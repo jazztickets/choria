@@ -1,0 +1,727 @@
+/*************************************************************************************
+*	Choria - http://choria.googlecode.com/
+*	Copyright (C) 2012  Alan Witkowski
+*
+*	This program is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	This program is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+**************************************************************************************/
+#include "mapeditor.h"
+#include "engine/game.h"
+#include "engine/input.h"
+#include "engine/graphics.h"
+#include "engine/globals.h"
+#include "engine/stats.h"
+
+MapEditorStateClass MapEditorState;
+
+// Initializes the state
+int MapEditorStateClass::Init() {
+
+	// Textures
+	BrushSize = 0;
+	Brush.Texture = NULL;
+	RefreshTexturePalette();
+	if(TexturePalette.size() > 0)
+		Brush.Texture = TexturePalette[0];
+
+	// Default map
+	Map = new MapClass("test.map", 50, 50);
+
+	// Set filters
+	ResetFilters();
+	Filters[FILTER_TEXTURE] = true;
+	Filters[FILTER_WALL] = true;
+
+	State = STATE_MAIN;
+
+	return 1;
+}
+
+// Shuts the state down
+int MapEditorStateClass::Close() {
+
+	CloseMap();
+
+	return 1;
+}
+
+// Deletes the map
+void MapEditorStateClass::CloseMap() {
+
+	if(Map) {
+		delete Map;
+		Map = NULL;
+	}
+}
+
+// Updates the current state
+void MapEditorStateClass::Update(u32 FrameTime) {
+
+	switch(State) {
+		case STATE_MAIN:
+			if(Input.GetMouseState(InputClass::MOUSE_LEFT) && !(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL))) {
+				switch(BrushSize) {
+					case 0:
+						ApplyBrush(BrushPosition.X, BrushPosition.Y);
+						if(!Map->IsValidPosition(BrushPosition.X, BrushPosition.Y))
+							Map->SetNoZoneTexture(Brush.Texture);
+					break;
+					case 1:
+						ApplyBrushSize(BrushPosition.X, BrushPosition.Y, 3);
+					break;
+					case 2:
+						ApplyBrushSize(BrushPosition.X, BrushPosition.Y, 6);
+					break;
+					case 3:
+						ApplyBrushSize(BrushPosition.X, BrushPosition.Y, 12);
+					break;
+				}				
+			}
+		break;
+	}
+}
+
+// Draws the current state
+void MapEditorStateClass::Draw() {
+
+	if(Map)
+		Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
+	RenderBrush();
+
+	stringc GridBrushPositionText = stringc(BrushPosition.X) + stringc(" ") + stringc(BrushPosition.Y);
+
+	Graphics.SetFont(GraphicsClass::FONT_8);
+	Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
+
+	irrGUI->drawAll();
+}
+
+// Key presses
+bool MapEditorStateClass::HandleKeyPress(EKEY_CODE Key) {
+
+	switch(State) {
+		case STATE_MAIN:
+			switch(Key) {
+				case KEY_ESCAPE:
+					Game.SetDone(true);
+				break;
+				case KEY_KEY_N:
+					InitNewMap();
+				break;
+				case KEY_KEY_W:
+					Brush.Wall = !Brush.Wall;
+				break;
+				case KEY_KEY_P:
+					Brush.PVP = !Brush.PVP;
+				break;
+				case KEY_KEY_S:
+					if(Map)
+						Map->SaveMap();
+				break;
+				case KEY_KEY_L:
+					InitLoadMap();
+				break;
+				case KEY_KEY_T:
+					InitTexturePalette();
+				break;
+				case KEY_KEY_B:
+					InitBrushOptions();
+				break;
+				case KEY_MINUS:
+					if(Brush.EventType > 0)
+						Brush.EventData--;
+				break;
+				case KEY_PLUS:
+					Brush.EventData++;
+				break;
+				case KEY_KEY_1:
+					ResetFilters();
+					Filters[FILTER_TEXTURE] = true;
+					Filters[FILTER_WALL] = true;
+				break;
+				case KEY_KEY_2:
+					ResetFilters();
+					Filters[FILTER_ZONE] = true;
+				break;
+				case KEY_KEY_3:
+					ResetFilters();
+					Filters[FILTER_PVP] = true;
+				break;
+				case KEY_KEY_4:
+					ResetFilters();
+					Filters[FILTER_EVENTTYPE] = true;
+					Filters[FILTER_EVENTDATA] = true;
+				break;
+				case KEY_F1:
+					BrushSize = 0;
+				break;
+				case KEY_F2:
+					BrushSize = 1;
+				break;
+				case KEY_F3:
+					BrushSize = 2;
+				break;
+				case KEY_F4:
+					BrushSize = 3;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+		case STATE_NEWMAP:
+			switch(Key) {
+				case KEY_ESCAPE:
+					CloseWindow(NEWMAP_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+		case STATE_LOADMAP:
+			switch(Key) {
+				case KEY_ESCAPE:
+					CloseWindow(NEWMAP_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+		case STATE_TEXTUREPALETTE:
+			switch(Key) {
+				case KEY_ESCAPE:
+					CloseWindow(TEXTUREPALETTE_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+		case STATE_BRUSHOPTIONS:
+			switch(Key) {
+				case KEY_ESCAPE:
+					CloseWindow(BRUSHOPTIONS_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+	}
+
+	return true;
+}
+
+// Mouse buttons
+bool MapEditorStateClass::HandleMousePress(int Button, int MouseX, int MouseY) {
+
+	if(Map) {
+		switch(Button) {
+			case InputClass::MOUSE_LEFT:
+				if(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL)) {
+					if(Map->IsValidPosition(BrushPosition.X, BrushPosition.Y))
+						Brush = *Map->GetTile(BrushPosition.X, BrushPosition.Y);
+				}
+			break;
+			case InputClass::MOUSE_RIGHT:
+				Map->SetCameraScroll(BrushPosition);
+			break;
+		}
+	}
+
+	return false;
+}
+
+// Scroll wheel
+void MapEditorStateClass::HandleMouseWheel(float Direction) {
+
+	Brush.Zone += (int)(Direction);
+	if(Brush.Zone < 0)
+		Brush.Zone = 0;
+}
+
+// Mouse movement
+void MapEditorStateClass::HandleMouseMotion(int MouseX, int MouseY) {
+
+	if(Map) {
+		BrushPosition.X = Map->GetCameraScroll().X + MouseX / MAP_TILE_WIDTH - Map->GetViewSize().Width / 2;
+		BrushPosition.Y = Map->GetCameraScroll().Y + MouseY / MAP_TILE_HEIGHT - Map->GetViewSize().Height / 2;
+	}
+}
+
+// GUI events
+void MapEditorStateClass::HandleGUI(EGUI_EVENT_TYPE EventType, IGUIElement *Element) {
+
+	switch(EventType) {
+		case EGET_ELEMENT_CLOSED:
+			State = STATE_MAIN;
+		break;
+		case EGET_EDITBOX_ENTER: {
+			IGUISpinBox *SpinBox = static_cast<IGUISpinBox *>(Element);
+			switch(Element->getID()) {
+				case NEWMAP_FILE:
+				case NEWMAP_WIDTH:
+				case NEWMAP_HEIGHT:
+					CreateMap();
+				break;
+				case BRUSHOPTIONS_ZONE:
+					Brush.Zone = (int)SpinBox->getValue();
+				break;
+				case BRUSHOPTIONS_EVENTDATA:
+					Brush.EventData = (int)SpinBox->getValue();
+				default:
+				break;
+			}
+		}
+		break;
+		case EGET_BUTTON_CLICKED:
+			switch(Element->getID()) {
+				case NEWMAP_CREATE:
+					CreateMap();
+				break;
+				case NEWMAP_CANCEL:
+					CloseWindow(NEWMAP_WINDOW);
+					State = STATE_MAIN;
+				break;
+				case BRUSHOPTIONS_FILTERCLOSE:
+					CloseWindow(BRUSHOPTIONS_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+
+					// Texture palette
+					if(Element->getID() >= TEXTURES_ID) {
+						int TextureIndex = Element->getID() - TEXTURES_ID;
+						Brush.Texture = TexturePalette[TextureIndex];
+
+						CloseWindow(TEXTUREPALETTE_WINDOW);
+						State = STATE_MAIN;
+					}
+				break;
+			}
+		break;
+		case EGET_CHECKBOX_CHANGED: {
+			IGUICheckBox *CheckBox = static_cast<IGUICheckBox *>(Element);
+
+			switch(Element->getID()) {
+				case BRUSHOPTIONS_WALL:
+					Brush.Wall = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_PVP:
+					Brush.PVP = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERTEXTURE:
+					Filters[FILTER_TEXTURE] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERWALL:
+					Filters[FILTER_WALL] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERZONE:
+					Filters[FILTER_ZONE] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERPVP:
+					Filters[FILTER_PVP] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTEREVENTTYPE:
+					Filters[FILTER_EVENTTYPE] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTEREVENTDATA:
+					Filters[FILTER_EVENTDATA] = CheckBox->isChecked();
+				break;
+			}
+		}
+		break;
+		case EGET_SPINBOX_CHANGED: {
+			IGUISpinBox *SpinBox = static_cast<IGUISpinBox *>(Element);
+			switch(Element->getID()) {
+				case BRUSHOPTIONS_ZONE:
+					Brush.Zone = (int)SpinBox->getValue();
+				break;
+				case BRUSHOPTIONS_EVENTDATA:
+					Brush.EventData = (int)SpinBox->getValue();
+				break;
+			}
+		}
+		break;
+		case EGET_COMBO_BOX_CHANGED: {
+			IGUIComboBox *ComboBox = static_cast<IGUIComboBox *>(Element);
+			switch(Element->getID()) {
+				case BRUSHOPTIONS_EVENTTYPE:
+					Brush.EventType = (int)ComboBox->getSelected();
+				break;
+			}
+		}
+		break;
+		case EGET_FILE_SELECTED: {
+			IGUIFileOpenDialog *FileOpen = static_cast<IGUIFileOpenDialog *>(Element);
+			stringc Filename(FileOpen->getFileName());
+
+			int LastSlash = Filename.findLast('/');
+			if(LastSlash != -1) {
+				Filename = Filename.subString(LastSlash+1, Filename.size());
+
+				CloseMap();
+				Map = new MapClass(Filename);
+				if(!Map->LoadMap()) {
+					CloseMap();
+				}
+			}
+
+			State = STATE_MAIN;
+		}
+		break;
+		case EGET_FILE_CHOOSE_DIALOG_CANCELLED:
+			State = STATE_MAIN;
+		break;
+		default:
+		break;
+	}
+}
+
+// Close a window by element
+void MapEditorStateClass::CloseWindow(int Element) {
+
+	IGUIWindow *Window = static_cast<IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(Element));
+	if(Window)
+		irrGUI->getRootGUIElement()->removeChild(Window);
+}
+
+// Initializes the new map screen
+void MapEditorStateClass::InitNewMap() {
+
+	// Main dialog window
+	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
+
+	// Filename
+	IGUIStaticText *EditFile = Graphics.AddText("File", 80, 54, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIEditBox *EditName = irrGUI->addEditBox(L"test.map", Graphics.GetRect(90, 50, 150, 25), true, Window, NEWMAP_FILE);
+	EditName->setMax(15);
+
+	// Map width
+	IGUIStaticText *TextWidth = Graphics.AddText("Width", 80, 84, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIEditBox *EditWidth = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 80, 100, 25), true, Window, NEWMAP_WIDTH);
+	EditWidth->setMax(15);
+
+	// Map height
+	IGUIStaticText *TextHeight = Graphics.AddText("Height", 80, 114, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIEditBox *EditHeight = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 110, 100, 25), true, Window, NEWMAP_HEIGHT);
+	EditHeight->setMax(15);
+
+	// Buttons
+	IGUIButton *ButtonCreate = irrGUI->addButton(Graphics.GetRect(20, 160, 110, 25), Window, NEWMAP_CREATE, L"Create");
+	IGUIButton *ButtonCancel = irrGUI->addButton(Graphics.GetRect(150, 160, 110, 25), Window, NEWMAP_CANCEL, L"Cancel");
+
+	// Error
+	IGUIStaticText *TextError = irrGUI->addStaticText(L"", Graphics.GetRect(20, 230, 400, 25), false, false, Window, NEWMAP_ERROR);
+
+	irrGUI->setFocus(EditName);
+
+	State = STATE_NEWMAP;
+}
+
+// Creates a map with the given parameters
+void MapEditorStateClass::CreateMap() {
+
+	// Get window
+	IGUIWindow *Window = static_cast<IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(NEWMAP_WINDOW));
+
+	// Get buttons
+	IGUIEditBox *EditFile = static_cast<IGUIEditBox *>(Window->getElementFromId(NEWMAP_FILE));
+	IGUIEditBox *EditWidth = static_cast<IGUIEditBox *>(Window->getElementFromId(NEWMAP_WIDTH));
+	IGUIEditBox *EditHeight = static_cast<IGUIEditBox *>(Window->getElementFromId(NEWMAP_HEIGHT));
+
+	IGUIStaticText *TextError = static_cast<IGUIStaticText *>(Window->getElementFromId(NEWMAP_ERROR));
+
+	// Get values
+	stringc File(EditFile->getText());
+	int Width = atoi(stringc(EditWidth->getText()).c_str());
+	int Height = atoi(stringc(EditHeight->getText()).c_str());
+
+	// Check filename
+	File.make_lower();
+	File.trim();
+	if(File == "" || File.size() < 5 || File.find(".map") == -1) {
+		TextError->setText(L"Invalid file name");
+		irrGUI->setFocus(EditFile);
+		return;
+	}
+
+	// Check width
+	if(Width < 5 || Width > 255) {
+		TextError->setText(L"Width must be between 5-255");
+		irrGUI->setFocus(EditWidth);
+		return;
+	}
+
+	// Check height
+	if(Height < 5 || Height > 255) {
+		TextError->setText(L"Height must be between 5-255");
+		irrGUI->setFocus(EditHeight);
+		return;
+	}
+
+	// Delete old map
+	CloseMap();
+
+	// Create map
+	Map = new MapClass(File, Width, Height);
+
+	CloseWindow(NEWMAP_WINDOW);
+	State = STATE_MAIN;
+}
+
+// Initialize the load map screen
+void MapEditorStateClass::InitLoadMap() {
+
+	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
+	irrFile->changeWorkingDirectoryTo("maps");
+
+	// Main dialog window
+	IGUIFileOpenDialog *FileOpen = irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1);
+
+	// Revert working directory
+	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
+
+	State = STATE_LOADMAP;
+}
+
+// Opens the texture palette dialog
+void MapEditorStateClass::InitTexturePalette() {
+
+	// Main dialog window
+	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
+
+	// Load texture buttons
+	int StartX = 10;
+	position2di TexturePosition(StartX, 30);
+	for(u32 i = 0; i < TexturePalette.size(); i++) {
+
+		IGUIButton *Button = irrGUI->addButton(Graphics.GetRect(TexturePosition.X, TexturePosition.Y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
+		Button->setImage(TexturePalette[i]);
+
+		TexturePosition.X += MAP_TILE_WIDTH;
+		if(TexturePosition.X > 600 - MAP_TILE_WIDTH) {
+			TexturePosition.X = StartX;
+			TexturePosition.Y += MAP_TILE_HEIGHT;
+		}
+	}
+
+	State = STATE_TEXTUREPALETTE;
+}
+
+
+// Opens the brush filter dialog
+void MapEditorStateClass::InitBrushOptions() {
+	int StartX, StartY, OffsetY;
+
+	// Main dialog window
+	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 200, 350), false, L"Brush Options", 0, BRUSHOPTIONS_WINDOW);
+
+	// Wall
+	StartX = 75, StartY = 40;
+	Graphics.AddText("Wall", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUICheckBox *BrushWall = irrGUI->addCheckBox(Brush.Wall, Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
+
+	Graphics.AddText("PVP", StartX + 50, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUICheckBox *BrushPVP = irrGUI->addCheckBox(Brush.PVP, Graphics.GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
+
+	// Zone
+	StartY += 30;
+	Graphics.AddText("Zone", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUISpinBox *BrushZone = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_ZONE);
+	BrushZone->setDecimalPlaces(0);
+	BrushZone->setRange(0.0f, 10000.0f);
+
+	// Event Type
+	StartY += 30;
+	Graphics.AddText("Event Type", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIComboBox *BrushEventType = irrGUI->addComboBox(Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_EVENTTYPE);
+	for(int i = 0; i < Stats.GetEventCount(); i++)
+		BrushEventType->addItem(stringw(Stats.GetEvent(i)->Name.c_str()).c_str());
+
+	BrushEventType->setSelected(Brush.EventType);
+
+	// Event Data
+	StartY += 30;
+	Graphics.AddText("Event Data", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUISpinBox *BrushEventData = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_EVENTDATA);
+	BrushEventData->setDecimalPlaces(0);
+	BrushEventData->setRange(0.0f, 10000.0f);
+
+	// Filters
+	StartY += 40, OffsetY = 20;
+	Graphics.AddText("Filters", 100, StartY, GraphicsClass::ALIGN_CENTER, Window);
+	Graphics.AddText("Texture", StartX - 5, StartY + 3 + OffsetY * 1, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Wall", StartX - 5, StartY + 3 + OffsetY * 2, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Zone", StartX - 5, StartY + 3 + OffsetY * 3, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Event Type", StartX - 5, StartY + 3 + OffsetY * 4, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Event Data", StartX - 5, StartY + 3 + OffsetY * 5, GraphicsClass::ALIGN_RIGHT, Window);
+	irrGUI->addCheckBox(Filters[FILTER_TEXTURE], Graphics.GetRect(StartX, StartY + OffsetY * 1, 100, 20), Window, BRUSHOPTIONS_FILTERTEXTURE);
+	irrGUI->addCheckBox(Filters[FILTER_WALL], Graphics.GetRect(StartX, StartY + OffsetY * 2, 100, 20), Window, BRUSHOPTIONS_FILTERWALL);
+	irrGUI->addCheckBox(Filters[FILTER_ZONE], Graphics.GetRect(StartX, StartY + OffsetY * 3, 100, 20), Window, BRUSHOPTIONS_FILTERZONE);
+	irrGUI->addCheckBox(Filters[FILTER_EVENTTYPE], Graphics.GetRect(StartX, StartY + OffsetY * 4, 100, 20), Window, BRUSHOPTIONS_FILTEREVENTTYPE);
+	irrGUI->addCheckBox(Filters[FILTER_EVENTDATA], Graphics.GetRect(StartX, StartY + OffsetY * 5, 100, 20), Window, BRUSHOPTIONS_FILTEREVENTDATA);
+
+	// Buttons
+	IGUIButton *ButtonClose = irrGUI->addButton(Graphics.GetCenteredRect(100, 320, 75, 25), Window, BRUSHOPTIONS_FILTERCLOSE, L"Close");
+
+	State = STATE_BRUSHOPTIONS;
+}
+
+// Loads all map textures from a directory
+void MapEditorStateClass::RefreshTexturePalette() {
+
+	TexturePalette.clear();
+
+	// Change directory to the textures
+	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
+	irrFile->changeWorkingDirectoryTo("textures/map");
+
+	// Load all textures in the directory
+	IFileList *FileList = irrFile->createFileList();
+	int FileCount = FileList->getFileCount();
+	for(int i = 0; i < FileCount; i++) {
+		if(!FileList->isDirectory(i)) {
+
+			// Load texture
+			ITexture *Texture = irrDriver->getTexture(FileList->getFileName(i));
+
+			// Check size
+			if(Texture->getSize() != dimension2du(32, 32)) {
+				//printf("Texture size is not 32x32 for file=%s\n", Texture->getName());
+				irrDriver->removeTexture(Texture);
+			}
+			else {
+
+				// Save textures off
+				TexturePalette.push_back(Texture);
+			}
+		}
+	}
+
+	// Revert working directory
+	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
+}
+
+// Applys a brush of varying size
+void MapEditorStateClass::ApplyBrushSize(int X, int Y, int Size) {
+
+	for(int i = 0; i < Size; i++) {
+		for(int j = 0; j < Size; j++) {
+			int PositionX = j - Size / 2;
+			int PositionY = i - Size / 2;
+
+			if(PositionX * PositionX + PositionY * PositionY >= Size - 1)
+				continue;
+
+			ApplyBrush(X + PositionX, Y + PositionY);
+		}
+	}
+}
+
+// Draws a texture on the map with the current brush
+void MapEditorStateClass::ApplyBrush(int X, int Y) {
+
+	if(Map) {
+		if(!Map->IsValidPosition(X, Y))
+			return;
+
+		// Get existing tile
+		TileStruct Tile;
+		Map->GetTile(X, Y, Tile);
+
+		// Apply filters
+		if(Filters[FILTER_TEXTURE])
+			Tile.Texture = Brush.Texture;
+		if(Filters[FILTER_WALL])
+			Tile.Wall = Brush.Wall;
+		if(Filters[FILTER_ZONE])
+			Tile.Zone = Brush.Zone;
+		if(Filters[FILTER_PVP])
+			Tile.PVP = Brush.PVP;
+		if(Filters[FILTER_EVENTTYPE])
+			Tile.EventType = Brush.EventType;
+		if(Filters[FILTER_EVENTDATA])
+			Tile.EventData = Brush.EventData;
+
+		// Set new tile
+		Map->SetTile(X, Y, &Tile);
+	}
+}
+
+// Draw information about the brush
+void MapEditorStateClass::RenderBrush() {
+
+	SColor Color(255, 255, 255, 255);
+	int StartX = 750, StartY = 480;
+	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 705, StartY - 10, 90, 125);
+
+	// Draw texture
+	StartY += 15;
+	if(Brush.Texture != NULL) {
+		Filters[FILTER_TEXTURE] ? Color.setAlpha(255) : Color.setAlpha(80);
+		Graphics.DrawCenteredImage(Brush.Texture, StartX, StartY, Color);
+	}
+
+	// Get wall text
+	const char *WallText = "Floor";
+	if(Brush.Wall)
+		WallText = "Wall";
+
+	// Draw wall info
+	StartY += 20;
+	Filters[FILTER_WALL] ? Color.setAlpha(255) : Color.setAlpha(128);
+	Graphics.SetFont(GraphicsClass::FONT_8);
+	Graphics.RenderText(WallText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+
+	// Draw zone info
+	StartY += 15;
+	Filters[FILTER_ZONE] ? Color.setAlpha(255) : Color.setAlpha(128);
+	stringc ZoneText = stringc("Zone ") + stringc(Brush.Zone);
+	Graphics.RenderText(ZoneText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+
+	// Get PVP text
+	const char *PVPText = "Safe";
+	if(Brush.PVP)
+		PVPText = "PVP";
+
+	// Draw pvp info
+	StartY += 15;
+	Filters[FILTER_PVP] ? Color.setAlpha(255) : Color.setAlpha(128);
+	Graphics.RenderText(PVPText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+
+	// Draw event info
+	StartY += 15;
+	Filters[FILTER_EVENTTYPE] ? Color.setAlpha(255) : Color.setAlpha(128);
+	stringc EventTypeText = stringc("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
+	Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+
+	// Draw event info
+	StartY += 15;
+	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
+	stringc EventDataText = stringc("Event Data: ") + stringc(Brush.EventData);
+	Graphics.RenderText(EventDataText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+}
+
+// Resets the filters to false
+void MapEditorStateClass::ResetFilters() {
+	for(int i = 0; i < FILTER_COUNT; i++) {
+		Filters[i] = false;
+	}
+}

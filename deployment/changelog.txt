@@ -1,0 +1,28 @@
+Choria 0.3.2 - 
+- made walking faster
+- reduced town portal time
+- reduced network usage
+- updated to irrlicht 1.7.2
+- updated enet to 1.3.0
+- updated sqlite
+
+Choria 0.3.1 - 2/2/2010
+- Added more content: monsters, weapons, traders, etc.
+
+Choria 0.3 - 7/1/2009
+- Added traders to the world
+- Ctrl+Click to split an item stack
+- Hit S to return to the last spawn point
+- Skill tooltips now show next-level stats
+- Rebalanced some skills
+
+Choria 0.2 - 10/24/2008
+- Hit T to trade items/gold between players
+- Hit Escape to bring up main menu
+- Regen now works during battle
+- Added some more game content
+- Fixed linux framerate bug
+- Fixed some interface bugs
+
+Choria 0.1 - 7/17/2008
+- First release
