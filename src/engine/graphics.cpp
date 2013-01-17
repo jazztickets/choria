@@ -62,6 +62,9 @@ int GraphicsClass::Init(int Width, int Height, bool FullScreen, E_DRIVER_TYPE Dr
 	Skin->setColor(EGDC_3D_SHADOW, SColor(255, 0, 0, 20));
 	Skin->setColor(EGDC_3D_HIGH_LIGHT, SColor(255, 120, 120, 120));
 	Skin->setColor(EGDC_3D_DARK_SHADOW, SColor(255, 50, 50, 50));
+	Skin->setColor(EGDC_EDITABLE, SColor(255, 0, 0, 0));
+	Skin->setColor(EGDC_FOCUSED_EDITABLE, SColor(255, 0, 0, 0));
+	Skin->setColor(EGDC_GRAY_EDITABLE, SColor(255, 0, 0, 0));
 
 	// Load images
 	Images[IMAGE_EMPYSLOT] = irrDriver->getTexture("textures/interface/emptyslot.png");

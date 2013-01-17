@@ -26,6 +26,7 @@ endif()
 # external libraries
 add_definitions("-DTIXML_USE_STL")
 find_package(Irrlicht REQUIRED)
+find_package(Threads REQUIRED)
 
 # set include directories
 include_directories("src")
@@ -59,7 +60,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
 # build exe
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
-target_link_libraries(${CMAKE_PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${EXTRA_LIBS})
+target_link_libraries(${CMAKE_PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 
 # copy irrlicht DLLs to working directory
 if(WIN32)
