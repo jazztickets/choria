@@ -1,2 +1,4 @@
 build
 bin
+working/*.dll
+working/save

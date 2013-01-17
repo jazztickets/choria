@@ -20,7 +20,7 @@
 
 // Libraries
 #include "action.h"
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 
 // Namespaces
 using namespace irr;

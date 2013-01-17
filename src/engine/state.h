@@ -19,7 +19,7 @@
 #define STATE_H
 
 // Libraries
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include <enet/enet.h>
 
 // Namespaces
