@@ -25,7 +25,7 @@ endif()
 
 # external libraries
 add_definitions("-DTIXML_USE_STL")
-find_package(Irrlicht REQUIRED)
+find_package(Irrlicht 1.8 REQUIRED)
 find_package(Threads REQUIRED)
 
 # set include directories
