@@ -1,0 +1,42 @@
+----COMMAND-LINE ARGUMENTS----
+
+to host a game
+-host
+
+open the mapeditor
+-mapeditor
+
+connect directly to an ipaddress
+-connect ipaddress
+
+set login information
+-login username password
+
+----HOW TO PLAY----
+
+Use Arrow keys to walk around.
+During battle, hit 1-8 to use a skill.
+Hit I to open your inventory.
+Hit K to open your skill page. Every level you get 3 skill points to spend. All skills must be equipped to your skillbar before they're activated.
+Hit C to see character stats.
+Hit enter to type a message to other players in your current map.
+Hit A to attack other players in PvP zones.
+Hit T to trade with other players.
+Hit S to teleport back to town.
+
+----MAP EDITOR----
+
+Hit N to start a new map
+Hit L to load a map
+Hit S to save
+Hit W to change from wall/nonwall
+Hit T to open up texture list
+Hit B to change brush options
+Hit +/- to change event #
+Hit 1-4 to select current brush mode
+Hit F1-F4 to change brush size
+
+LMB places a tile
+Ctrl+LMB copies an existing tile
+RMB scrolls the map
+Mousewheel changes current zone

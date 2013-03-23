@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Project Name="choria" InternalType="">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
+    </Plugin>
+  </Plugins>
+  <Description/>
+  <Dependencies/>
+  <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="../bin/Debug/choria" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../working" PauseExecWhenProcTerminates="no"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[
+      
+      ]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make -j8</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand>rm -rf debug; mkdir debug; cd debug &amp;&amp; cmake -DCMAKE_BUILD_TYPE=Debug ../../</MakefileGenerationCommand>
+        <ThirdPartyToolName>Other</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)/debug</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Release" Command="../bin/Release/choria" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../working" PauseExecWhenProcTerminates="no"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[
+      
+      
+      ]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make -j8</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand>rm -rf release; mkdir release; cd release &amp;&amp; cmake -DCMAKE_BUILD_TYPE=Release ../../</MakefileGenerationCommand>
+        <ThirdPartyToolName>Other</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)/release</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <VirtualDirectory Name="src">
+    <File Name="../src/characters.h"/>
+    <File Name="../src/connect.h"/>
+    <File Name="../src/account.h"/>
+    <File Name="../src/playclient.cpp"/>
+    <File Name="../src/mainmenu.cpp"/>
+    <File Name="../src/createcharacter.cpp"/>
+    <File Name="../src/playserver.h"/>
+    <File Name="../src/playclient.h"/>
+    <File Name="../src/playserver.cpp"/>
+    <File Name="../src/mapeditor.h"/>
+    <File Name="../src/createcharacter.h"/>
+    <File Name="../src/main.cpp"/>
+    <File Name="../src/mainmenu.h"/>
+    <File Name="../src/account.cpp"/>
+    <File Name="../src/characters.cpp"/>
+    <File Name="../src/mapeditor.cpp"/>
+    <File Name="../src/connect.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="enet">
+    <File Name="../src/enet/types.h"/>
+    <File Name="../src/enet/unix.c"/>
+    <File Name="../src/enet/callbacks.h"/>
+    <File Name="../src/enet/list.c"/>
+    <File Name="../src/enet/unix.h"/>
+    <File Name="../src/enet/list.h"/>
+    <File Name="../src/enet/win32.c"/>
+    <File Name="../src/enet/enet.h"/>
+    <File Name="../src/enet/protocol.c"/>
+    <File Name="../src/enet/packet.c"/>
+    <File Name="../src/enet/time.h"/>
+    <File Name="../src/enet/peer.c"/>
+    <File Name="../src/enet/callbacks.c"/>
+    <File Name="../src/enet/protocol.h"/>
+    <File Name="../src/enet/compress.c"/>
+    <File Name="../src/enet/win32.h"/>
+    <File Name="../src/enet/utility.h"/>
+    <File Name="../src/enet/host.c"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="engine">
+    <File Name="../src/engine/hud.h"/>
+    <File Name="../src/engine/objectmanager.h"/>
+    <File Name="../src/engine/constants.h"/>
+    <File Name="../src/engine/input.h"/>
+    <File Name="../src/engine/database.h"/>
+    <File Name="../src/engine/hud.cpp"/>
+    <File Name="../src/engine/globals.cpp"/>
+    <File Name="../src/engine/filestream.cpp"/>
+    <File Name="../src/engine/game.h"/>
+    <File Name="../src/engine/stats.h"/>
+    <File Name="../src/engine/game.cpp"/>
+    <File Name="../src/engine/stats.cpp"/>
+    <File Name="../src/engine/objectmanager.cpp"/>
+    <File Name="../src/engine/singleton.h"/>
+    <File Name="../src/engine/instances.cpp"/>
+    <File Name="../src/engine/config.cpp"/>
+    <File Name="../src/engine/random.h"/>
+    <File Name="../src/engine/config.h"/>
+    <File Name="../src/engine/globals.h"/>
+    <File Name="../src/engine/instances.h"/>
+    <File Name="../src/engine/state.h"/>
+    <File Name="../src/engine/filestream.h"/>
+    <File Name="../src/engine/graphics.cpp"/>
+    <File Name="../src/engine/database.cpp"/>
+    <File Name="../src/engine/input.cpp"/>
+    <File Name="../src/engine/graphics.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="instances">
+    <File Name="../src/instances/map.cpp"/>
+    <File Name="../src/instances/clientbattle.h"/>
+    <File Name="../src/instances/battle.h"/>
+    <File Name="../src/instances/clientbattle.cpp"/>
+    <File Name="../src/instances/serverbattle.h"/>
+    <File Name="../src/instances/map.h"/>
+    <File Name="../src/instances/serverbattle.cpp"/>
+    <File Name="../src/instances/battle.cpp"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="network">
+    <File Name="../src/network/multinetwork.cpp"/>
+    <File Name="../src/network/multinetwork.h"/>
+    <File Name="../src/network/network.h"/>
+    <File Name="../src/network/packetstream.cpp"/>
+    <File Name="../src/network/singlenetwork.cpp"/>
+    <File Name="../src/network/packetstream.h"/>
+    <File Name="../src/network/singlenetwork.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="objects">
+    <File Name="../src/objects/fighter.h"/>
+    <File Name="../src/objects/monster.cpp"/>
+    <File Name="../src/objects/monster.h"/>
+    <File Name="../src/objects/player.h"/>
+    <File Name="../src/objects/player.cpp"/>
+    <File Name="../src/objects/object.h"/>
+    <File Name="../src/objects/skill.h"/>
+    <File Name="../src/objects/skill.cpp"/>
+    <File Name="../src/objects/object.cpp"/>
+    <File Name="../src/objects/fighter.cpp"/>
+    <File Name="../src/objects/item.cpp"/>
+    <File Name="../src/objects/item.h"/>
+  </VirtualDirectory>
+</CodeLite_Project>
