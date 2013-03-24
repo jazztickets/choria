@@ -30,7 +30,6 @@ using namespace std;
 int ConfigClass::Init() {
 
 	#ifdef _WIN32
-		//SavePath = "saves/";
 		SavePath = stringc(getenv("APPDATA")) + stringc("/choria/");
 		CreateDirectory(SavePath.c_str(), NULL);
 	#else
