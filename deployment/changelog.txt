@@ -1,4 +1,6 @@
 Choria 0.3.3 -
+- updated to irrlicht 1.8
+- Save data now in %APPDATA%/choria for windows
 - fixed skill bug
 - fixed health/mana regen bug
 
