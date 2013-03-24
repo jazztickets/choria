@@ -94,6 +94,8 @@ class NetworkClass {
 		virtual int Connect(const char *TIPAddress) { return 0; }
 		virtual void Disconnect() { }
 
+		virtual enet_uint32 GetRTT() { return 0; }
+
 		// Packets
 		virtual void SendPacketToHost(PacketClass *TPacket) { }
 		virtual void SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer) { }

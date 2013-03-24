@@ -36,6 +36,8 @@ class MultiNetworkClass : public NetworkClass {
 		void Disconnect();
 		void WaitForDisconnect();
 
+		enet_uint32 GetRTT();
+
 		// Packets
 		void SendPacketToHost(PacketClass *TPacket);
 		void SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer);	

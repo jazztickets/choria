@@ -956,6 +956,12 @@ void HUDClass::DrawTopHUD() {
 		Graphics::Instance().RenderText("A", StartX - 10, StartY + 8, GraphicsClass::ALIGN_LEFT, PVPColor);
 		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
 	}
+
+	// Draw RTT
+	if(ClientNetwork->GetRTT()) {
+		sprintf(String, "%d ms", ClientNetwork->GetRTT());
+		Graphics::Instance().RenderText(String, 10, 600 - 25);
+	}
 }
 
 // Draws the player's inventory

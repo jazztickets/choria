@@ -101,6 +101,14 @@ void MultiNetworkClass::WaitForDisconnect() {
 	}
 }
 
+// Get round trip time
+enet_uint32 MultiNetworkClass::GetRTT() {
+	if(Peer)
+		return Peer->roundTripTime;
+
+	return 0;
+}
+
 // Update enet
 void MultiNetworkClass::Update() {
 	if(!Active)
