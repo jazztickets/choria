@@ -18,7 +18,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 
 // Namespaces
 using namespace irr;

@@ -19,7 +19,7 @@
 #define MONSTER_H
 
 // Libraries
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include "fighter.h"
 
 // Namespaces

@@ -19,7 +19,7 @@
 #define CONFIG_H
 
 // Libraries
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include "singleton.h"
 
 // Namespaces

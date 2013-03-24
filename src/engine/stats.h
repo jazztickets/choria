@@ -19,7 +19,7 @@
 #define STATS_H
 
 // Libraries
-#include <irrlicht/irrlicht.h>
+#include <irrlicht.h>
 #include <map>
 #include "singleton.h"
 #include "../objects/item.h"

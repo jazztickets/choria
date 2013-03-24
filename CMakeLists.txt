@@ -14,7 +14,9 @@ endif()
 if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-	
+	include_directories("${PROJECT_SOURCE_DIR}/extlibs/include")
+	link_directories("${PROJECT_SOURCE_DIR}/extlibs/")
+
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
 else()
