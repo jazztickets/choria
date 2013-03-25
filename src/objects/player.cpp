@@ -69,7 +69,7 @@ PlayerClass::PlayerClass()
 	TownPortalTime(0),
 	State(STATE_WALK) {
 
-	WorldImage = irrDriver->getTexture("textures/players/basic.png");
+	WorldImage = irrDriver->getTexture(WorkingDirectory + "textures/players/basic.png");
 
 	Position.X = 0;
 	Position.Y = 0;

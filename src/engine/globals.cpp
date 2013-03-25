@@ -24,5 +24,7 @@ IGUIEnvironment *irrGUI;
 IFileSystem *irrFile;
 ITimer *irrTimer;
 
+stringc WorkingDirectory;
+
 NetworkClass *ClientNetwork;
 NetworkClass *ServerNetwork;

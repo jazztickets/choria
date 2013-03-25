@@ -29,6 +29,7 @@ class MainMenuState : public StateClass {
 		enum ElementType {
 			ELEMENT_SINGLEPLAYER,
 			ELEMENT_MULTIPLAYER,
+			ELEMENT_EDITOR,
 			ELEMENT_OPTIONS,
 			ELEMENT_EXIT,
 		};

@@ -64,6 +64,8 @@ void MapEditorState::CloseMap() {
 
 // Updates the current state
 void MapEditorState::Update(u32 TDeltaTime) {
+	if(!Map)
+		return;
 
 	switch(State) {
 		case STATE_MAIN:
@@ -369,17 +371,11 @@ void MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement
 		break;
 		case EGET_FILE_SELECTED: {
 			IGUIFileOpenDialog *FileOpen = static_cast<IGUIFileOpenDialog *>(TElement);
-			stringc Filename(FileOpen->getFileName());
 
-			int LastSlash = Filename.findLast('/');
-			if(LastSlash != -1) {
-				Filename = Filename.subString(LastSlash+1, Filename.size());
-
+			CloseMap();
+			Map = new MapClass(FileOpen->getFileName());
+			if(!Map->LoadMap()) {
 				CloseMap();
-				Map = new MapClass(Filename);
-				if(!Map->LoadMap()) {
-					CloseMap();
-				}
 			}
 
 			State = STATE_MAIN;
@@ -488,14 +484,9 @@ void MapEditorState::CreateMap() {
 // Initialize the load map screen
 void MapEditorState::InitLoadMap() {
 
-	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
-	irrFile->changeWorkingDirectoryTo("maps");
-
 	// Main dialog window
-	IGUIFileOpenDialog *FileOpen = irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1);
-
-	// Revert working directory
-	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
+	stringc StartPath = WorkingDirectory + "maps";
+	IGUIFileOpenDialog *FileOpen = irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (stringc::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;
 }
@@ -588,10 +579,6 @@ void MapEditorState::RefreshTexturePalette() {
 
 	TexturePalette.clear();
 
-	// Change directory to the textures
-	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
-	irrFile->changeWorkingDirectoryTo("textures/map");
-
 	// Load all textures in the directory
 	IFileList *FileList = irrFile->createFileList();
 	int FileCount = FileList->getFileCount();
@@ -599,7 +586,7 @@ void MapEditorState::RefreshTexturePalette() {
 		if(!FileList->isDirectory(i)) {
 
 			// Load texture
-			ITexture *Texture = irrDriver->getTexture(FileList->getFileName(i));
+			ITexture *Texture = irrDriver->getTexture(WorkingDirectory + "textures/map/" + FileList->getFileName(i));
 
 			// Check size
 			if(Texture->getSize() != dimension2du(32, 32)) {
@@ -614,9 +601,6 @@ void MapEditorState::RefreshTexturePalette() {
 			}
 		}
 	}
-
-	// Revert working directory
-	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
 }
 
 // Applys a brush of varying size

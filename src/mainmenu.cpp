@@ -23,6 +23,7 @@
 #include "network/network.h"
 #include "network/packetstream.h"
 #include "connect.h"
+#include "mapeditor.h"
 #include "characters.h"
 
 // Initializes the state
@@ -37,10 +38,14 @@ int MainMenuState::Init() {
 	DrawY += OffsetY;
 	IGUIButton *MultiplayerButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_MULTIPLAYER, L"Multiplayer");
 
-	// Options
+	// Editor
 	DrawY += OffsetY;
-	IGUIButton *OptionButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_OPTIONS, L"Options");
-	OptionButton->setEnabled(false);
+	IGUIButton *EditorButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EDITOR, L"Map Editor");
+
+	// Options
+	//DrawY += OffsetY;
+	//IGUIButton *OptionButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_OPTIONS, L"Options");
+	//OptionButton->setEnabled(false);
 
 	// Exit
 	DrawY += OffsetY;
@@ -99,6 +104,9 @@ void MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement)
 				break;
 				case ELEMENT_MULTIPLAYER:
 					Game::Instance().ChangeState(ConnectState::Instance());
+				break;
+				case ELEMENT_EDITOR:
+					Game::Instance().ChangeState(MapEditorState::Instance());
 				break;
 				case ELEMENT_OPTIONS:
 				break;

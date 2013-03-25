@@ -189,7 +189,7 @@ void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP)
 				}
 			}
 			else {
-				Graphics::Instance().DrawCenteredImage(irrDriver->getTexture("textures/editor/nozone.png"), DrawPosition.X, DrawPosition.Y);
+				Graphics::Instance().DrawCenteredImage(irrDriver->getTexture(WorkingDirectory + "textures/editor/nozone.png"), DrawPosition.X, DrawPosition.Y);
 			}
 		}
 	}
@@ -236,7 +236,7 @@ int MapClass::SaveMap() {
 
 	// Open file
 	FileClass File;
-	int Result = File.OpenForWrite((stringc("maps/") + Filename).c_str());
+	int Result = File.OpenForWrite(Filename.c_str());
 	if(!Result) {
 		printf("SaveMap: unable to open file for writing\n");
 		return 0;
@@ -307,9 +307,9 @@ int MapClass::LoadMap() {
 
 	// Open file
 	FileClass File;
-	int Result = File.OpenForRead((stringc("maps/") + Filename).c_str());
+	int Result = File.OpenForRead(Filename.c_str());
 	if(!Result) {
-		printf("LoadMap: unable to open file for reading\n");
+		printf("LoadMap: unable to open file for reading: %s\n", Filename.c_str());
 		return 0;
 	}
 
@@ -331,8 +331,8 @@ int MapClass::LoadMap() {
 	Textures.clear();
 
 	// Change directories
-	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
-	irrFile->changeWorkingDirectoryTo("textures/map");
+	//stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
+	//irrFile->changeWorkingDirectoryTo("textures/map");
 
 	// Read textures from map
 	stringc TextureFile;
@@ -344,7 +344,7 @@ int MapClass::LoadMap() {
 		if(TextureFile == "none")
 			Textures.push_back(NULL);
 		else
-			Textures.push_back(irrDriver->getTexture(TextureFile.c_str()));
+			Textures.push_back(irrDriver->getTexture(WorkingDirectory + "textures/map/" + TextureFile));
 	}
 	
 	// Get no zone texture
@@ -353,9 +353,7 @@ int MapClass::LoadMap() {
 	if(TextureFile == "none")
 		NoZoneTexture = NULL;
 	else
-		NoZoneTexture = irrDriver->getTexture(TextureFile.c_str());
-
-	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
+		NoZoneTexture = irrDriver->getTexture(WorkingDirectory + "textures/map/" + TextureFile);
 
 	// Read map data
 	TileStruct *Tile;

@@ -81,7 +81,7 @@ void StatsClass::LoadMaps() {
 	// Get events
 	MapStruct Map;
 	while(Database->FetchRow()) {
-		Map.File = Database->GetString(1);
+		Map.File = WorkingDirectory + stringc("maps/") + Database->GetString(1);
 		Map.ViewWidth = Database->GetInt(2);
 		Map.ViewHeight = Database->GetInt(3);
 		Maps[Database->GetInt(0)] = Map;

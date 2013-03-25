@@ -38,6 +38,7 @@ extern IGUIEnvironment *irrGUI;
 extern IFileSystem *irrFile;
 extern ITimer *irrTimer;
 
+extern stringc WorkingDirectory;
 extern NetworkClass *ClientNetwork;
 extern NetworkClass *ServerNetwork;
 
