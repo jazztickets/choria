@@ -1,4 +1,5 @@
 Choria 0.3.3 -
+- added mouse moving
 - updated to irrlicht 1.8
 - Save data now in %APPDATA%/choria for windows
 - fixed skill bug
