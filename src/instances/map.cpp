@@ -225,6 +225,12 @@ bool MapClass::GridToScreen(const position2di &TGridPosition, position2di &TScre
 	return true;
 }
 
+// Converts a screen coordinate to a map position
+void MapClass::ScreenToGrid(const position2di &TScreenPosition, position2di &TGridPosition) const {
+	TGridPosition.X = GetCameraScroll().X + TScreenPosition.X / MAP_TILE_WIDTH - GetViewSize().Width / 2;
+	TGridPosition.Y = GetCameraScroll().Y + TScreenPosition.Y / MAP_TILE_HEIGHT - GetViewSize().Height / 2;
+}
+
 // Saves the map to a file
 int MapClass::SaveMap() {
 

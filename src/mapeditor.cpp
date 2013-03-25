@@ -260,8 +260,7 @@ void MapEditorState::HandleMouseWheel(float TDirection) {
 void MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
 
 	if(Map) {
-		BrushPosition.X = Map->GetCameraScroll().X + TMouseX / MAP_TILE_WIDTH - Map->GetViewSize().Width / 2;
-		BrushPosition.Y = Map->GetCameraScroll().Y + TMouseY / MAP_TILE_HEIGHT - Map->GetViewSize().Height / 2;
+		Map->ScreenToGrid(position2di(TMouseX, TMouseY), BrushPosition);
 	}
 }
 

@@ -87,6 +87,7 @@ class MapClass {
 		const dimension2di &GetViewSize() const { return ViewSize; }
 
 		bool GridToScreen(const position2di &TGridPosition, position2di &TScreenPosition) const;
+		void ScreenToGrid(const position2di &TScreenPosition, position2di &TGridPosition) const;
 
 		// Collision
 		bool CanMoveTo(const position2di &TPosition);

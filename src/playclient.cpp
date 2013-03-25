@@ -47,6 +47,8 @@ int PlayClientState::Init() {
 	Map = NULL;
 	Battle = NULL;
 	State = STATE_CONNECTING;
+	MoveTarget.set(0, 0);
+	MouseMoving = false;
 
 	Instances = new InstanceClass();
 	ObjectManager = new ObjectManagerClass();
@@ -167,6 +169,23 @@ void PlayClientState::Update(u32 TDeltaTime) {
 			
 			// Send move input
 			if(!HUD::Instance().IsChatting()) {
+				if(MouseMoving) {
+					position2di Delta = MoveTarget - Player->GetPosition();
+					
+					if(abs(Delta.X) > abs(Delta.Y)) {
+						if(Delta.X < 0)
+							SendMoveCommand(PlayerClass::MOVE_LEFT);
+						else if(Delta.X > 0)
+							SendMoveCommand(PlayerClass::MOVE_RIGHT);
+					}
+					else {
+						if(Delta.Y < 0)
+							SendMoveCommand(PlayerClass::MOVE_UP);
+						else if(Delta.Y > 0)
+							SendMoveCommand(PlayerClass::MOVE_DOWN);
+					}
+				}
+				
 				if(Input::Instance().GetKeyState(KEY_LEFT))
 					SendMoveCommand(PlayerClass::MOVE_LEFT);
 				else if(Input::Instance().GetKeyState(KEY_UP))
@@ -272,6 +291,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_KEY_S:
 					HUD::Instance().ToggleTownPortal();
 				break;
+				case KEY_KEY_B:
 				case KEY_KEY_I:
 					HUD::Instance().InitInventory();
 				break;
@@ -304,6 +324,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 				case KEY_KEY_I:
+				case KEY_KEY_B:
 				case KEY_SPACE:
 				case KEY_LEFT:
 				case KEY_UP:
@@ -330,6 +351,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 				case KEY_KEY_I:
+				case KEY_KEY_B:
 				case KEY_SPACE:
 				case KEY_LEFT:
 				case KEY_UP:
@@ -371,17 +393,26 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 
 // Mouse movement
 void PlayClientState::HandleMouseMotion(int TMouseX, int TMouseY) {
+	if(MouseMoving)
+		Map->ScreenToGrid(position2di(TMouseX, TMouseY), MoveTarget);
+		
 	HUD::Instance().HandleMouseMotion(TMouseX, TMouseY);
 }
 
 // Mouse buttons
 bool PlayClientState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
-
+	
+	if(State == STATE_WALK && TButton == InputClass::MOUSE_LEFT) {
+		Map->ScreenToGrid(position2di(TMouseX, TMouseY), MoveTarget);
+		MouseMoving = true;
+	}
+	
 	return HUD::Instance().HandleMousePress(TButton, TMouseX, TMouseY);
 }
 
 // Mouse releases
 void PlayClientState::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
+	MouseMoving = false;
 
 	HUD::Instance().HandleMouseRelease(TButton, TMouseX, TMouseY);
 }
