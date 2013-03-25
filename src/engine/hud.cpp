@@ -1377,6 +1377,11 @@ void HUDClass::DrawItemTooltip() {
 					Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
 					DrawY += 15;
 				}
+				if(Item->GetInvisPower() > 0) {
+					sprintf(Buffer, "Invisibility Length: %d", Item->GetInvisPower());
+					Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+					DrawY += 15;
+				}
 
 				if(TooltipItem.Window == WINDOW_INVENTORY) {
 					Graphics::Instance().RenderText("Right-click to use", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);

@@ -171,6 +171,9 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
 		bool MovePlayer(int TDirection);
 		int GetCurrentZone();
+		void SetInvisPower(int TValue) { InvisPower = TValue; }
+		int GetInvisPower() const { return InvisPower; }
+		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
 		void SetSkillLevel(int TSkillID, int TPoints) { SkillLevels[TSkillID] = TPoints; }
@@ -182,6 +185,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		// Battles
 		void GenerateNextBattle();
 		void SetNextBattle(int TValue) { NextBattle = TValue; }
+		void UpdateNextBattle(int TChange) { NextBattle += TChange; }
 		int GetNextBattle() const { return NextBattle; }
 		void SetBattle(BattleClass *TBattle) { Battle = TBattle; }
 		void StartBattle(BattleClass *TBattle);
@@ -267,6 +271,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		// Battle
 		int NextBattle;
 		u32 AttackPlayerTime;
+		int InvisPower;
 
 		// Items
 		InventoryStruct Inventory[INVENTORY_COUNT];

@@ -67,6 +67,7 @@ PlayerClass::PlayerClass()
 	TradeAccepted(false),
 	TradeGold(0),
 	TownPortalTime(0),
+	InvisPower(0),
 	State(STATE_WALK) {
 
 	WorldImage = irrDriver->getTexture(WorkingDirectory + "textures/players/basic.png");
@@ -133,9 +134,13 @@ void PlayerClass::RenderWorld(const MapClass *TMap) {
 		bool OnScreen = TMap->GridToScreen(Position, ScreenPosition);
 
 		if(OnScreen) {
-			Graphics::Instance().DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, SColor(255, 255, 255, 255));
+			int Alpha = 255;
+			if(IsInvisible())
+				Alpha = 70;
+				
+			Graphics::Instance().DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
 			if(StateImage) {
-				Graphics::Instance().DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, SColor(255, 255, 255, 255));
+				Graphics::Instance().DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
 			}
 		}
 	}
@@ -169,8 +174,11 @@ bool PlayerClass::MovePlayer(int TDirection) {
 		Moved = true;
 		MoveTime = 0;
 		Position = NewPosition;
-		NextBattle--;
-
+		if(InvisPower > 0)
+			InvisPower--;
+		else
+			NextBattle--;
+			
 		// Update regen
 		int HealthUpdate, ManaUpdate;
 		UpdateRegen(HealthUpdate, ManaUpdate);
@@ -444,11 +452,13 @@ bool PlayerClass::UsePotionWorld(int TSlot) {
 	// Get potion stats
 	int HealthRestore = Item->GetHealthRestore();
 	int ManaRestore = Item->GetManaRestore();
+	int ItemInvisPower = Item->GetInvisPower();
 
 	// Use only if needed
-	if(Item->IsHealthPotion() && Health < MaxHealth || Item->IsManaPotion() && Mana < MaxMana) {
+	if(Item->IsHealthPotion() && Health < MaxHealth || Item->IsManaPotion() && Mana < MaxMana || Item->IsInvisPotion()) {
 		UpdateHealth(HealthRestore);
 		UpdateMana(ManaRestore);
+		SetInvisPower(ItemInvisPower);
 		UpdateInventory(TSlot, -1);
 		return true;
 	}

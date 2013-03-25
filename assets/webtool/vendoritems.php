@@ -8,7 +8,10 @@
 		if(isset($_POST["MDItems"])) {
 			
 			// Delete old data
-			$Database->query("delete from VendorItems where VendorsID = $VendorsID");
+			if(!$Database->query("delete from VendorItems where VendorsID = $VendorsID")) {
+				print_r($Database->errorInfo());
+				exit();
+			}
 			
 			// Get new data
 			$MDItems = $_POST["MDItems"];
@@ -17,7 +20,10 @@
 			// Add items
 			for($i = 0; $i < $ItemCount; $i++) {
 				$ItemID = $MDItems[$i];
-				$Database->query("insert into VendorItems(VendorsID, ItemsID) values($VendorsID, $ItemID)");
+				if(!$Database->query("insert into VendorItems(VendorsID, ItemsID) values($VendorsID, $ItemID)")) {
+					print_r($Database->errorInfo());
+					exit();
+				}
 			}
 		}
 		

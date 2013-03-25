@@ -61,9 +61,11 @@ class ItemClass {
 		int GetMaxMana() const { return MaxMana; }
 		float GetHealthRegen() const { return HealthRegen; }
 		float GetManaRegen() const { return ManaRegen; }
+		int GetInvisPower() const { return InvisPower; }
 
 		bool IsHealthPotion() const { return Type == TYPE_POTION && HealthRestore > 0; }
 		bool IsManaPotion() const { return Type == TYPE_POTION && ManaRestore > 0; }
+		bool IsInvisPotion() const { return Type == TYPE_POTION && InvisPower > 0; }
 		bool IsPotionType(int TType) const { return TType == 0 && IsHealthPotion() || TType == 1 && IsManaPotion(); }
 
 		void GetDamageRange(int &TMin, int &TMax) const;

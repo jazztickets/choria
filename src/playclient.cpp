@@ -170,6 +170,7 @@ void PlayClientState::Update(u32 TDeltaTime) {
 			// Send move input
 			if(!HUD::Instance().IsChatting()) {
 				if(MouseMoving) {
+					Map->ScreenToGrid(Input::Instance().GetMousePosition(), MoveTarget);
 					position2di Delta = MoveTarget - Player->GetPosition();
 					
 					if(abs(Delta.X) > abs(Delta.Y)) {
@@ -393,9 +394,6 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 
 // Mouse movement
 void PlayClientState::HandleMouseMotion(int TMouseX, int TMouseY) {
-	if(MouseMoving)
-		Map->ScreenToGrid(position2di(TMouseX, TMouseY), MoveTarget);
-		
 	HUD::Instance().HandleMouseMotion(TMouseX, TMouseY);
 }
 
