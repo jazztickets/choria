@@ -21,6 +21,7 @@
 #include "engine/graphics.h"
 #include "engine/globals.h"
 #include "engine/stats.h"
+#include "mainmenu.h"
 
 // Initializes the state
 int MapEditorState::Init() {
@@ -113,7 +114,8 @@ bool MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game::Instance().SetDone(true);
+					//Game::Instance().SetDone(true);
+					Game::Instance().ChangeState(MainMenuState::Instance());
 				break;
 				case KEY_KEY_N:
 					InitNewMap();
@@ -583,7 +585,11 @@ void MapEditorState::RefreshTexturePalette() {
 	TexturePalette.clear();
 
 	// Load all textures in the directory
+	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
+	irrFile->changeWorkingDirectoryTo(WorkingDirectory + "textures/map");
 	IFileList *FileList = irrFile->createFileList();
+	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
+	
 	int FileCount = FileList->getFileCount();
 	for(int i = 0; i < FileCount; i++) {
 		if(!FileList->isDirectory(i)) {
