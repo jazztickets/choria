@@ -1305,7 +1305,7 @@ void HUDClass::DrawItemTooltip() {
 	if(Item) {
 		int DrawX = Input::Instance().GetMousePosition().X + 16;
 		int DrawY = Input::Instance().GetMousePosition().Y - 200;
-		int Width = 150;
+		int Width = 175;
 		int Height = 200;
 		if(DrawY < 20)
 			DrawY = 20;
