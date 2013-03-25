@@ -25,3 +25,14 @@ td {
 	font-weight: bold;
 	margin-bottom: 15px;
 }
+
+.regularform label {
+	font-weight: bold;
+}
+
+.regularform input[type="text"], .regularform input[type="radio"], .regularform textarea, .regularform select {
+	display: block;
+	margin-top: 2px;
+	margin-bottom: 10px;
+	width: 30ex;
+}
