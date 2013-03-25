@@ -519,7 +519,6 @@ void MapEditorState::InitTexturePalette() {
 	State = STATE_TEXTUREPALETTE;
 }
 
-
 // Opens the brush filter dialog
 void MapEditorState::InitBrushOptions() {
 	int StartX, StartY, OffsetY;

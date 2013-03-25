@@ -189,6 +189,7 @@ void StatsClass::LoadItems() {
 		Item.MaxMana = Database->GetInt(15);
 		Item.HealthRegen = Database->GetFloat(16);
 		Item.ManaRegen = Database->GetFloat(17);
+		Item.InvisPower = Database->GetInt(18);
 		Items[Item.ID] = Item;
 	}
 	Database->CloseQuery();

@@ -91,6 +91,7 @@ class ItemClass {
 		int MaxMana;
 		float HealthRegen;
 		float ManaRegen;
+		int InvisPower;
 };
 
 #endif
