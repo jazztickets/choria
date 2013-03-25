@@ -321,6 +321,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 							PacketClass Packet(NetworkClass::TRADER_ACCEPT);
 							ClientNetwork->SendPacketToHost(&Packet);
 							Player->AcceptTrader(Trader, RequiredItemSlots, RewardItemSlot);
+							Player->CalculatePlayerStats();
 							CloseWindows();
 						}
 						break;

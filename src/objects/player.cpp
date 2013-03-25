@@ -383,7 +383,7 @@ int PlayerClass::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) 
 		TSlots[i] = -1;
 
 		// Search for the required item
-		for(int j = INVENTORY_BACKPACK; j < INVENTORY_TRADE; j++) {
+		for(int j = INVENTORY_HEAD; j < INVENTORY_TRADE; j++) {
 			InventoryStruct *InventoryItem = &Inventory[j];
 			if(InventoryItem->Item == RequiredItem && InventoryItem->Count >= RequiredCount) {
 				TSlots[i] = j;

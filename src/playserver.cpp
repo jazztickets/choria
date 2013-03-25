@@ -1058,6 +1058,7 @@ void PlayServerState::HandleTraderAccept(PacketClass *TPacket, ENetPeer *TPeer) 
 	Player->AcceptTrader(Trader, RequiredItemSlots, RewardSlot);
 	Player->SetTrader(NULL);
 	Player->SetState(PlayerClass::STATE_WALK);
+	Player->CalculatePlayerStats();
 }
 
 // Spawns a player at a particular spawn point
