@@ -402,7 +402,8 @@ void MapEditorState::InitNewMap() {
 
 	// Main dialog window
 	IGUIWindow *Window = irrGUI->addWindow(Graphics::Instance().GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
-
+	irrGUI->setFocus(Window);
+	
 	// Filename
 	IGUIStaticText *EditFile = Graphics::Instance().AddText("File", 80, 54, GraphicsClass::ALIGN_RIGHT, Window);
 	IGUIEditBox *EditName = irrGUI->addEditBox(L"test.map", Graphics::Instance().GetRect(90, 50, 150, 25), true, Window, NEWMAP_FILE);
@@ -496,6 +497,7 @@ void MapEditorState::InitTexturePalette() {
 
 	// Main dialog window
 	IGUIWindow *Window = irrGUI->addWindow(Graphics::Instance().GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
+	irrGUI->setFocus(Window);
 
 	// Load texture buttons
 	int StartX = 10;
@@ -522,6 +524,7 @@ void MapEditorState::InitBrushOptions() {
 
 	// Main dialog window
 	IGUIWindow *Window = irrGUI->addWindow(Graphics::Instance().GetCenteredRect(400, 300, 200, 350), false, L"Brush Options", 0, BRUSHOPTIONS_WINDOW);
+	irrGUI->setFocus(Window);
 
 	// Wall
 	StartX = 75, StartY = 40;
