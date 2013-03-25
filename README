@@ -1,3 +1,12 @@
+choria - 2D RPG
+by Alan Witkowski
+
+Latest version can be found at:
+http://choria.googlecode.com
+
+Source code at:
+https://github.com/jazztickets/choria/tree/classic
+
 ----COMMAND-LINE ARGUMENTS----
 
 to host a game
@@ -14,9 +23,9 @@ set login information
 
 ----HOW TO PLAY----
 
-Use Arrow keys to walk around.
+Use Arrow keys or mouse to walk around.
 During battle, hit 1-8 to use a skill.
-Hit I to open your inventory.
+Hit I or B to open your inventory.
 Hit K to open your skill page. Every level you get 3 skill points to spend. All skills must be equipped to your skillbar before they're activated.
 Hit C to see character stats.
 Hit enter to type a message to other players in your current map.
