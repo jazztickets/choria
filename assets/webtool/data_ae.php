@@ -21,7 +21,7 @@
 				print_r($Database->errorInfo());
 				exit();
 			}
-			header("Location: monsters.php?changed=1");
+			header("Location: data.php?table=$table&changed=1");
 			exit;
 		}
 	}

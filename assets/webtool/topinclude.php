@@ -10,6 +10,8 @@
 	<body>
 		<div>
 			<a class="navbar" href="monsters.php">Monsters</a> |
+			<a class="navbar" href="data.php?table=items">Items</a> |
+			<a class="navbar" href="data.php?table=skills">Skills</a> |
 			<a class="navbar" href="zones.php">Zones</a> |
 			<a class="navbar" href="vendors.php">Vendors</a> |
 			<a class="navbar" href="traders.php">Traders</a>
