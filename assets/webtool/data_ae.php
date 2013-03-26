@@ -28,9 +28,10 @@
 	
 	$query = $Database->query("select * from $table where ID = $id");
 	$result = $query->fetch(PDO::FETCH_ASSOC);
+	$keys = array_keys($result);
 ?>
 	<div style="margin-bottom: 10px; font-weight: bold;">
-		Edit <?=$table?> stats for <?=$result['Name']?> (<?=$id?>)
+		Edit <?=$table?> stats for <?=$result[$keys[1]]?> (ID=<?=$id?>)
 	</div>
 	<form name="Form" action="data_ae.php?mode=<?=$mode?>&id=<?=$id?>&table=<?=$table?>" method="post" class="regularform">
 	<?
