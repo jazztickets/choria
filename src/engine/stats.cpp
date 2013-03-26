@@ -103,7 +103,7 @@ void StatsClass::LoadEvents() {
 	while(Database->FetchRow()) {
 		Event.Name = Database->GetString(1);
 		Event.ShortName = Database->GetString(2);
-		Event.Indexed = Database->GetInt(3);
+		Event.Indexed = !!Database->GetInt(3);
 		Events.push_back(Event);
 	}
 	Database->CloseQuery();

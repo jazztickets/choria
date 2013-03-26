@@ -77,8 +77,8 @@ void ServerBattleClass::StartBattle() {
 
 		// Write fighter type
 		int Type = Fighters[i]->GetType();
-		Packet.WriteBit(Type);
-		Packet.WriteBit(Fighters[i]->GetSide());
+		Packet.WriteBit(!!Type);
+		Packet.WriteBit(!!Fighters[i]->GetSide());
 
 		if(Type == FighterClass::TYPE_PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);

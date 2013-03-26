@@ -47,8 +47,6 @@ int PlayClientState::Init() {
 	Map = NULL;
 	Battle = NULL;
 	State = STATE_CONNECTING;
-	MoveTarget.set(0, 0);
-	MouseMoving = false;
 
 	Instances = new InstanceClass();
 	ObjectManager = new ObjectManagerClass();
@@ -169,7 +167,8 @@ void PlayClientState::Update(u32 TDeltaTime) {
 			
 			// Send move input
 			if(!HUD::Instance().IsChatting()) {
-				if(MouseMoving) {
+				if(Input::Instance().GetMouseState(InputClass::MOUSE_LEFT)) {
+					position2di MoveTarget;
 					Map->ScreenToGrid(Input::Instance().GetMousePosition(), MoveTarget);
 					position2di Delta = MoveTarget - Player->GetPosition();
 					
@@ -400,17 +399,11 @@ void PlayClientState::HandleMouseMotion(int TMouseX, int TMouseY) {
 // Mouse buttons
 bool PlayClientState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 	
-	if(State == STATE_WALK && TButton == InputClass::MOUSE_LEFT) {
-		Map->ScreenToGrid(position2di(TMouseX, TMouseY), MoveTarget);
-		MouseMoving = true;
-	}
-	
 	return HUD::Instance().HandleMousePress(TButton, TMouseX, TMouseY);
 }
 
 // Mouse releases
 void PlayClientState::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
-	MouseMoving = false;
 
 	HUD::Instance().HandleMouseRelease(TButton, TMouseX, TMouseY);
 }
@@ -891,7 +884,7 @@ void PlayClientState::HandleTradeAccept(PacketClass *TPacket) {
 		return;
 
 	// Set state
-	bool Accepted = TPacket->ReadChar();
+	bool Accepted = !!TPacket->ReadChar();
 	TradePlayer->SetTradeAccepted(Accepted);
 }
 

@@ -104,8 +104,6 @@ class PlayClientState : public StateClass {
 
 		// States
 		int State, CharacterSlot;
-		position2di MoveTarget;
-		bool MouseMoving;
 
 		// Time
 		u32 ClientTime, SentClientTime;

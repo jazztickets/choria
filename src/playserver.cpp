@@ -978,7 +978,7 @@ void PlayServerState::HandleTradeAccept(PacketClass *TPacket, ENetPeer *TPeer) {
 	if(TradePlayer) {
 
 		// Set the player's state
-		bool Accepted = TPacket->ReadChar();
+		bool Accepted = !!TPacket->ReadChar();
 		Player->SetTradeAccepted(Accepted);
 
 		// Check if both player's agree

@@ -19,6 +19,7 @@ if(WIN32)
 
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
+	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 else()
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})

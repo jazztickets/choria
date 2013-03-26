@@ -68,7 +68,7 @@ inline void RandomClass::SetSeed(u32 TSeed) {
 }
 
 // Generates a random integer
-inline uint RandomClass::GenerateRandomInteger() {
+inline u32 RandomClass::GenerateRandomInteger() {
    static u32 c = 8471623, i = 1023;
 	u64 t, a = 123471786LL;
 	u32 x, r = 0xfffffffe;
@@ -92,7 +92,7 @@ inline double RandomClass::Generate() {
 }
  
 // Generates a random number [0, TMax-1]
-inline uint RandomClass::Generate(uint TMax) {
+inline u32 RandomClass::Generate(u32 TMax) {
 
     return (u32)(Generate() * TMax);
 }
@@ -104,7 +104,7 @@ inline int RandomClass::GenerateRange(int TMin, int TMax) {
 }
 
 // Generates a random number [TMin, TMax]
-inline uint RandomClass::GenerateRange(uint TMin, uint TMax) {
+inline u32 RandomClass::GenerateRange(u32 TMin, u32 TMax) {
 
     return (u32)(Generate() * (TMax - TMin + 1)) + TMin;
 }

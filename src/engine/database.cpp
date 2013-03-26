@@ -146,7 +146,7 @@ int DatabaseClass::CloseQuery(int THandle) {
 // Gets the last insert id
 int DatabaseClass::GetLastInsertID() {
 	
-	return sqlite3_last_insert_rowid(Database);
+	return (int)sqlite3_last_insert_rowid(Database);
 }
 
 // Returns an integer column

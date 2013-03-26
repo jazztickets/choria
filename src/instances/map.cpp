@@ -365,8 +365,8 @@ int MapClass::LoadMap() {
 			Tile->Zone = File.ReadInt();
 			Tile->EventType = File.ReadInt();
 			Tile->EventData = File.ReadInt();
-			Tile->Wall = File.ReadChar();
-			Tile->PVP = File.ReadChar();
+			Tile->Wall = !!File.ReadChar();
+			Tile->PVP = !!File.ReadChar();
 
 			// Save off events that need to be indexed
 			if(Stats::Instance().GetEvent(Tile->EventType)->Indexed) {

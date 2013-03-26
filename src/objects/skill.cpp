@@ -54,7 +54,7 @@ float SkillClass::GetPowerAsFloat(int TLevel) const {
 	float Min, Max;
 	GetPowerRange(TLevel, Min, Max);
 
-	return Random::Instance().GenerateRange(Min, Max);
+	return (float)Random::Instance().GenerateRange(Min, Max);
 }
 
 // Returns the range of power
