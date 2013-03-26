@@ -1735,7 +1735,7 @@ void HUDClass::GetTraderItem(position2di &TPoint, CursorItemStruct &TCursorItem)
 		TCursorItem.Window = WINDOW_TRADER;
 		if(InventoryIndex < (int)Trader->TraderItems.size())
 			TCursorItem.Set(Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
-		else
+		else if(InventoryIndex == 9)
 			TCursorItem.Set(Trader->RewardItem, 0, 1, InventoryIndex);
 	}
 }

@@ -1,6 +1,6 @@
 <?
 	include("topinclude.php");
-	$changed = intval($_GET['changed']);
+	@$changed = intval($_GET['changed']);
 ?>
 
 <? if($changed) echo "<div class=\"changed\">Changed</div>"; ?>
