@@ -60,7 +60,7 @@ source_group(objects FILES ${SRC_OBJECTS})
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
 # build exe
-add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
+add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
 target_link_libraries(${CMAKE_PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT} sqlite3)
 
 # copy irrlicht DLLs to working directory
