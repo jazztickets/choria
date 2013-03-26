@@ -1,6 +1,7 @@
 <?
 	include("topinclude.php");
 	$id = intval($_GET["id"]);
+	$idname = $_GET["idname"];
 	$table = $_GET["table"];
 	$mode = $_GET["mode"];
 	
@@ -14,7 +15,7 @@
 			foreach($_POST as $name=>$value)
 				array_push($update_array,  "$name = \"$value\"");
 				
-			$sql = "update $table set " . implode(", ", $update_array) . " where ID = $id";
+			$sql = "update $table set " . implode(", ", $update_array) . " where $idname = $id";
 			//echo $sql;
 			//exit;
 			if(!$Database->query($sql)) {
@@ -26,14 +27,18 @@
 		}
 	}
 	
-	$query = $Database->query("select * from $table where ID = $id");
+	$query = $Database->query("select * from $table where $idname = $id");
+	if(!$query) {
+		print_r($Database->errorInfo());
+		exit();
+	}
 	$result = $query->fetch(PDO::FETCH_ASSOC);
 	$keys = array_keys($result);
 ?>
 	<div style="margin-bottom: 10px; font-weight: bold;">
 		Edit <?=$table?> stats for <?=$result[$keys[1]]?> (ID=<?=$id?>)
 	</div>
-	<form name="Form" action="data_ae.php?mode=<?=$mode?>&id=<?=$id?>&table=<?=$table?>" method="post" class="regularform">
+	<form name="Form" action="data_ae.php?mode=<?=$mode?>&id=<?=$id?>&idname=<?=$idname?>&table=<?=$table?>" method="post" class="regularform">
 	<?
 		foreach($result as $name=>$value) { 
 			if($name == "ID")

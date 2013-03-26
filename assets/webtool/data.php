@@ -42,7 +42,7 @@
 		$id = $result[$array_keys[0]];
 ?>
 	<tr>
-		<td><a href="data_ae.php?id=<?=$id?>&table=<?=$table?>&mode=edit"><?=$id?></a></td>
+		<td><a href="data_ae.php?id=<?=$id?>&idname=<?=$array_keys[0]?>&table=<?=$table?>&mode=edit"><?=$id?></a></td>
 		<? for($i = 1; $i < $key_count; $i++) { ?>
 		<td><?=$result[$array_keys[$i]]?></td>
 		<? } ?>
