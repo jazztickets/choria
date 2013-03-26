@@ -498,6 +498,7 @@ void PlayClientState::HandleChangeMaps(PacketClass *TPacket) {
 				case ObjectClass::PLAYER: {
 					stringc Name(TPacket->ReadString());
 					int PortraitID = TPacket->ReadChar();
+					int Invisible = TPacket->ReadBit();
 
 					// Information for your player
 					if(NetworkID == Player->GetNetworkID()) {
@@ -509,6 +510,7 @@ void PlayClientState::HandleChangeMaps(PacketClass *TPacket) {
 						NewPlayer->SetPosition(GridPosition);
 						NewPlayer->SetName(Name);
 						NewPlayer->SetPortraitID(PortraitID);
+						NewPlayer->SetInvisPower(Invisible);
 						ObjectManager->AddObjectWithNetworkID(NewPlayer, NetworkID);
 					}
 				}
@@ -543,11 +545,13 @@ void PlayClientState::HandleCreateObject(PacketClass *TPacket) {
 		case ObjectClass::PLAYER: {
 			stringc Name(TPacket->ReadString());
 			int PortraitID = TPacket->ReadChar();
+			int Invisible = TPacket->ReadBit();
 
 			NewObject = new PlayerClass();
 			PlayerClass *NewPlayer = static_cast<PlayerClass *>(NewObject);
 			NewPlayer->SetName(Name);
 			NewPlayer->SetPortraitID(PortraitID);
+			NewPlayer->SetInvisPower(Invisible);
 		}
 		break;
 	}
@@ -593,13 +597,17 @@ void PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
 	position2di Position;
 	char NetworkID;
 	int PlayerState;
+	int Invisible;
 	for(int i = 0; i < ObjectCount; i++) {
 
 		NetworkID = TPacket->ReadChar();
 		PlayerState = TPacket->ReadChar();
 		Position.X = TPacket->ReadChar();
 		Position.Y = TPacket->ReadChar();
-
+		Invisible = TPacket->ReadBit();
+		
+		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
+		
 		PlayerClass *OtherPlayer = static_cast<PlayerClass *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
 		if(OtherPlayer) {
 
@@ -611,8 +619,10 @@ void PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
 					State = STATE_WALK;
 				}
 			}
-			else
+			else {
 				OtherPlayer->SetPosition(Position);
+				OtherPlayer->SetInvisPower(Invisible);
+			}
 
 			switch(PlayerState) {
 				case PlayerClass::STATE_WALK:
@@ -624,7 +634,7 @@ void PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
 				default:
 					OtherPlayer->SetStateImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_WORLDBUSY));
 				break;
-			}
+			}			
 		}
 	}
 }

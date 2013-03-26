@@ -15,8 +15,8 @@ to host a game
 open the mapeditor
 -mapeditor
 
-connect directly to an ipaddress
--connect ipaddress
+show login screen
+-connect
 
 set login information
 -login username password

@@ -42,7 +42,7 @@ PacketClass::PacketClass(ENetPacket *TPacket)
 void PacketClass::Shrink() {
 
 	int Size = CurrentByte;
-	if(CurrentBit & 7)
+	if(CurrentBit)
 		Size++;
 
 	enet_packet_resize(Packet, Size);
@@ -52,7 +52,7 @@ void PacketClass::Shrink() {
 void PacketClass::AlignBitIndex() {
 
 	// Check to see if some bits were written before this
-	if(CurrentBit & 7) {
+	if(CurrentBit) {
 		CurrentBit = 0;
 		CurrentByte++;
 	}

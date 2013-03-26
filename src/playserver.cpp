@@ -578,7 +578,7 @@ void PlayServerState::HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer) {
 							int PlayersAdded = 0;
 							for(list<PlayerClass *>::Iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 								PlayerClass *PartyPlayer = *Iterator;
-								if(PartyPlayer->GetState() == PlayerClass::STATE_WALK) {
+								if(PartyPlayer->GetState() == PlayerClass::STATE_WALK && !PartyPlayer->IsInvisible()) {
 									SendPlayerPosition(PartyPlayer);
 									Battle->AddFighter(PartyPlayer, 0);
 									PlayersAdded++;
@@ -1112,6 +1112,7 @@ void PlayServerState::SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEven
 					PlayerClass *Player = static_cast<PlayerClass *>(Object);
 					Packet.WriteString(Player->GetName().c_str());
 					Packet.WriteChar(Player->GetPortraitID());
+					Packet.WriteBit((Player->IsInvisible()));
 				}
 				break;
 			}

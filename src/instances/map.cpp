@@ -433,6 +433,7 @@ void MapClass::AddObject(ObjectClass *TObject) {
 			PlayerClass *NewPlayer = static_cast<PlayerClass *>(TObject);
 			Packet.WriteString(NewPlayer->GetName().c_str());
 			Packet.WriteChar(NewPlayer->GetPortraitID());
+			Packet.WriteBit(NewPlayer->IsInvisible());
 		}
 		break;
 	}
@@ -520,15 +521,18 @@ void MapClass::SendObjectUpdates() {
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		ObjectClass *Object = *Iterator;
 		int State = 0;
+		bool Invisible = false;
 		if(Object->GetType() == ObjectClass::PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(Object);
 			State = Player->GetState();
+			Invisible = Player->IsInvisible();
 		}
 
 		Packet.WriteChar(Object->GetNetworkID());
 		Packet.WriteChar(State);
 		Packet.WriteChar(Object->GetPosition().X);
 		Packet.WriteChar(Object->GetPosition().Y);
+		Packet.WriteBit(Invisible);
 	}
 
 	SendPacketToPlayers(&Packet);
