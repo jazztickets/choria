@@ -3,6 +3,7 @@ build
 *.dll
 deployment/*.exe
 deployment/*-src
+deployment/*.tar.gz
 codelite/debug
 codelite/release
 codelite/*.mk

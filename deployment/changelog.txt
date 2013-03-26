@@ -1,10 +1,11 @@
-Choria 0.3.3 -
+Choria 0.4 -
 - Added invisibility potion
 - Added mouse moving
 - Updated to irrlicht 1.8
 - Save data now in %APPDATA%/choria for windows
 - Fixed skill bug
 - Fixed health/mana regen bug
+- Updated keybindings
 - Some rebalancing
 
 Choria 0.3.2 - 11/27/2010
