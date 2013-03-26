@@ -1,9 +1,30 @@
 <?
 	include("topinclude.php");
-	$id = intval($_GET["id"]);
+	@$id = intval($_GET["id"]);
 	$idname = $_GET["idname"];
 	$table = $_GET["table"];
 	$mode = $_GET["mode"];
+	
+	if($mode == "add") {
+		$sql = "insert into $table default values";
+		if(!$Database->query($sql)) {
+			print_r($Database->errorInfo());
+			exit();
+		}
+		
+		header("Location: data.php?table=$table&changed=1");
+		exit;
+	}
+	else if($mode == "remove") {
+		$sql = "delete from $table where $idname = $id";
+		if(!$Database->query($sql)) {
+			print_r($Database->errorInfo());
+			exit();
+		}
+		
+		header("Location: data.php?table=$table&changed=1");
+		exit;
+	}
 	
 	if(isset($_POST["Submit"])) {
 		if($mode == "edit") {

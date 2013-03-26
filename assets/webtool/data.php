@@ -7,7 +7,9 @@
 ?>
 
 <? if($changed) echo "<div class=\"changed\">Changed</div>"; ?>
-<table border="0">
+
+<a href="data_ae.php?idname=<?=$array_keys[0]?>&table=<?=$table?>&mode=add">Add new <?=$table?> row</a>
+<table border="0" style="margin-top: 10px">
 	
 <?
 	$sort_sql = "";
@@ -35,6 +37,7 @@
 		?>
 		<td><a href="data.php?table=<?=$table?>&sort=<?=$field?><?=$reverse_string?>"><?=$field?></a></td>
 		<? } ?>
+		<td></td>
 	</tr>
 <?
 
@@ -46,6 +49,7 @@
 		<? for($i = 1; $i < $key_count; $i++) { ?>
 		<td><?=$result[$array_keys[$i]]?></td>
 		<? } ?>
+		<td><a href="data_ae.php?id=<?=$id?>&idname=<?=$array_keys[0]?>&table=<?=$table?>&mode=remove" onclick="return confirm('Sure about that?');">Remove</a></td>
 	</tr>
 <?
 	}
