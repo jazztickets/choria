@@ -22,8 +22,8 @@
 #define SERVER_DATABASEVERSION "3"
 
 // Version of the game that's used to check compatibility between client and server
-const char * const GAME_VERSIONSTR = "v0.1.0";
-const int GAME_VERSION = 010;
+const char * const GAME_VERSIONSTR = "v1.0.0";
+const int GAME_VERSION = 100;
 
 // Maximum action bar count
 const int GAME_MAXACTIONS = 8;
