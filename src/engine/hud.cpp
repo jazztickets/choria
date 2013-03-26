@@ -1393,22 +1393,22 @@ void HUDClass::DrawItemTooltip() {
 
 		// Boosts
 		if(Item->GetMaxHealth() != 0) {
-			sprintf(Buffer, "+%d HP", Item->GetMaxHealth());
+			sprintf(Buffer, "%+d HP", Item->GetMaxHealth());
 			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 		if(Item->GetMaxMana() != 0) {
-			sprintf(Buffer, "+%d MP", Item->GetMaxMana());
+			sprintf(Buffer, "%+d MP", Item->GetMaxMana());
 			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 		if(Item->GetHealthRegen() != 0) {
-			sprintf(Buffer, "+%0.2f%% HP Regen", Item->GetHealthRegen());
+			sprintf(Buffer, "%+0.2f%% HP Regen", Item->GetHealthRegen());
 			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 		if(Item->GetManaRegen() != 0) {
-			sprintf(Buffer, "+%0.2f%% MP Regen", Item->GetManaRegen());
+			sprintf(Buffer, "%+0.2f%% MP Regen", Item->GetManaRegen());
 			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}

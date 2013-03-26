@@ -214,7 +214,7 @@ void StatsClass::LoadVendors() {
 		Vendor.Items.clear();
 
 		// Get items
-		sprintf(Buffer, "SELECT ItemsID FROM VendorItems where VendorsID = %d", Vendor.ID);
+		sprintf(Buffer, "SELECT ItemsID FROM VendorItems, Items where VendorItems.VendorsID = %d and Items.ID = VendorItems.ItemsID order by Items.Cost", Vendor.ID);
 		Database->RunDataQuery(Buffer, 1);
 		while(Database->FetchRow(1)) {
 			Vendor.Items.push_back(GetItem(Database->GetInt(0, 1)));
