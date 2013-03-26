@@ -288,7 +288,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 						HUD::Instance().InitMenu();
 					#endif
 				break;
-				case KEY_KEY_S:
+				case KEY_KEY_Q:
 					HUD::Instance().ToggleTownPortal();
 				break;
 				case KEY_KEY_B:
@@ -298,6 +298,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_KEY_T:
 					HUD::Instance().InitTrade();
 				break;
+				case KEY_KEY_S:
 				case KEY_KEY_K:
 					HUD::Instance().InitSkills();
 				break;
@@ -376,6 +377,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_SKILLS:
 			switch(TKey) {
 				case KEY_ESCAPE:
+				case KEY_KEY_S:
 				case KEY_KEY_K:
 				case KEY_SPACE:
 				case KEY_LEFT:

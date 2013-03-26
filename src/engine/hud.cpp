@@ -560,14 +560,14 @@ void HUDClass::InitButtonBar() {
 	// Town portal
 	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_TOWNPORTAL, 0, L"Town Portal");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_spawn.png"));
-	ButtonText = Graphics::Instance().AddText("S", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText = Graphics::Instance().AddText("Q", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
 	// Inventory
 	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_INVENTORY, 0, L"Inventory");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_inventory.png"));
-	ButtonText = Graphics::Instance().AddText("I", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText = Graphics::Instance().AddText("B", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
@@ -588,7 +588,7 @@ void HUDClass::InitButtonBar() {
 	// Skills
 	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_SKILLS, 0, L"Skills");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_skills.png"));
-	ButtonText = Graphics::Instance().AddText("K", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText = Graphics::Instance().AddText("S", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
