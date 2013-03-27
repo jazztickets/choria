@@ -6,7 +6,7 @@
       <Project Name="choria" ConfigName="Debug"/>
       <Project Name="choria" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release" Selected="no">
       <Project Name="choria" ConfigName="Release"/>
       <Project Name="choria" ConfigName="Release"/>
     </WorkspaceConfiguration>

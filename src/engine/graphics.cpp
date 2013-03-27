@@ -31,7 +31,9 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE
 
 	irrDevice->setWindowCaption(L"Choria");
 	irrDevice->setEventReceiver(TEventReceiver);
-
+	ILogger *Logger = irrDevice->getLogger();
+	Logger->setLogLevel(ELL_ERROR);
+  
 	// Save off global pointers
 	irrDriver = irrDevice->getVideoDriver();
 	irrScene = irrDevice->getSceneManager();

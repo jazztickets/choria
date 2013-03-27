@@ -40,7 +40,7 @@ void HandleCommands(void *Arguments) {
 	std::string Input;
 	bool Done = false;
 	
-	tthread::this_thread::sleep_for(tthread::chrono::milliseconds(500));
+	tthread::this_thread::sleep_for(tthread::chrono::milliseconds(300));
 	std::cout << "Type stop to stop the server" << std::endl;
 	while(!Done) {
 		std::getline(std::cin, Input);
