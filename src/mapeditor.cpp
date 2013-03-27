@@ -243,9 +243,10 @@ bool MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 						Brush = *Map->GetTile(BrushPosition.X, BrushPosition.Y);
 				}
 			break;
-			case InputClass::MOUSE_RIGHT:
+			case InputClass::MOUSE_RIGHT: {
+				Map->ScreenToGrid(position2di(TMouseX, TMouseY), BrushPosition);
 				Map->SetCameraScroll(BrushPosition);
-			break;
+			} break;
 		}
 	}
 
