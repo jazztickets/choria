@@ -34,7 +34,7 @@ int MultiNetworkClass::Init(bool TServer) {
 		Address.port = NETWORKING_PORT;
 
 		// Create listener connection
-		Connection = enet_host_create(&Address, 64, 0, 0, 0);
+		Connection = enet_host_create(&Address, 250, 0, 0, 0);
 		if(Connection == NULL) {
 			return 0;
 		}
