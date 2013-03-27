@@ -45,8 +45,9 @@ file(GLOB SRC_ENGINE src/engine/*.cpp src/engine/*.h)
 file(GLOB SRC_INSTANCES src/instances/*.cpp src/instances/*.h)
 file(GLOB SRC_NETWORK src/network/*.cpp src/network/*.h)
 file(GLOB SRC_OBJECTS src/objects/*.cpp src/objects/*.h)
+file(GLOB SRC_TINYTHREAD src/tinythread/*.cpp src/tinythread/*.h)
 
-file(GLOB SRC_ALL ${SRC_MAIN} ${SRC_ENET} ${SRC_ENGINE} ${SRC_INSTANCES} ${SRC_NETWORK} ${SRC_OBJECTS})
+file(GLOB SRC_ALL ${SRC_MAIN} ${SRC_ENET} ${SRC_ENGINE} ${SRC_INSTANCES} ${SRC_NETWORK} ${SRC_OBJECTS} ${SRC_TINYTHREAD})
 
 # add virtual folders
 source_group(main FILES ${SRC_MAIN})
@@ -55,6 +56,7 @@ source_group(engine FILES ${SRC_ENGINE})
 source_group(instances FILES ${SRC_INSTANCES})
 source_group(network FILES ${SRC_NETWORK})
 source_group(objects FILES ${SRC_OBJECTS})
+source_group(tinythreads FILES ${SRC_TINYTHREAD})
 
 # output path
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})

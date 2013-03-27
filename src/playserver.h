@@ -20,6 +20,7 @@
 
 // Libraries
 #include "engine/state.h"
+#include "tinythread/tinythread.h"
 
 // Forward Declarations
 class DatabaseClass;
@@ -47,6 +48,9 @@ class PlayServerState : public StateClass {
 
 		void PlayerTownPortal(PlayerClass *TPlayer);
 		u32 GetServerTime() const { return ServerTime; }
+		
+		void StartCommandThread();
+		void StopServer() { StopRequested = true; }
 
 		static PlayServerState *Instance() {
 			static PlayServerState ClassInstance;
@@ -96,6 +100,10 @@ class PlayServerState : public StateClass {
 		DatabaseClass *Database;
 		ObjectManagerClass *ObjectManager;
 		InstanceClass *Instances;
+		
+		bool StopRequested;
+		
+		tthread::thread *CommandThread;
 
 		u32 ServerTime;
 };

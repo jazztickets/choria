@@ -56,7 +56,7 @@ int SingleNetworkClass::Connect(const char *TIPAddress) {
 }
 
 // Disconnect from the host
-void SingleNetworkClass::Disconnect() {
+void SingleNetworkClass::Disconnect(ENetPeer *TPeer) {
 
 	if(Connected) {
 		Connected = false;

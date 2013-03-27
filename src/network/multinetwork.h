@@ -33,7 +33,7 @@ class MultiNetworkClass : public NetworkClass {
 
 		// Connections
 		int Connect(const char *TIPAddress);
-		void Disconnect();
+		void Disconnect(ENetPeer *TPeer=0);
 		void WaitForDisconnect();
 
 		enet_uint32 GetRTT();

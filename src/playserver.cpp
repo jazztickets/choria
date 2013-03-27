@@ -30,13 +30,34 @@
 #include "instances/serverbattle.h"
 #include "objects/player.h"
 #include "objects/monster.h"
+#include <iostream>
+#include <string>
 
 static void ObjectDeleted(ObjectClass *TObject);
 
+// Loop to run server commands
+void HandleCommands(void *Arguments) {
+	std::string Input;
+	bool Done = false;
+	
+	tthread::this_thread::sleep_for(tthread::chrono::milliseconds(500));
+	std::cout << "Type stop to stop the server" << std::endl;
+	while(!Done) {
+		std::getline(std::cin, Input);
+		if(Input == "stop")
+			Done = true;
+		else
+			std::cout << "Command not recognized" << std::endl;
+	}
+	
+	PlayServerState::Instance()->StopServer();
+}
+
 // Initializes the state
 int PlayServerState::Init() {
-
 	ServerTime = 0;
+	StopRequested = false;
+	CommandThread = NULL;
 
 	// Load database that stores accounts and characters
 	Database = new DatabaseClass();
@@ -64,12 +85,30 @@ int PlayServerState::Init() {
 
 // Shuts the state down
 int PlayServerState::Close() {
-
+	if(CommandThread) {
+		CommandThread->join();
+		delete CommandThread;
+	}
+	
+	// Disconnect peers
+	list<ObjectClass *> Objects = ObjectManager->GetObjects();
+	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
+			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
+			ServerNetwork->Disconnect(Player->GetPeer());
+		}
+	}
+	
 	delete Database;
 	delete ObjectManager;
 	delete Instances;
 
 	return 1;
+}
+
+// Start run the command thread
+void PlayServerState::StartCommandThread() {
+	CommandThread = new tthread::thread(HandleCommands, 0);
 }
 
 // Populates the server database with the default data
@@ -256,6 +295,10 @@ void PlayServerState::Update(u32 TDeltaTime) {
 
 	Instances->Update(TDeltaTime);
 	ObjectManager->Update(TDeltaTime);
+	
+	if(StopRequested) {
+		Game::Instance().SetDone(true);
+	}
 }
 
 // Login information

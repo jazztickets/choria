@@ -81,9 +81,11 @@ int MultiNetworkClass::Connect(const char *TIPAddress) {
 	return 1;
 }
 
-// Disconnect from the host
-void MultiNetworkClass::Disconnect() {
-	if(Peer)
+// Disconnect from the host or disconnect a client
+void MultiNetworkClass::Disconnect(ENetPeer *TPeer) {
+	if(TPeer)
+		enet_peer_disconnect(TPeer, 0);
+	else if(Peer)
 		enet_peer_disconnect(Peer, 0);
 }
 
@@ -91,6 +93,15 @@ void MultiNetworkClass::Disconnect() {
 void MultiNetworkClass::WaitForDisconnect() {
 
 	if(Peer) {
+		ENetEvent Event;
+		while(enet_host_service(Connection, &Event, 1000) > 0) {
+			if(Event.type == ENET_EVENT_TYPE_DISCONNECT) {
+				Peer = NULL;
+				return;
+			}
+		}
+	}
+	else if(Active) {
 		ENetEvent Event;
 		while(enet_host_service(Connection, &Event, 1000) > 0) {
 			if(Event.type == ENET_EVENT_TYPE_DISCONNECT) {

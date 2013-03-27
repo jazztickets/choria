@@ -107,6 +107,11 @@
     <File Name="../src/objects/item.cpp"/>
     <File Name="../src/objects/item.h"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="tinythread">
+    <File Name="../src/tinythread/fast_mutex.h"/>
+    <File Name="../src/tinythread/tinythread.h"/>
+    <File Name="../src/tinythread/tinythread.cpp"/>
+  </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="">

@@ -65,7 +65,7 @@ MapClass::MapClass(int TMapID) {
 MapClass::~MapClass() {
 
 	// Delete map data
-	FreeMap();	
+	FreeMap();
 }
 
 // Initialize variables

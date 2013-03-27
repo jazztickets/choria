@@ -92,7 +92,7 @@ class NetworkClass {
 
 		// Connections
 		virtual int Connect(const char *TIPAddress) { return 0; }
-		virtual void Disconnect() { }
+		virtual void Disconnect(ENetPeer *TPeer=0) { }
 
 		virtual enet_uint32 GetRTT() { return 0; }
 

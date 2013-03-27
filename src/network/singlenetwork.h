@@ -30,7 +30,7 @@ class SingleNetworkClass : public NetworkClass {
 
 		// Connections
 		int Connect(const char *TIPAddress);
-		void Disconnect();
+		void Disconnect(ENetPeer *TPeer=0);
 
 		// Packets
 		void SendPacketToHost(PacketClass *TPacket);

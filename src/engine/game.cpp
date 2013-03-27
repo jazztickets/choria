@@ -58,6 +58,7 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 		TokensRemaining = TArgumentCount - i - 1;
 		if(Token == "-host") {
 			State = PlayServerState::Instance();
+			PlayServerState::Instance()->StartCommandThread();
 			IsServer = true;
 			DriverType = EDT_NULL;
 		}
