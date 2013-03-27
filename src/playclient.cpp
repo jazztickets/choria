@@ -167,7 +167,7 @@ void PlayClientState::Update(u32 TDeltaTime) {
 			
 			// Send move input
 			if(!HUD::Instance().IsChatting()) {
-				if(Input::Instance().GetMouseState(InputClass::MOUSE_LEFT)) {
+				if(Input::Instance().GetMouseState(InputClass::MOUSE_LEFT) && !(Input::Instance().GetMousePosition().X >= 656 && Input::Instance().GetMousePosition().Y >= 575)) {
 					position2di MoveTarget;
 					Map->ScreenToGrid(Input::Instance().GetMousePosition(), MoveTarget);
 					position2di Delta = MoveTarget - Player->GetPosition();
