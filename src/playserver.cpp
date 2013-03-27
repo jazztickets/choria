@@ -95,6 +95,7 @@ int PlayServerState::Close() {
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
+			Player->Save();
 			ServerNetwork->Disconnect(Player->GetPeer());
 		}
 	}
