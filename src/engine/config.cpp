@@ -73,14 +73,15 @@ bool ConfigClass::LoadSettings() {
 
 	// Get IP address
 	char IPAddress[32];
-	File >> IPAddress;
+	File.getline(IPAddress, 31);
+	LastIPAddress = IPAddress;
 
 	// Get account name
 	char AccountName[32];
-	File >> AccountName;
-
-	LastIPAddress = IPAddress;
-	LastAccountName = AccountName;
+	if(!File.eof()) {
+		File.getline(AccountName, 31);
+		LastAccountName = AccountName;
+	}
 
 	// Close
 	File.clear();
