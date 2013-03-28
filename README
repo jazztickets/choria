@@ -64,6 +64,7 @@ git checkout classic
 sudo apt-get install apache2 php5 php5-sqlite
 
 2. Create a link to [choria_path]/assets/webtool in your web directory
+
 sudo ln -s ~/choria/assets/webtool /var/www/choria
 
 3. Make the sqlite database and database directory writable by the web user (e.g. www-data)
