@@ -49,3 +49,26 @@ LMB places a tile
 Ctrl+LMB copies an existing tile
 RMB scrolls the map
 Mousewheel changes current zone
+
+----DATABASE WEB TOOL----
+
+The design tool allows you to modify the game stats easily.
+
+1. Clone the git repo and checkout the classic branch
+git clone git://github.com/jazztickets/choria.git ~/choria
+cd ~/choria
+git checkout classic
+
+1. Install apache2, php5 and php5-sqlite packages.
+
+sudo apt-get install apache2 php5 php5-sqlite
+
+2. Create a link to [choria_path]/assets/webtool in your web directory
+sudo ln -s ~/choria/assets/webtool /var/www/choria
+
+3. Make the sqlite database and database directory writable by the web user (e.g. www-data)
+
+chgrp www-data ~/choria/working/database -R
+chmod g+w ~/choria/working/database -R
+
+Then open your browser and go to "http://localhost/choria"
