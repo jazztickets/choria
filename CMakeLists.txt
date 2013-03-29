@@ -58,9 +58,6 @@ source_group(network FILES ${SRC_NETWORK})
 source_group(objects FILES ${SRC_OBJECTS})
 source_group(tinythreads FILES ${SRC_TINYTHREAD})
 
-# output path
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-
 # build exe
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
 target_link_libraries(${CMAKE_PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT} sqlite3)
