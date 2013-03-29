@@ -237,7 +237,7 @@ void PlayClientState::Draw() {
 	// Draw map and objects
 	Map->SetCameraScroll(Player->GetPosition());
 	Map->Render();
-	ObjectManager->Render(Map);
+	ObjectManager->Render(Map, Player);
 
 	// Draw states
 	switch(State) {

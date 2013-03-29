@@ -128,10 +128,10 @@ void ObjectManagerClass::Update(u32 TDeltaTime) {
 }
 
 // Renders all of the objects
-void ObjectManagerClass::Render(const MapClass *TMap) {
+void ObjectManagerClass::Render(const MapClass *TMap, ObjectClass *TClientPlayer) {
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		ObjectClass *Object = *Iterator;
-		Object->RenderWorld(TMap);
+		Object->RenderWorld(TMap, TClientPlayer);
 	}
 }
 

@@ -98,7 +98,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		void SetState(int TState) { State = TState; }
 
 		void Update(u32 TDeltaTime);
-		void RenderWorld(const MapClass *TMap);
+		void RenderWorld(const MapClass *TMap, const ObjectClass *TClientPlayer=NULL);
 
 		// Connection
 		void SetPeer(ENetPeer *TPeer) { Peer = TPeer; }

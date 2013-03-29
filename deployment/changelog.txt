@@ -2,6 +2,7 @@ Choria 0.4 -
 - Added invisibility potion
 - Added mouse moving
 - Can now stop the server manually
+- Made player name visible in multiplayer
 - Updated to irrlicht 1.8
 - Save data now in %APPDATA%/choria for windows
 - Fixed skill bug

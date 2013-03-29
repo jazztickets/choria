@@ -42,7 +42,7 @@ class ObjectManagerClass {
 		~ObjectManagerClass();
 
 		void Update(u32 TDeltaTime);
-		void Render(const MapClass *TMap);
+		void Render(const MapClass *TMap, ObjectClass *TClientPlayer=NULL);
 		void SetObjectDeletedCallback(void (* Callback)(ObjectClass *TObject)) { ObjectDeletedCallback = Callback; }
 
 		void ClearObjects();

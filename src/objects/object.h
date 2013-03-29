@@ -44,7 +44,7 @@ class ObjectClass {
 			MONSTER,
 		};
 
-		virtual void RenderWorld(const MapClass *TMap) { }
+		virtual void RenderWorld(const MapClass *TMap, const ObjectClass *TClientPlayer=NULL) { }
 
 		ObjectClass(ObjectType TType);
 		virtual ~ObjectClass();

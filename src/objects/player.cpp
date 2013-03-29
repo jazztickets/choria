@@ -127,7 +127,7 @@ void PlayerClass::Update(u32 TDeltaTime) {
 }
 
 // Renders the player while walking around the world
-void PlayerClass::RenderWorld(const MapClass *TMap) {
+void PlayerClass::RenderWorld(const MapClass *TMap, const ObjectClass *TClientPlayer) {
 	if(TMap) {
 
 		position2di ScreenPosition;
@@ -137,10 +137,16 @@ void PlayerClass::RenderWorld(const MapClass *TMap) {
 			int Alpha = 255;
 			if(IsInvisible())
 				Alpha = 70;
-				
+			
+
 			Graphics::Instance().DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
 			if(StateImage) {
 				Graphics::Instance().DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
+			}
+
+			if(TClientPlayer != this) {
+				Graphics::Instance().SetFont(GraphicsClass::FONT_8);
+				Graphics::Instance().RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, GraphicsClass::ALIGN_CENTER);
 			}
 		}
 	}
