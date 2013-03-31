@@ -7,6 +7,35 @@ http://choria.googlecode.com
 Source code at:
 https://github.com/jazztickets/choria/tree/classic
 
+----BUILDING----
+
+Requires:
+	irrlicht 1.8
+	sqlite3
+	OpenGL
+	cmake
+
+To install irrlicht 1.8 easily, run:
+	
+	./install_irrlicht.sh
+
+Install dependencies:
+	
+	sudo apt-get install cmake libsqlite3-dev
+
+Compiling:
+
+	mkdir build
+	cd build
+	cmake ..
+	make -j`nproc`
+
+To install:
+	sudo make install
+
+To uninstall:
+	cat install_manifest.txt | xargs sudo rm
+
 ----COMMAND-LINE ARGUMENTS----
 
 to host a game
