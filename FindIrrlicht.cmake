@@ -27,9 +27,21 @@ find_path(
 		irrlicht
 )
 
-# find libraries
+# find debug library
 find_library(
-		IRRLICHT_LIBRARIES Irrlicht
+		IRRLICHT_DEBUG_LIBRARY Irrlicht_d Irrlicht
+	HINTS
+		ENV IRRLICHT_ROOT
+	PATHS
+		/usr/lib
+		/usr/local/lib
+	PATH_SUFFIXES
+		lib/Win32-visualstudio
+)
+
+# find release library
+find_library(
+		IRRLICHT_RELEASE_LIBRARY Irrlicht
 	HINTS
 		ENV IRRLICHT_ROOT
 	PATHS
@@ -46,9 +58,15 @@ if(IRRLICHT_INCLUDE_DIRS AND EXISTS "${IRRLICHT_INCLUDE_DIRS}/IrrCompileConfig.h
 	unset(irrlicht_version_str)
 endif()
 
+# combine debug and release
+set(IRRLICHT_LIBRARIES
+	debug ${IRRLICHT_DEBUG_LIBRARY}
+	optimized ${IRRLICHT_RELEASE_LIBRARY}
+)
+
 # handle QUIET and REQUIRED
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Irrlicht REQUIRED_VARS IRRLICHT_LIBRARIES IRRLICHT_INCLUDE_DIRS VERSION_VAR IRRLICHT_VERSION_STRING)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Irrlicht REQUIRED_VARS IRRLICHT_RELEASE_LIBRARY IRRLICHT_INCLUDE_DIRS VERSION_VAR IRRLICHT_VERSION_STRING)
 
 # advanced variables only show up in gui if show advanced is turned on
 mark_as_advanced(IRRLICHT_INCLUDE_DIRS IRRLICHT_LIBRARIES)
