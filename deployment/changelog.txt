@@ -1,3 +1,6 @@
+Choria 0.4.1 -
+- Fixed save/load path for mapeditor
+
 Choria 0.4 - 3/31/2013
 - Added invisibility potion
 - Added mouse moving

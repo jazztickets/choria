@@ -21,6 +21,7 @@
 #include "engine/graphics.h"
 #include "engine/globals.h"
 #include "engine/stats.h"
+#include "engine/config.h"
 #include "mainmenu.h"
 
 // Initializes the state
@@ -34,7 +35,8 @@ int MapEditorState::Init() {
 		Brush.Texture = TexturePalette[0];
 
 	// Default map
-	Map = new MapClass("test.map", 50, 50);
+	stringc SavePath = Config::Instance().GetSaveMapPath("test.map");
+	Map = new MapClass(SavePath, 50, 50);
 
 	// Set filters
 	ResetFilters();
@@ -479,7 +481,8 @@ void MapEditorState::CreateMap() {
 	CloseMap();
 
 	// Create map
-	Map = new MapClass(File, Width, Height);
+	stringc SavePath = Config::Instance().GetSaveMapPath(File);
+	Map = new MapClass(SavePath.c_str(), Width, Height);
 
 	CloseWindow(NEWMAP_WINDOW);
 	State = STATE_MAIN;
@@ -489,7 +492,7 @@ void MapEditorState::CreateMap() {
 void MapEditorState::InitLoadMap() {
 
 	// Main dialog window
-	stringc StartPath = WorkingDirectory + "maps";
+	stringc StartPath = Config::Instance().GetSaveMapPath("");
 	IGUIFileOpenDialog *FileOpen = irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (stringc::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;

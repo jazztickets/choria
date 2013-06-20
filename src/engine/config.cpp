@@ -31,10 +31,14 @@ int ConfigClass::Init() {
 
 	#ifdef _WIN32
 		SavePath = stringc(getenv("APPDATA")) + stringc("/choria/");
+		SaveMapPath = stringc(getenv("APPDATA")) + stringc("/choria/maps/");
 		CreateDirectory(SavePath.c_str(), NULL);
+		CreateDirectory(SaveMapPath.c_str(), NULL);
 	#else
 		SavePath = stringc(getenv("HOME")) + stringc("/.choria/");
+		SaveMapPath = stringc(getenv("HOME")) + stringc("/.choria/maps/");
 		mkdir(SavePath.c_str(), S_IRWXU | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
+		mkdir(SaveMapPath.c_str(), S_IRWXU | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
 	#endif
 
 	LastIPAddress = "127.0.0.1";
@@ -49,17 +53,22 @@ void ConfigClass::Close() {
 }
 
 // Gets the save path to a file
-void ConfigClass::GetSavePath(const stringc &TFile, stringc &TPath) {
+stringc ConfigClass::GetSavePath(const stringc &TFile) {
 
-	TPath = SavePath + stringc(TFile);
+	return SavePath + stringc(TFile);
+}
+
+// Gets the save map path to a file
+stringc ConfigClass::GetSaveMapPath(const stringc &TFile) {
+
+	return SaveMapPath + stringc(TFile);
 }
 
 // Loads settings
 bool ConfigClass::LoadSettings() {
 
 	// Get filename
-	stringc SaveFile;
-	GetSavePath("settings.cfg", SaveFile);
+	stringc SaveFile = GetSavePath("settings.cfg");
 
 	// Open file
 	ifstream File;
@@ -94,8 +103,7 @@ bool ConfigClass::LoadSettings() {
 bool ConfigClass::SaveSettings() {
 
 	// Get filename
-	stringc SaveFile;
-	GetSavePath("settings.cfg", SaveFile);
+	stringc SaveFile = GetSavePath("settings.cfg");
 
 	// Open file
 	ofstream File;

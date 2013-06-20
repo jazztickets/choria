@@ -62,8 +62,7 @@ int PlayServerState::Init() {
 	// Load database that stores accounts and characters
 	Database = new DatabaseClass();
 
-	stringc DatabasePath;
-	Config::Instance().GetSavePath("server.s3db", DatabasePath);
+	stringc DatabasePath = Config::Instance().GetSavePath("server.s3db");
 	if(!Database->OpenDatabase(DatabasePath.c_str())) {
 
 		// Create a new database

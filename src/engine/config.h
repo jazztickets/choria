@@ -38,7 +38,8 @@ class ConfigClass {
 		int Init();
 		void Close();
 
-		void GetSavePath(const stringc &TFile, stringc &TPath);
+		stringc GetSavePath(const stringc &TFile);
+		stringc GetSaveMapPath(const stringc &TFile);
 
 		bool LoadSettings();
 		bool SaveSettings();
@@ -51,7 +52,7 @@ class ConfigClass {
 	private:
 
 		// Paths
-		stringc SavePath;
+		stringc SavePath, SaveMapPath;
 
 		// Config
 		stringc LastIPAddress, LastAccountName;
