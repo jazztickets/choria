@@ -28,8 +28,8 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
-const int GAME_VERSION_NUM = 040;
-const char * const GAME_VERSION = "v0.4.0";
+const int GAME_VERSION_NUM = 041;
+const char * const GAME_VERSION = "v0.4.1";
 
 const int GAME_PORTALTIME = 3000;
 const int PLAYER_MOVETIME = 125;

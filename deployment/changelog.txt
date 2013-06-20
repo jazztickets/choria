@@ -1,4 +1,4 @@
-Choria 0.4.1 -
+Choria 0.4.1 - 6/20/2013
 - Fixed save/load path for mapeditor
 
 Choria 0.4 - 3/31/2013
