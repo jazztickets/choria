@@ -6,4 +6,4 @@ Icon=choria
 Terminal=false
 Type=Application
 Categories=Game;RolePlaying;
-StartupNotify=true
+StartupNotify=false
