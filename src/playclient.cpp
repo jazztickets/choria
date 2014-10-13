@@ -274,7 +274,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 	}
 
 	// Open character sheet
-	if(TKey == KEY_KEY_C) {
+	if(TKey == KEY_KEY_B) {
 		HUD::Instance().InitCharacter();
 	}
 
@@ -291,7 +291,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_KEY_Q:
 					HUD::Instance().ToggleTownPortal();
 				break;
-				case KEY_KEY_B:
+				case KEY_KEY_C:
 				case KEY_KEY_I:
 					HUD::Instance().InitInventory();
 				break;
@@ -325,7 +325,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 				case KEY_KEY_I:
-				case KEY_KEY_B:
+				case KEY_KEY_C:
 				case KEY_SPACE:
 				case KEY_LEFT:
 				case KEY_UP:
@@ -352,7 +352,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 				case KEY_KEY_I:
-				case KEY_KEY_B:
+				case KEY_KEY_C:
 				case KEY_SPACE:
 				case KEY_LEFT:
 				case KEY_UP:

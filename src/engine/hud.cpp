@@ -567,7 +567,7 @@ void HUDClass::InitButtonBar() {
 	// Inventory
 	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_INVENTORY, 0, L"Inventory");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_inventory.png"));
-	ButtonText = Graphics::Instance().AddText("B", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText = Graphics::Instance().AddText("C", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
@@ -581,7 +581,7 @@ void HUDClass::InitButtonBar() {
 	// Character
 	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_CHARACTER, 0, L"Character");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_character.png"));
-	ButtonText = Graphics::Instance().AddText("C", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText = Graphics::Instance().AddText("B", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
