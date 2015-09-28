@@ -1,13 +1,8 @@
-#!/bin/sh
-mkdir package
-cp -r ../src package
-cp ../README package
-cp ../FindIrrlicht.cmake package
-cp ../CMakeLists.txt package
-mkdir package/deployment
-cp choria choria.desktop choria.xpm license.txt changelog.txt package/deployment
-cp -r ../working/ package
+#!/bin/bash
+version=`grep 'GAME_VERSION=".*"' -o ../CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
+base=choria-${version}
+pkg=${base}-src.tar.gz
 
-rm -rf choria-$1-src
-mv package choria-$1-src
-tar -czf choria-$1-src.tar.gz choria-$1-src
+tar --transform "s,^,${base}/," -czvf ${pkg} -C ../ src/ working/ deployment/ cmake/ CMakeLists.txt README CHANGELOG LICENSE --exclude=$pkg --exclude=move.{sh,bat} --exclude=*.swp --exclude=*.nsi --exclude=make_src.sh
+
+echo -e "\nMade ${pkg}"

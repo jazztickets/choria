@@ -1,42 +1,57 @@
 cmake_minimum_required(VERSION 2.8)
 
+# define constants
+add_definitions(-DGAME_VERSION="0.4.2")
+
 # project name
 project(choria)
 
 # add extra find modules
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/;${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
 # windows only options
-if(WIN32)
+if(MSVC)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-	include_directories("${PROJECT_SOURCE_DIR}/extlibs/include")
-	link_directories("${PROJECT_SOURCE_DIR}/extlibs/")
+	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
-	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 else()
-	
+
 	# set default build type
 	if(NOT CMAKE_BUILD_TYPE)
 		set(CMAKE_BUILD_TYPE Release)
 	endif()
-	
+
+	# compiler flags
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-deprecated-declarations -pedantic -std=c++11")
+	add_definitions("-DHAS_SOCKLEN_T")
+
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-	add_definitions("-DHAS_SOCKLEN_T")
 endif()
 
 # external libraries
 add_definitions("-DTIXML_USE_STL")
+
+# find libraries
 find_package(Irrlicht 1.8 REQUIRED)
+if(NOT IRRLICHT_FOUND)
+	message(SEND_ERROR "Could not find Irrlicht!")
+endif()
+
+find_package(SQLite REQUIRED)
+if(NOT SQLITE_FOUND)
+	message(SEND_ERROR "Could not find SQLite3!")
+endif()
+
 find_package(Threads REQUIRED)
-#find_package(sqlite REQUIRED)
 
 # set include directories
 include_directories("src")
 include_directories(${IRRLICHT_INCLUDE_DIRS})
+include_directories(${SQLITE_INCLUDE_DIR})
 
 # add source files
 file(GLOB SRC_MAIN src/*.cpp src/*.h)
@@ -47,7 +62,15 @@ file(GLOB SRC_NETWORK src/network/*.cpp src/network/*.h)
 file(GLOB SRC_OBJECTS src/objects/*.cpp src/objects/*.h)
 file(GLOB SRC_TINYTHREAD src/tinythread/*.cpp src/tinythread/*.h)
 
-file(GLOB SRC_ALL ${SRC_MAIN} ${SRC_ENET} ${SRC_ENGINE} ${SRC_INSTANCES} ${SRC_NETWORK} ${SRC_OBJECTS} ${SRC_TINYTHREAD})
+file(GLOB SRC_ALL
+	${SRC_MAIN}
+	${SRC_ENET}
+	${SRC_ENGINE}
+	${SRC_INSTANCES}
+	${SRC_NETWORK}
+	${SRC_OBJECTS}
+	${SRC_TINYTHREAD}
+)
 
 # add virtual folders
 source_group(main FILES ${SRC_MAIN})
@@ -60,24 +83,34 @@ source_group(tinythreads FILES ${SRC_TINYTHREAD})
 
 # build exe
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
-target_link_libraries(${CMAKE_PROJECT_NAME} ${IRRLICHT_LIBRARIES} ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT} sqlite3)
+
+# link libraries
+target_link_libraries(${CMAKE_PROJECT_NAME}
+	${IRRLICHT_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT}
+	${SQLITE_LIBRARIES}
+	${EXTRA_LIBS}
+)
 
 # copy irrlicht DLLs to working directory
 if(WIN32)
-	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win32-VisualStudio/Irrlicht.dll" ${PROJECT_SOURCE_DIR}/working)
-	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win32-VisualStudio/Irrlicht_d.dll" ${PROJECT_SOURCE_DIR}/working)
+	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win64-VisualStudio/Irrlicht.dll" ${PROJECT_SOURCE_DIR}/working)
+	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win64-VisualStudio/Irrlicht_d.dll" ${PROJECT_SOURCE_DIR}/working)
 else()
-	
+
 	# linux installation
 	install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION share/games/${CMAKE_PROJECT_NAME})
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/working/database DESTINATION share/games/${CMAKE_PROJECT_NAME})
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/working/fonts DESTINATION share/games/${CMAKE_PROJECT_NAME})
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/working/maps DESTINATION share/games/${CMAKE_PROJECT_NAME})
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/working/textures DESTINATION share/games/${CMAKE_PROJECT_NAME})
-	install(FILES ${PROJECT_SOURCE_DIR}/deployment/${CMAKE_PROJECT_NAME}.xpm DESTINATION share/pixmaps)
+	install(FILES ${PROJECT_SOURCE_DIR}/deployment/${CMAKE_PROJECT_NAME}.png DESTINATION share/pixmaps)
 	install(FILES ${PROJECT_SOURCE_DIR}/deployment/${CMAKE_PROJECT_NAME}.desktop DESTINATION share/applications)
-	install(FILES ${PROJECT_SOURCE_DIR}/deployment/license.txt DESTINATION share/doc/${CMAKE_PROJECT_NAME})
-	install(FILES ${PROJECT_SOURCE_DIR}/deployment/changelog.txt DESTINATION share/doc/${CMAKE_PROJECT_NAME})
+	install(FILES ${PROJECT_SOURCE_DIR}/CHANGELOG DESTINATION share/doc/${CMAKE_PROJECT_NAME})
+	install(FILES ${PROJECT_SOURCE_DIR}/LICENSE DESTINATION share/doc/${CMAKE_PROJECT_NAME})
 	install(FILES ${PROJECT_SOURCE_DIR}/README DESTINATION share/doc/${CMAKE_PROJECT_NAME})
-	install(PROGRAMS ${PROJECT_SOURCE_DIR}/deployment/${CMAKE_PROJECT_NAME} DESTINATION games)
+
+	# generate the script to launch the program
+	configure_file(${PROJECT_SOURCE_DIR}/deployment/${CMAKE_PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles)
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${CMAKE_PROJECT_NAME} DESTINATION bin)
 endif()

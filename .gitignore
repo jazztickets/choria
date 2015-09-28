@@ -1,12 +1,8 @@
 bin
 build
 *.dll
+*.swp
+CMakeLists.txt.user
 deployment/*.exe
 deployment/*-src
 deployment/*.tar.gz
-codelite/debug
-codelite/release
-codelite/*.mk
-codelite/*.db
-codelite/*.tags
-codelite/choria.workspace.*

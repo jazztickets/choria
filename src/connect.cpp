@@ -25,6 +25,7 @@
 #include "network/packetstream.h"
 #include "mainmenu.h"
 #include "account.h"
+#include <string>
 
 // Initializes the state
 int ConnectState::Init() {
@@ -78,9 +79,9 @@ void ConnectState::HandleDisconnect(ENetEvent *TEvent) {
 void ConnectState::HandlePacket(ENetEvent *TEvent) {
 	PacketClass Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
-		case NetworkClass::GAME_VERSION: {
-			int Version = Packet.ReadInt();
-			if(Version != GAME_VERSION_NUM) {
+		case NetworkClass::VERSION: {
+			std::string Version(Packet.ReadString());
+			if(Version != GAME_VERSION) {
 				Message = "Game version differs from server's";
 				ChangeState(STATE_MAIN);
 			}
@@ -138,17 +139,17 @@ bool ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_RETURN:
 					ChangeState(STATE_CONNECT);
 				break;
-			}				
+			}
 		break;
 		case STATE_CONNECT:
 			switch(TKey) {
 				case KEY_ESCAPE:
 					ChangeState(STATE_MAIN);
 				break;
-			}		
+			}
 		break;
 	}
-	
+
 	return false;
 }
 
@@ -182,7 +183,7 @@ void ConnectState::ChangeState(int TState) {
 			ClientNetwork->Disconnect();
 		break;
 		case STATE_CONNECT: {
-		
+
 			if(ValidateForm() && ClientNetwork->Connect(IPAddress.c_str())) {
 				Form->setVisible(false);
 				Message = "";
@@ -190,7 +191,7 @@ void ConnectState::ChangeState(int TState) {
 			}
 		}
 		break;
-	}	
+	}
 }
 
 // Validates the login form

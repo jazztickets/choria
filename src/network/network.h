@@ -34,7 +34,7 @@ class NetworkClass {
 
 		enum PacketType {
 			NETWORK_SYNCHRONIZETIME,
-			GAME_VERSION,
+			VERSION,
 			CHAT_MESSAGE,
 			ACCOUNT_LOGININFO,
 			ACCOUNT_EXISTS,

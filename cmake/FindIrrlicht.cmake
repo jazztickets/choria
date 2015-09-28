@@ -36,7 +36,7 @@ find_library(
 		/usr/lib
 		/usr/local/lib
 	PATH_SUFFIXES
-		lib/Win32-visualstudio
+		lib/Win64-visualstudio
 )
 
 # find release library
@@ -48,7 +48,7 @@ find_library(
 		/usr/lib
 		/usr/local/lib
 	PATH_SUFFIXES
-		lib/Win32-visualstudio
+		lib/Win64-visualstudio
 )
 
 # get irrlicht version

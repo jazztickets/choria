@@ -39,7 +39,7 @@ static void ObjectDeleted(ObjectClass *TObject);
 void HandleCommands(void *Arguments) {
 	std::string Input;
 	bool Done = false;
-	
+
 	tthread::this_thread::sleep_for(tthread::chrono::milliseconds(300));
 	std::cout << "Type stop to stop the server" << std::endl;
 	while(!Done) {
@@ -49,7 +49,7 @@ void HandleCommands(void *Arguments) {
 		else
 			std::cout << "Command not recognized" << std::endl;
 	}
-	
+
 	PlayServerState::Instance()->StopServer();
 }
 
@@ -88,7 +88,7 @@ int PlayServerState::Close() {
 		CommandThread->join();
 		delete CommandThread;
 	}
-	
+
 	// Disconnect peers
 	list<ObjectClass *> Objects = ObjectManager->GetObjects();
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
@@ -98,7 +98,7 @@ int PlayServerState::Close() {
 			ServerNetwork->Disconnect(Player->GetPeer());
 		}
 	}
-	
+
 	delete Database;
 	delete ObjectManager;
 	delete Instances;
@@ -175,8 +175,8 @@ void PlayServerState::HandleConnect(ENetEvent *TEvent) {
 	NewPlayer->SetPeer(TEvent->peer);
 
 	// Send player the game version
-	PacketClass Packet(NetworkClass::GAME_VERSION);
-	Packet.WriteInt(GAME_VERSION_NUM);
+	PacketClass Packet(NetworkClass::VERSION);
+	Packet.WriteString(GAME_VERSION);
 	ServerNetwork->SendPacketToPeer(&Packet, TEvent->peer);
 }
 
@@ -295,7 +295,7 @@ void PlayServerState::Update(u32 TDeltaTime) {
 
 	Instances->Update(TDeltaTime);
 	ObjectManager->Update(TDeltaTime);
-	
+
 	if(StopRequested) {
 		Game::Instance().SetDone(true);
 	}
@@ -628,7 +628,7 @@ void PlayServerState::HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer) {
 									if(PlayersAdded == 2)
 										break;
 								}
-							}						
+							}
 						}
 
 						// Add monsters
@@ -877,7 +877,7 @@ void PlayServerState::HandleAttackPlayer(PacketClass *TPacket, ENetPeer *TPeer) 
 	MapClass *Map = Player->GetMap();
 	if(!Map)
 		return;
-	
+
 	// Check for a valid pvp tile
 	if(Player->GetTile()->PVP) {
 
@@ -940,7 +940,7 @@ void PlayServerState::HandleTradeRequest(PacketClass *TPacket, ENetPeer *TPeer) 
 	// Find the nearest player to trade with
 	PlayerClass *TradePlayer = Map->GetClosestPlayer(Player, 2.0f * 2.0f, PlayerClass::STATE_WAITTRADE);
 	if(TradePlayer == NULL) {
-		
+
 		// Set up trade post
 		Player->SetState(PlayerClass::STATE_WAITTRADE);
 		Player->SetTradeGold(0);
@@ -1052,7 +1052,7 @@ void PlayServerState::HandleTradeAccept(PacketClass *TPacket, ENetPeer *TPeer) {
 				BuildTradeItemsPacket(TradePlayer, &Packet, TradePlayer->GetGold());
 				ServerNetwork->SendPacketToPeer(&Packet, TradePlayer->GetPeer());
 			}
-			
+
 			Player->SetState(PlayerClass::STATE_WALK);
 			Player->SetTradePlayer(NULL);
 			Player->SetTradeGold(0);

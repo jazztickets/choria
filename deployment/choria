@@ -1,3 +1,3 @@
 #!/bin/sh
-cd /usr/local/share/games/choria
+cd ${CMAKE_INSTALL_PREFIX}/share/games/choria
 ./choria $@
