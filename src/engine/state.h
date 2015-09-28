@@ -60,4 +60,3 @@ class StateClass {
 	private:
 
 };
-

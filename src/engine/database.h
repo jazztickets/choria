@@ -50,4 +50,3 @@ class DatabaseClass {
 		sqlite3_stmt *QueryHandle[2];
 
 };
-

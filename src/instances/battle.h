@@ -89,4 +89,3 @@ class BattleClass {
 		int LeftFighterCount, RightFighterCount;
 		int PlayerCount, MonsterCount;
 };
-

@@ -115,4 +115,3 @@ class PlayClientState : public StateClass {
 		InstanceClass *Instances;
 
 };
-

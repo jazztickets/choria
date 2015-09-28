@@ -52,4 +52,3 @@ class MainMenuState : public StateClass {
 		void StartSinglePlayer();
 
 };
-

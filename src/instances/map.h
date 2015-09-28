@@ -152,4 +152,3 @@ class MapClass {
 		u32 ObjectUpdateTime;
 		list<ObjectClass *> Objects;
 };
-

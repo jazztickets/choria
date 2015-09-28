@@ -40,4 +40,3 @@ extern ITimer *irrTimer;
 extern stringc WorkingDirectory;
 extern NetworkClass *ClientNetwork;
 extern NetworkClass *ServerNetwork;
-

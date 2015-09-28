@@ -73,4 +73,3 @@ class AccountState : public StateClass {
 		bool CreateAccount;
 
 };
-

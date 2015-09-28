@@ -106,4 +106,3 @@ class PlayServerState : public StateClass {
 
 		u32 ServerTime;
 };
-

@@ -288,4 +288,3 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		bool TradeAccepted;
 		PlayerClass *TradePlayer;
 };
-

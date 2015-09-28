@@ -85,4 +85,3 @@ class CharactersState : public StateClass {
 		u32 ClickTimer;
 
 };
-

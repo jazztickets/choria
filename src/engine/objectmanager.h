@@ -66,4 +66,3 @@ class ObjectManagerClass {
 
 		int NextNetworkID;
 };
-

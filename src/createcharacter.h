@@ -73,4 +73,3 @@ class CreateCharacterState : public StateClass {
 
 		array<int> Portraits;
 };
-

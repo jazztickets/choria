@@ -57,4 +57,3 @@ class PacketClass {
 		// Data
 		enet_uint32 CurrentByte, CurrentBit;
 };
-

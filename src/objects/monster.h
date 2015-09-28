@@ -60,4 +60,3 @@ class MonsterClass : public FighterClass {
 		int ExperienceGiven, GoldGiven;
 		int AI;
 };
-

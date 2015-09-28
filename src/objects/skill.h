@@ -78,4 +78,3 @@ class SkillClass {
 		float Power;
 		float PowerRange;
 };
-

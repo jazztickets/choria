@@ -48,4 +48,3 @@ class MultiNetworkClass : public NetworkClass {
 		ENetHost *Connection;
 		ENetPeer *Peer;
 };
-

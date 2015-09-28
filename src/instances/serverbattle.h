@@ -57,4 +57,3 @@ class ServerBattleClass : public BattleClass {
 
 		u32 RoundTime;
 };
-

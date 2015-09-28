@@ -141,4 +141,3 @@ class FighterClass {
 		ITexture *Portrait;
 		position2di Offset;
 };
-

@@ -94,4 +94,3 @@ class ItemClass {
 		float ManaRegen;
 		int InvisPower;
 };
-

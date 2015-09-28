@@ -96,4 +96,3 @@ class ClientBattleClass : public BattleClass {
 		array<const ItemClass *> MonsterDrops;
 
 };
-

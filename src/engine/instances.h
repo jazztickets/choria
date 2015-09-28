@@ -60,4 +60,3 @@ class InstanceClass {
 		list<BattleClass *>::Iterator BattleIterator;
 
 };
-

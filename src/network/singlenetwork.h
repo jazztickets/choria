@@ -40,4 +40,3 @@ class SingleNetworkClass : public NetworkClass {
 		ENetPeer Peer;
 		bool Server, Connected;
 };
-

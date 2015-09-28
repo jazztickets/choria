@@ -69,4 +69,3 @@ class ConnectState : public StateClass {
 		stringc Message, IPAddress;
 
 };
-

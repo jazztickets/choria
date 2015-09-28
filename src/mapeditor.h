@@ -129,4 +129,3 @@ class MapEditorState : public StateClass {
 		// Filters
 		bool Filters[FILTER_COUNT];
 };
-

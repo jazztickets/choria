@@ -47,4 +47,3 @@ class FileClass {
 		std::fstream File;
 
 };
-
