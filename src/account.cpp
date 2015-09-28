@@ -25,6 +25,8 @@
 #include <connect.h>
 #include <characters.h>
 
+_AccountState AccountState;
+
 // Initializes the state
 int _AccountState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
@@ -76,7 +78,7 @@ int _AccountState::Close() {
 // Handles a disconnection from the server
 void _AccountState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(_ConnectState::Instance());
+	Game.ChangeState(&ConnectState);
 }
 
 // Handles a server packet
@@ -100,7 +102,7 @@ void _AccountState::HandlePacket(ENetEvent *TEvent) {
 			Config.SaveSettings();
 			AccountName = "";
 			Password = "";
-			Game.ChangeState(_CharactersState::Instance());
+			Game.ChangeState(&CharactersState);
 		break;
 	}
 }
@@ -140,7 +142,7 @@ bool _AccountState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game.ChangeState(_ConnectState::Instance());
+					Game.ChangeState(&ConnectState);
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_LOGIN);
@@ -166,7 +168,7 @@ void _AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement)
 							ChangeState(STATE_LOGIN);
 						break;
 						case ELEMENT_CANCEL:
-							Game.ChangeState(_ConnectState::Instance());
+							Game.ChangeState(&ConnectState);
 						break;
 						case ELEMENT_CREATEACCOUNT:
 							CreateAccount = true;

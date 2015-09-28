@@ -25,6 +25,8 @@
 #include <connect.h>
 #include <characters.h>
 
+_CreateCharacterState CreateCharacterState;
+
 // Initializes the state
 int _CreateCharacterState::Init() {
 
@@ -79,7 +81,7 @@ int _CreateCharacterState::Close() {
 // Handles a disconnection from the server
 void _CreateCharacterState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(_ConnectState::Instance());
+	Game.ChangeState(&ConnectState);
 }
 
 // Handles a server packet
@@ -87,7 +89,7 @@ void _CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
 	PacketClass Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
 		case NetworkClass::CREATECHARACTER_SUCCESS:
-			Game.ChangeState(_CharactersState::Instance());
+			Game.ChangeState(&CharactersState);
 		break;
 		case NetworkClass::CREATECHARACTER_INUSE:
 			Message = "Character name already in use";
@@ -204,5 +206,5 @@ void _CreateCharacterState::CreateCharacter() {
 
 // Back to character select
 void _CreateCharacterState::Back() {
-	Game.ChangeState(_CharactersState::Instance());
+	Game.ChangeState(&CharactersState);
 }

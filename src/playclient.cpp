@@ -32,6 +32,8 @@
 #include <objects/monster.h>
 #include <mainmenu.h>
 
+_PlayClientState PlayClientState;
+
 // Constructor
 _PlayClientState::_PlayClientState()
 :	CharacterSlot(0) {
@@ -82,7 +84,7 @@ void _PlayClientState::HandleConnect(ENetEvent *TEvent) {
 // Handles a disconnection from the server
 void _PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(_MainMenuState::Instance());
+	Game.ChangeState(&MainMenuState);
 }
 
 // Handles a server packet

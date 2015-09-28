@@ -64,11 +64,6 @@ class _CharactersState : public _State {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static _CharactersState *Instance() {
-			static _CharactersState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void HandleCharacterList(PacketClass *TPacket);
@@ -85,3 +80,5 @@ class _CharactersState : public _State {
 		u32 ClickTimer;
 
 };
+
+extern _CharactersState CharactersState;

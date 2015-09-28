@@ -33,6 +33,8 @@
 #include <iostream>
 #include <string>
 
+_PlayServerState PlayServerState;
+
 static void ObjectDeleted(ObjectClass *TObject);
 
 // Loop to run server commands
@@ -51,7 +53,7 @@ void HandleCommands(void *Arguments) {
 			std::cout << "Command not recognized" << std::endl;
 	}
 
-	_PlayServerState::Instance()->StopServer();
+	PlayServerState.StopServer();
 }
 
 // Initializes the state
@@ -1282,7 +1284,7 @@ void _PlayServerState::DeleteObject(ObjectClass *TObject) {
 // Called when object gets deleted
 void ObjectDeleted(ObjectClass *TObject) {
 
-	_PlayServerState::Instance()->DeleteObject(TObject);
+	PlayServerState.DeleteObject(TObject);
 }
 
 // Teleports a player back to town

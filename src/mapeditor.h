@@ -84,11 +84,6 @@ class _MapEditorState : public _State {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static _MapEditorState *Instance() {
-			static _MapEditorState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void CloseWindow(int TElement);
@@ -129,3 +124,5 @@ class _MapEditorState : public _State {
 		// Filters
 		bool Filters[FILTER_COUNT];
 };
+
+extern _MapEditorState MapEditorState;

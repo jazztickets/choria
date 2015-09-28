@@ -26,6 +26,8 @@
 #include <mapeditor.h>
 #include <characters.h>
 
+_MainMenuState MainMenuState;
+
 // Initializes the state
 int _MainMenuState::Init() {
 	int DrawX = 400, DrawY = 250, OffsetY = 50;
@@ -41,11 +43,6 @@ int _MainMenuState::Init() {
 	// Editor
 	DrawY += OffsetY;
 	irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EDITOR, L"Map Editor");
-
-	// Options
-	//DrawY += OffsetY;
-	//IGUIButton *OptionButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_OPTIONS, L"Options");
-	//OptionButton->setEnabled(false);
 
 	// Exit
 	DrawY += OffsetY;
@@ -101,14 +98,14 @@ void _MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement
 		case EGET_BUTTON_CLICKED:
 			switch(TElement->getID()) {
 				case ELEMENT_SINGLEPLAYER:
-					Game.ChangeState(_ConnectState::Instance());
+					Game.ChangeState(&ConnectState);
 					StartSinglePlayer();
 				break;
 				case ELEMENT_MULTIPLAYER:
-					Game.ChangeState(_ConnectState::Instance());
+					Game.ChangeState(&ConnectState);
 				break;
 				case ELEMENT_EDITOR:
-					Game.ChangeState(_MapEditorState::Instance());
+					Game.ChangeState(&MapEditorState);
 				break;
 				case ELEMENT_OPTIONS:
 				break;
@@ -135,5 +132,5 @@ void _MainMenuState::StartSinglePlayer() {
 	Packet.WriteString("singleplayer");
 	Packet.WriteString("singleplayer");
 	ClientNetwork->SendPacketToHost(&Packet);
-	Game.ChangeState(_CharactersState::Instance());
+	Game.ChangeState(&CharactersState);
 }

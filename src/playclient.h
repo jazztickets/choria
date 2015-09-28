@@ -69,11 +69,6 @@ class _PlayClientState : public _State {
 
 		int *GetState() { return &State; }
 
-		static _PlayClientState *Instance() {
-			static _PlayClientState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void HandleYourCharacterInfo(PacketClass *TPacket);
@@ -115,3 +110,5 @@ class _PlayClientState : public _State {
 		InstanceClass *Instances;
 
 };
+
+extern _PlayClientState PlayClientState;

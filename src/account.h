@@ -51,11 +51,6 @@ class _AccountState : public _State {
 
 		void SetLoginInfo(const stringc &TAccountName, const stringc &TPassword);
 
-		static _AccountState *Instance() {
-			static _AccountState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void ChangeState(int TState);
@@ -73,3 +68,5 @@ class _AccountState : public _State {
 		bool CreateAccount;
 
 };
+
+extern _AccountState AccountState;

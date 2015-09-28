@@ -51,11 +51,6 @@ class _CreateCharacterState : public _State {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static _CreateCharacterState *Instance() {
-			static _CreateCharacterState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void UpdateSelection(int TSelectedIndex);
@@ -73,3 +68,5 @@ class _CreateCharacterState : public _State {
 
 		array<int> Portraits;
 };
+
+extern _CreateCharacterState CreateCharacterState;

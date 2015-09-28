@@ -28,6 +28,8 @@
 #include <createcharacter.h>
 #include <playclient.h>
 
+_CharactersState CharactersState;
+
 // Initializes the state
 int _CharactersState::Init() {
 
@@ -75,7 +77,7 @@ int _CharactersState::Close() {
 // Handles a disconnection from the server
 void _CharactersState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(_ConnectState::Instance());
+	Game.ChangeState(&ConnectState);
 }
 
 // Handles a server packet
@@ -163,7 +165,7 @@ void _CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TEleme
 					Logout();
 				break;
 				case ELEMENT_CREATE:
-					Game.ChangeState(_CreateCharacterState::Instance());
+					Game.ChangeState(&CreateCharacterState);
 				break;
 				case ELEMENT_DELETE:
 					irrGUI->addMessageBox(L"", L"Are you sure you want to delete this character?", true, EMBF_YES | EMBF_NO, 0, ELEMENT_DELETECONFIRM);
@@ -256,8 +258,8 @@ void _CharactersState::PlayCharacter() {
 	if(SelectedIndex == -1 || !Slots[SelectedIndex].Used)
 		return;
 
-	_PlayClientState::Instance()->SetCharacterSlot(SelectedIndex);
-	Game.ChangeState(_PlayClientState::Instance());
+	PlayClientState.SetCharacterSlot(SelectedIndex);
+	Game.ChangeState(&PlayClientState);
 }
 
 // Delete a character
@@ -274,8 +276,8 @@ void _CharactersState::Delete() {
 void _CharactersState::Logout() {
 	if(Game.IsLocalServerRunning()) {
 		ClientNetwork->Disconnect();
-		Game.ChangeState(_MainMenuState::Instance());
+		Game.ChangeState(&MainMenuState);
 	}
 	else
-		Game.ChangeState(_AccountState::Instance());
+		Game.ChangeState(&AccountState);
 }

@@ -49,7 +49,7 @@ static PositionStruct EquippedItemPositions[PlayerClass::INVENTORY_BACKPACK] = {
 // Initialize
 int HUDClass::Init() {
 
-	State = _PlayClientState::Instance()->GetState();
+	State = PlayClientState.GetState();
 	Vendor = NULL;
 	Trader = NULL;
 	TooltipItem.Reset();

@@ -42,13 +42,10 @@ class _MainMenuState : public _State {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static _MainMenuState *Instance() {
-			static _MainMenuState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void StartSinglePlayer();
 
 };
+
+extern _MainMenuState MainMenuState;

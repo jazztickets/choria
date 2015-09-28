@@ -47,7 +47,7 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 
 	WindowActive = true;
 	LocalServerRunning = false;
-	State = _MainMenuState::Instance();
+	State = &MainMenuState;
 
 	bool IsServer = false;
 	E_DRIVER_TYPE DriverType = EDT_OPENGL;
@@ -59,20 +59,20 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 		Token = stringc(TArguments[i]);
 		TokensRemaining = TArgumentCount - i - 1;
 		if(Token == "-host") {
-			State = _PlayServerState::Instance();
-			_PlayServerState::Instance()->StartCommandThread();
+			State = &PlayServerState;
+			PlayServerState.StartCommandThread();
 			IsServer = true;
 			DriverType = EDT_NULL;
 		}
 		else if(Token == "-mapeditor") {
-			State = _MapEditorState::Instance();
+			State = &MapEditorState;
 		}
 		else if(Token == "-connect") {
-			State = _ConnectState::Instance();
+			State = &ConnectState;
 		}
 		else if(Token == "-login" && TokensRemaining > 1) {
-			_AccountState::Instance()->SetLoginInfo(TArguments[i+1], TArguments[i+2]);
-			i+=2;
+			AccountState.SetLoginInfo(TArguments[i+1], TArguments[i+2]);
+			i += 2;
 		}
 	}
 
@@ -129,7 +129,7 @@ void GameClass::Close() {
 	// Close the state
 	State->Close();
 	if(LocalServerRunning)
-		_PlayServerState::Instance()->Close();
+		PlayServerState.Close();
 
 	MultiNetwork->WaitForDisconnect();
 	Config.SaveSettings();
@@ -203,7 +203,7 @@ void GameClass::Update() {
 		break;
 		case STATE_UPDATE:
 			if(LocalServerRunning)
-				_PlayServerState::Instance()->Update(DeltaTime);
+				PlayServerState.Update(DeltaTime);
 			else
 				MultiNetwork->Update();
 			State->Update(DeltaTime);
@@ -254,7 +254,7 @@ void GameClass::StartLocalServer() {
 		ClientNetwork = ClientSingleNetwork;
 		ServerNetwork = ServerSingleNetwork;
 
-		_PlayServerState::Instance()->Init();
+		PlayServerState.Init();
 	}
 }
 
@@ -263,7 +263,7 @@ void GameClass::StopLocalServer() {
 	if(LocalServerRunning) {
 		LocalServerRunning = false;
 
-		_PlayServerState::Instance()->Close();
+		PlayServerState.Close();
 
 		ClientNetwork = MultiNetwork;
 		ServerNetwork = MultiNetwork;

@@ -121,7 +121,7 @@ void PlayerClass::Update(u32 TDeltaTime) {
 			Save();
 
 		if(State == STATE_TOWNPORTAL && TownPortalTime > GAME_PORTALTIME) {
-			_PlayServerState::Instance()->PlayerTownPortal(this);
+			PlayServerState.PlayerTownPortal(this);
 			State = STATE_WALK;
 		}
 	}

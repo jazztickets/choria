@@ -48,11 +48,6 @@ class _ConnectState : public _State {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static _ConnectState *Instance() {
-			static _ConnectState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void ChangeState(int TState);
@@ -69,3 +64,5 @@ class _ConnectState : public _State {
 		stringc Message, IPAddress;
 
 };
+
+extern _ConnectState ConnectState;

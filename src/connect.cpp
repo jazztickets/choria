@@ -27,6 +27,8 @@
 #include <account.h>
 #include <string>
 
+_ConnectState ConnectState;
+
 // Initializes the state
 int _ConnectState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
@@ -86,7 +88,7 @@ void _ConnectState::HandlePacket(ENetEvent *TEvent) {
 				ChangeState(STATE_MAIN);
 			}
 			else {
-				Game.ChangeState(_AccountState::Instance());
+				Game.ChangeState(&AccountState);
 			}
 		}
 		break;
@@ -134,7 +136,7 @@ bool _ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game.ChangeState(_MainMenuState::Instance());
+					Game.ChangeState(&MainMenuState);
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_CONNECT);
@@ -170,7 +172,7 @@ void _ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement)
 							ChangeState(STATE_CONNECT);
 						break;
 						case ELEMENT_CANCEL:
-							Game.ChangeState(_MainMenuState::Instance());
+							Game.ChangeState(&MainMenuState);
 						break;
 						default:
 						break;

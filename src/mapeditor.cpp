@@ -24,6 +24,8 @@
 #include <engine/config.h>
 #include <mainmenu.h>
 
+_MapEditorState MapEditorState;
+
 // Initializes the state
 int _MapEditorState::Init() {
 
@@ -117,7 +119,7 @@ bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 					//Game.SetDone(true);
-					Game.ChangeState(_MainMenuState::Instance());
+					Game.ChangeState(&MainMenuState);
 				break;
 				case KEY_KEY_N:
 					InitNewMap();

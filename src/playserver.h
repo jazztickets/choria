@@ -51,11 +51,6 @@ class _PlayServerState : public _State {
 		void StartCommandThread();
 		void StopServer() { StopRequested = true; }
 
-		static _PlayServerState *Instance() {
-			static _PlayServerState ClassInstance;
-			return &ClassInstance;
-		}
-
 	private:
 
 		void CreateDefaultDatabase();
@@ -106,3 +101,5 @@ class _PlayServerState : public _State {
 
 		u32 ServerTime;
 };
+
+extern _PlayServerState PlayServerState;
