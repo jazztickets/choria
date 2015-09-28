@@ -1158,6 +1158,8 @@ void PlayServerState::SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEven
 					Packet.WriteBit((Player->IsInvisible()));
 				}
 				break;
+				default:
+				break;
 			}
 		}
 

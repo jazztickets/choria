@@ -35,40 +35,41 @@ PlayerClass::PlayerClass()
 	FighterClass(TYPE_PLAYER),
 	AccountID(0),
 	CharacterID(0),
+	Database(NULL),
+	State(STATE_WALK),
 	MoveTime(0),
+	AutoSaveTime(0),
 	PortraitID(0),
-	Gold(0),
-	Experience(0),
+	StateImage(NULL),
 	SpawnMapID(1),
 	SpawnPoint(0),
-	SkillPoints(0),
-	SkillPointsUsed(0),
-	WeaponDamageModifier(0.0f),
-	WeaponMinDamage(0),
-	WeaponMaxDamage(0),
-	ArmorMinDefense(0),
-	ArmorMaxDefense(0),
-	MinDamageBonus(0),
-	MaxDamageBonus(0),
-	MinDefenseBonus(0),
-	MaxDefenseBonus(0),
+	TownPortalTime(0),
 	PlayTime(0),
 	PlayTimeAccumulator(0),
 	Deaths(0),
 	MonsterKills(0),
 	PlayerKills(0),
 	Bounty(0),
+	Gold(0),
+	Experience(0),
+	MinDamageBonus(0),
+	MaxDamageBonus(0),
+	MinDefenseBonus(0),
+	MaxDefenseBonus(0),
+	WeaponDamageModifier(0.0f),
+	WeaponMinDamage(0),
+	WeaponMaxDamage(0),
+	ArmorMinDefense(0),
+	ArmorMaxDefense(0),
 	AttackPlayerTime(0),
-	Vendor(NULL),
-	StateImage(NULL),
-	Database(NULL),
-	TradeRequestTime(0),
-	TradePlayer(NULL),
-	TradeAccepted(false),
-	TradeGold(0),
-	TownPortalTime(0),
 	InvisPower(0),
-	State(STATE_WALK) {
+	Vendor(NULL),
+	SkillPoints(0),
+	SkillPointsUsed(0),
+	TradeRequestTime(0),
+	TradeGold(0),
+	TradeAccepted(false),
+	TradePlayer(NULL) {
 
 	WorldImage = irrDriver->getTexture(WorkingDirectory + "textures/players/basic.png");
 
@@ -137,7 +138,7 @@ void PlayerClass::RenderWorld(const MapClass *TMap, const ObjectClass *TClientPl
 			int Alpha = 255;
 			if(IsInvisible())
 				Alpha = 70;
-			
+
 
 			Graphics::Instance().DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
 			if(StateImage) {
@@ -184,7 +185,7 @@ bool PlayerClass::MovePlayer(int TDirection) {
 			InvisPower--;
 		else
 			NextBattle--;
-			
+
 		// Update regen
 		int HealthUpdate, ManaUpdate;
 		UpdateRegen(HealthUpdate, ManaUpdate);
@@ -254,7 +255,7 @@ void PlayerClass::Save() {
 	for(int i = 0; i < INVENTORY_COUNT; i++) {
 		Item = GetInventory(i);
 		if(Item->Item) {
- 			sprintf(Query, "INSERT INTO Inventory VALUES(%d, %d, %d, %d)", CharacterID, i, Item->Item->GetID(), Item->Count);
+			sprintf(Query, "INSERT INTO Inventory VALUES(%d, %d, %d, %d)", CharacterID, i, Item->Item->GetID(), Item->Count);
 			Database->RunQuery(Query);
 		}
 	}
@@ -266,7 +267,7 @@ void PlayerClass::Save() {
 	for(int i = 0; i < PlayerClass::SKILL_COUNT; i++) {
 		int Points = GetSkillLevel(i);
 		if(Points > 0) {
- 			sprintf(Query, "INSERT INTO SkillLevel VALUES(%d, %d, %d)", CharacterID, i, Points);
+			sprintf(Query, "INSERT INTO SkillLevel VALUES(%d, %d, %d)", CharacterID, i, Points);
 			Database->RunQuery(Query);
 		}
 	}
@@ -376,10 +377,10 @@ int PlayerClass::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) 
 	// Check for an open reward slot
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
 		InventoryStruct *InventoryItem = &Inventory[i];
-		if(InventoryItem->Item == NULL || InventoryItem->Item == TTrader->RewardItem && InventoryItem->Count + TTrader->Count <= 255) {
+		if(InventoryItem->Item == NULL || (InventoryItem->Item == TTrader->RewardItem && InventoryItem->Count + TTrader->Count <= 255)) {
 			RewardItemSlot = i;
 			break;
-		}		
+		}
 	}
 
 	// Go through required items
@@ -461,7 +462,7 @@ bool PlayerClass::UsePotionWorld(int TSlot) {
 	int ItemInvisPower = Item->GetInvisPower();
 
 	// Use only if needed
-	if(Item->IsHealthPotion() && Health < MaxHealth || Item->IsManaPotion() && Mana < MaxMana || Item->IsInvisPotion()) {
+	if((Item->IsHealthPotion() && Health < MaxHealth) || (Item->IsManaPotion() && Mana < MaxMana) || Item->IsInvisPotion()) {
 		UpdateHealth(HealthRestore);
 		UpdateMana(ManaRestore);
 		SetInvisPower(ItemInvisPower);
@@ -694,7 +695,7 @@ void PlayerClass::SplitStack(int TSlot, int TCount) {
 			SplitItem->Count -= TCount;
 			AddItem(SplitItem->Item, TCount, EmptySlot);
 		}
-	}	
+	}
 }
 
 // Determines if the player's backpack is full

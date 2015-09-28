@@ -48,8 +48,8 @@ class FighterClass {
 		};
 
 		FighterClass(int TType);
-		~FighterClass();
-		
+		virtual ~FighterClass();
+
 		// Object
 		int GetType() const { return Type; }
 
@@ -110,7 +110,7 @@ class FighterClass {
 		virtual void UpdateExperience(int TValue) { }
 
 		virtual int GetSkillLevel(int TSlot) const { return 1; }
-		
+
 		// Skills
 		void SetSkillBar(int TSlot, const SkillClass *TSkill) { SkillBar[TSlot] = TSkill; }
 		const SkillClass *GetSkillBar(int TSlot);

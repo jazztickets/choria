@@ -23,7 +23,7 @@
 #include "../network/network.h"
 #include "../network/packetstream.h"
 #include "../objects/fighter.h"
-#include "../objects/player.h"
+#include <objects/player.h>
 
 // Gets the mana cost of a skill
 int SkillClass::GetManaCost(int TLevel) const {

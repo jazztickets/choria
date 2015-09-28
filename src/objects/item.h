@@ -37,7 +37,7 @@ class ItemClass {
 	friend class StatsClass;
 
 	public:
-	
+
 		enum ItemType {
 			TYPE_HEAD,
 			TYPE_BODY,
@@ -66,7 +66,7 @@ class ItemClass {
 		bool IsHealthPotion() const { return Type == TYPE_POTION && HealthRestore > 0; }
 		bool IsManaPotion() const { return Type == TYPE_POTION && ManaRestore > 0; }
 		bool IsInvisPotion() const { return Type == TYPE_POTION && InvisPower > 0; }
-		bool IsPotionType(int TType) const { return TType == 0 && IsHealthPotion() || TType == 1 && IsManaPotion(); }
+		bool IsPotionType(int TType) const { return (TType == 0 && IsHealthPotion()) || (TType == 1 && IsManaPotion()); }
 
 		void GetDamageRange(int &TMin, int &TMax) const;
 		void GetDefenseRange(int &TMin, int &TMax) const;

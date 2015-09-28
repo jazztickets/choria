@@ -22,7 +22,7 @@
 #include "../engine/stats.h"
 #include "../network/packetstream.h"
 #include "../objects/fighter.h"
-#include "../objects/player.h"
+#include <objects/player.h>
 
 // Constructor
 ClientBattleClass::ClientBattleClass()
@@ -58,11 +58,11 @@ void ClientBattleClass::StartBattle(PlayerClass *TClientPlayer) {
 	// Add skill buttons
 	const SkillClass *Skill;
 	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-		
+
 		// Add button
 		SkillButtons[i] = irrGUI->addButton(Graphics::Instance().GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
 		IGUIStaticText *Text = Graphics::Instance().AddText(stringc(i+1).c_str(), 3, 1, GraphicsClass::ALIGN_LEFT, SkillButtons[i]);
-		Text->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_8));		
+		Text->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_8));
 
 		// Get skill info
 		Skill = ClientPlayer->GetSkillBar(i);
@@ -73,7 +73,7 @@ void ClientBattleClass::StartBattle(PlayerClass *TClientPlayer) {
 	}
 	PassButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
 	PassButton->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_8));
-	
+
 	State = STATE_GETINPUT;
 	TargetState = -1;
 	ShowResults = false;
@@ -110,6 +110,8 @@ void ClientBattleClass::HandleInput(EKEY_CODE TKey) {
 				break;
 				case KEY_DOWN:
 					ChangeTarget(1);
+				break;
+				default:
 				break;
 			}
 		}
@@ -148,7 +150,11 @@ void ClientBattleClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElem
 						break;
 					}
 				break;
+				default:
+				break;
 			}
+		break;
+		default:
 		break;
 	}
 }
@@ -266,7 +272,7 @@ void ClientBattleClass::RenderBattleWin() {
 	IconY += IconSpacing;
 	TextOffsetY = IconY - 20;
 	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_BATTLECOINS, IconX, IconY);
-	
+
 	sprintf(String, "%d gold", TotalGold);
 	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
 	Graphics::Instance().RenderText(String, TextOffsetX, TextOffsetY);
@@ -301,7 +307,7 @@ void ClientBattleClass::RenderBattleWin() {
 			}
 		}
 	}
-	
+
 }
 
 // Renders the battle lost screen
@@ -361,7 +367,7 @@ void ClientBattleClass::EndBattle(PacketClass *TPacket) {
 	int ItemCount = TPacket->ReadChar();
 	for(int i = 0; i < ItemCount; i++) {
 		int ItemID = TPacket->ReadInt();
-		const ItemClass *Item = Stats::Instance().GetItem(ItemID); 
+		const ItemClass *Item = Stats::Instance().GetItem(ItemID);
 		MonsterDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
 	}

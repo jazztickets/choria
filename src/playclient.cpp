@@ -115,7 +115,7 @@ void PlayClientState::HandlePacket(ENetEvent *TEvent) {
 		break;
 		case NetworkClass::WORLD_POSITION:
 			HandlePlayerPosition(&Packet);
-		break;		
+		break;
 		case NetworkClass::BATTLE_TURNRESULTS:
 			HandleBattleTurnResults(&Packet);
 		break;
@@ -151,7 +151,7 @@ void PlayClientState::HandlePacket(ENetEvent *TEvent) {
 		break;
 		case NetworkClass::TRADE_EXCHANGE:
 			HandleTradeExchange(&Packet);
-		break;		
+		break;
 	}
 }
 
@@ -164,14 +164,14 @@ void PlayClientState::Update(u32 TDeltaTime) {
 		case STATE_CONNECTING:
 		break;
 		case STATE_WALK:
-			
+
 			// Send move input
 			if(!HUD::Instance().IsChatting()) {
 				if(Input::Instance().GetMouseState(InputClass::MOUSE_LEFT) && !(Input::Instance().GetMousePosition().X >= 656 && Input::Instance().GetMousePosition().Y >= 575)) {
 					position2di MoveTarget;
 					Map->ScreenToGrid(Input::Instance().GetMousePosition(), MoveTarget);
 					position2di Delta = MoveTarget - Player->GetPosition();
-					
+
 					if(abs(Delta.X) > abs(Delta.Y)) {
 						if(Delta.X < 0)
 							SendMoveCommand(PlayerClass::MOVE_LEFT);
@@ -185,7 +185,7 @@ void PlayClientState::Update(u32 TDeltaTime) {
 							SendMoveCommand(PlayerClass::MOVE_DOWN);
 					}
 				}
-				
+
 				if(Input::Instance().GetKeyState(KEY_LEFT))
 					SendMoveCommand(PlayerClass::MOVE_LEFT);
 				else if(Input::Instance().GetKeyState(KEY_UP))
@@ -303,7 +303,9 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 					HUD::Instance().InitSkills();
 				break;
 				case KEY_KEY_A:
-					SendAttackPlayer();					
+					SendAttackPlayer();
+				break;
+				default:
 				break;
 			}
 		break;
@@ -315,6 +317,8 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 					HUD::Instance().CloseWindows();
+				break;
+				default:
 				break;
 			}
 		break;
@@ -333,7 +337,9 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_DOWN:
 					HUD::Instance().CloseWindows();
 				break;
-			}			
+				default:
+				break;
+			}
 		break;
 		case STATE_TRADE:
 			switch(TKey) {
@@ -346,7 +352,9 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_DOWN:
 					HUD::Instance().CloseWindows();
 				break;
-			}			
+				default:
+				break;
+			}
 		break;
 		case STATE_VENDOR:
 			switch(TKey) {
@@ -360,6 +368,8 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_DOWN:
 					HUD::Instance().CloseWindows();
 				break;
+				default:
+				break;
 			}
 		break;
 		case STATE_TRADER:
@@ -371,6 +381,8 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_RIGHT:
 				case KEY_DOWN:
 					HUD::Instance().CloseWindows();
+				break;
+				default:
 				break;
 			}
 		break;
@@ -386,7 +398,11 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_DOWN:
 					HUD::Instance().CloseWindows();
 				break;
+				default:
+				break;
 			}
+		break;
+		default:
 		break;
 	}
 
@@ -400,7 +416,7 @@ void PlayClientState::HandleMouseMotion(int TMouseX, int TMouseY) {
 
 // Mouse buttons
 bool PlayClientState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
-	
+
 	return HUD::Instance().HandleMousePress(TButton, TMouseX, TMouseY);
 }
 
@@ -607,9 +623,9 @@ void PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
 		Position.X = TPacket->ReadChar();
 		Position.Y = TPacket->ReadChar();
 		Invisible = TPacket->ReadBit();
-		
+
 		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
-		
+
 		PlayerClass *OtherPlayer = static_cast<PlayerClass *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
 		if(OtherPlayer) {
 
@@ -636,7 +652,7 @@ void PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
 				default:
 					OtherPlayer->SetStateImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_WORLDBUSY));
 				break;
-			}			
+			}
 		}
 	}
 }
@@ -778,7 +794,7 @@ void PlayClientState::HandleEventStart(PacketClass *TPacket) {
 void PlayClientState::HandleInventoryUse(PacketClass *TPacket) {
 
 	int Slot = TPacket->ReadChar();
-	Player->UpdateInventory(Slot, -1);	
+	Player->UpdateInventory(Slot, -1);
 }
 
 // Handles a chat message
@@ -841,7 +857,7 @@ void PlayClientState::HandleTradeCancel(PacketClass *TPacket) {
 
 // Handles a trade item update
 void PlayClientState::HandleTradeItem(PacketClass *TPacket) {
-	
+
 	// Get trading player
 	PlayerClass *TradePlayer = Player->GetTradePlayer();
 	if(!TradePlayer)
@@ -867,7 +883,7 @@ void PlayClientState::HandleTradeItem(PacketClass *TPacket) {
 
 	// Reset agreement
 	TradePlayer->SetTradeAccepted(false);
-	HUD::Instance().ResetAcceptButton();	
+	HUD::Instance().ResetAcceptButton();
 }
 
 // Handles a gold update from the trading player
@@ -884,7 +900,7 @@ void PlayClientState::HandleTradeGold(PacketClass *TPacket) {
 
 	// Reset agreement
 	TradePlayer->SetTradeAccepted(false);
-	HUD::Instance().ResetAcceptButton();	
+	HUD::Instance().ResetAcceptButton();
 }
 
 // Handles a trade accept

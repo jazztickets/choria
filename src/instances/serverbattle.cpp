@@ -23,7 +23,7 @@
 #include "../network/network.h"
 #include "../engine/random.h"
 #include "../engine/instances.h"
-#include "../objects/player.h"
+#include <objects/player.h>
 #include "../objects/monster.h"
 
 // Constructor

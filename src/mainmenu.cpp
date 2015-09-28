@@ -32,15 +32,15 @@ int MainMenuState::Init() {
 
 	// Single Player
 	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	IGUIButton *SinglePlayerButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_SINGLEPLAYER, L"Single Player");
+	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_SINGLEPLAYER, L"Single Player");
 
 	// Multiplayer
 	DrawY += OffsetY;
-	IGUIButton *MultiplayerButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_MULTIPLAYER, L"Multiplayer");
+	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_MULTIPLAYER, L"Multiplayer");
 
 	// Editor
 	DrawY += OffsetY;
-	IGUIButton *EditorButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EDITOR, L"Map Editor");
+	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EDITOR, L"Map Editor");
 
 	// Options
 	//DrawY += OffsetY;
@@ -49,7 +49,7 @@ int MainMenuState::Init() {
 
 	// Exit
 	DrawY += OffsetY;
-	IGUIButton *ExitButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EXIT, L"Exit");
+	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EXIT, L"Exit");
 
 	// Game version
 	Graphics::Instance().AddText(GAME_VERSION, 10, 580);
@@ -88,6 +88,8 @@ bool MainMenuState::HandleKeyPress(EKEY_CODE TKey) {
 		case KEY_RETURN:
 			StartSinglePlayer();
 		break;
+		default:
+		break;
 	}
 
 	return false;
@@ -113,7 +115,11 @@ void MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement)
 				case ELEMENT_EXIT:
 					Game::Instance().SetDone(true);
 				break;
+				default:
+				break;
 			}
+		break;
+		default:
 		break;
 	}
 }

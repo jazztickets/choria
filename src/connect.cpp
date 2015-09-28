@@ -139,6 +139,8 @@ bool ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_RETURN:
 					ChangeState(STATE_CONNECT);
 				break;
+				default:
+				break;
 			}
 		break;
 		case STATE_CONNECT:
@@ -146,7 +148,11 @@ bool ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_ESCAPE:
 					ChangeState(STATE_MAIN);
 				break;
+				default:
+				break;
 			}
+		break;
+		default:
 		break;
 	}
 
@@ -166,9 +172,15 @@ void ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 						case ELEMENT_CANCEL:
 							Game::Instance().ChangeState(MainMenuState::Instance());
 						break;
+						default:
+						break;
 					}
 				break;
+				default:
+				break;
 			}
+		break;
+		default:
 		break;
 	}
 }

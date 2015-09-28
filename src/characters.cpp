@@ -143,6 +143,8 @@ bool CharactersState::HandleKeyPress(EKEY_CODE TKey) {
 				PlayCharacter();
 			}
 		break;
+		default:
+		break;
 	}
 
 	return false;
@@ -174,6 +176,8 @@ void CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 				case ELEMENT_SLOT5:
 					UpdateSelection(TElement->getID() - ELEMENT_SLOT0);
 				break;
+				default:
+				break;
 			}
 		break;
 		case EGET_MESSAGEBOX_YES:
@@ -181,10 +185,13 @@ void CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 				case ELEMENT_DELETECONFIRM:
 					Delete();
 				break;
+				default:
+				break;
 			}
 		break;
+		default:
+		break;
 	}
-
 }
 
 // Process the character list packet

@@ -69,7 +69,8 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 			State = ConnectState::Instance();
 		}
 		else if(Token == "-login" && TokensRemaining > 1) {
-			AccountState::Instance()->SetLoginInfo(TArguments[++i], TArguments[++i]);
+			AccountState::Instance()->SetLoginInfo(TArguments[i+1], TArguments[i+2]);
+			i+=2;
 		}
 	}
 

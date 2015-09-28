@@ -88,7 +88,7 @@ void MapEditorState::Update(u32 TDeltaTime) {
 					case 3:
 						ApplyBrushSize(BrushPosition.X, BrushPosition.Y, 12);
 					break;
-				}				
+				}
 			}
 		break;
 	}
@@ -408,28 +408,28 @@ void MapEditorState::InitNewMap() {
 	// Main dialog window
 	IGUIWindow *Window = irrGUI->addWindow(Graphics::Instance().GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
 	irrGUI->setFocus(Window);
-	
+
 	// Filename
-	IGUIStaticText *EditFile = Graphics::Instance().AddText("File", 80, 54, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics::Instance().AddText("File", 80, 54, GraphicsClass::ALIGN_RIGHT, Window);
 	IGUIEditBox *EditName = irrGUI->addEditBox(L"test.map", Graphics::Instance().GetRect(90, 50, 150, 25), true, Window, NEWMAP_FILE);
 	EditName->setMax(15);
 
 	// Map width
-	IGUIStaticText *TextWidth = Graphics::Instance().AddText("Width", 80, 84, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics::Instance().AddText("Width", 80, 84, GraphicsClass::ALIGN_RIGHT, Window);
 	IGUIEditBox *EditWidth = irrGUI->addEditBox(L"100", Graphics::Instance().GetRect(90, 80, 100, 25), true, Window, NEWMAP_WIDTH);
 	EditWidth->setMax(15);
 
 	// Map height
-	IGUIStaticText *TextHeight = Graphics::Instance().AddText("Height", 80, 114, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics::Instance().AddText("Height", 80, 114, GraphicsClass::ALIGN_RIGHT, Window);
 	IGUIEditBox *EditHeight = irrGUI->addEditBox(L"100", Graphics::Instance().GetRect(90, 110, 100, 25), true, Window, NEWMAP_HEIGHT);
 	EditHeight->setMax(15);
 
 	// Buttons
-	IGUIButton *ButtonCreate = irrGUI->addButton(Graphics::Instance().GetRect(20, 160, 110, 25), Window, NEWMAP_CREATE, L"Create");
-	IGUIButton *ButtonCancel = irrGUI->addButton(Graphics::Instance().GetRect(150, 160, 110, 25), Window, NEWMAP_CANCEL, L"Cancel");
+	irrGUI->addButton(Graphics::Instance().GetRect(20, 160, 110, 25), Window, NEWMAP_CREATE, L"Create");
+	irrGUI->addButton(Graphics::Instance().GetRect(150, 160, 110, 25), Window, NEWMAP_CANCEL, L"Cancel");
 
 	// Error
-	IGUIStaticText *TextError = irrGUI->addStaticText(L"", Graphics::Instance().GetRect(20, 230, 400, 25), false, false, Window, NEWMAP_ERROR);
+	irrGUI->addStaticText(L"", Graphics::Instance().GetRect(20, 230, 400, 25), false, false, Window, NEWMAP_ERROR);
 
 	irrGUI->setFocus(EditName);
 
@@ -493,7 +493,7 @@ void MapEditorState::InitLoadMap() {
 
 	// Main dialog window
 	stringc StartPath = Config::Instance().GetSaveMapPath("");
-	IGUIFileOpenDialog *FileOpen = irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (stringc::char_type *)StartPath.c_str());
+	irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (stringc::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;
 }
@@ -534,10 +534,10 @@ void MapEditorState::InitBrushOptions() {
 	// Wall
 	StartX = 75, StartY = 40;
 	Graphics::Instance().AddText("Wall", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUICheckBox *BrushWall = irrGUI->addCheckBox(Brush.Wall, Graphics::Instance().GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
+	irrGUI->addCheckBox(Brush.Wall, Graphics::Instance().GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
 
 	Graphics::Instance().AddText("PVP", StartX + 50, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUICheckBox *BrushPVP = irrGUI->addCheckBox(Brush.PVP, Graphics::Instance().GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
+	irrGUI->addCheckBox(Brush.PVP, Graphics::Instance().GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
 
 	// Zone
 	StartY += 30;
@@ -577,7 +577,7 @@ void MapEditorState::InitBrushOptions() {
 	irrGUI->addCheckBox(Filters[FILTER_EVENTDATA], Graphics::Instance().GetRect(StartX, StartY + OffsetY * 5, 100, 20), Window, BRUSHOPTIONS_FILTEREVENTDATA);
 
 	// Buttons
-	IGUIButton *ButtonClose = irrGUI->addButton(Graphics::Instance().GetCenteredRect(100, 320, 75, 25), Window, BRUSHOPTIONS_FILTERCLOSE, L"Close");
+	irrGUI->addButton(Graphics::Instance().GetCenteredRect(100, 320, 75, 25), Window, BRUSHOPTIONS_FILTERCLOSE, L"Close");
 
 	State = STATE_BRUSHOPTIONS;
 }
@@ -592,7 +592,7 @@ void MapEditorState::RefreshTexturePalette() {
 	irrFile->changeWorkingDirectoryTo(WorkingDirectory + "textures/map");
 	IFileList *FileList = irrFile->createFileList();
 	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
-	
+
 	int FileCount = FileList->getFileCount();
 	for(int i = 0; i < FileCount; i++) {
 		if(!FileList->isDirectory(i)) {

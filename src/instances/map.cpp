@@ -24,7 +24,7 @@
 #include "../engine/filestream.h"
 #include "../engine/stats.h"
 #include "../playserver.h"
-#include "../objects/player.h"
+#include <objects/player.h>
 
 // Constructor for the map editor: new map
 MapClass::MapClass(const stringc &TFilename, int TWidth, int THeight) {
@@ -40,7 +40,7 @@ MapClass::MapClass(const stringc &TFilename, int TWidth, int THeight) {
 // Constructor for the map editor: load map
 MapClass::MapClass(const stringc &TFilename) {
 	Init();
-	
+
 	Filename = TFilename;
 }
 
@@ -146,7 +146,7 @@ void MapClass::Render() {
 
 // Renders the map for editor
 void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
-	
+
 	position2di GridPosition, DrawPosition;
 	for(int i = 0; i < ViewSize.Width; i++) {
 		for(int j = 0; j < ViewSize.Height; j++) {
@@ -252,8 +252,8 @@ int MapClass::SaveMap() {
 	File.WriteInt(Height);
 
    // Write texture list
-    File.WriteInt(TextureList.size());
-    for(u32 i = 0; i < TextureList.size(); i++) {
+	File.WriteInt(TextureList.size());
+	for(u32 i = 0; i < TextureList.size(); i++) {
 		if(TextureList[i] == NULL)
 			File.WriteString("none");
 		else {
@@ -265,7 +265,7 @@ int MapClass::SaveMap() {
 
 			File.WriteString(TexturePath.c_str());
 		}
-    }
+	}
 
 	// Write no-zone texture
 	if(NoZoneTexture == NULL)
@@ -317,7 +317,7 @@ int MapClass::LoadMap() {
 	int MapVersion = File.ReadInt();
 	Width = File.ReadInt();
 	Height = File.ReadInt();
-	if(Width < 5 || Width > 255 || Height < 5 || Height > 255) {
+	if(Width < 5 || Width > 255 || Height < 5 || Height > 255 || MapVersion != MAP_VERSION) {
 		printf("LoadMap: bad size header\n");
 		return 0;
 	}
@@ -346,7 +346,7 @@ int MapClass::LoadMap() {
 		else
 			Textures.push_back(irrDriver->getTexture(WorkingDirectory + "textures/map/" + TextureFile));
 	}
-	
+
 	// Get no zone texture
 	File.ReadString(String);
 	TextureFile = String;
@@ -393,7 +393,7 @@ void MapClass::GetTextureListFromMap(array<ITexture *> &TTextures) {
 			// Check for new textures
 			if(GetTextureIndex(TTextures, Tiles[i][j].Texture) == -1) {
 				TTextures.push_back(Tiles[i][j].Texture);
-			}			
+			}
 		}
 	}
 }
@@ -436,6 +436,8 @@ void MapClass::AddObject(ObjectClass *TObject) {
 			Packet.WriteBit(NewPlayer->IsInvisible());
 		}
 		break;
+		default:
+		break;
 	}
 
 	// Notify other players of the new object
@@ -472,7 +474,7 @@ const list<ObjectClass *> &MapClass::GetObjects() const {
 
 // Returns a list of players close to a player
 void MapClass::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, list<PlayerClass *> &TPlayers) {
-	
+
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
@@ -489,7 +491,7 @@ void MapClass::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquare
 
 // Returns the closest player
 PlayerClass *MapClass::GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDistanceSquared, int TState) {
-	
+
 	PlayerClass *ClosestPlayer = NULL;
 	float ClosestDistanceSquared = 1e10;
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {

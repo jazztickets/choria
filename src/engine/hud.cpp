@@ -26,7 +26,7 @@
 #include "../network/network.h"
 #include "../network/packetstream.h"
 #include "../instances/map.h"
-#include "../objects/player.h"
+#include <objects/player.h>
 #include "../objects/item.h"
 
 struct PositionStruct {
@@ -272,7 +272,11 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 						case ELEMENT_MAINMENU:
 							InitMenu();
 						break;
+						default:
+						break;
 					}
+				break;
+				default:
 				break;
 			}
 		break;
@@ -289,6 +293,8 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 						break;
 					}
 				break;
+				default:
+				break;
 			}
 		break;
 		case PlayClientState::STATE_TOWNPORTAL:
@@ -300,6 +306,8 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 						break;
 					}
 				break;
+				default:
+				break;
 			}
 		break;
 		case PlayClientState::STATE_INVENTORY:
@@ -310,6 +318,8 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 							CloseWindows();
 						break;
 					}
+				break;
+				default:
 				break;
 			}
 		break;
@@ -328,7 +338,11 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 						case ELEMENT_TRADERCANCEL:
 							CloseWindows();
 						break;
+						default:
+						break;
 					}
+				break;
+				default:
 				break;
 			}
 		break;
@@ -344,6 +358,8 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 							Packet.WriteChar(TradeAcceptButton->isPressed());
 							ClientNetwork->SendPacketToHost(&Packet);
 						}
+						break;
+						default:
 						break;
 					}
 				break;
@@ -368,6 +384,8 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 						// Reset agreement
 						ResetAcceptButton();
 					}
+				break;
+				default:
 				break;
 			}
 		break;
@@ -428,7 +446,11 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 						RefreshSkillButtons();
 					}
 				break;
+				default:
+				break;
 			}
+		break;
+		default:
 		break;
 	}
 }
@@ -633,7 +655,7 @@ void HUDClass::InitInventory(int TX, int TY, bool TSendBusy) {
 	TabInventory = irrGUI->addTab(Graphics::Instance().GetCenteredRect(TX, TY, 265, 200));
 
 	// Add background
-	IGUIImage *Image = irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_INVENTORY), position2di(0, 0), true, TabInventory);
+	irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_INVENTORY), position2di(0, 0), true, TabInventory);
 
 	*State = PlayClientState::STATE_INVENTORY;
 }
@@ -663,7 +685,7 @@ void HUDClass::InitVendor(int TVendorID) {
 	TabVendor = irrGUI->addTab(Graphics::Instance().GetCenteredRect(400, 180, 262, 246));
 
 	// Add background
-	IGUIImage *Image = irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_VENDOR), position2di(0, 0), true, TabVendor);
+	irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_VENDOR), position2di(0, 0), true, TabVendor);
 
 	// Open inventory
 	InitInventory(400, 420, false);
@@ -703,11 +725,11 @@ void HUDClass::InitTrader(int TTraderID) {
 	TabTrader = irrGUI->addTab(Graphics::Instance().GetCenteredRect(400, 250, 166, 272));
 
 	// Add background
-	IGUIImage *Image = irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_TRADER), position2di(0, 0), true, TabTrader);
+	irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_TRADER), position2di(0, 0), true, TabTrader);
 
 	// Add buttons
 	IGUIButton *TradeButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
-	IGUIButton *CancelButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
+	irrGUI->addButton(Graphics::Instance().GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
 
 	// Can't trade
 	if(RewardItemSlot == -1)
@@ -1095,7 +1117,7 @@ void HUDClass::DrawTrader() {
 			Color.set(255, 255, 255, 255);
 		sprintf(Buffer, "%d", Trader->TraderItems[i].Count);
 		Graphics::Instance().RenderText(Buffer, DrawX + 16, DrawY - 14, GraphicsClass::ALIGN_CENTER, Color);
-	
+
 		PositionX++;
 		if(PositionX > 3) {
 			PositionX = 0;
@@ -1107,7 +1129,7 @@ void HUDClass::DrawTrader() {
 	Graphics::Instance().DrawCenteredImage(Trader->RewardItem->GetImage(), OffsetX + 82, OffsetY + 198);
 	sprintf(Buffer, "%d", Trader->Count);
 	Graphics::Instance().RenderText(Buffer, OffsetX + 82, OffsetY + 166, GraphicsClass::ALIGN_CENTER);
-	
+
 	// Draw text
 	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
 	Graphics::Instance().RenderText("Looking for", CenterX, OffsetY + 13, GraphicsClass::ALIGN_CENTER);
@@ -1510,7 +1532,7 @@ void HUDClass::DrawSkillTooltip() {
 
 // Draw the skill description
 void HUDClass::DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDrawX, int &TDrawY) {
-	
+
 	// Get skill data
 	int PowerMin, PowerMax, PowerMinRound, PowerMaxRound, PowerPercent;
 	float PowerMinFloat, PowerMaxFloat;
@@ -1595,7 +1617,6 @@ void HUDClass::DrawTradeItems(PlayerClass *TPlayer, int TDrawX, int TDrawY, bool
 	rect<s32> WindowArea = TabTrade->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
-	int CenterX = WindowArea.getCenter().X;
 
 	Graphics::Instance().SetFont(GraphicsClass::FONT_7);
 

@@ -20,11 +20,11 @@
 
 // Constructor
 ObjectClass::ObjectClass(ObjectType TType)
-:	Type(TType),
+:	Map(NULL),
+	Type(TType),
 	Deleted(false),
-	NetworkID(-1),
-	Map(NULL),
-	Position(-1, -1) {
+	Position(-1, -1),
+	NetworkID(-1) {
 
 }
 

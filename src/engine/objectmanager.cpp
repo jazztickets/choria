@@ -17,8 +17,8 @@
 *******************************************************************************/
 #include "objectmanager.h"
 #include "constants.h"
-#include "../objects/object.h"
-#include "../objects/player.h"
+#include <objects/object.h>
+#include <objects/player.h>
 
 // Constructor
 ObjectManagerClass::ObjectManagerClass() {
@@ -43,7 +43,7 @@ ObjectManagerClass::~ObjectManagerClass() {
 ObjectClass *ObjectManagerClass::AddObject(ObjectClass *TObject) {
 
 	if(TObject != NULL) {
-	
+
 		// Assign the object a network ID
 		int NetworkID = GetNextNetworkID();
 		if(NetworkID == -1) {
@@ -114,13 +114,13 @@ void ObjectManagerClass::Update(u32 TDeltaTime) {
 				ObjectDeletedCallback(Object);
 			}
 
-			ObjectArray[Object->GetNetworkID()] = NULL;
+			ObjectArray[(int)Object->GetNetworkID()] = NULL;
 
-			delete Object;			
+			delete Object;
 			Iterator = Objects.erase(Iterator);
 		}
 		else {
-			
+
 			++Iterator;
 		}
 	}

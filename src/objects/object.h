@@ -70,6 +70,9 @@ class ObjectClass {
 
 	protected:
 
+		// Instances
+		MapClass *Map;
+
 		// Properties
 		ObjectType Type;
 
@@ -79,9 +82,6 @@ class ObjectClass {
 
 		// Networking
 		char NetworkID;
-
-		// Instances
-		MapClass *Map;		
 
 };
 

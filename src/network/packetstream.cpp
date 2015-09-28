@@ -19,22 +19,22 @@
 
 // Constructor for a new packet
 PacketClass::PacketClass(char TPacketType, ENetPacketFlag TFlag, enet_uint8 TChannel)
-:	CurrentByte(0),
-	CurrentBit(0),
-	Channel(TChannel) {
+:	Channel(TChannel),
+	CurrentByte(0),
+	CurrentBit(0) {
 
 	// Create the enet packet
 	Packet = enet_packet_create(NULL, 32, TFlag);
 
 	// Write the packet header
 	WriteChar(TPacketType);
-};
+}
 
 // Constructor for existing packets
 PacketClass::PacketClass(ENetPacket *TPacket)
-:	CurrentByte(0),
-	CurrentBit(0),
-	Packet(TPacket) {
+:	Packet(TPacket),
+	CurrentByte(0),
+	CurrentBit(0) {
 
 }
 

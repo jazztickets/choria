@@ -138,7 +138,9 @@ bool CreateCharacterState::HandleKeyPress(EKEY_CODE TKey) {
 		case KEY_RETURN:
 			CreateCharacter();
 		break;
-	}				
+		default:
+		break;
+	}
 
 	return false;
 }
@@ -154,7 +156,7 @@ void CreateCharacterState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TE
 					CreateCharacter();
 				break;
 				case ELEMENT_BACK:
-					Back();					
+					Back();
 				break;
 				default:
 					if(ID >= ELEMENT_PORTRAITS) {
@@ -163,6 +165,8 @@ void CreateCharacterState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TE
 					}
 				break;
 			}
+		break;
+		default:
 		break;
 	}
 }

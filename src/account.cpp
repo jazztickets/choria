@@ -145,10 +145,12 @@ bool AccountState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_RETURN:
 					ChangeState(STATE_LOGIN);
 				break;
-			}				
+				default:
+				break;
+			}
 		break;
 	}
-	
+
 	return false;
 }
 
@@ -170,9 +172,15 @@ void AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 							CreateAccount = true;
 							ChangeState(STATE_LOGIN);
 						break;
+						default:
+						break;
 					}
 				break;
+				default:
+				break;
 			}
+		break;
+		default:
 		break;
 	}
 }
@@ -205,7 +213,7 @@ void AccountState::ChangeState(int TState) {
 				ClientNetwork->SendPacketToHost(&Packet);
 			}
 		break;
-	}	
+	}
 }
 
 // Validates the login form

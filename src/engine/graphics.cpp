@@ -29,18 +29,18 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE
 	if(irrDevice == NULL)
 		return 0;
 
-	irrDevice->setWindowCaption(L"Choria");
+	irrDevice->setWindowCaption(L"choria");
 	irrDevice->setEventReceiver(TEventReceiver);
 	ILogger *Logger = irrDevice->getLogger();
 	Logger->setLogLevel(ELL_ERROR);
-  
+
 	// Save off global pointers
 	irrDriver = irrDevice->getVideoDriver();
 	irrScene = irrDevice->getSceneManager();
 	irrGUI = irrDevice->getGUIEnvironment();
 	irrFile = irrDevice->getFileSystem();
 	irrTimer = irrDevice->getTimer();
-	
+
 	// Save original working directory
 	WorkingDirectory = irrFile->getWorkingDirectory() + "/";
 
@@ -59,7 +59,7 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE
 
 	// Set colors
 	Skin->setColor(EGDC_BUTTON_TEXT, SColor(255, 255, 255, 255));
-	Skin->setColor(EGDC_WINDOW, SColor(255, 0, 0, 20));	
+	Skin->setColor(EGDC_WINDOW, SColor(255, 0, 0, 20));
 	Skin->setColor(EGDC_WINDOW_SYMBOL, SColor(255, 255, 255, 255));
 	Skin->setColor(EGDC_3D_FACE, SColor(255, 0, 0, 20));
 	Skin->setColor(EGDC_3D_SHADOW, SColor(255, 0, 0, 20));
@@ -69,7 +69,7 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE
 	Skin->setColor(EGDC_GRAY_EDITABLE, SColor(255, 0, 0, 0));
 	Skin->setColor(EGDC_FOCUSED_EDITABLE, SColor(255, 0, 0, 0));
 	Skin->setColor(EGDC_EDITABLE, SColor(255, 0, 0, 0));
-	
+
 	// Load images
 	Images[IMAGE_EMPTYSLOT] = irrDriver->getTexture(WorkingDirectory + "textures/interface/emptyslot.png");
 	Images[IMAGE_SELECTEDSLOT] = irrDriver->getTexture(WorkingDirectory + "textures/interface/selectedslot.png");
@@ -131,7 +131,7 @@ void GraphicsClass::EndFrame() {
 
 // Draws an 2d image centered about a point
 void GraphicsClass::DrawCenteredImage(const ITexture *TTexture, int TPositionX, int TPositionY, const SColor &TColor) {
-	
+
 	if(TTexture)
 		irrDriver->draw2DImage(TTexture, position2di(TPositionX - (TTexture->getSize().Width >> 1), TPositionY - (TTexture->getSize().Height >> 1)), rect<s32>(0, 0, TTexture->getSize().Width, TTexture->getSize().Height), 0, TColor, true);
 }
@@ -201,7 +201,7 @@ rect<s32> GraphicsClass::GetCenteredRect(int TPositionX, int TPositionY, int TWi
 
 // Return a rect
 rect<s32> GraphicsClass::GetRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
-	
+
 	return rect<s32>(TPositionX, TPositionY, TPositionX + TWidth, TPositionY + THeight);
 }
 

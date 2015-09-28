@@ -18,7 +18,7 @@
 #include "battle.h"
 #include "../objects/fighter.h"
 #include "../objects/monster.h"
-#include "../objects/player.h"
+#include <objects/player.h>
 
 // Constructor
 BattleClass::BattleClass() {

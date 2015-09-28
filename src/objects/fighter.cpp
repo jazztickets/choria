@@ -25,6 +25,7 @@
 // Constructor
 FighterClass::FighterClass(int TType)
 :	Type(TType),
+	Name(""),
 	Level(0),
 	Health(0),
 	MaxHealth(0),
@@ -39,12 +40,11 @@ FighterClass::FighterClass(int TType)
 	HealthAccumulator(0.0f),
 	ManaAccumulator(0.0f),
 	Battle(NULL),
-	Portrait(NULL),
-	SkillUsed(NULL),
-	SkillUsing(NULL),
 	Command(-1),
-	Name(""),
-	Target(0) {
+	Target(0),
+	SkillUsing(NULL),
+	SkillUsed(NULL),
+	Portrait(NULL) {
 
 	for(int i = 0; i < FIGHTER_MAXSKILLS; i++)
 		SkillBar[i] = NULL;
