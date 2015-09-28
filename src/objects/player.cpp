@@ -71,7 +71,7 @@ PlayerClass::PlayerClass()
 	TradeAccepted(false),
 	TradePlayer(NULL) {
 
-	WorldImage = irrDriver->getTexture(WorkingDirectory + "textures/players/basic.png");
+	WorldImage = irrDriver->getTexture("textures/players/basic.png");
 
 	Position.X = 0;
 	Position.Y = 0;

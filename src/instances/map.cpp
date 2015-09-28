@@ -189,7 +189,7 @@ void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP)
 				}
 			}
 			else {
-				Graphics.DrawCenteredImage(irrDriver->getTexture(WorkingDirectory + "textures/editor/nozone.png"), DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(irrDriver->getTexture("textures/editor/nozone.png"), DrawPosition.X, DrawPosition.Y);
 			}
 		}
 	}
@@ -330,10 +330,6 @@ int MapClass::LoadMap() {
 	int TextureCount = File.ReadInt();
 	Textures.clear();
 
-	// Change directories
-	//stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
-	//irrFile->changeWorkingDirectoryTo("textures/map");
-
 	// Read textures from map
 	stringc TextureFile;
 	char String[256];
@@ -344,7 +340,7 @@ int MapClass::LoadMap() {
 		if(TextureFile == "none")
 			Textures.push_back(NULL);
 		else
-			Textures.push_back(irrDriver->getTexture(WorkingDirectory + "textures/map/" + TextureFile));
+			Textures.push_back(irrDriver->getTexture(stringc("textures/map/") + TextureFile));
 	}
 
 	// Get no zone texture
@@ -353,7 +349,7 @@ int MapClass::LoadMap() {
 	if(TextureFile == "none")
 		NoZoneTexture = NULL;
 	else
-		NoZoneTexture = irrDriver->getTexture(WorkingDirectory + "textures/map/" + TextureFile);
+		NoZoneTexture = irrDriver->getTexture(stringc("textures/map/") + TextureFile);
 
 	// Read map data
 	TileStruct *Tile;

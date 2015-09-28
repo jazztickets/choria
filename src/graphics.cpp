@@ -43,9 +43,6 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE
 	irrFile = irrDevice->getFileSystem();
 	irrTimer = irrDevice->getTimer();
 
-	// Save original working directory
-	WorkingDirectory = irrFile->getWorkingDirectory() + "/";
-
 	// Load skin data
 	Skin = irrGUI->getSkin();
 
@@ -73,41 +70,41 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE
 	Skin->setColor(EGDC_EDITABLE, SColor(255, 0, 0, 0));
 
 	// Load images
-	Images[IMAGE_EMPTYSLOT] = irrDriver->getTexture(WorkingDirectory + "textures/interface/emptyslot.png");
-	Images[IMAGE_SELECTEDSLOT] = irrDriver->getTexture(WorkingDirectory + "textures/interface/selectedslot.png");
-	Images[IMAGE_HEALTH] = irrDriver->getTexture(WorkingDirectory + "textures/interface/health.png");
-	Images[IMAGE_HEALTHMAX] = irrDriver->getTexture(WorkingDirectory + "textures/interface/healthmax.png");
-	Images[IMAGE_MANA] = irrDriver->getTexture(WorkingDirectory + "textures/interface/mana.png");
-	Images[IMAGE_MANAMAX] = irrDriver->getTexture(WorkingDirectory + "textures/interface/manamax.png");
-	Images[IMAGE_EXPERIENCE] = irrDriver->getTexture(WorkingDirectory + "textures/interface/experience.png");
-	Images[IMAGE_EXPERIENCEMAX] = irrDriver->getTexture(WorkingDirectory + "textures/interface/experiencemax.png");
-	Images[IMAGE_BLACK] = irrDriver->getTexture(WorkingDirectory + "textures/interface/black.png");
-	Images[IMAGE_GOLD] = irrDriver->getTexture(WorkingDirectory + "textures/interface/gold.png");
-	Images[IMAGE_PVP] = irrDriver->getTexture(WorkingDirectory + "textures/interface/pvp.png");
-	Images[IMAGE_MENULOGO] = irrDriver->getTexture(WorkingDirectory + "textures/menu/logo.png");
-	Images[IMAGE_MENUBLANKSLOT] = irrDriver->getTexture(WorkingDirectory + "textures/menu/blankslot.png");
-	Images[IMAGE_MENUSELECTED] = irrDriver->getTexture(WorkingDirectory + "textures/menu/selected.png");
-	Images[IMAGE_WORLDBUSY] = irrDriver->getTexture(WorkingDirectory + "textures/world/busy.png");
-	Images[IMAGE_WORLDTRADE] = irrDriver->getTexture(WorkingDirectory + "textures/world/trade.png");
-	Images[IMAGE_BATTLESLOTLEFT] = irrDriver->getTexture(WorkingDirectory + "textures/battle/slot_left.png");
-	Images[IMAGE_BATTLESLOTRIGHT] = irrDriver->getTexture(WorkingDirectory + "textures/battle/slot_right.png");
-	Images[IMAGE_BATTLEEXPERIENCE] = irrDriver->getTexture(WorkingDirectory + "textures/battle/experience.png");
-	Images[IMAGE_BATTLECOINS] = irrDriver->getTexture(WorkingDirectory + "textures/battle/coins.png");
-	Images[IMAGE_BATTLECHEST] = irrDriver->getTexture(WorkingDirectory + "textures/battle/chest.png");
-	Images[IMAGE_BATTLETARGET] = irrDriver->getTexture(WorkingDirectory + "textures/battle/target.png");
-	Images[IMAGE_INVENTORY] = irrDriver->getTexture(WorkingDirectory + "textures/interface/inventory.png");
-	Images[IMAGE_VENDOR] = irrDriver->getTexture(WorkingDirectory + "textures/interface/vendor.png");
-	Images[IMAGE_TRADE] = irrDriver->getTexture(WorkingDirectory + "textures/interface/trade.png");
-	Images[IMAGE_TRADER] = irrDriver->getTexture(WorkingDirectory + "textures/interface/trader.png");
-	Images[IMAGE_PLUS] = irrDriver->getTexture(WorkingDirectory + "textures/interface/plus.png");
-	Images[IMAGE_MINUS] = irrDriver->getTexture(WorkingDirectory + "textures/interface/minus.png");
+	Images[IMAGE_EMPTYSLOT] = irrDriver->getTexture("textures/interface/emptyslot.png");
+	Images[IMAGE_SELECTEDSLOT] = irrDriver->getTexture("textures/interface/selectedslot.png");
+	Images[IMAGE_HEALTH] = irrDriver->getTexture("textures/interface/health.png");
+	Images[IMAGE_HEALTHMAX] = irrDriver->getTexture("textures/interface/healthmax.png");
+	Images[IMAGE_MANA] = irrDriver->getTexture("textures/interface/mana.png");
+	Images[IMAGE_MANAMAX] = irrDriver->getTexture("textures/interface/manamax.png");
+	Images[IMAGE_EXPERIENCE] = irrDriver->getTexture("textures/interface/experience.png");
+	Images[IMAGE_EXPERIENCEMAX] = irrDriver->getTexture("textures/interface/experiencemax.png");
+	Images[IMAGE_BLACK] = irrDriver->getTexture("textures/interface/black.png");
+	Images[IMAGE_GOLD] = irrDriver->getTexture("textures/interface/gold.png");
+	Images[IMAGE_PVP] = irrDriver->getTexture("textures/interface/pvp.png");
+	Images[IMAGE_MENULOGO] = irrDriver->getTexture("textures/menu/logo.png");
+	Images[IMAGE_MENUBLANKSLOT] = irrDriver->getTexture("textures/menu/blankslot.png");
+	Images[IMAGE_MENUSELECTED] = irrDriver->getTexture("textures/menu/selected.png");
+	Images[IMAGE_WORLDBUSY] = irrDriver->getTexture("textures/world/busy.png");
+	Images[IMAGE_WORLDTRADE] = irrDriver->getTexture("textures/world/trade.png");
+	Images[IMAGE_BATTLESLOTLEFT] = irrDriver->getTexture("textures/battle/slot_left.png");
+	Images[IMAGE_BATTLESLOTRIGHT] = irrDriver->getTexture("textures/battle/slot_right.png");
+	Images[IMAGE_BATTLEEXPERIENCE] = irrDriver->getTexture("textures/battle/experience.png");
+	Images[IMAGE_BATTLECOINS] = irrDriver->getTexture("textures/battle/coins.png");
+	Images[IMAGE_BATTLECHEST] = irrDriver->getTexture("textures/battle/chest.png");
+	Images[IMAGE_BATTLETARGET] = irrDriver->getTexture("textures/battle/target.png");
+	Images[IMAGE_INVENTORY] = irrDriver->getTexture("textures/interface/inventory.png");
+	Images[IMAGE_VENDOR] = irrDriver->getTexture("textures/interface/vendor.png");
+	Images[IMAGE_TRADE] = irrDriver->getTexture("textures/interface/trade.png");
+	Images[IMAGE_TRADER] = irrDriver->getTexture("textures/interface/trader.png");
+	Images[IMAGE_PLUS] = irrDriver->getTexture("textures/interface/plus.png");
+	Images[IMAGE_MINUS] = irrDriver->getTexture("textures/interface/minus.png");
 
-	irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_spawn.png");
-	irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_inventory.png");
-	irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_trade.png");
-	irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_character.png");
-	irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_skills.png");
-	irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_menu.png");
+	irrDriver->getTexture("textures/interface/hud_spawn.png");
+	irrDriver->getTexture("textures/interface/hud_inventory.png");
+	irrDriver->getTexture("textures/interface/hud_trade.png");
+	irrDriver->getTexture("textures/interface/hud_character.png");
+	irrDriver->getTexture("textures/interface/hud_skills.png");
+	irrDriver->getTexture("textures/interface/hud_menu.png");
 
 	return 1;
 }

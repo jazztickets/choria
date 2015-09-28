@@ -586,12 +586,11 @@ void _MapEditorState::InitBrushOptions() {
 
 // Loads all map textures from a directory
 void _MapEditorState::RefreshTexturePalette() {
-
 	TexturePalette.clear();
 
 	// Load all textures in the directory
 	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
-	irrFile->changeWorkingDirectoryTo(WorkingDirectory + "textures/map");
+	irrFile->changeWorkingDirectoryTo("textures/map");
 	IFileList *FileList = irrFile->createFileList();
 	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
 
@@ -600,7 +599,7 @@ void _MapEditorState::RefreshTexturePalette() {
 		if(!FileList->isDirectory(i)) {
 
 			// Load texture
-			ITexture *Texture = irrDriver->getTexture(WorkingDirectory + "textures/map/" + FileList->getFileName(i));
+			ITexture *Texture = irrDriver->getTexture(stringc("textures/map/") + FileList->getFileName(i));
 
 			// Check size
 			if(Texture->getSize() != dimension2du(32, 32)) {

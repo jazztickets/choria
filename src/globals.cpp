@@ -17,14 +17,12 @@
 *******************************************************************************/
 #include <globals.h>
 
-IrrlichtDevice *irrDevice;
-IVideoDriver *irrDriver;
-ISceneManager *irrScene;
-IGUIEnvironment *irrGUI;
-IFileSystem *irrFile;
-ITimer *irrTimer;
-
-stringc WorkingDirectory;
+irr::IrrlichtDevice *irrDevice;
+irr::video::IVideoDriver *irrDriver;
+irr::scene::ISceneManager *irrScene;
+irr::gui::IGUIEnvironment *irrGUI;
+irr::io::IFileSystem *irrFile;
+irr::ITimer *irrTimer;
 
 NetworkClass *ClientNetwork;
 NetworkClass *ServerNetwork;

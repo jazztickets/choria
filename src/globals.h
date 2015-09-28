@@ -18,25 +18,15 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
+#include <IrrlichtDevice.h>
 
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+extern irr::IrrlichtDevice *irrDevice;
+extern irr::video::IVideoDriver *irrDriver;
+extern irr::scene::ISceneManager *irrScene;
+extern irr::gui::IGUIEnvironment *irrGUI;
+extern irr::io::IFileSystem *irrFile;
+extern irr::ITimer *irrTimer;
 
 class NetworkClass;
-
-extern IrrlichtDevice *irrDevice;
-extern IVideoDriver *irrDriver;
-extern ISceneManager *irrScene;
-extern IGUIEnvironment *irrGUI;
-extern IFileSystem *irrFile;
-extern ITimer *irrTimer;
-
-extern stringc WorkingDirectory;
 extern NetworkClass *ClientNetwork;
 extern NetworkClass *ServerNetwork;
