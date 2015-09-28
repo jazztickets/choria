@@ -63,7 +63,7 @@ int PlayServerState::Init() {
 	// Load database that stores accounts and characters
 	Database = new DatabaseClass();
 
-	stringc DatabasePath = Config::Instance().GetSavePath("server.s3db");
+	stringc DatabasePath = Config.GetSavePath("server.s3db");
 	if(!Database->OpenDatabase(DatabasePath.c_str())) {
 
 		// Create a new database
@@ -298,7 +298,7 @@ void PlayServerState::Update(u32 TDeltaTime) {
 	ObjectManager->Update(TDeltaTime);
 
 	if(StopRequested) {
-		Game::Instance().SetDone(true);
+		Game.SetDone(true);
 	}
 }
 
@@ -404,7 +404,7 @@ void PlayServerState::HandleCharacterSelect(PacketClass *TPacket, ENetPeer *TPee
 	Player->SetExperience(Database->GetInt(6));
 	Player->SetGold(Database->GetInt(7));
 	for(int i = 0; i < 8; i++)
-		Player->SetSkillBar(i, Stats::Instance().GetSkill(Database->GetInt(i + 8)));
+		Player->SetSkillBar(i, Stats.GetSkill(Database->GetInt(i + 8)));
 	Player->SetPlayTime(Database->GetInt(16));
 	Player->SetDeaths(Database->GetInt(17));
 	Player->SetMonsterKills(Database->GetInt(18));
@@ -588,12 +588,12 @@ void PlayServerState::HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer) {
 			break;
 			case MapClass::EVENT_VENDOR:
 				Player->SetState(PlayerClass::STATE_VENDOR);
-				Player->SetVendor(Stats::Instance().GetVendor(Tile->EventData));
+				Player->SetVendor(Stats.GetVendor(Tile->EventData));
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			case MapClass::EVENT_TRADER:
 				Player->SetState(PlayerClass::STATE_TRADER);
-				Player->SetTrader(Stats::Instance().GetTrader(Tile->EventData));
+				Player->SetTrader(Stats.GetTrader(Tile->EventData));
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			default:
@@ -603,7 +603,7 @@ void PlayServerState::HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer) {
 
 					// Get monsters
 					array<int> Monsters;
-					Stats::Instance().GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
+					Stats.GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
 					u32 MonsterCount = Monsters.size();
 					if(MonsterCount > 0) {
 
@@ -831,7 +831,7 @@ void PlayServerState::HandleSkillBar(PacketClass *TPacket, ENetPeer *TPeer) {
 
 	// Read skills
 	for(int i = 0; i < 8; i++) {
-		Player->SetSkillBar(i, Stats::Instance().GetSkill(TPacket->ReadChar()));
+		Player->SetSkillBar(i, Stats.GetSkill(TPacket->ReadChar()));
 	}
 
 	Player->CalculatePlayerStats();

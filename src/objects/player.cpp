@@ -140,14 +140,14 @@ void PlayerClass::RenderWorld(const MapClass *TMap, const ObjectClass *TClientPl
 				Alpha = 70;
 
 
-			Graphics::Instance().DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
+			Graphics.DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
 			if(StateImage) {
-				Graphics::Instance().DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
+				Graphics.DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
 			}
 
 			if(TClientPlayer != this) {
-				Graphics::Instance().SetFont(GraphicsClass::FONT_8);
-				Graphics::Instance().RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, GraphicsClass::ALIGN_CENTER);
+				Graphics.SetFont(GraphicsClass::FONT_8);
+				Graphics.RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, GraphicsClass::ALIGN_CENTER);
 			}
 		}
 	}
@@ -342,7 +342,7 @@ float PlayerClass::GetNextLevelPercent() const {
 // Sets the player's portrait
 void PlayerClass::SetPortraitID(int TID) {
 	PortraitID = TID;
-	Portrait = Stats::Instance().GetPortrait(PortraitID)->Image;
+	Portrait = Stats.GetPortrait(PortraitID)->Image;
 }
 
 // Sets the player's vendor
@@ -496,7 +496,7 @@ void PlayerClass::SetInventory(int TSlot, int TItemID, int TCount) {
 		Inventory[TSlot].Count = 0;
 	}
 	else {
-		Inventory[TSlot].Item = Stats::Instance().GetItem(TItemID);
+		Inventory[TSlot].Item = Stats.GetItem(TItemID);
 		Inventory[TSlot].Count = TCount;
 	}
 }
@@ -752,7 +752,7 @@ bool PlayerClass::CanEquipItem(int TSlot, const ItemClass *TItem) {
 
 // Updates a skill level
 void PlayerClass::AdjustSkillLevel(int TSkillID, int TAdjust) {
-	const SkillClass *Skill = Stats::Instance().GetSkill(TSkillID);
+	const SkillClass *Skill = Stats.GetSkill(TSkillID);
 	if(Skill == NULL)
 		return;
 
@@ -794,7 +794,7 @@ void PlayerClass::AdjustSkillLevel(int TSkillID, int TAdjust) {
 void PlayerClass::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	const array<SkillClass> &Skills = Stats::Instance().GetSkillList();
+	const array<SkillClass> &Skills = Stats.GetSkillList();
 	for(u32 i = 0; i < Skills.size(); i++) {
 		SkillPointsUsed += Skills[i].GetSkillCost() * SkillLevels[i];
 	}
@@ -855,18 +855,18 @@ void PlayerClass::CalculateLevelStats() {
 		Experience = 0;
 
 	// Cap max experience
-	const LevelStruct *MaxLevelStat = Stats::Instance().GetLevel(Stats::Instance().GetMaxLevel());
+	const LevelStruct *MaxLevelStat = Stats.GetLevel(Stats.GetMaxLevel());
 	if(Experience > MaxLevelStat->Experience)
 		Experience = MaxLevelStat->Experience;
 
 	// Find current level
-	const LevelStruct *LevelStat = Stats::Instance().FindLevel(Experience);
+	const LevelStruct *LevelStat = Stats.FindLevel(Experience);
 	Level = LevelStat->Level;
 	MaxHealth = LevelStat->Health;
 	MaxMana = LevelStat->Mana;
 	SkillPoints = LevelStat->SkillPoints;
 	ExperienceNextLevel = LevelStat->NextLevel;
-	if(Level == Stats::Instance().GetMaxLevel())
+	if(Level == Stats.GetMaxLevel())
 		ExperienceNeeded = 0;
 	else
 		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);

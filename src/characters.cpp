@@ -34,8 +34,8 @@ int CharactersState::Init() {
 	// Create character slots
 	int SlotX = 0, SlotY = 0;
 	for(int i = 0; i < CHARACTERS_MAX; i++) {
-		Slots[i].Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(SlotX * 200 + 200, SlotY * 150 + 150, 64, 64), 0, ELEMENT_SLOT0 + i);
-		Slots[i].Button->setImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_MENUBLANKSLOT));
+		Slots[i].Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 200 + 200, SlotY * 150 + 150, 64, 64), 0, ELEMENT_SLOT0 + i);
+		Slots[i].Button->setImage(Graphics.GetImage(GraphicsClass::IMAGE_MENUBLANKSLOT));
 		Slots[i].Used = false;
 		Slots[i].Name = "";
 		Slots[i].Level = 0;
@@ -49,11 +49,11 @@ int CharactersState::Init() {
 
 	// Buttons
 	int DrawX = 400, DrawY = 500, ButtonWidth = 80;
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	ButtonPlay = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX - 180, DrawY, ButtonWidth, 25), 0, ELEMENT_PLAY, L"Play");
-	ButtonCreate = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX - 60, DrawY, ButtonWidth, 25), 0, ELEMENT_CREATE, L"Create");
-	ButtonDelete = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX + 60, DrawY, ButtonWidth, 25), 0, ELEMENT_DELETE, L"Delete");
-	ButtonLogout = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX + 180, DrawY, ButtonWidth, 25), 0, ELEMENT_LOGOUT, L"Logout");
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	ButtonPlay = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 180, DrawY, ButtonWidth, 25), 0, ELEMENT_PLAY, L"Play");
+	ButtonCreate = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 60, DrawY, ButtonWidth, 25), 0, ELEMENT_CREATE, L"Create");
+	ButtonDelete = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 60, DrawY, ButtonWidth, 25), 0, ELEMENT_DELETE, L"Delete");
+	ButtonLogout = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 180, DrawY, ButtonWidth, 25), 0, ELEMENT_LOGOUT, L"Logout");
 	ButtonCreate->setEnabled(false);
 	ButtonPlay->setEnabled(false);
 	ButtonDelete->setEnabled(false);
@@ -75,7 +75,7 @@ int CharactersState::Close() {
 // Handles a disconnection from the server
 void CharactersState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game::Instance().ChangeState(ConnectState::Instance());
+	Game.ChangeState(ConnectState::Instance());
 }
 
 // Handles a server packet
@@ -97,9 +97,9 @@ void CharactersState::Update(u32 TDeltaTime) {
 void CharactersState::Draw() {
 
 	// Top text
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-	Graphics::Instance().RenderText("Select a slot", 400, 10, GraphicsClass::ALIGN_CENTER);
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.RenderText("Select a slot", 400, 10, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 
 	// Draw character text
 	position2di TextPosition;
@@ -108,15 +108,15 @@ void CharactersState::Draw() {
 		TextPosition = Slots[i].Button->getAbsolutePosition().getCenter();
 
 		if(Slots[i].Used) {
-			Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-			Graphics::Instance().RenderText(Slots[i].Name.c_str(), TextPosition.X, TextPosition.Y + 35, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(GraphicsClass::FONT_14);
+			Graphics.RenderText(Slots[i].Name.c_str(), TextPosition.X, TextPosition.Y + 35, GraphicsClass::ALIGN_CENTER);
 
 			sprintf(Buffer, "Level %d", Slots[i].Level);
-			Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-			Graphics::Instance().RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(GraphicsClass::FONT_10);
+			Graphics.RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, GraphicsClass::ALIGN_CENTER);
 		}
 		else {
-			Graphics::Instance().RenderText("Empty", TextPosition.X, TextPosition.Y + 35, GraphicsClass::ALIGN_CENTER);
+			Graphics.RenderText("Empty", TextPosition.X, TextPosition.Y + 35, GraphicsClass::ALIGN_CENTER);
 		}
 	}
 
@@ -126,7 +126,7 @@ void CharactersState::Draw() {
 	// Draw selected box
 	if(SelectedIndex != -1) {
 		position2di ButtonPosition = Slots[SelectedIndex].Button->getAbsolutePosition().getCenter();
-		Graphics::Instance().DrawImage(GraphicsClass::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
+		Graphics.DrawImage(GraphicsClass::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
 	}
 }
 
@@ -163,7 +163,7 @@ void CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 					Logout();
 				break;
 				case ELEMENT_CREATE:
-					Game::Instance().ChangeState(CreateCharacterState::Instance());
+					Game.ChangeState(CreateCharacterState::Instance());
 				break;
 				case ELEMENT_DELETE:
 					irrGUI->addMessageBox(L"", L"Are you sure you want to delete this character?", true, EMBF_YES | EMBF_NO, 0, ELEMENT_DELETECONFIRM);
@@ -208,14 +208,14 @@ void CharactersState::HandleCharacterList(PacketClass *TPacket) {
 	for(i = 0; i < CharacterCount; i++) {
 		Slots[i].Used = true;
 		Slots[i].Name = TPacket->ReadString();
-		PortraitImage = Stats::Instance().GetPortrait(TPacket->ReadInt())->Image;
+		PortraitImage = Stats.GetPortrait(TPacket->ReadInt())->Image;
 		Slots[i].Button->setImage(PortraitImage);
 		Slots[i].Button->setPressedImage(PortraitImage);
-		Slots[i].Level = Stats::Instance().FindLevel(TPacket->ReadInt())->Level;
+		Slots[i].Level = Stats.FindLevel(TPacket->ReadInt())->Level;
 	}
 	for(; i < CHARACTERS_MAX; i++) {
 		Slots[i].Used = false;
-		PortraitImage = Graphics::Instance().GetImage(GraphicsClass::IMAGE_MENUBLANKSLOT);
+		PortraitImage = Graphics.GetImage(GraphicsClass::IMAGE_MENUBLANKSLOT);
 		Slots[i].Button->setImage(PortraitImage);
 		Slots[i].Button->setPressedImage(PortraitImage);
 	}
@@ -257,7 +257,7 @@ void CharactersState::PlayCharacter() {
 		return;
 
 	PlayClientState::Instance()->SetCharacterSlot(SelectedIndex);
-	Game::Instance().ChangeState(PlayClientState::Instance());
+	Game.ChangeState(PlayClientState::Instance());
 }
 
 // Delete a character
@@ -272,10 +272,10 @@ void CharactersState::Delete() {
 
 // Logout
 void CharactersState::Logout() {
-	if(Game::Instance().IsLocalServerRunning()) {
+	if(Game.IsLocalServerRunning()) {
 		ClientNetwork->Disconnect();
-		Game::Instance().ChangeState(MainMenuState::Instance());
+		Game.ChangeState(MainMenuState::Instance());
 	}
 	else
-		Game::Instance().ChangeState(AccountState::Instance());
+		Game.ChangeState(AccountState::Instance());
 }

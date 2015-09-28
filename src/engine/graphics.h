@@ -19,7 +19,6 @@
 
 // Libraries
 #include <irrlicht.h>
-#include <engine/singleton.h>
 
 // Namespaces
 using namespace irr;
@@ -128,6 +127,4 @@ class GraphicsClass {
 
 };
 
-// Singletons
-typedef SingletonClass<GraphicsClass> Graphics;
-
+extern GraphicsClass Graphics;

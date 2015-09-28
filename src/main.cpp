@@ -20,17 +20,17 @@
 int main(int TArgumentCount, char **TArguments) {
 
 	// Initialize the game
-	if(!Game::Instance().Init(TArgumentCount, TArguments))
+	if(!Game.Init(TArgumentCount, TArguments))
 		return 1;
 
 	// Main game loop
-	while(!Game::Instance().IsDone()) {
+	while(!Game.IsDone()) {
 
-		Game::Instance().Update();
+		Game.Update();
 	}
 
 	// Shut down the system
-	Game::Instance().Close();
+	Game.Close();
 
 	return 0;
 }

@@ -35,7 +35,7 @@ int MapEditorState::Init() {
 		Brush.Texture = TexturePalette[0];
 
 	// Default map
-	stringc SavePath = Config::Instance().GetSaveMapPath("test.map");
+	stringc SavePath = Config.GetSaveMapPath("test.map");
 	Map = new MapClass(SavePath, 50, 50);
 
 	// Set filters
@@ -72,7 +72,7 @@ void MapEditorState::Update(u32 TDeltaTime) {
 
 	switch(State) {
 		case STATE_MAIN:
-			if(Input::Instance().GetMouseState(InputClass::MOUSE_LEFT) && !(Input::Instance().GetKeyState(KEY_CONTROL) || Input::Instance().GetKeyState(KEY_LCONTROL))) {
+			if(Input.GetMouseState(InputClass::MOUSE_LEFT) && !(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL))) {
 				switch(BrushSize) {
 					case 0:
 						ApplyBrush(BrushPosition.X, BrushPosition.Y);
@@ -103,8 +103,8 @@ void MapEditorState::Draw() {
 
 	stringc GridBrushPositionText = stringc(BrushPosition.X) + stringc(" ") + stringc(BrushPosition.Y);
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_8);
-	Graphics::Instance().RenderText(GridBrushPositionText.c_str(), 10, 10);
+	Graphics.SetFont(GraphicsClass::FONT_8);
+	Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
 
 	irrGUI->drawAll();
 }
@@ -116,8 +116,8 @@ bool MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					//Game::Instance().SetDone(true);
-					Game::Instance().ChangeState(MainMenuState::Instance());
+					//Game.SetDone(true);
+					Game.ChangeState(MainMenuState::Instance());
 				break;
 				case KEY_KEY_N:
 					InitNewMap();
@@ -240,7 +240,7 @@ bool MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 	if(Map) {
 		switch(TButton) {
 			case InputClass::MOUSE_LEFT:
-				if(Input::Instance().GetKeyState(KEY_CONTROL) || Input::Instance().GetKeyState(KEY_LCONTROL)) {
+				if(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL)) {
 					if(Map->IsValidPosition(BrushPosition.X, BrushPosition.Y))
 						Brush = *Map->GetTile(BrushPosition.X, BrushPosition.Y);
 				}
@@ -406,30 +406,30 @@ void MapEditorState::CloseWindow(int TElement) {
 void MapEditorState::InitNewMap() {
 
 	// Main dialog window
-	IGUIWindow *Window = irrGUI->addWindow(Graphics::Instance().GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
+	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
 	irrGUI->setFocus(Window);
 
 	// Filename
-	Graphics::Instance().AddText("File", 80, 54, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIEditBox *EditName = irrGUI->addEditBox(L"test.map", Graphics::Instance().GetRect(90, 50, 150, 25), true, Window, NEWMAP_FILE);
+	Graphics.AddText("File", 80, 54, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIEditBox *EditName = irrGUI->addEditBox(L"test.map", Graphics.GetRect(90, 50, 150, 25), true, Window, NEWMAP_FILE);
 	EditName->setMax(15);
 
 	// Map width
-	Graphics::Instance().AddText("Width", 80, 84, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIEditBox *EditWidth = irrGUI->addEditBox(L"100", Graphics::Instance().GetRect(90, 80, 100, 25), true, Window, NEWMAP_WIDTH);
+	Graphics.AddText("Width", 80, 84, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIEditBox *EditWidth = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 80, 100, 25), true, Window, NEWMAP_WIDTH);
 	EditWidth->setMax(15);
 
 	// Map height
-	Graphics::Instance().AddText("Height", 80, 114, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIEditBox *EditHeight = irrGUI->addEditBox(L"100", Graphics::Instance().GetRect(90, 110, 100, 25), true, Window, NEWMAP_HEIGHT);
+	Graphics.AddText("Height", 80, 114, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIEditBox *EditHeight = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 110, 100, 25), true, Window, NEWMAP_HEIGHT);
 	EditHeight->setMax(15);
 
 	// Buttons
-	irrGUI->addButton(Graphics::Instance().GetRect(20, 160, 110, 25), Window, NEWMAP_CREATE, L"Create");
-	irrGUI->addButton(Graphics::Instance().GetRect(150, 160, 110, 25), Window, NEWMAP_CANCEL, L"Cancel");
+	irrGUI->addButton(Graphics.GetRect(20, 160, 110, 25), Window, NEWMAP_CREATE, L"Create");
+	irrGUI->addButton(Graphics.GetRect(150, 160, 110, 25), Window, NEWMAP_CANCEL, L"Cancel");
 
 	// Error
-	irrGUI->addStaticText(L"", Graphics::Instance().GetRect(20, 230, 400, 25), false, false, Window, NEWMAP_ERROR);
+	irrGUI->addStaticText(L"", Graphics.GetRect(20, 230, 400, 25), false, false, Window, NEWMAP_ERROR);
 
 	irrGUI->setFocus(EditName);
 
@@ -481,7 +481,7 @@ void MapEditorState::CreateMap() {
 	CloseMap();
 
 	// Create map
-	stringc SavePath = Config::Instance().GetSaveMapPath(File);
+	stringc SavePath = Config.GetSaveMapPath(File);
 	Map = new MapClass(SavePath.c_str(), Width, Height);
 
 	CloseWindow(NEWMAP_WINDOW);
@@ -492,7 +492,7 @@ void MapEditorState::CreateMap() {
 void MapEditorState::InitLoadMap() {
 
 	// Main dialog window
-	stringc StartPath = Config::Instance().GetSaveMapPath("");
+	stringc StartPath = Config.GetSaveMapPath("");
 	irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (stringc::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;
@@ -502,7 +502,7 @@ void MapEditorState::InitLoadMap() {
 void MapEditorState::InitTexturePalette() {
 
 	// Main dialog window
-	IGUIWindow *Window = irrGUI->addWindow(Graphics::Instance().GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
+	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
 	irrGUI->setFocus(Window);
 
 	// Load texture buttons
@@ -510,7 +510,7 @@ void MapEditorState::InitTexturePalette() {
 	position2di TexturePosition(StartX, 30);
 	for(u32 i = 0; i < TexturePalette.size(); i++) {
 
-		IGUIButton *Button = irrGUI->addButton(Graphics::Instance().GetRect(TexturePosition.X, TexturePosition.Y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
+		IGUIButton *Button = irrGUI->addButton(Graphics.GetRect(TexturePosition.X, TexturePosition.Y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
 		Button->setImage(TexturePalette[i]);
 
 		TexturePosition.X += MAP_TILE_WIDTH;
@@ -528,56 +528,56 @@ void MapEditorState::InitBrushOptions() {
 	int StartX, StartY, OffsetY;
 
 	// Main dialog window
-	IGUIWindow *Window = irrGUI->addWindow(Graphics::Instance().GetCenteredRect(400, 300, 200, 350), false, L"Brush Options", 0, BRUSHOPTIONS_WINDOW);
+	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 200, 350), false, L"Brush Options", 0, BRUSHOPTIONS_WINDOW);
 	irrGUI->setFocus(Window);
 
 	// Wall
 	StartX = 75, StartY = 40;
-	Graphics::Instance().AddText("Wall", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	irrGUI->addCheckBox(Brush.Wall, Graphics::Instance().GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
+	Graphics.AddText("Wall", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	irrGUI->addCheckBox(Brush.Wall, Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
 
-	Graphics::Instance().AddText("PVP", StartX + 50, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	irrGUI->addCheckBox(Brush.PVP, Graphics::Instance().GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
+	Graphics.AddText("PVP", StartX + 50, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	irrGUI->addCheckBox(Brush.PVP, Graphics.GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
 
 	// Zone
 	StartY += 30;
-	Graphics::Instance().AddText("Zone", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUISpinBox *BrushZone = irrGUI->addSpinBox(L"0", Graphics::Instance().GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_ZONE);
+	Graphics.AddText("Zone", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUISpinBox *BrushZone = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_ZONE);
 	BrushZone->setDecimalPlaces(0);
 	BrushZone->setRange(0.0f, 10000.0f);
 
 	// Event Type
 	StartY += 30;
-	Graphics::Instance().AddText("Event Type", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIComboBox *BrushEventType = irrGUI->addComboBox(Graphics::Instance().GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_EVENTTYPE);
-	for(int i = 0; i < Stats::Instance().GetEventCount(); i++)
-		BrushEventType->addItem(stringw(Stats::Instance().GetEvent(i)->Name.c_str()).c_str());
+	Graphics.AddText("Event Type", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUIComboBox *BrushEventType = irrGUI->addComboBox(Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_EVENTTYPE);
+	for(int i = 0; i < Stats.GetEventCount(); i++)
+		BrushEventType->addItem(stringw(Stats.GetEvent(i)->Name.c_str()).c_str());
 
 	BrushEventType->setSelected(Brush.EventType);
 
 	// Event Data
 	StartY += 30;
-	Graphics::Instance().AddText("Event Data", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUISpinBox *BrushEventData = irrGUI->addSpinBox(L"0", Graphics::Instance().GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_EVENTDATA);
+	Graphics.AddText("Event Data", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	IGUISpinBox *BrushEventData = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_EVENTDATA);
 	BrushEventData->setDecimalPlaces(0);
 	BrushEventData->setRange(0.0f, 10000.0f);
 
 	// Filters
 	StartY += 40, OffsetY = 20;
-	Graphics::Instance().AddText("Filters", 100, StartY, GraphicsClass::ALIGN_CENTER, Window);
-	Graphics::Instance().AddText("Texture", StartX - 5, StartY + 3 + OffsetY * 1, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics::Instance().AddText("Wall", StartX - 5, StartY + 3 + OffsetY * 2, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics::Instance().AddText("Zone", StartX - 5, StartY + 3 + OffsetY * 3, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics::Instance().AddText("Event Type", StartX - 5, StartY + 3 + OffsetY * 4, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics::Instance().AddText("Event Data", StartX - 5, StartY + 3 + OffsetY * 5, GraphicsClass::ALIGN_RIGHT, Window);
-	irrGUI->addCheckBox(Filters[FILTER_TEXTURE], Graphics::Instance().GetRect(StartX, StartY + OffsetY * 1, 100, 20), Window, BRUSHOPTIONS_FILTERTEXTURE);
-	irrGUI->addCheckBox(Filters[FILTER_WALL], Graphics::Instance().GetRect(StartX, StartY + OffsetY * 2, 100, 20), Window, BRUSHOPTIONS_FILTERWALL);
-	irrGUI->addCheckBox(Filters[FILTER_ZONE], Graphics::Instance().GetRect(StartX, StartY + OffsetY * 3, 100, 20), Window, BRUSHOPTIONS_FILTERZONE);
-	irrGUI->addCheckBox(Filters[FILTER_EVENTTYPE], Graphics::Instance().GetRect(StartX, StartY + OffsetY * 4, 100, 20), Window, BRUSHOPTIONS_FILTEREVENTTYPE);
-	irrGUI->addCheckBox(Filters[FILTER_EVENTDATA], Graphics::Instance().GetRect(StartX, StartY + OffsetY * 5, 100, 20), Window, BRUSHOPTIONS_FILTEREVENTDATA);
+	Graphics.AddText("Filters", 100, StartY, GraphicsClass::ALIGN_CENTER, Window);
+	Graphics.AddText("Texture", StartX - 5, StartY + 3 + OffsetY * 1, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Wall", StartX - 5, StartY + 3 + OffsetY * 2, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Zone", StartX - 5, StartY + 3 + OffsetY * 3, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Event Type", StartX - 5, StartY + 3 + OffsetY * 4, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Event Data", StartX - 5, StartY + 3 + OffsetY * 5, GraphicsClass::ALIGN_RIGHT, Window);
+	irrGUI->addCheckBox(Filters[FILTER_TEXTURE], Graphics.GetRect(StartX, StartY + OffsetY * 1, 100, 20), Window, BRUSHOPTIONS_FILTERTEXTURE);
+	irrGUI->addCheckBox(Filters[FILTER_WALL], Graphics.GetRect(StartX, StartY + OffsetY * 2, 100, 20), Window, BRUSHOPTIONS_FILTERWALL);
+	irrGUI->addCheckBox(Filters[FILTER_ZONE], Graphics.GetRect(StartX, StartY + OffsetY * 3, 100, 20), Window, BRUSHOPTIONS_FILTERZONE);
+	irrGUI->addCheckBox(Filters[FILTER_EVENTTYPE], Graphics.GetRect(StartX, StartY + OffsetY * 4, 100, 20), Window, BRUSHOPTIONS_FILTEREVENTTYPE);
+	irrGUI->addCheckBox(Filters[FILTER_EVENTDATA], Graphics.GetRect(StartX, StartY + OffsetY * 5, 100, 20), Window, BRUSHOPTIONS_FILTEREVENTDATA);
 
 	// Buttons
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(100, 320, 75, 25), Window, BRUSHOPTIONS_FILTERCLOSE, L"Close");
+	irrGUI->addButton(Graphics.GetCenteredRect(100, 320, 75, 25), Window, BRUSHOPTIONS_FILTERCLOSE, L"Close");
 
 	State = STATE_BRUSHOPTIONS;
 }
@@ -666,13 +666,13 @@ void MapEditorState::RenderBrush() {
 
 	SColor Color(255, 255, 255, 255);
 	int StartX = 750, StartY = 480;
-	Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, 705, StartY - 10, 90, 125);
+	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 705, StartY - 10, 90, 125);
 
 	// Draw texture
 	StartY += 15;
 	if(Brush.Texture != NULL) {
 		Filters[FILTER_TEXTURE] ? Color.setAlpha(255) : Color.setAlpha(80);
-		Graphics::Instance().DrawCenteredImage(Brush.Texture, StartX, StartY, Color);
+		Graphics.DrawCenteredImage(Brush.Texture, StartX, StartY, Color);
 	}
 
 	// Get wall text
@@ -683,14 +683,14 @@ void MapEditorState::RenderBrush() {
 	// Draw wall info
 	StartY += 20;
 	Filters[FILTER_WALL] ? Color.setAlpha(255) : Color.setAlpha(128);
-	Graphics::Instance().SetFont(GraphicsClass::FONT_8);
-	Graphics::Instance().RenderText(WallText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	Graphics.SetFont(GraphicsClass::FONT_8);
+	Graphics.RenderText(WallText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
 
 	// Draw zone info
 	StartY += 15;
 	Filters[FILTER_ZONE] ? Color.setAlpha(255) : Color.setAlpha(128);
 	stringc ZoneText = stringc("Zone ") + stringc(Brush.Zone);
-	Graphics::Instance().RenderText(ZoneText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	Graphics.RenderText(ZoneText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
 
 	// Get PVP text
 	const char *PVPText = "Safe";
@@ -700,19 +700,19 @@ void MapEditorState::RenderBrush() {
 	// Draw pvp info
 	StartY += 15;
 	Filters[FILTER_PVP] ? Color.setAlpha(255) : Color.setAlpha(128);
-	Graphics::Instance().RenderText(PVPText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	Graphics.RenderText(PVPText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTTYPE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	stringc EventTypeText = stringc("Event: ") + Stats::Instance().GetEvent(Brush.EventType)->ShortName;
-	Graphics::Instance().RenderText(EventTypeText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	stringc EventTypeText = stringc("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
+	Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
 	stringc EventDataText = stringc("Event Data: ") + stringc(Brush.EventData);
-	Graphics::Instance().RenderText(EventDataText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	Graphics.RenderText(EventDataText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
 }
 
 // Resets the filters to false

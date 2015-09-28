@@ -52,7 +52,7 @@ int PlayClientState::Init() {
 	ObjectManager = new ObjectManagerClass();
 
 	// Set up the HUD system
-	if(!HUD::Instance().Init())
+	if(!HUD.Init())
 		return 0;
 
 	// Send character slot to play
@@ -67,7 +67,7 @@ int PlayClientState::Init() {
 int PlayClientState::Close() {
 
 	ClientNetwork->Disconnect();
-	HUD::Instance().Close();
+	HUD.Close();
 	delete ObjectManager;
 	delete Instances;
 
@@ -82,7 +82,7 @@ void PlayClientState::HandleConnect(ENetEvent *TEvent) {
 // Handles a disconnection from the server
 void PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game::Instance().ChangeState(MainMenuState::Instance());
+	Game.ChangeState(MainMenuState::Instance());
 }
 
 // Handles a server packet
@@ -166,10 +166,10 @@ void PlayClientState::Update(u32 TDeltaTime) {
 		case STATE_WALK:
 
 			// Send move input
-			if(!HUD::Instance().IsChatting()) {
-				if(Input::Instance().GetMouseState(InputClass::MOUSE_LEFT) && !(Input::Instance().GetMousePosition().X >= 656 && Input::Instance().GetMousePosition().Y >= 575)) {
+			if(!HUD.IsChatting()) {
+				if(Input.GetMouseState(InputClass::MOUSE_LEFT) && !(Input.GetMousePosition().X >= 656 && Input.GetMousePosition().Y >= 575)) {
 					position2di MoveTarget;
-					Map->ScreenToGrid(Input::Instance().GetMousePosition(), MoveTarget);
+					Map->ScreenToGrid(Input.GetMousePosition(), MoveTarget);
 					position2di Delta = MoveTarget - Player->GetPosition();
 
 					if(abs(Delta.X) > abs(Delta.Y)) {
@@ -186,23 +186,23 @@ void PlayClientState::Update(u32 TDeltaTime) {
 					}
 				}
 
-				if(Input::Instance().GetKeyState(KEY_LEFT))
+				if(Input.GetKeyState(KEY_LEFT))
 					SendMoveCommand(PlayerClass::MOVE_LEFT);
-				else if(Input::Instance().GetKeyState(KEY_UP))
+				else if(Input.GetKeyState(KEY_UP))
 					SendMoveCommand(PlayerClass::MOVE_UP);
-				else if(Input::Instance().GetKeyState(KEY_RIGHT))
+				else if(Input.GetKeyState(KEY_RIGHT))
 					SendMoveCommand(PlayerClass::MOVE_RIGHT);
-				else if(Input::Instance().GetKeyState(KEY_DOWN))
+				else if(Input.GetKeyState(KEY_DOWN))
 					SendMoveCommand(PlayerClass::MOVE_DOWN);
 			}
 		break;
 		case STATE_BATTLE:
 
 			// Send key input
-			if(!HUD::Instance().IsChatting()) {
+			if(!HUD.IsChatting()) {
 				for(int i = 0; i < 8; i++) {
 					EKEY_CODE Key = (EKEY_CODE)(KEY_KEY_1 + i);
-					if(Input::Instance().GetKeyState(Key)) {
+					if(Input.GetKeyState(Key)) {
 						 Battle->HandleInput(Key);
 						 break;
 					}
@@ -225,7 +225,7 @@ void PlayClientState::Update(u32 TDeltaTime) {
 		break;
 	}
 
-	HUD::Instance().Update(TDeltaTime);
+	HUD.Update(TDeltaTime);
 	ObjectManager->Update(TDeltaTime);
 }
 
@@ -249,33 +249,33 @@ void PlayClientState::Draw() {
 	}
 
 	// Draw before GUI
-	HUD::Instance().PreGUIDraw();
+	HUD.PreGUIDraw();
 
 	// Draw GUI
 	irrGUI->drawAll();
 
 	// Draw HUD
-	HUD::Instance().Draw();
+	HUD.Draw();
 }
 
 // Key presses
 bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 
 	// Start/stop chat
-	if(TKey == KEY_RETURN && !HUD::Instance().IsTypingGold()) {
-		HUD::Instance().ToggleChat();
+	if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
+		HUD.ToggleChat();
 		return true;
 	}
 
 	// Check chatting
-	if(HUD::Instance().IsChatting() || HUD::Instance().IsTypingGold()) {
-		HUD::Instance().HandleKeyPress(TKey);
+	if(HUD.IsChatting() || HUD.IsTypingGold()) {
+		HUD.HandleKeyPress(TKey);
 		return false;
 	}
 
 	// Open character sheet
 	if(TKey == KEY_KEY_B) {
-		HUD::Instance().InitCharacter();
+		HUD.InitCharacter();
 	}
 
 	switch(State) {
@@ -285,22 +285,22 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 					#ifdef _DEBUG
 						ClientNetwork->Disconnect();
 					#else
-						HUD::Instance().InitMenu();
+						HUD.InitMenu();
 					#endif
 				break;
 				case KEY_KEY_Q:
-					HUD::Instance().ToggleTownPortal();
+					HUD.ToggleTownPortal();
 				break;
 				case KEY_KEY_C:
 				case KEY_KEY_I:
-					HUD::Instance().InitInventory();
+					HUD.InitInventory();
 				break;
 				case KEY_KEY_T:
-					HUD::Instance().InitTrade();
+					HUD.InitTrade();
 				break;
 				case KEY_KEY_S:
 				case KEY_KEY_K:
-					HUD::Instance().InitSkills();
+					HUD.InitSkills();
 				break;
 				case KEY_KEY_A:
 					SendAttackPlayer();
@@ -310,13 +310,13 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 			}
 		break;
 		case STATE_TOWNPORTAL: {
-			HUD::Instance().ToggleTownPortal();
+			HUD.ToggleTownPortal();
 		}
 		break;
 		case STATE_MAINMENU:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					HUD::Instance().CloseWindows();
+					HUD.CloseWindows();
 				break;
 				default:
 				break;
@@ -335,7 +335,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_UP:
 				case KEY_RIGHT:
 				case KEY_DOWN:
-					HUD::Instance().CloseWindows();
+					HUD.CloseWindows();
 				break;
 				default:
 				break;
@@ -350,7 +350,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_UP:
 				case KEY_RIGHT:
 				case KEY_DOWN:
-					HUD::Instance().CloseWindows();
+					HUD.CloseWindows();
 				break;
 				default:
 				break;
@@ -366,7 +366,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_UP:
 				case KEY_RIGHT:
 				case KEY_DOWN:
-					HUD::Instance().CloseWindows();
+					HUD.CloseWindows();
 				break;
 				default:
 				break;
@@ -380,7 +380,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_UP:
 				case KEY_RIGHT:
 				case KEY_DOWN:
-					HUD::Instance().CloseWindows();
+					HUD.CloseWindows();
 				break;
 				default:
 				break;
@@ -396,7 +396,7 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 				case KEY_UP:
 				case KEY_RIGHT:
 				case KEY_DOWN:
-					HUD::Instance().CloseWindows();
+					HUD.CloseWindows();
 				break;
 				default:
 				break;
@@ -411,19 +411,19 @@ bool PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 
 // Mouse movement
 void PlayClientState::HandleMouseMotion(int TMouseX, int TMouseY) {
-	HUD::Instance().HandleMouseMotion(TMouseX, TMouseY);
+	HUD.HandleMouseMotion(TMouseX, TMouseY);
 }
 
 // Mouse buttons
 bool PlayClientState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 
-	return HUD::Instance().HandleMousePress(TButton, TMouseX, TMouseY);
+	return HUD.HandleMousePress(TButton, TMouseX, TMouseY);
 }
 
 // Mouse releases
 void PlayClientState::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 
-	HUD::Instance().HandleMouseRelease(TButton, TMouseX, TMouseY);
+	HUD.HandleMouseRelease(TButton, TMouseX, TMouseY);
 }
 
 // Handles GUI presses
@@ -435,7 +435,7 @@ void PlayClientState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 		break;
 	}
 
-	HUD::Instance().HandleGUI(TEventType, TElement);
+	HUD.HandleGUI(TEventType, TElement);
 }
 
 // Called once to synchronize your stats with the servers
@@ -454,7 +454,7 @@ void PlayClientState::HandleYourCharacterInfo(PacketClass *TPacket) {
 	Player->SetMonsterKills(TPacket->ReadInt());
 	Player->SetPlayerKills(TPacket->ReadInt());
 	Player->SetBounty(TPacket->ReadInt());
-	HUD::Instance().SetPlayer(Player);
+	HUD.SetPlayer(Player);
 
 	// Read items
 	int ItemCount = TPacket->ReadChar();
@@ -476,7 +476,7 @@ void PlayClientState::HandleYourCharacterInfo(PacketClass *TPacket) {
 	// Read skill bar
 	for(int i = 0; i < FIGHTER_MAXSKILLS; i++) {
 		int SkillID = TPacket->ReadChar();
-		Player->SetSkillBar(i, Stats::Instance().GetSkill(SkillID));
+		Player->SetSkillBar(i, Stats.GetSkill(SkillID));
 	}
 
 	Player->CalculateSkillPoints();
@@ -650,10 +650,10 @@ void PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
 					OtherPlayer->SetStateImage(NULL);
 				break;
 				case PlayerClass::STATE_WAITTRADE:
-					OtherPlayer->SetStateImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_WORLDTRADE));
+					OtherPlayer->SetStateImage(Graphics.GetImage(GraphicsClass::IMAGE_WORLDTRADE));
 				break;
 				default:
-					OtherPlayer->SetStateImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_WORLDBUSY));
+					OtherPlayer->SetStateImage(Graphics.GetImage(GraphicsClass::IMAGE_WORLDBUSY));
 				break;
 			}
 		}
@@ -715,7 +715,7 @@ void PlayClientState::HandleStartBattle(PacketClass *TPacket) {
 	}
 
 	// Start the battle
-	HUD::Instance().CloseWindows();
+	HUD.CloseWindows();
 	Battle->StartBattle(Player);
 	State = STATE_BATTLE;
 }
@@ -783,11 +783,11 @@ void PlayClientState::HandleEventStart(PacketClass *TPacket) {
 
 	switch(Type) {
 		case MapClass::EVENT_VENDOR:
-			HUD::Instance().InitVendor(Data);
+			HUD.InitVendor(Data);
 			State = STATE_VENDOR;
 		break;
 		case MapClass::EVENT_TRADER:
-			HUD::Instance().InitTrader(Data);
+			HUD.InitTrader(Data);
 			State = STATE_TRADER;
 		break;
 	}
@@ -815,7 +815,7 @@ void PlayClientState::HandleChatMessage(PacketClass *TPacket) {
 	// Create chat message
 	ChatStruct Chat;
 	Chat.Message = MessagePlayer->GetName() + stringc(": ") + Message;
-	HUD::Instance().AddChatMessage(Chat);
+	HUD.AddChatMessage(Chat);
 
 	printf("%s\n", Chat.Message.c_str());
 }
@@ -855,7 +855,7 @@ void PlayClientState::HandleTradeCancel(PacketClass *TPacket) {
 	Player->SetTradePlayer(NULL);
 
 	// Reset agreement
-	HUD::Instance().ResetAcceptButton();
+	HUD.ResetAcceptButton();
 }
 
 // Handles a trade item update
@@ -886,7 +886,7 @@ void PlayClientState::HandleTradeItem(PacketClass *TPacket) {
 
 	// Reset agreement
 	TradePlayer->SetTradeAccepted(false);
-	HUD::Instance().ResetAcceptButton();
+	HUD.ResetAcceptButton();
 }
 
 // Handles a gold update from the trading player
@@ -903,7 +903,7 @@ void PlayClientState::HandleTradeGold(PacketClass *TPacket) {
 
 	// Reset agreement
 	TradePlayer->SetTradeAccepted(false);
-	HUD::Instance().ResetAcceptButton();
+	HUD.ResetAcceptButton();
 }
 
 // Handles a trade accept
@@ -938,7 +938,7 @@ void PlayClientState::HandleTradeExchange(PacketClass *TPacket) {
 	Player->MoveTradeToInventory();
 
 	// Close window
-	HUD::Instance().CloseTrade(false);
+	HUD.CloseTrade(false);
 }
 
 // Sends a move command to the server

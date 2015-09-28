@@ -30,13 +30,13 @@ int CreateCharacterState::Init() {
 
 	// Get portrait list
 	list<PortraitStruct> PortraitList;
-	Stats::Instance().GetPortraitList(PortraitList);
+	Stats.GetPortraitList(PortraitList);
 
 	// Create portraits
 	int SlotX = 0, SlotY = 0, i = 0;
 	for(list<PortraitStruct>::Iterator Iterator = PortraitList.begin(); Iterator != PortraitList.end(); ++Iterator) {
 		Portraits.push_back(Iterator->ID);
-		IGUIButton *Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(SlotX * 100 + 50, SlotY * 100 + 150, 64, 64), 0, ELEMENT_PORTRAITS + i);
+		IGUIButton *Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 100 + 50, SlotY * 100 + 150, 64, 64), 0, ELEMENT_PORTRAITS + i);
 		Button->setImage(Iterator->Image);
 
 		i++;
@@ -49,16 +49,16 @@ int CreateCharacterState::Init() {
 
 	// Buttons
 	int DrawX = 400, DrawY = 450, ButtonWidth = 80;
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().AddText("Name", DrawX, DrawY, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.AddText("Name", DrawX, DrawY, GraphicsClass::ALIGN_CENTER);
 
 	DrawY += 35;
-	EditName = irrGUI->addEditBox(L"", Graphics::Instance().GetCenteredRect(DrawX, DrawY, 180, 25), true, 0, ELEMENT_NAME);
+	EditName = irrGUI->addEditBox(L"", Graphics.GetCenteredRect(DrawX, DrawY, 180, 25), true, 0, ELEMENT_NAME);
 	EditName->setMax(10);
 
 	DrawY += 50;
-	ButtonCreate = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX - 50, DrawY, ButtonWidth, 25), 0, ELEMENT_CREATE, L"Create");
-	ButtonBack = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX + 50, DrawY, ButtonWidth, 25), 0, ELEMENT_BACK, L"Back");
+	ButtonCreate = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 50, DrawY, ButtonWidth, 25), 0, ELEMENT_CREATE, L"Create");
+	ButtonBack = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 50, DrawY, ButtonWidth, 25), 0, ELEMENT_BACK, L"Back");
 
 	Message = "";
 	State = STATE_MAIN;
@@ -79,7 +79,7 @@ int CreateCharacterState::Close() {
 // Handles a disconnection from the server
 void CreateCharacterState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game::Instance().ChangeState(ConnectState::Instance());
+	Game.ChangeState(ConnectState::Instance());
 }
 
 // Handles a server packet
@@ -87,7 +87,7 @@ void CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
 	PacketClass Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
 		case NetworkClass::CREATECHARACTER_SUCCESS:
-			Game::Instance().ChangeState(CharactersState::Instance());
+			Game.ChangeState(CharactersState::Instance());
 		break;
 		case NetworkClass::CREATECHARACTER_INUSE:
 			Message = "Character name already in use";
@@ -106,16 +106,16 @@ void CreateCharacterState::Update(u32 TDeltaTime) {
 void CreateCharacterState::Draw() {
 
 	// Top text
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-	Graphics::Instance().RenderText("Create your character", 400, 10, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.RenderText("Create your character", 400, 10, GraphicsClass::ALIGN_CENTER);
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().RenderText("Select a picture", 400, 80, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.RenderText("Select a picture", 400, 80, GraphicsClass::ALIGN_CENTER);
 
 	// Message
 	if(Message.size() > 0) {
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-		Graphics::Instance().RenderText(Message.c_str(), 400, 400, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+		Graphics.SetFont(GraphicsClass::FONT_10);
+		Graphics.RenderText(Message.c_str(), 400, 400, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
 	}
 
 	// Draw GUI
@@ -124,7 +124,7 @@ void CreateCharacterState::Draw() {
 	// Draw selected box
 	if(SelectedIndex != -1) {
 		position2di ButtonPosition = SelectedButton->getAbsolutePosition().getCenter();
-		Graphics::Instance().DrawImage(GraphicsClass::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
+		Graphics.DrawImage(GraphicsClass::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
 	}
 }
 
@@ -204,5 +204,5 @@ void CreateCharacterState::CreateCharacter() {
 
 // Back to character select
 void CreateCharacterState::Back() {
-	Game::Instance().ChangeState(CharactersState::Instance());
+	Game.ChangeState(CharactersState::Instance());
 }

@@ -20,7 +20,6 @@
 // Libraries
 #include <irrlicht.h>
 #include <map>
-#include <engine/singleton.h>
 #include <objects/item.h>
 #include <objects/skill.h>
 
@@ -159,6 +158,4 @@ class StatsClass {
 		std::map<int, TraderStruct> Traders;
 };
 
-// Singletons
-typedef SingletonClass<StatsClass> Stats;
-
+extern StatsClass Stats;

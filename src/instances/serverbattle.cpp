@@ -307,7 +307,7 @@ void ServerBattleClass::CheckEnd() {
 				// Generate monster drops in player vs monster situations
 				array<int> MonsterDrops;
 				for(u32 i = 0; i < Monsters.size(); i++) {
-					Stats::Instance().GenerateMonsterDrops(Monsters[i]->GetID(), 1, MonsterDrops);
+					Stats.GenerateMonsterDrops(Monsters[i]->GetID(), 1, MonsterDrops);
 				}
 
 				// Get a list of players that receive items
@@ -382,7 +382,7 @@ void ServerBattleClass::CheckEnd() {
 			for(int j = 0; j < ItemCount; j++) {
 				int ItemID = PlayerItems[PlayerIndex][j];
 				Packet.WriteInt(ItemID);
-				Players[i]->AddItem(Stats::Instance().GetItem(ItemID), 1, -1);
+				Players[i]->AddItem(Stats.GetItem(ItemID), 1, -1);
 			}
 
 			ServerNetwork->SendPacketToPeer(&Packet, Players[i]->GetPeer());

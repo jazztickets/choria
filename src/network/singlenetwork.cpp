@@ -50,7 +50,7 @@ int SingleNetworkClass::Connect(const char *TIPAddress) {
 	ENetEvent Event;
 	Event.peer = &Peer;
 	PlayServerState::Instance()->HandleConnect(&Event);
-	Game::Instance().GetState()->HandleConnect(&Event);
+	Game.GetState()->HandleConnect(&Event);
 
 	return 1;
 }
@@ -65,7 +65,7 @@ void SingleNetworkClass::Disconnect(ENetPeer *TPeer) {
 		ENetEvent Event;
 		Event.peer = &Peer;
 		PlayServerState::Instance()->HandleDisconnect(&Event);
-		Game::Instance().GetState()->HandleDisconnect(&Event);
+		Game.GetState()->HandleDisconnect(&Event);
 	}
 }
 
@@ -90,6 +90,6 @@ void SingleNetworkClass::SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer)
 	ENetEvent Event;
 	Event.peer = &Peer;
 	Event.packet = TPacket->GetENetPacket();
-	Game::Instance().GetState()->HandlePacket(&Event);
+	Game.GetState()->HandlePacket(&Event);
 	enet_packet_destroy(Event.packet);
 }

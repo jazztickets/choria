@@ -52,7 +52,7 @@ MapClass::MapClass(int TMapID) {
 	ID = TMapID;
 
 	// Get map info
-	const MapStruct *Map = Stats::Instance().GetMap(ID);
+	const MapStruct *Map = Stats.GetMap(ID);
 	ViewSize.Width = Map->ViewWidth;
 	ViewSize.Height = Map->ViewHeight;
 
@@ -131,14 +131,14 @@ void MapClass::Render() {
 			GridPosition.Y = j + CameraScroll.Y - ViewSize.Height / 2;
 			DrawPosition = position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
 			if(NoZoneTexture)
-				Graphics::Instance().DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
 
 			// Validate coordinate
 			if(GridPosition.X >= 0 && GridPosition.X < Width && GridPosition.Y >= 0 && GridPosition.Y < Height) {
 				TileStruct *Tile = &Tiles[GridPosition.X][GridPosition.Y];
 
 				if(Tile->Texture)
-					Graphics::Instance().DrawCenteredImage(Tile->Texture, DrawPosition.X, DrawPosition.Y);
+					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.X, DrawPosition.Y);
 			}
 		}
 	}
@@ -156,7 +156,7 @@ void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP)
 			GridPosition.Y = j + CameraScroll.Y - ViewSize.Height / 2;
 			DrawPosition = position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
 			if(NoZoneTexture)
-				Graphics::Instance().DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
 
 			// Validate coordinate
 			if(GridPosition.X >= 0 && GridPosition.X < Width && GridPosition.Y >= 0 && GridPosition.Y < Height) {
@@ -164,32 +164,32 @@ void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP)
 
 				// Draw texture
 				if(Tile->Texture)
-					Graphics::Instance().DrawCenteredImage(Tile->Texture, DrawPosition.X, DrawPosition.Y);
+					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.X, DrawPosition.Y);
 				else if(NoZoneTexture)
-					Graphics::Instance().DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
+					Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
 
 				// Draw wall
 				if(TDrawWall && Tile->Wall)
-					Graphics::Instance().RenderText("W", DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER);
+					Graphics.RenderText("W", DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER);
 
 				// Draw zone
 				if(!Tile->Wall) {
 					if(TDrawZone && Tile->Zone > 0)
-						Graphics::Instance().RenderText(stringc(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER);
+						Graphics.RenderText(stringc(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER);
 
 					// Draw PVP
 					if(TDrawPVP && Tile->PVP)
-						Graphics::Instance().RenderText("PvP", DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+						Graphics.RenderText("PvP", DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
 				}
 
 				// Draw event info
 				if(Tile->EventType > 0) {
-					stringc EventText = Stats::Instance().GetEvent(Tile->EventType)->ShortName + stringc(", ") + stringc(Tile->EventData);
-					Graphics::Instance().RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, GraphicsClass::ALIGN_LEFT, SColor(255, 0, 255, 255));
+					stringc EventText = Stats.GetEvent(Tile->EventType)->ShortName + stringc(", ") + stringc(Tile->EventData);
+					Graphics.RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, GraphicsClass::ALIGN_LEFT, SColor(255, 0, 255, 255));
 				}
 			}
 			else {
-				Graphics::Instance().DrawCenteredImage(irrDriver->getTexture(WorkingDirectory + "textures/editor/nozone.png"), DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(irrDriver->getTexture(WorkingDirectory + "textures/editor/nozone.png"), DrawPosition.X, DrawPosition.Y);
 			}
 		}
 	}
@@ -369,7 +369,7 @@ int MapClass::LoadMap() {
 			Tile->PVP = !!File.ReadChar();
 
 			// Save off events that need to be indexed
-			if(Stats::Instance().GetEvent(Tile->EventType)->Indexed) {
+			if(Stats.GetEvent(Tile->EventType)->Indexed) {
 				IndexedEvents.push_back(IndexedEventStruct(Tile, position2di(i, j)));
 			}
 		}

@@ -125,7 +125,7 @@ void MultiNetworkClass::Update() {
 	if(!Active)
 		return;
 
-	StateClass *State = Game::Instance().GetState();
+	StateClass *State = Game.GetState();
 
 	ENetEvent Event;
 	while(enet_host_service(Connection, &Event, 0) > 0) {

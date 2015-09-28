@@ -32,6 +32,8 @@
 #include <connect.h>
 #include <account.h>
 
+GameClass Game;
+
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
@@ -75,20 +77,20 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 	}
 
 	// Initialize config system
-	if(!Config::Instance().Init())
+	if(!Config.Init())
 		return 0;
-	Config::Instance().LoadSettings();
+	Config.LoadSettings();
 
 	// Initialize graphics system
-	if(!Graphics::Instance().Init(800, 600, false, DriverType, &Input::Instance()))
+	if(!Graphics.Init(800, 600, false, DriverType, &Input))
 		return 0;
 
 	// Initialize input system
-	if(!Input::Instance().Init())
+	if(!Input.Init())
 		return 0;
 
 	// Set up the stats system
-	if(!Stats::Instance().Init())
+	if(!Stats.Init())
 		return 0;
 
 	// Set random seed
@@ -130,7 +132,7 @@ void GameClass::Close() {
 		PlayServerState::Instance()->Close();
 
 	MultiNetwork->WaitForDisconnect();
-	Config::Instance().SaveSettings();
+	Config.SaveSettings();
 
 	// Shut down the system
 	enet_deinitialize();
@@ -140,10 +142,10 @@ void GameClass::Close() {
 	delete MultiNetwork;
 	delete ClientSingleNetwork;
 	delete ServerSingleNetwork;
-	Stats::Instance().Close();
-	Input::Instance().Close();
-	Graphics::Instance().Close();
-	Config::Instance().Close();
+	Stats.Close();
+	Input.Close();
+	Graphics.Close();
+	Config.Close();
 }
 
 // Requests a state change
@@ -174,7 +176,7 @@ void GameClass::Update() {
 
 	// Check for window focus/blur events
 	if(PreviousWindowActive != WindowActive) {
-		Input::Instance().ResetInputState();
+		Input.ResetInputState();
 	}
 
 	// Update the current state
@@ -182,7 +184,7 @@ void GameClass::Update() {
 		case STATE_INIT:
 			ResetGraphics();
 			ResetTimer();
-			Input::Instance().ResetInputState();
+			Input.ResetInputState();
 			if(!State->Init()) {
 				Done = true;
 				return;
@@ -190,9 +192,9 @@ void GameClass::Update() {
 			State->Update(DeltaTime);
 
 			// Draw
-			Graphics::Instance().BeginFrame();
+			Graphics.BeginFrame();
 			State->Draw();
-			Graphics::Instance().EndFrame();
+			Graphics.EndFrame();
 
 			ManagerState = STATE_FADEIN;
 		break;
@@ -207,9 +209,9 @@ void GameClass::Update() {
 			State->Update(DeltaTime);
 
 			// Draw
-			Graphics::Instance().BeginFrame();
+			Graphics.BeginFrame();
 			State->Draw();
-			Graphics::Instance().EndFrame();
+			Graphics.EndFrame();
 		break;
 		case STATE_FADEOUT:
 			ManagerState = STATE_CLOSE;
@@ -232,7 +234,7 @@ void GameClass::ResetTimer() {
 
 // Resets the graphics for a state
 void GameClass::ResetGraphics() {
-	Graphics::Instance().Clear();
+	Graphics.Clear();
 }
 
 // Delays execution of the program

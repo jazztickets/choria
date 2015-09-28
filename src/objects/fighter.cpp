@@ -49,7 +49,7 @@ FighterClass::FighterClass(int TType)
 	for(int i = 0; i < FIGHTER_MAXSKILLS; i++)
 		SkillBar[i] = NULL;
 
-	SkillBar[0] = Stats::Instance().GetSkill(0);
+	SkillBar[0] = Stats.GetSkill(0);
 
 	Offset.X = Offset.Y = 0;
 }
@@ -78,29 +78,29 @@ void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, FighterR
 	}
 
 	// Name
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().RenderText(Name.c_str(), Offset.X + 32, Offset.Y - 3, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.RenderText(Name.c_str(), Offset.X + 32, Offset.Y - 3, GraphicsClass::ALIGN_CENTER);
 
 	// Portrait
-	Graphics::Instance().DrawImage(SlotImage, Offset.X + 32, Offset.Y + 50);
+	Graphics.DrawImage(SlotImage, Offset.X + 32, Offset.Y + 50);
 	if(Portrait)
-		Graphics::Instance().DrawCenteredImage(Portrait, Offset.X + 32, Offset.Y + 50);
+		Graphics.DrawCenteredImage(Portrait, Offset.X + 32, Offset.Y + 50);
 
 	// Health
 	int BarWidth = 80, BarHeight = 16, BarX = Offset.X + 70, BarY = Offset.Y + 27;
 
 	float HealthPercent = MaxHealth > 0 ? Health / (float)MaxHealth : 0;
 	sprintf(String, "%d / %d", Health, MaxHealth);
-	Graphics::Instance().SetFont(GraphicsClass::FONT_8);
-	Graphics::Instance().DrawBar(GraphicsClass::IMAGE_HEALTH, BarX, BarY, HealthPercent, BarWidth, BarHeight);
-	Graphics::Instance().RenderText(String, BarX + BarWidth / 2, BarY + 1, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_8);
+	Graphics.DrawBar(GraphicsClass::IMAGE_HEALTH, BarX, BarY, HealthPercent, BarWidth, BarHeight);
+	Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, GraphicsClass::ALIGN_CENTER);
 
 	// Mana
 	BarY += 30;
 	float ManaPercent = MaxMana > 0 ? Mana / (float)MaxMana : 0;
 	sprintf(String, "%d / %d", Mana, MaxMana);
-	Graphics::Instance().DrawBar(GraphicsClass::IMAGE_MANA, BarX, BarY, ManaPercent, BarWidth, BarHeight);
-	Graphics::Instance().RenderText(String, BarX + BarWidth / 2, BarY + 1, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBar(GraphicsClass::IMAGE_MANA, BarX, BarY, ManaPercent, BarWidth, BarHeight);
+	Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, GraphicsClass::ALIGN_CENTER);
 
 	// Show results of last turn
 	if(TShowResults) {
@@ -116,32 +116,32 @@ void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, FighterR
 		}
 
 		sprintf(String, "%c%d", Sign, TResult->HealthChange);
-		Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-		Graphics::Instance().RenderText(String, BarX + BarWidth / 2, Offset.Y + 2, GraphicsClass::ALIGN_CENTER, Color);
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+		Graphics.SetFont(GraphicsClass::FONT_14);
+		Graphics.RenderText(String, BarX + BarWidth / 2, Offset.Y + 2, GraphicsClass::ALIGN_CENTER, Color);
+		Graphics.SetFont(GraphicsClass::FONT_10);
 
 		// Draw the skill used
 		if(SkillUsed) {
-			Graphics::Instance().DrawCenteredImage(SkillUsed->GetImage(), Offset.X + 180, Offset.Y + 50, SColor(AlphaPercent, 255, 255, 255));
+			Graphics.DrawCenteredImage(SkillUsed->GetImage(), Offset.X + 180, Offset.Y + 50, SColor(AlphaPercent, 255, 255, 255));
 		}
 
 		// Draw damage dealt
 		if(TResult->DamageDealt) {
 			sprintf(String, "%d", TResult->DamageDealt);
-			Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-			Graphics::Instance().RenderText(String, Offset.X + 178, Offset.Y + 38, GraphicsClass::ALIGN_CENTER, SColor(AlphaPercent, 255, 255, 255));
-			Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+			Graphics.SetFont(GraphicsClass::FONT_14);
+			Graphics.RenderText(String, Offset.X + 178, Offset.Y + 38, GraphicsClass::ALIGN_CENTER, SColor(AlphaPercent, 255, 255, 255));
+			Graphics.SetFont(GraphicsClass::FONT_10);
 		}
 	}
 
 	// Draw the skill used
 	if(SkillUsing) {
-		Graphics::Instance().DrawCenteredImage(SkillUsing->GetImage(), Offset.X + 180, Offset.Y + 50, SColor(255, 255, 255, 255));
+		Graphics.DrawCenteredImage(SkillUsing->GetImage(), Offset.X + 180, Offset.Y + 50, SColor(255, 255, 255, 255));
 	}
 
 	// Draw target
 	if(TTarget)
-		Graphics::Instance().DrawImage(GraphicsClass::IMAGE_BATTLETARGET, Offset.X - 20, Offset.Y + 50);
+		Graphics.DrawImage(GraphicsClass::IMAGE_BATTLETARGET, Offset.X - 20, Offset.Y + 50);
 }
 
 // Returns the fighter's current battle

@@ -19,7 +19,6 @@
 
 // Libraries
 #include <irrlicht.h>
-#include <engine/singleton.h>
 
 // Namespaces
 using namespace irr;
@@ -232,6 +231,4 @@ class HUDClass {
 		bool TypingGold;
 };
 
-// Singletons
-typedef SingletonClass<HUDClass> HUD;
-
+extern HUDClass HUD;

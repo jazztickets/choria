@@ -19,7 +19,6 @@
 
 // Libraries
 #include <irrlicht.h>
-#include <engine/singleton.h>
 
 // Namespaces
 using namespace irr;
@@ -58,6 +57,4 @@ class ConfigClass {
 
 };
 
-// Singletons
-typedef SingletonClass<ConfigClass> Config;
-
+extern ConfigClass Config;

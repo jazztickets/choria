@@ -26,7 +26,7 @@ MonsterClass::MonsterClass(int TMonsterID)
 :	FighterClass(TYPE_MONSTER),
 	ID(TMonsterID) {
 
-	Stats::Instance().GetMonsterStats(TMonsterID, this);
+	Stats.GetMonsterStats(TMonsterID, this);
 }
 
 // Destructor

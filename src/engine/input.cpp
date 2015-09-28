@@ -19,6 +19,8 @@
 #include <engine/state.h>
 #include <engine/game.h>
 
+InputClass Input;
+
 // Initializes the system
 int InputClass::Init()  {
 
@@ -35,7 +37,7 @@ int InputClass::Close() {
 
 // Handle events
 bool InputClass::OnEvent(const SEvent &TEvent) {
-	if(Game::Instance().GetManagerState() != GameClass::STATE_UPDATE)
+	if(Game.GetManagerState() != GameClass::STATE_UPDATE)
 		return false;
 
 	bool Processed = false;
@@ -45,9 +47,9 @@ bool InputClass::OnEvent(const SEvent &TEvent) {
 
 			// Send key press events
 			if(TEvent.KeyInput.PressedDown && !GetKeyState(TEvent.KeyInput.Key))
-				Processed = Game::Instance().GetState()->HandleKeyPress(TEvent.KeyInput.Key);
+				Processed = Game.GetState()->HandleKeyPress(TEvent.KeyInput.Key);
 			else if(!TEvent.KeyInput.PressedDown)
-				Processed = Game::Instance().GetState()->HandleKeyRelease(TEvent.KeyInput.Key);
+				Processed = Game.GetState()->HandleKeyRelease(TEvent.KeyInput.Key);
 
 			// Set the current key state
 			SetKeyState(TEvent.KeyInput.Key, TEvent.KeyInput.PressedDown);
@@ -61,21 +63,21 @@ bool InputClass::OnEvent(const SEvent &TEvent) {
 				case EMIE_RMOUSE_PRESSED_DOWN:
 				case EMIE_MMOUSE_PRESSED_DOWN:
 					SetMouseState(TEvent.MouseInput.Event, true);
-					return Game::Instance().GetState()->HandleMousePress(TEvent.MouseInput.Event, TEvent.MouseInput.X, TEvent.MouseInput.Y);
+					return Game.GetState()->HandleMousePress(TEvent.MouseInput.Event, TEvent.MouseInput.X, TEvent.MouseInput.Y);
 				break;
 				case EMIE_LMOUSE_LEFT_UP:
 				case EMIE_RMOUSE_LEFT_UP:
 				case EMIE_MMOUSE_LEFT_UP:
 					SetMouseState(TEvent.MouseInput.Event - MOUSE_COUNT, false);
-					Game::Instance().GetState()->HandleMouseRelease(TEvent.MouseInput.Event - MOUSE_COUNT, TEvent.MouseInput.X, TEvent.MouseInput.Y);
+					Game.GetState()->HandleMouseRelease(TEvent.MouseInput.Event - MOUSE_COUNT, TEvent.MouseInput.X, TEvent.MouseInput.Y);
 				break;
 				case EMIE_MOUSE_MOVED:
 					MousePosition.X = TEvent.MouseInput.X;
 					MousePosition.Y = TEvent.MouseInput.Y;
-					Game::Instance().GetState()->HandleMouseMotion(MousePosition.X, MousePosition.Y);
+					Game.GetState()->HandleMouseMotion(MousePosition.X, MousePosition.Y);
 				break;
 				case EMIE_MOUSE_WHEEL:
-					Game::Instance().GetState()->HandleMouseWheel(TEvent.MouseInput.Wheel);
+					Game.GetState()->HandleMouseWheel(TEvent.MouseInput.Wheel);
 				break;
 				default:
 				break;
@@ -84,7 +86,7 @@ bool InputClass::OnEvent(const SEvent &TEvent) {
 			return false;
 		break;
 		case EET_GUI_EVENT:
-			Game::Instance().GetState()->HandleGUI(TEvent.GUIEvent.EventType, TEvent.GUIEvent.Caller);
+			Game.GetState()->HandleGUI(TEvent.GUIEvent.EventType, TEvent.GUIEvent.Caller);
 		break;
 		default:
 		break;

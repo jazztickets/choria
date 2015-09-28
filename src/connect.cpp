@@ -30,23 +30,23 @@
 // Initializes the state
 int ConnectState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
-	Form = irrGUI->addTab(Graphics::Instance().GetRect(0, 0, 800, 600));
+	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
-	IPAddress = Config::Instance().GetLastIPAddress();
+	IPAddress = Config.GetLastIPAddress();
 
 	// Text
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	TextIP = Graphics::Instance().AddText("IP Address", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	TextIP = Graphics.AddText("IP Address", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
 
 	// IP Address
 	DrawY += 35;
-	EditIP = irrGUI->addEditBox(stringw(IPAddress.c_str()).c_str(), Graphics::Instance().GetCenteredRect(DrawX, DrawY, 190, 25), true, Form, ELEMENT_IP);
+	EditIP = irrGUI->addEditBox(stringw(IPAddress.c_str()).c_str(), Graphics.GetCenteredRect(DrawX, DrawY, 190, 25), true, Form, ELEMENT_IP);
 	irrGUI->setFocus(EditIP);
 
 	// Buttons
 	DrawY += 50;
-	ButtonConnect = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX - 55, DrawY, ButtonWidth, 25), Form, ELEMENT_CONNECT, L"Connect");
-	ButtonCancel = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX + 55, DrawY, ButtonWidth, 25), Form, ELEMENT_CANCEL, L"Cancel");
+	ButtonConnect = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 55, DrawY, ButtonWidth, 25), Form, ELEMENT_CONNECT, L"Connect");
+	ButtonCancel = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 55, DrawY, ButtonWidth, 25), Form, ELEMENT_CANCEL, L"Cancel");
 
 	Message = "";
 	ChangeState(STATE_MAIN);
@@ -63,8 +63,8 @@ int ConnectState::Close() {
 // Handles a connection to the server
 void ConnectState::HandleConnect(ENetEvent *TEvent) {
 
-	Config::Instance().SetLastIPAddress(IPAddress);
-	Config::Instance().SaveSettings();
+	Config.SetLastIPAddress(IPAddress);
+	Config.SaveSettings();
 }
 
 // Handles a disconnection from the server
@@ -86,7 +86,7 @@ void ConnectState::HandlePacket(ENetEvent *TEvent) {
 				ChangeState(STATE_MAIN);
 			}
 			else {
-				Game::Instance().ChangeState(AccountState::Instance());
+				Game.ChangeState(AccountState::Instance());
 			}
 		}
 		break;
@@ -107,20 +107,20 @@ void ConnectState::Update(u32 TDeltaTime) {
 // Draws the current state
 void ConnectState::Draw() {
 
-	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
+	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
 
 	// Server message
 	if(Message.size() > 0) {
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-		Graphics::Instance().RenderText(Message.c_str(), 400, 200, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+		Graphics.SetFont(GraphicsClass::FONT_10);
+		Graphics.RenderText(Message.c_str(), 400, 200, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
 	}
 
 	switch(State) {
 		case STATE_MAIN:
 		break;
 		case STATE_CONNECT:
-			Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-			Graphics::Instance().RenderText("Connecting...", 400, 250, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(GraphicsClass::FONT_10);
+			Graphics.RenderText("Connecting...", 400, 250, GraphicsClass::ALIGN_CENTER);
 		break;
 	}
 
@@ -134,7 +134,7 @@ bool ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game::Instance().ChangeState(MainMenuState::Instance());
+					Game.ChangeState(MainMenuState::Instance());
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_CONNECT);
@@ -170,7 +170,7 @@ void ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 							ChangeState(STATE_CONNECT);
 						break;
 						case ELEMENT_CANCEL:
-							Game::Instance().ChangeState(MainMenuState::Instance());
+							Game.ChangeState(MainMenuState::Instance());
 						break;
 						default:
 						break;

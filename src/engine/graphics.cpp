@@ -18,6 +18,8 @@
 #include <engine/graphics.h>
 #include <engine/globals.h>
 
+GraphicsClass Graphics;
+
 // Initializes the graphics system
 int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE TDriverType, IEventReceiver *TEventReceiver) {
 
@@ -214,7 +216,7 @@ void GraphicsClass::Clear() {
 // Draws an interface image
 void GraphicsClass::DrawImage(ImageType TType, int TPositionX, int TPositionY, const SColor &TColor) {
 
-	Graphics::Instance().DrawCenteredImage(Images[TType], TPositionX, TPositionY, TColor);
+	Graphics.DrawCenteredImage(Images[TType], TPositionX, TPositionY, TColor);
 }
 
 // Draws a health or mana bar

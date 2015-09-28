@@ -31,30 +31,30 @@ int MainMenuState::Init() {
 	int DrawX = 400, DrawY = 250, OffsetY = 50;
 
 	// Single Player
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_SINGLEPLAYER, L"Single Player");
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_SINGLEPLAYER, L"Single Player");
 
 	// Multiplayer
 	DrawY += OffsetY;
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_MULTIPLAYER, L"Multiplayer");
+	irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_MULTIPLAYER, L"Multiplayer");
 
 	// Editor
 	DrawY += OffsetY;
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EDITOR, L"Map Editor");
+	irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EDITOR, L"Map Editor");
 
 	// Options
 	//DrawY += OffsetY;
-	//IGUIButton *OptionButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_OPTIONS, L"Options");
+	//IGUIButton *OptionButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_OPTIONS, L"Options");
 	//OptionButton->setEnabled(false);
 
 	// Exit
 	DrawY += OffsetY;
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EXIT, L"Exit");
+	irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_EXIT, L"Exit");
 
 	// Game version
-	Graphics::Instance().AddText(GAME_VERSION, 10, 580);
+	Graphics.AddText(GAME_VERSION, 10, 580);
 
-	Game::Instance().StopLocalServer();
+	Game.StopLocalServer();
 
 	return 1;
 }
@@ -73,7 +73,7 @@ void MainMenuState::Update(u32 TDeltaTime) {
 // Draws the current state
 void MainMenuState::Draw() {
 
-	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
+	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
 
 	irrGUI->drawAll();
 }
@@ -83,7 +83,7 @@ bool MainMenuState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(TKey) {
 		case KEY_ESCAPE:
-			Game::Instance().SetDone(true);
+			Game.SetDone(true);
 		break;
 		case KEY_RETURN:
 			StartSinglePlayer();
@@ -101,19 +101,19 @@ void MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement)
 		case EGET_BUTTON_CLICKED:
 			switch(TElement->getID()) {
 				case ELEMENT_SINGLEPLAYER:
-					Game::Instance().ChangeState(ConnectState::Instance());
+					Game.ChangeState(ConnectState::Instance());
 					StartSinglePlayer();
 				break;
 				case ELEMENT_MULTIPLAYER:
-					Game::Instance().ChangeState(ConnectState::Instance());
+					Game.ChangeState(ConnectState::Instance());
 				break;
 				case ELEMENT_EDITOR:
-					Game::Instance().ChangeState(MapEditorState::Instance());
+					Game.ChangeState(MapEditorState::Instance());
 				break;
 				case ELEMENT_OPTIONS:
 				break;
 				case ELEMENT_EXIT:
-					Game::Instance().SetDone(true);
+					Game.SetDone(true);
 				break;
 				default:
 				break;
@@ -126,7 +126,7 @@ void MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement)
 
 // Starts a single player game
 void MainMenuState::StartSinglePlayer() {
-	Game::Instance().StartLocalServer();
+	Game.StartLocalServer();
 	ClientNetwork->Connect("");
 
 	// Send fake account information
@@ -135,5 +135,5 @@ void MainMenuState::StartSinglePlayer() {
 	Packet.WriteString("singleplayer");
 	Packet.WriteString("singleplayer");
 	ClientNetwork->SendPacketToHost(&Packet);
-	Game::Instance().ChangeState(CharactersState::Instance());
+	Game.ChangeState(CharactersState::Instance());
 }

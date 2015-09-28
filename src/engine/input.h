@@ -19,7 +19,6 @@
 
 // Libraries
 #include <irrlicht.h>
-#include <engine/singleton.h>
 
 // Namespaces
 using namespace irr;
@@ -68,6 +67,4 @@ class InputClass : public IEventReceiver {
 
 };
 
-// Singletons
-typedef SingletonClass<InputClass> Input;
-
+extern InputClass Input;

@@ -28,38 +28,38 @@
 // Initializes the state
 int AccountState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
-	Form = irrGUI->addTab(Graphics::Instance().GetRect(0, 0, 800, 600));
+	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
 	if(AccountName == "")
-		AccountName = Config::Instance().GetLastAccountName();
+		AccountName = Config.GetLastAccountName();
 
 	// Account
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	TextAccountName = Graphics::Instance().AddText("Account", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	TextAccountName = Graphics.AddText("Account", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
 
 	DrawY += 35;
-	EditAccountName = irrGUI->addEditBox(L"", Graphics::Instance().GetCenteredRect(DrawX, DrawY, 180, 25), true, Form, ELEMENT_ACCOUNT);
+	EditAccountName = irrGUI->addEditBox(L"", Graphics.GetCenteredRect(DrawX, DrawY, 180, 25), true, Form, ELEMENT_ACCOUNT);
 	EditAccountName->setMax(15);
 	EditAccountName->setText(stringw(AccountName.c_str()).c_str());
 
 	// Password
 	DrawY += 35;
-	TextPassword = Graphics::Instance().AddText("Password", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
+	TextPassword = Graphics.AddText("Password", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
 
 	DrawY += 35;
-	EditPassword = irrGUI->addEditBox(L"", Graphics::Instance().GetCenteredRect(DrawX, DrawY, 180, 25), true, Form, ELEMENT_PASSWORD);
+	EditPassword = irrGUI->addEditBox(L"", Graphics.GetCenteredRect(DrawX, DrawY, 180, 25), true, Form, ELEMENT_PASSWORD);
 	EditPassword->setPasswordBox(true);
 	EditPassword->setMax(15);
 	EditPassword->setText(stringw(Password.c_str()).c_str());
 
 	// Buttons
 	DrawY += 50;
-	ButtonLogin = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX - 50, DrawY, ButtonWidth, 25), Form, ELEMENT_LOGIN, L"Log in");
-	ButtonCancel = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX + 50, DrawY, ButtonWidth, 25), Form, ELEMENT_CANCEL, L"Cancel");
+	ButtonLogin = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 50, DrawY, ButtonWidth, 25), Form, ELEMENT_LOGIN, L"Log in");
+	ButtonCancel = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 50, DrawY, ButtonWidth, 25), Form, ELEMENT_CANCEL, L"Cancel");
 
 	// Create account
 	DrawY += 50;
-	ButtonCreateAccount = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 120, 25), Form, ELEMENT_CREATEACCOUNT, L"Create Account");
+	ButtonCreateAccount = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 120, 25), Form, ELEMENT_CREATEACCOUNT, L"Create Account");
 
 	Message = "";
 	ChangeState(STATE_MAIN);
@@ -76,7 +76,7 @@ int AccountState::Close() {
 // Handles a disconnection from the server
 void AccountState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game::Instance().ChangeState(ConnectState::Instance());
+	Game.ChangeState(ConnectState::Instance());
 }
 
 // Handles a server packet
@@ -96,11 +96,11 @@ void AccountState::HandlePacket(ENetEvent *TEvent) {
 			ChangeState(STATE_MAIN);
 		break;
 		case NetworkClass::ACCOUNT_SUCCESS:
-			Config::Instance().SetLastAccountName(AccountName);
-			Config::Instance().SaveSettings();
+			Config.SetLastAccountName(AccountName);
+			Config.SaveSettings();
 			AccountName = "";
 			Password = "";
-			Game::Instance().ChangeState(CharactersState::Instance());
+			Game.ChangeState(CharactersState::Instance());
 		break;
 	}
 }
@@ -113,20 +113,20 @@ void AccountState::Update(u32 TDeltaTime) {
 // Draws the current state
 void AccountState::Draw() {
 
-	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
+	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
 
 	// Server message
 	if(Message.size() > 0) {
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-		Graphics::Instance().RenderText(Message.c_str(), 400, 200, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+		Graphics.SetFont(GraphicsClass::FONT_10);
+		Graphics.RenderText(Message.c_str(), 400, 200, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
 	}
 
 	switch(State) {
 		case STATE_MAIN:
 		break;
 		case STATE_LOGIN:
-			Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-			Graphics::Instance().RenderText("Sending information...", 400, 250, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(GraphicsClass::FONT_10);
+			Graphics.RenderText("Sending information...", 400, 250, GraphicsClass::ALIGN_CENTER);
 		break;
 	}
 
@@ -140,7 +140,7 @@ bool AccountState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game::Instance().ChangeState(ConnectState::Instance());
+					Game.ChangeState(ConnectState::Instance());
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_LOGIN);
@@ -166,7 +166,7 @@ void AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 							ChangeState(STATE_LOGIN);
 						break;
 						case ELEMENT_CANCEL:
-							Game::Instance().ChangeState(ConnectState::Instance());
+							Game.ChangeState(ConnectState::Instance());
 						break;
 						case ELEMENT_CREATEACCOUNT:
 							CreateAccount = true;

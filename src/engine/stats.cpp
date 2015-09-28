@@ -21,6 +21,8 @@
 #include <engine/random.h>
 #include <objects/monster.h>
 
+StatsClass Stats;
+
 // Initialize
 int StatsClass::Init() {
 
@@ -290,7 +292,7 @@ void StatsClass::GetMonsterStats(int TMonsterID, MonsterClass *TMonster) {
 
 		TMonster->AI = Database->GetInt(12);
 
-		TMonster->SkillBar[0] = Stats::Instance().GetSkill(0);
+		TMonster->SkillBar[0] = Stats.GetSkill(0);
 	}
 
 	// Free memory

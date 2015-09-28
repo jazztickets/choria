@@ -29,6 +29,8 @@
 #include <objects/player.h>
 #include <objects/item.h>
 
+HUDClass HUD;
+
 struct PositionStruct {
 	int X;
 	int Y;
@@ -120,7 +122,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 					if(TooltipItem.Item) {
 						if(TooltipItem.Window == WINDOW_VENDOR)
 							BuyItem(&TooltipItem, -1);
-						else if(TooltipItem.Window == WINDOW_INVENTORY && Input::Instance().IsShiftDown())
+						else if(TooltipItem.Window == WINDOW_INVENTORY && Input.IsShiftDown())
 							SellItem(&TooltipItem, 1);
 					}
 				break;
@@ -130,7 +132,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 			switch(TButton) {
 				case InputClass::MOUSE_LEFT:
 					if(TooltipItem.Item) {
-						if(Input::Instance().IsControlDown())
+						if(Input.IsControlDown())
 							SplitStack(TooltipItem.Slot, 1);
 						else
 							CursorItem = TooltipItem;
@@ -149,7 +151,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 			switch(TButton) {
 				case InputClass::MOUSE_LEFT:
 					if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
-						if(TooltipItem.Window == WINDOW_INVENTORY && Input::Instance().IsControlDown())
+						if(TooltipItem.Window == WINDOW_INVENTORY && Input.IsControlDown())
 							SplitStack(TooltipItem.Slot, 1);
 						else
 							CursorItem = TooltipItem;
@@ -416,7 +418,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 							if(Player->GetSkillLevel(SkillID) == 1) {
 
 								// Equip new skills
-								const SkillClass *Skill = Stats::Instance().GetSkill(SkillID);
+								const SkillClass *Skill = Stats.GetSkill(SkillID);
 								if(Skill) {
 									int Direction, Slot;
 									if(Skill->GetType() == SkillClass::TYPE_PASSIVE) {
@@ -475,20 +477,20 @@ void HUDClass::Update(u32 TDeltaTime) {
 void HUDClass::PreGUIDraw() {
 	switch(*State) {
 		case PlayClientState::STATE_MAINMENU:
-			Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, 0, 0, 800, 600, SColor(100, 255, 255, 255));
+			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 0, 0, 800, 600, SColor(100, 255, 255, 255));
 		break;
 		case PlayClientState::STATE_SKILLS: {
 			rect<s32> WindowArea = TabSkill->getAbsolutePosition();
 
 			// Draw background
-			Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, WindowArea.UpperLeftCorner.X, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth(), WindowArea.getHeight(), SColor(220, 255, 255, 255));
+			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, WindowArea.UpperLeftCorner.X, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth(), WindowArea.getHeight(), SColor(220, 255, 255, 255));
 		}
 		break;
 		case PlayClientState::STATE_TRADE: {
 			rect<s32> WindowArea = TabTrade->getAbsolutePosition();
 
 			// Draw background
-			Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, WindowArea.UpperLeftCorner.X-1, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth()-1, WindowArea.getHeight(), SColor(220, 255, 255, 255));
+			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, WindowArea.UpperLeftCorner.X-1, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth()-1, WindowArea.getHeight(), SColor(220, 255, 255, 255));
 		}
 		break;
 	}
@@ -558,8 +560,8 @@ void HUDClass::ToggleChat() {
 		CloseChat();
 	}
 	else {
-		ChatBox = irrGUI->addEditBox(L"", Graphics::Instance().GetRect(25, 570, 200, 20), true, NULL, ELEMENT_CHATBOX);
-		ChatBox->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_10));
+		ChatBox = irrGUI->addEditBox(L"", Graphics.GetRect(25, 570, 200, 20), true, NULL, ELEMENT_CHATBOX);
+		ChatBox->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_10));
 		ChatBox->setMax(NETWORKING_MESSAGESIZE);
 		irrGUI->setFocus(ChatBox);
 		Chatting = true;
@@ -580,45 +582,45 @@ void HUDClass::InitButtonBar() {
 	IGUIStaticText *ButtonText;
 
 	// Town portal
-	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_TOWNPORTAL, 0, L"Town Portal");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_TOWNPORTAL, 0, L"Town Portal");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_spawn.png"));
-	ButtonText = Graphics::Instance().AddText("Q", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("Q", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
 	// Inventory
-	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_INVENTORY, 0, L"Inventory");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_INVENTORY, 0, L"Inventory");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_inventory.png"));
-	ButtonText = Graphics::Instance().AddText("C", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("C", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
 	// Trade
-	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_TRADE, 0, L"Trade");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_TRADE, 0, L"Trade");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_trade.png"));
-	ButtonText = Graphics::Instance().AddText("T", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("T", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
 	// Character
-	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_CHARACTER, 0, L"Character");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_CHARACTER, 0, L"Character");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_character.png"));
-	ButtonText = Graphics::Instance().AddText("B", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("B", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
 	// Skills
-	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_SKILLS, 0, L"Skills");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_SKILLS, 0, L"Skills");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_skills.png"));
-	ButtonText = Graphics::Instance().AddText("S", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("S", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 
 	// Menu
-	Button = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_MAINMENU, 0, L"Menu");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_MAINMENU, 0, L"Menu");
 	Button->setImage(irrDriver->getTexture(WorkingDirectory + "textures/interface/hud_menu.png"));
-	ButtonText = Graphics::Instance().AddText("Esc", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("Esc", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
 	DrawX += 24;
 }
 
@@ -626,11 +628,11 @@ void HUDClass::InitButtonBar() {
 void HUDClass::InitMenu() {
 
 	// Add window
-	TabMenu = irrGUI->addTab(Graphics::Instance().GetRect(0, 0, 800, 500));
+	TabMenu = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 500));
 
 	// Add menu buttons
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(400, 275, 100, 25), TabMenu, ELEMENT_MAINMENURESUME, L"Resume");
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(400, 325, 100, 25), TabMenu, ELEMENT_MAINMENUEXIT, L"Exit");
+	irrGUI->addButton(Graphics.GetCenteredRect(400, 275, 100, 25), TabMenu, ELEMENT_MAINMENURESUME, L"Resume");
+	irrGUI->addButton(Graphics.GetCenteredRect(400, 325, 100, 25), TabMenu, ELEMENT_MAINMENUEXIT, L"Exit");
 
 	*State = PlayClientState::STATE_MAINMENU;
 }
@@ -652,10 +654,10 @@ void HUDClass::InitInventory(int TX, int TY, bool TSendBusy) {
 	TooltipItem.Reset();
 
 	// Add window
-	TabInventory = irrGUI->addTab(Graphics::Instance().GetCenteredRect(TX, TY, 265, 200));
+	TabInventory = irrGUI->addTab(Graphics.GetCenteredRect(TX, TY, 265, 200));
 
 	// Add background
-	irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_INVENTORY), position2di(0, 0), true, TabInventory);
+	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_INVENTORY), position2di(0, 0), true, TabInventory);
 
 	*State = PlayClientState::STATE_INVENTORY;
 }
@@ -679,13 +681,13 @@ void HUDClass::InitVendor(int TVendorID) {
 		return;
 
 	// Get vendor stats
-	Vendor = Stats::Instance().GetVendor(TVendorID);
+	Vendor = Stats.GetVendor(TVendorID);
 
 	// Add window
-	TabVendor = irrGUI->addTab(Graphics::Instance().GetCenteredRect(400, 180, 262, 246));
+	TabVendor = irrGUI->addTab(Graphics.GetCenteredRect(400, 180, 262, 246));
 
 	// Add background
-	irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_VENDOR), position2di(0, 0), true, TabVendor);
+	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_VENDOR), position2di(0, 0), true, TabVendor);
 
 	// Open inventory
 	InitInventory(400, 420, false);
@@ -716,20 +718,20 @@ void HUDClass::InitTrader(int TTraderID) {
 		return;
 
 	// Get trader stats
-	Trader = Stats::Instance().GetTrader(TTraderID);
+	Trader = Stats.GetTrader(TTraderID);
 
 	// Check for required items
 	RewardItemSlot = Player->GetRequiredItemSlots(Trader, RequiredItemSlots);
 
 	// Add window
-	TabTrader = irrGUI->addTab(Graphics::Instance().GetCenteredRect(400, 250, 166, 272));
+	TabTrader = irrGUI->addTab(Graphics.GetCenteredRect(400, 250, 166, 272));
 
 	// Add background
-	irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_TRADER), position2di(0, 0), true, TabTrader);
+	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_TRADER), position2di(0, 0), true, TabTrader);
 
 	// Add buttons
-	IGUIButton *TradeButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
-	irrGUI->addButton(Graphics::Instance().GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
+	IGUIButton *TradeButton = irrGUI->addButton(Graphics.GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
+	irrGUI->addButton(Graphics.GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
 
 	// Can't trade
 	if(RewardItemSlot == -1)
@@ -779,20 +781,20 @@ void HUDClass::InitSkills() {
 	SendBusy(true);
 
 	// Main window
-	TabSkill = irrGUI->addTab(Graphics::Instance().GetCenteredRect(400, 300, 450, 400), NULL, 0);
+	TabSkill = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 450, 400), NULL, 0);
 
 	// Add +/- buttons
-	const array<SkillClass> &Skills = Stats::Instance().GetSkillList();
+	const array<SkillClass> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
 	for(u32 i = 0; i < Skills.size(); i++) {
 		int DrawX = X * SKILL_SPACINGX + SKILL_STARTX + 16;
 		int DrawY = Y * SKILL_SPACINGY + SKILL_STARTY + 45;
 
 		// Add buy/sell button
-		IGUIButton *BuyButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
-		BuyButton->setImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_PLUS));
-		IGUIButton *SellButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
-		SellButton->setImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_MINUS));
+		IGUIButton *BuyButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
+		BuyButton->setImage(Graphics.GetImage(GraphicsClass::IMAGE_PLUS));
+		IGUIButton *SellButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
+		SellButton->setImage(Graphics.GetImage(GraphicsClass::IMAGE_MINUS));
 
 		X++;
 		if(X >= SKILL_COLUMNS) {
@@ -839,19 +841,19 @@ void HUDClass::InitTrade() {
 	TooltipItem.Reset();
 
 	// Add window
-	TabTrade = irrGUI->addTab(Graphics::Instance().GetCenteredRect(400, 300, 280, 470));
+	TabTrade = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 280, 470));
 
 	// Add background
-	TraderWindow = irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_TRADE), position2di(TRADE_WINDOWX, TRADE_WINDOWYTHEM), true, TabTrade);
+	TraderWindow = irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_TRADE), position2di(TRADE_WINDOWX, TRADE_WINDOWYTHEM), true, TabTrade);
 	TraderWindow->setVisible(false);
-	irrGUI->addImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_TRADE), position2di(TRADE_WINDOWX, TRADE_WINDOWYYOU), true, TabTrade);
+	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_TRADE), position2di(TRADE_WINDOWX, TRADE_WINDOWYYOU), true, TabTrade);
 
 	// Add gold input box
-	TradeGoldBox = irrGUI->addEditBox(L"0", Graphics::Instance().GetRect(TRADE_WINDOWX + 33, TRADE_WINDOWYYOU + 68, 89, 20), true, TabTrade, ELEMENT_GOLDTRADEBOX);
+	TradeGoldBox = irrGUI->addEditBox(L"0", Graphics.GetRect(TRADE_WINDOWX + 33, TRADE_WINDOWYYOU + 68, 89, 20), true, TabTrade, ELEMENT_GOLDTRADEBOX);
 	TradeGoldBox->setMax(10);
 
 	// Add accept button
-	TradeAcceptButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(140, 249, 100, 25), TabTrade, ELEMENT_TRADEACCEPT, L"Accept Trade");
+	TradeAcceptButton = irrGUI->addButton(Graphics.GetCenteredRect(140, 249, 100, 25), TabTrade, ELEMENT_TRADEACCEPT, L"Accept Trade");
 	TradeAcceptButton->setIsPushButton(true);
 	TradeAcceptButton->setEnabled(false);
 
@@ -910,8 +912,8 @@ void HUDClass::DrawChat() {
 		return;
 
 	// Set font
-	IGUIFont *TextFont = Graphics::Instance().GetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	IGUIFont *TextFont = Graphics.GetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 
 	int Index = 0;
 	for(list<ChatStruct>::Iterator Iterator = ChatHistory.getLast(); Iterator != ChatHistory.end(); --Iterator) {
@@ -922,10 +924,10 @@ void HUDClass::DrawChat() {
 
 		// Draw background
 		dimension2du TextArea = TextFont->getDimension(stringw(Chat.Message.c_str()).c_str());
-		Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX - 1, DrawY, TextArea.Width + 2, TextArea.Height, SColor(100, 255, 255, 255));
+		Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX - 1, DrawY, TextArea.Width + 2, TextArea.Height, SColor(100, 255, 255, 255));
 
 		// Draw text
-		Graphics::Instance().RenderText(Chat.Message.c_str(), DrawX, DrawY, GraphicsClass::ALIGN_LEFT, SColor(255, 255, 255, 255));
+		Graphics.RenderText(Chat.Message.c_str(), DrawX, DrawY, GraphicsClass::ALIGN_LEFT, SColor(255, 255, 255, 255));
 		Index++;
 		if(Index > 20)
 			break;
@@ -937,36 +939,36 @@ void HUDClass::DrawTopHUD() {
 	int StartX = 125, StartY = 15, Width = 100, Height = 16, Spacing = 20;
 
 	char String[256];
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-	Graphics::Instance().RenderText(Player->GetName().c_str(), StartX / 2, 11, GraphicsClass::ALIGN_CENTER);
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.RenderText(Player->GetName().c_str(), StartX / 2, 11, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 
 	// Draw experience bar
 	sprintf(String, "Level %d", Player->GetLevel());
-	Graphics::Instance().DrawBar(GraphicsClass::IMAGE_EXPERIENCE, StartX, StartY, Player->GetNextLevelPercent(), Width, Height);
-	Graphics::Instance().RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBar(GraphicsClass::IMAGE_EXPERIENCE, StartX, StartY, Player->GetNextLevelPercent(), Width, Height);
+	Graphics.RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
 
 	// Draw health
 	StartX += Width + Spacing;
 	float HealthPercent = Player->GetMaxHealth() > 0 ? Player->GetHealth() / (float)Player->GetMaxHealth() : 0;
 	sprintf(String, "%d / %d", Player->GetHealth(), Player->GetMaxHealth());
-	Graphics::Instance().DrawBar(GraphicsClass::IMAGE_HEALTH, StartX, StartY, HealthPercent, Width, Height);
-	Graphics::Instance().RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBar(GraphicsClass::IMAGE_HEALTH, StartX, StartY, HealthPercent, Width, Height);
+	Graphics.RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
 
 	// Draw mana
 	StartX += Width + Spacing;
 	float ManaPercent = Player->GetMaxMana() > 0 ? Player->GetMana() / (float)Player->GetMaxMana() : 0;
 	sprintf(String, "%d / %d", Player->GetMana(), Player->GetMaxMana());
-	Graphics::Instance().DrawBar(GraphicsClass::IMAGE_MANA, StartX, StartY, ManaPercent, Width, Height);
-	Graphics::Instance().RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBar(GraphicsClass::IMAGE_MANA, StartX, StartY, ManaPercent, Width, Height);
+	Graphics.RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
 
 	// Draw gold
 	StartX += Width + Spacing + 14;
-	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_GOLD, StartX, StartY + 8);
+	Graphics.DrawImage(GraphicsClass::IMAGE_GOLD, StartX, StartY + 8);
 
 	StartX += 20;
 	sprintf(String, "%d", Player->GetGold());
-	Graphics::Instance().RenderText(String, StartX, StartY);
+	Graphics.RenderText(String, StartX, StartY);
 
 	// Draw PVP icon
 	if(Player->GetTile()->PVP) {
@@ -974,16 +976,16 @@ void HUDClass::DrawTopHUD() {
 		SColor PVPColor(255, 255, 255, 255);
 		if(!Player->CanAttackPlayer())
 			PVPColor.set(150, 150, 150, 150);
-		Graphics::Instance().DrawImage(GraphicsClass::IMAGE_PVP, StartX, StartY + 8, PVPColor);
-		Graphics::Instance().SetFont(GraphicsClass::FONT_7);
-		Graphics::Instance().RenderText("A", StartX - 10, StartY + 8, GraphicsClass::ALIGN_LEFT, PVPColor);
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+		Graphics.DrawImage(GraphicsClass::IMAGE_PVP, StartX, StartY + 8, PVPColor);
+		Graphics.SetFont(GraphicsClass::FONT_7);
+		Graphics.RenderText("A", StartX - 10, StartY + 8, GraphicsClass::ALIGN_LEFT, PVPColor);
+		Graphics.SetFont(GraphicsClass::FONT_10);
 	}
 
 	// Draw RTT
 	if(ClientNetwork->GetRTT()) {
 		sprintf(String, "%d ms", ClientNetwork->GetRTT());
-		Graphics::Instance().RenderText(String, 10, 600 - 25);
+		Graphics.RenderText(String, 10, 600 - 25);
 	}
 }
 
@@ -993,7 +995,7 @@ void HUDClass::DrawInventory() {
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_7);
+	Graphics.SetFont(GraphicsClass::FONT_7);
 
 	// Draw equipped items
 	InventoryStruct *Item;
@@ -1004,7 +1006,7 @@ void HUDClass::DrawInventory() {
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
 			int DrawX = OffsetX + Position->X - 16;
 			int DrawY = OffsetY + Position->Y - 16;
-			Graphics::Instance().DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
+			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
 			DrawItemPrice(Item->Item, Item->Count, DrawX, DrawY, false);
 		}
 	}
@@ -1016,10 +1018,10 @@ void HUDClass::DrawInventory() {
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
 			int DrawX = OffsetX + 132 + PositionX * 32;
 			int DrawY = OffsetY + 1 + PositionY * 32;
-			Graphics::Instance().DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
+			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
 			DrawItemPrice(Item->Item, Item->Count, DrawX, DrawY, false);
 			if(Item->Count > 1)
-				Graphics::Instance().RenderText(stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
+				Graphics.RenderText(stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
 		}
 
 		PositionX++;
@@ -1029,13 +1031,13 @@ void HUDClass::DrawInventory() {
 		}
 	}
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 }
 
 // Draw the town portal sequence
 void HUDClass::DrawTownPortal() {
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
+	Graphics.SetFont(GraphicsClass::FONT_14);
 
 	// Get text
 	char String[256];
@@ -1044,16 +1046,16 @@ void HUDClass::DrawTownPortal() {
 
 	int DrawX = 400;
 	int DrawY = 200;
-	IGUIFont *TextFont = Graphics::Instance().GetFont(GraphicsClass::FONT_14);
+	IGUIFont *TextFont = Graphics.GetFont(GraphicsClass::FONT_14);
 	dimension2du TextArea = TextFont->getDimension(stringw(String).c_str());
 	TextArea.Width += 5;
 	TextArea.Height += 5;
 
 	// Draw text
-	Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX - 1 - TextArea.Width/2, DrawY-2, TextArea.Width, TextArea.Height, SColor(100, 255, 255, 255));
-	Graphics::Instance().RenderText(String, DrawX, DrawY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX - 1 - TextArea.Width/2, DrawY-2, TextArea.Width, TextArea.Height, SColor(100, 255, 255, 255));
+	Graphics.RenderText(String, DrawX, DrawY, GraphicsClass::ALIGN_CENTER);
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 }
 
 // Draw the vendor
@@ -1071,7 +1073,7 @@ void HUDClass::DrawVendor() {
 		if(!CursorItem.IsEqual(i, WINDOW_VENDOR)) {
 			int DrawX = OffsetX + 1 + PositionX * 32;
 			int DrawY = OffsetY + 47 + PositionY * 32;
-			Graphics::Instance().DrawCenteredImage(Item->GetImage(), DrawX + 16, DrawY + 16);
+			Graphics.DrawCenteredImage(Item->GetImage(), DrawX + 16, DrawY + 16);
 			DrawItemPrice(Item, 1, DrawX, DrawY, true);
 		}
 
@@ -1083,14 +1085,14 @@ void HUDClass::DrawVendor() {
 	}
 
 	// Draw name
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-	Graphics::Instance().RenderText(Vendor->Name.c_str(), CenterX, OffsetY + 4, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.RenderText(Vendor->Name.c_str(), CenterX, OffsetY + 4, GraphicsClass::ALIGN_CENTER);
 
 	// Draw info
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().RenderText(Vendor->Info.c_str(), CenterX, OffsetY + 27, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.RenderText(Vendor->Info.c_str(), CenterX, OffsetY + 27, GraphicsClass::ALIGN_CENTER);
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 }
 
 // Draw the trader screen
@@ -1100,7 +1102,7 @@ void HUDClass::DrawTrader() {
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 	int CenterX = WindowArea.getCenter().X;
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_8);
+	Graphics.SetFont(GraphicsClass::FONT_8);
 
 	// Draw items
 	int PositionX = 0, PositionY = 0;
@@ -1109,14 +1111,14 @@ void HUDClass::DrawTrader() {
 	for(u32 i = 0; i < Trader->TraderItems.size(); i++) {
 		int DrawX = OffsetX + 19 + PositionX * 32;
 		int DrawY = OffsetY + 52 + PositionY * 32 + PositionY * 14;
-		Graphics::Instance().DrawCenteredImage(Trader->TraderItems[i].Item->GetImage(), DrawX + 16, DrawY + 16);
+		Graphics.DrawCenteredImage(Trader->TraderItems[i].Item->GetImage(), DrawX + 16, DrawY + 16);
 
 		if(RequiredItemSlots[i] == -1)
 			Color.set(255, 255, 0, 0);
 		else
 			Color.set(255, 255, 255, 255);
 		sprintf(Buffer, "%d", Trader->TraderItems[i].Count);
-		Graphics::Instance().RenderText(Buffer, DrawX + 16, DrawY - 14, GraphicsClass::ALIGN_CENTER, Color);
+		Graphics.RenderText(Buffer, DrawX + 16, DrawY - 14, GraphicsClass::ALIGN_CENTER, Color);
 
 		PositionX++;
 		if(PositionX > 3) {
@@ -1126,14 +1128,14 @@ void HUDClass::DrawTrader() {
 	}
 
 	// Draw reward item
-	Graphics::Instance().DrawCenteredImage(Trader->RewardItem->GetImage(), OffsetX + 82, OffsetY + 198);
+	Graphics.DrawCenteredImage(Trader->RewardItem->GetImage(), OffsetX + 82, OffsetY + 198);
 	sprintf(Buffer, "%d", Trader->Count);
-	Graphics::Instance().RenderText(Buffer, OffsetX + 82, OffsetY + 166, GraphicsClass::ALIGN_CENTER);
+	Graphics.RenderText(Buffer, OffsetX + 82, OffsetY + 166, GraphicsClass::ALIGN_CENTER);
 
 	// Draw text
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().RenderText("Looking for", CenterX, OffsetY + 13, GraphicsClass::ALIGN_CENTER);
-	Graphics::Instance().RenderText("Reward", CenterX, OffsetY + 143, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.RenderText("Looking for", CenterX, OffsetY + 13, GraphicsClass::ALIGN_CENTER);
+	Graphics.RenderText("Reward", CenterX, OffsetY + 143, GraphicsClass::ALIGN_CENTER);
 }
 
 // Draw the trade screen
@@ -1152,14 +1154,14 @@ void HUDClass::DrawTrade() {
 		TraderWindow->setVisible(true);
 
 		// Draw player information
-		Graphics::Instance().RenderText(TradePlayer->GetName().c_str(), OffsetX + 72, OffsetY + 70 - 55, GraphicsClass::ALIGN_CENTER);
-		Graphics::Instance().DrawCenteredImage(Stats::Instance().GetPortrait(TradePlayer->GetPortraitID())->Image, OffsetX + 72, OffsetY + 70);
+		Graphics.RenderText(TradePlayer->GetName().c_str(), OffsetX + 72, OffsetY + 70 - 55, GraphicsClass::ALIGN_CENTER);
+		Graphics.DrawCenteredImage(Stats.GetPortrait(TradePlayer->GetPortraitID())->Image, OffsetX + 72, OffsetY + 70);
 
 		// Draw items
 		DrawTradeItems(TradePlayer, TRADE_WINDOWX, TRADE_WINDOWYTHEM, true);
 
 		// Draw gold
-		Graphics::Instance().RenderText(stringc(TradePlayer->GetTradeGold()).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
+		Graphics.RenderText(stringc(TradePlayer->GetTradeGold()).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
 
 		// Draw agreement state
 		stringc AcceptText;
@@ -1173,18 +1175,18 @@ void HUDClass::DrawTrade() {
 			AcceptColor.set(255, 255, 0, 0);
 		}
 
-		Graphics::Instance().RenderText(AcceptText.c_str(), CenterX, OffsetY + TRADE_WINDOWYTHEM + 100, GraphicsClass::ALIGN_CENTER, AcceptColor);
+		Graphics.RenderText(AcceptText.c_str(), CenterX, OffsetY + TRADE_WINDOWYTHEM + 100, GraphicsClass::ALIGN_CENTER, AcceptColor);
 		TradeAcceptButton->setEnabled(true);
 	}
 	else {
 		TraderWindow->setVisible(false);
-		Graphics::Instance().RenderText("Waiting for other player...", 400, 120, GraphicsClass::ALIGN_CENTER);
+		Graphics.RenderText("Waiting for other player...", 400, 120, GraphicsClass::ALIGN_CENTER);
 		TradeAcceptButton->setEnabled(false);
 	}
 
 	// Draw player information
-	Graphics::Instance().RenderText(Player->GetName().c_str(), OffsetX + 72, OffsetY + 198 - 55, GraphicsClass::ALIGN_CENTER);
-	Graphics::Instance().DrawCenteredImage(Stats::Instance().GetPortrait(Player->GetPortraitID())->Image, OffsetX + 72, OffsetY + 198);
+	Graphics.RenderText(Player->GetName().c_str(), OffsetX + 72, OffsetY + 198 - 55, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawCenteredImage(Stats.GetPortrait(Player->GetPortraitID())->Image, OffsetX + 72, OffsetY + 198);
 }
 
 // Draw the character stats page
@@ -1196,47 +1198,47 @@ void HUDClass::DrawCharacter() {
 	int DrawX = 800 - Width;
 	int DrawY = 300 - Height / 2;
 	int RightDrawX = 800 - 10;
-	Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height, SColor(220, 255, 255, 255));
+	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height, SColor(220, 255, 255, 255));
 	DrawX += 10;
 	DrawY += 10;
 
 	// Experience
-	Graphics::Instance().RenderText("EXP", DrawX, DrawY);
+	Graphics.RenderText("EXP", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetExperience());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	// Experience needed
 	DrawY += 15;
-	Graphics::Instance().RenderText("EXP needed", DrawX, DrawY);
+	Graphics.RenderText("EXP needed", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetExperienceNeeded());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	// Damage
 	DrawY += 15;
-	Graphics::Instance().RenderText("Damage", DrawX, DrawY);
+	Graphics.RenderText("Damage", DrawX, DrawY);
 	sprintf(Buffer, "%d-%d", Player->GetMinDamage(), Player->GetMaxDamage());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	// Defense
 	DrawY += 15;
-	Graphics::Instance().RenderText("Defense", DrawX, DrawY);
+	Graphics.RenderText("Defense", DrawX, DrawY);
 	sprintf(Buffer, "%d-%d", Player->GetMinDefense(), Player->GetMaxDefense());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	// Regen
 	DrawY += 15;
-	Graphics::Instance().RenderText("HP Regen", DrawX, DrawY);
+	Graphics.RenderText("HP Regen", DrawX, DrawY);
 	sprintf(Buffer, "%0.2f%%", Player->GetHealthRegen());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	DrawY += 15;
-	Graphics::Instance().RenderText("MP Regen", DrawX, DrawY);
+	Graphics.RenderText("MP Regen", DrawX, DrawY);
 	sprintf(Buffer, "%0.2f%%", Player->GetManaRegen());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	// Stats
 	DrawY += 30;
-	Graphics::Instance().RenderText("Play Time", DrawX, DrawY);
+	Graphics.RenderText("Play Time", DrawX, DrawY);
 
 	int Seconds = Player->GetPlayTime();
 	if(Seconds < 60)
@@ -1245,27 +1247,27 @@ void HUDClass::DrawCharacter() {
 		sprintf(Buffer, "%dm", Seconds / 60);
 	else
 		sprintf(Buffer, "%dh%dm", Seconds / 3600, (Seconds / 60 % 60));
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	DrawY += 15;
-	Graphics::Instance().RenderText("Deaths", DrawX, DrawY);
+	Graphics.RenderText("Deaths", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetDeaths());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	DrawY += 15;
-	Graphics::Instance().RenderText("Monster Kills", DrawX, DrawY);
+	Graphics.RenderText("Monster Kills", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetMonsterKills());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	DrawY += 15;
-	Graphics::Instance().RenderText("Player Kills", DrawX, DrawY);
+	Graphics.RenderText("Player Kills", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetPlayerKills());
-	Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 
 	//DrawY += 15;
-	//Graphics::Instance().RenderText("Bounty", DrawX, DrawY);
+	//Graphics.RenderText("Bounty", DrawX, DrawY);
 	//sprintf(Buffer, "%d", Player->GetBounty());
-	//Graphics::Instance().RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	//Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 }
 
 // Draws the skill page
@@ -1275,18 +1277,18 @@ void HUDClass::DrawSkills() {
 
 	// Remaining points
 	sprintf(Buffer, "Skill Points: %d", Player->GetSkillPointsRemaining());
-	Graphics::Instance().RenderText(Buffer, 400, SKILL_BARY - 23, GraphicsClass::ALIGN_CENTER);
+	Graphics.RenderText(Buffer, 400, SKILL_BARY - 23, GraphicsClass::ALIGN_CENTER);
 
 	// Draw skills
-	const array<SkillClass> &Skills = Stats::Instance().GetSkillList();
+	const array<SkillClass> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
 	for(u32 i = 0; i < Skills.size(); i++) {
 		int DrawX = WindowArea.UpperLeftCorner.X + X * SKILL_SPACINGX + SKILL_STARTX + 16;
 		int DrawY = WindowArea.UpperLeftCorner.Y + Y * SKILL_SPACINGY + SKILL_STARTY + 16;
-		Graphics::Instance().DrawCenteredImage(Skills[i].GetImage(), DrawX, DrawY);
+		Graphics.DrawCenteredImage(Skills[i].GetImage(), DrawX, DrawY);
 
 		sprintf(Buffer, "%d", Player->GetSkillLevel(i));
-		Graphics::Instance().RenderText(Buffer, DrawX, DrawY - 38, GraphicsClass::ALIGN_CENTER);
+		Graphics.RenderText(Buffer, DrawX, DrawY - 38, GraphicsClass::ALIGN_CENTER);
 
 		X++;
 		if(X >= SKILL_COLUMNS) {
@@ -1302,23 +1304,23 @@ void HUDClass::DrawSkills() {
 		if(Player->GetSkillBar(i))
 			Image = Player->GetSkillBar(i)->GetImage();
 		else
-			Image = Graphics::Instance().GetImage(GraphicsClass::IMAGE_EMPTYSLOT);
+			Image = Graphics.GetImage(GraphicsClass::IMAGE_EMPTYSLOT);
 
-		Graphics::Instance().DrawCenteredImage(Image, SKILL_BARX + i * 32 + 16, SKILL_BARY + 16);
+		Graphics.DrawCenteredImage(Image, SKILL_BARX + i * 32 + 16, SKILL_BARY + 16);
 	}
 }
 
 // Draws the item under the cursor
 void HUDClass::DrawCursorItem() {
 	if(CursorItem.Item) {
-		int DrawX = Input::Instance().GetMousePosition().X - 16;
-		int DrawY = Input::Instance().GetMousePosition().Y - 16;
-		Graphics::Instance().SetFont(GraphicsClass::FONT_7);
-		Graphics::Instance().DrawCenteredImage(CursorItem.Item->GetImage(), DrawX + 16, DrawY + 16);
+		int DrawX = Input.GetMousePosition().X - 16;
+		int DrawY = Input.GetMousePosition().Y - 16;
+		Graphics.SetFont(GraphicsClass::FONT_7);
+		Graphics.DrawCenteredImage(CursorItem.Item->GetImage(), DrawX + 16, DrawY + 16);
 		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawX, DrawY, CursorItem.Window == WINDOW_VENDOR);
 		if(CursorItem.Count > 1)
-			Graphics::Instance().RenderText(stringc(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+			Graphics.RenderText(stringc(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
+		Graphics.SetFont(GraphicsClass::FONT_10);
 	}
 }
 
@@ -1326,8 +1328,8 @@ void HUDClass::DrawCursorItem() {
 void HUDClass::DrawItemTooltip() {
 	const ItemClass *Item = TooltipItem.Item;
 	if(Item) {
-		int DrawX = Input::Instance().GetMousePosition().X + 16;
-		int DrawY = Input::Instance().GetMousePosition().Y - 200;
+		int DrawX = Input.GetMousePosition().X + 16;
+		int DrawY = Input.GetMousePosition().Y - 200;
 		int Width = 175;
 		int Height = 200;
 		if(DrawY < 20)
@@ -1336,24 +1338,24 @@ void HUDClass::DrawItemTooltip() {
 		// Draw background
 		char Buffer[256];
 		stringc String;
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-		Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height);
+		Graphics.SetFont(GraphicsClass::FONT_10);
+		Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height);
 		DrawX += 10;
 
 		// Draw name
 		DrawY += 10;
-		Graphics::Instance().RenderText(Item->GetName().c_str(), DrawX, DrawY);
+		Graphics.RenderText(Item->GetName().c_str(), DrawX, DrawY);
 
 		// Draw type
 		DrawY += 15;
 		Item->GetType(String);
-		Graphics::Instance().RenderText(String.c_str(), DrawX, DrawY);
+		Graphics.RenderText(String.c_str(), DrawX, DrawY);
 
 		/*
 		// Draw level
 		DrawY += 15;
 		sprintf(Buffer, "Level %d", Item->GetLevel());
-		Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+		Graphics.RenderText(Buffer, DrawX, DrawY);
 		*/
 
 		DrawY += 15;
@@ -1366,7 +1368,7 @@ void HUDClass::DrawItemTooltip() {
 				sprintf(Buffer, "Damage: %d to %d", Min, Max);
 			else
 				sprintf(Buffer, "Damage: %d", Min);
-			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+			Graphics.RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 
@@ -1377,7 +1379,7 @@ void HUDClass::DrawItemTooltip() {
 				sprintf(Buffer, "Defense: %d to %d", Min, Max);
 			else
 				sprintf(Buffer, "Defense: %d", Min);
-			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+			Graphics.RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 
@@ -1392,22 +1394,22 @@ void HUDClass::DrawItemTooltip() {
 			case ItemClass::TYPE_POTION:
 				if(Item->GetHealthRestore() > 0) {
 					sprintf(Buffer, "HP Restored: %d", Item->GetHealthRestore());
-					Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+					Graphics.RenderText(Buffer, DrawX, DrawY);
 					DrawY += 15;
 				}
 				if(Item->GetManaRestore() > 0) {
 					sprintf(Buffer, "MP Restored: %d", Item->GetManaRestore());
-					Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+					Graphics.RenderText(Buffer, DrawX, DrawY);
 					DrawY += 15;
 				}
 				if(Item->GetInvisPower() > 0) {
 					sprintf(Buffer, "Invisibility Length: %d", Item->GetInvisPower());
-					Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+					Graphics.RenderText(Buffer, DrawX, DrawY);
 					DrawY += 15;
 				}
 
 				if(TooltipItem.Window == WINDOW_INVENTORY) {
-					Graphics::Instance().RenderText("Right-click to use", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+					Graphics.RenderText("Right-click to use", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
 					DrawY += 15;
 				}
 			break;
@@ -1416,22 +1418,22 @@ void HUDClass::DrawItemTooltip() {
 		// Boosts
 		if(Item->GetMaxHealth() != 0) {
 			sprintf(Buffer, "%+d HP", Item->GetMaxHealth());
-			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+			Graphics.RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 		if(Item->GetMaxMana() != 0) {
 			sprintf(Buffer, "%+d MP", Item->GetMaxMana());
-			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+			Graphics.RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 		if(Item->GetHealthRegen() != 0) {
 			sprintf(Buffer, "%+0.2f%% HP Regen", Item->GetHealthRegen());
-			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+			Graphics.RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 		if(Item->GetManaRegen() != 0) {
 			sprintf(Buffer, "%+0.2f%% MP Regen", Item->GetManaRegen());
-			Graphics::Instance().RenderText(Buffer, DrawX, DrawY);
+			Graphics.RenderText(Buffer, DrawX, DrawY);
 			DrawY += 15;
 		}
 
@@ -1440,15 +1442,15 @@ void HUDClass::DrawItemTooltip() {
 			DrawY += 15;
 			if(TooltipItem.Window == WINDOW_VENDOR) {
 				sprintf(Buffer, "$%d", TooltipItem.Cost);
-				Graphics::Instance().RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
+				Graphics.RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
 				DrawY += 15;
-				Graphics::Instance().RenderText("Right-click to buy", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+				Graphics.RenderText("Right-click to buy", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
 			}
 			else if(TooltipItem.Window == WINDOW_INVENTORY) {
 				sprintf(Buffer, "$%d", TooltipItem.Cost);
-				Graphics::Instance().RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
+				Graphics.RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
 				DrawY += 15;
-				Graphics::Instance().RenderText("Shift+Right-click to sell", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+				Graphics.RenderText("Shift+Right-click to sell", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
 			}
 		}
 
@@ -1456,7 +1458,7 @@ void HUDClass::DrawItemTooltip() {
 			case PlayClientState::STATE_INVENTORY:
 			case PlayClientState::STATE_TRADE:
 				if(TooltipItem.Window == WINDOW_INVENTORY && TooltipItem.Count > 1) {
-					Graphics::Instance().RenderText("Ctrl+click to split", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+					Graphics.RenderText("Ctrl+click to split", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
 					DrawY += 15;
 				}
 			break;
@@ -1467,9 +1469,9 @@ void HUDClass::DrawItemTooltip() {
 // Draws the skill under the cursor
 void HUDClass::DrawCursorSkill() {
 	if(CursorSkill.Skill) {
-		int DrawX = Input::Instance().GetMousePosition().X - 16;
-		int DrawY = Input::Instance().GetMousePosition().Y - 16;
-		Graphics::Instance().DrawCenteredImage(CursorSkill.Skill->GetImage(), DrawX + 16, DrawY + 16);
+		int DrawX = Input.GetMousePosition().X - 16;
+		int DrawY = Input.GetMousePosition().Y - 16;
+		Graphics.DrawCenteredImage(CursorSkill.Skill->GetImage(), DrawX + 16, DrawY + 16);
 	}
 }
 
@@ -1478,8 +1480,8 @@ void HUDClass::DrawSkillTooltip() {
 	const SkillClass *Skill = TooltipSkill.Skill;
 	if(Skill) {
 		int SkillLevel = Player->GetSkillLevel(Skill->GetID());
-		int DrawX = Input::Instance().GetMousePosition().X + 16;
-		int DrawY = Input::Instance().GetMousePosition().Y - 100;
+		int DrawX = Input.GetMousePosition().X + 16;
+		int DrawY = Input.GetMousePosition().Y - 100;
 		int Width = 300;
 		int Height;
 		if(SkillLevel > 0)
@@ -1495,13 +1497,13 @@ void HUDClass::DrawSkillTooltip() {
 		// Draw background
 		char Buffer[256];
 		stringc String;
-		Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-		Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height);
+		Graphics.SetFont(GraphicsClass::FONT_10);
+		Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height);
 		DrawX += 10;
 		DrawY += 10;
 
 		// Draw name
-		Graphics::Instance().RenderText(Skill->GetName().c_str(), DrawX, DrawY);
+		Graphics.RenderText(Skill->GetName().c_str(), DrawX, DrawY);
 		DrawY += 15;
 
 		// Draw description
@@ -1510,7 +1512,7 @@ void HUDClass::DrawSkillTooltip() {
 		// Draw next level description
 		if(SkillLevel > 0) {
 			DrawY += 30;
-			Graphics::Instance().RenderText("Next level", DrawX, DrawY, GraphicsClass::ALIGN_LEFT);
+			Graphics.RenderText("Next level", DrawX, DrawY, GraphicsClass::ALIGN_LEFT);
 			DrawY += 15;
 			DrawSkillDescription(Skill, SkillLevel+1, DrawX, DrawY);
 		}
@@ -1518,13 +1520,13 @@ void HUDClass::DrawSkillTooltip() {
 		// Sell cost
 		DrawY += 30;
 		sprintf(Buffer, "Sell cost: $%d", Skill->GetSellCost(Player->GetLevel()));
-		Graphics::Instance().RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
+		Graphics.RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
 
 		// Additional information
 		switch(Skill->GetType()) {
 			case SkillClass::TYPE_PASSIVE:
 				DrawY += 15;
-				Graphics::Instance().RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+				Graphics.RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
 			break;
 		}
 	}
@@ -1546,7 +1548,7 @@ void HUDClass::DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDr
 	switch(Skill->GetType()) {
 		case SkillClass::TYPE_ATTACK:
 			sprintf(Buffer, Skill->GetInfo().c_str(), PowerPercent);
-			Graphics::Instance().RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 		case SkillClass::TYPE_SPELL:
 			switch(Skill->GetID()) {
@@ -1558,37 +1560,37 @@ void HUDClass::DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDr
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMinRound, PowerMaxRound);
 				break;
 			}
-			Graphics::Instance().RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 
 			TDrawY += 15;
 			sprintf(Buffer, "%d Mana", Skill->GetManaCost(TLevel));
-			Graphics::Instance().RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, SColor(255, 0, 0, 255));
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, SColor(255, 0, 0, 255));
 		break;
 		case SkillClass::TYPE_USEPOTION:
 			sprintf(Buffer, Skill->GetInfo().c_str(), PowerMin);
-			Graphics::Instance().RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 		case SkillClass::TYPE_PASSIVE:
 			switch(Skill->GetID()) {
 				case 4:
 				case 5:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxRound);
-					Graphics::Instance().RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 				break;
 				case 7:
 				case 8:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxFloat);
-					Graphics::Instance().RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 				break;
 				case 9:
 				case 10:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMax);
-					Graphics::Instance().RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 				break;
 			}
 		break;
 		default:
-			Graphics::Instance().RenderText(Skill->GetInfo().c_str(), TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Skill->GetInfo().c_str(), TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 	}
 }
@@ -1608,8 +1610,8 @@ void HUDClass::DrawItemPrice(const ItemClass *TItem, int TCount, int TDrawX, int
 	else
 		Color.set(255, 224, 216, 84);
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_7);
-	Graphics::Instance().RenderText(stringc(Price).c_str(), TDrawX + 2, TDrawY + 0, GraphicsClass::ALIGN_LEFT, Color);
+	Graphics.SetFont(GraphicsClass::FONT_7);
+	Graphics.RenderText(stringc(Price).c_str(), TDrawX + 2, TDrawY + 0, GraphicsClass::ALIGN_LEFT, Color);
 }
 
 // Draws trading items
@@ -1618,7 +1620,7 @@ void HUDClass::DrawTradeItems(PlayerClass *TPlayer, int TDrawX, int TDrawY, bool
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_7);
+	Graphics.SetFont(GraphicsClass::FONT_7);
 
 	// Draw trade items
 	InventoryStruct *Item;
@@ -1628,9 +1630,9 @@ void HUDClass::DrawTradeItems(PlayerClass *TPlayer, int TDrawX, int TDrawY, bool
 		if(Item->Item && (TDrawAll || !CursorItem.IsEqual(i, WINDOW_TRADEYOU))) {
 			int DrawX = OffsetX + TDrawX + PositionX * 32;
 			int DrawY = OffsetY + TDrawY + PositionY * 32;
-			Graphics::Instance().DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
+			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
 			if(Item->Count > 1)
-				Graphics::Instance().RenderText(stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
+				Graphics.RenderText(stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
 		}
 
 		PositionX++;
@@ -1639,7 +1641,7 @@ void HUDClass::DrawTradeItems(PlayerClass *TPlayer, int TDrawX, int TDrawY, bool
 			PositionY++;
 		}
 	}
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 }
 
 // Returns an item that's on the screen
@@ -1852,14 +1854,14 @@ void HUDClass::GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursor
 		return;
 
 	// Get skill from page
-	u32 SkillCount = Stats::Instance().GetSkillList().size();
+	u32 SkillCount = Stats.GetSkillList().size();
 	int X = 0, Y = 0;
 	for(u32 i = 0; i < SkillCount; i++) {
 		int SkillX = WindowArea.UpperLeftCorner.X + SKILL_STARTX + X * SKILL_SPACINGX;
 		int SkillY = WindowArea.UpperLeftCorner.Y + SKILL_STARTY + Y * SKILL_SPACINGY;
 		rect<s32> SkillArea(SkillX, SkillY, SkillX + 32, SkillY + 32);
 		if(SkillArea.isPointInside(TPoint)) {
-			TCursorSkill.Skill = Stats::Instance().GetSkill(i);
+			TCursorSkill.Skill = Stats.GetSkill(i);
 			TCursorSkill.Slot = i;
 			TCursorSkill.Window = WINDOW_SKILLS;
 			return;
@@ -1923,7 +1925,7 @@ void HUDClass::RefreshSkillButtons() {
 			SkillID = Button->getID() - ELEMENT_SKILLPLUS0;
 
 			// Hide locked skills
-			const SkillClass *Skill = Stats::Instance().GetSkill(SkillID);
+			const SkillClass *Skill = Stats.GetSkill(SkillID);
 			if(Skill->GetSkillCost() > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
 				Button->setVisible(false);
 		}

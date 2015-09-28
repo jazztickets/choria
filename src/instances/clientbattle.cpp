@@ -60,19 +60,19 @@ void ClientBattleClass::StartBattle(PlayerClass *TClientPlayer) {
 	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 
 		// Add button
-		SkillButtons[i] = irrGUI->addButton(Graphics::Instance().GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
-		IGUIStaticText *Text = Graphics::Instance().AddText(stringc(i+1).c_str(), 3, 1, GraphicsClass::ALIGN_LEFT, SkillButtons[i]);
-		Text->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_8));
+		SkillButtons[i] = irrGUI->addButton(Graphics.GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
+		IGUIStaticText *Text = Graphics.AddText(stringc(i+1).c_str(), 3, 1, GraphicsClass::ALIGN_LEFT, SkillButtons[i]);
+		Text->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_8));
 
 		// Get skill info
 		Skill = ClientPlayer->GetSkillBar(i);
 		if(Skill)
 			SkillButtons[i]->setImage(Skill->GetImage());
 		else
-			SkillButtons[i]->setImage(Graphics::Instance().GetImage(GraphicsClass::IMAGE_EMPTYSLOT));
+			SkillButtons[i]->setImage(Graphics.GetImage(GraphicsClass::IMAGE_EMPTYSLOT));
 	}
-	PassButton = irrGUI->addButton(Graphics::Instance().GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
-	PassButton->setOverrideFont(Graphics::Instance().GetFont(GraphicsClass::FONT_8));
+	PassButton = irrGUI->addButton(Graphics.GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
+	PassButton->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_8));
 
 	State = STATE_GETINPUT;
 	TargetState = -1;
@@ -163,7 +163,7 @@ void ClientBattleClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElem
 void ClientBattleClass::HandleCommand(int TSlot, int TSkillID) {
 	int Index = GetFighterFromSlot(TSlot);
 	if(Index != -1) {
-		Fighters[Index]->SetSkillUsing(Stats::Instance().GetSkill(TSkillID));
+		Fighters[Index]->SetSkillUsing(Stats.GetSkill(TSkillID));
 	}
 }
 
@@ -205,7 +205,7 @@ void ClientBattleClass::Update(u32 TDeltaTime) {
 void ClientBattleClass::Render() {
 
 	// Draw layout
-	Graphics::Instance().DrawBackground(GraphicsClass::IMAGE_BLACK, 130, 120, 540, 360, SColor(220, 255, 255, 255));
+	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 130, 120, 540, 360, SColor(220, 255, 255, 255));
 
 	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
 		ShowResults = false;
@@ -252,42 +252,42 @@ void ClientBattleClass::RenderBattleWin() {
 	char String[512];
 
 	// Draw title
-	Graphics::Instance().SetFont(GraphicsClass::FONT_18);
-	Graphics::Instance().RenderText("You have won", 400, 130, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_18);
+	Graphics.RenderText("You have won", 400, 130, GraphicsClass::ALIGN_CENTER);
 
 	// Draw experience
 	int IconX = 180, IconY = 200, IconSpacing = 110, TextOffsetX = IconX + 50, TextOffsetY;
-	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_BATTLEEXPERIENCE, IconX, IconY);
+	Graphics.DrawImage(GraphicsClass::IMAGE_BATTLEEXPERIENCE, IconX, IconY);
 
 	TextOffsetY = IconY - 23;
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
+	Graphics.SetFont(GraphicsClass::FONT_14);
 	sprintf(String, "%d experience", TotalExperience);
-	Graphics::Instance().RenderText(String, TextOffsetX, TextOffsetY);
+	Graphics.RenderText(String, TextOffsetX, TextOffsetY);
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(GraphicsClass::FONT_10);
 	sprintf(String, "You need %d more experience for your next level", ClientPlayer->GetExperienceNeeded());
-	Graphics::Instance().RenderText(String, TextOffsetX, TextOffsetY + 22);
+	Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
 
 	// Draw gold
 	IconY += IconSpacing;
 	TextOffsetY = IconY - 20;
-	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_BATTLECOINS, IconX, IconY);
+	Graphics.DrawImage(GraphicsClass::IMAGE_BATTLECOINS, IconX, IconY);
 
 	sprintf(String, "%d gold", TotalGold);
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-	Graphics::Instance().RenderText(String, TextOffsetX, TextOffsetY);
+	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.RenderText(String, TextOffsetX, TextOffsetY);
 
 	sprintf(String, "You have %d gold", ClientPlayer->GetGold());
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().RenderText(String, TextOffsetX, TextOffsetY + 22);
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
 
 	// Draw items
 	IconY += IconSpacing;
 	TextOffsetY = IconY - 10;
-	Graphics::Instance().DrawImage(GraphicsClass::IMAGE_BATTLECHEST, IconX, IconY);
+	Graphics.DrawImage(GraphicsClass::IMAGE_BATTLECHEST, IconX, IconY);
 
 	if(MonsterDrops.size() == 0) {
-		Graphics::Instance().RenderText("No items found", TextOffsetX, TextOffsetY);
+		Graphics.RenderText("No items found", TextOffsetX, TextOffsetY);
 	}
 	else {
 		int DrawX = TextOffsetX;
@@ -296,7 +296,7 @@ void ClientBattleClass::RenderBattleWin() {
 		// Draw items found
 		int ColumnIndex = 0;
 		for(u32 i = 0; i < MonsterDrops.size(); i++) {
-			Graphics::Instance().DrawCenteredImage(MonsterDrops[i]->GetImage(), DrawX + 16, DrawY + 16);
+			Graphics.DrawCenteredImage(MonsterDrops[i]->GetImage(), DrawX + 16, DrawY + 16);
 
 			DrawX += 40;
 			ColumnIndex++;
@@ -315,12 +315,12 @@ void ClientBattleClass::RenderBattleLose() {
 	RenderBattle(true);
 	char Buffer[256];
 
-	Graphics::Instance().SetFont(GraphicsClass::FONT_14);
-	Graphics::Instance().RenderText("You died", 400, 130, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.RenderText("You died", 400, 130, GraphicsClass::ALIGN_CENTER);
 
 	sprintf(Buffer, "You lose %d gold", abs(TotalGold));
-	Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-	Graphics::Instance().RenderText(Buffer, 400, 155, GraphicsClass::ALIGN_CENTER, SColor(255, 200, 200, 200));
+	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.RenderText(Buffer, 400, 155, GraphicsClass::ALIGN_CENTER, SColor(255, 200, 200, 200));
 }
 
 // Displays turn results from the server
@@ -367,7 +367,7 @@ void ClientBattleClass::EndBattle(PacketClass *TPacket) {
 	int ItemCount = TPacket->ReadChar();
 	for(int i = 0; i < ItemCount; i++) {
 		int ItemID = TPacket->ReadInt();
-		const ItemClass *Item = Stats::Instance().GetItem(ItemID);
+		const ItemClass *Item = Stats.GetItem(ItemID);
 		MonsterDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
 	}
