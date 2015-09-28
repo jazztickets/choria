@@ -36,7 +36,7 @@ class MainMenuState : public StateClass {
 
 		int Init();
 		int Close();
-		
+
 		bool HandleKeyPress(EKEY_CODE TKey);
 		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
 

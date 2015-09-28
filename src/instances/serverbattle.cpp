@@ -45,7 +45,7 @@ int ServerBattleClass::RemovePlayer(PlayerClass *TPlayer) {
 	for(u32 i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);
-			
+
 			if(Player == TPlayer) {
 				Player->StopBattle();
 				Fighters[i] = NULL;
@@ -53,7 +53,7 @@ int ServerBattleClass::RemovePlayer(PlayerClass *TPlayer) {
 
 			if(Fighters[i])
 				Count++;
-		}		
+		}
 	}
 	PlayerCount = Count;
 
@@ -185,7 +185,7 @@ void ServerBattleClass::ResolveTurn() {
 			// Ignore dead fighters
 			if(Fighters[i]->GetHealth() > 0) {
 				Result->Target = Fighters[i]->GetTarget();
-				
+
 				// Get skill used
 				const SkillClass *Skill = Fighters[i]->GetSkillBar(Fighters[i]->GetCommand());
 				if(Skill && Skill->CanUse(Result->Fighter)) {
@@ -195,7 +195,7 @@ void ServerBattleClass::ResolveTurn() {
 					// Update fighters
 					FighterResultStruct *TargetResult = &Results[TargetFighterIndex];
 					TargetResult->Fighter = Fighters[TargetFighterIndex];
-					Skill->ResolveSkill(Result, TargetResult);						
+					Skill->ResolveSkill(Result, TargetResult);
 				}
 
 				// Update health and mana regen
@@ -262,7 +262,7 @@ void ServerBattleClass::CheckEnd() {
 				Side[i].Dead = false;
 			}
 
-			// Sum experience and gold	
+			// Sum experience and gold
 			Side[i].ExperienceGiven += SideFighters[j]->GetExperienceGiven();
 			Side[i].GoldGiven += SideFighters[j]->GetGoldGiven();
 			Side[i].FighterCount++;
@@ -276,7 +276,7 @@ void ServerBattleClass::CheckEnd() {
 		for(int i = 0; i < 2; i++) {
 			if(Side[i].FighterCount > 0) {
 				int OtherSide = !i;
-				
+
 				// Divide experience up
 				if(Side[OtherSide].ExperienceGiven > 0) {
 					Side[OtherSide].ExperienceGiven /= Side[i].FighterCount;
@@ -383,7 +383,7 @@ void ServerBattleClass::CheckEnd() {
 				Packet.WriteInt(ItemID);
 				Players[i]->AddItem(Stats::Instance().GetItem(ItemID), 1, -1);
 			}
-			
+
 			ServerNetwork->SendPacketToPeer(&Packet, Players[i]->GetPeer());
 		}
 
@@ -395,14 +395,14 @@ void ServerBattleClass::CheckEnd() {
 
 // Send a packet to all players
 void ServerBattleClass::SendPacketToPlayers(PacketClass *TPacket) {
-	
+
 	// Send packet to all players
 	for(u32 i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);
 			ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer());
 		}
-	}	
+	}
 }
 
 // Send the player's skill to the other players

@@ -28,7 +28,7 @@ int SingleNetworkClass::Init(bool TServer) {
 	Connected = false;
 	Peer.address.host = 0;
 	Peer.address.port = 0;
-	
+
 	return 1;
 }
 
@@ -43,7 +43,7 @@ int SingleNetworkClass::Connect(const char *TIPAddress) {
 
 	if(Connected)
 		return 0;
-	
+
 	Connected = true;
 
 	// Simulate the connect
@@ -73,7 +73,7 @@ void SingleNetworkClass::Disconnect(ENetPeer *TPeer) {
 void SingleNetworkClass::SendPacketToHost(PacketClass *TPacket) {
 
 	if(Connected) {
-		
+
 		// Simulate packet event
 		ENetEvent Event;
 		Event.peer = &Peer;

@@ -34,7 +34,7 @@ using namespace gui;
 class InputClass : public IEventReceiver {
 
 	public:
-	
+
 		enum MouseButtonType {
 			MOUSE_LEFT,
 			MOUSE_RIGHT,

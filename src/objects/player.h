@@ -181,7 +181,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(int TSkillID, int TAdjust);
 		void CalculateSkillPoints();
-		
+
 		// Battles
 		void GenerateNextBattle();
 		void SetNextBattle(int TValue) { NextBattle = TValue; }
@@ -200,7 +200,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		const TraderStruct *GetTrader();
 		int GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots);
 		void AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRewardSlot);
-		
+
 		// Map
 		void SetSpawnMapID(int TValue) { SpawnMapID = TValue; }
 		int GetSpawnMapID() const { return SpawnMapID; }
@@ -226,8 +226,8 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		void SetTradeAccepted(bool TValue) { TradeAccepted = TValue; }
 		bool GetTradeAccepted() { return TradeAccepted; }
 
-		static bool IsSlotInventory(int TSlot) { return TSlot >= INVENTORY_BACKPACK && TSlot < INVENTORY_TRADE; } 
-		static bool IsSlotTrade(int TSlot) { return TSlot >= INVENTORY_TRADE && TSlot < INVENTORY_COUNT; } 
+		static bool IsSlotInventory(int TSlot) { return TSlot >= INVENTORY_BACKPACK && TSlot < INVENTORY_TRADE; }
+		static bool IsSlotTrade(int TSlot) { return TSlot >= INVENTORY_TRADE && TSlot < INVENTORY_COUNT; }
 
 	private:
 

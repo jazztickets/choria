@@ -40,7 +40,7 @@ class MultiNetworkClass : public NetworkClass {
 
 		// Packets
 		void SendPacketToHost(PacketClass *TPacket);
-		void SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer);	
+		void SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer);
 
 	private:
 

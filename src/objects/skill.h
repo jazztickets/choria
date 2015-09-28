@@ -39,7 +39,7 @@ class SkillClass {
 	friend class StatsClass;
 
 	public:
-	
+
 		enum SkillType {
 			TYPE_ATTACK,
 			TYPE_SPELL,

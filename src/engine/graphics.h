@@ -49,7 +49,7 @@ class GraphicsClass {
 			FONT_18,
 			FONT_COUNT,
 		};
-		
+
 		enum ImageType {
 			IMAGE_EMPTYSLOT,
 			IMAGE_SELECTEDSLOT,
@@ -116,7 +116,7 @@ class GraphicsClass {
 		// Graphics state
 		SColor ClearColor;
 		int Width, Height;
-		
+
 		// Theme
 		IGUISkin *Skin;
 

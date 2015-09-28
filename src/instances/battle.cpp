@@ -41,7 +41,7 @@ BattleClass::~BattleClass() {
 
 // Add a fighter to the battle
 void BattleClass::AddFighter(FighterClass *TFighter, int TSide) {
-	
+
 	// Count fighters and set slots
 	if(TSide == 0) {
 		TFighter->SetSlot(TSide + LeftFighterCount * 2);
@@ -57,7 +57,7 @@ void BattleClass::AddFighter(FighterClass *TFighter, int TSide) {
 	else
 		MonsterCount++;
 
-	Fighters.push_back(TFighter);	
+	Fighters.push_back(TFighter);
 }
 
 // Get a list of fighters from a side

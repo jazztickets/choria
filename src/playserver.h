@@ -48,7 +48,7 @@ class PlayServerState : public StateClass {
 
 		void PlayerTownPortal(PlayerClass *TPlayer);
 		u32 GetServerTime() const { return ServerTime; }
-		
+
 		void StartCommandThread();
 		void StopServer() { StopRequested = true; }
 
@@ -100,9 +100,9 @@ class PlayServerState : public StateClass {
 		DatabaseClass *Database;
 		ObjectManagerClass *ObjectManager;
 		InstanceClass *Instances;
-		
+
 		bool StopRequested;
-		
+
 		tthread::thread *CommandThread;
 
 		u32 ServerTime;

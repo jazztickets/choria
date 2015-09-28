@@ -42,7 +42,7 @@ class FileClass {
 		int ReadInt();
 		void ReadStruct(void *TData, int TSize);
 		void ReadString(char *TData);
-		
+
 	private:
 
 		std::fstream File;

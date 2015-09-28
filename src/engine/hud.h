@@ -156,7 +156,7 @@ class HUDClass {
 		void ToggleTownPortal();
 
 	private:
-		
+
 		void CloseMenu();
 		void CloseInventory();
 		void CloseVendor();

@@ -52,7 +52,7 @@ class MonsterClass : public FighterClass {
 		int GetCommand();
 
 	private:
-		
+
 		// Objects
 		array<FighterClass *> Opponents;
 		int ID;

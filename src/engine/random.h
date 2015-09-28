@@ -34,9 +34,9 @@ class RandomClass {
         int GenerateRange(int TMin, int TMax);
         u32 GenerateRange(u32 TMin, u32 TMax);
         double GenerateRange(double TMin, double TMax);
-	
+
 	private:
-	
+
 		// Base function
 		u32 GenerateRandomInteger();
 
@@ -90,7 +90,7 @@ inline double RandomClass::Generate() {
 
 	return GenerateRandomInteger() / 4294967296.0;
 }
- 
+
 // Generates a random number [0, TMax-1]
 inline u32 RandomClass::Generate(u32 TMax) {
 

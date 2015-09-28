@@ -18,7 +18,7 @@
 #include "engine/game.h"
 
 int main(int TArgumentCount, char **TArguments) {
-	
+
 	// Initialize the game
 	if(!Game::Instance().Init(TArgumentCount, TArguments))
 		return 1;

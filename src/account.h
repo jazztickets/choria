@@ -41,7 +41,7 @@ class AccountState : public StateClass {
 
 		int Init();
 		int Close();
-		
+
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
 		bool HandleKeyPress(EKEY_CODE TKey);
@@ -72,7 +72,7 @@ class AccountState : public StateClass {
 		IGUIButton *ButtonLogin, *ButtonCancel, *ButtonCreateAccount;
 		stringc Message, AccountName, Password;
 		bool CreateAccount;
-		
+
 };
 
 #endif

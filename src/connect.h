@@ -39,7 +39,7 @@ class ConnectState : public StateClass {
 
 		int Init();
 		int Close();
-		
+
 		void HandleConnect(ENetEvent *TEvent);
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
@@ -68,7 +68,7 @@ class ConnectState : public StateClass {
 		IGUIEditBox *EditIP;
 		IGUIButton *ButtonConnect, *ButtonCancel;
 		stringc Message, IPAddress;
-		
+
 };
 
 #endif

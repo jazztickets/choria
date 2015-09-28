@@ -43,7 +43,7 @@ class CreateCharacterState : public StateClass {
 
 		int Init();
 		int Close();
-		
+
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
 		bool HandleKeyPress(EKEY_CODE TKey);
@@ -62,7 +62,7 @@ class CreateCharacterState : public StateClass {
 		void UpdateSelection(int TSelectedIndex);
 		void CreateCharacter();
 		void Back();
-		
+
 		// States
 		int State;
 
@@ -72,7 +72,7 @@ class CreateCharacterState : public StateClass {
 		stringc Message;
 		int SelectedIndex;
 
-		array<int> Portraits;		
+		array<int> Portraits;
 };
 
 #endif

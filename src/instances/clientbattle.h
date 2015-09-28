@@ -80,7 +80,7 @@ class ClientBattleClass : public BattleClass {
 
 		void SendSkill(int TSkillSlot);
 		void ChangeTarget(int TDirection);
-	
+
 		// Battle results
 		u32 ResultTimer;
 		bool ShowResults;

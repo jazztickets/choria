@@ -105,7 +105,7 @@ class MapEditorState : public StateClass {
 		// Texture palette
 		void InitTexturePalette();
 		void RefreshTexturePalette();
-		
+
 		// Brushes
 		void InitBrushOptions();
 		void ApplyBrushSize(int TX, int TY, int TSize);

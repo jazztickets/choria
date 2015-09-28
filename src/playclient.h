@@ -34,7 +34,7 @@ class ClientBattleClass;
 class PlayClientState : public StateClass {
 
 	public:
-		
+
 		enum StateType {
 			STATE_CONNECTING,
 			STATE_MAINMENU,
@@ -62,7 +62,7 @@ class PlayClientState : public StateClass {
 		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
 		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
-	
+
 		void Update(u32 TDeltaTime);
 		void Draw();
 
@@ -85,7 +85,7 @@ class PlayClientState : public StateClass {
 		void HandleStartBattle(PacketClass *TPacket);
 		void HandleBattleTurnResults(PacketClass *TPacket);
 		void HandleBattleEnd(PacketClass *TPacket);
-		void HandleBattleCommand(PacketClass *TPacket);		
+		void HandleBattleCommand(PacketClass *TPacket);
 		void HandleHUD(PacketClass *TPacket);
 		void HandlePlayerPosition(PacketClass *TPacket);
 		void HandleEventStart(PacketClass *TPacket);

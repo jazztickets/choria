@@ -52,7 +52,7 @@ int FileClass::OpenForRead(const char *TFilename) {
 
 // Closes the file
 void FileClass::Close() {
-	
+
 	File.close();
 }
 

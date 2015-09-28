@@ -63,9 +63,9 @@ int DatabaseClass::OpenDatabaseCreate(const char *TFilename) {
 	return 1;
 }
 
-// Runs a query 
+// Runs a query
 int DatabaseClass::RunQuery(const char *TQueryString) {
-	
+
 	sqlite3_stmt *NewQueryHandle;
 	const char *Tail;
 	int Result = sqlite3_prepare_v2(Database, TQueryString, strlen(TQueryString), &NewQueryHandle, &Tail);
@@ -133,7 +133,7 @@ int DatabaseClass::FetchRow(int THandle) {
 
 // Shut down a query
 int DatabaseClass::CloseQuery(int THandle) {
-	
+
 	int Result = sqlite3_finalize(QueryHandle[THandle]);
 	if(Result != SQLITE_OK) {
 		printf("RunQuery: %s\n", sqlite3_errmsg(Database));
@@ -145,7 +145,7 @@ int DatabaseClass::CloseQuery(int THandle) {
 
 // Gets the last insert id
 int DatabaseClass::GetLastInsertID() {
-	
+
 	return (int)sqlite3_last_insert_rowid(Database);
 }
 

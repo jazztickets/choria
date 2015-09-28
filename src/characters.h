@@ -56,7 +56,7 @@ class CharactersState : public StateClass {
 
 		int Init();
 		int Close();
-		
+
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
 		bool HandleKeyPress(EKEY_CODE TKey);
@@ -84,7 +84,7 @@ class CharactersState : public StateClass {
 		SlotStruct Slots[CHARACTERS_MAX];
 		int SelectedIndex;
 		u32 ClickTimer;
-		
+
 };
 
 #endif

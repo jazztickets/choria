@@ -56,7 +56,7 @@ int StatsClass::Close() {
 void StatsClass::LoadPortraits() {
 
 	Portraits.clear();
-	
+
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Portraits");
 
@@ -74,7 +74,7 @@ void StatsClass::LoadPortraits() {
 void StatsClass::LoadMaps() {
 
 	Maps.clear();
-	
+
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Maps");
 
@@ -111,7 +111,7 @@ void StatsClass::LoadEvents() {
 
 // Loads level data
 void StatsClass::LoadLevels() {
-	
+
 	// Clear events
 	Levels.clear();
 
@@ -136,7 +136,7 @@ void StatsClass::LoadLevels() {
 void StatsClass::LoadSkills() {
 
 	Skills.clear();
-	
+
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Skills");
 
@@ -164,7 +164,7 @@ void StatsClass::LoadSkills() {
 void StatsClass::LoadItems() {
 
 	Items.clear();
-	
+
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Items");
 
@@ -198,7 +198,7 @@ void StatsClass::LoadItems() {
 // Loads vendor data
 void StatsClass::LoadVendors() {
 	Vendors.clear();
-	
+
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Vendors");
 
@@ -229,7 +229,7 @@ void StatsClass::LoadVendors() {
 // Loads trader data
 void StatsClass::LoadTraders() {
 	Traders.clear();
-	
+
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Traders");
 
@@ -308,7 +308,7 @@ const SkillClass *StatsClass::GetSkill(int TSkillID) {
 // Gets a list of portraits
 void StatsClass::GetPortraitList(list<PortraitStruct> &TList) {
 
-	for(std::map<int, PortraitStruct>::iterator Iterator = Portraits.begin(); Iterator != Portraits.end(); ++Iterator) 
+	for(std::map<int, PortraitStruct>::iterator Iterator = Portraits.begin(); Iterator != Portraits.end(); ++Iterator)
 		TList.push_back(Iterator->second);
 }
 
@@ -346,7 +346,7 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, array<int> &TMonsters) {
 
 		Zone.push_back(ZoneStruct(MonsterID, OddsSum));
 	}
-	
+
 	// Free memory
 	Database->CloseQuery();
 
@@ -359,7 +359,7 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, array<int> &TMonsters) {
 		for(int i = 0; i < MonsterCount; i++) {
 			RandomNumber = Random::Instance().GenerateRange(1, OddsSum);
 			for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
-				if(RandomNumber <= Zone[MonsterIndex].Odds) 
+				if(RandomNumber <= Zone[MonsterIndex].Odds)
 					break;
 			}
 
@@ -389,7 +389,7 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TD
 
 		MonsterDrop.push_back(MonsterDropStruct(ItemID, OddsSum));
 	}
-	
+
 	// Free memory
 	Database->CloseQuery();
 
@@ -402,7 +402,7 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TD
 		for(int i = 0; i < TCount; i++) {
 			RandomNumber = Random::Instance().GenerateRange(1, OddsSum);
 			for(ItemIndex = 0; ItemIndex < MonsterDrop.size(); ItemIndex++) {
-				if(RandomNumber <= MonsterDrop[ItemIndex].Odds) 
+				if(RandomNumber <= MonsterDrop[ItemIndex].Odds)
 					break;
 			}
 

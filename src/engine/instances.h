@@ -47,7 +47,7 @@ class InstanceClass {
 
 		// Maps
 		MapClass *GetMap(int TMapID);
-		
+
 		// Battles
 		ClientBattleClass *CreateClientBattle();
 		ServerBattleClass *CreateServerBattle();
