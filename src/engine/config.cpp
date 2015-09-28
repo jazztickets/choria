@@ -35,10 +35,15 @@ int ConfigClass::Init() {
 		CreateDirectory(SavePath.c_str(), NULL);
 		CreateDirectory(SaveMapPath.c_str(), NULL);
 	#else
-		SavePath = stringc(getenv("HOME")) + stringc("/.choria/");
-		SaveMapPath = stringc(getenv("HOME")) + stringc("/.choria/maps/");
-		mkdir(SavePath.c_str(), S_IRWXU | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
-		mkdir(SaveMapPath.c_str(), S_IRWXU | S_IXGRP | S_IRGRP | S_IXOTH | S_IROTH);
+		SavePath = stringc(getenv("HOME")) + stringc("/.local/");
+		mkdir(SavePath.c_str(), 0755);
+		SavePath += "share/";
+		mkdir(SavePath.c_str(), 0755);
+		SavePath += "choria/";
+		mkdir(SavePath.c_str(), 0755);
+
+		SaveMapPath = SavePath + stringc("maps/");
+		mkdir(SavePath.c_str(), 0755);
 	#endif
 
 	LastIPAddress = "127.0.0.1";

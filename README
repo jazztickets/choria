@@ -7,6 +7,8 @@ https://github.com/jazztickets/choria
 Windows users will need:
 https://www.microsoft.com/en-us/download/details.aspx?id=48145
 
+Save data is in ~/.local/share/choria for linux and %APPDATA%/choria for windows.
+
 ----BUILDING----
 
 Linux dependencies:
