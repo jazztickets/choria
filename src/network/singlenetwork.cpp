@@ -17,8 +17,8 @@
 *******************************************************************************/
 #include <network/singlenetwork.h>
 #include <network/packetstream.h>
-#include <engine/game.h>
-#include <engine/game.h>
+#include <game.h>
+#include <game.h>
 #include <states/playserver.h>
 
 // Initializes the network system

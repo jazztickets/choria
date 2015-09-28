@@ -19,7 +19,7 @@
 
 // Libraries
 #include <instances/battle.h>
-#include <engine/constants.h>
+#include <constants.h>
 
 // Forward Declarations
 class ItemClass;

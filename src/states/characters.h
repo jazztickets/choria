@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <engine/state.h>
+#include <state.h>
 
 // Constants
 const int CHARACTERS_MAX = 6;

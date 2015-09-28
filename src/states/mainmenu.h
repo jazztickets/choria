@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <engine/state.h>
+#include <state.h>
 
 // Classes
 class _MainMenuState : public _State {

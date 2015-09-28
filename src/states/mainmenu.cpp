@@ -16,10 +16,10 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/mainmenu.h>
-#include <engine/game.h>
-#include <engine/globals.h>
-#include <engine/graphics.h>
-#include <engine/constants.h>
+#include <game.h>
+#include <globals.h>
+#include <graphics.h>
+#include <constants.h>
 #include <network/network.h>
 #include <network/packetstream.h>
 #include <states/connect.h>

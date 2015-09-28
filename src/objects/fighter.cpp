@@ -16,9 +16,9 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/fighter.h>
-#include <engine/graphics.h>
-#include <engine/random.h>
-#include <engine/stats.h>
+#include <graphics.h>
+#include <random.h>
+#include <stats.h>
 #include <instances/battle.h>
 #include <objects/skill.h>
 

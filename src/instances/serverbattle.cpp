@@ -16,13 +16,13 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/serverbattle.h>
-#include <engine/globals.h>
-#include <engine/stats.h>
-#include <engine/constants.h>
+#include <globals.h>
+#include <stats.h>
+#include <constants.h>
 #include <network/packetstream.h>
 #include <network/network.h>
-#include <engine/random.h>
-#include <engine/instances.h>
+#include <random.h>
+#include <instances.h>
 #include <objects/player.h>
 #include <objects/monster.h>
 

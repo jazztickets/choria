@@ -16,12 +16,12 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/mapeditor.h>
-#include <engine/game.h>
-#include <engine/input.h>
-#include <engine/graphics.h>
-#include <engine/globals.h>
-#include <engine/stats.h>
-#include <engine/config.h>
+#include <game.h>
+#include <input.h>
+#include <graphics.h>
+#include <globals.h>
+#include <stats.h>
+#include <config.h>
 #include <states/mainmenu.h>
 
 _MapEditorState MapEditorState;

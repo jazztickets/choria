@@ -15,8 +15,8 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <engine/instances.h>
-#include <engine/globals.h>
+#include <instances.h>
+#include <globals.h>
 #include <instances/map.h>
 #include <instances/clientbattle.h>
 #include <instances/serverbattle.h>

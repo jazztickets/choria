@@ -16,7 +16,7 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/item.h>
-#include <engine/stats.h>
+#include <stats.h>
 
 // Returns the range of damage
 void ItemClass::GetDamageRange(int &TMin, int &TMax) const {

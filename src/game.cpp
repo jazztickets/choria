@@ -15,15 +15,15 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <engine/game.h>
-#include <engine/state.h>
-#include <engine/graphics.h>
-#include <engine/input.h>
-#include <engine/globals.h>
-#include <engine/random.h>
-#include <engine/objectmanager.h>
-#include <engine/config.h>
-#include <engine/stats.h>
+#include <game.h>
+#include <state.h>
+#include <graphics.h>
+#include <input.h>
+#include <globals.h>
+#include <random.h>
+#include <objectmanager.h>
+#include <config.h>
+#include <stats.h>
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
 #include <states/mainmenu.h>

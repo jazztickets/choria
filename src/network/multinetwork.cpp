@@ -17,8 +17,8 @@
 *******************************************************************************/
 #include <network/multinetwork.h>
 #include <network/packetstream.h>
-#include <engine/game.h>
-#include <engine/state.h>
+#include <game.h>
+#include <state.h>
 
 // Initializes the network system
 int MultiNetworkClass::Init(bool TServer) {

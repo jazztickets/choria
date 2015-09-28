@@ -16,10 +16,10 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/clientbattle.h>
-#include <engine/globals.h>
-#include <engine/graphics.h>
+#include <globals.h>
+#include <graphics.h>
 #include <network/network.h>
-#include <engine/stats.h>
+#include <stats.h>
 #include <network/packetstream.h>
 #include <objects/fighter.h>
 #include <objects/player.h>

@@ -16,14 +16,14 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/playserver.h>
-#include <engine/database.h>
-#include <engine/objectmanager.h>
-#include <engine/instances.h>
-#include <engine/stats.h>
-#include <engine/globals.h>
-#include <engine/config.h>
-#include <engine/game.h>
-#include <engine/constants.h>
+#include <database.h>
+#include <objectmanager.h>
+#include <instances.h>
+#include <stats.h>
+#include <globals.h>
+#include <config.h>
+#include <game.h>
+#include <constants.h>
 #include <network/network.h>
 #include <network/packetstream.h>
 #include <instances/map.h>

@@ -59,7 +59,6 @@ include_directories(${SQLITE_INCLUDE_DIR})
 # add source files
 file(GLOB SRC_MAIN src/*.cpp src/*.h)
 file(GLOB SRC_ENET src/enet/*.c src/enet/*.h)
-file(GLOB SRC_ENGINE src/engine/*.cpp src/engine/*.h)
 file(GLOB SRC_INSTANCES src/instances/*.cpp src/instances/*.h)
 file(GLOB SRC_NETWORK src/network/*.cpp src/network/*.h)
 file(GLOB SRC_OBJECTS src/objects/*.cpp src/objects/*.h)
@@ -69,7 +68,6 @@ file(GLOB SRC_ALL
 	${SRC_MAIN}
 	${SRC_STATES}
 	${SRC_ENET}
-	${SRC_ENGINE}
 	${SRC_INSTANCES}
 	${SRC_NETWORK}
 	${SRC_OBJECTS}
@@ -77,11 +75,11 @@ file(GLOB SRC_ALL
 
 # add virtual folders
 source_group(main FILES ${SRC_MAIN})
-source_group(enet FILES ${SRC_ENET})
-source_group(engine FILES ${SRC_ENGINE})
+source_group(states FILES ${SRC_STATES})
 source_group(instances FILES ${SRC_INSTANCES})
 source_group(network FILES ${SRC_NETWORK})
 source_group(objects FILES ${SRC_OBJECTS})
+source_group(enet FILES ${SRC_ENET})
 
 # build exe
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)

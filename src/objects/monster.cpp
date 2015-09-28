@@ -16,10 +16,10 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/monster.h>
-#include <engine/globals.h>
-#include <engine/graphics.h>
-#include <engine/random.h>
-#include <engine/stats.h>
+#include <globals.h>
+#include <graphics.h>
+#include <random.h>
+#include <stats.h>
 
 // Constructor
 MonsterClass::MonsterClass(int TMonsterID)

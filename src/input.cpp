@@ -15,9 +15,9 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <engine/input.h>
-#include <engine/state.h>
-#include <engine/game.h>
+#include <input.h>
+#include <state.h>
+#include <game.h>
 
 InputClass Input;
 

@@ -17,13 +17,13 @@
 *******************************************************************************/
 #include <objects/player.h>
 #include <enet/enet.h>
-#include <engine/globals.h>
-#include <engine/graphics.h>
-#include <engine/instances.h>
-#include <engine/random.h>
-#include <engine/stats.h>
-#include <engine/database.h>
-#include <engine/constants.h>
+#include <globals.h>
+#include <graphics.h>
+#include <instances.h>
+#include <random.h>
+#include <stats.h>
+#include <database.h>
+#include <constants.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <states/playserver.h>

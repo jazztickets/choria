@@ -16,13 +16,13 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/map.h>
-#include <engine/globals.h>
-#include <engine/graphics.h>
-#include <engine/constants.h>
+#include <globals.h>
+#include <graphics.h>
+#include <constants.h>
 #include <network/network.h>
 #include <network/packetstream.h>
-#include <engine/filestream.h>
-#include <engine/stats.h>
+#include <filestream.h>
+#include <stats.h>
 #include <states/playserver.h>
 #include <objects/player.h>
 
