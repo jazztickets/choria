@@ -1,6 +1,6 @@
-/*************************************************************************************
-*	Choria - http://choria.googlecode.com/
-*	Copyright (C) 2010  Alan Witkowski
+/******************************************************************************
+*	choria - https://github.com/jazztickets/choria
+*	Copyright (C) 2015  Alan Witkowski
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 *
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-**************************************************************************************/
+*******************************************************************************/
 #include "characters.h"
 #include "engine/game.h"
 #include "engine/globals.h"
@@ -113,7 +113,7 @@ void CharactersState::Draw() {
 
 			sprintf(Buffer, "Level %d", Slots[i].Level);
 			Graphics::Instance().SetFont(GraphicsClass::FONT_10);
-			Graphics::Instance().RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, GraphicsClass::ALIGN_CENTER);			
+			Graphics::Instance().RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, GraphicsClass::ALIGN_CENTER);
 		}
 		else {
 			Graphics::Instance().RenderText("Empty", TextPosition.X, TextPosition.Y + 35, GraphicsClass::ALIGN_CENTER);
@@ -143,7 +143,7 @@ bool CharactersState::HandleKeyPress(EKEY_CODE TKey) {
 				PlayCharacter();
 			}
 		break;
-	}				
+	}
 
 	return false;
 }
@@ -158,7 +158,7 @@ void CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 					PlayCharacter();
 				break;
 				case ELEMENT_LOGOUT:
-					Logout();					
+					Logout();
 				break;
 				case ELEMENT_CREATE:
 					Game::Instance().ChangeState(CreateCharacterState::Instance());
@@ -203,14 +203,14 @@ void CharactersState::HandleCharacterList(PacketClass *TPacket) {
 		Slots[i].Name = TPacket->ReadString();
 		PortraitImage = Stats::Instance().GetPortrait(TPacket->ReadInt())->Image;
 		Slots[i].Button->setImage(PortraitImage);
-		Slots[i].Button->setPressedImage(PortraitImage);		
+		Slots[i].Button->setPressedImage(PortraitImage);
 		Slots[i].Level = Stats::Instance().FindLevel(TPacket->ReadInt())->Level;
 	}
 	for(; i < CHARACTERS_MAX; i++) {
 		Slots[i].Used = false;
 		PortraitImage = Graphics::Instance().GetImage(GraphicsClass::IMAGE_MENUBLANKSLOT);
 		Slots[i].Button->setImage(PortraitImage);
-		Slots[i].Button->setPressedImage(PortraitImage);		
+		Slots[i].Button->setPressedImage(PortraitImage);
 	}
 }
 

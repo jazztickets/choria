@@ -1,40 +1,31 @@
-choria - 2D MMORPG
+choria - Finally, an MMORPG that's all about grinding and doing chores.
 by Alan Witkowski
 
 Latest version can be found at:
-http://choria.googlecode.com
+https://github.com/jazztickets/choria
 
-Source code at:
-https://github.com/jazztickets/choria/tree/classic
+Windows users will need:
+https://www.microsoft.com/en-us/download/details.aspx?id=48145
 
 ----BUILDING----
 
-Requires:
-	irrlicht 1.8
-	sqlite3
-	OpenGL
-	cmake
+Linux dependencies:
+cmake 2.8+
+irrlicht 1.8
+sqlite3
 
-To install irrlicht 1.8 easily, run:
-	
-	./install_irrlicht.sh
+Building and running:
+mkdir build
+cd build
+cmake ..
+make -j`nproc`
+cd ../working && ../bin/Release/choria
 
-Install dependencies:
-	
-	sudo apt-get install cmake libsqlite3-dev
-
-Compiling:
-
-	mkdir build
-	cd build
-	cmake ..
-	make -j`nproc`
-
-To install:
-	sudo make install
+Installing:
+run "sudo make install" from the build directory.
 
 To uninstall:
-	cat install_manifest.txt | xargs sudo rm
+cat install_manifest.txt | xargs sudo rm
 
 ----COMMAND-LINE ARGUMENTS----
 
@@ -83,10 +74,9 @@ Mousewheel changes current zone
 
 The design tool allows you to modify the game stats easily.
 
-1. Clone the git repo and checkout the classic branch
+1. Clone the git repo
 git clone git://github.com/jazztickets/choria.git ~/choria
 cd ~/choria
-git checkout classic
 
 1. Install apache2, php5 and php5-sqlite packages.
 
