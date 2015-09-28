@@ -27,7 +27,7 @@
 #include <characters.h>
 
 // Initializes the state
-int MainMenuState::Init() {
+int _MainMenuState::Init() {
 	int DrawX = 400, DrawY = 250, OffsetY = 50;
 
 	// Single Player
@@ -60,18 +60,18 @@ int MainMenuState::Init() {
 }
 
 // Shuts the state down
-int MainMenuState::Close() {
+int _MainMenuState::Close() {
 
 	return 1;
 }
 
 // Updates the current state
-void MainMenuState::Update(u32 TDeltaTime) {
+void _MainMenuState::Update(u32 TDeltaTime) {
 
 }
 
 // Draws the current state
-void MainMenuState::Draw() {
+void _MainMenuState::Draw() {
 
 	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
 
@@ -79,7 +79,7 @@ void MainMenuState::Draw() {
 }
 
 // Key presses
-bool MainMenuState::HandleKeyPress(EKEY_CODE TKey) {
+bool _MainMenuState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(TKey) {
 		case KEY_ESCAPE:
@@ -96,19 +96,19 @@ bool MainMenuState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 	switch(TEventType) {
 		case EGET_BUTTON_CLICKED:
 			switch(TElement->getID()) {
 				case ELEMENT_SINGLEPLAYER:
-					Game.ChangeState(ConnectState::Instance());
+					Game.ChangeState(_ConnectState::Instance());
 					StartSinglePlayer();
 				break;
 				case ELEMENT_MULTIPLAYER:
-					Game.ChangeState(ConnectState::Instance());
+					Game.ChangeState(_ConnectState::Instance());
 				break;
 				case ELEMENT_EDITOR:
-					Game.ChangeState(MapEditorState::Instance());
+					Game.ChangeState(_MapEditorState::Instance());
 				break;
 				case ELEMENT_OPTIONS:
 				break;
@@ -125,7 +125,7 @@ void MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement)
 }
 
 // Starts a single player game
-void MainMenuState::StartSinglePlayer() {
+void _MainMenuState::StartSinglePlayer() {
 	Game.StartLocalServer();
 	ClientNetwork->Connect("");
 
@@ -135,5 +135,5 @@ void MainMenuState::StartSinglePlayer() {
 	Packet.WriteString("singleplayer");
 	Packet.WriteString("singleplayer");
 	ClientNetwork->SendPacketToHost(&Packet);
-	Game.ChangeState(CharactersState::Instance());
+	Game.ChangeState(_CharactersState::Instance());
 }

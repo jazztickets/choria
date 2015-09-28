@@ -28,7 +28,7 @@
 #include <string>
 
 // Initializes the state
-int ConnectState::Init() {
+int _ConnectState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
 	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
@@ -55,20 +55,20 @@ int ConnectState::Init() {
 }
 
 // Shuts the state down
-int ConnectState::Close() {
+int _ConnectState::Close() {
 
 	return 1;
 }
 
 // Handles a connection to the server
-void ConnectState::HandleConnect(ENetEvent *TEvent) {
+void _ConnectState::HandleConnect(ENetEvent *TEvent) {
 
 	Config.SetLastIPAddress(IPAddress);
 	Config.SaveSettings();
 }
 
 // Handles a disconnection from the server
-void ConnectState::HandleDisconnect(ENetEvent *TEvent) {
+void _ConnectState::HandleDisconnect(ENetEvent *TEvent) {
 
 	if(State == STATE_CONNECT)
 		Message = "Unable to connect to server";
@@ -76,7 +76,7 @@ void ConnectState::HandleDisconnect(ENetEvent *TEvent) {
 }
 
 // Handles a server packet
-void ConnectState::HandlePacket(ENetEvent *TEvent) {
+void _ConnectState::HandlePacket(ENetEvent *TEvent) {
 	PacketClass Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
 		case NetworkClass::VERSION: {
@@ -86,7 +86,7 @@ void ConnectState::HandlePacket(ENetEvent *TEvent) {
 				ChangeState(STATE_MAIN);
 			}
 			else {
-				Game.ChangeState(AccountState::Instance());
+				Game.ChangeState(_AccountState::Instance());
 			}
 		}
 		break;
@@ -94,7 +94,7 @@ void ConnectState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void ConnectState::Update(u32 TDeltaTime) {
+void _ConnectState::Update(u32 TDeltaTime) {
 
 	switch(State) {
 		case STATE_MAIN:
@@ -105,7 +105,7 @@ void ConnectState::Update(u32 TDeltaTime) {
 }
 
 // Draws the current state
-void ConnectState::Draw() {
+void _ConnectState::Draw() {
 
 	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
 
@@ -128,13 +128,13 @@ void ConnectState::Draw() {
 }
 
 // Key presses
-bool ConnectState::HandleKeyPress(EKEY_CODE TKey) {
+bool _ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(State) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game.ChangeState(MainMenuState::Instance());
+					Game.ChangeState(_MainMenuState::Instance());
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_CONNECT);
@@ -160,7 +160,7 @@ bool ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 	switch(State) {
 		case STATE_MAIN:
 			switch(TEventType) {
@@ -170,7 +170,7 @@ void ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 							ChangeState(STATE_CONNECT);
 						break;
 						case ELEMENT_CANCEL:
-							Game.ChangeState(MainMenuState::Instance());
+							Game.ChangeState(_MainMenuState::Instance());
 						break;
 						default:
 						break;
@@ -186,7 +186,7 @@ void ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 }
 
 // Changes the internal state
-void ConnectState::ChangeState(int TState) {
+void _ConnectState::ChangeState(int TState) {
 
 	switch(TState) {
 		case STATE_MAIN:
@@ -207,7 +207,7 @@ void ConnectState::ChangeState(int TState) {
 }
 
 // Validates the login form
-bool ConnectState::ValidateForm() {
+bool _ConnectState::ValidateForm() {
 	IPAddress = EditIP->getText();
 	IPAddress.trim();
 

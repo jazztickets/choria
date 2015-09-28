@@ -21,7 +21,7 @@
 #include <engine/state.h>
 
 // Classes
-class MainMenuState : public StateClass {
+class _MainMenuState : public _State {
 
 	public:
 
@@ -42,8 +42,8 @@ class MainMenuState : public StateClass {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static MainMenuState *Instance() {
-			static MainMenuState ClassInstance;
+		static _MainMenuState *Instance() {
+			static _MainMenuState ClassInstance;
 			return &ClassInstance;
 		}
 

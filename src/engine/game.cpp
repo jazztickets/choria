@@ -47,7 +47,7 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 
 	WindowActive = true;
 	LocalServerRunning = false;
-	State = MainMenuState::Instance();
+	State = _MainMenuState::Instance();
 
 	bool IsServer = false;
 	E_DRIVER_TYPE DriverType = EDT_OPENGL;
@@ -59,19 +59,19 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 		Token = stringc(TArguments[i]);
 		TokensRemaining = TArgumentCount - i - 1;
 		if(Token == "-host") {
-			State = PlayServerState::Instance();
-			PlayServerState::Instance()->StartCommandThread();
+			State = _PlayServerState::Instance();
+			_PlayServerState::Instance()->StartCommandThread();
 			IsServer = true;
 			DriverType = EDT_NULL;
 		}
 		else if(Token == "-mapeditor") {
-			State = MapEditorState::Instance();
+			State = _MapEditorState::Instance();
 		}
 		else if(Token == "-connect") {
-			State = ConnectState::Instance();
+			State = _ConnectState::Instance();
 		}
 		else if(Token == "-login" && TokensRemaining > 1) {
-			AccountState::Instance()->SetLoginInfo(TArguments[i+1], TArguments[i+2]);
+			_AccountState::Instance()->SetLoginInfo(TArguments[i+1], TArguments[i+2]);
 			i+=2;
 		}
 	}
@@ -129,7 +129,7 @@ void GameClass::Close() {
 	// Close the state
 	State->Close();
 	if(LocalServerRunning)
-		PlayServerState::Instance()->Close();
+		_PlayServerState::Instance()->Close();
 
 	MultiNetwork->WaitForDisconnect();
 	Config.SaveSettings();
@@ -149,7 +149,7 @@ void GameClass::Close() {
 }
 
 // Requests a state change
-void GameClass::ChangeState(StateClass *TState) {
+void GameClass::ChangeState(_State *TState) {
 
 	NewState = TState;
 	ManagerState = STATE_FADEOUT;
@@ -203,7 +203,7 @@ void GameClass::Update() {
 		break;
 		case STATE_UPDATE:
 			if(LocalServerRunning)
-				PlayServerState::Instance()->Update(DeltaTime);
+				_PlayServerState::Instance()->Update(DeltaTime);
 			else
 				MultiNetwork->Update();
 			State->Update(DeltaTime);
@@ -254,7 +254,7 @@ void GameClass::StartLocalServer() {
 		ClientNetwork = ClientSingleNetwork;
 		ServerNetwork = ServerSingleNetwork;
 
-		PlayServerState::Instance()->Init();
+		_PlayServerState::Instance()->Init();
 	}
 }
 
@@ -263,7 +263,7 @@ void GameClass::StopLocalServer() {
 	if(LocalServerRunning) {
 		LocalServerRunning = false;
 
-		PlayServerState::Instance()->Close();
+		_PlayServerState::Instance()->Close();
 
 		ClientNetwork = MultiNetwork;
 		ServerNetwork = MultiNetwork;

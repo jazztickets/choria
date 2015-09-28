@@ -26,7 +26,7 @@
 #include <characters.h>
 
 // Initializes the state
-int CreateCharacterState::Init() {
+int _CreateCharacterState::Init() {
 
 	// Get portrait list
 	list<PortraitStruct> PortraitList;
@@ -69,7 +69,7 @@ int CreateCharacterState::Init() {
 }
 
 // Shuts the state down
-int CreateCharacterState::Close() {
+int _CreateCharacterState::Close() {
 
 	Portraits.clear();
 
@@ -77,17 +77,17 @@ int CreateCharacterState::Close() {
 }
 
 // Handles a disconnection from the server
-void CreateCharacterState::HandleDisconnect(ENetEvent *TEvent) {
+void _CreateCharacterState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(ConnectState::Instance());
+	Game.ChangeState(_ConnectState::Instance());
 }
 
 // Handles a server packet
-void CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
+void _CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
 	PacketClass Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
 		case NetworkClass::CREATECHARACTER_SUCCESS:
-			Game.ChangeState(CharactersState::Instance());
+			Game.ChangeState(_CharactersState::Instance());
 		break;
 		case NetworkClass::CREATECHARACTER_INUSE:
 			Message = "Character name already in use";
@@ -98,12 +98,12 @@ void CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void CreateCharacterState::Update(u32 TDeltaTime) {
+void _CreateCharacterState::Update(u32 TDeltaTime) {
 
 }
 
 // Draws the current state
-void CreateCharacterState::Draw() {
+void _CreateCharacterState::Draw() {
 
 	// Top text
 	Graphics.SetFont(GraphicsClass::FONT_14);
@@ -129,7 +129,7 @@ void CreateCharacterState::Draw() {
 }
 
 // Key presses
-bool CreateCharacterState::HandleKeyPress(EKEY_CODE TKey) {
+bool _CreateCharacterState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(TKey) {
 		case KEY_ESCAPE:
@@ -146,7 +146,7 @@ bool CreateCharacterState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void CreateCharacterState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _CreateCharacterState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 
 	int ID = TElement->getID();
 	switch(TEventType) {
@@ -172,12 +172,12 @@ void CreateCharacterState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TE
 }
 
 // Handles the selection of a portrait
-void CreateCharacterState::UpdateSelection(int TSelectedIndex) {
+void _CreateCharacterState::UpdateSelection(int TSelectedIndex) {
 	SelectedIndex = TSelectedIndex;
 }
 
 // Send character info to the server
-void CreateCharacterState::CreateCharacter() {
+void _CreateCharacterState::CreateCharacter() {
 
 	// Get picture
 	if(SelectedIndex == -1) {
@@ -203,6 +203,6 @@ void CreateCharacterState::CreateCharacter() {
 }
 
 // Back to character select
-void CreateCharacterState::Back() {
-	Game.ChangeState(CharactersState::Instance());
+void _CreateCharacterState::Back() {
+	Game.ChangeState(_CharactersState::Instance());
 }

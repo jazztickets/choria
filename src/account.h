@@ -21,7 +21,7 @@
 #include <engine/state.h>
 
 // Classes
-class AccountState : public StateClass {
+class _AccountState : public _State {
 
 	public:
 
@@ -51,8 +51,8 @@ class AccountState : public StateClass {
 
 		void SetLoginInfo(const stringc &TAccountName, const stringc &TPassword);
 
-		static AccountState *Instance() {
-			static AccountState ClassInstance;
+		static _AccountState *Instance() {
+			static _AccountState ClassInstance;
 			return &ClassInstance;
 		}
 

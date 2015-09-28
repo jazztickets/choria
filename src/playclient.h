@@ -30,7 +30,7 @@ class MapClass;
 class ClientBattleClass;
 
 // Classes
-class PlayClientState : public StateClass {
+class _PlayClientState : public _State {
 
 	public:
 
@@ -47,7 +47,7 @@ class PlayClientState : public StateClass {
 			STATE_TRADE,
 		};
 
-		PlayClientState();
+		_PlayClientState();
 
 		int Init();
 		int Close();
@@ -69,8 +69,8 @@ class PlayClientState : public StateClass {
 
 		int *GetState() { return &State; }
 
-		static PlayClientState *Instance() {
-			static PlayClientState ClassInstance;
+		static _PlayClientState *Instance() {
+			static _PlayClientState ClassInstance;
 			return &ClassInstance;
 		}
 

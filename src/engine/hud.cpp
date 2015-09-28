@@ -49,7 +49,7 @@ static PositionStruct EquippedItemPositions[PlayerClass::INVENTORY_BACKPACK] = {
 // Initialize
 int HUDClass::Init() {
 
-	State = PlayClientState::Instance()->GetState();
+	State = _PlayClientState::Instance()->GetState();
 	Vendor = NULL;
 	Trader = NULL;
 	TooltipItem.Reset();
@@ -95,13 +95,13 @@ void HUDClass::HandleMouseMotion(int TMouseX, int TMouseY) {
 	position2di MousePosition(TMouseX, TMouseY);
 
 	switch(*State) {
-		case PlayClientState::STATE_VENDOR:
-		case PlayClientState::STATE_TRADER:
-		case PlayClientState::STATE_TRADE:
-		case PlayClientState::STATE_INVENTORY:
+		case _PlayClientState::STATE_VENDOR:
+		case _PlayClientState::STATE_TRADER:
+		case _PlayClientState::STATE_TRADE:
+		case _PlayClientState::STATE_INVENTORY:
 			GetItem(MousePosition, TooltipItem);
 		break;
-		case PlayClientState::STATE_SKILLS:
+		case _PlayClientState::STATE_SKILLS:
 			GetSkill(MousePosition, TooltipSkill);
 		break;
 	}
@@ -111,7 +111,7 @@ void HUDClass::HandleMouseMotion(int TMouseX, int TMouseY) {
 bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 
 	switch(*State) {
-		case PlayClientState::STATE_VENDOR:
+		case _PlayClientState::STATE_VENDOR:
 			switch(TButton) {
 				case InputClass::MOUSE_LEFT:
 					if(TooltipItem.Item) {
@@ -128,7 +128,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_INVENTORY:
+		case _PlayClientState::STATE_INVENTORY:
 			switch(TButton) {
 				case InputClass::MOUSE_LEFT:
 					if(TooltipItem.Item) {
@@ -147,7 +147,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_TRADE:
+		case _PlayClientState::STATE_TRADE:
 			switch(TButton) {
 				case InputClass::MOUSE_LEFT:
 					if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
@@ -159,7 +159,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_SKILLS:
+		case _PlayClientState::STATE_SKILLS:
 			switch(TButton) {
 				case InputClass::MOUSE_LEFT:
 					if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
@@ -176,9 +176,9 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 void HUDClass::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 
 	switch(*State) {
-		case PlayClientState::STATE_INVENTORY:
-		case PlayClientState::STATE_VENDOR:
-		case PlayClientState::STATE_TRADE:
+		case _PlayClientState::STATE_INVENTORY:
+		case _PlayClientState::STATE_VENDOR:
+		case _PlayClientState::STATE_TRADE:
 			if(TButton == InputClass::MOUSE_LEFT) {
 
 				// Check for valid slots
@@ -223,7 +223,7 @@ void HUDClass::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 				CursorItem.Reset();
 			}
 		break;
-		case PlayClientState::STATE_SKILLS:
+		case _PlayClientState::STATE_SKILLS:
 			if(TButton == InputClass::MOUSE_LEFT) {
 
 				// Check for valid slots
@@ -255,7 +255,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 	}
 
 	switch(*State) {
-		case PlayClientState::STATE_WALK:
+		case _PlayClientState::STATE_WALK:
 			switch(TEventType) {
 				case EGET_BUTTON_CLICKED:
 					switch(ID) {
@@ -282,7 +282,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_MAINMENU:
+		case _PlayClientState::STATE_MAINMENU:
 			switch(TEventType) {
 				case EGET_BUTTON_CLICKED:
 					switch(ID) {
@@ -299,7 +299,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_TOWNPORTAL:
+		case _PlayClientState::STATE_TOWNPORTAL:
 			switch(TEventType) {
 				case EGET_BUTTON_CLICKED:
 					switch(ID) {
@@ -312,7 +312,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_INVENTORY:
+		case _PlayClientState::STATE_INVENTORY:
 			switch(TEventType) {
 				case EGET_BUTTON_CLICKED:
 					switch(ID) {
@@ -325,7 +325,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_TRADER:
+		case _PlayClientState::STATE_TRADER:
 			switch(TEventType) {
 				case EGET_BUTTON_CLICKED:
 					switch(ID) {
@@ -348,7 +348,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_TRADE:
+		case _PlayClientState::STATE_TRADE:
 			switch(TEventType) {
 				case EGET_BUTTON_CLICKED:
 					switch(ID) {
@@ -391,7 +391,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 				break;
 			}
 		break;
-		case PlayClientState::STATE_SKILLS:
+		case _PlayClientState::STATE_SKILLS:
 			switch(TEventType) {
 				case EGET_BUTTON_CLICKED:
 					switch(ID) {
@@ -476,17 +476,17 @@ void HUDClass::Update(u32 TDeltaTime) {
 // Draws the HUD before irrGUI
 void HUDClass::PreGUIDraw() {
 	switch(*State) {
-		case PlayClientState::STATE_MAINMENU:
+		case _PlayClientState::STATE_MAINMENU:
 			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 0, 0, 800, 600, SColor(100, 255, 255, 255));
 		break;
-		case PlayClientState::STATE_SKILLS: {
+		case _PlayClientState::STATE_SKILLS: {
 			rect<s32> WindowArea = TabSkill->getAbsolutePosition();
 
 			// Draw background
 			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, WindowArea.UpperLeftCorner.X, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth(), WindowArea.getHeight(), SColor(220, 255, 255, 255));
 		}
 		break;
-		case PlayClientState::STATE_TRADE: {
+		case _PlayClientState::STATE_TRADE: {
 			rect<s32> WindowArea = TabTrade->getAbsolutePosition();
 
 			// Draw background
@@ -501,24 +501,24 @@ void HUDClass::Draw() {
 	DrawTopHUD();
 
 	switch(*State) {
-		case PlayClientState::STATE_INVENTORY:
+		case _PlayClientState::STATE_INVENTORY:
 			DrawInventory();
 		break;
-		case PlayClientState::STATE_VENDOR:
+		case _PlayClientState::STATE_VENDOR:
 			DrawVendor();
 			DrawInventory();
 		break;
-		case PlayClientState::STATE_TRADER:
+		case _PlayClientState::STATE_TRADER:
 			DrawTrader();
 		break;
-		case PlayClientState::STATE_SKILLS:
+		case _PlayClientState::STATE_SKILLS:
 			DrawSkills();
 		break;
-		case PlayClientState::STATE_TRADE:
+		case _PlayClientState::STATE_TRADE:
 			DrawTrade();
 			DrawInventory();
 		break;
-		case PlayClientState::STATE_TOWNPORTAL:
+		case _PlayClientState::STATE_TOWNPORTAL:
 			DrawTownPortal();
 		break;
 	}
@@ -634,7 +634,7 @@ void HUDClass::InitMenu() {
 	irrGUI->addButton(Graphics.GetCenteredRect(400, 275, 100, 25), TabMenu, ELEMENT_MAINMENURESUME, L"Resume");
 	irrGUI->addButton(Graphics.GetCenteredRect(400, 325, 100, 25), TabMenu, ELEMENT_MAINMENUEXIT, L"Exit");
 
-	*State = PlayClientState::STATE_MAINMENU;
+	*State = _PlayClientState::STATE_MAINMENU;
 }
 
 // Close main menu
@@ -642,7 +642,7 @@ void HUDClass::CloseMenu() {
 
 	irrGUI->getRootGUIElement()->removeChild(TabMenu);
 
-	*State = PlayClientState::STATE_WALK;
+	*State = _PlayClientState::STATE_WALK;
 }
 
 // Initialize the inventory system
@@ -659,7 +659,7 @@ void HUDClass::InitInventory(int TX, int TY, bool TSendBusy) {
 	// Add background
 	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_INVENTORY), position2di(0, 0), true, TabInventory);
 
-	*State = PlayClientState::STATE_INVENTORY;
+	*State = _PlayClientState::STATE_INVENTORY;
 }
 
 // Close the inventory system
@@ -672,12 +672,12 @@ void HUDClass::CloseInventory() {
 	// No longer busy
 	SendBusy(false);
 
-	*State = PlayClientState::STATE_WALK;
+	*State = _PlayClientState::STATE_WALK;
 }
 
 // Initialize the vendor
 void HUDClass::InitVendor(int TVendorID) {
-	if(*State == PlayClientState::STATE_VENDOR)
+	if(*State == _PlayClientState::STATE_VENDOR)
 		return;
 
 	// Get vendor stats
@@ -695,7 +695,7 @@ void HUDClass::InitVendor(int TVendorID) {
 
 // Close the vendor
 void HUDClass::CloseVendor() {
-	if(*State != PlayClientState::STATE_VENDOR)
+	if(*State != _PlayClientState::STATE_VENDOR)
 		return;
 
 	irrGUI->getRootGUIElement()->removeChild(TabVendor);
@@ -708,13 +708,13 @@ void HUDClass::CloseVendor() {
 	PacketClass Packet(NetworkClass::EVENT_END);
 	ClientNetwork->SendPacketToHost(&Packet);
 
-	*State = PlayClientState::STATE_WALK;
+	*State = _PlayClientState::STATE_WALK;
 	Vendor = NULL;
 }
 
 // Initialize the trader
 void HUDClass::InitTrader(int TTraderID) {
-	if(*State == PlayClientState::STATE_TRADER)
+	if(*State == _PlayClientState::STATE_TRADER)
 		return;
 
 	// Get trader stats
@@ -737,12 +737,12 @@ void HUDClass::InitTrader(int TTraderID) {
 	if(RewardItemSlot == -1)
 		TradeButton->setEnabled(false);
 
-	*State = PlayClientState::STATE_TRADER;
+	*State = _PlayClientState::STATE_TRADER;
 }
 
 // Close the trader
 void HUDClass::CloseTrader() {
-	if(*State != PlayClientState::STATE_TRADER)
+	if(*State != _PlayClientState::STATE_TRADER)
 		return;
 
 	irrGUI->getRootGUIElement()->removeChild(TabTrader);
@@ -753,7 +753,7 @@ void HUDClass::CloseTrader() {
 	PacketClass Packet(NetworkClass::EVENT_END);
 	ClientNetwork->SendPacketToHost(&Packet);
 
-	*State = PlayClientState::STATE_WALK;
+	*State = _PlayClientState::STATE_WALK;
 	Trader = NULL;
 }
 
@@ -777,7 +777,7 @@ void HUDClass::CloseCharacter() {
 
 // Initialize the skills screen
 void HUDClass::InitSkills() {
-	*State = PlayClientState::STATE_SKILLS;
+	*State = _PlayClientState::STATE_SKILLS;
 	SendBusy(true);
 
 	// Main window
@@ -828,7 +828,7 @@ void HUDClass::CloseSkills() {
 	// No longer busy
 	SendBusy(false);
 
-	*State = PlayClientState::STATE_WALK;
+	*State = _PlayClientState::STATE_WALK;
 }
 
 // Initialize the trade system
@@ -860,7 +860,7 @@ void HUDClass::InitTrade() {
 	// Add inventory
 	InitInventory(400, 432, false);
 
-	*State = PlayClientState::STATE_TRADE;
+	*State = _PlayClientState::STATE_TRADE;
 }
 
 // Closes the trade system
@@ -878,29 +878,29 @@ void HUDClass::CloseTrade(bool TSendNotify) {
 		SendTradeCancel();
 
 	Player->SetTradePlayer(NULL);
-	*State = PlayClientState::STATE_WALK;
+	*State = _PlayClientState::STATE_WALK;
 }
 
 // Closes all windows
 void HUDClass::CloseWindows() {
 
 	switch(*State) {
-		case PlayClientState::STATE_MAINMENU:
+		case _PlayClientState::STATE_MAINMENU:
 			CloseMenu();
 		break;
-		case PlayClientState::STATE_VENDOR:
+		case _PlayClientState::STATE_VENDOR:
 			CloseVendor();
 		break;
-		case PlayClientState::STATE_TRADER:
+		case _PlayClientState::STATE_TRADER:
 			CloseTrader();
 		break;
-		case PlayClientState::STATE_INVENTORY:
+		case _PlayClientState::STATE_INVENTORY:
 			CloseInventory();
 		break;
-		case PlayClientState::STATE_SKILLS:
+		case _PlayClientState::STATE_SKILLS:
 			CloseSkills();
 		break;
-		case PlayClientState::STATE_TRADE:
+		case _PlayClientState::STATE_TRADE:
 			CloseTrade();
 		break;
 	}
@@ -1455,8 +1455,8 @@ void HUDClass::DrawItemTooltip() {
 		}
 
 		switch(*State) {
-			case PlayClientState::STATE_INVENTORY:
-			case PlayClientState::STATE_TRADE:
+			case _PlayClientState::STATE_INVENTORY:
+			case _PlayClientState::STATE_TRADE:
 				if(TooltipItem.Window == WINDOW_INVENTORY && TooltipItem.Count > 1) {
 					Graphics.RenderText("Ctrl+click to split", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
 					DrawY += 15;
@@ -1649,17 +1649,17 @@ void HUDClass::GetItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
 	TCursorItem.Reset();
 
 	switch(*State) {
-		case PlayClientState::STATE_INVENTORY:
+		case _PlayClientState::STATE_INVENTORY:
 			GetInventoryItem(TPoint, TCursorItem);
 		break;
-		case PlayClientState::STATE_VENDOR:
+		case _PlayClientState::STATE_VENDOR:
 			GetInventoryItem(TPoint, TCursorItem);
 			GetVendorItem(TPoint, TCursorItem);
 		break;
-		case PlayClientState::STATE_TRADER:
+		case _PlayClientState::STATE_TRADER:
 			GetTraderItem(TPoint, TCursorItem);
 		break;
-		case PlayClientState::STATE_TRADE:
+		case _PlayClientState::STATE_TRADE:
 			GetInventoryItem(TPoint, TCursorItem);
 			GetTradeItem(TPoint, TCursorItem);
 		break;
@@ -1839,10 +1839,10 @@ void HUDClass::GetSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill) {
 	TCursorSkill.Reset();
 
 	switch(*State) {
-		case PlayClientState::STATE_SKILLS:
+		case _PlayClientState::STATE_SKILLS:
 			GetSkillPageSkill(TPoint, TCursorSkill);
 		break;
-		case PlayClientState::STATE_BATTLE:
+		case _PlayClientState::STATE_BATTLE:
 		break;
 	}
 }
@@ -2007,8 +2007,8 @@ void HUDClass::ToggleTownPortal() {
 	ClientNetwork->SendPacketToHost(&Packet);
 	Player->StartTownPortal();
 
-	if(*State == PlayClientState::STATE_TOWNPORTAL)
-		*State = PlayClientState::STATE_WALK;
+	if(*State == _PlayClientState::STATE_TOWNPORTAL)
+		*State = _PlayClientState::STATE_WALK;
 	else
-		*State = PlayClientState::STATE_TOWNPORTAL;
+		*State = _PlayClientState::STATE_TOWNPORTAL;
 }

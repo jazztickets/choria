@@ -22,7 +22,7 @@
 #include <instances/map.h>
 
 // Classes
-class MapEditorState : public StateClass {
+class _MapEditorState : public _State {
 
 	public:
 
@@ -84,8 +84,8 @@ class MapEditorState : public StateClass {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static MapEditorState *Instance() {
-			static MapEditorState ClassInstance;
+		static _MapEditorState *Instance() {
+			static _MapEditorState ClassInstance;
 			return &ClassInstance;
 		}
 

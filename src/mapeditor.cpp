@@ -25,7 +25,7 @@
 #include <mainmenu.h>
 
 // Initializes the state
-int MapEditorState::Init() {
+int _MapEditorState::Init() {
 
 	// Textures
 	BrushSize = 0;
@@ -49,7 +49,7 @@ int MapEditorState::Init() {
 }
 
 // Shuts the state down
-int MapEditorState::Close() {
+int _MapEditorState::Close() {
 
 	CloseMap();
 
@@ -57,7 +57,7 @@ int MapEditorState::Close() {
 }
 
 // Deletes the map
-void MapEditorState::CloseMap() {
+void _MapEditorState::CloseMap() {
 
 	if(Map) {
 		delete Map;
@@ -66,7 +66,7 @@ void MapEditorState::CloseMap() {
 }
 
 // Updates the current state
-void MapEditorState::Update(u32 TDeltaTime) {
+void _MapEditorState::Update(u32 TDeltaTime) {
 	if(!Map)
 		return;
 
@@ -95,7 +95,7 @@ void MapEditorState::Update(u32 TDeltaTime) {
 }
 
 // Draws the current state
-void MapEditorState::Draw() {
+void _MapEditorState::Draw() {
 
 	if(Map)
 		Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
@@ -110,14 +110,14 @@ void MapEditorState::Draw() {
 }
 
 // Key presses
-bool MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
+bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(State) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
 					//Game.SetDone(true);
-					Game.ChangeState(MainMenuState::Instance());
+					Game.ChangeState(_MainMenuState::Instance());
 				break;
 				case KEY_KEY_N:
 					InitNewMap();
@@ -235,7 +235,7 @@ bool MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // Mouse buttons
-bool MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
+bool _MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 
 	if(Map) {
 		switch(TButton) {
@@ -256,7 +256,7 @@ bool MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 }
 
 // Scroll wheel
-void MapEditorState::HandleMouseWheel(float TDirection) {
+void _MapEditorState::HandleMouseWheel(float TDirection) {
 
 	Brush.Zone += (int)(TDirection);
 	if(Brush.Zone < 0)
@@ -264,7 +264,7 @@ void MapEditorState::HandleMouseWheel(float TDirection) {
 }
 
 // Mouse movement
-void MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
+void _MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
 
 	if(Map) {
 		Map->ScreenToGrid(position2di(TMouseX, TMouseY), BrushPosition);
@@ -272,7 +272,7 @@ void MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
 }
 
 // GUI events
-void MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 
 	switch(TEventType) {
 		case EGET_ELEMENT_CLOSED:
@@ -395,7 +395,7 @@ void MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement
 }
 
 // Close a window by element
-void MapEditorState::CloseWindow(int TElement) {
+void _MapEditorState::CloseWindow(int TElement) {
 
 	IGUIWindow *Window = static_cast<IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(TElement));
 	if(Window)
@@ -403,7 +403,7 @@ void MapEditorState::CloseWindow(int TElement) {
 }
 
 // Initializes the new map screen
-void MapEditorState::InitNewMap() {
+void _MapEditorState::InitNewMap() {
 
 	// Main dialog window
 	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
@@ -437,7 +437,7 @@ void MapEditorState::InitNewMap() {
 }
 
 // Creates a map with the given parameters
-void MapEditorState::CreateMap() {
+void _MapEditorState::CreateMap() {
 
 	// Get window
 	IGUIWindow *Window = static_cast<IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(NEWMAP_WINDOW));
@@ -489,7 +489,7 @@ void MapEditorState::CreateMap() {
 }
 
 // Initialize the load map screen
-void MapEditorState::InitLoadMap() {
+void _MapEditorState::InitLoadMap() {
 
 	// Main dialog window
 	stringc StartPath = Config.GetSaveMapPath("");
@@ -499,7 +499,7 @@ void MapEditorState::InitLoadMap() {
 }
 
 // Opens the texture palette dialog
-void MapEditorState::InitTexturePalette() {
+void _MapEditorState::InitTexturePalette() {
 
 	// Main dialog window
 	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
@@ -524,7 +524,7 @@ void MapEditorState::InitTexturePalette() {
 }
 
 // Opens the brush filter dialog
-void MapEditorState::InitBrushOptions() {
+void _MapEditorState::InitBrushOptions() {
 	int StartX, StartY, OffsetY;
 
 	// Main dialog window
@@ -583,7 +583,7 @@ void MapEditorState::InitBrushOptions() {
 }
 
 // Loads all map textures from a directory
-void MapEditorState::RefreshTexturePalette() {
+void _MapEditorState::RefreshTexturePalette() {
 
 	TexturePalette.clear();
 
@@ -616,7 +616,7 @@ void MapEditorState::RefreshTexturePalette() {
 }
 
 // Applys a brush of varying size
-void MapEditorState::ApplyBrushSize(int TX, int TY, int TSize) {
+void _MapEditorState::ApplyBrushSize(int TX, int TY, int TSize) {
 
 	for(int i = 0; i < TSize; i++) {
 		for(int j = 0; j < TSize; j++) {
@@ -632,7 +632,7 @@ void MapEditorState::ApplyBrushSize(int TX, int TY, int TSize) {
 }
 
 // Draws a texture on the map with the current brush
-void MapEditorState::ApplyBrush(int TX, int TY) {
+void _MapEditorState::ApplyBrush(int TX, int TY) {
 
 	if(Map) {
 		if(!Map->IsValidPosition(TX, TY))
@@ -662,7 +662,7 @@ void MapEditorState::ApplyBrush(int TX, int TY) {
 }
 
 // Draw information about the brush
-void MapEditorState::RenderBrush() {
+void _MapEditorState::RenderBrush() {
 
 	SColor Color(255, 255, 255, 255);
 	int StartX = 750, StartY = 480;
@@ -716,7 +716,7 @@ void MapEditorState::RenderBrush() {
 }
 
 // Resets the filters to false
-void MapEditorState::ResetFilters() {
+void _MapEditorState::ResetFilters() {
 	for(int i = 0; i < FILTER_COUNT; i++) {
 		Filters[i] = false;
 	}

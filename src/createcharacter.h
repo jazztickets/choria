@@ -24,7 +24,7 @@
 class PacketClass;
 
 // Classes
-class CreateCharacterState : public StateClass {
+class _CreateCharacterState : public _State {
 
 	public:
 
@@ -51,8 +51,8 @@ class CreateCharacterState : public StateClass {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static CreateCharacterState *Instance() {
-			static CreateCharacterState ClassInstance;
+		static _CreateCharacterState *Instance() {
+			static _CreateCharacterState ClassInstance;
 			return &ClassInstance;
 		}
 

@@ -29,7 +29,7 @@ using namespace io;
 using namespace gui;
 
 // Forward Declarations
-class StateClass;
+class _State;
 class SingleNetworkClass;
 class MultiNetworkClass;
 
@@ -50,8 +50,8 @@ class GameClass {
 		void Close();
 
 		// States
-		void ChangeState(StateClass *TState);
-		StateClass *GetState() { return State; }
+		void ChangeState(_State *TState);
+		_State *GetState() { return State; }
 
 		bool IsDone() { return Done; }
 		void SetDone(bool TValue) { Done = TValue; }
@@ -71,7 +71,7 @@ class GameClass {
 
 		// States
 		ManagerStateType ManagerState;
-		StateClass *State, *NewState;
+		_State *State, *NewState;
 		bool PreviousWindowActive, WindowActive;
 
 		// Flags

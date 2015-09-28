@@ -35,7 +35,7 @@ struct SlotStruct {
 };
 
 // Classes
-class CharactersState : public StateClass {
+class _CharactersState : public _State {
 
 	public:
 
@@ -64,8 +64,8 @@ class CharactersState : public StateClass {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static CharactersState *Instance() {
-			static CharactersState ClassInstance;
+		static _CharactersState *Instance() {
+			static _CharactersState ClassInstance;
 			return &ClassInstance;
 		}
 

@@ -26,7 +26,7 @@
 #include <characters.h>
 
 // Initializes the state
-int AccountState::Init() {
+int _AccountState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
 	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
@@ -68,19 +68,19 @@ int AccountState::Init() {
 }
 
 // Shuts the state down
-int AccountState::Close() {
+int _AccountState::Close() {
 
 	return 1;
 }
 
 // Handles a disconnection from the server
-void AccountState::HandleDisconnect(ENetEvent *TEvent) {
+void _AccountState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(ConnectState::Instance());
+	Game.ChangeState(_ConnectState::Instance());
 }
 
 // Handles a server packet
-void AccountState::HandlePacket(ENetEvent *TEvent) {
+void _AccountState::HandlePacket(ENetEvent *TEvent) {
 	PacketClass Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
 		case NetworkClass::ACCOUNT_NOTFOUND:
@@ -100,18 +100,18 @@ void AccountState::HandlePacket(ENetEvent *TEvent) {
 			Config.SaveSettings();
 			AccountName = "";
 			Password = "";
-			Game.ChangeState(CharactersState::Instance());
+			Game.ChangeState(_CharactersState::Instance());
 		break;
 	}
 }
 
 // Updates the current state
-void AccountState::Update(u32 TDeltaTime) {
+void _AccountState::Update(u32 TDeltaTime) {
 
 }
 
 // Draws the current state
-void AccountState::Draw() {
+void _AccountState::Draw() {
 
 	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
 
@@ -134,13 +134,13 @@ void AccountState::Draw() {
 }
 
 // Key presses
-bool AccountState::HandleKeyPress(EKEY_CODE TKey) {
+bool _AccountState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(State) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game.ChangeState(ConnectState::Instance());
+					Game.ChangeState(_ConnectState::Instance());
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_LOGIN);
@@ -155,7 +155,7 @@ bool AccountState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 	switch(State) {
 		case STATE_MAIN:
 			switch(TEventType) {
@@ -166,7 +166,7 @@ void AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 							ChangeState(STATE_LOGIN);
 						break;
 						case ELEMENT_CANCEL:
-							Game.ChangeState(ConnectState::Instance());
+							Game.ChangeState(_ConnectState::Instance());
 						break;
 						case ELEMENT_CREATEACCOUNT:
 							CreateAccount = true;
@@ -186,7 +186,7 @@ void AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) 
 }
 
 // Changes the internal state
-void AccountState::ChangeState(int TState) {
+void _AccountState::ChangeState(int TState) {
 
 	switch(TState) {
 		case STATE_MAIN:
@@ -217,7 +217,7 @@ void AccountState::ChangeState(int TState) {
 }
 
 // Validates the login form
-bool AccountState::ValidateForm() {
+bool _AccountState::ValidateForm() {
 
 	AccountName = EditAccountName->getText();
 	AccountName.trim();
@@ -240,7 +240,7 @@ bool AccountState::ValidateForm() {
 }
 
 // Sets the default login info
-void AccountState::SetLoginInfo(const stringc &TAccountName, const stringc &TPassword) {
+void _AccountState::SetLoginInfo(const stringc &TAccountName, const stringc &TPassword) {
 	AccountName = TAccountName;
 	Password = TPassword;
 }

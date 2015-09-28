@@ -31,7 +31,7 @@ class PlayerClass;
 class ServerBattleClass;
 
 // Classes
-class PlayServerState : public StateClass {
+class _PlayServerState : public _State {
 
 	public:
 
@@ -51,8 +51,8 @@ class PlayServerState : public StateClass {
 		void StartCommandThread();
 		void StopServer() { StopRequested = true; }
 
-		static PlayServerState *Instance() {
-			static PlayServerState ClassInstance;
+		static _PlayServerState *Instance() {
+			static _PlayServerState ClassInstance;
 			return &ClassInstance;
 		}
 

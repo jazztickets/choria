@@ -51,11 +51,11 @@ void HandleCommands(void *Arguments) {
 			std::cout << "Command not recognized" << std::endl;
 	}
 
-	PlayServerState::Instance()->StopServer();
+	_PlayServerState::Instance()->StopServer();
 }
 
 // Initializes the state
-int PlayServerState::Init() {
+int _PlayServerState::Init() {
 	ServerTime = 0;
 	StopRequested = false;
 	CommandThread = NULL;
@@ -84,7 +84,7 @@ int PlayServerState::Init() {
 }
 
 // Shuts the state down
-int PlayServerState::Close() {
+int _PlayServerState::Close() {
 	if(CommandThread) {
 		CommandThread->join();
 		delete CommandThread;
@@ -108,12 +108,12 @@ int PlayServerState::Close() {
 }
 
 // Start run the command thread
-void PlayServerState::StartCommandThread() {
+void _PlayServerState::StartCommandThread() {
 	CommandThread = new std::thread(HandleCommands, this);
 }
 
 // Populates the server database with the default data
-void PlayServerState::CreateDefaultDatabase() {
+void _PlayServerState::CreateDefaultDatabase() {
 
 	// Server information
 	Database->RunQuery("BEGIN TRANSACTION");
@@ -164,7 +164,7 @@ void PlayServerState::CreateDefaultDatabase() {
 }
 
 // Handles a new client connection
-void PlayServerState::HandleConnect(ENetEvent *TEvent) {
+void _PlayServerState::HandleConnect(ENetEvent *TEvent) {
 	printf("HandleConnect: %x:%x\n", TEvent->peer->address.host, TEvent->peer->address.port);
 
 	// Create the player and add it to the object list
@@ -182,7 +182,7 @@ void PlayServerState::HandleConnect(ENetEvent *TEvent) {
 }
 
 // Handles a client disconnect
-void PlayServerState::HandleDisconnect(ENetEvent *TEvent) {
+void _PlayServerState::HandleDisconnect(ENetEvent *TEvent) {
 	printf("HandleDisconnect: %x:%x\n", TEvent->peer->address.host, TEvent->peer->address.port);
 
 	PlayerClass *Player = static_cast<PlayerClass *>(TEvent->peer->data);
@@ -209,7 +209,7 @@ void PlayServerState::HandleDisconnect(ENetEvent *TEvent) {
 }
 
 // Handles a client packet
-void PlayServerState::HandlePacket(ENetEvent *TEvent) {
+void _PlayServerState::HandlePacket(ENetEvent *TEvent) {
 	//printf("HandlePacket: type=%d\n", TEvent->packet->data[0]);
 
 	PacketClass Packet(TEvent->packet);
@@ -291,7 +291,7 @@ void PlayServerState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void PlayServerState::Update(u32 TDeltaTime) {
+void _PlayServerState::Update(u32 TDeltaTime) {
 	ServerTime += TDeltaTime;
 
 	Instances->Update(TDeltaTime);
@@ -303,7 +303,7 @@ void PlayServerState::Update(u32 TDeltaTime) {
 }
 
 // Login information
-void PlayServerState::HandleLoginInfo(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleLoginInfo(PacketClass *TPacket, ENetPeer *TPeer) {
 	char QueryString[512];
 
 	// Read packet
@@ -366,14 +366,14 @@ void PlayServerState::HandleLoginInfo(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Sends a player his/her character list
-void PlayServerState::HandleCharacterListRequest(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleCharacterListRequest(PacketClass *TPacket, ENetPeer *TPeer) {
 
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	SendCharacterList(Player);
 }
 
 // Loads the player, updates the world, notifies clients
-void PlayServerState::HandleCharacterSelect(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleCharacterSelect(PacketClass *TPacket, ENetPeer *TPeer) {
 
 	int Slot = TPacket->ReadChar();
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
@@ -482,7 +482,7 @@ void PlayServerState::HandleCharacterSelect(PacketClass *TPacket, ENetPeer *TPee
 }
 
 // Handle a character delete request
-void PlayServerState::HandleCharacterDelete(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleCharacterDelete(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	char QueryString[512];
 
@@ -515,7 +515,7 @@ void PlayServerState::HandleCharacterDelete(PacketClass *TPacket, ENetPeer *TPee
 }
 
 // Handles the character create request
-void PlayServerState::HandleCharacterCreate(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleCharacterCreate(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	char QueryString[512];
 
@@ -564,7 +564,7 @@ void PlayServerState::HandleCharacterCreate(PacketClass *TPacket, ENetPeer *TPee
 }
 
 // Handles move commands from a client
-void PlayServerState::HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer) {
 
 	int Direction = TPacket->ReadChar();
 	//printf("HandleMoveCommand: %d\n", Direction);
@@ -646,7 +646,7 @@ void PlayServerState::HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles battle commands from a client
-void PlayServerState::HandleBattleCommand(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleBattleCommand(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -663,7 +663,7 @@ void PlayServerState::HandleBattleCommand(PacketClass *TPacket, ENetPeer *TPeer)
 }
 
 // The client is done with the battle results screen
-void PlayServerState::HandleBattleFinished(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleBattleFinished(PacketClass *TPacket, ENetPeer *TPeer) {
 	//printf("HandleBattleFinished:\n");
 
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
@@ -687,7 +687,7 @@ void PlayServerState::HandleBattleFinished(PacketClass *TPacket, ENetPeer *TPeer
 }
 
 // Handles a player's inventory move
-void PlayServerState::HandleInventoryMove(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleInventoryMove(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -739,7 +739,7 @@ void PlayServerState::HandleInventoryMove(PacketClass *TPacket, ENetPeer *TPeer)
 }
 
 // Handle a player's inventory use request
-void PlayServerState::HandleInventoryUse(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleInventoryUse(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -749,7 +749,7 @@ void PlayServerState::HandleInventoryUse(PacketClass *TPacket, ENetPeer *TPeer) 
 }
 
 // Handle a player's inventory split stack request
-void PlayServerState::HandleInventorySplit(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleInventorySplit(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -765,7 +765,7 @@ void PlayServerState::HandleInventorySplit(PacketClass *TPacket, ENetPeer *TPeer
 }
 
 // Handles a player's event end message
-void PlayServerState::HandleEventEnd(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleEventEnd(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -775,7 +775,7 @@ void PlayServerState::HandleEventEnd(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles a vendor exchange message
-void PlayServerState::HandleVendorExchange(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleVendorExchange(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -824,7 +824,7 @@ void PlayServerState::HandleVendorExchange(PacketClass *TPacket, ENetPeer *TPeer
 }
 
 // Handle a skill bar change
-void PlayServerState::HandleSkillBar(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleSkillBar(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -838,7 +838,7 @@ void PlayServerState::HandleSkillBar(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles a skill adjust
-void PlayServerState::HandleSkillAdjust(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleSkillAdjust(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -858,7 +858,7 @@ void PlayServerState::HandleSkillAdjust(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles a player's request to not start a battle with other players
-void PlayServerState::HandlePlayerBusy(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandlePlayerBusy(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -870,7 +870,7 @@ void PlayServerState::HandlePlayerBusy(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles a player's request to attack another player
-void PlayServerState::HandleAttackPlayer(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleAttackPlayer(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player || !Player->CanAttackPlayer())
 		return;
@@ -904,7 +904,7 @@ void PlayServerState::HandleAttackPlayer(PacketClass *TPacket, ENetPeer *TPeer) 
 }
 
 // Handle a chat message
-void PlayServerState::HandleChatMessage(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleChatMessage(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -928,7 +928,7 @@ void PlayServerState::HandleChatMessage(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handle a trade request
-void PlayServerState::HandleTradeRequest(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleTradeRequest(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -965,7 +965,7 @@ void PlayServerState::HandleTradeRequest(PacketClass *TPacket, ENetPeer *TPeer) 
 }
 
 // Handles a trade cancel
-void PlayServerState::HandleTradeCancel(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleTradeCancel(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -986,7 +986,7 @@ void PlayServerState::HandleTradeCancel(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handle a trade gold update
-void PlayServerState::HandleTradeGold(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleTradeGold(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -1012,7 +1012,7 @@ void PlayServerState::HandleTradeGold(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles a trade accept from a player
-void PlayServerState::HandleTradeAccept(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleTradeAccept(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -1074,7 +1074,7 @@ void PlayServerState::HandleTradeAccept(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles a town portal request
-void PlayServerState::HandleTownPortal(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleTownPortal(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -1083,7 +1083,7 @@ void PlayServerState::HandleTownPortal(PacketClass *TPacket, ENetPeer *TPeer) {
 }
 
 // Handles a trader accept
-void PlayServerState::HandleTraderAccept(PacketClass *TPacket, ENetPeer *TPeer) {
+void _PlayServerState::HandleTraderAccept(PacketClass *TPacket, ENetPeer *TPeer) {
 	PlayerClass *Player = static_cast<PlayerClass *>(TPeer->data);
 	if(!Player)
 		return;
@@ -1106,7 +1106,7 @@ void PlayServerState::HandleTraderAccept(PacketClass *TPacket, ENetPeer *TPeer) 
 }
 
 // Spawns a player at a particular spawn point
-void PlayServerState::SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEventType, int TEventData) {
+void _PlayServerState::SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEventType, int TEventData) {
 
 	// Get new map
 	MapClass *NewMap = Instances->GetMap(TNewMapID);
@@ -1172,7 +1172,7 @@ void PlayServerState::SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEven
 }
 
 // Updates the player's HUD
-void PlayServerState::SendHUD(PlayerClass *TPlayer) {
+void _PlayServerState::SendHUD(PlayerClass *TPlayer) {
 
 	PacketClass Packet(NetworkClass::WORLD_HUD);
 	Packet.WriteInt(TPlayer->GetExperience());
@@ -1186,7 +1186,7 @@ void PlayServerState::SendHUD(PlayerClass *TPlayer) {
 }
 
 // Send player their position
-void PlayServerState::SendPlayerPosition(PlayerClass *TPlayer) {
+void _PlayServerState::SendPlayerPosition(PlayerClass *TPlayer) {
 
 	PacketClass Packet(NetworkClass::WORLD_POSITION);
 	Packet.WriteChar(TPlayer->GetPosition().X);
@@ -1196,7 +1196,7 @@ void PlayServerState::SendPlayerPosition(PlayerClass *TPlayer) {
 }
 
 // Sends the player a list of his/her characters
-void PlayServerState::SendCharacterList(PlayerClass *TPlayer) {
+void _PlayServerState::SendCharacterList(PlayerClass *TPlayer) {
 	char QueryString[512];
 
 	// Get a count of the account's characters
@@ -1222,7 +1222,7 @@ void PlayServerState::SendCharacterList(PlayerClass *TPlayer) {
 }
 
 // Sends a player an event message
-void PlayServerState::SendEvent(PlayerClass *TPlayer, int TType, int TData) {
+void _PlayServerState::SendEvent(PlayerClass *TPlayer, int TType, int TData) {
 
 	// Create packet
 	PacketClass Packet(NetworkClass::EVENT_START);
@@ -1235,7 +1235,7 @@ void PlayServerState::SendEvent(PlayerClass *TPlayer, int TType, int TData) {
 }
 
 // Sends information to another player about items they're trading
-void PlayServerState::SendTradeInformation(PlayerClass *TSender, PlayerClass *TReceiver) {
+void _PlayServerState::SendTradeInformation(PlayerClass *TSender, PlayerClass *TReceiver) {
 
 	// Send items to trader player
 	PacketClass Packet(NetworkClass::TRADE_REQUEST);
@@ -1245,7 +1245,7 @@ void PlayServerState::SendTradeInformation(PlayerClass *TSender, PlayerClass *TR
 }
 
 // Adds trade item information to a packet
-void PlayServerState::BuildTradeItemsPacket(PlayerClass *TPlayer, PacketClass *TPacket, int TGold) {
+void _PlayServerState::BuildTradeItemsPacket(PlayerClass *TPlayer, PacketClass *TPacket, int TGold) {
 	TPacket->WriteInt(TGold);
 	for(int i = PlayerClass::INVENTORY_TRADE; i < PlayerClass::INVENTORY_COUNT; i++) {
 		if(TPlayer->GetInventory(i)->Item) {
@@ -1258,7 +1258,7 @@ void PlayServerState::BuildTradeItemsPacket(PlayerClass *TPlayer, PacketClass *T
 }
 
 // Removes a player from a battle and deletes the battle if necessary
-void PlayServerState::RemovePlayerFromBattle(PlayerClass *TPlayer) {
+void _PlayServerState::RemovePlayerFromBattle(PlayerClass *TPlayer) {
 	ServerBattleClass *Battle = static_cast<ServerBattleClass *>(TPlayer->GetBattle());
 	if(!Battle)
 		return;
@@ -1270,7 +1270,7 @@ void PlayServerState::RemovePlayerFromBattle(PlayerClass *TPlayer) {
 }
 
 // Deletes an object on the server and broadcasts it to the clients
-void PlayServerState::DeleteObject(ObjectClass *TObject) {
+void _PlayServerState::DeleteObject(ObjectClass *TObject) {
 
 	// Remove the object from their current map
 	MapClass *Map = TObject->GetMap();
@@ -1282,11 +1282,11 @@ void PlayServerState::DeleteObject(ObjectClass *TObject) {
 // Called when object gets deleted
 void ObjectDeleted(ObjectClass *TObject) {
 
-	PlayServerState::Instance()->DeleteObject(TObject);
+	_PlayServerState::Instance()->DeleteObject(TObject);
 }
 
 // Teleports a player back to town
-void PlayServerState::PlayerTownPortal(PlayerClass *TPlayer) {
+void _PlayServerState::PlayerTownPortal(PlayerClass *TPlayer) {
 
 	TPlayer->RestoreHealthMana();
 	SpawnPlayer(TPlayer, TPlayer->GetSpawnMapID(), MapClass::EVENT_SPAWN, TPlayer->GetSpawnPoint());

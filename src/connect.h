@@ -21,7 +21,7 @@
 #include <engine/state.h>
 
 // Classes
-class ConnectState : public StateClass {
+class _ConnectState : public _State {
 
 	public:
 
@@ -48,8 +48,8 @@ class ConnectState : public StateClass {
 		void Update(u32 TDeltaTime);
 		void Draw();
 
-		static ConnectState *Instance() {
-			static ConnectState ClassInstance;
+		static _ConnectState *Instance() {
+			static _ConnectState ClassInstance;
 			return &ClassInstance;
 		}
 

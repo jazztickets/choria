@@ -29,7 +29,7 @@
 #include <playclient.h>
 
 // Initializes the state
-int CharactersState::Init() {
+int _CharactersState::Init() {
 
 	// Create character slots
 	int SlotX = 0, SlotY = 0;
@@ -67,19 +67,19 @@ int CharactersState::Init() {
 }
 
 // Shuts the state down
-int CharactersState::Close() {
+int _CharactersState::Close() {
 
 	return 1;
 }
 
 // Handles a disconnection from the server
-void CharactersState::HandleDisconnect(ENetEvent *TEvent) {
+void _CharactersState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(ConnectState::Instance());
+	Game.ChangeState(_ConnectState::Instance());
 }
 
 // Handles a server packet
-void CharactersState::HandlePacket(ENetEvent *TEvent) {
+void _CharactersState::HandlePacket(ENetEvent *TEvent) {
 	PacketClass Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
 		case NetworkClass::CHARACTERS_LIST:
@@ -89,12 +89,12 @@ void CharactersState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void CharactersState::Update(u32 TDeltaTime) {
+void _CharactersState::Update(u32 TDeltaTime) {
 	ClickTimer += TDeltaTime;
 }
 
 // Draws the current state
-void CharactersState::Draw() {
+void _CharactersState::Draw() {
 
 	// Top text
 	Graphics.SetFont(GraphicsClass::FONT_14);
@@ -131,7 +131,7 @@ void CharactersState::Draw() {
 }
 
 // Key presses
-bool CharactersState::HandleKeyPress(EKEY_CODE TKey) {
+bool _CharactersState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(TKey) {
 		case KEY_ESCAPE:
@@ -151,7 +151,7 @@ bool CharactersState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 
 	switch(TEventType) {
 		case EGET_BUTTON_CLICKED:
@@ -163,7 +163,7 @@ void CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 					Logout();
 				break;
 				case ELEMENT_CREATE:
-					Game.ChangeState(CreateCharacterState::Instance());
+					Game.ChangeState(_CreateCharacterState::Instance());
 				break;
 				case ELEMENT_DELETE:
 					irrGUI->addMessageBox(L"", L"Are you sure you want to delete this character?", true, EMBF_YES | EMBF_NO, 0, ELEMENT_DELETECONFIRM);
@@ -195,7 +195,7 @@ void CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 }
 
 // Process the character list packet
-void CharactersState::HandleCharacterList(PacketClass *TPacket) {
+void _CharactersState::HandleCharacterList(PacketClass *TPacket) {
 
 	// Get count
 	int CharacterCount = TPacket->ReadChar();
@@ -222,14 +222,14 @@ void CharactersState::HandleCharacterList(PacketClass *TPacket) {
 }
 
 // Requests a character list from the server
-void CharactersState::RequestCharacterList() {
+void _CharactersState::RequestCharacterList() {
 
 	PacketClass Packet(NetworkClass::CHARACTERS_REQUEST);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Handles the selection of a slot
-void CharactersState::UpdateSelection(int TSelectedIndex) {
+void _CharactersState::UpdateSelection(int TSelectedIndex) {
 
 	int OldIndex = SelectedIndex;
 	SelectedIndex = TSelectedIndex;
@@ -252,16 +252,16 @@ void CharactersState::UpdateSelection(int TSelectedIndex) {
 }
 
 // Plays a character
-void CharactersState::PlayCharacter() {
+void _CharactersState::PlayCharacter() {
 	if(SelectedIndex == -1 || !Slots[SelectedIndex].Used)
 		return;
 
-	PlayClientState::Instance()->SetCharacterSlot(SelectedIndex);
-	Game.ChangeState(PlayClientState::Instance());
+	_PlayClientState::Instance()->SetCharacterSlot(SelectedIndex);
+	Game.ChangeState(_PlayClientState::Instance());
 }
 
 // Delete a character
-void CharactersState::Delete() {
+void _CharactersState::Delete() {
 	if(SelectedIndex == -1 || !Slots[SelectedIndex].Used)
 		return;
 
@@ -271,11 +271,11 @@ void CharactersState::Delete() {
 }
 
 // Logout
-void CharactersState::Logout() {
+void _CharactersState::Logout() {
 	if(Game.IsLocalServerRunning()) {
 		ClientNetwork->Disconnect();
-		Game.ChangeState(MainMenuState::Instance());
+		Game.ChangeState(_MainMenuState::Instance());
 	}
 	else
-		Game.ChangeState(AccountState::Instance());
+		Game.ChangeState(_AccountState::Instance());
 }
