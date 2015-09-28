@@ -17,26 +17,18 @@
 *******************************************************************************/
 #pragma once
 
-#include <irrlicht.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <SColor.h>
 
 const int GAME_PORTALTIME = 3000;
 const int PLAYER_MOVETIME = 125;
 
-const int MAP_VERSION	= 1;
-const int SCROLLMIN_X	= 2;
-const int SCROLLMIN_Y	= 2;
+const int MAP_VERSION = 1;
+const int SCROLLMIN_X = 2;
+const int SCROLLMIN_Y = 2;
 
-const SColor COLOR_GOLD(255, 196, 187, 44);
-const SColor COLOR_GRAY(255, 150, 150, 150);
-const SColor COLOR_LIGHTGRAY(255, 200, 200, 200);
+const irr::video::SColor COLOR_GOLD(255, 196, 187, 44);
+const irr::video::SColor COLOR_GRAY(255, 150, 150, 150);
+const irr::video::SColor COLOR_LIGHTGRAY(255, 200, 200, 200);
 
 const int MESSAGE_TIME = 15000;
 const int SKILL_STARTX = 35;

@@ -17,17 +17,20 @@
 *******************************************************************************/
 #include <graphics.h>
 #include <globals.h>
+#include <irrlicht.h>
 
 GraphicsClass Graphics;
 
+using namespace irr;
+
 // Initializes the graphics system
-int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE TDriverType, IEventReceiver *TEventReceiver) {
+int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, video::E_DRIVER_TYPE TDriverType, IEventReceiver *TEventReceiver) {
 
 	Width = TWidth;
 	Height = THeight;
 
 	// Create the irrlicht device
-	irrDevice = createDevice(TDriverType, dimension2du(TWidth, THeight), 32, TFullScreen, true, false, TEventReceiver);
+	irrDevice = createDevice(TDriverType, core::dimension2du(TWidth, THeight), 32, TFullScreen, true, false, TEventReceiver);
 	if(irrDevice == NULL)
 		return 0;
 
@@ -57,17 +60,17 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE
 	SetFont(FONT_10);
 
 	// Set colors
-	Skin->setColor(EGDC_BUTTON_TEXT, SColor(255, 255, 255, 255));
-	Skin->setColor(EGDC_WINDOW, SColor(255, 0, 0, 20));
-	Skin->setColor(EGDC_WINDOW_SYMBOL, SColor(255, 255, 255, 255));
-	Skin->setColor(EGDC_3D_FACE, SColor(255, 0, 0, 20));
-	Skin->setColor(EGDC_3D_SHADOW, SColor(255, 0, 0, 20));
-	Skin->setColor(EGDC_3D_HIGH_LIGHT, SColor(255, 120, 120, 120));
-	Skin->setColor(EGDC_3D_DARK_SHADOW, SColor(255, 50, 50, 50));
-	Skin->setColor(EGDC_GRAY_WINDOW_SYMBOL, SColor(255, 128, 128, 128));
-	Skin->setColor(EGDC_GRAY_EDITABLE, SColor(255, 0, 0, 0));
-	Skin->setColor(EGDC_FOCUSED_EDITABLE, SColor(255, 0, 0, 0));
-	Skin->setColor(EGDC_EDITABLE, SColor(255, 0, 0, 0));
+	Skin->setColor(gui::EGDC_BUTTON_TEXT, video::SColor(255, 255, 255, 255));
+	Skin->setColor(gui::EGDC_WINDOW, video::SColor(255, 0, 0, 20));
+	Skin->setColor(gui::EGDC_WINDOW_SYMBOL, video::SColor(255, 255, 255, 255));
+	Skin->setColor(gui::EGDC_3D_FACE, video::SColor(255, 0, 0, 20));
+	Skin->setColor(gui::EGDC_3D_SHADOW, video::SColor(255, 0, 0, 20));
+	Skin->setColor(gui::EGDC_3D_HIGH_LIGHT, video::SColor(255, 120, 120, 120));
+	Skin->setColor(gui::EGDC_3D_DARK_SHADOW, video::SColor(255, 50, 50, 50));
+	Skin->setColor(gui::EGDC_GRAY_WINDOW_SYMBOL, video::SColor(255, 128, 128, 128));
+	Skin->setColor(gui::EGDC_GRAY_EDITABLE, video::SColor(255, 0, 0, 0));
+	Skin->setColor(gui::EGDC_FOCUSED_EDITABLE, video::SColor(255, 0, 0, 0));
+	Skin->setColor(gui::EGDC_EDITABLE, video::SColor(255, 0, 0, 0));
 
 	// Load images
 	Images[IMAGE_EMPTYSLOT] = irrDriver->getTexture("textures/interface/emptyslot.png");
@@ -129,10 +132,17 @@ void GraphicsClass::EndFrame() {
 }
 
 // Draws an 2d image centered about a point
-void GraphicsClass::DrawCenteredImage(const ITexture *TTexture, int TPositionX, int TPositionY, const SColor &TColor) {
+void GraphicsClass::DrawCenteredImage(const video::ITexture *TTexture, int TPositionX, int TPositionY, const video::SColor &TColor) {
 
 	if(TTexture)
-		irrDriver->draw2DImage(TTexture, position2di(TPositionX - (TTexture->getSize().Width >> 1), TPositionY - (TTexture->getSize().Height >> 1)), rect<s32>(0, 0, TTexture->getSize().Width, TTexture->getSize().Height), 0, TColor, true);
+		irrDriver->draw2DImage(
+					TTexture,
+					core::position2di(TPositionX - (TTexture->getSize().Width >> 1), TPositionY - (TTexture->getSize().Height >> 1)),
+					core::recti(0, 0, TTexture->getSize().Width, TTexture->getSize().Height),
+					0,
+					TColor,
+					true
+					);
 }
 
 // Sets the current font
@@ -143,13 +153,13 @@ void GraphicsClass::SetFont(int TType) {
 }
 
 // Adds text to the screen
-IGUIStaticText *GraphicsClass::AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, IGUIElement *TParent) {
+gui::IGUIStaticText *GraphicsClass::AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, gui::IGUIElement *TParent) {
 
 	// Convert string
-	stringw Text(TText);
+	core::stringw Text(TText);
 
 	// Get dimensions
-	dimension2du TextArea = Fonts[CurrentFont]->getDimension(Text.c_str());
+	core::dimension2du TextArea = Fonts[CurrentFont]->getDimension(Text.c_str());
 
 	switch(TAlignType) {
 		case ALIGN_LEFT:
@@ -163,17 +173,17 @@ IGUIStaticText *GraphicsClass::AddText(const char *TText, int TPositionX, int TP
 	}
 
 	// Draw text
-	return irrGUI->addStaticText(Text.c_str(), rect<s32>(TPositionX, TPositionY, TPositionX + TextArea.Width, TPositionY + TextArea.Height), 0, false, TParent);
+	return irrGUI->addStaticText(Text.c_str(), core::recti(TPositionX, TPositionY, TPositionX + TextArea.Width, TPositionY + TextArea.Height), 0, false, TParent);
 }
 
 // Draws text to the screen
-void GraphicsClass::RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, const SColor &TColor) {
+void GraphicsClass::RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, const video::SColor &TColor) {
 
 	// Convert string
-	stringw Text(TText);
+	core::stringw Text(TText);
 
 	// Get dimensions
-	dimension2du TextArea = Fonts[CurrentFont]->getDimension(Text.c_str());
+	core::dimension2du TextArea = Fonts[CurrentFont]->getDimension(Text.c_str());
 
 	switch(TAlignType) {
 		case ALIGN_LEFT:
@@ -187,21 +197,21 @@ void GraphicsClass::RenderText(const char *TText, int TPositionX, int TPositionY
 	}
 
 	// Draw text
-	Fonts[CurrentFont]->draw(Text.c_str(), rect<s32>(TPositionX, TPositionY, TPositionX + TextArea.Width, TPositionY + TextArea.Height), TColor);
+	Fonts[CurrentFont]->draw(Text.c_str(), core::recti(TPositionX, TPositionY, TPositionX + TextArea.Width, TPositionY + TextArea.Height), TColor);
 }
 
 // Return a centered rect
-rect<s32> GraphicsClass::GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
+irr::core::recti GraphicsClass::GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
 	TWidth >>= 1;
 	THeight >>= 1;
 
-	return rect<s32>(TPositionX - TWidth, TPositionY - THeight, TPositionX + TWidth, TPositionY + THeight);
+	return core::recti(TPositionX - TWidth, TPositionY - THeight, TPositionX + TWidth, TPositionY + THeight);
 }
 
 // Return a rect
-rect<s32> GraphicsClass::GetRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
+irr::core::recti GraphicsClass::GetRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
 
-	return rect<s32>(TPositionX, TPositionY, TPositionX + TWidth, TPositionY + THeight);
+	return core::recti(TPositionX, TPositionY, TPositionX + TWidth, TPositionY + THeight);
 }
 
 // Clear all the GUI elements
@@ -211,7 +221,7 @@ void GraphicsClass::Clear() {
 }
 
 // Draws an interface image
-void GraphicsClass::DrawImage(ImageType TType, int TPositionX, int TPositionY, const SColor &TColor) {
+void GraphicsClass::DrawImage(ImageType TType, int TPositionX, int TPositionY, const video::SColor &TColor) {
 
 	Graphics.DrawCenteredImage(Images[TType], TPositionX, TPositionY, TColor);
 }
@@ -219,12 +229,12 @@ void GraphicsClass::DrawImage(ImageType TType, int TPositionX, int TPositionY, c
 // Draws a health or mana bar
 void GraphicsClass::DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight) {
 
-	irrDriver->draw2DImage(Images[TType + 1], position2di(TPositionX, TPositionY), rect<s32>(0, 0, TWidth, THeight), 0, SColor(255, 255, 255, 255), true);
-	irrDriver->draw2DImage(Images[TType], position2di(TPositionX, TPositionY), rect<s32>(0, 0, (int)(TWidth * TPercent), THeight), 0, SColor(255, 255, 255, 255), true);
+	irrDriver->draw2DImage(Images[TType + 1], core::position2di(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, video::SColor(255, 255, 255, 255), true);
+	irrDriver->draw2DImage(Images[TType], core::position2di(TPositionX, TPositionY), core::recti(0, 0, (int)(TWidth * TPercent), THeight), 0, video::SColor(255, 255, 255, 255), true);
 }
 
 // Draws a tiled background
-void GraphicsClass::DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const SColor &TColor) {
+void GraphicsClass::DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const video::SColor &TColor) {
 
-	irrDriver->draw2DImage(Images[TType], position2di(TPositionX, TPositionY), rect<s32>(0, 0, TWidth, THeight), 0, TColor, true);
+	irrDriver->draw2DImage(Images[TType], core::position2di(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, TColor, true);
 }

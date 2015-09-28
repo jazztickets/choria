@@ -18,15 +18,13 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <IEventReceiver.h>
+#include <IGUIFont.h>
+#include <IGUISkin.h>
+#include <IGUIStaticText.h>
+#include <ITexture.h>
+#include <EDriverTypes.h>
+#include <SColor.h>
 
 // Classes
 class GraphicsClass {
@@ -81,49 +79,49 @@ class GraphicsClass {
 			IMAGE_COUNT,
 		};
 
-		int Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE TDriverType, IEventReceiver *TEventReceiver);
+		int Init(int TWidth, int THeight, bool TFullScreen, irr::video::E_DRIVER_TYPE TDriverType, irr::IEventReceiver *TEventReceiver);
 		int Close();
 
 		// Rendering
 		void Clear();
-		void SetClearColor(const SColor &TColor) { ClearColor = TColor; }
+		void SetClearColor(const irr::video::SColor &TColor) { ClearColor = TColor; }
 		void BeginFrame();
 		void EndFrame();
 
 		// Fonts
 		void SetFont(int TType);
-		IGUIFont *GetFont(int TType) const { return Fonts[TType]; }
+		irr::gui::IGUIFont *GetFont(int TType) const { return Fonts[TType]; }
 
 		// Positions
-		rect<s32> GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight);
-		rect<s32> GetRect(int TPositionX, int TPositionY, int TWidth, int THeight);
+		irr::core::recti GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight);
+		irr::core::recti GetRect(int TPositionX, int TPositionY, int TWidth, int THeight);
 
 		// Text
-		IGUIStaticText *AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, IGUIElement *TParent=NULL);
-		void RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, const SColor &TColor=SColor(255, 255, 255, 255));
+		irr::gui::IGUIStaticText *AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, irr::gui::IGUIElement *TParent=NULL);
+		void RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 
 		// Images
-		void DrawCenteredImage(const ITexture *TTexture, int TPositionX, int TPositionY, const SColor &TColor=SColor(255, 255, 255, 255));
-		void DrawImage(ImageType TType, int TPositionX, int TPositionY, const SColor &TColor=SColor(255, 255, 255, 255));
+		void DrawCenteredImage(const irr::video::ITexture *TTexture, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
+		void DrawImage(ImageType TType, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 		void DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight);
-		void DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const SColor &TColor=SColor(255, 255, 255, 255));
-		ITexture *GetImage(ImageType TType) { return Images[TType]; }
+		void DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
+		irr::video::ITexture *GetImage(ImageType TType) { return Images[TType]; }
 
 	private:
 
 		// Graphics state
-		SColor ClearColor;
+		irr::video::SColor ClearColor;
 		int Width, Height;
 
 		// Theme
-		IGUISkin *Skin;
+		irr::gui::IGUISkin *Skin;
 
 		// Fonts
-		IGUIFont *Fonts[FONT_COUNT];
+		irr::gui::IGUIFont *Fonts[FONT_COUNT];
 		int CurrentFont;
 
 		// Images
-		ITexture *Images[IMAGE_COUNT];
+		irr::video::ITexture *Images[IMAGE_COUNT];
 
 };
 

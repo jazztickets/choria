@@ -18,15 +18,7 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <cstdint>
 
 // Forward Declarations
 class _State;
@@ -67,7 +59,6 @@ class GameClass {
 
 		void Delay(int TTime);
 		void ResetTimer();
-		void ResetGraphics();
 
 		// States
 		ManagerStateType ManagerState;
@@ -78,7 +69,7 @@ class GameClass {
 		bool Done, MouseWasLocked, MouseWasShown;
 
 		// Time
-		u32 TimeStamp, DeltaTime;
+		uint32_t TimeStamp, DeltaTime;
 
 		// Networking
 		bool LocalServerRunning;

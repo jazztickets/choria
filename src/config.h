@@ -18,15 +18,11 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
+#include <irrString.h>
 
 // Namespaces
 using namespace irr;
 using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 // Classes
 class ConfigClass {

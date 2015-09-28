@@ -182,7 +182,7 @@ void GameClass::Update() {
 	// Update the current state
 	switch(ManagerState) {
 		case STATE_INIT:
-			ResetGraphics();
+			Graphics.Clear();
 			ResetTimer();
 			Input.ResetInputState();
 			if(!State->Init()) {
@@ -230,11 +230,6 @@ void GameClass::ResetTimer() {
 
 	irrTimer->setTime(0);
 	TimeStamp = irrTimer->getTime();
-}
-
-// Resets the graphics for a state
-void GameClass::ResetGraphics() {
-	Graphics.Clear();
 }
 
 // Delays execution of the program
