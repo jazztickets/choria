@@ -26,7 +26,7 @@
 #include <engine/constants.h>
 #include <instances/map.h>
 #include <instances/battle.h>
-#include <playserver.h>
+#include <states/playserver.h>
 #include <objects/skill.h>
 
 // Constructor

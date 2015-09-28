@@ -26,11 +26,11 @@
 #include <engine/stats.h>
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
-#include <mainmenu.h>
-#include <mapeditor.h>
-#include <playserver.h>
-#include <connect.h>
-#include <account.h>
+#include <states/mainmenu.h>
+#include <states/mapeditor.h>
+#include <states/playserver.h>
+#include <states/connect.h>
+#include <states/account.h>
 
 GameClass Game;
 

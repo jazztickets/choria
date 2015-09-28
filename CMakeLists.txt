@@ -63,9 +63,11 @@ file(GLOB SRC_ENGINE src/engine/*.cpp src/engine/*.h)
 file(GLOB SRC_INSTANCES src/instances/*.cpp src/instances/*.h)
 file(GLOB SRC_NETWORK src/network/*.cpp src/network/*.h)
 file(GLOB SRC_OBJECTS src/objects/*.cpp src/objects/*.h)
+file(GLOB SRC_STATES src/states/*.cpp src/states/*.h)
 
 file(GLOB SRC_ALL
 	${SRC_MAIN}
+	${SRC_STATES}
 	${SRC_ENET}
 	${SRC_ENGINE}
 	${SRC_INSTANCES}

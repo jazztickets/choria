@@ -23,7 +23,7 @@
 #include <network/packetstream.h>
 #include <engine/filestream.h>
 #include <engine/stats.h>
-#include <playserver.h>
+#include <states/playserver.h>
 #include <objects/player.h>
 
 // Constructor for the map editor: new map

@@ -15,15 +15,15 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <account.h>
+#include <states/account.h>
 #include <engine/game.h>
 #include <engine/globals.h>
 #include <engine/config.h>
 #include <engine/graphics.h>
 #include <network/network.h>
 #include <network/packetstream.h>
-#include <connect.h>
-#include <characters.h>
+#include <states/connect.h>
+#include <states/characters.h>
 
 _AccountState AccountState;
 

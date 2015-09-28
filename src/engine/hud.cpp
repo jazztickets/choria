@@ -22,7 +22,7 @@
 #include <engine/input.h>
 #include <engine/stats.h>
 #include <engine/constants.h>
-#include <playclient.h>
+#include <states/playclient.h>
 #include <network/network.h>
 #include <network/packetstream.h>
 #include <instances/map.h>

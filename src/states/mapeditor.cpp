@@ -15,14 +15,14 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <mapeditor.h>
+#include <states/mapeditor.h>
 #include <engine/game.h>
 #include <engine/input.h>
 #include <engine/graphics.h>
 #include <engine/globals.h>
 #include <engine/stats.h>
 #include <engine/config.h>
-#include <mainmenu.h>
+#include <states/mainmenu.h>
 
 _MapEditorState MapEditorState;
 

@@ -15,7 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <playserver.h>
+#include <states/playserver.h>
 #include <engine/database.h>
 #include <engine/objectmanager.h>
 #include <engine/instances.h>

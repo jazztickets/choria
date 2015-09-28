@@ -19,7 +19,7 @@
 #include <network/packetstream.h>
 #include <engine/game.h>
 #include <engine/game.h>
-#include <playserver.h>
+#include <states/playserver.h>
 
 // Initializes the network system
 int SingleNetworkClass::Init(bool TServer) {

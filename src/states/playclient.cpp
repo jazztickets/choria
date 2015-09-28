@@ -15,7 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <playclient.h>
+#include <states/playclient.h>
 #include <engine/globals.h>
 #include <engine/game.h>
 #include <engine/graphics.h>
@@ -30,7 +30,7 @@
 #include <instances/clientbattle.h>
 #include <objects/player.h>
 #include <objects/monster.h>
-#include <mainmenu.h>
+#include <states/mainmenu.h>
 
 _PlayClientState PlayClientState;
 
