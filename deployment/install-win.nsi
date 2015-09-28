@@ -2,9 +2,9 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "choria"
-!define PRODUCT_VERSION "0.4.1"
+!define PRODUCT_VERSION "0.4.2"
 !define PRODUCT_PUBLISHER "Alan Witkowski"
-!define PRODUCT_WEB_SITE "http://choria.googlecode.com"
+!define PRODUCT_WEB_SITE "https://github.com/jazztickets/choria"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\choria.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
@@ -20,7 +20,7 @@
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; License page
-!insertmacro MUI_PAGE_LICENSE "license.txt"
+!insertmacro MUI_PAGE_LICENSE "..\LICENSE"
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 ; Instfiles page
@@ -49,8 +49,8 @@ ShowUnInstDetails show
 Section "MainSection" SEC01
   SetShellVarContext all
   SetOutPath "$INSTDIR"
-  File "changelog.txt"
-  File "license.txt"
+  File "..\CHANGELOG"
+  File "..\LICENSE"
   File "..\README"
   File "..\bin\Release\choria.exe"
   CreateDirectory "$SMPROGRAMS\choria"
@@ -58,8 +58,8 @@ Section "MainSection" SEC01
   CreateShortCut "$SMPROGRAMS\choria\choria Server.lnk" "$INSTDIR\choria.exe" "-host"
   CreateShortCut "$SMPROGRAMS\choria\choria Map Editor.lnk" "$INSTDIR\choria.exe" "-mapeditor"
   CreateShortCut "$DESKTOP\choria.lnk" "$INSTDIR\choria.exe"
-  CreateShortCut "$INSTDIR\choria Server.lnk" "$INSTDIR\choria.exe" "-host"
-  CreateShortCut "$INSTDIR\choria Map Editor.lnk" "$INSTDIR\choria.exe" "-mapeditor"
+  CreateShortCut "$SMPROGRAMS\choria\choria Server.lnk" "$INSTDIR\choria.exe" "-host"
+  CreateShortCut "$SMPROGRAMS\choria\choria Map Editor.lnk" "$INSTDIR\choria.exe" "-mapeditor"
   File "..\working\Irrlicht.dll"
   File /r "..\working\database"
   File /r "..\working\fonts"
@@ -85,7 +85,6 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 SectionEnd
 
-
 Function un.onUninstSuccess
   HideWindow
   MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
@@ -98,14 +97,7 @@ FunctionEnd
 
 Section Uninstall
   SetShellVarContext all
-  Delete "$INSTDIR\${PRODUCT_NAME}.url"
-  Delete "$INSTDIR\uninst.exe"
-  Delete "$INSTDIR\Irrlicht.dll"
-  Delete "$INSTDIR\choria.exe"
-  Delete "$INSTDIR\license.txt"
-  Delete "$INSTDIR\changelog.txt"
-  Delete "$INSTDIR\README"
-  
+
   Delete "$SMPROGRAMS\choria\Uninstall.lnk"
   Delete "$SMPROGRAMS\choria\Website.lnk"
   Delete "$DESKTOP\choria.lnk"
@@ -114,15 +106,10 @@ Section Uninstall
   Delete "$SMPROGRAMS\choria\choria Map Editor.lnk"
   Delete "$INSTDIR\choria Server.lnk"
   Delete "$INSTDIR\choria Map Editor.lnk"
-  
+
   RMDir "$SMPROGRAMS\choria"
-  RMDir /r "$INSTDIR\database"
-  RMDir /r "$INSTDIR\fonts"
-  RMDir /r "$INSTDIR\maps"
-  RMDir /r "$INSTDIR\textures"
-  
-  RMDir "$INSTDIR"
-  
+  RMDir /r "$INSTDIR"
+
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
   SetAutoClose true
