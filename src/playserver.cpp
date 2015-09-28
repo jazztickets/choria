@@ -40,7 +40,8 @@ void HandleCommands(void *Arguments) {
 	std::string Input;
 	bool Done = false;
 
-	tthread::this_thread::sleep_for(tthread::chrono::milliseconds(300));
+	std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
 	std::cout << "Type stop to stop the server" << std::endl;
 	while(!Done) {
 		std::getline(std::cin, Input);
@@ -108,7 +109,7 @@ int PlayServerState::Close() {
 
 // Start run the command thread
 void PlayServerState::StartCommandThread() {
-	CommandThread = new tthread::thread(HandleCommands, 0);
+	CommandThread = new std::thread(HandleCommands, this);
 }
 
 // Populates the server database with the default data

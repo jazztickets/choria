@@ -47,6 +47,9 @@ if(NOT SQLITE_FOUND)
 endif()
 
 find_package(Threads REQUIRED)
+if(NOT Threads_FOUND)
+	message(SEND_ERROR "Could not find Threads!")
+endif()
 
 # set include directories
 include_directories("src")
@@ -60,7 +63,6 @@ file(GLOB SRC_ENGINE src/engine/*.cpp src/engine/*.h)
 file(GLOB SRC_INSTANCES src/instances/*.cpp src/instances/*.h)
 file(GLOB SRC_NETWORK src/network/*.cpp src/network/*.h)
 file(GLOB SRC_OBJECTS src/objects/*.cpp src/objects/*.h)
-file(GLOB SRC_TINYTHREAD src/tinythread/*.cpp src/tinythread/*.h)
 
 file(GLOB SRC_ALL
 	${SRC_MAIN}
@@ -69,7 +71,6 @@ file(GLOB SRC_ALL
 	${SRC_INSTANCES}
 	${SRC_NETWORK}
 	${SRC_OBJECTS}
-	${SRC_TINYTHREAD}
 )
 
 # add virtual folders
@@ -79,7 +80,6 @@ source_group(engine FILES ${SRC_ENGINE})
 source_group(instances FILES ${SRC_INSTANCES})
 source_group(network FILES ${SRC_NETWORK})
 source_group(objects FILES ${SRC_OBJECTS})
-source_group(tinythreads FILES ${SRC_TINYTHREAD})
 
 # build exe
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)

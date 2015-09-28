@@ -558,7 +558,7 @@ void PlayClientState::HandleCreateObject(PacketClass *TPacket) {
 	int Type = TPacket->ReadChar();
 
 	// Create the object
-	ObjectClass *NewObject;
+	ObjectClass *NewObject = nullptr;
 	switch(Type) {
 		case ObjectClass::PLAYER: {
 			stringc Name(TPacket->ReadString());
@@ -573,10 +573,13 @@ void PlayClientState::HandleCreateObject(PacketClass *TPacket) {
 		}
 		break;
 	}
-	NewObject->SetPosition(position2di(Position.X, Position.Y));
 
-	// Add it to the manager
-	ObjectManager->AddObjectWithNetworkID(NewObject, NetworkID);
+	if(NewObject) {
+		NewObject->SetPosition(position2di(Position.X, Position.Y));
+
+		// Add it to the manager
+		ObjectManager->AddObjectWithNetworkID(NewObject, NetworkID);
+	}
 
 	//printf("HandleCreateObject: NetworkID=%d, Type=%d\n", NetworkID, Type);
 }

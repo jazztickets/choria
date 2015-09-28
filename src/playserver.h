@@ -20,7 +20,7 @@
 
 // Libraries
 #include "engine/state.h"
-#include "tinythread/tinythread.h"
+#include <thread>
 
 // Forward Declarations
 class DatabaseClass;
@@ -103,7 +103,7 @@ class PlayServerState : public StateClass {
 
 		bool StopRequested;
 
-		tthread::thread *CommandThread;
+		std::thread *CommandThread;
 
 		u32 ServerTime;
 };
