@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <vector>
 #include <cstdint>
 
 // Namespaces
@@ -29,8 +30,8 @@ using namespace video;
 using namespace io;
 using namespace gui;
 
-const int MAP_TILE_WIDTH	= 32;
-const int MAP_TILE_HEIGHT	= 32;
+const int MAP_TILE_WIDTH = 32;
+const int MAP_TILE_HEIGHT = 32;
 
 // Structures
 struct TileStruct {
@@ -127,8 +128,8 @@ class MapClass {
 
 		void SendObjectUpdates();
 
-		void GetTextureListFromMap(array<ITexture *> &TTextures);
-		int GetTextureIndex(array<ITexture *> &TTextures, ITexture *TTexture);
+		void GetTextureListFromMap(std::vector<ITexture *> &TTextures);
+		int GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTexture);
 
 		// Map file
 		int ID;
@@ -144,10 +145,10 @@ class MapClass {
 
 		// Textures
 		ITexture *NoZoneTexture;
-		array<ITexture *> Textures;
+		std::vector<ITexture *> Textures;
 
 		// Events
-		array<IndexedEventStruct> IndexedEvents;
+		std::vector<IndexedEventStruct> IndexedEvents;
 
 		// Objects
 		uint32_t ObjectUpdateTime;

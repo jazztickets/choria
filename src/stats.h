@@ -19,9 +19,10 @@
 
 // Libraries
 #include <irrlicht.h>
-#include <map>
 #include <objects/item.h>
 #include <objects/skill.h>
+#include <map>
+#include <vector>
 
 // Namespaces
 using namespace irr;
@@ -77,7 +78,7 @@ struct VendorStruct {
 	stringc Info;
 	float BuyPercent;
 	float SellPercent;
-	array<const ItemClass *> Items;
+	std::vector<const ItemClass *> Items;
 };
 
 struct TraderItemStruct {
@@ -90,7 +91,7 @@ struct TraderStruct {
 	stringc Name;
 	const ItemClass *RewardItem;
 	int Count;
-	array<TraderItemStruct> TraderItems;
+	std::vector<TraderItemStruct> TraderItems;
 };
 
 struct MonsterDropStruct {
@@ -119,8 +120,8 @@ class StatsClass {
 		void GetPortraitList(list<PortraitStruct> &TList);
 
 		// Monsters
-		void GenerateMonsterListFromZone(int TZone, array<int> &TMonsters);
-		void GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TDrops);
+		void GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters);
+		void GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops);
 
 		// Events
 		const EventStruct *GetEvent(int TIndex) const { return &Events[TIndex]; }
@@ -132,7 +133,7 @@ class StatsClass {
 		int GetMaxLevel() const { return Levels.size(); }
 
 		// Skills
-		const array<SkillClass> &GetSkillList() const { return Skills; }
+		const std::vector<SkillClass> &GetSkillList() const { return Skills; }
 
 	private:
 
@@ -147,9 +148,9 @@ class StatsClass {
 
 		DatabaseClass *Database;
 
-		array<EventStruct> Events;
-		array<LevelStruct> Levels;
-		array<SkillClass> Skills;
+		std::vector<EventStruct> Events;
+		std::vector<LevelStruct> Levels;
+		std::vector<SkillClass> Skills;
 
 		std::map<int, PortraitStruct> Portraits;
 		std::map<int, MapStruct> Maps;

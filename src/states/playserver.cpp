@@ -604,7 +604,7 @@ void _PlayServerState::HandleMoveCommand(_Packet *TPacket, ENetPeer *TPeer) {
 				if(Player->GetNextBattle() <= 0) {
 
 					// Get monsters
-					array<int> Monsters;
+					std::vector<int> Monsters;
 					Stats.GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
 					size_t MonsterCount = Monsters.size();
 					if(MonsterCount > 0) {

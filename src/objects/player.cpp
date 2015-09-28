@@ -794,7 +794,7 @@ void PlayerClass::AdjustSkillLevel(int TSkillID, int TAdjust) {
 void PlayerClass::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	const array<SkillClass> &Skills = Stats.GetSkillList();
+	const std::vector<SkillClass> &Skills = Stats.GetSkillList();
 	for(uint32_t i = 0; i < Skills.size(); i++) {
 		SkillPointsUsed += Skills[i].GetSkillCost() * SkillLevels[i];
 	}

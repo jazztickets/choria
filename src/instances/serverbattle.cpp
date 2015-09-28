@@ -236,7 +236,7 @@ void ServerBattleClass::CheckEnd() {
 		return;
 
 	// Players that get a reward
-	array<PlayerClass *> Players;
+	std::vector<PlayerClass *> Players;
 
 	// Get statistics for each side
 	BattleResultStruct Side[2];
@@ -294,7 +294,7 @@ void ServerBattleClass::CheckEnd() {
 		}
 
 		// Hand out monster drops
-		array<int> PlayerItems[3];
+		std::vector<int> PlayerItems[3];
 		if(!Side[0].Dead) {
 
 			// Get a monster list
@@ -305,7 +305,7 @@ void ServerBattleClass::CheckEnd() {
 			if(Monsters.size() > 0) {
 
 				// Generate monster drops in player vs monster situations
-				array<int> MonsterDrops;
+				std::vector<int> MonsterDrops;
 				for(size_t i = 0; i < Monsters.size(); i++) {
 					Stats.GenerateMonsterDrops(Monsters[i]->GetID(), 1, MonsterDrops);
 				}

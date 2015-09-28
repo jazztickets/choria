@@ -315,7 +315,7 @@ void StatsClass::GetPortraitList(list<PortraitStruct> &TList) {
 }
 
 // Randomly generates a list of monsters from a zone
-void StatsClass::GenerateMonsterListFromZone(int TZone, array<int> &TMonsters) {
+void StatsClass::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters) {
 	if(TZone == 0)
 		return;
 
@@ -339,7 +339,7 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, array<int> &TMonsters) {
 	Database->RunDataQuery(QueryString);
 
 	// Get monsters in zone
-	array<ZoneStruct> Zone;
+	std::vector<ZoneStruct> Zone;
 	int OddsSum = 0;
 	while(Database->FetchRow()) {
 		int MonsterID = Database->GetInt(0);
@@ -373,7 +373,7 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, array<int> &TMonsters) {
 }
 
 // Generates a list of items dropped from a monster
-void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TDrops) {
+void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops) {
 	if(TMonsterID == 0)
 		return;
 
@@ -383,7 +383,7 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TD
 	Database->RunDataQuery(QueryString);
 
 	// Get items from monster
-	array<MonsterDropStruct> MonsterDrop;
+	std::vector<MonsterDropStruct> MonsterDrop;
 	int OddsSum = 0;
 	while(Database->FetchRow()) {
 		int ItemID = Database->GetInt(0);

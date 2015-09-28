@@ -28,6 +28,7 @@
 #include <instances/map.h>
 #include <objects/player.h>
 #include <objects/item.h>
+#include <vector>
 
 HUDClass HUD;
 
@@ -784,7 +785,7 @@ void HUDClass::InitSkills() {
 	TabSkill = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 450, 400), NULL, 0);
 
 	// Add +/- buttons
-	const array<SkillClass> &Skills = Stats.GetSkillList();
+	const std::vector<SkillClass> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
 	for(size_t i = 0; i < Skills.size(); i++) {
 		int DrawX = X * SKILL_SPACINGX + SKILL_STARTX + 16;
@@ -1280,7 +1281,7 @@ void HUDClass::DrawSkills() {
 	Graphics.RenderText(Buffer, 400, SKILL_BARY - 23, GraphicsClass::ALIGN_CENTER);
 
 	// Draw skills
-	const array<SkillClass> &Skills = Stats.GetSkillList();
+	const std::vector<SkillClass> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
 	for(size_t i = 0; i < Skills.size(); i++) {
 		int DrawX = WindowArea.UpperLeftCorner.X + X * SKILL_SPACINGX + SKILL_STARTX + 16;

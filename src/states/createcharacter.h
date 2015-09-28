@@ -19,6 +19,7 @@
 
 // Libraries
 #include <state.h>
+#include <vector>
 
 // Forward Declarations
 class _Packet;
@@ -66,7 +67,7 @@ class _CreateCharacterState : public _State {
 		stringc Message;
 		int SelectedIndex;
 
-		array<int> Portraits;
+		std::vector<int> Portraits;
 };
 
 extern _CreateCharacterState CreateCharacterState;

@@ -243,7 +243,7 @@ int MapClass::SaveMap() {
 	}
 
 	// Generate a list of textures used by the map
-	array<ITexture *> TextureList;
+	std::vector<ITexture *> TextureList;
 	GetTextureListFromMap(TextureList);
 
 	// Write header
@@ -378,7 +378,7 @@ int MapClass::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void MapClass::GetTextureListFromMap(array<ITexture *> &TTextures) {
+void MapClass::GetTextureListFromMap(std::vector<ITexture *> &TTextures) {
 
 	TTextures.clear();
 
@@ -395,7 +395,7 @@ void MapClass::GetTextureListFromMap(array<ITexture *> &TTextures) {
 }
 
 // Returns the index of a texture in an array
-int MapClass::GetTextureIndex(array<ITexture *> &TTextures, ITexture *TTexture) {
+int MapClass::GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTexture) {
 
 	for(size_t i = 0; i < TTextures.size(); i++) {
 		if(TTextures[i] == TTexture)

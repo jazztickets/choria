@@ -93,6 +93,6 @@ class ClientBattleClass : public BattleClass {
 		IGUIButton *SkillButtons[BATTLE_MAXSKILLS], *PassButton;
 
 		// Items
-		array<const ItemClass *> MonsterDrops;
+		std::vector<const ItemClass *> MonsterDrops;
 
 };

@@ -114,7 +114,7 @@ class _MapEditorState : public _State {
 		MapClass *Map;
 
 		// Textures
-		array<ITexture *> TexturePalette;
+		std::vector<ITexture *> TexturePalette;
 
 		// Brush
 		int BrushSize;
