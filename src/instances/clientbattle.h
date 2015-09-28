@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef CLIENTBATTLE_H
-#define CLIENTBATTLE_H
+#pragma once
 
 // Libraries
 #include <instances/battle.h>
@@ -98,4 +97,3 @@ class ClientBattleClass : public BattleClass {
 
 };
 
-#endif

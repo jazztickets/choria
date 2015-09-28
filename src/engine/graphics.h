@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#pragma once
 
 // Libraries
 #include <irrlicht.h>
@@ -132,4 +131,3 @@ class GraphicsClass {
 // Singletons
 typedef SingletonClass<GraphicsClass> Graphics;
 
-#endif

@@ -15,25 +15,24 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef RANDOM_H
-#define RANDOM_H
+#pragma once
 
 #include <engine/singleton.h>
 
 class RandomClass {
 
-    public:
+	public:
 
-        RandomClass();
-        RandomClass(u32 TSeed);
+		RandomClass();
+		RandomClass(u32 TSeed);
 
-        void SetSeed(u32 TSeed);
+		void SetSeed(u32 TSeed);
 
-        double Generate();
-        u32 Generate(u32 TMax);
-        int GenerateRange(int TMin, int TMax);
-        u32 GenerateRange(u32 TMin, u32 TMax);
-        double GenerateRange(double TMin, double TMax);
+		double Generate();
+		u32 Generate(u32 TMax);
+		int GenerateRange(int TMin, int TMax);
+		u32 GenerateRange(u32 TMin, u32 TMax);
+		double GenerateRange(double TMin, double TMax);
 
 	private:
 
@@ -47,19 +46,19 @@ class RandomClass {
 // Constructor
 inline RandomClass::RandomClass() {
 
-    SetSeed(0);
+	SetSeed(0);
 }
 
 // Constructor
 inline RandomClass::RandomClass(u32 TSeed) {
 
-    SetSeed(TSeed);
+	SetSeed(TSeed);
 }
 
 // Sets the seed for the generator
 inline void RandomClass::SetSeed(u32 TSeed) {
 
-    for(u32 i = 0; i < 1024; i++){
+	for(u32 i = 0; i < 1024; i++){
 		TSeed ^= TSeed << 13;
 		TSeed ^= TSeed >> 17;
 		TSeed ^= TSeed << 5;
@@ -94,28 +93,27 @@ inline double RandomClass::Generate() {
 // Generates a random number [0, TMax-1]
 inline u32 RandomClass::Generate(u32 TMax) {
 
-    return (u32)(Generate() * TMax);
+	return (u32)(Generate() * TMax);
 }
 
 // Generates a random number [TMin, TMax]
 inline int RandomClass::GenerateRange(int TMin, int TMax) {
 
-    return (int)(Generate() * (TMax - TMin + 1)) + TMin;
+	return (int)(Generate() * (TMax - TMin + 1)) + TMin;
 }
 
 // Generates a random number [TMin, TMax]
 inline u32 RandomClass::GenerateRange(u32 TMin, u32 TMax) {
 
-    return (u32)(Generate() * (TMax - TMin + 1)) + TMin;
+	return (u32)(Generate() * (TMax - TMin + 1)) + TMin;
 }
 
 // Generates a random number [TMin, TMax]
 inline double RandomClass::GenerateRange(double TMin, double TMax) {
 
-    return (GenerateRandomInteger() / 4294967295.0) * (TMax - TMin) + TMin;
+	return (GenerateRandomInteger() / 4294967295.0) * (TMax - TMin) + TMin;
 }
 
 // Singletons
 typedef SingletonClass<RandomClass> Random;
 
-#endif

@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef SERVERBATTLE_H
-#define SERVERBATTLE_H
+#pragma once
 
 // Libraries
 #include <instances/battle.h>
@@ -59,4 +58,3 @@ class ServerBattleClass : public BattleClass {
 		u32 RoundTime;
 };
 
-#endif

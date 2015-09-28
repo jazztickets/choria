@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#pragma once
 
 #include <irrlicht.h>
 
@@ -61,4 +60,3 @@ const int BATTLE_SHOWRESULTTIME = 2000;
 const int BATTLE_WAITRESULTTIME = 375;
 const int BATTLE_WAITENDTIME = 300;
 
-#endif

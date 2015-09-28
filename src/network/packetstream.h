@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef PACKETSTREAM_H
-#define PACKETSTREAM_H
+#pragma once
 
 // Libraries
 #include <enet/enet.h>
@@ -59,4 +58,3 @@ class PacketClass {
 		enet_uint32 CurrentByte, CurrentBit;
 };
 
-#endif

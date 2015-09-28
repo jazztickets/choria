@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef SINGLENETWORK_H
-#define SINGLENETWORK_H
+#pragma once
 
 // Libraries
 #include <network/network.h>
@@ -42,4 +41,3 @@ class SingleNetworkClass : public NetworkClass {
 		bool Server, Connected;
 };
 
-#endif

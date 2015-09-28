@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef MAP_H
-#define MAP_H
+#pragma once
 
 // Libraries
 #include <irrlicht.h>
@@ -154,4 +153,3 @@ class MapClass {
 		list<ObjectClass *> Objects;
 };
 
-#endif

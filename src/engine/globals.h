@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#pragma once
 
 // Libraries
 #include <irrlicht.h>
@@ -42,4 +41,3 @@ extern stringc WorkingDirectory;
 extern NetworkClass *ClientNetwork;
 extern NetworkClass *ServerNetwork;
 
-#endif

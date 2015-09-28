@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef HUD_H
-#define HUD_H
+#pragma once
 
 // Libraries
 #include <irrlicht.h>
@@ -236,4 +235,3 @@ class HUDClass {
 // Singletons
 typedef SingletonClass<HUDClass> HUD;
 
-#endif

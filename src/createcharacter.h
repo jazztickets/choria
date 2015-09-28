@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef CREATECHARACTER_H
-#define CREATECHARACTER_H
+#pragma once
 
 // Libraries
 #include <engine/state.h>
@@ -75,4 +74,3 @@ class CreateCharacterState : public StateClass {
 		array<int> Portraits;
 };
 
-#endif

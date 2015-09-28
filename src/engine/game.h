@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 // Libraries
 #include <irrlicht.h>
@@ -92,4 +91,3 @@ class GameClass {
 // Singletons
 typedef SingletonClass<GameClass> Game;
 
-#endif

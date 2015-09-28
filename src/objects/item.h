@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef ITEM_H
-#define ITEM_H
+#pragma once
 
 // Libraries
 #include <irrlicht.h>
@@ -96,4 +95,3 @@ class ItemClass {
 		int InvisPower;
 };
 
-#endif

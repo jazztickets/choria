@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef OBJECTMANAGER_H
-#define OBJECTMANAGER_H
+#pragma once
 
 // Libraries
 #include <irrlicht.h>
@@ -68,4 +67,3 @@ class ObjectManagerClass {
 		int NextNetworkID;
 };
 
-#endif

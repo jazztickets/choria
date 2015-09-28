@@ -15,8 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#ifndef CONNECT_H
-#define CONNECT_H
+#pragma once
 
 // Libraries
 #include <engine/state.h>
@@ -71,4 +70,3 @@ class ConnectState : public StateClass {
 
 };
 
-#endif
