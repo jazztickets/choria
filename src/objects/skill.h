@@ -56,7 +56,6 @@ class SkillClass {
 
 		int GetManaCost(int TLevel) const;
 		int GetPower(int TLevel) const;
-		float GetPowerAsFloat(int TLevel) const;
 		void GetPowerRange(int TLevel, int &TMin, int &TMax) const;
 		void GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const;
 		void GetPowerRange(int TLevel, float &TMin, float &TMax) const;

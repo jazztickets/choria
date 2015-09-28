@@ -15,7 +15,6 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
+#include <engine/random.h>
 
-#include <random>
-extern std::mt19937 RandomGenerator;
+std::mt19937 RandomGenerator;

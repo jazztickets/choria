@@ -291,9 +291,8 @@ const TileStruct *PlayerClass::GetTile() {
 
 // Generates the number of moves until the next battle
 void PlayerClass::GenerateNextBattle() {
-
-	NextBattle = Random::Instance().GenerateRange(4, 14);
-	//NextBattle = Random::Instance().GenerateRange(1, 2);
+	std::uniform_int_distribution<int> Distribution(4, 14);
+	NextBattle = Distribution(RandomGenerator);
 }
 
 // Starts a battle

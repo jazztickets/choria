@@ -357,7 +357,8 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, array<int> &TMonsters) {
 		int RandomNumber;
 		u32 MonsterIndex;
 		for(int i = 0; i < MonsterCount; i++) {
-			RandomNumber = Random::Instance().GenerateRange(1, OddsSum);
+			std::uniform_int_distribution<int> Distribution(1, OddsSum);
+			RandomNumber = Distribution(RandomGenerator);
 			for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
 				if(RandomNumber <= Zone[MonsterIndex].Odds)
 					break;
@@ -400,7 +401,8 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TD
 		int RandomNumber;
 		u32 ItemIndex;
 		for(int i = 0; i < TCount; i++) {
-			RandomNumber = Random::Instance().GenerateRange(1, OddsSum);
+			std::uniform_int_distribution<int> Distribution(1, OddsSum);
+			RandomNumber = Distribution(RandomGenerator);
 			for(ItemIndex = 0; ItemIndex < MonsterDrop.size(); ItemIndex++) {
 				if(RandomNumber <= MonsterDrop[ItemIndex].Odds)
 					break;

@@ -41,20 +41,10 @@ int SkillClass::GetPower(int TLevel) const {
 	// Get range
 	int Min, Max;
 	GetPowerRangeRound(TLevel, Min, Max);
+	std::uniform_int_distribution<int> Distribution(Min, Max);
+	Distribution(RandomGenerator);
 
-	return Random::Instance().GenerateRange(Min, Max);
-}
-
-// Gets a random float between min and max power
-float SkillClass::GetPowerAsFloat(int TLevel) const {
-	if(TLevel < 1)
-		TLevel = 1;
-
-	// Get range
-	float Min, Max;
-	GetPowerRange(TLevel, Min, Max);
-
-	return (float)Random::Instance().GenerateRange(Min, Max);
+	return Distribution(RandomGenerator);
 }
 
 // Returns the range of power

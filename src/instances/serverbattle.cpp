@@ -315,7 +315,8 @@ void ServerBattleClass::CheckEnd() {
 				GetPlayerList(0, LeftSidePlayers);
 
 				// Give out rewards round robin style
-				u32 PlayerIndex = Random::Instance().GenerateRange(0, (int)(LeftSidePlayers.size()-1));
+				std::uniform_int_distribution<u32> Distribution(0, LeftSidePlayers.size()-1);
+				u32 PlayerIndex = Distribution(RandomGenerator);
 				for(u32 i = 0; i < MonsterDrops.size(); i++) {
 					int LeftSideSlot = LeftSidePlayers[PlayerIndex]->GetSlot() / 2;
 					if(MonsterDrops[i] > 0) {

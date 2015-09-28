@@ -213,14 +213,14 @@ void FighterClass::SetRegenAccumulators(float THealthAccumulator, float TManaAcc
 
 // Generate damage
 int FighterClass::GenerateDamage() {
-
-	return Random::Instance().GenerateRange(MinDamage, MaxDamage);
+	std::uniform_int_distribution<int> Distribution(MinDamage, MaxDamage);
+	return Distribution(RandomGenerator);
 }
 
 // Generate defense
 int FighterClass::GenerateDefense() {
-
-	return Random::Instance().GenerateRange(MinDefense, MaxDefense);
+	std::uniform_int_distribution<int> Distribution(MinDefense, MaxDefense);
+	return Distribution(RandomGenerator);
 }
 
 // Gets a skill id from the skill bar

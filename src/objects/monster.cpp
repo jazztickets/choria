@@ -46,7 +46,8 @@ void MonsterClass::UpdateTarget(const array<FighterClass *> &TFighters) {
 	int Count = TFighters.size();
 
 	// Get a random index
-	int RandomIndex = Random::Instance().GenerateRange(0, Count-1);
+	std::uniform_int_distribution<int> Distribution(0, Count-1);
+	int RandomIndex = Distribution(RandomGenerator);
 
 	Target = TFighters[RandomIndex]->GetSlot();
 }

@@ -92,7 +92,7 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 		return 0;
 
 	// Set random seed
-	Random::Instance().SetSeed(irrTimer->getRealTime());
+	RandomGenerator.seed(irrTimer->getRealTime());
 
 	// Initialize enet
 	if(enet_initialize() == -1)
