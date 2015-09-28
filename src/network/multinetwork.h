@@ -20,7 +20,7 @@
 // Libraries
 #include <network/network.h>
 
-class MultiNetworkClass : public NetworkClass {
+class _MultiNetwork : public _Network {
 
 	public:
 
@@ -38,8 +38,8 @@ class MultiNetworkClass : public NetworkClass {
 		enet_uint32 GetRTT();
 
 		// Packets
-		void SendPacketToHost(PacketClass *TPacket);
-		void SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer);
+		void SendPacketToHost(_Packet *TPacket);
+		void SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer);
 
 	private:
 

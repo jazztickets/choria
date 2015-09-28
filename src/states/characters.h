@@ -24,7 +24,7 @@
 const int CHARACTERS_MAX = 6;
 
 // Forward Declarations
-class PacketClass;
+class _Packet;
 
 // Structures
 struct SlotStruct {
@@ -66,7 +66,7 @@ class _CharactersState : public _State {
 
 	private:
 
-		void HandleCharacterList(PacketClass *TPacket);
+		void HandleCharacterList(_Packet *TPacket);
 		void UpdateSelection(int TSelectedIndex);
 		void RequestCharacterList();
 		void PlayCharacter();

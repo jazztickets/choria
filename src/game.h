@@ -22,8 +22,8 @@
 
 // Forward Declarations
 class _State;
-class SingleNetworkClass;
-class MultiNetworkClass;
+class _SingleNetwork;
+class _MultiNetwork;
 
 class GameClass {
 
@@ -73,8 +73,8 @@ class GameClass {
 
 		// Networking
 		bool LocalServerRunning;
-		SingleNetworkClass *ClientSingleNetwork, *ServerSingleNetwork;
-		MultiNetworkClass *MultiNetwork;
+		_SingleNetwork *ClientSingleNetwork, *ServerSingleNetwork;
+		_MultiNetwork *MultiNetwork;
 
 };
 

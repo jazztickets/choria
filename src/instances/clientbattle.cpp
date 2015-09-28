@@ -121,7 +121,7 @@ void ClientBattleClass::HandleInput(EKEY_CODE TKey) {
 			if(Timer > BATTLE_WAITENDTIME) {
 				State = STATE_DELETE;
 
-				PacketClass Packet(NetworkClass::BATTLE_CLIENTDONE);
+				_Packet Packet(_Network::BATTLE_CLIENTDONE);
 				ClientNetwork->SendPacketToHost(&Packet);
 			}
 		}
@@ -324,7 +324,7 @@ void ClientBattleClass::RenderBattleLose() {
 }
 
 // Displays turn results from the server
-void ClientBattleClass::ResolveTurn(PacketClass *TPacket) {
+void ClientBattleClass::ResolveTurn(_Packet *TPacket) {
 
 	for(u32 i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
@@ -354,7 +354,7 @@ void ClientBattleClass::ResolveTurn(PacketClass *TPacket) {
 }
 
 // End of a battle
-void ClientBattleClass::EndBattle(PacketClass *TPacket) {
+void ClientBattleClass::EndBattle(_Packet *TPacket) {
 
 	// Get ending stats
 	bool SideDead[2];
@@ -440,7 +440,7 @@ void ClientBattleClass::SendSkill(int TSkillSlot) {
 	if(TSkillSlot != 9 && (Skill == NULL || !Skill->CanUse(ClientPlayer)))
 		return;
 
-	PacketClass Packet(NetworkClass::BATTLE_COMMAND);
+	_Packet Packet(_Network::BATTLE_COMMAND);
 	Packet.WriteChar(TSkillSlot);
 	Packet.WriteChar(ClientPlayer->GetTarget());
 

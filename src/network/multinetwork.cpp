@@ -21,7 +21,7 @@
 #include <state.h>
 
 // Initializes the network system
-int MultiNetworkClass::Init(bool TServer) {
+int _MultiNetwork::Init(bool TServer) {
 	Peer = NULL;
 	Connection = NULL;
 	Active = false;
@@ -54,7 +54,7 @@ int MultiNetworkClass::Init(bool TServer) {
 }
 
 // Closes the network system
-int MultiNetworkClass::Close() {
+int _MultiNetwork::Close() {
 
 	if(Connection)
 		enet_host_destroy(Connection);
@@ -63,7 +63,7 @@ int MultiNetworkClass::Close() {
 }
 
 // Connect to a host
-int MultiNetworkClass::Connect(const char *TIPAddress) {
+int _MultiNetwork::Connect(const char *TIPAddress) {
 
 	// Get server address
 	ENetAddress Address;
@@ -82,7 +82,7 @@ int MultiNetworkClass::Connect(const char *TIPAddress) {
 }
 
 // Disconnect from the host or disconnect a client
-void MultiNetworkClass::Disconnect(ENetPeer *TPeer) {
+void _MultiNetwork::Disconnect(ENetPeer *TPeer) {
 	if(TPeer)
 		enet_peer_disconnect(TPeer, 0);
 	else if(Peer)
@@ -90,7 +90,7 @@ void MultiNetworkClass::Disconnect(ENetPeer *TPeer) {
 }
 
 // Waits for a disconnect
-void MultiNetworkClass::WaitForDisconnect() {
+void _MultiNetwork::WaitForDisconnect() {
 
 	if(Peer) {
 		ENetEvent Event;
@@ -113,7 +113,7 @@ void MultiNetworkClass::WaitForDisconnect() {
 }
 
 // Get round trip time
-enet_uint32 MultiNetworkClass::GetRTT() {
+enet_uint32 _MultiNetwork::GetRTT() {
 	if(Peer)
 		return Peer->roundTripTime;
 
@@ -121,7 +121,7 @@ enet_uint32 MultiNetworkClass::GetRTT() {
 }
 
 // Update enet
-void MultiNetworkClass::Update() {
+void _MultiNetwork::Update() {
 	if(!Active)
 		return;
 
@@ -151,7 +151,7 @@ void MultiNetworkClass::Update() {
 }
 
 // Client: Sends a packet to the host
-void MultiNetworkClass::SendPacketToHost(PacketClass *TPacket) {
+void _MultiNetwork::SendPacketToHost(_Packet *TPacket) {
 	if(!Peer)
 		return;
 
@@ -163,7 +163,7 @@ void MultiNetworkClass::SendPacketToHost(PacketClass *TPacket) {
 }
 
 // Server: Sends a packet to a single peer
-void MultiNetworkClass::SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer) {
+void _MultiNetwork::SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer) {
 	if(!TPeer)
 		return;
 

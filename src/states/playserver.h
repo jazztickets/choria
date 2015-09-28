@@ -25,7 +25,7 @@
 class DatabaseClass;
 class ObjectManagerClass;
 class InstanceClass;
-class PacketClass;
+class _Packet;
 class ObjectClass;
 class PlayerClass;
 class ServerBattleClass;
@@ -55,30 +55,30 @@ class _PlayServerState : public _State {
 
 		void CreateDefaultDatabase();
 
-		void HandleLoginInfo(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleCharacterListRequest(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleCharacterSelect(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleCharacterDelete(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleCharacterCreate(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleMoveCommand(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleBattleCommand(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleBattleFinished(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleInventoryMove(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleInventoryUse(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleInventorySplit(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleEventEnd(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleVendorExchange(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleSkillBar(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleSkillAdjust(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandlePlayerBusy(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleAttackPlayer(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleChatMessage(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleTradeRequest(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleTradeCancel(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleTradeGold(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleTradeAccept(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleTownPortal(PacketClass *TPacket, ENetPeer *TPeer);
-		void HandleTraderAccept(PacketClass *TPacket, ENetPeer *TPeer);
+		void HandleLoginInfo(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleCharacterListRequest(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleCharacterSelect(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleCharacterDelete(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleCharacterCreate(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleMoveCommand(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleBattleCommand(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleBattleFinished(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleInventoryMove(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleInventoryUse(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleInventorySplit(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleEventEnd(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleVendorExchange(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleSkillBar(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleSkillAdjust(_Packet *TPacket, ENetPeer *TPeer);
+		void HandlePlayerBusy(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleAttackPlayer(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleChatMessage(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleTradeRequest(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleTradeCancel(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleTradeGold(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleTradeAccept(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleTownPortal(_Packet *TPacket, ENetPeer *TPeer);
+		void HandleTraderAccept(_Packet *TPacket, ENetPeer *TPeer);
 
 		void SendPlayerPosition(PlayerClass *TPlayer);
 		void SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEventType, int TEventData);
@@ -87,7 +87,7 @@ class _PlayServerState : public _State {
 		void SendEvent(PlayerClass *TPlayer, int TType, int TData);
 		void SendTradeInformation(PlayerClass *TSender, PlayerClass *TReceiver);
 
-		void BuildTradeItemsPacket(PlayerClass *TPlayer, PacketClass *TPacket, int TGold);
+		void BuildTradeItemsPacket(PlayerClass *TPlayer, _Packet *TPacket, int TGold);
 
 		void RemovePlayerFromBattle(PlayerClass *TPlayer);
 

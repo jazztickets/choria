@@ -27,6 +27,6 @@ extern irr::gui::IGUIEnvironment *irrGUI;
 extern irr::io::IFileSystem *irrFile;
 extern irr::ITimer *irrTimer;
 
-class NetworkClass;
-extern NetworkClass *ClientNetwork;
-extern NetworkClass *ServerNetwork;
+class _Network;
+extern _Network *ClientNetwork;
+extern _Network *ServerNetwork;

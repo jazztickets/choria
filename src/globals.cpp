@@ -24,5 +24,5 @@ irr::gui::IGUIEnvironment *irrGUI;
 irr::io::IFileSystem *irrFile;
 irr::ITimer *irrTimer;
 
-NetworkClass *ClientNetwork;
-NetworkClass *ServerNetwork;
+_Network *ClientNetwork;
+_Network *ServerNetwork;

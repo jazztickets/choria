@@ -21,7 +21,7 @@
 #include <state.h>
 
 // Forward Declarations
-class PacketClass;
+class _Packet;
 
 // Classes
 class _CreateCharacterState : public _State {

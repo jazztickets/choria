@@ -419,7 +419,7 @@ bool MapClass::CanMoveTo(const position2di &TPosition) {
 void MapClass::AddObject(ObjectClass *TObject) {
 
 	// Create packet for the new object
-	PacketClass Packet(NetworkClass::WORLD_CREATEOBJECT);
+	_Packet Packet(_Network::WORLD_CREATEOBJECT);
 	Packet.WriteChar(TObject->GetNetworkID());
 	Packet.WriteChar(TObject->GetPosition().X);
 	Packet.WriteChar(TObject->GetPosition().Y);
@@ -455,7 +455,7 @@ void MapClass::RemoveObject(ObjectClass *TObject) {
 	}
 
 	// Create delete packet
-	PacketClass Packet(NetworkClass::WORLD_DELETEOBJECT);
+	_Packet Packet(_Network::WORLD_DELETEOBJECT);
 	Packet.WriteChar(TObject->GetNetworkID());
 
 	// Send to everyone
@@ -510,7 +510,7 @@ PlayerClass *MapClass::GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDi
 
 // Sends object position information to all the clients in the map
 void MapClass::SendObjectUpdates() {
-	PacketClass Packet(NetworkClass::WORLD_OBJECTUPDATES, ENET_PACKET_FLAG_UNSEQUENCED, 1);
+	_Packet Packet(_Network::WORLD_OBJECTUPDATES, ENET_PACKET_FLAG_UNSEQUENCED, 1);
 
 	// Get object count
 	int ObjectCount = Objects.getSize();
@@ -537,7 +537,7 @@ void MapClass::SendObjectUpdates() {
 }
 
 // Sends a packet to all of the players in the map
-void MapClass::SendPacketToPlayers(PacketClass *TPacket, PlayerClass *ExceptionPlayer) {
+void MapClass::SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer) {
 
 	// Send the packet out
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {

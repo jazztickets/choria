@@ -50,7 +50,7 @@ struct IndexedEventStruct {
 // Forward Declarations
 class ObjectClass;
 class PlayerClass;
-class PacketClass;
+class _Packet;
 
 // Classes
 class MapClass {
@@ -98,7 +98,7 @@ class MapClass {
 		void GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, list<PlayerClass *> &TPlayers);
 		PlayerClass *GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDistanceSquared, int TState);
 
-		void SendPacketToPlayers(PacketClass *TPacket, PlayerClass *ExceptionPlayer=NULL);
+		void SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer=NULL);
 
 		// Events
 		IndexedEventStruct *GetIndexedEvent(int TEventType, int TEventData);

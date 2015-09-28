@@ -83,21 +83,21 @@ void _AccountState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _AccountState::HandlePacket(ENetEvent *TEvent) {
-	PacketClass Packet(TEvent->packet);
+	_Packet Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
-		case NetworkClass::ACCOUNT_NOTFOUND:
+		case _Network::ACCOUNT_NOTFOUND:
 			Message = "Account not found";
 			ChangeState(STATE_MAIN);
 		break;
-		case NetworkClass::ACCOUNT_EXISTS:
+		case _Network::ACCOUNT_EXISTS:
 			Message = "Account exists";
 			ChangeState(STATE_MAIN);
 		break;
-		case NetworkClass::ACCOUNT_ALREADYLOGGEDIN:
+		case _Network::ACCOUNT_ALREADYLOGGEDIN:
 			Message = "Account is already logged into";
 			ChangeState(STATE_MAIN);
 		break;
-		case NetworkClass::ACCOUNT_SUCCESS:
+		case _Network::ACCOUNT_SUCCESS:
 			Config.SetLastAccountName(AccountName);
 			Config.SaveSettings();
 			AccountName = "";
@@ -208,7 +208,7 @@ void _AccountState::ChangeState(int TState) {
 				State = TState;
 
 				// Send information
-				PacketClass Packet(NetworkClass::ACCOUNT_LOGININFO);
+				_Packet Packet(_Network::ACCOUNT_LOGININFO);
 				Packet.WriteBit(CreateAccount);
 				Packet.WriteString(AccountName.c_str());
 				Packet.WriteString(Password.c_str());

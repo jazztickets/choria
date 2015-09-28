@@ -127,7 +127,7 @@ void _MainMenuState::StartSinglePlayer() {
 	ClientNetwork->Connect("");
 
 	// Send fake account information
-	PacketClass Packet(NetworkClass::ACCOUNT_LOGININFO);
+	_Packet Packet(_Network::ACCOUNT_LOGININFO);
 	Packet.WriteBit(0);
 	Packet.WriteString("singleplayer");
 	Packet.WriteString("singleplayer");

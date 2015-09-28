@@ -18,7 +18,7 @@
 #include <network/packetstream.h>
 
 // Constructor for a new packet
-PacketClass::PacketClass(char TPacketType, ENetPacketFlag TFlag, enet_uint8 TChannel)
+_Packet::_Packet(char TPacketType, ENetPacketFlag TFlag, enet_uint8 TChannel)
 :	Channel(TChannel),
 	CurrentByte(0),
 	CurrentBit(0) {
@@ -31,7 +31,7 @@ PacketClass::PacketClass(char TPacketType, ENetPacketFlag TFlag, enet_uint8 TCha
 }
 
 // Constructor for existing packets
-PacketClass::PacketClass(ENetPacket *TPacket)
+_Packet::_Packet(ENetPacket *TPacket)
 :	Packet(TPacket),
 	CurrentByte(0),
 	CurrentBit(0) {
@@ -39,7 +39,7 @@ PacketClass::PacketClass(ENetPacket *TPacket)
 }
 
 // Shrinks the enet packet to the current used size
-void PacketClass::Shrink() {
+void _Packet::Shrink() {
 
 	int Size = CurrentByte;
 	if(CurrentBit)
@@ -49,7 +49,7 @@ void PacketClass::Shrink() {
 }
 
 // Aligns the stream to the next byte
-void PacketClass::AlignBitIndex() {
+void _Packet::AlignBitIndex() {
 
 	// Check to see if some bits were written before this
 	if(CurrentBit) {
@@ -59,7 +59,7 @@ void PacketClass::AlignBitIndex() {
 }
 
 // Aligns the stream to the next byte and checks for a valid size
-void PacketClass::AlignAndExpand(int TNewWriteSize) {
+void _Packet::AlignAndExpand(int TNewWriteSize) {
 	AlignBitIndex();
 
 	// Resize the packet if needed
@@ -69,7 +69,7 @@ void PacketClass::AlignAndExpand(int TNewWriteSize) {
 }
 
 // Writes a single bit to the stream
-void PacketClass::WriteBit(bool TData) {
+void _Packet::WriteBit(bool TData) {
 
 	// If it's the first bit in the byte, clear the byte
 	if(CurrentBit == 0) {
@@ -89,7 +89,7 @@ void PacketClass::WriteBit(bool TData) {
 }
 
 // Write a single char to the stream
-void PacketClass::WriteChar(char TData) {
+void _Packet::WriteChar(char TData) {
 	AlignAndExpand(1);
 
 	Packet->data[CurrentByte] = TData;
@@ -97,7 +97,7 @@ void PacketClass::WriteChar(char TData) {
 }
 
 // Write a single int to the stream
-void PacketClass::WriteInt(int TData) {
+void _Packet::WriteInt(int TData) {
 	AlignAndExpand(sizeof(int));
 
 	*((int *)&Packet->data[CurrentByte]) = TData;
@@ -105,7 +105,7 @@ void PacketClass::WriteInt(int TData) {
 }
 
 // Write a single float to the stream
-void PacketClass::WriteFloat(float TData) {
+void _Packet::WriteFloat(float TData) {
 	AlignAndExpand(sizeof(float));
 
 	*((float *)&Packet->data[CurrentByte]) = TData;
@@ -113,7 +113,7 @@ void PacketClass::WriteFloat(float TData) {
 }
 
 // Write a string to the stream
-void PacketClass::WriteString(const char *TData) {
+void _Packet::WriteString(const char *TData) {
 	int StringLength = strlen(TData);
 	AlignAndExpand(StringLength + 1);
 
@@ -127,7 +127,7 @@ void PacketClass::WriteString(const char *TData) {
 }
 
 // Reads a bit from the stream
-bool PacketClass::ReadBit() {
+bool _Packet::ReadBit() {
 
 	bool Bit = !!(Packet->data[CurrentByte] & (1 << CurrentBit));
 
@@ -142,7 +142,7 @@ bool PacketClass::ReadBit() {
 }
 
 // Reads a char from the stream
-char PacketClass::ReadChar() {
+char _Packet::ReadChar() {
 	AlignBitIndex();
 
 	char Char = Packet->data[CurrentByte];
@@ -152,7 +152,7 @@ char PacketClass::ReadChar() {
 }
 
 // Reads an int from the stream
-int PacketClass::ReadInt() {
+int _Packet::ReadInt() {
 	AlignBitIndex();
 
 	int Int = *(int *)(&Packet->data[CurrentByte]);
@@ -162,7 +162,7 @@ int PacketClass::ReadInt() {
 }
 
 // Reads a float from the stream
-float PacketClass::ReadFloat() {
+float _Packet::ReadFloat() {
 	AlignBitIndex();
 
 	float Float = *(float *)(&Packet->data[CurrentByte]);
@@ -172,7 +172,7 @@ float PacketClass::ReadFloat() {
 }
 
 // Reads a string from the stream
-const char *PacketClass::ReadString() {
+const char *_Packet::ReadString() {
 	AlignBitIndex();
 
 	const char *String = (const char *)(&Packet->data[CurrentByte]);

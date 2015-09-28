@@ -66,7 +66,7 @@ int ServerBattleClass::RemovePlayer(PlayerClass *TPlayer) {
 void ServerBattleClass::StartBattle() {
 
 	// Build packet
-	PacketClass Packet(NetworkClass::WORLD_STARTBATTLE);
+	_Packet Packet(_Network::WORLD_STARTBATTLE);
 
 	// Write fighter count
 	int FighterCount = Fighters.size();
@@ -208,7 +208,7 @@ void ServerBattleClass::ResolveTurn() {
 	}
 
 	// Build packet for results
-	PacketClass Packet(NetworkClass::BATTLE_TURNRESULTS);
+	_Packet Packet(_Network::BATTLE_TURNRESULTS);
 	for(u32 i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
 
@@ -365,7 +365,7 @@ void ServerBattleClass::CheckEnd() {
 			}
 
 			// Write results
-			PacketClass Packet(NetworkClass::BATTLE_END);
+			_Packet Packet(_Network::BATTLE_END);
 			Packet.WriteBit(Side[0].Dead);
 			Packet.WriteBit(Side[1].Dead);
 			Packet.WriteChar(OppositeSide->PlayerCount);
@@ -395,7 +395,7 @@ void ServerBattleClass::CheckEnd() {
 }
 
 // Send a packet to all players
-void ServerBattleClass::SendPacketToPlayers(PacketClass *TPacket) {
+void ServerBattleClass::SendPacketToPlayers(_Packet *TPacket) {
 
 	// Send packet to all players
 	for(u32 i = 0; i < Fighters.size(); i++) {
@@ -422,7 +422,7 @@ void ServerBattleClass::SendSkillToPlayers(PlayerClass *TPlayer) {
 		SkillID = Skill->GetID();
 
 	// Build packet
-	PacketClass Packet(NetworkClass::BATTLE_COMMAND);
+	_Packet Packet(_Network::BATTLE_COMMAND);
 	Packet.WriteChar(TPlayer->GetSlot());
 	Packet.WriteChar(SkillID);
 

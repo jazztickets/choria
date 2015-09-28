@@ -52,7 +52,7 @@ class ServerBattleClass : public BattleClass {
 
 	private:
 
-		void SendPacketToPlayers(PacketClass *TPacket);
+		void SendPacketToPlayers(_Packet *TPacket);
 		void SendSkillToPlayers(PlayerClass *TPlayer);
 
 		u32 RoundTime;

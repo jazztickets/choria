@@ -25,9 +25,9 @@ const int NETWORKING_PORT = 60006;
 const int NETWORKING_MESSAGESIZE = 100;
 
 // Forward Declarations
-class PacketClass;
+class _Packet;
 
-class NetworkClass {
+class _Network {
 
 	public:
 
@@ -80,8 +80,8 @@ class NetworkClass {
 			TRADE_EXCHANGE,
 		};
 
-		NetworkClass() { }
-		virtual ~NetworkClass() { }
+		_Network() { }
+		virtual ~_Network() { }
 
 		virtual int Init(bool TServer) { return 0; }
 		virtual int Close() { return 0; }
@@ -96,8 +96,8 @@ class NetworkClass {
 		virtual enet_uint32 GetRTT() { return 0; }
 
 		// Packets
-		virtual void SendPacketToHost(PacketClass *TPacket) { }
-		virtual void SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer) { }
+		virtual void SendPacketToHost(_Packet *TPacket) { }
+		virtual void SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer) { }
 
 	protected:
 

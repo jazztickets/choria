@@ -101,9 +101,9 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 		return 0;
 
 	// Set up networking
-	MultiNetwork = new MultiNetworkClass();
-	ClientSingleNetwork = new SingleNetworkClass();
-	ServerSingleNetwork = new SingleNetworkClass();
+	MultiNetwork = new _MultiNetwork();
+	ClientSingleNetwork = new _SingleNetwork();
+	ServerSingleNetwork = new _SingleNetwork();
 	MultiNetwork->Init(IsServer);
 	ClientSingleNetwork->Init(false);
 	ServerSingleNetwork->Init(false);

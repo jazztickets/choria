@@ -20,7 +20,7 @@
 // Libraries
 #include <network/network.h>
 
-class SingleNetworkClass : public NetworkClass {
+class _SingleNetwork : public _Network {
 
 	public:
 
@@ -32,8 +32,8 @@ class SingleNetworkClass : public NetworkClass {
 		void Disconnect(ENetPeer *TPeer=0);
 
 		// Packets
-		void SendPacketToHost(PacketClass *TPacket);
-		void SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer);
+		void SendPacketToHost(_Packet *TPacket);
+		void SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer);
 
 	private:
 

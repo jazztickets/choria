@@ -32,7 +32,7 @@ using namespace gui;
 class FighterClass;
 class PlayerClass;
 class MonsterClass;
-class PacketClass;
+class _Packet;
 
 // Structures
 struct FighterResultStruct {

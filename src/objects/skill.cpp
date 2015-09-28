@@ -128,7 +128,7 @@ void SkillClass::ResolveSkill(FighterResultStruct *TResult, FighterResultStruct 
 					ManaRestore += ManaChange;
 
 					// Write packet
-					PacketClass Packet(NetworkClass::INVENTORY_USE);
+					_Packet Packet(_Network::INVENTORY_USE);
 					Packet.WriteChar(Slot);
 					ServerNetwork->SendPacketToPeer(&Packet, Player->GetPeer());
 				}

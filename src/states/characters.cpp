@@ -82,9 +82,9 @@ void _CharactersState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _CharactersState::HandlePacket(ENetEvent *TEvent) {
-	PacketClass Packet(TEvent->packet);
+	_Packet Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
-		case NetworkClass::CHARACTERS_LIST:
+		case _Network::CHARACTERS_LIST:
 			HandleCharacterList(&Packet);
 		break;
 	}
@@ -197,7 +197,7 @@ void _CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TEleme
 }
 
 // Process the character list packet
-void _CharactersState::HandleCharacterList(PacketClass *TPacket) {
+void _CharactersState::HandleCharacterList(_Packet *TPacket) {
 
 	// Get count
 	int CharacterCount = TPacket->ReadChar();
@@ -226,7 +226,7 @@ void _CharactersState::HandleCharacterList(PacketClass *TPacket) {
 // Requests a character list from the server
 void _CharactersState::RequestCharacterList() {
 
-	PacketClass Packet(NetworkClass::CHARACTERS_REQUEST);
+	_Packet Packet(_Network::CHARACTERS_REQUEST);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
@@ -267,7 +267,7 @@ void _CharactersState::Delete() {
 	if(SelectedIndex == -1 || !Slots[SelectedIndex].Used)
 		return;
 
-	PacketClass Packet(NetworkClass::CHARACTERS_DELETE);
+	_Packet Packet(_Network::CHARACTERS_DELETE);
 	Packet.WriteChar(SelectedIndex);
 	ClientNetwork->SendPacketToHost(&Packet);
 }

@@ -66,8 +66,8 @@ class ClientBattleClass : public BattleClass {
 		void GetPositionFromSlot(int TSlot, position2di &TPosition);
 
 		// Resolve
-		void ResolveTurn(PacketClass *TPacket);
-		void EndBattle(PacketClass *TPacket);
+		void ResolveTurn(_Packet *TPacket);
+		void EndBattle(_Packet *TPacket);
 
 	private:
 

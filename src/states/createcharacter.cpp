@@ -86,12 +86,12 @@ void _CreateCharacterState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
-	PacketClass Packet(TEvent->packet);
+	_Packet Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
-		case NetworkClass::CREATECHARACTER_SUCCESS:
+		case _Network::CREATECHARACTER_SUCCESS:
 			Game.ChangeState(&CharactersState);
 		break;
-		case NetworkClass::CREATECHARACTER_INUSE:
+		case _Network::CREATECHARACTER_INUSE:
 			Message = "Character name already in use";
 			ButtonCreate->setEnabled(true);
 			irrGUI->setFocus(EditName);
@@ -198,7 +198,7 @@ void _CreateCharacterState::CreateCharacter() {
 	ButtonCreate->setEnabled(false);
 
 	// Send information
-	PacketClass Packet(NetworkClass::CREATECHARACTER_INFO);
+	_Packet Packet(_Network::CREATECHARACTER_INFO);
 	Packet.WriteString(Name.c_str());
 	Packet.WriteInt(Portraits[SelectedIndex]);
 	ClientNetwork->SendPacketToHost(&Packet);

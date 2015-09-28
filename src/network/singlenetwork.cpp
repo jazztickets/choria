@@ -17,12 +17,11 @@
 *******************************************************************************/
 #include <network/singlenetwork.h>
 #include <network/packetstream.h>
-#include <game.h>
-#include <game.h>
 #include <states/playserver.h>
+#include <game.h>
 
 // Initializes the network system
-int SingleNetworkClass::Init(bool TServer) {
+int _SingleNetwork::Init(bool TServer) {
 
 	Server = TServer;
 	Connected = false;
@@ -33,13 +32,13 @@ int SingleNetworkClass::Init(bool TServer) {
 }
 
 // Closes the network system
-int SingleNetworkClass::Close() {
+int _SingleNetwork::Close() {
 
 	return 1;
 }
 
 // Connect to a host
-int SingleNetworkClass::Connect(const char *TIPAddress) {
+int _SingleNetwork::Connect(const char *TIPAddress) {
 
 	if(Connected)
 		return 0;
@@ -56,7 +55,7 @@ int SingleNetworkClass::Connect(const char *TIPAddress) {
 }
 
 // Disconnect from the host
-void SingleNetworkClass::Disconnect(ENetPeer *TPeer) {
+void _SingleNetwork::Disconnect(ENetPeer *TPeer) {
 
 	if(Connected) {
 		Connected = false;
@@ -70,7 +69,7 @@ void SingleNetworkClass::Disconnect(ENetPeer *TPeer) {
 }
 
 // Client: Sends a packet to the host
-void SingleNetworkClass::SendPacketToHost(PacketClass *TPacket) {
+void _SingleNetwork::SendPacketToHost(_Packet *TPacket) {
 
 	if(Connected) {
 
@@ -84,7 +83,7 @@ void SingleNetworkClass::SendPacketToHost(PacketClass *TPacket) {
 }
 
 // Server: Sends a packet to a single peer
-void SingleNetworkClass::SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer) {
+void _SingleNetwork::SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer) {
 
 	// Simulate packet event
 	ENetEvent Event;

@@ -58,7 +58,7 @@ int _PlayClientState::Init() {
 		return 0;
 
 	// Send character slot to play
-	PacketClass Packet(NetworkClass::CHARACTERS_PLAY);
+	_Packet Packet(_Network::CHARACTERS_PLAY);
 	Packet.WriteChar(CharacterSlot);
 	ClientNetwork->SendPacketToHost(&Packet);
 
@@ -91,67 +91,67 @@ void _PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
 void _PlayClientState::HandlePacket(ENetEvent *TEvent) {
 	//printf("HandlePacket: type=%d\n", TEvent->packet->data[0]);
 
-	PacketClass Packet(TEvent->packet);
+	_Packet Packet(TEvent->packet);
 	int PacketType = Packet.ReadChar();
 	switch(PacketType) {
-		case NetworkClass::WORLD_YOURCHARACTERINFO:
+		case _Network::WORLD_YOURCHARACTERINFO:
 			HandleYourCharacterInfo(&Packet);
 		break;
-		case NetworkClass::WORLD_CHANGEMAPS:
+		case _Network::WORLD_CHANGEMAPS:
 			HandleChangeMaps(&Packet);
 		break;
-		case NetworkClass::WORLD_CREATEOBJECT:
+		case _Network::WORLD_CREATEOBJECT:
 			HandleCreateObject(&Packet);
 		break;
-		case NetworkClass::WORLD_DELETEOBJECT:
+		case _Network::WORLD_DELETEOBJECT:
 			HandleDeleteObject(&Packet);
 		break;
-		case NetworkClass::WORLD_OBJECTUPDATES:
+		case _Network::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(&Packet);
 		break;
-		case NetworkClass::WORLD_STARTBATTLE:
+		case _Network::WORLD_STARTBATTLE:
 			HandleStartBattle(&Packet);
 		break;
-		case NetworkClass::WORLD_HUD:
+		case _Network::WORLD_HUD:
 			HandleHUD(&Packet);
 		break;
-		case NetworkClass::WORLD_POSITION:
+		case _Network::WORLD_POSITION:
 			HandlePlayerPosition(&Packet);
 		break;
-		case NetworkClass::BATTLE_TURNRESULTS:
+		case _Network::BATTLE_TURNRESULTS:
 			HandleBattleTurnResults(&Packet);
 		break;
-		case NetworkClass::BATTLE_END:
+		case _Network::BATTLE_END:
 			HandleBattleEnd(&Packet);
 		break;
-		case NetworkClass::BATTLE_COMMAND:
+		case _Network::BATTLE_COMMAND:
 			HandleBattleCommand(&Packet);
 		break;
-		case NetworkClass::EVENT_START:
+		case _Network::EVENT_START:
 			HandleEventStart(&Packet);
 		break;
-		case NetworkClass::INVENTORY_USE:
+		case _Network::INVENTORY_USE:
 			HandleInventoryUse(&Packet);
 		break;
-		case NetworkClass::CHAT_MESSAGE:
+		case _Network::CHAT_MESSAGE:
 			HandleChatMessage(&Packet);
 		break;
-		case NetworkClass::TRADE_REQUEST:
+		case _Network::TRADE_REQUEST:
 			HandleTradeRequest(&Packet);
 		break;
-		case NetworkClass::TRADE_CANCEL:
+		case _Network::TRADE_CANCEL:
 			HandleTradeCancel(&Packet);
 		break;
-		case NetworkClass::TRADE_ITEM:
+		case _Network::TRADE_ITEM:
 			HandleTradeItem(&Packet);
 		break;
-		case NetworkClass::TRADE_GOLD:
+		case _Network::TRADE_GOLD:
 			HandleTradeGold(&Packet);
 		break;
-		case NetworkClass::TRADE_ACCEPT:
+		case _Network::TRADE_ACCEPT:
 			HandleTradeAccept(&Packet);
 		break;
-		case NetworkClass::TRADE_EXCHANGE:
+		case _Network::TRADE_EXCHANGE:
 			HandleTradeExchange(&Packet);
 		break;
 	}
@@ -441,7 +441,7 @@ void _PlayClientState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TEleme
 }
 
 // Called once to synchronize your stats with the servers
-void _PlayClientState::HandleYourCharacterInfo(PacketClass *TPacket) {
+void _PlayClientState::HandleYourCharacterInfo(_Packet *TPacket) {
 
 	// Get pack info
 	int NetworkID = TPacket->ReadChar();
@@ -488,7 +488,7 @@ void _PlayClientState::HandleYourCharacterInfo(PacketClass *TPacket) {
 }
 
 // Called when the player changes maps
-void _PlayClientState::HandleChangeMaps(PacketClass *TPacket) {
+void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 
 	// Load map
 	int NewMapID = TPacket->ReadInt();
@@ -550,7 +550,7 @@ void _PlayClientState::HandleChangeMaps(PacketClass *TPacket) {
 }
 
 // Creates an object
-void _PlayClientState::HandleCreateObject(PacketClass *TPacket) {
+void _PlayClientState::HandleCreateObject(_Packet *TPacket) {
 
 	// Read packet
 	position2di Position;
@@ -587,7 +587,7 @@ void _PlayClientState::HandleCreateObject(PacketClass *TPacket) {
 }
 
 // Deletes an object
-void _PlayClientState::HandleDeleteObject(PacketClass *TPacket) {
+void _PlayClientState::HandleDeleteObject(_Packet *TPacket) {
 
 	int NetworkID = TPacket->ReadChar();
 
@@ -610,7 +610,7 @@ void _PlayClientState::HandleDeleteObject(PacketClass *TPacket) {
 }
 
 // Handles position updates from the server
-void _PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
+void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
 
 	// Get object Count
 	char ObjectCount = TPacket->ReadChar();
@@ -663,7 +663,7 @@ void _PlayClientState::HandleObjectUpdates(PacketClass *TPacket) {
 }
 
 // Handles the start of a battle
-void _PlayClientState::HandleStartBattle(PacketClass *TPacket) {
+void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 	//printf("HandleStartBattle: \n");
 
 	// Already in a battle
@@ -723,7 +723,7 @@ void _PlayClientState::HandleStartBattle(PacketClass *TPacket) {
 }
 
 // Handles the result of a turn in battle
-void _PlayClientState::HandleBattleTurnResults(PacketClass *TPacket) {
+void _PlayClientState::HandleBattleTurnResults(_Packet *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -733,7 +733,7 @@ void _PlayClientState::HandleBattleTurnResults(PacketClass *TPacket) {
 }
 
 // Handles the end of a battle
-void _PlayClientState::HandleBattleEnd(PacketClass *TPacket) {
+void _PlayClientState::HandleBattleEnd(_Packet *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -743,7 +743,7 @@ void _PlayClientState::HandleBattleEnd(PacketClass *TPacket) {
 }
 
 // Handles a battle command from other players
-void _PlayClientState::HandleBattleCommand(PacketClass *TPacket) {
+void _PlayClientState::HandleBattleCommand(_Packet *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -755,7 +755,7 @@ void _PlayClientState::HandleBattleCommand(PacketClass *TPacket) {
 }
 
 // Handles HUD updates
-void _PlayClientState::HandleHUD(PacketClass *TPacket) {
+void _PlayClientState::HandleHUD(_Packet *TPacket) {
 	Player->SetExperience(TPacket->ReadInt());
 	Player->SetGold(TPacket->ReadInt());
 	Player->SetHealth(TPacket->ReadInt());
@@ -767,7 +767,7 @@ void _PlayClientState::HandleHUD(PacketClass *TPacket) {
 }
 
 // Handles player position
-void _PlayClientState::HandlePlayerPosition(PacketClass *TPacket) {
+void _PlayClientState::HandlePlayerPosition(_Packet *TPacket) {
 	position2di GridPosition;
 	GridPosition.X = TPacket->ReadChar();
 	GridPosition.Y = TPacket->ReadChar();
@@ -775,7 +775,7 @@ void _PlayClientState::HandlePlayerPosition(PacketClass *TPacket) {
 }
 
 // Handles the start of an event
-void _PlayClientState::HandleEventStart(PacketClass *TPacket) {
+void _PlayClientState::HandleEventStart(_Packet *TPacket) {
 	position2di GridPosition;
 	int Type = TPacket->ReadChar();
 	int Data = TPacket->ReadInt();
@@ -796,14 +796,14 @@ void _PlayClientState::HandleEventStart(PacketClass *TPacket) {
 }
 
 // Handles the use of an inventory item
-void _PlayClientState::HandleInventoryUse(PacketClass *TPacket) {
+void _PlayClientState::HandleInventoryUse(_Packet *TPacket) {
 
 	int Slot = TPacket->ReadChar();
 	Player->UpdateInventory(Slot, -1);
 }
 
 // Handles a chat message
-void _PlayClientState::HandleChatMessage(PacketClass *TPacket) {
+void _PlayClientState::HandleChatMessage(_Packet *TPacket) {
 
 	// Read packet
 	int NetworkID = TPacket->ReadChar();
@@ -823,7 +823,7 @@ void _PlayClientState::HandleChatMessage(PacketClass *TPacket) {
 }
 
 // Handles a trade request
-void _PlayClientState::HandleTradeRequest(PacketClass *TPacket) {
+void _PlayClientState::HandleTradeRequest(_Packet *TPacket) {
 
 	// Read packet
 	int NetworkID = TPacket->ReadChar();
@@ -853,7 +853,7 @@ void _PlayClientState::HandleTradeRequest(PacketClass *TPacket) {
 }
 
 // Handles a trade cancel
-void _PlayClientState::HandleTradeCancel(PacketClass *TPacket) {
+void _PlayClientState::HandleTradeCancel(_Packet *TPacket) {
 	Player->SetTradePlayer(NULL);
 
 	// Reset agreement
@@ -861,7 +861,7 @@ void _PlayClientState::HandleTradeCancel(PacketClass *TPacket) {
 }
 
 // Handles a trade item update
-void _PlayClientState::HandleTradeItem(PacketClass *TPacket) {
+void _PlayClientState::HandleTradeItem(_Packet *TPacket) {
 
 	// Get trading player
 	PlayerClass *TradePlayer = Player->GetTradePlayer();
@@ -892,7 +892,7 @@ void _PlayClientState::HandleTradeItem(PacketClass *TPacket) {
 }
 
 // Handles a gold update from the trading player
-void _PlayClientState::HandleTradeGold(PacketClass *TPacket) {
+void _PlayClientState::HandleTradeGold(_Packet *TPacket) {
 
 	// Get trading player
 	PlayerClass *TradePlayer = Player->GetTradePlayer();
@@ -909,7 +909,7 @@ void _PlayClientState::HandleTradeGold(PacketClass *TPacket) {
 }
 
 // Handles a trade accept
-void _PlayClientState::HandleTradeAccept(PacketClass *TPacket) {
+void _PlayClientState::HandleTradeAccept(_Packet *TPacket) {
 
 	// Get trading player
 	PlayerClass *TradePlayer = Player->GetTradePlayer();
@@ -922,7 +922,7 @@ void _PlayClientState::HandleTradeAccept(PacketClass *TPacket) {
 }
 
 // Handles a trade exchange
-void _PlayClientState::HandleTradeExchange(PacketClass *TPacket) {
+void _PlayClientState::HandleTradeExchange(_Packet *TPacket) {
 
 	// Get gold offer
 	int Gold = TPacket->ReadInt();
@@ -950,7 +950,7 @@ void _PlayClientState::SendMoveCommand(int TDirection) {
 
 		// Move player locally
 		if(Player->MovePlayer(TDirection)) {
-			PacketClass Packet(NetworkClass::WORLD_MOVECOMMAND);
+			_Packet Packet(_Network::WORLD_MOVECOMMAND);
 			Packet.WriteChar(TDirection);
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
@@ -961,7 +961,7 @@ void _PlayClientState::SendMoveCommand(int TDirection) {
 void _PlayClientState::SendAttackPlayer() {
 	if(Player->CanAttackPlayer()) {
 		Player->ResetAttackPlayerTime();
-		PacketClass Packet(NetworkClass::WORLD_ATTACKPLAYER);
+		_Packet Packet(_Network::WORLD_ATTACKPLAYER);
 		ClientNetwork->SendPacketToHost(&Packet);
 	}
 }

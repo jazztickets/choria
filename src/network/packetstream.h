@@ -22,12 +22,12 @@
 #include <cstring>
 
 // Classes
-class PacketClass {
+class _Packet {
 
 	public:
 
-		PacketClass(char TPacketType, ENetPacketFlag TFlag=ENET_PACKET_FLAG_RELIABLE, enet_uint8 TChannel=0);
-		PacketClass(ENetPacket *TPacket);
+		_Packet(char TPacketType, ENetPacketFlag TFlag=ENET_PACKET_FLAG_RELIABLE, enet_uint8 TChannel=0);
+		_Packet(ENetPacket *TPacket);
 
 		ENetPacket *GetENetPacket() { return Packet; }
 		enet_uint8 GetChannel() { return Channel; }

@@ -24,7 +24,7 @@
 class DatabaseClass;
 class ObjectManagerClass;
 class InstanceClass;
-class PacketClass;
+class _Packet;
 class PlayerClass;
 class MapClass;
 class ClientBattleClass;
@@ -71,26 +71,26 @@ class _PlayClientState : public _State {
 
 	private:
 
-		void HandleYourCharacterInfo(PacketClass *TPacket);
-		void HandleChangeMaps(PacketClass *TPacket);
-		void HandleCreateObject(PacketClass *TPacket);
-		void HandleDeleteObject(PacketClass *TPacket);
-		void HandleObjectUpdates(PacketClass *TPacket);
-		void HandleStartBattle(PacketClass *TPacket);
-		void HandleBattleTurnResults(PacketClass *TPacket);
-		void HandleBattleEnd(PacketClass *TPacket);
-		void HandleBattleCommand(PacketClass *TPacket);
-		void HandleHUD(PacketClass *TPacket);
-		void HandlePlayerPosition(PacketClass *TPacket);
-		void HandleEventStart(PacketClass *TPacket);
-		void HandleInventoryUse(PacketClass *TPacket);
-		void HandleChatMessage(PacketClass *TPacket);
-		void HandleTradeRequest(PacketClass *TPacket);
-		void HandleTradeCancel(PacketClass *TPacket);
-		void HandleTradeItem(PacketClass *TPacket);
-		void HandleTradeGold(PacketClass *TPacket);
-		void HandleTradeAccept(PacketClass *TPacket);
-		void HandleTradeExchange(PacketClass *TPacket);
+		void HandleYourCharacterInfo(_Packet *TPacket);
+		void HandleChangeMaps(_Packet *TPacket);
+		void HandleCreateObject(_Packet *TPacket);
+		void HandleDeleteObject(_Packet *TPacket);
+		void HandleObjectUpdates(_Packet *TPacket);
+		void HandleStartBattle(_Packet *TPacket);
+		void HandleBattleTurnResults(_Packet *TPacket);
+		void HandleBattleEnd(_Packet *TPacket);
+		void HandleBattleCommand(_Packet *TPacket);
+		void HandleHUD(_Packet *TPacket);
+		void HandlePlayerPosition(_Packet *TPacket);
+		void HandleEventStart(_Packet *TPacket);
+		void HandleInventoryUse(_Packet *TPacket);
+		void HandleChatMessage(_Packet *TPacket);
+		void HandleTradeRequest(_Packet *TPacket);
+		void HandleTradeCancel(_Packet *TPacket);
+		void HandleTradeItem(_Packet *TPacket);
+		void HandleTradeGold(_Packet *TPacket);
+		void HandleTradeAccept(_Packet *TPacket);
+		void HandleTradeExchange(_Packet *TPacket);
 
 		void SendMoveCommand(int TDirection);
 		void SendAttackPlayer();

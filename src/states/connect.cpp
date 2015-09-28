@@ -79,9 +79,9 @@ void _ConnectState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _ConnectState::HandlePacket(ENetEvent *TEvent) {
-	PacketClass Packet(TEvent->packet);
+	_Packet Packet(TEvent->packet);
 	switch(Packet.ReadChar()) {
-		case NetworkClass::VERSION: {
+		case _Network::VERSION: {
 			std::string Version(Packet.ReadString());
 			if(Version != GAME_VERSION) {
 				Message = "Game version differs from server's";
