@@ -62,11 +62,11 @@ FighterClass::~FighterClass() {
 // Renders the fighter during a battle
 void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, FighterResultStruct *TResult, bool TTarget) {
 	char String[256];
-	u32 AlphaPercent = (u32)(255 * TTimerPercent);
+	uint32_t AlphaPercent = (uint32_t)(255 * TTimerPercent);
 	if(TTimerPercent > 0.75f)
 		AlphaPercent = 255;
 	else
-		AlphaPercent = (u32)(255 * TTimerPercent / 0.75f);
+		AlphaPercent = (uint32_t)(255 * TTimerPercent / 0.75f);
 
 	// Sides
 	GraphicsClass::ImageType SlotImage;

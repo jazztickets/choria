@@ -102,7 +102,7 @@ PlayerClass::~PlayerClass() {
 }
 
 // Updates the player
-void PlayerClass::Update(u32 TDeltaTime) {
+void PlayerClass::Update(uint32_t TDeltaTime) {
 
 	MoveTime += TDeltaTime;
 	AutoSaveTime += TDeltaTime;
@@ -383,7 +383,7 @@ int PlayerClass::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) 
 	}
 
 	// Go through required items
-	for(u32 i = 0; i < TTrader->TraderItems.size(); i++) {
+	for(size_t i = 0; i < TTrader->TraderItems.size(); i++) {
 		const ItemClass *RequiredItem = TTrader->TraderItems[i].Item;
 		int RequiredCount = TTrader->TraderItems[i].Count;
 		TSlots[i] = -1;
@@ -411,7 +411,7 @@ void PlayerClass::AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRe
 		return;
 
 	// Trade in required items
-	for(u32 i = 0; i < TTrader->TraderItems.size(); i++) {
+	for(uint32_t i = 0; i < TTrader->TraderItems.size(); i++) {
 		UpdateInventory(TSlots[i], -TTrader->TraderItems[i].Count);
 	}
 
@@ -795,7 +795,7 @@ void PlayerClass::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
 	const array<SkillClass> &Skills = Stats.GetSkillList();
-	for(u32 i = 0; i < Skills.size(); i++) {
+	for(uint32_t i = 0; i < Skills.size(); i++) {
 		SkillPointsUsed += Skills[i].GetSkillCost() * SkillLevels[i];
 	}
 }

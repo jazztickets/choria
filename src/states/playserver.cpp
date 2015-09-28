@@ -293,7 +293,7 @@ void _PlayServerState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _PlayServerState::Update(u32 TDeltaTime) {
+void _PlayServerState::Update(uint32_t TDeltaTime) {
 	ServerTime += TDeltaTime;
 
 	Instances->Update(TDeltaTime);
@@ -606,7 +606,7 @@ void _PlayServerState::HandleMoveCommand(_Packet *TPacket, ENetPeer *TPeer) {
 					// Get monsters
 					array<int> Monsters;
 					Stats.GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
-					u32 MonsterCount = Monsters.size();
+					size_t MonsterCount = Monsters.size();
 					if(MonsterCount > 0) {
 
 						// Create a new battle instance
@@ -635,7 +635,7 @@ void _PlayServerState::HandleMoveCommand(_Packet *TPacket, ENetPeer *TPeer) {
 						}
 
 						// Add monsters
-						for(u32 i = 0; i < Monsters.size(); i++) {
+						for(size_t i = 0; i < Monsters.size(); i++) {
 							Battle->AddFighter(new MonsterClass(Monsters[i]), 1);
 						}
 

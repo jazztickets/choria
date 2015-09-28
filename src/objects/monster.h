@@ -20,6 +20,7 @@
 // Libraries
 #include <irrlicht.h>
 #include <objects/fighter.h>
+#include <vector>
 
 // Namespaces
 using namespace irr;
@@ -42,7 +43,7 @@ class MonsterClass : public FighterClass {
 		~MonsterClass();
 
 		void Update();
-		void UpdateTarget(const array<FighterClass *> &TFighters);
+		void UpdateTarget(const std::vector<FighterClass *> &TFighters);
 
 		// Stats
 		int GetID() const { return ID; }
@@ -53,7 +54,7 @@ class MonsterClass : public FighterClass {
 	private:
 
 		// Objects
-		array<FighterClass *> Opponents;
+		std::vector<FighterClass *> Opponents;
 		int ID;
 
 		// Stats

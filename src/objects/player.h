@@ -96,7 +96,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		int GetState() const { return State; }
 		void SetState(int TState) { State = TState; }
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void RenderWorld(const MapClass *TMap, const ObjectClass *TClientPlayer=NULL);
 
 		// Connection
@@ -114,12 +114,12 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		int GetPortraitID() const { return PortraitID; }
 
 		// Stats
-		void SetPlayTime(u32 TValue) { PlayTime = TValue; }
+		void SetPlayTime(uint32_t TValue) { PlayTime = TValue; }
 		void SetDeaths(int TValue) { Deaths = TValue; }
 		void SetMonsterKills(int TValue) { MonsterKills = TValue; }
 		void SetPlayerKills(int TValue) { PlayerKills = TValue; }
 		void SetBounty(int TValue) { Bounty = TValue; }
-		u32 GetPlayTime() const { return PlayTime; }
+		uint32_t GetPlayTime() const { return PlayTime; }
 		int GetDeaths() const { return Deaths; }
 		int GetMonsterKills() const { return MonsterKills; }
 		int GetPlayerKills() const { return PlayerKills; }
@@ -210,7 +210,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		// World
 		void ToggleBusy(bool Value);
 		void StartTownPortal();
-		u32 GetTownPortalTime() const { return TownPortalTime; }
+		uint32_t GetTownPortalTime() const { return TownPortalTime; }
 		void SetStateImage(ITexture *TImage) { StateImage = TImage; }
 
 		// PVP
@@ -245,7 +245,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 
 		// States
 		int State;
-		u32 MoveTime, AutoSaveTime;
+		uint32_t MoveTime, AutoSaveTime;
 
 		// Texture
 		int PortraitID;
@@ -253,10 +253,10 @@ class PlayerClass : public ObjectClass, public FighterClass {
 
 		// Map
 		int SpawnMapID, SpawnPoint;
-		u32 TownPortalTime;
+		uint32_t TownPortalTime;
 
 		// Stats
-		u32 PlayTime, PlayTimeAccumulator;
+		uint32_t PlayTime, PlayTimeAccumulator;
 		int Deaths, MonsterKills, PlayerKills, Bounty;
 		int Gold;
 		int Experience, ExperienceNeeded, ExperienceNextLevel;
@@ -269,7 +269,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 
 		// Battle
 		int NextBattle;
-		u32 AttackPlayerTime;
+		uint32_t AttackPlayerTime;
 		int InvisPower;
 
 		// Items
@@ -283,7 +283,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		int PotionsLeft[2], MaxPotions[2];
 
 		// Trading
-		u32 TradeRequestTime;
+		uint32_t TradeRequestTime;
 		int TradeGold;
 		bool TradeAccepted;
 		PlayerClass *TradePlayer;

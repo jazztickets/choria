@@ -33,7 +33,7 @@ BattleClass::BattleClass() {
 BattleClass::~BattleClass() {
 
 	// Delete monsters
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetType() == FighterClass::TYPE_MONSTER)
 			delete Fighters[i];
 	}
@@ -61,9 +61,9 @@ void BattleClass::AddFighter(FighterClass *TFighter, int TSide) {
 }
 
 // Get a list of fighters from a side
-void BattleClass::GetFighterList(int TSide, array<FighterClass *> &TFighters) {
+void BattleClass::GetFighterList(int TSide, std::vector<FighterClass *> &TFighters) {
 
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == TSide) {
 			TFighters.push_back(Fighters[i]);
 		}
@@ -71,9 +71,9 @@ void BattleClass::GetFighterList(int TSide, array<FighterClass *> &TFighters) {
 }
 
 // Get a list of alive fighters from a side
-void BattleClass::GetAliveFighterList(int TSide, array<FighterClass *> &TFighters) {
+void BattleClass::GetAliveFighterList(int TSide, std::vector<FighterClass *> &TFighters) {
 
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == TSide && Fighters[i]->GetHealth() > 0) {
 			TFighters.push_back(Fighters[i]);
 		}
@@ -81,9 +81,9 @@ void BattleClass::GetAliveFighterList(int TSide, array<FighterClass *> &TFighter
 }
 
 // Get a list of monster from the right side
-void BattleClass::GetMonsterList(array<MonsterClass *> &TMonsters) {
+void BattleClass::GetMonsterList(std::vector<MonsterClass *> &TMonsters) {
 
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->GetType() == FighterClass::TYPE_MONSTER) {
 			TMonsters.push_back(static_cast<MonsterClass *>(Fighters[i]));
 		}
@@ -91,9 +91,9 @@ void BattleClass::GetMonsterList(array<MonsterClass *> &TMonsters) {
 }
 
 // Get a list of players from a side
-void BattleClass::GetPlayerList(int TSide, array<PlayerClass *> &TPlayers) {
+void BattleClass::GetPlayerList(int TSide, std::vector<PlayerClass *> &TPlayers) {
 
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == TSide && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
 			TPlayers.push_back(static_cast<PlayerClass *>(Fighters[i]));
 		}
@@ -102,7 +102,7 @@ void BattleClass::GetPlayerList(int TSide, array<PlayerClass *> &TPlayers) {
 
 // Gets a fighter index from a slot number
 int BattleClass::GetFighterFromSlot(int TSlot) {
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSlot() == TSlot) {
 			return i;
 		}

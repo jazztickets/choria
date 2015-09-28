@@ -96,7 +96,7 @@ void _ConnectState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _ConnectState::Update(u32 TDeltaTime) {
+void _ConnectState::Update(uint32_t TDeltaTime) {
 
 	switch(State) {
 		case STATE_MAIN:

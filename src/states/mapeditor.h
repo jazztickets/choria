@@ -81,7 +81,7 @@ class _MapEditorState : public _State {
 		void HandleMouseMotion(int TMouseX, int TMouseY);
 		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void Draw();
 
 	private:

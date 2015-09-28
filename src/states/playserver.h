@@ -42,11 +42,11 @@ class _PlayServerState : public _State {
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void DeleteObject(ObjectClass *TObject);
 
 		void PlayerTownPortal(PlayerClass *TPlayer);
-		u32 GetServerTime() const { return ServerTime; }
+		uint32_t GetServerTime() const { return ServerTime; }
 
 		void StartCommandThread();
 		void StopServer() { StopRequested = true; }
@@ -99,7 +99,7 @@ class _PlayServerState : public _State {
 
 		std::thread *CommandThread;
 
-		u32 ServerTime;
+		uint32_t ServerTime;
 };
 
 extern _PlayServerState PlayServerState;

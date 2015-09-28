@@ -61,7 +61,7 @@ class _CharactersState : public _State {
 		bool HandleKeyPress(EKEY_CODE TKey);
 		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void Draw();
 
 	private:
@@ -77,7 +77,7 @@ class _CharactersState : public _State {
 		IGUIButton *ButtonPlay, *ButtonLogout, *ButtonCreate, *ButtonDelete;
 		SlotStruct Slots[CHARACTERS_MAX];
 		int SelectedIndex;
-		u32 ClickTimer;
+		uint32_t ClickTimer;
 
 };
 

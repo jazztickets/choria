@@ -46,7 +46,7 @@ class _AccountState : public _State {
 		bool HandleKeyPress(EKEY_CODE TKey);
 		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void Draw();
 
 		void SetLoginInfo(const stringc &TAccountName, const stringc &TPassword);

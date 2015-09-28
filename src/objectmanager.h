@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <cstdint>
 
 // Namespaces
 using namespace irr;
@@ -40,7 +41,7 @@ class ObjectManagerClass {
 		ObjectManagerClass();
 		~ObjectManagerClass();
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void Render(const MapClass *TMap, ObjectClass *TClientPlayer=NULL);
 		void SetObjectDeletedCallback(void (* Callback)(ObjectClass *TObject)) { ObjectDeletedCallback = Callback; }
 

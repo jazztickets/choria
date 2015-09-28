@@ -108,7 +108,7 @@ void _AccountState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _AccountState::Update(u32 TDeltaTime) {
+void _AccountState::Update(uint32_t TDeltaTime) {
 
 }
 

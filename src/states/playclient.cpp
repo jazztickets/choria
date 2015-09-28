@@ -158,7 +158,7 @@ void _PlayClientState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _PlayClientState::Update(u32 TDeltaTime) {
+void _PlayClientState::Update(uint32_t TDeltaTime) {
 
 	ClientTime += TDeltaTime;
 

@@ -357,7 +357,7 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, array<int> &TMonsters) {
 
 		// Generate monsters
 		int RandomNumber;
-		u32 MonsterIndex;
+		size_t MonsterIndex;
 		for(int i = 0; i < MonsterCount; i++) {
 			std::uniform_int_distribution<int> Distribution(1, OddsSum);
 			RandomNumber = Distribution(RandomGenerator);
@@ -401,7 +401,7 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TD
 
 		// Generate items
 		int RandomNumber;
-		u32 ItemIndex;
+		size_t ItemIndex;
 		for(int i = 0; i < TCount; i++) {
 			std::uniform_int_distribution<int> Distribution(1, OddsSum);
 			RandomNumber = Distribution(RandomGenerator);
@@ -420,7 +420,7 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, array<int> &TD
 const LevelStruct *StatsClass::FindLevel(int TExperience) const {
 
 	// Search through levels
-	for(u32 i = 1; i < Levels.size(); i++) {
+	for(size_t i = 1; i < Levels.size(); i++) {
 		if(Levels[i].Experience > TExperience)
 			return &Levels[i-1];
 	}

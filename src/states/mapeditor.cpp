@@ -68,7 +68,7 @@ void _MapEditorState::CloseMap() {
 }
 
 // Updates the current state
-void _MapEditorState::Update(u32 TDeltaTime) {
+void _MapEditorState::Update(uint32_t TDeltaTime) {
 	if(!Map)
 		return;
 
@@ -510,7 +510,7 @@ void _MapEditorState::InitTexturePalette() {
 	// Load texture buttons
 	int StartX = 10;
 	position2di TexturePosition(StartX, 30);
-	for(u32 i = 0; i < TexturePalette.size(); i++) {
+	for(size_t i = 0; i < TexturePalette.size(); i++) {
 
 		IGUIButton *Button = irrGUI->addButton(Graphics.GetRect(TexturePosition.X, TexturePosition.Y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
 		Button->setImage(TexturePalette[i]);

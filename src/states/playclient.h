@@ -62,7 +62,7 @@ class _PlayClientState : public _State {
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
 		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void Draw();
 
 		void SetCharacterSlot(int TSlot) { CharacterSlot = TSlot; }
@@ -100,7 +100,7 @@ class _PlayClientState : public _State {
 		int State, CharacterSlot;
 
 		// Time
-		u32 ClientTime, SentClientTime;
+		uint32_t ClientTime, SentClientTime;
 
 		// Objects
 		PlayerClass *Player;

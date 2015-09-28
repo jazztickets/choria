@@ -48,7 +48,7 @@ void ClientBattleClass::StartBattle(PlayerClass *TClientPlayer) {
 
 	// Set fighter position offsets
 	position2di Offset;
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		GetPositionFromSlot(Fighters[i]->GetSlot(), Offset);
 		Fighters[i]->SetOffset(Offset);
 		Fighters[i]->SetSkillUsed(NULL);
@@ -81,7 +81,7 @@ void ClientBattleClass::StartBattle(PlayerClass *TClientPlayer) {
 
 // Removes a player from battle
 void ClientBattleClass::RemovePlayer(PlayerClass *TPlayer) {
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] == TPlayer) {
 			Fighters[i] = NULL;
 			break;
@@ -168,7 +168,7 @@ void ClientBattleClass::HandleCommand(int TSlot, int TSkillID) {
 }
 
 // Update the battle system for the client
-void ClientBattleClass::Update(u32 TDeltaTime) {
+void ClientBattleClass::Update(uint32_t TDeltaTime) {
 
 	ResultTimer += TDeltaTime;
 	Timer += TDeltaTime;
@@ -209,7 +209,7 @@ void ClientBattleClass::Render() {
 
 	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
 		ShowResults = false;
-		for(u32 i = 0; i < Fighters.size(); i++) {
+		for(size_t i = 0; i < Fighters.size(); i++) {
 			if(Fighters[i])
 				Fighters[i]->SetSkillUsed(NULL);
 		}
@@ -240,7 +240,7 @@ void ClientBattleClass::RenderBattle(bool TShowResults) {
 		TimerPercent = 1.0f - (float)ResultTimer / BATTLE_SHOWRESULTTIME;
 
 	// Draw fighters
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i])
 			Fighters[i]->RenderBattle(TShowResults, TimerPercent, &Results[i], ClientPlayer->GetTarget() == Fighters[i]->GetSlot());
 	}
@@ -295,7 +295,7 @@ void ClientBattleClass::RenderBattleWin() {
 
 		// Draw items found
 		int ColumnIndex = 0;
-		for(u32 i = 0; i < MonsterDrops.size(); i++) {
+		for(size_t i = 0; i < MonsterDrops.size(); i++) {
 			Graphics.DrawCenteredImage(MonsterDrops[i]->GetImage(), DrawX + 16, DrawY + 16);
 
 			DrawX += 40;
@@ -326,7 +326,7 @@ void ClientBattleClass::RenderBattleLose() {
 // Displays turn results from the server
 void ClientBattleClass::ResolveTurn(_Packet *TPacket) {
 
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
 			Results[i].SkillID = TPacket->ReadChar();
 			Results[i].Target = TPacket->ReadInt();
@@ -460,7 +460,7 @@ void ClientBattleClass::ChangeTarget(int TDirection) {
 		return;
 
 	// Get a list of fighters on the opposite side
-	array<FighterClass *> SideFighters;
+	std::vector<FighterClass *> SideFighters;
 	GetFighterList(!ClientPlayer->GetSide(), SideFighters);
 
 	// Find next available target

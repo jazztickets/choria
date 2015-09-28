@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <cstdint>
 
 // Namespaces
 using namespace irr;
@@ -48,7 +49,7 @@ class ObjectClass {
 		ObjectClass(ObjectType TType);
 		virtual ~ObjectClass();
 
-		virtual void Update(u32 TDeltaTime) { }
+		virtual void Update(uint32_t TDeltaTime) { }
 
 		ObjectType GetType() const { return Type; }
 

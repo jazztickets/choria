@@ -103,13 +103,13 @@ void MapClass::AllocateMap() {
 	}
 
 	// Delete textures
-	for(u32 i = 0; i < Textures.size(); i++)
+	for(size_t i = 0; i < Textures.size(); i++)
 		irrDriver->removeTexture(Textures[i]);
 	Textures.clear();
 }
 
 // Updates the map and sends object updates
-void MapClass::Update(u32 TDeltaTime) {
+void MapClass::Update(uint32_t TDeltaTime) {
 
 	ObjectUpdateTime += TDeltaTime;
 	if(ObjectUpdateTime > 200) {
@@ -253,7 +253,7 @@ int MapClass::SaveMap() {
 
    // Write texture list
 	File.WriteInt(TextureList.size());
-	for(u32 i = 0; i < TextureList.size(); i++) {
+	for(size_t i = 0; i < TextureList.size(); i++) {
 		if(TextureList[i] == NULL)
 			File.WriteString("none");
 		else {
@@ -397,7 +397,7 @@ void MapClass::GetTextureListFromMap(array<ITexture *> &TTextures) {
 // Returns the index of a texture in an array
 int MapClass::GetTextureIndex(array<ITexture *> &TTextures, ITexture *TTexture) {
 
-	for(u32 i = 0; i < TTextures.size(); i++) {
+	for(size_t i = 0; i < TTextures.size(); i++) {
 		if(TTextures[i] == TTexture)
 			return (int)i;
 	}
@@ -553,7 +553,7 @@ void MapClass::SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlaye
 // Finds an event that matches the criteria
 IndexedEventStruct *MapClass::GetIndexedEvent(int TEventType, int TEventData) {
 
-	for(u32 i = 0; i < IndexedEvents.size(); i++) {
+	for(size_t i = 0; i < IndexedEvents.size(); i++) {
 		IndexedEventStruct *IndexedEvent = &IndexedEvents[i];
 		if(IndexedEvent->Tile->EventType == TEventType && IndexedEvent->Tile->EventData == TEventData) {
 			return IndexedEvent;

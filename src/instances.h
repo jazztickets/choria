@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <cstdint>
 
 // Namespaces
 using namespace irr;
@@ -42,7 +43,7 @@ class InstanceClass {
 		InstanceClass();
 		~InstanceClass();
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 
 		// Maps
 		MapClass *GetMap(int TMapID);

@@ -42,7 +42,7 @@ ServerBattleClass::~ServerBattleClass() {
 int ServerBattleClass::RemovePlayer(PlayerClass *TPlayer) {
 
 	int Count = 0;
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);
 
@@ -124,7 +124,7 @@ void ServerBattleClass::HandleInput(PlayerClass *TPlayer, int TCommand, int TTar
 
 			// Check for all commands
 			bool Ready = true;
-			for(u32 i = 0; i < Fighters.size(); i++) {
+			for(size_t i = 0; i < Fighters.size(); i++) {
 				if(Fighters[i] && Fighters[i]->GetHealth() > 0 && Fighters[i]->GetCommand() == -1) {
 					Ready = false;
 					break;
@@ -137,7 +137,7 @@ void ServerBattleClass::HandleInput(PlayerClass *TPlayer, int TCommand, int TTar
 }
 
 // Update the battle system for the server
-void ServerBattleClass::Update(u32 TDeltaTime) {
+void ServerBattleClass::Update(uint32_t TDeltaTime) {
 
 	switch(State) {
 		case STATE_INPUT:
@@ -159,25 +159,25 @@ void ServerBattleClass::ResolveTurn() {
 	RoundTime = 0;
 
 	// Get a monster list
-	array<MonsterClass *> Monsters;
+	std::vector<MonsterClass *> Monsters;
 	GetMonsterList(Monsters);
 
 	// Update AI
 	if(Monsters.size() > 0) {
 
 		// Get a list of humans on the left side
-		array<FighterClass *> Humans;
+		std::vector<FighterClass *> Humans;
 		GetAliveFighterList(0, Humans);
 
 		// Update the monster's target
-		for(u32 i = 0; i < Monsters.size(); i++) {
+		for(size_t i = 0; i < Monsters.size(); i++) {
 			Monsters[i]->UpdateTarget(Humans);
 		}
 	}
 
 	// Handle each fighter's action
 	FighterResultStruct Results[BATTLE_MAXFIGHTERS];
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
 			FighterResultStruct *Result = &Results[i];
 			Result->Fighter = Fighters[i];
@@ -209,7 +209,7 @@ void ServerBattleClass::ResolveTurn() {
 
 	// Build packet for results
 	_Packet Packet(_Network::BATTLE_TURNRESULTS);
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
 
 			// Update fighters
@@ -243,11 +243,11 @@ void ServerBattleClass::CheckEnd() {
 	for(int i = 0; i < 2; i++) {
 
 		// Get a list of fighters that are still in the battle
-		array<FighterClass *> SideFighters;
+		std::vector<FighterClass *> SideFighters;
 		GetFighterList(i, SideFighters);
 
 		// Loop through fighters
-		for(u32 j = 0; j < SideFighters.size(); j++) {
+		for(size_t j = 0; j < SideFighters.size(); j++) {
 
 			// Keep track of players
 			if(SideFighters[j]->GetType() == FighterClass::TYPE_PLAYER) {
@@ -298,7 +298,7 @@ void ServerBattleClass::CheckEnd() {
 		if(!Side[0].Dead) {
 
 			// Get a monster list
-			array<MonsterClass *> Monsters;
+			std::vector<MonsterClass *> Monsters;
 			GetMonsterList(Monsters);
 
 			// Make sure there are monsters
@@ -306,18 +306,18 @@ void ServerBattleClass::CheckEnd() {
 
 				// Generate monster drops in player vs monster situations
 				array<int> MonsterDrops;
-				for(u32 i = 0; i < Monsters.size(); i++) {
+				for(size_t i = 0; i < Monsters.size(); i++) {
 					Stats.GenerateMonsterDrops(Monsters[i]->GetID(), 1, MonsterDrops);
 				}
 
 				// Get a list of players that receive items
-				array<PlayerClass *> LeftSidePlayers;
+				std::vector<PlayerClass *> LeftSidePlayers;
 				GetPlayerList(0, LeftSidePlayers);
 
 				// Give out rewards round robin style
-				std::uniform_int_distribution<u32> Distribution(0, LeftSidePlayers.size()-1);
-				u32 PlayerIndex = Distribution(RandomGenerator);
-				for(u32 i = 0; i < MonsterDrops.size(); i++) {
+				std::uniform_int_distribution<size_t> Distribution(0, LeftSidePlayers.size()-1);
+				size_t PlayerIndex = Distribution(RandomGenerator);
+				for(size_t i = 0; i < MonsterDrops.size(); i++) {
 					int LeftSideSlot = LeftSidePlayers[PlayerIndex]->GetSlot() / 2;
 					if(MonsterDrops[i] > 0) {
 						PlayerItems[LeftSideSlot].push_back(MonsterDrops[i]);
@@ -332,7 +332,7 @@ void ServerBattleClass::CheckEnd() {
 		}
 
 		// Award each player
-		for(u32 i = 0; i < Players.size(); i++) {
+		for(size_t i = 0; i < Players.size(); i++) {
 
 			// Get rewards
 			int ExperienceEarned = 0;
@@ -398,7 +398,7 @@ void ServerBattleClass::CheckEnd() {
 void ServerBattleClass::SendPacketToPlayers(_Packet *TPacket) {
 
 	// Send packet to all players
-	for(u32 i = 0; i < Fighters.size(); i++) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);
 			ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer());
@@ -410,7 +410,7 @@ void ServerBattleClass::SendPacketToPlayers(_Packet *TPacket) {
 void ServerBattleClass::SendSkillToPlayers(PlayerClass *TPlayer) {
 
 	// Get all the players on the player's side
-	array<PlayerClass *> SidePlayers;
+	std::vector<PlayerClass *> SidePlayers;
 	GetPlayerList(TPlayer->GetSide(), SidePlayers);
 	if(SidePlayers.size() == 1)
 		return;
@@ -427,7 +427,7 @@ void ServerBattleClass::SendSkillToPlayers(PlayerClass *TPlayer) {
 	Packet.WriteChar(SkillID);
 
 	// Send packet to all players
-	for(u32 i = 0; i < SidePlayers.size(); i++) {
+	for(size_t i = 0; i < SidePlayers.size(); i++) {
 		if(SidePlayers[i] != TPlayer) {
 			ServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->GetPeer());
 		}

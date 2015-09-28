@@ -44,7 +44,7 @@ class ServerBattleClass : public BattleClass {
 		void HandleInput(PlayerClass *TPlayer, int TCommand, int TTarget);
 
 		// Updates
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 
 		// Resolve
 		void ResolveTurn();
@@ -55,5 +55,5 @@ class ServerBattleClass : public BattleClass {
 		void SendPacketToPlayers(_Packet *TPacket);
 		void SendSkillToPlayers(PlayerClass *TPlayer);
 
-		u32 RoundTime;
+		uint32_t RoundTime;
 };

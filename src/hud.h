@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <cstdint>
 
 // Namespaces
 using namespace irr;
@@ -76,7 +77,7 @@ struct ChatStruct {
 	ChatStruct() : Message(""), TimeOut(0) { }
 	ChatStruct(const stringc &TMessage) : Message(TMessage), TimeOut(0) { }
 	stringc Message;
-	u32 TimeOut;
+	uint32_t TimeOut;
 };
 
 // Classes
@@ -121,7 +122,7 @@ class HUDClass {
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
 		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 		void PreGUIDraw();
 		void Draw();
 

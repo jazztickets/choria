@@ -91,7 +91,7 @@ void _CharactersState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _CharactersState::Update(u32 TDeltaTime) {
+void _CharactersState::Update(uint32_t TDeltaTime) {
 	ClickTimer += TDeltaTime;
 }
 

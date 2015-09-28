@@ -43,7 +43,7 @@ InstanceClass::~InstanceClass() {
 }
 
 // Updates all the instances
-void InstanceClass::Update(u32 TDeltaTime) {
+void InstanceClass::Update(uint32_t TDeltaTime) {
 
 	// Update maps
 	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {

@@ -63,7 +63,7 @@ int _MainMenuState::Close() {
 }
 
 // Updates the current state
-void _MainMenuState::Update(u32 TDeltaTime) {
+void _MainMenuState::Update(uint32_t TDeltaTime) {
 
 }
 

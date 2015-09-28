@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <cstdint>
 
 // Namespaces
 using namespace irr;
@@ -71,7 +72,7 @@ class MapClass {
 		MapClass(int TMapID);
 		~MapClass();
 
-		void Update(u32 TDeltaTime);
+		void Update(uint32_t TDeltaTime);
 
 		// States
 		int GetID() const { return ID; }
@@ -149,6 +150,6 @@ class MapClass {
 		array<IndexedEventStruct> IndexedEvents;
 
 		// Objects
-		u32 ObjectUpdateTime;
+		uint32_t ObjectUpdateTime;
 		list<ObjectClass *> Objects;
 };

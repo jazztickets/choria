@@ -458,7 +458,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 }
 
 // Updates the HUD
-void HUDClass::Update(u32 TDeltaTime) {
+void HUDClass::Update(uint32_t TDeltaTime) {
 
 	// Chat messages
 	for(list<ChatStruct>::Iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
@@ -786,7 +786,7 @@ void HUDClass::InitSkills() {
 	// Add +/- buttons
 	const array<SkillClass> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
-	for(u32 i = 0; i < Skills.size(); i++) {
+	for(size_t i = 0; i < Skills.size(); i++) {
 		int DrawX = X * SKILL_SPACINGX + SKILL_STARTX + 16;
 		int DrawY = Y * SKILL_SPACINGY + SKILL_STARTY + 45;
 
@@ -1068,7 +1068,7 @@ void HUDClass::DrawVendor() {
 	// Draw inventory items
 	const ItemClass *Item;
 	int PositionX = 0, PositionY = 0;
-	for(u32 i = 0; i < Vendor->Items.size(); i++) {
+	for(size_t i = 0; i < Vendor->Items.size(); i++) {
 		Item = Vendor->Items[i];
 		if(!CursorItem.IsEqual(i, WINDOW_VENDOR)) {
 			int DrawX = OffsetX + 1 + PositionX * 32;
@@ -1108,7 +1108,7 @@ void HUDClass::DrawTrader() {
 	int PositionX = 0, PositionY = 0;
 	char Buffer[256];
 	SColor Color;
-	for(u32 i = 0; i < Trader->TraderItems.size(); i++) {
+	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
 		int DrawX = OffsetX + 19 + PositionX * 32;
 		int DrawY = OffsetY + 52 + PositionY * 32 + PositionY * 14;
 		Graphics.DrawCenteredImage(Trader->TraderItems[i].Item->GetImage(), DrawX + 16, DrawY + 16);
@@ -1282,7 +1282,7 @@ void HUDClass::DrawSkills() {
 	// Draw skills
 	const array<SkillClass> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
-	for(u32 i = 0; i < Skills.size(); i++) {
+	for(size_t i = 0; i < Skills.size(); i++) {
 		int DrawX = WindowArea.UpperLeftCorner.X + X * SKILL_SPACINGX + SKILL_STARTX + 16;
 		int DrawY = WindowArea.UpperLeftCorner.Y + Y * SKILL_SPACINGY + SKILL_STARTY + 16;
 		Graphics.DrawCenteredImage(Skills[i].GetImage(), DrawX, DrawY);
@@ -1723,7 +1723,7 @@ void HUDClass::GetVendorItem(position2di &TPoint, CursorItemStruct &TCursorItem)
 
 	// Get vendor slot
 	if(TPoint.X >= 1 && TPoint.X <= 256 && TPoint.Y >= 47 && TPoint.Y < 47 + 192) {
-		u32 InventoryIndex = (TPoint.X - 1) / 32 + (TPoint.Y - 47) / 32 * 8;
+		size_t InventoryIndex = (TPoint.X - 1) / 32 + (TPoint.Y - 47) / 32 * 8;
 		//printf("%d=%d %d\n", InventoryIndex, TPoint.X, TPoint.Y);
 		if(InventoryIndex < Vendor->Items.size()) {
 			int Price = Vendor->Items[InventoryIndex]->GetPrice(Vendor, 1, true);
@@ -1734,7 +1734,7 @@ void HUDClass::GetVendorItem(position2di &TPoint, CursorItemStruct &TCursorItem)
 
 // Returns a trader item from a mouse position
 void HUDClass::GetTraderItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
-	rect<s32> WindowArea = TabTrader->getAbsolutePosition();
+	core::recti WindowArea = TabTrader->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
 		return;
 
@@ -1776,14 +1776,14 @@ void HUDClass::GetTradeItem(position2di &TPoint, CursorItemStruct &TCursorItem) 
 	// Get trade slot
 	PlayerClass *TradePlayer = Player->GetTradePlayer();
 	if(TradePlayer && TPoint.X >= TRADE_WINDOWX && TPoint.X < TRADE_WINDOWX + 128 && TPoint.Y >= TRADE_WINDOWYTHEM && TPoint.Y < TRADE_WINDOWYTHEM + 64) {
-		u32 InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYTHEM) / 32 * 4 + PlayerClass::INVENTORY_TRADE;
+		size_t InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYTHEM) / 32 * 4 + PlayerClass::INVENTORY_TRADE;
 		//printf("them: %d=%d %d\n", InventoryIndex, TPoint.X, TPoint.Y);
 		const ItemClass *Item = TradePlayer->GetInventory(InventoryIndex)->Item;
 		TCursorItem.Window = WINDOW_TRADETHEM;
 		TCursorItem.Set(Item, 0, TradePlayer->GetInventory(InventoryIndex)->Count, InventoryIndex);
 	}
 	else if(TPoint.X >= TRADE_WINDOWX && TPoint.X < TRADE_WINDOWX + 128 && TPoint.Y >= TRADE_WINDOWYYOU && TPoint.Y < TRADE_WINDOWYYOU + 64) {
-		u32 InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYYOU) / 32 * 4 + PlayerClass::INVENTORY_TRADE;
+		size_t InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYYOU) / 32 * 4 + PlayerClass::INVENTORY_TRADE;
 		//printf("you: %d=%d %d\n", InventoryIndex, TPoint.X, TPoint.Y);
 		const ItemClass *Item = Player->GetInventory(InventoryIndex)->Item;
 		TCursorItem.Window = WINDOW_TRADEYOU;
@@ -1854,9 +1854,8 @@ void HUDClass::GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursor
 		return;
 
 	// Get skill from page
-	u32 SkillCount = Stats.GetSkillList().size();
 	int X = 0, Y = 0;
-	for(u32 i = 0; i < SkillCount; i++) {
+	for(size_t i = 0; i < Stats.GetSkillList().size(); i++) {
 		int SkillX = WindowArea.UpperLeftCorner.X + SKILL_STARTX + X * SKILL_SPACINGX;
 		int SkillY = WindowArea.UpperLeftCorner.Y + SKILL_STARTY + Y * SKILL_SPACINGY;
 		rect<s32> SkillArea(SkillX, SkillY, SkillX + 32, SkillY + 32);

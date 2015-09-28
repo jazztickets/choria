@@ -54,7 +54,7 @@ class _State {
 		virtual void HandlePacket(ENetEvent *TEvent) { }
 
 		// Update
-		virtual void Update(u32 TDeltaTime) { }
+		virtual void Update(uint32_t TDeltaTime) { }
 		virtual void Draw() { };
 
 	private:

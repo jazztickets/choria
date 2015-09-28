@@ -98,7 +98,7 @@ void ObjectManagerClass::DeletesObjectsExcept(ObjectClass *TObject) {
 }
 
 // Updates all objects in the scene
-void ObjectManagerClass::Update(u32 TDeltaTime) {
+void ObjectManagerClass::Update(uint32_t TDeltaTime) {
 
 	// Update objects
 	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {

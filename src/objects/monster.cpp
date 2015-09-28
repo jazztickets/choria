@@ -40,7 +40,7 @@ void MonsterClass::Update() {
 }
 
 // Updates the monster's target based on AI
-void MonsterClass::UpdateTarget(const array<FighterClass *> &TFighters) {
+void MonsterClass::UpdateTarget(const std::vector<FighterClass *> &TFighters) {
 
 	// Get count of fighters
 	int Count = TFighters.size();

@@ -19,6 +19,8 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <vector>
+#include <cstdint>
 
 // Namespaces
 using namespace irr;
@@ -67,25 +69,25 @@ class BattleClass {
 		void AddFighter(FighterClass *TFighter, int TSide);
 
 		// Updates
-		virtual void Update(u32 TDeltaTime) { }
+		virtual void Update(uint32_t TDeltaTime) { }
 
 		// States
 		int GetState() const { return State; }
 
 	protected:
 
-		void GetFighterList(int TSide, array<FighterClass *> &TFighters);
-		void GetAliveFighterList(int TSide, array<FighterClass *> &TFighters);
-		void GetMonsterList(array<MonsterClass *> &TMonsters);
-		void GetPlayerList(int TSide, array<PlayerClass *> &TPlayers);
+		void GetFighterList(int TSide, std::vector<FighterClass *> &TFighters);
+		void GetAliveFighterList(int TSide, std::vector<FighterClass *> &TFighters);
+		void GetMonsterList(std::vector<MonsterClass *> &TMonsters);
+		void GetPlayerList(int TSide, std::vector<PlayerClass *> &TPlayers);
 		int GetFighterFromSlot(int TSlot);
 
 		// State
 		int State, TargetState;
-		u32 Timer;
+		uint32_t Timer;
 
 		// Objects
-		array<FighterClass *> Fighters;
+		std::vector<FighterClass *> Fighters;
 		int LeftFighterCount, RightFighterCount;
 		int PlayerCount, MonsterCount;
 };
