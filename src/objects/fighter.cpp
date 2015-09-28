@@ -15,12 +15,12 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "fighter.h"
-#include "../engine/graphics.h"
-#include "../engine/random.h"
-#include "../engine/stats.h"
-#include "../instances/battle.h"
-#include "skill.h"
+#include <objects/fighter.h>
+#include <engine/graphics.h>
+#include <engine/random.h>
+#include <engine/stats.h>
+#include <instances/battle.h>
+#include <objects/skill.h>
 
 // Constructor
 FighterClass::FighterClass(int TType)

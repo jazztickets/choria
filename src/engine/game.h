@@ -20,7 +20,7 @@
 
 // Libraries
 #include <irrlicht.h>
-#include "singleton.h"
+#include <engine/singleton.h>
 
 // Namespaces
 using namespace irr;

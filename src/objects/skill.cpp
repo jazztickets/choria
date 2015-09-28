@@ -15,14 +15,14 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "skill.h"
-#include "../engine/stats.h"
-#include "../engine/random.h"
-#include "../engine/globals.h"
-#include "../instances/battle.h"
-#include "../network/network.h"
-#include "../network/packetstream.h"
-#include "../objects/fighter.h"
+#include <objects/skill.h>
+#include <engine/stats.h>
+#include <engine/random.h>
+#include <engine/globals.h>
+#include <instances/battle.h>
+#include <network/network.h>
+#include <network/packetstream.h>
+#include <objects/fighter.h>
 #include <objects/player.h>
 
 // Gets the mana cost of a skill

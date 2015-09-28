@@ -15,15 +15,15 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "map.h"
-#include "../engine/globals.h"
-#include "../engine/graphics.h"
-#include "../engine/constants.h"
-#include "../network/network.h"
-#include "../network/packetstream.h"
-#include "../engine/filestream.h"
-#include "../engine/stats.h"
-#include "../playserver.h"
+#include <instances/map.h>
+#include <engine/globals.h>
+#include <engine/graphics.h>
+#include <engine/constants.h>
+#include <network/network.h>
+#include <network/packetstream.h>
+#include <engine/filestream.h>
+#include <engine/stats.h>
+#include <playserver.h>
 #include <objects/player.h>
 
 // Constructor for the map editor: new map

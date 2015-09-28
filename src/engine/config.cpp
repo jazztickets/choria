@@ -15,7 +15,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "config.h"
+#include <engine/config.h>
 #include <fstream>
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN

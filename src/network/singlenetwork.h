@@ -19,7 +19,7 @@
 #define SINGLENETWORK_H
 
 // Libraries
-#include "network.h"
+#include <network/network.h>
 
 class SingleNetworkClass : public NetworkClass {
 

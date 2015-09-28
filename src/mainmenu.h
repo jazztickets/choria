@@ -19,7 +19,7 @@
 #define MAINMENU_H
 
 // Libraries
-#include "engine/state.h"
+#include <engine/state.h>
 
 // Classes
 class MainMenuState : public StateClass {

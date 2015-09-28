@@ -19,7 +19,7 @@
 #define CHARACTERS_H
 
 // Libraries
-#include "engine/state.h"
+#include <engine/state.h>
 
 // Constants
 const int CHARACTERS_MAX = 6;

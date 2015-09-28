@@ -15,22 +15,22 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "playclient.h"
-#include "engine/globals.h"
-#include "engine/game.h"
-#include "engine/graphics.h"
-#include "engine/input.h"
-#include "engine/objectmanager.h"
-#include "engine/instances.h"
-#include "engine/stats.h"
-#include "engine/hud.h"
-#include "network/network.h"
-#include "network/packetstream.h"
-#include "instances/map.h"
-#include "instances/clientbattle.h"
-#include "objects/player.h"
-#include "objects/monster.h"
-#include "mainmenu.h"
+#include <playclient.h>
+#include <engine/globals.h>
+#include <engine/game.h>
+#include <engine/graphics.h>
+#include <engine/input.h>
+#include <engine/objectmanager.h>
+#include <engine/instances.h>
+#include <engine/stats.h>
+#include <engine/hud.h>
+#include <network/network.h>
+#include <network/packetstream.h>
+#include <instances/map.h>
+#include <instances/clientbattle.h>
+#include <objects/player.h>
+#include <objects/monster.h>
+#include <mainmenu.h>
 
 // Constructor
 PlayClientState::PlayClientState()

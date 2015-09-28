@@ -15,11 +15,11 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "stats.h"
-#include "database.h"
-#include "globals.h"
-#include "random.h"
-#include "../objects/monster.h"
+#include <engine/stats.h>
+#include <engine/database.h>
+#include <engine/globals.h>
+#include <engine/random.h>
+#include <objects/monster.h>
 
 // Initialize
 int StatsClass::Init() {

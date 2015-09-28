@@ -15,11 +15,11 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "singlenetwork.h"
-#include "packetstream.h"
-#include "../engine/game.h"
-#include "../engine/game.h"
-#include "../playserver.h"
+#include <network/singlenetwork.h>
+#include <network/packetstream.h>
+#include <engine/game.h>
+#include <engine/game.h>
+#include <playserver.h>
 
 // Initializes the network system
 int SingleNetworkClass::Init(bool TServer) {

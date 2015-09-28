@@ -15,8 +15,8 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "graphics.h"
-#include "globals.h"
+#include <engine/graphics.h>
+#include <engine/globals.h>
 
 // Initializes the graphics system
 int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, E_DRIVER_TYPE TDriverType, IEventReceiver *TEventReceiver) {

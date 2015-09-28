@@ -15,10 +15,10 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "multinetwork.h"
-#include "packetstream.h"
-#include "../engine/game.h"
-#include "../engine/state.h"
+#include <network/multinetwork.h>
+#include <network/packetstream.h>
+#include <engine/game.h>
+#include <engine/state.h>
 
 // Initializes the network system
 int MultiNetworkClass::Init(bool TServer) {
@@ -66,15 +66,15 @@ int MultiNetworkClass::Close() {
 int MultiNetworkClass::Connect(const char *TIPAddress) {
 
 	// Get server address
-    ENetAddress Address;
-    enet_address_set_host(&Address, TIPAddress);
-    Address.port = NETWORKING_PORT;
+	ENetAddress Address;
+	enet_address_set_host(&Address, TIPAddress);
+	Address.port = NETWORKING_PORT;
 
-    // Connect to server
-    Peer = enet_host_connect(Connection, &Address, 2, 0);
-    if(Peer == NULL) {
+	// Connect to server
+	Peer = enet_host_connect(Connection, &Address, 2, 0);
+	if(Peer == NULL) {
 		return 0;
-    }
+	}
 
 	Active = true;
 
@@ -158,7 +158,7 @@ void MultiNetworkClass::SendPacketToHost(PacketClass *TPacket) {
 	// Resize
 	TPacket->Shrink();
 
-    // Send packet
+	// Send packet
 	enet_peer_send(Peer, TPacket->GetChannel(), TPacket->GetENetPacket());
 }
 
@@ -170,6 +170,6 @@ void MultiNetworkClass::SendPacketToPeer(PacketClass *TPacket, ENetPeer *TPeer) 
 	// Resize
 	TPacket->Shrink();
 
-    // Send packet
-    enet_peer_send(TPeer, TPacket->GetChannel(), TPacket->GetENetPacket());
+	// Send packet
+	enet_peer_send(TPeer, TPacket->GetChannel(), TPacket->GetENetPacket());
 }

@@ -19,7 +19,7 @@
 #define CONNECT_H
 
 // Libraries
-#include "engine/state.h"
+#include <engine/state.h>
 
 // Classes
 class ConnectState : public StateClass {

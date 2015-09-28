@@ -21,9 +21,9 @@
 // Libraries
 #include <irrlicht.h>
 #include <enet/enet.h>
-#include "../engine/constants.h"
-#include "object.h"
-#include "fighter.h"
+#include <engine/constants.h>
+#include <objects/object.h>
+#include <objects/fighter.h>
 
 // Constants
 const int PLAYER_ATTACKTIME = 1000;

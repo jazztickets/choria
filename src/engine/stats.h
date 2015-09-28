@@ -21,9 +21,9 @@
 // Libraries
 #include <irrlicht.h>
 #include <map>
-#include "singleton.h"
-#include "../objects/item.h"
-#include "../objects/skill.h"
+#include <engine/singleton.h>
+#include <objects/item.h>
+#include <objects/skill.h>
 
 // Namespaces
 using namespace irr;

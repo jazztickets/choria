@@ -20,7 +20,7 @@
 
 // Libraries
 #include <irrlicht.h>
-#include "fighter.h"
+#include <objects/fighter.h>
 
 // Namespaces
 using namespace irr;

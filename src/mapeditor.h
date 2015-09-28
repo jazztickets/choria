@@ -19,8 +19,8 @@
 #define MAPEDITOR_H
 
 // Libraries
-#include "engine/state.h"
-#include "instances/map.h"
+#include <engine/state.h>
+#include <instances/map.h>
 
 // Classes
 class MapEditorState : public StateClass {

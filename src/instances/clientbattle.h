@@ -19,8 +19,8 @@
 #define CLIENTBATTLE_H
 
 // Libraries
-#include "battle.h"
-#include "../engine/constants.h"
+#include <instances/battle.h>
+#include <engine/constants.h>
 
 // Forward Declarations
 class ItemClass;

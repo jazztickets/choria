@@ -15,11 +15,11 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "monster.h"
-#include "../engine/globals.h"
-#include "../engine/graphics.h"
-#include "../engine/random.h"
-#include "../engine/stats.h"
+#include <objects/monster.h>
+#include <engine/globals.h>
+#include <engine/graphics.h>
+#include <engine/random.h>
+#include <engine/stats.h>
 
 // Constructor
 MonsterClass::MonsterClass(int TMonsterID)

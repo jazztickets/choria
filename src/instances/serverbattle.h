@@ -19,7 +19,7 @@
 #define SERVERBATTLE_H
 
 // Libraries
-#include "battle.h"
+#include <instances/battle.h>
 
 // Classes
 class ServerBattleClass : public BattleClass {

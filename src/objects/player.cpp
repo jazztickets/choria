@@ -15,19 +15,19 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "player.h"
+#include <objects/player.h>
 #include <enet/enet.h>
-#include "../engine/globals.h"
-#include "../engine/graphics.h"
-#include "../engine/instances.h"
-#include "../engine/random.h"
-#include "../engine/stats.h"
-#include "../engine/database.h"
-#include "../engine/constants.h"
-#include "../instances/map.h"
-#include "../instances/battle.h"
-#include "../playserver.h"
-#include "skill.h"
+#include <engine/globals.h>
+#include <engine/graphics.h>
+#include <engine/instances.h>
+#include <engine/random.h>
+#include <engine/stats.h>
+#include <engine/database.h>
+#include <engine/constants.h>
+#include <instances/map.h>
+#include <instances/battle.h>
+#include <playserver.h>
+#include <objects/skill.h>
 
 // Constructor
 PlayerClass::PlayerClass()

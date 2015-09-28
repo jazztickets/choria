@@ -19,7 +19,7 @@
 #define MULTINETWORK_H
 
 // Libraries
-#include "network.h"
+#include <network/network.h>
 
 class MultiNetworkClass : public NetworkClass {
 

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # define constants
 add_definitions(-DGAME_VERSION="0.4.2")
+add_definitions("-DHAS_SOCKLEN_T")
 
 # project name
 project(choria)
@@ -26,7 +27,6 @@ else()
 
 	# compiler flags
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-deprecated-declarations -pedantic -std=c++11")
-	add_definitions("-DHAS_SOCKLEN_T")
 
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
@@ -92,7 +92,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 	${EXTRA_LIBS}
 )
 
-# copy irrlicht DLLs to working directory
+# copy dlls to working directory
 if(WIN32)
 	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win64-VisualStudio/Irrlicht.dll" ${PROJECT_SOURCE_DIR}/working)
 	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win64-VisualStudio/Irrlicht_d.dll" ${PROJECT_SOURCE_DIR}/working)

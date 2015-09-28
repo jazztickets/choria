@@ -19,7 +19,7 @@
 #define CREATECHARACTER_H
 
 // Libraries
-#include "engine/state.h"
+#include <engine/state.h>
 
 // Forward Declarations
 class PacketClass;

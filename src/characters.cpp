@@ -15,18 +15,18 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "characters.h"
-#include "engine/game.h"
-#include "engine/globals.h"
-#include "engine/stats.h"
-#include "engine/graphics.h"
-#include "network/network.h"
-#include "network/packetstream.h"
-#include "mainmenu.h"
-#include "connect.h"
-#include "account.h"
-#include "createcharacter.h"
-#include "playclient.h"
+#include <characters.h>
+#include <engine/game.h>
+#include <engine/globals.h>
+#include <engine/stats.h>
+#include <engine/graphics.h>
+#include <network/network.h>
+#include <network/packetstream.h>
+#include <mainmenu.h>
+#include <connect.h>
+#include <account.h>
+#include <createcharacter.h>
+#include <playclient.h>
 
 // Initializes the state
 int CharactersState::Init() {

@@ -15,16 +15,16 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include "serverbattle.h"
-#include "../engine/globals.h"
-#include "../engine/stats.h"
-#include "../engine/constants.h"
-#include "../network/packetstream.h"
-#include "../network/network.h"
-#include "../engine/random.h"
-#include "../engine/instances.h"
+#include <instances/serverbattle.h>
+#include <engine/globals.h>
+#include <engine/stats.h>
+#include <engine/constants.h>
+#include <network/packetstream.h>
+#include <network/network.h>
+#include <engine/random.h>
+#include <engine/instances.h>
 #include <objects/player.h>
-#include "../objects/monster.h"
+#include <objects/monster.h>
 
 // Constructor
 ServerBattleClass::ServerBattleClass()

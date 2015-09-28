@@ -18,7 +18,7 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
-#include "singleton.h"
+#include <engine/singleton.h>
 
 class RandomClass {
 
