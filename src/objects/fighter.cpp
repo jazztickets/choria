@@ -60,7 +60,7 @@ FighterClass::~FighterClass() {
 }
 
 // Renders the fighter during a battle
-void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, FighterResultStruct *TResult, bool TTarget) {
+void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
 	char String[256];
 	uint32_t AlphaPercent = (uint32_t)(255 * TTimerPercent);
 	if(TTimerPercent > 0.75f)
@@ -145,7 +145,7 @@ void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, FighterR
 }
 
 // Returns the fighter's current battle
-BattleClass *FighterClass::GetBattle() {
+_Battle *FighterClass::GetBattle() {
 
 	return Battle;
 }

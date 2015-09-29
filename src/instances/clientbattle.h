@@ -26,9 +26,10 @@
 
 // Forward Declarations
 class ItemClass;
+class _Packet;
 
 // Classes
-class ClientBattleClass : public BattleClass {
+class _ClientBattle : public _Battle {
 
 	public:
 
@@ -49,8 +50,8 @@ class ClientBattleClass : public BattleClass {
 			ELEMENT_SKILL8=ELEMENT_SKILL1+BATTLE_MAXSKILLS-1,
 		};
 
-		ClientBattleClass();
-		~ClientBattleClass();
+		_ClientBattle();
+		~_ClientBattle();
 
 		// Setup
 		void StartBattle(PlayerClass *TClientPlayer);
@@ -89,7 +90,7 @@ class ClientBattleClass : public BattleClass {
 		int TotalExperience, TotalGold;
 
 		// Actions
-		FighterResultStruct Results[BATTLE_MAXFIGHTERS];
+		_FighterResult Results[BATTLE_MAXFIGHTERS];
 
 		// Client's player
 		PlayerClass *ClientPlayer;

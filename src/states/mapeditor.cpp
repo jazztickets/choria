@@ -38,7 +38,7 @@ int _MapEditorState::Init() {
 
 	// Default map
 	stringc SavePath = Config.GetSaveMapPath("test.map");
-	Map = new MapClass(SavePath, 50, 50);
+	Map = new _Map(SavePath, 50, 50);
 
 	// Set filters
 	ResetFilters();
@@ -380,7 +380,7 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 			IGUIFileOpenDialog *FileOpen = static_cast<IGUIFileOpenDialog *>(TElement);
 
 			CloseMap();
-			Map = new MapClass(FileOpen->getFileName());
+			Map = new _Map(FileOpen->getFileName());
 			if(!Map->LoadMap()) {
 				CloseMap();
 			}
@@ -484,7 +484,7 @@ void _MapEditorState::CreateMap() {
 
 	// Create map
 	stringc SavePath = Config.GetSaveMapPath(File);
-	Map = new MapClass(SavePath.c_str(), Width, Height);
+	Map = new _Map(SavePath.c_str(), Width, Height);
 
 	CloseWindow(NEWMAP_WINDOW);
 	State = STATE_MAIN;
@@ -640,7 +640,7 @@ void _MapEditorState::ApplyBrush(int TX, int TY) {
 			return;
 
 		// Get existing tile
-		TileStruct Tile;
+		_Tile Tile;
 		Map->GetTile(TX, TY, Tile);
 
 		// Apply filters

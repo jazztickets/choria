@@ -26,8 +26,8 @@ class ObjectManagerClass;
 class InstanceClass;
 class _Packet;
 class PlayerClass;
-class MapClass;
-class ClientBattleClass;
+class _Map;
+class _ClientBattle;
 
 // Classes
 class _PlayClientState : public _State {
@@ -104,8 +104,8 @@ class _PlayClientState : public _State {
 
 		// Objects
 		PlayerClass *Player;
-		MapClass *Map;
-		ClientBattleClass *Battle;
+		_Map *Map;
+		_ClientBattle *Battle;
 		ObjectManagerClass *ObjectManager;
 		InstanceClass *Instances;
 

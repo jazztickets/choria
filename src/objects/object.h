@@ -30,7 +30,7 @@ using namespace io;
 using namespace gui;
 
 // Forward Declarations
-class MapClass;
+class _Map;
 
 // Classes
 class ObjectClass {
@@ -44,7 +44,7 @@ class ObjectClass {
 			MONSTER,
 		};
 
-		virtual void RenderWorld(const MapClass *TMap, const ObjectClass *TClientPlayer=NULL) { }
+		virtual void RenderWorld(const _Map *TMap, const ObjectClass *TClientPlayer=NULL) { }
 
 		ObjectClass(ObjectType TType);
 		virtual ~ObjectClass();
@@ -65,13 +65,13 @@ class ObjectClass {
 		int GetMapID() const;
 
 		// Instances
-		void SetMap(MapClass *TMap);
-		MapClass *GetMap();
+		void SetMap(_Map *TMap);
+		_Map *GetMap();
 
 	protected:
 
 		// Instances
-		MapClass *Map;
+		_Map *Map;
 
 		// Properties
 		ObjectType Type;

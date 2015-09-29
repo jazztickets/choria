@@ -37,11 +37,11 @@ using namespace io;
 using namespace gui;
 
 // Forward Declarations
-class BattleClass;
+class _Battle;
 class ItemClass;
 class SkillClass;
 class DatabaseClass;
-struct TileStruct;
+struct _Tile;
 struct VendorStruct;
 struct TraderStruct;
 
@@ -97,7 +97,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		void SetState(int TState) { State = TState; }
 
 		void Update(uint32_t TDeltaTime);
-		void RenderWorld(const MapClass *TMap, const ObjectClass *TClientPlayer=NULL);
+		void RenderWorld(const _Map *TMap, const ObjectClass *TClientPlayer=NULL);
 
 		// Connection
 		void SetPeer(ENetPeer *TPeer) { Peer = TPeer; }
@@ -186,8 +186,8 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		void SetNextBattle(int TValue) { NextBattle = TValue; }
 		void UpdateNextBattle(int TChange) { NextBattle += TChange; }
 		int GetNextBattle() const { return NextBattle; }
-		void SetBattle(BattleClass *TBattle) { Battle = TBattle; }
-		void StartBattle(BattleClass *TBattle);
+		void SetBattle(_Battle *TBattle) { Battle = TBattle; }
+		void StartBattle(_Battle *TBattle);
 		void StopBattle();
 
 		// Vendor
@@ -205,7 +205,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		int GetSpawnMapID() const { return SpawnMapID; }
 		void SetSpawnPoint(int TValue) { SpawnPoint = TValue; }
 		int GetSpawnPoint() const { return SpawnPoint; }
-		const TileStruct *GetTile();
+		const _Tile *GetTile();
 
 		// World
 		void ToggleBusy(bool Value);

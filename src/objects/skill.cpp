@@ -90,7 +90,7 @@ int SkillClass::GetSellCost(int TPlayerLevel) const {
 }
 
 // Resolves the use of a skill in battle.
-void SkillClass::ResolveSkill(FighterResultStruct *TResult, FighterResultStruct *TTargetResult) const {
+void SkillClass::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const {
 	FighterClass *Fighter = TResult->Fighter;
 	FighterClass *TargetFighter = TTargetResult->Fighter;
 	int SkillLevel = Fighter->GetSkillLevel(ID);

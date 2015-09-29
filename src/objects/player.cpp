@@ -128,7 +128,7 @@ void PlayerClass::Update(uint32_t TDeltaTime) {
 }
 
 // Renders the player while walking around the world
-void PlayerClass::RenderWorld(const MapClass *TMap, const ObjectClass *TClientPlayer) {
+void PlayerClass::RenderWorld(const _Map *TMap, const ObjectClass *TClientPlayer) {
 	if(TMap) {
 
 		position2di ScreenPosition;
@@ -284,7 +284,7 @@ int PlayerClass::GetCurrentZone() {
 }
 
 // Gets the tile that the player is currently standing on
-const TileStruct *PlayerClass::GetTile() {
+const _Tile *PlayerClass::GetTile() {
 
 	return Map->GetTile(Position.X, Position.Y);
 }
@@ -296,7 +296,7 @@ void PlayerClass::GenerateNextBattle() {
 }
 
 // Starts a battle
-void PlayerClass::StartBattle(BattleClass *TBattle) {
+void PlayerClass::StartBattle(_Battle *TBattle) {
 
 	State = STATE_BATTLE;
 	Battle = TBattle;

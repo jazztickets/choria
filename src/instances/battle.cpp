@@ -21,7 +21,7 @@
 #include <objects/player.h>
 
 // Constructor
-BattleClass::BattleClass() {
+_Battle::_Battle() {
 	Timer = 0;
 	LeftFighterCount = 0;
 	RightFighterCount = 0;
@@ -30,7 +30,7 @@ BattleClass::BattleClass() {
 }
 
 // Destructor
-BattleClass::~BattleClass() {
+_Battle::~_Battle() {
 
 	// Delete monsters
 	for(size_t i = 0; i < Fighters.size(); i++) {
@@ -40,7 +40,7 @@ BattleClass::~BattleClass() {
 }
 
 // Add a fighter to the battle
-void BattleClass::AddFighter(FighterClass *TFighter, int TSide) {
+void _Battle::AddFighter(FighterClass *TFighter, int TSide) {
 
 	// Count fighters and set slots
 	if(TSide == 0) {
@@ -61,7 +61,7 @@ void BattleClass::AddFighter(FighterClass *TFighter, int TSide) {
 }
 
 // Get a list of fighters from a side
-void BattleClass::GetFighterList(int TSide, std::vector<FighterClass *> &TFighters) {
+void _Battle::GetFighterList(int TSide, std::vector<FighterClass *> &TFighters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == TSide) {
@@ -71,7 +71,7 @@ void BattleClass::GetFighterList(int TSide, std::vector<FighterClass *> &TFighte
 }
 
 // Get a list of alive fighters from a side
-void BattleClass::GetAliveFighterList(int TSide, std::vector<FighterClass *> &TFighters) {
+void _Battle::GetAliveFighterList(int TSide, std::vector<FighterClass *> &TFighters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == TSide && Fighters[i]->GetHealth() > 0) {
@@ -81,7 +81,7 @@ void BattleClass::GetAliveFighterList(int TSide, std::vector<FighterClass *> &TF
 }
 
 // Get a list of monster from the right side
-void BattleClass::GetMonsterList(std::vector<MonsterClass *> &TMonsters) {
+void _Battle::GetMonsterList(std::vector<MonsterClass *> &TMonsters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->GetType() == FighterClass::TYPE_MONSTER) {
@@ -91,7 +91,7 @@ void BattleClass::GetMonsterList(std::vector<MonsterClass *> &TMonsters) {
 }
 
 // Get a list of players from a side
-void BattleClass::GetPlayerList(int TSide, std::vector<PlayerClass *> &TPlayers) {
+void _Battle::GetPlayerList(int TSide, std::vector<PlayerClass *> &TPlayers) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == TSide && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
@@ -101,7 +101,7 @@ void BattleClass::GetPlayerList(int TSide, std::vector<PlayerClass *> &TPlayers)
 }
 
 // Gets a fighter index from a slot number
-int BattleClass::GetFighterFromSlot(int TSlot) {
+int _Battle::GetFighterFromSlot(int TSlot) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSlot() == TSlot) {
 			return i;

@@ -111,14 +111,14 @@ class _MapEditorState : public _State {
 		int State;
 
 		// Map
-		MapClass *Map;
+		_Map *Map;
 
 		// Textures
 		std::vector<ITexture *> TexturePalette;
 
 		// Brush
 		int BrushSize;
-		TileStruct Brush;
+		_Tile Brush;
 		position2di BrushPosition;
 
 		// Filters

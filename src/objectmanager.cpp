@@ -128,7 +128,7 @@ void ObjectManagerClass::Update(uint32_t TDeltaTime) {
 }
 
 // Renders all of the objects
-void ObjectManagerClass::Render(const MapClass *TMap, ObjectClass *TClientPlayer) {
+void ObjectManagerClass::Render(const _Map *TMap, ObjectClass *TClientPlayer) {
 	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		ObjectClass *Object = *Iterator;
 		Object->RenderWorld(TMap, TClientPlayer);

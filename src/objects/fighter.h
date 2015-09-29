@@ -32,9 +32,9 @@ using namespace gui;
 const int FIGHTER_MAXSKILLS = 8;
 
 // Forward Declarations
-class BattleClass;
+class _Battle;
 class SkillClass;
-struct FighterResultStruct;
+struct _FighterResult;
 
 // Classes
 class FighterClass {
@@ -53,7 +53,7 @@ class FighterClass {
 		int GetType() const { return Type; }
 
 		// Render
-		void RenderBattle(bool TShowResults, float TTimerPercent, FighterResultStruct *TResult, bool TTarget);
+		void RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget);
 		void SetOffset(const irr::core::position2di &TPosition) { Offset = TPosition; }
 
 		// Stats
@@ -84,7 +84,7 @@ class FighterClass {
 		int GetLevel() const { return Level; }
 
 		// Battles
-		BattleClass *GetBattle();
+		_Battle *GetBattle();
 		void SetCommand(int TCommand) { Command = TCommand; }
 		virtual int GetCommand() { return Command; }
 		void SetSkillUsed(const SkillClass *TSkill) { SkillUsed = TSkill; }
@@ -133,7 +133,7 @@ class FighterClass {
 		float HealthRegen, ManaRegen, HealthAccumulator, ManaAccumulator;
 
 		// Battle
-		BattleClass *Battle;
+		_Battle *Battle;
 		int Command, Target, Slot;
 		const SkillClass *SkillUsing, *SkillUsed;
 

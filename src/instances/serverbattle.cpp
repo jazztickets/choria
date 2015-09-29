@@ -28,7 +28,7 @@
 
 // Constructor
 ServerBattleClass::ServerBattleClass()
-:	BattleClass() {
+:	_Battle() {
 
 	RoundTime = 0;
 }
@@ -176,10 +176,10 @@ void ServerBattleClass::ResolveTurn() {
 	}
 
 	// Handle each fighter's action
-	FighterResultStruct Results[BATTLE_MAXFIGHTERS];
+	_FighterResult Results[BATTLE_MAXFIGHTERS];
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
-			FighterResultStruct *Result = &Results[i];
+			_FighterResult *Result = &Results[i];
 			Result->Fighter = Fighters[i];
 
 			// Ignore dead fighters
@@ -193,7 +193,7 @@ void ServerBattleClass::ResolveTurn() {
 					Result->SkillID = Skill->GetID();
 
 					// Update fighters
-					FighterResultStruct *TargetResult = &Results[TargetFighterIndex];
+					_FighterResult *TargetResult = &Results[TargetFighterIndex];
 					TargetResult->Fighter = Fighters[TargetFighterIndex];
 					Skill->ResolveSkill(Result, TargetResult);
 				}
@@ -239,7 +239,7 @@ void ServerBattleClass::CheckEnd() {
 	std::vector<PlayerClass *> Players;
 
 	// Get statistics for each side
-	BattleResultStruct Side[2];
+	_BattleResult Side[2];
 	for(int i = 0; i < 2; i++) {
 
 		// Get a list of fighters that are still in the battle
@@ -337,8 +337,8 @@ void ServerBattleClass::CheckEnd() {
 			// Get rewards
 			int ExperienceEarned = 0;
 			int GoldEarned = 0;
-			BattleResultStruct *PlayerSide = &Side[Players[i]->GetSide()];
-			BattleResultStruct *OppositeSide = &Side[!Players[i]->GetSide()];
+			_BattleResult *PlayerSide = &Side[Players[i]->GetSide()];
+			_BattleResult *OppositeSide = &Side[!Players[i]->GetSide()];
 			if(PlayerSide->Dead) {
 				GoldEarned = (int)(-Players[i]->GetGold() * 0.1f);
 				Players[i]->UpdateDeaths(1);

@@ -19,15 +19,15 @@
 #include <globals.h>
 #include <graphics.h>
 #include <constants.h>
-#include <network/network.h>
-#include <network/packetstream.h>
 #include <filestream.h>
 #include <stats.h>
+#include <network/network.h>
+#include <network/packetstream.h>
 #include <states/playserver.h>
 #include <objects/player.h>
 
 // Constructor for the map editor: new map
-MapClass::MapClass(const stringc &TFilename, int TWidth, int THeight) {
+_Map::_Map(const stringc &TFilename, int TWidth, int THeight) {
 	Init();
 
 	Filename = TFilename;
@@ -38,14 +38,14 @@ MapClass::MapClass(const stringc &TFilename, int TWidth, int THeight) {
 }
 
 // Constructor for the map editor: load map
-MapClass::MapClass(const stringc &TFilename) {
+_Map::_Map(const stringc &TFilename) {
 	Init();
 
 	Filename = TFilename;
 }
 
 // Constructor for maps already created in the database
-MapClass::MapClass(int TMapID) {
+_Map::_Map(int TMapID) {
 	Init();
 
 	// Set ID
@@ -62,14 +62,14 @@ MapClass::MapClass(int TMapID) {
 }
 
 // Destructor
-MapClass::~MapClass() {
+_Map::~_Map() {
 
 	// Delete map data
 	FreeMap();
 }
 
 // Initialize variables
-void MapClass::Init() {
+void _Map::Init() {
 	ID = 0;
 	NoZoneTexture = NULL;
 	Tiles = NULL;
@@ -80,7 +80,7 @@ void MapClass::Init() {
 }
 
 // Free memory used by the tiles
-void MapClass::FreeMap() {
+void _Map::FreeMap() {
 	if(Tiles) {
 		for(int i = 0; i < Width; i++)
 			delete[] Tiles[i];
@@ -93,13 +93,13 @@ void MapClass::FreeMap() {
 }
 
 // Allocates memory for the map
-void MapClass::AllocateMap() {
+void _Map::AllocateMap() {
 	if(Tiles)
 		return;
 
-	Tiles = new TileStruct*[Width];
+	Tiles = new _Tile*[Width];
 	for(int i = 0; i < Width; i++) {
-		Tiles[i] = new TileStruct[Height];
+		Tiles[i] = new _Tile[Height];
 	}
 
 	// Delete textures
@@ -109,7 +109,7 @@ void MapClass::AllocateMap() {
 }
 
 // Updates the map and sends object updates
-void MapClass::Update(uint32_t TDeltaTime) {
+void _Map::Update(uint32_t TDeltaTime) {
 
 	ObjectUpdateTime += TDeltaTime;
 	if(ObjectUpdateTime > 200) {
@@ -120,7 +120,7 @@ void MapClass::Update(uint32_t TDeltaTime) {
 }
 
 // Renders the map
-void MapClass::Render() {
+void _Map::Render() {
 
 	position2di GridPosition, DrawPosition;
 	for(int i = 0; i < ViewSize.Width; i++) {
@@ -135,7 +135,7 @@ void MapClass::Render() {
 
 			// Validate coordinate
 			if(GridPosition.X >= 0 && GridPosition.X < Width && GridPosition.Y >= 0 && GridPosition.Y < Height) {
-				TileStruct *Tile = &Tiles[GridPosition.X][GridPosition.Y];
+				_Tile *Tile = &Tiles[GridPosition.X][GridPosition.Y];
 
 				if(Tile->Texture)
 					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.X, DrawPosition.Y);
@@ -145,7 +145,7 @@ void MapClass::Render() {
 }
 
 // Renders the map for editor
-void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
+void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
 	position2di GridPosition, DrawPosition;
 	for(int i = 0; i < ViewSize.Width; i++) {
@@ -160,7 +160,7 @@ void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP)
 
 			// Validate coordinate
 			if(GridPosition.X >= 0 && GridPosition.X < Width && GridPosition.Y >= 0 && GridPosition.Y < Height) {
-				TileStruct *Tile = &Tiles[GridPosition.X][GridPosition.Y];
+				_Tile *Tile = &Tiles[GridPosition.X][GridPosition.Y];
 
 				// Draw texture
 				if(Tile->Texture)
@@ -196,7 +196,7 @@ void MapClass::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP)
 }
 
 // Sets the camera scroll position
-void MapClass::SetCameraScroll(const position2di &TPosition) {
+void _Map::SetCameraScroll(const position2di &TPosition) {
 
 	CameraScroll = TPosition;
 	if(CameraScroll.X < SCROLLMIN_X)
@@ -210,7 +210,7 @@ void MapClass::SetCameraScroll(const position2di &TPosition) {
 }
 
 // Converts a grid position on the map to a screen coordinate
-bool MapClass::GridToScreen(const position2di &TGridPosition, position2di &TScreenPosition) const {
+bool _Map::GridToScreen(const position2di &TGridPosition, position2di &TScreenPosition) const {
 
 	// Get delta from center
 	position2di CenterDelta(TGridPosition.X - CameraScroll.X, TGridPosition.Y - CameraScroll.Y);
@@ -226,13 +226,13 @@ bool MapClass::GridToScreen(const position2di &TGridPosition, position2di &TScre
 }
 
 // Converts a screen coordinate to a map position
-void MapClass::ScreenToGrid(const position2di &TScreenPosition, position2di &TGridPosition) const {
+void _Map::ScreenToGrid(const position2di &TScreenPosition, position2di &TGridPosition) const {
 	TGridPosition.X = GetCameraScroll().X + TScreenPosition.X / MAP_TILE_WIDTH - GetViewSize().Width / 2;
 	TGridPosition.Y = GetCameraScroll().Y + TScreenPosition.Y / MAP_TILE_HEIGHT - GetViewSize().Height / 2;
 }
 
 // Saves the map to a file
-int MapClass::SaveMap() {
+int _Map::SaveMap() {
 
 	// Open file
 	FileClass File;
@@ -281,7 +281,7 @@ int MapClass::SaveMap() {
 	}
 
 	// Write map data
-	TileStruct *Tile;
+	_Tile *Tile;
 	for(int i = 0; i < Width; i++) {
 		for(int j = 0; j < Height; j++) {
 			Tile = &Tiles[i][j];
@@ -303,7 +303,7 @@ int MapClass::SaveMap() {
 }
 
 // Loads a map
-int MapClass::LoadMap() {
+int _Map::LoadMap() {
 
 	// Open file
 	FileClass File;
@@ -352,7 +352,7 @@ int MapClass::LoadMap() {
 		NoZoneTexture = irrDriver->getTexture(stringc("textures/map/") + TextureFile);
 
 	// Read map data
-	TileStruct *Tile;
+	_Tile *Tile;
 	for(int i = 0; i < Width; i++) {
 		for(int j = 0; j < Height; j++) {
 			Tile = &Tiles[i][j];
@@ -366,7 +366,7 @@ int MapClass::LoadMap() {
 
 			// Save off events that need to be indexed
 			if(Stats.GetEvent(Tile->EventType)->Indexed) {
-				IndexedEvents.push_back(IndexedEventStruct(Tile, position2di(i, j)));
+				IndexedEvents.push_back(_IndexedEvent(Tile, position2di(i, j)));
 			}
 		}
 	}
@@ -378,7 +378,7 @@ int MapClass::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void MapClass::GetTextureListFromMap(std::vector<ITexture *> &TTextures) {
+void _Map::GetTextureListFromMap(std::vector<ITexture *> &TTextures) {
 
 	TTextures.clear();
 
@@ -395,7 +395,7 @@ void MapClass::GetTextureListFromMap(std::vector<ITexture *> &TTextures) {
 }
 
 // Returns the index of a texture in an array
-int MapClass::GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTexture) {
+int _Map::GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTexture) {
 
 	for(size_t i = 0; i < TTextures.size(); i++) {
 		if(TTextures[i] == TTexture)
@@ -406,7 +406,7 @@ int MapClass::GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTex
 }
 
 // Determines if a square can be moved to
-bool MapClass::CanMoveTo(const position2di &TPosition) {
+bool _Map::CanMoveTo(const position2di &TPosition) {
 
 	// Bounds
 	if(TPosition.X < 0 || TPosition.X >= Width || TPosition.Y < 0 || TPosition.Y >= Height)
@@ -416,7 +416,7 @@ bool MapClass::CanMoveTo(const position2di &TPosition) {
 }
 
 // Adds an object to the map
-void MapClass::AddObject(ObjectClass *TObject) {
+void _Map::AddObject(ObjectClass *TObject) {
 
 	// Create packet for the new object
 	_Packet Packet(_Network::WORLD_CREATEOBJECT);
@@ -444,7 +444,7 @@ void MapClass::AddObject(ObjectClass *TObject) {
 }
 
 // Removes an object from the map
-void MapClass::RemoveObject(ObjectClass *TObject) {
+void _Map::RemoveObject(ObjectClass *TObject) {
 
 	// Remove from the map
 	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
@@ -463,13 +463,13 @@ void MapClass::RemoveObject(ObjectClass *TObject) {
 }
 
 // Returns the list of objects
-const std::list<ObjectClass *> &MapClass::GetObjects() const {
+const std::list<ObjectClass *> &_Map::GetObjects() const {
 
 	return Objects;
 }
 
 // Returns a list of players close to a player
-void MapClass::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, std::list<PlayerClass *> &TPlayers) {
+void _Map::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, std::list<PlayerClass *> &TPlayers) {
 
 	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
@@ -486,7 +486,7 @@ void MapClass::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquare
 }
 
 // Returns the closest player
-PlayerClass *MapClass::GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDistanceSquared, int TState) {
+PlayerClass *_Map::GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDistanceSquared, int TState) {
 
 	PlayerClass *ClosestPlayer = NULL;
 	float ClosestDistanceSquared = 1e10;
@@ -509,7 +509,7 @@ PlayerClass *MapClass::GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDi
 }
 
 // Sends object position information to all the clients in the map
-void MapClass::SendObjectUpdates() {
+void _Map::SendObjectUpdates() {
 	_Packet Packet(_Network::WORLD_OBJECTUPDATES, ENET_PACKET_FLAG_UNSEQUENCED, 1);
 
 	// Get object count
@@ -537,7 +537,7 @@ void MapClass::SendObjectUpdates() {
 }
 
 // Sends a packet to all of the players in the map
-void MapClass::SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer) {
+void _Map::SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer) {
 
 	// Send the packet out
 	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
@@ -551,10 +551,10 @@ void MapClass::SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlaye
 }
 
 // Finds an event that matches the criteria
-IndexedEventStruct *MapClass::GetIndexedEvent(int TEventType, int TEventData) {
+_IndexedEvent *_Map::GetIndexedEvent(int TEventType, int TEventData) {
 
 	for(size_t i = 0; i < IndexedEvents.size(); i++) {
-		IndexedEventStruct *IndexedEvent = &IndexedEvents[i];
+		_IndexedEvent *IndexedEvent = &IndexedEvents[i];
 		if(IndexedEvent->Tile->EventType == TEventType && IndexedEvent->Tile->EventData == TEventData) {
 			return IndexedEvent;
 		}

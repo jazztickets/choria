@@ -480,7 +480,7 @@ void _PlayServerState::HandleCharacterSelect(_Packet *TPacket, ENetPeer *TPeer) 
 	ServerNetwork->SendPacketToPeer(&Packet, TPeer);
 
 	// Send map and players to new player
-	SpawnPlayer(Player, Player->GetSpawnMapID(), MapClass::EVENT_SPAWN, Player->GetSpawnPoint());
+	SpawnPlayer(Player, Player->GetSpawnMapID(), _Map::EVENT_SPAWN, Player->GetSpawnPoint());
 }
 
 // Handle a character delete request
@@ -575,25 +575,25 @@ void _PlayServerState::HandleMoveCommand(_Packet *TPacket, ENetPeer *TPeer) {
 	if(Player->MovePlayer(Direction)) {
 
 		// Handle events
-		const TileStruct *Tile = Player->GetTile();
+		const _Tile *Tile = Player->GetTile();
 		switch(Tile->EventType) {
-			case MapClass::EVENT_SPAWN:
+			case _Map::EVENT_SPAWN:
 				Player->SetSpawnMapID(Player->GetMapID());
 				Player->SetSpawnPoint(Tile->EventData);
 				Player->RestoreHealthMana();
 				SendHUD(Player);
 				Player->Save();
 			break;
-			case MapClass::EVENT_MAPCHANGE:
+			case _Map::EVENT_MAPCHANGE:
 				Player->GenerateNextBattle();
-				SpawnPlayer(Player, Tile->EventData, MapClass::EVENT_MAPCHANGE, Player->GetMapID());
+				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->GetMapID());
 			break;
-			case MapClass::EVENT_VENDOR:
+			case _Map::EVENT_VENDOR:
 				Player->SetState(PlayerClass::STATE_VENDOR);
 				Player->SetVendor(Stats.GetVendor(Tile->EventData));
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
-			case MapClass::EVENT_TRADER:
+			case _Map::EVENT_TRADER:
 				Player->SetState(PlayerClass::STATE_TRADER);
 				Player->SetTrader(Stats.GetTrader(Tile->EventData));
 				SendEvent(Player, Tile->EventType, Tile->EventData);
@@ -682,7 +682,7 @@ void _PlayServerState::HandleBattleFinished(_Packet *TPacket, ENetPeer *TPeer) {
 	// Check for death
 	if(Player->GetHealth() == 0) {
 		Player->RestoreHealthMana();
-		SpawnPlayer(Player, Player->GetSpawnMapID(), MapClass::EVENT_SPAWN, Player->GetSpawnPoint());
+		SpawnPlayer(Player, Player->GetSpawnMapID(), _Map::EVENT_SPAWN, Player->GetSpawnPoint());
 		Player->Save();
 	}
 	SendHUD(Player);
@@ -877,7 +877,7 @@ void _PlayServerState::HandleAttackPlayer(_Packet *TPacket, ENetPeer *TPeer) {
 	if(!Player || !Player->CanAttackPlayer())
 		return;
 
-	MapClass *Map = Player->GetMap();
+	_Map *Map = Player->GetMap();
 	if(!Map)
 		return;
 
@@ -912,7 +912,7 @@ void _PlayServerState::HandleChatMessage(_Packet *TPacket, ENetPeer *TPeer) {
 		return;
 
 	// Get map object
-	MapClass *Map = Player->GetMap();
+	_Map *Map = Player->GetMap();
 	if(!Map)
 		return;
 
@@ -936,7 +936,7 @@ void _PlayServerState::HandleTradeRequest(_Packet *TPacket, ENetPeer *TPeer) {
 		return;
 
 	// Get map object
-	MapClass *Map = Player->GetMap();
+	_Map *Map = Player->GetMap();
 	if(!Map)
 		return;
 
@@ -1111,15 +1111,15 @@ void _PlayServerState::HandleTraderAccept(_Packet *TPacket, ENetPeer *TPeer) {
 void _PlayServerState::SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEventType, int TEventData) {
 
 	// Get new map
-	MapClass *NewMap = Instances->GetMap(TNewMapID);
+	_Map *NewMap = Instances->GetMap(TNewMapID);
 
 	// Remove old player if map has changed
-	MapClass *OldMap = TPlayer->GetMap();
+	_Map *OldMap = TPlayer->GetMap();
 	if(OldMap && NewMap != OldMap)
 		OldMap->RemoveObject(TPlayer);
 
 	// Get spawn position
-	IndexedEventStruct *SpawnEvent = NewMap->GetIndexedEvent(TEventType, TEventData);
+	_IndexedEvent *SpawnEvent = NewMap->GetIndexedEvent(TEventType, TEventData);
 	if(SpawnEvent) {
 		TPlayer->SetPosition(SpawnEvent->Position);
 		SendPlayerPosition(TPlayer);
@@ -1275,7 +1275,7 @@ void _PlayServerState::RemovePlayerFromBattle(PlayerClass *TPlayer) {
 void _PlayServerState::DeleteObject(ObjectClass *TObject) {
 
 	// Remove the object from their current map
-	MapClass *Map = TObject->GetMap();
+	_Map *Map = TObject->GetMap();
 	if(Map) {
 		Map->RemoveObject(TObject);
 	}
@@ -1291,7 +1291,7 @@ void ObjectDeleted(ObjectClass *TObject) {
 void _PlayServerState::PlayerTownPortal(PlayerClass *TPlayer) {
 
 	TPlayer->RestoreHealthMana();
-	SpawnPlayer(TPlayer, TPlayer->GetSpawnMapID(), MapClass::EVENT_SPAWN, TPlayer->GetSpawnPoint());
+	SpawnPlayer(TPlayer, TPlayer->GetSpawnMapID(), _Map::EVENT_SPAWN, TPlayer->GetSpawnPoint());
 	SendHUD(TPlayer);
 	TPlayer->Save();
 }

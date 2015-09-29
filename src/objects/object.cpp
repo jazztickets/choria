@@ -34,13 +34,13 @@ ObjectClass::~ObjectClass() {
 }
 
 // Changes the object's map
-void ObjectClass::SetMap(MapClass *TMap) {
+void ObjectClass::SetMap(_Map *TMap) {
 
 	Map = TMap;
 }
 
 // Returns the object's map
-MapClass *ObjectClass::GetMap() {
+_Map *ObjectClass::GetMap() {
 
 	return Map;
 }

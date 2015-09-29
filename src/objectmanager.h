@@ -32,7 +32,7 @@ using namespace gui;
 
 // Forward Declarations
 class ObjectClass;
-class MapClass;
+class _Map;
 
 // Classes
 class ObjectManagerClass {
@@ -43,7 +43,7 @@ class ObjectManagerClass {
 		~ObjectManagerClass();
 
 		void Update(uint32_t TDeltaTime);
-		void Render(const MapClass *TMap, ObjectClass *TClientPlayer=NULL);
+		void Render(const _Map *TMap, ObjectClass *TClientPlayer=NULL);
 		void SetObjectDeletedCallback(void (* Callback)(ObjectClass *TObject)) { ObjectDeletedCallback = Callback; }
 
 		void ClearObjects();

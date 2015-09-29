@@ -31,7 +31,7 @@ using namespace gui;
 // Forward Declarations
 class FighterClass;
 struct VendorStruct;
-struct FighterResultStruct;
+struct _FighterResult;
 
 // Classes
 class SkillClass {
@@ -60,7 +60,7 @@ class SkillClass {
 		void GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const;
 		void GetPowerRange(int TLevel, float &TMin, float &TMax) const;
 
-		void ResolveSkill(FighterResultStruct *TResult, FighterResultStruct *TTargetResult) const;
+		void ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const;
 		bool CanUse(FighterClass *TFighter) const;
 
 	private:

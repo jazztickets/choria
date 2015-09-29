@@ -20,8 +20,11 @@
 // Libraries
 #include <instances/battle.h>
 
+// Forward Declarations
+class _Packet;
+
 // Classes
-class ServerBattleClass : public BattleClass {
+class ServerBattleClass : public _Battle {
 
 	public:
 

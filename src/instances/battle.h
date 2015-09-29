@@ -25,11 +25,10 @@
 class FighterClass;
 class PlayerClass;
 class MonsterClass;
-class _Packet;
 
 // Structures
-struct FighterResultStruct {
-	FighterResultStruct() : Fighter(nullptr), SkillID(-1), Target(-1), DamageDealt(0), HealthChange(0), ManaChange(0) { }
+struct _FighterResult {
+	_FighterResult() : Fighter(nullptr), SkillID(-1), Target(-1), DamageDealt(0), HealthChange(0), ManaChange(0) { }
 	FighterClass *Fighter;
 	int SkillID;
 	int Target;
@@ -38,8 +37,8 @@ struct FighterResultStruct {
 	int ManaChange;
 };
 
-struct BattleResultStruct {
-	BattleResultStruct() : FighterCount(0), PlayerCount(0), MonsterCount(0), ExperienceGiven(0), GoldGiven(0), Dead(true) { }
+struct _BattleResult {
+	_BattleResult() : FighterCount(0), PlayerCount(0), MonsterCount(0), ExperienceGiven(0), GoldGiven(0), Dead(true) { }
 	int FighterCount;
 	int PlayerCount;
 	int MonsterCount;
@@ -49,12 +48,12 @@ struct BattleResultStruct {
 };
 
 // Classes
-class BattleClass {
+class _Battle {
 
 	public:
 
-		BattleClass();
-		virtual ~BattleClass();
+		_Battle();
+		virtual ~_Battle();
 
 		// Objects
 		void AddFighter(FighterClass *TFighter, int TSide);

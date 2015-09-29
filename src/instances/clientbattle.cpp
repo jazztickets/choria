@@ -25,18 +25,18 @@
 #include <objects/player.h>
 
 // Constructor
-ClientBattleClass::ClientBattleClass()
-:	BattleClass() {
+_ClientBattle::_ClientBattle()
+:	_Battle() {
 
 }
 
 // Destructor
-ClientBattleClass::~ClientBattleClass() {
+_ClientBattle::~_ClientBattle() {
 
 }
 
 // Starts the battle on the client
-void ClientBattleClass::StartBattle(PlayerClass *TClientPlayer) {
+void _ClientBattle::StartBattle(PlayerClass *TClientPlayer) {
 
 	// Save the client's player
 	ClientPlayer = TClientPlayer;
@@ -80,7 +80,7 @@ void ClientBattleClass::StartBattle(PlayerClass *TClientPlayer) {
 }
 
 // Removes a player from battle
-void ClientBattleClass::RemovePlayer(PlayerClass *TPlayer) {
+void _ClientBattle::RemovePlayer(PlayerClass *TPlayer) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] == TPlayer) {
 			Fighters[i] = NULL;
@@ -90,7 +90,7 @@ void ClientBattleClass::RemovePlayer(PlayerClass *TPlayer) {
 }
 
 // Handles client input
-void ClientBattleClass::HandleInput(EKEY_CODE TKey) {
+void _ClientBattle::HandleInput(EKEY_CODE TKey) {
 
 	switch(State) {
 		case STATE_GETINPUT: {
@@ -132,7 +132,7 @@ void ClientBattleClass::HandleInput(EKEY_CODE TKey) {
 }
 
 // Handles GUI events
-void ClientBattleClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _ClientBattle::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 
 	int ID = TElement->getID();
 	switch(State) {
@@ -160,7 +160,7 @@ void ClientBattleClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElem
 }
 
 // Handles a command from an other player
-void ClientBattleClass::HandleCommand(int TSlot, int TSkillID) {
+void _ClientBattle::HandleCommand(int TSlot, int TSkillID) {
 	int Index = GetFighterFromSlot(TSlot);
 	if(Index != -1) {
 		Fighters[Index]->SetSkillUsing(Stats.GetSkill(TSkillID));
@@ -168,7 +168,7 @@ void ClientBattleClass::HandleCommand(int TSlot, int TSkillID) {
 }
 
 // Update the battle system for the client
-void ClientBattleClass::Update(uint32_t TDeltaTime) {
+void _ClientBattle::Update(uint32_t TDeltaTime) {
 
 	ResultTimer += TDeltaTime;
 	Timer += TDeltaTime;
@@ -202,7 +202,7 @@ void ClientBattleClass::Update(uint32_t TDeltaTime) {
 }
 
 // Render the battle system
-void ClientBattleClass::Render() {
+void _ClientBattle::Render() {
 
 	// Draw layout
 	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 130, 120, 540, 360, SColor(220, 255, 255, 255));
@@ -232,7 +232,7 @@ void ClientBattleClass::Render() {
 }
 
 // Renders the battle part
-void ClientBattleClass::RenderBattle(bool TShowResults) {
+void _ClientBattle::RenderBattle(bool TShowResults) {
 
 	// Get a percent of the results timer
 	float TimerPercent = 0;
@@ -247,7 +247,7 @@ void ClientBattleClass::RenderBattle(bool TShowResults) {
 }
 
 // Renders the battle win screen
-void ClientBattleClass::RenderBattleWin() {
+void _ClientBattle::RenderBattleWin() {
 
 	char String[512];
 
@@ -311,7 +311,7 @@ void ClientBattleClass::RenderBattleWin() {
 }
 
 // Renders the battle lost screen
-void ClientBattleClass::RenderBattleLose() {
+void _ClientBattle::RenderBattleLose() {
 	RenderBattle(true);
 	char Buffer[256];
 
@@ -324,7 +324,7 @@ void ClientBattleClass::RenderBattleLose() {
 }
 
 // Displays turn results from the server
-void ClientBattleClass::ResolveTurn(_Packet *TPacket) {
+void _ClientBattle::ResolveTurn(_Packet *TPacket) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
@@ -354,7 +354,7 @@ void ClientBattleClass::ResolveTurn(_Packet *TPacket) {
 }
 
 // End of a battle
-void ClientBattleClass::EndBattle(_Packet *TPacket) {
+void _ClientBattle::EndBattle(_Packet *TPacket) {
 
 	// Get ending stats
 	bool SideDead[2];
@@ -398,7 +398,7 @@ void ClientBattleClass::EndBattle(_Packet *TPacket) {
 }
 
 // Calculates a screen position for a slot
-void ClientBattleClass::GetPositionFromSlot(int TSlot, position2di &TPosition) {
+void _ClientBattle::GetPositionFromSlot(int TSlot, position2di &TPosition) {
 
 	// Get side
 	int TSide = TSlot & 1;
@@ -432,7 +432,7 @@ void ClientBattleClass::GetPositionFromSlot(int TSlot, position2di &TPosition) {
 }
 
 // Sends a skill selection to the server
-void ClientBattleClass::SendSkill(int TSkillSlot) {
+void _ClientBattle::SendSkill(int TSkillSlot) {
 	if(ClientPlayer->GetHealth() == 0)
 		return;
 
@@ -455,7 +455,7 @@ void ClientBattleClass::SendSkill(int TSkillSlot) {
 }
 
 // Changes targets
-void ClientBattleClass::ChangeTarget(int TDirection) {
+void _ClientBattle::ChangeTarget(int TDirection) {
 	if(ClientPlayer->GetHealth() == 0)
 		return;
 
@@ -480,7 +480,7 @@ void ClientBattleClass::ChangeTarget(int TDirection) {
 }
 
 // Updates player stats
-void ClientBattleClass::UpdateStats() {
+void _ClientBattle::UpdateStats() {
 	ClientPlayer->UpdateExperience(TotalExperience);
 	ClientPlayer->UpdateGold(TotalGold);
 	ClientPlayer->CalculatePlayerStats();

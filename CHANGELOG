@@ -1,4 +1,5 @@
 choria 0.4.2 -
+- linux save path now in ~/.local/share/choria
 - Switched to c++11
 - Added window release
 - Cleaned up project

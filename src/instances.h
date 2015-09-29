@@ -31,9 +31,9 @@ using namespace io;
 using namespace gui;
 
 // Forward Declarations
-class MapClass;
-class BattleClass;
-class ClientBattleClass;
+class _Map;
+class _Battle;
+class _ClientBattle;
 class ServerBattleClass;
 
 // Classes
@@ -47,18 +47,18 @@ class InstanceClass {
 		void Update(uint32_t TDeltaTime);
 
 		// Maps
-		MapClass *GetMap(int TMapID);
+		_Map *GetMap(int TMapID);
 
 		// Battles
-		ClientBattleClass *CreateClientBattle();
+		_ClientBattle *CreateClientBattle();
 		ServerBattleClass *CreateServerBattle();
-		void DeleteBattle(BattleClass *TBattle);
+		void DeleteBattle(_Battle *TBattle);
 
 	private:
 
-		std::list<MapClass *> Maps;
-		std::list<MapClass *>::iterator MapIterator;
-		std::list<BattleClass *> Battles;
-		std::list<BattleClass *>::iterator BattleIterator;
+		std::list<_Map *> Maps;
+		std::list<_Map *>::iterator MapIterator;
+		std::list<_Battle *> Battles;
+		std::list<_Battle *>::iterator BattleIterator;
 
 };

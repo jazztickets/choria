@@ -218,7 +218,7 @@ void _PlayClientState::Update(uint32_t TDeltaTime) {
 				Battle->Update(TDeltaTime);
 
 				// Done with the battle
-				if(Battle->GetState() == ClientBattleClass::STATE_DELETE) {
+				if(Battle->GetState() == _ClientBattle::STATE_DELETE) {
 					Instances->DeleteBattle(Battle);
 					Battle = NULL;
 					State = STATE_WALK;
@@ -492,7 +492,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 
 	// Load map
 	int NewMapID = TPacket->ReadInt();
-	MapClass *NewMap = Instances->GetMap(NewMapID);
+	_Map *NewMap = Instances->GetMap(NewMapID);
 	if(NewMap != Map) {
 
 		// Clear out other objects
@@ -784,11 +784,11 @@ void _PlayClientState::HandleEventStart(_Packet *TPacket) {
 	Player->SetPosition(GridPosition);
 
 	switch(Type) {
-		case MapClass::EVENT_VENDOR:
+		case _Map::EVENT_VENDOR:
 			HUD.InitVendor(Data);
 			State = STATE_VENDOR;
 		break;
-		case MapClass::EVENT_TRADER:
+		case _Map::EVENT_TRADER:
 			HUD.InitTrader(Data);
 			State = STATE_TRADER;
 		break;

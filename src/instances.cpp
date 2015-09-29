@@ -57,7 +57,7 @@ void InstanceClass::Update(uint32_t TDeltaTime) {
 }
 
 // Gets a map from the manager. Loads the level if it doesn't exist
-MapClass *InstanceClass::GetMap(int TMapID) {
+_Map *InstanceClass::GetMap(int TMapID) {
 
 	// Loop through loaded maps
 	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
@@ -68,15 +68,15 @@ MapClass *InstanceClass::GetMap(int TMapID) {
 	}
 
 	// Not found, so create it
-	MapClass *NewMap = new MapClass(TMapID);
+	_Map *NewMap = new _Map(TMapID);
 	Maps.push_back(NewMap);
 
 	return NewMap;
 }
 
 // Create a client battle instance
-ClientBattleClass *InstanceClass::CreateClientBattle() {
-	ClientBattleClass *NewBattle = new ClientBattleClass();
+_ClientBattle *InstanceClass::CreateClientBattle() {
+	_ClientBattle *NewBattle = new _ClientBattle();
 	Battles.push_back(NewBattle);
 
 	return NewBattle;
@@ -91,7 +91,7 @@ ServerBattleClass *InstanceClass::CreateServerBattle() {
 }
 
 // Battle has finished and can be removed
-void InstanceClass::DeleteBattle(BattleClass *TBattle) {
+void InstanceClass::DeleteBattle(_Battle *TBattle) {
 
 	// Loop through loaded battles
 	for(BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
