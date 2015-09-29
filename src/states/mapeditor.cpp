@@ -39,6 +39,7 @@ using namespace irr;
 
 // Initializes the state
 int _MapEditorState::Init() {
+	WorkingDirectory = irrFile->getWorkingDirectory();
 
 	// Textures
 	BrushSize = 0;
@@ -389,6 +390,7 @@ void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElemen
 		break;
 		case gui::EGET_FILE_SELECTED: {
 			gui::IGUIFileOpenDialog *FileOpen = static_cast<gui::IGUIFileOpenDialog *>(TElement);
+			irrFile->changeWorkingDirectoryTo(WorkingDirectory);
 
 			CloseMap();
 			Map = new _Map(FileOpen->getFileName());
@@ -503,6 +505,7 @@ void _MapEditorState::CreateMap() {
 
 // Initialize the load map screen
 void _MapEditorState::InitLoadMap() {
+	WorkingDirectory = irrFile->getWorkingDirectory();
 
 	// Main dialog window
 	core::stringc StartPath = Config.SaveMapPath;
@@ -600,10 +603,10 @@ void _MapEditorState::RefreshTexturePalette() {
 	TexturePalette.clear();
 
 	// Load all textures in the directory
-	core::stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
+	WorkingDirectory = irrFile->getWorkingDirectory();
 	irrFile->changeWorkingDirectoryTo("textures/map");
 	io::IFileList *FileList = irrFile->createFileList();
-	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
+	irrFile->changeWorkingDirectoryTo(WorkingDirectory.c_str());
 
 	int FileCount = FileList->getFileCount();
 	for(int i = 0; i < FileCount; i++) {
