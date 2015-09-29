@@ -15,6 +15,7 @@ if(MSVC)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
+	add_definitions("-DNOMINMAX")
 
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
