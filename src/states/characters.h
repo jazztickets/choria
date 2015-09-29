@@ -28,7 +28,7 @@ const int CHARACTERS_MAX = 6;
 class _Packet;
 
 // Structures
-struct SlotStruct {
+struct _CharacterSlot {
 	irr::gui::IGUIButton *Button;
 	irr::core::stringc Name;
 	int Level;
@@ -76,7 +76,7 @@ class _CharactersState : public _State {
 
 		// GUI
 		irr::gui::IGUIButton *ButtonPlay, *ButtonLogout, *ButtonCreate, *ButtonDelete;
-		SlotStruct Slots[CHARACTERS_MAX];
+		_CharacterSlot Slots[CHARACTERS_MAX];
 		int SelectedIndex;
 		uint32_t ClickTimer;
 

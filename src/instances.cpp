@@ -22,12 +22,12 @@
 #include <instances/serverbattle.h>
 
 // Constructor
-InstanceClass::InstanceClass() {
+_Instance::_Instance() {
 
 }
 
 // Destructor
-InstanceClass::~InstanceClass() {
+_Instance::~_Instance() {
 
 	// Delete maps
 	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
@@ -43,7 +43,7 @@ InstanceClass::~InstanceClass() {
 }
 
 // Updates all the instances
-void InstanceClass::Update(uint32_t TDeltaTime) {
+void _Instance::Update(uint32_t TDeltaTime) {
 
 	// Update maps
 	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
@@ -57,7 +57,7 @@ void InstanceClass::Update(uint32_t TDeltaTime) {
 }
 
 // Gets a map from the manager. Loads the level if it doesn't exist
-_Map *InstanceClass::GetMap(int TMapID) {
+_Map *_Instance::GetMap(int TMapID) {
 
 	// Loop through loaded maps
 	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
@@ -75,7 +75,7 @@ _Map *InstanceClass::GetMap(int TMapID) {
 }
 
 // Create a client battle instance
-_ClientBattle *InstanceClass::CreateClientBattle() {
+_ClientBattle *_Instance::CreateClientBattle() {
 	_ClientBattle *NewBattle = new _ClientBattle();
 	Battles.push_back(NewBattle);
 
@@ -83,7 +83,7 @@ _ClientBattle *InstanceClass::CreateClientBattle() {
 }
 
 // Create a server battle instance
-_ServerBattle *InstanceClass::CreateServerBattle() {
+_ServerBattle *_Instance::CreateServerBattle() {
 	_ServerBattle *NewBattle = new _ServerBattle();
 	Battles.push_back(NewBattle);
 
@@ -91,7 +91,7 @@ _ServerBattle *InstanceClass::CreateServerBattle() {
 }
 
 // Battle has finished and can be removed
-void InstanceClass::DeleteBattle(_Battle *TBattle) {
+void _Instance::DeleteBattle(_Battle *TBattle) {
 
 	// Loop through loaded battles
 	for(BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {

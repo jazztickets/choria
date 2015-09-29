@@ -22,12 +22,12 @@
 
 // Forward Declarations
 class _Fighter;
-struct VendorStruct;
+struct _Vendor;
 struct _FighterResult;
 
 // Classes
 class _Skill {
-	friend class StatsClass;
+	friend class _Stats;
 
 	public:
 

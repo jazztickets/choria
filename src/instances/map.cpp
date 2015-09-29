@@ -55,7 +55,7 @@ _Map::_Map(int TMapID) {
 	ID = TMapID;
 
 	// Get map info
-	const MapStruct *Map = Stats.GetMap(ID);
+	const _MapStat *Map = Stats.GetMap(ID);
 	ViewSize.Width = Map->ViewWidth;
 	ViewSize.Height = Map->ViewHeight;
 

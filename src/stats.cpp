@@ -23,10 +23,10 @@
 
 using namespace irr;
 
-StatsClass Stats;
+_Stats Stats;
 
 // Initialize
-int StatsClass::Init() {
+int _Stats::Init() {
 
 	// Load database that stores game data
 	Database = new _Database();
@@ -48,7 +48,7 @@ int StatsClass::Init() {
 }
 
 // Shutdown
-int StatsClass::Close() {
+int _Stats::Close() {
 
 	delete Database;
 	Events.clear();
@@ -57,7 +57,7 @@ int StatsClass::Close() {
 }
 
 // Load portrait data
-void StatsClass::LoadPortraits() {
+void _Stats::LoadPortraits() {
 
 	Portraits.clear();
 
@@ -65,7 +65,7 @@ void StatsClass::LoadPortraits() {
 	Database->RunDataQuery("SELECT * FROM Portraits");
 
 	// Get events
-	PortraitStruct Portrait;
+	_Portrait Portrait;
 	while(Database->FetchRow()) {
 		Portrait.ID = Database->GetInt(0);
 		Portrait.Image = irrDriver->getTexture((core::stringc("textures/portraits/") + core::stringc(Database->GetString(1))).c_str());
@@ -75,7 +75,7 @@ void StatsClass::LoadPortraits() {
 }
 
 // Load map data
-void StatsClass::LoadMaps() {
+void _Stats::LoadMaps() {
 
 	Maps.clear();
 
@@ -83,7 +83,7 @@ void StatsClass::LoadMaps() {
 	Database->RunDataQuery("SELECT * FROM Maps");
 
 	// Get events
-	MapStruct Map;
+	_MapStat Map;
 	while(Database->FetchRow()) {
 		Map.File = core::stringc("maps/") + Database->GetString(1);
 		Map.ViewWidth = Database->GetInt(2);
@@ -94,7 +94,7 @@ void StatsClass::LoadMaps() {
 }
 
 // Load event data
-void StatsClass::LoadEvents() {
+void _Stats::LoadEvents() {
 
 	// Clear events
 	Events.clear();
@@ -103,7 +103,7 @@ void StatsClass::LoadEvents() {
 	Database->RunDataQuery("SELECT * FROM Events");
 
 	// Get events
-	EventStruct Event;
+	_Event Event;
 	while(Database->FetchRow()) {
 		Event.Name = Database->GetString(1);
 		Event.ShortName = Database->GetString(2);
@@ -114,7 +114,7 @@ void StatsClass::LoadEvents() {
 }
 
 // Loads level data
-void StatsClass::LoadLevels() {
+void _Stats::LoadLevels() {
 
 	// Clear events
 	Levels.clear();
@@ -123,7 +123,7 @@ void StatsClass::LoadLevels() {
 	Database->RunDataQuery("SELECT * FROM Levels");
 
 	// Get events
-	LevelStruct Level;
+	_Level Level;
 	while(Database->FetchRow()) {
 		Level.Level = Database->GetInt(0);
 		Level.Experience = Database->GetInt(1);
@@ -137,7 +137,7 @@ void StatsClass::LoadLevels() {
 }
 
 // Loads skills into a map
-void StatsClass::LoadSkills() {
+void _Stats::LoadSkills() {
 
 	Skills.clear();
 
@@ -165,7 +165,7 @@ void StatsClass::LoadSkills() {
 }
 
 // Load items
-void StatsClass::LoadItems() {
+void _Stats::LoadItems() {
 
 	Items.clear();
 
@@ -200,7 +200,7 @@ void StatsClass::LoadItems() {
 }
 
 // Loads vendor data
-void StatsClass::LoadVendors() {
+void _Stats::LoadVendors() {
 	Vendors.clear();
 
 	// Run query
@@ -208,7 +208,7 @@ void StatsClass::LoadVendors() {
 
 	// Get vendors
 	char Buffer[256];
-	VendorStruct Vendor;
+	_Vendor Vendor;
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt(0);
 		Vendor.Name = Database->GetString(1);
@@ -231,7 +231,7 @@ void StatsClass::LoadVendors() {
 }
 
 // Loads trader data
-void StatsClass::LoadTraders() {
+void _Stats::LoadTraders() {
 	Traders.clear();
 
 	// Run query
@@ -239,7 +239,7 @@ void StatsClass::LoadTraders() {
 
 	// Get traders
 	char Buffer[256];
-	TraderStruct Trader;
+	_Trader Trader;
 	while(Database->FetchRow()) {
 		Trader.ID = Database->GetInt(0);
 		Trader.Name = Database->GetString(1);
@@ -251,7 +251,7 @@ void StatsClass::LoadTraders() {
 		sprintf(Buffer, "SELECT ItemsID, Count FROM TraderItems where TradersID = %d", Trader.ID);
 		Database->RunDataQuery(Buffer, 1);
 		while(Database->FetchRow(1)) {
-			TraderItemStruct TraderItem;
+			_TraderItem TraderItem;
 			TraderItem.Item = GetItem(Database->GetInt(0, 1));
 			TraderItem.Count = Database->GetInt(1, 1);
 			Trader.TraderItems.push_back(TraderItem);
@@ -264,7 +264,7 @@ void StatsClass::LoadTraders() {
 }
 
 // Gets monsters stats from the database
-void StatsClass::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
+void _Stats::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
 
 	// Run query
 	char QueryString[256];
@@ -302,7 +302,7 @@ void StatsClass::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
 }
 
 // Gets a skill by id
-const _Skill *StatsClass::GetSkill(int TSkillID) {
+const _Skill *_Stats::GetSkill(int TSkillID) {
 	if(TSkillID < 0 || TSkillID >= (int)Skills.size())
 		return nullptr;
 
@@ -310,14 +310,14 @@ const _Skill *StatsClass::GetSkill(int TSkillID) {
 }
 
 // Gets a list of portraits
-void StatsClass::GetPortraitList(std::list<PortraitStruct> &TList) {
+void _Stats::GetPortraitList(std::list<_Portrait> &TList) {
 
-	for(std::map<int, PortraitStruct>::iterator Iterator = Portraits.begin(); Iterator != Portraits.end(); ++Iterator)
+	for(std::map<int, _Portrait>::iterator Iterator = Portraits.begin(); Iterator != Portraits.end(); ++Iterator)
 		TList.push_back(Iterator->second);
 }
 
 // Randomly generates a list of monsters from a zone
-void StatsClass::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters) {
+void _Stats::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters) {
 	if(TZone == 0)
 		return;
 
@@ -341,14 +341,14 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonst
 	Database->RunDataQuery(QueryString);
 
 	// Get monsters in zone
-	std::vector<ZoneStruct> Zone;
+	std::vector<_Zone> Zone;
 	int OddsSum = 0;
 	while(Database->FetchRow()) {
 		int MonsterID = Database->GetInt(0);
 		int Odds = Database->GetInt(1);
 		OddsSum += Odds;
 
-		Zone.push_back(ZoneStruct(MonsterID, OddsSum));
+		Zone.push_back(_Zone(MonsterID, OddsSum));
 	}
 
 	// Free memory
@@ -375,7 +375,7 @@ void StatsClass::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonst
 }
 
 // Generates a list of items dropped from a monster
-void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops) {
+void _Stats::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops) {
 	if(TMonsterID == 0)
 		return;
 
@@ -385,14 +385,14 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<in
 	Database->RunDataQuery(QueryString);
 
 	// Get items from monster
-	std::vector<MonsterDropStruct> MonsterDrop;
+	std::vector<_MonsterDrop> MonsterDrop;
 	int OddsSum = 0;
 	while(Database->FetchRow()) {
 		int ItemID = Database->GetInt(0);
 		int Odds = Database->GetInt(1);
 		OddsSum += Odds;
 
-		MonsterDrop.push_back(MonsterDropStruct(ItemID, OddsSum));
+		MonsterDrop.push_back(_MonsterDrop(ItemID, OddsSum));
 	}
 
 	// Free memory
@@ -419,7 +419,7 @@ void StatsClass::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<in
 }
 
 // Find a level from the given experience number
-const LevelStruct *StatsClass::FindLevel(int TExperience) const {
+const _Level *_Stats::FindLevel(int TExperience) const {
 
 	// Search through levels
 	for(size_t i = 1; i < Levels.size(); i++) {

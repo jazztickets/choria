@@ -28,12 +28,12 @@ class _ClientBattle;
 class _ServerBattle;
 
 // Classes
-class InstanceClass {
+class _Instance {
 
 	public:
 
-		InstanceClass();
-		~InstanceClass();
+		_Instance();
+		~_Instance();
 
 		void Update(uint32_t TDeltaTime);
 

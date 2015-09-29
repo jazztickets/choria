@@ -23,7 +23,7 @@
 
 // Classes
 class _Monster : public _Fighter {
-	friend class StatsClass;
+	friend class _Stats;
 
 	public:
 

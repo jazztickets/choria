@@ -29,8 +29,8 @@ class _Item;
 class _Skill;
 class _Database;
 struct _Tile;
-struct VendorStruct;
-struct TraderStruct;
+struct _Vendor;
+struct _Trader;
 
 struct _InventorySlot {
 	const _Item *Item;
@@ -178,14 +178,14 @@ class _Player : public _Object, public _Fighter {
 		void StopBattle();
 
 		// Vendor
-		void SetVendor(const VendorStruct *TVendor);
-		const VendorStruct *GetVendor();
+		void SetVendor(const _Vendor *TVendor);
+		const _Vendor *GetVendor();
 
 		// Trader
-		void SetTrader(const TraderStruct *TTrader);
-		const TraderStruct *GetTrader();
-		int GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots);
-		void AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRewardSlot);
+		void SetTrader(const _Trader *TTrader);
+		const _Trader *GetTrader();
+		int GetRequiredItemSlots(const _Trader *TTrader, int *TSlots);
+		void AcceptTrader(const _Trader *TTrader, int *TSlots, int TRewardSlot);
 
 		// Map
 		void SetSpawnMapID(int TValue) { SpawnMapID = TValue; }
@@ -261,8 +261,8 @@ class _Player : public _Object, public _Fighter {
 
 		// Items
 		_InventorySlot Inventory[INVENTORY_COUNT];
-		const VendorStruct *Vendor;
-		const TraderStruct *Trader;
+		const _Vendor *Vendor;
+		const _Trader *Trader;
 
 		// Skills
 		int SkillLevels[SKILL_COUNT];

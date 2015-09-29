@@ -80,8 +80,8 @@ int _PlayServerState::Init() {
 		CreateDefaultDatabase();
 	}
 
-	Instances = new InstanceClass();
-	ObjectManager = new ObjectManagerClass();
+	Instances = new _Instance();
+	ObjectManager = new _ObjectManager();
 	ObjectManager->SetObjectDeletedCallback(ObjectDeleted);
 
 	return 1;
@@ -785,7 +785,7 @@ void _PlayServerState::HandleVendorExchange(_Packet *TPacket, ENetPeer *TPeer) {
 		return;
 
 	// Get vendor
-	const VendorStruct *Vendor = Player->GetVendor();
+	const _Vendor *Vendor = Player->GetVendor();
 	if(!Vendor)
 		return;
 
@@ -1092,7 +1092,7 @@ void _PlayServerState::HandleTraderAccept(_Packet *TPacket, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	const TraderStruct *Trader = Player->GetTrader();
+	const _Trader *Trader = Player->GetTrader();
 	if(!Trader)
 		return;
 

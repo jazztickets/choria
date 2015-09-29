@@ -22,8 +22,8 @@
 
 // Forward Declarations
 class _Database;
-class ObjectManagerClass;
-class InstanceClass;
+class _ObjectManager;
+class _Instance;
 class _Packet;
 class _Player;
 class _Map;
@@ -106,8 +106,8 @@ class _PlayClientState : public _State {
 		_Player *Player;
 		_Map *Map;
 		_ClientBattle *Battle;
-		ObjectManagerClass *ObjectManager;
-		InstanceClass *Instances;
+		_ObjectManager *ObjectManager;
+		_Instance *Instances;
 
 };
 

@@ -21,11 +21,11 @@
 #include <ITexture.h>
 
 // Forward Declarations
-struct VendorStruct;
+struct _Vendor;
 
 // Classes
 class _Item {
-	friend class StatsClass;
+	friend class _Stats;
 
 	public:
 
@@ -62,7 +62,7 @@ class _Item {
 		void GetDamageRange(int &TMin, int &TMax) const;
 		void GetDefenseRange(int &TMin, int &TMax) const;
 		void GetType(irr::core::stringc &TString) const;
-		int GetPrice(const VendorStruct *TVendor, int TCount, bool TBuy) const;
+		int GetPrice(const _Vendor *TVendor, int TCount, bool TBuy) const;
 
 	private:
 

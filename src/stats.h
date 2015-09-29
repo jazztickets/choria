@@ -32,18 +32,18 @@ class _Database;
 class _Monster;
 
 // Structures
-struct MapStruct {
+struct _MapStat {
 	irr::core::stringc File;
 	int ViewWidth;
 	int ViewHeight;
 };
 
-struct PortraitStruct {
+struct _Portrait {
 	int ID;
 	irr::video::ITexture *Image;
 };
 
-struct LevelStruct {
+struct _Level {
 	int Level;
 	int Experience;
 	int NextLevel;
@@ -52,19 +52,19 @@ struct LevelStruct {
 	int SkillPoints;
 };
 
-struct ZoneStruct {
-	ZoneStruct(int TMonsterID, int TOdds) : MonsterID(TMonsterID), Odds(TOdds) { }
+struct _Zone {
+	_Zone(int TMonsterID, int TOdds) : MonsterID(TMonsterID), Odds(TOdds) { }
 	int MonsterID;
 	int Odds;
 };
 
-struct EventStruct {
+struct _Event {
 	irr::core::stringc Name;
 	irr::core::stringc ShortName;
 	bool Indexed;
 };
 
-struct VendorStruct {
+struct _Vendor {
 	int ID;
 	irr::core::stringc Name;
 	irr::core::stringc Info;
@@ -73,27 +73,27 @@ struct VendorStruct {
 	std::vector<const _Item *> Items;
 };
 
-struct TraderItemStruct {
+struct _TraderItem {
 	const _Item *Item;
 	int Count;
 };
 
-struct TraderStruct {
+struct _Trader {
 	int ID;
 	irr::core::stringc Name;
 	const _Item *RewardItem;
 	int Count;
-	std::vector<TraderItemStruct> TraderItems;
+	std::vector<_TraderItem> TraderItems;
 };
 
-struct MonsterDropStruct {
-	MonsterDropStruct(int TItemID, int TOdds) : ItemID(TItemID), Odds(TOdds) { }
+struct _MonsterDrop {
+	_MonsterDrop(int TItemID, int TOdds) : ItemID(TItemID), Odds(TOdds) { }
 	int ItemID;
 	int Odds;
 };
 
 // Classes
-class StatsClass {
+class _Stats {
 
 	public:
 
@@ -102,26 +102,26 @@ class StatsClass {
 
 		// General Stats
 		void GetMonsterStats(int TMonsterID, _Monster *TMonster);
-		const PortraitStruct *GetPortrait(int TPortraitID) { return &Portraits[TPortraitID]; }
+		const _Portrait *GetPortrait(int TPortraitID) { return &Portraits[TPortraitID]; }
 		const _Skill *GetSkill(int TSkillID);
-		const MapStruct *GetMap(int TMapID) { return &Maps[TMapID]; }
+		const _MapStat *GetMap(int TMapID) { return &Maps[TMapID]; }
 		const _Item *GetItem(int TItemID) { return &Items[TItemID]; }
-		const VendorStruct *GetVendor(int TVendorID) { return &Vendors[TVendorID]; }
-		const TraderStruct *GetTrader(int TTraderID) { return &Traders[TTraderID]; }
+		const _Vendor *GetVendor(int TVendorID) { return &Vendors[TVendorID]; }
+		const _Trader *GetTrader(int TTraderID) { return &Traders[TTraderID]; }
 
-		void GetPortraitList(std::list<PortraitStruct> &TList);
+		void GetPortraitList(std::list<_Portrait> &TList);
 
 		// Monsters
 		void GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters);
 		void GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops);
 
 		// Events
-		const EventStruct *GetEvent(int TIndex) const { return &Events[TIndex]; }
+		const _Event *GetEvent(int TIndex) const { return &Events[TIndex]; }
 		int GetEventCount() const { return Events.size(); }
 
 		// Levels
-		const LevelStruct *GetLevel(int TLevel) const { return &Levels[TLevel-1]; }
-		const LevelStruct *FindLevel(int TExperience) const;
+		const _Level *GetLevel(int TLevel) const { return &Levels[TLevel-1]; }
+		const _Level *FindLevel(int TExperience) const;
 		int GetMaxLevel() const { return Levels.size(); }
 
 		// Skills
@@ -140,15 +140,15 @@ class StatsClass {
 
 		_Database *Database;
 
-		std::vector<EventStruct> Events;
-		std::vector<LevelStruct> Levels;
+		std::vector<_Event> Events;
+		std::vector<_Level> Levels;
 		std::vector<_Skill> Skills;
 
-		std::map<int, PortraitStruct> Portraits;
-		std::map<int, MapStruct> Maps;
+		std::map<int, _Portrait> Portraits;
+		std::map<int, _MapStat> Maps;
 		std::map<int, _Item> Items;
-		std::map<int, VendorStruct> Vendors;
-		std::map<int, TraderStruct> Traders;
+		std::map<int, _Vendor> Vendors;
+		std::map<int, _Trader> Traders;
 };
 
-extern StatsClass Stats;
+extern _Stats Stats;

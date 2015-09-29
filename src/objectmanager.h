@@ -26,12 +26,12 @@ class _Object;
 class _Map;
 
 // Classes
-class ObjectManagerClass {
+class _ObjectManager {
 
 	public:
 
-		ObjectManagerClass();
-		~ObjectManagerClass();
+		_ObjectManager();
+		~_ObjectManager();
 
 		void Update(uint32_t TDeltaTime);
 		void Render(const _Map *TMap, _Object *TClientPlayer=nullptr);

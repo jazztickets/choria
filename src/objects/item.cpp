@@ -71,7 +71,7 @@ void _Item::GetType(core::stringc &TString) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(const VendorStruct *TVendor, int TCount, bool TBuy) const {
+int _Item::GetPrice(const _Vendor *TVendor, int TCount, bool TBuy) const {
 	if(!TVendor)
 		return 0;
 

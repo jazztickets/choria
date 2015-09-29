@@ -1269,10 +1269,6 @@ void _HUD::DrawCharacter() {
 	sprintf(Buffer, "%d", Player->GetPlayerKills());
 	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
-	//DrawY += 15;
-	//Graphics.RenderText("Bounty", DrawX, DrawY);
-	//sprintf(Buffer, "%d", Player->GetBounty());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
 }
 
 // Draws the skill page

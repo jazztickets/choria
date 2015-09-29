@@ -348,31 +348,31 @@ void _Player::SetPortraitID(int TID) {
 }
 
 // Sets the player's vendor
-void _Player::SetVendor(const VendorStruct *TVendor) {
+void _Player::SetVendor(const _Vendor *TVendor) {
 
 	Vendor = TVendor;
 }
 
 // Gets the player's vendor
-const VendorStruct *_Player::GetVendor() {
+const _Vendor *_Player::GetVendor() {
 
 	return Vendor;
 }
 
 // Sets the player's trader
-void _Player::SetTrader(const TraderStruct *TTrader) {
+void _Player::SetTrader(const _Trader *TTrader) {
 
 	Trader = TTrader;
 }
 
 // Gets the player's trader
-const TraderStruct *_Player::GetTrader() {
+const _Trader *_Player::GetTrader() {
 
 	return Trader;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
-int _Player::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) {
+int _Player::GetRequiredItemSlots(const _Trader *TTrader, int *TSlots) {
 	int RewardItemSlot = -1;
 
 	// Check for an open reward slot
@@ -408,7 +408,7 @@ int _Player::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) {
 }
 
 // Accept a trade from a trader
-void _Player::AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRewardSlot) {
+void _Player::AcceptTrader(const _Trader *TTrader, int *TSlots, int TRewardSlot) {
 	if(TTrader == nullptr || !IsSlotInventory(TRewardSlot))
 		return;
 
@@ -857,12 +857,12 @@ void _Player::CalculateLevelStats() {
 		Experience = 0;
 
 	// Cap max experience
-	const LevelStruct *MaxLevelStat = Stats.GetLevel(Stats.GetMaxLevel());
+	const _Level *MaxLevelStat = Stats.GetLevel(Stats.GetMaxLevel());
 	if(Experience > MaxLevelStat->Experience)
 		Experience = MaxLevelStat->Experience;
 
 	// Find current level
-	const LevelStruct *LevelStat = Stats.FindLevel(Experience);
+	const _Level *LevelStat = Stats.FindLevel(Experience);
 	Level = LevelStat->Level;
 	MaxHealth = LevelStat->Health;
 	MaxMana = LevelStat->Mana;

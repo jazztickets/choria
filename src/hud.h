@@ -32,8 +32,8 @@ class _Player;
 class _Item;
 class _Skill;
 struct _InventorySlot;
-struct VendorStruct;
-struct TraderStruct;
+struct _Vendor;
+struct _Trader;
 
 // Structures
 struct _CursorItem {
@@ -203,8 +203,8 @@ class _HUD {
 
 		// Objects
 		_Player *Player;
-		const VendorStruct *Vendor;
-		const TraderStruct *Trader;
+		const _Vendor *Vendor;
+		const _Trader *Trader;
 
 		// GUI
 		irr::gui::IGUITab *TabMenu, *TabInventory, *TabVendor, *TabTrader, *TabSkill, *TabTrade;

@@ -53,8 +53,8 @@ int _PlayClientState::Init() {
 	Battle = nullptr;
 	State = STATE_CONNECTING;
 
-	Instances = new InstanceClass();
-	ObjectManager = new ObjectManagerClass();
+	Instances = new _Instance();
+	ObjectManager = new _ObjectManager();
 
 	// Set up the HUD system
 	if(!HUD.Init())

@@ -23,8 +23,8 @@
 
 // Forward Declarations
 class _Database;
-class ObjectManagerClass;
-class InstanceClass;
+class _ObjectManager;
+class _Instance;
 class _Packet;
 class _Object;
 class _Player;
@@ -92,8 +92,8 @@ class _PlayServerState : public _State {
 		void RemovePlayerFromBattle(_Player *TPlayer);
 
 		_Database *Database;
-		ObjectManagerClass *ObjectManager;
-		InstanceClass *Instances;
+		_ObjectManager *ObjectManager;
+		_Instance *Instances;
 
 		bool StopRequested;
 

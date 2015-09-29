@@ -21,7 +21,7 @@
 #include <objects/player.h>
 
 // Constructor
-ObjectManagerClass::ObjectManagerClass() {
+_ObjectManager::_ObjectManager() {
 
 	ObjectDeletedCallback = nullptr;
 	ObjectArray = new _Object *[MAX_OBJECTS];
@@ -32,7 +32,7 @@ ObjectManagerClass::ObjectManagerClass() {
 }
 
 // Destructor
-ObjectManagerClass::~ObjectManagerClass() {
+_ObjectManager::~_ObjectManager() {
 
 	ClearObjects();
 
@@ -40,7 +40,7 @@ ObjectManagerClass::~ObjectManagerClass() {
 }
 
 // Adds an object to the manager
-_Object *ObjectManagerClass::AddObject(_Object *TObject) {
+_Object *_ObjectManager::AddObject(_Object *TObject) {
 
 	if(TObject != nullptr) {
 
@@ -60,7 +60,7 @@ _Object *ObjectManagerClass::AddObject(_Object *TObject) {
 }
 
 // Adds an object with an assigned network ID
-_Object *ObjectManagerClass::AddObjectWithNetworkID(_Object *TObject, int TNetworkID) {
+_Object *_ObjectManager::AddObjectWithNetworkID(_Object *TObject, int TNetworkID) {
 
 	if(TObject != nullptr && TNetworkID < MAX_OBJECTS) {
 		TObject->SetNetworkID(TNetworkID);
@@ -72,13 +72,13 @@ _Object *ObjectManagerClass::AddObjectWithNetworkID(_Object *TObject, int TNetwo
 }
 
 // Deletes an object
-void ObjectManagerClass::DeleteObject(_Object *TObject) {
+void _ObjectManager::DeleteObject(_Object *TObject) {
 
 	TObject->SetDeleted(true);
 }
 
 // Deletes all of the objects
-void ObjectManagerClass::ClearObjects() {
+void _ObjectManager::ClearObjects() {
 
 	// Delete objects
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
@@ -89,7 +89,7 @@ void ObjectManagerClass::ClearObjects() {
 }
 
 // Deletes all the objects except for one
-void ObjectManagerClass::DeletesObjectsExcept(_Object *TObject) {
+void _ObjectManager::DeletesObjectsExcept(_Object *TObject) {
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
 		if(Object != TObject)
@@ -98,7 +98,7 @@ void ObjectManagerClass::DeletesObjectsExcept(_Object *TObject) {
 }
 
 // Updates all objects in the scene
-void ObjectManagerClass::Update(uint32_t TDeltaTime) {
+void _ObjectManager::Update(uint32_t TDeltaTime) {
 
 	// Update objects
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
@@ -128,7 +128,7 @@ void ObjectManagerClass::Update(uint32_t TDeltaTime) {
 }
 
 // Renders all of the objects
-void ObjectManagerClass::Render(const _Map *TMap, _Object *TClientPlayer) {
+void _ObjectManager::Render(const _Map *TMap, _Object *TClientPlayer) {
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
 		Object->RenderWorld(TMap, TClientPlayer);
@@ -136,7 +136,7 @@ void ObjectManagerClass::Render(const _Map *TMap, _Object *TClientPlayer) {
 }
 
 // Creates an object from a template ID
-_Object *ObjectManagerClass::CreateObjectFromTemplate(int TTemplateID) {
+_Object *_ObjectManager::CreateObjectFromTemplate(int TTemplateID) {
 
 	_Object *NewObject = nullptr;
 	NewObject = new _Player();
@@ -145,7 +145,7 @@ _Object *ObjectManagerClass::CreateObjectFromTemplate(int TTemplateID) {
 }
 
 // Returns the first available network id
-int ObjectManagerClass::GetNextNetworkID() {
+int _ObjectManager::GetNextNetworkID() {
 
 	for(int i = 0; i < MAX_OBJECTS; i++) {
 		if(ObjectArray[NextNetworkID] == nullptr)
@@ -160,7 +160,7 @@ int ObjectManagerClass::GetNextNetworkID() {
 }
 
 // Returns an object given a network ID
-_Object *ObjectManagerClass::GetObjectFromNetworkID(int TID) {
+_Object *_ObjectManager::GetObjectFromNetworkID(int TID) {
 
 	if(TID < 0 || TID >= MAX_OBJECTS)
 		return nullptr;
