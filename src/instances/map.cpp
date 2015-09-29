@@ -447,7 +447,7 @@ void MapClass::AddObject(ObjectClass *TObject) {
 void MapClass::RemoveObject(ObjectClass *TObject) {
 
 	// Remove from the map
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
 		if(*Iterator == TObject)
 			Iterator = Objects.erase(Iterator);
 		else
@@ -463,15 +463,15 @@ void MapClass::RemoveObject(ObjectClass *TObject) {
 }
 
 // Returns the list of objects
-const list<ObjectClass *> &MapClass::GetObjects() const {
+const std::list<ObjectClass *> &MapClass::GetObjects() const {
 
 	return Objects;
 }
 
 // Returns a list of players close to a player
-void MapClass::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, list<PlayerClass *> &TPlayers) {
+void MapClass::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, std::list<PlayerClass *> &TPlayers) {
 
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
 			if(Player != TPlayer) {
@@ -490,7 +490,7 @@ PlayerClass *MapClass::GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDi
 
 	PlayerClass *ClosestPlayer = NULL;
 	float ClosestDistanceSquared = 1e10;
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
 			if(Player != TPlayer && Player->GetState() == TState) {
@@ -513,10 +513,10 @@ void MapClass::SendObjectUpdates() {
 	_Packet Packet(_Network::WORLD_OBJECTUPDATES, ENET_PACKET_FLAG_UNSEQUENCED, 1);
 
 	// Get object count
-	int ObjectCount = Objects.getSize();
+	int ObjectCount = Objects.size();
 	Packet.WriteChar(ObjectCount);
 
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		ObjectClass *Object = *Iterator;
 		int State = 0;
 		bool Invisible = false;
@@ -540,7 +540,7 @@ void MapClass::SendObjectUpdates() {
 void MapClass::SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer) {
 
 	// Send the packet out
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
 

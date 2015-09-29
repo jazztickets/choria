@@ -49,7 +49,7 @@ class InputClass : public IEventReceiver {
 		bool GetKeyState(EKEY_CODE TKey) const { return Keys[TKey]; }
 		bool GetMouseState(int TButton) const { return MouseButtons[TButton]; }
 
-		const position2di &GetMousePosition() const { return MousePosition; }
+		const irr::core::position2di &GetMousePosition() const { return MousePosition; }
 
 		const char *GetKeyName(EKEY_CODE TKey);
 

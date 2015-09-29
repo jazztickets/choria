@@ -18,17 +18,8 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <vector>
 #include <cstdint>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 // Forward Declarations
 class FighterClass;
@@ -38,7 +29,7 @@ class _Packet;
 
 // Structures
 struct FighterResultStruct {
-	FighterResultStruct() : Fighter(NULL), SkillID(-1), Target(-1), DamageDealt(0), HealthChange(0), ManaChange(0) { }
+	FighterResultStruct() : Fighter(nullptr), SkillID(-1), Target(-1), DamageDealt(0), HealthChange(0), ManaChange(0) { }
 	FighterClass *Fighter;
 	int SkillID;
 	int Target;

@@ -308,7 +308,7 @@ const SkillClass *StatsClass::GetSkill(int TSkillID) {
 }
 
 // Gets a list of portraits
-void StatsClass::GetPortraitList(list<PortraitStruct> &TList) {
+void StatsClass::GetPortraitList(std::list<PortraitStruct> &TList) {
 
 	for(std::map<int, PortraitStruct>::iterator Iterator = Portraits.begin(); Iterator != Portraits.end(); ++Iterator)
 		TList.push_back(Iterator->second);

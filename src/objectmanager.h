@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <list>
 #include <cstdint>
 
 // Namespaces
@@ -52,14 +53,14 @@ class ObjectManagerClass {
 		ObjectClass *AddObjectWithNetworkID(ObjectClass *TObject, int TNetworkID);
 		void DeleteObject(ObjectClass *TObject);
 
-		int GetObjectCount() const { return Objects.getSize(); }
-		const list<ObjectClass *> &GetObjects() const { return Objects; }
+		int GetObjectCount() const { return Objects.size(); }
+		const std::list<ObjectClass *> &GetObjects() const { return Objects; }
 		ObjectClass *GetObjectFromNetworkID(int TID);
 
 	private:
 
 		int GetNextNetworkID();
-		list<ObjectClass *> Objects;
+		std::list<ObjectClass *> Objects;
 
 		// Networking
 		ObjectClass **ObjectArray;

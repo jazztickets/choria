@@ -20,15 +20,8 @@
 // Libraries
 #include <irrlicht.h>
 #include <vector>
+#include <list>
 #include <cstdint>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 const int MAP_TILE_WIDTH = 32;
 const int MAP_TILE_HEIGHT = 32;
@@ -36,7 +29,7 @@ const int MAP_TILE_HEIGHT = 32;
 // Structures
 struct TileStruct {
 	TileStruct() : Texture(NULL), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
-	ITexture *Texture;
+	irr::video::ITexture *Texture;
 	int Zone;
 	int EventType, EventData;
 	bool Wall;
@@ -44,9 +37,9 @@ struct TileStruct {
 };
 
 struct IndexedEventStruct {
-	IndexedEventStruct(const TileStruct *TTile, const position2di &TPosition) : Tile(TTile), Position(TPosition) { }
+	IndexedEventStruct(const TileStruct *TTile, const irr::core::position2di &TPosition) : Tile(TTile), Position(TPosition) { }
 	const TileStruct *Tile;
-	position2di Position;
+	irr::core::position2di Position;
 };
 
 // Forward Declarations
@@ -68,8 +61,8 @@ class MapClass {
 			EVENT_COUNT
 		};
 
-		MapClass(const stringc &TFilename, int TWidth, int THeight);
-		MapClass(const stringc &TFilename);
+		MapClass(const irr::core::stringc &TFilename, int TWidth, int THeight);
+		MapClass(const irr::core::stringc &TFilename);
 		MapClass(int TMapID);
 		~MapClass();
 
@@ -77,27 +70,27 @@ class MapClass {
 
 		// States
 		int GetID() const { return ID; }
-		const stringc &GetFilename() const { return Filename; }
+		const irr::core::stringc &GetFilename() const { return Filename; }
 
 		// Graphics
 		void Render();
 		void RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP);
 
-		void SetCameraScroll(const position2di &TPosition);
-		const position2di &GetCameraScroll() const { return CameraScroll; }
-		const dimension2di &GetViewSize() const { return ViewSize; }
+		void SetCameraScroll(const irr::core::position2di &TPosition);
+		const irr::core::position2di &GetCameraScroll() const { return CameraScroll; }
+		const irr::core::dimension2di &GetViewSize() const { return ViewSize; }
 
-		bool GridToScreen(const position2di &TGridPosition, position2di &TScreenPosition) const;
-		void ScreenToGrid(const position2di &TScreenPosition, position2di &TGridPosition) const;
+		bool GridToScreen(const irr::core::position2di &TGridPosition, irr::core::position2di &TScreenPosition) const;
+		void ScreenToGrid(const irr::core::position2di &TScreenPosition, irr::core::position2di &TGridPosition) const;
 
 		// Collision
-		bool CanMoveTo(const position2di &TPosition);
+		bool CanMoveTo(const irr::core::position2di &TPosition);
 
 		// Object management
 		void AddObject(ObjectClass *TObject);
 		void RemoveObject(ObjectClass *TObject);
-		const list<ObjectClass *> &GetObjects() const;
-		void GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, list<PlayerClass *> &TPlayers);
+		const std::list<ObjectClass *> &GetObjects() const;
+		void GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, std::list<PlayerClass *> &TPlayers);
 		PlayerClass *GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDistanceSquared, int TState);
 
 		void SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer=NULL);
@@ -109,7 +102,7 @@ class MapClass {
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
 		bool IsValidPosition(int TX, int TY) const { return TX >= 0 && TY >= 0 && TX < Width && TY < Height; }
-		void SetNoZoneTexture(ITexture *TTexture) { NoZoneTexture = TTexture; }
+		void SetNoZoneTexture(irr::video::ITexture *TTexture) { NoZoneTexture = TTexture; }
 
 		void GetTile(int TX, int TY, TileStruct &TTile) const { TTile = Tiles[TX][TY]; }
 		const TileStruct *GetTile(int TX, int TY) const { return &Tiles[TX][TY]; }
@@ -128,29 +121,29 @@ class MapClass {
 
 		void SendObjectUpdates();
 
-		void GetTextureListFromMap(std::vector<ITexture *> &TTextures);
-		int GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTexture);
+		void GetTextureListFromMap(std::vector<irr::video::ITexture *> &TTextures);
+		int GetTextureIndex(std::vector<irr::video::ITexture *> &TTextures, irr::video::ITexture *TTexture);
 
 		// Map file
 		int ID;
-		stringc Filename;
+		irr::core::stringc Filename;
 
 		// Viewing
-		dimension2di ViewSize;
-		position2di CameraScroll;
+		irr::core::dimension2di ViewSize;
+		irr::core::position2di CameraScroll;
 
 		// Map data
 		TileStruct **Tiles;
 		int Width, Height;
 
 		// Textures
-		ITexture *NoZoneTexture;
-		std::vector<ITexture *> Textures;
+		irr::video::ITexture *NoZoneTexture;
+		std::vector<irr::video::ITexture *> Textures;
 
 		// Events
 		std::vector<IndexedEventStruct> IndexedEvents;
 
 		// Objects
 		uint32_t ObjectUpdateTime;
-		list<ObjectClass *> Objects;
+		std::list<ObjectClass *> Objects;
 };

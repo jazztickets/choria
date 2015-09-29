@@ -81,7 +81,7 @@ void ObjectManagerClass::DeleteObject(ObjectClass *TObject) {
 void ObjectManagerClass::ClearObjects() {
 
 	// Delete objects
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		delete (*Iterator);
 	}
 
@@ -90,7 +90,7 @@ void ObjectManagerClass::ClearObjects() {
 
 // Deletes all the objects except for one
 void ObjectManagerClass::DeletesObjectsExcept(ObjectClass *TObject) {
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		ObjectClass *Object = *Iterator;
 		if(Object != TObject)
 			Object->SetDeleted(true);
@@ -101,7 +101,7 @@ void ObjectManagerClass::DeletesObjectsExcept(ObjectClass *TObject) {
 void ObjectManagerClass::Update(uint32_t TDeltaTime) {
 
 	// Update objects
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
 		ObjectClass *Object = *Iterator;
 
 		// Update the object
@@ -129,7 +129,7 @@ void ObjectManagerClass::Update(uint32_t TDeltaTime) {
 
 // Renders all of the objects
 void ObjectManagerClass::Render(const MapClass *TMap, ObjectClass *TClientPlayer) {
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		ObjectClass *Object = *Iterator;
 		Object->RenderWorld(TMap, TClientPlayer);
 	}

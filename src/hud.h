@@ -19,6 +19,8 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <IEventReceiver.h>
+#include <list>
 #include <cstdint>
 
 // Namespaces
@@ -120,7 +122,7 @@ class HUDClass {
 		void HandleMouseMotion(int TMouseX, int TMouseY);
 		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void PreGUIDraw();
@@ -216,7 +218,7 @@ class HUDClass {
 
 		// Chat
 		IGUIEditBox *ChatBox;
-		list<ChatStruct> ChatHistory;
+		std::list<ChatStruct> ChatHistory;
 		bool Chatting;
 
 		// Skills

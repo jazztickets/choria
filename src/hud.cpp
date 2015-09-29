@@ -462,7 +462,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 void HUDClass::Update(uint32_t TDeltaTime) {
 
 	// Chat messages
-	for(list<ChatStruct>::Iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
+	for(std::list<ChatStruct>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
 		ChatStruct &Chat = (*Iterator);
 		Chat.TimeOut += TDeltaTime;
 		if(Chat.TimeOut > MESSAGE_TIME) {
@@ -909,7 +909,7 @@ void HUDClass::CloseWindows() {
 
 // Draws chat messages
 void HUDClass::DrawChat() {
-	if(ChatHistory.getSize() == 0)
+	if(ChatHistory.size() == 0)
 		return;
 
 	// Set font
@@ -917,7 +917,7 @@ void HUDClass::DrawChat() {
 	Graphics.SetFont(GraphicsClass::FONT_10);
 
 	int Index = 0;
-	for(list<ChatStruct>::Iterator Iterator = ChatHistory.getLast(); Iterator != ChatHistory.end(); --Iterator) {
+	for(std::list<ChatStruct>::reverse_iterator Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		ChatStruct &Chat = (*Iterator);
 
 		int DrawX = 15;
@@ -1914,8 +1914,8 @@ void HUDClass::RefreshSkillButtons() {
 	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
 
 	// Loop through buttons
-	list<IGUIElement *> Buttons = TabSkill->getChildren();
-	for(list<IGUIElement *>::Iterator Iterator = Buttons.begin(); Iterator != Buttons.end(); ++Iterator) {
+	irr::core::list<IGUIElement *> Buttons = TabSkill->getChildren();
+	for(irr::core::list<IGUIElement *>::Iterator Iterator = Buttons.begin(); Iterator != Buttons.end(); ++Iterator) {
 		IGUIButton *Button = static_cast<IGUIButton *>(*Iterator);
 		Button->setVisible(true);
 

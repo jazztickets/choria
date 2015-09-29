@@ -20,6 +20,9 @@
 // Libraries
 #include <instances/battle.h>
 #include <constants.h>
+#include <IGUIElement.h>
+#include <IGUIButton.h>
+#include <Keycodes.h>
 
 // Forward Declarations
 class ItemClass;
@@ -54,8 +57,8 @@ class ClientBattleClass : public BattleClass {
 		void RemovePlayer(PlayerClass *TPlayer);
 
 		// Input
-		void HandleInput(EKEY_CODE TKey);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		void HandleInput(irr::EKEY_CODE TKey);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 		void HandleCommand(int TSlot, int TSkillID);
 
 		// Updates
@@ -63,7 +66,7 @@ class ClientBattleClass : public BattleClass {
 
 		// Render
 		void Render();
-		void GetPositionFromSlot(int TSlot, position2di &TPosition);
+		void GetPositionFromSlot(int TSlot, irr::core::position2di &TPosition);
 
 		// Resolve
 		void ResolveTurn(_Packet *TPacket);
@@ -90,7 +93,7 @@ class ClientBattleClass : public BattleClass {
 
 		// Client's player
 		PlayerClass *ClientPlayer;
-		IGUIButton *SkillButtons[BATTLE_MAXSKILLS], *PassButton;
+		irr::gui::IGUIButton *SkillButtons[BATTLE_MAXSKILLS], *PassButton;
 
 		// Items
 		std::vector<const ItemClass *> MonsterDrops;

@@ -22,6 +22,7 @@
 #include <objects/item.h>
 #include <objects/skill.h>
 #include <map>
+#include <list>
 #include <vector>
 
 // Namespaces
@@ -117,7 +118,7 @@ class StatsClass {
 		const VendorStruct *GetVendor(int TVendorID) { return &Vendors[TVendorID]; }
 		const TraderStruct *GetTrader(int TTraderID) { return &Traders[TTraderID]; }
 
-		void GetPortraitList(list<PortraitStruct> &TList);
+		void GetPortraitList(std::list<PortraitStruct> &TList);
 
 		// Monsters
 		void GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters);

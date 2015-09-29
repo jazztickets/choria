@@ -93,8 +93,8 @@ int _PlayServerState::Close() {
 	}
 
 	// Disconnect peers
-	list<ObjectClass *> Objects = ObjectManager->GetObjects();
-	for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	std::list<ObjectClass *> Objects = ObjectManager->GetObjects();
+	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
 			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
 			Player->Save();
@@ -617,12 +617,12 @@ void _PlayServerState::HandleMoveCommand(_Packet *TPacket, ENetPeer *TPeer) {
 						if(1) {
 
 							// Get a list of players
-							list<PlayerClass *> Players;
+							std::list<PlayerClass *> Players;
 							Player->GetMap()->GetClosePlayers(Player, 7*7, Players);
 
 							// Add players to battle
 							int PlayersAdded = 0;
-							for(list<PlayerClass *>::Iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
+							for(std::list<PlayerClass *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 								PlayerClass *PartyPlayer = *Iterator;
 								if(PartyPlayer->GetState() == PlayerClass::STATE_WALK && !PartyPlayer->IsInvisible()) {
 									SendPlayerPosition(PartyPlayer);
@@ -888,11 +888,11 @@ void _PlayServerState::HandleAttackPlayer(_Packet *TPacket, ENetPeer *TPeer) {
 		Player->ResetAttackPlayerTime();
 
 		// Get a list of players next to the player
-		list<PlayerClass *> Players;
+		std::list<PlayerClass *> Players;
 		Map->GetClosePlayers(Player, 1.5f * 1.5f, Players);
 
 		// Find a suitable player to attack
-		for(list<PlayerClass *>::Iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
+		for(std::list<PlayerClass *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 			PlayerClass *VictimPlayer = *Iterator;
 			if(VictimPlayer->GetState() != PlayerClass::STATE_BATTLE) {
 				ServerBattleClass *Battle = Instances->CreateServerBattle();
@@ -1144,9 +1144,9 @@ void _PlayServerState::SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEve
 		Packet.WriteInt(TNewMapID);
 
 		// Write object data
-		list<ObjectClass *> Objects = NewMap->GetObjects();
-		Packet.WriteInt(Objects.getSize());
-		for(list<ObjectClass *>::Iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		std::list<ObjectClass *> Objects = NewMap->GetObjects();
+		Packet.WriteInt(Objects.size());
+		for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 			ObjectClass *Object = *Iterator;
 
 			Packet.WriteChar(Object->GetNetworkID());

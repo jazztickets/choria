@@ -19,6 +19,7 @@
 
 // Libraries
 #include <irrlicht.h>
+#include <list>
 #include <cstdint>
 
 // Namespaces
@@ -55,9 +56,9 @@ class InstanceClass {
 
 	private:
 
-		list<MapClass *> Maps;
-		list<MapClass *>::Iterator MapIterator;
-		list<BattleClass *> Battles;
-		list<BattleClass *>::Iterator BattleIterator;
+		std::list<MapClass *> Maps;
+		std::list<MapClass *>::iterator MapIterator;
+		std::list<BattleClass *> Battles;
+		std::list<BattleClass *>::iterator BattleIterator;
 
 };

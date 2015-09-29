@@ -31,12 +31,12 @@ _CreateCharacterState CreateCharacterState;
 int _CreateCharacterState::Init() {
 
 	// Get portrait list
-	list<PortraitStruct> PortraitList;
+	std::list<PortraitStruct> PortraitList;
 	Stats.GetPortraitList(PortraitList);
 
 	// Create portraits
 	int SlotX = 0, SlotY = 0, i = 0;
-	for(list<PortraitStruct>::Iterator Iterator = PortraitList.begin(); Iterator != PortraitList.end(); ++Iterator) {
+	for(std::list<PortraitStruct>::iterator Iterator = PortraitList.begin(); Iterator != PortraitList.end(); ++Iterator) {
 		Portraits.push_back(Iterator->ID);
 		IGUIButton *Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 100 + 50, SlotY * 100 + 150, 64, 64), 0, ELEMENT_PORTRAITS + i);
 		Button->setImage(Iterator->Image);

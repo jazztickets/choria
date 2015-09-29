@@ -54,7 +54,7 @@ class FighterClass {
 
 		// Render
 		void RenderBattle(bool TShowResults, float TTimerPercent, FighterResultStruct *TResult, bool TTarget);
-		void SetOffset(const position2di &TPosition) { Offset = TPosition; }
+		void SetOffset(const irr::core::position2di &TPosition) { Offset = TPosition; }
 
 		// Stats
 		void SetName(const stringc &TName) { Name = TName; }

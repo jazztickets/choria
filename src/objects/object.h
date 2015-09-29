@@ -59,8 +59,8 @@ class ObjectClass {
 		void SetNetworkID(char TValue) { NetworkID = TValue; }
 		char GetNetworkID() const { return NetworkID; }
 
-		void SetPosition(const position2di &TPosition) { Position = TPosition; }
-		const position2di &GetPosition() const { return Position; }
+		void SetPosition(const irr::core::position2di &TPosition) { Position = TPosition; }
+		const irr::core::position2di &GetPosition() const { return Position; }
 
 		int GetMapID() const;
 
