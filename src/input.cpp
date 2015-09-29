@@ -19,10 +19,10 @@
 #include <state.h>
 #include <game.h>
 
-InputClass Input;
+_Input Input;
 
 // Initializes the system
-int InputClass::Init()  {
+int _Input::Init()  {
 
 	MousePosition.X = MousePosition.Y = 0;
 
@@ -30,20 +30,20 @@ int InputClass::Init()  {
 }
 
 // Shuts down the system
-int InputClass::Close() {
+int _Input::Close() {
 
 	return 1;
 }
 
 // Handle events
-bool InputClass::OnEvent(const SEvent &TEvent) {
-	if(Game.GetManagerState() != GameClass::STATE_UPDATE)
+bool _Input::OnEvent(const irr::SEvent &TEvent) {
+	if(Game.GetManagerState() != _Game::STATE_UPDATE)
 		return false;
 
 	bool Processed = false;
 
 	switch(TEvent.EventType) {
-		case EET_KEY_INPUT_EVENT:
+		case irr::EET_KEY_INPUT_EVENT:
 
 			// Send key press events
 			if(TEvent.KeyInput.PressedDown && !GetKeyState(TEvent.KeyInput.Key))
@@ -56,27 +56,27 @@ bool InputClass::OnEvent(const SEvent &TEvent) {
 
 			return Processed;
 		break;
-		case EET_MOUSE_INPUT_EVENT:
+		case irr::EET_MOUSE_INPUT_EVENT:
 
 			switch(TEvent.MouseInput.Event) {
-				case EMIE_LMOUSE_PRESSED_DOWN:
-				case EMIE_RMOUSE_PRESSED_DOWN:
-				case EMIE_MMOUSE_PRESSED_DOWN:
+				case irr::EMIE_LMOUSE_PRESSED_DOWN:
+				case irr::EMIE_RMOUSE_PRESSED_DOWN:
+				case irr::EMIE_MMOUSE_PRESSED_DOWN:
 					SetMouseState(TEvent.MouseInput.Event, true);
 					return Game.GetState()->HandleMousePress(TEvent.MouseInput.Event, TEvent.MouseInput.X, TEvent.MouseInput.Y);
 				break;
-				case EMIE_LMOUSE_LEFT_UP:
-				case EMIE_RMOUSE_LEFT_UP:
-				case EMIE_MMOUSE_LEFT_UP:
+				case irr::EMIE_LMOUSE_LEFT_UP:
+				case irr::EMIE_RMOUSE_LEFT_UP:
+				case irr::EMIE_MMOUSE_LEFT_UP:
 					SetMouseState(TEvent.MouseInput.Event - MOUSE_COUNT, false);
 					Game.GetState()->HandleMouseRelease(TEvent.MouseInput.Event - MOUSE_COUNT, TEvent.MouseInput.X, TEvent.MouseInput.Y);
 				break;
-				case EMIE_MOUSE_MOVED:
+				case irr::EMIE_MOUSE_MOVED:
 					MousePosition.X = TEvent.MouseInput.X;
 					MousePosition.Y = TEvent.MouseInput.Y;
 					Game.GetState()->HandleMouseMotion(MousePosition.X, MousePosition.Y);
 				break;
-				case EMIE_MOUSE_WHEEL:
+				case irr::EMIE_MOUSE_WHEEL:
 					Game.GetState()->HandleMouseWheel(TEvent.MouseInput.Wheel);
 				break;
 				default:
@@ -85,7 +85,7 @@ bool InputClass::OnEvent(const SEvent &TEvent) {
 
 			return false;
 		break;
-		case EET_GUI_EVENT:
+		case irr::EET_GUI_EVENT:
 			Game.GetState()->HandleGUI(TEvent.GUIEvent.EventType, TEvent.GUIEvent.Caller);
 		break;
 		default:
@@ -96,149 +96,149 @@ bool InputClass::OnEvent(const SEvent &TEvent) {
 }
 
 // Resets the keyboard state
-void InputClass::ResetInputState() {
+void _Input::ResetInputState() {
 
-	for(int i = 0; i < KEY_KEY_CODES_COUNT; i++)
+	for(int i = 0; i < irr::KEY_KEY_CODES_COUNT; i++)
 		Keys[i] = 0;
 }
 
 // Converts an irrlicht key code into a string
-const char *InputClass::GetKeyName(EKEY_CODE TKey) {
+const char *_Input::GetKeyName(irr::EKEY_CODE TKey) {
 
 	switch(TKey) {
-		case KEY_KEY_0:
+		case irr::KEY_KEY_0:
 			return "0";
 		break;
-		case KEY_KEY_1:
+		case irr::KEY_KEY_1:
 			return "1";
 		break;
-		case KEY_KEY_2:
+		case irr::KEY_KEY_2:
 			return "2";
 		break;
-		case KEY_KEY_3:
+		case irr::KEY_KEY_3:
 			return "3";
 		break;
-		case KEY_KEY_4:
+		case irr::KEY_KEY_4:
 			return "4";
 		break;
-		case KEY_KEY_5:
+		case irr::KEY_KEY_5:
 			return "5";
 		break;
-		case KEY_KEY_6:
+		case irr::KEY_KEY_6:
 			return "6";
 		break;
-		case KEY_KEY_7:
+		case irr::KEY_KEY_7:
 			return "7";
 		break;
-		case KEY_KEY_8:
+		case irr::KEY_KEY_8:
 			return "8";
 		break;
-		case KEY_KEY_9:
+		case irr::KEY_KEY_9:
 			return "9";
 		break;
-		case KEY_KEY_A:
+		case irr::KEY_KEY_A:
 			return "a";
 		break;
-		case KEY_KEY_B:
+		case irr::KEY_KEY_B:
 			return "b";
 		break;
-		case KEY_KEY_C:
+		case irr::KEY_KEY_C:
 			return "c";
 		break;
-		case KEY_KEY_D:
+		case irr::KEY_KEY_D:
 			return "d";
 		break;
-		case KEY_KEY_E:
+		case irr::KEY_KEY_E:
 			return "e";
 		break;
-		case KEY_KEY_F:
+		case irr::KEY_KEY_F:
 			return "f";
 		break;
-		case KEY_KEY_G:
+		case irr::KEY_KEY_G:
 			return "g";
 		break;
-		case KEY_KEY_H:
+		case irr::KEY_KEY_H:
 			return "h";
 		break;
-		case KEY_KEY_I:
+		case irr::KEY_KEY_I:
 			return "i";
 		break;
-		case KEY_KEY_J:
+		case irr::KEY_KEY_J:
 			return "j";
 		break;
-		case KEY_KEY_K:
+		case irr::KEY_KEY_K:
 			return "k";
 		break;
-		case KEY_KEY_L:
+		case irr::KEY_KEY_L:
 			return "l";
 		break;
-		case KEY_KEY_M:
+		case irr::KEY_KEY_M:
 			return "m";
 		break;
-		case KEY_KEY_N:
+		case irr::KEY_KEY_N:
 			return "n";
 		break;
-		case KEY_KEY_O:
+		case irr::KEY_KEY_O:
 			return "o";
 		break;
-		case KEY_KEY_P:
+		case irr::KEY_KEY_P:
 			return "p";
 		break;
-		case KEY_KEY_Q:
+		case irr::KEY_KEY_Q:
 			return "q";
 		break;
-		case KEY_KEY_R:
+		case irr::KEY_KEY_R:
 			return "r";
 		break;
-		case KEY_KEY_S:
+		case irr::KEY_KEY_S:
 			return "s";
 		break;
-		case KEY_KEY_T:
+		case irr::KEY_KEY_T:
 			return "t";
 		break;
-		case KEY_KEY_U:
+		case irr::KEY_KEY_U:
 			return "u";
 		break;
-		case KEY_KEY_V:
+		case irr::KEY_KEY_V:
 			return "v";
 		break;
-		case KEY_KEY_W:
+		case irr::KEY_KEY_W:
 			return "w";
 		break;
-		case KEY_KEY_X:
+		case irr::KEY_KEY_X:
 			return "x";
 		break;
-		case KEY_KEY_Y:
+		case irr::KEY_KEY_Y:
 			return "y";
 		break;
-		case KEY_KEY_Z:
+		case irr::KEY_KEY_Z:
 			return "z";
 		break;
-		case KEY_LEFT:
+		case irr::KEY_LEFT:
 			return "left";
 		break;
-		case KEY_UP:
+		case irr::KEY_UP:
 			return "up";
 		break;
-		case KEY_RIGHT:
+		case irr::KEY_RIGHT:
 			return "right";
 		break;
-		case KEY_DOWN:
+		case irr::KEY_DOWN:
 			return "down";
 		break;
-		case KEY_SPACE:
+		case irr::KEY_SPACE:
 			return "space";
 		break;
-		case KEY_SHIFT:
+		case irr::KEY_SHIFT:
 			return "shift";
 		break;
-		case KEY_CONTROL:
+		case irr::KEY_CONTROL:
 			return "control";
 		break;
-		case KEY_TAB:
+		case irr::KEY_TAB:
 			return "tab";
 		break;
-		case KEY_RETURN:
+		case irr::KEY_RETURN:
 			return "enter";
 		break;
 		default:

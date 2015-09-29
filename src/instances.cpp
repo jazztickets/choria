@@ -83,8 +83,8 @@ _ClientBattle *InstanceClass::CreateClientBattle() {
 }
 
 // Create a server battle instance
-ServerBattleClass *InstanceClass::CreateServerBattle() {
-	ServerBattleClass *NewBattle = new ServerBattleClass();
+_ServerBattle *InstanceClass::CreateServerBattle() {
+	_ServerBattle *NewBattle = new _ServerBattle();
 	Battles.push_back(NewBattle);
 
 	return NewBattle;

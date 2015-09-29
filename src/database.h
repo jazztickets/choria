@@ -17,18 +17,17 @@
 *******************************************************************************/
 #pragma once
 
-// Libraries
-#include <sqlite3.h>
-#include <cstdio>
-#include <cstring>
+// Forward Declarations
+struct sqlite3;
+struct sqlite3_stmt;
 
 // Classes
-class DatabaseClass {
+class _Database {
 
 	public:
 
-		DatabaseClass();
-		~DatabaseClass();
+		_Database();
+		~_Database();
 
 		int OpenDatabase(const char *TFilename);
 		int OpenDatabaseCreate(const char *TFilename);

@@ -27,7 +27,7 @@
 class _Battle;
 class _Item;
 class _Skill;
-class DatabaseClass;
+class _Database;
 struct _Tile;
 struct VendorStruct;
 struct TraderStruct;
@@ -84,7 +84,7 @@ class _Player : public _Object, public _Fighter {
 		void SetState(int TState) { State = TState; }
 
 		void Update(uint32_t TDeltaTime);
-		void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=NULL);
+		void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=nullptr);
 
 		// Connection
 		void SetPeer(ENetPeer *TPeer) { Peer = TPeer; }
@@ -92,7 +92,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Account
 		void Save();
-		void SetDatabase(DatabaseClass *TDatabase) { Database = TDatabase; }
+		void SetDatabase(_Database *TDatabase) { Database = TDatabase; }
 		void SetAccountID(int TID) { AccountID = TID; }
 		int GetAccountID() const { return AccountID; }
 		void SetCharacterID(int TID) { CharacterID = TID; }
@@ -149,7 +149,7 @@ class _Player : public _Object, public _Fighter {
 		bool UpdateInventory(int TSlot, int TAmount);
 		bool AddItem(const _Item *TItem, int TCount, int TSlot);
 		bool IsBackpackFull();
-		bool IsEmptySlot(int TSlot) { return Inventory[TSlot].Item == NULL; }
+		bool IsEmptySlot(int TSlot) { return Inventory[TSlot].Item == nullptr; }
 		void MoveTradeToInventory();
 		void SplitStack(int TSlot, int TCount);
 
@@ -228,7 +228,7 @@ class _Player : public _Object, public _Fighter {
 		// Connection information
 		int AccountID, CharacterID;
 		ENetPeer *Peer;
-		DatabaseClass *Database;
+		_Database *Database;
 
 		// States
 		int State;

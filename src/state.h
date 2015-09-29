@@ -18,16 +18,9 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
+#include <IGUIElement.h>
 #include <enet/enet.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <cstdint>
 
 // Classes
 class _State {
@@ -41,13 +34,13 @@ class _State {
 		virtual ~_State() { }
 
 		// Events
-		virtual bool HandleKeyPress(EKEY_CODE TKey) { return false; }
-		virtual bool HandleKeyRelease(EKEY_CODE TKey) { return false; }
+		virtual bool HandleKeyPress(irr::EKEY_CODE TKey) { return false; }
+		virtual bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }
 		virtual bool HandleMousePress(int TButton, int TMouseX, int TMouseY) { return false; }
 		virtual void HandleMouseRelease(int TButton, int TMouseX, int TMouseY) { }
 		virtual void HandleMouseWheel(float TDirection) { }
 		virtual void HandleMouseMotion(int TMouseX, int TMouseY) { }
-		virtual void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) { }
+		virtual void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement) { }
 
 		virtual void HandleConnect(ENetEvent *TEvent) { }
 		virtual void HandleDisconnect(ENetEvent *TEvent) { }

@@ -25,9 +25,12 @@
 #include <network/packetstream.h>
 #include <states/playserver.h>
 #include <objects/player.h>
+#include <ITexture.h>
+
+using namespace irr;
 
 // Constructor for the map editor: new map
-_Map::_Map(const stringc &TFilename, int TWidth, int THeight) {
+_Map::_Map(const core::stringc &TFilename, int TWidth, int THeight) {
 	Init();
 
 	Filename = TFilename;
@@ -38,7 +41,7 @@ _Map::_Map(const stringc &TFilename, int TWidth, int THeight) {
 }
 
 // Constructor for the map editor: load map
-_Map::_Map(const stringc &TFilename) {
+_Map::_Map(const core::stringc &TFilename) {
 	Init();
 
 	Filename = TFilename;
@@ -71,8 +74,8 @@ _Map::~_Map() {
 // Initialize variables
 void _Map::Init() {
 	ID = 0;
-	NoZoneTexture = NULL;
-	Tiles = NULL;
+	NoZoneTexture = nullptr;
+	Tiles = nullptr;
 	ViewSize.Width = 25;
 	ViewSize.Height = 19;
 	CameraScroll.X = SCROLLMIN_X;
@@ -86,7 +89,7 @@ void _Map::FreeMap() {
 			delete[] Tiles[i];
 		delete[] Tiles;
 
-		Tiles = NULL;
+		Tiles = nullptr;
 	}
 
 	IndexedEvents.clear();
@@ -122,14 +125,14 @@ void _Map::Update(uint32_t TDeltaTime) {
 // Renders the map
 void _Map::Render() {
 
-	position2di GridPosition, DrawPosition;
+	core::position2di GridPosition, DrawPosition;
 	for(int i = 0; i < ViewSize.Width; i++) {
 		for(int j = 0; j < ViewSize.Height; j++) {
 
 			// Get the actual grid coordinate
 			GridPosition.X = i + CameraScroll.X - ViewSize.Width / 2;
 			GridPosition.Y = j + CameraScroll.Y - ViewSize.Height / 2;
-			DrawPosition = position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
+			DrawPosition = core::position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
 			if(NoZoneTexture)
 				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
 
@@ -147,14 +150,14 @@ void _Map::Render() {
 // Renders the map for editor
 void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
-	position2di GridPosition, DrawPosition;
+	core::position2di GridPosition, DrawPosition;
 	for(int i = 0; i < ViewSize.Width; i++) {
 		for(int j = 0; j < ViewSize.Height; j++) {
 
 			// Get the actual grid coordinate
 			GridPosition.X = i + CameraScroll.X - ViewSize.Width / 2;
 			GridPosition.Y = j + CameraScroll.Y - ViewSize.Height / 2;
-			DrawPosition = position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
+			DrawPosition = core::position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
 			if(NoZoneTexture)
 				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
 
@@ -170,22 +173,22 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
 				// Draw wall
 				if(TDrawWall && Tile->Wall)
-					Graphics.RenderText("W", DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER);
+					Graphics.RenderText("W", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
 
 				// Draw zone
 				if(!Tile->Wall) {
 					if(TDrawZone && Tile->Zone > 0)
-						Graphics.RenderText(stringc(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER);
+						Graphics.RenderText(core::stringc(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
 
 					// Draw PVP
 					if(TDrawPVP && Tile->PVP)
-						Graphics.RenderText("PvP", DrawPosition.X, DrawPosition.Y - 8, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+						Graphics.RenderText("PvP", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 				}
 
 				// Draw event info
 				if(Tile->EventType > 0) {
-					stringc EventText = Stats.GetEvent(Tile->EventType)->ShortName + stringc(", ") + stringc(Tile->EventData);
-					Graphics.RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, GraphicsClass::ALIGN_LEFT, SColor(255, 0, 255, 255));
+					core::stringc EventText = Stats.GetEvent(Tile->EventType)->ShortName + core::stringc(", ") + core::stringc(Tile->EventData);
+					Graphics.RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 255, 255));
 				}
 			}
 			else {
@@ -196,7 +199,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 }
 
 // Sets the camera scroll position
-void _Map::SetCameraScroll(const position2di &TPosition) {
+void _Map::SetCameraScroll(const core::position2di &TPosition) {
 
 	CameraScroll = TPosition;
 	if(CameraScroll.X < SCROLLMIN_X)
@@ -210,10 +213,10 @@ void _Map::SetCameraScroll(const position2di &TPosition) {
 }
 
 // Converts a grid position on the map to a screen coordinate
-bool _Map::GridToScreen(const position2di &TGridPosition, position2di &TScreenPosition) const {
+bool _Map::GridToScreen(const core::position2di &TGridPosition, core::position2di &TScreenPosition) const {
 
 	// Get delta from center
-	position2di CenterDelta(TGridPosition.X - CameraScroll.X, TGridPosition.Y - CameraScroll.Y);
+	core::position2di CenterDelta(TGridPosition.X - CameraScroll.X, TGridPosition.Y - CameraScroll.Y);
 
 	TScreenPosition.X = CenterDelta.X * MAP_TILE_WIDTH + 400;
 	TScreenPosition.Y = CenterDelta.Y * MAP_TILE_HEIGHT + 300;
@@ -226,7 +229,7 @@ bool _Map::GridToScreen(const position2di &TGridPosition, position2di &TScreenPo
 }
 
 // Converts a screen coordinate to a map position
-void _Map::ScreenToGrid(const position2di &TScreenPosition, position2di &TGridPosition) const {
+void _Map::ScreenToGrid(const core::position2di &TScreenPosition, core::position2di &TGridPosition) const {
 	TGridPosition.X = GetCameraScroll().X + TScreenPosition.X / MAP_TILE_WIDTH - GetViewSize().Width / 2;
 	TGridPosition.Y = GetCameraScroll().Y + TScreenPosition.Y / MAP_TILE_HEIGHT - GetViewSize().Height / 2;
 }
@@ -235,7 +238,7 @@ void _Map::ScreenToGrid(const position2di &TScreenPosition, position2di &TGridPo
 int _Map::SaveMap() {
 
 	// Open file
-	FileClass File;
+	_FileStream File;
 	int Result = File.OpenForWrite(Filename.c_str());
 	if(!Result) {
 		printf("SaveMap: unable to open file for writing\n");
@@ -243,7 +246,7 @@ int _Map::SaveMap() {
 	}
 
 	// Generate a list of textures used by the map
-	std::vector<ITexture *> TextureList;
+	std::vector<video::ITexture *> TextureList;
 	GetTextureListFromMap(TextureList);
 
 	// Write header
@@ -254,12 +257,12 @@ int _Map::SaveMap() {
    // Write texture list
 	File.WriteInt(TextureList.size());
 	for(size_t i = 0; i < TextureList.size(); i++) {
-		if(TextureList[i] == NULL)
+		if(TextureList[i] == nullptr)
 			File.WriteString("none");
 		else {
 
 			// Strip path from texture name
-			stringc TexturePath = TextureList[i]->getName();
+			core::stringc TexturePath = TextureList[i]->getName();
 			int SlashIndex = TexturePath.findLastChar("/\\", 2);
 			TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
 
@@ -268,12 +271,12 @@ int _Map::SaveMap() {
 	}
 
 	// Write no-zone texture
-	if(NoZoneTexture == NULL)
+	if(NoZoneTexture == nullptr)
 		File.WriteString("none");
 	else {
 
 		// Strip path from texture name
-		stringc TexturePath = NoZoneTexture->getName();
+		core::stringc TexturePath = NoZoneTexture->getName();
 		int SlashIndex = TexturePath.findLastChar("/\\", 2);
 		TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
 
@@ -306,7 +309,7 @@ int _Map::SaveMap() {
 int _Map::LoadMap() {
 
 	// Open file
-	FileClass File;
+	_FileStream File;
 	int Result = File.OpenForRead(Filename.c_str());
 	if(!Result) {
 		printf("LoadMap: unable to open file for reading: %s\n", Filename.c_str());
@@ -331,25 +334,25 @@ int _Map::LoadMap() {
 	Textures.clear();
 
 	// Read textures from map
-	stringc TextureFile;
+	core::stringc TextureFile;
 	char String[256];
 	for(int i = 0; i < TextureCount; i++) {
 		File.ReadString(String);
 
 		TextureFile = String;
 		if(TextureFile == "none")
-			Textures.push_back(NULL);
+			Textures.push_back(nullptr);
 		else
-			Textures.push_back(irrDriver->getTexture(stringc("textures/map/") + TextureFile));
+			Textures.push_back(irrDriver->getTexture(core::stringc("textures/map/") + TextureFile));
 	}
 
 	// Get no zone texture
 	File.ReadString(String);
 	TextureFile = String;
 	if(TextureFile == "none")
-		NoZoneTexture = NULL;
+		NoZoneTexture = nullptr;
 	else
-		NoZoneTexture = irrDriver->getTexture(stringc("textures/map/") + TextureFile);
+		NoZoneTexture = irrDriver->getTexture(core::stringc("textures/map/") + TextureFile);
 
 	// Read map data
 	_Tile *Tile;
@@ -366,7 +369,7 @@ int _Map::LoadMap() {
 
 			// Save off events that need to be indexed
 			if(Stats.GetEvent(Tile->EventType)->Indexed) {
-				IndexedEvents.push_back(_IndexedEvent(Tile, position2di(i, j)));
+				IndexedEvents.push_back(_IndexedEvent(Tile, core::position2di(i, j)));
 			}
 		}
 	}
@@ -378,7 +381,7 @@ int _Map::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void _Map::GetTextureListFromMap(std::vector<ITexture *> &TTextures) {
+void _Map::GetTextureListFromMap(std::vector<video::ITexture *> &TTextures) {
 
 	TTextures.clear();
 
@@ -395,7 +398,7 @@ void _Map::GetTextureListFromMap(std::vector<ITexture *> &TTextures) {
 }
 
 // Returns the index of a texture in an array
-int _Map::GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTexture) {
+int _Map::GetTextureIndex(std::vector<video::ITexture *> &TTextures, video::ITexture *TTexture) {
 
 	for(size_t i = 0; i < TTextures.size(); i++) {
 		if(TTextures[i] == TTexture)
@@ -406,7 +409,7 @@ int _Map::GetTextureIndex(std::vector<ITexture *> &TTextures, ITexture *TTexture
 }
 
 // Determines if a square can be moved to
-bool _Map::CanMoveTo(const position2di &TPosition) {
+bool _Map::CanMoveTo(const core::position2di &TPosition) {
 
 	// Bounds
 	if(TPosition.X < 0 || TPosition.X >= Width || TPosition.Y < 0 || TPosition.Y >= Height)
@@ -488,7 +491,7 @@ void _Map::GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::
 // Returns the closest player
 _Player *_Map::GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState) {
 
-	_Player *ClosestPlayer = NULL;
+	_Player *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = 1e10;
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == _Object::PLAYER) {
@@ -560,5 +563,5 @@ _IndexedEvent *_Map::GetIndexedEvent(int TEventType, int TEventData) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }

@@ -19,19 +19,19 @@
 #include <globals.h>
 #include <irrlicht.h>
 
-GraphicsClass Graphics;
+_Graphics Graphics;
 
 using namespace irr;
 
 // Initializes the graphics system
-int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, video::E_DRIVER_TYPE TDriverType, IEventReceiver *TEventReceiver) {
+int _Graphics::Init(int TWidth, int THeight, bool TFullScreen, video::E_DRIVER_TYPE TDriverType, IEventReceiver *TEventReceiver) {
 
 	Width = TWidth;
 	Height = THeight;
 
 	// Create the irrlicht device
 	irrDevice = createDevice(TDriverType, core::dimension2du(TWidth, THeight), 32, TFullScreen, true, false, TEventReceiver);
-	if(irrDevice == NULL)
+	if(irrDevice == nullptr)
 		return 0;
 
 	irrDevice->setWindowCaption(L"choria");
@@ -113,7 +113,7 @@ int GraphicsClass::Init(int TWidth, int THeight, bool TFullScreen, video::E_DRIV
 }
 
 // Closes the graphics system
-int GraphicsClass::Close() {
+int _Graphics::Close() {
 
 	// Close irrlicht
 	irrDevice->drop();
@@ -122,17 +122,17 @@ int GraphicsClass::Close() {
 }
 
 // Erases the buffer and sets irrlicht up for the next frame
-void GraphicsClass::BeginFrame() {
+void _Graphics::BeginFrame() {
 	irrDriver->beginScene(true, true, ClearColor);
 }
 
 // Draws the buffer to the screen
-void GraphicsClass::EndFrame() {
+void _Graphics::EndFrame() {
 	irrDriver->endScene();
 }
 
 // Draws an 2d image centered about a point
-void GraphicsClass::DrawCenteredImage(const video::ITexture *TTexture, int TPositionX, int TPositionY, const video::SColor &TColor) {
+void _Graphics::DrawCenteredImage(const video::ITexture *TTexture, int TPositionX, int TPositionY, const video::SColor &TColor) {
 
 	if(TTexture)
 		irrDriver->draw2DImage(
@@ -146,14 +146,14 @@ void GraphicsClass::DrawCenteredImage(const video::ITexture *TTexture, int TPosi
 }
 
 // Sets the current font
-void GraphicsClass::SetFont(int TType) {
+void _Graphics::SetFont(int TType) {
 
 	CurrentFont = TType;
 	Skin->setFont(Fonts[CurrentFont]);
 }
 
 // Adds text to the screen
-gui::IGUIStaticText *GraphicsClass::AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, gui::IGUIElement *TParent) {
+gui::IGUIStaticText *_Graphics::AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, gui::IGUIElement *TParent) {
 
 	// Convert string
 	core::stringw Text(TText);
@@ -177,7 +177,7 @@ gui::IGUIStaticText *GraphicsClass::AddText(const char *TText, int TPositionX, i
 }
 
 // Draws text to the screen
-void GraphicsClass::RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, const video::SColor &TColor) {
+void _Graphics::RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, const video::SColor &TColor) {
 
 	// Convert string
 	core::stringw Text(TText);
@@ -201,7 +201,7 @@ void GraphicsClass::RenderText(const char *TText, int TPositionX, int TPositionY
 }
 
 // Return a centered rect
-irr::core::recti GraphicsClass::GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
+irr::core::recti _Graphics::GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
 	TWidth >>= 1;
 	THeight >>= 1;
 
@@ -209,32 +209,32 @@ irr::core::recti GraphicsClass::GetCenteredRect(int TPositionX, int TPositionY, 
 }
 
 // Return a rect
-irr::core::recti GraphicsClass::GetRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
+irr::core::recti _Graphics::GetRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
 
 	return core::recti(TPositionX, TPositionY, TPositionX + TWidth, TPositionY + THeight);
 }
 
 // Clear all the GUI elements
-void GraphicsClass::Clear() {
+void _Graphics::Clear() {
 
 	irrGUI->clear();
 }
 
 // Draws an interface image
-void GraphicsClass::DrawImage(ImageType TType, int TPositionX, int TPositionY, const video::SColor &TColor) {
+void _Graphics::DrawImage(ImageType TType, int TPositionX, int TPositionY, const video::SColor &TColor) {
 
 	Graphics.DrawCenteredImage(Images[TType], TPositionX, TPositionY, TColor);
 }
 
 // Draws a health or mana bar
-void GraphicsClass::DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight) {
+void _Graphics::DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight) {
 
 	irrDriver->draw2DImage(Images[TType + 1], core::position2di(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, video::SColor(255, 255, 255, 255), true);
 	irrDriver->draw2DImage(Images[TType], core::position2di(TPositionX, TPositionY), core::recti(0, 0, (int)(TWidth * TPercent), THeight), 0, video::SColor(255, 255, 255, 255), true);
 }
 
 // Draws a tiled background
-void GraphicsClass::DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const video::SColor &TColor) {
+void _Graphics::DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const video::SColor &TColor) {
 
 	irrDriver->draw2DImage(Images[TType], core::position2di(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, TColor, true);
 }

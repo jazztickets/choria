@@ -23,21 +23,32 @@
 #include <stats.h>
 #include <config.h>
 #include <states/mainmenu.h>
+#include <IFileSystem.h>
+#include <IGUIEnvironment.h>
+#include <IGUISpinBox.h>
+#include <IGUICheckBox.h>
+#include <IGUIComboBox.h>
+#include <IGUIFileOpenDialog.h>
+#include <IGUIWindow.h>
+#include <IGUIEditBox.h>
+#include <IGUIButton.h>
 
 _MapEditorState MapEditorState;
+
+using namespace irr;
 
 // Initializes the state
 int _MapEditorState::Init() {
 
 	// Textures
 	BrushSize = 0;
-	Brush.Texture = NULL;
+	Brush.Texture = nullptr;
 	RefreshTexturePalette();
 	if(TexturePalette.size() > 0)
 		Brush.Texture = TexturePalette[0];
 
 	// Default map
-	stringc SavePath = Config.GetSaveMapPath("test.map");
+	core::stringc SavePath = Config.GetSaveMapPath("test.map");
 	Map = new _Map(SavePath, 50, 50);
 
 	// Set filters
@@ -63,7 +74,7 @@ void _MapEditorState::CloseMap() {
 
 	if(Map) {
 		delete Map;
-		Map = NULL;
+		Map = nullptr;
 	}
 }
 
@@ -74,7 +85,7 @@ void _MapEditorState::Update(uint32_t TDeltaTime) {
 
 	switch(State) {
 		case STATE_MAIN:
-			if(Input.GetMouseState(InputClass::MOUSE_LEFT) && !(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL))) {
+			if(Input.GetMouseState(_Input::MOUSE_LEFT) && !(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL))) {
 				switch(BrushSize) {
 					case 0:
 						ApplyBrush(BrushPosition.X, BrushPosition.Y);
@@ -103,9 +114,9 @@ void _MapEditorState::Draw() {
 		Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
 	RenderBrush();
 
-	stringc GridBrushPositionText = stringc(BrushPosition.X) + stringc(" ") + stringc(BrushPosition.Y);
+	core::stringc GridBrushPositionText = core::stringc(BrushPosition.X) + core::stringc(" ") + core::stringc(BrushPosition.Y);
 
-	Graphics.SetFont(GraphicsClass::FONT_8);
+	Graphics.SetFont(_Graphics::FONT_8);
 	Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
 
 	irrGUI->drawAll();
@@ -241,14 +252,14 @@ bool _MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 
 	if(Map) {
 		switch(TButton) {
-			case InputClass::MOUSE_LEFT:
+			case _Input::MOUSE_LEFT:
 				if(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL)) {
 					if(Map->IsValidPosition(BrushPosition.X, BrushPosition.Y))
 						Brush = *Map->GetTile(BrushPosition.X, BrushPosition.Y);
 				}
 			break;
-			case InputClass::MOUSE_RIGHT: {
-				Map->ScreenToGrid(position2di(TMouseX, TMouseY), BrushPosition);
+			case _Input::MOUSE_RIGHT: {
+				Map->ScreenToGrid(core::position2di(TMouseX, TMouseY), BrushPosition);
 				Map->SetCameraScroll(BrushPosition);
 			} break;
 		}
@@ -269,19 +280,19 @@ void _MapEditorState::HandleMouseWheel(float TDirection) {
 void _MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
 
 	if(Map) {
-		Map->ScreenToGrid(position2di(TMouseX, TMouseY), BrushPosition);
+		Map->ScreenToGrid(core::position2di(TMouseX, TMouseY), BrushPosition);
 	}
 }
 
 // GUI events
-void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 
 	switch(TEventType) {
-		case EGET_ELEMENT_CLOSED:
+		case gui::EGET_ELEMENT_CLOSED:
 			State = STATE_MAIN;
 		break;
-		case EGET_EDITBOX_ENTER: {
-			IGUISpinBox *SpinBox = static_cast<IGUISpinBox *>(TElement);
+		case gui::EGET_EDITBOX_ENTER: {
+			gui::IGUISpinBox *SpinBox = static_cast<gui::IGUISpinBox *>(TElement);
 			switch(TElement->getID()) {
 				case NEWMAP_FILE:
 				case NEWMAP_WIDTH:
@@ -298,7 +309,7 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 			}
 		}
 		break;
-		case EGET_BUTTON_CLICKED:
+		case gui::EGET_BUTTON_CLICKED:
 			switch(TElement->getID()) {
 				case NEWMAP_CREATE:
 					CreateMap();
@@ -324,8 +335,8 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 				break;
 			}
 		break;
-		case EGET_CHECKBOX_CHANGED: {
-			IGUICheckBox *CheckBox = static_cast<IGUICheckBox *>(TElement);
+		case gui::EGET_CHECKBOX_CHANGED: {
+			gui::IGUICheckBox *CheckBox = static_cast<gui::IGUICheckBox *>(TElement);
 
 			switch(TElement->getID()) {
 				case BRUSHOPTIONS_WALL:
@@ -355,8 +366,8 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 			}
 		}
 		break;
-		case EGET_SPINBOX_CHANGED: {
-			IGUISpinBox *SpinBox = static_cast<IGUISpinBox *>(TElement);
+		case gui::EGET_SPINBOX_CHANGED: {
+			gui::IGUISpinBox *SpinBox = static_cast<gui::IGUISpinBox *>(TElement);
 			switch(TElement->getID()) {
 				case BRUSHOPTIONS_ZONE:
 					Brush.Zone = (int)SpinBox->getValue();
@@ -367,8 +378,8 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 			}
 		}
 		break;
-		case EGET_COMBO_BOX_CHANGED: {
-			IGUIComboBox *ComboBox = static_cast<IGUIComboBox *>(TElement);
+		case gui::EGET_COMBO_BOX_CHANGED: {
+			gui::IGUIComboBox *ComboBox = static_cast<gui::IGUIComboBox *>(TElement);
 			switch(TElement->getID()) {
 				case BRUSHOPTIONS_EVENTTYPE:
 					Brush.EventType = (int)ComboBox->getSelected();
@@ -376,8 +387,8 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 			}
 		}
 		break;
-		case EGET_FILE_SELECTED: {
-			IGUIFileOpenDialog *FileOpen = static_cast<IGUIFileOpenDialog *>(TElement);
+		case gui::EGET_FILE_SELECTED: {
+			gui::IGUIFileOpenDialog *FileOpen = static_cast<gui::IGUIFileOpenDialog *>(TElement);
 
 			CloseMap();
 			Map = new _Map(FileOpen->getFileName());
@@ -388,7 +399,7 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 			State = STATE_MAIN;
 		}
 		break;
-		case EGET_FILE_CHOOSE_DIALOG_CANCELLED:
+		case gui::EGET_FILE_CHOOSE_DIALOG_CANCELLED:
 			State = STATE_MAIN;
 		break;
 		default:
@@ -399,7 +410,7 @@ void _MapEditorState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElemen
 // Close a window by element
 void _MapEditorState::CloseWindow(int TElement) {
 
-	IGUIWindow *Window = static_cast<IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(TElement));
+	gui::IGUIWindow *Window = static_cast<gui::IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(TElement));
 	if(Window)
 		irrGUI->getRootGUIElement()->removeChild(Window);
 }
@@ -408,22 +419,22 @@ void _MapEditorState::CloseWindow(int TElement) {
 void _MapEditorState::InitNewMap() {
 
 	// Main dialog window
-	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
+	gui::IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
 	irrGUI->setFocus(Window);
 
 	// Filename
-	Graphics.AddText("File", 80, 54, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIEditBox *EditName = irrGUI->addEditBox(L"test.map", Graphics.GetRect(90, 50, 150, 25), true, Window, NEWMAP_FILE);
+	Graphics.AddText("File", 80, 54, _Graphics::ALIGN_RIGHT, Window);
+	gui::IGUIEditBox *EditName = irrGUI->addEditBox(L"test.map", Graphics.GetRect(90, 50, 150, 25), true, Window, NEWMAP_FILE);
 	EditName->setMax(15);
 
 	// Map width
-	Graphics.AddText("Width", 80, 84, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIEditBox *EditWidth = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 80, 100, 25), true, Window, NEWMAP_WIDTH);
+	Graphics.AddText("Width", 80, 84, _Graphics::ALIGN_RIGHT, Window);
+	gui::IGUIEditBox *EditWidth = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 80, 100, 25), true, Window, NEWMAP_WIDTH);
 	EditWidth->setMax(15);
 
 	// Map height
-	Graphics.AddText("Height", 80, 114, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIEditBox *EditHeight = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 110, 100, 25), true, Window, NEWMAP_HEIGHT);
+	Graphics.AddText("Height", 80, 114, _Graphics::ALIGN_RIGHT, Window);
+	gui::IGUIEditBox *EditHeight = irrGUI->addEditBox(L"100", Graphics.GetRect(90, 110, 100, 25), true, Window, NEWMAP_HEIGHT);
 	EditHeight->setMax(15);
 
 	// Buttons
@@ -442,19 +453,19 @@ void _MapEditorState::InitNewMap() {
 void _MapEditorState::CreateMap() {
 
 	// Get window
-	IGUIWindow *Window = static_cast<IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(NEWMAP_WINDOW));
+	gui::IGUIWindow *Window = static_cast<gui::IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(NEWMAP_WINDOW));
 
 	// Get buttons
-	IGUIEditBox *EditFile = static_cast<IGUIEditBox *>(Window->getElementFromId(NEWMAP_FILE));
-	IGUIEditBox *EditWidth = static_cast<IGUIEditBox *>(Window->getElementFromId(NEWMAP_WIDTH));
-	IGUIEditBox *EditHeight = static_cast<IGUIEditBox *>(Window->getElementFromId(NEWMAP_HEIGHT));
+	gui::IGUIEditBox *EditFile = static_cast<gui::IGUIEditBox *>(Window->getElementFromId(NEWMAP_FILE));
+	gui::IGUIEditBox *EditWidth = static_cast<gui::IGUIEditBox *>(Window->getElementFromId(NEWMAP_WIDTH));
+	gui::IGUIEditBox *EditHeight = static_cast<gui::IGUIEditBox *>(Window->getElementFromId(NEWMAP_HEIGHT));
 
-	IGUIStaticText *TextError = static_cast<IGUIStaticText *>(Window->getElementFromId(NEWMAP_ERROR));
+	gui::IGUIStaticText *TextError = static_cast<gui::IGUIStaticText *>(Window->getElementFromId(NEWMAP_ERROR));
 
 	// Get values
-	stringc File(EditFile->getText());
-	int Width = atoi(stringc(EditWidth->getText()).c_str());
-	int Height = atoi(stringc(EditHeight->getText()).c_str());
+	core::stringc File(EditFile->getText());
+	int Width = atoi(core::stringc(EditWidth->getText()).c_str());
+	int Height = atoi(core::stringc(EditHeight->getText()).c_str());
 
 	// Check filename
 	File.make_lower();
@@ -483,7 +494,7 @@ void _MapEditorState::CreateMap() {
 	CloseMap();
 
 	// Create map
-	stringc SavePath = Config.GetSaveMapPath(File);
+	core::stringc SavePath = Config.GetSaveMapPath(File);
 	Map = new _Map(SavePath.c_str(), Width, Height);
 
 	CloseWindow(NEWMAP_WINDOW);
@@ -494,8 +505,8 @@ void _MapEditorState::CreateMap() {
 void _MapEditorState::InitLoadMap() {
 
 	// Main dialog window
-	stringc StartPath = Config.GetSaveMapPath("");
-	irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (stringc::char_type *)StartPath.c_str());
+	core::stringc StartPath = Config.GetSaveMapPath("");
+	irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (core::stringc::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;
 }
@@ -504,15 +515,15 @@ void _MapEditorState::InitLoadMap() {
 void _MapEditorState::InitTexturePalette() {
 
 	// Main dialog window
-	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
+	gui::IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
 	irrGUI->setFocus(Window);
 
 	// Load texture buttons
 	int StartX = 10;
-	position2di TexturePosition(StartX, 30);
+	core::position2di TexturePosition(StartX, 30);
 	for(size_t i = 0; i < TexturePalette.size(); i++) {
 
-		IGUIButton *Button = irrGUI->addButton(Graphics.GetRect(TexturePosition.X, TexturePosition.Y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
+		gui::IGUIButton *Button = irrGUI->addButton(Graphics.GetRect(TexturePosition.X, TexturePosition.Y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
 		Button->setImage(TexturePalette[i]);
 
 		TexturePosition.X += MAP_TILE_WIDTH;
@@ -530,48 +541,48 @@ void _MapEditorState::InitBrushOptions() {
 	int StartX, StartY, OffsetY;
 
 	// Main dialog window
-	IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 200, 350), false, L"Brush Options", 0, BRUSHOPTIONS_WINDOW);
+	gui::IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 200, 350), false, L"Brush Options", 0, BRUSHOPTIONS_WINDOW);
 	irrGUI->setFocus(Window);
 
 	// Wall
 	StartX = 75, StartY = 40;
-	Graphics.AddText("Wall", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Wall", StartX - 5, StartY + 3, _Graphics::ALIGN_RIGHT, Window);
 	irrGUI->addCheckBox(Brush.Wall, Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
 
-	Graphics.AddText("PVP", StartX + 50, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("PVP", StartX + 50, StartY + 3, _Graphics::ALIGN_RIGHT, Window);
 	irrGUI->addCheckBox(Brush.PVP, Graphics.GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
 
 	// Zone
 	StartY += 30;
-	Graphics.AddText("Zone", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUISpinBox *BrushZone = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_ZONE);
+	Graphics.AddText("Zone", StartX - 5, StartY + 3, _Graphics::ALIGN_RIGHT, Window);
+	gui::IGUISpinBox *BrushZone = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_ZONE);
 	BrushZone->setDecimalPlaces(0);
 	BrushZone->setRange(0.0f, 10000.0f);
 
 	// Event Type
 	StartY += 30;
-	Graphics.AddText("Event Type", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUIComboBox *BrushEventType = irrGUI->addComboBox(Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_EVENTTYPE);
+	Graphics.AddText("Event Type", StartX - 5, StartY + 3, _Graphics::ALIGN_RIGHT, Window);
+	gui::IGUIComboBox *BrushEventType = irrGUI->addComboBox(Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_EVENTTYPE);
 	for(int i = 0; i < Stats.GetEventCount(); i++)
-		BrushEventType->addItem(stringw(Stats.GetEvent(i)->Name.c_str()).c_str());
+		BrushEventType->addItem(core::stringw(Stats.GetEvent(i)->Name.c_str()).c_str());
 
 	BrushEventType->setSelected(Brush.EventType);
 
 	// Event Data
 	StartY += 30;
-	Graphics.AddText("Event Data", StartX - 5, StartY + 3, GraphicsClass::ALIGN_RIGHT, Window);
-	IGUISpinBox *BrushEventData = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_EVENTDATA);
+	Graphics.AddText("Event Data", StartX - 5, StartY + 3, _Graphics::ALIGN_RIGHT, Window);
+	gui::IGUISpinBox *BrushEventData = irrGUI->addSpinBox(L"0", Graphics.GetRect(StartX, StartY, 100, 20), true, Window, BRUSHOPTIONS_EVENTDATA);
 	BrushEventData->setDecimalPlaces(0);
 	BrushEventData->setRange(0.0f, 10000.0f);
 
 	// Filters
 	StartY += 40, OffsetY = 20;
-	Graphics.AddText("Filters", 100, StartY, GraphicsClass::ALIGN_CENTER, Window);
-	Graphics.AddText("Texture", StartX - 5, StartY + 3 + OffsetY * 1, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics.AddText("Wall", StartX - 5, StartY + 3 + OffsetY * 2, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics.AddText("Zone", StartX - 5, StartY + 3 + OffsetY * 3, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics.AddText("Event Type", StartX - 5, StartY + 3 + OffsetY * 4, GraphicsClass::ALIGN_RIGHT, Window);
-	Graphics.AddText("Event Data", StartX - 5, StartY + 3 + OffsetY * 5, GraphicsClass::ALIGN_RIGHT, Window);
+	Graphics.AddText("Filters", 100, StartY, _Graphics::ALIGN_CENTER, Window);
+	Graphics.AddText("Texture", StartX - 5, StartY + 3 + OffsetY * 1, _Graphics::ALIGN_RIGHT, Window);
+	Graphics.AddText("Wall", StartX - 5, StartY + 3 + OffsetY * 2, _Graphics::ALIGN_RIGHT, Window);
+	Graphics.AddText("Zone", StartX - 5, StartY + 3 + OffsetY * 3, _Graphics::ALIGN_RIGHT, Window);
+	Graphics.AddText("Event Type", StartX - 5, StartY + 3 + OffsetY * 4, _Graphics::ALIGN_RIGHT, Window);
+	Graphics.AddText("Event Data", StartX - 5, StartY + 3 + OffsetY * 5, _Graphics::ALIGN_RIGHT, Window);
 	irrGUI->addCheckBox(Filters[FILTER_TEXTURE], Graphics.GetRect(StartX, StartY + OffsetY * 1, 100, 20), Window, BRUSHOPTIONS_FILTERTEXTURE);
 	irrGUI->addCheckBox(Filters[FILTER_WALL], Graphics.GetRect(StartX, StartY + OffsetY * 2, 100, 20), Window, BRUSHOPTIONS_FILTERWALL);
 	irrGUI->addCheckBox(Filters[FILTER_ZONE], Graphics.GetRect(StartX, StartY + OffsetY * 3, 100, 20), Window, BRUSHOPTIONS_FILTERZONE);
@@ -589,9 +600,9 @@ void _MapEditorState::RefreshTexturePalette() {
 	TexturePalette.clear();
 
 	// Load all textures in the directory
-	stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
+	core::stringc OldWorkingDirectory = irrFile->getWorkingDirectory();
 	irrFile->changeWorkingDirectoryTo("textures/map");
-	IFileList *FileList = irrFile->createFileList();
+	io::IFileList *FileList = irrFile->createFileList();
 	irrFile->changeWorkingDirectoryTo(OldWorkingDirectory.c_str());
 
 	int FileCount = FileList->getFileCount();
@@ -599,11 +610,11 @@ void _MapEditorState::RefreshTexturePalette() {
 		if(!FileList->isDirectory(i)) {
 
 			// Load texture
-			ITexture *Texture = irrDriver->getTexture(stringc("textures/map/") + FileList->getFileName(i));
+			video::ITexture *Texture = irrDriver->getTexture(core::stringc("textures/map/") + FileList->getFileName(i));
 
 			// Check size
-			if(Texture->getSize() != dimension2du(32, 32)) {
-				stringc TextureName = Texture->getName();
+			if(Texture->getSize() != core::dimension2du(32, 32)) {
+				core::stringc TextureName = Texture->getName();
 				printf("Texture size is not 32x32 for file=%s\n", TextureName.c_str());
 				irrDriver->removeTexture(Texture);
 			}
@@ -665,13 +676,13 @@ void _MapEditorState::ApplyBrush(int TX, int TY) {
 // Draw information about the brush
 void _MapEditorState::RenderBrush() {
 
-	SColor Color(255, 255, 255, 255);
+	video::SColor Color(255, 255, 255, 255);
 	int StartX = 750, StartY = 480;
-	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 705, StartY - 10, 90, 125);
+	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 705, StartY - 10, 90, 125);
 
 	// Draw texture
 	StartY += 15;
-	if(Brush.Texture != NULL) {
+	if(Brush.Texture != nullptr) {
 		Filters[FILTER_TEXTURE] ? Color.setAlpha(255) : Color.setAlpha(80);
 		Graphics.DrawCenteredImage(Brush.Texture, StartX, StartY, Color);
 	}
@@ -684,14 +695,14 @@ void _MapEditorState::RenderBrush() {
 	// Draw wall info
 	StartY += 20;
 	Filters[FILTER_WALL] ? Color.setAlpha(255) : Color.setAlpha(128);
-	Graphics.SetFont(GraphicsClass::FONT_8);
-	Graphics.RenderText(WallText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	Graphics.SetFont(_Graphics::FONT_8);
+	Graphics.RenderText(WallText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw zone info
 	StartY += 15;
 	Filters[FILTER_ZONE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	stringc ZoneText = stringc("Zone ") + stringc(Brush.Zone);
-	Graphics.RenderText(ZoneText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	core::stringc ZoneText = core::stringc("Zone ") + core::stringc(Brush.Zone);
+	Graphics.RenderText(ZoneText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Get PVP text
 	const char *PVPText = "Safe";
@@ -701,19 +712,19 @@ void _MapEditorState::RenderBrush() {
 	// Draw pvp info
 	StartY += 15;
 	Filters[FILTER_PVP] ? Color.setAlpha(255) : Color.setAlpha(128);
-	Graphics.RenderText(PVPText, StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	Graphics.RenderText(PVPText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTTYPE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	stringc EventTypeText = stringc("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
-	Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	core::stringc EventTypeText = core::stringc("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
+	Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
-	stringc EventDataText = stringc("Event Data: ") + stringc(Brush.EventData);
-	Graphics.RenderText(EventDataText.c_str(), StartX, StartY, GraphicsClass::ALIGN_CENTER, Color);
+	core::stringc EventDataText = core::stringc("Event Data: ") + core::stringc(Brush.EventData);
+	Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 }
 
 // Resets the filters to false

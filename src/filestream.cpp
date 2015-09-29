@@ -18,22 +18,20 @@
 #include <filestream.h>
 #include <cstring>
 
-using namespace std;
-
 // Constructor
-FileClass::FileClass() {
+_FileStream::_FileStream() {
 
 }
 
 // Destructor
-FileClass::~FileClass() {
+_FileStream::~_FileStream() {
 
 }
 
 // Open for writing
-int FileClass::OpenForWrite(const char *TFilename) {
+int _FileStream::OpenForWrite(const char *TFilename) {
 
-	File.open(TFilename, ios::out | ios::binary);
+	File.open(TFilename, std::ios::out | std::ios::binary);
 	if(!File.is_open())
 		return 0;
 
@@ -41,9 +39,9 @@ int FileClass::OpenForWrite(const char *TFilename) {
 }
 
 // Open for reading
-int FileClass::OpenForRead(const char *TFilename) {
+int _FileStream::OpenForRead(const char *TFilename) {
 
-	File.open(TFilename, ios::in | ios::binary);
+	File.open(TFilename, std::ios::in | std::ios::binary);
 	if(!File.is_open())
 		return 0;
 
@@ -51,44 +49,44 @@ int FileClass::OpenForRead(const char *TFilename) {
 }
 
 // Closes the file
-void FileClass::Close() {
+void _FileStream::Close() {
 
 	File.close();
 }
 
 // Write a char
-void FileClass::WriteChar(char TData) {
+void _FileStream::WriteChar(char TData) {
 
 	File.put(TData);
 }
 
 // Write an integer
-void FileClass::WriteInt(int TData) {
+void _FileStream::WriteInt(int TData) {
 
 	File.write(reinterpret_cast<char *>(&TData), sizeof(TData));
 }
 
 // Write a general struct
-void FileClass::WriteStruct(void *TData, int TSize) {
+void _FileStream::WriteStruct(void *TData, int TSize) {
 
 	File.write(reinterpret_cast<char *>(TData), TSize);
 }
 
 // Writes a string
-void FileClass::WriteString(const char *TData) {
+void _FileStream::WriteString(const char *TData) {
 
 	File.write(TData, strlen(TData));
 	File.put(0);
 }
 
 // Reads a char
-char FileClass::ReadChar() {
+char _FileStream::ReadChar() {
 
 	return File.get();
 }
 
 // Reads an integer
-int FileClass::ReadInt() {
+int _FileStream::ReadInt() {
 
 	int Data;
 	File.read(reinterpret_cast<char *>(&Data), sizeof(Data));
@@ -97,13 +95,13 @@ int FileClass::ReadInt() {
 }
 
 // Read a general struct
-void FileClass::ReadStruct(void *TData, int TSize) {
+void _FileStream::ReadStruct(void *TData, int TSize) {
 
 	File.read(reinterpret_cast<char *>(TData), TSize);
 }
 
 // Reads a string
-void FileClass::ReadString(char *TData) {
+void _FileStream::ReadString(char *TData) {
 
 	File.get(TData, 2147483647, 0);
 	File.get();

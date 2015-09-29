@@ -27,19 +27,19 @@
 #include <objects/monster.h>
 
 // Constructor
-ServerBattleClass::ServerBattleClass()
+_ServerBattle::_ServerBattle()
 :	_Battle() {
 
 	RoundTime = 0;
 }
 
 // Destructor
-ServerBattleClass::~ServerBattleClass() {
+_ServerBattle::~_ServerBattle() {
 
 }
 
 // Removes a player from the battle
-int ServerBattleClass::RemovePlayer(_Player *TPlayer) {
+int _ServerBattle::RemovePlayer(_Player *TPlayer) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
@@ -48,7 +48,7 @@ int ServerBattleClass::RemovePlayer(_Player *TPlayer) {
 
 			if(Player == TPlayer) {
 				Player->StopBattle();
-				Fighters[i] = NULL;
+				Fighters[i] = nullptr;
 			}
 
 			if(Fighters[i])
@@ -63,7 +63,7 @@ int ServerBattleClass::RemovePlayer(_Player *TPlayer) {
 }
 
 // Starts the battle and notifies the players
-void ServerBattleClass::StartBattle() {
+void _ServerBattle::StartBattle() {
 
 	// Build packet
 	_Packet Packet(_Network::WORLD_STARTBATTLE);
@@ -110,7 +110,7 @@ void ServerBattleClass::StartBattle() {
 }
 
 // Handles input from the client
-void ServerBattleClass::HandleInput(_Player *TPlayer, int TCommand, int TTarget) {
+void _ServerBattle::HandleInput(_Player *TPlayer, int TCommand, int TTarget) {
 
 	if(State == STATE_INPUT) {
 
@@ -137,7 +137,7 @@ void ServerBattleClass::HandleInput(_Player *TPlayer, int TCommand, int TTarget)
 }
 
 // Update the battle system for the server
-void ServerBattleClass::Update(uint32_t TDeltaTime) {
+void _ServerBattle::Update(uint32_t TDeltaTime) {
 
 	switch(State) {
 		case STATE_INPUT:
@@ -155,7 +155,7 @@ void ServerBattleClass::Update(uint32_t TDeltaTime) {
 }
 
 // Resolves the turn and sends the result to each player
-void ServerBattleClass::ResolveTurn() {
+void _ServerBattle::ResolveTurn() {
 	RoundTime = 0;
 
 	// Get a monster list
@@ -231,7 +231,7 @@ void ServerBattleClass::ResolveTurn() {
 }
 
 // Checks for the end of a battle
-void ServerBattleClass::CheckEnd() {
+void _ServerBattle::CheckEnd() {
 	if(State == STATE_END)
 		return;
 
@@ -395,7 +395,7 @@ void ServerBattleClass::CheckEnd() {
 }
 
 // Send a packet to all players
-void ServerBattleClass::SendPacketToPlayers(_Packet *TPacket) {
+void _ServerBattle::SendPacketToPlayers(_Packet *TPacket) {
 
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
@@ -407,7 +407,7 @@ void ServerBattleClass::SendPacketToPlayers(_Packet *TPacket) {
 }
 
 // Send the player's skill to the other players
-void ServerBattleClass::SendSkillToPlayers(_Player *TPlayer) {
+void _ServerBattle::SendSkillToPlayers(_Player *TPlayer) {
 
 	// Get all the players on the player's side
 	std::vector<_Player *> SidePlayers;

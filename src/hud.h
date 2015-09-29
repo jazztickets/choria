@@ -18,18 +18,14 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <IEventReceiver.h>
+#include <IGUIButton.h>
+#include <IGUITabControl.h>
+#include <IGUIEditBox.h>
+#include <IGUIImage.h>
+#include <IGUIButton.h>
 #include <list>
 #include <cstdint>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 // Forward Declarations
 class _Player;
@@ -40,7 +36,7 @@ struct VendorStruct;
 struct TraderStruct;
 
 // Structures
-struct CursorItemStruct {
+struct _CursorItem {
 	void Set(const _Item *TItem, int TCost, int TCount, int TSlot) {
 		Item = TItem;
 		Cost = TCost;
@@ -48,7 +44,7 @@ struct CursorItemStruct {
 		Slot = TSlot;
 	}
 	void Reset() {
-		Item = NULL;
+		Item = nullptr;
 		Count = 0;
 		Slot = -1;
 		Window = -1;
@@ -63,9 +59,9 @@ struct CursorItemStruct {
 	int Window;
 };
 
-struct CursorSkillStruct {
+struct _CursorSkill {
 	void Reset() {
-		Skill = NULL;
+		Skill = nullptr;
 		Slot = -1;
 		Window = -1;
 	}
@@ -75,15 +71,15 @@ struct CursorSkillStruct {
 	int Window;
 };
 
-struct ChatStruct {
-	ChatStruct() : Message(""), TimeOut(0) { }
-	ChatStruct(const irr::core::stringc &TMessage) : Message(TMessage), TimeOut(0) { }
+struct _ChatMessage {
+	_ChatMessage() : Message(""), TimeOut(0) { }
+	_ChatMessage(const irr::core::stringc &TMessage) : Message(TMessage), TimeOut(0) { }
 	irr::core::stringc Message;
 	uint32_t TimeOut;
 };
 
 // Classes
-class HUDClass {
+class _HUD {
 
 	public:
 
@@ -122,7 +118,7 @@ class HUDClass {
 		void HandleMouseMotion(int TMouseX, int TMouseY);
 		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
-		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void PreGUIDraw();
@@ -145,8 +141,8 @@ class HUDClass {
 		// Chat
 		void ToggleChat();
 		bool IsChatting() { return Chatting; }
-		void HandleKeyPress(EKEY_CODE TKey);
-		void AddChatMessage(ChatStruct &TChat) { ChatHistory.push_back(TChat); }
+		void HandleKeyPress(irr::EKEY_CODE TKey);
+		void AddChatMessage(_ChatMessage &TChat) { ChatHistory.push_back(TChat); }
 
 		// Trade
 		void CloseTrade(bool TSendNotify=true);
@@ -183,16 +179,16 @@ class HUDClass {
 		void DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY);
 		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
-		void GetItem(position2di &TPoint, CursorItemStruct &TCursorItem);
-		void GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorItem);
-		void GetVendorItem(position2di &TPoint, CursorItemStruct &TCursorItem);
-		void GetTraderItem(position2di &TPoint, CursorItemStruct &TCursorItem);
-		void GetTradeItem(position2di &TPoint, CursorItemStruct &TCursorItem);
-		void BuyItem(CursorItemStruct *TCursorItem, int TTargetSlot);
-		void SellItem(CursorItemStruct *TCursorItem, int TAmount);
+		void GetItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
+		void GetInventoryItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
+		void GetVendorItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
+		void GetTraderItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
+		void GetTradeItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
+		void BuyItem(_CursorItem *TCursorItem, int TTargetSlot);
+		void SellItem(_CursorItem *TCursorItem, int TAmount);
 
-		void GetSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill);
-		void GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill);
+		void GetSkill(irr::core::position2di &TPoint, _CursorSkill &TCursorSkill);
+		void GetSkillPageSkill(irr::core::position2di &TPoint, _CursorSkill &TCursorSkill);
 		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
 
 		void RefreshSkillButtons();
@@ -211,27 +207,27 @@ class HUDClass {
 		const TraderStruct *Trader;
 
 		// GUI
-		IGUITab *TabMenu, *TabInventory, *TabVendor, *TabTrader, *TabSkill, *TabTrade;
-		IGUIImage *TraderWindow;
-		CursorItemStruct CursorItem, TooltipItem;
+		irr::gui::IGUITab *TabMenu, *TabInventory, *TabVendor, *TabTrader, *TabSkill, *TabTrade;
+		irr::gui::IGUIImage *TraderWindow;
+		_CursorItem CursorItem, TooltipItem;
 		bool CharacterOpen;
 
 		// Chat
-		IGUIEditBox *ChatBox;
-		std::list<ChatStruct> ChatHistory;
+		irr::gui::IGUIEditBox *ChatBox;
+		std::list<_ChatMessage> ChatHistory;
 		bool Chatting;
 
 		// Skills
-		CursorSkillStruct CursorSkill, TooltipSkill;
+		_CursorSkill CursorSkill, TooltipSkill;
 		bool SkillBarChanged;
 
 		// Traders
 		int RequiredItemSlots[8], RewardItemSlot;
 
 		// Trading
-		IGUIEditBox *TradeGoldBox;
-		IGUIButton *TradeAcceptButton;
+		irr::gui::IGUIEditBox *TradeGoldBox;
+		irr::gui::IGUIButton *TradeAcceptButton;
 		bool TypingGold;
 };
 
-extern HUDClass HUD;
+extern _HUD HUD;

@@ -20,7 +20,7 @@
 
 // Constructor
 _Object::_Object(int TType)
-:	Map(NULL),
+:	Map(nullptr),
 	Type(TType),
 	Deleted(false),
 	Position(-1, -1),

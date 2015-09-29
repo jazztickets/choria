@@ -19,6 +19,10 @@
 
 // Libraries
 #include <state.h>
+#include <IGUITabControl.h>
+#include <IGUIEditBox.h>
+#include <IGUIButton.h>
+#include <IGUIStaticText.h>
 
 // Classes
 class _AccountState : public _State {
@@ -43,8 +47,8 @@ class _AccountState : public _State {
 
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
-		bool HandleKeyPress(EKEY_CODE TKey);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		bool HandleKeyPress(irr::EKEY_CODE TKey);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void Draw();
@@ -60,10 +64,10 @@ class _AccountState : public _State {
 		int State;
 
 		// GUI
-		IGUITab *Form;
-		IGUIStaticText *TextAccountName, *TextPassword;
-		IGUIEditBox *EditAccountName, *EditPassword;
-		IGUIButton *ButtonLogin, *ButtonCancel, *ButtonCreateAccount;
+		irr::gui::IGUITab *Form;
+		irr::gui::IGUIStaticText *TextAccountName, *TextPassword;
+		irr::gui::IGUIEditBox *EditAccountName, *EditPassword;
+		irr::gui::IGUIButton *ButtonLogin, *ButtonCancel, *ButtonCreateAccount;
 		irr::core::stringc Message, AccountName, Password;
 		bool CreateAccount;
 

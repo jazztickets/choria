@@ -18,17 +18,8 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <list>
 #include <cstdint>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 // Forward Declarations
 class _Object;
@@ -43,7 +34,7 @@ class ObjectManagerClass {
 		~ObjectManagerClass();
 
 		void Update(uint32_t TDeltaTime);
-		void Render(const _Map *TMap, _Object *TClientPlayer=NULL);
+		void Render(const _Map *TMap, _Object *TClientPlayer=nullptr);
 		void SetObjectDeletedCallback(void (* Callback)(_Object *TObject)) { ObjectDeletedCallback = Callback; }
 
 		void ClearObjects();

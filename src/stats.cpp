@@ -21,13 +21,15 @@
 #include <random.h>
 #include <objects/monster.h>
 
+using namespace irr;
+
 StatsClass Stats;
 
 // Initialize
 int StatsClass::Init() {
 
 	// Load database that stores game data
-	Database = new DatabaseClass();
+	Database = new _Database();
 	if(!Database->OpenDatabaseCreate("database/data.s3db")) {
 		return 0;
 	}
@@ -66,7 +68,7 @@ void StatsClass::LoadPortraits() {
 	PortraitStruct Portrait;
 	while(Database->FetchRow()) {
 		Portrait.ID = Database->GetInt(0);
-		Portrait.Image = irrDriver->getTexture((stringc("textures/portraits/") + stringc(Database->GetString(1))).c_str());
+		Portrait.Image = irrDriver->getTexture((core::stringc("textures/portraits/") + core::stringc(Database->GetString(1))).c_str());
 		Portraits[Portrait.ID] = Portrait;
 	}
 	Database->CloseQuery();
@@ -83,7 +85,7 @@ void StatsClass::LoadMaps() {
 	// Get events
 	MapStruct Map;
 	while(Database->FetchRow()) {
-		Map.File = stringc("maps/") + Database->GetString(1);
+		Map.File = core::stringc("maps/") + Database->GetString(1);
 		Map.ViewWidth = Database->GetInt(2);
 		Map.ViewHeight = Database->GetInt(3);
 		Maps[Database->GetInt(0)] = Map;
@@ -148,7 +150,7 @@ void StatsClass::LoadSkills() {
 		Skill.ID = Database->GetInt(0);
 		Skill.Name = Database->GetString(1);
 		Skill.Info = Database->GetString(2);
-		Skill.Image = irrDriver->getTexture((stringc("textures/skills/") + stringc(Database->GetString(3))).c_str());
+		Skill.Image = irrDriver->getTexture((core::stringc("textures/skills/") + core::stringc(Database->GetString(3))).c_str());
 		Skill.Type = Database->GetInt(4);
 		Skill.SkillCost = Database->GetInt(5);
 		Skill.ManaCostBase = Database->GetFloat(6);
@@ -177,7 +179,7 @@ void StatsClass::LoadItems() {
 		Item.Name = Database->GetString(1);
 		Item.Level = Database->GetInt(2);
 		Item.Type = Database->GetInt(3);
-		Item.Image = irrDriver->getTexture((stringc("textures/items/") + stringc(Database->GetString(4))).c_str());
+		Item.Image = irrDriver->getTexture((core::stringc("textures/items/") + core::stringc(Database->GetString(4))).c_str());
 		Item.LevelRequired = Database->GetInt(5);
 		Item.Cost = Database->GetInt(6);
 		Item.Damage = Database->GetFloat(7);
@@ -274,7 +276,7 @@ void StatsClass::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
 	if(Database->FetchRow()) {
 		TMonster->Level = Database->GetInt(1);
 		TMonster->Name = Database->GetString(2);
-		TMonster->Portrait = irrDriver->getTexture((stringc("textures/monsters/") + stringc(Database->GetString(3))).c_str());
+		TMonster->Portrait = irrDriver->getTexture((core::stringc("textures/monsters/") + core::stringc(Database->GetString(3))).c_str());
 		TMonster->Health = TMonster->MaxHealth = Database->GetInt(4);
 		TMonster->Mana = TMonster->MaxMana = Database->GetInt(5);
 		TMonster->ExperienceGiven = Database->GetInt(6);
@@ -302,7 +304,7 @@ void StatsClass::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
 // Gets a skill by id
 const _Skill *StatsClass::GetSkill(int TSkillID) {
 	if(TSkillID < 0 || TSkillID >= (int)Skills.size())
-		return NULL;
+		return nullptr;
 
 	return &Skills[TSkillID];
 }

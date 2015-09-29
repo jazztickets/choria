@@ -35,6 +35,8 @@
 
 _PlayServerState PlayServerState;
 
+using namespace irr;
+
 static void ObjectDeleted(_Object *TObject);
 
 // Loop to run server commands
@@ -60,12 +62,12 @@ void HandleCommands(void *Arguments) {
 int _PlayServerState::Init() {
 	ServerTime = 0;
 	StopRequested = false;
-	CommandThread = NULL;
+	CommandThread = nullptr;
 
 	// Load database that stores accounts and characters
-	Database = new DatabaseClass();
+	Database = new _Database();
 
-	stringc DatabasePath = Config.GetSavePath("server.s3db");
+	core::stringc DatabasePath = Config.GetSavePath("server.s3db");
 	if(!Database->OpenDatabase(DatabasePath.c_str())) {
 
 		// Create a new database
@@ -194,7 +196,7 @@ void _PlayServerState::HandleDisconnect(ENetEvent *TEvent) {
 	// Leave trading screen
 	_Player *TradePlayer = Player->GetTradePlayer();
 	if(TradePlayer) {
-		TradePlayer->SetTradePlayer(NULL);
+		TradePlayer->SetTradePlayer(nullptr);
 
 		_Packet Packet(_Network::TRADE_CANCEL);
 		ServerNetwork->SendPacketToPeer(&Packet, TradePlayer->GetPeer());
@@ -310,8 +312,8 @@ void _PlayServerState::HandleLoginInfo(_Packet *TPacket, ENetPeer *TPeer) {
 
 	// Read packet
 	bool CreateAccount = TPacket->ReadBit();
-	stringc Username(TPacket->ReadString());
-	stringc Password(TPacket->ReadString());
+	core::stringc Username(TPacket->ReadString());
+	core::stringc Password(TPacket->ReadString());
 	if(Username.size() > 15 || Password.size() > 15)
 		return;
 	Username.make_lower();
@@ -401,7 +403,7 @@ void _PlayServerState::HandleCharacterSelect(_Packet *TPacket, ENetPeer *TPeer) 
 	Player->SetCharacterID(Database->GetInt(0));
 	Player->SetSpawnMapID(Database->GetInt(2));
 	Player->SetSpawnPoint(Database->GetInt(3));
-	Player->SetName(stringc(Database->GetString(4)));
+	Player->SetName(core::stringc(Database->GetString(4)));
 	Player->SetPortraitID(Database->GetInt(5));
 	Player->SetExperience(Database->GetInt(6));
 	Player->SetGold(Database->GetInt(7));
@@ -522,7 +524,7 @@ void _PlayServerState::HandleCharacterCreate(_Packet *TPacket, ENetPeer *TPeer) 
 	char QueryString[512];
 
 	// Get character information
-	stringc Name(TPacket->ReadString());
+	core::stringc Name(TPacket->ReadString());
 	int PortraitID = TPacket->ReadInt();
 	if(Name.size() > 10)
 		return;
@@ -610,7 +612,7 @@ void _PlayServerState::HandleMoveCommand(_Packet *TPacket, ENetPeer *TPeer) {
 					if(MonsterCount > 0) {
 
 						// Create a new battle instance
-						ServerBattleClass *Battle = Instances->CreateServerBattle();
+						_ServerBattle *Battle = Instances->CreateServerBattle();
 
 						// Add players
 						Battle->AddFighter(Player, 0);
@@ -653,7 +655,7 @@ void _PlayServerState::HandleBattleCommand(_Packet *TPacket, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	ServerBattleClass *Battle = static_cast<ServerBattleClass *>(Player->GetBattle());
+	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->GetBattle());
 	if(!Battle)
 		return;
 
@@ -672,7 +674,7 @@ void _PlayServerState::HandleBattleFinished(_Packet *TPacket, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	ServerBattleClass *Battle = static_cast<ServerBattleClass *>(Player->GetBattle());
+	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->GetBattle());
 	if(!Battle)
 		return;
 
@@ -772,7 +774,7 @@ void _PlayServerState::HandleEventEnd(_Packet *TPacket, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	Player->SetVendor(NULL);
+	Player->SetVendor(nullptr);
 	Player->SetState(_Player::STATE_WALK);
 }
 
@@ -895,7 +897,7 @@ void _PlayServerState::HandleAttackPlayer(_Packet *TPacket, ENetPeer *TPeer) {
 		for(std::list<_Player *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 			_Player *VictimPlayer = *Iterator;
 			if(VictimPlayer->GetState() != _Player::STATE_BATTLE) {
-				ServerBattleClass *Battle = Instances->CreateServerBattle();
+				_ServerBattle *Battle = Instances->CreateServerBattle();
 				Battle->AddFighter(Player, 1);
 				Battle->AddFighter(VictimPlayer, 0);
 				Battle->StartBattle();
@@ -942,13 +944,13 @@ void _PlayServerState::HandleTradeRequest(_Packet *TPacket, ENetPeer *TPeer) {
 
 	// Find the nearest player to trade with
 	_Player *TradePlayer = Map->GetClosestPlayer(Player, 2.0f * 2.0f, _Player::STATE_WAITTRADE);
-	if(TradePlayer == NULL) {
+	if(TradePlayer == nullptr) {
 
 		// Set up trade post
 		Player->SetState(_Player::STATE_WAITTRADE);
 		Player->SetTradeGold(0);
 		Player->SetTradeAccepted(false);
-		Player->SetTradePlayer(NULL);
+		Player->SetTradePlayer(nullptr);
 	}
 	else {
 
@@ -976,7 +978,7 @@ void _PlayServerState::HandleTradeCancel(_Packet *TPacket, ENetPeer *TPeer) {
 	_Player *TradePlayer = Player->GetTradePlayer();
 	if(TradePlayer) {
 		TradePlayer->SetState(_Player::STATE_WAITTRADE);
-		TradePlayer->SetTradePlayer(NULL);
+		TradePlayer->SetTradePlayer(nullptr);
 		TradePlayer->SetTradeAccepted(false);
 
 		_Packet Packet(_Network::TRADE_CANCEL);
@@ -1057,11 +1059,11 @@ void _PlayServerState::HandleTradeAccept(_Packet *TPacket, ENetPeer *TPeer) {
 			}
 
 			Player->SetState(_Player::STATE_WALK);
-			Player->SetTradePlayer(NULL);
+			Player->SetTradePlayer(nullptr);
 			Player->SetTradeGold(0);
 			Player->MoveTradeToInventory();
 			TradePlayer->SetState(_Player::STATE_WALK);
-			TradePlayer->SetTradePlayer(NULL);
+			TradePlayer->SetTradePlayer(nullptr);
 			TradePlayer->SetTradeGold(0);
 			TradePlayer->MoveTradeToInventory();
 		}
@@ -1102,7 +1104,7 @@ void _PlayServerState::HandleTraderAccept(_Packet *TPacket, ENetPeer *TPeer) {
 
 	// Exchange items
 	Player->AcceptTrader(Trader, RequiredItemSlots, RewardSlot);
-	Player->SetTrader(NULL);
+	Player->SetTrader(nullptr);
 	Player->SetState(_Player::STATE_WALK);
 	Player->CalculatePlayerStats();
 }
@@ -1261,7 +1263,7 @@ void _PlayServerState::BuildTradeItemsPacket(_Player *TPlayer, _Packet *TPacket,
 
 // Removes a player from a battle and deletes the battle if necessary
 void _PlayServerState::RemovePlayerFromBattle(_Player *TPlayer) {
-	ServerBattleClass *Battle = static_cast<ServerBattleClass *>(TPlayer->GetBattle());
+	_ServerBattle *Battle = static_cast<_ServerBattle *>(TPlayer->GetBattle());
 	if(!Battle)
 		return;
 

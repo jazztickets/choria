@@ -24,7 +24,7 @@ _Packet::_Packet(char TPacketType, ENetPacketFlag TFlag, enet_uint8 TChannel)
 	CurrentBit(0) {
 
 	// Create the enet packet
-	Packet = enet_packet_create(NULL, 32, TFlag);
+	Packet = enet_packet_create(nullptr, 32, TFlag);
 
 	// Write the packet header
 	WriteChar(TPacketType);

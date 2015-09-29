@@ -21,7 +21,7 @@
 #include <state.h>
 
 // Forward Declarations
-class DatabaseClass;
+class _Database;
 class ObjectManagerClass;
 class InstanceClass;
 class _Packet;
@@ -55,12 +55,12 @@ class _PlayClientState : public _State {
 		void HandleConnect(ENetEvent *TEvent);
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
-		bool HandleKeyPress(EKEY_CODE TKey);
-		bool HandleKeyRelease(EKEY_CODE TKey) { return false; }
+		bool HandleKeyPress(irr::EKEY_CODE TKey);
+		bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }
 		void HandleMouseMotion(int TMouseX, int TMouseY);
 		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void Draw();

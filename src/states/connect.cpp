@@ -26,8 +26,11 @@
 #include <states/mainmenu.h>
 #include <states/account.h>
 #include <string>
+#include <IGUIEnvironment.h>
 
 _ConnectState ConnectState;
+
+using namespace irr;
 
 // Initializes the state
 int _ConnectState::Init() {
@@ -37,12 +40,12 @@ int _ConnectState::Init() {
 	IPAddress = Config.GetLastIPAddress();
 
 	// Text
-	Graphics.SetFont(GraphicsClass::FONT_10);
-	TextIP = Graphics.AddText("IP Address", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
+	Graphics.SetFont(_Graphics::FONT_10);
+	TextIP = Graphics.AddText("IP Address", DrawX, DrawY, _Graphics::ALIGN_CENTER, Form);
 
 	// IP Address
 	DrawY += 35;
-	EditIP = irrGUI->addEditBox(stringw(IPAddress.c_str()).c_str(), Graphics.GetCenteredRect(DrawX, DrawY, 190, 25), true, Form, ELEMENT_IP);
+	EditIP = irrGUI->addEditBox(core::stringw(IPAddress.c_str()).c_str(), Graphics.GetCenteredRect(DrawX, DrawY, 190, 25), true, Form, ELEMENT_IP);
 	irrGUI->setFocus(EditIP);
 
 	// Buttons
@@ -109,20 +112,20 @@ void _ConnectState::Update(uint32_t TDeltaTime) {
 // Draws the current state
 void _ConnectState::Draw() {
 
-	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
+	Graphics.DrawImage(_Graphics::IMAGE_MENULOGO, 400, 125);
 
 	// Server message
 	if(Message.size() > 0) {
-		Graphics.SetFont(GraphicsClass::FONT_10);
-		Graphics.RenderText(Message.c_str(), 400, 200, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+		Graphics.SetFont(_Graphics::FONT_10);
+		Graphics.RenderText(Message.c_str(), 400, 200, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 	}
 
 	switch(State) {
 		case STATE_MAIN:
 		break;
 		case STATE_CONNECT:
-			Graphics.SetFont(GraphicsClass::FONT_10);
-			Graphics.RenderText("Connecting...", 400, 250, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(_Graphics::FONT_10);
+			Graphics.RenderText("Connecting...", 400, 250, _Graphics::ALIGN_CENTER);
 		break;
 	}
 
@@ -162,11 +165,11 @@ bool _ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void _ConnectState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _ConnectState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 	switch(State) {
 		case STATE_MAIN:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(TElement->getID()) {
 						case ELEMENT_CONNECT:
 							ChangeState(STATE_CONNECT);

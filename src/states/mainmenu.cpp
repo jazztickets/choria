@@ -25,15 +25,18 @@
 #include <states/connect.h>
 #include <states/mapeditor.h>
 #include <states/characters.h>
+#include <IGUIEnvironment.h>
 
 _MainMenuState MainMenuState;
+
+using namespace irr;
 
 // Initializes the state
 int _MainMenuState::Init() {
 	int DrawX = 400, DrawY = 250, OffsetY = 50;
 
 	// Single Player
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 	irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 100, 25), 0, ELEMENT_SINGLEPLAYER, L"Single Player");
 
 	// Multiplayer
@@ -70,7 +73,7 @@ void _MainMenuState::Update(uint32_t TDeltaTime) {
 // Draws the current state
 void _MainMenuState::Draw() {
 
-	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
+	Graphics.DrawImage(_Graphics::IMAGE_MENULOGO, 400, 125);
 
 	irrGUI->drawAll();
 }
@@ -93,9 +96,9 @@ bool _MainMenuState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void _MainMenuState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _MainMenuState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 	switch(TEventType) {
-		case EGET_BUTTON_CLICKED:
+		case gui::EGET_BUTTON_CLICKED:
 			switch(TElement->getID()) {
 				case ELEMENT_SINGLEPLAYER:
 					Game.ChangeState(&ConnectState);

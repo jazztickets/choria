@@ -23,6 +23,9 @@
 #include <network/packetstream.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
+#include <IGUIEnvironment.h>
+
+using namespace irr;
 
 // Constructor
 _ClientBattle::_ClientBattle()
@@ -47,12 +50,12 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 	ClientPlayer->StartBattle(this);
 
 	// Set fighter position offsets
-	position2di Offset;
+	core::position2di Offset;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		GetPositionFromSlot(Fighters[i]->GetSlot(), Offset);
 		Fighters[i]->SetOffset(Offset);
-		Fighters[i]->SetSkillUsed(NULL);
-		Fighters[i]->SetSkillUsing(NULL);
+		Fighters[i]->SetSkillUsed(nullptr);
+		Fighters[i]->SetSkillUsing(nullptr);
 	}
 
 	// Add skill buttons
@@ -61,18 +64,18 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 
 		// Add button
 		SkillButtons[i] = irrGUI->addButton(Graphics.GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
-		IGUIStaticText *Text = Graphics.AddText(stringc(i+1).c_str(), 3, 1, GraphicsClass::ALIGN_LEFT, SkillButtons[i]);
-		Text->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_8));
+		gui::IGUIStaticText *Text = Graphics.AddText(core::stringc(i+1).c_str(), 3, 1, _Graphics::ALIGN_LEFT, SkillButtons[i]);
+		Text->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
 
 		// Get skill info
 		Skill = ClientPlayer->GetSkillBar(i);
 		if(Skill)
 			SkillButtons[i]->setImage(Skill->GetImage());
 		else
-			SkillButtons[i]->setImage(Graphics.GetImage(GraphicsClass::IMAGE_EMPTYSLOT));
+			SkillButtons[i]->setImage(Graphics.GetImage(_Graphics::IMAGE_EMPTYSLOT));
 	}
 	PassButton = irrGUI->addButton(Graphics.GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
-	PassButton->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_8));
+	PassButton->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
 
 	State = STATE_GETINPUT;
 	TargetState = -1;
@@ -83,7 +86,7 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 void _ClientBattle::RemovePlayer(_Player *TPlayer) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] == TPlayer) {
-			Fighters[i] = NULL;
+			Fighters[i] = nullptr;
 			break;
 		}
 	}
@@ -132,13 +135,13 @@ void _ClientBattle::HandleInput(EKEY_CODE TKey) {
 }
 
 // Handles GUI events
-void _ClientBattle::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _ClientBattle::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 
 	int ID = TElement->getID();
 	switch(State) {
 		case STATE_GETINPUT:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_PASS:
 							SendSkill(9);
@@ -205,13 +208,13 @@ void _ClientBattle::Update(uint32_t TDeltaTime) {
 void _ClientBattle::Render() {
 
 	// Draw layout
-	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 130, 120, 540, 360, SColor(220, 255, 255, 255));
+	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 130, 120, 540, 360, video::SColor(220, 255, 255, 255));
 
 	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
 		ShowResults = false;
 		for(size_t i = 0; i < Fighters.size(); i++) {
 			if(Fighters[i])
-				Fighters[i]->SetSkillUsed(NULL);
+				Fighters[i]->SetSkillUsed(nullptr);
 		}
 	}
 
@@ -252,39 +255,39 @@ void _ClientBattle::RenderBattleWin() {
 	char String[512];
 
 	// Draw title
-	Graphics.SetFont(GraphicsClass::FONT_18);
-	Graphics.RenderText("You have won", 400, 130, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_18);
+	Graphics.RenderText("You have won", 400, 130, _Graphics::ALIGN_CENTER);
 
 	// Draw experience
 	int IconX = 180, IconY = 200, IconSpacing = 110, TextOffsetX = IconX + 50, TextOffsetY;
-	Graphics.DrawImage(GraphicsClass::IMAGE_BATTLEEXPERIENCE, IconX, IconY);
+	Graphics.DrawImage(_Graphics::IMAGE_BATTLEEXPERIENCE, IconX, IconY);
 
 	TextOffsetY = IconY - 23;
-	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.SetFont(_Graphics::FONT_14);
 	sprintf(String, "%d experience", TotalExperience);
 	Graphics.RenderText(String, TextOffsetX, TextOffsetY);
 
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 	sprintf(String, "You need %d more experience for your next level", ClientPlayer->GetExperienceNeeded());
 	Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
 
 	// Draw gold
 	IconY += IconSpacing;
 	TextOffsetY = IconY - 20;
-	Graphics.DrawImage(GraphicsClass::IMAGE_BATTLECOINS, IconX, IconY);
+	Graphics.DrawImage(_Graphics::IMAGE_BATTLECOINS, IconX, IconY);
 
 	sprintf(String, "%d gold", TotalGold);
-	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.SetFont(_Graphics::FONT_14);
 	Graphics.RenderText(String, TextOffsetX, TextOffsetY);
 
 	sprintf(String, "You have %d gold", ClientPlayer->GetGold());
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 	Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
 
 	// Draw items
 	IconY += IconSpacing;
 	TextOffsetY = IconY - 10;
-	Graphics.DrawImage(GraphicsClass::IMAGE_BATTLECHEST, IconX, IconY);
+	Graphics.DrawImage(_Graphics::IMAGE_BATTLECHEST, IconX, IconY);
 
 	if(MonsterDrops.size() == 0) {
 		Graphics.RenderText("No items found", TextOffsetX, TextOffsetY);
@@ -315,12 +318,12 @@ void _ClientBattle::RenderBattleLose() {
 	RenderBattle(true);
 	char Buffer[256];
 
-	Graphics.SetFont(GraphicsClass::FONT_14);
-	Graphics.RenderText("You died", 400, 130, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_14);
+	Graphics.RenderText("You died", 400, 130, _Graphics::ALIGN_CENTER);
 
 	sprintf(Buffer, "You lose %d gold", abs(TotalGold));
-	Graphics.SetFont(GraphicsClass::FONT_10);
-	Graphics.RenderText(Buffer, 400, 155, GraphicsClass::ALIGN_CENTER, SColor(255, 200, 200, 200));
+	Graphics.SetFont(_Graphics::FONT_10);
+	Graphics.RenderText(Buffer, 400, 155, _Graphics::ALIGN_CENTER, video::SColor(255, 200, 200, 200));
 }
 
 // Displays turn results from the server
@@ -337,7 +340,7 @@ void _ClientBattle::ResolveTurn(_Packet *TPacket) {
 			Fighters[i]->SetHealth(Health);
 			Fighters[i]->SetMana(Mana);
 			Fighters[i]->SetSkillUsed(Fighters[i]->GetSkillUsing());
-			Fighters[i]->SetSkillUsing(NULL);
+			Fighters[i]->SetSkillUsing(nullptr);
 		}
 	}
 
@@ -398,7 +401,7 @@ void _ClientBattle::EndBattle(_Packet *TPacket) {
 }
 
 // Calculates a screen position for a slot
-void _ClientBattle::GetPositionFromSlot(int TSlot, position2di &TPosition) {
+void _ClientBattle::GetPositionFromSlot(int TSlot, core::position2di &TPosition) {
 
 	// Get side
 	int TSide = TSlot & 1;
@@ -437,7 +440,7 @@ void _ClientBattle::SendSkill(int TSkillSlot) {
 		return;
 
 	const _Skill *Skill = ClientPlayer->GetSkillBar(TSkillSlot);
-	if(TSkillSlot != 9 && (Skill == NULL || !Skill->CanUse(ClientPlayer)))
+	if(TSkillSlot != 9 && (Skill == nullptr || !Skill->CanUse(ClientPlayer)))
 		return;
 
 	_Packet Packet(_Network::BATTLE_COMMAND);

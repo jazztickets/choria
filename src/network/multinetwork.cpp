@@ -23,8 +23,8 @@
 
 // Initializes the network system
 int _MultiNetwork::Init(bool TServer) {
-	Peer = NULL;
-	Connection = NULL;
+	Peer = nullptr;
+	Connection = nullptr;
 	Active = false;
 
 	if(TServer) {
@@ -36,7 +36,7 @@ int _MultiNetwork::Init(bool TServer) {
 
 		// Create listener connection
 		Connection = enet_host_create(&Address, 250, 0, 0, 0);
-		if(Connection == NULL) {
+		if(Connection == nullptr) {
 			return 0;
 		}
 
@@ -45,8 +45,8 @@ int _MultiNetwork::Init(bool TServer) {
 	else {
 
 		// Create connection
-		Connection = enet_host_create(NULL, 1, 0, 0, 0);
-		if(Connection == NULL) {
+		Connection = enet_host_create(nullptr, 1, 0, 0, 0);
+		if(Connection == nullptr) {
 			return 0;
 		}
 	}
@@ -73,7 +73,7 @@ int _MultiNetwork::Connect(const char *TIPAddress) {
 
 	// Connect to server
 	Peer = enet_host_connect(Connection, &Address, 2, 0);
-	if(Peer == NULL) {
+	if(Peer == nullptr) {
 		return 0;
 	}
 
@@ -97,7 +97,7 @@ void _MultiNetwork::WaitForDisconnect() {
 		ENetEvent Event;
 		while(enet_host_service(Connection, &Event, 1000) > 0) {
 			if(Event.type == ENET_EVENT_TYPE_DISCONNECT) {
-				Peer = NULL;
+				Peer = nullptr;
 				return;
 			}
 		}
@@ -106,7 +106,7 @@ void _MultiNetwork::WaitForDisconnect() {
 		ENetEvent Event;
 		while(enet_host_service(Connection, &Event, 1000) > 0) {
 			if(Event.type == ENET_EVENT_TYPE_DISCONNECT) {
-				Peer = NULL;
+				Peer = nullptr;
 				return;
 			}
 		}
@@ -138,7 +138,7 @@ void _MultiNetwork::Update() {
 				State->HandleDisconnect(&Event);
 				if(Peer)
 					Active = false;
-				Peer = NULL;
+				Peer = nullptr;
 			break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				State->HandlePacket(&Event);

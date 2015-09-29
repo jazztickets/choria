@@ -27,7 +27,7 @@
 #include <SColor.h>
 
 // Classes
-class GraphicsClass {
+class _Graphics {
 
 	public:
 
@@ -97,7 +97,7 @@ class GraphicsClass {
 		irr::core::recti GetRect(int TPositionX, int TPositionY, int TWidth, int THeight);
 
 		// Text
-		irr::gui::IGUIStaticText *AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, irr::gui::IGUIElement *TParent=NULL);
+		irr::gui::IGUIStaticText *AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, irr::gui::IGUIElement *TParent=nullptr);
 		void RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 
 		// Images
@@ -125,4 +125,4 @@ class GraphicsClass {
 
 };
 
-extern GraphicsClass Graphics;
+extern _Graphics Graphics;

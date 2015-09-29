@@ -18,26 +18,17 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <objects/item.h>
 #include <objects/skill.h>
 #include <map>
 #include <list>
 #include <vector>
 
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 // Constants
 const int STATS_MAXGOLD = 1000000;
 
 // Forward Declarations
-class DatabaseClass;
+class _Database;
 class _Monster;
 
 // Structures
@@ -147,7 +138,7 @@ class StatsClass {
 		void LoadVendors();
 		void LoadTraders();
 
-		DatabaseClass *Database;
+		_Database *Database;
 
 		std::vector<EventStruct> Events;
 		std::vector<LevelStruct> Levels;

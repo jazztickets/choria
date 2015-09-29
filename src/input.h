@@ -18,18 +18,12 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <IEventReceiver.h>
+#include <Keycodes.h>
+#include <position2d.h>
 
 // Classes
-class InputClass : public IEventReceiver {
+class _Input : public irr::IEventReceiver {
 
 	public:
 
@@ -43,28 +37,28 @@ class InputClass : public IEventReceiver {
 		int Init();
 		int Close();
 
-		bool OnEvent(const SEvent &TEvent);
+		bool OnEvent(const irr::SEvent &TEvent);
 
 		void ResetInputState();
-		bool GetKeyState(EKEY_CODE TKey) const { return Keys[TKey]; }
+		bool GetKeyState(irr::EKEY_CODE TKey) const { return Keys[TKey]; }
 		bool GetMouseState(int TButton) const { return MouseButtons[TButton]; }
 
 		const irr::core::position2di &GetMousePosition() const { return MousePosition; }
 
-		const char *GetKeyName(EKEY_CODE TKey);
+		const char *GetKeyName(irr::EKEY_CODE TKey);
 
-		bool IsShiftDown() { return GetKeyState(KEY_SHIFT) || GetKeyState(KEY_LSHIFT) || GetKeyState(KEY_RSHIFT); }
-		bool IsControlDown() { return GetKeyState(KEY_CONTROL) || GetKeyState(KEY_LCONTROL) || GetKeyState(KEY_RCONTROL); }
+		bool IsShiftDown() { return GetKeyState(irr::KEY_SHIFT) || GetKeyState(irr::KEY_LSHIFT) || GetKeyState(irr::KEY_RSHIFT); }
+		bool IsControlDown() { return GetKeyState(irr::KEY_CONTROL) || GetKeyState(irr::KEY_LCONTROL) || GetKeyState(irr::KEY_RCONTROL); }
 
 	private:
 
-		void SetKeyState(EKEY_CODE TKey, bool TState) { Keys[TKey] = TState; }
+		void SetKeyState(irr::EKEY_CODE TKey, bool TState) { Keys[TKey] = TState; }
 		void SetMouseState(int TButton, bool TState) { MouseButtons[TButton] = TState; }
 
 		// Input
-		bool Keys[KEY_KEY_CODES_COUNT], MouseButtons[MOUSE_COUNT];
+		bool Keys[irr::KEY_KEY_CODES_COUNT], MouseButtons[MOUSE_COUNT];
 		irr::core::position2di MousePosition;
 
 };
 
-extern InputClass Input;
+extern _Input Input;

@@ -64,8 +64,8 @@ void _Skill::GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
-	int FinalPower = (int)(round_(PowerBase + Power * (TLevel - 1)));
-	int FinalPowerRange = (int)(round_(PowerRangeBase + PowerRange * (TLevel - 1)));
+	int FinalPower = (int)(std::roundf(PowerBase + Power * (TLevel - 1)));
+	int FinalPowerRange = (int)(std::roundf(PowerRangeBase + PowerRange * (TLevel - 1)));
 
 	TMin = FinalPower - FinalPowerRange;
 	TMax = FinalPower + FinalPowerRange;

@@ -24,8 +24,12 @@
 #include <network/packetstream.h>
 #include <states/connect.h>
 #include <states/characters.h>
+#include <IGUIEnvironment.h>
+#include <IGUIButton.h>
 
 _CreateCharacterState CreateCharacterState;
+
+using namespace irr;
 
 // Initializes the state
 int _CreateCharacterState::Init() {
@@ -38,7 +42,7 @@ int _CreateCharacterState::Init() {
 	int SlotX = 0, SlotY = 0, i = 0;
 	for(std::list<PortraitStruct>::iterator Iterator = PortraitList.begin(); Iterator != PortraitList.end(); ++Iterator) {
 		Portraits.push_back(Iterator->ID);
-		IGUIButton *Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 100 + 50, SlotY * 100 + 150, 64, 64), 0, ELEMENT_PORTRAITS + i);
+		gui::IGUIButton *Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 100 + 50, SlotY * 100 + 150, 64, 64), 0, ELEMENT_PORTRAITS + i);
 		Button->setImage(Iterator->Image);
 
 		i++;
@@ -51,8 +55,8 @@ int _CreateCharacterState::Init() {
 
 	// Buttons
 	int DrawX = 400, DrawY = 450, ButtonWidth = 80;
-	Graphics.SetFont(GraphicsClass::FONT_10);
-	Graphics.AddText("Name", DrawX, DrawY, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_10);
+	Graphics.AddText("Name", DrawX, DrawY, _Graphics::ALIGN_CENTER);
 
 	DrawY += 35;
 	EditName = irrGUI->addEditBox(L"", Graphics.GetCenteredRect(DrawX, DrawY, 180, 25), true, 0, ELEMENT_NAME);
@@ -65,7 +69,7 @@ int _CreateCharacterState::Init() {
 	Message = "";
 	State = STATE_MAIN;
 	SelectedIndex = -1;
-	SelectedButton = NULL;
+	SelectedButton = nullptr;
 
 	return 1;
 }
@@ -108,16 +112,16 @@ void _CreateCharacterState::Update(uint32_t TDeltaTime) {
 void _CreateCharacterState::Draw() {
 
 	// Top text
-	Graphics.SetFont(GraphicsClass::FONT_14);
-	Graphics.RenderText("Create your character", 400, 10, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_14);
+	Graphics.RenderText("Create your character", 400, 10, _Graphics::ALIGN_CENTER);
 
-	Graphics.SetFont(GraphicsClass::FONT_10);
-	Graphics.RenderText("Select a picture", 400, 80, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_10);
+	Graphics.RenderText("Select a picture", 400, 80, _Graphics::ALIGN_CENTER);
 
 	// Message
 	if(Message.size() > 0) {
-		Graphics.SetFont(GraphicsClass::FONT_10);
-		Graphics.RenderText(Message.c_str(), 400, 400, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+		Graphics.SetFont(_Graphics::FONT_10);
+		Graphics.RenderText(Message.c_str(), 400, 400, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 	}
 
 	// Draw GUI
@@ -125,8 +129,8 @@ void _CreateCharacterState::Draw() {
 
 	// Draw selected box
 	if(SelectedIndex != -1) {
-		position2di ButtonPosition = SelectedButton->getAbsolutePosition().getCenter();
-		Graphics.DrawImage(GraphicsClass::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
+		core::position2di ButtonPosition = SelectedButton->getAbsolutePosition().getCenter();
+		Graphics.DrawImage(_Graphics::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
 	}
 }
 
@@ -148,11 +152,11 @@ bool _CreateCharacterState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void _CreateCharacterState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _CreateCharacterState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 
 	int ID = TElement->getID();
 	switch(TEventType) {
-		case EGET_BUTTON_CLICKED:
+		case gui::EGET_BUTTON_CLICKED:
 			switch(ID) {
 				case ELEMENT_CREATE:
 					CreateCharacter();
@@ -162,7 +166,7 @@ void _CreateCharacterState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *T
 				break;
 				default:
 					if(ID >= ELEMENT_PORTRAITS) {
-						SelectedButton = static_cast<IGUIButton *>(TElement);
+						SelectedButton = static_cast<gui::IGUIButton *>(TElement);
 						UpdateSelection(ID - ELEMENT_PORTRAITS);
 					}
 				break;
@@ -188,7 +192,7 @@ void _CreateCharacterState::CreateCharacter() {
 	}
 
 	// Get name
-	stringc Name = EditName->getText();
+	core::stringc Name = EditName->getText();
 	Name.trim();
 	if(Name.size() == 0) {
 		Message = "Enter your name";

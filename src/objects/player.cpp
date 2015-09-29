@@ -29,18 +29,20 @@
 #include <states/playserver.h>
 #include <objects/skill.h>
 
+using namespace irr;
+
 // Constructor
 _Player::_Player()
 :	_Object(PLAYER),
 	_Fighter(TYPE_PLAYER),
 	AccountID(0),
 	CharacterID(0),
-	Database(NULL),
+	Database(nullptr),
 	State(STATE_WALK),
 	MoveTime(0),
 	AutoSaveTime(0),
 	PortraitID(0),
-	StateImage(NULL),
+	StateImage(nullptr),
 	SpawnMapID(1),
 	SpawnPoint(0),
 	TownPortalTime(0),
@@ -63,13 +65,13 @@ _Player::_Player()
 	ArmorMaxDefense(0),
 	AttackPlayerTime(0),
 	InvisPower(0),
-	Vendor(NULL),
+	Vendor(nullptr),
 	SkillPoints(0),
 	SkillPointsUsed(0),
 	TradeRequestTime(0),
 	TradeGold(0),
 	TradeAccepted(false),
-	TradePlayer(NULL) {
+	TradePlayer(nullptr) {
 
 	WorldImage = irrDriver->getTexture("textures/players/basic.png");
 
@@ -82,7 +84,7 @@ _Player::_Player()
 
 	// Reset items
 	for(int i = 0; i < _Player::INVENTORY_COUNT; i++) {
-		Inventory[i].Item = NULL;
+		Inventory[i].Item = nullptr;
 		Inventory[i].Count = 0;
 	}
 
@@ -131,7 +133,7 @@ void _Player::Update(uint32_t TDeltaTime) {
 void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 	if(TMap) {
 
-		position2di ScreenPosition;
+		core::position2di ScreenPosition;
 		bool OnScreen = TMap->GridToScreen(Position, ScreenPosition);
 
 		if(OnScreen) {
@@ -140,14 +142,14 @@ void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 				Alpha = 70;
 
 
-			Graphics.DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
+			Graphics.DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, video::SColor(Alpha, 255, 255, 255));
 			if(StateImage) {
-				Graphics.DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, SColor(Alpha, 255, 255, 255));
+				Graphics.DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, video::SColor(Alpha, 255, 255, 255));
 			}
 
 			if(TClientPlayer != this) {
-				Graphics.SetFont(GraphicsClass::FONT_8);
-				Graphics.RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, GraphicsClass::ALIGN_CENTER);
+				Graphics.SetFont(_Graphics::FONT_8);
+				Graphics.RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, _Graphics::ALIGN_CENTER);
 			}
 		}
 	}
@@ -159,7 +161,7 @@ bool _Player::MovePlayer(int TDirection) {
 		return false;
 
 	// Get new position
-	position2di NewPosition = Position;
+	core::position2di NewPosition = Position;
 	switch(TDirection) {
 		case MOVE_LEFT:
 			NewPosition.X--;
@@ -309,7 +311,7 @@ void _Player::StartBattle(_Battle *TBattle) {
 void _Player::StopBattle() {
 
 	State = STATE_WALK;
-	Battle = NULL;
+	Battle = nullptr;
 	GenerateNextBattle();
 }
 
@@ -376,7 +378,7 @@ int _Player::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) {
 	// Check for an open reward slot
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
 		_InventorySlot *InventoryItem = &Inventory[i];
-		if(InventoryItem->Item == NULL || (InventoryItem->Item == TTrader->RewardItem && InventoryItem->Count + TTrader->Count <= 255)) {
+		if(InventoryItem->Item == nullptr || (InventoryItem->Item == TTrader->RewardItem && InventoryItem->Count + TTrader->Count <= 255)) {
 			RewardItemSlot = i;
 			break;
 		}
@@ -407,7 +409,7 @@ int _Player::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) {
 
 // Accept a trade from a trader
 void _Player::AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRewardSlot) {
-	if(TTrader == NULL || !IsSlotInventory(TRewardSlot))
+	if(TTrader == nullptr || !IsSlotInventory(TRewardSlot))
 		return;
 
 	// Trade in required items
@@ -438,7 +440,7 @@ int _Player::GetPotionBattle(int TType) {
 // Uses a potion in battle
 bool _Player::UsePotionBattle(int TSlot, int TSkillType, int &THealthChange, int &TManaChange) {
 	const _Item *Item = GetInventoryItem(TSlot);
-	if(Item == NULL || Item->GetType() != _Item::TYPE_POTION)
+	if(Item == nullptr || Item->GetType() != _Item::TYPE_POTION)
 		return false;
 
 	THealthChange = Item->GetHealthRestore();
@@ -452,7 +454,7 @@ bool _Player::UsePotionBattle(int TSlot, int TSkillType, int &THealthChange, int
 // Uses a potion in the world
 bool _Player::UsePotionWorld(int TSlot) {
 	const _Item *Item = GetInventoryItem(TSlot);
-	if(Item == NULL)
+	if(Item == nullptr)
 		return false;
 
 	// Get potion stats
@@ -475,7 +477,7 @@ bool _Player::UsePotionWorld(int TSlot) {
 // Uses an item from the inventory
 bool _Player::UseInventory(int TSlot) {
 	const _Item *Item = GetInventoryItem(TSlot);
-	if(Item == NULL)
+	if(Item == nullptr)
 		return false;
 
 	// Handle item types
@@ -492,7 +494,7 @@ bool _Player::UseInventory(int TSlot) {
 void _Player::SetInventory(int TSlot, int TItemID, int TCount) {
 
 	if(TItemID == 0) {
-		Inventory[TSlot].Item = NULL;
+		Inventory[TSlot].Item = nullptr;
 		Inventory[TSlot].Count = 0;
 	}
 	else {
@@ -504,8 +506,8 @@ void _Player::SetInventory(int TSlot, int TItemID, int TCount) {
 // Sets an item in the inventory
 void _Player::SetInventory(int TSlot, _InventorySlot *TItem) {
 
-	if(TItem->Item == NULL) {
-		Inventory[TSlot].Item = NULL;
+	if(TItem->Item == nullptr) {
+		Inventory[TSlot].Item = nullptr;
 		Inventory[TSlot].Count = 0;
 	}
 	else {
@@ -525,7 +527,7 @@ const _Item *_Player::GetInventoryItem(int TSlot) {
 
 	// Check for bad slots
 	if(TSlot < INVENTORY_BACKPACK || TSlot >= INVENTORY_TRADE || !Inventory[TSlot].Item)
-		return NULL;
+		return nullptr;
 
 	return Inventory[TSlot].Item;
 }
@@ -566,7 +568,7 @@ bool _Player::MoveInventory(int TOldSlot, int TNewSlot) {
 				Inventory[TNewSlot].Count = 255;
 			}
 			else
-				Inventory[TOldSlot].Item = NULL;
+				Inventory[TOldSlot].Item = nullptr;
 		}
 		else {
 
@@ -596,7 +598,7 @@ bool _Player::UpdateInventory(int TSlot, int TAmount) {
 
 	Inventory[TSlot].Count += TAmount;
 	if(Inventory[TSlot].Count <= 0) {
-		Inventory[TSlot].Item = NULL;
+		Inventory[TSlot].Item = nullptr;
 		Inventory[TSlot].Count = 0;
 		return true;
 	}
@@ -619,7 +621,7 @@ bool _Player::AddItem(const _Item *TItem, int TCount, int TSlot) {
 			}
 
 			// Keep track of the first empty slot
-			if(Inventory[i].Item == NULL && EmptySlot == -1)
+			if(Inventory[i].Item == nullptr && EmptySlot == -1)
 				EmptySlot = i;
 		}
 
@@ -651,7 +653,7 @@ bool _Player::AddItem(const _Item *TItem, int TCount, int TSlot) {
 		Inventory[TSlot].Count += TCount;
 		return true;
 	}
-	else if(Inventory[TSlot].Item == NULL) {
+	else if(Inventory[TSlot].Item == nullptr) {
 		Inventory[TSlot].Item = TItem;
 		Inventory[TSlot].Count = TCount;
 		return true;
@@ -665,7 +667,7 @@ void _Player::MoveTradeToInventory() {
 
 	for(int i = INVENTORY_TRADE; i < INVENTORY_COUNT; i++) {
 		if(Inventory[i].Item && AddItem(Inventory[i].Item, Inventory[i].Count, -1))
-			Inventory[i].Item = NULL;
+			Inventory[i].Item = nullptr;
 	}
 }
 
@@ -687,7 +689,7 @@ void _Player::SplitStack(int TSlot, int TCount) {
 				EmptySlot = INVENTORY_BACKPACK;
 
 			Item = &Inventory[EmptySlot];
-		} while(!(EmptySlot == TSlot || Item->Item == NULL || (Item->Item == SplitItem->Item && Item->Count <= 255 - TCount)));
+		} while(!(EmptySlot == TSlot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= 255 - TCount)));
 
 		// Split item
 		if(EmptySlot != TSlot) {
@@ -702,7 +704,7 @@ bool _Player::IsBackpackFull() {
 
 	// Search backpack
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		if(Inventory[i].Item == NULL)
+		if(Inventory[i].Item == nullptr)
 			return false;
 	}
 
@@ -753,7 +755,7 @@ bool _Player::CanEquipItem(int TSlot, const _Item *TItem) {
 // Updates a skill level
 void _Player::AdjustSkillLevel(int TSkillID, int TAdjust) {
 	const _Skill *Skill = Stats.GetSkill(TSkillID);
-	if(Skill == NULL)
+	if(Skill == nullptr)
 		return;
 
 	// Buying
@@ -782,7 +784,7 @@ void _Player::AdjustSkillLevel(int TSkillID, int TAdjust) {
 		if(SkillLevels[TSkillID] == 0) {
 			for(int i = 0; i < 8; i++) {
 				if(SkillBar[i] == Skill) {
-					SkillBar[i] = NULL;
+					SkillBar[i] = nullptr;
 					break;
 				}
 			}
@@ -954,8 +956,8 @@ void _Player::CalculateSkillStats() {
 
 // Combine all stats
 void _Player::CalculateFinalStats() {
-	MinDamage = MinDamageBonus + (int)round_(WeaponMinDamage * WeaponDamageModifier);
-	MaxDamage = MaxDamageBonus + (int)round_(WeaponMaxDamage * WeaponDamageModifier);
+	MinDamage = MinDamageBonus + (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
+	MaxDamage = MaxDamageBonus + (int)std::roundf(WeaponMaxDamage * WeaponDamageModifier);
 	if(MinDamage < 0)
 		MinDamage = 0;
 	if(MaxDamage < 0)

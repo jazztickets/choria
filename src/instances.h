@@ -18,23 +18,14 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <list>
 #include <cstdint>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
 
 // Forward Declarations
 class _Map;
 class _Battle;
 class _ClientBattle;
-class ServerBattleClass;
+class _ServerBattle;
 
 // Classes
 class InstanceClass {
@@ -51,7 +42,7 @@ class InstanceClass {
 
 		// Battles
 		_ClientBattle *CreateClientBattle();
-		ServerBattleClass *CreateServerBattle();
+		_ServerBattle *CreateServerBattle();
 		void DeleteBattle(_Battle *TBattle);
 
 	private:

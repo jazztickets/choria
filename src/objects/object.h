@@ -36,7 +36,7 @@ class _Object {
 			MONSTER,
 		};
 
-		virtual void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=NULL) { }
+		virtual void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=nullptr) { }
 
 		_Object(int TType);
 		virtual ~_Object();

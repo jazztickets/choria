@@ -32,7 +32,9 @@
 #include <states/connect.h>
 #include <states/account.h>
 
-GameClass Game;
+_Game Game;
+
+using namespace irr;
 
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN
@@ -43,26 +45,26 @@ GameClass Game;
 #endif
 
 // Processes parameters and initializes the game
-int GameClass::Init(int TArgumentCount, char **TArguments) {
+int _Game::Init(int TArgumentCount, char **TArguments) {
 
 	WindowActive = true;
 	LocalServerRunning = false;
 	State = &MainMenuState;
 
 	bool IsServer = false;
-	E_DRIVER_TYPE DriverType = EDT_OPENGL;
+	video::E_DRIVER_TYPE DriverType = video::EDT_OPENGL;
 
 	// Process arguments
-	stringc Token;
+	core::stringc Token;
 	int TokensRemaining;
 	for(int i = 1; i < TArgumentCount; i++) {
-		Token = stringc(TArguments[i]);
+		Token = core::stringc(TArguments[i]);
 		TokensRemaining = TArgumentCount - i - 1;
 		if(Token == "-host") {
 			State = &PlayServerState;
 			PlayServerState.StartCommandThread();
 			IsServer = true;
-			DriverType = EDT_NULL;
+			DriverType = video::EDT_NULL;
 		}
 		else if(Token == "-mapeditor") {
 			State = &MapEditorState;
@@ -116,7 +118,7 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 	ResetTimer();
 
 	// Set the first state
-	NewState = NULL;
+	NewState = nullptr;
 	ManagerState = STATE_INIT;
 	Done = false;
 
@@ -124,7 +126,7 @@ int GameClass::Init(int TArgumentCount, char **TArguments) {
 }
 
 // Shuts down the game
-void GameClass::Close() {
+void _Game::Close() {
 
 	// Close the state
 	State->Close();
@@ -149,14 +151,14 @@ void GameClass::Close() {
 }
 
 // Requests a state change
-void GameClass::ChangeState(_State *TState) {
+void _Game::ChangeState(_State *TState) {
 
 	NewState = TState;
 	ManagerState = STATE_FADEOUT;
 }
 
 // Updates the current state and manages the state stack
-void GameClass::Update() {
+void _Game::Update() {
 
 	// Run irrlicht engine
 	if(!irrDevice->run())
@@ -226,14 +228,14 @@ void GameClass::Update() {
 }
 
 // Resets the game timer
-void GameClass::ResetTimer() {
+void _Game::ResetTimer() {
 
 	irrTimer->setTime(0);
 	TimeStamp = irrTimer->getTime();
 }
 
 // Delays execution of the program
-void GameClass::Delay(int TTime) {
+void _Game::Delay(int TTime) {
 	#ifdef _WIN32
 		Sleep(TTime);
 	#else
@@ -242,7 +244,7 @@ void GameClass::Delay(int TTime) {
 }
 
 // Starts the local server
-void GameClass::StartLocalServer() {
+void _Game::StartLocalServer() {
 	if(!LocalServerRunning) {
 		LocalServerRunning = true;
 
@@ -254,7 +256,7 @@ void GameClass::StartLocalServer() {
 }
 
 // Stops the local server
-void GameClass::StopLocalServer() {
+void _Game::StopLocalServer() {
 	if(LocalServerRunning) {
 		LocalServerRunning = false;
 

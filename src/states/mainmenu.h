@@ -36,8 +36,8 @@ class _MainMenuState : public _State {
 		int Init();
 		int Close();
 
-		bool HandleKeyPress(EKEY_CODE TKey);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		bool HandleKeyPress(irr::EKEY_CODE TKey);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void Draw();

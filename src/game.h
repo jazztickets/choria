@@ -25,7 +25,7 @@ class _State;
 class _SingleNetwork;
 class _MultiNetwork;
 
-class GameClass {
+class _Game {
 
 	public:
 
@@ -78,4 +78,4 @@ class GameClass {
 
 };
 
-extern GameClass Game;
+extern _Game Game;

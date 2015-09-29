@@ -24,8 +24,11 @@
 #include <network/packetstream.h>
 #include <states/connect.h>
 #include <states/characters.h>
+#include <IGUIEnvironment.h>
 
 _AccountState AccountState;
+
+using namespace irr;
 
 // Initializes the state
 int _AccountState::Init() {
@@ -36,23 +39,23 @@ int _AccountState::Init() {
 		AccountName = Config.GetLastAccountName();
 
 	// Account
-	Graphics.SetFont(GraphicsClass::FONT_10);
-	TextAccountName = Graphics.AddText("Account", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
+	Graphics.SetFont(_Graphics::FONT_10);
+	TextAccountName = Graphics.AddText("Account", DrawX, DrawY, _Graphics::ALIGN_CENTER, Form);
 
 	DrawY += 35;
 	EditAccountName = irrGUI->addEditBox(L"", Graphics.GetCenteredRect(DrawX, DrawY, 180, 25), true, Form, ELEMENT_ACCOUNT);
 	EditAccountName->setMax(15);
-	EditAccountName->setText(stringw(AccountName.c_str()).c_str());
+	EditAccountName->setText(core::stringw(AccountName.c_str()).c_str());
 
 	// Password
 	DrawY += 35;
-	TextPassword = Graphics.AddText("Password", DrawX, DrawY, GraphicsClass::ALIGN_CENTER, Form);
+	TextPassword = Graphics.AddText("Password", DrawX, DrawY, _Graphics::ALIGN_CENTER, Form);
 
 	DrawY += 35;
 	EditPassword = irrGUI->addEditBox(L"", Graphics.GetCenteredRect(DrawX, DrawY, 180, 25), true, Form, ELEMENT_PASSWORD);
 	EditPassword->setPasswordBox(true);
 	EditPassword->setMax(15);
-	EditPassword->setText(stringw(Password.c_str()).c_str());
+	EditPassword->setText(core::stringw(Password.c_str()).c_str());
 
 	// Buttons
 	DrawY += 50;
@@ -115,20 +118,20 @@ void _AccountState::Update(uint32_t TDeltaTime) {
 // Draws the current state
 void _AccountState::Draw() {
 
-	Graphics.DrawImage(GraphicsClass::IMAGE_MENULOGO, 400, 125);
+	Graphics.DrawImage(_Graphics::IMAGE_MENULOGO, 400, 125);
 
 	// Server message
 	if(Message.size() > 0) {
-		Graphics.SetFont(GraphicsClass::FONT_10);
-		Graphics.RenderText(Message.c_str(), 400, 200, GraphicsClass::ALIGN_CENTER, SColor(255, 255, 0, 0));
+		Graphics.SetFont(_Graphics::FONT_10);
+		Graphics.RenderText(Message.c_str(), 400, 200, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 	}
 
 	switch(State) {
 		case STATE_MAIN:
 		break;
 		case STATE_LOGIN:
-			Graphics.SetFont(GraphicsClass::FONT_10);
-			Graphics.RenderText("Sending information...", 400, 250, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(_Graphics::FONT_10);
+			Graphics.RenderText("Sending information...", 400, 250, _Graphics::ALIGN_CENTER);
 		break;
 	}
 
@@ -157,11 +160,11 @@ bool _AccountState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void _AccountState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _AccountState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 	switch(State) {
 		case STATE_MAIN:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(TElement->getID()) {
 						case ELEMENT_LOGIN:
 							CreateAccount = false;
@@ -242,7 +245,7 @@ bool _AccountState::ValidateForm() {
 }
 
 // Sets the default login info
-void _AccountState::SetLoginInfo(const stringc &TAccountName, const stringc &TPassword) {
+void _AccountState::SetLoginInfo(const core::stringc &TAccountName, const core::stringc &TPassword) {
 	AccountName = TAccountName;
 	Password = TPassword;
 }

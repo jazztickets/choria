@@ -19,6 +19,10 @@
 
 // Libraries
 #include <state.h>
+#include <IGUITabControl.h>
+#include <IGUIEditBox.h>
+#include <IGUIButton.h>
+#include <IGUIStaticText.h>
 
 // Classes
 class _ConnectState : public _State {
@@ -42,8 +46,8 @@ class _ConnectState : public _State {
 		void HandleConnect(ENetEvent *TEvent);
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
-		bool HandleKeyPress(EKEY_CODE TKey);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		bool HandleKeyPress(irr::EKEY_CODE TKey);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void Draw();
@@ -57,10 +61,10 @@ class _ConnectState : public _State {
 		int State;
 
 		// GUI
-		IGUITab *Form;
-		IGUIStaticText *TextIP;
-		IGUIEditBox *EditIP;
-		IGUIButton *ButtonConnect, *ButtonCancel;
+		irr::gui::IGUITab *Form;
+		irr::gui::IGUIStaticText *TextIP;
+		irr::gui::IGUIEditBox *EditIP;
+		irr::gui::IGUIButton *ButtonConnect, *ButtonCancel;
 		irr::core::stringc Message, IPAddress;
 
 };

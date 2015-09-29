@@ -31,8 +31,11 @@
 #include <objects/player.h>
 #include <objects/monster.h>
 #include <states/mainmenu.h>
+#include <IGUIEnvironment.h>
 
 _PlayClientState PlayClientState;
+
+using namespace irr;
 
 // Constructor
 _PlayClientState::_PlayClientState()
@@ -45,9 +48,9 @@ int _PlayClientState::Init() {
 
 	ClientTime = 0;
 	SentClientTime = 0;
-	Player = NULL;
-	Map = NULL;
-	Battle = NULL;
+	Player = nullptr;
+	Map = nullptr;
+	Battle = nullptr;
 	State = STATE_CONNECTING;
 
 	Instances = new InstanceClass();
@@ -169,10 +172,10 @@ void _PlayClientState::Update(uint32_t TDeltaTime) {
 
 			// Send move input
 			if(!HUD.IsChatting()) {
-				if(Input.GetMouseState(InputClass::MOUSE_LEFT) && !(Input.GetMousePosition().X >= 656 && Input.GetMousePosition().Y >= 575)) {
-					position2di MoveTarget;
+				if(Input.GetMouseState(_Input::MOUSE_LEFT) && !(Input.GetMousePosition().X >= 656 && Input.GetMousePosition().Y >= 575)) {
+					core::position2di MoveTarget;
 					Map->ScreenToGrid(Input.GetMousePosition(), MoveTarget);
-					position2di Delta = MoveTarget - Player->GetPosition();
+					core::position2di Delta = MoveTarget - Player->GetPosition();
 
 					if(abs(Delta.X) > abs(Delta.Y)) {
 						if(Delta.X < 0)
@@ -220,7 +223,7 @@ void _PlayClientState::Update(uint32_t TDeltaTime) {
 				// Done with the battle
 				if(Battle->GetState() == _ClientBattle::STATE_DELETE) {
 					Instances->DeleteBattle(Battle);
-					Battle = NULL;
+					Battle = nullptr;
 					State = STATE_WALK;
 				}
 			}
@@ -429,7 +432,7 @@ void _PlayClientState::HandleMouseRelease(int TButton, int TMouseX, int TMouseY)
 }
 
 // Handles GUI presses
-void _PlayClientState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _PlayClientState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 
 	switch(State) {
 		case STATE_BATTLE:
@@ -507,7 +510,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 		// Spawn players
 		int NetworkID;
 		_Player *NewPlayer;
-		position2di GridPosition;
+		core::position2di GridPosition;
 		for(int i = 0; i < PlayerCount; i++) {
 			NetworkID = TPacket->ReadChar();
 			GridPosition.X = TPacket->ReadChar();
@@ -516,7 +519,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 
 			switch(Type) {
 				case _Object::PLAYER: {
-					stringc Name(TPacket->ReadString());
+					core::stringc Name(TPacket->ReadString());
 					int PortraitID = TPacket->ReadChar();
 					int Invisible = TPacket->ReadBit();
 
@@ -543,7 +546,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 	// Delete the battle
 	if(Battle) {
 		Instances->DeleteBattle(Battle);
-		Battle = NULL;
+		Battle = nullptr;
 	}
 
 	State = STATE_WALK;
@@ -553,7 +556,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 void _PlayClientState::HandleCreateObject(_Packet *TPacket) {
 
 	// Read packet
-	position2di Position;
+	core::position2di Position;
 	int NetworkID = TPacket->ReadChar();
 	Position.X = TPacket->ReadChar();
 	Position.Y = TPacket->ReadChar();
@@ -563,7 +566,7 @@ void _PlayClientState::HandleCreateObject(_Packet *TPacket) {
 	_Object *NewObject = nullptr;
 	switch(Type) {
 		case _Object::PLAYER: {
-			stringc Name(TPacket->ReadString());
+			core::stringc Name(TPacket->ReadString());
 			int PortraitID = TPacket->ReadChar();
 			int Invisible = TPacket->ReadBit();
 
@@ -577,7 +580,7 @@ void _PlayClientState::HandleCreateObject(_Packet *TPacket) {
 	}
 
 	if(NewObject) {
-		NewObject->SetPosition(position2di(Position.X, Position.Y));
+		NewObject->SetPosition(core::position2di(Position.X, Position.Y));
 
 		// Add it to the manager
 		ObjectManager->AddObjectWithNetworkID(NewObject, NetworkID);
@@ -617,7 +620,7 @@ void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
 
 	//printf("HandleObjectUpdates: ServerTime=%d, ClientTime=%d, ObjectCount=%d\n", ServerTime, ClientTime, ObjectCount);
 
-	position2di Position;
+	core::position2di Position;
 	char NetworkID;
 	int PlayerState;
 	int Invisible;
@@ -649,13 +652,13 @@ void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
 
 			switch(PlayerState) {
 				case _Player::STATE_WALK:
-					OtherPlayer->SetStateImage(NULL);
+					OtherPlayer->SetStateImage(nullptr);
 				break;
 				case _Player::STATE_WAITTRADE:
-					OtherPlayer->SetStateImage(Graphics.GetImage(GraphicsClass::IMAGE_WORLDTRADE));
+					OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDTRADE));
 				break;
 				default:
-					OtherPlayer->SetStateImage(Graphics.GetImage(GraphicsClass::IMAGE_WORLDBUSY));
+					OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDBUSY));
 				break;
 			}
 		}
@@ -696,7 +699,7 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 
 			// Get player object
 			_Player *NewPlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
-			if(NewPlayer != NULL) {
+			if(NewPlayer != nullptr) {
 				NewPlayer->SetHealth(Health);
 				NewPlayer->SetMaxHealth(MaxHealth);
 				NewPlayer->SetMana(Mana);
@@ -768,7 +771,7 @@ void _PlayClientState::HandleHUD(_Packet *TPacket) {
 
 // Handles player position
 void _PlayClientState::HandlePlayerPosition(_Packet *TPacket) {
-	position2di GridPosition;
+	core::position2di GridPosition;
 	GridPosition.X = TPacket->ReadChar();
 	GridPosition.Y = TPacket->ReadChar();
 	Player->SetPosition(GridPosition);
@@ -776,7 +779,7 @@ void _PlayClientState::HandlePlayerPosition(_Packet *TPacket) {
 
 // Handles the start of an event
 void _PlayClientState::HandleEventStart(_Packet *TPacket) {
-	position2di GridPosition;
+	core::position2di GridPosition;
 	int Type = TPacket->ReadChar();
 	int Data = TPacket->ReadInt();
 	GridPosition.X = TPacket->ReadChar();
@@ -807,7 +810,7 @@ void _PlayClientState::HandleChatMessage(_Packet *TPacket) {
 
 	// Read packet
 	int NetworkID = TPacket->ReadChar();
-	stringc Message(TPacket->ReadString());
+	core::stringc Message(TPacket->ReadString());
 
 	// Get player that sent packet
 	_Player *MessagePlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
@@ -815,8 +818,8 @@ void _PlayClientState::HandleChatMessage(_Packet *TPacket) {
 		return;
 
 	// Create chat message
-	ChatStruct Chat;
-	Chat.Message = MessagePlayer->GetName() + stringc(": ") + Message;
+	_ChatMessage Chat;
+	Chat.Message = MessagePlayer->GetName() + core::stringc(": ") + Message;
 	HUD.AddChatMessage(Chat);
 
 	printf("%s\n", Chat.Message.c_str());
@@ -854,7 +857,7 @@ void _PlayClientState::HandleTradeRequest(_Packet *TPacket) {
 
 // Handles a trade cancel
 void _PlayClientState::HandleTradeCancel(_Packet *TPacket) {
-	Player->SetTradePlayer(NULL);
+	Player->SetTradePlayer(nullptr);
 
 	// Reset agreement
 	HUD.ResetAcceptButton();

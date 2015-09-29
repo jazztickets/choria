@@ -18,6 +18,8 @@
 #include <objects/item.h>
 #include <stats.h>
 
+using namespace irr;
+
 // Returns the range of damage
 void _Item::GetDamageRange(int &TMin, int &TMax) const {
 
@@ -33,7 +35,7 @@ void _Item::GetDefenseRange(int &TMin, int &TMax) const {
 }
 
 // Returns a string of the item type
-void _Item::GetType(stringc &TString) const {
+void _Item::GetType(core::stringc &TString) const {
 
 	switch(Type) {
 		case TYPE_HEAD:

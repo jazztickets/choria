@@ -27,8 +27,11 @@
 #include <states/account.h>
 #include <states/createcharacter.h>
 #include <states/playclient.h>
+#include <IGUIEnvironment.h>
 
 _CharactersState CharactersState;
+
+using namespace irr;
 
 // Initializes the state
 int _CharactersState::Init() {
@@ -37,7 +40,7 @@ int _CharactersState::Init() {
 	int SlotX = 0, SlotY = 0;
 	for(int i = 0; i < CHARACTERS_MAX; i++) {
 		Slots[i].Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 200 + 200, SlotY * 150 + 150, 64, 64), 0, ELEMENT_SLOT0 + i);
-		Slots[i].Button->setImage(Graphics.GetImage(GraphicsClass::IMAGE_MENUBLANKSLOT));
+		Slots[i].Button->setImage(Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT));
 		Slots[i].Used = false;
 		Slots[i].Name = "";
 		Slots[i].Level = 0;
@@ -51,7 +54,7 @@ int _CharactersState::Init() {
 
 	// Buttons
 	int DrawX = 400, DrawY = 500, ButtonWidth = 80;
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 	ButtonPlay = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 180, DrawY, ButtonWidth, 25), 0, ELEMENT_PLAY, L"Play");
 	ButtonCreate = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 60, DrawY, ButtonWidth, 25), 0, ELEMENT_CREATE, L"Create");
 	ButtonDelete = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 60, DrawY, ButtonWidth, 25), 0, ELEMENT_DELETE, L"Delete");
@@ -99,26 +102,26 @@ void _CharactersState::Update(uint32_t TDeltaTime) {
 void _CharactersState::Draw() {
 
 	// Top text
-	Graphics.SetFont(GraphicsClass::FONT_14);
-	Graphics.RenderText("Select a slot", 400, 10, GraphicsClass::ALIGN_CENTER);
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_14);
+	Graphics.RenderText("Select a slot", 400, 10, _Graphics::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_10);
 
 	// Draw character text
-	position2di TextPosition;
+	core::position2di TextPosition;
 	char Buffer[256];
 	for(int i = 0; i < CHARACTERS_MAX; i++) {
 		TextPosition = Slots[i].Button->getAbsolutePosition().getCenter();
 
 		if(Slots[i].Used) {
-			Graphics.SetFont(GraphicsClass::FONT_14);
-			Graphics.RenderText(Slots[i].Name.c_str(), TextPosition.X, TextPosition.Y + 35, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(_Graphics::FONT_14);
+			Graphics.RenderText(Slots[i].Name.c_str(), TextPosition.X, TextPosition.Y + 35, _Graphics::ALIGN_CENTER);
 
 			sprintf(Buffer, "Level %d", Slots[i].Level);
-			Graphics.SetFont(GraphicsClass::FONT_10);
-			Graphics.RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, GraphicsClass::ALIGN_CENTER);
+			Graphics.SetFont(_Graphics::FONT_10);
+			Graphics.RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, _Graphics::ALIGN_CENTER);
 		}
 		else {
-			Graphics.RenderText("Empty", TextPosition.X, TextPosition.Y + 35, GraphicsClass::ALIGN_CENTER);
+			Graphics.RenderText("Empty", TextPosition.X, TextPosition.Y + 35, _Graphics::ALIGN_CENTER);
 		}
 	}
 
@@ -127,8 +130,8 @@ void _CharactersState::Draw() {
 
 	// Draw selected box
 	if(SelectedIndex != -1) {
-		position2di ButtonPosition = Slots[SelectedIndex].Button->getAbsolutePosition().getCenter();
-		Graphics.DrawImage(GraphicsClass::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
+		core::position2di ButtonPosition = Slots[SelectedIndex].Button->getAbsolutePosition().getCenter();
+		Graphics.DrawImage(_Graphics::IMAGE_MENUSELECTED, ButtonPosition.X, ButtonPosition.Y);
 	}
 }
 
@@ -153,10 +156,10 @@ bool _CharactersState::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // GUI events
-void _CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _CharactersState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 
 	switch(TEventType) {
-		case EGET_BUTTON_CLICKED:
+		case gui::EGET_BUTTON_CLICKED:
 			switch(TElement->getID()) {
 				case ELEMENT_PLAY:
 					PlayCharacter();
@@ -168,7 +171,7 @@ void _CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TEleme
 					Game.ChangeState(&CreateCharacterState);
 				break;
 				case ELEMENT_DELETE:
-					irrGUI->addMessageBox(L"", L"Are you sure you want to delete this character?", true, EMBF_YES | EMBF_NO, 0, ELEMENT_DELETECONFIRM);
+					irrGUI->addMessageBox(L"", L"Are you sure you want to delete this character?", true, gui::EMBF_YES | gui::EMBF_NO, 0, ELEMENT_DELETECONFIRM);
 				break;
 				case ELEMENT_SLOT0:
 				case ELEMENT_SLOT1:
@@ -182,7 +185,7 @@ void _CharactersState::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TEleme
 				break;
 			}
 		break;
-		case EGET_MESSAGEBOX_YES:
+		case gui::EGET_MESSAGEBOX_YES:
 			switch(TElement->getID()) {
 				case ELEMENT_DELETECONFIRM:
 					Delete();
@@ -205,7 +208,7 @@ void _CharactersState::HandleCharacterList(_Packet *TPacket) {
 		ButtonCreate->setEnabled(true);
 
 	// Get characters
-	ITexture *PortraitImage;
+	video::ITexture *PortraitImage;
 	int i;
 	for(i = 0; i < CharacterCount; i++) {
 		Slots[i].Used = true;
@@ -217,7 +220,7 @@ void _CharactersState::HandleCharacterList(_Packet *TPacket) {
 	}
 	for(; i < CHARACTERS_MAX; i++) {
 		Slots[i].Used = false;
-		PortraitImage = Graphics.GetImage(GraphicsClass::IMAGE_MENUBLANKSLOT);
+		PortraitImage = Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT);
 		Slots[i].Button->setImage(PortraitImage);
 		Slots[i].Button->setPressedImage(PortraitImage);
 	}

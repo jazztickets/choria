@@ -16,17 +16,20 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <database.h>
+#include <sqlite3.h>
+#include <cstdio>
+#include <cstring>
 
 // Constructor
-DatabaseClass::DatabaseClass()
-:	Database(NULL) {
+_Database::_Database()
+:	Database(nullptr) {
 
-	QueryHandle[0] = NULL;
-	QueryHandle[1] = NULL;
+	QueryHandle[0] = nullptr;
+	QueryHandle[1] = nullptr;
 }
 
 // Destructor
-DatabaseClass::~DatabaseClass() {
+_Database::~_Database() {
 
 	// Close database
 	if(Database)
@@ -34,10 +37,10 @@ DatabaseClass::~DatabaseClass() {
 }
 
 // Load a database file
-int DatabaseClass::OpenDatabase(const char *TFilename) {
+int _Database::OpenDatabase(const char *TFilename) {
 
 	// Open database file
-	int Result = sqlite3_open_v2(TFilename, &Database, SQLITE_OPEN_READWRITE, NULL);
+	int Result = sqlite3_open_v2(TFilename, &Database, SQLITE_OPEN_READWRITE, nullptr);
 	if(Result != SQLITE_OK) {
 		printf("OpenDatabase: %s\n", sqlite3_errmsg(Database));
 		sqlite3_close(Database);
@@ -49,10 +52,10 @@ int DatabaseClass::OpenDatabase(const char *TFilename) {
 }
 
 // Load a database file
-int DatabaseClass::OpenDatabaseCreate(const char *TFilename) {
+int _Database::OpenDatabaseCreate(const char *TFilename) {
 
 	// Open database file
-	int Result = sqlite3_open_v2(TFilename, &Database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+	int Result = sqlite3_open_v2(TFilename, &Database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
 	if(Result != SQLITE_OK) {
 		printf("OpenDatabaseCreate: %s\n", sqlite3_errmsg(Database));
 		sqlite3_close(Database);
@@ -64,7 +67,7 @@ int DatabaseClass::OpenDatabaseCreate(const char *TFilename) {
 }
 
 // Runs a query
-int DatabaseClass::RunQuery(const char *TQueryString) {
+int _Database::RunQuery(const char *TQueryString) {
 
 	sqlite3_stmt *NewQueryHandle;
 	const char *Tail;
@@ -90,7 +93,7 @@ int DatabaseClass::RunQuery(const char *TQueryString) {
 }
 
 // Runs a query that returns data
-int DatabaseClass::RunDataQuery(const char *TQueryString, int THandle) {
+int _Database::RunDataQuery(const char *TQueryString, int THandle) {
 
 	const char *Tail;
 	int Result = sqlite3_prepare_v2(Database, TQueryString, strlen(TQueryString), &QueryHandle[THandle], &Tail);
@@ -103,7 +106,7 @@ int DatabaseClass::RunDataQuery(const char *TQueryString, int THandle) {
 }
 
 // Runs a query that counts a row and returns the result
-int DatabaseClass::RunCountQuery(const char *TQueryString) {
+int _Database::RunCountQuery(const char *TQueryString) {
 
 	RunDataQuery(TQueryString);
 	FetchRow();
@@ -115,7 +118,7 @@ int DatabaseClass::RunCountQuery(const char *TQueryString) {
 }
 
 // Fetch 1 row from a query
-int DatabaseClass::FetchRow(int THandle) {
+int _Database::FetchRow(int THandle) {
 
 	int Result = sqlite3_step(QueryHandle[THandle]);
 	switch(Result) {
@@ -132,7 +135,7 @@ int DatabaseClass::FetchRow(int THandle) {
 }
 
 // Shut down a query
-int DatabaseClass::CloseQuery(int THandle) {
+int _Database::CloseQuery(int THandle) {
 
 	int Result = sqlite3_finalize(QueryHandle[THandle]);
 	if(Result != SQLITE_OK) {
@@ -144,25 +147,25 @@ int DatabaseClass::CloseQuery(int THandle) {
 }
 
 // Gets the last insert id
-int DatabaseClass::GetLastInsertID() {
+int _Database::GetLastInsertID() {
 
 	return (int)sqlite3_last_insert_rowid(Database);
 }
 
 // Returns an integer column
-int DatabaseClass::GetInt(int TColumnIndex, int THandle) {
+int _Database::GetInt(int TColumnIndex, int THandle) {
 
 	return sqlite3_column_int(QueryHandle[THandle], TColumnIndex);
 }
 
 // Returns a float column
-float DatabaseClass::GetFloat(int TColumnIndex, int THandle) {
+float _Database::GetFloat(int TColumnIndex, int THandle) {
 
 	return static_cast<float>(sqlite3_column_double(QueryHandle[THandle], TColumnIndex));
 }
 
 // Returns a string column
-const char *DatabaseClass::GetString(int TColumnIndex, int THandle) {
+const char *_Database::GetString(int TColumnIndex, int THandle) {
 
 	return (const char *)sqlite3_column_text(QueryHandle[THandle], TColumnIndex);
 }

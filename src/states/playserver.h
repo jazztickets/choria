@@ -22,13 +22,13 @@
 #include <thread>
 
 // Forward Declarations
-class DatabaseClass;
+class _Database;
 class ObjectManagerClass;
 class InstanceClass;
 class _Packet;
 class _Object;
 class _Player;
-class ServerBattleClass;
+class _ServerBattle;
 
 // Classes
 class _PlayServerState : public _State {
@@ -91,7 +91,7 @@ class _PlayServerState : public _State {
 
 		void RemovePlayerFromBattle(_Player *TPlayer);
 
-		DatabaseClass *Database;
+		_Database *Database;
 		ObjectManagerClass *ObjectManager;
 		InstanceClass *Instances;
 

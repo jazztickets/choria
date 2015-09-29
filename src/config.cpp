@@ -18,7 +18,7 @@
 #include <config.h>
 #include <fstream>
 
-ConfigClass Config;
+_Config Config;
 
 #ifdef _WIN32
 	#define WIN32_LEAN_AND_MEAN
@@ -27,25 +27,25 @@ ConfigClass Config;
 	#include <sys/stat.h>
 #endif
 
-using namespace std;
+using namespace irr;
 
 // Constructor
-int ConfigClass::Init() {
+int _Config::Init() {
 
 	#ifdef _WIN32
-		SavePath = stringc(getenv("APPDATA")) + stringc("/choria/");
-		SaveMapPath = stringc(getenv("APPDATA")) + stringc("/choria/maps/");
-		CreateDirectory(SavePath.c_str(), NULL);
-		CreateDirectory(SaveMapPath.c_str(), NULL);
+		SavePath = core::stringc(getenv("APPDATA")) + core::stringc("/choria/");
+		SaveMapPath = core::stringc(getenv("APPDATA")) + core::stringc("/choria/maps/");
+		CreateDirectory(SavePath.c_str(), nullptr);
+		CreateDirectory(SaveMapPath.c_str(), nullptr);
 	#else
-		SavePath = stringc(getenv("HOME")) + stringc("/.local/");
+		SavePath = core::stringc(getenv("HOME")) + core::stringc("/.local/");
 		mkdir(SavePath.c_str(), 0755);
 		SavePath += "share/";
 		mkdir(SavePath.c_str(), 0755);
 		SavePath += "choria/";
 		mkdir(SavePath.c_str(), 0755);
 
-		SaveMapPath = SavePath + stringc("maps/");
+		SaveMapPath = SavePath + core::stringc("maps/");
 		mkdir(SavePath.c_str(), 0755);
 	#endif
 
@@ -56,31 +56,31 @@ int ConfigClass::Init() {
 }
 
 // Destructor
-void ConfigClass::Close() {
+void _Config::Close() {
 
 }
 
 // Gets the save path to a file
-stringc ConfigClass::GetSavePath(const stringc &TFile) {
+core::stringc _Config::GetSavePath(const core::stringc &TFile) {
 
-	return SavePath + stringc(TFile);
+	return SavePath + core::stringc(TFile);
 }
 
 // Gets the save map path to a file
-stringc ConfigClass::GetSaveMapPath(const stringc &TFile) {
+core::stringc _Config::GetSaveMapPath(const core::stringc &TFile) {
 
-	return SaveMapPath + stringc(TFile);
+	return SaveMapPath + core::stringc(TFile);
 }
 
 // Loads settings
-bool ConfigClass::LoadSettings() {
+bool _Config::LoadSettings() {
 
 	// Get filename
-	stringc SaveFile = GetSavePath("settings.cfg");
+	core::stringc SaveFile = GetSavePath("settings.cfg");
 
 	// Open file
-	ifstream File;
-	File.open(SaveFile.c_str(), ios::in);
+	std::ifstream File;
+	File.open(SaveFile.c_str(), std::ios::in);
 	if(!File.is_open()) {
 		File.clear();
 
@@ -108,14 +108,14 @@ bool ConfigClass::LoadSettings() {
 }
 
 // Saves settings
-bool ConfigClass::SaveSettings() {
+bool _Config::SaveSettings() {
 
 	// Get filename
-	stringc SaveFile = GetSavePath("settings.cfg");
+	core::stringc SaveFile = GetSavePath("settings.cfg");
 
 	// Open file
-	ofstream File;
-	File.open(SaveFile.c_str(), ios::out);
+	std::ofstream File;
+	File.open(SaveFile.c_str(), std::ios::out);
 	if(!File.is_open()) {
 		File.clear();
 
@@ -123,11 +123,11 @@ bool ConfigClass::SaveSettings() {
 	}
 
 	// Save settings
-	File << LastIPAddress.c_str() << endl;
+	File << LastIPAddress.c_str() << std::endl;
 	if(LastAccountName == "")
-		File << endl;
+		File << std::endl;
 	else
-		File << LastAccountName.c_str() << endl;
+		File << LastAccountName.c_str() << std::endl;
 
 	// Close
 	File.clear();

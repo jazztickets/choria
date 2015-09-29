@@ -20,12 +20,8 @@
 // Libraries
 #include <irrString.h>
 
-// Namespaces
-using namespace irr;
-using namespace core;
-
 // Classes
-class ConfigClass {
+class _Config {
 
 	public:
 
@@ -53,4 +49,4 @@ class ConfigClass {
 
 };
 
-extern ConfigClass Config;
+extern _Config Config;

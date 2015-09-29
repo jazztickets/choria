@@ -23,10 +23,10 @@
 // Constructor
 ObjectManagerClass::ObjectManagerClass() {
 
-	ObjectDeletedCallback = NULL;
+	ObjectDeletedCallback = nullptr;
 	ObjectArray = new _Object *[MAX_OBJECTS];
 	for(int i = 0; i < MAX_OBJECTS; i++)
-		ObjectArray[i] = NULL;
+		ObjectArray[i] = nullptr;
 
 	NextNetworkID = 0;
 }
@@ -42,13 +42,13 @@ ObjectManagerClass::~ObjectManagerClass() {
 // Adds an object to the manager
 _Object *ObjectManagerClass::AddObject(_Object *TObject) {
 
-	if(TObject != NULL) {
+	if(TObject != nullptr) {
 
 		// Assign the object a network ID
 		int NetworkID = GetNextNetworkID();
 		if(NetworkID == -1) {
 			printf("No available network ID\n");
-			return NULL;
+			return nullptr;
 		}
 
 		TObject->SetNetworkID(NetworkID);
@@ -62,7 +62,7 @@ _Object *ObjectManagerClass::AddObject(_Object *TObject) {
 // Adds an object with an assigned network ID
 _Object *ObjectManagerClass::AddObjectWithNetworkID(_Object *TObject, int TNetworkID) {
 
-	if(TObject != NULL && TNetworkID < MAX_OBJECTS) {
+	if(TObject != nullptr && TNetworkID < MAX_OBJECTS) {
 		TObject->SetNetworkID(TNetworkID);
 		Objects.push_back(TObject);
 		ObjectArray[TNetworkID] = TObject;
@@ -110,11 +110,11 @@ void ObjectManagerClass::Update(uint32_t TDeltaTime) {
 		// Delete old objects
 		if(Object->GetDeleted()) {
 
-			if(ObjectDeletedCallback != NULL) {
+			if(ObjectDeletedCallback != nullptr) {
 				ObjectDeletedCallback(Object);
 			}
 
-			ObjectArray[(int)Object->GetNetworkID()] = NULL;
+			ObjectArray[(int)Object->GetNetworkID()] = nullptr;
 
 			delete Object;
 			Iterator = Objects.erase(Iterator);
@@ -138,7 +138,7 @@ void ObjectManagerClass::Render(const _Map *TMap, _Object *TClientPlayer) {
 // Creates an object from a template ID
 _Object *ObjectManagerClass::CreateObjectFromTemplate(int TTemplateID) {
 
-	_Object *NewObject = NULL;
+	_Object *NewObject = nullptr;
 	NewObject = new _Player();
 
 	return NewObject;
@@ -148,7 +148,7 @@ _Object *ObjectManagerClass::CreateObjectFromTemplate(int TTemplateID) {
 int ObjectManagerClass::GetNextNetworkID() {
 
 	for(int i = 0; i < MAX_OBJECTS; i++) {
-		if(ObjectArray[NextNetworkID] == NULL)
+		if(ObjectArray[NextNetworkID] == nullptr)
 			return NextNetworkID;
 
 		NextNetworkID++;
@@ -163,7 +163,7 @@ int ObjectManagerClass::GetNextNetworkID() {
 _Object *ObjectManagerClass::GetObjectFromNetworkID(int TID) {
 
 	if(TID < 0 || TID >= MAX_OBJECTS)
-		return NULL;
+		return nullptr;
 
 	return ObjectArray[TID];
 }

@@ -21,12 +21,12 @@
 #include <fstream>
 
 // Classes
-class FileClass {
+class _FileStream {
 
 	public:
 
-		FileClass();
-		~FileClass();
+		_FileStream();
+		~_FileStream();
 
 		int OpenForWrite(const char *TFilename);
 		int OpenForRead(const char *TFilename);

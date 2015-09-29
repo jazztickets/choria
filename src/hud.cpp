@@ -29,8 +29,12 @@
 #include <objects/player.h>
 #include <objects/item.h>
 #include <vector>
+#include <algorithm>
+#include <IGUIEnvironment.h>
 
-HUDClass HUD;
+_HUD HUD;
+
+using namespace irr;
 
 struct PositionStruct {
 	int X;
@@ -48,11 +52,11 @@ static PositionStruct EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
 };
 
 // Initialize
-int HUDClass::Init() {
+int _HUD::Init() {
 
 	State = PlayClientState.GetState();
-	Vendor = NULL;
-	Trader = NULL;
+	Vendor = nullptr;
+	Trader = nullptr;
 	TooltipItem.Reset();
 	CursorItem.Reset();
 	TooltipSkill.Reset();
@@ -60,9 +64,9 @@ int HUDClass::Init() {
 	CharacterOpen = false;
 	Chatting = false;
 	TypingGold = false;
-	TradeAcceptButton = NULL;
+	TradeAcceptButton = nullptr;
 	RewardItemSlot = -1;
-	ChatBox = NULL;
+	ChatBox = nullptr;
 	ChatHistory.clear();
 
 	InitButtonBar();
@@ -71,13 +75,13 @@ int HUDClass::Init() {
 }
 
 // Shutdown
-int HUDClass::Close() {
+int _HUD::Close() {
 
 	return 1;
 }
 
 // Handles key presses
-void HUDClass::HandleKeyPress(EKEY_CODE TKey) {
+void _HUD::HandleKeyPress(EKEY_CODE TKey) {
 
 	if(Chatting) {
 		if(TKey == KEY_ESCAPE) {
@@ -92,8 +96,8 @@ void HUDClass::HandleKeyPress(EKEY_CODE TKey) {
 }
 
 // Handles mouse movement
-void HUDClass::HandleMouseMotion(int TMouseX, int TMouseY) {
-	position2di MousePosition(TMouseX, TMouseY);
+void _HUD::HandleMouseMotion(int TMouseX, int TMouseY) {
+	core::position2di MousePosition(TMouseX, TMouseY);
 
 	switch(*State) {
 		case _PlayClientState::STATE_VENDOR:
@@ -109,17 +113,17 @@ void HUDClass::HandleMouseMotion(int TMouseX, int TMouseY) {
 }
 
 // Handles mouse presses
-bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
+bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 
 	switch(*State) {
 		case _PlayClientState::STATE_VENDOR:
 			switch(TButton) {
-				case InputClass::MOUSE_LEFT:
+				case _Input::MOUSE_LEFT:
 					if(TooltipItem.Item) {
 						CursorItem = TooltipItem;
 					}
 				break;
-				case InputClass::MOUSE_RIGHT:
+				case _Input::MOUSE_RIGHT:
 					if(TooltipItem.Item) {
 						if(TooltipItem.Window == WINDOW_VENDOR)
 							BuyItem(&TooltipItem, -1);
@@ -131,7 +135,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_INVENTORY:
 			switch(TButton) {
-				case InputClass::MOUSE_LEFT:
+				case _Input::MOUSE_LEFT:
 					if(TooltipItem.Item) {
 						if(Input.IsControlDown())
 							SplitStack(TooltipItem.Slot, 1);
@@ -139,7 +143,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 							CursorItem = TooltipItem;
 					}
 				break;
-				case InputClass::MOUSE_RIGHT:
+				case _Input::MOUSE_RIGHT:
 					if(Player->UseInventory(TooltipItem.Slot)) {
 						_Packet Packet(_Network::INVENTORY_USE);
 						Packet.WriteChar(TooltipItem.Slot);
@@ -150,7 +154,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_TRADE:
 			switch(TButton) {
-				case InputClass::MOUSE_LEFT:
+				case _Input::MOUSE_LEFT:
 					if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
 						if(TooltipItem.Window == WINDOW_INVENTORY && Input.IsControlDown())
 							SplitStack(TooltipItem.Slot, 1);
@@ -162,7 +166,7 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_SKILLS:
 			switch(TButton) {
-				case InputClass::MOUSE_LEFT:
+				case _Input::MOUSE_LEFT:
 					if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
 						CursorSkill = TooltipSkill;
 				break;
@@ -174,13 +178,13 @@ bool HUDClass::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 }
 
 // Handles mouse release
-void HUDClass::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
+void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 
 	switch(*State) {
 		case _PlayClientState::STATE_INVENTORY:
 		case _PlayClientState::STATE_VENDOR:
 		case _PlayClientState::STATE_TRADE:
-			if(TButton == InputClass::MOUSE_LEFT) {
+			if(TButton == _Input::MOUSE_LEFT) {
 
 				// Check for valid slots
 				if(CursorItem.Item) {
@@ -225,7 +229,7 @@ void HUDClass::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 			}
 		break;
 		case _PlayClientState::STATE_SKILLS:
-			if(TButton == InputClass::MOUSE_LEFT) {
+			if(TButton == _Input::MOUSE_LEFT) {
 
 				// Check for valid slots
 				if(CursorSkill.Skill) {
@@ -237,7 +241,7 @@ void HUDClass::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 							SetSkillBar(TooltipSkill.Slot, CursorSkill.Slot, CursorSkill.Skill);
 					}
 					else if(CursorSkill.Window == WINDOW_SKILLBAR && TooltipSkill.Slot == -1) {
-						SetSkillBar(CursorSkill.Slot, -1, NULL);
+						SetSkillBar(CursorSkill.Slot, -1, nullptr);
 					}
 				}
 
@@ -248,17 +252,17 @@ void HUDClass::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 }
 
 // Handles GUI presses
-void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
+void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 	int ID = TElement->getID();
 
-	if(TEventType == EGET_BUTTON_CLICKED && ID == ELEMENT_CHARACTER) {
+	if(TEventType == gui::EGET_BUTTON_CLICKED && ID == ELEMENT_CHARACTER) {
 		InitCharacter();
 	}
 
 	switch(*State) {
 		case _PlayClientState::STATE_WALK:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_TOWNPORTAL:
 							ToggleTownPortal();
@@ -285,7 +289,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 		break;
 		case _PlayClientState::STATE_MAINMENU:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_MAINMENU:
 						case ELEMENT_MAINMENURESUME:
@@ -302,7 +306,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 		break;
 		case _PlayClientState::STATE_TOWNPORTAL:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_TOWNPORTAL:
 							ToggleTownPortal();
@@ -315,7 +319,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 		break;
 		case _PlayClientState::STATE_INVENTORY:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_INVENTORY:
 							CloseWindows();
@@ -328,7 +332,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 		break;
 		case _PlayClientState::STATE_TRADER:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_TRADERACCEPT: {
 							_Packet Packet(_Network::TRADER_ACCEPT);
@@ -351,7 +355,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 		break;
 		case _PlayClientState::STATE_TRADE:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_TRADE:
 							CloseWindows();
@@ -366,16 +370,16 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 						break;
 					}
 				break;
-				case EGET_ELEMENT_FOCUSED:
+				case gui::EGET_ELEMENT_FOCUSED:
 					if(ID == ELEMENT_GOLDTRADEBOX) {
 						TypingGold = true;
 					}
 				break;
-				case EGET_ELEMENT_FOCUS_LOST:
-				case EGET_EDITBOX_ENTER:
+				case gui::EGET_ELEMENT_FOCUS_LOST:
+				case gui::EGET_EDITBOX_ENTER:
 					if(ID == ELEMENT_GOLDTRADEBOX) {
 						TypingGold = false;
-						if(TEventType == EGET_EDITBOX_ENTER)
+						if(TEventType == gui::EGET_EDITBOX_ENTER)
 							irrGUI->removeFocus(TradeGoldBox);
 
 						// Send amount
@@ -394,7 +398,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 		break;
 		case _PlayClientState::STATE_SKILLS:
 			switch(TEventType) {
-				case EGET_BUTTON_CLICKED:
+				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_SKILLS:
 							CloseWindows();
@@ -431,7 +435,7 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 										Direction = 1;
 									}
 									for(int i = 0; i < 8; i++) {
-										if(Player->GetSkillBar(Slot) == NULL) {
+										if(Player->GetSkillBar(Slot) == nullptr) {
 											SetSkillBar(Slot, -1, Skill);
 											break;
 										}
@@ -459,11 +463,11 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 }
 
 // Updates the HUD
-void HUDClass::Update(uint32_t TDeltaTime) {
+void _HUD::Update(uint32_t TDeltaTime) {
 
 	// Chat messages
-	for(std::list<ChatStruct>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
-		ChatStruct &Chat = (*Iterator);
+	for(std::list<_ChatMessage>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
+		_ChatMessage &Chat = (*Iterator);
 		Chat.TimeOut += TDeltaTime;
 		if(Chat.TimeOut > MESSAGE_TIME) {
 			Iterator = ChatHistory.erase(Iterator);
@@ -475,30 +479,30 @@ void HUDClass::Update(uint32_t TDeltaTime) {
 }
 
 // Draws the HUD before irrGUI
-void HUDClass::PreGUIDraw() {
+void _HUD::PreGUIDraw() {
 	switch(*State) {
 		case _PlayClientState::STATE_MAINMENU:
-			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, 0, 0, 800, 600, SColor(100, 255, 255, 255));
+			Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 0, 0, 800, 600, video::SColor(100, 255, 255, 255));
 		break;
 		case _PlayClientState::STATE_SKILLS: {
-			rect<s32> WindowArea = TabSkill->getAbsolutePosition();
+			core::recti WindowArea = TabSkill->getAbsolutePosition();
 
 			// Draw background
-			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, WindowArea.UpperLeftCorner.X, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth(), WindowArea.getHeight(), SColor(220, 255, 255, 255));
+			Graphics.DrawBackground(_Graphics::IMAGE_BLACK, WindowArea.UpperLeftCorner.X, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth(), WindowArea.getHeight(), video::SColor(220, 255, 255, 255));
 		}
 		break;
 		case _PlayClientState::STATE_TRADE: {
-			rect<s32> WindowArea = TabTrade->getAbsolutePosition();
+			core::recti WindowArea = TabTrade->getAbsolutePosition();
 
 			// Draw background
-			Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, WindowArea.UpperLeftCorner.X-1, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth()-1, WindowArea.getHeight(), SColor(220, 255, 255, 255));
+			Graphics.DrawBackground(_Graphics::IMAGE_BLACK, WindowArea.UpperLeftCorner.X-1, WindowArea.UpperLeftCorner.Y, WindowArea.getWidth()-1, WindowArea.getHeight(), video::SColor(220, 255, 255, 255));
 		}
 		break;
 	}
 }
 
 // Draws the HUD elements
-void HUDClass::Draw() {
+void _HUD::Draw() {
 	DrawTopHUD();
 
 	switch(*State) {
@@ -539,16 +543,16 @@ void HUDClass::Draw() {
 }
 
 // Starts the chat box
-void HUDClass::ToggleChat() {
+void _HUD::ToggleChat() {
 
 	if(Chatting) {
-		stringc Message = stringc(ChatBox->getText());
+		core::stringc Message = core::stringc(ChatBox->getText());
 		Message.trim();
 		if(Message != "") {
 
 			// Add message to history
-			ChatStruct Chat;
-			Chat.Message = Player->GetName() + stringc(": ") + Message;
+			_ChatMessage Chat;
+			Chat.Message = Player->GetName() + core::stringc(": ") + Message;
 			ChatHistory.push_back(Chat);
 			printf("%s\n", Chat.Message.c_str());
 
@@ -561,8 +565,8 @@ void HUDClass::ToggleChat() {
 		CloseChat();
 	}
 	else {
-		ChatBox = irrGUI->addEditBox(L"", Graphics.GetRect(25, 570, 200, 20), true, NULL, ELEMENT_CHATBOX);
-		ChatBox->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_10));
+		ChatBox = irrGUI->addEditBox(L"", Graphics.GetRect(25, 570, 200, 20), true, nullptr, ELEMENT_CHATBOX);
+		ChatBox->setOverrideFont(Graphics.GetFont(_Graphics::FONT_10));
 		ChatBox->setMax(NETWORKING_MESSAGESIZE);
 		irrGUI->setFocus(ChatBox);
 		Chatting = true;
@@ -570,63 +574,63 @@ void HUDClass::ToggleChat() {
 }
 
 // Closes the chat window
-void HUDClass::CloseChat() {
+void _HUD::CloseChat() {
 	irrGUI->getRootGUIElement()->removeChild(ChatBox);
 	Chatting = false;
 }
 
 // Creates the buttons for the HUD bar
-void HUDClass::InitButtonBar() {
+void _HUD::InitButtonBar() {
 
 	int DrawX = 800 - 24 * 6 + 25/2, DrawY = 600 - 25 / 2;
-	IGUIButton *Button;
-	IGUIStaticText *ButtonText;
+	gui::IGUIButton *Button;
+	gui::IGUIStaticText *ButtonText;
 
 	// Town portal
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_TOWNPORTAL, 0, L"Town Portal");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_TOWNPORTAL, 0, L"Town Portal");
 	Button->setImage(irrDriver->getTexture("textures/interface/hud_spawn.png"));
-	ButtonText = Graphics.AddText("Q", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("Q", 2, 12, _Graphics::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Inventory
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_INVENTORY, 0, L"Inventory");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_INVENTORY, 0, L"Inventory");
 	Button->setImage(irrDriver->getTexture("textures/interface/hud_inventory.png"));
-	ButtonText = Graphics.AddText("C", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("C", 2, 12, _Graphics::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Trade
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_TRADE, 0, L"Trade");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_TRADE, 0, L"Trade");
 	Button->setImage(irrDriver->getTexture("textures/interface/hud_trade.png"));
-	ButtonText = Graphics.AddText("T", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("T", 2, 12, _Graphics::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Character
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_CHARACTER, 0, L"Character");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_CHARACTER, 0, L"Character");
 	Button->setImage(irrDriver->getTexture("textures/interface/hud_character.png"));
-	ButtonText = Graphics.AddText("B", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("B", 2, 12, _Graphics::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Skills
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_SKILLS, 0, L"Skills");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_SKILLS, 0, L"Skills");
 	Button->setImage(irrDriver->getTexture("textures/interface/hud_skills.png"));
-	ButtonText = Graphics.AddText("S", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("S", 2, 12, _Graphics::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Menu
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), NULL, ELEMENT_MAINMENU, 0, L"Menu");
+	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_MAINMENU, 0, L"Menu");
 	Button->setImage(irrDriver->getTexture("textures/interface/hud_menu.png"));
-	ButtonText = Graphics.AddText("Esc", 2, 12, GraphicsClass::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(GraphicsClass::FONT_7));
+	ButtonText = Graphics.AddText("Esc", 2, 12, _Graphics::ALIGN_LEFT, Button);
+	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 }
 
 // Initialize the main menu
-void HUDClass::InitMenu() {
+void _HUD::InitMenu() {
 
 	// Add window
 	TabMenu = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 500));
@@ -639,7 +643,7 @@ void HUDClass::InitMenu() {
 }
 
 // Close main menu
-void HUDClass::CloseMenu() {
+void _HUD::CloseMenu() {
 
 	irrGUI->getRootGUIElement()->removeChild(TabMenu);
 
@@ -647,7 +651,7 @@ void HUDClass::CloseMenu() {
 }
 
 // Initialize the inventory system
-void HUDClass::InitInventory(int TX, int TY, bool TSendBusy) {
+void _HUD::InitInventory(int TX, int TY, bool TSendBusy) {
 	if(TSendBusy)
 		SendBusy(true);
 
@@ -658,13 +662,13 @@ void HUDClass::InitInventory(int TX, int TY, bool TSendBusy) {
 	TabInventory = irrGUI->addTab(Graphics.GetCenteredRect(TX, TY, 265, 200));
 
 	// Add background
-	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_INVENTORY), position2di(0, 0), true, TabInventory);
+	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_INVENTORY), core::position2di(0, 0), true, TabInventory);
 
 	*State = _PlayClientState::STATE_INVENTORY;
 }
 
 // Close the inventory system
-void HUDClass::CloseInventory() {
+void _HUD::CloseInventory() {
 
 	irrGUI->getRootGUIElement()->removeChild(TabInventory);
 	CursorItem.Reset();
@@ -677,7 +681,7 @@ void HUDClass::CloseInventory() {
 }
 
 // Initialize the vendor
-void HUDClass::InitVendor(int TVendorID) {
+void _HUD::InitVendor(int TVendorID) {
 	if(*State == _PlayClientState::STATE_VENDOR)
 		return;
 
@@ -688,14 +692,14 @@ void HUDClass::InitVendor(int TVendorID) {
 	TabVendor = irrGUI->addTab(Graphics.GetCenteredRect(400, 180, 262, 246));
 
 	// Add background
-	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_VENDOR), position2di(0, 0), true, TabVendor);
+	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_VENDOR), core::position2di(0, 0), true, TabVendor);
 
 	// Open inventory
 	InitInventory(400, 420, false);
 }
 
 // Close the vendor
-void HUDClass::CloseVendor() {
+void _HUD::CloseVendor() {
 	if(*State != _PlayClientState::STATE_VENDOR)
 		return;
 
@@ -710,11 +714,11 @@ void HUDClass::CloseVendor() {
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	*State = _PlayClientState::STATE_WALK;
-	Vendor = NULL;
+	Vendor = nullptr;
 }
 
 // Initialize the trader
-void HUDClass::InitTrader(int TTraderID) {
+void _HUD::InitTrader(int TTraderID) {
 	if(*State == _PlayClientState::STATE_TRADER)
 		return;
 
@@ -728,10 +732,10 @@ void HUDClass::InitTrader(int TTraderID) {
 	TabTrader = irrGUI->addTab(Graphics.GetCenteredRect(400, 250, 166, 272));
 
 	// Add background
-	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_TRADER), position2di(0, 0), true, TabTrader);
+	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADER), core::position2di(0, 0), true, TabTrader);
 
 	// Add buttons
-	IGUIButton *TradeButton = irrGUI->addButton(Graphics.GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
+	gui::IGUIButton *TradeButton = irrGUI->addButton(Graphics.GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
 	irrGUI->addButton(Graphics.GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
 
 	// Can't trade
@@ -742,7 +746,7 @@ void HUDClass::InitTrader(int TTraderID) {
 }
 
 // Close the trader
-void HUDClass::CloseTrader() {
+void _HUD::CloseTrader() {
 	if(*State != _PlayClientState::STATE_TRADER)
 		return;
 
@@ -755,11 +759,11 @@ void HUDClass::CloseTrader() {
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	*State = _PlayClientState::STATE_WALK;
-	Trader = NULL;
+	Trader = nullptr;
 }
 
 // Initialize the character screen
-void HUDClass::InitCharacter() {
+void _HUD::InitCharacter() {
 	if(!CharacterOpen) {
 		CharacterOpen = true;
 	}
@@ -769,7 +773,7 @@ void HUDClass::InitCharacter() {
 }
 
 // Closes the character screen
-void HUDClass::CloseCharacter() {
+void _HUD::CloseCharacter() {
 
 	if(CharacterOpen) {
 		CharacterOpen = false;
@@ -777,12 +781,12 @@ void HUDClass::CloseCharacter() {
 }
 
 // Initialize the skills screen
-void HUDClass::InitSkills() {
+void _HUD::InitSkills() {
 	*State = _PlayClientState::STATE_SKILLS;
 	SendBusy(true);
 
 	// Main window
-	TabSkill = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 450, 400), NULL, 0);
+	TabSkill = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 450, 400), nullptr, 0);
 
 	// Add +/- buttons
 	const std::vector<_Skill> &Skills = Stats.GetSkillList();
@@ -792,10 +796,10 @@ void HUDClass::InitSkills() {
 		int DrawY = Y * SKILL_SPACINGY + SKILL_STARTY + 45;
 
 		// Add buy/sell button
-		IGUIButton *BuyButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
-		BuyButton->setImage(Graphics.GetImage(GraphicsClass::IMAGE_PLUS));
-		IGUIButton *SellButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
-		SellButton->setImage(Graphics.GetImage(GraphicsClass::IMAGE_MINUS));
+		gui::IGUIButton *BuyButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
+		BuyButton->setImage(Graphics.GetImage(_Graphics::IMAGE_PLUS));
+		gui::IGUIButton *SellButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
+		SellButton->setImage(Graphics.GetImage(_Graphics::IMAGE_MINUS));
 
 		X++;
 		if(X >= SKILL_COLUMNS) {
@@ -811,7 +815,7 @@ void HUDClass::InitSkills() {
 }
 
 // Close the skills screen
-void HUDClass::CloseSkills() {
+void _HUD::CloseSkills() {
 
 	irrGUI->getRootGUIElement()->removeChild(TabSkill);
 	CursorSkill.Reset();
@@ -833,7 +837,7 @@ void HUDClass::CloseSkills() {
 }
 
 // Initialize the trade system
-void HUDClass::InitTrade() {
+void _HUD::InitTrade() {
 
 	// Send request to server
 	SendTradeRequest();
@@ -845,9 +849,9 @@ void HUDClass::InitTrade() {
 	TabTrade = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 280, 470));
 
 	// Add background
-	TraderWindow = irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_TRADE), position2di(TRADE_WINDOWX, TRADE_WINDOWYTHEM), true, TabTrade);
+	TraderWindow = irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADE), core::position2di(TRADE_WINDOWX, TRADE_WINDOWYTHEM), true, TabTrade);
 	TraderWindow->setVisible(false);
-	irrGUI->addImage(Graphics.GetImage(GraphicsClass::IMAGE_TRADE), position2di(TRADE_WINDOWX, TRADE_WINDOWYYOU), true, TabTrade);
+	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADE), core::position2di(TRADE_WINDOWX, TRADE_WINDOWYYOU), true, TabTrade);
 
 	// Add gold input box
 	TradeGoldBox = irrGUI->addEditBox(L"0", Graphics.GetRect(TRADE_WINDOWX + 33, TRADE_WINDOWYYOU + 68, 89, 20), true, TabTrade, ELEMENT_GOLDTRADEBOX);
@@ -865,11 +869,11 @@ void HUDClass::InitTrade() {
 }
 
 // Closes the trade system
-void HUDClass::CloseTrade(bool TSendNotify) {
+void _HUD::CloseTrade(bool TSendNotify) {
 
 	// Remove trade window
 	irrGUI->getRootGUIElement()->removeChild(TabTrade);
-	TradeAcceptButton = NULL;
+	TradeAcceptButton = nullptr;
 
 	// Close inventory
 	CloseInventory();
@@ -878,12 +882,12 @@ void HUDClass::CloseTrade(bool TSendNotify) {
 	if(TSendNotify)
 		SendTradeCancel();
 
-	Player->SetTradePlayer(NULL);
+	Player->SetTradePlayer(nullptr);
 	*State = _PlayClientState::STATE_WALK;
 }
 
 // Closes all windows
-void HUDClass::CloseWindows() {
+void _HUD::CloseWindows() {
 
 	switch(*State) {
 		case _PlayClientState::STATE_MAINMENU:
@@ -908,27 +912,27 @@ void HUDClass::CloseWindows() {
 }
 
 // Draws chat messages
-void HUDClass::DrawChat() {
+void _HUD::DrawChat() {
 	if(ChatHistory.size() == 0)
 		return;
 
 	// Set font
-	IGUIFont *TextFont = Graphics.GetFont(GraphicsClass::FONT_10);
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	gui::IGUIFont *TextFont = Graphics.GetFont(_Graphics::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 
 	int Index = 0;
-	for(std::list<ChatStruct>::reverse_iterator Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
-		ChatStruct &Chat = (*Iterator);
+	for(std::list<_ChatMessage>::reverse_iterator Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
+		_ChatMessage &Chat = (*Iterator);
 
 		int DrawX = 15;
 		int DrawY = 550 - Index * 20;
 
 		// Draw background
-		dimension2du TextArea = TextFont->getDimension(stringw(Chat.Message.c_str()).c_str());
-		Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX - 1, DrawY, TextArea.Width + 2, TextArea.Height, SColor(100, 255, 255, 255));
+		core::dimension2du TextArea = TextFont->getDimension(core::stringw(Chat.Message.c_str()).c_str());
+		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX - 1, DrawY, TextArea.Width + 2, TextArea.Height, video::SColor(100, 255, 255, 255));
 
 		// Draw text
-		Graphics.RenderText(Chat.Message.c_str(), DrawX, DrawY, GraphicsClass::ALIGN_LEFT, SColor(255, 255, 255, 255));
+		Graphics.RenderText(Chat.Message.c_str(), DrawX, DrawY, _Graphics::ALIGN_LEFT, video::SColor(255, 255, 255, 255));
 		Index++;
 		if(Index > 20)
 			break;
@@ -936,36 +940,36 @@ void HUDClass::DrawChat() {
 }
 
 // Draws the top HUD area
-void HUDClass::DrawTopHUD() {
+void _HUD::DrawTopHUD() {
 	int StartX = 125, StartY = 15, Width = 100, Height = 16, Spacing = 20;
 
 	char String[256];
-	Graphics.SetFont(GraphicsClass::FONT_14);
-	Graphics.RenderText(Player->GetName().c_str(), StartX / 2, 11, GraphicsClass::ALIGN_CENTER);
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_14);
+	Graphics.RenderText(Player->GetName().c_str(), StartX / 2, 11, _Graphics::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_10);
 
 	// Draw experience bar
 	sprintf(String, "Level %d", Player->GetLevel());
-	Graphics.DrawBar(GraphicsClass::IMAGE_EXPERIENCE, StartX, StartY, Player->GetNextLevelPercent(), Width, Height);
-	Graphics.RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBar(_Graphics::IMAGE_EXPERIENCE, StartX, StartY, Player->GetNextLevelPercent(), Width, Height);
+	Graphics.RenderText(String, StartX + Width/2, StartY, _Graphics::ALIGN_CENTER);
 
 	// Draw health
 	StartX += Width + Spacing;
 	float HealthPercent = Player->GetMaxHealth() > 0 ? Player->GetHealth() / (float)Player->GetMaxHealth() : 0;
 	sprintf(String, "%d / %d", Player->GetHealth(), Player->GetMaxHealth());
-	Graphics.DrawBar(GraphicsClass::IMAGE_HEALTH, StartX, StartY, HealthPercent, Width, Height);
-	Graphics.RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBar(_Graphics::IMAGE_HEALTH, StartX, StartY, HealthPercent, Width, Height);
+	Graphics.RenderText(String, StartX + Width/2, StartY, _Graphics::ALIGN_CENTER);
 
 	// Draw mana
 	StartX += Width + Spacing;
 	float ManaPercent = Player->GetMaxMana() > 0 ? Player->GetMana() / (float)Player->GetMaxMana() : 0;
 	sprintf(String, "%d / %d", Player->GetMana(), Player->GetMaxMana());
-	Graphics.DrawBar(GraphicsClass::IMAGE_MANA, StartX, StartY, ManaPercent, Width, Height);
-	Graphics.RenderText(String, StartX + Width/2, StartY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBar(_Graphics::IMAGE_MANA, StartX, StartY, ManaPercent, Width, Height);
+	Graphics.RenderText(String, StartX + Width/2, StartY, _Graphics::ALIGN_CENTER);
 
 	// Draw gold
 	StartX += Width + Spacing + 14;
-	Graphics.DrawImage(GraphicsClass::IMAGE_GOLD, StartX, StartY + 8);
+	Graphics.DrawImage(_Graphics::IMAGE_GOLD, StartX, StartY + 8);
 
 	StartX += 20;
 	sprintf(String, "%d", Player->GetGold());
@@ -974,13 +978,13 @@ void HUDClass::DrawTopHUD() {
 	// Draw PVP icon
 	if(Player->GetTile()->PVP) {
 		StartX += 80;
-		SColor PVPColor(255, 255, 255, 255);
+		video::SColor PVPColor(255, 255, 255, 255);
 		if(!Player->CanAttackPlayer())
 			PVPColor.set(150, 150, 150, 150);
-		Graphics.DrawImage(GraphicsClass::IMAGE_PVP, StartX, StartY + 8, PVPColor);
-		Graphics.SetFont(GraphicsClass::FONT_7);
-		Graphics.RenderText("A", StartX - 10, StartY + 8, GraphicsClass::ALIGN_LEFT, PVPColor);
-		Graphics.SetFont(GraphicsClass::FONT_10);
+		Graphics.DrawImage(_Graphics::IMAGE_PVP, StartX, StartY + 8, PVPColor);
+		Graphics.SetFont(_Graphics::FONT_7);
+		Graphics.RenderText("A", StartX - 10, StartY + 8, _Graphics::ALIGN_LEFT, PVPColor);
+		Graphics.SetFont(_Graphics::FONT_10);
 	}
 
 	// Draw RTT
@@ -991,12 +995,12 @@ void HUDClass::DrawTopHUD() {
 }
 
 // Draws the player's inventory
-void HUDClass::DrawInventory() {
-	rect<s32> WindowArea = TabInventory->getAbsolutePosition();
+void _HUD::DrawInventory() {
+	core::recti WindowArea = TabInventory->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 
-	Graphics.SetFont(GraphicsClass::FONT_7);
+	Graphics.SetFont(_Graphics::FONT_7);
 
 	// Draw equipped items
 	_InventorySlot *Item;
@@ -1022,7 +1026,7 @@ void HUDClass::DrawInventory() {
 			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
 			DrawItemPrice(Item->Item, Item->Count, DrawX, DrawY, false);
 			if(Item->Count > 1)
-				Graphics.RenderText(stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
+				Graphics.RenderText(core::stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
 		}
 
 		PositionX++;
@@ -1032,36 +1036,36 @@ void HUDClass::DrawInventory() {
 		}
 	}
 
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 }
 
 // Draw the town portal sequence
-void HUDClass::DrawTownPortal() {
+void _HUD::DrawTownPortal() {
 
-	Graphics.SetFont(GraphicsClass::FONT_14);
+	Graphics.SetFont(_Graphics::FONT_14);
 
 	// Get text
 	char String[256];
 	int TimeLeft = GAME_PORTALTIME - (int)Player->GetTownPortalTime();
-	sprintf(String, "Portal in %d", max_(TimeLeft / 1000, 0) + 1);
+	sprintf(String, "Portal in %d", std::max(TimeLeft / 1000, 0) + 1);
 
 	int DrawX = 400;
 	int DrawY = 200;
-	IGUIFont *TextFont = Graphics.GetFont(GraphicsClass::FONT_14);
-	dimension2du TextArea = TextFont->getDimension(stringw(String).c_str());
+	gui::IGUIFont *TextFont = Graphics.GetFont(_Graphics::FONT_14);
+	core::dimension2du TextArea = TextFont->getDimension(core::stringw(String).c_str());
 	TextArea.Width += 5;
 	TextArea.Height += 5;
 
 	// Draw text
-	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX - 1 - TextArea.Width/2, DrawY-2, TextArea.Width, TextArea.Height, SColor(100, 255, 255, 255));
-	Graphics.RenderText(String, DrawX, DrawY, GraphicsClass::ALIGN_CENTER);
+	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX - 1 - TextArea.Width/2, DrawY-2, TextArea.Width, TextArea.Height, video::SColor(100, 255, 255, 255));
+	Graphics.RenderText(String, DrawX, DrawY, _Graphics::ALIGN_CENTER);
 
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 }
 
 // Draw the vendor
-void HUDClass::DrawVendor() {
-	rect<s32> WindowArea = TabVendor->getAbsolutePosition();
+void _HUD::DrawVendor() {
+	core::recti WindowArea = TabVendor->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 	int CenterX = WindowArea.getCenter().X;
@@ -1086,29 +1090,29 @@ void HUDClass::DrawVendor() {
 	}
 
 	// Draw name
-	Graphics.SetFont(GraphicsClass::FONT_14);
-	Graphics.RenderText(Vendor->Name.c_str(), CenterX, OffsetY + 4, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_14);
+	Graphics.RenderText(Vendor->Name.c_str(), CenterX, OffsetY + 4, _Graphics::ALIGN_CENTER);
 
 	// Draw info
-	Graphics.SetFont(GraphicsClass::FONT_10);
-	Graphics.RenderText(Vendor->Info.c_str(), CenterX, OffsetY + 27, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_10);
+	Graphics.RenderText(Vendor->Info.c_str(), CenterX, OffsetY + 27, _Graphics::ALIGN_CENTER);
 
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 }
 
 // Draw the trader screen
-void HUDClass::DrawTrader() {
-	rect<s32> WindowArea = TabTrader->getAbsolutePosition();
+void _HUD::DrawTrader() {
+	core::recti WindowArea = TabTrader->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 	int CenterX = WindowArea.getCenter().X;
 
-	Graphics.SetFont(GraphicsClass::FONT_8);
+	Graphics.SetFont(_Graphics::FONT_8);
 
 	// Draw items
 	int PositionX = 0, PositionY = 0;
 	char Buffer[256];
-	SColor Color;
+	video::SColor Color;
 	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
 		int DrawX = OffsetX + 19 + PositionX * 32;
 		int DrawY = OffsetY + 52 + PositionY * 32 + PositionY * 14;
@@ -1119,7 +1123,7 @@ void HUDClass::DrawTrader() {
 		else
 			Color.set(255, 255, 255, 255);
 		sprintf(Buffer, "%d", Trader->TraderItems[i].Count);
-		Graphics.RenderText(Buffer, DrawX + 16, DrawY - 14, GraphicsClass::ALIGN_CENTER, Color);
+		Graphics.RenderText(Buffer, DrawX + 16, DrawY - 14, _Graphics::ALIGN_CENTER, Color);
 
 		PositionX++;
 		if(PositionX > 3) {
@@ -1131,17 +1135,17 @@ void HUDClass::DrawTrader() {
 	// Draw reward item
 	Graphics.DrawCenteredImage(Trader->RewardItem->GetImage(), OffsetX + 82, OffsetY + 198);
 	sprintf(Buffer, "%d", Trader->Count);
-	Graphics.RenderText(Buffer, OffsetX + 82, OffsetY + 166, GraphicsClass::ALIGN_CENTER);
+	Graphics.RenderText(Buffer, OffsetX + 82, OffsetY + 166, _Graphics::ALIGN_CENTER);
 
 	// Draw text
-	Graphics.SetFont(GraphicsClass::FONT_10);
-	Graphics.RenderText("Looking for", CenterX, OffsetY + 13, GraphicsClass::ALIGN_CENTER);
-	Graphics.RenderText("Reward", CenterX, OffsetY + 143, GraphicsClass::ALIGN_CENTER);
+	Graphics.SetFont(_Graphics::FONT_10);
+	Graphics.RenderText("Looking for", CenterX, OffsetY + 13, _Graphics::ALIGN_CENTER);
+	Graphics.RenderText("Reward", CenterX, OffsetY + 143, _Graphics::ALIGN_CENTER);
 }
 
 // Draw the trade screen
-void HUDClass::DrawTrade() {
-	rect<s32> WindowArea = TabTrade->getAbsolutePosition();
+void _HUD::DrawTrade() {
+	core::recti WindowArea = TabTrade->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 	int CenterX = WindowArea.getCenter().X;
@@ -1155,18 +1159,18 @@ void HUDClass::DrawTrade() {
 		TraderWindow->setVisible(true);
 
 		// Draw player information
-		Graphics.RenderText(TradePlayer->GetName().c_str(), OffsetX + 72, OffsetY + 70 - 55, GraphicsClass::ALIGN_CENTER);
+		Graphics.RenderText(TradePlayer->GetName().c_str(), OffsetX + 72, OffsetY + 70 - 55, _Graphics::ALIGN_CENTER);
 		Graphics.DrawCenteredImage(Stats.GetPortrait(TradePlayer->GetPortraitID())->Image, OffsetX + 72, OffsetY + 70);
 
 		// Draw items
 		DrawTradeItems(TradePlayer, TRADE_WINDOWX, TRADE_WINDOWYTHEM, true);
 
 		// Draw gold
-		Graphics.RenderText(stringc(TradePlayer->GetTradeGold()).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
+		Graphics.RenderText(core::stringc(TradePlayer->GetTradeGold()).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
 
 		// Draw agreement state
-		stringc AcceptText;
-		SColor AcceptColor;
+		core::stringc AcceptText;
+		video::SColor AcceptColor;
 		if(TradePlayer->GetTradeAccepted()) {
 			AcceptText = "Accepted";
 			AcceptColor.set(255, 0, 255, 0);
@@ -1176,22 +1180,22 @@ void HUDClass::DrawTrade() {
 			AcceptColor.set(255, 255, 0, 0);
 		}
 
-		Graphics.RenderText(AcceptText.c_str(), CenterX, OffsetY + TRADE_WINDOWYTHEM + 100, GraphicsClass::ALIGN_CENTER, AcceptColor);
+		Graphics.RenderText(AcceptText.c_str(), CenterX, OffsetY + TRADE_WINDOWYTHEM + 100, _Graphics::ALIGN_CENTER, AcceptColor);
 		TradeAcceptButton->setEnabled(true);
 	}
 	else {
 		TraderWindow->setVisible(false);
-		Graphics.RenderText("Waiting for other player...", 400, 120, GraphicsClass::ALIGN_CENTER);
+		Graphics.RenderText("Waiting for other player...", 400, 120, _Graphics::ALIGN_CENTER);
 		TradeAcceptButton->setEnabled(false);
 	}
 
 	// Draw player information
-	Graphics.RenderText(Player->GetName().c_str(), OffsetX + 72, OffsetY + 198 - 55, GraphicsClass::ALIGN_CENTER);
+	Graphics.RenderText(Player->GetName().c_str(), OffsetX + 72, OffsetY + 198 - 55, _Graphics::ALIGN_CENTER);
 	Graphics.DrawCenteredImage(Stats.GetPortrait(Player->GetPortraitID())->Image, OffsetX + 72, OffsetY + 198);
 }
 
 // Draw the character stats page
-void HUDClass::DrawCharacter() {
+void _HUD::DrawCharacter() {
 	char Buffer[256];
 	int Width = 180;
 	int Height = 300;
@@ -1199,43 +1203,43 @@ void HUDClass::DrawCharacter() {
 	int DrawX = 800 - Width;
 	int DrawY = 300 - Height / 2;
 	int RightDrawX = 800 - 10;
-	Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height, SColor(220, 255, 255, 255));
+	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height, video::SColor(220, 255, 255, 255));
 	DrawX += 10;
 	DrawY += 10;
 
 	// Experience
 	Graphics.RenderText("EXP", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetExperience());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	// Experience needed
 	DrawY += 15;
 	Graphics.RenderText("EXP needed", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetExperienceNeeded());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	// Damage
 	DrawY += 15;
 	Graphics.RenderText("Damage", DrawX, DrawY);
 	sprintf(Buffer, "%d-%d", Player->GetMinDamage(), Player->GetMaxDamage());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	// Defense
 	DrawY += 15;
 	Graphics.RenderText("Defense", DrawX, DrawY);
 	sprintf(Buffer, "%d-%d", Player->GetMinDefense(), Player->GetMaxDefense());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	// Regen
 	DrawY += 15;
 	Graphics.RenderText("HP Regen", DrawX, DrawY);
 	sprintf(Buffer, "%0.2f%%", Player->GetHealthRegen());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	DrawY += 15;
 	Graphics.RenderText("MP Regen", DrawX, DrawY);
 	sprintf(Buffer, "%0.2f%%", Player->GetManaRegen());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	// Stats
 	DrawY += 30;
@@ -1248,22 +1252,22 @@ void HUDClass::DrawCharacter() {
 		sprintf(Buffer, "%dm", Seconds / 60);
 	else
 		sprintf(Buffer, "%dh%dm", Seconds / 3600, (Seconds / 60 % 60));
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	DrawY += 15;
 	Graphics.RenderText("Deaths", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetDeaths());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	DrawY += 15;
 	Graphics.RenderText("Monster Kills", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetMonsterKills());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	DrawY += 15;
 	Graphics.RenderText("Player Kills", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetPlayerKills());
-	Graphics.RenderText(Buffer, RightDrawX, DrawY, GraphicsClass::ALIGN_RIGHT);
+	Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	//DrawY += 15;
 	//Graphics.RenderText("Bounty", DrawX, DrawY);
@@ -1272,13 +1276,13 @@ void HUDClass::DrawCharacter() {
 }
 
 // Draws the skill page
-void HUDClass::DrawSkills() {
+void _HUD::DrawSkills() {
 	char Buffer[256];
-	rect<s32> WindowArea = TabSkill->getAbsolutePosition();
+	core::recti WindowArea = TabSkill->getAbsolutePosition();
 
 	// Remaining points
 	sprintf(Buffer, "Skill Points: %d", Player->GetSkillPointsRemaining());
-	Graphics.RenderText(Buffer, 400, SKILL_BARY - 23, GraphicsClass::ALIGN_CENTER);
+	Graphics.RenderText(Buffer, 400, SKILL_BARY - 23, _Graphics::ALIGN_CENTER);
 
 	// Draw skills
 	const std::vector<_Skill> &Skills = Stats.GetSkillList();
@@ -1289,7 +1293,7 @@ void HUDClass::DrawSkills() {
 		Graphics.DrawCenteredImage(Skills[i].GetImage(), DrawX, DrawY);
 
 		sprintf(Buffer, "%d", Player->GetSkillLevel(i));
-		Graphics.RenderText(Buffer, DrawX, DrawY - 38, GraphicsClass::ALIGN_CENTER);
+		Graphics.RenderText(Buffer, DrawX, DrawY - 38, _Graphics::ALIGN_CENTER);
 
 		X++;
 		if(X >= SKILL_COLUMNS) {
@@ -1299,34 +1303,34 @@ void HUDClass::DrawSkills() {
 	}
 
 	// Draw skill bar
-	ITexture *Image;
+	video::ITexture *Image;
 	for(int i = 0; i < 8; i++) {
 
 		if(Player->GetSkillBar(i))
 			Image = Player->GetSkillBar(i)->GetImage();
 		else
-			Image = Graphics.GetImage(GraphicsClass::IMAGE_EMPTYSLOT);
+			Image = Graphics.GetImage(_Graphics::IMAGE_EMPTYSLOT);
 
 		Graphics.DrawCenteredImage(Image, SKILL_BARX + i * 32 + 16, SKILL_BARY + 16);
 	}
 }
 
 // Draws the item under the cursor
-void HUDClass::DrawCursorItem() {
+void _HUD::DrawCursorItem() {
 	if(CursorItem.Item) {
 		int DrawX = Input.GetMousePosition().X - 16;
 		int DrawY = Input.GetMousePosition().Y - 16;
-		Graphics.SetFont(GraphicsClass::FONT_7);
+		Graphics.SetFont(_Graphics::FONT_7);
 		Graphics.DrawCenteredImage(CursorItem.Item->GetImage(), DrawX + 16, DrawY + 16);
 		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawX, DrawY, CursorItem.Window == WINDOW_VENDOR);
 		if(CursorItem.Count > 1)
-			Graphics.RenderText(stringc(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
-		Graphics.SetFont(GraphicsClass::FONT_10);
+			Graphics.RenderText(core::stringc(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
+		Graphics.SetFont(_Graphics::FONT_10);
 	}
 }
 
 // Draws information about an item
-void HUDClass::DrawItemTooltip() {
+void _HUD::DrawItemTooltip() {
 	const _Item *Item = TooltipItem.Item;
 	if(Item) {
 		int DrawX = Input.GetMousePosition().X + 16;
@@ -1338,9 +1342,9 @@ void HUDClass::DrawItemTooltip() {
 
 		// Draw background
 		char Buffer[256];
-		stringc String;
-		Graphics.SetFont(GraphicsClass::FONT_10);
-		Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height);
+		core::stringc String;
+		Graphics.SetFont(_Graphics::FONT_10);
+		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
 		DrawX += 10;
 
 		// Draw name
@@ -1410,7 +1414,7 @@ void HUDClass::DrawItemTooltip() {
 				}
 
 				if(TooltipItem.Window == WINDOW_INVENTORY) {
-					Graphics.RenderText("Right-click to use", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+					Graphics.RenderText("Right-click to use", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
 					DrawY += 15;
 				}
 			break;
@@ -1443,15 +1447,15 @@ void HUDClass::DrawItemTooltip() {
 			DrawY += 15;
 			if(TooltipItem.Window == WINDOW_VENDOR) {
 				sprintf(Buffer, "$%d", TooltipItem.Cost);
-				Graphics.RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
+				Graphics.RenderText(Buffer, DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GOLD);
 				DrawY += 15;
-				Graphics.RenderText("Right-click to buy", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+				Graphics.RenderText("Right-click to buy", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
 			}
 			else if(TooltipItem.Window == WINDOW_INVENTORY) {
 				sprintf(Buffer, "$%d", TooltipItem.Cost);
-				Graphics.RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
+				Graphics.RenderText(Buffer, DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GOLD);
 				DrawY += 15;
-				Graphics.RenderText("Shift+Right-click to sell", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+				Graphics.RenderText("Shift+Right-click to sell", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
 			}
 		}
 
@@ -1459,7 +1463,7 @@ void HUDClass::DrawItemTooltip() {
 			case _PlayClientState::STATE_INVENTORY:
 			case _PlayClientState::STATE_TRADE:
 				if(TooltipItem.Window == WINDOW_INVENTORY && TooltipItem.Count > 1) {
-					Graphics.RenderText("Ctrl+click to split", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+					Graphics.RenderText("Ctrl+click to split", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
 					DrawY += 15;
 				}
 			break;
@@ -1468,7 +1472,7 @@ void HUDClass::DrawItemTooltip() {
 }
 
 // Draws the skill under the cursor
-void HUDClass::DrawCursorSkill() {
+void _HUD::DrawCursorSkill() {
 	if(CursorSkill.Skill) {
 		int DrawX = Input.GetMousePosition().X - 16;
 		int DrawY = Input.GetMousePosition().Y - 16;
@@ -1477,7 +1481,7 @@ void HUDClass::DrawCursorSkill() {
 }
 
 // Draws the skill tooltip window
-void HUDClass::DrawSkillTooltip() {
+void _HUD::DrawSkillTooltip() {
 	const _Skill *Skill = TooltipSkill.Skill;
 	if(Skill) {
 		int SkillLevel = Player->GetSkillLevel(Skill->GetID());
@@ -1497,9 +1501,9 @@ void HUDClass::DrawSkillTooltip() {
 
 		// Draw background
 		char Buffer[256];
-		stringc String;
-		Graphics.SetFont(GraphicsClass::FONT_10);
-		Graphics.DrawBackground(GraphicsClass::IMAGE_BLACK, DrawX, DrawY, Width, Height);
+		core::stringc String;
+		Graphics.SetFont(_Graphics::FONT_10);
+		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
 		DrawX += 10;
 		DrawY += 10;
 
@@ -1513,7 +1517,7 @@ void HUDClass::DrawSkillTooltip() {
 		// Draw next level description
 		if(SkillLevel > 0) {
 			DrawY += 30;
-			Graphics.RenderText("Next level", DrawX, DrawY, GraphicsClass::ALIGN_LEFT);
+			Graphics.RenderText("Next level", DrawX, DrawY, _Graphics::ALIGN_LEFT);
 			DrawY += 15;
 			DrawSkillDescription(Skill, SkillLevel+1, DrawX, DrawY);
 		}
@@ -1521,20 +1525,20 @@ void HUDClass::DrawSkillTooltip() {
 		// Sell cost
 		DrawY += 30;
 		sprintf(Buffer, "Sell cost: $%d", Skill->GetSellCost(Player->GetLevel()));
-		Graphics.RenderText(Buffer, DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GOLD);
+		Graphics.RenderText(Buffer, DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GOLD);
 
 		// Additional information
 		switch(Skill->GetType()) {
 			case _Skill::TYPE_PASSIVE:
 				DrawY += 15;
-				Graphics.RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
+				Graphics.RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
 			break;
 		}
 	}
 }
 
 // Draw the skill description
-void HUDClass::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY) {
+void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY) {
 
 	// Get skill data
 	int PowerMin, PowerMax, PowerMinRound, PowerMaxRound, PowerPercent;
@@ -1542,14 +1546,14 @@ void HUDClass::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX,
 	Skill->GetPowerRange(TLevel, PowerMin, PowerMax);
 	Skill->GetPowerRangeRound(TLevel, PowerMinRound, PowerMaxRound);
 	Skill->GetPowerRange(TLevel, PowerMinFloat, PowerMaxFloat);
-	PowerPercent = (int)round_(PowerMaxFloat * 100);
+	PowerPercent = (int)std::roundf(PowerMaxFloat * 100);
 
 	// Draw description
 	char Buffer[256];
 	switch(Skill->GetType()) {
 		case _Skill::TYPE_ATTACK:
 			sprintf(Buffer, Skill->GetInfo().c_str(), PowerPercent);
-			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 		case _Skill::TYPE_SPELL:
 			switch(Skill->GetID()) {
@@ -1561,43 +1565,43 @@ void HUDClass::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX,
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMinRound, PowerMaxRound);
 				break;
 			}
-			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 
 			TDrawY += 15;
 			sprintf(Buffer, "%d Mana", Skill->GetManaCost(TLevel));
-			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, SColor(255, 0, 0, 255));
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 0, 255));
 		break;
 		case _Skill::TYPE_USEPOTION:
 			sprintf(Buffer, Skill->GetInfo().c_str(), PowerMin);
-			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 		case _Skill::TYPE_PASSIVE:
 			switch(Skill->GetID()) {
 				case 4:
 				case 5:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxRound);
-					Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 				break;
 				case 7:
 				case 8:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxFloat);
-					Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 				break;
 				case 9:
 				case 10:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMax);
-					Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 				break;
 			}
 		break;
 		default:
-			Graphics.RenderText(Skill->GetInfo().c_str(), TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Graphics.RenderText(Skill->GetInfo().c_str(), TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 	}
 }
 
 // Draws an item's price
-void HUDClass::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy) {
+void _HUD::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy) {
 	if(!Vendor)
 		return;
 
@@ -1605,23 +1609,23 @@ void HUDClass::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDr
 	int Price = TItem->GetPrice(Vendor, TCount, TBuy);
 
 	// Color
-	SColor Color;
+	video::SColor Color;
 	if(TBuy && Player->GetGold() < Price)
 		Color.set(255, 255, 0, 0);
 	else
 		Color.set(255, 224, 216, 84);
 
-	Graphics.SetFont(GraphicsClass::FONT_7);
-	Graphics.RenderText(stringc(Price).c_str(), TDrawX + 2, TDrawY + 0, GraphicsClass::ALIGN_LEFT, Color);
+	Graphics.SetFont(_Graphics::FONT_7);
+	Graphics.RenderText(core::stringc(Price).c_str(), TDrawX + 2, TDrawY + 0, _Graphics::ALIGN_LEFT, Color);
 }
 
 // Draws trading items
-void HUDClass::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll) {
-	rect<s32> WindowArea = TabTrade->getAbsolutePosition();
+void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll) {
+	core::recti WindowArea = TabTrade->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
 
-	Graphics.SetFont(GraphicsClass::FONT_7);
+	Graphics.SetFont(_Graphics::FONT_7);
 
 	// Draw trade items
 	_InventorySlot *Item;
@@ -1633,7 +1637,7 @@ void HUDClass::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDr
 			int DrawY = OffsetY + TDrawY + PositionY * 32;
 			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
 			if(Item->Count > 1)
-				Graphics.RenderText(stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
+				Graphics.RenderText(core::stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
 		}
 
 		PositionX++;
@@ -1642,11 +1646,11 @@ void HUDClass::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDr
 			PositionY++;
 		}
 	}
-	Graphics.SetFont(GraphicsClass::FONT_10);
+	Graphics.SetFont(_Graphics::FONT_10);
 }
 
 // Returns an item that's on the screen
-void HUDClass::GetItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
+void _HUD::GetItem(core::position2di &TPoint, _CursorItem &TCursorItem) {
 	TCursorItem.Reset();
 
 	switch(*State) {
@@ -1668,8 +1672,8 @@ void HUDClass::GetItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
 }
 
 // Returns an inventory item from a mouse position
-void HUDClass::GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
-	rect<s32> WindowArea = TabInventory->getAbsolutePosition();
+void _HUD::GetInventoryItem(core::position2di &TPoint, _CursorItem &TCursorItem) {
+	core::recti WindowArea = TabInventory->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
 		return;
 
@@ -1684,7 +1688,7 @@ void HUDClass::GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorIt
 	// Search equipped item area
 	if(TPoint.X < 122) {
 
-		rect<s32> ItemArea;
+		core::recti ItemArea;
 		for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
 			ItemArea.UpperLeftCorner.X = EquippedItemPositions[i].X - 16;
 			ItemArea.UpperLeftCorner.Y = EquippedItemPositions[i].Y - 16;
@@ -1711,8 +1715,8 @@ void HUDClass::GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorIt
 }
 
 // Returns a vendor item from a mouse position
-void HUDClass::GetVendorItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
-	rect<s32> WindowArea = TabVendor->getAbsolutePosition();
+void _HUD::GetVendorItem(core::position2di &TPoint, _CursorItem &TCursorItem) {
+	core::recti WindowArea = TabVendor->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
 		return;
 
@@ -1734,7 +1738,7 @@ void HUDClass::GetVendorItem(position2di &TPoint, CursorItemStruct &TCursorItem)
 }
 
 // Returns a trader item from a mouse position
-void HUDClass::GetTraderItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
+void _HUD::GetTraderItem(core::position2di &TPoint, _CursorItem &TCursorItem) {
 	core::recti WindowArea = TabTrader->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
 		return;
@@ -1765,8 +1769,8 @@ void HUDClass::GetTraderItem(position2di &TPoint, CursorItemStruct &TCursorItem)
 }
 
 // Returns a trade item from a mouse position
-void HUDClass::GetTradeItem(position2di &TPoint, CursorItemStruct &TCursorItem) {
-	rect<s32> WindowArea = TabTrade->getAbsolutePosition();
+void _HUD::GetTradeItem(core::position2di &TPoint, _CursorItem &TCursorItem) {
+	core::recti WindowArea = TabTrade->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
 		return;
 
@@ -1793,7 +1797,7 @@ void HUDClass::GetTradeItem(position2di &TPoint, CursorItemStruct &TCursorItem) 
 }
 
 // Buys an item from the vendor
-void HUDClass::BuyItem(CursorItemStruct *TCursorItem, int TTargetSlot) {
+void _HUD::BuyItem(_CursorItem *TCursorItem, int TTargetSlot) {
 	if(Player->GetGold() >= TCursorItem->Cost && Player->AddItem(TCursorItem->Item, TCursorItem->Count, TTargetSlot)) {
 
 		// Update player
@@ -1813,7 +1817,7 @@ void HUDClass::BuyItem(CursorItemStruct *TCursorItem, int TTargetSlot) {
 }
 
 // Sells an item
-void HUDClass::SellItem(CursorItemStruct *TCursorItem, int TAmount) {
+void _HUD::SellItem(_CursorItem *TCursorItem, int TAmount) {
 	if(!TCursorItem->Item)
 		return;
 
@@ -1836,7 +1840,7 @@ void HUDClass::SellItem(CursorItemStruct *TCursorItem, int TAmount) {
 }
 
 // Returns a skill that's on the screen
-void HUDClass::GetSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill) {
+void _HUD::GetSkill(core::position2di &TPoint, _CursorSkill &TCursorSkill) {
 	TCursorSkill.Reset();
 
 	switch(*State) {
@@ -1849,8 +1853,8 @@ void HUDClass::GetSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill) {
 }
 
 // Gets a skill from the skill page
-void HUDClass::GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill) {
-	rect<s32> WindowArea = TabSkill->getAbsolutePosition();
+void _HUD::GetSkillPageSkill(core::position2di &TPoint, _CursorSkill &TCursorSkill) {
+	core::recti WindowArea = TabSkill->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
 		return;
 
@@ -1859,7 +1863,7 @@ void HUDClass::GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursor
 	for(size_t i = 0; i < Stats.GetSkillList().size(); i++) {
 		int SkillX = WindowArea.UpperLeftCorner.X + SKILL_STARTX + X * SKILL_SPACINGX;
 		int SkillY = WindowArea.UpperLeftCorner.Y + SKILL_STARTY + Y * SKILL_SPACINGY;
-		rect<s32> SkillArea(SkillX, SkillY, SkillX + 32, SkillY + 32);
+		core::recti SkillArea(SkillX, SkillY, SkillX + 32, SkillY + 32);
 		if(SkillArea.isPointInside(TPoint)) {
 			TCursorSkill.Skill = Stats.GetSkill(i);
 			TCursorSkill.Slot = i;
@@ -1884,7 +1888,7 @@ void HUDClass::GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursor
 }
 
 // Sets the player's skill bar
-void HUDClass::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
+void _HUD::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
 	if(Player->GetSkillBar(TSlot) == TSkill)
 		return;
 
@@ -1894,7 +1898,7 @@ void HUDClass::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
 		// Remove duplicate skills
 		for(int i = 0; i < 8; i++) {
 			if(Player->GetSkillBar(i) == TSkill)
-				Player->SetSkillBar(i, NULL);
+				Player->SetSkillBar(i, nullptr);
 		}
 	}
 	else {
@@ -1908,15 +1912,15 @@ void HUDClass::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
 }
 
 // Shows or hides the plus/minus buttons
-void HUDClass::RefreshSkillButtons() {
+void _HUD::RefreshSkillButtons() {
 
 	// Get remaining points
 	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
 
 	// Loop through buttons
-	irr::core::list<IGUIElement *> Buttons = TabSkill->getChildren();
-	for(irr::core::list<IGUIElement *>::Iterator Iterator = Buttons.begin(); Iterator != Buttons.end(); ++Iterator) {
-		IGUIButton *Button = static_cast<IGUIButton *>(*Iterator);
+	irr::core::list<gui::IGUIElement *> Buttons = TabSkill->getChildren();
+	for(irr::core::list<gui::IGUIElement *>::Iterator Iterator = Buttons.begin(); Iterator != Buttons.end(); ++Iterator) {
+		gui::IGUIButton *Button = static_cast<gui::IGUIButton *>(*Iterator);
 		Button->setVisible(true);
 
 		// Toggle buttons
@@ -1938,7 +1942,7 @@ void HUDClass::RefreshSkillButtons() {
 }
 
 // Sends the busy signal to the server
-void HUDClass::SendBusy(bool TValue) {
+void _HUD::SendBusy(bool TValue) {
 
 	_Packet Packet(_Network::WORLD_BUSY);
 	Packet.WriteChar(TValue);
@@ -1946,37 +1950,37 @@ void HUDClass::SendBusy(bool TValue) {
 }
 
 // Trade with another player
-void HUDClass::SendTradeRequest() {
+void _HUD::SendTradeRequest() {
 	_Packet Packet(_Network::TRADE_REQUEST);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Cancel a trade
-void HUDClass::SendTradeCancel() {
+void _HUD::SendTradeCancel() {
 	_Packet Packet(_Network::TRADE_CANCEL);
 	ClientNetwork->SendPacketToHost(&Packet);
 
-	Player->SetTradePlayer(NULL);
+	Player->SetTradePlayer(nullptr);
 }
 
 // Make sure the trade gold box is valid
-int HUDClass::ValidateTradeGold() {
+int _HUD::ValidateTradeGold() {
 
 	// Get gold amount
-	int Gold = atoi(stringc(TradeGoldBox->getText()).c_str());
+	int Gold = atoi(core::stringc(TradeGoldBox->getText()).c_str());
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->GetGold())
 		Gold = Player->GetGold();
 
 	// Set text
-	TradeGoldBox->setText(stringw(Gold).c_str());
+	TradeGoldBox->setText(core::stringw(Gold).c_str());
 
 	return Gold;
 }
 
 // Resets the trade agreement
-void HUDClass::ResetAcceptButton() {
+void _HUD::ResetAcceptButton() {
 	if(TradeAcceptButton)
 		TradeAcceptButton->setPressed(false);
 
@@ -1986,7 +1990,7 @@ void HUDClass::ResetAcceptButton() {
 }
 
 // Split a stack of items
-void HUDClass::SplitStack(int TSlot, int TCount) {
+void _HUD::SplitStack(int TSlot, int TCount) {
 
 	// Split only inventory items
 	if(!_Player::IsSlotInventory(TSlot))
@@ -2002,7 +2006,7 @@ void HUDClass::SplitStack(int TSlot, int TCount) {
 }
 
 // Toggles the town portal state
-void HUDClass::ToggleTownPortal() {
+void _HUD::ToggleTownPortal() {
 	_Packet Packet(_Network::WORLD_TOWNPORTAL);
 	ClientNetwork->SendPacketToHost(&Packet);
 	Player->StartTownPortal();

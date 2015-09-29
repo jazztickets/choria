@@ -24,7 +24,7 @@
 class _Packet;
 
 // Classes
-class ServerBattleClass : public _Battle {
+class _ServerBattle : public _Battle {
 
 	public:
 
@@ -34,8 +34,8 @@ class ServerBattleClass : public _Battle {
 			STATE_END,
 		};
 
-		ServerBattleClass();
-		~ServerBattleClass();
+		_ServerBattle();
+		~_ServerBattle();
 
 		// Setup
 		void StartBattle();

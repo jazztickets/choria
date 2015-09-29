@@ -20,6 +20,8 @@
 // Libraries
 #include <state.h>
 #include <vector>
+#include <IGUIEditBox.h>
+#include <IGUIButton.h>
 
 // Forward Declarations
 class _Packet;
@@ -46,8 +48,8 @@ class _CreateCharacterState : public _State {
 
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
-		bool HandleKeyPress(EKEY_CODE TKey);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		bool HandleKeyPress(irr::EKEY_CODE TKey);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void Draw();
@@ -62,8 +64,8 @@ class _CreateCharacterState : public _State {
 		int State;
 
 		// GUI
-		IGUIEditBox *EditName;
-		IGUIButton *ButtonCreate, *ButtonBack, *SelectedButton;
+		irr::gui::IGUIEditBox *EditName;
+		irr::gui::IGUIButton *ButtonCreate, *ButtonBack, *SelectedButton;
 		irr::core::stringc Message;
 		int SelectedIndex;
 

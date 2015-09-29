@@ -28,7 +28,7 @@ const int MAP_TILE_HEIGHT = 32;
 
 // Structures
 struct _Tile {
-	_Tile() : Texture(NULL), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
+	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
 	irr::video::ITexture *Texture;
 	int Zone;
 	int EventType, EventData;
@@ -93,7 +93,7 @@ class _Map {
 		void GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers);
 		_Player *GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState);
 
-		void SendPacketToPlayers(_Packet *TPacket, _Player *ExceptionPlayer=NULL);
+		void SendPacketToPlayers(_Packet *TPacket, _Player *ExceptionPlayer=nullptr);
 
 		// Events
 		_IndexedEvent *GetIndexedEvent(int TEventType, int TEventData);

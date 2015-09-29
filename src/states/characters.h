@@ -19,6 +19,7 @@
 
 // Libraries
 #include <state.h>
+#include <IGUIButton.h>
 
 // Constants
 const int CHARACTERS_MAX = 6;
@@ -28,7 +29,7 @@ class _Packet;
 
 // Structures
 struct SlotStruct {
-	IGUIButton *Button;
+	irr::gui::IGUIButton *Button;
 	irr::core::stringc Name;
 	int Level;
 	bool Used;
@@ -58,8 +59,8 @@ class _CharactersState : public _State {
 
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
-		bool HandleKeyPress(EKEY_CODE TKey);
-		void HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement);
+		bool HandleKeyPress(irr::EKEY_CODE TKey);
+		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(uint32_t TDeltaTime);
 		void Draw();
@@ -74,7 +75,7 @@ class _CharactersState : public _State {
 		void Logout();
 
 		// GUI
-		IGUIButton *ButtonPlay, *ButtonLogout, *ButtonCreate, *ButtonDelete;
+		irr::gui::IGUIButton *ButtonPlay, *ButtonLogout, *ButtonCreate, *ButtonDelete;
 		SlotStruct Slots[CHARACTERS_MAX];
 		int SelectedIndex;
 		uint32_t ClickTimer;
