@@ -75,6 +75,7 @@ _Map::~_Map() {
 void _Map::Init() {
 	ID = 0;
 	NoZoneTexture = nullptr;
+	DefaultNoZoneTexture = irrDriver->getTexture("textures/editor/nozone.png");
 	Tiles = nullptr;
 	ViewSize.Width = 25;
 	ViewSize.Height = 19;
@@ -192,7 +193,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 				}
 			}
 			else {
-				Graphics.DrawCenteredImage(irrDriver->getTexture("textures/editor/nozone.png"), DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(DefaultNoZoneTexture, DrawPosition.X, DrawPosition.Y);
 			}
 		}
 	}

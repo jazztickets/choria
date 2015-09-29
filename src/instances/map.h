@@ -137,7 +137,7 @@ class _Map {
 		int Width, Height;
 
 		// Textures
-		irr::video::ITexture *NoZoneTexture;
+		irr::video::ITexture *NoZoneTexture, *DefaultNoZoneTexture;
 		std::vector<irr::video::ITexture *> Textures;
 
 		// Events
