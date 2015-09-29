@@ -25,7 +25,7 @@ class DatabaseClass;
 class ObjectManagerClass;
 class InstanceClass;
 class _Packet;
-class PlayerClass;
+class _Player;
 class _Map;
 class _ClientBattle;
 
@@ -103,7 +103,7 @@ class _PlayClientState : public _State {
 		uint32_t ClientTime, SentClientTime;
 
 		// Objects
-		PlayerClass *Player;
+		_Player *Player;
 		_Map *Map;
 		_ClientBattle *Battle;
 		ObjectManagerClass *ObjectManager;

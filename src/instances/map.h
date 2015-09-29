@@ -43,8 +43,8 @@ struct _IndexedEvent {
 };
 
 // Forward Declarations
-class ObjectClass;
-class PlayerClass;
+class _Object;
+class _Player;
 class _Packet;
 
 // Classes
@@ -87,13 +87,13 @@ class _Map {
 		bool CanMoveTo(const irr::core::position2di &TPosition);
 
 		// Object management
-		void AddObject(ObjectClass *TObject);
-		void RemoveObject(ObjectClass *TObject);
-		const std::list<ObjectClass *> &GetObjects() const;
-		void GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, std::list<PlayerClass *> &TPlayers);
-		PlayerClass *GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDistanceSquared, int TState);
+		void AddObject(_Object *TObject);
+		void RemoveObject(_Object *TObject);
+		const std::list<_Object *> &GetObjects() const;
+		void GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers);
+		_Player *GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState);
 
-		void SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer=NULL);
+		void SendPacketToPlayers(_Packet *TPacket, _Player *ExceptionPlayer=NULL);
 
 		// Events
 		_IndexedEvent *GetIndexedEvent(int TEventType, int TEventData);
@@ -145,5 +145,5 @@ class _Map {
 
 		// Objects
 		uint32_t ObjectUpdateTime;
-		std::list<ObjectClass *> Objects;
+		std::list<_Object *> Objects;
 };

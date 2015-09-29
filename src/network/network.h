@@ -20,13 +20,10 @@
 // Libraries
 #include <enet/enet.h>
 
-// Constants
-const int NETWORKING_PORT = 60006;
-const int NETWORKING_MESSAGESIZE = 100;
-
 // Forward Declarations
 class _Packet;
 
+// Classes
 class _Network {
 
 	public:

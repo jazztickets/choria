@@ -32,16 +32,16 @@ using namespace io;
 using namespace gui;
 
 // Forward Declarations
-class PlayerClass;
-class ItemClass;
-class SkillClass;
-struct InventoryStruct;
+class _Player;
+class _Item;
+class _Skill;
+struct _InventorySlot;
 struct VendorStruct;
 struct TraderStruct;
 
 // Structures
 struct CursorItemStruct {
-	void Set(const ItemClass *TItem, int TCost, int TCount, int TSlot) {
+	void Set(const _Item *TItem, int TCost, int TCount, int TSlot) {
 		Item = TItem;
 		Cost = TCost;
 		Count = TCount;
@@ -56,7 +56,7 @@ struct CursorItemStruct {
 
 	bool IsEqual(int TSlot, int TWindow) { return Slot == TSlot && Window == TWindow; }
 
-	const ItemClass *Item;
+	const _Item *Item;
 	int Cost;
 	int Count;
 	int Slot;
@@ -70,15 +70,15 @@ struct CursorSkillStruct {
 		Window = -1;
 	}
 
-	const SkillClass *Skill;
+	const _Skill *Skill;
 	int Slot;
 	int Window;
 };
 
 struct ChatStruct {
 	ChatStruct() : Message(""), TimeOut(0) { }
-	ChatStruct(const stringc &TMessage) : Message(TMessage), TimeOut(0) { }
-	stringc Message;
+	ChatStruct(const irr::core::stringc &TMessage) : Message(TMessage), TimeOut(0) { }
+	irr::core::stringc Message;
 	uint32_t TimeOut;
 };
 
@@ -129,7 +129,7 @@ class HUDClass {
 		void Draw();
 
 		// Objects
-		void SetPlayer(PlayerClass *TPlayer) { Player = TPlayer; }
+		void SetPlayer(_Player *TPlayer) { Player = TPlayer; }
 
 		// Windows
 		void InitButtonBar();
@@ -175,13 +175,13 @@ class HUDClass {
 		void DrawTrader();
 		void DrawTrade();
 		void DrawSkills();
-		void DrawItemPrice(const ItemClass *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy);
+		void DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy);
 		void DrawCursorItem();
 		void DrawItemTooltip();
 		void DrawCursorSkill();
 		void DrawSkillTooltip();
-		void DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDrawX, int &TDrawY);
-		void DrawTradeItems(PlayerClass *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
+		void DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY);
+		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
 		void GetItem(position2di &TPoint, CursorItemStruct &TCursorItem);
 		void GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorItem);
@@ -193,7 +193,7 @@ class HUDClass {
 
 		void GetSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill);
 		void GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursorSkill);
-		void SetSkillBar(int TSlot, int TOldSlot, const SkillClass *TSkill);
+		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
 
 		void RefreshSkillButtons();
 		void SendBusy(bool TValue);
@@ -206,7 +206,7 @@ class HUDClass {
 		int *State;
 
 		// Objects
-		PlayerClass *Player;
+		_Player *Player;
 		const VendorStruct *Vendor;
 		const TraderStruct *Trader;
 

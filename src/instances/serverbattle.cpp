@@ -39,12 +39,12 @@ ServerBattleClass::~ServerBattleClass() {
 }
 
 // Removes a player from the battle
-int ServerBattleClass::RemovePlayer(PlayerClass *TPlayer) {
+int ServerBattleClass::RemovePlayer(_Player *TPlayer) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
-			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);
+		if(Fighters[i] && Fighters[i]->GetType() == _Fighter::TYPE_PLAYER) {
+			_Player *Player = static_cast<_Player *>(Fighters[i]);
 
 			if(Player == TPlayer) {
 				Player->StopBattle();
@@ -80,8 +80,8 @@ void ServerBattleClass::StartBattle() {
 		Packet.WriteBit(!!Type);
 		Packet.WriteBit(!!Fighters[i]->GetSide());
 
-		if(Type == FighterClass::TYPE_PLAYER) {
-			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);
+		if(Type == _Fighter::TYPE_PLAYER) {
+			_Player *Player = static_cast<_Player *>(Fighters[i]);
 
 			// Network ID
 			Packet.WriteChar(Player->GetNetworkID());
@@ -96,7 +96,7 @@ void ServerBattleClass::StartBattle() {
 			Player->StartBattle(this);
 		}
 		else {
-			MonsterClass *Monster = static_cast<MonsterClass *>(Fighters[i]);
+			_Monster *Monster = static_cast<_Monster *>(Fighters[i]);
 
 			// Monster ID
 			Packet.WriteInt(Monster->GetID());
@@ -110,7 +110,7 @@ void ServerBattleClass::StartBattle() {
 }
 
 // Handles input from the client
-void ServerBattleClass::HandleInput(PlayerClass *TPlayer, int TCommand, int TTarget) {
+void ServerBattleClass::HandleInput(_Player *TPlayer, int TCommand, int TTarget) {
 
 	if(State == STATE_INPUT) {
 
@@ -159,14 +159,14 @@ void ServerBattleClass::ResolveTurn() {
 	RoundTime = 0;
 
 	// Get a monster list
-	std::vector<MonsterClass *> Monsters;
+	std::vector<_Monster *> Monsters;
 	GetMonsterList(Monsters);
 
 	// Update AI
 	if(Monsters.size() > 0) {
 
 		// Get a list of humans on the left side
-		std::vector<FighterClass *> Humans;
+		std::vector<_Fighter *> Humans;
 		GetAliveFighterList(0, Humans);
 
 		// Update the monster's target
@@ -187,7 +187,7 @@ void ServerBattleClass::ResolveTurn() {
 				Result->Target = Fighters[i]->GetTarget();
 
 				// Get skill used
-				const SkillClass *Skill = Fighters[i]->GetSkillBar(Fighters[i]->GetCommand());
+				const _Skill *Skill = Fighters[i]->GetSkillBar(Fighters[i]->GetCommand());
 				if(Skill && Skill->CanUse(Result->Fighter)) {
 					int TargetFighterIndex = GetFighterFromSlot(Result->Target);
 					Result->SkillID = Skill->GetID();
@@ -236,22 +236,22 @@ void ServerBattleClass::CheckEnd() {
 		return;
 
 	// Players that get a reward
-	std::vector<PlayerClass *> Players;
+	std::vector<_Player *> Players;
 
 	// Get statistics for each side
 	_BattleResult Side[2];
 	for(int i = 0; i < 2; i++) {
 
 		// Get a list of fighters that are still in the battle
-		std::vector<FighterClass *> SideFighters;
+		std::vector<_Fighter *> SideFighters;
 		GetFighterList(i, SideFighters);
 
 		// Loop through fighters
 		for(size_t j = 0; j < SideFighters.size(); j++) {
 
 			// Keep track of players
-			if(SideFighters[j]->GetType() == FighterClass::TYPE_PLAYER) {
-				Players.push_back(static_cast<PlayerClass *>(SideFighters[j]));
+			if(SideFighters[j]->GetType() == _Fighter::TYPE_PLAYER) {
+				Players.push_back(static_cast<_Player *>(SideFighters[j]));
 				Side[i].PlayerCount++;
 			}
 			else
@@ -298,7 +298,7 @@ void ServerBattleClass::CheckEnd() {
 		if(!Side[0].Dead) {
 
 			// Get a monster list
-			std::vector<MonsterClass *> Monsters;
+			std::vector<_Monster *> Monsters;
 			GetMonsterList(Monsters);
 
 			// Make sure there are monsters
@@ -311,7 +311,7 @@ void ServerBattleClass::CheckEnd() {
 				}
 
 				// Get a list of players that receive items
-				std::vector<PlayerClass *> LeftSidePlayers;
+				std::vector<_Player *> LeftSidePlayers;
 				GetPlayerList(0, LeftSidePlayers);
 
 				// Give out rewards round robin style
@@ -399,24 +399,24 @@ void ServerBattleClass::SendPacketToPlayers(_Packet *TPacket) {
 
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetType() == FighterClass::TYPE_PLAYER) {
-			PlayerClass *Player = static_cast<PlayerClass *>(Fighters[i]);
+		if(Fighters[i] && Fighters[i]->GetType() == _Fighter::TYPE_PLAYER) {
+			_Player *Player = static_cast<_Player *>(Fighters[i]);
 			ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer());
 		}
 	}
 }
 
 // Send the player's skill to the other players
-void ServerBattleClass::SendSkillToPlayers(PlayerClass *TPlayer) {
+void ServerBattleClass::SendSkillToPlayers(_Player *TPlayer) {
 
 	// Get all the players on the player's side
-	std::vector<PlayerClass *> SidePlayers;
+	std::vector<_Player *> SidePlayers;
 	GetPlayerList(TPlayer->GetSide(), SidePlayers);
 	if(SidePlayers.size() == 1)
 		return;
 
 	// Get skill id
-	const SkillClass *Skill = TPlayer->GetSkillBar(TPlayer->GetCommand());
+	const _Skill *Skill = TPlayer->GetSkillBar(TPlayer->GetCommand());
 	int SkillID = -1;
 	if(Skill)
 		SkillID = Skill->GetID();

@@ -25,7 +25,7 @@
 #include <Keycodes.h>
 
 // Forward Declarations
-class ItemClass;
+class _Item;
 class _Packet;
 
 // Classes
@@ -54,8 +54,8 @@ class _ClientBattle : public _Battle {
 		~_ClientBattle();
 
 		// Setup
-		void StartBattle(PlayerClass *TClientPlayer);
-		void RemovePlayer(PlayerClass *TPlayer);
+		void StartBattle(_Player *TClientPlayer);
+		void RemovePlayer(_Player *TPlayer);
 
 		// Input
 		void HandleInput(irr::EKEY_CODE TKey);
@@ -93,10 +93,10 @@ class _ClientBattle : public _Battle {
 		_FighterResult Results[BATTLE_MAXFIGHTERS];
 
 		// Client's player
-		PlayerClass *ClientPlayer;
+		_Player *ClientPlayer;
 		irr::gui::IGUIButton *SkillButtons[BATTLE_MAXSKILLS], *PassButton;
 
 		// Items
-		std::vector<const ItemClass *> MonsterDrops;
+		std::vector<const _Item *> MonsterDrops;
 
 };

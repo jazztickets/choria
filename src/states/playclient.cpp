@@ -176,26 +176,26 @@ void _PlayClientState::Update(uint32_t TDeltaTime) {
 
 					if(abs(Delta.X) > abs(Delta.Y)) {
 						if(Delta.X < 0)
-							SendMoveCommand(PlayerClass::MOVE_LEFT);
+							SendMoveCommand(_Player::MOVE_LEFT);
 						else if(Delta.X > 0)
-							SendMoveCommand(PlayerClass::MOVE_RIGHT);
+							SendMoveCommand(_Player::MOVE_RIGHT);
 					}
 					else {
 						if(Delta.Y < 0)
-							SendMoveCommand(PlayerClass::MOVE_UP);
+							SendMoveCommand(_Player::MOVE_UP);
 						else if(Delta.Y > 0)
-							SendMoveCommand(PlayerClass::MOVE_DOWN);
+							SendMoveCommand(_Player::MOVE_DOWN);
 					}
 				}
 
 				if(Input.GetKeyState(KEY_LEFT))
-					SendMoveCommand(PlayerClass::MOVE_LEFT);
+					SendMoveCommand(_Player::MOVE_LEFT);
 				else if(Input.GetKeyState(KEY_UP))
-					SendMoveCommand(PlayerClass::MOVE_UP);
+					SendMoveCommand(_Player::MOVE_UP);
 				else if(Input.GetKeyState(KEY_RIGHT))
-					SendMoveCommand(PlayerClass::MOVE_RIGHT);
+					SendMoveCommand(_Player::MOVE_RIGHT);
 				else if(Input.GetKeyState(KEY_DOWN))
-					SendMoveCommand(PlayerClass::MOVE_DOWN);
+					SendMoveCommand(_Player::MOVE_DOWN);
 			}
 		break;
 		case STATE_BATTLE:
@@ -446,7 +446,7 @@ void _PlayClientState::HandleYourCharacterInfo(_Packet *TPacket) {
 	// Get pack info
 	int NetworkID = TPacket->ReadChar();
 
-	Player = new PlayerClass();
+	Player = new _Player();
 	Player->SetName(TPacket->ReadString());
 	Player->SetPortraitID(TPacket->ReadInt());
 	Player->SetExperience(TPacket->ReadInt());
@@ -506,7 +506,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 
 		// Spawn players
 		int NetworkID;
-		PlayerClass *NewPlayer;
+		_Player *NewPlayer;
 		position2di GridPosition;
 		for(int i = 0; i < PlayerCount; i++) {
 			NetworkID = TPacket->ReadChar();
@@ -515,7 +515,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 			int Type = TPacket->ReadChar();
 
 			switch(Type) {
-				case ObjectClass::PLAYER: {
+				case _Object::PLAYER: {
 					stringc Name(TPacket->ReadString());
 					int PortraitID = TPacket->ReadChar();
 					int Invisible = TPacket->ReadBit();
@@ -526,7 +526,7 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 					}
 					else {
 
-						NewPlayer = new PlayerClass();
+						NewPlayer = new _Player();
 						NewPlayer->SetPosition(GridPosition);
 						NewPlayer->SetName(Name);
 						NewPlayer->SetPortraitID(PortraitID);
@@ -560,15 +560,15 @@ void _PlayClientState::HandleCreateObject(_Packet *TPacket) {
 	int Type = TPacket->ReadChar();
 
 	// Create the object
-	ObjectClass *NewObject = nullptr;
+	_Object *NewObject = nullptr;
 	switch(Type) {
-		case ObjectClass::PLAYER: {
+		case _Object::PLAYER: {
 			stringc Name(TPacket->ReadString());
 			int PortraitID = TPacket->ReadChar();
 			int Invisible = TPacket->ReadBit();
 
-			NewObject = new PlayerClass();
-			PlayerClass *NewPlayer = static_cast<PlayerClass *>(NewObject);
+			NewObject = new _Player();
+			_Player *NewPlayer = static_cast<_Player *>(NewObject);
 			NewPlayer->SetName(Name);
 			NewPlayer->SetPortraitID(PortraitID);
 			NewPlayer->SetInvisPower(Invisible);
@@ -591,10 +591,10 @@ void _PlayClientState::HandleDeleteObject(_Packet *TPacket) {
 
 	int NetworkID = TPacket->ReadChar();
 
-	ObjectClass *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
+	_Object *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
 	if(Object) {
-		if(Object->GetType() == ObjectClass::PLAYER) {
-			PlayerClass *DeletedPlayer = static_cast<PlayerClass *>(Object);
+		if(Object->GetType() == _Object::PLAYER) {
+			_Player *DeletedPlayer = static_cast<_Player *>(Object);
 			switch(State) {
 				case STATE_BATTLE:
 					Battle->RemovePlayer(DeletedPlayer);
@@ -631,14 +631,14 @@ void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
 
 		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
 
-		PlayerClass *OtherPlayer = static_cast<PlayerClass *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
+		_Player *OtherPlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
 		if(OtherPlayer) {
 
 			OtherPlayer->SetState(PlayerState);
 			if(Player == OtherPlayer) {
 
 				// Return from town portal state
-				if(PlayerState == PlayerClass::STATE_WALK && State == STATE_TOWNPORTAL) {
+				if(PlayerState == _Player::STATE_WALK && State == STATE_TOWNPORTAL) {
 					State = STATE_WALK;
 				}
 			}
@@ -648,10 +648,10 @@ void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
 			}
 
 			switch(PlayerState) {
-				case PlayerClass::STATE_WALK:
+				case _Player::STATE_WALK:
 					OtherPlayer->SetStateImage(NULL);
 				break;
-				case PlayerClass::STATE_WAITTRADE:
+				case _Player::STATE_WAITTRADE:
 					OtherPlayer->SetStateImage(Graphics.GetImage(GraphicsClass::IMAGE_WORLDTRADE));
 				break;
 				default:
@@ -683,7 +683,7 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 		int Type = TPacket->ReadBit();
 		int Side = TPacket->ReadBit();
 
-		if(Type == FighterClass::TYPE_PLAYER) {
+		if(Type == _Fighter::TYPE_PLAYER) {
 
 			// Network ID
 			int NetworkID = TPacket->ReadChar();
@@ -695,7 +695,7 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 			int MaxMana = TPacket->ReadInt();
 
 			// Get player object
-			PlayerClass *NewPlayer = static_cast<PlayerClass *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
+			_Player *NewPlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
 			if(NewPlayer != NULL) {
 				NewPlayer->SetHealth(Health);
 				NewPlayer->SetMaxHealth(MaxHealth);
@@ -710,7 +710,7 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 
 			// Monster ID
 			int MonsterID = TPacket->ReadInt();
-			MonsterClass *Monster = new MonsterClass(MonsterID);
+			_Monster *Monster = new _Monster(MonsterID);
 
 			Battle->AddFighter(Monster, Side);
 		}
@@ -810,7 +810,7 @@ void _PlayClientState::HandleChatMessage(_Packet *TPacket) {
 	stringc Message(TPacket->ReadString());
 
 	// Get player that sent packet
-	PlayerClass *MessagePlayer = static_cast<PlayerClass *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
+	_Player *MessagePlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
 	if(!MessagePlayer)
 		return;
 
@@ -829,7 +829,7 @@ void _PlayClientState::HandleTradeRequest(_Packet *TPacket) {
 	int NetworkID = TPacket->ReadChar();
 
 	// Get trading player
-	PlayerClass *TradePlayer = static_cast<PlayerClass *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
+	_Player *TradePlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
 	if(!TradePlayer)
 		return;
 
@@ -842,7 +842,7 @@ void _PlayClientState::HandleTradeRequest(_Packet *TPacket) {
 
 	// Get gold offer
 	TradePlayer->SetTradeGold(TPacket->ReadInt());
-	for(int i = PlayerClass::INVENTORY_TRADE; i < PlayerClass::INVENTORY_COUNT; i++) {
+	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
 		int ItemID = TPacket->ReadInt();
 		int Count = 0;
 		if(ItemID != 0)
@@ -864,7 +864,7 @@ void _PlayClientState::HandleTradeCancel(_Packet *TPacket) {
 void _PlayClientState::HandleTradeItem(_Packet *TPacket) {
 
 	// Get trading player
-	PlayerClass *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->GetTradePlayer();
 	if(!TradePlayer)
 		return;
 
@@ -895,7 +895,7 @@ void _PlayClientState::HandleTradeItem(_Packet *TPacket) {
 void _PlayClientState::HandleTradeGold(_Packet *TPacket) {
 
 	// Get trading player
-	PlayerClass *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->GetTradePlayer();
 	if(!TradePlayer)
 		return;
 
@@ -912,7 +912,7 @@ void _PlayClientState::HandleTradeGold(_Packet *TPacket) {
 void _PlayClientState::HandleTradeAccept(_Packet *TPacket) {
 
 	// Get trading player
-	PlayerClass *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->GetTradePlayer();
 	if(!TradePlayer)
 		return;
 
@@ -927,7 +927,7 @@ void _PlayClientState::HandleTradeExchange(_Packet *TPacket) {
 	// Get gold offer
 	int Gold = TPacket->ReadInt();
 	Player->SetGold(Gold);
-	for(int i = PlayerClass::INVENTORY_TRADE; i < PlayerClass::INVENTORY_COUNT; i++) {
+	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
 		int ItemID = TPacket->ReadInt();
 		int Count = 0;
 		if(ItemID != 0)

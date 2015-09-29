@@ -19,6 +19,7 @@
 #include <network/packetstream.h>
 #include <game.h>
 #include <state.h>
+#include <constants.h>
 
 // Initializes the network system
 int _MultiNetwork::Init(bool TServer) {

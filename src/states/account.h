@@ -49,7 +49,7 @@ class _AccountState : public _State {
 		void Update(uint32_t TDeltaTime);
 		void Draw();
 
-		void SetLoginInfo(const stringc &TAccountName, const stringc &TPassword);
+		void SetLoginInfo(const irr::core::stringc &TAccountName, const irr::core::stringc &TPassword);
 
 	private:
 
@@ -64,7 +64,7 @@ class _AccountState : public _State {
 		IGUIStaticText *TextAccountName, *TextPassword;
 		IGUIEditBox *EditAccountName, *EditPassword;
 		IGUIButton *ButtonLogin, *ButtonCancel, *ButtonCreateAccount;
-		stringc Message, AccountName, Password;
+		irr::core::stringc Message, AccountName, Password;
 		bool CreateAccount;
 
 };

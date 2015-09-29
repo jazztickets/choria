@@ -26,7 +26,7 @@
 #include <objects/player.h>
 
 // Gets the mana cost of a skill
-int SkillClass::GetManaCost(int TLevel) const {
+int _Skill::GetManaCost(int TLevel) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
@@ -34,7 +34,7 @@ int SkillClass::GetManaCost(int TLevel) const {
 }
 
 // Gets a random number between min and max power
-int SkillClass::GetPower(int TLevel) const {
+int _Skill::GetPower(int TLevel) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
@@ -48,7 +48,7 @@ int SkillClass::GetPower(int TLevel) const {
 }
 
 // Returns the range of power
-void SkillClass::GetPowerRange(int TLevel, int &TMin, int &TMax) const {
+void _Skill::GetPowerRange(int TLevel, int &TMin, int &TMax) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
@@ -60,7 +60,7 @@ void SkillClass::GetPowerRange(int TLevel, int &TMin, int &TMax) const {
 }
 
 // Returns the range of power rounded
-void SkillClass::GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const {
+void _Skill::GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
@@ -72,7 +72,7 @@ void SkillClass::GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const {
 }
 
 // Returns the range of power
-void SkillClass::GetPowerRange(int TLevel, float &TMin, float &TMax) const {
+void _Skill::GetPowerRange(int TLevel, float &TMin, float &TMax) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
@@ -84,15 +84,15 @@ void SkillClass::GetPowerRange(int TLevel, float &TMin, float &TMax) const {
 }
 
 // Gets the sell cost of a skill
-int SkillClass::GetSellCost(int TPlayerLevel) const {
+int _Skill::GetSellCost(int TPlayerLevel) const {
 
 	return SkillCost * (11 + TPlayerLevel);
 }
 
 // Resolves the use of a skill in battle.
-void SkillClass::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const {
-	FighterClass *Fighter = TResult->Fighter;
-	FighterClass *TargetFighter = TTargetResult->Fighter;
+void _Skill::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const {
+	_Fighter *Fighter = TResult->Fighter;
+	_Fighter *TargetFighter = TTargetResult->Fighter;
 	int SkillLevel = Fighter->GetSkillLevel(ID);
 
 	int Damage = 0, Healing = 0, ManaRestore = 0, ManaCost = 0;
@@ -115,8 +115,8 @@ void SkillClass::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetRe
 			ManaCost = GetManaCost(SkillLevel);
 		break;
 		case TYPE_USEPOTION:
-			if(Fighter->GetType() == FighterClass::TYPE_PLAYER) {
-				PlayerClass *Player = static_cast<PlayerClass *>(Fighter);
+			if(Fighter->GetType() == _Fighter::TYPE_PLAYER) {
+				_Player *Player = static_cast<_Player *>(Fighter);
 
 				// Use the potion
 				int Type = (ID == 2);
@@ -149,7 +149,7 @@ void SkillClass::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetRe
 }
 
 // Determines if a skill can be used
-bool SkillClass::CanUse(FighterClass *TFighter) const {
+bool _Skill::CanUse(_Fighter *TFighter) const {
 	int Level = TFighter->GetSkillLevel(ID);
 
 	// Check for bad types
@@ -162,10 +162,10 @@ bool SkillClass::CanUse(FighterClass *TFighter) const {
 
 	// Potions
 	if(Type == TYPE_USEPOTION) {
-		if(TFighter->GetType() == FighterClass::TYPE_MONSTER)
+		if(TFighter->GetType() == _Fighter::TYPE_MONSTER)
 			return false;
 
-		PlayerClass *Player = static_cast<PlayerClass *>(TFighter);
+		_Player *Player = static_cast<_Player *>(TFighter);
 		return Player->GetPotionBattle(ID == 2) != -1;
 	}
 

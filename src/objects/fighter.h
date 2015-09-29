@@ -18,26 +18,18 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <ITexture.h>
 
 // Constants
 const int FIGHTER_MAXSKILLS = 8;
 
 // Forward Declarations
 class _Battle;
-class SkillClass;
+class _Skill;
 struct _FighterResult;
 
 // Classes
-class FighterClass {
+class _Fighter {
 
 	public:
 
@@ -46,8 +38,8 @@ class FighterClass {
 			TYPE_MONSTER,
 		};
 
-		FighterClass(int TType);
-		virtual ~FighterClass();
+		_Fighter(int TType);
+		virtual ~_Fighter();
 
 		// Object
 		int GetType() const { return Type; }
@@ -57,13 +49,13 @@ class FighterClass {
 		void SetOffset(const irr::core::position2di &TPosition) { Offset = TPosition; }
 
 		// Stats
-		void SetName(const stringc &TName) { Name = TName; }
+		void SetName(const irr::core::stringc &TName) { Name = TName; }
 		void SetHealth(int TValue) { Health = TValue; }
 		void SetMaxHealth(int TValue) { MaxHealth = TValue; }
 		void SetMana(int TValue) { Mana = TValue; }
 		void SetMaxMana(int TValue) { MaxMana = TValue; }
 
-		const stringc &GetName() const { return Name; }
+		const irr::core::stringc &GetName() const { return Name; }
 		int GetHealth() const { return Health; }
 		int GetMaxHealth() const { return MaxHealth; }
 		int GetMana() const { return Mana; }
@@ -87,10 +79,10 @@ class FighterClass {
 		_Battle *GetBattle();
 		void SetCommand(int TCommand) { Command = TCommand; }
 		virtual int GetCommand() { return Command; }
-		void SetSkillUsed(const SkillClass *TSkill) { SkillUsed = TSkill; }
-		const SkillClass *GetSkillUsed() const { return SkillUsed; }
-		void SetSkillUsing(const SkillClass *TSkill) { SkillUsing = TSkill; }
-		const SkillClass *GetSkillUsing() const { return SkillUsing; }
+		void SetSkillUsed(const _Skill *TSkill) { SkillUsed = TSkill; }
+		const _Skill *GetSkillUsed() const { return SkillUsed; }
+		void SetSkillUsing(const _Skill *TSkill) { SkillUsing = TSkill; }
+		const _Skill *GetSkillUsing() const { return SkillUsing; }
 		void SetTarget(int TTarget) { Target = TTarget; }
 		int GetTarget() const { return Target; }
 		void SetSlot(int TSlot) { Slot = TSlot; }
@@ -111,8 +103,8 @@ class FighterClass {
 		virtual int GetSkillLevel(int TSlot) const { return 1; }
 
 		// Skills
-		void SetSkillBar(int TSlot, const SkillClass *TSkill) { SkillBar[TSlot] = TSkill; }
-		const SkillClass *GetSkillBar(int TSlot);
+		void SetSkillBar(int TSlot, const _Skill *TSkill) { SkillBar[TSlot] = TSkill; }
+		const _Skill *GetSkillBar(int TSlot);
 		int GetSkillBarID(int TSlot);
 
 	protected:
@@ -121,10 +113,10 @@ class FighterClass {
 		int Type;
 
 		// Action bar
-		const SkillClass *SkillBar[FIGHTER_MAXSKILLS];
+		const _Skill *SkillBar[FIGHTER_MAXSKILLS];
 
 		// Stats
-		stringc Name;
+		irr::core::stringc Name;
 		int Level;
 		int Health, MaxHealth;
 		int Mana, MaxMana;
@@ -135,9 +127,9 @@ class FighterClass {
 		// Battle
 		_Battle *Battle;
 		int Command, Target, Slot;
-		const SkillClass *SkillUsing, *SkillUsed;
+		const _Skill *SkillUsing, *SkillUsed;
 
 		// Render
-		ITexture *Portrait;
-		position2di Offset;
+		irr::video::ITexture *Portrait;
+		irr::core::position2di Offset;
 };

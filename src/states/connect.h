@@ -61,7 +61,7 @@ class _ConnectState : public _State {
 		IGUIStaticText *TextIP;
 		IGUIEditBox *EditIP;
 		IGUIButton *ButtonConnect, *ButtonCancel;
-		stringc Message, IPAddress;
+		irr::core::stringc Message, IPAddress;
 
 };
 

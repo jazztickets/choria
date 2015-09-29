@@ -22,14 +22,14 @@
 #include <cstdint>
 
 // Forward Declarations
-class FighterClass;
-class PlayerClass;
-class MonsterClass;
+class _Fighter;
+class _Player;
+class _Monster;
 
 // Structures
 struct _FighterResult {
 	_FighterResult() : Fighter(nullptr), SkillID(-1), Target(-1), DamageDealt(0), HealthChange(0), ManaChange(0) { }
-	FighterClass *Fighter;
+	_Fighter *Fighter;
 	int SkillID;
 	int Target;
 	int DamageDealt;
@@ -56,7 +56,7 @@ class _Battle {
 		virtual ~_Battle();
 
 		// Objects
-		void AddFighter(FighterClass *TFighter, int TSide);
+		void AddFighter(_Fighter *TFighter, int TSide);
 
 		// Updates
 		virtual void Update(uint32_t TDeltaTime) { }
@@ -66,10 +66,10 @@ class _Battle {
 
 	protected:
 
-		void GetFighterList(int TSide, std::vector<FighterClass *> &TFighters);
-		void GetAliveFighterList(int TSide, std::vector<FighterClass *> &TFighters);
-		void GetMonsterList(std::vector<MonsterClass *> &TMonsters);
-		void GetPlayerList(int TSide, std::vector<PlayerClass *> &TPlayers);
+		void GetFighterList(int TSide, std::vector<_Fighter *> &TFighters);
+		void GetAliveFighterList(int TSide, std::vector<_Fighter *> &TFighters);
+		void GetMonsterList(std::vector<_Monster *> &TMonsters);
+		void GetPlayerList(int TSide, std::vector<_Player *> &TPlayers);
 		int GetFighterFromSlot(int TSlot);
 
 		// State
@@ -77,7 +77,7 @@ class _Battle {
 		uint32_t Timer;
 
 		// Objects
-		std::vector<FighterClass *> Fighters;
+		std::vector<_Fighter *> Fighters;
 		int LeftFighterCount, RightFighterCount;
 		int PlayerCount, MonsterCount;
 };

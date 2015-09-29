@@ -119,7 +119,7 @@ class _MapEditorState : public _State {
 		// Brush
 		int BrushSize;
 		_Tile Brush;
-		position2di BrushPosition;
+		irr::core::position2di BrushPosition;
 
 		// Filters
 		bool Filters[FILTER_COUNT];

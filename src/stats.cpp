@@ -143,7 +143,7 @@ void StatsClass::LoadSkills() {
 	Database->RunDataQuery("SELECT * FROM Skills");
 
 	// Get events
-	SkillClass Skill;
+	_Skill Skill;
 	while(Database->FetchRow()) {
 		Skill.ID = Database->GetInt(0);
 		Skill.Name = Database->GetString(1);
@@ -171,7 +171,7 @@ void StatsClass::LoadItems() {
 	Database->RunDataQuery("SELECT * FROM Items");
 
 	// Get events
-	ItemClass Item;
+	_Item Item;
 	while(Database->FetchRow()) {
 		Item.ID = Database->GetInt(0);
 		Item.Name = Database->GetString(1);
@@ -262,7 +262,7 @@ void StatsClass::LoadTraders() {
 }
 
 // Gets monsters stats from the database
-void StatsClass::GetMonsterStats(int TMonsterID, MonsterClass *TMonster) {
+void StatsClass::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
 
 	// Run query
 	char QueryString[256];
@@ -300,7 +300,7 @@ void StatsClass::GetMonsterStats(int TMonsterID, MonsterClass *TMonster) {
 }
 
 // Gets a skill by id
-const SkillClass *StatsClass::GetSkill(int TSkillID) {
+const _Skill *StatsClass::GetSkill(int TSkillID) {
 	if(TSkillID < 0 || TSkillID >= (int)Skills.size())
 		return NULL;
 

@@ -23,7 +23,7 @@
 #include <objects/skill.h>
 
 // Constructor
-FighterClass::FighterClass(int TType)
+_Fighter::_Fighter(int TType)
 :	Type(TType),
 	Name(""),
 	Level(0),
@@ -55,12 +55,12 @@ FighterClass::FighterClass(int TType)
 }
 
 // Destructor
-FighterClass::~FighterClass() {
+_Fighter::~_Fighter() {
 
 }
 
 // Renders the fighter during a battle
-void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
+void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
 	char String[256];
 	uint32_t AlphaPercent = (uint32_t)(255 * TTimerPercent);
 	if(TTimerPercent > 0.75f)
@@ -145,13 +145,13 @@ void FighterClass::RenderBattle(bool TShowResults, float TTimerPercent, _Fighter
 }
 
 // Returns the fighter's current battle
-_Battle *FighterClass::GetBattle() {
+_Battle *_Fighter::GetBattle() {
 
 	return Battle;
 }
 
 // Update health
-void FighterClass::UpdateHealth(int TValue) {
+void _Fighter::UpdateHealth(int TValue) {
 	Health += TValue;
 
 	if(Health < 0)
@@ -161,7 +161,7 @@ void FighterClass::UpdateHealth(int TValue) {
 }
 
 // Update mana
-void FighterClass::UpdateMana(int TValue) {
+void _Fighter::UpdateMana(int TValue) {
 	Mana += TValue;
 
 	if(Mana < 0)
@@ -171,13 +171,13 @@ void FighterClass::UpdateMana(int TValue) {
 }
 
 // Set health and mana to max
-void FighterClass::RestoreHealthMana() {
+void _Fighter::RestoreHealthMana() {
 	Health = MaxHealth;
 	Mana = MaxMana;
 }
 
 // Updates the fighter's regen
-void FighterClass::UpdateRegen(int &THealthUpdate, int &TManaUpdate) {
+void _Fighter::UpdateRegen(int &THealthUpdate, int &TManaUpdate) {
 
 	THealthUpdate = 0;
 	TManaUpdate = 0;
@@ -206,25 +206,25 @@ void FighterClass::UpdateRegen(int &THealthUpdate, int &TManaUpdate) {
 }
 
 // Sets the fighter's accumulators
-void FighterClass::SetRegenAccumulators(float THealthAccumulator, float TManaAccumulator) {
+void _Fighter::SetRegenAccumulators(float THealthAccumulator, float TManaAccumulator) {
 	HealthAccumulator = THealthAccumulator;
 	ManaAccumulator = TManaAccumulator;
 }
 
 // Generate damage
-int FighterClass::GenerateDamage() {
+int _Fighter::GenerateDamage() {
 	std::uniform_int_distribution<int> Distribution(MinDamage, MaxDamage);
 	return Distribution(RandomGenerator);
 }
 
 // Generate defense
-int FighterClass::GenerateDefense() {
+int _Fighter::GenerateDefense() {
 	std::uniform_int_distribution<int> Distribution(MinDefense, MaxDefense);
 	return Distribution(RandomGenerator);
 }
 
 // Gets a skill id from the skill bar
-int FighterClass::GetSkillBarID(int TSlot) {
+int _Fighter::GetSkillBarID(int TSlot) {
 	if(SkillBar[TSlot] == NULL)
 		return -1;
 
@@ -232,7 +232,7 @@ int FighterClass::GetSkillBarID(int TSlot) {
 }
 
 // Get a skill from the skill bar
-const SkillClass *FighterClass::GetSkillBar(int TSlot) {
+const _Skill *_Fighter::GetSkillBar(int TSlot) {
 	if(TSlot < 0 || TSlot >= 8)
 		return NULL;
 

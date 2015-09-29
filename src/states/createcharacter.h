@@ -64,7 +64,7 @@ class _CreateCharacterState : public _State {
 		// GUI
 		IGUIEditBox *EditName;
 		IGUIButton *ButtonCreate, *ButtonBack, *SelectedButton;
-		stringc Message;
+		irr::core::stringc Message;
 		int SelectedIndex;
 
 		std::vector<int> Portraits;

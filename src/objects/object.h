@@ -18,40 +18,32 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <cstdint>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <position2d.h>
 
 // Forward Declarations
 class _Map;
 
 // Classes
-class ObjectClass {
+class _Object {
 
 	public:
 
-		enum ObjectType {
+		enum Type {
 			NONE,
 			FIGHTER,
 			PLAYER,
 			MONSTER,
 		};
 
-		virtual void RenderWorld(const _Map *TMap, const ObjectClass *TClientPlayer=NULL) { }
+		virtual void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=NULL) { }
 
-		ObjectClass(ObjectType TType);
-		virtual ~ObjectClass();
+		_Object(int TType);
+		virtual ~_Object();
 
 		virtual void Update(uint32_t TDeltaTime) { }
 
-		ObjectType GetType() const { return Type; }
+		int GetType() const { return Type; }
 
 		void SetDeleted(bool TValue) { Deleted = TValue; }
 		bool GetDeleted() const { return Deleted; }
@@ -74,11 +66,11 @@ class ObjectClass {
 		_Map *Map;
 
 		// Properties
-		ObjectType Type;
+		int Type;
 
 		// State
 		bool Deleted;
-		position2di Position;
+		irr::core::position2di Position;
 
 		// Networking
 		char NetworkID;

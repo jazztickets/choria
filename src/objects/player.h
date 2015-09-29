@@ -18,40 +18,27 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <enet/enet.h>
 #include <constants.h>
 #include <objects/object.h>
 #include <objects/fighter.h>
 
-// Constants
-const int PLAYER_ATTACKTIME = 1000;
-const int PLAYER_TRADEITEMS = 8;
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
 // Forward Declarations
 class _Battle;
-class ItemClass;
-class SkillClass;
+class _Item;
+class _Skill;
 class DatabaseClass;
 struct _Tile;
 struct VendorStruct;
 struct TraderStruct;
 
-struct InventoryStruct {
-	const ItemClass *Item;
+struct _InventorySlot {
+	const _Item *Item;
 	int Count;
 };
 
 // Classes
-class PlayerClass : public ObjectClass, public FighterClass {
+class _Player : public _Object, public _Fighter {
 
 	public:
 
@@ -90,14 +77,14 @@ class PlayerClass : public ObjectClass, public FighterClass {
 			SKILL_COUNT = 25
 		};
 
-		PlayerClass();
-		~PlayerClass();
+		_Player();
+		~_Player();
 
 		int GetState() const { return State; }
 		void SetState(int TState) { State = TState; }
 
 		void Update(uint32_t TDeltaTime);
-		void RenderWorld(const _Map *TMap, const ObjectClass *TClientPlayer=NULL);
+		void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=NULL);
 
 		// Connection
 		void SetPeer(ENetPeer *TPeer) { Peer = TPeer; }
@@ -155,12 +142,12 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		bool UsePotionWorld(int TSlot);
 		bool UseInventory(int TSlot);
 		void SetInventory(int TSlot, int TItemID, int TCount);
-		void SetInventory(int TSlot, InventoryStruct *TItem);
-		InventoryStruct *GetInventory(int TSlot);
-		const ItemClass *GetInventoryItem(int TSlot);
+		void SetInventory(int TSlot, _InventorySlot *TItem);
+		_InventorySlot *GetInventory(int TSlot);
+		const _Item *GetInventoryItem(int TSlot);
 		bool MoveInventory(int TOldSlot, int TNewSlot);
 		bool UpdateInventory(int TSlot, int TAmount);
-		bool AddItem(const ItemClass *TItem, int TCount, int TSlot);
+		bool AddItem(const _Item *TItem, int TCount, int TSlot);
 		bool IsBackpackFull();
 		bool IsEmptySlot(int TSlot) { return Inventory[TSlot].Item == NULL; }
 		void MoveTradeToInventory();
@@ -211,15 +198,15 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		void ToggleBusy(bool Value);
 		void StartTownPortal();
 		uint32_t GetTownPortalTime() const { return TownPortalTime; }
-		void SetStateImage(ITexture *TImage) { StateImage = TImage; }
+		void SetStateImage(irr::video::ITexture *TImage) { StateImage = TImage; }
 
 		// PVP
 		bool CanAttackPlayer();
 		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
 
 		// Trading
-		void SetTradePlayer(PlayerClass *TPlayer) { TradePlayer = TPlayer; }
-		PlayerClass *GetTradePlayer() const { return TradePlayer; }
+		void SetTradePlayer(_Player *TPlayer) { TradePlayer = TPlayer; }
+		_Player *GetTradePlayer() const { return TradePlayer; }
 		void SetTradeGold(int TValue) { TradeGold = TValue; }
 		int GetTradeGold() const { return TradeGold; }
 		void SetTradeAccepted(bool TValue) { TradeAccepted = TValue; }
@@ -235,7 +222,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		void CalculateSkillStats();
 		void CalculateFinalStats();
 
-		bool CanEquipItem(int TSlot, const ItemClass *TItem);
+		bool CanEquipItem(int TSlot, const _Item *TItem);
 		void SwapItem(int TSlot, int TOldSlot);
 
 		// Connection information
@@ -249,7 +236,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 
 		// Texture
 		int PortraitID;
-		ITexture *WorldImage, *StateImage;
+		irr::video::ITexture *WorldImage, *StateImage;
 
 		// Map
 		int SpawnMapID, SpawnPoint;
@@ -273,7 +260,7 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		int InvisPower;
 
 		// Items
-		InventoryStruct Inventory[INVENTORY_COUNT];
+		_InventorySlot Inventory[INVENTORY_COUNT];
 		const VendorStruct *Vendor;
 		const TraderStruct *Trader;
 
@@ -286,5 +273,5 @@ class PlayerClass : public ObjectClass, public FighterClass {
 		uint32_t TradeRequestTime;
 		int TradeGold;
 		bool TradeAccepted;
-		PlayerClass *TradePlayer;
+		_Player *TradePlayer;
 };

@@ -18,26 +18,18 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <ITexture.h>
 
 // Forward Declarations
 struct VendorStruct;
 
 // Classes
-class ItemClass {
+class _Item {
 	friend class StatsClass;
 
 	public:
 
-		enum ItemType {
+		enum Type {
 			TYPE_HEAD,
 			TYPE_BODY,
 			TYPE_LEGS,
@@ -51,8 +43,8 @@ class ItemClass {
 
 		int GetID() const { return ID; }
 		int GetType() const { return Type; }
-		ITexture *GetImage() const { return Image; }
-		const stringc &GetName() const { return Name; }
+		irr::video::ITexture *GetImage() const { return Image; }
+		const irr::core::stringc &GetName() const { return Name; }
 		int GetLevel() const { return Level; }
 		int GetHealthRestore() const { return HealthRestore; }
 		int GetManaRestore() const { return ManaRestore; }
@@ -69,16 +61,16 @@ class ItemClass {
 
 		void GetDamageRange(int &TMin, int &TMax) const;
 		void GetDefenseRange(int &TMin, int &TMax) const;
-		void GetType(stringc &TString) const;
+		void GetType(irr::core::stringc &TString) const;
 		int GetPrice(const VendorStruct *TVendor, int TCount, bool TBuy) const;
 
 	private:
 
 		int ID;
-		stringc Name;
+		irr::core::stringc Name;
 		int Level;
 		int Type;
-		ITexture *Image;
+		irr::video::ITexture *Image;
 		int LevelRequired;
 		int Cost;
 		float Damage;

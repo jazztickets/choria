@@ -31,7 +31,7 @@ using namespace io;
 using namespace gui;
 
 // Forward Declarations
-class ObjectClass;
+class _Object;
 class _Map;
 
 // Classes
@@ -43,28 +43,28 @@ class ObjectManagerClass {
 		~ObjectManagerClass();
 
 		void Update(uint32_t TDeltaTime);
-		void Render(const _Map *TMap, ObjectClass *TClientPlayer=NULL);
-		void SetObjectDeletedCallback(void (* Callback)(ObjectClass *TObject)) { ObjectDeletedCallback = Callback; }
+		void Render(const _Map *TMap, _Object *TClientPlayer=NULL);
+		void SetObjectDeletedCallback(void (* Callback)(_Object *TObject)) { ObjectDeletedCallback = Callback; }
 
 		void ClearObjects();
-		void DeletesObjectsExcept(ObjectClass *TObject);
-		ObjectClass *CreateObjectFromTemplate(int TTemplateID);
-		ObjectClass *AddObject(ObjectClass *TObject);
-		ObjectClass *AddObjectWithNetworkID(ObjectClass *TObject, int TNetworkID);
-		void DeleteObject(ObjectClass *TObject);
+		void DeletesObjectsExcept(_Object *TObject);
+		_Object *CreateObjectFromTemplate(int TTemplateID);
+		_Object *AddObject(_Object *TObject);
+		_Object *AddObjectWithNetworkID(_Object *TObject, int TNetworkID);
+		void DeleteObject(_Object *TObject);
 
 		int GetObjectCount() const { return Objects.size(); }
-		const std::list<ObjectClass *> &GetObjects() const { return Objects; }
-		ObjectClass *GetObjectFromNetworkID(int TID);
+		const std::list<_Object *> &GetObjects() const { return Objects; }
+		_Object *GetObjectFromNetworkID(int TID);
 
 	private:
 
 		int GetNextNetworkID();
-		std::list<ObjectClass *> Objects;
+		std::list<_Object *> Objects;
 
 		// Networking
-		ObjectClass **ObjectArray;
-		void (* ObjectDeletedCallback)(ObjectClass *TObject);
+		_Object **ObjectArray;
+		void (* ObjectDeletedCallback)(_Object *TObject);
 
 		int NextNetworkID;
 };

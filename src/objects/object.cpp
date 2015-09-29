@@ -19,7 +19,7 @@
 #include <instances/map.h>
 
 // Constructor
-ObjectClass::ObjectClass(ObjectType TType)
+_Object::_Object(int TType)
 :	Map(NULL),
 	Type(TType),
 	Deleted(false),
@@ -29,24 +29,24 @@ ObjectClass::ObjectClass(ObjectType TType)
 }
 
 // Destructor
-ObjectClass::~ObjectClass() {
+_Object::~_Object() {
 
 }
 
 // Changes the object's map
-void ObjectClass::SetMap(_Map *TMap) {
+void _Object::SetMap(_Map *TMap) {
 
 	Map = TMap;
 }
 
 // Returns the object's map
-_Map *ObjectClass::GetMap() {
+_Map *_Object::GetMap() {
 
 	return Map;
 }
 
 // Returns the object's map id
-int ObjectClass::GetMapID() const {
+int _Object::GetMapID() const {
 	if(!Map)
 		return 0;
 

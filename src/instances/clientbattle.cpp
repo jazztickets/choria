@@ -36,7 +36,7 @@ _ClientBattle::~_ClientBattle() {
 }
 
 // Starts the battle on the client
-void _ClientBattle::StartBattle(PlayerClass *TClientPlayer) {
+void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 
 	// Save the client's player
 	ClientPlayer = TClientPlayer;
@@ -56,7 +56,7 @@ void _ClientBattle::StartBattle(PlayerClass *TClientPlayer) {
 	}
 
 	// Add skill buttons
-	const SkillClass *Skill;
+	const _Skill *Skill;
 	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 
 		// Add button
@@ -80,7 +80,7 @@ void _ClientBattle::StartBattle(PlayerClass *TClientPlayer) {
 }
 
 // Removes a player from battle
-void _ClientBattle::RemovePlayer(PlayerClass *TPlayer) {
+void _ClientBattle::RemovePlayer(_Player *TPlayer) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] == TPlayer) {
 			Fighters[i] = NULL;
@@ -367,7 +367,7 @@ void _ClientBattle::EndBattle(_Packet *TPacket) {
 	int ItemCount = TPacket->ReadChar();
 	for(int i = 0; i < ItemCount; i++) {
 		int ItemID = TPacket->ReadInt();
-		const ItemClass *Item = Stats.GetItem(ItemID);
+		const _Item *Item = Stats.GetItem(ItemID);
 		MonsterDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
 	}
@@ -436,7 +436,7 @@ void _ClientBattle::SendSkill(int TSkillSlot) {
 	if(ClientPlayer->GetHealth() == 0)
 		return;
 
-	const SkillClass *Skill = ClientPlayer->GetSkillBar(TSkillSlot);
+	const _Skill *Skill = ClientPlayer->GetSkillBar(TSkillSlot);
 	if(TSkillSlot != 9 && (Skill == NULL || !Skill->CanUse(ClientPlayer)))
 		return;
 
@@ -448,7 +448,7 @@ void _ClientBattle::SendSkill(int TSkillSlot) {
 	ClientPlayer->SetSkillUsing(Skill);
 
 	// Update potion count
-	if(TSkillSlot != 9 && Skill->GetType() == SkillClass::TYPE_USEPOTION)
+	if(TSkillSlot != 9 && Skill->GetType() == _Skill::TYPE_USEPOTION)
 		ClientPlayer->UpdatePotionsLeft(Skill->GetID() == 2);
 
 	State = STATE_WAIT;
@@ -460,7 +460,7 @@ void _ClientBattle::ChangeTarget(int TDirection) {
 		return;
 
 	// Get a list of fighters on the opposite side
-	std::vector<FighterClass *> SideFighters;
+	std::vector<_Fighter *> SideFighters;
 	GetFighterList(!ClientPlayer->GetSide(), SideFighters);
 
 	// Find next available target

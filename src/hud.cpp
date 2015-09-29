@@ -37,7 +37,7 @@ struct PositionStruct {
 	int Y;
 };
 
-static PositionStruct EquippedItemPositions[PlayerClass::INVENTORY_BACKPACK] = {
+static PositionStruct EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
 	{66, 20},
 	{66, 78},
 	{64, 162},
@@ -419,10 +419,10 @@ void HUDClass::HandleGUI(EGUI_EVENT_TYPE TEventType, IGUIElement *TElement) {
 							if(Player->GetSkillLevel(SkillID) == 1) {
 
 								// Equip new skills
-								const SkillClass *Skill = Stats.GetSkill(SkillID);
+								const _Skill *Skill = Stats.GetSkill(SkillID);
 								if(Skill) {
 									int Direction, Slot;
-									if(Skill->GetType() == SkillClass::TYPE_PASSIVE) {
+									if(Skill->GetType() == _Skill::TYPE_PASSIVE) {
 										Slot = 7;
 										Direction = -1;
 									}
@@ -785,7 +785,7 @@ void HUDClass::InitSkills() {
 	TabSkill = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 450, 400), NULL, 0);
 
 	// Add +/- buttons
-	const std::vector<SkillClass> &Skills = Stats.GetSkillList();
+	const std::vector<_Skill> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
 	for(size_t i = 0; i < Skills.size(); i++) {
 		int DrawX = X * SKILL_SPACINGX + SKILL_STARTX + 16;
@@ -999,9 +999,9 @@ void HUDClass::DrawInventory() {
 	Graphics.SetFont(GraphicsClass::FONT_7);
 
 	// Draw equipped items
-	InventoryStruct *Item;
+	_InventorySlot *Item;
 	PositionStruct *Position;
-	for(int i = 0; i < PlayerClass::INVENTORY_BACKPACK; i++) {
+	for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
 		Item = Player->GetInventory(i);
 		Position = &EquippedItemPositions[i];
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
@@ -1014,7 +1014,7 @@ void HUDClass::DrawInventory() {
 
 	// Draw inventory items
 	int PositionX = 0, PositionY = 0;
-	for(int i = PlayerClass::INVENTORY_BACKPACK; i < PlayerClass::INVENTORY_TRADE; i++) {
+	for(int i = _Player::INVENTORY_BACKPACK; i < _Player::INVENTORY_TRADE; i++) {
 		Item = Player->GetInventory(i);
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
 			int DrawX = OffsetX + 132 + PositionX * 32;
@@ -1067,7 +1067,7 @@ void HUDClass::DrawVendor() {
 	int CenterX = WindowArea.getCenter().X;
 
 	// Draw inventory items
-	const ItemClass *Item;
+	const _Item *Item;
 	int PositionX = 0, PositionY = 0;
 	for(size_t i = 0; i < Vendor->Items.size(); i++) {
 		Item = Vendor->Items[i];
@@ -1150,7 +1150,7 @@ void HUDClass::DrawTrade() {
 	DrawTradeItems(Player, TRADE_WINDOWX, TRADE_WINDOWYYOU, false);
 
 	// Draw trading player information
-	PlayerClass *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->GetTradePlayer();
 	if(TradePlayer) {
 		TraderWindow->setVisible(true);
 
@@ -1281,7 +1281,7 @@ void HUDClass::DrawSkills() {
 	Graphics.RenderText(Buffer, 400, SKILL_BARY - 23, GraphicsClass::ALIGN_CENTER);
 
 	// Draw skills
-	const std::vector<SkillClass> &Skills = Stats.GetSkillList();
+	const std::vector<_Skill> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
 	for(size_t i = 0; i < Skills.size(); i++) {
 		int DrawX = WindowArea.UpperLeftCorner.X + X * SKILL_SPACINGX + SKILL_STARTX + 16;
@@ -1327,7 +1327,7 @@ void HUDClass::DrawCursorItem() {
 
 // Draws information about an item
 void HUDClass::DrawItemTooltip() {
-	const ItemClass *Item = TooltipItem.Item;
+	const _Item *Item = TooltipItem.Item;
 	if(Item) {
 		int DrawX = Input.GetMousePosition().X + 16;
 		int DrawY = Input.GetMousePosition().Y - 200;
@@ -1385,14 +1385,14 @@ void HUDClass::DrawItemTooltip() {
 		}
 
 		switch(Item->GetType()) {
-			case ItemClass::TYPE_WEAPON1HAND:
-			case ItemClass::TYPE_WEAPON2HAND:
-			case ItemClass::TYPE_HEAD:
-			case ItemClass::TYPE_BODY:
-			case ItemClass::TYPE_LEGS:
-			case ItemClass::TYPE_SHIELD:
+			case _Item::TYPE_WEAPON1HAND:
+			case _Item::TYPE_WEAPON2HAND:
+			case _Item::TYPE_HEAD:
+			case _Item::TYPE_BODY:
+			case _Item::TYPE_LEGS:
+			case _Item::TYPE_SHIELD:
 			break;
-			case ItemClass::TYPE_POTION:
+			case _Item::TYPE_POTION:
 				if(Item->GetHealthRestore() > 0) {
 					sprintf(Buffer, "HP Restored: %d", Item->GetHealthRestore());
 					Graphics.RenderText(Buffer, DrawX, DrawY);
@@ -1478,7 +1478,7 @@ void HUDClass::DrawCursorSkill() {
 
 // Draws the skill tooltip window
 void HUDClass::DrawSkillTooltip() {
-	const SkillClass *Skill = TooltipSkill.Skill;
+	const _Skill *Skill = TooltipSkill.Skill;
 	if(Skill) {
 		int SkillLevel = Player->GetSkillLevel(Skill->GetID());
 		int DrawX = Input.GetMousePosition().X + 16;
@@ -1525,7 +1525,7 @@ void HUDClass::DrawSkillTooltip() {
 
 		// Additional information
 		switch(Skill->GetType()) {
-			case SkillClass::TYPE_PASSIVE:
+			case _Skill::TYPE_PASSIVE:
 				DrawY += 15;
 				Graphics.RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, GraphicsClass::ALIGN_LEFT, COLOR_GRAY);
 			break;
@@ -1534,7 +1534,7 @@ void HUDClass::DrawSkillTooltip() {
 }
 
 // Draw the skill description
-void HUDClass::DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDrawX, int &TDrawY) {
+void HUDClass::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY) {
 
 	// Get skill data
 	int PowerMin, PowerMax, PowerMinRound, PowerMaxRound, PowerPercent;
@@ -1547,11 +1547,11 @@ void HUDClass::DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDr
 	// Draw description
 	char Buffer[256];
 	switch(Skill->GetType()) {
-		case SkillClass::TYPE_ATTACK:
+		case _Skill::TYPE_ATTACK:
 			sprintf(Buffer, Skill->GetInfo().c_str(), PowerPercent);
 			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
-		case SkillClass::TYPE_SPELL:
+		case _Skill::TYPE_SPELL:
 			switch(Skill->GetID()) {
 				case 3:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxRound);
@@ -1567,11 +1567,11 @@ void HUDClass::DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDr
 			sprintf(Buffer, "%d Mana", Skill->GetManaCost(TLevel));
 			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, SColor(255, 0, 0, 255));
 		break;
-		case SkillClass::TYPE_USEPOTION:
+		case _Skill::TYPE_USEPOTION:
 			sprintf(Buffer, Skill->GetInfo().c_str(), PowerMin);
 			Graphics.RenderText(Buffer, TDrawX, TDrawY, GraphicsClass::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
-		case SkillClass::TYPE_PASSIVE:
+		case _Skill::TYPE_PASSIVE:
 			switch(Skill->GetID()) {
 				case 4:
 				case 5:
@@ -1597,7 +1597,7 @@ void HUDClass::DrawSkillDescription(const SkillClass *Skill, int TLevel, int TDr
 }
 
 // Draws an item's price
-void HUDClass::DrawItemPrice(const ItemClass *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy) {
+void HUDClass::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy) {
 	if(!Vendor)
 		return;
 
@@ -1616,7 +1616,7 @@ void HUDClass::DrawItemPrice(const ItemClass *TItem, int TCount, int TDrawX, int
 }
 
 // Draws trading items
-void HUDClass::DrawTradeItems(PlayerClass *TPlayer, int TDrawX, int TDrawY, bool TDrawAll) {
+void HUDClass::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll) {
 	rect<s32> WindowArea = TabTrade->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.X;
 	int OffsetY = WindowArea.UpperLeftCorner.Y;
@@ -1624,9 +1624,9 @@ void HUDClass::DrawTradeItems(PlayerClass *TPlayer, int TDrawX, int TDrawY, bool
 	Graphics.SetFont(GraphicsClass::FONT_7);
 
 	// Draw trade items
-	InventoryStruct *Item;
+	_InventorySlot *Item;
 	int PositionX = 0, PositionY = 0;
-	for(int i = PlayerClass::INVENTORY_TRADE; i < PlayerClass::INVENTORY_COUNT; i++) {
+	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
 		Item = TPlayer->GetInventory(i);
 		if(Item->Item && (TDrawAll || !CursorItem.IsEqual(i, WINDOW_TRADEYOU))) {
 			int DrawX = OffsetX + TDrawX + PositionX * 32;
@@ -1673,7 +1673,7 @@ void HUDClass::GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorIt
 	if(!WindowArea.isPointInside(TPoint))
 		return;
 
-	const ItemClass *Item;
+	const _Item *Item;
 	int Price = 0;
 	TCursorItem.Window = WINDOW_INVENTORY;
 
@@ -1685,7 +1685,7 @@ void HUDClass::GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorIt
 	if(TPoint.X < 122) {
 
 		rect<s32> ItemArea;
-		for(int i = 0; i < PlayerClass::INVENTORY_BACKPACK; i++) {
+		for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
 			ItemArea.UpperLeftCorner.X = EquippedItemPositions[i].X - 16;
 			ItemArea.UpperLeftCorner.Y = EquippedItemPositions[i].Y - 16;
 			ItemArea.LowerRightCorner.X = EquippedItemPositions[i].X + 16;
@@ -1701,7 +1701,7 @@ void HUDClass::GetInventoryItem(position2di &TPoint, CursorItemStruct &TCursorIt
 		}
 	}
 	else if(TPoint.X >= 132 && TPoint.X <= 259 && TPoint.Y >= 1 && TPoint.Y <= 192) {
-		int InventoryIndex = (TPoint.X - 132) / 32 + (TPoint.Y - 1) / 32 * 4 + PlayerClass::INVENTORY_BACKPACK;
+		int InventoryIndex = (TPoint.X - 132) / 32 + (TPoint.Y - 1) / 32 * 4 + _Player::INVENTORY_BACKPACK;
 		//printf("%d=%d %d\n", InventoryIndex, TPoint.X, TPoint.Y);
 		Item = Player->GetInventory(InventoryIndex)->Item;
 		if(Item)
@@ -1775,18 +1775,18 @@ void HUDClass::GetTradeItem(position2di &TPoint, CursorItemStruct &TCursorItem) 
 	TPoint.Y -= WindowArea.UpperLeftCorner.Y;
 
 	// Get trade slot
-	PlayerClass *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->GetTradePlayer();
 	if(TradePlayer && TPoint.X >= TRADE_WINDOWX && TPoint.X < TRADE_WINDOWX + 128 && TPoint.Y >= TRADE_WINDOWYTHEM && TPoint.Y < TRADE_WINDOWYTHEM + 64) {
-		size_t InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYTHEM) / 32 * 4 + PlayerClass::INVENTORY_TRADE;
+		size_t InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYTHEM) / 32 * 4 + _Player::INVENTORY_TRADE;
 		//printf("them: %d=%d %d\n", InventoryIndex, TPoint.X, TPoint.Y);
-		const ItemClass *Item = TradePlayer->GetInventory(InventoryIndex)->Item;
+		const _Item *Item = TradePlayer->GetInventory(InventoryIndex)->Item;
 		TCursorItem.Window = WINDOW_TRADETHEM;
 		TCursorItem.Set(Item, 0, TradePlayer->GetInventory(InventoryIndex)->Count, InventoryIndex);
 	}
 	else if(TPoint.X >= TRADE_WINDOWX && TPoint.X < TRADE_WINDOWX + 128 && TPoint.Y >= TRADE_WINDOWYYOU && TPoint.Y < TRADE_WINDOWYYOU + 64) {
-		size_t InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYYOU) / 32 * 4 + PlayerClass::INVENTORY_TRADE;
+		size_t InventoryIndex = (TPoint.X - TRADE_WINDOWX) / 32 + (TPoint.Y - TRADE_WINDOWYYOU) / 32 * 4 + _Player::INVENTORY_TRADE;
 		//printf("you: %d=%d %d\n", InventoryIndex, TPoint.X, TPoint.Y);
-		const ItemClass *Item = Player->GetInventory(InventoryIndex)->Item;
+		const _Item *Item = Player->GetInventory(InventoryIndex)->Item;
 		TCursorItem.Window = WINDOW_TRADEYOU;
 		TCursorItem.Set(Item, 0, Player->GetInventory(InventoryIndex)->Count, InventoryIndex);
 	}
@@ -1884,7 +1884,7 @@ void HUDClass::GetSkillPageSkill(position2di &TPoint, CursorSkillStruct &TCursor
 }
 
 // Sets the player's skill bar
-void HUDClass::SetSkillBar(int TSlot, int TOldSlot, const SkillClass *TSkill) {
+void HUDClass::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
 	if(Player->GetSkillBar(TSlot) == TSkill)
 		return;
 
@@ -1898,7 +1898,7 @@ void HUDClass::SetSkillBar(int TSlot, int TOldSlot, const SkillClass *TSkill) {
 		}
 	}
 	else {
-		const SkillClass *OldSkill = Player->GetSkillBar(TSlot);
+		const _Skill *OldSkill = Player->GetSkillBar(TSlot);
 		Player->SetSkillBar(TOldSlot, OldSkill);
 	}
 
@@ -1925,7 +1925,7 @@ void HUDClass::RefreshSkillButtons() {
 			SkillID = Button->getID() - ELEMENT_SKILLPLUS0;
 
 			// Hide locked skills
-			const SkillClass *Skill = Stats.GetSkill(SkillID);
+			const _Skill *Skill = Stats.GetSkill(SkillID);
 			if(Skill->GetSkillCost() > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
 				Button->setVisible(false);
 		}
@@ -1980,7 +1980,7 @@ void HUDClass::ResetAcceptButton() {
 	if(TradeAcceptButton)
 		TradeAcceptButton->setPressed(false);
 
-	PlayerClass *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->GetTradePlayer();
 	if(TradePlayer)
 		TradePlayer->SetTradeAccepted(false);
 }
@@ -1989,7 +1989,7 @@ void HUDClass::ResetAcceptButton() {
 void HUDClass::SplitStack(int TSlot, int TCount) {
 
 	// Split only inventory items
-	if(!PlayerClass::IsSlotInventory(TSlot))
+	if(!_Player::IsSlotInventory(TSlot))
 		return;
 
 	// Build packet

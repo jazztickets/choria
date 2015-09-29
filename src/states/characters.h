@@ -29,7 +29,7 @@ class _Packet;
 // Structures
 struct SlotStruct {
 	IGUIButton *Button;
-	stringc Name;
+	irr::core::stringc Name;
 	int Level;
 	bool Used;
 };

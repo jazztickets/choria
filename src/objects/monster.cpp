@@ -22,25 +22,25 @@
 #include <stats.h>
 
 // Constructor
-MonsterClass::MonsterClass(int TMonsterID)
-:	FighterClass(TYPE_MONSTER),
+_Monster::_Monster(int TMonsterID)
+:	_Fighter(TYPE_MONSTER),
 	ID(TMonsterID) {
 
 	Stats.GetMonsterStats(TMonsterID, this);
 }
 
 // Destructor
-MonsterClass::~MonsterClass() {
+_Monster::~_Monster() {
 
 }
 
 // Updates the monster
-void MonsterClass::Update() {
+void _Monster::Update() {
 
 }
 
 // Updates the monster's target based on AI
-void MonsterClass::UpdateTarget(const std::vector<FighterClass *> &TFighters) {
+void _Monster::UpdateTarget(const std::vector<_Fighter *> &TFighters) {
 
 	// Get count of fighters
 	int Count = TFighters.size();
@@ -53,7 +53,7 @@ void MonsterClass::UpdateTarget(const std::vector<FighterClass *> &TFighters) {
 }
 
 // Returns the monsters command
-int MonsterClass::GetCommand() {
+int _Monster::GetCommand() {
 
 	return 0;
 }

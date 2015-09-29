@@ -18,32 +18,20 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
 #include <objects/fighter.h>
 #include <vector>
 
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
-
-// Constants
-const int MONSTER_MAXACTIONS = 8;
-
 // Classes
-class MonsterClass : public FighterClass {
+class _Monster : public _Fighter {
 	friend class StatsClass;
 
 	public:
 
-		MonsterClass(int TMonsterID);
-		~MonsterClass();
+		_Monster(int TMonsterID);
+		~_Monster();
 
 		void Update();
-		void UpdateTarget(const std::vector<FighterClass *> &TFighters);
+		void UpdateTarget(const std::vector<_Fighter *> &TFighters);
 
 		// Stats
 		int GetID() const { return ID; }
@@ -54,7 +42,7 @@ class MonsterClass : public FighterClass {
 	private:
 
 		// Objects
-		std::vector<FighterClass *> Opponents;
+		std::vector<_Fighter *> Opponents;
 		int ID;
 
 		// Stats

@@ -18,23 +18,15 @@
 #pragma once
 
 // Libraries
-#include <irrlicht.h>
-
-// Namespaces
-using namespace irr;
-using namespace core;
-using namespace scene;
-using namespace video;
-using namespace io;
-using namespace gui;
+#include <ITexture.h>
 
 // Forward Declarations
-class FighterClass;
+class _Fighter;
 struct VendorStruct;
 struct _FighterResult;
 
 // Classes
-class SkillClass {
+class _Skill {
 	friend class StatsClass;
 
 	public:
@@ -48,9 +40,9 @@ class SkillClass {
 
 		int GetID() const { return ID; }
 		int GetType() const { return Type; }
-		ITexture *GetImage() const { return Image; }
-		const stringc &GetName() const { return Name; }
-		const stringc &GetInfo() const { return Info; }
+		irr::video::ITexture *GetImage() const { return Image; }
+		const irr::core::stringc &GetName() const { return Name; }
+		const irr::core::stringc &GetInfo() const { return Info; }
 		int GetSkillCost() const { return SkillCost; }
 		int GetSellCost(int TPlayerLevel) const;
 
@@ -61,15 +53,15 @@ class SkillClass {
 		void GetPowerRange(int TLevel, float &TMin, float &TMax) const;
 
 		void ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const;
-		bool CanUse(FighterClass *TFighter) const;
+		bool CanUse(_Fighter *TFighter) const;
 
 	private:
 
 		int ID;
 		int Type;
-		stringc Name;
-		stringc Info;
-		ITexture *Image;
+		irr::core::stringc Name;
+		irr::core::stringc Info;
+		irr::video::ITexture *Image;
 		int SkillCost;
 		float ManaCostBase;
 		float ManaCost;

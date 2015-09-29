@@ -32,24 +32,24 @@ class ConfigClass {
 		int Init();
 		void Close();
 
-		stringc GetSavePath(const stringc &TFile);
-		stringc GetSaveMapPath(const stringc &TFile);
+		irr::core::stringc GetSavePath(const irr::core::stringc &TFile);
+		irr::core::stringc GetSaveMapPath(const irr::core::stringc &TFile);
 
 		bool LoadSettings();
 		bool SaveSettings();
 
-		void SetLastIPAddress(const stringc &TValue) { LastIPAddress = TValue; }
-		void SetLastAccountName(const stringc &TValue) { LastAccountName = TValue; }
-		const stringc &GetLastIPAddress() const { return LastIPAddress; }
-		const stringc &GetLastAccountName() const { return LastAccountName; }
+		void SetLastIPAddress(const irr::core::stringc &TValue) { LastIPAddress = TValue; }
+		void SetLastAccountName(const irr::core::stringc &TValue) { LastAccountName = TValue; }
+		const irr::core::stringc &GetLastIPAddress() const { return LastIPAddress; }
+		const irr::core::stringc &GetLastAccountName() const { return LastAccountName; }
 
 	private:
 
 		// Paths
-		stringc SavePath, SaveMapPath;
+		irr::core::stringc SavePath, SaveMapPath;
 
 		// Config
-		stringc LastIPAddress, LastAccountName;
+		irr::core::stringc LastIPAddress, LastAccountName;
 
 };
 

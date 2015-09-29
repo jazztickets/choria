@@ -38,18 +38,18 @@ const int STATS_MAXGOLD = 1000000;
 
 // Forward Declarations
 class DatabaseClass;
-class MonsterClass;
+class _Monster;
 
 // Structures
 struct MapStruct {
-	stringc File;
+	irr::core::stringc File;
 	int ViewWidth;
 	int ViewHeight;
 };
 
 struct PortraitStruct {
 	int ID;
-	ITexture *Image;
+	irr::video::ITexture *Image;
 };
 
 struct LevelStruct {
@@ -68,29 +68,29 @@ struct ZoneStruct {
 };
 
 struct EventStruct {
-	stringc Name;
-	stringc ShortName;
+	irr::core::stringc Name;
+	irr::core::stringc ShortName;
 	bool Indexed;
 };
 
 struct VendorStruct {
 	int ID;
-	stringc Name;
-	stringc Info;
+	irr::core::stringc Name;
+	irr::core::stringc Info;
 	float BuyPercent;
 	float SellPercent;
-	std::vector<const ItemClass *> Items;
+	std::vector<const _Item *> Items;
 };
 
 struct TraderItemStruct {
-	const ItemClass *Item;
+	const _Item *Item;
 	int Count;
 };
 
 struct TraderStruct {
 	int ID;
-	stringc Name;
-	const ItemClass *RewardItem;
+	irr::core::stringc Name;
+	const _Item *RewardItem;
 	int Count;
 	std::vector<TraderItemStruct> TraderItems;
 };
@@ -110,11 +110,11 @@ class StatsClass {
 		int Close();
 
 		// General Stats
-		void GetMonsterStats(int TMonsterID, MonsterClass *TMonster);
+		void GetMonsterStats(int TMonsterID, _Monster *TMonster);
 		const PortraitStruct *GetPortrait(int TPortraitID) { return &Portraits[TPortraitID]; }
-		const SkillClass *GetSkill(int TSkillID);
+		const _Skill *GetSkill(int TSkillID);
 		const MapStruct *GetMap(int TMapID) { return &Maps[TMapID]; }
-		const ItemClass *GetItem(int TItemID) { return &Items[TItemID]; }
+		const _Item *GetItem(int TItemID) { return &Items[TItemID]; }
 		const VendorStruct *GetVendor(int TVendorID) { return &Vendors[TVendorID]; }
 		const TraderStruct *GetTrader(int TTraderID) { return &Traders[TTraderID]; }
 
@@ -134,7 +134,7 @@ class StatsClass {
 		int GetMaxLevel() const { return Levels.size(); }
 
 		// Skills
-		const std::vector<SkillClass> &GetSkillList() const { return Skills; }
+		const std::vector<_Skill> &GetSkillList() const { return Skills; }
 
 	private:
 
@@ -151,11 +151,11 @@ class StatsClass {
 
 		std::vector<EventStruct> Events;
 		std::vector<LevelStruct> Levels;
-		std::vector<SkillClass> Skills;
+		std::vector<_Skill> Skills;
 
 		std::map<int, PortraitStruct> Portraits;
 		std::map<int, MapStruct> Maps;
-		std::map<int, ItemClass> Items;
+		std::map<int, _Item> Items;
 		std::map<int, VendorStruct> Vendors;
 		std::map<int, TraderStruct> Traders;
 };

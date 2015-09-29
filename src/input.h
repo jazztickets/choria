@@ -63,7 +63,7 @@ class InputClass : public IEventReceiver {
 
 		// Input
 		bool Keys[KEY_KEY_CODES_COUNT], MouseButtons[MOUSE_COUNT];
-		position2di MousePosition;
+		irr::core::position2di MousePosition;
 
 };
 

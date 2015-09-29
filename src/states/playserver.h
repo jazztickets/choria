@@ -26,8 +26,8 @@ class DatabaseClass;
 class ObjectManagerClass;
 class InstanceClass;
 class _Packet;
-class ObjectClass;
-class PlayerClass;
+class _Object;
+class _Player;
 class ServerBattleClass;
 
 // Classes
@@ -43,9 +43,9 @@ class _PlayServerState : public _State {
 		void HandlePacket(ENetEvent *TEvent);
 
 		void Update(uint32_t TDeltaTime);
-		void DeleteObject(ObjectClass *TObject);
+		void DeleteObject(_Object *TObject);
 
-		void PlayerTownPortal(PlayerClass *TPlayer);
+		void PlayerTownPortal(_Player *TPlayer);
 		uint32_t GetServerTime() const { return ServerTime; }
 
 		void StartCommandThread();
@@ -80,16 +80,16 @@ class _PlayServerState : public _State {
 		void HandleTownPortal(_Packet *TPacket, ENetPeer *TPeer);
 		void HandleTraderAccept(_Packet *TPacket, ENetPeer *TPeer);
 
-		void SendPlayerPosition(PlayerClass *TPlayer);
-		void SpawnPlayer(PlayerClass *TPlayer, int TNewMapID, int TEventType, int TEventData);
-		void SendHUD(PlayerClass *TPlayer);
-		void SendCharacterList(PlayerClass *TPlayer);
-		void SendEvent(PlayerClass *TPlayer, int TType, int TData);
-		void SendTradeInformation(PlayerClass *TSender, PlayerClass *TReceiver);
+		void SendPlayerPosition(_Player *TPlayer);
+		void SpawnPlayer(_Player *TPlayer, int TNewMapID, int TEventType, int TEventData);
+		void SendHUD(_Player *TPlayer);
+		void SendCharacterList(_Player *TPlayer);
+		void SendEvent(_Player *TPlayer, int TType, int TData);
+		void SendTradeInformation(_Player *TSender, _Player *TReceiver);
 
-		void BuildTradeItemsPacket(PlayerClass *TPlayer, _Packet *TPacket, int TGold);
+		void BuildTradeItemsPacket(_Player *TPlayer, _Packet *TPacket, int TGold);
 
-		void RemovePlayerFromBattle(PlayerClass *TPlayer);
+		void RemovePlayerFromBattle(_Player *TPlayer);
 
 		DatabaseClass *Database;
 		ObjectManagerClass *ObjectManager;

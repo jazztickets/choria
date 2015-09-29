@@ -416,7 +416,7 @@ bool _Map::CanMoveTo(const position2di &TPosition) {
 }
 
 // Adds an object to the map
-void _Map::AddObject(ObjectClass *TObject) {
+void _Map::AddObject(_Object *TObject) {
 
 	// Create packet for the new object
 	_Packet Packet(_Network::WORLD_CREATEOBJECT);
@@ -425,8 +425,8 @@ void _Map::AddObject(ObjectClass *TObject) {
 	Packet.WriteChar(TObject->GetPosition().Y);
 	Packet.WriteChar(TObject->GetType());
 	switch(TObject->GetType()) {
-		case ObjectClass::PLAYER: {
-			PlayerClass *NewPlayer = static_cast<PlayerClass *>(TObject);
+		case _Object::PLAYER: {
+			_Player *NewPlayer = static_cast<_Player *>(TObject);
 			Packet.WriteString(NewPlayer->GetName().c_str());
 			Packet.WriteChar(NewPlayer->GetPortraitID());
 			Packet.WriteBit(NewPlayer->IsInvisible());
@@ -444,10 +444,10 @@ void _Map::AddObject(ObjectClass *TObject) {
 }
 
 // Removes an object from the map
-void _Map::RemoveObject(ObjectClass *TObject) {
+void _Map::RemoveObject(_Object *TObject) {
 
 	// Remove from the map
-	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
 		if(*Iterator == TObject)
 			Iterator = Objects.erase(Iterator);
 		else
@@ -463,17 +463,17 @@ void _Map::RemoveObject(ObjectClass *TObject) {
 }
 
 // Returns the list of objects
-const std::list<ObjectClass *> &_Map::GetObjects() const {
+const std::list<_Object *> &_Map::GetObjects() const {
 
 	return Objects;
 }
 
 // Returns a list of players close to a player
-void _Map::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, std::list<PlayerClass *> &TPlayers) {
+void _Map::GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers) {
 
-	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
-			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
+	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		if((*Iterator)->GetType() == _Object::PLAYER) {
+			_Player *Player = static_cast<_Player *>(*Iterator);
 			if(Player != TPlayer) {
 				int XDelta = Player->GetPosition().X - TPlayer->GetPosition().X;
 				int YDelta = Player->GetPosition().Y - TPlayer->GetPosition().Y;
@@ -486,13 +486,13 @@ void _Map::GetClosePlayers(const PlayerClass *TPlayer, float TDistanceSquared, s
 }
 
 // Returns the closest player
-PlayerClass *_Map::GetClosestPlayer(const PlayerClass *TPlayer, float TMaxDistanceSquared, int TState) {
+_Player *_Map::GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState) {
 
-	PlayerClass *ClosestPlayer = NULL;
+	_Player *ClosestPlayer = NULL;
 	float ClosestDistanceSquared = 1e10;
-	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
-			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
+	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		if((*Iterator)->GetType() == _Object::PLAYER) {
+			_Player *Player = static_cast<_Player *>(*Iterator);
 			if(Player != TPlayer && Player->GetState() == TState) {
 				int XDelta = Player->GetPosition().X - TPlayer->GetPosition().X;
 				int YDelta = Player->GetPosition().Y - TPlayer->GetPosition().Y;
@@ -516,12 +516,12 @@ void _Map::SendObjectUpdates() {
 	int ObjectCount = Objects.size();
 	Packet.WriteChar(ObjectCount);
 
-	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		ObjectClass *Object = *Iterator;
+	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		_Object *Object = *Iterator;
 		int State = 0;
 		bool Invisible = false;
-		if(Object->GetType() == ObjectClass::PLAYER) {
-			PlayerClass *Player = static_cast<PlayerClass *>(Object);
+		if(Object->GetType() == _Object::PLAYER) {
+			_Player *Player = static_cast<_Player *>(Object);
 			State = Player->GetState();
 			Invisible = Player->IsInvisible();
 		}
@@ -537,12 +537,12 @@ void _Map::SendObjectUpdates() {
 }
 
 // Sends a packet to all of the players in the map
-void _Map::SendPacketToPlayers(_Packet *TPacket, PlayerClass *ExceptionPlayer) {
+void _Map::SendPacketToPlayers(_Packet *TPacket, _Player *ExceptionPlayer) {
 
 	// Send the packet out
-	for(std::list<ObjectClass *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if((*Iterator)->GetType() == ObjectClass::PLAYER) {
-			PlayerClass *Player = static_cast<PlayerClass *>(*Iterator);
+	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		if((*Iterator)->GetType() == _Object::PLAYER) {
+			_Player *Player = static_cast<_Player *>(*Iterator);
 
 			if(Player != ExceptionPlayer)
 				ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer());

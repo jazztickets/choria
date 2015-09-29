@@ -19,21 +19,21 @@
 #include <stats.h>
 
 // Returns the range of damage
-void ItemClass::GetDamageRange(int &TMin, int &TMax) const {
+void _Item::GetDamageRange(int &TMin, int &TMax) const {
 
 	TMin = (int)(Damage - DamageRange);
 	TMax = (int)(Damage + DamageRange);
 }
 
 // Returns the range of defense
-void ItemClass::GetDefenseRange(int &TMin, int &TMax) const {
+void _Item::GetDefenseRange(int &TMin, int &TMax) const {
 
 	TMin = (int)(Defense - DefenseRange);
 	TMax = (int)(Defense + DefenseRange);
 }
 
 // Returns a string of the item type
-void ItemClass::GetType(stringc &TString) const {
+void _Item::GetType(stringc &TString) const {
 
 	switch(Type) {
 		case TYPE_HEAD:
@@ -69,7 +69,7 @@ void ItemClass::GetType(stringc &TString) const {
 }
 
 // Returns the item's price to/from a vendor
-int ItemClass::GetPrice(const VendorStruct *TVendor, int TCount, bool TBuy) const {
+int _Item::GetPrice(const VendorStruct *TVendor, int TCount, bool TBuy) const {
 	if(!TVendor)
 		return 0;
 

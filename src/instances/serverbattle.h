@@ -41,10 +41,10 @@ class ServerBattleClass : public _Battle {
 		void StartBattle();
 
 		// Objects
-		int RemovePlayer(PlayerClass *TPlayer);
+		int RemovePlayer(_Player *TPlayer);
 
 		// Input
-		void HandleInput(PlayerClass *TPlayer, int TCommand, int TTarget);
+		void HandleInput(_Player *TPlayer, int TCommand, int TTarget);
 
 		// Updates
 		void Update(uint32_t TDeltaTime);
@@ -56,7 +56,7 @@ class ServerBattleClass : public _Battle {
 	private:
 
 		void SendPacketToPlayers(_Packet *TPacket);
-		void SendSkillToPlayers(PlayerClass *TPlayer);
+		void SendSkillToPlayers(_Player *TPlayer);
 
 		uint32_t RoundTime;
 };

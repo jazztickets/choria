@@ -30,9 +30,9 @@
 #include <objects/skill.h>
 
 // Constructor
-PlayerClass::PlayerClass()
-:	ObjectClass(PLAYER),
-	FighterClass(TYPE_PLAYER),
+_Player::_Player()
+:	_Object(PLAYER),
+	_Fighter(TYPE_PLAYER),
 	AccountID(0),
 	CharacterID(0),
 	Database(NULL),
@@ -81,13 +81,13 @@ PlayerClass::PlayerClass()
 		MaxPotions[i] = PotionsLeft[i] = 0;
 
 	// Reset items
-	for(int i = 0; i < PlayerClass::INVENTORY_COUNT; i++) {
+	for(int i = 0; i < _Player::INVENTORY_COUNT; i++) {
 		Inventory[i].Item = NULL;
 		Inventory[i].Count = 0;
 	}
 
 	// Reset skills
-	for(int i = 0; i < PlayerClass::SKILL_COUNT; i++) {
+	for(int i = 0; i < _Player::SKILL_COUNT; i++) {
 		SkillLevels[i] = 0;
 	}
 
@@ -95,14 +95,14 @@ PlayerClass::PlayerClass()
 }
 
 // Destructor
-PlayerClass::~PlayerClass() {
+_Player::~_Player() {
 
 	if(Map)
 		Map->RemoveObject(this);
 }
 
 // Updates the player
-void PlayerClass::Update(uint32_t TDeltaTime) {
+void _Player::Update(uint32_t TDeltaTime) {
 
 	MoveTime += TDeltaTime;
 	AutoSaveTime += TDeltaTime;
@@ -128,7 +128,7 @@ void PlayerClass::Update(uint32_t TDeltaTime) {
 }
 
 // Renders the player while walking around the world
-void PlayerClass::RenderWorld(const _Map *TMap, const ObjectClass *TClientPlayer) {
+void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 	if(TMap) {
 
 		position2di ScreenPosition;
@@ -154,7 +154,7 @@ void PlayerClass::RenderWorld(const _Map *TMap, const ObjectClass *TClientPlayer
 }
 
 // Moves the player
-bool PlayerClass::MovePlayer(int TDirection) {
+bool _Player::MovePlayer(int TDirection) {
 	if(State != STATE_WALK)
 		return false;
 
@@ -197,7 +197,7 @@ bool PlayerClass::MovePlayer(int TDirection) {
 }
 
 // Saves the player
-void PlayerClass::Save() {
+void _Player::Save() {
 	if(!Database || CharacterID == 0)
 		return;
 
@@ -251,7 +251,7 @@ void PlayerClass::Save() {
 	sprintf(Query, "DELETE FROM Inventory WHERE CharactersID = %d", CharacterID);
 	Database->RunQuery(Query);
 
-	const InventoryStruct *Item;
+	const _InventorySlot *Item;
 	for(int i = 0; i < INVENTORY_COUNT; i++) {
 		Item = GetInventory(i);
 		if(Item->Item) {
@@ -264,7 +264,7 @@ void PlayerClass::Save() {
 	sprintf(Query, "DELETE FROM SkillLevel WHERE CharactersID = %d", CharacterID);
 	Database->RunQuery(Query);
 
-	for(int i = 0; i < PlayerClass::SKILL_COUNT; i++) {
+	for(int i = 0; i < _Player::SKILL_COUNT; i++) {
 		int Points = GetSkillLevel(i);
 		if(Points > 0) {
 			sprintf(Query, "INSERT INTO SkillLevel VALUES(%d, %d, %d)", CharacterID, i, Points);
@@ -278,25 +278,25 @@ void PlayerClass::Save() {
 }
 
 // Get the zone that the player is standing in
-int PlayerClass::GetCurrentZone() {
+int _Player::GetCurrentZone() {
 
 	return GetTile()->Zone;
 }
 
 // Gets the tile that the player is currently standing on
-const _Tile *PlayerClass::GetTile() {
+const _Tile *_Player::GetTile() {
 
 	return Map->GetTile(Position.X, Position.Y);
 }
 
 // Generates the number of moves until the next battle
-void PlayerClass::GenerateNextBattle() {
+void _Player::GenerateNextBattle() {
 	std::uniform_int_distribution<int> Distribution(4, 14);
 	NextBattle = Distribution(RandomGenerator);
 }
 
 // Starts a battle
-void PlayerClass::StartBattle(_Battle *TBattle) {
+void _Player::StartBattle(_Battle *TBattle) {
 
 	State = STATE_BATTLE;
 	Battle = TBattle;
@@ -306,7 +306,7 @@ void PlayerClass::StartBattle(_Battle *TBattle) {
 }
 
 // Stop a battle
-void PlayerClass::StopBattle() {
+void _Player::StopBattle() {
 
 	State = STATE_WALK;
 	Battle = NULL;
@@ -314,13 +314,13 @@ void PlayerClass::StopBattle() {
 }
 
 // Determines if a player can attack
-bool PlayerClass::CanAttackPlayer() {
+bool _Player::CanAttackPlayer() {
 
-	return State == PlayerClass::STATE_WALK && AttackPlayerTime > PLAYER_ATTACKTIME;
+	return State == _Player::STATE_WALK && AttackPlayerTime > PLAYER_ATTACKTIME;
 }
 
 // Update gold amount
-void PlayerClass::UpdateGold(int TValue) {
+void _Player::UpdateGold(int TValue) {
 
 	Gold += TValue;
 	if(Gold < 0)
@@ -330,7 +330,7 @@ void PlayerClass::UpdateGold(int TValue) {
 }
 
 // Get the percentage to the next level
-float PlayerClass::GetNextLevelPercent() const {
+float _Player::GetNextLevelPercent() const {
 	float Percent = 0;
 
 	if(ExperienceNextLevel > 0)
@@ -340,42 +340,42 @@ float PlayerClass::GetNextLevelPercent() const {
 }
 
 // Sets the player's portrait
-void PlayerClass::SetPortraitID(int TID) {
+void _Player::SetPortraitID(int TID) {
 	PortraitID = TID;
 	Portrait = Stats.GetPortrait(PortraitID)->Image;
 }
 
 // Sets the player's vendor
-void PlayerClass::SetVendor(const VendorStruct *TVendor) {
+void _Player::SetVendor(const VendorStruct *TVendor) {
 
 	Vendor = TVendor;
 }
 
 // Gets the player's vendor
-const VendorStruct *PlayerClass::GetVendor() {
+const VendorStruct *_Player::GetVendor() {
 
 	return Vendor;
 }
 
 // Sets the player's trader
-void PlayerClass::SetTrader(const TraderStruct *TTrader) {
+void _Player::SetTrader(const TraderStruct *TTrader) {
 
 	Trader = TTrader;
 }
 
 // Gets the player's trader
-const TraderStruct *PlayerClass::GetTrader() {
+const TraderStruct *_Player::GetTrader() {
 
 	return Trader;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
-int PlayerClass::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) {
+int _Player::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) {
 	int RewardItemSlot = -1;
 
 	// Check for an open reward slot
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		InventoryStruct *InventoryItem = &Inventory[i];
+		_InventorySlot *InventoryItem = &Inventory[i];
 		if(InventoryItem->Item == NULL || (InventoryItem->Item == TTrader->RewardItem && InventoryItem->Count + TTrader->Count <= 255)) {
 			RewardItemSlot = i;
 			break;
@@ -384,13 +384,13 @@ int PlayerClass::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) 
 
 	// Go through required items
 	for(size_t i = 0; i < TTrader->TraderItems.size(); i++) {
-		const ItemClass *RequiredItem = TTrader->TraderItems[i].Item;
+		const _Item *RequiredItem = TTrader->TraderItems[i].Item;
 		int RequiredCount = TTrader->TraderItems[i].Count;
 		TSlots[i] = -1;
 
 		// Search for the required item
 		for(int j = INVENTORY_HEAD; j < INVENTORY_TRADE; j++) {
-			InventoryStruct *InventoryItem = &Inventory[j];
+			_InventorySlot *InventoryItem = &Inventory[j];
 			if(InventoryItem->Item == RequiredItem && InventoryItem->Count >= RequiredCount) {
 				TSlots[i] = j;
 				break;
@@ -406,7 +406,7 @@ int PlayerClass::GetRequiredItemSlots(const TraderStruct *TTrader, int *TSlots) 
 }
 
 // Accept a trade from a trader
-void PlayerClass::AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRewardSlot) {
+void _Player::AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRewardSlot) {
 	if(TTrader == NULL || !IsSlotInventory(TRewardSlot))
 		return;
 
@@ -420,7 +420,7 @@ void PlayerClass::AcceptTrader(const TraderStruct *TTrader, int *TSlots, int TRe
 }
 
 // Finds a potion in the player's inventory for use in battle
-int PlayerClass::GetPotionBattle(int TType) {
+int _Player::GetPotionBattle(int TType) {
 
 	// Check for skill uses
 	if(PotionsLeft[TType] <= 0)
@@ -436,9 +436,9 @@ int PlayerClass::GetPotionBattle(int TType) {
 }
 
 // Uses a potion in battle
-bool PlayerClass::UsePotionBattle(int TSlot, int TSkillType, int &THealthChange, int &TManaChange) {
-	const ItemClass *Item = GetInventoryItem(TSlot);
-	if(Item == NULL || Item->GetType() != ItemClass::TYPE_POTION)
+bool _Player::UsePotionBattle(int TSlot, int TSkillType, int &THealthChange, int &TManaChange) {
+	const _Item *Item = GetInventoryItem(TSlot);
+	if(Item == NULL || Item->GetType() != _Item::TYPE_POTION)
 		return false;
 
 	THealthChange = Item->GetHealthRestore();
@@ -450,8 +450,8 @@ bool PlayerClass::UsePotionBattle(int TSlot, int TSkillType, int &THealthChange,
 }
 
 // Uses a potion in the world
-bool PlayerClass::UsePotionWorld(int TSlot) {
-	const ItemClass *Item = GetInventoryItem(TSlot);
+bool _Player::UsePotionWorld(int TSlot) {
+	const _Item *Item = GetInventoryItem(TSlot);
 	if(Item == NULL)
 		return false;
 
@@ -473,14 +473,14 @@ bool PlayerClass::UsePotionWorld(int TSlot) {
 }
 
 // Uses an item from the inventory
-bool PlayerClass::UseInventory(int TSlot) {
-	const ItemClass *Item = GetInventoryItem(TSlot);
+bool _Player::UseInventory(int TSlot) {
+	const _Item *Item = GetInventoryItem(TSlot);
 	if(Item == NULL)
 		return false;
 
 	// Handle item types
 	switch(Item->GetType()) {
-		case ItemClass::TYPE_POTION:
+		case _Item::TYPE_POTION:
 			return UsePotionWorld(TSlot);
 		break;
 	}
@@ -489,7 +489,7 @@ bool PlayerClass::UseInventory(int TSlot) {
 }
 
 // Sets an item in the inventory
-void PlayerClass::SetInventory(int TSlot, int TItemID, int TCount) {
+void _Player::SetInventory(int TSlot, int TItemID, int TCount) {
 
 	if(TItemID == 0) {
 		Inventory[TSlot].Item = NULL;
@@ -502,7 +502,7 @@ void PlayerClass::SetInventory(int TSlot, int TItemID, int TCount) {
 }
 
 // Sets an item in the inventory
-void PlayerClass::SetInventory(int TSlot, InventoryStruct *TItem) {
+void _Player::SetInventory(int TSlot, _InventorySlot *TItem) {
 
 	if(TItem->Item == NULL) {
 		Inventory[TSlot].Item = NULL;
@@ -515,13 +515,13 @@ void PlayerClass::SetInventory(int TSlot, InventoryStruct *TItem) {
 }
 
 // Returns an item from the inventory
-InventoryStruct *PlayerClass::GetInventory(int TSlot) {
+_InventorySlot *_Player::GetInventory(int TSlot) {
 
 	return &Inventory[TSlot];
 }
 
 // Gets an inventory item
-const ItemClass *PlayerClass::GetInventoryItem(int TSlot) {
+const _Item *_Player::GetInventoryItem(int TSlot) {
 
 	// Check for bad slots
 	if(TSlot < INVENTORY_BACKPACK || TSlot >= INVENTORY_TRADE || !Inventory[TSlot].Item)
@@ -531,7 +531,7 @@ const ItemClass *PlayerClass::GetInventoryItem(int TSlot) {
 }
 
 // Moves an item from one slot to another
-bool PlayerClass::MoveInventory(int TOldSlot, int TNewSlot) {
+bool _Player::MoveInventory(int TOldSlot, int TNewSlot) {
 	if(TOldSlot == TNewSlot)
 		return false;
 
@@ -582,8 +582,8 @@ bool PlayerClass::MoveInventory(int TOldSlot, int TNewSlot) {
 }
 
 // Swaps two items
-void PlayerClass::SwapItem(int TSlot, int TOldSlot) {
-	InventoryStruct TempItem;
+void _Player::SwapItem(int TSlot, int TOldSlot) {
+	_InventorySlot TempItem;
 
 	// Swap items
 	TempItem = Inventory[TSlot];
@@ -592,7 +592,7 @@ void PlayerClass::SwapItem(int TSlot, int TOldSlot) {
 }
 
 // Updates an item's count, deleting if necessary
-bool PlayerClass::UpdateInventory(int TSlot, int TAmount) {
+bool _Player::UpdateInventory(int TSlot, int TAmount) {
 
 	Inventory[TSlot].Count += TAmount;
 	if(Inventory[TSlot].Count <= 0) {
@@ -605,7 +605,7 @@ bool PlayerClass::UpdateInventory(int TSlot, int TAmount) {
 }
 
 // Attempts to add an item to the inventory
-bool PlayerClass::AddItem(const ItemClass *TItem, int TCount, int TSlot) {
+bool _Player::AddItem(const _Item *TItem, int TCount, int TSlot) {
 
 	// Place somewhere in backpack
 	if(TSlot == -1) {
@@ -661,7 +661,7 @@ bool PlayerClass::AddItem(const ItemClass *TItem, int TCount, int TSlot) {
 }
 
 // Moves the player's trade items to their backpack
-void PlayerClass::MoveTradeToInventory() {
+void _Player::MoveTradeToInventory() {
 
 	for(int i = INVENTORY_TRADE; i < INVENTORY_COUNT; i++) {
 		if(Inventory[i].Item && AddItem(Inventory[i].Item, Inventory[i].Count, -1))
@@ -670,17 +670,17 @@ void PlayerClass::MoveTradeToInventory() {
 }
 
 // Splits a stack
-void PlayerClass::SplitStack(int TSlot, int TCount) {
+void _Player::SplitStack(int TSlot, int TCount) {
 	if(TSlot < 0 || TSlot >= INVENTORY_COUNT)
 		return;
 
 	// Make sure stack is large enough
-	InventoryStruct *SplitItem = &Inventory[TSlot];
+	_InventorySlot *SplitItem = &Inventory[TSlot];
 	if(SplitItem->Item && SplitItem->Count > TCount) {
 
 		// Find an empty slot or existing item
 		int EmptySlot = TSlot;
-		InventoryStruct *Item;
+		_InventorySlot *Item;
 		do {
 			EmptySlot++;
 			if(EmptySlot >= INVENTORY_TRADE)
@@ -698,7 +698,7 @@ void PlayerClass::SplitStack(int TSlot, int TCount) {
 }
 
 // Determines if the player's backpack is full
-bool PlayerClass::IsBackpackFull() {
+bool _Player::IsBackpackFull() {
 
 	// Search backpack
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
@@ -710,7 +710,7 @@ bool PlayerClass::IsBackpackFull() {
 }
 
 // Checks if an item can be equipped
-bool PlayerClass::CanEquipItem(int TSlot, const ItemClass *TItem) {
+bool _Player::CanEquipItem(int TSlot, const _Item *TItem) {
 
 	// Already equipped
 	if(Inventory[TSlot].Item)
@@ -719,28 +719,28 @@ bool PlayerClass::CanEquipItem(int TSlot, const ItemClass *TItem) {
 	// Check type
 	switch(TSlot) {
 		case INVENTORY_HEAD:
-			if(TItem->GetType() == ItemClass::TYPE_HEAD)
+			if(TItem->GetType() == _Item::TYPE_HEAD)
 				return true;
 		break;
 		case INVENTORY_BODY:
-			if(TItem->GetType() == ItemClass::TYPE_BODY)
+			if(TItem->GetType() == _Item::TYPE_BODY)
 				return true;
 		break;
 		case INVENTORY_LEGS:
-			if(TItem->GetType() == ItemClass::TYPE_LEGS)
+			if(TItem->GetType() == _Item::TYPE_LEGS)
 				return true;
 		break;
 		case INVENTORY_HAND1:
-			if(TItem->GetType() == ItemClass::TYPE_WEAPON1HAND)
+			if(TItem->GetType() == _Item::TYPE_WEAPON1HAND)
 				return true;
 		break;
 		case INVENTORY_HAND2:
-			if(TItem->GetType() == ItemClass::TYPE_SHIELD)
+			if(TItem->GetType() == _Item::TYPE_SHIELD)
 				return true;
 		break;
 		case INVENTORY_RING1:
 		case INVENTORY_RING2:
-			if(TItem->GetType() == ItemClass::TYPE_RING)
+			if(TItem->GetType() == _Item::TYPE_RING)
 				return true;
 		break;
 		default:
@@ -751,8 +751,8 @@ bool PlayerClass::CanEquipItem(int TSlot, const ItemClass *TItem) {
 }
 
 // Updates a skill level
-void PlayerClass::AdjustSkillLevel(int TSkillID, int TAdjust) {
-	const SkillClass *Skill = Stats.GetSkill(TSkillID);
+void _Player::AdjustSkillLevel(int TSkillID, int TAdjust) {
+	const _Skill *Skill = Stats.GetSkill(TSkillID);
 	if(Skill == NULL)
 		return;
 
@@ -791,17 +791,17 @@ void PlayerClass::AdjustSkillLevel(int TSkillID, int TAdjust) {
 }
 
 // Calculates the number of skill points used
-void PlayerClass::CalculateSkillPoints() {
+void _Player::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	const std::vector<SkillClass> &Skills = Stats.GetSkillList();
+	const std::vector<_Skill> &Skills = Stats.GetSkillList();
 	for(uint32_t i = 0; i < Skills.size(); i++) {
 		SkillPointsUsed += Skills[i].GetSkillCost() * SkillLevels[i];
 	}
 }
 
 // Toggles the player's busy state
-void PlayerClass::ToggleBusy(bool TValue) {
+void _Player::ToggleBusy(bool TValue) {
 
 	if(TValue && State == STATE_WALK) {
 		State = STATE_BUSY;
@@ -812,7 +812,7 @@ void PlayerClass::ToggleBusy(bool TValue) {
 }
 
 // Starts the town portal process
-void PlayerClass::StartTownPortal() {
+void _Player::StartTownPortal() {
 	if(State == STATE_TOWNPORTAL)
 		State = STATE_WALK;
 	else if(State == STATE_WALK)
@@ -822,7 +822,7 @@ void PlayerClass::StartTownPortal() {
 }
 
 // Calculates all of the player stats
-void PlayerClass::CalculatePlayerStats() {
+void _Player::CalculatePlayerStats() {
 	HealthRegen = ManaRegen = 0.0f;
 	MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
 	MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
@@ -848,7 +848,7 @@ void PlayerClass::CalculatePlayerStats() {
 }
 
 // Calculates the base level stats
-void PlayerClass::CalculateLevelStats() {
+void _Player::CalculateLevelStats() {
 
 	// Cap min experience
 	if(Experience < 0)
@@ -874,7 +874,7 @@ void PlayerClass::CalculateLevelStats() {
 }
 
 // Calculates stats from equipped items
-void PlayerClass::CalculateGearStats() {
+void _Player::CalculateGearStats() {
 
 	// Get stats
 	if(!Inventory[INVENTORY_HAND1].Item)
@@ -882,7 +882,7 @@ void PlayerClass::CalculateGearStats() {
 
 	// Check each item
 	for(int i = 0; i < INVENTORY_BACKPACK; i++) {
-		const ItemClass *Item = Inventory[i].Item;
+		const _Item *Item = Inventory[i].Item;
 		if(Item) {
 			int Min, Max;
 
@@ -906,11 +906,11 @@ void PlayerClass::CalculateGearStats() {
 }
 
 // Calculates skill bonuses
-void PlayerClass::CalculateSkillStats() {
+void _Player::CalculateSkillStats() {
 
 	// Go through each skill bar
 	for(int i = 0; i < 8; i++) {
-		const SkillClass *Skill = SkillBar[i];
+		const _Skill *Skill = SkillBar[i];
 		if(Skill) {
 			int Min, Max, MinRound, MaxRound;
 			float MinFloat, MaxFloat;
@@ -953,7 +953,7 @@ void PlayerClass::CalculateSkillStats() {
 }
 
 // Combine all stats
-void PlayerClass::CalculateFinalStats() {
+void _Player::CalculateFinalStats() {
 	MinDamage = MinDamageBonus + (int)round_(WeaponMinDamage * WeaponDamageModifier);
 	MaxDamage = MaxDamageBonus + (int)round_(WeaponMaxDamage * WeaponDamageModifier);
 	if(MinDamage < 0)
