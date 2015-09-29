@@ -464,7 +464,7 @@ void _HUD::Update(uint32_t TDeltaTime) {
 	for(std::list<_ChatMessage>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
 		_ChatMessage &Chat = (*Iterator);
 		Chat.TimeOut += TDeltaTime;
-		if(Chat.TimeOut > MESSAGE_TIME) {
+		if(Chat.TimeOut > NETWORKING_CHAT_TIMEOUT) {
 			Iterator = ChatHistory.erase(Iterator);
 		}
 		else {
@@ -562,7 +562,7 @@ void _HUD::ToggleChat() {
 	else {
 		ChatBox = irrGUI->addEditBox(L"", Graphics.GetRect(25, 570, 200, 20), true, nullptr, ELEMENT_CHATBOX);
 		ChatBox->setOverrideFont(Graphics.GetFont(_Graphics::FONT_10));
-		ChatBox->setMax(NETWORKING_MESSAGESIZE);
+		ChatBox->setMax(NETWORKING_CHAT_SIZE);
 		irrGUI->setFocus(ChatBox);
 		Chatting = true;
 	}

@@ -24,9 +24,6 @@
 #include <list>
 #include <vector>
 
-// Constants
-const int STATS_MAXGOLD = 1000000;
-
 // Forward Declarations
 class _Database;
 class _Monster;

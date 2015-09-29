@@ -920,8 +920,8 @@ void _PlayServerState::HandleChatMessage(_Packet *TPacket, ENetPeer *TPeer) {
 
 	// Get message
 	char Message[256];
-	strncpy(Message, TPacket->ReadString(), NETWORKING_MESSAGESIZE);
-	Message[NETWORKING_MESSAGESIZE] = 0;
+	strncpy(Message, TPacket->ReadString(), NETWORKING_CHAT_SIZE);
+	Message[NETWORKING_CHAT_SIZE] = 0;
 
 	// Send message to other players
 	_Packet Packet(_Network::CHAT_MESSAGE);

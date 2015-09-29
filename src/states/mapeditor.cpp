@@ -22,6 +22,7 @@
 #include <globals.h>
 #include <stats.h>
 #include <config.h>
+#include <constants.h>
 #include <states/mainmenu.h>
 #include <IFileSystem.h>
 #include <IGUIEnvironment.h>

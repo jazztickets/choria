@@ -23,9 +23,6 @@
 #include <list>
 #include <cstdint>
 
-const int MAP_TILE_WIDTH = 32;
-const int MAP_TILE_HEIGHT = 32;
-
 // Structures
 struct _Tile {
 	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }

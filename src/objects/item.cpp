@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/item.h>
 #include <stats.h>
+#include <constants.h>
 
 using namespace irr;
 

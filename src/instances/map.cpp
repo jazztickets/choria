@@ -79,8 +79,8 @@ void _Map::Init() {
 	Tiles = nullptr;
 	ViewSize.Width = 25;
 	ViewSize.Height = 19;
-	CameraScroll.X = SCROLLMIN_X;
-	CameraScroll.Y = SCROLLMIN_Y;
+	CameraScroll.X = CAMERA_SCROLLMIN_X;
+	CameraScroll.Y = CAMERA_SCROLLMIN_Y;
 }
 
 // Free memory used by the tiles
@@ -203,14 +203,14 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 void _Map::SetCameraScroll(const core::position2di &TPosition) {
 
 	CameraScroll = TPosition;
-	if(CameraScroll.X < SCROLLMIN_X)
-		CameraScroll.X = SCROLLMIN_X;
-	if(CameraScroll.Y < SCROLLMIN_Y)
-		CameraScroll.Y = SCROLLMIN_Y;
-	if(CameraScroll.X >= Width - SCROLLMIN_X)
-		CameraScroll.X = Width - SCROLLMIN_X;
-	if(CameraScroll.Y >= Height - SCROLLMIN_Y)
-		CameraScroll.Y = Height - SCROLLMIN_Y;
+	if(CameraScroll.X < CAMERA_SCROLLMIN_X)
+		CameraScroll.X = CAMERA_SCROLLMIN_X;
+	if(CameraScroll.Y < CAMERA_SCROLLMIN_Y)
+		CameraScroll.Y = CAMERA_SCROLLMIN_Y;
+	if(CameraScroll.X >= Width - CAMERA_SCROLLMIN_X)
+		CameraScroll.X = Width - CAMERA_SCROLLMIN_X;
+	if(CameraScroll.Y >= Height - CAMERA_SCROLLMIN_Y)
+		CameraScroll.Y = Height - CAMERA_SCROLLMIN_Y;
 }
 
 // Converts a grid position on the map to a screen coordinate

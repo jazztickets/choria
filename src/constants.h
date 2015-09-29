@@ -20,20 +20,18 @@
 #include <SColor.h>
 
 const int GAME_PORTALTIME = 3000;
-const int PLAYER_MOVETIME = 125;
 
 const int MAP_VERSION = 1;
-const int SCROLLMIN_X = 2;
-const int SCROLLMIN_Y = 2;
+const int MAP_TILE_WIDTH = 32;
+const int MAP_TILE_HEIGHT = 32;
+
+const int CAMERA_SCROLLMIN_X = 2;
+const int CAMERA_SCROLLMIN_Y = 2;
 
 const int NETWORKING_PORT = 60006;
-const int NETWORKING_MESSAGESIZE = 100;
+const int NETWORKING_CHAT_SIZE = 100;
+const int NETWORKING_CHAT_TIMEOUT = 15000;
 
-const irr::video::SColor COLOR_GOLD(255, 196, 187, 44);
-const irr::video::SColor COLOR_GRAY(255, 150, 150, 150);
-const irr::video::SColor COLOR_LIGHTGRAY(255, 200, 200, 200);
-
-const int MESSAGE_TIME = 15000;
 const int SKILL_STARTX = 35;
 const int SKILL_STARTY = 40;
 const int SKILL_SPACINGX = 50;
@@ -55,5 +53,12 @@ const int BATTLE_SHOWRESULTTIME = 2000;
 const int BATTLE_WAITRESULTTIME = 375;
 const int BATTLE_WAITENDTIME = 300;
 
+const int PLAYER_MOVETIME = 125;
 const int PLAYER_TRADEITEMS = 8;
 const int PLAYER_ATTACKTIME = 1000;
+
+const int STATS_MAXGOLD = 1000000;
+
+const irr::video::SColor COLOR_GOLD(255, 196, 187, 44);
+const irr::video::SColor COLOR_GRAY(255, 150, 150, 150);
+const irr::video::SColor COLOR_LIGHTGRAY(255, 200, 200, 200);
