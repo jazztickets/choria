@@ -36,7 +36,7 @@ int _AccountState::Init() {
 	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
 	if(AccountName == "")
-		AccountName = Config.GetLastAccountName();
+		AccountName = Config.LastAccountName;
 
 	// Account
 	Graphics.SetFont(_Graphics::FONT_10);
@@ -101,7 +101,7 @@ void _AccountState::HandlePacket(ENetEvent *TEvent) {
 			ChangeState(STATE_MAIN);
 		break;
 		case _Network::ACCOUNT_SUCCESS:
-			Config.SetLastAccountName(AccountName);
+			Config.LastAccountName = AccountName;
 			Config.SaveSettings();
 			AccountName = "";
 			Password = "";

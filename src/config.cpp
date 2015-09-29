@@ -60,32 +60,18 @@ void _Config::Close() {
 
 }
 
-// Gets the save path to a file
-core::stringc _Config::GetSavePath(const core::stringc &TFile) {
-
-	return SavePath + core::stringc(TFile);
-}
-
-// Gets the save map path to a file
-core::stringc _Config::GetSaveMapPath(const core::stringc &TFile) {
-
-	return SaveMapPath + core::stringc(TFile);
-}
-
 // Loads settings
 bool _Config::LoadSettings() {
 
 	// Get filename
-	core::stringc SaveFile = GetSavePath("settings.cfg");
+	core::stringc SaveFile = SavePath + "settings.cfg";
 
 	// Open file
 	std::ifstream File;
 	File.open(SaveFile.c_str(), std::ios::in);
-	if(!File.is_open()) {
-		File.clear();
-
+	if(!File)
 		return SaveSettings();
-	}
+
 	File.width(32);
 
 	// Get IP address
@@ -101,7 +87,6 @@ bool _Config::LoadSettings() {
 	}
 
 	// Close
-	File.clear();
 	File.close();
 
 	return true;
@@ -111,16 +96,13 @@ bool _Config::LoadSettings() {
 bool _Config::SaveSettings() {
 
 	// Get filename
-	core::stringc SaveFile = GetSavePath("settings.cfg");
+	core::stringc SaveFile = SavePath + "settings.cfg";
 
 	// Open file
 	std::ofstream File;
 	File.open(SaveFile.c_str(), std::ios::out);
-	if(!File.is_open()) {
-		File.clear();
-
+	if(!File)
 		return false;
-	}
 
 	// Save settings
 	File << LastIPAddress.c_str() << std::endl;
@@ -130,7 +112,6 @@ bool _Config::SaveSettings() {
 		File << LastAccountName.c_str() << std::endl;
 
 	// Close
-	File.clear();
 	File.close();
 
 	return true;

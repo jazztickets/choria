@@ -37,7 +37,7 @@ int _ConnectState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
 	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
-	IPAddress = Config.GetLastIPAddress();
+	IPAddress = Config.LastIPAddress;
 
 	// Text
 	Graphics.SetFont(_Graphics::FONT_10);
@@ -68,7 +68,7 @@ int _ConnectState::Close() {
 // Handles a connection to the server
 void _ConnectState::HandleConnect(ENetEvent *TEvent) {
 
-	Config.SetLastIPAddress(IPAddress);
+	Config.LastIPAddress = IPAddress;
 	Config.SaveSettings();
 }
 

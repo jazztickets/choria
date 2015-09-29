@@ -48,7 +48,7 @@ int _MapEditorState::Init() {
 		Brush.Texture = TexturePalette[0];
 
 	// Default map
-	core::stringc SavePath = Config.GetSaveMapPath("test.map");
+	core::stringc SavePath = Config.SaveMapPath + "test.map";
 	Map = new _Map(SavePath, 50, 50);
 
 	// Set filters
@@ -494,7 +494,7 @@ void _MapEditorState::CreateMap() {
 	CloseMap();
 
 	// Create map
-	core::stringc SavePath = Config.GetSaveMapPath(File);
+	core::stringc SavePath = Config.SaveMapPath + File;
 	Map = new _Map(SavePath.c_str(), Width, Height);
 
 	CloseWindow(NEWMAP_WINDOW);
@@ -505,7 +505,7 @@ void _MapEditorState::CreateMap() {
 void _MapEditorState::InitLoadMap() {
 
 	// Main dialog window
-	core::stringc StartPath = Config.GetSaveMapPath("");
+	core::stringc StartPath = Config.SaveMapPath;
 	irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (core::stringc::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;

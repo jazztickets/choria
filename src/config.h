@@ -28,18 +28,8 @@ class _Config {
 		int Init();
 		void Close();
 
-		irr::core::stringc GetSavePath(const irr::core::stringc &TFile);
-		irr::core::stringc GetSaveMapPath(const irr::core::stringc &TFile);
-
 		bool LoadSettings();
 		bool SaveSettings();
-
-		void SetLastIPAddress(const irr::core::stringc &TValue) { LastIPAddress = TValue; }
-		void SetLastAccountName(const irr::core::stringc &TValue) { LastAccountName = TValue; }
-		const irr::core::stringc &GetLastIPAddress() const { return LastIPAddress; }
-		const irr::core::stringc &GetLastAccountName() const { return LastAccountName; }
-
-	private:
 
 		// Paths
 		irr::core::stringc SavePath, SaveMapPath;
