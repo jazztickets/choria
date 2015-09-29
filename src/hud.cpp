@@ -36,12 +36,7 @@ _HUD HUD;
 
 using namespace irr;
 
-struct PositionStruct {
-	int X;
-	int Y;
-};
-
-static PositionStruct EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
+static core::position2di EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
 	{66, 20},
 	{66, 78},
 	{64, 162},
@@ -1004,7 +999,7 @@ void _HUD::DrawInventory() {
 
 	// Draw equipped items
 	_InventorySlot *Item;
-	PositionStruct *Position;
+	core::position2di *Position;
 	for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
 		Item = Player->GetInventory(i);
 		Position = &EquippedItemPositions[i];
