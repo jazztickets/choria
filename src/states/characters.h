@@ -62,7 +62,7 @@ class _CharactersState : public _State {
 		bool HandleKeyPress(irr::EKEY_CODE TKey);
 		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 		void Draw();
 
 	private:
@@ -78,7 +78,7 @@ class _CharactersState : public _State {
 		irr::gui::IGUIButton *ButtonPlay, *ButtonLogout, *ButtonCreate, *ButtonDelete;
 		_CharacterSlot Slots[CHARACTERS_MAX];
 		int SelectedIndex;
-		uint32_t ClickTimer;
+		double ClickTimer;
 
 };
 

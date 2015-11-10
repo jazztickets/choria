@@ -62,7 +62,7 @@ class _PlayClientState : public _State {
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
 		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 		void Draw();
 
 		void SetCharacterSlot(int TSlot) { CharacterSlot = TSlot; }
@@ -100,7 +100,7 @@ class _PlayClientState : public _State {
 		int State, CharacterSlot;
 
 		// Time
-		uint32_t ClientTime, SentClientTime;
+		double ClientTime, SentClientTime;
 
 		// Objects
 		_Player *Player;

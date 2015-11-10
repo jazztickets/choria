@@ -63,7 +63,7 @@ class _ClientBattle : public _Battle {
 		void HandleCommand(int TSlot, int TSkillID);
 
 		// Updates
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 
 		// Render
 		void Render();
@@ -85,7 +85,7 @@ class _ClientBattle : public _Battle {
 		void ChangeTarget(int TDirection);
 
 		// Battle results
-		uint32_t ResultTimer;
+		double ResultTimer;
 		bool ShowResults;
 		int TotalExperience, TotalGold;
 

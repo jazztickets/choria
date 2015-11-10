@@ -35,20 +35,20 @@ class _Packet {
 
 		void WriteBit(bool TData);
 		void WriteChar(char TData);
-		void WriteInt(int TData);
+		void WriteInt(int32_t TData);
 		void WriteFloat(float TData);
 		void WriteString(const char *TData);
 
 		bool ReadBit();
 		char ReadChar();
-		int ReadInt();
+		int32_t ReadInt();
 		float ReadFloat();
 		const char *ReadString();
 
 	private:
 
 		void AlignBitIndex();
-		void AlignAndExpand(int TNewWriteSize);
+		void AlignAndExpand(size_t TNewWriteSize);
 
 		// Packet information
 		ENetPacket *Packet;

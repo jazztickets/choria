@@ -161,9 +161,9 @@ void _PlayClientState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _PlayClientState::Update(uint32_t TDeltaTime) {
+void _PlayClientState::Update(double FrameTime) {
 
-	ClientTime += TDeltaTime;
+	ClientTime += FrameTime;
 
 	switch(State) {
 		case STATE_CONNECTING:
@@ -218,7 +218,7 @@ void _PlayClientState::Update(uint32_t TDeltaTime) {
 			if(Battle) {
 
 				// Update the battle
-				Battle->Update(TDeltaTime);
+				Battle->Update(FrameTime);
 
 				// Done with the battle
 				if(Battle->GetState() == _ClientBattle::STATE_DELETE) {
@@ -230,8 +230,8 @@ void _PlayClientState::Update(uint32_t TDeltaTime) {
 		break;
 	}
 
-	HUD.Update(TDeltaTime);
-	ObjectManager->Update(TDeltaTime);
+	HUD.Update(FrameTime);
+	ObjectManager->Update(FrameTime);
 }
 
 // Draws the current state

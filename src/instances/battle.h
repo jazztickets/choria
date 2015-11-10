@@ -59,7 +59,7 @@ class _Battle {
 		void AddFighter(_Fighter *TFighter, int TSide);
 
 		// Updates
-		virtual void Update(uint32_t TDeltaTime) { }
+		virtual void Update(double FrameTime) { }
 
 		// States
 		int GetState() const { return State; }
@@ -74,7 +74,7 @@ class _Battle {
 
 		// State
 		int State, TargetState;
-		uint32_t Timer;
+		double Timer;
 
 		// Objects
 		std::vector<_Fighter *> Fighters;

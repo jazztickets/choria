@@ -33,7 +33,7 @@ class _ObjectManager {
 		_ObjectManager();
 		~_ObjectManager();
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 		void Render(const _Map *TMap, _Object *TClientPlayer=nullptr);
 		void SetObjectDeletedCallback(void (* Callback)(_Object *TObject)) { ObjectDeletedCallback = Callback; }
 

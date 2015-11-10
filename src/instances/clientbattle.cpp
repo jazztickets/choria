@@ -171,10 +171,10 @@ void _ClientBattle::HandleCommand(int TSlot, int TSkillID) {
 }
 
 // Update the battle system for the client
-void _ClientBattle::Update(uint32_t TDeltaTime) {
+void _ClientBattle::Update(double FrameTime) {
 
-	ResultTimer += TDeltaTime;
-	Timer += TDeltaTime;
+	ResultTimer += FrameTime;
+	Timer += FrameTime;
 	switch(State) {
 		case STATE_GETINPUT:
 		break;

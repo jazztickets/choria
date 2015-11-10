@@ -458,12 +458,12 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 }
 
 // Updates the HUD
-void _HUD::Update(uint32_t TDeltaTime) {
+void _HUD::Update(double FrameTime) {
 
 	// Chat messages
 	for(std::list<_ChatMessage>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
 		_ChatMessage &Chat = (*Iterator);
-		Chat.TimeOut += TDeltaTime;
+		Chat.TimeOut += FrameTime;
 		if(Chat.TimeOut > NETWORKING_CHAT_TIMEOUT) {
 			Iterator = ChatHistory.erase(Iterator);
 		}
@@ -1041,8 +1041,8 @@ void _HUD::DrawTownPortal() {
 
 	// Get text
 	char String[256];
-	int TimeLeft = GAME_PORTALTIME - (int)Player->GetTownPortalTime();
-	sprintf(String, "Portal in %d", std::max(TimeLeft / 1000, 0) + 1);
+	double TimeLeft = GAME_PORTALTIME - Player->GetTownPortalTime();
+	sprintf(String, "Portal in %.2f", std::max(TimeLeft, 0.0));
 
 	int DrawX = 400;
 	int DrawY = 200;

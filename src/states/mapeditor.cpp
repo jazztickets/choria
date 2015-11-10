@@ -81,7 +81,7 @@ void _MapEditorState::CloseMap() {
 }
 
 // Updates the current state
-void _MapEditorState::Update(uint32_t TDeltaTime) {
+void _MapEditorState::Update(double FrameTime) {
 	if(!Map)
 		return;
 

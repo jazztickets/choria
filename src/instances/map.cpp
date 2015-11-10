@@ -113,10 +113,10 @@ void _Map::AllocateMap() {
 }
 
 // Updates the map and sends object updates
-void _Map::Update(uint32_t TDeltaTime) {
+void _Map::Update(double FrameTime) {
 
-	ObjectUpdateTime += TDeltaTime;
-	if(ObjectUpdateTime > 200) {
+	ObjectUpdateTime += FrameTime;
+	if(ObjectUpdateTime > NETWORK_UPDATEPERIOD) {
 		ObjectUpdateTime = 0;
 
 		SendObjectUpdates();

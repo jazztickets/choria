@@ -41,7 +41,7 @@ class _Object {
 		_Object(int TType);
 		virtual ~_Object();
 
-		virtual void Update(uint32_t TDeltaTime) { }
+		virtual void Update(double FrameTime) { }
 
 		int GetType() const { return Type; }
 

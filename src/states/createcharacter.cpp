@@ -104,7 +104,7 @@ void _CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _CreateCharacterState::Update(uint32_t TDeltaTime) {
+void _CreateCharacterState::Update(double FrameTime) {
 
 }
 

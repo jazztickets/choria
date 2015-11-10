@@ -295,11 +295,11 @@ void _PlayServerState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _PlayServerState::Update(uint32_t TDeltaTime) {
-	ServerTime += TDeltaTime;
+void _PlayServerState::Update(double FrameTime) {
+	ServerTime += FrameTime;
 
-	Instances->Update(TDeltaTime);
-	ObjectManager->Update(TDeltaTime);
+	Instances->Update(FrameTime);
+	ObjectManager->Update(FrameTime);
 
 	if(StopRequested) {
 		Game.SetDone(true);

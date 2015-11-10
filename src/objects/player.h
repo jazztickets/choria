@@ -83,7 +83,7 @@ class _Player : public _Object, public _Fighter {
 		int GetState() const { return State; }
 		void SetState(int TState) { State = TState; }
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 		void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=nullptr);
 
 		// Connection
@@ -101,12 +101,12 @@ class _Player : public _Object, public _Fighter {
 		int GetPortraitID() const { return PortraitID; }
 
 		// Stats
-		void SetPlayTime(uint32_t TValue) { PlayTime = TValue; }
+		void SetPlayTime(int TValue) { PlayTime = TValue; }
 		void SetDeaths(int TValue) { Deaths = TValue; }
 		void SetMonsterKills(int TValue) { MonsterKills = TValue; }
 		void SetPlayerKills(int TValue) { PlayerKills = TValue; }
 		void SetBounty(int TValue) { Bounty = TValue; }
-		uint32_t GetPlayTime() const { return PlayTime; }
+		int GetPlayTime() const { return PlayTime; }
 		int GetDeaths() const { return Deaths; }
 		int GetMonsterKills() const { return MonsterKills; }
 		int GetPlayerKills() const { return PlayerKills; }
@@ -197,7 +197,7 @@ class _Player : public _Object, public _Fighter {
 		// World
 		void ToggleBusy(bool Value);
 		void StartTownPortal();
-		uint32_t GetTownPortalTime() const { return TownPortalTime; }
+		double GetTownPortalTime() const { return TownPortalTime; }
 		void SetStateImage(irr::video::ITexture *TImage) { StateImage = TImage; }
 
 		// PVP
@@ -232,7 +232,7 @@ class _Player : public _Object, public _Fighter {
 
 		// States
 		int State;
-		uint32_t MoveTime, AutoSaveTime;
+		double MoveTime, AutoSaveTime;
 
 		// Texture
 		int PortraitID;
@@ -240,10 +240,11 @@ class _Player : public _Object, public _Fighter {
 
 		// Map
 		int SpawnMapID, SpawnPoint;
-		uint32_t TownPortalTime;
+		double TownPortalTime;
 
 		// Stats
-		uint32_t PlayTime, PlayTimeAccumulator;
+		int PlayTime;
+		double PlayTimeAccumulator;
 		int Deaths, MonsterKills, PlayerKills, Bounty;
 		int Gold;
 		int Experience, ExperienceNeeded, ExperienceNextLevel;
@@ -256,7 +257,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Battle
 		int NextBattle;
-		uint32_t AttackPlayerTime;
+		double AttackPlayerTime;
 		int InvisPower;
 
 		// Items
@@ -270,7 +271,7 @@ class _Player : public _Object, public _Fighter {
 		int PotionsLeft[2], MaxPotions[2];
 
 		// Trading
-		uint32_t TradeRequestTime;
+		double TradeRequestTime;
 		int TradeGold;
 		bool TradeAccepted;
 		_Player *TradePlayer;

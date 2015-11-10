@@ -98,14 +98,14 @@ void _ObjectManager::DeletesObjectsExcept(_Object *TObject) {
 }
 
 // Updates all objects in the scene
-void _ObjectManager::Update(uint32_t TDeltaTime) {
+void _ObjectManager::Update(double FrameTime) {
 
 	// Update objects
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
 		_Object *Object = *Iterator;
 
 		// Update the object
-		Object->Update(TDeltaTime);
+		Object->Update(FrameTime);
 
 		// Delete old objects
 		if(Object->GetDeleted()) {

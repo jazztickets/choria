@@ -59,7 +59,7 @@ void _Packet::AlignBitIndex() {
 }
 
 // Aligns the stream to the next byte and checks for a valid size
-void _Packet::AlignAndExpand(int TNewWriteSize) {
+void _Packet::AlignAndExpand(size_t TNewWriteSize) {
 	AlignBitIndex();
 
 	// Resize the packet if needed
@@ -97,11 +97,11 @@ void _Packet::WriteChar(char TData) {
 }
 
 // Write a single int to the stream
-void _Packet::WriteInt(int TData) {
-	AlignAndExpand(sizeof(int));
+void _Packet::WriteInt(int32_t TData) {
+	AlignAndExpand(sizeof(int32_t));
 
 	*((int *)&Packet->data[CurrentByte]) = TData;
-	CurrentByte += sizeof(int);
+	CurrentByte += sizeof(int32_t);
 }
 
 // Write a single float to the stream
@@ -152,11 +152,11 @@ char _Packet::ReadChar() {
 }
 
 // Reads an int from the stream
-int _Packet::ReadInt() {
+int32_t _Packet::ReadInt() {
 	AlignBitIndex();
 
-	int Int = *(int *)(&Packet->data[CurrentByte]);
-	CurrentByte += sizeof(int);
+	int32_t Int = *(int32_t *)(&Packet->data[CurrentByte]);
+	CurrentByte += sizeof(int32_t);
 
 	return Int;
 }

@@ -137,11 +137,11 @@ void _ServerBattle::HandleInput(_Player *TPlayer, int TCommand, int TTarget) {
 }
 
 // Update the battle system for the server
-void _ServerBattle::Update(uint32_t TDeltaTime) {
+void _ServerBattle::Update(double FrameTime) {
 
 	switch(State) {
 		case STATE_INPUT:
-			RoundTime += TDeltaTime;
+			RoundTime += FrameTime;
 			if(RoundTime > BATTLE_ROUNDTIME)
 				State = STATE_RESOLVETURN;
 		break;

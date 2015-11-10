@@ -35,7 +35,7 @@ class _Instance {
 		_Instance();
 		~_Instance();
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 
 		// Maps
 		_Map *GetMap(int TMapID);

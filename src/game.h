@@ -57,7 +57,6 @@ class _Game {
 
 	private:
 
-		void Delay(int TTime);
 		void ResetTimer();
 
 		// States
@@ -69,7 +68,7 @@ class _Game {
 		bool Done, MouseWasLocked, MouseWasShown;
 
 		// Time
-		uint32_t TimeStamp, DeltaTime;
+		double TimeStamp, LastFrameTime;
 
 		// Networking
 		bool LocalServerRunning;

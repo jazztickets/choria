@@ -43,16 +43,16 @@ _Instance::~_Instance() {
 }
 
 // Updates all the instances
-void _Instance::Update(uint32_t TDeltaTime) {
+void _Instance::Update(double FrameTime) {
 
 	// Update maps
 	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
-		(*MapIterator)->Update(TDeltaTime);
+		(*MapIterator)->Update(FrameTime);
 	}
 
 	// Update battles
 	for(BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
-		(*BattleIterator)->Update(TDeltaTime);
+		(*BattleIterator)->Update(FrameTime);
 	}
 }
 

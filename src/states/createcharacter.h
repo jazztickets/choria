@@ -51,7 +51,7 @@ class _CreateCharacterState : public _State {
 		bool HandleKeyPress(irr::EKEY_CODE TKey);
 		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 		void Draw();
 
 	private:

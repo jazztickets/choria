@@ -20,6 +20,7 @@
 #include <globals.h>
 #include <stats.h>
 #include <graphics.h>
+#include <constants.h>
 #include <network/network.h>
 #include <network/packetstream.h>
 #include <states/mainmenu.h>
@@ -94,8 +95,8 @@ void _CharactersState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _CharactersState::Update(uint32_t TDeltaTime) {
-	ClickTimer += TDeltaTime;
+void _CharactersState::Update(double FrameTime) {
+	ClickTimer += FrameTime;
 }
 
 // Draws the current state
@@ -240,7 +241,7 @@ void _CharactersState::UpdateSelection(int TSelectedIndex) {
 	SelectedIndex = TSelectedIndex;
 
 	// Check for double clicks
-	if(SelectedIndex == OldIndex && ClickTimer < 500) {
+	if(SelectedIndex == OldIndex && ClickTimer < GAME_DOUBLECLICKTIME) {
 		PlayCharacter();
 	}
 

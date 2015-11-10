@@ -63,7 +63,7 @@ class _Map {
 		_Map(int TMapID);
 		~_Map();
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 
 		// States
 		int GetID() const { return ID; }
@@ -141,6 +141,6 @@ class _Map {
 		std::vector<_IndexedEvent> IndexedEvents;
 
 		// Objects
-		uint32_t ObjectUpdateTime;
+		double ObjectUpdateTime;
 		std::list<_Object *> Objects;
 };

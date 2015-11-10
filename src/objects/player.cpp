@@ -104,22 +104,22 @@ _Player::~_Player() {
 }
 
 // Updates the player
-void _Player::Update(uint32_t TDeltaTime) {
+void _Player::Update(double FrameTime) {
 
-	MoveTime += TDeltaTime;
-	AutoSaveTime += TDeltaTime;
-	AttackPlayerTime += TDeltaTime;
-	TradeRequestTime += TDeltaTime;
-	PlayTimeAccumulator += TDeltaTime;
-	TownPortalTime += TDeltaTime;
-	if(PlayTimeAccumulator > 1000) {
-		PlayTimeAccumulator -= 1000;
+	MoveTime += FrameTime;
+	AutoSaveTime += FrameTime;
+	AttackPlayerTime += FrameTime;
+	TradeRequestTime += FrameTime;
+	PlayTimeAccumulator += FrameTime;
+	TownPortalTime += FrameTime;
+	if(PlayTimeAccumulator > 1.0) {
+		PlayTimeAccumulator -= 1.0;
 		PlayTime++;
 	}
 
 	// Run server commands
 	if(Database) {
-		if(AutoSaveTime >= 60000)
+		if(AutoSaveTime >= GAME_AUTOSAVEPERIOD)
 			Save();
 
 		if(State == STATE_TOWNPORTAL && TownPortalTime > GAME_PORTALTIME) {
@@ -222,7 +222,7 @@ void _Player::Save() {
 					", SkillBar5 = %d"
 					", SkillBar6 = %d"
 					", SkillBar7 = %d"
-					", PlayTime = %u"
+					", PlayTime = %d"
 					", Deaths = %d"
 					", MonsterKills = %d"
 					", PlayerKills = %d"

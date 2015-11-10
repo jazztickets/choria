@@ -19,7 +19,12 @@
 
 #include <SColor.h>
 
-const int GAME_PORTALTIME = 3000;
+const double GAME_PORTALTIME = 3.0;
+const double GAME_SLEEPRATE = 1 / 120.0;
+const double GAME_AUTOSAVEPERIOD = 60.0;
+const double GAME_DOUBLECLICKTIME = 0.5;
+
+const double NETWORK_UPDATEPERIOD = 0.2;
 
 const int MAP_VERSION = 1;
 const int MAP_TILE_WIDTH = 32;
@@ -30,7 +35,7 @@ const int CAMERA_SCROLLMIN_Y = 2;
 
 const int NETWORKING_PORT = 60006;
 const int NETWORKING_CHAT_SIZE = 100;
-const int NETWORKING_CHAT_TIMEOUT = 15000;
+const double NETWORKING_CHAT_TIMEOUT = 15.0;
 
 const int SKILL_STARTX = 35;
 const int SKILL_STARTY = 40;
@@ -47,15 +52,15 @@ const int TRADE_WINDOWYYOU = 138;
 const int MAX_OBJECTS = 255;
 
 const int BATTLE_MAXFIGHTERS = 6;
-const int BATTLE_ROUNDTIME = 5 * 1000;
+const double BATTLE_ROUNDTIME = 5.0;
 const int BATTLE_MAXSKILLS = 8;
-const int BATTLE_SHOWRESULTTIME = 2000;
-const int BATTLE_WAITRESULTTIME = 375;
-const int BATTLE_WAITENDTIME = 300;
+const double BATTLE_SHOWRESULTTIME = 2.0;
+const double BATTLE_WAITRESULTTIME = 0.375;
+const double BATTLE_WAITENDTIME = 0.30;
 
-const int PLAYER_MOVETIME = 125;
+const double PLAYER_MOVETIME = 0.125;
 const int PLAYER_TRADEITEMS = 8;
-const int PLAYER_ATTACKTIME = 1000;
+const double PLAYER_ATTACKTIME = 1.0;
 
 const int STATS_MAXGOLD = 1000000;
 

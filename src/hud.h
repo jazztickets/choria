@@ -75,7 +75,7 @@ struct _ChatMessage {
 	_ChatMessage() : Message(""), TimeOut(0) { }
 	_ChatMessage(const irr::core::stringc &TMessage) : Message(TMessage), TimeOut(0) { }
 	irr::core::stringc Message;
-	uint32_t TimeOut;
+	double TimeOut;
 };
 
 // Classes
@@ -120,7 +120,7 @@ class _HUD {
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
 		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 		void PreGUIDraw();
 		void Draw();
 

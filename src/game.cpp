@@ -24,6 +24,7 @@
 #include <objectmanager.h>
 #include <config.h>
 #include <stats.h>
+#include <constants.h>
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
 #include <states/mainmenu.h>
@@ -165,12 +166,14 @@ void _Game::Update() {
 		Done = true;
 
 	// Get time difference from last frame
-	DeltaTime = irrTimer->getTime() - TimeStamp;
+	LastFrameTime = (irrTimer->getTime() - TimeStamp) * 0.001f;
 	TimeStamp = irrTimer->getTime();
 
 	// Limit frame rate
-	if(DeltaTime < 15)
-		Delay(15 - DeltaTime);
+	float ExtraTime = GAME_SLEEPRATE - LastFrameTime;
+	if(ExtraTime > 0.0f) {
+		irrDevice->sleep((uint32_t)(ExtraTime * 1000));
+	}
 
 	// Check for window activity
 	PreviousWindowActive = WindowActive;
@@ -191,7 +194,7 @@ void _Game::Update() {
 				Done = true;
 				return;
 			}
-			State->Update(DeltaTime);
+			State->Update(LastFrameTime);
 
 			// Draw
 			Graphics.BeginFrame();
@@ -205,10 +208,10 @@ void _Game::Update() {
 		break;
 		case STATE_UPDATE:
 			if(LocalServerRunning)
-				PlayServerState.Update(DeltaTime);
+				PlayServerState.Update(LastFrameTime);
 			else
 				MultiNetwork->Update();
-			State->Update(DeltaTime);
+			State->Update(LastFrameTime);
 
 			// Draw
 			Graphics.BeginFrame();
@@ -232,15 +235,6 @@ void _Game::ResetTimer() {
 
 	irrTimer->setTime(0);
 	TimeStamp = irrTimer->getTime();
-}
-
-// Delays execution of the program
-void _Game::Delay(int TTime) {
-	#ifdef _WIN32
-		Sleep(TTime);
-	#else
-		usleep(TTime * 1000);
-	#endif
 }
 
 // Starts the local server

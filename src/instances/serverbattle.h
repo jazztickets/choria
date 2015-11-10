@@ -47,7 +47,7 @@ class _ServerBattle : public _Battle {
 		void HandleInput(_Player *TPlayer, int TCommand, int TTarget);
 
 		// Updates
-		void Update(uint32_t TDeltaTime);
+		void Update(double FrameTime);
 
 		// Resolve
 		void ResolveTurn();
@@ -58,5 +58,5 @@ class _ServerBattle : public _Battle {
 		void SendPacketToPlayers(_Packet *TPacket);
 		void SendSkillToPlayers(_Player *TPlayer);
 
-		uint32_t RoundTime;
+		double RoundTime;
 };

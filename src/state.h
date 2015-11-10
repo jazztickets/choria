@@ -47,7 +47,7 @@ class _State {
 		virtual void HandlePacket(ENetEvent *TEvent) { }
 
 		// Update
-		virtual void Update(uint32_t TDeltaTime) { }
+		virtual void Update(double FrameTime) { }
 		virtual void Draw() { };
 
 	private:
