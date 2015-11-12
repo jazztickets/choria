@@ -115,7 +115,7 @@ class _MapEditorState : public _State {
 		irr::core::stringc WorkingDirectory;
 
 		// Textures
-		std::vector<irr::video::ITexture *> TexturePalette;
+		std::vector<_Texture *> TexturePalette;
 
 		// Brush
 		int BrushSize;

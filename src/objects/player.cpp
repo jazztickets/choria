@@ -73,7 +73,7 @@ _Player::_Player()
 	TradeAccepted(false),
 	TradePlayer(nullptr) {
 
-	WorldImage = irrDriver->getTexture("textures/players/basic.png");
+	//WorldImage = irrDriver->getTexture("textures/players/basic.png");
 
 	Position.X = 0;
 	Position.Y = 0;

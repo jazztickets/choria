@@ -198,7 +198,7 @@ class _Player : public _Object, public _Fighter {
 		void ToggleBusy(bool Value);
 		void StartTownPortal();
 		double GetTownPortalTime() const { return TownPortalTime; }
-		void SetStateImage(irr::video::ITexture *TImage) { StateImage = TImage; }
+		void SetStateImage(_Texture *TImage) { StateImage = TImage; }
 
 		// PVP
 		bool CanAttackPlayer();
@@ -236,7 +236,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Texture
 		int PortraitID;
-		irr::video::ITexture *WorldImage, *StateImage;
+		_Texture *WorldImage, *StateImage;
 
 		// Map
 		int SpawnMapID, SpawnPoint;

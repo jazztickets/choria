@@ -23,7 +23,7 @@
 #include <IGUIFont.h>
 #include <IGUISkin.h>
 #include <IGUIStaticText.h>
-#include <ITexture.h>
+#include <texture.h>
 #include <EDriverTypes.h>
 #include <SColor.h>
 #include <glm/vec2.hpp>
@@ -31,6 +31,8 @@
 #include <SDL_video.h>
 #include <SDL_mouse.h>
 #include <string>
+
+#include <ITexture.h>
 
 // Forward Declarations
 class _Texture;
@@ -125,11 +127,11 @@ class _Graphics {
 		void RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 
 		// Images
-		void DrawCenteredImage(const irr::video::ITexture *TTexture, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
+		void DrawCenteredImage(const _Texture *TTexture, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 		void DrawImage(ImageType TType, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 		void DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight);
 		void DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
-		irr::video::ITexture *GetImage(ImageType TType) { return Images[TType]; }
+		_Texture *GetImage(ImageType TType) { return Images[TType]; }
 
 
 		void ToggleFullScreen(const glm::ivec2 &WindowSize, const glm::ivec2 &FullscreenSize);
@@ -219,7 +221,7 @@ class _Graphics {
 		int CurrentFont;
 
 		// Images
-		irr::video::ITexture *Images[IMAGE_COUNT];
+		_Texture *Images[IMAGE_COUNT];
 
 };
 

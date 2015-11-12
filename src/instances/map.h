@@ -19,15 +19,16 @@
 
 // Libraries
 #include <network/network.h>
-#include <ITexture.h>
+#include <texture.h>
 #include <vector>
 #include <list>
 #include <cstdint>
+#include <irrlicht.h>
 
 // Structures
 struct _Tile {
 	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
-	irr::video::ITexture *Texture;
+	_Texture *Texture;
 	int32_t Zone;
 	int32_t EventType;
 	int32_t EventData;
@@ -101,7 +102,7 @@ class _Map {
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
 		bool IsValidPosition(int TX, int TY) const { return TX >= 0 && TY >= 0 && TX < Width && TY < Height; }
-		void SetNoZoneTexture(irr::video::ITexture *TTexture) { NoZoneTexture = TTexture; }
+		void SetNoZoneTexture(_Texture *TTexture) { NoZoneTexture = TTexture; }
 
 		void GetTile(int TX, int TY, _Tile &TTile) const { TTile = Tiles[TX][TY]; }
 		const _Tile *GetTile(int TX, int TY) const { return &Tiles[TX][TY]; }
@@ -120,8 +121,8 @@ class _Map {
 
 		void SendObjectUpdates();
 
-		void GetTextureListFromMap(std::vector<irr::video::ITexture *> &TTextures);
-		int GetTextureIndex(std::vector<irr::video::ITexture *> &TTextures, irr::video::ITexture *TTexture);
+		void GetTextureListFromMap(std::vector<_Texture *> &TTextures);
+		int GetTextureIndex(std::vector<_Texture *> &TTextures, _Texture *TTexture);
 
 		// Map file
 		int ID;
@@ -136,8 +137,8 @@ class _Map {
 		int32_t Width, Height;
 
 		// Textures
-		irr::video::ITexture *NoZoneTexture, *DefaultNoZoneTexture;
-		std::vector<irr::video::ITexture *> Textures;
+		_Texture *NoZoneTexture, *DefaultNoZoneTexture;
+		std::vector<_Texture *> Textures;
 
 		// Events
 		std::vector<_IndexedEvent> IndexedEvents;

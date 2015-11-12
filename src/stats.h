@@ -37,7 +37,7 @@ struct _MapStat {
 
 struct _Portrait {
 	int ID;
-	irr::video::ITexture *Image;
+	_Texture *Image;
 };
 
 struct _Level {

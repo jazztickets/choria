@@ -18,7 +18,9 @@
 #pragma once
 
 // Libraries
-#include <ITexture.h>
+#include <texture.h>
+#include <irrString.h>
+#include <irrlicht.h>
 
 // Constants
 const int FIGHTER_MAXSKILLS = 8;
@@ -26,6 +28,7 @@ const int FIGHTER_MAXSKILLS = 8;
 // Forward Declarations
 class _Battle;
 class _Skill;
+class _Texture;
 struct _FighterResult;
 
 // Classes
@@ -130,6 +133,6 @@ class _Fighter {
 		const _Skill *SkillUsing, *SkillUsed;
 
 		// Render
-		irr::video::ITexture *Portrait;
+		_Texture *Portrait;
 		irr::core::position2di Offset;
 };

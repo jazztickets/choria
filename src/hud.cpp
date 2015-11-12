@@ -586,42 +586,42 @@ void _HUD::InitButtonBar() {
 
 	// Town portal
 	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_TOWNPORTAL, 0, L"Town Portal");
-	Button->setImage(irrDriver->getTexture("textures/interface/hud_spawn.png"));
+	//Button->setImage(irrDriver->getTexture("textures/interface/hud_spawn.png"));
 	ButtonText = Graphics.AddText("Q", 2, 12, _Graphics::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Inventory
 	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_INVENTORY, 0, L"Inventory");
-	Button->setImage(irrDriver->getTexture("textures/interface/hud_inventory.png"));
+	//Button->setImage(irrDriver->getTexture("textures/interface/hud_inventory.png"));
 	ButtonText = Graphics.AddText("C", 2, 12, _Graphics::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Trade
 	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_TRADE, 0, L"Trade");
-	Button->setImage(irrDriver->getTexture("textures/interface/hud_trade.png"));
+	//Button->setImage(irrDriver->getTexture("textures/interface/hud_trade.png"));
 	ButtonText = Graphics.AddText("T", 2, 12, _Graphics::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Character
 	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_CHARACTER, 0, L"Character");
-	Button->setImage(irrDriver->getTexture("textures/interface/hud_character.png"));
+	//Button->setImage(irrDriver->getTexture("textures/interface/hud_character.png"));
 	ButtonText = Graphics.AddText("B", 2, 12, _Graphics::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Skills
 	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_SKILLS, 0, L"Skills");
-	Button->setImage(irrDriver->getTexture("textures/interface/hud_skills.png"));
+	//Button->setImage(irrDriver->getTexture("textures/interface/hud_skills.png"));
 	ButtonText = Graphics.AddText("S", 2, 12, _Graphics::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
 
 	// Menu
 	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_MAINMENU, 0, L"Menu");
-	Button->setImage(irrDriver->getTexture("textures/interface/hud_menu.png"));
+	//Button->setImage(irrDriver->getTexture("textures/interface/hud_menu.png"));
 	ButtonText = Graphics.AddText("Esc", 2, 12, _Graphics::ALIGN_LEFT, Button);
 	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
 	DrawX += 24;
@@ -657,10 +657,10 @@ void _HUD::InitInventory(int TX, int TY, bool TSendBusy) {
 	TooltipItem.Reset();
 
 	// Add window
-	TabInventory = irrGUI->addTab(Graphics.GetCenteredRect(TX, TY, 265, 200));
+	//TabInventory = irrGUI->addTab(Graphics.GetCenteredRect(TX, TY, 265, 200));
 
 	// Add background
-	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_INVENTORY), core::position2di(0, 0), true, TabInventory);
+	//irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_INVENTORY), core::position2di(0, 0), true, TabInventory);
 
 	*State = _PlayClientState::STATE_INVENTORY;
 }
@@ -690,7 +690,7 @@ void _HUD::InitVendor(int TVendorID) {
 	TabVendor = irrGUI->addTab(Graphics.GetCenteredRect(400, 180, 262, 246));
 
 	// Add background
-	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_VENDOR), core::position2di(0, 0), true, TabVendor);
+	//irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_VENDOR), core::position2di(0, 0), true, TabVendor);
 
 	// Open inventory
 	InitInventory(400, 420, false);
@@ -731,7 +731,7 @@ void _HUD::InitTrader(int TTraderID) {
 	TabTrader = irrGUI->addTab(Graphics.GetCenteredRect(400, 250, 166, 272));
 
 	// Add background
-	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADER), core::position2di(0, 0), true, TabTrader);
+//	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADER), core::position2di(0, 0), true, TabTrader);
 
 	// Add buttons
 	gui::IGUIButton *TradeButton = irrGUI->addButton(Graphics.GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
@@ -797,9 +797,9 @@ void _HUD::InitSkills() {
 
 		// Add buy/sell button
 		gui::IGUIButton *BuyButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
-		BuyButton->setImage(Graphics.GetImage(_Graphics::IMAGE_PLUS));
+		//BuyButton->setImage(Graphics.GetImage(_Graphics::IMAGE_PLUS));
 		gui::IGUIButton *SellButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
-		SellButton->setImage(Graphics.GetImage(_Graphics::IMAGE_MINUS));
+		//SellButton->setImage(Graphics.GetImage(_Graphics::IMAGE_MINUS));
 
 		X++;
 		if(X >= SKILL_COLUMNS) {
@@ -839,7 +839,7 @@ void _HUD::CloseSkills() {
 
 // Initialize the trade system
 void _HUD::InitTrade() {
-
+/*
 	// Send request to server
 	SendTradeRequest();
 
@@ -865,7 +865,7 @@ void _HUD::InitTrade() {
 
 	// Add inventory
 	InitInventory(400, 432, false);
-
+*/
 	*State = _PlayClientState::STATE_TRADE;
 }
 
@@ -1300,7 +1300,7 @@ void _HUD::DrawSkills() {
 	}
 
 	// Draw skill bar
-	video::ITexture *Image;
+	_Texture *Image;
 	for(int i = 0; i < 8; i++) {
 
 		if(Player->GetSkillBar(i))

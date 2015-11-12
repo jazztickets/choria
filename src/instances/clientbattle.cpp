@@ -68,11 +68,12 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 		Text->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
 
 		// Get skill info
-		Skill = ClientPlayer->GetSkillBar(i);
+		/*Skill = ClientPlayer->GetSkillBar(i);
 		if(Skill)
 			SkillButtons[i]->setImage(Skill->GetImage());
 		else
 			SkillButtons[i]->setImage(Graphics.GetImage(_Graphics::IMAGE_EMPTYSLOT));
+			*/
 	}
 	PassButton = irrGUI->addButton(Graphics.GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
 	PassButton->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));

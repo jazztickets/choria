@@ -18,7 +18,8 @@
 #pragma once
 
 // Libraries
-#include <ITexture.h>
+#include <texture.h>
+#include <irrString.h>
 
 // Forward Declarations
 struct _Vendor;
@@ -43,7 +44,7 @@ class _Item {
 
 		int GetID() const { return ID; }
 		int GetType() const { return Type; }
-		irr::video::ITexture *GetImage() const { return Image; }
+		_Texture *GetImage() const { return Image; }
 		const irr::core::stringc &GetName() const { return Name; }
 		int GetLevel() const { return Level; }
 		int GetHealthRestore() const { return HealthRestore; }
@@ -70,7 +71,7 @@ class _Item {
 		irr::core::stringc Name;
 		int Level;
 		int Type;
-		irr::video::ITexture *Image;
+		_Texture *Image;
 		int LevelRequired;
 		int Cost;
 		float Damage;

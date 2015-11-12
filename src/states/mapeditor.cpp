@@ -515,7 +515,7 @@ void _MapEditorState::InitLoadMap() {
 
 // Opens the texture palette dialog
 void _MapEditorState::InitTexturePalette() {
-
+/*
 	// Main dialog window
 	gui::IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
 	irrGUI->setFocus(Window);
@@ -536,6 +536,7 @@ void _MapEditorState::InitTexturePalette() {
 	}
 
 	State = STATE_TEXTUREPALETTE;
+	*/
 }
 
 // Opens the brush filter dialog
@@ -599,6 +600,7 @@ void _MapEditorState::InitBrushOptions() {
 
 // Loads all map textures from a directory
 void _MapEditorState::RefreshTexturePalette() {
+	/*
 	TexturePalette.clear();
 
 	// Load all textures in the directory
@@ -612,7 +614,7 @@ void _MapEditorState::RefreshTexturePalette() {
 		if(!FileList->isDirectory(i)) {
 
 			// Load texture
-			video::ITexture *Texture = irrDriver->getTexture(core::stringc("textures/map/") + FileList->getFileName(i));
+			_Texture *Texture = irrDriver->getTexture(core::stringc("textures/map/") + FileList->getFileName(i));
 
 			// Check size
 			if(Texture->getSize() != core::dimension2du(32, 32)) {
@@ -626,7 +628,7 @@ void _MapEditorState::RefreshTexturePalette() {
 				TexturePalette.push_back(Texture);
 			}
 		}
-	}
+	}*/
 }
 
 // Applys a brush of varying size

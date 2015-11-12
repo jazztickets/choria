@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <ITexture.h>
+#include <texture.h>
 
 // Forward Declarations
 class _Fighter;
@@ -40,9 +40,9 @@ class _Skill {
 
 		int GetID() const { return ID; }
 		int GetType() const { return Type; }
-		irr::video::ITexture *GetImage() const { return Image; }
-		const irr::core::stringc &GetName() const { return Name; }
-		const irr::core::stringc &GetInfo() const { return Info; }
+		_Texture *GetImage() const { return Image; }
+		const std::string &GetName() const { return Name; }
+		const std::string &GetInfo() const { return Info; }
 		int GetSkillCost() const { return SkillCost; }
 		int GetSellCost(int TPlayerLevel) const;
 
@@ -59,9 +59,9 @@ class _Skill {
 
 		int ID;
 		int Type;
-		irr::core::stringc Name;
-		irr::core::stringc Info;
-		irr::video::ITexture *Image;
+		std::string Name;
+		std::string Info;
+		_Texture *Image;
 		int SkillCost;
 		float ManaCostBase;
 		float ManaCost;

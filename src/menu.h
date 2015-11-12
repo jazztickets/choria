@@ -75,7 +75,6 @@ class _Menu {
 		_Menu();
 
 		void InitTitle();
-		void InitTutorial();
 		void InitSinglePlayer();
 		void InitOptions();
 		void InitInGame();

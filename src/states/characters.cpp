@@ -41,7 +41,7 @@ void _CharactersState::Init() {
 	int SlotX = 0, SlotY = 0;
 	for(int i = 0; i < CHARACTERS_MAX; i++) {
 		Slots[i].Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 200 + 200, SlotY * 150 + 150, 64, 64), 0, ELEMENT_SLOT0 + i);
-		Slots[i].Button->setImage(Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT));
+		//Slots[i].Button->setImage(Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT));
 		Slots[i].Used = false;
 		Slots[i].Name = "";
 		Slots[i].Level = 0;
@@ -205,21 +205,21 @@ void _CharactersState::HandleCharacterList(_Buffer *TPacket) {
 		ButtonCreate->setEnabled(true);
 
 	// Get characters
-	video::ITexture *PortraitImage;
+	_Texture *PortraitImage;
 	int i;
 	for(i = 0; i < CharacterCount; i++) {
 		Slots[i].Used = true;
 		Slots[i].Name = TPacket->ReadString();
-		PortraitImage = Stats.GetPortrait(TPacket->Read<int32_t>())->Image;
-		Slots[i].Button->setImage(PortraitImage);
-		Slots[i].Button->setPressedImage(PortraitImage);
+		//PortraitImage = Stats.GetPortrait(TPacket->Read<int32_t>())->Image;
+		//Slots[i].Button->setImage(PortraitImage);
+		//Slots[i].Button->setPressedImage(PortraitImage);
 		Slots[i].Level = Stats.FindLevel(TPacket->Read<int32_t>())->Level;
 	}
 	for(; i < CHARACTERS_MAX; i++) {
 		Slots[i].Used = false;
-		PortraitImage = Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT);
-		Slots[i].Button->setImage(PortraitImage);
-		Slots[i].Button->setPressedImage(PortraitImage);
+		//PortraitImage = Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT);
+		//Slots[i].Button->setImage(PortraitImage);
+		//Slots[i].Button->setPressedImage(PortraitImage);
 	}
 }
 

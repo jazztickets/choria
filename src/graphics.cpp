@@ -110,7 +110,7 @@ void _Graphics::Close() {
 }
 
 // Draws an 2d image centered about a point
-void _Graphics::DrawCenteredImage(const video::ITexture *TTexture, int TPositionX, int TPositionY, const video::SColor &TColor) {
+void _Graphics::DrawCenteredImage(const _Texture *TTexture, int TPositionX, int TPositionY, const video::SColor &TColor) {
 
 	/*if(TTexture)
 		irrDriver->draw2DImage(

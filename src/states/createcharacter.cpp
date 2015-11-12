@@ -43,7 +43,7 @@ void _CreateCharacterState::Init() {
 	for(std::list<_Portrait>::iterator Iterator = PortraitList.begin(); Iterator != PortraitList.end(); ++Iterator) {
 		Portraits.push_back(Iterator->ID);
 		gui::IGUIButton *Button = irrGUI->addButton(Graphics.GetCenteredRect(SlotX * 100 + 50, SlotY * 100 + 150, 64, 64), 0, ELEMENT_PORTRAITS + i);
-		Button->setImage(Iterator->Image);
+		//Button->setImage(Iterator->Image);
 
 		i++;
 		SlotX++;

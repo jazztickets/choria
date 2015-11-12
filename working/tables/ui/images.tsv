@@ -1,1 +1,2 @@
 identifier	parent	texture	color	offset x	offset y	width	height	alignment x	alignment y	stretch/fill
+image_title_logo	element_menu_title	menu/logo.png		0	60	344	128	1	0	0

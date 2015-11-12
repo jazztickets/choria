@@ -21,37 +21,26 @@
 #include <actions.h>
 #include <graphics.h>
 #include <assets.h>
+#include <config.h>
+#include <framework.h>
+#include <buffer.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/button.h>
 #include <ui/image.h>
 #include <ui/textbox.h>
-#include <config.h>
-#include <framework.h>
-//#include <states/client.h>
+#include <network/network.h>
 #include <states/null.h>
 #include <sstream>
 #include <SDL_mouse.h>
+
+#include <globals.h>
 
 _Menu Menu;
 
 const std::string InputBoxPrefix = "button_options_input_";
 const std::string PlayerButtonPrefix = "button_singleplayer_slot";
 const std::string PlayerColorButtonPrefix = "button_new_color";
-
-const std::string KEYLABEL_IDENTIFIERS[] = {
-	"label_options_config_up",
-	"label_options_config_down",
-	"label_options_config_left",
-	"label_options_config_right",
-	"label_options_config_fire",
-	"label_options_config_aim",
-	"label_options_config_use",
-	"label_options_config_inventory",
-	"label_options_config_reload",
-	"label_options_config_weaponswitch",
-	"label_options_config_medkit",
-};
 
 // Constructor
 _Menu::_Menu() {
@@ -65,23 +54,28 @@ _Menu::_Menu() {
 
 // Initialize
 void _Menu::InitTitle() {
-	//Assets.Labels["label_game_version"]->Text = GAME_VERSION_STRING;
+	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
 
-	//Background = Assets.GetImage("menu_bg");
 	CurrentLayout = Assets.Elements["element_menu_title"];
+	Framework.StopLocalServer();
 
 	State = STATE_TITLE;
 }
 
-// Init tutorial
-void _Menu::InitTutorial() {
-	//Framework.ChangeState(&ClientState);
-	//State = STATE_NONE;
-}
-
 // Init single player
 void _Menu::InitSinglePlayer() {
-	//CurrentLayout = Assets.Elements["element_menu_singleplayer"];
+	CurrentLayout = Assets.Elements["element_menu_singleplayer"];
+	Framework.StartLocalServer();
+	ClientNetwork->Connect("");
+
+	// Send fake account information
+	_Buffer Packet;
+	Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
+	Packet.WriteBit(0);
+	Packet.WriteString("singleplayer");
+	Packet.WriteString("singleplayer");
+	ClientNetwork->SendPacketToHost(&Packet);
+	//Framework.ChangeState(&CharactersState);
 
 	SinglePlayerState = SINGLEPLAYER_NONE;
 	State = STATE_SINGLEPLAYER;
@@ -252,14 +246,12 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 		switch(State) {
 			case STATE_TITLE: {
-				if(Clicked->Identifier == "button_title_tutorial") {
-					InitTutorial();
-				}
-				else if(Clicked->Identifier == "button_title_single") {
+				if(Clicked->Identifier == "button_title_singleplayer") {
 					InitSinglePlayer();
 				}
-				else if(Clicked->Identifier == "button_title_options") {
-					InitOptions();
+				else if(Clicked->Identifier == "button_title_multiplayer") {
+				}
+				else if(Clicked->Identifier == "button_title_mapeditor") {
 				}
 				else if(Clicked->Identifier == "button_title_exit") {
 					Framework.SetDone(true);
@@ -376,7 +368,6 @@ void _Menu::Update(double FrameTime) {
 		case STATE_TITLE: {
 		} break;
 		case STATE_SINGLEPLAYER: {
-
 		} break;
 		case STATE_OPTIONS: {
 		} break;
@@ -396,7 +387,7 @@ void _Menu::Render() {
 		case STATE_TITLE: {
 			if(CurrentLayout)
 				CurrentLayout->Render();
-			//Assets.Labels["label_game_version"]->Render();
+			Assets.Labels["label_menu_title_version"]->Render();
 		} break;
 		case STATE_OPTIONS: {
 			if(CurrentLayout)

@@ -24,7 +24,7 @@
 #include <buffer.h>
 #include <states/playserver.h>
 #include <objects/player.h>
-#include <ITexture.h>
+#include <texture.h>
 #include <fstream>
 #include <limits>
 
@@ -76,7 +76,7 @@ _Map::~_Map() {
 void _Map::Init() {
 	ID = 0;
 	NoZoneTexture = nullptr;
-	DefaultNoZoneTexture = irrDriver->getTexture("textures/editor/nozone.png");
+	//DefaultNoZoneTexture = irrDriver->getTexture("textures/editor/nozone.png");
 	Tiles = nullptr;
 	ViewSize.Width = 25;
 	ViewSize.Height = 19;
@@ -108,8 +108,8 @@ void _Map::AllocateMap() {
 	}
 
 	// Delete textures
-	for(size_t i = 0; i < Textures.size(); i++)
-		irrDriver->removeTexture(Textures[i]);
+	//for(size_t i = 0; i < Textures.size(); i++)
+	//	irrDriver->removeTexture(Textures[i]);
 	Textures.clear();
 }
 
@@ -247,7 +247,7 @@ int _Map::SaveMap() {
 	}
 
 	// Generate a list of textures used by the map
-	std::vector<video::ITexture *> TextureList;
+	std::vector<_Texture *> TextureList;
 	GetTextureListFromMap(TextureList);
 
 	// Write header
@@ -266,12 +266,12 @@ int _Map::SaveMap() {
 		else {
 
 			// Strip path from texture name
-			core::stringc TexturePath = TextureList[i]->getName();
-			int SlashIndex = TexturePath.findLastChar("/\\", 2);
-			TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
+			//std::string TexturePath = TextureList[i]->Identifier;
+			//int SlashIndex = TexturePath.findLastChar("/\\", 2);
+			//TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
 
-			File.write(TexturePath.c_str(), TexturePath.size());
-			File.put(0);
+			//File.write(TexturePath.c_str(), TexturePath.size());
+			//File.put(0);
 		}
 	}
 
@@ -283,12 +283,12 @@ int _Map::SaveMap() {
 	else {
 
 		// Strip path from texture name
-		core::stringc TexturePath = NoZoneTexture->getName();
-		int SlashIndex = TexturePath.findLastChar("/\\", 2);
-		TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
+		//std::string TexturePath = NoZoneTexture->Identifier;
+		//int SlashIndex = TexturePath.findLastChar("/\\", 2);
+		//TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
 
-		File.write(TexturePath.c_str(), TexturePath.size());
-		File.put(0);
+		//File.write(TexturePath.c_str(), TexturePath.size());
+		//File.put(0);
 	}
 
 	// Write map data
@@ -351,20 +351,20 @@ int _Map::LoadMap() {
 		File.get();
 
 		TextureFile = String;
-		if(TextureFile == "none")
-			Textures.push_back(nullptr);
-		else
-			Textures.push_back(irrDriver->getTexture(core::stringc("textures/map/") + TextureFile));
+		//if(TextureFile == "none")
+		//	Textures.push_back(nullptr);
+		//else
+		//	Textures.push_back(irrDriver->getTexture(core::stringc("textures/map/") + TextureFile));
 	}
 
 	// Get no zone texture
 	File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
 	File.get();
 	TextureFile = String;
-	if(TextureFile == "none")
-		NoZoneTexture = nullptr;
-	else
-		NoZoneTexture = irrDriver->getTexture(core::stringc("textures/map/") + TextureFile);
+	//if(TextureFile == "none")
+	//	NoZoneTexture = nullptr;
+	//else
+	//	NoZoneTexture = irrDriver->getTexture(core::stringc("textures/map/") + TextureFile);
 
 	// Read map data
 	_Tile *Tile;
@@ -396,7 +396,7 @@ int _Map::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void _Map::GetTextureListFromMap(std::vector<video::ITexture *> &TTextures) {
+void _Map::GetTextureListFromMap(std::vector<_Texture *> &TTextures) {
 
 	TTextures.clear();
 
@@ -413,7 +413,7 @@ void _Map::GetTextureListFromMap(std::vector<video::ITexture *> &TTextures) {
 }
 
 // Returns the index of a texture in an array
-int _Map::GetTextureIndex(std::vector<video::ITexture *> &TTextures, video::ITexture *TTexture) {
+int _Map::GetTextureIndex(std::vector<_Texture *> &TTextures, _Texture *TTexture) {
 
 	for(size_t i = 0; i < TTextures.size(); i++) {
 		if(TTextures[i] == TTexture)
