@@ -30,6 +30,7 @@
 #include <glm/mat4x4.hpp>
 #include <SDL_video.h>
 #include <SDL_mouse.h>
+#include <string>
 
 // Forward Declarations
 class _Texture;
@@ -48,6 +49,7 @@ enum VertexBufferType {
 
 struct _WindowSettings {
 	_WindowSettings() : Size(0), Position(0), Fullscreen(false), Vsync(false) { }
+	std::string WindowTitle;
 	glm::ivec2 Size;
 	glm::ivec2 Position;
 	bool Fullscreen;

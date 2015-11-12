@@ -24,7 +24,9 @@
 #include <objectmanager.h>
 #include <config.h>
 #include <stats.h>
+#include <assets.h>
 #include <constants.h>
+#include <actions.h>
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
 #include <states/mainmenu.h>
@@ -79,9 +81,13 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 	// Initialize graphics system
 	_WindowSettings WindowSettings;
+	WindowSettings.WindowTitle = "choria";
 	WindowSettings.Size = glm::ivec2(800, 600);
 	WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	Graphics.Init(WindowSettings);
+
+	Assets.Init(false);
+	Graphics.SetStaticUniforms();
 
 	// Set up the stats system
 	//Stats.Init();
@@ -156,18 +162,6 @@ void _Framework::ChangeState(_State *TState) {
 // Updates the current state and manages the state stack
 void _Framework::Update() {
 /*
-	// Run irrlicht engine
-	if(!irrDevice->run())
-		Done = true;
-
-	// Check for window activity
-	PreviousWindowActive = WindowActive;
-	WindowActive = irrDevice->isWindowActive();
-
-	// Check for window focus/blur events
-	if(PreviousWindowActive != WindowActive) {
-		Input.ResetInputState();
-	}
 
 	// Update the current state
 	switch(FrameworkState) {
@@ -217,6 +211,7 @@ void _Framework::Update() {
 	Timer = SDL_GetPerformanceCounter();
 
 	SDL_PumpEvents();
+	Input.Update(FrameTime);
 
 	// Loop through events
 	SDL_Event Event;
@@ -228,7 +223,7 @@ void _Framework::Update() {
 					if(State && FrameworkState == UPDATE) {
 						_KeyEvent KeyEvent(Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
 						State->KeyEvent(KeyEvent);
-						//Actions.InputEvent(_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+						Actions.InputEvent(_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
 					}
 
 					// Toggle fullscreen
@@ -251,7 +246,7 @@ void _Framework::Update() {
 				if(State && FrameworkState == UPDATE) {
 					_MouseEvent MouseEvent(glm::ivec2(Event.motion.x, Event.motion.y), Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
 					State->MouseEvent(MouseEvent);
-					//Actions.InputEvent(_Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
+					Actions.InputEvent(_Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
 				}
 			break;
 			case SDL_MOUSEWHEEL:

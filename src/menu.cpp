@@ -18,14 +18,14 @@
 #include <menu.h>
 #include <constants.h>
 #include <input.h>
-//#include <actions.h>
+#include <actions.h>
 #include <graphics.h>
-//#include <assets.h>
-//#include <ui/element.h>
-//#include <ui/label.h>
-//#include <ui/button.h>
-//#include <ui/image.h>
-//#include <ui/textbox.h>
+#include <assets.h>
+#include <ui/element.h>
+#include <ui/label.h>
+#include <ui/button.h>
+#include <ui/image.h>
+#include <ui/textbox.h>
 #include <config.h>
 #include <framework.h>
 //#include <states/client.h>
@@ -53,13 +53,6 @@ const std::string KEYLABEL_IDENTIFIERS[] = {
 	"label_options_config_medkit",
 };
 
-const char *COLORS[] = {
-	"black",
-	"red",
-	"green",
-	"blue",
-};
-
 // Constructor
 _Menu::_Menu() {
 	State = STATE_NONE;
@@ -73,10 +66,9 @@ _Menu::_Menu() {
 // Initialize
 void _Menu::InitTitle() {
 	//Assets.Labels["label_game_version"]->Text = GAME_VERSION_STRING;
-	//Graphics.ShowCursor(CURSOR_MAIN);
 
 	//Background = Assets.GetImage("menu_bg");
-	//CurrentLayout = Assets.Elements["element_menu_title"];
+	CurrentLayout = Assets.Elements["element_menu_title"];
 
 	State = STATE_TITLE;
 }
@@ -170,8 +162,8 @@ void _Menu::Close() {
 
 // Handle key event
 void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
-	//if(CurrentLayout)
-	//	CurrentLayout->HandleKeyEvent(KeyEvent);
+	if(CurrentLayout)
+		CurrentLayout->HandleKeyEvent(KeyEvent);
 
 	switch(State) {
 		case STATE_TITLE: {
@@ -220,15 +212,15 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 
 // Handle text
 void _Menu::TextEvent(const char *Text) {
-	//if(CurrentLayout)
-	//	CurrentLayout->HandleTextEvent(Text);
+	if(CurrentLayout)
+		CurrentLayout->HandleTextEvent(Text);
 }
 
 // Handle mouse event
 void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 	if(!CurrentLayout)
 		return;
-/*
+
 	// Accepting new action input
 	switch(State) {
 		case STATE_OPTIONS: {
@@ -336,17 +328,17 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 					else if(Clicked->Identifier == "button_options_save") {
 						Config.Save();
-						if(Framework.GetState() == &ClientState)
-							InitInGame();
-						else
-							InitTitle();
+						//if(Framework.GetState() == &ClientState)
+						//	InitInGame();
+						//else
+						//	InitTitle();
 					}
 					else if(Clicked->Identifier == "button_options_cancel") {
 						Config.Load();
-						if(Framework.GetState() == &ClientState)
-							InitInGame();
-						else
-							InitTitle();
+						//if(Framework.GetState() == &ClientState)
+						//	InitInGame();
+						//else
+						//	InitTitle();
 					}
 					else if(Clicked->Identifier.substr(0, InputBoxPrefix.size()) == InputBoxPrefix) {
 						OptionsState = OPTION_ACCEPT_INPUT;
@@ -370,16 +362,15 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 			break;
 		}
 	}
-	*/
 }
 
 // Update phase
 void _Menu::Update(double FrameTime) {
 	PreviousClickTimer += FrameTime;
 
-	//if(CurrentLayout && OptionsState == OPTION_NONE) {
-	//	CurrentLayout->Update(FrameTime, Input.GetMouse());
-	//}
+	if(CurrentLayout && OptionsState == OPTION_NONE) {
+		CurrentLayout->Update(FrameTime, Input.GetMouse());
+	}
 
 	switch(State) {
 		case STATE_TITLE: {
@@ -397,7 +388,6 @@ void _Menu::Update(double FrameTime) {
 // Draw phase
 void _Menu::Render() {
 	Graphics.Setup2D();
-	/*
 
 	if(Background)
 		Background->Render();
@@ -406,14 +396,14 @@ void _Menu::Render() {
 		case STATE_TITLE: {
 			if(CurrentLayout)
 				CurrentLayout->Render();
-			Assets.Labels["label_game_version"]->Render();
+			//Assets.Labels["label_game_version"]->Render();
 		} break;
 		case STATE_OPTIONS: {
 			if(CurrentLayout)
 				CurrentLayout->Render();
 
 			if(OptionsState == OPTION_ACCEPT_INPUT) {
-				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				//Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
 				Assets.Elements["element_menu_popup"]->Render();
 			}
 		} break;
@@ -421,7 +411,7 @@ void _Menu::Render() {
 			Assets.Elements["element_menu_singleplayer"]->Render();
 
 			if(SinglePlayerState == SINGLEPLAYER_NEW_PLAYER) {
-				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				//Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
 				if(CurrentLayout)
 					CurrentLayout->Render();
 			}
@@ -434,7 +424,6 @@ void _Menu::Render() {
 		default:
 		break;
 	}
-*/
 }
 
 // Refreshes the save slots after player creation

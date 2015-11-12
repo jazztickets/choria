@@ -1,0 +1,5 @@
+identifier	parent	font	color	text	offset x	offset y	width	height	alignment x	alignment y
+label_menu_title_tutorial	button_title_tutorial	menu_buttons		Single Player	0	0	0	0	1	1
+label_menu_title_single	button_title_single	menu_buttons		Multiplayer	0	0	0	0	1	1
+label_menu_title_options	button_title_options	menu_buttons		Map Editor	0	0	0	0	1	1
+label_menu_title_exit	button_title_exit	menu_buttons		Exit	0	0	0	0	1	1

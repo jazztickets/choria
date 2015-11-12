@@ -2,6 +2,7 @@ bin
 build
 *.dll
 *.swp
+*.~lock*
 CMakeLists.txt.user
 deployment/*.exe
 deployment/*-src

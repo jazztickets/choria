@@ -68,14 +68,6 @@ class _Menu {
 			LABEL_COUNT
 		};
 
-		enum ColorType {
-			COLOR_BLACK,
-			COLOR_RED,
-			COLOR_GREEN,
-			COLOR_BLUE,
-			COLOR_COUNT,
-		};
-
 		enum SlotType {
 			SAVE_COUNT=10,
 		};

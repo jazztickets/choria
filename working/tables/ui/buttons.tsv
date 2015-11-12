@@ -1,0 +1,5 @@
+identifier	parent	style	hover style	offset x	offset y	width	height	alignment x	alignment y	userdata
+button_title_tutorial	element_menu_title	style_menu_button	style_menu_button_hover	0	200	200	48	1	0	0
+button_title_single	element_menu_title	style_menu_button	style_menu_button_hover	0	280	200	48	1	0	0
+button_title_options	element_menu_title	style_menu_button	style_menu_button_hover	0	360	200	48	1	0	0
+button_title_exit	element_menu_title	style_menu_button	style_menu_button_hover	0	440	200	48	1	0	0

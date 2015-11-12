@@ -38,7 +38,8 @@ _Assets Assets;
 
 // Initialize
 void _Assets::Init(bool IsServer) {
-	/*LoadStrings(ASSETS_STRINGS);
+	LoadTextureDirectory(TEXTURES_MENU, IsServer);
+	/*
 	LoadTextureDirectory(TEXTURES_HUD, IsServer);
 	LoadTextureDirectory(TEXTURES_HUD_REPEAT, IsServer, true);
 	LoadTextureDirectory(TEXTURES_EDITOR, IsServer);
@@ -46,12 +47,12 @@ void _Assets::Init(bool IsServer) {
 	LoadTextureDirectory(TEXTURES_TILES, IsServer);
 	LoadTextureDirectory(TEXTURES_BLOCKS, IsServer, true, true);
 	LoadTextureDirectory(TEXTURES_PROPS, IsServer, true, true);
+	*/
 	LoadLayers(ASSETS_LAYERS);
 
 	if(!IsServer) {
 		LoadPrograms(ASSETS_PROGRAMS);
 		LoadFonts(ASSETS_FONTS);
-		LoadMeshDirectory(MESHES_PATH);
 		LoadColors(ASSETS_COLORS);
 		LoadStyles(ASSETS_UI_STYLES);
 		LoadElements(ASSETS_UI_ELEMENTS);
@@ -62,8 +63,6 @@ void _Assets::Init(bool IsServer) {
 
 		ResolveElementParents();
 	}
-
-	LoadAnimations(ASSETS_ANIMATIONS, IsServer);*/
 }
 
 // Shutdown

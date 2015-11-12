@@ -51,7 +51,6 @@ void _NullState::MouseEvent(const _MouseEvent &MouseEvent) {
 
 // Update
 void _NullState::Update(double FrameTime) {
-
 	Menu.Update(FrameTime);
 }
 

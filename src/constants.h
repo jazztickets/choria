@@ -80,16 +80,27 @@ const  int          DEFAULT_ANISOTROPY             =  0;
 const  double       DEFAULT_MAXFPS                 =  120.0;
 const  double       DEFAULT_NETWORKRATE            =  1.0/20.0;
 const  uint16_t     DEFAULT_NETWORKPORT            =  31234;
-const  std::string  TEXTURES_PATH                  =  "textures/";
-
 //     Graphics
 const  int          GRAPHICS_CIRCLE_VERTICES       =  32;
 const  double       MATH_PI                        =  3.14159265358979323846;
+//     Menu
+const  float        MENU_ACCEPTINPUT_FADE          =  0.7f;
+const  double       MENU_DOUBLECLICK_TIME          =  0.250;
+const  double       MENU_CURSOR_PERIOD             =  0.5;
+//     Textures
+const  std::string  TEXTURES_PATH                  =  "textures/";
+const  std::string  TEXTURES_BLOCKS                =  "blocks/";
+const  std::string  TEXTURES_EDITOR                =  "editor/";
+const  std::string  TEXTURES_EDITOR_REPEAT         =  "editor_repeat/";
+const  std::string  TEXTURES_HUD                   =  "hud/";
+const  std::string  TEXTURES_HUD_REPEAT            =  "hud_repeat/";
+const  std::string  TEXTURES_MENU                  =  "menu/";
+const  std::string  TEXTURES_PROPS                 =  "props/";
+const  std::string  TEXTURES_TILES                 =  "tiles/";
 //     Assets
 const  std::string  ASSETS_FONTS_PATH              =  "fonts/";
 const  std::string  ASSETS_MAPS_PATH               =  "maps/";
 const  std::string  ASSETS_PROGRAMS                =  "tables/programs.tsv";
-const  std::string  ASSETS_ANIMATIONS              =  "tables/animations.tsv";
 const  std::string  ASSETS_COLORS                  =  "tables/colors.tsv";
 const  std::string  ASSETS_FONTS                   =  "tables/fonts.tsv";
 const  std::string  ASSETS_LAYERS                  =  "tables/layers.tsv";

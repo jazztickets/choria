@@ -1,0 +1,11 @@
+identifier	red	green	blue	alpha
+white	1	1	1	1
+black	0	0	0	1
+red	1	0	0	1
+green	0	1	0	1
+blue	0	0	1	1
+cyan	0	1	1	1
+purple	1	0	1	1
+menu_button	0.1	0.1	0.1	1
+menu_button_hover	0.2	0.2	0.2	1
+menu_button_border	0.5	0.5	0.5	1

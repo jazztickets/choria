@@ -45,6 +45,10 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	Enabled = true;
 	DirtyState();
 
+	// Set root element
+	Element = new _Element();
+	Element->Size = WindowSize;
+
 	// Set video flags
 	Uint32 VideoFlags = SDL_WINDOW_OPENGL;
 	if(WindowSettings.Fullscreen)
@@ -58,7 +62,7 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
 	// Set video mode
-	Window = SDL_CreateWindow("choria", WindowSettings.Position.x, WindowSettings.Position.y, WindowSettings.Size.x, WindowSettings.Size.y, VideoFlags);
+	Window = SDL_CreateWindow(WindowSettings.WindowTitle.c_str(), WindowSettings.Position.x, WindowSettings.Position.y, WindowSettings.Size.x, WindowSettings.Size.y, VideoFlags);
 	if(Window == nullptr)
 		throw std::runtime_error("SDL_CreateWindow failed");
 
