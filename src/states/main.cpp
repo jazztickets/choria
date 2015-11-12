@@ -16,14 +16,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <framework.h>
+#include <config.h>
 
 int main(int ArgumentCount, char **Arguments) {
+
+	// Init config system
+	Config.Init("settings.cfg");
 
 	// Initialize framework
 	Framework.Init(ArgumentCount, Arguments);
 
 	// Main game loop
-	while(!Framework.IsDone()) {
+	while(!Framework.GetDone()) {
 
 		Framework.Update();
 	}

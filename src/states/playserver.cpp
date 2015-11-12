@@ -59,7 +59,7 @@ void HandleCommands(void *Arguments) {
 }
 
 // Initializes the state
-int _PlayServerState::Init() {
+void _PlayServerState::Init() {
 	ServerTime = 0;
 	StopRequested = false;
 	CommandThread = nullptr;
@@ -67,13 +67,13 @@ int _PlayServerState::Init() {
 	// Load database that stores accounts and characters
 	Database = new _Database();
 
-	core::stringc DatabasePath = Config.SavePath + "server.s3db";
+	std::string DatabasePath = Config.ConfigPath + "server.s3db";
 	if(!Database->OpenDatabase(DatabasePath.c_str())) {
 
 		// Create a new database
 		printf("Creating new database...\n");
 		if(!Database->OpenDatabaseCreate(DatabasePath.c_str())) {
-			return 0;
+			throw std::runtime_error("OpenDatabaseCreate failed");
 		}
 
 		// Populate data
@@ -83,12 +83,10 @@ int _PlayServerState::Init() {
 	Instances = new _Instance();
 	ObjectManager = new _ObjectManager();
 	ObjectManager->SetObjectDeletedCallback(ObjectDeleted);
-
-	return 1;
 }
 
 // Shuts the state down
-int _PlayServerState::Close() {
+void _PlayServerState::Close() {
 	if(CommandThread) {
 		CommandThread->join();
 		delete CommandThread;
@@ -107,8 +105,6 @@ int _PlayServerState::Close() {
 	delete Database;
 	delete ObjectManager;
 	delete Instances;
-
-	return 1;
 }
 
 // Start run the command thread

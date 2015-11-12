@@ -21,17 +21,29 @@
 #include <IGUIElement.h>
 #include <enet/enet.h>
 #include <cstdint>
+#include <input.h>
 
 // Classes
 class _State {
 
 	public:
 
-		// Setup functions
-		virtual int Init() { return 1; }
-		virtual int Close() { return 1; }
-
+		// Setup
+		virtual void Init() { };
+		virtual void Close() { };
 		virtual ~_State() { }
+
+		// Input
+		virtual bool HandleAction(int InputType, int Action, int Value) { return false; }
+		virtual void KeyEvent(const _KeyEvent &KeyEvent) { };
+		virtual void TextEvent(const char *Text) { };
+		virtual void MouseEvent(const _MouseEvent &MouseEvent) { }
+		virtual void MouseWheelEvent(int Direction) { }
+		virtual void WindowEvent(uint8_t Event) { }
+
+		// Update
+		virtual void Update(double FrameTime) { };
+		virtual void Render(double BlendFactor) { };
 
 		// Events
 		virtual bool HandleKeyPress(irr::EKEY_CODE TKey) { return false; }
@@ -47,8 +59,8 @@ class _State {
 		virtual void HandlePacket(ENetEvent *TEvent) { }
 
 		// Update
-		virtual void Update(double FrameTime) { }
 		virtual void Draw() { };
+
 
 	private:
 

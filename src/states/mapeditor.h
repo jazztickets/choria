@@ -70,8 +70,8 @@ class _MapEditorState : public _State {
 			FILTER_COUNT
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		bool HandleKeyPress(irr::EKEY_CODE TKey);
 		bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }

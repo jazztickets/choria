@@ -24,8 +24,8 @@ class _SingleNetwork : public _Network {
 
 	public:
 
-		int Init(bool TServer);
-		int Close();
+		void Init(bool TServer);
+		void Close();
 
 		// Connections
 		int Connect(const char *TIPAddress);

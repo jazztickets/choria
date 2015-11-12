@@ -43,8 +43,8 @@ class _CreateCharacterState : public _State {
 			ELEMENT_PORTRAITS,
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);

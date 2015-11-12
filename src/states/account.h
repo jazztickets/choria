@@ -42,8 +42,8 @@ class _AccountState : public _State {
 			ELEMENT_CREATEACCOUNT,
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);

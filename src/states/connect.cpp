@@ -33,11 +33,11 @@ _ConnectState ConnectState;
 using namespace irr;
 
 // Initializes the state
-int _ConnectState::Init() {
+void _ConnectState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
 	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
-	IPAddress = Config.LastIPAddress;
+//	IPAddress = Config.LastIPAddress;
 
 	// Text
 	Graphics.SetFont(_Graphics::FONT_10);
@@ -55,21 +55,17 @@ int _ConnectState::Init() {
 
 	Message = "";
 	ChangeState(STATE_MAIN);
-
-	return 1;
 }
 
 // Shuts the state down
-int _ConnectState::Close() {
-
-	return 1;
+void _ConnectState::Close() {
 }
 
 // Handles a connection to the server
 void _ConnectState::HandleConnect(ENetEvent *TEvent) {
 
-	Config.LastIPAddress = IPAddress;
-	Config.SaveSettings();
+	//Config.LastIPAddress = IPAddress;
+	//Config.SaveSettings();
 }
 
 // Handles a disconnection from the server

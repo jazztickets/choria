@@ -54,8 +54,8 @@ class _CharactersState : public _State {
 			ELEMENT_SLOT5,
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);

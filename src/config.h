@@ -18,25 +18,61 @@
 #pragma once
 
 // Libraries
-#include <irrString.h>
+#include <glm/vec2.hpp>
+#include <string>
+#include <sstream>
+#include <unordered_map>
 
-// Classes
+// Load/save config file
 class _Config {
 
 	public:
 
-		void Init();
+		void Init(const std::string &ConfigFile);
 		void Close();
 
-		bool LoadSettings();
-		bool SaveSettings();
+		void Load();
+		void Save();
+		void SetDefaults();
+		void LoadDefaultInputBindings();
+		void SetDefaultFullscreenSize();
 
-		// Paths
-		irr::core::stringc SavePath, SaveMapPath;
+		// State
+		std::string ConfigPath;
 
-		// Config
-		irr::core::stringc LastIPAddress, LastAccountName;
+		// Graphics
+		glm::ivec2 WindowSize;
+		glm::ivec2 FullscreenSize;
+		int MaxFPS;
+		int Vsync;
+		int MSAA;
+		int Anisotropy;
+		int Fullscreen;
 
+		// Audio
+		int AudioEnabled;
+		float SoundVolume;
+		float MusicVolume;
+
+		// Networking
+		double FakeLag;
+		double NetworkRate;
+		uint16_t NetworkPort;
+
+	private:
+
+		template <typename Type>
+		void GetValue(const std::string &Field, Type &Value) {
+			auto MapIterator = Map.find(Field);
+			if(MapIterator != Map.end()) {
+				std::stringstream Stream(MapIterator->second);
+				Stream >> Value;
+			}
+		}
+
+		// State
+		std::string ConfigFile;
+		std::unordered_map<std::string, std::string> Map;
 };
 
 extern _Config Config;

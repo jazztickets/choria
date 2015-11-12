@@ -21,22 +21,80 @@
 
 _Input Input;
 
+const std::string MouseButtonNames[] = {
+	"",
+	"LMB",
+	"MMB",
+	"RMB",
+	"Mouse 4",
+	"Mouse 5",
+	"Mouse 6",
+	"Mouse 7",
+	"Mouse 8",
+	"Mouse 9",
+	"Mouse 10",
+	"Mouse 11",
+	"Mouse 12",
+	"Mouse 13",
+	"Mouse 14",
+	"Mouse 15",
+	"Mouse 16",
+	"Mouse 17",
+	"Mouse 18",
+	"Mouse 19",
+	"Mouse 20",
+};
+
+// Initialize
+_Input::_Input() {
+}
+
+// Update input state
+void _Input::Update(double FrameTime) {
+
+	// Update state
+	KeyState = SDL_GetKeyboardState(nullptr);
+	MouseState = SDL_GetMouseState(&Mouse.x, &Mouse.y);
+}
+
+// Returns the name of a key
+const char *_Input::GetKeyName(int Key) {
+	return SDL_GetScancodeName((SDL_Scancode)Key);
+}
+
+// Returns the name of a mouse button
+const std::string &_Input::GetMouseButtonName(Uint32 Button) {
+	if(Button >= sizeof(MouseButtonNames))
+		return MouseButtonNames[0];
+
+	return MouseButtonNames[Button];
+}
+
+// Returns true if a mod key is down
+bool _Input::ModKeyDown(int Key) {
+	return SDL_GetModState() & Key;
+}
+
+// Returns true if a mouse button is down
+bool _Input::MouseDown(Uint32 Button) {
+	return MouseState & SDL_BUTTON(Button);
+}
+
+_OldInput OldInput;
+
 // Initializes the system
-int _Input::Init()  {
+void _OldInput::Init()  {
 
 	MousePosition.X = MousePosition.Y = 0;
-
-	return 1;
 }
 
 // Shuts down the system
-int _Input::Close() {
-
-	return 1;
+void _OldInput::Close() {
 }
 
 // Handle events
-bool _Input::OnEvent(const irr::SEvent &TEvent) {
+bool _OldInput::OnEvent(const irr::SEvent &TEvent) {
+	/*
 	if(Framework.GetManagerState() != _Framework::UPDATE)
 		return false;
 
@@ -90,20 +148,20 @@ bool _Input::OnEvent(const irr::SEvent &TEvent) {
 		break;
 		default:
 		break;
-	}
+	}*/
 
 	return false;
 }
 
 // Resets the keyboard state
-void _Input::ResetInputState() {
+void _OldInput::ResetInputState() {
 
 	for(int i = 0; i < irr::KEY_KEY_CODES_COUNT; i++)
 		Keys[i] = 0;
 }
 
 // Converts an irrlicht key code into a string
-const char *_Input::GetKeyName(irr::EKEY_CODE TKey) {
+const char *_OldInput::GetKeyName(irr::EKEY_CODE TKey) {
 
 	switch(TKey) {
 		case irr::KEY_KEY_0:

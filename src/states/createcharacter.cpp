@@ -32,7 +32,7 @@ _CreateCharacterState CreateCharacterState;
 using namespace irr;
 
 // Initializes the state
-int _CreateCharacterState::Init() {
+void _CreateCharacterState::Init() {
 
 	// Get portrait list
 	std::list<_Portrait> PortraitList;
@@ -70,16 +70,12 @@ int _CreateCharacterState::Init() {
 	State = STATE_MAIN;
 	SelectedIndex = -1;
 	SelectedButton = nullptr;
-
-	return 1;
 }
 
 // Shuts the state down
-int _CreateCharacterState::Close() {
+void _CreateCharacterState::Close() {
 
 	Portraits.clear();
-
-	return 1;
 }
 
 // Handles a disconnection from the server

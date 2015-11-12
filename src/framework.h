@@ -38,18 +38,19 @@ class _Framework {
 			CLOSE
 		};
 
+		// Setup
 		void Init(int ArgumentCount, char **Arguments);
-		void Update();
 		void Close();
 
-		// States
-		void ChangeState(_State *TState);
+		// Update functions
+		void Update();
+		void Render();
+
+		bool GetDone() { return Done; }
+		void SetDone(bool Done) { this->Done = Done; }
+
 		_State *GetState() { return State; }
-
-		bool IsDone() { return Done; }
-		void SetDone(bool TValue) { Done = TValue; }
-
-		int GetManagerState() const { return FrameworkState; }
+		void ChangeState(_State *RequestedState);
 
 		// Networking
 		bool IsLocalServerRunning() const { return LocalServerRunning; }
@@ -65,8 +66,6 @@ class _Framework {
 		_State *State;
 		_State *RequestedState;
 		bool Done;
-		bool PreviousWindowActive;
-		bool WindowActive;
 
 		// Flags
 		bool MouseWasLocked, MouseWasShown;

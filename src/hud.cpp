@@ -47,7 +47,7 @@ static core::position2di EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
 };
 
 // Initialize
-int _HUD::Init() {
+void _HUD::Init() {
 
 	State = PlayClientState.GetState();
 	Vendor = nullptr;
@@ -65,14 +65,10 @@ int _HUD::Init() {
 	ChatHistory.clear();
 
 	InitButtonBar();
-
-	return 1;
 }
 
 // Shutdown
-int _HUD::Close() {
-
-	return 1;
+void _HUD::Close() {
 }
 
 // Handles key presses
@@ -113,16 +109,16 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 	switch(*State) {
 		case _PlayClientState::STATE_VENDOR:
 			switch(TButton) {
-				case _Input::MOUSE_LEFT:
+				case _OldInput::MOUSE_LEFT:
 					if(TooltipItem.Item) {
 						CursorItem = TooltipItem;
 					}
 				break;
-				case _Input::MOUSE_RIGHT:
+				case _OldInput::MOUSE_RIGHT:
 					if(TooltipItem.Item) {
 						if(TooltipItem.Window == WINDOW_VENDOR)
 							BuyItem(&TooltipItem, -1);
-						else if(TooltipItem.Window == WINDOW_INVENTORY && Input.IsShiftDown())
+						else if(TooltipItem.Window == WINDOW_INVENTORY && OldInput.IsShiftDown())
 							SellItem(&TooltipItem, 1);
 					}
 				break;
@@ -130,15 +126,15 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_INVENTORY:
 			switch(TButton) {
-				case _Input::MOUSE_LEFT:
+				case _OldInput::MOUSE_LEFT:
 					if(TooltipItem.Item) {
-						if(Input.IsControlDown())
+						if(OldInput.IsControlDown())
 							SplitStack(TooltipItem.Slot, 1);
 						else
 							CursorItem = TooltipItem;
 					}
 				break;
-				case _Input::MOUSE_RIGHT:
+				case _OldInput::MOUSE_RIGHT:
 					if(Player->UseInventory(TooltipItem.Slot)) {
 						_Buffer Packet;
 						Packet.Write<char>(_Network::INVENTORY_USE);
@@ -150,9 +146,9 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_TRADE:
 			switch(TButton) {
-				case _Input::MOUSE_LEFT:
+				case _OldInput::MOUSE_LEFT:
 					if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
-						if(TooltipItem.Window == WINDOW_INVENTORY && Input.IsControlDown())
+						if(TooltipItem.Window == WINDOW_INVENTORY && OldInput.IsControlDown())
 							SplitStack(TooltipItem.Slot, 1);
 						else
 							CursorItem = TooltipItem;
@@ -162,7 +158,7 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_SKILLS:
 			switch(TButton) {
-				case _Input::MOUSE_LEFT:
+				case _OldInput::MOUSE_LEFT:
 					if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
 						CursorSkill = TooltipSkill;
 				break;
@@ -180,7 +176,7 @@ void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 		case _PlayClientState::STATE_INVENTORY:
 		case _PlayClientState::STATE_VENDOR:
 		case _PlayClientState::STATE_TRADE:
-			if(TButton == _Input::MOUSE_LEFT) {
+			if(TButton == _OldInput::MOUSE_LEFT) {
 
 				// Check for valid slots
 				if(CursorItem.Item) {
@@ -226,7 +222,7 @@ void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 			}
 		break;
 		case _PlayClientState::STATE_SKILLS:
-			if(TButton == _Input::MOUSE_LEFT) {
+			if(TButton == _OldInput::MOUSE_LEFT) {
 
 				// Check for valid slots
 				if(CursorSkill.Skill) {
@@ -1319,8 +1315,8 @@ void _HUD::DrawSkills() {
 // Draws the item under the cursor
 void _HUD::DrawCursorItem() {
 	if(CursorItem.Item) {
-		int DrawX = Input.GetMousePosition().X - 16;
-		int DrawY = Input.GetMousePosition().Y - 16;
+		int DrawX = OldInput.GetMousePosition().X - 16;
+		int DrawY = OldInput.GetMousePosition().Y - 16;
 		Graphics.SetFont(_Graphics::FONT_7);
 		Graphics.DrawCenteredImage(CursorItem.Item->GetImage(), DrawX + 16, DrawY + 16);
 		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawX, DrawY, CursorItem.Window == WINDOW_VENDOR);
@@ -1334,8 +1330,8 @@ void _HUD::DrawCursorItem() {
 void _HUD::DrawItemTooltip() {
 	const _Item *Item = TooltipItem.Item;
 	if(Item) {
-		int DrawX = Input.GetMousePosition().X + 16;
-		int DrawY = Input.GetMousePosition().Y - 200;
+		int DrawX = OldInput.GetMousePosition().X + 16;
+		int DrawY = OldInput.GetMousePosition().Y - 200;
 		int Width = 175;
 		int Height = 200;
 		if(DrawY < 20)
@@ -1475,8 +1471,8 @@ void _HUD::DrawItemTooltip() {
 // Draws the skill under the cursor
 void _HUD::DrawCursorSkill() {
 	if(CursorSkill.Skill) {
-		int DrawX = Input.GetMousePosition().X - 16;
-		int DrawY = Input.GetMousePosition().Y - 16;
+		int DrawX = OldInput.GetMousePosition().X - 16;
+		int DrawY = OldInput.GetMousePosition().Y - 16;
 		Graphics.DrawCenteredImage(CursorSkill.Skill->GetImage(), DrawX + 16, DrawY + 16);
 	}
 }
@@ -1486,8 +1482,8 @@ void _HUD::DrawSkillTooltip() {
 	const _Skill *Skill = TooltipSkill.Skill;
 	if(Skill) {
 		int SkillLevel = Player->GetSkillLevel(Skill->GetID());
-		int DrawX = Input.GetMousePosition().X + 16;
-		int DrawY = Input.GetMousePosition().Y - 100;
+		int DrawX = OldInput.GetMousePosition().X + 16;
+		int DrawY = OldInput.GetMousePosition().Y - 100;
 		int Width = 300;
 		int Height;
 		if(SkillLevel > 0)

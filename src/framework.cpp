@@ -32,23 +32,20 @@
 #include <states/playserver.h>
 #include <states/connect.h>
 #include <states/account.h>
+#include <states/null.h>
 #include <framelimit.h>
 #include <SDL.h>
 #include <string>
 
 _Framework Framework;
 
-using namespace irr;
-
 // Processes parameters and initializes the game
 void _Framework::Init(int ArgumentCount, char **Arguments) {
 	FrameLimit = nullptr;
-	WindowActive = true;
 	LocalServerRunning = false;
-	State = &MainMenuState;
+	State = &NullState;
 
 	bool IsServer = false;
-	video::E_DRIVER_TYPE DriverType = video::EDT_OPENGL;
 
 	// Process arguments
 	std::string Token;
@@ -60,7 +57,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			State = &PlayServerState;
 			PlayServerState.StartCommandThread();
 			IsServer = true;
-			DriverType = video::EDT_NULL;
 		}
 		else if(Token == "-mapeditor") {
 			State = &MapEditorState;
@@ -74,22 +70,21 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 	}
 
-	// Initialize config system
-	Config.Init();
-	Config.LoadSettings();
+	// Get fullscreen size
+	Config.SetDefaultFullscreenSize();
 
 	// Initialize SDL
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 		throw std::runtime_error("Failed to initialize SDL");
 
 	// Initialize graphics system
-	Graphics.Init(800, 600, false, DriverType, &Input);
-
-	// Initialize input system
-	Input.Init();
+	_WindowSettings WindowSettings;
+	WindowSettings.Size = glm::ivec2(800, 600);
+	WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+	Graphics.Init(WindowSettings);
 
 	// Set up the stats system
-	Stats.Init();
+	//Stats.Init();
 
 	// Set random seed
 	RandomGenerator.seed(SDL_GetPerformanceCounter());
@@ -126,19 +121,23 @@ void _Framework::Close() {
 	if(LocalServerRunning)
 		PlayServerState.Close();
 
-	MultiNetwork->WaitForDisconnect();
-	Config.SaveSettings();
+	if(MultiNetwork)
+		MultiNetwork->WaitForDisconnect();
+	//Config.SaveSettings();
 
 	// Shut down the system
 	_Network::CloseSystem();
-	MultiNetwork->Close();
-	ClientSingleNetwork->Close();
-	ServerSingleNetwork->Close();
+	if(MultiNetwork)
+		MultiNetwork->Close();
+	if(ClientSingleNetwork)
+		ClientSingleNetwork->Close();
+	if(ServerSingleNetwork)
+		ServerSingleNetwork->Close();
 	delete MultiNetwork;
 	delete ClientSingleNetwork;
 	delete ServerSingleNetwork;
 	Stats.Close();
-	Input.Close();
+	OldInput.Close();
 	Graphics.Close();
 	Config.Close();
 
@@ -156,15 +155,10 @@ void _Framework::ChangeState(_State *TState) {
 
 // Updates the current state and manages the state stack
 void _Framework::Update() {
-
+/*
 	// Run irrlicht engine
 	if(!irrDevice->run())
 		Done = true;
-
-	double FrameTime = (SDL_GetPerformanceCounter() - Timer) / (double)SDL_GetPerformanceFrequency();
-	Timer = SDL_GetPerformanceCounter();
-
-	SDL_PumpEvents();
 
 	// Check for window activity
 	PreviousWindowActive = WindowActive;
@@ -217,6 +211,88 @@ void _Framework::Update() {
 			FrameworkState = INIT;
 		break;
 	}
+*/
+
+	double FrameTime = (SDL_GetPerformanceCounter() - Timer) / (double)SDL_GetPerformanceFrequency();
+	Timer = SDL_GetPerformanceCounter();
+
+	SDL_PumpEvents();
+
+	// Loop through events
+	SDL_Event Event;
+	while(SDL_PollEvent(&Event)) {
+		switch(Event.type){
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+				if(!Event.key.repeat) {
+					if(State && FrameworkState == UPDATE) {
+						_KeyEvent KeyEvent(Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+						State->KeyEvent(KeyEvent);
+						//Actions.InputEvent(_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+					}
+
+					// Toggle fullscreen
+					//if(Event.type == SDL_KEYDOWN && (Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN)
+					//	Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
+				}
+				else {
+					if(State && FrameworkState == UPDATE && Event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
+						_KeyEvent KeyEvent(Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+						State->KeyEvent(KeyEvent);
+					}
+				}
+			break;
+			case SDL_TEXTINPUT:
+				if(State)
+					State->TextEvent(Event.text.text);
+			break;
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				if(State && FrameworkState == UPDATE) {
+					_MouseEvent MouseEvent(glm::ivec2(Event.motion.x, Event.motion.y), Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
+					State->MouseEvent(MouseEvent);
+					//Actions.InputEvent(_Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
+				}
+			break;
+			case SDL_MOUSEWHEEL:
+				if(State)
+					State->MouseWheelEvent(Event.wheel.y);
+			break;
+			case SDL_WINDOWEVENT:
+				if(Event.window.event)
+					State->WindowEvent(Event.window.event);
+			break;
+			case SDL_QUIT:
+				Done = true;
+			break;
+		}
+	}
+
+	switch(FrameworkState) {
+		case INIT: {
+			if(State) {
+				State->Init();
+				FrameworkState = UPDATE;
+			}
+			else
+				Done = true;
+		} break;
+		case UPDATE: {
+			State->Update(FrameTime);
+			State->Render(0.0);
+		} break;
+		case CLOSE: {
+			if(State)
+				State->Close();
+
+			State = RequestedState;
+			FrameworkState = INIT;
+		} break;
+		default:
+		break;
+	}
+
+	Graphics.Flip(FrameTime);
 
 	if(FrameLimit)
 		FrameLimit->Update();

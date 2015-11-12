@@ -20,9 +20,10 @@
 #include <framework.h>
 #include <state.h>
 #include <constants.h>
+#include <stdexcept>
 
 // Initializes the network system
-int _MultiNetwork::Init(bool TServer) {
+void _MultiNetwork::Init(bool TServer) {
 	Peer = nullptr;
 	Connection = nullptr;
 	Active = false;
@@ -37,7 +38,7 @@ int _MultiNetwork::Init(bool TServer) {
 		// Create listener connection
 		Connection = enet_host_create(&Address, 250, 0, 0, 0);
 		if(Connection == nullptr) {
-			return 0;
+			throw std::runtime_error("enet_host_create failed");
 		}
 
 		Active = true;
@@ -47,20 +48,16 @@ int _MultiNetwork::Init(bool TServer) {
 		// Create connection
 		Connection = enet_host_create(nullptr, 1, 0, 0, 0);
 		if(Connection == nullptr) {
-			return 0;
+			throw std::runtime_error("enet_host_create failed");
 		}
 	}
-
-	return 1;
 }
 
 // Closes the network system
-int _MultiNetwork::Close() {
+void _MultiNetwork::Close() {
 
 	if(Connection)
 		enet_host_destroy(Connection);
-
-	return 1;
 }
 
 // Connect to a host

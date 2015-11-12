@@ -24,8 +24,8 @@ class _MultiNetwork : public _Network {
 
 	public:
 
-		int Init(bool TServer);
-		int Close();
+		void Init(bool TServer);
+		void Close();
 
 		// Updates
 		void Update();

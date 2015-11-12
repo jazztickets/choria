@@ -40,8 +40,8 @@ class _ConnectState : public _State {
 			ELEMENT_CANCEL,
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		void HandleConnect(ENetEvent *TEvent);
 		void HandleDisconnect(ENetEvent *TEvent);

@@ -16,101 +16,206 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <config.h>
+#include <files.h>
+#include <constants.h>
+#include <actions.h>
+#include <input.h>
+#include <sstream>
 #include <fstream>
+#include <SDL_filesystem.h>
 
+// Globals
 _Config Config;
 
-#ifdef _WIN32
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
-#else
-	#include <sys/stat.h>
-#endif
+// Initializes the config system
+void _Config::Init(const std::string &ConfigFile) {
 
-using namespace irr;
-
-// Constructor
-void _Config::Init() {
-
-	#ifdef _WIN32
-		SavePath = core::stringc(getenv("APPDATA")) + core::stringc("/choria/");
-		SaveMapPath = core::stringc(getenv("APPDATA")) + core::stringc("/choria/maps/");
-		CreateDirectory(SavePath.c_str(), nullptr);
-		CreateDirectory(SaveMapPath.c_str(), nullptr);
-	#else
-		SavePath = core::stringc(getenv("HOME")) + core::stringc("/.local/");
-		mkdir(SavePath.c_str(), 0755);
-		SavePath += "share/";
-		mkdir(SavePath.c_str(), 0755);
-		SavePath += "choria/";
-		mkdir(SavePath.c_str(), 0755);
-
-		SaveMapPath = SavePath + core::stringc("maps/");
-		mkdir(SavePath.c_str(), 0755);
-	#endif
-
-	LastIPAddress = "127.0.0.1";
-	LastAccountName = "";
-}
-
-// Destructor
-void _Config::Close() {
-
-}
-
-// Loads settings
-bool _Config::LoadSettings() {
-
-	// Get filename
-	core::stringc SaveFile = SavePath + "settings.cfg";
-
-	// Open file
-	std::ifstream File;
-	File.open(SaveFile.c_str(), std::ios::in);
-	if(!File)
-		return SaveSettings();
-
-	File.width(32);
-
-	// Get IP address
-	char IPAddress[32];
-	File.getline(IPAddress, 31);
-	LastIPAddress = IPAddress;
-
-	// Get account name
-	char AccountName[32];
-	if(!File.eof()) {
-		File.getline(AccountName, 31);
-		LastAccountName = AccountName;
+	// Create config path
+	char *PrefPath = SDL_GetPrefPath("", "choria");
+	if(PrefPath) {
+		ConfigPath = PrefPath;
+		SDL_free(PrefPath);
+	}
+	else {
+		throw std::runtime_error("Cannot create config path!");
 	}
 
-	// Close
-	File.close();
+	this->ConfigFile = ConfigPath + ConfigFile;
 
-	return true;
+	// Load defaults
+	SetDefaults();
+
+	// Load config
+	Load();
 }
 
-// Saves settings
-bool _Config::SaveSettings() {
+// Closes the config system
+void _Config::Close() {
+	Save();
+}
 
-	// Get filename
-	core::stringc SaveFile = SavePath + "settings.cfg";
+// Set defaults
+void _Config::SetDefaults() {
+
+	// Gets set after SDL
+	FullscreenSize = glm::ivec2(0, 0);
+
+	// Set defaults
+	WindowSize = DEFAULT_WINDOW_SIZE;
+	MSAA = 0;
+	Anisotropy = DEFAULT_ANISOTROPY;
+	Fullscreen = DEFAULT_FULLSCREEN;
+	Vsync = DEFAULT_VSYNC;
+	MaxFPS = DEFAULT_MAXFPS;
+	AudioEnabled = DEFAULT_AUDIOENABLED;
+
+	SoundVolume = 1.0f;
+	MusicVolume = 1.0f;
+
+	FakeLag = 0.0f;
+	NetworkRate = DEFAULT_NETWORKRATE;
+	NetworkPort = DEFAULT_NETWORKPORT;
+
+	LoadDefaultInputBindings();
+}
+
+// Load default key bindings
+void _Config::LoadDefaultInputBindings() {
+
+	// Clear mappings
+	for(int i = 0; i < _Input::INPUT_COUNT; i++)
+		Actions.ClearMappings(i);
+
+/*	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYUP, _Actions::UP);
+	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYDOWN, _Actions::DOWN);
+	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYLEFT, _Actions::LEFT);
+	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYRIGHT, _Actions::RIGHT);
+	*/
+}
+
+// Use SDL to determine desktop size
+void _Config::SetDefaultFullscreenSize() {
+	if(Config.FullscreenSize != glm::ivec2(0))
+		return;
+
+	SDL_DisplayMode DisplayMode;
+	if(SDL_GetDesktopDisplayMode(0, &DisplayMode) != 0)
+		Config.FullscreenSize = DEFAULT_WINDOW_SIZE;
+	else
+		Config.FullscreenSize = glm::ivec2(DisplayMode.w, DisplayMode.h);
+}
+
+// Load the config file
+void _Config::Load() {
 
 	// Open file
-	std::ofstream File;
-	File.open(SaveFile.c_str(), std::ios::out);
-	if(!File)
-		return false;
+	std::ifstream File(ConfigFile.c_str());
+	if(!File) {
+		Save();
+		return;
+	}
 
-	// Save settings
-	File << LastIPAddress.c_str() << std::endl;
-	if(LastAccountName == "")
-		File << std::endl;
-	else
-		File << LastAccountName.c_str() << std::endl;
+	// Read data into map
+	Map.clear();
+	char Buffer[256];
+	while(File) {
 
-	// Close
+		File.getline(Buffer, 256);
+		if(File.good()) {
+			std::string Line(Buffer);
+			std::size_t Pos = Line.find_first_of('=');
+			if(Pos != std::string::npos) {
+				std::string Field = Line.substr(0, Pos);
+				std::string Value = Line.substr(Pos+1, Line.size());
+
+				Map[Field] = Value;
+			}
+		}
+	}
 	File.close();
 
-	return true;
+	// Read config
+	GetValue("window_width", WindowSize.x);
+	GetValue("window_height", WindowSize.y);
+	GetValue("fullscreen_width", FullscreenSize.x);
+	GetValue("fullscreen_height", FullscreenSize.y);
+	GetValue("fullscreen", Fullscreen);
+	GetValue("vsync", Vsync);
+	GetValue("max_fps", MaxFPS);
+	GetValue("anisotropy", Anisotropy);
+	GetValue("msaa", MSAA);
+	GetValue("audio_enabled", AudioEnabled);
+	GetValue("sound_volume", SoundVolume);
+	GetValue("music_volume", MusicVolume);
+	GetValue("fake_lag", FakeLag);
+	GetValue("network_rate", NetworkRate);
+	GetValue("network_port", NetworkPort);
+
+	if(NetworkRate < 0.01)
+		NetworkRate = 0.01;
+
+	// Load bindings
+	for(int i = 0; i < _Actions::COUNT; i++) {
+		std::ostringstream Buffer;
+		Buffer << "action_" << i;
+
+		// Get input key/button
+		std::string InputString;
+		GetValue(Buffer.str(), InputString);
+
+		// Clear out current map
+		Actions.ClearAllMappingsForAction(i);
+
+		// Skip empty
+		if(!InputString.size())
+			continue;
+
+		// Parse input bind
+		int InputType, Input;
+		char Dummy;
+		std::stringstream Stream(InputString);
+		Stream >> InputType >> Dummy >> Input;
+		Actions.AddInputMap(InputType, Input, i);
+	}
+}
+
+// Save variables to the config file
+void _Config::Save() {
+
+	std::ofstream File(ConfigFile.c_str());
+	if(!File.is_open()) {
+		return;
+	}
+
+	// Write variables
+	File << "window_width=" << WindowSize.x << std::endl;
+	File << "window_height=" << WindowSize.y << std::endl;
+	File << "fullscreen_width=" << FullscreenSize.x << std::endl;
+	File << "fullscreen_height=" << FullscreenSize.y << std::endl;
+	File << "fullscreen=" << Fullscreen << std::endl;
+	File << "vsync=" << Vsync << std::endl;
+	File << "max_fps=" << MaxFPS << std::endl;
+	File << "msaa=" << MSAA << std::endl;
+	File << "anisotropy=" << Anisotropy << std::endl;
+	File << "audio_enabled=" << AudioEnabled << std::endl;
+	File << "sound_volume=" << SoundVolume << std::endl;
+	File << "music_volume=" << MusicVolume << std::endl;
+	File << "fake_lag=" << FakeLag << std::endl;
+	File << "network_rate=" << NetworkRate << std::endl;
+	File << "network_port=" << NetworkPort << std::endl;
+
+	// Write out input map
+	for(int i = 0; i < _Actions::COUNT; i++) {
+		File << "action_" << i << "=";
+		for(int j = 0; j < _Input::INPUT_COUNT; j++) {
+			int Input = Actions.GetInputForAction(j, i);
+			if(Input != -1) {
+				File << j << "_" << Input;
+				break;
+			}
+		}
+		File << std::endl;
+	}
+
+	File.close();
 }

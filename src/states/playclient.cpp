@@ -44,7 +44,7 @@ _PlayClientState::_PlayClientState()
 }
 
 // Initializes the state
-int _PlayClientState::Init() {
+void _PlayClientState::Init() {
 
 	ClientTime = 0;
 	SentClientTime = 0;
@@ -57,27 +57,22 @@ int _PlayClientState::Init() {
 	ObjectManager = new _ObjectManager();
 
 	// Set up the HUD system
-	if(!HUD.Init())
-		return 0;
+	HUD.Init();
 
 	// Send character slot to play
 	_Buffer Packet;
 	Packet.Write<char>(_Network::CHARACTERS_PLAY);
 	Packet.Write<char>(CharacterSlot);
 	ClientNetwork->SendPacketToHost(&Packet);
-
-	return 1;
 }
 
 // Shuts the state down
-int _PlayClientState::Close() {
+void _PlayClientState::Close() {
 
 	ClientNetwork->Disconnect();
 	HUD.Close();
 	delete ObjectManager;
 	delete Instances;
-
-	return 1;
 }
 
 // Handles a connection to the server
@@ -173,9 +168,9 @@ void _PlayClientState::Update(double FrameTime) {
 
 			// Send move input
 			if(!HUD.IsChatting()) {
-				if(Input.GetMouseState(_Input::MOUSE_LEFT) && !(Input.GetMousePosition().X >= 656 && Input.GetMousePosition().Y >= 575)) {
+				if(OldInput.GetMouseState(_OldInput::MOUSE_LEFT) && !(OldInput.GetMousePosition().X >= 656 && OldInput.GetMousePosition().Y >= 575)) {
 					core::position2di MoveTarget;
-					Map->ScreenToGrid(Input.GetMousePosition(), MoveTarget);
+					Map->ScreenToGrid(OldInput.GetMousePosition(), MoveTarget);
 					core::position2di Delta = MoveTarget - Player->GetPosition();
 
 					if(abs(Delta.X) > abs(Delta.Y)) {
@@ -192,13 +187,13 @@ void _PlayClientState::Update(double FrameTime) {
 					}
 				}
 
-				if(Input.GetKeyState(KEY_LEFT))
+				if(OldInput.GetKeyState(KEY_LEFT))
 					SendMoveCommand(_Player::MOVE_LEFT);
-				else if(Input.GetKeyState(KEY_UP))
+				else if(OldInput.GetKeyState(KEY_UP))
 					SendMoveCommand(_Player::MOVE_UP);
-				else if(Input.GetKeyState(KEY_RIGHT))
+				else if(OldInput.GetKeyState(KEY_RIGHT))
 					SendMoveCommand(_Player::MOVE_RIGHT);
-				else if(Input.GetKeyState(KEY_DOWN))
+				else if(OldInput.GetKeyState(KEY_DOWN))
 					SendMoveCommand(_Player::MOVE_DOWN);
 			}
 		break;
@@ -208,7 +203,7 @@ void _PlayClientState::Update(double FrameTime) {
 			if(!HUD.IsChatting()) {
 				for(int i = 0; i < 8; i++) {
 					EKEY_CODE Key = (EKEY_CODE)(KEY_KEY_1 + i);
-					if(Input.GetKeyState(Key)) {
+					if(OldInput.GetKeyState(Key)) {
 						 Battle->HandleInput(Key);
 						 break;
 					}

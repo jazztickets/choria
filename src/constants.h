@@ -18,6 +18,9 @@
 #pragma once
 
 #include <SColor.h>
+#include <string>
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
 const double GAME_PORTALTIME = 3.0;
 const double GAME_SLEEPRATE = 1 / 120.0;
@@ -67,3 +70,45 @@ const int STATS_MAXGOLD = 1000000;
 const irr::video::SColor COLOR_GOLD(255, 196, 187, 44);
 const irr::video::SColor COLOR_GRAY(255, 150, 150, 150);
 const irr::video::SColor COLOR_LIGHTGRAY(255, 200, 200, 200);
+
+//     Config
+const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
+const  int          DEFAULT_FULLSCREEN             =  0;
+const  int          DEFAULT_AUDIOENABLED           =  1;
+const  int          DEFAULT_VSYNC                  =  1;
+const  int          DEFAULT_ANISOTROPY             =  0;
+const  double       DEFAULT_MAXFPS                 =  120.0;
+const  double       DEFAULT_NETWORKRATE            =  1.0/20.0;
+const  uint16_t     DEFAULT_NETWORKPORT            =  31234;
+const  std::string  TEXTURES_PATH                  =  "textures/";
+
+//     Graphics
+const  int          GRAPHICS_CIRCLE_VERTICES       =  32;
+const  double       MATH_PI                        =  3.14159265358979323846;
+//     Assets
+const  std::string  ASSETS_FONTS_PATH              =  "fonts/";
+const  std::string  ASSETS_MAPS_PATH               =  "maps/";
+const  std::string  ASSETS_PROGRAMS                =  "tables/programs.tsv";
+const  std::string  ASSETS_ANIMATIONS              =  "tables/animations.tsv";
+const  std::string  ASSETS_COLORS                  =  "tables/colors.tsv";
+const  std::string  ASSETS_FONTS                   =  "tables/fonts.tsv";
+const  std::string  ASSETS_LAYERS                  =  "tables/layers.tsv";
+const  std::string  ASSETS_STRINGS                 =  "tables/strings.tsv";
+const  std::string  ASSETS_UI_BUTTONS              =  "tables/ui/buttons.tsv";
+const  std::string  ASSETS_UI_ELEMENTS             =  "tables/ui/elements.tsv";
+const  std::string  ASSETS_UI_IMAGES               =  "tables/ui/images.tsv";
+const  std::string  ASSETS_UI_LABELS               =  "tables/ui/labels.tsv";
+const  std::string  ASSETS_UI_STYLES               =  "tables/ui/styles.tsv";
+const  std::string  ASSETS_UI_TEXTBOXES            =  "tables/ui/textboxes.tsv";
+
+//     Colors
+const  glm::vec4    COLOR_WHITE                    =  {1.0f,1.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_TWHITE                   =  {1.0f,1.0f,1.0f,0.5f};
+const  glm::vec4    COLOR_DARK                     =  {0.3f,0.3f,0.3f,1.0f};
+const  glm::vec4    COLOR_TGRAY                    =  {1.0f,1.0f,1.0f,0.2f};
+const  glm::vec4    COLOR_RED                      =  {1.0f,0.0f,0.0f,1.0f};
+const  glm::vec4    COLOR_GREEN                    =  {0.0f,1.0f,0.0f,1.0f};
+const  glm::vec4    COLOR_BLUE                     =  {0.0f,0.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_YELLOW                   =  {1.0f,1.0f,0.0f,1.0f};
+const  glm::vec4    COLOR_MAGENTA                  =  {1.0f,0.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_CYAN                     =  {0.0f,1.0f,1.0f,1.0f};

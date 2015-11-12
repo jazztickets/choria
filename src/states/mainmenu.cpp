@@ -32,7 +32,7 @@ _MainMenuState MainMenuState;
 using namespace irr;
 
 // Initializes the state
-int _MainMenuState::Init() {
+void _MainMenuState::Init() {
 	int DrawX = 400, DrawY = 250, OffsetY = 50;
 
 	// Single Player
@@ -55,14 +55,10 @@ int _MainMenuState::Init() {
 	Graphics.AddText(GAME_VERSION, 10, 580);
 
 	Framework.StopLocalServer();
-
-	return 1;
 }
 
 // Shuts the state down
-int _MainMenuState::Close() {
-
-	return 1;
+void _MainMenuState::Close() {
 }
 
 // Updates the current state

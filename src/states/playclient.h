@@ -49,8 +49,8 @@ class _PlayClientState : public _State {
 
 		_PlayClientState();
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		void HandleConnect(ENetEvent *TEvent);
 		void HandleDisconnect(ENetEvent *TEvent);

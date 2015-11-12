@@ -35,7 +35,7 @@ _CharactersState CharactersState;
 using namespace irr;
 
 // Initializes the state
-int _CharactersState::Init() {
+void _CharactersState::Init() {
 
 	// Create character slots
 	int SlotX = 0, SlotY = 0;
@@ -68,14 +68,10 @@ int _CharactersState::Init() {
 	RequestCharacterList();
 
 	SelectedIndex = -1;
-
-	return 1;
 }
 
 // Shuts the state down
-int _CharactersState::Close() {
-
-	return 1;
+void _CharactersState::Close() {
 }
 
 // Handles a disconnection from the server

@@ -31,12 +31,12 @@ _AccountState AccountState;
 using namespace irr;
 
 // Initializes the state
-int _AccountState::Init() {
+void _AccountState::Init() {
 	int DrawX = 400, DrawY = 250, ButtonWidth = 80;
 	Form = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 600));
 
-	if(AccountName == "")
-		AccountName = Config.LastAccountName;
+	//if(AccountName == "")
+	//	AccountName = Config.LastAccountName;
 
 	// Account
 	Graphics.SetFont(_Graphics::FONT_10);
@@ -68,14 +68,10 @@ int _AccountState::Init() {
 
 	Message = "";
 	ChangeState(STATE_MAIN);
-
-	return 1;
 }
 
 // Shuts the state down
-int _AccountState::Close() {
-
-	return 1;
+void _AccountState::Close() {
 }
 
 // Handles a disconnection from the server
@@ -101,8 +97,8 @@ void _AccountState::HandlePacket(ENetEvent *TEvent) {
 			ChangeState(STATE_MAIN);
 		break;
 		case _Network::ACCOUNT_SUCCESS:
-			Config.LastAccountName = AccountName;
-			Config.SaveSettings();
+			//Config.LastAccountName = AccountName;
+			//Config.SaveSettings();
 			AccountName = "";
 			Password = "";
 			Framework.ChangeState(&CharactersState);

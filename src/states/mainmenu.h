@@ -33,8 +33,8 @@ class _MainMenuState : public _State {
 			ELEMENT_EXIT,
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		bool HandleKeyPress(irr::EKEY_CODE TKey);
 		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);

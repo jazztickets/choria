@@ -39,7 +39,7 @@ _MapEditorState MapEditorState;
 using namespace irr;
 
 // Initializes the state
-int _MapEditorState::Init() {
+void _MapEditorState::Init() {
 	WorkingDirectory = irrFile->getWorkingDirectory();
 
 	// Textures
@@ -50,7 +50,8 @@ int _MapEditorState::Init() {
 		Brush.Texture = TexturePalette[0];
 
 	// Default map
-	core::stringc SavePath = Config.SaveMapPath + "test.map";
+	//core::stringc SavePath = Config.ConfigPath + "test.map";
+	core::stringc SavePath = "test.map";
 	Map = new _Map(SavePath, 50, 50);
 
 	// Set filters
@@ -59,16 +60,12 @@ int _MapEditorState::Init() {
 	Filters[FILTER_WALL] = true;
 
 	State = STATE_MAIN;
-
-	return 1;
 }
 
 // Shuts the state down
-int _MapEditorState::Close() {
+void _MapEditorState::Close() {
 
 	CloseMap();
-
-	return 1;
 }
 
 // Deletes the map
@@ -87,7 +84,7 @@ void _MapEditorState::Update(double FrameTime) {
 
 	switch(State) {
 		case STATE_MAIN:
-			if(Input.GetMouseState(_Input::MOUSE_LEFT) && !(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL))) {
+			if(OldInput.GetMouseState(_OldInput::MOUSE_LEFT) && !(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL))) {
 				switch(BrushSize) {
 					case 0:
 						ApplyBrush(BrushPosition.X, BrushPosition.Y);
@@ -254,13 +251,13 @@ bool _MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 
 	if(Map) {
 		switch(TButton) {
-			case _Input::MOUSE_LEFT:
-				if(Input.GetKeyState(KEY_CONTROL) || Input.GetKeyState(KEY_LCONTROL)) {
+			case _OldInput::MOUSE_LEFT:
+				if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
 					if(Map->IsValidPosition(BrushPosition.X, BrushPosition.Y))
 						Brush = *Map->GetTile(BrushPosition.X, BrushPosition.Y);
 				}
 			break;
-			case _Input::MOUSE_RIGHT: {
+			case _OldInput::MOUSE_RIGHT: {
 				Map->ScreenToGrid(core::position2di(TMouseX, TMouseY), BrushPosition);
 				Map->SetCameraScroll(BrushPosition);
 			} break;
@@ -497,7 +494,8 @@ void _MapEditorState::CreateMap() {
 	CloseMap();
 
 	// Create map
-	core::stringc SavePath = Config.SaveMapPath + File;
+	//core::stringc SavePath = Config.SaveMapPath + File;
+	core::stringc SavePath = File;
 	Map = new _Map(SavePath.c_str(), Width, Height);
 
 	CloseWindow(NEWMAP_WINDOW);
@@ -509,7 +507,7 @@ void _MapEditorState::InitLoadMap() {
 	WorkingDirectory = irrFile->getWorkingDirectory();
 
 	// Main dialog window
-	core::stringc StartPath = Config.SaveMapPath;
+	core::stringc StartPath = core::stringc(Config.ConfigPath.c_str());
 	irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (core::stringc::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;

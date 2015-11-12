@@ -35,8 +35,8 @@ class _PlayServerState : public _State {
 
 	public:
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		void HandleConnect(ENetEvent *TEvent);
 		void HandleDisconnect(ENetEvent *TEvent);

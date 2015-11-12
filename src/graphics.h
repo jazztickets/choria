@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <opengl.h>
 #include <IEventReceiver.h>
 #include <IGUIFont.h>
 #include <IGUISkin.h>
@@ -25,6 +26,33 @@
 #include <ITexture.h>
 #include <EDriverTypes.h>
 #include <SColor.h>
+#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
+#include <SDL_video.h>
+#include <SDL_mouse.h>
+
+// Forward Declarations
+class _Texture;
+class _Program;
+class _Element;
+struct _Bounds;
+
+enum VertexBufferType {
+	VBO_NONE,
+	VBO_CIRCLE,
+	VBO_QUAD,
+	VBO_ATLAS,
+	VBO_CUBE,
+	VBO_COUNT
+};
+
+struct _WindowSettings {
+	_WindowSettings() : Size(0), Position(0), Fullscreen(false), Vsync(false) { }
+	glm::ivec2 Size;
+	glm::ivec2 Position;
+	bool Fullscreen;
+	bool Vsync;
+};
 
 // Classes
 class _Graphics {
@@ -79,14 +107,8 @@ class _Graphics {
 			IMAGE_COUNT,
 		};
 
-		int Init(int TWidth, int THeight, bool TFullScreen, irr::video::E_DRIVER_TYPE TDriverType, irr::IEventReceiver *TEventReceiver);
-		int Close();
-
-		// Rendering
-		void Clear();
-		void SetClearColor(const irr::video::SColor &TColor) { ClearColor = TColor; }
-		void BeginFrame();
-		void EndFrame();
+		void Init(const _WindowSettings &WindowSettings);
+		void Close();
 
 		// Fonts
 		void SetFont(int TType);
@@ -107,7 +129,81 @@ class _Graphics {
 		void DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 		irr::video::ITexture *GetImage(ImageType TType) { return Images[TType]; }
 
+
+		void ToggleFullScreen(const glm::ivec2 &WindowSize, const glm::ivec2 &FullscreenSize);
+		void ShowCursor(int Type);
+		void BuildVertexBuffers();
+
+		void SetStaticUniforms();
+		void ChangeViewport(const glm::ivec2 &Size);
+		void ChangeWindowSize(const glm::ivec2 &Size);
+		void Setup2D();
+		void Setup3D();
+
+		void FadeScreen(float Amount);
+		void DrawImage(const _Bounds &Bounds, const _Texture *Texture, bool Stretch=false);
+		void DrawAtlas(const _Bounds &Bounds, const _Texture *Texture, const glm::vec4 &TextureCoords);
+		void DrawRectangle(const _Bounds &Bounds, bool Filled=false);
+		void DrawMask(const _Bounds &Bounds);
+
+		void DrawSprite(const glm::vec3 &Position, const _Texture *Texture, float Rotation=0.0f, const glm::vec2 Scale=glm::vec2(1.0f));
+		void DrawTile(const glm::vec2 &Start, const glm::vec2 &End, float Z, const _Texture *Texture);
+		void DrawCube(const glm::vec3 &Start, const glm::vec3 &Scale, const _Texture *Texture);
+		void DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool Filled=false);
+		void DrawCircle(const glm::vec3 &Position, float Radius);
+
+		void SetDepthMask(bool Value);
+		void EnableStencilTest();
+		void DisableStencilTest();
+		void ClearScreen();
+		void Flip(double FrameTime);
+
+		GLuint CreateVBO(float *Triangles, GLuint Size, GLenum Type);
+		void UpdateVBOTextureCoords(int VBO, float *Data);
+		void SetVBO(GLuint Type);
+		void EnableAttribs(int AttribLevel);
+
+		void SetColor(const glm::vec4 &Color);
+		void SetTextureID(GLuint TextureID);
+		void SetVertexBufferID(GLuint VertexBufferID);
+		void SetProgram(const _Program *Program);
+		void SetDepthTest(bool DepthTest);
+
+		void DirtyState();
+
+		// State
+		_Element *Element;
+		glm::ivec2 WindowSize;
+		glm::ivec2 ViewportSize;
+		glm::mat4 Ortho;
+		float AspectRatio;
+
+		GLfloat Anisotropy;
+		GLuint VertexBuffer[VBO_COUNT];
+
+		int FramesPerSecond;
+
 	private:
+
+		void SetupOpenGL();
+
+		// Data structures
+		bool Enabled;
+		SDL_Window *Window;
+		SDL_GLContext Context;
+
+		// State changes
+		GLuint LastVertexBufferID;
+		GLuint LastTextureID;
+		int LastAttribLevel;
+		glm::vec4 LastColor;
+		const _Program *LastProgram;
+		bool LastDepthTest;
+
+		// Benchmarking
+		double FrameRateTimer;
+		int FrameCount;
+
 
 		// Graphics state
 		irr::video::SColor ClearColor;

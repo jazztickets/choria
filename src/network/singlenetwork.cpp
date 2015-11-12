@@ -21,20 +21,16 @@
 #include <framework.h>
 
 // Initializes the network system
-int _SingleNetwork::Init(bool TServer) {
+void _SingleNetwork::Init(bool TServer) {
 
 	Server = TServer;
 	Connected = false;
 	Peer.address.host = 0;
 	Peer.address.port = 0;
-
-	return 1;
 }
 
 // Closes the network system
-int _SingleNetwork::Close() {
-
-	return 1;
+void _SingleNetwork::Close() {
 }
 
 // Connect to a host

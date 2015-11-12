@@ -94,8 +94,8 @@ class _Stats {
 
 	public:
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		// General Stats
 		void GetMonsterStats(int TMonsterID, _Monster *TMonster);

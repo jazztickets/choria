@@ -26,12 +26,12 @@ using namespace irr;
 _Stats Stats;
 
 // Initialize
-int _Stats::Init() {
+void _Stats::Init() {
 
 	// Load database that stores game data
 	Database = new _Database();
 	if(!Database->OpenDatabaseCreate("database/data.s3db")) {
-		return 0;
+		throw std::runtime_error("OpenDatabaseCreate failed");
 	}
 
 	// Load spreadsheet data
@@ -43,17 +43,13 @@ int _Stats::Init() {
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
-
-	return 1;
 }
 
 // Shutdown
-int _Stats::Close() {
+void _Stats::Close() {
 
 	delete Database;
 	Events.clear();
-
-	return 1;
 }
 
 // Load portrait data

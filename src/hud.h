@@ -111,8 +111,8 @@ class _HUD {
 			WINDOW_SKILLBAR
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		// Updates
 		void HandleMouseMotion(int TMouseX, int TMouseY);

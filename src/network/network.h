@@ -113,8 +113,8 @@ class _Network {
 		_Network();
 		virtual ~_Network();
 
-		virtual int Init(bool TServer) { return 0; }
-		virtual int Close() { return 0; }
+		virtual void Init(bool TServer) { }
+		virtual void Close() { }
 
 		// Updates
 		virtual void Update() { }

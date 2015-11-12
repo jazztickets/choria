@@ -21,9 +21,63 @@
 #include <IEventReceiver.h>
 #include <Keycodes.h>
 #include <position2d.h>
+#include <string>
+#include <glm/vec2.hpp>
+#include <SDL_keyboard.h>
+#include <SDL_mouse.h>
+
+struct _KeyEvent {
+	_KeyEvent(int Key, bool Pressed) : Key(Key), Pressed(Pressed) { }
+	int Key;
+	bool Pressed;
+};
+
+struct _MouseEvent {
+	_MouseEvent(const glm::ivec2 &Position, int Button, bool Pressed) : Position(Position), Button(Button), Pressed(Pressed) { }
+	glm::ivec2 Position;
+	int Button;
+	bool Pressed;
+};
 
 // Classes
-class _Input : public irr::IEventReceiver {
+class _Input {
+
+	public:
+
+		enum InputType {
+			KEYBOARD,
+			MOUSE_BUTTON,
+			MOUSE_AXIS,
+			JOYSTICK_BUTTON,
+			JOYSTICK_AXIS,
+			INPUT_COUNT,
+		};
+
+		_Input();
+
+		void Update(double FrameTime);
+
+		int KeyDown(int Key) { return KeyState[Key]; }
+		bool ModKeyDown(int Key);
+		bool MouseDown(Uint32 Button);
+
+		const glm::ivec2 &GetMouse() { return Mouse; }
+
+		static const char *GetKeyName(int Key);
+		static const std::string &GetMouseButtonName(Uint32 Button);
+
+	private:
+
+		// States
+		const Uint8 *KeyState;
+		Uint32 MouseState;
+		glm::ivec2 Mouse;
+};
+
+extern _Input Input;
+
+// Classes
+class _OldInput : public irr::IEventReceiver {
 
 	public:
 
@@ -34,8 +88,8 @@ class _Input : public irr::IEventReceiver {
 			MOUSE_COUNT,
 		};
 
-		int Init();
-		int Close();
+		void Init();
+		void Close();
 
 		bool OnEvent(const irr::SEvent &TEvent);
 
@@ -61,4 +115,4 @@ class _Input : public irr::IEventReceiver {
 
 };
 
-extern _Input Input;
+extern _OldInput OldInput;

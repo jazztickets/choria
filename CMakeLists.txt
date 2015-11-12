@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # define constants
 add_definitions(-DGAME_VERSION="0.5.0")
+add_definitions("-DGLM_FORCE_RADIANS")
 add_definitions("-DHAS_SOCKLEN_T")
 
 # project name
@@ -42,9 +43,24 @@ if(NOT IRRLICHT_FOUND)
 	message(SEND_ERROR "Could not find Irrlicht!")
 endif()
 
+find_package(OpenGL REQUIRED)
+if(NOT OPENGL_FOUND)
+	message(SEND_ERROR "Could not find OpenGL!")
+endif()
+
 find_package(SDL2 REQUIRED)
 if(NOT SDL2_FOUND)
 	message(SEND_ERROR "Could not find SDL2!")
+endif()
+
+find_package(Freetype REQUIRED)
+if(NOT FREETYPE_FOUND)
+	message(SEND_ERROR "Could not find Freetype 2!")
+endif()
+
+find_package(GLM REQUIRED)
+if(NOT GLM_FOUND)
+	message(SEND_ERROR "Could not find GLM!")
 endif()
 
 find_package(SQLite REQUIRED)
@@ -60,7 +76,9 @@ endif()
 # set include directories
 include_directories("src")
 include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${IRRLICHT_INCLUDE_DIRS})
+include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
 
 # add source files
@@ -70,6 +88,7 @@ file(GLOB SRC_INSTANCES "src/instances/*.cpp" "src/instances/*.h")
 file(GLOB SRC_NETWORK "src/network/*.cpp" "src/network/*.h")
 file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
 file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
+file(GLOB SRC_UI "src/ui/*.cpp" "src/ui/*.h")
 file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
 
 file(GLOB SRC_ALL
@@ -79,6 +98,7 @@ file(GLOB SRC_ALL
 	${SRC_INSTANCES}
 	${SRC_NETWORK}
 	${SRC_OBJECTS}
+	${SRC_UI}
 	${SRC_PNGLITE}
 )
 
@@ -97,9 +117,11 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
 # link libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
 	${IRRLICHT_LIBRARIES}
+	${OPENGL_gl_LIBRARY}
 	${SDL2_LIBRARY}
-	${CMAKE_THREAD_LIBS_INIT}
+	${FREETYPE_LIBRARIES}
 	${SQLITE_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT}
 	${EXTRA_LIBS}
 )
 
