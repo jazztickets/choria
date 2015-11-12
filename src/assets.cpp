@@ -38,18 +38,18 @@ _Assets Assets;
 
 // Initialize
 void _Assets::Init(bool IsServer) {
-	LoadTextureDirectory(TEXTURES_MENU, IsServer);
-	/*
-	LoadTextureDirectory(TEXTURES_HUD, IsServer);
-	LoadTextureDirectory(TEXTURES_HUD_REPEAT, IsServer, true);
+	LoadTextureDirectory(TEXTURES_BATTLE, IsServer);
 	LoadTextureDirectory(TEXTURES_EDITOR, IsServer);
+	LoadTextureDirectory(TEXTURES_INTERFACE, IsServer);
+	LoadTextureDirectory(TEXTURES_ITEMS, IsServer);
+	LoadTextureDirectory(TEXTURES_MAP, IsServer);
 	LoadTextureDirectory(TEXTURES_MENU, IsServer);
-	LoadTextureDirectory(TEXTURES_TILES, IsServer);
-	LoadTextureDirectory(TEXTURES_BLOCKS, IsServer, true, true);
-	LoadTextureDirectory(TEXTURES_PROPS, IsServer, true, true);
-	*/
+	LoadTextureDirectory(TEXTURES_MONSTERS, IsServer);
+	LoadTextureDirectory(TEXTURES_PLAYERS, IsServer);
+	LoadTextureDirectory(TEXTURES_PORTRAITS, IsServer);
+	LoadTextureDirectory(TEXTURES_SKILLS, IsServer);
+	LoadTextureDirectory(TEXTURES_WORLD, IsServer);
 	LoadLayers(ASSETS_LAYERS);
-
 	if(!IsServer) {
 		LoadPrograms(ASSETS_PROGRAMS);
 		LoadFonts(ASSETS_FONTS);

@@ -236,7 +236,8 @@ class _Player : public _Object, public _Fighter {
 
 		// Texture
 		int PortraitID;
-		_Texture *WorldImage, *StateImage;
+		const _Texture *WorldImage;
+		const _Texture *StateImage;
 
 		// Map
 		int SpawnMapID, SpawnPoint;

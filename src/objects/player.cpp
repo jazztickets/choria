@@ -28,6 +28,7 @@
 #include <instances/battle.h>
 #include <states/playserver.h>
 #include <objects/skill.h>
+#include <assets.h>
 
 using namespace irr;
 
@@ -73,7 +74,7 @@ _Player::_Player()
 	TradeAccepted(false),
 	TradePlayer(nullptr) {
 
-	//WorldImage = irrDriver->getTexture("textures/players/basic.png");
+	WorldImage = Assets.Textures["players/basic.png"];
 
 	Position.X = 0;
 	Position.Y = 0;

@@ -89,14 +89,17 @@ const  double       MENU_DOUBLECLICK_TIME          =  0.250;
 const  double       MENU_CURSOR_PERIOD             =  0.5;
 //     Textures
 const  std::string  TEXTURES_PATH                  =  "textures/";
-const  std::string  TEXTURES_BLOCKS                =  "blocks/";
+const  std::string  TEXTURES_BATTLE                =  "battle/";
 const  std::string  TEXTURES_EDITOR                =  "editor/";
-const  std::string  TEXTURES_EDITOR_REPEAT         =  "editor_repeat/";
-const  std::string  TEXTURES_HUD                   =  "hud/";
-const  std::string  TEXTURES_HUD_REPEAT            =  "hud_repeat/";
+const  std::string  TEXTURES_INTERFACE             =  "interface/";
+const  std::string  TEXTURES_ITEMS                 =  "items/";
+const  std::string  TEXTURES_MAP                   =  "map/";
 const  std::string  TEXTURES_MENU                  =  "menu/";
-const  std::string  TEXTURES_PROPS                 =  "props/";
-const  std::string  TEXTURES_TILES                 =  "tiles/";
+const  std::string  TEXTURES_MONSTERS              =  "monsters/";
+const  std::string  TEXTURES_PLAYERS               =  "players/";
+const  std::string  TEXTURES_PORTRAITS             =  "portraits/";
+const  std::string  TEXTURES_SKILLS                =  "skills/";
+const  std::string  TEXTURES_WORLD                 =  "world/";
 //     Assets
 const  std::string  ASSETS_FONTS_PATH              =  "fonts/";
 const  std::string  ASSETS_MAPS_PATH               =  "maps/";
@@ -111,7 +114,6 @@ const  std::string  ASSETS_UI_IMAGES               =  "tables/ui/images.tsv";
 const  std::string  ASSETS_UI_LABELS               =  "tables/ui/labels.tsv";
 const  std::string  ASSETS_UI_STYLES               =  "tables/ui/styles.tsv";
 const  std::string  ASSETS_UI_TEXTBOXES            =  "tables/ui/textboxes.tsv";
-
 //     Colors
 const  glm::vec4    COLOR_WHITE                    =  {1.0f,1.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_TWHITE                   =  {1.0f,1.0f,1.0f,0.5f};

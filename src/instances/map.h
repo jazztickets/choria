@@ -137,7 +137,8 @@ class _Map {
 		int32_t Width, Height;
 
 		// Textures
-		_Texture *NoZoneTexture, *DefaultNoZoneTexture;
+		const _Texture *NoZoneTexture;
+		const _Texture *DefaultNoZoneTexture;
 		std::vector<_Texture *> Textures;
 
 		// Events

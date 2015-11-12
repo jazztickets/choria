@@ -25,6 +25,7 @@
 #include <states/playserver.h>
 #include <objects/player.h>
 #include <texture.h>
+#include <assets.h>
 #include <fstream>
 #include <limits>
 
@@ -76,7 +77,7 @@ _Map::~_Map() {
 void _Map::Init() {
 	ID = 0;
 	NoZoneTexture = nullptr;
-	//DefaultNoZoneTexture = irrDriver->getTexture("textures/editor/nozone.png");
+	DefaultNoZoneTexture = Assets.Textures["editor/nozone.png"];
 	Tiles = nullptr;
 	ViewSize.Width = 25;
 	ViewSize.Height = 19;
