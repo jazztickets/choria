@@ -38,8 +38,8 @@ class _MultiNetwork : public _Network {
 		enet_uint32 GetRTT();
 
 		// Packets
-		void SendPacketToHost(_Packet *TPacket);
-		void SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer);
+		void SendPacketToHost(_Buffer *Buffer, SendType Type=RELIABLE, uint8_t Channel=0);
+		void SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0);
 
 	private:
 

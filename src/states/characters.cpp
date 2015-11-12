@@ -22,7 +22,7 @@
 #include <graphics.h>
 #include <constants.h>
 #include <network/network.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <states/mainmenu.h>
 #include <states/connect.h>
 #include <states/account.h>
@@ -86,8 +86,8 @@ void _CharactersState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _CharactersState::HandlePacket(ENetEvent *TEvent) {
-	_Packet Packet(TEvent->packet);
-	switch(Packet.ReadChar()) {
+	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	switch(Packet.Read<char>()) {
 		case _Network::CHARACTERS_LIST:
 			HandleCharacterList(&Packet);
 		break;
@@ -201,10 +201,10 @@ void _CharactersState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIEleme
 }
 
 // Process the character list packet
-void _CharactersState::HandleCharacterList(_Packet *TPacket) {
+void _CharactersState::HandleCharacterList(_Buffer *TPacket) {
 
 	// Get count
-	int CharacterCount = TPacket->ReadChar();
+	int CharacterCount = TPacket->Read<char>();
 	if(CharacterCount < CHARACTERS_MAX)
 		ButtonCreate->setEnabled(true);
 
@@ -214,10 +214,10 @@ void _CharactersState::HandleCharacterList(_Packet *TPacket) {
 	for(i = 0; i < CharacterCount; i++) {
 		Slots[i].Used = true;
 		Slots[i].Name = TPacket->ReadString();
-		PortraitImage = Stats.GetPortrait(TPacket->ReadInt())->Image;
+		PortraitImage = Stats.GetPortrait(TPacket->Read<int32_t>())->Image;
 		Slots[i].Button->setImage(PortraitImage);
 		Slots[i].Button->setPressedImage(PortraitImage);
-		Slots[i].Level = Stats.FindLevel(TPacket->ReadInt())->Level;
+		Slots[i].Level = Stats.FindLevel(TPacket->Read<int32_t>())->Level;
 	}
 	for(; i < CHARACTERS_MAX; i++) {
 		Slots[i].Used = false;
@@ -230,7 +230,8 @@ void _CharactersState::HandleCharacterList(_Packet *TPacket) {
 // Requests a character list from the server
 void _CharactersState::RequestCharacterList() {
 
-	_Packet Packet(_Network::CHARACTERS_REQUEST);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::CHARACTERS_REQUEST);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
@@ -271,8 +272,9 @@ void _CharactersState::Delete() {
 	if(SelectedIndex == -1 || !Slots[SelectedIndex].Used)
 		return;
 
-	_Packet Packet(_Network::CHARACTERS_DELETE);
-	Packet.WriteChar(SelectedIndex);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::CHARACTERS_DELETE);
+	Packet.Write<char>(SelectedIndex);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 

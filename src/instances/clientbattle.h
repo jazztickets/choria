@@ -26,7 +26,7 @@
 
 // Forward Declarations
 class _Item;
-class _Packet;
+class _Buffer;
 
 // Classes
 class _ClientBattle : public _Battle {
@@ -70,8 +70,8 @@ class _ClientBattle : public _Battle {
 		void GetPositionFromSlot(int TSlot, irr::core::position2di &TPosition);
 
 		// Resolve
-		void ResolveTurn(_Packet *TPacket);
-		void EndBattle(_Packet *TPacket);
+		void ResolveTurn(_Buffer *TPacket);
+		void EndBattle(_Buffer *TPacket);
 
 	private:
 

@@ -22,9 +22,9 @@
 #include <input.h>
 #include <stats.h>
 #include <constants.h>
+#include <buffer.h>
 #include <states/playclient.h>
 #include <network/network.h>
-#include <network/packetstream.h>
 #include <instances/map.h>
 #include <objects/player.h>
 #include <objects/item.h>
@@ -140,8 +140,9 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 				break;
 				case _Input::MOUSE_RIGHT:
 					if(Player->UseInventory(TooltipItem.Slot)) {
-						_Packet Packet(_Network::INVENTORY_USE);
-						Packet.WriteChar(TooltipItem.Slot);
+						_Buffer Packet;
+						Packet.Write<char>(_Network::INVENTORY_USE);
+						Packet.Write<char>(TooltipItem.Slot);
 						ClientNetwork->SendPacketToHost(&Packet);
 					}
 				break;
@@ -195,9 +196,10 @@ void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 								case WINDOW_INVENTORY:
 
 									if(TooltipItem.Slot >= 0 && Player->MoveInventory(CursorItem.Slot, TooltipItem.Slot)) {
-										_Packet Packet(_Network::INVENTORY_MOVE);
-										Packet.WriteChar(CursorItem.Slot);
-										Packet.WriteChar(TooltipItem.Slot);
+										_Buffer Packet;
+										Packet.Write<char>(_Network::INVENTORY_MOVE);
+										Packet.Write<char>(CursorItem.Slot);
+										Packet.Write<char>(TooltipItem.Slot);
 										ClientNetwork->SendPacketToHost(&Packet);
 
 										ResetAcceptButton();
@@ -330,7 +332,8 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_TRADERACCEPT: {
-							_Packet Packet(_Network::TRADER_ACCEPT);
+							_Buffer Packet;
+							Packet.Write<char>(_Network::TRADER_ACCEPT);
 							ClientNetwork->SendPacketToHost(&Packet);
 							Player->AcceptTrader(Trader, RequiredItemSlots, RewardItemSlot);
 							Player->CalculatePlayerStats();
@@ -356,8 +359,9 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 							CloseWindows();
 						break;
 						case ELEMENT_TRADEACCEPT: {
-							_Packet Packet(_Network::TRADE_ACCEPT);
-							Packet.WriteChar(TradeAcceptButton->isPressed());
+							_Buffer Packet;
+							Packet.Write<char>(_Network::TRADE_ACCEPT);
+							Packet.Write<char>(TradeAcceptButton->isPressed());
 							ClientNetwork->SendPacketToHost(&Packet);
 						}
 						break;
@@ -379,8 +383,9 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 
 						// Send amount
 						int GoldAmount = ValidateTradeGold();
-						_Packet Packet(_Network::TRADE_GOLD);
-						Packet.WriteInt(GoldAmount);
+						_Buffer Packet;
+						Packet.Write<char>(_Network::TRADE_GOLD);
+						Packet.Write<int32_t>(GoldAmount);
 						ClientNetwork->SendPacketToHost(&Packet);
 
 						// Reset agreement
@@ -402,7 +407,8 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 
 					// Skills
 					if(ID >= ELEMENT_SKILLPLUS0) {
-						_Packet Packet(_Network::SKILLS_SKILLADJUST);
+						_Buffer Packet;
+						Packet.Write<char>(_Network::SKILLS_SKILLADJUST);
 
 						// Buy or sell skill
 						int SkillID;
@@ -439,7 +445,7 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 								}
 							}
 						}
-						Packet.WriteChar(SkillID);
+						Packet.Write<char>(SkillID);
 						ClientNetwork->SendPacketToHost(&Packet);
 
 						// Update player
@@ -552,7 +558,8 @@ void _HUD::ToggleChat() {
 			printf("%s\n", Chat.Message.c_str());
 
 			// Send message to server
-			_Packet Packet(_Network::CHAT_MESSAGE);
+			_Buffer Packet;
+			Packet.Write<char>(_Network::CHAT_MESSAGE);
 			Packet.WriteString(Message.c_str());
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
@@ -705,7 +712,8 @@ void _HUD::CloseVendor() {
 	CloseInventory();
 
 	// Notify server
-	_Packet Packet(_Network::EVENT_END);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::EVENT_END);
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	*State = _PlayClientState::STATE_WALK;
@@ -750,7 +758,8 @@ void _HUD::CloseTrader() {
 	CursorItem.Reset();
 
 	// Notify server
-	_Packet Packet(_Network::EVENT_END);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::EVENT_END);
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	*State = _PlayClientState::STATE_WALK;
@@ -818,10 +827,11 @@ void _HUD::CloseSkills() {
 
 	// Send new skill bar to server
 	if(SkillBarChanged) {
-		_Packet Packet(_Network::SKILLS_SKILLBAR);
-		for(int i = 0; i < 8; i++) {
-			Packet.WriteChar(Player->GetSkillBarID(i));
-		}
+		_Buffer Packet;
+		Packet.Write<char>(_Network::SKILLS_SKILLBAR);
+		for(int i = 0; i < 8; i++)
+			Packet.Write<char>(Player->GetSkillBarID(i));
+
 		ClientNetwork->SendPacketToHost(&Packet);
 	}
 
@@ -1796,11 +1806,12 @@ void _HUD::BuyItem(_CursorItem *TCursorItem, int TTargetSlot) {
 		Player->UpdateGold(-Price);
 
 		// Notify server
-		_Packet Packet(_Network::VENDOR_EXCHANGE);
+		_Buffer Packet;
+		Packet.Write<char>(_Network::VENDOR_EXCHANGE);
 		Packet.WriteBit(1);
-		Packet.WriteChar(TCursorItem->Count);
-		Packet.WriteChar(TCursorItem->Slot);
-		Packet.WriteChar(TTargetSlot);
+		Packet.Write<char>(TCursorItem->Count);
+		Packet.Write<char>(TCursorItem->Slot);
+		Packet.Write<char>(TTargetSlot);
 		ClientNetwork->SendPacketToHost(&Packet);
 
 		Player->CalculatePlayerStats();
@@ -1818,10 +1829,11 @@ void _HUD::SellItem(_CursorItem *TCursorItem, int TAmount) {
 	bool Deleted = Player->UpdateInventory(TCursorItem->Slot, -TAmount);
 
 	// Notify server
-	_Packet Packet(_Network::VENDOR_EXCHANGE);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
-	Packet.WriteChar(TAmount);
-	Packet.WriteChar(TCursorItem->Slot);
+	Packet.Write<char>(TAmount);
+	Packet.Write<char>(TCursorItem->Slot);
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	if(Deleted)
@@ -1935,20 +1947,23 @@ void _HUD::RefreshSkillButtons() {
 // Sends the busy signal to the server
 void _HUD::SendBusy(bool TValue) {
 
-	_Packet Packet(_Network::WORLD_BUSY);
-	Packet.WriteChar(TValue);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::WORLD_BUSY);
+	Packet.Write<char>(TValue);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Trade with another player
 void _HUD::SendTradeRequest() {
-	_Packet Packet(_Network::TRADE_REQUEST);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::TRADE_REQUEST);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Cancel a trade
 void _HUD::SendTradeCancel() {
-	_Packet Packet(_Network::TRADE_CANCEL);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::TRADE_CANCEL);
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	Player->SetTradePlayer(nullptr);
@@ -1988,9 +2003,10 @@ void _HUD::SplitStack(int TSlot, int TCount) {
 		return;
 
 	// Build packet
-	_Packet Packet(_Network::INVENTORY_SPLIT);
-	Packet.WriteChar(TSlot);
-	Packet.WriteChar(TCount);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::INVENTORY_SPLIT);
+	Packet.Write<char>(TSlot);
+	Packet.Write<char>(TCount);
 
 	ClientNetwork->SendPacketToHost(&Packet);
 	Player->SplitStack(TSlot, TCount);
@@ -1998,7 +2014,8 @@ void _HUD::SplitStack(int TSlot, int TCount) {
 
 // Toggles the town portal state
 void _HUD::ToggleTownPortal() {
-	_Packet Packet(_Network::WORLD_TOWNPORTAL);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::WORLD_TOWNPORTAL);
 	ClientNetwork->SendPacketToHost(&Packet);
 	Player->StartTownPortal();
 

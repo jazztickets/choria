@@ -21,7 +21,7 @@
 #include <stats.h>
 #include <graphics.h>
 #include <network/network.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <states/connect.h>
 #include <states/characters.h>
 #include <IGUIEnvironment.h>
@@ -90,8 +90,8 @@ void _CreateCharacterState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
-	_Packet Packet(TEvent->packet);
-	switch(Packet.ReadChar()) {
+	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	switch(Packet.Read<char>()) {
 		case _Network::CREATECHARACTER_SUCCESS:
 			Game.ChangeState(&CharactersState);
 		break;
@@ -202,9 +202,10 @@ void _CreateCharacterState::CreateCharacter() {
 	ButtonCreate->setEnabled(false);
 
 	// Send information
-	_Packet Packet(_Network::CREATECHARACTER_INFO);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::CREATECHARACTER_INFO);
 	Packet.WriteString(Name.c_str());
-	Packet.WriteInt(Portraits[SelectedIndex]);
+	Packet.Write<int32_t>(Portraits[SelectedIndex]);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 

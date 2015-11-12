@@ -16,7 +16,7 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <network/multinetwork.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <game.h>
 #include <state.h>
 #include <constants.h>
@@ -152,25 +152,27 @@ void _MultiNetwork::Update() {
 }
 
 // Client: Sends a packet to the host
-void _MultiNetwork::SendPacketToHost(_Packet *TPacket) {
+void _MultiNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
 	if(!Peer)
 		return;
 
-	// Resize
-	TPacket->Shrink();
+	// Create enet packet
+	ENetPacket *EPacket = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 
 	// Send packet
-	enet_peer_send(Peer, TPacket->GetChannel(), TPacket->GetENetPacket());
+	enet_peer_send(Peer, Channel, EPacket);
+	enet_host_flush(Connection);
 }
 
 // Server: Sends a packet to a single peer
-void _MultiNetwork::SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer) {
+void _MultiNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType Type, uint8_t Channel) {
 	if(!TPeer)
 		return;
 
-	// Resize
-	TPacket->Shrink();
+	// Create enet packet
+	ENetPacket *Packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 
 	// Send packet
-	enet_peer_send(TPeer, TPacket->GetChannel(), TPacket->GetENetPacket());
+	enet_peer_send(TPeer, Channel, Packet);
+	enet_host_flush(Connection);
 }

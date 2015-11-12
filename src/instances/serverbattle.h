@@ -21,7 +21,7 @@
 #include <instances/battle.h>
 
 // Forward Declarations
-class _Packet;
+class _Buffer;
 
 // Classes
 class _ServerBattle : public _Battle {
@@ -55,7 +55,7 @@ class _ServerBattle : public _Battle {
 
 	private:
 
-		void SendPacketToPlayers(_Packet *TPacket);
+		void SendPacketToPlayers(_Buffer *TPacket);
 		void SendSkillToPlayers(_Player *TPlayer);
 
 		double RoundTime;

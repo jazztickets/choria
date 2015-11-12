@@ -21,7 +21,7 @@
 #include <graphics.h>
 #include <constants.h>
 #include <network/network.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <states/connect.h>
 #include <states/mapeditor.h>
 #include <states/characters.h>
@@ -130,7 +130,8 @@ void _MainMenuState::StartSinglePlayer() {
 	ClientNetwork->Connect("");
 
 	// Send fake account information
-	_Packet Packet(_Network::ACCOUNT_LOGININFO);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
 	Packet.WriteBit(0);
 	Packet.WriteString("singleplayer");
 	Packet.WriteString("singleplayer");

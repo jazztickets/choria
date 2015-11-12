@@ -16,7 +16,7 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <network/singlenetwork.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <states/playserver.h>
 #include <game.h>
 
@@ -69,26 +69,26 @@ void _SingleNetwork::Disconnect(ENetPeer *TPeer) {
 }
 
 // Client: Sends a packet to the host
-void _SingleNetwork::SendPacketToHost(_Packet *TPacket) {
+void _SingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
 
 	if(Connected) {
 
 		// Simulate packet event
 		ENetEvent Event;
 		Event.peer = &Peer;
-		Event.packet = TPacket->GetENetPacket();
+		Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 		PlayServerState.HandlePacket(&Event);
 		enet_packet_destroy(Event.packet);
 	}
 }
 
 // Server: Sends a packet to a single peer
-void _SingleNetwork::SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer) {
+void _SingleNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType Type, uint8_t Channel) {
 
 	// Simulate packet event
 	ENetEvent Event;
 	Event.peer = &Peer;
-	Event.packet = TPacket->GetENetPacket();
+	Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 	Game.GetState()->HandlePacket(&Event);
 	enet_packet_destroy(Event.packet);
 }

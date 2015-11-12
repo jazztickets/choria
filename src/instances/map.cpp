@@ -22,7 +22,7 @@
 #include <filestream.h>
 #include <stats.h>
 #include <network/network.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <states/playserver.h>
 #include <objects/player.h>
 #include <ITexture.h>
@@ -423,16 +423,17 @@ bool _Map::CanMoveTo(const core::position2di &TPosition) {
 void _Map::AddObject(_Object *TObject) {
 
 	// Create packet for the new object
-	_Packet Packet(_Network::WORLD_CREATEOBJECT);
-	Packet.WriteChar(TObject->GetNetworkID());
-	Packet.WriteChar(TObject->GetPosition().X);
-	Packet.WriteChar(TObject->GetPosition().Y);
-	Packet.WriteChar(TObject->GetType());
+	_Buffer Packet;
+	Packet.Write<char>(_Network::WORLD_CREATEOBJECT);
+	Packet.Write<char>(TObject->GetNetworkID());
+	Packet.Write<char>(TObject->GetPosition().X);
+	Packet.Write<char>(TObject->GetPosition().Y);
+	Packet.Write<char>(TObject->GetType());
 	switch(TObject->GetType()) {
 		case _Object::PLAYER: {
 			_Player *NewPlayer = static_cast<_Player *>(TObject);
 			Packet.WriteString(NewPlayer->GetName().c_str());
-			Packet.WriteChar(NewPlayer->GetPortraitID());
+			Packet.Write<char>(NewPlayer->GetPortraitID());
 			Packet.WriteBit(NewPlayer->IsInvisible());
 		}
 		break;
@@ -459,8 +460,9 @@ void _Map::RemoveObject(_Object *TObject) {
 	}
 
 	// Create delete packet
-	_Packet Packet(_Network::WORLD_DELETEOBJECT);
-	Packet.WriteChar(TObject->GetNetworkID());
+	_Buffer Packet;
+	Packet.Write<char>(_Network::WORLD_DELETEOBJECT);
+	Packet.Write<char>(TObject->GetNetworkID());
 
 	// Send to everyone
 	SendPacketToPlayers(&Packet);
@@ -514,11 +516,14 @@ _Player *_Map::GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquare
 
 // Sends object position information to all the clients in the map
 void _Map::SendObjectUpdates() {
-	_Packet Packet(_Network::WORLD_OBJECTUPDATES, ENET_PACKET_FLAG_UNSEQUENCED, 1);
+
+	// unsequenced
+	_Buffer Packet;
+	Packet.Write<char>(_Network::WORLD_OBJECTUPDATES);
 
 	// Get object count
 	int ObjectCount = Objects.size();
-	Packet.WriteChar(ObjectCount);
+	Packet.Write<char>(ObjectCount);
 
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
@@ -530,18 +535,18 @@ void _Map::SendObjectUpdates() {
 			Invisible = Player->IsInvisible();
 		}
 
-		Packet.WriteChar(Object->GetNetworkID());
-		Packet.WriteChar(State);
-		Packet.WriteChar(Object->GetPosition().X);
-		Packet.WriteChar(Object->GetPosition().Y);
+		Packet.Write<char>(Object->GetNetworkID());
+		Packet.Write<char>(State);
+		Packet.Write<char>(Object->GetPosition().X);
+		Packet.Write<char>(Object->GetPosition().Y);
 		Packet.WriteBit(Invisible);
 	}
 
-	SendPacketToPlayers(&Packet);
+	SendPacketToPlayers(&Packet, nullptr, _Network::UNSEQUENCED);
 }
 
 // Sends a packet to all of the players in the map
-void _Map::SendPacketToPlayers(_Packet *TPacket, _Player *ExceptionPlayer) {
+void _Map::SendPacketToPlayers(_Buffer *TPacket, _Player *ExceptionPlayer, _Network::SendType Type) {
 
 	// Send the packet out
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
@@ -549,7 +554,7 @@ void _Map::SendPacketToPlayers(_Packet *TPacket, _Player *ExceptionPlayer) {
 			_Player *Player = static_cast<_Player *>(*Iterator);
 
 			if(Player != ExceptionPlayer)
-				ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer());
+				ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer(), Type, Type == _Network::UNSEQUENCED);
 		}
 	}
 }

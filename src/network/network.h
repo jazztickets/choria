@@ -21,7 +21,26 @@
 #include <enet/enet.h>
 
 // Forward Declarations
-class _Packet;
+class _Buffer;
+class _Peer;
+
+// Network Event
+struct _NetworkEvent {
+
+	// Types
+	enum EventType {
+		CONNECT,
+		DISCONNECT,
+		PACKET,
+	};
+
+	_NetworkEvent() : Data(nullptr), Peer(nullptr) { }
+
+	EventType Type;
+	float Time;
+	_Buffer *Data;
+	_Peer *Peer;
+};
 
 // Classes
 class _Network {
@@ -77,6 +96,20 @@ class _Network {
 			TRADE_EXCHANGE,
 		};
 
+		// Different ways to send data
+		enum SendType {
+			RELIABLE = 1,
+			UNSEQUENCED = 2,
+		};
+
+		// Different states for connection
+		enum ConnectionStateType {
+			DISCONNECTED,
+			CONNECTING,
+			CONNECTED,
+			DISCONNECTING,
+		};
+
 		_Network() { }
 		virtual ~_Network() { }
 
@@ -93,8 +126,8 @@ class _Network {
 		virtual enet_uint32 GetRTT() { return 0; }
 
 		// Packets
-		virtual void SendPacketToHost(_Packet *TPacket) { }
-		virtual void SendPacketToPeer(_Packet *TPacket, ENetPeer *TPeer) { }
+		virtual void SendPacketToHost(_Buffer *TPacket, SendType Type=RELIABLE, uint8_t Channel=0) { }
+		virtual void SendPacketToPeer(_Buffer *TPacket, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0) { }
 
 	protected:
 

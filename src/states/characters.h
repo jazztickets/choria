@@ -25,7 +25,7 @@
 const int CHARACTERS_MAX = 6;
 
 // Forward Declarations
-class _Packet;
+class _Buffer;
 
 // Structures
 struct _CharacterSlot {
@@ -67,7 +67,7 @@ class _CharactersState : public _State {
 
 	private:
 
-		void HandleCharacterList(_Packet *TPacket);
+		void HandleCharacterList(_Buffer *TPacket);
 		void UpdateSelection(int TSelectedIndex);
 		void RequestCharacterList();
 		void PlayCharacter();

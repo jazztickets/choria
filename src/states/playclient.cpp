@@ -24,8 +24,8 @@
 #include <instances.h>
 #include <stats.h>
 #include <hud.h>
+#include <buffer.h>
 #include <network/network.h>
-#include <network/packetstream.h>
 #include <instances/map.h>
 #include <instances/clientbattle.h>
 #include <objects/player.h>
@@ -61,8 +61,9 @@ int _PlayClientState::Init() {
 		return 0;
 
 	// Send character slot to play
-	_Packet Packet(_Network::CHARACTERS_PLAY);
-	Packet.WriteChar(CharacterSlot);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::CHARACTERS_PLAY);
+	Packet.Write<char>(CharacterSlot);
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	return 1;
@@ -94,8 +95,8 @@ void _PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
 void _PlayClientState::HandlePacket(ENetEvent *TEvent) {
 	//printf("HandlePacket: type=%d\n", TEvent->packet->data[0]);
 
-	_Packet Packet(TEvent->packet);
-	int PacketType = Packet.ReadChar();
+	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	int PacketType = Packet.Read<char>();
 	switch(PacketType) {
 		case _Network::WORLD_YOURCHARACTERINFO:
 			HandleYourCharacterInfo(&Packet);
@@ -444,43 +445,43 @@ void _PlayClientState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIEleme
 }
 
 // Called once to synchronize your stats with the servers
-void _PlayClientState::HandleYourCharacterInfo(_Packet *TPacket) {
+void _PlayClientState::HandleYourCharacterInfo(_Buffer *TPacket) {
 
 	// Get pack info
-	int NetworkID = TPacket->ReadChar();
+	int NetworkID = TPacket->Read<char>();
 
 	Player = new _Player();
 	Player->SetName(TPacket->ReadString());
-	Player->SetPortraitID(TPacket->ReadInt());
-	Player->SetExperience(TPacket->ReadInt());
-	Player->SetGold(TPacket->ReadInt());
-	Player->SetPlayTime(TPacket->ReadInt());
-	Player->SetDeaths(TPacket->ReadInt());
-	Player->SetMonsterKills(TPacket->ReadInt());
-	Player->SetPlayerKills(TPacket->ReadInt());
-	Player->SetBounty(TPacket->ReadInt());
+	Player->SetPortraitID(TPacket->Read<int32_t>());
+	Player->SetExperience(TPacket->Read<int32_t>());
+	Player->SetGold(TPacket->Read<int32_t>());
+	Player->SetPlayTime(TPacket->Read<int32_t>());
+	Player->SetDeaths(TPacket->Read<int32_t>());
+	Player->SetMonsterKills(TPacket->Read<int32_t>());
+	Player->SetPlayerKills(TPacket->Read<int32_t>());
+	Player->SetBounty(TPacket->Read<int32_t>());
 	HUD.SetPlayer(Player);
 
 	// Read items
-	int ItemCount = TPacket->ReadChar();
+	int ItemCount = TPacket->Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
-		int Slot = TPacket->ReadChar();
-		int Count = (u8)TPacket->ReadChar();
-		int ItemID = TPacket->ReadInt();
+		int Slot = TPacket->Read<char>();
+		int Count = (u8)TPacket->Read<char>();
+		int ItemID = TPacket->Read<int32_t>();
 		Player->SetInventory(Slot, ItemID, Count);
 	}
 
 	// Read skills
-	int SkillCount = TPacket->ReadChar();
+	int SkillCount = TPacket->Read<char>();
 	for(int i = 0; i < SkillCount; i++) {
-		int Points = TPacket->ReadInt();
-		int Slot = TPacket->ReadChar();
+		int Points = TPacket->Read<int32_t>();
+		int Slot = TPacket->Read<char>();
 		Player->SetSkillLevel(Slot, Points);
 	}
 
 	// Read skill bar
 	for(int i = 0; i < FIGHTER_MAXSKILLS; i++) {
-		int SkillID = TPacket->ReadChar();
+		int SkillID = TPacket->Read<char>();
 		Player->SetSkillBar(i, Stats.GetSkill(SkillID));
 	}
 
@@ -491,10 +492,10 @@ void _PlayClientState::HandleYourCharacterInfo(_Packet *TPacket) {
 }
 
 // Called when the player changes maps
-void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
+void _PlayClientState::HandleChangeMaps(_Buffer *TPacket) {
 
 	// Load map
-	int NewMapID = TPacket->ReadInt();
+	int NewMapID = TPacket->Read<int32_t>();
 	_Map *NewMap = Instances->GetMap(NewMapID);
 	if(NewMap != Map) {
 
@@ -505,22 +506,22 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 		Map = NewMap;
 
 		// Get player count for map
-		int PlayerCount = TPacket->ReadInt();
+		int PlayerCount = TPacket->Read<int32_t>();
 
 		// Spawn players
 		int NetworkID;
 		_Player *NewPlayer;
 		core::position2di GridPosition;
 		for(int i = 0; i < PlayerCount; i++) {
-			NetworkID = TPacket->ReadChar();
-			GridPosition.X = TPacket->ReadChar();
-			GridPosition.Y = TPacket->ReadChar();
-			int Type = TPacket->ReadChar();
+			NetworkID = TPacket->Read<char>();
+			GridPosition.X = TPacket->Read<char>();
+			GridPosition.Y = TPacket->Read<char>();
+			int Type = TPacket->Read<char>();
 
 			switch(Type) {
 				case _Object::PLAYER: {
 					core::stringc Name(TPacket->ReadString());
-					int PortraitID = TPacket->ReadChar();
+					int PortraitID = TPacket->Read<char>();
 					int Invisible = TPacket->ReadBit();
 
 					// Information for your player
@@ -553,21 +554,21 @@ void _PlayClientState::HandleChangeMaps(_Packet *TPacket) {
 }
 
 // Creates an object
-void _PlayClientState::HandleCreateObject(_Packet *TPacket) {
+void _PlayClientState::HandleCreateObject(_Buffer *TPacket) {
 
 	// Read packet
 	core::position2di Position;
-	int NetworkID = TPacket->ReadChar();
-	Position.X = TPacket->ReadChar();
-	Position.Y = TPacket->ReadChar();
-	int Type = TPacket->ReadChar();
+	int NetworkID = TPacket->Read<char>();
+	Position.X = TPacket->Read<char>();
+	Position.Y = TPacket->Read<char>();
+	int Type = TPacket->Read<char>();
 
 	// Create the object
 	_Object *NewObject = nullptr;
 	switch(Type) {
 		case _Object::PLAYER: {
 			core::stringc Name(TPacket->ReadString());
-			int PortraitID = TPacket->ReadChar();
+			int PortraitID = TPacket->Read<char>();
 			int Invisible = TPacket->ReadBit();
 
 			NewObject = new _Player();
@@ -590,9 +591,9 @@ void _PlayClientState::HandleCreateObject(_Packet *TPacket) {
 }
 
 // Deletes an object
-void _PlayClientState::HandleDeleteObject(_Packet *TPacket) {
+void _PlayClientState::HandleDeleteObject(_Buffer *TPacket) {
 
-	int NetworkID = TPacket->ReadChar();
+	int NetworkID = TPacket->Read<char>();
 
 	_Object *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
 	if(Object) {
@@ -613,10 +614,10 @@ void _PlayClientState::HandleDeleteObject(_Packet *TPacket) {
 }
 
 // Handles position updates from the server
-void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
+void _PlayClientState::HandleObjectUpdates(_Buffer *TPacket) {
 
 	// Get object Count
-	char ObjectCount = TPacket->ReadChar();
+	char ObjectCount = TPacket->Read<char>();
 
 	//printf("HandleObjectUpdates: ServerTime=%d, ClientTime=%d, ObjectCount=%d\n", ServerTime, ClientTime, ObjectCount);
 
@@ -626,10 +627,10 @@ void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
 	int Invisible;
 	for(int i = 0; i < ObjectCount; i++) {
 
-		NetworkID = TPacket->ReadChar();
-		PlayerState = TPacket->ReadChar();
-		Position.X = TPacket->ReadChar();
-		Position.Y = TPacket->ReadChar();
+		NetworkID = TPacket->Read<char>();
+		PlayerState = TPacket->Read<char>();
+		Position.X = TPacket->Read<char>();
+		Position.Y = TPacket->Read<char>();
 		Invisible = TPacket->ReadBit();
 
 		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
@@ -666,7 +667,7 @@ void _PlayClientState::HandleObjectUpdates(_Packet *TPacket) {
 }
 
 // Handles the start of a battle
-void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
+void _PlayClientState::HandleStartBattle(_Buffer *TPacket) {
 	//printf("HandleStartBattle: \n");
 
 	// Already in a battle
@@ -677,7 +678,7 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 	Battle = Instances->CreateClientBattle();
 
 	// Get fighter count
-	int FighterCount = TPacket->ReadChar();
+	int FighterCount = TPacket->Read<char>();
 
 	// Get fighter information
 	for(int i = 0; i < FighterCount; i++) {
@@ -689,13 +690,13 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 		if(Type == _Fighter::TYPE_PLAYER) {
 
 			// Network ID
-			int NetworkID = TPacket->ReadChar();
+			int NetworkID = TPacket->Read<char>();
 
 			// Player stats
-			int Health = TPacket->ReadInt();
-			int MaxHealth = TPacket->ReadInt();
-			int Mana = TPacket->ReadInt();
-			int MaxMana = TPacket->ReadInt();
+			int Health = TPacket->Read<int32_t>();
+			int MaxHealth = TPacket->Read<int32_t>();
+			int Mana = TPacket->Read<int32_t>();
+			int MaxMana = TPacket->Read<int32_t>();
 
 			// Get player object
 			_Player *NewPlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
@@ -712,7 +713,7 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 		else {
 
 			// Monster ID
-			int MonsterID = TPacket->ReadInt();
+			int MonsterID = TPacket->Read<int32_t>();
 			_Monster *Monster = new _Monster(MonsterID);
 
 			Battle->AddFighter(Monster, Side);
@@ -726,7 +727,7 @@ void _PlayClientState::HandleStartBattle(_Packet *TPacket) {
 }
 
 // Handles the result of a turn in battle
-void _PlayClientState::HandleBattleTurnResults(_Packet *TPacket) {
+void _PlayClientState::HandleBattleTurnResults(_Buffer *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -736,7 +737,7 @@ void _PlayClientState::HandleBattleTurnResults(_Packet *TPacket) {
 }
 
 // Handles the end of a battle
-void _PlayClientState::HandleBattleEnd(_Packet *TPacket) {
+void _PlayClientState::HandleBattleEnd(_Buffer *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -746,44 +747,44 @@ void _PlayClientState::HandleBattleEnd(_Packet *TPacket) {
 }
 
 // Handles a battle command from other players
-void _PlayClientState::HandleBattleCommand(_Packet *TPacket) {
+void _PlayClientState::HandleBattleCommand(_Buffer *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
 		return;
 
-	int Slot = TPacket->ReadChar();
-	int SkillID = TPacket->ReadChar();
+	int Slot = TPacket->Read<char>();
+	int SkillID = TPacket->Read<char>();
 	Battle->HandleCommand(Slot, SkillID);
 }
 
 // Handles HUD updates
-void _PlayClientState::HandleHUD(_Packet *TPacket) {
-	Player->SetExperience(TPacket->ReadInt());
-	Player->SetGold(TPacket->ReadInt());
-	Player->SetHealth(TPacket->ReadInt());
-	Player->SetMana(TPacket->ReadInt());
-	float HealthAccumulator = TPacket->ReadFloat();
-	float ManaAccumulator = TPacket->ReadFloat();
+void _PlayClientState::HandleHUD(_Buffer *TPacket) {
+	Player->SetExperience(TPacket->Read<int32_t>());
+	Player->SetGold(TPacket->Read<int32_t>());
+	Player->SetHealth(TPacket->Read<int32_t>());
+	Player->SetMana(TPacket->Read<int32_t>());
+	float HealthAccumulator = TPacket->Read<float>();
+	float ManaAccumulator = TPacket->Read<float>();
 	Player->SetRegenAccumulators(HealthAccumulator, ManaAccumulator);
 	Player->CalculatePlayerStats();
 }
 
 // Handles player position
-void _PlayClientState::HandlePlayerPosition(_Packet *TPacket) {
+void _PlayClientState::HandlePlayerPosition(_Buffer *TPacket) {
 	core::position2di GridPosition;
-	GridPosition.X = TPacket->ReadChar();
-	GridPosition.Y = TPacket->ReadChar();
+	GridPosition.X = TPacket->Read<char>();
+	GridPosition.Y = TPacket->Read<char>();
 	Player->SetPosition(GridPosition);
 }
 
 // Handles the start of an event
-void _PlayClientState::HandleEventStart(_Packet *TPacket) {
+void _PlayClientState::HandleEventStart(_Buffer *TPacket) {
 	core::position2di GridPosition;
-	int Type = TPacket->ReadChar();
-	int Data = TPacket->ReadInt();
-	GridPosition.X = TPacket->ReadChar();
-	GridPosition.Y = TPacket->ReadChar();
+	int Type = TPacket->Read<char>();
+	int Data = TPacket->Read<int32_t>();
+	GridPosition.X = TPacket->Read<char>();
+	GridPosition.Y = TPacket->Read<char>();
 	Player->SetPosition(GridPosition);
 
 	switch(Type) {
@@ -799,17 +800,17 @@ void _PlayClientState::HandleEventStart(_Packet *TPacket) {
 }
 
 // Handles the use of an inventory item
-void _PlayClientState::HandleInventoryUse(_Packet *TPacket) {
+void _PlayClientState::HandleInventoryUse(_Buffer *TPacket) {
 
-	int Slot = TPacket->ReadChar();
+	int Slot = TPacket->Read<char>();
 	Player->UpdateInventory(Slot, -1);
 }
 
 // Handles a chat message
-void _PlayClientState::HandleChatMessage(_Packet *TPacket) {
+void _PlayClientState::HandleChatMessage(_Buffer *TPacket) {
 
 	// Read packet
-	int NetworkID = TPacket->ReadChar();
+	int NetworkID = TPacket->Read<char>();
 	core::stringc Message(TPacket->ReadString());
 
 	// Get player that sent packet
@@ -826,10 +827,10 @@ void _PlayClientState::HandleChatMessage(_Packet *TPacket) {
 }
 
 // Handles a trade request
-void _PlayClientState::HandleTradeRequest(_Packet *TPacket) {
+void _PlayClientState::HandleTradeRequest(_Buffer *TPacket) {
 
 	// Read packet
-	int NetworkID = TPacket->ReadChar();
+	int NetworkID = TPacket->Read<char>();
 
 	// Get trading player
 	_Player *TradePlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
@@ -844,19 +845,19 @@ void _PlayClientState::HandleTradeRequest(_Packet *TPacket) {
 	Player->SetTradeAccepted(false);
 
 	// Get gold offer
-	TradePlayer->SetTradeGold(TPacket->ReadInt());
+	TradePlayer->SetTradeGold(TPacket->Read<int32_t>());
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
-		int ItemID = TPacket->ReadInt();
+		int ItemID = TPacket->Read<int32_t>();
 		int Count = 0;
 		if(ItemID != 0)
-			Count = TPacket->ReadChar();
+			Count = TPacket->Read<char>();
 
 		TradePlayer->SetInventory(i, ItemID, Count);
 	}
 }
 
 // Handles a trade cancel
-void _PlayClientState::HandleTradeCancel(_Packet *TPacket) {
+void _PlayClientState::HandleTradeCancel(_Buffer *TPacket) {
 	Player->SetTradePlayer(nullptr);
 
 	// Reset agreement
@@ -864,7 +865,7 @@ void _PlayClientState::HandleTradeCancel(_Packet *TPacket) {
 }
 
 // Handles a trade item update
-void _PlayClientState::HandleTradeItem(_Packet *TPacket) {
+void _PlayClientState::HandleTradeItem(_Buffer *TPacket) {
 
 	// Get trading player
 	_Player *TradePlayer = Player->GetTradePlayer();
@@ -872,18 +873,18 @@ void _PlayClientState::HandleTradeItem(_Packet *TPacket) {
 		return;
 
 	// Get old slot information
-	int OldItemID = TPacket->ReadInt();
-	int OldSlot = TPacket->ReadChar();
+	int OldItemID = TPacket->Read<int32_t>();
+	int OldSlot = TPacket->Read<char>();
 	int OldCount = 0;
 	if(OldItemID > 0)
-		OldCount = TPacket->ReadChar();
+		OldCount = TPacket->Read<char>();
 
 	// Get new slot information
-	int NewItemID = TPacket->ReadInt();
-	int NewSlot = TPacket->ReadChar();
+	int NewItemID = TPacket->Read<int32_t>();
+	int NewSlot = TPacket->Read<char>();
 	int NewCount = 0;
 	if(NewItemID > 0)
-		NewCount = TPacket->ReadChar();
+		NewCount = TPacket->Read<char>();
 
 	// Update player
 	TradePlayer->SetInventory(OldSlot, OldItemID, OldCount);
@@ -895,7 +896,7 @@ void _PlayClientState::HandleTradeItem(_Packet *TPacket) {
 }
 
 // Handles a gold update from the trading player
-void _PlayClientState::HandleTradeGold(_Packet *TPacket) {
+void _PlayClientState::HandleTradeGold(_Buffer *TPacket) {
 
 	// Get trading player
 	_Player *TradePlayer = Player->GetTradePlayer();
@@ -903,7 +904,7 @@ void _PlayClientState::HandleTradeGold(_Packet *TPacket) {
 		return;
 
 	// Set gold
-	int Gold = TPacket->ReadInt();
+	int Gold = TPacket->Read<int32_t>();
 	TradePlayer->SetTradeGold(Gold);
 
 	// Reset agreement
@@ -912,7 +913,7 @@ void _PlayClientState::HandleTradeGold(_Packet *TPacket) {
 }
 
 // Handles a trade accept
-void _PlayClientState::HandleTradeAccept(_Packet *TPacket) {
+void _PlayClientState::HandleTradeAccept(_Buffer *TPacket) {
 
 	// Get trading player
 	_Player *TradePlayer = Player->GetTradePlayer();
@@ -920,21 +921,21 @@ void _PlayClientState::HandleTradeAccept(_Packet *TPacket) {
 		return;
 
 	// Set state
-	bool Accepted = !!TPacket->ReadChar();
+	bool Accepted = !!TPacket->Read<char>();
 	TradePlayer->SetTradeAccepted(Accepted);
 }
 
 // Handles a trade exchange
-void _PlayClientState::HandleTradeExchange(_Packet *TPacket) {
+void _PlayClientState::HandleTradeExchange(_Buffer *TPacket) {
 
 	// Get gold offer
-	int Gold = TPacket->ReadInt();
+	int Gold = TPacket->Read<int32_t>();
 	Player->SetGold(Gold);
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
-		int ItemID = TPacket->ReadInt();
+		int ItemID = TPacket->Read<int32_t>();
 		int Count = 0;
 		if(ItemID != 0)
-			Count = TPacket->ReadChar();
+			Count = TPacket->Read<char>();
 
 		Player->SetInventory(i, ItemID, Count);
 	}
@@ -953,8 +954,9 @@ void _PlayClientState::SendMoveCommand(int TDirection) {
 
 		// Move player locally
 		if(Player->MovePlayer(TDirection)) {
-			_Packet Packet(_Network::WORLD_MOVECOMMAND);
-			Packet.WriteChar(TDirection);
+			_Buffer Packet;
+			Packet.Write<char>(_Network::WORLD_MOVECOMMAND);
+			Packet.Write<char>(TDirection);
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
 	}
@@ -964,7 +966,8 @@ void _PlayClientState::SendMoveCommand(int TDirection) {
 void _PlayClientState::SendAttackPlayer() {
 	if(Player->CanAttackPlayer()) {
 		Player->ResetAttackPlayerTime();
-		_Packet Packet(_Network::WORLD_ATTACKPLAYER);
+		_Buffer Packet;
+		Packet.Write<char>(_Network::WORLD_ATTACKPLAYER);
 		ClientNetwork->SendPacketToHost(&Packet);
 	}
 }

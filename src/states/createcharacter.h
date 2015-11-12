@@ -24,7 +24,7 @@
 #include <IGUIButton.h>
 
 // Forward Declarations
-class _Packet;
+class _Buffer;
 
 // Classes
 class _CreateCharacterState : public _State {

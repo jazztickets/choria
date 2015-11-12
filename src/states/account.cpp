@@ -20,8 +20,8 @@
 #include <globals.h>
 #include <config.h>
 #include <graphics.h>
+#include <buffer.h>
 #include <network/network.h>
-#include <network/packetstream.h>
 #include <states/connect.h>
 #include <states/characters.h>
 #include <IGUIEnvironment.h>
@@ -86,8 +86,8 @@ void _AccountState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _AccountState::HandlePacket(ENetEvent *TEvent) {
-	_Packet Packet(TEvent->packet);
-	switch(Packet.ReadChar()) {
+	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	switch(Packet.Read<char>()) {
 		case _Network::ACCOUNT_NOTFOUND:
 			Message = "Account not found";
 			ChangeState(STATE_MAIN);
@@ -211,7 +211,9 @@ void _AccountState::ChangeState(int TState) {
 				State = TState;
 
 				// Send information
-				_Packet Packet(_Network::ACCOUNT_LOGININFO);
+				_Buffer Packet;
+				Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
+
 				Packet.WriteBit(CreateAccount);
 				Packet.WriteString(AccountName.c_str());
 				Packet.WriteString(Password.c_str());

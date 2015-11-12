@@ -1,3 +1,5 @@
+choria 0.5.0 - 
+
 choria 0.4.2 - 2015-09-29
 - Linux save data now in ~/.local/share/choria
 - Switched to c++11

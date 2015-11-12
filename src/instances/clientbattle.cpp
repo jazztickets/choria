@@ -20,7 +20,7 @@
 #include <graphics.h>
 #include <network/network.h>
 #include <stats.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
 #include <IGUIEnvironment.h>
@@ -124,7 +124,8 @@ void _ClientBattle::HandleInput(EKEY_CODE TKey) {
 			if(Timer > BATTLE_WAITENDTIME) {
 				State = STATE_DELETE;
 
-				_Packet Packet(_Network::BATTLE_CLIENTDONE);
+				_Buffer Packet;
+				Packet.Write<char>(_Network::BATTLE_CLIENTDONE);
 				ClientNetwork->SendPacketToHost(&Packet);
 			}
 		}
@@ -327,16 +328,16 @@ void _ClientBattle::RenderBattleLose() {
 }
 
 // Displays turn results from the server
-void _ClientBattle::ResolveTurn(_Packet *TPacket) {
+void _ClientBattle::ResolveTurn(_Buffer *TPacket) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
-			Results[i].SkillID = TPacket->ReadChar();
-			Results[i].Target = TPacket->ReadInt();
-			Results[i].DamageDealt = TPacket->ReadInt();
-			Results[i].HealthChange = TPacket->ReadInt();
-			int Health = TPacket->ReadInt();
-			int Mana = TPacket->ReadInt();
+			Results[i].SkillID = TPacket->Read<char>();
+			Results[i].Target = TPacket->Read<int32_t>();
+			Results[i].DamageDealt = TPacket->Read<int32_t>();
+			Results[i].HealthChange = TPacket->Read<int32_t>();
+			int Health = TPacket->Read<int32_t>();
+			int Mana = TPacket->Read<int32_t>();
 			Fighters[i]->SetHealth(Health);
 			Fighters[i]->SetMana(Mana);
 			Fighters[i]->SetSkillUsed(Fighters[i]->GetSkillUsing());
@@ -357,19 +358,19 @@ void _ClientBattle::ResolveTurn(_Packet *TPacket) {
 }
 
 // End of a battle
-void _ClientBattle::EndBattle(_Packet *TPacket) {
+void _ClientBattle::EndBattle(_Buffer *TPacket) {
 
 	// Get ending stats
 	bool SideDead[2];
 	SideDead[0] = TPacket->ReadBit();
 	SideDead[1] = TPacket->ReadBit();
-	int PlayerKills = TPacket->ReadChar();
-	int MonsterKills = TPacket->ReadChar();
-	TotalExperience = TPacket->ReadInt();
-	TotalGold = TPacket->ReadInt();
-	int ItemCount = TPacket->ReadChar();
+	int PlayerKills = TPacket->Read<char>();
+	int MonsterKills = TPacket->Read<char>();
+	TotalExperience = TPacket->Read<int32_t>();
+	TotalGold = TPacket->Read<int32_t>();
+	int ItemCount = TPacket->Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
-		int ItemID = TPacket->ReadInt();
+		int ItemID = TPacket->Read<int32_t>();
 		const _Item *Item = Stats.GetItem(ItemID);
 		MonsterDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
@@ -443,9 +444,10 @@ void _ClientBattle::SendSkill(int TSkillSlot) {
 	if(TSkillSlot != 9 && (Skill == nullptr || !Skill->CanUse(ClientPlayer)))
 		return;
 
-	_Packet Packet(_Network::BATTLE_COMMAND);
-	Packet.WriteChar(TSkillSlot);
-	Packet.WriteChar(ClientPlayer->GetTarget());
+	_Buffer Packet;
+	Packet.Write<char>(_Network::BATTLE_COMMAND);
+	Packet.Write<char>(TSkillSlot);
+	Packet.Write<char>(ClientPlayer->GetTarget());
 
 	ClientNetwork->SendPacketToHost(&Packet);
 	ClientPlayer->SetSkillUsing(Skill);

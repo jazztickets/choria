@@ -19,7 +19,7 @@
 #include <globals.h>
 #include <stats.h>
 #include <constants.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <network/network.h>
 #include <random.h>
 #include <instances.h>
@@ -66,11 +66,12 @@ int _ServerBattle::RemovePlayer(_Player *TPlayer) {
 void _ServerBattle::StartBattle() {
 
 	// Build packet
-	_Packet Packet(_Network::WORLD_STARTBATTLE);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::WORLD_STARTBATTLE);
 
 	// Write fighter count
 	int FighterCount = Fighters.size();
-	Packet.WriteChar(FighterCount);
+	Packet.Write<char>(FighterCount);
 
 	// Write fighter information
 	for(int i = 0; i < FighterCount; i++) {
@@ -84,13 +85,13 @@ void _ServerBattle::StartBattle() {
 			_Player *Player = static_cast<_Player *>(Fighters[i]);
 
 			// Network ID
-			Packet.WriteChar(Player->GetNetworkID());
+			Packet.Write<char>(Player->GetNetworkID());
 
 			// Player stats
-			Packet.WriteInt(Player->GetHealth());
-			Packet.WriteInt(Player->GetMaxHealth());
-			Packet.WriteInt(Player->GetMana());
-			Packet.WriteInt(Player->GetMaxMana());
+			Packet.Write<int32_t>(Player->GetHealth());
+			Packet.Write<int32_t>(Player->GetMaxHealth());
+			Packet.Write<int32_t>(Player->GetMana());
+			Packet.Write<int32_t>(Player->GetMaxMana());
 
 			// Start the battle for the player
 			Player->StartBattle(this);
@@ -99,7 +100,7 @@ void _ServerBattle::StartBattle() {
 			_Monster *Monster = static_cast<_Monster *>(Fighters[i]);
 
 			// Monster ID
-			Packet.WriteInt(Monster->GetID());
+			Packet.Write<int32_t>(Monster->GetID());
 		}
 	}
 
@@ -208,7 +209,9 @@ void _ServerBattle::ResolveTurn() {
 	}
 
 	// Build packet for results
-	_Packet Packet(_Network::BATTLE_TURNRESULTS);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::BATTLE_TURNRESULTS);
+
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
 
@@ -217,12 +220,12 @@ void _ServerBattle::ResolveTurn() {
 			Fighters[i]->UpdateMana(Results[i].ManaChange);
 			Fighters[i]->SetCommand(-1);
 
-			Packet.WriteChar(Results[i].Target);
-			Packet.WriteInt(Results[i].SkillID);
-			Packet.WriteInt(Results[i].DamageDealt);
-			Packet.WriteInt(Results[i].HealthChange);
-			Packet.WriteInt(Fighters[i]->GetHealth());
-			Packet.WriteInt(Fighters[i]->GetMana());
+			Packet.Write<char>(Results[i].Target);
+			Packet.Write<int32_t>(Results[i].SkillID);
+			Packet.Write<int32_t>(Results[i].DamageDealt);
+			Packet.Write<int32_t>(Results[i].HealthChange);
+			Packet.Write<int32_t>(Fighters[i]->GetHealth());
+			Packet.Write<int32_t>(Fighters[i]->GetMana());
 		}
 	}
 
@@ -365,23 +368,24 @@ void _ServerBattle::CheckEnd() {
 			}
 
 			// Write results
-			_Packet Packet(_Network::BATTLE_END);
+			_Buffer Packet;
+			Packet.Write<char>(_Network::BATTLE_END);
 			Packet.WriteBit(Side[0].Dead);
 			Packet.WriteBit(Side[1].Dead);
-			Packet.WriteChar(OppositeSide->PlayerCount);
-			Packet.WriteChar(OppositeSide->MonsterCount);
-			Packet.WriteInt(ExperienceEarned);
-			Packet.WriteInt(GoldEarned);
+			Packet.Write<char>(OppositeSide->PlayerCount);
+			Packet.Write<char>(OppositeSide->MonsterCount);
+			Packet.Write<int32_t>(ExperienceEarned);
+			Packet.Write<int32_t>(GoldEarned);
 
 			// Write items
 			int PlayerIndex = Players[i]->GetSlot() / 2;
 			int ItemCount = PlayerItems[PlayerIndex].size();
-			Packet.WriteChar(ItemCount);
+			Packet.Write<char>(ItemCount);
 
 			// Write items
 			for(int j = 0; j < ItemCount; j++) {
 				int ItemID = PlayerItems[PlayerIndex][j];
-				Packet.WriteInt(ItemID);
+				Packet.Write<int32_t>(ItemID);
 				Players[i]->AddItem(Stats.GetItem(ItemID), 1, -1);
 			}
 
@@ -395,7 +399,7 @@ void _ServerBattle::CheckEnd() {
 }
 
 // Send a packet to all players
-void _ServerBattle::SendPacketToPlayers(_Packet *TPacket) {
+void _ServerBattle::SendPacketToPlayers(_Buffer *TPacket) {
 
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
@@ -422,9 +426,10 @@ void _ServerBattle::SendSkillToPlayers(_Player *TPlayer) {
 		SkillID = Skill->GetID();
 
 	// Build packet
-	_Packet Packet(_Network::BATTLE_COMMAND);
-	Packet.WriteChar(TPlayer->GetSlot());
-	Packet.WriteChar(SkillID);
+	_Buffer Packet;
+	Packet.Write<char>(_Network::BATTLE_COMMAND);
+	Packet.Write<char>(TPlayer->GetSlot());
+	Packet.Write<char>(SkillID);
 
 	// Send packet to all players
 	for(size_t i = 0; i < SidePlayers.size(); i++) {

@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <network/network.h>
 #include <ITexture.h>
 #include <vector>
 #include <list>
@@ -42,7 +43,7 @@ struct _IndexedEvent {
 // Forward Declarations
 class _Object;
 class _Player;
-class _Packet;
+class _Buffer;
 
 // Classes
 class _Map {
@@ -90,7 +91,7 @@ class _Map {
 		void GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers);
 		_Player *GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState);
 
-		void SendPacketToPlayers(_Packet *TPacket, _Player *ExceptionPlayer=nullptr);
+		void SendPacketToPlayers(_Buffer *TPacket, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
 
 		// Events
 		_IndexedEvent *GetIndexedEvent(int TEventType, int TEventData);

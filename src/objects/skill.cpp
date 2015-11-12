@@ -21,7 +21,7 @@
 #include <globals.h>
 #include <instances/battle.h>
 #include <network/network.h>
-#include <network/packetstream.h>
+#include <buffer.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
 
@@ -128,8 +128,9 @@ void _Skill::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult
 					ManaRestore += ManaChange;
 
 					// Write packet
-					_Packet Packet(_Network::INVENTORY_USE);
-					Packet.WriteChar(Slot);
+					_Buffer Packet;
+					Packet.Write<char>(_Network::INVENTORY_USE);
+					Packet.Write<char>(Slot);
 					ServerNetwork->SendPacketToPeer(&Packet, Player->GetPeer());
 				}
 			}

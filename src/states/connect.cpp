@@ -21,8 +21,8 @@
 #include <globals.h>
 #include <config.h>
 #include <graphics.h>
+#include <buffer.h>
 #include <network/network.h>
-#include <network/packetstream.h>
 #include <states/mainmenu.h>
 #include <states/account.h>
 #include <string>
@@ -82,8 +82,8 @@ void _ConnectState::HandleDisconnect(ENetEvent *TEvent) {
 
 // Handles a server packet
 void _ConnectState::HandlePacket(ENetEvent *TEvent) {
-	_Packet Packet(TEvent->packet);
-	switch(Packet.ReadChar()) {
+	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	switch(Packet.Read<char>()) {
 		case _Network::VERSION: {
 			std::string Version(Packet.ReadString());
 			if(Version != GAME_VERSION) {

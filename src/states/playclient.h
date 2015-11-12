@@ -24,7 +24,7 @@
 class _Database;
 class _ObjectManager;
 class _Instance;
-class _Packet;
+class _Buffer;
 class _Player;
 class _Map;
 class _ClientBattle;
@@ -71,26 +71,26 @@ class _PlayClientState : public _State {
 
 	private:
 
-		void HandleYourCharacterInfo(_Packet *TPacket);
-		void HandleChangeMaps(_Packet *TPacket);
-		void HandleCreateObject(_Packet *TPacket);
-		void HandleDeleteObject(_Packet *TPacket);
-		void HandleObjectUpdates(_Packet *TPacket);
-		void HandleStartBattle(_Packet *TPacket);
-		void HandleBattleTurnResults(_Packet *TPacket);
-		void HandleBattleEnd(_Packet *TPacket);
-		void HandleBattleCommand(_Packet *TPacket);
-		void HandleHUD(_Packet *TPacket);
-		void HandlePlayerPosition(_Packet *TPacket);
-		void HandleEventStart(_Packet *TPacket);
-		void HandleInventoryUse(_Packet *TPacket);
-		void HandleChatMessage(_Packet *TPacket);
-		void HandleTradeRequest(_Packet *TPacket);
-		void HandleTradeCancel(_Packet *TPacket);
-		void HandleTradeItem(_Packet *TPacket);
-		void HandleTradeGold(_Packet *TPacket);
-		void HandleTradeAccept(_Packet *TPacket);
-		void HandleTradeExchange(_Packet *TPacket);
+		void HandleYourCharacterInfo(_Buffer *TPacket);
+		void HandleChangeMaps(_Buffer *TPacket);
+		void HandleCreateObject(_Buffer *TPacket);
+		void HandleDeleteObject(_Buffer *TPacket);
+		void HandleObjectUpdates(_Buffer *TPacket);
+		void HandleStartBattle(_Buffer *TPacket);
+		void HandleBattleTurnResults(_Buffer *TPacket);
+		void HandleBattleEnd(_Buffer *TPacket);
+		void HandleBattleCommand(_Buffer *TPacket);
+		void HandleHUD(_Buffer *TPacket);
+		void HandlePlayerPosition(_Buffer *TPacket);
+		void HandleEventStart(_Buffer *TPacket);
+		void HandleInventoryUse(_Buffer *TPacket);
+		void HandleChatMessage(_Buffer *TPacket);
+		void HandleTradeRequest(_Buffer *TPacket);
+		void HandleTradeCancel(_Buffer *TPacket);
+		void HandleTradeItem(_Buffer *TPacket);
+		void HandleTradeGold(_Buffer *TPacket);
+		void HandleTradeAccept(_Buffer *TPacket);
+		void HandleTradeExchange(_Buffer *TPacket);
 
 		void SendMoveCommand(int TDirection);
 		void SendAttackPlayer();
