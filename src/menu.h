@@ -18,8 +18,8 @@
 #pragma once
 
 // Libraries
-//#include <save.h>
 #include <string>
+#include <enet/enet.h>
 
 // Forward Declarations
 class _Element;
@@ -38,7 +38,7 @@ class _Menu {
 		enum StateType {
 			STATE_NONE,
 			STATE_TITLE,
-			STATE_SINGLEPLAYER,
+			STATE_CHARACTERS,
 			STATE_OPTIONS,
 			STATE_INGAME,
 		};
@@ -48,34 +48,23 @@ class _Menu {
 			OPTION_ACCEPT_INPUT,
 		};
 
-		enum SinglePlayerStateType {
-			SINGLEPLAYER_NONE,
-			SINGLEPLAYER_NEW_PLAYER,
+		enum CharactersStateType {
+			CHARACTERS_NONE,
+			CHARACTERS_CREATE,
 		};
 
 		enum KeyLabelType {
-			LABEL_UP,
-			LABEL_DOWN,
-			LABEL_LEFT,
-			LABEL_RIGHT,
-			LABEL_USE,
-			LABEL_INVENTORY,
-			LABEL_FIRE,
-			LABEL_AIM,
-			LABEL_RELOAD,
-			LABEL_SWITCH,
-			LABEL_MEDKIT,
-			LABEL_COUNT
+			LABEL_COUNT=1,
 		};
 
 		enum SlotType {
-			SAVE_COUNT=10,
+			SAVE_COUNT=6,
 		};
 
 		_Menu();
 
 		void InitTitle();
-		void InitSinglePlayer();
+		void InitCharacters();
 		void InitOptions();
 		void InitInGame();
 		void InitPlay();
@@ -88,9 +77,16 @@ class _Menu {
 		void Update(double FrameTime);
 		void Render();
 
+		// Network
+		void HandleConnect(ENetEvent *TEvent);
+		void HandleDisconnect(ENetEvent *TEvent);
+		void HandlePacket(ENetEvent *TEvent);
+
 		const StateType &GetState() const { return State; }
 
 	private:
+
+		void Connect(const std::string &Address, bool Fake=false);
 
 		void InitNewPlayer();
 		void LaunchGame();
@@ -120,7 +116,7 @@ class _Menu {
 		int CurrentAction;
 
 		// Singleplayer
-		SinglePlayerStateType SinglePlayerState;
+		CharactersStateType CharactersState;
 		int SelectedSlot;
 		int SelectedColor;
 };

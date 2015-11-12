@@ -48,7 +48,7 @@ _Menu::_Menu() {
 	CurrentLayout = nullptr;
 	Background = nullptr;
 	OptionsState = OPTION_NONE;
-	SinglePlayerState = SINGLEPLAYER_NONE;
+	CharactersState = CHARACTERS_NONE;
 	PreviousClickTimer = 0.0;
 }
 
@@ -63,22 +63,10 @@ void _Menu::InitTitle() {
 }
 
 // Init single player
-void _Menu::InitSinglePlayer() {
-	CurrentLayout = Assets.Elements["element_menu_singleplayer"];
-	Framework.StartLocalServer();
-	ClientNetwork->Connect("");
-
-	// Send fake account information
-	_Buffer Packet;
-	Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
-	Packet.WriteBit(0);
-	Packet.WriteString("singleplayer");
-	Packet.WriteString("singleplayer");
-	ClientNetwork->SendPacketToHost(&Packet);
-	//Framework.ChangeState(&CharactersState);
-
-	SinglePlayerState = SINGLEPLAYER_NONE;
-	State = STATE_SINGLEPLAYER;
+void _Menu::InitCharacters() {
+	CurrentLayout = Assets.Elements["element_menu_characters"];
+	CharactersState = CHARACTERS_NONE;
+	State = STATE_CHARACTERS;
 }
 
 // Options
@@ -134,7 +122,7 @@ void _Menu::InitNewPlayer() {
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
 	*/
-	SinglePlayerState = SINGLEPLAYER_NEW_PLAYER;
+	CharactersState = CHARACTERS_CREATE;
 }
 
 // Play the game
@@ -164,9 +152,9 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
 				Framework.SetDone(true);
 		} break;
-		case STATE_SINGLEPLAYER: {
+		case STATE_CHARACTERS: {
 
-			if(SinglePlayerState == SINGLEPLAYER_NONE) {
+			if(CharactersState == CHARACTERS_NONE) {
 				if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
 					InitTitle();
 			}
@@ -247,7 +235,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 		switch(State) {
 			case STATE_TITLE: {
 				if(Clicked->Identifier == "button_title_singleplayer") {
-					InitSinglePlayer();
+					Connect("", true);
 				}
 				else if(Clicked->Identifier == "button_title_multiplayer") {
 				}
@@ -257,8 +245,8 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					Framework.SetDone(true);
 				}
 			} break;
-			case STATE_SINGLEPLAYER: {
-				if(SinglePlayerState == SINGLEPLAYER_NONE) {
+			case STATE_CHARACTERS: {
+				if(CharactersState == CHARACTERS_NONE) {
 
 					if(Clicked->Identifier == "button_singleplayer_delete") {
 						if(SelectedSlot != -1) {
@@ -367,7 +355,7 @@ void _Menu::Update(double FrameTime) {
 	switch(State) {
 		case STATE_TITLE: {
 		} break;
-		case STATE_SINGLEPLAYER: {
+		case STATE_CHARACTERS: {
 		} break;
 		case STATE_OPTIONS: {
 		} break;
@@ -398,10 +386,10 @@ void _Menu::Render() {
 				Assets.Elements["element_menu_popup"]->Render();
 			}
 		} break;
-		case STATE_SINGLEPLAYER: {
-			Assets.Elements["element_menu_singleplayer"]->Render();
+		case STATE_CHARACTERS: {
+			Assets.Elements["element_menu_characters"]->Render();
 
-			if(SinglePlayerState == SINGLEPLAYER_NEW_PLAYER) {
+			if(CharactersState == CHARACTERS_CREATE) {
 				//Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
 				if(CurrentLayout)
 					CurrentLayout->Render();
@@ -414,6 +402,87 @@ void _Menu::Render() {
 		} break;
 		default:
 		break;
+	}
+}
+
+void _Menu::HandleConnect(ENetEvent *TEvent) {
+}
+
+void _Menu::HandleDisconnect(ENetEvent *TEvent) {
+
+}
+
+// Handle packet
+void _Menu::HandlePacket(ENetEvent *TEvent) {
+	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	switch(Packet.Read<char>()) {
+		case _Network::VERSION: {
+			std::string Version(Packet.ReadString());
+			Framework.Log << "_Network::VERSION=" << Version << std::endl;
+			if(Version != GAME_VERSION) {
+				//Message = "Game version differs from server's";
+				//ChangeState(STATE_MAIN);
+			}
+		}
+		break;
+		case _Network::ACCOUNT_SUCCESS: {
+			Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
+		}
+		case _Network::CHARACTERS_LIST: {
+			Framework.Log << "_Network::CHARACTERS_LIST" << std::endl;
+
+			// Get count
+			int CharacterCount = Packet.Read<char>();
+			//if(CharacterCount < SAVE_COUNT)
+			//	ButtonCreate->setEnabled(true);
+
+			// Get characters
+			_Texture *PortraitImage;
+			int i;
+			for(i = 0; i < CharacterCount; i++) {
+				//Slots[i].Used = true;
+				//Slots[i].Name = TPacket->ReadString();
+				//PortraitImage = Stats.GetPortrait(TPacket->Read<int32_t>())->Image;
+				//Slots[i].Button->setImage(PortraitImage);
+				//Slots[i].Button->setPressedImage(PortraitImage);
+				//Slots[i].Level = Stats.FindLevel(TPacket->Read<int32_t>())->Level;
+			}
+			for(; i < SAVE_COUNT; i++) {
+				//Slots[i].Used = false;
+				//PortraitImage = Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT);
+				//Slots[i].Button->setImage(PortraitImage);
+				//Slots[i].Button->setPressedImage(PortraitImage);
+			}
+
+			InitCharacters();
+		}
+		break;
+	}
+}
+
+// Connect to a server
+void _Menu::Connect(const std::string &Address, bool Fake) {
+
+	// Connect to the fake singleplayer network
+	if(Fake) {
+		Framework.StartLocalServer();
+		ClientNetwork->Connect("");
+
+		// Send fake account information
+		{
+			_Buffer Packet;
+			Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
+			Packet.WriteBit(0);
+			Packet.WriteString("singleplayer");
+			Packet.WriteString("singleplayer");
+			ClientNetwork->SendPacketToHost(&Packet);
+		}
+
+		{
+			_Buffer Packet;
+			Packet.Write<char>(_Network::CHARACTERS_REQUEST);
+			ClientNetwork->SendPacketToHost(&Packet);
+		}
 	}
 }
 

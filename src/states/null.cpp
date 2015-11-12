@@ -58,3 +58,18 @@ void _NullState::Update(double FrameTime) {
 void _NullState::Render(double BlendFactor) {
 	Menu.Render();
 }
+
+// Connect
+void _NullState::HandleConnect(ENetEvent *TEvent) {
+	Menu.HandleConnect(TEvent);
+}
+
+// Disconnect
+void _NullState::HandleDisconnect(ENetEvent *TEvent) {
+	Menu.HandleDisconnect(TEvent);
+}
+
+// Packet
+void _NullState::HandlePacket(ENetEvent *TEvent) {
+	Menu.HandlePacket(TEvent);
+}

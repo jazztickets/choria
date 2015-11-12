@@ -18,13 +18,9 @@
 #pragma once
 
 // Libraries
-#include <IrrlichtDevice.h>
+#include <IGUIEnvironment.h>
 
-extern irr::IrrlichtDevice *irrDevice;
-extern irr::video::IVideoDriver *irrDriver;
-extern irr::scene::ISceneManager *irrScene;
 extern irr::gui::IGUIEnvironment *irrGUI;
-extern irr::io::IFileSystem *irrFile;
 
 class _Network;
 extern _Network *ClientNetwork;

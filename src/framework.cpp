@@ -73,6 +73,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 	// Get fullscreen size
 	Config.SetDefaultFullscreenSize();
+	Log.Open((Config.ConfigPath + "client.log").c_str());
 
 	// Initialize SDL
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -142,7 +143,6 @@ void _Framework::Close() {
 	delete ClientSingleNetwork;
 	delete ServerSingleNetwork;
 	Stats.Close();
-	OldInput.Close();
 	Graphics.Close();
 	Config.Close();
 
@@ -160,52 +160,6 @@ void _Framework::ChangeState(_State *TState) {
 
 // Updates the current state and manages the state stack
 void _Framework::Update() {
-/*
-
-	// Update the current state
-	switch(FrameworkState) {
-		case INIT:
-			Graphics.Clear();
-			Input.ResetInputState();
-			if(!State->Init()) {
-				Done = true;
-				return;
-			}
-			State->Update(FrameTime);
-
-			// Draw
-			Graphics.BeginFrame();
-			State->Draw();
-			Graphics.EndFrame();
-
-			FrameworkState = FADEIN;
-		break;
-		case FADEIN:
-			FrameworkState = UPDATE;
-		break;
-		case UPDATE:
-			if(LocalServerRunning)
-				PlayServerState.Update(FrameTime);
-			else
-				MultiNetwork->Update();
-			State->Update(FrameTime);
-
-			// Draw
-			Graphics.BeginFrame();
-			State->Draw();
-			Graphics.EndFrame();
-		break;
-		case FADEOUT:
-			FrameworkState = CLOSE;
-		break;
-		case CLOSE:
-			State->Close();
-			State = RequestedState;
-			FrameworkState = INIT;
-		break;
-	}
-*/
-
 	double FrameTime = (SDL_GetPerformanceCounter() - Timer) / (double)SDL_GetPerformanceFrequency();
 	Timer = SDL_GetPerformanceCounter();
 
@@ -272,6 +226,10 @@ void _Framework::Update() {
 				Done = true;
 		} break;
 		case UPDATE: {
+			if(LocalServerRunning)
+				PlayServerState.Update(FrameTime);
+			else
+				MultiNetwork->Update();
 			State->Update(FrameTime);
 			State->Render(0.0);
 		} break;

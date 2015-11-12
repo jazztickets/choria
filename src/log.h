@@ -15,9 +15,55 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <globals.h>
+#pragma once
 
-irr::gui::IGUIEnvironment *irrGUI;
+// Libraries
+#include <fstream>
+#include <iostream>
 
-_Network *ClientNetwork;
-_Network *ServerNetwork;
+// Log file class
+class _LogFile {
+
+	public:
+
+		_LogFile() : ToStdOut(true) { }
+		~_LogFile() {
+			File.close();
+			File.clear();
+		}
+
+		// Open log file
+		void Open(const char *Filename) {
+			File.open(Filename);
+		}
+
+		void SetToStdOut(bool ToStdOut) { this->ToStdOut = ToStdOut; }
+
+		// Handles most types
+		template <typename Type>
+		_LogFile &operator<<(const Type &Value) {
+			if(ToStdOut)
+				std::clog << Value;
+
+			if(File.is_open())
+				File << Value;
+
+			return *this;
+		}
+
+		// Handles endl
+		_LogFile &operator<<(std::ostream &(*Value)(std::ostream &)) {
+			if(ToStdOut)
+				std::clog << Value;
+
+			if(File.is_open())
+				File << Value;
+
+			return *this;
+		}
+
+	private:
+
+		std::ofstream File;
+		bool ToStdOut;
+};

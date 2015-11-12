@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <log.h>
 #include <cstdint>
 
 // Forward Declarations
@@ -56,6 +57,8 @@ class _Framework {
 		bool IsLocalServerRunning() const { return LocalServerRunning; }
 		void StartLocalServer();
 		void StopLocalServer();
+
+		_LogFile Log;
 
 	private:
 

@@ -91,15 +91,12 @@ class _OldInput : public irr::IEventReceiver {
 		void Init();
 		void Close();
 
-		bool OnEvent(const irr::SEvent &TEvent);
+		bool OnEvent(const irr::SEvent &TEvent) { }
 
-		void ResetInputState();
 		bool GetKeyState(irr::EKEY_CODE TKey) const { return Keys[TKey]; }
 		bool GetMouseState(int TButton) const { return MouseButtons[TButton]; }
 
 		const irr::core::position2di &GetMousePosition() const { return MousePosition; }
-
-		const char *GetKeyName(irr::EKEY_CODE TKey);
 
 		bool IsShiftDown() { return GetKeyState(irr::KEY_SHIFT) || GetKeyState(irr::KEY_LSHIFT) || GetKeyState(irr::KEY_RSHIFT); }
 		bool IsControlDown() { return GetKeyState(irr::KEY_CONTROL) || GetKeyState(irr::KEY_LCONTROL) || GetKeyState(irr::KEY_RCONTROL); }

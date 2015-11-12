@@ -38,6 +38,11 @@ class _NullState : public _State {
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
+		// Network
+		void HandleConnect(ENetEvent *TEvent);
+		void HandleDisconnect(ENetEvent *TEvent);
+		void HandlePacket(ENetEvent *TEvent);
+
 	protected:
 
 };
