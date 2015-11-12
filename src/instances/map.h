@@ -28,8 +28,9 @@
 struct _Tile {
 	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
 	irr::video::ITexture *Texture;
-	int Zone;
-	int EventType, EventData;
+	int32_t Zone;
+	int32_t EventType;
+	int32_t EventData;
 	bool Wall;
 	bool PVP;
 };
@@ -132,7 +133,7 @@ class _Map {
 
 		// Map data
 		_Tile **Tiles;
-		int Width, Height;
+		int32_t Width, Height;
 
 		// Textures
 		irr::video::ITexture *NoZoneTexture, *DefaultNoZoneTexture;

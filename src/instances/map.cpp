@@ -19,13 +19,14 @@
 #include <globals.h>
 #include <graphics.h>
 #include <constants.h>
-#include <filestream.h>
 #include <stats.h>
 #include <network/network.h>
 #include <buffer.h>
 #include <states/playserver.h>
 #include <objects/player.h>
 #include <ITexture.h>
+#include <fstream>
+#include <limits>
 
 using namespace irr;
 
@@ -239,9 +240,8 @@ void _Map::ScreenToGrid(const core::position2di &TScreenPosition, core::position
 int _Map::SaveMap() {
 
 	// Open file
-	_FileStream File;
-	int Result = File.OpenForWrite(Filename.c_str());
-	if(!Result) {
+	std::ofstream File(Filename.c_str(), std::ios::binary);
+	if(!File) {
 		printf("SaveMap: unable to open file for writing\n");
 		return 0;
 	}
@@ -251,15 +251,18 @@ int _Map::SaveMap() {
 	GetTextureListFromMap(TextureList);
 
 	// Write header
-	File.WriteInt(MAP_VERSION);
-	File.WriteInt(Width);
-	File.WriteInt(Height);
+	File.write((char *)&MAP_VERSION, sizeof(MAP_VERSION));
+	File.write((char *)&Width, sizeof(Width));
+	File.write((char *)&Height, sizeof(Height));
 
-   // Write texture list
-	File.WriteInt(TextureList.size());
-	for(size_t i = 0; i < TextureList.size(); i++) {
-		if(TextureList[i] == nullptr)
-			File.WriteString("none");
+	// Write texture list
+	int32_t TextureCount = (int32_t)(TextureList.size());
+	File.write((char *)&TextureCount, sizeof(TextureCount));
+	for(int32_t i = 0; i < TextureCount; i++) {
+		if(TextureList[i] == nullptr) {
+			File.write("none", 4);
+			File.put(0);
+		}
 		else {
 
 			// Strip path from texture name
@@ -267,13 +270,16 @@ int _Map::SaveMap() {
 			int SlashIndex = TexturePath.findLastChar("/\\", 2);
 			TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
 
-			File.WriteString(TexturePath.c_str());
+			File.write(TexturePath.c_str(), TexturePath.size());
+			File.put(0);
 		}
 	}
 
 	// Write no-zone texture
-	if(NoZoneTexture == nullptr)
-		File.WriteString("none");
+	if(NoZoneTexture == nullptr) {
+		File.write("none", 4);
+		File.put(0);
+	}
 	else {
 
 		// Strip path from texture name
@@ -281,7 +287,8 @@ int _Map::SaveMap() {
 		int SlashIndex = TexturePath.findLastChar("/\\", 2);
 		TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
 
-		File.WriteString(TexturePath.c_str());
+		File.write(TexturePath.c_str(), TexturePath.size());
+		File.put(0);
 	}
 
 	// Write map data
@@ -291,17 +298,18 @@ int _Map::SaveMap() {
 			Tile = &Tiles[i][j];
 
 			// Write texture
-			File.WriteInt(GetTextureIndex(TextureList, Tile->Texture));
-			File.WriteInt(Tile->Zone);
-			File.WriteInt(Tile->EventType);
-			File.WriteInt(Tile->EventData);
-			File.WriteChar(Tile->Wall);
-			File.WriteChar(Tile->PVP);
+			int32_t TextureIndex = GetTextureIndex(TextureList, Tile->Texture);
+			File.write((char *)&TextureIndex, sizeof(TextureIndex));
+			File.write((char *)&Tile->Zone, sizeof(Tile->Zone));
+			File.write((char *)&Tile->EventType, sizeof(Tile->EventType));
+			File.write((char *)&Tile->EventData, sizeof(Tile->EventData));
+			File.write((char *)&Tile->Wall, sizeof(Tile->Wall));
+			File.write((char *)&Tile->PVP, sizeof(Tile->PVP));
 		}
 	}
 
 	// Close file
-	File.Close();
+	File.close();
 
 	return 1;
 }
@@ -310,17 +318,17 @@ int _Map::SaveMap() {
 int _Map::LoadMap() {
 
 	// Open file
-	_FileStream File;
-	int Result = File.OpenForRead(Filename.c_str());
-	if(!Result) {
+	std::ifstream File(Filename.c_str(), std::ios::binary);
+	if(!File) {
 		printf("LoadMap: unable to open file for reading: %s\n", Filename.c_str());
 		return 0;
 	}
 
 	// Read header
-	int MapVersion = File.ReadInt();
-	Width = File.ReadInt();
-	Height = File.ReadInt();
+	int32_t MapVersion;
+	File.read((char *)&MapVersion, sizeof(MapVersion));
+	File.read((char *)&Width, sizeof(Width));
+	File.read((char *)&Height, sizeof(Height));
 	if(Width < 5 || Width > 255 || Height < 5 || Height > 255 || MapVersion != MAP_VERSION) {
 		printf("LoadMap: bad size header\n");
 		return 0;
@@ -331,14 +339,16 @@ int _Map::LoadMap() {
 	AllocateMap();
 
 	// Get count of textures
-	int TextureCount = File.ReadInt();
+	int32_t TextureCount;
+	File.read((char *)&TextureCount, sizeof(TextureCount));
 	Textures.clear();
 
 	// Read textures from map
 	core::stringc TextureFile;
 	char String[256];
-	for(int i = 0; i < TextureCount; i++) {
-		File.ReadString(String);
+	for(int32_t i = 0; i < TextureCount; i++) {
+		File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
+		File.get();
 
 		TextureFile = String;
 		if(TextureFile == "none")
@@ -348,7 +358,8 @@ int _Map::LoadMap() {
 	}
 
 	// Get no zone texture
-	File.ReadString(String);
+	File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
+	File.get();
 	TextureFile = String;
 	if(TextureFile == "none")
 		NoZoneTexture = nullptr;
@@ -361,12 +372,15 @@ int _Map::LoadMap() {
 		for(int j = 0; j < Height; j++) {
 			Tile = &Tiles[i][j];
 
-			Tile->Texture = Textures[File.ReadInt()];
-			Tile->Zone = File.ReadInt();
-			Tile->EventType = File.ReadInt();
-			Tile->EventData = File.ReadInt();
-			Tile->Wall = !!File.ReadChar();
-			Tile->PVP = !!File.ReadChar();
+			int32_t TextureIndex;
+			File.read((char *)&TextureIndex, sizeof(int32_t));
+			Tile->Texture = Textures[TextureIndex];
+
+			File.read((char *)&Tile->Zone, sizeof(Tile->Zone));
+			File.read((char *)&Tile->EventType, sizeof(Tile->EventType));
+			File.read((char *)&Tile->EventData, sizeof(Tile->EventData));
+			File.read((char *)&Tile->Wall, sizeof(Tile->Wall));
+			File.read((char *)&Tile->PVP, sizeof(Tile->PVP));
 
 			// Save off events that need to be indexed
 			if(Stats.GetEvent(Tile->EventType)->Indexed) {
@@ -376,7 +390,7 @@ int _Map::LoadMap() {
 	}
 
 	// Close file
-	File.Close();
+	File.close();
 
 	return 1;
 }

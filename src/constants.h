@@ -26,7 +26,7 @@ const double GAME_DOUBLECLICKTIME = 0.5;
 
 const double NETWORK_UPDATEPERIOD = 0.2;
 
-const int MAP_VERSION = 1;
+const int32_t MAP_VERSION = 1;
 const int MAP_TILE_WIDTH = 32;
 const int MAP_TILE_HEIGHT = 32;
 
