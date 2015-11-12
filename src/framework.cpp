@@ -29,7 +29,6 @@
 #include <actions.h>
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
-#include <states/mainmenu.h>
 #include <states/mapeditor.h>
 #include <states/playserver.h>
 #include <states/connect.h>

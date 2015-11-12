@@ -23,7 +23,6 @@
 #include <stats.h>
 #include <config.h>
 #include <constants.h>
-#include <states/mainmenu.h>
 #include <IFileSystem.h>
 #include <IGUIEnvironment.h>
 #include <IGUISpinBox.h>
@@ -129,7 +128,7 @@ bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 					//Game.SetDone(true);
-					Framework.ChangeState(&MainMenuState);
+					//Framework.ChangeState(&MainMenuState);
 				break;
 				case KEY_KEY_N:
 					InitNewMap();

@@ -23,7 +23,6 @@
 #include <graphics.h>
 #include <buffer.h>
 #include <network/network.h>
-#include <states/mainmenu.h>
 #include <states/account.h>
 #include <string>
 #include <IGUIEnvironment.h>
@@ -135,7 +134,7 @@ bool _ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Framework.ChangeState(&MainMenuState);
+					//Framework.ChangeState(&MainMenuState);
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_CONNECT);
@@ -171,7 +170,7 @@ void _ConnectState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement 
 							ChangeState(STATE_CONNECT);
 						break;
 						case ELEMENT_CANCEL:
-							Framework.ChangeState(&MainMenuState);
+							//Framework.ChangeState(&MainMenuState);
 						break;
 						default:
 						break;

@@ -30,7 +30,6 @@
 #include <instances/clientbattle.h>
 #include <objects/player.h>
 #include <objects/monster.h>
-#include <states/mainmenu.h>
 #include <IGUIEnvironment.h>
 
 _PlayClientState PlayClientState;
@@ -83,7 +82,7 @@ void _PlayClientState::HandleConnect(ENetEvent *TEvent) {
 // Handles a disconnection from the server
 void _PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Framework.ChangeState(&MainMenuState);
+	//Framework.ChangeState(&MainMenuState);
 }
 
 // Handles a server packet

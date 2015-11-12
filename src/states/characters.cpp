@@ -23,7 +23,6 @@
 #include <constants.h>
 #include <network/network.h>
 #include <buffer.h>
-#include <states/mainmenu.h>
 #include <states/connect.h>
 #include <states/account.h>
 #include <states/createcharacter.h>
@@ -278,7 +277,7 @@ void _CharactersState::Delete() {
 void _CharactersState::Logout() {
 	if(Framework.IsLocalServerRunning()) {
 		ClientNetwork->Disconnect();
-		Framework.ChangeState(&MainMenuState);
+		//Framework.ChangeState(&MainMenuState);
 	}
 	else
 		Framework.ChangeState(&AccountState);
