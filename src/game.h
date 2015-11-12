@@ -24,6 +24,7 @@
 class _State;
 class _SingleNetwork;
 class _MultiNetwork;
+class _FrameLimit;
 
 class _Game {
 
@@ -68,7 +69,8 @@ class _Game {
 		bool Done, MouseWasLocked, MouseWasShown;
 
 		// Time
-		double TimeStamp, LastFrameTime;
+		_FrameLimit *FrameLimit;
+		uint64_t Timer;
 
 		// Networking
 		bool LocalServerRunning;

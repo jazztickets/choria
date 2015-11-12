@@ -32,6 +32,8 @@
 #include <states/playserver.h>
 #include <states/connect.h>
 #include <states/account.h>
+#include <framelimit.h>
+#include <SDL.h>
 
 _Game Game;
 
@@ -47,7 +49,7 @@ using namespace irr;
 
 // Processes parameters and initializes the game
 int _Game::Init(int TArgumentCount, char **TArguments) {
-
+	FrameLimit = nullptr;
 	WindowActive = true;
 	LocalServerRunning = false;
 	State = &MainMenuState;
@@ -84,6 +86,10 @@ int _Game::Init(int TArgumentCount, char **TArguments) {
 		return 0;
 	Config.LoadSettings();
 
+	// Initialize SDL
+	if(SDL_Init(SDL_INIT_VIDEO) < 0)
+		throw std::runtime_error("Failed to initialize SDL");
+
 	// Initialize graphics system
 	if(!Graphics.Init(800, 600, false, DriverType, &Input))
 		return 0;
@@ -115,13 +121,13 @@ int _Game::Init(int TArgumentCount, char **TArguments) {
 	else
 		ClientNetwork = MultiNetwork;
 
-	// Start the state timer
-	ResetTimer();
-
 	// Set the first state
 	NewState = nullptr;
 	ManagerState = STATE_INIT;
 	Done = false;
+
+	Timer = SDL_GetPerformanceCounter();
+	FrameLimit = new _FrameLimit(120.0, false);
 
 	return 1;
 }
@@ -149,6 +155,10 @@ void _Game::Close() {
 	Input.Close();
 	Graphics.Close();
 	Config.Close();
+
+	delete FrameLimit;
+	if(SDL_WasInit(SDL_INIT_VIDEO))
+		SDL_Quit();
 }
 
 // Requests a state change
@@ -165,15 +175,10 @@ void _Game::Update() {
 	if(!irrDevice->run())
 		Done = true;
 
-	// Get time difference from last frame
-	LastFrameTime = (irrTimer->getTime() - TimeStamp) * 0.001f;
-	TimeStamp = irrTimer->getTime();
+	double FrameTime = (SDL_GetPerformanceCounter() - Timer) / (double)SDL_GetPerformanceFrequency();
+	Timer = SDL_GetPerformanceCounter();
 
-	// Limit frame rate
-	float ExtraTime = GAME_SLEEPRATE - LastFrameTime;
-	if(ExtraTime > 0.0f) {
-		irrDevice->sleep((uint32_t)(ExtraTime * 1000));
-	}
+	SDL_PumpEvents();
 
 	// Check for window activity
 	PreviousWindowActive = WindowActive;
@@ -188,13 +193,12 @@ void _Game::Update() {
 	switch(ManagerState) {
 		case STATE_INIT:
 			Graphics.Clear();
-			ResetTimer();
 			Input.ResetInputState();
 			if(!State->Init()) {
 				Done = true;
 				return;
 			}
-			State->Update(LastFrameTime);
+			State->Update(FrameTime);
 
 			// Draw
 			Graphics.BeginFrame();
@@ -208,10 +212,10 @@ void _Game::Update() {
 		break;
 		case STATE_UPDATE:
 			if(LocalServerRunning)
-				PlayServerState.Update(LastFrameTime);
+				PlayServerState.Update(FrameTime);
 			else
 				MultiNetwork->Update();
-			State->Update(LastFrameTime);
+			State->Update(FrameTime);
 
 			// Draw
 			Graphics.BeginFrame();
@@ -228,13 +232,8 @@ void _Game::Update() {
 		break;
 	}
 
-}
-
-// Resets the game timer
-void _Game::ResetTimer() {
-
-	irrTimer->setTime(0);
-	TimeStamp = irrTimer->getTime();
+	if(FrameLimit)
+		FrameLimit->Update();
 }
 
 // Starts the local server

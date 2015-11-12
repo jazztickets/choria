@@ -42,6 +42,11 @@ if(NOT IRRLICHT_FOUND)
 	message(SEND_ERROR "Could not find Irrlicht!")
 endif()
 
+find_package(SDL2 REQUIRED)
+if(NOT SDL2_FOUND)
+	message(SEND_ERROR "Could not find SDL2!")
+endif()
+
 find_package(SQLite REQUIRED)
 if(NOT SQLITE_FOUND)
 	message(SEND_ERROR "Could not find SQLite3!")
@@ -54,16 +59,18 @@ endif()
 
 # set include directories
 include_directories("src")
+include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${IRRLICHT_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
 
 # add source files
-file(GLOB SRC_MAIN src/*.cpp src/*.h)
-file(GLOB SRC_ENET src/enet/*.c src/enet/*.h)
-file(GLOB SRC_INSTANCES src/instances/*.cpp src/instances/*.h)
-file(GLOB SRC_NETWORK src/network/*.cpp src/network/*.h)
-file(GLOB SRC_OBJECTS src/objects/*.cpp src/objects/*.h)
-file(GLOB SRC_STATES src/states/*.cpp src/states/*.h)
+file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
+file(GLOB SRC_ENET "src/enet/*.c" "src/enet/*.h")
+file(GLOB SRC_INSTANCES "src/instances/*.cpp" "src/instances/*.h")
+file(GLOB SRC_NETWORK "src/network/*.cpp" "src/network/*.h")
+file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
+file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
+file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
 
 file(GLOB SRC_ALL
 	${SRC_MAIN}
@@ -72,6 +79,7 @@ file(GLOB SRC_ALL
 	${SRC_INSTANCES}
 	${SRC_NETWORK}
 	${SRC_OBJECTS}
+	${SRC_PNGLITE}
 )
 
 # add virtual folders
@@ -81,6 +89,7 @@ source_group(instances FILES ${SRC_INSTANCES})
 source_group(network FILES ${SRC_NETWORK})
 source_group(objects FILES ${SRC_OBJECTS})
 source_group(enet FILES ${SRC_ENET})
+source_group(pnglite FILES ${SRC_PNGLITE})
 
 # build exe
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
@@ -88,6 +97,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
 # link libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
 	${IRRLICHT_LIBRARIES}
+	${SDL2_LIBRARY}
 	${CMAKE_THREAD_LIBS_INIT}
 	${SQLITE_LIBRARIES}
 	${EXTRA_LIBS}
