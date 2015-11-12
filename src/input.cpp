@@ -37,7 +37,7 @@ int _Input::Close() {
 
 // Handle events
 bool _Input::OnEvent(const irr::SEvent &TEvent) {
-	if(Framework.GetManagerState() != _Framework::STATE_UPDATE)
+	if(Framework.GetManagerState() != _Framework::UPDATE)
 		return false;
 
 	bool Processed = false;

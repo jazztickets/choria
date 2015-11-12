@@ -34,21 +34,14 @@
 #include <states/account.h>
 #include <framelimit.h>
 #include <SDL.h>
+#include <string>
 
 _Framework Framework;
 
 using namespace irr;
 
-#ifdef _WIN32
-	#define WIN32_LEAN_AND_MEAN
-	#include <windows.h>
-	#include <winbase.h>
-#else
-	#include <unistd.h>
-#endif
-
 // Processes parameters and initializes the game
-int _Framework::Init(int TArgumentCount, char **TArguments) {
+void _Framework::Init(int ArgumentCount, char **Arguments) {
 	FrameLimit = nullptr;
 	WindowActive = true;
 	LocalServerRunning = false;
@@ -58,11 +51,11 @@ int _Framework::Init(int TArgumentCount, char **TArguments) {
 	video::E_DRIVER_TYPE DriverType = video::EDT_OPENGL;
 
 	// Process arguments
-	core::stringc Token;
+	std::string Token;
 	int TokensRemaining;
-	for(int i = 1; i < TArgumentCount; i++) {
-		Token = core::stringc(TArguments[i]);
-		TokensRemaining = TArgumentCount - i - 1;
+	for(int i = 1; i < ArgumentCount; i++) {
+		Token = std::string(Arguments[i]);
+		TokensRemaining = ArgumentCount - i - 1;
 		if(Token == "-host") {
 			State = &PlayServerState;
 			PlayServerState.StartCommandThread();
@@ -76,14 +69,13 @@ int _Framework::Init(int TArgumentCount, char **TArguments) {
 			State = &ConnectState;
 		}
 		else if(Token == "-login" && TokensRemaining > 1) {
-			AccountState.SetLoginInfo(TArguments[i+1], TArguments[i+2]);
+			AccountState.SetLoginInfo(Arguments[i+1], Arguments[i+2]);
 			i += 2;
 		}
 	}
 
 	// Initialize config system
-	if(!Config.Init())
-		return 0;
+	Config.Init();
 	Config.LoadSettings();
 
 	// Initialize SDL
@@ -91,23 +83,19 @@ int _Framework::Init(int TArgumentCount, char **TArguments) {
 		throw std::runtime_error("Failed to initialize SDL");
 
 	// Initialize graphics system
-	if(!Graphics.Init(800, 600, false, DriverType, &Input))
-		return 0;
+	Graphics.Init(800, 600, false, DriverType, &Input);
 
 	// Initialize input system
-	if(!Input.Init())
-		return 0;
+	Input.Init();
 
 	// Set up the stats system
-	if(!Stats.Init())
-		return 0;
+	Stats.Init();
 
 	// Set random seed
-	RandomGenerator.seed(irrTimer->getRealTime());
+	RandomGenerator.seed(SDL_GetPerformanceCounter());
 
-	// Initialize enet
-	if(enet_initialize() == -1)
-		return 0;
+	// Initialize network subsystem
+	_Network::InitializeSystem();
 
 	// Set up networking
 	MultiNetwork = new _MultiNetwork();
@@ -122,14 +110,12 @@ int _Framework::Init(int TArgumentCount, char **TArguments) {
 		ClientNetwork = MultiNetwork;
 
 	// Set the first state
-	NewState = nullptr;
-	ManagerState = STATE_INIT;
+	RequestedState = nullptr;
+	FrameworkState = INIT;
 	Done = false;
 
 	Timer = SDL_GetPerformanceCounter();
 	FrameLimit = new _FrameLimit(120.0, false);
-
-	return 1;
 }
 
 // Shuts down the game
@@ -144,7 +130,7 @@ void _Framework::Close() {
 	Config.SaveSettings();
 
 	// Shut down the system
-	enet_deinitialize();
+	_Network::CloseSystem();
 	MultiNetwork->Close();
 	ClientSingleNetwork->Close();
 	ServerSingleNetwork->Close();
@@ -164,8 +150,8 @@ void _Framework::Close() {
 // Requests a state change
 void _Framework::ChangeState(_State *TState) {
 
-	NewState = TState;
-	ManagerState = STATE_FADEOUT;
+	RequestedState = TState;
+	FrameworkState = FADEOUT;
 }
 
 // Updates the current state and manages the state stack
@@ -190,8 +176,8 @@ void _Framework::Update() {
 	}
 
 	// Update the current state
-	switch(ManagerState) {
-		case STATE_INIT:
+	switch(FrameworkState) {
+		case INIT:
 			Graphics.Clear();
 			Input.ResetInputState();
 			if(!State->Init()) {
@@ -205,12 +191,12 @@ void _Framework::Update() {
 			State->Draw();
 			Graphics.EndFrame();
 
-			ManagerState = STATE_FADEIN;
+			FrameworkState = FADEIN;
 		break;
-		case STATE_FADEIN:
-			ManagerState = STATE_UPDATE;
+		case FADEIN:
+			FrameworkState = UPDATE;
 		break;
-		case STATE_UPDATE:
+		case UPDATE:
 			if(LocalServerRunning)
 				PlayServerState.Update(FrameTime);
 			else
@@ -222,13 +208,13 @@ void _Framework::Update() {
 			State->Draw();
 			Graphics.EndFrame();
 		break;
-		case STATE_FADEOUT:
-			ManagerState = STATE_CLOSE;
+		case FADEOUT:
+			FrameworkState = CLOSE;
 		break;
-		case STATE_CLOSE:
+		case CLOSE:
 			State->Close();
-			State = NewState;
-			ManagerState = STATE_INIT;
+			State = RequestedState;
+			FrameworkState = INIT;
 		break;
 	}
 

@@ -44,7 +44,6 @@ int _Graphics::Init(int TWidth, int THeight, bool TFullScreen, video::E_DRIVER_T
 	irrScene = irrDevice->getSceneManager();
 	irrGUI = irrDevice->getGUIEnvironment();
 	irrFile = irrDevice->getFileSystem();
-	irrTimer = irrDevice->getTimer();
 
 	// Load skin data
 	Skin = irrGUI->getSkin();

@@ -30,15 +30,15 @@ class _Framework {
 
 	public:
 
-		enum ManagerStateType {
-			STATE_INIT,
-			STATE_FADEIN,
-			STATE_UPDATE,
-			STATE_FADEOUT,
-			STATE_CLOSE
+		enum StateType {
+			INIT,
+			FADEIN,
+			UPDATE,
+			FADEOUT,
+			CLOSE
 		};
 
-		int Init(int TArgumentCount, char **TArguments);
+		void Init(int ArgumentCount, char **Arguments);
 		void Update();
 		void Close();
 
@@ -49,7 +49,7 @@ class _Framework {
 		bool IsDone() { return Done; }
 		void SetDone(bool TValue) { Done = TValue; }
 
-		int GetManagerState() const { return ManagerState; }
+		int GetManagerState() const { return FrameworkState; }
 
 		// Networking
 		bool IsLocalServerRunning() const { return LocalServerRunning; }
@@ -61,12 +61,15 @@ class _Framework {
 		void ResetTimer();
 
 		// States
-		ManagerStateType ManagerState;
-		_State *State, *NewState;
-		bool PreviousWindowActive, WindowActive;
+		StateType FrameworkState;
+		_State *State;
+		_State *RequestedState;
+		bool Done;
+		bool PreviousWindowActive;
+		bool WindowActive;
 
 		// Flags
-		bool Done, MouseWasLocked, MouseWasShown;
+		bool MouseWasLocked, MouseWasShown;
 
 		// Time
 		_FrameLimit *FrameLimit;
@@ -74,7 +77,8 @@ class _Framework {
 
 		// Networking
 		bool LocalServerRunning;
-		_SingleNetwork *ClientSingleNetwork, *ServerSingleNetwork;
+		_SingleNetwork *ClientSingleNetwork;
+		_SingleNetwork *ServerSingleNetwork;
 		_MultiNetwork *MultiNetwork;
 
 };

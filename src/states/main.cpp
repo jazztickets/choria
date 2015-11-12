@@ -17,11 +17,10 @@
 *******************************************************************************/
 #include <framework.h>
 
-int main(int TArgumentCount, char **TArguments) {
+int main(int ArgumentCount, char **Arguments) {
 
-	// Initialize the game
-	if(!Framework.Init(TArgumentCount, TArguments))
-		return 1;
+	// Initialize framework
+	Framework.Init(ArgumentCount, Arguments);
 
 	// Main game loop
 	while(!Framework.IsDone()) {

@@ -25,7 +25,7 @@ class _Config {
 
 	public:
 
-		int Init();
+		void Init();
 		void Close();
 
 		bool LoadSettings();

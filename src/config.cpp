@@ -30,7 +30,7 @@ _Config Config;
 using namespace irr;
 
 // Constructor
-int _Config::Init() {
+void _Config::Init() {
 
 	#ifdef _WIN32
 		SavePath = core::stringc(getenv("APPDATA")) + core::stringc("/choria/");
@@ -51,8 +51,6 @@ int _Config::Init() {
 
 	LastIPAddress = "127.0.0.1";
 	LastAccountName = "";
-
-	return 1;
 }
 
 // Destructor

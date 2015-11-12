@@ -15,17 +15,25 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
+#include <network/network.h>
+#include <stdexcept>
 
-// Libraries
-#include <IrrlichtDevice.h>
+// Constructor
+_Network::_Network() {
+}
 
-extern irr::IrrlichtDevice *irrDevice;
-extern irr::video::IVideoDriver *irrDriver;
-extern irr::scene::ISceneManager *irrScene;
-extern irr::gui::IGUIEnvironment *irrGUI;
-extern irr::io::IFileSystem *irrFile;
+// Destructor
+_Network::~_Network() {
+}
 
-class _Network;
-extern _Network *ClientNetwork;
-extern _Network *ServerNetwork;
+// Initializes enet
+void _Network::InitializeSystem() {
+
+	if(enet_initialize() != 0)
+		throw std::runtime_error("enet_initialize() error");
+}
+
+// Closes enet
+void _Network::CloseSystem() {
+	enet_deinitialize();
+}

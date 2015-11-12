@@ -110,8 +110,8 @@ class _Network {
 			DISCONNECTING,
 		};
 
-		_Network() { }
-		virtual ~_Network() { }
+		_Network();
+		virtual ~_Network();
 
 		virtual int Init(bool TServer) { return 0; }
 		virtual int Close() { return 0; }
@@ -128,6 +128,10 @@ class _Network {
 		// Packets
 		virtual void SendPacketToHost(_Buffer *TPacket, SendType Type=RELIABLE, uint8_t Channel=0) { }
 		virtual void SendPacketToPeer(_Buffer *TPacket, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0) { }
+
+		// Static functions
+		static void InitializeSystem();
+		static void CloseSystem();
 
 	protected:
 
