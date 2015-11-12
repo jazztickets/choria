@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/connect.h>
-#include <game.h>
+#include <framework.h>
 #include <constants.h>
 #include <globals.h>
 #include <config.h>
@@ -91,7 +91,7 @@ void _ConnectState::HandlePacket(ENetEvent *TEvent) {
 				ChangeState(STATE_MAIN);
 			}
 			else {
-				Game.ChangeState(&AccountState);
+				Framework.ChangeState(&AccountState);
 			}
 		}
 		break;
@@ -139,7 +139,7 @@ bool _ConnectState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game.ChangeState(&MainMenuState);
+					Framework.ChangeState(&MainMenuState);
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_CONNECT);
@@ -175,7 +175,7 @@ void _ConnectState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement 
 							ChangeState(STATE_CONNECT);
 						break;
 						case ELEMENT_CANCEL:
-							Game.ChangeState(&MainMenuState);
+							Framework.ChangeState(&MainMenuState);
 						break;
 						default:
 						break;

@@ -22,7 +22,7 @@
 #include <stats.h>
 #include <globals.h>
 #include <config.h>
-#include <game.h>
+#include <framework.h>
 #include <constants.h>
 #include <network/network.h>
 #include <buffer.h>
@@ -304,7 +304,7 @@ void _PlayServerState::Update(double FrameTime) {
 	ObjectManager->Update(FrameTime);
 
 	if(StopRequested) {
-		Game.SetDone(true);
+		Framework.SetDone(true);
 	}
 }
 

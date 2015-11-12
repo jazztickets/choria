@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/mapeditor.h>
-#include <game.h>
+#include <framework.h>
 #include <input.h>
 #include <graphics.h>
 #include <globals.h>
@@ -132,7 +132,7 @@ bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 			switch(TKey) {
 				case KEY_ESCAPE:
 					//Game.SetDone(true);
-					Game.ChangeState(&MainMenuState);
+					Framework.ChangeState(&MainMenuState);
 				break;
 				case KEY_KEY_N:
 					InitNewMap();

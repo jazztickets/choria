@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <network/multinetwork.h>
 #include <buffer.h>
-#include <game.h>
+#include <framework.h>
 #include <state.h>
 #include <constants.h>
 
@@ -126,7 +126,7 @@ void _MultiNetwork::Update() {
 	if(!Active)
 		return;
 
-	_State *State = Game.GetState();
+	_State *State = Framework.GetState();
 
 	ENetEvent Event;
 	while(enet_host_service(Connection, &Event, 0) > 0) {

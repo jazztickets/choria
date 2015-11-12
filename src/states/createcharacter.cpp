@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/createcharacter.h>
-#include <game.h>
+#include <framework.h>
 #include <globals.h>
 #include <stats.h>
 #include <graphics.h>
@@ -85,7 +85,7 @@ int _CreateCharacterState::Close() {
 // Handles a disconnection from the server
 void _CreateCharacterState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(&ConnectState);
+	Framework.ChangeState(&ConnectState);
 }
 
 // Handles a server packet
@@ -93,7 +93,7 @@ void _CreateCharacterState::HandlePacket(ENetEvent *TEvent) {
 	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
 	switch(Packet.Read<char>()) {
 		case _Network::CREATECHARACTER_SUCCESS:
-			Game.ChangeState(&CharactersState);
+			Framework.ChangeState(&CharactersState);
 		break;
 		case _Network::CREATECHARACTER_INUSE:
 			Message = "Character name already in use";
@@ -211,5 +211,5 @@ void _CreateCharacterState::CreateCharacter() {
 
 // Back to character select
 void _CreateCharacterState::Back() {
-	Game.ChangeState(&CharactersState);
+	Framework.ChangeState(&CharactersState);
 }

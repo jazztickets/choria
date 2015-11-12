@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/mainmenu.h>
-#include <game.h>
+#include <framework.h>
 #include <globals.h>
 #include <graphics.h>
 #include <constants.h>
@@ -54,7 +54,7 @@ int _MainMenuState::Init() {
 	// Game version
 	Graphics.AddText(GAME_VERSION, 10, 580);
 
-	Game.StopLocalServer();
+	Framework.StopLocalServer();
 
 	return 1;
 }
@@ -83,7 +83,7 @@ bool _MainMenuState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(TKey) {
 		case KEY_ESCAPE:
-			Game.SetDone(true);
+			Framework.SetDone(true);
 		break;
 		case KEY_RETURN:
 			StartSinglePlayer();
@@ -101,19 +101,19 @@ void _MainMenuState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement
 		case gui::EGET_BUTTON_CLICKED:
 			switch(TElement->getID()) {
 				case ELEMENT_SINGLEPLAYER:
-					Game.ChangeState(&ConnectState);
+					Framework.ChangeState(&ConnectState);
 					StartSinglePlayer();
 				break;
 				case ELEMENT_MULTIPLAYER:
-					Game.ChangeState(&ConnectState);
+					Framework.ChangeState(&ConnectState);
 				break;
 				case ELEMENT_EDITOR:
-					Game.ChangeState(&MapEditorState);
+					Framework.ChangeState(&MapEditorState);
 				break;
 				case ELEMENT_OPTIONS:
 				break;
 				case ELEMENT_EXIT:
-					Game.SetDone(true);
+					Framework.SetDone(true);
 				break;
 				default:
 				break;
@@ -126,7 +126,7 @@ void _MainMenuState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement
 
 // Starts a single player game
 void _MainMenuState::StartSinglePlayer() {
-	Game.StartLocalServer();
+	Framework.StartLocalServer();
 	ClientNetwork->Connect("");
 
 	// Send fake account information
@@ -136,5 +136,5 @@ void _MainMenuState::StartSinglePlayer() {
 	Packet.WriteString("singleplayer");
 	Packet.WriteString("singleplayer");
 	ClientNetwork->SendPacketToHost(&Packet);
-	Game.ChangeState(&CharactersState);
+	Framework.ChangeState(&CharactersState);
 }

@@ -26,7 +26,7 @@ class _SingleNetwork;
 class _MultiNetwork;
 class _FrameLimit;
 
-class _Game {
+class _Framework {
 
 	public:
 
@@ -79,4 +79,4 @@ class _Game {
 
 };
 
-extern _Game Game;
+extern _Framework Framework;

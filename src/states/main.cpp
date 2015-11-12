@@ -15,22 +15,22 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <game.h>
+#include <framework.h>
 
 int main(int TArgumentCount, char **TArguments) {
 
 	// Initialize the game
-	if(!Game.Init(TArgumentCount, TArguments))
+	if(!Framework.Init(TArgumentCount, TArguments))
 		return 1;
 
 	// Main game loop
-	while(!Game.IsDone()) {
+	while(!Framework.IsDone()) {
 
-		Game.Update();
+		Framework.Update();
 	}
 
 	// Shut down the system
-	Game.Close();
+	Framework.Close();
 
 	return 0;
 }

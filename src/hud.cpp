@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <hud.h>
-#include <game.h>
+#include <framework.h>
 #include <graphics.h>
 #include <globals.h>
 #include <input.h>

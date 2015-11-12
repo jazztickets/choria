@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <states/playclient.h>
 #include <globals.h>
-#include <game.h>
+#include <framework.h>
 #include <graphics.h>
 #include <input.h>
 #include <objectmanager.h>
@@ -88,7 +88,7 @@ void _PlayClientState::HandleConnect(ENetEvent *TEvent) {
 // Handles a disconnection from the server
 void _PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(&MainMenuState);
+	Framework.ChangeState(&MainMenuState);
 }
 
 // Handles a server packet

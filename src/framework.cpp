@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <game.h>
+#include <framework.h>
 #include <state.h>
 #include <graphics.h>
 #include <input.h>
@@ -35,7 +35,7 @@
 #include <framelimit.h>
 #include <SDL.h>
 
-_Game Game;
+_Framework Framework;
 
 using namespace irr;
 
@@ -48,7 +48,7 @@ using namespace irr;
 #endif
 
 // Processes parameters and initializes the game
-int _Game::Init(int TArgumentCount, char **TArguments) {
+int _Framework::Init(int TArgumentCount, char **TArguments) {
 	FrameLimit = nullptr;
 	WindowActive = true;
 	LocalServerRunning = false;
@@ -133,7 +133,7 @@ int _Game::Init(int TArgumentCount, char **TArguments) {
 }
 
 // Shuts down the game
-void _Game::Close() {
+void _Framework::Close() {
 
 	// Close the state
 	State->Close();
@@ -162,14 +162,14 @@ void _Game::Close() {
 }
 
 // Requests a state change
-void _Game::ChangeState(_State *TState) {
+void _Framework::ChangeState(_State *TState) {
 
 	NewState = TState;
 	ManagerState = STATE_FADEOUT;
 }
 
 // Updates the current state and manages the state stack
-void _Game::Update() {
+void _Framework::Update() {
 
 	// Run irrlicht engine
 	if(!irrDevice->run())
@@ -237,7 +237,7 @@ void _Game::Update() {
 }
 
 // Starts the local server
-void _Game::StartLocalServer() {
+void _Framework::StartLocalServer() {
 	if(!LocalServerRunning) {
 		LocalServerRunning = true;
 
@@ -249,7 +249,7 @@ void _Game::StartLocalServer() {
 }
 
 // Stops the local server
-void _Game::StopLocalServer() {
+void _Framework::StopLocalServer() {
 	if(LocalServerRunning) {
 		LocalServerRunning = false;
 

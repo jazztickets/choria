@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/account.h>
-#include <game.h>
+#include <framework.h>
 #include <globals.h>
 #include <config.h>
 #include <graphics.h>
@@ -81,7 +81,7 @@ int _AccountState::Close() {
 // Handles a disconnection from the server
 void _AccountState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Game.ChangeState(&ConnectState);
+	Framework.ChangeState(&ConnectState);
 }
 
 // Handles a server packet
@@ -105,7 +105,7 @@ void _AccountState::HandlePacket(ENetEvent *TEvent) {
 			Config.SaveSettings();
 			AccountName = "";
 			Password = "";
-			Game.ChangeState(&CharactersState);
+			Framework.ChangeState(&CharactersState);
 		break;
 	}
 }
@@ -145,7 +145,7 @@ bool _AccountState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Game.ChangeState(&ConnectState);
+					Framework.ChangeState(&ConnectState);
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_LOGIN);
@@ -171,7 +171,7 @@ void _AccountState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement 
 							ChangeState(STATE_LOGIN);
 						break;
 						case ELEMENT_CANCEL:
-							Game.ChangeState(&ConnectState);
+							Framework.ChangeState(&ConnectState);
 						break;
 						case ELEMENT_CREATEACCOUNT:
 							CreateAccount = true;
