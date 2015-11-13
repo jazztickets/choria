@@ -1,16 +1,16 @@
-identifier	parent	style	hover style	offset x	offset y	width	height	alignment x	alignment y	userdata
-button_title_singleplayer	element_menu_title	style_menu_button	style_menu_button_hover	0	240	200	48	1	0	0
-button_title_multiplayer	element_menu_title	style_menu_button	style_menu_button_hover	0	320	200	48	1	0	0
-button_title_mapeditor	element_menu_title	style_menu_button	style_menu_button_hover	0	400	200	48	1	0	0
-button_title_exit	element_menu_title	style_menu_button	style_menu_button_hover	0	480	200	48	1	0	0
-button_characters_slot0	element_menu_characters	style_menu_button	style_menu_button_hover	-170	-120	128	128	1	1	0
-button_characters_slot1	element_menu_characters	style_menu_button	style_menu_button_hover	0	-120	128	128	1	1	1
-button_characters_slot2	element_menu_characters	style_menu_button	style_menu_button_hover	170	-120	128	128	1	1	2
-button_characters_slot3	element_menu_characters	style_menu_button	style_menu_button_hover	-170	70	128	128	1	1	3
-button_characters_slot4	element_menu_characters	style_menu_button	style_menu_button_hover	0	70	128	128	1	1	4
-button_characters_slot5	element_menu_characters	style_menu_button	style_menu_button_hover	170	70	128	128	1	1	5
-button_characters_delete	element_menu_characters	style_menu_button	style_menu_button_hover	-150	230	128	48	1	1	0
-button_characters_play	element_menu_characters	style_menu_button	style_menu_button_hover	0	230	128	48	1	1	0
-button_characters_back	element_menu_characters	style_menu_button	style_menu_button_hover	150	230	128	48	1	1	0
-button_newcharacter_create	element_menu_new	style_menu_button	style_menu_button_hover	-75	-16	128	32	1	2	0
-button_newcharacter_cancel	element_menu_new	style_menu_button	style_menu_button_hover	75	-16	128	32	1	2	0
+identifier	parent	style	disabled style	hover style	offset x	offset y	width	height	alignment x	alignment y	userdata
+button_title_singleplayer	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	240	200	48	1	0	0
+button_title_multiplayer	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	320	200	48	1	0	0
+button_title_mapeditor	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	400	200	48	1	0	0
+button_title_exit	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	480	200	48	1	0	0
+button_characters_slot0	element_menu_characters	style_menu_button		style_menu_button_hover	-170	-120	128	128	1	1	0
+button_characters_slot1	element_menu_characters	style_menu_button		style_menu_button_hover	0	-120	128	128	1	1	1
+button_characters_slot2	element_menu_characters	style_menu_button		style_menu_button_hover	170	-120	128	128	1	1	2
+button_characters_slot3	element_menu_characters	style_menu_button		style_menu_button_hover	-170	70	128	128	1	1	3
+button_characters_slot4	element_menu_characters	style_menu_button		style_menu_button_hover	0	70	128	128	1	1	4
+button_characters_slot5	element_menu_characters	style_menu_button		style_menu_button_hover	170	70	128	128	1	1	5
+button_characters_delete	element_menu_characters	style_menu_button		style_menu_button_hover	-150	230	128	48	1	1	0
+button_characters_play	element_menu_characters	style_menu_button		style_menu_button_hover	0	230	128	48	1	1	0
+button_characters_back	element_menu_characters	style_menu_button		style_menu_button_hover	150	230	128	48	1	1	0
+button_newcharacter_create	element_menu_new	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-75	-16	128	32	1	2	0
+button_newcharacter_cancel	element_menu_new	style_menu_button	style_menu_button_disabled	style_menu_button_hover	75	-16	128	32	1	2	0

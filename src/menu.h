@@ -98,6 +98,7 @@ class _Menu {
 		void LaunchGame();
 
 		void LoadPortraitButtons();
+		void ValidateCreateCharacter();
 		void RefreshInputLabels();
 		void ResetCharacterSlots();
 		void CreateCharacter();

@@ -59,10 +59,12 @@ class _Element {
 		void *UserData;
 
 		int MaskOutside : 1;
+		int Enabled : 1;
 		int Debug : 4;
 
 		// Graphics
 		const _Style *Style;
+		const _Style *DisabledStyle;
 		float Fade;
 
 		// Layout

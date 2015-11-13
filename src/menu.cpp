@@ -102,6 +102,9 @@ void _Menu::InitPlay() {
 
 // Init new player popup
 void _Menu::InitNewCharacter() {
+	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
+	CreateButton->Enabled = false;
+
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	Name->Focused = true;
 	Name->Text = "";
@@ -192,6 +195,34 @@ void _Menu::LoadPortraitButtons() {
 	PortraitsElement->CalculateBounds();
 }
 
+// Check new character screen for portrait and name
+void _Menu::ValidateCreateCharacter() {
+	bool PortraitSelected = false;
+	bool NameValid = false;
+
+	// Check for selected portrait
+	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
+	for(auto &Element : PortraitsElement->Children) {
+		_Button *Button = (_Button *)Element;
+		if(Button->Checked) {
+			PortraitSelected = true;
+			break;
+		}
+	}
+
+	// Check name length
+	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
+	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+	if(Name->Text.length() > 0)
+		NameValid = true;
+
+	// Enable button
+	if(PortraitSelected && NameValid)
+		CreateButton->Enabled = true;
+	else
+		CreateButton->Enabled = false;
+}
+
 // Shutdown
 void _Menu::Close() {
 }
@@ -214,6 +245,8 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			}
 			else {
 				if(KeyEvent.Pressed) {
+					ValidateCreateCharacter();
+
 					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
 						InitCharacters();
 					else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
@@ -250,6 +283,16 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 void _Menu::TextEvent(const char *Text) {
 	if(CurrentLayout)
 		CurrentLayout->HandleTextEvent(Text);
+
+	switch(State) {
+		case STATE_CHARACTERS:
+			if(CharactersState == CHARACTERS_CREATE) {
+				ValidateCreateCharacter();
+			}
+		break;
+		default:
+		break;
+	}
 }
 
 // Handle mouse event
@@ -306,7 +349,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						if(SelectedSlot != -1) {
 							//Save.DeletePlayer(SelectedSlot);
 
-							CharacterSlots[SelectedSlot].Button->Enabled = false;
+							CharacterSlots[SelectedSlot].Button->Checked = false;
 							SelectedSlot = -1;
 						}
 					}
@@ -322,7 +365,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						// Deselect previous slot
 						if(SelectedSlot != -1)
-							CharacterSlots[SelectedSlot].Button->Enabled = false;
+							CharacterSlots[SelectedSlot].Button->Checked = false;
 
 						// Set up create player screen
 						//if(!Save.GetPlayer(Clicked->ID)) {
@@ -330,7 +373,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						//}
 
 						SelectedSlot = (intptr_t)Clicked->UserData;
-						CharacterSlots[SelectedSlot].Button->Enabled = true;
+						CharacterSlots[SelectedSlot].Button->Checked = true;
 
 						if(DoubleClick) {
 							LaunchGame();
@@ -345,12 +388,14 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						int i = 0;
 						for(auto &Element : Clicked->Parent->Children) {
 							_Button *Button = (_Button *)Element;
-							Button->Enabled = false;
+							Button->Checked = false;
 							if(i == Selected)
-								Button->Enabled = true;
+								Button->Checked = true;
 
 							i++;
 						}
+
+						ValidateCreateCharacter();
 					}
 					else if(Clicked->Identifier == "button_newcharacter_create") {
 						CreateCharacter();

@@ -300,6 +300,14 @@ void _Assets::LoadStyles(const std::string &Path) {
 		std::string TextureIdentifier = GetTSVText(File);
 		std::string TextureColorIdentifier = GetTSVText(File);
 
+		// Check for color
+		if(BackgroundColorIdentifier != "" && Colors.find(BackgroundColorIdentifier) == Colors.end())
+			throw std::runtime_error("Unable to find color: " + BackgroundColorIdentifier + " for style: " + Identifier);
+
+		// Check for color
+		if(BorderColorIdentifier != "" && Colors.find(BorderColorIdentifier) == Colors.end())
+			throw std::runtime_error("Unable to find color: " + BorderColorIdentifier + " for style: " + Identifier);
+
 		// Find program
 		if(Programs.find(ProgramIdentifier) == Programs.end())
 		   throw std::runtime_error("Cannot find program: " + ProgramIdentifier);
@@ -517,6 +525,7 @@ void _Assets::LoadButtons(const std::string &Path) {
 		std::string Identifier = GetTSVText(File);
 		std::string ParentIdentifier = GetTSVText(File);
 		std::string StyleIdentifier = GetTSVText(File);
+		std::string DisabledStyleIdentifier = GetTSVText(File);
 		std::string HoverStyleIdentifier = GetTSVText(File);
 
 		// Check for duplicates
@@ -530,13 +539,13 @@ void _Assets::LoadButtons(const std::string &Path) {
 		if(StyleIdentifier != "" && Styles.find(StyleIdentifier) == Styles.end())
 			throw std::runtime_error("Unable to find style: " + StyleIdentifier + " for button: " + Identifier);
 
+		// Check for disabled style
+		if(DisabledStyleIdentifier != "" && Styles.find(DisabledStyleIdentifier) == Styles.end())
+			throw std::runtime_error("Unable to find style: " + DisabledStyleIdentifier + " for button: " + Identifier);
+
 		// Check for hover style
 		if(HoverStyleIdentifier != "" && Styles.find(HoverStyleIdentifier) == Styles.end())
 			throw std::runtime_error("Unable to find style: " + HoverStyleIdentifier + " for button: " + Identifier);
-
-		// Get style
-		_Style *Style = Styles[StyleIdentifier];
-		_Style *HoverStyle = Styles[HoverStyleIdentifier];
 
 		// Read attributes
 		glm::ivec2 Offset, Size;
@@ -552,8 +561,9 @@ void _Assets::LoadButtons(const std::string &Path) {
 		Button->Offset = Offset;
 		Button->Size = Size;
 		Button->Alignment = Alignment;
-		Button->Style = Style;
-		Button->HoverStyle = HoverStyle;
+		Button->Style = Styles[StyleIdentifier];
+		Button->DisabledStyle = Styles[DisabledStyleIdentifier];
+		Button->HoverStyle = Styles[HoverStyleIdentifier];
 		Button->UserData = UserData;
 
 		// Add to map

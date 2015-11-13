@@ -1,5 +1,6 @@
 identifier	background color	border color	program	texture	texture color	stretch
 style_menu_button	menu_button	menu_button_border	ortho_pos			0
+style_menu_button_disabled	menu_button_disabled	menu_button_border	ortho_pos			0
 style_menu_button_hover	menu_button_hover	menu_button_border	ortho_pos			0
 style_menu_window	menu_button	menu_button_border	ortho_pos			0
 style_menu_textbox	menu_button	menu_button_border	ortho_pos			0
