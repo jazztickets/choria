@@ -100,7 +100,7 @@ class _Menu {
 		void LoadPortraitButtons();
 		void RefreshInputLabels();
 		void ResetCharacterSlots();
-		void CreatePlayer();
+		void CreateCharacter();
 		void RemapInput(int InputType, int Input);
 
 		// States
@@ -123,7 +123,6 @@ class _Menu {
 		// Singleplayer
 		CharactersStateType CharactersState;
 		int SelectedSlot;
-		int SelectedColor;
 };
 
 extern _Menu Menu;

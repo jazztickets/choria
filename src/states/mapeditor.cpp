@@ -115,7 +115,7 @@ void _MapEditorState::Draw() {
 	core::stringc GridBrushPositionText = core::stringc(BrushPosition.X) + core::stringc(" ") + core::stringc(BrushPosition.Y);
 
 	Graphics.SetFont(_Graphics::FONT_8);
-	Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
+	//Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
 
 	irrGUI->drawAll();
 }
@@ -699,13 +699,13 @@ void _MapEditorState::RenderBrush() {
 	StartY += 20;
 	Filters[FILTER_WALL] ? Color.setAlpha(255) : Color.setAlpha(128);
 	Graphics.SetFont(_Graphics::FONT_8);
-	Graphics.RenderText(WallText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
+	//Graphics.RenderText(WallText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw zone info
 	StartY += 15;
 	Filters[FILTER_ZONE] ? Color.setAlpha(255) : Color.setAlpha(128);
 	core::stringc ZoneText = core::stringc("Zone ") + core::stringc(Brush.Zone);
-	Graphics.RenderText(ZoneText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
+	//Graphics.RenderText(ZoneText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Get PVP text
 	const char *PVPText = "Safe";
@@ -715,19 +715,19 @@ void _MapEditorState::RenderBrush() {
 	// Draw pvp info
 	StartY += 15;
 	Filters[FILTER_PVP] ? Color.setAlpha(255) : Color.setAlpha(128);
-	Graphics.RenderText(PVPText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
+	//Graphics.RenderText(PVPText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTTYPE] ? Color.setAlpha(255) : Color.setAlpha(128);
 	core::stringc EventTypeText = core::stringc("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
-	Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
+	//Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
 	core::stringc EventDataText = core::stringc("Event Data: ") + core::stringc(Brush.EventData);
-	Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
+	//Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 }
 
 // Resets the filters to false

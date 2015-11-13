@@ -44,7 +44,7 @@ const std::string InputBoxPrefix = "button_options_input_";
 const std::string CharacterButtonPrefix = "button_characters_slot";
 const std::string CharacterNamePrefix = "label_menu_characters_slot_name";
 const std::string CharacterLevelPrefix = "label_menu_characters_slot_level";
-const std::string PlayerColorButtonPrefix = "button_new_color";
+const std::string CharacterPortraitPrefix = "button_newcharacter_portrait";
 
 // Constructor
 _Menu::_Menu() {
@@ -102,7 +102,7 @@ void _Menu::InitPlay() {
 
 // Init new player popup
 void _Menu::InitNewCharacter() {
-	_TextBox *Name = Assets.TextBoxes["textbox_new_name"];
+	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	Name->Focused = true;
 	Name->Text = "";
 	Name->ResetCursor();
@@ -126,6 +126,20 @@ void _Menu::LaunchGame() {
 	//State = STATE_NONE;
 }
 
+// Create character
+void _Menu::CreateCharacter() {
+	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+	if(Name->Text.length() == 0)
+		return;
+
+	// Send information
+	_Buffer Packet;
+	Packet.Write<char>(_Network::CREATECHARACTER_INFO);
+	Packet.WriteString(Name->Text.c_str());
+	//Packet.Write<int32_t>(Portraits[SelectedIndex]);
+	//ClientNetwork->SendPacketToHost(&Packet);
+}
+
 // Load portraits
 void _Menu::LoadPortraitButtons() {
 
@@ -136,37 +150,32 @@ void _Menu::LoadPortraitButtons() {
 		delete Children[i]->Style;
 		delete Children[i];
 	}
-
 	Children.clear();
 
-	// Loop through textures
 	glm::ivec2 Offset(10, 0);
 	int Width = PortraitsElement->Size.x;
+	size_t i = 0;
+
+	// Iterate over portraits
 	std::list<_Portrait> Portraits;
 	Stats.GetPortraits(Portraits);
-	int i = 0;
 	for(auto &Portrait : Portraits) {
 
 		// Create style
 		_Style *Style = new _Style;
-		Style->Identifier = "dummy";
-		Style->HasBackgroundColor = false;
-		Style->HasBorderColor = false;
-		Style->BorderColor = COLOR_WHITE;
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
 		Style->Texture = Portrait.Image;
-		Style->Stretch = true;
 
 		// Add button
 		_Button *Button = new _Button();
-		Button->Identifier = "portrait";
+		Button->Identifier = CharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->Offset = Offset;
 		Button->Size = Portrait.Image->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
-		Button->HoverStyle = Assets.Styles["menu_button_border"];
+		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
 		Button->UserData = (void *)i;
 		PortraitsElement->Children.push_back(Button);
 
@@ -176,6 +185,8 @@ void _Menu::LoadPortraitButtons() {
 			Offset.y += Portrait.Image->Size.y + 10;
 			Offset.x = 10;
 		}
+
+		i++;
 	}
 
 	PortraitsElement->CalculateBounds();
@@ -206,7 +217,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
 						InitCharacters();
 					else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
-						CreatePlayer();
+						CreateCharacter();
 				}
 			}
 		} break;
@@ -327,15 +338,22 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
-					if(Clicked->Identifier.substr(0, PlayerColorButtonPrefix.size()) == PlayerColorButtonPrefix) {
-						//if(SelectedColor != -1)
-							//PortraitButtons[SelectedColor]->Enabled = false;
+					if(Clicked->Identifier == CharacterPortraitPrefix) {
+						int Selected = (intptr_t)Clicked->UserData;
 
-						SelectedColor = (intptr_t)Clicked->UserData;
-						//PortraitButtons[SelectedColor]->Enabled = true;
+						// Unselect all portraits and select the clicked element
+						int i = 0;
+						for(auto &Element : Clicked->Parent->Children) {
+							_Button *Button = (_Button *)Element;
+							Button->Enabled = false;
+							if(i == Selected)
+								Button->Enabled = true;
+
+							i++;
+						}
 					}
 					else if(Clicked->Identifier == "button_newcharacter_create") {
-						CreatePlayer();
+						CreateCharacter();
 					}
 					else if(Clicked->Identifier == "button_newcharacter_cancel") {
 						InitCharacters();
@@ -495,6 +513,7 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				std::stringstream Buffer;
 				Buffer << "Level " << Stats.FindLevel(Experience)->Level;
 				CharacterSlots[i].Level->Text = Buffer.str();
+				//CharacterSlots[i].Button->Style->Texture =
 				//Slots[i].Used = true;
 				//Slots[i].Name = TPacket->ReadString();
 				//PortraitImage = Stats.GetPortrait(TPacket->Read<int32_t>())->Image;
@@ -511,6 +530,13 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 
 			InitCharacters();
 		}
+		break;
+		case _Network::CREATECHARACTER_SUCCESS:
+			//Framework.ChangeState(&CharactersState);
+		break;
+		case _Network::CREATECHARACTER_INUSE:
+			//Message = "Character name already in use";
+			//ButtonCreate->setEnabled(true);
 		break;
 	}
 }
@@ -579,20 +605,6 @@ void _Menu::RefreshInputLabels() {
 		InputLabels[i] = Assets.Labels[KEYLABEL_IDENTIFIERS[i]];
 		InputLabels[i]->Text = Actions.GetInputNameForAction(i);
 		InputLabels[i]->Parent->UserData = (void *)(intptr_t)i;
-	}*/
-}
-
-// Handle player creation
-void _Menu::CreatePlayer() {
-	/*if(Assets.TextBoxes["textbox_new_name"]->Text.length() == 0)
-		return;
-
-	CurrentLayout = Assets.Elements["element_menu_singleplayer"];
-	CharactersState = SINGLEPLAYER_NONE;
-
-	if(SelectedSlot != -1) {
-		//Save.CreateNewPlayer(SelectedSlot, Assets.TextBoxes["textbox_new_name")->Text, COLORS[SelectedColor]];
-		RefreshSaveSlots();
 	}*/
 }
 

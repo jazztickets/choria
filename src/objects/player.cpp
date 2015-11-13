@@ -150,7 +150,7 @@ void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 
 			if(TClientPlayer != this) {
 				Graphics.SetFont(_Graphics::FONT_8);
-				Graphics.RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, _Graphics::ALIGN_CENTER);
+				//Graphics.RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, _Graphics::ALIGN_CENTER);
 			}
 		}
 	}

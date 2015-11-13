@@ -258,7 +258,7 @@ void _ClientBattle::RenderBattleWin() {
 
 	// Draw title
 	Graphics.SetFont(_Graphics::FONT_18);
-	Graphics.RenderText("You have won", 400, 130, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText("You have won", 400, 130, _Graphics::ALIGN_CENTER);
 
 	// Draw experience
 	int IconX = 180, IconY = 200, IconSpacing = 110, TextOffsetX = IconX + 50, TextOffsetY;
@@ -267,11 +267,11 @@ void _ClientBattle::RenderBattleWin() {
 	TextOffsetY = IconY - 23;
 	Graphics.SetFont(_Graphics::FONT_14);
 	sprintf(String, "%d experience", TotalExperience);
-	Graphics.RenderText(String, TextOffsetX, TextOffsetY);
+	//Graphics.RenderText(String, TextOffsetX, TextOffsetY);
 
 	Graphics.SetFont(_Graphics::FONT_10);
 	sprintf(String, "You need %d more experience for your next level", ClientPlayer->GetExperienceNeeded());
-	Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
+	//Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
 
 	// Draw gold
 	IconY += IconSpacing;
@@ -280,11 +280,11 @@ void _ClientBattle::RenderBattleWin() {
 
 	sprintf(String, "%d gold", TotalGold);
 	Graphics.SetFont(_Graphics::FONT_14);
-	Graphics.RenderText(String, TextOffsetX, TextOffsetY);
+	//Graphics.RenderText(String, TextOffsetX, TextOffsetY);
 
 	sprintf(String, "You have %d gold", ClientPlayer->GetGold());
 	Graphics.SetFont(_Graphics::FONT_10);
-	Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
+	//Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
 
 	// Draw items
 	IconY += IconSpacing;
@@ -292,7 +292,7 @@ void _ClientBattle::RenderBattleWin() {
 	Graphics.DrawImage(_Graphics::IMAGE_BATTLECHEST, IconX, IconY);
 
 	if(MonsterDrops.size() == 0) {
-		Graphics.RenderText("No items found", TextOffsetX, TextOffsetY);
+		//Graphics.RenderText("No items found", TextOffsetX, TextOffsetY);
 	}
 	else {
 		int DrawX = TextOffsetX;
@@ -321,11 +321,11 @@ void _ClientBattle::RenderBattleLose() {
 	char Buffer[256];
 
 	Graphics.SetFont(_Graphics::FONT_14);
-	Graphics.RenderText("You died", 400, 130, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText("You died", 400, 130, _Graphics::ALIGN_CENTER);
 
 	sprintf(Buffer, "You lose %d gold", abs(TotalGold));
 	Graphics.SetFont(_Graphics::FONT_10);
-	Graphics.RenderText(Buffer, 400, 155, _Graphics::ALIGN_CENTER, video::SColor(255, 200, 200, 200));
+	//Graphics.RenderText(Buffer, 400, 155, _Graphics::ALIGN_CENTER, video::SColor(255, 200, 200, 200));
 }
 
 // Displays turn results from the server

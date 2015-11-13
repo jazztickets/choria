@@ -17,7 +17,6 @@
 *******************************************************************************/
 #pragma once
 
-#include <SColor.h>
 #include <string>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
@@ -66,10 +65,6 @@ const int PLAYER_TRADEITEMS = 8;
 const double PLAYER_ATTACKTIME = 1.0;
 
 const int STATS_MAXGOLD = 1000000;
-
-const irr::video::SColor COLOR_GOLD(255, 196, 187, 44);
-const irr::video::SColor COLOR_GRAY(255, 150, 150, 150);
-const irr::video::SColor COLOR_LIGHTGRAY(255, 200, 200, 200);
 
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
@@ -125,3 +120,4 @@ const  glm::vec4    COLOR_BLUE                     =  {0.0f,0.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_YELLOW                   =  {1.0f,1.0f,0.0f,1.0f};
 const  glm::vec4    COLOR_MAGENTA                  =  {1.0f,0.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_CYAN                     =  {0.0f,1.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_GOLD                     =  {0.76f,0.73f,0.173f,1.0f};

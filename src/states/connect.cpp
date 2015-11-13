@@ -112,7 +112,7 @@ void _ConnectState::Draw() {
 	// Server message
 	if(Message.size() > 0) {
 		Graphics.SetFont(_Graphics::FONT_10);
-		Graphics.RenderText(Message.c_str(), 400, 200, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
+		//Graphics.RenderText(Message.c_str(), 400, 200, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 	}
 
 	switch(State) {
@@ -120,7 +120,7 @@ void _ConnectState::Draw() {
 		break;
 		case STATE_CONNECT:
 			Graphics.SetFont(_Graphics::FONT_10);
-			Graphics.RenderText("Connecting...", 400, 250, _Graphics::ALIGN_CENTER);
+			//Graphics.RenderText("Connecting...", 400, 250, _Graphics::ALIGN_CENTER);
 		break;
 	}
 

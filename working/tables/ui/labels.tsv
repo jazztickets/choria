@@ -21,6 +21,6 @@ label_menu_characters_delete	button_characters_delete	menu_buttons		Delete	0	0	0
 label_menu_characters_play	button_characters_play	menu_buttons		Play	0	0	0	0	1	1
 label_menu_characters_back	button_characters_back	menu_buttons		Back	0	0	0	0	1	1
 label_menu_newcharacter_portraits	element_menu_new	hud_medium		Portraits	0	12	0	0	1	0
-label_menu_newcharacter_name	textbox_new_name	hud_medium		Name	0	-25	0	0	1	0
+label_menu_newcharacter_name	textbox_newcharacter_name	hud_medium		Name	0	-25	0	0	1	0
 label_menu_newcharacter_create	button_newcharacter_create	hud_medium		Create	0	0	0	0	1	1
 label_menu_newcharacter_cancel	button_newcharacter_cancel	hud_medium		Cancel	0	0	0	0	1	1

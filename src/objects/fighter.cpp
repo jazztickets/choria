@@ -81,7 +81,7 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 
 	// Name
 	Graphics.SetFont(_Graphics::FONT_10);
-	Graphics.RenderText(Name.c_str(), Offset.X + 32, Offset.Y - 3, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText(Name.c_str(), Offset.X + 32, Offset.Y - 3, _Graphics::ALIGN_CENTER);
 
 	// Portrait
 	Graphics.DrawImage(SlotImage, Offset.X + 32, Offset.Y + 50);
@@ -95,14 +95,14 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 	sprintf(String, "%d / %d", Health, MaxHealth);
 	Graphics.SetFont(_Graphics::FONT_8);
 	Graphics.DrawBar(_Graphics::IMAGE_HEALTH, BarX, BarY, HealthPercent, BarWidth, BarHeight);
-	Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, _Graphics::ALIGN_CENTER);
 
 	// Mana
 	BarY += 30;
 	float ManaPercent = MaxMana > 0 ? Mana / (float)MaxMana : 0;
 	sprintf(String, "%d / %d", Mana, MaxMana);
 	Graphics.DrawBar(_Graphics::IMAGE_MANA, BarX, BarY, ManaPercent, BarWidth, BarHeight);
-	Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, _Graphics::ALIGN_CENTER);
 
 	// Show results of last turn
 	if(TShowResults) {
@@ -119,7 +119,7 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 
 		sprintf(String, "%c%d", Sign, TResult->HealthChange);
 		Graphics.SetFont(_Graphics::FONT_14);
-		Graphics.RenderText(String, BarX + BarWidth / 2, Offset.Y + 2, _Graphics::ALIGN_CENTER, Color);
+		//Graphics.RenderText(String, BarX + BarWidth / 2, Offset.Y + 2, _Graphics::ALIGN_CENTER, Color);
 		Graphics.SetFont(_Graphics::FONT_10);
 
 		// Draw the skill used
@@ -131,7 +131,7 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 		if(TResult->DamageDealt) {
 			sprintf(String, "%d", TResult->DamageDealt);
 			Graphics.SetFont(_Graphics::FONT_14);
-			Graphics.RenderText(String, Offset.X + 178, Offset.Y + 38, _Graphics::ALIGN_CENTER, video::SColor(AlphaPercent, 255, 255, 255));
+			//Graphics.RenderText(String, Offset.X + 178, Offset.Y + 38, _Graphics::ALIGN_CENTER, video::SColor(AlphaPercent, 255, 255, 255));
 			Graphics.SetFont(_Graphics::FONT_10);
 		}
 	}

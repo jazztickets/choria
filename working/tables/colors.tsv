@@ -9,3 +9,4 @@ purple	1	0	1	1
 menu_button	0.1	0.1	0.12	1
 menu_button_hover	0.2	0.2	0.24	1
 menu_button_border	0.3	0.3	0.3	1
+highlight	1	1	1	0.15

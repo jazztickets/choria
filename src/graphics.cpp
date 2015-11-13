@@ -488,7 +488,7 @@ void _Graphics::DrawAtlas(const _Bounds &Bounds, const _Texture *Texture, const 
 
 // Draw rectangle in screen space
 void _Graphics::DrawRectangle(const _Bounds &Bounds, bool Filled) {
-	DrawRectangle(glm::vec2(Bounds.Start.x+1, Bounds.Start.y), glm::vec2(Bounds.End.x, Bounds.End.y-1), Filled);
+	DrawRectangle(glm::vec2(Bounds.Start.x, Bounds.Start.y), glm::vec2(Bounds.End.x, Bounds.End.y), Filled);
 }
 
 // Draw stencil mask

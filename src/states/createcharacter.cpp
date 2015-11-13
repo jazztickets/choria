@@ -109,15 +109,15 @@ void _CreateCharacterState::Draw() {
 
 	// Top text
 	Graphics.SetFont(_Graphics::FONT_14);
-	Graphics.RenderText("Create your character", 400, 10, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText("Create your character", 400, 10, _Graphics::ALIGN_CENTER);
 
 	Graphics.SetFont(_Graphics::FONT_10);
-	Graphics.RenderText("Select a picture", 400, 80, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText("Select a picture", 400, 80, _Graphics::ALIGN_CENTER);
 
 	// Message
 	if(Message.size() > 0) {
 		Graphics.SetFont(_Graphics::FONT_10);
-		Graphics.RenderText(Message.c_str(), 400, 400, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
+		//Graphics.RenderText(Message.c_str(), 400, 400, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 	}
 
 	// Draw GUI

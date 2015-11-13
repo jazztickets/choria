@@ -119,7 +119,7 @@ void _AccountState::Draw() {
 	// Server message
 	if(Message.size() > 0) {
 		Graphics.SetFont(_Graphics::FONT_10);
-		Graphics.RenderText(Message.c_str(), 400, 200, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
+		//Graphics.RenderText(Message.c_str(), 400, 200, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 	}
 
 	switch(State) {
@@ -127,7 +127,7 @@ void _AccountState::Draw() {
 		break;
 		case STATE_LOGIN:
 			Graphics.SetFont(_Graphics::FONT_10);
-			Graphics.RenderText("Sending information...", 400, 250, _Graphics::ALIGN_CENTER);
+			//Graphics.RenderText("Sending information...", 400, 250, _Graphics::ALIGN_CENTER);
 		break;
 	}
 

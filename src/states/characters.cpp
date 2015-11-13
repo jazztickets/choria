@@ -99,7 +99,7 @@ void _CharactersState::Draw() {
 
 	// Top text
 	Graphics.SetFont(_Graphics::FONT_14);
-	Graphics.RenderText("Select a slot", 400, 10, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText("Select a slot", 400, 10, _Graphics::ALIGN_CENTER);
 	Graphics.SetFont(_Graphics::FONT_10);
 
 	// Draw character text
@@ -110,14 +110,14 @@ void _CharactersState::Draw() {
 
 		if(Slots[i].Used) {
 			Graphics.SetFont(_Graphics::FONT_14);
-			Graphics.RenderText(Slots[i].Name.c_str(), TextPosition.X, TextPosition.Y + 35, _Graphics::ALIGN_CENTER);
+			//Graphics.RenderText(Slots[i].Name.c_str(), TextPosition.X, TextPosition.Y + 35, _Graphics::ALIGN_CENTER);
 
 			sprintf(Buffer, "Level %d", Slots[i].Level);
 			Graphics.SetFont(_Graphics::FONT_10);
-			Graphics.RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, _Graphics::ALIGN_CENTER);
+			//Graphics.RenderText(Buffer, TextPosition.X, TextPosition.Y + 57, _Graphics::ALIGN_CENTER);
 		}
 		else {
-			Graphics.RenderText("Empty", TextPosition.X, TextPosition.Y + 35, _Graphics::ALIGN_CENTER);
+			//Graphics.RenderText("Empty", TextPosition.X, TextPosition.Y + 35, _Graphics::ALIGN_CENTER);
 		}
 	}
 

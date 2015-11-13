@@ -176,22 +176,23 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
 				// Draw wall
 				if(TDrawWall && Tile->Wall)
-					Graphics.RenderText("W", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
+					//Graphics.RenderText("W", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
 
 				// Draw zone
 				if(!Tile->Wall) {
 					if(TDrawZone && Tile->Zone > 0)
-						Graphics.RenderText(core::stringc(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
+						//Graphics.RenderText(core::stringc(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
 
 					// Draw PVP
-					if(TDrawPVP && Tile->PVP)
-						Graphics.RenderText("PvP", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
+					if(TDrawPVP && Tile->PVP) {
+						//Graphics.RenderText("PvP", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
+					}
 				}
 
 				// Draw event info
 				if(Tile->EventType > 0) {
 					core::stringc EventText = Stats.GetEvent(Tile->EventType)->ShortName + core::stringc(", ") + core::stringc(Tile->EventData);
-					Graphics.RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 255, 255));
+					//Graphics.RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 255, 255));
 				}
 			}
 			else {
