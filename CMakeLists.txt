@@ -17,6 +17,7 @@ if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 	add_definitions("-DNOMINMAX")
+	set(ZLIB_ROOT $ENV{ZLIB_ROOT})
 
 	# set output path
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
@@ -58,6 +59,11 @@ if(NOT FREETYPE_FOUND)
 	message(SEND_ERROR "Could not find Freetype 2!")
 endif()
 
+find_package(ZLIB REQUIRED)
+if(NOT ZLIB_FOUND)
+	message(SEND_ERROR "Could not find zlib!")
+endif()
+
 find_package(GLM REQUIRED)
 if(NOT GLM_FOUND)
 	message(SEND_ERROR "Could not find GLM!")
@@ -80,6 +86,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${IRRLICHT_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
+include_directories(${ZLIB_INCLUDE_DIRS})
 
 # add source files
 file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
@@ -121,14 +128,13 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 	${SDL2_LIBRARY}
 	${FREETYPE_LIBRARIES}
 	${SQLITE_LIBRARIES}
+	${ZLIB_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 	${EXTRA_LIBS}
 )
 
 # copy dlls to working directory
 if(WIN32)
-	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win64-VisualStudio/Irrlicht.dll" ${PROJECT_SOURCE_DIR}/working)
-	add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "$ENV{IRRLICHT_ROOT}/bin/Win64-VisualStudio/Irrlicht_d.dll" ${PROJECT_SOURCE_DIR}/working)
 else()
 
 	# linux installation
