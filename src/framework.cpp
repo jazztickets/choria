@@ -142,6 +142,7 @@ void _Framework::Close() {
 	delete MultiNetwork;
 	delete ClientSingleNetwork;
 	delete ServerSingleNetwork;
+	Assets.Close();
 	Stats.Close();
 	Graphics.Close();
 	Config.Close();
