@@ -37,7 +37,7 @@ struct _MapStat {
 
 struct _Portrait {
 	int ID;
-	_Texture *Image;
+	const _Texture *Image;
 };
 
 struct _Level {
@@ -94,6 +94,7 @@ class _Stats {
 
 	public:
 
+		_Stats() : Database(nullptr) { }
 		void Init();
 		void Close();
 

@@ -12,3 +12,5 @@ button_characters_slot5	element_menu_characters	style_menu_button	style_menu_but
 button_characters_delete	element_menu_characters	style_menu_button	style_menu_button_hover	-150	230	128	48	1	1	0
 button_characters_play	element_menu_characters	style_menu_button	style_menu_button_hover	0	230	128	48	1	1	0
 button_characters_back	element_menu_characters	style_menu_button	style_menu_button_hover	150	230	128	48	1	1	0
+button_newcharacter_create	element_menu_new	style_menu_button	style_menu_button_hover	-75	-16	128	32	1	2	0
+button_newcharacter_cancel	element_menu_new	style_menu_button	style_menu_button_hover	75	-16	128	32	1	2	0

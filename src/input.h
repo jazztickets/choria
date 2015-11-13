@@ -91,7 +91,7 @@ class _OldInput : public irr::IEventReceiver {
 		void Init();
 		void Close();
 
-		bool OnEvent(const irr::SEvent &TEvent) { }
+		bool OnEvent(const irr::SEvent &TEvent) { return false; }
 
 		bool GetKeyState(irr::EKEY_CODE TKey) const { return Keys[TKey]; }
 		bool GetMouseState(int TButton) const { return MouseButtons[TButton]; }

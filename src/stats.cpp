@@ -19,6 +19,7 @@
 #include <database.h>
 #include <globals.h>
 #include <random.h>
+#include <assets.h>
 #include <objects/monster.h>
 
 using namespace irr;
@@ -49,6 +50,7 @@ void _Stats::Init() {
 void _Stats::Close() {
 
 	delete Database;
+	Database = nullptr;
 	Events.clear();
 }
 
@@ -64,7 +66,7 @@ void _Stats::LoadPortraits() {
 	_Portrait Portrait;
 	while(Database->FetchRow()) {
 		Portrait.ID = Database->GetInt(0);
-		//Portrait.Image = irrDriver->getTexture((core::stringc("textures/portraits/") + core::stringc(Database->GetString(1))).c_str());
+		Portrait.Image = Assets.Textures[std::string("portraits/") + Database->GetString(1)];
 		Portraits[Portrait.ID] = Portrait;
 	}
 	Database->CloseQuery();
@@ -146,7 +148,7 @@ void _Stats::LoadSkills() {
 		Skill.ID = Database->GetInt(0);
 		Skill.Name = Database->GetString(1);
 		Skill.Info = Database->GetString(2);
-		//Skill.Image = irrDriver->getTexture((core::stringc("textures/skills/") + core::stringc(Database->GetString(3))).c_str());
+		Skill.Image = Assets.Textures[std::string("skills/") + Database->GetString(3)];
 		Skill.Type = Database->GetInt(4);
 		Skill.SkillCost = Database->GetInt(5);
 		Skill.ManaCostBase = Database->GetFloat(6);
@@ -175,7 +177,7 @@ void _Stats::LoadItems() {
 		Item.Name = Database->GetString(1);
 		Item.Level = Database->GetInt(2);
 		Item.Type = Database->GetInt(3);
-		//Item.Image = irrDriver->getTexture((core::stringc("textures/items/") + core::stringc(Database->GetString(4))).c_str());
+		Item.Image = Assets.Textures[std::string("items/") + Database->GetString(4)];
 		Item.LevelRequired = Database->GetInt(5);
 		Item.Cost = Database->GetInt(6);
 		Item.Damage = Database->GetFloat(7);
@@ -272,7 +274,7 @@ void _Stats::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
 	if(Database->FetchRow()) {
 		TMonster->Level = Database->GetInt(1);
 		TMonster->Name = Database->GetString(2);
-		//TMonster->Portrait = irrDriver->getTexture((core::stringc("textures/monsters/") + core::stringc(Database->GetString(3))).c_str());
+		TMonster->Portrait = Assets.Textures[std::string("monsters/") + Database->GetString(3)];
 		TMonster->Health = TMonster->MaxHealth = Database->GetInt(4);
 		TMonster->Mana = TMonster->MaxMana = Database->GetInt(5);
 		TMonster->ExperienceGiven = Database->GetInt(6);

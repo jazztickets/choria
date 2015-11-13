@@ -71,6 +71,7 @@ class _Menu {
 
 		void InitTitle();
 		void InitCharacters();
+		void InitNewCharacter();
 		void InitOptions();
 		void InitInGame();
 		void InitPlay();
@@ -94,12 +95,11 @@ class _Menu {
 
 		void Connect(const std::string &Address, bool Fake=false);
 
-		void InitNewCharacter();
 		void LaunchGame();
 
+		void LoadPortraitButtons();
 		void RefreshInputLabels();
 		void ResetCharacterSlots();
-		void CancelCreate();
 		void CreatePlayer();
 		void RemapInput(int InputType, int Input);
 

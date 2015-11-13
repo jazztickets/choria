@@ -40,7 +40,7 @@ class _Skill {
 
 		int GetID() const { return ID; }
 		int GetType() const { return Type; }
-		_Texture *GetImage() const { return Image; }
+		const _Texture *GetImage() const { return Image; }
 		const std::string &GetName() const { return Name; }
 		const std::string &GetInfo() const { return Info; }
 		int GetSkillCost() const { return SkillCost; }
@@ -61,7 +61,7 @@ class _Skill {
 		int Type;
 		std::string Name;
 		std::string Info;
-		_Texture *Image;
+		const _Texture *Image;
 		int SkillCost;
 		float ManaCostBase;
 		float ManaCost;

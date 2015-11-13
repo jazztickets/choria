@@ -133,6 +133,6 @@ class _Fighter {
 		const _Skill *SkillUsing, *SkillUsed;
 
 		// Render
-		_Texture *Portrait;
+		const _Texture *Portrait;
 		irr::core::position2di Offset;
 };

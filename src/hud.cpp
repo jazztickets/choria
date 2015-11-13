@@ -1300,7 +1300,7 @@ void _HUD::DrawSkills() {
 	}
 
 	// Draw skill bar
-	_Texture *Image;
+	const _Texture *Image;
 	for(int i = 0; i < 8; i++) {
 
 		if(Player->GetSkillBar(i))

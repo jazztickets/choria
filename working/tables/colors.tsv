@@ -6,6 +6,6 @@ green	0	1	0	1
 blue	0	0	1	1
 cyan	0	1	1	1
 purple	1	0	1	1
-menu_button	0.1	0.12	0.1	1
-menu_button_hover	0.2	0.24	0.2	1
-menu_button_border	0.3	0.33	0.3	1
+menu_button	0.1	0.1	0.12	1
+menu_button_hover	0.2	0.2	0.24	1
+menu_button_border	0.3	0.3	0.3	1

@@ -29,6 +29,7 @@
 #include <ui/label.h>
 #include <ui/button.h>
 #include <ui/image.h>
+#include <ui/style.h>
 #include <ui/textbox.h>
 #include <network/network.h>
 #include <states/null.h>
@@ -106,23 +107,7 @@ void _Menu::InitNewCharacter() {
 	Name->Text = "";
 	Name->ResetCursor();
 
-	// Deselect previous elements
-	std::list<_Portrait> Portraits;
-	Stats.GetPortraits(Portraits);
-	int i = 0;
-	for(auto &Portrait : Portraits) {
-		//std::stringstream Buffer;
-		//Buffer << PlayerColorButtonPrefix << i;
-
-		//PortraitButtons[i] = Assets.Buttons[Buffer.str()];
-		//PortraitButtons[i]->Enabled = false;
-		//PortraitButtons[i]->UserData = (void *)(intptr_t)i;
-
-		i++;
-	}
-
-	SelectedColor = 0;
-	//PortraitButtons[SelectedColor]->Enabled = true;
+	LoadPortraitButtons();
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
 	CharactersState = CHARACTERS_CREATE;
@@ -139,6 +124,61 @@ void _Menu::LaunchGame() {
 
 	//SaveSlots[SelectedSlot]->Enabled = false;
 	//State = STATE_NONE;
+}
+
+// Load portraits
+void _Menu::LoadPortraitButtons() {
+
+	// Clear old children
+	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
+	std::vector<_Element *> &Children = PortraitsElement->Children;
+	for(size_t i = 0; i < Children.size(); i++) {
+		delete Children[i]->Style;
+		delete Children[i];
+	}
+
+	Children.clear();
+
+	// Loop through textures
+	glm::ivec2 Offset(10, 0);
+	int Width = PortraitsElement->Size.x;
+	std::list<_Portrait> Portraits;
+	Stats.GetPortraits(Portraits);
+	int i = 0;
+	for(auto &Portrait : Portraits) {
+
+		// Create style
+		_Style *Style = new _Style;
+		Style->Identifier = "dummy";
+		Style->HasBackgroundColor = false;
+		Style->HasBorderColor = false;
+		Style->BorderColor = COLOR_WHITE;
+		Style->TextureColor = COLOR_WHITE;
+		Style->Program = Assets.Programs["ortho_pos_uv"];
+		Style->Texture = Portrait.Image;
+		Style->Stretch = true;
+
+		// Add button
+		_Button *Button = new _Button();
+		Button->Identifier = "portrait";
+		Button->Parent = PortraitsElement;
+		Button->Offset = Offset;
+		Button->Size = Portrait.Image->Size;
+		Button->Alignment = LEFT_TOP;
+		Button->Style = Style;
+		Button->HoverStyle = Assets.Styles["menu_button_border"];
+		Button->UserData = (void *)i;
+		PortraitsElement->Children.push_back(Button);
+
+		// Update position
+		Offset.x += Portrait.Image->Size.x + 10;
+		if(Offset.x > Width - Portrait.Image->Size.x + 10) {
+			Offset.y += Portrait.Image->Size.y + 10;
+			Offset.x = 10;
+		}
+	}
+
+	PortraitsElement->CalculateBounds();
 }
 
 // Shutdown
@@ -164,7 +204,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			else {
 				if(KeyEvent.Pressed) {
 					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-						CancelCreate();
+						InitCharacters();
 					else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
 						CreatePlayer();
 				}
@@ -294,11 +334,11 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						SelectedColor = (intptr_t)Clicked->UserData;
 						//PortraitButtons[SelectedColor]->Enabled = true;
 					}
-					else if(Clicked->Identifier == "button_new_create") {
+					else if(Clicked->Identifier == "button_newcharacter_create") {
 						CreatePlayer();
 					}
-					else if(Clicked->Identifier == "button_new_cancel") {
-						CancelCreate();
+					else if(Clicked->Identifier == "button_newcharacter_cancel") {
+						InitCharacters();
 					}
 				}
 			} break;
@@ -493,6 +533,7 @@ void _Menu::Connect(const std::string &Address, bool Fake) {
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
 
+		// Request character list
 		{
 			_Buffer Packet;
 			Packet.Write<char>(_Network::CHARACTERS_REQUEST);
@@ -539,14 +580,6 @@ void _Menu::RefreshInputLabels() {
 		InputLabels[i]->Text = Actions.GetInputNameForAction(i);
 		InputLabels[i]->Parent->UserData = (void *)(intptr_t)i;
 	}*/
-}
-
-// Cancel create screen
-void _Menu::CancelCreate() {
-	CurrentLayout = Assets.Elements["element_menu_characters"];
-	CharactersState = CHARACTERS_NONE;
-
-	//SaveSlots[SelectedSlot]->Enabled = false;
 }
 
 // Handle player creation

@@ -266,6 +266,7 @@ void _Framework::StartLocalServer() {
 // Stops the local server
 void _Framework::StopLocalServer() {
 	if(LocalServerRunning) {
+		ClientNetwork->Disconnect();
 		LocalServerRunning = false;
 
 		PlayServerState.Close();

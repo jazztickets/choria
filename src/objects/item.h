@@ -44,7 +44,7 @@ class _Item {
 
 		int GetID() const { return ID; }
 		int GetType() const { return Type; }
-		_Texture *GetImage() const { return Image; }
+		const _Texture *GetImage() const { return Image; }
 		const irr::core::stringc &GetName() const { return Name; }
 		int GetLevel() const { return Level; }
 		int GetHealthRestore() const { return HealthRestore; }
@@ -71,7 +71,7 @@ class _Item {
 		irr::core::stringc Name;
 		int Level;
 		int Type;
-		_Texture *Image;
+		const _Texture *Image;
 		int LevelRequired;
 		int Cost;
 		float Damage;
