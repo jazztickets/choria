@@ -35,9 +35,11 @@ class _Menu {
 	public:
 
 		struct _CharacterSlot {
+			_CharacterSlot() : Button(nullptr), Name(nullptr), Level(nullptr), Used(false) {}
 			_Button *Button;
 			_Label *Name;
 			_Label *Level;
+			bool Used;
 		};
 
 		// Menu states
@@ -98,8 +100,10 @@ class _Menu {
 		void LaunchGame();
 
 		int GetSelectedPortrait();
+		int GetSelectedCharacter();
 		void LoadPortraitButtons();
 		void ValidateCreateCharacter();
+		void UpdateCharacterButtons();
 		void RefreshInputLabels();
 		void CreateCharacter();
 		void RequestCharacterList();
@@ -124,7 +128,6 @@ class _Menu {
 
 		// Singleplayer
 		CharactersStateType CharactersState;
-		int SelectedSlot;
 };
 
 extern _Menu Menu;

@@ -153,10 +153,9 @@ void _Framework::Close() {
 }
 
 // Requests a state change
-void _Framework::ChangeState(_State *TState) {
-
-	RequestedState = TState;
-	FrameworkState = FADEOUT;
+void _Framework::ChangeState(_State *RequestedState) {
+	this->RequestedState = RequestedState;
+	FrameworkState = CLOSE;
 }
 
 // Updates the current state and manages the state stack

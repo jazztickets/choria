@@ -33,6 +33,7 @@
 #include <ui/textbox.h>
 #include <network/network.h>
 #include <states/null.h>
+#include <states/playclient.h>
 #include <sstream>
 #include <SDL_mouse.h>
 
@@ -146,6 +147,25 @@ int _Menu::GetSelectedPortrait() {
 	return -1;
 }
 
+// Get the selected character slot
+int _Menu::GetSelectedCharacter() {
+	int Index = 0;
+
+	// Check for selected character
+	_Element *CharactersElement = Assets.Elements["element_menu_characters"];
+	for(auto &Element : CharactersElement->Children) {
+		if(Element->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
+			_Button *Button = (_Button *)Element;
+			if(Button->Checked)
+				return Index;
+
+			Index++;
+		}
+	}
+
+	return -1;
+}
+
 // Create character
 void _Menu::CreateCharacter() {
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
@@ -245,6 +265,20 @@ void _Menu::ValidateCreateCharacter() {
 		CreateButton->Enabled = true;
 	else
 		CreateButton->Enabled = false;
+}
+
+// Validate characters ui elements
+void _Menu::UpdateCharacterButtons() {
+	_Button *DeleteButton = Assets.Buttons["button_characters_delete"];
+	_Button *PlayButton = Assets.Buttons["button_characters_play"];
+	DeleteButton->Enabled = false;
+	PlayButton->Enabled = false;
+
+	int SelectedSlot = GetSelectedCharacter();
+	if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
+		DeleteButton->Enabled = true;
+		PlayButton->Enabled = true;
+	}
 }
 
 // Shutdown
@@ -369,35 +403,44 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 			case STATE_CHARACTERS: {
 				if(CharactersState == CHARACTERS_NONE) {
 
-					if(Clicked->Identifier == "button_singleplayer_delete") {
-						if(SelectedSlot != -1) {
-							//Save.DeletePlayer(SelectedSlot);
-
-							CharacterSlots[SelectedSlot].Button->Checked = false;
-							SelectedSlot = -1;
+					if(Clicked->Identifier == "button_characters_delete") {
+						int SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
+							_Buffer Packet;
+							Packet.Write<char>(_Network::CHARACTERS_DELETE);
+							Packet.Write<char>(SelectedSlot);
+							ClientNetwork->SendPacketToHost(&Packet);
 						}
 					}
-					else if(Clicked->Identifier == "button_singleplayer_play") {
-						//if(SelectedSlot != -1 && Save.GetPlayer(SelectedSlot)) {
-						//	LaunchGame();
-						//}
+					else if(Clicked->Identifier == "button_characters_play") {
+						int SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
+							PlayClientState.SetCharacterSlot(SelectedSlot);
+							Framework.ChangeState(&PlayClientState);
+						}
 					}
-					else if(Clicked->Identifier == "button_singleplayer_back") {
+					else if(Clicked->Identifier == "button_characters_back") {
 						InitTitle();
 					}
 					else if(Clicked->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
 
-						// Deselect previous slot
-						if(SelectedSlot != -1)
-							CharacterSlots[SelectedSlot].Button->Checked = false;
+						// Deselect slots
+						_Element *CharactersElement = Assets.Elements["element_menu_characters"];
+						for(auto &Element : CharactersElement->Children) {
+							if(Element->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
+								_Button *Button = (_Button *)Element;
+								Button->Checked = false;
+							}
+						}
 
-						// Set up create player screen
-						//if(!Save.GetPlayer(Clicked->ID)) {
+						int SelectedSlot = (intptr_t)Clicked->UserData;
+						if(CharacterSlots[SelectedSlot].Used) {
+							CharacterSlots[SelectedSlot].Button->Checked = true;
+						}
+						else
 							InitNewCharacter();
-						//}
 
-						SelectedSlot = (intptr_t)Clicked->UserData;
-						CharacterSlots[SelectedSlot].Button->Checked = true;
+						UpdateCharacterButtons();
 
 						if(DoubleClick) {
 							LaunchGame();
@@ -581,8 +624,6 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 					throw std::runtime_error("Can't find label: " + Buffer.str());
 				Buffer.str("");
 
-				CharacterSlots[i].Name->Text = "Empty Slot";
-
 				// Set slot level
 				Buffer << CharacterLevelPrefix << i;
 				CharacterSlots[i].Level = Assets.Labels[Buffer.str()];
@@ -590,20 +631,22 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 					throw std::runtime_error("Can't find label: " + Buffer.str());
 				Buffer.str("");
 
-				CharacterSlots[i].Level->Text = "";
-
 				// Assign button
 				Buffer << CharacterButtonPrefix << i;
 				CharacterSlots[i].Button = Assets.Buttons[Buffer.str()];
+				CharacterSlots[i].Button->Checked = false;
+
+				// Set state
+				CharacterSlots[i].Name->Text = "Empty Slot";
+				CharacterSlots[i].Level->Text = "";
+				CharacterSlots[i].Used = false;
 			}
 
 			//if(CharacterCount < SAVE_COUNT)
 			//	ButtonCreate->setEnabled(true);
 
 			// Get characters
-			_Texture *PortraitImage;
-			int i;
-			for(i = 0; i < CharacterCount; i++) {
+			for(int i = 0; i < CharacterCount; i++) {
 				CharacterSlots[i].Name->Text = Packet.ReadString();
 				int32_t PortraitIndex = Packet.Read<int32_t>();
 				int32_t Experience = Packet.Read<int32_t>();
@@ -611,14 +654,18 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				std::stringstream Buffer;
 				Buffer << "Level " << Stats.FindLevel(Experience)->Level;
 				CharacterSlots[i].Level->Text = Buffer.str();
+				CharacterSlots[i].Used = true;
 				//CharacterSlots[i].Button->Style->Texture =
 				//Slots[i].Used = true;
 				//Slots[i].Name = TPacket->ReadString();
-				//PortraitImage = Stats.GetPortrait(TPacket->Read<int32_t>())->Image;
+				//const _Texture *PortraitImage = Stats.GetPortrait(PortraitIndex)->Image;
+				//CharacterSlots[i].Button->Style->Texture = PortraitImage;
 				//Slots[i].Button->setImage(PortraitImage);
 				//Slots[i].Button->setPressedImage(PortraitImage);
 				//Slots[i].Level = Stats.FindLevel(TPacket->Read<int32_t>())->Level;
 			}
+
+			UpdateCharacterButtons();
 
 			InitCharacters();
 		}
