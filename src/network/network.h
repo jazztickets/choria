@@ -19,6 +19,7 @@
 
 // Libraries
 #include <enet/enet.h>
+#include <cstdint>
 
 // Forward Declarations
 class _Buffer;
