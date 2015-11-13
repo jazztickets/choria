@@ -63,6 +63,7 @@ void _Menu::InitTitle() {
 	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
 
 	CurrentLayout = Assets.Elements["element_menu_title"];
+	ClientNetwork->Disconnect();
 	Framework.StopLocalServer();
 
 	State = STATE_TITLE;
@@ -140,6 +141,9 @@ void _Menu::InitConnect() {
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Color = COLOR_WHITE;
 	Label->Text = "";
+
+	_Button *Button = Assets.Buttons["button_connect_connect"];
+	Button->Enabled = true;
 
 	State = STATE_CONNECT;
 }
@@ -233,6 +237,9 @@ void _Menu::ConnectToHost() {
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Text = "Connecting...";
+
+	_Button *Button = Assets.Buttons["button_connect_connect"];
+	Button->Enabled = false;
 }
 
 // Request character list from server

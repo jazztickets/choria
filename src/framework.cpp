@@ -31,7 +31,6 @@
 #include <network/multinetwork.h>
 #include <states/mapeditor.h>
 #include <states/playserver.h>
-#include <states/connect.h>
 #include <states/account.h>
 #include <states/null.h>
 #include <framelimit.h>
@@ -63,7 +62,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			State = &MapEditorState;
 		}
 		else if(Token == "-connect") {
-			State = &ConnectState;
 		}
 		else if(Token == "-login" && TokensRemaining > 1) {
 			AccountState.SetLoginInfo(Arguments[i+1], Arguments[i+2]);

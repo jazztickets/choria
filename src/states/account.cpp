@@ -22,7 +22,6 @@
 #include <graphics.h>
 #include <buffer.h>
 #include <network/network.h>
-#include <states/connect.h>
 #include <IGUIEnvironment.h>
 
 _AccountState AccountState;
@@ -76,7 +75,7 @@ void _AccountState::Close() {
 // Handles a disconnection from the server
 void _AccountState::HandleDisconnect(ENetEvent *TEvent) {
 
-	Framework.ChangeState(&ConnectState);
+//	Framework.ChangeState(&ConnectState);
 }
 
 // Handles a server packet
@@ -140,7 +139,7 @@ bool _AccountState::HandleKeyPress(EKEY_CODE TKey) {
 		case STATE_MAIN:
 			switch(TKey) {
 				case KEY_ESCAPE:
-					Framework.ChangeState(&ConnectState);
+					//Framework.ChangeState(&ConnectState);
 				break;
 				case KEY_RETURN:
 					ChangeState(STATE_LOGIN);
@@ -166,7 +165,7 @@ void _AccountState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement 
 							ChangeState(STATE_LOGIN);
 						break;
 						case ELEMENT_CANCEL:
-							Framework.ChangeState(&ConnectState);
+							//Framework.ChangeState(&ConnectState);
 						break;
 						case ELEMENT_CREATEACCOUNT:
 							CreateAccount = true;

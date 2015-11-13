@@ -95,7 +95,7 @@ void _Element::Update(double FrameTime, const glm::ivec2 &Mouse) {
 	ReleasedElement = nullptr;
 
 	// Test element first
-	if(Bounds.PointInside(Mouse) && Clickable) {
+	if(Bounds.PointInside(Mouse) && Clickable && Enabled) {
 		HitElement = this;
 	}
 	else if(MaskOutside) {
