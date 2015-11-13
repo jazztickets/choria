@@ -20,6 +20,7 @@
 #include <framework.h>
 #include <state.h>
 #include <constants.h>
+#include <config.h>
 #include <stdexcept>
 
 // Initializes the network system
@@ -33,7 +34,7 @@ void _MultiNetwork::Init(bool TServer) {
 		// Set up port
 		ENetAddress Address;
 		Address.host = ENET_HOST_ANY;
-		Address.port = NETWORKING_PORT;
+		Address.port = Config.NetworkPort;
 
 		// Create listener connection
 		Connection = enet_host_create(&Address, 250, 0, 0, 0);
@@ -61,12 +62,12 @@ void _MultiNetwork::Close() {
 }
 
 // Connect to a host
-int _MultiNetwork::Connect(const char *TIPAddress) {
+int _MultiNetwork::Connect(const char *TIPAddress, uint16_t Port) {
 
 	// Get server address
 	ENetAddress Address;
 	enet_address_set_host(&Address, TIPAddress);
-	Address.port = NETWORKING_PORT;
+	Address.port = Port;
 
 	// Connect to server
 	Peer = enet_host_connect(Connection, &Address, 2, 0);

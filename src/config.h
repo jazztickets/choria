@@ -59,6 +59,9 @@ class _Config {
 		double NetworkRate;
 		uint16_t NetworkPort;
 
+		std::string LastHost;
+		std::string LastPort;
+
 	private:
 
 		template <typename Type>

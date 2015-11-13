@@ -76,6 +76,9 @@ void _Config::SetDefaults() {
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
 
+	LastHost = "127.0.0.1";
+	LastPort = std::to_string(DEFAULT_NETWORKPORT);
+
 	LoadDefaultInputBindings();
 }
 
@@ -150,6 +153,8 @@ void _Config::Load() {
 	GetValue("fake_lag", FakeLag);
 	GetValue("network_rate", NetworkRate);
 	GetValue("network_port", NetworkPort);
+	GetValue("last_host", LastHost);
+	GetValue("last_port", LastPort);
 
 	if(NetworkRate < 0.01)
 		NetworkRate = 0.01;
@@ -203,6 +208,8 @@ void _Config::Save() {
 	File << "fake_lag=" << FakeLag << std::endl;
 	File << "network_rate=" << NetworkRate << std::endl;
 	File << "network_port=" << NetworkPort << std::endl;
+	File << "last_host=" << LastHost << std::endl;
+	File << "last_port=" << LastPort << std::endl;
 
 	// Write out input map
 	for(int i = 0; i < _Actions::COUNT; i++) {

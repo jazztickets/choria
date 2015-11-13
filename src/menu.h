@@ -49,6 +49,8 @@ class _Menu {
 			STATE_NONE,
 			STATE_TITLE,
 			STATE_CHARACTERS,
+			STATE_CONNECT,
+			STATE_ACCOUNT,
 			STATE_OPTIONS,
 			STATE_INGAME,
 		};
@@ -72,6 +74,8 @@ class _Menu {
 		void InitTitle();
 		void InitCharacters();
 		void InitNewCharacter();
+		void InitConnect();
+		void InitAccount();
 		void InitOptions();
 		void InitInGame();
 		void InitPlay();
@@ -93,7 +97,7 @@ class _Menu {
 
 	private:
 
-		void Connect(const std::string &Address, bool Fake=false);
+		void Connect(const std::string &Address, uint16_t Port, bool Fake);
 
 		int GetSelectedPortraitID();
 		int GetSelectedCharacter();
@@ -102,6 +106,7 @@ class _Menu {
 		void UpdateCharacterButtons();
 		void RefreshInputLabels();
 		void CreateCharacter();
+		void ConnectToHost();
 		void RequestCharacterList();
 		void RemapInput(int InputType, int Input);
 

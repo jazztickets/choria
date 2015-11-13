@@ -122,6 +122,44 @@ void _Menu::InitNewCharacter() {
 	CharactersState = CHARACTERS_CREATE;
 }
 
+// Init connect screen
+void _Menu::InitConnect() {
+	ClientNetwork->Disconnect();
+
+	CurrentLayout = Assets.Elements["element_menu_connect"];
+
+	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
+	Host->Focused = true;
+	Host->Text = Config.LastHost;
+	Host->ResetCursor();
+
+	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+	Port->Focused = false;
+	Port->Text = Config.LastPort;
+
+	_Label *Label = Assets.Labels["label_menu_connect_message"];
+	Label->Color = COLOR_WHITE;
+	Label->Text = "";
+
+	State = STATE_CONNECT;
+}
+
+// Init account info screen
+void _Menu::InitAccount() {
+	CurrentLayout = Assets.Elements["element_menu_account"];
+
+	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
+	Username->Focused = true;
+	Username->Text = "";
+	Username->ResetCursor();
+
+	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
+	Password->Focused = false;
+	Password->Text = "";
+
+	State = STATE_ACCOUNT;
+}
+
 // Get the selected portrait id
 int _Menu::GetSelectedPortraitID() {
 
@@ -173,6 +211,30 @@ void _Menu::CreateCharacter() {
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
+void _Menu::ConnectToHost() {
+	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
+	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+	if(Host->Text.length() == 0) {
+		Host->Focused = true;
+		Port->Focused = false;
+		return;
+	}
+
+	if(Port->Text.length() == 0) {
+		Host->Focused = false;
+		Port->Focused = true;
+		return;
+	}
+
+	std::stringstream Buffer(Port->Text);
+	uint16_t PortNumber;
+	Buffer >> PortNumber;
+	Connect(Host->Text, PortNumber, false);
+
+	_Label *Label = Assets.Labels["label_menu_connect_message"];
+	Label->Text = "Connecting...";
+}
+
 // Request character list from server
 void _Menu::RequestCharacterList() {
 
@@ -218,7 +280,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
-		Button->UserData = (void *)Portrait.ID;
+		Button->UserData = (void *)(intptr_t)Portrait.ID;
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
@@ -298,6 +360,14 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 				}
 			}
 		} break;
+		case STATE_CONNECT: {
+			if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+				InitTitle();
+		} break;
+		case STATE_ACCOUNT: {
+			if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+				InitConnect();
+		} break;
 		case STATE_OPTIONS: {
 			if(OptionsState == OPTION_NONE) {
 				if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE) {
@@ -376,9 +446,10 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 		switch(State) {
 			case STATE_TITLE: {
 				if(Clicked->Identifier == "button_title_singleplayer") {
-					Connect("", true);
+					Connect("", 0, true);
 				}
 				else if(Clicked->Identifier == "button_title_multiplayer") {
+					InitConnect();
 				}
 				else if(Clicked->Identifier == "button_title_mapeditor") {
 				}
@@ -458,6 +529,21 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					else if(Clicked->Identifier == "button_newcharacter_cancel") {
 						RequestCharacterList();
 					}
+				}
+			} break;
+			case STATE_CONNECT: {
+				if(Clicked->Identifier == "button_connect_connect") {
+					ConnectToHost();
+				}
+				else if(Clicked->Identifier == "button_connect_back") {
+					InitTitle();
+				}
+			} break;
+			case STATE_ACCOUNT: {
+				if(Clicked->Identifier == "button_account_login") {
+				}
+				else if(Clicked->Identifier == "button_account_back") {
+					InitConnect();
 				}
 			} break;
 			case STATE_OPTIONS: {
@@ -556,6 +642,12 @@ void _Menu::Render() {
 			}
 
 		} break;
+		case STATE_CONNECT: {
+			Assets.Elements["element_menu_connect"]->Render();
+		} break;
+		case STATE_ACCOUNT: {
+			Assets.Elements["element_menu_account"]->Render();
+		} break;
 		case STATE_INGAME: {
 			if(CurrentLayout)
 				CurrentLayout->Render();
@@ -566,10 +658,27 @@ void _Menu::Render() {
 }
 
 void _Menu::HandleConnect(ENetEvent *TEvent) {
+	switch(State) {
+		case STATE_CONNECT: {
+			InitAccount();
+		} break;
+		default:
+		break;
+	}
 }
 
 void _Menu::HandleDisconnect(ENetEvent *TEvent) {
+	switch(State) {
+		case STATE_CONNECT: {
+			InitConnect();
 
+			_Label *Label = Assets.Labels["label_menu_connect_message"];
+			Label->Color = COLOR_RED;
+			Label->Text = "Unable to connect to server";
+		} break;
+		default:
+		break;
+	}
 }
 
 // Handle packet
@@ -583,13 +692,11 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				//Message = "Game version differs from server's";
 				//ChangeState(STATE_MAIN);
 			}
-		}
-		break;
+		} break;
 		case _Network::ACCOUNT_SUCCESS: {
 			Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
 			RequestCharacterList();
-		}
-		break;
+		} break;
 		case _Network::CHARACTERS_LIST: {
 			Framework.Log << "_Network::CHARACTERS_LIST" << std::endl;
 
@@ -645,15 +752,8 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				Buffer << "Level " << Stats.FindLevel(Experience)->Level;
 				CharacterSlots[i].Level->Text = Buffer.str();
 				CharacterSlots[i].Used = true;
-				//CharacterSlots[i].Button->Style->Texture =
-				//Slots[i].Used = true;
-				//Slots[i].Name = TPacket->ReadString();
 				const _Texture *PortraitImage = Stats.GetPortrait(PortraitIndex)->Image;
 				CharacterSlots[i].Image->Texture = PortraitImage;
-				//CharacterSlots[i].Button->Style->Texture = PortraitImage;
-				//Slots[i].Button->setImage(PortraitImage);
-				//Slots[i].Button->setPressedImage(PortraitImage);
-				//Slots[i].Level = Stats.FindLevel(TPacket->Read<int32_t>())->Level;
 			}
 
 			// Disable ui buttons
@@ -661,8 +761,7 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 
 			// Set state
 			InitCharacters();
-		}
-		break;
+		} break;
 		case _Network::CREATECHARACTER_SUCCESS:
 
 			// Close new character screen
@@ -677,12 +776,12 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Connect to a server
-void _Menu::Connect(const std::string &Address, bool Fake) {
+void _Menu::Connect(const std::string &Address, uint16_t Port, bool Fake) {
 
 	// Connect to the fake singleplayer network
 	if(Fake) {
 		Framework.StartLocalServer();
-		ClientNetwork->Connect("");
+		ClientNetwork->Connect("", Port);
 
 		// Send fake account information
 		{
@@ -693,6 +792,9 @@ void _Menu::Connect(const std::string &Address, bool Fake) {
 			Packet.WriteString("singleplayer");
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
+	}
+	else {
+		ClientNetwork->Connect(Address.c_str(), Port);
 	}
 }
 

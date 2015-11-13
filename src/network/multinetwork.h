@@ -31,7 +31,7 @@ class _MultiNetwork : public _Network {
 		void Update();
 
 		// Connections
-		int Connect(const char *TIPAddress);
+		int Connect(const char *TIPAddress, uint16_t Port);
 		void Disconnect(ENetPeer *TPeer=0);
 		void WaitForDisconnect();
 

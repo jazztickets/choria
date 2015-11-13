@@ -121,7 +121,7 @@ class _Network {
 		virtual void Update() { }
 
 		// Connections
-		virtual int Connect(const char *TIPAddress) { return 0; }
+		virtual int Connect(const char *TIPAddress, uint16_t Port) { return 0; }
 		virtual void Disconnect(ENetPeer *TPeer=0) { }
 
 		virtual enet_uint32 GetRTT() { return 0; }

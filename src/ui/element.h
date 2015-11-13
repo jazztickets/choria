@@ -58,10 +58,10 @@ class _Element {
 		_Element *Parent;
 		void *UserData;
 
-		int MaskOutside : 1;
-		int Enabled : 1;
-		int Clickable : 1;
-		int Debug : 4;
+		bool MaskOutside : 1;
+		bool Enabled : 1;
+		bool Clickable : 1;
+		int Debug;
 
 		// Graphics
 		const _Style *Style;

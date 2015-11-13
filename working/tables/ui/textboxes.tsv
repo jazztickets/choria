@@ -1,2 +1,6 @@
 identifier	parent	style	font	offset x	offset y	width	height	alignment x	alignment y	max length
 textbox_newcharacter_name	element_menu_new	style_menu_textbox	hud_medium	0	-65	250	30	1	2	10
+textbox_connect_host	element_menu_connect	style_menu_textbox	hud_medium	0	-250	250	30	1	2	64
+textbox_connect_port	element_menu_connect	style_menu_textbox	hud_medium	0	-150	250	30	1	2	5
+textbox_account_username	element_menu_account	style_menu_textbox	hud_medium	0	-250	250	30	1	2	64
+textbox_account_password	element_menu_account	style_menu_textbox	hud_medium	0	-150	250	30	1	2	5

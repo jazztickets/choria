@@ -196,7 +196,7 @@ void _ConnectState::ChangeState(int TState) {
 		break;
 		case STATE_CONNECT: {
 
-			if(ValidateForm() && ClientNetwork->Connect(IPAddress.c_str())) {
+			if(ValidateForm() && ClientNetwork->Connect(IPAddress.c_str(), 0)) {
 				Form->setVisible(false);
 				Message = "";
 				State = TState;

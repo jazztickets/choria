@@ -28,7 +28,7 @@ class _SingleNetwork : public _Network {
 		void Close();
 
 		// Connections
-		int Connect(const char *TIPAddress);
+		int Connect(const char *TIPAddress, uint16_t Port);
 		void Disconnect(ENetPeer *TPeer=0);
 
 		// Packets

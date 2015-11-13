@@ -34,7 +34,7 @@ void _SingleNetwork::Close() {
 }
 
 // Connect to a host
-int _SingleNetwork::Connect(const char *TIPAddress) {
+int _SingleNetwork::Connect(const char *TIPAddress, uint16_t Port) {
 
 	if(Connected)
 		return 0;

@@ -35,7 +35,6 @@ const int MAP_TILE_HEIGHT = 32;
 const int CAMERA_SCROLLMIN_X = 2;
 const int CAMERA_SCROLLMIN_Y = 2;
 
-const int NETWORKING_PORT = 60006;
 const int NETWORKING_CHAT_SIZE = 100;
 const double NETWORKING_CHAT_TIMEOUT = 15.0;
 
