@@ -32,6 +32,7 @@ _Element::_Element() :
 	UserData(nullptr),
 	MaskOutside(false),
 	Enabled(true),
+	Clickable(true),
 	Debug(0),
 	Style(nullptr),
 	DisabledStyle(nullptr),
@@ -94,7 +95,7 @@ void _Element::Update(double FrameTime, const glm::ivec2 &Mouse) {
 	ReleasedElement = nullptr;
 
 	// Test element first
-	if(Bounds.PointInside(Mouse)) {
+	if(Bounds.PointInside(Mouse) && Clickable) {
 		HitElement = this;
 	}
 	else if(MaskOutside) {

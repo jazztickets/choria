@@ -40,6 +40,7 @@ class _Menu {
 			_Button *Button;
 			_Label *Name;
 			_Label *Level;
+			_Image *Image;
 			bool Used;
 		};
 
@@ -94,7 +95,7 @@ class _Menu {
 
 		void Connect(const std::string &Address, bool Fake=false);
 
-		int GetSelectedPortrait();
+		int GetSelectedPortraitID();
 		int GetSelectedCharacter();
 		void LoadPortraitButtons();
 		void ValidateCreateCharacter();

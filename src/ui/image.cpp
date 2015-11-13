@@ -37,11 +37,6 @@ void _Image::Render() const {
 		Graphics.SetVBO(VBO_NONE);
 		Graphics.DrawImage(Bounds, Texture, Stretch);
 	}
-	else {
-		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-		Graphics.SetVBO(VBO_NONE);
-		Graphics.DrawRectangle(Bounds, Stretch);
-	}
 
 	// Draw children
 	_Element::Render();

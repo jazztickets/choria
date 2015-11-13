@@ -45,7 +45,8 @@ const std::string InputBoxPrefix = "button_options_input_";
 const std::string CharacterButtonPrefix = "button_characters_slot";
 const std::string CharacterNamePrefix = "label_menu_characters_slot_name";
 const std::string CharacterLevelPrefix = "label_menu_characters_slot_level";
-const std::string CharacterPortraitPrefix = "button_newcharacter_portrait";
+const std::string CharacterImagePrefix = "image_menu_characters_slot";
+const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 
 // Constructor
 _Menu::_Menu() {
@@ -121,18 +122,15 @@ void _Menu::InitNewCharacter() {
 	CharactersState = CHARACTERS_CREATE;
 }
 
-// Get the selected portrait index
-int _Menu::GetSelectedPortrait() {
-	int Index = 0;
+// Get the selected portrait id
+int _Menu::GetSelectedPortraitID() {
 
 	// Check for selected portrait
 	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
 	for(auto &Element : PortraitsElement->Children) {
 		_Button *Button = (_Button *)Element;
 		if(Button->Checked)
-			return Index;
-
-		Index++;
+			return (intptr_t)Button->UserData;
 	}
 
 	return -1;
@@ -163,15 +161,15 @@ void _Menu::CreateCharacter() {
 	if(Name->Text.length() == 0)
 		return;
 
-	int SelectedPortrait = GetSelectedPortrait();
-	if(SelectedPortrait == -1)
+	int PortraitID = GetSelectedPortraitID();
+	if(PortraitID == -1)
 		return;
 
 	// Send information
 	_Buffer Packet;
 	Packet.Write<char>(_Network::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
-	Packet.Write<int32_t>(SelectedPortrait);
+	Packet.Write<int32_t>(PortraitID);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
@@ -213,14 +211,14 @@ void _Menu::LoadPortraitButtons() {
 
 		// Add button
 		_Button *Button = new _Button();
-		Button->Identifier = CharacterPortraitPrefix;
+		Button->Identifier = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->Offset = Offset;
 		Button->Size = Portrait.Image->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
-		Button->UserData = (void *)i;
+		Button->UserData = (void *)Portrait.ID;
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
@@ -240,7 +238,7 @@ void _Menu::LoadPortraitButtons() {
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
 
-	int PortraitIndex = GetSelectedPortrait();
+	int PortraitID = GetSelectedPortraitID();
 
 	// Check name length
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
@@ -249,7 +247,7 @@ void _Menu::ValidateCreateCharacter() {
 		NameValid = true;
 
 	// Enable button
-	if(PortraitIndex != -1 && NameValid)
+	if(PortraitID != -1 && NameValid)
 		CreateButton->Enabled = true;
 	else
 		CreateButton->Enabled = false;
@@ -437,22 +435,19 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
-					if(Clicked->Identifier == CharacterPortraitPrefix) {
-						int Selected = (intptr_t)Clicked->UserData;
+					if(Clicked->Identifier == NewCharacterPortraitPrefix) {
+						int SelectedID = (intptr_t)Clicked->UserData;
 
 						// Unselect all portraits and select the clicked element
-						int i = 0;
 						for(auto &Element : Clicked->Parent->Children) {
 							_Button *Button = (_Button *)Element;
 							Button->Checked = false;
-							if(i == Selected) {
+							if((intptr_t)Button->UserData == SelectedID) {
 								_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 								Name->Focused = true;
 								Name->ResetCursor();
 								Button->Checked = true;
 							}
-
-							i++;
 						}
 
 						ValidateCreateCharacter();
@@ -620,6 +615,13 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 					throw std::runtime_error("Can't find label: " + Buffer.str());
 				Buffer.str("");
 
+				// Set image
+				Buffer << CharacterImagePrefix << i;
+				CharacterSlots[i].Image = Assets.Images[Buffer.str()];
+				if(!CharacterSlots[i].Image)
+					throw std::runtime_error("Can't find image: " + Buffer.str());
+				Buffer.str("");
+
 				// Assign button
 				Buffer << CharacterButtonPrefix << i;
 				CharacterSlots[i].Button = Assets.Buttons[Buffer.str()];
@@ -628,6 +630,8 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				// Set state
 				CharacterSlots[i].Name->Text = "Empty Slot";
 				CharacterSlots[i].Level->Text = "";
+				CharacterSlots[i].Image->Texture = nullptr;
+				CharacterSlots[i].Image->Clickable = false;
 				CharacterSlots[i].Used = false;
 			}
 
@@ -644,7 +648,8 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				//CharacterSlots[i].Button->Style->Texture =
 				//Slots[i].Used = true;
 				//Slots[i].Name = TPacket->ReadString();
-				//const _Texture *PortraitImage = Stats.GetPortrait(PortraitIndex)->Image;
+				const _Texture *PortraitImage = Stats.GetPortrait(PortraitIndex)->Image;
+				CharacterSlots[i].Image->Texture = PortraitImage;
 				//CharacterSlots[i].Button->Style->Texture = PortraitImage;
 				//Slots[i].Button->setImage(PortraitImage);
 				//Slots[i].Button->setPressedImage(PortraitImage);

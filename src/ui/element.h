@@ -60,6 +60,7 @@ class _Element {
 
 		int MaskOutside : 1;
 		int Enabled : 1;
+		int Clickable : 1;
 		int Debug : 4;
 
 		// Graphics

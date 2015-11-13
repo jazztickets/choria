@@ -1,2 +1,2 @@
 identifier	parent	style	font	offset x	offset y	width	height	alignment x	alignment y	max length
-textbox_newcharacter_name	element_menu_new	style_menu_textbox	hud_medium	0	-65	250	30	1	2	15
+textbox_newcharacter_name	element_menu_new	style_menu_textbox	hud_medium	0	-65	250	30	1	2	10

@@ -529,7 +529,7 @@ void _PlayServerState::HandleCharacterCreate(_Buffer *TPacket, ENetPeer *TPeer) 
 	// Get character information
 	core::stringc Name(TPacket->ReadString());
 	int PortraitID = TPacket->Read<int32_t>();
-	if(Name.size() > 10)
+	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
 
 	// Check character limit
