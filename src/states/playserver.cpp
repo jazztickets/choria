@@ -535,7 +535,7 @@ void _PlayServerState::HandleCharacterCreate(_Buffer *TPacket, ENetPeer *TPeer) 
 	// Check character limit
 	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", Player->GetAccountID());
 	int CharacterCount = Database->RunCountQuery(QueryString);
-	if(CharacterCount >= 6)
+	if(CharacterCount >= SAVE_COUNT)
 		return;
 
 	// Check for existing names

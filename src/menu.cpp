@@ -111,23 +111,14 @@ void _Menu::InitNewCharacter() {
 	Name->Text = "";
 	Name->ResetCursor();
 
+	_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
+	Label->Text = "Name";
+	Label->Color = COLOR_WHITE;
+
 	LoadPortraitButtons();
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
 	CharactersState = CHARACTERS_CREATE;
-}
-
-// Play the game
-void _Menu::LaunchGame() {
-	//Save.GetPlayer(SelectedSlot)->Load();
-	//PlayState.SetPlayer(Save.GetPlayer(SelectedSlot));
-	//ClientState.SetLevel("");
-	//ClientState.SetTestMode(false);
-	//ClientState.SetFromEditor(false);
-	//Framework.ChangeState(&ClientState);
-
-	//SaveSlots[SelectedSlot]->Enabled = false;
-	//State = STATE_NONE;
 }
 
 // Get the selected portrait index
@@ -182,9 +173,6 @@ void _Menu::CreateCharacter() {
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<int32_t>(SelectedPortrait);
 	ClientNetwork->SendPacketToHost(&Packet);
-
-	// Close new character screen
-	RequestCharacterList();
 }
 
 // Request character list from server
@@ -435,6 +423,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						int SelectedSlot = (intptr_t)Clicked->UserData;
 						if(CharacterSlots[SelectedSlot].Used) {
+							PlayClientState.SetCharacterSlot(SelectedSlot);
 							CharacterSlots[SelectedSlot].Button->Checked = true;
 						}
 						else
@@ -442,8 +431,8 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						UpdateCharacterButtons();
 
-						if(DoubleClick) {
-							LaunchGame();
+						if(DoubleClick && SelectedSlot != -1) {
+							Framework.ChangeState(&PlayClientState);
 						}
 					}
 				}
@@ -613,7 +602,7 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 			int CharacterCount = Packet.Read<char>();
 			Framework.Log << "CharacterCount=" << CharacterCount << std::endl;
 
-			// Set up character slots
+			// Reset character slots
 			for(int i = 0; i < SAVE_COUNT; i++) {
 				std::stringstream Buffer;
 
@@ -642,9 +631,6 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				CharacterSlots[i].Used = false;
 			}
 
-			//if(CharacterCount < SAVE_COUNT)
-			//	ButtonCreate->setEnabled(true);
-
 			// Get characters
 			for(int i = 0; i < CharacterCount; i++) {
 				CharacterSlots[i].Name->Text = Packet.ReadString();
@@ -665,17 +651,22 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				//Slots[i].Level = Stats.FindLevel(TPacket->Read<int32_t>())->Level;
 			}
 
+			// Disable ui buttons
 			UpdateCharacterButtons();
 
+			// Set state
 			InitCharacters();
 		}
 		break;
 		case _Network::CREATECHARACTER_SUCCESS:
-			//Framework.ChangeState(&CharactersState);
+
+			// Close new character screen
+			RequestCharacterList();
 		break;
 		case _Network::CREATECHARACTER_INUSE:
-			//Message = "Character name already in use";
-			//ButtonCreate->setEnabled(true);
+			_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
+			Label->Text = "Name in use";
+			Label->Color = COLOR_RED;
 		break;
 	}
 }

@@ -19,6 +19,7 @@
 
 // Libraries
 #include <string>
+#include <constants.h>
 #include <enet/enet.h>
 
 // Forward Declarations
@@ -65,10 +66,6 @@ class _Menu {
 			LABEL_COUNT=1,
 		};
 
-		enum SlotType {
-			SAVE_COUNT=6,
-		};
-
 		_Menu();
 
 		void InitTitle();
@@ -96,8 +93,6 @@ class _Menu {
 	private:
 
 		void Connect(const std::string &Address, bool Fake=false);
-
-		void LaunchGame();
 
 		int GetSelectedPortrait();
 		int GetSelectedCharacter();

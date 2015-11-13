@@ -23,7 +23,6 @@
 #include <buffer.h>
 #include <network/network.h>
 #include <states/connect.h>
-#include <states/characters.h>
 #include <IGUIEnvironment.h>
 
 _AccountState AccountState;
@@ -101,7 +100,7 @@ void _AccountState::HandlePacket(ENetEvent *TEvent) {
 			//Config.SaveSettings();
 			AccountName = "";
 			Password = "";
-			Framework.ChangeState(&CharactersState);
+			//Framework.ChangeState(&CharactersState);
 		break;
 	}
 }

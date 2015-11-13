@@ -65,6 +65,7 @@ const int PLAYER_TRADEITEMS = 8;
 const double PLAYER_ATTACKTIME = 1.0;
 
 const int STATS_MAXGOLD = 1000000;
+const int SAVE_COUNT = 6;
 
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
