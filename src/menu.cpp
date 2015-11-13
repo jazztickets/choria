@@ -24,6 +24,7 @@
 #include <config.h>
 #include <framework.h>
 #include <buffer.h>
+#include <stats.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/button.h>
@@ -39,7 +40,9 @@
 _Menu Menu;
 
 const std::string InputBoxPrefix = "button_options_input_";
-const std::string PlayerButtonPrefix = "button_singleplayer_slot";
+const std::string CharacterButtonPrefix = "button_characters_slot";
+const std::string CharacterNamePrefix = "label_menu_characters_slot_name";
+const std::string CharacterLevelPrefix = "label_menu_characters_slot_level";
 const std::string PlayerColorButtonPrefix = "button_new_color";
 
 // Constructor
@@ -84,7 +87,6 @@ void _Menu::InitOptions() {
 void _Menu::InitInGame() {
 	//CurrentLayout = Assets.Elements["element_menu_ingame"];
 
-	//Graphics.ShowCursor(CURSOR_MAIN);
 	Background = nullptr;
 
 	State = STATE_INGAME;
@@ -92,36 +94,37 @@ void _Menu::InitInGame() {
 
 // Return to play
 void _Menu::InitPlay() {
-
-	//Graphics.ShowCursor(CURSOR_CROSS);
 	CurrentLayout = nullptr;
 
 	State = STATE_NONE;
 }
 
 // Init new player popup
-void _Menu::InitNewPlayer() {
-	/*
+void _Menu::InitNewCharacter() {
 	_TextBox *Name = Assets.TextBoxes["textbox_new_name"];
 	Name->Focused = true;
 	Name->Text = "";
 	Name->ResetCursor();
 
 	// Deselect previous elements
-	for(int i = 0; i < COLOR_COUNT; i++) {
-		std::stringstream Buffer;
-		Buffer << PlayerColorButtonPrefix << i;
+	std::list<_Portrait> Portraits;
+	Stats.GetPortraits(Portraits);
+	int i = 0;
+	for(auto &Portrait : Portraits) {
+		//std::stringstream Buffer;
+		//Buffer << PlayerColorButtonPrefix << i;
 
-		ColorButtons[i] = Assets.Buttons[Buffer.str()];
-		ColorButtons[i]->Enabled = false;
-		ColorButtons[i]->UserData = (void *)(intptr_t)i;
+		//PortraitButtons[i] = Assets.Buttons[Buffer.str()];
+		//PortraitButtons[i]->Enabled = false;
+		//PortraitButtons[i]->UserData = (void *)(intptr_t)i;
+
+		i++;
 	}
 
 	SelectedColor = 0;
-	ColorButtons[SelectedColor]->Enabled = true;
+	//PortraitButtons[SelectedColor]->Enabled = true;
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
-	*/
 	CharactersState = CHARACTERS_CREATE;
 }
 
@@ -251,9 +254,8 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					if(Clicked->Identifier == "button_singleplayer_delete") {
 						if(SelectedSlot != -1) {
 							//Save.DeletePlayer(SelectedSlot);
-							RefreshSaveSlots();
 
-							SaveSlots[SelectedSlot]->Enabled = false;
+							CharacterSlots[SelectedSlot].Button->Enabled = false;
 							SelectedSlot = -1;
 						}
 					}
@@ -265,32 +267,32 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					else if(Clicked->Identifier == "button_singleplayer_back") {
 						InitTitle();
 					}
-					else if(Clicked->Identifier.substr(0, PlayerButtonPrefix.size()) == PlayerButtonPrefix) {
+					else if(Clicked->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
 
 						// Deselect previous slot
 						if(SelectedSlot != -1)
-							SaveSlots[SelectedSlot]->Enabled = false;
+							CharacterSlots[SelectedSlot].Button->Enabled = false;
 
 						// Set up create player screen
 						//if(!Save.GetPlayer(Clicked->ID)) {
-							InitNewPlayer();
+							InitNewCharacter();
 						//}
 
 						SelectedSlot = (intptr_t)Clicked->UserData;
-						SaveSlots[SelectedSlot]->Enabled = true;
+						CharacterSlots[SelectedSlot].Button->Enabled = true;
 
 						if(DoubleClick) {
 							LaunchGame();
 						}
 					}
 				}
-				else {
+				else if(CharactersState == CHARACTERS_CREATE) {
 					if(Clicked->Identifier.substr(0, PlayerColorButtonPrefix.size()) == PlayerColorButtonPrefix) {
-						if(SelectedColor != -1)
-							ColorButtons[SelectedColor]->Enabled = false;
+						//if(SelectedColor != -1)
+							//PortraitButtons[SelectedColor]->Enabled = false;
 
 						SelectedColor = (intptr_t)Clicked->UserData;
-						ColorButtons[SelectedColor]->Enabled = true;
+						//PortraitButtons[SelectedColor]->Enabled = true;
 					}
 					else if(Clicked->Identifier == "button_new_create") {
 						CreatePlayer();
@@ -382,7 +384,7 @@ void _Menu::Render() {
 				CurrentLayout->Render();
 
 			if(OptionsState == OPTION_ACCEPT_INPUT) {
-				//Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
 				Assets.Elements["element_menu_popup"]->Render();
 			}
 		} break;
@@ -390,7 +392,7 @@ void _Menu::Render() {
 			Assets.Elements["element_menu_characters"]->Render();
 
 			if(CharactersState == CHARACTERS_CREATE) {
-				//Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
 				if(CurrentLayout)
 					CurrentLayout->Render();
 			}
@@ -428,11 +430,17 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 		case _Network::ACCOUNT_SUCCESS: {
 			Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
 		}
+		break;
 		case _Network::CHARACTERS_LIST: {
 			Framework.Log << "_Network::CHARACTERS_LIST" << std::endl;
 
 			// Get count
 			int CharacterCount = Packet.Read<char>();
+			Framework.Log << "CharacterCount=" << CharacterCount << std::endl;
+
+			// Reset slots
+			ResetCharacterSlots();
+
 			//if(CharacterCount < SAVE_COUNT)
 			//	ButtonCreate->setEnabled(true);
 
@@ -440,6 +448,13 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 			_Texture *PortraitImage;
 			int i;
 			for(i = 0; i < CharacterCount; i++) {
+				CharacterSlots[i].Name->Text = Packet.ReadString();
+				int32_t PortraitIndex = Packet.Read<int32_t>();
+				int32_t Experience = Packet.Read<int32_t>();
+
+				std::stringstream Buffer;
+				Buffer << "Level " << Stats.FindLevel(Experience)->Level;
+				CharacterSlots[i].Level->Text = Buffer.str();
 				//Slots[i].Used = true;
 				//Slots[i].Name = TPacket->ReadString();
 				//PortraitImage = Stats.GetPortrait(TPacket->Read<int32_t>())->Image;
@@ -486,25 +501,35 @@ void _Menu::Connect(const std::string &Address, bool Fake) {
 	}
 }
 
-// Refreshes the save slots after player creation
-void _Menu::RefreshSaveSlots() {
-/*
+// Refreshes the character slots
+void _Menu::ResetCharacterSlots() {
+
 	// Load save slots
 	for(int i = 0; i < SAVE_COUNT; i++) {
 		std::stringstream Buffer;
-		Buffer << "label_menu_singleplayer_slot" << i;
-		_Label *SlotLabel = Assets.Labels[Buffer.str()];
-		if(!SlotLabel)
-			throw std::runtime_error("Can't find label: " + Buffer.str());
 
+		// Set slot name
+		Buffer << CharacterNamePrefix << i;
+		CharacterSlots[i].Name = Assets.Labels[Buffer.str()];
+		if(!CharacterSlots[i].Name)
+			throw std::runtime_error("Can't find label: " + Buffer.str());
 		Buffer.str("");
 
-		SlotLabel->Text = "Empty Slot";
+		CharacterSlots[i].Name->Text = "Empty Slot";
 
-		Buffer << PlayerButtonPrefix << i;
-		SaveSlots[i] = Assets.Buttons[Buffer.str()];
+		// Set slot level
+		Buffer << CharacterLevelPrefix << i;
+		CharacterSlots[i].Level = Assets.Labels[Buffer.str()];
+		if(!CharacterSlots[i].Level)
+			throw std::runtime_error("Can't find label: " + Buffer.str());
+		Buffer.str("");
+
+		CharacterSlots[i].Level->Text = "";
+
+		// Assign button
+		Buffer << CharacterButtonPrefix << i;
+		CharacterSlots[i].Button = Assets.Buttons[Buffer.str()];
 	}
-*/
 }
 
 // Refreshes the input map labels
@@ -518,8 +543,8 @@ void _Menu::RefreshInputLabels() {
 
 // Cancel create screen
 void _Menu::CancelCreate() {
-	//CurrentLayout = Assets.Elements["element_menu_singleplayer"];
-	//SinglePlayerState = SINGLEPLAYER_NONE;
+	CurrentLayout = Assets.Elements["element_menu_characters"];
+	CharactersState = CHARACTERS_NONE;
 
 	//SaveSlots[SelectedSlot]->Enabled = false;
 }
@@ -530,7 +555,7 @@ void _Menu::CreatePlayer() {
 		return;
 
 	CurrentLayout = Assets.Elements["element_menu_singleplayer"];
-	SinglePlayerState = SINGLEPLAYER_NONE;
+	CharactersState = SINGLEPLAYER_NONE;
 
 	if(SelectedSlot != -1) {
 		//Save.CreateNewPlayer(SelectedSlot, Assets.TextBoxes["textbox_new_name")->Text, COLORS[SelectedColor]];

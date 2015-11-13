@@ -90,7 +90,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	Graphics.SetStaticUniforms();
 
 	// Set up the stats system
-	//Stats.Init();
+	Stats.Init();
 
 	// Set random seed
 	RandomGenerator.seed(SDL_GetPerformanceCounter());

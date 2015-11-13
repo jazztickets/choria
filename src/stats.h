@@ -106,7 +106,7 @@ class _Stats {
 		const _Vendor *GetVendor(int TVendorID) { return &Vendors[TVendorID]; }
 		const _Trader *GetTrader(int TTraderID) { return &Traders[TTraderID]; }
 
-		void GetPortraitList(std::list<_Portrait> &TList);
+		void GetPortraits(std::list<_Portrait> &TList);
 
 		// Monsters
 		void GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters);

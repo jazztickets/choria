@@ -34,6 +34,12 @@ class _Menu {
 
 	public:
 
+		struct _CharacterSlot {
+			_Button *Button;
+			_Label *Name;
+			_Label *Level;
+		};
+
 		// Menu states
 		enum StateType {
 			STATE_NONE,
@@ -88,11 +94,11 @@ class _Menu {
 
 		void Connect(const std::string &Address, bool Fake=false);
 
-		void InitNewPlayer();
+		void InitNewCharacter();
 		void LaunchGame();
 
 		void RefreshInputLabels();
-		void RefreshSaveSlots();
+		void ResetCharacterSlots();
 		void CancelCreate();
 		void CreatePlayer();
 		void RemapInput(int InputType, int Input);
@@ -104,8 +110,7 @@ class _Menu {
 		_Image *Background;
 		_Element *CurrentLayout;
 		_Label *InputLabels[LABEL_COUNT];
-		_Button *SaveSlots[SAVE_COUNT];
-		_Button *ColorButtons[4];
+		_CharacterSlot CharacterSlots[SAVE_COUNT];
 
 		// Double click
 		_Element *PreviousClick;

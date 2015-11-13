@@ -36,7 +36,7 @@ void _CreateCharacterState::Init() {
 
 	// Get portrait list
 	std::list<_Portrait> PortraitList;
-	Stats.GetPortraitList(PortraitList);
+	Stats.GetPortraits(PortraitList);
 
 	// Create portraits
 	int SlotX = 0, SlotY = 0, i = 0;

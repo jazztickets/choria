@@ -3,4 +3,20 @@ label_menu_title_singleplayer	button_title_singleplayer	menu_buttons		Single Pla
 label_menu_title_multiplayer	button_title_multiplayer	menu_buttons		Multiplayer	0	0	0	0	1	1
 label_menu_title_mapeditor	button_title_mapeditor	menu_buttons		Map Editor	0	0	0	0	1	1
 label_menu_title_exit	button_title_exit	menu_buttons		Exit	0	0	0	0	1	1
-label_menu_title_version		hud_medium		test	20	-20	0	0	0	2
+label_menu_title_version		hud_small			20	-20	0	0	0	2
+label_menu_characters_title	element_menu_characters	hud_large		Characters	0	-250	0	0	1	1
+label_menu_characters_slot_name0	button_characters_slot0	hud_medium		Empty Slot	0	150	0	0	1	3
+label_menu_characters_slot_name1	button_characters_slot1	hud_medium		Empty Slot	0	150	0	0	1	3
+label_menu_characters_slot_name2	button_characters_slot2	hud_medium		Empty Slot	0	150	0	0	1	3
+label_menu_characters_slot_name3	button_characters_slot3	hud_medium		Empty Slot	0	150	0	0	1	3
+label_menu_characters_slot_name4	button_characters_slot4	hud_medium		Empty Slot	0	150	0	0	1	3
+label_menu_characters_slot_name5	button_characters_slot5	hud_medium		Empty Slot	0	150	0	0	1	3
+label_menu_characters_slot_level0	button_characters_slot0	hud_small		Level 1	0	170	0	0	1	3
+label_menu_characters_slot_level1	button_characters_slot1	hud_small		Level 1	0	170	0	0	1	3
+label_menu_characters_slot_level2	button_characters_slot2	hud_small		Level 1	0	170	0	0	1	3
+label_menu_characters_slot_level3	button_characters_slot3	hud_small		Level 1	0	170	0	0	1	3
+label_menu_characters_slot_level4	button_characters_slot4	hud_small		Level 1	0	170	0	0	1	3
+label_menu_characters_slot_level5	button_characters_slot5	hud_small		Level 1	0	170	0	0	1	3
+label_menu_characters_delete	button_characters_delete	menu_buttons		Delete	0	0	0	0	1	1
+label_menu_characters_play	button_characters_play	menu_buttons		Play	0	0	0	0	1	1
+label_menu_characters_back	button_characters_back	menu_buttons		Back	0	0	0	0	1	1
