@@ -97,11 +97,12 @@ class _Menu {
 
 		void LaunchGame();
 
+		int GetSelectedPortrait();
 		void LoadPortraitButtons();
 		void ValidateCreateCharacter();
 		void RefreshInputLabels();
-		void ResetCharacterSlots();
 		void CreateCharacter();
+		void RequestCharacterList();
 		void RemapInput(int InputType, int Input);
 
 		// States

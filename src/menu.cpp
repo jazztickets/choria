@@ -129,18 +129,51 @@ void _Menu::LaunchGame() {
 	//State = STATE_NONE;
 }
 
+// Get the selected portrait index
+int _Menu::GetSelectedPortrait() {
+	int Index = 0;
+
+	// Check for selected portrait
+	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
+	for(auto &Element : PortraitsElement->Children) {
+		_Button *Button = (_Button *)Element;
+		if(Button->Checked)
+			return Index;
+
+		Index++;
+	}
+
+	return -1;
+}
+
 // Create character
 void _Menu::CreateCharacter() {
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	if(Name->Text.length() == 0)
 		return;
 
+	int SelectedPortrait = GetSelectedPortrait();
+	if(SelectedPortrait == -1)
+		return;
+
 	// Send information
 	_Buffer Packet;
 	Packet.Write<char>(_Network::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
-	//Packet.Write<int32_t>(Portraits[SelectedIndex]);
-	//ClientNetwork->SendPacketToHost(&Packet);
+	Packet.Write<int32_t>(SelectedPortrait);
+	ClientNetwork->SendPacketToHost(&Packet);
+
+	// Close new character screen
+	RequestCharacterList();
+}
+
+// Request character list from server
+void _Menu::RequestCharacterList() {
+
+	// Request character list
+	_Buffer Packet;
+	Packet.Write<char>(_Network::CHARACTERS_REQUEST);
+	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Load portraits
@@ -197,18 +230,9 @@ void _Menu::LoadPortraitButtons() {
 
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
-	bool PortraitSelected = false;
 	bool NameValid = false;
 
-	// Check for selected portrait
-	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
-	for(auto &Element : PortraitsElement->Children) {
-		_Button *Button = (_Button *)Element;
-		if(Button->Checked) {
-			PortraitSelected = true;
-			break;
-		}
-	}
+	int PortraitIndex = GetSelectedPortrait();
 
 	// Check name length
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
@@ -217,7 +241,7 @@ void _Menu::ValidateCreateCharacter() {
 		NameValid = true;
 
 	// Enable button
-	if(PortraitSelected && NameValid)
+	if(PortraitIndex != -1 && NameValid)
 		CreateButton->Enabled = true;
 	else
 		CreateButton->Enabled = false;
@@ -248,7 +272,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 					ValidateCreateCharacter();
 
 					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-						InitCharacters();
+						RequestCharacterList();
 					else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
 						CreateCharacter();
 				}
@@ -389,8 +413,12 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						for(auto &Element : Clicked->Parent->Children) {
 							_Button *Button = (_Button *)Element;
 							Button->Checked = false;
-							if(i == Selected)
+							if(i == Selected) {
+								_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+								Name->Focused = true;
+								Name->ResetCursor();
 								Button->Checked = true;
+							}
 
 							i++;
 						}
@@ -401,7 +429,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						CreateCharacter();
 					}
 					else if(Clicked->Identifier == "button_newcharacter_cancel") {
-						InitCharacters();
+						RequestCharacterList();
 					}
 				}
 			} break;
@@ -532,6 +560,7 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 		break;
 		case _Network::ACCOUNT_SUCCESS: {
 			Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
+			RequestCharacterList();
 		}
 		break;
 		case _Network::CHARACTERS_LIST: {
@@ -541,8 +570,32 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 			int CharacterCount = Packet.Read<char>();
 			Framework.Log << "CharacterCount=" << CharacterCount << std::endl;
 
-			// Reset slots
-			ResetCharacterSlots();
+			// Set up character slots
+			for(int i = 0; i < SAVE_COUNT; i++) {
+				std::stringstream Buffer;
+
+				// Set slot name
+				Buffer << CharacterNamePrefix << i;
+				CharacterSlots[i].Name = Assets.Labels[Buffer.str()];
+				if(!CharacterSlots[i].Name)
+					throw std::runtime_error("Can't find label: " + Buffer.str());
+				Buffer.str("");
+
+				CharacterSlots[i].Name->Text = "Empty Slot";
+
+				// Set slot level
+				Buffer << CharacterLevelPrefix << i;
+				CharacterSlots[i].Level = Assets.Labels[Buffer.str()];
+				if(!CharacterSlots[i].Level)
+					throw std::runtime_error("Can't find label: " + Buffer.str());
+				Buffer.str("");
+
+				CharacterSlots[i].Level->Text = "";
+
+				// Assign button
+				Buffer << CharacterButtonPrefix << i;
+				CharacterSlots[i].Button = Assets.Buttons[Buffer.str()];
+			}
 
 			//if(CharacterCount < SAVE_COUNT)
 			//	ButtonCreate->setEnabled(true);
@@ -565,12 +618,6 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 				//Slots[i].Button->setImage(PortraitImage);
 				//Slots[i].Button->setPressedImage(PortraitImage);
 				//Slots[i].Level = Stats.FindLevel(TPacket->Read<int32_t>())->Level;
-			}
-			for(; i < SAVE_COUNT; i++) {
-				//Slots[i].Used = false;
-				//PortraitImage = Graphics.GetImage(_Graphics::IMAGE_MENUBLANKSLOT);
-				//Slots[i].Button->setImage(PortraitImage);
-				//Slots[i].Button->setPressedImage(PortraitImage);
 			}
 
 			InitCharacters();
@@ -603,44 +650,6 @@ void _Menu::Connect(const std::string &Address, bool Fake) {
 			Packet.WriteString("singleplayer");
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
-
-		// Request character list
-		{
-			_Buffer Packet;
-			Packet.Write<char>(_Network::CHARACTERS_REQUEST);
-			ClientNetwork->SendPacketToHost(&Packet);
-		}
-	}
-}
-
-// Refreshes the character slots
-void _Menu::ResetCharacterSlots() {
-
-	// Load save slots
-	for(int i = 0; i < SAVE_COUNT; i++) {
-		std::stringstream Buffer;
-
-		// Set slot name
-		Buffer << CharacterNamePrefix << i;
-		CharacterSlots[i].Name = Assets.Labels[Buffer.str()];
-		if(!CharacterSlots[i].Name)
-			throw std::runtime_error("Can't find label: " + Buffer.str());
-		Buffer.str("");
-
-		CharacterSlots[i].Name->Text = "Empty Slot";
-
-		// Set slot level
-		Buffer << CharacterLevelPrefix << i;
-		CharacterSlots[i].Level = Assets.Labels[Buffer.str()];
-		if(!CharacterSlots[i].Level)
-			throw std::runtime_error("Can't find label: " + Buffer.str());
-		Buffer.str("");
-
-		CharacterSlots[i].Level->Text = "";
-
-		// Assign button
-		Buffer << CharacterButtonPrefix << i;
-		CharacterSlots[i].Button = Assets.Buttons[Buffer.str()];
 	}
 }
 

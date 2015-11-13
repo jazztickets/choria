@@ -166,6 +166,7 @@ void _PlayServerState::CreateDefaultDatabase() {
 // Handles a new client connection
 void _PlayServerState::HandleConnect(ENetEvent *TEvent) {
 	printf("HandleConnect: %x:%x\n", TEvent->peer->address.host, TEvent->peer->address.port);
+	fflush(stdout);
 
 	// Create the player and add it to the object list
 	_Player *NewPlayer = new _Player();
