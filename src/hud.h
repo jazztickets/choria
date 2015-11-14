@@ -25,6 +25,7 @@
 #include <IGUIImage.h>
 #include <IGUIButton.h>
 #include <list>
+#include <string>
 #include <cstdint>
 
 // Forward Declarations
@@ -73,8 +74,8 @@ struct _CursorSkill {
 
 struct _ChatMessage {
 	_ChatMessage() : Message(""), TimeOut(0) { }
-	_ChatMessage(const irr::core::stringc &TMessage) : Message(TMessage), TimeOut(0) { }
-	irr::core::stringc Message;
+	_ChatMessage(const std::string &TMessage) : Message(TMessage), TimeOut(0) { }
+	std::string Message;
 	double TimeOut;
 };
 

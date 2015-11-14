@@ -36,7 +36,7 @@ void _Item::GetDefenseRange(int &TMin, int &TMax) const {
 }
 
 // Returns a string of the item type
-void _Item::GetType(core::stringc &TString) const {
+void _Item::GetType(std::string &TString) const {
 
 	switch(Type) {
 		case TYPE_HEAD:

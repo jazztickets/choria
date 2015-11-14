@@ -52,13 +52,13 @@ class _Fighter {
 		void SetOffset(const irr::core::position2di &TPosition) { Offset = TPosition; }
 
 		// Stats
-		void SetName(const irr::core::stringc &TName) { Name = TName; }
+		void SetName(const std::string &TName) { Name = TName; }
 		void SetHealth(int TValue) { Health = TValue; }
 		void SetMaxHealth(int TValue) { MaxHealth = TValue; }
 		void SetMana(int TValue) { Mana = TValue; }
 		void SetMaxMana(int TValue) { MaxMana = TValue; }
 
-		const irr::core::stringc &GetName() const { return Name; }
+		const std::string &GetName() const { return Name; }
 		int GetHealth() const { return Health; }
 		int GetMaxHealth() const { return MaxHealth; }
 		int GetMana() const { return Mana; }
@@ -119,7 +119,7 @@ class _Fighter {
 		const _Skill *SkillBar[FIGHTER_MAXSKILLS];
 
 		// Stats
-		irr::core::stringc Name;
+		std::string Name;
 		int Level;
 		int Health, MaxHealth;
 		int Mana, MaxMana;

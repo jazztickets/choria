@@ -30,7 +30,7 @@ class _Monster;
 
 // Structures
 struct _MapStat {
-	irr::core::stringc File;
+	std::string File;
 	int ViewWidth;
 	int ViewHeight;
 };
@@ -56,15 +56,15 @@ struct _Zone {
 };
 
 struct _Event {
-	irr::core::stringc Name;
-	irr::core::stringc ShortName;
+	std::string Name;
+	std::string ShortName;
 	bool Indexed;
 };
 
 struct _Vendor {
 	int ID;
-	irr::core::stringc Name;
-	irr::core::stringc Info;
+	std::string Name;
+	std::string Info;
 	float BuyPercent;
 	float SellPercent;
 	std::vector<const _Item *> Items;
@@ -77,7 +77,7 @@ struct _TraderItem {
 
 struct _Trader {
 	int ID;
-	irr::core::stringc Name;
+	std::string Name;
 	const _Item *RewardItem;
 	int Count;
 	std::vector<_TraderItem> TraderItems;

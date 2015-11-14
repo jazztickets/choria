@@ -112,7 +112,7 @@ class _MapEditorState : public _State {
 
 		// Map
 		_Map *Map;
-		irr::core::stringc WorkingDirectory;
+		std::string WorkingDirectory;
 
 		// Textures
 		std::vector<_Texture *> TexturePalette;

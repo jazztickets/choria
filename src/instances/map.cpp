@@ -32,7 +32,7 @@
 using namespace irr;
 
 // Constructor for the map editor: new map
-_Map::_Map(const core::stringc &TFilename, int TWidth, int THeight) {
+_Map::_Map(const std::string &TFilename, int TWidth, int THeight) {
 	Init();
 
 	Filename = TFilename;
@@ -43,7 +43,7 @@ _Map::_Map(const core::stringc &TFilename, int TWidth, int THeight) {
 }
 
 // Constructor for the map editor: load map
-_Map::_Map(const core::stringc &TFilename) {
+_Map::_Map(const std::string &TFilename) {
 	Init();
 
 	Filename = TFilename;
@@ -181,7 +181,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 				// Draw zone
 				if(!Tile->Wall) {
 					if(TDrawZone && Tile->Zone > 0)
-						//Graphics.RenderText(core::stringc(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
+						//Graphics.RenderText(std::string(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
 
 					// Draw PVP
 					if(TDrawPVP && Tile->PVP) {
@@ -191,7 +191,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
 				// Draw event info
 				if(Tile->EventType > 0) {
-					core::stringc EventText = Stats.GetEvent(Tile->EventType)->ShortName + core::stringc(", ") + core::stringc(Tile->EventData);
+					std::string EventText = Stats.GetEvent(Tile->EventType)->ShortName + std::string(", ") + std::to_string(Tile->EventData);
 					//Graphics.RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 255, 255));
 				}
 			}
@@ -249,7 +249,7 @@ int _Map::SaveMap() {
 	}
 
 	// Generate a list of textures used by the map
-	std::vector<_Texture *> TextureList;
+	std::vector<const _Texture *> TextureList;
 	GetTextureListFromMap(TextureList);
 
 	// Write header
@@ -346,17 +346,17 @@ int _Map::LoadMap() {
 	Textures.clear();
 
 	// Read textures from map
-	core::stringc TextureFile;
+	std::string TextureFile;
 	char String[256];
 	for(int32_t i = 0; i < TextureCount; i++) {
 		File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
 		File.get();
 
 		TextureFile = String;
-		//if(TextureFile == "none")
-		//	Textures.push_back(nullptr);
-		//else
-		//	Textures.push_back(irrDriver->getTexture(core::stringc("textures/map/") + TextureFile));
+		if(TextureFile == "none")
+			Textures.push_back(nullptr);
+		else
+			Textures.push_back(Assets.Textures[std::string("map/") + TextureFile]);
 	}
 
 	// Get no zone texture
@@ -366,7 +366,7 @@ int _Map::LoadMap() {
 	//if(TextureFile == "none")
 	//	NoZoneTexture = nullptr;
 	//else
-	//	NoZoneTexture = irrDriver->getTexture(core::stringc("textures/map/") + TextureFile);
+	//	NoZoneTexture = irrDriver->getTexture(std::string("textures/map/") + TextureFile);
 
 	// Read map data
 	_Tile *Tile;
@@ -398,7 +398,7 @@ int _Map::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void _Map::GetTextureListFromMap(std::vector<_Texture *> &TTextures) {
+void _Map::GetTextureListFromMap(std::vector<const _Texture *> &TTextures) {
 
 	TTextures.clear();
 
@@ -415,7 +415,7 @@ void _Map::GetTextureListFromMap(std::vector<_Texture *> &TTextures) {
 }
 
 // Returns the index of a texture in an array
-int _Map::GetTextureIndex(std::vector<_Texture *> &TTextures, _Texture *TTexture) {
+int _Map::GetTextureIndex(std::vector<const _Texture *> &TTextures, const _Texture *TTexture) {
 
 	for(size_t i = 0; i < TTextures.size(); i++) {
 		if(TTextures[i] == TTexture)

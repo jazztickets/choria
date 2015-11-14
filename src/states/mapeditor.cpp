@@ -49,8 +49,8 @@ void _MapEditorState::Init() {
 		Brush.Texture = TexturePalette[0];
 
 	// Default map
-	//core::stringc SavePath = Config.ConfigPath + "test.map";
-	core::stringc SavePath = "test.map";
+	//std::string SavePath = Config.ConfigPath + "test.map";
+	std::string SavePath = "test.map";
 	Map = new _Map(SavePath, 50, 50);
 
 	// Set filters
@@ -112,7 +112,7 @@ void _MapEditorState::Draw() {
 		Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
 	RenderBrush();
 
-	core::stringc GridBrushPositionText = core::stringc(BrushPosition.X) + core::stringc(" ") + core::stringc(BrushPosition.Y);
+	std::string GridBrushPositionText = std::to_string(BrushPosition.X) + std::string(" ") + std::to_string(BrushPosition.Y);
 
 	Graphics.SetFont(_Graphics::FONT_8);
 	//Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
@@ -390,7 +390,7 @@ void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElemen
 			//irrFile->changeWorkingDirectoryTo(WorkingDirectory);
 
 			CloseMap();
-			Map = new _Map(FileOpen->getFileName());
+			//Map = new _Map(FileOpen->getFileName());
 			if(!Map->LoadMap()) {
 				CloseMap();
 			}
@@ -450,7 +450,7 @@ void _MapEditorState::InitNewMap() {
 
 // Creates a map with the given parameters
 void _MapEditorState::CreateMap() {
-
+/*
 	// Get window
 	gui::IGUIWindow *Window = static_cast<gui::IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(NEWMAP_WINDOW));
 
@@ -462,9 +462,9 @@ void _MapEditorState::CreateMap() {
 	gui::IGUIStaticText *TextError = static_cast<gui::IGUIStaticText *>(Window->getElementFromId(NEWMAP_ERROR));
 
 	// Get values
-	core::stringc File(EditFile->getText());
-	int Width = atoi(core::stringc(EditWidth->getText()).c_str());
-	int Height = atoi(core::stringc(EditHeight->getText()).c_str());
+	std::string File(EditFile->getText());
+	int Width = atoi(std::string(EditWidth->getText()).c_str());
+	int Height = atoi(std::string(EditHeight->getText()).c_str());
 
 	// Check filename
 	File.make_lower();
@@ -493,12 +493,12 @@ void _MapEditorState::CreateMap() {
 	CloseMap();
 
 	// Create map
-	//core::stringc SavePath = Config.SaveMapPath + File;
-	core::stringc SavePath = File;
+	//std::string SavePath = Config.SaveMapPath + File;
+	std::string SavePath = File;
 	Map = new _Map(SavePath.c_str(), Width, Height);
 
 	CloseWindow(NEWMAP_WINDOW);
-	State = STATE_MAIN;
+	State = STATE_MAIN;*/
 }
 
 // Initialize the load map screen
@@ -506,8 +506,8 @@ void _MapEditorState::InitLoadMap() {
 	//WorkingDirectory = irrFile->getWorkingDirectory();
 
 	// Main dialog window
-	core::stringc StartPath = core::stringc(Config.ConfigPath.c_str());
-	irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (core::stringc::char_type *)StartPath.c_str());
+	std::string StartPath = std::string(Config.ConfigPath.c_str());
+	//irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (std::string::char_type *)StartPath.c_str());
 
 	State = STATE_LOADMAP;
 }
@@ -613,11 +613,11 @@ void _MapEditorState::RefreshTexturePalette() {
 		if(!FileList->isDirectory(i)) {
 
 			// Load texture
-			_Texture *Texture = irrDriver->getTexture(core::stringc("textures/map/") + FileList->getFileName(i));
+			_Texture *Texture = irrDriver->getTexture(std::string("textures/map/") + FileList->getFileName(i));
 
 			// Check size
 			if(Texture->getSize() != core::dimension2du(32, 32)) {
-				core::stringc TextureName = Texture->getName();
+				std::string TextureName = Texture->getName();
 				printf("Texture size is not 32x32 for file=%s\n", TextureName.c_str());
 				irrDriver->removeTexture(Texture);
 			}
@@ -704,7 +704,7 @@ void _MapEditorState::RenderBrush() {
 	// Draw zone info
 	StartY += 15;
 	Filters[FILTER_ZONE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	core::stringc ZoneText = core::stringc("Zone ") + core::stringc(Brush.Zone);
+	std::string ZoneText = std::string("Zone ") + std::to_string(Brush.Zone);
 	//Graphics.RenderText(ZoneText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Get PVP text
@@ -720,13 +720,13 @@ void _MapEditorState::RenderBrush() {
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTTYPE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	core::stringc EventTypeText = core::stringc("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
+	std::string EventTypeText = std::string("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
 	//Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
-	core::stringc EventDataText = core::stringc("Event Data: ") + core::stringc(Brush.EventData);
+	std::string EventDataText = std::string("Event Data: ") + std::to_string(Brush.EventData);
 	//Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 }
 

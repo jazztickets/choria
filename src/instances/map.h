@@ -24,11 +24,12 @@
 #include <list>
 #include <cstdint>
 #include <irrlicht.h>
+#include <string>
 
 // Structures
 struct _Tile {
 	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
-	_Texture *Texture;
+	const _Texture *Texture;
 	int32_t Zone;
 	int32_t EventType;
 	int32_t EventData;
@@ -61,8 +62,8 @@ class _Map {
 			EVENT_COUNT
 		};
 
-		_Map(const irr::core::stringc &TFilename, int TWidth, int THeight);
-		_Map(const irr::core::stringc &TFilename);
+		_Map(const std::string &TFilename, int TWidth, int THeight);
+		_Map(const std::string &TFilename);
 		_Map(int TMapID);
 		~_Map();
 
@@ -70,7 +71,7 @@ class _Map {
 
 		// States
 		int GetID() const { return ID; }
-		const irr::core::stringc &GetFilename() const { return Filename; }
+		const std::string &GetFilename() const { return Filename; }
 
 		// Graphics
 		void Render();
@@ -102,7 +103,7 @@ class _Map {
 		int GetWidth() const { return Width; }
 		int GetHeight() const { return Height; }
 		bool IsValidPosition(int TX, int TY) const { return TX >= 0 && TY >= 0 && TX < Width && TY < Height; }
-		void SetNoZoneTexture(_Texture *TTexture) { NoZoneTexture = TTexture; }
+		void SetNoZoneTexture(const _Texture *TTexture) { NoZoneTexture = TTexture; }
 
 		void GetTile(int TX, int TY, _Tile &TTile) const { TTile = Tiles[TX][TY]; }
 		const _Tile *GetTile(int TX, int TY) const { return &Tiles[TX][TY]; }
@@ -121,12 +122,12 @@ class _Map {
 
 		void SendObjectUpdates();
 
-		void GetTextureListFromMap(std::vector<_Texture *> &TTextures);
-		int GetTextureIndex(std::vector<_Texture *> &TTextures, _Texture *TTexture);
+		void GetTextureListFromMap(std::vector<const _Texture *> &TTextures);
+		int GetTextureIndex(std::vector<const _Texture *> &TTextures, const _Texture *TTexture);
 
 		// Map file
 		int ID;
-		irr::core::stringc Filename;
+		std::string Filename;
 
 		// Viewing
 		irr::core::dimension2di ViewSize;
@@ -139,7 +140,7 @@ class _Map {
 		// Textures
 		const _Texture *NoZoneTexture;
 		const _Texture *DefaultNoZoneTexture;
-		std::vector<_Texture *> Textures;
+		std::vector<const _Texture *> Textures;
 
 		// Events
 		std::vector<_IndexedEvent> IndexedEvents;

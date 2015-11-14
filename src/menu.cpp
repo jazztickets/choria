@@ -395,8 +395,12 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 
 	switch(State) {
 		case STATE_TITLE: {
-			if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-				Framework.SetDone(true);
+			if(KeyEvent.Pressed) {
+				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+					Framework.SetDone(true);
+				else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+					Connect("", 0, true);
+			}
 		} break;
 		case STATE_CHARACTERS: {
 

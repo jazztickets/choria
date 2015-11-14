@@ -311,12 +311,12 @@ void _PlayServerState::HandleLoginInfo(_Buffer *TPacket, ENetPeer *TPeer) {
 
 	// Read packet
 	bool CreateAccount = TPacket->ReadBit();
-	core::stringc Username(TPacket->ReadString());
-	core::stringc Password(TPacket->ReadString());
+	std::string Username(TPacket->ReadString());
+	std::string Password(TPacket->ReadString());
 	if(Username.size() > 15 || Password.size() > 15)
 		return;
-	Username.make_lower();
-	Password.make_lower();
+	//Username.make_lower();
+	//Password.make_lower();
 
 	//printf("HandleLoginInfo: CreateAccount=%d, username=%s, password=%s\n", CreateAccount, Username.c_str(), Password.c_str());
 
@@ -405,7 +405,7 @@ void _PlayServerState::HandleCharacterSelect(_Buffer *TPacket, ENetPeer *TPeer) 
 	Player->SetCharacterID(Database->GetInt(0));
 	Player->SetSpawnMapID(Database->GetInt(2));
 	Player->SetSpawnPoint(Database->GetInt(3));
-	Player->SetName(core::stringc(Database->GetString(4)));
+	Player->SetName(std::string(Database->GetString(4)));
 	Player->SetPortraitID(Database->GetInt(5));
 	Player->SetExperience(Database->GetInt(6));
 	Player->SetGold(Database->GetInt(7));
@@ -527,7 +527,7 @@ void _PlayServerState::HandleCharacterCreate(_Buffer *TPacket, ENetPeer *TPeer) 
 	char QueryString[512];
 
 	// Get character information
-	core::stringc Name(TPacket->ReadString());
+	std::string Name(TPacket->ReadString());
 	int PortraitID = TPacket->Read<int32_t>();
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;

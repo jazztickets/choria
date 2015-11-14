@@ -541,15 +541,15 @@ void _HUD::Draw() {
 
 // Starts the chat box
 void _HUD::ToggleChat() {
-
+/*
 	if(Chatting) {
-		core::stringc Message = core::stringc(ChatBox->getText());
+		std::string Message = std::string(ChatBox->getText());
 		Message.trim();
 		if(Message != "") {
 
 			// Add message to history
 			_ChatMessage Chat;
-			Chat.Message = Player->GetName() + core::stringc(": ") + Message;
+			Chat.Message = Player->GetName() + std::string(": ") + Message;
 			ChatHistory.push_back(Chat);
 			printf("%s\n", Chat.Message.c_str());
 
@@ -568,7 +568,7 @@ void _HUD::ToggleChat() {
 		ChatBox->setMax(NETWORKING_CHAT_SIZE);
 		irrGUI->setFocus(ChatBox);
 		Chatting = true;
-	}
+	}*/
 }
 
 // Closes the chat window
@@ -579,6 +579,7 @@ void _HUD::CloseChat() {
 
 // Creates the buttons for the HUD bar
 void _HUD::InitButtonBar() {
+	return;
 
 	int DrawX = 800 - 24 * 6 + 25/2, DrawY = 600 - 25 / 2;
 	gui::IGUIButton *Button;
@@ -792,13 +793,13 @@ void _HUD::InitSkills() {
 	const std::vector<_Skill> &Skills = Stats.GetSkillList();
 	int X = 0, Y = 0;
 	for(size_t i = 0; i < Skills.size(); i++) {
-		int DrawX = X * SKILL_SPACINGX + SKILL_STARTX + 16;
-		int DrawY = Y * SKILL_SPACINGY + SKILL_STARTY + 45;
+		//int DrawX = X * SKILL_SPACINGX + SKILL_STARTX + 16;
+		//int DrawY = Y * SKILL_SPACINGY + SKILL_STARTY + 45;
 
 		// Add buy/sell button
-		gui::IGUIButton *BuyButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
+		//gui::IGUIButton *BuyButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
 		//BuyButton->setImage(Graphics.GetImage(_Graphics::IMAGE_PLUS));
-		gui::IGUIButton *SellButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
+		//gui::IGUIButton *SellButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
 		//SellButton->setImage(Graphics.GetImage(_Graphics::IMAGE_MINUS));
 
 		X++;
@@ -1027,7 +1028,7 @@ void _HUD::DrawInventory() {
 			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
 			DrawItemPrice(Item->Item, Item->Count, DrawX, DrawY, false);
 			if(Item->Count > 1) {
-				//Graphics.RenderText(core::stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
+				//Graphics.RenderText(std::string(Item->Count).c_str(), DrawX + 2, DrawY + 20);
 			}
 		}
 
@@ -1168,10 +1169,10 @@ void _HUD::DrawTrade() {
 		DrawTradeItems(TradePlayer, TRADE_WINDOWX, TRADE_WINDOWYTHEM, true);
 
 		// Draw gold
-		//Graphics.RenderText(core::stringc(TradePlayer->GetTradeGold()).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
+		//Graphics.RenderText(std::string(TradePlayer->GetTradeGold()).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
 
 		// Draw agreement state
-		core::stringc AcceptText;
+		std::string AcceptText;
 		video::SColor AcceptColor;
 		if(TradePlayer->GetTradeAccepted()) {
 			AcceptText = "Accepted";
@@ -1322,7 +1323,7 @@ void _HUD::DrawCursorItem() {
 		Graphics.DrawCenteredImage(CursorItem.Item->GetImage(), DrawX + 16, DrawY + 16);
 		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawX, DrawY, CursorItem.Window == WINDOW_VENDOR);
 		if(CursorItem.Count > 1)
-			//Graphics.RenderText(core::stringc(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
+			//Graphics.RenderText(std::string(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
 		Graphics.SetFont(_Graphics::FONT_10);
 	}
 }
@@ -1340,7 +1341,7 @@ void _HUD::DrawItemTooltip() {
 
 		// Draw background
 		char Buffer[256];
-		core::stringc String;
+		std::string String;
 		Graphics.SetFont(_Graphics::FONT_10);
 		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
 		DrawX += 10;
@@ -1499,7 +1500,7 @@ void _HUD::DrawSkillTooltip() {
 
 		// Draw background
 		char Buffer[256];
-		core::stringc String;
+		std::string String;
 		Graphics.SetFont(_Graphics::FONT_10);
 		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
 		DrawX += 10;
@@ -1614,7 +1615,7 @@ void _HUD::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY,
 		Color.set(255, 224, 216, 84);
 
 	Graphics.SetFont(_Graphics::FONT_7);
-	//Graphics.RenderText(core::stringc(Price).c_str(), TDrawX + 2, TDrawY + 0, _Graphics::ALIGN_LEFT, Color);
+	//Graphics.RenderText(std::string(Price).c_str(), TDrawX + 2, TDrawY + 0, _Graphics::ALIGN_LEFT, Color);
 }
 
 // Draws trading items
@@ -1635,7 +1636,7 @@ void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAl
 			int DrawY = OffsetY + TDrawY + PositionY * 32;
 			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
 			if(Item->Count > 1) {
-				//Graphics.RenderText(core::stringc(Item->Count).c_str(), DrawX + 2, DrawY + 20);
+				//Graphics.RenderText(std::string(Item->Count).c_str(), DrawX + 2, DrawY + 20);
 			}
 		}
 
@@ -1969,9 +1970,9 @@ void _HUD::SendTradeCancel() {
 
 // Make sure the trade gold box is valid
 int _HUD::ValidateTradeGold() {
-
+/*
 	// Get gold amount
-	int Gold = atoi(core::stringc(TradeGoldBox->getText()).c_str());
+	int Gold = atoi(std::string(TradeGoldBox->getText()).c_str());
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->GetGold())
@@ -1981,6 +1982,8 @@ int _HUD::ValidateTradeGold() {
 	TradeGoldBox->setText(core::stringw(Gold).c_str());
 
 	return Gold;
+	*/
+	return 0;
 }
 
 // Resets the trade agreement

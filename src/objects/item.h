@@ -45,7 +45,7 @@ class _Item {
 		int GetID() const { return ID; }
 		int GetType() const { return Type; }
 		const _Texture *GetImage() const { return Image; }
-		const irr::core::stringc &GetName() const { return Name; }
+		const std::string &GetName() const { return Name; }
 		int GetLevel() const { return Level; }
 		int GetHealthRestore() const { return HealthRestore; }
 		int GetManaRestore() const { return ManaRestore; }
@@ -62,13 +62,13 @@ class _Item {
 
 		void GetDamageRange(int &TMin, int &TMax) const;
 		void GetDefenseRange(int &TMin, int &TMax) const;
-		void GetType(irr::core::stringc &TString) const;
+		void GetType(std::string &TString) const;
 		int GetPrice(const _Vendor *TVendor, int TCount, bool TBuy) const;
 
 	private:
 
 		int ID;
-		irr::core::stringc Name;
+		std::string Name;
 		int Level;
 		int Type;
 		const _Texture *Image;

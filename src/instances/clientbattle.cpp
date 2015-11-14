@@ -63,9 +63,9 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 
 		// Add button
-		SkillButtons[i] = irrGUI->addButton(Graphics.GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
-		gui::IGUIStaticText *Text = Graphics.AddText(core::stringc(i+1).c_str(), 3, 1, _Graphics::ALIGN_LEFT, SkillButtons[i]);
-		Text->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
+		//SkillButtons[i] = irrGUI->addButton(Graphics.GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
+		//gui::IGUIStaticText *Text = Graphics.AddText(std::string(i+1).c_str(), 3, 1, _Graphics::ALIGN_LEFT, SkillButtons[i]);
+		//Text->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
 
 		// Get skill info
 		/*Skill = ClientPlayer->GetSkillBar(i);

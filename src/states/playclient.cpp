@@ -514,7 +514,7 @@ void _PlayClientState::HandleChangeMaps(_Buffer *TPacket) {
 
 			switch(Type) {
 				case _Object::PLAYER: {
-					core::stringc Name(TPacket->ReadString());
+					std::string Name(TPacket->ReadString());
 					int PortraitID = TPacket->Read<char>();
 					int Invisible = TPacket->ReadBit();
 
@@ -561,7 +561,7 @@ void _PlayClientState::HandleCreateObject(_Buffer *TPacket) {
 	_Object *NewObject = nullptr;
 	switch(Type) {
 		case _Object::PLAYER: {
-			core::stringc Name(TPacket->ReadString());
+			std::string Name(TPacket->ReadString());
 			int PortraitID = TPacket->Read<char>();
 			int Invisible = TPacket->ReadBit();
 
@@ -805,7 +805,7 @@ void _PlayClientState::HandleChatMessage(_Buffer *TPacket) {
 
 	// Read packet
 	int NetworkID = TPacket->Read<char>();
-	core::stringc Message(TPacket->ReadString());
+	std::string Message(TPacket->ReadString());
 
 	// Get player that sent packet
 	_Player *MessagePlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
@@ -814,7 +814,7 @@ void _PlayClientState::HandleChatMessage(_Buffer *TPacket) {
 
 	// Create chat message
 	_ChatMessage Chat;
-	Chat.Message = MessagePlayer->GetName() + core::stringc(": ") + Message;
+	Chat.Message = MessagePlayer->GetName() + std::string(": ") + Message;
 	HUD.AddChatMessage(Chat);
 
 	printf("%s\n", Chat.Message.c_str());

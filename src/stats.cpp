@@ -83,7 +83,7 @@ void _Stats::LoadMaps() {
 	// Get events
 	_MapStat Map;
 	while(Database->FetchRow()) {
-		Map.File = core::stringc("maps/") + Database->GetString(1);
+		Map.File = std::string("maps/") + Database->GetString(1);
 		Map.ViewWidth = Database->GetInt(2);
 		Map.ViewHeight = Database->GetInt(3);
 		Maps[Database->GetInt(0)] = Map;
