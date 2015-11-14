@@ -168,21 +168,21 @@ void _PlayClientState::Update(double FrameTime) {
 
 			// Send move input
 			if(!HUD.IsChatting()) {
-				if(OldInput.GetMouseState(_OldInput::MOUSE_LEFT) && !(OldInput.GetMousePosition().X >= 656 && OldInput.GetMousePosition().Y >= 575)) {
-					core::position2di MoveTarget;
-					Map->ScreenToGrid(OldInput.GetMousePosition(), MoveTarget);
-					core::position2di Delta = MoveTarget - Player->GetPosition();
+				if(OldInput.GetMouseState(_OldInput::MOUSE_LEFT) && !(Input.GetMouse().x >= 656 && Input.GetMouse().y >= 575)) {
+					glm::ivec2 MoveTarget;
+					Map->ScreenToGrid(Input.GetMouse(), MoveTarget);
+					glm::ivec2 Delta = MoveTarget - Player->GetPosition();
 
-					if(abs(Delta.X) > abs(Delta.Y)) {
-						if(Delta.X < 0)
+					if(abs(Delta.x) > abs(Delta.y)) {
+						if(Delta.x < 0)
 							SendMoveCommand(_Player::MOVE_LEFT);
-						else if(Delta.X > 0)
+						else if(Delta.x > 0)
 							SendMoveCommand(_Player::MOVE_RIGHT);
 					}
 					else {
-						if(Delta.Y < 0)
+						if(Delta.y < 0)
 							SendMoveCommand(_Player::MOVE_UP);
-						else if(Delta.Y > 0)
+						else if(Delta.y > 0)
 							SendMoveCommand(_Player::MOVE_DOWN);
 					}
 				}
@@ -442,7 +442,7 @@ void _PlayClientState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIEleme
 		break;
 	}
 
-	HUD.HandleGUI(TEventType, TElement);
+	//HUD.HandleGUI(TEventType, TElement);
 }
 
 // Called once to synchronize your stats with the servers
@@ -512,11 +512,11 @@ void _PlayClientState::HandleChangeMaps(_Buffer *TPacket) {
 		// Spawn players
 		int NetworkID;
 		_Player *NewPlayer;
-		core::position2di GridPosition;
+		glm::ivec2 GridPosition;
 		for(int i = 0; i < PlayerCount; i++) {
 			NetworkID = TPacket->Read<char>();
-			GridPosition.X = TPacket->Read<char>();
-			GridPosition.Y = TPacket->Read<char>();
+			GridPosition.x = TPacket->Read<char>();
+			GridPosition.y = TPacket->Read<char>();
 			int Type = TPacket->Read<char>();
 
 			switch(Type) {
@@ -558,10 +558,10 @@ void _PlayClientState::HandleChangeMaps(_Buffer *TPacket) {
 void _PlayClientState::HandleCreateObject(_Buffer *TPacket) {
 
 	// Read packet
-	core::position2di Position;
+	glm::ivec2 Position;
 	int NetworkID = TPacket->Read<char>();
-	Position.X = TPacket->Read<char>();
-	Position.Y = TPacket->Read<char>();
+	Position.x = TPacket->Read<char>();
+	Position.y = TPacket->Read<char>();
 	int Type = TPacket->Read<char>();
 
 	// Create the object
@@ -582,7 +582,7 @@ void _PlayClientState::HandleCreateObject(_Buffer *TPacket) {
 	}
 
 	if(NewObject) {
-		NewObject->SetPosition(core::position2di(Position.X, Position.Y));
+		NewObject->SetPosition(glm::ivec2(Position.x, Position.y));
 
 		// Add it to the manager
 		ObjectManager->AddObjectWithNetworkID(NewObject, NetworkID);
@@ -622,7 +622,7 @@ void _PlayClientState::HandleObjectUpdates(_Buffer *TPacket) {
 
 	//printf("HandleObjectUpdates: ServerTime=%d, ClientTime=%d, ObjectCount=%d\n", ServerTime, ClientTime, ObjectCount);
 
-	core::position2di Position;
+	glm::ivec2 Position;
 	char NetworkID;
 	int PlayerState;
 	int Invisible;
@@ -630,8 +630,8 @@ void _PlayClientState::HandleObjectUpdates(_Buffer *TPacket) {
 
 		NetworkID = TPacket->Read<char>();
 		PlayerState = TPacket->Read<char>();
-		Position.X = TPacket->Read<char>();
-		Position.Y = TPacket->Read<char>();
+		Position.x = TPacket->Read<char>();
+		Position.y = TPacket->Read<char>();
 		Invisible = TPacket->ReadBit();
 
 		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
@@ -773,19 +773,19 @@ void _PlayClientState::HandleHUD(_Buffer *TPacket) {
 
 // Handles player position
 void _PlayClientState::HandlePlayerPosition(_Buffer *TPacket) {
-	core::position2di GridPosition;
-	GridPosition.X = TPacket->Read<char>();
-	GridPosition.Y = TPacket->Read<char>();
+	glm::ivec2 GridPosition;
+	GridPosition.x = TPacket->Read<char>();
+	GridPosition.y = TPacket->Read<char>();
 	Player->SetPosition(GridPosition);
 }
 
 // Handles the start of an event
 void _PlayClientState::HandleEventStart(_Buffer *TPacket) {
-	core::position2di GridPosition;
+	glm::ivec2 GridPosition;
 	int Type = TPacket->Read<char>();
 	int Data = TPacket->Read<int32_t>();
-	GridPosition.X = TPacket->Read<char>();
-	GridPosition.Y = TPacket->Read<char>();
+	GridPosition.x = TPacket->Read<char>();
+	GridPosition.y = TPacket->Read<char>();
 	Player->SetPosition(GridPosition);
 
 	switch(Type) {

@@ -76,8 +76,8 @@ _Player::_Player()
 
 	WorldImage = Assets.Textures["players/basic.png"];
 
-	Position.X = 0;
-	Position.Y = 0;
+	Position.x = 0;
+	Position.y = 0;
 
 	// Reset number of potions used in battle
 	for(int i = 0; i < 2; i++)
@@ -134,7 +134,7 @@ void _Player::Update(double FrameTime) {
 void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 	if(TMap) {
 
-		core::position2di ScreenPosition;
+		glm::ivec2 ScreenPosition;
 		bool OnScreen = TMap->GridToScreen(Position, ScreenPosition);
 
 		if(OnScreen) {
@@ -143,14 +143,14 @@ void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 				Alpha = 70;
 
 
-			Graphics.DrawCenteredImage(WorldImage, ScreenPosition.X, ScreenPosition.Y, video::SColor(Alpha, 255, 255, 255));
+			Graphics.DrawCenteredImage(WorldImage, ScreenPosition.x, ScreenPosition.y, video::SColor(Alpha, 255, 255, 255));
 			if(StateImage) {
-				Graphics.DrawCenteredImage(StateImage, ScreenPosition.X, ScreenPosition.Y, video::SColor(Alpha, 255, 255, 255));
+				Graphics.DrawCenteredImage(StateImage, ScreenPosition.x, ScreenPosition.y, video::SColor(Alpha, 255, 255, 255));
 			}
 
 			if(TClientPlayer != this) {
 				Graphics.SetFont(_Graphics::FONT_8);
-				//Graphics.RenderText(Name.c_str(), ScreenPosition.X, ScreenPosition.Y - 28, _Graphics::ALIGN_CENTER);
+				//Graphics.RenderText(Name.c_str(), ScreenPosition.x, ScreenPosition.y - 28, _Graphics::ALIGN_CENTER);
 			}
 		}
 	}
@@ -162,19 +162,19 @@ bool _Player::MovePlayer(int TDirection) {
 		return false;
 
 	// Get new position
-	core::position2di NewPosition = Position;
+	glm::ivec2 NewPosition = Position;
 	switch(TDirection) {
 		case MOVE_LEFT:
-			NewPosition.X--;
+			NewPosition.x--;
 		break;
 		case MOVE_UP:
-			NewPosition.Y--;
+			NewPosition.y--;
 		break;
 		case MOVE_RIGHT:
-			NewPosition.X++;
+			NewPosition.x++;
 		break;
 		case MOVE_DOWN:
-			NewPosition.Y++;
+			NewPosition.y++;
 		break;
 	}
 
@@ -289,7 +289,7 @@ int _Player::GetCurrentZone() {
 // Gets the tile that the player is currently standing on
 const _Tile *_Player::GetTile() {
 
-	return Map->GetTile(Position.X, Position.Y);
+	return Map->GetTile(Position.x, Position.y);
 }
 
 // Generates the number of moves until the next battle

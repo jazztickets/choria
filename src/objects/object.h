@@ -19,7 +19,7 @@
 
 // Libraries
 #include <cstdint>
-#include <position2d.h>
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Map;
@@ -51,8 +51,8 @@ class _Object {
 		void SetNetworkID(char TValue) { NetworkID = TValue; }
 		char GetNetworkID() const { return NetworkID; }
 
-		void SetPosition(const irr::core::position2di &TPosition) { Position = TPosition; }
-		const irr::core::position2di &GetPosition() const { return Position; }
+		void SetPosition(const glm::ivec2 &TPosition) { Position = TPosition; }
+		const glm::ivec2 &GetPosition() const { return Position; }
 
 		int GetMapID() const;
 
@@ -70,7 +70,7 @@ class _Object {
 
 		// State
 		bool Deleted;
-		irr::core::position2di Position;
+		glm::ivec2 Position;
 
 		// Networking
 		char NetworkID;

@@ -18,15 +18,10 @@
 #pragma once
 
 // Libraries
-#include <IEventReceiver.h>
-#include <IGUIButton.h>
-#include <IGUITabControl.h>
-#include <IGUIEditBox.h>
-#include <IGUIImage.h>
-#include <IGUIButton.h>
 #include <list>
 #include <string>
 #include <cstdint>
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Player;
@@ -119,7 +114,6 @@ class _HUD {
 		void HandleMouseMotion(int TMouseX, int TMouseY);
 		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
-		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(double FrameTime);
 		void PreGUIDraw();
@@ -141,7 +135,6 @@ class _HUD {
 		// Chat
 		void ToggleChat();
 		bool IsChatting() { return Chatting; }
-		void HandleKeyPress(irr::EKEY_CODE TKey);
 		void AddChatMessage(_ChatMessage &TChat) { ChatHistory.push_back(TChat); }
 
 		// Trade
@@ -163,7 +156,6 @@ class _HUD {
 		void CloseChat();
 
 		void DrawChat();
-		void DrawTopHUD();
 		void DrawInventory();
 		void DrawTownPortal();
 		void DrawCharacter();
@@ -179,16 +171,16 @@ class _HUD {
 		void DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY);
 		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
-		void GetItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
-		void GetInventoryItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
-		void GetVendorItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
-		void GetTraderItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
-		void GetTradeItem(irr::core::position2di &TPoint, _CursorItem &TCursorItem);
+		void GetItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
+		void GetInventoryItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
+		void GetVendorItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
+		void GetTraderItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
+		void GetTradeItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
 		void BuyItem(_CursorItem *TCursorItem, int TTargetSlot);
 		void SellItem(_CursorItem *TCursorItem, int TAmount);
 
-		void GetSkill(irr::core::position2di &TPoint, _CursorSkill &TCursorSkill);
-		void GetSkillPageSkill(irr::core::position2di &TPoint, _CursorSkill &TCursorSkill);
+		void GetSkill(glm::ivec2 &TPoint, _CursorSkill &TCursorSkill);
+		void GetSkillPageSkill(glm::ivec2 &TPoint, _CursorSkill &TCursorSkill);
 		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
 
 		void RefreshSkillButtons();
@@ -207,13 +199,10 @@ class _HUD {
 		const _Trader *Trader;
 
 		// GUI
-		irr::gui::IGUITab *TabMenu, *TabInventory, *TabVendor, *TabTrader, *TabSkill, *TabTrade;
-		irr::gui::IGUIImage *TraderWindow;
 		_CursorItem CursorItem, TooltipItem;
 		bool CharacterOpen;
 
 		// Chat
-		irr::gui::IGUIEditBox *ChatBox;
 		std::list<_ChatMessage> ChatHistory;
 		bool Chatting;
 
@@ -225,8 +214,6 @@ class _HUD {
 		int RequiredItemSlots[8], RewardItemSlot;
 
 		// Trading
-		irr::gui::IGUIEditBox *TradeGoldBox;
-		irr::gui::IGUIButton *TradeAcceptButton;
 		bool TypingGold;
 };
 

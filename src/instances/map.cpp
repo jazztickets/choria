@@ -58,8 +58,8 @@ _Map::_Map(int TMapID) {
 
 	// Get map info
 	const _MapStat *Map = Stats.GetMap(ID);
-	ViewSize.Width = Map->ViewWidth;
-	ViewSize.Height = Map->ViewHeight;
+	ViewSize.x = Map->ViewWidth;
+	ViewSize.y = Map->ViewHeight;
 
 	// Load map
 	Filename = Map->File;
@@ -79,10 +79,10 @@ void _Map::Init() {
 	NoZoneTexture = nullptr;
 	DefaultNoZoneTexture = Assets.Textures["editor/nozone.png"];
 	Tiles = nullptr;
-	ViewSize.Width = 25;
-	ViewSize.Height = 19;
-	CameraScroll.X = CAMERA_SCROLLMIN_X;
-	CameraScroll.Y = CAMERA_SCROLLMIN_Y;
+	ViewSize.x = 25;
+	ViewSize.y = 19;
+	CameraScroll.x = CAMERA_SCROLLMIN_X;
+	CameraScroll.y = CAMERA_SCROLLMIN_Y;
 }
 
 // Free memory used by the tiles
@@ -129,23 +129,23 @@ void _Map::Render() {
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);
 
-	core::position2di GridPosition, DrawPosition;
-	for(int i = 0; i < ViewSize.Width; i++) {
-		for(int j = 0; j < ViewSize.Height; j++) {
+	glm::ivec2 GridPosition, DrawPosition;
+	for(int i = 0; i < ViewSize.x; i++) {
+		for(int j = 0; j < ViewSize.y; j++) {
 
 			// Get the actual grid coordinate
-			GridPosition.X = i + CameraScroll.X - ViewSize.Width / 2;
-			GridPosition.Y = j + CameraScroll.Y - ViewSize.Height / 2;
-			DrawPosition = core::position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
+			GridPosition.x = i + CameraScroll.x - ViewSize.x / 2;
+			GridPosition.y = j + CameraScroll.y - ViewSize.y / 2;
+			DrawPosition = glm::ivec2((i - ViewSize.x / 2) * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2, (j - ViewSize.y / 2) * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2);
 			if(NoZoneTexture)
-				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.x, DrawPosition.y);
 
 			// Validate coordinate
-			if(GridPosition.X >= 0 && GridPosition.X < Width && GridPosition.Y >= 0 && GridPosition.Y < Height) {
-				_Tile *Tile = &Tiles[GridPosition.X][GridPosition.Y];
+			if(GridPosition.x >= 0 && GridPosition.x < Width && GridPosition.y >= 0 && GridPosition.y < Height) {
+				_Tile *Tile = &Tiles[GridPosition.x][GridPosition.y];
 
 				if(Tile->Texture)
-					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.X, DrawPosition.Y);
+					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.x, DrawPosition.y);
 			}
 		}
 	}
@@ -154,89 +154,89 @@ void _Map::Render() {
 // Renders the map for editor
 void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
-	core::position2di GridPosition, DrawPosition;
-	for(int i = 0; i < ViewSize.Width; i++) {
-		for(int j = 0; j < ViewSize.Height; j++) {
+	glm::ivec2 GridPosition, DrawPosition;
+	for(int i = 0; i < ViewSize.x; i++) {
+		for(int j = 0; j < ViewSize.y; j++) {
 
 			// Get the actual grid coordinate
-			GridPosition.X = i + CameraScroll.X - ViewSize.Width / 2;
-			GridPosition.Y = j + CameraScroll.Y - ViewSize.Height / 2;
-			DrawPosition = core::position2di((i - ViewSize.Width / 2) * MAP_TILE_WIDTH + 400, (j - ViewSize.Height / 2) * MAP_TILE_HEIGHT + 300);
+			GridPosition.x = i + CameraScroll.x - ViewSize.x / 2;
+			GridPosition.y = j + CameraScroll.y - ViewSize.y / 2;
+			DrawPosition = glm::ivec2((i - ViewSize.x / 2) * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2, (j - ViewSize.y / 2) * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2);
 			if(NoZoneTexture)
-				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.x, DrawPosition.y);
 
 			// Validate coordinate
-			if(GridPosition.X >= 0 && GridPosition.X < Width && GridPosition.Y >= 0 && GridPosition.Y < Height) {
-				_Tile *Tile = &Tiles[GridPosition.X][GridPosition.Y];
+			if(GridPosition.x >= 0 && GridPosition.x < Width && GridPosition.y >= 0 && GridPosition.y < Height) {
+				_Tile *Tile = &Tiles[GridPosition.x][GridPosition.y];
 
 				// Draw texture
 				if(Tile->Texture)
-					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.X, DrawPosition.Y);
+					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.x, DrawPosition.y);
 				else if(NoZoneTexture)
-					Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.X, DrawPosition.Y);
+					Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.x, DrawPosition.y);
 
 				// Draw wall
 				if(TDrawWall && Tile->Wall)
-					//Graphics.RenderText("W", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
+					//Graphics.RenderText("W", DrawPosition.x, DrawPosition.y - 8, _Graphics::ALIGN_CENTER);
 
 				// Draw zone
 				if(!Tile->Wall) {
 					if(TDrawZone && Tile->Zone > 0)
-						//Graphics.RenderText(std::string(Tile->Zone).c_str(), DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER);
+						//Graphics.RenderText(std::string(Tile->Zone).c_str(), DrawPosition.x, DrawPosition.y - 8, _Graphics::ALIGN_CENTER);
 
 					// Draw PVP
 					if(TDrawPVP && Tile->PVP) {
-						//Graphics.RenderText("PvP", DrawPosition.X, DrawPosition.Y - 8, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
+						//Graphics.RenderText("PvP", DrawPosition.x, DrawPosition.y - 8, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
 					}
 				}
 
 				// Draw event info
 				if(Tile->EventType > 0) {
 					std::string EventText = Stats.GetEvent(Tile->EventType)->ShortName + std::string(", ") + std::to_string(Tile->EventData);
-					//Graphics.RenderText(EventText.c_str(), DrawPosition.X - 16, DrawPosition.Y - 16, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 255, 255));
+					//Graphics.RenderText(EventText.c_str(), DrawPosition.x - 16, DrawPosition.y - 16, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 255, 255));
 				}
 			}
 			else {
-				Graphics.DrawCenteredImage(DefaultNoZoneTexture, DrawPosition.X, DrawPosition.Y);
+				Graphics.DrawCenteredImage(DefaultNoZoneTexture, DrawPosition.x, DrawPosition.y);
 			}
 		}
 	}
 }
 
 // Sets the camera scroll position
-void _Map::SetCameraScroll(const core::position2di &TPosition) {
+void _Map::SetCameraScroll(const glm::ivec2 &TPosition) {
 
 	CameraScroll = TPosition;
-	if(CameraScroll.X < CAMERA_SCROLLMIN_X)
-		CameraScroll.X = CAMERA_SCROLLMIN_X;
-	if(CameraScroll.Y < CAMERA_SCROLLMIN_Y)
-		CameraScroll.Y = CAMERA_SCROLLMIN_Y;
-	if(CameraScroll.X >= Width - CAMERA_SCROLLMIN_X)
-		CameraScroll.X = Width - CAMERA_SCROLLMIN_X;
-	if(CameraScroll.Y >= Height - CAMERA_SCROLLMIN_Y)
-		CameraScroll.Y = Height - CAMERA_SCROLLMIN_Y;
+	if(CameraScroll.x < CAMERA_SCROLLMIN_X)
+		CameraScroll.x = CAMERA_SCROLLMIN_X;
+	if(CameraScroll.y < CAMERA_SCROLLMIN_Y)
+		CameraScroll.y = CAMERA_SCROLLMIN_Y;
+	if(CameraScroll.x >= Width - CAMERA_SCROLLMIN_X)
+		CameraScroll.x = Width - CAMERA_SCROLLMIN_X;
+	if(CameraScroll.y >= Height - CAMERA_SCROLLMIN_Y)
+		CameraScroll.y = Height - CAMERA_SCROLLMIN_Y;
 }
 
 // Converts a grid position on the map to a screen coordinate
-bool _Map::GridToScreen(const core::position2di &TGridPosition, core::position2di &TScreenPosition) const {
+bool _Map::GridToScreen(const glm::ivec2 &TGridPosition, glm::ivec2 &TScreenPosition) const {
 
 	// Get delta from center
-	core::position2di CenterDelta(TGridPosition.X - CameraScroll.X, TGridPosition.Y - CameraScroll.Y);
+	glm::ivec2 CenterDelta(TGridPosition.x - CameraScroll.x, TGridPosition.y - CameraScroll.y);
 
-	TScreenPosition.X = CenterDelta.X * MAP_TILE_WIDTH + 400;
-	TScreenPosition.Y = CenterDelta.Y * MAP_TILE_HEIGHT + 300;
+	TScreenPosition.x = CenterDelta.x * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2;
+	TScreenPosition.y = CenterDelta.y * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2;
 
 	// Check if it's on screen
-	if(abs(CenterDelta.X) > ViewSize.Width/2 || abs(CenterDelta.Y) > ViewSize.Height/2)
+	if(abs(CenterDelta.x) > ViewSize.x/2 || abs(CenterDelta.y) > ViewSize.y/2)
 		return false;
 
 	return true;
 }
 
 // Converts a screen coordinate to a map position
-void _Map::ScreenToGrid(const core::position2di &TScreenPosition, core::position2di &TGridPosition) const {
-	TGridPosition.X = GetCameraScroll().X + TScreenPosition.X / MAP_TILE_WIDTH - GetViewSize().Width / 2;
-	TGridPosition.Y = GetCameraScroll().Y + TScreenPosition.Y / MAP_TILE_HEIGHT - GetViewSize().Height / 2;
+void _Map::ScreenToGrid(const glm::ivec2 &TScreenPosition, glm::ivec2 &TGridPosition) const {
+	TGridPosition.x = GetCameraScroll().x + TScreenPosition.x / MAP_TILE_WIDTH - GetViewSize().x / 2;
+	TGridPosition.y = GetCameraScroll().y + TScreenPosition.y / MAP_TILE_HEIGHT - GetViewSize().y / 2;
 }
 
 // Saves the map to a file
@@ -387,7 +387,7 @@ int _Map::LoadMap() {
 
 			// Save off events that need to be indexed
 			if(Stats.GetEvent(Tile->EventType)->Indexed) {
-				IndexedEvents.push_back(_IndexedEvent(Tile, core::position2di(i, j)));
+				IndexedEvents.push_back(_IndexedEvent(Tile, glm::ivec2(i, j)));
 			}
 		}
 	}
@@ -427,13 +427,13 @@ int _Map::GetTextureIndex(std::vector<const _Texture *> &TTextures, const _Textu
 }
 
 // Determines if a square can be moved to
-bool _Map::CanMoveTo(const core::position2di &TPosition) {
+bool _Map::CanMoveTo(const glm::ivec2 &TPosition) {
 
 	// Bounds
-	if(TPosition.X < 0 || TPosition.X >= Width || TPosition.Y < 0 || TPosition.Y >= Height)
+	if(TPosition.x < 0 || TPosition.x >= Width || TPosition.y < 0 || TPosition.y >= Height)
 		return false;
 
-	return !Tiles[TPosition.X][TPosition.Y].Wall;
+	return !Tiles[TPosition.x][TPosition.y].Wall;
 }
 
 // Adds an object to the map
@@ -443,8 +443,8 @@ void _Map::AddObject(_Object *TObject) {
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_CREATEOBJECT);
 	Packet.Write<char>(TObject->GetNetworkID());
-	Packet.Write<char>(TObject->GetPosition().X);
-	Packet.Write<char>(TObject->GetPosition().Y);
+	Packet.Write<char>(TObject->GetPosition().x);
+	Packet.Write<char>(TObject->GetPosition().y);
 	Packet.Write<char>(TObject->GetType());
 	switch(TObject->GetType()) {
 		case _Object::PLAYER: {
@@ -498,8 +498,8 @@ void _Map::GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::
 		if((*Iterator)->GetType() == _Object::PLAYER) {
 			_Player *Player = static_cast<_Player *>(*Iterator);
 			if(Player != TPlayer) {
-				int XDelta = Player->GetPosition().X - TPlayer->GetPosition().X;
-				int YDelta = Player->GetPosition().Y - TPlayer->GetPosition().Y;
+				int XDelta = Player->GetPosition().x - TPlayer->GetPosition().x;
+				int YDelta = Player->GetPosition().y - TPlayer->GetPosition().y;
 				if((float)(XDelta * XDelta + YDelta * YDelta) <= TDistanceSquared) {
 					TPlayers.push_back(Player);
 				}
@@ -517,8 +517,8 @@ _Player *_Map::GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquare
 		if((*Iterator)->GetType() == _Object::PLAYER) {
 			_Player *Player = static_cast<_Player *>(*Iterator);
 			if(Player != TPlayer && Player->GetState() == TState) {
-				int XDelta = Player->GetPosition().X - TPlayer->GetPosition().X;
-				int YDelta = Player->GetPosition().Y - TPlayer->GetPosition().Y;
+				int XDelta = Player->GetPosition().x - TPlayer->GetPosition().x;
+				int YDelta = Player->GetPosition().y - TPlayer->GetPosition().y;
 				float DistanceSquared = (float)(XDelta * XDelta + YDelta * YDelta);
 				if(DistanceSquared <= TMaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
 					ClosestDistanceSquared = DistanceSquared;
@@ -554,8 +554,8 @@ void _Map::SendObjectUpdates() {
 
 		Packet.Write<char>(Object->GetNetworkID());
 		Packet.Write<char>(State);
-		Packet.Write<char>(Object->GetPosition().X);
-		Packet.Write<char>(Object->GetPosition().Y);
+		Packet.Write<char>(Object->GetPosition().x);
+		Packet.Write<char>(Object->GetPosition().y);
 		Packet.WriteBit(Invisible);
 	}
 

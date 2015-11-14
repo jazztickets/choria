@@ -38,9 +38,9 @@ struct _Tile {
 };
 
 struct _IndexedEvent {
-	_IndexedEvent(const _Tile *Tile, const irr::core::position2di &Position) : Tile(Tile), Position(Position) { }
+	_IndexedEvent(const _Tile *Tile, const glm::ivec2 &Position) : Tile(Tile), Position(Position) { }
 	const _Tile *Tile;
-	irr::core::position2di Position;
+	glm::ivec2 Position;
 };
 
 // Forward Declarations
@@ -77,15 +77,15 @@ class _Map {
 		void Render();
 		void RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP);
 
-		void SetCameraScroll(const irr::core::position2di &TPosition);
-		const irr::core::position2di &GetCameraScroll() const { return CameraScroll; }
-		const irr::core::dimension2di &GetViewSize() const { return ViewSize; }
+		void SetCameraScroll(const glm::ivec2 &TPosition);
+		const glm::ivec2 &GetCameraScroll() const { return CameraScroll; }
+		const glm::ivec2 &GetViewSize() const { return ViewSize; }
 
-		bool GridToScreen(const irr::core::position2di &TGridPosition, irr::core::position2di &TScreenPosition) const;
-		void ScreenToGrid(const irr::core::position2di &TScreenPosition, irr::core::position2di &TGridPosition) const;
+		bool GridToScreen(const glm::ivec2 &TGridPosition, glm::ivec2 &TScreenPosition) const;
+		void ScreenToGrid(const glm::ivec2 &TScreenPosition, glm::ivec2 &TGridPosition) const;
 
 		// Collision
-		bool CanMoveTo(const irr::core::position2di &TPosition);
+		bool CanMoveTo(const glm::ivec2 &TPosition);
 
 		// Object management
 		void AddObject(_Object *TObject);
@@ -130,8 +130,8 @@ class _Map {
 		std::string Filename;
 
 		// Viewing
-		irr::core::dimension2di ViewSize;
-		irr::core::position2di CameraScroll;
+		glm::ivec2 ViewSize;
+		glm::ivec2 CameraScroll;
 
 		// Map data
 		_Tile **Tiles;

@@ -118,7 +118,7 @@ void _Graphics::DrawCenteredImage(const _Texture *Texture, int PositionX, int Po
 	/*if(TTexture)
 		irrDriver->draw2DImage(
 					TTexture,
-					core::position2di(TPositionX - (TTexture->getSize().Width >> 1), TPositionY - (TTexture->getSize().Height >> 1)),
+					glm::ivec2(TPositionX - (TTexture->getSize().Width >> 1), TPositionY - (TTexture->getSize().Height >> 1)),
 					core::recti(0, 0, TTexture->getSize().Width, TTexture->getSize().Height),
 					0,
 					TColor,
@@ -209,14 +209,14 @@ void _Graphics::DrawImage(ImageType TType, int TPositionX, int TPositionY, const
 // Draws a health or mana bar
 void _Graphics::DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight) {
 
-	//irrDriver->draw2DImage(Images[TType + 1], core::position2di(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, video::SColor(255, 255, 255, 255), true);
-	//irrDriver->draw2DImage(Images[TType], core::position2di(TPositionX, TPositionY), core::recti(0, 0, (int)(TWidth * TPercent), THeight), 0, video::SColor(255, 255, 255, 255), true);
+	//irrDriver->draw2DImage(Images[TType + 1], glm::ivec2(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, video::SColor(255, 255, 255, 255), true);
+	//irrDriver->draw2DImage(Images[TType], glm::ivec2(TPositionX, TPositionY), core::recti(0, 0, (int)(TWidth * TPercent), THeight), 0, video::SColor(255, 255, 255, 255), true);
 }
 
 // Draws a tiled background
 void _Graphics::DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const video::SColor &TColor) {
 
-	//irrDriver->draw2DImage(Images[TType], core::position2di(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, TColor, true);
+	//irrDriver->draw2DImage(Images[TType], glm::ivec2(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, TColor, true);
 }
 
 

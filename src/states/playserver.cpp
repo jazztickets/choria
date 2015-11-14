@@ -1165,8 +1165,8 @@ void _PlayServerState::SpawnPlayer(_Player *TPlayer, int TNewMapID, int TEventTy
 			_Object *Object = *Iterator;
 
 			Packet.Write<char>(Object->GetNetworkID());
-			Packet.Write<char>(Object->GetPosition().X);
-			Packet.Write<char>(Object->GetPosition().Y);
+			Packet.Write<char>(Object->GetPosition().x);
+			Packet.Write<char>(Object->GetPosition().y);
 			Packet.Write<char>(Object->GetType());
 			switch(Object->GetType()) {
 				case _Object::PLAYER: {
@@ -1208,8 +1208,8 @@ void _PlayServerState::SendPlayerPosition(_Player *TPlayer) {
 
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_POSITION);
-	Packet.Write<char>(TPlayer->GetPosition().X);
-	Packet.Write<char>(TPlayer->GetPosition().Y);
+	Packet.Write<char>(TPlayer->GetPosition().x);
+	Packet.Write<char>(TPlayer->GetPosition().y);
 
 	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
 }
@@ -1249,8 +1249,8 @@ void _PlayServerState::SendEvent(_Player *TPlayer, int TType, int TData) {
 	Packet.Write<char>(_Network::EVENT_START);
 	Packet.Write<char>(TType);
 	Packet.Write<int32_t>(TData);
-	Packet.Write<char>(TPlayer->GetPosition().X);
-	Packet.Write<char>(TPlayer->GetPosition().Y);
+	Packet.Write<char>(TPlayer->GetPosition().x);
+	Packet.Write<char>(TPlayer->GetPosition().y);
 
 	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
 }

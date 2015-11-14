@@ -50,7 +50,7 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 	ClientPlayer->StartBattle(this);
 
 	// Set fighter position offsets
-	core::position2di Offset;
+	glm::ivec2 Offset;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		GetPositionFromSlot(Fighters[i]->GetSlot(), Offset);
 		Fighters[i]->SetOffset(Offset);
@@ -403,7 +403,7 @@ void _ClientBattle::EndBattle(_Buffer *TPacket) {
 }
 
 // Calculates a screen position for a slot
-void _ClientBattle::GetPositionFromSlot(int TSlot, core::position2di &TPosition) {
+void _ClientBattle::GetPositionFromSlot(int TSlot, glm::ivec2 &TPosition) {
 
 	// Get side
 	int TSide = TSlot & 1;
@@ -411,11 +411,11 @@ void _ClientBattle::GetPositionFromSlot(int TSlot, core::position2di &TPosition)
 	// Check sides
 	int SideCount;
 	if(TSide == 0) {
-		TPosition.X = 170;
+		TPosition.x = 170;
 		SideCount = LeftFighterCount;
 	}
 	else {
-		TPosition.X = 460;
+		TPosition.x = 460;
 		SideCount = RightFighterCount;
 	}
 
@@ -425,13 +425,13 @@ void _ClientBattle::GetPositionFromSlot(int TSlot, core::position2di &TPosition)
 	// Get layout based off side count
 	switch(SideCount) {
 		case 1:
-			TPosition.Y = 247;
+			TPosition.y = 247;
 		break;
 		case 2:
-			TPosition.Y = 240 + (SideIndex * 2 - 1) * 70;
+			TPosition.y = 240 + (SideIndex * 2 - 1) * 70;
 		break;
 		default:
-			TPosition.Y = 140 + 300 / SideCount * SideIndex;
+			TPosition.y = 140 + 300 / SideCount * SideIndex;
 		break;
 	}
 }

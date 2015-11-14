@@ -86,18 +86,18 @@ void _MapEditorState::Update(double FrameTime) {
 			if(OldInput.GetMouseState(_OldInput::MOUSE_LEFT) && !(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL))) {
 				switch(BrushSize) {
 					case 0:
-						ApplyBrush(BrushPosition.X, BrushPosition.Y);
-						if(!Map->IsValidPosition(BrushPosition.X, BrushPosition.Y))
+						ApplyBrush(BrushPosition.x, BrushPosition.y);
+						if(!Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
 							Map->SetNoZoneTexture(Brush.Texture);
 					break;
 					case 1:
-						ApplyBrushSize(BrushPosition.X, BrushPosition.Y, 3);
+						ApplyBrushSize(BrushPosition.x, BrushPosition.y, 3);
 					break;
 					case 2:
-						ApplyBrushSize(BrushPosition.X, BrushPosition.Y, 6);
+						ApplyBrushSize(BrushPosition.x, BrushPosition.y, 6);
 					break;
 					case 3:
-						ApplyBrushSize(BrushPosition.X, BrushPosition.Y, 12);
+						ApplyBrushSize(BrushPosition.x, BrushPosition.y, 12);
 					break;
 				}
 			}
@@ -112,7 +112,7 @@ void _MapEditorState::Draw() {
 		Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
 	RenderBrush();
 
-	std::string GridBrushPositionText = std::to_string(BrushPosition.X) + std::string(" ") + std::to_string(BrushPosition.Y);
+	std::string GridBrushPositionText = std::to_string(BrushPosition.x) + std::string(" ") + std::to_string(BrushPosition.y);
 
 	Graphics.SetFont(_Graphics::FONT_8);
 	//Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
@@ -252,12 +252,12 @@ bool _MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		switch(TButton) {
 			case _OldInput::MOUSE_LEFT:
 				if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
-					if(Map->IsValidPosition(BrushPosition.X, BrushPosition.Y))
-						Brush = *Map->GetTile(BrushPosition.X, BrushPosition.Y);
+					if(Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
+						Brush = *Map->GetTile(BrushPosition.x, BrushPosition.y);
 				}
 			break;
 			case _OldInput::MOUSE_RIGHT: {
-				Map->ScreenToGrid(core::position2di(TMouseX, TMouseY), BrushPosition);
+				Map->ScreenToGrid(glm::ivec2(TMouseX, TMouseY), BrushPosition);
 				Map->SetCameraScroll(BrushPosition);
 			} break;
 		}
@@ -278,7 +278,7 @@ void _MapEditorState::HandleMouseWheel(float TDirection) {
 void _MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
 
 	if(Map) {
-		Map->ScreenToGrid(core::position2di(TMouseX, TMouseY), BrushPosition);
+		Map->ScreenToGrid(glm::ivec2(TMouseX, TMouseY), BrushPosition);
 	}
 }
 
@@ -521,16 +521,16 @@ void _MapEditorState::InitTexturePalette() {
 
 	// Load texture buttons
 	int StartX = 10;
-	core::position2di TexturePosition(StartX, 30);
+	glm::ivec2 TexturePosition(StartX, 30);
 	for(size_t i = 0; i < TexturePalette.size(); i++) {
 
-		gui::IGUIButton *Button = irrGUI->addButton(Graphics.GetRect(TexturePosition.X, TexturePosition.Y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
+		gui::IGUIButton *Button = irrGUI->addButton(Graphics.GetRect(TexturePosition.x, TexturePosition.y, TexturePalette[i]->getSize().Width, TexturePalette[i]->getSize().Height), Window, TEXTURES_ID+i);
 		Button->setImage(TexturePalette[i]);
 
-		TexturePosition.X += MAP_TILE_WIDTH;
-		if(TexturePosition.X > 600 - MAP_TILE_WIDTH) {
-			TexturePosition.X = StartX;
-			TexturePosition.Y += MAP_TILE_HEIGHT;
+		TexturePosition.x += MAP_TILE_WIDTH;
+		if(TexturePosition.x > 600 - MAP_TILE_WIDTH) {
+			TexturePosition.x = StartX;
+			TexturePosition.y += MAP_TILE_HEIGHT;
 		}
 	}
 

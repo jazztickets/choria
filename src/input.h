@@ -96,7 +96,7 @@ class _OldInput : public irr::IEventReceiver {
 		bool GetKeyState(irr::EKEY_CODE TKey) const { return Keys[TKey]; }
 		bool GetMouseState(int TButton) const { return MouseButtons[TButton]; }
 
-		const irr::core::position2di &GetMousePosition() const { return MousePosition; }
+		const glm::ivec2 &GetMousePosition() const { return MousePosition; }
 
 		bool IsShiftDown() { return GetKeyState(irr::KEY_SHIFT) || GetKeyState(irr::KEY_LSHIFT) || GetKeyState(irr::KEY_RSHIFT); }
 		bool IsControlDown() { return GetKeyState(irr::KEY_CONTROL) || GetKeyState(irr::KEY_LCONTROL) || GetKeyState(irr::KEY_RCONTROL); }
@@ -108,7 +108,7 @@ class _OldInput : public irr::IEventReceiver {
 
 		// Input
 		bool Keys[irr::KEY_KEY_CODES_COUNT], MouseButtons[MOUSE_COUNT];
-		irr::core::position2di MousePosition;
+		glm::ivec2 MousePosition;
 
 };
 

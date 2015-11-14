@@ -49,7 +49,7 @@ class _Fighter {
 
 		// Render
 		void RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget);
-		void SetOffset(const irr::core::position2di &TPosition) { Offset = TPosition; }
+		void SetOffset(const glm::ivec2 &TPosition) { Offset = TPosition; }
 
 		// Stats
 		void SetName(const std::string &TName) { Name = TName; }
@@ -134,5 +134,5 @@ class _Fighter {
 
 		// Render
 		const _Texture *Portrait;
-		irr::core::position2di Offset;
+		glm::ivec2 Offset;
 };

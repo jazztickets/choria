@@ -79,7 +79,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	// Initialize graphics system
 	_WindowSettings WindowSettings;
 	WindowSettings.WindowTitle = "choria";
-	WindowSettings.Size = glm::ivec2(800, 600);
+	WindowSettings.Size = Config.WindowSize;
 	WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	Graphics.Init(WindowSettings);
 
