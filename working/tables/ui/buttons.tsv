@@ -16,5 +16,6 @@ button_newcharacter_create	element_menu_new	style_menu_button	style_menu_button_
 button_newcharacter_cancel	element_menu_new	style_menu_button	style_menu_button_disabled	style_menu_button_hover	75	-16	128	32	1	2	0
 button_connect_connect	element_menu_connect	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-75	230	128	48	1	1	0
 button_connect_back	element_menu_connect	style_menu_button	style_menu_button_disabled	style_menu_button_hover	75	230	128	48	1	1	0
-button_account_login	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-80	230	150	48	1	1	0
-button_account_back	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	80	230	150	48	1	1	0
+button_account_login	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-150	230	128	48	1	1	0
+button_account_create	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	230	128	48	1	1	0
+button_account_back	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	150	230	128	48	1	1	0

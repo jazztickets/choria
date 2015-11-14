@@ -107,8 +107,12 @@ class _Menu {
 		void RefreshInputLabels();
 		void CreateCharacter();
 		void ConnectToHost();
+		void SendAccountInfo(bool CreateAccount=false);
 		void RequestCharacterList();
 		void RemapInput(int InputType, int Input);
+
+		void SetAccountMessage(const std::string &Message);
+		void FocusNextElement(bool ShiftDown=false);
 
 		// States
 		StateType State;

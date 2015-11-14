@@ -161,6 +161,13 @@ void _Menu::InitAccount() {
 	Password->Focused = false;
 	Password->Text = "";
 
+	_Label *Label = Assets.Labels["label_menu_account_message"];
+	Label->Color = COLOR_WHITE;
+	Label->Text = "";
+
+	_Button *Button = Assets.Buttons["button_account_login"];
+	Button->Enabled = true;
+
 	State = STATE_ACCOUNT;
 }
 
@@ -240,6 +247,47 @@ void _Menu::ConnectToHost() {
 
 	_Button *Button = Assets.Buttons["button_connect_connect"];
 	Button->Enabled = false;
+}
+
+// Send login info
+void _Menu::SendAccountInfo(bool CreateAccount) {
+	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
+	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
+	_Label *Label = Assets.Labels["label_menu_account_message"];
+
+	// Check username
+	if(Username->Text.length() == 0) {
+		Username->Focused = true;
+		Password->Focused = false;
+		Label->Color = COLOR_RED;
+		Label->Text = "Enter a username";
+
+		return;
+	}
+
+	// Check password
+	if(Password->Text.length() == 0) {
+		Username->Focused = false;
+		Password->Focused = true;
+		Label->Color = COLOR_RED;
+		Label->Text = "Enter a password";
+
+		return;
+	}
+
+	Label->Color = COLOR_WHITE;
+	Label->Text = "Logging in...";
+
+	_Button *Button = Assets.Buttons["button_account_login"];
+	Button->Enabled = false;
+
+	// Send information
+	_Buffer Packet;
+	Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
+	Packet.WriteBit(CreateAccount);
+	Packet.WriteString(Username->Text.c_str());
+	Packet.WriteString(Password->Text.c_str());
+	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Request character list from server
@@ -368,12 +416,24 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			}
 		} break;
 		case STATE_CONNECT: {
-			if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-				InitTitle();
+			if(KeyEvent.Pressed) {
+				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+					InitTitle();
+				else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+					ConnectToHost();
+				else if(KeyEvent.Key == SDL_SCANCODE_TAB)
+					FocusNextElement(Input.ModKeyDown(KMOD_SHIFT));
+			}
 		} break;
 		case STATE_ACCOUNT: {
-			if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-				InitConnect();
+			if(KeyEvent.Pressed) {
+				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+					InitConnect();
+				else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+					SendAccountInfo();
+				else if(KeyEvent.Key == SDL_SCANCODE_TAB)
+					FocusNextElement(Input.ModKeyDown(KMOD_SHIFT));
+			}
 		} break;
 		case STATE_OPTIONS: {
 			if(OptionsState == OPTION_NONE) {
@@ -548,6 +608,10 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 			} break;
 			case STATE_ACCOUNT: {
 				if(Clicked->Identifier == "button_account_login") {
+					SendAccountInfo();
+				}
+				else if(Clicked->Identifier == "button_account_create") {
+					SendAccountInfo(true);
 				}
 				else if(Clicked->Identifier == "button_account_back") {
 					InitConnect();
@@ -681,7 +745,7 @@ void _Menu::HandleDisconnect(ENetEvent *TEvent) {
 
 			_Label *Label = Assets.Labels["label_menu_connect_message"];
 			Label->Color = COLOR_RED;
-			Label->Text = "Unable to connect to server";
+			Label->Text = "Disconnected from server";
 		} break;
 		default:
 		break;
@@ -769,16 +833,25 @@ void _Menu::HandlePacket(ENetEvent *TEvent) {
 			// Set state
 			InitCharacters();
 		} break;
-		case _Network::CREATECHARACTER_SUCCESS:
+		case _Network::CREATECHARACTER_SUCCESS: {
 
 			// Close new character screen
 			RequestCharacterList();
-		break;
-		case _Network::CREATECHARACTER_INUSE:
+		} break;
+		case _Network::CREATECHARACTER_INUSE: {
 			_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
 			Label->Text = "Name in use";
 			Label->Color = COLOR_RED;
-		break;
+		} break;
+		case _Network::ACCOUNT_EXISTS: {
+			SetAccountMessage("Account already exists");
+		} break;
+		case _Network::ACCOUNT_NOTFOUND: {
+			SetAccountMessage("Username/password wrong");
+		} break;
+		case _Network::ACCOUNT_ALREADYLOGGEDIN: {
+			SetAccountMessage("Account in use");
+		} break;
 	}
 }
 
@@ -837,4 +910,52 @@ void _Menu::RemapInput(int InputType, int Input) {
 	// Update menu labels
 	RefreshInputLabels();
 	*/
+}
+
+// Set message for account screen
+void _Menu::SetAccountMessage(const std::string &Message) {
+	_Label *Label = Assets.Labels["label_menu_account_message"];
+	Label->Text = Message;
+	Label->Color = COLOR_RED;
+
+	_Button *Button = Assets.Buttons["button_account_login"];
+	Button->Enabled = true;
+}
+
+// Cycle focused elements
+void _Menu::FocusNextElement(bool ShiftDown) {
+	switch(State) {
+		case STATE_CONNECT: {
+			_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
+			_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+
+			if(Host->Focused) {
+				Host->Focused = false;
+				Port->Focused = true;
+				Port->ResetCursor();
+			}
+			else if(Port->Focused) {
+				Host->Focused = true;
+				Port->Focused = false;
+				Host->ResetCursor();
+			}
+		} break;
+		case STATE_ACCOUNT: {
+			_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
+			_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
+
+			if(Username->Focused) {
+				Username->Focused = false;
+				Password->Focused = true;
+				Password->ResetCursor();
+			}
+			else if(Password->Focused) {
+				Username->Focused = true;
+				Password->Focused = false;
+				Username->ResetCursor();
+			}
+		} break;
+		default:
+		break;
+	}
 }

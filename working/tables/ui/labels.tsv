@@ -27,12 +27,13 @@ label_menu_newcharacter_cancel	button_newcharacter_cancel	hud_medium		Cancel	0	0
 label_menu_connect_title	element_menu_connect	hud_large		Connect	0	-250	0	0	1	1
 label_menu_connect_host	textbox_connect_host	menu_buttons		Host	0	-35	0	0	1	1
 label_menu_connect_port	textbox_connect_port	menu_buttons		Port	0	-35	0	0	1	1
-label_menu_connect_message	element_menu_connect	menu_buttons			0	140	0	0	1	1
+label_menu_connect_message	textbox_connect_port	menu_buttons			0	110	0	0	1	3
 label_menu_connect_connect	button_connect_connect	menu_buttons		Connect	0	0	0	0	1	1
 label_menu_connect_back	button_connect_back	menu_buttons		Back	0	0	0	0	1	1
 label_menu_account_title	element_menu_account	hud_large		Account Info	0	-250	0	0	1	1
 label_menu_account_username	textbox_account_username	menu_buttons		Username	0	-35	0	0	1	1
 label_menu_account_password	textbox_account_password	menu_buttons		Password	0	-35	0	0	1	1
-label_menu_account_message	element_menu_account	menu_buttons	red		0	140	0	0	1	1
-label_menu_account_login	button_account_login	menu_buttons		Login/Create	0	0	0	0	1	1
+label_menu_account_message	textbox_account_password	menu_buttons	red		0	110	0	0	1	3
+label_menu_account_login	button_account_login	menu_buttons		Login	0	0	0	0	1	1
+label_menu_account_create	button_account_create	menu_buttons		Create	0	0	0	0	1	1
 label_menu_account_back	button_account_back	menu_buttons		Back	0	0	0	0	1	1
