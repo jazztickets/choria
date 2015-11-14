@@ -6,3 +6,5 @@ image_menu_characters_slot2	button_characters_slot2			0	0	64	64	1	1	0
 image_menu_characters_slot3	button_characters_slot3			0	0	64	64	1	1	0
 image_menu_characters_slot4	button_characters_slot4			0	0	64	64	1	1	0
 image_menu_characters_slot5	button_characters_slot5			0	0	64	64	1	1	0
+image_hud_experience_bar	element_hud_experience	hud_repeat/experience0.png		0	0	256	8	0	0	0
+image_hud_experience_bar_full	element_hud_experience	hud_repeat/experience1.png		0	0	256	8	0	0	0

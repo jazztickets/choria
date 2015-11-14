@@ -409,7 +409,10 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
 						InitTitle();
 					else if(KeyEvent.Key == SDL_SCANCODE_RETURN) {
-						PlayClientState.SetCharacterSlot(0);
+						int SelectedCharacter = GetSelectedCharacter();
+						if(SelectedCharacter == -1)
+							SelectedCharacter = 0;
+						PlayClientState.SetCharacterSlot(SelectedCharacter);
 						Framework.ChangeState(&PlayClientState);
 					}
 				}

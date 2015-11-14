@@ -87,6 +87,7 @@ const  double       MENU_CURSOR_PERIOD             =  0.5;
 const  std::string  TEXTURES_PATH                  =  "textures/";
 const  std::string  TEXTURES_BATTLE                =  "battle/";
 const  std::string  TEXTURES_EDITOR                =  "editor/";
+const  std::string  TEXTURES_HUD_REPEAT            =  "hud_repeat/";
 const  std::string  TEXTURES_INTERFACE             =  "interface/";
 const  std::string  TEXTURES_ITEMS                 =  "items/";
 const  std::string  TEXTURES_MAP                   =  "map/";

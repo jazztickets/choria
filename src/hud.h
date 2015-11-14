@@ -123,13 +123,12 @@ class _HUD {
 
 		void Update(double FrameTime);
 		void PreGUIDraw();
-		void Draw();
+		void Render();
 
 		// Objects
-		void SetPlayer(_Player *TPlayer) { Player = TPlayer; }
+		void SetPlayer(_Player *Player);
 
 		// Windows
-		void InitButtonBar();
 		void InitMenu();
 		void InitInventory(int TX=400, int TY=300, bool TSendBusy=true);
 		void InitVendor(int TVendorID);

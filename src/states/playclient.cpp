@@ -257,7 +257,7 @@ void _PlayClientState::Render(double BlendFactor) {
 	//irrGUI->drawAll();
 
 	// Draw HUD
-	HUD.Draw();
+	HUD.Render();
 }
 
 // Key events

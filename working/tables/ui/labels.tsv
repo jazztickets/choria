@@ -37,3 +37,5 @@ label_menu_account_message	textbox_account_password	menu_buttons	red		0	110	0	0	
 label_menu_account_login	button_account_login	menu_buttons		Login	0	0	0	0	1	1
 label_menu_account_create	button_account_create	menu_buttons		Create	0	0	0	0	1	1
 label_menu_account_back	button_account_back	menu_buttons		Back	0	0	0	0	1	1
+label_hud_name	element_hud	hud_medium		Name	20	25	0	0	0	3
+label_hud_experience	element_hud_experience	hud_small			0	-5	0	0	1	3

@@ -5,3 +5,10 @@ style_menu_button_hover	menu_button_hover	menu_button_border	ortho_pos			0
 style_menu_window	menu_button	menu_button_border	ortho_pos			0
 style_menu_textbox	menu_button	menu_button_border	ortho_pos			0
 style_menu_portrait_hover	highlight		ortho_pos			0
+style_hud_bg	dark		ortho_pos			0
+style_hud_buttonbar_portal			ortho_pos_uv	interface/hud_portal.png		0
+style_hud_buttonbar_inventory			ortho_pos_uv	interface/hud_inventory.png		0
+style_hud_buttonbar_trade			ortho_pos_uv	interface/hud_trade.png		0
+style_hud_buttonbar_character			ortho_pos_uv	interface/hud_character.png		0
+style_hud_buttonbar_skills			ortho_pos_uv	interface/hud_skills.png		0
+style_hud_buttonbar_menu			ortho_pos_uv	interface/hud_menu.png		0

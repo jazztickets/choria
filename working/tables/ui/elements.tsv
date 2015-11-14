@@ -5,3 +5,6 @@ element_menu_new		style_menu_window	0	0	380	350	1	1	0
 element_menu_new_portraits	element_menu_new		0	40	380	350	1	1	0
 element_menu_connect			0	0	512	400	1	1	0
 element_menu_account			0	0	512	400	1	1	0
+element_hud_buttonbar			0	0	150	25	2	0	0
+element_hud		style_hud_bg	0	0	150	40	0	0	0
+element_hud_experience			0	-50	256	8	1	2	0

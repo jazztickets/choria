@@ -23,6 +23,12 @@
 #include <stats.h>
 #include <constants.h>
 #include <buffer.h>
+#include <assets.h>
+#include <ui/element.h>
+#include <ui/button.h>
+#include <ui/label.h>
+#include <ui/textbox.h>
+#include <ui/image.h>
 #include <states/playclient.h>
 #include <network/network.h>
 #include <instances/map.h>
@@ -30,6 +36,7 @@
 #include <objects/item.h>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 #include <IGUIEnvironment.h>
 
 _HUD HUD;
@@ -63,8 +70,6 @@ void _HUD::Init() {
 	RewardItemSlot = -1;
 	ChatBox = nullptr;
 	ChatHistory.clear();
-
-	InitButtonBar();
 }
 
 // Shutdown
@@ -461,6 +466,8 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 
 // Updates the HUD
 void _HUD::Update(double FrameTime) {
+	Assets.Elements["element_hud"]->Update(FrameTime, Input.GetMouse());
+	Assets.Elements["element_hud_buttonbar"]->Update(FrameTime, Input.GetMouse());
 
 	// Chat messages
 	for(std::list<_ChatMessage>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
@@ -499,7 +506,18 @@ void _HUD::PreGUIDraw() {
 }
 
 // Draws the HUD elements
-void _HUD::Draw() {
+void _HUD::Render() {
+	Assets.Elements["element_hud"]->Render();
+	Assets.Elements["element_hud_buttonbar"]->Render();
+
+	// Draw experience bar
+	std::stringstream Buffer;
+	Buffer << Player->GetExperienceNextLevel() - Player->GetExperienceNeeded() << " / " << Player->GetExperienceNextLevel() << " XP";
+	Assets.Labels["label_hud_experience"]->Text = Buffer.str();
+	Buffer.str("");
+	Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
+	Assets.Elements["element_hud_experience"]->Render();
+
 	DrawTopHUD();
 
 	switch(*State) {
@@ -539,6 +557,13 @@ void _HUD::Draw() {
 	DrawChat();
 }
 
+// Set player for HUD
+void _HUD::SetPlayer(_Player *Player) {
+	this->Player = Player;
+
+	Assets.Labels["label_hud_name"]->Text = Player->GetName();
+}
+
 // Starts the chat box
 void _HUD::ToggleChat() {
 /*
@@ -575,57 +600,6 @@ void _HUD::ToggleChat() {
 void _HUD::CloseChat() {
 	irrGUI->getRootGUIElement()->removeChild(ChatBox);
 	Chatting = false;
-}
-
-// Creates the buttons for the HUD bar
-void _HUD::InitButtonBar() {
-	return;
-
-	int DrawX = 800 - 24 * 6 + 25/2, DrawY = 600 - 25 / 2;
-	gui::IGUIButton *Button;
-	gui::IGUIStaticText *ButtonText;
-
-	// Town portal
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_TOWNPORTAL, 0, L"Town Portal");
-	//Button->setImage(Assets.Textures["interface/hud_spawn.png"]);
-	ButtonText = Graphics.AddText("Q", 2, 12, _Graphics::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
-	DrawX += 24;
-
-	// Inventory
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_INVENTORY, 0, L"Inventory");
-	//Button->setImage(Assets.Textures["interface/hud_inventory.png"]);
-	ButtonText = Graphics.AddText("C", 2, 12, _Graphics::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
-	DrawX += 24;
-
-	// Trade
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_TRADE, 0, L"Trade");
-	//Button->setImage(Assets.Textures["interface/hud_trade.png"]);
-	ButtonText = Graphics.AddText("T", 2, 12, _Graphics::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
-	DrawX += 24;
-
-	// Character
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_CHARACTER, 0, L"Character");
-	//Button->setImage(Assets.Textures["interface/hud_character.png"]);
-	ButtonText = Graphics.AddText("B", 2, 12, _Graphics::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
-	DrawX += 24;
-
-	// Skills
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_SKILLS, 0, L"Skills");
-	//Button->setImage(Assets.Textures["interface/hud_skills.png"]);
-	ButtonText = Graphics.AddText("S", 2, 12, _Graphics::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
-	DrawX += 24;
-
-	// Menu
-	Button = irrGUI->addButton(Graphics.GetCenteredRect(DrawX, DrawY, 25, 25), nullptr, ELEMENT_MAINMENU, 0, L"Menu");
-	//Button->setImage(Assets.Textures["interface/hud_menu.png"]);
-	ButtonText = Graphics.AddText("Esc", 2, 12, _Graphics::ALIGN_LEFT, Button);
-	ButtonText->setOverrideFont(Graphics.GetFont(_Graphics::FONT_7));
-	DrawX += 24;
 }
 
 // Initialize the main menu
