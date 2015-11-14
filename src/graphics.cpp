@@ -22,16 +22,13 @@
 #include <constants.h>
 #include <texture.h>
 #include <ui/element.h>
-#include <irrlicht.h>
 #include <SDL.h>
-#include <stdexcept>
 #include <pnglite/pnglite.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <stdexcept>
 
 _Graphics Graphics;
-
-using namespace irr;
 
 // Initializes the graphics system
 void _Graphics::Init(const _WindowSettings &WindowSettings) {
@@ -108,118 +105,6 @@ void _Graphics::Close() {
 		Window = nullptr;
 	}
 }
-
-// Draws an 2d image centered about a point
-void _Graphics::DrawCenteredImage(const _Texture *Texture, int PositionX, int PositionY, const video::SColor &Color) {
-	_Bounds Bounds;
-	Bounds.Start = glm::vec2(PositionX - Texture->Size.x/2, PositionY - Texture->Size.y/2);
-	Bounds.End = glm::vec2(PositionX + Texture->Size.x/2, PositionY + Texture->Size.y/2);
-	DrawImage(Bounds, Texture, false);
-	/*if(TTexture)
-		irrDriver->draw2DImage(
-					TTexture,
-					glm::ivec2(TPositionX - (TTexture->getSize().Width >> 1), TPositionY - (TTexture->getSize().Height >> 1)),
-					core::recti(0, 0, TTexture->getSize().Width, TTexture->getSize().Height),
-					0,
-					TColor,
-					true
-					);
-	*/
-}
-
-// Sets the current font
-void _Graphics::SetFont(int TType) {
-
-	//CurrentFont = TType;
-	//Skin->setFont(Fonts[CurrentFont]);
-}
-
-// Adds text to the screen
-gui::IGUIStaticText *_Graphics::AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, gui::IGUIElement *TParent) {
-
-	/*// Convert string
-	core::stringw Text(TText);
-
-	// Get dimensions
-	core::dimension2du TextArea = Fonts[CurrentFont]->getDimension(Text.c_str());
-
-	switch(TAlignType) {
-		case ALIGN_LEFT:
-		break;
-		case ALIGN_CENTER:
-			TPositionX -= TextArea.Width >> 1;
-		break;
-		case ALIGN_RIGHT:
-			TPositionX -= TextArea.Width;
-		break;
-	}
-
-	// Draw text
-	return irrGUI->addStaticText(Text.c_str(), core::recti(TPositionX, TPositionY, TPositionX + TextArea.Width, TPositionY + TextArea.Height), 0, false, TParent);
-	*/
-
-	return 0;
-}
-
-// Draws text to the screen
-void _Graphics::RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType, const video::SColor &TColor) {
-/*
-	// Convert string
-	core::stringw Text(TText);
-
-	// Get dimensions
-	core::dimension2du TextArea = Fonts[CurrentFont]->getDimension(Text.c_str());
-
-	switch(TAlignType) {
-		case ALIGN_LEFT:
-		break;
-		case ALIGN_CENTER:
-			TPositionX -= TextArea.Width >> 1;
-		break;
-		case ALIGN_RIGHT:
-			TPositionX -= TextArea.Width;
-		break;
-	}
-
-	// Draw text
-	Fonts[CurrentFont]->draw(Text.c_str(), core::recti(TPositionX, TPositionY, TPositionX + TextArea.Width, TPositionY + TextArea.Height), TColor);
-	*/
-}
-
-// Return a centered rect
-irr::core::recti _Graphics::GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
-	TWidth >>= 1;
-	THeight >>= 1;
-
-	return core::recti(TPositionX - TWidth, TPositionY - THeight, TPositionX + TWidth, TPositionY + THeight);
-}
-
-// Return a rect
-irr::core::recti _Graphics::GetRect(int TPositionX, int TPositionY, int TWidth, int THeight) {
-
-	return core::recti(TPositionX, TPositionY, TPositionX + TWidth, TPositionY + THeight);
-}
-
-// Draws an interface image
-void _Graphics::DrawImage(ImageType TType, int TPositionX, int TPositionY, const video::SColor &TColor) {
-
-	//Graphics.DrawCenteredImage(Images[TType], TPositionX, TPositionY, TColor);
-}
-
-// Draws a health or mana bar
-void _Graphics::DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight) {
-
-	//irrDriver->draw2DImage(Images[TType + 1], glm::ivec2(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, video::SColor(255, 255, 255, 255), true);
-	//irrDriver->draw2DImage(Images[TType], glm::ivec2(TPositionX, TPositionY), core::recti(0, 0, (int)(TWidth * TPercent), THeight), 0, video::SColor(255, 255, 255, 255), true);
-}
-
-// Draws a tiled background
-void _Graphics::DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const video::SColor &TColor) {
-
-	//irrDriver->draw2DImage(Images[TType], glm::ivec2(TPositionX, TPositionY), core::recti(0, 0, TWidth, THeight), 0, TColor, true);
-}
-
-
 
 // Change the viewport
 void _Graphics::ChangeViewport(const glm::ivec2 &Size) {
@@ -439,6 +324,16 @@ void _Graphics::FadeScreen(float Amount) {
 
 	Graphics.SetColor(glm::vec4(0.0f, 0.0f, 0.0f, Amount));
 	DrawRectangle(glm::vec2(0, 0), WindowSize, true);
+}
+
+// Draw image centered
+void _Graphics::DrawCenteredImage(const glm::ivec2 &Position, const _Texture *Texture, const glm::vec4 &Color) {
+	Graphics.SetColor(Color);
+
+	_Bounds Bounds;
+	Bounds.Start = Position - Texture->Size / 2;
+	Bounds.End = Position + Texture->Size / 2;
+	DrawImage(Bounds, Texture, false);
 }
 
 // Draw image in screen space

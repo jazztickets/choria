@@ -56,12 +56,11 @@ class _PlayClientState : public _State {
 		void TextEvent(const char *Text) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 
-		void HandleConnect(ENetEvent *TEvent);
-		void HandleDisconnect(ENetEvent *TEvent);
-		void HandlePacket(ENetEvent *TEvent);
-		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
+		void HandleConnect(ENetEvent *TEvent) override;
+		void HandleDisconnect(ENetEvent *TEvent) override;
+		void HandlePacket(ENetEvent *TEvent) override;
 
-		void Update(double FrameTime);
+		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
 		void SetCharacterSlot(int TSlot) { CharacterSlot = TSlot; }

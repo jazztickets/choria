@@ -116,7 +116,6 @@ class _HUD {
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
 
 		void Update(double FrameTime);
-		void PreGUIDraw();
 		void Render();
 
 		// Objects

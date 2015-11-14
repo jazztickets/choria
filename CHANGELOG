@@ -1,4 +1,6 @@
 choria 0.5.0 - 
+- Removed irrlicht
+- Added SDL2
 
 choria 0.4.2 - 2015-09-29
 - Linux save data now in ~/.local/share/choria

@@ -29,8 +29,6 @@
 #include <fstream>
 #include <limits>
 
-using namespace irr;
-
 // Constructor for the map editor: new map
 _Map::_Map(const std::string &TFilename, int TWidth, int THeight) {
 	Init();
@@ -138,14 +136,14 @@ void _Map::Render() {
 			GridPosition.y = j + CameraScroll.y - ViewSize.y / 2;
 			DrawPosition = glm::ivec2((i - ViewSize.x / 2) * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2, (j - ViewSize.y / 2) * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2);
 			if(NoZoneTexture)
-				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.x, DrawPosition.y);
+				Graphics.DrawCenteredImage(DrawPosition, NoZoneTexture);
 
 			// Validate coordinate
 			if(GridPosition.x >= 0 && GridPosition.x < Width && GridPosition.y >= 0 && GridPosition.y < Height) {
 				_Tile *Tile = &Tiles[GridPosition.x][GridPosition.y];
 
 				if(Tile->Texture)
-					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.x, DrawPosition.y);
+					Graphics.DrawCenteredImage(DrawPosition, Tile->Texture);
 			}
 		}
 	}
@@ -163,7 +161,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 			GridPosition.y = j + CameraScroll.y - ViewSize.y / 2;
 			DrawPosition = glm::ivec2((i - ViewSize.x / 2) * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2, (j - ViewSize.y / 2) * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2);
 			if(NoZoneTexture)
-				Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.x, DrawPosition.y);
+				Graphics.DrawCenteredImage(DrawPosition, NoZoneTexture);
 
 			// Validate coordinate
 			if(GridPosition.x >= 0 && GridPosition.x < Width && GridPosition.y >= 0 && GridPosition.y < Height) {
@@ -171,9 +169,9 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
 				// Draw texture
 				if(Tile->Texture)
-					Graphics.DrawCenteredImage(Tile->Texture, DrawPosition.x, DrawPosition.y);
+					Graphics.DrawCenteredImage(DrawPosition, Tile->Texture);
 				else if(NoZoneTexture)
-					Graphics.DrawCenteredImage(NoZoneTexture, DrawPosition.x, DrawPosition.y);
+					Graphics.DrawCenteredImage(DrawPosition, NoZoneTexture);
 
 				// Draw wall
 				if(TDrawWall && Tile->Wall)
@@ -197,7 +195,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 				}
 			}
 			else {
-				Graphics.DrawCenteredImage(DefaultNoZoneTexture, DrawPosition.x, DrawPosition.y);
+				Graphics.DrawCenteredImage(DrawPosition, DefaultNoZoneTexture);
 			}
 		}
 	}

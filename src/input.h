@@ -18,9 +18,6 @@
 #pragma once
 
 // Libraries
-#include <IEventReceiver.h>
-#include <Keycodes.h>
-#include <position2d.h>
 #include <string>
 #include <glm/vec2.hpp>
 #include <SDL_keyboard.h>
@@ -75,41 +72,3 @@ class _Input {
 };
 
 extern _Input Input;
-
-// Classes
-class _OldInput : public irr::IEventReceiver {
-
-	public:
-
-		enum MouseButtonType {
-			MOUSE_LEFT,
-			MOUSE_RIGHT,
-			MOUSE_MIDDLE,
-			MOUSE_COUNT,
-		};
-
-		void Init();
-		void Close();
-
-		bool OnEvent(const irr::SEvent &TEvent) { return false; }
-
-		bool GetKeyState(irr::EKEY_CODE TKey) const { return Keys[TKey]; }
-		bool GetMouseState(int TButton) const { return MouseButtons[TButton]; }
-
-		const glm::ivec2 &GetMousePosition() const { return MousePosition; }
-
-		bool IsShiftDown() { return GetKeyState(irr::KEY_SHIFT) || GetKeyState(irr::KEY_LSHIFT) || GetKeyState(irr::KEY_RSHIFT); }
-		bool IsControlDown() { return GetKeyState(irr::KEY_CONTROL) || GetKeyState(irr::KEY_LCONTROL) || GetKeyState(irr::KEY_RCONTROL); }
-
-	private:
-
-		void SetKeyState(irr::EKEY_CODE TKey, bool TState) { Keys[TKey] = TState; }
-		void SetMouseState(int TButton, bool TState) { MouseButtons[TButton] = TState; }
-
-		// Input
-		bool Keys[irr::KEY_KEY_CODES_COUNT], MouseButtons[MOUSE_COUNT];
-		glm::ivec2 MousePosition;
-
-};
-
-extern _OldInput OldInput;

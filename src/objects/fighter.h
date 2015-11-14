@@ -19,8 +19,6 @@
 
 // Libraries
 #include <texture.h>
-#include <irrString.h>
-#include <irrlicht.h>
 
 // Constants
 const int FIGHTER_MAXSKILLS = 8;

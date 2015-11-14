@@ -18,7 +18,6 @@
 #pragma once
 
 // Libraries
-#include <IGUIElement.h>
 #include <enet/enet.h>
 #include <cstdint>
 #include <input.h>
@@ -45,22 +44,16 @@ class _State {
 		virtual void Update(double FrameTime) { };
 		virtual void Render(double BlendFactor) { };
 
-		// Events
-		virtual bool HandleKeyPress(irr::EKEY_CODE TKey) { return false; }
-		virtual bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }
-		virtual bool HandleMousePress(int TButton, int TMouseX, int TMouseY) { return false; }
-		virtual void HandleMouseRelease(int TButton, int TMouseX, int TMouseY) { }
-		virtual void HandleMouseWheel(float TDirection) { }
-		virtual void HandleMouseMotion(int TMouseX, int TMouseY) { }
-		virtual void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement) { }
-
+		// Network
 		virtual void HandleConnect(ENetEvent *TEvent) { }
 		virtual void HandleDisconnect(ENetEvent *TEvent) { }
 		virtual void HandlePacket(ENetEvent *TEvent) { }
 
-		// Update
-		virtual void Draw() { };
-
+		// OLD
+		virtual bool HandleMousePress(int TButton, int TMouseX, int TMouseY) { return false; }
+		virtual void HandleMouseRelease(int TButton, int TMouseX, int TMouseY) { }
+		virtual void HandleMouseWheel(float TDirection) { }
+		virtual void HandleMouseMotion(int TMouseX, int TMouseY) { }
 
 	private:
 

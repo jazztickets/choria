@@ -18,10 +18,6 @@
 #pragma once
 
 // Libraries
-#include <IGUIEnvironment.h>
-
-extern irr::gui::IGUIEnvironment *irrGUI;
-
 class _Network;
 extern _Network *ClientNetwork;
 extern _Network *ServerNetwork;

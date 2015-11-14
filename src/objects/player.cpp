@@ -30,8 +30,6 @@
 #include <objects/skill.h>
 #include <assets.h>
 
-using namespace irr;
-
 // Constructor
 _Player::_Player()
 :	_Object(PLAYER),
@@ -138,18 +136,17 @@ void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 		bool OnScreen = TMap->GridToScreen(Position, ScreenPosition);
 
 		if(OnScreen) {
-			int Alpha = 255;
+			float Alpha = 1.0f;
 			if(IsInvisible())
-				Alpha = 70;
+				Alpha = PLAYER_INVIS_ALPHA;
 
-
-			Graphics.DrawCenteredImage(WorldImage, ScreenPosition.x, ScreenPosition.y, video::SColor(Alpha, 255, 255, 255));
+			Graphics.DrawCenteredImage(ScreenPosition, WorldImage, glm::vec4(Alpha, 1.0f, 1.0f, 1.0f));
 			if(StateImage) {
-				Graphics.DrawCenteredImage(StateImage, ScreenPosition.x, ScreenPosition.y, video::SColor(Alpha, 255, 255, 255));
+				Graphics.DrawCenteredImage(ScreenPosition, StateImage, glm::vec4(Alpha, 1.0f, 1.0f, 1.0f));
 			}
 
 			if(TClientPlayer != this) {
-				Graphics.SetFont(_Graphics::FONT_8);
+				//Graphics.SetFont(_Graphics::FONT_8);
 				//Graphics.RenderText(Name.c_str(), ScreenPosition.x, ScreenPosition.y - 28, _Graphics::ALIGN_CENTER);
 			}
 		}
@@ -337,7 +334,7 @@ float _Player::GetNextLevelPercent() const {
 	float Percent = 0;
 
 	if(ExperienceNextLevel > 0)
-		Percent = 1.0f - (f32)ExperienceNeeded / ExperienceNextLevel;
+		Percent = 1.0f - (float)ExperienceNeeded / ExperienceNextLevel;
 
 	return Percent;
 }

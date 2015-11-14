@@ -23,19 +23,8 @@
 #include <stats.h>
 #include <config.h>
 #include <constants.h>
-#include <IFileSystem.h>
-#include <IGUIEnvironment.h>
-#include <IGUISpinBox.h>
-#include <IGUICheckBox.h>
-#include <IGUIComboBox.h>
-#include <IGUIFileOpenDialog.h>
-#include <IGUIWindow.h>
-#include <IGUIEditBox.h>
-#include <IGUIButton.h>
 
 _MapEditorState MapEditorState;
-
-using namespace irr;
 
 // Initializes the state
 void _MapEditorState::Init() {
@@ -83,7 +72,7 @@ void _MapEditorState::Update(double FrameTime) {
 
 	switch(State) {
 		case STATE_MAIN:
-			if(OldInput.GetMouseState(_OldInput::MOUSE_LEFT) && !(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL))) {
+			if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL))) {
 				switch(BrushSize) {
 					case 0:
 						ApplyBrush(BrushPosition.x, BrushPosition.y);
@@ -114,13 +103,12 @@ void _MapEditorState::Draw() {
 
 	std::string GridBrushPositionText = std::to_string(BrushPosition.x) + std::string(" ") + std::to_string(BrushPosition.y);
 
-	Graphics.SetFont(_Graphics::FONT_8);
+	//Graphics.SetFont(_Graphics::FONT_8);
 	//Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
-
-	irrGUI->drawAll();
 }
 
 // Key presses
+/*
 bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 
 	switch(State) {
@@ -244,25 +232,25 @@ bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 
 	return true;
 }
-
+*/
 // Mouse buttons
 bool _MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
-
+/*
 	if(Map) {
 		switch(TButton) {
-			case _OldInput::MOUSE_LEFT:
+			case SDL_BUTTON_LEFT:
 				if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
 					if(Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
 						Brush = *Map->GetTile(BrushPosition.x, BrushPosition.y);
 				}
 			break;
-			case _OldInput::MOUSE_RIGHT: {
+			case SDL_BUTTON_RIGHT: {
 				Map->ScreenToGrid(glm::ivec2(TMouseX, TMouseY), BrushPosition);
 				Map->SetCameraScroll(BrushPosition);
 			} break;
 		}
 	}
-
+*/
 	return false;
 }
 
@@ -283,6 +271,7 @@ void _MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
 }
 
 // GUI events
+/*
 void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 
 	switch(TEventType) {
@@ -405,18 +394,14 @@ void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElemen
 		break;
 	}
 }
-
+*/
 // Close a window by element
 void _MapEditorState::CloseWindow(int TElement) {
-
-	gui::IGUIWindow *Window = static_cast<gui::IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(TElement));
-	if(Window)
-		irrGUI->getRootGUIElement()->removeChild(Window);
 }
 
 // Initializes the new map screen
 void _MapEditorState::InitNewMap() {
-
+/*
 	// Main dialog window
 	gui::IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
 	irrGUI->setFocus(Window);
@@ -444,7 +429,7 @@ void _MapEditorState::InitNewMap() {
 	irrGUI->addStaticText(L"", Graphics.GetRect(20, 230, 400, 25), false, false, Window, NEWMAP_ERROR);
 
 	irrGUI->setFocus(EditName);
-
+*/
 	State = STATE_NEWMAP;
 }
 
@@ -540,6 +525,7 @@ void _MapEditorState::InitTexturePalette() {
 
 // Opens the brush filter dialog
 void _MapEditorState::InitBrushOptions() {
+	/*
 	int StartX, StartY, OffsetY;
 
 	// Main dialog window
@@ -593,7 +579,7 @@ void _MapEditorState::InitBrushOptions() {
 
 	// Buttons
 	irrGUI->addButton(Graphics.GetCenteredRect(100, 320, 75, 25), Window, BRUSHOPTIONS_FILTERCLOSE, L"Close");
-
+*/
 	State = STATE_BRUSHOPTIONS;
 }
 
@@ -679,6 +665,7 @@ void _MapEditorState::ApplyBrush(int TX, int TY) {
 // Draw information about the brush
 void _MapEditorState::RenderBrush() {
 
+	/*
 	video::SColor Color(255, 255, 255, 255);
 	int StartX = 750, StartY = 480;
 	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 705, StartY - 10, 90, 125);
@@ -698,7 +685,7 @@ void _MapEditorState::RenderBrush() {
 	// Draw wall info
 	StartY += 20;
 	Filters[FILTER_WALL] ? Color.setAlpha(255) : Color.setAlpha(128);
-	Graphics.SetFont(_Graphics::FONT_8);
+	//Graphics.SetFont(_Graphics::FONT_8);
 	//Graphics.RenderText(WallText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw zone info
@@ -728,6 +715,7 @@ void _MapEditorState::RenderBrush() {
 	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
 	std::string EventDataText = std::string("Event Data: ") + std::to_string(Brush.EventData);
 	//Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
+	*/
 }
 
 // Resets the filters to false

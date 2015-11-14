@@ -22,8 +22,6 @@
 #include <assets.h>
 #include <objects/monster.h>
 
-using namespace irr;
-
 _Stats Stats;
 
 // Initialize

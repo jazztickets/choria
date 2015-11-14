@@ -40,8 +40,6 @@
 
 _HUD HUD;
 
-using namespace irr;
-
 static glm::ivec2 EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
 	{66, 20},
 	{66, 78},
@@ -96,16 +94,16 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 	switch(*State) {
 		case _PlayClientState::STATE_VENDOR:
 			switch(TButton) {
-				case _OldInput::MOUSE_LEFT:
+				case SDL_BUTTON_LEFT:
 					if(TooltipItem.Item) {
 						CursorItem = TooltipItem;
 					}
 				break;
-				case _OldInput::MOUSE_RIGHT:
+				case SDL_BUTTON_RIGHT:
 					if(TooltipItem.Item) {
 						if(TooltipItem.Window == WINDOW_VENDOR)
 							BuyItem(&TooltipItem, -1);
-						else if(TooltipItem.Window == WINDOW_INVENTORY && OldInput.IsShiftDown())
+						else if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
 							SellItem(&TooltipItem, 1);
 					}
 				break;
@@ -113,15 +111,15 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_INVENTORY:
 			switch(TButton) {
-				case _OldInput::MOUSE_LEFT:
+				case SDL_BUTTON_LEFT:
 					if(TooltipItem.Item) {
-						if(OldInput.IsControlDown())
+						if(Input.ModKeyDown(KMOD_CTRL))
 							SplitStack(TooltipItem.Slot, 1);
 						else
 							CursorItem = TooltipItem;
 					}
 				break;
-				case _OldInput::MOUSE_RIGHT:
+				case SDL_BUTTON_RIGHT:
 					if(Player->UseInventory(TooltipItem.Slot)) {
 						_Buffer Packet;
 						Packet.Write<char>(_Network::INVENTORY_USE);
@@ -133,9 +131,9 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_TRADE:
 			switch(TButton) {
-				case _OldInput::MOUSE_LEFT:
+				case SDL_BUTTON_LEFT:
 					if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
-						if(TooltipItem.Window == WINDOW_INVENTORY && OldInput.IsControlDown())
+						if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
 							SplitStack(TooltipItem.Slot, 1);
 						else
 							CursorItem = TooltipItem;
@@ -145,7 +143,7 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 		case _PlayClientState::STATE_SKILLS:
 			switch(TButton) {
-				case _OldInput::MOUSE_LEFT:
+				case SDL_BUTTON_LEFT:
 					if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
 						CursorSkill = TooltipSkill;
 				break;
@@ -163,7 +161,7 @@ void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 		case _PlayClientState::STATE_INVENTORY:
 		case _PlayClientState::STATE_VENDOR:
 		case _PlayClientState::STATE_TRADE:
-			if(TButton == _OldInput::MOUSE_LEFT) {
+			if(TButton == SDL_BUTTON_LEFT) {
 
 				// Check for valid slots
 				if(CursorItem.Item) {
@@ -209,7 +207,7 @@ void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 			}
 		break;
 		case _PlayClientState::STATE_SKILLS:
-			if(TButton == _OldInput::MOUSE_LEFT) {
+			if(TButton == SDL_BUTTON_LEFT) {
 
 				// Check for valid slots
 				if(CursorSkill.Skill) {
@@ -466,8 +464,8 @@ void _HUD::Update(double FrameTime) {
 	}
 }
 
-// Draws the HUD before irrGUI
-void _HUD::PreGUIDraw() {
+// Draws the HUD elements
+void _HUD::Render() {
 	/*
 	switch(*State) {
 		case _PlayClientState::STATE_MAINMENU:
@@ -488,10 +486,7 @@ void _HUD::PreGUIDraw() {
 		}
 		break;
 	}*/
-}
 
-// Draws the HUD elements
-void _HUD::Render() {
 	Assets.Elements["element_hud"]->Render();
 	Assets.Elements["element_hud_buttonbar"]->Render();
 
@@ -502,6 +497,10 @@ void _HUD::Render() {
 	Buffer.str("");
 	Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
 	Assets.Elements["element_hud_experience"]->Render();
+
+	Buffer << "Level " << Player->GetLevel();
+	Assets.Labels["label_hud_level"]->Text = Buffer.str();
+	Buffer.str("");
 
 	/*
 		// Draw health
@@ -916,10 +915,6 @@ void _HUD::DrawChat() {
 	if(ChatHistory.size() == 0)
 		return;
 
-	// Set font
-	gui::IGUIFont *TextFont = Graphics.GetFont(_Graphics::FONT_10);
-	Graphics.SetFont(_Graphics::FONT_10);
-
 	int Index = 0;
 	for(std::list<_ChatMessage>::reverse_iterator Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		_ChatMessage &Chat = (*Iterator);
@@ -928,8 +923,8 @@ void _HUD::DrawChat() {
 		int DrawY = 550 - Index * 20;
 
 		// Draw background
-		core::dimension2du TextArea = TextFont->getDimension(core::stringw(Chat.Message.c_str()).c_str());
-		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX - 1, DrawY, TextArea.Width + 2, TextArea.Height, video::SColor(100, 255, 255, 255));
+		//core::dimension2du TextArea = TextFont->getDimension(core::stringw(Chat.Message.c_str()).c_str());
+		//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX - 1, DrawY, TextArea.Width + 2, TextArea.Height, video::SColor(100, 255, 255, 255));
 
 		// Draw text
 		//Graphics.RenderText(Chat.Message.c_str(), DrawX, DrawY, _Graphics::ALIGN_LEFT, video::SColor(255, 255, 255, 255));
@@ -990,6 +985,8 @@ void _HUD::DrawInventory() {
 // Draw the town portal sequence
 void _HUD::DrawTownPortal() {
 
+	/*
+
 	Graphics.SetFont(_Graphics::FONT_14);
 
 	// Get text
@@ -1009,6 +1006,7 @@ void _HUD::DrawTownPortal() {
 	//Graphics.RenderText(String, DrawX, DrawY, _Graphics::ALIGN_CENTER);
 
 	Graphics.SetFont(_Graphics::FONT_10);
+	*/
 }
 
 // Draw the vendor
@@ -1157,7 +1155,7 @@ void _HUD::DrawCharacter() {
 	int DrawX = 800 - Width;
 	int DrawY = 300 - Height / 2;
 	int RightDrawX = 800 - 10;
-	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height, video::SColor(220, 255, 255, 255));
+	//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height, video::SColor(220, 255, 255, 255));
 	DrawX += 10;
 	DrawY += 10;
 
@@ -1271,14 +1269,13 @@ void _HUD::DrawSkills() {
 // Draws the item under the cursor
 void _HUD::DrawCursorItem() {
 	if(CursorItem.Item) {
-		int DrawX = OldInput.GetMousePosition().x - 16;
-		int DrawY = OldInput.GetMousePosition().y - 16;
-		Graphics.SetFont(_Graphics::FONT_7);
-		Graphics.DrawCenteredImage(CursorItem.Item->GetImage(), DrawX + 16, DrawY + 16);
-		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawX, DrawY, CursorItem.Window == WINDOW_VENDOR);
-		if(CursorItem.Count > 1)
+		glm::ivec2 DrawPosition = Input.GetMouse() - 16;
+		//Graphics.SetFont(_Graphics::FONT_7);
+		Graphics.DrawCenteredImage(DrawPosition + 16, CursorItem.Item->GetImage());
+		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawPosition.x, DrawPosition.y, CursorItem.Window == WINDOW_VENDOR);
+		//if(CursorItem.Count > 1)
 			//Graphics.RenderText(std::string(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
-		Graphics.SetFont(_Graphics::FONT_10);
+		//Graphics.SetFont(_Graphics::FONT_10);
 	}
 }
 
@@ -1286,8 +1283,8 @@ void _HUD::DrawCursorItem() {
 void _HUD::DrawItemTooltip() {
 	const _Item *Item = TooltipItem.Item;
 	if(Item) {
-		int DrawX = OldInput.GetMousePosition().x + 16;
-		int DrawY = OldInput.GetMousePosition().y - 200;
+		int DrawX = Input.GetMouse().x + 16;
+		int DrawY = Input.GetMouse().y - 200;
 		int Width = 175;
 		int Height = 200;
 		if(DrawY < 20)
@@ -1296,8 +1293,8 @@ void _HUD::DrawItemTooltip() {
 		// Draw background
 		char Buffer[256];
 		std::string String;
-		Graphics.SetFont(_Graphics::FONT_10);
-		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
+		//Graphics.SetFont(_Graphics::FONT_10);
+		//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
 		DrawX += 10;
 
 		// Draw name
@@ -1427,14 +1424,15 @@ void _HUD::DrawItemTooltip() {
 // Draws the skill under the cursor
 void _HUD::DrawCursorSkill() {
 	if(CursorSkill.Skill) {
-		int DrawX = OldInput.GetMousePosition().x - 16;
-		int DrawY = OldInput.GetMousePosition().y - 16;
-		Graphics.DrawCenteredImage(CursorSkill.Skill->GetImage(), DrawX + 16, DrawY + 16);
+		glm::ivec2 DrawPosition = Input.GetMouse() - 16;
+		//Graphics.SetFont(_Graphics::FONT_7);
+		Graphics.DrawCenteredImage(DrawPosition + 16, CursorSkill.Skill->GetImage());
 	}
 }
 
 // Draws the skill tooltip window
 void _HUD::DrawSkillTooltip() {
+	/*
 	const _Skill *Skill = TooltipSkill.Skill;
 	if(Skill) {
 		int SkillLevel = Player->GetSkillLevel(Skill->GetID());
@@ -1487,12 +1485,13 @@ void _HUD::DrawSkillTooltip() {
 				//Graphics.RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
 			break;
 		}
-	}
+	}*/
 }
 
 // Draw the skill description
 void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY) {
 
+	/*
 	// Get skill data
 	int PowerMin, PowerMax, PowerMinRound, PowerMaxRound, PowerPercent;
 	float PowerMinFloat, PowerMaxFloat;
@@ -1550,11 +1549,12 @@ void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int
 		default:
 			//Graphics.RenderText(Skill->GetInfo().c_str(), TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
-	}
+	}*/
 }
 
 // Draws an item's price
 void _HUD::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy) {
+	/*
 	if(!Vendor)
 		return;
 
@@ -1568,8 +1568,9 @@ void _HUD::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY,
 	else
 		Color.set(255, 224, 216, 84);
 
-	Graphics.SetFont(_Graphics::FONT_7);
+	//Graphics.SetFont(_Graphics::FONT_7);
 	//Graphics.RenderText(std::string(Price).c_str(), TDrawX + 2, TDrawY + 0, _Graphics::ALIGN_LEFT, Color);
+	*/
 }
 
 // Draws trading items

@@ -73,13 +73,12 @@ class _MapEditorState : public _State {
 		void Init();
 		void Close();
 
-		bool HandleKeyPress(irr::EKEY_CODE TKey);
-		bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }
+		//bool HandleKeyPress(irr::EKEY_CODE TKey);
+		//bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }
 		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY) { }
 		void HandleMouseWheel(float TDirection);
 		void HandleMouseMotion(int TMouseX, int TMouseY);
-		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(double FrameTime);
 		void Draw();

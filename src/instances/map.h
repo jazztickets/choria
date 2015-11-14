@@ -23,7 +23,6 @@
 #include <vector>
 #include <list>
 #include <cstdint>
-#include <irrlicht.h>
 #include <string>
 
 // Structures

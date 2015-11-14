@@ -20,9 +20,6 @@
 // Libraries
 #include <instances/battle.h>
 #include <constants.h>
-#include <IGUIElement.h>
-#include <IGUIButton.h>
-#include <Keycodes.h>
 
 // Forward Declarations
 class _Item;
@@ -58,8 +55,6 @@ class _ClientBattle : public _Battle {
 		void RemovePlayer(_Player *TPlayer);
 
 		// Input
-		void HandleInput(irr::EKEY_CODE TKey);
-		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 		void HandleCommand(int TSlot, int TSkillID);
 
 		// Updates
@@ -94,7 +89,6 @@ class _ClientBattle : public _Battle {
 
 		// Client's player
 		_Player *ClientPlayer;
-		irr::gui::IGUIButton *SkillButtons[BATTLE_MAXSKILLS], *PassButton;
 
 		// Items
 		std::vector<const _Item *> MonsterDrops;

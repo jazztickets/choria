@@ -23,9 +23,6 @@
 #include <buffer.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
-#include <IGUIEnvironment.h>
-
-using namespace irr;
 
 // Constructor
 _ClientBattle::_ClientBattle()
@@ -75,8 +72,8 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 			SkillButtons[i]->setImage(Graphics.GetImage(_Graphics::IMAGE_EMPTYSLOT));
 			*/
 	}
-	PassButton = irrGUI->addButton(Graphics.GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
-	PassButton->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
+	//PassButton = irrGUI->addButton(Graphics.GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
+	//PassButton->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
 
 	State = STATE_GETINPUT;
 	TargetState = -1;
@@ -94,6 +91,7 @@ void _ClientBattle::RemovePlayer(_Player *TPlayer) {
 }
 
 // Handles client input
+/*
 void _ClientBattle::HandleInput(EKEY_CODE TKey) {
 
 	switch(State) {
@@ -135,7 +133,8 @@ void _ClientBattle::HandleInput(EKEY_CODE TKey) {
 		break;
 	}
 }
-
+*/
+/*
 // Handles GUI events
 void _ClientBattle::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
 
@@ -162,7 +161,7 @@ void _ClientBattle::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement 
 		default:
 		break;
 	}
-}
+}*/
 
 // Handles a command from an other player
 void _ClientBattle::HandleCommand(int TSlot, int TSkillID) {
@@ -210,7 +209,7 @@ void _ClientBattle::Update(double FrameTime) {
 void _ClientBattle::Render() {
 
 	// Draw layout
-	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 130, 120, 540, 360, video::SColor(220, 255, 255, 255));
+	//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 130, 120, 540, 360, video::SColor(220, 255, 255, 255));
 
 	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
 		ShowResults = false;
@@ -253,6 +252,7 @@ void _ClientBattle::RenderBattle(bool TShowResults) {
 
 // Renders the battle win screen
 void _ClientBattle::RenderBattleWin() {
+	/*
 
 	char String[512];
 
@@ -312,11 +312,13 @@ void _ClientBattle::RenderBattleWin() {
 			}
 		}
 	}
+	*/
 
 }
 
 // Renders the battle lost screen
 void _ClientBattle::RenderBattleLose() {
+	/*
 	RenderBattle(true);
 	char Buffer[256];
 
@@ -326,6 +328,7 @@ void _ClientBattle::RenderBattleLose() {
 	sprintf(Buffer, "You lose %d gold", abs(TotalGold));
 	Graphics.SetFont(_Graphics::FONT_10);
 	//Graphics.RenderText(Buffer, 400, 155, _Graphics::ALIGN_CENTER, video::SColor(255, 200, 200, 200));
+	*/
 }
 
 // Displays turn results from the server
@@ -395,11 +398,6 @@ void _ClientBattle::EndBattle(_Buffer *TPacket) {
 		State = TargetState;
 		TargetState = -1;
 	}
-
-	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-		irrGUI->getRootGUIElement()->removeChild(SkillButtons[i]);
-	}
-	irrGUI->getRootGUIElement()->removeChild(PassButton);
 }
 
 // Calculates a screen position for a slot

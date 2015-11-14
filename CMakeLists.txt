@@ -39,11 +39,6 @@ endif()
 add_definitions("-DTIXML_USE_STL")
 
 # find libraries
-find_package(Irrlicht 1.8 REQUIRED)
-if(NOT IRRLICHT_FOUND)
-	message(SEND_ERROR "Could not find Irrlicht!")
-endif()
-
 find_package(OpenGL REQUIRED)
 if(NOT OPENGL_FOUND)
 	message(SEND_ERROR "Could not find OpenGL!")
@@ -83,7 +78,6 @@ endif()
 include_directories("src")
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${FREETYPE_INCLUDE_DIRS})
-include_directories(${IRRLICHT_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIRS})
@@ -123,7 +117,6 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
 
 # link libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
-	${IRRLICHT_LIBRARIES}
 	${OPENGL_gl_LIBRARY}
 	${SDL2_LIBRARY}
 	${FREETYPE_LIBRARIES}

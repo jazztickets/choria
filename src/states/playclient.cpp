@@ -31,11 +31,8 @@
 #include <objects/player.h>
 #include <objects/monster.h>
 #include <states/null.h>
-#include <IGUIEnvironment.h>
 
 _PlayClientState PlayClientState;
-
-using namespace irr;
 
 // Constructor
 _PlayClientState::_PlayClientState()
@@ -160,7 +157,6 @@ void _PlayClientState::HandlePacket(ENetEvent *TEvent) {
 void _PlayClientState::Update(double FrameTime) {
 
 	ClientTime += FrameTime;
-
 	switch(State) {
 		case STATE_CONNECTING:
 		break;
@@ -168,7 +164,7 @@ void _PlayClientState::Update(double FrameTime) {
 
 			// Send move input
 			if(!HUD.IsChatting()) {
-				if(OldInput.GetMouseState(_OldInput::MOUSE_LEFT) && !(Input.GetMouse().x >= 656 && Input.GetMouse().y >= 575)) {
+				if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.GetMouse().x >= 656 && Input.GetMouse().y >= 575)) {
 					glm::ivec2 MoveTarget;
 					Map->ScreenToGrid(Input.GetMouse(), MoveTarget);
 					glm::ivec2 Delta = MoveTarget - Player->GetPosition();
@@ -201,13 +197,14 @@ void _PlayClientState::Update(double FrameTime) {
 
 			// Send key input
 			if(!HUD.IsChatting()) {
+				/*
 				for(int i = 0; i < 8; i++) {
 					EKEY_CODE Key = (EKEY_CODE)(KEY_KEY_1 + i);
 					if(OldInput.GetKeyState(Key)) {
 						 Battle->HandleInput(Key);
 						 break;
 					}
-				}
+				}*/
 			}
 
 			// Singleplayer check
@@ -225,7 +222,6 @@ void _PlayClientState::Update(double FrameTime) {
 			}
 		break;
 	}
-
 	HUD.Update(FrameTime);
 	ObjectManager->Update(FrameTime);
 }
@@ -249,12 +245,6 @@ void _PlayClientState::Render(double BlendFactor) {
 			Battle->Render();
 		break;
 	}
-
-	// Draw before GUI
-	HUD.PreGUIDraw();
-
-	// Draw GUI
-	//irrGUI->drawAll();
 
 	// Draw HUD
 	HUD.Render();
@@ -433,18 +423,6 @@ void _PlayClientState::MouseEvent(const _MouseEvent &MouseEvent) {
 	//HUD.HandleMouseRelease(TButton, TMouseX, TMouseY);
 }
 
-// Handles GUI presses
-void _PlayClientState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
-
-	switch(State) {
-		case STATE_BATTLE:
-			Battle->HandleGUI(TEventType, TElement);
-		break;
-	}
-
-	//HUD.HandleGUI(TEventType, TElement);
-}
-
 // Called once to synchronize your stats with the servers
 void _PlayClientState::HandleYourCharacterInfo(_Buffer *TPacket) {
 
@@ -467,7 +445,7 @@ void _PlayClientState::HandleYourCharacterInfo(_Buffer *TPacket) {
 	int ItemCount = TPacket->Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
 		int Slot = TPacket->Read<char>();
-		int Count = (u8)TPacket->Read<char>();
+		int Count = (uint8_t)TPacket->Read<char>();
 		int ItemID = TPacket->Read<int32_t>();
 		Player->SetInventory(Slot, ItemID, Count);
 	}
@@ -657,10 +635,10 @@ void _PlayClientState::HandleObjectUpdates(_Buffer *TPacket) {
 					OtherPlayer->SetStateImage(nullptr);
 				break;
 				case _Player::STATE_WAITTRADE:
-					OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDTRADE));
+					//OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDTRADE));
 				break;
 				default:
-					OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDBUSY));
+					//OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDBUSY));
 				break;
 			}
 		}

@@ -21,9 +21,6 @@
 
 _Input Input;
 
-//TODO remove
-_OldInput OldInput;
-
 const std::string MouseButtonNames[] = {
 	"",
 	"LMB",

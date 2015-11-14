@@ -19,7 +19,6 @@
 
 // Libraries
 #include <texture.h>
-#include <irrString.h>
 
 // Forward Declarations
 struct _Vendor;

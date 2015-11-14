@@ -17,7 +17,5 @@
 *******************************************************************************/
 #include <globals.h>
 
-irr::gui::IGUIEnvironment *irrGUI;
-
 _Network *ClientNetwork;
 _Network *ServerNetwork;

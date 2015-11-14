@@ -35,8 +35,6 @@
 
 _PlayServerState PlayServerState;
 
-using namespace irr;
-
 static void ObjectDeleted(_Object *TObject);
 
 // Loop to run server commands

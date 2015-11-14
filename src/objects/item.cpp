@@ -19,8 +19,6 @@
 #include <stats.h>
 #include <constants.h>
 
-using namespace irr;
-
 // Returns the range of damage
 void _Item::GetDamageRange(int &TMin, int &TMax) const {
 

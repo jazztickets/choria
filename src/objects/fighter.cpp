@@ -22,8 +22,6 @@
 #include <instances/battle.h>
 #include <objects/skill.h>
 
-using namespace irr;
-
 // Constructor
 _Fighter::_Fighter(int TType)
 :	Type(TType),
@@ -63,6 +61,8 @@ _Fighter::~_Fighter() {
 
 // Renders the fighter during a battle
 void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
+
+	/*
 	char String[256];
 	uint32_t AlphaPercent = (uint32_t)(255 * TTimerPercent);
 	if(TTimerPercent > 0.75f)
@@ -144,6 +144,7 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 	// Draw target
 	if(TTarget)
 		Graphics.DrawImage(_Graphics::IMAGE_BATTLETARGET, Offset.x - 20, Offset.y + 50);
+		*/
 }
 
 // Returns the fighter's current battle

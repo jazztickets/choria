@@ -19,20 +19,12 @@
 
 // Libraries
 #include <opengl.h>
-#include <IEventReceiver.h>
-#include <IGUIFont.h>
-#include <IGUISkin.h>
-#include <IGUIStaticText.h>
 #include <texture.h>
-#include <EDriverTypes.h>
-#include <SColor.h>
 #include <glm/vec2.hpp>
 #include <glm/mat4x4.hpp>
 #include <SDL_video.h>
 #include <SDL_mouse.h>
 #include <string>
-
-#include <ITexture.h>
 
 // Forward Declarations
 class _Texture;
@@ -63,76 +55,8 @@ class _Graphics {
 
 	public:
 
-		enum AlignType {
-			ALIGN_LEFT,
-			ALIGN_CENTER,
-			ALIGN_RIGHT,
-		};
-
-		enum FontType {
-			FONT_7,
-			FONT_8,
-			FONT_10,
-			FONT_14,
-			FONT_18,
-			FONT_COUNT,
-		};
-
-		enum ImageType {
-			IMAGE_EMPTYSLOT,
-			IMAGE_SELECTEDSLOT,
-			IMAGE_HEALTH,
-			IMAGE_HEALTHMAX,
-			IMAGE_MANA,
-			IMAGE_MANAMAX,
-			IMAGE_EXPERIENCE,
-			IMAGE_EXPERIENCEMAX,
-			IMAGE_BLACK,
-			IMAGE_GOLD,
-			IMAGE_PVP,
-			IMAGE_MENULOGO,
-			IMAGE_MENUBLANKSLOT,
-			IMAGE_MENUSELECTED,
-			IMAGE_WORLDBUSY,
-			IMAGE_WORLDTRADE,
-			IMAGE_WORLDFIGHTING,
-			IMAGE_BATTLESLOTLEFT,
-			IMAGE_BATTLESLOTRIGHT,
-			IMAGE_BATTLECOINS,
-			IMAGE_BATTLEEXPERIENCE,
-			IMAGE_BATTLECHEST,
-			IMAGE_BATTLETARGET,
-			IMAGE_INVENTORY,
-			IMAGE_VENDOR,
-			IMAGE_TRADE,
-			IMAGE_TRADER,
-			IMAGE_PLUS,
-			IMAGE_MINUS,
-			IMAGE_COUNT,
-		};
-
 		void Init(const _WindowSettings &WindowSettings);
 		void Close();
-
-		// Fonts
-		void SetFont(int TType);
-		irr::gui::IGUIFont *GetFont(int TType) const { return Fonts[TType]; }
-
-		// Positions
-		irr::core::recti GetCenteredRect(int TPositionX, int TPositionY, int TWidth, int THeight);
-		irr::core::recti GetRect(int TPositionX, int TPositionY, int TWidth, int THeight);
-
-		// Text
-		irr::gui::IGUIStaticText *AddText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, irr::gui::IGUIElement *TParent=nullptr);
-		void RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
-
-		// Images
-		void DrawCenteredImage(const _Texture *TTexture, int PositionX, int PositionY, const irr::video::SColor &Color=irr::video::SColor(255, 255, 255, 255));
-		void DrawImage(ImageType TType, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
-		void DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight);
-		void DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
-		_Texture *GetImage(ImageType TType) { return Images[TType]; }
-
 
 		void ToggleFullScreen(const glm::ivec2 &WindowSize, const glm::ivec2 &FullscreenSize);
 		void ShowCursor(int Type);
@@ -145,6 +69,7 @@ class _Graphics {
 		void Setup3D();
 
 		void FadeScreen(float Amount);
+		void DrawCenteredImage(const glm::ivec2 &Position, const _Texture *Texture, const glm::vec4 &Color=glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		void DrawImage(const _Bounds &Bounds, const _Texture *Texture, bool Stretch=false);
 		void DrawAtlas(const _Bounds &Bounds, const _Texture *Texture, const glm::vec4 &TextureCoords);
 		void DrawRectangle(const _Bounds &Bounds, bool Filled=false);
@@ -207,22 +132,6 @@ class _Graphics {
 		// Benchmarking
 		double FrameRateTimer;
 		int FrameCount;
-
-
-		// Graphics state
-		irr::video::SColor ClearColor;
-		int Width, Height;
-
-		// Theme
-		irr::gui::IGUISkin *Skin;
-
-		// Fonts
-		irr::gui::IGUIFont *Fonts[FONT_COUNT];
-		int CurrentFont;
-
-		// Images
-		_Texture *Images[IMAGE_COUNT];
-
 };
 
 extern _Graphics Graphics;
