@@ -127,7 +127,7 @@ class _Graphics {
 		void RenderText(const char *TText, int TPositionX, int TPositionY, AlignType TAlignType=ALIGN_LEFT, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 
 		// Images
-		void DrawCenteredImage(const _Texture *TTexture, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
+		void DrawCenteredImage(const _Texture *TTexture, int PositionX, int PositionY, const irr::video::SColor &Color=irr::video::SColor(255, 255, 255, 255));
 		void DrawImage(ImageType TType, int TPositionX, int TPositionY, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));
 		void DrawBar(ImageType TType, int TPositionX, int TPositionY, float TPercent, int TWidth, int THeight);
 		void DrawBackground(ImageType TType, int TPositionX, int TPositionY, int TWidth, int THeight, const irr::video::SColor &TColor=irr::video::SColor(255, 255, 255, 255));

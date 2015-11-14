@@ -52,18 +52,17 @@ class _PlayClientState : public _State {
 		void Init();
 		void Close();
 
+		void KeyEvent(const _KeyEvent &KeyEvent) override;
+		void TextEvent(const char *Text) override;
+		void MouseEvent(const _MouseEvent &MouseEvent) override;
+
 		void HandleConnect(ENetEvent *TEvent);
 		void HandleDisconnect(ENetEvent *TEvent);
 		void HandlePacket(ENetEvent *TEvent);
-		bool HandleKeyPress(irr::EKEY_CODE TKey);
-		bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }
-		void HandleMouseMotion(int TMouseX, int TMouseY);
-		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
-		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
 		void HandleGUI(irr::gui::EGUI_EVENT_TYPE TEventType, irr::gui::IGUIElement *TElement);
 
 		void Update(double FrameTime);
-		void Draw();
+		void Render(double BlendFactor) override;
 
 		void SetCharacterSlot(int TSlot) { CharacterSlot = TSlot; }
 

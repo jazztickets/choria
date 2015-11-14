@@ -405,8 +405,14 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 		case STATE_CHARACTERS: {
 
 			if(CharactersState == CHARACTERS_NONE) {
-				if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-					InitTitle();
+				if(KeyEvent.Pressed) {
+					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+						InitTitle();
+					else if(KeyEvent.Key == SDL_SCANCODE_RETURN) {
+						PlayClientState.SetCharacterSlot(0);
+						Framework.ChangeState(&PlayClientState);
+					}
+				}
 			}
 			else {
 				if(KeyEvent.Pressed) {

@@ -30,6 +30,7 @@
 #include <instances/clientbattle.h>
 #include <objects/player.h>
 #include <objects/monster.h>
+#include <states/null.h>
 #include <IGUIEnvironment.h>
 
 _PlayClientState PlayClientState;
@@ -82,7 +83,7 @@ void _PlayClientState::HandleConnect(ENetEvent *TEvent) {
 // Handles a disconnection from the server
 void _PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
 
-	//Framework.ChangeState(&MainMenuState);
+	Framework.ChangeState(&NullState);
 }
 
 // Handles a server packet
@@ -186,13 +187,13 @@ void _PlayClientState::Update(double FrameTime) {
 					}
 				}
 
-				if(OldInput.GetKeyState(KEY_LEFT))
+				if(Input.KeyDown(SDL_SCANCODE_LEFT))
 					SendMoveCommand(_Player::MOVE_LEFT);
-				else if(OldInput.GetKeyState(KEY_UP))
+				else if(Input.KeyDown(SDL_SCANCODE_UP))
 					SendMoveCommand(_Player::MOVE_UP);
-				else if(OldInput.GetKeyState(KEY_RIGHT))
+				else if(Input.KeyDown(SDL_SCANCODE_RIGHT))
 					SendMoveCommand(_Player::MOVE_RIGHT);
-				else if(OldInput.GetKeyState(KEY_DOWN))
+				else if(Input.KeyDown(SDL_SCANCODE_DOWN))
 					SendMoveCommand(_Player::MOVE_DOWN);
 			}
 		break;
@@ -229,10 +230,11 @@ void _PlayClientState::Update(double FrameTime) {
 	ObjectManager->Update(FrameTime);
 }
 
-// Draws the current state
-void _PlayClientState::Draw() {
+void _PlayClientState::Render(double BlendFactor) {
 	if(State == STATE_CONNECTING)
 		return;
+
+	Graphics.Setup2D();
 
 	// Draw map and objects
 	Map->SetCameraScroll(Player->GetPosition());
@@ -252,15 +254,16 @@ void _PlayClientState::Draw() {
 	HUD.PreGUIDraw();
 
 	// Draw GUI
-	irrGUI->drawAll();
+	//irrGUI->drawAll();
 
 	// Draw HUD
 	HUD.Draw();
 }
 
-// Key presses
-bool _PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
+// Key events
+void _PlayClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 
+/*
 	// Start/stop chat
 	if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
 		HUD.ToggleChat();
@@ -404,26 +407,30 @@ bool _PlayClientState::HandleKeyPress(EKEY_CODE TKey) {
 		break;
 		default:
 		break;
+	}*/
+
+	switch(State) {
+		case STATE_WALK:
+			if(KeyEvent.Pressed) {
+				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE) {
+					ClientNetwork->Disconnect();
+					//Framework.SetDone(true);
+				}
+			}
+		break;
 	}
-
-	return true;
 }
 
-// Mouse movement
-void _PlayClientState::HandleMouseMotion(int TMouseX, int TMouseY) {
-	HUD.HandleMouseMotion(TMouseX, TMouseY);
+// Text input events
+void _PlayClientState::TextEvent(const char *Text) {
+
 }
 
-// Mouse buttons
-bool _PlayClientState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
-
-	return HUD.HandleMousePress(TButton, TMouseX, TMouseY);
-}
-
-// Mouse releases
-void _PlayClientState::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
-
-	HUD.HandleMouseRelease(TButton, TMouseX, TMouseY);
+// Mouse events
+void _PlayClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+	//HUD.HandleMouseMotion(TMouseX, TMouseY);
+	//HUD.HandleMousePress(TButton, TMouseX, TMouseY);
+	//HUD.HandleMouseRelease(TButton, TMouseX, TMouseY);
 }
 
 // Handles GUI presses

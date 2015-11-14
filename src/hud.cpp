@@ -729,18 +729,18 @@ void _HUD::InitTrader(int TTraderID) {
 	RewardItemSlot = Player->GetRequiredItemSlots(Trader, RequiredItemSlots);
 
 	// Add window
-	TabTrader = irrGUI->addTab(Graphics.GetCenteredRect(400, 250, 166, 272));
+	//TabTrader = irrGUI->addTab(Graphics.GetCenteredRect(400, 250, 166, 272));
 
 	// Add background
 //	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADER), core::position2di(0, 0), true, TabTrader);
 
 	// Add buttons
-	gui::IGUIButton *TradeButton = irrGUI->addButton(Graphics.GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
-	irrGUI->addButton(Graphics.GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
+	//gui::IGUIButton *TradeButton = irrGUI->addButton(Graphics.GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
+	//irrGUI->addButton(Graphics.GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
 
 	// Can't trade
-	if(RewardItemSlot == -1)
-		TradeButton->setEnabled(false);
+	//if(RewardItemSlot == -1)
+	//	TradeButton->setEnabled(false);
 
 	*State = _PlayClientState::STATE_TRADER;
 }

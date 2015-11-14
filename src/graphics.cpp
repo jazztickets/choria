@@ -110,8 +110,11 @@ void _Graphics::Close() {
 }
 
 // Draws an 2d image centered about a point
-void _Graphics::DrawCenteredImage(const _Texture *TTexture, int TPositionX, int TPositionY, const video::SColor &TColor) {
-
+void _Graphics::DrawCenteredImage(const _Texture *Texture, int PositionX, int PositionY, const video::SColor &Color) {
+	_Bounds Bounds;
+	Bounds.Start = glm::vec2(PositionX - Texture->Size.x/2, PositionY - Texture->Size.y/2);
+	Bounds.End = glm::vec2(PositionX + Texture->Size.x/2, PositionY + Texture->Size.y/2);
+	DrawImage(Bounds, Texture, false);
 	/*if(TTexture)
 		irrDriver->draw2DImage(
 					TTexture,

@@ -109,8 +109,6 @@ void _Map::AllocateMap() {
 	}
 
 	// Delete textures
-	//for(size_t i = 0; i < Textures.size(); i++)
-	//	irrDriver->removeTexture(Textures[i]);
 	Textures.clear();
 }
 
@@ -127,6 +125,9 @@ void _Map::Update(double FrameTime) {
 
 // Renders the map
 void _Map::Render() {
+
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.SetVBO(VBO_NONE);
 
 	core::position2di GridPosition, DrawPosition;
 	for(int i = 0; i < ViewSize.Width; i++) {
@@ -363,10 +364,10 @@ int _Map::LoadMap() {
 	File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
 	File.get();
 	TextureFile = String;
-	//if(TextureFile == "none")
-	//	NoZoneTexture = nullptr;
-	//else
-	//	NoZoneTexture = irrDriver->getTexture(std::string("textures/map/") + TextureFile);
+	if(TextureFile == "none")
+		NoZoneTexture = nullptr;
+	else
+		NoZoneTexture = Assets.Textures[std::string("map/") + TextureFile];
 
 	// Read map data
 	_Tile *Tile;
