@@ -488,7 +488,9 @@ void _HUD::Render() {
 	}*/
 
 	Assets.Elements["element_hud"]->Render();
+	//Assets.Elements["element_hud_bottom"]->Render();
 	Assets.Elements["element_hud_buttonbar"]->Render();
+	Assets.Elements["element_hud_actionbar"]->Render();
 
 	// Draw experience bar
 	std::stringstream Buffer;

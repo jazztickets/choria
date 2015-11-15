@@ -7,4 +7,6 @@ element_menu_connect			0	0	512	400	1	1	0
 element_menu_account			0	0	512	400	1	1	0
 element_hud_buttonbar			0	0	150	25	2	0	0
 element_hud		style_hud_bg	0	0	150	64	0	0	0
-element_hud_experience			0	-50	256	8	1	2	0
+element_hud_experience			0	-70	256	8	1	2	0
+element_hud_actionbar			0	-10	384	48	1	2	0
+element_hud_bottom		style_hud_bg	0	0	512	110	1	2	0

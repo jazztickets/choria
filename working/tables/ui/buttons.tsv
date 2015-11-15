@@ -25,3 +25,11 @@ button_hud_buttonbar_trade	element_hud_buttonbar	style_hud_buttonbar_trade			50	
 button_hud_buttonbar_character	element_hud_buttonbar	style_hud_buttonbar_character			75	0	25	25	0	0	0
 button_hud_buttonbar_skills	element_hud_buttonbar	style_hud_buttonbar_skills			100	0	25	25	0	0	0
 button_hud_buttonbar_menu	element_hud_buttonbar	style_hud_buttonbar_menu			125	0	25	25	0	0	0
+button_hud_actionbar_1	element_hud_actionbar	style_hud_actionbar_slot			0	0	48	48	0	0	0
+button_hud_actionbar_2	element_hud_actionbar	style_hud_actionbar_slot			48	0	48	48	0	0	0
+button_hud_actionbar_3	element_hud_actionbar	style_hud_actionbar_slot			96	0	48	48	0	0	0
+button_hud_actionbar_4	element_hud_actionbar	style_hud_actionbar_slot			144	0	48	48	0	0	0
+button_hud_actionbar_5	element_hud_actionbar	style_hud_actionbar_slot			192	0	48	48	0	0	0
+button_hud_actionbar_6	element_hud_actionbar	style_hud_actionbar_slot			240	0	48	48	0	0	0
+button_hud_actionbar_7	element_hud_actionbar	style_hud_actionbar_slot			288	0	48	48	0	0	0
+button_hud_actionbar_8	element_hud_actionbar	style_hud_actionbar_slot			336	0	48	48	0	0	0
