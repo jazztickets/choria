@@ -498,12 +498,30 @@ void _HUD::Render() {
 	Assets.Labels["label_hud_experience"]->Text = Buffer.str();
 	Buffer.str("");
 	Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
+	Assets.Images["image_hud_experience_bar_empty"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x);
 	Assets.Elements["element_hud_experience"]->Render();
 
 	Buffer << "Level " << Player->GetLevel();
 	Assets.Labels["label_hud_level"]->Text = Buffer.str();
 	Buffer.str("");
 
+	// Draw health bar
+	float HealthPercent = Player->GetMaxHealth() > 0 ? Player->GetHealth() / (float)Player->GetMaxHealth() : 0;
+	Buffer << Player->GetHealth() << " / " << Player->GetMaxHealth();
+	Assets.Labels["label_hud_health"]->Text = Buffer.str();
+	Buffer.str("");
+	Assets.Images["image_hud_health_bar_full"]->SetWidth(Assets.Elements["element_hud_health"]->Size.x * HealthPercent);
+	Assets.Images["image_hud_health_bar_empty"]->SetWidth(Assets.Elements["element_hud_health"]->Size.x);
+	Assets.Elements["element_hud_health"]->Render();
+
+	// Draw mana bar
+	float ManaPercent = Player->GetMaxMana() > 0 ? Player->GetMana() / (float)Player->GetMaxMana() : 0;
+	Buffer << Player->GetMana() << " / " << Player->GetMaxMana();
+	Assets.Labels["label_hud_mana"]->Text = Buffer.str();
+	Buffer.str("");
+	Assets.Images["image_hud_mana_bar_full"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x * ManaPercent);
+	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x);
+	Assets.Elements["element_hud_mana"]->Render();
 	/*
 		// Draw health
 		StartX += Width + Spacing;

@@ -489,6 +489,10 @@ void _Assets::LoadImages(const std::string &Path) {
 		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical >> Stretch;
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+		// Check for texture
+		if(TextureIdentifier != "" && Textures.find(TextureIdentifier) == Textures.end())
+			throw std::runtime_error("Unable to find texture: " + TextureIdentifier + " for image: " + Identifier);
+
 		// Get texture
 		const _Texture *Texture = Textures[TextureIdentifier];
 
