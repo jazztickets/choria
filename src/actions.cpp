@@ -28,19 +28,16 @@ _Actions::_Actions() {
 	ResetState();
 }
 
+// Reset the state
+void _Actions::ResetState() {
+	for(int i = 0; i < COUNT; i++) {
+		State[i].Value = 0.0f;
+		State[i].Source = -1;
+	}
+}
+
 // Load action names from database;
 void _Actions::LoadActionNames() {
-	Names[UP] = Assets.Labels["label_options_up"]->Text;
-	Names[DOWN] = Assets.Labels["label_options_down"]->Text;
-	Names[LEFT] = Assets.Labels["label_options_left"]->Text;
-	Names[RIGHT] = Assets.Labels["label_options_right"]->Text;
-	Names[FIRE] = Assets.Labels["label_options_fire"]->Text;
-	Names[AIM] = Assets.Labels["label_options_aim"]->Text;
-	Names[USE] = Assets.Labels["label_options_use"]->Text;
-	Names[INVENTORY] = Assets.Labels["label_options_inventory"]->Text;
-	Names[RELOAD] = Assets.Labels["label_options_reload"]->Text;
-	Names[WEAPONSWITCH] = Assets.Labels["label_options_weaponswitch"]->Text;
-	Names[MEDKIT] = Assets.Labels["label_options_medkit"]->Text;
 }
 
 // Clear all mappings
@@ -53,7 +50,7 @@ void _Actions::ClearMappings(int InputType) {
 void _Actions::ClearMappingsForAction(int InputType, int Action) {
 	for(int i = 0; i < ACTIONS_MAXINPUTS; i++) {
 		for(auto MapIterator = InputMap[InputType][i].begin(); MapIterator != InputMap[InputType][i].end(); ) {
-			if(*MapIterator == Action) {
+			if(MapIterator->Action == Action) {
 				MapIterator = InputMap[InputType][i].erase(MapIterator);
 			}
 			else
@@ -69,26 +66,38 @@ void _Actions::ClearAllMappingsForAction(int Action) {
 	}
 }
 
+// Serialize input map to stream
+void _Actions::Serialize(std::ofstream &File, int InputType) {
+	for(int i = 0; i < ACTIONS_MAXINPUTS; i++) {
+		for(auto &Iterator : InputMap[InputType][i]) {
+			File << "action_" << Iterator.Action << "=" << InputType << "_" << i << std::endl;
+		}
+	}
+}
+
 // Get action
-int _Actions::GetState(int Action) {
-	return !!(State & (1 << Action));
+float _Actions::GetState(int Action) {
+	if(Action < 0 || Action >= COUNT)
+		return 0.0f;
+
+	return State[Action].Value;
 }
 
 // Add an input mapping
-void _Actions::AddInputMap(int InputType, int Input, int Action, bool IfNone) {
+void _Actions::AddInputMap(int InputType, int Input, int Action, float Scale, float DeadZone, bool IfNone) {
 	if(Action < 0 || Action >= COUNT || Input < 0 || Input >= ACTIONS_MAXINPUTS)
 		return;
 
 	if(!IfNone || (IfNone && GetInputForAction(InputType, Action) == -1)) {
-		InputMap[InputType][Input].push_back(Action);
+		InputMap[InputType][Input].push_back(_ActionMap(Action, Scale, DeadZone));
 	}
 }
 
 // Returns the first input for an action
 int _Actions::GetInputForAction(int InputType, int Action) {
 	for(int i = 0; i < ACTIONS_MAXINPUTS; i++) {
-		for(auto &Iterator : InputMap[InputType][i]) {
-			if(Iterator == Action) {
+		for(auto &MapIterator : InputMap[InputType][i]) {
+			if(MapIterator.Action == Action) {
 				return i;
 			}
 		}
@@ -123,12 +132,34 @@ void _Actions::InputEvent(int InputType, int Input, int Value) {
 	if(Input < 0 || Input >= ACTIONS_MAXINPUTS)
 		return;
 
-	for(auto &Action : InputMap[InputType][Input]) {
-		State &= ~(1 << Action);
-		State |= Value << Action;
+	//printf("%d %d %f\n", InputType, Input, Value); fflush(stdout);
+	for(auto &MapIterator : InputMap[InputType][Input]) {
+
+		// Only let joystick overwrite action state if the keyboard isn't being used
+		if(InputType != _Input::JOYSTICK_AXIS || (InputType == _Input::JOYSTICK_AXIS && (State[MapIterator.Action].Source == -1 || State[MapIterator.Action].Source == _Input::JOYSTICK_AXIS))) {
+
+			// If key was released, set source to -1 so that joystick can overwrite it
+			if(InputType == _Input::KEYBOARD && Value == 0.0f)
+				State[MapIterator.Action].Source = -1;
+			else
+				State[MapIterator.Action].Source = InputType;
+
+			// Check for deadzone
+			if(fabs(Value) <= MapIterator.DeadZone)
+				Value = 0.0f;
+
+			State[MapIterator.Action].Value = Value;
+		}
+
+		// Check for deadzone
+		if(fabs(Value) <= MapIterator.DeadZone)
+			Value = 0.0f;
+
+		// Apply input scale to action
+		float InputValue = Value * MapIterator.Scale;
 
 		// If true is returned, stop handling the same key
-		if(Framework.GetState()->HandleAction(InputType, Action, Value))
+		if(Framework.GetState()->HandleAction(InputType, MapIterator.Action, InputValue))
 			break;
 	}
 }

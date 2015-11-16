@@ -95,7 +95,7 @@ void _MapEditorState::Update(double FrameTime) {
 }
 
 // Draws the current state
-void _MapEditorState::Draw() {
+void _MapEditorState::Render(double BlendFactor) {
 
 	if(Map)
 		Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);

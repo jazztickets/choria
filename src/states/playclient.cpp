@@ -20,6 +20,7 @@
 #include <framework.h>
 #include <graphics.h>
 #include <input.h>
+#include <actions.h>
 #include <objectmanager.h>
 #include <instances.h>
 #include <stats.h>
@@ -70,6 +71,11 @@ void _PlayClientState::Close() {
 	HUD.Close();
 	delete ObjectManager;
 	delete Instances;
+}
+
+// Handle an input action
+bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
+	return true;
 }
 
 // Handles a connection to the server
@@ -160,40 +166,17 @@ void _PlayClientState::Update(double FrameTime) {
 	switch(State) {
 		case STATE_CONNECTING:
 		break;
-		case STATE_WALK:
-
-			// Send move input
-			if(!HUD.IsChatting()) {
-				if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.GetMouse().x >= 656 && Input.GetMouse().y >= 575)) {
-					glm::ivec2 MoveTarget;
-					Map->ScreenToGrid(Input.GetMouse(), MoveTarget);
-					glm::ivec2 Delta = MoveTarget - Player->GetPosition();
-
-					if(abs(Delta.x) > abs(Delta.y)) {
-						if(Delta.x < 0)
-							SendMoveCommand(_Player::MOVE_LEFT);
-						else if(Delta.x > 0)
-							SendMoveCommand(_Player::MOVE_RIGHT);
-					}
-					else {
-						if(Delta.y < 0)
-							SendMoveCommand(_Player::MOVE_UP);
-						else if(Delta.y > 0)
-							SendMoveCommand(_Player::MOVE_DOWN);
-					}
-				}
-
-				if(Input.KeyDown(SDL_SCANCODE_LEFT))
-					SendMoveCommand(_Player::MOVE_LEFT);
-				else if(Input.KeyDown(SDL_SCANCODE_UP))
-					SendMoveCommand(_Player::MOVE_UP);
-				else if(Input.KeyDown(SDL_SCANCODE_RIGHT))
-					SendMoveCommand(_Player::MOVE_RIGHT);
-				else if(Input.KeyDown(SDL_SCANCODE_DOWN))
-					SendMoveCommand(_Player::MOVE_DOWN);
-			}
-		break;
-		case STATE_BATTLE:
+		case STATE_WALK: {
+			if(Actions.GetState(_Actions::UP))
+				SendMoveCommand(_Player::MOVE_UP);
+			else if(Actions.GetState(_Actions::DOWN))
+				SendMoveCommand(_Player::MOVE_DOWN);
+			else if(Actions.GetState(_Actions::LEFT))
+				SendMoveCommand(_Player::MOVE_LEFT);
+			else if(Actions.GetState(_Actions::RIGHT))
+				SendMoveCommand(_Player::MOVE_RIGHT);
+		} break;
+		case STATE_BATTLE: {
 
 			// Send key input
 			if(!HUD.IsChatting()) {
@@ -220,7 +203,7 @@ void _PlayClientState::Update(double FrameTime) {
 					State = STATE_WALK;
 				}
 			}
-		break;
+		} break;
 	}
 	HUD.Update(FrameTime);
 	ObjectManager->Update(FrameTime);

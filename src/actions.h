@@ -25,6 +25,21 @@
 
 // Constants
 const int ACTIONS_MAXINPUTS = SDL_NUM_SCANCODES;
+const float ACTIONS_SCALE = 1.0f;
+const float ACTIONS_DEADZONE = 0.05f;
+
+struct _ActionMap {
+	_ActionMap(int Action, float Scale, float DeadZone) : Action(Action), DeadZone(DeadZone), Scale(Scale) { }
+
+	int Action;
+	float DeadZone;
+	float Scale;
+};
+
+struct _ActionState {
+	float Value;
+	int Source;
+};
 
 // Actions class
 class _Actions {
@@ -36,31 +51,24 @@ class _Actions {
 			DOWN,
 			LEFT,
 			RIGHT,
-			FIRE,
-			AIM,
-			USE,
-			INVENTORY,
-			RELOAD,
-			WEAPONSWITCH,
-			MEDKIT,
 			COUNT,
 		};
 
 		_Actions();
 
-		void ResetState() { State = 0; }
+		void ResetState();
 		void LoadActionNames();
 		void ClearMappings(int InputType);
 		void ClearMappingsForAction(int InputType, int Action);
 		void ClearAllMappingsForAction(int Action);
+		void Serialize(std::ofstream &File, int InputType);
 
 		// Actions
-		int GetState(int Action);
-		int GetState() { return State; }
+		float GetState(int Action);
 		const std::string &GetName(int Action) { return Names[Action]; }
 
 		// Maps
-		void AddInputMap(int InputType, int Input, int Action, bool IfNone=true);
+		void AddInputMap(int InputType, int Input, int Action, float Scale=1.0f, float DeadZone=-1.0f, bool IfNone=true);
 		int GetInputForAction(int InputType, int Action);
 		std::string GetInputNameForAction(int Action);
 
@@ -70,10 +78,10 @@ class _Actions {
 	private:
 
 		// Input bindings
-		std::list<int> InputMap[_Input::INPUT_COUNT][ACTIONS_MAXINPUTS];
+		std::list<_ActionMap> InputMap[_Input::INPUT_COUNT][ACTIONS_MAXINPUTS];
 
 		// State of each action
-		int State;
+		_ActionState State[COUNT];
 
 		// Nice names for each action
 		std::string Names[COUNT];

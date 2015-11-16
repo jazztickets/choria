@@ -126,7 +126,7 @@ void _Framework::Close() {
 
 	if(MultiNetwork)
 		MultiNetwork->WaitForDisconnect();
-	//Config.SaveSettings();
+	Config.Save();
 
 	// Shut down the system
 	_Network::CloseSystem();

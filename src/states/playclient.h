@@ -49,9 +49,10 @@ class _PlayClientState : public _State {
 
 		_PlayClientState();
 
-		void Init();
-		void Close();
+		void Init() override;
+		void Close() override;
 
+		bool HandleAction(int InputType, int Action, int Value) override;
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
 		void TextEvent(const char *Text) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;

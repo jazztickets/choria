@@ -28,32 +28,26 @@ class _State {
 	public:
 
 		// Setup
-		virtual void Init() { };
-		virtual void Close() { };
+		virtual void Init() { }
+		virtual void Close() { }
 		virtual ~_State() { }
 
 		// Input
 		virtual bool HandleAction(int InputType, int Action, int Value) { return false; }
-		virtual void KeyEvent(const _KeyEvent &KeyEvent) { };
-		virtual void TextEvent(const char *Text) { };
+		virtual void KeyEvent(const _KeyEvent &KeyEvent) { }
+		virtual void TextEvent(const char *Text) { }
 		virtual void MouseEvent(const _MouseEvent &MouseEvent) { }
 		virtual void MouseWheelEvent(int Direction) { }
 		virtual void WindowEvent(uint8_t Event) { }
 
 		// Update
-		virtual void Update(double FrameTime) { };
-		virtual void Render(double BlendFactor) { };
+		virtual void Update(double FrameTime) { }
+		virtual void Render(double BlendFactor) { }
 
 		// Network
 		virtual void HandleConnect(ENetEvent *TEvent) { }
 		virtual void HandleDisconnect(ENetEvent *TEvent) { }
 		virtual void HandlePacket(ENetEvent *TEvent) { }
-
-		// OLD
-		virtual bool HandleMousePress(int TButton, int TMouseX, int TMouseY) { return false; }
-		virtual void HandleMouseRelease(int TButton, int TMouseX, int TMouseY) { }
-		virtual void HandleMouseWheel(float TDirection) { }
-		virtual void HandleMouseMotion(int TMouseX, int TMouseY) { }
 
 	private:
 

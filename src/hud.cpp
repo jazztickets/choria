@@ -523,20 +523,6 @@ void _HUD::Render() {
 	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x);
 	Assets.Elements["element_hud_mana"]->Render();
 	/*
-		// Draw health
-		StartX += Width + Spacing;
-		float HealthPercent = Player->GetMaxHealth() > 0 ? Player->GetHealth() / (float)Player->GetMaxHealth() : 0;
-		sprintf(String, "%d / %d", Player->GetHealth(), Player->GetMaxHealth());
-		Graphics.DrawBar(_Graphics::IMAGE_HEALTH, StartX, StartY, HealthPercent, Width, Height);
-		//Graphics.RenderText(String, StartX + Width/2, StartY, _Graphics::ALIGN_CENTER);
-
-		// Draw mana
-		StartX += Width + Spacing;
-		float ManaPercent = Player->GetMaxMana() > 0 ? Player->GetMana() / (float)Player->GetMaxMana() : 0;
-		sprintf(String, "%d / %d", Player->GetMana(), Player->GetMaxMana());
-		Graphics.DrawBar(_Graphics::IMAGE_MANA, StartX, StartY, ManaPercent, Width, Height);
-		//Graphics.RenderText(String, StartX + Width/2, StartY, _Graphics::ALIGN_CENTER);
-
 		// Draw gold
 		StartX += Width + Spacing + 14;
 		Graphics.DrawImage(_Graphics::IMAGE_GOLD, StartX, StartY + 8);
@@ -932,6 +918,7 @@ void _HUD::CloseWindows() {
 
 // Draws chat messages
 void _HUD::DrawChat() {
+	/*
 	if(ChatHistory.size() == 0)
 		return;
 
@@ -952,6 +939,7 @@ void _HUD::DrawChat() {
 		if(Index > 20)
 			break;
 	}
+	*/
 }
 
 // Draws the player's inventory
@@ -1168,6 +1156,7 @@ void _HUD::DrawTrade() {
 
 // Draw the character stats page
 void _HUD::DrawCharacter() {
+	/*
 	char Buffer[256];
 	int Width = 180;
 	int Height = 300;
@@ -1240,7 +1229,7 @@ void _HUD::DrawCharacter() {
 	//Graphics.RenderText("Player Kills", DrawX, DrawY);
 	sprintf(Buffer, "%d", Player->GetPlayerKills());
 	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
-
+*/
 }
 
 // Draws the skill page
@@ -1301,6 +1290,7 @@ void _HUD::DrawCursorItem() {
 
 // Draws information about an item
 void _HUD::DrawItemTooltip() {
+	/*
 	const _Item *Item = TooltipItem.Item;
 	if(Item) {
 		int DrawX = Input.GetMouse().x + 16;
@@ -1326,12 +1316,10 @@ void _HUD::DrawItemTooltip() {
 		Item->GetType(String);
 		//Graphics.RenderText(String.c_str(), DrawX, DrawY);
 
-		/*
 		// Draw level
 		DrawY += 15;
 		sprintf(Buffer, "Level %d", Item->GetLevel());
 		//Graphics.RenderText(Buffer, DrawX, DrawY);
-		*/
 
 		DrawY += 15;
 		int Min, Max;
@@ -1439,6 +1427,7 @@ void _HUD::DrawItemTooltip() {
 			break;
 		}
 	}
+	*/
 }
 
 // Draws the skill under the cursor

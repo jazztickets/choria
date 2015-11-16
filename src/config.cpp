@@ -89,11 +89,18 @@ void _Config::LoadDefaultInputBindings() {
 	for(int i = 0; i < _Input::INPUT_COUNT; i++)
 		Actions.ClearMappings(i);
 
-/*	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYUP, _Actions::UP);
-	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYDOWN, _Actions::DOWN);
-	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYLEFT, _Actions::LEFT);
-	Actions.AddInputMap(_Input::KEYBOARD, DEFAULT_KEYRIGHT, _Actions::RIGHT);
-	*/
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_UP, _Actions::UP, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_E, _Actions::UP, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_K, _Actions::UP, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_DOWN, _Actions::DOWN, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_D, _Actions::DOWN, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_J, _Actions::DOWN, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_LEFT, _Actions::LEFT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_S, _Actions::LEFT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_H, _Actions::LEFT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, _Actions::RIGHT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F, _Actions::RIGHT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_L, _Actions::RIGHT, 1.0f, -1.0f, false);
 }
 
 // Use SDL to determine desktop size
@@ -168,9 +175,6 @@ void _Config::Load() {
 		std::string InputString;
 		GetValue(Buffer.str(), InputString);
 
-		// Clear out current map
-		Actions.ClearAllMappingsForAction(i);
-
 		// Skip empty
 		if(!InputString.size())
 			continue;
@@ -180,7 +184,7 @@ void _Config::Load() {
 		char Dummy;
 		std::stringstream Stream(InputString);
 		Stream >> InputType >> Dummy >> Input;
-		Actions.AddInputMap(InputType, Input, i);
+		Actions.AddInputMap(InputType, Input, i, false);
 	}
 }
 
@@ -212,17 +216,9 @@ void _Config::Save() {
 	File << "last_port=" << LastPort << std::endl;
 
 	// Write out input map
-	for(int i = 0; i < _Actions::COUNT; i++) {
-		File << "action_" << i << "=";
-		for(int j = 0; j < _Input::INPUT_COUNT; j++) {
-			int Input = Actions.GetInputForAction(j, i);
-			if(Input != -1) {
-				File << j << "_" << Input;
-				break;
-			}
-		}
-		File << std::endl;
-	}
+	Actions.Serialize(File, _Input::KEYBOARD);
+	Actions.Serialize(File, _Input::MOUSE_AXIS);
+	Actions.Serialize(File, _Input::MOUSE_BUTTON);
 
 	File.close();
 }

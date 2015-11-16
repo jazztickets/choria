@@ -70,18 +70,16 @@ class _MapEditorState : public _State {
 			FILTER_COUNT
 		};
 
-		void Init();
-		void Close();
+		void Init() override;
+		void Close() override;
 
-		//bool HandleKeyPress(irr::EKEY_CODE TKey);
-		//bool HandleKeyRelease(irr::EKEY_CODE TKey) { return false; }
 		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
 		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY) { }
 		void HandleMouseWheel(float TDirection);
 		void HandleMouseMotion(int TMouseX, int TMouseY);
 
-		void Update(double FrameTime);
-		void Draw();
+		void Update(double FrameTime) override;
+		void Render(double BlendFactor) override;
 
 	private:
 
