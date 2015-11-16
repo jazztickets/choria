@@ -653,9 +653,9 @@ void _HUD::CloseMenu() {
 }
 
 // Initialize the inventory system
-void _HUD::InitInventory(int TX, int TY, bool TSendBusy) {
-	if(TSendBusy)
-		SendBusy(true);
+void _HUD::InitInventory(const glm::ivec2 &Position, bool SendBusy) {
+	if(SendBusy)
+		SendBusySignal(true);
 
 	CursorItem.Reset();
 	TooltipItem.Reset();
@@ -677,7 +677,7 @@ void _HUD::CloseInventory() {
 	TooltipItem.Reset();
 
 	// No longer busy
-	SendBusy(false);
+	SendBusySignal(false);
 
 	*State = _PlayClientState::STATE_WALK;
 }
@@ -697,7 +697,7 @@ void _HUD::InitVendor(int TVendorID) {
 	//irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_VENDOR), glm::ivec2(0, 0), true, TabVendor);
 
 	// Open inventory
-	InitInventory(400, 420, false);
+	InitInventory(glm::ivec2(400, 420), false);
 }
 
 // Close the vendor
@@ -787,7 +787,7 @@ void _HUD::CloseCharacter() {
 // Initialize the skills screen
 void _HUD::InitSkills() {
 	*State = _PlayClientState::STATE_SKILLS;
-	SendBusy(true);
+	SendBusySignal(true);
 
 	// Main window
 	//TabSkill = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 450, 400), nullptr, 0);
@@ -836,7 +836,7 @@ void _HUD::CloseSkills() {
 	}
 
 	// No longer busy
-	SendBusy(false);
+	SendBusySignal(false);
 
 	*State = _PlayClientState::STATE_WALK;
 }
@@ -1921,11 +1921,10 @@ void _HUD::RefreshSkillButtons() {
 }
 
 // Sends the busy signal to the server
-void _HUD::SendBusy(bool TValue) {
-
+void _HUD::SendBusySignal(bool Value) {
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_BUSY);
-	Packet.Write<char>(TValue);
+	Packet.Write<char>(Value);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 

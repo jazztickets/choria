@@ -101,6 +101,23 @@ void _Config::LoadDefaultInputBindings() {
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, _Actions::RIGHT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F, _Actions::RIGHT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_L, _Actions::RIGHT, 1.0f, -1.0f, false);
+
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, _Actions::MENU, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_C, _Actions::INVENTORY, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_R, _Actions::SKILLS, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_Q, _Actions::TELEPORT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_B, _Actions::CHARACTER, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_T, _Actions::TRADE, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_A, _Actions::ATTACK, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, _Actions::CHAT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_1, _Actions::SKILL1, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_2, _Actions::SKILL2, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_3, _Actions::SKILL3, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_4, _Actions::SKILL4, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_5, _Actions::SKILL5, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_6, _Actions::SKILL6, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_7, _Actions::SKILL7, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_8, _Actions::SKILL8, 1.0f, -1.0f, false);
 }
 
 // Use SDL to determine desktop size

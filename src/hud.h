@@ -123,7 +123,7 @@ class _HUD {
 
 		// Windows
 		void InitMenu();
-		void InitInventory(int TX=400, int TY=300, bool TSendBusy=true);
+		void InitInventory(const glm::ivec2 &Position, bool SendBusy);
 		void InitVendor(int TVendorID);
 		void InitTrader(int TTraderID);
 		void InitCharacter();
@@ -183,7 +183,7 @@ class _HUD {
 		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
 
 		void RefreshSkillButtons();
-		void SendBusy(bool TValue);
+		void SendBusySignal(bool Value);
 		void SendTradeRequest();
 		void SendTradeCancel();
 		int ValidateTradeGold();

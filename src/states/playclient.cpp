@@ -73,11 +73,6 @@ void _PlayClientState::Close() {
 	delete Instances;
 }
 
-// Handle an input action
-bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
-	return true;
-}
-
 // Handles a connection to the server
 void _PlayClientState::HandleConnect(ENetEvent *TEvent) {
 
@@ -233,165 +228,173 @@ void _PlayClientState::Render(double BlendFactor) {
 	HUD.Render();
 }
 
+// Handle an input action
+bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
+	if(Value == 0)
+		return true;
+
+	/*
+		// Start/stop chat
+		if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
+			HUD.ToggleChat();
+			return true;
+		}
+
+		// Check chatting
+		if(HUD.IsChatting() || HUD.IsTypingGold()) {
+			HUD.HandleKeyPress(TKey);
+			return false;
+		}
+
+		// Open character sheet
+		if(TKey == KEY_KEY_B) {
+			HUD.InitCharacter();
+		}
+
+		switch(State) {
+			case STATE_WALK:
+				switch(TKey) {
+					default:
+					break;
+				}
+			break;
+			case STATE_TOWNPORTAL: {
+				HUD.ToggleTownPortal();
+			}
+			break;
+			case STATE_MAINMENU:
+				switch(TKey) {
+					case KEY_ESCAPE:
+						HUD.CloseWindows();
+					break;
+					default:
+					break;
+				}
+			break;
+			case STATE_BATTLE:
+				Battle->HandleInput(TKey);
+			break;
+			case STATE_INVENTORY:
+				switch(TKey) {
+					case KEY_ESCAPE:
+					case KEY_KEY_I:
+					case KEY_KEY_C:
+					case KEY_SPACE:
+					case KEY_LEFT:
+					case KEY_UP:
+					case KEY_RIGHT:
+					case KEY_DOWN:
+						HUD.CloseWindows();
+					break;
+					default:
+					break;
+				}
+			break;
+			case STATE_TRADE:
+				switch(TKey) {
+					case KEY_ESCAPE:
+					case KEY_KEY_T:
+					case KEY_SPACE:
+					case KEY_LEFT:
+					case KEY_UP:
+					case KEY_RIGHT:
+					case KEY_DOWN:
+						HUD.CloseWindows();
+					break;
+					default:
+					break;
+				}
+			break;
+			case STATE_VENDOR:
+				switch(TKey) {
+					case KEY_ESCAPE:
+					case KEY_KEY_I:
+					case KEY_KEY_C:
+					case KEY_SPACE:
+					case KEY_LEFT:
+					case KEY_UP:
+					case KEY_RIGHT:
+					case KEY_DOWN:
+						HUD.CloseWindows();
+					break;
+					default:
+					break;
+				}
+			break;
+			case STATE_TRADER:
+				switch(TKey) {
+					case KEY_ESCAPE:
+					case KEY_SPACE:
+					case KEY_LEFT:
+					case KEY_UP:
+					case KEY_RIGHT:
+					case KEY_DOWN:
+						HUD.CloseWindows();
+					break;
+					default:
+					break;
+				}
+			break;
+			case STATE_SKILLS:
+				switch(TKey) {
+					case KEY_ESCAPE:
+					case KEY_KEY_S:
+					case KEY_KEY_K:
+					case KEY_SPACE:
+					case KEY_LEFT:
+					case KEY_UP:
+					case KEY_RIGHT:
+					case KEY_DOWN:
+						HUD.CloseWindows();
+					break;
+					default:
+					break;
+				}
+			break;
+			default:
+			break;
+		}*/
+
+	switch(State) {
+		case STATE_WALK:
+			switch(Action) {
+				case _Actions::MENU:
+					ClientNetwork->Disconnect();
+					//HUD.InitMenu();
+				break;
+				case _Actions::INVENTORY:
+					HUD.InitInventory(glm::ivec2(400, 300), true);
+				break;
+				case _Actions::TELEPORT:
+					HUD.ToggleTownPortal();
+				break;
+				case _Actions::TRADE:
+					HUD.InitTrade();
+				break;
+				case _Actions::SKILLS:
+					HUD.InitSkills();
+				break;
+				case _Actions::ATTACK:
+					SendAttackPlayer();
+				break;
+			}
+		break;
+		case STATE_INVENTORY:
+			switch(Action) {
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+	}
+
+	return true;
+}
+
 // Key events
 void _PlayClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 
-/*
-	// Start/stop chat
-	if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
-		HUD.ToggleChat();
-		return true;
-	}
-
-	// Check chatting
-	if(HUD.IsChatting() || HUD.IsTypingGold()) {
-		HUD.HandleKeyPress(TKey);
-		return false;
-	}
-
-	// Open character sheet
-	if(TKey == KEY_KEY_B) {
-		HUD.InitCharacter();
-	}
-
-	switch(State) {
-		case STATE_WALK:
-			switch(TKey) {
-				case KEY_ESCAPE:
-					#ifdef _DEBUG
-						ClientNetwork->Disconnect();
-					#else
-						HUD.InitMenu();
-					#endif
-				break;
-				case KEY_KEY_Q:
-					HUD.ToggleTownPortal();
-				break;
-				case KEY_KEY_C:
-				case KEY_KEY_I:
-					HUD.InitInventory();
-				break;
-				case KEY_KEY_T:
-					HUD.InitTrade();
-				break;
-				case KEY_KEY_S:
-				case KEY_KEY_K:
-					HUD.InitSkills();
-				break;
-				case KEY_KEY_A:
-					SendAttackPlayer();
-				break;
-				default:
-				break;
-			}
-		break;
-		case STATE_TOWNPORTAL: {
-			HUD.ToggleTownPortal();
-		}
-		break;
-		case STATE_MAINMENU:
-			switch(TKey) {
-				case KEY_ESCAPE:
-					HUD.CloseWindows();
-				break;
-				default:
-				break;
-			}
-		break;
-		case STATE_BATTLE:
-			Battle->HandleInput(TKey);
-		break;
-		case STATE_INVENTORY:
-			switch(TKey) {
-				case KEY_ESCAPE:
-				case KEY_KEY_I:
-				case KEY_KEY_C:
-				case KEY_SPACE:
-				case KEY_LEFT:
-				case KEY_UP:
-				case KEY_RIGHT:
-				case KEY_DOWN:
-					HUD.CloseWindows();
-				break;
-				default:
-				break;
-			}
-		break;
-		case STATE_TRADE:
-			switch(TKey) {
-				case KEY_ESCAPE:
-				case KEY_KEY_T:
-				case KEY_SPACE:
-				case KEY_LEFT:
-				case KEY_UP:
-				case KEY_RIGHT:
-				case KEY_DOWN:
-					HUD.CloseWindows();
-				break;
-				default:
-				break;
-			}
-		break;
-		case STATE_VENDOR:
-			switch(TKey) {
-				case KEY_ESCAPE:
-				case KEY_KEY_I:
-				case KEY_KEY_C:
-				case KEY_SPACE:
-				case KEY_LEFT:
-				case KEY_UP:
-				case KEY_RIGHT:
-				case KEY_DOWN:
-					HUD.CloseWindows();
-				break;
-				default:
-				break;
-			}
-		break;
-		case STATE_TRADER:
-			switch(TKey) {
-				case KEY_ESCAPE:
-				case KEY_SPACE:
-				case KEY_LEFT:
-				case KEY_UP:
-				case KEY_RIGHT:
-				case KEY_DOWN:
-					HUD.CloseWindows();
-				break;
-				default:
-				break;
-			}
-		break;
-		case STATE_SKILLS:
-			switch(TKey) {
-				case KEY_ESCAPE:
-				case KEY_KEY_S:
-				case KEY_KEY_K:
-				case KEY_SPACE:
-				case KEY_LEFT:
-				case KEY_UP:
-				case KEY_RIGHT:
-				case KEY_DOWN:
-					HUD.CloseWindows();
-				break;
-				default:
-				break;
-			}
-		break;
-		default:
-		break;
-	}*/
-
-	switch(State) {
-		case STATE_WALK:
-			if(KeyEvent.Pressed) {
-				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE) {
-					ClientNetwork->Disconnect();
-					//Framework.SetDone(true);
-				}
-			}
-		break;
-	}
 }
 
 // Text input events
