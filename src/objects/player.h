@@ -198,7 +198,7 @@ class _Player : public _Object, public _Fighter {
 		void ToggleBusy(bool Value);
 		void StartTownPortal();
 		double GetTownPortalTime() const { return TownPortalTime; }
-		void SetStateImage(_Texture *TImage) { StateImage = TImage; }
+		void SetStateImage(const _Texture *TImage) { StateImage = TImage; }
 
 		// PVP
 		bool CanAttackPlayer();

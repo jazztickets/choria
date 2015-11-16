@@ -12,3 +12,4 @@ image_hud_mana_bar_empty	element_hud_mana	hud_repeat/mana_empty.png		0	0	0	32	0	
 image_hud_mana_bar_full	element_hud_mana	hud_repeat/mana_full.png		0	0	0	32	0	0	0
 image_hud_experience_bar_empty	element_hud_experience	hud_repeat/experience_empty.png		0	0	0	8	0	0	0
 image_hud_experience_bar_full	element_hud_experience	hud_repeat/experience_full.png		0	0	0	8	0	0	0
+image_inventory	element_inventory	hud/inventory.png		0	0	362	288	0	0	0

@@ -69,17 +69,23 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	}
 
 	// Get fullscreen size
-	Config.SetDefaultFullscreenSize();
 	Log.Open((Config.ConfigPath + "client.log").c_str());
 
 	// Initialize SDL
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 		throw std::runtime_error("Failed to initialize SDL");
 
+	// Get fullscreen size
+	Config.SetDefaultFullscreenSize();
+
 	// Initialize graphics system
 	_WindowSettings WindowSettings;
 	WindowSettings.WindowTitle = "choria";
-	WindowSettings.Size = Config.WindowSize;
+	WindowSettings.Fullscreen = Config.Fullscreen;
+	if(Config.Fullscreen)
+		WindowSettings.Size = Config.FullscreenSize;
+	else
+		WindowSettings.Size = Config.WindowSize;
 	WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 	Graphics.Init(WindowSettings);
 
@@ -170,15 +176,15 @@ void _Framework::Update() {
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
 				if(!Event.key.repeat) {
-					if(State && FrameworkState == UPDATE) {
+
+					// Toggle fullscreen
+					if(Event.type == SDL_KEYDOWN && (Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN)
+						Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
+					else if(State && FrameworkState == UPDATE) {
 						_KeyEvent KeyEvent(Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
 						State->KeyEvent(KeyEvent);
 						Actions.InputEvent(_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
 					}
-
-					// Toggle fullscreen
-					//if(Event.type == SDL_KEYDOWN && (Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN)
-					//	Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
 				}
 				else {
 					if(State && FrameworkState == UPDATE && Event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {

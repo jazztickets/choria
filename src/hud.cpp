@@ -451,6 +451,14 @@ void _HUD::Update(double FrameTime) {
 	Assets.Elements["element_hud"]->Update(FrameTime, Input.GetMouse());
 	Assets.Elements["element_hud_buttonbar"]->Update(FrameTime, Input.GetMouse());
 
+	switch(*State) {
+		case _PlayClientState::STATE_INVENTORY:
+			Assets.Elements["element_inventory"]->Update(FrameTime, Input.GetMouse());
+		break;
+		default:
+		break;
+	}
+
 	// Chat messages
 	for(std::list<_ChatMessage>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
 		_ChatMessage &Chat = (*Iterator);
@@ -466,27 +474,6 @@ void _HUD::Update(double FrameTime) {
 
 // Draws the HUD elements
 void _HUD::Render() {
-	/*
-	switch(*State) {
-		case _PlayClientState::STATE_MAINMENU:
-			Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 0, 0, 800, 600, video::SColor(100, 255, 255, 255));
-		break;
-		case _PlayClientState::STATE_SKILLS: {
-			core::recti WindowArea = TabSkill->getAbsolutePosition();
-
-			// Draw background
-			Graphics.DrawBackground(_Graphics::IMAGE_BLACK, WindowArea.UpperLeftCorner.x, WindowArea.UpperLeftCorner.y, WindowArea.getWidth(), WindowArea.getHeight(), video::SColor(220, 255, 255, 255));
-		}
-		break;
-		case _PlayClientState::STATE_TRADE: {
-			core::recti WindowArea = TabTrade->getAbsolutePosition();
-
-			// Draw background
-			Graphics.DrawBackground(_Graphics::IMAGE_BLACK, WindowArea.UpperLeftCorner.x-1, WindowArea.UpperLeftCorner.y, WindowArea.getWidth()-1, WindowArea.getHeight(), video::SColor(220, 255, 255, 255));
-		}
-		break;
-	}*/
-
 	Assets.Elements["element_hud"]->Render();
 	//Assets.Elements["element_hud_bottom"]->Render();
 	Assets.Elements["element_hud_buttonbar"]->Render();
@@ -659,12 +646,6 @@ void _HUD::InitInventory(const glm::ivec2 &Position, bool SendBusy) {
 
 	CursorItem.Reset();
 	TooltipItem.Reset();
-
-	// Add window
-	//TabInventory = irrGUI->addTab(Graphics.GetCenteredRect(TX, TY, 265, 200));
-
-	// Add background
-	//irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_INVENTORY), glm::ivec2(0, 0), true, TabInventory);
 
 	*State = _PlayClientState::STATE_INVENTORY;
 }
@@ -944,6 +925,8 @@ void _HUD::DrawChat() {
 
 // Draws the player's inventory
 void _HUD::DrawInventory() {
+
+	Assets.Elements["element_inventory"]->Render();
 	/*
 	core::recti WindowArea = TabInventory->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.x;

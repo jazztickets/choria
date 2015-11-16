@@ -145,7 +145,7 @@ void _Graphics::ToggleFullScreen(const glm::ivec2 &WindowSize, const glm::ivec2 
 		Graphics.ChangeWindowSize(FullscreenSize);
 	}
 
-	if(SDL_SetWindowFullscreen(Window, SDL_GetWindowFlags(Window) ^ SDL_WINDOW_FULLSCREEN) != 0) {
+	if(SDL_SetWindowFullscreen(Window, SDL_GetWindowFlags(Window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP) != 0) {
 		// failed
 	}
 }

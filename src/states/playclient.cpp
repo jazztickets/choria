@@ -26,6 +26,7 @@
 #include <stats.h>
 #include <hud.h>
 #include <buffer.h>
+#include <assets.h>
 #include <network/network.h>
 #include <instances/map.h>
 #include <instances/clientbattle.h>
@@ -363,7 +364,7 @@ bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
 					//HUD.InitMenu();
 				break;
 				case _Actions::INVENTORY:
-					HUD.InitInventory(glm::ivec2(400, 300), true);
+					HUD.InitInventory(glm::ivec2(0, 0), true);
 				break;
 				case _Actions::TELEPORT:
 					HUD.ToggleTownPortal();
@@ -621,10 +622,10 @@ void _PlayClientState::HandleObjectUpdates(_Buffer *TPacket) {
 					OtherPlayer->SetStateImage(nullptr);
 				break;
 				case _Player::STATE_WAITTRADE:
-					//OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDTRADE));
+					OtherPlayer->SetStateImage(Assets.Textures["world/trade.png"]);
 				break;
 				default:
-					//OtherPlayer->SetStateImage(Graphics.GetImage(_Graphics::IMAGE_WORLDBUSY));
+					OtherPlayer->SetStateImage(Assets.Textures["world/busy.png"]);
 				break;
 			}
 		}
