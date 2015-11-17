@@ -405,9 +405,7 @@ void _PlayClientState::TextEvent(const char *Text) {
 
 // Mouse events
 void _PlayClientState::MouseEvent(const _MouseEvent &MouseEvent) {
-	//HUD.HandleMouseMotion(TMouseX, TMouseY);
-	//HUD.HandleMousePress(TButton, TMouseX, TMouseY);
-	//HUD.HandleMouseRelease(TButton, TMouseX, TMouseY);
+	HUD.MouseEvent(MouseEvent);
 }
 
 // Called once to synchronize your stats with the servers

@@ -12,3 +12,4 @@ menu_button_hover	0.2	0.2	0.24	1
 menu_button_border	0.3	0.3	0.3	1
 highlight	1	1	1	0.15
 dark	0	0	0	0.8
+inventory_slot_trans	1	1	1	0.7

@@ -13,3 +13,4 @@ style_hud_buttonbar_character			ortho_pos_uv	hud/buttonbar_character.png		0
 style_hud_buttonbar_skills			ortho_pos_uv	hud/buttonbar_skills.png		0
 style_hud_buttonbar_menu			ortho_pos_uv	hud/buttonbar_menu.png		0
 style_hud_actionbar_slot			ortho_pos_uv	hud/slot.png		0
+style_hud_actionbar_slot_alpha			ortho_pos_uv	hud/slot.png	inventory_slot_trans	0

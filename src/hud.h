@@ -169,7 +169,6 @@ class _HUD {
 		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
 		void GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
-		void GetInventoryItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
 		void GetVendorItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
 		void GetTraderItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
 		void GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);

@@ -74,149 +74,141 @@ void _HUD::Close() {
 
 // Mouse events
 void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
-	switch(*State) {
-		case _PlayClientState::STATE_VENDOR:
-		case _PlayClientState::STATE_TRADER:
-		case _PlayClientState::STATE_TRADE:
-		case _PlayClientState::STATE_INVENTORY:
-			GetItem(MouseEvent.Position, TooltipItem);
-		break;
-		case _PlayClientState::STATE_SKILLS:
-			GetSkill(MouseEvent.Position, TooltipSkill);
-		break;
-	}
 
 	// Press
-	switch(*State) {
-		case _PlayClientState::STATE_VENDOR:
-			switch(MouseEvent.Button) {
-				case SDL_BUTTON_LEFT:
-					if(TooltipItem.Item) {
-						CursorItem = TooltipItem;
-					}
-				break;
-				case SDL_BUTTON_RIGHT:
-					if(TooltipItem.Item) {
-						if(TooltipItem.Window == WINDOW_VENDOR)
-							BuyItem(&TooltipItem, -1);
-						else if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
-							SellItem(&TooltipItem, 1);
-					}
-				break;
-			}
-		break;
-		case _PlayClientState::STATE_INVENTORY:
-			switch(MouseEvent.Button) {
-				case SDL_BUTTON_LEFT:
-					if(TooltipItem.Item) {
-						if(Input.ModKeyDown(KMOD_CTRL))
-							SplitStack(TooltipItem.Slot, 1);
-						else
+	if(MouseEvent.Pressed) {
+		switch(*State) {
+			case _PlayClientState::STATE_VENDOR:
+				switch(MouseEvent.Button) {
+					case SDL_BUTTON_LEFT:
+						if(TooltipItem.Item) {
 							CursorItem = TooltipItem;
-					}
-				break;
-				case SDL_BUTTON_RIGHT:
-					if(Player->UseInventory(TooltipItem.Slot)) {
-						_Buffer Packet;
-						Packet.Write<char>(_Network::INVENTORY_USE);
-						Packet.Write<char>(TooltipItem.Slot);
-						ClientNetwork->SendPacketToHost(&Packet);
-					}
-				break;
-			}
-		break;
-		case _PlayClientState::STATE_TRADE:
-			switch(MouseEvent.Button) {
-				case SDL_BUTTON_LEFT:
-					if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
-						if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
-							SplitStack(TooltipItem.Slot, 1);
-						else
-							CursorItem = TooltipItem;
-					}
-				break;
-			}
-		break;
-		case _PlayClientState::STATE_SKILLS:
-			switch(MouseEvent.Button) {
-				case SDL_BUTTON_LEFT:
-					if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
-						CursorSkill = TooltipSkill;
-				break;
-			}
-		break;
+						}
+					break;
+					case SDL_BUTTON_RIGHT:
+						if(TooltipItem.Item) {
+							if(TooltipItem.Window == WINDOW_VENDOR)
+								BuyItem(&TooltipItem, -1);
+							else if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
+								SellItem(&TooltipItem, 1);
+						}
+					break;
+				}
+			break;
+			case _PlayClientState::STATE_INVENTORY: {
+				switch(MouseEvent.Button) {
+					case SDL_BUTTON_LEFT:
+						if(TooltipItem.Item) {
+							if(Input.ModKeyDown(KMOD_CTRL))
+								SplitStack(TooltipItem.Slot, 1);
+							else
+								CursorItem = TooltipItem;
+						}
+					break;
+					case SDL_BUTTON_RIGHT:
+						if(Player->UseInventory(TooltipItem.Slot)) {
+							_Buffer Packet;
+							Packet.Write<char>(_Network::INVENTORY_USE);
+							Packet.Write<char>(TooltipItem.Slot);
+							ClientNetwork->SendPacketToHost(&Packet);
+						}
+					break;
+				}
+			} break;
+			case _PlayClientState::STATE_TRADE:
+				switch(MouseEvent.Button) {
+					case SDL_BUTTON_LEFT:
+						if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
+							if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
+								SplitStack(TooltipItem.Slot, 1);
+							else
+								CursorItem = TooltipItem;
+						}
+					break;
+				}
+			break;
+			case _PlayClientState::STATE_SKILLS:
+				switch(MouseEvent.Button) {
+					case SDL_BUTTON_LEFT:
+						if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
+							CursorSkill = TooltipSkill;
+					break;
+				}
+			break;
+		}
 	}
-
 	// Release
-	switch(*State) {
-		case _PlayClientState::STATE_INVENTORY:
-		case _PlayClientState::STATE_VENDOR:
-		case _PlayClientState::STATE_TRADE:
-			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+	else {
+		switch(*State) {
+			case _PlayClientState::STATE_INVENTORY:
+			case _PlayClientState::STATE_VENDOR:
+			case _PlayClientState::STATE_TRADE:
+				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
-				// Check for valid slots
-				if(CursorItem.Item) {
+					// Check for valid slots
+					if(CursorItem.Item) {
 
-					switch(CursorItem.Window) {
-						// Coming from inventory
-						case WINDOW_TRADEYOU:
-						case WINDOW_INVENTORY:
+						switch(CursorItem.Window) {
+							// Coming from inventory
+							case WINDOW_TRADEYOU:
+							case WINDOW_INVENTORY:
 
-							switch(TooltipItem.Window) {
-								// Send inventory move packet
-								case WINDOW_TRADEYOU:
-								case WINDOW_INVENTORY:
+								switch(TooltipItem.Window) {
+									// Send inventory move packet
+									case WINDOW_TRADEYOU:
+									case WINDOW_INVENTORY:
 
-									if(TooltipItem.Slot >= 0 && Player->MoveInventory(CursorItem.Slot, TooltipItem.Slot)) {
-										_Buffer Packet;
-										Packet.Write<char>(_Network::INVENTORY_MOVE);
-										Packet.Write<char>(CursorItem.Slot);
-										Packet.Write<char>(TooltipItem.Slot);
-										ClientNetwork->SendPacketToHost(&Packet);
+										if(TooltipItem.Slot >= 0 && Player->MoveInventory(CursorItem.Slot, TooltipItem.Slot)) {
+											_Buffer Packet;
+											Packet.Write<char>(_Network::INVENTORY_MOVE);
+											Packet.Write<char>(CursorItem.Slot);
+											Packet.Write<char>(TooltipItem.Slot);
+											ClientNetwork->SendPacketToHost(&Packet);
 
-										ResetAcceptButton();
-										Player->CalculatePlayerStats();
+											ResetAcceptButton();
+											Player->CalculatePlayerStats();
+										}
+									break;
+									// Sell an item
+									case WINDOW_VENDOR: {
+										SellItem(&CursorItem, 1);
 									}
-								break;
-								// Sell an item
-								case WINDOW_VENDOR: {
-									SellItem(&CursorItem, 1);
+									break;
 								}
-								break;
-							}
-						break;
-						// Buy an item
-						case WINDOW_VENDOR:
-							if(TooltipItem.Window == WINDOW_INVENTORY) {
-								BuyItem(&CursorItem, TooltipItem.Slot);
-							}
-						break;
+							break;
+							// Buy an item
+							case WINDOW_VENDOR:
+								if(TooltipItem.Window == WINDOW_INVENTORY) {
+									BuyItem(&CursorItem, TooltipItem.Slot);
+								}
+							break;
+						}
 					}
+
+					CursorItem.Reset();
 				}
+			break;
+			case _PlayClientState::STATE_SKILLS:
+				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
-				CursorItem.Reset();
-			}
-		break;
-		case _PlayClientState::STATE_SKILLS:
-			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+					// Check for valid slots
+					if(CursorSkill.Skill) {
 
-				// Check for valid slots
-				if(CursorSkill.Skill) {
-
-					if(TooltipSkill.Window == WINDOW_SKILLBAR) {
-						if(CursorSkill.Window == WINDOW_SKILLS)
-							SetSkillBar(TooltipSkill.Slot, -1, CursorSkill.Skill);
-						else if(CursorSkill.Window == WINDOW_SKILLBAR)
-							SetSkillBar(TooltipSkill.Slot, CursorSkill.Slot, CursorSkill.Skill);
+						if(TooltipSkill.Window == WINDOW_SKILLBAR) {
+							if(CursorSkill.Window == WINDOW_SKILLS)
+								SetSkillBar(TooltipSkill.Slot, -1, CursorSkill.Skill);
+							else if(CursorSkill.Window == WINDOW_SKILLBAR)
+								SetSkillBar(TooltipSkill.Slot, CursorSkill.Slot, CursorSkill.Skill);
+						}
+						else if(CursorSkill.Window == WINDOW_SKILLBAR && TooltipSkill.Slot == -1) {
+							SetSkillBar(CursorSkill.Slot, -1, nullptr);
+						}
 					}
-					else if(CursorSkill.Window == WINDOW_SKILLBAR && TooltipSkill.Slot == -1) {
-						SetSkillBar(CursorSkill.Slot, -1, nullptr);
-					}
+
+					CursorSkill.Reset();
 				}
-
-				CursorSkill.Reset();
-			}
-		break;
+			break;
+		}
 	}
 }
 
@@ -443,9 +435,24 @@ void _HUD::Update(double FrameTime) {
 	Assets.Elements["element_hud_buttonbar"]->Update(FrameTime, Input.GetMouse());
 
 	switch(*State) {
-		case _PlayClientState::STATE_INVENTORY:
-			Assets.Elements["element_inventory"]->Update(FrameTime, Input.GetMouse());
-		break;
+		case _PlayClientState::STATE_INVENTORY: {
+			_Element *InventoryElement = Assets.Elements["element_inventory"];
+			InventoryElement->Update(FrameTime, Input.GetMouse());
+			_Element *HoverSlot = InventoryElement->HitElement;
+			if(HoverSlot && HoverSlot != InventoryElement) {
+				int InventoryIndex = (intptr_t)HoverSlot->UserData;
+				TooltipItem.Window = WINDOW_INVENTORY;
+				const _Item *Item = Player->GetInventory(InventoryIndex)->Item;
+				_InventorySlot *InventorySlot = Player->GetInventory(InventoryIndex);
+
+				// Get price if vendor is open
+				int Price = 0;
+				if(Item)
+					Price = Item->GetPrice(Vendor, InventorySlot->Count, false);
+
+				TooltipItem.Set(Item, Price, InventorySlot->Count, InventoryIndex);
+			}
+		} break;
 		default:
 		break;
 	}
@@ -938,12 +945,12 @@ void _HUD::DrawInventory() {
 	for(int i = _Player::INVENTORY_BACKPACK; i < _Player::INVENTORY_TRADE; i++) {
 		Item = Player->GetInventory(i);
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
-			glm::ivec2 DrawPosition(Offset.x + 170 + GridPosition.x * 48, Offset.y + GridPosition.y * 48);
+			glm::ivec2 DrawPosition(Offset.x + 170 + GridPosition.x * 48 + 24, Offset.y + GridPosition.y * 48 + 24);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition + 24, Item->Item->GetImage());
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
 			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
 			if(Item->Count > 1) {
-				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(44, 44), glm::vec4(1.0f), RIGHT_BASELINE);
+				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 			}
 		}
 
@@ -1243,13 +1250,12 @@ void _HUD::DrawSkills() {
 // Draws the item under the cursor
 void _HUD::DrawCursorItem() {
 	if(CursorItem.Item) {
-		glm::ivec2 DrawPosition = Input.GetMouse() - 16;
-		//Graphics.SetFont(_Graphics::FONT_7);
-		Graphics.DrawCenteredImage(DrawPosition + 16, CursorItem.Item->GetImage());
+		glm::ivec2 DrawPosition = Input.GetMouse();
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(DrawPosition, CursorItem.Item->GetImage());
 		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawPosition, CursorItem.Window == WINDOW_VENDOR);
-		//if(CursorItem.Count > 1)
-			//Graphics.RenderText(std::string(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
-		//Graphics.SetFont(_Graphics::FONT_10);
+		if(CursorItem.Count > 1)
+			Assets.Fonts["hud_small"]->DrawText(std::to_string(CursorItem.Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 	}
 }
 
@@ -1582,6 +1588,7 @@ void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAl
 
 // Returns an item that's on the screen
 void _HUD::GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
+	/*
 	TCursorItem.Reset();
 
 	switch(*State) {
@@ -1599,52 +1606,7 @@ void _HUD::GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 			GetInventoryItem(Position, TCursorItem);
 			GetTradeItem(Position, TCursorItem);
 		break;
-	}
-}
-
-// Returns an inventory item from a mouse position
-void _HUD::GetInventoryItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
-	/*
-	core::recti WindowArea = TabInventory->getAbsolutePosition();
-	if(!WindowArea.isPointInside(TPoint))
-		return;
-
-	const _Item *Item;
-	int Price = 0;
-	TCursorItem.Window = WINDOW_INVENTORY;
-
-	// Adjust mouse position
-	TPoint.x -= WindowArea.UpperLeftCorner.x;
-	TPoint.y -= WindowArea.UpperLeftCorner.y;
-
-	// Search equipped item area
-	if(TPoint.x < 122) {
-
-		core::recti ItemArea;
-		for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
-			ItemArea.UpperLeftCorner.x = EquippedItemPositions[i].x - 16;
-			ItemArea.UpperLeftCorner.y = EquippedItemPositions[i].y - 16;
-			ItemArea.LowerRightCorner.x = EquippedItemPositions[i].x + 16;
-			ItemArea.LowerRightCorner.y = EquippedItemPositions[i].y + 16;
-			if(ItemArea.isPointInside(TPoint)) {
-				//printf("%d=%d %d\n", i, TPoint.x, TPoint.y);
-				Item = Player->GetInventory(i)->Item;
-				if(Item)
-					Price = Item->GetPrice(Vendor, Player->GetInventory(i)->Count, false);
-				TCursorItem.Set(Item, Price, Player->GetInventory(i)->Count, i);
-				return;
-			}
-		}
-	}
-	else if(TPoint.x >= 132 && TPoint.x <= 259 && TPoint.y >= 1 && TPoint.y <= 192) {
-		int InventoryIndex = (TPoint.x - 132) / 32 + (TPoint.y - 1) / 32 * 4 + _Player::INVENTORY_BACKPACK;
-		//printf("%d=%d %d\n", InventoryIndex, TPoint.x, TPoint.y);
-		Item = Player->GetInventory(InventoryIndex)->Item;
-		if(Item)
-			Price = Item->GetPrice(Vendor, Player->GetInventory(InventoryIndex)->Count, false);
-		TCursorItem.Set(Item, Price, Player->GetInventory(InventoryIndex)->Count, InventoryIndex);
-	}
-	*/
+	}*/
 }
 
 // Returns a vendor item from a mouse position
