@@ -433,6 +433,7 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 void _HUD::Update(double FrameTime) {
 	Assets.Elements["element_hud"]->Update(FrameTime, Input.GetMouse());
 	Assets.Elements["element_hud_buttonbar"]->Update(FrameTime, Input.GetMouse());
+	TooltipItem.Reset();
 
 	switch(*State) {
 		case _PlayClientState::STATE_INVENTORY: {
@@ -1261,60 +1262,66 @@ void _HUD::DrawCursorItem() {
 
 // Draws information about an item
 void _HUD::DrawItemTooltip() {
-	/*
 	const _Item *Item = TooltipItem.Item;
 	if(Item) {
-		int DrawX = Input.GetMouse().x + 16;
-		int DrawY = Input.GetMouse().y - 200;
-		int Width = 175;
-		int Height = 200;
-		if(DrawY < 20)
-			DrawY = 20;
+		_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
+		_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
+		_Label *TooltipType = Assets.Labels["label_item_tooltip_type"];
 
-		// Draw background
-		char Buffer[256];
-		std::string String;
-		//Graphics.SetFont(_Graphics::FONT_10);
-		//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
-		DrawX += 10;
+		// Set label values
+		TooltipName->Text = Item->GetName();
+		Item->GetType(TooltipType->Text);
 
-		// Draw name
-		DrawY += 10;
-		//Graphics.RenderText(Item->GetName().c_str(), DrawX, DrawY);
+		// Set window width
+		_TextBounds TextBounds;
+		Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
+		int Width = 250;
+		Width = std::max(Width, TextBounds.Width) + 20;
 
-		// Draw type
-		DrawY += 15;
-		Item->GetType(String);
-		//Graphics.RenderText(String.c_str(), DrawX, DrawY);
+		// Position window
+		glm::ivec2 WindowOffset = Input.GetMouse();
+		WindowOffset.x += 20;
+		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+		TooltipElement->SetOffset(WindowOffset);
+		TooltipElement->SetWidth(Width);
 
-		// Draw level
-		DrawY += 15;
-		sprintf(Buffer, "Level %d", Item->GetLevel());
-		//Graphics.RenderText(Buffer, DrawX, DrawY);
+		// Render tooltip
+		TooltipElement->Render();
 
-		DrawY += 15;
+		glm::ivec2 DrawPosition((TooltipElement->Bounds.End.x - TooltipElement->Bounds.Start.x) / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
+
+		DrawPosition.y += 40;
+		glm::ivec2 Spacing(10, 0);
+
+		// Render damage
 		int Min, Max;
-
-		// Damage
 		Item->GetDamageRange(Min, Max);
 		if(Min != 0 || Max != 0) {
+
+			std::stringstream Buffer;
 			if(Min != Max)
-				sprintf(Buffer, "Damage: %d to %d", Min, Max);
+				Buffer << Min << " - " << Max;
 			else
-				sprintf(Buffer, "Damage: %d", Min);
-			//Graphics.RenderText(Buffer, DrawX, DrawY);
-			DrawY += 15;
+				Buffer << Min;
+
+			Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
+			DrawPosition.y += 20;
 		}
 
-		// Defense
+		// Render defense
 		Item->GetDefenseRange(Min, Max);
 		if(Min != 0 || Max != 0) {
+
+			std::stringstream Buffer;
 			if(Min != Max)
-				sprintf(Buffer, "Defense: %d to %d", Min, Max);
+				Buffer << Min << " - " << Max;
 			else
-				sprintf(Buffer, "Defense: %d", Min);
-			//Graphics.RenderText(Buffer, DrawX, DrawY);
-			DrawY += 15;
+				Buffer << Min;
+
+			Assets.Fonts["hud_medium"]->DrawText("Defense", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
+			DrawPosition.y += 20;
 		}
 
 		switch(Item->GetType()) {
@@ -1326,28 +1333,31 @@ void _HUD::DrawItemTooltip() {
 			case _Item::TYPE_SHIELD:
 			break;
 			case _Item::TYPE_POTION:
+				if(TooltipItem.Window == WINDOW_INVENTORY) {
+					DrawPosition.y -= 20;
+					Assets.Fonts["hud_small"]->DrawText("Right-click to use", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+					DrawPosition.y += 40;
+				}
 				if(Item->GetHealthRestore() > 0) {
-					sprintf(Buffer, "HP Restored: %d", Item->GetHealthRestore());
-					//Graphics.RenderText(Buffer, DrawX, DrawY);
-					DrawY += 15;
+					std::stringstream Buffer;
+					Buffer << "+" << Item->GetHealthRestore() << " HP";
+					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GREEN, CENTER_BASELINE);
+					DrawPosition.y += 20;
 				}
 				if(Item->GetManaRestore() > 0) {
-					sprintf(Buffer, "MP Restored: %d", Item->GetManaRestore());
-					//Graphics.RenderText(Buffer, DrawX, DrawY);
-					DrawY += 15;
+					std::stringstream Buffer;
+					Buffer << "+" << Item->GetManaRestore() << " MP";
+					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_BLUE, CENTER_BASELINE);
+					DrawPosition.y += 20;
 				}
 				if(Item->GetInvisPower() > 0) {
-					sprintf(Buffer, "Invisibility Length: %d", Item->GetInvisPower());
+					//sprintf(Buffer, "Invisibility Length: %d", Item->GetInvisPower());
 					//Graphics.RenderText(Buffer, DrawX, DrawY);
-					DrawY += 15;
-				}
-
-				if(TooltipItem.Window == WINDOW_INVENTORY) {
-					////Graphics.RenderText("Right-click to use", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
-					DrawY += 15;
+					DrawPosition.y += 20;
 				}
 			break;
 		}
+		/*
 
 		// Boosts
 		if(Item->GetMaxHealth() != 0) {
@@ -1397,8 +1407,8 @@ void _HUD::DrawItemTooltip() {
 				}
 			break;
 		}
-	}
 	*/
+	}
 }
 
 // Draws the skill under the cursor

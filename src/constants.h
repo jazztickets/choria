@@ -125,3 +125,4 @@ const  glm::vec4    COLOR_YELLOW                   =  {1.0f,1.0f,0.0f,1.0f};
 const  glm::vec4    COLOR_MAGENTA                  =  {1.0f,0.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_CYAN                     =  {0.0f,1.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_GOLD                     =  {0.76f,0.73f,0.173f,1.0f};
+const  glm::vec4    COLOR_GRAY                     =  {0.6f,0.6f,0.6f,1.0f};
