@@ -30,6 +30,7 @@ class _Skill;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
+struct _MouseEvent;
 
 // Structures
 struct _CursorItem {
@@ -111,10 +112,7 @@ class _HUD {
 		void Close();
 
 		// Updates
-		void HandleMouseMotion(int TMouseX, int TMouseY);
-		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
-		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY);
-
+		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
 		void Render();
 
@@ -162,7 +160,7 @@ class _HUD {
 		void DrawTrader();
 		void DrawTrade();
 		void DrawSkills();
-		void DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy);
+		void DrawItemPrice(const _Item *TItem, int TCount, const glm::ivec2 &DrawPosition, bool TBuy);
 		void DrawCursorItem();
 		void DrawItemTooltip();
 		void DrawCursorSkill();
@@ -170,16 +168,16 @@ class _HUD {
 		void DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY);
 		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
-		void GetItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
-		void GetInventoryItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
-		void GetVendorItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
-		void GetTraderItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
-		void GetTradeItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem);
+		void GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
+		void GetInventoryItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
+		void GetVendorItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
+		void GetTraderItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
+		void GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
 		void BuyItem(_CursorItem *TCursorItem, int TTargetSlot);
 		void SellItem(_CursorItem *TCursorItem, int TAmount);
 
-		void GetSkill(glm::ivec2 &TPoint, _CursorSkill &TCursorSkill);
-		void GetSkillPageSkill(glm::ivec2 &TPoint, _CursorSkill &TCursorSkill);
+		void GetSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill);
+		void GetSkillPageSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill);
 		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
 
 		void RefreshSkillButtons();

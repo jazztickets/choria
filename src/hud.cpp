@@ -21,6 +21,7 @@
 #include <globals.h>
 #include <input.h>
 #include <stats.h>
+#include <font.h>
 #include <constants.h>
 #include <buffer.h>
 #include <assets.h>
@@ -41,13 +42,13 @@
 _HUD HUD;
 
 static glm::ivec2 EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
-	{66, 20},
-	{66, 78},
-	{64, 162},
-	{25, 106},
-	{105, 108},
-	{25, 146},
-	{105, 146}
+	{ 61,  4   },
+	{ 61,  67  },
+	{ 64,  234 },
+	{ 12,  125 },
+	{ 111, 125 },
+	{ 12,  176 },
+	{ 111, 176 }
 };
 
 // Initialize
@@ -71,29 +72,24 @@ void _HUD::Init() {
 void _HUD::Close() {
 }
 
-// Handles mouse movement
-void _HUD::HandleMouseMotion(int TMouseX, int TMouseY) {
-	glm::ivec2 MousePosition(TMouseX, TMouseY);
-
+// Mouse events
+void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 	switch(*State) {
 		case _PlayClientState::STATE_VENDOR:
 		case _PlayClientState::STATE_TRADER:
 		case _PlayClientState::STATE_TRADE:
 		case _PlayClientState::STATE_INVENTORY:
-			GetItem(MousePosition, TooltipItem);
+			GetItem(MouseEvent.Position, TooltipItem);
 		break;
 		case _PlayClientState::STATE_SKILLS:
-			GetSkill(MousePosition, TooltipSkill);
+			GetSkill(MouseEvent.Position, TooltipSkill);
 		break;
 	}
-}
 
-// Handles mouse presses
-bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
-
+	// Press
 	switch(*State) {
 		case _PlayClientState::STATE_VENDOR:
-			switch(TButton) {
+			switch(MouseEvent.Button) {
 				case SDL_BUTTON_LEFT:
 					if(TooltipItem.Item) {
 						CursorItem = TooltipItem;
@@ -110,7 +106,7 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 			}
 		break;
 		case _PlayClientState::STATE_INVENTORY:
-			switch(TButton) {
+			switch(MouseEvent.Button) {
 				case SDL_BUTTON_LEFT:
 					if(TooltipItem.Item) {
 						if(Input.ModKeyDown(KMOD_CTRL))
@@ -130,7 +126,7 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 			}
 		break;
 		case _PlayClientState::STATE_TRADE:
-			switch(TButton) {
+			switch(MouseEvent.Button) {
 				case SDL_BUTTON_LEFT:
 					if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
 						if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
@@ -142,7 +138,7 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 			}
 		break;
 		case _PlayClientState::STATE_SKILLS:
-			switch(TButton) {
+			switch(MouseEvent.Button) {
 				case SDL_BUTTON_LEFT:
 					if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
 						CursorSkill = TooltipSkill;
@@ -151,17 +147,12 @@ bool _HUD::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
 		break;
 	}
 
-	return false;
-}
-
-// Handles mouse release
-void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
-
+	// Release
 	switch(*State) {
 		case _PlayClientState::STATE_INVENTORY:
 		case _PlayClientState::STATE_VENDOR:
 		case _PlayClientState::STATE_TRADE:
-			if(TButton == SDL_BUTTON_LEFT) {
+			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
 				// Check for valid slots
 				if(CursorItem.Item) {
@@ -207,7 +198,7 @@ void _HUD::HandleMouseRelease(int TButton, int TMouseX, int TMouseY) {
 			}
 		break;
 		case _PlayClientState::STATE_SKILLS:
-			if(TButton == SDL_BUTTON_LEFT) {
+			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
 				// Check for valid slots
 				if(CursorSkill.Skill) {
@@ -810,7 +801,7 @@ void _HUD::CloseSkills() {
 	if(SkillBarChanged) {
 		_Buffer Packet;
 		Packet.Write<char>(_Network::SKILLS_SKILLBAR);
-		for(int i = 0; i < 8; i++)
+		for(int i = 0; i < BATTLE_MAXSKILLS; i++)
 			Packet.Write<char>(Player->GetSkillBarID(i));
 
 		ClientNetwork->SendPacketToHost(&Packet);
@@ -925,52 +916,43 @@ void _HUD::DrawChat() {
 
 // Draws the player's inventory
 void _HUD::DrawInventory() {
-
 	Assets.Elements["element_inventory"]->Render();
-	/*
-	core::recti WindowArea = TabInventory->getAbsolutePosition();
-	int OffsetX = WindowArea.UpperLeftCorner.x;
-	int OffsetY = WindowArea.UpperLeftCorner.y;
 
-	Graphics.SetFont(_Graphics::FONT_7);
+	// Get position of window
+	glm::ivec2 Offset = Assets.Elements["element_inventory"]->Bounds.Start;
 
 	// Draw equipped items
 	_InventorySlot *Item;
-	glm::ivec2 *Position;
 	for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
 		Item = Player->GetInventory(i);
-		Position = &EquippedItemPositions[i];
+		glm::ivec2 &Position = EquippedItemPositions[i];
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
-			int DrawX = OffsetX + Position->X - 16;
-			int DrawY = OffsetY + Position->Y - 16;
-			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
-			DrawItemPrice(Item->Item, Item->Count, DrawX, DrawY, false);
+			glm::ivec2 DrawPosition = Offset + Position + glm::ivec2(24, 24);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
+			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
 		}
 	}
 
 	// Draw inventory items
-	int PositionX = 0, PositionY = 0;
+	glm::ivec2 GridPosition(0, 0);
 	for(int i = _Player::INVENTORY_BACKPACK; i < _Player::INVENTORY_TRADE; i++) {
 		Item = Player->GetInventory(i);
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
-			int DrawX = OffsetX + 132 + PositionX * 32;
-			int DrawY = OffsetY + 1 + PositionY * 32;
-			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
-			DrawItemPrice(Item->Item, Item->Count, DrawX, DrawY, false);
+			glm::ivec2 DrawPosition(Offset.x + 170 + GridPosition.x * 48, Offset.y + GridPosition.y * 48);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition + 24, Item->Item->GetImage());
+			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
 			if(Item->Count > 1) {
-				//Graphics.RenderText(std::string(Item->Count).c_str(), DrawX + 2, DrawY + 20);
+				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(44, 44), glm::vec4(1.0f), RIGHT_BASELINE);
 			}
 		}
 
-		PositionX++;
-		if(PositionX > 3) {
-			PositionX = 0;
-			PositionY++;
+		GridPosition.x++;
+		if(GridPosition.x > 3) {
+			GridPosition.x = 0;
+			GridPosition.y++;
 		}
 	}
-
-	Graphics.SetFont(_Graphics::FONT_10);
-	*/
 }
 
 // Draw the town portal sequence
@@ -1264,7 +1246,7 @@ void _HUD::DrawCursorItem() {
 		glm::ivec2 DrawPosition = Input.GetMouse() - 16;
 		//Graphics.SetFont(_Graphics::FONT_7);
 		Graphics.DrawCenteredImage(DrawPosition + 16, CursorItem.Item->GetImage());
-		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawPosition.x, DrawPosition.y, CursorItem.Window == WINDOW_VENDOR);
+		DrawItemPrice(CursorItem.Item, CursorItem.Count, DrawPosition, CursorItem.Window == WINDOW_VENDOR);
 		//if(CursorItem.Count > 1)
 			//Graphics.RenderText(std::string(CursorItem.Count).c_str(), DrawX + 2, DrawY + 20);
 		//Graphics.SetFont(_Graphics::FONT_10);
@@ -1545,7 +1527,7 @@ void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int
 }
 
 // Draws an item's price
-void _HUD::DrawItemPrice(const _Item *TItem, int TCount, int TDrawX, int TDrawY, bool TBuy) {
+void _HUD::DrawItemPrice(const _Item *TItem, int TCount, const glm::ivec2 &DrawPosition, bool TBuy) {
 	/*
 	if(!Vendor)
 		return;
@@ -1599,29 +1581,29 @@ void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAl
 }
 
 // Returns an item that's on the screen
-void _HUD::GetItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
+void _HUD::GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 	TCursorItem.Reset();
 
 	switch(*State) {
 		case _PlayClientState::STATE_INVENTORY:
-			GetInventoryItem(TPoint, TCursorItem);
+			GetInventoryItem(Position, TCursorItem);
 		break;
 		case _PlayClientState::STATE_VENDOR:
-			GetInventoryItem(TPoint, TCursorItem);
-			GetVendorItem(TPoint, TCursorItem);
+			GetInventoryItem(Position, TCursorItem);
+			GetVendorItem(Position, TCursorItem);
 		break;
 		case _PlayClientState::STATE_TRADER:
-			GetTraderItem(TPoint, TCursorItem);
+			GetTraderItem(Position, TCursorItem);
 		break;
 		case _PlayClientState::STATE_TRADE:
-			GetInventoryItem(TPoint, TCursorItem);
-			GetTradeItem(TPoint, TCursorItem);
+			GetInventoryItem(Position, TCursorItem);
+			GetTradeItem(Position, TCursorItem);
 		break;
 	}
 }
 
 // Returns an inventory item from a mouse position
-void _HUD::GetInventoryItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
+void _HUD::GetInventoryItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 	/*
 	core::recti WindowArea = TabInventory->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
@@ -1666,7 +1648,7 @@ void _HUD::GetInventoryItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
 }
 
 // Returns a vendor item from a mouse position
-void _HUD::GetVendorItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
+void _HUD::GetVendorItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 	/*
 	core::recti WindowArea = TabVendor->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
@@ -1691,7 +1673,7 @@ void _HUD::GetVendorItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
 }
 
 // Returns a trader item from a mouse position
-void _HUD::GetTraderItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
+void _HUD::GetTraderItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 	/*
 	core::recti WindowArea = TabTrader->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
@@ -1724,7 +1706,7 @@ void _HUD::GetTraderItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
 }
 
 // Returns a trade item from a mouse position
-void _HUD::GetTradeItem(glm::ivec2 &TPoint, _CursorItem &TCursorItem) {
+void _HUD::GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 	/*
 	core::recti WindowArea = TabTrade->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
@@ -1799,12 +1781,12 @@ void _HUD::SellItem(_CursorItem *TCursorItem, int TAmount) {
 }
 
 // Returns a skill that's on the screen
-void _HUD::GetSkill(glm::ivec2 &TPoint, _CursorSkill &TCursorSkill) {
+void _HUD::GetSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill) {
 	TCursorSkill.Reset();
 
 	switch(*State) {
 		case _PlayClientState::STATE_SKILLS:
-			GetSkillPageSkill(TPoint, TCursorSkill);
+			GetSkillPageSkill(Position, TCursorSkill);
 		break;
 		case _PlayClientState::STATE_BATTLE:
 		break;
@@ -1812,7 +1794,7 @@ void _HUD::GetSkill(glm::ivec2 &TPoint, _CursorSkill &TCursorSkill) {
 }
 
 // Gets a skill from the skill page
-void _HUD::GetSkillPageSkill(glm::ivec2 &TPoint, _CursorSkill &TCursorSkill) {
+void _HUD::GetSkillPageSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill) {
 	/*
 	core::recti WindowArea = TabSkill->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
