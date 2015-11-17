@@ -38,6 +38,7 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
+#include <iomanip>
 
 _HUD HUD;
 
@@ -1288,16 +1289,17 @@ void _HUD::DrawItemTooltip() {
 		// Render tooltip
 		TooltipElement->Render();
 
+		// Set draw position to center of window
 		glm::ivec2 DrawPosition((TooltipElement->Bounds.End.x - TooltipElement->Bounds.Start.x) / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
-
 		DrawPosition.y += 40;
+
 		glm::ivec2 Spacing(10, 0);
+		int SpacingY = 25;
 
 		// Render damage
 		int Min, Max;
 		Item->GetDamageRange(Min, Max);
 		if(Min != 0 || Max != 0) {
-
 			std::stringstream Buffer;
 			if(Min != Max)
 				Buffer << Min << " - " << Max;
@@ -1306,13 +1308,12 @@ void _HUD::DrawItemTooltip() {
 
 			Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
-			DrawPosition.y += 20;
+			DrawPosition.y += SpacingY;
 		}
 
 		// Render defense
 		Item->GetDefenseRange(Min, Max);
 		if(Min != 0 || Max != 0) {
-
 			std::stringstream Buffer;
 			if(Min != Max)
 				Buffer << Min << " - " << Max;
@@ -1321,7 +1322,7 @@ void _HUD::DrawItemTooltip() {
 
 			Assets.Fonts["hud_medium"]->DrawText("Defense", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
-			DrawPosition.y += 20;
+			DrawPosition.y += SpacingY;
 		}
 
 		switch(Item->GetType()) {
@@ -1336,51 +1337,55 @@ void _HUD::DrawItemTooltip() {
 				if(TooltipItem.Window == WINDOW_INVENTORY) {
 					DrawPosition.y -= 20;
 					Assets.Fonts["hud_small"]->DrawText("Right-click to use", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
-					DrawPosition.y += 40;
+					DrawPosition.y += SpacingY*2;
 				}
 				if(Item->GetHealthRestore() > 0) {
 					std::stringstream Buffer;
 					Buffer << "+" << Item->GetHealthRestore() << " HP";
 					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GREEN, CENTER_BASELINE);
-					DrawPosition.y += 20;
+					DrawPosition.y += SpacingY;
 				}
 				if(Item->GetManaRestore() > 0) {
 					std::stringstream Buffer;
 					Buffer << "+" << Item->GetManaRestore() << " MP";
 					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_BLUE, CENTER_BASELINE);
-					DrawPosition.y += 20;
+					DrawPosition.y += SpacingY;
 				}
 				if(Item->GetInvisPower() > 0) {
-					//sprintf(Buffer, "Invisibility Length: %d", Item->GetInvisPower());
-					//Graphics.RenderText(Buffer, DrawX, DrawY);
-					DrawPosition.y += 20;
+					std::stringstream Buffer;
+					Buffer << "+" << Item->GetInvisPower() << " Invisibility Time";
+					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_TWHITE, CENTER_BASELINE);
+					DrawPosition.y += SpacingY;
 				}
 			break;
 		}
-		/*
 
 		// Boosts
-		if(Item->GetMaxHealth() != 0) {
-			sprintf(Buffer, "%+d HP", Item->GetMaxHealth());
-			//Graphics.RenderText(Buffer, DrawX, DrawY);
-			DrawY += 15;
+		if(Item->GetMaxHealth() > 0) {
+			std::stringstream Buffer;
+			Buffer << "+" << Item->GetMaxHealth() << "% HP";
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			DrawPosition.y += SpacingY;
 		}
-		if(Item->GetMaxMana() != 0) {
-			sprintf(Buffer, "%+d MP", Item->GetMaxMana());
-			//Graphics.RenderText(Buffer, DrawX, DrawY);
-			DrawY += 15;
+		if(Item->GetMaxMana() > 0) {
+			std::stringstream Buffer;
+			Buffer << "+" << Item->GetMaxMana() << "% MP";
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			DrawPosition.y += SpacingY;
 		}
-		if(Item->GetHealthRegen() != 0) {
-			sprintf(Buffer, "%+0.2f%% HP Regen", Item->GetHealthRegen());
-			//Graphics.RenderText(Buffer, DrawX, DrawY);
-			DrawY += 15;
+		if(Item->GetHealthRegen() > 0) {
+			std::stringstream Buffer;
+			Buffer << "+" << std::setprecision(2) << Item->GetHealthRegen() << "% HP Regen";
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			DrawPosition.y += SpacingY;
 		}
-		if(Item->GetManaRegen() != 0) {
-			sprintf(Buffer, "%+0.2f%% MP Regen", Item->GetManaRegen());
-			//Graphics.RenderText(Buffer, DrawX, DrawY);
-			DrawY += 15;
+		if(Item->GetManaRegen() > 0) {
+			std::stringstream Buffer;
+			Buffer << "+" << std::setprecision(2) << Item->GetManaRegen() << "% MP Regen";
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			DrawPosition.y += SpacingY;
 		}
-
+		/*
 		// Vendors
 		if(Vendor) {
 			DrawY += 15;
@@ -1397,17 +1402,16 @@ void _HUD::DrawItemTooltip() {
 				//Graphics.RenderText("Shift+Right-click to sell", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
 			}
 		}
-
+*/
 		switch(*State) {
 			case _PlayClientState::STATE_INVENTORY:
 			case _PlayClientState::STATE_TRADE:
 				if(TooltipItem.Window == WINDOW_INVENTORY && TooltipItem.Count > 1) {
-					//Graphics.RenderText("Ctrl+click to split", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
-					DrawY += 15;
+					Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+					DrawPosition.y += SpacingY;
 				}
 			break;
 		}
-	*/
 	}
 }
 
@@ -1415,7 +1419,6 @@ void _HUD::DrawItemTooltip() {
 void _HUD::DrawCursorSkill() {
 	if(CursorSkill.Skill) {
 		glm::ivec2 DrawPosition = Input.GetMouse() - 16;
-		//Graphics.SetFont(_Graphics::FONT_7);
 		Graphics.DrawCenteredImage(DrawPosition + 16, CursorSkill.Skill->GetImage());
 	}
 }
