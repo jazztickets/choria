@@ -67,6 +67,11 @@ const int STATS_MAXGOLD = 1000000;
 const int SAVE_COUNT = 6;
 const int PLAYER_NAME_SIZE = 10;
 const float PLAYER_INVIS_ALPHA = 0.27f;
+const int INVENTORY_BAG_COLUMNS = 4;
+const int VENDOR_BAG_COLUMNS = 5;
+const int INVENTORY_BAG_OFFSET = 170;
+const int INVENTORY_TOOLTIP_OFFSETX = 20;
+const int INVENTORY_TOOLTIP_PADDING = 10;
 
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
@@ -125,4 +130,5 @@ const  glm::vec4    COLOR_YELLOW                   =  {1.0f,1.0f,0.0f,1.0f};
 const  glm::vec4    COLOR_MAGENTA                  =  {1.0f,0.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_CYAN                     =  {0.0f,1.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_GOLD                     =  {0.76f,0.73f,0.173f,1.0f};
+const  glm::vec4    COLOR_LIGHTGOLD                =  {0.88f,0.85f,0.33f,1.0f};
 const  glm::vec4    COLOR_GRAY                     =  {0.6f,0.6f,0.6f,1.0f};

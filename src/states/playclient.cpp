@@ -364,7 +364,7 @@ bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
 					//HUD.InitMenu();
 				break;
 				case _Actions::INVENTORY:
-					HUD.InitInventory(glm::ivec2(0, 0), true);
+					HUD.InitInventory(true);
 				break;
 				case _Actions::TELEPORT:
 					HUD.ToggleTownPortal();
@@ -381,6 +381,14 @@ bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
 			}
 		break;
 		case STATE_INVENTORY:
+			switch(Action) {
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_VENDOR:
 			switch(Action) {
 				case _Actions::MENU:
 				case _Actions::INVENTORY:

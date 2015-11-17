@@ -24,6 +24,8 @@
 #include <config.h>
 #include <framework.h>
 #include <constants.h>
+#include <assets.h>
+#include <ui/textbox.h>
 #include <network/network.h>
 #include <buffer.h>
 #include <instances/map.h>
@@ -527,7 +529,7 @@ void _PlayServerState::HandleCharacterCreate(_Buffer *TPacket, ENetPeer *TPeer) 
 	// Get character information
 	std::string Name(TPacket->ReadString());
 	int PortraitID = TPacket->Read<int32_t>();
-	if(Name.size() > PLAYER_NAME_SIZE)
+	if(Name.size() > Assets.TextBoxes["textbox_newcharacter_name"]->MaxLength)
 		return;
 
 	// Check character limit

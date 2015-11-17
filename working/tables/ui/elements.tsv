@@ -12,5 +12,6 @@ element_hud_mana			300	-19	150	32	1	2	0
 element_hud_experience			0	-70	350	8	1	2	0
 element_hud_actionbar			0	-10	384	48	1	2	0
 element_hud_bottom		style_hud_bg	0	0	800	110	1	2	0
+element_item_tooltip		style_hud_item_tooltip_bg	0	0	250	250	0	0	0
 element_inventory			-215	0	362	288	1	1	0
-element_item_tooltip		style_hud_item_tooltip_bg	0	0	250	200	0	0	0
+element_vendor			215	0	362	288	1	1	0

@@ -280,19 +280,6 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 				break;
 			}
 		break;
-		case _PlayClientState::STATE_INVENTORY:
-			switch(TEventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_INVENTORY:
-							CloseWindows();
-						break;
-					}
-				break;
-				default:
-				break;
-			}
-		break;
 		case _PlayClientState::STATE_TRADER:
 			switch(TEventType) {
 				case gui::EGET_BUTTON_CLICKED:
@@ -437,22 +424,44 @@ void _HUD::Update(double FrameTime) {
 	TooltipItem.Reset();
 
 	switch(*State) {
+		case _PlayClientState::STATE_VENDOR:
 		case _PlayClientState::STATE_INVENTORY: {
 			_Element *InventoryElement = Assets.Elements["element_inventory"];
+			_Element *VendorElement = Assets.Elements["element_vendor"];
+			_Element *HoverSlot;
 			InventoryElement->Update(FrameTime, Input.GetMouse());
-			_Element *HoverSlot = InventoryElement->HitElement;
-			if(HoverSlot && HoverSlot != InventoryElement) {
-				int InventoryIndex = (intptr_t)HoverSlot->UserData;
-				TooltipItem.Window = WINDOW_INVENTORY;
-				const _Item *Item = Player->GetInventory(InventoryIndex)->Item;
-				_InventorySlot *InventorySlot = Player->GetInventory(InventoryIndex);
+			HoverSlot = InventoryElement->HitElement;
+			TooltipItem.Window = WINDOW_INVENTORY;
 
-				// Get price if vendor is open
-				int Price = 0;
-				if(Item)
-					Price = Item->GetPrice(Vendor, InventorySlot->Count, false);
+			// Get vendor hover item
+			if(!HoverSlot && *State == _PlayClientState::STATE_VENDOR) {
+				VendorElement->Update(FrameTime, Input.GetMouse());
+				HoverSlot = VendorElement->HitElement;
+				TooltipItem.Window = WINDOW_VENDOR;
+			}
 
-				TooltipItem.Set(Item, Price, InventorySlot->Count, InventoryIndex);
+			// Set tooltip item
+			if(HoverSlot && HoverSlot != InventoryElement && HoverSlot != VendorElement) {
+				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
+				if(TooltipItem.Window == WINDOW_INVENTORY) {
+					_InventorySlot *InventorySlot = Player->GetInventory(InventoryIndex);
+
+					// Get price if vendor is open
+					int Price = 0;
+					if(InventorySlot->Item)
+						Price = InventorySlot->Item->GetPrice(Vendor, InventorySlot->Count, false);
+
+					TooltipItem.Set(InventorySlot->Item, Price, InventorySlot->Count, InventoryIndex);
+				}
+				else if(TooltipItem.Window == WINDOW_VENDOR) {
+					if(InventoryIndex < Vendor->Items.size()) {
+						const _Item *Item = Vendor->Items[InventoryIndex];
+						if(Item) {
+							int Price = Item->GetPrice(Vendor, 1, true);
+							TooltipItem.Set(Item, Price, 1, InventoryIndex);
+						}
+					}
+				}
 			}
 		} break;
 		default:
@@ -640,7 +649,7 @@ void _HUD::CloseMenu() {
 }
 
 // Initialize the inventory system
-void _HUD::InitInventory(const glm::ivec2 &Position, bool SendBusy) {
+void _HUD::InitInventory(bool SendBusy) {
 	if(SendBusy)
 		SendBusySignal(true);
 
@@ -664,21 +673,15 @@ void _HUD::CloseInventory() {
 }
 
 // Initialize the vendor
-void _HUD::InitVendor(int TVendorID) {
+void _HUD::InitVendor(int VendorID) {
 	if(*State == _PlayClientState::STATE_VENDOR)
 		return;
 
 	// Get vendor stats
-	Vendor = Stats.GetVendor(TVendorID);
-
-	// Add window
-	//TabVendor = irrGUI->addTab(Graphics.GetCenteredRect(400, 180, 262, 246));
-
-	// Add background
-	//irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_VENDOR), glm::ivec2(0, 0), true, TabVendor);
+	Vendor = Stats.GetVendor(VendorID);
 
 	// Open inventory
-	InitInventory(glm::ivec2(400, 420), false);
+	InitInventory(false);
 }
 
 // Close the vendor
@@ -923,47 +926,6 @@ void _HUD::DrawChat() {
 	*/
 }
 
-// Draws the player's inventory
-void _HUD::DrawInventory() {
-	Assets.Elements["element_inventory"]->Render();
-
-	// Get position of window
-	glm::ivec2 Offset = Assets.Elements["element_inventory"]->Bounds.Start;
-
-	// Draw equipped items
-	_InventorySlot *Item;
-	for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
-		Item = Player->GetInventory(i);
-		glm::ivec2 &Position = EquippedItemPositions[i];
-		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
-			glm::ivec2 DrawPosition = Offset + Position + glm::ivec2(24, 24);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
-			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
-		}
-	}
-
-	// Draw inventory items
-	glm::ivec2 GridPosition(0, 0);
-	for(int i = _Player::INVENTORY_BACKPACK; i < _Player::INVENTORY_TRADE; i++) {
-		Item = Player->GetInventory(i);
-		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
-			glm::ivec2 DrawPosition(Offset.x + 170 + GridPosition.x * 48 + 24, Offset.y + GridPosition.y * 48 + 24);
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
-			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
-			if(Item->Count > 1) {
-				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
-			}
-		}
-
-		GridPosition.x++;
-		if(GridPosition.x > 3) {
-			GridPosition.x = 0;
-			GridPosition.y++;
-		}
-	}
-}
-
 // Draw the town portal sequence
 void _HUD::DrawTownPortal() {
 
@@ -991,32 +953,72 @@ void _HUD::DrawTownPortal() {
 	*/
 }
 
-// Draw the vendor
-void _HUD::DrawVendor() {
-	/*
-	core::recti WindowArea = TabVendor->getAbsolutePosition();
-	int OffsetX = WindowArea.UpperLeftCorner.x;
-	int OffsetY = WindowArea.UpperLeftCorner.y;
-	int CenterX = WindowArea.getCenter().x;
+// Draws the player's inventory
+void _HUD::DrawInventory() {
+	Assets.Elements["element_inventory"]->Render();
 
-	// Draw inventory items
-	const _Item *Item;
-	int PositionX = 0, PositionY = 0;
-	for(size_t i = 0; i < Vendor->Items.size(); i++) {
-		Item = Vendor->Items[i];
-		if(!CursorItem.IsEqual(i, WINDOW_VENDOR)) {
-			int DrawX = OffsetX + 1 + PositionX * 32;
-			int DrawY = OffsetY + 47 + PositionY * 32;
-			Graphics.DrawCenteredImage(Item->GetImage(), DrawX + 16, DrawY + 16);
-			DrawItemPrice(Item, 1, DrawX, DrawY, true);
-		}
+	// Get position of window
+	glm::ivec2 Offset = Assets.Elements["element_inventory"]->Bounds.Start;
 
-		PositionX++;
-		if(PositionX > 7) {
-			PositionX = 0;
-			PositionY++;
+	// Draw equipped items
+	for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
+		_InventorySlot *Item = Player->GetInventory(i);
+		glm::ivec2 &Position = EquippedItemPositions[i];
+		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
+			glm::ivec2 DrawPosition = Offset + Position + glm::ivec2(24, 24);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
+			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
 		}
 	}
+
+	// Draw inventory items
+	glm::ivec2 GridPosition(0, 0);
+	for(int i = _Player::INVENTORY_BACKPACK; i < _Player::INVENTORY_TRADE; i++) {
+		_InventorySlot *Item = Player->GetInventory(i);
+		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
+			glm::ivec2 DrawPosition(Offset.x + INVENTORY_BAG_OFFSET + GridPosition.x * 48 + 24, Offset.y + GridPosition.y * 48 + 24);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
+			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
+			if(Item->Count > 1) {
+				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+			}
+		}
+
+		GridPosition.x++;
+		if(GridPosition.x >= INVENTORY_BAG_COLUMNS) {
+			GridPosition.x = 0;
+			GridPosition.y++;
+		}
+	}
+}
+
+// Draw the vendor
+void _HUD::DrawVendor() {
+	Assets.Elements["element_vendor"]->Render();
+
+	// Get position of window
+	glm::ivec2 Offset = Assets.Elements["element_vendor"]->Bounds.Start;
+
+	// Draw inventory items
+	glm::ivec2 GridPosition(0, 0);
+	for(size_t i = 0; i < Vendor->Items.size(); i++) {
+		const _Item *Item = Vendor->Items[i];
+		if(Item && !CursorItem.IsEqual(i, WINDOW_VENDOR)) {
+			glm::ivec2 DrawPosition(Offset.x + GridPosition.x * 48 + 24, Offset.y + GridPosition.y * 48 + 24);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Item->GetImage());
+			DrawItemPrice(Item, 1, DrawPosition, true);
+		}
+
+		GridPosition.x++;
+		if(GridPosition.x >= VENDOR_BAG_COLUMNS) {
+			GridPosition.x = 0;
+			GridPosition.y++;
+		}
+	}
+	/*
 
 	// Draw name
 	Graphics.SetFont(_Graphics::FONT_14);
@@ -1281,8 +1283,13 @@ void _HUD::DrawItemTooltip() {
 
 		// Position window
 		glm::ivec2 WindowOffset = Input.GetMouse();
-		WindowOffset.x += 20;
+		WindowOffset.x += INVENTORY_TOOLTIP_OFFSETX;
 		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+
+		// Reposition window if out of bounds
+		if(WindowOffset.x + Width > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
+			WindowOffset.x -= Width + INVENTORY_TOOLTIP_OFFSETX + INVENTORY_TOOLTIP_PADDING;
+
 		TooltipElement->SetOffset(WindowOffset);
 		TooltipElement->SetWidth(Width);
 
@@ -1389,24 +1396,28 @@ void _HUD::DrawItemTooltip() {
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
-		/*
+
 		// Vendors
 		if(Vendor) {
-			DrawY += 15;
+			DrawPosition.y += SpacingY;
 			if(TooltipItem.Window == WINDOW_VENDOR) {
-				sprintf(Buffer, "$%d", TooltipItem.Cost);
-				//Graphics.RenderText(Buffer, DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GOLD);
-				DrawY += 15;
-				//Graphics.RenderText("Right-click to buy", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
+				std::stringstream Buffer;
+				Buffer << "Buy for " << TooltipItem.Cost << " gold";
+				Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GOLD, CENTER_BASELINE);
+				DrawPosition.y += SpacingY;
+				Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+				DrawPosition.y += SpacingY;
 			}
 			else if(TooltipItem.Window == WINDOW_INVENTORY) {
-				sprintf(Buffer, "$%d", TooltipItem.Cost);
-				//Graphics.RenderText(Buffer, DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GOLD);
-				DrawY += 15;
-				//Graphics.RenderText("Shift+Right-click to sell", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
+				std::stringstream Buffer;
+				Buffer << "Sell for " << TooltipItem.Cost << " gold";
+				Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GOLD, CENTER_BASELINE);
+				DrawPosition.y += SpacingY;
+				Assets.Fonts["hud_small"]->DrawText("Shift+Right-click to sell", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+				DrawPosition.y += SpacingY;
 			}
 		}
-*/
+
 		switch(*State) {
 			case _PlayClientState::STATE_INVENTORY:
 			case _PlayClientState::STATE_TRADE:
@@ -1550,24 +1561,21 @@ void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int
 }
 
 // Draws an item's price
-void _HUD::DrawItemPrice(const _Item *TItem, int TCount, const glm::ivec2 &DrawPosition, bool TBuy) {
-	/*
+void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy) {
 	if(!Vendor)
 		return;
 
 	// Real price
-	int Price = TItem->GetPrice(Vendor, TCount, TBuy);
+	int Price = Item->GetPrice(Vendor, Count, Buy);
 
 	// Color
-	video::SColor Color;
-	if(TBuy && Player->GetGold() < Price)
-		Color.set(255, 255, 0, 0);
+	glm::vec4 Color;
+	if(Buy && Player->GetGold() < Price)
+		Color = COLOR_RED;
 	else
-		Color.set(255, 224, 216, 84);
+		Color = COLOR_LIGHTGOLD;
 
-	//Graphics.SetFont(_Graphics::FONT_7);
-	//Graphics.RenderText(std::string(Price).c_str(), TDrawX + 2, TDrawY + 0, _Graphics::ALIGN_LEFT, Color);
-	*/
+	Assets.Fonts["hud_small"]->DrawText(std::to_string(Price).c_str(), DrawPosition + glm::ivec2(20, -8), Color, RIGHT_BASELINE);
 }
 
 // Draws trading items

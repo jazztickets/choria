@@ -45,6 +45,7 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	// Set root element
 	Element = new _Element();
 	Element->Size = WindowSize;
+	Element->CalculateBounds();
 
 	// Set video flags
 	Uint32 VideoFlags = SDL_WINDOW_OPENGL;

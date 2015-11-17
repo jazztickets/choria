@@ -121,8 +121,8 @@ class _HUD {
 
 		// Windows
 		void InitMenu();
-		void InitInventory(const glm::ivec2 &Position, bool SendBusy);
-		void InitVendor(int TVendorID);
+		void InitInventory(bool SendBusy);
+		void InitVendor(int VendorID);
 		void InitTrader(int TTraderID);
 		void InitCharacter();
 		void InitSkills();
@@ -160,7 +160,7 @@ class _HUD {
 		void DrawTrader();
 		void DrawTrade();
 		void DrawSkills();
-		void DrawItemPrice(const _Item *TItem, int TCount, const glm::ivec2 &DrawPosition, bool TBuy);
+		void DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
 		void DrawItemTooltip();
 		void DrawCursorSkill();
