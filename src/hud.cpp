@@ -487,19 +487,24 @@ void _HUD::Render() {
 	//Assets.Elements["element_hud_bottom"]->Render();
 	Assets.Elements["element_hud_buttonbar"]->Render();
 	Assets.Elements["element_hud_actionbar"]->Render();
+	std::stringstream Buffer;
+
+	// Set hud values
+	Buffer << "Level " << Player->GetLevel();
+	Assets.Labels["label_hud_level"]->Text = Buffer.str();
+	Buffer.str("");
+
+	Buffer << Player->GetGold() << " Gold";
+	Assets.Labels["label_hud_gold"]->Text = Buffer.str();
+	Buffer.str("");
 
 	// Draw experience bar
-	std::stringstream Buffer;
 	Buffer << Player->GetExperienceNextLevel() - Player->GetExperienceNeeded() << " / " << Player->GetExperienceNextLevel() << " XP";
 	Assets.Labels["label_hud_experience"]->Text = Buffer.str();
 	Buffer.str("");
 	Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
 	Assets.Images["image_hud_experience_bar_empty"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x);
 	Assets.Elements["element_hud_experience"]->Render();
-
-	Buffer << "Level " << Player->GetLevel();
-	Assets.Labels["label_hud_level"]->Text = Buffer.str();
-	Buffer.str("");
 
 	// Draw health bar
 	float HealthPercent = Player->GetMaxHealth() > 0 ? Player->GetHealth() / (float)Player->GetMaxHealth() : 0;
