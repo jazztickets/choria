@@ -1337,7 +1337,7 @@ void _HUD::DrawItemTooltip() {
 				if(TooltipItem.Window == WINDOW_INVENTORY) {
 					DrawPosition.y -= 20;
 					Assets.Fonts["hud_small"]->DrawText("Right-click to use", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
-					DrawPosition.y += SpacingY*2;
+					DrawPosition.y += 40;
 				}
 				if(Item->GetHealthRestore() > 0) {
 					std::stringstream Buffer;
@@ -1363,26 +1363,30 @@ void _HUD::DrawItemTooltip() {
 		// Boosts
 		if(Item->GetMaxHealth() > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << Item->GetMaxHealth() << "% HP";
-			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			Buffer << "+" << Item->GetMaxHealth() << "%";
+			Assets.Fonts["hud_medium"]->DrawText("HP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 		if(Item->GetMaxMana() > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << Item->GetMaxMana() << "% MP";
-			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			Buffer << "+" << Item->GetMaxMana() << "%";
+			Assets.Fonts["hud_medium"]->DrawText("MP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 		if(Item->GetHealthRegen() > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << std::setprecision(2) << Item->GetHealthRegen() << "% HP Regen";
-			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			Buffer << "+" << std::setprecision(2) << Item->GetHealthRegen() << "%";
+			Assets.Fonts["hud_medium"]->DrawText("HP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 		if(Item->GetManaRegen() > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << std::setprecision(2) << Item->GetManaRegen() << "% MP Regen";
-			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+			Buffer << "+" << std::setprecision(2) << Item->GetManaRegen() << "%";
+			Assets.Fonts["hud_medium"]->DrawText("MP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 		/*
