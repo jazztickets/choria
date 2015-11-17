@@ -26,8 +26,15 @@
 #include <objects/player.h>
 #include <texture.h>
 #include <assets.h>
+#include <program.h>
+#include <camera.h>
 #include <fstream>
 #include <limits>
+#include <glm/vec3.hpp>
+#include <glm/gtx/norm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 // Constructor for the map editor: new map
 _Map::_Map(const std::string &TFilename, int TWidth, int THeight) {
@@ -122,29 +129,27 @@ void _Map::Update(double FrameTime) {
 }
 
 // Renders the map
-void _Map::Render() {
+void _Map::Render(_Camera *Camera) {
+	Graphics.SetProgram(Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+	Graphics.SetColor(COLOR_WHITE);
+	Graphics.SetVBO(VBO_QUAD);
 
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetVBO(VBO_NONE);
-
-	glm::ivec2 GridPosition, DrawPosition;
-	for(int i = 0; i < ViewSize.x; i++) {
-		for(int j = 0; j < ViewSize.y; j++) {
-
-			// Get the actual grid coordinate
-			GridPosition.x = i + CameraScroll.x - ViewSize.x / 2;
-			GridPosition.y = j + CameraScroll.y - ViewSize.y / 2;
-			DrawPosition = glm::ivec2((i - ViewSize.x / 2) * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2, (j - ViewSize.y / 2) * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2);
+	Graphics.SetDepthTest(false);
+	Graphics.SetDepthMask(false);
+	glm::vec4 Bounds = Camera->GetAABB();
+	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Width);
+	Bounds[1] = glm::clamp(Bounds[1], 0.0f, (float)Height);
+	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Width);
+	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Height);
+	for(int j = Bounds[1]; j < Bounds[3]; j++) {
+		for(int i = Bounds[0]; i < Bounds[2]; i++) {
+			_Tile *Tile = &Tiles[i][j];
 			if(NoZoneTexture)
-				Graphics.DrawCenteredImage(DrawPosition, NoZoneTexture);
+				Graphics.DrawSprite(glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0), NoZoneTexture);
 
-			// Validate coordinate
-			if(GridPosition.x >= 0 && GridPosition.x < Width && GridPosition.y >= 0 && GridPosition.y < Height) {
-				_Tile *Tile = &Tiles[GridPosition.x][GridPosition.y];
-
-				if(Tile->Texture)
-					Graphics.DrawCenteredImage(DrawPosition, Tile->Texture);
-			}
+			if(Tile->Texture)
+				Graphics.DrawSprite(glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0), Tile->Texture);
 		}
 	}
 }

@@ -85,6 +85,13 @@ const  uint16_t     DEFAULT_NETWORKPORT            =  31234;
 //     Graphics
 const  int          GRAPHICS_CIRCLE_VERTICES       =  32;
 const  double       MATH_PI                        =  3.14159265358979323846;
+//     Camera
+const  float        CAMERA_DISTANCE                =  9.375f;
+const  float        CAMERA_DIVISOR                 =  30.0f;
+const  float        CAMERA_EDITOR_DIVISOR          =  5.0f;
+const  float        CAMERA_FOVY                    =  90.0f;
+const  float        CAMERA_NEAR                    =  0.1f;
+const  float        CAMERA_FAR                     =  100.0f;
 //     Menu
 const  float        MENU_ACCEPTINPUT_FADE          =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME          =  0.250;

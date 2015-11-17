@@ -27,6 +27,7 @@ class _Instance;
 class _Buffer;
 class _Player;
 class _Map;
+class _Camera;
 class _ClientBattle;
 
 // Classes
@@ -56,6 +57,7 @@ class _ClientState : public _State {
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
 		void TextEvent(const char *Text) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
+		void WindowEvent(uint8_t Event) override;
 
 		void HandleConnect(ENetEvent *TEvent) override;
 		void HandleDisconnect(ENetEvent *TEvent) override;
@@ -100,6 +102,9 @@ class _ClientState : public _State {
 
 		// Time
 		double ClientTime, SentClientTime;
+
+		// Graphics
+		_Camera *Camera;
 
 		// Objects
 		_Player *Player;

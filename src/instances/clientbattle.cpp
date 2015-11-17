@@ -56,8 +56,8 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 	}
 
 	// Add skill buttons
-	const _Skill *Skill;
-	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
+	//const _Skill *Skill;
+	//for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 
 		// Add button
 		//SkillButtons[i] = irrGUI->addButton(Graphics.GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
@@ -71,7 +71,7 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 		else
 			SkillButtons[i]->setImage(Graphics.GetImage(_Graphics::IMAGE_EMPTYSLOT));
 			*/
-	}
+	//}
 	//PassButton = irrGUI->addButton(Graphics.GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
 	//PassButton->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
 

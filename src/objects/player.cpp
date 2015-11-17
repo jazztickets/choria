@@ -23,12 +23,15 @@
 #include <random.h>
 #include <stats.h>
 #include <database.h>
+#include <assets.h>
+#include <program.h>
 #include <constants.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <states/server.h>
 #include <objects/skill.h>
-#include <assets.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Constructor
 _Player::_Player()
@@ -132,23 +135,28 @@ void _Player::Update(double FrameTime) {
 void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 	if(TMap) {
 
-		glm::ivec2 ScreenPosition;
-		bool OnScreen = TMap->GridToScreen(Position, ScreenPosition);
+		float Alpha = 1.0f;
+		if(IsInvisible())
+			Alpha = PLAYER_INVIS_ALPHA;
 
-		if(OnScreen) {
-			float Alpha = 1.0f;
-			if(IsInvisible())
-				Alpha = PLAYER_INVIS_ALPHA;
+		Graphics.SetProgram(Assets.Programs["pos_uv"]);
+		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-			Graphics.DrawCenteredImage(ScreenPosition, WorldImage, glm::vec4(Alpha, 1.0f, 1.0f, 1.0f));
-			if(StateImage) {
-				Graphics.DrawCenteredImage(ScreenPosition, StateImage, glm::vec4(Alpha, 1.0f, 1.0f, 1.0f));
-			}
+		Graphics.SetColor(glm::vec4(Alpha, 1.0f, 1.0f, 1.0f));
+		Graphics.SetVBO(VBO_QUAD);
 
-			if(TClientPlayer != this) {
-				//Graphics.SetFont(_Graphics::FONT_8);
-				//Graphics.RenderText(Name.c_str(), ScreenPosition.x, ScreenPosition.y - 28, _Graphics::ALIGN_CENTER);
-			}
+		Graphics.SetDepthTest(false);
+		Graphics.SetDepthMask(false);
+
+		glm::vec3 DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+		Graphics.DrawSprite(DrawPosition, WorldImage);
+		if(StateImage) {
+			Graphics.DrawSprite(DrawPosition, StateImage);
+		}
+
+		if(TClientPlayer != this) {
+			//Graphics.SetFont(_Graphics::FONT_8);
+			//Graphics.RenderText(Name.c_str(), ScreenPosition.x, ScreenPosition.y - 28, _Graphics::ALIGN_CENTER);
 		}
 	}
 }

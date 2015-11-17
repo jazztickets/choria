@@ -234,7 +234,7 @@ void _Framework::Update() {
 			else
 				MultiNetwork->Update();
 			State->Update(FrameTime);
-			State->Render(0.0);
+			State->Render(1.0);
 		} break;
 		case CLOSE: {
 			if(State)

@@ -25,6 +25,12 @@
 #include <cstdint>
 #include <string>
 
+// Forward Declarations
+class _Object;
+class _Player;
+class _Buffer;
+class _Camera;
+
 // Structures
 struct _Tile {
 	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
@@ -41,11 +47,6 @@ struct _IndexedEvent {
 	const _Tile *Tile;
 	glm::ivec2 Position;
 };
-
-// Forward Declarations
-class _Object;
-class _Player;
-class _Buffer;
 
 // Classes
 class _Map {
@@ -73,7 +74,7 @@ class _Map {
 		const std::string &GetFilename() const { return Filename; }
 
 		// Graphics
-		void Render();
+		void Render(_Camera *Camera);
 		void RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP);
 
 		void SetCameraScroll(const glm::ivec2 &TPosition);

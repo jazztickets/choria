@@ -27,12 +27,16 @@
 #include <hud.h>
 #include <buffer.h>
 #include <assets.h>
+#include <camera.h>
+#include <program.h>
 #include <network/network.h>
 #include <instances/map.h>
 #include <instances/clientbattle.h>
 #include <objects/player.h>
 #include <objects/monster.h>
 #include <states/null.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 _ClientState ClientState;
 
@@ -54,6 +58,8 @@ void _ClientState::Init() {
 
 	Instances = new _Instance();
 	ObjectManager = new _ObjectManager();
+	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
+	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	// Set up the HUD system
 	HUD.Init();
@@ -70,8 +76,15 @@ void _ClientState::Close() {
 
 	ClientNetwork->Disconnect();
 	HUD.Close();
+	delete Camera;
 	delete ObjectManager;
 	delete Instances;
+}
+
+// Window events
+void _ClientState::WindowEvent(uint8_t Event) {
+	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
 // Handles a connection to the server
@@ -157,8 +170,11 @@ void _ClientState::HandlePacket(ENetEvent *TEvent) {
 
 // Updates the current state
 void _ClientState::Update(double FrameTime) {
+	if(Camera && Player) {
+		Camera->Set2DPosition(glm::vec2(Player->GetPosition()));
+		Camera->Update(FrameTime);
+	}
 
-	ClientTime += FrameTime;
 	switch(State) {
 		case STATE_CONNECTING:
 		break;
@@ -203,18 +219,46 @@ void _ClientState::Update(double FrameTime) {
 	}
 	HUD.Update(FrameTime);
 	ObjectManager->Update(FrameTime);
+
+	ClientTime += FrameTime;
 }
 
 void _ClientState::Render(double BlendFactor) {
 	if(State == STATE_CONNECTING)
 		return;
 
-	Graphics.Setup2D();
+	Graphics.Setup3D();
+	glm::vec3 LightPosition(glm::vec3(Player->GetPosition(), 1) + glm::vec3(0.5f, 0.5f, 0));
+	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
+	glm::vec4 AmbientLight(0.25f, 0.25f, 0.25f, 1.0f);
+	//glm::vec4 AmbientLight(0.05f, 0.05f, ClientTime / 50, 1.0f);
+
+	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
+	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
+	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
+	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
+	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
+
+	// Setup the viewing matrix
+	Graphics.Setup3D();
+	Camera->Set3DProjection(BlendFactor);
+	Graphics.SetProgram(Assets.Programs["pos"]);
+	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	//TEMP
+	//Graphics.SetProgram(Assets.Programs["text"]);
+	//glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Draw map and objects
-	Map->SetCameraScroll(Player->GetPosition());
-	Map->Render();
+	//Map->SetCameraScroll(Player->GetPosition());
+	Map->Render(Camera);
 	ObjectManager->Render(Map, Player);
+
+	Graphics.Setup2D();
 
 	// Draw states
 	switch(State) {
@@ -499,6 +543,7 @@ void _ClientState::HandleChangeMaps(_Buffer *TPacket) {
 					// Information for your player
 					if(NetworkID == Player->GetNetworkID()) {
 						Player->SetPosition(GridPosition);
+						Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE));
 					}
 					else {
 
