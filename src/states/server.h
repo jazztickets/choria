@@ -31,7 +31,7 @@ class _Player;
 class _ServerBattle;
 
 // Classes
-class _PlayServerState : public _State {
+class _ServerState : public _State {
 
 	public:
 
@@ -102,4 +102,4 @@ class _PlayServerState : public _State {
 		double ServerTime;
 };
 
-extern _PlayServerState PlayServerState;
+extern _ServerState ServerState;

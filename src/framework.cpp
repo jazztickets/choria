@@ -30,7 +30,7 @@
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
 #include <states/mapeditor.h>
-#include <states/playserver.h>
+#include <states/server.h>
 #include <states/null.h>
 #include <framelimit.h>
 #include <SDL.h>
@@ -53,8 +53,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Token = std::string(Arguments[i]);
 		TokensRemaining = ArgumentCount - i - 1;
 		if(Token == "-host") {
-			State = &PlayServerState;
-			PlayServerState.StartCommandThread();
+			State = &ServerState;
+			ServerState.StartCommandThread();
 			IsServer = true;
 		}
 		else if(Token == "-mapeditor") {
@@ -128,7 +128,7 @@ void _Framework::Close() {
 	// Close the state
 	State->Close();
 	if(LocalServerRunning)
-		PlayServerState.Close();
+		ServerState.Close();
 
 	if(MultiNetwork)
 		MultiNetwork->WaitForDisconnect();
@@ -230,7 +230,7 @@ void _Framework::Update() {
 		} break;
 		case UPDATE: {
 			if(LocalServerRunning)
-				PlayServerState.Update(FrameTime);
+				ServerState.Update(FrameTime);
 			else
 				MultiNetwork->Update();
 			State->Update(FrameTime);
@@ -261,7 +261,7 @@ void _Framework::StartLocalServer() {
 		ClientNetwork = ClientSingleNetwork;
 		ServerNetwork = ServerSingleNetwork;
 
-		PlayServerState.Init();
+		ServerState.Init();
 	}
 }
 
@@ -271,7 +271,7 @@ void _Framework::StopLocalServer() {
 		ClientNetwork->Disconnect();
 		LocalServerRunning = false;
 
-		PlayServerState.Close();
+		ServerState.Close();
 
 		ClientNetwork = MultiNetwork;
 		ServerNetwork = MultiNetwork;

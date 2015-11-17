@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <network/singlenetwork.h>
 #include <buffer.h>
-#include <states/playserver.h>
+#include <states/server.h>
 #include <framework.h>
 
 // Initializes the network system
@@ -44,7 +44,7 @@ int _SingleNetwork::Connect(const char *TIPAddress, uint16_t Port) {
 	// Simulate the connect
 	ENetEvent Event;
 	Event.peer = &Peer;
-	PlayServerState.HandleConnect(&Event);
+	ServerState.HandleConnect(&Event);
 	Framework.GetState()->HandleConnect(&Event);
 
 	return 1;
@@ -59,7 +59,7 @@ void _SingleNetwork::Disconnect(ENetPeer *TPeer) {
 		// Simulate the disconnect
 		ENetEvent Event;
 		Event.peer = &Peer;
-		PlayServerState.HandleDisconnect(&Event);
+		ServerState.HandleDisconnect(&Event);
 		Framework.GetState()->HandleDisconnect(&Event);
 	}
 }
@@ -73,7 +73,7 @@ void _SingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Ch
 		ENetEvent Event;
 		Event.peer = &Peer;
 		Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
-		PlayServerState.HandlePacket(&Event);
+		ServerState.HandlePacket(&Event);
 		enet_packet_destroy(Event.packet);
 	}
 }

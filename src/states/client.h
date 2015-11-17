@@ -30,7 +30,7 @@ class _Map;
 class _ClientBattle;
 
 // Classes
-class _PlayClientState : public _State {
+class _ClientState : public _State {
 
 	public:
 
@@ -47,7 +47,7 @@ class _PlayClientState : public _State {
 			STATE_TRADE,
 		};
 
-		_PlayClientState();
+		_ClientState();
 
 		void Init() override;
 		void Close() override;
@@ -110,4 +110,4 @@ class _PlayClientState : public _State {
 
 };
 
-extern _PlayClientState PlayClientState;
+extern _ClientState ClientState;

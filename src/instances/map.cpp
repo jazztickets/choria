@@ -22,7 +22,7 @@
 #include <stats.h>
 #include <network/network.h>
 #include <buffer.h>
-#include <states/playserver.h>
+#include <states/server.h>
 #include <objects/player.h>
 #include <texture.h>
 #include <assets.h>

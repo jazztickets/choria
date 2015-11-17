@@ -33,7 +33,7 @@
 #include <ui/textbox.h>
 #include <network/network.h>
 #include <states/null.h>
-#include <states/playclient.h>
+#include <states/client.h>
 #include <sstream>
 #include <SDL_mouse.h>
 
@@ -412,8 +412,8 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 						int SelectedCharacter = GetSelectedCharacter();
 						if(SelectedCharacter == -1)
 							SelectedCharacter = 0;
-						PlayClientState.SetCharacterSlot(SelectedCharacter);
-						Framework.ChangeState(&PlayClientState);
+						ClientState.SetCharacterSlot(SelectedCharacter);
+						Framework.ChangeState(&ClientState);
 					}
 				}
 			}
@@ -552,8 +552,8 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					else if(Clicked->Identifier == "button_characters_play") {
 						int SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
-							PlayClientState.SetCharacterSlot(SelectedSlot);
-							Framework.ChangeState(&PlayClientState);
+							ClientState.SetCharacterSlot(SelectedSlot);
+							Framework.ChangeState(&ClientState);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_back") {
@@ -572,7 +572,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						int SelectedSlot = (intptr_t)Clicked->UserData;
 						if(CharacterSlots[SelectedSlot].Used) {
-							PlayClientState.SetCharacterSlot(SelectedSlot);
+							ClientState.SetCharacterSlot(SelectedSlot);
 							CharacterSlots[SelectedSlot].Button->Checked = true;
 						}
 						else
@@ -581,7 +581,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						UpdateCharacterButtons();
 
 						if(DoubleClick && SelectedSlot != -1) {
-							Framework.ChangeState(&PlayClientState);
+							Framework.ChangeState(&ClientState);
 						}
 					}
 				}

@@ -26,7 +26,7 @@
 #include <constants.h>
 #include <instances/map.h>
 #include <instances/battle.h>
-#include <states/playserver.h>
+#include <states/server.h>
 #include <objects/skill.h>
 #include <assets.h>
 
@@ -122,7 +122,7 @@ void _Player::Update(double FrameTime) {
 			Save();
 
 		if(State == STATE_TOWNPORTAL && TownPortalTime > GAME_PORTALTIME) {
-			PlayServerState.PlayerTownPortal(this);
+			ServerState.PlayerTownPortal(this);
 			State = STATE_WALK;
 		}
 	}

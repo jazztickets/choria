@@ -30,7 +30,7 @@
 #include <ui/label.h>
 #include <ui/textbox.h>
 #include <ui/image.h>
-#include <states/playclient.h>
+#include <states/client.h>
 #include <network/network.h>
 #include <instances/map.h>
 #include <objects/player.h>
@@ -55,7 +55,7 @@ static glm::ivec2 EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
 // Initialize
 void _HUD::Init() {
 
-	State = PlayClientState.GetState();
+	State = ClientState.GetState();
 	Vendor = nullptr;
 	Trader = nullptr;
 	TooltipItem.Reset();
@@ -79,7 +79,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 	// Press
 	if(MouseEvent.Pressed) {
 		switch(*State) {
-			case _PlayClientState::STATE_VENDOR:
+			case _ClientState::STATE_VENDOR:
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
 						if(TooltipItem.Item) {
@@ -96,7 +96,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					break;
 				}
 			break;
-			case _PlayClientState::STATE_INVENTORY: {
+			case _ClientState::STATE_INVENTORY: {
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
 						if(TooltipItem.Item) {
@@ -116,7 +116,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					break;
 				}
 			} break;
-			case _PlayClientState::STATE_TRADE:
+			case _ClientState::STATE_TRADE:
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
 						if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
@@ -128,7 +128,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					break;
 				}
 			break;
-			case _PlayClientState::STATE_SKILLS:
+			case _ClientState::STATE_SKILLS:
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
 						if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
@@ -141,9 +141,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 	// Release
 	else {
 		switch(*State) {
-			case _PlayClientState::STATE_INVENTORY:
-			case _PlayClientState::STATE_VENDOR:
-			case _PlayClientState::STATE_TRADE:
+			case _ClientState::STATE_INVENTORY:
+			case _ClientState::STATE_VENDOR:
+			case _ClientState::STATE_TRADE:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
 					// Check for valid slots
@@ -189,7 +189,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					CursorItem.Reset();
 				}
 			break;
-			case _PlayClientState::STATE_SKILLS:
+			case _ClientState::STATE_SKILLS:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
 					// Check for valid slots
@@ -424,8 +424,8 @@ void _HUD::Update(double FrameTime) {
 	TooltipItem.Reset();
 
 	switch(*State) {
-		case _PlayClientState::STATE_VENDOR:
-		case _PlayClientState::STATE_INVENTORY: {
+		case _ClientState::STATE_VENDOR:
+		case _ClientState::STATE_INVENTORY: {
 			_Element *InventoryElement = Assets.Elements["element_inventory"];
 			_Element *VendorElement = Assets.Elements["element_vendor"];
 			_Element *HoverSlot;
@@ -434,7 +434,7 @@ void _HUD::Update(double FrameTime) {
 			TooltipItem.Window = WINDOW_INVENTORY;
 
 			// Get vendor hover item
-			if(!HoverSlot && *State == _PlayClientState::STATE_VENDOR) {
+			if(!HoverSlot && *State == _ClientState::STATE_VENDOR) {
 				VendorElement->Update(FrameTime, Input.GetMouse());
 				HoverSlot = VendorElement->HitElement;
 				TooltipItem.Window = WINDOW_VENDOR;
@@ -546,24 +546,24 @@ void _HUD::Render() {
 		}*/
 
 	switch(*State) {
-		case _PlayClientState::STATE_INVENTORY:
+		case _ClientState::STATE_INVENTORY:
 			DrawInventory();
 		break;
-		case _PlayClientState::STATE_VENDOR:
+		case _ClientState::STATE_VENDOR:
 			DrawVendor();
 			DrawInventory();
 		break;
-		case _PlayClientState::STATE_TRADER:
+		case _ClientState::STATE_TRADER:
 			DrawTrader();
 		break;
-		case _PlayClientState::STATE_SKILLS:
+		case _ClientState::STATE_SKILLS:
 			DrawSkills();
 		break;
-		case _PlayClientState::STATE_TRADE:
+		case _ClientState::STATE_TRADE:
 			DrawTrade();
 			DrawInventory();
 		break;
-		case _PlayClientState::STATE_TOWNPORTAL:
+		case _ClientState::STATE_TOWNPORTAL:
 			DrawTownPortal();
 		break;
 	}
@@ -637,7 +637,7 @@ void _HUD::InitMenu() {
 	//irrGUI->addButton(Graphics.GetCenteredRect(400, 275, 100, 25), TabMenu, ELEMENT_MAINMENURESUME, L"Resume");
 	//irrGUI->addButton(Graphics.GetCenteredRect(400, 325, 100, 25), TabMenu, ELEMENT_MAINMENUEXIT, L"Exit");
 
-	*State = _PlayClientState::STATE_MAINMENU;
+	*State = _ClientState::STATE_MAINMENU;
 }
 
 // Close main menu
@@ -645,7 +645,7 @@ void _HUD::CloseMenu() {
 
 	//irrGUI->getRootGUIElement()->removeChild(TabMenu);
 
-	*State = _PlayClientState::STATE_WALK;
+	*State = _ClientState::STATE_WALK;
 }
 
 // Initialize the inventory system
@@ -656,7 +656,7 @@ void _HUD::InitInventory(bool SendBusy) {
 	CursorItem.Reset();
 	TooltipItem.Reset();
 
-	*State = _PlayClientState::STATE_INVENTORY;
+	*State = _ClientState::STATE_INVENTORY;
 }
 
 // Close the inventory system
@@ -669,12 +669,12 @@ void _HUD::CloseInventory() {
 	// No longer busy
 	SendBusySignal(false);
 
-	*State = _PlayClientState::STATE_WALK;
+	*State = _ClientState::STATE_WALK;
 }
 
 // Initialize the vendor
 void _HUD::InitVendor(int VendorID) {
-	if(*State == _PlayClientState::STATE_VENDOR)
+	if(*State == _ClientState::STATE_VENDOR)
 		return;
 
 	// Get vendor stats
@@ -686,7 +686,7 @@ void _HUD::InitVendor(int VendorID) {
 
 // Close the vendor
 void _HUD::CloseVendor() {
-	if(*State != _PlayClientState::STATE_VENDOR)
+	if(*State != _ClientState::STATE_VENDOR)
 		return;
 
 	//irrGUI->getRootGUIElement()->removeChild(TabVendor);
@@ -700,13 +700,13 @@ void _HUD::CloseVendor() {
 	Packet.Write<char>(_Network::EVENT_END);
 	ClientNetwork->SendPacketToHost(&Packet);
 
-	*State = _PlayClientState::STATE_WALK;
+	*State = _ClientState::STATE_WALK;
 	Vendor = nullptr;
 }
 
 // Initialize the trader
 void _HUD::InitTrader(int TTraderID) {
-	if(*State == _PlayClientState::STATE_TRADER)
+	if(*State == _ClientState::STATE_TRADER)
 		return;
 
 	// Get trader stats
@@ -729,12 +729,12 @@ void _HUD::InitTrader(int TTraderID) {
 	//if(RewardItemSlot == -1)
 	//	TradeButton->setEnabled(false);
 
-	*State = _PlayClientState::STATE_TRADER;
+	*State = _ClientState::STATE_TRADER;
 }
 
 // Close the trader
 void _HUD::CloseTrader() {
-	if(*State != _PlayClientState::STATE_TRADER)
+	if(*State != _ClientState::STATE_TRADER)
 		return;
 
 	//irrGUI->getRootGUIElement()->removeChild(TabTrader);
@@ -746,7 +746,7 @@ void _HUD::CloseTrader() {
 	Packet.Write<char>(_Network::EVENT_END);
 	ClientNetwork->SendPacketToHost(&Packet);
 
-	*State = _PlayClientState::STATE_WALK;
+	*State = _ClientState::STATE_WALK;
 	Trader = nullptr;
 }
 
@@ -770,7 +770,7 @@ void _HUD::CloseCharacter() {
 
 // Initialize the skills screen
 void _HUD::InitSkills() {
-	*State = _PlayClientState::STATE_SKILLS;
+	*State = _ClientState::STATE_SKILLS;
 	SendBusySignal(true);
 
 	// Main window
@@ -822,7 +822,7 @@ void _HUD::CloseSkills() {
 	// No longer busy
 	SendBusySignal(false);
 
-	*State = _PlayClientState::STATE_WALK;
+	*State = _ClientState::STATE_WALK;
 }
 
 // Initialize the trade system
@@ -854,7 +854,7 @@ void _HUD::InitTrade() {
 	// Add inventory
 	InitInventory(400, 432, false);
 */
-	*State = _PlayClientState::STATE_TRADE;
+	*State = _ClientState::STATE_TRADE;
 }
 
 // Closes the trade system
@@ -872,29 +872,29 @@ void _HUD::CloseTrade(bool TSendNotify) {
 		SendTradeCancel();
 
 	Player->SetTradePlayer(nullptr);
-	*State = _PlayClientState::STATE_WALK;
+	*State = _ClientState::STATE_WALK;
 }
 
 // Closes all windows
 void _HUD::CloseWindows() {
 
 	switch(*State) {
-		case _PlayClientState::STATE_MAINMENU:
+		case _ClientState::STATE_MAINMENU:
 			CloseMenu();
 		break;
-		case _PlayClientState::STATE_VENDOR:
+		case _ClientState::STATE_VENDOR:
 			CloseVendor();
 		break;
-		case _PlayClientState::STATE_TRADER:
+		case _ClientState::STATE_TRADER:
 			CloseTrader();
 		break;
-		case _PlayClientState::STATE_INVENTORY:
+		case _ClientState::STATE_INVENTORY:
 			CloseInventory();
 		break;
-		case _PlayClientState::STATE_SKILLS:
+		case _ClientState::STATE_SKILLS:
 			CloseSkills();
 		break;
-		case _PlayClientState::STATE_TRADE:
+		case _ClientState::STATE_TRADE:
 			CloseTrade();
 		break;
 	}
@@ -1419,8 +1419,8 @@ void _HUD::DrawItemTooltip() {
 		}
 
 		switch(*State) {
-			case _PlayClientState::STATE_INVENTORY:
-			case _PlayClientState::STATE_TRADE:
+			case _ClientState::STATE_INVENTORY:
+			case _ClientState::STATE_TRADE:
 				if(TooltipItem.Window == WINDOW_INVENTORY && TooltipItem.Count > 1) {
 					Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 					DrawPosition.y += SpacingY;
@@ -1772,10 +1772,10 @@ void _HUD::GetSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill) {
 	TCursorSkill.Reset();
 
 	switch(*State) {
-		case _PlayClientState::STATE_SKILLS:
+		case _ClientState::STATE_SKILLS:
 			GetSkillPageSkill(Position, TCursorSkill);
 		break;
-		case _PlayClientState::STATE_BATTLE:
+		case _ClientState::STATE_BATTLE:
 		break;
 	}
 }
@@ -1948,8 +1948,8 @@ void _HUD::ToggleTownPortal() {
 	ClientNetwork->SendPacketToHost(&Packet);
 	Player->StartTownPortal();
 
-	if(*State == _PlayClientState::STATE_TOWNPORTAL)
-		*State = _PlayClientState::STATE_WALK;
+	if(*State == _ClientState::STATE_TOWNPORTAL)
+		*State = _ClientState::STATE_WALK;
 	else
-		*State = _PlayClientState::STATE_TOWNPORTAL;
+		*State = _ClientState::STATE_TOWNPORTAL;
 }

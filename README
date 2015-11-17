@@ -13,7 +13,7 @@ Save data is in ~/.local/share/choria for linux and %APPDATA%/choria for windows
 
 Linux dependencies:
 cmake 2.8+
-opengl
+opengl 2.1+
 sdl2
 glm
 sqlite3

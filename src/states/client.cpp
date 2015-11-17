@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <states/playclient.h>
+#include <states/client.h>
 #include <globals.h>
 #include <framework.h>
 #include <graphics.h>
@@ -34,16 +34,16 @@
 #include <objects/monster.h>
 #include <states/null.h>
 
-_PlayClientState PlayClientState;
+_ClientState ClientState;
 
 // Constructor
-_PlayClientState::_PlayClientState()
+_ClientState::_ClientState()
 :	CharacterSlot(0) {
 
 }
 
 // Initializes the state
-void _PlayClientState::Init() {
+void _ClientState::Init() {
 
 	ClientTime = 0;
 	SentClientTime = 0;
@@ -66,7 +66,7 @@ void _PlayClientState::Init() {
 }
 
 // Shuts the state down
-void _PlayClientState::Close() {
+void _ClientState::Close() {
 
 	ClientNetwork->Disconnect();
 	HUD.Close();
@@ -75,18 +75,18 @@ void _PlayClientState::Close() {
 }
 
 // Handles a connection to the server
-void _PlayClientState::HandleConnect(ENetEvent *TEvent) {
+void _ClientState::HandleConnect(ENetEvent *TEvent) {
 
 }
 
 // Handles a disconnection from the server
-void _PlayClientState::HandleDisconnect(ENetEvent *TEvent) {
+void _ClientState::HandleDisconnect(ENetEvent *TEvent) {
 
 	Framework.ChangeState(&NullState);
 }
 
 // Handles a server packet
-void _PlayClientState::HandlePacket(ENetEvent *TEvent) {
+void _ClientState::HandlePacket(ENetEvent *TEvent) {
 	//printf("HandlePacket: type=%d\n", TEvent->packet->data[0]);
 
 	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
@@ -156,7 +156,7 @@ void _PlayClientState::HandlePacket(ENetEvent *TEvent) {
 }
 
 // Updates the current state
-void _PlayClientState::Update(double FrameTime) {
+void _ClientState::Update(double FrameTime) {
 
 	ClientTime += FrameTime;
 	switch(State) {
@@ -205,7 +205,7 @@ void _PlayClientState::Update(double FrameTime) {
 	ObjectManager->Update(FrameTime);
 }
 
-void _PlayClientState::Render(double BlendFactor) {
+void _ClientState::Render(double BlendFactor) {
 	if(State == STATE_CONNECTING)
 		return;
 
@@ -230,7 +230,7 @@ void _PlayClientState::Render(double BlendFactor) {
 }
 
 // Handle an input action
-bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
+bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	if(Value == 0)
 		return true;
 
@@ -402,22 +402,22 @@ bool _PlayClientState::HandleAction(int InputType, int Action, int Value) {
 }
 
 // Key events
-void _PlayClientState::KeyEvent(const _KeyEvent &KeyEvent) {
+void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 
 }
 
 // Text input events
-void _PlayClientState::TextEvent(const char *Text) {
+void _ClientState::TextEvent(const char *Text) {
 
 }
 
 // Mouse events
-void _PlayClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
 	HUD.MouseEvent(MouseEvent);
 }
 
 // Called once to synchronize your stats with the servers
-void _PlayClientState::HandleYourCharacterInfo(_Buffer *TPacket) {
+void _ClientState::HandleYourCharacterInfo(_Buffer *TPacket) {
 
 	// Get pack info
 	int NetworkID = TPacket->Read<char>();
@@ -464,7 +464,7 @@ void _PlayClientState::HandleYourCharacterInfo(_Buffer *TPacket) {
 }
 
 // Called when the player changes maps
-void _PlayClientState::HandleChangeMaps(_Buffer *TPacket) {
+void _ClientState::HandleChangeMaps(_Buffer *TPacket) {
 
 	// Load map
 	int NewMapID = TPacket->Read<int32_t>();
@@ -526,7 +526,7 @@ void _PlayClientState::HandleChangeMaps(_Buffer *TPacket) {
 }
 
 // Creates an object
-void _PlayClientState::HandleCreateObject(_Buffer *TPacket) {
+void _ClientState::HandleCreateObject(_Buffer *TPacket) {
 
 	// Read packet
 	glm::ivec2 Position;
@@ -563,7 +563,7 @@ void _PlayClientState::HandleCreateObject(_Buffer *TPacket) {
 }
 
 // Deletes an object
-void _PlayClientState::HandleDeleteObject(_Buffer *TPacket) {
+void _ClientState::HandleDeleteObject(_Buffer *TPacket) {
 
 	int NetworkID = TPacket->Read<char>();
 
@@ -586,7 +586,7 @@ void _PlayClientState::HandleDeleteObject(_Buffer *TPacket) {
 }
 
 // Handles position updates from the server
-void _PlayClientState::HandleObjectUpdates(_Buffer *TPacket) {
+void _ClientState::HandleObjectUpdates(_Buffer *TPacket) {
 
 	// Get object Count
 	char ObjectCount = TPacket->Read<char>();
@@ -639,7 +639,7 @@ void _PlayClientState::HandleObjectUpdates(_Buffer *TPacket) {
 }
 
 // Handles the start of a battle
-void _PlayClientState::HandleStartBattle(_Buffer *TPacket) {
+void _ClientState::HandleStartBattle(_Buffer *TPacket) {
 	//printf("HandleStartBattle: \n");
 
 	// Already in a battle
@@ -699,7 +699,7 @@ void _PlayClientState::HandleStartBattle(_Buffer *TPacket) {
 }
 
 // Handles the result of a turn in battle
-void _PlayClientState::HandleBattleTurnResults(_Buffer *TPacket) {
+void _ClientState::HandleBattleTurnResults(_Buffer *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -709,7 +709,7 @@ void _PlayClientState::HandleBattleTurnResults(_Buffer *TPacket) {
 }
 
 // Handles the end of a battle
-void _PlayClientState::HandleBattleEnd(_Buffer *TPacket) {
+void _ClientState::HandleBattleEnd(_Buffer *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -719,7 +719,7 @@ void _PlayClientState::HandleBattleEnd(_Buffer *TPacket) {
 }
 
 // Handles a battle command from other players
-void _PlayClientState::HandleBattleCommand(_Buffer *TPacket) {
+void _ClientState::HandleBattleCommand(_Buffer *TPacket) {
 
 	// Check for a battle in progress
 	if(!Battle)
@@ -731,7 +731,7 @@ void _PlayClientState::HandleBattleCommand(_Buffer *TPacket) {
 }
 
 // Handles HUD updates
-void _PlayClientState::HandleHUD(_Buffer *TPacket) {
+void _ClientState::HandleHUD(_Buffer *TPacket) {
 	Player->SetExperience(TPacket->Read<int32_t>());
 	Player->SetGold(TPacket->Read<int32_t>());
 	Player->SetHealth(TPacket->Read<int32_t>());
@@ -743,7 +743,7 @@ void _PlayClientState::HandleHUD(_Buffer *TPacket) {
 }
 
 // Handles player position
-void _PlayClientState::HandlePlayerPosition(_Buffer *TPacket) {
+void _ClientState::HandlePlayerPosition(_Buffer *TPacket) {
 	glm::ivec2 GridPosition;
 	GridPosition.x = TPacket->Read<char>();
 	GridPosition.y = TPacket->Read<char>();
@@ -751,7 +751,7 @@ void _PlayClientState::HandlePlayerPosition(_Buffer *TPacket) {
 }
 
 // Handles the start of an event
-void _PlayClientState::HandleEventStart(_Buffer *TPacket) {
+void _ClientState::HandleEventStart(_Buffer *TPacket) {
 	glm::ivec2 GridPosition;
 	int Type = TPacket->Read<char>();
 	int Data = TPacket->Read<int32_t>();
@@ -772,14 +772,14 @@ void _PlayClientState::HandleEventStart(_Buffer *TPacket) {
 }
 
 // Handles the use of an inventory item
-void _PlayClientState::HandleInventoryUse(_Buffer *TPacket) {
+void _ClientState::HandleInventoryUse(_Buffer *TPacket) {
 
 	int Slot = TPacket->Read<char>();
 	Player->UpdateInventory(Slot, -1);
 }
 
 // Handles a chat message
-void _PlayClientState::HandleChatMessage(_Buffer *TPacket) {
+void _ClientState::HandleChatMessage(_Buffer *TPacket) {
 
 	// Read packet
 	int NetworkID = TPacket->Read<char>();
@@ -799,7 +799,7 @@ void _PlayClientState::HandleChatMessage(_Buffer *TPacket) {
 }
 
 // Handles a trade request
-void _PlayClientState::HandleTradeRequest(_Buffer *TPacket) {
+void _ClientState::HandleTradeRequest(_Buffer *TPacket) {
 
 	// Read packet
 	int NetworkID = TPacket->Read<char>();
@@ -829,7 +829,7 @@ void _PlayClientState::HandleTradeRequest(_Buffer *TPacket) {
 }
 
 // Handles a trade cancel
-void _PlayClientState::HandleTradeCancel(_Buffer *TPacket) {
+void _ClientState::HandleTradeCancel(_Buffer *TPacket) {
 	Player->SetTradePlayer(nullptr);
 
 	// Reset agreement
@@ -837,7 +837,7 @@ void _PlayClientState::HandleTradeCancel(_Buffer *TPacket) {
 }
 
 // Handles a trade item update
-void _PlayClientState::HandleTradeItem(_Buffer *TPacket) {
+void _ClientState::HandleTradeItem(_Buffer *TPacket) {
 
 	// Get trading player
 	_Player *TradePlayer = Player->GetTradePlayer();
@@ -868,7 +868,7 @@ void _PlayClientState::HandleTradeItem(_Buffer *TPacket) {
 }
 
 // Handles a gold update from the trading player
-void _PlayClientState::HandleTradeGold(_Buffer *TPacket) {
+void _ClientState::HandleTradeGold(_Buffer *TPacket) {
 
 	// Get trading player
 	_Player *TradePlayer = Player->GetTradePlayer();
@@ -885,7 +885,7 @@ void _PlayClientState::HandleTradeGold(_Buffer *TPacket) {
 }
 
 // Handles a trade accept
-void _PlayClientState::HandleTradeAccept(_Buffer *TPacket) {
+void _ClientState::HandleTradeAccept(_Buffer *TPacket) {
 
 	// Get trading player
 	_Player *TradePlayer = Player->GetTradePlayer();
@@ -898,7 +898,7 @@ void _PlayClientState::HandleTradeAccept(_Buffer *TPacket) {
 }
 
 // Handles a trade exchange
-void _PlayClientState::HandleTradeExchange(_Buffer *TPacket) {
+void _ClientState::HandleTradeExchange(_Buffer *TPacket) {
 
 	// Get gold offer
 	int Gold = TPacket->Read<int32_t>();
@@ -920,7 +920,7 @@ void _PlayClientState::HandleTradeExchange(_Buffer *TPacket) {
 }
 
 // Sends a move command to the server
-void _PlayClientState::SendMoveCommand(int TDirection) {
+void _ClientState::SendMoveCommand(int TDirection) {
 
 	if(Player->CanMove()) {
 
@@ -935,7 +935,7 @@ void _PlayClientState::SendMoveCommand(int TDirection) {
 }
 
 // Requests an attack to another a player
-void _PlayClientState::SendAttackPlayer() {
+void _ClientState::SendAttackPlayer() {
 	if(Player->CanAttackPlayer()) {
 		Player->ResetAttackPlayerTime();
 		_Buffer Packet;
