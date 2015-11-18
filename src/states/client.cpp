@@ -426,6 +426,10 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		break;
 		case STATE_INVENTORY:
 			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
 				case _Actions::MENU:
 				case _Actions::INVENTORY:
 					HUD.CloseWindows();
@@ -434,8 +438,48 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		break;
 		case STATE_VENDOR:
 			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
 				case _Actions::MENU:
 				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_TRADER:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_TRADE:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_SKILLS:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::SKILLS:
 					HUD.CloseWindows();
 				break;
 			}

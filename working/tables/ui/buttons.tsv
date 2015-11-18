@@ -94,3 +94,14 @@ button_vendor_bag_26	element_vendor	style_hud_slot			48	240	48	48	0	0	26
 button_vendor_bag_27	element_vendor	style_hud_slot			96	240	48	48	0	0	27
 button_vendor_bag_28	element_vendor	style_hud_slot			144	240	48	48	0	0	28
 button_vendor_bag_29	element_vendor	style_hud_slot			192	240	48	48	0	0	29
+button_trader_bag_0	element_trader	style_hud_slot			-72	80	48	48	1	0	0
+button_trader_bag_1	element_trader	style_hud_slot			-24	80	48	48	1	0	1
+button_trader_bag_2	element_trader	style_hud_slot			24	80	48	48	1	0	2
+button_trader_bag_3	element_trader	style_hud_slot			72	80	48	48	1	0	3
+button_trader_bag_4	element_trader	style_hud_slot			-72	160	48	48	1	0	4
+button_trader_bag_5	element_trader	style_hud_slot			-24	160	48	48	1	0	5
+button_trader_bag_6	element_trader	style_hud_slot			24	160	48	48	1	0	6
+button_trader_bag_7	element_trader	style_hud_slot			72	160	48	48	1	0	7
+button_trader_bag_reward	element_trader	style_hud_slot			0	275	48	48	1	0	8
+button_trader_accept	element_trader	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-55	345	90	32	1	0	9
+button_trader_cancel	element_trader	style_menu_button	style_menu_button_disabled	style_menu_button_hover	55	345	90	32	1	0	10

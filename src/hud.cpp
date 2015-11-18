@@ -464,6 +464,20 @@ void _HUD::Update(double FrameTime) {
 				}
 			}
 		} break;
+		case _ClientState::STATE_TRADER: {
+			_Element *TraderElement = Assets.Elements["element_trader"];
+			_Element *HoverSlot;
+			TraderElement->Update(FrameTime, Input.GetMouse());
+			HoverSlot = TraderElement->HitElement;
+			if(HoverSlot && HoverSlot != TraderElement) {
+				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
+				TooltipItem.Window = WINDOW_TRADER;
+				if(InventoryIndex < Trader->TraderItems.size())
+					TooltipItem.Set(Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
+				else if(InventoryIndex == 8)
+					TooltipItem.Set(Trader->RewardItem, 0, 1, InventoryIndex);
+			}
+		} break;
 		default:
 		break;
 	}
@@ -1006,7 +1020,7 @@ void _HUD::DrawVendor() {
 	// Get position of window
 	glm::ivec2 Offset = Assets.Elements["element_vendor"]->Bounds.Start;
 
-	// Draw inventory items
+	// Draw vendor items
 	glm::ivec2 GridPosition(0, 0);
 	for(size_t i = 0; i < Vendor->Items.size(); i++) {
 		const _Item *Item = Vendor->Items[i];
@@ -1023,63 +1037,43 @@ void _HUD::DrawVendor() {
 			GridPosition.y++;
 		}
 	}
-	/*
-
-	// Draw name
-	Graphics.SetFont(_Graphics::FONT_14);
-	//Graphics.RenderText(Vendor->Name.c_str(), CenterX, OffsetY + 4, _Graphics::ALIGN_CENTER);
-
-	// Draw info
-	Graphics.SetFont(_Graphics::FONT_10);
-	//Graphics.RenderText(Vendor->Info.c_str(), CenterX, OffsetY + 27, _Graphics::ALIGN_CENTER);
-
-	Graphics.SetFont(_Graphics::FONT_10);
-	*/
 }
 
 // Draw the trader screen
 void _HUD::DrawTrader() {
-	/*
-	core::recti WindowArea = TabTrader->getAbsolutePosition();
-	int OffsetX = WindowArea.UpperLeftCorner.x;
-	int OffsetY = WindowArea.UpperLeftCorner.y;
-	int CenterX = WindowArea.getCenter().x;
+	Assets.Elements["element_trader"]->Render();
 
-	Graphics.SetFont(_Graphics::FONT_8);
-
-	// Draw items
-	int PositionX = 0, PositionY = 0;
-	char Buffer[256];
-	video::SColor Color;
+	// Draw trader items
 	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
-		int DrawX = OffsetX + 19 + PositionX * 32;
-		int DrawY = OffsetY + 52 + PositionY * 32 + PositionY * 14;
-		Graphics.DrawCenteredImage(Trader->TraderItems[i].Item->GetImage(), DrawX + 16, DrawY + 16);
 
+		// Get button position
+		std::stringstream Buffer;
+		Buffer << "button_trader_bag_" << i;
+		_Button *Button = Assets.Buttons[Buffer.str()];
+		glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+
+		// Draw item
+		const _Item *Item = Trader->TraderItems[i].Item;
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(DrawPosition, Item->GetImage());
+
+		glm::vec4 Color;
 		if(RequiredItemSlots[i] == -1)
-			Color.set(255, 255, 0, 0);
+			Color = COLOR_RED;
 		else
-			Color.set(255, 255, 255, 255);
-		sprintf(Buffer, "%d", Trader->TraderItems[i].Count);
-		//Graphics.RenderText(Buffer, DrawX + 16, DrawY - 14, _Graphics::ALIGN_CENTER, Color);
+			Color = COLOR_WHITE;
 
-		PositionX++;
-		if(PositionX > 3) {
-			PositionX = 0;
-			PositionY++;
-		}
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Trader->TraderItems[i].Count).c_str(), DrawPosition + glm::ivec2(0, -32), Color, CENTER_BASELINE);
 	}
 
-	// Draw reward item
-	Graphics.DrawCenteredImage(Trader->RewardItem->GetImage(), OffsetX + 82, OffsetY + 198);
-	sprintf(Buffer, "%d", Trader->Count);
-	//Graphics.RenderText(Buffer, OffsetX + 82, OffsetY + 166, _Graphics::ALIGN_CENTER);
+	// Get reward button
+	_Button *RewardButton = Assets.Buttons["button_trader_bag_reward"];
+	glm::ivec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2;
 
-	// Draw text
-	Graphics.SetFont(_Graphics::FONT_10);
-	//Graphics.RenderText("Looking for", CenterX, OffsetY + 13, _Graphics::ALIGN_CENTER);
-	//Graphics.RenderText("Reward", CenterX, OffsetY + 143, _Graphics::ALIGN_CENTER);
-	*/
+	// Draw item
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.DrawCenteredImage(DrawPosition, Trader->RewardItem->GetImage());
+	Assets.Fonts["hud_small"]->DrawText(std::to_string(Trader->Count).c_str(), DrawPosition + glm::ivec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
 }
 
 // Draw the trade screen
@@ -1637,31 +1631,6 @@ void _HUD::GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 			GetTradeItem(Position, TCursorItem);
 		break;
 	}*/
-}
-
-// Returns a vendor item from a mouse position
-void _HUD::GetVendorItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
-	/*
-	core::recti WindowArea = TabVendor->getAbsolutePosition();
-	if(!WindowArea.isPointInside(TPoint))
-		return;
-
-	TCursorItem.Window = WINDOW_VENDOR;
-
-	// Adjust mouse position
-	TPoint.x -= WindowArea.UpperLeftCorner.x;
-	TPoint.y -= WindowArea.UpperLeftCorner.y;
-
-	// Get vendor slot
-	if(TPoint.x >= 1 && TPoint.x <= 256 && TPoint.y >= 47 && TPoint.y < 47 + 192) {
-		size_t InventoryIndex = (TPoint.x - 1) / 32 + (TPoint.y - 47) / 32 * 8;
-		//printf("%d=%d %d\n", InventoryIndex, TPoint.x, TPoint.y);
-		if(InventoryIndex < Vendor->Items.size()) {
-			int Price = Vendor->Items[InventoryIndex]->GetPrice(Vendor, 1, true);
-			TCursorItem.Set(Vendor->Items[InventoryIndex], Price, 1, InventoryIndex);
-		}
-	}
-	*/
 }
 
 // Returns a trader item from a mouse position
