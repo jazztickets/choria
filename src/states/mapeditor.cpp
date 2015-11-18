@@ -26,9 +26,12 @@
 #include <camera.h>
 #include <assets.h>
 #include <program.h>
+#include <font.h>
 #include <instances/map.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <sstream>
+#include <iomanip>
 
 _EditorState EditorState;
 
@@ -134,14 +137,21 @@ void _EditorState::Render(double BlendFactor) {
 	Graphics.SetProgram(Assets.Programs["text"]);
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
+	// Render map
 	if(Map)
 		Map->Render(Camera, Filter);
+
+	Graphics.Setup2D();
+	Graphics.SetProgram(Assets.Programs["text"]);
+	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
+
+	// Render brush
 	RenderBrush();
 
-	//std::string GridBrushPositionText = std::to_string(BrushPosition.x) + std::string(" ") + std::to_string(BrushPosition.y);
-
-	//Graphics.SetFont(_Graphics::FONT_8);
-	//Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
+	// Draw world cursor
+	std::stringstream Buffer;
+	Buffer << std::fixed << std::setprecision(1) << WorldCursor.x << ", " << WorldCursor.y;
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
 }
 
 // GUI events
@@ -402,10 +412,8 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 			switch(MouseEvent.Button) {
 				// Eyedropper tool
 				case SDL_BUTTON_LEFT:
-					//if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
-						//if(Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
-							//Brush = *Map->GetTile(BrushPosition.x, BrushPosition.y);
-					//}
+					if(Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor))
+						*Brush = *Map->GetTile(WorldCursor);
 				break;
 				// Scroll map
 				case SDL_BUTTON_RIGHT:
@@ -418,16 +426,20 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 
 // Mouse scroll wheel
 void _EditorState::MouseWheelEvent(int Direction) {
-	//Brush->Zone += (int)(TDirection);
-	//if(Brush->Zone < 0)
-		//Brush->Zone = 0;
+	if(Input.ModKeyDown(KMOD_CTRL)) {
+		Brush->Zone += Direction;
+		if(Brush->Zone < 0)
+			Brush->Zone = 0;
+	}
+	else {
 
-	// Zoom
-	float Multiplier = 1.0f * Direction;
-	if(Input.ModKeyDown(KMOD_SHIFT))
-		Multiplier = 10.0f * Direction;
+		// Zoom
+		float Multiplier = 1.0f * Direction;
+		if(Input.ModKeyDown(KMOD_SHIFT))
+			Multiplier = 10.0f * Direction;
 
-	Camera->UpdateDistance(-Multiplier);
+		Camera->UpdateDistance(-Multiplier);
+	}
 }
 
 // Window events
@@ -529,7 +541,6 @@ void _EditorState::CreateMap() {
 
 // Initialize the load map screen
 void _EditorState::InitLoadMap() {
-	//WorkingDirectory = irrFile->getWorkingDirectory();
 
 	// Main dialog window
 	std::string StartPath = std::string(Config.ConfigPath.c_str());
