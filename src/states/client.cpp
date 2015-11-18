@@ -326,6 +326,18 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
+		case STATE_TELEPORT:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::TELEPORT:
+					HUD.ToggleTeleport();
+				break;
+			}
+		break;
 		case STATE_INVENTORY:
 			switch(Action) {
 				case _Actions::UP:

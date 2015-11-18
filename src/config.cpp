@@ -146,7 +146,6 @@ void _Config::Load() {
 	Map.clear();
 	char Buffer[256];
 	while(File) {
-
 		File.getline(Buffer, 256);
 		if(File.good()) {
 			std::string Line(Buffer);
@@ -159,6 +158,8 @@ void _Config::Load() {
 			}
 		}
 	}
+
+	// Close
 	File.close();
 
 	// Read config
@@ -209,10 +210,10 @@ void _Config::Load() {
 // Save variables to the config file
 void _Config::Save() {
 
+	// Open file
 	std::ofstream File(ConfigFile.c_str());
-	if(!File.is_open()) {
+	if(!File.is_open())
 		return;
-	}
 
 	// Write variables
 	File << "window_width=" << WindowSize.x << std::endl;
