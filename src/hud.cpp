@@ -42,16 +42,6 @@
 
 _HUD HUD;
 
-static glm::ivec2 EquippedItemPositions[_Player::INVENTORY_BACKPACK] = {
-	{ 61,  4   },
-	{ 61,  67  },
-	{ 64,  234 },
-	{ 12,  125 },
-	{ 111, 125 },
-	{ 12,  176 },
-	{ 111, 176 }
-};
-
 // Initialize
 void _HUD::Init() {
 
@@ -445,21 +435,27 @@ void _HUD::Update(double FrameTime) {
 		case _ClientState::STATE_VENDOR:
 		case _ClientState::STATE_INVENTORY: {
 			_Element *InventoryElement = Assets.Elements["element_inventory"];
-			_Element *VendorElement = Assets.Elements["element_vendor"];
 			InventoryElement->Update(FrameTime, Input.GetMouse());
 			_Element *HoverSlot = InventoryElement->HitElement;
-			TooltipItem.Window = WINDOW_INVENTORY;
+			if(HoverSlot)
+				TooltipItem.Window = WINDOW_INVENTORY;
 
 			// Get vendor hover item
+			_Element *VendorElement = Assets.Elements["element_vendor"];
 			if(!HoverSlot && *State == _ClientState::STATE_VENDOR) {
 				VendorElement->Update(FrameTime, Input.GetMouse());
 				HoverSlot = VendorElement->HitElement;
 				TooltipItem.Window = WINDOW_VENDOR;
 			}
 
+			// Check for valid slot
+			if(!HoverSlot)
+				break;
+
 			// Set tooltip item
-			if(HoverSlot && HoverSlot != InventoryElement && HoverSlot != VendorElement) {
+			if((intptr_t)HoverSlot->UserData >= 0) {
 				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
+
 				if(TooltipItem.Window == WINDOW_INVENTORY) {
 					_InventorySlot *InventorySlot = Player->GetInventory(InventoryIndex);
 
@@ -696,7 +692,6 @@ void _HUD::InitInventory(bool SendBusy) {
 // Close the inventory system
 void _HUD::CloseInventory() {
 
-	//irrGUI->getRootGUIElement()->removeChild(TabInventory);
 	CursorItem.Reset();
 	TooltipItem.Reset();
 
@@ -884,17 +879,13 @@ void _HUD::InitTrade() {
 }
 
 // Closes the trade system
-void _HUD::CloseTrade(bool TSendNotify) {
-
-	// Remove trade window
-	//irrGUI->getRootGUIElement()->removeChild(TabTrade);
-	//TradeAcceptButton = nullptr;
+void _HUD::CloseTrade(bool SendNotify) {
 
 	// Close inventory
 	CloseInventory();
 
 	// Notify server
-	if(TSendNotify)
+	if(SendNotify)
 		SendTradeCancel();
 
 	Player->SetTradePlayer(nullptr);
@@ -983,39 +974,31 @@ void _HUD::DrawTownPortal() {
 void _HUD::DrawInventory() {
 	Assets.Elements["element_inventory"]->Render();
 
-	// Get position of window
-	glm::ivec2 Offset = Assets.Elements["element_inventory"]->Bounds.Start;
+	// Draw player's items
+	for(int i = 0; i < _Player::INVENTORY_TRADE; i++) {
 
-	// Draw equipped items
-	for(int i = 0; i < _Player::INVENTORY_BACKPACK; i++) {
-		_InventorySlot *Item = Player->GetInventory(i);
-		glm::ivec2 &Position = EquippedItemPositions[i];
-		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
-			glm::ivec2 DrawPosition = Offset + Position + glm::ivec2(24, 24);
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
-			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
-		}
-	}
-
-	// Draw inventory items
-	glm::ivec2 GridPosition(0, 0);
-	for(int i = _Player::INVENTORY_BACKPACK; i < _Player::INVENTORY_TRADE; i++) {
+		// Get inventory slot
 		_InventorySlot *Item = Player->GetInventory(i);
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
-			glm::ivec2 DrawPosition(Offset.x + INVENTORY_BAG_OFFSET + GridPosition.x * 48 + 24, Offset.y + GridPosition.y * 48 + 24);
+
+			// Get bag button
+			std::stringstream Buffer;
+			Buffer << "button_inventory_bag_" << i;
+			_Button *Button = Assets.Buttons[Buffer.str()];
+
+			// Get position of slot
+			glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+
+			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
+
+			// Draw price if using vendor
 			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
-			if(Item->Count > 1) {
+
+			// Draw count
+			if(Item->Count > 1)
 				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
-			}
-		}
-
-		GridPosition.x++;
-		if(GridPosition.x >= INVENTORY_BAG_COLUMNS) {
-			GridPosition.x = 0;
-			GridPosition.y++;
 		}
 	}
 }
@@ -1024,24 +1007,25 @@ void _HUD::DrawInventory() {
 void _HUD::DrawVendor() {
 	Assets.Elements["element_vendor"]->Render();
 
-	// Get position of window
-	glm::ivec2 Offset = Assets.Elements["element_vendor"]->Bounds.Start;
-
 	// Draw vendor items
-	glm::ivec2 GridPosition(0, 0);
 	for(size_t i = 0; i < Vendor->Items.size(); i++) {
 		const _Item *Item = Vendor->Items[i];
 		if(Item && !CursorItem.IsEqual(i, WINDOW_VENDOR)) {
-			glm::ivec2 DrawPosition(Offset.x + GridPosition.x * 48 + 24, Offset.y + GridPosition.y * 48 + 24);
+
+			// Get bag button
+			std::stringstream Buffer;
+			Buffer << "button_vendor_bag_" << i;
+			_Button *Button = Assets.Buttons[Buffer.str()];
+
+			// Get position of slot
+			glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+
+			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Item->GetImage());
-			DrawItemPrice(Item, 1, DrawPosition, true);
-		}
 
-		GridPosition.x++;
-		if(GridPosition.x >= VENDOR_BAG_COLUMNS) {
-			GridPosition.x = 0;
-			GridPosition.y++;
+			// Draw price
+			DrawItemPrice(Item, 1, DrawPosition, true);
 		}
 	}
 }

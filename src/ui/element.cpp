@@ -29,7 +29,7 @@ const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
 _Element::_Element() :
 	GlobalID(0),
 	Parent(nullptr),
-	UserData(nullptr),
+	UserData((void *)-1),
 	MaskOutside(false),
 	Enabled(true),
 	Clickable(true),

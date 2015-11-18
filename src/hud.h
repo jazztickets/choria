@@ -135,7 +135,7 @@ class _HUD {
 		void AddChatMessage(_ChatMessage &Chat) { ChatHistory.push_back(Chat); }
 
 		// Trade
-		void CloseTrade(bool TSendNotify=true);
+		void CloseTrade(bool SendNotify=true);
 		bool IsTypingGold() { return TypingGold; }
 		void ResetAcceptButton();
 
