@@ -155,7 +155,7 @@ void _Config::Load() {
 				std::string Field = Line.substr(0, Pos);
 				std::string Value = Line.substr(Pos+1, Line.size());
 
-				Map[Field] = Value;
+				Map[Field].push_back(Value);
 			}
 		}
 	}
@@ -183,7 +183,6 @@ void _Config::Load() {
 	if(NetworkRate < 0.01)
 		NetworkRate = 0.01;
 
-	return;
 	// Clear bindings
 	for(int i = 0; i < _Input::INPUT_COUNT; i++)
 		Actions.ClearMappings(i);
@@ -193,20 +192,17 @@ void _Config::Load() {
 		std::ostringstream Buffer;
 		Buffer << "action_" << i;
 
-		// Get input key/button
-		std::string InputString;
-		GetValue(Buffer.str(), InputString);
+		// Get list of inputs for each action
+		const auto &Values = Map[Buffer.str()];
+		for(auto &Iterator : Values) {
 
-		// Skip empty
-		if(!InputString.size())
-			continue;
-
-		// Parse input bind
-		int InputType, Input;
-		char Dummy;
-		std::stringstream Stream(InputString);
-		Stream >> InputType >> Dummy >> Input;
-		Actions.AddInputMap(InputType, Input, i, 1.0f, -1.0f, false);
+			// Parse input bind
+			int InputType, Input;
+			char Dummy;
+			std::stringstream Stream(Iterator);
+			Stream >> InputType >> Dummy >> Input;
+			Actions.AddInputMap(InputType, Input, i, 1.0f, -1.0f, false);
+		}
 	}
 }
 
@@ -238,10 +234,9 @@ void _Config::Save() {
 	File << "last_port=" << LastPort << std::endl;
 
 	// Write out input map
-	//Actions.Serialize(File);
-	//Actions.Serialize(File, _Input::KEYBOARD);
-	//Actions.Serialize(File, _Input::MOUSE_AXIS);
-	//Actions.Serialize(File, _Input::MOUSE_BUTTON);
+	Actions.Serialize(File, _Input::KEYBOARD);
+	Actions.Serialize(File, _Input::MOUSE_AXIS);
+	Actions.Serialize(File, _Input::MOUSE_BUTTON);
 
 	File.close();
 }

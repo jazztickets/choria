@@ -21,6 +21,7 @@
 #include <glm/vec2.hpp>
 #include <string>
 #include <sstream>
+#include <list>
 #include <unordered_map>
 
 // Load/save config file
@@ -66,16 +67,16 @@ class _Config {
 
 		template <typename Type>
 		void GetValue(const std::string &Field, Type &Value) {
-			auto MapIterator = Map.find(Field);
+			const auto &MapIterator = Map.find(Field);
 			if(MapIterator != Map.end()) {
-				std::stringstream Stream(MapIterator->second);
+				std::stringstream Stream(MapIterator->second.front());
 				Stream >> Value;
 			}
 		}
 
 		// State
 		std::string ConfigFile;
-		std::unordered_map<std::string, std::string> Map;
+		std::unordered_map<std::string, std::list<std::string>> Map;
 };
 
 extern _Config Config;

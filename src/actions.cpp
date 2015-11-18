@@ -75,10 +75,6 @@ void _Actions::Serialize(std::ofstream &File, int InputType) {
 	}
 }
 
-// Serialize input map to stream
-void _Actions::Serialize(std::ofstream &File) {
-}
-
 // Get action
 float _Actions::GetState(int Action) {
 	if(Action < 0 || Action >= COUNT)
