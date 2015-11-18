@@ -78,6 +78,7 @@ class _Actions {
 		void ClearMappingsForAction(int InputType, int Action);
 		void ClearAllMappingsForAction(int Action);
 		void Serialize(std::ofstream &File, int InputType);
+		void Serialize(std::ofstream &File);
 
 		// Actions
 		float GetState(int Action);

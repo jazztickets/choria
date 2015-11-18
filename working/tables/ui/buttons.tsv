@@ -19,20 +19,20 @@ button_connect_back	element_menu_connect	style_menu_button	style_menu_button_dis
 button_account_login	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-150	230	128	48	1	1	0
 button_account_create	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	230	128	48	1	1	0
 button_account_back	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	150	230	128	48	1	1	0
-button_hud_buttonbar_teleport	element_hud_buttonbar	style_hud_buttonbar_teleport			0	0	25	25	0	0	0
-button_hud_buttonbar_inventory	element_hud_buttonbar	style_hud_buttonbar_inventory			25	0	25	25	0	0	0
-button_hud_buttonbar_trade	element_hud_buttonbar	style_hud_buttonbar_trade			50	0	25	25	0	0	0
-button_hud_buttonbar_character	element_hud_buttonbar	style_hud_buttonbar_character			75	0	25	25	0	0	0
-button_hud_buttonbar_skills	element_hud_buttonbar	style_hud_buttonbar_skills			100	0	25	25	0	0	0
-button_hud_buttonbar_menu	element_hud_buttonbar	style_hud_buttonbar_menu			125	0	25	25	0	0	0
-button_hud_actionbar_1	element_hud_actionbar	style_hud_slot			0	0	48	48	0	0	0
-button_hud_actionbar_2	element_hud_actionbar	style_hud_slot			48	0	48	48	0	0	0
-button_hud_actionbar_3	element_hud_actionbar	style_hud_slot			96	0	48	48	0	0	0
-button_hud_actionbar_4	element_hud_actionbar	style_hud_slot			144	0	48	48	0	0	0
-button_hud_actionbar_5	element_hud_actionbar	style_hud_slot			192	0	48	48	0	0	0
-button_hud_actionbar_6	element_hud_actionbar	style_hud_slot			240	0	48	48	0	0	0
-button_hud_actionbar_7	element_hud_actionbar	style_hud_slot			288	0	48	48	0	0	0
-button_hud_actionbar_8	element_hud_actionbar	style_hud_slot			336	0	48	48	0	0	0
+button_buttonbar_teleport	element_buttonbar	style_buttonbar_teleport			0	0	25	25	0	0	0
+button_buttonbar_inventory	element_buttonbar	style_buttonbar_inventory			25	0	25	25	0	0	0
+button_buttonbar_trade	element_buttonbar	style_buttonbar_trade			50	0	25	25	0	0	0
+button_buttonbar_character	element_buttonbar	style_buttonbar_character			75	0	25	25	0	0	0
+button_buttonbar_skills	element_buttonbar	style_buttonbar_skills			100	0	25	25	0	0	0
+button_buttonbar_menu	element_buttonbar	style_buttonbar_menu			125	0	25	25	0	0	0
+button_actionbar_0	element_actionbar	style_hud_slot			0	0	48	48	0	0	0
+button_actionbar_1	element_actionbar	style_hud_slot			48	0	48	48	0	0	1
+button_actionbar_2	element_actionbar	style_hud_slot			96	0	48	48	0	0	2
+button_actionbar_3	element_actionbar	style_hud_slot			144	0	48	48	0	0	3
+button_actionbar_4	element_actionbar	style_hud_slot			192	0	48	48	0	0	4
+button_actionbar_5	element_actionbar	style_hud_slot			240	0	48	48	0	0	5
+button_actionbar_6	element_actionbar	style_hud_slot			288	0	48	48	0	0	6
+button_actionbar_7	element_actionbar	style_hud_slot			336	0	48	48	0	0	7
 button_inventory_bag_0	element_inventory	style_hud_slot_alpha			61	4	48	48	0	0	0
 button_inventory_bag_1	element_inventory	style_hud_slot_alpha			61	67	48	48	0	0	1
 button_inventory_bag_2	element_inventory	style_hud_slot_alpha			64	234	48	48	0	0	2

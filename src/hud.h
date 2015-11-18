@@ -141,6 +141,7 @@ class _HUD {
 		void DrawVendor();
 		void DrawTrader();
 		void DrawTrade();
+		void DrawActionBar();
 		void DrawSkills();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();

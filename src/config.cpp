@@ -183,6 +183,11 @@ void _Config::Load() {
 	if(NetworkRate < 0.01)
 		NetworkRate = 0.01;
 
+	return;
+	// Clear bindings
+	for(int i = 0; i < _Input::INPUT_COUNT; i++)
+		Actions.ClearMappings(i);
+
 	// Load bindings
 	for(int i = 0; i < _Actions::COUNT; i++) {
 		std::ostringstream Buffer;
@@ -201,7 +206,7 @@ void _Config::Load() {
 		char Dummy;
 		std::stringstream Stream(InputString);
 		Stream >> InputType >> Dummy >> Input;
-		Actions.AddInputMap(InputType, Input, i, false);
+		Actions.AddInputMap(InputType, Input, i, 1.0f, -1.0f, false);
 	}
 }
 
@@ -233,9 +238,10 @@ void _Config::Save() {
 	File << "last_port=" << LastPort << std::endl;
 
 	// Write out input map
-	Actions.Serialize(File, _Input::KEYBOARD);
-	Actions.Serialize(File, _Input::MOUSE_AXIS);
-	Actions.Serialize(File, _Input::MOUSE_BUTTON);
+	//Actions.Serialize(File);
+	//Actions.Serialize(File, _Input::KEYBOARD);
+	//Actions.Serialize(File, _Input::MOUSE_AXIS);
+	//Actions.Serialize(File, _Input::MOUSE_BUTTON);
 
 	File.close();
 }

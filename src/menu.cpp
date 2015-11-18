@@ -918,7 +918,7 @@ void _Menu::RemapInput(int InputType, int Input) {
 	Actions.ClearMappingsForAction(_Input::MOUSE_BUTTON, CurrentAction);
 
 	// Add new binding
-	Actions.AddInputMap(InputType, Input, CurrentAction, false);
+	Actions.AddInputMap(InputType, Input, CurrentAction, 1.0f, -1.0f, false);
 
 	// Update menu labels
 	RefreshInputLabels();

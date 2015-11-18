@@ -25,6 +25,7 @@
 #include <constants.h>
 #include <buffer.h>
 #include <assets.h>
+#include <actions.h>
 #include <ui/element.h>
 #include <ui/button.h>
 #include <ui/label.h>
@@ -364,7 +365,7 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 // Updates the HUD
 void _HUD::Update(double FrameTime) {
 	Assets.Elements["element_hud"]->Update(FrameTime, Input.GetMouse());
-	Assets.Elements["element_hud_buttonbar"]->Update(FrameTime, Input.GetMouse());
+	Assets.Elements["element_buttonbar"]->Update(FrameTime, Input.GetMouse());
 	TooltipItem.Reset();
 
 	switch(*State) {
@@ -446,8 +447,10 @@ void _HUD::Update(double FrameTime) {
 // Draws the HUD elements
 void _HUD::Render() {
 	Assets.Elements["element_hud"]->Render();
-	Assets.Elements["element_hud_buttonbar"]->Render();
-	Assets.Elements["element_hud_actionbar"]->Render();
+	Assets.Elements["element_buttonbar"]->Render();
+	Assets.Elements["element_actionbar"]->Render();
+	DrawActionBar();
+
 	std::stringstream Buffer;
 
 	// Set hud values
@@ -589,7 +592,6 @@ void _HUD::ToggleChat() {
 
 // Closes the chat window
 void _HUD::CloseChat() {
-	//irrGUI->getRootGUIElement()->removeChild(ChatBox);
 	Chatting = false;
 }
 
@@ -608,8 +610,6 @@ void _HUD::InitMenu() {
 
 // Close main menu
 void _HUD::CloseMenu() {
-
-	//irrGUI->getRootGUIElement()->removeChild(TabMenu);
 
 	*State = _ClientState::STATE_WALK;
 }
@@ -654,7 +654,6 @@ void _HUD::CloseVendor() {
 	if(*State != _ClientState::STATE_VENDOR)
 		return;
 
-	//irrGUI->getRootGUIElement()->removeChild(TabVendor);
 	CursorItem.Reset();
 
 	// Close inventory
@@ -694,7 +693,6 @@ void _HUD::CloseTrader() {
 	if(*State != _ClientState::STATE_TRADER)
 		return;
 
-	//irrGUI->getRootGUIElement()->removeChild(TabTrader);
 	TooltipItem.Reset();
 	CursorItem.Reset();
 
@@ -1039,6 +1037,31 @@ void _HUD::DrawTrade() {
 	//Graphics.RenderText(Player->GetName().c_str(), OffsetX + 72, OffsetY + 198 - 55, _Graphics::ALIGN_CENTER);
 	Graphics.DrawCenteredImage(Stats.GetPortrait(Player->GetPortraitID())->Image, OffsetX + 72, OffsetY + 198);
 	*/
+}
+
+// Draw the action bar
+void _HUD::DrawActionBar() {
+	Assets.Elements["element_actionbar"]->Render();
+
+	// Draw trader items
+	for(size_t i = 0; i < BATTLE_MAXSKILLS; i++) {
+
+		// Get button position
+		std::stringstream Buffer;
+		Buffer << "button_actionbar_" << i;
+		_Button *Button = Assets.Buttons[Buffer.str()];
+		glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+
+		// Draw skill icon
+		const _Skill *Skill = Player->GetSkillBar(i);
+		if(Skill) {
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Skill->GetImage());
+		}
+
+		// Draw hotkey
+		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction(_Actions::SKILL1 + i), DrawPosition + glm::ivec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
+	}
 }
 
 // Draw the character stats page

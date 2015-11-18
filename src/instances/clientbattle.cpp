@@ -55,26 +55,6 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 		Fighters[i]->SetSkillUsing(nullptr);
 	}
 
-	// Add skill buttons
-	//const _Skill *Skill;
-	//for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-
-		// Add button
-		//SkillButtons[i] = irrGUI->addButton(Graphics.GetCenteredRect(288 + i * 32, 464, 32, 32), 0, ELEMENT_SKILL1 + i, 0);
-		//gui::IGUIStaticText *Text = Graphics.AddText(std::string(i+1).c_str(), 3, 1, _Graphics::ALIGN_LEFT, SkillButtons[i]);
-		//Text->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
-
-		// Get skill info
-		/*Skill = ClientPlayer->GetSkillBar(i);
-		if(Skill)
-			SkillButtons[i]->setImage(Skill->GetImage());
-		else
-			SkillButtons[i]->setImage(Graphics.GetImage(_Graphics::IMAGE_EMPTYSLOT));
-			*/
-	//}
-	//PassButton = irrGUI->addButton(Graphics.GetCenteredRect(570, 464, 50, 20), 0, ELEMENT_PASS, L"Pass");
-	//PassButton->setOverrideFont(Graphics.GetFont(_Graphics::FONT_8));
-
 	State = STATE_GETINPUT;
 	TargetState = -1;
 	ShowResults = false;
