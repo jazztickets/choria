@@ -19,10 +19,15 @@
 
 // Libraries
 #include <state.h>
-#include <instances/map.h>
+#include <vector>
+
+struct _Tile;
+class _Camera;
+class _Map;
+class _Texture;
 
 // Classes
-class _MapEditorState : public _State {
+class _EditorState : public _State {
 
 	public:
 
@@ -73,13 +78,15 @@ class _MapEditorState : public _State {
 		void Init() override;
 		void Close() override;
 
-		bool HandleMousePress(int TButton, int TMouseX, int TMouseY);
-		void HandleMouseRelease(int TButton, int TMouseX, int TMouseY) { }
-		void HandleMouseWheel(float TDirection);
-		void HandleMouseMotion(int TMouseX, int TMouseY);
-
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
+
+		void KeyEvent(const _KeyEvent &KeyEvent) override;
+		void TextEvent(const char *Text) override;
+		void MouseEvent(const _MouseEvent &MouseEvent) override;
+		void WindowEvent(uint8_t Event) override;
+
+		void SetFilename(const std::string &Filename) { this->Filename = Filename; }
 
 	private:
 
@@ -107,8 +114,13 @@ class _MapEditorState : public _State {
 		// General
 		int State;
 
+		// Graphics
+		_Camera *Camera;
+		glm::vec2 WorldCursor;
+
 		// Map
 		_Map *Map;
+		std::string Filename;
 		std::string WorkingDirectory;
 
 		// Textures
@@ -116,11 +128,11 @@ class _MapEditorState : public _State {
 
 		// Brush
 		int BrushSize;
-		_Tile Brush;
+		_Tile *Brush;
 		glm::ivec2 BrushPosition;
 
 		// Filters
 		bool Filters[FILTER_COUNT];
 };
 
-extern _MapEditorState MapEditorState;
+extern _EditorState EditorState;

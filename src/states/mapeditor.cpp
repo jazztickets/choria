@@ -23,24 +23,36 @@
 #include <stats.h>
 #include <config.h>
 #include <constants.h>
+#include <camera.h>
+#include <assets.h>
+#include <program.h>
+#include <instances/map.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
-_MapEditorState MapEditorState;
+_EditorState EditorState;
 
 // Initializes the state
-void _MapEditorState::Init() {
-	//WorkingDirectory = irrFile->getWorkingDirectory();
+void _EditorState::Init() {
 
-	// Textures
+	// Create brush
+	Brush = new _Tile();
 	BrushSize = 0;
-	Brush.Texture = nullptr;
+	Brush->Texture = nullptr;
 	RefreshTexturePalette();
 	if(TexturePalette.size() > 0)
-		Brush.Texture = TexturePalette[0];
+		Brush->Texture = TexturePalette[0];
+
+	// Create camera
+	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR);
+	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	// Default map
-	//std::string SavePath = Config.ConfigPath + "test.map";
-	std::string SavePath = "test.map";
-	Map = new _Map(SavePath, 50, 50);
+	Map = nullptr;
+	if(Filename != "") {
+		Map = new _Map(Filename);
+		Map->LoadMap();
+	}
 
 	// Set filters
 	ResetFilters();
@@ -51,24 +63,27 @@ void _MapEditorState::Init() {
 }
 
 // Shuts the state down
-void _MapEditorState::Close() {
+void _EditorState::Close() {
+	delete Camera;
+	delete Brush;
 
 	CloseMap();
 }
 
-// Deletes the map
-void _MapEditorState::CloseMap() {
-
-	if(Map) {
-		delete Map;
-		Map = nullptr;
-	}
-}
-
 // Updates the current state
-void _MapEditorState::Update(double FrameTime) {
+void _EditorState::Update(double FrameTime) {
 	if(!Map)
 		return;
+
+	if(Camera) {
+		Camera->Update(FrameTime);
+
+		// Get world cursor
+		Camera->ConvertScreenToWorld(Input.GetMouse(), WorldCursor);
+
+		// Get tile indices for later usage
+		WorldCursor = Map->GetValidPosition(WorldCursor);
+	}
 
 	switch(State) {
 		case STATE_MAIN:
@@ -77,7 +92,7 @@ void _MapEditorState::Update(double FrameTime) {
 					case 0:
 						ApplyBrush(BrushPosition.x, BrushPosition.y);
 						if(!Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
-							Map->SetNoZoneTexture(Brush.Texture);
+							Map->SetNoZoneTexture(Brush->Texture);
 					break;
 					case 1:
 						ApplyBrushSize(BrushPosition.x, BrushPosition.y, 3);
@@ -95,10 +110,27 @@ void _MapEditorState::Update(double FrameTime) {
 }
 
 // Draws the current state
-void _MapEditorState::Render(double BlendFactor) {
+void _EditorState::Render(double BlendFactor) {
+	Graphics.Setup3D();
+
+	// Set lights
+	glm::vec4 AmbientLight(1.0f, 1.0f, 1.0f, 1.0f);
+	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
+
+	// Setup the viewing matrix
+	Graphics.Setup3D();
+	Camera->Set3DProjection(BlendFactor);
+	Graphics.SetProgram(Assets.Programs["pos"]);
+	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	if(Map)
-		Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
+		//Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
+		Map->Render(Camera, true);
 	RenderBrush();
 
 	std::string GridBrushPositionText = std::to_string(BrushPosition.x) + std::string(" ") + std::to_string(BrushPosition.y);
@@ -108,24 +140,160 @@ void _MapEditorState::Render(double BlendFactor) {
 }
 
 // Key presses
+// Mouse buttons
 /*
-bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
+// Scroll wheel
+void _EditorState::HandleMouseWheel(float TDirection) {
 
+	Brush->Zone += (int)(TDirection);
+	if(Brush->Zone < 0)
+		Brush->Zone = 0;
+}
+
+*/
+// GUI events
+/*
+void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
+
+	switch(TEventType) {
+		case gui::EGET_ELEMENT_CLOSED:
+			State = STATE_MAIN;
+		break;
+		case gui::EGET_EDITBOX_ENTER: {
+			gui::IGUISpinBox *SpinBox = static_cast<gui::IGUISpinBox *>(TElement);
+			switch(TElement->getID()) {
+				case NEWMAP_FILE:
+				case NEWMAP_WIDTH:
+				case NEWMAP_HEIGHT:
+					CreateMap();
+				break;
+				case BRUSHOPTIONS_ZONE:
+					Brush->Zone = (int)SpinBox->getValue();
+				break;
+				case BRUSHOPTIONS_EVENTDATA:
+					Brush->EventData = (int)SpinBox->getValue();
+				default:
+				break;
+			}
+		}
+		break;
+		case gui::EGET_BUTTON_CLICKED:
+			switch(TElement->getID()) {
+				case NEWMAP_CREATE:
+					CreateMap();
+				break;
+				case NEWMAP_CANCEL:
+					CloseWindow(NEWMAP_WINDOW);
+					State = STATE_MAIN;
+				break;
+				case BRUSHOPTIONS_FILTERCLOSE:
+					CloseWindow(BRUSHOPTIONS_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+
+					// Texture palette
+					if(TElement->getID() >= TEXTURES_ID) {
+						int TextureIndex = TElement->getID() - TEXTURES_ID;
+						Brush->Texture = TexturePalette[TextureIndex];
+
+						CloseWindow(TEXTUREPALETTE_WINDOW);
+						State = STATE_MAIN;
+					}
+				break;
+			}
+		break;
+		case gui::EGET_CHECKBOX_CHANGED: {
+			gui::IGUICheckBox *CheckBox = static_cast<gui::IGUICheckBox *>(TElement);
+
+			switch(TElement->getID()) {
+				case BRUSHOPTIONS_WALL:
+					Brush->Wall = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_PVP:
+					Brush->PVP = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERTEXTURE:
+					Filters[FILTER_TEXTURE] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERWALL:
+					Filters[FILTER_WALL] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERZONE:
+					Filters[FILTER_ZONE] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTERPVP:
+					Filters[FILTER_PVP] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTEREVENTTYPE:
+					Filters[FILTER_EVENTTYPE] = CheckBox->isChecked();
+				break;
+				case BRUSHOPTIONS_FILTEREVENTDATA:
+					Filters[FILTER_EVENTDATA] = CheckBox->isChecked();
+				break;
+			}
+		}
+		break;
+		case gui::EGET_SPINBOX_CHANGED: {
+			gui::IGUISpinBox *SpinBox = static_cast<gui::IGUISpinBox *>(TElement);
+			switch(TElement->getID()) {
+				case BRUSHOPTIONS_ZONE:
+					Brush->Zone = (int)SpinBox->getValue();
+				break;
+				case BRUSHOPTIONS_EVENTDATA:
+					Brush->EventData = (int)SpinBox->getValue();
+				break;
+			}
+		}
+		break;
+		case gui::EGET_COMBO_BOX_CHANGED: {
+			gui::IGUIComboBox *ComboBox = static_cast<gui::IGUIComboBox *>(TElement);
+			switch(TElement->getID()) {
+				case BRUSHOPTIONS_EVENTTYPE:
+					Brush->EventType = (int)ComboBox->getSelected();
+				break;
+			}
+		}
+		break;
+		case gui::EGET_FILE_SELECTED: {
+			gui::IGUIFileOpenDialog *FileOpen = static_cast<gui::IGUIFileOpenDialog *>(TElement);
+			//irrFile->changeWorkingDirectoryTo(WorkingDirectory);
+
+			CloseMap();
+			//Map = new _Map(FileOpen->getFileName());
+			if(!Map->LoadMap()) {
+				CloseMap();
+			}
+
+			State = STATE_MAIN;
+		}
+		break;
+		case gui::EGET_FILE_CHOOSE_DIALOG_CANCELLED:
+			State = STATE_MAIN;
+		break;
+		default:
+		break;
+	}
+}
+*/
+
+// Key events
+void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 	switch(State) {
 		case STATE_MAIN:
-			switch(TKey) {
-				case KEY_ESCAPE:
-					//Game.SetDone(true);
-					//Framework.ChangeState(&MainMenuState);
+			switch(KeyEvent.Key) {
+				case SDL_SCANCODE_ESCAPE:
+					Framework.SetDone(true);
 				break;
+				/*
 				case KEY_KEY_N:
 					InitNewMap();
 				break;
 				case KEY_KEY_W:
-					Brush.Wall = !Brush.Wall;
+					Brush->Wall = !Brush->Wall;
 				break;
 				case KEY_KEY_P:
-					Brush.PVP = !Brush.PVP;
+					Brush->PVP = !Brush->PVP;
 				break;
 				case KEY_KEY_S:
 					if(Map)
@@ -142,12 +310,12 @@ bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 				break;
 				case KEY_MINUS:
 				case KEY_SUBTRACT:
-					if(Brush.EventData > 0)
-						Brush.EventData--;
+					if(Brush->EventData > 0)
+						Brush->EventData--;
 				break;
 				case KEY_ADD:
 				case KEY_PLUS:
-					Brush.EventData++;
+					Brush->EventData++;
 				break;
 				case KEY_KEY_1:
 					ResetFilters();
@@ -182,8 +350,10 @@ bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 				default:
 					return false;
 				break;
+				*/
 			}
 		break;
+			/*
 		case STATE_NEWMAP:
 			switch(TKey) {
 				case KEY_ESCAPE:
@@ -227,180 +397,52 @@ bool _MapEditorState::HandleKeyPress(EKEY_CODE TKey) {
 					return false;
 				break;
 			}
-		break;
+		break;*/
 	}
-
-	return true;
 }
-*/
-// Mouse buttons
-bool _MapEditorState::HandleMousePress(int TButton, int TMouseX, int TMouseY) {
-/*
+
+// Text input events
+void _EditorState::TextEvent(const char *Text) {
+
+}
+
+// Mouse events
+void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 	if(Map) {
-		switch(TButton) {
-			case SDL_BUTTON_LEFT:
-				if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
-					if(Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
-						Brush = *Map->GetTile(BrushPosition.x, BrushPosition.y);
-				}
-			break;
-			case SDL_BUTTON_RIGHT: {
-				Map->ScreenToGrid(glm::ivec2(TMouseX, TMouseY), BrushPosition);
-				Map->SetCameraScroll(BrushPosition);
-			} break;
+		if(MouseEvent.Pressed) {
+			switch(MouseEvent.Button) {
+				// Eyedropper tool
+				case SDL_BUTTON_LEFT:
+					//if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
+						//if(Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
+							//Brush = *Map->GetTile(BrushPosition.x, BrushPosition.y);
+					//}
+				break;
+				// Scroll map
+				case SDL_BUTTON_RIGHT:
+					Camera->Set2DPosition(WorldCursor);
+					//if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
+						//if(Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
+							//Brush = *Map->GetTile(BrushPosition.x, BrushPosition.y);
+					//}
+				break;
+			}
 		}
-	}
-*/
-	return false;
-}
-
-// Scroll wheel
-void _MapEditorState::HandleMouseWheel(float TDirection) {
-
-	Brush.Zone += (int)(TDirection);
-	if(Brush.Zone < 0)
-		Brush.Zone = 0;
-}
-
-// Mouse movement
-void _MapEditorState::HandleMouseMotion(int TMouseX, int TMouseY) {
-
-	if(Map) {
-		Map->ScreenToGrid(glm::ivec2(TMouseX, TMouseY), BrushPosition);
 	}
 }
 
-// GUI events
-/*
-void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
-
-	switch(TEventType) {
-		case gui::EGET_ELEMENT_CLOSED:
-			State = STATE_MAIN;
-		break;
-		case gui::EGET_EDITBOX_ENTER: {
-			gui::IGUISpinBox *SpinBox = static_cast<gui::IGUISpinBox *>(TElement);
-			switch(TElement->getID()) {
-				case NEWMAP_FILE:
-				case NEWMAP_WIDTH:
-				case NEWMAP_HEIGHT:
-					CreateMap();
-				break;
-				case BRUSHOPTIONS_ZONE:
-					Brush.Zone = (int)SpinBox->getValue();
-				break;
-				case BRUSHOPTIONS_EVENTDATA:
-					Brush.EventData = (int)SpinBox->getValue();
-				default:
-				break;
-			}
-		}
-		break;
-		case gui::EGET_BUTTON_CLICKED:
-			switch(TElement->getID()) {
-				case NEWMAP_CREATE:
-					CreateMap();
-				break;
-				case NEWMAP_CANCEL:
-					CloseWindow(NEWMAP_WINDOW);
-					State = STATE_MAIN;
-				break;
-				case BRUSHOPTIONS_FILTERCLOSE:
-					CloseWindow(BRUSHOPTIONS_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-
-					// Texture palette
-					if(TElement->getID() >= TEXTURES_ID) {
-						int TextureIndex = TElement->getID() - TEXTURES_ID;
-						Brush.Texture = TexturePalette[TextureIndex];
-
-						CloseWindow(TEXTUREPALETTE_WINDOW);
-						State = STATE_MAIN;
-					}
-				break;
-			}
-		break;
-		case gui::EGET_CHECKBOX_CHANGED: {
-			gui::IGUICheckBox *CheckBox = static_cast<gui::IGUICheckBox *>(TElement);
-
-			switch(TElement->getID()) {
-				case BRUSHOPTIONS_WALL:
-					Brush.Wall = CheckBox->isChecked();
-				break;
-				case BRUSHOPTIONS_PVP:
-					Brush.PVP = CheckBox->isChecked();
-				break;
-				case BRUSHOPTIONS_FILTERTEXTURE:
-					Filters[FILTER_TEXTURE] = CheckBox->isChecked();
-				break;
-				case BRUSHOPTIONS_FILTERWALL:
-					Filters[FILTER_WALL] = CheckBox->isChecked();
-				break;
-				case BRUSHOPTIONS_FILTERZONE:
-					Filters[FILTER_ZONE] = CheckBox->isChecked();
-				break;
-				case BRUSHOPTIONS_FILTERPVP:
-					Filters[FILTER_PVP] = CheckBox->isChecked();
-				break;
-				case BRUSHOPTIONS_FILTEREVENTTYPE:
-					Filters[FILTER_EVENTTYPE] = CheckBox->isChecked();
-				break;
-				case BRUSHOPTIONS_FILTEREVENTDATA:
-					Filters[FILTER_EVENTDATA] = CheckBox->isChecked();
-				break;
-			}
-		}
-		break;
-		case gui::EGET_SPINBOX_CHANGED: {
-			gui::IGUISpinBox *SpinBox = static_cast<gui::IGUISpinBox *>(TElement);
-			switch(TElement->getID()) {
-				case BRUSHOPTIONS_ZONE:
-					Brush.Zone = (int)SpinBox->getValue();
-				break;
-				case BRUSHOPTIONS_EVENTDATA:
-					Brush.EventData = (int)SpinBox->getValue();
-				break;
-			}
-		}
-		break;
-		case gui::EGET_COMBO_BOX_CHANGED: {
-			gui::IGUIComboBox *ComboBox = static_cast<gui::IGUIComboBox *>(TElement);
-			switch(TElement->getID()) {
-				case BRUSHOPTIONS_EVENTTYPE:
-					Brush.EventType = (int)ComboBox->getSelected();
-				break;
-			}
-		}
-		break;
-		case gui::EGET_FILE_SELECTED: {
-			gui::IGUIFileOpenDialog *FileOpen = static_cast<gui::IGUIFileOpenDialog *>(TElement);
-			//irrFile->changeWorkingDirectoryTo(WorkingDirectory);
-
-			CloseMap();
-			//Map = new _Map(FileOpen->getFileName());
-			if(!Map->LoadMap()) {
-				CloseMap();
-			}
-
-			State = STATE_MAIN;
-		}
-		break;
-		case gui::EGET_FILE_CHOOSE_DIALOG_CANCELLED:
-			State = STATE_MAIN;
-		break;
-		default:
-		break;
-	}
+// Window events
+void _EditorState::WindowEvent(uint8_t Event) {
+	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
-*/
+
 // Close a window by element
-void _MapEditorState::CloseWindow(int TElement) {
+void _EditorState::CloseWindow(int TElement) {
 }
 
 // Initializes the new map screen
-void _MapEditorState::InitNewMap() {
+void _EditorState::InitNewMap() {
 /*
 	// Main dialog window
 	gui::IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 300, 300), false, L"New Map", 0, NEWMAP_WINDOW);
@@ -434,7 +476,7 @@ void _MapEditorState::InitNewMap() {
 }
 
 // Creates a map with the given parameters
-void _MapEditorState::CreateMap() {
+void _EditorState::CreateMap() {
 /*
 	// Get window
 	gui::IGUIWindow *Window = static_cast<gui::IGUIWindow *>(irrGUI->getRootGUIElement()->getElementFromId(NEWMAP_WINDOW));
@@ -487,7 +529,7 @@ void _MapEditorState::CreateMap() {
 }
 
 // Initialize the load map screen
-void _MapEditorState::InitLoadMap() {
+void _EditorState::InitLoadMap() {
 	//WorkingDirectory = irrFile->getWorkingDirectory();
 
 	// Main dialog window
@@ -498,7 +540,7 @@ void _MapEditorState::InitLoadMap() {
 }
 
 // Opens the texture palette dialog
-void _MapEditorState::InitTexturePalette() {
+void _EditorState::InitTexturePalette() {
 /*
 	// Main dialog window
 	gui::IGUIWindow *Window = irrGUI->addWindow(Graphics.GetCenteredRect(400, 300, 600, 400), false, L"Texture Palette", 0, TEXTUREPALETTE_WINDOW);
@@ -524,7 +566,7 @@ void _MapEditorState::InitTexturePalette() {
 }
 
 // Opens the brush filter dialog
-void _MapEditorState::InitBrushOptions() {
+void _EditorState::InitBrushOptions() {
 	/*
 	int StartX, StartY, OffsetY;
 
@@ -535,10 +577,10 @@ void _MapEditorState::InitBrushOptions() {
 	// Wall
 	StartX = 75, StartY = 40;
 	Graphics.AddText("Wall", StartX - 5, StartY + 3, _Graphics::ALIGN_RIGHT, Window);
-	irrGUI->addCheckBox(Brush.Wall, Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
+	irrGUI->addCheckBox(Brush->Wall, Graphics.GetRect(StartX, StartY, 100, 20), Window, BRUSHOPTIONS_WALL);
 
 	Graphics.AddText("PVP", StartX + 50, StartY + 3, _Graphics::ALIGN_RIGHT, Window);
-	irrGUI->addCheckBox(Brush.PVP, Graphics.GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
+	irrGUI->addCheckBox(Brush->PVP, Graphics.GetRect(StartX + 55, StartY, 100, 20), Window, BRUSHOPTIONS_PVP);
 
 	// Zone
 	StartY += 30;
@@ -554,7 +596,7 @@ void _MapEditorState::InitBrushOptions() {
 	for(int i = 0; i < Stats.GetEventCount(); i++)
 		BrushEventType->addItem(core::stringw(Stats.GetEvent(i)->Name.c_str()).c_str());
 
-	BrushEventType->setSelected(Brush.EventType);
+	BrushEventType->setSelected(Brush->EventType);
 
 	// Event Data
 	StartY += 30;
@@ -584,7 +626,7 @@ void _MapEditorState::InitBrushOptions() {
 }
 
 // Loads all map textures from a directory
-void _MapEditorState::RefreshTexturePalette() {
+void _EditorState::RefreshTexturePalette() {
 	/*
 	TexturePalette.clear();
 
@@ -617,7 +659,7 @@ void _MapEditorState::RefreshTexturePalette() {
 }
 
 // Applys a brush of varying size
-void _MapEditorState::ApplyBrushSize(int TX, int TY, int TSize) {
+void _EditorState::ApplyBrushSize(int TX, int TY, int TSize) {
 
 	for(int i = 0; i < TSize; i++) {
 		for(int j = 0; j < TSize; j++) {
@@ -633,7 +675,7 @@ void _MapEditorState::ApplyBrushSize(int TX, int TY, int TSize) {
 }
 
 // Draws a texture on the map with the current brush
-void _MapEditorState::ApplyBrush(int TX, int TY) {
+void _EditorState::ApplyBrush(int TX, int TY) {
 
 	if(Map) {
 		if(!Map->IsValidPosition(TX, TY))
@@ -645,17 +687,17 @@ void _MapEditorState::ApplyBrush(int TX, int TY) {
 
 		// Apply filters
 		if(Filters[FILTER_TEXTURE])
-			Tile.Texture = Brush.Texture;
+			Tile.Texture = Brush->Texture;
 		if(Filters[FILTER_WALL])
-			Tile.Wall = Brush.Wall;
+			Tile.Wall = Brush->Wall;
 		if(Filters[FILTER_ZONE])
-			Tile.Zone = Brush.Zone;
+			Tile.Zone = Brush->Zone;
 		if(Filters[FILTER_PVP])
-			Tile.PVP = Brush.PVP;
+			Tile.PVP = Brush->PVP;
 		if(Filters[FILTER_EVENTTYPE])
-			Tile.EventType = Brush.EventType;
+			Tile.EventType = Brush->EventType;
 		if(Filters[FILTER_EVENTDATA])
-			Tile.EventData = Brush.EventData;
+			Tile.EventData = Brush->EventData;
 
 		// Set new tile
 		Map->SetTile(TX, TY, &Tile);
@@ -663,7 +705,7 @@ void _MapEditorState::ApplyBrush(int TX, int TY) {
 }
 
 // Draw information about the brush
-void _MapEditorState::RenderBrush() {
+void _EditorState::RenderBrush() {
 
 	/*
 	video::SColor Color(255, 255, 255, 255);
@@ -672,14 +714,14 @@ void _MapEditorState::RenderBrush() {
 
 	// Draw texture
 	StartY += 15;
-	if(Brush.Texture != nullptr) {
+	if(Brush->Texture != nullptr) {
 		Filters[FILTER_TEXTURE] ? Color.setAlpha(255) : Color.setAlpha(80);
-		Graphics.DrawCenteredImage(Brush.Texture, StartX, StartY, Color);
+		Graphics.DrawCenteredImage(Brush->Texture, StartX, StartY, Color);
 	}
 
 	// Get wall text
 	const char *WallText = "Floor";
-	if(Brush.Wall)
+	if(Brush->Wall)
 		WallText = "Wall";
 
 	// Draw wall info
@@ -691,12 +733,12 @@ void _MapEditorState::RenderBrush() {
 	// Draw zone info
 	StartY += 15;
 	Filters[FILTER_ZONE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	std::string ZoneText = std::string("Zone ") + std::to_string(Brush.Zone);
+	std::string ZoneText = std::string("Zone ") + std::to_string(Brush->Zone);
 	//Graphics.RenderText(ZoneText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Get PVP text
 	const char *PVPText = "Safe";
-	if(Brush.PVP)
+	if(Brush->PVP)
 		PVPText = "PVP";
 
 	// Draw pvp info
@@ -707,20 +749,26 @@ void _MapEditorState::RenderBrush() {
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTTYPE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	std::string EventTypeText = std::string("Event: ") + Stats.GetEvent(Brush.EventType)->ShortName;
+	std::string EventTypeText = std::string("Event: ") + Stats.GetEvent(Brush->EventType)->ShortName;
 	//Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 
 	// Draw event info
 	StartY += 15;
 	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
-	std::string EventDataText = std::string("Event Data: ") + std::to_string(Brush.EventData);
+	std::string EventDataText = std::string("Event Data: ") + std::to_string(Brush->EventData);
 	//Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 	*/
 }
 
 // Resets the filters to false
-void _MapEditorState::ResetFilters() {
+void _EditorState::ResetFilters() {
 	for(int i = 0; i < FILTER_COUNT; i++) {
 		Filters[i] = false;
 	}
+}
+
+// Deletes the map
+void _EditorState::CloseMap() {
+	delete Map;
+	Map = nullptr;
 }

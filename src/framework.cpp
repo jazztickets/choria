@@ -57,8 +57,10 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			ServerState.StartCommandThread();
 			IsServer = true;
 		}
-		else if(Token == "-mapeditor") {
-			State = &MapEditorState;
+		else if(Token == "-editor") {
+			State = &EditorState;
+			if(TokensRemaining && Arguments[i+1][0] != '-')
+				EditorState.SetFilename(Arguments[++i]);
 		}
 		else if(Token == "-connect") {
 		}

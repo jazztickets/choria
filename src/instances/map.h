@@ -24,6 +24,7 @@
 #include <list>
 #include <cstdint>
 #include <string>
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Object;
@@ -62,9 +63,9 @@ class _Map {
 			EVENT_COUNT
 		};
 
-		_Map(const std::string &TFilename, int TWidth, int THeight);
-		_Map(const std::string &TFilename);
-		_Map(int TMapID);
+		_Map(const std::string &Filename, const glm::ivec2 &Size);
+		_Map(const std::string &Filename);
+		_Map(int ID);
 		~_Map();
 
 		void Update(double FrameTime);
@@ -74,15 +75,7 @@ class _Map {
 		const std::string &GetFilename() const { return Filename; }
 
 		// Graphics
-		void Render(_Camera *Camera);
-		void RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP);
-
-		void SetCameraScroll(const glm::ivec2 &TPosition);
-		const glm::ivec2 &GetCameraScroll() const { return CameraScroll; }
-		const glm::ivec2 &GetViewSize() const { return ViewSize; }
-
-		bool GridToScreen(const glm::ivec2 &TGridPosition, glm::ivec2 &TScreenPosition) const;
-		void ScreenToGrid(const glm::ivec2 &TScreenPosition, glm::ivec2 &TGridPosition) const;
+		void Render(_Camera *Camera, bool Editor=false);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &TPosition);
@@ -100,10 +93,11 @@ class _Map {
 		_IndexedEvent *GetIndexedEvent(int TEventType, int TEventData);
 
 		// Map editing
-		int GetWidth() const { return Width; }
-		int GetHeight() const { return Height; }
-		bool IsValidPosition(int TX, int TY) const { return TX >= 0 && TY >= 0 && TX < Width && TY < Height; }
+		int GetWidth() const { return Size.x; }
+		int GetHeight() const { return Size.y; }
+		bool IsValidPosition(int TX, int TY) const { return TX >= 0 && TY >= 0 && TX < Size.x && TY < Size.y; }
 		void SetNoZoneTexture(const _Texture *TTexture) { NoZoneTexture = TTexture; }
+		glm::vec2 GetValidPosition(const glm::vec2 &Position);
 
 		void GetTile(int TX, int TY, _Tile &TTile) const { TTile = Tiles[TX][TY]; }
 		const _Tile *GetTile(int TX, int TY) const { return &Tiles[TX][TY]; }
@@ -111,7 +105,7 @@ class _Map {
 
 		// File IO
 		int SaveMap();
-		int LoadMap();
+		void LoadMap();
 
 	private:
 
@@ -129,13 +123,9 @@ class _Map {
 		int ID;
 		std::string Filename;
 
-		// Viewing
-		glm::ivec2 ViewSize;
-		glm::ivec2 CameraScroll;
-
 		// Map data
 		_Tile **Tiles;
-		int32_t Width, Height;
+		glm::ivec2 Size;
 
 		// Textures
 		const _Texture *NoZoneTexture;

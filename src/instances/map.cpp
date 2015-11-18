@@ -37,34 +37,31 @@
 #include <iostream>
 
 // Constructor for the map editor: new map
-_Map::_Map(const std::string &TFilename, int TWidth, int THeight) {
+_Map::_Map(const std::string &Filename, const glm::ivec2 &Size) {
 	Init();
 
-	Filename = TFilename;
-	Width = TWidth;
-	Height = THeight;
+	this->Filename = Filename;
+	this->Size = Size;
 
 	AllocateMap();
 }
 
 // Constructor for the map editor: load map
-_Map::_Map(const std::string &TFilename) {
+_Map::_Map(const std::string &Filename) {
 	Init();
 
-	Filename = TFilename;
+	this->Filename = Filename;
 }
 
 // Constructor for maps already created in the database
-_Map::_Map(int TMapID) {
+_Map::_Map(int ID) {
 	Init();
 
 	// Set ID
-	ID = TMapID;
+	this->ID = ID;
 
 	// Get map info
 	const _MapStat *Map = Stats.GetMap(ID);
-	ViewSize.x = Map->ViewWidth;
-	ViewSize.y = Map->ViewHeight;
 
 	// Load map
 	Filename = Map->File;
@@ -84,16 +81,12 @@ void _Map::Init() {
 	NoZoneTexture = nullptr;
 	DefaultNoZoneTexture = Assets.Textures["editor/nozone.png"];
 	Tiles = nullptr;
-	ViewSize.x = 25;
-	ViewSize.y = 19;
-	CameraScroll.x = CAMERA_SCROLLMIN_X;
-	CameraScroll.y = CAMERA_SCROLLMIN_Y;
 }
 
 // Free memory used by the tiles
 void _Map::FreeMap() {
 	if(Tiles) {
-		for(int i = 0; i < Width; i++)
+		for(int i = 0; i < Size.x; i++)
 			delete[] Tiles[i];
 		delete[] Tiles;
 
@@ -108,9 +101,9 @@ void _Map::AllocateMap() {
 	if(Tiles)
 		return;
 
-	Tiles = new _Tile*[Width];
-	for(int i = 0; i < Width; i++) {
-		Tiles[i] = new _Tile[Height];
+	Tiles = new _Tile*[Size.x];
+	for(int i = 0; i < Size.x; i++) {
+		Tiles[i] = new _Tile[Size.y];
 	}
 
 	// Delete textures
@@ -129,7 +122,7 @@ void _Map::Update(double FrameTime) {
 }
 
 // Renders the map
-void _Map::Render(_Camera *Camera) {
+void _Map::Render(_Camera *Camera, bool Editor) {
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	Graphics.SetColor(COLOR_WHITE);
@@ -138,10 +131,10 @@ void _Map::Render(_Camera *Camera) {
 	Graphics.SetDepthTest(false);
 	Graphics.SetDepthMask(false);
 	glm::vec4 Bounds = Camera->GetAABB();
-	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Width);
-	Bounds[1] = glm::clamp(Bounds[1], 0.0f, (float)Height);
-	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Width);
-	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Height);
+	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Size.x);
+	Bounds[1] = glm::clamp(Bounds[1], 0.0f, (float)Size.y);
+	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Size.x);
+	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
 	for(int j = Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = Bounds[0]; i < Bounds[2]; i++) {
 			_Tile *Tile = &Tiles[i][j];
@@ -153,7 +146,7 @@ void _Map::Render(_Camera *Camera) {
 		}
 	}
 }
-
+/*
 // Renders the map for editor
 void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
@@ -169,7 +162,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 				Graphics.DrawCenteredImage(DrawPosition, NoZoneTexture);
 
 			// Validate coordinate
-			if(GridPosition.x >= 0 && GridPosition.x < Width && GridPosition.y >= 0 && GridPosition.y < Height) {
+			if(GridPosition.x >= 0 && GridPosition.x < Size.x && GridPosition.y >= 0 && GridPosition.y < Size.y) {
 				_Tile *Tile = &Tiles[GridPosition.x][GridPosition.y];
 
 				// Draw texture
@@ -205,43 +198,7 @@ void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 		}
 	}
 }
-
-// Sets the camera scroll position
-void _Map::SetCameraScroll(const glm::ivec2 &TPosition) {
-
-	CameraScroll = TPosition;
-	if(CameraScroll.x < CAMERA_SCROLLMIN_X)
-		CameraScroll.x = CAMERA_SCROLLMIN_X;
-	if(CameraScroll.y < CAMERA_SCROLLMIN_Y)
-		CameraScroll.y = CAMERA_SCROLLMIN_Y;
-	if(CameraScroll.x >= Width - CAMERA_SCROLLMIN_X)
-		CameraScroll.x = Width - CAMERA_SCROLLMIN_X;
-	if(CameraScroll.y >= Height - CAMERA_SCROLLMIN_Y)
-		CameraScroll.y = Height - CAMERA_SCROLLMIN_Y;
-}
-
-// Converts a grid position on the map to a screen coordinate
-bool _Map::GridToScreen(const glm::ivec2 &TGridPosition, glm::ivec2 &TScreenPosition) const {
-
-	// Get delta from center
-	glm::ivec2 CenterDelta(TGridPosition.x - CameraScroll.x, TGridPosition.y - CameraScroll.y);
-
-	TScreenPosition.x = CenterDelta.x * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2;
-	TScreenPosition.y = CenterDelta.y * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2;
-
-	// Check if it's on screen
-	if(abs(CenterDelta.x) > ViewSize.x/2 || abs(CenterDelta.y) > ViewSize.y/2)
-		return false;
-
-	return true;
-}
-
-// Converts a screen coordinate to a map position
-void _Map::ScreenToGrid(const glm::ivec2 &TScreenPosition, glm::ivec2 &TGridPosition) const {
-	TGridPosition.x = GetCameraScroll().x + TScreenPosition.x / MAP_TILE_WIDTH - GetViewSize().x / 2;
-	TGridPosition.y = GetCameraScroll().y + TScreenPosition.y / MAP_TILE_HEIGHT - GetViewSize().y / 2;
-}
-
+*/
 // Saves the map to a file
 int _Map::SaveMap() {
 
@@ -258,8 +215,8 @@ int _Map::SaveMap() {
 
 	// Write header
 	File.write((char *)&MAP_VERSION, sizeof(MAP_VERSION));
-	File.write((char *)&Width, sizeof(Width));
-	File.write((char *)&Height, sizeof(Height));
+	File.write((char *)&Size.x, sizeof(Size.x));
+	File.write((char *)&Size.y, sizeof(Size.y));
 
 	// Write texture list
 	int32_t TextureCount = (int32_t)(TextureList.size());
@@ -299,8 +256,8 @@ int _Map::SaveMap() {
 
 	// Write map data
 	_Tile *Tile;
-	for(int i = 0; i < Width; i++) {
-		for(int j = 0; j < Height; j++) {
+	for(int i = 0; i < Size.x; i++) {
+		for(int j = 0; j < Size.y; j++) {
 			Tile = &Tiles[i][j];
 
 			// Write texture
@@ -321,24 +278,20 @@ int _Map::SaveMap() {
 }
 
 // Loads a map
-int _Map::LoadMap() {
+void _Map::LoadMap() {
 
 	// Open file
 	std::ifstream File(Filename.c_str(), std::ios::binary);
-	if(!File) {
-		printf("LoadMap: unable to open file for reading: %s\n", Filename.c_str());
-		return 0;
-	}
+	if(!File)
+		throw std::runtime_error("_Map::LoadMap: Unable to open file for reading: " + Filename);
 
 	// Read header
 	int32_t MapVersion;
 	File.read((char *)&MapVersion, sizeof(MapVersion));
-	File.read((char *)&Width, sizeof(Width));
-	File.read((char *)&Height, sizeof(Height));
-	if(Width < 5 || Width > 255 || Height < 5 || Height > 255 || MapVersion != MAP_VERSION) {
-		printf("LoadMap: bad size header\n");
-		return 0;
-	}
+	File.read((char *)&Size.x, sizeof(Size.x));
+	File.read((char *)&Size.y, sizeof(Size.y));
+	if(Size.x < 5 || Size.x > 255 || Size.y < 5 || Size.y > 255 || MapVersion != MAP_VERSION)
+		throw std::runtime_error("_Map::LoadMap: Bad size header");
 
 	// Allocate memory
 	FreeMap();
@@ -374,8 +327,8 @@ int _Map::LoadMap() {
 
 	// Read map data
 	_Tile *Tile;
-	for(int i = 0; i < Width; i++) {
-		for(int j = 0; j < Height; j++) {
+	for(int i = 0; i < Size.x; i++) {
+		for(int j = 0; j < Size.y; j++) {
 			Tile = &Tiles[i][j];
 
 			int32_t TextureIndex;
@@ -397,8 +350,6 @@ int _Map::LoadMap() {
 
 	// Close file
 	File.close();
-
-	return 1;
 }
 
 // Builds an array of textures that are used in the map
@@ -407,8 +358,8 @@ void _Map::GetTextureListFromMap(std::vector<const _Texture *> &TTextures) {
 	TTextures.clear();
 
 	// Go through map
-	for(int i = 0; i < Width; i++) {
-		for(int j = 0; j < Height; j++) {
+	for(int i = 0; i < Size.x; i++) {
+		for(int j = 0; j < Size.y; j++) {
 
 			// Check for new textures
 			if(GetTextureIndex(TTextures, Tiles[i][j].Texture) == -1) {
@@ -433,7 +384,7 @@ int _Map::GetTextureIndex(std::vector<const _Texture *> &TTextures, const _Textu
 bool _Map::CanMoveTo(const glm::ivec2 &TPosition) {
 
 	// Bounds
-	if(TPosition.x < 0 || TPosition.x >= Width || TPosition.y < 0 || TPosition.y >= Height)
+	if(TPosition.x < 0 || TPosition.x >= Size.x || TPosition.y < 0 || TPosition.y >= Size.y)
 		return false;
 
 	return !Tiles[TPosition.x][TPosition.y].Wall;
@@ -590,4 +541,9 @@ _IndexedEvent *_Map::GetIndexedEvent(int TEventType, int TEventData) {
 	}
 
 	return nullptr;
+}
+
+// Get a valid position within the grid
+glm::vec2 _Map::GetValidPosition(const glm::vec2 &Position) {
+	return glm::clamp(Position, glm::vec2(0.0f), glm::vec2(Size));
 }
