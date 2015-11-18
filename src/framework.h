@@ -76,6 +76,8 @@ class _Framework {
 		// Time
 		_FrameLimit *FrameLimit;
 		uint64_t Timer;
+		double TimeStep;
+		double TimeStepAccumulator;
 
 		// Networking
 		bool LocalServerRunning;

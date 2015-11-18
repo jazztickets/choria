@@ -43,7 +43,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	FrameLimit = nullptr;
 	LocalServerRunning = false;
 	State = &NullState;
-
+	TimeStepAccumulator = 0.0;
+	TimeStep = GAME_TIMESTEP;
 	bool IsServer = false;
 
 	// Process arguments
@@ -231,12 +232,18 @@ void _Framework::Update() {
 				Done = true;
 		} break;
 		case UPDATE: {
-			if(LocalServerRunning)
-				ServerState.Update(FrameTime);
-			else
-				MultiNetwork->Update();
-			State->Update(FrameTime);
-			State->Render(1.0);
+			TimeStepAccumulator += FrameTime;
+			while(TimeStepAccumulator >= TimeStep) {
+				if(LocalServerRunning)
+					ServerState.Update(TimeStep);
+				else
+					MultiNetwork->Update();
+
+				State->Update(TimeStep);
+				TimeStepAccumulator -= TimeStep;
+			}
+
+			State->Render(TimeStepAccumulator);
 		} break;
 		case CLOSE: {
 			if(State)

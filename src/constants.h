@@ -22,6 +22,7 @@
 #include <glm/vec4.hpp>
 
 const double GAME_TELEPORT_TIME = 3.0;
+const double GAME_TIMESTEP = 1 / 100.0f;
 const double GAME_SLEEPRATE = 1 / 120.0;
 const double GAME_AUTOSAVEPERIOD = 60.0;
 const double GAME_DOUBLECLICKTIME = 0.5;
