@@ -24,7 +24,7 @@
 #include <stdexcept>
 
 // Initializes the network system
-void _MultiNetwork::Init(bool TServer) {
+void _MultiNetwork::Init(bool TServer, uint16_t Port) {
 	Peer = nullptr;
 	Connection = nullptr;
 	Active = false;
@@ -34,7 +34,7 @@ void _MultiNetwork::Init(bool TServer) {
 		// Set up port
 		ENetAddress Address;
 		Address.host = ENET_HOST_ANY;
-		Address.port = Config.NetworkPort;
+		Address.port = Port;
 
 		// Create listener connection
 		Connection = enet_host_create(&Address, 250, 0, 0, 0);
@@ -173,4 +173,12 @@ void _MultiNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType 
 	// Send packet
 	enet_peer_send(TPeer, Channel, Packet);
 	enet_host_flush(Connection);
+}
+
+// Get port used
+uint16_t _MultiNetwork::GetPort() {
+	if(Connection)
+		return Connection->address.port;
+
+	return 0;
 }

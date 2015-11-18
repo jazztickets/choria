@@ -45,6 +45,12 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	State = &NullState;
 	TimeStepAccumulator = 0.0;
 	TimeStep = GAME_TIMESTEP;
+	RequestedState = nullptr;
+	FrameworkState = INIT;
+	Done = false;
+
+	// Settings
+	uint16_t NetworkPort = Config.NetworkPort;
 	bool IsServer = false;
 
 	// Process arguments
@@ -55,7 +61,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		TokensRemaining = ArgumentCount - i - 1;
 		if(Token == "-host") {
 			State = &ServerState;
-			ServerState.StartCommandThread();
 			IsServer = true;
 		}
 		else if(Token == "-editor") {
@@ -69,37 +74,10 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			//AccountState.SetLoginInfo(Arguments[i+1], Arguments[i+2]);
 			i += 2;
 		}
+		else if(Token == "-port" && TokensRemaining > 0) {
+			NetworkPort = atoi(Arguments[++i]);
+		}
 	}
-
-	// Get fullscreen size
-	Log.Open((Config.ConfigPath + "client.log").c_str());
-
-	// Initialize SDL
-	if(SDL_Init(SDL_INIT_VIDEO) < 0)
-		throw std::runtime_error("Failed to initialize SDL");
-
-	// Get fullscreen size
-	Config.SetDefaultFullscreenSize();
-
-	// Initialize graphics system
-	_WindowSettings WindowSettings;
-	WindowSettings.WindowTitle = "choria";
-	WindowSettings.Fullscreen = Config.Fullscreen;
-	if(Config.Fullscreen)
-		WindowSettings.Size = Config.FullscreenSize;
-	else
-		WindowSettings.Size = Config.WindowSize;
-	WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-	Graphics.Init(WindowSettings);
-
-	Assets.Init(false);
-	Graphics.SetStaticUniforms();
-
-	// Set up the stats system
-	Stats.Init();
-
-	// Set random seed
-	RandomGenerator.seed(SDL_GetPerformanceCounter());
 
 	// Initialize network subsystem
 	_Network::InitializeSystem();
@@ -108,7 +86,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	MultiNetwork = new _MultiNetwork();
 	ClientSingleNetwork = new _SingleNetwork();
 	ServerSingleNetwork = new _SingleNetwork();
-	MultiNetwork->Init(IsServer);
+	MultiNetwork->Init(IsServer, NetworkPort);
 	ClientSingleNetwork->Init(false);
 	ServerSingleNetwork->Init(false);
 	if(IsServer)
@@ -116,13 +94,52 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	else
 		ClientNetwork = MultiNetwork;
 
-	// Set the first state
-	RequestedState = nullptr;
-	FrameworkState = INIT;
-	Done = false;
+	// Set random seed
+	RandomGenerator.seed(SDL_GetPerformanceCounter());
+
+	// Check state
+	if(State == &ServerState) {
+
+		// Open log
+		Log.Open((Config.ConfigPath + "server.log").c_str());
+
+		Assets.Init(true);
+		Stats.Init();
+		ServerState.StartCommandThread();
+		FrameLimit = new _FrameLimit(120.0, false);
+	}
+	else {
+
+		// Open log
+		Log.Open((Config.ConfigPath + "client.log").c_str());
+
+		// Initialize SDL
+		if(SDL_Init(SDL_INIT_VIDEO) < 0)
+			throw std::runtime_error("Failed to initialize SDL");
+
+		// Get fullscreen size
+		Config.SetDefaultFullscreenSize();
+
+		// Initialize graphics system
+		_WindowSettings WindowSettings;
+		WindowSettings.WindowTitle = "choria";
+		WindowSettings.Fullscreen = Config.Fullscreen;
+		if(Config.Fullscreen)
+			WindowSettings.Size = Config.FullscreenSize;
+		else
+			WindowSettings.Size = Config.WindowSize;
+		WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+		Graphics.Init(WindowSettings);
+		Assets.Init(false);
+		Graphics.SetStaticUniforms();
+
+		// Set up the stats system
+		Stats.Init();
+
+		FrameLimit = new _FrameLimit(120.0, false);
+	}
 
 	Timer = SDL_GetPerformanceCounter();
-	FrameLimit = new _FrameLimit(120.0, false);
 }
 
 // Shuts down the game

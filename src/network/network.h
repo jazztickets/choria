@@ -126,6 +126,8 @@ class _Network {
 
 		virtual enet_uint32 GetRTT() { return 0; }
 
+		virtual uint16_t GetPort() { return 0; }
+
 		// Packets
 		virtual void SendPacketToHost(_Buffer *TPacket, SendType Type=RELIABLE, uint8_t Channel=0) { }
 		virtual void SendPacketToPeer(_Buffer *TPacket, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0) { }

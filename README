@@ -39,6 +39,9 @@ cat install_manifest.txt | xargs sudo rm
 to host a game
 -host
 
+change network listen port
+-port [port_number]
+
 open the mapeditor
 -mapeditor
 

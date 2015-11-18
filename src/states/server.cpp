@@ -24,7 +24,6 @@
 #include <config.h>
 #include <framework.h>
 #include <constants.h>
-#include <assets.h>
 #include <ui/textbox.h>
 #include <network/network.h>
 #include <buffer.h>
@@ -46,7 +45,8 @@ void HandleCommands(void *Arguments) {
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
-	std::cout << "Type stop to stop the server" << std::endl;
+	Framework.Log << "Listening on port " << ServerNetwork->GetPort() << std::endl;
+	Framework.Log << "Type stop to stop the server" << std::endl;
 	while(!Done) {
 		std::getline(std::cin, Input);
 		if(Input == "stop")
@@ -165,8 +165,9 @@ void _ServerState::CreateDefaultDatabase() {
 
 // Handles a new client connection
 void _ServerState::HandleConnect(ENetEvent *TEvent) {
-	printf("HandleConnect: %x:%x\n", TEvent->peer->address.host, TEvent->peer->address.port);
-	fflush(stdout);
+	char Buffer[16];
+	enet_address_get_host_ip(&TEvent->peer->address, Buffer, 16);
+	Framework.Log << "_ServerState::HandleConnect: " << Buffer << ":" << TEvent->peer->address.port << std::endl;
 
 	// Create the player and add it to the object list
 	_Player *NewPlayer = new _Player();
@@ -185,7 +186,9 @@ void _ServerState::HandleConnect(ENetEvent *TEvent) {
 
 // Handles a client disconnect
 void _ServerState::HandleDisconnect(ENetEvent *TEvent) {
-	printf("HandleDisconnect: %x:%x\n", TEvent->peer->address.host, TEvent->peer->address.port);
+	char Buffer[16];
+	enet_address_get_host_ip(&TEvent->peer->address, Buffer, 16);
+	Framework.Log << "_ServerState::HandleDisconnect: " << Buffer << ":" << TEvent->peer->address.port << std::endl;
 
 	_Player *Player = static_cast<_Player *>(TEvent->peer->data);
 	if(!Player)
@@ -529,7 +532,7 @@ void _ServerState::HandleCharacterCreate(_Buffer *TPacket, ENetPeer *TPeer) {
 	// Get character information
 	std::string Name(TPacket->ReadString());
 	int PortraitID = TPacket->Read<int32_t>();
-	if(Name.size() > Assets.TextBoxes["textbox_newcharacter_name"]->MaxLength)
+	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
 
 	// Check character limit

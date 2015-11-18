@@ -34,6 +34,7 @@
 #include <network/network.h>
 #include <states/null.h>
 #include <states/client.h>
+#include <states/editor.h>
 #include <sstream>
 #include <SDL_mouse.h>
 
@@ -532,6 +533,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitConnect();
 				}
 				else if(Clicked->Identifier == "button_title_mapeditor") {
+					Framework.ChangeState(&EditorState);
 				}
 				else if(Clicked->Identifier == "button_title_exit") {
 					Framework.SetDone(true);
