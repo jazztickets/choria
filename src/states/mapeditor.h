@@ -26,6 +26,15 @@ class _Camera;
 class _Map;
 class _Texture;
 
+enum FilterType {
+	FILTER_TEXTURE   = (1 << 1),
+	FILTER_WALL      = (1 << 2),
+	FILTER_PVP       = (1 << 3),
+	FILTER_ZONE      = (1 << 4),
+	FILTER_EVENTTYPE = (1 << 5),
+	FILTER_EVENTDATA = (1 << 6),
+};
+
 // Classes
 class _EditorState : public _State {
 
@@ -65,15 +74,7 @@ class _EditorState : public _State {
 			STATE_BRUSHOPTIONS,
 		};
 
-		enum FilterType {
-			FILTER_TEXTURE,
-			FILTER_WALL,
-			FILTER_PVP,
-			FILTER_ZONE,
-			FILTER_EVENTTYPE,
-			FILTER_EVENTDATA,
-			FILTER_COUNT
-		};
+		_EditorState();
 
 		void Init() override;
 		void Close() override;
@@ -84,6 +85,7 @@ class _EditorState : public _State {
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
 		void TextEvent(const char *Text) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
+		void MouseWheelEvent(int Direction) override;
 		void WindowEvent(uint8_t Event) override;
 
 		void SetFilename(const std::string &Filename) { this->Filename = Filename; }
@@ -106,10 +108,9 @@ class _EditorState : public _State {
 
 		// Brushes
 		void InitBrushOptions();
-		void ApplyBrushSize(int TX, int TY, int TSize);
-		void ApplyBrush(int TX, int TY);
+		void ApplyBrushSize(const glm::vec2 &Position, int BrushSize);
+		void ApplyBrush(const glm::vec2 &Position);
 		void RenderBrush();
-		void ResetFilters();
 
 		// General
 		int State;
@@ -129,10 +130,9 @@ class _EditorState : public _State {
 		// Brush
 		int BrushSize;
 		_Tile *Brush;
-		glm::ivec2 BrushPosition;
 
-		// Filters
-		bool Filters[FILTER_COUNT];
+		// Filter
+		int Filter;
 };
 
 extern _EditorState EditorState;

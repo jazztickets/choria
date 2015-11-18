@@ -294,7 +294,7 @@ int _Player::GetCurrentZone() {
 // Gets the tile that the player is currently standing on
 const _Tile *_Player::GetTile() {
 
-	return Map->GetTile(Position.x, Position.y);
+	return Map->GetTile(Position);
 }
 
 // Generates the number of moves until the next battle

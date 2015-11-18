@@ -26,6 +26,7 @@
 #include <objects/player.h>
 #include <texture.h>
 #include <assets.h>
+#include <font.h>
 #include <program.h>
 #include <camera.h>
 #include <fstream>
@@ -122,7 +123,7 @@ void _Map::Update(double FrameTime) {
 }
 
 // Renders the map
-void _Map::Render(_Camera *Camera, bool Editor) {
+void _Map::Render(_Camera *Camera, int RenderFlags) {
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	Graphics.SetColor(COLOR_WHITE);
@@ -138,67 +139,58 @@ void _Map::Render(_Camera *Camera, bool Editor) {
 	for(int j = Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = Bounds[0]; i < Bounds[2]; i++) {
 			_Tile *Tile = &Tiles[i][j];
+
+			glm::vec3 DrawPosition = glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0);
 			if(NoZoneTexture)
-				Graphics.DrawSprite(glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0), NoZoneTexture);
+				Graphics.DrawSprite(DrawPosition, NoZoneTexture);
 
 			if(Tile->Texture)
-				Graphics.DrawSprite(glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0), Tile->Texture);
+				Graphics.DrawSprite(DrawPosition, Tile->Texture);
+
 		}
 	}
-}
-/*
-// Renders the map for editor
-void _Map::RenderForMapEditor(bool TDrawWall, bool TDrawZone, bool TDrawPVP) {
 
-	glm::ivec2 GridPosition, DrawPosition;
-	for(int i = 0; i < ViewSize.x; i++) {
-		for(int j = 0; j < ViewSize.y; j++) {
+	// Check for flags
+	if(!RenderFlags)
+		return;
 
-			// Get the actual grid coordinate
-			GridPosition.x = i + CameraScroll.x - ViewSize.x / 2;
-			GridPosition.y = j + CameraScroll.y - ViewSize.y / 2;
-			DrawPosition = glm::ivec2((i - ViewSize.x / 2) * MAP_TILE_WIDTH + Graphics.ViewportSize.x/2, (j - ViewSize.y / 2) * MAP_TILE_HEIGHT + Graphics.ViewportSize.y/2);
+	// Draw text overlay
+	for(int j = Bounds[1]; j < Bounds[3]; j++) {
+		for(int i = Bounds[0]; i < Bounds[2]; i++) {
+			_Tile *Tile = &Tiles[i][j];
+
+			glm::vec3 DrawPosition = glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0);
 			if(NoZoneTexture)
-				Graphics.DrawCenteredImage(DrawPosition, NoZoneTexture);
+				Graphics.DrawSprite(DrawPosition, NoZoneTexture);
 
-			// Validate coordinate
-			if(GridPosition.x >= 0 && GridPosition.x < Size.x && GridPosition.y >= 0 && GridPosition.y < Size.y) {
-				_Tile *Tile = &Tiles[GridPosition.x][GridPosition.y];
+			if(Tile->Texture)
+				Graphics.DrawSprite(DrawPosition, Tile->Texture);
 
-				// Draw texture
-				if(Tile->Texture)
-					Graphics.DrawCenteredImage(DrawPosition, Tile->Texture);
-				else if(NoZoneTexture)
-					Graphics.DrawCenteredImage(DrawPosition, NoZoneTexture);
-
-				// Draw wall
-				if(TDrawWall && Tile->Wall)
-					//Graphics.RenderText("W", DrawPosition.x, DrawPosition.y - 8, _Graphics::ALIGN_CENTER);
-
-				// Draw zone
-				if(!Tile->Wall) {
-					if(TDrawZone && Tile->Zone > 0)
-						//Graphics.RenderText(std::string(Tile->Zone).c_str(), DrawPosition.x, DrawPosition.y - 8, _Graphics::ALIGN_CENTER);
-
-					// Draw PVP
-					if(TDrawPVP && Tile->PVP) {
-						//Graphics.RenderText("PvP", DrawPosition.x, DrawPosition.y - 8, _Graphics::ALIGN_CENTER, video::SColor(255, 255, 0, 0));
-					}
-				}
-
-				// Draw event info
-				if(Tile->EventType > 0) {
-					std::string EventText = Stats.GetEvent(Tile->EventType)->ShortName + std::string(", ") + std::to_string(Tile->EventData);
-					//Graphics.RenderText(EventText.c_str(), DrawPosition.x - 16, DrawPosition.y - 16, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 255, 255));
-				}
+			// Draw wall
+			if(Tile->Wall) {
+				if(RenderFlags & FILTER_WALL)
+					Assets.Fonts["hud_small"]->DrawText("W", glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 32.0f);
 			}
 			else {
-				Graphics.DrawCenteredImage(DrawPosition, DefaultNoZoneTexture);
+
+				// Draw zone number
+				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0)
+					Assets.Fonts["hud_small"]->DrawText(std::to_string(Tile->Zone).c_str(), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 32.0f);
+
+				// Draw PVP
+				if((RenderFlags & FILTER_PVP) && Tile->PVP)
+					Assets.Fonts["hud_small"]->DrawText("PVP", glm::vec2(DrawPosition), COLOR_RED, CENTER_MIDDLE, 1.0f / 32.0f);
+			}
+
+			// Draw event info
+			if(Tile->EventType > 0) {
+				std::string EventText = Stats.GetEvent(Tile->EventType)->ShortName + std::string(", ") + std::to_string(Tile->EventData);
+				Assets.Fonts["hud_small"]->DrawText(EventText, glm::vec2(DrawPosition), COLOR_CYAN, CENTER_MIDDLE, 1.0f / 32.0f);
 			}
 		}
 	}
 }
-*/
+
 // Saves the map to a file
 int _Map::SaveMap() {
 

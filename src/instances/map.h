@@ -24,6 +24,7 @@
 #include <list>
 #include <cstdint>
 #include <string>
+#include <states/mapeditor.h>
 #include <glm/vec2.hpp>
 
 // Forward Declarations
@@ -75,7 +76,7 @@ class _Map {
 		const std::string &GetFilename() const { return Filename; }
 
 		// Graphics
-		void Render(_Camera *Camera, bool Editor=false);
+		void Render(_Camera *Camera, int RenderFlags=0);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &TPosition);
@@ -95,13 +96,13 @@ class _Map {
 		// Map editing
 		int GetWidth() const { return Size.x; }
 		int GetHeight() const { return Size.y; }
-		bool IsValidPosition(int TX, int TY) const { return TX >= 0 && TY >= 0 && TX < Size.x && TY < Size.y; }
-		void SetNoZoneTexture(const _Texture *TTexture) { NoZoneTexture = TTexture; }
+		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
+		void SetNoZoneTexture(const _Texture *Texture) { NoZoneTexture = Texture; }
 		glm::vec2 GetValidPosition(const glm::vec2 &Position);
 
-		void GetTile(int TX, int TY, _Tile &TTile) const { TTile = Tiles[TX][TY]; }
-		const _Tile *GetTile(int TX, int TY) const { return &Tiles[TX][TY]; }
-		void SetTile(int TX, int TY, const _Tile *TTile) { Tiles[TX][TY] = *TTile; }
+		void GetTile(const glm::ivec2 &Position, _Tile &Tile) const { Tile = Tiles[Position.x][Position.y]; }
+		const _Tile *GetTile(const glm::ivec2 &Position) const { return &Tiles[Position.x][Position.y]; }
+		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
 
 		// File IO
 		int SaveMap();

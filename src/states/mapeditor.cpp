@@ -32,6 +32,11 @@
 
 _EditorState EditorState;
 
+// Constructor
+_EditorState::_EditorState() :
+	Map(nullptr) {
+}
+
 // Initializes the state
 void _EditorState::Init() {
 
@@ -55,9 +60,9 @@ void _EditorState::Init() {
 	}
 
 	// Set filters
-	ResetFilters();
-	Filters[FILTER_TEXTURE] = true;
-	Filters[FILTER_WALL] = true;
+	Filter = 0;
+	Filter |= FILTER_TEXTURE;
+	Filter |= FILTER_WALL;
 
 	State = STATE_MAIN;
 }
@@ -75,13 +80,12 @@ void _EditorState::Update(double FrameTime) {
 	if(!Map)
 		return;
 
+	// Update camera
 	if(Camera) {
 		Camera->Update(FrameTime);
 
 		// Get world cursor
 		Camera->ConvertScreenToWorld(Input.GetMouse(), WorldCursor);
-
-		// Get tile indices for later usage
 		WorldCursor = Map->GetValidPosition(WorldCursor);
 	}
 
@@ -90,18 +94,18 @@ void _EditorState::Update(double FrameTime) {
 			if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL))) {
 				switch(BrushSize) {
 					case 0:
-						ApplyBrush(BrushPosition.x, BrushPosition.y);
-						if(!Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
-							Map->SetNoZoneTexture(Brush->Texture);
+						ApplyBrush(WorldCursor);
+						//if(!Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
+						//	Map->SetNoZoneTexture(Brush->Texture);
 					break;
 					case 1:
-						ApplyBrushSize(BrushPosition.x, BrushPosition.y, 3);
+						ApplyBrushSize(WorldCursor, 3);
 					break;
 					case 2:
-						ApplyBrushSize(BrushPosition.x, BrushPosition.y, 6);
+						ApplyBrushSize(WorldCursor, 6);
 					break;
 					case 3:
-						ApplyBrushSize(BrushPosition.x, BrushPosition.y, 12);
+						ApplyBrushSize(WorldCursor, 12);
 					break;
 				}
 			}
@@ -127,30 +131,19 @@ void _EditorState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["text"]);
+	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	if(Map)
-		//Map->RenderForMapEditor(Filters[FILTER_WALL], Filters[FILTER_ZONE], Filters[FILTER_PVP]);
-		Map->Render(Camera, true);
+		Map->Render(Camera, Filter);
 	RenderBrush();
 
-	std::string GridBrushPositionText = std::to_string(BrushPosition.x) + std::string(" ") + std::to_string(BrushPosition.y);
+	//std::string GridBrushPositionText = std::to_string(BrushPosition.x) + std::string(" ") + std::to_string(BrushPosition.y);
 
 	//Graphics.SetFont(_Graphics::FONT_8);
 	//Graphics.RenderText(GridBrushPositionText.c_str(), 10, 10);
 }
 
-// Key presses
-// Mouse buttons
-/*
-// Scroll wheel
-void _EditorState::HandleMouseWheel(float TDirection) {
-
-	Brush->Zone += (int)(TDirection);
-	if(Brush->Zone < 0)
-		Brush->Zone = 0;
-}
-
-*/
 // GUI events
 /*
 void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
@@ -285,78 +278,73 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				case SDL_SCANCODE_ESCAPE:
 					Framework.SetDone(true);
 				break;
-				/*
-				case KEY_KEY_N:
+				case SDL_SCANCODE_1:
+					Filter = 0;
+					Filter |= FILTER_TEXTURE;
+					Filter |= FILTER_WALL;
+				break;
+				case SDL_SCANCODE_2:
+					Filter = 0;
+					Filter |= FILTER_ZONE;
+				break;
+				case SDL_SCANCODE_3:
+					Filter = 0;
+					Filter |= FILTER_PVP;
+				break;
+				case SDL_SCANCODE_4:
+					Filter = 0;
+					Filter |= FILTER_EVENTTYPE;
+					Filter |= FILTER_EVENTDATA;
+				break;
+				case SDL_SCANCODE_N:
 					InitNewMap();
 				break;
-				case KEY_KEY_W:
+				case SDL_SCANCODE_W:
 					Brush->Wall = !Brush->Wall;
 				break;
-				case KEY_KEY_P:
+				case SDL_SCANCODE_P:
 					Brush->PVP = !Brush->PVP;
 				break;
-				case KEY_KEY_S:
+				case SDL_SCANCODE_S:
 					if(Map)
 						Map->SaveMap();
 				break;
-				case KEY_KEY_L:
+				case SDL_SCANCODE_L:
 					InitLoadMap();
 				break;
-				case KEY_KEY_T:
+				case SDL_SCANCODE_T:
 					InitTexturePalette();
 				break;
-				case KEY_KEY_B:
+				case SDL_SCANCODE_B:
 					InitBrushOptions();
 				break;
-				case KEY_MINUS:
-				case KEY_SUBTRACT:
+				case SDL_SCANCODE_MINUS:
 					if(Brush->EventData > 0)
 						Brush->EventData--;
 				break;
-				case KEY_ADD:
-				case KEY_PLUS:
+				case SDL_SCANCODE_EQUALS:
 					Brush->EventData++;
 				break;
-				case KEY_KEY_1:
-					ResetFilters();
-					Filters[FILTER_TEXTURE] = true;
-					Filters[FILTER_WALL] = true;
-				break;
-				case KEY_KEY_2:
-					ResetFilters();
-					Filters[FILTER_ZONE] = true;
-				break;
-				case KEY_KEY_3:
-					ResetFilters();
-					Filters[FILTER_PVP] = true;
-				break;
-				case KEY_KEY_4:
-					ResetFilters();
-					Filters[FILTER_EVENTTYPE] = true;
-					Filters[FILTER_EVENTDATA] = true;
-				break;
-				case KEY_F1:
+				case SDL_SCANCODE_F1:
 					BrushSize = 0;
 				break;
-				case KEY_F2:
+				case SDL_SCANCODE_F2:
 					BrushSize = 1;
 				break;
-				case KEY_F3:
+				case SDL_SCANCODE_F3:
 					BrushSize = 2;
 				break;
-				case KEY_F4:
+				case SDL_SCANCODE_F4:
 					BrushSize = 3;
 				break;
 				default:
-					return false;
 				break;
-				*/
 			}
 		break;
-			/*
+	/*
 		case STATE_NEWMAP:
 			switch(TKey) {
-				case KEY_ESCAPE:
+				case SDL_SCANCODE_ESCAPE:
 					CloseWindow(NEWMAP_WINDOW);
 					State = STATE_MAIN;
 				break;
@@ -367,7 +355,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 		break;
 		case STATE_LOADMAP:
 			switch(TKey) {
-				case KEY_ESCAPE:
+				case SDL_SCANCODE_ESCAPE:
 					CloseWindow(NEWMAP_WINDOW);
 					State = STATE_MAIN;
 				break;
@@ -378,7 +366,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 		break;
 		case STATE_TEXTUREPALETTE:
 			switch(TKey) {
-				case KEY_ESCAPE:
+				case SDL_SCANCODE_ESCAPE:
 					CloseWindow(TEXTUREPALETTE_WINDOW);
 					State = STATE_MAIN;
 				break;
@@ -389,7 +377,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 		break;
 		case STATE_BRUSHOPTIONS:
 			switch(TKey) {
-				case KEY_ESCAPE:
+				case SDL_SCANCODE_ESCAPE:
 					CloseWindow(BRUSHOPTIONS_WINDOW);
 					State = STATE_MAIN;
 				break;
@@ -397,7 +385,8 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 					return false;
 				break;
 			}
-		break;*/
+		break;
+	*/
 	}
 }
 
@@ -421,14 +410,24 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 				// Scroll map
 				case SDL_BUTTON_RIGHT:
 					Camera->Set2DPosition(WorldCursor);
-					//if(OldInput.GetKeyState(KEY_CONTROL) || OldInput.GetKeyState(KEY_LCONTROL)) {
-						//if(Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
-							//Brush = *Map->GetTile(BrushPosition.x, BrushPosition.y);
-					//}
 				break;
 			}
 		}
 	}
+}
+
+// Mouse scroll wheel
+void _EditorState::MouseWheelEvent(int Direction) {
+	//Brush->Zone += (int)(TDirection);
+	//if(Brush->Zone < 0)
+		//Brush->Zone = 0;
+
+	// Zoom
+	float Multiplier = 1.0f * Direction;
+	if(Input.ModKeyDown(KMOD_SHIFT))
+		Multiplier = 10.0f * Direction;
+
+	Camera->UpdateDistance(-Multiplier);
 }
 
 // Window events
@@ -659,48 +658,47 @@ void _EditorState::RefreshTexturePalette() {
 }
 
 // Applys a brush of varying size
-void _EditorState::ApplyBrushSize(int TX, int TY, int TSize) {
+void _EditorState::ApplyBrushSize(const glm::vec2 &Position, int BrushSize) {
 
-	for(int i = 0; i < TSize; i++) {
-		for(int j = 0; j < TSize; j++) {
-			int PositionX = j - TSize / 2;
-			int PositionY = i - TSize / 2;
+	for(int i = 0; i < BrushSize; i++) {
+		for(int j = 0; j < BrushSize; j++) {
+			glm::vec2 Offset = glm::vec2(j, i) - glm::vec2(BrushSize/2);
 
-			if(PositionX * PositionX + PositionY * PositionY >= TSize - 1)
+			if(Offset.x * Offset.x + Offset.y * Offset.y >= BrushSize - 1)
 				continue;
 
-			ApplyBrush(TX + PositionX, TY + PositionY);
+			ApplyBrush(Position + Offset);
 		}
 	}
 }
 
 // Draws a texture on the map with the current brush
-void _EditorState::ApplyBrush(int TX, int TY) {
+void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 	if(Map) {
-		if(!Map->IsValidPosition(TX, TY))
+		if(!Map->IsValidPosition(Position))
 			return;
 
 		// Get existing tile
 		_Tile Tile;
-		Map->GetTile(TX, TY, Tile);
+		Map->GetTile(Position, Tile);
 
 		// Apply filters
-		if(Filters[FILTER_TEXTURE])
+		if(Filter & FILTER_TEXTURE)
 			Tile.Texture = Brush->Texture;
-		if(Filters[FILTER_WALL])
+		if(Filter & FILTER_WALL)
 			Tile.Wall = Brush->Wall;
-		if(Filters[FILTER_ZONE])
+		if(Filter & FILTER_ZONE)
 			Tile.Zone = Brush->Zone;
-		if(Filters[FILTER_PVP])
+		if(Filter & FILTER_PVP)
 			Tile.PVP = Brush->PVP;
-		if(Filters[FILTER_EVENTTYPE])
+		if(Filter & FILTER_EVENTTYPE)
 			Tile.EventType = Brush->EventType;
-		if(Filters[FILTER_EVENTDATA])
+		if(Filter & FILTER_EVENTDATA)
 			Tile.EventData = Brush->EventData;
 
 		// Set new tile
-		Map->SetTile(TX, TY, &Tile);
+		Map->SetTile(Position, &Tile);
 	}
 }
 
@@ -758,13 +756,6 @@ void _EditorState::RenderBrush() {
 	std::string EventDataText = std::string("Event Data: ") + std::to_string(Brush->EventData);
 	//Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
 	*/
-}
-
-// Resets the filters to false
-void _EditorState::ResetFilters() {
-	for(int i = 0; i < FILTER_COUNT; i++) {
-		Filters[i] = false;
-	}
 }
 
 // Deletes the map
