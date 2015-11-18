@@ -79,23 +79,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 	// Press
 	if(MouseEvent.Pressed) {
 		switch(*State) {
-			case _ClientState::STATE_VENDOR:
-				switch(MouseEvent.Button) {
-					case SDL_BUTTON_LEFT:
-						if(TooltipItem.Item) {
-							CursorItem = TooltipItem;
-						}
-					break;
-					case SDL_BUTTON_RIGHT:
-						if(TooltipItem.Item) {
-							if(TooltipItem.Window == WINDOW_VENDOR)
-								BuyItem(&TooltipItem, -1);
-							else if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
-								SellItem(&TooltipItem, 1);
-						}
-					break;
-				}
-			break;
 			case _ClientState::STATE_INVENTORY: {
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
@@ -112,6 +95,23 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							Packet.Write<char>(_Network::INVENTORY_USE);
 							Packet.Write<char>(TooltipItem.Slot);
 							ClientNetwork->SendPacketToHost(&Packet);
+						}
+					break;
+				}
+			} break;
+			case _ClientState::STATE_VENDOR: {
+				switch(MouseEvent.Button) {
+					case SDL_BUTTON_LEFT:
+						if(TooltipItem.Item) {
+							CursorItem = TooltipItem;
+						}
+					break;
+					case SDL_BUTTON_RIGHT:
+						if(TooltipItem.Item) {
+							if(TooltipItem.Window == WINDOW_VENDOR)
+								BuyItem(&TooltipItem, -1);
+							else if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
+								SellItem(&TooltipItem, 1);
 						}
 					break;
 				}
@@ -189,6 +189,24 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					CursorItem.Reset();
 				}
 			break;
+			case _ClientState::STATE_TRADER: {
+				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+					_Element *TraderElement = Assets.Elements["element_trader"];
+					if(TraderElement->HitElement) {
+						if(TraderElement->HitElement->Identifier == "button_trader_accept") {
+							_Buffer Packet;
+							Packet.Write<char>(_Network::TRADER_ACCEPT);
+							ClientNetwork->SendPacketToHost(&Packet);
+							Player->AcceptTrader(Trader, RequiredItemSlots, RewardItemSlot);
+							Player->CalculatePlayerStats();
+							CloseWindows();
+						}
+						else if(TraderElement->HitElement->Identifier == "button_trader_cancel") {
+							CloseWindows();
+						}
+					}
+				}
+			} break;
 			case _ClientState::STATE_SKILLS:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
@@ -428,9 +446,8 @@ void _HUD::Update(double FrameTime) {
 		case _ClientState::STATE_INVENTORY: {
 			_Element *InventoryElement = Assets.Elements["element_inventory"];
 			_Element *VendorElement = Assets.Elements["element_vendor"];
-			_Element *HoverSlot;
 			InventoryElement->Update(FrameTime, Input.GetMouse());
-			HoverSlot = InventoryElement->HitElement;
+			_Element *HoverSlot = InventoryElement->HitElement;
 			TooltipItem.Window = WINDOW_INVENTORY;
 
 			// Get vendor hover item
@@ -466,9 +483,8 @@ void _HUD::Update(double FrameTime) {
 		} break;
 		case _ClientState::STATE_TRADER: {
 			_Element *TraderElement = Assets.Elements["element_trader"];
-			_Element *HoverSlot;
 			TraderElement->Update(FrameTime, Input.GetMouse());
-			HoverSlot = TraderElement->HitElement;
+			_Element *HoverSlot = TraderElement->HitElement;
 			if(HoverSlot && HoverSlot != TraderElement) {
 				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
 				TooltipItem.Window = WINDOW_TRADER;
@@ -498,7 +514,6 @@ void _HUD::Update(double FrameTime) {
 // Draws the HUD elements
 void _HUD::Render() {
 	Assets.Elements["element_hud"]->Render();
-	//Assets.Elements["element_hud_bottom"]->Render();
 	Assets.Elements["element_hud_buttonbar"]->Render();
 	Assets.Elements["element_hud_actionbar"]->Render();
 	std::stringstream Buffer;
@@ -724,29 +739,21 @@ void _HUD::CloseVendor() {
 }
 
 // Initialize the trader
-void _HUD::InitTrader(int TTraderID) {
+void _HUD::InitTrader(int TraderID) {
 	if(*State == _ClientState::STATE_TRADER)
 		return;
 
 	// Get trader stats
-	Trader = Stats.GetTrader(TTraderID);
+	Trader = Stats.GetTrader(TraderID);
 
 	// Check for required items
 	RewardItemSlot = Player->GetRequiredItemSlots(Trader, RequiredItemSlots);
 
-	// Add window
-	//TabTrader = irrGUI->addTab(Graphics.GetCenteredRect(400, 250, 166, 272));
-
-	// Add background
-//	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADER), glm::ivec2(0, 0), true, TabTrader);
-
-	// Add buttons
-	//gui::IGUIButton *TradeButton = irrGUI->addButton(Graphics.GetCenteredRect(166/2 - 38, 245, 60, 25), TabTrader, ELEMENT_TRADERACCEPT, L"Trade");
-	//irrGUI->addButton(Graphics.GetCenteredRect(166/2 + 38, 245, 60, 25), TabTrader, ELEMENT_TRADERCANCEL, L"Cancel");
-
-	// Can't trade
-	//if(RewardItemSlot == -1)
-	//	TradeButton->setEnabled(false);
+	// Disable accept button if requirements not met
+	if(RewardItemSlot == -1)
+		Assets.Buttons["button_trader_accept"]->Enabled = false;
+	else
+		Assets.Buttons["button_trader_accept"]->Enabled = true;
 
 	*State = _ClientState::STATE_TRADER;
 }

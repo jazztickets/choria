@@ -34,20 +34,20 @@ struct _MouseEvent;
 
 // Structures
 struct _CursorItem {
-	void Set(const _Item *TItem, int TCost, int TCount, int TSlot) {
-		Item = TItem;
-		Cost = TCost;
-		Count = TCount;
-		Slot = TSlot;
+	void Set(const _Item *Item, int Cost, int Count, int Slot) {
+		this->Item = Item;
+		this->Cost = Cost;
+		this->Count = Count;
+		this->Slot = Slot;
 	}
 	void Reset() {
-		Item = nullptr;
-		Count = 0;
-		Slot = -1;
-		Window = -1;
+		this->Item = nullptr;
+		this->Count = 0;
+		this->Slot = -1;
+		this->Window = -1;
 	}
 
-	bool IsEqual(int TSlot, int TWindow) { return Slot == TSlot && Window == TWindow; }
+	bool IsEqual(int Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
 
 	const _Item *Item;
 	int Cost;
@@ -123,7 +123,7 @@ class _HUD {
 		void InitMenu();
 		void InitInventory(bool SendBusy);
 		void InitVendor(int VendorID);
-		void InitTrader(int TTraderID);
+		void InitTrader(int TraderID);
 		void InitCharacter();
 		void InitSkills();
 		void InitTrade();
@@ -132,7 +132,7 @@ class _HUD {
 		// Chat
 		void ToggleChat();
 		bool IsChatting() { return Chatting; }
-		void AddChatMessage(_ChatMessage &TChat) { ChatHistory.push_back(TChat); }
+		void AddChatMessage(_ChatMessage &Chat) { ChatHistory.push_back(Chat); }
 
 		// Trade
 		void CloseTrade(bool TSendNotify=true);
