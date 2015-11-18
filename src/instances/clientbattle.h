@@ -56,6 +56,7 @@ class _ClientBattle : public _Battle {
 
 		// Input
 		void HandleCommand(int TSlot, int TSkillID);
+		void HandleAction(int Action);
 
 		// Updates
 		void Update(double FrameTime);

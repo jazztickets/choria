@@ -15,8 +15,11 @@ Linux dependencies:
 cmake 2.8+
 opengl 2.1+
 sdl2
+freetype2
 glm
 sqlite3
+zlib
+pthreads
 
 Building and running:
 mkdir build

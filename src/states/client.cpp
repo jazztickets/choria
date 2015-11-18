@@ -192,14 +192,12 @@ void _ClientState::Update(double FrameTime) {
 
 			// Send key input
 			if(!HUD.IsChatting()) {
-				/*
-				for(int i = 0; i < 8; i++) {
-					EKEY_CODE Key = (EKEY_CODE)(KEY_KEY_1 + i);
-					if(OldInput.GetKeyState(Key)) {
-						 Battle->HandleInput(Key);
+				for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
+					if(Actions.GetState(_Actions::SKILL1+i)) {
+						 Battle->HandleAction(_Actions::SKILL1+i);
 						 break;
 					}
-				}*/
+				}
 			}
 
 			// Singleplayer check
@@ -249,12 +247,8 @@ void _ClientState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	//TEMP
-	//Graphics.SetProgram(Assets.Programs["text"]);
-	//glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Draw map and objects
-	//Map->SetCameraScroll(Player->GetPosition());
 	Map->Render(Camera);
 	ObjectManager->Render(Map, Player);
 
@@ -295,12 +289,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	if(TKey == KEY_KEY_B) {
 		HUD.InitCharacter();
 	}
-
-	switch(State) {
-		case STATE_BATTLE:
-			Battle->HandleInput(TKey);
-		break;
-	}*/
+*/
 
 	switch(State) {
 		case STATE_WALK:
@@ -325,6 +314,9 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 					SendAttackPlayer();
 				break;
 			}
+		break;
+		case STATE_BATTLE:
+			Battle->HandleAction(Action);
 		break;
 		case STATE_TELEPORT:
 			switch(Action) {

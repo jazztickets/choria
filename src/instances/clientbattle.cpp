@@ -21,6 +21,7 @@
 #include <network/network.h>
 #include <stats.h>
 #include <buffer.h>
+#include <actions.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
 
@@ -70,34 +71,38 @@ void _ClientBattle::RemovePlayer(_Player *TPlayer) {
 	}
 }
 
-// Handles client input
-/*
-void _ClientBattle::HandleInput(EKEY_CODE TKey) {
+// Handles a command from an other player
+void _ClientBattle::HandleCommand(int TSlot, int TSkillID) {
+	int Index = GetFighterFromSlot(TSlot);
+	if(Index != -1) {
+		Fighters[Index]->SetSkillUsing(Stats.GetSkill(TSkillID));
+	}
+}
+
+// Handle player input
+void _ClientBattle::HandleAction(int Action) {
 
 	switch(State) {
 		case STATE_GETINPUT: {
-			switch(TKey) {
-				case KEY_KEY_1:
-				case KEY_KEY_2:
-				case KEY_KEY_3:
-				case KEY_KEY_4:
-				case KEY_KEY_5:
-				case KEY_KEY_6:
-				case KEY_KEY_7:
-				case KEY_KEY_8:
-					SendSkill(TKey - KEY_KEY_1);
+			switch(Action) {
+				case _Actions::SKILL1:
+				case _Actions::SKILL2:
+				case _Actions::SKILL3:
+				case _Actions::SKILL4:
+				case _Actions::SKILL5:
+				case _Actions::SKILL6:
+				case _Actions::SKILL7:
+				case _Actions::SKILL8:
+					SendSkill(Action - _Actions::SKILL1);
 				break;
-				case KEY_UP:
+				case _Actions::UP:
 					ChangeTarget(-1);
 				break;
-				case KEY_DOWN:
+				case _Actions::DOWN:
 					ChangeTarget(1);
 				break;
-				default:
-				break;
 			}
-		}
-		break;
+		} break;
 		case STATE_WIN:
 		case STATE_LOSE: {
 			if(Timer > BATTLE_WAITENDTIME) {
@@ -111,43 +116,6 @@ void _ClientBattle::HandleInput(EKEY_CODE TKey) {
 		break;
 		default:
 		break;
-	}
-}
-*/
-/*
-// Handles GUI events
-void _ClientBattle::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
-
-	int ID = TElement->getID();
-	switch(State) {
-		case STATE_GETINPUT:
-			switch(TEventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_PASS:
-							SendSkill(9);
-						break;
-						default:
-							if(ID >= ELEMENT_SKILL1 && ID <= ELEMENT_SKILL8) {
-								SendSkill(TElement->getID() - ELEMENT_SKILL1);
-							}
-						break;
-					}
-				break;
-				default:
-				break;
-			}
-		break;
-		default:
-		break;
-	}
-}*/
-
-// Handles a command from an other player
-void _ClientBattle::HandleCommand(int TSlot, int TSkillID) {
-	int Index = GetFighterFromSlot(TSlot);
-	if(Index != -1) {
-		Fighters[Index]->SetSkillUsing(Stats.GetSkill(TSkillID));
 	}
 }
 
