@@ -215,35 +215,25 @@ int _Map::SaveMap() {
 	File.write((char *)&TextureCount, sizeof(TextureCount));
 	for(int32_t i = 0; i < TextureCount; i++) {
 		if(TextureList[i] == nullptr) {
-			File.write("none", 4);
+			File.write("map/none", 8);
 			File.put(0);
 		}
 		else {
-
-			// Strip path from texture name
-			//std::string TexturePath = TextureList[i]->Identifier;
-			//int SlashIndex = TexturePath.findLastChar("/\\", 2);
-			//TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
-
-			//File.write(TexturePath.c_str(), TexturePath.size());
-			//File.put(0);
+			std::string TexturePath = TextureList[i]->Identifier;
+			File.write(TexturePath.c_str(), TexturePath.size());
+			File.put(0);
 		}
 	}
 
 	// Write no-zone texture
 	if(NoZoneTexture == nullptr) {
-		File.write("none", 4);
+		File.write("map/none", 8);
 		File.put(0);
 	}
 	else {
-
-		// Strip path from texture name
-		//std::string TexturePath = NoZoneTexture->Identifier;
-		//int SlashIndex = TexturePath.findLastChar("/\\", 2);
-		//TexturePath = TexturePath.subString(SlashIndex + 1, TexturePath.size() - SlashIndex - 1);
-
-		//File.write(TexturePath.c_str(), TexturePath.size());
-		//File.put(0);
+		std::string TexturePath = NoZoneTexture->Identifier;
+		File.write(TexturePath.c_str(), TexturePath.size());
+		File.put(0);
 	}
 
 	// Write map data
@@ -302,20 +292,27 @@ void _Map::LoadMap() {
 		File.get();
 
 		TextureFile = String;
-		if(TextureFile == "none")
+
+		if(TextureFile.substr(0, 4) != "map/")
+			TextureFile = std::string("map/") + TextureFile;
+
+		if(TextureFile == "map/none")
 			Textures.push_back(nullptr);
 		else
-			Textures.push_back(Assets.Textures[std::string("map/") + TextureFile]);
+			Textures.push_back(Assets.Textures[TextureFile]);
 	}
 
 	// Get no zone texture
 	File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
 	File.get();
 	TextureFile = String;
-	if(TextureFile == "none")
+	if(TextureFile.substr(0, 4) != "map/")
+		TextureFile = std::string("map/") + TextureFile;
+
+	if(TextureFile == "map/none")
 		NoZoneTexture = nullptr;
 	else
-		NoZoneTexture = Assets.Textures[std::string("map/") + TextureFile];
+		NoZoneTexture = Assets.Textures[TextureFile];
 
 	// Read map data
 	_Tile *Tile;
