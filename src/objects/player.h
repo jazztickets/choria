@@ -49,7 +49,7 @@ class _Player : public _Object, public _Fighter {
 			STATE_TRADER,
 			STATE_WAITTRADE,
 			STATE_TRADE,
-			STATE_TOWNPORTAL,
+			STATE_TELEPORT,
 			STATE_BUSY,
 		};
 
@@ -196,8 +196,8 @@ class _Player : public _Object, public _Fighter {
 
 		// World
 		void ToggleBusy(bool Value);
-		void StartTownPortal();
-		double GetTownPortalTime() const { return TownPortalTime; }
+		void StartTeleport();
+		double GetTeleportTime() const { return TeleportTime; }
 		void SetStateImage(const _Texture *TImage) { StateImage = TImage; }
 
 		// PVP
@@ -241,7 +241,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Map
 		int SpawnMapID, SpawnPoint;
-		double TownPortalTime;
+		double TeleportTime;
 
 		// Stats
 		int PlayTime;

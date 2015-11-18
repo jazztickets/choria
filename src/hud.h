@@ -80,24 +80,6 @@ class _HUD {
 
 	public:
 
-		enum ElementType {
-			ELEMENT_TOWNPORTAL=50,
-			ELEMENT_INVENTORY,
-			ELEMENT_TRADE,
-			ELEMENT_CHARACTER,
-			ELEMENT_SKILLS,
-			ELEMENT_MAINMENU,
-			ELEMENT_MAINMENURESUME,
-			ELEMENT_MAINMENUEXIT,
-			ELEMENT_TRADERACCEPT,
-			ELEMENT_TRADERCANCEL,
-			ELEMENT_CHATBOX,
-			ELEMENT_GOLDTRADEBOX,
-			ELEMENT_TRADEACCEPT,
-			ELEMENT_SKILLPLUS0=100,
-			ELEMENT_SKILLMINUS0=200,
-		};
-
 		enum WindowType {
 			WINDOW_INVENTORY,
 			WINDOW_VENDOR,
@@ -139,8 +121,8 @@ class _HUD {
 		bool IsTypingGold() { return TypingGold; }
 		void ResetAcceptButton();
 
-		// Town portal
-		void ToggleTownPortal();
+		// Teleport to town
+		void ToggleTeleport();
 
 	private:
 
@@ -154,7 +136,7 @@ class _HUD {
 
 		void DrawChat();
 		void DrawInventory();
-		void DrawTownPortal();
+		void DrawTeleport();
 		void DrawCharacter();
 		void DrawVendor();
 		void DrawTrader();
@@ -168,8 +150,6 @@ class _HUD {
 		void DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY);
 		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
-		void GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
-		void GetTraderItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
 		void GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
 		void BuyItem(_CursorItem *TCursorItem, int TTargetSlot);
 		void SellItem(_CursorItem *TCursorItem, int TAmount);

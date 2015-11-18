@@ -272,8 +272,8 @@ void _ServerState::HandlePacket(ENetEvent *TEvent) {
 		case _Network::WORLD_ATTACKPLAYER:
 			HandleAttackPlayer(&Packet, TEvent->peer);
 		break;
-		case _Network::WORLD_TOWNPORTAL:
-			HandleTownPortal(&Packet, TEvent->peer);
+		case _Network::WORLD_TELEPORT:
+			HandleTeleport(&Packet, TEvent->peer);
 		break;
 		case _Network::CHAT_MESSAGE:
 			HandleChatMessage(&Packet, TEvent->peer);
@@ -1089,13 +1089,13 @@ void _ServerState::HandleTradeAccept(_Buffer *TPacket, ENetPeer *TPeer) {
 	}
 }
 
-// Handles a town portal request
-void _ServerState::HandleTownPortal(_Buffer *TPacket, ENetPeer *TPeer) {
+// Handles a teleport request
+void _ServerState::HandleTeleport(_Buffer *TPacket, ENetPeer *TPeer) {
 	_Player *Player = static_cast<_Player *>(TPeer->data);
 	if(!Player)
 		return;
 
-	Player->StartTownPortal();
+	Player->StartTeleport();
 }
 
 // Handles a trader accept
@@ -1308,7 +1308,7 @@ void ObjectDeleted(_Object *TObject) {
 }
 
 // Teleports a player back to town
-void _ServerState::PlayerTownPortal(_Player *TPlayer) {
+void _ServerState::PlayerTeleport(_Player *TPlayer) {
 
 	TPlayer->RestoreHealthMana();
 	SpawnPlayer(TPlayer, TPlayer->GetSpawnMapID(), _Map::EVENT_SPAWN, TPlayer->GetSpawnPoint());

@@ -45,7 +45,7 @@ class _ServerState : public _State {
 		void Update(double FrameTime);
 		void DeleteObject(_Object *TObject);
 
-		void PlayerTownPortal(_Player *TPlayer);
+		void PlayerTeleport(_Player *TPlayer);
 		double GetServerTime() const { return ServerTime; }
 
 		void StartCommandThread();
@@ -77,7 +77,7 @@ class _ServerState : public _State {
 		void HandleTradeCancel(_Buffer *TPacket, ENetPeer *TPeer);
 		void HandleTradeGold(_Buffer *TPacket, ENetPeer *TPeer);
 		void HandleTradeAccept(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleTownPortal(_Buffer *TPacket, ENetPeer *TPeer);
+		void HandleTeleport(_Buffer *TPacket, ENetPeer *TPeer);
 		void HandleTraderAccept(_Buffer *TPacket, ENetPeer *TPeer);
 
 		void SendPlayerPosition(_Player *TPlayer);

@@ -279,126 +279,28 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 
 	/*
-		// Start/stop chat
-		if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
-			HUD.ToggleChat();
-			return true;
-		}
+	// Start/stop chat
+	if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
+		HUD.ToggleChat();
+		return true;
+	}
 
-		// Check chatting
-		if(HUD.IsChatting() || HUD.IsTypingGold()) {
-			HUD.HandleKeyPress(TKey);
-			return false;
-		}
+	// Check chatting
+	if(HUD.IsChatting() || HUD.IsTypingGold()) {
+		HUD.HandleKeyPress(TKey);
+		return false;
+	}
 
-		// Open character sheet
-		if(TKey == KEY_KEY_B) {
-			HUD.InitCharacter();
-		}
+	// Open character sheet
+	if(TKey == KEY_KEY_B) {
+		HUD.InitCharacter();
+	}
 
-		switch(State) {
-			case STATE_WALK:
-				switch(TKey) {
-					default:
-					break;
-				}
-			break;
-			case STATE_TOWNPORTAL: {
-				HUD.ToggleTownPortal();
-			}
-			break;
-			case STATE_MAINMENU:
-				switch(TKey) {
-					case KEY_ESCAPE:
-						HUD.CloseWindows();
-					break;
-					default:
-					break;
-				}
-			break;
-			case STATE_BATTLE:
-				Battle->HandleInput(TKey);
-			break;
-			case STATE_INVENTORY:
-				switch(TKey) {
-					case KEY_ESCAPE:
-					case KEY_KEY_I:
-					case KEY_KEY_C:
-					case KEY_SPACE:
-					case KEY_LEFT:
-					case KEY_UP:
-					case KEY_RIGHT:
-					case KEY_DOWN:
-						HUD.CloseWindows();
-					break;
-					default:
-					break;
-				}
-			break;
-			case STATE_TRADE:
-				switch(TKey) {
-					case KEY_ESCAPE:
-					case KEY_KEY_T:
-					case KEY_SPACE:
-					case KEY_LEFT:
-					case KEY_UP:
-					case KEY_RIGHT:
-					case KEY_DOWN:
-						HUD.CloseWindows();
-					break;
-					default:
-					break;
-				}
-			break;
-			case STATE_VENDOR:
-				switch(TKey) {
-					case KEY_ESCAPE:
-					case KEY_KEY_I:
-					case KEY_KEY_C:
-					case KEY_SPACE:
-					case KEY_LEFT:
-					case KEY_UP:
-					case KEY_RIGHT:
-					case KEY_DOWN:
-						HUD.CloseWindows();
-					break;
-					default:
-					break;
-				}
-			break;
-			case STATE_TRADER:
-				switch(TKey) {
-					case KEY_ESCAPE:
-					case KEY_SPACE:
-					case KEY_LEFT:
-					case KEY_UP:
-					case KEY_RIGHT:
-					case KEY_DOWN:
-						HUD.CloseWindows();
-					break;
-					default:
-					break;
-				}
-			break;
-			case STATE_SKILLS:
-				switch(TKey) {
-					case KEY_ESCAPE:
-					case KEY_KEY_S:
-					case KEY_KEY_K:
-					case KEY_SPACE:
-					case KEY_LEFT:
-					case KEY_UP:
-					case KEY_RIGHT:
-					case KEY_DOWN:
-						HUD.CloseWindows();
-					break;
-					default:
-					break;
-				}
-			break;
-			default:
-			break;
-		}*/
+	switch(State) {
+		case STATE_BATTLE:
+			Battle->HandleInput(TKey);
+		break;
+	}*/
 
 	switch(State) {
 		case STATE_WALK:
@@ -411,7 +313,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 					HUD.InitInventory(true);
 				break;
 				case _Actions::TELEPORT:
-					HUD.ToggleTownPortal();
+					HUD.ToggleTeleport();
 				break;
 				case _Actions::TRADE:
 					HUD.InitTrade();
@@ -702,8 +604,8 @@ void _ClientState::HandleObjectUpdates(_Buffer *TPacket) {
 			OtherPlayer->SetState(PlayerState);
 			if(Player == OtherPlayer) {
 
-				// Return from town portal state
-				if(PlayerState == _Player::STATE_WALK && State == STATE_TOWNPORTAL) {
+				// Return from teleport state
+				if(PlayerState == _Player::STATE_WALK && State == STATE_TELEPORT) {
 					State = STATE_WALK;
 				}
 			}

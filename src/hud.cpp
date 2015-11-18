@@ -231,33 +231,6 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 	}
 
 	switch(*State) {
-		case _PlayClientState::STATE_WALK:
-			switch(TEventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_TOWNPORTAL:
-							ToggleTownPortal();
-						break;
-						case ELEMENT_INVENTORY:
-							InitInventory();
-						break;
-						case ELEMENT_TRADE:
-							InitTrade();
-						break;
-						case ELEMENT_SKILLS:
-							InitSkills();
-						break;
-						case ELEMENT_MAINMENU:
-							InitMenu();
-						break;
-						default:
-						break;
-					}
-				break;
-				default:
-				break;
-			}
-		break;
 		case _PlayClientState::STATE_MAINMENU:
 			switch(TEventType) {
 				case gui::EGET_BUTTON_CLICKED:
@@ -268,43 +241,6 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 						break;
 						case ELEMENT_MAINMENUEXIT:
 							ClientNetwork->Disconnect();
-						break;
-					}
-				break;
-				default:
-				break;
-			}
-		break;
-		case _PlayClientState::STATE_TOWNPORTAL:
-			switch(TEventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_TOWNPORTAL:
-							ToggleTownPortal();
-						break;
-					}
-				break;
-				default:
-				break;
-			}
-		break;
-		case _PlayClientState::STATE_TRADER:
-			switch(TEventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_TRADERACCEPT: {
-							_Buffer Packet;
-							Packet.Write<char>(_Network::TRADER_ACCEPT);
-							ClientNetwork->SendPacketToHost(&Packet);
-							Player->AcceptTrader(Trader, RequiredItemSlots, RewardItemSlot);
-							Player->CalculatePlayerStats();
-							CloseWindows();
-						}
-						break;
-						case ELEMENT_TRADERCANCEL:
-							CloseWindows();
-						break;
-						default:
 						break;
 					}
 				break;
@@ -593,8 +529,8 @@ void _HUD::Render() {
 			DrawTrade();
 			DrawInventory();
 		break;
-		case _ClientState::STATE_TOWNPORTAL:
-			DrawTownPortal();
+		case _ClientState::STATE_TELEPORT:
+			DrawTeleport();
 		break;
 	}
 
@@ -943,31 +879,16 @@ void _HUD::DrawChat() {
 	*/
 }
 
-// Draw the town portal sequence
-void _HUD::DrawTownPortal() {
+// Draw the teleport sequence
+void _HUD::DrawTeleport() {
+	double Timeleft = GAME_TELEPORT_TIME - Player->GetTeleportTime();
+	if(Timeleft > 0) {
+		Assets.Elements["element_teleport"]->Render();
 
-	/*
-
-	Graphics.SetFont(_Graphics::FONT_14);
-
-	// Get text
-	char String[256];
-	double TimeLeft = GAME_PORTALTIME - Player->GetTownPortalTime();
-	sprintf(String, "Portal in %.2f", std::max(TimeLeft, 0.0));
-
-	int DrawX = 400;
-	int DrawY = 200;
-	gui::IGUIFont *TextFont = Graphics.GetFont(_Graphics::FONT_14);
-	core::dimension2du TextArea = TextFont->getDimension(core::stringw(String).c_str());
-	TextArea.Width += 5;
-	TextArea.Height += 5;
-
-	// Draw text
-	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX - 1 - TextArea.Width/2, DrawY-2, TextArea.Width, TextArea.Height, video::SColor(100, 255, 255, 255));
-	//Graphics.RenderText(String, DrawX, DrawY, _Graphics::ALIGN_CENTER);
-
-	Graphics.SetFont(_Graphics::FONT_10);
-	*/
+		std::stringstream Buffer;
+		Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Timeleft;
+		Assets.Labels["label_teleport_timeleft"]->Text = Buffer.str();
+	}
 }
 
 // Draws the player's inventory
@@ -1601,62 +1522,6 @@ void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAl
 	*/
 }
 
-// Returns an item that's on the screen
-void _HUD::GetItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
-	/*
-	TCursorItem.Reset();
-
-	switch(*State) {
-		case _PlayClientState::STATE_INVENTORY:
-			GetInventoryItem(Position, TCursorItem);
-		break;
-		case _PlayClientState::STATE_VENDOR:
-			GetInventoryItem(Position, TCursorItem);
-			GetVendorItem(Position, TCursorItem);
-		break;
-		case _PlayClientState::STATE_TRADER:
-			GetTraderItem(Position, TCursorItem);
-		break;
-		case _PlayClientState::STATE_TRADE:
-			GetInventoryItem(Position, TCursorItem);
-			GetTradeItem(Position, TCursorItem);
-		break;
-	}*/
-}
-
-// Returns a trader item from a mouse position
-void _HUD::GetTraderItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
-	/*
-	core::recti WindowArea = TabTrader->getAbsolutePosition();
-	if(!WindowArea.isPointInside(TPoint))
-		return;
-
-	// Adjust mouse position
-	TPoint.x -= WindowArea.UpperLeftCorner.x;
-	TPoint.y -= WindowArea.UpperLeftCorner.y;
-
-	// Get trader slot
-	int InventoryIndex = -1;
-	if(TPoint.x >= 19 && TPoint.x <= 146 && TPoint.y >= 52 && TPoint.y <= 83)
-		InventoryIndex = (TPoint.x - 19) / 32 + (TPoint.y - 52) / 32;
-	else if(TPoint.x >= 19 && TPoint.x <= 146 && TPoint.y >= 98 && TPoint.y <= 129)
-		InventoryIndex = 4 + (TPoint.x - 19) / 32 + (TPoint.y - 98) / 32;
-	else if(TPoint.x >= 67 && TPoint.x <= 98 && TPoint.y >= 182 && TPoint.y <= 213)
-		InventoryIndex = 9;
-
-	//printf("%d=%d %d\n", InventoryIndex, TPoint.x, TPoint.y);
-
-	// Set cursor item
-	if(InventoryIndex != -1) {
-		TCursorItem.Window = WINDOW_TRADER;
-		if(InventoryIndex < (int)Trader->TraderItems.size())
-			TCursorItem.Set(Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
-		else if(InventoryIndex == 9)
-			TCursorItem.Set(Trader->RewardItem, 0, 1, InventoryIndex);
-	}
-	*/
-}
-
 // Returns a trade item from a mouse position
 void _HUD::GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 	/*
@@ -1906,15 +1771,15 @@ void _HUD::SplitStack(int TSlot, int TCount) {
 	Player->SplitStack(TSlot, TCount);
 }
 
-// Toggles the town portal state
-void _HUD::ToggleTownPortal() {
+// Toggles the teleport state
+void _HUD::ToggleTeleport() {
 	_Buffer Packet;
-	Packet.Write<char>(_Network::WORLD_TOWNPORTAL);
+	Packet.Write<char>(_Network::WORLD_TELEPORT);
 	ClientNetwork->SendPacketToHost(&Packet);
-	Player->StartTownPortal();
+	Player->StartTeleport();
 
-	if(*State == _ClientState::STATE_TOWNPORTAL)
+	if(*State == _ClientState::STATE_TELEPORT)
 		*State = _ClientState::STATE_WALK;
 	else
-		*State = _ClientState::STATE_TOWNPORTAL;
+		*State = _ClientState::STATE_TELEPORT;
 }

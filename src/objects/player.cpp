@@ -47,7 +47,7 @@ _Player::_Player()
 	StateImage(nullptr),
 	SpawnMapID(1),
 	SpawnPoint(0),
-	TownPortalTime(0),
+	TeleportTime(0),
 	PlayTime(0),
 	PlayTimeAccumulator(0),
 	Deaths(0),
@@ -113,7 +113,7 @@ void _Player::Update(double FrameTime) {
 	AttackPlayerTime += FrameTime;
 	TradeRequestTime += FrameTime;
 	PlayTimeAccumulator += FrameTime;
-	TownPortalTime += FrameTime;
+	TeleportTime += FrameTime;
 	if(PlayTimeAccumulator > 1.0) {
 		PlayTimeAccumulator -= 1.0;
 		PlayTime++;
@@ -124,8 +124,8 @@ void _Player::Update(double FrameTime) {
 		if(AutoSaveTime >= GAME_AUTOSAVEPERIOD)
 			Save();
 
-		if(State == STATE_TOWNPORTAL && TownPortalTime > GAME_PORTALTIME) {
-			ServerState.PlayerTownPortal(this);
+		if(State == STATE_TELEPORT && TeleportTime > GAME_TELEPORT_TIME) {
+			ServerState.PlayerTeleport(this);
 			State = STATE_WALK;
 		}
 	}
@@ -819,14 +819,14 @@ void _Player::ToggleBusy(bool TValue) {
 	}
 }
 
-// Starts the town portal process
-void _Player::StartTownPortal() {
-	if(State == STATE_TOWNPORTAL)
+// Starts the teleport process
+void _Player::StartTeleport() {
+	if(State == STATE_TELEPORT)
 		State = STATE_WALK;
 	else if(State == STATE_WALK)
-		State = STATE_TOWNPORTAL;
+		State = STATE_TELEPORT;
 
-	TownPortalTime = 0;
+	TeleportTime = 0;
 }
 
 // Calculates all of the player stats
