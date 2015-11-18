@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <states/mapeditor.h>
+#include <states/editor.h>
 #include <framework.h>
 #include <input.h>
 #include <graphics.h>

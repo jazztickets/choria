@@ -29,7 +29,7 @@
 #include <actions.h>
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
-#include <states/mapeditor.h>
+#include <states/editor.h>
 #include <states/server.h>
 #include <states/null.h>
 #include <framelimit.h>

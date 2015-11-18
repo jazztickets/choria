@@ -24,7 +24,7 @@
 #include <list>
 #include <cstdint>
 #include <string>
-#include <states/mapeditor.h>
+#include <states/editor.h>
 #include <glm/vec2.hpp>
 
 // Forward Declarations
