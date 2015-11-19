@@ -26,6 +26,7 @@ void _NullState::Init() {
 }
 
 void _NullState::Close() {
+	Menu.Close();
 }
 
 // Action handler

@@ -114,6 +114,8 @@ class _Menu {
 		void SetAccountMessage(const std::string &Message);
 		void FocusNextElement(bool ShiftDown=false);
 
+		void ClearPortraits();
+
 		// States
 		StateType State;
 

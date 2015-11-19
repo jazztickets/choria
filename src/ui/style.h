@@ -28,6 +28,13 @@ class _Program;
 
 // Classes
 struct _Style {
+	_Style() :
+		HasBackgroundColor(false),
+		HasBorderColor(false),
+		Program(nullptr),
+		Texture(nullptr),
+		Atlas(nullptr),
+		Stretch(false) { }
 
 	// Attributes
 	std::string Identifier;

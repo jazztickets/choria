@@ -327,7 +327,7 @@ void _Assets::LoadStyles(const std::string &Path) {
 		const _Texture *Texture = Textures[TextureIdentifier];
 
 		// Create style
-		_Style *Style = new _Style;
+		_Style *Style = new _Style();
 		Style->Identifier = Identifier;
 		Style->HasBackgroundColor = BackgroundColorIdentifier != "";
 		Style->HasBorderColor = BorderColorIdentifier != "";

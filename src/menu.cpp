@@ -305,12 +305,7 @@ void _Menu::LoadPortraitButtons() {
 
 	// Clear old children
 	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
-	std::vector<_Element *> &Children = PortraitsElement->Children;
-	for(size_t i = 0; i < Children.size(); i++) {
-		delete Children[i]->Style;
-		delete Children[i];
-	}
-	Children.clear();
+	ClearPortraits();
 
 	glm::ivec2 Offset(10, 0);
 	size_t i = 0;
@@ -321,7 +316,7 @@ void _Menu::LoadPortraitButtons() {
 	for(auto &Portrait : Portraits) {
 
 		// Create style
-		_Style *Style = new _Style;
+		_Style *Style = new _Style();
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
 		Style->Texture = Portrait.Image;
@@ -386,6 +381,7 @@ void _Menu::UpdateCharacterButtons() {
 
 // Shutdown
 void _Menu::Close() {
+	ClearPortraits();
 }
 
 // Handle key event
@@ -972,4 +968,14 @@ void _Menu::FocusNextElement(bool ShiftDown) {
 		default:
 		break;
 	}
+}
+
+// Clear memory used by portraits
+void _Menu::ClearPortraits() {
+	std::vector<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
+	for(size_t i = 0; i < Children.size(); i++) {
+		delete Children[i]->Style;
+		delete Children[i];
+	}
+	Children.clear();
 }

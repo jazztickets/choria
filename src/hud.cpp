@@ -742,7 +742,7 @@ void _HUD::InitSkills() {
 	for(const auto &Skill : Stats.Skills) {
 
 		// Create style
-		_Style *Style = new _Style;
+		_Style *Style = new _Style();
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
 		Style->Texture = Skill.Image;
