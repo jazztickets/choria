@@ -1324,14 +1324,14 @@ void _HUD::DrawItemTooltip() {
 		// Boosts
 		if(Item->GetMaxHealth() > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << Item->GetMaxHealth() << "%";
+			Buffer << "+" << Item->GetMaxHealth();
 			Assets.Fonts["hud_medium"]->DrawText("HP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 		if(Item->GetMaxMana() > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << Item->GetMaxMana() << "%";
+			Buffer << "+" << Item->GetMaxMana();
 			Assets.Fonts["hud_medium"]->DrawText("MP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
