@@ -735,19 +735,19 @@ void _HUD::CloseCharacter() {
 // Delete memory used by skill page
 void _HUD::ClearSkills() {
 	_Element *SkillsElement = Assets.Elements["element_skills"];
-	_Style *ButtonStyle = Assets.Styles["style_menu_button"];
 	std::vector<_Element *> &Children = SkillsElement->Children;
 	for(size_t i = 0; i < Children.size(); i++) {
-
-		// Don't delete static styles
-		if(Children[i]->Style != ButtonStyle)
+		if(Children[i]->Style && Children[i]->Style->UserCreated)
 			delete Children[i]->Style;
 
 		// Delete labels
-		for(size_t j = 0; j < Children[i]->Children.size(); j++)
-			delete Children[i]->Children[j];
+		for(size_t j = 0; j < Children[i]->Children.size(); j++) {
+			if(Children[i]->Children[j]->UserCreated)
+				delete Children[i]->Children[j];
+		}
 
-		delete Children[i];
+		if(Children[i]->UserCreated)
+			delete Children[i];
 	}
 	Children.clear();
 }
@@ -761,10 +761,11 @@ void _HUD::InitSkills() {
 	_Element *SkillsElement = Assets.Elements["element_skills"];
 	ClearSkills();
 
-	glm::ivec2 Start(10, 10);
+	glm::ivec2 Start(10, 25);
 	glm::ivec2 Offset(Start);
-	glm::ivec2 Spacing(10, 32);
-	glm::ivec2 PlusOffset(4, 8);
+	glm::ivec2 LevelOffset(0, -4);
+	glm::ivec2 Spacing(10, 50);
+	glm::ivec2 PlusOffset(4, 6);
 	glm::ivec2 MinusSpacing(8, 0);
 	glm::ivec2 LabelOffset(-1, 3);
 	size_t i = 0;
@@ -777,6 +778,7 @@ void _HUD::InitSkills() {
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
 		Style->Texture = Skill.Image;
+		Style->UserCreated = true;
 
 		// Add button
 		_Button *Button = new _Button();
@@ -787,7 +789,19 @@ void _HUD::InitSkills() {
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
 		Button->UserData = (void *)(intptr_t)Skill.ID;
+		Button->UserCreated = true;
 		SkillsElement->Children.push_back(Button);
+
+		// Add button
+		_Label *LevelLabel = new _Label();
+		LevelLabel->Parent = Button;
+		LevelLabel->Text = "0";
+		LevelLabel->Offset = LevelOffset;
+		LevelLabel->Alignment = CENTER_BASELINE;
+		LevelLabel->Color = COLOR_WHITE;
+		LevelLabel->Font = Assets.Fonts["hud_small"];
+		LevelLabel->UserCreated = true;
+		SkillsElement->Children.push_back(LevelLabel);
 
 		// Add plus button
 		_Button *PlusButton = new _Button();
@@ -799,6 +813,7 @@ void _HUD::InitSkills() {
 		PlusButton->Style = Assets.Styles["style_menu_button"];
 		PlusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
 		PlusButton->UserData = (void *)(intptr_t)Skill.ID;
+		PlusButton->UserCreated = true;
 		SkillsElement->Children.push_back(PlusButton);
 
 		// Add minus button
@@ -811,6 +826,7 @@ void _HUD::InitSkills() {
 		MinusButton->Style = Assets.Styles["style_menu_button"];
 		MinusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
 		MinusButton->UserData = (void *)(intptr_t)Skill.ID;
+		MinusButton->UserCreated = true;
 		SkillsElement->Children.push_back(MinusButton);
 
 		// Add plus label
@@ -821,6 +837,7 @@ void _HUD::InitSkills() {
 		PlusLabel->Alignment = CENTER_MIDDLE;
 		PlusLabel->Color = COLOR_WHITE;
 		PlusLabel->Font = Assets.Fonts["hud_medium"];
+		PlusLabel->UserCreated = true;
 		SkillsElement->Children.push_back(PlusLabel);
 
 		// Add minus label
@@ -831,6 +848,7 @@ void _HUD::InitSkills() {
 		MinusLabel->Alignment = CENTER_MIDDLE;
 		MinusLabel->Color = COLOR_WHITE;
 		MinusLabel->Font = Assets.Fonts["hud_medium"];
+		MinusLabel->UserCreated = true;
 		SkillsElement->Children.push_back(MinusLabel);
 
 		// Update position
@@ -842,8 +860,8 @@ void _HUD::InitSkills() {
 
 		i++;
 	}
-
 	SkillsElement->CalculateBounds();
+
 	RefreshSkillButtons();
 	CursorSkill.Reset();
 	TooltipSkill.Reset();

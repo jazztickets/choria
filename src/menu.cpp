@@ -320,6 +320,7 @@ void _Menu::LoadPortraitButtons() {
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
 		Style->Texture = Portrait.Image;
+		Style->UserCreated = true;
 
 		// Add button
 		_Button *Button = new _Button();
@@ -331,6 +332,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Style = Style;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
 		Button->UserData = (void *)(intptr_t)Portrait.ID;
+		Button->UserCreated = true;
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position

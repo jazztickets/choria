@@ -61,6 +61,7 @@ class _Element {
 		bool MaskOutside : 1;
 		bool Enabled : 1;
 		bool Clickable : 1;
+		bool UserCreated : 1;
 		int Debug;
 
 		// Graphics

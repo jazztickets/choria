@@ -33,6 +33,7 @@ _Element::_Element() :
 	MaskOutside(false),
 	Enabled(true),
 	Clickable(true),
+	UserCreated(false),
 	Debug(0),
 	Style(nullptr),
 	DisabledStyle(nullptr),

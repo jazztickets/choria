@@ -34,7 +34,8 @@ struct _Style {
 		Program(nullptr),
 		Texture(nullptr),
 		Atlas(nullptr),
-		Stretch(false) { }
+		Stretch(false),
+		UserCreated(false) { }
 
 	// Attributes
 	std::string Identifier;
@@ -52,5 +53,6 @@ struct _Style {
 	const _Atlas *Atlas;
 
 	// Properties
-	bool Stretch;
+	bool Stretch : 1;
+	bool UserCreated : 1;
 };
