@@ -429,6 +429,13 @@ void _HUD::Update(double FrameTime) {
 					TooltipItem.Set(Trader->RewardItem, 0, 1, InventoryIndex);
 			}
 		} break;
+		case _ClientState::STATE_SKILLS: {
+			_Element *SkillsElement = Assets.Elements["element_skills"];
+			SkillsElement->Update(FrameTime, Input.GetMouse());
+			_Element *HoverSlot = SkillsElement->HitElement;
+			if(HoverSlot && HoverSlot != SkillsElement) {
+			}
+		} break;
 		default:
 		break;
 	}
@@ -725,6 +732,26 @@ void _HUD::CloseCharacter() {
 	}
 }
 
+// Delete memory used by skill page
+void _HUD::ClearSkills() {
+	_Element *SkillsElement = Assets.Elements["element_skills"];
+	_Style *ButtonStyle = Assets.Styles["style_menu_button"];
+	std::vector<_Element *> &Children = SkillsElement->Children;
+	for(size_t i = 0; i < Children.size(); i++) {
+
+		// Don't delete static styles
+		if(Children[i]->Style != ButtonStyle)
+			delete Children[i]->Style;
+
+		// Delete labels
+		for(size_t j = 0; j < Children[i]->Children.size(); j++)
+			delete Children[i]->Children[j];
+
+		delete Children[i];
+	}
+	Children.clear();
+}
+
 // Initialize the skills screen
 void _HUD::InitSkills() {
 	*State = _ClientState::STATE_SKILLS;
@@ -734,8 +761,12 @@ void _HUD::InitSkills() {
 	_Element *SkillsElement = Assets.Elements["element_skills"];
 	ClearSkills();
 
-	glm::ivec2 Offset(10, 10);
-	glm::ivec2 Spacing(10, 10);
+	glm::ivec2 Start(10, 10);
+	glm::ivec2 Offset(Start);
+	glm::ivec2 Spacing(10, 32);
+	glm::ivec2 PlusOffset(4, 8);
+	glm::ivec2 MinusSpacing(8, 0);
+	glm::ivec2 LabelOffset(-1, 3);
 	size_t i = 0;
 
 	// Iterate over skills
@@ -755,15 +786,58 @@ void _HUD::InitSkills() {
 		Button->Size = Skill.Image->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
-		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
 		Button->UserData = (void *)(intptr_t)Skill.ID;
 		SkillsElement->Children.push_back(Button);
+
+		// Add plus button
+		_Button *PlusButton = new _Button();
+		PlusButton->Identifier = "button_skills_plus";
+		PlusButton->Parent = SkillsElement;
+		PlusButton->Size = glm::ivec2(16, 16);
+		PlusButton->Offset = Offset + glm::ivec2(PlusOffset.x, Skill.Image->Size.y + PlusOffset.y);
+		PlusButton->Alignment = LEFT_TOP;
+		PlusButton->Style = Assets.Styles["style_menu_button"];
+		PlusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
+		PlusButton->UserData = (void *)(intptr_t)Skill.ID;
+		SkillsElement->Children.push_back(PlusButton);
+
+		// Add minus button
+		_Button *MinusButton = new _Button();
+		MinusButton->Identifier = "button_skills_minus";
+		MinusButton->Parent = SkillsElement;
+		MinusButton->Size = glm::ivec2(16, 16);
+		MinusButton->Offset = Offset + glm::ivec2(PlusOffset.x + PlusButton->Size.x + MinusSpacing.x, Skill.Image->Size.y + PlusOffset.y);
+		MinusButton->Alignment = LEFT_TOP;
+		MinusButton->Style = Assets.Styles["style_menu_button"];
+		MinusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
+		MinusButton->UserData = (void *)(intptr_t)Skill.ID;
+		SkillsElement->Children.push_back(MinusButton);
+
+		// Add plus label
+		_Label *PlusLabel = new _Label();
+		PlusLabel->Parent = PlusButton;
+		PlusLabel->Text = "+";
+		PlusLabel->Offset = LabelOffset;
+		PlusLabel->Alignment = CENTER_MIDDLE;
+		PlusLabel->Color = COLOR_WHITE;
+		PlusLabel->Font = Assets.Fonts["hud_medium"];
+		SkillsElement->Children.push_back(PlusLabel);
+
+		// Add minus label
+		_Label *MinusLabel = new _Label();
+		MinusLabel->Parent = MinusButton;
+		MinusLabel->Text = "-";
+		MinusLabel->Offset = LabelOffset;
+		MinusLabel->Alignment = CENTER_MIDDLE;
+		MinusLabel->Color = COLOR_WHITE;
+		MinusLabel->Font = Assets.Fonts["hud_medium"];
+		SkillsElement->Children.push_back(MinusLabel);
 
 		// Update position
 		Offset.x += Skill.Image->Size.x + Spacing.x;
 		if(Offset.x > SkillsElement->Size.x - Skill.Image->Size.x) {
 			Offset.y += Skill.Image->Size.y + Spacing.y;
-			Offset.x = 10;
+			Offset.x = Start.x;
 		}
 
 		i++;
@@ -1712,17 +1786,6 @@ void _HUD::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
 	Player->SetSkillBar(TSlot, TSkill);
 	Player->CalculatePlayerStats();
 	SkillBarChanged = true;
-}
-
-// Delete memory used by skill page
-void _HUD::ClearSkills() {
-	_Element *SkillsElement = Assets.Elements["element_skills"];
-	std::vector<_Element *> &Children = SkillsElement->Children;
-	for(size_t i = 0; i < Children.size(); i++) {
-		delete Children[i]->Style;
-		delete Children[i];
-	}
-	Children.clear();
 }
 
 // Shows or hides the plus/minus buttons

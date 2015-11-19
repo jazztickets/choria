@@ -51,8 +51,10 @@ struct _Alignment {
 	int Horizontal, Vertical;
 };
 
-const _Alignment LEFT_TOP         = _Alignment(_Alignment::LEFT, _Alignment::TOP);
+const _Alignment LEFT_TOP         = _Alignment(_Alignment::LEFT,   _Alignment::TOP);
+const _Alignment LEFT_BOTTOM      = _Alignment(_Alignment::LEFT,   _Alignment::BOTTOM);
+const _Alignment RIGHT_BOTTOM     = _Alignment(_Alignment::RIGHT,  _Alignment::BOTTOM);
 const _Alignment CENTER_MIDDLE    = _Alignment(_Alignment::CENTER, _Alignment::MIDDLE);
-const _Alignment LEFT_BASELINE    = _Alignment(_Alignment::LEFT, _Alignment::BASELINE);
-const _Alignment RIGHT_BASELINE   = _Alignment(_Alignment::RIGHT, _Alignment::BASELINE);
+const _Alignment LEFT_BASELINE    = _Alignment(_Alignment::LEFT,   _Alignment::BASELINE);
+const _Alignment RIGHT_BASELINE   = _Alignment(_Alignment::RIGHT,  _Alignment::BASELINE);
 const _Alignment CENTER_BASELINE  = _Alignment(_Alignment::CENTER, _Alignment::BASELINE);
