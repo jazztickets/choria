@@ -47,6 +47,7 @@ class _Element {
 		void CalculateChildrenBounds();
 
 		void SetDebug(int Debug);
+		void SetVisible(bool Visible);
 		void SetOffset(const glm::ivec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
 		void SetWidth(int Width) { Size.x = Width; CalculateBounds(); }
 		void SetHeight(int Height) { Size.y = Height; CalculateBounds(); }
@@ -58,9 +59,10 @@ class _Element {
 		_Element *Parent;
 		void *UserData;
 
-		bool MaskOutside : 1;
+		bool Visible : 1;
 		bool Enabled : 1;
 		bool Clickable : 1;
+		bool MaskOutside : 1;
 		bool UserCreated : 1;
 		int Debug;
 

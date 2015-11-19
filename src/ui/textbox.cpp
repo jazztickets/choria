@@ -80,6 +80,9 @@ void _TextBox::HandleTextEvent(const char *Text) {
 
 // Render the element
 void _TextBox::Render() const {
+	if(!Visible)
+		return;
+
 	std::string RenderText;
 	if(DrawCursor && Focused)
 		RenderText = Text + "|";

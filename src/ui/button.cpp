@@ -37,6 +37,8 @@ _Button::~_Button() {
 
 // Render the element
 void _Button::Render() const {
+	if(!Visible)
+		return;
 
 	if(Enabled) {
 		if(Style) {

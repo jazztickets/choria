@@ -30,6 +30,9 @@ _Label::~_Label() {
 
 // Render the element
 void _Label::Render() const {
+	if(!Visible)
+		return;
+
 	glm::vec4 RenderColor(Color.r, Color.g, Color.b, Color.a*Fade);
 
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);

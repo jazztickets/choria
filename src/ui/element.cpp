@@ -30,9 +30,10 @@ _Element::_Element() :
 	GlobalID(0),
 	Parent(nullptr),
 	UserData((void *)-1),
-	MaskOutside(false),
+	Visible(true),
 	Enabled(true),
 	Clickable(true),
+	MaskOutside(false),
 	UserCreated(false),
 	Debug(0),
 	Style(nullptr),
@@ -96,7 +97,7 @@ void _Element::Update(double FrameTime, const glm::ivec2 &Mouse) {
 	ReleasedElement = nullptr;
 
 	// Test element first
-	if(Bounds.PointInside(Mouse) && Clickable && Enabled) {
+	if(Bounds.PointInside(Mouse) && Visible && Clickable && Enabled) {
 		HitElement = this;
 	}
 	else if(MaskOutside) {
@@ -165,6 +166,8 @@ void _Element::CalculateChildrenBounds() {
 
 // Render the element
 void _Element::Render() const {
+	if(!Visible)
+		return;
 
 	if(MaskOutside) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
@@ -214,4 +217,12 @@ void _Element::SetDebug(int Debug) {
 
 	for(size_t i = 0; i < Children.size(); i++)
 		Children[i]->SetDebug(Debug + 1);
+}
+
+// Set visibility of element and children
+void _Element::SetVisible(bool Visible) {
+	this->Visible = Visible;
+
+	for(size_t i = 0; i < Children.size(); i++)
+		Children[i]->SetVisible(Visible);
 }

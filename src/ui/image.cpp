@@ -30,6 +30,8 @@ _Image::~_Image() {
 
 // Render the element
 void _Image::Render() const {
+	if(!Visible)
+		return;
 
 	Graphics.SetColor(Color);
 	if(Texture) {

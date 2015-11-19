@@ -780,7 +780,7 @@ void _HUD::InitSkills() {
 		Style->Texture = Skill.Image;
 		Style->UserCreated = true;
 
-		// Add button
+		// Add skill icon
 		_Button *Button = new _Button();
 		Button->Identifier = "button_skills_skill";
 		Button->Parent = SkillsElement;
@@ -792,14 +792,15 @@ void _HUD::InitSkills() {
 		Button->UserCreated = true;
 		SkillsElement->Children.push_back(Button);
 
-		// Add button
+		// Add level label
 		_Label *LevelLabel = new _Label();
+		LevelLabel->Identifier = "label_skills_level";
 		LevelLabel->Parent = Button;
-		LevelLabel->Text = "0";
 		LevelLabel->Offset = LevelOffset;
 		LevelLabel->Alignment = CENTER_BASELINE;
 		LevelLabel->Color = COLOR_WHITE;
 		LevelLabel->Font = Assets.Fonts["hud_small"];
+		LevelLabel->UserData = (void *)(intptr_t)Skill.ID;
 		LevelLabel->UserCreated = true;
 		SkillsElement->Children.push_back(LevelLabel);
 
@@ -838,7 +839,7 @@ void _HUD::InitSkills() {
 		PlusLabel->Color = COLOR_WHITE;
 		PlusLabel->Font = Assets.Fonts["hud_medium"];
 		PlusLabel->UserCreated = true;
-		SkillsElement->Children.push_back(PlusLabel);
+		PlusButton->Children.push_back(PlusLabel);
 
 		// Add minus label
 		_Label *MinusLabel = new _Label();
@@ -849,7 +850,7 @@ void _HUD::InitSkills() {
 		MinusLabel->Color = COLOR_WHITE;
 		MinusLabel->Font = Assets.Fonts["hud_medium"];
 		MinusLabel->UserCreated = true;
-		SkillsElement->Children.push_back(MinusLabel);
+		MinusButton->Children.push_back(MinusLabel);
 
 		// Update position
 		Offset.x += Skill.Image->Size.x + Spacing.x;
@@ -866,6 +867,38 @@ void _HUD::InitSkills() {
 	CursorSkill.Reset();
 	TooltipSkill.Reset();
 	SkillBarChanged = false;
+}
+
+// Shows or hides the plus/minus buttons
+void _HUD::RefreshSkillButtons() {
+
+	// Get remaining points
+	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
+
+	// Loop through buttons
+	_Element *SkillsElement = Assets.Elements["element_skills"];
+	for(auto &Element : SkillsElement->Children) {
+		int SkillID = (intptr_t)Element->UserData;
+		if(Element->Identifier == "label_skills_level") {
+			_Label *Label = (_Label *)Element;
+			Label->Text = std::to_string(Player->GetSkillLevel(SkillID));
+		}
+		else if(Element->Identifier == "button_skills_plus") {
+			_Button *Button = (_Button *)Element;
+			const _Skill *Skill = Stats.GetSkill(SkillID);
+			if(Skill->SkillCost > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
+				Button->SetVisible(false);
+			else
+				Button->SetVisible(true);
+		}
+		else if(Element->Identifier == "button_skills_minus") {
+			_Button *Button = (_Button *)Element;
+			if(Player->GetSkillLevel(SkillID) == 0)
+				Button->SetVisible(false);
+			else
+				Button->SetVisible(true);
+		}
+	}
 }
 
 // Close the skills screen
@@ -1804,37 +1837,6 @@ void _HUD::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
 	Player->SetSkillBar(TSlot, TSkill);
 	Player->CalculatePlayerStats();
 	SkillBarChanged = true;
-}
-
-// Shows or hides the plus/minus buttons
-void _HUD::RefreshSkillButtons() {
-/*
-	// Get remaining points
-	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
-
-	// Loop through buttons
-	irr::core::list<gui::IGUIElement *> Buttons = TabSkill->getChildren();
-	for(irr::core::list<gui::IGUIElement *>::Iterator Iterator = Buttons.begin(); Iterator != Buttons.end(); ++Iterator) {
-		gui::IGUIButton *Button = static_cast<gui::IGUIButton *>(*Iterator);
-		Button->setVisible(true);
-
-		// Toggle buttons
-		int SkillID;
-		if(Button->getID() < ELEMENT_SKILLMINUS0) {
-			SkillID = Button->getID() - ELEMENT_SKILLPLUS0;
-
-			// Hide locked skills
-			const _Skill *Skill = Stats.GetSkill(SkillID);
-			if(Skill->GetSkillCost() > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
-				Button->setVisible(false);
-		}
-		else {
-			SkillID = Button->getID() - ELEMENT_SKILLMINUS0;
-			if(Player->GetSkillLevel(SkillID) == 0)
-				Button->setVisible(false);
-		}
-	}
-	*/
 }
 
 // Sends the busy signal to the server
