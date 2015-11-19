@@ -148,7 +148,7 @@ class _HUD {
 		void DrawItemTooltip();
 		void DrawCursorSkill();
 		void DrawSkillTooltip();
-		void DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY);
+		void DrawSkillDescription(const _Skill *Skill, int SkillLevel, glm::ivec2 &DrawPosition, int Width);
 		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
 		void GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
@@ -175,7 +175,8 @@ class _HUD {
 		const _Trader *Trader;
 
 		// GUI
-		_CursorItem CursorItem, TooltipItem;
+		_CursorItem CursorItem;
+		_CursorItem TooltipItem;
 		bool CharacterOpen;
 
 		// Chat

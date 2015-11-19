@@ -46,7 +46,6 @@ _HUD HUD;
 
 // Initialize
 void _HUD::Init() {
-
 	State = ClientState.GetState();
 	Vendor = nullptr;
 	Trader = nullptr;
@@ -1242,46 +1241,18 @@ void _HUD::DrawCharacter() {
 
 // Draws the skill page
 void _HUD::DrawSkills() {
-	Assets.Elements["element_skills"]->Render();
+	_Element *Element = Assets.Elements["element_skills"];
+	Element->Render();
 
-	/*
-	char Buffer[256];
-	core::recti WindowArea = TabSkill->getAbsolutePosition();
+	// Show remaining skill points
+	std::string SkillPointsText;
+	if(Player->GetSkillPointsRemaining() != 1)
+		SkillPointsText	= std::to_string(Player->GetSkillPointsRemaining()) + " Skill Points";
+	else
+		SkillPointsText	= std::to_string(Player->GetSkillPointsRemaining()) + " Skill Point";
 
-	// Remaining points
-	sprintf(Buffer, "Skill Points: %d", Player->GetSkillPointsRemaining());
-	//Graphics.RenderText(Buffer, 400, SKILL_BARY - 23, _Graphics::ALIGN_CENTER);
-
-	// Draw skills
-	const std::vector<_Skill> &Skills = Stats.GetSkillList();
-	int X = 0, Y = 0;
-	for(size_t i = 0; i < Skills.size(); i++) {
-		int DrawX = WindowArea.UpperLeftCorner.x + X * SKILL_SPACINGX + SKILL_STARTX + 16;
-		int DrawY = WindowArea.UpperLeftCorner.y + Y * SKILL_SPACINGY + SKILL_STARTY + 16;
-		Graphics.DrawCenteredImage(Skills[i].GetImage(), DrawX, DrawY);
-
-		sprintf(Buffer, "%d", Player->GetSkillLevel(i));
-		//Graphics.RenderText(Buffer, DrawX, DrawY - 38, _Graphics::ALIGN_CENTER);
-
-		X++;
-		if(X >= SKILL_COLUMNS) {
-			X = 0;
-			Y++;
-		}
-	}
-
-	// Draw skill bar
-	const _Texture *Image;
-	for(int i = 0; i < 8; i++) {
-
-		if(Player->GetSkillBar(i))
-			Image = Player->GetSkillBar(i)->GetImage();
-		else
-			Image = Graphics.GetImage(_Graphics::IMAGE_EMPTYSLOT);
-
-		Graphics.DrawCenteredImage(Image, SKILL_BARX + i * 32 + 16, SKILL_BARY + 16);
-	}
-	*/
+	glm::ivec2 DrawPosition = glm::ivec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 30);
+	Assets.Fonts["hud_medium"]->DrawText(SkillPointsText.c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
 }
 
 // Draws the item under the cursor
@@ -1474,124 +1445,136 @@ void _HUD::DrawCursorSkill() {
 
 // Draws the skill tooltip window
 void _HUD::DrawSkillTooltip() {
-	/*
 	const _Skill *Skill = TooltipSkill.Skill;
 	if(Skill) {
+		_Element *TooltipElement = Assets.Elements["element_skills_tooltip"];
+		_Label *TooltipName = Assets.Labels["label_skills_tooltip_name"];
+
+		// Set label values
+		TooltipName->Text = Skill->Name;
+
+		// Get window width
+		int Width = TooltipElement->Bounds.End.x - TooltipElement->Bounds.Start.x;
+
+		// Position window
+		glm::ivec2 WindowOffset = Input.GetMouse();
+		WindowOffset.x += INVENTORY_TOOLTIP_OFFSETX;
+		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+
+		// Reposition window if out of bounds
+		if(WindowOffset.y < Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING)
+			WindowOffset.y = Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING;
+		if(WindowOffset.x + Width > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
+			WindowOffset.x -= Width + INVENTORY_TOOLTIP_OFFSETX + INVENTORY_TOOLTIP_PADDING;
+
+		TooltipElement->SetOffset(WindowOffset);
+
+		// Render tooltip
+		TooltipElement->Render();
+
+		// Set draw position to center of window
+		glm::ivec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
+		DrawPosition.y += 30;
+
+		// Get current skill level
 		int SkillLevel = Player->GetSkillLevel(Skill->ID);
-		int DrawX = OldInput.GetMousePosition().x + 16;
-		int DrawY = OldInput.GetMousePosition().y - 100;
-		int Width = 300;
-		int Height;
-		if(SkillLevel > 0)
-			Height = 150;
-		else
-			Height = 100;
 
-		if(DrawY < 20)
-			DrawY = 20;
-		if(DrawX + Width > 800)
-			DrawX = 800 - Width;
+		// Get current level description
+		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
+		DrawPosition.y += 25;
+		DrawSkillDescription(Skill, SkillLevel, DrawPosition, Width);
 
-		// Draw background
-		char Buffer[256];
-		std::string String;
-		Graphics.SetFont(_Graphics::FONT_10);
-		Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height);
-		DrawX += 10;
-		DrawY += 10;
-
-		// Draw name
-		//Graphics.RenderText(Skill->GetName().c_str(), DrawX, DrawY);
-		DrawY += 15;
-
-		// Draw description
-		DrawSkillDescription(Skill, SkillLevel, DrawX, DrawY);
-
-		// Draw next level description
+		// Get next level description
 		if(SkillLevel > 0) {
-			DrawY += 30;
-			//Graphics.RenderText("Next level", DrawX, DrawY, _Graphics::ALIGN_LEFT);
-			DrawY += 15;
-			DrawSkillDescription(Skill, SkillLevel+1, DrawX, DrawY);
+			DrawPosition.y += 25;
+			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
+			DrawPosition.y += 25;
+			DrawSkillDescription(Skill, SkillLevel+1, DrawPosition, Width);
 		}
-
-		// Sell cost
-		DrawY += 30;
-		sprintf(Buffer, "Sell cost: $%d", Skill->GetSellCost(Player->GetLevel()));
-		//Graphics.RenderText(Buffer, DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GOLD);
 
 		// Additional information
 		switch(Skill->Type) {
 			case _Skill::TYPE_PASSIVE:
-				DrawY += 15;
-				//Graphics.RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
+				DrawPosition.y += 25;
+				Assets.Fonts["hud_small"]->DrawText("Passive skills must be equipped to the actionbar", DrawPosition, COLOR_GRAY, LEFT_BASELINE);
 			break;
 		}
-	}*/
+	}
 }
 
 // Draw the skill description
-void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int &TDrawY) {
+void _HUD::DrawSkillDescription(const _Skill *Skill, int SkillLevel, glm::ivec2 &DrawPosition, int Width) {
 
-	/*
-	// Get skill data
-	int PowerMin, PowerMax, PowerMinRound, PowerMaxRound, PowerPercent;
+	// Get power range
+	int PowerMin, PowerMax;
+	Skill->GetPowerRange(SkillLevel, PowerMin, PowerMax);
+
+	// Get power range rounded
+	int PowerMinRound, PowerMaxRound;
+	Skill->GetPowerRangeRound(SkillLevel, PowerMinRound, PowerMaxRound);
+
+	// Get floating point range
 	float PowerMinFloat, PowerMaxFloat;
-	Skill->GetPowerRange(TLevel, PowerMin, PowerMax);
-	Skill->GetPowerRangeRound(TLevel, PowerMinRound, PowerMaxRound);
-	Skill->GetPowerRange(TLevel, PowerMinFloat, PowerMaxFloat);
-	PowerPercent = (int)std::roundf(PowerMaxFloat * 100);
+	Skill->GetPowerRange(SkillLevel, PowerMinFloat, PowerMaxFloat);
+
+	// Get percent
+	int PowerPercent = (int)std::roundf(PowerMaxFloat * 100);
 
 	// Draw description
-	char Buffer[256];
+	int SpacingY = 25;
+	char Buffer[512];
+	Buffer[0] = 0;
 	switch(Skill->Type) {
 		case _Skill::TYPE_ATTACK:
-			sprintf(Buffer, Skill->GetInfo().c_str(), PowerPercent);
-			//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			sprintf(Buffer, Skill->Info.c_str(), PowerPercent);
+			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			DrawPosition.y += SpacingY;
 		break;
 		case _Skill::TYPE_SPELL:
 			switch(Skill->ID) {
 				case 3:
-					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxRound);
+					sprintf(Buffer, Skill->Info.c_str(), PowerMaxRound);
 				break;
 				case 6:
 				case 11:
-					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMinRound, PowerMaxRound);
+					sprintf(Buffer, Skill->Info.c_str(), PowerMinRound, PowerMaxRound);
 				break;
 			}
-			//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			DrawPosition.y += SpacingY;
 
-			TDrawY += 15;
-			sprintf(Buffer, "%d Mana", Skill->GetManaCost(TLevel));
-			//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, video::SColor(255, 0, 0, 255));
+			sprintf(Buffer, "%d Mana", Skill->GetManaCost(SkillLevel));
+			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_BLUE, LEFT_BASELINE);
+			DrawPosition.y += 15;
 		break;
 		case _Skill::TYPE_USEPOTION:
-			sprintf(Buffer, Skill->GetInfo().c_str(), PowerMin);
-			//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			sprintf(Buffer, Skill->Info.c_str(), PowerMin);
+			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			DrawPosition.y += SpacingY;
 		break;
 		case _Skill::TYPE_PASSIVE:
 			switch(Skill->ID) {
 				case 4:
 				case 5:
-					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxRound);
-					//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					sprintf(Buffer, Skill->Info.c_str(), PowerMaxRound);
 				break;
 				case 7:
 				case 8:
-					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxFloat);
-					//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					sprintf(Buffer, Skill->Info.c_str(), PowerMaxFloat);
 				break;
 				case 9:
 				case 10:
-					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMax);
-					//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
+					sprintf(Buffer, Skill->Info.c_str(), PowerMax);
 				break;
 			}
+			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			DrawPosition.y += SpacingY;
 		break;
 		default:
-			//Graphics.RenderText(Skill->GetInfo().c_str(), TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
+			Assets.Fonts["hud_small"]->DrawText(Skill->Info.c_str(), DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			DrawPosition.y += SpacingY;
 		break;
-	}*/
+	}
 }
 
 // Draws an item's price
