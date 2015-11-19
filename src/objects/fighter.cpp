@@ -231,7 +231,7 @@ int _Fighter::GetSkillBarID(int TSlot) {
 	if(SkillBar[TSlot] == nullptr)
 		return -1;
 
-	return SkillBar[TSlot]->GetID();
+	return SkillBar[TSlot]->ID;
 }
 
 // Get a skill from the skill bar

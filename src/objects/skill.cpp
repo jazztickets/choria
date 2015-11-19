@@ -42,7 +42,6 @@ int _Skill::GetPower(int TLevel) const {
 	int Min, Max;
 	GetPowerRangeRound(TLevel, Min, Max);
 	std::uniform_int_distribution<int> Distribution(Min, Max);
-	Distribution(RandomGenerator);
 
 	return Distribution(RandomGenerator);
 }

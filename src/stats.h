@@ -113,9 +113,14 @@ class _Stats {
 		void GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters);
 		void GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops);
 
-		// Events
-		const _Event *GetEvent(int TIndex) const { return &Events[TIndex]; }
-		int GetEventCount() const { return Events.size(); }
+		std::vector<_Event> Events;
+		std::vector<_Level> Levels;
+
+		std::map<int, _Portrait> Portraits;
+		std::map<int, _MapStat> Maps;
+		std::map<int, _Item> Items;
+		std::map<int, _Vendor> Vendors;
+		std::map<int, _Trader> Traders;
 
 		// Levels
 		const _Level *GetLevel(int TLevel) const { return &Levels[TLevel-1]; }
@@ -123,7 +128,7 @@ class _Stats {
 		int GetMaxLevel() const { return Levels.size(); }
 
 		// Skills
-		const std::vector<_Skill> &GetSkillList() const { return Skills; }
+		std::vector<_Skill> Skills;
 
 	private:
 
@@ -138,15 +143,6 @@ class _Stats {
 
 		_Database *Database;
 
-		std::vector<_Event> Events;
-		std::vector<_Level> Levels;
-		std::vector<_Skill> Skills;
-
-		std::map<int, _Portrait> Portraits;
-		std::map<int, _MapStat> Maps;
-		std::map<int, _Item> Items;
-		std::map<int, _Vendor> Vendors;
-		std::map<int, _Trader> Traders;
 };
 
 extern _Stats Stats;

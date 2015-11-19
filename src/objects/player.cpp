@@ -766,7 +766,7 @@ void _Player::AdjustSkillLevel(int TSkillID, int TAdjust) {
 
 	// Buying
 	if(TAdjust > 0) {
-		if(Skill->GetSkillCost() > GetSkillPointsRemaining() || SkillLevels[TSkillID] >= 255)
+		if(Skill->SkillCost > GetSkillPointsRemaining() || SkillLevels[TSkillID] >= 255)
 			return;
 
 		// Update level
@@ -802,9 +802,8 @@ void _Player::AdjustSkillLevel(int TSkillID, int TAdjust) {
 void _Player::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	const std::vector<_Skill> &Skills = Stats.GetSkillList();
-	for(uint32_t i = 0; i < Skills.size(); i++) {
-		SkillPointsUsed += Skills[i].GetSkillCost() * SkillLevels[i];
+	for(uint32_t i = 0; i < Stats.Skills.size(); i++) {
+		SkillPointsUsed += Stats.Skills[i].SkillCost * SkillLevels[i];
 	}
 }
 
@@ -922,11 +921,11 @@ void _Player::CalculateSkillStats() {
 		if(Skill) {
 			int Min, Max, MinRound, MaxRound;
 			float MinFloat, MaxFloat;
-			Skill->GetPowerRange(SkillLevels[Skill->GetID()], Min, Max);
-			Skill->GetPowerRangeRound(SkillLevels[Skill->GetID()], MinRound, MaxRound);
-			Skill->GetPowerRange(SkillLevels[Skill->GetID()], MinFloat, MaxFloat);
+			Skill->GetPowerRange(SkillLevels[Skill->ID], Min, Max);
+			Skill->GetPowerRangeRound(SkillLevels[Skill->ID], MinRound, MaxRound);
+			Skill->GetPowerRange(SkillLevels[Skill->ID], MinFloat, MaxFloat);
 
-			switch(Skill->GetID()) {
+			switch(Skill->ID) {
 				case 0:
 					WeaponDamageModifier = MaxFloat;
 				break;

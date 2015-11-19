@@ -31,6 +31,7 @@
 #include <ui/label.h>
 #include <ui/textbox.h>
 #include <ui/image.h>
+#include <ui/style.h>
 #include <states/client.h>
 #include <network/network.h>
 #include <instances/map.h>
@@ -62,6 +63,7 @@ void _HUD::Init() {
 
 // Shutdown
 void _HUD::Close() {
+	ClearSkills();
 }
 
 // Mouse events
@@ -122,7 +124,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			case _ClientState::STATE_SKILLS:
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
-						if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->GetID()) > 0)
+						if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->ID) > 0)
 							CursorSkill = TooltipSkill;
 					break;
 				}
@@ -325,7 +327,7 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 								const _Skill *Skill = Stats.GetSkill(SkillID);
 								if(Skill) {
 									int Direction, Slot;
-									if(Skill->GetType() == _Skill::TYPE_PASSIVE) {
+									if(Skill->Type == _Skill::TYPE_PASSIVE) {
 										Slot = 7;
 										Direction = -1;
 									}
@@ -728,29 +730,46 @@ void _HUD::InitSkills() {
 	*State = _ClientState::STATE_SKILLS;
 	SendBusySignal(true);
 
-	// Main window
-	//TabSkill = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 450, 400), nullptr, 0);
+	// Clear old children
+	_Element *SkillsElement = Assets.Elements["element_skills"];
+	ClearSkills();
 
-	// Add +/- buttons
-	const std::vector<_Skill> &Skills = Stats.GetSkillList();
-	int X = 0, Y = 0;
-	for(size_t i = 0; i < Skills.size(); i++) {
-		//int DrawX = X * SKILL_SPACINGX + SKILL_STARTX + 16;
-		//int DrawY = Y * SKILL_SPACINGY + SKILL_STARTY + 45;
+	glm::ivec2 Offset(10, 10);
+	glm::ivec2 Spacing(10, 10);
+	size_t i = 0;
 
-		// Add buy/sell button
-		//gui::IGUIButton *BuyButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX - 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLPLUS0 + i);
-		//BuyButton->setImage(Graphics.GetImage(_Graphics::IMAGE_PLUS));
-		//gui::IGUIButton *SellButton = irrGUI->addButton(Graphics.GetCenteredRect(DrawX + 8, DrawY, 12, 12), TabSkill, ELEMENT_SKILLMINUS0 + i);
-		//SellButton->setImage(Graphics.GetImage(_Graphics::IMAGE_MINUS));
+	// Iterate over skills
+	for(const auto &Skill : Stats.Skills) {
 
-		X++;
-		if(X >= SKILL_COLUMNS) {
-			X = 0;
-			Y++;
+		// Create style
+		_Style *Style = new _Style;
+		Style->TextureColor = COLOR_WHITE;
+		Style->Program = Assets.Programs["ortho_pos_uv"];
+		Style->Texture = Skill.Image;
+
+		// Add button
+		_Button *Button = new _Button();
+		Button->Identifier = "button_skills_skill";
+		Button->Parent = SkillsElement;
+		Button->Offset = Offset;
+		Button->Size = Skill.Image->Size;
+		Button->Alignment = LEFT_TOP;
+		Button->Style = Style;
+		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
+		Button->UserData = (void *)(intptr_t)Skill.ID;
+		SkillsElement->Children.push_back(Button);
+
+		// Update position
+		Offset.x += Skill.Image->Size.x + Spacing.x;
+		if(Offset.x > SkillsElement->Size.x - Skill.Image->Size.x) {
+			Offset.y += Skill.Image->Size.y + Spacing.y;
+			Offset.x = 10;
 		}
+
+		i++;
 	}
 
+	SkillsElement->CalculateBounds();
 	RefreshSkillButtons();
 	CursorSkill.Reset();
 	TooltipSkill.Reset();
@@ -1056,7 +1075,7 @@ void _HUD::DrawActionBar() {
 		const _Skill *Skill = Player->GetSkillBar(i);
 		if(Skill) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Skill->GetImage());
+			Graphics.DrawCenteredImage(DrawPosition, Skill->Image);
 		}
 
 		// Draw hotkey
@@ -1144,6 +1163,7 @@ void _HUD::DrawCharacter() {
 
 // Draws the skill page
 void _HUD::DrawSkills() {
+	Assets.Elements["element_skills"]->Render();
 
 	/*
 	char Buffer[256];
@@ -1368,7 +1388,7 @@ void _HUD::DrawItemTooltip() {
 void _HUD::DrawCursorSkill() {
 	if(CursorSkill.Skill) {
 		glm::ivec2 DrawPosition = Input.GetMouse() - 16;
-		Graphics.DrawCenteredImage(DrawPosition + 16, CursorSkill.Skill->GetImage());
+		Graphics.DrawCenteredImage(DrawPosition + 16, CursorSkill.Skill->Image);
 	}
 }
 
@@ -1377,7 +1397,7 @@ void _HUD::DrawSkillTooltip() {
 	/*
 	const _Skill *Skill = TooltipSkill.Skill;
 	if(Skill) {
-		int SkillLevel = Player->GetSkillLevel(Skill->GetID());
+		int SkillLevel = Player->GetSkillLevel(Skill->ID);
 		int DrawX = OldInput.GetMousePosition().x + 16;
 		int DrawY = OldInput.GetMousePosition().y - 100;
 		int Width = 300;
@@ -1421,7 +1441,7 @@ void _HUD::DrawSkillTooltip() {
 		//Graphics.RenderText(Buffer, DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GOLD);
 
 		// Additional information
-		switch(Skill->GetType()) {
+		switch(Skill->Type) {
 			case _Skill::TYPE_PASSIVE:
 				DrawY += 15;
 				//Graphics.RenderText("Passive skills must be equipped to skillbar", DrawX, DrawY, _Graphics::ALIGN_LEFT, COLOR_GRAY);
@@ -1444,13 +1464,13 @@ void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int
 
 	// Draw description
 	char Buffer[256];
-	switch(Skill->GetType()) {
+	switch(Skill->Type) {
 		case _Skill::TYPE_ATTACK:
 			sprintf(Buffer, Skill->GetInfo().c_str(), PowerPercent);
 			//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 		case _Skill::TYPE_SPELL:
-			switch(Skill->GetID()) {
+			switch(Skill->ID) {
 				case 3:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxRound);
 				break;
@@ -1470,7 +1490,7 @@ void _HUD::DrawSkillDescription(const _Skill *Skill, int TLevel, int TDrawX, int
 			//Graphics.RenderText(Buffer, TDrawX, TDrawY, _Graphics::ALIGN_LEFT, COLOR_LIGHTGRAY);
 		break;
 		case _Skill::TYPE_PASSIVE:
-			switch(Skill->GetID()) {
+			switch(Skill->ID) {
 				case 4:
 				case 5:
 					sprintf(Buffer, Skill->GetInfo().c_str(), PowerMaxRound);
@@ -1692,6 +1712,17 @@ void _HUD::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
 	Player->SetSkillBar(TSlot, TSkill);
 	Player->CalculatePlayerStats();
 	SkillBarChanged = true;
+}
+
+// Delete memory used by skill page
+void _HUD::ClearSkills() {
+	_Element *SkillsElement = Assets.Elements["element_skills"];
+	std::vector<_Element *> &Children = SkillsElement->Children;
+	for(size_t i = 0; i < Children.size(); i++) {
+		delete Children[i]->Style;
+		delete Children[i];
+	}
+	Children.clear();
 }
 
 // Shows or hides the plus/minus buttons

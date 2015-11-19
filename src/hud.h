@@ -158,6 +158,7 @@ class _HUD {
 		void GetSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill);
 		void GetSkillPageSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill);
 		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
+		void ClearSkills();
 
 		void RefreshSkillButtons();
 		void SendBusySignal(bool Value);

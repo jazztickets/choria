@@ -184,7 +184,7 @@ void _Map::Render(_Camera *Camera, int RenderFlags) {
 
 			// Draw event info
 			if(Tile->EventType > 0) {
-				std::string EventText = Stats.GetEvent(Tile->EventType)->ShortName + std::string(", ") + std::to_string(Tile->EventData);
+				std::string EventText = Stats.Events[Tile->EventType].ShortName + std::string(", ") + std::to_string(Tile->EventData);
 				Assets.Fonts["hud_small"]->DrawText(EventText, glm::vec2(DrawPosition), COLOR_CYAN, CENTER_MIDDLE, 1.0f / 32.0f);
 			}
 		}
@@ -331,7 +331,7 @@ void _Map::LoadMap() {
 			File.read((char *)&Tile->PVP, sizeof(Tile->PVP));
 
 			// Save off events that need to be indexed
-			if(Stats.GetEvent(Tile->EventType)->Indexed) {
+			if(Stats.Events[Tile->EventType].Indexed) {
 				IndexedEvents.push_back(_IndexedEvent(Tile, glm::ivec2(i, j)));
 			}
 		}

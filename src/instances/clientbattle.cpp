@@ -400,8 +400,8 @@ void _ClientBattle::SendSkill(int TSkillSlot) {
 	ClientPlayer->SetSkillUsing(Skill);
 
 	// Update potion count
-	if(TSkillSlot != 9 && Skill->GetType() == _Skill::TYPE_USEPOTION)
-		ClientPlayer->UpdatePotionsLeft(Skill->GetID() == 2);
+	if(TSkillSlot != 9 && Skill->Type == _Skill::TYPE_USEPOTION)
+		ClientPlayer->UpdatePotionsLeft(Skill->ID == 2);
 
 	State = STATE_WAIT;
 }

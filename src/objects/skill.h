@@ -38,14 +38,7 @@ class _Skill {
 			TYPE_USEPOTION,
 		};
 
-		int GetID() const { return ID; }
-		int GetType() const { return Type; }
-		const _Texture *GetImage() const { return Image; }
-		const std::string &GetName() const { return Name; }
-		const std::string &GetInfo() const { return Info; }
-		int GetSkillCost() const { return SkillCost; }
 		int GetSellCost(int TPlayerLevel) const;
-
 		int GetManaCost(int TLevel) const;
 		int GetPower(int TLevel) const;
 		void GetPowerRange(int TLevel, int &TMin, int &TMax) const;
@@ -55,14 +48,15 @@ class _Skill {
 		void ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const;
 		bool CanUse(_Fighter *TFighter) const;
 
-	private:
-
 		int ID;
 		int Type;
 		std::string Name;
 		std::string Info;
 		const _Texture *Image;
 		int SkillCost;
+
+	private:
+
 		float ManaCostBase;
 		float ManaCost;
 		float PowerBase;

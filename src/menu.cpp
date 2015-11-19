@@ -313,7 +313,6 @@ void _Menu::LoadPortraitButtons() {
 	Children.clear();
 
 	glm::ivec2 Offset(10, 0);
-	int Width = PortraitsElement->Size.x;
 	size_t i = 0;
 
 	// Iterate over portraits
@@ -341,7 +340,7 @@ void _Menu::LoadPortraitButtons() {
 
 		// Update position
 		Offset.x += Portrait.Image->Size.x + 10;
-		if(Offset.x > Width - Portrait.Image->Size.x + 10) {
+		if(Offset.x > PortraitsElement->Size.x - Portrait.Image->Size.x - 10) {
 			Offset.y += Portrait.Image->Size.y + 10;
 			Offset.x = 10;
 		}

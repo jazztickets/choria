@@ -191,7 +191,7 @@ void _ServerBattle::ResolveTurn() {
 				const _Skill *Skill = Fighters[i]->GetSkillBar(Fighters[i]->GetCommand());
 				if(Skill && Skill->CanUse(Result->Fighter)) {
 					int TargetFighterIndex = GetFighterFromSlot(Result->Target);
-					Result->SkillID = Skill->GetID();
+					Result->SkillID = Skill->ID;
 
 					// Update fighters
 					_FighterResult *TargetResult = &Results[TargetFighterIndex];
@@ -423,7 +423,7 @@ void _ServerBattle::SendSkillToPlayers(_Player *TPlayer) {
 	const _Skill *Skill = TPlayer->GetSkillBar(TPlayer->GetCommand());
 	int SkillID = -1;
 	if(Skill)
-		SkillID = Skill->GetID();
+		SkillID = Skill->ID;
 
 	// Build packet
 	_Buffer Packet;
