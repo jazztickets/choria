@@ -272,7 +272,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	if(Value == 0)
 		return true;
 
-	/*
+/*
 	// Start/stop chat
 	if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
 		HUD.ToggleChat();

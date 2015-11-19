@@ -155,8 +155,7 @@ class _HUD {
 		void BuyItem(_CursorItem *TCursorItem, int TTargetSlot);
 		void SellItem(_CursorItem *TCursorItem, int TAmount);
 
-		void GetSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill);
-		void GetSkillPageSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill);
+		void AdjustSkillLevel(int SkillID, int Direction);
 		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
 		void ClearSkills();
 
@@ -184,7 +183,8 @@ class _HUD {
 		bool Chatting;
 
 		// Skills
-		_CursorSkill CursorSkill, TooltipSkill;
+		_CursorSkill CursorSkill;
+		_CursorSkill TooltipSkill;
 		bool SkillBarChanged;
 
 		// Traders

@@ -202,6 +202,15 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			} break;
 			case _ClientState::STATE_SKILLS:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+					_Element *SkillsElement = Assets.Elements["element_skills"];
+					if(SkillsElement->HitElement) {
+						if(SkillsElement->HitElement->Identifier == "button_skills_plus") {
+							AdjustSkillLevel((intptr_t)SkillsElement->HitElement->Parent->UserData, 1);
+						}
+						else if(SkillsElement->HitElement->Identifier == "button_skills_minus") {
+							AdjustSkillLevel((intptr_t)SkillsElement->HitElement->Parent->UserData, -1);
+						}
+					}
 
 					// Check for valid slots
 					if(CursorSkill.Skill) {
@@ -296,70 +305,6 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 				break;
 			}
 		break;
-		case _PlayClientState::STATE_SKILLS:
-			switch(TEventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_SKILLS:
-							CloseWindows();
-						break;
-					}
-
-					// Skills
-					if(ID >= ELEMENT_SKILLPLUS0) {
-						_Buffer Packet;
-						Packet.Write<char>(_Network::SKILLS_SKILLADJUST);
-
-						// Buy or sell skill
-						int SkillID;
-						if(ID >= ELEMENT_SKILLMINUS0) {
-							SkillID = ID - ELEMENT_SKILLMINUS0;
-							Packet.WriteBit(0);
-							Player->AdjustSkillLevel(SkillID, -1);
-						}
-						else {
-							SkillID = ID - ELEMENT_SKILLPLUS0;
-							Packet.WriteBit(1);
-							Player->AdjustSkillLevel(SkillID, 1);
-							if(Player->GetSkillLevel(SkillID) == 1) {
-
-								// Equip new skills
-								const _Skill *Skill = Stats.GetSkill(SkillID);
-								if(Skill) {
-									int Direction, Slot;
-									if(Skill->Type == _Skill::TYPE_PASSIVE) {
-										Slot = 7;
-										Direction = -1;
-									}
-									else {
-										Slot = 0;
-										Direction = 1;
-									}
-									for(int i = 0; i < 8; i++) {
-										if(Player->GetSkillBar(Slot) == nullptr) {
-											SetSkillBar(Slot, -1, Skill);
-											break;
-										}
-										Slot += Direction;
-									}
-								}
-							}
-						}
-						Packet.Write<char>(SkillID);
-						ClientNetwork->SendPacketToHost(&Packet);
-
-						// Update player
-						Player->CalculateSkillPoints();
-						Player->CalculatePlayerStats();
-						RefreshSkillButtons();
-					}
-				break;
-				default:
-				break;
-			}
-		break;
-		default:
-		break;
 	}
 }
 */
@@ -369,6 +314,7 @@ void _HUD::Update(double FrameTime) {
 	Assets.Elements["element_hud"]->Update(FrameTime, Input.GetMouse());
 	Assets.Elements["element_buttonbar"]->Update(FrameTime, Input.GetMouse());
 	TooltipItem.Reset();
+	TooltipSkill.Reset();
 
 	switch(*State) {
 		case _ClientState::STATE_VENDOR:
@@ -434,6 +380,12 @@ void _HUD::Update(double FrameTime) {
 			SkillsElement->Update(FrameTime, Input.GetMouse());
 			_Element *HoverSlot = SkillsElement->HitElement;
 			if(HoverSlot && HoverSlot != SkillsElement) {
+
+				int SkillID = (intptr_t)HoverSlot->UserData;
+				if(SkillID != -1) {
+					TooltipSkill.Window = WINDOW_SKILLS;
+					TooltipSkill.Skill = Stats.GetSkill(SkillID);
+				}
 			}
 		} break;
 		default:
@@ -765,8 +717,8 @@ void _HUD::InitSkills() {
 	glm::ivec2 Offset(Start);
 	glm::ivec2 LevelOffset(0, -4);
 	glm::ivec2 Spacing(10, 50);
-	glm::ivec2 PlusOffset(4, 6);
-	glm::ivec2 MinusSpacing(8, 0);
+	glm::ivec2 PlusOffset(-12, 37);
+	glm::ivec2 MinusOffset(12, 37);
 	glm::ivec2 LabelOffset(-1, 3);
 	size_t i = 0;
 
@@ -807,26 +759,24 @@ void _HUD::InitSkills() {
 		// Add plus button
 		_Button *PlusButton = new _Button();
 		PlusButton->Identifier = "button_skills_plus";
-		PlusButton->Parent = SkillsElement;
+		PlusButton->Parent = Button;
 		PlusButton->Size = glm::ivec2(16, 16);
-		PlusButton->Offset = Offset + glm::ivec2(PlusOffset.x, Skill.Image->Size.y + PlusOffset.y);
-		PlusButton->Alignment = LEFT_TOP;
+		PlusButton->Offset = PlusOffset;
+		PlusButton->Alignment = CENTER_MIDDLE;
 		PlusButton->Style = Assets.Styles["style_menu_button"];
 		PlusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
-		PlusButton->UserData = (void *)(intptr_t)Skill.ID;
 		PlusButton->UserCreated = true;
 		SkillsElement->Children.push_back(PlusButton);
 
 		// Add minus button
 		_Button *MinusButton = new _Button();
 		MinusButton->Identifier = "button_skills_minus";
-		MinusButton->Parent = SkillsElement;
+		MinusButton->Parent = Button;
 		MinusButton->Size = glm::ivec2(16, 16);
-		MinusButton->Offset = Offset + glm::ivec2(PlusOffset.x + PlusButton->Size.x + MinusSpacing.x, Skill.Image->Size.y + PlusOffset.y);
-		MinusButton->Alignment = LEFT_TOP;
+		MinusButton->Offset = MinusOffset;
+		MinusButton->Alignment = CENTER_MIDDLE;
 		MinusButton->Style = Assets.Styles["style_menu_button"];
 		MinusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
-		MinusButton->UserData = (void *)(intptr_t)Skill.ID;
 		MinusButton->UserCreated = true;
 		SkillsElement->Children.push_back(MinusButton);
 
@@ -878,13 +828,16 @@ void _HUD::RefreshSkillButtons() {
 	// Loop through buttons
 	_Element *SkillsElement = Assets.Elements["element_skills"];
 	for(auto &Element : SkillsElement->Children) {
-		int SkillID = (intptr_t)Element->UserData;
 		if(Element->Identifier == "label_skills_level") {
+			int SkillID = (intptr_t)Element->UserData;
 			_Label *Label = (_Label *)Element;
 			Label->Text = std::to_string(Player->GetSkillLevel(SkillID));
 		}
 		else if(Element->Identifier == "button_skills_plus") {
 			_Button *Button = (_Button *)Element;
+
+			// Get skill
+			int SkillID = (intptr_t)Button->Parent->UserData;
 			const _Skill *Skill = Stats.GetSkill(SkillID);
 			if(Skill->SkillCost > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
 				Button->SetVisible(false);
@@ -893,6 +846,9 @@ void _HUD::RefreshSkillButtons() {
 		}
 		else if(Element->Identifier == "button_skills_minus") {
 			_Button *Button = (_Button *)Element;
+
+			// Get skill
+			int SkillID = (intptr_t)Button->Parent->UserData;
 			if(Player->GetSkillLevel(SkillID) == 0)
 				Button->SetVisible(false);
 			else
@@ -903,8 +859,6 @@ void _HUD::RefreshSkillButtons() {
 
 // Close the skills screen
 void _HUD::CloseSkills() {
-
-	//irrGUI->getRootGUIElement()->removeChild(TabSkill);
 	CursorSkill.Reset();
 	TooltipSkill.Reset();
 
@@ -1512,8 +1466,9 @@ void _HUD::DrawItemTooltip() {
 // Draws the skill under the cursor
 void _HUD::DrawCursorSkill() {
 	if(CursorSkill.Skill) {
-		glm::ivec2 DrawPosition = Input.GetMouse() - 16;
-		Graphics.DrawCenteredImage(DrawPosition + 16, CursorSkill.Skill->Image);
+		glm::ivec2 DrawPosition = Input.GetMouse();
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(DrawPosition, CursorSkill.Skill->Image);
 	}
 }
 
@@ -1765,54 +1720,51 @@ void _HUD::SellItem(_CursorItem *TCursorItem, int TAmount) {
 	Player->CalculatePlayerStats();
 }
 
-// Returns a skill that's on the screen
-void _HUD::GetSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill) {
-	TCursorSkill.Reset();
+// Adjust skill level
+void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
+	_Buffer Packet;
+	Packet.Write<char>(_Network::SKILLS_SKILLADJUST);
 
-	switch(*State) {
-		case _ClientState::STATE_SKILLS:
-			GetSkillPageSkill(Position, TCursorSkill);
-		break;
-		case _ClientState::STATE_BATTLE:
-		break;
+	// Sell skill
+	if(Direction < 0) {
+		Packet.WriteBit(0);
+		Player->AdjustSkillLevel(SkillID, -1);
 	}
-}
+	// Buy skill
+	else {
+		Packet.WriteBit(1);
+		Player->AdjustSkillLevel(SkillID, 1);
+		if(Player->GetSkillLevel(SkillID) == 1) {
 
-// Gets a skill from the skill page
-void _HUD::GetSkillPageSkill(const glm::ivec2 &Position, _CursorSkill &TCursorSkill) {
-	/*
-	core::recti WindowArea = TabSkill->getAbsolutePosition();
-	if(!WindowArea.isPointInside(TPoint))
-		return;
-
-	// Get skill from page
-	int X = 0, Y = 0;
-	for(size_t i = 0; i < Stats.GetSkillList().size(); i++) {
-		int SkillX = WindowArea.UpperLeftCorner.x + SKILL_STARTX + X * SKILL_SPACINGX;
-		int SkillY = WindowArea.UpperLeftCorner.y + SKILL_STARTY + Y * SKILL_SPACINGY;
-		core::recti SkillArea(SkillX, SkillY, SkillX + 32, SkillY + 32);
-		if(SkillArea.isPointInside(TPoint)) {
-			TCursorSkill.Skill = Stats.GetSkill(i);
-			TCursorSkill.Slot = i;
-			TCursorSkill.Window = WINDOW_SKILLS;
-			return;
+			// Equip new skills
+			const _Skill *Skill = Stats.GetSkill(SkillID);
+			if(Skill) {
+				int Direction, Slot;
+				if(Skill->Type == _Skill::TYPE_PASSIVE) {
+					Slot = 7;
+					Direction = -1;
+				}
+				else {
+					Slot = 0;
+					Direction = 1;
+				}
+				for(int i = 0; i < 8; i++) {
+					if(Player->GetSkillBar(Slot) == nullptr) {
+						SetSkillBar(Slot, -1, Skill);
+						break;
+					}
+					Slot += Direction;
+				}
+			}
 		}
-
-		X++;
-		if(X >= SKILL_COLUMNS) {
-			X = 0;
-			Y++;
-		}
 	}
+	Packet.Write<char>(SkillID);
+	ClientNetwork->SendPacketToHost(&Packet);
 
-	// Get skill bar
-	if(TPoint.x >= SKILL_BARX && TPoint.x < SKILL_BARX + 32 * 8 && TPoint.y >= SKILL_BARY && TPoint.y <= SKILL_BARY + 32) {
-		int Index = (TPoint.x - SKILL_BARX) / 32;
-		TCursorSkill.Skill = Player->GetSkillBar(Index);
-		TCursorSkill.Slot = Index;
-		TCursorSkill.Window = WINDOW_SKILLBAR;
-	}
-	*/
+	// Update player
+	Player->CalculateSkillPoints();
+	Player->CalculatePlayerStats();
+	RefreshSkillButtons();
 }
 
 // Sets the player's skill bar
