@@ -261,7 +261,7 @@ void _Player::Save() {
 
 	const _InventorySlot *Item;
 	for(int i = 0; i < INVENTORY_COUNT; i++) {
-		Item = GetInventory(i);
+		Item = &Inventory[i];
 		if(Item->Item) {
 			sprintf(Query, "INSERT INTO Inventory VALUES(%d, %d, %d, %d)", CharacterID, i, Item->Item->GetID(), Item->Count);
 			Database->RunQuery(Query);
@@ -522,12 +522,6 @@ void _Player::SetInventory(int Slot, _InventorySlot *TItem) {
 	}
 }
 
-// Returns an item from the inventory
-_InventorySlot *_Player::GetInventory(int Slot) {
-
-	return &Inventory[Slot];
-}
-
 // Gets an inventory item
 const _Item *_Player::GetInventoryItem(int Slot) {
 
@@ -590,13 +584,13 @@ bool _Player::MoveInventory(int TOldSlot, int TNewSlot) {
 }
 
 // Swaps two items
-void _Player::SwapItem(int Slot, int TOldSlot) {
+void _Player::SwapItem(int Slot, int OldSlot) {
 	_InventorySlot TempItem;
 
 	// Swap items
 	TempItem = Inventory[Slot];
-	Inventory[Slot] = Inventory[TOldSlot];
-	Inventory[TOldSlot] = TempItem;
+	Inventory[Slot] = Inventory[OldSlot];
+	Inventory[OldSlot] = TempItem;
 }
 
 // Updates an item's count, deleting if necessary

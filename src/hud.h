@@ -152,8 +152,8 @@ class _HUD {
 		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
 
 		void GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
-		void BuyItem(_CursorItem *TCursorItem, int TTargetSlot);
-		void SellItem(_CursorItem *TCursorItem, int TAmount);
+		void BuyItem(_CursorItem *Item, int TargetSlot);
+		void SellItem(_CursorItem *TCursorItem, int Amount);
 
 		void AdjustSkillLevel(int SkillID, int Direction);
 		void SetSkillBar(int Slot, int TOldSlot, const _Skill *Skill);

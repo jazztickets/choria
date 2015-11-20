@@ -335,7 +335,7 @@ void _HUD::Update(double FrameTime) {
 				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
 
 				if(TooltipItem.Window == WINDOW_INVENTORY) {
-					_InventorySlot *InventorySlot = Player->GetInventory(InventoryIndex);
+					_InventorySlot *InventorySlot = &Player->Inventory[InventoryIndex];
 
 					// Get price if vendor is open
 					int Price = 0;
@@ -980,7 +980,7 @@ void _HUD::DrawChat() {
 
 // Draw the teleport sequence
 void _HUD::DrawTeleport() {
-	double Timeleft = GAME_TELEPORT_TIME - Player->GetTeleportTime();
+	double Timeleft = GAME_TELEPORT_TIME - Player->TeleportTime;
 	if(Timeleft > 0) {
 		Assets.Elements["element_teleport"]->Render();
 
@@ -998,7 +998,7 @@ void _HUD::DrawInventory() {
 	for(int i = 0; i < _Player::INVENTORY_TRADE; i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = Player->GetInventory(i);
+		_InventorySlot *Item = &Player->Inventory[i];
 		if(Item->Item && !CursorItem.IsEqual(i, WINDOW_INVENTORY)) {
 
 			// Get bag button
@@ -1614,7 +1614,7 @@ void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAl
 	_InventorySlot *Item;
 	int PositionX = 0, PositionY = 0;
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
-		Item = TPlayer->GetInventory(i);
+		Item = TPlayer->Inventory[i];
 		if(Item->Item && (TDrawAll || !CursorItem.IsEqual(i, WINDOW_TRADEYOU))) {
 			int DrawX = OffsetX + TDrawX + PositionX * 32;
 			int DrawY = OffsetY + TDrawY + PositionY * 32;
@@ -1665,20 +1665,20 @@ void _HUD::GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 }
 
 // Buys an item from the vendor
-void _HUD::BuyItem(_CursorItem *TCursorItem, int TTargetSlot) {
-	if(Player->Gold >= TCursorItem->Cost && Player->AddItem(TCursorItem->Item, TCursorItem->Count, TTargetSlot)) {
+void _HUD::BuyItem(_CursorItem *Item, int TargetSlot) {
+	if(Player->Gold >= Item->Cost && Player->AddItem(Item->Item, Item->Count, TargetSlot)) {
 
 		// Update player
-		int Price = TCursorItem->Item->GetPrice(Vendor, TCursorItem->Count, true);
+		int Price = Item->Item->GetPrice(Vendor, Item->Count, true);
 		Player->UpdateGold(-Price);
 
 		// Notify server
 		_Buffer Packet;
 		Packet.Write<char>(_Network::VENDOR_EXCHANGE);
 		Packet.WriteBit(1);
-		Packet.Write<char>(TCursorItem->Count);
-		Packet.Write<char>(TCursorItem->Slot);
-		Packet.Write<char>(TTargetSlot);
+		Packet.Write<char>(Item->Count);
+		Packet.Write<char>(Item->Slot);
+		Packet.Write<char>(TargetSlot);
 		ClientNetwork->SendPacketToHost(&Packet);
 
 		Player->CalculatePlayerStats();
@@ -1686,25 +1686,25 @@ void _HUD::BuyItem(_CursorItem *TCursorItem, int TTargetSlot) {
 }
 
 // Sells an item
-void _HUD::SellItem(_CursorItem *TCursorItem, int TAmount) {
-	if(!TCursorItem->Item)
+void _HUD::SellItem(_CursorItem *Item, int Amount) {
+	if(!Item->Item)
 		return;
 
 	// Update player
-	int Price = TCursorItem->Item->GetPrice(Vendor, TAmount, 0);
+	int Price = Item->Item->GetPrice(Vendor, Amount, 0);
 	Player->UpdateGold(Price);
-	bool Deleted = Player->UpdateInventory(TCursorItem->Slot, -TAmount);
+	bool Deleted = Player->UpdateInventory(Item->Slot, -Amount);
 
 	// Notify server
 	_Buffer Packet;
 	Packet.Write<char>(_Network::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
-	Packet.Write<char>(TAmount);
-	Packet.Write<char>(TCursorItem->Slot);
+	Packet.Write<char>(Amount);
+	Packet.Write<char>(Item->Slot);
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	if(Deleted)
-		TCursorItem->Reset();
+		Item->Reset();
 
 	Player->CalculatePlayerStats();
 }

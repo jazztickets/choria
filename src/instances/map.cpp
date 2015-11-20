@@ -393,7 +393,7 @@ void _Map::AddObject(_Object *TObject) {
 		case _Object::PLAYER: {
 			_Player *NewPlayer = static_cast<_Player *>(TObject);
 			Packet.WriteString(NewPlayer->Name.c_str());
-			Packet.Write<char>(NewPlayer->GetPortraitID());
+			Packet.Write<char>(NewPlayer->PortraitID);
 			Packet.WriteBit(NewPlayer->IsInvisible());
 		}
 		break;
@@ -459,7 +459,7 @@ _Player *_Map::GetClosestPlayer(const _Player *TPlayer, float MaxDistanceSquared
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == _Object::PLAYER) {
 			_Player *Player = static_cast<_Player *>(*Iterator);
-			if(Player != TPlayer && Player->GetState() == TState) {
+			if(Player != TPlayer && Player->State == TState) {
 				int XDelta = Player->GetPosition().x - TPlayer->GetPosition().x;
 				int YDelta = Player->GetPosition().y - TPlayer->GetPosition().y;
 				float DistanceSquared = (float)(XDelta * XDelta + YDelta * YDelta);
@@ -491,7 +491,7 @@ void _Map::SendObjectUpdates() {
 		bool Invisible = false;
 		if(Object->GetType() == _Object::PLAYER) {
 			_Player *Player = static_cast<_Player *>(Object);
-			State = Player->GetState();
+			State = Player->State;
 			Invisible = Player->IsInvisible();
 		}
 
@@ -514,7 +514,7 @@ void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Netwo
 			_Player *Player = static_cast<_Player *>(*Iterator);
 
 			if(Player != ExceptionPlayer)
-				ServerNetwork->SendPacketToPeer(Packet, Player->GetPeer(), Type, Type == _Network::UNSEQUENCED);
+				ServerNetwork->SendPacketToPeer(Packet, Player->Peer, Type, Type == _Network::UNSEQUENCED);
 		}
 	}
 }

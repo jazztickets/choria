@@ -85,9 +85,9 @@ class _ServerState : public _State {
 		void SendHUD(_Player *TPlayer);
 		void SendCharacterList(_Player *TPlayer);
 		void SendEvent(_Player *TPlayer, int TType, int TData);
-		void SendTradeInformation(_Player *TSender, _Player *TReceiver);
+		void SendTradeInformation(_Player *Sender, _Player *Receiver);
 
-		void BuildTradeItemsPacket(_Player *TPlayer, _Buffer *Packet, int TGold);
+		void BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int Gold);
 
 		void RemovePlayerFromBattle(_Player *TPlayer);
 

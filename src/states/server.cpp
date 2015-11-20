@@ -98,7 +98,7 @@ void _ServerState::Close() {
 		if((*Iterator)->GetType() == _Object::PLAYER) {
 			_Player *Player = static_cast<_Player *>(*Iterator);
 			Player->Save();
-			ServerNetwork->Disconnect(Player->GetPeer());
+			ServerNetwork->Disconnect(Player->Peer);
 		}
 	}
 
@@ -175,7 +175,7 @@ void _ServerState::HandleConnect(ENetEvent *Event) {
 
 	// Store the player in the peer struct
 	Event->peer->data = NewPlayer;
-	NewPlayer->SetPeer(Event->peer);
+	NewPlayer->Peer = Event->peer;
 
 	// Send player the game version
 	_Buffer Packet;
@@ -201,7 +201,7 @@ void _ServerState::HandleDisconnect(ENetEvent *Event) {
 
 		_Buffer Packet;
 		Packet.Write<char>(_Network::TRADE_CANCEL);
-		ServerNetwork->SendPacketToPeer(&Packet, TradePlayer->GetPeer());
+		ServerNetwork->SendPacketToPeer(&Packet, TradePlayer->Peer);
 	}
 
 	// Remove from battle
@@ -365,7 +365,7 @@ void _ServerState::HandleLoginInfo(_Buffer *Packet, ENetPeer *TPeer) {
 
 		// Store the account id
 		_Player *Player = (_Player *)TPeer->data;
-		Player->SetAccountID(AccountID);
+		Player->AccountID = AccountID;
 
 		_Buffer NewPacket;
 		NewPacket.Write<char>(_Network::ACCOUNT_SUCCESS);
@@ -386,17 +386,17 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 
 	int Slot = Packet->Read<char>();
 	_Player *Player = static_cast<_Player *>(TPeer->data);
-	//printf("HandleCharacterSelect: accountid=%d, slot=%d\n", Player->GetAccountID(), Slot);
+	//printf("HandleCharacterSelect: accountid=%d, slot=%d\n", Player->AccountID, Slot);
 
 	// Check account
-	if(Player->GetAccountID() <= 0) {
+	if(Player->AccountID <= 0) {
 		printf(" Bad account id\n");
 		return;
 	}
 
 	// Get character info
 	char QueryString[512];
-	sprintf(QueryString, "SELECT * FROM Characters WHERE AccountsID = %d LIMIT %d, 1", Player->GetAccountID(), Slot);
+	sprintf(QueryString, "SELECT * FROM Characters WHERE AccountsID = %d LIMIT %d, 1", Player->AccountID, Slot);
 	Database->RunDataQuery(QueryString);
 	if(!Database->FetchRow()) {
 		printf(" Didn't find a character for slot %d\n", Slot);
@@ -404,8 +404,8 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	}
 
 	// Set player properties
-	Player->SetDatabase(Database);
-	Player->SetCharacterID(Database->GetInt(0));
+	Player->Database = Database;
+	Player->CharacterID = Database->GetInt(0);
 	Player->SpawnMapID = Database->GetInt(2);
 	Player->SpawnPoint = Database->GetInt(3);
 	Player->Name = Database->GetString(4);
@@ -414,16 +414,16 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	Player->Gold = Database->GetInt(7);
 	for(int i = 0; i < 8; i++)
 		Player->SetSkillBar(i, Stats.GetSkill(Database->GetInt(i + 8)));
-	Player->SetPlayTime(Database->GetInt(16));
-	Player->SetDeaths(Database->GetInt(17));
-	Player->SetMonsterKills(Database->GetInt(18));
-	Player->SetPlayerKills(Database->GetInt(19));
-	Player->SetBounty(Database->GetInt(20));
+	Player->PlayTime = Database->GetInt(16);
+	Player->Deaths = Database->GetInt(17);
+	Player->MonsterKills = Database->GetInt(18);
+	Player->PlayerKills = Database->GetInt(19);
+	Player->Bounty = Database->GetInt(20);
 
 	Database->CloseQuery();
 
 	// Set inventory
-	sprintf(QueryString, "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = %d", Player->GetCharacterID());
+	sprintf(QueryString, "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = %d", Player->CharacterID);
 	Database->RunDataQuery(QueryString);
 	int ItemCount = 0;
 	while(Database->FetchRow()) {
@@ -433,7 +433,7 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	Database->CloseQuery();
 
 	// Set skills
-	sprintf(QueryString, "SELECT SkillsID, Level FROM SkillLevel WHERE CharactersID = %d", Player->GetCharacterID());
+	sprintf(QueryString, "SELECT SkillsID, Level FROM SkillLevel WHERE CharactersID = %d", Player->CharacterID);
 	Database->RunDataQuery(QueryString);
 	int SkillCount = 0;
 	while(Database->FetchRow()) {
@@ -453,22 +453,22 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	NewPacket.Write<char>(_Network::WORLD_YOURCHARACTERINFO);
 	NewPacket.Write<char>(Player->GetNetworkID());
 	NewPacket.WriteString(Player->Name.c_str());
-	NewPacket.Write<int32_t>(Player->GetPortraitID());
+	NewPacket.Write<int32_t>(Player->PortraitID);
 	NewPacket.Write<int32_t>(Player->Experience);
 	NewPacket.Write<int32_t>(Player->Gold);
-	NewPacket.Write<int32_t>(Player->GetPlayTime());
-	NewPacket.Write<int32_t>(Player->GetDeaths());
-	NewPacket.Write<int32_t>(Player->GetMonsterKills());
-	NewPacket.Write<int32_t>(Player->GetPlayerKills());
-	NewPacket.Write<int32_t>(Player->GetBounty());
+	NewPacket.Write<int32_t>(Player->PlayTime);
+	NewPacket.Write<int32_t>(Player->Deaths);
+	NewPacket.Write<int32_t>(Player->MonsterKills);
+	NewPacket.Write<int32_t>(Player->PlayerKills);
+	NewPacket.Write<int32_t>(Player->Bounty);
 
 	// Write items
 	NewPacket.Write<char>(ItemCount);
 	for(int i = 0; i < _Player::INVENTORY_COUNT; i++) {
-		if(Player->GetInventory(i)->Item) {
+		if(Player->Inventory[i].Item) {
 			NewPacket.Write<char>(i);
-			NewPacket.Write<char>(Player->GetInventory(i)->Count);
-			NewPacket.Write<int32_t>(Player->GetInventory(i)->Item->GetID());
+			NewPacket.Write<char>(Player->Inventory[i].Count);
+			NewPacket.Write<int32_t>(Player->Inventory[i].Item->GetID());
 		}
 	}
 
@@ -501,7 +501,7 @@ void _ServerState::HandleCharacterDelete(_Buffer *Packet, ENetPeer *TPeer) {
 
 	// Get character ID
 	int CharacterID = 0;
-	sprintf(QueryString, "SELECT ID FROM Characters WHERE AccountsID = %d LIMIT %d, 1", Player->GetAccountID(), Index);
+	sprintf(QueryString, "SELECT ID FROM Characters WHERE AccountsID = %d LIMIT %d, 1", Player->AccountID, Index);
 	Database->RunDataQuery(QueryString);
 	if(Database->FetchRow()) {
 		CharacterID = Database->GetInt(0);
@@ -536,7 +536,7 @@ void _ServerState::HandleCharacterCreate(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	// Check character limit
-	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", Player->GetAccountID());
+	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", Player->AccountID);
 	int CharacterCount = Database->RunCountQuery(QueryString);
 	if(CharacterCount >= SAVE_COUNT)
 		return;
@@ -557,7 +557,7 @@ void _ServerState::HandleCharacterCreate(_Buffer *Packet, ENetPeer *TPeer) {
 
 	// Create the character
 	Database->RunQuery("BEGIN TRANSACTION");
-	sprintf(QueryString, "INSERT INTO Characters(AccountsID, Name, PortraitID, SkillBar0) VALUES(%d, '%s', %d, 0)", Player->GetAccountID(), Name.c_str(), PortraitID);
+	sprintf(QueryString, "INSERT INTO Characters(AccountsID, Name, PortraitID, SkillBar0) VALUES(%d, '%s', %d, 0)", Player->AccountID, Name.c_str(), PortraitID);
 	Database->RunQuery(QueryString);
 
 	int CharacterID = Database->GetLastInsertID();
@@ -599,12 +599,12 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->GetMapID());
 			break;
 			case _Map::EVENT_VENDOR:
-				Player->SetState(_Player::STATE_VENDOR);
+				Player->State =_Player::STATE_VENDOR;
 				Player->SetVendor(Stats.GetVendor(Tile->EventData));
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			case _Map::EVENT_TRADER:
-				Player->SetState(_Player::STATE_TRADER);
+				Player->State =_Player::STATE_TRADER;
 				Player->SetTrader(Stats.GetTrader(Tile->EventData));
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
@@ -634,7 +634,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 							int PlayersAdded = 0;
 							for(std::list<_Player *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 								_Player *PartyPlayer = *Iterator;
-								if(PartyPlayer->GetState() == _Player::STATE_WALK && !PartyPlayer->IsInvisible()) {
+								if(PartyPlayer->State == _Player::STATE_WALK && !PartyPlayer->IsInvisible()) {
 									SendPlayerPosition(PartyPlayer);
 									Battle->AddFighter(PartyPlayer, 0);
 									PlayersAdded++;
@@ -713,15 +713,15 @@ void _ServerState::HandleInventoryMove(_Buffer *Packet, ENetPeer *TPeer) {
 
 	// Check for trading players
 	_Player *TradePlayer = Player->TradePlayer;
-	if(Player->GetState() == _Player::STATE_TRADE && TradePlayer && (_Player::IsSlotTrade(OldSlot) || _Player::IsSlotTrade(NewSlot))) {
+	if(Player->State == _Player::STATE_TRADE && TradePlayer && (_Player::IsSlotTrade(OldSlot) || _Player::IsSlotTrade(NewSlot))) {
 
 		// Reset agreement
 		Player->TradeAccepted = false;
 		TradePlayer->TradeAccepted = false;
 
 		// Send item updates to trading player
-		_InventorySlot *OldSlotItem = Player->GetInventory(OldSlot);
-		_InventorySlot *NewSlotItem = Player->GetInventory(NewSlot);
+		_InventorySlot *OldSlotItem = &Player->Inventory[OldSlot];
+		_InventorySlot *NewSlotItem = &Player->Inventory[NewSlot];
 
 		// Get item information
 		int OldItemID = 0, NewItemID = 0, OldItemCount = 0, NewItemCount = 0;
@@ -747,7 +747,7 @@ void _ServerState::HandleInventoryMove(_Buffer *Packet, ENetPeer *TPeer) {
 			NewPacket.Write<char>(NewItemCount);
 
 		// Send updates
-		ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->GetPeer());
+		ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
 	}
 }
 
@@ -784,7 +784,7 @@ void _ServerState::HandleEventEnd(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	Player->SetVendor(nullptr);
-	Player->SetState(_Player::STATE_WALK);
+	Player->State = _Player::STATE_WALK;
 }
 
 // Handles a vendor exchange message
@@ -827,7 +827,7 @@ void _ServerState::HandleVendorExchange(_Buffer *Packet, ENetPeer *TPeer) {
 			return;
 
 		// Get item info
-		_InventorySlot *Item = Player->GetInventory(Slot);
+		_InventorySlot *Item = &Player->Inventory[Slot];
 		if(Item && Item->Item) {
 			int Price = Item->Item->GetPrice(Vendor, Amount, Buy);
 			Player->UpdateGold(Price);
@@ -905,7 +905,7 @@ void _ServerState::HandleAttackPlayer(_Buffer *Packet, ENetPeer *TPeer) {
 		// Find a suitable player to attack
 		for(std::list<_Player *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 			_Player *VictimPlayer = *Iterator;
-			if(VictimPlayer->GetState() != _Player::STATE_BATTLE) {
+			if(VictimPlayer->State != _Player::STATE_BATTLE) {
 				_ServerBattle *Battle = Instances->CreateServerBattle();
 				Battle->AddFighter(Player, 1);
 				Battle->AddFighter(VictimPlayer, 0);
@@ -957,7 +957,7 @@ void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *TPeer) {
 	if(TradePlayer == nullptr) {
 
 		// Set up trade post
-		Player->SetState(_Player::STATE_WAITTRADE);
+		Player->State = _Player::STATE_WAITTRADE;
 		Player->TradeGold = 0;
 		Player->TradeAccepted = false;
 		Player->TradePlayer = nullptr;
@@ -973,8 +973,8 @@ void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *TPeer) {
 		TradePlayer->TradePlayer = Player;
 		TradePlayer->TradeAccepted = false;
 
-		Player->SetState(_Player::STATE_TRADE);
-		TradePlayer->SetState(_Player::STATE_TRADE);
+		Player->State = _Player::STATE_TRADE;
+		TradePlayer->State = _Player::STATE_TRADE;
 	}
 }
 
@@ -987,17 +987,17 @@ void _ServerState::HandleTradeCancel(_Buffer *Packet, ENetPeer *TPeer) {
 	// Notify trading player
 	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->SetState(_Player::STATE_WAITTRADE);
+		TradePlayer->State = _Player::STATE_WAITTRADE;
 		TradePlayer->TradePlayer = nullptr;
 		TradePlayer->TradeAccepted = false;
 
 		_Buffer NewPacket;
 		NewPacket.Write<char>(_Network::TRADE_CANCEL);
-		ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->GetPeer());
+		ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
 	}
 
 	// Set state back to normal
-	Player->SetState(_Player::STATE_WALK);
+	Player->State = _Player::STATE_WALK;
 }
 
 // Handle a trade gold update
@@ -1023,7 +1023,7 @@ void _ServerState::HandleTradeGold(_Buffer *Packet, ENetPeer *TPeer) {
 		_Buffer NewPacket;
 		NewPacket.Write<char>(_Network::TRADE_GOLD);
 		NewPacket.Write<int32_t>(Gold);
-		ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->GetPeer());
+		ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
 	}
 }
 
@@ -1048,9 +1048,9 @@ void _ServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *TPeer) {
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
 			for(int i = 0; i < PLAYER_TRADEITEMS; i++) {
 				int InventorySlot = i + _Player::INVENTORY_TRADE;
-				TempItems[i] = *Player->GetInventory(InventorySlot);
+				TempItems[i] = Player->Inventory[InventorySlot];
 
-				Player->SetInventory(InventorySlot, TradePlayer->GetInventory(InventorySlot));
+				Player->SetInventory(InventorySlot, &TradePlayer->Inventory[InventorySlot]);
 				TradePlayer->SetInventory(InventorySlot, &TempItems[i]);
 			}
 
@@ -1063,20 +1063,20 @@ void _ServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *TPeer) {
 				_Buffer NewPacket;
 				NewPacket.Write<char>(_Network::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(Player, &NewPacket, Player->Gold);
-				ServerNetwork->SendPacketToPeer(&NewPacket, Player->GetPeer());
+				ServerNetwork->SendPacketToPeer(&NewPacket, Player->Peer);
 			}
 			{
 				_Buffer NewPacket;
 				NewPacket.Write<char>(_Network::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(TradePlayer, &NewPacket, TradePlayer->Gold);
-				ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->GetPeer());
+				ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
 			}
 
-			Player->SetState(_Player::STATE_WALK);
+			Player->State = _Player::STATE_WALK;
 			Player->TradePlayer = nullptr;
 			Player->TradeGold = 0;
 			Player->MoveTradeToInventory();
-			TradePlayer->SetState(_Player::STATE_WALK);
+			TradePlayer->State = _Player::STATE_WALK;
 			TradePlayer->TradePlayer = nullptr;
 			TradePlayer->TradeGold = 0;
 			TradePlayer->MoveTradeToInventory();
@@ -1087,7 +1087,7 @@ void _ServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *TPeer) {
 			_Buffer NewPacket;
 			NewPacket.Write<char>(_Network::TRADE_ACCEPT);
 			NewPacket.Write<char>(Accepted);
-			ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->GetPeer());
+			ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
 		}
 	}
 }
@@ -1120,7 +1120,7 @@ void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer) {
 	// Exchange items
 	Player->AcceptTrader(Trader, RequiredItemSlots, RewardSlot);
 	Player->SetTrader(nullptr);
-	Player->SetState(_Player::STATE_WALK);
+	Player->State = _Player::STATE_WALK;
 	Player->CalculatePlayerStats();
 }
 
@@ -1143,7 +1143,7 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 	}
 
 	// Set state
-	Player->SetState(_Player::STATE_WALK);
+	Player->State = _Player::STATE_WALK;
 
 	// Send new object list
 	if(NewMap != OldMap) {
@@ -1175,7 +1175,7 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 				case _Object::PLAYER: {
 					_Player *PlayerObject = static_cast<_Player *>(Object);
 					Packet.WriteString(PlayerObject->Name.c_str());
-					Packet.Write<char>(PlayerObject->GetPortraitID());
+					Packet.Write<char>(PlayerObject->PortraitID);
 					Packet.WriteBit((PlayerObject->IsInvisible()));
 				}
 				break;
@@ -1185,7 +1185,7 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 		}
 
 		// Send object list to the player
-		ServerNetwork->SendPacketToPeer(&Packet, Player->GetPeer());
+		ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 	}
 
 	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->GetNetworkID());
@@ -1203,7 +1203,7 @@ void _ServerState::SendHUD(_Player *TPlayer) {
 	Packet.Write<float>(TPlayer->HealthAccumulator);
 	Packet.Write<float>(TPlayer->ManaAccumulator);
 
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
+	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
 }
 
 // Send player their position
@@ -1214,7 +1214,7 @@ void _ServerState::SendPlayerPosition(_Player *TPlayer) {
 	Packet.Write<char>(TPlayer->GetPosition().x);
 	Packet.Write<char>(TPlayer->GetPosition().y);
 
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
+	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
 }
 
 // Sends the player a list of his/her characters
@@ -1222,7 +1222,7 @@ void _ServerState::SendCharacterList(_Player *TPlayer) {
 	char QueryString[512];
 
 	// Get a count of the account's characters
-	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", TPlayer->GetAccountID());
+	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", TPlayer->AccountID);
 	int CharacterCount = Database->RunCountQuery(QueryString);
 
 	// Create the packet
@@ -1231,7 +1231,7 @@ void _ServerState::SendCharacterList(_Player *TPlayer) {
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
-	sprintf(QueryString, "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = %d", TPlayer->GetAccountID());
+	sprintf(QueryString, "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = %d", TPlayer->AccountID);
 	Database->RunDataQuery(QueryString);
 	while(Database->FetchRow()) {
 		Packet.WriteString(Database->GetString(0));
@@ -1241,7 +1241,7 @@ void _ServerState::SendCharacterList(_Player *TPlayer) {
 	Database->CloseQuery();
 
 	// Send list
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
+	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
 }
 
 // Sends a player an event message
@@ -1255,27 +1255,27 @@ void _ServerState::SendEvent(_Player *TPlayer, int TType, int TData) {
 	Packet.Write<char>(TPlayer->GetPosition().x);
 	Packet.Write<char>(TPlayer->GetPosition().y);
 
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
+	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
 }
 
 // Sends information to another player about items they're trading
-void _ServerState::SendTradeInformation(_Player *TSender, _Player *TReceiver) {
+void _ServerState::SendTradeInformation(_Player *Sender, _Player *Receiver) {
 
 	// Send items to trader player
 	_Buffer Packet;
 	Packet.Write<char>(_Network::TRADE_REQUEST);
-	Packet.Write<char>(TSender->GetNetworkID());
-	BuildTradeItemsPacket(TSender, &Packet, TSender->TradeGold);
-	ServerNetwork->SendPacketToPeer(&Packet, TReceiver->GetPeer());
+	Packet.Write<char>(Sender->GetNetworkID());
+	BuildTradeItemsPacket(Sender, &Packet, Sender->TradeGold);
+	ServerNetwork->SendPacketToPeer(&Packet, Receiver->Peer);
 }
 
 // Adds trade item information to a packet
-void _ServerState::BuildTradeItemsPacket(_Player *TPlayer, _Buffer *Packet, int TGold) {
-	Packet->Write<int32_t>(TGold);
+void _ServerState::BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int Gold) {
+	Packet->Write<int32_t>(Gold);
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
-		if(TPlayer->GetInventory(i)->Item) {
-			Packet->Write<int32_t>(TPlayer->GetInventory(i)->Item->GetID());
-			Packet->Write<char>(TPlayer->GetInventory(i)->Count);
+		if(Player->Inventory[i].Item) {
+			Packet->Write<int32_t>(Player->Inventory[i].Item->GetID());
+			Packet->Write<char>(Player->Inventory[i].Count);
 		}
 		else
 			Packet->Write<int32_t>(0);

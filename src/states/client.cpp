@@ -421,11 +421,11 @@ void _ClientState::HandleYourCharacterInfo(_Buffer *Packet) {
 	Player->SetPortraitID(Packet->Read<int32_t>());
 	Player->Experience = Packet->Read<int32_t>();
 	Player->Gold = Packet->Read<int32_t>();
-	Player->SetPlayTime(Packet->Read<int32_t>());
-	Player->SetDeaths(Packet->Read<int32_t>());
-	Player->SetMonsterKills(Packet->Read<int32_t>());
-	Player->SetPlayerKills(Packet->Read<int32_t>());
-	Player->SetBounty(Packet->Read<int32_t>());
+	Player->PlayTime = Packet->Read<int32_t>();
+	Player->Deaths = Packet->Read<int32_t>();
+	Player->MonsterKills = Packet->Read<int32_t>();
+	Player->PlayerKills = Packet->Read<int32_t>();
+	Player->Bounty = Packet->Read<int32_t>();
 	HUD.SetPlayer(Player);
 
 	// Read items
@@ -605,7 +605,7 @@ void _ClientState::HandleObjectUpdates(_Buffer *Packet) {
 		_Player *OtherPlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
 		if(OtherPlayer) {
 
-			OtherPlayer->SetState(PlayerState);
+			OtherPlayer->State = PlayerState;
 			if(Player == OtherPlayer) {
 
 				// Return from teleport state
@@ -620,13 +620,13 @@ void _ClientState::HandleObjectUpdates(_Buffer *Packet) {
 
 			switch(PlayerState) {
 				case _Player::STATE_WALK:
-					OtherPlayer->SetStateImage(nullptr);
+					OtherPlayer->StateImage = nullptr;
 				break;
 				case _Player::STATE_WAITTRADE:
-					OtherPlayer->SetStateImage(Assets.Textures["world/trade.png"]);
+					OtherPlayer->StateImage = Assets.Textures["world/trade.png"];
 				break;
 				default:
-					OtherPlayer->SetStateImage(Assets.Textures["world/busy.png"]);
+					OtherPlayer->StateImage = Assets.Textures["world/busy.png"];
 				break;
 			}
 		}

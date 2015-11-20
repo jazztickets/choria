@@ -389,7 +389,7 @@ void _ServerBattle::CheckEnd() {
 				Players[i]->AddItem(Stats.GetItem(ItemID), 1, -1);
 			}
 
-			ServerNetwork->SendPacketToPeer(&Packet, Players[i]->GetPeer());
+			ServerNetwork->SendPacketToPeer(&Packet, Players[i]->Peer);
 		}
 
 		State = STATE_END;
@@ -405,7 +405,7 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
 			_Player *Player = static_cast<_Player *>(Fighters[i]);
-			ServerNetwork->SendPacketToPeer(Packet, Player->GetPeer());
+			ServerNetwork->SendPacketToPeer(Packet, Player->Peer);
 		}
 	}
 }
@@ -434,7 +434,7 @@ void _ServerBattle::SendSkillToPlayers(_Player *Player) {
 	// Send packet to all players
 	for(size_t i = 0; i < SidePlayers.size(); i++) {
 		if(SidePlayers[i] != Player) {
-			ServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->GetPeer());
+			ServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->Peer);
 		}
 	}
 }

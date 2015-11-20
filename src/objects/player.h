@@ -80,40 +80,14 @@ class _Player : public _Object, public _Fighter {
 		_Player();
 		~_Player();
 
-		int GetState() const { return State; }
-		void SetState(int TState) { State = TState; }
-
-		void Update(double FrameTime);
-		void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=nullptr);
-
-		// Connection
-		void SetPeer(ENetPeer *TPeer) { Peer = TPeer; }
-		ENetPeer *GetPeer() const { return Peer; }
+		void Update(double FrameTime) override;
+		void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=nullptr) override;
 
 		// Account
 		void Save();
-		void SetDatabase(_Database *TDatabase) { Database = TDatabase; }
-		void SetAccountID(int TID) { AccountID = TID; }
-		int GetAccountID() const { return AccountID; }
-		void SetCharacterID(int TID) { CharacterID = TID; }
-		int GetCharacterID() const { return CharacterID; }
 		void SetPortraitID(int TID);
-		int GetPortraitID() const { return PortraitID; }
 
 		// Stats
-		void SetPlayTime(int Value) { PlayTime = Value; }
-		void SetDeaths(int Value) { Deaths = Value; }
-		void SetMonsterKills(int Value) { MonsterKills = Value; }
-		void SetPlayerKills(int Value) { PlayerKills = Value; }
-		void SetBounty(int Value) { Bounty = Value; }
-		int GetPlayTime() const { return PlayTime; }
-		int GetDeaths() const { return Deaths; }
-		int GetMonsterKills() const { return MonsterKills; }
-		int GetPlayerKills() const { return PlayerKills; }
-		int GetBounty() const { return Bounty; }
-		float GetHealthRegen() const { return HealthRegen; }
-		float GetManaRegen() const { return ManaRegen; }
-
 		void UpdateDeaths(int Value) { Deaths += Value; }
 		void UpdateMonsterKills(int Value) { MonsterKills += Value; }
 		void UpdatePlayerKills(int Value) { PlayerKills += Value; }
@@ -122,10 +96,10 @@ class _Player : public _Object, public _Fighter {
 
 		// Experience
 		float GetNextLevelPercent() const;
-		void UpdateExperience(int Value) { Experience += Value; }
+		void UpdateExperience(int Value) override { Experience += Value; }
 
 		// Gold
-		int GetGoldGiven() const { return (int)(Gold * 0.1f); }
+		int GetGoldGiven() const override { return (int)(Gold * 0.1f); }
 		void UpdateGold(int Value);
 
 		// Inventory
@@ -137,7 +111,6 @@ class _Player : public _Object, public _Fighter {
 		bool UseInventory(int Slot);
 		void SetInventory(int Slot, int TItemID, int TCount);
 		void SetInventory(int Slot, _InventorySlot *TItem);
-		_InventorySlot *GetInventory(int Slot);
 		const _Item *GetInventoryItem(int Slot);
 		bool MoveInventory(int TOldSlot, int TNewSlot);
 		bool UpdateInventory(int Slot, int TAmount);
@@ -155,7 +128,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Skills
 		void SetSkillLevel(int TSkillID, int TPoints) { SkillLevels[TSkillID] = TPoints; }
-		int GetSkillLevel(int TSkillID) const { return SkillLevels[TSkillID]; }
+		int GetSkillLevel(int TSkillID) const override { return SkillLevels[TSkillID]; }
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(int TSkillID, int TAdjust);
 		void CalculateSkillPoints();
@@ -181,8 +154,6 @@ class _Player : public _Object, public _Fighter {
 		// World
 		void ToggleBusy(bool Value);
 		void StartTeleport();
-		double GetTeleportTime() const { return TeleportTime; }
-		void SetStateImage(const _Texture *TImage) { StateImage = TImage; }
 
 		// PVP
 		bool CanAttackPlayer();
@@ -251,6 +222,6 @@ class _Player : public _Object, public _Fighter {
 		void CalculateFinalStats();
 
 		bool CanEquipItem(int Slot, const _Item *TItem);
-		void SwapItem(int Slot, int TOldSlot);
+		void SwapItem(int Slot, int OldSlot);
 
 };
