@@ -195,9 +195,9 @@ void _ServerState::HandleDisconnect(ENetEvent *Event) {
 		return;
 
 	// Leave trading screen
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->SetTradePlayer(nullptr);
+		TradePlayer->TradePlayer = nullptr;
 
 		_Buffer Packet;
 		Packet.Write<char>(_Network::TRADE_CANCEL);
@@ -406,12 +406,12 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	// Set player properties
 	Player->SetDatabase(Database);
 	Player->SetCharacterID(Database->GetInt(0));
-	Player->SetSpawnMapID(Database->GetInt(2));
-	Player->SetSpawnPoint(Database->GetInt(3));
+	Player->SpawnMapID = Database->GetInt(2);
+	Player->SpawnPoint = Database->GetInt(3);
 	Player->Name = Database->GetString(4);
 	Player->SetPortraitID(Database->GetInt(5));
-	Player->SetExperience(Database->GetInt(6));
-	Player->SetGold(Database->GetInt(7));
+	Player->Experience = Database->GetInt(6);
+	Player->Gold = Database->GetInt(7);
 	for(int i = 0; i < 8; i++)
 		Player->SetSkillBar(i, Stats.GetSkill(Database->GetInt(i + 8)));
 	Player->SetPlayTime(Database->GetInt(16));
@@ -454,8 +454,8 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	NewPacket.Write<char>(Player->GetNetworkID());
 	NewPacket.WriteString(Player->Name.c_str());
 	NewPacket.Write<int32_t>(Player->GetPortraitID());
-	NewPacket.Write<int32_t>(Player->GetExperience());
-	NewPacket.Write<int32_t>(Player->GetGold());
+	NewPacket.Write<int32_t>(Player->Experience);
+	NewPacket.Write<int32_t>(Player->Gold);
 	NewPacket.Write<int32_t>(Player->GetPlayTime());
 	NewPacket.Write<int32_t>(Player->GetDeaths());
 	NewPacket.Write<int32_t>(Player->GetMonsterKills());
@@ -488,7 +488,7 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	ServerNetwork->SendPacketToPeer(&NewPacket, TPeer);
 
 	// Send map and players to new player
-	SpawnPlayer(Player, Player->GetSpawnMapID(), _Map::EVENT_SPAWN, Player->GetSpawnPoint());
+	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 }
 
 // Handle a character delete request
@@ -588,8 +588,8 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 		const _Tile *Tile = Player->GetTile();
 		switch(Tile->EventType) {
 			case _Map::EVENT_SPAWN:
-				Player->SetSpawnMapID(Player->GetMapID());
-				Player->SetSpawnPoint(Tile->EventData);
+				Player->SpawnMapID = Player->GetMapID();
+				Player->SpawnPoint = Tile->EventData;
 				Player->RestoreHealthMana();
 				SendHUD(Player);
 				Player->Save();
@@ -611,7 +611,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 			default:
 
 				// Start a battle
-				if(Player->GetNextBattle() <= 0) {
+				if(Player->NextBattle <= 0) {
 
 					// Get monsters
 					std::vector<int> Monsters;
@@ -692,7 +692,7 @@ void _ServerState::HandleBattleFinished(_Buffer *Packet, ENetPeer *TPeer) {
 	// Check for death
 	if(Player->Health == 0) {
 		Player->RestoreHealthMana();
-		SpawnPlayer(Player, Player->GetSpawnMapID(), _Map::EVENT_SPAWN, Player->GetSpawnPoint());
+		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 		Player->Save();
 	}
 	SendHUD(Player);
@@ -712,12 +712,12 @@ void _ServerState::HandleInventoryMove(_Buffer *Packet, ENetPeer *TPeer) {
 	Player->CalculatePlayerStats();
 
 	// Check for trading players
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(Player->GetState() == _Player::STATE_TRADE && TradePlayer && (_Player::IsSlotTrade(OldSlot) || _Player::IsSlotTrade(NewSlot))) {
 
 		// Reset agreement
-		Player->SetTradeAccepted(false);
-		TradePlayer->SetTradeAccepted(false);
+		Player->TradeAccepted = false;
+		TradePlayer->TradeAccepted = false;
 
 		// Send item updates to trading player
 		_InventorySlot *OldSlotItem = Player->GetInventory(OldSlot);
@@ -958,9 +958,9 @@ void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *TPeer) {
 
 		// Set up trade post
 		Player->SetState(_Player::STATE_WAITTRADE);
-		Player->SetTradeGold(0);
-		Player->SetTradeAccepted(false);
-		Player->SetTradePlayer(nullptr);
+		Player->TradeGold = 0;
+		Player->TradeAccepted = false;
+		Player->TradePlayer = nullptr;
 	}
 	else {
 
@@ -968,10 +968,10 @@ void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *TPeer) {
 		SendTradeInformation(Player, TradePlayer);
 		SendTradeInformation(TradePlayer, Player);
 
-		Player->SetTradePlayer(TradePlayer);
-		Player->SetTradeAccepted(false);
-		TradePlayer->SetTradePlayer(Player);
-		TradePlayer->SetTradeAccepted(false);
+		Player->TradePlayer = TradePlayer;
+		Player->TradeAccepted = false;
+		TradePlayer->TradePlayer = Player;
+		TradePlayer->TradeAccepted = false;
 
 		Player->SetState(_Player::STATE_TRADE);
 		TradePlayer->SetState(_Player::STATE_TRADE);
@@ -985,11 +985,11 @@ void _ServerState::HandleTradeCancel(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	// Notify trading player
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
 		TradePlayer->SetState(_Player::STATE_WAITTRADE);
-		TradePlayer->SetTradePlayer(nullptr);
-		TradePlayer->SetTradeAccepted(false);
+		TradePlayer->TradePlayer = nullptr;
+		TradePlayer->TradeAccepted = false;
 
 		_Buffer NewPacket;
 		NewPacket.Write<char>(_Network::TRADE_CANCEL);
@@ -1010,15 +1010,15 @@ void _ServerState::HandleTradeGold(_Buffer *Packet, ENetPeer *TPeer) {
 	int Gold = Packet->Read<int32_t>();
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > Player->GetGold())
-		Gold = Player->GetGold();
-	Player->SetTradeGold(Gold);
-	Player->SetTradeAccepted(false);
+	else if(Gold > Player->Gold)
+		Gold = Player->Gold;
+	Player->TradeGold = Gold;
+	Player->TradeAccepted = false;
 
 	// Notify player
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->SetTradeAccepted(false);
+		TradePlayer->TradeAccepted = false;
 
 		_Buffer NewPacket;
 		NewPacket.Write<char>(_Network::TRADE_GOLD);
@@ -1034,15 +1034,15 @@ void _ServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	// Get trading player
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
 
 		// Set the player's state
 		bool Accepted = !!Packet->Read<char>();
-		Player->SetTradeAccepted(Accepted);
+		Player->TradeAccepted = Accepted;
 
 		// Check if both player's agree
-		if(Accepted && TradePlayer->GetTradeAccepted()) {
+		if(Accepted && TradePlayer->TradeAccepted) {
 
 			// Exchange items
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
@@ -1055,30 +1055,30 @@ void _ServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *TPeer) {
 			}
 
 			// Exchange gold
-			Player->UpdateGold(TradePlayer->GetTradeGold() - Player->GetTradeGold());
-			TradePlayer->UpdateGold(Player->GetTradeGold() - TradePlayer->GetTradeGold());
+			Player->UpdateGold(TradePlayer->TradeGold - Player->TradeGold);
+			TradePlayer->UpdateGold(Player->TradeGold - TradePlayer->TradeGold);
 
 			// Send packet to players
 			{
 				_Buffer NewPacket;
 				NewPacket.Write<char>(_Network::TRADE_EXCHANGE);
-				BuildTradeItemsPacket(Player, &NewPacket, Player->GetGold());
+				BuildTradeItemsPacket(Player, &NewPacket, Player->Gold);
 				ServerNetwork->SendPacketToPeer(&NewPacket, Player->GetPeer());
 			}
 			{
 				_Buffer NewPacket;
 				NewPacket.Write<char>(_Network::TRADE_EXCHANGE);
-				BuildTradeItemsPacket(TradePlayer, &NewPacket, TradePlayer->GetGold());
+				BuildTradeItemsPacket(TradePlayer, &NewPacket, TradePlayer->Gold);
 				ServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->GetPeer());
 			}
 
 			Player->SetState(_Player::STATE_WALK);
-			Player->SetTradePlayer(nullptr);
-			Player->SetTradeGold(0);
+			Player->TradePlayer = nullptr;
+			Player->TradeGold = 0;
 			Player->MoveTradeToInventory();
 			TradePlayer->SetState(_Player::STATE_WALK);
-			TradePlayer->SetTradePlayer(nullptr);
-			TradePlayer->SetTradeGold(0);
+			TradePlayer->TradePlayer = nullptr;
+			TradePlayer->TradeGold = 0;
 			TradePlayer->MoveTradeToInventory();
 		}
 		else {
@@ -1196,8 +1196,8 @@ void _ServerState::SendHUD(_Player *TPlayer) {
 
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_HUD);
-	Packet.Write<int32_t>(TPlayer->GetExperience());
-	Packet.Write<int32_t>(TPlayer->GetGold());
+	Packet.Write<int32_t>(TPlayer->Experience);
+	Packet.Write<int32_t>(TPlayer->Gold);
 	Packet.Write<int32_t>(TPlayer->Health);
 	Packet.Write<int32_t>(TPlayer->Mana);
 	Packet.Write<float>(TPlayer->HealthAccumulator);
@@ -1265,7 +1265,7 @@ void _ServerState::SendTradeInformation(_Player *TSender, _Player *TReceiver) {
 	_Buffer Packet;
 	Packet.Write<char>(_Network::TRADE_REQUEST);
 	Packet.Write<char>(TSender->GetNetworkID());
-	BuildTradeItemsPacket(TSender, &Packet, TSender->GetTradeGold());
+	BuildTradeItemsPacket(TSender, &Packet, TSender->TradeGold);
 	ServerNetwork->SendPacketToPeer(&Packet, TReceiver->GetPeer());
 }
 
@@ -1313,7 +1313,7 @@ void ObjectDeleted(_Object *TObject) {
 void _ServerState::PlayerTeleport(_Player *TPlayer) {
 
 	TPlayer->RestoreHealthMana();
-	SpawnPlayer(TPlayer, TPlayer->GetSpawnMapID(), _Map::EVENT_SPAWN, TPlayer->GetSpawnPoint());
+	SpawnPlayer(TPlayer, TPlayer->SpawnMapID, _Map::EVENT_SPAWN, TPlayer->SpawnPoint);
 	SendHUD(TPlayer);
 	TPlayer->Save();
 }

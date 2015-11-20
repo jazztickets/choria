@@ -59,10 +59,10 @@ class _Item {
 		bool IsInvisPotion() const { return Type == TYPE_POTION && InvisPower > 0; }
 		bool IsPotionType(int TType) const { return (TType == 0 && IsHealthPotion()) || (TType == 1 && IsManaPotion()); }
 
-		void GetDamageRange(int &TMin, int &TMax) const;
-		void GetDefenseRange(int &TMin, int &TMax) const;
-		void GetType(std::string &TString) const;
-		int GetPrice(const _Vendor *TVendor, int TCount, bool TBuy) const;
+		void GetDamageRange(int &Min, int &Max) const;
+		void GetDefenseRange(int &Min, int &Max) const;
+		void GetType(std::string &String) const;
+		int GetPrice(const _Vendor *Vendor, int TCount, bool TBuy) const;
 
 		int ID;
 		std::string Name;

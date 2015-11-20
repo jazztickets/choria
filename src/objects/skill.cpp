@@ -47,39 +47,39 @@ int _Skill::GetPower(int TLevel) const {
 }
 
 // Returns the range of power
-void _Skill::GetPowerRange(int TLevel, int &TMin, int &TMax) const {
+void _Skill::GetPowerRange(int TLevel, int &Min, int &Max) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
 	int FinalPower = (int)(PowerBase + Power * (TLevel - 1));
 	int FinalPowerRange = (int)(PowerRangeBase + PowerRange * (TLevel - 1));
 
-	TMin = FinalPower - FinalPowerRange;
-	TMax = FinalPower + FinalPowerRange;
+	Min = FinalPower - FinalPowerRange;
+	Max = FinalPower + FinalPowerRange;
 }
 
 // Returns the range of power rounded
-void _Skill::GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const {
+void _Skill::GetPowerRangeRound(int TLevel, int &Min, int &Max) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
 	int FinalPower = (int)(std::roundf(PowerBase + Power * (TLevel - 1)));
 	int FinalPowerRange = (int)(std::roundf(PowerRangeBase + PowerRange * (TLevel - 1)));
 
-	TMin = FinalPower - FinalPowerRange;
-	TMax = FinalPower + FinalPowerRange;
+	Min = FinalPower - FinalPowerRange;
+	Max = FinalPower + FinalPowerRange;
 }
 
 // Returns the range of power
-void _Skill::GetPowerRange(int TLevel, float &TMin, float &TMax) const {
+void _Skill::GetPowerRange(int TLevel, float &Min, float &Max) const {
 	if(TLevel < 1)
 		TLevel = 1;
 
 	float FinalPower = PowerBase + Power * (TLevel - 1);
 	float FinalPowerRange = PowerRangeBase + PowerRange * (TLevel - 1);
 
-	TMin = FinalPower - FinalPowerRange;
-	TMax = FinalPower + FinalPowerRange;
+	Min = FinalPower - FinalPowerRange;
+	Max = FinalPower + FinalPowerRange;
 }
 
 // Resolves the use of a skill in battle.

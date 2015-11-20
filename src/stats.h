@@ -104,7 +104,7 @@ class _Stats {
 		const _Skill *GetSkill(int TSkillID);
 		const _MapStat *GetMap(int TMapID) { return &Maps[TMapID]; }
 		const _Item *GetItem(int TItemID) { return &Items[TItemID]; }
-		const _Vendor *GetVendor(int TVendorID) { return &Vendors[TVendorID]; }
+		const _Vendor *GetVendor(int VendorID) { return &Vendors[VendorID]; }
 		const _Trader *GetTrader(int TTraderID) { return &Traders[TTraderID]; }
 
 		void GetPortraits(std::list<_Portrait> &TList);

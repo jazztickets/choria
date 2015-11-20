@@ -452,7 +452,7 @@ void _Map::GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::
 }
 
 // Returns the closest player
-_Player *_Map::GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState) {
+_Player *_Map::GetClosestPlayer(const _Player *TPlayer, float MaxDistanceSquared, int TState) {
 
 	_Player *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = 1e10;
@@ -463,7 +463,7 @@ _Player *_Map::GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquare
 				int XDelta = Player->GetPosition().x - TPlayer->GetPosition().x;
 				int YDelta = Player->GetPosition().y - TPlayer->GetPosition().y;
 				float DistanceSquared = (float)(XDelta * XDelta + YDelta * YDelta);
-				if(DistanceSquared <= TMaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
+				if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
 					ClosestDistanceSquared = DistanceSquared;
 					ClosestPlayer = Player;
 				}

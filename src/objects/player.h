@@ -121,16 +121,10 @@ class _Player : public _Object, public _Fighter {
 		void CalculatePlayerStats();
 
 		// Experience
-		void SetExperience(int Value) { Experience = Value; }
-		int GetExperience() const { return Experience; }
-		int GetExperienceNeeded() const { return ExperienceNeeded; }
-		int GetExperienceNextLevel() const { return ExperienceNextLevel; }
 		float GetNextLevelPercent() const;
 		void UpdateExperience(int Value) { Experience += Value; }
 
 		// Gold
-		void SetGold(int Value) { Gold = Value; }
-		int GetGold() const { return Gold; }
 		int GetGoldGiven() const { return (int)(Gold * 0.1f); }
 		void UpdateGold(int Value);
 
@@ -157,8 +151,6 @@ class _Player : public _Object, public _Fighter {
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
 		bool MovePlayer(int Direction);
 		int GetCurrentZone();
-		void SetInvisPower(int Value) { InvisPower = Value; }
-		int GetInvisPower() const { return InvisPower; }
 		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
@@ -170,14 +162,11 @@ class _Player : public _Object, public _Fighter {
 
 		// Battles
 		void GenerateNextBattle();
-		void SetNextBattle(int Value) { NextBattle = Value; }
-		int GetNextBattle() const { return NextBattle; }
-		void SetBattle(_Battle *TBattle) { Battle = TBattle; }
 		void StartBattle(_Battle *TBattle);
 		void StopBattle();
 
 		// Vendor
-		void SetVendor(const _Vendor *TVendor);
+		void SetVendor(const _Vendor *Vendor);
 		const _Vendor *GetVendor();
 
 		// Trader
@@ -187,10 +176,6 @@ class _Player : public _Object, public _Fighter {
 		void AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot);
 
 		// Map
-		void SetSpawnMapID(int Value) { SpawnMapID = Value; }
-		int GetSpawnMapID() const { return SpawnMapID; }
-		void SetSpawnPoint(int Value) { SpawnPoint = Value; }
-		int GetSpawnPoint() const { return SpawnPoint; }
 		const _Tile *GetTile();
 
 		// World
@@ -202,14 +187,6 @@ class _Player : public _Object, public _Fighter {
 		// PVP
 		bool CanAttackPlayer();
 		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
-
-		// Trading
-		void SetTradePlayer(_Player *TPlayer) { TradePlayer = TPlayer; }
-		_Player *GetTradePlayer() const { return TradePlayer; }
-		void SetTradeGold(int Value) { TradeGold = Value; }
-		int GetTradeGold() const { return TradeGold; }
-		void SetTradeAccepted(bool Value) { TradeAccepted = Value; }
-		bool GetTradeAccepted() { return TradeAccepted; }
 
 		static bool IsSlotInventory(int Slot) { return Slot >= INVENTORY_BACKPACK && Slot < INVENTORY_TRADE; }
 		static bool IsSlotTrade(int Slot) { return Slot >= INVENTORY_TRADE && Slot < INVENTORY_COUNT; }

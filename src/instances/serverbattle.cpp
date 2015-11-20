@@ -343,7 +343,7 @@ void _ServerBattle::CheckEnd() {
 			_BattleResult *PlayerSide = &Side[Players[i]->GetSide()];
 			_BattleResult *OppositeSide = &Side[!Players[i]->GetSide()];
 			if(PlayerSide->Dead) {
-				GoldEarned = (int)(-Players[i]->GetGold() * 0.1f);
+				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
 				Players[i]->UpdateDeaths(1);
 			}
 			else {

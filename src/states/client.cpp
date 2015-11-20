@@ -419,8 +419,8 @@ void _ClientState::HandleYourCharacterInfo(_Buffer *Packet) {
 	Player = new _Player();
 	Player->Name = Packet->ReadString();
 	Player->SetPortraitID(Packet->Read<int32_t>());
-	Player->SetExperience(Packet->Read<int32_t>());
-	Player->SetGold(Packet->Read<int32_t>());
+	Player->Experience = Packet->Read<int32_t>();
+	Player->Gold = Packet->Read<int32_t>();
 	Player->SetPlayTime(Packet->Read<int32_t>());
 	Player->SetDeaths(Packet->Read<int32_t>());
 	Player->SetMonsterKills(Packet->Read<int32_t>());
@@ -500,7 +500,7 @@ void _ClientState::HandleChangeMaps(_Buffer *Packet) {
 						NewPlayer = new _Player();
 						NewPlayer->Position = GridPosition;
 						NewPlayer->Name = Name;
-						NewPlayer->PortraitID = PortraitID;
+						NewPlayer->SetPortraitID(PortraitID);
 						NewPlayer->InvisPower = Invisible;
 						ObjectManager->AddObjectWithNetworkID(NewPlayer, NetworkID);
 					}
@@ -541,7 +541,7 @@ void _ClientState::HandleCreateObject(_Buffer *Packet) {
 			NewObject = new _Player();
 			_Player *NewPlayer = static_cast<_Player *>(NewObject);
 			NewPlayer->Name = Name;
-			NewPlayer->PortraitID = PortraitID;
+			NewPlayer->SetPortraitID(PortraitID);
 			NewPlayer->InvisPower = Invisible;
 		}
 		break;
@@ -614,8 +614,8 @@ void _ClientState::HandleObjectUpdates(_Buffer *Packet) {
 				}
 			}
 			else {
-				OtherPlayer->SetPosition(Position);
-				OtherPlayer->SetInvisPower(Invisible);
+				OtherPlayer->Position = Position;
+				OtherPlayer->InvisPower = Invisible;
 			}
 
 			switch(PlayerState) {
@@ -803,14 +803,14 @@ void _ClientState::HandleTradeRequest(_Buffer *Packet) {
 		return;
 
 	// Set the trading player
-	Player->SetTradePlayer(TradePlayer);
+	Player->TradePlayer = (TradePlayer);
 
 	// Reset state
-	TradePlayer->SetTradeAccepted(false);
-	Player->SetTradeAccepted(false);
+	TradePlayer->TradeAccepted = false;
+	Player->TradeAccepted = false;
 
 	// Get gold offer
-	TradePlayer->SetTradeGold(Packet->Read<int32_t>());
+	TradePlayer->TradeGold = Packet->Read<int32_t>();
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
 		int ItemID = Packet->Read<int32_t>();
 		int Count = 0;
@@ -823,7 +823,7 @@ void _ClientState::HandleTradeRequest(_Buffer *Packet) {
 
 // Handles a trade cancel
 void _ClientState::HandleTradeCancel(_Buffer *Packet) {
-	Player->SetTradePlayer(nullptr);
+	Player->TradePlayer = nullptr;
 
 	// Reset agreement
 	HUD.ResetAcceptButton();
@@ -833,7 +833,7 @@ void _ClientState::HandleTradeCancel(_Buffer *Packet) {
 void _ClientState::HandleTradeItem(_Buffer *Packet) {
 
 	// Get trading player
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(!TradePlayer)
 		return;
 
@@ -856,7 +856,7 @@ void _ClientState::HandleTradeItem(_Buffer *Packet) {
 	TradePlayer->SetInventory(NewSlot, NewItemID, NewCount);
 
 	// Reset agreement
-	TradePlayer->SetTradeAccepted(false);
+	TradePlayer->TradeAccepted = false;
 	HUD.ResetAcceptButton();
 }
 
@@ -864,16 +864,16 @@ void _ClientState::HandleTradeItem(_Buffer *Packet) {
 void _ClientState::HandleTradeGold(_Buffer *Packet) {
 
 	// Get trading player
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(!TradePlayer)
 		return;
 
 	// Set gold
 	int Gold = Packet->Read<int32_t>();
-	TradePlayer->SetTradeGold(Gold);
+	TradePlayer->TradeGold = Gold;
 
 	// Reset agreement
-	TradePlayer->SetTradeAccepted(false);
+	TradePlayer->TradeAccepted = false;
 	HUD.ResetAcceptButton();
 }
 
@@ -881,13 +881,13 @@ void _ClientState::HandleTradeGold(_Buffer *Packet) {
 void _ClientState::HandleTradeAccept(_Buffer *Packet) {
 
 	// Get trading player
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(!TradePlayer)
 		return;
 
 	// Set state
 	bool Accepted = !!Packet->Read<char>();
-	TradePlayer->SetTradeAccepted(Accepted);
+	TradePlayer->TradeAccepted = Accepted;
 }
 
 // Handles a trade exchange
@@ -895,7 +895,7 @@ void _ClientState::HandleTradeExchange(_Buffer *Packet) {
 
 	// Get gold offer
 	int Gold = Packet->Read<int32_t>();
-	Player->SetGold(Gold);
+	Player->Gold = Gold;
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
 		int ItemID = Packet->Read<int32_t>();
 		int Count = 0;

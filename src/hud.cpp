@@ -422,12 +422,12 @@ void _HUD::Render() {
 	Assets.Labels["label_hud_level"]->Text = Buffer.str();
 	Buffer.str("");
 
-	Buffer << Player->GetGold() << " Gold";
+	Buffer << Player->Gold << " Gold";
 	Assets.Labels["label_hud_gold"]->Text = Buffer.str();
 	Buffer.str("");
 
 	// Draw experience bar
-	Buffer << Player->GetExperienceNextLevel() - Player->GetExperienceNeeded() << " / " << Player->GetExperienceNextLevel() << " XP";
+	Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
 	Assets.Labels["label_hud_experience"]->Text = Buffer.str();
 	Buffer.str("");
 	Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
@@ -457,7 +457,7 @@ void _HUD::Render() {
 		Graphics.DrawImage(_Graphics::IMAGE_GOLD, StartX, StartY + 8);
 
 		StartX += 20;
-		sprintf(String, "%d", Player->GetGold());
+		sprintf(String, "%d", Player->Gold);
 		//Graphics.RenderText(String, StartX, StartY);
 
 		// Draw PVP icon
@@ -923,7 +923,7 @@ void _HUD::CloseTrade(bool SendNotify) {
 	if(SendNotify)
 		SendTradeCancel();
 
-	Player->SetTradePlayer(nullptr);
+	Player->TradePlayer = nullptr;
 	*State = _ClientState::STATE_WALK;
 }
 
@@ -1099,7 +1099,7 @@ void _HUD::DrawTrade() {
 	DrawTradeItems(Player, TRADE_WINDOWX, TRADE_WINDOWYYOU, false);
 
 	// Draw trading player information
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
 		TraderWindow->setVisible(true);
 
@@ -1111,7 +1111,7 @@ void _HUD::DrawTrade() {
 		DrawTradeItems(TradePlayer, TRADE_WINDOWX, TRADE_WINDOWYTHEM, true);
 
 		// Draw gold
-		//Graphics.RenderText(std::string(TradePlayer->GetTradeGold()).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
+		//Graphics.RenderText(std::string(TradePlayer->TradeGold).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
 
 		// Draw agreement state
 		std::string AcceptText;
@@ -1181,13 +1181,13 @@ void _HUD::DrawCharacter() {
 
 	// Experience
 	//Graphics.RenderText("EXP", DrawX, DrawY);
-	sprintf(Buffer, "%d", Player->GetExperience());
+	sprintf(Buffer, "%d", Player->Experience);
 	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	// Experience needed
 	DrawY += 15;
 	//Graphics.RenderText("EXP needed", DrawX, DrawY);
-	sprintf(Buffer, "%d", Player->GetExperienceNeeded());
+	sprintf(Buffer, "%d", Player->ExperienceNeeded);
 	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
 
 	// Damage
@@ -1593,7 +1593,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPos
 
 	// Color
 	glm::vec4 Color;
-	if(Buy && Player->GetGold() < Price)
+	if(Buy && Player->Gold < Price)
 		Color = COLOR_RED;
 	else
 		Color = COLOR_LIGHTGOLD;
@@ -1646,7 +1646,7 @@ void _HUD::GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 	TPoint.y -= WindowArea.UpperLeftCorner.y;
 
 	// Get trade slot
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer && TPoint.x >= TRADE_WINDOWX && TPoint.x < TRADE_WINDOWX + 128 && TPoint.y >= TRADE_WINDOWYTHEM && TPoint.y < TRADE_WINDOWYTHEM + 64) {
 		size_t InventoryIndex = (TPoint.x - TRADE_WINDOWX) / 32 + (TPoint.y - TRADE_WINDOWYTHEM) / 32 * 4 + _Player::INVENTORY_TRADE;
 		//printf("them: %d=%d %d\n", InventoryIndex, TPoint.x, TPoint.y);
@@ -1666,7 +1666,7 @@ void _HUD::GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 
 // Buys an item from the vendor
 void _HUD::BuyItem(_CursorItem *TCursorItem, int TTargetSlot) {
-	if(Player->GetGold() >= TCursorItem->Cost && Player->AddItem(TCursorItem->Item, TCursorItem->Count, TTargetSlot)) {
+	if(Player->Gold >= TCursorItem->Cost && Player->AddItem(TCursorItem->Item, TCursorItem->Count, TTargetSlot)) {
 
 		// Update player
 		int Price = TCursorItem->Item->GetPrice(Vendor, TCursorItem->Count, true);
@@ -1801,7 +1801,7 @@ void _HUD::SendTradeCancel() {
 	Packet.Write<char>(_Network::TRADE_CANCEL);
 	ClientNetwork->SendPacketToHost(&Packet);
 
-	Player->SetTradePlayer(nullptr);
+	Player->TradePlayer = nullptr;
 }
 
 // Make sure the trade gold box is valid
@@ -1811,8 +1811,8 @@ int _HUD::ValidateTradeGold() {
 	int Gold = atoi(std::string(TradeGoldBox->getText()).c_str());
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > Player->GetGold())
-		Gold = Player->GetGold();
+	else if(Gold > Player->Gold)
+		Gold = Player->Gold;
 
 	// Set text
 	TradeGoldBox->setText(core::stringw(Gold).c_str());
@@ -1827,9 +1827,9 @@ void _HUD::ResetAcceptButton() {
 	//if(TradeAcceptButton)
 	//	TradeAcceptButton->setPressed(false);
 
-	_Player *TradePlayer = Player->GetTradePlayer();
+	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer)
-		TradePlayer->SetTradeAccepted(false);
+		TradePlayer->TradeAccepted = false;
 }
 
 // Split a stack of items

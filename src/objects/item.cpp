@@ -20,49 +20,49 @@
 #include <constants.h>
 
 // Returns the range of damage
-void _Item::GetDamageRange(int &TMin, int &TMax) const {
+void _Item::GetDamageRange(int &Min, int &Max) const {
 
-	TMin = (int)(Damage - DamageRange);
-	TMax = (int)(Damage + DamageRange);
+	Min = (int)(Damage - DamageRange);
+	Max = (int)(Damage + DamageRange);
 }
 
 // Returns the range of defense
-void _Item::GetDefenseRange(int &TMin, int &TMax) const {
+void _Item::GetDefenseRange(int &Min, int &Max) const {
 
-	TMin = (int)(Defense - DefenseRange);
-	TMax = (int)(Defense + DefenseRange);
+	Min = (int)(Defense - DefenseRange);
+	Max = (int)(Defense + DefenseRange);
 }
 
 // Returns a string of the item type
-void _Item::GetType(std::string &TString) const {
+void _Item::GetType(std::string &String) const {
 
 	switch(Type) {
 		case TYPE_HEAD:
-			TString = "Helmet";
+			String = "Helmet";
 		break;
 		case TYPE_BODY:
-			TString = "Armor";
+			String = "Armor";
 		break;
 		case TYPE_LEGS:
-			TString = "Boots";
+			String = "Boots";
 		break;
 		case TYPE_WEAPON1HAND:
-			TString = "Weapon";
+			String = "Weapon";
 		break;
 		case TYPE_WEAPON2HAND:
-			TString = "Weapon";
+			String = "Weapon";
 		break;
 		case TYPE_SHIELD:
-			TString = "Shield";
+			String = "Shield";
 		break;
 		case TYPE_RING:
-			TString = "Ring";
+			String = "Ring";
 		break;
 		case TYPE_POTION:
-			TString = "Potion";
+			String = "Potion";
 		break;
 		case TYPE_TRADE:
-			TString = "Tradable";
+			String = "Tradable";
 		break;
 		default:
 		break;
@@ -70,16 +70,16 @@ void _Item::GetType(std::string &TString) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(const _Vendor *TVendor, int TCount, bool TBuy) const {
-	if(!TVendor)
+int _Item::GetPrice(const _Vendor *Vendor, int TCount, bool TBuy) const {
+	if(!Vendor)
 		return 0;
 
 	// Calculate
 	int Price;
 	if(TBuy)
-		Price = (int)(Cost * TVendor->BuyPercent) * TCount;
+		Price = (int)(Cost * Vendor->BuyPercent) * TCount;
 	else
-		Price = (int)(Cost * TVendor->SellPercent) * TCount;
+		Price = (int)(Cost * Vendor->SellPercent) * TCount;
 
 	// Cap
 	if(Price < 0)

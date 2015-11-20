@@ -40,9 +40,9 @@ class _Skill {
 
 		int GetManaCost(int TLevel) const;
 		int GetPower(int TLevel) const;
-		void GetPowerRange(int TLevel, int &TMin, int &TMax) const;
-		void GetPowerRangeRound(int TLevel, int &TMin, int &TMax) const;
-		void GetPowerRange(int TLevel, float &TMin, float &TMax) const;
+		void GetPowerRange(int TLevel, int &Min, int &Max) const;
+		void GetPowerRangeRound(int TLevel, int &Min, int &Max) const;
+		void GetPowerRange(int TLevel, float &Min, float &Max) const;
 
 		void ResolveSkill(_FighterResult *Result, _FighterResult *TTargetResult) const;
 		bool CanUse(_Fighter *TFighter) const;

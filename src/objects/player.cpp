@@ -354,9 +354,9 @@ void _Player::SetPortraitID(int TID) {
 }
 
 // Sets the player's vendor
-void _Player::SetVendor(const _Vendor *TVendor) {
+void _Player::SetVendor(const _Vendor *Vendor) {
 
-	Vendor = TVendor;
+	this->Vendor = Vendor;
 }
 
 // Gets the player's vendor
@@ -472,7 +472,7 @@ bool _Player::UsePotionWorld(int Slot) {
 	if((Item->IsHealthPotion() && Health < MaxHealth) || (Item->IsManaPotion() && Mana < MaxMana) || Item->IsInvisPotion()) {
 		UpdateHealth(HealthRestore);
 		UpdateMana(ManaRestore);
-		SetInvisPower(ItemInvisPower);
+		InvisPower = ItemInvisPower;
 		UpdateInventory(Slot, -1);
 		return true;
 	}

@@ -86,7 +86,7 @@ class _Map {
 		void RemoveObject(_Object *TObject);
 		const std::list<_Object *> &GetObjects() const;
 		void GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers);
-		_Player *GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState);
+		_Player *GetClosestPlayer(const _Player *TPlayer, float MaxDistanceSquared, int TState);
 
 		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
 
