@@ -211,7 +211,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						}
 					}
 
-					// Check for valid slots
+					// Check for assigning skills to actionbar
 					if(CursorSkill.Skill) {
 
 						if(TooltipSkill.Window == WINDOW_SKILLBAR) {
@@ -235,12 +235,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 // Handles GUI presses
 /*
 void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
-	int ID = TElement->getID();
-
-	if(TEventType == gui::EGET_BUTTON_CLICKED && ID == ELEMENT_CHARACTER) {
-		InitCharacter();
-	}
-
 	switch(*State) {
 		case _PlayClientState::STATE_MAINMENU:
 			switch(TEventType) {
@@ -375,15 +369,25 @@ void _HUD::Update(double FrameTime) {
 			}
 		} break;
 		case _ClientState::STATE_SKILLS: {
+
+			// Check skill page
 			_Element *SkillsElement = Assets.Elements["element_skills"];
 			SkillsElement->Update(FrameTime, Input.GetMouse());
 			_Element *HoverSlot = SkillsElement->HitElement;
-			if(HoverSlot && HoverSlot != SkillsElement) {
+			if(HoverSlot) {
+				TooltipSkill.Window = WINDOW_SKILLS;
+				TooltipSkill.Skill = Stats.GetSkill((intptr_t)HoverSlot->UserData);
+			}
 
-				int SkillID = (intptr_t)HoverSlot->UserData;
-				if(SkillID != -1) {
-					TooltipSkill.Window = WINDOW_SKILLS;
-					TooltipSkill.Skill = Stats.GetSkill(SkillID);
+			// Check actionbar
+			if(!HoverSlot && *State == _ClientState::STATE_SKILLS) {
+				_Element *ActionbarElement = Assets.Elements["element_actionbar"];
+				ActionbarElement->Update(FrameTime, Input.GetMouse());
+				HoverSlot = ActionbarElement->HitElement;
+				if(HoverSlot) {
+					TooltipSkill.Window = WINDOW_SKILLBAR;
+					TooltipSkill.Slot = (intptr_t)HoverSlot->UserData;
+					TooltipSkill.Skill = Player->GetSkillBar(TooltipSkill.Slot);
 				}
 			}
 		} break;
@@ -1287,12 +1291,12 @@ void _HUD::DrawItemTooltip() {
 
 		// Position window
 		glm::ivec2 WindowOffset = Input.GetMouse();
-		WindowOffset.x += INVENTORY_TOOLTIP_OFFSETX;
+		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
 		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
 		// Reposition window if out of bounds
 		if(WindowOffset.x + Width > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
-			WindowOffset.x -= Width + INVENTORY_TOOLTIP_OFFSETX + INVENTORY_TOOLTIP_PADDING;
+			WindowOffset.x -= Width + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
 
 		TooltipElement->SetOffset(WindowOffset);
 		TooltipElement->SetWidth(Width);
@@ -1454,18 +1458,20 @@ void _HUD::DrawSkillTooltip() {
 		TooltipName->Text = Skill->Name;
 
 		// Get window width
-		int Width = TooltipElement->Bounds.End.x - TooltipElement->Bounds.Start.x;
+		glm::ivec2 Size = TooltipElement->Bounds.End - TooltipElement->Bounds.Start;
 
 		// Position window
 		glm::ivec2 WindowOffset = Input.GetMouse();
-		WindowOffset.x += INVENTORY_TOOLTIP_OFFSETX;
+		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
 		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
 		// Reposition window if out of bounds
 		if(WindowOffset.y < Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING)
 			WindowOffset.y = Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING;
-		if(WindowOffset.x + Width > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
-			WindowOffset.x -= Width + INVENTORY_TOOLTIP_OFFSETX + INVENTORY_TOOLTIP_PADDING;
+		if(WindowOffset.x + Size.x > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
+			WindowOffset.x -= Size.x + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
+		if(WindowOffset.y + Size.y > Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
+			WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
 		TooltipElement->SetOffset(WindowOffset);
 
@@ -1482,14 +1488,14 @@ void _HUD::DrawSkillTooltip() {
 		// Get current level description
 		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += 25;
-		DrawSkillDescription(Skill, SkillLevel, DrawPosition, Width);
+		DrawSkillDescription(Skill, SkillLevel, DrawPosition, Size.x);
 
 		// Get next level description
 		if(SkillLevel > 0) {
 			DrawPosition.y += 25;
 			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += 25;
-			DrawSkillDescription(Skill, SkillLevel+1, DrawPosition, Width);
+			DrawSkillDescription(Skill, SkillLevel+1, DrawPosition, Size.x);
 		}
 
 		// Additional information
@@ -1751,25 +1757,25 @@ void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
 }
 
 // Sets the player's skill bar
-void _HUD::SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill) {
-	if(Player->GetSkillBar(TSlot) == TSkill)
+void _HUD::SetSkillBar(int Slot, int OldSlot, const _Skill *Skill) {
+	if(Player->GetSkillBar(Slot) == Skill)
 		return;
 
 	// Check for swapping
-	if(TOldSlot == -1) {
+	if(OldSlot == -1) {
 
 		// Remove duplicate skills
 		for(int i = 0; i < 8; i++) {
-			if(Player->GetSkillBar(i) == TSkill)
+			if(Player->GetSkillBar(i) == Skill)
 				Player->SetSkillBar(i, nullptr);
 		}
 	}
 	else {
-		const _Skill *OldSkill = Player->GetSkillBar(TSlot);
-		Player->SetSkillBar(TOldSlot, OldSkill);
+		const _Skill *OldSkill = Player->GetSkillBar(Slot);
+		Player->SetSkillBar(OldSlot, OldSkill);
 	}
 
-	Player->SetSkillBar(TSlot, TSkill);
+	Player->SetSkillBar(Slot, Skill);
 	Player->CalculatePlayerStats();
 	SkillBarChanged = true;
 }

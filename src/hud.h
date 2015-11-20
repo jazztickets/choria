@@ -156,7 +156,7 @@ class _HUD {
 		void SellItem(_CursorItem *TCursorItem, int TAmount);
 
 		void AdjustSkillLevel(int SkillID, int Direction);
-		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *TSkill);
+		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *Skill);
 		void ClearSkills();
 
 		void RefreshSkillButtons();
