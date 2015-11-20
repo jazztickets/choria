@@ -417,7 +417,7 @@ void _ClientState::HandleYourCharacterInfo(_Buffer *Packet) {
 	int NetworkID = Packet->Read<char>();
 
 	Player = new _Player();
-	Player->SetName(Packet->ReadString());
+	Player->Name = Packet->ReadString();
 	Player->SetPortraitID(Packet->Read<int32_t>());
 	Player->SetExperience(Packet->Read<int32_t>());
 	Player->SetGold(Packet->Read<int32_t>());
@@ -498,10 +498,10 @@ void _ClientState::HandleChangeMaps(_Buffer *Packet) {
 					else {
 
 						NewPlayer = new _Player();
-						NewPlayer->SetPosition(GridPosition);
-						NewPlayer->SetName(Name);
-						NewPlayer->SetPortraitID(PortraitID);
-						NewPlayer->SetInvisPower(Invisible);
+						NewPlayer->Position = GridPosition;
+						NewPlayer->Name = Name;
+						NewPlayer->PortraitID = PortraitID;
+						NewPlayer->InvisPower = Invisible;
 						ObjectManager->AddObjectWithNetworkID(NewPlayer, NetworkID);
 					}
 				}
@@ -540,9 +540,9 @@ void _ClientState::HandleCreateObject(_Buffer *Packet) {
 
 			NewObject = new _Player();
 			_Player *NewPlayer = static_cast<_Player *>(NewObject);
-			NewPlayer->SetName(Name);
-			NewPlayer->SetPortraitID(PortraitID);
-			NewPlayer->SetInvisPower(Invisible);
+			NewPlayer->Name = Name;
+			NewPlayer->PortraitID = PortraitID;
+			NewPlayer->InvisPower = Invisible;
 		}
 		break;
 	}
@@ -667,11 +667,11 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 			// Get player object
 			_Player *NewPlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
 			if(NewPlayer != nullptr) {
-				NewPlayer->SetHealth(Health);
-				NewPlayer->SetMaxHealth(MaxHealth);
-				NewPlayer->SetMana(Mana);
-				NewPlayer->SetMaxMana(MaxMana);
-				NewPlayer->SetBattle(Battle);
+				NewPlayer->Health = Health;
+				NewPlayer->MaxHealth = MaxHealth;
+				NewPlayer->Mana = Mana;
+				NewPlayer->MaxMana = MaxMana;
+				NewPlayer->Battle = Battle;
 
 				Battle->AddFighter(NewPlayer, Side);
 			}
@@ -726,13 +726,12 @@ void _ClientState::HandleBattleCommand(_Buffer *Packet) {
 
 // Handles HUD updates
 void _ClientState::HandleHUD(_Buffer *Packet) {
-	Player->SetExperience(Packet->Read<int32_t>());
-	Player->SetGold(Packet->Read<int32_t>());
-	Player->SetHealth(Packet->Read<int32_t>());
-	Player->SetMana(Packet->Read<int32_t>());
-	float HealthAccumulator = Packet->Read<float>();
-	float ManaAccumulator = Packet->Read<float>();
-	Player->SetRegenAccumulators(HealthAccumulator, ManaAccumulator);
+	Player->Experience = Packet->Read<int32_t>();
+	Player->Gold = Packet->Read<int32_t>();
+	Player->Health = Packet->Read<int32_t>();
+	Player->Mana = Packet->Read<int32_t>();
+	Player->HealthAccumulator = Packet->Read<float>();
+	Player->ManaAccumulator = Packet->Read<float>();
 	Player->CalculatePlayerStats();
 }
 
@@ -786,7 +785,7 @@ void _ClientState::HandleChatMessage(_Buffer *Packet) {
 
 	// Create chat message
 	_ChatMessage Chat;
-	Chat.Message = MessagePlayer->GetName() + std::string(": ") + Message;
+	Chat.Message = MessagePlayer->Name + std::string(": ") + Message;
 	HUD.AddChatMessage(Chat);
 
 	printf("%s\n", Chat.Message.c_str());

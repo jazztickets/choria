@@ -101,11 +101,11 @@ class _Player : public _Object, public _Fighter {
 		int GetPortraitID() const { return PortraitID; }
 
 		// Stats
-		void SetPlayTime(int TValue) { PlayTime = TValue; }
-		void SetDeaths(int TValue) { Deaths = TValue; }
-		void SetMonsterKills(int TValue) { MonsterKills = TValue; }
-		void SetPlayerKills(int TValue) { PlayerKills = TValue; }
-		void SetBounty(int TValue) { Bounty = TValue; }
+		void SetPlayTime(int Value) { PlayTime = Value; }
+		void SetDeaths(int Value) { Deaths = Value; }
+		void SetMonsterKills(int Value) { MonsterKills = Value; }
+		void SetPlayerKills(int Value) { PlayerKills = Value; }
+		void SetBounty(int Value) { Bounty = Value; }
 		int GetPlayTime() const { return PlayTime; }
 		int GetDeaths() const { return Deaths; }
 		int GetMonsterKills() const { return MonsterKills; }
@@ -114,25 +114,25 @@ class _Player : public _Object, public _Fighter {
 		float GetHealthRegen() const { return HealthRegen; }
 		float GetManaRegen() const { return ManaRegen; }
 
-		void UpdateDeaths(int TValue) { Deaths += TValue; }
-		void UpdateMonsterKills(int TValue) { MonsterKills += TValue; }
-		void UpdatePlayerKills(int TValue) { PlayerKills += TValue; }
+		void UpdateDeaths(int Value) { Deaths += Value; }
+		void UpdateMonsterKills(int Value) { MonsterKills += Value; }
+		void UpdatePlayerKills(int Value) { PlayerKills += Value; }
 
 		void CalculatePlayerStats();
 
 		// Experience
-		void SetExperience(int TValue) { Experience = TValue; }
+		void SetExperience(int Value) { Experience = Value; }
 		int GetExperience() const { return Experience; }
 		int GetExperienceNeeded() const { return ExperienceNeeded; }
 		int GetExperienceNextLevel() const { return ExperienceNextLevel; }
 		float GetNextLevelPercent() const;
-		void UpdateExperience(int TValue) { Experience += TValue; }
+		void UpdateExperience(int Value) { Experience += Value; }
 
 		// Gold
-		void SetGold(int TValue) { Gold = TValue; }
+		void SetGold(int Value) { Gold = Value; }
 		int GetGold() const { return Gold; }
 		int GetGoldGiven() const { return (int)(Gold * 0.1f); }
-		void UpdateGold(int TValue);
+		void UpdateGold(int Value);
 
 		// Inventory
 		void SetPotionsLeft(int THealthCount, int TManaCount);
@@ -157,7 +157,7 @@ class _Player : public _Object, public _Fighter {
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
 		bool MovePlayer(int Direction);
 		int GetCurrentZone();
-		void SetInvisPower(int TValue) { InvisPower = TValue; }
+		void SetInvisPower(int Value) { InvisPower = Value; }
 		int GetInvisPower() const { return InvisPower; }
 		bool IsInvisible() const { return InvisPower > 0; }
 
@@ -170,7 +170,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Battles
 		void GenerateNextBattle();
-		void SetNextBattle(int TValue) { NextBattle = TValue; }
+		void SetNextBattle(int Value) { NextBattle = Value; }
 		int GetNextBattle() const { return NextBattle; }
 		void SetBattle(_Battle *TBattle) { Battle = TBattle; }
 		void StartBattle(_Battle *TBattle);
@@ -187,9 +187,9 @@ class _Player : public _Object, public _Fighter {
 		void AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot);
 
 		// Map
-		void SetSpawnMapID(int TValue) { SpawnMapID = TValue; }
+		void SetSpawnMapID(int Value) { SpawnMapID = Value; }
 		int GetSpawnMapID() const { return SpawnMapID; }
-		void SetSpawnPoint(int TValue) { SpawnPoint = TValue; }
+		void SetSpawnPoint(int Value) { SpawnPoint = Value; }
 		int GetSpawnPoint() const { return SpawnPoint; }
 		const _Tile *GetTile();
 
@@ -206,23 +206,13 @@ class _Player : public _Object, public _Fighter {
 		// Trading
 		void SetTradePlayer(_Player *TPlayer) { TradePlayer = TPlayer; }
 		_Player *GetTradePlayer() const { return TradePlayer; }
-		void SetTradeGold(int TValue) { TradeGold = TValue; }
+		void SetTradeGold(int Value) { TradeGold = Value; }
 		int GetTradeGold() const { return TradeGold; }
-		void SetTradeAccepted(bool TValue) { TradeAccepted = TValue; }
+		void SetTradeAccepted(bool Value) { TradeAccepted = Value; }
 		bool GetTradeAccepted() { return TradeAccepted; }
 
 		static bool IsSlotInventory(int Slot) { return Slot >= INVENTORY_BACKPACK && Slot < INVENTORY_TRADE; }
 		static bool IsSlotTrade(int Slot) { return Slot >= INVENTORY_TRADE && Slot < INVENTORY_COUNT; }
-
-	private:
-
-		void CalculateLevelStats();
-		void CalculateGearStats();
-		void CalculateSkillStats();
-		void CalculateFinalStats();
-
-		bool CanEquipItem(int Slot, const _Item *TItem);
-		void SwapItem(int Slot, int TOldSlot);
 
 		// Connection information
 		int AccountID, CharacterID;
@@ -275,4 +265,15 @@ class _Player : public _Object, public _Fighter {
 		int TradeGold;
 		bool TradeAccepted;
 		_Player *TradePlayer;
+
+	private:
+
+		void CalculateLevelStats();
+		void CalculateGearStats();
+		void CalculateSkillStats();
+		void CalculateFinalStats();
+
+		bool CanEquipItem(int Slot, const _Item *TItem);
+		void SwapItem(int Slot, int TOldSlot);
+
 };

@@ -30,8 +30,8 @@
 #include <sstream>
 
 // Constructor
-_Fighter::_Fighter(int TType)
-:	Type(TType),
+_Fighter::_Fighter(int Type)
+:	Type(Type),
 	Name(""),
 	Level(0),
 	Health(0),
@@ -67,7 +67,7 @@ _Fighter::~_Fighter() {
 }
 
 // Renders the fighter during a battle
-void _Fighter::RenderBattle(bool ShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
+void _Fighter::RenderBattle(bool ShowResults, float TimerPercent, _FighterResult *Result, bool TTarget) {
 
 	// Get slot ui element depending on side
 	_Element *Slot;
@@ -154,23 +154,23 @@ void _Fighter::RenderBattle(bool ShowResults, float TTimerPercent, _FighterResul
 	if(ShowResults) {
 
 		float AlphaPercent;
-		if(TTimerPercent > 0.75f)
+		if(TimerPercent > 0.75f)
 			AlphaPercent = 1;
 		else
-			AlphaPercent = TTimerPercent / 0.75f;
+			AlphaPercent = TimerPercent / 0.75f;
 
 		char Sign = ' ';
 		glm::vec4 Color = COLOR_GRAY;
-		if(TResult->HealthChange > 0) {
+		if(Result->HealthChange > 0) {
 			Sign = '+';
 			Color = COLOR_GREEN;
 		}
-		else if(TResult->HealthChange < 0) {
+		else if(Result->HealthChange < 0) {
 			Color = COLOR_RED;
 		}
 		Color.w = AlphaPercent;
 
-		Buffer << Sign << TResult->HealthChange;
+		Buffer << Sign << Result->HealthChange;
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), HealthBarCenter + glm::ivec2(0, -20), Color, CENTER_BASELINE);
 
 		const _Texture *SkillTexture;
@@ -186,7 +186,7 @@ void _Fighter::RenderBattle(bool ShowResults, float TTimerPercent, _FighterResul
 		Graphics.DrawCenteredImage(SkillUsedPosition, SkillTexture, WhiteAlpha);
 
 		// Draw damage dealt
-		Assets.Fonts["hud_medium"]->DrawText(std::to_string(TResult->DamageDealt).c_str(), SkillUsedPosition, WhiteAlpha, CENTER_MIDDLE);
+		Assets.Fonts["hud_medium"]->DrawText(std::to_string(Result->DamageDealt).c_str(), SkillUsedPosition, WhiteAlpha, CENTER_MIDDLE);
 	}
 	// Draw the skill used
 	if(SkillUsing) {
@@ -210,8 +210,8 @@ _Battle *_Fighter::GetBattle() {
 }
 
 // Update health
-void _Fighter::UpdateHealth(int TValue) {
-	Health += TValue;
+void _Fighter::UpdateHealth(int Value) {
+	Health += Value;
 
 	if(Health < 0)
 		Health = 0;
@@ -220,8 +220,8 @@ void _Fighter::UpdateHealth(int TValue) {
 }
 
 // Update mana
-void _Fighter::UpdateMana(int TValue) {
-	Mana += TValue;
+void _Fighter::UpdateMana(int Value) {
+	Mana += Value;
 
 	if(Mana < 0)
 		Mana = 0;
@@ -262,12 +262,6 @@ void _Fighter::UpdateRegen(int &THealthUpdate, int &TManaUpdate) {
 	else if(ManaAccumulator < 0.0f) {
 		ManaAccumulator = 0;
 	}
-}
-
-// Sets the fighter's accumulators
-void _Fighter::SetRegenAccumulators(float THealthAccumulator, float TManaAccumulator) {
-	HealthAccumulator = THealthAccumulator;
-	ManaAccumulator = TManaAccumulator;
 }
 
 // Generate damage

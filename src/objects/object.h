@@ -45,10 +45,10 @@ class _Object {
 
 		int GetType() const { return Type; }
 
-		void SetDeleted(bool TValue) { Deleted = TValue; }
+		void SetDeleted(bool Value) { Deleted = Value; }
 		bool GetDeleted() const { return Deleted; }
 
-		void SetNetworkID(char TValue) { NetworkID = TValue; }
+		void SetNetworkID(char Value) { NetworkID = Value; }
 		char GetNetworkID() const { return NetworkID; }
 
 		void SetPosition(const glm::ivec2 &Position) { this->Position = Position; }

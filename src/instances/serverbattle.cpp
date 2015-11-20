@@ -43,7 +43,7 @@ int _ServerBattle::RemovePlayer(_Player *Player) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetType() == _Fighter::TYPE_PLAYER) {
+		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
 			_Player *Player = static_cast<_Player *>(Fighters[i]);
 
 			if(Player == Player) {
@@ -77,7 +77,7 @@ void _ServerBattle::StartBattle() {
 	for(int i = 0; i < FighterCount; i++) {
 
 		// Write fighter type
-		int Type = Fighters[i]->GetType();
+		int Type = Fighters[i]->Type;
 		Packet.WriteBit(!!Type);
 		Packet.WriteBit(!!Fighters[i]->GetSide());
 
@@ -88,10 +88,10 @@ void _ServerBattle::StartBattle() {
 			Packet.Write<char>(Player->GetNetworkID());
 
 			// Player stats
-			Packet.Write<int32_t>(Player->GetHealth());
-			Packet.Write<int32_t>(Player->GetMaxHealth());
-			Packet.Write<int32_t>(Player->GetMana());
-			Packet.Write<int32_t>(Player->GetMaxMana());
+			Packet.Write<int32_t>(Player->Health);
+			Packet.Write<int32_t>(Player->MaxHealth);
+			Packet.Write<int32_t>(Player->Mana);
+			Packet.Write<int32_t>(Player->MaxMana);
 
 			// Start the battle for the player
 			Player->StartBattle(this);
@@ -126,7 +126,7 @@ void _ServerBattle::HandleInput(_Player *Player, int Command, int Target) {
 			// Check for all commands
 			bool Ready = true;
 			for(size_t i = 0; i < Fighters.size(); i++) {
-				if(Fighters[i] && Fighters[i]->GetHealth() > 0 && Fighters[i]->GetCommand() == -1) {
+				if(Fighters[i] && Fighters[i]->Health > 0 && Fighters[i]->GetCommand() == -1) {
 					Ready = false;
 					break;
 				}
@@ -184,7 +184,7 @@ void _ServerBattle::ResolveTurn() {
 			Result->Fighter = Fighters[i];
 
 			// Ignore dead fighters
-			if(Fighters[i]->GetHealth() > 0) {
+			if(Fighters[i]->Health > 0) {
 				Result->Target = Fighters[i]->Target;
 
 				// Get skill used
@@ -224,8 +224,8 @@ void _ServerBattle::ResolveTurn() {
 			Packet.Write<int32_t>(Results[i].SkillID);
 			Packet.Write<int32_t>(Results[i].DamageDealt);
 			Packet.Write<int32_t>(Results[i].HealthChange);
-			Packet.Write<int32_t>(Fighters[i]->GetHealth());
-			Packet.Write<int32_t>(Fighters[i]->GetMana());
+			Packet.Write<int32_t>(Fighters[i]->Health);
+			Packet.Write<int32_t>(Fighters[i]->Mana);
 		}
 	}
 
@@ -253,7 +253,7 @@ void _ServerBattle::CheckEnd() {
 		for(size_t j = 0; j < SideFighters.size(); j++) {
 
 			// Keep track of players
-			if(SideFighters[j]->GetType() == _Fighter::TYPE_PLAYER) {
+			if(SideFighters[j]->Type == _Fighter::TYPE_PLAYER) {
 				Players.push_back(static_cast<_Player *>(SideFighters[j]));
 				Side[i].PlayerCount++;
 			}
@@ -261,7 +261,7 @@ void _ServerBattle::CheckEnd() {
 				Side[i].MonsterCount++;
 
 			// Tally alive fighters
-			if(SideFighters[j]->GetHealth() > 0) {
+			if(SideFighters[j]->Health > 0) {
 				Side[i].Dead = false;
 			}
 
@@ -353,8 +353,8 @@ void _ServerBattle::CheckEnd() {
 				Players[i]->UpdateMonsterKills(OppositeSide->MonsterCount);
 
 				// Revive dead players and give them one health
-				if(Players[i]->GetHealth() == 0)
-					Players[i]->SetHealth(1);
+				if(Players[i]->Health == 0)
+					Players[i]->Health = 1;
 			}
 
 			// Update stats
@@ -403,7 +403,7 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetType() == _Fighter::TYPE_PLAYER) {
+		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
 			_Player *Player = static_cast<_Player *>(Fighters[i]);
 			ServerNetwork->SendPacketToPeer(Packet, Player->GetPeer());
 		}

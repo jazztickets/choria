@@ -251,10 +251,8 @@ void _ClientBattle::ResolveTurn(_Buffer *Packet) {
 			Results[i].Target = Packet->Read<int32_t>();
 			Results[i].DamageDealt = Packet->Read<int32_t>();
 			Results[i].HealthChange = Packet->Read<int32_t>();
-			int Health = Packet->Read<int32_t>();
-			int Mana = Packet->Read<int32_t>();
-			Fighters[i]->SetHealth(Health);
-			Fighters[i]->SetMana(Mana);
+			Fighters[i]->Health = Packet->Read<int32_t>();
+			Fighters[i]->Mana = Packet->Read<int32_t>();
 			Fighters[i]->SetSkillUsed(Fighters[i]->GetSkillUsing());
 			Fighters[i]->SetSkillUsing(nullptr);
 		}
@@ -262,7 +260,7 @@ void _ClientBattle::ResolveTurn(_Buffer *Packet) {
 
 	// Change targets if the old one died
 	int TargetIndex = GetFighterFromSlot(ClientPlayer->Target);
-	if(TargetIndex != -1 && Fighters[TargetIndex]->GetHealth() == 0)
+	if(TargetIndex != -1 && Fighters[TargetIndex]->Health == 0)
 		ChangeTarget(1);
 
 	Timer = 0;
@@ -345,7 +343,7 @@ void _ClientBattle::GetPositionFromSlot(int Slot, glm::ivec2 &Position) {
 
 // Sends a skill selection to the server
 void _ClientBattle::SendSkill(int SkillSlot) {
-	if(ClientPlayer->GetHealth() == 0)
+	if(ClientPlayer->Health == 0)
 		return;
 
 	const _Skill *Skill = ClientPlayer->GetSkillBar(SkillSlot);
@@ -369,7 +367,7 @@ void _ClientBattle::SendSkill(int SkillSlot) {
 
 // Changes targets
 void _ClientBattle::ChangeTarget(int Direction) {
-	if(ClientPlayer->GetHealth() == 0)
+	if(ClientPlayer->Health == 0)
 		return;
 
 	// Get a list of fighters on the opposite side
@@ -386,7 +384,7 @@ void _ClientBattle::ChangeTarget(int Direction) {
 		else if(Index < 0)
 			Index = SideFighters.size()-1;
 
-	} while(StartIndex != Index && SideFighters[Index]->GetHealth() == 0);
+	} while(StartIndex != Index && SideFighters[Index]->Health == 0);
 
 	// Set new target
 	ClientPlayer->Target = SideFighters[Index]->BattleSlot;

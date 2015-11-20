@@ -64,8 +64,6 @@ class _Item {
 		void GetType(std::string &TString) const;
 		int GetPrice(const _Vendor *TVendor, int TCount, bool TBuy) const;
 
-	private:
-
 		int ID;
 		std::string Name;
 		int Level;
@@ -85,4 +83,7 @@ class _Item {
 		float HealthRegen;
 		float ManaRegen;
 		int InvisPower;
+
+	private:
+
 };

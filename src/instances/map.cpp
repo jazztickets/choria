@@ -392,7 +392,7 @@ void _Map::AddObject(_Object *TObject) {
 	switch(TObject->GetType()) {
 		case _Object::PLAYER: {
 			_Player *NewPlayer = static_cast<_Player *>(TObject);
-			Packet.WriteString(NewPlayer->GetName().c_str());
+			Packet.WriteString(NewPlayer->Name.c_str());
 			Packet.Write<char>(NewPlayer->GetPortraitID());
 			Packet.WriteBit(NewPlayer->IsInvisible());
 		}

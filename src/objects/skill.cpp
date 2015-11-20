@@ -83,8 +83,8 @@ void _Skill::GetPowerRange(int TLevel, float &TMin, float &TMax) const {
 }
 
 // Resolves the use of a skill in battle.
-void _Skill::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const {
-	_Fighter *Fighter = TResult->Fighter;
+void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TTargetResult) const {
+	_Fighter *Fighter = Result->Fighter;
 	_Fighter *TargetFighter = TTargetResult->Fighter;
 	int SkillLevel = Fighter->GetSkillLevel(ID);
 
@@ -108,7 +108,7 @@ void _Skill::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult
 			ManaCost = GetManaCost(SkillLevel);
 		break;
 		case TYPE_USEPOTION:
-			if(Fighter->GetType() == _Fighter::TYPE_PLAYER) {
+			if(Fighter->Type == _Fighter::TYPE_PLAYER) {
 				_Player *Player = static_cast<_Player *>(Fighter);
 
 				// Use the potion
@@ -134,12 +134,12 @@ void _Skill::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult
 	Damage -= TargetFighter->GenerateDefense();
 	if(Damage < 0)
 		Damage = 0;
-	TResult->DamageDealt = Damage;
+	Result->DamageDealt = Damage;
 
 	// Update results
 	TTargetResult->HealthChange += -Damage;
-	TResult->HealthChange += Healing;
-	TResult->ManaChange += ManaRestore - ManaCost;
+	Result->HealthChange += Healing;
+	Result->ManaChange += ManaRestore - ManaCost;
 }
 
 // Determines if a skill can be used
@@ -151,12 +151,12 @@ bool _Skill::CanUse(_Fighter *TFighter) const {
 		return false;
 
 	// Spell cost
-	if(TFighter->GetMana() < GetManaCost(Level))
+	if(TFighter->Mana < GetManaCost(Level))
 		return false;
 
 	// Potions
 	if(Type == TYPE_USEPOTION) {
-		if(TFighter->GetType() == _Fighter::TYPE_MONSTER)
+		if(TFighter->Type == _Fighter::TYPE_MONSTER)
 			return false;
 
 		_Player *Player = static_cast<_Player *>(TFighter);

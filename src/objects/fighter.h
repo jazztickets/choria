@@ -39,40 +39,19 @@ class _Fighter {
 			TYPE_MONSTER,
 		};
 
-		_Fighter(int TType);
+		_Fighter(int Type);
 		virtual ~_Fighter();
 
-		// Object
-		int GetType() const { return Type; }
-
 		// Render
-		void RenderBattle(bool ShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget);
+		void RenderBattle(bool ShowResults, float TimerPercent, _FighterResult *Result, bool TTarget);
 		void SetOffset(const glm::ivec2 &Position) { Offset = Position; }
 
 		// Stats
-		void SetName(const std::string &TName) { Name = TName; }
-		void SetHealth(int TValue) { Health = TValue; }
-		void SetMaxHealth(int TValue) { MaxHealth = TValue; }
-		void SetMana(int TValue) { Mana = TValue; }
-		void SetMaxMana(int TValue) { MaxMana = TValue; }
-
-		const std::string &GetName() const { return Name; }
-		int GetHealth() const { return Health; }
-		int GetMaxHealth() const { return MaxHealth; }
-		int GetMana() const { return Mana; }
-		int GetMaxMana() const { return MaxMana; }
-
-		float GetHealthRegen() const { return HealthRegen; }
-		float GetManaRegen() const { return ManaRegen; }
-		float GetHealthAccumulator() const { return HealthAccumulator; }
-		float GetManaAccumulator() const { return ManaAccumulator; }
-
-		void UpdateHealth(int TValue);
-		void UpdateMana(int TValue);
+		void UpdateHealth(int Value);
+		void UpdateMana(int Value);
 		void RestoreHealthMana();
 
 		void UpdateRegen(int &THealthUpdate, int &TManaUpdate);
-		void SetRegenAccumulators(float THealthAccumulator, float TManaAccumulator);
 
 		int GetLevel() const { return Level; }
 
@@ -91,7 +70,7 @@ class _Fighter {
 		virtual int GetExperienceGiven() const { return 0; }
 		virtual int GetGoldGiven() const { return 0; }
 
-		virtual void UpdateExperience(int TValue) { }
+		virtual void UpdateExperience(int Value) { }
 		virtual int GetSkillLevel(int Slot) const { return 1; }
 
 		// Skills

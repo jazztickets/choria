@@ -435,8 +435,8 @@ void _HUD::Render() {
 	Assets.Elements["element_hud_experience"]->Render();
 
 	// Draw health bar
-	float HealthPercent = Player->GetMaxHealth() > 0 ? Player->GetHealth() / (float)Player->GetMaxHealth() : 0;
-	Buffer << Player->GetHealth() << " / " << Player->GetMaxHealth();
+	float HealthPercent = Player->MaxHealth > 0 ? Player->Health / (float)Player->MaxHealth : 0;
+	Buffer << Player->Health << " / " << Player->MaxHealth;
 	Assets.Labels["label_hud_health"]->Text = Buffer.str();
 	Buffer.str("");
 	Assets.Images["image_hud_health_bar_full"]->SetWidth(Assets.Elements["element_hud_health"]->Size.x * HealthPercent);
@@ -444,8 +444,8 @@ void _HUD::Render() {
 	Assets.Elements["element_hud_health"]->Render();
 
 	// Draw mana bar
-	float ManaPercent = Player->GetMaxMana() > 0 ? Player->GetMana() / (float)Player->GetMaxMana() : 0;
-	Buffer << Player->GetMana() << " / " << Player->GetMaxMana();
+	float ManaPercent = Player->MaxMana > 0 ? Player->Mana / (float)Player->MaxMana : 0;
+	Buffer << Player->Mana << " / " << Player->MaxMana;
 	Assets.Labels["label_hud_mana"]->Text = Buffer.str();
 	Buffer.str("");
 	Assets.Images["image_hud_mana_bar_full"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x * ManaPercent);
@@ -519,7 +519,7 @@ void _HUD::Render() {
 void _HUD::SetPlayer(_Player *Player) {
 	this->Player = Player;
 
-	Assets.Labels["label_hud_name"]->Text = Player->GetName();
+	Assets.Labels["label_hud_name"]->Text = Player->Name;
 }
 
 // Starts the chat box
@@ -532,7 +532,7 @@ void _HUD::ToggleChat() {
 
 			// Add message to history
 			_ChatMessage Chat;
-			Chat.Message = Player->GetName() + std::string(": ") + Message;
+			Chat.Message = Player->Name + std::string(": ") + Message;
 			ChatHistory.push_back(Chat);
 			printf("%s\n", Chat.Message.c_str());
 
@@ -1104,7 +1104,7 @@ void _HUD::DrawTrade() {
 		TraderWindow->setVisible(true);
 
 		// Draw player information
-		//Graphics.RenderText(TradePlayer->GetName().c_str(), OffsetX + 72, OffsetY + 70 - 55, _Graphics::ALIGN_CENTER);
+		//Graphics.RenderText(TradePlayer->Name.c_str(), OffsetX + 72, OffsetY + 70 - 55, _Graphics::ALIGN_CENTER);
 		Graphics.DrawCenteredImage(Stats.GetPortrait(TradePlayer->GetPortraitID())->Image, OffsetX + 72, OffsetY + 70);
 
 		// Draw items
@@ -1135,7 +1135,7 @@ void _HUD::DrawTrade() {
 	}
 
 	// Draw player information
-	//Graphics.RenderText(Player->GetName().c_str(), OffsetX + 72, OffsetY + 198 - 55, _Graphics::ALIGN_CENTER);
+	//Graphics.RenderText(Player->Name.c_str(), OffsetX + 72, OffsetY + 198 - 55, _Graphics::ALIGN_CENTER);
 	Graphics.DrawCenteredImage(Stats.GetPortrait(Player->GetPortraitID())->Image, OffsetX + 72, OffsetY + 198);
 	*/
 }
@@ -1376,16 +1376,16 @@ void _HUD::DrawItemTooltip() {
 		}
 
 		// Boosts
-		if(Item->GetMaxHealth() > 0) {
+		if(Item->MaxHealth > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << Item->GetMaxHealth();
+			Buffer << "+" << Item->MaxHealth;
 			Assets.Fonts["hud_medium"]->DrawText("HP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
-		if(Item->GetMaxMana() > 0) {
+		if(Item->MaxMana > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << Item->GetMaxMana();
+			Buffer << "+" << Item->MaxMana;
 			Assets.Fonts["hud_medium"]->DrawText("MP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;

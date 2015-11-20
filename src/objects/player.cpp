@@ -328,9 +328,9 @@ bool _Player::CanAttackPlayer() {
 }
 
 // Update gold amount
-void _Player::UpdateGold(int TValue) {
+void _Player::UpdateGold(int Value) {
 
-	Gold += TValue;
+	Gold += Value;
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > STATS_MAXGOLD)
@@ -805,12 +805,12 @@ void _Player::CalculateSkillPoints() {
 }
 
 // Toggles the player's busy state
-void _Player::ToggleBusy(bool TValue) {
+void _Player::ToggleBusy(bool Value) {
 
-	if(TValue && State == STATE_WALK) {
+	if(Value && State == STATE_WALK) {
 		State = STATE_BUSY;
 	}
-	else if(!TValue && State == STATE_BUSY) {
+	else if(!Value && State == STATE_BUSY) {
 		State = STATE_WALK;
 	}
 }
@@ -901,8 +901,8 @@ void _Player::CalculateGearStats() {
 			ArmorMaxDefense += Max;
 
 			// Boosts
-			MaxHealth += Item->GetMaxHealth();
-			MaxMana += Item->GetMaxMana();
+			MaxHealth += Item->MaxHealth;
+			MaxMana += Item->MaxMana;
 			HealthRegen += Item->GetHealthRegen();
 			ManaRegen += Item->GetManaRegen();
 		}

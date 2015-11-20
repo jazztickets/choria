@@ -408,7 +408,7 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	Player->SetCharacterID(Database->GetInt(0));
 	Player->SetSpawnMapID(Database->GetInt(2));
 	Player->SetSpawnPoint(Database->GetInt(3));
-	Player->SetName(std::string(Database->GetString(4)));
+	Player->Name = Database->GetString(4);
 	Player->SetPortraitID(Database->GetInt(5));
 	Player->SetExperience(Database->GetInt(6));
 	Player->SetGold(Database->GetInt(7));
@@ -452,7 +452,7 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	_Buffer NewPacket;
 	NewPacket.Write<char>(_Network::WORLD_YOURCHARACTERINFO);
 	NewPacket.Write<char>(Player->GetNetworkID());
-	NewPacket.WriteString(Player->GetName().c_str());
+	NewPacket.WriteString(Player->Name.c_str());
 	NewPacket.Write<int32_t>(Player->GetPortraitID());
 	NewPacket.Write<int32_t>(Player->GetExperience());
 	NewPacket.Write<int32_t>(Player->GetGold());
@@ -690,7 +690,7 @@ void _ServerState::HandleBattleFinished(_Buffer *Packet, ENetPeer *TPeer) {
 	RemovePlayerFromBattle(Player);
 
 	// Check for death
-	if(Player->GetHealth() == 0) {
+	if(Player->Health == 0) {
 		Player->RestoreHealthMana();
 		SpawnPlayer(Player, Player->GetSpawnMapID(), _Map::EVENT_SPAWN, Player->GetSpawnPoint());
 		Player->Save();
@@ -1174,7 +1174,7 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 			switch(Object->GetType()) {
 				case _Object::PLAYER: {
 					_Player *PlayerObject = static_cast<_Player *>(Object);
-					Packet.WriteString(PlayerObject->GetName().c_str());
+					Packet.WriteString(PlayerObject->Name.c_str());
 					Packet.Write<char>(PlayerObject->GetPortraitID());
 					Packet.WriteBit((PlayerObject->IsInvisible()));
 				}
@@ -1198,10 +1198,10 @@ void _ServerState::SendHUD(_Player *TPlayer) {
 	Packet.Write<char>(_Network::WORLD_HUD);
 	Packet.Write<int32_t>(TPlayer->GetExperience());
 	Packet.Write<int32_t>(TPlayer->GetGold());
-	Packet.Write<int32_t>(TPlayer->GetHealth());
-	Packet.Write<int32_t>(TPlayer->GetMana());
-	Packet.Write<float>(TPlayer->GetHealthAccumulator());
-	Packet.Write<float>(TPlayer->GetManaAccumulator());
+	Packet.Write<int32_t>(TPlayer->Health);
+	Packet.Write<int32_t>(TPlayer->Mana);
+	Packet.Write<float>(TPlayer->HealthAccumulator);
+	Packet.Write<float>(TPlayer->ManaAccumulator);
 
 	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
 }
