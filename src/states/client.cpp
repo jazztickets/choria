@@ -468,7 +468,7 @@ void _ClientState::HandleChangeMaps(_Buffer *Packet) {
 		// Clear out other objects
 		ObjectManager->DeletesObjectsExcept(Player);
 
-		Player->SetMap(NewMap);
+		Player->Map = NewMap;
 		Map = NewMap;
 
 		// Get player count for map

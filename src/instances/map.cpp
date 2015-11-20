@@ -370,13 +370,13 @@ int _Map::GetTextureIndex(std::vector<const _Texture *> &TTextures, const _Textu
 }
 
 // Determines if a square can be moved to
-bool _Map::CanMoveTo(const glm::ivec2 &TPosition) {
+bool _Map::CanMoveTo(const glm::ivec2 &Position) {
 
 	// Bounds
-	if(TPosition.x < 0 || TPosition.x >= Size.x || TPosition.y < 0 || TPosition.y >= Size.y)
+	if(Position.x < 0 || Position.x >= Size.x || Position.y < 0 || Position.y >= Size.y)
 		return false;
 
-	return !Tiles[TPosition.x][TPosition.y].Wall;
+	return !Tiles[Position.x][Position.y].Wall;
 }
 
 // Adds an object to the map

@@ -51,16 +51,10 @@ class _Object {
 		void SetNetworkID(char TValue) { NetworkID = TValue; }
 		char GetNetworkID() const { return NetworkID; }
 
-		void SetPosition(const glm::ivec2 &TPosition) { Position = TPosition; }
+		void SetPosition(const glm::ivec2 &Position) { this->Position = Position; }
 		const glm::ivec2 &GetPosition() const { return Position; }
 
 		int GetMapID() const;
-
-		// Instances
-		void SetMap(_Map *TMap);
-		_Map *GetMap();
-
-	protected:
 
 		// Instances
 		_Map *Map;
@@ -74,5 +68,8 @@ class _Object {
 
 		// Networking
 		char NetworkID;
+
+	protected:
+
 
 };

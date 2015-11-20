@@ -47,7 +47,7 @@ class _Fighter {
 
 		// Render
 		void RenderBattle(bool ShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget);
-		void SetOffset(const glm::ivec2 &TPosition) { Offset = TPosition; }
+		void SetOffset(const glm::ivec2 &Position) { Offset = Position; }
 
 		// Stats
 		void SetName(const std::string &TName) { Name = TName; }

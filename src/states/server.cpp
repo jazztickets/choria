@@ -628,7 +628,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 
 							// Get a list of players
 							std::list<_Player *> Players;
-							Player->GetMap()->GetClosePlayers(Player, 7*7, Players);
+							Player->Map->GetClosePlayers(Player, 7*7, Players);
 
 							// Add players to battle
 							int PlayersAdded = 0;
@@ -888,7 +888,7 @@ void _ServerState::HandleAttackPlayer(_Buffer *Packet, ENetPeer *TPeer) {
 	if(!Player || !Player->CanAttackPlayer())
 		return;
 
-	_Map *Map = Player->GetMap();
+	_Map *Map = Player->Map;
 	if(!Map)
 		return;
 
@@ -923,7 +923,7 @@ void _ServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	// Get map object
-	_Map *Map = Player->GetMap();
+	_Map *Map = Player->Map;
 	if(!Map)
 		return;
 
@@ -948,7 +948,7 @@ void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	// Get map object
-	_Map *Map = Player->GetMap();
+	_Map *Map = Player->Map;
 	if(!Map)
 		return;
 
@@ -1125,41 +1125,41 @@ void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer) {
 }
 
 // Spawns a player at a particular spawn point
-void _ServerState::SpawnPlayer(_Player *TPlayer, int TNewMapID, int TEventType, int TEventData) {
+void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData) {
 
 	// Get new map
-	_Map *NewMap = Instances->GetMap(TNewMapID);
+	_Map *NewMap = Instances->GetMap(NewMapID);
 
 	// Remove old player if map has changed
-	_Map *OldMap = TPlayer->GetMap();
+	_Map *OldMap = Player->Map;
 	if(OldMap && NewMap != OldMap)
-		OldMap->RemoveObject(TPlayer);
+		OldMap->RemoveObject(Player);
 
 	// Get spawn position
-	_IndexedEvent *SpawnEvent = NewMap->GetIndexedEvent(TEventType, TEventData);
+	_IndexedEvent *SpawnEvent = NewMap->GetIndexedEvent(EventType, EventData);
 	if(SpawnEvent) {
-		TPlayer->SetPosition(SpawnEvent->Position);
-		SendPlayerPosition(TPlayer);
+		Player->SetPosition(SpawnEvent->Position);
+		SendPlayerPosition(Player);
 	}
 
 	// Set state
-	TPlayer->SetState(_Player::STATE_WALK);
+	Player->SetState(_Player::STATE_WALK);
 
 	// Send new object list
 	if(NewMap != OldMap) {
 
 		// Update pointers
-		TPlayer->SetMap(NewMap);
+		Player->Map = NewMap;
 
 		// Add player to map
-		NewMap->AddObject(TPlayer);
+		NewMap->AddObject(Player);
 
 		// Build packet for player
 		_Buffer Packet;
 		Packet.Write<char>(_Network::WORLD_CHANGEMAPS);
 
 		// Send player info
-		Packet.Write<int32_t>(TNewMapID);
+		Packet.Write<int32_t>(NewMapID);
 
 		// Write object data
 		std::list<_Object *> Objects = NewMap->GetObjects();
@@ -1173,10 +1173,10 @@ void _ServerState::SpawnPlayer(_Player *TPlayer, int TNewMapID, int TEventType, 
 			Packet.Write<char>(Object->GetType());
 			switch(Object->GetType()) {
 				case _Object::PLAYER: {
-					_Player *Player = static_cast<_Player *>(Object);
-					Packet.WriteString(Player->GetName().c_str());
-					Packet.Write<char>(Player->GetPortraitID());
-					Packet.WriteBit((Player->IsInvisible()));
+					_Player *PlayerObject = static_cast<_Player *>(Object);
+					Packet.WriteString(PlayerObject->GetName().c_str());
+					Packet.Write<char>(PlayerObject->GetPortraitID());
+					Packet.WriteBit((PlayerObject->IsInvisible()));
 				}
 				break;
 				default:
@@ -1185,7 +1185,7 @@ void _ServerState::SpawnPlayer(_Player *TPlayer, int TNewMapID, int TEventType, 
 		}
 
 		// Send object list to the player
-		ServerNetwork->SendPacketToPeer(&Packet, TPlayer->GetPeer());
+		ServerNetwork->SendPacketToPeer(&Packet, Player->GetPeer());
 	}
 
 	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->GetNetworkID());
@@ -1295,13 +1295,12 @@ void _ServerState::RemovePlayerFromBattle(_Player *TPlayer) {
 }
 
 // Deletes an object on the server and broadcasts it to the clients
-void _ServerState::DeleteObject(_Object *TObject) {
+void _ServerState::DeleteObject(_Object *Object) {
 
 	// Remove the object from their current map
-	_Map *Map = TObject->GetMap();
-	if(Map) {
-		Map->RemoveObject(TObject);
-	}
+	_Map *Map = Object->Map;
+	if(Map)
+		Map->RemoveObject(Object);
 }
 
 // Called when object gets deleted

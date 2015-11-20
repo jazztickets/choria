@@ -33,18 +33,6 @@ _Object::~_Object() {
 
 }
 
-// Changes the object's map
-void _Object::SetMap(_Map *TMap) {
-
-	Map = TMap;
-}
-
-// Returns the object's map
-_Map *_Object::GetMap() {
-
-	return Map;
-}
-
 // Returns the object's map id
 int _Object::GetMapID() const {
 	if(!Map)

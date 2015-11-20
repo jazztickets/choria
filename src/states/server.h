@@ -81,7 +81,7 @@ class _ServerState : public _State {
 		void HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer);
 
 		void SendPlayerPosition(_Player *TPlayer);
-		void SpawnPlayer(_Player *TPlayer, int TNewMapID, int TEventType, int TEventData);
+		void SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData);
 		void SendHUD(_Player *TPlayer);
 		void SendCharacterList(_Player *TPlayer);
 		void SendEvent(_Player *TPlayer, int TType, int TData);

@@ -79,7 +79,7 @@ class _Map {
 		void Render(_Camera *Camera, int RenderFlags=0);
 
 		// Collision
-		bool CanMoveTo(const glm::ivec2 &TPosition);
+		bool CanMoveTo(const glm::ivec2 &Position);
 
 		// Object management
 		void AddObject(_Object *TObject);
