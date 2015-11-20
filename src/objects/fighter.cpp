@@ -69,12 +69,6 @@ _Fighter::~_Fighter() {
 // Renders the fighter during a battle
 void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
 
-	uint32_t AlphaPercent = (uint32_t)(255 * TTimerPercent);
-	if(TTimerPercent > 0.75f)
-		AlphaPercent = 255;
-	else
-		AlphaPercent = (uint32_t)(255 * TTimerPercent / 0.75f);
-
 	// Get slot ui element depending on side
 	_Element *Slot;
 	if(GetSide() == 0)
@@ -109,19 +103,21 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 	float HealthPercent = MaxHealth > 0 ? Health / (float)MaxHealth : 0;
 
 	// Get ui size
-	_Bounds Bounds;
-	Bounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
-	Bounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
-	glm::ivec2 BarCenter = (Bounds.Start + Bounds.End) / 2;
+	_Bounds BarBounds;
+	BarBounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
+	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
+	glm::ivec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2;
+	glm::ivec2 HealthBarCenter = BarCenter;
+	int BarEndX = BarBounds.End.x;
 
 	// Draw empty bar
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);
-	Graphics.DrawImage(Bounds, Assets.Images["image_hud_health_bar_empty"]->Texture, true);
+	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
-	Bounds.End = SlotPosition + glm::ivec2(BarSize.x * HealthPercent, BarSize.y/2) + BarOffset;
-	Graphics.DrawImage(Bounds, Assets.Images["image_hud_health_bar_full"]->Texture, true);
+	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * HealthPercent, BarSize.y/2) + BarOffset;
+	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_full"]->Texture, true);
 
 	// Draw health text
 	std::stringstream Buffer;
@@ -135,66 +131,76 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 
 		// Get ui size
 		BarOffset.y = -BarOffset.y;
-		Bounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
-		Bounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
-		BarCenter = (Bounds.Start + Bounds.End) / 2;
+		BarBounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
+		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
+		BarCenter = (BarBounds.Start + BarBounds.End) / 2;
 
 		// Draw empty bar
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.SetVBO(VBO_NONE);
-		Graphics.DrawImage(Bounds, Assets.Images["image_hud_mana_bar_empty"]->Texture, true);
+		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_empty"]->Texture, true);
 
 		// Draw full bar
-		Bounds.End = SlotPosition + glm::ivec2(BarSize.x * ManaPercent, BarSize.y/2) + BarOffset;
-		Graphics.DrawImage(Bounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
+		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * ManaPercent, BarSize.y/2) + BarOffset;
+		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
 		Buffer << Mana << " / " << MaxMana;
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), COLOR_WHITE, CENTER_BASELINE);
 		Buffer.str("");
 	}
-	/*
+
 	// Show results of last turn
 	if(TShowResults) {
 
+		float AlphaPercent;
+		if(TTimerPercent > 0.75f)
+			AlphaPercent = 1;
+		else
+			AlphaPercent = TTimerPercent / 0.75f;
+
 		char Sign = ' ';
-		video::SColor Color(AlphaPercent, 150, 150, 150);
+		glm::vec4 Color = COLOR_GRAY;
 		if(TResult->HealthChange > 0) {
 			Sign = '+';
-			Color.set(AlphaPercent, 0, 255, 0);
+			Color = COLOR_GREEN;
 		}
 		else if(TResult->HealthChange < 0) {
-			Color.set(AlphaPercent, 255, 0, 0);
+			Color = COLOR_RED;
 		}
+		Color.w = AlphaPercent;
 
-		sprintf(String, "%c%d", Sign, TResult->HealthChange);
-		Graphics.SetFont(_Graphics::FONT_14);
-		//Graphics.RenderText(String, BarX + BarWidth / 2, Offset.y + 2, _Graphics::ALIGN_CENTER, Color);
-		Graphics.SetFont(_Graphics::FONT_10);
+		Buffer << Sign << TResult->HealthChange;
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), HealthBarCenter + glm::ivec2(0, -20), Color, CENTER_BASELINE);
 
-		// Draw the skill used
-		if(SkillUsed) {
-			Graphics.DrawCenteredImage(SkillUsed->GetImage(), Offset.x + 180, Offset.y + 50, video::SColor(AlphaPercent, 255, 255, 255));
-		}
+		const _Texture *SkillTexture;
+		if(SkillUsed)
+			SkillTexture = SkillUsed->Image;
+		else
+			SkillTexture = Assets.Textures["skills/attack.png"];
+
+		// Draw skill icon
+		glm::vec4 WhiteAlpha = glm::vec4(1.0f, 1.0f, 1.0f, AlphaPercent);
+		glm::ivec2 SkillUsedPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(SkillUsedPosition, SkillTexture, WhiteAlpha);
 
 		// Draw damage dealt
-		if(TResult->DamageDealt) {
-			sprintf(String, "%d", TResult->DamageDealt);
-			Graphics.SetFont(_Graphics::FONT_14);
-			//Graphics.RenderText(String, Offset.x + 178, Offset.y + 38, _Graphics::ALIGN_CENTER, video::SColor(AlphaPercent, 255, 255, 255));
-			Graphics.SetFont(_Graphics::FONT_10);
-		}
+		Assets.Fonts["hud_medium"]->DrawText(std::to_string(TResult->DamageDealt).c_str(), SkillUsedPosition, WhiteAlpha, CENTER_MIDDLE);
 	}
-
 	// Draw the skill used
 	if(SkillUsing) {
-		Graphics.DrawCenteredImage(SkillUsing->GetImage(), Offset.x + 180, Offset.y + 50, video::SColor(255, 255, 255, 255));
+		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + SkillUsing->Image->Size.x/2 + 10, 0);
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(SkillUsingPosition, SkillUsing->Image);
 	}
 
 	// Draw target
-	if(TTarget)
-		Graphics.DrawImage(_Graphics::IMAGE_BATTLETARGET, Offset.x - 20, Offset.y + 50);
-		*/
+	if(TTarget) {
+		const _Texture *Texture = Assets.Textures["battle/target.png"];
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture);
+	}
 }
 
 // Returns the fighter's current battle

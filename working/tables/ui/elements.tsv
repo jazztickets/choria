@@ -18,6 +18,6 @@ element_trader		style_hud_bg	0	0	240	400	1	1	0
 element_teleport		style_hud_bg	0	-100	150	48	1	1	0
 element_skills		style_hud_bg	0	0	474	450	1	1	0
 element_skills_tooltip		style_hud_item_tooltip_bg	0	0	370	250	0	0	0
-element_battle		style_hud_bg	0	0	540	360	1	1	0
+element_battle		style_hud_bg	0	0	560	360	1	1	0
 element_side_left		style_battle_slot_green	0	0	64	64	1	1	0
 element_side_right		style_battle_slot_red	0	0	64	64	1	1	0
