@@ -72,26 +72,26 @@ class _ClientState : public _State {
 
 	private:
 
-		void HandleYourCharacterInfo(_Buffer *TPacket);
-		void HandleChangeMaps(_Buffer *TPacket);
-		void HandleCreateObject(_Buffer *TPacket);
-		void HandleDeleteObject(_Buffer *TPacket);
-		void HandleObjectUpdates(_Buffer *TPacket);
-		void HandleStartBattle(_Buffer *TPacket);
-		void HandleBattleTurnResults(_Buffer *TPacket);
-		void HandleBattleEnd(_Buffer *TPacket);
-		void HandleBattleCommand(_Buffer *TPacket);
-		void HandleHUD(_Buffer *TPacket);
-		void HandlePlayerPosition(_Buffer *TPacket);
-		void HandleEventStart(_Buffer *TPacket);
-		void HandleInventoryUse(_Buffer *TPacket);
-		void HandleChatMessage(_Buffer *TPacket);
-		void HandleTradeRequest(_Buffer *TPacket);
-		void HandleTradeCancel(_Buffer *TPacket);
-		void HandleTradeItem(_Buffer *TPacket);
-		void HandleTradeGold(_Buffer *TPacket);
-		void HandleTradeAccept(_Buffer *TPacket);
-		void HandleTradeExchange(_Buffer *TPacket);
+		void HandleYourCharacterInfo(_Buffer *Packet);
+		void HandleChangeMaps(_Buffer *Packet);
+		void HandleCreateObject(_Buffer *Packet);
+		void HandleDeleteObject(_Buffer *Packet);
+		void HandleObjectUpdates(_Buffer *Packet);
+		void HandleStartBattle(_Buffer *Packet);
+		void HandleBattleTurnResults(_Buffer *Packet);
+		void HandleBattleEnd(_Buffer *Packet);
+		void HandleBattleCommand(_Buffer *Packet);
+		void HandleHUD(_Buffer *Packet);
+		void HandlePlayerPosition(_Buffer *Packet);
+		void HandleEventStart(_Buffer *Packet);
+		void HandleInventoryUse(_Buffer *Packet);
+		void HandleChatMessage(_Buffer *Packet);
+		void HandleTradeRequest(_Buffer *Packet);
+		void HandleTradeCancel(_Buffer *Packet);
+		void HandleTradeItem(_Buffer *Packet);
+		void HandleTradeGold(_Buffer *Packet);
+		void HandleTradeAccept(_Buffer *Packet);
+		void HandleTradeExchange(_Buffer *Packet);
 
 		void SendMoveCommand(int TDirection);
 		void SendAttackPlayer();

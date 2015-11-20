@@ -399,13 +399,13 @@ void _ServerBattle::CheckEnd() {
 }
 
 // Send a packet to all players
-void _ServerBattle::SendPacketToPlayers(_Buffer *TPacket) {
+void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetType() == _Fighter::TYPE_PLAYER) {
 			_Player *Player = static_cast<_Player *>(Fighters[i]);
-			ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer());
+			ServerNetwork->SendPacketToPeer(Packet, Player->GetPeer());
 		}
 	}
 }

@@ -55,30 +55,30 @@ class _ServerState : public _State {
 
 		void CreateDefaultDatabase();
 
-		void HandleLoginInfo(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleCharacterListRequest(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleCharacterSelect(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleCharacterDelete(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleCharacterCreate(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleMoveCommand(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleBattleCommand(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleBattleFinished(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleInventoryMove(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleInventoryUse(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleInventorySplit(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleEventEnd(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleVendorExchange(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleSkillBar(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleSkillAdjust(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandlePlayerBusy(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleAttackPlayer(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleChatMessage(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleTradeRequest(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleTradeCancel(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleTradeGold(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleTradeAccept(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleTeleport(_Buffer *TPacket, ENetPeer *TPeer);
-		void HandleTraderAccept(_Buffer *TPacket, ENetPeer *TPeer);
+		void HandleLoginInfo(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleCharacterListRequest(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleCharacterDelete(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleCharacterCreate(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleBattleCommand(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleBattleFinished(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleInventoryMove(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleInventoryUse(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleInventorySplit(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleEventEnd(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleVendorExchange(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleSkillBar(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleSkillAdjust(_Buffer *Packet, ENetPeer *TPeer);
+		void HandlePlayerBusy(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleAttackPlayer(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleChatMessage(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleTradeRequest(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleTradeCancel(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleTradeGold(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleTradeAccept(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleTeleport(_Buffer *Packet, ENetPeer *TPeer);
+		void HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer);
 
 		void SendPlayerPosition(_Player *TPlayer);
 		void SpawnPlayer(_Player *TPlayer, int TNewMapID, int TEventType, int TEventData);
@@ -87,7 +87,7 @@ class _ServerState : public _State {
 		void SendEvent(_Player *TPlayer, int TType, int TData);
 		void SendTradeInformation(_Player *TSender, _Player *TReceiver);
 
-		void BuildTradeItemsPacket(_Player *TPlayer, _Buffer *TPacket, int TGold);
+		void BuildTradeItemsPacket(_Player *TPlayer, _Buffer *Packet, int TGold);
 
 		void RemovePlayerFromBattle(_Player *TPlayer);
 

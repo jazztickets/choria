@@ -66,8 +66,8 @@ class _ClientBattle : public _Battle {
 		void GetPositionFromSlot(int TSlot, glm::ivec2 &Position);
 
 		// Resolve
-		void ResolveTurn(_Buffer *TPacket);
-		void EndBattle(_Buffer *TPacket);
+		void ResolveTurn(_Buffer *Packet);
+		void EndBattle(_Buffer *Packet);
 
 	private:
 

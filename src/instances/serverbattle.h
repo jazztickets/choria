@@ -55,7 +55,7 @@ class _ServerBattle : public _Battle {
 
 	private:
 
-		void SendPacketToPlayers(_Buffer *TPacket);
+		void SendPacketToPlayers(_Buffer *Packet);
 		void SendSkillToPlayers(_Player *TPlayer);
 
 		double RoundTime;

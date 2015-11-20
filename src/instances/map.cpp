@@ -506,7 +506,7 @@ void _Map::SendObjectUpdates() {
 }
 
 // Sends a packet to all of the players in the map
-void _Map::SendPacketToPlayers(_Buffer *TPacket, _Player *ExceptionPlayer, _Network::SendType Type) {
+void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Network::SendType Type) {
 
 	// Send the packet out
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
@@ -514,7 +514,7 @@ void _Map::SendPacketToPlayers(_Buffer *TPacket, _Player *ExceptionPlayer, _Netw
 			_Player *Player = static_cast<_Player *>(*Iterator);
 
 			if(Player != ExceptionPlayer)
-				ServerNetwork->SendPacketToPeer(TPacket, Player->GetPeer(), Type, Type == _Network::UNSEQUENCED);
+				ServerNetwork->SendPacketToPeer(Packet, Player->GetPeer(), Type, Type == _Network::UNSEQUENCED);
 		}
 	}
 }

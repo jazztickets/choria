@@ -129,8 +129,8 @@ class _Network {
 		virtual uint16_t GetPort() { return 0; }
 
 		// Packets
-		virtual void SendPacketToHost(_Buffer *TPacket, SendType Type=RELIABLE, uint8_t Channel=0) { }
-		virtual void SendPacketToPeer(_Buffer *TPacket, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0) { }
+		virtual void SendPacketToHost(_Buffer *Packet, SendType Type=RELIABLE, uint8_t Channel=0) { }
+		virtual void SendPacketToPeer(_Buffer *Packet, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0) { }
 
 		// Static functions
 		static void InitializeSystem();

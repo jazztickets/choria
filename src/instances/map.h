@@ -88,7 +88,7 @@ class _Map {
 		void GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers);
 		_Player *GetClosestPlayer(const _Player *TPlayer, float TMaxDistanceSquared, int TState);
 
-		void SendPacketToPlayers(_Buffer *TPacket, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
+		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
 
 		// Events
 		_IndexedEvent *GetIndexedEvent(int TEventType, int TEventData);

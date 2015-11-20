@@ -243,16 +243,16 @@ void _ClientBattle::RenderBattleLose() {
 }
 
 // Displays turn results from the server
-void _ClientBattle::ResolveTurn(_Buffer *TPacket) {
+void _ClientBattle::ResolveTurn(_Buffer *Packet) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
-			Results[i].SkillID = TPacket->Read<char>();
-			Results[i].Target = TPacket->Read<int32_t>();
-			Results[i].DamageDealt = TPacket->Read<int32_t>();
-			Results[i].HealthChange = TPacket->Read<int32_t>();
-			int Health = TPacket->Read<int32_t>();
-			int Mana = TPacket->Read<int32_t>();
+			Results[i].SkillID = Packet->Read<char>();
+			Results[i].Target = Packet->Read<int32_t>();
+			Results[i].DamageDealt = Packet->Read<int32_t>();
+			Results[i].HealthChange = Packet->Read<int32_t>();
+			int Health = Packet->Read<int32_t>();
+			int Mana = Packet->Read<int32_t>();
 			Fighters[i]->SetHealth(Health);
 			Fighters[i]->SetMana(Mana);
 			Fighters[i]->SetSkillUsed(Fighters[i]->GetSkillUsing());
@@ -273,19 +273,19 @@ void _ClientBattle::ResolveTurn(_Buffer *TPacket) {
 }
 
 // End of a battle
-void _ClientBattle::EndBattle(_Buffer *TPacket) {
+void _ClientBattle::EndBattle(_Buffer *Packet) {
 
 	// Get ending stats
 	bool SideDead[2];
-	SideDead[0] = TPacket->ReadBit();
-	SideDead[1] = TPacket->ReadBit();
-	int PlayerKills = TPacket->Read<char>();
-	int MonsterKills = TPacket->Read<char>();
-	TotalExperience = TPacket->Read<int32_t>();
-	TotalGold = TPacket->Read<int32_t>();
-	int ItemCount = TPacket->Read<char>();
+	SideDead[0] = Packet->ReadBit();
+	SideDead[1] = Packet->ReadBit();
+	int PlayerKills = Packet->Read<char>();
+	int MonsterKills = Packet->Read<char>();
+	TotalExperience = Packet->Read<int32_t>();
+	TotalGold = Packet->Read<int32_t>();
+	int ItemCount = Packet->Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
-		int ItemID = TPacket->Read<int32_t>();
+		int ItemID = Packet->Read<int32_t>();
 		const _Item *Item = Stats.GetItem(ItemID);
 		MonsterDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
