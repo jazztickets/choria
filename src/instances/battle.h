@@ -56,7 +56,7 @@ class _Battle {
 		virtual ~_Battle();
 
 		// Objects
-		void AddFighter(_Fighter *TFighter, int TSide);
+		void AddFighter(_Fighter *Fighter, int Side);
 
 		// Updates
 		virtual void Update(double FrameTime) { }
@@ -66,11 +66,11 @@ class _Battle {
 
 	protected:
 
-		void GetFighterList(int TSide, std::vector<_Fighter *> &TFighters);
-		void GetAliveFighterList(int TSide, std::vector<_Fighter *> &TFighters);
-		void GetMonsterList(std::vector<_Monster *> &TMonsters);
-		void GetPlayerList(int TSide, std::vector<_Player *> &TPlayers);
-		int GetFighterFromSlot(int TSlot);
+		void GetFighterList(int Side, std::vector<_Fighter *> &SideFighters);
+		void GetAliveFighterList(int Side, std::vector<_Fighter *> &AliveFighters);
+		void GetMonsterList(std::vector<_Monster *> &Monsters);
+		void GetPlayerList(int Side, std::vector<_Player *> &Players);
+		int GetFighterFromSlot(int Slot);
 
 		// State
 		int State, TargetState;
