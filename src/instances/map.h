@@ -91,11 +91,9 @@ class _Map {
 		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
 
 		// Events
-		_IndexedEvent *GetIndexedEvent(int TEventType, int TEventData);
+		_IndexedEvent *GetIndexedEvent(int EventType, int EventData);
 
 		// Map editing
-		int GetWidth() const { return Size.x; }
-		int GetHeight() const { return Size.y; }
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
 		void SetNoZoneTexture(const _Texture *Texture) { NoZoneTexture = Texture; }
 		glm::vec2 GetValidPosition(const glm::vec2 &Position);

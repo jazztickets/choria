@@ -24,19 +24,19 @@ class _SingleNetwork : public _Network {
 
 	public:
 
-		void Init(bool TServer);
+		void Init(bool Server);
 		void Close();
 
 		// Connections
-		int Connect(const char *TIPAddress, uint16_t Port);
-		void Disconnect(ENetPeer *TPeer=0);
+		int Connect(const char *IPAddress, uint16_t Port);
+		void Disconnect(ENetPeer *Peer=0);
 
 		// Packets
 		void SendPacketToHost(_Buffer *Buffer, SendType Type=RELIABLE, uint8_t Channel=0);
-		void SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0);
+		void SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type=RELIABLE, uint8_t Channel=0);
 
 	private:
 
-		ENetPeer Peer;
+		ENetPeer DummyPeer;
 		bool Server, Connected;
 };

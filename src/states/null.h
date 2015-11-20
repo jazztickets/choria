@@ -39,9 +39,9 @@ class _NullState : public _State {
 		void Render(double BlendFactor) override;
 
 		// Network
-		void HandleConnect(ENetEvent *TEvent);
-		void HandleDisconnect(ENetEvent *TEvent);
-		void HandlePacket(ENetEvent *TEvent);
+		void HandleConnect(ENetEvent *Event);
+		void HandleDisconnect(ENetEvent *Event);
+		void HandlePacket(ENetEvent *Event);
 
 	protected:
 

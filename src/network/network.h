@@ -121,16 +121,15 @@ class _Network {
 		virtual void Update() { }
 
 		// Connections
-		virtual int Connect(const char *TIPAddress, uint16_t Port) { return 0; }
-		virtual void Disconnect(ENetPeer *TPeer=0) { }
+		virtual int Connect(const char *IPAddress, uint16_t Port) { return 0; }
+		virtual void Disconnect(ENetPeer *Peer=0) { }
 
 		virtual enet_uint32 GetRTT() { return 0; }
-
 		virtual uint16_t GetPort() { return 0; }
 
 		// Packets
 		virtual void SendPacketToHost(_Buffer *Packet, SendType Type=RELIABLE, uint8_t Channel=0) { }
-		virtual void SendPacketToPeer(_Buffer *Packet, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0) { }
+		virtual void SendPacketToPeer(_Buffer *Packet, ENetPeer *Peer, SendType Type=RELIABLE, uint8_t Channel=0) { }
 
 		// Static functions
 		static void InitializeSystem();

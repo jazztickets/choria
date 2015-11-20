@@ -39,14 +39,14 @@ _ServerBattle::~_ServerBattle() {
 }
 
 // Removes a player from the battle
-int _ServerBattle::RemovePlayer(_Player *TPlayer) {
+int _ServerBattle::RemovePlayer(_Player *Player) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetType() == _Fighter::TYPE_PLAYER) {
 			_Player *Player = static_cast<_Player *>(Fighters[i]);
 
-			if(Player == TPlayer) {
+			if(Player == Player) {
 				Player->StopBattle();
 				Fighters[i] = nullptr;
 			}
@@ -111,17 +111,17 @@ void _ServerBattle::StartBattle() {
 }
 
 // Handles input from the client
-void _ServerBattle::HandleInput(_Player *TPlayer, int TCommand, int TTarget) {
+void _ServerBattle::HandleInput(_Player *Player, int Command, int Target) {
 
 	if(State == STATE_INPUT) {
 
 		// Check for needed commands
-		if(TPlayer->GetCommand() == -1) {
-			TPlayer->SetCommand(TCommand);
-			TPlayer->Target = TTarget;
+		if(Player->GetCommand() == -1) {
+			Player->SetCommand(Command);
+			Player->Target = Target;
 
 			// Notify other players
-			SendSkillToPlayers(TPlayer);
+			SendSkillToPlayers(Player);
 
 			// Check for all commands
 			bool Ready = true;
@@ -411,16 +411,16 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 }
 
 // Send the player's skill to the other players
-void _ServerBattle::SendSkillToPlayers(_Player *TPlayer) {
+void _ServerBattle::SendSkillToPlayers(_Player *Player) {
 
 	// Get all the players on the player's side
 	std::vector<_Player *> SidePlayers;
-	GetPlayerList(TPlayer->GetSide(), SidePlayers);
+	GetPlayerList(Player->GetSide(), SidePlayers);
 	if(SidePlayers.size() == 1)
 		return;
 
 	// Get skill id
-	const _Skill *Skill = TPlayer->GetSkillBar(TPlayer->GetCommand());
+	const _Skill *Skill = Player->GetSkillBar(Player->GetCommand());
 	int SkillID = -1;
 	if(Skill)
 		SkillID = Skill->ID;
@@ -428,12 +428,12 @@ void _ServerBattle::SendSkillToPlayers(_Player *TPlayer) {
 	// Build packet
 	_Buffer Packet;
 	Packet.Write<char>(_Network::BATTLE_COMMAND);
-	Packet.Write<char>(TPlayer->BattleSlot);
+	Packet.Write<char>(Player->BattleSlot);
 	Packet.Write<char>(SkillID);
 
 	// Send packet to all players
 	for(size_t i = 0; i < SidePlayers.size(); i++) {
-		if(SidePlayers[i] != TPlayer) {
+		if(SidePlayers[i] != Player) {
 			ServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->GetPeer());
 		}
 	}

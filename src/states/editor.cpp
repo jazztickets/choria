@@ -156,9 +156,9 @@ void _EditorState::Render(double BlendFactor) {
 
 // GUI events
 /*
-void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
+void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE EventType, gui::IGUIElement *TElement) {
 
-	switch(TEventType) {
+	switch(EventType) {
 		case gui::EGET_ELEMENT_CLOSED:
 			State = STATE_MAIN;
 		break;

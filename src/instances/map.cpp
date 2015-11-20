@@ -520,11 +520,11 @@ void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Netwo
 }
 
 // Finds an event that matches the criteria
-_IndexedEvent *_Map::GetIndexedEvent(int TEventType, int TEventData) {
+_IndexedEvent *_Map::GetIndexedEvent(int EventType, int EventData) {
 
 	for(size_t i = 0; i < IndexedEvents.size(); i++) {
 		_IndexedEvent *IndexedEvent = &IndexedEvents[i];
-		if(IndexedEvent->Tile->EventType == TEventType && IndexedEvent->Tile->EventData == TEventData) {
+		if(IndexedEvent->Tile->EventType == EventType && IndexedEvent->Tile->EventData == EventData) {
 			return IndexedEvent;
 		}
 	}

@@ -155,7 +155,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Movement
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
-		bool MovePlayer(int TDirection);
+		bool MovePlayer(int Direction);
 		int GetCurrentZone();
 		void SetInvisPower(int TValue) { InvisPower = TValue; }
 		int GetInvisPower() const { return InvisPower; }

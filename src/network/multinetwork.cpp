@@ -24,12 +24,12 @@
 #include <stdexcept>
 
 // Initializes the network system
-void _MultiNetwork::Init(bool TServer, uint16_t Port) {
-	Peer = nullptr;
+void _MultiNetwork::Init(bool Server, uint16_t Port) {
+	ClientPeer = nullptr;
 	Connection = nullptr;
 	Active = false;
 
-	if(TServer) {
+	if(Server) {
 
 		// Set up port
 		ENetAddress Address;
@@ -62,16 +62,16 @@ void _MultiNetwork::Close() {
 }
 
 // Connect to a host
-int _MultiNetwork::Connect(const char *TIPAddress, uint16_t Port) {
+int _MultiNetwork::Connect(const char *IPAddress, uint16_t Port) {
 
 	// Get server address
 	ENetAddress Address;
-	enet_address_set_host(&Address, TIPAddress);
+	enet_address_set_host(&Address, IPAddress);
 	Address.port = Port;
 
 	// Connect to server
-	Peer = enet_host_connect(Connection, &Address, 2, 0);
-	if(Peer == nullptr) {
+	ClientPeer = enet_host_connect(Connection, &Address, 2, 0);
+	if(ClientPeer == nullptr) {
 		return 0;
 	}
 
@@ -81,21 +81,21 @@ int _MultiNetwork::Connect(const char *TIPAddress, uint16_t Port) {
 }
 
 // Disconnect from the host or disconnect a client
-void _MultiNetwork::Disconnect(ENetPeer *TPeer) {
-	if(TPeer)
-		enet_peer_disconnect(TPeer, 0);
-	else if(Peer)
+void _MultiNetwork::Disconnect(ENetPeer *Peer) {
+	if(Peer)
 		enet_peer_disconnect(Peer, 0);
+	else if(ClientPeer)
+		enet_peer_disconnect(ClientPeer, 0);
 }
 
 // Waits for a disconnect
 void _MultiNetwork::WaitForDisconnect() {
 
-	if(Peer) {
+	if(ClientPeer) {
 		ENetEvent Event;
 		while(enet_host_service(Connection, &Event, 1000) > 0) {
 			if(Event.type == ENET_EVENT_TYPE_DISCONNECT) {
-				Peer = nullptr;
+				ClientPeer = nullptr;
 				return;
 			}
 		}
@@ -104,7 +104,7 @@ void _MultiNetwork::WaitForDisconnect() {
 		ENetEvent Event;
 		while(enet_host_service(Connection, &Event, 1000) > 0) {
 			if(Event.type == ENET_EVENT_TYPE_DISCONNECT) {
-				Peer = nullptr;
+				ClientPeer = nullptr;
 				return;
 			}
 		}
@@ -113,8 +113,8 @@ void _MultiNetwork::WaitForDisconnect() {
 
 // Get round trip time
 enet_uint32 _MultiNetwork::GetRTT() {
-	if(Peer)
-		return Peer->roundTripTime;
+	if(ClientPeer)
+		return ClientPeer->roundTripTime;
 
 	return 0;
 }
@@ -134,9 +134,9 @@ void _MultiNetwork::Update() {
 			break;
 			case ENET_EVENT_TYPE_DISCONNECT:
 				State->HandleDisconnect(&Event);
-				if(Peer)
+				if(ClientPeer)
 					Active = false;
-				Peer = nullptr;
+				ClientPeer = nullptr;
 			break;
 			case ENET_EVENT_TYPE_RECEIVE:
 				State->HandlePacket(&Event);
@@ -151,27 +151,27 @@ void _MultiNetwork::Update() {
 
 // Client: Sends a packet to the host
 void _MultiNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
-	if(!Peer)
+	if(!ClientPeer)
 		return;
 
 	// Create enet packet
 	ENetPacket *EPacket = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 
 	// Send packet
-	enet_peer_send(Peer, Channel, EPacket);
+	enet_peer_send(ClientPeer, Channel, EPacket);
 	enet_host_flush(Connection);
 }
 
 // Server: Sends a packet to a single peer
-void _MultiNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType Type, uint8_t Channel) {
-	if(!TPeer)
+void _MultiNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type, uint8_t Channel) {
+	if(!Peer)
 		return;
 
 	// Create enet packet
 	ENetPacket *Packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 
 	// Send packet
-	enet_peer_send(TPeer, Channel, Packet);
+	enet_peer_send(Peer, Channel, Packet);
 	enet_host_flush(Connection);
 }
 

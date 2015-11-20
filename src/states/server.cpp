@@ -164,33 +164,33 @@ void _ServerState::CreateDefaultDatabase() {
 }
 
 // Handles a new client connection
-void _ServerState::HandleConnect(ENetEvent *TEvent) {
+void _ServerState::HandleConnect(ENetEvent *Event) {
 	char Buffer[16];
-	enet_address_get_host_ip(&TEvent->peer->address, Buffer, 16);
-	Framework.Log << "_ServerState::HandleConnect: " << Buffer << ":" << TEvent->peer->address.port << std::endl;
+	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
+	Framework.Log << "_ServerState::HandleConnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
 
 	// Create the player and add it to the object list
 	_Player *NewPlayer = new _Player();
 	ObjectManager->AddObject(NewPlayer);
 
 	// Store the player in the peer struct
-	TEvent->peer->data = NewPlayer;
-	NewPlayer->SetPeer(TEvent->peer);
+	Event->peer->data = NewPlayer;
+	NewPlayer->SetPeer(Event->peer);
 
 	// Send player the game version
 	_Buffer Packet;
 	Packet.Write<char>(_Network::VERSION);
 	Packet.WriteString(GAME_VERSION);
-	ServerNetwork->SendPacketToPeer(&Packet, TEvent->peer);
+	ServerNetwork->SendPacketToPeer(&Packet, Event->peer);
 }
 
 // Handles a client disconnect
-void _ServerState::HandleDisconnect(ENetEvent *TEvent) {
+void _ServerState::HandleDisconnect(ENetEvent *Event) {
 	char Buffer[16];
-	enet_address_get_host_ip(&TEvent->peer->address, Buffer, 16);
-	Framework.Log << "_ServerState::HandleDisconnect: " << Buffer << ":" << TEvent->peer->address.port << std::endl;
+	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
+	Framework.Log << "_ServerState::HandleDisconnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
 
-	_Player *Player = static_cast<_Player *>(TEvent->peer->data);
+	_Player *Player = static_cast<_Player *>(Event->peer->data);
 	if(!Player)
 		return;
 
@@ -215,83 +215,83 @@ void _ServerState::HandleDisconnect(ENetEvent *TEvent) {
 }
 
 // Handles a client packet
-void _ServerState::HandlePacket(ENetEvent *TEvent) {
-	//printf("HandlePacket: type=%d\n", TEvent->packet->data[0]);
+void _ServerState::HandlePacket(ENetEvent *Event) {
+	//printf("HandlePacket: type=%d\n", Event->packet->data[0]);
 
-	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	_Buffer Packet((char *)Event->packet->data, Event->packet->dataLength);
 	int PacketType = Packet.Read<char>();
 	switch(PacketType) {
 		case _Network::ACCOUNT_LOGININFO:
-			HandleLoginInfo(&Packet, TEvent->peer);
+			HandleLoginInfo(&Packet, Event->peer);
 		break;
 		case _Network::CHARACTERS_REQUEST:
-			HandleCharacterListRequest(&Packet, TEvent->peer);
+			HandleCharacterListRequest(&Packet, Event->peer);
 		break;
 		case _Network::CHARACTERS_PLAY:
-			HandleCharacterSelect(&Packet, TEvent->peer);
+			HandleCharacterSelect(&Packet, Event->peer);
 		break;
 		case _Network::CHARACTERS_DELETE:
-			HandleCharacterDelete(&Packet, TEvent->peer);
+			HandleCharacterDelete(&Packet, Event->peer);
 		break;
 		case _Network::CREATECHARACTER_INFO:
-			HandleCharacterCreate(&Packet, TEvent->peer);
+			HandleCharacterCreate(&Packet, Event->peer);
 		break;
 		case _Network::WORLD_MOVECOMMAND:
-			HandleMoveCommand(&Packet, TEvent->peer);
+			HandleMoveCommand(&Packet, Event->peer);
 		break;
 		case _Network::BATTLE_COMMAND:
-			HandleBattleCommand(&Packet, TEvent->peer);
+			HandleBattleCommand(&Packet, Event->peer);
 		break;
 		case _Network::BATTLE_CLIENTDONE:
-			HandleBattleFinished(&Packet, TEvent->peer);
+			HandleBattleFinished(&Packet, Event->peer);
 		break;
 		case _Network::INVENTORY_MOVE:
-			HandleInventoryMove(&Packet, TEvent->peer);
+			HandleInventoryMove(&Packet, Event->peer);
 		break;
 		case _Network::INVENTORY_USE:
-			HandleInventoryUse(&Packet, TEvent->peer);
+			HandleInventoryUse(&Packet, Event->peer);
 		break;
 		case _Network::INVENTORY_SPLIT:
-			HandleInventorySplit(&Packet, TEvent->peer);
+			HandleInventorySplit(&Packet, Event->peer);
 		break;
 		case _Network::EVENT_END:
-			HandleEventEnd(&Packet, TEvent->peer);
+			HandleEventEnd(&Packet, Event->peer);
 		break;
 		case _Network::VENDOR_EXCHANGE:
-			HandleVendorExchange(&Packet, TEvent->peer);
+			HandleVendorExchange(&Packet, Event->peer);
 		break;
 		case _Network::TRADER_ACCEPT:
-			HandleTraderAccept(&Packet, TEvent->peer);
+			HandleTraderAccept(&Packet, Event->peer);
 		break;
 		case _Network::SKILLS_SKILLBAR:
-			HandleSkillBar(&Packet, TEvent->peer);
+			HandleSkillBar(&Packet, Event->peer);
 		break;
 		case _Network::SKILLS_SKILLADJUST:
-			HandleSkillAdjust(&Packet, TEvent->peer);
+			HandleSkillAdjust(&Packet, Event->peer);
 		break;
 		case _Network::WORLD_BUSY:
-			HandlePlayerBusy(&Packet, TEvent->peer);
+			HandlePlayerBusy(&Packet, Event->peer);
 		break;
 		case _Network::WORLD_ATTACKPLAYER:
-			HandleAttackPlayer(&Packet, TEvent->peer);
+			HandleAttackPlayer(&Packet, Event->peer);
 		break;
 		case _Network::WORLD_TELEPORT:
-			HandleTeleport(&Packet, TEvent->peer);
+			HandleTeleport(&Packet, Event->peer);
 		break;
 		case _Network::CHAT_MESSAGE:
-			HandleChatMessage(&Packet, TEvent->peer);
+			HandleChatMessage(&Packet, Event->peer);
 		break;
 		case _Network::TRADE_REQUEST:
-			HandleTradeRequest(&Packet, TEvent->peer);
+			HandleTradeRequest(&Packet, Event->peer);
 		break;
 		case _Network::TRADE_CANCEL:
-			HandleTradeCancel(&Packet, TEvent->peer);
+			HandleTradeCancel(&Packet, Event->peer);
 		break;
 		case _Network::TRADE_GOLD:
-			HandleTradeGold(&Packet, TEvent->peer);
+			HandleTradeGold(&Packet, Event->peer);
 		break;
 		case _Network::TRADE_ACCEPT:
-			HandleTradeAccept(&Packet, TEvent->peer);
+			HandleTradeAccept(&Packet, Event->peer);
 		break;
 	}
 }

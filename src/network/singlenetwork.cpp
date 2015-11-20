@@ -21,12 +21,11 @@
 #include <framework.h>
 
 // Initializes the network system
-void _SingleNetwork::Init(bool TServer) {
-
-	Server = TServer;
+void _SingleNetwork::Init(bool Server) {
+	this->Server = Server;
 	Connected = false;
-	Peer.address.host = 0;
-	Peer.address.port = 0;
+	DummyPeer.address.host = 0;
+	DummyPeer.address.port = 0;
 }
 
 // Closes the network system
@@ -34,7 +33,7 @@ void _SingleNetwork::Close() {
 }
 
 // Connect to a host
-int _SingleNetwork::Connect(const char *TIPAddress, uint16_t Port) {
+int _SingleNetwork::Connect(const char *IPAddress, uint16_t Port) {
 
 	if(Connected)
 		return 0;
@@ -43,7 +42,7 @@ int _SingleNetwork::Connect(const char *TIPAddress, uint16_t Port) {
 
 	// Simulate the connect
 	ENetEvent Event;
-	Event.peer = &Peer;
+	Event.peer = &DummyPeer;
 	ServerState.HandleConnect(&Event);
 	Framework.GetState()->HandleConnect(&Event);
 
@@ -51,14 +50,14 @@ int _SingleNetwork::Connect(const char *TIPAddress, uint16_t Port) {
 }
 
 // Disconnect from the host
-void _SingleNetwork::Disconnect(ENetPeer *TPeer) {
+void _SingleNetwork::Disconnect(ENetPeer *Peer) {
 
 	if(Connected) {
 		Connected = false;
 
 		// Simulate the disconnect
 		ENetEvent Event;
-		Event.peer = &Peer;
+		Event.peer = &DummyPeer;
 		ServerState.HandleDisconnect(&Event);
 		Framework.GetState()->HandleDisconnect(&Event);
 	}
@@ -71,7 +70,7 @@ void _SingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Ch
 
 		// Simulate packet event
 		ENetEvent Event;
-		Event.peer = &Peer;
+		Event.peer = &DummyPeer;
 		Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 		ServerState.HandlePacket(&Event);
 		enet_packet_destroy(Event.packet);
@@ -79,11 +78,11 @@ void _SingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Ch
 }
 
 // Server: Sends a packet to a single peer
-void _SingleNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType Type, uint8_t Channel) {
+void _SingleNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type, uint8_t Channel) {
 
 	// Simulate packet event
 	ENetEvent Event;
-	Event.peer = &Peer;
+	Event.peer = &DummyPeer;
 	Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
 	Framework.GetState()->HandlePacket(&Event);
 	enet_packet_destroy(Event.packet);

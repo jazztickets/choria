@@ -740,7 +740,7 @@ void _Menu::Render() {
 	}
 }
 
-void _Menu::HandleConnect(ENetEvent *TEvent) {
+void _Menu::HandleConnect(ENetEvent *Event) {
 	switch(State) {
 		case STATE_CONNECT: {
 			InitAccount();
@@ -750,7 +750,7 @@ void _Menu::HandleConnect(ENetEvent *TEvent) {
 	}
 }
 
-void _Menu::HandleDisconnect(ENetEvent *TEvent) {
+void _Menu::HandleDisconnect(ENetEvent *Event) {
 	switch(State) {
 		case STATE_CONNECT: {
 			InitConnect();
@@ -765,8 +765,8 @@ void _Menu::HandleDisconnect(ENetEvent *TEvent) {
 }
 
 // Handle packet
-void _Menu::HandlePacket(ENetEvent *TEvent) {
-	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+void _Menu::HandlePacket(ENetEvent *Event) {
+	_Buffer Packet((char *)Event->packet->data, Event->packet->dataLength);
 	switch(Packet.Read<char>()) {
 		case _Network::VERSION: {
 			std::string Version(Packet.ReadString());

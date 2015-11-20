@@ -162,13 +162,13 @@ void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 }
 
 // Moves the player
-bool _Player::MovePlayer(int TDirection) {
+bool _Player::MovePlayer(int Direction) {
 	if(State != STATE_WALK)
 		return false;
 
 	// Get new position
 	glm::ivec2 NewPosition = Position;
-	switch(TDirection) {
+	switch(Direction) {
 		case MOVE_LEFT:
 			NewPosition.x--;
 		break;

@@ -88,21 +88,21 @@ void _ClientState::WindowEvent(uint8_t Event) {
 }
 
 // Handles a connection to the server
-void _ClientState::HandleConnect(ENetEvent *TEvent) {
+void _ClientState::HandleConnect(ENetEvent *Event) {
 
 }
 
 // Handles a disconnection from the server
-void _ClientState::HandleDisconnect(ENetEvent *TEvent) {
+void _ClientState::HandleDisconnect(ENetEvent *Event) {
 
 	Framework.ChangeState(&NullState);
 }
 
 // Handles a server packet
-void _ClientState::HandlePacket(ENetEvent *TEvent) {
-	//printf("HandlePacket: type=%d\n", TEvent->packet->data[0]);
+void _ClientState::HandlePacket(ENetEvent *Event) {
+	//printf("HandlePacket: type=%d\n", Event->packet->data[0]);
 
-	_Buffer Packet((char *)TEvent->packet->data, TEvent->packet->dataLength);
+	_Buffer Packet((char *)Event->packet->data, Event->packet->dataLength);
 	int PacketType = Packet.Read<char>();
 	switch(PacketType) {
 		case _Network::WORLD_YOURCHARACTERINFO:
@@ -914,15 +914,15 @@ void _ClientState::HandleTradeExchange(_Buffer *Packet) {
 }
 
 // Sends a move command to the server
-void _ClientState::SendMoveCommand(int TDirection) {
+void _ClientState::SendMoveCommand(int Direction) {
 
 	if(Player->CanMove()) {
 
 		// Move player locally
-		if(Player->MovePlayer(TDirection)) {
+		if(Player->MovePlayer(Direction)) {
 			_Buffer Packet;
 			Packet.Write<char>(_Network::WORLD_MOVECOMMAND);
-			Packet.Write<char>(TDirection);
+			Packet.Write<char>(Direction);
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
 	}

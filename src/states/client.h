@@ -59,9 +59,9 @@ class _ClientState : public _State {
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 		void WindowEvent(uint8_t Event) override;
 
-		void HandleConnect(ENetEvent *TEvent) override;
-		void HandleDisconnect(ENetEvent *TEvent) override;
-		void HandlePacket(ENetEvent *TEvent) override;
+		void HandleConnect(ENetEvent *Event) override;
+		void HandleDisconnect(ENetEvent *Event) override;
+		void HandlePacket(ENetEvent *Event) override;
 
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
@@ -93,7 +93,7 @@ class _ClientState : public _State {
 		void HandleTradeAccept(_Buffer *Packet);
 		void HandleTradeExchange(_Buffer *Packet);
 
-		void SendMoveCommand(int TDirection);
+		void SendMoveCommand(int Direction);
 		void SendAttackPlayer();
 		void SynchronizeTime();
 

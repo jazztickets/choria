@@ -24,20 +24,20 @@ class _MultiNetwork : public _Network {
 
 	public:
 
-		void Init(bool TServer, uint16_t Port);
+		void Init(bool Server, uint16_t Port);
 		void Close() override;
 
 		// Updates
 		void Update() override;
 
 		// Connections
-		int Connect(const char *TIPAddress, uint16_t Port) override;
-		void Disconnect(ENetPeer *TPeer=0) override;
+		int Connect(const char *IPAddress, uint16_t Port) override;
+		void Disconnect(ENetPeer *Peer=0) override;
 		void WaitForDisconnect();
 
 		// Packets
 		void SendPacketToHost(_Buffer *Buffer, SendType Type=RELIABLE, uint8_t Channel=0) override;
-		void SendPacketToPeer(_Buffer *Buffer, ENetPeer *TPeer, SendType Type=RELIABLE, uint8_t Channel=0) override;
+		void SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type=RELIABLE, uint8_t Channel=0) override;
 
 		// Info
 		uint16_t GetPort() override;
@@ -48,5 +48,5 @@ class _MultiNetwork : public _Network {
 		bool Active;
 
 		ENetHost *Connection;
-		ENetPeer *Peer;
+		ENetPeer *ClientPeer;
 };

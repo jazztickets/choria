@@ -234,10 +234,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 // Handles GUI presses
 /*
-void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement) {
+void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE EventType, gui::IGUIElement *TElement) {
 	switch(*State) {
 		case _PlayClientState::STATE_MAINMENU:
-			switch(TEventType) {
+			switch(EventType) {
 				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_MAINMENU:
@@ -254,7 +254,7 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 			}
 		break;
 		case _PlayClientState::STATE_TRADE:
-			switch(TEventType) {
+			switch(EventType) {
 				case gui::EGET_BUTTON_CLICKED:
 					switch(ID) {
 						case ELEMENT_TRADE:
@@ -280,7 +280,7 @@ void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE TEventType, gui::IGUIElement *TElement
 				case gui::EGET_EDITBOX_ENTER:
 					if(ID == ELEMENT_GOLDTRADEBOX) {
 						TypingGold = false;
-						//if(TEventType == gui::EGET_EDITBOX_ENTER)
+						//if(EventType == gui::EGET_EDITBOX_ENTER)
 						//	irrGUI->removeFocus(TradeGoldBox);
 
 						// Send amount

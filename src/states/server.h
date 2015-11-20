@@ -38,9 +38,9 @@ class _ServerState : public _State {
 		void Init();
 		void Close();
 
-		void HandleConnect(ENetEvent *TEvent);
-		void HandleDisconnect(ENetEvent *TEvent);
-		void HandlePacket(ENetEvent *TEvent);
+		void HandleConnect(ENetEvent *Event);
+		void HandleDisconnect(ENetEvent *Event);
+		void HandlePacket(ENetEvent *Event);
 
 		void Update(double FrameTime);
 		void DeleteObject(_Object *TObject);
