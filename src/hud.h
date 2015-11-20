@@ -156,7 +156,7 @@ class _HUD {
 		void SellItem(_CursorItem *TCursorItem, int TAmount);
 
 		void AdjustSkillLevel(int SkillID, int Direction);
-		void SetSkillBar(int TSlot, int TOldSlot, const _Skill *Skill);
+		void SetSkillBar(int Slot, int TOldSlot, const _Skill *Skill);
 		void ClearSkills();
 
 		void RefreshSkillButtons();
@@ -165,7 +165,7 @@ class _HUD {
 		void SendTradeCancel();
 		int ValidateTradeGold();
 
-		void SplitStack(int TSlot, int TCount);
+		void SplitStack(int Slot, int TCount);
 
 		int *State;
 

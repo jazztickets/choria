@@ -46,7 +46,7 @@ class _Fighter {
 		int GetType() const { return Type; }
 
 		// Render
-		void RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget);
+		void RenderBattle(bool ShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget);
 		void SetOffset(const glm::ivec2 &TPosition) { Offset = TPosition; }
 
 		// Stats
@@ -84,31 +84,20 @@ class _Fighter {
 		const _Skill *GetSkillUsed() const { return SkillUsed; }
 		void SetSkillUsing(const _Skill *TSkill) { SkillUsing = TSkill; }
 		const _Skill *GetSkillUsing() const { return SkillUsing; }
-		void SetTarget(int TTarget) { Target = TTarget; }
-		int GetTarget() const { return Target; }
-		void SetSlot(int TSlot) { Slot = TSlot; }
-		int GetSlot() const { return Slot; }
-		int GetSide() const { return Slot & 1; }
+		int GetSide() const { return BattleSlot & 1; }
 		int GenerateDamage();
 		int GenerateDefense();
-		int GetMinDamage() const { return MinDamage; }
-		int GetMaxDamage() const { return MaxDamage; }
-		int GetMinDefense() const { return MinDefense; }
-		int GetMaxDefense() const { return MaxDefense; }
 
 		virtual int GetExperienceGiven() const { return 0; }
 		virtual int GetGoldGiven() const { return 0; }
 
 		virtual void UpdateExperience(int TValue) { }
-
-		virtual int GetSkillLevel(int TSlot) const { return 1; }
+		virtual int GetSkillLevel(int Slot) const { return 1; }
 
 		// Skills
-		void SetSkillBar(int TSlot, const _Skill *TSkill) { SkillBar[TSlot] = TSkill; }
-		const _Skill *GetSkillBar(int TSlot);
-		int GetSkillBarID(int TSlot);
-
-	protected:
+		void SetSkillBar(int Slot, const _Skill *Skill) { SkillBar[Slot] = Skill; }
+		const _Skill *GetSkillBar(int Slot);
+		int GetSkillBarID(int Slot);
 
 		// Objects
 		int Type;
@@ -127,10 +116,13 @@ class _Fighter {
 
 		// Battle
 		_Battle *Battle;
-		int Command, Target, Slot;
+		int Command, Target, BattleSlot;
 		const _Skill *SkillUsing, *SkillUsed;
 
 		// Render
 		const _Texture *Portrait;
 		glm::ivec2 Offset;
+
+	protected:
+
 };

@@ -67,7 +67,7 @@ _Fighter::~_Fighter() {
 }
 
 // Renders the fighter during a battle
-void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
+void _Fighter::RenderBattle(bool ShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
 
 	// Get slot ui element depending on side
 	_Element *Slot;
@@ -151,7 +151,7 @@ void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResu
 	}
 
 	// Show results of last turn
-	if(TShowResults) {
+	if(ShowResults) {
 
 		float AlphaPercent;
 		if(TTimerPercent > 0.75f)
@@ -283,17 +283,17 @@ int _Fighter::GenerateDefense() {
 }
 
 // Gets a skill id from the skill bar
-int _Fighter::GetSkillBarID(int TSlot) {
-	if(SkillBar[TSlot] == nullptr)
+int _Fighter::GetSkillBarID(int Slot) {
+	if(SkillBar[Slot] == nullptr)
 		return -1;
 
-	return SkillBar[TSlot]->ID;
+	return SkillBar[Slot]->ID;
 }
 
 // Get a skill from the skill bar
-const _Skill *_Fighter::GetSkillBar(int TSlot) {
-	if(TSlot < 0 || TSlot >= 8)
+const _Skill *_Fighter::GetSkillBar(int Slot) {
+	if(Slot < 0 || Slot >= 8)
 		return nullptr;
 
-	return SkillBar[TSlot];
+	return SkillBar[Slot];
 }

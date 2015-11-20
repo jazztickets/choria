@@ -66,7 +66,7 @@ class _ClientState : public _State {
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
-		void SetCharacterSlot(int TSlot) { CharacterSlot = TSlot; }
+		void SetCharacterSlot(int Slot) { CharacterSlot = Slot; }
 
 		int *GetState() { return &State; }
 

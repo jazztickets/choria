@@ -378,7 +378,7 @@ const _Trader *_Player::GetTrader() {
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
-int _Player::GetRequiredItemSlots(const _Trader *TTrader, int *TSlots) {
+int _Player::GetRequiredItemSlots(const _Trader *TTrader, int *Slots) {
 	int RewardItemSlot = -1;
 
 	// Check for an open reward slot
@@ -394,19 +394,19 @@ int _Player::GetRequiredItemSlots(const _Trader *TTrader, int *TSlots) {
 	for(size_t i = 0; i < TTrader->TraderItems.size(); i++) {
 		const _Item *RequiredItem = TTrader->TraderItems[i].Item;
 		int RequiredCount = TTrader->TraderItems[i].Count;
-		TSlots[i] = -1;
+		Slots[i] = -1;
 
 		// Search for the required item
 		for(int j = INVENTORY_HEAD; j < INVENTORY_TRADE; j++) {
 			_InventorySlot *InventoryItem = &Inventory[j];
 			if(InventoryItem->Item == RequiredItem && InventoryItem->Count >= RequiredCount) {
-				TSlots[i] = j;
+				Slots[i] = j;
 				break;
 			}
 		}
 
 		// Didn't find an item
-		if(TSlots[i] == -1)
+		if(Slots[i] == -1)
 			RewardItemSlot = -1;
 	}
 
@@ -414,13 +414,13 @@ int _Player::GetRequiredItemSlots(const _Trader *TTrader, int *TSlots) {
 }
 
 // Accept a trade from a trader
-void _Player::AcceptTrader(const _Trader *TTrader, int *TSlots, int TRewardSlot) {
+void _Player::AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot) {
 	if(TTrader == nullptr || !IsSlotInventory(TRewardSlot))
 		return;
 
 	// Trade in required items
 	for(uint32_t i = 0; i < TTrader->TraderItems.size(); i++) {
-		UpdateInventory(TSlots[i], -TTrader->TraderItems[i].Count);
+		UpdateInventory(Slots[i], -TTrader->TraderItems[i].Count);
 	}
 
 	// Give player reward
@@ -444,22 +444,22 @@ int _Player::GetPotionBattle(int TType) {
 }
 
 // Uses a potion in battle
-bool _Player::UsePotionBattle(int TSlot, int TSkillType, int &THealthChange, int &TManaChange) {
-	const _Item *Item = GetInventoryItem(TSlot);
+bool _Player::UsePotionBattle(int Slot, int TSkillType, int &THealthChange, int &TManaChange) {
+	const _Item *Item = GetInventoryItem(Slot);
 	if(Item == nullptr || Item->GetType() != _Item::TYPE_POTION)
 		return false;
 
 	THealthChange = Item->GetHealthRestore();
 	TManaChange = Item->GetManaRestore();
 	UpdatePotionsLeft(TSkillType);
-	UpdateInventory(TSlot, -1);
+	UpdateInventory(Slot, -1);
 
 	return true;
 }
 
 // Uses a potion in the world
-bool _Player::UsePotionWorld(int TSlot) {
-	const _Item *Item = GetInventoryItem(TSlot);
+bool _Player::UsePotionWorld(int Slot) {
+	const _Item *Item = GetInventoryItem(Slot);
 	if(Item == nullptr)
 		return false;
 
@@ -473,7 +473,7 @@ bool _Player::UsePotionWorld(int TSlot) {
 		UpdateHealth(HealthRestore);
 		UpdateMana(ManaRestore);
 		SetInvisPower(ItemInvisPower);
-		UpdateInventory(TSlot, -1);
+		UpdateInventory(Slot, -1);
 		return true;
 	}
 
@@ -481,15 +481,15 @@ bool _Player::UsePotionWorld(int TSlot) {
 }
 
 // Uses an item from the inventory
-bool _Player::UseInventory(int TSlot) {
-	const _Item *Item = GetInventoryItem(TSlot);
+bool _Player::UseInventory(int Slot) {
+	const _Item *Item = GetInventoryItem(Slot);
 	if(Item == nullptr)
 		return false;
 
 	// Handle item types
 	switch(Item->GetType()) {
 		case _Item::TYPE_POTION:
-			return UsePotionWorld(TSlot);
+			return UsePotionWorld(Slot);
 		break;
 	}
 
@@ -497,45 +497,45 @@ bool _Player::UseInventory(int TSlot) {
 }
 
 // Sets an item in the inventory
-void _Player::SetInventory(int TSlot, int TItemID, int TCount) {
+void _Player::SetInventory(int Slot, int TItemID, int TCount) {
 
 	if(TItemID == 0) {
-		Inventory[TSlot].Item = nullptr;
-		Inventory[TSlot].Count = 0;
+		Inventory[Slot].Item = nullptr;
+		Inventory[Slot].Count = 0;
 	}
 	else {
-		Inventory[TSlot].Item = Stats.GetItem(TItemID);
-		Inventory[TSlot].Count = TCount;
+		Inventory[Slot].Item = Stats.GetItem(TItemID);
+		Inventory[Slot].Count = TCount;
 	}
 }
 
 // Sets an item in the inventory
-void _Player::SetInventory(int TSlot, _InventorySlot *TItem) {
+void _Player::SetInventory(int Slot, _InventorySlot *TItem) {
 
 	if(TItem->Item == nullptr) {
-		Inventory[TSlot].Item = nullptr;
-		Inventory[TSlot].Count = 0;
+		Inventory[Slot].Item = nullptr;
+		Inventory[Slot].Count = 0;
 	}
 	else {
-		Inventory[TSlot].Item = TItem->Item;
-		Inventory[TSlot].Count = TItem->Count;
+		Inventory[Slot].Item = TItem->Item;
+		Inventory[Slot].Count = TItem->Count;
 	}
 }
 
 // Returns an item from the inventory
-_InventorySlot *_Player::GetInventory(int TSlot) {
+_InventorySlot *_Player::GetInventory(int Slot) {
 
-	return &Inventory[TSlot];
+	return &Inventory[Slot];
 }
 
 // Gets an inventory item
-const _Item *_Player::GetInventoryItem(int TSlot) {
+const _Item *_Player::GetInventoryItem(int Slot) {
 
 	// Check for bad slots
-	if(TSlot < INVENTORY_BACKPACK || TSlot >= INVENTORY_TRADE || !Inventory[TSlot].Item)
+	if(Slot < INVENTORY_BACKPACK || Slot >= INVENTORY_TRADE || !Inventory[Slot].Item)
 		return nullptr;
 
-	return Inventory[TSlot].Item;
+	return Inventory[Slot].Item;
 }
 
 // Moves an item from one slot to another
@@ -590,22 +590,22 @@ bool _Player::MoveInventory(int TOldSlot, int TNewSlot) {
 }
 
 // Swaps two items
-void _Player::SwapItem(int TSlot, int TOldSlot) {
+void _Player::SwapItem(int Slot, int TOldSlot) {
 	_InventorySlot TempItem;
 
 	// Swap items
-	TempItem = Inventory[TSlot];
-	Inventory[TSlot] = Inventory[TOldSlot];
+	TempItem = Inventory[Slot];
+	Inventory[Slot] = Inventory[TOldSlot];
 	Inventory[TOldSlot] = TempItem;
 }
 
 // Updates an item's count, deleting if necessary
-bool _Player::UpdateInventory(int TSlot, int TAmount) {
+bool _Player::UpdateInventory(int Slot, int TAmount) {
 
-	Inventory[TSlot].Count += TAmount;
-	if(Inventory[TSlot].Count <= 0) {
-		Inventory[TSlot].Item = nullptr;
-		Inventory[TSlot].Count = 0;
+	Inventory[Slot].Count += TAmount;
+	if(Inventory[Slot].Count <= 0) {
+		Inventory[Slot].Item = nullptr;
+		Inventory[Slot].Count = 0;
 		return true;
 	}
 
@@ -613,10 +613,10 @@ bool _Player::UpdateInventory(int TSlot, int TAmount) {
 }
 
 // Attempts to add an item to the inventory
-bool _Player::AddItem(const _Item *TItem, int TCount, int TSlot) {
+bool _Player::AddItem(const _Item *TItem, int TCount, int Slot) {
 
 	// Place somewhere in backpack
-	if(TSlot == -1) {
+	if(Slot == -1) {
 
 		// Find existing item
 		int EmptySlot = -1;
@@ -641,27 +641,27 @@ bool _Player::AddItem(const _Item *TItem, int TCount, int TSlot) {
 		return false;
 	}
 	// Trying to equip an item
-	else if(TSlot < INVENTORY_BACKPACK) {
+	else if(Slot < INVENTORY_BACKPACK) {
 
 		// Make sure it can be equipped
-		if(!CanEquipItem(TSlot, TItem))
+		if(!CanEquipItem(Slot, TItem))
 			return false;
 
 		// Set item
-		Inventory[TSlot].Item = TItem;
-		Inventory[TSlot].Count = TCount;
+		Inventory[Slot].Item = TItem;
+		Inventory[Slot].Count = TCount;
 
 		return true;
 	}
 
 	// Add item
-	if(Inventory[TSlot].Item == TItem && Inventory[TSlot].Count + TCount <= 255) {
-		Inventory[TSlot].Count += TCount;
+	if(Inventory[Slot].Item == TItem && Inventory[Slot].Count + TCount <= 255) {
+		Inventory[Slot].Count += TCount;
 		return true;
 	}
-	else if(Inventory[TSlot].Item == nullptr) {
-		Inventory[TSlot].Item = TItem;
-		Inventory[TSlot].Count = TCount;
+	else if(Inventory[Slot].Item == nullptr) {
+		Inventory[Slot].Item = TItem;
+		Inventory[Slot].Count = TCount;
 		return true;
 	}
 
@@ -678,16 +678,16 @@ void _Player::MoveTradeToInventory() {
 }
 
 // Splits a stack
-void _Player::SplitStack(int TSlot, int TCount) {
-	if(TSlot < 0 || TSlot >= INVENTORY_COUNT)
+void _Player::SplitStack(int Slot, int TCount) {
+	if(Slot < 0 || Slot >= INVENTORY_COUNT)
 		return;
 
 	// Make sure stack is large enough
-	_InventorySlot *SplitItem = &Inventory[TSlot];
+	_InventorySlot *SplitItem = &Inventory[Slot];
 	if(SplitItem->Item && SplitItem->Count > TCount) {
 
 		// Find an empty slot or existing item
-		int EmptySlot = TSlot;
+		int EmptySlot = Slot;
 		_InventorySlot *Item;
 		do {
 			EmptySlot++;
@@ -695,10 +695,10 @@ void _Player::SplitStack(int TSlot, int TCount) {
 				EmptySlot = INVENTORY_BACKPACK;
 
 			Item = &Inventory[EmptySlot];
-		} while(!(EmptySlot == TSlot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= 255 - TCount)));
+		} while(!(EmptySlot == Slot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= 255 - TCount)));
 
 		// Split item
-		if(EmptySlot != TSlot) {
+		if(EmptySlot != Slot) {
 			SplitItem->Count -= TCount;
 			AddItem(SplitItem->Item, TCount, EmptySlot);
 		}
@@ -718,14 +718,14 @@ bool _Player::IsBackpackFull() {
 }
 
 // Checks if an item can be equipped
-bool _Player::CanEquipItem(int TSlot, const _Item *TItem) {
+bool _Player::CanEquipItem(int Slot, const _Item *TItem) {
 
 	// Already equipped
-	if(Inventory[TSlot].Item)
+	if(Inventory[Slot].Item)
 		return false;
 
 	// Check type
-	switch(TSlot) {
+	switch(Slot) {
 		case INVENTORY_HEAD:
 			if(TItem->GetType() == _Item::TYPE_HEAD)
 				return true;

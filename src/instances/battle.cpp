@@ -44,11 +44,11 @@ void _Battle::AddFighter(_Fighter *Fighter, int Side) {
 
 	// Count fighters and set slots
 	if(Side == 0) {
-		Fighter->SetSlot(Side + LeftFighterCount * 2);
+		Fighter->BattleSlot = Side + LeftFighterCount * 2;
 		LeftFighterCount++;
 	}
 	else {
-		Fighter->SetSlot(Side + RightFighterCount * 2);
+		Fighter->BattleSlot = Side + RightFighterCount * 2;
 		RightFighterCount++;
 	}
 
@@ -103,7 +103,7 @@ void _Battle::GetPlayerList(int Side, std::vector<_Player *> &Players) {
 // Gets a fighter index from a slot number
 int _Battle::GetFighterFromSlot(int Slot) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetSlot() == Slot) {
+		if(Fighters[i] && Fighters[i]->BattleSlot == Slot) {
 			return i;
 		}
 	}

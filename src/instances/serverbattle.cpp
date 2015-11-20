@@ -118,7 +118,7 @@ void _ServerBattle::HandleInput(_Player *TPlayer, int TCommand, int TTarget) {
 		// Check for needed commands
 		if(TPlayer->GetCommand() == -1) {
 			TPlayer->SetCommand(TCommand);
-			TPlayer->SetTarget(TTarget);
+			TPlayer->Target = TTarget;
 
 			// Notify other players
 			SendSkillToPlayers(TPlayer);
@@ -185,7 +185,7 @@ void _ServerBattle::ResolveTurn() {
 
 			// Ignore dead fighters
 			if(Fighters[i]->GetHealth() > 0) {
-				Result->Target = Fighters[i]->GetTarget();
+				Result->Target = Fighters[i]->Target;
 
 				// Get skill used
 				const _Skill *Skill = Fighters[i]->GetSkillBar(Fighters[i]->GetCommand());
@@ -321,7 +321,7 @@ void _ServerBattle::CheckEnd() {
 				std::uniform_int_distribution<size_t> Distribution(0, LeftSidePlayers.size()-1);
 				size_t PlayerIndex = Distribution(RandomGenerator);
 				for(size_t i = 0; i < MonsterDrops.size(); i++) {
-					int LeftSideSlot = LeftSidePlayers[PlayerIndex]->GetSlot() / 2;
+					int LeftSideSlot = LeftSidePlayers[PlayerIndex]->BattleSlot / 2;
 					if(MonsterDrops[i] > 0) {
 						PlayerItems[LeftSideSlot].push_back(MonsterDrops[i]);
 
@@ -378,7 +378,7 @@ void _ServerBattle::CheckEnd() {
 			Packet.Write<int32_t>(GoldEarned);
 
 			// Write items
-			int PlayerIndex = Players[i]->GetSlot() / 2;
+			int PlayerIndex = Players[i]->BattleSlot / 2;
 			int ItemCount = PlayerItems[PlayerIndex].size();
 			Packet.Write<char>(ItemCount);
 
@@ -428,7 +428,7 @@ void _ServerBattle::SendSkillToPlayers(_Player *TPlayer) {
 	// Build packet
 	_Buffer Packet;
 	Packet.Write<char>(_Network::BATTLE_COMMAND);
-	Packet.Write<char>(TPlayer->GetSlot());
+	Packet.Write<char>(TPlayer->BattleSlot);
 	Packet.Write<char>(SkillID);
 
 	// Send packet to all players

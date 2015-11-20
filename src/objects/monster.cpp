@@ -49,7 +49,7 @@ void _Monster::UpdateTarget(const std::vector<_Fighter *> &TFighters) {
 	std::uniform_int_distribution<int> Distribution(0, Count-1);
 	int RandomIndex = Distribution(RandomGenerator);
 
-	Target = TFighters[RandomIndex]->GetSlot();
+	Target = TFighters[RandomIndex]->BattleSlot;
 }
 
 // Returns the monsters command

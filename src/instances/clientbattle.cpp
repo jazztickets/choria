@@ -43,20 +43,20 @@ _ClientBattle::~_ClientBattle() {
 }
 
 // Starts the battle on the client
-void _ClientBattle::StartBattle(_Player *TClientPlayer) {
+void _ClientBattle::StartBattle(_Player *Player) {
 
 	// Save the client's player
-	ClientPlayer = TClientPlayer;
+	ClientPlayer = Player;
 	if(ClientPlayer->GetSide() == 0)
-		ClientPlayer->SetTarget(1);
+		ClientPlayer->Target = 1;
 	else
-		ClientPlayer->SetTarget(0);
+		ClientPlayer->Target = 0;
 	ClientPlayer->StartBattle(this);
 
 	// Set fighter position offsets
 	glm::ivec2 Offset;
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		GetPositionFromSlot(Fighters[i]->GetSlot(), Offset);
+		GetPositionFromSlot(Fighters[i]->BattleSlot, Offset);
 		Fighters[i]->SetOffset(Offset);
 		Fighters[i]->SetSkillUsed(nullptr);
 		Fighters[i]->SetSkillUsing(nullptr);
@@ -68,9 +68,9 @@ void _ClientBattle::StartBattle(_Player *TClientPlayer) {
 }
 
 // Removes a player from battle
-void _ClientBattle::RemovePlayer(_Player *TPlayer) {
+void _ClientBattle::RemovePlayer(_Player *Player) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] == TPlayer) {
+		if(Fighters[i] == Player) {
 			Fighters[i] = nullptr;
 			break;
 		}
@@ -78,10 +78,10 @@ void _ClientBattle::RemovePlayer(_Player *TPlayer) {
 }
 
 // Handles a command from an other player
-void _ClientBattle::HandleCommand(int TSlot, int TSkillID) {
-	int Index = GetFighterFromSlot(TSlot);
+void _ClientBattle::HandleCommand(int Slot, int SkillID) {
+	int Index = GetFighterFromSlot(Slot);
 	if(Index != -1) {
-		Fighters[Index]->SetSkillUsing(Stats.GetSkill(TSkillID));
+		Fighters[Index]->SetSkillUsing(Stats.GetSkill(SkillID));
 	}
 }
 
@@ -188,7 +188,7 @@ void _ClientBattle::Render() {
 }
 
 // Renders the battle part
-void _ClientBattle::RenderBattle(bool TShowResults) {
+void _ClientBattle::RenderBattle(bool ShowResults) {
 	Assets.Elements["element_battle"]->Render();
 
 	// Get a percent of the results timer
@@ -199,7 +199,7 @@ void _ClientBattle::RenderBattle(bool TShowResults) {
 	// Draw fighters
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i])
-			Fighters[i]->RenderBattle(TShowResults, TimerPercent, &Results[i], ClientPlayer->GetTarget() == Fighters[i]->GetSlot());
+			Fighters[i]->RenderBattle(ShowResults, TimerPercent, &Results[i], ClientPlayer->Target == Fighters[i]->BattleSlot);
 	}
 }
 
@@ -261,7 +261,7 @@ void _ClientBattle::ResolveTurn(_Buffer *Packet) {
 	}
 
 	// Change targets if the old one died
-	int TargetIndex = GetFighterFromSlot(ClientPlayer->GetTarget());
+	int TargetIndex = GetFighterFromSlot(ClientPlayer->Target);
 	if(TargetIndex != -1 && Fighters[TargetIndex]->GetHealth() == 0)
 		ChangeTarget(1);
 
@@ -344,31 +344,31 @@ void _ClientBattle::GetPositionFromSlot(int Slot, glm::ivec2 &Position) {
 }
 
 // Sends a skill selection to the server
-void _ClientBattle::SendSkill(int TSkillSlot) {
+void _ClientBattle::SendSkill(int SkillSlot) {
 	if(ClientPlayer->GetHealth() == 0)
 		return;
 
-	const _Skill *Skill = ClientPlayer->GetSkillBar(TSkillSlot);
-	if(TSkillSlot != 9 && (Skill == nullptr || !Skill->CanUse(ClientPlayer)))
+	const _Skill *Skill = ClientPlayer->GetSkillBar(SkillSlot);
+	if(SkillSlot != 9 && (Skill == nullptr || !Skill->CanUse(ClientPlayer)))
 		return;
 
 	_Buffer Packet;
 	Packet.Write<char>(_Network::BATTLE_COMMAND);
-	Packet.Write<char>(TSkillSlot);
-	Packet.Write<char>(ClientPlayer->GetTarget());
+	Packet.Write<char>(SkillSlot);
+	Packet.Write<char>(ClientPlayer->Target);
 
 	ClientNetwork->SendPacketToHost(&Packet);
 	ClientPlayer->SetSkillUsing(Skill);
 
 	// Update potion count
-	if(TSkillSlot != 9 && Skill->Type == _Skill::TYPE_USEPOTION)
+	if(SkillSlot != 9 && Skill->Type == _Skill::TYPE_USEPOTION)
 		ClientPlayer->UpdatePotionsLeft(Skill->ID == 2);
 
 	State = STATE_WAIT;
 }
 
 // Changes targets
-void _ClientBattle::ChangeTarget(int TDirection) {
+void _ClientBattle::ChangeTarget(int Direction) {
 	if(ClientPlayer->GetHealth() == 0)
 		return;
 
@@ -378,9 +378,9 @@ void _ClientBattle::ChangeTarget(int TDirection) {
 
 	// Find next available target
 	int StartIndex, Index;
-	StartIndex = Index = ClientPlayer->GetTarget() / 2;
+	StartIndex = Index = ClientPlayer->Target / 2;
 	do {
-		Index += TDirection;
+		Index += Direction;
 		if(Index >= (int)SideFighters.size())
 			Index = 0;
 		else if(Index < 0)
@@ -389,7 +389,7 @@ void _ClientBattle::ChangeTarget(int TDirection) {
 	} while(StartIndex != Index && SideFighters[Index]->GetHealth() == 0);
 
 	// Set new target
-	ClientPlayer->SetTarget(SideFighters[Index]->GetSlot());
+	ClientPlayer->Target = SideFighters[Index]->BattleSlot;
 }
 
 // Updates player stats

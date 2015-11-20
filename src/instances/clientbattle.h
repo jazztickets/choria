@@ -51,11 +51,11 @@ class _ClientBattle : public _Battle {
 		~_ClientBattle();
 
 		// Setup
-		void StartBattle(_Player *TClientPlayer);
-		void RemovePlayer(_Player *TPlayer);
+		void StartBattle(_Player *Player);
+		void RemovePlayer(_Player *Player);
 
 		// Input
-		void HandleCommand(int TSlot, int TSkillID);
+		void HandleCommand(int Slot, int SkillID);
 		void HandleAction(int Action);
 
 		// Updates
@@ -63,7 +63,7 @@ class _ClientBattle : public _Battle {
 
 		// Render
 		void Render();
-		void GetPositionFromSlot(int TSlot, glm::ivec2 &Position);
+		void GetPositionFromSlot(int Slot, glm::ivec2 &Position);
 
 		// Resolve
 		void ResolveTurn(_Buffer *Packet);
@@ -71,14 +71,14 @@ class _ClientBattle : public _Battle {
 
 	private:
 
-		void RenderBattle(bool TShowResults);
+		void RenderBattle(bool ShowResults);
 		void RenderBattleWin();
 		void RenderBattleLose();
 
 		void UpdateStats();
 
-		void SendSkill(int TSkillSlot);
-		void ChangeTarget(int TDirection);
+		void SendSkill(int SkillSlot);
+		void ChangeTarget(int Direction);
 
 		// Battle results
 		double ResultTimer;

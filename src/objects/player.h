@@ -138,20 +138,20 @@ class _Player : public _Object, public _Fighter {
 		void SetPotionsLeft(int THealthCount, int TManaCount);
 		void UpdatePotionsLeft(int TType) { PotionsLeft[TType]--; }
 		int GetPotionBattle(int TType);
-		bool UsePotionBattle(int TSlot, int TSkillType, int &THealthChange, int &TManaChange);
-		bool UsePotionWorld(int TSlot);
-		bool UseInventory(int TSlot);
-		void SetInventory(int TSlot, int TItemID, int TCount);
-		void SetInventory(int TSlot, _InventorySlot *TItem);
-		_InventorySlot *GetInventory(int TSlot);
-		const _Item *GetInventoryItem(int TSlot);
+		bool UsePotionBattle(int Slot, int TSkillType, int &THealthChange, int &TManaChange);
+		bool UsePotionWorld(int Slot);
+		bool UseInventory(int Slot);
+		void SetInventory(int Slot, int TItemID, int TCount);
+		void SetInventory(int Slot, _InventorySlot *TItem);
+		_InventorySlot *GetInventory(int Slot);
+		const _Item *GetInventoryItem(int Slot);
 		bool MoveInventory(int TOldSlot, int TNewSlot);
-		bool UpdateInventory(int TSlot, int TAmount);
-		bool AddItem(const _Item *TItem, int TCount, int TSlot);
+		bool UpdateInventory(int Slot, int TAmount);
+		bool AddItem(const _Item *TItem, int TCount, int Slot);
 		bool IsBackpackFull();
-		bool IsEmptySlot(int TSlot) { return Inventory[TSlot].Item == nullptr; }
+		bool IsEmptySlot(int Slot) { return Inventory[Slot].Item == nullptr; }
 		void MoveTradeToInventory();
-		void SplitStack(int TSlot, int TCount);
+		void SplitStack(int Slot, int TCount);
 
 		// Movement
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
@@ -183,8 +183,8 @@ class _Player : public _Object, public _Fighter {
 		// Trader
 		void SetTrader(const _Trader *TTrader);
 		const _Trader *GetTrader();
-		int GetRequiredItemSlots(const _Trader *TTrader, int *TSlots);
-		void AcceptTrader(const _Trader *TTrader, int *TSlots, int TRewardSlot);
+		int GetRequiredItemSlots(const _Trader *TTrader, int *Slots);
+		void AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot);
 
 		// Map
 		void SetSpawnMapID(int TValue) { SpawnMapID = TValue; }
@@ -211,8 +211,8 @@ class _Player : public _Object, public _Fighter {
 		void SetTradeAccepted(bool TValue) { TradeAccepted = TValue; }
 		bool GetTradeAccepted() { return TradeAccepted; }
 
-		static bool IsSlotInventory(int TSlot) { return TSlot >= INVENTORY_BACKPACK && TSlot < INVENTORY_TRADE; }
-		static bool IsSlotTrade(int TSlot) { return TSlot >= INVENTORY_TRADE && TSlot < INVENTORY_COUNT; }
+		static bool IsSlotInventory(int Slot) { return Slot >= INVENTORY_BACKPACK && Slot < INVENTORY_TRADE; }
+		static bool IsSlotTrade(int Slot) { return Slot >= INVENTORY_TRADE && Slot < INVENTORY_COUNT; }
 
 	private:
 
@@ -221,8 +221,8 @@ class _Player : public _Object, public _Fighter {
 		void CalculateSkillStats();
 		void CalculateFinalStats();
 
-		bool CanEquipItem(int TSlot, const _Item *TItem);
-		void SwapItem(int TSlot, int TOldSlot);
+		bool CanEquipItem(int Slot, const _Item *TItem);
+		void SwapItem(int Slot, int TOldSlot);
 
 		// Connection information
 		int AccountID, CharacterID;

@@ -1833,20 +1833,20 @@ void _HUD::ResetAcceptButton() {
 }
 
 // Split a stack of items
-void _HUD::SplitStack(int TSlot, int TCount) {
+void _HUD::SplitStack(int Slot, int TCount) {
 
 	// Split only inventory items
-	if(!_Player::IsSlotInventory(TSlot))
+	if(!_Player::IsSlotInventory(Slot))
 		return;
 
 	// Build packet
 	_Buffer Packet;
 	Packet.Write<char>(_Network::INVENTORY_SPLIT);
-	Packet.Write<char>(TSlot);
+	Packet.Write<char>(Slot);
 	Packet.Write<char>(TCount);
 
 	ClientNetwork->SendPacketToHost(&Packet);
-	Player->SplitStack(TSlot, TCount);
+	Player->SplitStack(Slot, TCount);
 }
 
 // Toggles the teleport state
