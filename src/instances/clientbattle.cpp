@@ -25,6 +25,8 @@
 #include <assets.h>
 #include <font.h>
 #include <ui/element.h>
+#include <ui/label.h>
+#include <ui/image.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
 #include <network/network.h>
@@ -159,8 +161,6 @@ void _ClientBattle::Update(double FrameTime) {
 
 // Render the battle system
 void _ClientBattle::Render() {
-	Assets.Elements["element_battle"]->Render();
-
 	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
 		ShowResults = false;
 		for(size_t i = 0; i < Fighters.size(); i++) {
@@ -175,9 +175,11 @@ void _ClientBattle::Render() {
 		case STATE_TURNRESULTS:
 			RenderBattle(ShowResults);
 		break;
+		case STATE_INITWIN:
 		case STATE_WIN:
 			RenderBattleWin();
 		break;
+		case STATE_INITLOSE:
 		case STATE_LOSE:
 			RenderBattleLose();
 		break;
@@ -187,6 +189,7 @@ void _ClientBattle::Render() {
 
 // Renders the battle part
 void _ClientBattle::RenderBattle(bool TShowResults) {
+	Assets.Elements["element_battle"]->Render();
 
 	// Get a percent of the results timer
 	float TimerPercent = 0;
@@ -202,83 +205,41 @@ void _ClientBattle::RenderBattle(bool TShowResults) {
 
 // Renders the battle win screen
 void _ClientBattle::RenderBattleWin() {
-	/*
+	_Element *BattleWinElement = Assets.Elements["element_battlewin"];
+	Assets.Labels["label_battlewin_experience"]->Text = std::to_string(TotalExperience) + " experience";
+	Assets.Labels["label_battlewin_coins"]->Text = std::to_string(TotalGold) + " gold";
+	Assets.Labels["label_battlewin_chest"]->Visible = MonsterDrops.size() == 0;
+	BattleWinElement->Render();
 
-	char String[512];
+	// Draw item drops
+	if(MonsterDrops.size() > 0) {
 
-	// Draw title
-	Graphics.SetFont(_Graphics::FONT_18);
-	//Graphics.RenderText("You have won", 400, 130, _Graphics::ALIGN_CENTER);
-
-	// Draw experience
-	int IconX = 180, IconY = 200, IconSpacing = 110, TextOffsetX = IconX + 50, TextOffsetY;
-	Graphics.DrawImage(_Graphics::IMAGE_BATTLEEXPERIENCE, IconX, IconY);
-
-	TextOffsetY = IconY - 23;
-	Graphics.SetFont(_Graphics::FONT_14);
-	sprintf(String, "%d experience", TotalExperience);
-	//Graphics.RenderText(String, TextOffsetX, TextOffsetY);
-
-	Graphics.SetFont(_Graphics::FONT_10);
-	sprintf(String, "You need %d more experience for your next level", ClientPlayer->GetExperienceNeeded());
-	//Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
-
-	// Draw gold
-	IconY += IconSpacing;
-	TextOffsetY = IconY - 20;
-	Graphics.DrawImage(_Graphics::IMAGE_BATTLECOINS, IconX, IconY);
-
-	sprintf(String, "%d gold", TotalGold);
-	Graphics.SetFont(_Graphics::FONT_14);
-	//Graphics.RenderText(String, TextOffsetX, TextOffsetY);
-
-	sprintf(String, "You have %d gold", ClientPlayer->GetGold());
-	Graphics.SetFont(_Graphics::FONT_10);
-	//Graphics.RenderText(String, TextOffsetX, TextOffsetY + 22);
-
-	// Draw items
-	IconY += IconSpacing;
-	TextOffsetY = IconY - 10;
-	Graphics.DrawImage(_Graphics::IMAGE_BATTLECHEST, IconX, IconY);
-
-	if(MonsterDrops.size() == 0) {
-		//Graphics.RenderText("No items found", TextOffsetX, TextOffsetY);
-	}
-	else {
-		int DrawX = TextOffsetX;
-		int DrawY = TextOffsetY - 8;
+		// Get positions
+		_Image *Image = Assets.Images["image_battlewin_chest"];
+		glm::ivec2 StartPosition = (Image->Bounds.Start + Image->Bounds.End) / 2;
+		StartPosition.x += Image->Size.x;
+		glm::ivec2 DrawPosition(StartPosition);
 
 		// Draw items found
-		int ColumnIndex = 0;
 		for(size_t i = 0; i < MonsterDrops.size(); i++) {
-			Graphics.DrawCenteredImage(MonsterDrops[i]->GetImage(), DrawX + 16, DrawY + 16);
+			const _Texture *Texture = MonsterDrops[i]->GetImage();
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Texture);
 
-			DrawX += 40;
-			ColumnIndex++;
-			if(ColumnIndex > 8) {
-				DrawX = TextOffsetX;
-				DrawY += 40;
-				ColumnIndex = 0;
+			// Move draw position down
+			DrawPosition.x += Texture->Size.x + 10;
+			if(DrawPosition.x > BattleWinElement->Bounds.End.x) {
+				DrawPosition.x = StartPosition.x;
+				DrawPosition.y += Texture->Size.y + 10;;
 			}
 		}
 	}
-	*/
-
 }
 
 // Renders the battle lost screen
 void _ClientBattle::RenderBattleLose() {
-	/*
-	RenderBattle(true);
-	char Buffer[256];
-
-	Graphics.SetFont(_Graphics::FONT_14);
-	//Graphics.RenderText("You died", 400, 130, _Graphics::ALIGN_CENTER);
-
-	sprintf(Buffer, "You lose %d gold", abs(TotalGold));
-	Graphics.SetFont(_Graphics::FONT_10);
-	//Graphics.RenderText(Buffer, 400, 155, _Graphics::ALIGN_CENTER, video::SColor(255, 200, 200, 200));
-	*/
+	Assets.Labels["label_battlelose_gold"]->Text = "You lost " + std::to_string(abs(TotalGold)) + " gold";
+	Assets.Elements["element_battlelose"]->Render();
 }
 
 // Displays turn results from the server
