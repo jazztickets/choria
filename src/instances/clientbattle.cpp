@@ -57,9 +57,9 @@ void _ClientBattle::StartBattle(_Player *Player) {
 	glm::ivec2 Offset;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		GetPositionFromSlot(Fighters[i]->BattleSlot, Offset);
-		Fighters[i]->SetOffset(Offset);
-		Fighters[i]->SetSkillUsed(nullptr);
-		Fighters[i]->SetSkillUsing(nullptr);
+		Fighters[i]->Offset = Offset;
+		Fighters[i]->SkillUsed = nullptr;
+		Fighters[i]->SkillUsing = nullptr;
 	}
 
 	State = STATE_GETINPUT;
@@ -81,7 +81,7 @@ void _ClientBattle::RemovePlayer(_Player *Player) {
 void _ClientBattle::HandleCommand(int Slot, int SkillID) {
 	int Index = GetFighterFromSlot(Slot);
 	if(Index != -1) {
-		Fighters[Index]->SetSkillUsing(Stats.GetSkill(SkillID));
+		Fighters[Index]->SkillUsing = Stats.GetSkill(SkillID);
 	}
 }
 
@@ -165,7 +165,7 @@ void _ClientBattle::Render() {
 		ShowResults = false;
 		for(size_t i = 0; i < Fighters.size(); i++) {
 			if(Fighters[i])
-				Fighters[i]->SetSkillUsed(nullptr);
+				Fighters[i]->SkillUsed = nullptr;
 		}
 	}
 
@@ -253,8 +253,8 @@ void _ClientBattle::ResolveTurn(_Buffer *Packet) {
 			Results[i].HealthChange = Packet->Read<int32_t>();
 			Fighters[i]->Health = Packet->Read<int32_t>();
 			Fighters[i]->Mana = Packet->Read<int32_t>();
-			Fighters[i]->SetSkillUsed(Fighters[i]->GetSkillUsing());
-			Fighters[i]->SetSkillUsing(nullptr);
+			Fighters[i]->SkillUsed = Fighters[i]->SkillUsing;
+			Fighters[i]->SkillUsing = nullptr;
 		}
 	}
 
@@ -356,7 +356,7 @@ void _ClientBattle::SendSkill(int SkillSlot) {
 	Packet.Write<char>(ClientPlayer->Target);
 
 	ClientNetwork->SendPacketToHost(&Packet);
-	ClientPlayer->SetSkillUsing(Skill);
+	ClientPlayer->SkillUsing = Skill;
 
 	// Update potion count
 	if(SkillSlot != 9 && Skill->Type == _Skill::TYPE_USEPOTION)

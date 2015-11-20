@@ -22,11 +22,11 @@
 #include <stats.h>
 
 // Constructor
-_Monster::_Monster(int TMonsterID)
+_Monster::_Monster(int MonsterID)
 :	_Fighter(TYPE_MONSTER),
-	ID(TMonsterID) {
+	ID(MonsterID) {
 
-	Stats.GetMonsterStats(TMonsterID, this);
+	Stats.GetMonsterStats(MonsterID, this);
 }
 
 // Destructor
@@ -40,16 +40,16 @@ void _Monster::Update() {
 }
 
 // Updates the monster's target based on AI
-void _Monster::UpdateTarget(const std::vector<_Fighter *> &TFighters) {
+void _Monster::UpdateTarget(const std::vector<_Fighter *> &Fighters) {
 
 	// Get count of fighters
-	int Count = TFighters.size();
+	int Count = Fighters.size();
 
 	// Get a random index
 	std::uniform_int_distribution<int> Distribution(0, Count-1);
 	int RandomIndex = Distribution(RandomGenerator);
 
-	Target = TFighters[RandomIndex]->BattleSlot;
+	Target = Fighters[RandomIndex]->BattleSlot;
 }
 
 // Returns the monsters command

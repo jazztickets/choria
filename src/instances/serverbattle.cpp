@@ -117,7 +117,7 @@ void _ServerBattle::HandleInput(_Player *Player, int Command, int Target) {
 
 		// Check for needed commands
 		if(Player->GetCommand() == -1) {
-			Player->SetCommand(Command);
+			Player->Command = Command;
 			Player->Target = Target;
 
 			// Notify other players
@@ -218,7 +218,7 @@ void _ServerBattle::ResolveTurn() {
 			// Update fighters
 			Fighters[i]->UpdateHealth(Results[i].HealthChange);
 			Fighters[i]->UpdateMana(Results[i].ManaChange);
-			Fighters[i]->SetCommand(-1);
+			Fighters[i]->Command = -1;
 
 			Packet.Write<char>(Results[i].Target);
 			Packet.Write<int32_t>(Results[i].SkillID);
@@ -358,11 +358,11 @@ void _ServerBattle::CheckEnd() {
 			}
 
 			// Update stats
-			int CurrentLevel = Players[i]->GetLevel();
+			int CurrentLevel = Players[i]->Level;
 			Players[i]->UpdateExperience(ExperienceEarned);
 			Players[i]->UpdateGold(GoldEarned);
 			Players[i]->CalculatePlayerStats();
-			int NewLevel = Players[i]->GetLevel();
+			int NewLevel = Players[i]->Level;
 			if(NewLevel > CurrentLevel) {
 				Players[i]->RestoreHealthMana();
 			}

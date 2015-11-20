@@ -203,12 +203,6 @@ void _Fighter::RenderBattle(bool ShowResults, float TimerPercent, _FighterResult
 	}
 }
 
-// Returns the fighter's current battle
-_Battle *_Fighter::GetBattle() {
-
-	return Battle;
-}
-
 // Update health
 void _Fighter::UpdateHealth(int Value) {
 	Health += Value;

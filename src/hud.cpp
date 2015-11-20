@@ -418,7 +418,7 @@ void _HUD::Render() {
 	std::stringstream Buffer;
 
 	// Set hud values
-	Buffer << "Level " << Player->GetLevel();
+	Buffer << "Level " << Player->Level;
 	Assets.Labels["label_hud_level"]->Text = Buffer.str();
 	Buffer.str("");
 

@@ -44,7 +44,6 @@ class _Fighter {
 
 		// Render
 		void RenderBattle(bool ShowResults, float TimerPercent, _FighterResult *Result, bool TTarget);
-		void SetOffset(const glm::ivec2 &Position) { Offset = Position; }
 
 		// Stats
 		void UpdateHealth(int Value);
@@ -53,16 +52,8 @@ class _Fighter {
 
 		void UpdateRegen(int &THealthUpdate, int &TManaUpdate);
 
-		int GetLevel() const { return Level; }
-
 		// Battles
-		_Battle *GetBattle();
-		void SetCommand(int TCommand) { Command = TCommand; }
 		virtual int GetCommand() { return Command; }
-		void SetSkillUsed(const _Skill *TSkill) { SkillUsed = TSkill; }
-		const _Skill *GetSkillUsed() const { return SkillUsed; }
-		void SetSkillUsing(const _Skill *TSkill) { SkillUsing = TSkill; }
-		const _Skill *GetSkillUsing() const { return SkillUsing; }
 		int GetSide() const { return BattleSlot & 1; }
 		int GenerateDamage();
 		int GenerateDefense();

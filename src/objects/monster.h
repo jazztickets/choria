@@ -27,17 +27,17 @@ class _Monster : public _Fighter {
 
 	public:
 
-		_Monster(int TMonsterID);
+		_Monster(int MonsterID);
 		~_Monster();
 
 		void Update();
-		void UpdateTarget(const std::vector<_Fighter *> &TFighters);
+		void UpdateTarget(const std::vector<_Fighter *> &Fighters);
 
 		// Stats
 		int GetID() const { return ID; }
-		int GetExperienceGiven() const { return ExperienceGiven; }
-		int GetGoldGiven() const { return GoldGiven; }
-		int GetCommand();
+		int GetExperienceGiven() const override { return ExperienceGiven; }
+		int GetGoldGiven() const override { return GoldGiven; }
+		int GetCommand() override;
 
 	private:
 

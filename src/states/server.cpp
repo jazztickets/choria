@@ -663,7 +663,7 @@ void _ServerState::HandleBattleCommand(_Buffer *Packet, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->GetBattle());
+	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->Battle);
 	if(!Battle)
 		return;
 
@@ -682,7 +682,7 @@ void _ServerState::HandleBattleFinished(_Buffer *Packet, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->GetBattle());
+	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->Battle);
 	if(!Battle)
 		return;
 
@@ -1284,7 +1284,7 @@ void _ServerState::BuildTradeItemsPacket(_Player *TPlayer, _Buffer *Packet, int 
 
 // Removes a player from a battle and deletes the battle if necessary
 void _ServerState::RemovePlayerFromBattle(_Player *TPlayer) {
-	_ServerBattle *Battle = static_cast<_ServerBattle *>(TPlayer->GetBattle());
+	_ServerBattle *Battle = static_cast<_ServerBattle *>(TPlayer->Battle);
 	if(!Battle)
 		return;
 
