@@ -38,7 +38,6 @@ class _Skill {
 			TYPE_USEPOTION,
 		};
 
-		int GetSellCost(int TPlayerLevel) const;
 		int GetManaCost(int TLevel) const;
 		int GetPower(int TLevel) const;
 		void GetPowerRange(int TLevel, int &TMin, int &TMax) const;

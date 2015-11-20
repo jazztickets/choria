@@ -82,12 +82,6 @@ void _Skill::GetPowerRange(int TLevel, float &TMin, float &TMax) const {
 	TMax = FinalPower + FinalPowerRange;
 }
 
-// Gets the sell cost of a skill
-int _Skill::GetSellCost(int TPlayerLevel) const {
-
-	return SkillCost * (11 + TPlayerLevel);
-}
-
 // Resolves the use of a skill in battle.
 void _Skill::ResolveSkill(_FighterResult *TResult, _FighterResult *TTargetResult) const {
 	_Fighter *Fighter = TResult->Fighter;

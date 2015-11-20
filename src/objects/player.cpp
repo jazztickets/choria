@@ -775,16 +775,13 @@ void _Player::AdjustSkillLevel(int TSkillID, int TAdjust) {
 			SkillLevels[TSkillID] = 255;
 	}
 	else if(TAdjust < 0) {
-		int SellCost = Skill->GetSellCost(Level);
-		if(SellCost > Gold || SkillLevels[TSkillID] == 0)
+		if(SkillLevels[TSkillID] == 0)
 			return;
 
 		// Update level
 		SkillLevels[TSkillID] += TAdjust;
 		if(SkillLevels[TSkillID] < 0)
 			SkillLevels[TSkillID] = 0;
-
-		UpdateGold(-SellCost);
 
 		// Update skill bar
 		if(SkillLevels[TSkillID] == 0) {
