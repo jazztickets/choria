@@ -1305,7 +1305,7 @@ void _HUD::DrawItemTooltip() {
 		TooltipElement->Render();
 
 		// Set draw position to center of window
-		glm::ivec2 DrawPosition((TooltipElement->Bounds.End.x - TooltipElement->Bounds.Start.x) / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
+		glm::ivec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
 		DrawPosition.y += 40;
 
 		glm::ivec2 Spacing(10, 0);
@@ -1458,12 +1458,12 @@ void _HUD::DrawSkillTooltip() {
 		TooltipName->Text = Skill->Name;
 
 		// Get window width
-		glm::ivec2 Size = TooltipElement->Bounds.End - TooltipElement->Bounds.Start;
+		glm::ivec2 Size = TooltipElement->Size;
 
 		// Position window
 		glm::ivec2 WindowOffset = Input.GetMouse();
 		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
-		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+		WindowOffset.y += -Size.y / 2;
 
 		// Reposition window if out of bounds
 		if(WindowOffset.y < Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING)

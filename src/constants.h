@@ -71,6 +71,8 @@ const int INVENTORY_BAG_OFFSET = 170;
 const int INVENTORY_TOOLTIP_OFFSET = 20;
 const int INVENTORY_TOOLTIP_PADDING = 10;
 
+const int BATTLE_SLOT_SIZE = 64;
+
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
 const  int          DEFAULT_FULLSCREEN             =  0;

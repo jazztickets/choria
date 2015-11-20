@@ -16,11 +16,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/fighter.h>
+#include <constants.h>
 #include <graphics.h>
 #include <random.h>
 #include <stats.h>
+#include <assets.h>
+#include <font.h>
+#include <program.h>
+#include <ui/element.h>
+#include <ui/image.h>
 #include <instances/battle.h>
 #include <objects/skill.h>
+#include <sstream>
 
 // Constructor
 _Fighter::_Fighter(int TType)
@@ -62,48 +69,91 @@ _Fighter::~_Fighter() {
 // Renders the fighter during a battle
 void _Fighter::RenderBattle(bool TShowResults, float TTimerPercent, _FighterResult *TResult, bool TTarget) {
 
-	/*
-	char String[256];
 	uint32_t AlphaPercent = (uint32_t)(255 * TTimerPercent);
 	if(TTimerPercent > 0.75f)
 		AlphaPercent = 255;
 	else
 		AlphaPercent = (uint32_t)(255 * TTimerPercent / 0.75f);
 
-	// Sides
-	_Graphics::ImageType SlotImage;
-	if(GetSide() == 0) {
-		SlotImage = _Graphics::IMAGE_BATTLESLOTLEFT;
-	}
-	else {
-		SlotImage = _Graphics::IMAGE_BATTLESLOTRIGHT;
-	}
+	// Get slot ui element depending on side
+	_Element *Slot;
+	if(GetSide() == 0)
+		Slot = Assets.Elements["element_side_left"];
+	else
+		Slot = Assets.Elements["element_side_right"];
+
+	// Draw slot
+	Slot->Offset = Offset;
+	Slot->CalculateBounds();
+	Slot->Render();
+
+	// Get slot center
+	glm::ivec2 SlotPosition = (Slot->Bounds.Start + Slot->Bounds.End) / 2;
 
 	// Name
-	Graphics.SetFont(_Graphics::FONT_10);
-	//Graphics.RenderText(Name.c_str(), Offset.x + 32, Offset.y - 3, _Graphics::ALIGN_CENTER);
+	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), Slot->Bounds.Start + glm::ivec2(32, -10), COLOR_WHITE, CENTER_BASELINE);
 
 	// Portrait
-	Graphics.DrawImage(SlotImage, Offset.x + 32, Offset.y + 50);
-	if(Portrait)
-		Graphics.DrawCenteredImage(Portrait, Offset.x + 32, Offset.y + 50);
+	if(Portrait) {
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(SlotPosition, Portrait);
+	}
 
-	// Health
-	int BarWidth = 80, BarHeight = 16, BarX = Offset.x + 70, BarY = Offset.y + 27;
+	// Health/mana bars
+	glm::ivec2 BarSize(90, 22);
+	glm::ivec2 BarOffset(Portrait->Size.x/2 + 10, -15);
+	if(MaxMana == 0)
+		BarOffset.y = 0;
 
+	// Get health percent
 	float HealthPercent = MaxHealth > 0 ? Health / (float)MaxHealth : 0;
-	sprintf(String, "%d / %d", Health, MaxHealth);
-	Graphics.SetFont(_Graphics::FONT_8);
-	Graphics.DrawBar(_Graphics::IMAGE_HEALTH, BarX, BarY, HealthPercent, BarWidth, BarHeight);
-	//Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, _Graphics::ALIGN_CENTER);
 
-	// Mana
-	BarY += 30;
-	float ManaPercent = MaxMana > 0 ? Mana / (float)MaxMana : 0;
-	sprintf(String, "%d / %d", Mana, MaxMana);
-	Graphics.DrawBar(_Graphics::IMAGE_MANA, BarX, BarY, ManaPercent, BarWidth, BarHeight);
-	//Graphics.RenderText(String, BarX + BarWidth / 2, BarY + 1, _Graphics::ALIGN_CENTER);
+	// Get ui size
+	_Bounds Bounds;
+	Bounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
+	Bounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
+	glm::ivec2 BarCenter = (Bounds.Start + Bounds.End) / 2;
 
+	// Draw empty bar
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.SetVBO(VBO_NONE);
+	Graphics.DrawImage(Bounds, Assets.Images["image_hud_health_bar_empty"]->Texture, true);
+
+	// Draw full bar
+	Bounds.End = SlotPosition + glm::ivec2(BarSize.x * HealthPercent, BarSize.y/2) + BarOffset;
+	Graphics.DrawImage(Bounds, Assets.Images["image_hud_health_bar_full"]->Texture, true);
+
+	// Draw health text
+	std::stringstream Buffer;
+	Buffer << Health << " / " << MaxHealth;
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), COLOR_WHITE, CENTER_BASELINE);
+	Buffer.str("");
+
+	// Draw mana
+	if(MaxMana > 0) {
+		float ManaPercent = MaxMana > 0 ? Mana / (float)MaxMana : 0;
+
+		// Get ui size
+		BarOffset.y = -BarOffset.y;
+		Bounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
+		Bounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
+		BarCenter = (Bounds.Start + Bounds.End) / 2;
+
+		// Draw empty bar
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.SetVBO(VBO_NONE);
+		Graphics.DrawImage(Bounds, Assets.Images["image_hud_mana_bar_empty"]->Texture, true);
+
+		// Draw full bar
+		Bounds.End = SlotPosition + glm::ivec2(BarSize.x * ManaPercent, BarSize.y/2) + BarOffset;
+		Graphics.DrawImage(Bounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
+
+		// Draw mana text
+		Buffer << Mana << " / " << MaxMana;
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), COLOR_WHITE, CENTER_BASELINE);
+		Buffer.str("");
+	}
+	/*
 	// Show results of last turn
 	if(TShowResults) {
 

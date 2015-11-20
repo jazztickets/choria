@@ -18,12 +18,16 @@
 #include <instances/clientbattle.h>
 #include <globals.h>
 #include <graphics.h>
-#include <network/network.h>
 #include <stats.h>
 #include <buffer.h>
 #include <actions.h>
+#include <program.h>
+#include <assets.h>
+#include <font.h>
+#include <ui/element.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
+#include <network/network.h>
 
 // Constructor
 _ClientBattle::_ClientBattle()
@@ -155,9 +159,7 @@ void _ClientBattle::Update(double FrameTime) {
 
 // Render the battle system
 void _ClientBattle::Render() {
-
-	// Draw layout
-	//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 130, 120, 540, 360, video::SColor(220, 255, 255, 255));
+	Assets.Elements["element_battle"]->Render();
 
 	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
 		ShowResults = false;
@@ -349,37 +351,35 @@ void _ClientBattle::EndBattle(_Buffer *TPacket) {
 }
 
 // Calculates a screen position for a slot
-void _ClientBattle::GetPositionFromSlot(int TSlot, glm::ivec2 &TPosition) {
+void _ClientBattle::GetPositionFromSlot(int Slot, glm::ivec2 &Position) {
+	_Element *BattleElement = Assets.Elements["element_battle"];
+	glm::ivec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2;
 
 	// Get side
-	int TSide = TSlot & 1;
+	int Side = Slot & 1;
 
 	// Check sides
 	int SideCount;
-	if(TSide == 0) {
-		TPosition.x = 170;
+	if(Side == 0) {
+		Position.x = Center.x - 180;
 		SideCount = LeftFighterCount;
 	}
 	else {
-		TPosition.x = 460;
+		Position.x = Center.x + 100;
 		SideCount = RightFighterCount;
 	}
 
 	// Get an index into the side
-	int SideIndex = TSlot / 2;
+	int SideIndex = Slot / 2;
 
-	// Get layout based off side count
-	switch(SideCount) {
-		case 1:
-			TPosition.y = 247;
-		break;
-		case 2:
-			TPosition.y = 240 + (SideIndex * 2 - 1) * 70;
-		break;
-		default:
-			TPosition.y = 140 + 300 / SideCount * SideIndex;
-		break;
-	}
+	// Divide space into SideCount parts, then divide that by 2
+	int SpacingY = (BattleElement->Size.y / SideCount) / 2;
+
+	// Place slots in between main divisions
+	Position.y = BattleElement->Bounds.Start.y + SpacingY * (2 * SideIndex + 1) + 10;
+
+	// Convert position to relative offset from center
+	Position = Position - Center;
 }
 
 // Sends a skill selection to the server

@@ -16,3 +16,6 @@ highlight	1	1	1	0.15
 dark	0	0	0	0.8
 inventory_slot_trans	1	1	1	0.7
 item_tooltip_bg	0	0	0	0.9
+red_alpha	1	0	0	0.1
+green_alpha	0	1	0	0.1
+blue_alpha	0	0	1	0.1

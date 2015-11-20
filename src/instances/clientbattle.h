@@ -63,7 +63,7 @@ class _ClientBattle : public _Battle {
 
 		// Render
 		void Render();
-		void GetPositionFromSlot(int TSlot, glm::ivec2 &TPosition);
+		void GetPositionFromSlot(int TSlot, glm::ivec2 &Position);
 
 		// Resolve
 		void ResolveTurn(_Buffer *TPacket);

@@ -171,7 +171,6 @@ class _Player : public _Object, public _Fighter {
 		// Battles
 		void GenerateNextBattle();
 		void SetNextBattle(int TValue) { NextBattle = TValue; }
-		void UpdateNextBattle(int TChange) { NextBattle += TChange; }
 		int GetNextBattle() const { return NextBattle; }
 		void SetBattle(_Battle *TBattle) { Battle = TBattle; }
 		void StartBattle(_Battle *TBattle);

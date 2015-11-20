@@ -635,7 +635,6 @@ void _ClientState::HandleObjectUpdates(_Buffer *TPacket) {
 
 // Handles the start of a battle
 void _ClientState::HandleStartBattle(_Buffer *TPacket) {
-	//printf("HandleStartBattle: \n");
 
 	// Already in a battle
 	if(Battle)
@@ -666,7 +665,7 @@ void _ClientState::HandleStartBattle(_Buffer *TPacket) {
 			int MaxMana = TPacket->Read<int32_t>();
 
 			// Get player object
-			_Player *NewPlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
+			_Player *NewPlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
 			if(NewPlayer != nullptr) {
 				NewPlayer->SetHealth(Health);
 				NewPlayer->SetMaxHealth(MaxHealth);
