@@ -71,10 +71,6 @@ class _Map {
 
 		void Update(double FrameTime);
 
-		// States
-		int GetID() const { return ID; }
-		const std::string &GetFilename() const { return Filename; }
-
 		// Graphics
 		void Render(_Camera *Camera, int RenderFlags=0);
 
@@ -84,9 +80,8 @@ class _Map {
 		// Object management
 		void AddObject(_Object *Object);
 		void RemoveObject(_Object *TObject);
-		const std::list<_Object *> &GetObjects() const;
-		void GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers);
-		_Player *GetClosestPlayer(const _Player *TPlayer, float MaxDistanceSquared, int TState);
+		void GetClosePlayers(const _Player *TPlayer, float DistanceSquared, std::list<_Player *> &Players);
+		_Player *GetClosestPlayer(const _Player *Player, float MaxDistanceSquared, int State);
 
 		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
 
@@ -105,18 +100,6 @@ class _Map {
 		// File IO
 		int SaveMap();
 		void LoadMap();
-
-	private:
-
-		void Init();
-
-		void AllocateMap();
-		void FreeMap();
-
-		void SendObjectUpdates();
-
-		void GetTextureListFromMap(std::vector<const _Texture *> &TTextures);
-		int GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture);
 
 		// Map file
 		int ID;
@@ -137,4 +120,17 @@ class _Map {
 		// Objects
 		double ObjectUpdateTime;
 		std::list<_Object *> Objects;
+
+	private:
+
+		void Init();
+
+		void AllocateMap();
+		void FreeMap();
+
+		void SendObjectUpdates();
+
+		void GetTextureListFromMap(std::vector<const _Texture *> &TTextures);
+		int GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture);
+
 };

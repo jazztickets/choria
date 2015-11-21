@@ -80,7 +80,7 @@ class _ServerState : public _State {
 		void HandleTeleport(_Buffer *Packet, ENetPeer *TPeer);
 		void HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer);
 
-		void SendPlayerPosition(_Player *TPlayer);
+		void SendPlayerPosition(_Player *Player);
 		void SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData);
 		void SendHUD(_Player *TPlayer);
 		void SendCharacterList(_Player *TPlayer);

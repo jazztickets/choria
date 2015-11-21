@@ -54,8 +54,6 @@ class _Object {
 		void SetPosition(const glm::ivec2 &Position) { this->Position = Position; }
 		const glm::ivec2 &GetPosition() const { return Position; }
 
-		int GetMapID() const;
-
 		// Instances
 		_Map *Map;
 

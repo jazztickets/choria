@@ -60,7 +60,7 @@ _Map *_Instance::GetMap(int MapID) {
 	for(auto &Map : Maps) {
 
 		// Check id
-		if(Map->GetID() == MapID)
+		if(Map->ID == MapID)
 			return Map;
 	}
 

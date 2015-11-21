@@ -94,7 +94,7 @@ void _ServerState::Close() {
 
 	// Disconnect peers
 	std::list<_Object *> Objects = ObjectManager->GetObjects();
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == _Object::PLAYER) {
 			_Player *Player = static_cast<_Player *>(*Iterator);
 			Player->Save();
@@ -588,7 +588,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 		const _Tile *Tile = Player->GetTile();
 		switch(Tile->EventType) {
 			case _Map::EVENT_SPAWN:
-				Player->SpawnMapID = Player->GetMapID();
+				Player->SpawnMapID = Player->Map->ID;
 				Player->SpawnPoint = Tile->EventData;
 				Player->RestoreHealthMana();
 				SendHUD(Player);
@@ -596,7 +596,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 			break;
 			case _Map::EVENT_MAPCHANGE:
 				Player->GenerateNextBattle();
-				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->GetMapID());
+				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->Map->ID);
 			break;
 			case _Map::EVENT_VENDOR:
 				Player->State =_Player::STATE_VENDOR;
@@ -1162,9 +1162,8 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 		Packet.Write<int32_t>(NewMapID);
 
 		// Write object data
-		std::list<_Object *> Objects = NewMap->GetObjects();
-		Packet.Write<int32_t>(Objects.size());
-		for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		Packet.Write<int32_t>(NewMap->Objects.size());
+		for(auto Iterator = NewMap->Objects.begin(); Iterator != NewMap->Objects.end(); ++Iterator) {
 			_Object *Object = *Iterator;
 
 			Packet.Write<char>(Object->GetNetworkID());
@@ -1207,14 +1206,14 @@ void _ServerState::SendHUD(_Player *TPlayer) {
 }
 
 // Send player their position
-void _ServerState::SendPlayerPosition(_Player *TPlayer) {
+void _ServerState::SendPlayerPosition(_Player *Player) {
 
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_POSITION);
-	Packet.Write<char>(TPlayer->GetPosition().x);
-	Packet.Write<char>(TPlayer->GetPosition().y);
+	Packet.Write<char>(Player->GetPosition().x);
+	Packet.Write<char>(Player->GetPosition().y);
 
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
+	ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 }
 
 // Sends the player a list of his/her characters

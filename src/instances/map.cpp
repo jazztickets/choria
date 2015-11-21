@@ -412,7 +412,7 @@ void _Map::AddObject(_Object *Object) {
 void _Map::RemoveObject(_Object *TObject) {
 
 	// Remove from the map
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
 		if(*Iterator == TObject)
 			Iterator = Objects.erase(Iterator);
 		else
@@ -428,23 +428,16 @@ void _Map::RemoveObject(_Object *TObject) {
 	SendPacketToPlayers(&Packet);
 }
 
-// Returns the list of objects
-const std::list<_Object *> &_Map::GetObjects() const {
-
-	return Objects;
-}
-
 // Returns a list of players close to a player
-void _Map::GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers) {
+void _Map::GetClosePlayers(const _Player *Player, float DistanceSquared, std::list<_Player *> &Players) {
 
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if((*Iterator)->GetType() == _Object::PLAYER) {
-			_Player *Player = static_cast<_Player *>(*Iterator);
-			if(Player != TPlayer) {
-				int XDelta = Player->GetPosition().x - TPlayer->GetPosition().x;
-				int YDelta = Player->GetPosition().y - TPlayer->GetPosition().y;
-				if((float)(XDelta * XDelta + YDelta * YDelta) <= TDistanceSquared) {
-					TPlayers.push_back(Player);
+	for(const auto &Object : Objects) {
+		if(Object->GetType() == _Object::PLAYER) {
+			_Player *TestPlayer = (_Player *)Object;
+			if(TestPlayer != Player) {
+				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
+				if((float)(Delta.x * Delta.x + Delta.y * Delta.y) <= DistanceSquared) {
+					Players.push_back(TestPlayer);
 				}
 			}
 		}
@@ -452,20 +445,19 @@ void _Map::GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::
 }
 
 // Returns the closest player
-_Player *_Map::GetClosestPlayer(const _Player *TPlayer, float MaxDistanceSquared, int TState) {
+_Player *_Map::GetClosestPlayer(const _Player *Player, float MaxDistanceSquared, int State) {
 
 	_Player *ClosestPlayer = nullptr;
-	float ClosestDistanceSquared = 1e10;
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if((*Iterator)->GetType() == _Object::PLAYER) {
-			_Player *Player = static_cast<_Player *>(*Iterator);
-			if(Player != TPlayer && Player->State == TState) {
-				int XDelta = Player->GetPosition().x - TPlayer->GetPosition().x;
-				int YDelta = Player->GetPosition().y - TPlayer->GetPosition().y;
-				float DistanceSquared = (float)(XDelta * XDelta + YDelta * YDelta);
+	float ClosestDistanceSquared = HUGE_VAL;
+	for(const auto &Object : Objects) {
+		if(Object->GetType() == _Object::PLAYER) {
+			_Player *TestPlayer = (_Player *)Object;
+			if(TestPlayer != Player && TestPlayer->State == State) {
+				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
+				float DistanceSquared = (float)(Delta.x * Delta.x + Delta.y * Delta.y);
 				if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
 					ClosestDistanceSquared = DistanceSquared;
-					ClosestPlayer = Player;
+					ClosestPlayer = TestPlayer;
 				}
 			}
 		}
@@ -485,7 +477,7 @@ void _Map::SendObjectUpdates() {
 	int ObjectCount = Objects.size();
 	Packet.Write<char>(ObjectCount);
 
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
 		int State = 0;
 		bool Invisible = false;
@@ -509,7 +501,7 @@ void _Map::SendObjectUpdates() {
 void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Network::SendType Type) {
 
 	// Send the packet out
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		if((*Iterator)->GetType() == _Object::PLAYER) {
 			_Player *Player = static_cast<_Player *>(*Iterator);
 

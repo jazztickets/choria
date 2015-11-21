@@ -81,7 +81,7 @@ void _ObjectManager::DeleteObject(_Object *TObject) {
 void _ObjectManager::ClearObjects() {
 
 	// Delete objects
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		delete (*Iterator);
 	}
 
@@ -90,7 +90,7 @@ void _ObjectManager::ClearObjects() {
 
 // Deletes all the objects except for one
 void _ObjectManager::DeletesObjectsExcept(_Object *TObject) {
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
 		if(Object != TObject)
 			Object->SetDeleted(true);
@@ -101,7 +101,7 @@ void _ObjectManager::DeletesObjectsExcept(_Object *TObject) {
 void _ObjectManager::Update(double FrameTime) {
 
 	// Update objects
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
 		_Object *Object = *Iterator;
 
 		// Update the object
@@ -129,7 +129,7 @@ void _ObjectManager::Update(double FrameTime) {
 
 // Renders all of the objects
 void _ObjectManager::Render(_Object *ClientPlayer) {
-	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
 		Object->RenderWorld(ClientPlayer);
 	}

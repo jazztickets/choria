@@ -32,11 +32,3 @@ _Object::_Object(int TType)
 _Object::~_Object() {
 
 }
-
-// Returns the object's map id
-int _Object::GetMapID() const {
-	if(!Map)
-		return 0;
-
-	return Map->GetID();
-}
