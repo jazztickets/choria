@@ -62,18 +62,15 @@ void _NullState::Render(double BlendFactor) {
 
 // Connect
 void _NullState::HandleConnect(ENetEvent *Event) {
-	Framework.Log << "_NullState::HandleConnect" << std::endl;
 	Menu.HandleConnect(Event);
 }
 
 // Disconnect
 void _NullState::HandleDisconnect(ENetEvent *Event) {
-	Framework.Log << "_NullState::HandleDisconnect" << std::endl;
 	Menu.HandleDisconnect(Event);
 }
 
 // Packet
 void _NullState::HandlePacket(ENetEvent *Event) {
-	Framework.Log << "_NullState::HandlePacket" << std::endl;
 	Menu.HandlePacket(Event);
 }

@@ -149,14 +149,13 @@ class _HUD {
 		void DrawCursorSkill();
 		void DrawSkillTooltip();
 		void DrawSkillDescription(const _Skill *Skill, int SkillLevel, glm::ivec2 &DrawPosition, int Width);
-		void DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll);
+		void DrawTradeItems(_Player *Player, bool DrawAll);
 
-		void GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem);
 		void BuyItem(_CursorItem *Item, int TargetSlot);
-		void SellItem(_CursorItem *TCursorItem, int Amount);
+		void SellItem(_CursorItem *Item, int Amount);
 
 		void AdjustSkillLevel(int SkillID, int Direction);
-		void SetSkillBar(int Slot, int TOldSlot, const _Skill *Skill);
+		void SetSkillBar(int Slot, int OldSlot, const _Skill *Skill);
 		void ClearSkills();
 
 		void RefreshSkillButtons();
@@ -165,7 +164,7 @@ class _HUD {
 		void SendTradeCancel();
 		int ValidateTradeGold();
 
-		void SplitStack(int Slot, int TCount);
+		void SplitStack(int Slot, int Count);
 
 		int *State;
 

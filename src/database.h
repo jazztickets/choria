@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #pragma once
+#include <cstdint>
 
 // Forward Declarations
 struct sqlite3;
@@ -29,19 +30,19 @@ class _Database {
 		_Database();
 		~_Database();
 
-		int OpenDatabase(const char *TFilename);
-		int OpenDatabaseCreate(const char *TFilename);
+		int OpenDatabase(const char *Path);
+		int OpenDatabaseCreate(const char *Path);
 
-		int RunQuery(const char *TQueryString);
-		int RunDataQuery(const char *TQueryString, int THandle=0);
-		int RunCountQuery(const char *TQueryString);
-		int FetchRow(int THandle=0);
-		int CloseQuery(int THandle=0);
-		int GetLastInsertID();
+		void RunQuery(const char *QueryString);
+		void RunDataQuery(const char *QueryString, int Handle=0);
+		int RunCountQuery(const char *QueryString);
+		int FetchRow(int Handle=0);
+		int CloseQuery(int Handle=0);
+		int64_t GetLastInsertID();
 
-		int GetInt(int TColumnIndex, int THandle=0);
-		float GetFloat(int TColumnIndex, int THandle=0);
-		const char *GetString(int TColumnIndex, int THandle=0);
+		int GetInt(int ColumnIndex, int Handle=0);
+		float GetFloat(int ColumnIndex, int Handle=0);
+		const char *GetString(int ColumnIndex, int Handle=0);
 
 	private:
 

@@ -1601,7 +1601,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPos
 }
 
 // Draws trading items
-void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAll) {
+void _HUD::DrawTradeItems(_Player *Player, bool DrawAll) {
 	/*
 	core::recti WindowArea = TabTrade->getAbsolutePosition();
 	int OffsetX = WindowArea.UpperLeftCorner.x;
@@ -1632,10 +1632,10 @@ void _HUD::DrawTradeItems(_Player *TPlayer, int TDrawX, int TDrawY, bool TDrawAl
 	Graphics.SetFont(_Graphics::FONT_10);
 	*/
 }
-
+/*
 // Returns a trade item from a mouse position
 void _HUD::GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
-	/*
+
 	core::recti WindowArea = TabTrade->getAbsolutePosition();
 	if(!WindowArea.isPointInside(TPoint))
 		return;
@@ -1660,8 +1660,9 @@ void _HUD::GetTradeItem(const glm::ivec2 &Position, _CursorItem &TCursorItem) {
 		TCursorItem.Window = WINDOW_TRADEYOU;
 		TCursorItem.Set(Item, 0, Player->GetInventory(InventoryIndex)->Count, InventoryIndex);
 	}
-	*/
+
 }
+*/
 
 // Buys an item from the vendor
 void _HUD::BuyItem(_CursorItem *Item, int TargetSlot) {
@@ -1832,7 +1833,7 @@ void _HUD::ResetAcceptButton() {
 }
 
 // Split a stack of items
-void _HUD::SplitStack(int Slot, int TCount) {
+void _HUD::SplitStack(int Slot, int Count) {
 
 	// Split only inventory items
 	if(!_Player::IsSlotInventory(Slot))
@@ -1842,10 +1843,10 @@ void _HUD::SplitStack(int Slot, int TCount) {
 	_Buffer Packet;
 	Packet.Write<char>(_Network::INVENTORY_SPLIT);
 	Packet.Write<char>(Slot);
-	Packet.Write<char>(TCount);
+	Packet.Write<char>(Count);
 
 	ClientNetwork->SendPacketToHost(&Packet);
-	Player->SplitStack(Slot, TCount);
+	Player->SplitStack(Slot, Count);
 }
 
 // Toggles the teleport state

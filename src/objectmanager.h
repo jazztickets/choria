@@ -38,15 +38,15 @@ class _ObjectManager {
 		void SetObjectDeletedCallback(void (* Callback)(_Object *TObject)) { ObjectDeletedCallback = Callback; }
 
 		void ClearObjects();
-		void DeletesObjectsExcept(_Object *TObject);
-		_Object *CreateObjectFromTemplate(int TTemplateID);
-		_Object *AddObject(_Object *TObject);
+		void DeletesObjectsExcept(_Object *ExceptionObject);
+		_Object *CreateObjectFromTemplate();
+		_Object *AddObject(_Object *Object);
 		_Object *AddObjectWithNetworkID(_Object *Object, int NetworkID);
 		void DeleteObject(_Object *Object);
 
 		int GetObjectCount() const { return Objects.size(); }
 		const std::list<_Object *> &GetObjects() const { return Objects; }
-		_Object *GetObjectFromNetworkID(int TID);
+		_Object *GetObjectFromNetworkID(int ID);
 
 	private:
 
@@ -55,7 +55,7 @@ class _ObjectManager {
 
 		// Networking
 		_Object **ObjectArray;
-		void (* ObjectDeletedCallback)(_Object *TObject);
+		void (* ObjectDeletedCallback)(_Object *Object);
 
 		int NextNetworkID;
 };

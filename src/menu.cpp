@@ -770,22 +770,22 @@ void _Menu::HandlePacket(ENetEvent *Event) {
 	switch(Packet.Read<char>()) {
 		case _Network::VERSION: {
 			std::string Version(Packet.ReadString());
-			Framework.Log << "_Network::VERSION=" << Version << std::endl;
+			//Framework.Log << "_Network::VERSION=" << Version << std::endl;
 			if(Version != GAME_VERSION) {
 				//Message = "Game version differs from server's";
 				//ChangeState(STATE_MAIN);
 			}
 		} break;
 		case _Network::ACCOUNT_SUCCESS: {
-			Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
+			//Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
 			RequestCharacterList();
 		} break;
 		case _Network::CHARACTERS_LIST: {
-			Framework.Log << "_Network::CHARACTERS_LIST" << std::endl;
+			//Framework.Log << "_Network::CHARACTERS_LIST" << std::endl;
 
 			// Get count
 			int CharacterCount = Packet.Read<char>();
-			Framework.Log << "CharacterCount=" << CharacterCount << std::endl;
+			//Framework.Log << "CharacterCount=" << CharacterCount << std::endl;
 
 			// Reset character slots
 			for(int i = 0; i < SAVE_COUNT; i++) {

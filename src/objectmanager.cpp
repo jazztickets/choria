@@ -134,7 +134,7 @@ void _ObjectManager::Render(_Object *ClientPlayer) {
 }
 
 // Creates an object from a template ID
-_Object *_ObjectManager::CreateObjectFromTemplate(int TTemplateID) {
+_Object *_ObjectManager::CreateObjectFromTemplate() {
 
 	_Object *NewObject = nullptr;
 	NewObject = new _Player();
@@ -158,10 +158,9 @@ int _ObjectManager::GetNextNetworkID() {
 }
 
 // Returns an object given a network ID
-_Object *_ObjectManager::GetObjectFromNetworkID(int TID) {
-
-	if(TID < 0 || TID >= MAX_OBJECTS)
+_Object *_ObjectManager::GetObjectFromNetworkID(int ID) {
+	if(ID < 0 || ID >= MAX_OBJECTS)
 		return nullptr;
 
-	return ObjectArray[TID];
+	return ObjectArray[ID];
 }

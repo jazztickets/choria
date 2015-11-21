@@ -209,8 +209,6 @@ void _Player::Save() {
 	if(!Database || CharacterID == 0)
 		return;
 
-	printf("Saving Character %s\n", Name.c_str());
-
 	char Query[512];
 	Database->RunQuery("BEGIN TRANSACTION");
 
