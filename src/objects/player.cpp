@@ -132,8 +132,8 @@ void _Player::Update(double FrameTime) {
 }
 
 // Renders the player while walking around the world
-void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
-	if(TMap) {
+void _Player::RenderWorld(const _Object *ClientPlayer) {
+	if(Map) {
 
 		float Alpha = 1.0f;
 		if(IsInvisible())
@@ -154,7 +154,7 @@ void _Player::RenderWorld(const _Map *TMap, const _Object *TClientPlayer) {
 			Graphics.DrawSprite(DrawPosition, StateImage);
 		}
 
-		if(TClientPlayer != this) {
+		if(ClientPlayer != this) {
 			//Graphics.SetFont(_Graphics::FONT_8);
 			//Graphics.RenderText(Name.c_str(), ScreenPosition.x, ScreenPosition.y - 28, _Graphics::ALIGN_CENTER);
 		}
@@ -353,30 +353,6 @@ void _Player::SetPortraitID(int TID) {
 	Portrait = Stats.GetPortrait(PortraitID)->Image;
 }
 
-// Sets the player's vendor
-void _Player::SetVendor(const _Vendor *Vendor) {
-
-	this->Vendor = Vendor;
-}
-
-// Gets the player's vendor
-const _Vendor *_Player::GetVendor() {
-
-	return Vendor;
-}
-
-// Sets the player's trader
-void _Player::SetTrader(const _Trader *TTrader) {
-
-	Trader = TTrader;
-}
-
-// Gets the player's trader
-const _Trader *_Player::GetTrader() {
-
-	return Trader;
-}
-
 // Fills an array with inventory indices correlating to a trader's required items
 int _Player::GetRequiredItemSlots(const _Trader *TTrader, int *Slots) {
 	int RewardItemSlot = -1;
@@ -497,28 +473,28 @@ bool _Player::UseInventory(int Slot) {
 }
 
 // Sets an item in the inventory
-void _Player::SetInventory(int Slot, int TItemID, int TCount) {
+void _Player::SetInventory(int Slot, int ItemID, int TCount) {
 
-	if(TItemID == 0) {
+	if(ItemID == 0) {
 		Inventory[Slot].Item = nullptr;
 		Inventory[Slot].Count = 0;
 	}
 	else {
-		Inventory[Slot].Item = Stats.GetItem(TItemID);
+		Inventory[Slot].Item = Stats.GetItem(ItemID);
 		Inventory[Slot].Count = TCount;
 	}
 }
 
 // Sets an item in the inventory
-void _Player::SetInventory(int Slot, _InventorySlot *TItem) {
+void _Player::SetInventory(int Slot, _InventorySlot *Item) {
 
-	if(TItem->Item == nullptr) {
+	if(Item->Item == nullptr) {
 		Inventory[Slot].Item = nullptr;
 		Inventory[Slot].Count = 0;
 	}
 	else {
-		Inventory[Slot].Item = TItem->Item;
-		Inventory[Slot].Count = TItem->Count;
+		Inventory[Slot].Item = Item->Item;
+		Inventory[Slot].Count = Item->Count;
 	}
 }
 
@@ -533,25 +509,25 @@ const _Item *_Player::GetInventoryItem(int Slot) {
 }
 
 // Moves an item from one slot to another
-bool _Player::MoveInventory(int TOldSlot, int TNewSlot) {
-	if(TOldSlot == TNewSlot)
+bool _Player::MoveInventory(int OldSlot, int NewSlot) {
+	if(OldSlot == NewSlot)
 		return false;
 
 	// Equippable items
-	if(TNewSlot < INVENTORY_BACKPACK) {
+	if(NewSlot < INVENTORY_BACKPACK) {
 
 		// Check if the item is even equippable
-		if(!CanEquipItem(TNewSlot, Inventory[TOldSlot].Item))
+		if(!CanEquipItem(NewSlot, Inventory[OldSlot].Item))
 			return false;
 
 		// Split stacks
-		if(Inventory[TOldSlot].Count > 1) {
-			Inventory[TNewSlot].Item = Inventory[TOldSlot].Item;
-			Inventory[TNewSlot].Count = 1;
-			Inventory[TOldSlot].Count--;
+		if(Inventory[OldSlot].Count > 1) {
+			Inventory[NewSlot].Item = Inventory[OldSlot].Item;
+			Inventory[NewSlot].Count = 1;
+			Inventory[OldSlot].Count--;
 		}
 		else
-			SwapItem(TNewSlot, TOldSlot);
+			SwapItem(NewSlot, OldSlot);
 
 		return true;
 	}
@@ -559,24 +535,24 @@ bool _Player::MoveInventory(int TOldSlot, int TNewSlot) {
 	else {
 
 		// Add to stack
-		if(Inventory[TNewSlot].Item == Inventory[TOldSlot].Item) {
-			Inventory[TNewSlot].Count += Inventory[TOldSlot].Count;
+		if(Inventory[NewSlot].Item == Inventory[OldSlot].Item) {
+			Inventory[NewSlot].Count += Inventory[OldSlot].Count;
 
 			// Group stacks
-			if(Inventory[TNewSlot].Count > 255) {
-				Inventory[TOldSlot].Count = Inventory[TNewSlot].Count - 255;
-				Inventory[TNewSlot].Count = 255;
+			if(Inventory[NewSlot].Count > 255) {
+				Inventory[OldSlot].Count = Inventory[NewSlot].Count - 255;
+				Inventory[NewSlot].Count = 255;
 			}
 			else
-				Inventory[TOldSlot].Item = nullptr;
+				Inventory[OldSlot].Item = nullptr;
 		}
 		else {
 
 			// Disable reverse equip for now
-			if(TOldSlot < INVENTORY_BACKPACK && Inventory[TNewSlot].Item)
+			if(OldSlot < INVENTORY_BACKPACK && Inventory[NewSlot].Item)
 				return false;
 
-			SwapItem(TNewSlot, TOldSlot);
+			SwapItem(NewSlot, OldSlot);
 		}
 
 		return true;
@@ -594,9 +570,9 @@ void _Player::SwapItem(int Slot, int OldSlot) {
 }
 
 // Updates an item's count, deleting if necessary
-bool _Player::UpdateInventory(int Slot, int TAmount) {
+bool _Player::UpdateInventory(int Slot, int Amount) {
 
-	Inventory[Slot].Count += TAmount;
+	Inventory[Slot].Count += Amount;
 	if(Inventory[Slot].Count <= 0) {
 		Inventory[Slot].Item = nullptr;
 		Inventory[Slot].Count = 0;
@@ -607,7 +583,7 @@ bool _Player::UpdateInventory(int Slot, int TAmount) {
 }
 
 // Attempts to add an item to the inventory
-bool _Player::AddItem(const _Item *TItem, int TCount, int Slot) {
+bool _Player::AddItem(const _Item *Item, int Count, int Slot) {
 
 	// Place somewhere in backpack
 	if(Slot == -1) {
@@ -615,8 +591,8 @@ bool _Player::AddItem(const _Item *TItem, int TCount, int Slot) {
 		// Find existing item
 		int EmptySlot = -1;
 		for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-			if(Inventory[i].Item == TItem && Inventory[i].Count + TCount <= 255) {
-				Inventory[i].Count += TCount;
+			if(Inventory[i].Item == Item && Inventory[i].Count + Count <= 255) {
+				Inventory[i].Count += Count;
 				return true;
 			}
 
@@ -627,8 +603,8 @@ bool _Player::AddItem(const _Item *TItem, int TCount, int Slot) {
 
 		// Found an empty slot
 		if(EmptySlot != -1) {
-			Inventory[EmptySlot].Item = TItem;
-			Inventory[EmptySlot].Count = TCount;
+			Inventory[EmptySlot].Item = Item;
+			Inventory[EmptySlot].Count = Count;
 			return true;
 		}
 
@@ -638,24 +614,24 @@ bool _Player::AddItem(const _Item *TItem, int TCount, int Slot) {
 	else if(Slot < INVENTORY_BACKPACK) {
 
 		// Make sure it can be equipped
-		if(!CanEquipItem(Slot, TItem))
+		if(!CanEquipItem(Slot, Item))
 			return false;
 
 		// Set item
-		Inventory[Slot].Item = TItem;
-		Inventory[Slot].Count = TCount;
+		Inventory[Slot].Item = Item;
+		Inventory[Slot].Count = Count;
 
 		return true;
 	}
 
 	// Add item
-	if(Inventory[Slot].Item == TItem && Inventory[Slot].Count + TCount <= 255) {
-		Inventory[Slot].Count += TCount;
+	if(Inventory[Slot].Item == Item && Inventory[Slot].Count + Count <= 255) {
+		Inventory[Slot].Count += Count;
 		return true;
 	}
 	else if(Inventory[Slot].Item == nullptr) {
-		Inventory[Slot].Item = TItem;
-		Inventory[Slot].Count = TCount;
+		Inventory[Slot].Item = Item;
+		Inventory[Slot].Count = Count;
 		return true;
 	}
 
@@ -672,13 +648,13 @@ void _Player::MoveTradeToInventory() {
 }
 
 // Splits a stack
-void _Player::SplitStack(int Slot, int TCount) {
+void _Player::SplitStack(int Slot, int Count) {
 	if(Slot < 0 || Slot >= INVENTORY_COUNT)
 		return;
 
 	// Make sure stack is large enough
 	_InventorySlot *SplitItem = &Inventory[Slot];
-	if(SplitItem->Item && SplitItem->Count > TCount) {
+	if(SplitItem->Item && SplitItem->Count > Count) {
 
 		// Find an empty slot or existing item
 		int EmptySlot = Slot;
@@ -689,12 +665,12 @@ void _Player::SplitStack(int Slot, int TCount) {
 				EmptySlot = INVENTORY_BACKPACK;
 
 			Item = &Inventory[EmptySlot];
-		} while(!(EmptySlot == Slot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= 255 - TCount)));
+		} while(!(EmptySlot == Slot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= 255 - Count)));
 
 		// Split item
 		if(EmptySlot != Slot) {
-			SplitItem->Count -= TCount;
-			AddItem(SplitItem->Item, TCount, EmptySlot);
+			SplitItem->Count -= Count;
+			AddItem(SplitItem->Item, Count, EmptySlot);
 		}
 	}
 }
@@ -712,7 +688,7 @@ bool _Player::IsBackpackFull() {
 }
 
 // Checks if an item can be equipped
-bool _Player::CanEquipItem(int Slot, const _Item *TItem) {
+bool _Player::CanEquipItem(int Slot, const _Item *Item) {
 
 	// Already equipped
 	if(Inventory[Slot].Item)
@@ -721,28 +697,28 @@ bool _Player::CanEquipItem(int Slot, const _Item *TItem) {
 	// Check type
 	switch(Slot) {
 		case INVENTORY_HEAD:
-			if(TItem->GetType() == _Item::TYPE_HEAD)
+			if(Item->GetType() == _Item::TYPE_HEAD)
 				return true;
 		break;
 		case INVENTORY_BODY:
-			if(TItem->GetType() == _Item::TYPE_BODY)
+			if(Item->GetType() == _Item::TYPE_BODY)
 				return true;
 		break;
 		case INVENTORY_LEGS:
-			if(TItem->GetType() == _Item::TYPE_LEGS)
+			if(Item->GetType() == _Item::TYPE_LEGS)
 				return true;
 		break;
 		case INVENTORY_HAND1:
-			if(TItem->GetType() == _Item::TYPE_WEAPON1HAND)
+			if(Item->GetType() == _Item::TYPE_WEAPON1HAND)
 				return true;
 		break;
 		case INVENTORY_HAND2:
-			if(TItem->GetType() == _Item::TYPE_SHIELD)
+			if(Item->GetType() == _Item::TYPE_SHIELD)
 				return true;
 		break;
 		case INVENTORY_RING1:
 		case INVENTORY_RING2:
-			if(TItem->GetType() == _Item::TYPE_RING)
+			if(Item->GetType() == _Item::TYPE_RING)
 				return true;
 		break;
 		default:
@@ -753,32 +729,32 @@ bool _Player::CanEquipItem(int Slot, const _Item *TItem) {
 }
 
 // Updates a skill level
-void _Player::AdjustSkillLevel(int TSkillID, int TAdjust) {
-	const _Skill *Skill = Stats.GetSkill(TSkillID);
+void _Player::AdjustSkillLevel(int SkillID, int Adjust) {
+	const _Skill *Skill = Stats.GetSkill(SkillID);
 	if(Skill == nullptr)
 		return;
 
 	// Buying
-	if(TAdjust > 0) {
-		if(Skill->SkillCost > GetSkillPointsRemaining() || SkillLevels[TSkillID] >= 255)
+	if(Adjust > 0) {
+		if(Skill->SkillCost > GetSkillPointsRemaining() || SkillLevels[SkillID] >= 255)
 			return;
 
 		// Update level
-		SkillLevels[TSkillID] += TAdjust;
-		if(SkillLevels[TSkillID] > 255)
-			SkillLevels[TSkillID] = 255;
+		SkillLevels[SkillID] += Adjust;
+		if(SkillLevels[SkillID] > 255)
+			SkillLevels[SkillID] = 255;
 	}
-	else if(TAdjust < 0) {
-		if(SkillLevels[TSkillID] == 0)
+	else if(Adjust < 0) {
+		if(SkillLevels[SkillID] == 0)
 			return;
 
 		// Update level
-		SkillLevels[TSkillID] += TAdjust;
-		if(SkillLevels[TSkillID] < 0)
-			SkillLevels[TSkillID] = 0;
+		SkillLevels[SkillID] += Adjust;
+		if(SkillLevels[SkillID] < 0)
+			SkillLevels[SkillID] = 0;
 
 		// Update skill bar
-		if(SkillLevels[TSkillID] == 0) {
+		if(SkillLevels[SkillID] == 0) {
 			for(int i = 0; i < 8; i++) {
 				if(SkillBar[i] == Skill) {
 					SkillBar[i] = nullptr;

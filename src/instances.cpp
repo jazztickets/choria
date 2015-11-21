@@ -23,22 +23,21 @@
 
 // Constructor
 _Instance::_Instance() {
-
 }
 
 // Destructor
 _Instance::~_Instance() {
 
 	// Delete maps
-	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
-		delete *MapIterator;
-	}
+	for(auto &Map : Maps)
+		delete Map;
+
 	Maps.clear();
 
 	// Delete battles
-	for(BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
-		delete *BattleIterator;
-	}
+	for(auto &Battle : Battles)
+		delete Battle;
+
 	Battles.clear();
 }
 
@@ -46,29 +45,27 @@ _Instance::~_Instance() {
 void _Instance::Update(double FrameTime) {
 
 	// Update maps
-	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
-		(*MapIterator)->Update(FrameTime);
-	}
+	for(auto &Map : Maps)
+		Map->Update(FrameTime);
 
 	// Update battles
-	for(BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
-		(*BattleIterator)->Update(FrameTime);
-	}
+	for(auto &Battle : Battles)
+		Battle->Update(FrameTime);
 }
 
 // Gets a map from the manager. Loads the level if it doesn't exist
-_Map *_Instance::GetMap(int TMapID) {
+_Map *_Instance::GetMap(int MapID) {
 
 	// Loop through loaded maps
-	for(MapIterator = Maps.begin(); MapIterator != Maps.end(); ++MapIterator) {
+	for(auto &Map : Maps) {
 
 		// Check id
-		if((*MapIterator)->GetID() == TMapID)
-			return (*MapIterator);
+		if(Map->GetID() == MapID)
+			return Map;
 	}
 
 	// Not found, so create it
-	_Map *NewMap = new _Map(TMapID);
+	_Map *NewMap = new _Map(MapID);
 	Maps.push_back(NewMap);
 
 	return NewMap;
@@ -91,14 +88,14 @@ _ServerBattle *_Instance::CreateServerBattle() {
 }
 
 // Battle has finished and can be removed
-void _Instance::DeleteBattle(_Battle *TBattle) {
+void _Instance::DeleteBattle(_Battle *Battle) {
 
 	// Loop through loaded battles
-	for(BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
-		if(*BattleIterator == TBattle) {
+	for(auto BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
+		if(*BattleIterator == Battle) {
 			Battles.erase(BattleIterator);
-			delete TBattle;
-			break;
+			delete Battle;
+			return;
 		}
 	}
 }

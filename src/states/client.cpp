@@ -250,7 +250,7 @@ void _ClientState::Render(double BlendFactor) {
 
 	// Draw map and objects
 	Map->Render(Camera);
-	ObjectManager->Render(Map, Player);
+	ObjectManager->Render(Player);
 
 	Graphics.Setup2D();
 

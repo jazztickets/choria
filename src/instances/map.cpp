@@ -359,10 +359,10 @@ void _Map::GetTextureListFromMap(std::vector<const _Texture *> &TTextures) {
 }
 
 // Returns the index of a texture in an array
-int _Map::GetTextureIndex(std::vector<const _Texture *> &TTextures, const _Texture *TTexture) {
+int _Map::GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture) {
 
-	for(size_t i = 0; i < TTextures.size(); i++) {
-		if(TTextures[i] == TTexture)
+	for(size_t i = 0; i < SearchTextures.size(); i++) {
+		if(SearchTextures[i] == Texture)
 			return (int)i;
 	}
 
@@ -380,18 +380,18 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position) {
 }
 
 // Adds an object to the map
-void _Map::AddObject(_Object *TObject) {
+void _Map::AddObject(_Object *Object) {
 
 	// Create packet for the new object
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_CREATEOBJECT);
-	Packet.Write<char>(TObject->GetNetworkID());
-	Packet.Write<char>(TObject->GetPosition().x);
-	Packet.Write<char>(TObject->GetPosition().y);
-	Packet.Write<char>(TObject->GetType());
-	switch(TObject->GetType()) {
+	Packet.Write<char>(Object->GetNetworkID());
+	Packet.Write<char>(Object->GetPosition().x);
+	Packet.Write<char>(Object->GetPosition().y);
+	Packet.Write<char>(Object->GetType());
+	switch(Object->GetType()) {
 		case _Object::PLAYER: {
-			_Player *NewPlayer = static_cast<_Player *>(TObject);
+			_Player *NewPlayer = static_cast<_Player *>(Object);
 			Packet.WriteString(NewPlayer->Name.c_str());
 			Packet.Write<char>(NewPlayer->PortraitID);
 			Packet.WriteBit(NewPlayer->IsInvisible());
@@ -405,7 +405,7 @@ void _Map::AddObject(_Object *TObject) {
 	SendPacketToPlayers(&Packet);
 
 	// Add object to map
-	Objects.push_back(TObject);
+	Objects.push_back(Object);
 }
 
 // Removes an object from the map

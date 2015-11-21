@@ -600,12 +600,12 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *TPeer) {
 			break;
 			case _Map::EVENT_VENDOR:
 				Player->State =_Player::STATE_VENDOR;
-				Player->SetVendor(Stats.GetVendor(Tile->EventData));
+				Player->Vendor = Stats.GetVendor(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			case _Map::EVENT_TRADER:
 				Player->State =_Player::STATE_TRADER;
-				Player->SetTrader(Stats.GetTrader(Tile->EventData));
+				Player->Trader = Stats.GetTrader(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			default:
@@ -783,7 +783,7 @@ void _ServerState::HandleEventEnd(_Buffer *Packet, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	Player->SetVendor(nullptr);
+	Player->Vendor = nullptr;
 	Player->State = _Player::STATE_WALK;
 }
 
@@ -794,7 +794,7 @@ void _ServerState::HandleVendorExchange(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	// Get vendor
-	const _Vendor *Vendor = Player->GetVendor();
+	const _Vendor *Vendor = Player->Vendor;
 	if(!Vendor)
 		return;
 
@@ -1107,7 +1107,7 @@ void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer) {
 	if(!Player)
 		return;
 
-	const _Trader *Trader = Player->GetTrader();
+	const _Trader *Trader = Player->Trader;
 	if(!Trader)
 		return;
 
@@ -1119,7 +1119,7 @@ void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer) {
 
 	// Exchange items
 	Player->AcceptTrader(Trader, RequiredItemSlots, RewardSlot);
-	Player->SetTrader(nullptr);
+	Player->Trader = nullptr;
 	Player->State = _Player::STATE_WALK;
 	Player->CalculatePlayerStats();
 }

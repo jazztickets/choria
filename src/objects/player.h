@@ -81,17 +81,13 @@ class _Player : public _Object, public _Fighter {
 		~_Player();
 
 		void Update(double FrameTime) override;
-		void RenderWorld(const _Map *TMap, const _Object *TClientPlayer=nullptr) override;
+		void RenderWorld(const _Object *ClientPlayer=nullptr) override;
 
 		// Account
 		void Save();
 		void SetPortraitID(int TID);
 
 		// Stats
-		void UpdateDeaths(int Value) { Deaths += Value; }
-		void UpdateMonsterKills(int Value) { MonsterKills += Value; }
-		void UpdatePlayerKills(int Value) { PlayerKills += Value; }
-
 		void CalculatePlayerStats();
 
 		// Experience
@@ -109,16 +105,16 @@ class _Player : public _Object, public _Fighter {
 		bool UsePotionBattle(int Slot, int TSkillType, int &THealthChange, int &TManaChange);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);
-		void SetInventory(int Slot, int TItemID, int TCount);
-		void SetInventory(int Slot, _InventorySlot *TItem);
+		void SetInventory(int Slot, int ItemID, int TCount);
+		void SetInventory(int Slot, _InventorySlot *Item);
 		const _Item *GetInventoryItem(int Slot);
-		bool MoveInventory(int TOldSlot, int TNewSlot);
-		bool UpdateInventory(int Slot, int TAmount);
-		bool AddItem(const _Item *TItem, int TCount, int Slot);
+		bool MoveInventory(int OldSlot, int NewSlot);
+		bool UpdateInventory(int Slot, int Amount);
+		bool AddItem(const _Item *Item, int Count, int Slot);
 		bool IsBackpackFull();
 		bool IsEmptySlot(int Slot) { return Inventory[Slot].Item == nullptr; }
 		void MoveTradeToInventory();
-		void SplitStack(int Slot, int TCount);
+		void SplitStack(int Slot, int Count);
 
 		// Movement
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
@@ -130,7 +126,7 @@ class _Player : public _Object, public _Fighter {
 		void SetSkillLevel(int TSkillID, int TPoints) { SkillLevels[TSkillID] = TPoints; }
 		int GetSkillLevel(int TSkillID) const override { return SkillLevels[TSkillID]; }
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
-		void AdjustSkillLevel(int TSkillID, int TAdjust);
+		void AdjustSkillLevel(int SkillID, int Adjust);
 		void CalculateSkillPoints();
 
 		// Battles
@@ -138,13 +134,7 @@ class _Player : public _Object, public _Fighter {
 		void StartBattle(_Battle *TBattle);
 		void StopBattle();
 
-		// Vendor
-		void SetVendor(const _Vendor *Vendor);
-		const _Vendor *GetVendor();
-
 		// Trader
-		void SetTrader(const _Trader *TTrader);
-		const _Trader *GetTrader();
 		int GetRequiredItemSlots(const _Trader *TTrader, int *Slots);
 		void AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot);
 
@@ -221,7 +211,7 @@ class _Player : public _Object, public _Fighter {
 		void CalculateSkillStats();
 		void CalculateFinalStats();
 
-		bool CanEquipItem(int Slot, const _Item *TItem);
+		bool CanEquipItem(int Slot, const _Item *Item);
 		void SwapItem(int Slot, int OldSlot);
 
 };

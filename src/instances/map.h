@@ -82,7 +82,7 @@ class _Map {
 		bool CanMoveTo(const glm::ivec2 &Position);
 
 		// Object management
-		void AddObject(_Object *TObject);
+		void AddObject(_Object *Object);
 		void RemoveObject(_Object *TObject);
 		const std::list<_Object *> &GetObjects() const;
 		void GetClosePlayers(const _Player *TPlayer, float TDistanceSquared, std::list<_Player *> &TPlayers);
@@ -116,7 +116,7 @@ class _Map {
 		void SendObjectUpdates();
 
 		void GetTextureListFromMap(std::vector<const _Texture *> &TTextures);
-		int GetTextureIndex(std::vector<const _Texture *> &TTextures, const _Texture *TTexture);
+		int GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture);
 
 		// Map file
 		int ID;

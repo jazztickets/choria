@@ -344,13 +344,13 @@ void _ServerBattle::CheckEnd() {
 			_BattleResult *OppositeSide = &Side[!Players[i]->GetSide()];
 			if(PlayerSide->Dead) {
 				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
-				Players[i]->UpdateDeaths(1);
+				Players[i]->Deaths++;
 			}
 			else {
 				ExperienceEarned = OppositeSide->ExperienceGiven;
 				GoldEarned = OppositeSide->GoldGiven;
-				Players[i]->UpdatePlayerKills(OppositeSide->PlayerCount);
-				Players[i]->UpdateMonsterKills(OppositeSide->MonsterCount);
+				Players[i]->PlayerKills += OppositeSide->PlayerCount;
+				Players[i]->MonsterKills += OppositeSide->MonsterCount;
 
 				// Revive dead players and give them one health
 				if(Players[i]->Health == 0)

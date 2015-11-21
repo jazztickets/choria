@@ -19,7 +19,6 @@
 
 // Libraries
 #include <list>
-#include <cstdint>
 
 // Forward Declarations
 class _Map;
@@ -38,18 +37,16 @@ class _Instance {
 		void Update(double FrameTime);
 
 		// Maps
-		_Map *GetMap(int TMapID);
+		_Map *GetMap(int MapID);
 
 		// Battles
 		_ClientBattle *CreateClientBattle();
 		_ServerBattle *CreateServerBattle();
-		void DeleteBattle(_Battle *TBattle);
+		void DeleteBattle(_Battle *Battle);
 
 	private:
 
 		std::list<_Map *> Maps;
-		std::list<_Map *>::iterator MapIterator;
 		std::list<_Battle *> Battles;
-		std::list<_Battle *>::iterator BattleIterator;
 
 };

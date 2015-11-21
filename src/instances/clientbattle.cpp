@@ -293,12 +293,12 @@ void _ClientBattle::EndBattle(_Buffer *Packet) {
 	int PlayerSide = ClientPlayer->GetSide();
 	int OtherSide = !PlayerSide;
 	if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
-		ClientPlayer->UpdatePlayerKills(PlayerKills);
-		ClientPlayer->UpdateMonsterKills(MonsterKills);
+		ClientPlayer->PlayerKills += PlayerKills;
+		ClientPlayer->MonsterKills += MonsterKills;
 		TargetState = STATE_INITWIN;
 	}
 	else {
-		ClientPlayer->UpdateDeaths(1);
+		ClientPlayer->Deaths++;
 		TargetState = STATE_INITLOSE;
 	}
 

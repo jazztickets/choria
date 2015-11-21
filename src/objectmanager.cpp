@@ -128,10 +128,10 @@ void _ObjectManager::Update(double FrameTime) {
 }
 
 // Renders all of the objects
-void _ObjectManager::Render(const _Map *TMap, _Object *TClientPlayer) {
+void _ObjectManager::Render(_Object *ClientPlayer) {
 	for(std::list<_Object *>::iterator Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
 		_Object *Object = *Iterator;
-		Object->RenderWorld(TMap, TClientPlayer);
+		Object->RenderWorld(ClientPlayer);
 	}
 }
 
