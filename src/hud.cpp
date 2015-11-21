@@ -109,7 +109,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			case _ClientState::STATE_TRADE:
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
-						if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEM) {
+						if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEIRS) {
 							if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
 								SplitStack(TooltipItem.Slot, 1);
 							else
@@ -138,15 +138,15 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 					// Check for valid slots
 					if(CursorItem.Item) {
-
 						switch(CursorItem.Window) {
-							// Coming from inventory
-							case WINDOW_TRADEYOU:
-							case WINDOW_INVENTORY:
 
+							// Coming from inventory
+							case WINDOW_TRADEYOURS:
+							case WINDOW_INVENTORY:
 								switch(TooltipItem.Window) {
+
 									// Send inventory move packet
-									case WINDOW_TRADEYOU:
+									case WINDOW_TRADEYOURS:
 									case WINDOW_INVENTORY:
 
 										if(TooltipItem.Slot >= 0 && Player->MoveInventory(CursorItem.Slot, TooltipItem.Slot)) {
@@ -161,9 +161,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 										}
 									break;
 									// Sell an item
-									case WINDOW_VENDOR: {
+									case WINDOW_VENDOR:
 										SellItem(&CursorItem, 1);
-									}
 									break;
 								}
 							break;
@@ -309,7 +308,8 @@ void _HUD::Update(double FrameTime) {
 
 	switch(*State) {
 		case _ClientState::STATE_VENDOR:
-		case _ClientState::STATE_INVENTORY: {
+		case _ClientState::STATE_INVENTORY:
+		case _ClientState::STATE_TRADE: {
 			_Element *InventoryElement = Assets.Elements["element_inventory"];
 			InventoryElement->Update(FrameTime, Input.GetMouse());
 			_Element *HoverSlot = InventoryElement->HitElement;
@@ -324,6 +324,26 @@ void _HUD::Update(double FrameTime) {
 				TooltipItem.Window = WINDOW_VENDOR;
 			}
 
+			// Get trade items
+			if(*State == _ClientState::STATE_TRADE) {
+				_Element *TradeTheirsElement = Assets.Elements["element_trade_theirs"];
+				TradeTheirsElement->Visible = false;
+				if(!HoverSlot && Player->TradePlayer) {
+					TradeTheirsElement->Visible = true;
+
+					TradeTheirsElement->Update(FrameTime, Input.GetMouse());
+					HoverSlot = TradeTheirsElement->HitElement;
+					TooltipItem.Window = WINDOW_TRADETHEIRS;
+				}
+
+				_Element *TradeYoursElement = Assets.Elements["element_trade_yours"];
+				if(!HoverSlot) {
+					TradeYoursElement->Update(FrameTime, Input.GetMouse());
+					HoverSlot = TradeYoursElement->HitElement;
+					TooltipItem.Window = WINDOW_TRADEYOURS;
+				}
+			}
+
 			// Check for valid slot
 			if(!HoverSlot)
 				break;
@@ -332,7 +352,7 @@ void _HUD::Update(double FrameTime) {
 			if((intptr_t)HoverSlot->UserData >= 0) {
 				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
 
-				if(TooltipItem.Window == WINDOW_INVENTORY) {
+				if(TooltipItem.Window == WINDOW_INVENTORY || TooltipItem.Window == WINDOW_TRADEYOURS) {
 					_InventorySlot *InventorySlot = &Player->Inventory[InventoryIndex];
 
 					// Get price if vendor is open
@@ -350,43 +370,6 @@ void _HUD::Update(double FrameTime) {
 							TooltipItem.Set(Item, Price, 1, InventoryIndex);
 						}
 					}
-				}
-			}
-		} break;
-		case _ClientState::STATE_TRADE: {
-			/*
-				// Get trade slot
-				if(TradePlayer && TPoint.x >= TRADE_WINDOWX && TPoint.x < TRADE_WINDOWX + 128 && TPoint.y >= TRADE_WINDOWYTHEM && TPoint.y < TRADE_WINDOWYTHEM + 64) {
-					const _Item *Item = TradePlayer->GetInventory(InventoryIndex)->Item;
-					TCursorItem.Window = WINDOW_TRADETHEM;
-					TCursorItem.Set(Item, 0, TradePlayer->GetInventory(InventoryIndex)->Count, InventoryIndex);
-				}
-				else if(TPoint.x >= TRADE_WINDOWX && TPoint.x < TRADE_WINDOWX + 128 && TPoint.y >= TRADE_WINDOWYYOU && TPoint.y < TRADE_WINDOWYYOU + 64) {
-					const _Item *Item = Player->GetInventory(InventoryIndex)->Item;
-					TCursorItem.Window = WINDOW_TRADEYOU;
-					TCursorItem.Set(Item, 0, Player->GetInventory(InventoryIndex)->Count, InventoryIndex);
-				}
-
-			}
-			*/
-
-			_Element *TradeElement = Assets.Elements["element_trade_theirs"];
-			TradeElement->Update(FrameTime, Input.GetMouse());
-			_Element *HoverSlot = TradeElement->HitElement;
-			if(HoverSlot && HoverSlot != TradeElement) {
-				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
-				if(InventoryIndex >= 0) {
-					/*if(InventoryIndex < 8) {
-						TooltipItem.Window = WINDOW_TRADETHEM;
-						_InventorySlot &InventorySlot = Player->TradePlayer->Inventory[InventoryIndex];
-						TooltipItem.Set(InventorySlot.Item, 0, InventorySlot.Count, InventoryIndex);
-					}
-					else {
-						InventoryIndex -= 8;
-						_InventorySlot &InventorySlot = Player->Inventory[InventoryIndex];
-						TooltipItem.Window = WINDOW_TRADEYOU;
-						TooltipItem.Set(InventorySlot.Item, 0, InventorySlot.Count, InventoryIndex);
-					}*/
 				}
 			}
 		} break;
@@ -431,7 +414,7 @@ void _HUD::Update(double FrameTime) {
 	}
 
 	// Chat messages
-	for(std::list<_ChatMessage>::iterator Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
+	for(auto Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
 		_ChatMessage &Chat = (*Iterator);
 		Chat.TimeOut += FrameTime;
 		if(Chat.TimeOut > NETWORKING_CHAT_TIMEOUT) {
@@ -487,31 +470,18 @@ void _HUD::Render() {
 	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x);
 	Assets.Elements["element_hud_mana"]->Render();
 	/*
-		// Draw gold
-		StartX += Width + Spacing + 14;
-		Graphics.DrawImage(_Graphics::IMAGE_GOLD, StartX, StartY + 8);
-
-		StartX += 20;
-		sprintf(String, "%d", Player->Gold);
-		//Graphics.RenderText(String, StartX, StartY);
-
 		// Draw PVP icon
 		if(Player->GetTile()->PVP) {
-			StartX += 80;
-			video::SColor PVPColor(255, 255, 255, 255);
 			if(!Player->CanAttackPlayer())
-				PVPColor.set(150, 150, 150, 150);
-			Graphics.DrawImage(_Graphics::IMAGE_PVP, StartX, StartY + 8, PVPColor);
-			Graphics.SetFont(_Graphics::FONT_7);
-			//Graphics.RenderText("A", StartX - 10, StartY + 8, _Graphics::ALIGN_LEFT, PVPColor);
-			Graphics.SetFont(_Graphics::FONT_10);
+				Graphics.DrawImage(_Graphics::IMAGE_PVP, StartX, StartY + 8, PVPColor);
 		}
 
 		// Draw RTT
 		if(ClientNetwork->GetRTT()) {
 			sprintf(String, "%d ms", ClientNetwork->GetRTT());
 			//Graphics.RenderText(String, 10, 600 - 25);
-		}*/
+		}
+	*/
 
 	switch(*State) {
 		case _ClientState::STATE_INVENTORY:
@@ -521,15 +491,15 @@ void _HUD::Render() {
 			DrawVendor();
 			DrawInventory();
 		break;
+		case _ClientState::STATE_TRADE:
+			DrawTrade();
+			DrawInventory();
+		break;
 		case _ClientState::STATE_TRADER:
 			DrawTrader();
 		break;
 		case _ClientState::STATE_SKILLS:
 			DrawSkills();
-		break;
-		case _ClientState::STATE_TRADE:
-			DrawTrade();
-			DrawInventory();
 		break;
 		case _ClientState::STATE_TELEPORT:
 			DrawTeleport();
@@ -671,27 +641,6 @@ void _HUD::InitTrade() {
 	// Send request to server
 	SendTradeRequest();
 
-	/*
-	// Add window
-	TabTrade = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 280, 470));
-
-	// Add background
-	TraderWindow = irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADE), glm::ivec2(TRADE_WINDOWX, TRADE_WINDOWYTHEM), true, TabTrade);
-	TraderWindow->setVisible(false);
-	irrGUI->addImage(Graphics.GetImage(_Graphics::IMAGE_TRADE), glm::ivec2(TRADE_WINDOWX, TRADE_WINDOWYYOU), true, TabTrade);
-
-	// Add gold input box
-	TradeGoldBox = irrGUI->addEditBox(L"0", Graphics.GetRect(TRADE_WINDOWX + 33, TRADE_WINDOWYYOU + 68, 89, 20), true, TabTrade, ELEMENT_GOLDTRADEBOX);
-	TradeGoldBox->setMax(10);
-
-	// Add accept button
-	TradeAcceptButton = irrGUI->addButton(Graphics.GetCenteredRect(140, 249, 100, 25), TabTrade, ELEMENT_TRADEACCEPT, L"Accept Trade");
-	TradeAcceptButton->setIsPushButton(true);
-	TradeAcceptButton->setEnabled(false);
-
-	// Add inventory
-	InitInventory(400, 432, false);
-*/
 	*State = _ClientState::STATE_TRADE;
 }
 
@@ -1083,15 +1032,12 @@ void _HUD::DrawVendor() {
 // Draw the trade screen
 void _HUD::DrawTrade() {
 	Assets.Elements["element_trade"]->Render();
-	/*
-	core::recti WindowArea = TabTrade->getAbsolutePosition();
-	int OffsetX = WindowArea.UpperLeftCorner.x;
-	int OffsetY = WindowArea.UpperLeftCorner.y;
-	int CenterX = WindowArea.getCenter().x;
 
 	// Draw items
-	DrawTradeItems(Player, TRADE_WINDOWX, TRADE_WINDOWYYOU, false);
+	DrawTradeItems(Player, "button_trade_yourbag_", WINDOW_TRADEYOURS);
+	DrawTradeItems(Player->TradePlayer, "button_trade_theirbag_", WINDOW_TRADETHEIRS);
 
+	/*
 	// Draw trading player information
 	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
@@ -1132,6 +1078,40 @@ void _HUD::DrawTrade() {
 	//Graphics.RenderText(Player->Name.c_str(), OffsetX + 72, OffsetY + 198 - 55, _Graphics::ALIGN_CENTER);
 	Graphics.DrawCenteredImage(Stats.GetPortrait(Player->GetPortraitID())->Image, OffsetX + 72, OffsetY + 198);
 	*/
+}
+
+// Draws trading items
+void _HUD::DrawTradeItems(_Player *Player, const std::string &ElementPrefix, int Window) {
+	if(!Player)
+		return;
+
+	// Draw offered items
+	int BagIndex = 0;
+	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
+
+		// Get inventory slot
+		_InventorySlot *Item = &Player->Inventory[i];
+		if(Item->Item && !CursorItem.IsEqual(i, Window)) {
+
+			// Get bag button
+			std::stringstream Buffer;
+			Buffer << ElementPrefix << BagIndex;
+			_Button *Button = Assets.Buttons[Buffer.str()];
+
+			// Get position of slot
+			glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+
+			// Draw item
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
+
+			// Draw count
+			if(Item->Count > 1)
+				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+		}
+
+		BagIndex++;
+	}
 }
 
 // Draw the trader screen
@@ -1630,39 +1610,6 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPos
 		Color = COLOR_LIGHTGOLD;
 
 	Assets.Fonts["hud_small"]->DrawText(std::to_string(Price).c_str(), DrawPosition + glm::ivec2(20, -8), Color, RIGHT_BASELINE);
-}
-
-// Draws trading items
-void _HUD::DrawTradeItems(_Player *Player, bool DrawAll) {
-	/*
-	core::recti WindowArea = TabTrade->getAbsolutePosition();
-	int OffsetX = WindowArea.UpperLeftCorner.x;
-	int OffsetY = WindowArea.UpperLeftCorner.y;
-
-	Graphics.SetFont(_Graphics::FONT_7);
-
-	// Draw trade items
-	_InventorySlot *Item;
-	int PositionX = 0, PositionY = 0;
-	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
-		Item = TPlayer->Inventory[i];
-		if(Item->Item && (TDrawAll || !CursorItem.IsEqual(i, WINDOW_TRADEYOU))) {
-			int DrawX = OffsetX + TDrawX + PositionX * 32;
-			int DrawY = OffsetY + TDrawY + PositionY * 32;
-			Graphics.DrawCenteredImage(Item->Item->GetImage(), DrawX + 16, DrawY + 16);
-			if(Item->Count > 1) {
-				//Graphics.RenderText(std::string(Item->Count).c_str(), DrawX + 2, DrawY + 20);
-			}
-		}
-
-		PositionX++;
-		if(PositionX > 3) {
-			PositionX = 0;
-			PositionY++;
-		}
-	}
-	Graphics.SetFont(_Graphics::FONT_10);
-	*/
 }
 
 // Buys an item from the vendor

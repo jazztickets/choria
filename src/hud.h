@@ -85,8 +85,8 @@ class _HUD {
 			WINDOW_INVENTORY,
 			WINDOW_VENDOR,
 			WINDOW_TRADER,
-			WINDOW_TRADETHEM,
-			WINDOW_TRADEYOU,
+			WINDOW_TRADETHEIRS,
+			WINDOW_TRADEYOURS,
 			WINDOW_SKILLS,
 			WINDOW_SKILLBAR
 		};
@@ -150,7 +150,7 @@ class _HUD {
 		void DrawCursorSkill();
 		void DrawSkillTooltip();
 		void DrawSkillDescription(const _Skill *Skill, int SkillLevel, glm::ivec2 &DrawPosition, int Width);
-		void DrawTradeItems(_Player *Player, bool DrawAll);
+		void DrawTradeItems(_Player *Player, const std::string &ElementPrefix, int Window);
 
 		void BuyItem(_CursorItem *Item, int TargetSlot);
 		void SellItem(_CursorItem *Item, int Amount);

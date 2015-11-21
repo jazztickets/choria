@@ -4,4 +4,4 @@ textbox_connect_host	element_menu_connect	style_menu_textbox	hud_medium	0	-250	2
 textbox_connect_port	element_menu_connect	style_menu_textbox	hud_medium	0	-150	250	30	1	2	5
 textbox_account_username	element_menu_account	style_menu_textbox	hud_medium	0	-250	250	30	1	2	20
 textbox_account_password	element_menu_account	style_menu_textbox	hud_medium	0	-150	250	30	1	2	20
-textbox_trade_gold	element_trade	style_menu_textbox	hud_medium	0	150	200	30	0	2	10
+textbox_trade_gold	element_trade	style_menu_textbox	hud_medium	50	-10	130	30	0	2	10
