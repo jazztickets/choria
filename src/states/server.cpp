@@ -1113,7 +1113,7 @@ void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer) {
 
 	// Get trader information
 	int RequiredItemSlots[8];
-	int RewardSlot = Player->GetRequiredItemSlots(Trader, RequiredItemSlots);
+	int RewardSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
 	if(RewardSlot == -1)
 		return;
 

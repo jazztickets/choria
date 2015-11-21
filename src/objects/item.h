@@ -25,7 +25,6 @@ struct _Vendor;
 
 // Classes
 class _Item {
-	friend class _Stats;
 
 	public:
 
@@ -57,12 +56,12 @@ class _Item {
 		bool IsHealthPotion() const { return Type == TYPE_POTION && HealthRestore > 0; }
 		bool IsManaPotion() const { return Type == TYPE_POTION && ManaRestore > 0; }
 		bool IsInvisPotion() const { return Type == TYPE_POTION && InvisPower > 0; }
-		bool IsPotionType(int TType) const { return (TType == 0 && IsHealthPotion()) || (TType == 1 && IsManaPotion()); }
+		bool IsPotionType(int PotionType) const { return (PotionType == 0 && IsHealthPotion()) || (PotionType == 1 && IsManaPotion()); }
 
 		void GetDamageRange(int &Min, int &Max) const;
 		void GetDefenseRange(int &Min, int &Max) const;
 		void GetType(std::string &String) const;
-		int GetPrice(const _Vendor *Vendor, int TCount, bool TBuy) const;
+		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 
 		int ID;
 		std::string Name;

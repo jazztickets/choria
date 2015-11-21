@@ -639,9 +639,10 @@ void _HUD::InitTrader(int TraderID) {
 
 	// Get trader stats
 	Trader = Stats.GetTrader(TraderID);
+	Player->Trader = Trader;
 
 	// Check for required items
-	RewardItemSlot = Player->GetRequiredItemSlots(Trader, RequiredItemSlots);
+	RewardItemSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
 
 	// Disable accept button if requirements not met
 	if(RewardItemSlot == -1)
@@ -667,6 +668,7 @@ void _HUD::CloseTrader() {
 
 	*State = _ClientState::STATE_WALK;
 	Trader = nullptr;
+	Player->Trader = nullptr;
 }
 
 // Initialize the character screen

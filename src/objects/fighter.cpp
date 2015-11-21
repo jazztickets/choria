@@ -67,7 +67,7 @@ _Fighter::~_Fighter() {
 }
 
 // Renders the fighter during a battle
-void _Fighter::RenderBattle(bool ShowResults, float TimerPercent, _FighterResult *Result, bool TTarget) {
+void _Fighter::RenderBattle(bool ShowResults, float TimerPercent, _FighterResult *Result, bool IsTarget) {
 
 	// Get slot ui element depending on side
 	_Element *Slot;
@@ -196,7 +196,7 @@ void _Fighter::RenderBattle(bool ShowResults, float TimerPercent, _FighterResult
 	}
 
 	// Draw target
-	if(TTarget) {
+	if(IsTarget) {
 		const _Texture *Texture = Assets.Textures["battle/target.png"];
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture);
@@ -230,17 +230,17 @@ void _Fighter::RestoreHealthMana() {
 }
 
 // Updates the fighter's regen
-void _Fighter::UpdateRegen(int &THealthUpdate, int &TManaUpdate) {
+void _Fighter::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
 
-	THealthUpdate = 0;
-	TManaUpdate = 0;
+	HealthUpdate = 0;
+	ManaUpdate = 0;
 	HealthAccumulator += HealthRegen * 0.01f * MaxHealth;
 	ManaAccumulator += ManaRegen * 0.01f * MaxMana;
 
 	if(HealthAccumulator >= 1.0f) {
 		int IntegerAccumulator = (int)HealthAccumulator;
 
-		THealthUpdate = IntegerAccumulator;
+		HealthUpdate = IntegerAccumulator;
 		HealthAccumulator -= IntegerAccumulator;
 	}
 	else if(HealthAccumulator < 0.0f) {
@@ -250,7 +250,7 @@ void _Fighter::UpdateRegen(int &THealthUpdate, int &TManaUpdate) {
 	if(ManaAccumulator >= 1.0f) {
 		int IntegerAccumulator = (int)ManaAccumulator;
 
-		TManaUpdate = IntegerAccumulator;
+		ManaUpdate = IntegerAccumulator;
 		ManaAccumulator -= IntegerAccumulator;
 	}
 	else if(ManaAccumulator < 0.0f) {

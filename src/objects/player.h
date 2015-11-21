@@ -99,13 +99,12 @@ class _Player : public _Object, public _Fighter {
 		void UpdateGold(int Value);
 
 		// Inventory
-		void SetPotionsLeft(int THealthCount, int TManaCount);
-		void UpdatePotionsLeft(int TType) { PotionsLeft[TType]--; }
-		int GetPotionBattle(int TType);
-		bool UsePotionBattle(int Slot, int TSkillType, int &THealthChange, int &TManaChange);
+		void UpdatePotionsLeft(int PotionType) { PotionsLeft[PotionType]--; }
+		int GetPotionBattle(int PotionType);
+		bool UsePotionBattle(int Slot, int SkillType, int &HealthChange, int &ManaChange);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);
-		void SetInventory(int Slot, int ItemID, int TCount);
+		void SetInventory(int Slot, int ItemID, int Count);
 		void SetInventory(int Slot, _InventorySlot *Item);
 		const _Item *GetInventoryItem(int Slot);
 		bool MoveInventory(int OldSlot, int NewSlot);
@@ -135,7 +134,7 @@ class _Player : public _Object, public _Fighter {
 		void StopBattle();
 
 		// Trader
-		int GetRequiredItemSlots(const _Trader *TTrader, int *Slots);
+		int GetRequiredItemSlots(int *Slots);
 		void AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot);
 
 		// Map

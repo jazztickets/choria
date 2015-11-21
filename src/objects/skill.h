@@ -27,7 +27,6 @@ struct _FighterResult;
 
 // Classes
 class _Skill {
-	friend class _Stats;
 
 	public:
 
@@ -38,14 +37,14 @@ class _Skill {
 			TYPE_USEPOTION,
 		};
 
-		int GetManaCost(int TLevel) const;
-		int GetPower(int TLevel) const;
-		void GetPowerRange(int TLevel, int &Min, int &Max) const;
-		void GetPowerRangeRound(int TLevel, int &Min, int &Max) const;
-		void GetPowerRange(int TLevel, float &Min, float &Max) const;
+		int GetManaCost(int Level) const;
+		int GetPower(int Level) const;
+		void GetPowerRange(int Level, int &Min, int &Max) const;
+		void GetPowerRangeRound(int Level, int &Min, int &Max) const;
+		void GetPowerRange(int Level, float &Min, float &Max) const;
 
-		void ResolveSkill(_FighterResult *Result, _FighterResult *TTargetResult) const;
-		bool CanUse(_Fighter *TFighter) const;
+		void ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) const;
+		bool CanUse(_Fighter *Fighter) const;
 
 		int ID;
 		int Type;
@@ -54,12 +53,13 @@ class _Skill {
 		const _Texture *Image;
 		int SkillCost;
 
-	private:
-
 		float ManaCostBase;
 		float ManaCost;
 		float PowerBase;
 		float PowerRangeBase;
 		float Power;
 		float PowerRange;
+
+	private:
+
 };

@@ -23,7 +23,6 @@
 
 // Classes
 class _Monster : public _Fighter {
-	friend class _Stats;
 
 	public:
 
@@ -39,8 +38,6 @@ class _Monster : public _Fighter {
 		int GetGoldGiven() const override { return GoldGiven; }
 		int GetCommand() override;
 
-	private:
-
 		// Objects
 		std::vector<_Fighter *> Opponents;
 		int ID;
@@ -48,4 +45,7 @@ class _Monster : public _Fighter {
 		// Stats
 		int ExperienceGiven, GoldGiven;
 		int AI;
+
+	private:
+
 };

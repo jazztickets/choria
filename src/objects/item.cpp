@@ -70,16 +70,16 @@ void _Item::GetType(std::string &String) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(const _Vendor *Vendor, int TCount, bool TBuy) const {
+int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 	if(!Vendor)
 		return 0;
 
 	// Calculate
 	int Price;
-	if(TBuy)
-		Price = (int)(Cost * Vendor->BuyPercent) * TCount;
+	if(Buy)
+		Price = (int)(Cost * Vendor->BuyPercent) * QueryCount;
 	else
-		Price = (int)(Cost * Vendor->SellPercent) * TCount;
+		Price = (int)(Cost * Vendor->SellPercent) * QueryCount;
 
 	// Cap
 	if(Price < 0)

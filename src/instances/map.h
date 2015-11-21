@@ -90,7 +90,6 @@ class _Map {
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
-		void SetNoZoneTexture(const _Texture *Texture) { NoZoneTexture = Texture; }
 		glm::vec2 GetValidPosition(const glm::vec2 &Position);
 
 		void GetTile(const glm::ivec2 &Position, _Tile &Tile) const { Tile = Tiles[Position.x][Position.y]; }

@@ -348,28 +348,28 @@ float _Player::GetNextLevelPercent() const {
 }
 
 // Sets the player's portrait
-void _Player::SetPortraitID(int TID) {
-	PortraitID = TID;
+void _Player::SetPortraitID(int Value) {
+	PortraitID = Value;
 	Portrait = Stats.GetPortrait(PortraitID)->Image;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
-int _Player::GetRequiredItemSlots(const _Trader *TTrader, int *Slots) {
+int _Player::GetRequiredItemSlots(int *Slots) {
 	int RewardItemSlot = -1;
 
 	// Check for an open reward slot
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
 		_InventorySlot *InventoryItem = &Inventory[i];
-		if(InventoryItem->Item == nullptr || (InventoryItem->Item == TTrader->RewardItem && InventoryItem->Count + TTrader->Count <= 255)) {
+		if(InventoryItem->Item == nullptr || (InventoryItem->Item == Trader->RewardItem && InventoryItem->Count + Trader->Count <= 255)) {
 			RewardItemSlot = i;
 			break;
 		}
 	}
 
 	// Go through required items
-	for(size_t i = 0; i < TTrader->TraderItems.size(); i++) {
-		const _Item *RequiredItem = TTrader->TraderItems[i].Item;
-		int RequiredCount = TTrader->TraderItems[i].Count;
+	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
+		const _Item *RequiredItem = Trader->TraderItems[i].Item;
+		int RequiredCount = Trader->TraderItems[i].Count;
 		Slots[i] = -1;
 
 		// Search for the required item
@@ -404,15 +404,15 @@ void _Player::AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot) 
 }
 
 // Finds a potion in the player's inventory for use in battle
-int _Player::GetPotionBattle(int TType) {
+int _Player::GetPotionBattle(int PotionType) {
 
 	// Check for skill uses
-	if(PotionsLeft[TType] <= 0)
+	if(PotionsLeft[PotionType] <= 0)
 		return -1;
 
 	// Search
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		if(Inventory[i].Item && Inventory[i].Item->IsPotionType(TType))
+		if(Inventory[i].Item && Inventory[i].Item->IsPotionType(PotionType))
 			return i;
 	}
 
@@ -420,14 +420,14 @@ int _Player::GetPotionBattle(int TType) {
 }
 
 // Uses a potion in battle
-bool _Player::UsePotionBattle(int Slot, int TSkillType, int &THealthChange, int &TManaChange) {
+bool _Player::UsePotionBattle(int Slot, int SkillType, int &HealthChange, int &ManaChange) {
 	const _Item *Item = GetInventoryItem(Slot);
 	if(Item == nullptr || Item->GetType() != _Item::TYPE_POTION)
 		return false;
 
-	THealthChange = Item->GetHealthRestore();
-	TManaChange = Item->GetManaRestore();
-	UpdatePotionsLeft(TSkillType);
+	HealthChange = Item->GetHealthRestore();
+	ManaChange = Item->GetManaRestore();
+	UpdatePotionsLeft(SkillType);
 	UpdateInventory(Slot, -1);
 
 	return true;
@@ -473,7 +473,7 @@ bool _Player::UseInventory(int Slot) {
 }
 
 // Sets an item in the inventory
-void _Player::SetInventory(int Slot, int ItemID, int TCount) {
+void _Player::SetInventory(int Slot, int ItemID, int Count) {
 
 	if(ItemID == 0) {
 		Inventory[Slot].Item = nullptr;
@@ -481,7 +481,7 @@ void _Player::SetInventory(int Slot, int ItemID, int TCount) {
 	}
 	else {
 		Inventory[Slot].Item = Stats.GetItem(ItemID);
-		Inventory[Slot].Count = TCount;
+		Inventory[Slot].Count = Count;
 	}
 }
 

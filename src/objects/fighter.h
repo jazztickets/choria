@@ -43,14 +43,14 @@ class _Fighter {
 		virtual ~_Fighter();
 
 		// Render
-		void RenderBattle(bool ShowResults, float TimerPercent, _FighterResult *Result, bool TTarget);
+		void RenderBattle(bool ShowResults, float TimerPercent, _FighterResult *Result, bool IsTarget);
 
 		// Stats
 		void UpdateHealth(int Value);
 		void UpdateMana(int Value);
 		void RestoreHealthMana();
 
-		void UpdateRegen(int &THealthUpdate, int &TManaUpdate);
+		void UpdateRegen(int &HealthUpdate, int &ManaUpdate);
 
 		// Battles
 		virtual int GetCommand() { return Command; }

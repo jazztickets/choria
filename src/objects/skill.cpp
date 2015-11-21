@@ -26,66 +26,66 @@
 #include <objects/player.h>
 
 // Gets the mana cost of a skill
-int _Skill::GetManaCost(int TLevel) const {
-	if(TLevel < 1)
-		TLevel = 1;
+int _Skill::GetManaCost(int Level) const {
+	if(Level < 1)
+		Level = 1;
 
-	return (int)(ManaCostBase + ManaCost * (TLevel - 1));
+	return (int)(ManaCostBase + ManaCost * (Level - 1));
 }
 
 // Gets a random number between min and max power
-int _Skill::GetPower(int TLevel) const {
-	if(TLevel < 1)
-		TLevel = 1;
+int _Skill::GetPower(int Level) const {
+	if(Level < 1)
+		Level = 1;
 
 	// Get range
 	int Min, Max;
-	GetPowerRangeRound(TLevel, Min, Max);
+	GetPowerRangeRound(Level, Min, Max);
 	std::uniform_int_distribution<int> Distribution(Min, Max);
 
 	return Distribution(RandomGenerator);
 }
 
 // Returns the range of power
-void _Skill::GetPowerRange(int TLevel, int &Min, int &Max) const {
-	if(TLevel < 1)
-		TLevel = 1;
+void _Skill::GetPowerRange(int Level, int &Min, int &Max) const {
+	if(Level < 1)
+		Level = 1;
 
-	int FinalPower = (int)(PowerBase + Power * (TLevel - 1));
-	int FinalPowerRange = (int)(PowerRangeBase + PowerRange * (TLevel - 1));
+	int FinalPower = (int)(PowerBase + Power * (Level - 1));
+	int FinalPowerRange = (int)(PowerRangeBase + PowerRange * (Level - 1));
 
 	Min = FinalPower - FinalPowerRange;
 	Max = FinalPower + FinalPowerRange;
 }
 
 // Returns the range of power rounded
-void _Skill::GetPowerRangeRound(int TLevel, int &Min, int &Max) const {
-	if(TLevel < 1)
-		TLevel = 1;
+void _Skill::GetPowerRangeRound(int Level, int &Min, int &Max) const {
+	if(Level < 1)
+		Level = 1;
 
-	int FinalPower = (int)(std::roundf(PowerBase + Power * (TLevel - 1)));
-	int FinalPowerRange = (int)(std::roundf(PowerRangeBase + PowerRange * (TLevel - 1)));
+	int FinalPower = (int)(std::roundf(PowerBase + Power * (Level - 1)));
+	int FinalPowerRange = (int)(std::roundf(PowerRangeBase + PowerRange * (Level - 1)));
 
 	Min = FinalPower - FinalPowerRange;
 	Max = FinalPower + FinalPowerRange;
 }
 
 // Returns the range of power
-void _Skill::GetPowerRange(int TLevel, float &Min, float &Max) const {
-	if(TLevel < 1)
-		TLevel = 1;
+void _Skill::GetPowerRange(int Level, float &Min, float &Max) const {
+	if(Level < 1)
+		Level = 1;
 
-	float FinalPower = PowerBase + Power * (TLevel - 1);
-	float FinalPowerRange = PowerRangeBase + PowerRange * (TLevel - 1);
+	float FinalPower = PowerBase + Power * (Level - 1);
+	float FinalPowerRange = PowerRangeBase + PowerRange * (Level - 1);
 
 	Min = FinalPower - FinalPowerRange;
 	Max = FinalPower + FinalPowerRange;
 }
 
 // Resolves the use of a skill in battle.
-void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TTargetResult) const {
+void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) const {
 	_Fighter *Fighter = Result->Fighter;
-	_Fighter *TargetFighter = TTargetResult->Fighter;
+	_Fighter *TargetFighter = TargetResult->Fighter;
 	int SkillLevel = Fighter->GetSkillLevel(ID);
 
 	int Damage = 0, Healing = 0, ManaRestore = 0, ManaCost = 0;
@@ -134,32 +134,32 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TTargetResult)
 	Damage -= TargetFighter->GenerateDefense();
 	if(Damage < 0)
 		Damage = 0;
-	Result->DamageDealt = Damage;
 
 	// Update results
-	TTargetResult->HealthChange += -Damage;
+	Result->DamageDealt = Damage;
+	TargetResult->HealthChange += -Damage;
 	Result->HealthChange += Healing;
 	Result->ManaChange += ManaRestore - ManaCost;
 }
 
 // Determines if a skill can be used
-bool _Skill::CanUse(_Fighter *TFighter) const {
-	int Level = TFighter->GetSkillLevel(ID);
+bool _Skill::CanUse(_Fighter *Fighter) const {
+	int Level = Fighter->GetSkillLevel(ID);
 
 	// Check for bad types
 	if(Type == TYPE_PASSIVE)
 		return false;
 
 	// Spell cost
-	if(TFighter->Mana < GetManaCost(Level))
+	if(Fighter->Mana < GetManaCost(Level))
 		return false;
 
 	// Potions
 	if(Type == TYPE_USEPOTION) {
-		if(TFighter->Type == _Fighter::TYPE_MONSTER)
+		if(Fighter->Type == _Fighter::TYPE_MONSTER)
 			return false;
 
-		_Player *Player = static_cast<_Player *>(TFighter);
+		_Player *Player = static_cast<_Player *>(Fighter);
 		return Player->GetPotionBattle(ID == 2) != -1;
 	}
 
