@@ -70,7 +70,8 @@ struct _CursorSkill {
 
 struct _ChatMessage {
 	_ChatMessage() : Message(""), TimeOut(0) { }
-	_ChatMessage(const std::string &TMessage) : Message(TMessage), TimeOut(0) { }
+	_ChatMessage(const std::string &Message) : Message(Message), TimeOut(0) { }
+
 	std::string Message;
 	double TimeOut;
 };

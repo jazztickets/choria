@@ -342,17 +342,17 @@ void _Map::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void _Map::GetTextureListFromMap(std::vector<const _Texture *> &TTextures) {
+void _Map::GetTextureListFromMap(std::vector<const _Texture *> &SearchTextures) {
 
-	TTextures.clear();
+	SearchTextures.clear();
 
 	// Go through map
 	for(int i = 0; i < Size.x; i++) {
 		for(int j = 0; j < Size.y; j++) {
 
 			// Check for new textures
-			if(GetTextureIndex(TTextures, Tiles[i][j].Texture) == -1) {
-				TTextures.push_back(Tiles[i][j].Texture);
+			if(GetTextureIndex(SearchTextures, Tiles[i][j].Texture) == -1) {
+				SearchTextures.push_back(Tiles[i][j].Texture);
 			}
 		}
 	}

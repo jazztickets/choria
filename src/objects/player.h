@@ -122,7 +122,7 @@ class _Player : public _Object, public _Fighter {
 		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
-		void SetSkillLevel(int SkillID, int TPoints) { SkillLevels[SkillID] = TPoints; }
+		void SetSkillLevel(int SkillID, int Points) { SkillLevels[SkillID] = Points; }
 		int GetSkillLevel(int SkillID) const override { return SkillLevels[SkillID]; }
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(int SkillID, int Adjust);
