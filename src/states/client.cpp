@@ -587,22 +587,18 @@ void _ClientState::HandleObjectUpdates(_Buffer *Packet) {
 	char ObjectCount = Packet->Read<char>();
 
 	//printf("HandleObjectUpdates: ServerTime=%d, ClientTime=%d, ObjectCount=%d\n", ServerTime, ClientTime, ObjectCount);
-
-	glm::ivec2 Position;
-	char NetworkID;
-	int PlayerState;
-	int Invisible;
 	for(int i = 0; i < ObjectCount; i++) {
+		glm::ivec2 Position;
 
-		NetworkID = Packet->Read<char>();
-		PlayerState = Packet->Read<char>();
+		char NetworkID = Packet->Read<char>();
+		int PlayerState = Packet->Read<char>();
 		Position.x = Packet->Read<char>();
 		Position.y = Packet->Read<char>();
-		Invisible = Packet->ReadBit();
+		int Invisible = Packet->ReadBit();
 
 		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
 
-		_Player *OtherPlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
+		_Player *OtherPlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
 		if(OtherPlayer) {
 
 			OtherPlayer->State = PlayerState;

@@ -92,7 +92,7 @@ class _EditorState : public _State {
 
 	private:
 
-		void CloseWindow(int TElement);
+		void CloseWindow(int Element);
 		void CloseMap();
 
 		// New

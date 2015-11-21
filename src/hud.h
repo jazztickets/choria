@@ -172,7 +172,6 @@ class _HUD {
 		// Objects
 		_Player *Player;
 		const _Vendor *Vendor;
-		const _Trader *Trader;
 
 		// GUI
 		_CursorItem CursorItem;

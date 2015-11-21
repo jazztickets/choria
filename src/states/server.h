@@ -43,9 +43,9 @@ class _ServerState : public _State {
 		void HandlePacket(ENetEvent *Event);
 
 		void Update(double FrameTime);
-		void DeleteObject(_Object *TObject);
+		void DeleteObject(_Object *Object);
 
-		void PlayerTeleport(_Player *TPlayer);
+		void PlayerTeleport(_Player *Player);
 		double GetServerTime() const { return ServerTime; }
 
 		void StartCommandThread();
@@ -82,14 +82,14 @@ class _ServerState : public _State {
 
 		void SendPlayerPosition(_Player *Player);
 		void SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData);
-		void SendHUD(_Player *TPlayer);
-		void SendCharacterList(_Player *TPlayer);
-		void SendEvent(_Player *TPlayer, int TType, int TData);
+		void SendHUD(_Player *Player);
+		void SendCharacterList(_Player *Player);
+		void SendEvent(_Player *Player, int Type, int Data);
 		void SendTradeInformation(_Player *Sender, _Player *Receiver);
 
 		void BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int Gold);
 
-		void RemovePlayerFromBattle(_Player *TPlayer);
+		void RemovePlayerFromBattle(_Player *Player);
 
 		_Database *Database;
 		_ObjectManager *ObjectManager;

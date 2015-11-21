@@ -48,7 +48,6 @@ _HUD HUD;
 void _HUD::Init() {
 	State = ClientState.GetState();
 	Vendor = nullptr;
-	Trader = nullptr;
 	TooltipItem.Reset();
 	CursorItem.Reset();
 	TooltipSkill.Reset();
@@ -189,7 +188,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<char>(_Network::TRADER_ACCEPT);
 							ClientNetwork->SendPacketToHost(&Packet);
-							Player->AcceptTrader(Trader, RequiredItemSlots, RewardItemSlot);
+							Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
 							Player->CalculatePlayerStats();
 							CloseWindows();
 						}
@@ -362,10 +361,10 @@ void _HUD::Update(double FrameTime) {
 			if(HoverSlot && HoverSlot != TraderElement) {
 				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
 				TooltipItem.Window = WINDOW_TRADER;
-				if(InventoryIndex < Trader->TraderItems.size())
-					TooltipItem.Set(Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
+				if(InventoryIndex < Player->Trader->TraderItems.size())
+					TooltipItem.Set(Player->Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
 				else if(InventoryIndex == 8)
-					TooltipItem.Set(Trader->RewardItem, 0, 1, InventoryIndex);
+					TooltipItem.Set(Player->Trader->RewardItem, 0, 1, InventoryIndex);
 			}
 		} break;
 		case _ClientState::STATE_SKILLS: {
@@ -638,8 +637,7 @@ void _HUD::InitTrader(int TraderID) {
 		return;
 
 	// Get trader stats
-	Trader = Stats.GetTrader(TraderID);
-	Player->Trader = Trader;
+	Player->Trader = Stats.GetTrader(TraderID);
 
 	// Check for required items
 	RewardItemSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
@@ -667,7 +665,6 @@ void _HUD::CloseTrader() {
 	ClientNetwork->SendPacketToHost(&Packet);
 
 	*State = _ClientState::STATE_WALK;
-	Trader = nullptr;
 	Player->Trader = nullptr;
 }
 
@@ -885,13 +882,13 @@ void _HUD::CloseSkills() {
 
 // Initialize the trade system
 void _HUD::InitTrade() {
-/*
 	// Send request to server
 	SendTradeRequest();
 
 	CursorItem.Reset();
 	TooltipItem.Reset();
 
+	/*
 	// Add window
 	TabTrade = irrGUI->addTab(Graphics.GetCenteredRect(400, 300, 280, 470));
 
@@ -1057,7 +1054,7 @@ void _HUD::DrawTrader() {
 	Assets.Elements["element_trader"]->Render();
 
 	// Draw trader items
-	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
+	for(size_t i = 0; i < Player->Trader->TraderItems.size(); i++) {
 
 		// Get button position
 		std::stringstream Buffer;
@@ -1066,7 +1063,7 @@ void _HUD::DrawTrader() {
 		glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
 
 		// Draw item
-		const _Item *Item = Trader->TraderItems[i].Item;
+		const _Item *Item = Player->Trader->TraderItems[i].Item;
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Item->GetImage());
 
@@ -1076,7 +1073,7 @@ void _HUD::DrawTrader() {
 		else
 			Color = COLOR_WHITE;
 
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Trader->TraderItems[i].Count).c_str(), DrawPosition + glm::ivec2(0, -32), Color, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->TraderItems[i].Count).c_str(), DrawPosition + glm::ivec2(0, -32), Color, CENTER_BASELINE);
 	}
 
 	// Get reward button
@@ -1085,8 +1082,8 @@ void _HUD::DrawTrader() {
 
 	// Draw item
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.DrawCenteredImage(DrawPosition, Trader->RewardItem->GetImage());
-	Assets.Fonts["hud_small"]->DrawText(std::to_string(Trader->Count).c_str(), DrawPosition + glm::ivec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
+	Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->GetImage());
+	Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count).c_str(), DrawPosition + glm::ivec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
 }
 
 // Draw the trade screen

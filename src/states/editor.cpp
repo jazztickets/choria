@@ -449,7 +449,7 @@ void _EditorState::WindowEvent(uint8_t Event) {
 }
 
 // Close a window by element
-void _EditorState::CloseWindow(int TElement) {
+void _EditorState::CloseWindow(int Element) {
 }
 
 // Initializes the new map screen

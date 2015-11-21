@@ -38,7 +38,7 @@ _ServerBattle::~_ServerBattle() {
 
 }
 
-// Removes a player from the battle
+// Removes a player from the battle, return remaining player count
 int _ServerBattle::RemovePlayer(_Player *Player) {
 
 	int Count = 0;

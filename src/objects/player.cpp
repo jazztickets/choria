@@ -304,10 +304,9 @@ void _Player::GenerateNextBattle() {
 }
 
 // Starts a battle
-void _Player::StartBattle(_Battle *TBattle) {
-
+void _Player::StartBattle(_Battle *Battle) {
 	State = STATE_BATTLE;
-	Battle = TBattle;
+	this->Battle = Battle;
 	Command = -1;
 	for(int i = 0; i < 2; i++)
 		PotionsLeft[i] = MaxPotions[i];
@@ -315,7 +314,6 @@ void _Player::StartBattle(_Battle *TBattle) {
 
 // Stop a battle
 void _Player::StopBattle() {
-
 	State = STATE_WALK;
 	Battle = nullptr;
 	GenerateNextBattle();
@@ -390,17 +388,17 @@ int _Player::GetRequiredItemSlots(int *Slots) {
 }
 
 // Accept a trade from a trader
-void _Player::AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot) {
-	if(TTrader == nullptr || !IsSlotInventory(TRewardSlot))
+void _Player::AcceptTrader(int *Slots, int RewardSlot) {
+	if(Trader == nullptr || !IsSlotInventory(RewardSlot))
 		return;
 
 	// Trade in required items
-	for(uint32_t i = 0; i < TTrader->TraderItems.size(); i++) {
-		UpdateInventory(Slots[i], -TTrader->TraderItems[i].Count);
+	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++) {
+		UpdateInventory(Slots[i], -Trader->TraderItems[i].Count);
 	}
 
 	// Give player reward
-	AddItem(TTrader->RewardItem, TTrader->Count, TRewardSlot);
+	AddItem(Trader->RewardItem, Trader->Count, RewardSlot);
 }
 
 // Finds a potion in the player's inventory for use in battle

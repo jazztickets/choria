@@ -342,16 +342,17 @@ void _Map::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void _Map::GetTextureListFromMap(std::vector<const _Texture *> &SearchTextures) {
-	SearchTextures.clear();
+void _Map::GetTextureListFromMap(std::vector<const _Texture *> &TTextures) {
+
+	TTextures.clear();
 
 	// Go through map
 	for(int i = 0; i < Size.x; i++) {
 		for(int j = 0; j < Size.y; j++) {
 
 			// Check for new textures
-			if(GetTextureIndex(SearchTextures, Tiles[i][j].Texture) == -1) {
-				SearchTextures.push_back(Tiles[i][j].Texture);
+			if(GetTextureIndex(TTextures, Tiles[i][j].Texture) == -1) {
+				TTextures.push_back(Tiles[i][j].Texture);
 			}
 		}
 	}
@@ -408,11 +409,11 @@ void _Map::AddObject(_Object *Object) {
 }
 
 // Removes an object from the map
-void _Map::RemoveObject(_Object *RemoveObject) {
+void _Map::RemoveObject(_Object *TObject) {
 
 	// Remove from the map
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
-		if(*Iterator == RemoveObject)
+		if(*Iterator == TObject)
 			Iterator = Objects.erase(Iterator);
 		else
 			++Iterator;
@@ -421,7 +422,7 @@ void _Map::RemoveObject(_Object *RemoveObject) {
 	// Create delete packet
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_DELETEOBJECT);
-	Packet.Write<char>(RemoveObject->NetworkID);
+	Packet.Write<char>(TObject->NetworkID);
 
 	// Send to everyone
 	SendPacketToPlayers(&Packet);
@@ -467,6 +468,7 @@ _Player *_Map::GetClosestPlayer(const _Player *Player, float MaxDistanceSquared,
 
 // Sends object position information to all the clients in the map
 void _Map::SendObjectUpdates() {
+
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_OBJECTUPDATES);
 

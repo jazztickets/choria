@@ -1118,7 +1118,7 @@ void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *TPeer) {
 		return;
 
 	// Exchange items
-	Player->AcceptTrader(Trader, RequiredItemSlots, RewardSlot);
+	Player->AcceptTrader(RequiredItemSlots, RewardSlot);
 	Player->Trader = nullptr;
 	Player->State = _Player::STATE_WALK;
 	Player->CalculatePlayerStats();
@@ -1191,18 +1191,18 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 }
 
 // Updates the player's HUD
-void _ServerState::SendHUD(_Player *TPlayer) {
+void _ServerState::SendHUD(_Player *Player) {
 
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_HUD);
-	Packet.Write<int32_t>(TPlayer->Experience);
-	Packet.Write<int32_t>(TPlayer->Gold);
-	Packet.Write<int32_t>(TPlayer->Health);
-	Packet.Write<int32_t>(TPlayer->Mana);
-	Packet.Write<float>(TPlayer->HealthAccumulator);
-	Packet.Write<float>(TPlayer->ManaAccumulator);
+	Packet.Write<int32_t>(Player->Experience);
+	Packet.Write<int32_t>(Player->Gold);
+	Packet.Write<int32_t>(Player->Health);
+	Packet.Write<int32_t>(Player->Mana);
+	Packet.Write<float>(Player->HealthAccumulator);
+	Packet.Write<float>(Player->ManaAccumulator);
 
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
+	ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 }
 
 // Send player their position
@@ -1217,11 +1217,11 @@ void _ServerState::SendPlayerPosition(_Player *Player) {
 }
 
 // Sends the player a list of his/her characters
-void _ServerState::SendCharacterList(_Player *TPlayer) {
+void _ServerState::SendCharacterList(_Player *Player) {
 	char QueryString[512];
 
 	// Get a count of the account's characters
-	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", TPlayer->AccountID);
+	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", Player->AccountID);
 	int CharacterCount = Database->RunCountQuery(QueryString);
 
 	// Create the packet
@@ -1230,7 +1230,7 @@ void _ServerState::SendCharacterList(_Player *TPlayer) {
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
-	sprintf(QueryString, "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = %d", TPlayer->AccountID);
+	sprintf(QueryString, "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = %d", Player->AccountID);
 	Database->RunDataQuery(QueryString);
 	while(Database->FetchRow()) {
 		Packet.WriteString(Database->GetString(0));
@@ -1240,21 +1240,21 @@ void _ServerState::SendCharacterList(_Player *TPlayer) {
 	Database->CloseQuery();
 
 	// Send list
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
+	ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 }
 
 // Sends a player an event message
-void _ServerState::SendEvent(_Player *TPlayer, int TType, int TData) {
+void _ServerState::SendEvent(_Player *Player, int Type, int Data) {
 
 	// Create packet
 	_Buffer Packet;
 	Packet.Write<char>(_Network::EVENT_START);
-	Packet.Write<char>(TType);
-	Packet.Write<int32_t>(TData);
-	Packet.Write<char>(TPlayer->Position.x);
-	Packet.Write<char>(TPlayer->Position.y);
+	Packet.Write<char>(Type);
+	Packet.Write<int32_t>(Data);
+	Packet.Write<char>(Player->Position.x);
+	Packet.Write<char>(Player->Position.y);
 
-	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
+	ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 }
 
 // Sends information to another player about items they're trading
@@ -1282,15 +1282,14 @@ void _ServerState::BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int G
 }
 
 // Removes a player from a battle and deletes the battle if necessary
-void _ServerState::RemovePlayerFromBattle(_Player *TPlayer) {
-	_ServerBattle *Battle = static_cast<_ServerBattle *>(TPlayer->Battle);
+void _ServerState::RemovePlayerFromBattle(_Player *Player) {
+	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->Battle);
 	if(!Battle)
 		return;
 
 	// Delete instance
-	if(Battle->RemovePlayer(TPlayer) == 0) {
+	if(Battle->RemovePlayer(Player) == 0)
 		Instances->DeleteBattle(Battle);
-	}
 }
 
 // Deletes an object on the server and broadcasts it to the clients
@@ -1309,10 +1308,10 @@ void ObjectDeleted(_Object *TObject) {
 }
 
 // Teleports a player back to town
-void _ServerState::PlayerTeleport(_Player *TPlayer) {
+void _ServerState::PlayerTeleport(_Player *Player) {
 
-	TPlayer->RestoreHealthMana();
-	SpawnPlayer(TPlayer, TPlayer->SpawnMapID, _Map::EVENT_SPAWN, TPlayer->SpawnPoint);
-	SendHUD(TPlayer);
-	TPlayer->Save();
+	Player->RestoreHealthMana();
+	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
+	SendHUD(Player);
+	Player->Save();
 }

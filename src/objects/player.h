@@ -85,7 +85,7 @@ class _Player : public _Object, public _Fighter {
 
 		// Account
 		void Save();
-		void SetPortraitID(int TID);
+		void SetPortraitID(int Value);
 
 		// Stats
 		void CalculatePlayerStats();
@@ -122,20 +122,20 @@ class _Player : public _Object, public _Fighter {
 		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
-		void SetSkillLevel(int TSkillID, int TPoints) { SkillLevels[TSkillID] = TPoints; }
-		int GetSkillLevel(int TSkillID) const override { return SkillLevels[TSkillID]; }
+		void SetSkillLevel(int SkillID, int TPoints) { SkillLevels[SkillID] = TPoints; }
+		int GetSkillLevel(int SkillID) const override { return SkillLevels[SkillID]; }
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(int SkillID, int Adjust);
 		void CalculateSkillPoints();
 
 		// Battles
 		void GenerateNextBattle();
-		void StartBattle(_Battle *TBattle);
+		void StartBattle(_Battle *Battle);
 		void StopBattle();
 
 		// Trader
 		int GetRequiredItemSlots(int *Slots);
-		void AcceptTrader(const _Trader *TTrader, int *Slots, int TRewardSlot);
+		void AcceptTrader(int *Slots, int RewardSlot);
 
 		// Map
 		const _Tile *GetTile();
