@@ -19,9 +19,9 @@
 #include <instances/map.h>
 
 // Constructor
-_Object::_Object(int TType)
+_Object::_Object(int Type)
 :	Map(nullptr),
-	Type(TType),
+	Type(Type),
 	Deleted(false),
 	Position(-1, -1),
 	NetworkID(-1) {

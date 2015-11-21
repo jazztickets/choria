@@ -36,23 +36,12 @@ class _Object {
 			MONSTER,
 		};
 
-		virtual void RenderWorld(const _Object *TClientPlayer=nullptr) { }
+		virtual void RenderWorld(const _Object *ClientPlayer=nullptr) { }
 
-		_Object(int TType);
+		_Object(int Type);
 		virtual ~_Object();
 
 		virtual void Update(double FrameTime) { }
-
-		int GetType() const { return Type; }
-
-		void SetDeleted(bool Value) { Deleted = Value; }
-		bool GetDeleted() const { return Deleted; }
-
-		void SetNetworkID(char Value) { NetworkID = Value; }
-		char GetNetworkID() const { return NetworkID; }
-
-		void SetPosition(const glm::ivec2 &Position) { this->Position = Position; }
-		const glm::ivec2 &GetPosition() const { return Position; }
 
 		// Instances
 		_Map *Map;

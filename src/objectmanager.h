@@ -41,8 +41,8 @@ class _ObjectManager {
 		void DeletesObjectsExcept(_Object *TObject);
 		_Object *CreateObjectFromTemplate(int TTemplateID);
 		_Object *AddObject(_Object *TObject);
-		_Object *AddObjectWithNetworkID(_Object *TObject, int TNetworkID);
-		void DeleteObject(_Object *TObject);
+		_Object *AddObjectWithNetworkID(_Object *Object, int NetworkID);
+		void DeleteObject(_Object *Object);
 
 		int GetObjectCount() const { return Objects.size(); }
 		const std::list<_Object *> &GetObjects() const { return Objects; }

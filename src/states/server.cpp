@@ -94,9 +94,9 @@ void _ServerState::Close() {
 
 	// Disconnect peers
 	std::list<_Object *> Objects = ObjectManager->GetObjects();
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if((*Iterator)->GetType() == _Object::PLAYER) {
-			_Player *Player = static_cast<_Player *>(*Iterator);
+	for(auto &Object : Objects) {
+		if(Object->Type == _Object::PLAYER) {
+			_Player *Player = (_Player *)Object;
 			Player->Save();
 			ServerNetwork->Disconnect(Player->Peer);
 		}
@@ -451,7 +451,7 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *TPeer) {
 	// Send character packet
 	_Buffer NewPacket;
 	NewPacket.Write<char>(_Network::WORLD_YOURCHARACTERINFO);
-	NewPacket.Write<char>(Player->GetNetworkID());
+	NewPacket.Write<char>(Player->NetworkID);
 	NewPacket.WriteString(Player->Name.c_str());
 	NewPacket.Write<int32_t>(Player->PortraitID);
 	NewPacket.Write<int32_t>(Player->Experience);
@@ -935,7 +935,7 @@ void _ServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *TPeer) {
 	// Send message to other players
 	_Buffer NewPacket;
 	NewPacket.Write<char>(_Network::CHAT_MESSAGE);
-	NewPacket.Write<char>(Player->GetNetworkID());
+	NewPacket.Write<char>(Player->NetworkID);
 	NewPacket.WriteString(Message);
 
 	Map->SendPacketToPlayers(&NewPacket, Player);
@@ -1138,7 +1138,7 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 	// Get spawn position
 	_IndexedEvent *SpawnEvent = NewMap->GetIndexedEvent(EventType, EventData);
 	if(SpawnEvent) {
-		Player->SetPosition(SpawnEvent->Position);
+		Player->Position = SpawnEvent->Position;
 		SendPlayerPosition(Player);
 	}
 
@@ -1166,11 +1166,11 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 		for(auto Iterator = NewMap->Objects.begin(); Iterator != NewMap->Objects.end(); ++Iterator) {
 			_Object *Object = *Iterator;
 
-			Packet.Write<char>(Object->GetNetworkID());
-			Packet.Write<char>(Object->GetPosition().x);
-			Packet.Write<char>(Object->GetPosition().y);
-			Packet.Write<char>(Object->GetType());
-			switch(Object->GetType()) {
+			Packet.Write<char>(Object->NetworkID);
+			Packet.Write<char>(Object->Position.x);
+			Packet.Write<char>(Object->Position.y);
+			Packet.Write<char>(Object->Type);
+			switch(Object->Type) {
 				case _Object::PLAYER: {
 					_Player *PlayerObject = static_cast<_Player *>(Object);
 					Packet.WriteString(PlayerObject->Name.c_str());
@@ -1187,7 +1187,7 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 		ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 	}
 
-	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->GetNetworkID());
+	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->NetworkID);
 }
 
 // Updates the player's HUD
@@ -1210,8 +1210,8 @@ void _ServerState::SendPlayerPosition(_Player *Player) {
 
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_POSITION);
-	Packet.Write<char>(Player->GetPosition().x);
-	Packet.Write<char>(Player->GetPosition().y);
+	Packet.Write<char>(Player->Position.x);
+	Packet.Write<char>(Player->Position.y);
 
 	ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 }
@@ -1251,8 +1251,8 @@ void _ServerState::SendEvent(_Player *TPlayer, int TType, int TData) {
 	Packet.Write<char>(_Network::EVENT_START);
 	Packet.Write<char>(TType);
 	Packet.Write<int32_t>(TData);
-	Packet.Write<char>(TPlayer->GetPosition().x);
-	Packet.Write<char>(TPlayer->GetPosition().y);
+	Packet.Write<char>(TPlayer->Position.x);
+	Packet.Write<char>(TPlayer->Position.y);
 
 	ServerNetwork->SendPacketToPeer(&Packet, TPlayer->Peer);
 }
@@ -1263,7 +1263,7 @@ void _ServerState::SendTradeInformation(_Player *Sender, _Player *Receiver) {
 	// Send items to trader player
 	_Buffer Packet;
 	Packet.Write<char>(_Network::TRADE_REQUEST);
-	Packet.Write<char>(Sender->GetNetworkID());
+	Packet.Write<char>(Sender->NetworkID);
 	BuildTradeItemsPacket(Sender, &Packet, Sender->TradeGold);
 	ServerNetwork->SendPacketToPeer(&Packet, Receiver->Peer);
 }

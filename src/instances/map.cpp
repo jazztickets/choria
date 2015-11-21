@@ -342,17 +342,16 @@ void _Map::LoadMap() {
 }
 
 // Builds an array of textures that are used in the map
-void _Map::GetTextureListFromMap(std::vector<const _Texture *> &TTextures) {
-
-	TTextures.clear();
+void _Map::GetTextureListFromMap(std::vector<const _Texture *> &SearchTextures) {
+	SearchTextures.clear();
 
 	// Go through map
 	for(int i = 0; i < Size.x; i++) {
 		for(int j = 0; j < Size.y; j++) {
 
 			// Check for new textures
-			if(GetTextureIndex(TTextures, Tiles[i][j].Texture) == -1) {
-				TTextures.push_back(Tiles[i][j].Texture);
+			if(GetTextureIndex(SearchTextures, Tiles[i][j].Texture) == -1) {
+				SearchTextures.push_back(Tiles[i][j].Texture);
 			}
 		}
 	}
@@ -385,11 +384,11 @@ void _Map::AddObject(_Object *Object) {
 	// Create packet for the new object
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_CREATEOBJECT);
-	Packet.Write<char>(Object->GetNetworkID());
-	Packet.Write<char>(Object->GetPosition().x);
-	Packet.Write<char>(Object->GetPosition().y);
-	Packet.Write<char>(Object->GetType());
-	switch(Object->GetType()) {
+	Packet.Write<char>(Object->NetworkID);
+	Packet.Write<char>(Object->Position.x);
+	Packet.Write<char>(Object->Position.y);
+	Packet.Write<char>(Object->Type);
+	switch(Object->Type) {
 		case _Object::PLAYER: {
 			_Player *NewPlayer = static_cast<_Player *>(Object);
 			Packet.WriteString(NewPlayer->Name.c_str());
@@ -409,11 +408,11 @@ void _Map::AddObject(_Object *Object) {
 }
 
 // Removes an object from the map
-void _Map::RemoveObject(_Object *TObject) {
+void _Map::RemoveObject(_Object *RemoveObject) {
 
 	// Remove from the map
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
-		if(*Iterator == TObject)
+		if(*Iterator == RemoveObject)
 			Iterator = Objects.erase(Iterator);
 		else
 			++Iterator;
@@ -422,7 +421,7 @@ void _Map::RemoveObject(_Object *TObject) {
 	// Create delete packet
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_DELETEOBJECT);
-	Packet.Write<char>(TObject->GetNetworkID());
+	Packet.Write<char>(RemoveObject->NetworkID);
 
 	// Send to everyone
 	SendPacketToPlayers(&Packet);
@@ -432,7 +431,7 @@ void _Map::RemoveObject(_Object *TObject) {
 void _Map::GetClosePlayers(const _Player *Player, float DistanceSquared, std::list<_Player *> &Players) {
 
 	for(const auto &Object : Objects) {
-		if(Object->GetType() == _Object::PLAYER) {
+		if(Object->Type == _Object::PLAYER) {
 			_Player *TestPlayer = (_Player *)Object;
 			if(TestPlayer != Player) {
 				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
@@ -450,7 +449,7 @@ _Player *_Map::GetClosestPlayer(const _Player *Player, float MaxDistanceSquared,
 	_Player *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
 	for(const auto &Object : Objects) {
-		if(Object->GetType() == _Object::PLAYER) {
+		if(Object->Type == _Object::PLAYER) {
 			_Player *TestPlayer = (_Player *)Object;
 			if(TestPlayer != Player && TestPlayer->State == State) {
 				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
@@ -468,8 +467,6 @@ _Player *_Map::GetClosestPlayer(const _Player *Player, float MaxDistanceSquared,
 
 // Sends object position information to all the clients in the map
 void _Map::SendObjectUpdates() {
-
-	// unsequenced
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_OBJECTUPDATES);
 
@@ -477,20 +474,20 @@ void _Map::SendObjectUpdates() {
 	int ObjectCount = Objects.size();
 	Packet.Write<char>(ObjectCount);
 
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		_Object *Object = *Iterator;
+	// Iterate over objects
+	for(const auto &Object : Objects) {
 		int State = 0;
 		bool Invisible = false;
-		if(Object->GetType() == _Object::PLAYER) {
-			_Player *Player = static_cast<_Player *>(Object);
+		if(Object->Type == _Object::PLAYER) {
+			_Player *Player = (_Player *)Object;
 			State = Player->State;
 			Invisible = Player->IsInvisible();
 		}
 
-		Packet.Write<char>(Object->GetNetworkID());
+		Packet.Write<char>(Object->NetworkID);
 		Packet.Write<char>(State);
-		Packet.Write<char>(Object->GetPosition().x);
-		Packet.Write<char>(Object->GetPosition().y);
+		Packet.Write<char>(Object->Position.x);
+		Packet.Write<char>(Object->Position.y);
 		Packet.WriteBit(Invisible);
 	}
 
@@ -501,9 +498,9 @@ void _Map::SendObjectUpdates() {
 void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Network::SendType Type) {
 
 	// Send the packet out
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if((*Iterator)->GetType() == _Object::PLAYER) {
-			_Player *Player = static_cast<_Player *>(*Iterator);
+	for(auto &Object : Objects) {
+		if(Object->Type == _Object::PLAYER) {
+			_Player *Player = (_Player *)Object;
 
 			if(Player != ExceptionPlayer)
 				ServerNetwork->SendPacketToPeer(Packet, Player->Peer, Type, Type == _Network::UNSEQUENCED);

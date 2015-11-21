@@ -171,7 +171,7 @@ void _ClientState::HandlePacket(ENetEvent *Event) {
 // Updates the current state
 void _ClientState::Update(double FrameTime) {
 	if(Camera && Player) {
-		Camera->Set2DPosition(glm::vec2(Player->GetPosition()));
+		Camera->Set2DPosition(glm::vec2(Player->Position));
 		Camera->Update(FrameTime);
 	}
 
@@ -226,7 +226,7 @@ void _ClientState::Render(double BlendFactor) {
 		return;
 
 	Graphics.Setup3D();
-	glm::vec3 LightPosition(glm::vec3(Player->GetPosition(), 1) + glm::vec3(0.5f, 0.5f, 0));
+	glm::vec3 LightPosition(glm::vec3(Player->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
 	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
 	glm::vec4 AmbientLight(0.25f, 0.25f, 0.25f, 1.0f);
 	//glm::vec4 AmbientLight(0.05f, 0.05f, ClientTime / 50, 1.0f);
@@ -491,8 +491,8 @@ void _ClientState::HandleChangeMaps(_Buffer *Packet) {
 					int Invisible = Packet->ReadBit();
 
 					// Information for your player
-					if(NetworkID == Player->GetNetworkID()) {
-						Player->SetPosition(GridPosition);
+					if(NetworkID == Player->NetworkID) {
+						Player->Position = GridPosition;
 						Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE));
 					}
 					else {
@@ -548,7 +548,7 @@ void _ClientState::HandleCreateObject(_Buffer *Packet) {
 	}
 
 	if(NewObject) {
-		NewObject->SetPosition(glm::ivec2(Position.x, Position.y));
+		NewObject->Position = Position;
 
 		// Add it to the manager
 		ObjectManager->AddObjectWithNetworkID(NewObject, NetworkID);
@@ -564,7 +564,7 @@ void _ClientState::HandleDeleteObject(_Buffer *Packet) {
 
 	_Object *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
 	if(Object) {
-		if(Object->GetType() == _Object::PLAYER) {
+		if(Object->Type == _Object::PLAYER) {
 			_Player *DeletedPlayer = static_cast<_Player *>(Object);
 			switch(State) {
 				case STATE_BATTLE:
@@ -572,7 +572,7 @@ void _ClientState::HandleDeleteObject(_Buffer *Packet) {
 				break;
 			}
 		}
-		Object->SetDeleted(true);
+		Object->Deleted = true;
 	}
 	else
 		printf("failed to delete object with networkid=%d\n", NetworkID);
@@ -740,7 +740,7 @@ void _ClientState::HandlePlayerPosition(_Buffer *Packet) {
 	glm::ivec2 GridPosition;
 	GridPosition.x = Packet->Read<char>();
 	GridPosition.y = Packet->Read<char>();
-	Player->SetPosition(GridPosition);
+	Player->Position = GridPosition;
 }
 
 // Handles the start of an event
@@ -750,7 +750,7 @@ void _ClientState::HandleEventStart(_Buffer *Packet) {
 	int Data = Packet->Read<int32_t>();
 	GridPosition.x = Packet->Read<char>();
 	GridPosition.y = Packet->Read<char>();
-	Player->SetPosition(GridPosition);
+	Player->Position = GridPosition;
 
 	switch(Type) {
 		case _Map::EVENT_VENDOR:

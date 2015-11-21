@@ -40,9 +40,9 @@ _ObjectManager::~_ObjectManager() {
 }
 
 // Adds an object to the manager
-_Object *_ObjectManager::AddObject(_Object *TObject) {
+_Object *_ObjectManager::AddObject(_Object *Object) {
 
-	if(TObject != nullptr) {
+	if(Object != nullptr) {
 
 		// Assign the object a network ID
 		int NetworkID = GetNextNetworkID();
@@ -51,30 +51,29 @@ _Object *_ObjectManager::AddObject(_Object *TObject) {
 			return nullptr;
 		}
 
-		TObject->SetNetworkID(NetworkID);
-		Objects.push_back(TObject);
-		ObjectArray[NetworkID] = TObject;
+		Object->NetworkID = NetworkID;
+		Objects.push_back(Object);
+		ObjectArray[NetworkID] = Object;
 	}
 
-	return TObject;
+	return Object;
 }
 
 // Adds an object with an assigned network ID
-_Object *_ObjectManager::AddObjectWithNetworkID(_Object *TObject, int TNetworkID) {
+_Object *_ObjectManager::AddObjectWithNetworkID(_Object *Object, int NetworkID) {
 
-	if(TObject != nullptr && TNetworkID < MAX_OBJECTS) {
-		TObject->SetNetworkID(TNetworkID);
-		Objects.push_back(TObject);
-		ObjectArray[TNetworkID] = TObject;
+	if(Object != nullptr && NetworkID < MAX_OBJECTS) {
+		Object->NetworkID = NetworkID;
+		Objects.push_back(Object);
+		ObjectArray[NetworkID] = Object;
 	}
 
-	return TObject;
+	return Object;
 }
 
 // Deletes an object
-void _ObjectManager::DeleteObject(_Object *TObject) {
-
-	TObject->SetDeleted(true);
+void _ObjectManager::DeleteObject(_Object *Object) {
+	Object->Deleted = true;
 }
 
 // Deletes all of the objects
@@ -89,11 +88,10 @@ void _ObjectManager::ClearObjects() {
 }
 
 // Deletes all the objects except for one
-void _ObjectManager::DeletesObjectsExcept(_Object *TObject) {
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		_Object *Object = *Iterator;
-		if(Object != TObject)
-			Object->SetDeleted(true);
+void _ObjectManager::DeletesObjectsExcept(_Object *ExceptionObject) {
+	for(const auto &Object : Objects) {
+		if(Object != ExceptionObject)
+			Object->Deleted = true;
 	}
 }
 
@@ -108,13 +106,13 @@ void _ObjectManager::Update(double FrameTime) {
 		Object->Update(FrameTime);
 
 		// Delete old objects
-		if(Object->GetDeleted()) {
+		if(Object->Deleted) {
 
 			if(ObjectDeletedCallback != nullptr) {
 				ObjectDeletedCallback(Object);
 			}
 
-			ObjectArray[(int)Object->GetNetworkID()] = nullptr;
+			ObjectArray[(int)Object->NetworkID] = nullptr;
 
 			delete Object;
 			Iterator = Objects.erase(Iterator);

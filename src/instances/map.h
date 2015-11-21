@@ -79,8 +79,8 @@ class _Map {
 
 		// Object management
 		void AddObject(_Object *Object);
-		void RemoveObject(_Object *TObject);
-		void GetClosePlayers(const _Player *TPlayer, float DistanceSquared, std::list<_Player *> &Players);
+		void RemoveObject(_Object *RemoveObject);
+		void GetClosePlayers(const _Player *Player, float DistanceSquared, std::list<_Player *> &Players);
 		_Player *GetClosestPlayer(const _Player *Player, float MaxDistanceSquared, int State);
 
 		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
@@ -130,7 +130,7 @@ class _Map {
 
 		void SendObjectUpdates();
 
-		void GetTextureListFromMap(std::vector<const _Texture *> &TTextures);
+		void GetTextureListFromMap(std::vector<const _Texture *> &SearchTextures);
 		int GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture);
 
 };
