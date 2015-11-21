@@ -559,7 +559,6 @@ void _ClientState::HandleCreateObject(_Buffer *Packet) {
 
 // Deletes an object
 void _ClientState::HandleDeleteObject(_Buffer *Packet) {
-
 	int NetworkID = Packet->Read<char>();
 
 	_Object *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
@@ -648,7 +647,6 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 		// Get fighter type
 		int Type = Packet->ReadBit();
 		int Side = Packet->ReadBit();
-
 		if(Type == _Fighter::TYPE_PLAYER) {
 
 			// Network ID
@@ -783,8 +781,6 @@ void _ClientState::HandleChatMessage(_Buffer *Packet) {
 	_ChatMessage Chat;
 	Chat.Message = MessagePlayer->Name + std::string(": ") + Message;
 	HUD.AddChatMessage(Chat);
-
-	printf("%s\n", Chat.Message.c_str());
 }
 
 // Handles a trade request

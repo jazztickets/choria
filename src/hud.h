@@ -140,8 +140,8 @@ class _HUD {
 		void DrawTeleport();
 		void DrawCharacter();
 		void DrawVendor();
-		void DrawTrader();
 		void DrawTrade();
+		void DrawTrader();
 		void DrawActionBar();
 		void DrawSkills();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy);
@@ -171,7 +171,6 @@ class _HUD {
 
 		// Objects
 		_Player *Player;
-		const _Vendor *Vendor;
 
 		// GUI
 		_CursorItem CursorItem;
