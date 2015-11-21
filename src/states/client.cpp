@@ -397,12 +397,12 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 
 // Key events
 void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
-
+	HUD.KeyEvent(KeyEvent);
 }
 
 // Text input events
 void _ClientState::TextEvent(const char *Text) {
-
+	HUD.TextEvent(Text);
 }
 
 // Mouse events

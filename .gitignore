@@ -3,6 +3,7 @@ build
 *.dll
 *.swp
 *.~lock*
+src/tags
 CMakeLists.txt.user
 deployment/*.exe
 deployment/*-src

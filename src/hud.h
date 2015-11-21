@@ -30,6 +30,7 @@ class _Skill;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
+struct _KeyEvent;
 struct _MouseEvent;
 
 // Structures
@@ -95,6 +96,8 @@ class _HUD {
 		void Close();
 
 		// Updates
+		void KeyEvent(const _KeyEvent &KeyEvent);
+		void TextEvent(const char *Text);
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
 		void Render();

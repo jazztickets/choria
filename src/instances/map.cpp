@@ -146,7 +146,6 @@ void _Map::Render(_Camera *Camera, int RenderFlags) {
 
 			if(Tile->Texture)
 				Graphics.DrawSprite(DrawPosition, Tile->Texture);
-
 		}
 	}
 
@@ -158,13 +157,7 @@ void _Map::Render(_Camera *Camera, int RenderFlags) {
 	for(int j = Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = Bounds[0]; i < Bounds[2]; i++) {
 			_Tile *Tile = &Tiles[i][j];
-
 			glm::vec3 DrawPosition = glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0);
-			if(NoZoneTexture)
-				Graphics.DrawSprite(DrawPosition, NoZoneTexture);
-
-			if(Tile->Texture)
-				Graphics.DrawSprite(DrawPosition, Tile->Texture);
 
 			// Draw wall
 			if(Tile->Wall) {

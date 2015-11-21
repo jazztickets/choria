@@ -63,6 +63,29 @@ void _HUD::Close() {
 	ClearSkills();
 }
 
+// Handle keys
+void _HUD::KeyEvent(const _KeyEvent &KeyEvent) {
+	switch(*State) {
+		case _ClientState::STATE_TRADE: {
+			Assets.Elements["element_trade"]->HandleKeyEvent(KeyEvent);
+			if(KeyEvent.Pressed) {
+				if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+					Assets.TextBoxes["textbox_trade_gold"]->Focused = false;
+			}
+		} break;
+	}
+}
+
+// Handle text input
+void _HUD::TextEvent(const char *Text) {
+	switch(*State) {
+		case _ClientState::STATE_TRADE: {
+			Assets.Elements["element_trade"]->HandleTextEvent(Text);
+			ValidateTradeGold();
+		} break;
+	}
+}
+
 // Mouse events
 void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
@@ -115,6 +138,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							else
 								CursorItem = TooltipItem;
 						}
+
+						if(MouseEvent.Button == SDL_BUTTON_LEFT)
+							Assets.Elements["element_trade"]->HandleInput(MouseEvent.Pressed);
 					break;
 				}
 			break;
@@ -326,19 +352,18 @@ void _HUD::Update(double FrameTime) {
 
 			// Get trade items
 			if(*State == _ClientState::STATE_TRADE) {
+				Assets.Elements["element_trade"]->Update(FrameTime, Input.GetMouse());
 				_Element *TradeTheirsElement = Assets.Elements["element_trade_theirs"];
 				TradeTheirsElement->Visible = false;
 				if(!HoverSlot && Player->TradePlayer) {
 					TradeTheirsElement->Visible = true;
 
-					TradeTheirsElement->Update(FrameTime, Input.GetMouse());
 					HoverSlot = TradeTheirsElement->HitElement;
 					TooltipItem.Window = WINDOW_TRADETHEIRS;
 				}
 
-				_Element *TradeYoursElement = Assets.Elements["element_trade_yours"];
 				if(!HoverSlot) {
-					TradeYoursElement->Update(FrameTime, Input.GetMouse());
+					_Element *TradeYoursElement = Assets.Elements["element_trade_yours"];
 					HoverSlot = TradeYoursElement->HitElement;
 					TooltipItem.Window = WINDOW_TRADEYOURS;
 				}
@@ -640,6 +665,9 @@ void _HUD::InitTrade() {
 
 	// Send request to server
 	SendTradeRequest();
+
+	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold"];
+	GoldTextBox->Text = "0";
 
 	*State = _ClientState::STATE_TRADE;
 }
@@ -1754,20 +1782,21 @@ void _HUD::SendTradeCancel() {
 
 // Make sure the trade gold box is valid
 int _HUD::ValidateTradeGold() {
-/*
+	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold"];
+
 	// Get gold amount
-	int Gold = atoi(std::string(TradeGoldBox->getText()).c_str());
+	std::stringstream Buffer(GoldTextBox->Text);
+	int Gold;
+	Buffer >> Gold;
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Gold)
 		Gold = Player->Gold;
 
 	// Set text
-	TradeGoldBox->setText(core::stringw(Gold).c_str());
+	GoldTextBox->Text = std::to_string(Gold);
 
 	return Gold;
-	*/
-	return 0;
 }
 
 // Resets the trade agreement
