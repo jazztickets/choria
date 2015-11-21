@@ -50,7 +50,7 @@ struct _Level {
 };
 
 struct _Zone {
-	_Zone(int TMonsterID, int TOdds) : MonsterID(TMonsterID), Odds(TOdds) { }
+	_Zone(int MonsterID, int Odds) : MonsterID(MonsterID), Odds(Odds) { }
 	int MonsterID;
 	int Odds;
 };
@@ -84,7 +84,7 @@ struct _Trader {
 };
 
 struct _MonsterDrop {
-	_MonsterDrop(int TItemID, int TOdds) : ItemID(TItemID), Odds(TOdds) { }
+	_MonsterDrop(int ItemID, int Odds) : ItemID(ItemID), Odds(Odds) { }
 	int ItemID;
 	int Odds;
 };
@@ -99,19 +99,19 @@ class _Stats {
 		void Close();
 
 		// General Stats
-		void GetMonsterStats(int TMonsterID, _Monster *TMonster);
-		const _Portrait *GetPortrait(int TPortraitID) { return &Portraits[TPortraitID]; }
-		const _Skill *GetSkill(int TSkillID);
-		const _MapStat *GetMap(int TMapID) { return &Maps[TMapID]; }
-		const _Item *GetItem(int TItemID) { return &Items[TItemID]; }
+		void GetMonsterStats(int MonsterID, _Monster *Monster);
+		const _Portrait *GetPortrait(int PortraitID) { return &Portraits[PortraitID]; }
+		const _Skill *GetSkill(int SkillID);
+		const _MapStat *GetMap(int MapID) { return &Maps[MapID]; }
+		const _Item *GetItem(int ItemID) { return &Items[ItemID]; }
 		const _Vendor *GetVendor(int VendorID) { return &Vendors[VendorID]; }
-		const _Trader *GetTrader(int TTraderID) { return &Traders[TTraderID]; }
+		const _Trader *GetTrader(int TraderID) { return &Traders[TraderID]; }
 
-		void GetPortraits(std::list<_Portrait> &TList);
+		void GetPortraits(std::list<_Portrait> &List);
 
 		// Monsters
-		void GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters);
-		void GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops);
+		void GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters);
+		void GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Drops);
 
 		std::vector<_Event> Events;
 		std::vector<_Level> Levels;
@@ -123,8 +123,8 @@ class _Stats {
 		std::map<int, _Trader> Traders;
 
 		// Levels
-		const _Level *GetLevel(int TLevel) const { return &Levels[TLevel-1]; }
-		const _Level *FindLevel(int TExperience) const;
+		const _Level *GetLevel(int Level) const { return &Levels[Level-1]; }
+		const _Level *FindLevel(int Experience) const;
 		int GetMaxLevel() const { return Levels.size(); }
 
 		// Skills

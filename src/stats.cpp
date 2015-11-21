@@ -29,9 +29,8 @@ void _Stats::Init() {
 
 	// Load database that stores game data
 	Database = new _Database();
-	if(!Database->OpenDatabaseCreate("database/data.s3db")) {
+	if(!Database->OpenDatabaseCreate("database/data.s3db"))
 		throw std::runtime_error("OpenDatabaseCreate failed");
-	}
 
 	// Load spreadsheet data
 	LoadPortraits();
@@ -46,7 +45,6 @@ void _Stats::Init() {
 
 // Shutdown
 void _Stats::Close() {
-
 	delete Database;
 	Database = nullptr;
 	Events.clear();
@@ -260,37 +258,37 @@ void _Stats::LoadTraders() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
+void _Stats::GetMonsterStats(int MonsterID, _Monster *Monster) {
 
 	// Run query
 	char QueryString[256];
-	sprintf(QueryString, "SELECT * FROM Monsters WHERE ID = %d", TMonsterID);
+	sprintf(QueryString, "SELECT * FROM Monsters WHERE ID = %d", MonsterID);
 	Database->RunDataQuery(QueryString);
 
 	// Get data
 	float Value, Range;
 	if(Database->FetchRow()) {
-		TMonster->Level = Database->GetInt(1);
-		TMonster->Name = Database->GetString(2);
-		TMonster->Portrait = Assets.Textures[std::string("monsters/") + Database->GetString(3)];
-		TMonster->Health = TMonster->MaxHealth = Database->GetInt(4);
-		TMonster->Mana = TMonster->MaxMana = Database->GetInt(5);
-		TMonster->ExperienceGiven = Database->GetInt(6);
-		TMonster->GoldGiven = Database->GetInt(7);
+		Monster->Level = Database->GetInt(1);
+		Monster->Name = Database->GetString(2);
+		Monster->Portrait = Assets.Textures[std::string("monsters/") + Database->GetString(3)];
+		Monster->Health = Monster->MaxHealth = Database->GetInt(4);
+		Monster->Mana = Monster->MaxMana = Database->GetInt(5);
+		Monster->ExperienceGiven = Database->GetInt(6);
+		Monster->GoldGiven = Database->GetInt(7);
 
 		Value = Database->GetFloat(8);
 		Range = Database->GetFloat(9);
-		TMonster->MinDamage = (int)(Value - Range);
-		TMonster->MaxDamage = (int)(Value + Range);
+		Monster->MinDamage = (int)(Value - Range);
+		Monster->MaxDamage = (int)(Value + Range);
 
 		Value = Database->GetFloat(10);
 		Range = Database->GetFloat(11);
-		TMonster->MinDefense = (int)(Value - Range);
-		TMonster->MaxDefense = (int)(Value + Range);
+		Monster->MinDefense = (int)(Value - Range);
+		Monster->MaxDefense = (int)(Value + Range);
 
-		TMonster->AI = Database->GetInt(12);
+		Monster->AI = Database->GetInt(12);
 
-		TMonster->SkillBar[0] = Stats.GetSkill(0);
+		Monster->SkillBar[0] = Stats.GetSkill(0);
 	}
 
 	// Free memory
@@ -298,30 +296,30 @@ void _Stats::GetMonsterStats(int TMonsterID, _Monster *TMonster) {
 }
 
 // Gets a skill by id
-const _Skill *_Stats::GetSkill(int TSkillID) {
-	if(TSkillID < 0 || TSkillID >= (int)Skills.size())
+const _Skill *_Stats::GetSkill(int SkillID) {
+	if(SkillID < 0 || SkillID >= (int)Skills.size())
 		return nullptr;
 
-	return &Skills[TSkillID];
+	return &Skills[SkillID];
 }
 
 // Gets a list of portraits
-void _Stats::GetPortraits(std::list<_Portrait> &TList) {
+void _Stats::GetPortraits(std::list<_Portrait> &List) {
 
 	for(std::map<int, _Portrait>::iterator Iterator = Portraits.begin(); Iterator != Portraits.end(); ++Iterator)
-		TList.push_back(Iterator->second);
+		List.push_back(Iterator->second);
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters) {
-	if(TZone == 0)
+void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters) {
+	if(ZoneID == 0)
 		return;
 
 	char QueryString[256];
 	int MonsterCount = 0;
 
 	// Get zone info
-	sprintf(QueryString, "SELECT MonsterCount FROM Zones WHERE ID = %d", TZone);
+	sprintf(QueryString, "SELECT MonsterCount FROM Zones WHERE ID = %d", ZoneID);
 	Database->RunDataQuery(QueryString);
 	if(Database->FetchRow()) {
 		MonsterCount = Database->GetInt(0);
@@ -333,7 +331,7 @@ void _Stats::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters)
 		return;
 
 	// Run query
-	sprintf(QueryString, "SELECT MonstersID, Odds FROM ZoneData WHERE ZonesID = %d", TZone);
+	sprintf(QueryString, "SELECT MonstersID, Odds FROM ZoneData WHERE ZonesID = %d", ZoneID);
 	Database->RunDataQuery(QueryString);
 
 	// Get monsters in zone
@@ -365,19 +363,19 @@ void _Stats::GenerateMonsterListFromZone(int TZone, std::vector<int> &TMonsters)
 			}
 
 			// Populate monster list
-			TMonsters.push_back(Zone[MonsterIndex].MonsterID);
+			Monsters.push_back(Zone[MonsterIndex].MonsterID);
 		}
 	}
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &TDrops) {
-	if(TMonsterID == 0)
+void _Stats::GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Drops) {
+	if(MonsterID == 0)
 		return;
 
 	// Run query
 	char QueryString[256];
-	sprintf(QueryString, "SELECT ItemsID, Odds FROM MonsterDrops WHERE MonstersID = %d", TMonsterID);
+	sprintf(QueryString, "SELECT ItemsID, Odds FROM MonsterDrops WHERE MonstersID = %d", MonsterID);
 	Database->RunDataQuery(QueryString);
 
 	// Get items from monster
@@ -400,7 +398,7 @@ void _Stats::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &
 		// Generate items
 		int RandomNumber;
 		size_t ItemIndex;
-		for(int i = 0; i < TCount; i++) {
+		for(int i = 0; i < Count; i++) {
 			std::uniform_int_distribution<int> Distribution(1, OddsSum);
 			RandomNumber = Distribution(RandomGenerator);
 			for(ItemIndex = 0; ItemIndex < MonsterDrop.size(); ItemIndex++) {
@@ -409,17 +407,17 @@ void _Stats::GenerateMonsterDrops(int TMonsterID, int TCount, std::vector<int> &
 			}
 
 			// Populate item list
-			TDrops.push_back(MonsterDrop[ItemIndex].ItemID);
+			Drops.push_back(MonsterDrop[ItemIndex].ItemID);
 		}
 	}
 }
 
 // Find a level from the given experience number
-const _Level *_Stats::FindLevel(int TExperience) const {
+const _Level *_Stats::FindLevel(int Experience) const {
 
 	// Search through levels
 	for(size_t i = 1; i < Levels.size(); i++) {
-		if(Levels[i].Experience > TExperience)
+		if(Levels[i].Experience > Experience)
 			return &Levels[i-1];
 	}
 
