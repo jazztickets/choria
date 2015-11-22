@@ -352,8 +352,8 @@ void _ServerBattle::CheckEnd() {
 				Players[i]->MonsterKills += OppositeSide->MonsterCount;
 
 				// Revive dead players and give them one health
-				if(Players[i]->Health == 0)
-					Players[i]->Health = 1;
+				//if(Players[i]->Health == 0)
+				//	Players[i]->Health = 1;
 			}
 
 			// Update stats
