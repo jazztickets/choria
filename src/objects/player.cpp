@@ -143,7 +143,8 @@ void _Player::RenderWorld(const _Object *ClientPlayer) {
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-		Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
+		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
+		Graphics.SetColor(Color);
 		Graphics.SetVBO(VBO_QUAD);
 
 		Graphics.SetDepthTest(false);
@@ -156,7 +157,7 @@ void _Player::RenderWorld(const _Object *ClientPlayer) {
 		}
 
 		if(ClientPlayer != this) {
-			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), COLOR_WHITE, CENTER_BASELINE, 1.0f / WorldImage->Size.x);
+			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldImage->Size.x);
 		}
 	}
 }
