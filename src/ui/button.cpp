@@ -120,9 +120,3 @@ void _Button::Render() const {
 		Children[i]->Render();
 	}
 }
-
-// Handle pressed event
-void _Button::HandleInput(bool Pressed) {
-	if(HitElement) {
-	}
-}

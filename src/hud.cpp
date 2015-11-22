@@ -153,6 +153,14 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					break;
 				}
 			break;
+			case _ClientState::STATE_TRADER:
+				switch(MouseEvent.Button) {
+					case SDL_BUTTON_LEFT:
+						_Element *TraderElement = Assets.Elements["element_trader"];
+						TraderElement->HandleInput(MouseEvent.Pressed);
+					break;
+				}
+			break;
 			case _ClientState::STATE_SKILLS:
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
@@ -209,39 +217,42 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							break;
 						}
 					}
+					else {
+						_Element *TradeElement = Assets.Elements["element_trade"];
+						TradeElement->HandleInput(MouseEvent.Pressed);
+
+						// Check for accept button
+						_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+						if(TradeElement->GetClickedElement() == AcceptButton) {
+							AcceptButton->Checked = !AcceptButton->Checked;
+							UpdateAcceptButton();
+
+							//_Buffer Packet;
+							_Buffer Packet;
+							Packet.Write<char>(_Network::TRADE_ACCEPT);
+							Packet.Write<char>(AcceptButton->Checked);
+							ClientNetwork->SendPacketToHost(&Packet);
+						}
+					}
 
 					CursorItem.Reset();
-
-					// Check for accept button
-					_Element *TradeYoursElement = Assets.Elements["element_trade_yours"];
-					_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
-					if(TradeYoursElement->HitElement == AcceptButton) {
-						AcceptButton->Checked = !AcceptButton->Checked;
-						UpdateAcceptButton();
-
-						//_Buffer Packet;
-						_Buffer Packet;
-						Packet.Write<char>(_Network::TRADE_ACCEPT);
-						Packet.Write<char>(AcceptButton->Checked);
-						ClientNetwork->SendPacketToHost(&Packet);
-					}
 				}
 			break;
 			case _ClientState::STATE_TRADER: {
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 					_Element *TraderElement = Assets.Elements["element_trader"];
-					if(TraderElement->HitElement) {
-						if(TraderElement->HitElement->Identifier == "button_trader_accept") {
-							_Buffer Packet;
-							Packet.Write<char>(_Network::TRADER_ACCEPT);
-							ClientNetwork->SendPacketToHost(&Packet);
-							Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
-							Player->CalculatePlayerStats();
-							CloseWindows();
-						}
-						else if(TraderElement->HitElement->Identifier == "button_trader_cancel") {
-							CloseWindows();
-						}
+					TraderElement->HandleInput(MouseEvent.Pressed);
+
+					if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
+						_Buffer Packet;
+						Packet.Write<char>(_Network::TRADER_ACCEPT);
+						ClientNetwork->SendPacketToHost(&Packet);
+						Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
+						Player->CalculatePlayerStats();
+						CloseWindows();
+					}
+					else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
+						CloseWindows();
 					}
 				}
 			} break;
