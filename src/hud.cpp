@@ -149,8 +149,12 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 								CursorItem = TooltipItem;
 						}
 
-						if(MouseEvent.Button == SDL_BUTTON_LEFT)
-							Assets.Elements["element_trade"]->HandleInput(MouseEvent.Pressed);
+						Assets.Elements["element_trade"]->HandleInput(MouseEvent.Pressed);
+
+						//_Buffer Packet;
+						//Packet.Write<char>(_Network::TRADE_ACCEPT);
+						//Packet.Write<char>(TradeAcceptButton->isPressed());
+						//ClientNetwork->SendPacketToHost(&Packet);
 					break;
 				}
 			break;
@@ -264,76 +268,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		}
 	}
 }
-
-// Handles GUI presses
-/*
-void _HUD::HandleGUI(gui::EGUI_EVENT_TYPE EventType, gui::IGUIElement *TElement) {
-	switch(*State) {
-		case _PlayClientState::STATE_MAINMENU:
-			switch(EventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_MAINMENU:
-						case ELEMENT_MAINMENURESUME:
-							CloseMenu();
-						break;
-						case ELEMENT_MAINMENUEXIT:
-							ClientNetwork->Disconnect();
-						break;
-					}
-				break;
-				default:
-				break;
-			}
-		break;
-		case _PlayClientState::STATE_TRADE:
-			switch(EventType) {
-				case gui::EGET_BUTTON_CLICKED:
-					switch(ID) {
-						case ELEMENT_TRADE:
-							CloseWindows();
-						break;
-						case ELEMENT_TRADEACCEPT: {
-							_Buffer Packet;
-							Packet.Write<char>(_Network::TRADE_ACCEPT);
-							//Packet.Write<char>(TradeAcceptButton->isPressed());
-							ClientNetwork->SendPacketToHost(&Packet);
-						}
-						break;
-						default:
-						break;
-					}
-				break;
-				case gui::EGET_ELEMENT_FOCUSED:
-					if(ID == ELEMENT_GOLDTRADEBOX) {
-						TypingGold = true;
-					}
-				break;
-				case gui::EGET_ELEMENT_FOCUS_LOST:
-				case gui::EGET_EDITBOX_ENTER:
-					if(ID == ELEMENT_GOLDTRADEBOX) {
-						TypingGold = false;
-						//if(EventType == gui::EGET_EDITBOX_ENTER)
-						//	irrGUI->removeFocus(TradeGoldBox);
-
-						// Send amount
-						int GoldAmount = ValidateTradeGold();
-						_Buffer Packet;
-						Packet.Write<char>(_Network::TRADE_GOLD);
-						Packet.Write<int32_t>(GoldAmount);
-						ClientNetwork->SendPacketToHost(&Packet);
-
-						// Reset agreement
-						ResetAcceptButton();
-					}
-				break;
-				default:
-				break;
-			}
-		break;
-	}
-}
-*/
 
 // Updates the HUD
 void _HUD::Update(double FrameTime) {

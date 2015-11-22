@@ -247,12 +247,16 @@ void _ClientState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["text"]);
+	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Draw map and objects
 	Map->Render(Camera);
 	ObjectManager->Render(Player);
 
 	Graphics.Setup2D();
+	Graphics.SetProgram(Assets.Programs["text"]);
+	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
 	// Draw states
 	switch(State) {
@@ -500,6 +504,7 @@ void _ClientState::HandleChangeMaps(_Buffer *Packet) {
 						NewPlayer = new _Player();
 						NewPlayer->Position = GridPosition;
 						NewPlayer->Name = Name;
+						NewPlayer->Map = Player->Map;
 						NewPlayer->SetPortraitID(PortraitID);
 						NewPlayer->InvisPower = Invisible;
 						ObjectManager->AddObjectWithNetworkID(NewPlayer, NetworkID);
@@ -539,10 +544,11 @@ void _ClientState::HandleCreateObject(_Buffer *Packet) {
 			int Invisible = Packet->ReadBit();
 
 			NewObject = new _Player();
-			_Player *NewPlayer = static_cast<_Player *>(NewObject);
+			_Player *NewPlayer = (_Player *)NewObject;
 			NewPlayer->Name = Name;
 			NewPlayer->SetPortraitID(PortraitID);
 			NewPlayer->InvisPower = Invisible;
+			NewPlayer->Map = Player->Map;
 		}
 		break;
 	}
@@ -554,7 +560,7 @@ void _ClientState::HandleCreateObject(_Buffer *Packet) {
 		ObjectManager->AddObjectWithNetworkID(NewObject, NetworkID);
 	}
 
-	//printf("HandleCreateObject: NetworkID=%d, Type=%d\n", NetworkID, Type);
+	//printf("HandleCreateObject: NetworkID=%d, Type=%d\n", NetworkID, Type); fflush(stdout);
 }
 
 // Deletes an object

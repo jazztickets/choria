@@ -156,7 +156,7 @@ void _Player::RenderWorld(const _Object *ClientPlayer) {
 		}
 
 		if(ClientPlayer != this) {
-			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_BASELINE);
+			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), COLOR_WHITE, CENTER_BASELINE, 1.0f / WorldImage->Size.x);
 		}
 	}
 }
