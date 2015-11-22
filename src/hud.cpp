@@ -150,11 +150,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						}
 
 						Assets.Elements["element_trade"]->HandleInput(MouseEvent.Pressed);
-
-						//_Buffer Packet;
-						//Packet.Write<char>(_Network::TRADE_ACCEPT);
-						//Packet.Write<char>(TradeAcceptButton->isPressed());
-						//ClientNetwork->SendPacketToHost(&Packet);
 					break;
 				}
 			break;
@@ -216,6 +211,20 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 
 					CursorItem.Reset();
+
+					// Check for accept button
+					_Element *TradeYoursElement = Assets.Elements["element_trade_yours"];
+					_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+					if(TradeYoursElement->HitElement == AcceptButton) {
+						AcceptButton->Checked = !AcceptButton->Checked;
+						UpdateAcceptButton();
+
+						//_Buffer Packet;
+						_Buffer Packet;
+						Packet.Write<char>(_Network::TRADE_ACCEPT);
+						Packet.Write<char>(AcceptButton->Checked);
+						ClientNetwork->SendPacketToHost(&Packet);
+					}
 				}
 			break;
 			case _ClientState::STATE_TRADER: {
@@ -618,6 +627,9 @@ void _HUD::InitTrade() {
 
 	// Send request to server
 	SendTradeRequest();
+
+	// Reset ui
+	ResetAcceptButton();
 
 	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
 	Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = "0";
@@ -1723,17 +1735,39 @@ void _HUD::ValidateTradeGold() {
 	ResetAcceptButton();
 }
 
+// Update accept button label text
+void _HUD::UpdateAcceptButton() {
+	_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+	_Label *LabelTradeStatusYours = Assets.Labels["label_trade_status_yours"];
+	if(AcceptButton->Checked) {
+		LabelTradeStatusYours->Text = "Accepted";
+		LabelTradeStatusYours->Color = COLOR_GREEN;
+	}
+	else {
+		LabelTradeStatusYours->Text = "Accept";
+		LabelTradeStatusYours->Color = COLOR_WHITE;
+	}
+}
+
 // Resets the trade agreement
 void _HUD::ResetAcceptButton() {
-	_Label *LabelTradeStatusYours = Assets.Labels["label_trade_status_yours"];
-	LabelTradeStatusYours->Text = "Unaccepted";
-	LabelTradeStatusYours->Color = COLOR_WHITE;
+	_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+	AcceptButton->Checked = false;
+	UpdateAcceptButton();
 
-	if(Player->TradePlayer) {
-		_Label *LabelTradeStatusTheirs = Assets.Labels["label_trade_status_theirs"];
+	UpdateTradeStatus(false);
+}
+
+// Update their status label
+void _HUD::UpdateTradeStatus(bool Accepted) {
+	_Label *LabelTradeStatusTheirs = Assets.Labels["label_trade_status_theirs"];
+	if(Accepted) {
+		LabelTradeStatusTheirs->Text = "Accepted";
+		LabelTradeStatusTheirs->Color = COLOR_GREEN;
+	}
+	else {
 		LabelTradeStatusTheirs->Text = "Unaccepted";
 		LabelTradeStatusTheirs->Color = COLOR_RED;
-		Player->TradePlayer->TradeAccepted = false;
 	}
 }
 

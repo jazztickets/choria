@@ -124,6 +124,7 @@ class _HUD {
 		void CloseTrade(bool SendNotify=true);
 		bool IsTypingGold() { return TypingGold; }
 		void ResetAcceptButton();
+		void UpdateTradeStatus(bool Accepted);
 
 		// Teleport to town
 		void ToggleTeleport();
@@ -167,6 +168,7 @@ class _HUD {
 		void SendTradeRequest();
 		void SendTradeCancel();
 		void ValidateTradeGold();
+		void UpdateAcceptButton();
 
 		void SplitStack(int Slot, int Count);
 

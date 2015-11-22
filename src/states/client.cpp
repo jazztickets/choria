@@ -800,10 +800,6 @@ void _ClientState::HandleTradeRequest(_Buffer *Packet) {
 	if(!Player->TradePlayer)
 		return;
 
-	// Reset state
-	Player->TradePlayer->TradeAccepted = false;
-	Player->TradeAccepted = false;
-
 	// Get gold offer
 	Player->TradePlayer->TradeGold = Packet->Read<int32_t>();
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
@@ -879,7 +875,7 @@ void _ClientState::HandleTradeAccept(_Buffer *Packet) {
 
 	// Set state
 	bool Accepted = !!Packet->Read<char>();
-	Player->TradePlayer->TradeAccepted = Accepted;
+	HUD.UpdateTradeStatus(Accepted);
 }
 
 // Handles a trade exchange
