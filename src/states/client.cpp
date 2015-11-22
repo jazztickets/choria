@@ -790,26 +790,23 @@ void _ClientState::HandleTradeRequest(_Buffer *Packet) {
 	int NetworkID = Packet->Read<char>();
 
 	// Get trading player
-	_Player *TradePlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
-	if(!TradePlayer)
+	Player->TradePlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
+	if(!Player->TradePlayer)
 		return;
 
-	// Set the trading player
-	Player->TradePlayer = (TradePlayer);
-
 	// Reset state
-	TradePlayer->TradeAccepted = false;
+	Player->TradePlayer->TradeAccepted = false;
 	Player->TradeAccepted = false;
 
 	// Get gold offer
-	TradePlayer->TradeGold = Packet->Read<int32_t>();
+	Player->TradePlayer->TradeGold = Packet->Read<int32_t>();
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
 		int ItemID = Packet->Read<int32_t>();
 		int Count = 0;
 		if(ItemID != 0)
 			Count = Packet->Read<char>();
 
-		TradePlayer->SetInventory(i, ItemID, Count);
+		Player->TradePlayer->SetInventory(i, ItemID, Count);
 	}
 }
 
@@ -825,8 +822,7 @@ void _ClientState::HandleTradeCancel(_Buffer *Packet) {
 void _ClientState::HandleTradeItem(_Buffer *Packet) {
 
 	// Get trading player
-	_Player *TradePlayer = Player->TradePlayer;
-	if(!TradePlayer)
+	if(!Player->TradePlayer)
 		return;
 
 	// Get old slot information
@@ -844,11 +840,11 @@ void _ClientState::HandleTradeItem(_Buffer *Packet) {
 		NewCount = Packet->Read<char>();
 
 	// Update player
-	TradePlayer->SetInventory(OldSlot, OldItemID, OldCount);
-	TradePlayer->SetInventory(NewSlot, NewItemID, NewCount);
+	Player->TradePlayer->SetInventory(OldSlot, OldItemID, OldCount);
+	Player->TradePlayer->SetInventory(NewSlot, NewItemID, NewCount);
 
 	// Reset agreement
-	TradePlayer->TradeAccepted = false;
+	Player->TradePlayer->TradeAccepted = false;
 	HUD.ResetAcceptButton();
 }
 
@@ -856,16 +852,15 @@ void _ClientState::HandleTradeItem(_Buffer *Packet) {
 void _ClientState::HandleTradeGold(_Buffer *Packet) {
 
 	// Get trading player
-	_Player *TradePlayer = Player->TradePlayer;
-	if(!TradePlayer)
+	if(!Player->TradePlayer)
 		return;
 
 	// Set gold
 	int Gold = Packet->Read<int32_t>();
-	TradePlayer->TradeGold = Gold;
+	Player->TradePlayer->TradeGold = Gold;
 
 	// Reset agreement
-	TradePlayer->TradeAccepted = false;
+	Player->TradePlayer->TradeAccepted = false;
 	HUD.ResetAcceptButton();
 }
 
@@ -873,13 +868,12 @@ void _ClientState::HandleTradeGold(_Buffer *Packet) {
 void _ClientState::HandleTradeAccept(_Buffer *Packet) {
 
 	// Get trading player
-	_Player *TradePlayer = Player->TradePlayer;
-	if(!TradePlayer)
+	if(!Player->TradePlayer)
 		return;
 
 	// Set state
 	bool Accepted = !!Packet->Read<char>();
-	TradePlayer->TradeAccepted = Accepted;
+	Player->TradePlayer->TradeAccepted = Accepted;
 }
 
 // Handles a trade exchange

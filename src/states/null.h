@@ -24,6 +24,13 @@ class _NullState : public _State {
 
 	public:
 
+		_NullState() : StartupMode(0) { }
+
+		enum ModeTypes {
+			NORMAL,
+			CONNECT
+		};
+
 		// Setup
 		void Init() override;
 		void Close() override;
@@ -42,6 +49,8 @@ class _NullState : public _State {
 		void HandleConnect(ENetEvent *Event);
 		void HandleDisconnect(ENetEvent *Event);
 		void HandlePacket(ENetEvent *Event);
+
+		int StartupMode;
 
 	protected:
 

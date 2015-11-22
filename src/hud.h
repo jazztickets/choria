@@ -166,7 +166,7 @@ class _HUD {
 		void SendBusySignal(bool Value);
 		void SendTradeRequest();
 		void SendTradeCancel();
-		int ValidateTradeGold();
+		void ValidateTradeGold();
 
 		void SplitStack(int Slot, int Count);
 

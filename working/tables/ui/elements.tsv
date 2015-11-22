@@ -14,9 +14,9 @@ element_actionbar			0	-10	384	48	1	2	0
 element_item_tooltip		style_hud_item_tooltip_bg	0	0	250	300	0	0	0
 element_inventory			-215	0	362	288	1	1	0
 element_vendor			215	0	362	288	1	1	0
-element_trade		style_hud_bg	180	0	192	288	1	1	0
-element_trade_theirs	element_trade	style_hud_bg	0	0	192	92	0	0	0
-element_trade_yours	element_trade	style_hud_bg	0	144	192	92	0	0	0
+element_trade		style_hud_bg	180	0	304	288	1	1	0
+element_trade_theirs	element_trade	style_hud_bg	112	0	192	92	0	0	0
+element_trade_yours	element_trade	style_hud_bg	112	144	192	92	0	0	0
 element_trader		style_hud_bg	0	0	240	400	1	1	0
 element_teleport		style_hud_bg	0	-100	150	48	1	1	0
 element_skills		style_hud_bg	0	0	474	450	1	1	0

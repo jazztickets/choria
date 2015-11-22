@@ -125,7 +125,7 @@ void _Menu::InitNewCharacter() {
 }
 
 // Init connect screen
-void _Menu::InitConnect() {
+void _Menu::InitConnect(bool ConnectNow) {
 	ClientNetwork->Disconnect();
 
 	CurrentLayout = Assets.Elements["element_menu_connect"];
@@ -147,6 +147,9 @@ void _Menu::InitConnect() {
 	Button->Enabled = true;
 
 	State = STATE_CONNECT;
+
+	if(ConnectNow)
+		ConnectToHost();
 }
 
 // Init account info screen
@@ -155,12 +158,12 @@ void _Menu::InitAccount() {
 
 	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
 	Username->Focused = true;
-	Username->Text = "";
+	Username->Text = DefaultUsername;
 	Username->ResetCursor();
 
 	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
 	Password->Focused = false;
-	Password->Text = "";
+	Password->Text = DefaultPassword;
 
 	_Label *Label = Assets.Labels["label_menu_account_message"];
 	Label->Color = COLOR_WHITE;

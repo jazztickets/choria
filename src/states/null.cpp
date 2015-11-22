@@ -22,7 +22,17 @@
 _NullState NullState;
 
 void _NullState::Init() {
-	Menu.InitTitle();
+
+	switch(StartupMode) {
+		case NORMAL:
+			Menu.InitTitle();
+		break;
+		case CONNECT:
+			Menu.InitConnect(true);
+		break;
+	}
+
+	StartupMode = NORMAL;
 }
 
 void _NullState::Close() {

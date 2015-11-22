@@ -43,13 +43,16 @@ change network listen port
 -port [port_number]
 
 open the mapeditor
--mapeditor
+-editor
 
-show login screen
+connect to default ip/port
 -connect
 
-set login information
--login username password
+set username on login screen
+-username [username]
+
+set password on login screen
+-password [password]
 
 ----HOW TO PLAY----
 

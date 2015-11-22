@@ -27,6 +27,7 @@
 #include <assets.h>
 #include <constants.h>
 #include <actions.h>
+#include <menu.h>
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
 #include <states/editor.h>
@@ -69,10 +70,13 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 				EditorState.SetFilename(Arguments[++i]);
 		}
 		else if(Token == "-connect") {
+			NullState.StartupMode = _NullState::CONNECT;
 		}
-		else if(Token == "-login" && TokensRemaining > 1) {
-			//AccountState.SetLoginInfo(Arguments[i+1], Arguments[i+2]);
-			i += 2;
+		else if(Token == "-username" && TokensRemaining > 0) {
+			Menu.SetUsername(Arguments[++i]);
+		}
+		else if(Token == "-password" && TokensRemaining > 0) {
+			Menu.SetPassword(Arguments[++i]);
 		}
 		else if(Token == "-port" && TokensRemaining > 0) {
 			NetworkPort = atoi(Arguments[++i]);

@@ -67,11 +67,18 @@ void _HUD::Close() {
 void _HUD::KeyEvent(const _KeyEvent &KeyEvent) {
 	switch(*State) {
 		case _ClientState::STATE_TRADE: {
+			_TextBox *TextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
+			std::string OldValue = TextBox->Text;
+
 			Assets.Elements["element_trade"]->HandleKeyEvent(KeyEvent);
 			if(KeyEvent.Pressed) {
-				if(KeyEvent.Key == SDL_SCANCODE_RETURN)
-					Assets.TextBoxes["textbox_trade_gold"]->Focused = false;
+				if(KeyEvent.Key == SDL_SCANCODE_RETURN) {
+					TextBox->Focused = false;
+				}
 			}
+
+			if(OldValue != TextBox->Text)
+				ValidateTradeGold();
 		} break;
 	}
 }
@@ -80,8 +87,11 @@ void _HUD::KeyEvent(const _KeyEvent &KeyEvent) {
 void _HUD::TextEvent(const char *Text) {
 	switch(*State) {
 		case _ClientState::STATE_TRADE: {
-			Assets.Elements["element_trade"]->HandleTextEvent(Text);
-			ValidateTradeGold();
+			_TextBox *TextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
+			std::string OldValue = TextBox->Text;
+			TextBox->HandleTextEvent(Text);
+			if(OldValue != TextBox->Text)
+				ValidateTradeGold();
 		} break;
 	}
 }
@@ -354,12 +364,21 @@ void _HUD::Update(double FrameTime) {
 			if(*State == _ClientState::STATE_TRADE) {
 				Assets.Elements["element_trade"]->Update(FrameTime, Input.GetMouse());
 				_Element *TradeTheirsElement = Assets.Elements["element_trade_theirs"];
+				_Label *LabelTradeStatus = Assets.Labels["label_trade_status"];
 				TradeTheirsElement->Visible = false;
-				if(!HoverSlot && Player->TradePlayer) {
+				LabelTradeStatus->Visible = true;
+				if(Player->TradePlayer) {
 					TradeTheirsElement->Visible = true;
+					LabelTradeStatus->Visible = false;
 
-					HoverSlot = TradeTheirsElement->HitElement;
-					TooltipItem.Window = WINDOW_TRADETHEIRS;
+					Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
+					Assets.Labels["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
+					Assets.Images["image_trade_portrait_theirs"]->Texture = Player->TradePlayer->Portrait;
+
+					if(!HoverSlot) {
+						HoverSlot = TradeTheirsElement->HitElement;
+						TooltipItem.Window = WINDOW_TRADETHEIRS;
+					}
 				}
 
 				if(!HoverSlot) {
@@ -666,8 +685,12 @@ void _HUD::InitTrade() {
 	// Send request to server
 	SendTradeRequest();
 
-	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold"];
-	GoldTextBox->Text = "0";
+	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
+	Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = "0";
+	Assets.TextBoxes["textbox_trade_gold_yours"]->Text = "0";
+	Assets.Elements["element_trade_theirs"]->Visible = false;
+	Assets.Labels["label_trade_name_yours"]->Text = Player->Name;
+	Assets.Images["image_trade_portrait_yours"]->Texture = Player->Portrait;
 
 	*State = _ClientState::STATE_TRADE;
 }
@@ -1064,48 +1087,6 @@ void _HUD::DrawTrade() {
 	// Draw items
 	DrawTradeItems(Player, "button_trade_yourbag_", WINDOW_TRADEYOURS);
 	DrawTradeItems(Player->TradePlayer, "button_trade_theirbag_", WINDOW_TRADETHEIRS);
-
-	/*
-	// Draw trading player information
-	_Player *TradePlayer = Player->TradePlayer;
-	if(TradePlayer) {
-		TraderWindow->setVisible(true);
-
-		// Draw player information
-		//Graphics.RenderText(TradePlayer->Name.c_str(), OffsetX + 72, OffsetY + 70 - 55, _Graphics::ALIGN_CENTER);
-		Graphics.DrawCenteredImage(Stats.GetPortrait(TradePlayer->GetPortraitID())->Image, OffsetX + 72, OffsetY + 70);
-
-		// Draw items
-		DrawTradeItems(TradePlayer, TRADE_WINDOWX, TRADE_WINDOWYTHEM, true);
-
-		// Draw gold
-		//Graphics.RenderText(std::string(TradePlayer->TradeGold).c_str(), OffsetX + TRADE_WINDOWX + 35, OffsetY + TRADE_WINDOWYTHEM + 70);
-
-		// Draw agreement state
-		std::string AcceptText;
-		video::SColor AcceptColor;
-		if(TradePlayer->GetTradeAccepted()) {
-			AcceptText = "Accepted";
-			AcceptColor.set(255, 0, 255, 0);
-		}
-		else {
-			AcceptText = "Unaccepted";
-			AcceptColor.set(255, 255, 0, 0);
-		}
-
-		//Graphics.RenderText(AcceptText.c_str(), CenterX, OffsetY + TRADE_WINDOWYTHEM + 100, _Graphics::ALIGN_CENTER, AcceptColor);
-		TradeAcceptButton->setEnabled(true);
-	}
-	else {
-		TraderWindow->setVisible(false);
-		//Graphics.RenderText("Waiting for other player...", 400, 120, _Graphics::ALIGN_CENTER);
-		TradeAcceptButton->setEnabled(false);
-	}
-
-	// Draw player information
-	//Graphics.RenderText(Player->Name.c_str(), OffsetX + 72, OffsetY + 198 - 55, _Graphics::ALIGN_CENTER);
-	Graphics.DrawCenteredImage(Stats.GetPortrait(Player->GetPortraitID())->Image, OffsetX + 72, OffsetY + 198);
-	*/
 }
 
 // Draws trading items
@@ -1780,9 +1761,9 @@ void _HUD::SendTradeCancel() {
 	Player->TradePlayer = nullptr;
 }
 
-// Make sure the trade gold box is valid
-int _HUD::ValidateTradeGold() {
-	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold"];
+// Make sure the trade gold box is valid and send gold to player
+void _HUD::ValidateTradeGold() {
+	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
 
 	// Get gold amount
 	std::stringstream Buffer(GoldTextBox->Text);
@@ -1796,17 +1777,30 @@ int _HUD::ValidateTradeGold() {
 	// Set text
 	GoldTextBox->Text = std::to_string(Gold);
 
-	return Gold;
+	// Send amount
+	if(Player->TradePlayer) {
+		_Buffer Packet;
+		Packet.Write<char>(_Network::TRADE_GOLD);
+		Packet.Write<int32_t>(Gold);
+		ClientNetwork->SendPacketToHost(&Packet);
+	}
+
+	// Reset agreement
+	ResetAcceptButton();
 }
 
 // Resets the trade agreement
 void _HUD::ResetAcceptButton() {
-	//if(TradeAcceptButton)
-	//	TradeAcceptButton->setPressed(false);
+	_Label *LabelTradeStatusYours = Assets.Labels["label_trade_status_yours"];
+	LabelTradeStatusYours->Text = "Unaccepted";
+	LabelTradeStatusYours->Color = COLOR_WHITE;
 
-	_Player *TradePlayer = Player->TradePlayer;
-	if(TradePlayer)
-		TradePlayer->TradeAccepted = false;
+	if(Player->TradePlayer) {
+		_Label *LabelTradeStatusTheirs = Assets.Labels["label_trade_status_theirs"];
+		LabelTradeStatusTheirs->Text = "Unaccepted";
+		LabelTradeStatusTheirs->Color = COLOR_RED;
+		Player->TradePlayer->TradeAccepted = false;
+	}
 }
 
 // Split a stack of items

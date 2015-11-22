@@ -23,6 +23,7 @@
 #include <random.h>
 #include <stats.h>
 #include <database.h>
+#include <font.h>
 #include <assets.h>
 #include <program.h>
 #include <constants.h>
@@ -142,7 +143,7 @@ void _Player::RenderWorld(const _Object *ClientPlayer) {
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-		Graphics.SetColor(glm::vec4(Alpha, 1.0f, 1.0f, 1.0f));
+		Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
 		Graphics.SetVBO(VBO_QUAD);
 
 		Graphics.SetDepthTest(false);
@@ -155,8 +156,7 @@ void _Player::RenderWorld(const _Object *ClientPlayer) {
 		}
 
 		if(ClientPlayer != this) {
-			//Graphics.SetFont(_Graphics::FONT_8);
-			//Graphics.RenderText(Name.c_str(), ScreenPosition.x, ScreenPosition.y - 28, _Graphics::ALIGN_CENTER);
+			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_BASELINE);
 		}
 	}
 }

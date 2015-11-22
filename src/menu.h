@@ -74,7 +74,7 @@ class _Menu {
 		void InitTitle();
 		void InitCharacters();
 		void InitNewCharacter();
-		void InitConnect();
+		void InitConnect(bool ConnectNow=false);
 		void InitAccount();
 		void InitOptions();
 		void InitInGame();
@@ -94,6 +94,9 @@ class _Menu {
 		void HandlePacket(ENetEvent *Event);
 
 		const StateType &GetState() const { return State; }
+
+		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
+		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
 
 	private:
 
@@ -118,6 +121,8 @@ class _Menu {
 
 		// States
 		StateType State;
+		std::string DefaultUsername;
+		std::string DefaultPassword;
 
 		// UI
 		_Image *Background;
