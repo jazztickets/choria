@@ -570,7 +570,7 @@ void _ClientState::HandleDeleteObject(_Buffer *Packet) {
 	_Object *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
 	if(Object) {
 		if(Object->Type == _Object::PLAYER) {
-			_Player *DeletedPlayer = static_cast<_Player *>(Object);
+			_Player *DeletedPlayer = (_Player *)Object;
 			switch(State) {
 				case STATE_BATTLE:
 					Battle->RemovePlayer(DeletedPlayer);
@@ -779,7 +779,7 @@ void _ClientState::HandleChatMessage(_Buffer *Packet) {
 	std::string Message(Packet->ReadString());
 
 	// Get player that sent packet
-	_Player *MessagePlayer = static_cast<_Player *>(ObjectManager->GetObjectFromNetworkID(NetworkID));
+	_Player *MessagePlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
 	if(!MessagePlayer)
 		return;
 

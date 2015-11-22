@@ -384,7 +384,7 @@ void _Map::AddObject(_Object *Object) {
 	Packet.Write<char>(Object->Type);
 	switch(Object->Type) {
 		case _Object::PLAYER: {
-			_Player *NewPlayer = static_cast<_Player *>(Object);
+			_Player *NewPlayer = (_Player *)Object;
 			Packet.WriteString(NewPlayer->Name.c_str());
 			Packet.Write<char>(NewPlayer->PortraitID);
 			Packet.WriteBit(NewPlayer->IsInvisible());

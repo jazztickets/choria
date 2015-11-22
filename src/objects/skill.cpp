@@ -109,7 +109,7 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) 
 		break;
 		case TYPE_USEPOTION:
 			if(Fighter->Type == _Fighter::TYPE_PLAYER) {
-				_Player *Player = static_cast<_Player *>(Fighter);
+				_Player *Player = (_Player *)Fighter;
 
 				// Use the potion
 				int Type = (ID == 2);
@@ -159,7 +159,7 @@ bool _Skill::CanUse(_Fighter *Fighter) const {
 		if(Fighter->Type == _Fighter::TYPE_MONSTER)
 			return false;
 
-		_Player *Player = static_cast<_Player *>(Fighter);
+		_Player *Player = (_Player *)Fighter;
 		return Player->GetPotionBattle(ID == 2) != -1;
 	}
 

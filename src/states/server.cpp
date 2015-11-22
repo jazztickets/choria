@@ -190,7 +190,7 @@ void _ServerState::HandleDisconnect(ENetEvent *Event) {
 	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
 	Framework.Log << "_ServerState::HandleDisconnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
 
-	_Player *Player = static_cast<_Player *>(Event->peer->data);
+	_Player *Player = (_Player *)Event->peer->data;
 	if(!Player)
 		return;
 
@@ -377,7 +377,7 @@ void _ServerState::HandleLoginInfo(_Buffer *Packet, ENetPeer *Peer) {
 // Sends a player his/her character list
 void _ServerState::HandleCharacterListRequest(_Buffer *Packet, ENetPeer *Peer) {
 
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	SendCharacterList(Player);
 }
 
@@ -385,7 +385,7 @@ void _ServerState::HandleCharacterListRequest(_Buffer *Packet, ENetPeer *Peer) {
 void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *Peer) {
 
 	int Slot = Packet->Read<char>();
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	//printf("HandleCharacterSelect: accountid=%d, slot=%d\n", Player->AccountID, Slot);
 
 	// Check account
@@ -493,7 +493,7 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handle a character delete request
 void _ServerState::HandleCharacterDelete(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	char QueryString[512];
 
 	// Get delete slot
@@ -526,7 +526,7 @@ void _ServerState::HandleCharacterDelete(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles the character create request
 void _ServerState::HandleCharacterCreate(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	char QueryString[512];
 
 	// Get character information
@@ -581,7 +581,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer) {
 	int Direction = Packet->Read<char>();
 	//printf("HandleMoveCommand: %d\n", Direction);
 
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(Player->MovePlayer(Direction)) {
 
 		// Handle events
@@ -659,7 +659,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles battle commands from a client
 void _ServerState::HandleBattleCommand(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -676,13 +676,13 @@ void _ServerState::HandleBattleCommand(_Buffer *Packet, ENetPeer *Peer) {
 
 // The client is done with the battle results screen
 void _ServerState::HandleBattleFinished(_Buffer *Packet, ENetPeer *Peer) {
-	//printf("HandleBattleFinished:\n");
+	printf("HandleBattleFinished:%p\n", (void *)Peer); fflush(stdout);
 
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
-	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->Battle);
+	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
 	if(!Battle)
 		return;
 
@@ -695,12 +695,14 @@ void _ServerState::HandleBattleFinished(_Buffer *Packet, ENetPeer *Peer) {
 		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 		Player->Save();
 	}
+
+	// Send updates
 	SendHUD(Player);
 }
 
 // Handles a player's inventory move
 void _ServerState::HandleInventoryMove(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -753,7 +755,7 @@ void _ServerState::HandleInventoryMove(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handle a player's inventory use request
 void _ServerState::HandleInventoryUse(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -763,7 +765,7 @@ void _ServerState::HandleInventoryUse(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handle a player's inventory split stack request
 void _ServerState::HandleInventorySplit(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -779,7 +781,7 @@ void _ServerState::HandleInventorySplit(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a player's event end message
 void _ServerState::HandleEventEnd(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -789,7 +791,7 @@ void _ServerState::HandleEventEnd(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a vendor exchange message
 void _ServerState::HandleVendorExchange(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -838,12 +840,12 @@ void _ServerState::HandleVendorExchange(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handle a skill bar change
 void _ServerState::HandleSkillBar(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
 	// Read skills
-	for(int i = 0; i < 8; i++) {
+	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 		Player->SetSkillBar(i, Stats.GetSkill(Packet->Read<char>()));
 	}
 
@@ -852,7 +854,7 @@ void _ServerState::HandleSkillBar(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a skill adjust
 void _ServerState::HandleSkillAdjust(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -872,7 +874,7 @@ void _ServerState::HandleSkillAdjust(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a player's request to not start a battle with other players
 void _ServerState::HandlePlayerBusy(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -884,7 +886,7 @@ void _ServerState::HandlePlayerBusy(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a player's request to attack another player
 void _ServerState::HandleAttackPlayer(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player || !Player->CanAttackPlayer())
 		return;
 
@@ -918,7 +920,7 @@ void _ServerState::HandleAttackPlayer(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handle a chat message
 void _ServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -943,7 +945,7 @@ void _ServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handle a trade request
 void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -980,7 +982,7 @@ void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a trade cancel
 void _ServerState::HandleTradeCancel(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -1002,7 +1004,7 @@ void _ServerState::HandleTradeCancel(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handle a trade gold update
 void _ServerState::HandleTradeGold(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -1029,7 +1031,7 @@ void _ServerState::HandleTradeGold(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a trade accept from a player
 void _ServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -1094,7 +1096,7 @@ void _ServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a teleport request
 void _ServerState::HandleTeleport(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -1103,7 +1105,7 @@ void _ServerState::HandleTeleport(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles a trader accept
 void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *Peer) {
-	_Player *Player = static_cast<_Player *>(Peer->data);
+	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;
 
@@ -1172,7 +1174,7 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 			Packet.Write<char>(Object->Type);
 			switch(Object->Type) {
 				case _Object::PLAYER: {
-					_Player *PlayerObject = static_cast<_Player *>(Object);
+					_Player *PlayerObject = (_Player *)Object;
 					Packet.WriteString(PlayerObject->Name.c_str());
 					Packet.Write<char>(PlayerObject->PortraitID);
 					Packet.WriteBit((PlayerObject->IsInvisible()));
@@ -1283,7 +1285,7 @@ void _ServerState::BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int G
 
 // Removes a player from a battle and deletes the battle if necessary
 void _ServerState::RemovePlayerFromBattle(_Player *Player) {
-	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->Battle);
+	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
 	if(!Battle)
 		return;
 

@@ -85,7 +85,7 @@ void _Battle::GetMonsterList(std::vector<_Monster *> &Monsters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->Type == _Fighter::TYPE_MONSTER) {
-			Monsters.push_back(static_cast<_Monster *>(Fighters[i]));
+			Monsters.push_back((_Monster *)Fighters[i]);
 		}
 	}
 }
@@ -95,7 +95,7 @@ void _Battle::GetPlayerList(int Side, std::vector<_Player *> &Players) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
-			Players.push_back(static_cast<_Player *>(Fighters[i]));
+			Players.push_back((_Player *)Fighters[i]);
 		}
 	}
 }

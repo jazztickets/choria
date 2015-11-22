@@ -39,14 +39,13 @@ _ServerBattle::~_ServerBattle() {
 }
 
 // Removes a player from the battle, return remaining player count
-int _ServerBattle::RemovePlayer(_Player *Player) {
+int _ServerBattle::RemovePlayer(_Player *RemovePlayer) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
-			_Player *Player = static_cast<_Player *>(Fighters[i]);
-
-			if(Player == Player) {
+			_Player *Player = (_Player *)Fighters[i];
+			if(Player == RemovePlayer) {
 				Player->StopBattle();
 				Fighters[i] = nullptr;
 			}
@@ -82,7 +81,7 @@ void _ServerBattle::StartBattle() {
 		Packet.WriteBit(!!Fighters[i]->GetSide());
 
 		if(Type == _Fighter::TYPE_PLAYER) {
-			_Player *Player = static_cast<_Player *>(Fighters[i]);
+			_Player *Player = (_Player *)Fighters[i];
 
 			// Network ID
 			Packet.Write<char>(Player->NetworkID);
@@ -97,7 +96,7 @@ void _ServerBattle::StartBattle() {
 			Player->StartBattle(this);
 		}
 		else {
-			_Monster *Monster = static_cast<_Monster *>(Fighters[i]);
+			_Monster *Monster = (_Monster *)Fighters[i];
 
 			// Monster ID
 			Packet.Write<int32_t>(Monster->GetID());
@@ -254,7 +253,7 @@ void _ServerBattle::CheckEnd() {
 
 			// Keep track of players
 			if(SideFighters[j]->Type == _Fighter::TYPE_PLAYER) {
-				Players.push_back(static_cast<_Player *>(SideFighters[j]));
+				Players.push_back((_Player *)SideFighters[j]);
 				Side[i].PlayerCount++;
 			}
 			else
@@ -404,7 +403,7 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
-			_Player *Player = static_cast<_Player *>(Fighters[i]);
+			_Player *Player = (_Player *)Fighters[i];
 			ServerNetwork->SendPacketToPeer(Packet, Player->Peer);
 		}
 	}

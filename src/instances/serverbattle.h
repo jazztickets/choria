@@ -41,7 +41,7 @@ class _ServerBattle : public _Battle {
 		void StartBattle();
 
 		// Objects
-		int RemovePlayer(_Player *Player);
+		int RemovePlayer(_Player *RemovePlayer);
 
 		// Input
 		void HandleInput(_Player *Player, int Command, int Target);
