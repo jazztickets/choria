@@ -47,9 +47,6 @@ class _Framework {
 		void Update();
 		void Render();
 
-		bool GetDone() { return Done; }
-		void SetDone(bool Done) { this->Done = Done; }
-
 		_State *GetState() { return State; }
 		void ChangeState(_State *RequestedState);
 
@@ -58,7 +55,11 @@ class _Framework {
 		void StartLocalServer();
 		void StopLocalServer();
 
+		// Logging
 		_LogFile Log;
+
+		// State
+		bool Done;
 
 	private:
 
@@ -68,10 +69,6 @@ class _Framework {
 		StateType FrameworkState;
 		_State *State;
 		_State *RequestedState;
-		bool Done;
-
-		// Flags
-		bool MouseWasLocked, MouseWasShown;
 
 		// Time
 		_FrameLimit *FrameLimit;

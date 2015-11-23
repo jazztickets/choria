@@ -29,6 +29,7 @@
 #include <assets.h>
 #include <camera.h>
 #include <program.h>
+#include <menu.h>
 #include <network/network.h>
 #include <instances/map.h>
 #include <instances/clientbattle.h>
@@ -42,12 +43,15 @@ _ClientState ClientState;
 
 // Constructor
 _ClientState::_ClientState()
-:	CharacterSlot(0) {
+:	CharacterSlot(0),
+	IsTesting(false) {
 
 }
 
 // Initializes the state
 void _ClientState::Init() {
+
+	Menu.InitPlay();
 
 	ClientTime = 0;
 	SentClientTime = 0;
@@ -175,47 +179,56 @@ void _ClientState::Update(double FrameTime) {
 		Camera->Update(FrameTime);
 	}
 
-	switch(State) {
-		case STATE_CONNECTING:
-		break;
-		case STATE_WALK: {
-			if(Actions.GetState(_Actions::UP))
-				SendMoveCommand(_Player::MOVE_UP);
-			else if(Actions.GetState(_Actions::DOWN))
-				SendMoveCommand(_Player::MOVE_DOWN);
-			else if(Actions.GetState(_Actions::LEFT))
-				SendMoveCommand(_Player::MOVE_LEFT);
-			else if(Actions.GetState(_Actions::RIGHT))
-				SendMoveCommand(_Player::MOVE_RIGHT);
-		} break;
-		case STATE_BATTLE: {
 
-			// Send key input
-			if(!HUD.IsChatting()) {
-				for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-					if(Actions.GetState(_Actions::SKILL1+i)) {
-						 Battle->HandleAction(_Actions::SKILL1+i);
-						 break;
+	// Handle input
+	if(Menu.GetState() == _Menu::STATE_NONE) {
+		switch(State) {
+			case STATE_CONNECTING:
+			break;
+			case STATE_WALK: {
+				if(Actions.GetState(_Actions::UP))
+					SendMoveCommand(_Player::MOVE_UP);
+				else if(Actions.GetState(_Actions::DOWN))
+					SendMoveCommand(_Player::MOVE_DOWN);
+				else if(Actions.GetState(_Actions::LEFT))
+					SendMoveCommand(_Player::MOVE_LEFT);
+				else if(Actions.GetState(_Actions::RIGHT))
+					SendMoveCommand(_Player::MOVE_RIGHT);
+			} break;
+			case STATE_BATTLE: {
+
+				// Send key input
+				if(!HUD.IsChatting()) {
+					for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
+						if(Actions.GetState(_Actions::SKILL1+i)) {
+							Battle->HandleAction(_Actions::SKILL1+i);
+							break;
+						}
 					}
 				}
-			}
 
-			// Singleplayer check
-			if(Battle) {
+				// Singleplayer check
+				if(Battle) {
 
-				// Update the battle
-				Battle->Update(FrameTime);
+					// Update the battle
+					Battle->Update(FrameTime);
 
-				// Done with the battle
-				if(Battle->GetState() == _ClientBattle::STATE_DELETE) {
-					Instances->DeleteBattle(Battle);
-					Battle = nullptr;
-					State = STATE_WALK;
+					// Done with the battle
+					if(Battle->GetState() == _ClientBattle::STATE_DELETE) {
+						Instances->DeleteBattle(Battle);
+						Battle = nullptr;
+						State = STATE_WALK;
+					}
 				}
-			}
-		} break;
+			} break;
+		}
 	}
+
+	// Update and menu
 	HUD.Update(FrameTime);
+	Menu.Update(FrameTime);
+
+	// Update objects
 	ObjectManager->Update(FrameTime);
 
 	ClientTime += FrameTime;
@@ -269,12 +282,28 @@ void _ClientState::Render(double BlendFactor) {
 
 	// Draw HUD
 	HUD.Render();
+
+	// Draw menu
+	Menu.Render();
+}
+
+// Send the busy signal to server
+void _ClientState::SendBusy(bool Value) {
+	_Buffer Packet;
+	Packet.Write<char>(_Network::WORLD_BUSY);
+	Packet.Write<char>(Value);
+	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Handle an input action
 bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	if(Value == 0)
 		return true;
+
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.HandleAction(InputType, Action, Value);
+		return true;
+	}
 
 /*
 	// Start/stop chat
@@ -283,24 +312,16 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
-	// Check chatting
-	if(HUD.IsChatting() || HUD.IsTypingGold()) {
-		HUD.HandleKeyPress(TKey);
-		return false;
-	}
-
-	// Open character sheet
-	if(TKey == KEY_KEY_B) {
-		HUD.InitCharacter();
-	}
 */
 
 	switch(State) {
 		case STATE_WALK:
 			switch(Action) {
 				case _Actions::MENU:
-					ClientNetwork->Disconnect();
-					//HUD.InitMenu();
+					if(IsTesting)
+						ClientNetwork->Disconnect();
+					else
+						Menu.InitInGame();
 				break;
 				case _Actions::INVENTORY:
 					HUD.InitInventory(true);
@@ -401,16 +422,31 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 
 // Key events
 void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.KeyEvent(KeyEvent);
+		return;
+	}
+
 	HUD.KeyEvent(KeyEvent);
 }
 
 // Text input events
 void _ClientState::TextEvent(const char *Text) {
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.TextEvent(Text);
+		return;
+	}
+
 	HUD.TextEvent(Text);
 }
 
 // Mouse events
 void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.MouseEvent(MouseEvent);
+		return;
+	}
+
 	HUD.MouseEvent(MouseEvent);
 }
 

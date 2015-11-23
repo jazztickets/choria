@@ -79,7 +79,7 @@ void _Menu::InitCharacters() {
 
 // Options
 void _Menu::InitOptions() {
-	//CurrentLayout = Assets.Elements["element_menu_options"];
+	CurrentLayout = Assets.Elements["element_menu_options"];
 
 	RefreshInputLabels();
 	CurrentAction = -1;
@@ -90,10 +90,11 @@ void _Menu::InitOptions() {
 
 // In-game menu
 void _Menu::InitInGame() {
-	//CurrentLayout = Assets.Elements["element_menu_ingame"];
+	CurrentLayout = Assets.Elements["element_menu_ingame"];
 
 	Background = nullptr;
 
+	ClientState.SendBusy(true);
 	State = STATE_INGAME;
 }
 
@@ -101,6 +102,7 @@ void _Menu::InitInGame() {
 void _Menu::InitPlay() {
 	CurrentLayout = nullptr;
 
+	ClientState.SendBusy(false);
 	State = STATE_NONE;
 }
 
@@ -389,6 +391,15 @@ void _Menu::Close() {
 	ClearPortraits();
 }
 
+// Handle actions
+void _Menu::HandleAction(int InputType, int Action, int Value) {
+	switch(Action) {
+		case _Actions::MENU:
+			Menu.InitPlay();
+		break;
+	}
+}
+
 // Handle key event
 void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 	if(CurrentLayout)
@@ -398,7 +409,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 		case STATE_TITLE: {
 			if(KeyEvent.Pressed) {
 				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-					Framework.SetDone(true);
+					Framework.Done = true;
 				else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
 					Connect("", 0, true);
 			}
@@ -466,8 +477,6 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			}
 		} break;
 		case STATE_INGAME: {
-			if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE)
-				InitPlay();
 		} break;
 		default:
 		break;
@@ -536,7 +545,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					Framework.ChangeState(&EditorState);
 				}
 				else if(Clicked->Identifier == "button_title_exit") {
-					Framework.SetDone(true);
+					Framework.Done = true;
 				}
 			} break;
 			case STATE_CHARACTERS: {
@@ -640,17 +649,9 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 					else if(Clicked->Identifier == "button_options_save") {
 						Config.Save();
-						//if(Framework.GetState() == &ClientState)
-						//	InitInGame();
-						//else
-						//	InitTitle();
 					}
 					else if(Clicked->Identifier == "button_options_cancel") {
 						Config.Load();
-						//if(Framework.GetState() == &ClientState)
-						//	InitInGame();
-						//else
-						//	InitTitle();
 					}
 					else if(Clicked->Identifier.substr(0, InputBoxPrefix.size()) == InputBoxPrefix) {
 						OptionsState = OPTION_ACCEPT_INPUT;
@@ -666,8 +667,8 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 				else if(Clicked->Identifier == "button_ingame_options") {
 					InitOptions();
 				}
-				else if(Clicked->Identifier == "button_ingame_menu") {
-					Framework.ChangeState(&NullState);
+				else if(Clicked->Identifier == "button_ingame_disconnect") {
+					ClientNetwork->Disconnect();
 				}
 			} break;
 			default:
@@ -735,6 +736,8 @@ void _Menu::Render() {
 			Assets.Elements["element_menu_account"]->Render();
 		} break;
 		case STATE_INGAME: {
+			Graphics.FadeScreen(MENU_PAUSE_FADE);
+
 			if(CurrentLayout)
 				CurrentLayout->Render();
 		} break;

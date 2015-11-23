@@ -122,3 +122,5 @@ button_trader_accept	element_trader	style_menu_button	style_menu_button_disabled
 button_trader_cancel	element_trader	style_menu_button	style_menu_button_disabled	style_menu_button_hover	55	345	90	32	1	0	10
 button_trade_accept_theirs	image_trade_portrait_theirs				0	58	88	24	1	1	-1
 button_trade_accept_yours	image_trade_portrait_yours	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	58	88	24	1	1	-1
+button_ingame_resume	element_menu_ingame	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	-60	200	48	1	1	0
+button_ingame_disconnect	element_menu_ingame	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	20	200	48	1	1	0

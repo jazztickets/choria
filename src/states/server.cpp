@@ -167,7 +167,7 @@ void _ServerState::CreateDefaultDatabase() {
 void _ServerState::HandleConnect(ENetEvent *Event) {
 	char Buffer[16];
 	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
-	Framework.Log << "_ServerState::HandleConnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
+	Framework.Log << "HandleConnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
 
 	// Create the player and add it to the object list
 	_Player *NewPlayer = new _Player();
@@ -188,7 +188,7 @@ void _ServerState::HandleConnect(ENetEvent *Event) {
 void _ServerState::HandleDisconnect(ENetEvent *Event) {
 	char Buffer[16];
 	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
-	Framework.Log << "_ServerState::HandleDisconnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
+	Framework.Log << "HandleDisconnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
 
 	_Player *Player = (_Player *)Event->peer->data;
 	if(!Player)
@@ -304,7 +304,7 @@ void _ServerState::Update(double FrameTime) {
 	ObjectManager->Update(FrameTime);
 
 	if(StopRequested) {
-		Framework.SetDone(true);
+		Framework.Done = true;
 	}
 }
 
@@ -676,8 +676,6 @@ void _ServerState::HandleBattleCommand(_Buffer *Packet, ENetPeer *Peer) {
 
 // The client is done with the battle results screen
 void _ServerState::HandleBattleFinished(_Buffer *Packet, ENetPeer *Peer) {
-	printf("HandleBattleFinished:%p\n", (void *)Peer); fflush(stdout);
-
 	_Player *Player = (_Player *)Peer->data;
 	if(!Player)
 		return;

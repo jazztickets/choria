@@ -106,7 +106,6 @@ class _HUD {
 		void SetPlayer(_Player *Player);
 
 		// Windows
-		void InitMenu();
 		void InitInventory(bool SendBusy);
 		void InitVendor(int VendorID);
 		void InitTrader(int TraderID);
@@ -130,7 +129,6 @@ class _HUD {
 
 	private:
 
-		void CloseMenu();
 		void CloseInventory();
 		void CloseVendor();
 		void CloseTrader();
@@ -162,7 +160,6 @@ class _HUD {
 		void ClearSkills();
 
 		void RefreshSkillButtons();
-		void SendBusySignal(bool Value);
 		void SendTradeRequest();
 		void SendTradeCancel();
 		void ValidateTradeGold();

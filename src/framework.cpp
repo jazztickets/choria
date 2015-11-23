@@ -31,6 +31,7 @@
 #include <network/singlenetwork.h>
 #include <network/multinetwork.h>
 #include <states/editor.h>
+#include <states/client.h>
 #include <states/server.h>
 #include <states/null.h>
 #include <framelimit.h>
@@ -80,6 +81,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 		else if(Token == "-port" && TokensRemaining > 0) {
 			NetworkPort = atoi(Arguments[++i]);
+		}
+		else if(Token == "-test") {
+			ClientState.SetIsTesting(true);
 		}
 	}
 

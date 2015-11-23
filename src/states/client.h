@@ -37,7 +37,6 @@ class _ClientState : public _State {
 
 		enum StateType {
 			STATE_CONNECTING,
-			STATE_MAINMENU,
 			STATE_WALK,
 			STATE_BATTLE,
 			STATE_TELEPORT,
@@ -67,8 +66,11 @@ class _ClientState : public _State {
 		void Render(double BlendFactor) override;
 
 		void SetCharacterSlot(int Slot) { CharacterSlot = Slot; }
+		void SetIsTesting(bool Value) { IsTesting = Value; }
 
 		int *GetState() { return &State; }
+
+		void SendBusy(bool Value);
 
 	private:
 
@@ -98,7 +100,9 @@ class _ClientState : public _State {
 		void SynchronizeTime();
 
 		// States
-		int State, CharacterSlot;
+		int State;
+		int CharacterSlot;
+		bool IsTesting;
 
 		// Time
 		double ClientTime, SentClientTime;

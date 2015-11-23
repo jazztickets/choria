@@ -27,7 +27,7 @@ int main(int ArgumentCount, char **Arguments) {
 	Framework.Init(ArgumentCount, Arguments);
 
 	// Main game loop
-	while(!Framework.GetDone()) {
+	while(!Framework.Done) {
 
 		Framework.Update();
 	}

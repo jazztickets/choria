@@ -81,6 +81,7 @@ class _Menu {
 		void InitPlay();
 		void Close();
 
+		void HandleAction(int InputType, int Action, int Value);
 		void KeyEvent(const _KeyEvent &KeyEvent);
 		void TextEvent(const char *Text);
 		void MouseEvent(const _MouseEvent &MouseEvent);

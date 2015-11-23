@@ -94,6 +94,7 @@ const  float        CAMERA_NEAR                    =  0.1f;
 const  float        CAMERA_FAR                     =  100.0f;
 //     Menu
 const  float        MENU_ACCEPTINPUT_FADE          =  0.7f;
+const  float        MENU_PAUSE_FADE                =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME          =  0.250;
 const  double       MENU_CURSOR_PERIOD             =  0.5;
 //     Textures

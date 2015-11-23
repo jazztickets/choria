@@ -563,29 +563,10 @@ void _HUD::CloseChat() {
 	Chatting = false;
 }
 
-// Initialize the main menu
-void _HUD::InitMenu() {
-
-	// Add window
-	//TabMenu = irrGUI->addTab(Graphics.GetRect(0, 0, 800, 500));
-
-	// Add menu buttons
-	//irrGUI->addButton(Graphics.GetCenteredRect(400, 275, 100, 25), TabMenu, ELEMENT_MAINMENURESUME, L"Resume");
-	//irrGUI->addButton(Graphics.GetCenteredRect(400, 325, 100, 25), TabMenu, ELEMENT_MAINMENUEXIT, L"Exit");
-
-	*State = _ClientState::STATE_MAINMENU;
-}
-
-// Close main menu
-void _HUD::CloseMenu() {
-
-	*State = _ClientState::STATE_WALK;
-}
-
 // Initialize the inventory system
 void _HUD::InitInventory(bool SendBusy) {
 	if(SendBusy)
-		SendBusySignal(true);
+		ClientState.SendBusy(true);
 
 	CursorItem.Reset();
 
@@ -598,7 +579,7 @@ void _HUD::CloseInventory() {
 	CursorItem.Reset();
 
 	// No longer busy
-	SendBusySignal(false);
+	ClientState.SendBusy(false);
 
 	*State = _ClientState::STATE_WALK;
 }
@@ -726,7 +707,7 @@ void _HUD::ClearSkills() {
 // Initialize the skills screen
 void _HUD::InitSkills() {
 	*State = _ClientState::STATE_SKILLS;
-	SendBusySignal(true);
+	ClientState.SendBusy(true);
 
 	// Clear old children
 	_Element *SkillsElement = Assets.Elements["element_skills"];
@@ -892,7 +873,7 @@ void _HUD::CloseSkills() {
 	}
 
 	// No longer busy
-	SendBusySignal(false);
+	ClientState.SendBusy(false);
 
 	*State = _ClientState::STATE_WALK;
 }
@@ -901,9 +882,6 @@ void _HUD::CloseSkills() {
 void _HUD::CloseWindows() {
 
 	switch(*State) {
-		case _ClientState::STATE_MAINMENU:
-			CloseMenu();
-		break;
 		case _ClientState::STATE_VENDOR:
 			CloseVendor();
 		break;
@@ -1675,14 +1653,6 @@ void _HUD::SetSkillBar(int Slot, int OldSlot, const _Skill *Skill) {
 	Player->SetSkillBar(Slot, Skill);
 	Player->CalculatePlayerStats();
 	SkillBarChanged = true;
-}
-
-// Sends the busy signal to the server
-void _HUD::SendBusySignal(bool Value) {
-	_Buffer Packet;
-	Packet.Write<char>(_Network::WORLD_BUSY);
-	Packet.Write<char>(Value);
-	ClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Trade with another player

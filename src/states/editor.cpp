@@ -286,7 +286,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 		case STATE_MAIN:
 			switch(KeyEvent.Key) {
 				case SDL_SCANCODE_ESCAPE:
-					Framework.SetDone(true);
+					Framework.Done = true;
 				break;
 				case SDL_SCANCODE_1:
 					Filter = 0;

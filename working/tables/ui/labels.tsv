@@ -63,3 +63,5 @@ label_trade_name_theirs	image_trade_portrait_theirs	hud_small			0	-12	0	0	1	3
 label_trade_name_yours	image_trade_portrait_yours	hud_small			0	-12	0	0	1	3
 label_trade_status_theirs	button_trade_accept_theirs	hud_small			0	17	0	0	1	3
 label_trade_status_yours	button_trade_accept_yours	hud_small		Accept	0	17	0	0	1	3
+label_menu_ingame_resume	button_ingame_resume	menu_buttons		Resume	0	32	0	0	1	3
+label_menu_ingame_disconnect	button_ingame_disconnect	menu_buttons		Disconnect	0	32	0	0	1	3
