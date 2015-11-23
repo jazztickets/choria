@@ -175,7 +175,7 @@ void _ClientState::HandlePacket(ENetEvent *Event) {
 // Updates the current state
 void _ClientState::Update(double FrameTime) {
 	if(Camera && Player) {
-		Camera->Set2DPosition(glm::vec2(Player->Position));
+		Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(+0.5f, +0.5f));
 		Camera->Update(FrameTime);
 	}
 
@@ -541,7 +541,7 @@ void _ClientState::HandleChangeMaps(_Buffer *Packet) {
 					// Information for your player
 					if(NetworkID == Player->NetworkID) {
 						Player->Position = GridPosition;
-						Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE));
+						Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
 					}
 					else {
 
