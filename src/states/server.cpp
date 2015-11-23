@@ -67,7 +67,7 @@ void _ServerState::Init() {
 	// Load database that stores accounts and characters
 	Database = new _Database();
 
-	std::string DatabasePath = Config.ConfigPath + "server.s3db";
+	std::string DatabasePath = Config.ConfigPath + "save.dat";
 	if(!Database->OpenDatabase(DatabasePath.c_str())) {
 
 		// Create a new database

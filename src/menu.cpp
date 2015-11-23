@@ -424,8 +424,11 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 						int SelectedCharacter = GetSelectedCharacter();
 						if(SelectedCharacter == -1)
 							SelectedCharacter = 0;
-						ClientState.SetCharacterSlot(SelectedCharacter);
-						Framework.ChangeState(&ClientState);
+
+						if(CharacterSlots[SelectedCharacter].Used) {
+							ClientState.SetCharacterSlot(SelectedCharacter);
+							Framework.ChangeState(&ClientState);
+						}
 					}
 				}
 			}
