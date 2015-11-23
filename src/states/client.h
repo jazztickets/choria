@@ -71,6 +71,7 @@ class _ClientState : public _State {
 		int *GetState() { return &State; }
 
 		void SendBusy(bool Value);
+		double GetTime() { return ClientTime; }
 
 	private:
 

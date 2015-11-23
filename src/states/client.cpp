@@ -308,7 +308,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	}
 
 	// Start/stop chat
-	if(Action == _Actions::CHAT && !HUD.IsTypingGold()) {
+	if(Action == _Actions::CHAT) {
 		HUD.ToggleChat();
 		return true;
 	}
@@ -810,7 +810,6 @@ void _ClientState::HandleEventStart(_Buffer *Packet) {
 
 // Handles the use of an inventory item
 void _ClientState::HandleInventoryUse(_Buffer *Packet) {
-
 	int Slot = Packet->Read<char>();
 	Player->UpdateInventory(Slot, -1);
 }
@@ -830,6 +829,8 @@ void _ClientState::HandleChatMessage(_Buffer *Packet) {
 	// Create chat message
 	_ChatMessage Chat;
 	Chat.Message = MessagePlayer->Name + std::string(": ") + Message;
+	Chat.Player = MessagePlayer;
+	Chat.Time = ClientTime;
 	HUD.AddChatMessage(Chat);
 }
 

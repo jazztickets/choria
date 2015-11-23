@@ -120,7 +120,7 @@ class _HUD {
 
 		// Trade
 		void CloseTrade(bool SendNotify=true);
-		bool IsTypingGold() { return TypingGold; }
+		bool IsTypingGold();
 		void ResetAcceptButton();
 		void UpdateTradeStatus(bool Accepted);
 
@@ -135,7 +135,7 @@ class _HUD {
 		void CloseTrader();
 		void CloseSkills();
 
-		void DrawChat();
+		void DrawChat(bool IgnoreTimeout);
 		void DrawInventory();
 		void DrawTeleport();
 		void DrawCharacter();
@@ -188,9 +188,6 @@ class _HUD {
 
 		// Traders
 		int RequiredItemSlots[8], RewardItemSlot;
-
-		// Trading
-		bool TypingGold;
 };
 
 extern _HUD HUD;

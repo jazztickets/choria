@@ -929,7 +929,8 @@ void _ServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *Peer) {
 
 	// Get message
 	std::string Message = Packet->ReadString();
-	Message[NETWORKING_CHAT_SIZE] = 0;
+	if(Message.length() > NETWORKING_CHAT_SIZE)
+		Message.resize(NETWORKING_CHAT_SIZE);
 
 	// Send message to other players
 	_Buffer NewPacket;

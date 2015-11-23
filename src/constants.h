@@ -72,6 +72,9 @@ const int INVENTORY_TOOLTIP_OFFSET = 20;
 const int INVENTORY_TOOLTIP_PADDING = 10;
 
 const int BATTLE_SLOT_SIZE = 64;
+const int CHAT_MESSAGES = 15;
+const int CHAT_MESSAGE_TIMEOUT = 10;
+const float CHAT_MESSAGE_FADETIME = 1.0f;
 
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);

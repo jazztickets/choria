@@ -53,13 +53,12 @@ void _HUD::Init() {
 	CursorSkill.Reset();
 	CharacterOpen = false;
 	Chatting = false;
-	TypingGold = false;
 	RewardItemSlot = -1;
 	ChatHistory.clear();
 	CloseChat();
 
 	_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
-	ChatTextBox->TextOffset = glm::vec2(5, 14);
+	ChatTextBox->TextOffset = glm::vec2(5, 15);
 }
 
 // Shutdown
@@ -75,14 +74,15 @@ void _HUD::KeyEvent(const _KeyEvent &KeyEvent) {
 			std::string OldValue = TextBox->Text;
 
 			Assets.Elements["element_trade"]->HandleKeyEvent(KeyEvent);
+			if(OldValue != TextBox->Text)
+				ValidateTradeGold();
+
 			if(KeyEvent.Pressed) {
 				if(KeyEvent.Key == SDL_SCANCODE_RETURN) {
 					TextBox->Focused = false;
+					return;
 				}
 			}
-
-			if(OldValue != TextBox->Text)
-				ValidateTradeGold();
 		} break;
 	}
 
@@ -428,23 +428,14 @@ void _HUD::Update(double FrameTime) {
 		_Element *ChatElement = Assets.Elements["element_chat"];
 		ChatElement->Update(FrameTime, Input.GetMouse());
 	}
-
-	// Chat messages
-	/*
-	for(auto Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
-		_ChatMessage &Chat = (*Iterator);
-		Chat.TimeOut += FrameTime;
-		if(Chat.TimeOut > NETWORKING_CHAT_TIMEOUT) {
-			Iterator = ChatHistory.erase(Iterator);
-		}
-		else {
-			++Iterator;
-		}
-	}*/
 }
 
 // Draws the HUD elements
 void _HUD::Render() {
+
+	// Draw chat messages
+	DrawChat(Chatting);
+
 	Assets.Elements["element_hud"]->Render();
 	Assets.Elements["element_buttonbar"]->Render();
 	Assets.Elements["element_actionbar"]->Render();
@@ -535,8 +526,6 @@ void _HUD::Render() {
 	DrawCursorSkill();
 	DrawSkillTooltip();
 
-	// Draw chat messages
-	DrawChat();
 }
 
 // Set player for HUD
@@ -548,6 +537,8 @@ void _HUD::SetPlayer(_Player *Player) {
 
 // Starts the chat box
 void _HUD::ToggleChat() {
+	if(IsTypingGold())
+		return;
 
 	if(Chatting) {
 		_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
@@ -662,6 +653,11 @@ void _HUD::CloseTrade(bool SendNotify) {
 
 	Player->TradePlayer = nullptr;
 	*State = _ClientState::STATE_WALK;
+}
+
+// Return true if player is typing gold
+bool _HUD::IsTypingGold() {
+	return Assets.TextBoxes["textbox_trade_gold_yours"]->Focused;
 }
 
 // Initialize the trader
@@ -917,7 +913,7 @@ void _HUD::CloseWindows() {
 }
 
 // Draws chat messages
-void _HUD::DrawChat() {
+void _HUD::DrawChat(bool IgnoreTimeout) {
 
 	// Draw window
 	_Element *ChatElement = Assets.Elements["element_chat"];
@@ -933,13 +929,20 @@ void _HUD::DrawChat() {
 	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		_ChatMessage &Chat = (*Iterator);
 
+		float TimeLeft = Chat.Time - ClientState.GetTime() + CHAT_MESSAGE_TIMEOUT;
+		if(Index >= CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
+			break;
+
 		// Draw text
-		Assets.Fonts["hud_small"]->DrawText(Chat.Message.c_str(), DrawPosition);
+		glm::vec4 Color = COLOR_WHITE;
+		if(!IgnoreTimeout && TimeLeft <= CHAT_MESSAGE_FADETIME)
+			Color.w = TimeLeft;
+
+		//std::cout << Color.w << std::endl;
+		Assets.Fonts["hud_small"]->DrawText(Chat.Message.c_str(), DrawPosition, Color);
 		DrawPosition.y += SpacingY;
 
 		Index++;
-		if(Index > 20)
-			break;
 	}
 }
 
