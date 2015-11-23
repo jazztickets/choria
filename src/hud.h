@@ -110,7 +110,6 @@ class _HUD {
 		void InitInventory(bool SendBusy);
 		void InitVendor(int VendorID);
 		void InitTrader(int TraderID);
-		void InitCharacter();
 		void InitSkills();
 		void InitTrade();
 		void CloseWindows();
@@ -135,7 +134,6 @@ class _HUD {
 		void CloseInventory();
 		void CloseVendor();
 		void CloseTrader();
-		void CloseCharacter();
 		void CloseSkills();
 		void CloseChat();
 

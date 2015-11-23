@@ -22,9 +22,8 @@ button_account_back	element_menu_account	style_menu_button	style_menu_button_dis
 button_buttonbar_teleport	element_buttonbar	style_buttonbar_teleport			0	0	25	25	0	0	0
 button_buttonbar_inventory	element_buttonbar	style_buttonbar_inventory			25	0	25	25	0	0	0
 button_buttonbar_trade	element_buttonbar	style_buttonbar_trade			50	0	25	25	0	0	0
-button_buttonbar_character	element_buttonbar	style_buttonbar_character			75	0	25	25	0	0	0
-button_buttonbar_skills	element_buttonbar	style_buttonbar_skills			100	0	25	25	0	0	0
-button_buttonbar_menu	element_buttonbar	style_buttonbar_menu			125	0	25	25	0	0	0
+button_buttonbar_skills	element_buttonbar	style_buttonbar_skills			75	0	25	25	0	0	0
+button_buttonbar_menu	element_buttonbar	style_buttonbar_menu			100	0	25	25	0	0	0
 button_actionbar_0	element_actionbar	style_hud_slot			0	0	48	48	0	0	0
 button_actionbar_1	element_actionbar	style_hud_slot			48	0	48	48	0	0	1
 button_actionbar_2	element_actionbar	style_hud_slot			96	0	48	48	0	0	2

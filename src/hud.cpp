@@ -484,6 +484,7 @@ void _HUD::Render() {
 	switch(*State) {
 		case _ClientState::STATE_INVENTORY:
 			DrawInventory();
+			DrawCharacter();
 		break;
 		case _ClientState::STATE_VENDOR:
 			DrawVendor();
@@ -700,24 +701,6 @@ void _HUD::CloseTrader() {
 
 	*State = _ClientState::STATE_WALK;
 	Player->Trader = nullptr;
-}
-
-// Initialize the character screen
-void _HUD::InitCharacter() {
-	if(!CharacterOpen) {
-		CharacterOpen = true;
-	}
-	else {
-		CloseCharacter();
-	}
-}
-
-// Closes the character screen
-void _HUD::CloseCharacter() {
-
-	if(CharacterOpen) {
-		CharacterOpen = false;
-	}
 }
 
 // Delete memory used by skill page
@@ -1144,80 +1127,80 @@ void _HUD::DrawActionBar() {
 
 // Draw the character stats page
 void _HUD::DrawCharacter() {
-	/*
-	char Buffer[256];
-	int Width = 180;
-	int Height = 300;
+	_Element *CharacterElement = Assets.Elements["element_character"];
+	CharacterElement->Render();
 
-	int DrawX = 800 - Width;
-	int DrawY = 300 - Height / 2;
-	int RightDrawX = 800 - 10;
-	//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX, DrawY, Width, Height, video::SColor(220, 255, 255, 255));
-	DrawX += 10;
-	DrawY += 10;
-
-	// Experience
-	//Graphics.RenderText("EXP", DrawX, DrawY);
-	sprintf(Buffer, "%d", Player->Experience);
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
-
-	// Experience needed
-	DrawY += 15;
-	//Graphics.RenderText("EXP needed", DrawX, DrawY);
-	sprintf(Buffer, "%d", Player->ExperienceNeeded);
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+	// Set up UI
+	int SpacingY = 20;
+	glm::ivec2 Spacing(15, 0);
+	glm::ivec2 DrawPosition = CharacterElement->Bounds.Start;
+	DrawPosition.x += CharacterElement->Size.x/2;
+	DrawPosition.y += 20 + SpacingY;
+	std::stringstream Buffer;
 
 	// Damage
-	DrawY += 15;
-	//Graphics.RenderText("Damage", DrawX, DrawY);
-	sprintf(Buffer, "%d-%d", Player->GetMinDamage(), Player->GetMaxDamage());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+	Buffer << Player->MinDamage << " - " << Player->MaxDamage;
+	Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
 	// Defense
-	DrawY += 15;
-	//Graphics.RenderText("Defense", DrawX, DrawY);
-	sprintf(Buffer, "%d-%d", Player->GetMinDefense(), Player->GetMaxDefense());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+	Buffer << Player->MinDefense << " - " << Player->MaxDefense;
+	Assets.Fonts["hud_small"]->DrawText("Defense", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
-	// Regen
-	DrawY += 15;
-	//Graphics.RenderText("HP Regen", DrawX, DrawY);
-	sprintf(Buffer, "%0.2f%%", Player->GetHealthRegen());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+	// HP Regen
+	Buffer << std::setprecision(3) << Player->HealthRegen;
+	Assets.Fonts["hud_small"]->DrawText("HP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
-	DrawY += 15;
-	//Graphics.RenderText("MP Regen", DrawX, DrawY);
-	sprintf(Buffer, "%0.2f%%", Player->GetManaRegen());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+	// MP Regen
+	Buffer << std::setprecision(3) << Player->ManaRegen;
+	Assets.Fonts["hud_small"]->DrawText("MP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
-	// Stats
-	DrawY += 30;
-	//Graphics.RenderText("Play Time", DrawX, DrawY);
+	// Separator
+	DrawPosition.y += SpacingY;
 
-	int Seconds = Player->GetPlayTime();
-	if(Seconds < 60)
-		sprintf(Buffer, "%ds", Seconds);
-	else if(Seconds < 3600)
-		sprintf(Buffer, "%dm", Seconds / 60);
+	// Playtime
+	if(Player->PlayTime < 60)
+		Buffer << Player->PlayTime << "s";
+	else if(Player->PlayTime < 3600)
+		Buffer << Player->PlayTime / 60 << "m";
 	else
-		sprintf(Buffer, "%dh%dm", Seconds / 3600, (Seconds / 60 % 60));
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+		Buffer << Player->PlayTime / 3600 << "h" << (Player->PlayTime / 60 % 60) << "m";
+	Assets.Fonts["hud_small"]->DrawText("Play time", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
-	DrawY += 15;
-	//Graphics.RenderText("Deaths", DrawX, DrawY);
-	sprintf(Buffer, "%d", Player->GetDeaths());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+	// Deaths
+	Buffer << Player->Deaths;
+	Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
-	DrawY += 15;
-	//Graphics.RenderText("Monster Kills", DrawX, DrawY);
-	sprintf(Buffer, "%d", Player->GetMonsterKills());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
+	// Monster kills
+	Buffer << Player->MonsterKills;
+	Assets.Fonts["hud_small"]->DrawText("Monster kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
-	DrawY += 15;
-	//Graphics.RenderText("Player Kills", DrawX, DrawY);
-	sprintf(Buffer, "%d", Player->GetPlayerKills());
-	//Graphics.RenderText(Buffer, RightDrawX, DrawY, _Graphics::ALIGN_RIGHT);
-*/
+	// Player kills
+	Buffer << Player->PlayerKills;
+	Assets.Fonts["hud_small"]->DrawText("Player kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 }
 
 // Draws the skill page

@@ -53,7 +53,6 @@ class _Actions {
 			RIGHT,
 			INVENTORY,
 			SKILLS,
-			CHARACTER,
 			TELEPORT,
 			MENU,
 			ATTACK,
