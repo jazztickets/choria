@@ -56,6 +56,7 @@ void _NullState::KeyEvent(const _KeyEvent &KeyEvent) {
 
 // Mouse handler
 void _NullState::MouseEvent(const _MouseEvent &MouseEvent) {
+	FocusedElement = nullptr;
 	Menu.MouseEvent(MouseEvent);
 }
 

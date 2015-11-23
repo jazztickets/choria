@@ -52,10 +52,10 @@ class _ClientState : public _State {
 		void Init() override;
 		void Close() override;
 
-		bool HandleAction(int InputType, int Action, int Value) override;
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 		void WindowEvent(uint8_t Event) override;
+		bool HandleAction(int InputType, int Action, int Value) override;
 
 		void HandleConnect(ENetEvent *Event) override;
 		void HandleDisconnect(ENetEvent *Event) override;

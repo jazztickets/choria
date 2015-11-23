@@ -15,39 +15,6 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
+#include <ui/ui.h>
 
-// Libraries
-#include <ui/element.h>
-#include <glm/vec2.hpp>
-#include <glm/vec4.hpp>
-
-// Forward Declarations
-class _Font;
-
-// Classes
-class _TextBox : public _Element {
-
-	public:
-
-		_TextBox();
-		~_TextBox() override;
-
-		void Update(double FrameTime, const glm::ivec2 &Mouse) override;
-		bool HandleKeyEvent(const _KeyEvent &KeyEvent) override;
-		void HandleInput(bool Pressed) override;
-		void Render() const override;
-
-		void ResetCursor() { CursorTimer = 0; }
-
-		std::string Text;
-
-		const _Font *Font;
-		glm::vec2 TextOffset;
-		size_t MaxLength;
-
-		double CursorTimer;
-
-	private:
-
-};
+_Element *FocusedElement = nullptr;

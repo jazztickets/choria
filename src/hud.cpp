@@ -67,23 +67,15 @@ void _HUD::Close() {
 	ClearSkills();
 }
 
-// Handle keys
-void _HUD::KeyEvent(const _KeyEvent &KeyEvent) {
+// Handle the enter key
+void _HUD::HandleEnter() {
 
-	switch(*State) {
-		case _ClientState::STATE_TRADE: {
-			_TextBox *TextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
-			std::string OldValue = TextBox->Text;
-
-			//Assets.Elements["element_trade"]->HandleKeyEvent(KeyEvent);
-			if(OldValue != TextBox->Text)
-				ValidateTradeGold();
-		} break;
-		default:
-			if(IsChatting()) {
-				//Assets.Elements["element_chat"]->HandleKeyEvent(KeyEvent);
-			}
-		break;
+	if(IsTypingGold()) {
+		FocusedElement = nullptr;
+		ValidateTradeGold();
+	}
+	else {
+		ToggleChat();
 	}
 }
 
@@ -405,6 +397,9 @@ void _HUD::Update(double FrameTime) {
 	if(IsChatting()) {
 		_Element *ChatElement = Assets.Elements["element_chat"];
 		ChatElement->Update(FrameTime, Input.GetMouse());
+
+		if(ChatTextBox != FocusedElement)
+			CloseChat();
 	}
 }
 
@@ -515,6 +510,9 @@ void _HUD::SetPlayer(_Player *Player) {
 
 // Starts the chat box
 void _HUD::ToggleChat() {
+	if(IsTypingGold())
+		return;
+
 	if(IsChatting()) {
 		if(ChatTextBox->Text != "") {
 
@@ -528,9 +526,9 @@ void _HUD::ToggleChat() {
 		CloseChat();
 	}
 	else {
-		ChatTextBox->Focused = true;
 		ChatTextBox->Visible = true;
 		ChatTextBox->ResetCursor();
+		FocusedElement = ChatTextBox;
 	}
 }
 
@@ -542,7 +540,6 @@ bool _HUD::IsChatting() {
 // Closes the chat window
 void _HUD::CloseChat() {
 	ChatTextBox->Visible = false;
-	ChatTextBox->Focused = false;
 	ChatTextBox->Text = "";
 }
 
@@ -604,7 +601,7 @@ void _HUD::InitTrade() {
 	// Send request to server
 	SendTradeRequest();
 
-	// Reset ui
+	// Reset UI
 	ResetAcceptButton();
 
 	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
@@ -619,6 +616,7 @@ void _HUD::InitTrade() {
 
 // Closes the trade system
 void _HUD::CloseTrade(bool SendNotify) {
+	FocusedElement = nullptr;
 
 	// Close inventory
 	CloseInventory();
@@ -633,7 +631,7 @@ void _HUD::CloseTrade(bool SendNotify) {
 
 // Return true if player is typing gold
 bool _HUD::IsTypingGold() {
-	return Assets.TextBoxes["textbox_trade_gold_yours"]->Focused;
+	return FocusedElement == Assets.TextBoxes["textbox_trade_gold_yours"];
 }
 
 // Initialize the trader

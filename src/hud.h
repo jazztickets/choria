@@ -98,7 +98,7 @@ class _HUD {
 		void Close();
 
 		// Updates
-		void KeyEvent(const _KeyEvent &KeyEvent);
+		void HandleEnter();
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
 		void Render();
@@ -118,16 +118,17 @@ class _HUD {
 		void ToggleChat();
 		bool IsChatting();
 		void AddChatMessage(_ChatMessage &Chat) { ChatHistory.push_back(Chat); }
+		void CloseChat();
 
 		// Trade
 		void CloseTrade(bool SendNotify=true);
 		bool IsTypingGold();
 		void ResetAcceptButton();
 		void UpdateTradeStatus(bool Accepted);
+		void ValidateTradeGold();
 
-		// Teleport to town
+		// Teleport
 		void ToggleTeleport();
-		void CloseChat();
 
 	private:
 
@@ -163,7 +164,6 @@ class _HUD {
 		void RefreshSkillButtons();
 		void SendTradeRequest();
 		void SendTradeCancel();
-		void ValidateTradeGold();
 		void UpdateAcceptButton();
 
 		void SplitStack(int Slot, int Count);

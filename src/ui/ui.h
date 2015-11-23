@@ -19,6 +19,10 @@
 
 #include <glm/vec2.hpp>
 
+class _Element;
+
+extern _Element *FocusedElement;
+
 // Bounds struct
 struct _Bounds {
 	bool PointInside(const glm::ivec2 &Point) const {

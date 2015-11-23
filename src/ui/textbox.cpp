@@ -22,10 +22,8 @@
 
 // Constructor
 _TextBox::_TextBox() :
-	Focused(false),
 	Font(nullptr),
 	MaxLength(0),
-	DrawCursor(true),
 	CursorTimer(0) {
 
 	//TODO fix
@@ -40,32 +38,26 @@ _TextBox::~_TextBox() {
 void _TextBox::Update(double FrameTime, const glm::ivec2 &Mouse) {
 	_Element::Update(FrameTime, Mouse);
 
-	if(Focused) {
+	if(FocusedElement == this) {
 		CursorTimer += FrameTime;
-		if(CursorTimer > 0.5) {
+		if(CursorTimer >= 1) {
 			CursorTimer = 0;
-			DrawCursor = !DrawCursor;
 		}
 	}
 }
 
 // Handle pressed event
 void _TextBox::HandleInput(bool Pressed) {
-	_Element::HandleInput(Pressed);
-
 	if(HitElement) {
-		Focused = true;
 		ResetCursor();
-	}
-	else {
-		Focused = false;
+		FocusedElement = this;
 	}
 }
 
 // Handle key event
 bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 
-	if(Focused && Visible) {
+	if(FocusedElement == this && Visible) {
 		if(Text.length() < MaxLength && KeyEvent.Text[0] >= 32 && KeyEvent.Text[0] <= 126) {
 			Text += KeyEvent.Text[0];
 			ResetCursor();
@@ -79,7 +71,6 @@ bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 			return true;
 		}
 		else if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-			//Focused = false;
 			return true;
 		}
 	}
@@ -93,7 +84,7 @@ void _TextBox::Render() const {
 		return;
 
 	std::string RenderText;
-	if(DrawCursor && Focused)
+	if(CursorTimer < 0.5 && FocusedElement == this)
 		RenderText = Text + "|";
 	else
 		RenderText = Text;

@@ -86,12 +86,6 @@ void _ClientState::Close() {
 	delete Instances;
 }
 
-// Window events
-void _ClientState::WindowEvent(uint8_t Event) {
-	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
-		Camera->CalculateFrustum(Graphics.AspectRatio);
-}
-
 // Handles a connection to the server
 void _ClientState::HandleConnect(ENetEvent *Event) {
 
@@ -173,14 +167,47 @@ void _ClientState::HandlePacket(ENetEvent *Event) {
 	}
 }
 
+// Key events
+void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
+	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
+
+	if(!Handled) {
+		if(Menu.GetState() != _Menu::STATE_NONE) {
+			Menu.KeyEvent(KeyEvent);
+			return;
+		}
+	}
+	else {
+		if(!HUD.IsChatting())
+			HUD.ValidateTradeGold();
+	}
+}
+
+// Mouse events
+void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+	FocusedElement = nullptr;
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.MouseEvent(MouseEvent);
+		return;
+	}
+
+	HUD.MouseEvent(MouseEvent);
+}
+
+// Window events
+void _ClientState::WindowEvent(uint8_t Event) {
+	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		Camera->CalculateFrustum(Graphics.AspectRatio);
+}
+
 // Handle an input action
 bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	if(Value == 0)
 		return true;
 
-	// Start/stop chat
+	// Handle enter key
 	if(Action == _Actions::CHAT) {
-		HUD.ToggleChat();
+		HUD.HandleEnter();
 		return true;
 	}
 
@@ -192,6 +219,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
+	// Pass to menu
 	if(Menu.GetState() != _Menu::STATE_NONE) {
 		Menu.HandleAction(InputType, Action, Value);
 		return true;
@@ -301,28 +329,6 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	}
 
 	return true;
-}
-
-// Key events
-void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
-	Graphics.Element->HandleKeyEvent(KeyEvent);
-
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.KeyEvent(KeyEvent);
-		return;
-	}
-
-	HUD.KeyEvent(KeyEvent);
-}
-
-// Mouse events
-void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.MouseEvent(MouseEvent);
-		return;
-	}
-
-	HUD.MouseEvent(MouseEvent);
 }
 
 // Updates the current state

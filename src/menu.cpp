@@ -112,15 +112,16 @@ void _Menu::InitNewCharacter() {
 	CreateButton->Enabled = false;
 
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
-	Name->Focused = true;
 	Name->Text = "";
-	Name->ResetCursor();
 
 	_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
 	Label->Text = "Name";
 	Label->Color = COLOR_WHITE;
 
 	LoadPortraitButtons();
+
+	FocusedElement = Name;
+	Name->ResetCursor();
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
 	CharactersState = CHARACTERS_CREATE;
@@ -133,12 +134,9 @@ void _Menu::InitConnect(bool ConnectNow) {
 	CurrentLayout = Assets.Elements["element_menu_connect"];
 
 	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
-	Host->Focused = true;
 	Host->Text = Config.LastHost;
-	Host->ResetCursor();
 
 	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
-	Port->Focused = false;
 	Port->Text = Config.LastPort;
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
@@ -148,8 +146,11 @@ void _Menu::InitConnect(bool ConnectNow) {
 	_Button *Button = Assets.Buttons["button_connect_connect"];
 	Button->Enabled = true;
 
-	State = STATE_CONNECT;
+	// Set focus
+	FocusedElement = Host;
+	Host->ResetCursor();
 
+	State = STATE_CONNECT;
 	if(ConnectNow)
 		ConnectToHost();
 }
@@ -159,12 +160,9 @@ void _Menu::InitAccount() {
 	CurrentLayout = Assets.Elements["element_menu_account"];
 
 	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
-	Username->Focused = true;
 	Username->Text = DefaultUsername;
-	Username->ResetCursor();
 
 	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
-	Password->Focused = false;
 	Password->Text = DefaultPassword;
 
 	_Label *Label = Assets.Labels["label_menu_account_message"];
@@ -173,6 +171,10 @@ void _Menu::InitAccount() {
 
 	_Button *Button = Assets.Buttons["button_account_login"];
 	Button->Enabled = true;
+
+	// Set focus
+	FocusedElement = Username;
+	Username->ResetCursor();
 
 	State = STATE_ACCOUNT;
 }
@@ -232,14 +234,12 @@ void _Menu::ConnectToHost() {
 	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
 	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
 	if(Host->Text.length() == 0) {
-		Host->Focused = true;
-		Port->Focused = false;
+		FocusedElement = Host;
 		return;
 	}
 
 	if(Port->Text.length() == 0) {
-		Host->Focused = false;
-		Port->Focused = true;
+		FocusedElement = Port;
 		return;
 	}
 
@@ -263,8 +263,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 
 	// Check username
 	if(Username->Text.length() == 0) {
-		Username->Focused = true;
-		Password->Focused = false;
+		FocusedElement = Username;
 		Label->Color = COLOR_RED;
 		Label->Text = "Enter a username";
 
@@ -273,8 +272,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 
 	// Check password
 	if(Password->Text.length() == 0) {
-		Username->Focused = false;
-		Password->Focused = true;
+		FocusedElement = Password;
 		Label->Color = COLOR_RED;
 		Label->Text = "Enter a password";
 
@@ -364,6 +362,8 @@ void _Menu::ValidateCreateCharacter() {
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	if(Name->Text.length() > 0)
 		NameValid = true;
+	else
+		FocusedElement = Name;
 
 	// Enable button
 	if(PortraitID != -1 && NameValid)
@@ -402,12 +402,9 @@ void _Menu::HandleAction(int InputType, int Action, int Value) {
 
 // Handle key event
 void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
-	if(KeyEvent.Repeat)
-		return;
-
 	switch(State) {
 		case STATE_TITLE: {
-			if(KeyEvent.Pressed) {
+			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					Framework.Done = true;
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
@@ -416,7 +413,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 		} break;
 		case STATE_CHARACTERS: {
 			if(CharactersState == CHARACTERS_NONE) {
-				if(KeyEvent.Pressed) {
+				if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 						InitTitle();
 					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
@@ -429,14 +426,12 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 							Framework.ChangeState(&ClientState);
 						}
 					}
-
-					ValidateCreateCharacter();
 				}
 			}
-			else {
-				if(KeyEvent.Pressed) {
-					ValidateCreateCharacter();
+			else if(CharactersState == CHARACTERS_CREATE){
+				ValidateCreateCharacter();
 
+				if(KeyEvent.Pressed) {
 					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 						RequestCharacterList();
 					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
@@ -445,7 +440,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			}
 		} break;
 		case STATE_CONNECT: {
-			if(KeyEvent.Pressed) {
+			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					InitTitle();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
@@ -455,7 +450,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			}
 		} break;
 		case STATE_ACCOUNT: {
-			if(KeyEvent.Pressed) {
+			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					InitConnect();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
@@ -475,7 +470,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 				}
 			}
 			else {
-				if(KeyEvent.Pressed) {
+				if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 					RemapInput(_Input::KEYBOARD, KeyEvent.Scancode);
 				}
 			}
@@ -594,7 +589,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							Button->Checked = false;
 							if((intptr_t)Button->UserData == SelectedID) {
 								_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
-								Name->Focused = true;
+								FocusedElement = Name;
 								Name->ResetCursor();
 								Button->Checked = true;
 							}
@@ -935,31 +930,23 @@ void _Menu::FocusNextElement(bool ShiftDown) {
 			_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
 			_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
 
-			if(Host->Focused) {
-				Host->Focused = false;
-				Port->Focused = true;
-				Port->ResetCursor();
-			}
-			else if(Port->Focused) {
-				Host->Focused = true;
-				Port->Focused = false;
-				Host->ResetCursor();
-			}
+			if(FocusedElement == Host)
+				FocusedElement = Port;
+			else if(FocusedElement == Port || FocusedElement == nullptr)
+				FocusedElement = Host;
+
+			((_TextBox *)FocusedElement)->ResetCursor();
 		} break;
 		case STATE_ACCOUNT: {
 			_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
 			_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
 
-			if(Username->Focused) {
-				Username->Focused = false;
-				Password->Focused = true;
-				Password->ResetCursor();
-			}
-			else if(Password->Focused) {
-				Username->Focused = true;
-				Password->Focused = false;
-				Username->ResetCursor();
-			}
+			if(FocusedElement == Username)
+				FocusedElement = Password;
+			else if(FocusedElement == Password || FocusedElement == nullptr)
+				FocusedElement = Username;
+
+			((_TextBox *)FocusedElement)->ResetCursor();
 		} break;
 		default:
 		break;
