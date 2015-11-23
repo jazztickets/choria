@@ -79,6 +79,7 @@ _Map::~_Map() {
 
 // Initialize variables
 void _Map::Init() {
+	ObjectUpdateTime = 0;
 	ID = 0;
 	NoZoneTexture = nullptr;
 	Tiles = nullptr;

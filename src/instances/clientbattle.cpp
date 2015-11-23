@@ -33,7 +33,8 @@
 
 // Constructor
 _ClientBattle::_ClientBattle()
-:	_Battle() {
+:	_Battle(),
+	ResultTimer(0) {
 
 }
 

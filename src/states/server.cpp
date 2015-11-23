@@ -1323,7 +1323,6 @@ void ObjectDeleted(_Object *Object) {
 
 // Teleports a player back to town
 void _ServerState::PlayerTeleport(_Player *Player) {
-
 	Player->RestoreHealthMana();
 	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 	SendHUD(Player);
