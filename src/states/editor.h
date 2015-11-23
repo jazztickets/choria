@@ -83,7 +83,6 @@ class _EditorState : public _State {
 		void Render(double BlendFactor) override;
 
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
-		void TextEvent(const char *Text) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 		void MouseWheelEvent(int Direction) override;
 		void WindowEvent(uint8_t Event) override;

@@ -28,6 +28,7 @@
 class _Player;
 class _Item;
 class _Skill;
+class _TextBox;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
@@ -98,7 +99,6 @@ class _HUD {
 
 		// Updates
 		void KeyEvent(const _KeyEvent &KeyEvent);
-		void TextEvent(const char *Text);
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
 		void Render();
@@ -116,7 +116,7 @@ class _HUD {
 
 		// Chat
 		void ToggleChat();
-		bool IsChatting() { return Chatting; }
+		bool IsChatting();
 		void AddChatMessage(_ChatMessage &Chat) { ChatHistory.push_back(Chat); }
 
 		// Trade
@@ -180,7 +180,7 @@ class _HUD {
 
 		// Chat
 		std::list<_ChatMessage> ChatHistory;
-		bool Chatting;
+		_TextBox *ChatTextBox;
 
 		// Skills
 		_CursorSkill CursorSkill;

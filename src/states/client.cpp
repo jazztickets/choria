@@ -30,6 +30,7 @@
 #include <camera.h>
 #include <program.h>
 #include <menu.h>
+#include <ui/element.h>
 #include <network/network.h>
 #include <instances/map.h>
 #include <instances/clientbattle.h>
@@ -172,13 +173,164 @@ void _ClientState::HandlePacket(ENetEvent *Event) {
 	}
 }
 
+// Handle an input action
+bool _ClientState::HandleAction(int InputType, int Action, int Value) {
+	if(Value == 0)
+		return true;
+
+	// Start/stop chat
+	if(Action == _Actions::CHAT) {
+		HUD.ToggleChat();
+		return true;
+	}
+
+	// Grab all actions except escape
+	if(HUD.IsChatting()) {
+		if(Action == _Actions::MENU)
+			HUD.CloseChat();
+
+		return true;
+	}
+
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.HandleAction(InputType, Action, Value);
+		return true;
+	}
+
+	switch(State) {
+		case STATE_WALK:
+			switch(Action) {
+				case _Actions::MENU:
+					if(IsTesting)
+						ClientNetwork->Disconnect();
+					else
+						Menu.InitInGame();
+				break;
+				case _Actions::INVENTORY:
+					HUD.InitInventory(true);
+				break;
+				case _Actions::TELEPORT:
+					HUD.ToggleTeleport();
+				break;
+				case _Actions::TRADE:
+					HUD.InitTrade();
+				break;
+				case _Actions::SKILLS:
+					HUD.InitSkills();
+				break;
+				case _Actions::ATTACK:
+					SendAttackPlayer();
+				break;
+			}
+		break;
+		case STATE_BATTLE:
+			Battle->HandleAction(Action);
+		break;
+		case STATE_TELEPORT:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::TELEPORT:
+					HUD.ToggleTeleport();
+				break;
+			}
+		break;
+		case STATE_INVENTORY:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_VENDOR:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_TRADER:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_TRADE:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+		case STATE_SKILLS:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::SKILLS:
+					HUD.CloseWindows();
+				break;
+			}
+		break;
+	}
+
+	return true;
+}
+
+// Key events
+void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
+	Graphics.Element->HandleKeyEvent(KeyEvent);
+
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.KeyEvent(KeyEvent);
+		return;
+	}
+
+	HUD.KeyEvent(KeyEvent);
+}
+
+// Mouse events
+void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.MouseEvent(MouseEvent);
+		return;
+	}
+
+	HUD.MouseEvent(MouseEvent);
+}
+
 // Updates the current state
 void _ClientState::Update(double FrameTime) {
 	if(Camera && Player) {
 		Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(+0.5f, +0.5f));
 		Camera->Update(FrameTime);
 	}
-
 
 	// Handle input
 	if(Menu.GetState() == _Menu::STATE_NONE) {
@@ -295,167 +447,6 @@ void _ClientState::SendBusy(bool Value) {
 	Packet.Write<char>(_Network::WORLD_BUSY);
 	Packet.Write<char>(Value);
 	ClientNetwork->SendPacketToHost(&Packet);
-}
-
-// Handle an input action
-bool _ClientState::HandleAction(int InputType, int Action, int Value) {
-	if(Value == 0)
-		return true;
-
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.HandleAction(InputType, Action, Value);
-		return true;
-	}
-
-	// Start/stop chat
-	if(Action == _Actions::CHAT) {
-		HUD.ToggleChat();
-		return true;
-	}
-
-	// Check for chat window
-	if(HUD.IsChatting()) {
-		if(Action == _Actions::MENU) {
-			HUD.CloseChat();
-		}
-
-		return true;
-	}
-
-	switch(State) {
-		case STATE_WALK:
-			switch(Action) {
-				case _Actions::MENU:
-					if(IsTesting)
-						ClientNetwork->Disconnect();
-					else
-						Menu.InitInGame();
-				break;
-				case _Actions::INVENTORY:
-					HUD.InitInventory(true);
-				break;
-				case _Actions::TELEPORT:
-					HUD.ToggleTeleport();
-				break;
-				case _Actions::TRADE:
-					HUD.InitTrade();
-				break;
-				case _Actions::SKILLS:
-					HUD.InitSkills();
-				break;
-				case _Actions::ATTACK:
-					SendAttackPlayer();
-				break;
-			}
-		break;
-		case STATE_BATTLE:
-			Battle->HandleAction(Action);
-		break;
-		case STATE_TELEPORT:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::TELEPORT:
-					HUD.ToggleTeleport();
-				break;
-			}
-		break;
-		case STATE_INVENTORY:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD.CloseWindows();
-				break;
-			}
-		break;
-		case STATE_VENDOR:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD.CloseWindows();
-				break;
-			}
-		break;
-		case STATE_TRADER:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD.CloseWindows();
-				break;
-			}
-		break;
-		case STATE_TRADE:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD.CloseWindows();
-				break;
-			}
-		break;
-		case STATE_SKILLS:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::SKILLS:
-					HUD.CloseWindows();
-				break;
-			}
-		break;
-	}
-
-	return true;
-}
-
-// Key events
-void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.KeyEvent(KeyEvent);
-		return;
-	}
-
-	HUD.KeyEvent(KeyEvent);
-}
-
-// Text input events
-void _ClientState::TextEvent(const char *Text) {
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.TextEvent(Text);
-		return;
-	}
-
-	HUD.TextEvent(Text);
-}
-
-// Mouse events
-void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.MouseEvent(MouseEvent);
-		return;
-	}
-
-	HUD.MouseEvent(MouseEvent);
 }
 
 // Called once to synchronize your stats with the servers

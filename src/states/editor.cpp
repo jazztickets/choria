@@ -282,9 +282,12 @@ void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE EventType, gui::IGUIElement
 
 // Key events
 void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
+	if(KeyEvent.Repeat)
+		return;
+
 	switch(State) {
 		case STATE_MAIN:
-			switch(KeyEvent.Key) {
+			switch(KeyEvent.Scancode) {
 				case SDL_SCANCODE_ESCAPE:
 					Framework.Done = true;
 				break;
@@ -398,11 +401,6 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 		break;
 	*/
 	}
-}
-
-// Text input events
-void _EditorState::TextEvent(const char *Text) {
-
 }
 
 // Mouse events

@@ -38,8 +38,7 @@ class _Element {
 
 		virtual void CalculateBounds();
 		virtual void Render() const;
-		virtual void HandleKeyEvent(const _KeyEvent &KeyEvent);
-		virtual void HandleTextEvent(const char *Text);
+		virtual bool HandleKeyEvent(const _KeyEvent &KeyEvent);
 		virtual void HandleInput(bool Pressed);
 		_Element *GetClickedElement();
 

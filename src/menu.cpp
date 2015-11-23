@@ -402,24 +402,24 @@ void _Menu::HandleAction(int InputType, int Action, int Value) {
 
 // Handle key event
 void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
-	if(CurrentLayout)
-		CurrentLayout->HandleKeyEvent(KeyEvent);
+	if(KeyEvent.Repeat)
+		return;
 
 	switch(State) {
 		case STATE_TITLE: {
 			if(KeyEvent.Pressed) {
-				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					Framework.Done = true;
-				else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					Connect("", 0, true);
 			}
 		} break;
 		case STATE_CHARACTERS: {
 			if(CharactersState == CHARACTERS_NONE) {
 				if(KeyEvent.Pressed) {
-					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 						InitTitle();
-					else if(KeyEvent.Key == SDL_SCANCODE_RETURN) {
+					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
 						int SelectedCharacter = GetSelectedCharacter();
 						if(SelectedCharacter == -1)
 							SelectedCharacter = 0;
@@ -429,42 +429,44 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 							Framework.ChangeState(&ClientState);
 						}
 					}
+
+					ValidateCreateCharacter();
 				}
 			}
 			else {
 				if(KeyEvent.Pressed) {
 					ValidateCreateCharacter();
 
-					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 						RequestCharacterList();
-					else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 						CreateCharacter();
 				}
 			}
 		} break;
 		case STATE_CONNECT: {
 			if(KeyEvent.Pressed) {
-				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					InitTitle();
-				else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					ConnectToHost();
-				else if(KeyEvent.Key == SDL_SCANCODE_TAB)
+				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
 					FocusNextElement(Input.ModKeyDown(KMOD_SHIFT));
 			}
 		} break;
 		case STATE_ACCOUNT: {
 			if(KeyEvent.Pressed) {
-				if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)
+				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					InitConnect();
-				else if(KeyEvent.Key == SDL_SCANCODE_RETURN)
+				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					SendAccountInfo();
-				else if(KeyEvent.Key == SDL_SCANCODE_TAB)
+				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
 					FocusNextElement(Input.ModKeyDown(KMOD_SHIFT));
 			}
 		} break;
 		case STATE_OPTIONS: {
 			if(OptionsState == OPTION_NONE) {
-				if(KeyEvent.Pressed && KeyEvent.Key == SDL_SCANCODE_ESCAPE) {
+				if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_ESCAPE) {
 					//Config.Save();
 					//if(Framework.GetState() == &ClientState)
 					//	InitInGame();
@@ -474,28 +476,12 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			}
 			else {
 				if(KeyEvent.Pressed) {
-					RemapInput(_Input::KEYBOARD, KeyEvent.Key);
+					RemapInput(_Input::KEYBOARD, KeyEvent.Scancode);
 				}
 			}
 		} break;
 		case STATE_INGAME: {
 		} break;
-		default:
-		break;
-	}
-}
-
-// Handle text
-void _Menu::TextEvent(const char *Text) {
-	if(CurrentLayout)
-		CurrentLayout->HandleTextEvent(Text);
-
-	switch(State) {
-		case STATE_CHARACTERS:
-			if(CharactersState == CHARACTERS_CREATE) {
-				ValidateCreateCharacter();
-			}
-		break;
 		default:
 		break;
 	}

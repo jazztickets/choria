@@ -52,60 +52,38 @@ void _HUD::Init() {
 	TooltipSkill.Reset();
 	CursorSkill.Reset();
 	CharacterOpen = false;
-	Chatting = false;
 	RewardItemSlot = -1;
 	ChatHistory.clear();
-	CloseChat();
 
-	_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
+	ChatTextBox = Assets.TextBoxes["textbox_chat"];
 	ChatTextBox->TextOffset = glm::vec2(5, 15);
+
+	CloseChat();
 }
 
 // Shutdown
 void _HUD::Close() {
+	ChatTextBox = nullptr;
 	ClearSkills();
 }
 
 // Handle keys
 void _HUD::KeyEvent(const _KeyEvent &KeyEvent) {
+
 	switch(*State) {
 		case _ClientState::STATE_TRADE: {
 			_TextBox *TextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
 			std::string OldValue = TextBox->Text;
 
-			Assets.Elements["element_trade"]->HandleKeyEvent(KeyEvent);
+			//Assets.Elements["element_trade"]->HandleKeyEvent(KeyEvent);
 			if(OldValue != TextBox->Text)
 				ValidateTradeGold();
-
-			if(KeyEvent.Pressed) {
-				if(KeyEvent.Key == SDL_SCANCODE_RETURN) {
-					TextBox->Focused = false;
-					return;
-				}
+		} break;
+		default:
+			if(IsChatting()) {
+				//Assets.Elements["element_chat"]->HandleKeyEvent(KeyEvent);
 			}
-		} break;
-	}
-
-	if(Chatting) {
-		Assets.Elements["element_chat"]->HandleKeyEvent(KeyEvent);
-	}
-}
-
-// Handle text input
-void _HUD::TextEvent(const char *Text) {
-	switch(*State) {
-		case _ClientState::STATE_TRADE: {
-			_TextBox *TextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
-			std::string OldValue = TextBox->Text;
-			TextBox->HandleTextEvent(Text);
-			if(OldValue != TextBox->Text)
-				ValidateTradeGold();
-		} break;
-	}
-
-	if(Chatting) {
-		_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
-		ChatTextBox->HandleTextEvent(Text);
+		break;
 	}
 }
 
@@ -424,7 +402,7 @@ void _HUD::Update(double FrameTime) {
 		break;
 	}
 
-	if(Chatting) {
+	if(IsChatting()) {
 		_Element *ChatElement = Assets.Elements["element_chat"];
 		ChatElement->Update(FrameTime, Input.GetMouse());
 	}
@@ -434,7 +412,7 @@ void _HUD::Update(double FrameTime) {
 void _HUD::Render() {
 
 	// Draw chat messages
-	DrawChat(Chatting);
+	DrawChat(IsChatting());
 
 	Assets.Elements["element_hud"]->Render();
 	Assets.Elements["element_buttonbar"]->Render();
@@ -537,11 +515,7 @@ void _HUD::SetPlayer(_Player *Player) {
 
 // Starts the chat box
 void _HUD::ToggleChat() {
-	if(IsTypingGold())
-		return;
-
-	if(Chatting) {
-		_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
+	if(IsChatting()) {
 		if(ChatTextBox->Text != "") {
 
 			// Send message to server
@@ -554,19 +528,21 @@ void _HUD::ToggleChat() {
 		CloseChat();
 	}
 	else {
-		_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
 		ChatTextBox->Focused = true;
 		ChatTextBox->Visible = true;
-		Chatting = true;
+		ChatTextBox->ResetCursor();
 	}
+}
+
+// Return true if the chatbox is open
+bool _HUD::IsChatting() {
+	return ChatTextBox->Visible;
 }
 
 // Closes the chat window
 void _HUD::CloseChat() {
-	Chatting = false;
-
-	_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
 	ChatTextBox->Visible = false;
+	ChatTextBox->Focused = false;
 	ChatTextBox->Text = "";
 }
 

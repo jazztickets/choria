@@ -200,50 +200,45 @@ void _Framework::Update() {
 	// Loop through events
 	SDL_Event Event;
 	while(SDL_PollEvent(&Event)) {
-		switch(Event.type){
-			case SDL_KEYDOWN:
-			case SDL_KEYUP:
-				if(!Event.key.repeat) {
+		if(State && FrameworkState == UPDATE) {
+			switch(Event.type){
+				case SDL_KEYDOWN:
+				case SDL_KEYUP: {
 
-					// Toggle fullscreen
-					if(Event.type == SDL_KEYDOWN && (Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN)
-						Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
-					else if(State && FrameworkState == UPDATE) {
-						_KeyEvent KeyEvent(Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
-						State->KeyEvent(KeyEvent);
-						Actions.InputEvent(_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+					// Handle alt-enter
+					if(Event.type == SDL_KEYDOWN && (Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+						if(!Event.key.repeat)
+							Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
 					}
-				}
-				else {
-					if(State && FrameworkState == UPDATE && Event.key.keysym.scancode == SDL_SCANCODE_BACKSPACE) {
-						_KeyEvent KeyEvent(Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+					else {
+						_KeyEvent KeyEvent("", Event.key.keysym.scancode, Event.type == SDL_KEYDOWN, Event.key.repeat);
 						State->KeyEvent(KeyEvent);
+						if(!Event.key.repeat) {
+							Actions.InputEvent(_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+						}
 					}
-				}
-			break;
-			case SDL_TEXTINPUT:
-				if(State)
-					State->TextEvent(Event.text.text);
-			break;
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
-				if(State && FrameworkState == UPDATE) {
+				} break;
+				case SDL_TEXTINPUT: {
+					_KeyEvent KeyEvent(Event.text.text, 0, 0, 1);
+					State->KeyEvent(KeyEvent);
+				} break;
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP: {
 					_MouseEvent MouseEvent(glm::ivec2(Event.motion.x, Event.motion.y), Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
 					State->MouseEvent(MouseEvent);
 					Actions.InputEvent(_Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
-				}
-			break;
-			case SDL_MOUSEWHEEL:
-				if(State)
+				} break;
+				case SDL_MOUSEWHEEL: {
 					State->MouseWheelEvent(Event.wheel.y);
-			break;
-			case SDL_WINDOWEVENT:
-				if(Event.window.event)
-					State->WindowEvent(Event.window.event);
-			break;
-			case SDL_QUIT:
-				Done = true;
-			break;
+				} break;
+				case SDL_WINDOWEVENT:
+					if(Event.window.event)
+						State->WindowEvent(Event.window.event);
+				break;
+				case SDL_QUIT:
+					Done = true;
+				break;
+			}
 		}
 	}
 

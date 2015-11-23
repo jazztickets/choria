@@ -34,8 +34,7 @@ class _TextBox : public _Element {
 		~_TextBox() override;
 
 		void Update(double FrameTime, const glm::ivec2 &Mouse) override;
-		void HandleKeyEvent(const _KeyEvent &KeyEvent) override;
-		void HandleTextEvent(const char *Text) override;
+		bool HandleKeyEvent(const _KeyEvent &KeyEvent) override;
 		void HandleInput(bool Pressed) override;
 		void Render() const override;
 

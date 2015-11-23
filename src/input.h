@@ -24,9 +24,11 @@
 #include <SDL_mouse.h>
 
 struct _KeyEvent {
-	_KeyEvent(int Key, bool Pressed) : Key(Key), Pressed(Pressed) { }
-	int Key;
+	_KeyEvent(const char *Text, int Scancode, bool Pressed, bool Repeat) : Text(Text), Scancode(Scancode), Pressed(Pressed), Repeat(Repeat) { }
+	const char *Text;
+	int Scancode;
 	bool Pressed;
+	bool Repeat;
 };
 
 struct _MouseEvent {

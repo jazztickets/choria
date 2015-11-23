@@ -16,6 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/null.h>
+#include <graphics.h>
+#include <ui/element.h>
 #include <framework.h>
 #include <menu.h>
 
@@ -47,12 +49,9 @@ bool _NullState::HandleAction(int InputType, int Action, int Value) {
 
 // Key handler
 void _NullState::KeyEvent(const _KeyEvent &KeyEvent) {
-	Menu.KeyEvent(KeyEvent);
-}
+	Graphics.Element->HandleKeyEvent(KeyEvent);
 
-// Text handler
-void _NullState::TextEvent(const char *Text) {
-	Menu.TextEvent(Text);
+	Menu.KeyEvent(KeyEvent);
 }
 
 // Mouse handler

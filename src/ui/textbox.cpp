@@ -63,22 +63,28 @@ void _TextBox::HandleInput(bool Pressed) {
 }
 
 // Handle key event
-void _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
+bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 
-	if(Focused && KeyEvent.Pressed) {
-		if(KeyEvent.Key == SDL_SCANCODE_BACKSPACE && Text.length() > 0) {
+	if(Focused && Visible) {
+		if(Text.length() < MaxLength && KeyEvent.Text[0] >= 32 && KeyEvent.Text[0] <= 126) {
+			Text += KeyEvent.Text[0];
+			ResetCursor();
+
+			return true;
+		}
+		else if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_BACKSPACE && Text.length() > 0) {
 			Text.erase(Text.length() - 1, 1);
 			ResetCursor();
+
+			return true;
+		}
+		else if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
+			//Focused = false;
+			return true;
 		}
 	}
-}
 
-// Handle text event
-void _TextBox::HandleTextEvent(const char *Text) {
-	if(Focused && this->Text.length() < MaxLength && Text[0] >= 32 && Text[0] <= 126) {
-		this->Text += Text[0];
-		ResetCursor();
-	}
+	return false;
 }
 
 // Render the element

@@ -50,19 +50,15 @@ _Element::~_Element() {
 }
 
 // Handle key event
-void _Element::HandleKeyEvent(const _KeyEvent &KeyEvent) {
+bool _Element::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 
 	// Pass event to children
-	for(size_t i = 0; i < Children.size(); i++)
-		Children[i]->HandleKeyEvent(KeyEvent);
-}
+	for(size_t i = 0; i < Children.size(); i++) {
+		if(Children[i]->HandleKeyEvent(KeyEvent))
+			return true;
+	}
 
-// Handle text event
-void _Element::HandleTextEvent(const char *Text) {
-
-	// Pass event to children
-	for(size_t i = 0; i < Children.size(); i++)
-		Children[i]->HandleTextEvent(Text);
+	return false;
 }
 
 // Handle a press event

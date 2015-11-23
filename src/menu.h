@@ -83,7 +83,6 @@ class _Menu {
 
 		void HandleAction(int InputType, int Action, int Value);
 		void KeyEvent(const _KeyEvent &KeyEvent);
-		void TextEvent(const char *Text);
 		void MouseEvent(const _MouseEvent &MouseEvent);
 
 		void Update(double FrameTime);
