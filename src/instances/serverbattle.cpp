@@ -25,6 +25,7 @@
 #include <instances.h>
 #include <objects/player.h>
 #include <objects/monster.h>
+#include <states/server.h>
 
 // Constructor
 _ServerBattle::_ServerBattle()
@@ -344,6 +345,8 @@ void _ServerBattle::CheckEnd() {
 			if(PlayerSide->Dead) {
 				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
 				Players[i]->Deaths++;
+
+				ServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(GoldEarned) + " gold"), COLOR_RED);
 			}
 			else {
 				ExperienceEarned = OppositeSide->ExperienceGiven;
@@ -364,6 +367,7 @@ void _ServerBattle::CheckEnd() {
 			int NewLevel = Players[i]->Level;
 			if(NewLevel > CurrentLevel) {
 				Players[i]->RestoreHealthMana();
+				ServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
 			}
 
 			// Write results

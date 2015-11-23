@@ -49,7 +49,7 @@ label_trader_lookingfor	element_trader	hud_medium		Looking for	0	35	0	0	1	3
 label_trader_reward	element_trader	hud_medium		Reward	0	240	0	0	1	3
 label_trader_accept	button_trader_accept	hud_medium		Accept	0	22	0	0	1	3
 label_trader_cancel	button_trader_cancel	hud_medium		Cancel	0	22	0	0	1	3
-label_teleport_timeleft	element_teleport	hud_medium		3	0	32	0	0	1	3
+label_teleport_timeleft	element_teleport	hud_medium			0	32	0	0	1	3
 label_skills_tooltip_name	element_skills_tooltip	menu_buttons			0	30	0	0	1	3
 label_battle_title	element_battle	battle_large			0	45	0	0	1	3
 label_battlewin_title	element_battlewin	battle_large		Victory	0	45	0	0	1	3

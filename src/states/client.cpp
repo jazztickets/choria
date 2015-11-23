@@ -273,6 +273,9 @@ void _ClientState::Render(double BlendFactor) {
 	Graphics.SetProgram(Assets.Programs["text"]);
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
+	// Draw HUD
+	HUD.Render();
+
 	// Draw states
 	switch(State) {
 		case STATE_WALK:
@@ -281,9 +284,6 @@ void _ClientState::Render(double BlendFactor) {
 			Battle->Render();
 		break;
 	}
-
-	// Draw HUD
-	HUD.Render();
 
 	// Draw menu
 	Menu.Render();
@@ -818,19 +818,11 @@ void _ClientState::HandleInventoryUse(_Buffer *Packet) {
 void _ClientState::HandleChatMessage(_Buffer *Packet) {
 
 	// Read packet
-	int NetworkID = Packet->Read<char>();
-	std::string Message(Packet->ReadString());
-
-	// Get player that sent packet
-	_Player *MessagePlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
-	if(!MessagePlayer)
-		return;
-
-	// Create chat message
 	_ChatMessage Chat;
-	Chat.Message = MessagePlayer->Name + std::string(": ") + Message;
-	Chat.Player = MessagePlayer;
+	Chat.Color = Packet->Read<glm::vec4>();
+	Chat.Message = Packet->ReadString();
 	Chat.Time = ClientTime;
+
 	HUD.AddChatMessage(Chat);
 }
 

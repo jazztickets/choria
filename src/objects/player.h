@@ -18,7 +18,6 @@
 #pragma once
 
 // Libraries
-#include <enet/enet.h>
 #include <constants.h>
 #include <objects/object.h>
 #include <objects/fighter.h>
@@ -153,7 +152,6 @@ class _Player : public _Object, public _Fighter {
 
 		// Connection information
 		int AccountID, CharacterID;
-		ENetPeer *Peer;
 		_Database *Database;
 
 		// States

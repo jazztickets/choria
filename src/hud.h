@@ -22,6 +22,7 @@
 #include <string>
 #include <cstdint>
 #include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _Player;
@@ -70,10 +71,10 @@ struct _CursorSkill {
 };
 
 struct _ChatMessage {
-	_ChatMessage() : Message(""), Player(nullptr), Time(0) { }
+	_ChatMessage() : Message(""), Color(1.0f), Time(0) { }
 
 	std::string Message;
-	const _Player *Player;
+	glm::vec4 Color;
 	double Time;
 };
 

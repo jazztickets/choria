@@ -922,23 +922,25 @@ void _ServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *Peer) {
 	if(!Player)
 		return;
 
-	// Get map object
-	_Map *Map = Player->Map;
-	if(!Map)
-		return;
-
 	// Get message
 	std::string Message = Packet->ReadString();
 	if(Message.length() > NETWORKING_CHAT_SIZE)
 		Message.resize(NETWORKING_CHAT_SIZE);
 
+	// Append name
+	Message = Player->Name + ": " + Message;
+
 	// Send message to other players
 	_Buffer NewPacket;
 	NewPacket.Write<char>(_Network::CHAT_MESSAGE);
-	NewPacket.Write<char>(Player->NetworkID);
+	NewPacket.Write<glm::vec4>(COLOR_WHITE);
 	NewPacket.WriteString(Message.c_str());
 
-	Map->SendPacketToPlayers(&NewPacket);
+	// Broadcast message
+	auto &Objects = ObjectManager->GetObjects();
+	for(auto &Object : Objects) {
+		ServerNetwork->SendPacketToPeer(&NewPacket, Object->Peer);
+	}
 }
 
 // Handle a trade request
@@ -1122,6 +1124,21 @@ void _ServerState::HandleTraderAccept(_Buffer *Packet, ENetPeer *Peer) {
 	Player->Trader = nullptr;
 	Player->State = _Player::STATE_WALK;
 	Player->CalculatePlayerStats();
+}
+
+// Send a message to the player
+void _ServerState::SendMessage(_Player *Player, const std::string &Message, const glm::vec4 &Color) {
+	if(!Player)
+		return;
+
+	// Build message
+	_Buffer Packet;
+	Packet.Write<char>(_Network::CHAT_MESSAGE);
+	Packet.Write<glm::vec4>(Color);
+	Packet.WriteString(Message.c_str());
+
+	// Send
+	ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 }
 
 // Spawns a player at a particular spawn point

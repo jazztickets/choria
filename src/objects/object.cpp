@@ -21,6 +21,7 @@
 // Constructor
 _Object::_Object(int Type)
 :	Map(nullptr),
+	Peer(nullptr),
 	Type(Type),
 	Deleted(false),
 	Position(-1, -1),

@@ -20,6 +20,7 @@
 // Libraries
 #include <state.h>
 #include <thread>
+#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _Database;
@@ -50,6 +51,7 @@ class _ServerState : public _State {
 
 		void StartCommandThread();
 		void StopServer() { StopRequested = true; }
+		void SendMessage(_Player *Player, const std::string &Message, const glm::vec4 &Color=glm::vec4(1.0f));
 
 	private:
 

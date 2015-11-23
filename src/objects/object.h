@@ -19,6 +19,7 @@
 
 // Libraries
 #include <cstdint>
+#include <enet/enet.h>
 #include <glm/vec2.hpp>
 
 // Forward Declarations
@@ -45,6 +46,7 @@ class _Object {
 
 		// Instances
 		_Map *Map;
+		ENetPeer *Peer;
 
 		// Properties
 		int Type;

@@ -927,19 +927,19 @@ void _HUD::DrawChat(bool IgnoreTimeout) {
 	// Draw messages
 	int Index = 0;
 	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
-		_ChatMessage &Chat = (*Iterator);
+		_ChatMessage &ChatMessage = (*Iterator);
 
-		float TimeLeft = Chat.Time - ClientState.GetTime() + CHAT_MESSAGE_TIMEOUT;
+		float TimeLeft = ChatMessage.Time - ClientState.GetTime() + CHAT_MESSAGE_TIMEOUT;
 		if(Index >= CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
 			break;
 
-		// Draw text
-		glm::vec4 Color = COLOR_WHITE;
+		// Set color
+		glm::vec4 Color = ChatMessage.Color;
 		if(!IgnoreTimeout && TimeLeft <= CHAT_MESSAGE_FADETIME)
 			Color.w = TimeLeft;
 
-		//std::cout << Color.w << std::endl;
-		Assets.Fonts["hud_small"]->DrawText(Chat.Message.c_str(), DrawPosition, Color);
+		// Draw text
+		Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message.c_str(), DrawPosition, Color);
 		DrawPosition.y += SpacingY;
 
 		Index++;
