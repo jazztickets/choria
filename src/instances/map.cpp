@@ -35,6 +35,7 @@
 #include <glm/gtx/norm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <zlib/zfstream.h>
 #include <iostream>
 
 // Constructor for the map editor: new map
@@ -66,7 +67,7 @@ _Map::_Map(int ID) {
 
 	// Load map
 	Filename = Map->File;
-	LoadMap();
+	Load();
 }
 
 // Destructor
@@ -80,7 +81,6 @@ _Map::~_Map() {
 void _Map::Init() {
 	ID = 0;
 	NoZoneTexture = nullptr;
-	DefaultNoZoneTexture = Assets.Textures["editor/nozone.png"];
 	Tiles = nullptr;
 }
 
@@ -93,8 +93,6 @@ void _Map::FreeMap() {
 
 		Tiles = nullptr;
 	}
-
-	IndexedEvents.clear();
 }
 
 // Allocates memory for the map
@@ -106,9 +104,6 @@ void _Map::AllocateMap() {
 	for(int i = 0; i < Size.x; i++) {
 		Tiles[i] = new _Tile[Size.y];
 	}
-
-	// Delete textures
-	Textures.clear();
 }
 
 // Updates the map and sends object updates
@@ -184,154 +179,161 @@ void _Map::Render(_Camera *Camera, int RenderFlags) {
 	}
 }
 
-// Saves the map to a file
-int _Map::SaveMap() {
+// Load map
+void _Map::Load() {
+	/*this->Stats = Stats;
+	this->ID = ID;
+	this->Filename = Path;
+	this->ServerNetwork = ServerNetwork;
+	std::string AtlasPath = TEXTURES_TILES + MAP_DEFAULT_TILESET;
+	*/
+	//bool TilesInitialized = false;
 
-	// Open file
-	std::ofstream File(Filename.c_str(), std::ios::binary);
-	if(!File) {
-		printf("SaveMap: unable to open file for writing\n");
-		return 0;
-	}
+	// Load file
+	gzifstream File(Filename.c_str());
+	try {
+		_Tile *Tile = nullptr;
+		while(!File.eof() && File.peek() != EOF) {
 
-	// Generate a list of textures used by the map
-	std::vector<const _Texture *> TextureList;
-	GetTextureListFromMap(TextureList);
+			// Read chunk type
+			char ChunkType;
+			File >> ChunkType;
 
-	// Write header
-	File.write((char *)&MAP_VERSION, sizeof(MAP_VERSION));
-	File.write((char *)&Size.x, sizeof(Size.x));
-	File.write((char *)&Size.y, sizeof(Size.y));
-
-	// Write texture list
-	int32_t TextureCount = (int32_t)(TextureList.size());
-	File.write((char *)&TextureCount, sizeof(TextureCount));
-	for(int32_t i = 0; i < TextureCount; i++) {
-		if(TextureList[i] == nullptr) {
-			File.write("map/none", 8);
-			File.put(0);
-		}
-		else {
-			std::string TexturePath = TextureList[i]->Identifier;
-			File.write(TexturePath.c_str(), TexturePath.size());
-			File.put(0);
-		}
-	}
-
-	// Write no-zone texture
-	if(NoZoneTexture == nullptr) {
-		File.write("map/none", 8);
-		File.put(0);
-	}
-	else {
-		std::string TexturePath = NoZoneTexture->Identifier;
-		File.write(TexturePath.c_str(), TexturePath.size());
-		File.put(0);
-	}
-
-	// Write map data
-	_Tile *Tile;
-	for(int i = 0; i < Size.x; i++) {
-		for(int j = 0; j < Size.y; j++) {
-			Tile = &Tiles[i][j];
-
-			// Write texture
-			int32_t TextureIndex = GetTextureIndex(TextureList, Tile->Texture);
-			File.write((char *)&TextureIndex, sizeof(TextureIndex));
-			File.write((char *)&Tile->Zone, sizeof(Tile->Zone));
-			File.write((char *)&Tile->EventType, sizeof(Tile->EventType));
-			File.write((char *)&Tile->EventData, sizeof(Tile->EventData));
-			File.write((char *)&Tile->Wall, sizeof(Tile->Wall));
-			File.write((char *)&Tile->PVP, sizeof(Tile->PVP));
-		}
-	}
-
-	// Close file
-	File.close();
-
-	return 1;
-}
-
-// Loads a map
-void _Map::LoadMap() {
-
-	// Open file
-	std::ifstream File(Filename.c_str(), std::ios::binary);
-	if(!File)
-		throw std::runtime_error("_Map::LoadMap: Unable to open file for reading: " + Filename);
-
-	// Read header
-	int32_t MapVersion;
-	File.read((char *)&MapVersion, sizeof(MapVersion));
-	File.read((char *)&Size.x, sizeof(Size.x));
-	File.read((char *)&Size.y, sizeof(Size.y));
-	if(Size.x < 5 || Size.x > 255 || Size.y < 5 || Size.y > 255 || MapVersion != MAP_VERSION)
-		throw std::runtime_error("_Map::LoadMap: Bad size header");
-
-	// Allocate memory
-	FreeMap();
-	AllocateMap();
-
-	// Get count of textures
-	int32_t TextureCount;
-	File.read((char *)&TextureCount, sizeof(TextureCount));
-	Textures.clear();
-
-	// Read textures from map
-	std::string TextureFile;
-	char String[256];
-	for(int32_t i = 0; i < TextureCount; i++) {
-		File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
-		File.get();
-
-		TextureFile = String;
-
-		if(TextureFile.substr(0, 4) != "map/")
-			TextureFile = std::string("map/") + TextureFile;
-
-		if(TextureFile == "map/none")
-			Textures.push_back(nullptr);
-		else
-			Textures.push_back(Assets.Textures[TextureFile]);
-	}
-
-	// Get no zone texture
-	File.get(String, std::numeric_limits<std::streamsize>::max(), 0);
-	File.get();
-	TextureFile = String;
-	if(TextureFile.substr(0, 4) != "map/")
-		TextureFile = std::string("map/") + TextureFile;
-
-	if(TextureFile == "map/none")
-		NoZoneTexture = nullptr;
-	else
-		NoZoneTexture = Assets.Textures[TextureFile];
-
-	// Read map data
-	_Tile *Tile;
-	for(int i = 0; i < Size.x; i++) {
-		for(int j = 0; j < Size.y; j++) {
-			Tile = &Tiles[i][j];
-
-			int32_t TextureIndex;
-			File.read((char *)&TextureIndex, sizeof(int32_t));
-			Tile->Texture = Textures[TextureIndex];
-
-			File.read((char *)&Tile->Zone, sizeof(Tile->Zone));
-			File.read((char *)&Tile->EventType, sizeof(Tile->EventType));
-			File.read((char *)&Tile->EventData, sizeof(Tile->EventData));
-			File.read((char *)&Tile->Wall, sizeof(Tile->Wall));
-			File.read((char *)&Tile->PVP, sizeof(Tile->PVP));
-
-			// Save off events that need to be indexed
-			if(Stats.Events[Tile->EventType].Indexed) {
-				IndexedEvents.push_back(_IndexedEvent(Tile, glm::ivec2(i, j)));
+			switch(ChunkType) {
+				// Map version
+				case 'V': {
+					int FileVersion;
+					File >> FileVersion;
+					if(FileVersion != MAP_VERSION)
+						throw std::runtime_error("Level version mismatch: ");
+				} break;
+				// Map size
+				case 'S': {
+					File >> Size.x >> Size.y;
+					FreeMap();
+					AllocateMap();
+					//TilesInitialized = true;
+				} break;
+				// No-zone textuer
+				case 'N': {
+					std::string TextureIdentifier;
+					File >> TextureIdentifier;
+					if(TextureIdentifier == "none")
+						NoZoneTexture = nullptr;
+					else
+						NoZoneTexture = Assets.Textures[TextureIdentifier];
+				} break;
+				// Atlas texture
+				case 'a': {
+					//File >> AtlasPath;
+				} break;
+				// Tile
+				case 'T': {
+					glm::ivec2 Coordinate;
+					File >> Coordinate.x >> Coordinate.y;
+					Tile = &Tiles[Coordinate.x][Coordinate.y];
+				} break;
+				case 't': {
+					std::string TextureIdentifier;
+					File >> TextureIdentifier;
+					if(TextureIdentifier == "none")
+						Tile->Texture = nullptr;
+					else
+						Tile->Texture = Assets.Textures[TextureIdentifier];
+				} break;
+				case 'z': {
+					File >> Tile->Zone;
+				} break;
+				case 'e': {
+					File >> Tile->EventType >> Tile->EventData;
+				} break;
+				case 'w': {
+					File >> Tile->Wall;
+				} break;
+				case 'p': {
+					File >> Tile->PVP;
+				} break;
 			}
 		}
+
+		File.close();
+	}
+	catch(std::exception &Error) {
+		std::cout << Error.what() << std::endl;
 	}
 
-	// Close file
-	File.close();
+	//if(!TilesInitialized)
+	//	Grid->InitTiles();
+
+	// Initialize 2d tile rendering
+	if(!ServerNetwork) {
+		/*
+		TileAtlas = new _Atlas(Assets.Textures[AtlasPath], glm::ivec2(64, 64), 1);
+
+		GLuint TileVertexCount = 4 * Grid->Size.x * Grid->Size.y;
+		GLuint TileFaceCount = 2 * Grid->Size.x * Grid->Size.y;
+
+		TileVertices = new glm::vec4[TileVertexCount];
+		TileFaces = new glm::u32vec3[TileFaceCount];
+
+		int FaceIndex = 0;
+		int VertexIndex = 0;
+		for(int j = 0; j < Grid->Size.y; j++) {
+			for(int i = 0; i < Grid->Size.x; i++) {
+				TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 1, VertexIndex + 0 };
+				TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 3, VertexIndex + 1 };
+				VertexIndex += 4;
+			}
+		}
+
+		glGenBuffers(1, &TileVertexBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
+
+		glGenBuffers(1, &TileElementBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
+		*/
+	}
+}
+
+// Saves the level to a file
+void _Map::Save(const std::string &String) {
+	if(String == "")
+		throw std::runtime_error("Empty file name");
+
+	Filename = String;
+
+	// Open file
+	gzofstream Output(Filename.c_str());
+	if(!Output)
+		throw std::runtime_error("Cannot create file: " + Filename);
+
+	// Header
+	Output << "V " << MAP_VERSION << '\n';
+	Output << "S " << Size.x << " " << Size.y << '\n';
+	if(NoZoneTexture)
+		Output << "N " << NoZoneTexture->Identifier << '\n';
+	else
+		Output << "N none\n";
+
+	// Write tile map
+	for(int j = 0; j < Size.y; j++) {
+		for(int i = 0; i < Size.x; i++) {
+			Output << "T " << i << " " << j << '\n';
+			if(Tiles[i][j].Texture)
+				Output << "t " << Tiles[i][j].Texture->Identifier << '\n';
+			else
+				Output << "t none\n";
+			Output << "z " << Tiles[i][j].Zone << '\n';
+			Output << "e " << Tiles[i][j].EventType << " " << Tiles[i][j].EventData << '\n';
+			Output << "w " << Tiles[i][j].Wall << '\n';
+			Output << "p " << Tiles[i][j].PVP << '\n';
+		}
+		Output << '\n';
+	}
+
+	Output.close();
 }
 
 // Builds an array of textures that are used in the map
@@ -459,6 +461,22 @@ _Player *_Map::GetClosestPlayer(const _Player *Player, float MaxDistanceSquared,
 	return ClosestPlayer;
 }
 
+// Find an event on the map, returns true on found
+bool _Map::FindEvent(int EventType, int EventData, glm::ivec2 &Position) {
+
+	for(int j = 0; j < Size.y; j++) {
+		for(int i = 0; i < Size.x; i++) {
+			if(Tiles[i][j].EventType == EventType && Tiles[i][j].EventData == EventData) {
+				Position.x = i;
+				Position.y = j;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 // Sends object position information to all the clients in the map
 void _Map::SendObjectUpdates() {
 
@@ -501,19 +519,6 @@ void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Netwo
 				ServerNetwork->SendPacketToPeer(Packet, Player->Peer, Type, Type == _Network::UNSEQUENCED);
 		}
 	}
-}
-
-// Finds an event that matches the criteria
-_IndexedEvent *_Map::GetIndexedEvent(int EventType, int EventData) {
-
-	for(size_t i = 0; i < IndexedEvents.size(); i++) {
-		_IndexedEvent *IndexedEvent = &IndexedEvents[i];
-		if(IndexedEvent->Tile->EventType == EventType && IndexedEvent->Tile->EventData == EventData) {
-			return IndexedEvent;
-		}
-	}
-
-	return nullptr;
 }
 
 // Get a valid position within the grid

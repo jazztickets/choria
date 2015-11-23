@@ -59,7 +59,7 @@ void _EditorState::Init() {
 	Map = nullptr;
 	if(Filename != "") {
 		Map = new _Map(Filename);
-		Map->LoadMap();
+		Map->Load();
 	}
 
 	// Set filters
@@ -320,7 +320,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				break;
 				case SDL_SCANCODE_S:
 					if(Map)
-						Map->SaveMap();
+						Map->Save(Map->Filename);
 				break;
 				case SDL_SCANCODE_L:
 					InitLoadMap();

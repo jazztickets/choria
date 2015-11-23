@@ -44,12 +44,6 @@ struct _Tile {
 	bool PVP;
 };
 
-struct _IndexedEvent {
-	_IndexedEvent(const _Tile *Tile, const glm::ivec2 &Position) : Tile(Tile), Position(Position) { }
-	const _Tile *Tile;
-	glm::ivec2 Position;
-};
-
 // Classes
 class _Map {
 
@@ -82,11 +76,9 @@ class _Map {
 		void RemoveObject(_Object *RemoveObject);
 		void GetClosePlayers(const _Player *Player, float DistanceSquared, std::list<_Player *> &Players);
 		_Player *GetClosestPlayer(const _Player *Player, float MaxDistanceSquared, int State);
+		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
 
 		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
-
-		// Events
-		_IndexedEvent *GetIndexedEvent(int EventType, int EventData);
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
@@ -97,8 +89,8 @@ class _Map {
 		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
 
 		// File IO
-		int SaveMap();
-		void LoadMap();
+		void Load();
+		void Save(const std::string &String);
 
 		// Map file
 		int ID;
@@ -110,11 +102,6 @@ class _Map {
 
 		// Textures
 		const _Texture *NoZoneTexture;
-		const _Texture *DefaultNoZoneTexture;
-		std::vector<const _Texture *> Textures;
-
-		// Events
-		std::vector<_IndexedEvent> IndexedEvents;
 
 		// Objects
 		double ObjectUpdateTime;

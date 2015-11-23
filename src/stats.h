@@ -58,7 +58,6 @@ struct _Zone {
 struct _Event {
 	std::string Name;
 	std::string ShortName;
-	bool Indexed;
 };
 
 struct _Vendor {

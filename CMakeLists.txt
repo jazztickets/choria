@@ -91,6 +91,7 @@ file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
 file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
 file(GLOB SRC_UI "src/ui/*.cpp" "src/ui/*.h")
 file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
+file(GLOB SRC_ZLIB "src/zlib/*.cc" "src/zlib/*.h")
 
 file(GLOB SRC_ALL
 	${SRC_MAIN}
@@ -101,6 +102,7 @@ file(GLOB SRC_ALL
 	${SRC_OBJECTS}
 	${SRC_UI}
 	${SRC_PNGLITE}
+	${SRC_ZLIB}
 )
 
 # add virtual folders

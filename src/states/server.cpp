@@ -1152,12 +1152,9 @@ void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int
 	if(OldMap && NewMap != OldMap)
 		OldMap->RemoveObject(Player);
 
-	// Get spawn position
-	_IndexedEvent *SpawnEvent = NewMap->GetIndexedEvent(EventType, EventData);
-	if(SpawnEvent) {
-		Player->Position = SpawnEvent->Position;
-		SendPlayerPosition(Player);
-	}
+	// Find spawn point in map
+	NewMap->FindEvent(EventType, EventData, Player->Position);
+	SendPlayerPosition(Player);
 
 	// Set state
 	Player->State = _Player::STATE_WALK;

@@ -29,7 +29,6 @@ const double GAME_DOUBLECLICKTIME = 0.5;
 
 const double NETWORK_UPDATEPERIOD = 0.2;
 
-const int32_t MAP_VERSION = 1;
 const int MAP_TILE_WIDTH = 32;
 const int MAP_TILE_HEIGHT = 32;
 
@@ -75,6 +74,8 @@ const int BATTLE_SLOT_SIZE = 64;
 const int CHAT_MESSAGES = 15;
 const int CHAT_MESSAGE_TIMEOUT = 10;
 const float CHAT_MESSAGE_FADETIME = 1.0f;
+
+const int MAP_VERSION = 1;
 
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
