@@ -6,3 +6,4 @@ textbox_account_username	element_menu_account	style_menu_textbox	hud_medium	0	-2
 textbox_account_password	element_menu_account	style_menu_textbox	hud_medium	0	-150	250	30	1	2	20
 textbox_trade_gold_theirs	element_trade_theirs	style_menu_textbox	hud_medium	50	44	130	30	0	2	10
 textbox_trade_gold_yours	element_trade_yours	style_menu_textbox	hud_medium	50	44	130	30	0	2	10
+textbox_chat	element_chat	style_menu_textbox	hud_small	3	-2	346	20	0	2	100

@@ -19,6 +19,7 @@
 
 // Libraries
 #include <ui/element.h>
+#include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 // Forward Declarations
@@ -44,6 +45,7 @@ class _TextBox : public _Element {
 		bool Focused;
 
 		const _Font *Font;
+		glm::vec2 TextOffset;
 		size_t MaxLength;
 
 		bool DrawCursor;

@@ -56,6 +56,10 @@ void _HUD::Init() {
 	TypingGold = false;
 	RewardItemSlot = -1;
 	ChatHistory.clear();
+	CloseChat();
+
+	_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
+	ChatTextBox->TextOffset = glm::vec2(5, 14);
 }
 
 // Shutdown
@@ -81,6 +85,10 @@ void _HUD::KeyEvent(const _KeyEvent &KeyEvent) {
 				ValidateTradeGold();
 		} break;
 	}
+
+	if(Chatting) {
+		Assets.Elements["element_chat"]->HandleKeyEvent(KeyEvent);
+	}
 }
 
 // Handle text input
@@ -93,6 +101,11 @@ void _HUD::TextEvent(const char *Text) {
 			if(OldValue != TextBox->Text)
 				ValidateTradeGold();
 		} break;
+	}
+
+	if(Chatting) {
+		_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
+		ChatTextBox->HandleTextEvent(Text);
 	}
 }
 
@@ -411,7 +424,13 @@ void _HUD::Update(double FrameTime) {
 		break;
 	}
 
+	if(Chatting) {
+		_Element *ChatElement = Assets.Elements["element_chat"];
+		ChatElement->Update(FrameTime, Input.GetMouse());
+	}
+
 	// Chat messages
+	/*
 	for(auto Iterator = ChatHistory.begin(); Iterator != ChatHistory.end();) {
 		_ChatMessage &Chat = (*Iterator);
 		Chat.TimeOut += FrameTime;
@@ -421,7 +440,7 @@ void _HUD::Update(double FrameTime) {
 		else {
 			++Iterator;
 		}
-	}
+	}*/
 }
 
 // Draws the HUD elements
@@ -516,6 +535,7 @@ void _HUD::Render() {
 	DrawCursorSkill();
 	DrawSkillTooltip();
 
+	// Draw chat messages
 	DrawChat();
 }
 
@@ -528,39 +548,35 @@ void _HUD::SetPlayer(_Player *Player) {
 
 // Starts the chat box
 void _HUD::ToggleChat() {
-/*
-	if(Chatting) {
-		std::string Message = std::string(ChatBox->getText());
-		Message.trim();
-		if(Message != "") {
 
-			// Add message to history
-			_ChatMessage Chat;
-			Chat.Message = Player->Name + std::string(": ") + Message;
-			ChatHistory.push_back(Chat);
-			printf("%s\n", Chat.Message.c_str());
+	if(Chatting) {
+		_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
+		if(ChatTextBox->Text != "") {
 
 			// Send message to server
 			_Buffer Packet;
 			Packet.Write<char>(_Network::CHAT_MESSAGE);
-			Packet.WriteString(Message.c_str());
+			Packet.WriteString(ChatTextBox->Text.c_str());
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
 
 		CloseChat();
 	}
 	else {
-		ChatBox = irrGUI->addEditBox(L"", Graphics.GetRect(25, 570, 200, 20), true, nullptr, ELEMENT_CHATBOX);
-		ChatBox->setOverrideFont(Graphics.GetFont(_Graphics::FONT_10));
-		ChatBox->setMax(NETWORKING_CHAT_SIZE);
-		irrGUI->setFocus(ChatBox);
+		_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
+		ChatTextBox->Focused = true;
+		ChatTextBox->Visible = true;
 		Chatting = true;
-	}*/
+	}
 }
 
 // Closes the chat window
 void _HUD::CloseChat() {
 	Chatting = false;
+
+	_TextBox *ChatTextBox = Assets.TextBoxes["textbox_chat"];
+	ChatTextBox->Visible = false;
+	ChatTextBox->Text = "";
 }
 
 // Initialize the inventory system
@@ -902,28 +918,29 @@ void _HUD::CloseWindows() {
 
 // Draws chat messages
 void _HUD::DrawChat() {
-	/*
-	if(ChatHistory.size() == 0)
-		return;
 
+	// Draw window
+	_Element *ChatElement = Assets.Elements["element_chat"];
+	ChatElement->Render();
+
+	// Set up UI position
+	int SpacingY = -20;
+	glm::ivec2 DrawPosition = glm::ivec2(ChatElement->Bounds.Start.x + 10, ChatElement->Bounds.End.y);
+	DrawPosition.y += SpacingY + -20;
+
+	// Draw messages
 	int Index = 0;
-	for(std::list<_ChatMessage>::reverse_iterator Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
+	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		_ChatMessage &Chat = (*Iterator);
 
-		int DrawX = 15;
-		int DrawY = 550 - Index * 20;
-
-		// Draw background
-		//core::dimension2du TextArea = TextFont->getDimension(core::stringw(Chat.Message.c_str()).c_str());
-		//Graphics.DrawBackground(_Graphics::IMAGE_BLACK, DrawX - 1, DrawY, TextArea.Width + 2, TextArea.Height, video::SColor(100, 255, 255, 255));
-
 		// Draw text
-		//Graphics.RenderText(Chat.Message.c_str(), DrawX, DrawY, _Graphics::ALIGN_LEFT, video::SColor(255, 255, 255, 255));
+		Assets.Fonts["hud_small"]->DrawText(Chat.Message.c_str(), DrawPosition);
+		DrawPosition.y += SpacingY;
+
 		Index++;
 		if(Index > 20)
 			break;
 	}
-	*/
 }
 
 // Draw the teleport sequence

@@ -27,6 +27,9 @@ _TextBox::_TextBox() :
 	MaxLength(0),
 	DrawCursor(true),
 	CursorTimer(0) {
+
+	//TODO fix
+	TextOffset = glm::vec2(5.0f, 22.0f);
 }
 
 // Destructor
@@ -91,5 +94,5 @@ void _TextBox::Render() const {
 
 	_Element::Render();
 
-	Font->DrawText(RenderText, glm::vec2(Bounds.Start) + glm::vec2(5.0f, 22.0f), glm::vec4(1.0f));
+	Font->DrawText(RenderText, glm::vec2(Bounds.Start) + TextOffset, glm::vec4(1.0f));
 }

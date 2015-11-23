@@ -70,11 +70,11 @@ struct _CursorSkill {
 };
 
 struct _ChatMessage {
-	_ChatMessage() : Message(""), TimeOut(0) { }
-	_ChatMessage(const std::string &Message) : Message(Message), TimeOut(0) { }
+	_ChatMessage() : Message(""), Player(nullptr), Time(0) { }
 
 	std::string Message;
-	double TimeOut;
+	const _Player *Player;
+	double Time;
 };
 
 // Classes
@@ -126,6 +126,7 @@ class _HUD {
 
 		// Teleport to town
 		void ToggleTeleport();
+		void CloseChat();
 
 	private:
 
@@ -133,7 +134,6 @@ class _HUD {
 		void CloseVendor();
 		void CloseTrader();
 		void CloseSkills();
-		void CloseChat();
 
 		void DrawChat();
 		void DrawInventory();

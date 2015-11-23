@@ -415,7 +415,6 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			}
 		} break;
 		case STATE_CHARACTERS: {
-
 			if(CharactersState == CHARACTERS_NONE) {
 				if(KeyEvent.Pressed) {
 					if(KeyEvent.Key == SDL_SCANCODE_ESCAPE)

@@ -186,14 +186,16 @@ void _ClientState::Update(double FrameTime) {
 			case STATE_CONNECTING:
 			break;
 			case STATE_WALK: {
-				if(Actions.GetState(_Actions::UP))
-					SendMoveCommand(_Player::MOVE_UP);
-				else if(Actions.GetState(_Actions::DOWN))
-					SendMoveCommand(_Player::MOVE_DOWN);
-				else if(Actions.GetState(_Actions::LEFT))
-					SendMoveCommand(_Player::MOVE_LEFT);
-				else if(Actions.GetState(_Actions::RIGHT))
-					SendMoveCommand(_Player::MOVE_RIGHT);
+				if(!HUD.IsChatting()) {
+					if(Actions.GetState(_Actions::UP))
+						SendMoveCommand(_Player::MOVE_UP);
+					else if(Actions.GetState(_Actions::DOWN))
+						SendMoveCommand(_Player::MOVE_DOWN);
+					else if(Actions.GetState(_Actions::LEFT))
+						SendMoveCommand(_Player::MOVE_LEFT);
+					else if(Actions.GetState(_Actions::RIGHT))
+						SendMoveCommand(_Player::MOVE_RIGHT);
+				}
 			} break;
 			case STATE_BATTLE: {
 
@@ -305,14 +307,20 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
-/*
 	// Start/stop chat
-	if(TKey == KEY_RETURN && !HUD.IsTypingGold()) {
+	if(Action == _Actions::CHAT && !HUD.IsTypingGold()) {
 		HUD.ToggleChat();
 		return true;
 	}
 
-*/
+	// Check for chat window
+	if(HUD.IsChatting()) {
+		if(Action == _Actions::MENU) {
+			HUD.CloseChat();
+		}
+
+		return true;
+	}
 
 	switch(State) {
 		case STATE_WALK:

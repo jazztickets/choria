@@ -928,17 +928,16 @@ void _ServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *Peer) {
 		return;
 
 	// Get message
-	char Message[256];
-	strncpy(Message, Packet->ReadString(), NETWORKING_CHAT_SIZE);
+	std::string Message = Packet->ReadString();
 	Message[NETWORKING_CHAT_SIZE] = 0;
 
 	// Send message to other players
 	_Buffer NewPacket;
 	NewPacket.Write<char>(_Network::CHAT_MESSAGE);
 	NewPacket.Write<char>(Player->NetworkID);
-	NewPacket.WriteString(Message);
+	NewPacket.WriteString(Message.c_str());
 
-	Map->SendPacketToPlayers(&NewPacket, Player);
+	Map->SendPacketToPlayers(&NewPacket);
 }
 
 // Handle a trade request
