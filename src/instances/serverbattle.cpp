@@ -131,6 +131,8 @@ void _ServerBattle::HandleInput(_Player *Player, int Command, int Target) {
 					break;
 				}
 			}
+
+			// All players are ready
 			if(Ready)
 				State = STATE_RESOLVETURN;
 		}
@@ -346,7 +348,7 @@ void _ServerBattle::CheckEnd() {
 				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
 				Players[i]->Deaths++;
 
-				ServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(GoldEarned) + " gold"), COLOR_RED);
+				ServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
 			}
 			else {
 				ExperienceEarned = OppositeSide->ExperienceGiven;

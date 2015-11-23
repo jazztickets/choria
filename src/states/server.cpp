@@ -663,7 +663,7 @@ void _ServerState::HandleBattleCommand(_Buffer *Packet, ENetPeer *Peer) {
 	if(!Player)
 		return;
 
-	_ServerBattle *Battle = static_cast<_ServerBattle *>(Player->Battle);
+	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
 	if(!Battle)
 		return;
 

@@ -239,7 +239,7 @@ void _ClientBattle::RenderBattleWin() {
 
 // Renders the battle lost screen
 void _ClientBattle::RenderBattleLose() {
-	Assets.Labels["label_battlelose_gold"]->Text = "You lost " + std::to_string(abs(TotalGold)) + " gold";
+	Assets.Labels["label_battlelose_gold"]->Text = "You lost " + std::to_string(std::abs(TotalGold)) + " gold";
 	Assets.Elements["element_battlelose"]->Render();
 }
 
