@@ -191,6 +191,7 @@ class _HUD {
 		_Element *TraderElement;
 		_Element *SkillsElement;
 		_Element *TeleportElement;
+		_Element *ChatElement;
 		_Cursor Cursor;
 		_Cursor Tooltip;
 

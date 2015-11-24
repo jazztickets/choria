@@ -73,6 +73,7 @@ void _HUD::Init() {
 	TraderElement = Assets.Elements["element_trader"];
 	SkillsElement = Assets.Elements["element_skills"];
 	TeleportElement = Assets.Elements["element_teleport"];
+	ChatElement = Assets.Elements["element_chat"];
 
 	ActionBarElement->SetVisible(true);
 	ButtonBarElement->SetVisible(true);
@@ -83,6 +84,7 @@ void _HUD::Init() {
 	TraderElement->SetVisible(false);
 	SkillsElement->SetVisible(false);
 	TeleportElement->SetVisible(false);
+	ChatElement->SetVisible(false);
 
 	Assets.Elements["element_hud"]->SetVisible(true);
 	Assets.Elements["element_hud_health"]->SetVisible(true);
@@ -537,7 +539,7 @@ void _HUD::ToggleChat() {
 		CloseChat();
 	}
 	else {
-		ChatTextBox->Visible = true;
+		ChatElement->SetVisible(true);
 		ChatTextBox->ResetCursor();
 		FocusedElement = ChatTextBox;
 	}
@@ -593,7 +595,7 @@ void _HUD::ToggleSkills() {
 
 // Open/close menu
 void _HUD::ToggleMenu() {
-
+	Menu.InitInGame();
 }
 
 // Return true if the chatbox is open
@@ -603,7 +605,7 @@ bool _HUD::IsChatting() {
 
 // Closes the chat window
 void _HUD::CloseChat() {
-	ChatTextBox->Visible = false;
+	ChatElement->SetVisible(false);
 	ChatTextBox->Text = "";
 }
 
