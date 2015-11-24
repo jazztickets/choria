@@ -56,8 +56,8 @@ class _Fighter : public _Object {
 		int GenerateDefense();
 		void UpdateTarget(const std::vector<_Fighter *> &Fighters);
 
-		virtual int GetExperienceGiven() const { return 0; }
-		virtual int GetGoldGiven() const { return 0; }
+		virtual int GetExperienceGiven() const { return ExperienceGiven; }
+		virtual int GetGoldGiven() const { return GoldGiven; }
 
 		virtual void UpdateExperience(int Value) { }
 		virtual int GetSkillLevel(int Slot) const { return 1; }
