@@ -37,7 +37,7 @@ struct _InventorySlot {
 };
 
 // Classes
-class _Player : public _Object, public _Fighter {
+class _Player : public _Fighter {
 
 	public:
 

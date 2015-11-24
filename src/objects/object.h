@@ -31,8 +31,6 @@ class _Object {
 	public:
 
 		enum Type {
-			NONE,
-			FIGHTER,
 			PLAYER,
 			MONSTER,
 		};

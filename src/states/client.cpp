@@ -671,7 +671,7 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 		// Get fighter type
 		int Type = Packet->ReadBit();
 		int Side = Packet->ReadBit();
-		if(Type == _Fighter::TYPE_PLAYER) {
+		if(Type == _Object::PLAYER) {
 
 			// Network ID
 			int NetworkID = Packet->Read<char>();
@@ -700,7 +700,7 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 			int MonsterID = Packet->Read<int32_t>();
 			_Fighter *Monster = new _Fighter(MonsterID);
 			Monster->ID = MonsterID;
-			Monster->FighterType = _Fighter::TYPE_MONSTER;
+			Monster->Type = _Object::MONSTER;
 			Stats.GetMonsterStats(MonsterID, Monster);
 
 			Player->Battle->AddFighter(Monster, Side);

@@ -30,8 +30,8 @@
 #include <sstream>
 
 // Constructor
-_Fighter::_Fighter(int FighterType)
-:	FighterType(FighterType),
+_Fighter::_Fighter(int Type)
+:	_Object(Type),
 	Name(""),
 	Level(0),
 	Health(0),
@@ -262,7 +262,7 @@ void _Fighter::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
 
 // Command input
 int _Fighter::GetCommand() {
-	 if(FighterType == TYPE_MONSTER)
+	 if(Type == MONSTER)
 		 return 0;
 	 else
 		 return Command;

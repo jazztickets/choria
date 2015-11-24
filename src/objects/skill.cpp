@@ -250,7 +250,7 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) 
 			ManaCost = GetManaCost(SkillLevel);
 		break;
 		case TYPE_USEPOTION:
-			if(Fighter->FighterType == _Fighter::TYPE_PLAYER) {
+			if(Fighter->Type == _Object::PLAYER) {
 				_Player *Player = (_Player *)Fighter;
 
 				// Use the potion
@@ -298,7 +298,7 @@ bool _Skill::CanUse(_Fighter *Fighter) const {
 
 	// Potions
 	if(Type == TYPE_USEPOTION) {
-		if(Fighter->FighterType == _Fighter::TYPE_MONSTER)
+		if(Fighter->Type == _Object::MONSTER)
 			return false;
 
 		_Player *Player = (_Player *)Fighter;

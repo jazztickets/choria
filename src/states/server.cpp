@@ -655,7 +655,7 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer) {
 						for(size_t i = 0; i < Monsters.size(); i++) {
 							_Fighter *Monster = new _Fighter(Monsters[i]);
 							Monster->ID = Monsters[i];
-							Monster->FighterType = _Fighter::TYPE_MONSTER;
+							Monster->Type = _Object::MONSTER;
 							Stats.GetMonsterStats(Monsters[i], Monster);
 							Battle->AddFighter(Monster, 1);
 						}

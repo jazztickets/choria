@@ -35,8 +35,7 @@
 
 // Constructor
 _Player::_Player()
-:	_Object(PLAYER),
-	_Fighter(TYPE_PLAYER),
+:	_Fighter(PLAYER),
 	AccountID(0),
 	CharacterID(0),
 	Database(nullptr),

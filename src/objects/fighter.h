@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/object.h>
 #include <texture.h>
 #include <vector>
 
@@ -31,16 +32,11 @@ class _Texture;
 struct _FighterResult;
 
 // Classes
-class _Fighter {
+class _Fighter : public _Object {
 
 	public:
 
-		enum FighterType {
-			TYPE_PLAYER,
-			TYPE_MONSTER,
-		};
-
-		_Fighter(int FighterType);
+		_Fighter(int Type);
 		virtual ~_Fighter();
 
 		// Render
@@ -70,9 +66,6 @@ class _Fighter {
 		void SetSkillBar(int Slot, const _Skill *Skill) { SkillBar[Slot] = Skill; }
 		const _Skill *GetSkillBar(int Slot);
 		int GetSkillBarID(int Slot);
-
-		// Objects
-		int FighterType;
 
 		// Action bar
 		const _Skill *SkillBar[FIGHTER_MAXSKILLS];
