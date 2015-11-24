@@ -9,7 +9,7 @@ element_hud			0	0	150	80	0	0	0
 element_hud_health			-300	-19	150	32	1	2	0
 element_hud_mana			300	-19	150	32	1	2	0
 element_hud_experience			0	-70	350	8	1	2	0
-element_buttonbar			0	0	125	25	2	0	0
+element_buttonbar			0	0	160	32	2	0	0
 element_actionbar			0	-10	384	48	1	2	0
 element_item_tooltip		style_hud_item_tooltip_bg	0	0	250	300	0	0	0
 element_inventory			-215	0	362	288	1	1	0

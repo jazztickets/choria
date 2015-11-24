@@ -75,6 +75,8 @@ const int CHAT_MESSAGES = 15;
 const int CHAT_MESSAGE_TIMEOUT = 10;
 const float CHAT_MESSAGE_FADETIME = 1.0f;
 
+const int HUD_KEYNAME_LENGTH = 3;
+
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
 const  int          DEFAULT_FULLSCREEN             =  0;
