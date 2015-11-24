@@ -19,6 +19,7 @@
 
 // Libraries
 #include <texture.h>
+#include <vector>
 
 // Constants
 const int FIGHTER_MAXSKILLS = 8;
@@ -53,10 +54,11 @@ class _Fighter {
 		void UpdateRegen(int &HealthUpdate, int &ManaUpdate);
 
 		// Battles
-		virtual int GetCommand() { return Command; }
+		int GetCommand();
 		int GetSide() const { return BattleSlot & 1; }
 		int GenerateDamage();
 		int GenerateDefense();
+		void UpdateTarget(const std::vector<_Fighter *> &Fighters);
 
 		virtual int GetExperienceGiven() const { return 0; }
 		virtual int GetGoldGiven() const { return 0; }
@@ -92,6 +94,12 @@ class _Fighter {
 		// Render
 		const _Texture *Portrait;
 		glm::ivec2 Offset;
+
+		// Monster
+		std::vector<_Fighter *> Opponents;
+		int ID;
+		int ExperienceGiven, GoldGiven;
+		int AI;
 
 	protected:
 

@@ -24,7 +24,7 @@
 #include <network/network.h>
 #include <random.h>
 #include <objects/player.h>
-#include <objects/monster.h>
+#include <objects/fighter.h>
 #include <states/server.h>
 
 // Constructor
@@ -97,10 +97,10 @@ void _ServerBattle::StartBattle() {
 			Player->StartBattle(this);
 		}
 		else {
-			_Monster *Monster = (_Monster *)Fighters[i];
+			_Fighter *Monster = (_Fighter *)Fighters[i];
 
 			// Monster ID
-			Packet.Write<int32_t>(Monster->GetID());
+			Packet.Write<int32_t>(Monster->ID);
 		}
 	}
 
@@ -162,7 +162,7 @@ void _ServerBattle::ResolveTurn() {
 	RoundTime = 0;
 
 	// Get a monster list
-	std::vector<_Monster *> Monsters;
+	std::vector<_Fighter *> Monsters;
 	GetMonsterList(Monsters);
 
 	// Update AI
@@ -303,7 +303,7 @@ void _ServerBattle::CheckEnd() {
 		if(!Side[0].Dead) {
 
 			// Get a monster list
-			std::vector<_Monster *> Monsters;
+			std::vector<_Fighter *> Monsters;
 			GetMonsterList(Monsters);
 
 			// Make sure there are monsters
@@ -312,7 +312,7 @@ void _ServerBattle::CheckEnd() {
 				// Generate monster drops in player vs monster situations
 				std::vector<int> MonsterDrops;
 				for(size_t i = 0; i < Monsters.size(); i++) {
-					Stats.GenerateMonsterDrops(Monsters[i]->GetID(), 1, MonsterDrops);
+					Stats.GenerateMonsterDrops(Monsters[i]->ID, 1, MonsterDrops);
 				}
 
 				// Get a list of players that receive items

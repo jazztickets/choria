@@ -35,7 +35,7 @@
 #include <instances/map.h>
 #include <instances/clientbattle.h>
 #include <objects/player.h>
-#include <objects/monster.h>
+#include <objects/fighter.h>
 #include <states/null.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -698,7 +698,10 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 
 			// Monster ID
 			int MonsterID = Packet->Read<int32_t>();
-			_Monster *Monster = new _Monster(MonsterID);
+			_Fighter *Monster = new _Fighter(MonsterID);
+			Monster->ID = MonsterID;
+			Monster->FighterType = _Fighter::TYPE_MONSTER;
+			Stats.GetMonsterStats(MonsterID, Monster);
 
 			Player->Battle->AddFighter(Monster, Side);
 		}

@@ -30,7 +30,7 @@
 #include <instances/map.h>
 #include <instances/serverbattle.h>
 #include <objects/player.h>
-#include <objects/monster.h>
+#include <objects/fighter.h>
 #include <iostream>
 #include <string>
 
@@ -653,7 +653,11 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer) {
 
 						// Add monsters
 						for(size_t i = 0; i < Monsters.size(); i++) {
-							Battle->AddFighter(new _Monster(Monsters[i]), 1);
+							_Fighter *Monster = new _Fighter(Monsters[i]);
+							Monster->ID = Monsters[i];
+							Monster->FighterType = _Fighter::TYPE_MONSTER;
+							Stats.GetMonsterStats(Monsters[i], Monster);
+							Battle->AddFighter(Monster, 1);
 						}
 
 						Battle->StartBattle();

@@ -19,7 +19,7 @@
 #include <database.h>
 #include <random.h>
 #include <assets.h>
-#include <objects/monster.h>
+#include <objects/fighter.h>
 
 _Stats Stats;
 
@@ -254,7 +254,7 @@ void _Stats::LoadTraders() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(int MonsterID, _Monster *Monster) {
+void _Stats::GetMonsterStats(int MonsterID, _Fighter *Monster) {
 
 	// Run query
 	char QueryString[256];

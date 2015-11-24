@@ -260,6 +260,14 @@ void _Fighter::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
 	}
 }
 
+// Command input
+int _Fighter::GetCommand() {
+	 if(FighterType == TYPE_MONSTER)
+		 return 0;
+	 else
+		 return Command;
+}
+
 // Generate damage
 int _Fighter::GenerateDamage() {
 	std::uniform_int_distribution<int> Distribution(MinDamage, MaxDamage);
@@ -286,4 +294,17 @@ const _Skill *_Fighter::GetSkillBar(int Slot) {
 		return nullptr;
 
 	return SkillBar[Slot];
+}
+
+// Updates the monster's target based on AI
+void _Fighter::UpdateTarget(const std::vector<_Fighter *> &Fighters) {
+
+	// Get count of fighters
+	int Count = Fighters.size();
+
+	// Get a random index
+	std::uniform_int_distribution<int> Distribution(0, Count-1);
+	int RandomIndex = Distribution(RandomGenerator);
+
+	Target = Fighters[RandomIndex]->BattleSlot;
 }

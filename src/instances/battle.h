@@ -24,7 +24,6 @@
 // Forward Declarations
 class _Fighter;
 class _Player;
-class _Monster;
 
 // Structures
 struct _FighterResult {
@@ -72,7 +71,7 @@ class _Battle {
 
 		void GetFighterList(int Side, std::vector<_Fighter *> &SideFighters);
 		void GetAliveFighterList(int Side, std::vector<_Fighter *> &AliveFighters);
-		void GetMonsterList(std::vector<_Monster *> &Monsters);
+		void GetMonsterList(std::vector<_Fighter *> &Monsters);
 		void GetPlayerList(int Side, std::vector<_Player *> &Players);
 		int GetFighterFromSlot(int Slot);
 

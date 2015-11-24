@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <instances/battle.h>
 #include <objects/fighter.h>
-#include <objects/monster.h>
+#include <objects/fighter.h>
 #include <objects/player.h>
 
 // Constructor
@@ -81,11 +81,11 @@ void _Battle::GetAliveFighterList(int Side, std::vector<_Fighter *> &AliveFighte
 }
 
 // Get a list of monster from the right side
-void _Battle::GetMonsterList(std::vector<_Monster *> &Monsters) {
+void _Battle::GetMonsterList(std::vector<_Fighter *> &Monsters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->FighterType == _Fighter::TYPE_MONSTER) {
-			Monsters.push_back((_Monster *)Fighters[i]);
+			Monsters.push_back((_Fighter *)Fighters[i]);
 		}
 	}
 }
