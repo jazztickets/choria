@@ -30,8 +30,8 @@
 #include <sstream>
 
 // Constructor
-_Fighter::_Fighter(int Type)
-:	Type(Type),
+_Fighter::_Fighter(int FighterType)
+:	FighterType(FighterType),
 	Name(""),
 	Level(0),
 	Health(0),

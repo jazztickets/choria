@@ -39,7 +39,7 @@ class _Fighter {
 			TYPE_MONSTER,
 		};
 
-		_Fighter(int Type);
+		_Fighter(int FighterType);
 		virtual ~_Fighter();
 
 		// Render
@@ -70,7 +70,7 @@ class _Fighter {
 		int GetSkillBarID(int Slot);
 
 		// Objects
-		int Type;
+		int FighterType;
 
 		// Action bar
 		const _Skill *SkillBar[FIGHTER_MAXSKILLS];

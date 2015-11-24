@@ -34,7 +34,7 @@ _Battle::~_Battle() {
 
 	// Delete monsters
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_MONSTER)
+		if(Fighters[i] && Fighters[i]->FighterType == _Fighter::TYPE_MONSTER)
 			delete Fighters[i];
 	}
 }
@@ -52,7 +52,7 @@ void _Battle::AddFighter(_Fighter *Fighter, int Side) {
 		RightFighterCount++;
 	}
 
-	if(Fighter->Type == _Fighter::TYPE_PLAYER)
+	if(Fighter->FighterType == _Fighter::TYPE_PLAYER)
 		PlayerCount++;
 	else
 		MonsterCount++;
@@ -84,7 +84,7 @@ void _Battle::GetAliveFighterList(int Side, std::vector<_Fighter *> &AliveFighte
 void _Battle::GetMonsterList(std::vector<_Monster *> &Monsters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->Type == _Fighter::TYPE_MONSTER) {
+		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->FighterType == _Fighter::TYPE_MONSTER) {
 			Monsters.push_back((_Monster *)Fighters[i]);
 		}
 	}
@@ -94,7 +94,7 @@ void _Battle::GetMonsterList(std::vector<_Monster *> &Monsters) {
 void _Battle::GetPlayerList(int Side, std::vector<_Player *> &Players) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
+		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->FighterType == _Fighter::TYPE_PLAYER) {
 			Players.push_back((_Player *)Fighters[i]);
 		}
 	}

@@ -44,7 +44,7 @@ int _ServerBattle::RemoveFighter(_Fighter *RemoveFighter) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
+		if(Fighters[i] && Fighters[i]->FighterType == _Fighter::TYPE_PLAYER) {
 			_Player *Player = (_Player *)Fighters[i];
 			if(Player == RemoveFighter) {
 				Player->StopBattle();
@@ -77,7 +77,7 @@ void _ServerBattle::StartBattle() {
 	for(int i = 0; i < FighterCount; i++) {
 
 		// Write fighter type
-		int Type = Fighters[i]->Type;
+		int Type = Fighters[i]->FighterType;
 		Packet.WriteBit(!!Type);
 		Packet.WriteBit(!!Fighters[i]->GetSide());
 
@@ -255,7 +255,7 @@ void _ServerBattle::CheckEnd() {
 		for(size_t j = 0; j < SideFighters.size(); j++) {
 
 			// Keep track of players
-			if(SideFighters[j]->Type == _Fighter::TYPE_PLAYER) {
+			if(SideFighters[j]->FighterType == _Fighter::TYPE_PLAYER) {
 				Players.push_back((_Player *)SideFighters[j]);
 				Side[i].PlayerCount++;
 			}
@@ -408,7 +408,7 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
+		if(Fighters[i] && Fighters[i]->FighterType == _Fighter::TYPE_PLAYER) {
 			_Player *Player = (_Player *)Fighters[i];
 			ServerNetwork->SendPacketToPeer(Packet, Player->Peer);
 		}
