@@ -38,38 +38,21 @@ struct _MouseEvent;
 
 // Structures
 struct _Cursor {
-	void Set(const _Item *Item, int Cost, int Count, int Slot) {
-		this->Item = Item;
-		this->Cost = Cost;
-		this->Count = Count;
-		this->Slot = Slot;
-	}
 	void Reset() {
-		this->Item = nullptr;
-		this->Count = 0;
-		this->Slot = -1;
-		this->Window = -1;
-		this->UserData = -1;
+		Item = nullptr;
+		Skill = nullptr;
+		Cost = 0;
+		Count = 0;
+		Slot = -1;
+		Window = -1;
 	}
 
 	bool IsEqual(int Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
 
 	const _Item *Item;
+	const _Skill *Skill;
 	int Cost;
 	int Count;
-	int Slot;
-	int Window;
-	int UserData;
-};
-
-struct _CursorSkill {
-	void Reset() {
-		Skill = nullptr;
-		Slot = -1;
-		Window = -1;
-	}
-
-	const _Skill *Skill;
 	int Slot;
 	int Window;
 };
@@ -200,8 +183,6 @@ class _HUD {
 		_TextBox *ChatTextBox;
 
 		// Skills
-		_CursorSkill CursorSkill;
-		_CursorSkill TooltipSkill;
 		bool SkillBarChanged;
 
 		// Traders

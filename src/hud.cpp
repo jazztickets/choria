@@ -50,8 +50,6 @@ void _HUD::Init() {
 	State = ClientState.GetState();
 	Tooltip.Reset();
 	Cursor.Reset();
-	TooltipSkill.Reset();
-	CursorSkill.Reset();
 	RewardItemSlot = -1;
 	ChatHistory.clear();
 
@@ -153,6 +151,12 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				break;
 			}
 		}
+		else if(Tooltip.Skill) {
+			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+				if(Tooltip.Skill && Player->GetSkillLevel(Tooltip.Skill->ID) > 0)
+					Cursor = Tooltip;
+			}
+		}
 /*
 		switch(*State) {
 			case _ClientState::STATE_TRADE:
@@ -169,21 +173,14 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					break;
 				}
 			break;
-			case _ClientState::STATE_SKILLS:
-				switch(MouseEvent.Button) {
-					case SDL_BUTTON_LEFT:
-						if(TooltipSkill.Skill && Player->GetSkillLevel(TooltipSkill.Skill->ID) > 0)
-							CursorSkill = TooltipSkill;
-					break;
-				}
-			break;
 		}
 		*/
 	}
-	// Release
-	else {
+	// Release left mouse button
+	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
-		if(ButtonBarElement->GetClickedElement() != nullptr) {
+		// Check button bar
+		if(ButtonBarElement->GetClickedElement()) {
 			if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_teleport") {
 				HUD.ToggleTeleport();
 			}
@@ -200,9 +197,30 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				HUD.ToggleMenu();
 			}
 		}
-
-		// Check for valid slots
-		if(Cursor.Item) {
+		// Check skill level up/down
+		else if(SkillsElement->GetClickedElement()) {
+			if(SkillsElement->GetClickedElement()->Identifier == "button_skills_plus") {
+				AdjustSkillLevel((intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, 1);
+			}
+			else if(SkillsElement->GetClickedElement()->Identifier == "button_skills_minus") {
+				AdjustSkillLevel((intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, -1);
+			}
+		}
+		// Accept trader button
+		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
+			_Buffer Packet;
+			Packet.Write<char>(_Network::TRADER_ACCEPT);
+			ClientNetwork->SendPacketToHost(&Packet);
+			Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
+			Player->CalculatePlayerStats();
+			CloseWindows();
+		}
+		// Cancel trader button
+		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
+			CloseWindows();
+		}
+		// Released an item
+		else if(Cursor.Item) {
 			switch(Cursor.Window) {
 
 				// Coming from inventory
@@ -239,16 +257,17 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				break;
 			}
 		}
-		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
-			_Buffer Packet;
-			Packet.Write<char>(_Network::TRADER_ACCEPT);
-			ClientNetwork->SendPacketToHost(&Packet);
-			Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
-			Player->CalculatePlayerStats();
-			CloseWindows();
-		}
-		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
-			CloseWindows();
+		// Released a skill
+		else if(Cursor.Skill) {
+			if(Tooltip.Window == WINDOW_ACTIONBAR) {
+				if(Cursor.Window == WINDOW_SKILLS)
+					SetSkillBar(Tooltip.Slot, -1, Cursor.Skill);
+				else if(Cursor.Window == WINDOW_ACTIONBAR)
+					SetSkillBar(Tooltip.Slot, Cursor.Slot, Cursor.Skill);
+			}
+			else if(Cursor.Window == WINDOW_ACTIONBAR && (Tooltip.Slot == -1 || Tooltip.Window == -1)) {
+				SetSkillBar(Cursor.Slot, -1, nullptr);
+			}
 		}
 
 		switch(*State) {
@@ -256,8 +275,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			case _ClientState::STATE_TRADE:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 					if(!Cursor.Item) {
-						_Element *TradeElement = Assets.Elements["element_trade"];
-						//TradeElement->HandleInput(MouseEvent.Pressed);
 
 						// Check for accept button
 						_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
@@ -272,37 +289,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							ClientNetwork->SendPacketToHost(&Packet);
 						}
 					}
-
-					Cursor.Reset();
-				}
-			break;
-			case _ClientState::STATE_SKILLS:
-				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-					_Element *SkillsElement = Assets.Elements["element_skills"];
-					if(SkillsElement->HitElement) {
-						if(SkillsElement->HitElement->Identifier == "button_skills_plus") {
-							AdjustSkillLevel((intptr_t)SkillsElement->HitElement->Parent->UserData, 1);
-						}
-						else if(SkillsElement->HitElement->Identifier == "button_skills_minus") {
-							AdjustSkillLevel((intptr_t)SkillsElement->HitElement->Parent->UserData, -1);
-						}
-					}
-
-					// Check for assigning skills to actionbar
-					if(CursorSkill.Skill) {
-
-						if(TooltipSkill.Window == WINDOW_ACTIONBAR) {
-							if(CursorSkill.Window == WINDOW_SKILLS)
-								SetSkillBar(TooltipSkill.Slot, -1, CursorSkill.Skill);
-							else if(CursorSkill.Window == WINDOW_ACTIONBAR)
-								SetSkillBar(TooltipSkill.Slot, CursorSkill.Slot, CursorSkill.Skill);
-						}
-						else if(CursorSkill.Window == WINDOW_ACTIONBAR && TooltipSkill.Slot == -1) {
-							SetSkillBar(CursorSkill.Slot, -1, nullptr);
-						}
-					}
-
-					CursorSkill.Reset();
 				}
 			break;
 		}
@@ -314,39 +300,42 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 // Updates the HUD
 void _HUD::Update(double FrameTime) {
 	Tooltip.Reset();
-	TooltipSkill.Reset();
 
 	_Element *HitElement = Graphics.Element->HitElement;
 	if(HitElement) {
-		Tooltip.UserData = (intptr_t)HitElement->UserData;
+		Tooltip.Slot = (intptr_t)HitElement->UserData;
 		if(HitElement->Parent)
 			Tooltip.Window = (intptr_t)HitElement->Parent->UserData;
 
 		switch(Tooltip.Window) {
 			case WINDOW_INVENTORY:
 			case WINDOW_TRADEYOURS: {
-				if(Tooltip.UserData >= 0) {
-					_InventorySlot *InventorySlot = &Player->Inventory[Tooltip.UserData];
+				if(Tooltip.Slot >= 0) {
+					_InventorySlot *InventorySlot = &Player->Inventory[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
-					Tooltip.Slot = Tooltip.UserData;
 				}
 			} break;
 			case WINDOW_VENDOR: {
-				if(Player->Vendor && (size_t)Tooltip.UserData < Player->Vendor->Items.size()) {
-					Tooltip.Item = Player->Vendor->Items[Tooltip.UserData];
+				if(Player->Vendor && (size_t)Tooltip.Slot < Player->Vendor->Items.size()) {
+					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
 					if(Tooltip.Item) {
 						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, 1, true);
 						Tooltip.Count = 1;
-						Tooltip.Slot = Tooltip.UserData;
 					}
 				}
 			} break;
 			case WINDOW_TRADER: {
-				if((size_t)Tooltip.UserData < Player->Trader->TraderItems.size())
-					Tooltip.Set(Player->Trader->TraderItems[Tooltip.UserData].Item, 0, 1, Tooltip.UserData);
-				else if(Tooltip.UserData == 8)
-					Tooltip.Set(Player->Trader->RewardItem, 0, 1, Tooltip.UserData);
+				if((size_t)Tooltip.Slot < Player->Trader->TraderItems.size())
+					Tooltip.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
+				else if(Tooltip.Slot == 8)
+					Tooltip.Item = Player->Trader->RewardItem;
+			} break;
+			case WINDOW_SKILLS: {
+				Tooltip.Skill = Stats.GetSkill(Tooltip.Slot);
+			} break;
+			case WINDOW_ACTIONBAR: {
+				Tooltip.Skill = Player->GetSkillBar(Tooltip.Slot);
 			} break;
 		}
 	}
@@ -384,47 +373,7 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.Window = WINDOW_TRADEYOURS;
 				}
 			}
-
-
 		} break;
-		case _ClientState::STATE_TRADER: {
-			_Element *TraderElement = Assets.Elements["element_trader"];
-			TraderElement->Update(FrameTime, Input.GetMouse());
-			_Element *HoverSlot = TraderElement->HitElement;
-			if(HoverSlot && HoverSlot != TraderElement) {
-				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
-				Tooltip.Window = WINDOW_TRADER;
-				if(InventoryIndex < Player->Trader->TraderItems.size())
-					Tooltip.Set(Player->Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
-				else if(InventoryIndex == 8)
-					Tooltip.Set(Player->Trader->RewardItem, 0, 1, InventoryIndex);
-			}
-		} break;
-		case _ClientState::STATE_SKILLS: {
-
-			// Check skill page
-			_Element *SkillsElement = Assets.Elements["element_skills"];
-			SkillsElement->Update(FrameTime, Input.GetMouse());
-			_Element *HoverSlot = SkillsElement->HitElement;
-			if(HoverSlot) {
-				TooltipSkill.Window = WINDOW_SKILLS;
-				TooltipSkill.Skill = Stats.GetSkill((intptr_t)HoverSlot->UserData);
-			}
-
-			// Check actionbar
-			if(!HoverSlot && *State == _ClientState::STATE_SKILLS) {
-				_Element *ActionbarElement = Assets.Elements["element_actionbar"];
-				ActionbarElement->Update(FrameTime, Input.GetMouse());
-				HoverSlot = ActionbarElement->HitElement;
-				if(HoverSlot) {
-					TooltipSkill.Window = WINDOW_SKILLBAR;
-					TooltipSkill.Slot = (intptr_t)HoverSlot->UserData;
-					TooltipSkill.Skill = Player->GetSkillBar(TooltipSkill.Slot);
-				}
-			}
-		} break;
-		default:
-		break;
 	}
 */
 	if(IsChatting()) {
@@ -443,8 +392,7 @@ void _HUD::Render() {
 	DrawChat(IsChatting());
 
 	Assets.Elements["element_hud"]->Render();
-	Assets.Elements["element_buttonbar"]->Render();
-	Assets.Elements["element_actionbar"]->Render();
+	ButtonBarElement->Render();
 	DrawActionBar();
 
 	std::stringstream Buffer;
@@ -727,7 +675,6 @@ void _HUD::CloseTrader() {
 
 // Delete memory used by skill page
 void _HUD::ClearSkills() {
-	_Element *SkillsElement = Assets.Elements["element_skills"];
 	std::vector<_Element *> &Children = SkillsElement->Children;
 	for(size_t i = 0; i < Children.size(); i++) {
 		if(Children[i]->Style && Children[i]->Style->UserCreated)
@@ -751,7 +698,6 @@ void _HUD::InitSkills() {
 	ClientState.SendBusy(true);
 
 	// Clear old children
-	_Element *SkillsElement = Assets.Elements["element_skills"];
 	ClearSkills();
 
 	glm::ivec2 Start(10, 25);
@@ -856,8 +802,8 @@ void _HUD::InitSkills() {
 	SkillsElement->SetVisible(true);
 
 	RefreshSkillButtons();
-	CursorSkill.Reset();
-	TooltipSkill.Reset();
+	Cursor.Reset();
+	Tooltip.Reset();
 	SkillBarChanged = false;
 }
 
@@ -868,7 +814,6 @@ void _HUD::RefreshSkillButtons() {
 	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
 
 	// Loop through buttons
-	_Element *SkillsElement = Assets.Elements["element_skills"];
 	for(auto &Element : SkillsElement->Children) {
 		if(Element->Identifier == "label_skills_level") {
 			int SkillID = (intptr_t)Element->UserData;
@@ -901,8 +846,8 @@ void _HUD::RefreshSkillButtons() {
 
 // Close the skills screen
 void _HUD::CloseSkills() {
-	CursorSkill.Reset();
-	TooltipSkill.Reset();
+	Cursor.Reset();
+	Tooltip.Reset();
 
 	// Send new skill bar to server
 	if(SkillBarChanged) {
@@ -1449,19 +1394,20 @@ void _HUD::DrawItemTooltip() {
 
 // Draws the skill under the cursor
 void _HUD::DrawCursorSkill() {
-	if(CursorSkill.Skill) {
+	if(Cursor.Skill) {
 		glm::ivec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, CursorSkill.Skill->Image);
+		Graphics.DrawCenteredImage(DrawPosition, Cursor.Skill->Image);
 	}
 }
 
 // Draws the skill tooltip window
 void _HUD::DrawSkillTooltip() {
-	const _Skill *Skill = TooltipSkill.Skill;
+	const _Skill *Skill = Tooltip.Skill;
 	if(Skill) {
 		_Element *TooltipElement = Assets.Elements["element_skills_tooltip"];
 		_Label *TooltipName = Assets.Labels["label_skills_tooltip_name"];
+		TooltipElement->SetVisible(true);
 
 		// Set label values
 		TooltipName->Text = Skill->Name;
@@ -1486,6 +1432,7 @@ void _HUD::DrawSkillTooltip() {
 
 		// Render tooltip
 		TooltipElement->Render();
+		TooltipElement->SetVisible(false);
 
 		// Set draw position to center of window
 		glm::ivec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
