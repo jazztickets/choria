@@ -22,6 +22,8 @@
 
 // Forward Declarations
 struct _Vendor;
+struct _Cursor;
+class _Player;
 
 // Classes
 class _Item {
@@ -39,6 +41,8 @@ class _Item {
 			TYPE_POTION,
 			TYPE_TRADE,
 		};
+
+		void DrawTooltip(const _Player *Player, const _Cursor &Tooltip) const;
 
 		bool IsHealthPotion() const { return Type == TYPE_POTION && HealthRestore > 0; }
 		bool IsManaPotion() const { return Type == TYPE_POTION && ManaRestore > 0; }

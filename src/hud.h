@@ -139,7 +139,6 @@ class _HUD {
 		void DrawSkills();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
-		void DrawItemTooltip();
 		void DrawCursorSkill();
 		void DrawSkillTooltip();
 		void DrawSkillDescription(const _Skill *Skill, int SkillLevel, glm::ivec2 &DrawPosition, int Width);
