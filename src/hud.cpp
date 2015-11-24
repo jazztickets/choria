@@ -116,69 +116,54 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 	// Press
 	if(MouseEvent.Pressed) {
 		if(Tooltip.Item) {
-			if(Input.ModKeyDown(KMOD_CTRL))
-				SplitStack(Tooltip.Slot, 1);
-			else
-				Cursor = Tooltip;
+			switch(Tooltip.Window) {
+				case WINDOW_INVENTORY:
+					// Pickup item
+					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+						if(Input.ModKeyDown(KMOD_CTRL))
+							SplitStack(Tooltip.Slot, 1);
+						else
+							Cursor = Tooltip;
+					}
+					// Use an item
+					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
+						if(Input.ModKeyDown(KMOD_SHIFT)) {
+							SellItem(&Tooltip, 1);
+						}
+						else if(Player->UseInventory(Tooltip.Slot)) {
+							_Buffer Packet;
+							Packet.Write<char>(_Network::INVENTORY_USE);
+							Packet.Write<char>(Tooltip.Slot);
+							ClientNetwork->SendPacketToHost(&Packet);
+						}
+					}
+				break;
+				case WINDOW_VENDOR:
+					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+						Cursor = Tooltip;
+					}
+					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
+						if(Tooltip.Window == WINDOW_VENDOR)
+							BuyItem(&Tooltip, -1);
+						else if(Tooltip.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
+							SellItem(&Tooltip, 1);
+					}
+				break;
+			}
 		}
 /*
 		switch(*State) {
-			case _ClientState::STATE_INVENTORY: {
-				switch(MouseEvent.Button) {
-					case SDL_BUTTON_LEFT:
-						if(TooltipItem.Item) {
-							if(Input.ModKeyDown(KMOD_CTRL))
-								SplitStack(TooltipItem.Slot, 1);
-							else
-								CursorItem = TooltipItem;
-						}
-					break;
-					case SDL_BUTTON_RIGHT:
-						if(Player->UseInventory(TooltipItem.Slot)) {
-							_Buffer Packet;
-							Packet.Write<char>(_Network::INVENTORY_USE);
-							Packet.Write<char>(TooltipItem.Slot);
-							ClientNetwork->SendPacketToHost(&Packet);
-						}
-					break;
-				}
-			} break;
-			case _ClientState::STATE_VENDOR: {
-				switch(MouseEvent.Button) {
-					case SDL_BUTTON_LEFT:
-						if(TooltipItem.Item) {
-							CursorItem = TooltipItem;
-						}
-					break;
-					case SDL_BUTTON_RIGHT:
-						if(TooltipItem.Item) {
-							if(TooltipItem.Window == WINDOW_VENDOR)
-								BuyItem(&TooltipItem, -1);
-							else if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
-								SellItem(&TooltipItem, 1);
-						}
-					break;
-				}
-			} break;
 			case _ClientState::STATE_TRADE:
 				switch(MouseEvent.Button) {
 					case SDL_BUTTON_LEFT:
-						if(TooltipItem.Item && TooltipItem.Window != WINDOW_TRADETHEIRS) {
-							if(TooltipItem.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
-								SplitStack(TooltipItem.Slot, 1);
+						if(Tooltip.Item && Tooltip.Window != WINDOW_TRADETHEIRS) {
+							if(Tooltip.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
+								SplitStack(Tooltip.Slot, 1);
 							else
-								CursorItem = TooltipItem;
+								CursorItem = Tooltip;
 						}
 
 						//Assets.Elements["element_trade"]->HandleInput(MouseEvent.Pressed);
-					break;
-				}
-			break;
-			case _ClientState::STATE_TRADER:
-				switch(MouseEvent.Button) {
-					case SDL_BUTTON_LEFT:
-						//_Element *TraderElement = Assets.Elements["element_trader"];
-						//TraderElement->HandleInput(MouseEvent.Pressed);
 					break;
 				}
 			break;
@@ -214,50 +199,61 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			}
 		}
 
+		// Check for valid slots
+		if(Cursor.Item) {
+			switch(Cursor.Window) {
+
+				// Coming from inventory
+				case WINDOW_TRADEYOURS:
+				case WINDOW_INVENTORY:
+					switch(Tooltip.Window) {
+
+						// Send inventory move packet
+						case WINDOW_TRADEYOURS:
+						case WINDOW_INVENTORY:
+
+							if(Tooltip.Slot >= 0 && Player->MoveInventory(Cursor.Slot, Tooltip.Slot)) {
+								_Buffer Packet;
+								Packet.Write<char>(_Network::INVENTORY_MOVE);
+								Packet.Write<char>(Cursor.Slot);
+								Packet.Write<char>(Tooltip.Slot);
+								ClientNetwork->SendPacketToHost(&Packet);
+
+								ResetAcceptButton();
+								Player->CalculatePlayerStats();
+							}
+						break;
+						// Sell an item
+						case WINDOW_VENDOR:
+							SellItem(&Cursor, 1);
+						break;
+					}
+				break;
+				// Buy an item
+				case WINDOW_VENDOR:
+					if(Tooltip.Window == WINDOW_INVENTORY) {
+						BuyItem(&Cursor, Tooltip.Slot);
+					}
+				break;
+			}
+		}
+		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
+			_Buffer Packet;
+			Packet.Write<char>(_Network::TRADER_ACCEPT);
+			ClientNetwork->SendPacketToHost(&Packet);
+			Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
+			Player->CalculatePlayerStats();
+			CloseWindows();
+		}
+		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
+			CloseWindows();
+		}
+
 		switch(*State) {
 			case _ClientState::STATE_VENDOR:
 			case _ClientState::STATE_TRADE:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-
-					// Check for valid slots
-					if(Cursor.Item) {
-						switch(Cursor.Window) {
-
-							// Coming from inventory
-							case WINDOW_TRADEYOURS:
-							case WINDOW_INVENTORY:
-								switch(Tooltip.Window) {
-
-									// Send inventory move packet
-									case WINDOW_TRADEYOURS:
-									case WINDOW_INVENTORY:
-
-										if(Tooltip.Slot >= 0 && Player->MoveInventory(Cursor.Slot, Tooltip.Slot)) {
-											_Buffer Packet;
-											Packet.Write<char>(_Network::INVENTORY_MOVE);
-											Packet.Write<char>(Cursor.Slot);
-											Packet.Write<char>(Tooltip.Slot);
-											ClientNetwork->SendPacketToHost(&Packet);
-
-											ResetAcceptButton();
-											Player->CalculatePlayerStats();
-										}
-									break;
-									// Sell an item
-									case WINDOW_VENDOR:
-										SellItem(&Cursor, 1);
-									break;
-								}
-							break;
-							// Buy an item
-							case WINDOW_VENDOR:
-								if(Tooltip.Window == WINDOW_INVENTORY) {
-									BuyItem(&Cursor, Tooltip.Slot);
-								}
-							break;
-						}
-					}
-					else {
+					if(!Cursor.Item) {
 						_Element *TradeElement = Assets.Elements["element_trade"];
 						//TradeElement->HandleInput(MouseEvent.Pressed);
 
@@ -278,24 +274,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					Cursor.Reset();
 				}
 			break;
-			case _ClientState::STATE_TRADER: {
-				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-					_Element *TraderElement = Assets.Elements["element_trader"];
-					//TraderElement->HandleInput(MouseEvent.Pressed);
-
-					if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
-						_Buffer Packet;
-						Packet.Write<char>(_Network::TRADER_ACCEPT);
-						ClientNetwork->SendPacketToHost(&Packet);
-						Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
-						Player->CalculatePlayerStats();
-						CloseWindows();
-					}
-					else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
-						CloseWindows();
-					}
-				}
-			} break;
 			case _ClientState::STATE_SKILLS:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 					_Element *SkillsElement = Assets.Elements["element_skills"];
@@ -326,6 +304,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				}
 			break;
 		}
+
+		Cursor.Reset();
 	}
 }
 
@@ -360,52 +340,20 @@ void _HUD::Update(double FrameTime) {
 					}
 				}
 			} break;
+			case WINDOW_TRADER: {
+				if((size_t)Tooltip.UserData < Player->Trader->TraderItems.size())
+					Tooltip.Set(Player->Trader->TraderItems[Tooltip.UserData].Item, 0, 1, Tooltip.UserData);
+				else if(Tooltip.UserData == 8)
+					Tooltip.Set(Player->Trader->RewardItem, 0, 1, Tooltip.UserData);
+			} break;
 		}
 	}
-/*
-	// Set tooltip item
-	if(HitElement && (intptr_t)HitElement->UserData >= 0) {
-		size_t InventoryIndex = (intptr_t)HitElement->UserData;
 
-		if(Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_TRADEYOURS) {
-			_InventorySlot *InventorySlot = &Player->Inventory[InventoryIndex];
-
-			// Get price if vendor is open
-			int Price = 0;
-			if(InventorySlot->Item)
-				Price = InventorySlot->Item->GetPrice(Player->Vendor, InventorySlot->Count, false);
-
-			Tooltip.Set(InventorySlot->Item, Price, InventorySlot->Count, InventoryIndex);
-		}
-		else if(Tooltip.Window == WINDOW_VENDOR) {
-			if(InventoryIndex < Player->Vendor->Items.size()) {
-				const _Item *Item = Player->Vendor->Items[InventoryIndex];
-				if(Item) {
-					int Price = Item->GetPrice(Player->Vendor, 1, true);
-					Tooltip.Set(Item, Price, 1, InventoryIndex);
-				}
-			}
-		}
-	}
-	*/
 /*
 	switch(*State) {
 		case _ClientState::STATE_VENDOR:
 		case _ClientState::STATE_INVENTORY:
 		case _ClientState::STATE_TRADE: {
-
-			InventoryElement->Update(FrameTime, Input.GetMouse());
-			_Element *HoverSlot = InventoryElement->HitElement;
-			if(HoverSlot)
-				TooltipItem.Window = WINDOW_INVENTORY;
-
-			// Get vendor hover item
-			_Element *VendorElement = Assets.Elements["element_vendor"];
-			if(!HoverSlot && *State == _ClientState::STATE_VENDOR) {
-				VendorElement->Update(FrameTime, Input.GetMouse());
-				HoverSlot = VendorElement->HitElement;
-				TooltipItem.Window = WINDOW_VENDOR;
-			}
 
 			// Get trade items
 			if(*State == _ClientState::STATE_TRADE) {
@@ -424,14 +372,14 @@ void _HUD::Update(double FrameTime) {
 
 					if(!HoverSlot) {
 						HoverSlot = TradeTheirsElement->HitElement;
-						TooltipItem.Window = WINDOW_TRADETHEIRS;
+						Tooltip.Window = WINDOW_TRADETHEIRS;
 					}
 				}
 
 				if(!HoverSlot) {
 					_Element *TradeYoursElement = Assets.Elements["element_trade_yours"];
 					HoverSlot = TradeYoursElement->HitElement;
-					TooltipItem.Window = WINDOW_TRADEYOURS;
+					Tooltip.Window = WINDOW_TRADEYOURS;
 				}
 			}
 
@@ -443,11 +391,11 @@ void _HUD::Update(double FrameTime) {
 			_Element *HoverSlot = TraderElement->HitElement;
 			if(HoverSlot && HoverSlot != TraderElement) {
 				size_t InventoryIndex = (intptr_t)HoverSlot->UserData;
-				TooltipItem.Window = WINDOW_TRADER;
+				Tooltip.Window = WINDOW_TRADER;
 				if(InventoryIndex < Player->Trader->TraderItems.size())
-					TooltipItem.Set(Player->Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
+					Tooltip.Set(Player->Trader->TraderItems[InventoryIndex].Item, 0, 1, InventoryIndex);
 				else if(InventoryIndex == 8)
-					TooltipItem.Set(Player->Trader->RewardItem, 0, 1, InventoryIndex);
+					Tooltip.Set(Player->Trader->RewardItem, 0, 1, InventoryIndex);
 			}
 		} break;
 		case _ClientState::STATE_SKILLS: {
@@ -753,6 +701,8 @@ void _HUD::InitTrader(int TraderID) {
 	else
 		Assets.Buttons["button_trader_accept"]->Enabled = true;
 
+	TraderElement->SetVisible(true);
+
 	*State = _ClientState::STATE_TRADER;
 }
 
@@ -762,6 +712,7 @@ void _HUD::CloseTrader() {
 		return;
 
 	Cursor.Reset();
+	TraderElement->SetVisible(false);
 
 	// Notify server
 	_Buffer Packet;
@@ -1680,7 +1631,7 @@ void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
 
 // Sells an item
 void _HUD::SellItem(_Cursor *Item, int Amount) {
-	if(!Item->Item)
+	if(!Item->Item || !Player->Vendor)
 		return;
 
 	// Update player
