@@ -31,6 +31,7 @@
 #include <objects/player.h>
 #include <ui/label.h>
 #include <ui/element.h>
+#include <algorithm>
 
 // Draw tooltip
 void _Skill::DrawTooltip(const _Player *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {

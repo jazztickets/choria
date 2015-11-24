@@ -28,6 +28,7 @@
 #include <assets.h>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 // Draw tooltip
 void _Item::DrawTooltip(const _Player *Player, const _Cursor &Tooltip) const {
