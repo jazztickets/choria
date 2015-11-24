@@ -79,7 +79,9 @@ void _Fighter::RenderBattle(bool ShowResults, float TimerPercent, _FighterResult
 	// Draw slot
 	Slot->Offset = Offset;
 	Slot->CalculateBounds();
+	Slot->SetVisible(true);
 	Slot->Render();
+	Slot->SetVisible(false);
 
 	// Get slot center
 	glm::ivec2 SlotPosition = (Slot->Bounds.Start + Slot->Bounds.End) / 2;

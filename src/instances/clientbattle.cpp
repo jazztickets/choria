@@ -34,17 +34,27 @@
 // Constructor
 _ClientBattle::_ClientBattle()
 :	_Battle(),
-	ResultTimer(0) {
+	ResultTimer(0),
+	BattleElement(nullptr),
+	BattleWinElement(nullptr),
+	BattleLoseElement(nullptr) {
 
 }
 
 // Destructor
 _ClientBattle::~_ClientBattle() {
+	BattleElement->SetVisible(false);
+	BattleWinElement->SetVisible(false);
+	BattleLoseElement->SetVisible(false);
 
 }
 
 // Starts the battle on the client
 void _ClientBattle::StartBattle(_Player *Player) {
+	BattleElement = Assets.Elements["element_battle"];
+	BattleWinElement = Assets.Elements["element_battlewin"];
+	BattleLoseElement = Assets.Elements["element_battlelose"];
+	BattleElement->SetVisible(true);
 
 	// Save the client's player
 	ClientPlayer = Player;
@@ -190,7 +200,7 @@ void _ClientBattle::Render() {
 
 // Renders the battle part
 void _ClientBattle::RenderBattle(bool ShowResults) {
-	Assets.Elements["element_battle"]->Render();
+	BattleElement->Render();
 
 	// Get a percent of the results timer
 	float TimerPercent = 0;
@@ -206,7 +216,7 @@ void _ClientBattle::RenderBattle(bool ShowResults) {
 
 // Renders the battle win screen
 void _ClientBattle::RenderBattleWin() {
-	_Element *BattleWinElement = Assets.Elements["element_battlewin"];
+	BattleWinElement->SetVisible(true);
 	Assets.Labels["label_battlewin_experience"]->Text = std::to_string(TotalExperience) + " experience";
 	Assets.Labels["label_battlewin_coins"]->Text = std::to_string(TotalGold) + " gold";
 	Assets.Labels["label_battlewin_chest"]->Visible = MonsterDrops.size() == 0;
@@ -240,7 +250,9 @@ void _ClientBattle::RenderBattleWin() {
 // Renders the battle lost screen
 void _ClientBattle::RenderBattleLose() {
 	Assets.Labels["label_battlelose_gold"]->Text = "You lost " + std::to_string(std::abs(TotalGold)) + " gold";
-	Assets.Elements["element_battlelose"]->Render();
+
+	BattleLoseElement->SetVisible(true);
+	BattleLoseElement->Render();
 }
 
 // Displays turn results from the server

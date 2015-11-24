@@ -24,6 +24,7 @@
 // Forward Declarations
 class _Item;
 class _Buffer;
+class _Element;
 
 // Classes
 class _ClientBattle : public _Battle {
@@ -84,6 +85,11 @@ class _ClientBattle : public _Battle {
 		double ResultTimer;
 		bool ShowResults;
 		int TotalExperience, TotalGold;
+
+		// UI
+		_Element *BattleElement;
+		_Element *BattleWinElement;
+		_Element *BattleLoseElement;
 
 		// Actions
 		_FighterResult Results[BATTLE_MAXFIGHTERS];
