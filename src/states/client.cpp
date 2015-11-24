@@ -751,20 +751,16 @@ void _ClientState::HandleHUD(_Buffer *Packet) {
 
 // Handles player position
 void _ClientState::HandlePlayerPosition(_Buffer *Packet) {
-	glm::ivec2 GridPosition;
-	GridPosition.x = Packet->Read<char>();
-	GridPosition.y = Packet->Read<char>();
-	Player->Position = GridPosition;
+	Player->Position.x = Packet->Read<char>();
+	Player->Position.y = Packet->Read<char>();
 }
 
 // Handles the start of an event
 void _ClientState::HandleEventStart(_Buffer *Packet) {
-	glm::ivec2 GridPosition;
 	int Type = Packet->Read<char>();
 	int Data = Packet->Read<int32_t>();
-	GridPosition.x = Packet->Read<char>();
-	GridPosition.y = Packet->Read<char>();
-	Player->Position = GridPosition;
+	Player->Position.x = Packet->Read<char>();
+	Player->Position.y = Packet->Read<char>();
 
 	switch(Type) {
 		case _Map::EVENT_VENDOR:

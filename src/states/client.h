@@ -23,7 +23,6 @@
 // Forward Declarations
 class _Database;
 class _ObjectManager;
-class _Instance;
 class _Buffer;
 class _Player;
 class _Map;
