@@ -95,9 +95,7 @@ class _ClientState : public _State {
 		// Objects
 		_Player *Player;
 		_Camera *Camera;
-		_Map *Map;
 		_ObjectManager *ObjectManager;
-		_Instance *Instances;
 
 };
 

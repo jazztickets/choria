@@ -22,7 +22,6 @@
 #include <input.h>
 #include <actions.h>
 #include <objectmanager.h>
-#include <instances.h>
 #include <stats.h>
 #include <hud.h>
 #include <buffer.h>
@@ -56,9 +55,7 @@ void _ClientState::Init() {
 
 	ClientTime = 0;
 	Player = nullptr;
-	Map = nullptr;
 
-	Instances = new _Instance();
 	ObjectManager = new _ObjectManager();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
@@ -80,7 +77,6 @@ void _ClientState::Close() {
 	HUD.Close();
 	delete Camera;
 	delete ObjectManager;
-	delete Instances;
 }
 
 // Handles a connection to the server
@@ -356,7 +352,7 @@ void _ClientState::Update(double FrameTime) {
 
 					// Done with the battle
 					if(Player->Battle->GetState() == _ClientBattle::STATE_DELETE) {
-						Instances->DeleteBattle(Player->Battle);
+						delete Player->Battle;
 						Player->Battle = nullptr;
 						Player->State = _Player::STATE_WALK;
 					}
@@ -376,16 +372,19 @@ void _ClientState::Update(double FrameTime) {
 }
 
 void _ClientState::Render(double BlendFactor) {
+	if(!Player || !Player->Map || !Camera)
+		return;
+
 	Graphics.Setup3D();
 	glm::vec3 LightPosition(glm::vec3(Player->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
 	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
 
 	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
 	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv"]->AmbientLight = Map->AmbientLight;
+	Assets.Programs["pos_uv"]->AmbientLight = Player->Map->AmbientLight;
 	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
 	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv_norm"]->AmbientLight = Map->AmbientLight;
+	Assets.Programs["pos_uv_norm"]->AmbientLight = Player->Map->AmbientLight;
 
 	// Setup the viewing matrix
 	Graphics.Setup3D();
@@ -400,7 +399,7 @@ void _ClientState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Draw map and objects
-	Map->Render(Camera);
+	Player->Map->Render(Camera);
 	ObjectManager->Render(Player);
 
 	Graphics.Setup2D();
@@ -475,62 +474,66 @@ void _ClientState::HandleYourCharacterInfo(_Buffer *Packet) {
 
 // Called when the player changes maps
 void _ClientState::HandleChangeMaps(_Buffer *Packet) {
+	if(!Player)
+		return;
 
 	// Load map
-	int NewMapID = Packet->Read<int32_t>();
-	_Map *NewMap = Instances->GetMap(NewMapID);
-	if(NewMap != Map) {
+	int MapID = Packet->Read<int32_t>();
 
-		// Clear out other objects
-		ObjectManager->DeletesObjectsExcept(Player);
+	// Delete old map and create new
+	if(!Player->Map || Player->Map->ID != MapID) {
 
-		Player->Map = NewMap;
-		Map = NewMap;
+		if(Player->Map)
+			delete Player->Map;
 
-		// Get player count for map
-		int PlayerCount = Packet->Read<int32_t>();
+		Player->Map = new _Map(MapID);
+	}
 
-		// Spawn players
-		int NetworkID;
-		_Player *NewPlayer;
-		glm::ivec2 GridPosition;
-		for(int i = 0; i < PlayerCount; i++) {
-			NetworkID = Packet->Read<char>();
-			GridPosition.x = Packet->Read<char>();
-			GridPosition.y = Packet->Read<char>();
-			int Type = Packet->Read<char>();
+	// Clear out other objects
+	ObjectManager->DeletesObjectsExcept(Player);
 
-			switch(Type) {
-				case _Object::PLAYER: {
-					std::string Name(Packet->ReadString());
-					int PortraitID = Packet->Read<char>();
-					int Invisible = Packet->ReadBit();
+	// Get player count for map
+	int PlayerCount = Packet->Read<int32_t>();
 
-					// Information for your player
-					if(NetworkID == Player->NetworkID) {
-						Player->Position = GridPosition;
-						Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
-					}
-					else {
+	// Spawn players
+	int NetworkID;
+	_Player *NewPlayer;
+	glm::ivec2 GridPosition;
+	for(int i = 0; i < PlayerCount; i++) {
+		NetworkID = Packet->Read<char>();
+		GridPosition.x = Packet->Read<char>();
+		GridPosition.y = Packet->Read<char>();
+		int Type = Packet->Read<char>();
 
-						NewPlayer = new _Player();
-						NewPlayer->Position = GridPosition;
-						NewPlayer->Name = Name;
-						NewPlayer->Map = Player->Map;
-						NewPlayer->SetPortraitID(PortraitID);
-						NewPlayer->InvisPower = Invisible;
-						ObjectManager->AddObjectWithNetworkID(NewPlayer, NetworkID);
-					}
+		switch(Type) {
+			case _Object::PLAYER: {
+				std::string Name(Packet->ReadString());
+				int PortraitID = Packet->Read<char>();
+				int Invisible = Packet->ReadBit();
+
+				// Information for your player
+				if(NetworkID == Player->NetworkID) {
+					Player->Position = GridPosition;
+					Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
 				}
-				break;
-			}
-		}
+				else {
 
+					NewPlayer = new _Player();
+					NewPlayer->Position = GridPosition;
+					NewPlayer->Name = Name;
+					NewPlayer->Map = Player->Map;
+					NewPlayer->SetPortraitID(PortraitID);
+					NewPlayer->InvisPower = Invisible;
+					ObjectManager->AddObjectWithNetworkID(NewPlayer, NetworkID);
+				}
+			}
+			break;
+		}
 	}
 
 	// Delete the battle
 	if(Player->Battle) {
-		Instances->DeleteBattle(Player->Battle);
+		delete Player->Battle;
 		Player->Battle = nullptr;
 	}
 
@@ -654,7 +657,7 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 		return;
 
 	// Create a new battle instance
-	Player->Battle = Instances->CreateClientBattle();
+	Player->Battle = new _ClientBattle();;
 
 	// Get fighter count
 	int FighterCount = Packet->Read<char>();

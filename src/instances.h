@@ -23,7 +23,6 @@
 // Forward Declarations
 class _Map;
 class _Battle;
-class _ClientBattle;
 class _ServerBattle;
 
 // Classes
@@ -40,7 +39,6 @@ class _Instance {
 		_Map *GetMap(int MapID);
 
 		// Battles
-		_ClientBattle *CreateClientBattle();
 		_ServerBattle *CreateServerBattle();
 		void DeleteBattle(_Battle *Battle);
 

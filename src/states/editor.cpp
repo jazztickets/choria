@@ -19,7 +19,6 @@
 #include <framework.h>
 #include <input.h>
 #include <graphics.h>
-#include <globals.h>
 #include <stats.h>
 #include <config.h>
 #include <constants.h>

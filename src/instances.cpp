@@ -16,9 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances.h>
-#include <globals.h>
 #include <instances/map.h>
-#include <instances/clientbattle.h>
 #include <instances/serverbattle.h>
 
 // Constructor
@@ -69,14 +67,6 @@ _Map *_Instance::GetMap(int MapID) {
 	Maps.push_back(NewMap);
 
 	return NewMap;
-}
-
-// Create a client battle instance
-_ClientBattle *_Instance::CreateClientBattle() {
-	_ClientBattle *NewBattle = new _ClientBattle();
-	Battles.push_back(NewBattle);
-
-	return NewBattle;
 }
 
 // Create a server battle instance

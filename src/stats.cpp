@@ -17,7 +17,6 @@
 *******************************************************************************/
 #include <stats.h>
 #include <database.h>
-#include <globals.h>
 #include <random.h>
 #include <assets.h>
 #include <objects/monster.h>
