@@ -24,6 +24,7 @@
 #include <program.h>
 #include <assets.h>
 #include <font.h>
+#include <packet.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
@@ -126,7 +127,7 @@ void _ClientBattle::HandleAction(int Action) {
 				State = STATE_DELETE;
 
 				_Buffer Packet;
-				Packet.Write<char>(_Network::BATTLE_CLIENTDONE);
+				Packet.Write<char>(Packet::BATTLE_CLIENTDONE);
 				ClientNetwork->SendPacketToHost(&Packet);
 			}
 		}
@@ -364,7 +365,7 @@ void _ClientBattle::SendSkill(int SkillSlot) {
 		return;
 
 	_Buffer Packet;
-	Packet.Write<char>(_Network::BATTLE_COMMAND);
+	Packet.Write<char>(Packet::BATTLE_COMMAND);
 	Packet.Write<char>(SkillSlot);
 	Packet.Write<char>(ClientPlayer->Target);
 

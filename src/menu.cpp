@@ -25,6 +25,7 @@
 #include <framework.h>
 #include <buffer.h>
 #include <stats.h>
+#include <packet.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/button.h>
@@ -237,7 +238,7 @@ void _Menu::CreateCharacter() {
 
 	// Send information
 	_Buffer Packet;
-	Packet.Write<char>(_Network::CREATECHARACTER_INFO);
+	Packet.Write<char>(Packet::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<int32_t>(PortraitID);
 	ClientNetwork->SendPacketToHost(&Packet);
@@ -300,7 +301,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 
 	// Send information
 	_Buffer Packet;
-	Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
+	Packet.Write<char>(Packet::ACCOUNT_LOGININFO);
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
@@ -312,7 +313,7 @@ void _Menu::RequestCharacterList() {
 
 	// Request character list
 	_Buffer Packet;
-	Packet.Write<char>(_Network::CHARACTERS_REQUEST);
+	Packet.Write<char>(Packet::CHARACTERS_REQUEST);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
 
@@ -551,7 +552,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						int SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
 							_Buffer Packet;
-							Packet.Write<char>(_Network::CHARACTERS_DELETE);
+							Packet.Write<char>(Packet::CHARACTERS_DELETE);
 							Packet.Write<char>(SelectedSlot);
 							ClientNetwork->SendPacketToHost(&Packet);
 						}
@@ -775,7 +776,7 @@ void _Menu::HandleDisconnect(ENetEvent *Event) {
 void _Menu::HandlePacket(ENetEvent *Event) {
 	_Buffer Packet((char *)Event->packet->data, Event->packet->dataLength);
 	switch(Packet.Read<char>()) {
-		case _Network::VERSION: {
+		case Packet::VERSION: {
 			std::string Version(Packet.ReadString());
 			//Framework.Log << "_Network::VERSION=" << Version << std::endl;
 			if(Version != GAME_VERSION) {
@@ -783,11 +784,11 @@ void _Menu::HandlePacket(ENetEvent *Event) {
 				//ChangeState(STATE_MAIN);
 			}
 		} break;
-		case _Network::ACCOUNT_SUCCESS: {
+		case Packet::ACCOUNT_SUCCESS: {
 			//Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
 			RequestCharacterList();
 		} break;
-		case _Network::CHARACTERS_LIST: {
+		case Packet::CHARACTERS_LIST: {
 			//Framework.Log << "_Network::CHARACTERS_LIST" << std::endl;
 
 			// Get count
@@ -852,23 +853,23 @@ void _Menu::HandlePacket(ENetEvent *Event) {
 			// Set state
 			InitCharacters();
 		} break;
-		case _Network::CREATECHARACTER_SUCCESS: {
+		case Packet::CREATECHARACTER_SUCCESS: {
 
 			// Close new character screen
 			RequestCharacterList();
 		} break;
-		case _Network::CREATECHARACTER_INUSE: {
+		case Packet::CREATECHARACTER_INUSE: {
 			_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
 			Label->Text = "Name in use";
 			Label->Color = COLOR_RED;
 		} break;
-		case _Network::ACCOUNT_EXISTS: {
+		case Packet::ACCOUNT_EXISTS: {
 			SetAccountMessage("Account already exists");
 		} break;
-		case _Network::ACCOUNT_NOTFOUND: {
+		case Packet::ACCOUNT_NOTFOUND: {
 			SetAccountMessage("Username/password wrong");
 		} break;
-		case _Network::ACCOUNT_ALREADYLOGGEDIN: {
+		case Packet::ACCOUNT_ALREADYLOGGEDIN: {
 			SetAccountMessage("Account in use");
 		} break;
 	}
@@ -885,7 +886,7 @@ void _Menu::Connect(const std::string &Address, uint16_t Port, bool Fake) {
 		// Send fake account information
 		{
 			_Buffer Packet;
-			Packet.Write<char>(_Network::ACCOUNT_LOGININFO);
+			Packet.Write<char>(Packet::ACCOUNT_LOGININFO);
 			Packet.WriteBit(0);
 			Packet.WriteString("singleplayer");
 			Packet.WriteString("singleplayer");

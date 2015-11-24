@@ -20,6 +20,7 @@
 #include <stats.h>
 #include <constants.h>
 #include <buffer.h>
+#include <packet.h>
 #include <network/network.h>
 #include <random.h>
 #include <instances.h>
@@ -67,7 +68,7 @@ void _ServerBattle::StartBattle() {
 
 	// Build packet
 	_Buffer Packet;
-	Packet.Write<char>(_Network::WORLD_STARTBATTLE);
+	Packet.Write<char>(Packet::WORLD_STARTBATTLE);
 
 	// Write fighter count
 	int FighterCount = Fighters.size();
@@ -212,7 +213,7 @@ void _ServerBattle::ResolveTurn() {
 
 	// Build packet for results
 	_Buffer Packet;
-	Packet.Write<char>(_Network::BATTLE_TURNRESULTS);
+	Packet.Write<char>(Packet::BATTLE_TURNRESULTS);
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
@@ -374,7 +375,7 @@ void _ServerBattle::CheckEnd() {
 
 			// Write results
 			_Buffer Packet;
-			Packet.Write<char>(_Network::BATTLE_END);
+			Packet.Write<char>(Packet::BATTLE_END);
 			Packet.WriteBit(Side[0].Dead);
 			Packet.WriteBit(Side[1].Dead);
 			Packet.Write<char>(OppositeSide->PlayerCount);
@@ -432,7 +433,7 @@ void _ServerBattle::SendSkillToPlayers(_Player *Player) {
 
 	// Build packet
 	_Buffer Packet;
-	Packet.Write<char>(_Network::BATTLE_COMMAND);
+	Packet.Write<char>(Packet::BATTLE_COMMAND);
 	Packet.Write<char>(Player->BattleSlot);
 	Packet.Write<char>(SkillID);
 

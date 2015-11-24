@@ -29,14 +29,15 @@
 #include <font.h>
 #include <program.h>
 #include <camera.h>
-#include <fstream>
-#include <limits>
+#include <packet.h>
 #include <glm/vec3.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <zlib/zfstream.h>
 #include <iostream>
+#include <fstream>
+#include <limits>
 
 // Constructor for the map editor: new map
 _Map::_Map(const std::string &Filename, const glm::ivec2 &Size) {
@@ -385,7 +386,7 @@ void _Map::AddObject(_Object *Object) {
 
 	// Create packet for the new object
 	_Buffer Packet;
-	Packet.Write<char>(_Network::WORLD_CREATEOBJECT);
+	Packet.Write<char>(Packet::WORLD_CREATEOBJECT);
 	Packet.Write<char>(Object->NetworkID);
 	Packet.Write<char>(Object->Position.x);
 	Packet.Write<char>(Object->Position.y);
@@ -422,7 +423,7 @@ void _Map::RemoveObject(_Object *RemoveObject) {
 
 	// Create delete packet
 	_Buffer Packet;
-	Packet.Write<char>(_Network::WORLD_DELETEOBJECT);
+	Packet.Write<char>(Packet::WORLD_DELETEOBJECT);
 	Packet.Write<char>(RemoveObject->NetworkID);
 
 	// Send to everyone
@@ -487,7 +488,7 @@ bool _Map::FindEvent(int EventType, int EventData, glm::ivec2 &Position) {
 void _Map::SendObjectUpdates() {
 
 	_Buffer Packet;
-	Packet.Write<char>(_Network::WORLD_OBJECTUPDATES);
+	Packet.Write<char>(Packet::WORLD_OBJECTUPDATES);
 
 	// Get object count
 	int ObjectCount = Objects.size();

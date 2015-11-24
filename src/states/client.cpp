@@ -30,6 +30,7 @@
 #include <camera.h>
 #include <program.h>
 #include <menu.h>
+#include <packet.h>
 #include <ui/element.h>
 #include <network/network.h>
 #include <instances/map.h>
@@ -67,7 +68,7 @@ void _ClientState::Init() {
 
 	// Send character slot to play
 	_Buffer Packet;
-	Packet.Write<char>(_Network::CHARACTERS_PLAY);
+	Packet.Write<char>(Packet::CHARACTERS_PLAY);
 	Packet.Write<char>(CharacterSlot);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
@@ -100,64 +101,64 @@ void _ClientState::HandlePacket(ENetEvent *Event) {
 	_Buffer Packet((char *)Event->packet->data, Event->packet->dataLength);
 	int PacketType = Packet.Read<char>();
 	switch(PacketType) {
-		case _Network::WORLD_YOURCHARACTERINFO:
+		case Packet::WORLD_YOURCHARACTERINFO:
 			HandleYourCharacterInfo(&Packet);
 		break;
-		case _Network::WORLD_CHANGEMAPS:
+		case Packet::WORLD_CHANGEMAPS:
 			HandleChangeMaps(&Packet);
 		break;
-		case _Network::WORLD_CREATEOBJECT:
+		case Packet::WORLD_CREATEOBJECT:
 			HandleCreateObject(&Packet);
 		break;
-		case _Network::WORLD_DELETEOBJECT:
+		case Packet::WORLD_DELETEOBJECT:
 			HandleDeleteObject(&Packet);
 		break;
-		case _Network::WORLD_OBJECTUPDATES:
+		case Packet::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(&Packet);
 		break;
-		case _Network::WORLD_STARTBATTLE:
+		case Packet::WORLD_STARTBATTLE:
 			HandleStartBattle(&Packet);
 		break;
-		case _Network::WORLD_HUD:
+		case Packet::WORLD_HUD:
 			HandleHUD(&Packet);
 		break;
-		case _Network::WORLD_POSITION:
+		case Packet::WORLD_POSITION:
 			HandlePlayerPosition(&Packet);
 		break;
-		case _Network::BATTLE_TURNRESULTS:
+		case Packet::BATTLE_TURNRESULTS:
 			HandleBattleTurnResults(&Packet);
 		break;
-		case _Network::BATTLE_END:
+		case Packet::BATTLE_END:
 			HandleBattleEnd(&Packet);
 		break;
-		case _Network::BATTLE_COMMAND:
+		case Packet::BATTLE_COMMAND:
 			HandleBattleCommand(&Packet);
 		break;
-		case _Network::EVENT_START:
+		case Packet::EVENT_START:
 			HandleEventStart(&Packet);
 		break;
-		case _Network::INVENTORY_USE:
+		case Packet::INVENTORY_USE:
 			HandleInventoryUse(&Packet);
 		break;
-		case _Network::CHAT_MESSAGE:
+		case Packet::CHAT_MESSAGE:
 			HandleChatMessage(&Packet);
 		break;
-		case _Network::TRADE_REQUEST:
+		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(&Packet);
 		break;
-		case _Network::TRADE_CANCEL:
+		case Packet::TRADE_CANCEL:
 			HandleTradeCancel(&Packet);
 		break;
-		case _Network::TRADE_ITEM:
+		case Packet::TRADE_ITEM:
 			HandleTradeItem(&Packet);
 		break;
-		case _Network::TRADE_GOLD:
+		case Packet::TRADE_GOLD:
 			HandleTradeGold(&Packet);
 		break;
-		case _Network::TRADE_ACCEPT:
+		case Packet::TRADE_ACCEPT:
 			HandleTradeAccept(&Packet);
 		break;
-		case _Network::TRADE_EXCHANGE:
+		case Packet::TRADE_EXCHANGE:
 			HandleTradeExchange(&Packet);
 		break;
 	}
@@ -420,7 +421,7 @@ void _ClientState::Render(double BlendFactor) {
 // Send the busy signal to server
 void _ClientState::SendBusy(bool Value) {
 	_Buffer Packet;
-	Packet.Write<char>(_Network::WORLD_BUSY);
+	Packet.Write<char>(Packet::WORLD_BUSY);
 	Packet.Write<char>(Value);
 	ClientNetwork->SendPacketToHost(&Packet);
 }
@@ -911,7 +912,7 @@ void _ClientState::SendMoveCommand(int Direction) {
 		// Move player locally
 		if(Player->MovePlayer(Direction)) {
 			_Buffer Packet;
-			Packet.Write<char>(_Network::WORLD_MOVECOMMAND);
+			Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
 			Packet.Write<char>(Direction);
 			ClientNetwork->SendPacketToHost(&Packet);
 		}
@@ -923,7 +924,7 @@ void _ClientState::SendAttackPlayer() {
 	if(Player->CanAttackPlayer()) {
 		Player->ResetAttackPlayerTime();
 		_Buffer Packet;
-		Packet.Write<char>(_Network::WORLD_ATTACKPLAYER);
+		Packet.Write<char>(Packet::WORLD_ATTACKPLAYER);
 		ClientNetwork->SendPacketToHost(&Packet);
 	}
 }

@@ -24,6 +24,7 @@
 #include <graphics.h>
 #include <input.h>
 #include <assets.h>
+#include <packet.h>
 #include <instances/battle.h>
 #include <network/network.h>
 #include <objects/fighter.h>
@@ -263,7 +264,7 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) 
 
 					// Write packet
 					_Buffer Packet;
-					Packet.Write<char>(_Network::INVENTORY_USE);
+					Packet.Write<char>(Packet::INVENTORY_USE);
 					Packet.Write<char>(Slot);
 					ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 				}
