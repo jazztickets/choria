@@ -155,7 +155,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				break;
 			}
 		}
-		else if(Tooltip.Skill) {
+		else if(Tooltip.Skill && SkillsElement->Visible) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 				if(Tooltip.Skill && Player->GetSkillLevel(Tooltip.Skill->ID) > 0)
 					Cursor = Tooltip;
@@ -1378,6 +1378,7 @@ void _HUD::DrawCursorSkill() {
 // Draws the skill tooltip window
 void _HUD::DrawSkillTooltip() {
 	const _Skill *Skill = Tooltip.Skill;
+	bool DrawNextLevel = SkillsElement->Visible;
 	if(Skill) {
 		_Element *TooltipElement = Assets.Elements["element_skills_tooltip"];
 		_Label *TooltipName = Assets.Labels["label_skills_tooltip_name"];
@@ -1421,7 +1422,7 @@ void _HUD::DrawSkillTooltip() {
 		DrawSkillDescription(Skill, SkillLevel, DrawPosition, Size.x);
 
 		// Get next level description
-		if(SkillLevel > 0) {
+		if(DrawNextLevel && SkillLevel > 0) {
 			DrawPosition.y += 25;
 			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += 25;
