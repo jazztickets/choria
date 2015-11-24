@@ -19,7 +19,6 @@
 #include <enet/enet.h>
 #include <globals.h>
 #include <graphics.h>
-#include <instances.h>
 #include <random.h>
 #include <stats.h>
 #include <database.h>

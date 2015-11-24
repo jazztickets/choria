@@ -23,7 +23,6 @@
 #include <packet.h>
 #include <network/network.h>
 #include <random.h>
-#include <instances.h>
 #include <objects/player.h>
 #include <objects/monster.h>
 #include <states/server.h>

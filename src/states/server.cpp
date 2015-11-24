@@ -18,7 +18,6 @@
 #include <states/server.h>
 #include <database.h>
 #include <objectmanager.h>
-#include <instances.h>
 #include <stats.h>
 #include <globals.h>
 #include <config.h>
@@ -81,7 +80,6 @@ void _ServerState::Init() {
 		CreateDefaultDatabase();
 	}
 
-	Instances = new _Instance();
 	ObjectManager = new _ObjectManager();
 	ObjectManager->SetObjectDeletedCallback(ObjectDeleted);
 }
@@ -105,7 +103,6 @@ void _ServerState::Close() {
 
 	delete Database;
 	delete ObjectManager;
-	delete Instances;
 }
 
 // Start run the command thread
@@ -301,7 +298,15 @@ void _ServerState::HandlePacket(ENetEvent *Event) {
 void _ServerState::Update(double FrameTime) {
 	ServerTime += FrameTime;
 
-	Instances->Update(FrameTime);
+	// Update maps
+	for(auto &Map : Maps)
+		Map->Update(FrameTime);
+
+	// Update battles
+	for(auto &Battle : Battles)
+		Battle->Update(FrameTime);
+
+	// Update objects
 	ObjectManager->Update(FrameTime);
 
 	if(StopRequested) {
@@ -621,7 +626,8 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer) {
 					if(MonsterCount > 0) {
 
 						// Create a new battle instance
-						_ServerBattle *Battle = Instances->CreateServerBattle();
+						_ServerBattle *Battle = new _ServerBattle();
+						Battles.push_back(Battle);
 
 						// Add players
 						Battle->AddFighter(Player, 0);
@@ -907,7 +913,9 @@ void _ServerState::HandleAttackPlayer(_Buffer *Packet, ENetPeer *Peer) {
 		for(std::list<_Player *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 			_Player *VictimPlayer = *Iterator;
 			if(VictimPlayer->State != _Player::STATE_BATTLE) {
-				_ServerBattle *Battle = Instances->CreateServerBattle();
+				_ServerBattle *Battle = new _ServerBattle();
+				Battles.push_back(Battle);
+
 				Battle->AddFighter(Player, 1);
 				Battle->AddFighter(VictimPlayer, 0);
 				Battle->StartBattle();
@@ -1146,7 +1154,7 @@ void _ServerState::SendMessage(_Player *Player, const std::string &Message, cons
 void _ServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData) {
 
 	// Get new map
-	_Map *NewMap = Instances->GetMap(NewMapID);
+	_Map *NewMap = GetMap(NewMapID);
 
 	// Remove old player if map has changed
 	_Map *OldMap = Player->Map;
@@ -1303,8 +1311,17 @@ void _ServerState::RemovePlayerFromBattle(_Player *Player) {
 		return;
 
 	// Delete instance
-	if(Battle->RemoveFighter(Player) == 0)
-		Instances->DeleteBattle(Battle);
+	if(Battle->RemoveFighter(Player) == 0) {
+
+		// Loop through loaded battles
+		for(auto BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
+			if(*BattleIterator == Battle) {
+				Battles.erase(BattleIterator);
+				delete Battle;
+				return;
+			}
+		}
+	}
 }
 
 // Deletes an object on the server and broadcasts it to the clients
@@ -1328,4 +1345,22 @@ void _ServerState::PlayerTeleport(_Player *Player) {
 	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 	SendHUD(Player);
 	Player->Save();
+}
+
+// Gets a map from the manager. Loads the level if it doesn't exist
+_Map *_ServerState::GetMap(int MapID) {
+
+	// Loop through loaded maps
+	for(auto &Map : Maps) {
+
+		// Check id
+		if(Map->ID == MapID)
+			return Map;
+	}
+
+	// Not found, so create it
+	_Map *NewMap = new _Map(MapID);
+	Maps.push_back(NewMap);
+
+	return NewMap;
 }

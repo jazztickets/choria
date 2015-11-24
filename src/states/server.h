@@ -20,16 +20,17 @@
 // Libraries
 #include <state.h>
 #include <thread>
+#include <list>
 #include <glm/vec4.hpp>
 
 // Forward Declarations
 class _Database;
 class _ObjectManager;
-class _Instance;
+class _Map;
+class _Battle;
 class _Buffer;
 class _Object;
 class _Player;
-class _ServerBattle;
 
 // Classes
 class _ServerState : public _State {
@@ -52,6 +53,8 @@ class _ServerState : public _State {
 		void StartCommandThread();
 		void StopServer() { StopRequested = true; }
 		void SendMessage(_Player *Player, const std::string &Message, const glm::vec4 &Color=glm::vec4(1.0f));
+
+		_Map *GetMap(int MapID);
 
 	private:
 
@@ -95,7 +98,8 @@ class _ServerState : public _State {
 
 		_Database *Database;
 		_ObjectManager *ObjectManager;
-		_Instance *Instances;
+		std::list<_Map *> Maps;
+		std::list<_Battle *> Battles;
 
 		bool StopRequested;
 

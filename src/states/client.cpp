@@ -317,6 +317,9 @@ void _ClientState::Update(double FrameTime) {
 		Camera->Update(FrameTime);
 	}
 
+	if(!Player)
+		return;
+
 	// Handle input
 	if(Menu.GetState() == _Menu::STATE_NONE) {
 		switch(Player->State) {
