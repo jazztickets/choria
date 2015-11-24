@@ -83,6 +83,7 @@ void _Map::Init() {
 	ID = 0;
 	NoZoneTexture = nullptr;
 	Tiles = nullptr;
+	AmbientLight = MAP_AMBIENT_LIGHT;
 }
 
 // Free memory used by the tiles
@@ -224,6 +225,10 @@ void _Map::Load() {
 					else
 						NoZoneTexture = Assets.Textures[TextureIdentifier];
 				} break;
+				// Ambient light
+				case 'A': {
+					File >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
+				}
 				// Atlas texture
 				case 'a': {
 					//File >> AtlasPath;

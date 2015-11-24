@@ -910,7 +910,7 @@ void _HUD::DrawChat(bool IgnoreTimeout) {
 		// Set color
 		glm::vec4 Color = ChatMessage.Color;
 		if(!IgnoreTimeout && TimeLeft <= CHAT_MESSAGE_FADETIME)
-			Color.w = TimeLeft;
+			Color.a = TimeLeft;
 
 		// Draw text
 		Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message.c_str(), DrawPosition, Color);

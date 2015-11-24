@@ -26,6 +26,7 @@
 #include <string>
 #include <states/editor.h>
 #include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _Object;
@@ -100,7 +101,8 @@ class _Map {
 		_Tile **Tiles;
 		glm::ivec2 Size;
 
-		// Textures
+		// Graphics
+		glm::vec4 AmbientLight;
 		const _Texture *NoZoneTexture;
 
 		// Objects

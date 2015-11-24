@@ -168,7 +168,7 @@ void _Fighter::RenderBattle(bool ShowResults, float TimerPercent, _FighterResult
 		else if(Result->HealthChange < 0) {
 			Color = COLOR_RED;
 		}
-		Color.w = AlphaPercent;
+		Color.a = AlphaPercent;
 
 		Buffer << Sign << Result->HealthChange;
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), HealthBarCenter + glm::ivec2(0, -20), Color, CENTER_BASELINE);

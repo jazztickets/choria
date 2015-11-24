@@ -75,8 +75,6 @@ const int CHAT_MESSAGES = 15;
 const int CHAT_MESSAGE_TIMEOUT = 10;
 const float CHAT_MESSAGE_FADETIME = 1.0f;
 
-const int MAP_VERSION = 1;
-
 //     Config
 const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
 const  int          DEFAULT_FULLSCREEN             =  0;
@@ -96,6 +94,9 @@ const  float        CAMERA_EDITOR_DIVISOR          =  5.0f;
 const  float        CAMERA_FOVY                    =  90.0f;
 const  float        CAMERA_NEAR                    =  0.1f;
 const  float        CAMERA_FAR                     =  100.0f;
+//     Map
+const  int          MAP_VERSION                    =  1;
+const  glm::vec4    MAP_AMBIENT_LIGHT              =  glm::vec4(0.3,0.3,0.3,1);
 //     Menu
 const  float        MENU_ACCEPTINPUT_FADE          =  0.7f;
 const  float        MENU_PAUSE_FADE                =  0.7f;

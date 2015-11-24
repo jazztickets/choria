@@ -401,15 +401,13 @@ void _ClientState::Render(double BlendFactor) {
 	Graphics.Setup3D();
 	glm::vec3 LightPosition(glm::vec3(Player->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
 	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
-	glm::vec4 AmbientLight(0.25f, 0.25f, 0.25f, 1.0f);
-	//glm::vec4 AmbientLight(0.05f, 0.05f, ClientTime / 50, 1.0f);
 
 	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
 	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+	Assets.Programs["pos_uv"]->AmbientLight = Map->AmbientLight;
 	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
 	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
+	Assets.Programs["pos_uv_norm"]->AmbientLight = Map->AmbientLight;
 
 	// Setup the viewing matrix
 	Graphics.Setup3D();
