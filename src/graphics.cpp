@@ -44,6 +44,7 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 
 	// Set root element
 	Element = new _Element();
+	Element->Visible = true;
 	Element->Size = WindowSize;
 	Element->CalculateBounds();
 

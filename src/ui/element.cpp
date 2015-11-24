@@ -30,7 +30,7 @@ _Element::_Element() :
 	GlobalID(0),
 	Parent(nullptr),
 	UserData((void *)-1),
-	Visible(true),
+	Visible(false),
 	Enabled(true),
 	Clickable(true),
 	MaskOutside(false),
@@ -63,6 +63,8 @@ bool _Element::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 
 // Handle a press event
 void _Element::HandleInput(bool Pressed) {
+	if(!Visible)
+		return;
 
 	// Pass event to children
 	for(size_t i = 0; i < Children.size(); i++)
@@ -102,10 +104,12 @@ void _Element::Update(double FrameTime, const glm::ivec2 &Mouse) {
 	}
 
 	// Test children
-	for(size_t i = 0; i < Children.size(); i++) {
-		Children[i]->Update(FrameTime, Mouse);
-		if(Children[i]->HitElement)
-			HitElement = Children[i]->HitElement;
+	if(Visible) {
+		for(size_t i = 0; i < Children.size(); i++) {
+			Children[i]->Update(FrameTime, Mouse);
+			if(Children[i]->HitElement)
+				HitElement = Children[i]->HitElement;
+		}
 	}
 }
 

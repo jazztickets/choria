@@ -53,17 +53,27 @@ const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 _Menu::_Menu() {
 	State = STATE_NONE;
 	CurrentLayout = nullptr;
-	Background = nullptr;
 	OptionsState = OPTION_NONE;
 	CharactersState = CHARACTERS_NONE;
 	PreviousClickTimer = 0.0;
 }
 
+// Change the current layout
+void _Menu::ChangeLayout(const std::string &ElementIdentifier) {
+	if(CurrentLayout)
+		CurrentLayout->SetVisible(false);
+
+	CurrentLayout = Assets.Elements[ElementIdentifier];
+	CurrentLayout->SetVisible(true);
+}
+
 // Initialize
 void _Menu::InitTitle() {
 	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
+	Assets.Labels["label_menu_title_version"]->Visible = true;
 
-	CurrentLayout = Assets.Elements["element_menu_title"];
+	ChangeLayout("element_menu_title");
+
 	ClientNetwork->Disconnect();
 	Framework.StopLocalServer();
 
@@ -72,14 +82,15 @@ void _Menu::InitTitle() {
 
 // Init single player
 void _Menu::InitCharacters() {
-	CurrentLayout = Assets.Elements["element_menu_characters"];
+	ChangeLayout("element_menu_characters");
+
 	CharactersState = CHARACTERS_NONE;
 	State = STATE_CHARACTERS;
 }
 
 // Options
 void _Menu::InitOptions() {
-	CurrentLayout = Assets.Elements["element_menu_options"];
+	ChangeLayout("element_menu_options");
 
 	RefreshInputLabels();
 	CurrentAction = -1;
@@ -90,9 +101,7 @@ void _Menu::InitOptions() {
 
 // In-game menu
 void _Menu::InitInGame() {
-	CurrentLayout = Assets.Elements["element_menu_ingame"];
-
-	Background = nullptr;
+	ChangeLayout("element_menu_ingame");
 
 	ClientState.SendBusy(true);
 	State = STATE_INGAME;
@@ -100,6 +109,8 @@ void _Menu::InitInGame() {
 
 // Return to play
 void _Menu::InitPlay() {
+	if(CurrentLayout)
+		CurrentLayout->SetVisible(false);
 	CurrentLayout = nullptr;
 
 	ClientState.SendBusy(false);
@@ -124,6 +135,8 @@ void _Menu::InitNewCharacter() {
 	Name->ResetCursor();
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
+	CurrentLayout->SetVisible(true);
+
 	CharactersState = CHARACTERS_CREATE;
 }
 
@@ -131,7 +144,7 @@ void _Menu::InitNewCharacter() {
 void _Menu::InitConnect(bool ConnectNow) {
 	ClientNetwork->Disconnect();
 
-	CurrentLayout = Assets.Elements["element_menu_connect"];
+	ChangeLayout("element_menu_connect");
 
 	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
 	Host->Text = Config.LastHost;
@@ -157,7 +170,7 @@ void _Menu::InitConnect(bool ConnectNow) {
 
 // Init account info screen
 void _Menu::InitAccount() {
-	CurrentLayout = Assets.Elements["element_menu_account"];
+	ChangeLayout("element_menu_account");
 
 	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
 	Username->Text = DefaultUsername;
@@ -683,9 +696,6 @@ void _Menu::Update(double FrameTime) {
 // Draw phase
 void _Menu::Render() {
 	Graphics.Setup2D();
-
-	if(Background)
-		Background->Render();
 
 	switch(State) {
 		case STATE_TITLE: {

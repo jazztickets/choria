@@ -599,12 +599,12 @@ void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer) {
 				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->Map->ID);
 			break;
 			case _Map::EVENT_VENDOR:
-				Player->State =_Player::STATE_VENDOR;
+				Player->State = _Player::STATE_VENDOR;
 				Player->Vendor = Stats.GetVendor(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			case _Map::EVENT_TRADER:
-				Player->State =_Player::STATE_TRADER;
+				Player->State = _Player::STATE_TRADER;
 				Player->Trader = Stats.GetTrader(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;

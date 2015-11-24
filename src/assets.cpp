@@ -376,7 +376,9 @@ void _Assets::LoadElements(const std::string &Path) {
 		glm::ivec2 Offset, Size;
 		_Alignment Alignment;
 		bool MaskOutside;
-		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical >> MaskOutside;
+		bool Clickable;
+		intptr_t UserData;
+		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical >> MaskOutside >> Clickable >> UserData;
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Check for style
@@ -392,6 +394,8 @@ void _Assets::LoadElements(const std::string &Path) {
 		Element->Alignment = Alignment;
 		Element->Style = Styles[StyleIdentifier];
 		Element->MaskOutside = MaskOutside;
+		Element->Clickable = Clickable;
+		Element->UserData = (void *)UserData;
 
 		// Add to map
 		Element->GlobalID = AllElements.size();

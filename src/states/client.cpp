@@ -185,6 +185,8 @@ void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 
 // Mouse events
 void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+	Graphics.Element->HandleInput(MouseEvent.Pressed);
+
 	FocusedElement = nullptr;
 	if(Menu.GetState() != _Menu::STATE_NONE) {
 		Menu.MouseEvent(MouseEvent);
@@ -232,19 +234,19 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 					if(IsTesting)
 						ClientNetwork->Disconnect();
 					else
-						Menu.InitInGame();
+						HUD.ToggleMenu();
 				break;
 				case _Actions::INVENTORY:
-					HUD.InitInventory(true);
+					HUD.ToggleInventory();
 				break;
 				case _Actions::TELEPORT:
 					HUD.ToggleTeleport();
 				break;
 				case _Actions::TRADE:
-					HUD.InitTrade();
+					HUD.ToggleTrade();
 				break;
 				case _Actions::SKILLS:
-					HUD.InitSkills();
+					HUD.ToggleSkills();
 				break;
 				case _Actions::ATTACK:
 					SendAttackPlayer();
@@ -263,18 +265,6 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::MENU:
 				case _Actions::TELEPORT:
 					HUD.ToggleTeleport();
-				break;
-			}
-		break;
-		case STATE_INVENTORY:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD.CloseWindows();
 				break;
 			}
 		break;
@@ -310,6 +300,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::RIGHT:
 				case _Actions::MENU:
 				case _Actions::INVENTORY:
+				case _Actions::TRADE:
 					HUD.CloseWindows();
 				break;
 			}
@@ -333,6 +324,8 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 
 // Updates the current state
 void _ClientState::Update(double FrameTime) {
+	Graphics.Element->Update(FrameTime, Input.GetMouse());
+
 	if(Camera && Player) {
 		Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(+0.5f, +0.5f));
 		Camera->Update(FrameTime);

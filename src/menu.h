@@ -100,6 +100,7 @@ class _Menu {
 
 	private:
 
+		void ChangeLayout(const std::string &ElementIdentifier);
 		void Connect(const std::string &Address, uint16_t Port, bool Fake);
 
 		int GetSelectedPortraitID();
@@ -125,7 +126,6 @@ class _Menu {
 		std::string DefaultPassword;
 
 		// UI
-		_Image *Background;
 		_Element *CurrentLayout;
 		_Label *InputLabels[LABEL_COUNT];
 		_CharacterSlot CharacterSlots[SAVE_COUNT];

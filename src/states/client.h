@@ -40,7 +40,6 @@ class _ClientState : public _State {
 			STATE_WALK,
 			STATE_BATTLE,
 			STATE_TELEPORT,
-			STATE_INVENTORY,
 			STATE_VENDOR,
 			STATE_TRADER,
 			STATE_SKILLS,

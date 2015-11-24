@@ -28,6 +28,7 @@
 class _Player;
 class _Item;
 class _Skill;
+class _Element;
 class _TextBox;
 struct _InventorySlot;
 struct _Vendor;
@@ -36,7 +37,7 @@ struct _KeyEvent;
 struct _MouseEvent;
 
 // Structures
-struct _CursorItem {
+struct _Cursor {
 	void Set(const _Item *Item, int Cost, int Count, int Slot) {
 		this->Item = Item;
 		this->Cost = Cost;
@@ -48,6 +49,7 @@ struct _CursorItem {
 		this->Count = 0;
 		this->Slot = -1;
 		this->Window = -1;
+		this->UserData = -1;
 	}
 
 	bool IsEqual(int Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
@@ -57,6 +59,7 @@ struct _CursorItem {
 	int Count;
 	int Slot;
 	int Window;
+	int UserData;
 };
 
 struct _CursorSkill {
@@ -85,13 +88,14 @@ class _HUD {
 	public:
 
 		enum WindowType {
+			WINDOW_BUTTONBAR,
 			WINDOW_INVENTORY,
 			WINDOW_VENDOR,
 			WINDOW_TRADER,
 			WINDOW_TRADETHEIRS,
 			WINDOW_TRADEYOURS,
 			WINDOW_SKILLS,
-			WINDOW_SKILLBAR
+			WINDOW_ACTIONBAR
 		};
 
 		void Init();
@@ -105,6 +109,13 @@ class _HUD {
 
 		// Objects
 		void SetPlayer(_Player *Player);
+
+		// Button bar
+		void ToggleTeleport();
+		void ToggleInventory();
+		void ToggleTrade();
+		void ToggleSkills();
+		void ToggleMenu();
 
 		// Windows
 		void InitInventory(bool SendBusy);
@@ -126,9 +137,6 @@ class _HUD {
 		void ResetAcceptButton();
 		void UpdateTradeStatus(bool Accepted);
 		void ValidateTradeGold();
-
-		// Teleport
-		void ToggleTeleport();
 
 	private:
 
@@ -154,8 +162,8 @@ class _HUD {
 		void DrawSkillDescription(const _Skill *Skill, int SkillLevel, glm::ivec2 &DrawPosition, int Width);
 		void DrawTradeItems(_Player *Player, const std::string &ElementPrefix, int Window);
 
-		void BuyItem(_CursorItem *Item, int TargetSlot);
-		void SellItem(_CursorItem *Item, int Amount);
+		void BuyItem(_Cursor *Item, int TargetSlot);
+		void SellItem(_Cursor *Item, int Amount);
 
 		void AdjustSkillLevel(int SkillID, int Direction);
 		void SetSkillBar(int Slot, int OldSlot, const _Skill *Skill);
@@ -173,10 +181,18 @@ class _HUD {
 		// Objects
 		_Player *Player;
 
-		// GUI
-		_CursorItem CursorItem;
-		_CursorItem TooltipItem;
-		bool CharacterOpen;
+		// UI
+		_Element *ActionBarElement;
+		_Element *ButtonBarElement;
+		_Element *InventoryElement;
+		_Element *CharacterElement;
+		_Element *VendorElement;
+		_Element *TradeElement;
+		_Element *TraderElement;
+		_Element *SkillsElement;
+		_Element *TeleportElement;
+		_Cursor Cursor;
+		_Cursor Tooltip;
 
 		// Chat
 		std::list<_ChatMessage> ChatHistory;

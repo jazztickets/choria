@@ -50,18 +50,20 @@ bool _NullState::HandleAction(int InputType, int Action, int Value) {
 // Key handler
 void _NullState::KeyEvent(const _KeyEvent &KeyEvent) {
 	Graphics.Element->HandleKeyEvent(KeyEvent);
-
 	Menu.KeyEvent(KeyEvent);
 }
 
 // Mouse handler
 void _NullState::MouseEvent(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
+	Graphics.Element->HandleInput(MouseEvent.Pressed);
 	Menu.MouseEvent(MouseEvent);
 }
 
 // Update
 void _NullState::Update(double FrameTime) {
+	Graphics.Element->Update(FrameTime, Input.GetMouse());
+
 	Menu.Update(FrameTime);
 }
 
