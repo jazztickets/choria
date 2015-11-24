@@ -156,8 +156,6 @@ class _HUD {
 
 		void SplitStack(int Slot, int Count);
 
-		int *State;
-
 		// Objects
 		_Player *Player;
 

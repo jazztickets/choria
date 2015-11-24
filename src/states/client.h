@@ -35,17 +35,6 @@ class _ClientState : public _State {
 
 	public:
 
-		enum StateType {
-			STATE_CONNECTING,
-			STATE_WALK,
-			STATE_BATTLE,
-			STATE_TELEPORT,
-			STATE_VENDOR,
-			STATE_TRADER,
-			STATE_SKILLS,
-			STATE_TRADE,
-		};
-
 		_ClientState();
 
 		void Init() override;
@@ -65,8 +54,6 @@ class _ClientState : public _State {
 
 		void SetCharacterSlot(int Slot) { CharacterSlot = Slot; }
 		void SetIsTesting(bool Value) { IsTesting = Value; }
-
-		int *GetState() { return &State; }
 
 		void SendBusy(bool Value);
 		double GetTime() { return ClientTime; }
@@ -99,20 +86,16 @@ class _ClientState : public _State {
 		void SynchronizeTime();
 
 		// States
-		int State;
 		int CharacterSlot;
 		bool IsTesting;
 
 		// Time
-		double ClientTime, SentClientTime;
-
-		// Graphics
-		_Camera *Camera;
+		double ClientTime;
 
 		// Objects
 		_Player *Player;
+		_Camera *Camera;
 		_Map *Map;
-		_ClientBattle *Battle;
 		_ObjectManager *ObjectManager;
 		_Instance *Instances;
 

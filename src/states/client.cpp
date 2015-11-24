@@ -51,15 +51,11 @@ _ClientState::_ClientState()
 
 // Initializes the state
 void _ClientState::Init() {
-
 	Menu.InitPlay();
 
 	ClientTime = 0;
-	SentClientTime = 0;
 	Player = nullptr;
 	Map = nullptr;
-	Battle = nullptr;
-	State = STATE_CONNECTING;
 
 	Instances = new _Instance();
 	ObjectManager = new _ObjectManager();
@@ -229,8 +225,8 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
-	switch(State) {
-		case STATE_WALK:
+	switch(Player->State) {
+		case _Player::STATE_WALK:
 			switch(Action) {
 				case _Actions::MENU:
 					if(IsTesting)
@@ -255,10 +251,10 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case STATE_BATTLE:
-			Battle->HandleAction(Action);
+		case _Player::STATE_BATTLE:
+			((_ClientBattle *)Player->Battle)->HandleAction(Action);
 		break;
-		case STATE_TELEPORT:
+		case _Player::STATE_TELEPORT:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -270,7 +266,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case STATE_VENDOR:
+		case _Player::STATE_VENDOR:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -282,7 +278,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case STATE_TRADER:
+		case _Player::STATE_TRADER:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -294,7 +290,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case STATE_TRADE:
+		case _Player::STATE_TRADE:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -307,17 +303,8 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case STATE_SKILLS:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::SKILLS:
-					HUD.CloseWindows();
-				break;
-			}
+		case _Player::STATE_BUSY:
+			HUD.CloseWindows();
 		break;
 	}
 
@@ -335,10 +322,8 @@ void _ClientState::Update(double FrameTime) {
 
 	// Handle input
 	if(Menu.GetState() == _Menu::STATE_NONE) {
-		switch(State) {
-			case STATE_CONNECTING:
-			break;
-			case STATE_WALK: {
+		switch(Player->State) {
+			case _Player::STATE_WALK: {
 				if(!HUD.IsChatting()) {
 					if(Actions.GetState(_Actions::UP))
 						SendMoveCommand(_Player::MOVE_UP);
@@ -350,29 +335,29 @@ void _ClientState::Update(double FrameTime) {
 						SendMoveCommand(_Player::MOVE_RIGHT);
 				}
 			} break;
-			case STATE_BATTLE: {
+			case _Player::STATE_BATTLE: {
 
 				// Send key input
 				if(!HUD.IsChatting()) {
 					for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 						if(Actions.GetState(_Actions::SKILL1+i)) {
-							Battle->HandleAction(_Actions::SKILL1+i);
+							((_ClientBattle *)Player->Battle)->HandleAction(_Actions::SKILL1+i);
 							break;
 						}
 					}
 				}
 
 				// Singleplayer check
-				if(Battle) {
+				if(Player->Battle) {
 
 					// Update the battle
-					Battle->Update(FrameTime);
+					Player->Battle->Update(FrameTime);
 
 					// Done with the battle
-					if(Battle->GetState() == _ClientBattle::STATE_DELETE) {
-						Instances->DeleteBattle(Battle);
-						Battle = nullptr;
-						State = STATE_WALK;
+					if(Player->Battle->GetState() == _ClientBattle::STATE_DELETE) {
+						Instances->DeleteBattle(Player->Battle);
+						Player->Battle = nullptr;
+						Player->State = _Player::STATE_WALK;
 					}
 				}
 			} break;
@@ -390,9 +375,6 @@ void _ClientState::Update(double FrameTime) {
 }
 
 void _ClientState::Render(double BlendFactor) {
-	if(State == STATE_CONNECTING)
-		return;
-
 	Graphics.Setup3D();
 	glm::vec3 LightPosition(glm::vec3(Player->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
 	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
@@ -428,13 +410,8 @@ void _ClientState::Render(double BlendFactor) {
 	HUD.Render();
 
 	// Draw states
-	switch(State) {
-		case STATE_WALK:
-		break;
-		case STATE_BATTLE:
-			Battle->Render();
-		break;
-	}
+	if(Player->Battle)
+		((_ClientBattle *)Player->Battle)->Render();
 
 	// Draw menu
 	Menu.Render();
@@ -551,12 +528,12 @@ void _ClientState::HandleChangeMaps(_Buffer *Packet) {
 	}
 
 	// Delete the battle
-	if(Battle) {
-		Instances->DeleteBattle(Battle);
-		Battle = nullptr;
+	if(Player->Battle) {
+		Instances->DeleteBattle(Player->Battle);
+		Player->Battle = nullptr;
 	}
 
-	State = STATE_WALK;
+	Player->State = _Player::STATE_WALK;
 }
 
 // Creates an object
@@ -605,9 +582,9 @@ void _ClientState::HandleDeleteObject(_Buffer *Packet) {
 	if(Object) {
 		if(Object->Type == _Object::PLAYER) {
 			_Player *DeletedPlayer = (_Player *)Object;
-			switch(State) {
-				case STATE_BATTLE:
-					Battle->RemovePlayer(DeletedPlayer);
+			switch(Player->State) {
+				case _Player::STATE_BATTLE:
+					((_ClientBattle *)Player->Battle)->RemovePlayer(DeletedPlayer);
 				break;
 			}
 		}
@@ -644,8 +621,8 @@ void _ClientState::HandleObjectUpdates(_Buffer *Packet) {
 			if(Player == OtherPlayer) {
 
 				// Return from teleport state
-				if(PlayerState == _Player::STATE_WALK && State == STATE_TELEPORT) {
-					State = STATE_WALK;
+				if(PlayerState == _Player::STATE_WALK && Player->State == _Player::STATE_TELEPORT) {
+					Player->State = _Player::STATE_WALK;
 				}
 			}
 			else {
@@ -657,7 +634,7 @@ void _ClientState::HandleObjectUpdates(_Buffer *Packet) {
 				case _Player::STATE_WALK:
 					OtherPlayer->StateImage = nullptr;
 				break;
-				case _Player::STATE_WAITTRADE:
+				case _Player::STATE_TRADE:
 					OtherPlayer->StateImage = Assets.Textures["world/trade.png"];
 				break;
 				default:
@@ -672,11 +649,11 @@ void _ClientState::HandleObjectUpdates(_Buffer *Packet) {
 void _ClientState::HandleStartBattle(_Buffer *Packet) {
 
 	// Already in a battle
-	if(Battle)
+	if(Player->Battle)
 		return;
 
 	// Create a new battle instance
-	Battle = Instances->CreateClientBattle();
+	Player->Battle = Instances->CreateClientBattle();
 
 	// Get fighter count
 	int FighterCount = Packet->Read<char>();
@@ -705,9 +682,9 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 				NewPlayer->MaxHealth = MaxHealth;
 				NewPlayer->Mana = Mana;
 				NewPlayer->MaxMana = MaxMana;
-				NewPlayer->Battle = Battle;
+				NewPlayer->Battle = Player->Battle;
 
-				Battle->AddFighter(NewPlayer, Side);
+				Player->Battle->AddFighter(NewPlayer, Side);
 			}
 		}
 		else {
@@ -716,46 +693,45 @@ void _ClientState::HandleStartBattle(_Buffer *Packet) {
 			int MonsterID = Packet->Read<int32_t>();
 			_Monster *Monster = new _Monster(MonsterID);
 
-			Battle->AddFighter(Monster, Side);
+			Player->Battle->AddFighter(Monster, Side);
 		}
 	}
 
 	// Start the battle
 	HUD.CloseWindows();
-	Battle->StartBattle(Player);
-	State = STATE_BATTLE;
+	((_ClientBattle *)Player->Battle)->StartBattle(Player);
 }
 
 // Handles the result of a turn in battle
 void _ClientState::HandleBattleTurnResults(_Buffer *Packet) {
 
 	// Check for a battle in progress
-	if(!Battle)
+	if(!Player->Battle)
 		return;
 
-	Battle->ResolveTurn(Packet);
+	((_ClientBattle *)Player->Battle)->ResolveTurn(Packet);
 }
 
 // Handles the end of a battle
 void _ClientState::HandleBattleEnd(_Buffer *Packet) {
 
 	// Check for a battle in progress
-	if(!Battle)
+	if(!Player->Battle)
 		return;
 
-	Battle->EndBattle(Packet);
+	((_ClientBattle *)Player->Battle)->EndBattle(Packet);
 }
 
 // Handles a battle command from other players
 void _ClientState::HandleBattleCommand(_Buffer *Packet) {
 
 	// Check for a battle in progress
-	if(!Battle)
+	if(!Player->Battle)
 		return;
 
 	int Slot = Packet->Read<char>();
 	int SkillID = Packet->Read<char>();
-	Battle->HandleCommand(Slot, SkillID);
+	((_ClientBattle *)Player->Battle)->HandleCommand(Slot, SkillID);
 }
 
 // Handles HUD updates
@@ -789,11 +765,11 @@ void _ClientState::HandleEventStart(_Buffer *Packet) {
 	switch(Type) {
 		case _Map::EVENT_VENDOR:
 			HUD.InitVendor(Data);
-			State = STATE_VENDOR;
+			Player->State = _Player::STATE_VENDOR;
 		break;
 		case _Map::EVENT_TRADER:
 			HUD.InitTrader(Data);
-			State = STATE_TRADER;
+			Player->State = _Player::STATE_TRADER;
 		break;
 	}
 }

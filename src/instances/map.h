@@ -76,7 +76,7 @@ class _Map {
 		void AddObject(_Object *Object);
 		void RemoveObject(_Object *RemoveObject);
 		void GetClosePlayers(const _Player *Player, float DistanceSquared, std::list<_Player *> &Players);
-		_Player *GetClosestPlayer(const _Player *Player, float MaxDistanceSquared, int State);
+		_Player *FindTradePlayer(const _Player *Player, float MaxDistanceSquared);
 		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
 
 		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);

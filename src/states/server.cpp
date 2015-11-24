@@ -577,11 +577,11 @@ void _ServerState::HandleCharacterCreate(_Buffer *Packet, ENetPeer *Peer) {
 
 // Handles move commands from a client
 void _ServerState::HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer) {
+	_Player *Player = (_Player *)Peer->data;
+	if(!Player)
+		return;
 
 	int Direction = Packet->Read<char>();
-	//printf("HandleMoveCommand: %d\n", Direction);
-
-	_Player *Player = (_Player *)Peer->data;
 	if(Player->MovePlayer(Direction)) {
 
 		// Handle events
@@ -877,7 +877,7 @@ void _ServerState::HandlePlayerBusy(_Buffer *Packet, ENetPeer *Peer) {
 		return;
 
 	bool Value = Packet->ReadBit();
-	Player->ToggleBusy(Value);
+	Player->SetBusy(Value);
 
 	//printf("HandlePlayerBusy: Value=%d\n", Value);
 }
@@ -955,11 +955,11 @@ void _ServerState::HandleTradeRequest(_Buffer *Packet, ENetPeer *Peer) {
 		return;
 
 	// Find the nearest player to trade with
-	_Player *TradePlayer = Map->GetClosestPlayer(Player, 2.0f * 2.0f, _Player::STATE_WAITTRADE);
+	_Player *TradePlayer = Map->FindTradePlayer(Player, 2.0f * 2.0f);
 	if(TradePlayer == nullptr) {
 
 		// Set up trade post
-		Player->State = _Player::STATE_WAITTRADE;
+		Player->State = _Player::STATE_TRADE;
 		Player->TradeGold = 0;
 		Player->TradeAccepted = false;
 		Player->TradePlayer = nullptr;
@@ -989,7 +989,7 @@ void _ServerState::HandleTradeCancel(_Buffer *Packet, ENetPeer *Peer) {
 	// Notify trading player
 	_Player *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->State = _Player::STATE_WAITTRADE;
+		TradePlayer->State = _Player::STATE_TRADE;
 		TradePlayer->TradePlayer = nullptr;
 		TradePlayer->TradeAccepted = false;
 

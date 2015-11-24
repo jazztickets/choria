@@ -46,7 +46,6 @@ class _Player : public _Object, public _Fighter {
 			STATE_BATTLE,
 			STATE_VENDOR,
 			STATE_TRADER,
-			STATE_WAITTRADE,
 			STATE_TRADE,
 			STATE_TELEPORT,
 			STATE_BUSY,
@@ -140,7 +139,7 @@ class _Player : public _Object, public _Fighter {
 		const _Tile *GetTile();
 
 		// World
-		void ToggleBusy(bool Value);
+		void SetBusy(bool Value);
 		void StartTeleport();
 
 		// PVP

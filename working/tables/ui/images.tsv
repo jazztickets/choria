@@ -20,3 +20,8 @@ image_trade_gold_theirs	element_trade_theirs	hud/gold.png		8	44	32	32	0	2	0
 image_trade_gold_yours	element_trade_yours	hud/gold.png		8	44	32	32	0	2	0
 image_trade_portrait_theirs	element_trade_theirs	portraits/chris.png		-88	32	64	64	0	0	0
 image_trade_portrait_yours	element_trade_yours	portraits/tara.png		-88	32	64	64	0	0	0
+image_buttonbar_teleport	button_buttonbar_teleport	hud/teleport.png		0	0	32	32	1	1	0
+image_buttonbar_inventory	button_buttonbar_inventory	hud/bag.png		0	0	32	32	1	1	0
+image_buttonbar_trade	button_buttonbar_trade	hud/trade.png		0	0	32	32	1	1	0
+image_buttonbar_skills	button_buttonbar_skills	hud/skills.png		0	0	32	32	1	1	0
+image_buttonbar_menu	button_buttonbar_menu	hud/menu.png		0	0	32	32	1	1	0

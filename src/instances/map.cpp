@@ -410,11 +410,11 @@ void _Map::AddObject(_Object *Object) {
 }
 
 // Removes an object from the map
-void _Map::RemoveObject(_Object *TObject) {
+void _Map::RemoveObject(_Object *RemoveObject) {
 
 	// Remove from the map
 	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
-		if(*Iterator == TObject)
+		if(*Iterator == RemoveObject)
 			Iterator = Objects.erase(Iterator);
 		else
 			++Iterator;
@@ -423,7 +423,7 @@ void _Map::RemoveObject(_Object *TObject) {
 	// Create delete packet
 	_Buffer Packet;
 	Packet.Write<char>(_Network::WORLD_DELETEOBJECT);
-	Packet.Write<char>(TObject->NetworkID);
+	Packet.Write<char>(RemoveObject->NetworkID);
 
 	// Send to everyone
 	SendPacketToPlayers(&Packet);
@@ -446,14 +446,14 @@ void _Map::GetClosePlayers(const _Player *Player, float DistanceSquared, std::li
 }
 
 // Returns the closest player
-_Player *_Map::GetClosestPlayer(const _Player *Player, float MaxDistanceSquared, int State) {
+_Player *_Map::FindTradePlayer(const _Player *Player, float MaxDistanceSquared) {
 
 	_Player *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
 	for(const auto &Object : Objects) {
 		if(Object->Type == _Object::PLAYER) {
 			_Player *TestPlayer = (_Player *)Object;
-			if(TestPlayer != Player && TestPlayer->State == State) {
+			if(TestPlayer != Player && TestPlayer->State == _Player::STATE_TRADE && TestPlayer->TradePlayer == nullptr) {
 				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
 				float DistanceSquared = (float)(Delta.x * Delta.x + Delta.y * Delta.y);
 				if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {

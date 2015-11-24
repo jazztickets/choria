@@ -22,6 +22,7 @@
 
 // Constructor
 _Image::_Image() {
+	Clickable = false;
 }
 
 // Destructor

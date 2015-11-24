@@ -772,7 +772,7 @@ void _Player::CalculateSkillPoints() {
 }
 
 // Toggles the player's busy state
-void _Player::ToggleBusy(bool Value) {
+void _Player::SetBusy(bool Value) {
 
 	if(Value && State == STATE_WALK) {
 		State = STATE_BUSY;

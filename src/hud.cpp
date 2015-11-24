@@ -47,7 +47,6 @@ _HUD HUD;
 
 // Initialize
 void _HUD::Init() {
-	State = ClientState.GetState();
 	Tooltip.Reset();
 	Cursor.Reset();
 	RewardItemSlot = -1;
@@ -256,9 +255,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			}
 		}
 
-		switch(*State) {
-			case _ClientState::STATE_VENDOR:
-			case _ClientState::STATE_TRADE:
+		switch(Player->State) {
+			case _Player::STATE_VENDOR:
+			case _Player::STATE_TRADE:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 					if(!Cursor.Item) {
 
@@ -327,11 +326,11 @@ void _HUD::Update(double FrameTime) {
 		}
 	}
 
-	switch(*State) {
-		case _ClientState::STATE_TRADE: {
+	switch(Player->State) {
+		case _Player::STATE_TRADE: {
 
 			// Get trade items
-			if(*State == _ClientState::STATE_TRADE) {
+			if(Player->State == _Player::STATE_TRADE) {
 				TradeTheirsElement->SetVisible(false);
 				if(Player->TradePlayer) {
 					TradeTheirsElement->SetVisible(true);
@@ -424,13 +423,6 @@ void _HUD::Render() {
 		Tooltip.Skill->DrawTooltip(Player, Tooltip, SkillsElement->Visible);
 }
 
-// Set player for HUD
-void _HUD::SetPlayer(_Player *Player) {
-	this->Player = Player;
-
-	Assets.Labels["label_hud_name"]->Text = Player->Name;
-}
-
 // Starts the chat box
 void _HUD::ToggleChat() {
 	if(IsTypingGold())
@@ -462,12 +454,12 @@ void _HUD::ToggleTeleport() {
 	ClientNetwork->SendPacketToHost(&Packet);
 	Player->StartTeleport();
 
-	if(*State == _ClientState::STATE_TELEPORT) {
-		*State = _ClientState::STATE_WALK;
+	if(Player->State == _Player::STATE_TELEPORT) {
+		//Player->State = _Player::STATE_WALK;
 		TeleportElement->SetVisible(false);
 	}
 	else {
-		*State = _ClientState::STATE_TELEPORT;
+		//Player->State = _Player::STATE_TELEPORT;
 		TeleportElement->SetVisible(true);
 	}
 }
@@ -476,21 +468,19 @@ void _HUD::ToggleTeleport() {
 void _HUD::ToggleInventory() {
 	Cursor.Reset();
 
-	InventoryElement->SetVisible(!InventoryElement->Visible);
-	if(InventoryElement->Visible) {
-		ClientState.SendBusy(true);
+	if(!InventoryElement->Visible) {
+		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
+		ClientState.SendBusy(true);
 	}
 	else {
-		ClientState.SendBusy(false);
-		CharacterElement->SetVisible(false);
+		CloseInventory();
 	}
 }
 
 // Open/close trade
 void _HUD::ToggleTrade() {
-	TradeElement->SetVisible(!TradeElement->Visible);
-	if(TradeElement->Visible) {
+	if(!TradeElement->Visible) {
 		InitTrade();
 	}
 	else {
@@ -514,20 +504,9 @@ void _HUD::ToggleMenu() {
 	Menu.InitInGame();
 }
 
-// Return true if the chatbox is open
-bool _HUD::IsChatting() {
-	return ChatTextBox->Visible;
-}
-
-// Closes the chat window
-void _HUD::CloseChat() {
-	ChatElement->SetVisible(false);
-	ChatTextBox->Text = "";
-}
-
 // Initialize the vendor
 void _HUD::InitVendor(int VendorID) {
-	if(*State == _ClientState::STATE_VENDOR)
+	if(Player->State == _Player::STATE_VENDOR)
 		return;
 
 	Cursor.Reset();
@@ -541,30 +520,13 @@ void _HUD::InitVendor(int VendorID) {
 	ClientState.SendBusy(true);
 }
 
-// Close the vendor
-void _HUD::CloseVendor() {
-	if(*State != _ClientState::STATE_VENDOR)
-		return;
-
-	Cursor.Reset();
-
-	// Close inventory
-	InventoryElement->SetVisible(false);
-	VendorElement->SetVisible(false);
-	ClientState.SendBusy(false);
-
-	// Notify server
-	_Buffer Packet;
-	Packet.Write<char>(_Network::EVENT_END);
-	ClientNetwork->SendPacketToHost(&Packet);
-
-	*State = _ClientState::STATE_WALK;
-	Player->Vendor = nullptr;
-}
-
 // Initialize the trade system
 void _HUD::InitTrade() {
+	if(Player->State != _Player::STATE_WALK)
+		return;
+
 	InventoryElement->SetVisible(true);
+	TradeElement->SetVisible(true);
 
 	// Send request to server
 	SendTradeRequest();
@@ -580,34 +542,12 @@ void _HUD::InitTrade() {
 	Assets.Labels["label_trade_name_yours"]->Text = Player->Name;
 	Assets.Images["image_trade_portrait_yours"]->Texture = Player->Portrait;
 
-	*State = _ClientState::STATE_TRADE;
-}
-
-// Closes the trade system
-void _HUD::CloseTrade(bool SendNotify) {
-	FocusedElement = nullptr;
-
-	// Close inventory
-	InventoryElement->SetVisible(false);
-	TradeElement->SetVisible(false);
-	ClientState.SendBusy(false);
-
-	// Notify server
-	if(SendNotify)
-		SendTradeCancel();
-
-	Player->TradePlayer = nullptr;
-	*State = _ClientState::STATE_WALK;
-}
-
-// Return true if player is typing gold
-bool _HUD::IsTypingGold() {
-	return FocusedElement == Assets.TextBoxes["textbox_trade_gold_yours"];
+	//Player->State = _Player::STATE_TRADE;
 }
 
 // Initialize the trader
 void _HUD::InitTrader(int TraderID) {
-	if(*State == _ClientState::STATE_TRADER)
+	if(Player->State == _Player::STATE_TRADER)
 		return;
 
 	// Get trader stats
@@ -624,48 +564,11 @@ void _HUD::InitTrader(int TraderID) {
 
 	TraderElement->SetVisible(true);
 
-	*State = _ClientState::STATE_TRADER;
-}
-
-// Close the trader
-void _HUD::CloseTrader() {
-	if(*State != _ClientState::STATE_TRADER)
-		return;
-
-	Cursor.Reset();
-	TraderElement->SetVisible(false);
-
-	// Notify server
-	_Buffer Packet;
-	Packet.Write<char>(_Network::EVENT_END);
-	ClientNetwork->SendPacketToHost(&Packet);
-
-	*State = _ClientState::STATE_WALK;
-	Player->Trader = nullptr;
-}
-
-// Delete memory used by skill page
-void _HUD::ClearSkills() {
-	std::vector<_Element *> &Children = SkillsElement->Children;
-	for(size_t i = 0; i < Children.size(); i++) {
-		if(Children[i]->Style && Children[i]->Style->UserCreated)
-			delete Children[i]->Style;
-
-		// Delete labels
-		for(size_t j = 0; j < Children[i]->Children.size(); j++) {
-			if(Children[i]->Children[j]->UserCreated)
-				delete Children[i]->Children[j];
-		}
-
-		if(Children[i]->UserCreated)
-			delete Children[i];
-	}
-	Children.clear();
+	//Player->State = _Player::STATE_TRADER;
 }
 
 // Initialize the skills screen
 void _HUD::InitSkills() {
-	*State = _ClientState::STATE_SKILLS;
 	ClientState.SendBusy(true);
 
 	// Clear old children
@@ -778,41 +681,38 @@ void _HUD::InitSkills() {
 	SkillBarChanged = false;
 }
 
-// Shows or hides the plus/minus buttons
-void _HUD::RefreshSkillButtons() {
+// Closes the chat window
+void _HUD::CloseChat() {
+	ChatElement->SetVisible(false);
+	ChatTextBox->Text = "";
+}
 
-	// Get remaining points
-	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
+// Close inventory screen
+void _HUD::CloseInventory() {
+	if(InventoryElement->Visible)
+		ClientState.SendBusy(false);
+	InventoryElement->SetVisible(false);
+	CharacterElement->SetVisible(false);
+}
 
-	// Loop through buttons
-	for(auto &Element : SkillsElement->Children) {
-		if(Element->Identifier == "label_skills_level") {
-			int SkillID = (intptr_t)Element->UserData;
-			_Label *Label = (_Label *)Element;
-			Label->Text = std::to_string(Player->GetSkillLevel(SkillID));
-		}
-		else if(Element->Identifier == "button_skills_plus") {
-			_Button *Button = (_Button *)Element;
+// Close the vendor
+void _HUD::CloseVendor() {
+	if(Player->State != _Player::STATE_VENDOR)
+		return;
 
-			// Get skill
-			int SkillID = (intptr_t)Button->Parent->UserData;
-			const _Skill *Skill = Stats.GetSkill(SkillID);
-			if(Skill->SkillCost > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
-				Button->SetVisible(false);
-			else
-				Button->SetVisible(true);
-		}
-		else if(Element->Identifier == "button_skills_minus") {
-			_Button *Button = (_Button *)Element;
+	Cursor.Reset();
 
-			// Get skill
-			int SkillID = (intptr_t)Button->Parent->UserData;
-			if(Player->GetSkillLevel(SkillID) == 0)
-				Button->SetVisible(false);
-			else
-				Button->SetVisible(true);
-		}
-	}
+	// Close inventory
+	CloseInventory();
+	VendorElement->SetVisible(false);
+
+	// Notify server
+	_Buffer Packet;
+	Packet.Write<char>(_Network::EVENT_END);
+	ClientNetwork->SendPacketToHost(&Packet);
+
+	//Player->State = _Player::STATE_WALK;
+	Player->Vendor = nullptr;
 }
 
 // Close the skills screen
@@ -833,27 +733,51 @@ void _HUD::CloseSkills() {
 	// No longer busy
 	ClientState.SendBusy(false);
 	SkillsElement->SetVisible(false);
+}
 
-	*State = _ClientState::STATE_WALK;
+// Closes the trade system
+void _HUD::CloseTrade(bool SendNotify) {
+	if(!(Player->State == _Player::STATE_TRADE || Player->State == _Player::STATE_TRADE))
+		return;
+
+	FocusedElement = nullptr;
+
+	// Close inventory
+	CloseInventory();
+	TradeElement->SetVisible(false);
+
+	// Notify server
+	if(SendNotify)
+		SendTradeCancel();
+
+	Player->TradePlayer = nullptr;
+	//Player->State = _Player::STATE_WALK;
+}
+
+// Close the trader
+void _HUD::CloseTrader() {
+	if(Player->State != _Player::STATE_TRADER)
+		return;
+
+	Cursor.Reset();
+	TraderElement->SetVisible(false);
+
+	// Notify server
+	_Buffer Packet;
+	Packet.Write<char>(_Network::EVENT_END);
+	ClientNetwork->SendPacketToHost(&Packet);
+
+	//Player->State = _Player::STATE_WALK;
+	Player->Trader = nullptr;
 }
 
 // Closes all windows
 void _HUD::CloseWindows() {
-
-	switch(*State) {
-		case _ClientState::STATE_VENDOR:
-			CloseVendor();
-		break;
-		case _ClientState::STATE_TRADER:
-			CloseTrader();
-		break;
-		case _ClientState::STATE_SKILLS:
-			CloseSkills();
-		break;
-		case _ClientState::STATE_TRADE:
-			CloseTrade();
-		break;
-	}
+	CloseInventory();
+	CloseVendor();
+	CloseSkills();
+	CloseTrade();
+	CloseTrader();
 }
 
 // Draws chat messages
@@ -1334,6 +1258,62 @@ void _HUD::SetSkillBar(int Slot, int OldSlot, const _Skill *Skill) {
 	SkillBarChanged = true;
 }
 
+// Delete memory used by skill page
+void _HUD::ClearSkills() {
+	std::vector<_Element *> &Children = SkillsElement->Children;
+	for(size_t i = 0; i < Children.size(); i++) {
+		if(Children[i]->Style && Children[i]->Style->UserCreated)
+			delete Children[i]->Style;
+
+		// Delete labels
+		for(size_t j = 0; j < Children[i]->Children.size(); j++) {
+			if(Children[i]->Children[j]->UserCreated)
+				delete Children[i]->Children[j];
+		}
+
+		if(Children[i]->UserCreated)
+			delete Children[i];
+	}
+	Children.clear();
+}
+
+// Shows or hides the plus/minus buttons
+void _HUD::RefreshSkillButtons() {
+
+	// Get remaining points
+	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
+
+	// Loop through buttons
+	for(auto &Element : SkillsElement->Children) {
+		if(Element->Identifier == "label_skills_level") {
+			int SkillID = (intptr_t)Element->UserData;
+			_Label *Label = (_Label *)Element;
+			Label->Text = std::to_string(Player->GetSkillLevel(SkillID));
+		}
+		else if(Element->Identifier == "button_skills_plus") {
+			_Button *Button = (_Button *)Element;
+
+			// Get skill
+			int SkillID = (intptr_t)Button->Parent->UserData;
+			const _Skill *Skill = Stats.GetSkill(SkillID);
+			if(Skill->SkillCost > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
+				Button->SetVisible(false);
+			else
+				Button->SetVisible(true);
+		}
+		else if(Element->Identifier == "button_skills_minus") {
+			_Button *Button = (_Button *)Element;
+
+			// Get skill
+			int SkillID = (intptr_t)Button->Parent->UserData;
+			if(Player->GetSkillLevel(SkillID) == 0)
+				Button->SetVisible(false);
+			else
+				Button->SetVisible(true);
+		}
+	}
+}
+
 // Trade with another player
 void _HUD::SendTradeRequest() {
 	_Buffer Packet;
@@ -1429,4 +1409,21 @@ void _HUD::SplitStack(int Slot, int Count) {
 
 	ClientNetwork->SendPacketToHost(&Packet);
 	Player->SplitStack(Slot, Count);
+}
+
+// Return true if player is typing gold
+bool _HUD::IsTypingGold() {
+	return FocusedElement == Assets.TextBoxes["textbox_trade_gold_yours"];
+}
+
+// Return true if the chatbox is open
+bool _HUD::IsChatting() {
+	return ChatTextBox->Visible;
+}
+
+// Set player for HUD
+void _HUD::SetPlayer(_Player *Player) {
+	this->Player = Player;
+
+	Assets.Labels["label_hud_name"]->Text = Player->Name;
 }
