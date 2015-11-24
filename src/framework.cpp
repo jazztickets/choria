@@ -160,7 +160,6 @@ void _Framework::Close() {
 
 	if(MultiNetwork)
 		MultiNetwork->WaitForDisconnect();
-	Config.Save();
 
 	// Shut down the system
 	_Network::CloseSystem();

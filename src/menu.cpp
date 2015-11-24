@@ -732,6 +732,14 @@ void _Menu::Render() {
 void _Menu::HandleConnect(ENetEvent *Event) {
 	switch(State) {
 		case STATE_CONNECT: {
+			_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
+			_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+
+			// Save connection information
+			Config.LastHost = Host->Text;
+			Config.LastPort = Port->Text;
+			Config.Save();
+
 			InitAccount();
 		} break;
 		default:

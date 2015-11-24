@@ -51,7 +51,6 @@ void _Config::Init(const std::string &ConfigFile) {
 
 // Closes the config system
 void _Config::Close() {
-	Save();
 }
 
 // Set defaults
