@@ -262,7 +262,7 @@ void _Player::Save() {
 	for(int i = 0; i < INVENTORY_COUNT; i++) {
 		Item = &Inventory[i];
 		if(Item->Item) {
-			sprintf(Query, "INSERT INTO Inventory VALUES(%d, %d, %d, %d)", CharacterID, i, Item->Item->GetID(), Item->Count);
+			sprintf(Query, "INSERT INTO Inventory VALUES(%d, %d, %d, %d)", CharacterID, i, Item->Item->ID, Item->Count);
 			Database->RunQuery(Query);
 		}
 	}
@@ -419,11 +419,11 @@ int _Player::GetPotionBattle(int PotionType) {
 // Uses a potion in battle
 bool _Player::UsePotionBattle(int Slot, int SkillType, int &HealthChange, int &ManaChange) {
 	const _Item *Item = GetInventoryItem(Slot);
-	if(Item == nullptr || Item->GetType() != _Item::TYPE_POTION)
+	if(Item == nullptr || Item->Type != _Item::TYPE_POTION)
 		return false;
 
-	HealthChange = Item->GetHealthRestore();
-	ManaChange = Item->GetManaRestore();
+	HealthChange = Item->HealthRestore;
+	ManaChange = Item->ManaRestore;
 	UpdatePotionsLeft(SkillType);
 	UpdateInventory(Slot, -1);
 
@@ -437,9 +437,9 @@ bool _Player::UsePotionWorld(int Slot) {
 		return false;
 
 	// Get potion stats
-	int HealthRestore = Item->GetHealthRestore();
-	int ManaRestore = Item->GetManaRestore();
-	int ItemInvisPower = Item->GetInvisPower();
+	int HealthRestore = Item->HealthRestore;
+	int ManaRestore = Item->ManaRestore;
+	int ItemInvisPower = Item->InvisPower;
 
 	// Use only if needed
 	if((Item->IsHealthPotion() && Health < MaxHealth) || (Item->IsManaPotion() && Mana < MaxMana) || Item->IsInvisPotion()) {
@@ -460,7 +460,7 @@ bool _Player::UseInventory(int Slot) {
 		return false;
 
 	// Handle item types
-	switch(Item->GetType()) {
+	switch(Item->Type) {
 		case _Item::TYPE_POTION:
 			return UsePotionWorld(Slot);
 		break;
@@ -694,28 +694,28 @@ bool _Player::CanEquipItem(int Slot, const _Item *Item) {
 	// Check type
 	switch(Slot) {
 		case INVENTORY_HEAD:
-			if(Item->GetType() == _Item::TYPE_HEAD)
+			if(Item->Type == _Item::TYPE_HEAD)
 				return true;
 		break;
 		case INVENTORY_BODY:
-			if(Item->GetType() == _Item::TYPE_BODY)
+			if(Item->Type == _Item::TYPE_BODY)
 				return true;
 		break;
 		case INVENTORY_LEGS:
-			if(Item->GetType() == _Item::TYPE_LEGS)
+			if(Item->Type == _Item::TYPE_LEGS)
 				return true;
 		break;
 		case INVENTORY_HAND1:
-			if(Item->GetType() == _Item::TYPE_WEAPON1HAND)
+			if(Item->Type == _Item::TYPE_WEAPON1HAND)
 				return true;
 		break;
 		case INVENTORY_HAND2:
-			if(Item->GetType() == _Item::TYPE_SHIELD)
+			if(Item->Type == _Item::TYPE_SHIELD)
 				return true;
 		break;
 		case INVENTORY_RING1:
 		case INVENTORY_RING2:
-			if(Item->GetType() == _Item::TYPE_RING)
+			if(Item->Type == _Item::TYPE_RING)
 				return true;
 		break;
 		default:
@@ -870,8 +870,8 @@ void _Player::CalculateGearStats() {
 			// Boosts
 			MaxHealth += Item->MaxHealth;
 			MaxMana += Item->MaxMana;
-			HealthRegen += Item->GetHealthRegen();
-			ManaRegen += Item->GetManaRegen();
+			HealthRegen += Item->HealthRegen;
+			ManaRegen += Item->ManaRegen;
 		}
 	}
 }

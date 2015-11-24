@@ -468,7 +468,7 @@ void _ServerState::HandleCharacterSelect(_Buffer *Packet, ENetPeer *Peer) {
 		if(Player->Inventory[i].Item) {
 			NewPacket.Write<char>(i);
 			NewPacket.Write<char>(Player->Inventory[i].Count);
-			NewPacket.Write<int32_t>(Player->Inventory[i].Item->GetID());
+			NewPacket.Write<int32_t>(Player->Inventory[i].Item->ID);
 		}
 	}
 
@@ -726,11 +726,11 @@ void _ServerState::HandleInventoryMove(_Buffer *Packet, ENetPeer *Peer) {
 		// Get item information
 		int OldItemID = 0, NewItemID = 0, OldItemCount = 0, NewItemCount = 0;
 		if(OldSlotItem->Item) {
-			OldItemID = OldSlotItem->Item->GetID();
+			OldItemID = OldSlotItem->Item->ID;
 			OldItemCount = OldSlotItem->Count;
 		}
 		if(NewSlotItem->Item) {
-			NewItemID = NewSlotItem->Item->GetID();
+			NewItemID = NewSlotItem->Item->ID;
 			NewItemCount = NewSlotItem->Count;
 		}
 
@@ -1287,7 +1287,7 @@ void _ServerState::BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int G
 	Packet->Write<int32_t>(Gold);
 	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
 		if(Player->Inventory[i].Item) {
-			Packet->Write<int32_t>(Player->Inventory[i].Item->GetID());
+			Packet->Write<int32_t>(Player->Inventory[i].Item->ID);
 			Packet->Write<char>(Player->Inventory[i].Count);
 		}
 		else

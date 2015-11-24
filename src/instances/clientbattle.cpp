@@ -233,7 +233,7 @@ void _ClientBattle::RenderBattleWin() {
 
 		// Draw items found
 		for(size_t i = 0; i < MonsterDrops.size(); i++) {
-			const _Texture *Texture = MonsterDrops[i]->GetImage();
+			const _Texture *Texture = MonsterDrops[i]->Image;
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Texture);
 

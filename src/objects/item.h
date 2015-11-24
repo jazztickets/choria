@@ -40,19 +40,6 @@ class _Item {
 			TYPE_TRADE,
 		};
 
-		int GetID() const { return ID; }
-		int GetType() const { return Type; }
-		const _Texture *GetImage() const { return Image; }
-		const std::string &GetName() const { return Name; }
-		int GetLevel() const { return Level; }
-		int GetHealthRestore() const { return HealthRestore; }
-		int GetManaRestore() const { return ManaRestore; }
-		int GetMaxHealth() const { return MaxHealth; }
-		int GetMaxMana() const { return MaxMana; }
-		float GetHealthRegen() const { return HealthRegen; }
-		float GetManaRegen() const { return ManaRegen; }
-		int GetInvisPower() const { return InvisPower; }
-
 		bool IsHealthPotion() const { return Type == TYPE_POTION && HealthRestore > 0; }
 		bool IsManaPotion() const { return Type == TYPE_POTION && ManaRestore > 0; }
 		bool IsInvisPotion() const { return Type == TYPE_POTION && InvisPower > 0; }

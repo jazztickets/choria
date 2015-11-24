@@ -929,7 +929,7 @@ void _HUD::DrawInventory() {
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Image);
 
 			// Draw price if using vendor
 			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
@@ -963,7 +963,7 @@ void _HUD::DrawVendor() {
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->GetImage());
+			Graphics.DrawCenteredImage(DrawPosition, Item->Image);
 
 			// Draw price
 			DrawItemPrice(Item, 1, DrawPosition, true);
@@ -1006,7 +1006,7 @@ void _HUD::DrawTradeItems(_Player *Player, const std::string &ElementPrefix, int
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->GetImage());
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Image);
 
 			// Draw count
 			if(Item->Count > 1)
@@ -1036,7 +1036,7 @@ void _HUD::DrawTrader() {
 		// Draw item
 		const _Item *Item = Player->Trader->TraderItems[i].Item;
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Item->GetImage());
+		Graphics.DrawCenteredImage(DrawPosition, Item->Image);
 
 		glm::vec4 Color;
 		if(RequiredItemSlots[i] == -1)
@@ -1053,7 +1053,7 @@ void _HUD::DrawTrader() {
 
 	// Draw item
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->GetImage());
+	Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->Image);
 	Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count).c_str(), DrawPosition + glm::ivec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
 }
 
@@ -1188,7 +1188,7 @@ void _HUD::DrawCursorItem() {
 	if(Cursor.Item) {
 		glm::ivec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->GetImage());
+		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->Image);
 		DrawItemPrice(Cursor.Item, Cursor.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
 		if(Cursor.Count > 1)
 			Assets.Fonts["hud_small"]->DrawText(std::to_string(Cursor.Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
@@ -1205,7 +1205,7 @@ void _HUD::DrawItemTooltip() {
 		TooltipElement->SetVisible(true);
 
 		// Set label values
-		TooltipName->Text = Item->GetName();
+		TooltipName->Text = Item->Name;
 		Item->GetType(TooltipType->Text);
 
 		// Set window width
@@ -1266,7 +1266,7 @@ void _HUD::DrawItemTooltip() {
 			DrawPosition.y += SpacingY;
 		}
 
-		switch(Item->GetType()) {
+		switch(Item->Type) {
 			case _Item::TYPE_WEAPON1HAND:
 			case _Item::TYPE_WEAPON2HAND:
 			case _Item::TYPE_HEAD:
@@ -1280,21 +1280,21 @@ void _HUD::DrawItemTooltip() {
 					Assets.Fonts["hud_small"]->DrawText("Right-click to use", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 					DrawPosition.y += 40;
 				}
-				if(Item->GetHealthRestore() > 0) {
+				if(Item->HealthRestore > 0) {
 					std::stringstream Buffer;
-					Buffer << "+" << Item->GetHealthRestore() << " HP";
+					Buffer << "+" << Item->HealthRestore << " HP";
 					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GREEN, CENTER_BASELINE);
 					DrawPosition.y += SpacingY;
 				}
-				if(Item->GetManaRestore() > 0) {
+				if(Item->ManaRestore > 0) {
 					std::stringstream Buffer;
-					Buffer << "+" << Item->GetManaRestore() << " MP";
+					Buffer << "+" << Item->ManaRestore << " MP";
 					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_BLUE, CENTER_BASELINE);
 					DrawPosition.y += SpacingY;
 				}
-				if(Item->GetInvisPower() > 0) {
+				if(Item->InvisPower > 0) {
 					std::stringstream Buffer;
-					Buffer << "+" << Item->GetInvisPower() << " Invisibility Time";
+					Buffer << "+" << Item->InvisPower << " Invisibility Time";
 					Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_TWHITE, CENTER_BASELINE);
 					DrawPosition.y += SpacingY;
 				}
@@ -1316,16 +1316,16 @@ void _HUD::DrawItemTooltip() {
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
-		if(Item->GetHealthRegen() > 0) {
+		if(Item->HealthRegen > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << std::setprecision(2) << Item->GetHealthRegen() << "%";
+			Buffer << "+" << std::setprecision(2) << Item->HealthRegen << "%";
 			Assets.Fonts["hud_medium"]->DrawText("HP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
-		if(Item->GetManaRegen() > 0) {
+		if(Item->ManaRegen > 0) {
 			std::stringstream Buffer;
-			Buffer << "+" << std::setprecision(2) << Item->GetManaRegen() << "%";
+			Buffer << "+" << std::setprecision(2) << Item->ManaRegen << "%";
 			Assets.Fonts["hud_medium"]->DrawText("MP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
