@@ -31,8 +31,6 @@ class _Monster;
 // Structures
 struct _MapStat {
 	std::string File;
-	int ViewWidth;
-	int ViewHeight;
 };
 
 struct _Portrait {

@@ -80,8 +80,6 @@ void _Stats::LoadMaps() {
 	_MapStat Map;
 	while(Database->FetchRow()) {
 		Map.File = std::string("maps/") + Database->GetString(1);
-		Map.ViewWidth = Database->GetInt(2);
-		Map.ViewHeight = Database->GetInt(3);
 		Maps[Database->GetInt(0)] = Map;
 	}
 	Database->CloseQuery();
