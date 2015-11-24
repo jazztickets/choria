@@ -403,12 +403,6 @@ void _HUD::Render() {
 			if(!Player->CanAttackPlayer())
 				Graphics.DrawImage(_Graphics::IMAGE_PVP, StartX, StartY + 8, PVPColor);
 		}
-
-		// Draw RTT
-		if(ClientNetwork->GetRTT()) {
-			sprintf(String, "%d ms", ClientNetwork->GetRTT());
-			//Graphics.RenderText(String, 10, 600 - 25);
-		}
 	*/
 
 	DrawInventory();
@@ -426,7 +420,8 @@ void _HUD::Render() {
 
 	// Draw skill information
 	DrawCursorSkill();
-	DrawSkillTooltip();
+	if(Tooltip.Skill)
+		Tooltip.Skill->DrawTooltip(Player, Tooltip, SkillsElement->Visible);
 }
 
 // Set player for HUD
@@ -1202,145 +1197,6 @@ void _HUD::DrawCursorSkill() {
 		glm::ivec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Cursor.Skill->Image);
-	}
-}
-
-// Draws the skill tooltip window
-void _HUD::DrawSkillTooltip() {
-	const _Skill *Skill = Tooltip.Skill;
-	bool DrawNextLevel = SkillsElement->Visible;
-	if(Skill) {
-		_Element *TooltipElement = Assets.Elements["element_skills_tooltip"];
-		_Label *TooltipName = Assets.Labels["label_skills_tooltip_name"];
-		TooltipElement->SetVisible(true);
-
-		// Set label values
-		TooltipName->Text = Skill->Name;
-
-		// Get window width
-		glm::ivec2 Size = TooltipElement->Size;
-
-		// Position window
-		glm::ivec2 WindowOffset = Input.GetMouse();
-		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
-		WindowOffset.y += -Size.y / 2;
-
-		// Reposition window if out of bounds
-		if(WindowOffset.y < Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING)
-			WindowOffset.y = Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING;
-		if(WindowOffset.x + Size.x > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
-			WindowOffset.x -= Size.x + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
-		if(WindowOffset.y + Size.y > Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
-			WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
-
-		TooltipElement->SetOffset(WindowOffset);
-
-		// Render tooltip
-		TooltipElement->Render();
-		TooltipElement->SetVisible(false);
-
-		// Set draw position to center of window
-		glm::ivec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
-		DrawPosition.y += 30;
-
-		// Get current skill level
-		int SkillLevel = Player->GetSkillLevel(Skill->ID);
-
-		// Get current level description
-		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
-		DrawPosition.y += 25;
-		DrawSkillDescription(Skill, SkillLevel, DrawPosition, Size.x);
-
-		// Get next level description
-		if(DrawNextLevel && SkillLevel > 0) {
-			DrawPosition.y += 25;
-			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
-			DrawPosition.y += 25;
-			DrawSkillDescription(Skill, SkillLevel+1, DrawPosition, Size.x);
-		}
-
-		// Additional information
-		switch(Skill->Type) {
-			case _Skill::TYPE_PASSIVE:
-				DrawPosition.y += 25;
-				Assets.Fonts["hud_small"]->DrawText("Passive skills must be equipped to the actionbar", DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			break;
-		}
-	}
-}
-
-// Draw the skill description
-void _HUD::DrawSkillDescription(const _Skill *Skill, int SkillLevel, glm::ivec2 &DrawPosition, int Width) {
-
-	// Get power range
-	int PowerMin, PowerMax;
-	Skill->GetPowerRange(SkillLevel, PowerMin, PowerMax);
-
-	// Get power range rounded
-	int PowerMinRound, PowerMaxRound;
-	Skill->GetPowerRangeRound(SkillLevel, PowerMinRound, PowerMaxRound);
-
-	// Get floating point range
-	float PowerMinFloat, PowerMaxFloat;
-	Skill->GetPowerRange(SkillLevel, PowerMinFloat, PowerMaxFloat);
-
-	// Get percent
-	int PowerPercent = (int)std::roundf(PowerMaxFloat * 100);
-
-	// Draw description
-	int SpacingY = 25;
-	char Buffer[512];
-	Buffer[0] = 0;
-	switch(Skill->Type) {
-		case _Skill::TYPE_ATTACK:
-			sprintf(Buffer, Skill->Info.c_str(), PowerPercent);
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		break;
-		case _Skill::TYPE_SPELL:
-			switch(Skill->ID) {
-				case 3:
-					sprintf(Buffer, Skill->Info.c_str(), PowerMaxRound);
-				break;
-				case 6:
-				case 11:
-					sprintf(Buffer, Skill->Info.c_str(), PowerMinRound, PowerMaxRound);
-				break;
-			}
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-
-			sprintf(Buffer, "%d Mana", Skill->GetManaCost(SkillLevel));
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_BLUE, LEFT_BASELINE);
-			DrawPosition.y += 15;
-		break;
-		case _Skill::TYPE_USEPOTION:
-			sprintf(Buffer, Skill->Info.c_str(), PowerMin);
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		break;
-		case _Skill::TYPE_PASSIVE:
-			switch(Skill->ID) {
-				case 4:
-				case 5:
-					sprintf(Buffer, Skill->Info.c_str(), PowerMaxRound);
-				break;
-				case 7:
-				case 8:
-					sprintf(Buffer, Skill->Info.c_str(), PowerMaxFloat);
-				break;
-				case 9:
-				case 10:
-					sprintf(Buffer, Skill->Info.c_str(), PowerMax);
-				break;
-			}
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		break;
-		default:
-			Assets.Fonts["hud_small"]->DrawText(Skill->Info.c_str(), DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		break;
 	}
 }
 

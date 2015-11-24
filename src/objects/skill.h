@@ -24,6 +24,8 @@
 class _Fighter;
 struct _Vendor;
 struct _FighterResult;
+struct _Cursor;
+class _Player;
 
 // Classes
 class _Skill {
@@ -36,6 +38,9 @@ class _Skill {
 			TYPE_PASSIVE,
 			TYPE_USEPOTION,
 		};
+
+		void DrawTooltip(const _Player *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
+		void DrawDescription(int SkillLevel, glm::ivec2 &DrawPosition, int Width) const;
 
 		int GetManaCost(int Level) const;
 		int GetPower(int Level) const;

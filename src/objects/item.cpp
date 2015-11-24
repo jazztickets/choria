@@ -29,7 +29,7 @@
 #include <sstream>
 #include <iomanip>
 
-// Draw item tool tip
+// Draw tooltip
 void _Item::DrawTooltip(const _Player *Player, const _Cursor &Tooltip) const {
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
