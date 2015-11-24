@@ -68,6 +68,7 @@ void _HUD::Init() {
 	CharacterElement = Assets.Elements["element_character"];
 	VendorElement = Assets.Elements["element_vendor"];
 	TradeElement = Assets.Elements["element_trade"];
+	TradeTheirsElement = Assets.Elements["element_trade_theirs"];
 	TraderElement = Assets.Elements["element_trader"];
 	SkillsElement = Assets.Elements["element_skills"];
 	TeleportElement = Assets.Elements["element_teleport"];
@@ -79,6 +80,7 @@ void _HUD::Init() {
 	CharacterElement->SetVisible(false);
 	VendorElement->SetVisible(false);
 	TradeElement->SetVisible(false);
+	TradeTheirsElement->SetVisible(false);
 	TraderElement->SetVisible(false);
 	SkillsElement->SetVisible(false);
 	TeleportElement->SetVisible(false);
@@ -117,7 +119,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 	if(MouseEvent.Pressed) {
 		if(Tooltip.Item) {
 			switch(Tooltip.Window) {
+				case WINDOW_TRADEYOURS:
 				case WINDOW_INVENTORY:
+
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 						if(Input.ModKeyDown(KMOD_CTRL))
@@ -157,24 +161,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					Cursor = Tooltip;
 			}
 		}
-/*
-		switch(*State) {
-			case _ClientState::STATE_TRADE:
-				switch(MouseEvent.Button) {
-					case SDL_BUTTON_LEFT:
-						if(Tooltip.Item && Tooltip.Window != WINDOW_TRADETHEIRS) {
-							if(Tooltip.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_CTRL))
-								SplitStack(Tooltip.Slot, 1);
-							else
-								CursorItem = Tooltip;
-						}
-
-						//Assets.Elements["element_trade"]->HandleInput(MouseEvent.Pressed);
-					break;
-				}
-			break;
-		}
-		*/
 	}
 	// Release left mouse button
 	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
@@ -309,6 +295,7 @@ void _HUD::Update(double FrameTime) {
 
 		switch(Tooltip.Window) {
 			case WINDOW_INVENTORY:
+			case WINDOW_TRADETHEIRS:
 			case WINDOW_TRADEYOURS: {
 				if(Tooltip.Slot >= 0) {
 					_InventorySlot *InventorySlot = &Player->Inventory[Tooltip.Slot];
@@ -340,46 +327,25 @@ void _HUD::Update(double FrameTime) {
 		}
 	}
 
-/*
 	switch(*State) {
-		case _ClientState::STATE_VENDOR:
-		case _ClientState::STATE_INVENTORY:
 		case _ClientState::STATE_TRADE: {
 
 			// Get trade items
 			if(*State == _ClientState::STATE_TRADE) {
-				Assets.Elements["element_trade"]->Update(FrameTime, Input.GetMouse());
-				_Element *TradeTheirsElement = Assets.Elements["element_trade_theirs"];
-				_Label *LabelTradeStatus = Assets.Labels["label_trade_status"];
-				TradeTheirsElement->Visible = false;
-				LabelTradeStatus->Visible = true;
+				TradeTheirsElement->SetVisible(false);
 				if(Player->TradePlayer) {
-					TradeTheirsElement->Visible = true;
-					LabelTradeStatus->Visible = false;
+					TradeTheirsElement->SetVisible(true);
+					Assets.Labels["label_trade_status"]->SetVisible(false);
 
 					Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
 					Assets.Labels["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
 					Assets.Images["image_trade_portrait_theirs"]->Texture = Player->TradePlayer->Portrait;
-
-					if(!HoverSlot) {
-						HoverSlot = TradeTheirsElement->HitElement;
-						Tooltip.Window = WINDOW_TRADETHEIRS;
-					}
-				}
-
-				if(!HoverSlot) {
-					_Element *TradeYoursElement = Assets.Elements["element_trade_yours"];
-					HoverSlot = TradeYoursElement->HitElement;
-					Tooltip.Window = WINDOW_TRADEYOURS;
 				}
 			}
 		} break;
 	}
-*/
-	if(IsChatting()) {
-		_Element *ChatElement = Assets.Elements["element_chat"];
-		ChatElement->Update(FrameTime, Input.GetMouse());
 
+	if(IsChatting()) {
 		if(ChatTextBox != FocusedElement)
 			CloseChat();
 	}
@@ -527,7 +493,13 @@ void _HUD::ToggleInventory() {
 
 // Open/close trade
 void _HUD::ToggleTrade() {
-
+	TradeElement->SetVisible(!TradeElement->Visible);
+	if(TradeElement->Visible) {
+		InitTrade();
+	}
+	else {
+		CloseTrade();
+	}
 }
 
 // Open/close skills
@@ -596,6 +568,7 @@ void _HUD::CloseVendor() {
 
 // Initialize the trade system
 void _HUD::InitTrade() {
+	InventoryElement->SetVisible(true);
 
 	// Send request to server
 	SendTradeRequest();
@@ -603,10 +576,11 @@ void _HUD::InitTrade() {
 	// Reset UI
 	ResetAcceptButton();
 
+	TradeTheirsElement->SetVisible(false);
+	Assets.Labels["label_trade_status"]->SetVisible(true);
 	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
 	Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = "0";
 	Assets.TextBoxes["textbox_trade_gold_yours"]->Text = "0";
-	Assets.Elements["element_trade_theirs"]->Visible = false;
 	Assets.Labels["label_trade_name_yours"]->Text = Player->Name;
 	Assets.Images["image_trade_portrait_yours"]->Texture = Player->Portrait;
 
@@ -619,6 +593,7 @@ void _HUD::CloseTrade(bool SendNotify) {
 
 	// Close inventory
 	InventoryElement->SetVisible(false);
+	TradeElement->SetVisible(false);
 	ClientState.SendBusy(false);
 
 	// Notify server
@@ -889,7 +864,6 @@ void _HUD::CloseWindows() {
 void _HUD::DrawChat(bool IgnoreTimeout) {
 
 	// Draw window
-	_Element *ChatElement = Assets.Elements["element_chat"];
 	ChatElement->Render();
 
 	// Set up UI position

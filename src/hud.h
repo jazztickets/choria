@@ -171,6 +171,7 @@ class _HUD {
 		_Element *CharacterElement;
 		_Element *VendorElement;
 		_Element *TradeElement;
+		_Element *TradeTheirsElement;
 		_Element *TraderElement;
 		_Element *SkillsElement;
 		_Element *TeleportElement;

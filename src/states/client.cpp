@@ -185,14 +185,16 @@ void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 
 // Mouse events
 void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+	FocusedElement = nullptr;
 	Graphics.Element->HandleInput(MouseEvent.Pressed);
 
-	FocusedElement = nullptr;
+	// Pass to menu
 	if(Menu.GetState() != _Menu::STATE_NONE) {
 		Menu.MouseEvent(MouseEvent);
 		return;
 	}
 
+	// Pass to hud
 	HUD.MouseEvent(MouseEvent);
 }
 
