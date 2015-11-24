@@ -249,7 +249,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 			}
 		break;
 		case _Player::STATE_BATTLE:
-			((_ClientBattle *)Player->Battle)->HandleAction(Action);
+			Player->Battle->HandleAction(Action);
 		break;
 		case _Player::STATE_TELEPORT:
 			switch(Action) {
@@ -338,7 +338,7 @@ void _ClientState::Update(double FrameTime) {
 				if(!HUD.IsChatting()) {
 					for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 						if(Actions.GetState(_Actions::SKILL1+i)) {
-							((_ClientBattle *)Player->Battle)->HandleAction(_Actions::SKILL1+i);
+							Player->Battle->HandleAction(_Actions::SKILL1+i);
 							break;
 						}
 					}
@@ -411,7 +411,7 @@ void _ClientState::Render(double BlendFactor) {
 
 	// Draw states
 	if(Player->Battle)
-		((_ClientBattle *)Player->Battle)->Render();
+		Player->Battle->Render(BlendFactor);
 
 	// Draw menu
 	Menu.Render();
@@ -588,7 +588,7 @@ void _ClientState::HandleDeleteObject(_Buffer *Packet) {
 			_Player *DeletedPlayer = (_Player *)Object;
 			switch(Player->State) {
 				case _Player::STATE_BATTLE:
-					((_ClientBattle *)Player->Battle)->RemovePlayer(DeletedPlayer);
+					Player->Battle->RemoveFighter(DeletedPlayer);
 				break;
 			}
 		}

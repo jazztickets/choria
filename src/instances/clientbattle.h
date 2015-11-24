@@ -53,17 +53,17 @@ class _ClientBattle : public _Battle {
 
 		// Setup
 		void StartBattle(_Player *Player);
-		void RemovePlayer(_Player *Player);
+		int RemoveFighter(_Fighter *Fighter) override;
 
 		// Input
 		void HandleCommand(int Slot, int SkillID);
-		void HandleAction(int Action);
+		void HandleAction(int Action) override;
 
 		// Updates
 		void Update(double FrameTime);
 
 		// Render
-		void Render();
+		void Render(double BlendFactor) override;
 		void GetPositionFromSlot(int Slot, glm::ivec2 &Position);
 
 		// Resolve

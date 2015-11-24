@@ -1303,7 +1303,7 @@ void _ServerState::RemovePlayerFromBattle(_Player *Player) {
 		return;
 
 	// Delete instance
-	if(Battle->RemovePlayer(Player) == 0)
+	if(Battle->RemoveFighter(Player) == 0)
 		Instances->DeleteBattle(Battle);
 }
 

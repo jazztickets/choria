@@ -80,13 +80,15 @@ void _ClientBattle::StartBattle(_Player *Player) {
 }
 
 // Removes a player from battle
-void _ClientBattle::RemovePlayer(_Player *Player) {
+int _ClientBattle::RemoveFighter(_Fighter *Fighter) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] == Player) {
+		if(Fighters[i] == Fighter) {
 			Fighters[i] = nullptr;
 			break;
 		}
 	}
+
+	return 0;
 }
 
 // Handles a command from an other player
@@ -172,7 +174,7 @@ void _ClientBattle::Update(double FrameTime) {
 }
 
 // Render the battle system
-void _ClientBattle::Render() {
+void _ClientBattle::Render(double BlendFactor) {
 	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
 		ShowResults = false;
 		for(size_t i = 0; i < Fighters.size(); i++) {

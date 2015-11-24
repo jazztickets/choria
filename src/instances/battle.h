@@ -57,9 +57,13 @@ class _Battle {
 
 		// Objects
 		void AddFighter(_Fighter *Fighter, int Side);
+		virtual int RemoveFighter(_Fighter *RemoveFighter) { return 0; }
 
 		// Updates
 		virtual void Update(double FrameTime) { }
+		virtual void Render(double BlendFactor) { }
+
+		virtual void HandleAction(int Action) { }
 
 		// States
 		int GetState() const { return State; }

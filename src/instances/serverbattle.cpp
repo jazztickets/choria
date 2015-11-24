@@ -41,13 +41,13 @@ _ServerBattle::~_ServerBattle() {
 }
 
 // Removes a player from the battle, return remaining player count
-int _ServerBattle::RemovePlayer(_Player *RemovePlayer) {
+int _ServerBattle::RemoveFighter(_Fighter *RemoveFighter) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Fighter::TYPE_PLAYER) {
 			_Player *Player = (_Player *)Fighters[i];
-			if(Player == RemovePlayer) {
+			if(Player == RemoveFighter) {
 				Player->StopBattle();
 				Fighters[i] = nullptr;
 			}
