@@ -121,16 +121,16 @@ void _Map::AllocateMap() {
 // Updates the map and sends object updates
 void _Map::Update(double FrameTime) {
 
-	ObjectUpdateTime += FrameTime;
+/*	ObjectUpdateTime += FrameTime;
 	if(ObjectUpdateTime > NETWORK_UPDATEPERIOD) {
 		ObjectUpdateTime = 0;
 
 		SendObjectUpdates();
-	}
+	}*/
 }
 
 // Renders the map
-void _Map::Render(_Camera *Camera, _Stats *Stats, int RenderFlags) {
+void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags) {
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	Graphics.SetColor(COLOR_WHITE);
@@ -154,6 +154,11 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, int RenderFlags) {
 			if(Tile->Texture)
 				Graphics.DrawSprite(DrawPosition, Tile->Texture);
 		}
+	}
+
+	// Render objects
+	for(const auto &Object : Objects) {
+		Object->Render(ClientPlayer);
 	}
 
 	// Check for flags
@@ -420,7 +425,7 @@ void _Map::RemoveObject(const _Object *RemoveObject) {
 	// Create delete packet
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_DELETEOBJECT);
-	Packet.Write<char>(RemoveObject->NetworkID);
+	Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
 
 	// Send to everyone
 	BroadcastPacket(Packet);
@@ -449,13 +454,23 @@ void _Map::DeleteObjects() {
 	NextObjectID = 0;
 }
 
+// Get object by id
+_Object *_Map::GetObjectByID(NetworkIDType ObjectID) {
+	for(auto &Object : Objects) {
+		if(Object->ID == ObjectID)
+			return Object;
+	}
+
+	return nullptr;
+}
+
 // Adds an object to the map
 void _Map::AddObject(_Object *Object) {
 
 	// Create packet for the new object
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_CREATEOBJECT);
-	Packet.Write<char>(Object->NetworkID);
+	Packet.Write<NetworkIDType>(Object->NetworkID);
 	Packet.Write<char>(Object->Position.x);
 	Packet.Write<char>(Object->Position.y);
 	Packet.Write<char>(Object->Type);
@@ -576,7 +591,7 @@ void _Map::SendObjectUpdates() {
 			Invisible = Player->IsInvisible();
 		}
 
-		Packet.Write<char>(Object->NetworkID);
+		Packet.Write<NetworkIDType>(Object->NetworkID);
 		Packet.Write<char>(State);
 		Packet.Write<char>(Object->Position.x);
 		Packet.Write<char>(Object->Position.y);

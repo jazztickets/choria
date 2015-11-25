@@ -91,7 +91,7 @@ class _Object {
 		_Object();
 		virtual ~_Object();
 
-		void RenderWorld(const _Object *ClientPlayer=nullptr);
+		void Render(const _Object *ClientPlayer=nullptr);
 		void Update(double FrameTime);
 
 		// -- FROM FIGHTER --

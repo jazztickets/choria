@@ -72,7 +72,7 @@ class _Map {
 		void Update(double FrameTime);
 
 		// Graphics
-		void Render(_Camera *Camera, _Stats *Stats, int RenderFlags=0);
+		void Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags=0);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position);
@@ -87,6 +87,7 @@ class _Map {
 		void RemovePeer(const _Peer *Peer);
 
 		void DeleteObjects();
+		_Object *GetObjectByID(NetworkIDType ObjectID);
 		void AddObject(_Object *Object);
 		void AddObject(_Object *Object, NetworkIDType NetworkID);
 		void RemoveObject(const _Object *RemoveObject);

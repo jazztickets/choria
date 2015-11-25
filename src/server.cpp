@@ -249,7 +249,7 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 			HandleCharacterListRequest(Data, Peer);
 		break;
 		case Packet::CHARACTERS_PLAY:
-			HandleCharacterSelect(Data, Peer);
+			HandleCharacterPlay(Data, Peer);
 		break;
 		case Packet::CREATECHARACTER_INFO:
 			HandleCharacterCreate(Data, Peer);
@@ -528,7 +528,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 }
 
 // Loads the player, updates the world, notifies clients
-void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -668,15 +668,15 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) 
 		// Update pointers
 		Player->Map = Map;
 
-		// Add player to map
-		Map->AddObject(Player);
-		Map->AddPeer(Peer);
-
 		// Send new map id
 		_Buffer Packet;
 		Packet.Write<char>(Packet::WORLD_CHANGEMAPS);
 		Packet.Write<int32_t>(MapID);
 		Network->SendPacket(Packet, Peer);
+
+		// Add player to map
+		Map->AddPeer(Peer);
+		Map->AddObject(Player);
 
 		// Send object list to the player
 		Map->SendObjectList(Peer);

@@ -79,7 +79,7 @@ class _Server {
 
 		void HandleLoginInfo(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterListRequest(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterSelect(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterPlay(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
 		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);

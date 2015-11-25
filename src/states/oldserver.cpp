@@ -677,7 +677,7 @@ void _OldServerState::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	// Send items to trader player
 	_Buffer Packet;
 	Packet.Write<char>(Packet::TRADE_REQUEST);
-	Packet.Write<char>(Sender->NetworkID);
+	Packet.Write<NetworkIDType>(Sender->NetworkID);
 	BuildTradeItemsPacket(Sender, &Packet, Sender->TradeGold);
 	OldServerNetwork->SendPacketToPeer(&Packet, Receiver->OldPeer);
 }

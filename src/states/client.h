@@ -76,8 +76,6 @@ class _ClientState : public _State {
 		_ClientNetwork *Network;
 		_Server *Server;
 		std::string HostAddress;
-		uint16_t TimeSteps;
-		uint16_t LastServerTimeSteps;
 		uint16_t ConnectPort;
 
 	protected:

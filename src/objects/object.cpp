@@ -43,7 +43,7 @@ _Object::_Object()
 	Type(0),
 	Deleted(false),
 	Position(-1, -1),
-	NetworkID(-1),
+	NetworkID(0),
 
 	Name(""),
 	Level(0),
@@ -397,8 +397,8 @@ void _Object::Update(double FrameTime) {
 }
 
 // Renders the player while walking around the world
-void _Object::RenderWorld(const _Object *ClientPlayer) {
-	if(Map) {
+void _Object::Render(const _Object *ClientPlayer) {
+	if(Map && WorldImage) {
 
 		float Alpha = 1.0f;
 		if(IsInvisible())

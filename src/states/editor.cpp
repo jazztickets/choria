@@ -138,7 +138,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Render map
 	if(Map)
-		Map->Render(Camera, 0, Filter);
+		Map->Render(Camera, nullptr, nullptr, Filter);
 
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["text"]);

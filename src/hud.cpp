@@ -113,6 +113,8 @@ void _HUD::HandleEnter() {
 
 // Mouse events
 void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
+	if(!Player)
+		return;
 
 	// Press
 	if(MouseEvent.Pressed) {

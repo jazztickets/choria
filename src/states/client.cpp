@@ -123,7 +123,114 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	if(!Player)
 		return false;
 
-	return false;
+	if(Value == 0)
+		return true;
+
+	// Handle enter key
+	if(Action == _Actions::CHAT) {
+		HUD->HandleEnter();
+		return true;
+	}
+
+	// Grab all actions except escape
+	if(HUD->IsChatting()) {
+		if(Action == _Actions::MENU)
+			HUD->CloseChat();
+
+		return true;
+	}
+
+	// Pass to menu
+	if(Menu.GetState() != _Menu::STATE_NONE) {
+		Menu.HandleAction(InputType, Action, Value);
+		return true;
+	}
+
+	switch(Player->State) {
+		case _Object::STATE_WALK:
+			switch(Action) {
+				case _Actions::MENU:
+					if(IsTesting)
+						Framework.Done = true;
+						//Network->Disconnect();
+					else
+						HUD->ToggleMenu();
+				break;
+				case _Actions::INVENTORY:
+					HUD->ToggleInventory();
+				break;
+				case _Actions::TELEPORT:
+					HUD->ToggleTeleport();
+				break;
+				case _Actions::TRADE:
+					HUD->ToggleTrade();
+				break;
+				case _Actions::SKILLS:
+					HUD->ToggleSkills();
+				break;
+				case _Actions::ATTACK:
+					//SendAttackPlayer();
+				break;
+			}
+		break;
+		case _Object::STATE_BATTLE:
+			Player->Battle->HandleAction(Action);
+		break;
+		case _Object::STATE_TELEPORT:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::TELEPORT:
+					HUD->ToggleTeleport();
+				break;
+			}
+		break;
+		case _Object::STATE_VENDOR:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD->CloseWindows();
+				break;
+			}
+		break;
+		case _Object::STATE_TRADER:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+					HUD->CloseWindows();
+				break;
+			}
+		break;
+		case _Object::STATE_TRADE:
+			switch(Action) {
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+				case _Actions::MENU:
+				case _Actions::INVENTORY:
+				case _Actions::TRADE:
+					HUD->CloseWindows();
+				break;
+			}
+		break;
+		case _Object::STATE_BUSY:
+			HUD->CloseWindows();
+		break;
+	}
+
+	return true;
 }
 
 // Key handler
@@ -163,6 +270,7 @@ void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
 	Graphics.Element->HandleInput(MouseEvent.Pressed);
 	Menu.MouseEvent(MouseEvent);
+	HUD->MouseEvent(MouseEvent);
 }
 
 void _ClientState::WindowEvent(uint8_t Event) {
@@ -198,31 +306,66 @@ void _ClientState::Update(double FrameTime) {
 		}
 	}
 
-	if(!Player || !Player->Map)
-		return;
-
 	// Update menu
 	Menu.Update(FrameTime);
+
+	if(!Player || !Player->Map)
+		return;
 
 	// Update objects
 	Player->Map->Update(FrameTime);
 
 	// Update camera
-	Camera->Set2DPosition(glm::vec2(Player->Position));
+	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(+0.5f, +0.5f));
 	Camera->Update(FrameTime);
 
 	// Update the HUD
 	HUD->Update(FrameTime);
 
-	// Send network updates to server
-	if(Player && Network->IsConnected()) {
+	// Handle input
+	/*
+	if(Menu.GetState() == _Menu::STATE_NONE) {
+		switch(Player->State) {
+			case _Object::STATE_WALK: {
+				if(!HUD->IsChatting()) {
+					if(Actions.GetState(_Actions::UP))
+						SendMoveCommand(_Object::MOVE_UP);
+					else if(Actions.GetState(_Actions::DOWN))
+						SendMoveCommand(_Object::MOVE_DOWN);
+					else if(Actions.GetState(_Actions::LEFT))
+						SendMoveCommand(_Object::MOVE_LEFT);
+					else if(Actions.GetState(_Actions::RIGHT))
+						SendMoveCommand(_Object::MOVE_RIGHT);
+				}
+			} break;
+			case _Object::STATE_BATTLE: {
 
-		// Reset timer
-		Network->ResetUpdateTimer();
-	}
+				// Send key input
+				if(!HUD->IsChatting()) {
+					for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+						if(Actions.GetState(_Actions::SKILL1+i)) {
+							Player->Battle->HandleAction(_Actions::SKILL1+i);
+							break;
+						}
+					}
+				}
 
-	if(Player)
-		TimeSteps++;
+				// Singleplayer check
+				if(Player->Battle) {
+
+					// Update the battle
+					Player->Battle->Update(FrameTime);
+
+					// Done with the battle
+					if(Player->Battle->GetState() == _ClientBattle::STATE_DELETE) {
+						delete Player->Battle;
+						Player->Battle = nullptr;
+						Player->State = _Object::STATE_WALK;
+					}
+				}
+			} break;
+		}
+	}*/
 }
 
 // Render the state
@@ -256,8 +399,7 @@ void _ClientState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Draw map and objects
-	Player->Map->Render(Camera, Stats);
-	//ObjectManager->Render(Player);
+	Player->Map->Render(Camera, Stats, Player);
 
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["text"]);
@@ -290,13 +432,13 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::WORLD_OBJECTLIST:
 			HandleObjectList(Data);
 		break;
-			/*
 		case Packet::WORLD_CREATEOBJECT:
 			HandleCreateObject(Data);
 		break;
 		case Packet::WORLD_DELETEOBJECT:
 			HandleDeleteObject(Data);
 		break;
+			/*
 		case Packet::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
 		break;
@@ -384,6 +526,7 @@ void _ClientState::HandleConnect() {
 void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	Log << "HandleYourCharacterInfo" << std::endl;
 
+	Player->WorldImage = Assets.Textures["players/basic.png"];
 	Player->Stats = Stats;
 	Player->Name = Data.ReadString();
 	Player->PortraitID = Data.Read<int32_t>();
@@ -422,8 +565,6 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	Player->CalculateSkillPoints();
 	Player->CalculatePlayerStats();
 	Player->RestoreHealthMana();
-
-	//ObjectManager->AddObjectWithNetworkID(Player, NetworkID);
 }
 
 // Called when the player changes maps
@@ -492,275 +633,55 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 	}
 }
 
-/*
-
-// Key events
-void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
-	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
-
-	if(!Handled) {
-		if(Menu.GetState() != _Menu::STATE_NONE) {
-			Menu.KeyEvent(KeyEvent);
-			return;
-		}
-	}
-	else {
-		if(!HUD->IsChatting())
-			HUD->ValidateTradeGold();
-	}
-}
-
-// Mouse events
-void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
-	FocusedElement = nullptr;
-	Graphics.Element->HandleInput(MouseEvent.Pressed);
-
-	// Pass to menu
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.MouseEvent(MouseEvent);
-		return;
-	}
-
-	// Pass to hud
-	HUD->MouseEvent(MouseEvent);
-}
-
-// Handle an input action
-bool _ClientState::HandleAction(int InputType, int Action, int Value) {
-	if(Value == 0)
-		return true;
-
-	// Handle enter key
-	if(Action == _Actions::CHAT) {
-		HUD->HandleEnter();
-		return true;
-	}
-
-	// Grab all actions except escape
-	if(HUD->IsChatting()) {
-		if(Action == _Actions::MENU)
-			HUD->CloseChat();
-
-		return true;
-	}
-
-	// Pass to menu
-	if(Menu.GetState() != _Menu::STATE_NONE) {
-		Menu.HandleAction(InputType, Action, Value);
-		return true;
-	}
-
-	switch(Player->State) {
-		case _Object::STATE_WALK:
-			switch(Action) {
-				case _Actions::MENU:
-					if(IsTesting)
-						OldClientNetwork->Disconnect();
-					else
-						HUD->ToggleMenu();
-				break;
-				case _Actions::INVENTORY:
-					HUD->ToggleInventory();
-				break;
-				case _Actions::TELEPORT:
-					HUD->ToggleTeleport();
-				break;
-				case _Actions::TRADE:
-					HUD->ToggleTrade();
-				break;
-				case _Actions::SKILLS:
-					HUD->ToggleSkills();
-				break;
-				case _Actions::ATTACK:
-					SendAttackPlayer();
-				break;
-			}
-		break;
-		case _Object::STATE_BATTLE:
-			Player->Battle->HandleAction(Action);
-		break;
-		case _Object::STATE_TELEPORT:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::TELEPORT:
-					HUD->ToggleTeleport();
-				break;
-			}
-		break;
-		case _Object::STATE_VENDOR:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD->CloseWindows();
-				break;
-			}
-		break;
-		case _Object::STATE_TRADER:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD->CloseWindows();
-				break;
-			}
-		break;
-		case _Object::STATE_TRADE:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-				case _Actions::TRADE:
-					HUD->CloseWindows();
-				break;
-			}
-		break;
-		case _Object::STATE_BUSY:
-			HUD->CloseWindows();
-		break;
-	}
-
-	return true;
-}
-
-// Updates the current state
-void _ClientState::Update(double FrameTime) {
-	Graphics.Element->Update(FrameTime, Input.GetMouse());
-
-	if(Camera && Player) {
-		Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(+0.5f, +0.5f));
-		Camera->Update(FrameTime);
-	}
-
-	if(!Player)
-		return;
-
-	// Handle input
-	if(Menu.GetState() == _Menu::STATE_NONE) {
-		switch(Player->State) {
-			case _Object::STATE_WALK: {
-				if(!HUD->IsChatting()) {
-					if(Actions.GetState(_Actions::UP))
-						SendMoveCommand(_Object::MOVE_UP);
-					else if(Actions.GetState(_Actions::DOWN))
-						SendMoveCommand(_Object::MOVE_DOWN);
-					else if(Actions.GetState(_Actions::LEFT))
-						SendMoveCommand(_Object::MOVE_LEFT);
-					else if(Actions.GetState(_Actions::RIGHT))
-						SendMoveCommand(_Object::MOVE_RIGHT);
-				}
-			} break;
-			case _Object::STATE_BATTLE: {
-
-				// Send key input
-				if(!HUD->IsChatting()) {
-					for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-						if(Actions.GetState(_Actions::SKILL1+i)) {
-							Player->Battle->HandleAction(_Actions::SKILL1+i);
-							break;
-						}
-					}
-				}
-
-				// Singleplayer check
-				if(Player->Battle) {
-
-					// Update the battle
-					Player->Battle->Update(FrameTime);
-
-					// Done with the battle
-					if(Player->Battle->GetState() == _ClientBattle::STATE_DELETE) {
-						delete Player->Battle;
-						Player->Battle = nullptr;
-						Player->State = _Object::STATE_WALK;
-					}
-				}
-			} break;
-		}
-	}
-
-	// Update and menu
-	HUD->Update(FrameTime);
-	Menu.Update(FrameTime);
-
-	// Update objects
-	ObjectManager->Update(FrameTime);
-
-	ClientTime += FrameTime;
-}
-
-// Send the busy signal to server
-void _ClientState::SendBusy(bool Value) {
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_BUSY);
-	Packet.Write<char>(Value);
-	OldClientNetwork->SendPacketToHost(&Packet);
-}
-
 // Creates an object
 void _ClientState::HandleCreateObject(_Buffer &Data) {
+	if(!Player->Map)
+		throw std::runtime_error("No map!");
 
 	// Read packet
 	glm::ivec2 Position;
-	int NetworkID = Data.Read<char>();
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	Position.x = Data.Read<char>();
 	Position.y = Data.Read<char>();
 	int Type = Data.Read<char>();
 
 	// Create the object
-	_Object *NewObject = nullptr;
-	switch(Type) {
-		case _Object::PLAYER: {
-			std::string Name(Data.ReadString());
-			int PortraitID = Data.Read<char>();
-			int Invisible = Data.ReadBit();
+	std::string Name(Data.ReadString());
+	int PortraitID = Data.Read<char>();
+	int Invisible = Data.ReadBit();
 
-			NewObject = new _Object();
-			_Object *NewPlayer = (_Object *)NewObject;
-			NewPlayer->Name = Name;
-			NewPlayer->SetPortraitID(PortraitID);
-			NewPlayer->InvisPower = Invisible;
-			NewPlayer->Map = Player->Map;
-		}
-		break;
+	_Object *Object = nullptr;
+	if(NetworkID != Player->NetworkID) {
+		Object = new _Object();
+		Object->NetworkID = NetworkID;
+		Object->Name = Name;
+		Object->PortraitID = PortraitID;
+		Object->Portrait = Stats->Portraits[PortraitID].Image;
+		Object->InvisPower = Invisible;
+		Object->Map = Player->Map;
+		Object->Type = Type;
 	}
+	else
+		Object = Player;
 
-	if(NewObject) {
-		NewObject->Position = Position;
+	if(Object) {
+		Object->Position = Position;
 
 		// Add it to the manager
-		ObjectManager->AddObjectWithNetworkID(NewObject, NetworkID);
+		Player->Map->AddObject(Object, NetworkID);
 	}
-
-	//printf("HandleCreateObject: NetworkID=%d, Type=%d\n", NetworkID, Type); fflush(stdout);
 }
 
 // Deletes an object
 void _ClientState::HandleDeleteObject(_Buffer &Data) {
-	int NetworkID = Data.Read<char>();
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
-	_Object *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
+	_Object *Object = Player->Map->GetObjectByID(NetworkID);
 	if(Object) {
-		if(Object->Type == _Object::PLAYER) {
-			_Object *DeletedPlayer = (_Object *)Object;
-			switch(Player->State) {
-				case _Object::STATE_BATTLE:
-					Player->Battle->RemoveFighter(DeletedPlayer);
-				break;
-			}
+		switch(Player->State) {
+			case _Object::STATE_BATTLE:
+				Player->Battle->RemoveFighter(Object);
+			break;
 		}
 		Object->Deleted = true;
 	}
@@ -768,6 +689,17 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 		printf("failed to delete object with networkid=%d\n", NetworkID);
 
 	//printf("HandleDeleteObject: NetworkID=%d\n", NetworkID);
+}
+
+/*
+
+
+// Send the busy signal to server
+void _ClientState::SendBusy(bool Value) {
+	_Buffer Packet;
+	Packet.Write<char>(Packet::WORLD_BUSY);
+	Packet.Write<char>(Value);
+	OldClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Handles position updates from the server
@@ -780,7 +712,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 	for(int i = 0; i < ObjectCount; i++) {
 		glm::ivec2 Position;
 
-		char NetworkID = Data.Read<char>();
+		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 		int PlayerState = Data.Read<char>();
 		Position.x = Data.Read<char>();
 		Position.y = Data.Read<char>();
@@ -841,7 +773,7 @@ void _ClientState::HandleStartBattle(_Buffer &Data) {
 		if(Type == _Object::PLAYER) {
 
 			// Network ID
-			int NetworkID = Data.Read<char>();
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 			// Player stats
 			int Health = Data.Read<int32_t>();
@@ -969,7 +901,7 @@ void _ClientState::HandleChatMessage(_Buffer &Data) {
 void _ClientState::HandleTradeRequest(_Buffer &Data) {
 
 	// Read packet
-	int NetworkID = Data.Read<char>();
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Get trading player
 	Player->TradePlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);

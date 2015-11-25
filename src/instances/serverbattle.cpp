@@ -84,7 +84,7 @@ void _ServerBattle::StartBattle() {
 			_Object *Player = (_Object *)Fighters[i];
 
 			// Network ID
-			Packet.Write<char>(Player->NetworkID);
+			Packet.Write<NetworkIDType>(Player->NetworkID);
 
 			// Player stats
 			Packet.Write<int32_t>(Player->Health);
