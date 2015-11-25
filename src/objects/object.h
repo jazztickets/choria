@@ -22,9 +22,9 @@
 #include <cstdint>
 #include <glm/vec2.hpp>
 #include <vector>
+#include <network/network.h>
 
 //TODO delete
-#include <enet/enet.h>
 class _Database;
 
 // Forward Declarations
@@ -90,7 +90,7 @@ class _Object {
 			SKILL_COUNT = 25
 		};
 
-		_Object() { }
+		//_Object() { }
 		_Object(int Type);
 		virtual ~_Object();
 
@@ -206,7 +206,7 @@ class _Object {
 		int Type;
 		bool Deleted;
 		glm::ivec2 Position;
-		char NetworkID;
+		NetworkIDType NetworkID;
 
 		// -- FIGHTER  --
 

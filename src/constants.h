@@ -96,6 +96,9 @@ const  float        CAMERA_EDITOR_DIVISOR          =  5.0f;
 const  float        CAMERA_FOVY                    =  90.0f;
 const  float        CAMERA_NEAR                    =  0.1f;
 const  float        CAMERA_FAR                     =  100.0f;
+//     Account
+const  int          ACCOUNT_MAX_USERNAME_SIZE      =  15;
+const  int          ACCOUNT_MAX_PASSWORD_SIZE      =  15;
 //     Map
 const  int          MAP_VERSION                    =  1;
 const  glm::vec4    MAP_AMBIENT_LIGHT              =  glm::vec4(0.3,0.3,0.3,1);

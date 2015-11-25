@@ -321,7 +321,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	bool CreateAccount = Data.ReadBit();
 	std::string Username(Data.ReadString());
 	std::string Password(Data.ReadString());
-	if(Username.size() > 15 || Password.size() > 15)
+	if(Username.size() > ACCOUNT_MAX_USERNAME_SIZE || Password.size() > ACCOUNT_MAX_PASSWORD_SIZE)
 		return;
 
 	std::stringstream Query;
@@ -379,6 +379,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 		Network->SendPacket(Packet, Peer);
 	}
 }
+
 // Sends a player his/her character list
 void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
@@ -537,68 +538,49 @@ _Map *_Server::GetMap(int MapID) {
 
 	return NewMap;
 }
+
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Peer *Peer, int NewMapID, int EventType, int EventData) {
+void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) {
 	if(!ValidatePeer(Peer))
 		return;
 
 	_Object *Player = Peer->Object;
 
 	// Get new map
-	_Map *NewMap = GetMap(NewMapID);
+	_Map *Map = GetMap(MapID);
 
 	// Remove old player if map has changed
 	_Map *OldMap = Player->Map;
-	if(OldMap && NewMap != OldMap)
+	if(OldMap && Map != OldMap) {
 		OldMap->RemoveObject(Player);
+		OldMap->RemovePeer(Peer);
+	}
 
 	// Find spawn point in map
-	NewMap->FindEvent(EventType, EventData, Player->Position);
+	Map->FindEvent(EventType, EventData, Player->Position);
 	SendPlayerPosition(Player);
 
 	// Set state
 	Player->State = _Object::STATE_WALK;
 
 	// Send new object list
-	if(NewMap != OldMap) {
+	if(Map != OldMap) {
 
 		// Update pointers
-		Player->Map = NewMap;
+		Player->Map = Map;
 
 		// Add player to map
-		NewMap->AddObject(Player);
+		Map->AddObject(Player);
+		Map->AddPeer(Peer);
 
-		// Build packet for player
+		// Send new map id
 		_Buffer Packet;
 		Packet.Write<char>(Packet::WORLD_CHANGEMAPS);
-
-		// Send player info
-		Packet.Write<int32_t>(NewMapID);
-
-		// Write object data
-		Packet.Write<int32_t>(NewMap->Objects.size());
-		for(auto Iterator = NewMap->Objects.begin(); Iterator != NewMap->Objects.end(); ++Iterator) {
-			_Object *Object = *Iterator;
-
-			Packet.Write<NetworkIDType>(Object->NetworkID);
-			Packet.Write<char>(Object->Position.x);
-			Packet.Write<char>(Object->Position.y);
-			Packet.Write<char>(Object->Type);
-			switch(Object->Type) {
-				case _Object::PLAYER: {
-					_Object *PlayerObject = (_Object *)Object;
-					Packet.WriteString(PlayerObject->Name.c_str());
-					Packet.Write<char>(PlayerObject->PortraitID);
-					Packet.WriteBit((PlayerObject->IsInvisible()));
-				}
-				break;
-				default:
-				break;
-			}
-		}
+		Packet.Write<int32_t>(MapID);
+		Network->SendPacket(Packet, Peer);
 
 		// Send object list to the player
-		Network->SendPacket(Packet, Peer);
+		Map->SendObjectList(Peer);
 	}
 	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->NetworkID);
 }
@@ -614,7 +596,7 @@ bool _Server::ValidatePeer(_Peer *Peer) {
 	return true;
 }
 
-// Send player their position
+// Send position to player
 void _Server::SendPlayerPosition(_Object *Player) {
 
 	_Buffer Packet;

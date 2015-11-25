@@ -47,8 +47,6 @@ _ClientState ClientState;
 
 // Constructor
 _ClientState::_ClientState() :
-	Level(""),
-	SaveFilename("test.save"),
 	IsTesting(true),
 	FromEditor(false),
 	Stats(nullptr),
@@ -59,15 +57,14 @@ _ClientState::_ClientState() :
 
 // Load level and set up objects
 void _ClientState::Init() {
-	Player = nullptr;
-	Camera = nullptr;
-	HUD = nullptr;
 	Map = nullptr;
-	Network = nullptr;
 	Server = nullptr;
 
 	HUD = new _HUD();
 	Stats = new _Stats();
+	Player = new _Object(0);
+	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
+	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
@@ -254,6 +251,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::WORLD_CHANGEMAPS:
 			HandleChangeMaps(Data);
 		break;
+		case Packet::WORLD_OBJECTLIST:
+			HandleObjectList(Data);
+		break;
 			/*
 		case Packet::WORLD_CREATEOBJECT:
 			HandleCreateObject(Data);
@@ -346,8 +346,8 @@ void _ClientState::HandleConnect() {
 
 // Called once to synchronize your stats with the servers
 void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
+	Log << "HandleYourCharacterInfo" << std::endl;
 
-	Player = new _Object();
 	Player->Stats = Stats;
 	Player->Name = Data.ReadString();
 	Player->PortraitID = Data.Read<int32_t>();
@@ -400,54 +400,10 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 	// Delete old map and create new
 	if(!Player->Map || Player->Map->ID != MapID) {
-
 		if(Player->Map)
 			delete Player->Map;
 
 		Player->Map = new _Map(MapID, Stats);
-	}
-
-	// Clear out other objects
-	//ObjectManager->DeletesObjectsExcept(Player);
-
-	// Get player count for map
-	int PlayerCount = Data.Read<int32_t>();
-
-	// Spawn players
-	int NetworkID;
-	_Object *NewPlayer;
-	glm::ivec2 GridPosition;
-	for(int i = 0; i < PlayerCount; i++) {
-		NetworkID = Data.Read<char>();
-		GridPosition.x = Data.Read<char>();
-		GridPosition.y = Data.Read<char>();
-		int Type = Data.Read<char>();
-
-		switch(Type) {
-			case _Object::PLAYER: {
-				std::string Name(Data.ReadString());
-				int PortraitID = Data.Read<char>();
-				int Invisible = Data.ReadBit();
-
-				// Information for your player
-				if(NetworkID == Player->NetworkID) {
-					Player->Position = GridPosition;
-					Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
-				}
-				else {
-
-					NewPlayer = new _Object();
-					NewPlayer->Position = GridPosition;
-					NewPlayer->Name = Name;
-					NewPlayer->Map = Player->Map;
-					NewPlayer->PortraitID = PortraitID;
-					NewPlayer->Portrait = Stats->Portraits[PortraitID].Image;
-					NewPlayer->InvisPower = Invisible;
-					//ObjectManager->AddObjectWithNetworkID(NewPlayer, NetworkID);
-				}
-			}
-			break;
-		}
 	}
 
 	// Delete the battle
@@ -457,6 +413,45 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 	}
 
 	Player->State = _Object::STATE_WALK;
+}
+
+// Handle objectlist
+void _ClientState::HandleObjectList(_Buffer &Data) {
+	if(!Player->Map)
+		throw std::runtime_error("Player does not have a map!");
+
+	// Get object count for map
+	int ObjectCount = Data.Read<int32_t>();
+
+	// Create objects
+	for(int i = 0; i < ObjectCount; i++) {
+
+		// Read data
+		glm::ivec2 GridPosition;
+		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+		GridPosition.x = Data.Read<char>();
+		GridPosition.y = Data.Read<char>();
+		int Type = Data.Read<char>();
+		std::string Name(Data.ReadString());
+		int PortraitID = Data.Read<char>();
+		int Invisible = Data.ReadBit();
+
+		// Information for your player
+		if(NetworkID == Player->NetworkID) {
+			Player->Position = GridPosition;
+			Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
+		}
+		else if(Type >= 0) {
+			_Object *Object = new _Object(0);
+			Object->Position = GridPosition;
+			Object->Name = Name;
+			Object->Map = Player->Map;
+			Object->PortraitID = PortraitID;
+			Object->Portrait = Stats->Portraits[PortraitID].Image;
+			Object->InvisPower = Invisible;
+			Player->Map->AddObject(Object, NetworkID);
+		}
+	}
 }
 
 /*

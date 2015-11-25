@@ -56,8 +56,6 @@ class _ClientState : public _State {
 		void Render(double BlendFactor) override;
 
 		// Parameters
-		std::string Level;
-		std::string SaveFilename;
 		bool IsTesting;
 		bool FromEditor;
 
@@ -94,6 +92,7 @@ class _ClientState : public _State {
 		void HandleConnect();
 		void HandleYourCharacterInfo(_Buffer &Data);
 		void HandleChangeMaps(_Buffer &Data);
+		void HandleObjectList(_Buffer &Data);
 		void HandleCreateObject(_Buffer &Data);
 		void HandleDeleteObject(_Buffer &Data);
 		void HandleObjectUpdates(_Buffer &Data);

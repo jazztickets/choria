@@ -36,6 +36,7 @@ class _Buffer;
 class _Camera;
 class _ServerNetwork;
 class _Stats;
+class _Peer;
 
 // Structures
 struct _Tile {
@@ -76,14 +77,7 @@ class _Map {
 		bool CanMoveTo(const glm::ivec2 &Position);
 
 		// Object management
-		//void AddObject(_Object *Object) { Objects.push_back(Object); }
 		NetworkIDType GenerateObjectID();
-
-		void SendObjectList(_Object *Player, uint16_t TimeSteps);
-		void BuildObjectUpdate(_Buffer &Buffer, uint16_t TimeSteps);
-		void BuildObjectList(_Buffer &Buffer);
-		void UpdateObjectsFromBuffer(_Buffer &Buffer, uint16_t TimeSteps);
-		_Object *GetObjectByID(uint16_t ObjectID);
 
 		// Peer management
 		void BroadcastPacket(_Buffer &Buffer);
@@ -91,13 +85,14 @@ class _Map {
 		void AddPeer(const _Peer *Peer) { Peers.push_back(Peer); }
 		void RemovePeer(const _Peer *Peer);
 
+		void DeleteObjects();
 		void AddObject(_Object *Object);
+		void AddObject(_Object *Object, NetworkIDType NetworkID);
 		void RemoveObject(const _Object *RemoveObject);
+		void SendObjectList(_Peer *Peer);
 		//void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
 		//_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
-
-		//void SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer=nullptr, _OldNetwork::SendType Type=_OldNetwork::RELIABLE);
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }

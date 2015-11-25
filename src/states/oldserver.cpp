@@ -90,13 +90,6 @@ void _OldServerState::Close() {
 	delete ObjectManager;
 }
 
-// Start run the command thread
-void _OldServerState::StartCommandThread() {
-	CommandThread = new std::thread(HandleCommands, this);
-}
-
-
-
 // Handles a client disconnect
 void _Server::HandleDisconnect(ENetEvent *Event) {
 	char Buffer[16];

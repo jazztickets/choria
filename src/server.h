@@ -100,6 +100,7 @@ class _Server {
 		void HandleTeleport(_Buffer &Data, _Peer *Peer);
 		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
 
+		void SendObjectList(_Peer *Peer);
 		void CreateDefaultDatabase();
 
 		// Threading

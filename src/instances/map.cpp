@@ -17,11 +17,11 @@
 *******************************************************************************/
 #include <instances/map.h>
 #include <network/servernetwork.h>
+#include <network/peer.h>
 #include <globals.h>
 #include <graphics.h>
 #include <constants.h>
 #include <stats.h>
-#include <network/oldnetwork.h>
 #include <buffer.h>
 #include <states/oldserver.h>
 #include <objects/object.h>
@@ -39,6 +39,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <stdexcept>
 
 // Constructor for the map editor: new map
 _Map::_Map(const std::string &Filename, const glm::ivec2 &Size) {
@@ -74,6 +75,7 @@ _Map::_Map(int ID, _Stats *Stats) {
 
 // Destructor
 _Map::~_Map() {
+	DeleteObjects();
 
 	// Delete map data
 	FreeMap();
@@ -429,6 +431,19 @@ void _Map::RemovePeer(const _Peer *Peer) {
 	}
 }
 
+// Delete all objects
+void _Map::DeleteObjects() {
+
+	// Delete objects
+	for(auto &Object : Objects) {
+		delete Object;
+	}
+
+	Objects.clear();
+	ObjectIDs.clear();
+	NextObjectID = 0;
+}
+
 // Adds an object to the map
 void _Map::AddObject(_Object *Object) {
 
@@ -439,22 +454,23 @@ void _Map::AddObject(_Object *Object) {
 	Packet.Write<char>(Object->Position.x);
 	Packet.Write<char>(Object->Position.y);
 	Packet.Write<char>(Object->Type);
-	switch(Object->Type) {
-		case _Object::PLAYER: {
-			_Object *NewPlayer = (_Object *)Object;
-			Packet.WriteString(NewPlayer->Name.c_str());
-			Packet.Write<char>(NewPlayer->PortraitID);
-			Packet.WriteBit(NewPlayer->IsInvisible());
-		}
-		break;
-		default:
-		break;
-	}
+	Packet.WriteString(Object->Name.c_str());
+	Packet.Write<char>(Object->PortraitID);
+	Packet.WriteBit(Object->IsInvisible());
 
 	// Notify other players of the new object
 	BroadcastPacket(Packet);
 
 	// Add object to map
+	Objects.push_back(Object);
+}
+
+// Add object with network
+void _Map::AddObject(_Object *Object, NetworkIDType NetworkID) {
+	if(ObjectIDs[NetworkID])
+		throw std::runtime_error(std::string("NetworkID already taken: ") + std::to_string(NetworkID));
+
+	ObjectIDs[NetworkID] = true;
 	Objects.push_back(Object);
 }
 /*
@@ -512,6 +528,29 @@ bool _Map::FindEvent(int EventType, int EventData, glm::ivec2 &Position) {
 	return false;
 }
 
+// Send complete object list to player
+void _Map::SendObjectList(_Peer *Peer) {
+	if(!ServerNetwork)
+		return;
+
+	_Buffer Packet;
+	Packet.Write<char>(Packet::WORLD_OBJECTLIST);
+
+	// Write object data
+	Packet.Write<int32_t>(Objects.size());
+	for(auto &Object : Objects) {
+		Packet.Write<NetworkIDType>(Object->NetworkID);
+		Packet.Write<char>(Object->Position.x);
+		Packet.Write<char>(Object->Position.y);
+		Packet.Write<char>(Object->Type);
+		Packet.WriteString(Object->Name.c_str());
+		Packet.Write<char>(Object->PortraitID);
+		Packet.WriteBit((Object->IsInvisible()));
+	}
+
+	ServerNetwork->SendPacket(Packet, Peer);
+}
+
 // Sends object position information to all the clients in the map
 void _Map::SendObjectUpdates() {
 
@@ -541,21 +580,6 @@ void _Map::SendObjectUpdates() {
 
 	//SendPacketToPlayers(&Packet, nullptr, _OldNetwork::UNSEQUENCED);
 }
-/*
-// Sends a packet to all of the players in the map
-void _Map::SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer, _OldNetwork::SendType Type) {
-
-	// Send the packet out
-	for(auto &Object : Objects) {
-		if(Object->Type == _Object::PLAYER) {
-			_Object *Player = (_Object *)Object;
-
-			if(Player != ExceptionPlayer)
-				OldServerNetwork->SendPacketToPeer(Packet, Player->OldPeer, Type, Type == _OldNetwork::UNSEQUENCED);
-		}
-	}
-}
-*/
 
 // Broadcast a packet to all peers in the map
 void _Map::BroadcastPacket(_Buffer &Buffer) {
