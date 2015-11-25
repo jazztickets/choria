@@ -142,97 +142,13 @@ void _OldServerState::Update(double FrameTime) {
 }
 
 
-// Handle a character delete request
-void _Server::HandleCharacterDelete(_Buffer &Packet, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	char QueryString[512];
-
-	// Get delete slot
-	int Index = Packet->Read<char>();
-
-	// Get character ID
-	int CharacterID = 0;
-	sprintf(QueryString, "SELECT ID FROM Characters WHERE AccountsID = %d LIMIT %d, 1", Player->AccountID, Index);
-	Database->RunDataQuery(QueryString);
-	if(Database->FetchRow()) {
-		CharacterID = Database->GetInt(0);
-	}
-	Database->CloseQuery();
-
-	// Delete character
-	sprintf(QueryString, "DELETE FROM Characters WHERE ID = %d", CharacterID);
-	Database->RunQuery(QueryString);
-
-	// Delete items
-	sprintf(QueryString, "DELETE FROM Inventory WHERE CharactersID = %d", CharacterID);
-	Database->RunQuery(QueryString);
-
-	// Delete skill levels
-	sprintf(QueryString, "DELETE FROM SkillLevel WHERE CharactersID = %d", CharacterID);
-	Database->RunQuery(QueryString);
-
-	// Update the player
-	SendCharacterList(Player);
-}
-
-// Handles the character create request
-void _Server::HandleCharacterCreate(_Buffer &Packet, _Peer *Peer) {
-	_Object *Player = Peer->Object;
-	char QueryString[512];
-
-	// Get character information
-	std::string Name(Packet->ReadString());
-	int PortraitID = Packet->Read<int32_t>();
-	if(Name.size() > PLAYER_NAME_SIZE)
-		return;
-
-	// Check character limit
-	sprintf(QueryString, "SELECT Count(ID) FROM Characters WHERE AccountsID = %d", Player->AccountID);
-	int CharacterCount = Database->RunCountQuery(QueryString);
-	if(CharacterCount >= SAVE_COUNT)
-		return;
-
-	// Check for existing names
-	sprintf(QueryString, "SELECT ID FROM Characters WHERE Name = '%s'", Name.c_str());
-	Database->RunDataQuery(QueryString);
-	int FindResult = Database->FetchRow();
-	Database->CloseQuery();
-
-	// Found an existing name
-	if(FindResult) {
-		_Buffer NewPacket;
-		NewPacket.Write<char>(Packet::CREATECHARACTER_INUSE);
-		Network->SendPacket(NewPacket, Peer);
-		return;
-	}
-
-	// Create the character
-	Database->RunQuery("BEGIN TRANSACTION");
-	sprintf(QueryString, "INSERT INTO Characters(AccountsID, Name, PortraitID, SkillBar0) VALUES(%d, '%s', %d, 0)", Player->AccountID, Name.c_str(), PortraitID);
-	Database->RunQuery(QueryString);
-
-	int CharacterID = Database->GetLastInsertID();
-	sprintf(QueryString, "INSERT INTO Inventory VALUES(%d, 1, 2, 1)", CharacterID);
-	Database->RunQuery(QueryString);
-	sprintf(QueryString, "INSERT INTO Inventory VALUES(%d, 3, 1, 1)", CharacterID);
-	Database->RunQuery(QueryString);
-	sprintf(QueryString, "INSERT INTO SkillLevel VALUES(%d, 0, 1)", CharacterID);
-	Database->RunQuery(QueryString);
-	Database->RunQuery("END TRANSACTION");
-
-	// Notify the client
-	_Buffer NewPacket;
-	NewPacket.Write<char>(Packet::CREATECHARACTER_SUCCESS);
-	Network->SendPacket(NewPacket, Peer);
-}
-
 // Handles move commands from a client
-void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
-	int Direction = Packet->Read<char>();
+	int Direction = Data.Read<char>();
 	if(Player->MovePlayer(Direction)) {
 
 		// Handle events
@@ -314,7 +230,7 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles battle commands from a client
-void _Server::HandleBattleCommand(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -323,15 +239,15 @@ void _Server::HandleBattleCommand(_Buffer &Packet, _Peer *Peer) {
 	if(!Battle)
 		return;
 
-	int Command = Packet->Read<char>();
-	int Target = Packet->Read<char>();
+	int Command = Data.Read<char>();
+	int Target = Data.Read<char>();
 	Battle->HandleInput(Player, Command, Target);
 
 	//printf("HandleBattleCommand: %d\n", Command);
 }
 
 // The client is done with the battle results screen
-void _Server::HandleBattleFinished(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -355,13 +271,13 @@ void _Server::HandleBattleFinished(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a player's inventory move
-void _Server::HandleInventoryMove(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
-	int OldSlot = Packet->Read<char>();
-	int NewSlot = Packet->Read<char>();
+	int OldSlot = Data.Read<char>();
+	int NewSlot = Data.Read<char>();
 
 	// Move items
 	Player->MoveInventory(OldSlot, NewSlot);
@@ -408,7 +324,7 @@ void _Server::HandleInventoryMove(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handle a player's inventory use request
-void _Server::HandleInventoryUse(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -418,13 +334,13 @@ void _Server::HandleInventoryUse(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handle a player's inventory split stack request
-void _Server::HandleInventorySplit(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
-	int Slot = Packet->Read<char>();
-	int Count = Packet->Read<char>();
+	int Slot = Data.Read<char>();
+	int Count = Data.Read<char>();
 
 	// Inventory only
 	if(!_Object::IsSlotInventory(Slot))
@@ -434,7 +350,7 @@ void _Server::HandleInventorySplit(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a player's event end message
-void _Server::HandleEventEnd(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -444,7 +360,7 @@ void _Server::HandleEventEnd(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a vendor exchange message
-void _Server::HandleVendorExchange(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -455,9 +371,9 @@ void _Server::HandleVendorExchange(_Buffer &Packet, _Peer *Peer) {
 		return;
 
 	// Get info
-	bool Buy = Packet->ReadBit();
-	int Amount = Packet->Read<char>();
-	int Slot = Packet->Read<char>();
+	bool Buy = Data.ReadBit();
+	int Amount = Data.Read<char>();
+	int Slot = Data.Read<char>();
 	if(Slot < 0)
 		return;
 
@@ -467,7 +383,7 @@ void _Server::HandleVendorExchange(_Buffer &Packet, _Peer *Peer) {
 			return;
 
 		// Get optional inventory slot
-		int TargetSlot = Packet->Read<char>();
+		int TargetSlot = Data.Read<char>();
 
 		// Get item info
 		const _Item *Item = Vendor->Items[Slot];
@@ -493,7 +409,7 @@ void _Server::HandleVendorExchange(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handle a skill bar change
-void _Server::HandleSkillBar(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleSkillBar(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -507,14 +423,14 @@ void _Server::HandleSkillBar(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a skill adjust
-void _Server::HandleSkillAdjust(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
 	// Process packet
-	bool Spend = Packet->ReadBit();
-	int SkillID = Packet->Read<char>();
+	bool Spend = Data.ReadBit();
+	int SkillID = Data.Read<char>();
 	if(Spend) {
 		Player->AdjustSkillLevel(SkillID, 1);
 	}
@@ -527,19 +443,19 @@ void _Server::HandleSkillAdjust(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a player's request to not start a battle with other players
-void _Server::HandlePlayerBusy(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandlePlayerBusy(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
-	bool Value = Packet->ReadBit();
+	bool Value = Data.ReadBit();
 	Player->SetBusy(Value);
 
 	//printf("HandlePlayerBusy: Value=%d\n", Value);
 }
 
 // Handles a player's request to attack another player
-void _Server::HandleAttackPlayer(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player || !Player->CanAttackPlayer())
 		return;
@@ -575,13 +491,13 @@ void _Server::HandleAttackPlayer(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handle a chat message
-void _Server::HandleChatMessage(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
 	// Get message
-	std::string Message = Packet->ReadString();
+	std::string Message = Data.ReadString();
 	if(Message.length() > NETWORKING_CHAT_SIZE)
 		Message.resize(NETWORKING_CHAT_SIZE);
 
@@ -602,7 +518,7 @@ void _Server::HandleChatMessage(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handle a trade request
-void _Server::HandleTradeRequest(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -639,7 +555,7 @@ void _Server::HandleTradeRequest(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a trade cancel
-void _Server::HandleTradeCancel(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -661,13 +577,13 @@ void _Server::HandleTradeCancel(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handle a trade gold update
-void _Server::HandleTradeGold(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
 	// Set gold amount
-	int Gold = Packet->Read<int32_t>();
+	int Gold = Data.Read<int32_t>();
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Gold)
@@ -688,7 +604,7 @@ void _Server::HandleTradeGold(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a trade accept from a player
-void _Server::HandleTradeAccept(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -753,7 +669,7 @@ void _Server::HandleTradeAccept(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a teleport request
-void _Server::HandleTeleport(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleTeleport(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
@@ -762,7 +678,7 @@ void _Server::HandleTeleport(_Buffer &Packet, _Peer *Peer) {
 }
 
 // Handles a trader accept
-void _Server::HandleTraderAccept(_Buffer &Packet, _Peer *Peer) {
+void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;

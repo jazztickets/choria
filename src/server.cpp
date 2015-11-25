@@ -247,13 +247,13 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::CHARACTERS_PLAY:
 			HandleCharacterSelect(Data, Peer);
 		break;
-			/*
-		case Packet::CHARACTERS_DELETE:
-			HandleCharacterDelete(Data, Peer);
-		break;
 		case Packet::CREATECHARACTER_INFO:
 			HandleCharacterCreate(Data, Peer);
 		break;
+		case Packet::CHARACTERS_DELETE:
+			HandleCharacterDelete(Data, Peer);
+		break;
+			/*
 		case Packet::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
@@ -385,7 +385,117 @@ void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
+	SendCharacterList(Peer);
+}
+
+// Handles the character create request
+void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
 	_Object *Player = Peer->Object;
+
+	// Get character information
+	std::string Name(Data.ReadString());
+	int PortraitID = Data.Read<int32_t>();
+	if(Name.size() > PLAYER_NAME_SIZE)
+		return;
+
+	std::stringstream Query;
+
+	// Check character limit
+	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Player->AccountID;
+	int CharacterCount = Database->RunCountQuery(Query.str());
+	if(CharacterCount >= SAVE_COUNT)
+		return;
+	Query.str("");
+
+	// Check for existing names
+	Query << "SELECT ID FROM Characters WHERE Name = '" << Name << "'";
+	Database->RunDataQuery(Query.str());
+	int FindResult = Database->FetchRow();
+	Database->CloseQuery();
+	Query.str("");
+
+	// Found an existing name
+	if(FindResult) {
+		_Buffer NewPacket;
+		NewPacket.Write<char>(Packet::CREATECHARACTER_INUSE);
+		Network->SendPacket(NewPacket, Peer);
+		return;
+	}
+
+	// Create the character
+	Database->RunQuery("BEGIN TRANSACTION");
+	Query << "INSERT INTO Characters(AccountsID, Name, PortraitID, SkillBar0) VALUES(" << Player->AccountID << ", '" << Name << "', " << PortraitID << ", 0)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	int CharacterID = Database->GetLastInsertID();
+	Query << "INSERT INTO Inventory VALUES(" << CharacterID << ", 1, 2, 1)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	Query << "INSERT INTO Inventory VALUES(" << CharacterID << ", 3, 1, 1)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	Query << "INSERT INTO SkillLevel VALUES(" << CharacterID << ", 0, 1)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	Database->RunQuery("END TRANSACTION");
+
+	// Notify the client
+	_Buffer NewPacket;
+	NewPacket.Write<char>(Packet::CREATECHARACTER_SUCCESS);
+	Network->SendPacket(NewPacket, Peer);
+}
+
+// Handle a character delete request
+void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+	std::stringstream Query;
+
+	// Get delete slot
+	int Index = Data.Read<char>();
+	int CharacterID = 0;
+
+	// Get character ID
+	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Player->AccountID << " LIMIT " << Index << ", 1";
+	Database->RunDataQuery(Query.str());
+	if(Database->FetchRow()) {
+		CharacterID = Database->GetInt(0);
+	}
+	Database->CloseQuery();
+	Query.str("");
+
+	// Delete character
+	Query << "DELETE FROM Characters WHERE ID = " << CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	// Delete items
+	Query << "DELETE FROM Inventory WHERE CharactersID = " << CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	// Delete skill levels
+	Query << "DELETE FROM SkillLevel WHERE CharactersID = " << CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	// Update the player
+	SendCharacterList(Peer);
+}
+
+// Send character list
+void _Server::SendCharacterList(_Peer *Peer) {
+	_Object *Player = Peer->Object;
+
 	std::stringstream Query;
 
 	// Get a count of the account's characters

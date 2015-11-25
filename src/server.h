@@ -78,8 +78,8 @@ class _Server {
 		void HandleLoginInfo(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterListRequest(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterSelect(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
 		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
 		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
@@ -100,6 +100,7 @@ class _Server {
 		void HandleTeleport(_Buffer &Data, _Peer *Peer);
 		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
 
+		void SendCharacterList(_Peer *Peer);
 		void SendObjectList(_Peer *Peer);
 		void CreateDefaultDatabase();
 

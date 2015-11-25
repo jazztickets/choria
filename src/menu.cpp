@@ -554,7 +554,6 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						int SelectedSlot = (intptr_t)Clicked->UserData;
 						if(CharacterSlots[SelectedSlot].Used) {
-							//OldClientState.SetCharacterSlot(SelectedSlot);
 							CharacterSlots[SelectedSlot].Button->Checked = true;
 						}
 						else
