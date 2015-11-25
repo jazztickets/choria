@@ -22,10 +22,7 @@
 
 // Initializes the network system
 void _OldSingleNetwork::Init(bool Server) {
-	this->Server = Server;
-	Connected = false;
-	DummyPeer.address.host = 0;
-	DummyPeer.address.port = 0;
+
 }
 
 // Closes the network system
@@ -35,55 +32,20 @@ void _OldSingleNetwork::Close() {
 // Connect to a host
 int _OldSingleNetwork::Connect(const char *IPAddress, uint16_t Port) {
 
-	if(Connected)
-		return 0;
-
-	Connected = true;
-
-	// Simulate the connect
-	ENetEvent Event;
-	Event.peer = &DummyPeer;
-	OldServerState.HandleConnect(&Event);
-	Framework.GetState()->HandleConnect(&Event);
-
 	return 1;
 }
 
 // Disconnect from the host
 void _OldSingleNetwork::Disconnect(ENetPeer *Peer) {
 
-	if(Connected) {
-		Connected = false;
-
-		// Simulate the disconnect
-		ENetEvent Event;
-		Event.peer = &DummyPeer;
-		OldServerState.HandleDisconnect(&Event);
-		Framework.GetState()->HandleDisconnect(&Event);
-	}
 }
 
 // Client: Sends a packet to the host
 void _OldSingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
 
-	if(Connected) {
-
-		// Simulate packet event
-		ENetEvent Event;
-		Event.peer = &DummyPeer;
-		Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
-		OldServerState.HandlePacket(&Event);
-		enet_packet_destroy(Event.packet);
-	}
 }
 
 // Server: Sends a packet to a single peer
 void _OldSingleNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type, uint8_t Channel) {
 
-	// Simulate packet event
-	ENetEvent Event;
-	Event.peer = &DummyPeer;
-	Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
-	Framework.GetState()->HandlePacket(&Event);
-	enet_packet_destroy(Event.packet);
 }

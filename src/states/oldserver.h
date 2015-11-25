@@ -32,6 +32,8 @@ class _Buffer;
 class _Object;
 class _Player;
 
+class _ServerNetwork;
+
 // Classes
 class _OldServerState : public _State {
 
@@ -39,10 +41,6 @@ class _OldServerState : public _State {
 
 		void Init();
 		void Close();
-
-		void HandleConnect(ENetEvent *Event);
-		void HandleDisconnect(ENetEvent *Event);
-		void HandlePacket(ENetEvent *Event);
 
 		void Update(double FrameTime);
 		void DeleteObject(_Object *Object);
@@ -59,31 +57,6 @@ class _OldServerState : public _State {
 	private:
 
 		void CreateDefaultDatabase();
-
-		void HandleLoginInfo(_Buffer *Packet, ENetPeer *Peer);
-		void HandleCharacterListRequest(_Buffer *Packet, ENetPeer *Peer);
-		void HandleCharacterSelect(_Buffer *Packet, ENetPeer *Peer);
-		void HandleCharacterDelete(_Buffer *Packet, ENetPeer *Peer);
-		void HandleCharacterCreate(_Buffer *Packet, ENetPeer *Peer);
-		void HandleMoveCommand(_Buffer *Packet, ENetPeer *Peer);
-		void HandleBattleCommand(_Buffer *Packet, ENetPeer *Peer);
-		void HandleBattleFinished(_Buffer *Packet, ENetPeer *Peer);
-		void HandleInventoryMove(_Buffer *Packet, ENetPeer *Peer);
-		void HandleInventoryUse(_Buffer *Packet, ENetPeer *Peer);
-		void HandleInventorySplit(_Buffer *Packet, ENetPeer *Peer);
-		void HandleEventEnd(_Buffer *Packet, ENetPeer *Peer);
-		void HandleVendorExchange(_Buffer *Packet, ENetPeer *Peer);
-		void HandleSkillBar(_Buffer *Packet, ENetPeer *Peer);
-		void HandleSkillAdjust(_Buffer *Packet, ENetPeer *Peer);
-		void HandlePlayerBusy(_Buffer *Packet, ENetPeer *Peer);
-		void HandleAttackPlayer(_Buffer *Packet, ENetPeer *Peer);
-		void HandleChatMessage(_Buffer *Packet, ENetPeer *Peer);
-		void HandleTradeRequest(_Buffer *Packet, ENetPeer *Peer);
-		void HandleTradeCancel(_Buffer *Packet, ENetPeer *Peer);
-		void HandleTradeGold(_Buffer *Packet, ENetPeer *Peer);
-		void HandleTradeAccept(_Buffer *Packet, ENetPeer *Peer);
-		void HandleTeleport(_Buffer *Packet, ENetPeer *Peer);
-		void HandleTraderAccept(_Buffer *Packet, ENetPeer *Peer);
 
 		void SendPlayerPosition(_Player *Player);
 		void SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData);
@@ -106,6 +79,7 @@ class _OldServerState : public _State {
 		std::thread *CommandThread;
 
 		double ServerTime;
+		_ServerNetwork *Network;
 };
 
 extern _OldServerState OldServerState;

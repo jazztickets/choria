@@ -343,7 +343,7 @@ float _Player::GetNextLevelPercent() const {
 // Sets the player's portrait
 void _Player::SetPortraitID(int Value) {
 	PortraitID = Value;
-	Portrait = OldStats.GetPortrait(PortraitID)->Image;
+	Portrait = OldStats.Portraits[PortraitID].Image;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items

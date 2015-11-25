@@ -133,7 +133,7 @@ void _Server::Update(double FrameTime) {
 				HandleDisconnect(NetworkEvent);
 			break;
 			case _NetworkEvent::PACKET:
-				HandlePacket(NetworkEvent.Data, NetworkEvent.Peer);
+				HandlePacket(*NetworkEvent.Data, NetworkEvent.Peer);
 				delete NetworkEvent.Data;
 			break;
 		}
@@ -205,92 +205,93 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 }
 
 // Handle packet data
-void _Server::HandlePacket(_Buffer *Data, _Peer *Peer) {
-	char PacketType = Data->Read<char>();
+void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
+	char PacketType = Data.Read<char>();
 
 	switch(PacketType) {
 		case Packet::ACCOUNT_LOGININFO:
 			HandleLoginInfo(Data, Peer);
 		break;
-	/*	case Packet::CHARACTERS_REQUEST:
-			HandleCharacterListRequest(&Packet, Event->peer);
+		case Packet::CHARACTERS_REQUEST:
+			HandleCharacterListRequest(Data, Peer);
 		break;
+			/*
 		case Packet::CHARACTERS_PLAY:
-			HandleCharacterSelect(&Packet, Event->peer);
+			HandleCharacterSelect(Data, Peer);
 		break;
 		case Packet::CHARACTERS_DELETE:
-			HandleCharacterDelete(&Packet, Event->peer);
+			HandleCharacterDelete(Data, Peer);
 		break;
 		case Packet::CREATECHARACTER_INFO:
-			HandleCharacterCreate(&Packet, Event->peer);
+			HandleCharacterCreate(Data, Peer);
 		break;
 		case Packet::WORLD_MOVECOMMAND:
-			HandleMoveCommand(&Packet, Event->peer);
+			HandleMoveCommand(Data, Peer);
 		break;
 		case Packet::BATTLE_COMMAND:
-			HandleBattleCommand(&Packet, Event->peer);
+			HandleBattleCommand(Data, Peer);
 		break;
 		case Packet::BATTLE_CLIENTDONE:
-			HandleBattleFinished(&Packet, Event->peer);
+			HandleBattleFinished(Data, Peer);
 		break;
 		case Packet::INVENTORY_MOVE:
-			HandleInventoryMove(&Packet, Event->peer);
+			HandleInventoryMove(Data, Peer);
 		break;
 		case Packet::INVENTORY_USE:
-			HandleInventoryUse(&Packet, Event->peer);
+			HandleInventoryUse(Data, Peer);
 		break;
 		case Packet::INVENTORY_SPLIT:
-			HandleInventorySplit(&Packet, Event->peer);
+			HandleInventorySplit(Data, Peer);
 		break;
 		case Packet::EVENT_END:
-			HandleEventEnd(&Packet, Event->peer);
+			HandleEventEnd(Data, Peer);
 		break;
 		case Packet::VENDOR_EXCHANGE:
-			HandleVendorExchange(&Packet, Event->peer);
+			HandleVendorExchange(Data, Peer);
 		break;
 		case Packet::TRADER_ACCEPT:
-			HandleTraderAccept(&Packet, Event->peer);
+			HandleTraderAccept(Data, Peer);
 		break;
 		case Packet::SKILLS_SKILLBAR:
-			HandleSkillBar(&Packet, Event->peer);
+			HandleSkillBar(Data, Peer);
 		break;
 		case Packet::SKILLS_SKILLADJUST:
-			HandleSkillAdjust(&Packet, Event->peer);
+			HandleSkillAdjust(Data, Peer);
 		break;
 		case Packet::WORLD_BUSY:
-			HandlePlayerBusy(&Packet, Event->peer);
+			HandlePlayerBusy(Data, Peer);
 		break;
 		case Packet::WORLD_ATTACKPLAYER:
-			HandleAttackPlayer(&Packet, Event->peer);
+			HandleAttackPlayer(Data, Peer);
 		break;
 		case Packet::WORLD_TELEPORT:
-			HandleTeleport(&Packet, Event->peer);
+			HandleTeleport(Data, Peer);
 		break;
 		case Packet::CHAT_MESSAGE:
-			HandleChatMessage(&Packet, Event->peer);
+			HandleChatMessage(Data, Peer);
 		break;
 		case Packet::TRADE_REQUEST:
-			HandleTradeRequest(&Packet, Event->peer);
+			HandleTradeRequest(Data, Peer);
 		break;
 		case Packet::TRADE_CANCEL:
-			HandleTradeCancel(&Packet, Event->peer);
+			HandleTradeCancel(Data, Peer);
 		break;
 		case Packet::TRADE_GOLD:
-			HandleTradeGold(&Packet, Event->peer);
+			HandleTradeGold(Data, Peer);
 		break;
 		case Packet::TRADE_ACCEPT:
-			HandleTradeAccept(&Packet, Event->peer);
+			HandleTradeAccept(Data, Peer);
 		break;*/
 	}
 }
 
 // Login information
-void _Server::HandleLoginInfo(_Buffer *Data, _Peer *Peer) {
+void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 
 	// Read packet
-	bool CreateAccount = Data->ReadBit();
-	std::string Username(Data->ReadString());
-	std::string Password(Data->ReadString());
+	bool CreateAccount = Data.ReadBit();
+	std::string Username(Data.ReadString());
+	std::string Password(Data.ReadString());
 	if(Username.size() > 15 || Password.size() > 15)
 		return;
 
@@ -298,27 +299,27 @@ void _Server::HandleLoginInfo(_Buffer *Data, _Peer *Peer) {
 	if(CreateAccount) {
 
 		// Check for existing account
-		std::string Query ="SELECT ID FROM Accounts WHERE Username = '" + Username + "'";
-		Database->RunDataQuery(Query.c_str());
+		std::string Query = "SELECT ID FROM Accounts WHERE Username = '" + Username + "'";
+		Database->RunDataQuery(Query);
 		int Result = Database->FetchRow();
 		Database->CloseQuery();
 
 		if(Result) {
-			_Buffer Packet;
-			Packet.Write<char>(Packet::ACCOUNT_EXISTS);
-			Network->SendPacket(Packet, Peer);
+			_Buffer NewPacket;
+			NewPacket.Write<char>(Packet::ACCOUNT_EXISTS);
+			Network->SendPacket(NewPacket, Peer);
 			return;
 		}
 		else {
 			std::string Query = "INSERT INTO Accounts(Username, Password) VALUES('" + Username + "', '" + Password + "')";
-			Database->RunQuery(Query.c_str());
+			Database->RunQuery(Query);
 		}
 	}
 
 	// Get account information
 	int AccountID = 0;
 	std::string Query = "SELECT ID FROM Accounts WHERE Username = '" + Username + "' AND Password = '" + Password + "'";
-	Database->RunDataQuery(Query.c_str());
+	Database->RunDataQuery(Query);
 	if(Database->FetchRow()) {
 		AccountID = Database->GetInt(0);
 	}
@@ -332,6 +333,7 @@ void _Server::HandleLoginInfo(_Buffer *Data, _Peer *Peer) {
 	}
 	else {
 
+		// Create object
 		_Object *Object = new _Object(_Object::PLAYER);
 		Object->AccountID = AccountID;
 		Object->Peer = Peer;
@@ -341,6 +343,150 @@ void _Server::HandleLoginInfo(_Buffer *Data, _Peer *Peer) {
 		Packet.Write<char>(Packet::ACCOUNT_SUCCESS);
 		Network->SendPacket(Packet, Peer);
 	}
+}
+// Sends a player his/her character list
+void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
+	_Object *Player = Peer->Object;
+	if(!Player)
+		return;
+
+	std::stringstream Query;
+
+	// Get a count of the account's characters
+	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Player->AccountID;
+	int CharacterCount = Database->RunCountQuery(Query.str());
+	Query.str("");
+
+	// Create the packet
+	_Buffer NewPacket;
+	NewPacket.Write<char>(Packet::CHARACTERS_LIST);
+	NewPacket.Write<char>(CharacterCount);
+
+	// Generate a list of characters
+	Query << "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = " << Player->AccountID;
+	Database->RunDataQuery(Query.str());
+	while(Database->FetchRow()) {
+		NewPacket.WriteString(Database->GetString(0));
+		NewPacket.Write<int32_t>(Database->GetInt(1));
+		NewPacket.Write<int32_t>(Database->GetInt(2));
+	}
+	Database->CloseQuery();
+	Query.str("");
+
+	// Send list
+	Network->SendPacket(NewPacket, Peer);
+}
+
+// Loads the player, updates the world, notifies clients
+void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
+
+	int Slot = Data.Read<char>();
+	_Object *Player = Peer->Object;
+	//printf("HandleCharacterSelect: accountid=%d, slot=%d\n", Player->AccountID, Slot);
+
+	// Check account
+	if(Player->AccountID <= 0) {
+		return;
+	}
+
+	// Get character info
+	std::stringstream Query;
+	Query << "SELECT * FROM Characters WHERE AccountsID = " << Player->AccountID << " LIMIT " << Slot<< ", 1";
+	Database->RunDataQuery(Query.str());
+	if(!Database->FetchRow()) {
+		printf(" Didn't find a character for slot %d\n", Slot);
+		return;
+	}
+	Query.str("");
+
+	// Set player properties
+	/*
+	Player->Database = Database;
+	Player->CharacterID = Database->GetInt(0);
+	Player->SpawnMapID = Database->GetInt(2);
+	Player->SpawnPoint = Database->GetInt(3);
+	Player->Name = Database->GetString(4);
+	Player->SetPortraitID(Database->GetInt(5));
+	Player->Experience = Database->GetInt(6);
+	Player->Gold = Database->GetInt(7);
+	for(int i = 0; i < 8; i++)
+		Player->SetSkillBar(i, OldStats.GetSkill(Database->GetInt(i + 8)));
+	Player->PlayTime = Database->GetInt(16);
+	Player->Deaths = Database->GetInt(17);
+	Player->MonsterKills = Database->GetInt(18);
+	Player->PlayerKills = Database->GetInt(19);
+	Player->Bounty = Database->GetInt(20);
+
+	Database->CloseQuery();
+
+	// Set inventory
+	sprintf(Query.str(), "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = %d", Player->CharacterID);
+	Database->RunDataQuery(Query.str());
+	int ItemCount = 0;
+	while(Database->FetchRow()) {
+		Player->SetInventory(Database->GetInt(0), Database->GetInt(1), Database->GetInt(2));
+		ItemCount++;
+	}
+	Database->CloseQuery();
+
+	// Set skills
+	sprintf(Query.str(), "SELECT SkillsID, Level FROM SkillLevel WHERE CharactersID = %d", Player->CharacterID);
+	Database->RunDataQuery(Query.str());
+	int SkillCount = 0;
+	while(Database->FetchRow()) {
+		int SkillLevel = Database->GetInt(1);
+		Player->SetSkillLevel(Database->GetInt(0), SkillLevel);
+		if(SkillLevel > 0)
+			SkillCount++;
+	}
+	Database->CloseQuery();
+
+	// Get stats
+	Player->CalculatePlayerStats();
+	Player->RestoreHealthMana();
+
+	// Send character packet
+	_Buffer NewPacket;
+	NewPacket.Write<char>(Packet::WORLD_YOURCHARACTERINFO);
+	NewPacket.Write<char>(Player->NetworkID);
+	NewPacket.WriteString(Player->Name.c_str());
+	NewPacket.Write<int32_t>(Player->PortraitID);
+	NewPacket.Write<int32_t>(Player->Experience);
+	NewPacket.Write<int32_t>(Player->Gold);
+	NewPacket.Write<int32_t>(Player->PlayTime);
+	NewPacket.Write<int32_t>(Player->Deaths);
+	NewPacket.Write<int32_t>(Player->MonsterKills);
+	NewPacket.Write<int32_t>(Player->PlayerKills);
+	NewPacket.Write<int32_t>(Player->Bounty);
+
+	// Write items
+	NewPacket.Write<char>(ItemCount);
+	for(int i = 0; i < _Player::INVENTORY_COUNT; i++) {
+		if(Player->Inventory[i].Item) {
+			NewPacket.Write<char>(i);
+			NewPacket.Write<char>(Player->Inventory[i].Count);
+			NewPacket.Write<int32_t>(Player->Inventory[i].Item->ID);
+		}
+	}
+
+	// Write skills
+	NewPacket.Write<char>(SkillCount);
+	for(int i = 0; i < _Player::SKILL_COUNT; i++) {
+		if(Player->GetSkillLevel(i) > 0) {
+			NewPacket.Write<int32_t>(Player->GetSkillLevel(i));
+			NewPacket.Write<char>(i);
+		}
+	}
+
+	// Write skill bar
+	for(int i = 0; i < FIGHTER_MAXSKILLS; i++) {
+		NewPacket.Write<char>(Player->GetSkillBarID(i));
+	}
+	OldServerNetwork->SendPacketToPeer(&NewPacket, Peer);
+
+	// Send map and players to new player
+	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
+	*/
 }
 
 // Send map information to a client

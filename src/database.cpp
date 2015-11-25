@@ -19,7 +19,6 @@
 #include <sqlite3.h>
 #include <stdexcept>
 #include <cstdio>
-#include <cstring>
 
 // Constructor
 _Database::_Database()
@@ -38,10 +37,10 @@ _Database::~_Database() {
 }
 
 // Load a database file
-int _Database::OpenDatabase(const char *Path) {
+int _Database::OpenDatabase(const std::string &Path) {
 
 	// Open database file
-	int Result = sqlite3_open_v2(Path, &Database, SQLITE_OPEN_READWRITE, nullptr);
+	int Result = sqlite3_open_v2(Path.c_str(), &Database, SQLITE_OPEN_READWRITE, nullptr);
 	if(Result != SQLITE_OK) {
 		printf("OpenDatabase: %s\n", sqlite3_errmsg(Database));
 		sqlite3_close(Database);
@@ -53,10 +52,10 @@ int _Database::OpenDatabase(const char *Path) {
 }
 
 // Load a database file
-int _Database::OpenDatabaseCreate(const char *Path) {
+int _Database::OpenDatabaseCreate(const std::string &Path) {
 
 	// Open database file
-	int Result = sqlite3_open_v2(Path, &Database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+	int Result = sqlite3_open_v2(Path.c_str(), &Database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
 	if(Result != SQLITE_OK) {
 		printf("OpenDatabaseCreate: %s\n", sqlite3_errmsg(Database));
 		sqlite3_close(Database);
@@ -68,11 +67,11 @@ int _Database::OpenDatabaseCreate(const char *Path) {
 }
 
 // Runs a query
-void _Database::RunQuery(const char *QueryString) {
+void _Database::RunQuery(const std::string &Query) {
 
 	sqlite3_stmt *NewQueryHandle;
 	const char *Tail;
-	int Result = sqlite3_prepare_v2(Database, QueryString, strlen(QueryString), &NewQueryHandle, &Tail);
+	int Result = sqlite3_prepare_v2(Database, Query.c_str(), Query.length(), &NewQueryHandle, &Tail);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 
@@ -86,18 +85,18 @@ void _Database::RunQuery(const char *QueryString) {
 }
 
 // Runs a query that returns data
-void _Database::RunDataQuery(const char *QueryString, int Handle) {
+void _Database::RunDataQuery(const std::string &Query, int Handle) {
 
 	const char *Tail;
-	int Result = sqlite3_prepare_v2(Database, QueryString, strlen(QueryString), &QueryHandle[Handle], &Tail);
+	int Result = sqlite3_prepare_v2(Database, Query.c_str(), Query.length(), &QueryHandle[Handle], &Tail);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 }
 
 // Runs a query that counts a row and returns the result
-int _Database::RunCountQuery(const char *QueryString) {
+int _Database::RunCountQuery(const std::string &Query) {
 
-	RunDataQuery(QueryString);
+	RunDataQuery(Query);
 	FetchRow();
 	int Count = GetInt(0);
 

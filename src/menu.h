@@ -20,7 +20,6 @@
 // Libraries
 #include <string>
 #include <constants.h>
-#include <enet/enet.h>
 
 // Forward Declarations
 class _Element;
@@ -29,6 +28,7 @@ class _Label;
 class _Image;
 class _Buffer;
 class _ClientNetwork;
+class _Stats;
 struct _MouseEvent;
 struct _KeyEvent;
 
@@ -53,13 +53,7 @@ class _Menu {
 			STATE_CHARACTERS,
 			STATE_CONNECT,
 			STATE_ACCOUNT,
-			STATE_OPTIONS,
 			STATE_INGAME,
-		};
-
-		enum OptionsStateType {
-			OPTION_NONE,
-			OPTION_ACCEPT_INPUT,
 		};
 
 		enum CharactersStateType {
@@ -100,6 +94,7 @@ class _Menu {
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
 		void SetNetwork(_ClientNetwork *Network) { this->Network = Network; }
+		void SetStats(_Stats *Stats) { this->Stats = Stats; }
 
 	private:
 
@@ -110,12 +105,10 @@ class _Menu {
 		void LoadPortraitButtons();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();
-		void RefreshInputLabels();
 		void CreateCharacter();
 		void ConnectToHost();
 		void SendAccountInfo(bool CreateAccount=false);
 		void RequestCharacterList();
-		void RemapInput(int InputType, int Input);
 
 		void SetAccountMessage(const std::string &Message);
 		void FocusNextElement(bool ShiftDown=false);
@@ -125,6 +118,9 @@ class _Menu {
 		// Network
 		_ClientNetwork *Network;
 
+		// Data
+		_Stats *Stats;
+
 		// States
 		StateType State;
 		std::string DefaultUsername;
@@ -132,16 +128,11 @@ class _Menu {
 
 		// UI
 		_Element *CurrentLayout;
-		_Label *InputLabels[LABEL_COUNT];
 		_CharacterSlot CharacterSlots[SAVE_COUNT];
 
 		// Double click
 		_Element *PreviousClick;
 		double PreviousClickTimer;
-
-		// Options
-		OptionsStateType OptionsState;
-		int CurrentAction;
 
 		// Singleplayer
 		CharactersStateType CharactersState;

@@ -26,6 +26,7 @@
 #include <menu.h>
 #include <camera.h>
 #include <assets.h>
+#include <stats.h>
 #include <hud.h>
 #include <config.h>
 #include <actions.h>
@@ -64,6 +65,9 @@ void _ClientState::Init() {
 	Network = nullptr;
 	Server = nullptr;
 
+	Stats = new _Stats();
+	Stats->Init();
+
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
@@ -73,6 +77,7 @@ void _ClientState::Init() {
 	Actions.ResetState();
 
 	Menu.SetNetwork(Network);
+	Menu.SetStats(Stats);
 	Menu.InitTitle();
 }
 
@@ -317,7 +322,7 @@ void _ClientState::HandleConnect() {
 		Packet.WriteBit(0);
 		Packet.WriteString("singleplayer");
 		Packet.WriteString("singleplayer");
-		Network->SendPacket(&Packet);
+		Network->SendPacket(Packet);
 	}
 
 	//HUD = nullptr;

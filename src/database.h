@@ -16,6 +16,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #pragma once
+
+// Libraries
+#include <string>
 #include <cstdint>
 
 // Forward Declarations
@@ -30,12 +33,12 @@ class _Database {
 		_Database();
 		~_Database();
 
-		int OpenDatabase(const char *Path);
-		int OpenDatabaseCreate(const char *Path);
+		int OpenDatabase(const std::string &Path);
+		int OpenDatabaseCreate(const std::string &Path);
 
-		void RunQuery(const char *QueryString);
-		void RunDataQuery(const char *QueryString, int Handle=0);
-		int RunCountQuery(const char *QueryString);
+		void RunQuery(const std::string &Query);
+		void RunDataQuery(const std::string &Query, int Handle=0);
+		int RunCountQuery(const std::string &Query);
 		int FetchRow(int Handle=0);
 		int CloseQuery(int Handle=0);
 		int64_t GetLastInsertID();

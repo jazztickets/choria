@@ -97,7 +97,6 @@ class _Stats {
 
 		// General Stats
 		void GetMonsterStats(int MonsterID, _Fighter *Monster);
-		const _Portrait *GetPortrait(int PortraitID) { return &Portraits[PortraitID]; }
 		const _Skill *GetSkill(int SkillID);
 		const _MapStat *GetMap(int MapID) { return &Maps[MapID]; }
 		const _Item *GetItem(int ItemID) { return &Items[ItemID]; }

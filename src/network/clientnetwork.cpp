@@ -101,10 +101,10 @@ void _ClientNetwork::HandleEvent(_NetworkEvent &Event, ENetEvent &EEvent) {
 }
 
 // Send a packet
-void _ClientNetwork::SendPacket(_Buffer *Buffer, SendType Type, uint8_t Channel) {
+void _ClientNetwork::SendPacket(_Buffer &Buffer, SendType Type, uint8_t Channel) {
 
 	// Create enet packet
-	ENetPacket *EPacket = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
+	ENetPacket *EPacket = enet_packet_create(Buffer.GetData(), Buffer.GetCurrentSize(), Type);
 
 	// Send packet
 	enet_peer_send(Peer->ENetPeer, Channel, EPacket);

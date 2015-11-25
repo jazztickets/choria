@@ -69,9 +69,32 @@ class _Server {
 
 		void HandleConnect(_NetworkEvent &Event);
 		void HandleDisconnect(_NetworkEvent &Event);
-		void HandlePacket(_Buffer *Data, _Peer *Peer);
+		void HandlePacket(_Buffer &Data, _Peer *Peer);
 
-		void HandleLoginInfo(_Buffer *Data, _Peer *Peer);
+		void HandleLoginInfo(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterListRequest(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterSelect(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
+		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
+		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
+		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
+		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
+		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
+		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
+		void HandleEventEnd(_Buffer &Data, _Peer *Peer);
+		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
+		void HandleSkillBar(_Buffer &Data, _Peer *Peer);
+		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
+		void HandlePlayerBusy(_Buffer &Data, _Peer *Peer);
+		void HandleAttackPlayer(_Buffer &Data, _Peer *Peer);
+		void HandleChatMessage(_Buffer &Data, _Peer *Peer);
+		void HandleTradeRequest(_Buffer &Data, _Peer *Peer);
+		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
+		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
+		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
+		void HandleTeleport(_Buffer &Data, _Peer *Peer);
+		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
 
 		void CreateDefaultDatabase();
 

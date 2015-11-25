@@ -59,7 +59,7 @@ class _ClientState : public _State {
 		void SetLevel(const std::string &Level) { this->Level = Level; }
 		void SetIsTesting(bool Value) { IsTesting = Value; }
 		void SetFromEditor(bool Value) { FromEditor = Value; }
-		void SetStats(const _Stats *Stats)  { this->Stats = Stats; }
+		void SetStats(_Stats *Stats)  { this->Stats = Stats; }
 		bool GetFromEditor() const { return FromEditor; }
 
 		void SetSaveFilename(const std::string &SaveFilename) { this->SaveFilename = SaveFilename; }
@@ -88,7 +88,7 @@ class _ClientState : public _State {
 		bool FromEditor;
 
 		// Game
-		const _Stats *Stats;
+		_Stats *Stats;
 		_LogFile *Log;
 
 		// Map

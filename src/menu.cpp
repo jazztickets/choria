@@ -55,7 +55,6 @@ _Menu::_Menu() {
 	Network = nullptr;
 	State = STATE_NONE;
 	CurrentLayout = nullptr;
-	OptionsState = OPTION_NONE;
 	CharactersState = CHARACTERS_NONE;
 	PreviousClickTimer = 0.0;
 }
@@ -87,17 +86,6 @@ void _Menu::InitCharacters() {
 
 	CharactersState = CHARACTERS_NONE;
 	State = STATE_CHARACTERS;
-}
-
-// Options
-void _Menu::InitOptions() {
-	ChangeLayout("element_menu_options");
-
-	RefreshInputLabels();
-	CurrentAction = -1;
-
-	OptionsState = OPTION_NONE;
-	State = STATE_OPTIONS;
 }
 
 // In-game menu
@@ -241,7 +229,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<char>(Packet::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<int32_t>(PortraitID);
-	Network->SendPacket(&Packet);
+	Network->SendPacket(Packet);
 }
 
 void _Menu::ConnectToHost() {
@@ -307,7 +295,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
-	Network->SendPacket(&Packet);
+	Network->SendPacket(Packet);
 }
 
 // Request character list from server
@@ -316,7 +304,7 @@ void _Menu::RequestCharacterList() {
 	// Request character list
 	_Buffer Packet;
 	Packet.Write<char>(Packet::CHARACTERS_REQUEST);
-	Network->SendPacket(&Packet);
+	Network->SendPacket(Packet);
 }
 
 // Load portraits
@@ -331,7 +319,7 @@ void _Menu::LoadPortraitButtons() {
 
 	// Iterate over portraits
 	std::list<_Portrait> Portraits;
-	OldStats.GetPortraits(Portraits);
+	Stats->GetPortraits(Portraits);
 	for(auto &Portrait : Portraits) {
 
 		// Create style
@@ -482,22 +470,6 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 					FocusNextElement(Input.ModKeyDown(KMOD_SHIFT));
 			}
 		} break;
-		case STATE_OPTIONS: {
-			if(OptionsState == OPTION_NONE) {
-				if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_ESCAPE) {
-					//Config.Save();
-					//if(Framework.GetState() == &ClientState)
-					//	InitInGame();
-					//else
-					//	InitTitle();
-				}
-			}
-			else {
-				if(KeyEvent.Pressed && !KeyEvent.Repeat) {
-					RemapInput(_Input::KEYBOARD, KeyEvent.Scancode);
-				}
-			}
-		} break;
 		case STATE_INGAME: {
 		} break;
 		default:
@@ -512,20 +484,6 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 	if(!CurrentLayout)
 		return;
-
-	// Accepting new action input
-	switch(State) {
-		case STATE_OPTIONS: {
-			if(OptionsState == OPTION_ACCEPT_INPUT) {
-				if(MouseEvent.Pressed) {
-					RemapInput(_Input::MOUSE_BUTTON, MouseEvent.Button);
-					return;
-				}
-			}
-		} break;
-		default:
-		break;
-	}
 
 	if(MouseEvent.Button == SDL_BUTTON_LEFT)
 		CurrentLayout->HandleInput(MouseEvent.Pressed);
@@ -566,7 +524,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<char>(Packet::CHARACTERS_DELETE);
 							Packet.Write<char>(SelectedSlot);
-							Network->SendPacket(&Packet);
+							Network->SendPacket(Packet);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
@@ -650,31 +608,9 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitConnect();
 				}
 			} break;
-			case STATE_OPTIONS: {
-				if(OptionsState == OPTION_NONE) {
-					if(Clicked->Identifier == "button_options_defaults") {
-						Config.LoadDefaultInputBindings();
-						RefreshInputLabels();
-					}
-					else if(Clicked->Identifier == "button_options_save") {
-						Config.Save();
-					}
-					else if(Clicked->Identifier == "button_options_cancel") {
-						Config.Load();
-					}
-					else if(Clicked->Identifier.substr(0, InputBoxPrefix.size()) == InputBoxPrefix) {
-						OptionsState = OPTION_ACCEPT_INPUT;
-						CurrentAction = (intptr_t)Clicked->UserData;
-						Assets.Labels["label_menu_options_accept_action"]->Text = Actions.GetName(CurrentAction);
-					}
-				}
-			} break;
 			case STATE_INGAME: {
 				if(Clicked->Identifier == "button_ingame_resume") {
 					InitPlay();
-				}
-				else if(Clicked->Identifier == "button_ingame_options") {
-					InitOptions();
 				}
 				else if(Clicked->Identifier == "button_ingame_disconnect") {
 					Network->Disconnect();
@@ -692,21 +628,6 @@ void _Menu::Update(double FrameTime) {
 		return;
 
 	PreviousClickTimer += FrameTime;
-
-	if(CurrentLayout && OptionsState == OPTION_NONE) {
-		CurrentLayout->Update(FrameTime, Input.GetMouse());
-	}
-
-	switch(State) {
-		case STATE_TITLE: {
-		} break;
-		case STATE_CHARACTERS: {
-		} break;
-		case STATE_OPTIONS: {
-		} break;
-		default:
-		break;
-	}
 }
 
 // Draw phase
@@ -721,15 +642,6 @@ void _Menu::Render() {
 			if(CurrentLayout)
 				CurrentLayout->Render();
 			Assets.Labels["label_menu_title_version"]->Render();
-		} break;
-		case STATE_OPTIONS: {
-			if(CurrentLayout)
-				CurrentLayout->Render();
-
-			if(OptionsState == OPTION_ACCEPT_INPUT) {
-				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
-				Assets.Elements["element_menu_popup"]->Render();
-			}
 		} break;
 		case STATE_CHARACTERS: {
 			Assets.Elements["element_menu_characters"]->Render();
@@ -854,10 +766,10 @@ void _Menu::HandlePacket(_Buffer &Buffer) {
 				int32_t Experience = Buffer.Read<int32_t>();
 
 				std::stringstream Buffer;
-				Buffer << "Level " << OldStats.FindLevel(Experience)->Level;
+				Buffer << "Level " << Stats->FindLevel(Experience)->Level;
 				CharacterSlots[i].Level->Text = Buffer.str();
 				CharacterSlots[i].Used = true;
-				const _Texture *PortraitImage = OldStats.GetPortrait(PortraitIndex)->Image;
+				const _Texture *PortraitImage = Stats->Portraits[PortraitIndex].Image;
 				CharacterSlots[i].Image->Texture = PortraitImage;
 			}
 
@@ -887,40 +799,6 @@ void _Menu::HandlePacket(_Buffer &Buffer) {
 			SetAccountMessage("Account in use");
 		} break;
 	}
-}
-
-// Refreshes the input map labels
-void _Menu::RefreshInputLabels() {
-	/*for(size_t i = 0; i < LABEL_COUNT; i++) {
-		InputLabels[i] = Assets.Labels[KEYLABEL_IDENTIFIERS[i]];
-		InputLabels[i]->Text = Actions.GetInputNameForAction(i);
-		InputLabels[i]->Parent->UserData = (void *)(intptr_t)i;
-	}*/
-}
-
-// Remap a key/button
-void _Menu::RemapInput(int InputType, int Input) {
-	/*OptionsState = OPTION_NONE;
-	if(InputType == _Input::KEYBOARD && Input == SDL_SCANCODE_ESCAPE)
-		return;
-
-	// Remove duplicate keys/buttons
-	for(int i = 0; i < _Actions::COUNT; i++) {
-		if(Actions.GetInputForAction(InputType, i) == Input) {
-			Actions.ClearMappingsForAction(InputType, i);
-		}
-	}
-
-	// Clear out existing action
-	Actions.ClearMappingsForAction(_Input::KEYBOARD, CurrentAction);
-	Actions.ClearMappingsForAction(_Input::MOUSE_BUTTON, CurrentAction);
-
-	// Add new binding
-	Actions.AddInputMap(InputType, Input, CurrentAction, 1.0f, -1.0f, false);
-
-	// Update menu labels
-	RefreshInputLabels();
-	*/
 }
 
 // Set message for account screen
