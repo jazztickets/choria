@@ -316,7 +316,7 @@ void _ClientState::Update(double FrameTime) {
 	Player->Map->Update(FrameTime);
 
 	// Update camera
-	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(+0.5f, +0.5f));
+	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
 	Camera->Update(FrameTime);
 
 	// Update the HUD

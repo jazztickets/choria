@@ -585,6 +585,8 @@ void _HUD::InitSkills() {
 	// Iterate over skills
 	for(const auto &SkillIterator : ClientState.Stats->Skills) {
 		const _Skill *Skill = SkillIterator.second;
+		if(!Skill)
+			continue;
 
 		// Create style
 		_Style *Style = new _Style();

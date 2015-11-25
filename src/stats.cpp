@@ -129,7 +129,7 @@ void _Stats::LoadSkills() {
 		Skill->ID = Database->GetInt(0);
 		Skill->Name = Database->GetString(1);
 		Skill->Info = Database->GetString(2);
-		Skill->Image = Assets.Textures[std::string("skills/") + Database->GetString(3)];
+		Skill->Image = Assets.Textures[Database->GetString(3)];
 		Skill->Type = Database->GetInt(4);
 		Skill->SkillCost = Database->GetInt(5);
 		Skill->ManaCostBase = Database->GetFloat(6);
