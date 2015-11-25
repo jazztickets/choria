@@ -20,6 +20,7 @@
 #include <network/peer.h>
 #include <objects/object.h>
 #include <instances/map.h>
+#include <database.h>
 #include <buffer.h>
 #include <packet.h>
 #include <stats.h>
@@ -71,6 +72,19 @@ _Server::_Server(uint16_t NetworkPort)
 	Network->SetUpdatePeriod(Config.NetworkRate);
 	Log.Open((Config.ConfigPath + "server.log").c_str());
 	//Log.SetToStdOut(true);
+
+	Database = new _Database();
+
+	std::string DatabasePath = Config.ConfigPath + "save.dat";
+	if(!Database->OpenDatabase(DatabasePath.c_str())) {
+
+		// Create a new database
+		if(!Database->OpenDatabaseCreate(DatabasePath.c_str()))
+			throw std::runtime_error("OpenDatabaseCreate failed");
+
+		// Populate data
+		CreateDefaultDatabase();
+	}
 }
 
 // Destructor
@@ -83,6 +97,8 @@ _Server::~_Server() {
 	for(auto &Map : Maps) {
 		delete Map;
 	}
+
+	delete Database;
 
 	delete Thread;
 }
@@ -175,13 +191,14 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 		return;
 
 	// Update map
-	_Map *Map = Object->Map;
+	//_Map *Map = Object->Map;
 	//if(Map) {
 	//	Map->RemovePeer(Event.Peer);
 	//}
 
 	// Remove from list
-	Object->Deleted = true;
+	//Object->Deleted = true;
+	delete Object;
 
 	// Delete peer from network
 	Network->DeletePeer(Event.Peer);
@@ -191,36 +208,139 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 void _Server::HandlePacket(_Buffer *Data, _Peer *Peer) {
 	char PacketType = Data->Read<char>();
 
-	/*
 	switch(PacketType) {
-		case Packet::CLIENT_JOIN:
-			HandleClientJoin(Data, Peer);
+		case Packet::ACCOUNT_LOGININFO:
+			HandleLoginInfo(Data, Peer);
 		break;
-		case Packet::CLIENT_INPUT:
-			HandleClientInput(Data, Peer);
+	/*	case Packet::CHARACTERS_REQUEST:
+			HandleCharacterListRequest(&Packet, Event->peer);
 		break;
-	}*/
+		case Packet::CHARACTERS_PLAY:
+			HandleCharacterSelect(&Packet, Event->peer);
+		break;
+		case Packet::CHARACTERS_DELETE:
+			HandleCharacterDelete(&Packet, Event->peer);
+		break;
+		case Packet::CREATECHARACTER_INFO:
+			HandleCharacterCreate(&Packet, Event->peer);
+		break;
+		case Packet::WORLD_MOVECOMMAND:
+			HandleMoveCommand(&Packet, Event->peer);
+		break;
+		case Packet::BATTLE_COMMAND:
+			HandleBattleCommand(&Packet, Event->peer);
+		break;
+		case Packet::BATTLE_CLIENTDONE:
+			HandleBattleFinished(&Packet, Event->peer);
+		break;
+		case Packet::INVENTORY_MOVE:
+			HandleInventoryMove(&Packet, Event->peer);
+		break;
+		case Packet::INVENTORY_USE:
+			HandleInventoryUse(&Packet, Event->peer);
+		break;
+		case Packet::INVENTORY_SPLIT:
+			HandleInventorySplit(&Packet, Event->peer);
+		break;
+		case Packet::EVENT_END:
+			HandleEventEnd(&Packet, Event->peer);
+		break;
+		case Packet::VENDOR_EXCHANGE:
+			HandleVendorExchange(&Packet, Event->peer);
+		break;
+		case Packet::TRADER_ACCEPT:
+			HandleTraderAccept(&Packet, Event->peer);
+		break;
+		case Packet::SKILLS_SKILLBAR:
+			HandleSkillBar(&Packet, Event->peer);
+		break;
+		case Packet::SKILLS_SKILLADJUST:
+			HandleSkillAdjust(&Packet, Event->peer);
+		break;
+		case Packet::WORLD_BUSY:
+			HandlePlayerBusy(&Packet, Event->peer);
+		break;
+		case Packet::WORLD_ATTACKPLAYER:
+			HandleAttackPlayer(&Packet, Event->peer);
+		break;
+		case Packet::WORLD_TELEPORT:
+			HandleTeleport(&Packet, Event->peer);
+		break;
+		case Packet::CHAT_MESSAGE:
+			HandleChatMessage(&Packet, Event->peer);
+		break;
+		case Packet::TRADE_REQUEST:
+			HandleTradeRequest(&Packet, Event->peer);
+		break;
+		case Packet::TRADE_CANCEL:
+			HandleTradeCancel(&Packet, Event->peer);
+		break;
+		case Packet::TRADE_GOLD:
+			HandleTradeGold(&Packet, Event->peer);
+		break;
+		case Packet::TRADE_ACCEPT:
+			HandleTradeAccept(&Packet, Event->peer);
+		break;*/
+	}
 }
 
-// Handle a client joining the game
-void _Server::HandleClientJoin(_Buffer *Data, _Peer *Peer) {
+// Login information
+void _Server::HandleLoginInfo(_Buffer *Data, _Peer *Peer) {
 
-	// Make sure the peer doesn't already have a player object
-	if(Peer->Object)
+	// Read packet
+	bool CreateAccount = Data->ReadBit();
+	std::string Username(Data->ReadString());
+	std::string Password(Data->ReadString());
+	if(Username.size() > 15 || Password.size() > 15)
 		return;
 
-	// Get map
-	std::string MapFilename = Data->ReadString();
-	ChangePlayerMap(MapFilename, Peer);
-}
+	// Create account or login
+	if(CreateAccount) {
 
-// Handle input from client
-void _Server::HandleClientInput(_Buffer *Data, _Peer *Peer) {
+		// Check for existing account
+		std::string Query ="SELECT ID FROM Accounts WHERE Username = '" + Username + "'";
+		Database->RunDataQuery(Query.c_str());
+		int Result = Database->FetchRow();
+		Database->CloseQuery();
 
-	// Get player object
-	_Object *Object = Peer->Object;
-	if(!Object)
-		return;
+		if(Result) {
+			_Buffer Packet;
+			Packet.Write<char>(Packet::ACCOUNT_EXISTS);
+			Network->SendPacket(Packet, Peer);
+			return;
+		}
+		else {
+			std::string Query = "INSERT INTO Accounts(Username, Password) VALUES('" + Username + "', '" + Password + "')";
+			Database->RunQuery(Query.c_str());
+		}
+	}
+
+	// Get account information
+	int AccountID = 0;
+	std::string Query = "SELECT ID FROM Accounts WHERE Username = '" + Username + "' AND Password = '" + Password + "'";
+	Database->RunDataQuery(Query.c_str());
+	if(Database->FetchRow()) {
+		AccountID = Database->GetInt(0);
+	}
+	Database->CloseQuery();
+
+	// Make sure account exists
+	if(AccountID == 0) {
+		_Buffer Packet;
+		Packet.Write<char>(Packet::ACCOUNT_NOTFOUND);
+		Network->SendPacket(Packet, Peer);
+	}
+	else {
+
+		_Object *Object = new _Object(_Object::PLAYER);
+		Object->AccountID = AccountID;
+		Object->Peer = Peer;
+		Peer->Object = Object;
+
+		_Buffer Packet;
+		Packet.Write<char>(Packet::ACCOUNT_SUCCESS);
+		Network->SendPacket(Packet, Peer);
+	}
 }
 
 // Send map information to a client
@@ -303,4 +423,56 @@ _Map *_Server::GetMap(const std::string &MapName) {
 	return Map;*/
 
 	return 0;
+}
+
+
+// Populates the server database with the default data
+void _Server::CreateDefaultDatabase() {
+
+	// Server information
+	Database->RunQuery("BEGIN TRANSACTION");
+	Database->RunQuery("CREATE TABLE ServerInfo('Version' INTEGER)");
+	Database->RunQuery("CREATE TABLE Accounts("
+						"'ID' INTEGER PRIMARY KEY"
+						", 'Username' TEXT"
+						", 'Password' TEXT"
+						")");
+	Database->RunQuery(	"CREATE TABLE Characters("
+						"'ID' INTEGER PRIMARY KEY"
+						", 'AccountsID' INTEGER DEFAULT(0)"
+						", 'MapID' INTEGER DEFAULT(1)"
+						", 'SpawnPoint' INTEGER DEFAULT(0)"
+						", 'Name' TEXT"
+						", 'PortraitID' INTEGER DEFAULT(1)"
+						", 'Experience' INTEGER DEFAULT(0)"
+						", 'Gold' INTEGER DEFAULT(0)"
+						", 'SkillBar0' INTEGER DEFAULT(-1)"
+						", 'SkillBar1' INTEGER DEFAULT(-1)"
+						", 'SkillBar2' INTEGER DEFAULT(-1)"
+						", 'SkillBar3' INTEGER DEFAULT(-1)"
+						", 'SkillBar4' INTEGER DEFAULT(-1)"
+						", 'SkillBar5' INTEGER DEFAULT(-1)"
+						", 'SkillBar6' INTEGER DEFAULT(-1)"
+						", 'SkillBar7' INTEGER DEFAULT(-1)"
+						", 'PlayTime' INTEGER DEFAULT(0)"
+						", 'Deaths' INTEGER DEFAULT(0)"
+						", 'MonsterKills' INTEGER DEFAULT(0)"
+						", 'PlayerKills' INTEGER DEFAULT(0)"
+						", 'Bounty' INTEGER DEFAULT(0)"
+						")");
+	Database->RunQuery(	"CREATE TABLE Inventory("
+						"'CharactersID' INTEGER"
+						", 'Slot' INTEGER"
+						", 'ItemsID' INTEGER"
+						", 'Count' INTEGER"
+						")");
+	Database->RunQuery(	"CREATE TABLE SkillLevel("
+						"'CharactersID' INTEGER"
+						", 'SkillsID' INTEGER"
+						", 'Level' INTEGER"
+						")");
+
+	Database->RunQuery("INSERT INTO ServerInfo(Version) VALUES(1)");
+	Database->RunQuery("INSERT INTO Accounts(Username, Password) VALUES('singleplayer', 'singleplayer')");
+	Database->RunQuery("END TRANSACTION");
 }

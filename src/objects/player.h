@@ -149,8 +149,6 @@ class _Player : public _Fighter {
 		static bool IsSlotInventory(int Slot) { return Slot >= INVENTORY_BACKPACK && Slot < INVENTORY_TRADE; }
 		static bool IsSlotTrade(int Slot) { return Slot >= INVENTORY_TRADE && Slot < INVENTORY_COUNT; }
 
-		// Connection information
-		int AccountID, CharacterID;
 		_Database *Database;
 
 		// States

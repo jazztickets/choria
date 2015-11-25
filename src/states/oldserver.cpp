@@ -97,7 +97,7 @@ void _OldServerState::Close() {
 		if(Object->Type == _Object::PLAYER) {
 			_Player *Player = (_Player *)Object;
 			Player->Save();
-			OldServerNetwork->Disconnect(Player->Peer);
+			OldServerNetwork->Disconnect(Player->OldPeer);
 		}
 	}
 
@@ -173,7 +173,7 @@ void _OldServerState::HandleConnect(ENetEvent *Event) {
 
 	// Store the player in the peer struct
 	Event->peer->data = NewPlayer;
-	NewPlayer->Peer = Event->peer;
+	NewPlayer->OldPeer = Event->peer;
 
 	// Send player the game version
 	_Buffer Packet;
@@ -199,7 +199,7 @@ void _OldServerState::HandleDisconnect(ENetEvent *Event) {
 
 		_Buffer Packet;
 		Packet.Write<char>(Packet::TRADE_CANCEL);
-		OldServerNetwork->SendPacketToPeer(&Packet, TradePlayer->Peer);
+		OldServerNetwork->SendPacketToPeer(&Packet, TradePlayer->OldPeer);
 	}
 
 	// Remove from battle
@@ -758,7 +758,7 @@ void _OldServerState::HandleInventoryMove(_Buffer *Packet, ENetPeer *Peer) {
 			NewPacket.Write<char>(NewItemCount);
 
 		// Send updates
-		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
+		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
 	}
 }
 
@@ -952,7 +952,7 @@ void _OldServerState::HandleChatMessage(_Buffer *Packet, ENetPeer *Peer) {
 	// Broadcast message
 	auto &Objects = ObjectManager->GetObjects();
 	for(auto &Object : Objects) {
-		OldServerNetwork->SendPacketToPeer(&NewPacket, Object->Peer);
+		OldServerNetwork->SendPacketToPeer(&NewPacket, Object->OldPeer);
 	}
 }
 
@@ -1008,7 +1008,7 @@ void _OldServerState::HandleTradeCancel(_Buffer *Packet, ENetPeer *Peer) {
 
 		_Buffer NewPacket;
 		NewPacket.Write<char>(Packet::TRADE_CANCEL);
-		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
+		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
 	}
 
 	// Set state back to normal
@@ -1038,7 +1038,7 @@ void _OldServerState::HandleTradeGold(_Buffer *Packet, ENetPeer *Peer) {
 		_Buffer NewPacket;
 		NewPacket.Write<char>(Packet::TRADE_GOLD);
 		NewPacket.Write<int32_t>(Gold);
-		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
+		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
 	}
 }
 
@@ -1078,13 +1078,13 @@ void _OldServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *Peer) {
 				_Buffer NewPacket;
 				NewPacket.Write<char>(Packet::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(Player, &NewPacket, Player->Gold);
-				OldServerNetwork->SendPacketToPeer(&NewPacket, Player->Peer);
+				OldServerNetwork->SendPacketToPeer(&NewPacket, Player->OldPeer);
 			}
 			{
 				_Buffer NewPacket;
 				NewPacket.Write<char>(Packet::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(TradePlayer, &NewPacket, TradePlayer->Gold);
-				OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
+				OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
 			}
 
 			Player->State = _Player::STATE_WALK;
@@ -1102,7 +1102,7 @@ void _OldServerState::HandleTradeAccept(_Buffer *Packet, ENetPeer *Peer) {
 			_Buffer NewPacket;
 			NewPacket.Write<char>(Packet::TRADE_ACCEPT);
 			NewPacket.Write<char>(Accepted);
-			OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->Peer);
+			OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
 		}
 	}
 }
@@ -1151,7 +1151,7 @@ void _OldServerState::SendMessage(_Player *Player, const std::string &Message, c
 	Packet.WriteString(Message.c_str());
 
 	// Send
-	OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+	OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 }
 
 // Spawns a player at a particular spawn point
@@ -1211,7 +1211,7 @@ void _OldServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, 
 		}
 
 		// Send object list to the player
-		OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+		OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 	}
 
 	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->NetworkID);
@@ -1229,7 +1229,7 @@ void _OldServerState::SendHUD(_Player *Player) {
 	Packet.Write<float>(Player->HealthAccumulator);
 	Packet.Write<float>(Player->ManaAccumulator);
 
-	OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+	OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 }
 
 // Send player their position
@@ -1240,7 +1240,7 @@ void _OldServerState::SendPlayerPosition(_Player *Player) {
 	Packet.Write<char>(Player->Position.x);
 	Packet.Write<char>(Player->Position.y);
 
-	OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+	OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 }
 
 // Sends the player a list of his/her characters
@@ -1267,7 +1267,7 @@ void _OldServerState::SendCharacterList(_Player *Player) {
 	Database->CloseQuery();
 
 	// Send list
-	OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+	OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 }
 
 // Sends a player an event message
@@ -1281,7 +1281,7 @@ void _OldServerState::SendEvent(_Player *Player, int Type, int Data) {
 	Packet.Write<char>(Player->Position.x);
 	Packet.Write<char>(Player->Position.y);
 
-	OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+	OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 }
 
 // Sends information to another player about items they're trading
@@ -1292,7 +1292,7 @@ void _OldServerState::SendTradeInformation(_Player *Sender, _Player *Receiver) {
 	Packet.Write<char>(Packet::TRADE_REQUEST);
 	Packet.Write<char>(Sender->NetworkID);
 	BuildTradeItemsPacket(Sender, &Packet, Sender->TradeGold);
-	OldServerNetwork->SendPacketToPeer(&Packet, Receiver->Peer);
+	OldServerNetwork->SendPacketToPeer(&Packet, Receiver->OldPeer);
 }
 
 // Adds trade item information to a packet

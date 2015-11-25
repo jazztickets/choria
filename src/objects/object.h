@@ -24,6 +24,7 @@
 
 // Forward Declarations
 class _Map;
+class _Peer;
 
 // Classes
 class _Object {
@@ -44,7 +45,8 @@ class _Object {
 
 		// Instances
 		_Map *Map;
-		ENetPeer *Peer;
+		ENetPeer *OldPeer;
+		_Peer *Peer;
 
 		// Properties
 		int Type;
@@ -56,7 +58,13 @@ class _Object {
 		// Networking
 		char NetworkID;
 
+		// Connection information
+		int AccountID;
+		int CharacterID;
+
+
 	protected:
 
+		int Dummy;
 
 };

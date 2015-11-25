@@ -16,6 +16,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <menu.h>
+#include <states/oldclient.h>
+#include <states/client.h>
+#include <states/editor.h>
+#include <network/clientnetwork.h>
+#include <ui/element.h>
+#include <ui/label.h>
+#include <ui/button.h>
+#include <ui/image.h>
+#include <ui/style.h>
+#include <ui/textbox.h>
 #include <constants.h>
 #include <input.h>
 #include <actions.h>
@@ -26,16 +36,6 @@
 #include <buffer.h>
 #include <stats.h>
 #include <packet.h>
-#include <ui/element.h>
-#include <ui/label.h>
-#include <ui/button.h>
-#include <ui/image.h>
-#include <ui/style.h>
-#include <ui/textbox.h>
-#include <network/oldnetwork.h>
-#include <states/null.h>
-#include <states/oldclient.h>
-#include <states/editor.h>
 #include <sstream>
 #include <SDL_mouse.h>
 
@@ -52,6 +52,7 @@ const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 
 // Constructor
 _Menu::_Menu() {
+	Network = nullptr;
 	State = STATE_NONE;
 	CurrentLayout = nullptr;
 	OptionsState = OPTION_NONE;
@@ -75,7 +76,7 @@ void _Menu::InitTitle() {
 
 	ChangeLayout("element_menu_title");
 
-	//OldClientNetwork->Disconnect();
+	Network->Disconnect();
 
 	State = STATE_TITLE;
 }
@@ -142,7 +143,7 @@ void _Menu::InitNewCharacter() {
 
 // Init connect screen
 void _Menu::InitConnect(bool ConnectNow) {
-	OldClientNetwork->Disconnect();
+	Network->Disconnect();
 
 	ChangeLayout("element_menu_connect");
 
@@ -240,7 +241,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<char>(Packet::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<int32_t>(PortraitID);
-	OldClientNetwork->SendPacketToHost(&Packet);
+	Network->SendPacket(&Packet);
 }
 
 void _Menu::ConnectToHost() {
@@ -259,7 +260,9 @@ void _Menu::ConnectToHost() {
 	std::stringstream Buffer(Port->Text);
 	uint16_t PortNumber;
 	Buffer >> PortNumber;
-	Connect(Host->Text, PortNumber, false);
+	ClientState.SetHostAddress(Host->Text);
+	ClientState.SetConnectPort(PortNumber);
+	ClientState.Connect(false);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Text = "Connecting...";
@@ -304,7 +307,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
-	OldClientNetwork->SendPacketToHost(&Packet);
+	Network->SendPacket(&Packet);
 }
 
 // Request character list from server
@@ -313,7 +316,7 @@ void _Menu::RequestCharacterList() {
 	// Request character list
 	_Buffer Packet;
 	Packet.Write<char>(Packet::CHARACTERS_REQUEST);
-	OldClientNetwork->SendPacketToHost(&Packet);
+	Network->SendPacket(&Packet);
 }
 
 // Load portraits
@@ -406,6 +409,9 @@ void _Menu::Close() {
 
 // Handle actions
 void _Menu::HandleAction(int InputType, int Action, int Value) {
+	if(State == STATE_NONE)
+		return;
+
 	switch(Action) {
 		case _Actions::MENU:
 			Menu.InitPlay();
@@ -415,13 +421,17 @@ void _Menu::HandleAction(int InputType, int Action, int Value) {
 
 // Handle key event
 void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
+	if(State == STATE_NONE)
+		return;
+
 	switch(State) {
 		case STATE_TITLE: {
 			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					Framework.Done = true;
-				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
-					Connect("", 0, true);
+				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
+					ClientState.Connect(true);
+				}
 			}
 		} break;
 		case STATE_CHARACTERS: {
@@ -497,6 +507,9 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 
 // Handle mouse event
 void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
+	if(State == STATE_NONE)
+		return;
+
 	if(!CurrentLayout)
 		return;
 
@@ -532,7 +545,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 		switch(State) {
 			case STATE_TITLE: {
 				if(Clicked->Identifier == "button_title_singleplayer") {
-					Connect("", 0, true);
+					ClientState.Connect(true);
 				}
 				else if(Clicked->Identifier == "button_title_multiplayer") {
 					InitConnect();
@@ -553,7 +566,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<char>(Packet::CHARACTERS_DELETE);
 							Packet.Write<char>(SelectedSlot);
-							OldClientNetwork->SendPacketToHost(&Packet);
+							Network->SendPacket(&Packet);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
@@ -664,7 +677,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitOptions();
 				}
 				else if(Clicked->Identifier == "button_ingame_disconnect") {
-					OldClientNetwork->Disconnect();
+					Network->Disconnect();
 				}
 			} break;
 			default:
@@ -675,6 +688,9 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 // Update phase
 void _Menu::Update(double FrameTime) {
+	if(State == STATE_NONE)
+		return;
+
 	PreviousClickTimer += FrameTime;
 
 	if(CurrentLayout && OptionsState == OPTION_NONE) {
@@ -695,6 +711,9 @@ void _Menu::Update(double FrameTime) {
 
 // Draw phase
 void _Menu::Render() {
+	if(State == STATE_NONE)
+		return;
+
 	Graphics.Setup2D();
 
 	switch(State) {
@@ -739,7 +758,8 @@ void _Menu::Render() {
 	}
 }
 
-void _Menu::HandleConnect(ENetEvent *Event) {
+// Connect
+void _Menu::HandleConnect() {
 	switch(State) {
 		case STATE_CONNECT: {
 			_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
@@ -757,7 +777,8 @@ void _Menu::HandleConnect(ENetEvent *Event) {
 	}
 }
 
-void _Menu::HandleDisconnect(ENetEvent *Event) {
+// Disconnect
+void _Menu::HandleDisconnect() {
 	switch(State) {
 		case STATE_CONNECT: {
 			InitConnect();
@@ -772,27 +793,21 @@ void _Menu::HandleDisconnect(ENetEvent *Event) {
 }
 
 // Handle packet
-void _Menu::HandlePacket(ENetEvent *Event) {
-	_Buffer Packet((char *)Event->packet->data, Event->packet->dataLength);
-	switch(Packet.Read<char>()) {
+void _Menu::HandlePacket(_Buffer &Buffer) {
+	switch(Buffer.Read<char>()) {
 		case Packet::VERSION: {
-			std::string Version(Packet.ReadString());
-			//Framework.Log << "_Network::VERSION=" << Version << std::endl;
+			std::string Version(Buffer.ReadString());
 			if(Version != GAME_VERSION) {
-				//Message = "Game version differs from server's";
-				//ChangeState(STATE_MAIN);
+				throw std::runtime_error("Wrong game version");
 			}
 		} break;
 		case Packet::ACCOUNT_SUCCESS: {
-			//Framework.Log << "_Network::ACCOUNT_SUCCESS" << std::endl;
 			RequestCharacterList();
 		} break;
 		case Packet::CHARACTERS_LIST: {
-			//Framework.Log << "_Network::CHARACTERS_LIST" << std::endl;
 
 			// Get count
-			int CharacterCount = Packet.Read<char>();
-			//Framework.Log << "CharacterCount=" << CharacterCount << std::endl;
+			int CharacterCount = Buffer.Read<char>();
 
 			// Reset character slots
 			for(int i = 0; i < SAVE_COUNT; i++) {
@@ -834,9 +849,9 @@ void _Menu::HandlePacket(ENetEvent *Event) {
 
 			// Get characters
 			for(int i = 0; i < CharacterCount; i++) {
-				CharacterSlots[i].Name->Text = Packet.ReadString();
-				int32_t PortraitIndex = Packet.Read<int32_t>();
-				int32_t Experience = Packet.Read<int32_t>();
+				CharacterSlots[i].Name->Text = Buffer.ReadString();
+				int32_t PortraitIndex = Buffer.Read<int32_t>();
+				int32_t Experience = Buffer.Read<int32_t>();
 
 				std::stringstream Buffer;
 				Buffer << "Level " << OldStats.FindLevel(Experience)->Level;
@@ -871,28 +886,6 @@ void _Menu::HandlePacket(ENetEvent *Event) {
 		case Packet::ACCOUNT_ALREADYLOGGEDIN: {
 			SetAccountMessage("Account in use");
 		} break;
-	}
-}
-
-// Connect to a server
-void _Menu::Connect(const std::string &Address, uint16_t Port, bool Fake) {
-
-	// Connect to the fake singleplayer network
-	if(Fake) {
-		OldClientNetwork->Connect("", Port);
-
-		// Send fake account information
-		{
-			_Buffer Packet;
-			Packet.Write<char>(Packet::ACCOUNT_LOGININFO);
-			Packet.WriteBit(0);
-			Packet.WriteString("singleplayer");
-			Packet.WriteString("singleplayer");
-			OldClientNetwork->SendPacketToHost(&Packet);
-		}
-	}
-	else {
-		OldClientNetwork->Connect(Address.c_str(), Port);
 	}
 }
 

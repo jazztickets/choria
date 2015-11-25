@@ -21,11 +21,15 @@
 // Constructor
 _Object::_Object(int Type)
 :	Map(nullptr),
+	OldPeer(nullptr),
 	Peer(nullptr),
 	Type(Type),
 	Deleted(false),
 	Position(-1, -1),
-	NetworkID(-1) {
+	NetworkID(-1),
+	AccountID(0),
+	CharacterID(0),
+	Dummy(0) {
 
 }
 

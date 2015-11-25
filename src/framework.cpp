@@ -93,6 +93,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 		// Open log
 		Log.Open((Config.ConfigPath + "client.log").c_str());
+		ClientState.SetLog(&Log);
 
 		// Initialize SDL
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)

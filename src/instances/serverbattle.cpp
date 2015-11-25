@@ -394,7 +394,7 @@ void _ServerBattle::CheckEnd() {
 				Players[i]->AddItem(OldStats.GetItem(ItemID), 1, -1);
 			}
 
-			OldServerNetwork->SendPacketToPeer(&Packet, Players[i]->Peer);
+			OldServerNetwork->SendPacketToPeer(&Packet, Players[i]->OldPeer);
 		}
 
 		State = STATE_END;
@@ -410,7 +410,7 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Object::PLAYER) {
 			_Player *Player = (_Player *)Fighters[i];
-			OldServerNetwork->SendPacketToPeer(Packet, Player->Peer);
+			OldServerNetwork->SendPacketToPeer(Packet, Player->OldPeer);
 		}
 	}
 }
@@ -439,7 +439,7 @@ void _ServerBattle::SendSkillToPlayers(_Player *Player) {
 	// Send packet to all players
 	for(size_t i = 0; i < SidePlayers.size(); i++) {
 		if(SidePlayers[i] != Player) {
-			OldServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->Peer);
+			OldServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->OldPeer);
 		}
 	}
 }

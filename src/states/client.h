@@ -42,6 +42,9 @@ class _ClientState : public _State {
 		void Init() override;
 		void Close() override;
 
+		// Network
+		void Connect(bool IsLocal);
+
 		// Input
 		bool HandleAction(int InputType, int Action, int Value) override;
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
@@ -62,10 +65,11 @@ class _ClientState : public _State {
 		void SetSaveFilename(const std::string &SaveFilename) { this->SaveFilename = SaveFilename; }
 		void SetHostAddress(const std::string &HostAddress) { this->HostAddress = HostAddress; }
 		void SetConnectPort(uint16_t ConnectPort) { this->ConnectPort = ConnectPort; }
-		void SetRunServer(bool RunServer) { this->RunServer = RunServer; }
 		void SetLog(_LogFile *Log) { this->Log = Log; }
 
 	protected:
+
+		void StartLocalServer();
 
 		void HandlePacket(_Buffer &Buffer);
 		void HandleConnect();
@@ -82,7 +86,6 @@ class _ClientState : public _State {
 		std::string SaveFilename;
 		bool IsTesting;
 		bool FromEditor;
-		bool RunServer;
 
 		// Game
 		const _Stats *Stats;

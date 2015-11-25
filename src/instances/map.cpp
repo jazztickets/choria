@@ -523,7 +523,7 @@ void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _OldNe
 			_Player *Player = (_Player *)Object;
 
 			if(Player != ExceptionPlayer)
-				OldServerNetwork->SendPacketToPeer(Packet, Player->Peer, Type, Type == _OldNetwork::UNSEQUENCED);
+				OldServerNetwork->SendPacketToPeer(Packet, Player->OldPeer, Type, Type == _OldNetwork::UNSEQUENCED);
 		}
 	}
 }

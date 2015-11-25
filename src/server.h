@@ -29,6 +29,7 @@ class _Buffer;
 class _Peer;
 class _Map;
 class _Stats;
+class _Database;
 struct _NetworkEvent;
 
 // Server class
@@ -54,6 +55,7 @@ class _Server {
 		_LogFile Log;
 
 		// Stats
+		_Database *Database;
 		const _Stats *Stats;
 
 		// Network
@@ -68,8 +70,10 @@ class _Server {
 		void HandleConnect(_NetworkEvent &Event);
 		void HandleDisconnect(_NetworkEvent &Event);
 		void HandlePacket(_Buffer *Data, _Peer *Peer);
-		void HandleClientJoin(_Buffer *Data, _Peer *Peer);
-		void HandleClientInput(_Buffer *Data, _Peer *Peer);
+
+		void HandleLoginInfo(_Buffer *Data, _Peer *Peer);
+
+		void CreateDefaultDatabase();
 
 		// Threading
 		std::thread *Thread;

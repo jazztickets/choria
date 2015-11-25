@@ -16,9 +16,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/client.h>
-#include <states/null.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>
+#include <instances/map.h>
+#include <ui/element.h>
 #include <constants.h>
 #include <framework.h>
 #include <graphics.h>
@@ -26,12 +27,12 @@
 #include <camera.h>
 #include <assets.h>
 #include <hud.h>
-#include <instances/map.h>
 #include <config.h>
 #include <actions.h>
 #include <buffer.h>
 #include <server.h>
 #include <packet.h>
+#include <log.h>
 #include <iostream>
 #include <sstream>
 
@@ -48,7 +49,6 @@ _ClientState::_ClientState() :
 	SaveFilename("test.save"),
 	IsTesting(true),
 	FromEditor(false),
-	RunServer(true),
 	Stats(nullptr),
 	Server(nullptr),
 	HostAddress("127.0.0.1"),
@@ -64,29 +64,57 @@ void _ClientState::Init() {
 	Network = nullptr;
 	Server = nullptr;
 
-	if(RunServer) {
-		Server = new _Server(ConnectPort);
-		Server->Stats = Stats;
-		Server->StartThread();
-	}
-
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
-	Network->Connect(HostAddress.c_str(), ConnectPort);
 
 	Graphics.ChangeViewport(Graphics.WindowSize);
 
 	Actions.ResetState();
+
+	Menu.SetNetwork(Network);
+	Menu.InitTitle();
 }
 
 // Close map
 void _ClientState::Close() {
+	Menu.Close();
+
 	delete Camera;
 	delete HUD;
 	delete Map;
 	delete Network;
 	delete Server;
+}
+
+// Connect to a server
+void _ClientState::Connect(bool IsLocal) {
+
+	// Connect to the fake singleplayer network
+	if(IsLocal) {
+		StartLocalServer();
+		Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT);
+	}
+	else {
+		Network->Connect(HostAddress.c_str(), ConnectPort);
+	}
+}
+
+void _ClientState::StartLocalServer() {
+
+	// Kill existing server
+	if(Server) {
+		Server->StopServer();
+		delete Server;
+	}
+
+	// Start server in thread
+	Server = new _Server(ConnectPort);
+	Server->Stats = Stats;
+	Server->StartThread();
+
+	// Connect
+	Network->Connect(HostAddress.c_str(), ConnectPort);
 }
 
 // Action handler
@@ -99,7 +127,20 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 
 // Key handler
 void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
+	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
+	Menu.KeyEvent(KeyEvent);
 
+	if(!Handled) {
+		if(Menu.GetState() != _Menu::STATE_NONE) {
+			Menu.KeyEvent(KeyEvent);
+			return;
+		}
+	}
+	else {
+		//if(!HUD.IsChatting())
+		//	HUD.ValidateTradeGold();
+	}
+	/*
 	if(KeyEvent.Pressed) {
 		switch(KeyEvent.Scancode) {
 			case SDL_SCANCODE_ESCAPE:
@@ -113,18 +154,26 @@ void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_GRAVE:
 			break;
 		}
-	}
+	}*/
 }
 
 // Mouse handler
 void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+	FocusedElement = nullptr;
+	Graphics.Element->HandleInput(MouseEvent.Pressed);
+	Menu.MouseEvent(MouseEvent);
 }
 
 void _ClientState::WindowEvent(uint8_t Event) {
+	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
 // Update
 void _ClientState::Update(double FrameTime) {
+	Graphics.Element->Update(FrameTime, Input.GetMouse());
+
+	// Update network
 	Network->Update(FrameTime);
 
 	// Get events
@@ -147,6 +196,9 @@ void _ClientState::Update(double FrameTime) {
 			break;
 		}
 	}
+
+	// Update menu
+	Menu.Update(FrameTime);
 
 	// Process input
 	if(Player && Map) {
@@ -179,43 +231,101 @@ void _ClientState::Update(double FrameTime) {
 
 // Render the state
 void _ClientState::Render(double BlendFactor) {
+	Menu.Render();
+
 	if(!Map || !Player)
 		return;
-
 }
 
 // Handle packet from server
 void _ClientState::HandlePacket(_Buffer &Buffer) {
+	Menu.HandlePacket(Buffer);
+
 	char PacketType = Buffer.Read<char>();
 
-	/*
 	switch(PacketType) {
-		case Packet::MAP_INFO:
-			HandleMapInfo(Buffer);
+		/*
+		case Packet::WORLD_YOURCHARACTERINFO:
+			HandleYourCharacterInfo(&Packet);
 		break;
-		case Packet::OBJECT_LIST:
-			HandleObjectList(Buffer);
+		case Packet::WORLD_CHANGEMAPS:
+			HandleChangeMaps(&Packet);
 		break;
-		case Packet::OBJECT_UPDATES:
-			HandleObjectUpdates(Buffer);
+		case Packet::WORLD_CREATEOBJECT:
+			HandleCreateObject(&Packet);
 		break;
-		case Packet::OBJECT_CREATE:
-			HandleObjectCreate(Buffer);
+		case Packet::WORLD_DELETEOBJECT:
+			HandleDeleteObject(&Packet);
 		break;
-		case Packet::OBJECT_DELETE:
-			HandleObjectDelete(Buffer);
+		case Packet::WORLD_OBJECTUPDATES:
+			HandleObjectUpdates(&Packet);
 		break;
-	}*/
+		case Packet::WORLD_STARTBATTLE:
+			HandleStartBattle(&Packet);
+		break;
+		case Packet::WORLD_HUD:
+			HandleHUD(&Packet);
+		break;
+		case Packet::WORLD_POSITION:
+			HandlePlayerPosition(&Packet);
+		break;
+		case Packet::BATTLE_TURNRESULTS:
+			HandleBattleTurnResults(&Packet);
+		break;
+		case Packet::BATTLE_END:
+			HandleBattleEnd(&Packet);
+		break;
+		case Packet::BATTLE_COMMAND:
+			HandleBattleCommand(&Packet);
+		break;
+		case Packet::EVENT_START:
+			HandleEventStart(&Packet);
+		break;
+		case Packet::INVENTORY_USE:
+			HandleInventoryUse(&Packet);
+		break;
+		case Packet::CHAT_MESSAGE:
+			HandleChatMessage(&Packet);
+		break;
+		case Packet::TRADE_REQUEST:
+			HandleTradeRequest(&Packet);
+		break;
+		case Packet::TRADE_CANCEL:
+			HandleTradeCancel(&Packet);
+		break;
+		case Packet::TRADE_ITEM:
+			HandleTradeItem(&Packet);
+		break;
+		case Packet::TRADE_GOLD:
+			HandleTradeGold(&Packet);
+		break;
+		case Packet::TRADE_ACCEPT:
+			HandleTradeAccept(&Packet);
+		break;
+		case Packet::TRADE_EXCHANGE:
+			HandleTradeExchange(&Packet);
+		break;*/
+	}
 }
 
 // Handle connection to server
 void _ClientState::HandleConnect() {
-	HUD = nullptr;
 
-	//Log << TimeSteps << " -- CONNECT" << std::endl;
+	if(Server) {
+		_Buffer Packet;
+		Packet.Write<char>(Packet::ACCOUNT_LOGININFO);
+		Packet.WriteBit(0);
+		Packet.WriteString("singleplayer");
+		Packet.WriteString("singleplayer");
+		Network->SendPacket(&Packet);
+	}
 
-	if(Level == "")
-		Level = "test.map";
+	//HUD = nullptr;
+
+	*Log << " -- CONNECT" << std::endl;
+
+	//if(Level == "")
+	//	Level = "test.map";
 
 	//_Buffer Buffer;
 	//Buffer.Write<char>(Packet::CLIENT_JOIN);
@@ -223,11 +333,11 @@ void _ClientState::HandleConnect() {
 	//Network->SendPacket(&Buffer);
 
 	// Initialize hud
-	HUD = new _HUD();
+	//HUD = new _HUD();
 
 	// Set up graphics
-	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
-	Camera->CalculateFrustum(Graphics.AspectRatio);
+	//Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
+	//Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
 // Load the map

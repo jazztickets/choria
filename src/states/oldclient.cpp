@@ -36,7 +36,6 @@
 #include <instances/clientbattle.h>
 #include <objects/player.h>
 #include <objects/fighter.h>
-#include <states/null.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -81,13 +80,11 @@ void _OldClientState::Close() {
 
 // Handles a connection to the server
 void _OldClientState::HandleConnect(ENetEvent *Event) {
-
 }
 
 // Handles a disconnection from the server
 void _OldClientState::HandleDisconnect(ENetEvent *Event) {
-
-	Framework.ChangeState(&NullState);
+//	Framework.ChangeState(&NullState);
 }
 
 // Handles a server packet

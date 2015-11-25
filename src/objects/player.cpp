@@ -36,8 +36,6 @@
 // Constructor
 _Player::_Player()
 :	_Fighter(PLAYER),
-	AccountID(0),
-	CharacterID(0),
 	Database(nullptr),
 	State(STATE_WALK),
 	MoveTime(0),

@@ -27,6 +27,8 @@ class _Element;
 class _Button;
 class _Label;
 class _Image;
+class _Buffer;
+class _ClientNetwork;
 struct _MouseEvent;
 struct _KeyEvent;
 
@@ -89,19 +91,19 @@ class _Menu {
 		void Render();
 
 		// Network
-		void HandleConnect(ENetEvent *Event);
-		void HandleDisconnect(ENetEvent *Event);
-		void HandlePacket(ENetEvent *Event);
+		void HandleConnect();
+		void HandleDisconnect();
+		void HandlePacket(_Buffer &Buffer);
 
 		const StateType &GetState() const { return State; }
 
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
+		void SetNetwork(_ClientNetwork *Network) { this->Network = Network; }
 
 	private:
 
 		void ChangeLayout(const std::string &ElementIdentifier);
-		void Connect(const std::string &Address, uint16_t Port, bool Fake);
 
 		int GetSelectedPortraitID();
 		int GetSelectedCharacter();
@@ -119,6 +121,9 @@ class _Menu {
 		void FocusNextElement(bool ShiftDown=false);
 
 		void ClearPortraits();
+
+		// Network
+		_ClientNetwork *Network;
 
 		// States
 		StateType State;

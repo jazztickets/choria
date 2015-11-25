@@ -267,7 +267,7 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) 
 					_Buffer Packet;
 					Packet.Write<char>(Packet::INVENTORY_USE);
 					Packet.Write<char>(Slot);
-					OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+					OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 				}
 			}
 		break;
