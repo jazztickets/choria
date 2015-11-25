@@ -91,9 +91,8 @@ class _Stats {
 
 	public:
 
-		_Stats() : Database(nullptr) { }
-		void Init();
-		void Close();
+		_Stats();
+		~_Stats();
 
 		// General Stats
 		void GetMonsterStats(int MonsterID, _Object *Monster);
@@ -140,5 +139,3 @@ class _Stats {
 		_Database *Database;
 
 };
-
-extern _Stats OldStats;

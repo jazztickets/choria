@@ -108,7 +108,7 @@ _Object::_Object(int Type)
 	for(int i = 0; i < BATTLE_MAXSKILLS; i++)
 		SkillBar[i] = nullptr;
 
-	//SkillBar[0] = OldStats.GetSkill(0);
+	//SkillBar[0] = Stats->GetSkill(0);
 
 	Offset.x = Offset.y = 0;
 
@@ -750,7 +750,7 @@ void _Object::SetInventory(int Slot, int ItemID, int Count) {
 		Inventory[Slot].Count = 0;
 	}
 	else {
-		Inventory[Slot].Item = OldStats.GetItem(ItemID);
+		Inventory[Slot].Item = Stats->GetItem(ItemID);
 		Inventory[Slot].Count = Count;
 	}
 }
@@ -1000,7 +1000,7 @@ bool _Object::CanEquipItem(int Slot, const _Item *Item) {
 
 // Updates a skill level
 void _Object::AdjustSkillLevel(int SkillID, int Adjust) {
-	const _Skill *Skill = OldStats.GetSkill(SkillID);
+	const _Skill *Skill = Stats->GetSkill(SkillID);
 	if(Skill == nullptr)
 		return;
 
@@ -1039,8 +1039,8 @@ void _Object::AdjustSkillLevel(int SkillID, int Adjust) {
 void _Object::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	for(uint32_t i = 0; i < OldStats.Skills.size(); i++) {
-		SkillPointsUsed += OldStats.Skills[i].SkillCost * SkillLevels[i];
+	for(uint32_t i = 0; i < Stats->Skills.size(); i++) {
+		SkillPointsUsed += Stats->Skills[i].SkillCost * SkillLevels[i];
 	}
 }
 
@@ -1099,18 +1099,18 @@ void _Object::CalculateLevelStats() {
 		Experience = 0;
 
 	// Cap max experience
-	const _Level *MaxLevelStat = OldStats.GetLevel(OldStats.GetMaxLevel());
+	const _Level *MaxLevelStat = Stats->GetLevel(Stats->GetMaxLevel());
 	if(Experience > MaxLevelStat->Experience)
 		Experience = MaxLevelStat->Experience;
 
 	// Find current level
-	const _Level *LevelStat = OldStats.FindLevel(Experience);
+	const _Level *LevelStat = Stats->FindLevel(Experience);
 	Level = LevelStat->Level;
 	MaxHealth = LevelStat->Health;
 	MaxMana = LevelStat->Mana;
 	SkillPoints = LevelStat->SkillPoints;
 	ExperienceNextLevel = LevelStat->NextLevel;
-	if(Level == OldStats.GetMaxLevel())
+	if(Level == Stats->GetMaxLevel())
 		ExperienceNeeded = 0;
 	else
 		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);

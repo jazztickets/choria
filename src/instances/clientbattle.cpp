@@ -94,7 +94,7 @@ int _ClientBattle::RemoveFighter(_Object *Fighter) {
 void _ClientBattle::HandleCommand(int Slot, int SkillID) {
 	int Index = GetFighterFromSlot(Slot);
 	if(Index != -1) {
-		Fighters[Index]->SkillUsing = OldStats.GetSkill(SkillID);
+		Fighters[Index]->SkillUsing = Stats->GetSkill(SkillID);
 	}
 }
 
@@ -299,7 +299,7 @@ void _ClientBattle::EndBattle(_Buffer *Packet) {
 	int ItemCount = Packet->Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
 		int ItemID = Packet->Read<int32_t>();
-		const _Item *Item = OldStats.GetItem(ItemID);
+		const _Item *Item = Stats->GetItem(ItemID);
 		MonsterDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
 	}

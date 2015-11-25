@@ -34,6 +34,7 @@ class _Texture;
 class _Battle;
 class _Skill;
 class _Item;
+class _Stats;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
@@ -289,6 +290,7 @@ class _Object {
 
 
 		_Database *Database;
+		_Stats *Stats;
 
 	protected:
 

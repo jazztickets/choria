@@ -21,10 +21,8 @@
 #include <random.h>
 #include <assets.h>
 
-_Stats OldStats;
-
-// Initialize
-void _Stats::Init() {
+// Constructor
+_Stats::_Stats() {
 
 	// Load database that stores game data
 	Database = new _Database();
@@ -42,8 +40,8 @@ void _Stats::Init() {
 	LoadTraders();
 }
 
-// Shutdown
-void _Stats::Close() {
+// Destructor
+_Stats::~_Stats() {
 	delete Database;
 	Database = nullptr;
 	Events.clear();
@@ -284,7 +282,7 @@ void _Stats::GetMonsterStats(int MonsterID, _Object *Monster) {
 
 		Monster->AI = Database->GetInt(12);
 
-		Monster->SkillBar[0] = OldStats.GetSkill(0);
+		Monster->SkillBar[0] = GetSkill(0);
 	}
 
 	// Free memory

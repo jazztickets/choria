@@ -258,6 +258,14 @@ void _Menu::ConnectToHost() {
 	Button->Enabled = false;
 }
 
+// Send character to play
+void _Menu::SendCharacterPlay(int Slot) {
+	_Buffer Packet;
+	Packet.Write<char>(Packet::CHARACTERS_PLAY);
+	Packet.Write<char>(Slot);
+	ClientState.Network->SendPacket(Packet);
+}
+
 // Send login info
 void _Menu::SendAccountInfo(bool CreateAccount) {
 	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
@@ -432,8 +440,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 							SelectedCharacter = 0;
 
 						if(CharacterSlots[SelectedCharacter].Used) {
-							//OldClientState.SetCharacterSlot(SelectedCharacter);
-							Framework.ChangeState(&OldClientState);
+							SendCharacterPlay(SelectedCharacter);
 						}
 					}
 				}
@@ -529,8 +536,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					else if(Clicked->Identifier == "button_characters_play") {
 						int SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
-							//OldClientState.SetCharacterSlot(SelectedSlot);
-							Framework.ChangeState(&OldClientState);
+							SendCharacterPlay(SelectedSlot);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_back") {
@@ -704,8 +710,8 @@ void _Menu::HandleDisconnect() {
 }
 
 // Handle packet
-void _Menu::HandlePacket(_Buffer &Buffer) {
-	switch(Buffer.Read<char>()) {
+void _Menu::HandlePacket(_Buffer &Buffer, char PacketType) {
+	switch(PacketType) {
 		case Packet::VERSION: {
 			std::string Version(Buffer.ReadString());
 			if(Version != GAME_VERSION) {

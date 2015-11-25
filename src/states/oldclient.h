@@ -31,71 +31,7 @@ class _ClientBattle;
 
 // Classes
 class _OldClientState : public _State {
-/*
-	public:
 
-		_OldClientState();
-
-		void Init() override;
-		void Close() override;
-
-		void KeyEvent(const _KeyEvent &KeyEvent) override;
-		void MouseEvent(const _MouseEvent &MouseEvent) override;
-		void WindowEvent(uint8_t Event) override;
-		bool HandleAction(int InputType, int Action, int Value) override;
-
-		void HandleConnect(ENetEvent *Event) override;
-		void HandleDisconnect(ENetEvent *Event) override;
-		void HandlePacket(ENetEvent *Event) override;
-
-		void Update(double FrameTime) override;
-		void Render(double BlendFactor) override;
-
-		void SetCharacterSlot(int Slot) { CharacterSlot = Slot; }
-		void SetIsTesting(bool Value) { IsTesting = Value; }
-
-		void SendBusy(bool Value);
-		double GetTime() { return ClientTime; }
-
-	private:
-
-		void HandleYourCharacterInfo(_Buffer *Packet);
-		void HandleChangeMaps(_Buffer *Packet);
-		void HandleCreateObject(_Buffer *Packet);
-		void HandleDeleteObject(_Buffer *Packet);
-		void HandleObjectUpdates(_Buffer *Packet);
-		void HandleStartBattle(_Buffer *Packet);
-		void HandleBattleTurnResults(_Buffer *Packet);
-		void HandleBattleEnd(_Buffer *Packet);
-		void HandleBattleCommand(_Buffer *Packet);
-		void HandleHUD(_Buffer *Packet);
-		void HandlePlayerPosition(_Buffer *Packet);
-		void HandleEventStart(_Buffer *Packet);
-		void HandleInventoryUse(_Buffer *Packet);
-		void HandleChatMessage(_Buffer *Packet);
-		void HandleTradeRequest(_Buffer *Packet);
-		void HandleTradeCancel(_Buffer *Packet);
-		void HandleTradeItem(_Buffer *Packet);
-		void HandleTradeGold(_Buffer *Packet);
-		void HandleTradeAccept(_Buffer *Packet);
-		void HandleTradeExchange(_Buffer *Packet);
-
-		void SendMoveCommand(int Direction);
-		void SendAttackPlayer();
-		void SynchronizeTime();
-
-		// States
-		int CharacterSlot;
-		bool IsTesting;
-
-		// Time
-		double ClientTime;
-
-		// Objects
-		_Object *Player;
-		_Camera *Camera;
-		_ObjectManager *ObjectManager;
-*/
 };
 
 extern _OldClientState OldClientState;

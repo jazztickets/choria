@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/map.h>
+#include <network/servernetwork.h>
 #include <globals.h>
 #include <graphics.h>
 #include <constants.h>
@@ -57,14 +58,14 @@ _Map::_Map(const std::string &Filename) {
 }
 
 // Constructor for maps already created in the database
-_Map::_Map(int ID) {
+_Map::_Map(int ID, _Stats *Stats) {
 	Init();
 
 	// Set ID
 	this->ID = ID;
 
 	// Get map info
-	const _MapStat *Map = OldStats.GetMap(ID);
+	const _MapStat *Map = Stats->GetMap(ID);
 
 	// Load map
 	Filename = Map->File;
@@ -80,6 +81,7 @@ _Map::~_Map() {
 
 // Initialize variables
 void _Map::Init() {
+	NextObjectID = 0;
 	ObjectUpdateTime = 0;
 	ID = 0;
 	NoZoneTexture = nullptr;
@@ -121,7 +123,7 @@ void _Map::Update(double FrameTime) {
 }
 
 // Renders the map
-void _Map::Render(_Camera *Camera, int RenderFlags) {
+void _Map::Render(_Camera *Camera, _Stats *Stats, int RenderFlags) {
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	Graphics.SetColor(COLOR_WHITE);
@@ -175,7 +177,7 @@ void _Map::Render(_Camera *Camera, int RenderFlags) {
 
 			// Draw event info
 			if(Tile->EventType > 0) {
-				std::string EventText = OldStats.Events[Tile->EventType].ShortName + std::string(", ") + std::to_string(Tile->EventData);
+				std::string EventText = Stats->Events[Tile->EventType].ShortName + std::string(", ") + std::to_string(Tile->EventData);
 				Assets.Fonts["hud_small"]->DrawText(EventText, glm::vec2(DrawPosition), COLOR_CYAN, CENTER_MIDDLE, 1.0f / 32.0f);
 			}
 		}
@@ -381,6 +383,52 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position) {
 	return !Tiles[Position.x][Position.y].Wall;
 }
 
+// Generate network id
+NetworkIDType _Map::GenerateObjectID() {
+
+	// Search for an empty slot
+	for(NetworkIDType i = 0; i <= std::numeric_limits<NetworkIDType>::max(); i++) {
+		if(ObjectIDs[NextObjectID] == false) {
+			ObjectIDs[NextObjectID] = true;
+			return NextObjectID;
+		}
+
+		NextObjectID++;
+	}
+
+	throw std::runtime_error("Ran out of object ids");
+}
+
+// Removes an object from the map
+void _Map::RemoveObject(const _Object *RemoveObject) {
+
+	// Remove from the map
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+		if(*Iterator == RemoveObject)
+			Iterator = Objects.erase(Iterator);
+		else
+			++Iterator;
+	}
+
+	// Create delete packet
+	_Buffer Packet;
+	Packet.Write<char>(Packet::WORLD_DELETEOBJECT);
+	Packet.Write<char>(RemoveObject->NetworkID);
+
+	// Send to everyone
+	BroadcastPacket(Packet);
+}
+
+// Remove a peer
+void _Map::RemovePeer(const _Peer *Peer) {
+	for(auto Iterator = Peers.begin(); Iterator != Peers.end(); ++Iterator) {
+		if(*Iterator == Peer) {
+			Peers.erase(Iterator);
+			return;
+		}
+	}
+}
+
 // Adds an object to the map
 void _Map::AddObject(_Object *Object) {
 
@@ -404,32 +452,12 @@ void _Map::AddObject(_Object *Object) {
 	}
 
 	// Notify other players of the new object
-	SendPacketToPlayers(&Packet);
+	BroadcastPacket(Packet);
 
 	// Add object to map
 	Objects.push_back(Object);
 }
-
-// Removes an object from the map
-void _Map::RemoveObject(_Object *RemoveObject) {
-
-	// Remove from the map
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
-		if(*Iterator == RemoveObject)
-			Iterator = Objects.erase(Iterator);
-		else
-			++Iterator;
-	}
-
-	// Create delete packet
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_DELETEOBJECT);
-	Packet.Write<char>(RemoveObject->NetworkID);
-
-	// Send to everyone
-	SendPacketToPlayers(&Packet);
-}
-
+/*
 // Returns a list of players close to a player
 void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players) {
 
@@ -467,7 +495,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 
 	return ClosestPlayer;
 }
-
+*/
 // Find an event on the map, returns true on found
 bool _Map::FindEvent(int EventType, int EventData, glm::ivec2 &Position) {
 
@@ -511,9 +539,9 @@ void _Map::SendObjectUpdates() {
 		Packet.WriteBit(Invisible);
 	}
 
-	SendPacketToPlayers(&Packet, nullptr, _OldNetwork::UNSEQUENCED);
+	//SendPacketToPlayers(&Packet, nullptr, _OldNetwork::UNSEQUENCED);
 }
-
+/*
 // Sends a packet to all of the players in the map
 void _Map::SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer, _OldNetwork::SendType Type) {
 
@@ -525,6 +553,17 @@ void _Map::SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer, _OldNe
 			if(Player != ExceptionPlayer)
 				OldServerNetwork->SendPacketToPeer(Packet, Player->OldPeer, Type, Type == _OldNetwork::UNSEQUENCED);
 		}
+	}
+}
+*/
+
+// Broadcast a packet to all peers in the map
+void _Map::BroadcastPacket(_Buffer &Buffer) {
+	if(!ServerNetwork)
+		return;
+
+	for(auto &Peer : Peers) {
+		ServerNetwork->SendPacket(Buffer, Peer);
 	}
 }
 

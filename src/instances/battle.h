@@ -23,6 +23,7 @@
 
 // Forward Declarations
 class _Object;
+class _Stats;
 
 // Structures
 struct _ActionResult {
@@ -65,6 +66,8 @@ class _Battle {
 
 		// States
 		int GetState() const { return State; }
+
+		_Stats *Stats;
 
 	protected:
 

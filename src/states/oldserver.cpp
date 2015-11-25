@@ -209,7 +209,7 @@ void _Server::HandleCharacterCreate(_Buffer &Packet, _Peer *Peer) {
 	if(FindResult) {
 		_Buffer NewPacket;
 		NewPacket.Write<char>(Packet::CREATECHARACTER_INUSE);
-		OldServerNetwork->SendPacketToPeer(&NewPacket, Peer);
+		Network->SendPacket(NewPacket, Peer);
 		return;
 	}
 
@@ -230,7 +230,7 @@ void _Server::HandleCharacterCreate(_Buffer &Packet, _Peer *Peer) {
 	// Notify the client
 	_Buffer NewPacket;
 	NewPacket.Write<char>(Packet::CREATECHARACTER_SUCCESS);
-	OldServerNetwork->SendPacketToPeer(&NewPacket, Peer);
+	Network->SendPacket(NewPacket, Peer);
 }
 
 // Handles move commands from a client
@@ -258,12 +258,12 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 			break;
 			case _Map::EVENT_VENDOR:
 				Player->State = _Object::STATE_VENDOR;
-				Player->Vendor = OldStats.GetVendor(Tile->EventData);
+				Player->Vendor = Stats->GetVendor(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			case _Map::EVENT_TRADER:
 				Player->State = _Object::STATE_TRADER;
-				Player->Trader = OldStats.GetTrader(Tile->EventData);
+				Player->Trader = Stats->GetTrader(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			default:
@@ -273,7 +273,7 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 
 					// Get monsters
 					std::vector<int> Monsters;
-					OldStats.GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
+					Stats->GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
 					size_t MonsterCount = Monsters.size();
 					if(MonsterCount > 0) {
 
@@ -308,7 +308,7 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 							_Object *Monster = new _Object(Monsters[i]);
 							Monster->ID = Monsters[i];
 							Monster->Type = _Object::MONSTER;
-							OldStats.GetMonsterStats(Monsters[i], Monster);
+							Stats->GetMonsterStats(Monsters[i], Monster);
 							Battle->AddFighter(Monster, 1);
 						}
 
@@ -507,7 +507,7 @@ void _Server::HandleSkillBar(_Buffer &Packet, _Peer *Peer) {
 
 	// Read skills
 	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-		Player->SetSkillBar(i, OldStats.GetSkill(Packet->Read<char>()));
+		Player->SetSkillBar(i, Stats->GetSkill(Packet->Read<char>()));
 	}
 
 	Player->CalculatePlayerStats();
@@ -806,69 +806,6 @@ void _OldServerState::SendMessage(_Object *Player, const std::string &Message, c
 	Network->SendPacket(Packet, Peer);
 }
 
-// Spawns a player at a particular spawn point
-void _OldServerState::SpawnPlayer(_Object *Player, int NewMapID, int EventType, int EventData) {
-
-	// Get new map
-	_Map *NewMap = GetMap(NewMapID);
-
-	// Remove old player if map has changed
-	_Map *OldMap = Player->Map;
-	if(OldMap && NewMap != OldMap)
-		OldMap->RemoveObject(Player);
-
-	// Find spawn point in map
-	NewMap->FindEvent(EventType, EventData, Player->Position);
-	SendPlayerPosition(Player);
-
-	// Set state
-	Player->State = _Object::STATE_WALK;
-
-	// Send new object list
-	if(NewMap != OldMap) {
-
-		// Update pointers
-		Player->Map = NewMap;
-
-		// Add player to map
-		NewMap->AddObject(Player);
-
-		// Build packet for player
-		_Buffer Packet;
-		Packet.Write<char>(Packet::WORLD_CHANGEMAPS);
-
-		// Send player info
-		Packet.Write<int32_t>(NewMapID);
-
-		// Write object data
-		Packet.Write<int32_t>(NewMap->Objects.size());
-		for(auto Iterator = NewMap->Objects.begin(); Iterator != NewMap->Objects.end(); ++Iterator) {
-			_Object *Object = *Iterator;
-
-			Packet.Write<char>(Object->NetworkID);
-			Packet.Write<char>(Object->Position.x);
-			Packet.Write<char>(Object->Position.y);
-			Packet.Write<char>(Object->Type);
-			switch(Object->Type) {
-				case _Object::PLAYER: {
-					_Object *PlayerObject = (_Object *)Object;
-					Packet.WriteString(PlayerObject->Name.c_str());
-					Packet.Write<char>(PlayerObject->PortraitID);
-					Packet.WriteBit((PlayerObject->IsInvisible()));
-				}
-				break;
-				default:
-				break;
-			}
-		}
-
-		// Send object list to the player
-		Network->SendPacket(Packet, Peer);
-	}
-
-	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->NetworkID);
-}
-
 // Updates the player's HUD
 void _OldServerState::SendHUD(_Object *Player) {
 
@@ -880,17 +817,6 @@ void _OldServerState::SendHUD(_Object *Player) {
 	Packet.Write<int32_t>(Player->Mana);
 	Packet.Write<float>(Player->HealthAccumulator);
 	Packet.Write<float>(Player->ManaAccumulator);
-
-	Network->SendPacket(Packet, Peer);
-}
-
-// Send player their position
-void _OldServerState::SendPlayerPosition(_Object *Player) {
-
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_POSITION);
-	Packet.Write<char>(Player->Position.x);
-	Packet.Write<char>(Player->Position.y);
 
 	Network->SendPacket(Packet, Peer);
 }
@@ -976,21 +902,4 @@ void _OldServerState::PlayerTeleport(_Object *Player) {
 	Player->Save();
 }
 
-// Gets a map from the manager. Loads the level if it doesn't exist
-_Map *_OldServerState::GetMap(int MapID) {
-
-	// Loop through loaded maps
-	for(auto &Map : Maps) {
-
-		// Check id
-		if(Map->ID == MapID)
-			return Map;
-	}
-
-	// Not found, so create it
-	_Map *NewMap = new _Map(MapID);
-	Maps.push_back(NewMap);
-
-	return NewMap;
-}
 */

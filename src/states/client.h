@@ -89,13 +89,52 @@ class _ClientState : public _State {
 
 		void StartLocalServer();
 
-		void HandlePacket(_Buffer &Buffer);
+		void HandlePacket(_Buffer &Data);
+
 		void HandleConnect();
-		void HandleMapInfo(_Buffer &Buffer);
-		void HandleObjectList(_Buffer &Buffer);
-		void HandleObjectUpdates(_Buffer &Buffer);
-		void HandleObjectCreate(_Buffer &Buffer);
-		void HandleObjectDelete(_Buffer &Buffer);
+		void HandleYourCharacterInfo(_Buffer &Data);
+		void HandleChangeMaps(_Buffer &Data);
+		void HandleCreateObject(_Buffer &Data);
+		void HandleDeleteObject(_Buffer &Data);
+		void HandleObjectUpdates(_Buffer &Data);
+		void HandleStartBattle(_Buffer &Data);
+		void HandleBattleTurnResults(_Buffer &Data);
+		void HandleBattleEnd(_Buffer &Data);
+		void HandleBattleCommand(_Buffer &Data);
+		void HandleHUD(_Buffer &Data);
+		void HandlePlayerPosition(_Buffer &Data);
+		void HandleEventStart(_Buffer &Data);
+		void HandleInventoryUse(_Buffer &Data);
+		void HandleChatMessage(_Buffer &Data);
+		void HandleTradeRequest(_Buffer &Data);
+		void HandleTradeCancel(_Buffer &Data);
+		void HandleTradeItem(_Buffer &Data);
+		void HandleTradeGold(_Buffer &Data);
+		void HandleTradeAccept(_Buffer &Data);
+		void HandleTradeExchange(_Buffer &Data);
+
+	/*
+		void SendBusy(bool Value);
+
+	private:
+
+
+		void SendMoveCommand(int Direction);
+		void SendAttackPlayer();
+		void SynchronizeTime();
+
+		// States
+		int CharacterSlot;
+		bool IsTesting;
+
+		// Time
+		double ClientTime;
+
+		// Objects
+		_Object *Player;
+		_Camera *Camera;
+		_ObjectManager *ObjectManager;
+	*/
 
 		bool IsPaused();
 

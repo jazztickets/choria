@@ -28,6 +28,8 @@
 class _Buffer;
 class _Peer;
 
+typedef uint16_t NetworkIDType;
+
 // Network Event
 struct _NetworkEvent {
 

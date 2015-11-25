@@ -51,14 +51,10 @@ class _OldServerState : public _State {
 		void StopServer() { StopRequested = true; }
 		void SendMessage(_Object *Player, const std::string &Message, const glm::vec4 &Color=glm::vec4(1.0f));
 
-		_Map *GetMap(int MapID);
-
 	private:
 
 		void CreateDefaultDatabase();
 
-		void SendPlayerPosition(_Object *Player);
-		void SpawnPlayer(_Object *Player, int NewMapID, int EventType, int EventData);
 		void SendHUD(_Object *Player);
 		void SendCharacterList(_Object *Player);
 		void SendEvent(_Object *Player, int Type, int Data);

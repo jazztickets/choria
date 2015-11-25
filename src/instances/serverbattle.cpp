@@ -311,7 +311,7 @@ void _ServerBattle::CheckEnd() {
 				// Generate monster drops in player vs monster situations
 				std::vector<int> MonsterDrops;
 				for(size_t i = 0; i < Monsters.size(); i++) {
-					OldStats.GenerateMonsterDrops(Monsters[i]->ID, 1, MonsterDrops);
+					Stats->GenerateMonsterDrops(Monsters[i]->ID, 1, MonsterDrops);
 				}
 
 				// Get a list of players that receive items
@@ -390,7 +390,7 @@ void _ServerBattle::CheckEnd() {
 			for(int j = 0; j < ItemCount; j++) {
 				int ItemID = PlayerItems[PlayerIndex][j];
 				Packet.Write<int32_t>(ItemID);
-				Players[i]->AddItem(OldStats.GetItem(ItemID), 1, -1);
+				Players[i]->AddItem(Stats->GetItem(ItemID), 1, -1);
 			}
 
 			OldServerNetwork->SendPacketToPeer(&Packet, Players[i]->OldPeer);

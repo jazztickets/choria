@@ -87,7 +87,7 @@ class _Menu {
 		// Network
 		void HandleConnect();
 		void HandleDisconnect();
-		void HandlePacket(_Buffer &Buffer);
+		void HandlePacket(_Buffer &Buffer, char PacketType);
 
 		const StateType &GetState() const { return State; }
 
@@ -105,6 +105,7 @@ class _Menu {
 		void UpdateCharacterButtons();
 		void CreateCharacter();
 		void ConnectToHost();
+		void SendCharacterPlay(int Slot);
 		void SendAccountInfo(bool CreateAccount=false);
 		void RequestCharacterList();
 

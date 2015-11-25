@@ -19,6 +19,7 @@
 
 // Libraries
 #include <network/oldnetwork.h>
+#include <network/network.h>
 #include <texture.h>
 #include <vector>
 #include <list>
@@ -27,11 +28,14 @@
 #include <states/editor.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <unordered_map>
 
 // Forward Declarations
 class _Object;
 class _Buffer;
 class _Camera;
+class _ServerNetwork;
+class _Stats;
 
 // Structures
 struct _Tile {
@@ -60,25 +64,40 @@ class _Map {
 
 		_Map(const std::string &Filename, const glm::ivec2 &Size);
 		_Map(const std::string &Filename);
-		_Map(int ID);
+		_Map(int ID, _Stats *Stats);
 		~_Map();
 
 		void Update(double FrameTime);
 
 		// Graphics
-		void Render(_Camera *Camera, int RenderFlags=0);
+		void Render(_Camera *Camera, _Stats *Stats, int RenderFlags=0);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position);
 
 		// Object management
+		//void AddObject(_Object *Object) { Objects.push_back(Object); }
+		NetworkIDType GenerateObjectID();
+
+		void SendObjectList(_Object *Player, uint16_t TimeSteps);
+		void BuildObjectUpdate(_Buffer &Buffer, uint16_t TimeSteps);
+		void BuildObjectList(_Buffer &Buffer);
+		void UpdateObjectsFromBuffer(_Buffer &Buffer, uint16_t TimeSteps);
+		_Object *GetObjectByID(uint16_t ObjectID);
+
+		// Peer management
+		void BroadcastPacket(_Buffer &Buffer);
+		const std::list<const _Peer *> &GetPeers() const { return Peers; }
+		void AddPeer(const _Peer *Peer) { Peers.push_back(Peer); }
+		void RemovePeer(const _Peer *Peer);
+
 		void AddObject(_Object *Object);
-		void RemoveObject(_Object *RemoveObject);
-		void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
-		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
+		void RemoveObject(const _Object *RemoveObject);
+		//void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
+		//_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
 
-		void SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer=nullptr, _OldNetwork::SendType Type=_OldNetwork::RELIABLE);
+		//void SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer=nullptr, _OldNetwork::SendType Type=_OldNetwork::RELIABLE);
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
@@ -105,10 +124,20 @@ class _Map {
 		const _Texture *NoZoneTexture;
 
 		// Objects
-		double ObjectUpdateTime;
 		std::list<_Object *> Objects;
+		double ObjectUpdateTime;
+
+		// Network
+		_ServerNetwork *ServerNetwork;
 
 	private:
+
+		// Network
+		std::list<const _Peer *> Peers;
+
+		// Objects
+		std::unordered_map<uint16_t, bool> ObjectIDs;
+		uint16_t NextObjectID;
 
 		void Init();
 

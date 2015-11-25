@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <hud.h>
+#include <states/client.h>
 #include <framework.h>
 #include <graphics.h>
 #include <globals.h>
@@ -44,10 +45,9 @@
 #include <sstream>
 #include <iomanip>
 
-_HUD HUD;
-
 // Initialize
-void _HUD::Init() {
+_HUD::_HUD() {
+	Player = nullptr;
 	Tooltip.Reset();
 	Cursor.Reset();
 	RewardItemSlot = -1;
@@ -95,7 +95,7 @@ void _HUD::Init() {
 }
 
 // Shutdown
-void _HUD::Close() {
+_HUD::~_HUD() {
 	ChatTextBox = nullptr;
 	ClearSkills();
 }
@@ -168,19 +168,19 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		// Check button bar
 		if(ButtonBarElement->GetClickedElement()) {
 			if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_teleport") {
-				HUD.ToggleTeleport();
+				ToggleTeleport();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_inventory") {
-				HUD.ToggleInventory();
+				ToggleInventory();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_trade") {
-				HUD.ToggleTrade();
+				ToggleTrade();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_skills") {
-				HUD.ToggleSkills();
+				ToggleSkills();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_menu") {
-				HUD.ToggleMenu();
+				ToggleMenu();
 			}
 		}
 		// Check skill level up/down
@@ -322,7 +322,7 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.Item = Player->Trader->RewardItem;
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Skill = OldStats.GetSkill(Tooltip.Slot);
+				Tooltip.Skill = ClientState.Stats->GetSkill(Tooltip.Slot);
 			} break;
 			case WINDOW_ACTIONBAR: {
 				Tooltip.Skill = Player->GetSkillBar(Tooltip.Slot);
@@ -514,7 +514,7 @@ void _HUD::InitVendor(int VendorID) {
 	Cursor.Reset();
 
 	// Get vendor stats
-	Player->Vendor = OldStats.GetVendor(VendorID);
+	Player->Vendor = ClientState.Stats->GetVendor(VendorID);
 
 	// Open inventory
 	InventoryElement->SetVisible(true);
@@ -551,7 +551,7 @@ void _HUD::InitTrader(int TraderID) {
 		return;
 
 	// Get trader stats
-	Player->Trader = OldStats.GetTrader(TraderID);
+	Player->Trader = ClientState.Stats->GetTrader(TraderID);
 
 	// Check for required items
 	RewardItemSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
@@ -582,7 +582,7 @@ void _HUD::InitSkills() {
 	size_t i = 0;
 
 	// Iterate over skills
-	for(const auto &Skill : OldStats.Skills) {
+	for(const auto &Skill : ClientState.Stats->Skills) {
 
 		// Create style
 		_Style *Style = new _Style();
@@ -1199,7 +1199,7 @@ void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
 		if(Player->GetSkillLevel(SkillID) == 1) {
 
 			// Equip new skills
-			const _Skill *Skill = OldStats.GetSkill(SkillID);
+			const _Skill *Skill = ClientState.Stats->GetSkill(SkillID);
 			if(Skill) {
 				int Direction, Slot;
 				if(Skill->Type == _Skill::TYPE_PASSIVE) {
@@ -1290,7 +1290,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			int SkillID = (intptr_t)Button->Parent->UserData;
-			const _Skill *Skill = OldStats.GetSkill(SkillID);
+			const _Skill *Skill = ClientState.Stats->GetSkill(SkillID);
 			if(Skill->SkillCost > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
 				Button->SetVisible(false);
 			else

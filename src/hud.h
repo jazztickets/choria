@@ -81,8 +81,8 @@ class _HUD {
 			WINDOW_ACTIONBAR
 		};
 
-		void Init();
-		void Close();
+		_HUD();
+		~_HUD();
 
 		// Updates
 		void HandleEnter();

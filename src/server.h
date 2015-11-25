@@ -30,6 +30,7 @@ class _Peer;
 class _Map;
 class _Stats;
 class _Database;
+class _Object;
 struct _NetworkEvent;
 
 // Server class
@@ -43,9 +44,6 @@ class _Server {
 		void Update(double FrameTime);
 		void StartThread();
 		void StopServer();
-
-		_Map *GetMap(const std::string &MapName);
-		void ChangePlayerMap(const std::string &MapName, _Peer *Peer);
 
 		// State
 		bool Done;
@@ -65,9 +63,13 @@ class _Server {
 		std::list<_Map *> Maps;
 		uint8_t NextMapID;
 
+		_Map *GetMap(int MapID);
+
 	private:
 
+		void SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData);
 		bool ValidatePeer(_Peer *Peer);
+		void SendPlayerPosition(_Object *Player);
 
 		void HandleConnect(_NetworkEvent &Event);
 		void HandleDisconnect(_NetworkEvent &Event);
