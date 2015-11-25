@@ -52,8 +52,8 @@ class _ClientBattle : public _Battle {
 		~_ClientBattle();
 
 		// Setup
-		void StartBattle(_Player *Player);
-		int RemoveFighter(_Fighter *Fighter) override;
+		void StartBattle(_Object *Player);
+		int RemoveFighter(_Object *Fighter) override;
 
 		// Input
 		void HandleCommand(int Slot, int SkillID);
@@ -92,10 +92,10 @@ class _ClientBattle : public _Battle {
 		_Element *BattleLoseElement;
 
 		// Actions
-		_FighterResult Results[BATTLE_MAXFIGHTERS];
+		_ActionResult Results[BATTLE_MAXFIGHTERS];
 
 		// Client's player
-		_Player *ClientPlayer;
+		_Object *ClientPlayer;
 
 		// Items
 		std::vector<const _Item *> MonsterDrops;

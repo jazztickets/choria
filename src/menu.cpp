@@ -92,7 +92,7 @@ void _Menu::InitCharacters() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 
-	OldClientState.SendBusy(true);
+	//OldClientState.SendBusy(true);
 	State = STATE_INGAME;
 }
 
@@ -102,7 +102,7 @@ void _Menu::InitPlay() {
 		CurrentLayout->SetVisible(false);
 	CurrentLayout = nullptr;
 
-	OldClientState.SendBusy(false);
+	//OldClientState.SendBusy(false);
 	State = STATE_NONE;
 }
 
@@ -433,7 +433,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 							SelectedCharacter = 0;
 
 						if(CharacterSlots[SelectedCharacter].Used) {
-							OldClientState.SetCharacterSlot(SelectedCharacter);
+							//OldClientState.SetCharacterSlot(SelectedCharacter);
 							Framework.ChangeState(&OldClientState);
 						}
 					}
@@ -530,7 +530,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					else if(Clicked->Identifier == "button_characters_play") {
 						int SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
-							OldClientState.SetCharacterSlot(SelectedSlot);
+							//OldClientState.SetCharacterSlot(SelectedSlot);
 							Framework.ChangeState(&OldClientState);
 						}
 					}
@@ -550,7 +550,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						int SelectedSlot = (intptr_t)Clicked->UserData;
 						if(CharacterSlots[SelectedSlot].Used) {
-							OldClientState.SetCharacterSlot(SelectedSlot);
+							//OldClientState.SetCharacterSlot(SelectedSlot);
 							CharacterSlots[SelectedSlot].Button->Checked = true;
 						}
 						else

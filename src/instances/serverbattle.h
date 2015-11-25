@@ -41,10 +41,10 @@ class _ServerBattle : public _Battle {
 		void StartBattle();
 
 		// Objects
-		int RemoveFighter(_Fighter *RemoveFighter) override;
+		int RemoveFighter(_Object *RemoveFighter) override;
 
 		// Input
-		void HandleInput(_Player *Player, int Command, int Target);
+		void HandleInput(_Object *Player, int Command, int Target);
 
 		// Updates
 		void Update(double FrameTime);
@@ -56,7 +56,7 @@ class _ServerBattle : public _Battle {
 	private:
 
 		void SendPacketToPlayers(_Buffer *Packet);
-		void SendSkillToPlayers(_Player *Player);
+		void SendSkillToPlayers(_Object *Player);
 
 		double RoundTime;
 };

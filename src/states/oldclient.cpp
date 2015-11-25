@@ -34,13 +34,12 @@
 #include <network/oldnetwork.h>
 #include <instances/map.h>
 #include <instances/clientbattle.h>
-#include <objects/player.h>
-#include <objects/fighter.h>
+#include <objects/object.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 _OldClientState OldClientState;
-
+/*
 // Constructor
 _OldClientState::_OldClientState()
 :	CharacterSlot(0),
@@ -220,7 +219,7 @@ bool _OldClientState::HandleAction(int InputType, int Action, int Value) {
 	}
 
 	switch(Player->State) {
-		case _Player::STATE_WALK:
+		case _Object::STATE_WALK:
 			switch(Action) {
 				case _Actions::MENU:
 					if(IsTesting)
@@ -245,10 +244,10 @@ bool _OldClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case _Player::STATE_BATTLE:
+		case _Object::STATE_BATTLE:
 			Player->Battle->HandleAction(Action);
 		break;
-		case _Player::STATE_TELEPORT:
+		case _Object::STATE_TELEPORT:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -260,7 +259,7 @@ bool _OldClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case _Player::STATE_VENDOR:
+		case _Object::STATE_VENDOR:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -272,7 +271,7 @@ bool _OldClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case _Player::STATE_TRADER:
+		case _Object::STATE_TRADER:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -284,7 +283,7 @@ bool _OldClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case _Player::STATE_TRADE:
+		case _Object::STATE_TRADE:
 			switch(Action) {
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -297,7 +296,7 @@ bool _OldClientState::HandleAction(int InputType, int Action, int Value) {
 				break;
 			}
 		break;
-		case _Player::STATE_BUSY:
+		case _Object::STATE_BUSY:
 			HUD.CloseWindows();
 		break;
 	}
@@ -320,19 +319,19 @@ void _OldClientState::Update(double FrameTime) {
 	// Handle input
 	if(Menu.GetState() == _Menu::STATE_NONE) {
 		switch(Player->State) {
-			case _Player::STATE_WALK: {
+			case _Object::STATE_WALK: {
 				if(!HUD.IsChatting()) {
 					if(Actions.GetState(_Actions::UP))
-						SendMoveCommand(_Player::MOVE_UP);
+						SendMoveCommand(_Object::MOVE_UP);
 					else if(Actions.GetState(_Actions::DOWN))
-						SendMoveCommand(_Player::MOVE_DOWN);
+						SendMoveCommand(_Object::MOVE_DOWN);
 					else if(Actions.GetState(_Actions::LEFT))
-						SendMoveCommand(_Player::MOVE_LEFT);
+						SendMoveCommand(_Object::MOVE_LEFT);
 					else if(Actions.GetState(_Actions::RIGHT))
-						SendMoveCommand(_Player::MOVE_RIGHT);
+						SendMoveCommand(_Object::MOVE_RIGHT);
 				}
 			} break;
-			case _Player::STATE_BATTLE: {
+			case _Object::STATE_BATTLE: {
 
 				// Send key input
 				if(!HUD.IsChatting()) {
@@ -354,7 +353,7 @@ void _OldClientState::Update(double FrameTime) {
 					if(Player->Battle->GetState() == _ClientBattle::STATE_DELETE) {
 						delete Player->Battle;
 						Player->Battle = nullptr;
-						Player->State = _Player::STATE_WALK;
+						Player->State = _Object::STATE_WALK;
 					}
 				}
 			} break;
@@ -431,9 +430,9 @@ void _OldClientState::HandleYourCharacterInfo(_Buffer *Packet) {
 	// Get pack info
 	int NetworkID = Packet->Read<char>();
 
-	Player = new _Player();
+	Player = new _Object();
 	Player->Name = Packet->ReadString();
-	Player->SetPortraitID(Packet->Read<int32_t>());
+	Player->PortraitID = Packet->Read<int32_t>();
 	Player->Experience = Packet->Read<int32_t>();
 	Player->Gold = Packet->Read<int32_t>();
 	Player->PlayTime = Packet->Read<int32_t>();
@@ -461,9 +460,9 @@ void _OldClientState::HandleYourCharacterInfo(_Buffer *Packet) {
 	}
 
 	// Read skill bar
-	for(int i = 0; i < FIGHTER_MAXSKILLS; i++) {
+	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 		int SkillID = Packet->Read<char>();
-		Player->SetSkillBar(i, OldStats.GetSkill(SkillID));
+		Player->SkillBar[i] = OldStats.GetSkill(SkillID);
 	}
 
 	Player->CalculateSkillPoints();
@@ -497,7 +496,7 @@ void _OldClientState::HandleChangeMaps(_Buffer *Packet) {
 
 	// Spawn players
 	int NetworkID;
-	_Player *NewPlayer;
+	_Object *NewPlayer;
 	glm::ivec2 GridPosition;
 	for(int i = 0; i < PlayerCount; i++) {
 		NetworkID = Packet->Read<char>();
@@ -518,7 +517,7 @@ void _OldClientState::HandleChangeMaps(_Buffer *Packet) {
 				}
 				else {
 
-					NewPlayer = new _Player();
+					NewPlayer = new _Object();
 					NewPlayer->Position = GridPosition;
 					NewPlayer->Name = Name;
 					NewPlayer->Map = Player->Map;
@@ -537,7 +536,7 @@ void _OldClientState::HandleChangeMaps(_Buffer *Packet) {
 		Player->Battle = nullptr;
 	}
 
-	Player->State = _Player::STATE_WALK;
+	Player->State = _Object::STATE_WALK;
 }
 
 // Creates an object
@@ -558,8 +557,8 @@ void _OldClientState::HandleCreateObject(_Buffer *Packet) {
 			int PortraitID = Packet->Read<char>();
 			int Invisible = Packet->ReadBit();
 
-			NewObject = new _Player();
-			_Player *NewPlayer = (_Player *)NewObject;
+			NewObject = new _Object();
+			_Object *NewPlayer = (_Object *)NewObject;
 			NewPlayer->Name = Name;
 			NewPlayer->SetPortraitID(PortraitID);
 			NewPlayer->InvisPower = Invisible;
@@ -585,9 +584,9 @@ void _OldClientState::HandleDeleteObject(_Buffer *Packet) {
 	_Object *Object = ObjectManager->GetObjectFromNetworkID(NetworkID);
 	if(Object) {
 		if(Object->Type == _Object::PLAYER) {
-			_Player *DeletedPlayer = (_Player *)Object;
+			_Object *DeletedPlayer = (_Object *)Object;
 			switch(Player->State) {
-				case _Player::STATE_BATTLE:
+				case _Object::STATE_BATTLE:
 					Player->Battle->RemoveFighter(DeletedPlayer);
 				break;
 			}
@@ -618,15 +617,15 @@ void _OldClientState::HandleObjectUpdates(_Buffer *Packet) {
 
 		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
 
-		_Player *OtherPlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
+		_Object *OtherPlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
 		if(OtherPlayer) {
 
 			OtherPlayer->State = PlayerState;
 			if(Player == OtherPlayer) {
 
 				// Return from teleport state
-				if(PlayerState == _Player::STATE_WALK && Player->State == _Player::STATE_TELEPORT) {
-					Player->State = _Player::STATE_WALK;
+				if(PlayerState == _Object::STATE_WALK && Player->State == _Object::STATE_TELEPORT) {
+					Player->State = _Object::STATE_WALK;
 				}
 			}
 			else {
@@ -635,10 +634,10 @@ void _OldClientState::HandleObjectUpdates(_Buffer *Packet) {
 			}
 
 			switch(PlayerState) {
-				case _Player::STATE_WALK:
+				case _Object::STATE_WALK:
 					OtherPlayer->StateImage = nullptr;
 				break;
-				case _Player::STATE_TRADE:
+				case _Object::STATE_TRADE:
 					OtherPlayer->StateImage = Assets.Textures["world/trade.png"];
 				break;
 				default:
@@ -680,7 +679,7 @@ void _OldClientState::HandleStartBattle(_Buffer *Packet) {
 			int MaxMana = Packet->Read<int32_t>();
 
 			// Get player object
-			_Player *NewPlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
+			_Object *NewPlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
 			if(NewPlayer != nullptr) {
 				NewPlayer->Health = Health;
 				NewPlayer->MaxHealth = MaxHealth;
@@ -695,7 +694,7 @@ void _OldClientState::HandleStartBattle(_Buffer *Packet) {
 
 			// Monster ID
 			int MonsterID = Packet->Read<int32_t>();
-			_Fighter *Monster = new _Fighter(MonsterID);
+			_Object *Monster = new _Object(MonsterID);
 			Monster->ID = MonsterID;
 			Monster->Type = _Object::MONSTER;
 			OldStats.GetMonsterStats(MonsterID, Monster);
@@ -768,11 +767,11 @@ void _OldClientState::HandleEventStart(_Buffer *Packet) {
 	switch(Type) {
 		case _Map::EVENT_VENDOR:
 			HUD.InitVendor(Data);
-			Player->State = _Player::STATE_VENDOR;
+			Player->State = _Object::STATE_VENDOR;
 		break;
 		case _Map::EVENT_TRADER:
 			HUD.InitTrader(Data);
-			Player->State = _Player::STATE_TRADER;
+			Player->State = _Object::STATE_TRADER;
 		break;
 	}
 }
@@ -802,13 +801,13 @@ void _OldClientState::HandleTradeRequest(_Buffer *Packet) {
 	int NetworkID = Packet->Read<char>();
 
 	// Get trading player
-	Player->TradePlayer = (_Player *)ObjectManager->GetObjectFromNetworkID(NetworkID);
+	Player->TradePlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
 	if(!Player->TradePlayer)
 		return;
 
 	// Get gold offer
 	Player->TradePlayer->TradeGold = Packet->Read<int32_t>();
-	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
+	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
 		int ItemID = Packet->Read<int32_t>();
 		int Count = 0;
 		if(ItemID != 0)
@@ -890,7 +889,7 @@ void _OldClientState::HandleTradeExchange(_Buffer *Packet) {
 	// Get gold offer
 	int Gold = Packet->Read<int32_t>();
 	Player->Gold = Gold;
-	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
+	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
 		int ItemID = Packet->Read<int32_t>();
 		int Count = 0;
 		if(ItemID != 0)
@@ -930,3 +929,4 @@ void _OldClientState::SendAttackPlayer() {
 		OldClientNetwork->SendPacketToHost(&Packet);
 	}
 }
+*/

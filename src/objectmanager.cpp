@@ -18,7 +18,6 @@
 #include <objectmanager.h>
 #include <constants.h>
 #include <objects/object.h>
-#include <objects/player.h>
 
 // Constructor
 _ObjectManager::_ObjectManager() {
@@ -137,7 +136,7 @@ void _ObjectManager::Render(_Object *ClientPlayer) {
 _Object *_ObjectManager::CreateObjectFromTemplate() {
 
 	_Object *NewObject = nullptr;
-	NewObject = new _Player();
+	NewObject = new _Object();
 
 	return NewObject;
 }

@@ -56,7 +56,7 @@ class _Server {
 
 		// Stats
 		_Database *Database;
-		const _Stats *Stats;
+		_Stats *Stats;
 
 		// Network
 		std::unique_ptr<_ServerNetwork> Network;
@@ -66,6 +66,8 @@ class _Server {
 		uint8_t NextMapID;
 
 	private:
+
+		bool ValidatePeer(_Peer *Peer);
 
 		void HandleConnect(_NetworkEvent &Event);
 		void HandleDisconnect(_NetworkEvent &Event);

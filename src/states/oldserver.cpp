@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/oldserver.h>
+#include <objects/object.h>
 #include <database.h>
 #include <objectmanager.h>
 #include <stats.h>
@@ -29,17 +30,15 @@
 #include <buffer.h>
 #include <instances/map.h>
 #include <instances/serverbattle.h>
-#include <objects/player.h>
-#include <objects/fighter.h>
 #include <iostream>
 #include <string>
 
 #include <network/servernetwork.h>
+/*
 
 _Peer *Peer;
 
 _OldServerState OldServerState;
-
 static void ObjectDeleted(_Object *Object);
 
 // Loop to run server commands
@@ -68,22 +67,6 @@ void _OldServerState::Init() {
 	StopRequested = false;
 	CommandThread = nullptr;
 
-	// Load database that stores accounts and characters
-	Database = new _Database();
-
-	std::string DatabasePath = Config.ConfigPath + "save.dat";
-	if(!Database->OpenDatabase(DatabasePath.c_str())) {
-
-		// Create a new database
-		printf("Creating new database...\n");
-		if(!Database->OpenDatabaseCreate(DatabasePath.c_str())) {
-			throw std::runtime_error("OpenDatabaseCreate failed");
-		}
-
-		// Populate data
-		CreateDefaultDatabase();
-	}
-
 	ObjectManager = new _ObjectManager();
 	ObjectManager->SetObjectDeletedCallback(ObjectDeleted);
 }
@@ -99,9 +82,8 @@ void _OldServerState::Close() {
 	std::list<_Object *> Objects = ObjectManager->GetObjects();
 	for(auto &Object : Objects) {
 		if(Object->Type == _Object::PLAYER) {
-			_Player *Player = (_Player *)Object;
-			Player->Save();
-			OldServerNetwork->Disconnect(Player->OldPeer);
+			Object->Save();
+			OldServerNetwork->Disconnect(Object->OldPeer);
 		}
 	}
 
@@ -114,77 +96,7 @@ void _OldServerState::StartCommandThread() {
 	CommandThread = new std::thread(HandleCommands, this);
 }
 
-// Populates the server database with the default data
-void _OldServerState::CreateDefaultDatabase() {
 
-	// Server information
-	Database->RunQuery("BEGIN TRANSACTION");
-	Database->RunQuery("CREATE TABLE ServerInfo('Version' INTEGER)");
-	Database->RunQuery("CREATE TABLE Accounts("
-						"'ID' INTEGER PRIMARY KEY"
-						", 'Username' TEXT"
-						", 'Password' TEXT"
-						")");
-	Database->RunQuery(	"CREATE TABLE Characters("
-						"'ID' INTEGER PRIMARY KEY"
-						", 'AccountsID' INTEGER DEFAULT(0)"
-						", 'MapID' INTEGER DEFAULT(1)"
-						", 'SpawnPoint' INTEGER DEFAULT(0)"
-						", 'Name' TEXT"
-						", 'PortraitID' INTEGER DEFAULT(1)"
-						", 'Experience' INTEGER DEFAULT(0)"
-						", 'Gold' INTEGER DEFAULT(0)"
-						", 'SkillBar0' INTEGER DEFAULT(-1)"
-						", 'SkillBar1' INTEGER DEFAULT(-1)"
-						", 'SkillBar2' INTEGER DEFAULT(-1)"
-						", 'SkillBar3' INTEGER DEFAULT(-1)"
-						", 'SkillBar4' INTEGER DEFAULT(-1)"
-						", 'SkillBar5' INTEGER DEFAULT(-1)"
-						", 'SkillBar6' INTEGER DEFAULT(-1)"
-						", 'SkillBar7' INTEGER DEFAULT(-1)"
-						", 'PlayTime' INTEGER DEFAULT(0)"
-						", 'Deaths' INTEGER DEFAULT(0)"
-						", 'MonsterKills' INTEGER DEFAULT(0)"
-						", 'PlayerKills' INTEGER DEFAULT(0)"
-						", 'Bounty' INTEGER DEFAULT(0)"
-						")");
-	Database->RunQuery(	"CREATE TABLE Inventory("
-						"'CharactersID' INTEGER"
-						", 'Slot' INTEGER"
-						", 'ItemsID' INTEGER"
-						", 'Count' INTEGER"
-						")");
-	Database->RunQuery(	"CREATE TABLE SkillLevel("
-						"'CharactersID' INTEGER"
-						", 'SkillsID' INTEGER"
-						", 'Level' INTEGER"
-						")");
-
-	Database->RunQuery("INSERT INTO ServerInfo(Version) VALUES(1)");
-	Database->RunQuery("INSERT INTO Accounts(Username, Password) VALUES('singleplayer', 'singleplayer')");
-	Database->RunQuery("END TRANSACTION");
-}
-/*
-// Handles a new client connection
-void _Server::HandleConnect(ENetEvent *Event) {
-	char Buffer[16];
-	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
-	Framework.Log << "HandleConnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
-
-	// Create the player and add it to the object list
-	_Player *NewPlayer = new _Player();
-	ObjectManager->AddObject(NewPlayer);
-
-	// Store the player in the peer struct
-	Event->peer->data = NewPlayer;
-	NewPlayer->OldPeer = Event->peer;
-
-	// Send player the game version
-	_Buffer Packet;
-	Packet.Write<char>(Packet::VERSION);
-	Packet.WriteString(GAME_VERSION);
-	OldServerNetwork->SendPacketToPeer(&Packet, Event->peer);
-}
 
 // Handles a client disconnect
 void _Server::HandleDisconnect(ENetEvent *Event) {
@@ -192,12 +104,12 @@ void _Server::HandleDisconnect(ENetEvent *Event) {
 	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
 	Framework.Log << "HandleDisconnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
 
-	_Player *Player = (_Player *)Event->peer->data;
+	_Object *Player = (_Object *)Event->peer->data;
 	if(!Player)
 		return;
 
 	// Leave trading screen
-	_Player *TradePlayer = Player->TradePlayer;
+	_Object *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
 		TradePlayer->TradePlayer = nullptr;
 
@@ -215,7 +127,7 @@ void _Server::HandleDisconnect(ENetEvent *Event) {
 	// Delete object
 	ObjectManager->DeleteObject(Player);
 }
-*/
+
 
 // Updates the current state
 void _OldServerState::Update(double FrameTime) {
@@ -236,11 +148,11 @@ void _OldServerState::Update(double FrameTime) {
 		Framework.Done = true;
 	}
 }
-/*
+
 
 // Handle a character delete request
 void _Server::HandleCharacterDelete(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	char QueryString[512];
 
 	// Get delete slot
@@ -324,7 +236,7 @@ void _Server::HandleCharacterCreate(_Buffer &Packet, _Peer *Peer) {
 
 // Handles move commands from a client
 void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -346,12 +258,12 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->Map->ID);
 			break;
 			case _Map::EVENT_VENDOR:
-				Player->State = _Player::STATE_VENDOR;
+				Player->State = _Object::STATE_VENDOR;
 				Player->Vendor = OldStats.GetVendor(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
 			case _Map::EVENT_TRADER:
-				Player->State = _Player::STATE_TRADER;
+				Player->State = _Object::STATE_TRADER;
 				Player->Trader = OldStats.GetTrader(Tile->EventData);
 				SendEvent(Player, Tile->EventType, Tile->EventData);
 			break;
@@ -375,14 +287,14 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 						if(1) {
 
 							// Get a list of players
-							std::list<_Player *> Players;
+							std::list<_Object *> Players;
 							Player->Map->GetClosePlayers(Player, 7*7, Players);
 
 							// Add players to battle
 							int PlayersAdded = 0;
-							for(std::list<_Player *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
-								_Player *PartyPlayer = *Iterator;
-								if(PartyPlayer->State == _Player::STATE_WALK && !PartyPlayer->IsInvisible()) {
+							for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
+								_Object *PartyPlayer = *Iterator;
+								if(PartyPlayer->State == _Object::STATE_WALK && !PartyPlayer->IsInvisible()) {
 									SendPlayerPosition(PartyPlayer);
 									Battle->AddFighter(PartyPlayer, 0);
 									PlayersAdded++;
@@ -394,7 +306,7 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 
 						// Add monsters
 						for(size_t i = 0; i < Monsters.size(); i++) {
-							_Fighter *Monster = new _Fighter(Monsters[i]);
+							_Object *Monster = new _Object(Monsters[i]);
 							Monster->ID = Monsters[i];
 							Monster->Type = _Object::MONSTER;
 							OldStats.GetMonsterStats(Monsters[i], Monster);
@@ -411,7 +323,7 @@ void _Server::HandleMoveCommand(_Buffer &Packet, _Peer *Peer) {
 
 // Handles battle commands from a client
 void _Server::HandleBattleCommand(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -428,7 +340,7 @@ void _Server::HandleBattleCommand(_Buffer &Packet, _Peer *Peer) {
 
 // The client is done with the battle results screen
 void _Server::HandleBattleFinished(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -452,7 +364,7 @@ void _Server::HandleBattleFinished(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a player's inventory move
 void _Server::HandleInventoryMove(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -464,8 +376,8 @@ void _Server::HandleInventoryMove(_Buffer &Packet, _Peer *Peer) {
 	Player->CalculatePlayerStats();
 
 	// Check for trading players
-	_Player *TradePlayer = Player->TradePlayer;
-	if(Player->State == _Player::STATE_TRADE && TradePlayer && (_Player::IsSlotTrade(OldSlot) || _Player::IsSlotTrade(NewSlot))) {
+	_Object *TradePlayer = Player->TradePlayer;
+	if(Player->State == _Object::STATE_TRADE && TradePlayer && (_Object::IsSlotTrade(OldSlot) || _Object::IsSlotTrade(NewSlot))) {
 
 		// Reset agreement
 		Player->TradeAccepted = false;
@@ -505,7 +417,7 @@ void _Server::HandleInventoryMove(_Buffer &Packet, _Peer *Peer) {
 
 // Handle a player's inventory use request
 void _Server::HandleInventoryUse(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -515,7 +427,7 @@ void _Server::HandleInventoryUse(_Buffer &Packet, _Peer *Peer) {
 
 // Handle a player's inventory split stack request
 void _Server::HandleInventorySplit(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -523,7 +435,7 @@ void _Server::HandleInventorySplit(_Buffer &Packet, _Peer *Peer) {
 	int Count = Packet->Read<char>();
 
 	// Inventory only
-	if(!_Player::IsSlotInventory(Slot))
+	if(!_Object::IsSlotInventory(Slot))
 		return;
 
 	Player->SplitStack(Slot, Count);
@@ -531,17 +443,17 @@ void _Server::HandleInventorySplit(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a player's event end message
 void _Server::HandleEventEnd(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
 	Player->Vendor = nullptr;
-	Player->State = _Player::STATE_WALK;
+	Player->State = _Object::STATE_WALK;
 }
 
 // Handles a vendor exchange message
 void _Server::HandleVendorExchange(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -575,7 +487,7 @@ void _Server::HandleVendorExchange(_Buffer &Packet, _Peer *Peer) {
 		Player->CalculatePlayerStats();
 	}
 	else {
-		if(Slot >= _Player::INVENTORY_COUNT)
+		if(Slot >= _Object::INVENTORY_COUNT)
 			return;
 
 		// Get item info
@@ -590,7 +502,7 @@ void _Server::HandleVendorExchange(_Buffer &Packet, _Peer *Peer) {
 
 // Handle a skill bar change
 void _Server::HandleSkillBar(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -604,7 +516,7 @@ void _Server::HandleSkillBar(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a skill adjust
 void _Server::HandleSkillAdjust(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -624,7 +536,7 @@ void _Server::HandleSkillAdjust(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a player's request to not start a battle with other players
 void _Server::HandlePlayerBusy(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -636,7 +548,7 @@ void _Server::HandlePlayerBusy(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a player's request to attack another player
 void _Server::HandleAttackPlayer(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player || !Player->CanAttackPlayer())
 		return;
 
@@ -651,13 +563,13 @@ void _Server::HandleAttackPlayer(_Buffer &Packet, _Peer *Peer) {
 		Player->ResetAttackPlayerTime();
 
 		// Get a list of players next to the player
-		std::list<_Player *> Players;
+		std::list<_Object *> Players;
 		Map->GetClosePlayers(Player, 1.5f * 1.5f, Players);
 
 		// Find a suitable player to attack
-		for(std::list<_Player *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
-			_Player *VictimPlayer = *Iterator;
-			if(VictimPlayer->State != _Player::STATE_BATTLE) {
+		for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
+			_Object *VictimPlayer = *Iterator;
+			if(VictimPlayer->State != _Object::STATE_BATTLE) {
 				_ServerBattle *Battle = new _ServerBattle();
 				Battles.push_back(Battle);
 
@@ -672,7 +584,7 @@ void _Server::HandleAttackPlayer(_Buffer &Packet, _Peer *Peer) {
 
 // Handle a chat message
 void _Server::HandleChatMessage(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -699,7 +611,7 @@ void _Server::HandleChatMessage(_Buffer &Packet, _Peer *Peer) {
 
 // Handle a trade request
 void _Server::HandleTradeRequest(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -709,11 +621,11 @@ void _Server::HandleTradeRequest(_Buffer &Packet, _Peer *Peer) {
 		return;
 
 	// Find the nearest player to trade with
-	_Player *TradePlayer = Map->FindTradePlayer(Player, 2.0f * 2.0f);
+	_Object *TradePlayer = Map->FindTradePlayer(Player, 2.0f * 2.0f);
 	if(TradePlayer == nullptr) {
 
 		// Set up trade post
-		Player->State = _Player::STATE_TRADE;
+		Player->State = _Object::STATE_TRADE;
 		Player->TradeGold = 0;
 		Player->TradeAccepted = false;
 		Player->TradePlayer = nullptr;
@@ -729,21 +641,21 @@ void _Server::HandleTradeRequest(_Buffer &Packet, _Peer *Peer) {
 		TradePlayer->TradePlayer = Player;
 		TradePlayer->TradeAccepted = false;
 
-		Player->State = _Player::STATE_TRADE;
-		TradePlayer->State = _Player::STATE_TRADE;
+		Player->State = _Object::STATE_TRADE;
+		TradePlayer->State = _Object::STATE_TRADE;
 	}
 }
 
 // Handles a trade cancel
 void _Server::HandleTradeCancel(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
 	// Notify trading player
-	_Player *TradePlayer = Player->TradePlayer;
+	_Object *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->State = _Player::STATE_TRADE;
+		TradePlayer->State = _Object::STATE_TRADE;
 		TradePlayer->TradePlayer = nullptr;
 		TradePlayer->TradeAccepted = false;
 
@@ -753,12 +665,12 @@ void _Server::HandleTradeCancel(_Buffer &Packet, _Peer *Peer) {
 	}
 
 	// Set state back to normal
-	Player->State = _Player::STATE_WALK;
+	Player->State = _Object::STATE_WALK;
 }
 
 // Handle a trade gold update
 void _Server::HandleTradeGold(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -772,7 +684,7 @@ void _Server::HandleTradeGold(_Buffer &Packet, _Peer *Peer) {
 	Player->TradeAccepted = false;
 
 	// Notify player
-	_Player *TradePlayer = Player->TradePlayer;
+	_Object *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
 		TradePlayer->TradeAccepted = false;
 
@@ -785,12 +697,12 @@ void _Server::HandleTradeGold(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a trade accept from a player
 void _Server::HandleTradeAccept(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
 	// Get trading player
-	_Player *TradePlayer = Player->TradePlayer;
+	_Object *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
 
 		// Set the player's state
@@ -803,7 +715,7 @@ void _Server::HandleTradeAccept(_Buffer &Packet, _Peer *Peer) {
 			// Exchange items
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
 			for(int i = 0; i < PLAYER_TRADEITEMS; i++) {
-				int InventorySlot = i + _Player::INVENTORY_TRADE;
+				int InventorySlot = i + _Object::INVENTORY_TRADE;
 				TempItems[i] = Player->Inventory[InventorySlot];
 
 				Player->SetInventory(InventorySlot, &TradePlayer->Inventory[InventorySlot]);
@@ -828,11 +740,11 @@ void _Server::HandleTradeAccept(_Buffer &Packet, _Peer *Peer) {
 				OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
 			}
 
-			Player->State = _Player::STATE_WALK;
+			Player->State = _Object::STATE_WALK;
 			Player->TradePlayer = nullptr;
 			Player->TradeGold = 0;
 			Player->MoveTradeToInventory();
-			TradePlayer->State = _Player::STATE_WALK;
+			TradePlayer->State = _Object::STATE_WALK;
 			TradePlayer->TradePlayer = nullptr;
 			TradePlayer->TradeGold = 0;
 			TradePlayer->MoveTradeToInventory();
@@ -850,7 +762,7 @@ void _Server::HandleTradeAccept(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a teleport request
 void _Server::HandleTeleport(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -859,7 +771,7 @@ void _Server::HandleTeleport(_Buffer &Packet, _Peer *Peer) {
 
 // Handles a trader accept
 void _Server::HandleTraderAccept(_Buffer &Packet, _Peer *Peer) {
-	_Player *Player = (_Player *)Peer->data;
+	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
@@ -876,12 +788,12 @@ void _Server::HandleTraderAccept(_Buffer &Packet, _Peer *Peer) {
 	// Exchange items
 	Player->AcceptTrader(RequiredItemSlots, RewardSlot);
 	Player->Trader = nullptr;
-	Player->State = _Player::STATE_WALK;
+	Player->State = _Object::STATE_WALK;
 	Player->CalculatePlayerStats();
 }
-*/
+
 // Send a message to the player
-void _OldServerState::SendMessage(_Player *Player, const std::string &Message, const glm::vec4 &Color) {
+void _OldServerState::SendMessage(_Object *Player, const std::string &Message, const glm::vec4 &Color) {
 	if(!Player)
 		return;
 
@@ -896,7 +808,7 @@ void _OldServerState::SendMessage(_Player *Player, const std::string &Message, c
 }
 
 // Spawns a player at a particular spawn point
-void _OldServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData) {
+void _OldServerState::SpawnPlayer(_Object *Player, int NewMapID, int EventType, int EventData) {
 
 	// Get new map
 	_Map *NewMap = GetMap(NewMapID);
@@ -911,7 +823,7 @@ void _OldServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, 
 	SendPlayerPosition(Player);
 
 	// Set state
-	Player->State = _Player::STATE_WALK;
+	Player->State = _Object::STATE_WALK;
 
 	// Send new object list
 	if(NewMap != OldMap) {
@@ -940,7 +852,7 @@ void _OldServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, 
 			Packet.Write<char>(Object->Type);
 			switch(Object->Type) {
 				case _Object::PLAYER: {
-					_Player *PlayerObject = (_Player *)Object;
+					_Object *PlayerObject = (_Object *)Object;
 					Packet.WriteString(PlayerObject->Name.c_str());
 					Packet.Write<char>(PlayerObject->PortraitID);
 					Packet.WriteBit((PlayerObject->IsInvisible()));
@@ -959,7 +871,7 @@ void _OldServerState::SpawnPlayer(_Player *Player, int NewMapID, int EventType, 
 }
 
 // Updates the player's HUD
-void _OldServerState::SendHUD(_Player *Player) {
+void _OldServerState::SendHUD(_Object *Player) {
 
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_HUD);
@@ -974,7 +886,7 @@ void _OldServerState::SendHUD(_Player *Player) {
 }
 
 // Send player their position
-void _OldServerState::SendPlayerPosition(_Player *Player) {
+void _OldServerState::SendPlayerPosition(_Object *Player) {
 
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_POSITION);
@@ -985,7 +897,7 @@ void _OldServerState::SendPlayerPosition(_Player *Player) {
 }
 
 // Sends a player an event message
-void _OldServerState::SendEvent(_Player *Player, int Type, int Data) {
+void _OldServerState::SendEvent(_Object *Player, int Type, int Data) {
 
 	// Create packet
 	_Buffer Packet;
@@ -999,7 +911,7 @@ void _OldServerState::SendEvent(_Player *Player, int Type, int Data) {
 }
 
 // Sends information to another player about items they're trading
-void _OldServerState::SendTradeInformation(_Player *Sender, _Player *Receiver) {
+void _OldServerState::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 	// Send items to trader player
 	_Buffer Packet;
@@ -1010,9 +922,9 @@ void _OldServerState::SendTradeInformation(_Player *Sender, _Player *Receiver) {
 }
 
 // Adds trade item information to a packet
-void _OldServerState::BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int Gold) {
+void _OldServerState::BuildTradeItemsPacket(_Object *Player, _Buffer *Packet, int Gold) {
 	Packet->Write<int32_t>(Gold);
-	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
+	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
 		if(Player->Inventory[i].Item) {
 			Packet->Write<int32_t>(Player->Inventory[i].Item->ID);
 			Packet->Write<char>(Player->Inventory[i].Count);
@@ -1023,7 +935,7 @@ void _OldServerState::BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, in
 }
 
 // Removes a player from a battle and deletes the battle if necessary
-void _OldServerState::RemovePlayerFromBattle(_Player *Player) {
+void _OldServerState::RemovePlayerFromBattle(_Object *Player) {
 	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
 	if(!Battle)
 		return;
@@ -1058,7 +970,7 @@ void ObjectDeleted(_Object *Object) {
 }
 
 // Teleports a player back to town
-void _OldServerState::PlayerTeleport(_Player *Player) {
+void _OldServerState::PlayerTeleport(_Object *Player) {
 	Player->RestoreHealthMana();
 	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 	SendHUD(Player);
@@ -1082,3 +994,4 @@ _Map *_OldServerState::GetMap(int MapID) {
 
 	return NewMap;
 }
+*/

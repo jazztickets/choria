@@ -16,10 +16,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <stats.h>
+#include <objects/object.h>
 #include <database.h>
 #include <random.h>
 #include <assets.h>
-#include <objects/fighter.h>
 
 _Stats OldStats;
 
@@ -254,7 +254,7 @@ void _Stats::LoadTraders() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(int MonsterID, _Fighter *Monster) {
+void _Stats::GetMonsterStats(int MonsterID, _Object *Monster) {
 
 	// Run query
 	char QueryString[256];

@@ -23,7 +23,7 @@
 #include <network/oldnetwork.h>
 #include <buffer.h>
 #include <states/oldserver.h>
-#include <objects/player.h>
+#include <objects/object.h>
 #include <texture.h>
 #include <assets.h>
 #include <font.h>
@@ -393,7 +393,7 @@ void _Map::AddObject(_Object *Object) {
 	Packet.Write<char>(Object->Type);
 	switch(Object->Type) {
 		case _Object::PLAYER: {
-			_Player *NewPlayer = (_Player *)Object;
+			_Object *NewPlayer = (_Object *)Object;
 			Packet.WriteString(NewPlayer->Name.c_str());
 			Packet.Write<char>(NewPlayer->PortraitID);
 			Packet.WriteBit(NewPlayer->IsInvisible());
@@ -431,11 +431,11 @@ void _Map::RemoveObject(_Object *RemoveObject) {
 }
 
 // Returns a list of players close to a player
-void _Map::GetClosePlayers(const _Player *Player, float DistanceSquared, std::list<_Player *> &Players) {
+void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players) {
 
 	for(const auto &Object : Objects) {
 		if(Object->Type == _Object::PLAYER) {
-			_Player *TestPlayer = (_Player *)Object;
+			_Object *TestPlayer = (_Object *)Object;
 			if(TestPlayer != Player) {
 				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
 				if((float)(Delta.x * Delta.x + Delta.y * Delta.y) <= DistanceSquared) {
@@ -447,14 +447,14 @@ void _Map::GetClosePlayers(const _Player *Player, float DistanceSquared, std::li
 }
 
 // Returns the closest player
-_Player *_Map::FindTradePlayer(const _Player *Player, float MaxDistanceSquared) {
+_Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) {
 
-	_Player *ClosestPlayer = nullptr;
+	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
 	for(const auto &Object : Objects) {
 		if(Object->Type == _Object::PLAYER) {
-			_Player *TestPlayer = (_Player *)Object;
-			if(TestPlayer != Player && TestPlayer->State == _Player::STATE_TRADE && TestPlayer->TradePlayer == nullptr) {
+			_Object *TestPlayer = (_Object *)Object;
+			if(TestPlayer != Player && TestPlayer->State == _Object::STATE_TRADE && TestPlayer->TradePlayer == nullptr) {
 				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
 				float DistanceSquared = (float)(Delta.x * Delta.x + Delta.y * Delta.y);
 				if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
@@ -499,7 +499,7 @@ void _Map::SendObjectUpdates() {
 		int State = 0;
 		bool Invisible = false;
 		if(Object->Type == _Object::PLAYER) {
-			_Player *Player = (_Player *)Object;
+			_Object *Player = (_Object *)Object;
 			State = Player->State;
 			Invisible = Player->IsInvisible();
 		}
@@ -515,12 +515,12 @@ void _Map::SendObjectUpdates() {
 }
 
 // Sends a packet to all of the players in the map
-void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _OldNetwork::SendType Type) {
+void _Map::SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer, _OldNetwork::SendType Type) {
 
 	// Send the packet out
 	for(auto &Object : Objects) {
 		if(Object->Type == _Object::PLAYER) {
-			_Player *Player = (_Player *)Object;
+			_Object *Player = (_Object *)Object;
 
 			if(Player != ExceptionPlayer)
 				OldServerNetwork->SendPacketToPeer(Packet, Player->OldPeer, Type, Type == _OldNetwork::UNSEQUENCED);

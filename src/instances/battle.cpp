@@ -16,9 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/battle.h>
-#include <objects/fighter.h>
-#include <objects/fighter.h>
-#include <objects/player.h>
+#include <objects/object.h>
 
 // Constructor
 _Battle::_Battle() {
@@ -40,7 +38,7 @@ _Battle::~_Battle() {
 }
 
 // Add a fighter to the battle
-void _Battle::AddFighter(_Fighter *Fighter, int Side) {
+void _Battle::AddFighter(_Object *Fighter, int Side) {
 
 	// Count fighters and set slots
 	if(Side == 0) {
@@ -61,7 +59,7 @@ void _Battle::AddFighter(_Fighter *Fighter, int Side) {
 }
 
 // Get a list of fighters from a side
-void _Battle::GetFighterList(int Side, std::vector<_Fighter *> &SideFighters) {
+void _Battle::GetFighterList(int Side, std::vector<_Object *> &SideFighters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == Side) {
@@ -71,7 +69,7 @@ void _Battle::GetFighterList(int Side, std::vector<_Fighter *> &SideFighters) {
 }
 
 // Get a list of alive fighters from a side
-void _Battle::GetAliveFighterList(int Side, std::vector<_Fighter *> &AliveFighters) {
+void _Battle::GetAliveFighterList(int Side, std::vector<_Object *> &AliveFighters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->Health > 0) {
@@ -81,21 +79,21 @@ void _Battle::GetAliveFighterList(int Side, std::vector<_Fighter *> &AliveFighte
 }
 
 // Get a list of monster from the right side
-void _Battle::GetMonsterList(std::vector<_Fighter *> &Monsters) {
+void _Battle::GetMonsterList(std::vector<_Object *> &Monsters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->Type == _Object::MONSTER) {
-			Monsters.push_back((_Fighter *)Fighters[i]);
+			Monsters.push_back((_Object *)Fighters[i]);
 		}
 	}
 }
 
 // Get a list of players from a side
-void _Battle::GetPlayerList(int Side, std::vector<_Player *> &Players) {
+void _Battle::GetPlayerList(int Side, std::vector<_Object *> &Players) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->Type == _Object::PLAYER) {
-			Players.push_back((_Player *)Fighters[i]);
+			Players.push_back((_Object *)Fighters[i]);
 		}
 	}
 }

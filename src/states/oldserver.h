@@ -30,10 +30,9 @@ class _Map;
 class _Battle;
 class _Buffer;
 class _Object;
-class _Player;
 
 class _ServerNetwork;
-
+/*
 // Classes
 class _OldServerState : public _State {
 
@@ -45,12 +44,12 @@ class _OldServerState : public _State {
 		void Update(double FrameTime);
 		void DeleteObject(_Object *Object);
 
-		void PlayerTeleport(_Player *Player);
+		void PlayerTeleport(_Object *Player);
 		double GetServerTime() const { return ServerTime; }
 
 		void StartCommandThread();
 		void StopServer() { StopRequested = true; }
-		void SendMessage(_Player *Player, const std::string &Message, const glm::vec4 &Color=glm::vec4(1.0f));
+		void SendMessage(_Object *Player, const std::string &Message, const glm::vec4 &Color=glm::vec4(1.0f));
 
 		_Map *GetMap(int MapID);
 
@@ -58,16 +57,16 @@ class _OldServerState : public _State {
 
 		void CreateDefaultDatabase();
 
-		void SendPlayerPosition(_Player *Player);
-		void SpawnPlayer(_Player *Player, int NewMapID, int EventType, int EventData);
-		void SendHUD(_Player *Player);
-		void SendCharacterList(_Player *Player);
-		void SendEvent(_Player *Player, int Type, int Data);
-		void SendTradeInformation(_Player *Sender, _Player *Receiver);
+		void SendPlayerPosition(_Object *Player);
+		void SpawnPlayer(_Object *Player, int NewMapID, int EventType, int EventData);
+		void SendHUD(_Object *Player);
+		void SendCharacterList(_Object *Player);
+		void SendEvent(_Object *Player, int Type, int Data);
+		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 
-		void BuildTradeItemsPacket(_Player *Player, _Buffer *Packet, int Gold);
+		void BuildTradeItemsPacket(_Object *Player, _Buffer *Packet, int Gold);
 
-		void RemovePlayerFromBattle(_Player *Player);
+		void RemovePlayerFromBattle(_Object *Player);
 
 		_Database *Database;
 		_ObjectManager *ObjectManager;
@@ -83,3 +82,4 @@ class _OldServerState : public _State {
 };
 
 extern _OldServerState OldServerState;
+*/

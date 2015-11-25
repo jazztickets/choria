@@ -65,13 +65,13 @@ _Server::_Server(uint16_t NetworkPort)
 	NextMapID(0),
 	Thread(nullptr) {
 
+	Log.Open((Config.ConfigPath + "server.log").c_str());
+
 	if(!Network->HasConnection())
 		throw std::runtime_error("Unable to bind address!");
 
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
-	Log.Open((Config.ConfigPath + "server.log").c_str());
-	//Log.SetToStdOut(true);
 
 	Database = new _Database();
 
@@ -179,17 +179,46 @@ void _Server::Update(double FrameTime) {
 
 // Handle client connect
 void _Server::HandleConnect(_NetworkEvent &Event) {
-	//Log << TimeSteps << " -- connect peer_count=" << (int)Network->GetPeers().size() << std::endl;
+	char Buffer[16];
+	ENetAddress *Address = &Event.Peer->ENetPeer->address;
+	enet_address_get_host_ip(Address, Buffer, 16);
+	Log << "Connect: " << Buffer << ":" << Address->port << std::endl;
+
+	// Send game version
+	_Buffer Packet;
+	Packet.Write<char>(Packet::VERSION);
+	Packet.WriteString(GAME_VERSION);
+	Network->SendPacket(Packet, Event.Peer);
 }
 
 // Handle client disconnect
 void _Server::HandleDisconnect(_NetworkEvent &Event) {
+	char Buffer[16];
+	ENetAddress *Address = &Event.Peer->ENetPeer->address;
+	enet_address_get_host_ip(Address, Buffer, 16);
+	Log << "Disconnect: " << Buffer << ":" << Address->port << std::endl;
 
 	// Get object
 	_Object *Object = Event.Peer->Object;
 	if(!Object)
 		return;
 
+	// Leave trading screen
+	/*_Object *TradePlayer = Player->TradePlayer;
+	if(TradePlayer) {
+		TradePlayer->TradePlayer = nullptr;
+
+		_Buffer Packet;
+		Packet.Write<char>(Packet::TRADE_CANCEL);
+		OldServerNetwork->SendPacketToPeer(&Packet, TradePlayer->OldPeer);
+	}
+
+	// Remove from battle
+	RemovePlayerFromBattle(Player);
+
+	// Save character info
+	Player->Save();
+	*/
 	// Update map
 	//_Map *Map = Object->Map;
 	//if(Map) {
@@ -215,10 +244,10 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::CHARACTERS_REQUEST:
 			HandleCharacterListRequest(Data, Peer);
 		break;
-			/*
 		case Packet::CHARACTERS_PLAY:
 			HandleCharacterSelect(Data, Peer);
 		break;
+			/*
 		case Packet::CHARACTERS_DELETE:
 			HandleCharacterDelete(Data, Peer);
 		break;
@@ -346,10 +375,10 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 }
 // Sends a player his/her character list
 void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = Peer->Object;
-	if(!Player)
+	if(!ValidatePeer(Peer))
 		return;
 
+	_Object *Player = Peer->Object;
 	std::stringstream Query;
 
 	// Get a count of the account's characters
@@ -379,38 +408,34 @@ void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
 
 // Loads the player, updates the world, notifies clients
 void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
-
-	int Slot = Data.Read<char>();
-	_Object *Player = Peer->Object;
-	//printf("HandleCharacterSelect: accountid=%d, slot=%d\n", Player->AccountID, Slot);
-
-	// Check account
-	if(Player->AccountID <= 0) {
+	if(!ValidatePeer(Peer))
 		return;
-	}
+
+	_Object *Player = Peer->Object;
+
+	// Read packet
+	int Slot = Data.Read<char>();
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT * FROM Characters WHERE AccountsID = " << Player->AccountID << " LIMIT " << Slot<< ", 1";
+	Query << "SELECT * FROM Characters WHERE AccountsID = " << Player->AccountID << " LIMIT " << Slot << ", 1";
 	Database->RunDataQuery(Query.str());
 	if(!Database->FetchRow()) {
-		printf(" Didn't find a character for slot %d\n", Slot);
+		Log << "Character slot " << Slot << " empty!";
 		return;
 	}
 	Query.str("");
 
 	// Set player properties
-	/*
-	Player->Database = Database;
 	Player->CharacterID = Database->GetInt(0);
 	Player->SpawnMapID = Database->GetInt(2);
 	Player->SpawnPoint = Database->GetInt(3);
 	Player->Name = Database->GetString(4);
-	Player->SetPortraitID(Database->GetInt(5));
+	Player->PortraitID = Database->GetInt(5);
 	Player->Experience = Database->GetInt(6);
 	Player->Gold = Database->GetInt(7);
 	for(int i = 0; i < 8; i++)
-		Player->SetSkillBar(i, OldStats.GetSkill(Database->GetInt(i + 8)));
+		Player->SkillBar[i] = OldStats.GetSkill(Database->GetInt(i + 8));
 	Player->PlayTime = Database->GetInt(16);
 	Player->Deaths = Database->GetInt(17);
 	Player->MonsterKills = Database->GetInt(18);
@@ -418,7 +443,7 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 	Player->Bounty = Database->GetInt(20);
 
 	Database->CloseQuery();
-
+/*
 	// Set inventory
 	sprintf(Query.str(), "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = %d", Player->CharacterID);
 	Database->RunDataQuery(Query.str());
@@ -461,7 +486,7 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 
 	// Write items
 	NewPacket.Write<char>(ItemCount);
-	for(int i = 0; i < _Player::INVENTORY_COUNT; i++) {
+	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
 		if(Player->Inventory[i].Item) {
 			NewPacket.Write<char>(i);
 			NewPacket.Write<char>(Player->Inventory[i].Count);
@@ -471,7 +496,7 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 
 	// Write skills
 	NewPacket.Write<char>(SkillCount);
-	for(int i = 0; i < _Player::SKILL_COUNT; i++) {
+	for(int i = 0; i < _Object::SKILL_COUNT; i++) {
 		if(Player->GetSkillLevel(i) > 0) {
 			NewPacket.Write<int32_t>(Player->GetSkillLevel(i));
 			NewPacket.Write<char>(i);
@@ -479,7 +504,7 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Write skill bar
-	for(int i = 0; i < FIGHTER_MAXSKILLS; i++) {
+	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
 		NewPacket.Write<char>(Player->GetSkillBarID(i));
 	}
 	OldServerNetwork->SendPacketToPeer(&NewPacket, Peer);
@@ -539,6 +564,17 @@ void _Server::ChangePlayerMap(const std::string &MapName, _Peer *Peer) {
 	Map->AddPeer(Peer);
 	Map->SendObjectList(Object, TimeSteps);
 	*/
+}
+
+// Validate a peer's attributes
+bool _Server::ValidatePeer(_Peer *Peer) {
+	if(!Peer->Object)
+		return false;
+
+	if(Peer->Object->AccountID == 0)
+		return false;
+
+	return true;
 }
 
 // Get a map if it's already loaded, if not load it and return it

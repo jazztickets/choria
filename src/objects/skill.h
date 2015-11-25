@@ -21,11 +21,10 @@
 #include <texture.h>
 
 // Forward Declarations
-class _Fighter;
+class _Object;
 struct _Vendor;
-struct _FighterResult;
+struct _ActionResult;
 struct _Cursor;
-class _Player;
 
 // Classes
 class _Skill {
@@ -39,7 +38,7 @@ class _Skill {
 			TYPE_USEPOTION,
 		};
 
-		void DrawTooltip(const _Player *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
+		void DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
 		void DrawDescription(int SkillLevel, glm::ivec2 &DrawPosition, int Width) const;
 
 		int GetManaCost(int Level) const;
@@ -48,8 +47,8 @@ class _Skill {
 		void GetPowerRangeRound(int Level, int &Min, int &Max) const;
 		void GetPowerRange(int Level, float &Min, float &Max) const;
 
-		void ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) const;
-		bool CanUse(_Fighter *Fighter) const;
+		void ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) const;
+		bool CanUse(_Object *Fighter) const;
 
 		int ID;
 		int Type;

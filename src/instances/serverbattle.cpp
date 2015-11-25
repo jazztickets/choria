@@ -23,8 +23,7 @@
 #include <packet.h>
 #include <network/oldnetwork.h>
 #include <random.h>
-#include <objects/player.h>
-#include <objects/fighter.h>
+#include <objects/object.h>
 #include <states/oldserver.h>
 
 // Constructor
@@ -40,12 +39,12 @@ _ServerBattle::~_ServerBattle() {
 }
 
 // Removes a player from the battle, return remaining player count
-int _ServerBattle::RemoveFighter(_Fighter *RemoveFighter) {
+int _ServerBattle::RemoveFighter(_Object *RemoveFighter) {
 
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Object::PLAYER) {
-			_Player *Player = (_Player *)Fighters[i];
+			_Object *Player = (_Object *)Fighters[i];
 			if(Player == RemoveFighter) {
 				Player->StopBattle();
 				Fighters[i] = nullptr;
@@ -82,7 +81,7 @@ void _ServerBattle::StartBattle() {
 		Packet.WriteBit(!!Fighters[i]->GetSide());
 
 		if(Type == _Object::PLAYER) {
-			_Player *Player = (_Player *)Fighters[i];
+			_Object *Player = (_Object *)Fighters[i];
 
 			// Network ID
 			Packet.Write<char>(Player->NetworkID);
@@ -97,7 +96,7 @@ void _ServerBattle::StartBattle() {
 			Player->StartBattle(this);
 		}
 		else {
-			_Fighter *Monster = (_Fighter *)Fighters[i];
+			_Object *Monster = (_Object *)Fighters[i];
 
 			// Monster ID
 			Packet.Write<int32_t>(Monster->ID);
@@ -111,7 +110,7 @@ void _ServerBattle::StartBattle() {
 }
 
 // Handles input from the client
-void _ServerBattle::HandleInput(_Player *Player, int Command, int Target) {
+void _ServerBattle::HandleInput(_Object *Player, int Command, int Target) {
 
 	if(State == STATE_INPUT) {
 
@@ -162,14 +161,14 @@ void _ServerBattle::ResolveTurn() {
 	RoundTime = 0;
 
 	// Get a monster list
-	std::vector<_Fighter *> Monsters;
+	std::vector<_Object *> Monsters;
 	GetMonsterList(Monsters);
 
 	// Update AI
 	if(Monsters.size() > 0) {
 
 		// Get a list of humans on the left side
-		std::vector<_Fighter *> Humans;
+		std::vector<_Object *> Humans;
 		GetAliveFighterList(0, Humans);
 
 		// Update the monster's target
@@ -179,10 +178,10 @@ void _ServerBattle::ResolveTurn() {
 	}
 
 	// Handle each fighter's action
-	_FighterResult Results[BATTLE_MAXFIGHTERS];
+	_ActionResult Results[BATTLE_MAXFIGHTERS];
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
-			_FighterResult *Result = &Results[i];
+			_ActionResult *Result = &Results[i];
 			Result->Fighter = Fighters[i];
 
 			// Ignore dead fighters
@@ -196,7 +195,7 @@ void _ServerBattle::ResolveTurn() {
 					Result->SkillID = Skill->ID;
 
 					// Update fighters
-					_FighterResult *TargetResult = &Results[TargetFighterIndex];
+					_ActionResult *TargetResult = &Results[TargetFighterIndex];
 					TargetResult->Fighter = Fighters[TargetFighterIndex];
 					Skill->ResolveSkill(Result, TargetResult);
 				}
@@ -241,14 +240,14 @@ void _ServerBattle::CheckEnd() {
 		return;
 
 	// Players that get a reward
-	std::vector<_Player *> Players;
+	std::vector<_Object *> Players;
 
 	// Get statistics for each side
 	_BattleResult Side[2];
 	for(int i = 0; i < 2; i++) {
 
 		// Get a list of fighters that are still in the battle
-		std::vector<_Fighter *> SideFighters;
+		std::vector<_Object *> SideFighters;
 		GetFighterList(i, SideFighters);
 
 		// Loop through fighters
@@ -256,7 +255,7 @@ void _ServerBattle::CheckEnd() {
 
 			// Keep track of players
 			if(SideFighters[j]->Type == _Object::PLAYER) {
-				Players.push_back((_Player *)SideFighters[j]);
+				Players.push_back((_Object *)SideFighters[j]);
 				Side[i].PlayerCount++;
 			}
 			else
@@ -303,7 +302,7 @@ void _ServerBattle::CheckEnd() {
 		if(!Side[0].Dead) {
 
 			// Get a monster list
-			std::vector<_Fighter *> Monsters;
+			std::vector<_Object *> Monsters;
 			GetMonsterList(Monsters);
 
 			// Make sure there are monsters
@@ -316,7 +315,7 @@ void _ServerBattle::CheckEnd() {
 				}
 
 				// Get a list of players that receive items
-				std::vector<_Player *> LeftSidePlayers;
+				std::vector<_Object *> LeftSidePlayers;
 				GetPlayerList(0, LeftSidePlayers);
 
 				// Give out rewards round robin style
@@ -348,7 +347,7 @@ void _ServerBattle::CheckEnd() {
 				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
 				Players[i]->Deaths++;
 
-				OldServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
+				//OldServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
 			}
 			else {
 				ExperienceEarned = OppositeSide->ExperienceGiven;
@@ -369,7 +368,7 @@ void _ServerBattle::CheckEnd() {
 			int NewLevel = Players[i]->Level;
 			if(NewLevel > CurrentLevel) {
 				Players[i]->RestoreHealthMana();
-				OldServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
+				//OldServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
 			}
 
 			// Write results
@@ -409,17 +408,17 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Object::PLAYER) {
-			_Player *Player = (_Player *)Fighters[i];
+			_Object *Player = (_Object *)Fighters[i];
 			OldServerNetwork->SendPacketToPeer(Packet, Player->OldPeer);
 		}
 	}
 }
 
 // Send the player's skill to the other players
-void _ServerBattle::SendSkillToPlayers(_Player *Player) {
+void _ServerBattle::SendSkillToPlayers(_Object *Player) {
 
 	// Get all the players on the player's side
-	std::vector<_Player *> SidePlayers;
+	std::vector<_Object *> SidePlayers;
 	GetPlayerList(Player->GetSide(), SidePlayers);
 	if(SidePlayers.size() == 1)
 		return;

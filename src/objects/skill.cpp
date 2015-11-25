@@ -27,14 +27,13 @@
 #include <packet.h>
 #include <instances/battle.h>
 #include <network/oldnetwork.h>
-#include <objects/fighter.h>
-#include <objects/player.h>
+#include <objects/object.h>
 #include <ui/label.h>
 #include <ui/element.h>
 #include <algorithm>
 
 // Draw tooltip
-void _Skill::DrawTooltip(const _Player *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
+void _Skill::DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
 	_Element *TooltipElement = Assets.Elements["element_skills_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_skills_tooltip_name"];
 	TooltipElement->SetVisible(true);
@@ -226,9 +225,9 @@ void _Skill::GetPowerRange(int Level, float &Min, float &Max) const {
 }
 
 // Resolves the use of a skill in battle.
-void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) const {
-	_Fighter *Fighter = Result->Fighter;
-	_Fighter *TargetFighter = TargetResult->Fighter;
+void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) const {
+	_Object *Fighter = Result->Fighter;
+	_Object *TargetFighter = TargetResult->Fighter;
 	int SkillLevel = Fighter->GetSkillLevel(ID);
 
 	int Damage = 0, Healing = 0, ManaRestore = 0, ManaCost = 0;
@@ -252,7 +251,7 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) 
 		break;
 		case TYPE_USEPOTION:
 			if(Fighter->Type == _Object::PLAYER) {
-				_Player *Player = (_Player *)Fighter;
+				_Object *Player = (_Object *)Fighter;
 
 				// Use the potion
 				int Type = (ID == 2);
@@ -286,7 +285,7 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) 
 }
 
 // Determines if a skill can be used
-bool _Skill::CanUse(_Fighter *Fighter) const {
+bool _Skill::CanUse(_Object *Fighter) const {
 	int Level = Fighter->GetSkillLevel(ID);
 
 	// Check for bad types
@@ -302,7 +301,7 @@ bool _Skill::CanUse(_Fighter *Fighter) const {
 		if(Fighter->Type == _Object::MONSTER)
 			return false;
 
-		_Player *Player = (_Player *)Fighter;
+		_Object *Player = (_Object *)Fighter;
 		return Player->GetPotionBattle(ID == 2) != -1;
 	}
 

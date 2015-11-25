@@ -20,7 +20,7 @@
 #include <constants.h>
 #include <font.h>
 #include <hud.h>
-#include <objects/player.h>
+#include <objects/object.h>
 #include <ui/label.h>
 #include <ui/element.h>
 #include <graphics.h>
@@ -31,7 +31,7 @@
 #include <algorithm>
 
 // Draw tooltip
-void _Item::DrawTooltip(const _Player *Player, const _Cursor &Tooltip) const {
+void _Item::DrawTooltip(const _Object *Player, const _Cursor &Tooltip) const {
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
 	_Label *TooltipType = Assets.Labels["label_item_tooltip_type"];

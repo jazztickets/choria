@@ -26,7 +26,7 @@
 
 // Forward Declarations
 class _Database;
-class _Fighter;
+class _Object;
 
 // Structures
 struct _MapStat {
@@ -96,7 +96,7 @@ class _Stats {
 		void Close();
 
 		// General Stats
-		void GetMonsterStats(int MonsterID, _Fighter *Monster);
+		void GetMonsterStats(int MonsterID, _Object *Monster);
 		const _Skill *GetSkill(int SkillID);
 		const _MapStat *GetMap(int MapID) { return &Maps[MapID]; }
 		const _Item *GetItem(int ItemID) { return &Items[ItemID]; }

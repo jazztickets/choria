@@ -25,7 +25,7 @@
 #include <glm/vec4.hpp>
 
 // Forward Declarations
-class _Player;
+class _Object;
 class _Item;
 class _Skill;
 class _Element;
@@ -91,7 +91,7 @@ class _HUD {
 		void Render();
 
 		// Objects
-		void SetPlayer(_Player *Player);
+		void SetPlayer(_Object *Player);
 
 		// Button bar
 		void ToggleTeleport();
@@ -140,7 +140,7 @@ class _HUD {
 		void DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
 		void DrawCursorSkill();
-		void DrawTradeItems(_Player *Player, const std::string &ElementPrefix, int Window);
+		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
 
 		void BuyItem(_Cursor *Item, int TargetSlot);
 		void SellItem(_Cursor *Item, int Amount);
@@ -157,7 +157,7 @@ class _HUD {
 		void SplitStack(int Slot, int Count);
 
 		// Objects
-		_Player *Player;
+		_Object *Player;
 
 		// UI
 		_Element *ActionBarElement;

@@ -28,8 +28,7 @@
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
-#include <objects/fighter.h>
-#include <objects/player.h>
+#include <objects/object.h>
 #include <network/oldnetwork.h>
 
 // Constructor
@@ -51,7 +50,7 @@ _ClientBattle::~_ClientBattle() {
 }
 
 // Starts the battle on the client
-void _ClientBattle::StartBattle(_Player *Player) {
+void _ClientBattle::StartBattle(_Object *Player) {
 	BattleElement = Assets.Elements["element_battle"];
 	BattleWinElement = Assets.Elements["element_battlewin"];
 	BattleLoseElement = Assets.Elements["element_battlelose"];
@@ -80,7 +79,7 @@ void _ClientBattle::StartBattle(_Player *Player) {
 }
 
 // Removes a player from battle
-int _ClientBattle::RemoveFighter(_Fighter *Fighter) {
+int _ClientBattle::RemoveFighter(_Object *Fighter) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] == Fighter) {
 			Fighters[i] = nullptr;
@@ -387,7 +386,7 @@ void _ClientBattle::ChangeTarget(int Direction) {
 		return;
 
 	// Get a list of fighters on the opposite side
-	std::vector<_Fighter *> SideFighters;
+	std::vector<_Object *> SideFighters;
 	GetFighterList(!ClientPlayer->GetSide(), SideFighters);
 
 	// Find next available target

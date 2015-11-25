@@ -34,10 +34,10 @@
 #include <ui/textbox.h>
 #include <ui/image.h>
 #include <ui/style.h>
+#include <objects/object.h>
 #include <states/oldclient.h>
 #include <network/oldnetwork.h>
 #include <instances/map.h>
-#include <objects/player.h>
 #include <objects/item.h>
 #include <vector>
 #include <algorithm>
@@ -257,8 +257,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		}
 
 		switch(Player->State) {
-			case _Player::STATE_VENDOR:
-			case _Player::STATE_TRADE:
+			case _Object::STATE_VENDOR:
+			case _Object::STATE_TRADE:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 					if(!Cursor.Item) {
 
@@ -331,10 +331,10 @@ void _HUD::Update(double FrameTime) {
 	}
 
 	switch(Player->State) {
-		case _Player::STATE_TRADE: {
+		case _Object::STATE_TRADE: {
 
 			// Get trade items
-			if(Player->State == _Player::STATE_TRADE) {
+			if(Player->State == _Object::STATE_TRADE) {
 				TradeTheirsElement->SetVisible(false);
 				if(Player->TradePlayer) {
 					TradeTheirsElement->SetVisible(true);
@@ -458,7 +458,7 @@ void _HUD::ToggleTeleport() {
 	OldClientNetwork->SendPacketToHost(&Packet);
 	Player->StartTeleport();
 
-	if(Player->State == _Player::STATE_TELEPORT) {
+	if(Player->State == _Object::STATE_TELEPORT) {
 		TeleportElement->SetVisible(false);
 	}
 	else {
@@ -473,7 +473,7 @@ void _HUD::ToggleInventory() {
 	if(!InventoryElement->Visible) {
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
-		OldClientState.SendBusy(true);
+		//OldClientState.SendBusy(true);
 	}
 	else {
 		CloseInventory();
@@ -508,7 +508,7 @@ void _HUD::ToggleMenu() {
 
 // Initialize the vendor
 void _HUD::InitVendor(int VendorID) {
-	if(Player->State == _Player::STATE_VENDOR)
+	if(Player->State == _Object::STATE_VENDOR)
 		return;
 
 	Cursor.Reset();
@@ -519,12 +519,12 @@ void _HUD::InitVendor(int VendorID) {
 	// Open inventory
 	InventoryElement->SetVisible(true);
 	VendorElement->SetVisible(true);
-	OldClientState.SendBusy(true);
+	//OldClientState.SendBusy(true);
 }
 
 // Initialize the trade system
 void _HUD::InitTrade() {
-	if(Player->State != _Player::STATE_WALK)
+	if(Player->State != _Object::STATE_WALK)
 		return;
 
 	InventoryElement->SetVisible(true);
@@ -547,7 +547,7 @@ void _HUD::InitTrade() {
 
 // Initialize the trader
 void _HUD::InitTrader(int TraderID) {
-	if(Player->State == _Player::STATE_TRADER)
+	if(Player->State == _Object::STATE_TRADER)
 		return;
 
 	// Get trader stats
@@ -567,7 +567,7 @@ void _HUD::InitTrader(int TraderID) {
 
 // Initialize the skills screen
 void _HUD::InitSkills() {
-	OldClientState.SendBusy(true);
+	//OldClientState.SendBusy(true);
 
 	// Clear old children
 	ClearSkills();
@@ -688,14 +688,14 @@ void _HUD::CloseChat() {
 // Close inventory screen
 void _HUD::CloseInventory() {
 	if(InventoryElement->Visible)
-		OldClientState.SendBusy(false);
+		//OldClientState.SendBusy(false);
 	InventoryElement->SetVisible(false);
 	CharacterElement->SetVisible(false);
 }
 
 // Close the vendor
 void _HUD::CloseVendor() {
-	if(Player->State != _Player::STATE_VENDOR)
+	if(Player->State != _Object::STATE_VENDOR)
 		return;
 
 	Cursor.Reset();
@@ -728,13 +728,13 @@ void _HUD::CloseSkills() {
 	}
 
 	// No longer busy
-	OldClientState.SendBusy(false);
+	//OldClientState.SendBusy(false);
 	SkillsElement->SetVisible(false);
 }
 
 // Closes the trade system
 void _HUD::CloseTrade(bool SendNotify) {
-	if(!(Player->State == _Player::STATE_TRADE || Player->State == _Player::STATE_TRADE))
+	if(!(Player->State == _Object::STATE_TRADE || Player->State == _Object::STATE_TRADE))
 		return;
 
 	FocusedElement = nullptr;
@@ -752,7 +752,7 @@ void _HUD::CloseTrade(bool SendNotify) {
 
 // Close the trader
 void _HUD::CloseTrader() {
-	if(Player->State != _Player::STATE_TRADER)
+	if(Player->State != _Object::STATE_TRADER)
 		return;
 
 	Cursor.Reset();
@@ -777,7 +777,7 @@ void _HUD::CloseWindows() {
 
 // Draws chat messages
 void _HUD::DrawChat(bool IgnoreTimeout) {
-
+/*
 	// Draw window
 	ChatElement->Render();
 
@@ -805,7 +805,7 @@ void _HUD::DrawChat(bool IgnoreTimeout) {
 		DrawPosition.y += SpacingY;
 
 		Index++;
-	}
+	}*/
 }
 
 // Draw the teleport sequence
@@ -828,7 +828,7 @@ void _HUD::DrawInventory() {
 	InventoryElement->Render();
 
 	// Draw player's items
-	for(int i = 0; i < _Player::INVENTORY_TRADE; i++) {
+	for(int i = 0; i < _Object::INVENTORY_TRADE; i++) {
 
 		// Get inventory slot
 		_InventorySlot *Item = &Player->Inventory[i];
@@ -899,13 +899,13 @@ void _HUD::DrawTrade() {
 }
 
 // Draws trading items
-void _HUD::DrawTradeItems(_Player *Player, const std::string &ElementPrefix, int Window) {
+void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window) {
 	if(!Player)
 		return;
 
 	// Draw offered items
 	int BagIndex = 0;
-	for(int i = _Player::INVENTORY_TRADE; i < _Player::INVENTORY_COUNT; i++) {
+	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
 
 		// Get inventory slot
 		_InventorySlot *Item = &Player->Inventory[i];
@@ -1240,15 +1240,15 @@ void _HUD::SetSkillBar(int Slot, int OldSlot, const _Skill *Skill) {
 		// Remove duplicate skills
 		for(int i = 0; i < 8; i++) {
 			if(Player->GetSkillBar(i) == Skill)
-				Player->SetSkillBar(i, nullptr);
+				Player->SkillBar[i] = nullptr;
 		}
 	}
 	else {
 		const _Skill *OldSkill = Player->GetSkillBar(Slot);
-		Player->SetSkillBar(OldSlot, OldSkill);
+		Player->SkillBar[OldSlot] = OldSkill;
 	}
 
-	Player->SetSkillBar(Slot, Skill);
+	Player->SkillBar[Slot] = Skill;
 	Player->CalculatePlayerStats();
 	SkillBarChanged = true;
 }
@@ -1393,7 +1393,7 @@ void _HUD::UpdateTradeStatus(bool Accepted) {
 void _HUD::SplitStack(int Slot, int Count) {
 
 	// Split only inventory items
-	if(!_Player::IsSlotInventory(Slot))
+	if(!_Object::IsSlotInventory(Slot))
 		return;
 
 	// Build packet
@@ -1417,7 +1417,7 @@ bool _HUD::IsChatting() {
 }
 
 // Set player for HUD
-void _HUD::SetPlayer(_Player *Player) {
+void _HUD::SetPlayer(_Object *Player) {
 	this->Player = Player;
 
 	Assets.Labels["label_hud_name"]->Text = Player->Name;

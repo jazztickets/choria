@@ -24,14 +24,14 @@
 class _Database;
 class _ObjectManager;
 class _Buffer;
-class _Player;
+class _Object;
 class _Map;
 class _Camera;
 class _ClientBattle;
 
 // Classes
 class _OldClientState : public _State {
-
+/*
 	public:
 
 		_OldClientState();
@@ -92,10 +92,10 @@ class _OldClientState : public _State {
 		double ClientTime;
 
 		// Objects
-		_Player *Player;
+		_Object *Player;
 		_Camera *Camera;
 		_ObjectManager *ObjectManager;
-
+*/
 };
 
 extern _OldClientState OldClientState;

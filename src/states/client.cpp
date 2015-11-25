@@ -190,10 +190,10 @@ void _ClientState::Update(double FrameTime) {
 				HandleConnect();
 			} break;
 			case _NetworkEvent::DISCONNECT:
-				if(FromEditor)
-					Framework.ChangeState(&EditorState);
-				else
-					Framework.Done = true;
+				//if(FromEditor)
+					//Framework.ChangeState(&EditorState);
+				//else
+					Menu.InitTitle();
 			break;
 			case _NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
@@ -349,8 +349,8 @@ void _ClientState::HandleConnect() {
 void _ClientState::HandleMapInfo(_Buffer &Buffer) {
 
 	// Read packet
-	uint8_t MapID = Buffer.Read<uint8_t>();
-	std::string NewMap = Buffer.ReadString();
+	//uint8_t MapID = Buffer.Read<uint8_t>();
+	//std::string NewMap = Buffer.ReadString();
 
 	// Create new map
 	//delete Map;
@@ -362,7 +362,7 @@ void _ClientState::HandleMapInfo(_Buffer &Buffer) {
 
 // Handle a complete list of objects from a map
 void _ClientState::HandleObjectList(_Buffer &Buffer) {
-
+/*
 	// Check map id
 	uint8_t MapID = Buffer.Read<uint8_t>();
 	if(MapID != Map->ID)
@@ -378,8 +378,8 @@ void _ClientState::HandleObjectList(_Buffer &Buffer) {
 	// Read object list
 	uint16_t ObjectCount = Buffer.Read<uint16_t>();
 	for(uint16_t i = 0; i < ObjectCount; i++) {
-		std::string Identifier = Buffer.ReadString();
-		uint16_t NetworkID = Buffer.Read<uint16_t>();
+		//std::string Identifier = Buffer.ReadString();
+		//uint16_t NetworkID = Buffer.Read<uint16_t>();
 
 		// Create object
 		//_Object *Object = Stats->CreateObject(Identifier, false);
@@ -398,7 +398,7 @@ void _ClientState::HandleObjectList(_Buffer &Buffer) {
 	if(Player) {
 		//HUD->SetPlayer(Player);
 		//Camera->ForcePosition(glm::vec3(Player->Physics->Position.x, Player->Physics->Position.y, CAMERA_DISTANCE));
-	}
+	}*/
 }
 
 // Handle incremental updates from a map
@@ -431,8 +431,8 @@ void _ClientState::HandleObjectCreate(_Buffer &Buffer) {
 		return;
 
 	// Get object properties
-	std::string Identifier = Buffer.ReadString();
-	uint16_t ID = Buffer.Read<uint16_t>();
+	//std::string Identifier = Buffer.ReadString();
+	//uint16_t ID = Buffer.Read<uint16_t>();
 
 	// Create object
 	/*
@@ -458,7 +458,7 @@ void _ClientState::HandleObjectDelete(_Buffer &Buffer) {
 		return;
 
 	// Delete object by id
-	uint16_t ID = Buffer.Read<uint16_t>();
+	//uint16_t ID = Buffer.Read<uint16_t>();
 	//_Object *Object = Map->GetObjectByID(ID);
 	//if(Object)
 	//	Object->Deleted = true;

@@ -30,7 +30,6 @@
 
 // Forward Declarations
 class _Object;
-class _Player;
 class _Buffer;
 class _Camera;
 
@@ -75,11 +74,11 @@ class _Map {
 		// Object management
 		void AddObject(_Object *Object);
 		void RemoveObject(_Object *RemoveObject);
-		void GetClosePlayers(const _Player *Player, float DistanceSquared, std::list<_Player *> &Players);
-		_Player *FindTradePlayer(const _Player *Player, float MaxDistanceSquared);
+		void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
+		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
 
-		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _OldNetwork::SendType Type=_OldNetwork::RELIABLE);
+		void SendPacketToPlayers(_Buffer *Packet, _Object *ExceptionPlayer=nullptr, _OldNetwork::SendType Type=_OldNetwork::RELIABLE);
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
