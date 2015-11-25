@@ -36,7 +36,6 @@
 #include <ui/image.h>
 #include <ui/style.h>
 #include <objects/object.h>
-#include <states/oldclient.h>
 #include <network/oldnetwork.h>
 #include <instances/map.h>
 #include <objects/item.h>

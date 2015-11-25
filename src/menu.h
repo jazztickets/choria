@@ -105,7 +105,7 @@ class _Menu {
 		void UpdateCharacterButtons();
 		void CreateCharacter();
 		void ConnectToHost();
-		void SendCharacterPlay(int Slot);
+		void PlayCharacter(int Slot);
 		void SendAccountInfo(bool CreateAccount=false);
 		void RequestCharacterList();
 

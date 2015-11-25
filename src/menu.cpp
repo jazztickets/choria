@@ -16,7 +16,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <menu.h>
-#include <states/oldclient.h>
 #include <states/client.h>
 #include <states/editor.h>
 #include <network/clientnetwork.h>
@@ -259,7 +258,7 @@ void _Menu::ConnectToHost() {
 }
 
 // Send character to play
-void _Menu::SendCharacterPlay(int Slot) {
+void _Menu::PlayCharacter(int Slot) {
 	_Buffer Packet;
 	Packet.Write<char>(Packet::CHARACTERS_PLAY);
 	Packet.Write<char>(Slot);
@@ -440,7 +439,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 							SelectedCharacter = 0;
 
 						if(CharacterSlots[SelectedCharacter].Used) {
-							SendCharacterPlay(SelectedCharacter);
+							PlayCharacter(SelectedCharacter);
 						}
 					}
 				}
@@ -536,7 +535,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					else if(Clicked->Identifier == "button_characters_play") {
 						int SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
-							SendCharacterPlay(SelectedSlot);
+							PlayCharacter(SelectedSlot);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_back") {
@@ -564,7 +563,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						UpdateCharacterButtons();
 
 						if(DoubleClick && SelectedSlot != -1) {
-							Framework.ChangeState(&OldClientState);
+							PlayCharacter(SelectedSlot);
 						}
 					}
 				}
