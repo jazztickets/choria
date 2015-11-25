@@ -68,10 +68,10 @@ class _Object {
 		};
 
 		enum MoveDirectionType {
-			MOVE_LEFT,
-			MOVE_UP,
-			MOVE_RIGHT,
-			MOVE_DOWN,
+			MOVE_UP    = (1 << 0),
+			MOVE_DOWN  = (1 << 1),
+			MOVE_LEFT  = (1 << 2),
+			MOVE_RIGHT = (1 << 3),
 		};
 
 		enum InventoryType {
@@ -159,7 +159,7 @@ class _Object {
 
 		// Movement
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
-		bool MovePlayer(int Direction);
+		bool MovePlayer();
 		int GetCurrentZone();
 		bool IsInvisible() const { return InvisPower > 0; }
 
@@ -238,7 +238,7 @@ class _Object {
 
 		// States
 		int State;
-		double MoveTime, AutoSaveTime;
+		double MoveTime;
 
 		// Texture
 		int PortraitID;
@@ -278,12 +278,12 @@ class _Object {
 		int PotionsLeft[2], MaxPotions[2];
 
 		// Trading
-		double TradeRequestTime;
 		int TradeGold;
 		bool TradeAccepted;
 		_Object *TradePlayer;
 
 
+		int InputState;
 		_Database *Database;
 		_Stats *Stats;
 

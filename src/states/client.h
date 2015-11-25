@@ -55,6 +55,8 @@ class _ClientState : public _State {
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
+		//void SendBusy(bool Value);
+
 		// Parameters
 		bool IsTesting;
 		bool FromEditor;
@@ -78,6 +80,7 @@ class _ClientState : public _State {
 		std::string HostAddress;
 		uint16_t ConnectPort;
 
+
 	protected:
 
 		void StartLocalServer();
@@ -90,13 +93,13 @@ class _ClientState : public _State {
 		void HandleObjectList(_Buffer &Data);
 		void HandleCreateObject(_Buffer &Data);
 		void HandleDeleteObject(_Buffer &Data);
+		void HandlePlayerPosition(_Buffer &Data);
 		void HandleObjectUpdates(_Buffer &Data);
 		void HandleStartBattle(_Buffer &Data);
 		void HandleBattleTurnResults(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
 		void HandleBattleCommand(_Buffer &Data);
 		void HandleHUD(_Buffer &Data);
-		void HandlePlayerPosition(_Buffer &Data);
 		void HandleEventStart(_Buffer &Data);
 		void HandleInventoryUse(_Buffer &Data);
 		void HandleChatMessage(_Buffer &Data);
@@ -107,13 +110,13 @@ class _ClientState : public _State {
 		void HandleTradeAccept(_Buffer &Data);
 		void HandleTradeExchange(_Buffer &Data);
 
+		void SendMoveCommand(int Direction);
+
 	/*
-		void SendBusy(bool Value);
 
 	private:
 
 
-		void SendMoveCommand(int Direction);
 		void SendAttackPlayer();
 		void SynchronizeTime();
 

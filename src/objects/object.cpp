@@ -70,7 +70,6 @@ _Object::_Object()
 	CharacterID(0),
 	State(STATE_WALK),
 	MoveTime(0),
-	AutoSaveTime(0),
 	PortraitID(0),
 	StateImage(nullptr),
 	SpawnMapID(1),
@@ -98,7 +97,6 @@ _Object::_Object()
 	Vendor(nullptr),
 	SkillPoints(0),
 	SkillPointsUsed(0),
-	TradeRequestTime(0),
 	TradeGold(0),
 	TradeAccepted(false),
 	TradePlayer(nullptr),
@@ -120,6 +118,7 @@ _Object::_Object()
 		Inventory[i].Count = 0;
 	}
 
+	InputState = 0;
 	Database = 0;
 }
 
@@ -373,26 +372,17 @@ void _Object::UpdateTarget(const std::vector<_Object *> &Fighters) {
 // Updates the player
 void _Object::Update(double FrameTime) {
 
+	// Update player position
+	MovePlayer();
+
+	// Update timers
 	MoveTime += FrameTime;
-	AutoSaveTime += FrameTime;
 	AttackPlayerTime += FrameTime;
-	TradeRequestTime += FrameTime;
 	PlayTimeAccumulator += FrameTime;
 	TeleportTime += FrameTime;
-	if(PlayTimeAccumulator > 1.0) {
+	if(PlayTimeAccumulator >= 1.0) {
 		PlayTimeAccumulator -= 1.0;
 		PlayTime++;
-	}
-
-	// Run server commands
-	if(Database) {
-		if(AutoSaveTime >= GAME_AUTOSAVEPERIOD)
-			Save();
-
-		if(State == STATE_TELEPORT && TeleportTime > GAME_TELEPORT_TIME) {
-			//OldServerState.PlayerTeleport(this);
-			State = STATE_WALK;
-		}
 	}
 }
 
@@ -427,33 +417,27 @@ void _Object::Render(const _Object *ClientPlayer) {
 }
 
 // Moves the player
-bool _Object::MovePlayer(int Direction) {
+bool _Object::MovePlayer() {
 	if(State != STATE_WALK)
 		return false;
 
 	// Get new position
-	glm::ivec2 NewPosition = Position;
-	switch(Direction) {
-		case MOVE_LEFT:
-			NewPosition.x--;
-		break;
-		case MOVE_UP:
-			NewPosition.y--;
-		break;
-		case MOVE_RIGHT:
-			NewPosition.x++;
-		break;
-		case MOVE_DOWN:
-			NewPosition.y++;
-		break;
-	}
+	glm::ivec2 Direction(0, 0);
+	if(InputState & MOVE_UP)
+		Direction.y += -1;
+	if(InputState & MOVE_DOWN)
+		Direction.y += 1;
+	if(InputState & MOVE_LEFT)
+		Direction.x += -1;
+	if(InputState & MOVE_RIGHT)
+		Direction.x += 1;
+
+	if(MoveTime < PLAYER_MOVETIME || (Direction.x != 0 && Direction.y != 0 && MoveTime < PLAYER_MOVETIME * 1.414))
+		return false;
 
 	// Move player
-	bool Moved = false;
-	if(Map->CanMoveTo(NewPosition)) {
-		Moved = true;
-		MoveTime = 0;
-		Position = NewPosition;
+	if(Map->CanMoveTo(Position + Direction)) {
+		Position += Direction;
 		if(InvisPower > 0)
 			InvisPower--;
 		else
@@ -464,9 +448,13 @@ bool _Object::MovePlayer(int Direction) {
 		UpdateRegen(HealthUpdate, ManaUpdate);
 		UpdateHealth(HealthUpdate);
 		UpdateMana(ManaUpdate);
+
+		MoveTime = 0;
+
+		return true;
 	}
 
-	return Moved;
+	return false;
 }
 
 // Saves the player
@@ -543,8 +531,6 @@ void _Object::Save() {
 	}
 
 	Database->RunQuery("END TRANSACTION");
-
-	AutoSaveTime = 0;
 }
 
 // Get the zone that the player is standing in

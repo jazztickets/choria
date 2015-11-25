@@ -141,7 +141,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	}
 
 	// Pass to menu
-	if(Menu.GetState() != _Menu::STATE_NONE) {
+	if(Menu.State != _Menu::STATE_NONE) {
 		Menu.HandleAction(InputType, Action, Value);
 		return true;
 	}
@@ -239,30 +239,15 @@ void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 	Menu.KeyEvent(KeyEvent);
 
 	if(!Handled) {
-		if(Menu.GetState() != _Menu::STATE_NONE) {
+		if(Menu.State != _Menu::STATE_NONE) {
 			Menu.KeyEvent(KeyEvent);
 			return;
 		}
 	}
 	else {
-		//if(!HUD.IsChatting())
-		//	HUD.ValidateTradeGold();
+		if(!HUD->IsChatting())
+			HUD->ValidateTradeGold();
 	}
-	/*
-	if(KeyEvent.Pressed) {
-		switch(KeyEvent.Scancode) {
-			case SDL_SCANCODE_ESCAPE:
-				if(Server)
-					Server->StopServer();
-				else
-					Network->Disconnect();
-			break;
-			case SDL_SCANCODE_F1:
-			break;
-			case SDL_SCANCODE_GRAVE:
-			break;
-		}
-	}*/
 }
 
 // Mouse handler
@@ -312,6 +297,16 @@ void _ClientState::Update(double FrameTime) {
 	if(!Player || !Player->Map)
 		return;
 
+	Player->InputState = 0;
+	if(Actions.GetState(_Actions::UP))
+		Player->InputState |= _Object::MOVE_UP;
+	if(Actions.GetState(_Actions::DOWN))
+		Player->InputState |= _Object::MOVE_DOWN;
+	if(Actions.GetState(_Actions::LEFT))
+		Player->InputState |= _Object::MOVE_LEFT;
+	if(Actions.GetState(_Actions::RIGHT))
+		Player->InputState |= _Object::MOVE_RIGHT;
+
 	// Update objects
 	Player->Map->Update(FrameTime);
 
@@ -326,18 +321,6 @@ void _ClientState::Update(double FrameTime) {
 	/*
 	if(Menu.GetState() == _Menu::STATE_NONE) {
 		switch(Player->State) {
-			case _Object::STATE_WALK: {
-				if(!HUD->IsChatting()) {
-					if(Actions.GetState(_Actions::UP))
-						SendMoveCommand(_Object::MOVE_UP);
-					else if(Actions.GetState(_Actions::DOWN))
-						SendMoveCommand(_Object::MOVE_DOWN);
-					else if(Actions.GetState(_Actions::LEFT))
-						SendMoveCommand(_Object::MOVE_LEFT);
-					else if(Actions.GetState(_Actions::RIGHT))
-						SendMoveCommand(_Object::MOVE_RIGHT);
-				}
-			} break;
 			case _Object::STATE_BATTLE: {
 
 				// Send key input
@@ -347,20 +330,6 @@ void _ClientState::Update(double FrameTime) {
 							Player->Battle->HandleAction(_Actions::SKILL1+i);
 							break;
 						}
-					}
-				}
-
-				// Singleplayer check
-				if(Player->Battle) {
-
-					// Update the battle
-					Player->Battle->Update(FrameTime);
-
-					// Done with the battle
-					if(Player->Battle->GetState() == _ClientBattle::STATE_DELETE) {
-						delete Player->Battle;
-						Player->Battle = nullptr;
-						Player->State = _Object::STATE_WALK;
 					}
 				}
 			} break;
@@ -438,6 +407,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::WORLD_DELETEOBJECT:
 			HandleDeleteObject(Data);
 		break;
+		case Packet::WORLD_POSITION:
+			HandlePlayerPosition(Data);
+		break;
 			/*
 		case Packet::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
@@ -448,9 +420,7 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::WORLD_HUD:
 			HandleHUD(Data);
 		break;
-		case Packet::WORLD_POSITION:
-			HandlePlayerPosition(Data);
-		break;
+
 		case Packet::BATTLE_TURNRESULTS:
 			HandleBattleTurnResults(Data);
 		break;
@@ -691,15 +661,34 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 	//printf("HandleDeleteObject: NetworkID=%d\n", NetworkID);
 }
 
+// Sends a move command to the server
+void _ClientState::SendMoveCommand(int Direction) {
+
+	/*if(Player->CanMove()) {
+
+		// Move player locally
+		if(Player->MovePlayer(Direction)) {
+			_Buffer Packet;
+			Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
+			Packet.Write<char>(Direction);
+			Network->SendPacket(Packet);
+		}
+	}*/
+}
+
+// Handles player position
+void _ClientState::HandlePlayerPosition(_Buffer &Data) {
+	Player->Position.x = Data.Read<char>();
+	Player->Position.y = Data.Read<char>();
+}
+
 /*
-
-
 // Send the busy signal to server
 void _ClientState::SendBusy(bool Value) {
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_BUSY);
 	Packet.Write<char>(Value);
-	OldClientNetwork->SendPacketToHost(&Packet);
+	Network->SendPacket(Packet);
 }
 
 // Handles position updates from the server
@@ -854,12 +843,6 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->CalculatePlayerStats();
 }
 
-// Handles player position
-void _ClientState::HandlePlayerPosition(_Buffer &Data) {
-	Player->Position.x = Data.Read<char>();
-	Player->Position.y = Data.Read<char>();
-}
-
 // Handles the start of an event
 void _ClientState::HandleEventStart(_Buffer &Data) {
 	int Type = Data.Read<char>();
@@ -1008,28 +991,13 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 	HUD->CloseTrade(false);
 }
 
-// Sends a move command to the server
-void _ClientState::SendMoveCommand(int Direction) {
-
-	if(Player->CanMove()) {
-
-		// Move player locally
-		if(Player->MovePlayer(Direction)) {
-			_Buffer Packet;
-			Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
-			Packet.Write<char>(Direction);
-			OldClientNetwork->SendPacketToHost(&Packet);
-		}
-	}
-}
-
 // Requests an attack to another a player
 void _ClientState::SendAttackPlayer() {
 	if(Player->CanAttackPlayer()) {
 		Player->ResetAttackPlayerTime();
 		_Buffer Packet;
 		Packet.Write<char>(Packet::WORLD_ATTACKPLAYER);
-		OldClientNetwork->SendPacketToHost(&Packet);
+		Network->SendPacket(Packet);
 	}
 }
 */

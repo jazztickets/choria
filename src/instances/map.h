@@ -135,6 +135,7 @@ class _Map {
 		// Objects
 		std::unordered_map<NetworkIDType, bool> ObjectIDs;
 		NetworkIDType NextObjectID;
+		NetworkIDType ObjectUpdateCount;
 
 		void Init();
 

@@ -121,6 +121,34 @@ void _Map::AllocateMap() {
 // Updates the map and sends object updates
 void _Map::Update(double FrameTime) {
 
+	ObjectUpdateCount = 0;
+
+	// Update objects
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+		_Object *Object = *Iterator;
+
+		// Update the object
+		Object->Update(FrameTime);
+
+		// Delete old objects
+		if(Object->Deleted) {
+			if(Object->Peer) {
+				RemovePeer(Object->Peer);
+			}
+			RemoveObject(Object);
+			ObjectIDs[Object->ID] = false;
+
+			delete Object;
+			Iterator = Objects.erase(Iterator);
+		}
+		else {
+			//if(Object->SendUpdate)
+			ObjectUpdateCount++;
+
+			++Iterator;
+		}
+	}
+
 /*	ObjectUpdateTime += FrameTime;
 	if(ObjectUpdateTime > NETWORK_UPDATEPERIOD) {
 		ObjectUpdateTime = 0;

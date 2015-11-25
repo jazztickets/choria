@@ -657,7 +657,6 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) 
 
 	// Find spawn point in map
 	Map->FindEvent(EventType, EventData, Player->Position);
-	SendPlayerPosition(Player);
 
 	// Set state
 	Player->State = _Object::STATE_WALK;
@@ -681,6 +680,9 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) 
 		// Send object list to the player
 		Map->SendObjectList(Peer);
 	}
+	else
+		SendPlayerPosition(Player);
+
 }
 
 // Gets a map from the manager. Loads the level if it doesn't exist

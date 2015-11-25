@@ -89,10 +89,10 @@ class _Menu {
 		void HandleDisconnect();
 		void HandlePacket(_Buffer &Buffer, char PacketType);
 
-		const StateType &GetState() const { return State; }
-
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
+
+		StateType State;
 
 	private:
 
@@ -115,7 +115,6 @@ class _Menu {
 		void ClearPortraits();
 
 		// States
-		StateType State;
 		std::string DefaultUsername;
 		std::string DefaultPassword;
 
