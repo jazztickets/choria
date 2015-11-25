@@ -68,7 +68,10 @@ void _Skill::DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool Dra
 	DrawPosition.y += 30;
 
 	// Get current skill level
-	int SkillLevel = Player->SkillLevels[ID];
+	int32_t SkillLevel = 0;
+	auto SkillLevelIterator = Player->SkillLevels.find(ID);
+	if(SkillLevelIterator != Player->SkillLevels.end())
+		SkillLevel = SkillLevelIterator->second;
 
 	// Get current level description
 	Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);

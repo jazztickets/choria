@@ -94,7 +94,7 @@ int _ClientBattle::RemoveFighter(_Object *Fighter) {
 void _ClientBattle::HandleCommand(int Slot, uint32_t SkillID) {
 	int Index = GetFighterFromSlot(Slot);
 	if(Index != -1) {
-		Fighters[Index]->SkillUsing = &Stats->Skills[SkillID];
+		Fighters[Index]->SkillUsing = Stats->Skills[SkillID];
 	}
 }
 

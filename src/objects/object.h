@@ -23,6 +23,7 @@
 #include <glm/vec2.hpp>
 #include <vector>
 #include <network/network.h>
+#include <unordered_map>
 
 //TODO delete
 class _Database;
@@ -84,10 +85,6 @@ class _Object {
 			INVENTORY_BACKPACK,
 			INVENTORY_TRADE = INVENTORY_BACKPACK + 24,
 			INVENTORY_COUNT = INVENTORY_TRADE + PLAYER_TRADEITEMS,
-		};
-
-		enum SkillType {
-			SKILL_COUNT = 25
 		};
 
 		//_Object() { }
@@ -276,7 +273,7 @@ class _Object {
 		const _Trader *Trader;
 
 		// Skills
-		int SkillLevels[SKILL_COUNT];
+		std::unordered_map<uint32_t, int32_t> SkillLevels;
 		int SkillPoints, SkillPointsUsed;
 		int PotionsLeft[2], MaxPotions[2];
 

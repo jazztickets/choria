@@ -42,6 +42,9 @@ _Stats::_Stats() {
 
 // Destructor
 _Stats::~_Stats() {
+	for(const auto &Skill : Skills)
+		delete Skill.second;
+
 	delete Database;
 	Database = nullptr;
 	Events.clear();
@@ -49,8 +52,6 @@ _Stats::~_Stats() {
 
 // Load portrait data
 void _Stats::LoadPortraits() {
-
-	Portraits.clear();
 
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Portraits");
@@ -68,8 +69,6 @@ void _Stats::LoadPortraits() {
 // Load map data
 void _Stats::LoadMaps() {
 
-	Maps.clear();
-
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Maps");
 
@@ -84,9 +83,6 @@ void _Stats::LoadMaps() {
 
 // Load event data
 void _Stats::LoadEvents() {
-
-	// Clear events
-	Events.clear();
 
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Events");
@@ -103,9 +99,6 @@ void _Stats::LoadEvents() {
 
 // Loads level data
 void _Stats::LoadLevels() {
-
-	// Clear events
-	Levels.clear();
 
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Levels");
@@ -127,35 +120,33 @@ void _Stats::LoadLevels() {
 // Loads skills into a map
 void _Stats::LoadSkills() {
 
-	Skills.clear();
-
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Skills");
 
 	// Get events
-	_Skill Skill;
 	while(Database->FetchRow()) {
-		Skill.ID = Database->GetInt(0);
-		Skill.Name = Database->GetString(1);
-		Skill.Info = Database->GetString(2);
-		Skill.Image = Assets.Textures[std::string("skills/") + Database->GetString(3)];
-		Skill.Type = Database->GetInt(4);
-		Skill.SkillCost = Database->GetInt(5);
-		Skill.ManaCostBase = Database->GetFloat(6);
-		Skill.ManaCost = Database->GetFloat(7);
-		Skill.PowerBase = Database->GetFloat(8);
-		Skill.PowerRangeBase = Database->GetFloat(9);
-		Skill.Power = Database->GetFloat(10);
-		Skill.PowerRange = Database->GetFloat(11);
-		Skills[Skill.ID] = Skill;
+		_Skill *Skill = new _Skill;
+		Skill->ID = Database->GetInt(0);
+		Skill->Name = Database->GetString(1);
+		Skill->Info = Database->GetString(2);
+		Skill->Image = Assets.Textures[std::string("skills/") + Database->GetString(3)];
+		Skill->Type = Database->GetInt(4);
+		Skill->SkillCost = Database->GetInt(5);
+		Skill->ManaCostBase = Database->GetFloat(6);
+		Skill->ManaCost = Database->GetFloat(7);
+		Skill->PowerBase = Database->GetFloat(8);
+		Skill->PowerRangeBase = Database->GetFloat(9);
+		Skill->Power = Database->GetFloat(10);
+		Skill->PowerRange = Database->GetFloat(11);
+		Skills[Skill->ID] = Skill;
 	}
 	Database->CloseQuery();
+
+	Skills[0] = nullptr;
 }
 
 // Load items
 void _Stats::LoadItems() {
-
-	Items.clear();
 
 	// Run query
 	Database->RunDataQuery("SELECT * FROM Items");
@@ -282,7 +273,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 		Monster->AI = Database->GetInt(12);
 
-		Monster->ActionBar[0] = &Skills[1];
+		Monster->ActionBar[0] = Skills[1];
 	}
 
 	// Free memory

@@ -321,7 +321,7 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.Item = Player->Trader->RewardItem;
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Skill = &ClientState.Stats->Skills[Tooltip.Slot];
+				Tooltip.Skill = ClientState.Stats->Skills[Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
 				Tooltip.Skill = Player->GetActionBar(Tooltip.Slot);
@@ -582,13 +582,13 @@ void _HUD::InitSkills() {
 
 	// Iterate over skills
 	for(const auto &SkillIterator : ClientState.Stats->Skills) {
-		const _Skill &Skill = SkillIterator.second;
+		const _Skill *Skill = SkillIterator.second;
 
 		// Create style
 		_Style *Style = new _Style();
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->Texture = Skill.Image;
+		Style->Texture = Skill->Image;
 		Style->UserCreated = true;
 
 		// Add skill icon
@@ -596,10 +596,10 @@ void _HUD::InitSkills() {
 		Button->Identifier = "button_skills_skill";
 		Button->Parent = SkillsElement;
 		Button->Offset = Offset;
-		Button->Size = Skill.Image->Size;
+		Button->Size = Skill->Image->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
-		Button->UserData = (void *)(intptr_t)Skill.ID;
+		Button->UserData = (void *)(intptr_t)Skill->ID;
 		Button->UserCreated = true;
 		SkillsElement->Children.push_back(Button);
 
@@ -611,7 +611,7 @@ void _HUD::InitSkills() {
 		LevelLabel->Alignment = CENTER_BASELINE;
 		LevelLabel->Color = COLOR_WHITE;
 		LevelLabel->Font = Assets.Fonts["hud_small"];
-		LevelLabel->UserData = (void *)(intptr_t)Skill.ID;
+		LevelLabel->UserData = (void *)(intptr_t)Skill->ID;
 		LevelLabel->UserCreated = true;
 		SkillsElement->Children.push_back(LevelLabel);
 
@@ -662,9 +662,9 @@ void _HUD::InitSkills() {
 		MinusButton->Children.push_back(MinusLabel);
 
 		// Update position
-		Offset.x += Skill.Image->Size.x + Spacing.x;
-		if(Offset.x > SkillsElement->Size.x - Skill.Image->Size.x) {
-			Offset.y += Skill.Image->Size.y + Spacing.y;
+		Offset.x += Skill->Image->Size.x + Spacing.x;
+		if(Offset.x > SkillsElement->Size.x - Skill->Image->Size.x) {
+			Offset.y += Skill->Image->Size.y + Spacing.y;
 			Offset.x = Start.x;
 		}
 
@@ -1202,7 +1202,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 		if(Player->SkillLevels[SkillID] == 1) {
 
 			// Equip new skills
-			const _Skill *Skill = &ClientState.Stats->Skills[SkillID];
+			const _Skill *Skill = ClientState.Stats->Skills[SkillID];
 			if(Skill) {
 				int Direction, Slot;
 				if(Skill->Type == _Skill::TYPE_PASSIVE) {
@@ -1293,7 +1293,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (intptr_t)Button->Parent->UserData;
-			const _Skill *Skill = &ClientState.Stats->Skills[SkillID];
+			const _Skill *Skill = ClientState.Stats->Skills[SkillID];
 			if(Skill->SkillCost > SkillPointsRemaining || Player->SkillLevels[SkillID] >= 255)
 				Button->SetVisible(false);
 			else

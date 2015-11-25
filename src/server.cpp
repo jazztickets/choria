@@ -444,7 +444,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	Database->RunQuery(Query.str());
 	Query.str("");
 
-	Query << "INSERT INTO SkillLevel VALUES(" << CharacterID << ", 0, 1)";
+	Query << "INSERT INTO SkillLevel VALUES(" << CharacterID << ", 1, 1)";
 	Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -557,10 +557,7 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 	Player->Gold = Database->GetInt(7);
 	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
 		uint32_t SkillID = Database->GetInt(i + 8);
-		if(SkillID > 0)
-			Player->ActionBar[i] = &Stats->Skills[SkillID];
-		else
-			Player->ActionBar[i] = nullptr;
+		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
 	Player->PlayTime = Database->GetInt(16);
 	Player->Deaths = Database->GetInt(17);
@@ -623,10 +620,10 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 
 	// Write skills
 	Packet.Write<char>(SkillCount);
-	for(int i = 0; i < _Object::SKILL_COUNT; i++) {
-		if(Player->SkillLevels[i] > 0) {
-			Packet.Write<char>(i);
-			Packet.Write<int32_t>(Player->SkillLevels[i]);
+	for(const auto &SkillLevel : Player->SkillLevels) {
+		if(SkillLevel.second > 0) {
+			Packet.Write<uint32_t>(SkillLevel.first);
+			Packet.Write<int32_t>(SkillLevel.second);
 		}
 	}
 

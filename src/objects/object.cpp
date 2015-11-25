@@ -120,10 +120,6 @@ _Object::_Object()
 		Inventory[i].Count = 0;
 	}
 
-	for(int i = 0; i < _Object::SKILL_COUNT; i++) {
-		SkillLevels[i] = 0;
-	}
-
 	Database = 0;
 }
 
@@ -539,10 +535,9 @@ void _Object::Save() {
 	sprintf(Query, "DELETE FROM SkillLevel WHERE CharactersID = %d", CharacterID);
 	Database->RunQuery(Query);
 
-	for(int i = 0; i < _Object::SKILL_COUNT; i++) {
-		int Points = SkillLevels[i];
-		if(Points > 0) {
-			sprintf(Query, "INSERT INTO SkillLevel VALUES(%d, %d, %d)", CharacterID, i, Points);
+	for(auto &SkillLevel : SkillLevels) {
+		if(SkillLevel.second > 0) {
+			sprintf(Query, "INSERT INTO SkillLevel VALUES(%d, %d, %d)", CharacterID, SkillLevel.first, SkillLevel.second);
 			Database->RunQuery(Query);
 		}
 	}
@@ -992,7 +987,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 	if(SkillID == 0)
 		return;
 
-	const _Skill *Skill = &Stats->Skills[SkillID];
+	const _Skill *Skill = Stats->Skills[SkillID];
 	if(Skill == nullptr)
 		return;
 
@@ -1031,8 +1026,10 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 void _Object::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	for(uint32_t i = 0; i < Stats->Skills.size(); i++) {
-		SkillPointsUsed += Stats->Skills[i].SkillCost * SkillLevels[i];
+	for(const auto &SkillLevel : SkillLevels) {
+		const _Skill *Skill = Stats->Skills[SkillLevel.first];
+		if(Skill)
+			SkillPointsUsed += Skill->SkillCost * SkillLevel.second;
 	}
 }
 

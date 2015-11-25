@@ -408,18 +408,15 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	// Read skills
 	int SkillCount = Data.Read<char>();
 	for(int i = 0; i < SkillCount; i++) {
-		int Slot = Data.Read<char>();
+		uint32_t SkillID = Data.Read<uint32_t>();
 		int32_t Points = Data.Read<int32_t>();
-		Player->SetSkillLevel(Slot, Points);
+		Player->SkillLevels[SkillID] = Points;
 	}
 
 	// Read skill bar
 	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
-		if(SkillID == 0)
-			Player->ActionBar[i] = nullptr;
-		else
-			Player->ActionBar[i] = &Stats->Skills[SkillID];
+		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
 
 	Player->CalculateSkillPoints();

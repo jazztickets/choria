@@ -21,6 +21,7 @@
 #include <objects/item.h>
 #include <objects/skill.h>
 #include <map>
+#include <unordered_map>
 #include <list>
 #include <vector>
 
@@ -120,7 +121,7 @@ class _Stats {
 		int GetMaxLevel() const { return Levels.size(); }
 
 		// Skills
-		std::map<uint32_t, _Skill> Skills;
+		std::unordered_map<uint32_t, const _Skill *> Skills;
 
 	private:
 
