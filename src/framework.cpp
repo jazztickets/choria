@@ -74,7 +74,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			NetworkPort = atoi(Arguments[++i]);
 		}
 		else if(Token == "-test") {
-			ClientState.SetIsTesting(true);
+			ClientState.IsTesting = true;
 		}
 	}
 
@@ -92,8 +92,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	else {
 
 		// Open log
-		Log.Open((Config.ConfigPath + "client.log").c_str());
-		ClientState.SetLog(&Log);
+		ClientState.Log.Open((Config.ConfigPath + "client.log").c_str());
 
 		// Initialize SDL
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)

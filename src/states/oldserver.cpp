@@ -18,7 +18,6 @@
 #include <states/oldserver.h>
 #include <objects/object.h>
 #include <database.h>
-#include <objectmanager.h>
 #include <stats.h>
 #include <globals.h>
 #include <config.h>

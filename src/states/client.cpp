@@ -76,8 +76,6 @@ void _ClientState::Init() {
 
 	Actions.ResetState();
 
-	Menu.SetNetwork(Network);
-	Menu.SetStats(Stats);
 	Menu.InitTitle();
 }
 
@@ -95,7 +93,7 @@ void _ClientState::Close() {
 // Connect to a server
 void _ClientState::Connect(bool IsLocal) {
 
-	// Connect to the fake singleplayer network
+	// Start a local server
 	if(IsLocal) {
 		StartLocalServer();
 		Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT);
@@ -327,7 +325,7 @@ void _ClientState::HandleConnect() {
 
 	//HUD = nullptr;
 
-	*Log << " -- CONNECT" << std::endl;
+	//Log << " -- CONNECT" << std::endl;
 
 	//if(Level == "")
 	//	Level = "test.map";

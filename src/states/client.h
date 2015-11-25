@@ -18,6 +18,7 @@
 #pragma once
 
 #include <state.h>
+#include <log.h>
 
 // Forward Declarations
 class _Font;
@@ -30,7 +31,6 @@ class _ClientNetwork;
 class _Server;
 class _Buffer;
 class _Stats;
-class _LogFile;
 
 // Play state
 class _ClientState : public _State {
@@ -55,32 +55,6 @@ class _ClientState : public _State {
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
-		// State parameters
-		void SetLevel(const std::string &Level) { this->Level = Level; }
-		void SetIsTesting(bool Value) { IsTesting = Value; }
-		void SetFromEditor(bool Value) { FromEditor = Value; }
-		void SetStats(_Stats *Stats)  { this->Stats = Stats; }
-		bool GetFromEditor() const { return FromEditor; }
-
-		void SetSaveFilename(const std::string &SaveFilename) { this->SaveFilename = SaveFilename; }
-		void SetHostAddress(const std::string &HostAddress) { this->HostAddress = HostAddress; }
-		void SetConnectPort(uint16_t ConnectPort) { this->ConnectPort = ConnectPort; }
-		void SetLog(_LogFile *Log) { this->Log = Log; }
-
-	protected:
-
-		void StartLocalServer();
-
-		void HandlePacket(_Buffer &Buffer);
-		void HandleConnect();
-		void HandleMapInfo(_Buffer &Buffer);
-		void HandleObjectList(_Buffer &Buffer);
-		void HandleObjectUpdates(_Buffer &Buffer);
-		void HandleObjectCreate(_Buffer &Buffer);
-		void HandleObjectDelete(_Buffer &Buffer);
-
-		bool IsPaused();
-
 		// Parameters
 		std::string Level;
 		std::string SaveFilename;
@@ -89,7 +63,7 @@ class _ClientState : public _State {
 
 		// Game
 		_Stats *Stats;
-		_LogFile *Log;
+		_LogFile Log;
 
 		// Map
 		_Map *Map;
@@ -110,6 +84,20 @@ class _ClientState : public _State {
 		uint16_t TimeSteps;
 		uint16_t LastServerTimeSteps;
 		uint16_t ConnectPort;
+
+	protected:
+
+		void StartLocalServer();
+
+		void HandlePacket(_Buffer &Buffer);
+		void HandleConnect();
+		void HandleMapInfo(_Buffer &Buffer);
+		void HandleObjectList(_Buffer &Buffer);
+		void HandleObjectUpdates(_Buffer &Buffer);
+		void HandleObjectCreate(_Buffer &Buffer);
+		void HandleObjectDelete(_Buffer &Buffer);
+
+		bool IsPaused();
 
 };
 

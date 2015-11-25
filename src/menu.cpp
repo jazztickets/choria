@@ -52,7 +52,6 @@ const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 
 // Constructor
 _Menu::_Menu() {
-	Network = nullptr;
 	State = STATE_NONE;
 	CurrentLayout = nullptr;
 	CharactersState = CHARACTERS_NONE;
@@ -75,7 +74,7 @@ void _Menu::InitTitle() {
 
 	ChangeLayout("element_menu_title");
 
-	Network->Disconnect();
+	ClientState.Network->Disconnect();
 
 	State = STATE_TITLE;
 }
@@ -131,7 +130,7 @@ void _Menu::InitNewCharacter() {
 
 // Init connect screen
 void _Menu::InitConnect(bool ConnectNow) {
-	Network->Disconnect();
+	ClientState.Network->Disconnect();
 
 	ChangeLayout("element_menu_connect");
 
@@ -229,7 +228,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<char>(Packet::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<int32_t>(PortraitID);
-	Network->SendPacket(Packet);
+	ClientState.Network->SendPacket(Packet);
 }
 
 void _Menu::ConnectToHost() {
@@ -248,8 +247,8 @@ void _Menu::ConnectToHost() {
 	std::stringstream Buffer(Port->Text);
 	uint16_t PortNumber;
 	Buffer >> PortNumber;
-	ClientState.SetHostAddress(Host->Text);
-	ClientState.SetConnectPort(PortNumber);
+	ClientState.HostAddress = Host->Text;
+	ClientState.ConnectPort = PortNumber;
 	ClientState.Connect(false);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
@@ -295,7 +294,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
-	Network->SendPacket(Packet);
+	ClientState.Network->SendPacket(Packet);
 }
 
 // Request character list from server
@@ -304,7 +303,7 @@ void _Menu::RequestCharacterList() {
 	// Request character list
 	_Buffer Packet;
 	Packet.Write<char>(Packet::CHARACTERS_REQUEST);
-	Network->SendPacket(Packet);
+	ClientState.Network->SendPacket(Packet);
 }
 
 // Load portraits
@@ -319,7 +318,7 @@ void _Menu::LoadPortraitButtons() {
 
 	// Iterate over portraits
 	std::list<_Portrait> Portraits;
-	Stats->GetPortraits(Portraits);
+	ClientState.Stats->GetPortraits(Portraits);
 	for(auto &Portrait : Portraits) {
 
 		// Create style
@@ -524,7 +523,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<char>(Packet::CHARACTERS_DELETE);
 							Packet.Write<char>(SelectedSlot);
-							Network->SendPacket(Packet);
+							ClientState.Network->SendPacket(Packet);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
@@ -613,7 +612,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitPlay();
 				}
 				else if(Clicked->Identifier == "button_ingame_disconnect") {
-					Network->Disconnect();
+					ClientState.Network->Disconnect();
 				}
 			} break;
 			default:
@@ -766,10 +765,10 @@ void _Menu::HandlePacket(_Buffer &Buffer) {
 				int32_t Experience = Buffer.Read<int32_t>();
 
 				std::stringstream Buffer;
-				Buffer << "Level " << Stats->FindLevel(Experience)->Level;
+				Buffer << "Level " << ClientState.Stats->FindLevel(Experience)->Level;
 				CharacterSlots[i].Level->Text = Buffer.str();
 				CharacterSlots[i].Used = true;
-				const _Texture *PortraitImage = Stats->Portraits[PortraitIndex].Image;
+				const _Texture *PortraitImage = ClientState.Stats->Portraits[PortraitIndex].Image;
 				CharacterSlots[i].Image->Texture = PortraitImage;
 			}
 

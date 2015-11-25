@@ -93,8 +93,6 @@ class _Menu {
 
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
-		void SetNetwork(_ClientNetwork *Network) { this->Network = Network; }
-		void SetStats(_Stats *Stats) { this->Stats = Stats; }
 
 	private:
 
@@ -114,12 +112,6 @@ class _Menu {
 		void FocusNextElement(bool ShiftDown=false);
 
 		void ClearPortraits();
-
-		// Network
-		_ClientNetwork *Network;
-
-		// Data
-		_Stats *Stats;
 
 		// States
 		StateType State;
