@@ -368,7 +368,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	else {
 
 		// Create object
-		_Object *Object = new _Object(_Object::PLAYER);
+		_Object *Object = new _Object();
 		Object->AccountID = AccountID;
 		Object->Peer = Peer;
 		Object->Stats = Stats;
@@ -521,24 +521,6 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 	SpawnPlayer(Peer, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 }
 
-// Gets a map from the manager. Loads the level if it doesn't exist
-_Map *_Server::GetMap(int MapID) {
-
-	// Loop through loaded maps
-	for(auto &Map : Maps) {
-
-		// Check id
-		if(Map->ID == MapID)
-			return Map;
-	}
-
-	// Not found, so create it
-	_Map *NewMap = new _Map(MapID, Stats);
-	Maps.push_back(NewMap);
-
-	return NewMap;
-}
-
 // Spawns a player at a particular spawn point
 void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) {
 	if(!ValidatePeer(Peer))
@@ -583,6 +565,25 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) 
 		Map->SendObjectList(Peer);
 	}
 	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->NetworkID);
+}
+
+// Gets a map from the manager. Loads the level if it doesn't exist
+_Map *_Server::GetMap(int MapID) {
+
+	// Loop through loaded maps
+	for(auto &Map : Maps) {
+
+		// Check id
+		if(Map->ID == MapID)
+			return Map;
+	}
+
+	// Not found, so create it
+	_Map *NewMap = new _Map(MapID, Stats);
+	NewMap->ServerNetwork = Network.get();
+	Maps.push_back(NewMap);
+
+	return NewMap;
 }
 
 // Validate a peer's attributes

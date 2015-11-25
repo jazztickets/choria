@@ -63,6 +63,7 @@ class _Map {
 			EVENT_COUNT
 		};
 
+		_Map();
 		_Map(const std::string &Filename, const glm::ivec2 &Size);
 		_Map(const std::string &Filename);
 		_Map(int ID, _Stats *Stats);
@@ -131,8 +132,8 @@ class _Map {
 		std::list<const _Peer *> Peers;
 
 		// Objects
-		std::unordered_map<uint16_t, bool> ObjectIDs;
-		uint16_t NextObjectID;
+		std::unordered_map<NetworkIDType, bool> ObjectIDs;
+		NetworkIDType NextObjectID;
 
 		void Init();
 

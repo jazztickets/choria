@@ -36,11 +36,11 @@
 #include <sstream>
 
 // Constructor
-_Object::_Object(int Type)
+_Object::_Object()
 :	Map(nullptr),
 	OldPeer(nullptr),
 	Peer(nullptr),
-	Type(Type),
+	Type(0),
 	Deleted(false),
 	Position(-1, -1),
 	NetworkID(-1),

@@ -63,9 +63,6 @@ class _ClientState : public _State {
 		_Stats *Stats;
 		_LogFile Log;
 
-		// Map
-		_Map *Map;
-
 		// Entities
 		_Object *Player;
 

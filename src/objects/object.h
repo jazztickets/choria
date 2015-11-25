@@ -91,7 +91,7 @@ class _Object {
 		};
 
 		//_Object() { }
-		_Object(int Type);
+		_Object();
 		virtual ~_Object();
 
 		void RenderWorld(const _Object *ClientPlayer=nullptr);

@@ -57,12 +57,11 @@ _ClientState::_ClientState() :
 
 // Load level and set up objects
 void _ClientState::Init() {
-	Map = nullptr;
 	Server = nullptr;
 
 	HUD = new _HUD();
 	Stats = new _Stats();
-	Player = new _Object(0);
+	Player = new _Object();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
@@ -83,7 +82,8 @@ void _ClientState::Close() {
 
 	delete Camera;
 	delete HUD;
-	delete Map;
+	if(Player->Map)
+		delete Player->Map;
 	delete Network;
 	delete Server;
 }
@@ -198,26 +198,21 @@ void _ClientState::Update(double FrameTime) {
 		}
 	}
 
+	if(!Player || !Player->Map)
+		return;
+
 	// Update menu
 	Menu.Update(FrameTime);
 
-	// Process input
-	if(Player && Map) {
-	}
-
 	// Update objects
-	if(Map)
-		Map->Update(FrameTime);
+	Player->Map->Update(FrameTime);
 
 	// Update camera
-	if(Camera && Player) {
-		Camera->Set2DPosition(glm::vec2(Player->Position));
-		Camera->Update(FrameTime);
-	}
+	Camera->Set2DPosition(glm::vec2(Player->Position));
+	Camera->Update(FrameTime);
 
 	// Update the HUD
-	if(HUD)
-		HUD->Update(FrameTime);
+	HUD->Update(FrameTime);
 
 	// Send network updates to server
 	if(Player && Network->IsConnected()) {
@@ -234,8 +229,49 @@ void _ClientState::Update(double FrameTime) {
 void _ClientState::Render(double BlendFactor) {
 	Menu.Render();
 
-	if(!Map || !Player)
+	if(!Player || !Player->Map)
 		return;
+
+	Graphics.Setup3D();
+	glm::vec3 LightPosition(glm::vec3(Player->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
+	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
+
+	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
+	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
+	Assets.Programs["pos_uv"]->AmbientLight = Player->Map->AmbientLight;
+	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
+	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
+	Assets.Programs["pos_uv_norm"]->AmbientLight = Player->Map->AmbientLight;
+
+	// Setup the viewing matrix
+	Graphics.Setup3D();
+	Camera->Set3DProjection(BlendFactor);
+	Graphics.SetProgram(Assets.Programs["pos"]);
+	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["text"]);
+	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+
+	// Draw map and objects
+	Player->Map->Render(Camera, Stats);
+	//ObjectManager->Render(Player);
+
+	Graphics.Setup2D();
+	Graphics.SetProgram(Assets.Programs["text"]);
+	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
+
+	// Draw HUD
+	HUD->Render();
+
+	// Draw states
+	if(Player->Battle)
+		Player->Battle->Render(BlendFactor);
+
+	// Draw menu
+	Menu.Render();
 }
 
 // Handle packet from server
@@ -395,6 +431,8 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 	if(!Player)
 		return;
 
+	Menu.InitPlay();
+
 	// Load map
 	int MapID = Data.Read<int32_t>();
 
@@ -442,7 +480,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 			Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
 		}
 		else if(Type >= 0) {
-			_Object *Object = new _Object(0);
+			_Object *Object = new _Object();
 			Object->Position = GridPosition;
 			Object->Name = Name;
 			Object->Map = Player->Map;
@@ -662,52 +700,6 @@ void _ClientState::Update(double FrameTime) {
 	ObjectManager->Update(FrameTime);
 
 	ClientTime += FrameTime;
-}
-
-void _ClientState::Render(double BlendFactor) {
-	if(!Player || !Player->Map || !Camera)
-		return;
-
-	Graphics.Setup3D();
-	glm::vec3 LightPosition(glm::vec3(Player->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
-	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
-
-	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
-	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv"]->AmbientLight = Player->Map->AmbientLight;
-	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
-	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv_norm"]->AmbientLight = Player->Map->AmbientLight;
-
-	// Setup the viewing matrix
-	Graphics.Setup3D();
-	Camera->Set3DProjection(BlendFactor);
-	Graphics.SetProgram(Assets.Programs["pos"]);
-	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["text"]);
-	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-
-	// Draw map and objects
-	Player->Map->Render(Camera);
-	ObjectManager->Render(Player);
-
-	Graphics.Setup2D();
-	Graphics.SetProgram(Assets.Programs["text"]);
-	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
-
-	// Draw HUD
-	HUD->Render();
-
-	// Draw states
-	if(Player->Battle)
-		Player->Battle->Render(BlendFactor);
-
-	// Draw menu
-	Menu.Render();
 }
 
 // Send the busy signal to server

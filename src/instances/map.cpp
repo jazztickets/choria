@@ -42,7 +42,12 @@
 #include <stdexcept>
 
 // Constructor for the map editor: new map
-_Map::_Map(const std::string &Filename, const glm::ivec2 &Size) {
+_Map::_Map()
+:	ServerNetwork(nullptr) {
+
+}
+
+_Map::_Map(const std::string &Filename, const glm::ivec2 &Size) : _Map() {
 	Init();
 
 	this->Filename = Filename;
@@ -52,14 +57,14 @@ _Map::_Map(const std::string &Filename, const glm::ivec2 &Size) {
 }
 
 // Constructor for the map editor: load map
-_Map::_Map(const std::string &Filename) {
+_Map::_Map(const std::string &Filename) : _Map() {
 	Init();
 
 	this->Filename = Filename;
 }
 
 // Constructor for maps already created in the database
-_Map::_Map(int ID, _Stats *Stats) {
+_Map::_Map(int ID, _Stats *Stats) : _Map() {
 	Init();
 
 	// Set ID
