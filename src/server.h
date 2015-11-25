@@ -28,6 +28,7 @@ class _ServerNetwork;
 class _Buffer;
 class _Peer;
 class _Map;
+class _Battle;
 class _Stats;
 class _Database;
 class _Object;
@@ -61,6 +62,7 @@ class _Server {
 
 		// Map manager
 		std::list<_Map *> Maps;
+		std::list<_Battle *>Battles;
 		uint8_t NextMapID;
 
 		_Map *GetMap(int MapID);
@@ -88,7 +90,7 @@ class _Server {
 		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
 		void HandleEventEnd(_Buffer &Data, _Peer *Peer);
 		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
-		void HandleSkillBar(_Buffer &Data, _Peer *Peer);
+		void HandleActionBar(_Buffer &Data, _Peer *Peer);
 		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerBusy(_Buffer &Data, _Peer *Peer);
 		void HandleAttackPlayer(_Buffer &Data, _Peer *Peer);

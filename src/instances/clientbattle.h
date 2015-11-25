@@ -45,7 +45,7 @@ class _ClientBattle : public _Battle {
 		enum ElementType {
 			ELEMENT_PASS,
 			ELEMENT_SKILL1,
-			ELEMENT_SKILL8=ELEMENT_SKILL1+BATTLE_MAXSKILLS-1,
+			ELEMENT_SKILL8=ELEMENT_SKILL1+ACTIONBAR_SIZE-1,
 		};
 
 		_ClientBattle();
@@ -56,7 +56,7 @@ class _ClientBattle : public _Battle {
 		int RemoveFighter(_Object *Fighter) override;
 
 		// Input
-		void HandleCommand(int Slot, int SkillID);
+		void HandleCommand(int Slot, uint32_t SkillID);
 		void HandleAction(int Action) override;
 
 		// Updates

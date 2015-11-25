@@ -147,7 +147,7 @@ void _Stats::LoadSkills() {
 		Skill.PowerRangeBase = Database->GetFloat(9);
 		Skill.Power = Database->GetFloat(10);
 		Skill.PowerRange = Database->GetFloat(11);
-		Skills.push_back(Skill);
+		Skills[Skill.ID] = Skill;
 	}
 	Database->CloseQuery();
 }
@@ -252,7 +252,7 @@ void _Stats::LoadTraders() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(int MonsterID, _Object *Monster) {
+void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 	// Run query
 	char QueryString[256];
@@ -282,26 +282,11 @@ void _Stats::GetMonsterStats(int MonsterID, _Object *Monster) {
 
 		Monster->AI = Database->GetInt(12);
 
-		Monster->SkillBar[0] = GetSkill(0);
+		Monster->ActionBar[0] = &Skills[1];
 	}
 
 	// Free memory
 	Database->CloseQuery();
-}
-
-// Gets a skill by id
-const _Skill *_Stats::GetSkill(int SkillID) {
-	if(SkillID < 0 || SkillID >= (int)Skills.size())
-		return nullptr;
-
-	return &Skills[SkillID];
-}
-
-// Gets a list of portraits
-void _Stats::GetPortraits(std::list<_Portrait> &List) {
-
-	for(std::map<int, _Portrait>::iterator Iterator = Portraits.begin(); Iterator != Portraits.end(); ++Iterator)
-		List.push_back(Iterator->second);
 }
 
 // Randomly generates a list of monsters from a zone

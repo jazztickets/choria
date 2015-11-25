@@ -68,7 +68,7 @@ void _Skill::DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool Dra
 	DrawPosition.y += 30;
 
 	// Get current skill level
-	int SkillLevel = Player->GetSkillLevel(ID);
+	int SkillLevel = Player->SkillLevels[ID];
 
 	// Get current level description
 	Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
@@ -228,7 +228,7 @@ void _Skill::GetPowerRange(int Level, float &Min, float &Max) const {
 void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) const {
 	_Object *Fighter = Result->Fighter;
 	_Object *TargetFighter = TargetResult->Fighter;
-	int SkillLevel = Fighter->GetSkillLevel(ID);
+	int SkillLevel = Fighter->SkillLevels[ID];
 
 	int Damage = 0, Healing = 0, ManaRestore = 0, ManaCost = 0;
 	switch(Type) {
@@ -286,7 +286,7 @@ void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) co
 
 // Determines if a skill can be used
 bool _Skill::CanUse(_Object *Fighter) const {
-	int Level = Fighter->GetSkillLevel(ID);
+	int Level = Fighter->SkillLevels[ID];
 
 	// Check for bad types
 	if(Type == TYPE_PASSIVE)

@@ -50,7 +50,7 @@ class _Skill {
 		void ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) const;
 		bool CanUse(_Object *Fighter) const;
 
-		int ID;
+		uint32_t ID;
 		int Type;
 		std::string Name;
 		std::string Info;

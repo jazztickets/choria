@@ -156,7 +156,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		}
 		else if(Tooltip.Skill && SkillsElement->Visible) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-				if(Tooltip.Skill && Player->GetSkillLevel(Tooltip.Skill->ID) > 0)
+				if(Tooltip.Skill && Player->SkillLevels[Tooltip.Skill->ID] > 0)
 					Cursor = Tooltip;
 			}
 		}
@@ -246,12 +246,12 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		else if(Cursor.Skill) {
 			if(Tooltip.Window == WINDOW_ACTIONBAR) {
 				if(Cursor.Window == WINDOW_SKILLS)
-					SetSkillBar(Tooltip.Slot, -1, Cursor.Skill);
+					SetActionBar(Tooltip.Slot, -1, Cursor.Skill);
 				else if(Cursor.Window == WINDOW_ACTIONBAR)
-					SetSkillBar(Tooltip.Slot, Cursor.Slot, Cursor.Skill);
+					SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Skill);
 			}
 			else if(Cursor.Window == WINDOW_ACTIONBAR && (Tooltip.Slot == -1 || Tooltip.Window == -1)) {
-				SetSkillBar(Cursor.Slot, -1, nullptr);
+				SetActionBar(Cursor.Slot, -1, nullptr);
 			}
 		}
 
@@ -321,10 +321,10 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.Item = Player->Trader->RewardItem;
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Skill = ClientState.Stats->GetSkill(Tooltip.Slot);
+				Tooltip.Skill = &ClientState.Stats->Skills[Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
-				Tooltip.Skill = Player->GetSkillBar(Tooltip.Slot);
+				Tooltip.Skill = Player->GetActionBar(Tooltip.Slot);
 			} break;
 		}
 	}
@@ -581,7 +581,8 @@ void _HUD::InitSkills() {
 	size_t i = 0;
 
 	// Iterate over skills
-	for(const auto &Skill : ClientState.Stats->Skills) {
+	for(const auto &SkillIterator : ClientState.Stats->Skills) {
+		const _Skill &Skill = SkillIterator.second;
 
 		// Create style
 		_Style *Style = new _Style();
@@ -675,7 +676,7 @@ void _HUD::InitSkills() {
 	RefreshSkillButtons();
 	Cursor.Reset();
 	Tooltip.Reset();
-	SkillBarChanged = false;
+	ActionBarChanged = false;
 }
 
 // Closes the chat window
@@ -717,11 +718,11 @@ void _HUD::CloseSkills() {
 	Tooltip.Reset();
 
 	// Send new skill bar to server
-	if(SkillBarChanged) {
+	if(ActionBarChanged) {
 		_Buffer Packet;
-		Packet.Write<char>(Packet::SKILLS_SKILLBAR);
-		for(int i = 0; i < BATTLE_MAXSKILLS; i++)
-			Packet.Write<char>(Player->GetSkillBarID(i));
+		Packet.Write<char>(Packet::HUD_ACTIONBAR);
+		for(int i = 0; i < ACTIONBAR_SIZE; i++)
+			Packet.Write<char>(Player->GetActionBarID(i));
 
 		OldClientNetwork->SendPacketToHost(&Packet);
 	}
@@ -979,7 +980,7 @@ void _HUD::DrawActionBar() {
 	ActionBarElement->Render();
 
 	// Draw trader items
-	for(size_t i = 0; i < BATTLE_MAXSKILLS; i++) {
+	for(size_t i = 0; i < ACTIONBAR_SIZE; i++) {
 
 		// Get button position
 		std::stringstream Buffer;
@@ -988,7 +989,7 @@ void _HUD::DrawActionBar() {
 		glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
 
 		// Draw skill icon
-		const _Skill *Skill = Player->GetSkillBar(i);
+		const _Skill *Skill = Player->GetActionBar(i);
 		if(Skill) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Skill->Image);
@@ -1182,7 +1183,10 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 }
 
 // Adjust skill level
-void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
+void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
+	if(SkillID == 0)
+		return;
+
 	_Buffer Packet;
 	Packet.Write<char>(Packet::SKILLS_SKILLADJUST);
 
@@ -1195,10 +1199,10 @@ void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
 	else {
 		Packet.WriteBit(1);
 		Player->AdjustSkillLevel(SkillID, 1);
-		if(Player->GetSkillLevel(SkillID) == 1) {
+		if(Player->SkillLevels[SkillID] == 1) {
 
 			// Equip new skills
-			const _Skill *Skill = ClientState.Stats->GetSkill(SkillID);
+			const _Skill *Skill = &ClientState.Stats->Skills[SkillID];
 			if(Skill) {
 				int Direction, Slot;
 				if(Skill->Type == _Skill::TYPE_PASSIVE) {
@@ -1210,8 +1214,8 @@ void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
 					Direction = 1;
 				}
 				for(int i = 0; i < 8; i++) {
-					if(Player->GetSkillBar(Slot) == nullptr) {
-						SetSkillBar(Slot, -1, Skill);
+					if(Player->GetActionBar(Slot) == nullptr) {
+						SetActionBar(Slot, -1, Skill);
 						break;
 					}
 					Slot += Direction;
@@ -1229,8 +1233,8 @@ void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
 }
 
 // Sets the player's skill bar
-void _HUD::SetSkillBar(int Slot, int OldSlot, const _Skill *Skill) {
-	if(Player->GetSkillBar(Slot) == Skill)
+void _HUD::SetActionBar(int Slot, int OldSlot, const _Skill *Skill) {
+	if(Player->GetActionBar(Slot) == Skill)
 		return;
 
 	// Check for swapping
@@ -1238,18 +1242,18 @@ void _HUD::SetSkillBar(int Slot, int OldSlot, const _Skill *Skill) {
 
 		// Remove duplicate skills
 		for(int i = 0; i < 8; i++) {
-			if(Player->GetSkillBar(i) == Skill)
-				Player->SkillBar[i] = nullptr;
+			if(Player->GetActionBar(i) == Skill)
+				Player->ActionBar[i] = nullptr;
 		}
 	}
 	else {
-		const _Skill *OldSkill = Player->GetSkillBar(Slot);
-		Player->SkillBar[OldSlot] = OldSkill;
+		const _Skill *OldSkill = Player->GetActionBar(Slot);
+		Player->ActionBar[OldSlot] = OldSkill;
 	}
 
-	Player->SkillBar[Slot] = Skill;
+	Player->ActionBar[Slot] = Skill;
 	Player->CalculatePlayerStats();
-	SkillBarChanged = true;
+	ActionBarChanged = true;
 }
 
 // Delete memory used by skill page
@@ -1282,15 +1286,15 @@ void _HUD::RefreshSkillButtons() {
 		if(Element->Identifier == "label_skills_level") {
 			int SkillID = (intptr_t)Element->UserData;
 			_Label *Label = (_Label *)Element;
-			Label->Text = std::to_string(Player->GetSkillLevel(SkillID));
+			Label->Text = std::to_string(Player->SkillLevels[SkillID]);
 		}
 		else if(Element->Identifier == "button_skills_plus") {
 			_Button *Button = (_Button *)Element;
 
 			// Get skill
-			int SkillID = (intptr_t)Button->Parent->UserData;
-			const _Skill *Skill = ClientState.Stats->GetSkill(SkillID);
-			if(Skill->SkillCost > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
+			uint32_t SkillID = (intptr_t)Button->Parent->UserData;
+			const _Skill *Skill = &ClientState.Stats->Skills[SkillID];
+			if(Skill->SkillCost > SkillPointsRemaining || Player->SkillLevels[SkillID] >= 255)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);
@@ -1300,7 +1304,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			int SkillID = (intptr_t)Button->Parent->UserData;
-			if(Player->GetSkillLevel(SkillID) == 0)
+			if(Player->SkillLevels[SkillID] == 0)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);

@@ -105,41 +105,30 @@ _Object::_Object()
 
 	Dummy(0) {
 
-	for(int i = 0; i < BATTLE_MAXSKILLS; i++)
-		SkillBar[i] = nullptr;
-
-	//SkillBar[0] = Stats->GetSkill(0);
+	for(int i = 0; i < ACTIONBAR_SIZE; i++)
+		ActionBar[i] = nullptr;
 
 	Offset.x = Offset.y = 0;
-
-
-	WorldImage = Assets.Textures["players/basic.png"];
-
 	Position.x = 0;
 	Position.y = 0;
 
-	// Reset number of potions used in battle
 	for(int i = 0; i < 2; i++)
 		MaxPotions[i] = PotionsLeft[i] = 0;
 
-	// Reset items
 	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
 		Inventory[i].Item = nullptr;
 		Inventory[i].Count = 0;
 	}
 
-	// Reset skills
 	for(int i = 0; i < _Object::SKILL_COUNT; i++) {
 		SkillLevels[i] = 0;
 	}
-	Database = 0;
 
-	GenerateNextBattle();
+	Database = 0;
 }
 
 // Destructor
 _Object::~_Object() {
-
 }
 
 // Renders the fighter during a battle
@@ -357,19 +346,19 @@ int _Object::GenerateDefense() {
 }
 
 // Gets a skill id from the skill bar
-int _Object::GetSkillBarID(int Slot) {
-	if(SkillBar[Slot] == nullptr)
-		return -1;
+uint32_t _Object::GetActionBarID(int Slot) {
+	if(ActionBar[Slot] == nullptr)
+		return 0;
 
-	return SkillBar[Slot]->ID;
+	return ActionBar[Slot]->ID;
 }
 
 // Get a skill from the skill bar
-const _Skill *_Object::GetSkillBar(int Slot) {
-	if(Slot < 0 || Slot >= 8)
+const _Skill *_Object::GetActionBar(int Slot) {
+	if(Slot < 0 || Slot >= ACTIONBAR_SIZE)
 		return nullptr;
 
-	return SkillBar[Slot];
+	return ActionBar[Slot];
 }
 
 // Updates the monster's target based on AI
@@ -498,14 +487,14 @@ void _Object::Save() {
 					", SpawnPoint = %d"
 					", Experience = %d"
 					", Gold = %d"
-					", SkillBar0 = %d"
-					", SkillBar1 = %d"
-					", SkillBar2 = %d"
-					", SkillBar3 = %d"
-					", SkillBar4 = %d"
-					", SkillBar5 = %d"
-					", SkillBar6 = %d"
-					", SkillBar7 = %d"
+					", ActionBar0 = %d"
+					", ActionBar1 = %d"
+					", ActionBar2 = %d"
+					", ActionBar3 = %d"
+					", ActionBar4 = %d"
+					", ActionBar5 = %d"
+					", ActionBar6 = %d"
+					", ActionBar7 = %d"
 					", PlayTime = %d"
 					", Deaths = %d"
 					", MonsterKills = %d"
@@ -516,14 +505,14 @@ void _Object::Save() {
 					SpawnPoint,
 					Experience,
 					Gold,
-					GetSkillBarID(0),
-					GetSkillBarID(1),
-					GetSkillBarID(2),
-					GetSkillBarID(3),
-					GetSkillBarID(4),
-					GetSkillBarID(5),
-					GetSkillBarID(6),
-					GetSkillBarID(7),
+					GetActionBarID(0),
+					GetActionBarID(1),
+					GetActionBarID(2),
+					GetActionBarID(3),
+					GetActionBarID(4),
+					GetActionBarID(5),
+					GetActionBarID(6),
+					GetActionBarID(7),
 					PlayTime,
 					Deaths,
 					MonsterKills,
@@ -551,7 +540,7 @@ void _Object::Save() {
 	Database->RunQuery(Query);
 
 	for(int i = 0; i < _Object::SKILL_COUNT; i++) {
-		int Points = GetSkillLevel(i);
+		int Points = SkillLevels[i];
 		if(Points > 0) {
 			sprintf(Query, "INSERT INTO SkillLevel VALUES(%d, %d, %d)", CharacterID, i, Points);
 			Database->RunQuery(Query);
@@ -999,8 +988,11 @@ bool _Object::CanEquipItem(int Slot, const _Item *Item) {
 }
 
 // Updates a skill level
-void _Object::AdjustSkillLevel(int SkillID, int Adjust) {
-	const _Skill *Skill = Stats->GetSkill(SkillID);
+void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
+	if(SkillID == 0)
+		return;
+
+	const _Skill *Skill = &Stats->Skills[SkillID];
 	if(Skill == nullptr)
 		return;
 
@@ -1026,8 +1018,8 @@ void _Object::AdjustSkillLevel(int SkillID, int Adjust) {
 		// Update skill bar
 		if(SkillLevels[SkillID] == 0) {
 			for(int i = 0; i < 8; i++) {
-				if(SkillBar[i] == Skill) {
-					SkillBar[i] = nullptr;
+				if(ActionBar[i] == Skill) {
+					ActionBar[i] = nullptr;
 					break;
 				}
 			}
@@ -1154,7 +1146,7 @@ void _Object::CalculateSkillStats() {
 
 	// Go through each skill bar
 	for(int i = 0; i < 8; i++) {
-		const _Skill *Skill = SkillBar[i];
+		const _Skill *Skill = ActionBar[i];
 		if(Skill) {
 			int Min, Max, MinRound, MaxRound;
 			float MinFloat, MaxFloat;

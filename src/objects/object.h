@@ -120,18 +120,16 @@ class _Object {
 		int GetGoldGiven() const { return GoldGiven; }
 
 		void UpdateExperience(int Value) { }
-		int GetSkillLevel(int Slot) const { return 1; }
 
 		// Skills
-		const _Skill *GetSkillBar(int Slot);
-		int GetSkillBarID(int Slot);
+		const _Skill *GetActionBar(int Slot);
+		uint32_t GetActionBarID(int Slot);
 
 		// -- END FROM FIGHTER --
 
 		// -- FROM PLAYER --
 		//void UpdateExperience(int Value) { Experience += Value; }
 		//int GetGoldGiven() const { return (int)(Gold * 0.1f); }
-		//int GetSkillLevel(int SkillID) const { return SkillLevels[SkillID]; }
 
 		// Account
 		void Save();
@@ -171,7 +169,7 @@ class _Object {
 		// Skills
 		void SetSkillLevel(int SkillID, int Points) { SkillLevels[SkillID] = Points; }
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
-		void AdjustSkillLevel(int SkillID, int Adjust);
+		void AdjustSkillLevel(uint32_t SkillID, int Adjust);
 		void CalculateSkillPoints();
 
 		// Battles
@@ -211,7 +209,7 @@ class _Object {
 		// -- FIGHTER  --
 
 		// Action bar
-		const _Skill *SkillBar[BATTLE_MAXSKILLS];
+		const _Skill *ActionBar[ACTIONBAR_SIZE];
 
 		// Stats
 		std::string Name;

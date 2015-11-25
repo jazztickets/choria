@@ -324,9 +324,8 @@ void _Menu::LoadPortraitButtons() {
 	size_t i = 0;
 
 	// Iterate over portraits
-	std::list<_Portrait> Portraits;
-	ClientState.Stats->GetPortraits(Portraits);
-	for(auto &Portrait : Portraits) {
+	for(auto &PortraitIterator : ClientState.Stats->Portraits) {
+		_Portrait &Portrait = PortraitIterator.second;
 
 		// Create style
 		_Style *Style = new _Style();

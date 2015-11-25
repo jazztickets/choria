@@ -408,15 +408,18 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	// Read skills
 	int SkillCount = Data.Read<char>();
 	for(int i = 0; i < SkillCount; i++) {
-		int Points = Data.Read<int32_t>();
 		int Slot = Data.Read<char>();
+		int32_t Points = Data.Read<int32_t>();
 		Player->SetSkillLevel(Slot, Points);
 	}
 
 	// Read skill bar
-	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-		int SkillID = Data.Read<char>();
-		Player->SkillBar[i] = Stats->GetSkill(SkillID);
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		uint32_t SkillID = Data.Read<uint32_t>();
+		if(SkillID == 0)
+			Player->ActionBar[i] = nullptr;
+		else
+			Player->ActionBar[i] = &Stats->Skills[SkillID];
 	}
 
 	Player->CalculateSkillPoints();
@@ -667,7 +670,7 @@ void _ClientState::Update(double FrameTime) {
 
 				// Send key input
 				if(!HUD->IsChatting()) {
-					for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
+					for(int i = 0; i < ACTIONBAR_SIZE; i++) {
 						if(Actions.GetState(_Actions::SKILL1+i)) {
 							Player->Battle->HandleAction(_Actions::SKILL1+i);
 							break;

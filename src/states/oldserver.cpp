@@ -16,29 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/oldserver.h>
-#include <objects/object.h>
-#include <database.h>
-#include <stats.h>
-#include <globals.h>
-#include <config.h>
-#include <framework.h>
-#include <constants.h>
-#include <packet.h>
-#include <ui/textbox.h>
-#include <network/oldnetwork.h>
-#include <buffer.h>
-#include <instances/map.h>
-#include <instances/serverbattle.h>
-#include <iostream>
-#include <string>
 
-#include <network/servernetwork.h>
 /*
-
-_Peer *Peer;
-
-_OldServerState OldServerState;
-static void ObjectDeleted(_Object *Object);
 
 // Loop to run server commands
 void HandleCommands(void *Arguments) {
@@ -89,58 +68,6 @@ void _OldServerState::Close() {
 	delete Database;
 	delete ObjectManager;
 }
-
-// Handles a client disconnect
-void _Server::HandleDisconnect(ENetEvent *Event) {
-	char Buffer[16];
-	enet_address_get_host_ip(&Event->peer->address, Buffer, 16);
-	Framework.Log << "HandleDisconnect: " << Buffer << ":" << Event->peer->address.port << std::endl;
-
-	_Object *Player = (_Object *)Event->peer->data;
-	if(!Player)
-		return;
-
-	// Leave trading screen
-	_Object *TradePlayer = Player->TradePlayer;
-	if(TradePlayer) {
-		TradePlayer->TradePlayer = nullptr;
-
-		_Buffer Packet;
-		Packet.Write<char>(Packet::TRADE_CANCEL);
-		OldServerNetwork->SendPacketToPeer(&Packet, TradePlayer->OldPeer);
-	}
-
-	// Remove from battle
-	RemovePlayerFromBattle(Player);
-
-	// Save character info
-	Player->Save();
-
-	// Delete object
-	ObjectManager->DeleteObject(Player);
-}
-
-
-// Updates the current state
-void _OldServerState::Update(double FrameTime) {
-	ServerTime += FrameTime;
-
-	// Update maps
-	for(auto &Map : Maps)
-		Map->Update(FrameTime);
-
-	// Update battles
-	for(auto &Battle : Battles)
-		Battle->Update(FrameTime);
-
-	// Update objects
-	ObjectManager->Update(FrameTime);
-
-	if(StopRequested) {
-		Framework.Done = true;
-	}
-}
-
 
 // Handles move commands from a client
 void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
@@ -409,14 +336,14 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle a skill bar change
-void _Server::HandleSkillBar(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleActionBar(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
 	if(!Player)
 		return;
 
 	// Read skills
-	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-		Player->SetSkillBar(i, Stats->GetSkill(Packet->Read<char>()));
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		Player->SetActionBar(i, Stats->GetSkill(Packet->Read<char>()));
 	}
 
 	Player->CalculatePlayerStats();

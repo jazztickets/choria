@@ -91,10 +91,10 @@ int _ClientBattle::RemoveFighter(_Object *Fighter) {
 }
 
 // Handles a command from an other player
-void _ClientBattle::HandleCommand(int Slot, int SkillID) {
+void _ClientBattle::HandleCommand(int Slot, uint32_t SkillID) {
 	int Index = GetFighterFromSlot(Slot);
 	if(Index != -1) {
-		Fighters[Index]->SkillUsing = Stats->GetSkill(SkillID);
+		Fighters[Index]->SkillUsing = &Stats->Skills[SkillID];
 	}
 }
 
@@ -361,7 +361,7 @@ void _ClientBattle::SendSkill(int SkillSlot) {
 	if(ClientPlayer->Health == 0)
 		return;
 
-	const _Skill *Skill = ClientPlayer->GetSkillBar(SkillSlot);
+	const _Skill *Skill = ClientPlayer->GetActionBar(SkillSlot);
 	if(SkillSlot != 9 && (Skill == nullptr || !Skill->CanUse(ClientPlayer)))
 		return;
 

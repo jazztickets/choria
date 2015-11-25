@@ -95,14 +95,11 @@ class _Stats {
 		~_Stats();
 
 		// General Stats
-		void GetMonsterStats(int MonsterID, _Object *Monster);
-		const _Skill *GetSkill(int SkillID);
-		const _MapStat *GetMap(int MapID) { return &Maps[MapID]; }
-		const _Item *GetItem(int ItemID) { return &Items[ItemID]; }
-		const _Vendor *GetVendor(int VendorID) { return &Vendors[VendorID]; }
-		const _Trader *GetTrader(int TraderID) { return &Traders[TraderID]; }
-
-		void GetPortraits(std::list<_Portrait> &List);
+		void GetMonsterStats(uint32_t MonsterID, _Object *Monster);
+		const _MapStat *GetMap(uint32_t MapID) { return &Maps[MapID]; }
+		const _Item *GetItem(uint32_t ItemID) { return &Items[ItemID]; }
+		const _Vendor *GetVendor(uint32_t VendorID) { return &Vendors[VendorID]; }
+		const _Trader *GetTrader(uint32_t TraderID) { return &Traders[TraderID]; }
 
 		// Monsters
 		void GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters);
@@ -111,11 +108,11 @@ class _Stats {
 		std::vector<_Event> Events;
 		std::vector<_Level> Levels;
 
-		std::map<int, _Portrait> Portraits;
-		std::map<int, _MapStat> Maps;
-		std::map<int, _Item> Items;
-		std::map<int, _Vendor> Vendors;
-		std::map<int, _Trader> Traders;
+		std::map<uint32_t, _Portrait> Portraits;
+		std::map<uint32_t, _MapStat> Maps;
+		std::map<uint32_t, _Item> Items;
+		std::map<uint32_t, _Vendor> Vendors;
+		std::map<uint32_t, _Trader> Traders;
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[Level-1]; }
@@ -123,7 +120,7 @@ class _Stats {
 		int GetMaxLevel() const { return Levels.size(); }
 
 		// Skills
-		std::vector<_Skill> Skills;
+		std::map<uint32_t, _Skill> Skills;
 
 	private:
 

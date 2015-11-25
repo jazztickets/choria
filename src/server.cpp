@@ -20,6 +20,7 @@
 #include <network/peer.h>
 #include <objects/object.h>
 #include <instances/map.h>
+#include <instances/battle.h>
 #include <database.h>
 #include <buffer.h>
 #include <packet.h>
@@ -143,12 +144,15 @@ void _Server::Update(double FrameTime) {
 	for(auto &Map : Maps)
 		Map->Update(FrameTime);
 
+	// Update maps
+	for(auto &Battle : Battles)
+		Battle->Update(FrameTime);
+
 	// Check if updates should be sent
 	if(Network->NeedsUpdate()) {
 		//Log << "NeedsUpdate " << TimeSteps << std::endl;
 		Network->ResetUpdateTimer();
 		if(0 && (rand() % 10) == 0) {
-			//printf("droppin pack\n");
 		}
 		else if(Network->GetPeers().size() > 0) {
 
@@ -281,8 +285,8 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::TRADER_ACCEPT:
 			HandleTraderAccept(Data, Peer);
 		break;
-		case Packet::SKILLS_SKILLBAR:
-			HandleSkillBar(Data, Peer);
+		case Packet::HUD_ACTIONBAR:
+			HandleActionBar(Data, Peer);
 		break;
 		case Packet::SKILLS_SKILLADJUST:
 			HandleSkillAdjust(Data, Peer);
@@ -427,7 +431,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Create the character
 	Database->RunQuery("BEGIN TRANSACTION");
-	Query << "INSERT INTO Characters(AccountsID, Name, PortraitID, SkillBar0) VALUES(" << Player->AccountID << ", '" << Name << "', " << PortraitID << ", 0)";
+	Query << "INSERT INTO Characters(AccountsID, Name, PortraitID, ActionBar0) VALUES(" << Player->AccountID << ", '" << Name << "', " << PortraitID << ", 1)";
 	Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -551,8 +555,13 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 	Player->PortraitID = Database->GetInt(5);
 	Player->Experience = Database->GetInt(6);
 	Player->Gold = Database->GetInt(7);
-	for(int i = 0; i < BATTLE_MAXSKILLS; i++)
-		Player->SkillBar[i] = Stats->GetSkill(Database->GetInt(i + 8));
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		uint32_t SkillID = Database->GetInt(i + 8);
+		if(SkillID > 0)
+			Player->ActionBar[i] = &Stats->Skills[SkillID];
+		else
+			Player->ActionBar[i] = nullptr;
+	}
 	Player->PlayTime = Database->GetInt(16);
 	Player->Deaths = Database->GetInt(17);
 	Player->MonsterKills = Database->GetInt(18);
@@ -615,16 +624,17 @@ void _Server::HandleCharacterSelect(_Buffer &Data, _Peer *Peer) {
 	// Write skills
 	Packet.Write<char>(SkillCount);
 	for(int i = 0; i < _Object::SKILL_COUNT; i++) {
-		if(Player->GetSkillLevel(i) > 0) {
-			Packet.Write<int32_t>(Player->GetSkillLevel(i));
+		if(Player->SkillLevels[i] > 0) {
 			Packet.Write<char>(i);
+			Packet.Write<int32_t>(Player->SkillLevels[i]);
 		}
 	}
 
 	// Write skill bar
-	for(int i = 0; i < BATTLE_MAXSKILLS; i++) {
-		Packet.Write<char>(Player->GetSkillBarID(i));
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		Packet.Write<uint32_t>(Player->GetActionBarID(i));
 	}
+
 	Network->SendPacket(Packet, Peer);
 
 	// Send map and players to new player
@@ -674,7 +684,6 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) 
 		// Send object list to the player
 		Map->SendObjectList(Peer);
 	}
-	//printf("SpawnPlayer: MapID=%d, NetworkID=%d\n", TNewMapID, TPlayer->NetworkID);
 }
 
 // Gets a map from the manager. Loads the level if it doesn't exist
@@ -738,14 +747,14 @@ void _Server::CreateDefaultDatabase() {
 						", 'PortraitID' INTEGER DEFAULT(1)"
 						", 'Experience' INTEGER DEFAULT(0)"
 						", 'Gold' INTEGER DEFAULT(0)"
-						", 'SkillBar0' INTEGER DEFAULT(-1)"
-						", 'SkillBar1' INTEGER DEFAULT(-1)"
-						", 'SkillBar2' INTEGER DEFAULT(-1)"
-						", 'SkillBar3' INTEGER DEFAULT(-1)"
-						", 'SkillBar4' INTEGER DEFAULT(-1)"
-						", 'SkillBar5' INTEGER DEFAULT(-1)"
-						", 'SkillBar6' INTEGER DEFAULT(-1)"
-						", 'SkillBar7' INTEGER DEFAULT(-1)"
+						", 'ActionBar0' INTEGER DEFAULT(0)"
+						", 'ActionBar1' INTEGER DEFAULT(0)"
+						", 'ActionBar2' INTEGER DEFAULT(0)"
+						", 'ActionBar3' INTEGER DEFAULT(0)"
+						", 'ActionBar4' INTEGER DEFAULT(0)"
+						", 'ActionBar5' INTEGER DEFAULT(0)"
+						", 'ActionBar6' INTEGER DEFAULT(0)"
+						", 'ActionBar7' INTEGER DEFAULT(0)"
 						", 'PlayTime' INTEGER DEFAULT(0)"
 						", 'Deaths' INTEGER DEFAULT(0)"
 						", 'MonsterKills' INTEGER DEFAULT(0)"
@@ -764,7 +773,7 @@ void _Server::CreateDefaultDatabase() {
 						", 'Level' INTEGER"
 						")");
 
-	Database->RunQuery("INSERT INTO ServerInfo(Version) VALUES(1)");
+	Database->RunQuery("INSERT INTO ServerInfo(Version) VALUES(" + std::to_string(SAVE_VERSION) + ")");
 	Database->RunQuery("INSERT INTO Accounts(Username, Password) VALUES('singleplayer', 'singleplayer')");
 	Database->RunQuery("END TRANSACTION");
 }

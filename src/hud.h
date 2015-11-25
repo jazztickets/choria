@@ -145,8 +145,8 @@ class _HUD {
 		void BuyItem(_Cursor *Item, int TargetSlot);
 		void SellItem(_Cursor *Item, int Amount);
 
-		void AdjustSkillLevel(int SkillID, int Direction);
-		void SetSkillBar(int Slot, int OldSlot, const _Skill *Skill);
+		void AdjustSkillLevel(uint32_t SkillID, int Direction);
+		void SetActionBar(int Slot, int OldSlot, const _Skill *Skill);
 		void ClearSkills();
 
 		void RefreshSkillButtons();
@@ -179,7 +179,7 @@ class _HUD {
 		_TextBox *ChatTextBox;
 
 		// Skills
-		bool SkillBarChanged;
+		bool ActionBarChanged;
 
 		// Traders
 		int RequiredItemSlots[8], RewardItemSlot;

@@ -51,7 +51,7 @@ const int MAX_OBJECTS = 255;
 
 const int BATTLE_MAXFIGHTERS = 6;
 const double BATTLE_ROUNDTIME = 5.0;
-const int BATTLE_MAXSKILLS = 8;
+const int ACTIONBAR_SIZE = 8;
 const double BATTLE_SHOWRESULTTIME = 2.0;
 const double BATTLE_WAITRESULTTIME = 0.375;
 const double BATTLE_WAITENDTIME = 0.30;
@@ -62,6 +62,7 @@ const double PLAYER_ATTACKTIME = 1.0;
 
 const int STATS_MAXGOLD = 1000000;
 const int SAVE_COUNT = 6;
+const int SAVE_VERSION = 1;
 const int PLAYER_NAME_SIZE = 10;
 const float PLAYER_INVIS_ALPHA = 0.27f;
 const int INVENTORY_BAG_COLUMNS = 4;

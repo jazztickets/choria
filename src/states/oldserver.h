@@ -17,21 +17,6 @@
 *******************************************************************************/
 #pragma once
 
-// Libraries
-#include <state.h>
-#include <thread>
-#include <list>
-#include <glm/vec4.hpp>
-
-// Forward Declarations
-class _Database;
-class _ObjectManager;
-class _Map;
-class _Battle;
-class _Buffer;
-class _Object;
-
-class _ServerNetwork;
 /*
 // Classes
 class _OldServerState : public _State {
@@ -53,8 +38,6 @@ class _OldServerState : public _State {
 
 	private:
 
-		void CreateDefaultDatabase();
-
 		void SendHUD(_Object *Player);
 		void SendCharacterList(_Object *Player);
 		void SendEvent(_Object *Player, int Type, int Data);
@@ -64,18 +47,5 @@ class _OldServerState : public _State {
 
 		void RemovePlayerFromBattle(_Object *Player);
 
-		_Database *Database;
-		_ObjectManager *ObjectManager;
-		std::list<_Map *> Maps;
-		std::list<_Battle *> Battles;
-
-		bool StopRequested;
-
-		std::thread *CommandThread;
-
-		double ServerTime;
-		_ServerNetwork *Network;
 };
-
-extern _OldServerState OldServerState;
 */
