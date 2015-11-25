@@ -34,8 +34,8 @@
 #include <ui/textbox.h>
 #include <ui/image.h>
 #include <ui/style.h>
-#include <states/client.h>
-#include <network/network.h>
+#include <states/oldclient.h>
+#include <network/oldnetwork.h>
 #include <instances/map.h>
 #include <objects/player.h>
 #include <objects/item.h>
@@ -138,7 +138,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<char>(Packet::INVENTORY_USE);
 							Packet.Write<char>(Tooltip.Slot);
-							ClientNetwork->SendPacketToHost(&Packet);
+							OldClientNetwork->SendPacketToHost(&Packet);
 						}
 					}
 				break;
@@ -196,7 +196,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
 			_Buffer Packet;
 			Packet.Write<char>(Packet::TRADER_ACCEPT);
-			ClientNetwork->SendPacketToHost(&Packet);
+			OldClientNetwork->SendPacketToHost(&Packet);
 			Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
 			Player->CalculatePlayerStats();
 			CloseWindows();
@@ -223,7 +223,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 								Packet.Write<char>(Packet::INVENTORY_MOVE);
 								Packet.Write<char>(Cursor.Slot);
 								Packet.Write<char>(Tooltip.Slot);
-								ClientNetwork->SendPacketToHost(&Packet);
+								OldClientNetwork->SendPacketToHost(&Packet);
 
 								ResetAcceptButton();
 								Player->CalculatePlayerStats();
@@ -272,7 +272,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<char>(Packet::TRADE_ACCEPT);
 							Packet.Write<char>(AcceptButton->Checked);
-							ClientNetwork->SendPacketToHost(&Packet);
+							OldClientNetwork->SendPacketToHost(&Packet);
 						}
 					}
 				}
@@ -285,6 +285,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 // Updates the HUD
 void _HUD::Update(double FrameTime) {
+	if(!Player)
+		return;
+
 	Tooltip.Reset();
 
 	_Element *HitElement = Graphics.Element->HitElement;
@@ -319,7 +322,7 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.Item = Player->Trader->RewardItem;
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Skill = Stats.GetSkill(Tooltip.Slot);
+				Tooltip.Skill = OldStats.GetSkill(Tooltip.Slot);
 			} break;
 			case WINDOW_ACTIONBAR: {
 				Tooltip.Skill = Player->GetSkillBar(Tooltip.Slot);
@@ -436,7 +439,7 @@ void _HUD::ToggleChat() {
 			_Buffer Packet;
 			Packet.Write<char>(Packet::CHAT_MESSAGE);
 			Packet.WriteString(ChatTextBox->Text.c_str());
-			ClientNetwork->SendPacketToHost(&Packet);
+			OldClientNetwork->SendPacketToHost(&Packet);
 		}
 
 		CloseChat();
@@ -452,7 +455,7 @@ void _HUD::ToggleChat() {
 void _HUD::ToggleTeleport() {
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_TELEPORT);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 	Player->StartTeleport();
 
 	if(Player->State == _Player::STATE_TELEPORT) {
@@ -470,7 +473,7 @@ void _HUD::ToggleInventory() {
 	if(!InventoryElement->Visible) {
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
-		ClientState.SendBusy(true);
+		OldClientState.SendBusy(true);
 	}
 	else {
 		CloseInventory();
@@ -511,12 +514,12 @@ void _HUD::InitVendor(int VendorID) {
 	Cursor.Reset();
 
 	// Get vendor stats
-	Player->Vendor = Stats.GetVendor(VendorID);
+	Player->Vendor = OldStats.GetVendor(VendorID);
 
 	// Open inventory
 	InventoryElement->SetVisible(true);
 	VendorElement->SetVisible(true);
-	ClientState.SendBusy(true);
+	OldClientState.SendBusy(true);
 }
 
 // Initialize the trade system
@@ -548,7 +551,7 @@ void _HUD::InitTrader(int TraderID) {
 		return;
 
 	// Get trader stats
-	Player->Trader = Stats.GetTrader(TraderID);
+	Player->Trader = OldStats.GetTrader(TraderID);
 
 	// Check for required items
 	RewardItemSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
@@ -564,7 +567,7 @@ void _HUD::InitTrader(int TraderID) {
 
 // Initialize the skills screen
 void _HUD::InitSkills() {
-	ClientState.SendBusy(true);
+	OldClientState.SendBusy(true);
 
 	// Clear old children
 	ClearSkills();
@@ -579,7 +582,7 @@ void _HUD::InitSkills() {
 	size_t i = 0;
 
 	// Iterate over skills
-	for(const auto &Skill : Stats.Skills) {
+	for(const auto &Skill : OldStats.Skills) {
 
 		// Create style
 		_Style *Style = new _Style();
@@ -685,7 +688,7 @@ void _HUD::CloseChat() {
 // Close inventory screen
 void _HUD::CloseInventory() {
 	if(InventoryElement->Visible)
-		ClientState.SendBusy(false);
+		OldClientState.SendBusy(false);
 	InventoryElement->SetVisible(false);
 	CharacterElement->SetVisible(false);
 }
@@ -704,7 +707,7 @@ void _HUD::CloseVendor() {
 	// Notify server
 	_Buffer Packet;
 	Packet.Write<char>(Packet::EVENT_END);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 
 	Player->Vendor = nullptr;
 }
@@ -721,11 +724,11 @@ void _HUD::CloseSkills() {
 		for(int i = 0; i < BATTLE_MAXSKILLS; i++)
 			Packet.Write<char>(Player->GetSkillBarID(i));
 
-		ClientNetwork->SendPacketToHost(&Packet);
+		OldClientNetwork->SendPacketToHost(&Packet);
 	}
 
 	// No longer busy
-	ClientState.SendBusy(false);
+	OldClientState.SendBusy(false);
 	SkillsElement->SetVisible(false);
 }
 
@@ -758,7 +761,7 @@ void _HUD::CloseTrader() {
 	// Notify server
 	_Buffer Packet;
 	Packet.Write<char>(Packet::EVENT_END);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 
 	Player->Trader = nullptr;
 }
@@ -788,7 +791,7 @@ void _HUD::DrawChat(bool IgnoreTimeout) {
 	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		_ChatMessage &ChatMessage = (*Iterator);
 
-		float TimeLeft = ChatMessage.Time - ClientState.GetTime() + CHAT_MESSAGE_TIMEOUT;
+		float TimeLeft = ChatMessage.Time - OldClientState.GetTime() + CHAT_MESSAGE_TIMEOUT;
 		if(Index >= CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
 			break;
 
@@ -1149,7 +1152,7 @@ void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
 		Packet.Write<char>(Item->Count);
 		Packet.Write<char>(Item->Slot);
 		Packet.Write<char>(TargetSlot);
-		ClientNetwork->SendPacketToHost(&Packet);
+		OldClientNetwork->SendPacketToHost(&Packet);
 
 		Player->CalculatePlayerStats();
 	}
@@ -1171,7 +1174,7 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	Packet.WriteBit(0);
 	Packet.Write<char>(Amount);
 	Packet.Write<char>(Item->Slot);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 
 	if(Deleted)
 		Item->Reset();
@@ -1196,7 +1199,7 @@ void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
 		if(Player->GetSkillLevel(SkillID) == 1) {
 
 			// Equip new skills
-			const _Skill *Skill = Stats.GetSkill(SkillID);
+			const _Skill *Skill = OldStats.GetSkill(SkillID);
 			if(Skill) {
 				int Direction, Slot;
 				if(Skill->Type == _Skill::TYPE_PASSIVE) {
@@ -1218,7 +1221,7 @@ void _HUD::AdjustSkillLevel(int SkillID, int Direction) {
 		}
 	}
 	Packet.Write<char>(SkillID);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 
 	// Update player
 	Player->CalculateSkillPoints();
@@ -1287,7 +1290,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			int SkillID = (intptr_t)Button->Parent->UserData;
-			const _Skill *Skill = Stats.GetSkill(SkillID);
+			const _Skill *Skill = OldStats.GetSkill(SkillID);
 			if(Skill->SkillCost > SkillPointsRemaining || Player->GetSkillLevel(SkillID) >= 255)
 				Button->SetVisible(false);
 			else
@@ -1310,14 +1313,14 @@ void _HUD::RefreshSkillButtons() {
 void _HUD::SendTradeRequest() {
 	_Buffer Packet;
 	Packet.Write<char>(Packet::TRADE_REQUEST);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Cancel a trade
 void _HUD::SendTradeCancel() {
 	_Buffer Packet;
 	Packet.Write<char>(Packet::TRADE_CANCEL);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 
 	Player->TradePlayer = nullptr;
 }
@@ -1343,7 +1346,7 @@ void _HUD::ValidateTradeGold() {
 		_Buffer Packet;
 		Packet.Write<char>(Packet::TRADE_GOLD);
 		Packet.Write<int32_t>(Gold);
-		ClientNetwork->SendPacketToHost(&Packet);
+		OldClientNetwork->SendPacketToHost(&Packet);
 	}
 
 	// Reset agreement
@@ -1399,7 +1402,7 @@ void _HUD::SplitStack(int Slot, int Count) {
 	Packet.Write<char>(Slot);
 	Packet.Write<char>(Count);
 
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 	Player->SplitStack(Slot, Count);
 }
 

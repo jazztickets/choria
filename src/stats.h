@@ -142,4 +142,4 @@ class _Stats {
 
 };
 
-extern _Stats Stats;
+extern _Stats OldStats;

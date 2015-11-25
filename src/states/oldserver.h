@@ -33,7 +33,7 @@ class _Object;
 class _Player;
 
 // Classes
-class _ServerState : public _State {
+class _OldServerState : public _State {
 
 	public:
 
@@ -108,4 +108,4 @@ class _ServerState : public _State {
 		double ServerTime;
 };
 
-extern _ServerState ServerState;
+extern _OldServerState OldServerState;

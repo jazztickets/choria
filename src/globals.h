@@ -18,6 +18,6 @@
 #pragma once
 
 // Libraries
-class _Network;
-extern _Network *ClientNetwork;
-extern _Network *ServerNetwork;
+class _OldNetwork;
+extern _OldNetwork *OldClientNetwork;
+extern _OldNetwork *OldServerNetwork;

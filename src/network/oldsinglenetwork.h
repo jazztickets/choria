@@ -18,9 +18,9 @@
 #pragma once
 
 // Libraries
-#include <network/network.h>
+#include <network/oldnetwork.h>
 
-class _SingleNetwork : public _Network {
+class _OldSingleNetwork : public _OldNetwork {
 
 	public:
 

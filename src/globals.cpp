@@ -17,5 +17,5 @@
 *******************************************************************************/
 #include <globals.h>
 
-_Network *ClientNetwork;
-_Network *ServerNetwork;
+_OldNetwork *OldClientNetwork;
+_OldNetwork *OldServerNetwork;

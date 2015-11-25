@@ -15,13 +15,13 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <network/singlenetwork.h>
+#include <network/oldsinglenetwork.h>
 #include <buffer.h>
-#include <states/server.h>
+#include <states/oldserver.h>
 #include <framework.h>
 
 // Initializes the network system
-void _SingleNetwork::Init(bool Server) {
+void _OldSingleNetwork::Init(bool Server) {
 	this->Server = Server;
 	Connected = false;
 	DummyPeer.address.host = 0;
@@ -29,11 +29,11 @@ void _SingleNetwork::Init(bool Server) {
 }
 
 // Closes the network system
-void _SingleNetwork::Close() {
+void _OldSingleNetwork::Close() {
 }
 
 // Connect to a host
-int _SingleNetwork::Connect(const char *IPAddress, uint16_t Port) {
+int _OldSingleNetwork::Connect(const char *IPAddress, uint16_t Port) {
 
 	if(Connected)
 		return 0;
@@ -43,14 +43,14 @@ int _SingleNetwork::Connect(const char *IPAddress, uint16_t Port) {
 	// Simulate the connect
 	ENetEvent Event;
 	Event.peer = &DummyPeer;
-	ServerState.HandleConnect(&Event);
+	OldServerState.HandleConnect(&Event);
 	Framework.GetState()->HandleConnect(&Event);
 
 	return 1;
 }
 
 // Disconnect from the host
-void _SingleNetwork::Disconnect(ENetPeer *Peer) {
+void _OldSingleNetwork::Disconnect(ENetPeer *Peer) {
 
 	if(Connected) {
 		Connected = false;
@@ -58,13 +58,13 @@ void _SingleNetwork::Disconnect(ENetPeer *Peer) {
 		// Simulate the disconnect
 		ENetEvent Event;
 		Event.peer = &DummyPeer;
-		ServerState.HandleDisconnect(&Event);
+		OldServerState.HandleDisconnect(&Event);
 		Framework.GetState()->HandleDisconnect(&Event);
 	}
 }
 
 // Client: Sends a packet to the host
-void _SingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
+void _OldSingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
 
 	if(Connected) {
 
@@ -72,13 +72,13 @@ void _SingleNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Ch
 		ENetEvent Event;
 		Event.peer = &DummyPeer;
 		Event.packet = enet_packet_create(Buffer->GetData(), Buffer->GetCurrentSize(), Type);
-		ServerState.HandlePacket(&Event);
+		OldServerState.HandlePacket(&Event);
 		enet_packet_destroy(Event.packet);
 	}
 }
 
 // Server: Sends a packet to a single peer
-void _SingleNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type, uint8_t Channel) {
+void _OldSingleNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type, uint8_t Channel) {
 
 	// Simulate packet event
 	ENetEvent Event;

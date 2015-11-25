@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <network/network.h>
+#include <network/oldnetwork.h>
 #include <texture.h>
 #include <vector>
 #include <list>
@@ -79,7 +79,7 @@ class _Map {
 		_Player *FindTradePlayer(const _Player *Player, float MaxDistanceSquared);
 		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
 
-		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _Network::SendType Type=_Network::RELIABLE);
+		void SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer=nullptr, _OldNetwork::SendType Type=_OldNetwork::RELIABLE);
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }

@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <network/multinetwork.h>
+#include <network/oldmultinetwork.h>
 #include <buffer.h>
 #include <framework.h>
 #include <state.h>
@@ -24,7 +24,7 @@
 #include <stdexcept>
 
 // Initializes the network system
-void _MultiNetwork::Init(bool Server, uint16_t Port) {
+void _OldMultiNetwork::Init(bool Server, uint16_t Port) {
 	ClientPeer = nullptr;
 	Connection = nullptr;
 	Active = false;
@@ -55,14 +55,14 @@ void _MultiNetwork::Init(bool Server, uint16_t Port) {
 }
 
 // Closes the network system
-void _MultiNetwork::Close() {
+void _OldMultiNetwork::Close() {
 
 	if(Connection)
 		enet_host_destroy(Connection);
 }
 
 // Connect to a host
-int _MultiNetwork::Connect(const char *IPAddress, uint16_t Port) {
+int _OldMultiNetwork::Connect(const char *IPAddress, uint16_t Port) {
 
 	// Get server address
 	ENetAddress Address;
@@ -81,7 +81,7 @@ int _MultiNetwork::Connect(const char *IPAddress, uint16_t Port) {
 }
 
 // Disconnect from the host or disconnect a client
-void _MultiNetwork::Disconnect(ENetPeer *Peer) {
+void _OldMultiNetwork::Disconnect(ENetPeer *Peer) {
 	if(Peer)
 		enet_peer_disconnect(Peer, 0);
 	else if(ClientPeer)
@@ -89,7 +89,7 @@ void _MultiNetwork::Disconnect(ENetPeer *Peer) {
 }
 
 // Waits for a disconnect
-void _MultiNetwork::WaitForDisconnect() {
+void _OldMultiNetwork::WaitForDisconnect() {
 
 	if(ClientPeer) {
 		ENetEvent Event;
@@ -112,7 +112,7 @@ void _MultiNetwork::WaitForDisconnect() {
 }
 
 // Get round trip time
-enet_uint32 _MultiNetwork::GetRTT() {
+enet_uint32 _OldMultiNetwork::GetRTT() {
 	if(ClientPeer)
 		return ClientPeer->roundTripTime;
 
@@ -120,7 +120,7 @@ enet_uint32 _MultiNetwork::GetRTT() {
 }
 
 // Update enet
-void _MultiNetwork::Update() {
+void _OldMultiNetwork::Update() {
 	if(!Active)
 		return;
 
@@ -150,7 +150,7 @@ void _MultiNetwork::Update() {
 }
 
 // Client: Sends a packet to the host
-void _MultiNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
+void _OldMultiNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Channel) {
 	if(!ClientPeer)
 		return;
 
@@ -163,7 +163,7 @@ void _MultiNetwork::SendPacketToHost(_Buffer *Buffer, SendType Type, uint8_t Cha
 }
 
 // Server: Sends a packet to a single peer
-void _MultiNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type, uint8_t Channel) {
+void _OldMultiNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type, uint8_t Channel) {
 	if(!Peer)
 		return;
 
@@ -176,7 +176,7 @@ void _MultiNetwork::SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType T
 }
 
 // Get port used
-uint16_t _MultiNetwork::GetPort() {
+uint16_t _OldMultiNetwork::GetPort() {
 	if(Connection)
 		return Connection->address.port;
 

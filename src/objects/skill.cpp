@@ -26,7 +26,7 @@
 #include <assets.h>
 #include <packet.h>
 #include <instances/battle.h>
-#include <network/network.h>
+#include <network/oldnetwork.h>
 #include <objects/fighter.h>
 #include <objects/player.h>
 #include <ui/label.h>
@@ -267,7 +267,7 @@ void _Skill::ResolveSkill(_FighterResult *Result, _FighterResult *TargetResult) 
 					_Buffer Packet;
 					Packet.Write<char>(Packet::INVENTORY_USE);
 					Packet.Write<char>(Slot);
-					ServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
+					OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 				}
 			}
 		break;

@@ -17,84 +17,96 @@
 *******************************************************************************/
 #pragma once
 
-// Libraries
 #include <state.h>
 
 // Forward Declarations
-class _Database;
-class _ObjectManager;
-class _Buffer;
-class _Player;
+class _Font;
+class _HUD;
 class _Map;
+class _Object;
+class _Item;
 class _Camera;
-class _ClientBattle;
+class _ClientNetwork;
+class _Server;
+class _Buffer;
+class _Stats;
+class _LogFile;
 
-// Classes
+// Play state
 class _ClientState : public _State {
 
 	public:
 
+		// Setup
 		_ClientState();
-
 		void Init() override;
 		void Close() override;
 
+		// Input
+		bool HandleAction(int InputType, int Action, int Value) override;
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 		void WindowEvent(uint8_t Event) override;
-		bool HandleAction(int InputType, int Action, int Value) override;
 
-		void HandleConnect(ENetEvent *Event) override;
-		void HandleDisconnect(ENetEvent *Event) override;
-		void HandlePacket(ENetEvent *Event) override;
-
+		// Update
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
-		void SetCharacterSlot(int Slot) { CharacterSlot = Slot; }
+		// State parameters
+		void SetLevel(const std::string &Level) { this->Level = Level; }
 		void SetIsTesting(bool Value) { IsTesting = Value; }
+		void SetFromEditor(bool Value) { FromEditor = Value; }
+		void SetStats(const _Stats *Stats)  { this->Stats = Stats; }
+		bool GetFromEditor() const { return FromEditor; }
 
-		void SendBusy(bool Value);
-		double GetTime() { return ClientTime; }
+		void SetSaveFilename(const std::string &SaveFilename) { this->SaveFilename = SaveFilename; }
+		void SetHostAddress(const std::string &HostAddress) { this->HostAddress = HostAddress; }
+		void SetConnectPort(uint16_t ConnectPort) { this->ConnectPort = ConnectPort; }
+		void SetRunServer(bool RunServer) { this->RunServer = RunServer; }
+		void SetLog(_LogFile *Log) { this->Log = Log; }
 
-	private:
+	protected:
 
-		void HandleYourCharacterInfo(_Buffer *Packet);
-		void HandleChangeMaps(_Buffer *Packet);
-		void HandleCreateObject(_Buffer *Packet);
-		void HandleDeleteObject(_Buffer *Packet);
-		void HandleObjectUpdates(_Buffer *Packet);
-		void HandleStartBattle(_Buffer *Packet);
-		void HandleBattleTurnResults(_Buffer *Packet);
-		void HandleBattleEnd(_Buffer *Packet);
-		void HandleBattleCommand(_Buffer *Packet);
-		void HandleHUD(_Buffer *Packet);
-		void HandlePlayerPosition(_Buffer *Packet);
-		void HandleEventStart(_Buffer *Packet);
-		void HandleInventoryUse(_Buffer *Packet);
-		void HandleChatMessage(_Buffer *Packet);
-		void HandleTradeRequest(_Buffer *Packet);
-		void HandleTradeCancel(_Buffer *Packet);
-		void HandleTradeItem(_Buffer *Packet);
-		void HandleTradeGold(_Buffer *Packet);
-		void HandleTradeAccept(_Buffer *Packet);
-		void HandleTradeExchange(_Buffer *Packet);
+		void HandlePacket(_Buffer &Buffer);
+		void HandleConnect();
+		void HandleMapInfo(_Buffer &Buffer);
+		void HandleObjectList(_Buffer &Buffer);
+		void HandleObjectUpdates(_Buffer &Buffer);
+		void HandleObjectCreate(_Buffer &Buffer);
+		void HandleObjectDelete(_Buffer &Buffer);
 
-		void SendMoveCommand(int Direction);
-		void SendAttackPlayer();
-		void SynchronizeTime();
+		bool IsPaused();
 
-		// States
-		int CharacterSlot;
+		// Parameters
+		std::string Level;
+		std::string SaveFilename;
 		bool IsTesting;
+		bool FromEditor;
+		bool RunServer;
 
-		// Time
-		double ClientTime;
+		// Game
+		const _Stats *Stats;
+		_LogFile *Log;
 
-		// Objects
-		_Player *Player;
+		// Map
+		_Map *Map;
+
+		// Entities
+		_Object *Player;
+
+		// HUD
+		_HUD *HUD;
+
+		// Camera
 		_Camera *Camera;
-		_ObjectManager *ObjectManager;
+
+		// Network
+		_ClientNetwork *Network;
+		_Server *Server;
+		std::string HostAddress;
+		uint16_t TimeSteps;
+		uint16_t LastServerTimeSteps;
+		uint16_t ConnectPort;
 
 };
 

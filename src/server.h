@@ -19,58 +19,58 @@
 
 // Libraries
 #include <log.h>
-#include <cstdint>
+#include <memory>
+#include <thread>
+#include <list>
 
 // Forward Declarations
-class _State;
-class _OldSingleNetwork;
-class _OldMultiNetwork;
-class _FrameLimit;
+class _ServerNetwork;
+class _Buffer;
+class _Peer;
+class _Map;
+class _Stats;
+struct _NetworkEvent;
 
-class _Framework {
+// Server class
+class _Server {
 
 	public:
 
-		enum StateType {
-			INIT,
-			FADEIN,
-			UPDATE,
-			FADEOUT,
-			CLOSE
-		};
+		_Server(uint16_t NetworkPort);
+		~_Server();
 
-		// Setup
-		void Init(int ArgumentCount, char **Arguments);
-		void Close();
+		void Update(double FrameTime);
+		void StartThread();
+		void StopServer();
 
-		// Update functions
-		void Update();
-		void Render();
-
-		_State *GetState() { return State; }
-		void ChangeState(_State *RequestedState);
-
-		// Logging
-		_LogFile Log;
+		_Map *GetMap(const std::string &MapName);
+		void ChangePlayerMap(const std::string &MapName, _Peer *Peer);
 
 		// State
 		bool Done;
+		bool StartShutdown;
+		uint16_t TimeSteps;
+		double Time;
+		_LogFile Log;
+
+		// Stats
+		const _Stats *Stats;
+
+		// Network
+		std::unique_ptr<_ServerNetwork> Network;
+
+		// Map manager
+		std::list<_Map *> Maps;
+		uint8_t NextMapID;
 
 	private:
 
-		void ResetTimer();
+		void HandleConnect(_NetworkEvent &Event);
+		void HandleDisconnect(_NetworkEvent &Event);
+		void HandlePacket(_Buffer *Data, _Peer *Peer);
+		void HandleClientJoin(_Buffer *Data, _Peer *Peer);
+		void HandleClientInput(_Buffer *Data, _Peer *Peer);
 
-		// States
-		StateType FrameworkState;
-		_State *State;
-		_State *RequestedState;
-
-		// Time
-		_FrameLimit *FrameLimit;
-		uint64_t Timer;
-		double TimeStep;
-		double TimeStepAccumulator;
-
+		// Threading
+		std::thread *Thread;
 };
-
-extern _Framework Framework;

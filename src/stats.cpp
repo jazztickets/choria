@@ -21,7 +21,7 @@
 #include <assets.h>
 #include <objects/fighter.h>
 
-_Stats Stats;
+_Stats OldStats;
 
 // Initialize
 void _Stats::Init() {
@@ -284,7 +284,7 @@ void _Stats::GetMonsterStats(int MonsterID, _Fighter *Monster) {
 
 		Monster->AI = Database->GetInt(12);
 
-		Monster->SkillBar[0] = Stats.GetSkill(0);
+		Monster->SkillBar[0] = OldStats.GetSkill(0);
 	}
 
 	// Free memory

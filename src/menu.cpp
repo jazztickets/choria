@@ -32,9 +32,9 @@
 #include <ui/image.h>
 #include <ui/style.h>
 #include <ui/textbox.h>
-#include <network/network.h>
+#include <network/oldnetwork.h>
 #include <states/null.h>
-#include <states/client.h>
+#include <states/oldclient.h>
 #include <states/editor.h>
 #include <sstream>
 #include <SDL_mouse.h>
@@ -75,8 +75,7 @@ void _Menu::InitTitle() {
 
 	ChangeLayout("element_menu_title");
 
-	ClientNetwork->Disconnect();
-	Framework.StopLocalServer();
+	//OldClientNetwork->Disconnect();
 
 	State = STATE_TITLE;
 }
@@ -104,7 +103,7 @@ void _Menu::InitOptions() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 
-	ClientState.SendBusy(true);
+	OldClientState.SendBusy(true);
 	State = STATE_INGAME;
 }
 
@@ -114,7 +113,7 @@ void _Menu::InitPlay() {
 		CurrentLayout->SetVisible(false);
 	CurrentLayout = nullptr;
 
-	ClientState.SendBusy(false);
+	OldClientState.SendBusy(false);
 	State = STATE_NONE;
 }
 
@@ -143,7 +142,7 @@ void _Menu::InitNewCharacter() {
 
 // Init connect screen
 void _Menu::InitConnect(bool ConnectNow) {
-	ClientNetwork->Disconnect();
+	OldClientNetwork->Disconnect();
 
 	ChangeLayout("element_menu_connect");
 
@@ -241,7 +240,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<char>(Packet::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<int32_t>(PortraitID);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 }
 
 void _Menu::ConnectToHost() {
@@ -305,7 +304,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Request character list from server
@@ -314,7 +313,7 @@ void _Menu::RequestCharacterList() {
 	// Request character list
 	_Buffer Packet;
 	Packet.Write<char>(Packet::CHARACTERS_REQUEST);
-	ClientNetwork->SendPacketToHost(&Packet);
+	OldClientNetwork->SendPacketToHost(&Packet);
 }
 
 // Load portraits
@@ -329,7 +328,7 @@ void _Menu::LoadPortraitButtons() {
 
 	// Iterate over portraits
 	std::list<_Portrait> Portraits;
-	Stats.GetPortraits(Portraits);
+	OldStats.GetPortraits(Portraits);
 	for(auto &Portrait : Portraits) {
 
 		// Create style
@@ -436,8 +435,8 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 							SelectedCharacter = 0;
 
 						if(CharacterSlots[SelectedCharacter].Used) {
-							ClientState.SetCharacterSlot(SelectedCharacter);
-							Framework.ChangeState(&ClientState);
+							OldClientState.SetCharacterSlot(SelectedCharacter);
+							Framework.ChangeState(&OldClientState);
 						}
 					}
 				}
@@ -554,14 +553,14 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<char>(Packet::CHARACTERS_DELETE);
 							Packet.Write<char>(SelectedSlot);
-							ClientNetwork->SendPacketToHost(&Packet);
+							OldClientNetwork->SendPacketToHost(&Packet);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
 						int SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
-							ClientState.SetCharacterSlot(SelectedSlot);
-							Framework.ChangeState(&ClientState);
+							OldClientState.SetCharacterSlot(SelectedSlot);
+							Framework.ChangeState(&OldClientState);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_back") {
@@ -580,7 +579,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						int SelectedSlot = (intptr_t)Clicked->UserData;
 						if(CharacterSlots[SelectedSlot].Used) {
-							ClientState.SetCharacterSlot(SelectedSlot);
+							OldClientState.SetCharacterSlot(SelectedSlot);
 							CharacterSlots[SelectedSlot].Button->Checked = true;
 						}
 						else
@@ -589,7 +588,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						UpdateCharacterButtons();
 
 						if(DoubleClick && SelectedSlot != -1) {
-							Framework.ChangeState(&ClientState);
+							Framework.ChangeState(&OldClientState);
 						}
 					}
 				}
@@ -665,7 +664,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitOptions();
 				}
 				else if(Clicked->Identifier == "button_ingame_disconnect") {
-					ClientNetwork->Disconnect();
+					OldClientNetwork->Disconnect();
 				}
 			} break;
 			default:
@@ -840,10 +839,10 @@ void _Menu::HandlePacket(ENetEvent *Event) {
 				int32_t Experience = Packet.Read<int32_t>();
 
 				std::stringstream Buffer;
-				Buffer << "Level " << Stats.FindLevel(Experience)->Level;
+				Buffer << "Level " << OldStats.FindLevel(Experience)->Level;
 				CharacterSlots[i].Level->Text = Buffer.str();
 				CharacterSlots[i].Used = true;
-				const _Texture *PortraitImage = Stats.GetPortrait(PortraitIndex)->Image;
+				const _Texture *PortraitImage = OldStats.GetPortrait(PortraitIndex)->Image;
 				CharacterSlots[i].Image->Texture = PortraitImage;
 			}
 
@@ -880,8 +879,7 @@ void _Menu::Connect(const std::string &Address, uint16_t Port, bool Fake) {
 
 	// Connect to the fake singleplayer network
 	if(Fake) {
-		Framework.StartLocalServer();
-		ClientNetwork->Connect("", Port);
+		OldClientNetwork->Connect("", Port);
 
 		// Send fake account information
 		{
@@ -890,11 +888,11 @@ void _Menu::Connect(const std::string &Address, uint16_t Port, bool Fake) {
 			Packet.WriteBit(0);
 			Packet.WriteString("singleplayer");
 			Packet.WriteString("singleplayer");
-			ClientNetwork->SendPacketToHost(&Packet);
+			OldClientNetwork->SendPacketToHost(&Packet);
 		}
 	}
 	else {
-		ClientNetwork->Connect(Address.c_str(), Port);
+		OldClientNetwork->Connect(Address.c_str(), Port);
 	}
 }
 

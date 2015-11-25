@@ -18,8 +18,11 @@
 #pragma once
 
 // Libraries
-#include <enet/enet.h>
+#include <string>
+#include <list>
+#include <queue>
 #include <cstdint>
+#include <enet/enet.h>
 
 // Forward Declarations
 class _Buffer;
@@ -43,7 +46,6 @@ struct _NetworkEvent {
 	_Peer *Peer;
 };
 
-// Classes
 class _Network {
 
 	public:
@@ -65,27 +67,51 @@ class _Network {
 		_Network();
 		virtual ~_Network();
 
-		virtual void Init(bool Server) { }
-		virtual void Close() { }
+		void Update(double FrameTime);
+
+		// Settings
+		void SetFakeLag(double Value) { FakeLag = Value; }
 
 		// Updates
-		virtual void Update() { }
+		bool GetNetworkEvent(_NetworkEvent &NetworkEvent);
+		bool HasConnection() { return Connection != nullptr; }
 
-		// Connections
-		virtual int Connect(const char *IPAddress, uint16_t Port) { return 0; }
-		virtual void Disconnect(ENetPeer *Peer=0) { }
+		// Stats
+		uint32_t GetSentSpeed() { return SentSpeed; }
+		uint32_t GetReceiveSpeed() { return ReceiveSpeed; }
 
-		virtual enet_uint32 GetRTT() { return 0; }
-		virtual uint16_t GetPort() { return 0; }
-
-		// Packets
-		virtual void SendPacketToHost(_Buffer *Packet, SendType Type=RELIABLE, uint8_t Channel=0) { }
-		virtual void SendPacketToPeer(_Buffer *Packet, ENetPeer *Peer, SendType Type=RELIABLE, uint8_t Channel=0) { }
+		// Internals
+		void SetUpdatePeriod(double UpdatePeriod) { this->UpdatePeriod = UpdatePeriod; }
+		double GetUpdatePeriod() const { return UpdatePeriod; }
+		bool NeedsUpdate() { return UpdateTimer >= UpdatePeriod; }
+		void ResetUpdateTimer() { UpdateTimer = 0.0f; }
 
 		// Static functions
 		static void InitializeSystem();
 		static void CloseSystem();
 
+		// Determine if an ack is newer or the same as another
+		static bool MoreRecentAck(uint16_t Previous, uint16_t Current, uint16_t Max) {
+			return (Current > Previous && Current - Previous <= Max / 2) || (Previous > Current && Previous - Current > Max / 2);
+		}
+
 	protected:
 
+		virtual void CreateEvent(_NetworkEvent &Event, double Time, ENetEvent &EEvent) { }
+		virtual void HandleEvent(_NetworkEvent &Event, ENetEvent &EEvent) { }
+
+		// State
+		ENetHost *Connection;
+		double Time;
+
+		// Updates
+		double UpdateTimer, UpdatePeriod;
+
+		// Stats
+		uint32_t SentSpeed, ReceiveSpeed;
+		double SecondTimer;
+
+		// Fake lag
+		double FakeLag;
+		std::queue<_NetworkEvent> NetworkEvents;
 };

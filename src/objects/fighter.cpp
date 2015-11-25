@@ -56,7 +56,7 @@ _Fighter::_Fighter(int Type)
 	for(int i = 0; i < FIGHTER_MAXSKILLS; i++)
 		SkillBar[i] = nullptr;
 
-	SkillBar[0] = Stats.GetSkill(0);
+	SkillBar[0] = OldStats.GetSkill(0);
 
 	Offset.x = Offset.y = 0;
 }

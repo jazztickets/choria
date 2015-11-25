@@ -18,59 +18,38 @@
 #pragma once
 
 // Libraries
-#include <log.h>
-#include <cstdint>
+#include <network/network.h>
 
 // Forward Declarations
-class _State;
-class _OldSingleNetwork;
-class _OldMultiNetwork;
-class _FrameLimit;
+class _Buffer;
+class _Peer;
 
-class _Framework {
+class _ServerNetwork : public _Network {
 
 	public:
 
-		enum StateType {
-			INIT,
-			FADEIN,
-			UPDATE,
-			FADEOUT,
-			CLOSE
-		};
+		_ServerNetwork(int NetworkPort);
+		~_ServerNetwork();
 
-		// Setup
-		void Init(int ArgumentCount, char **Arguments);
-		void Close();
+		// Connections
+		void DisconnectAll();
 
-		// Update functions
-		void Update();
-		void Render();
+		// Packets
+		void SendPacket(const _Buffer &Buffer, const _Peer *Peer, SendType Type=RELIABLE, uint8_t Channel=0);
+		void BroadcastPacket(const _Buffer &Buffer, _Peer *ExceptionPeer, SendType Type=RELIABLE, uint8_t Channel=0);
 
-		_State *GetState() { return State; }
-		void ChangeState(_State *RequestedState);
-
-		// Logging
-		_LogFile Log;
-
-		// State
-		bool Done;
+		// Peers
+		const std::list<_Peer *> &GetPeers() const { return Peers; }
+		void DeletePeer(_Peer *Peer);
 
 	private:
 
-		void ResetTimer();
+		void CreateEvent(_NetworkEvent &Event, double Time, ENetEvent &EEvent) override;
+		void HandleEvent(_NetworkEvent &Event, ENetEvent &EEvent) override;
 
-		// States
-		StateType FrameworkState;
-		_State *State;
-		_State *RequestedState;
+		// Delete peers and empty list
+		void ClearPeers();
 
-		// Time
-		_FrameLimit *FrameLimit;
-		uint64_t Timer;
-		double TimeStep;
-		double TimeStepAccumulator;
-
+		// Peers
+		std::list<_Peer *> Peers;
 };
-
-extern _Framework Framework;

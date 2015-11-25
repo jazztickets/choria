@@ -28,7 +28,7 @@
 #include <constants.h>
 #include <instances/map.h>
 #include <instances/battle.h>
-#include <states/server.h>
+#include <states/oldserver.h>
 #include <objects/skill.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -124,7 +124,7 @@ void _Player::Update(double FrameTime) {
 			Save();
 
 		if(State == STATE_TELEPORT && TeleportTime > GAME_TELEPORT_TIME) {
-			ServerState.PlayerTeleport(this);
+			OldServerState.PlayerTeleport(this);
 			State = STATE_WALK;
 		}
 	}
@@ -345,7 +345,7 @@ float _Player::GetNextLevelPercent() const {
 // Sets the player's portrait
 void _Player::SetPortraitID(int Value) {
 	PortraitID = Value;
-	Portrait = Stats.GetPortrait(PortraitID)->Image;
+	Portrait = OldStats.GetPortrait(PortraitID)->Image;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
@@ -475,7 +475,7 @@ void _Player::SetInventory(int Slot, int ItemID, int Count) {
 		Inventory[Slot].Count = 0;
 	}
 	else {
-		Inventory[Slot].Item = Stats.GetItem(ItemID);
+		Inventory[Slot].Item = OldStats.GetItem(ItemID);
 		Inventory[Slot].Count = Count;
 	}
 }
@@ -725,7 +725,7 @@ bool _Player::CanEquipItem(int Slot, const _Item *Item) {
 
 // Updates a skill level
 void _Player::AdjustSkillLevel(int SkillID, int Adjust) {
-	const _Skill *Skill = Stats.GetSkill(SkillID);
+	const _Skill *Skill = OldStats.GetSkill(SkillID);
 	if(Skill == nullptr)
 		return;
 
@@ -764,8 +764,8 @@ void _Player::AdjustSkillLevel(int SkillID, int Adjust) {
 void _Player::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	for(uint32_t i = 0; i < Stats.Skills.size(); i++) {
-		SkillPointsUsed += Stats.Skills[i].SkillCost * SkillLevels[i];
+	for(uint32_t i = 0; i < OldStats.Skills.size(); i++) {
+		SkillPointsUsed += OldStats.Skills[i].SkillCost * SkillLevels[i];
 	}
 }
 
@@ -824,18 +824,18 @@ void _Player::CalculateLevelStats() {
 		Experience = 0;
 
 	// Cap max experience
-	const _Level *MaxLevelStat = Stats.GetLevel(Stats.GetMaxLevel());
+	const _Level *MaxLevelStat = OldStats.GetLevel(OldStats.GetMaxLevel());
 	if(Experience > MaxLevelStat->Experience)
 		Experience = MaxLevelStat->Experience;
 
 	// Find current level
-	const _Level *LevelStat = Stats.FindLevel(Experience);
+	const _Level *LevelStat = OldStats.FindLevel(Experience);
 	Level = LevelStat->Level;
 	MaxHealth = LevelStat->Health;
 	MaxMana = LevelStat->Mana;
 	SkillPoints = LevelStat->SkillPoints;
 	ExperienceNextLevel = LevelStat->NextLevel;
-	if(Level == Stats.GetMaxLevel())
+	if(Level == OldStats.GetMaxLevel())
 		ExperienceNeeded = 0;
 	else
 		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);

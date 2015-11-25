@@ -18,59 +18,40 @@
 #pragma once
 
 // Libraries
-#include <log.h>
-#include <cstdint>
+#include <state.h>
+#include <thread>
 
 // Forward Declarations
-class _State;
-class _OldSingleNetwork;
-class _OldMultiNetwork;
-class _FrameLimit;
+class _Server;
+class _Stats;
 
-class _Framework {
+// Dedicated server state
+class _DedicatedState : public _State {
 
 	public:
 
-		enum StateType {
-			INIT,
-			FADEIN,
-			UPDATE,
-			FADEOUT,
-			CLOSE
-		};
+		_DedicatedState();
 
 		// Setup
-		void Init(int ArgumentCount, char **Arguments);
-		void Close();
+		void Init() override;
+		void Close() override;
 
-		// Update functions
-		void Update();
-		void Render();
+		// Update
+		void Update(double FrameTime) override;
 
-		_State *GetState() { return State; }
-		void ChangeState(_State *RequestedState);
+		// State parameters
+		void SetNetworkPort(uint16_t NetworkPort) { this->NetworkPort = NetworkPort; }
+		void SetStats(const _Stats *Stats)  { this->Stats = Stats; }
 
-		// Logging
-		_LogFile Log;
+	protected:
 
-		// State
-		bool Done;
+		_Server *Server;
+		std::thread *Thread;
+		const _Stats *Stats;
 
-	private:
-
-		void ResetTimer();
-
-		// States
-		StateType FrameworkState;
-		_State *State;
-		_State *RequestedState;
-
-		// Time
-		_FrameLimit *FrameLimit;
-		uint64_t Timer;
-		double TimeStep;
-		double TimeStepAccumulator;
+		std::string HostAddress;
+		uint16_t NetworkPort;
 
 };
 
-extern _Framework Framework;
+extern _DedicatedState DedicatedState;

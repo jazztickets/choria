@@ -16,24 +16,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <framework.h>
-#include <state.h>
+#include <states/editor.h>
+#include <states/client.h>
+#include <states/dedicated.h>
 #include <graphics.h>
 #include <input.h>
 #include <globals.h>
 #include <random.h>
-#include <objectmanager.h>
 #include <config.h>
-#include <stats.h>
 #include <assets.h>
 #include <constants.h>
 #include <actions.h>
 #include <menu.h>
-#include <network/singlenetwork.h>
-#include <network/multinetwork.h>
-#include <states/editor.h>
-#include <states/client.h>
-#include <states/server.h>
-#include <states/null.h>
 #include <framelimit.h>
 #include <SDL.h>
 #include <string>
@@ -43,8 +37,6 @@ _Framework Framework;
 // Processes parameters and initializes the game
 void _Framework::Init(int ArgumentCount, char **Arguments) {
 	FrameLimit = nullptr;
-	LocalServerRunning = false;
-	State = &NullState;
 	TimeStepAccumulator = 0.0;
 	TimeStep = GAME_TIMESTEP;
 	RequestedState = nullptr;
@@ -53,7 +45,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 	// Settings
 	uint16_t NetworkPort = Config.NetworkPort;
-	bool IsServer = false;
+	State = &ClientState;
 
 	// Process arguments
 	std::string Token;
@@ -62,8 +54,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Token = std::string(Arguments[i]);
 		TokensRemaining = ArgumentCount - i - 1;
 		if(Token == "-host") {
-			State = &ServerState;
-			IsServer = true;
+			State = &DedicatedState;
 		}
 		else if(Token == "-editor") {
 			State = &EditorState;
@@ -71,7 +62,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 				EditorState.SetFilename(Arguments[++i]);
 		}
 		else if(Token == "-connect") {
-			NullState.StartupMode = _NullState::CONNECT;
+			//NullState.StartupMode = _NullState::CONNECT;
 		}
 		else if(Token == "-username" && TokensRemaining > 0) {
 			Menu.SetUsername(Arguments[++i]);
@@ -87,34 +78,16 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 	}
 
-	// Initialize network subsystem
-	_Network::InitializeSystem();
-
-	// Set up networking
-	MultiNetwork = new _MultiNetwork();
-	ClientSingleNetwork = new _SingleNetwork();
-	ServerSingleNetwork = new _SingleNetwork();
-	MultiNetwork->Init(IsServer, NetworkPort);
-	ClientSingleNetwork->Init(false);
-	ServerSingleNetwork->Init(false);
-	if(IsServer)
-		ServerNetwork = MultiNetwork;
-	else
-		ClientNetwork = MultiNetwork;
-
 	// Set random seed
 	RandomGenerator.seed(SDL_GetPerformanceCounter());
 
 	// Check state
-	if(State == &ServerState) {
-
-		// Open log
-		Log.Open((Config.ConfigPath + "server.log").c_str());
-
+	if(State == &DedicatedState) {
 		Assets.Init(true);
-		Stats.Init();
-		ServerState.StartCommandThread();
 		FrameLimit = new _FrameLimit(120.0, false);
+
+		DedicatedState.SetNetworkPort(NetworkPort);
+		//DedicatedState.SetStats(Stats);
 	}
 	else {
 
@@ -128,7 +101,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		// Get fullscreen size
 		Config.SetDefaultFullscreenSize();
 
-		// Initialize graphics system
+		// Get window settings
 		_WindowSettings WindowSettings;
 		WindowSettings.WindowTitle = "choria";
 		WindowSettings.Fullscreen = Config.Fullscreen;
@@ -137,12 +110,11 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else
 			WindowSettings.Size = Config.WindowSize;
 		WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+		// Set up subsystems
 		Graphics.Init(WindowSettings);
 		Assets.Init(false);
 		Graphics.SetStaticUniforms();
-
-		// Set up the stats system
-		Stats.Init();
 
 		FrameLimit = new _FrameLimit(120.0, false);
 	}
@@ -155,29 +127,13 @@ void _Framework::Close() {
 
 	// Close the state
 	State->Close();
-	if(LocalServerRunning)
-		ServerState.Close();
 
-	if(MultiNetwork)
-		MultiNetwork->WaitForDisconnect();
-
-	// Shut down the system
-	_Network::CloseSystem();
-	if(MultiNetwork)
-		MultiNetwork->Close();
-	if(ClientSingleNetwork)
-		ClientSingleNetwork->Close();
-	if(ServerSingleNetwork)
-		ServerSingleNetwork->Close();
-	delete MultiNetwork;
-	delete ClientSingleNetwork;
-	delete ServerSingleNetwork;
+	// Close subsystems
 	Assets.Close();
-	Stats.Close();
 	Graphics.Close();
 	Config.Close();
-
 	delete FrameLimit;
+
 	if(SDL_WasInit(SDL_INIT_VIDEO))
 		SDL_Quit();
 }
@@ -253,11 +209,6 @@ void _Framework::Update() {
 		case UPDATE: {
 			TimeStepAccumulator += FrameTime;
 			while(TimeStepAccumulator >= TimeStep) {
-				if(LocalServerRunning)
-					ServerState.Update(TimeStep);
-				else
-					MultiNetwork->Update();
-
 				State->Update(TimeStep);
 				TimeStepAccumulator -= TimeStep;
 			}
@@ -279,29 +230,4 @@ void _Framework::Update() {
 
 	if(FrameLimit)
 		FrameLimit->Update();
-}
-
-// Starts the local server
-void _Framework::StartLocalServer() {
-	if(!LocalServerRunning) {
-		LocalServerRunning = true;
-
-		ClientNetwork = ClientSingleNetwork;
-		ServerNetwork = ServerSingleNetwork;
-
-		ServerState.Init();
-	}
-}
-
-// Stops the local server
-void _Framework::StopLocalServer() {
-	if(LocalServerRunning) {
-		ClientNetwork->Disconnect();
-		LocalServerRunning = false;
-
-		ServerState.Close();
-
-		ClientNetwork = MultiNetwork;
-		ServerNetwork = MultiNetwork;
-	}
 }

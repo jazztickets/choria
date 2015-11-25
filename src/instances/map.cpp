@@ -20,9 +20,9 @@
 #include <graphics.h>
 #include <constants.h>
 #include <stats.h>
-#include <network/network.h>
+#include <network/oldnetwork.h>
 #include <buffer.h>
-#include <states/server.h>
+#include <states/oldserver.h>
 #include <objects/player.h>
 #include <texture.h>
 #include <assets.h>
@@ -64,7 +64,7 @@ _Map::_Map(int ID) {
 	this->ID = ID;
 
 	// Get map info
-	const _MapStat *Map = Stats.GetMap(ID);
+	const _MapStat *Map = OldStats.GetMap(ID);
 
 	// Load map
 	Filename = Map->File;
@@ -175,7 +175,7 @@ void _Map::Render(_Camera *Camera, int RenderFlags) {
 
 			// Draw event info
 			if(Tile->EventType > 0) {
-				std::string EventText = Stats.Events[Tile->EventType].ShortName + std::string(", ") + std::to_string(Tile->EventData);
+				std::string EventText = OldStats.Events[Tile->EventType].ShortName + std::string(", ") + std::to_string(Tile->EventData);
 				Assets.Fonts["hud_small"]->DrawText(EventText, glm::vec2(DrawPosition), COLOR_CYAN, CENTER_MIDDLE, 1.0f / 32.0f);
 			}
 		}
@@ -273,7 +273,7 @@ void _Map::Load() {
 	//	Grid->InitTiles();
 
 	// Initialize 2d tile rendering
-	if(!ServerNetwork) {
+	if(!OldServerNetwork) {
 		/*
 		TileAtlas = new _Atlas(Assets.Textures[AtlasPath], glm::ivec2(64, 64), 1);
 
@@ -511,11 +511,11 @@ void _Map::SendObjectUpdates() {
 		Packet.WriteBit(Invisible);
 	}
 
-	SendPacketToPlayers(&Packet, nullptr, _Network::UNSEQUENCED);
+	SendPacketToPlayers(&Packet, nullptr, _OldNetwork::UNSEQUENCED);
 }
 
 // Sends a packet to all of the players in the map
-void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Network::SendType Type) {
+void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _OldNetwork::SendType Type) {
 
 	// Send the packet out
 	for(auto &Object : Objects) {
@@ -523,7 +523,7 @@ void _Map::SendPacketToPlayers(_Buffer *Packet, _Player *ExceptionPlayer, _Netwo
 			_Player *Player = (_Player *)Object;
 
 			if(Player != ExceptionPlayer)
-				ServerNetwork->SendPacketToPeer(Packet, Player->Peer, Type, Type == _Network::UNSEQUENCED);
+				OldServerNetwork->SendPacketToPeer(Packet, Player->Peer, Type, Type == _OldNetwork::UNSEQUENCED);
 		}
 	}
 }

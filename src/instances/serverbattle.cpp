@@ -21,11 +21,11 @@
 #include <constants.h>
 #include <buffer.h>
 #include <packet.h>
-#include <network/network.h>
+#include <network/oldnetwork.h>
 #include <random.h>
 #include <objects/player.h>
 #include <objects/fighter.h>
-#include <states/server.h>
+#include <states/oldserver.h>
 
 // Constructor
 _ServerBattle::_ServerBattle()
@@ -312,7 +312,7 @@ void _ServerBattle::CheckEnd() {
 				// Generate monster drops in player vs monster situations
 				std::vector<int> MonsterDrops;
 				for(size_t i = 0; i < Monsters.size(); i++) {
-					Stats.GenerateMonsterDrops(Monsters[i]->ID, 1, MonsterDrops);
+					OldStats.GenerateMonsterDrops(Monsters[i]->ID, 1, MonsterDrops);
 				}
 
 				// Get a list of players that receive items
@@ -348,7 +348,7 @@ void _ServerBattle::CheckEnd() {
 				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
 				Players[i]->Deaths++;
 
-				ServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
+				OldServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
 			}
 			else {
 				ExperienceEarned = OppositeSide->ExperienceGiven;
@@ -369,7 +369,7 @@ void _ServerBattle::CheckEnd() {
 			int NewLevel = Players[i]->Level;
 			if(NewLevel > CurrentLevel) {
 				Players[i]->RestoreHealthMana();
-				ServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
+				OldServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
 			}
 
 			// Write results
@@ -391,10 +391,10 @@ void _ServerBattle::CheckEnd() {
 			for(int j = 0; j < ItemCount; j++) {
 				int ItemID = PlayerItems[PlayerIndex][j];
 				Packet.Write<int32_t>(ItemID);
-				Players[i]->AddItem(Stats.GetItem(ItemID), 1, -1);
+				Players[i]->AddItem(OldStats.GetItem(ItemID), 1, -1);
 			}
 
-			ServerNetwork->SendPacketToPeer(&Packet, Players[i]->Peer);
+			OldServerNetwork->SendPacketToPeer(&Packet, Players[i]->Peer);
 		}
 
 		State = STATE_END;
@@ -410,7 +410,7 @@ void _ServerBattle::SendPacketToPlayers(_Buffer *Packet) {
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Object::PLAYER) {
 			_Player *Player = (_Player *)Fighters[i];
-			ServerNetwork->SendPacketToPeer(Packet, Player->Peer);
+			OldServerNetwork->SendPacketToPeer(Packet, Player->Peer);
 		}
 	}
 }
@@ -439,7 +439,7 @@ void _ServerBattle::SendSkillToPlayers(_Player *Player) {
 	// Send packet to all players
 	for(size_t i = 0; i < SidePlayers.size(); i++) {
 		if(SidePlayers[i] != Player) {
-			ServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->Peer);
+			OldServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->Peer);
 		}
 	}
 }

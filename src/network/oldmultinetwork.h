@@ -18,59 +18,35 @@
 #pragma once
 
 // Libraries
-#include <log.h>
-#include <cstdint>
+#include <network/oldnetwork.h>
 
-// Forward Declarations
-class _State;
-class _OldSingleNetwork;
-class _OldMultiNetwork;
-class _FrameLimit;
-
-class _Framework {
+class _OldMultiNetwork : public _OldNetwork {
 
 	public:
 
-		enum StateType {
-			INIT,
-			FADEIN,
-			UPDATE,
-			FADEOUT,
-			CLOSE
-		};
+		void Init(bool Server, uint16_t Port);
+		void Close() override;
 
-		// Setup
-		void Init(int ArgumentCount, char **Arguments);
-		void Close();
+		// Updates
+		void Update() override;
 
-		// Update functions
-		void Update();
-		void Render();
+		// Connections
+		int Connect(const char *IPAddress, uint16_t Port) override;
+		void Disconnect(ENetPeer *Peer=0) override;
+		void WaitForDisconnect();
 
-		_State *GetState() { return State; }
-		void ChangeState(_State *RequestedState);
+		// Packets
+		void SendPacketToHost(_Buffer *Buffer, SendType Type=RELIABLE, uint8_t Channel=0) override;
+		void SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type=RELIABLE, uint8_t Channel=0) override;
 
-		// Logging
-		_LogFile Log;
-
-		// State
-		bool Done;
+		// Info
+		uint16_t GetPort() override;
+		enet_uint32 GetRTT() override;
 
 	private:
 
-		void ResetTimer();
+		bool Active;
 
-		// States
-		StateType FrameworkState;
-		_State *State;
-		_State *RequestedState;
-
-		// Time
-		_FrameLimit *FrameLimit;
-		uint64_t Timer;
-		double TimeStep;
-		double TimeStepAccumulator;
-
+		ENetHost *Connection;
+		ENetPeer *ClientPeer;
 };
-
-extern _Framework Framework;

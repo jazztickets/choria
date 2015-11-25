@@ -15,38 +15,25 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
+#include <network/oldnetwork.h>
+#include <stdexcept>
 
-// Libraries
-#include <network/network.h>
+// Constructor
+_OldNetwork::_OldNetwork() {
+}
 
-class _MultiNetwork : public _Network {
+// Destructor
+_OldNetwork::~_OldNetwork() {
+}
 
-	public:
+// Initializes enet
+void _OldNetwork::InitializeSystem() {
 
-		void Init(bool Server, uint16_t Port);
-		void Close() override;
+	if(enet_initialize() != 0)
+		throw std::runtime_error("enet_initialize() error");
+}
 
-		// Updates
-		void Update() override;
-
-		// Connections
-		int Connect(const char *IPAddress, uint16_t Port) override;
-		void Disconnect(ENetPeer *Peer=0) override;
-		void WaitForDisconnect();
-
-		// Packets
-		void SendPacketToHost(_Buffer *Buffer, SendType Type=RELIABLE, uint8_t Channel=0) override;
-		void SendPacketToPeer(_Buffer *Buffer, ENetPeer *Peer, SendType Type=RELIABLE, uint8_t Channel=0) override;
-
-		// Info
-		uint16_t GetPort() override;
-		enet_uint32 GetRTT() override;
-
-	private:
-
-		bool Active;
-
-		ENetHost *Connection;
-		ENetPeer *ClientPeer;
-};
+// Closes enet
+void _OldNetwork::CloseSystem() {
+	enet_deinitialize();
+}
