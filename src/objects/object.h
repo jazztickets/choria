@@ -159,7 +159,7 @@ class _Object {
 
 		// Movement
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
-		bool MovePlayer();
+		int Move();
 		int GetCurrentZone();
 		bool IsInvisible() const { return InvisPower > 0; }
 
@@ -199,6 +199,7 @@ class _Object {
 		ENetPeer *OldPeer;
 		_Peer *Peer;
 		int Type;
+		int Moved;
 		bool Deleted;
 		glm::ivec2 Position;
 		NetworkIDType NetworkID;

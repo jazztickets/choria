@@ -148,13 +148,6 @@ void _Map::Update(double FrameTime) {
 			++Iterator;
 		}
 	}
-
-/*	ObjectUpdateTime += FrameTime;
-	if(ObjectUpdateTime > NETWORK_UPDATEPERIOD) {
-		ObjectUpdateTime = 0;
-
-		SendObjectUpdates();
-	}*/
 }
 
 // Renders the map

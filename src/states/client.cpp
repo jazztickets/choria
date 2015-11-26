@@ -297,6 +297,7 @@ void _ClientState::Update(double FrameTime) {
 	if(!Player || !Player->Map)
 		return;
 
+	// Set input
 	Player->InputState = 0;
 	if(Actions.GetState(_Actions::UP))
 		Player->InputState |= _Object::MOVE_UP;
@@ -309,6 +310,12 @@ void _ClientState::Update(double FrameTime) {
 
 	// Update objects
 	Player->Map->Update(FrameTime);
+	if(Player->Moved) {
+		_Buffer Packet;
+		Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
+		Packet.Write<char>(Player->Moved);
+		Network->SendPacket(Packet);
+	}
 
 	// Update camera
 	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
@@ -420,7 +427,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::WORLD_HUD:
 			HandleHUD(Data);
 		break;
-
 		case Packet::BATTLE_TURNRESULTS:
 			HandleBattleTurnResults(Data);
 		break;
@@ -668,10 +674,7 @@ void _ClientState::SendMoveCommand(int Direction) {
 
 		// Move player locally
 		if(Player->MovePlayer(Direction)) {
-			_Buffer Packet;
-			Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
-			Packet.Write<char>(Direction);
-			Network->SendPacket(Packet);
+
 		}
 	}*/
 }

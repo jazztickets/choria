@@ -41,6 +41,7 @@ _Object::_Object()
 	OldPeer(nullptr),
 	Peer(nullptr),
 	Type(0),
+	Moved(false),
 	Deleted(false),
 	Position(-1, -1),
 	NetworkID(0),
@@ -373,7 +374,9 @@ void _Object::UpdateTarget(const std::vector<_Object *> &Fighters) {
 void _Object::Update(double FrameTime) {
 
 	// Update player position
-	MovePlayer();
+	Moved = Move();
+	if(Moved)
+		InputState = 0;
 
 	// Update timers
 	MoveTime += FrameTime;
@@ -417,9 +420,9 @@ void _Object::Render(const _Object *ClientPlayer) {
 }
 
 // Moves the player
-bool _Object::MovePlayer() {
-	if(State != STATE_WALK)
-		return false;
+int _Object::Move() {
+	if(State != STATE_WALK || InputState == 0)
+		return 0;
 
 	// Get new position
 	glm::ivec2 Direction(0, 0);
@@ -432,8 +435,9 @@ bool _Object::MovePlayer() {
 	if(InputState & MOVE_RIGHT)
 		Direction.x += 1;
 
+	// Check timer
 	if(MoveTime < PLAYER_MOVETIME || (Direction.x != 0 && Direction.y != 0 && MoveTime < PLAYER_MOVETIME * 1.414))
-		return false;
+		return 0;
 
 	// Move player
 	if(Map->CanMoveTo(Position + Direction)) {
@@ -451,10 +455,10 @@ bool _Object::MovePlayer() {
 
 		MoveTime = 0;
 
-		return true;
+		return InputState;
 	}
 
-	return false;
+	return 0;
 }
 
 // Saves the player

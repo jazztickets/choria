@@ -257,10 +257,10 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::CHARACTERS_DELETE:
 			HandleCharacterDelete(Data, Peer);
 		break;
-			/*
 		case Packet::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
+		/*
 		case Packet::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
 		break;
@@ -496,37 +496,6 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	SendCharacterList(Peer);
 }
 
-// Send character list
-void _Server::SendCharacterList(_Peer *Peer) {
-	_Object *Player = Peer->Object;
-
-	std::stringstream Query;
-
-	// Get a count of the account's characters
-	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Player->AccountID;
-	int CharacterCount = Database->RunCountQuery(Query.str());
-	Query.str("");
-
-	// Create the packet
-	_Buffer Packet;
-	Packet.Write<char>(Packet::CHARACTERS_LIST);
-	Packet.Write<char>(CharacterCount);
-
-	// Generate a list of characters
-	Query << "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = " << Player->AccountID;
-	Database->RunDataQuery(Query.str());
-	while(Database->FetchRow()) {
-		Packet.WriteString(Database->GetString(0));
-		Packet.Write<int32_t>(Database->GetInt(1));
-		Packet.Write<int32_t>(Database->GetInt(2));
-	}
-	Database->CloseQuery();
-	Query.str("");
-
-	// Send list
-	Network->SendPacket(Packet, Peer);
-}
-
 // Loads the player, updates the world, notifies clients
 void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
@@ -636,6 +605,126 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Send map and players to new player
 	SpawnPlayer(Peer, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
+}
+
+// Handles move commands from a client
+void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+	Player->InputState = Data.Read<char>();
+	/*
+	if(Player->MovePlayer(Direction)) {
+
+		// Handle events
+		const _Tile *Tile = Player->GetTile();
+		switch(Tile->EventType) {
+			case _Map::EVENT_SPAWN:
+				Player->SpawnMapID = Player->Map->ID;
+				Player->SpawnPoint = Tile->EventData;
+				Player->RestoreHealthMana();
+				SendHUD(Player);
+				Player->Save();
+			break;
+			case _Map::EVENT_MAPCHANGE:
+				Player->GenerateNextBattle();
+				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->Map->ID);
+			break;
+			case _Map::EVENT_VENDOR:
+				Player->State = _Object::STATE_VENDOR;
+				Player->Vendor = Stats->GetVendor(Tile->EventData);
+				SendEvent(Player, Tile->EventType, Tile->EventData);
+			break;
+			case _Map::EVENT_TRADER:
+				Player->State = _Object::STATE_TRADER;
+				Player->Trader = Stats->GetTrader(Tile->EventData);
+				SendEvent(Player, Tile->EventType, Tile->EventData);
+			break;
+			default:
+
+				// Start a battle
+				if(Player->NextBattle <= 0) {
+
+					// Get monsters
+					std::vector<int> Monsters;
+					Stats->GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
+					size_t MonsterCount = Monsters.size();
+					if(MonsterCount > 0) {
+
+						// Create a new battle instance
+						_ServerBattle *Battle = new _ServerBattle();
+						Battles.push_back(Battle);
+
+						// Add players
+						Battle->AddFighter(Player, 0);
+						if(1) {
+
+							// Get a list of players
+							std::list<_Object *> Players;
+							Player->Map->GetClosePlayers(Player, 7*7, Players);
+
+							// Add players to battle
+							int PlayersAdded = 0;
+							for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
+								_Object *PartyPlayer = *Iterator;
+								if(PartyPlayer->State == _Object::STATE_WALK && !PartyPlayer->IsInvisible()) {
+									SendPlayerPosition(PartyPlayer);
+									Battle->AddFighter(PartyPlayer, 0);
+									PlayersAdded++;
+									if(PlayersAdded == 2)
+										break;
+								}
+							}
+						}
+
+						// Add monsters
+						for(size_t i = 0; i < Monsters.size(); i++) {
+							_Object *Monster = new _Object(Monsters[i]);
+							Monster->ID = Monsters[i];
+							Monster->Type = _Object::MONSTER;
+							Stats->GetMonsterStats(Monsters[i], Monster);
+							Battle->AddFighter(Monster, 1);
+						}
+
+						Battle->StartBattle();
+					}
+				}
+			break;
+		}
+	}*/
+
+}
+
+// Send character list
+void _Server::SendCharacterList(_Peer *Peer) {
+	_Object *Player = Peer->Object;
+
+	std::stringstream Query;
+
+	// Get a count of the account's characters
+	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Player->AccountID;
+	int CharacterCount = Database->RunCountQuery(Query.str());
+	Query.str("");
+
+	// Create the packet
+	_Buffer Packet;
+	Packet.Write<char>(Packet::CHARACTERS_LIST);
+	Packet.Write<char>(CharacterCount);
+
+	// Generate a list of characters
+	Query << "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = " << Player->AccountID;
+	Database->RunDataQuery(Query.str());
+	while(Database->FetchRow()) {
+		Packet.WriteString(Database->GetString(0));
+		Packet.Write<int32_t>(Database->GetInt(1));
+		Packet.Write<int32_t>(Database->GetInt(2));
+	}
+	Database->CloseQuery();
+	Query.str("");
+
+	// Send list
+	Network->SendPacket(Packet, Peer);
 }
 
 // Spawns a player at a particular spawn point
