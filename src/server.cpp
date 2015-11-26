@@ -750,6 +750,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Player->MonsterKills = Database->GetInt(18);
 	Player->PlayerKills = Database->GetInt(19);
 	Player->Bounty = Database->GetInt(20);
+	Database->CloseQuery();
 
 	// Set inventory
 	Query << "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = " << Player->CharacterID;

@@ -1342,7 +1342,7 @@ void _HUD::ValidateTradeGold() {
 
 	// Get gold amount
 	std::stringstream Buffer(GoldTextBox->Text);
-	int Gold;
+	int Gold = 0;
 	Buffer >> Gold;
 	if(Gold < 0)
 		Gold = 0;
