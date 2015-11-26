@@ -19,6 +19,7 @@
 #include <states/editor.h>
 #include <states/client.h>
 #include <states/dedicated.h>
+#include <network/network.h>
 #include <graphics.h>
 #include <input.h>
 #include <globals.h>
@@ -78,6 +79,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 	}
 
+    // Initialize network subsystem
+    _Network::InitializeSystem();
+
 	// Set random seed
 	RandomGenerator.seed(SDL_GetPerformanceCounter());
 
@@ -132,6 +136,8 @@ void _Framework::Close() {
 	Graphics.Close();
 	Config.Close();
 	delete FrameLimit;
+
+    _Network::CloseSystem();
 
 	if(SDL_WasInit(SDL_INIT_VIDEO))
 		SDL_Quit();
