@@ -320,8 +320,6 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	bool CreateAccount = Data.ReadBit();
 	std::string Username(Data.ReadString());
 	std::string Password(Data.ReadString());
-	if(Username.size() > ACCOUNT_MAX_USERNAME_SIZE || Password.size() > ACCOUNT_MAX_PASSWORD_SIZE)
-		return;
 
 	std::stringstream Query;
 
@@ -329,7 +327,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	if(CreateAccount) {
 
 		// Check for existing account
-		Query << "SELECT ID FROM Accounts WHERE Username = '" << Username << "'";
+		Query << "SELECT id FROM account WHERE username = '" << Username << "'";
 		Save->Database->RunDataQuery(Query.str());
 		int Result = Save->Database->FetchRow();
 		Save->Database->CloseQuery();
@@ -342,14 +340,14 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 			return;
 		}
 		else {
-			Query << "INSERT INTO Accounts(Username, Password) VALUES('" << Username << "', '" << Password << "')";
+			Query << "INSERT INTO account(username, password) VALUES('" << Username << "', '" << Password << "')";
 			Save->Database->RunQuery(Query.str());
 			Query.str("");
 		}
 	}
 
 	// Get account information
-	Query << "SELECT ID FROM Accounts WHERE Username = '" << Username << "' AND Password = '" << Password << "'";
+	Query << "SELECT id FROM account WHERE username = '" << Username << "' AND password = '" << Password << "'";
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		Peer->AccountID = Save->Database->GetInt(0);
@@ -393,14 +391,14 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	std::stringstream Query;
 
 	// Check character limit
-	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Peer->AccountID;
+	Query << "SELECT count(id) FROM character WHERE account_id = " << Peer->AccountID;
 	int CharacterCount = Save->Database->RunCountQuery(Query.str());
 	if(CharacterCount >= SAVE_COUNT)
 		return;
 	Query.str("");
 
 	// Check for existing names
-	Query << "SELECT ID FROM Characters WHERE Name = '" << Name << "'";
+	Query << "SELECT id FROM character WHERE name = '" << Name << "'";
 	Save->Database->RunDataQuery(Query.str());
 	int FindResult = Save->Database->FetchRow();
 	Save->Database->CloseQuery();
@@ -416,20 +414,20 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Create the character
 	Save->Database->RunQuery("BEGIN TRANSACTION");
-	Query << "INSERT INTO Characters(AccountsID, Name, PortraitID, ActionBar0) VALUES(" << Peer->AccountID << ", '" << Name << "', " << PortraitID << ", 1)";
+	Query << "INSERT INTO character(account_id, name, portrait_id, actionbar0) VALUES(" << Peer->AccountID << ", '" << Name << "', " << PortraitID << ", 1)";
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	int CharacterID = Save->Database->GetLastInsertID();
-	Query << "INSERT INTO Inventory VALUES(" << CharacterID << ", 1, 2, 1)";
+	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 1, 2, 1)";
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
-	Query << "INSERT INTO Inventory VALUES(" << CharacterID << ", 3, 1, 1)";
+	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 3, 1, 1)";
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
-	Query << "INSERT INTO SkillLevel VALUES(" << CharacterID << ", 1, 1)";
+	Query << "INSERT INTO skilllevel VALUES(" << CharacterID << ", 1, 1)";
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -453,7 +451,7 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	int CharacterID = 0;
 
 	// Get character ID
-	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Index << ", 1";
+	Query << "SELECT ID FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Index << ", 1";
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		CharacterID = Save->Database->GetInt(0);
@@ -462,17 +460,17 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	Query.str("");
 
 	// Delete character
-	Query << "DELETE FROM Characters WHERE ID = " << CharacterID;
+	Query << "DELETE FROM character WHERE id = " << CharacterID;
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	// Delete items
-	Query << "DELETE FROM Inventory WHERE CharactersID = " << CharacterID;
+	Query << "DELETE FROM inventory WHERE character_id = " << CharacterID;
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	// Delete skill levels
-	Query << "DELETE FROM SkillLevel WHERE CharactersID = " << CharacterID;
+	Query << "DELETE FROM skilllevel WHERE character_id = " << CharacterID;
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -488,7 +486,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
+	Query << "SELECT ID FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		Peer->CharacterID = Save->Database->GetInt(0);
@@ -600,7 +598,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	std::stringstream Query;
 
 	// Get a count of the account's characters
-	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Peer->AccountID;
+	Query << "SELECT count(id) FROM character WHERE account_id = " << Peer->AccountID;
 	int CharacterCount = Save->Database->RunCountQuery(Query.str());
 	Query.str("");
 
@@ -610,7 +608,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
-	Query << "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = " << Peer->AccountID;
+	Query << "SELECT name, portrait_id, Experience FROM character WHERE account_id = " << Peer->AccountID;
 	Save->Database->RunDataQuery(Query.str());
 	while(Save->Database->FetchRow()) {
 		Packet.WriteString(Save->Database->GetString(0));
@@ -712,7 +710,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	std::stringstream Query;
 
 	// Get character
-	Query << "SELECT * FROM Characters WHERE ID = " << Peer->CharacterID;
+	Query << "SELECT * FROM character WHERE id = " << Peer->CharacterID;
 	Save->Database->RunDataQuery(Query.str());
 	Query.str("");
 
@@ -743,7 +741,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Save->Database->CloseQuery();
 
 	// Set inventory
-	Query << "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = " << Player->CharacterID;
+	Query << "SELECT slot, item_id, count FROM inventory WHERE character_id = " << Player->CharacterID;
 	Save->Database->RunDataQuery(Query.str());
 	int ItemCount = 0;
 	while(Save->Database->FetchRow()) {
@@ -754,7 +752,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Query.str("");
 
 	// Set skills
-	Query << "SELECT SkillsID, Level FROM SkillLevel WHERE CharactersID = " << Player->CharacterID;
+	Query << "SELECT skill_id, level FROM skilllevel WHERE character_id = " << Player->CharacterID;
 	Save->Database->RunDataQuery(Query.str());
 	int SkillCount = 0;
 	while(Save->Database->FetchRow()) {

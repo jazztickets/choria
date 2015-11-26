@@ -482,8 +482,8 @@ void _ClientState::HandleConnect() {
 		_Buffer Packet;
 		Packet.Write<char>(Packet::ACCOUNT_LOGININFO);
 		Packet.WriteBit(0);
-		Packet.WriteString("singleplayer");
-		Packet.WriteString("singleplayer");
+		Packet.WriteString("choria_singleplayer");
+		Packet.WriteString("choria_singleplayer");
 		Network->SendPacket(Packet);
 	}
 

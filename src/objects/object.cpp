@@ -513,7 +513,7 @@ void _Object::Save() {
 	Database->RunQuery(Query);
 
 	// Save items
-	sprintf(Query, "DELETE FROM Inventory WHERE CharactersID = %d", CharacterID);
+	sprintf(Query, "DELETE FROM Inventory WHERE character_id = %d", CharacterID);
 	Database->RunQuery(Query);
 
 	const _InventorySlot *Item;
@@ -526,7 +526,7 @@ void _Object::Save() {
 	}
 
 	// Save skill points
-	sprintf(Query, "DELETE FROM SkillLevel WHERE CharactersID = %d", CharacterID);
+	sprintf(Query, "DELETE FROM SkillLevel WHERE character_id = %d", CharacterID);
 	Database->RunQuery(Query);
 
 	for(auto &SkillLevel : SkillLevels) {

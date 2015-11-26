@@ -48,74 +48,79 @@ _Save::~_Save() {
 	delete Database;
 }
 
-// Populates the server database with the default data
+// Create default save database
 void _Save::CreateDefaultDatabase() {
 
 	Database->RunQuery(
 				"BEGIN TRANSACTION"
 	);
 
+	// Settings
 	Database->RunQuery(
-				"CREATE TABLE ServerInfo('Version' INTEGER)"
+				"CREATE TABLE settings('version' INTEGER)"
 	);
 
 	Database->RunQuery(
-				"CREATE TABLE Accounts("
-				"'ID' INTEGER PRIMARY KEY"
-				", 'Username' TEXT"
-				", 'Password' TEXT"
+				"INSERT INTO settings(version) VALUES(" + std::to_string(SAVE_VERSION) + ")"
+	);
+
+	// Accounts
+	Database->RunQuery(
+				"CREATE TABLE account("
+				"'id' INTEGER PRIMARY KEY,"
+				"'username' TEXT,"
+				"'password' TEXT"
 				")"
 	);
 
 	Database->RunQuery(
-				"CREATE TABLE Characters("
-				"'ID' INTEGER PRIMARY KEY"
-				", 'AccountsID' INTEGER DEFAULT(0)"
-				", 'MapID' INTEGER DEFAULT(1)"
-				", 'SpawnPoint' INTEGER DEFAULT(0)"
-				", 'Name' TEXT"
-				", 'PortraitID' INTEGER DEFAULT(1)"
-				", 'Experience' INTEGER DEFAULT(0)"
-				", 'Gold' INTEGER DEFAULT(0)"
-				", 'ActionBar0' INTEGER DEFAULT(0)"
-				", 'ActionBar1' INTEGER DEFAULT(0)"
-				", 'ActionBar2' INTEGER DEFAULT(0)"
-				", 'ActionBar3' INTEGER DEFAULT(0)"
-				", 'ActionBar4' INTEGER DEFAULT(0)"
-				", 'ActionBar5' INTEGER DEFAULT(0)"
-				", 'ActionBar6' INTEGER DEFAULT(0)"
-				", 'ActionBar7' INTEGER DEFAULT(0)"
-				", 'PlayTime' INTEGER DEFAULT(0)"
-				", 'Deaths' INTEGER DEFAULT(0)"
-				", 'MonsterKills' INTEGER DEFAULT(0)"
-				", 'PlayerKills' INTEGER DEFAULT(0)"
-				", 'Bounty' INTEGER DEFAULT(0)"
+				"INSERT INTO account(username, password) VALUES('choria_singleplayer', 'choria_singleplayer')"
+	);
+
+	// Characters
+	Database->RunQuery(
+				"CREATE TABLE character("
+				"'id' INTEGER PRIMARY KEY,"
+				"'account_id' INTEGER DEFAULT(0),"
+				"'map_id' INTEGER DEFAULT(1),"
+				"'spawnpoint' INTEGER DEFAULT(0),"
+				"'name' TEXT,"
+				"'portrait_id' INTEGER DEFAULT(1),"
+				"'experience' INTEGER DEFAULT(0),"
+				"'gold' INTEGER DEFAULT(0),"
+				"'actionbar0' INTEGER DEFAULT(0),"
+				"'actionbar1' INTEGER DEFAULT(0),"
+				"'actionbar2' INTEGER DEFAULT(0),"
+				"'actionbar3' INTEGER DEFAULT(0),"
+				"'actionbar4' INTEGER DEFAULT(0),"
+				"'actionbar5' INTEGER DEFAULT(0),"
+				"'actionbar6' INTEGER DEFAULT(0),"
+				"'actionbar7' INTEGER DEFAULT(0),"
+				"'playtime' INTEGER DEFAULT(0),"
+				"'deaths' INTEGER DEFAULT(0),"
+				"'monsterkills' INTEGER DEFAULT(0),"
+				"'playerkills' INTEGER DEFAULT(0),"
+				"'bounty' INTEGER DEFAULT(0)"
 				")"
 	);
 
+	// Inventory
 	Database->RunQuery(
-				"CREATE TABLE Inventory("
-				"'CharactersID' INTEGER"
-				", 'Slot' INTEGER"
-				", 'ItemsID' INTEGER"
-				", 'Count' INTEGER"
+				"CREATE TABLE inventory("
+				"'character_id' INTEGER,"
+				"'slot' INTEGER,"
+				"'item_id' INTEGER,"
+				"'count' INTEGER"
 				")"
 	);
 
+	// Skill levels
 	Database->RunQuery(
-				"CREATE TABLE SkillLevel("
-				"'CharactersID' INTEGER"
-				", 'SkillsID' INTEGER"
-				", 'Level' INTEGER"
+				"CREATE TABLE skilllevel("
+				"'character_id' INTEGER,"
+				"'skill_id' INTEGER,"
+				"'level' INTEGER"
 				")"
-	);
-
-	Database->RunQuery(
-				"INSERT INTO ServerInfo(Version) VALUES(" + std::to_string(SAVE_VERSION) + ")"
-	);
-
-	Database->RunQuery(
-				"INSERT INTO Accounts(Username, Password) VALUES('singleplayer', 'singleplayer')"
 	);
 
 	Database->RunQuery(
