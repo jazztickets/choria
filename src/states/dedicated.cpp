@@ -36,6 +36,8 @@ void RunCommandThread(_Server *Server) {
 			std::cout << "Command not recognized" << std::endl;
 	}
 
+	std::cout << "Stopping..." << std::endl;
+
 	Server->StopServer();
 }
 
@@ -72,7 +74,8 @@ void _DedicatedState::Close() {
 		delete Thread;
 	}
 
-	delete Server->Stats;
+	if(Server)
+		delete Server->Stats;
 	delete Server;
 }
 

@@ -203,9 +203,14 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 	Log << "Disconnect: " << Buffer << ":" << Address->port << std::endl;
 
 	// Get object
-	_Object *Object = Event.Peer->Object;
-	if(!Object)
-		return;
+	_Object *Player = Event.Peer->Object;
+	if(Player) {
+		if(Player->Map) {
+			Player->Map->RemovePeer(Event.Peer);
+		}
+
+		Player->Deleted = true;
+	}
 
 	// Leave trading screen
 	/*_Object *TradePlayer = Player->TradePlayer;
@@ -223,15 +228,6 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 	// Save character info
 	Player->Save();
 	*/
-	// Update map
-	//_Map *Map = Object->Map;
-	//if(Map) {
-	//	Map->RemovePeer(Event.Peer);
-	//}
-
-	// Remove from list
-	//Object->Deleted = true;
-	delete Object;
 
 	// Delete peer from network
 	Network->DeletePeer(Event.Peer);
@@ -448,10 +444,9 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 // Handle a character delete request
 void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
+	if(!Peer->AccountID)
 		return;
 
-	_Object *Player = Peer->Object;
 	std::stringstream Query;
 
 	// Get delete slot
@@ -690,8 +685,6 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 
 // Send character list
 void _Server::SendCharacterList(_Peer *Peer) {
-	_Object *Player = Peer->Object;
-
 	std::stringstream Query;
 
 	// Get a count of the account's characters

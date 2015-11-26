@@ -1334,6 +1334,9 @@ void _HUD::SendTradeCancel() {
 
 // Make sure the trade gold box is valid and send gold to player
 void _HUD::ValidateTradeGold() {
+	if(!Player)
+		return;
+
 	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
 
 	// Get gold amount

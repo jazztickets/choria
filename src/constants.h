@@ -87,6 +87,7 @@ const  int          DEFAULT_ANISOTROPY             =  0;
 const  double       DEFAULT_MAXFPS                 =  120.0;
 const  double       DEFAULT_NETWORKRATE            =  1.0/20.0;
 const  uint16_t     DEFAULT_NETWORKPORT            =  31234;
+const  uint16_t     DEFAULT_NETWORKPORT_ALT        =  31235;
 //     Graphics
 const  int          GRAPHICS_CIRCLE_VERTICES       =  32;
 const  double       MATH_PI                        =  3.14159265358979323846;

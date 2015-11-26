@@ -95,13 +95,14 @@ void _ClientState::Connect(bool IsLocal) {
 	// Start a local server
 	if(IsLocal) {
 		StartLocalServer();
-		Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT);
+		Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT_ALT);
 	}
 	else {
 		Network->Connect(HostAddress.c_str(), ConnectPort);
 	}
 }
 
+// Start local server in thread
 void _ClientState::StartLocalServer() {
 
 	// Kill existing server
@@ -111,12 +112,9 @@ void _ClientState::StartLocalServer() {
 	}
 
 	// Start server in thread
-	Server = new _Server(ConnectPort);
+	Server = new _Server(DEFAULT_NETWORKPORT_ALT);
 	Server->Stats = Stats;
 	Server->StartThread();
-
-	// Connect
-	Network->Connect(HostAddress.c_str(), ConnectPort);
 }
 
 // Action handler
@@ -237,18 +235,14 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 // Key handler
 void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
-	Menu.KeyEvent(KeyEvent);
+	if(!Handled)
+		Menu.KeyEvent(KeyEvent);
 
-	if(!Handled) {
-		if(Menu.State != _Menu::STATE_NONE) {
-			Menu.KeyEvent(KeyEvent);
-			return;
-		}
-	}
-	else {
-		if(!HUD->IsChatting())
-			HUD->ValidateTradeGold();
-	}
+	if(Menu.State != _Menu::STATE_NONE)
+		return;
+
+	if(!HUD->IsChatting())
+		HUD->ValidateTradeGold();
 }
 
 // Mouse handler
@@ -280,10 +274,7 @@ void _ClientState::Update(double FrameTime) {
 				HandleConnect();
 			} break;
 			case _NetworkEvent::DISCONNECT:
-				//if(FromEditor)
-					//Framework.ChangeState(&EditorState);
-				//else
-					Menu.InitTitle();
+				Menu.HandleDisconnect();
 			break;
 			case _NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
@@ -479,24 +470,7 @@ void _ClientState::HandleConnect() {
 		Network->SendPacket(Packet);
 	}
 
-	//HUD = nullptr;
-
-	//Log << " -- CONNECT" << std::endl;
-
-	//if(Level == "")
-	//	Level = "test.map";
-
-	//_Buffer Buffer;
-	//Buffer.Write<char>(Packet::CLIENT_JOIN);
-	//Buffer.WriteString(Level.c_str());
-	//Network->SendPacket(&Buffer);
-
-	// Initialize hud
-	//HUD = new _HUD();
-
-	// Set up graphics
-	//Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
-	//Camera->CalculateFrustum(Graphics.AspectRatio);
+	Menu.HandleConnect();
 }
 
 // Called once to synchronize your stats with the servers
