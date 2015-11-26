@@ -21,6 +21,7 @@
 #include <objects/object.h>
 #include <instances/map.h>
 #include <instances/battle.h>
+#include <save.h>
 #include <database.h>
 #include <buffer.h>
 #include <packet.h>
@@ -74,18 +75,7 @@ _Server::_Server(uint16_t NetworkPort)
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
-	Database = new _Database();
-
-	std::string DatabasePath = Config.ConfigPath + "save.dat";
-	if(!Database->OpenDatabase(DatabasePath.c_str())) {
-
-		// Create a new database
-		if(!Database->OpenDatabaseCreate(DatabasePath.c_str()))
-			throw std::runtime_error("OpenDatabaseCreate failed");
-
-		// Populate data
-		CreateDefaultDatabase();
-	}
+	Save = new _Save();
 }
 
 // Destructor
@@ -99,7 +89,7 @@ _Server::~_Server() {
 	}
 	Maps.clear();
 
-	delete Database;
+	delete Save;
 	delete Thread;
 }
 
@@ -340,9 +330,9 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 
 		// Check for existing account
 		Query << "SELECT ID FROM Accounts WHERE Username = '" << Username << "'";
-		Database->RunDataQuery(Query.str());
-		int Result = Database->FetchRow();
-		Database->CloseQuery();
+		Save->Database->RunDataQuery(Query.str());
+		int Result = Save->Database->FetchRow();
+		Save->Database->CloseQuery();
 		Query.str("");
 
 		if(Result) {
@@ -353,18 +343,18 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 		}
 		else {
 			Query << "INSERT INTO Accounts(Username, Password) VALUES('" << Username << "', '" << Password << "')";
-			Database->RunQuery(Query.str());
+			Save->Database->RunQuery(Query.str());
 			Query.str("");
 		}
 	}
 
 	// Get account information
 	Query << "SELECT ID FROM Accounts WHERE Username = '" << Username << "' AND Password = '" << Password << "'";
-	Database->RunDataQuery(Query.str());
-	if(Database->FetchRow()) {
-		Peer->AccountID = Database->GetInt(0);
+	Save->Database->RunDataQuery(Query.str());
+	if(Save->Database->FetchRow()) {
+		Peer->AccountID = Save->Database->GetInt(0);
 	}
-	Database->CloseQuery();
+	Save->Database->CloseQuery();
 	Query.str("");
 
 	// Make sure account exists
@@ -404,16 +394,16 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Check character limit
 	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Peer->AccountID;
-	int CharacterCount = Database->RunCountQuery(Query.str());
+	int CharacterCount = Save->Database->RunCountQuery(Query.str());
 	if(CharacterCount >= SAVE_COUNT)
 		return;
 	Query.str("");
 
 	// Check for existing names
 	Query << "SELECT ID FROM Characters WHERE Name = '" << Name << "'";
-	Database->RunDataQuery(Query.str());
-	int FindResult = Database->FetchRow();
-	Database->CloseQuery();
+	Save->Database->RunDataQuery(Query.str());
+	int FindResult = Save->Database->FetchRow();
+	Save->Database->CloseQuery();
 	Query.str("");
 
 	// Found an existing name
@@ -425,25 +415,25 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Create the character
-	Database->RunQuery("BEGIN TRANSACTION");
+	Save->Database->RunQuery("BEGIN TRANSACTION");
 	Query << "INSERT INTO Characters(AccountsID, Name, PortraitID, ActionBar0) VALUES(" << Peer->AccountID << ", '" << Name << "', " << PortraitID << ", 1)";
-	Database->RunQuery(Query.str());
+	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
-	int CharacterID = Database->GetLastInsertID();
+	int CharacterID = Save->Database->GetLastInsertID();
 	Query << "INSERT INTO Inventory VALUES(" << CharacterID << ", 1, 2, 1)";
-	Database->RunQuery(Query.str());
+	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	Query << "INSERT INTO Inventory VALUES(" << CharacterID << ", 3, 1, 1)";
-	Database->RunQuery(Query.str());
+	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	Query << "INSERT INTO SkillLevel VALUES(" << CharacterID << ", 1, 1)";
-	Database->RunQuery(Query.str());
+	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
-	Database->RunQuery("END TRANSACTION");
+	Save->Database->RunQuery("END TRANSACTION");
 
 	// Notify the client
 	_Buffer NewPacket;
@@ -464,26 +454,26 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 
 	// Get character ID
 	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Index << ", 1";
-	Database->RunDataQuery(Query.str());
-	if(Database->FetchRow()) {
-		CharacterID = Database->GetInt(0);
+	Save->Database->RunDataQuery(Query.str());
+	if(Save->Database->FetchRow()) {
+		CharacterID = Save->Database->GetInt(0);
 	}
-	Database->CloseQuery();
+	Save->Database->CloseQuery();
 	Query.str("");
 
 	// Delete character
 	Query << "DELETE FROM Characters WHERE ID = " << CharacterID;
-	Database->RunQuery(Query.str());
+	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	// Delete items
 	Query << "DELETE FROM Inventory WHERE CharactersID = " << CharacterID;
-	Database->RunQuery(Query.str());
+	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	// Delete skill levels
 	Query << "DELETE FROM SkillLevel WHERE CharactersID = " << CharacterID;
-	Database->RunQuery(Query.str());
+	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
 	// Update the player
@@ -499,11 +489,11 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	// Get character info
 	std::stringstream Query;
 	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
-	Database->RunDataQuery(Query.str());
-	if(Database->FetchRow()) {
-		Peer->CharacterID = Database->GetInt(0);
+	Save->Database->RunDataQuery(Query.str());
+	if(Save->Database->FetchRow()) {
+		Peer->CharacterID = Save->Database->GetInt(0);
 	}
-	Database->CloseQuery();
+	Save->Database->CloseQuery();
 	Query.str("");
 
 	// Check for valid character id
@@ -611,7 +601,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 
 	// Get a count of the account's characters
 	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Peer->AccountID;
-	int CharacterCount = Database->RunCountQuery(Query.str());
+	int CharacterCount = Save->Database->RunCountQuery(Query.str());
 	Query.str("");
 
 	// Create the packet
@@ -621,13 +611,13 @@ void _Server::SendCharacterList(_Peer *Peer) {
 
 	// Generate a list of characters
 	Query << "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = " << Peer->AccountID;
-	Database->RunDataQuery(Query.str());
-	while(Database->FetchRow()) {
-		Packet.WriteString(Database->GetString(0));
-		Packet.Write<int32_t>(Database->GetInt(1));
-		Packet.Write<int32_t>(Database->GetInt(2));
+	Save->Database->RunDataQuery(Query.str());
+	while(Save->Database->FetchRow()) {
+		Packet.WriteString(Save->Database->GetString(0));
+		Packet.Write<int32_t>(Save->Database->GetInt(1));
+		Packet.Write<int32_t>(Save->Database->GetInt(2));
 	}
-	Database->CloseQuery();
+	Save->Database->CloseQuery();
 	Query.str("");
 
 	// Send list
@@ -723,57 +713,57 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	// Get character
 	Query << "SELECT * FROM Characters WHERE ID = " << Peer->CharacterID;
-	Database->RunDataQuery(Query.str());
+	Save->Database->RunDataQuery(Query.str());
 	Query.str("");
 
 	// Get row
-	if(!Database->FetchRow()) {
-		Database->CloseQuery();
+	if(!Save->Database->FetchRow()) {
+		Save->Database->CloseQuery();
 		return nullptr;
 	}
 
 	// Set properties
-	Peer->CharacterID = Database->GetInt(0);
-	Player->CharacterID = Database->GetInt(0);
-	Player->SpawnMapID = Database->GetInt(2);
-	Player->SpawnPoint = Database->GetInt(3);
-	Player->Name = Database->GetString(4);
-	Player->PortraitID = Database->GetInt(5);
-	Player->Experience = Database->GetInt(6);
-	Player->Gold = Database->GetInt(7);
+	Peer->CharacterID = Save->Database->GetInt(0);
+	Player->CharacterID = Save->Database->GetInt(0);
+	Player->SpawnMapID = Save->Database->GetInt(2);
+	Player->SpawnPoint = Save->Database->GetInt(3);
+	Player->Name = Save->Database->GetString(4);
+	Player->PortraitID = Save->Database->GetInt(5);
+	Player->Experience = Save->Database->GetInt(6);
+	Player->Gold = Save->Database->GetInt(7);
 	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		uint32_t SkillID = Database->GetInt(i + 8);
+		uint32_t SkillID = Save->Database->GetInt(i + 8);
 		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
-	Player->PlayTime = Database->GetInt(16);
-	Player->Deaths = Database->GetInt(17);
-	Player->MonsterKills = Database->GetInt(18);
-	Player->PlayerKills = Database->GetInt(19);
-	Player->Bounty = Database->GetInt(20);
-	Database->CloseQuery();
+	Player->PlayTime = Save->Database->GetInt(16);
+	Player->Deaths = Save->Database->GetInt(17);
+	Player->MonsterKills = Save->Database->GetInt(18);
+	Player->PlayerKills = Save->Database->GetInt(19);
+	Player->Bounty = Save->Database->GetInt(20);
+	Save->Database->CloseQuery();
 
 	// Set inventory
 	Query << "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = " << Player->CharacterID;
-	Database->RunDataQuery(Query.str());
+	Save->Database->RunDataQuery(Query.str());
 	int ItemCount = 0;
-	while(Database->FetchRow()) {
-		Player->SetInventory(Database->GetInt(0), Database->GetInt(1), Database->GetInt(2));
+	while(Save->Database->FetchRow()) {
+		Player->SetInventory(Save->Database->GetInt(0), Save->Database->GetInt(1), Save->Database->GetInt(2));
 		ItemCount++;
 	}
-	Database->CloseQuery();
+	Save->Database->CloseQuery();
 	Query.str("");
 
 	// Set skills
 	Query << "SELECT SkillsID, Level FROM SkillLevel WHERE CharactersID = " << Player->CharacterID;
-	Database->RunDataQuery(Query.str());
+	Save->Database->RunDataQuery(Query.str());
 	int SkillCount = 0;
-	while(Database->FetchRow()) {
-		int SkillLevel = Database->GetInt(1);
-		Player->SetSkillLevel(Database->GetInt(0), SkillLevel);
+	while(Save->Database->FetchRow()) {
+		int SkillLevel = Save->Database->GetInt(1);
+		Player->SetSkillLevel(Save->Database->GetInt(0), SkillLevel);
 		if(SkillLevel > 0)
 			SkillCount++;
 	}
-	Database->CloseQuery();
+	Save->Database->CloseQuery();
 	Query.str("");
 
 	// Get stats
@@ -863,55 +853,4 @@ void _Server::SendPlayerPosition(_Object *Player) {
 	Packet.Write<glm::ivec2>(Player->Position);
 
 	Network->SendPacket(Packet, Player->Peer);
-}
-
-// Populates the server database with the default data
-void _Server::CreateDefaultDatabase() {
-
-	// Server information
-	Database->RunQuery("BEGIN TRANSACTION");
-	Database->RunQuery("CREATE TABLE ServerInfo('Version' INTEGER)");
-	Database->RunQuery("CREATE TABLE Accounts("
-						"'ID' INTEGER PRIMARY KEY"
-						", 'Username' TEXT"
-						", 'Password' TEXT"
-						")");
-	Database->RunQuery(	"CREATE TABLE Characters("
-						"'ID' INTEGER PRIMARY KEY"
-						", 'AccountsID' INTEGER DEFAULT(0)"
-						", 'MapID' INTEGER DEFAULT(1)"
-						", 'SpawnPoint' INTEGER DEFAULT(0)"
-						", 'Name' TEXT"
-						", 'PortraitID' INTEGER DEFAULT(1)"
-						", 'Experience' INTEGER DEFAULT(0)"
-						", 'Gold' INTEGER DEFAULT(0)"
-						", 'ActionBar0' INTEGER DEFAULT(0)"
-						", 'ActionBar1' INTEGER DEFAULT(0)"
-						", 'ActionBar2' INTEGER DEFAULT(0)"
-						", 'ActionBar3' INTEGER DEFAULT(0)"
-						", 'ActionBar4' INTEGER DEFAULT(0)"
-						", 'ActionBar5' INTEGER DEFAULT(0)"
-						", 'ActionBar6' INTEGER DEFAULT(0)"
-						", 'ActionBar7' INTEGER DEFAULT(0)"
-						", 'PlayTime' INTEGER DEFAULT(0)"
-						", 'Deaths' INTEGER DEFAULT(0)"
-						", 'MonsterKills' INTEGER DEFAULT(0)"
-						", 'PlayerKills' INTEGER DEFAULT(0)"
-						", 'Bounty' INTEGER DEFAULT(0)"
-						")");
-	Database->RunQuery(	"CREATE TABLE Inventory("
-						"'CharactersID' INTEGER"
-						", 'Slot' INTEGER"
-						", 'ItemsID' INTEGER"
-						", 'Count' INTEGER"
-						")");
-	Database->RunQuery(	"CREATE TABLE SkillLevel("
-						"'CharactersID' INTEGER"
-						", 'SkillsID' INTEGER"
-						", 'Level' INTEGER"
-						")");
-
-	Database->RunQuery("INSERT INTO ServerInfo(Version) VALUES(" + std::to_string(SAVE_VERSION) + ")");
-	Database->RunQuery("INSERT INTO Accounts(Username, Password) VALUES('singleplayer', 'singleplayer')");
-	Database->RunQuery("END TRANSACTION");
 }

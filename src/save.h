@@ -18,30 +18,22 @@
 #pragma once
 
 // Libraries
-#include <input.h>
-#include <cstdint>
+
+// Forward Declarations
+class _Database;
 
 // Classes
-class _State {
+class _Save {
 
 	public:
 
-		// Setup
-		virtual void Init() { }
-		virtual void Close() { }
-		virtual ~_State() { }
+		_Save();
+		~_Save();
 
-		// Input
-		virtual bool HandleAction(int InputType, int Action, int Value) { return false; }
-		virtual void KeyEvent(const _KeyEvent &KeyEvent) { }
-		virtual void MouseEvent(const _MouseEvent &MouseEvent) { }
-		virtual void MouseWheelEvent(int Direction) { }
-		virtual void WindowEvent(uint8_t Event) { }
-
-		// Update
-		virtual void Update(double FrameTime) { }
-		virtual void Render(double BlendFactor) { }
+		_Database *Database;
 
 	private:
+
+		void CreateDefaultDatabase();
 
 };

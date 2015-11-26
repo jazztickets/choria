@@ -459,7 +459,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 		case STATE_CONNECT: {
 			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-					ClientState.Network->Disconnect();
+					InitTitle();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					ConnectToHost();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)

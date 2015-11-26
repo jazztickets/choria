@@ -30,7 +30,7 @@ class _Peer;
 class _Map;
 class _Battle;
 class _Stats;
-class _Database;
+class _Save;
 class _Object;
 struct _NetworkEvent;
 
@@ -55,8 +55,8 @@ class _Server {
 		_LogFile Log;
 
 		// Stats
-		_Database *Database;
 		_Stats *Stats;
+		_Save *Save;
 
 		// Network
 		std::unique_ptr<_ServerNetwork> Network;
@@ -107,7 +107,6 @@ class _Server {
 
 		void SendCharacterList(_Peer *Peer);
 		void SendObjectList(_Peer *Peer);
-		void CreateDefaultDatabase();
 
 		// Threading
 		std::thread *Thread;
