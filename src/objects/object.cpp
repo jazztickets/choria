@@ -27,7 +27,6 @@
 #include <program.h>
 #include <constants.h>
 #include <instances/battle.h>
-#include <states/oldserver.h>
 #include <objects/skill.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

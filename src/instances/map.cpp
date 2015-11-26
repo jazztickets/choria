@@ -22,7 +22,6 @@
 #include <constants.h>
 #include <stats.h>
 #include <buffer.h>
-#include <states/oldserver.h>
 #include <objects/object.h>
 #include <texture.h>
 #include <assets.h>

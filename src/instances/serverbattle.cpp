@@ -22,7 +22,6 @@
 #include <packet.h>
 #include <random.h>
 #include <objects/object.h>
-#include <states/oldserver.h>
 
 // Constructor
 _ServerBattle::_ServerBattle()

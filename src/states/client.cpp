@@ -667,18 +667,6 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 	}
 }
 
-// Sends a move command to the server
-void _ClientState::SendMoveCommand(int Direction) {
-
-	/*if(Player->CanMove()) {
-
-		// Move player locally
-		if(Player->MovePlayer(Direction)) {
-
-		}
-	}*/
-}
-
 // Handles player position
 void _ClientState::HandlePlayerPosition(_Buffer &Data) {
 	if(!Player)

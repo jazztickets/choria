@@ -113,8 +113,6 @@ class _ClientState : public _State {
 		void HandleTradeAccept(_Buffer &Data);
 		void HandleTradeExchange(_Buffer &Data);
 
-		void SendMoveCommand(int Direction);
-
 	/*
 
 	private:
