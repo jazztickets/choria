@@ -128,7 +128,7 @@ std::string _Actions::GetInputNameForAction(int Action) {
 }
 
 // Inject an input into the action handler
-void _Actions::InputEvent(int InputType, int Input, int Value) {
+void _Actions::InputEvent(int InputType, int Input, float Value) {
 	if(Input < 0 || Input >= ACTIONS_MAXINPUTS)
 		return;
 

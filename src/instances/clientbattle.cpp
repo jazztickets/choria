@@ -16,6 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/clientbattle.h>
+#include <states/client.h>
+#include <network/clientnetwork.h>
 #include <globals.h>
 #include <graphics.h>
 #include <stats.h>
@@ -29,7 +31,6 @@
 #include <ui/label.h>
 #include <ui/image.h>
 #include <objects/object.h>
-#include <network/oldnetwork.h>
 
 // Constructor
 _ClientBattle::_ClientBattle()
@@ -129,7 +130,7 @@ void _ClientBattle::HandleAction(int Action) {
 
 				_Buffer Packet;
 				Packet.Write<char>(Packet::BATTLE_CLIENTDONE);
-				OldClientNetwork->SendPacketToHost(&Packet);
+				ClientState.Network->SendPacket(Packet);
 			}
 		}
 		break;
@@ -370,7 +371,7 @@ void _ClientBattle::SendSkill(int SkillSlot) {
 	Packet.Write<char>(SkillSlot);
 	Packet.Write<char>(ClientPlayer->Target);
 
-	OldClientNetwork->SendPacketToHost(&Packet);
+	ClientState.Network->SendPacket(Packet);
 	ClientPlayer->SkillUsing = Skill;
 
 	// Update potion count

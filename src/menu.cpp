@@ -405,9 +405,15 @@ void _Menu::HandleAction(int InputType, int Action, int Value) {
 	if(State == STATE_NONE)
 		return;
 
-	switch(Action) {
-		case _Actions::MENU:
-			Menu.InitPlay();
+	switch(State) {
+		case STATE_INGAME:
+			switch(Action) {
+				case _Actions::MENU:
+					Menu.InitPlay();
+				break;
+			}
+		break;
+		default:
 		break;
 	}
 }

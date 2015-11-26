@@ -119,10 +119,16 @@ void _ClientState::StartLocalServer() {
 
 // Action handler
 bool _ClientState::HandleAction(int InputType, int Action, int Value) {
-	if(!Player)
-		return false;
-
 	if(Value == 0)
+		return true;
+
+	// Pass to menu
+	if(Menu.State != _Menu::STATE_NONE) {
+		Menu.HandleAction(InputType, Action, Value);
+		return true;
+	}
+
+	if(!Player)
 		return true;
 
 	// Handle enter key
@@ -136,12 +142,6 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		if(Action == _Actions::MENU)
 			HUD->CloseChat();
 
-		return true;
-	}
-
-	// Pass to menu
-	if(Menu.State != _Menu::STATE_NONE) {
-		Menu.HandleAction(InputType, Action, Value);
 		return true;
 	}
 
@@ -235,6 +235,8 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 // Key handler
 void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
+
+	// Pass to menu
 	if(!Handled)
 		Menu.KeyEvent(KeyEvent);
 
@@ -249,7 +251,12 @@ void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
 	Graphics.Element->HandleInput(MouseEvent.Pressed);
+
+	// Pass to menu
 	Menu.MouseEvent(MouseEvent);
+	if(Menu.State != _Menu::STATE_NONE)
+		return;
+
 	HUD->MouseEvent(MouseEvent);
 }
 
@@ -388,8 +395,6 @@ void _ClientState::Render(double BlendFactor) {
 void _ClientState::HandlePacket(_Buffer &Data) {
 	char PacketType = Data.Read<char>();
 
-	Menu.HandlePacket(Data, PacketType);
-
 	switch(PacketType) {
 		case Packet::WORLD_YOURCHARACTERINFO:
 			HandleYourCharacterInfo(Data);
@@ -455,6 +460,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::TRADE_EXCHANGE:
 			HandleTradeExchange(Data);
 		break;*/
+		default:
+			Menu.HandlePacket(Data, PacketType);
+		break;
 	}
 }
 

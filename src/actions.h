@@ -88,7 +88,7 @@ class _Actions {
 		std::string GetInputNameForAction(int Action);
 
 		// Handlers
-		void InputEvent(int InputType, int Input, int Value);
+		void InputEvent(int InputType, int Input, float Value);
 
 	private:
 
