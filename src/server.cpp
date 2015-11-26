@@ -208,6 +208,9 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 			Player->Map->RemovePeer(Event.Peer);
 		}
 
+		// Save player
+		Save->SavePlayer(Player);
+
 		Player->Deleted = true;
 	}
 
@@ -608,7 +611,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
-	Query << "SELECT name, portrait_id, Experience FROM character WHERE account_id = " << Peer->AccountID;
+	Query << "SELECT name, portrait_id, experience FROM character WHERE account_id = " << Peer->AccountID;
 	Save->Database->RunDataQuery(Query.str());
 	while(Save->Database->FetchRow()) {
 		Packet.WriteString(Save->Database->GetString(0));

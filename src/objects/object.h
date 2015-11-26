@@ -25,9 +25,6 @@
 #include <network/network.h>
 #include <unordered_map>
 
-//TODO delete
-class _Database;
-
 // Forward Declarations
 class _Map;
 class _Peer;
@@ -119,7 +116,7 @@ class _Object {
 
 		// Skills
 		const _Skill *GetActionBar(int Slot);
-		uint32_t GetActionBarID(int Slot);
+		uint32_t GetActionBarID(int Slot) const;
 
 		// -- END FROM FIGHTER --
 
@@ -281,9 +278,7 @@ class _Object {
 		bool TradeAccepted;
 		_Object *TradePlayer;
 
-
 		int InputState;
-		_Database *Database;
 		_Stats *Stats;
 
 	protected:

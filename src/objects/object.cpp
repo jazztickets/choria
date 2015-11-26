@@ -23,7 +23,6 @@
 #include <graphics.h>
 #include <random.h>
 #include <stats.h>
-#include <database.h>
 #include <font.h>
 #include <program.h>
 #include <constants.h>
@@ -118,7 +117,6 @@ _Object::_Object()
 	}
 
 	InputState = 0;
-	Database = 0;
 }
 
 // Destructor
@@ -340,7 +338,7 @@ int _Object::GenerateDefense() {
 }
 
 // Gets a skill id from the skill bar
-uint32_t _Object::GetActionBarID(int Slot) {
+uint32_t _Object::GetActionBarID(int Slot) const {
 	if(ActionBar[Slot] == nullptr)
 		return 0;
 
@@ -461,82 +459,6 @@ int _Object::Move() {
 	}
 
 	return 0;
-}
-
-// Saves the player
-void _Object::Save() {
-	if(!Database || CharacterID == 0)
-		return;
-
-	char Query[512];
-	Database->RunQuery("BEGIN TRANSACTION");
-
-	// Save character stats
-	sprintf(Query, "UPDATE Characters SET "
-					"MapID = %d"
-					", SpawnPoint = %d"
-					", Experience = %d"
-					", Gold = %d"
-					", ActionBar0 = %d"
-					", ActionBar1 = %d"
-					", ActionBar2 = %d"
-					", ActionBar3 = %d"
-					", ActionBar4 = %d"
-					", ActionBar5 = %d"
-					", ActionBar6 = %d"
-					", ActionBar7 = %d"
-					", PlayTime = %d"
-					", Deaths = %d"
-					", MonsterKills = %d"
-					", PlayerKills = %d"
-					", Bounty = %d"
-					" WHERE ID = %d",
-					SpawnMapID,
-					SpawnPoint,
-					Experience,
-					Gold,
-					GetActionBarID(0),
-					GetActionBarID(1),
-					GetActionBarID(2),
-					GetActionBarID(3),
-					GetActionBarID(4),
-					GetActionBarID(5),
-					GetActionBarID(6),
-					GetActionBarID(7),
-					PlayTime,
-					Deaths,
-					MonsterKills,
-					PlayerKills,
-					Bounty,
-					CharacterID
-					);
-	Database->RunQuery(Query);
-
-	// Save items
-	sprintf(Query, "DELETE FROM Inventory WHERE character_id = %d", CharacterID);
-	Database->RunQuery(Query);
-
-	const _InventorySlot *Item;
-	for(int i = 0; i < INVENTORY_COUNT; i++) {
-		Item = &Inventory[i];
-		if(Item->Item) {
-			sprintf(Query, "INSERT INTO Inventory VALUES(%d, %d, %d, %d)", CharacterID, i, Item->Item->ID, Item->Count);
-			Database->RunQuery(Query);
-		}
-	}
-
-	// Save skill points
-	sprintf(Query, "DELETE FROM SkillLevel WHERE character_id = %d", CharacterID);
-	Database->RunQuery(Query);
-
-	for(auto &SkillLevel : SkillLevels) {
-		if(SkillLevel.second > 0) {
-			sprintf(Query, "INSERT INTO SkillLevel VALUES(%d, %d, %d)", CharacterID, SkillLevel.first, SkillLevel.second);
-			Database->RunQuery(Query);
-		}
-	}
-
-	Database->RunQuery("END TRANSACTION");
 }
 
 // Get the zone that the player is standing in

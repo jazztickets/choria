@@ -21,6 +21,7 @@
 
 // Forward Declarations
 class _Database;
+class _Object;
 
 // Classes
 class _Save {
@@ -31,6 +32,8 @@ class _Save {
 		~_Save();
 
 		_Database *Database;
+
+		void SavePlayer(const _Object *Player);
 
 	private:
 

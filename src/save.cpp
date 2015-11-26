@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <save.h>
 #include <objects/object.h>
+#include <objects/item.h>
 #include <database.h>
 #include <config.h>
 #include <constants.h>
@@ -126,4 +127,67 @@ void _Save::CreateDefaultDatabase() {
 	Database->RunQuery(
 				"END TRANSACTION"
 	);
+}
+
+// Saves the player
+void _Save::SavePlayer(const _Object *Player) {
+	if(Player->CharacterID == 0)
+		return;
+
+	Database->RunQuery("BEGIN TRANSACTION");
+
+	// Save character stats
+	std::stringstream Query;
+	Query
+		<< "UPDATE character SET "
+		<< "  map_id = " << Player->SpawnMapID
+		<< ", spawnpoint = " << Player->SpawnPoint
+		<< ", experience = " <<Player->Experience
+		<< ", gold = " << Player->Gold
+		<< ", actionbar0 = " << Player->GetActionBarID(0)
+		<< ", actionbar1 = " << Player->GetActionBarID(1)
+		<< ", actionbar2 = " << Player->GetActionBarID(2)
+		<< ", actionbar3 = " << Player->GetActionBarID(3)
+		<< ", actionbar4 = " << Player->GetActionBarID(4)
+		<< ", actionbar5 = " << Player->GetActionBarID(5)
+		<< ", actionbar6 = " << Player->GetActionBarID(6)
+		<< ", actionbar7 = " << Player->GetActionBarID(7)
+		<< ", playtime = " << Player->PlayTime
+		<< ", deaths = " << Player->Deaths
+		<< ", monsterkills = " << Player->MonsterKills
+		<< ", playerkills = " << Player->PlayerKills
+		<< ", bounty = " << Player->Bounty
+		<< " WHERE id = " << Player->CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	// Save items
+	Query << "DELETE FROM inventory WHERE character_id = " << Player->CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	const _InventorySlot *Item;
+	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
+		Item = &Player->Inventory[i];
+		if(Item->Item) {
+			Query << "INSERT INTO inventory VALUES(" << Player->CharacterID << ", " << i << ", " << Item->Item->ID << ", " << Item->Count << ")";;
+			Database->RunQuery(Query.str());
+			Query.str("");
+		}
+	}
+
+	// Save skill points
+	Query << "DELETE FROM skilllevel WHERE character_id = " << Player->CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	for(auto &SkillLevel : Player->SkillLevels) {
+		if(SkillLevel.second > 0) {
+			Query << "INSERT INTO skilllevel VALUES(" << Player->CharacterID << ", " << SkillLevel.first << ", " << SkillLevel.second << ")";
+			Database->RunQuery(Query.str());
+			Query.str("");
+		}
+	}
+
+	Database->RunQuery("END TRANSACTION");
 }
