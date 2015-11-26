@@ -69,6 +69,7 @@ _Object::_Object()
 	State(STATE_WALK),
 	MoveTime(0),
 	PortraitID(0),
+	WorldImage(nullptr),
 	StateImage(nullptr),
 	SpawnMapID(1),
 	SpawnPoint(0),

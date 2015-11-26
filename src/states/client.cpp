@@ -577,7 +577,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 	*/
 }
 
-// Handle objectlist
+// Handle object list
 void _ClientState::HandleObjectList(_Buffer &Data) {
 
 	// Read header
@@ -596,6 +596,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 		Object->PortraitID = Data.Read<char>();
 		Object->Portrait = Stats->Portraits[Object->PortraitID].Image;
 		Object->InvisPower = Data.ReadBit();
+		Object->WorldImage = Assets.Textures["players/basic.png"];
 
 		Map->AddObject(Object, Object->NetworkID);
 		Object->Map = Map;
@@ -615,37 +616,29 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 
 // Creates an object
 void _ClientState::HandleCreateObject(_Buffer &Data) {
-	if(!Map)
-		throw std::runtime_error("No map!");
+	if(!Map || !Player)
+		return;
 
 	// Read packet
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-	glm::ivec2 Position = Data.Read<glm::ivec2>();
-	int Type = Data.Read<char>();
 
-	// Create the object
-	std::string Name(Data.ReadString());
-	int PortraitID = Data.Read<char>();
-	int Invisible = Data.ReadBit();
-
-	_Object *Object = nullptr;
+	// Check id
 	if(NetworkID != Player->NetworkID) {
-		Object = new _Object();
+
+		// Create object
+		_Object *Object = new _Object();
 		Object->NetworkID = NetworkID;
-		Object->Name = Name;
-		Object->PortraitID = PortraitID;
-		Object->Portrait = Stats->Portraits[PortraitID].Image;
-		Object->InvisPower = Invisible;
+		Object->Position = Data.Read<glm::ivec2>();
+		Object->Type = Data.Read<char>();
+		Object->Name = Data.ReadString();
+		Object->PortraitID = Data.Read<char>();
+		Object->InvisPower = Data.ReadBit();
+
+		Object->Portrait = Stats->Portraits[Object->PortraitID].Image;
 		Object->Map = Map;
-		Object->Type = Type;
-	}
-	else
-		Object = Player;
+		Object->WorldImage = Assets.Textures["players/basic.png"];
 
-	if(Object) {
-		Object->Position = Position;
-
-		// Add it to the manager
+		// Add to map
 		Map->AddObject(Object, NetworkID);
 	}
 }
