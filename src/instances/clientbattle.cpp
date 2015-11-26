@@ -18,7 +18,6 @@
 #include <instances/clientbattle.h>
 #include <states/client.h>
 #include <network/clientnetwork.h>
-#include <globals.h>
 #include <graphics.h>
 #include <stats.h>
 #include <buffer.h>

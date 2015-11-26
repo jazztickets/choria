@@ -23,10 +23,9 @@
 
 // Forward Declarations
 class _State;
-class _OldSingleNetwork;
-class _OldMultiNetwork;
 class _FrameLimit;
 
+// Classes
 class _Framework {
 
 	public:

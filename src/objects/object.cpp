@@ -20,7 +20,6 @@
 #include <ui/element.h>
 #include <ui/image.h>
 #include <assets.h>
-#include <globals.h>
 #include <graphics.h>
 #include <random.h>
 #include <stats.h>

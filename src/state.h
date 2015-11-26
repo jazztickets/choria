@@ -43,11 +43,6 @@ class _State {
 		virtual void Update(double FrameTime) { }
 		virtual void Render(double BlendFactor) { }
 
-		// Network
-		virtual void HandleConnect(ENetEvent *Event) { }
-		virtual void HandleDisconnect(ENetEvent *Event) { }
-		virtual void HandlePacket(ENetEvent *Event) { }
-
 	private:
 
 };

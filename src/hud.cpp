@@ -20,7 +20,6 @@
 #include <network/clientnetwork.h>
 #include <framework.h>
 #include <graphics.h>
-#include <globals.h>
 #include <input.h>
 #include <stats.h>
 #include <font.h>
@@ -37,7 +36,6 @@
 #include <ui/image.h>
 #include <ui/style.h>
 #include <objects/object.h>
-#include <network/oldnetwork.h>
 #include <instances/map.h>
 #include <objects/item.h>
 #include <vector>

@@ -38,8 +38,6 @@
 #include <sstream>
 #include <SDL_mouse.h>
 
-#include <globals.h>
-
 _Menu Menu;
 
 const std::string InputBoxPrefix = "button_options_input_";

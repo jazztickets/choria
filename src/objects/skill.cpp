@@ -18,7 +18,6 @@
 #include <objects/skill.h>
 #include <stats.h>
 #include <random.h>
-#include <globals.h>
 #include <buffer.h>
 #include <font.h>
 #include <graphics.h>
@@ -26,7 +25,6 @@
 #include <assets.h>
 #include <packet.h>
 #include <instances/battle.h>
-#include <network/oldnetwork.h>
 #include <objects/object.h>
 #include <ui/label.h>
 #include <ui/element.h>
@@ -269,7 +267,7 @@ void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) co
 					_Buffer Packet;
 					Packet.Write<char>(Packet::INVENTORY_USE);
 					Packet.Write<char>(Slot);
-					OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
+					//OldServerNetwork->SendPacketToPeer(&Packet, Player->OldPeer);
 				}
 			}
 		break;

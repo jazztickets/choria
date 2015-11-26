@@ -18,7 +18,6 @@
 #include <instances/map.h>
 #include <network/servernetwork.h>
 #include <network/peer.h>
-#include <globals.h>
 #include <graphics.h>
 #include <constants.h>
 #include <stats.h>
@@ -307,7 +306,7 @@ void _Map::Load() {
 	//	Grid->InitTiles();
 
 	// Initialize 2d tile rendering
-	if(!OldServerNetwork) {
+	//if(!OldServerNetwork) {
 		/*
 		TileAtlas = new _Atlas(Assets.Textures[AtlasPath], glm::ivec2(64, 64), 1);
 
@@ -335,7 +334,7 @@ void _Map::Load() {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
 		*/
-	}
+	//}
 }
 
 // Saves the level to a file
