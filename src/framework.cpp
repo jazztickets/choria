@@ -87,7 +87,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		FrameLimit = new _FrameLimit(120.0, false);
 
 		DedicatedState.SetNetworkPort(NetworkPort);
-		//DedicatedState.SetStats(Stats);
 	}
 	else {
 

@@ -354,29 +354,21 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Get account information
-	int AccountID = 0;
 	Query << "SELECT ID FROM Accounts WHERE Username = '" << Username << "' AND Password = '" << Password << "'";
 	Database->RunDataQuery(Query.str());
 	if(Database->FetchRow()) {
-		AccountID = Database->GetInt(0);
+		Peer->AccountID = Database->GetInt(0);
 	}
 	Database->CloseQuery();
 	Query.str("");
 
 	// Make sure account exists
-	if(AccountID == 0) {
+	if(Peer->AccountID == 0) {
 		_Buffer Packet;
 		Packet.Write<char>(Packet::ACCOUNT_NOTFOUND);
 		Network->SendPacket(Packet, Peer);
 	}
 	else {
-
-		// Create object
-		_Object *Object = new _Object();
-		Object->AccountID = AccountID;
-		Object->Peer = Peer;
-		Object->Stats = Stats;
-		Peer->Object = Object;
 
 		_Buffer Packet;
 		Packet.Write<char>(Packet::ACCOUNT_SUCCESS);
@@ -386,7 +378,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 
 // Sends a player his/her character list
 void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
+	if(!Peer->AccountID)
 		return;
 
 	SendCharacterList(Peer);
@@ -394,10 +386,8 @@ void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
 
 // Handles the character create request
 void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
+	if(!Peer->AccountID)
 		return;
-
-	_Object *Player = Peer->Object;
 
 	// Get character information
 	std::string Name(Data.ReadString());
@@ -408,7 +398,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	std::stringstream Query;
 
 	// Check character limit
-	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Player->AccountID;
+	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Peer->AccountID;
 	int CharacterCount = Database->RunCountQuery(Query.str());
 	if(CharacterCount >= SAVE_COUNT)
 		return;
@@ -431,7 +421,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Create the character
 	Database->RunQuery("BEGIN TRANSACTION");
-	Query << "INSERT INTO Characters(AccountsID, Name, PortraitID, ActionBar0) VALUES(" << Player->AccountID << ", '" << Name << "', " << PortraitID << ", 1)";
+	Query << "INSERT INTO Characters(AccountsID, Name, PortraitID, ActionBar0) VALUES(" << Peer->AccountID << ", '" << Name << "', " << PortraitID << ", 1)";
 	Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -469,7 +459,7 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	int CharacterID = 0;
 
 	// Get character ID
-	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Player->AccountID << " LIMIT " << Index << ", 1";
+	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Index << ", 1";
 	Database->RunDataQuery(Query.str());
 	if(Database->FetchRow()) {
 		CharacterID = Database->GetInt(0);
@@ -498,17 +488,19 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 
 // Loads the player, updates the world, notifies clients
 void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
-		return;
 
-	_Object *Player = Peer->Object;
+	// Create object
+	_Object *Player = new _Object();
+	Player->Peer = Peer;
+	Player->Stats = Stats;
+	Peer->Object = Player;
 
 	// Read packet
 	int Slot = Data.Read<char>();
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT * FROM Characters WHERE AccountsID = " << Player->AccountID << " LIMIT " << Slot << ", 1";
+	Query << "SELECT * FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
 	Database->RunDataQuery(Query.str());
 	if(!Database->FetchRow()) {
 		Log << "Character slot " << Slot << " empty!";
@@ -703,7 +695,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	std::stringstream Query;
 
 	// Get a count of the account's characters
-	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Player->AccountID;
+	Query << "SELECT Count(ID) FROM Characters WHERE AccountsID = " << Peer->AccountID;
 	int CharacterCount = Database->RunCountQuery(Query.str());
 	Query.str("");
 
@@ -713,7 +705,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
-	Query << "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = " << Player->AccountID;
+	Query << "SELECT Name, PortraitID, Experience FROM Characters WHERE AccountsID = " << Peer->AccountID;
 	Database->RunDataQuery(Query.str());
 	while(Database->FetchRow()) {
 		Packet.WriteString(Database->GetString(0));
@@ -795,10 +787,10 @@ _Map *_Server::GetMap(int MapID) {
 
 // Validate a peer's attributes
 bool _Server::ValidatePeer(_Peer *Peer) {
-	if(!Peer->Object)
+	if(!Peer->AccountID)
 		return false;
 
-	if(Peer->Object->AccountID == 0)
+	if(!Peer->Object)
 		return false;
 
 	return true;

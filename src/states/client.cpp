@@ -86,6 +86,7 @@ void _ClientState::Close() {
 		delete Player->Map;
 	delete Network;
 	delete Server;
+	delete Stats;
 }
 
 // Connect to a server

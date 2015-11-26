@@ -18,6 +18,7 @@
 #include <states/dedicated.h>
 #include <framework.h>
 #include <server.h>
+#include <stats.h>
 
 _DedicatedState DedicatedState;
 
@@ -41,20 +42,18 @@ void RunCommandThread(_Server *Server) {
 // Constructor
 _DedicatedState::_DedicatedState() :
 	Server(nullptr),
-	Thread(nullptr),
-	Stats(nullptr) {
+	Stats(nullptr),
+	Thread(nullptr) {
 
 }
 
 // Init
 void _DedicatedState::Init() {
-	if(!Stats)
-		throw std::runtime_error(std::string(__FUNCTION__) + " - Stats is null!");
 
 	// Setup server
 	try {
 		Server = new _Server(NetworkPort);
-		Server->Stats = Stats;
+		Server->Stats = new _Stats();
 
 		std::cout << "Listening on port " << NetworkPort << std::endl;
 
@@ -73,6 +72,7 @@ void _DedicatedState::Close() {
 		delete Thread;
 	}
 
+	delete Server->Stats;
 	delete Server;
 }
 

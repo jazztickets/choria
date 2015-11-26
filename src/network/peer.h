@@ -29,10 +29,11 @@ class _Peer {
 
 	public:
 
-		_Peer(_ENetPeer *ENetPeer) : ENetPeer(ENetPeer), Object(nullptr), LastAck(0) { }
+		_Peer(_ENetPeer *ENetPeer) : ENetPeer(ENetPeer), Object(nullptr), AccountID(0), LastAck(0) { }
 
 		_ENetPeer *ENetPeer;
 		_Object *Object;
+		uint32_t AccountID;
 		uint16_t LastAck;
 
 };

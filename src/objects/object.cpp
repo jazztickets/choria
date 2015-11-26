@@ -67,7 +67,6 @@ _Object::_Object()
 	SkillUsed(nullptr),
 	Portrait(nullptr),
 
-	AccountID(0),
 	CharacterID(0),
 	State(STATE_WALK),
 	MoveTime(0),

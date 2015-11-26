@@ -234,7 +234,6 @@ class _Object {
 		int AI;
 
 		// -- PLAYER  --
-		int AccountID;
 		int CharacterID;
 
 		// States
