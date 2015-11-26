@@ -120,7 +120,6 @@ void _Map::AllocateMap() {
 
 // Updates the map and sends object updates
 void _Map::Update(double FrameTime) {
-
 	ObjectUpdateCount = 0;
 
 	// Update objects
@@ -136,7 +135,7 @@ void _Map::Update(double FrameTime) {
 				RemovePeer(Object->Peer);
 			}
 			RemoveObject(Object);
-			ObjectIDs[Object->ID] = false;
+			ObjectIDs[Object->NetworkID] = false;
 
 			delete Object;
 			Iterator = Objects.erase(Iterator);
@@ -435,21 +434,18 @@ NetworkIDType _Map::GenerateObjectID() {
 // Removes an object from the map
 void _Map::RemoveObject(const _Object *RemoveObject) {
 
-	// Remove from the map
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
-		if(*Iterator == RemoveObject)
-			Iterator = Objects.erase(Iterator);
-		else
-			++Iterator;
+	// Notify peers
+	if(ServerNetwork) {
+
+		// Create packet
+		_Buffer Packet;
+		Packet.Write<char>(Packet::WORLD_DELETEOBJECT);
+		Packet.Write<uint8_t>(ID);
+		Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
+
+		// Send to everyone
+		BroadcastPacket(Packet);
 	}
-
-	// Create delete packet
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_DELETEOBJECT);
-	Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
-
-	// Send to everyone
-	BroadcastPacket(Packet);
 }
 
 // Remove a peer
@@ -478,7 +474,7 @@ void _Map::DeleteObjects() {
 // Get object by id
 _Object *_Map::GetObjectByID(NetworkIDType ObjectID) {
 	for(auto &Object : Objects) {
-		if(Object->ID == ObjectID)
+		if(Object->NetworkID == ObjectID)
 			return Object;
 	}
 
@@ -487,13 +483,14 @@ _Object *_Map::GetObjectByID(NetworkIDType ObjectID) {
 
 // Adds an object to the map
 void _Map::AddObject(_Object *Object) {
+	if(!ServerNetwork)
+		return;
 
 	// Create packet for the new object
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_CREATEOBJECT);
 	Packet.Write<NetworkIDType>(Object->NetworkID);
-	Packet.Write<char>(Object->Position.x);
-	Packet.Write<char>(Object->Position.y);
+	Packet.Write<glm::ivec2>(Object->Position);
 	Packet.Write<char>(Object->Type);
 	Packet.WriteString(Object->Name.c_str());
 	Packet.Write<char>(Object->PortraitID);
@@ -574,15 +571,19 @@ void _Map::SendObjectList(_Peer *Peer) {
 	if(!ServerNetwork)
 		return;
 
+	if(!Peer->Object)
+		return;
+
+	// Create packet
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_OBJECTLIST);
+	Packet.Write<NetworkIDType>(Peer->Object->NetworkID);
 
 	// Write object data
-	Packet.Write<int32_t>(Objects.size());
+	Packet.Write<NetworkIDType>(Objects.size());
 	for(auto &Object : Objects) {
 		Packet.Write<NetworkIDType>(Object->NetworkID);
-		Packet.Write<char>(Object->Position.x);
-		Packet.Write<char>(Object->Position.y);
+		Packet.Write<glm::ivec2>(Object->Position);
 		Packet.Write<char>(Object->Type);
 		Packet.WriteString(Object->Name.c_str());
 		Packet.Write<char>(Object->PortraitID);

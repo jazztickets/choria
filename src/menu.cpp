@@ -73,8 +73,6 @@ void _Menu::InitTitle() {
 
 	ChangeLayout("element_menu_title");
 
-	ClientState.Network->Disconnect();
-
 	State = STATE_TITLE;
 }
 
@@ -437,7 +435,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			if(CharactersState == CHARACTERS_NONE) {
 				if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-						InitTitle();
+						ClientState.Network->Disconnect();
 					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
 						int SelectedCharacter = GetSelectedCharacter();
 						if(SelectedCharacter == -1)
@@ -463,7 +461,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 		case STATE_CONNECT: {
 			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-					InitTitle();
+					ClientState.Network->Disconnect();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					ConnectToHost();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
@@ -544,7 +542,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_back") {
-						InitTitle();
+						ClientState.Network->Disconnect();
 					}
 					else if(Clicked->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
 
@@ -700,6 +698,10 @@ void _Menu::HandleConnect() {
 // Disconnect
 void _Menu::HandleDisconnect() {
 	switch(State) {
+		case STATE_NONE:
+		case STATE_CHARACTERS: {
+			InitTitle();
+		} break;
 		case STATE_CONNECT: {
 			InitConnect();
 

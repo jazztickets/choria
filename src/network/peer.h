@@ -34,6 +34,7 @@ class _Peer {
 		_ENetPeer *ENetPeer;
 		_Object *Object;
 		uint32_t AccountID;
+		uint32_t CharacterID;
 		uint16_t LastAck;
 
 };

@@ -434,8 +434,12 @@ int _Object::Move() {
 	if(InputState & MOVE_RIGHT)
 		Direction.x += 1;
 
+	// Remove diagonols
+	if(Direction.x != 0 && Direction.y != 0)
+		Direction.x = 0;
+
 	// Check timer
-	if(MoveTime < PLAYER_MOVETIME || (Direction.x != 0 && Direction.y != 0 && MoveTime < PLAYER_MOVETIME * 1.414))
+	if(MoveTime < PLAYER_MOVETIME)
 		return 0;
 
 	// Move player

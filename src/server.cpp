@@ -91,22 +91,30 @@ _Server::_Server(uint16_t NetworkPort)
 // Destructor
 _Server::~_Server() {
 	Done = true;
-	if(Thread)
-		Thread->join();
+	JoinThread();
 
 	// Delete maps
 	for(auto &Map : Maps) {
 		delete Map;
 	}
+	Maps.clear();
 
 	delete Database;
-
 	delete Thread;
 }
 
 // Start the server thread
 void _Server::StartThread() {
 	Thread = new std::thread(RunThread, this);
+}
+
+// Wait for thread to join
+void _Server::JoinThread() {
+	if(Thread)
+		Thread->join();
+
+	delete Thread;
+	Thread = nullptr;
 }
 
 // Stop the server
@@ -117,7 +125,7 @@ void _Server::StopServer() {
 
 // Update
 void _Server::Update(double FrameTime) {
-	//Log << "ServerUpdate " << TimeSteps << std::endl;
+	//Log << "ServerUpdate " << Time << std::endl;
 
 	// Update network
 	Network->Update(FrameTime);
@@ -173,6 +181,7 @@ void _Server::Update(double FrameTime) {
 		}
 	}
 
+	// Wait for peers to disconnect
 	if(StartShutdown && Network->GetPeers().size() == 0) {
 		Done = true;
 	}
@@ -484,114 +493,27 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 // Loads the player, updates the world, notifies clients
 void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
-	// Create object
-	_Object *Player = new _Object();
-	Player->Peer = Peer;
-	Player->Stats = Stats;
-	Peer->Object = Player;
-
 	// Read packet
 	int Slot = Data.Read<char>();
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT * FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
+	Query << "SELECT ID FROM Characters WHERE AccountsID = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
 	Database->RunDataQuery(Query.str());
-	if(!Database->FetchRow()) {
+	if(Database->FetchRow()) {
+		Peer->CharacterID = Database->GetInt(0);
+	}
+	Database->CloseQuery();
+	Query.str("");
+
+	// Check for valid character id
+	if(!Peer->CharacterID) {
 		Log << "Character slot " << Slot << " empty!";
 		return;
 	}
-	Query.str("");
-
-	// Set player properties
-	Player->CharacterID = Database->GetInt(0);
-	Player->SpawnMapID = Database->GetInt(2);
-	Player->SpawnPoint = Database->GetInt(3);
-	Player->Name = Database->GetString(4);
-	Player->PortraitID = Database->GetInt(5);
-	Player->Experience = Database->GetInt(6);
-	Player->Gold = Database->GetInt(7);
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		uint32_t SkillID = Database->GetInt(i + 8);
-		Player->ActionBar[i] = Stats->Skills[SkillID];
-	}
-	Player->PlayTime = Database->GetInt(16);
-	Player->Deaths = Database->GetInt(17);
-	Player->MonsterKills = Database->GetInt(18);
-	Player->PlayerKills = Database->GetInt(19);
-	Player->Bounty = Database->GetInt(20);
-
-	Database->CloseQuery();
-
-	// Set inventory
-	Query << "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = " << Player->CharacterID;
-	Database->RunDataQuery(Query.str());
-	int ItemCount = 0;
-	while(Database->FetchRow()) {
-		Player->SetInventory(Database->GetInt(0), Database->GetInt(1), Database->GetInt(2));
-		ItemCount++;
-	}
-	Database->CloseQuery();
-	Query.str("");
-
-	// Set skills
-	Query << "SELECT SkillsID, Level FROM SkillLevel WHERE CharactersID = " << Player->CharacterID;
-	Database->RunDataQuery(Query.str());
-	int SkillCount = 0;
-	while(Database->FetchRow()) {
-		int SkillLevel = Database->GetInt(1);
-		Player->SetSkillLevel(Database->GetInt(0), SkillLevel);
-		if(SkillLevel > 0)
-			SkillCount++;
-	}
-	Database->CloseQuery();
-	Query.str("");
-
-	// Get stats
-	Player->CalculatePlayerStats();
-	Player->RestoreHealthMana();
-
-	// Send character packet
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_YOURCHARACTERINFO);
-	Packet.WriteString(Player->Name.c_str());
-	Packet.Write<int32_t>(Player->PortraitID);
-	Packet.Write<int32_t>(Player->Experience);
-	Packet.Write<int32_t>(Player->Gold);
-	Packet.Write<int32_t>(Player->PlayTime);
-	Packet.Write<int32_t>(Player->Deaths);
-	Packet.Write<int32_t>(Player->MonsterKills);
-	Packet.Write<int32_t>(Player->PlayerKills);
-	Packet.Write<int32_t>(Player->Bounty);
-
-	// Write items
-	Packet.Write<char>(ItemCount);
-	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		if(Player->Inventory[i].Item) {
-			Packet.Write<char>(i);
-			Packet.Write<char>(Player->Inventory[i].Count);
-			Packet.Write<int32_t>(Player->Inventory[i].Item->ID);
-		}
-	}
-
-	// Write skills
-	Packet.Write<char>(SkillCount);
-	for(const auto &SkillLevel : Player->SkillLevels) {
-		if(SkillLevel.second > 0) {
-			Packet.Write<uint32_t>(SkillLevel.first);
-			Packet.Write<int32_t>(SkillLevel.second);
-		}
-	}
-
-	// Write skill bar
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		Packet.Write<uint32_t>(Player->GetActionBarID(i));
-	}
-
-	Network->SendPacket(Packet, Peer);
 
 	// Send map and players to new player
-	SpawnPlayer(Peer, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
+	SpawnPlayer(Peer, _Map::EVENT_SPAWN);
 }
 
 // Handles move commands from a client
@@ -713,33 +635,39 @@ void _Server::SendCharacterList(_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) {
-	if(!ValidatePeer(Peer))
+void _Server::SpawnPlayer(_Peer *Peer, int MapID) {
+	if(!Peer->AccountID || !Peer->CharacterID)
 		return;
 
+	// Get player object
 	_Object *Player = Peer->Object;
 
 	// Get new map
 	_Map *Map = GetMap(MapID);
 
+	// Get old map
+	_Map *OldMap = nullptr;
+	if(Player)
+		OldMap = Player->Map;
+
 	// Remove old player if map has changed
-	_Map *OldMap = Player->Map;
-	if(OldMap && Map != OldMap) {
-		OldMap->RemoveObject(Player);
-		OldMap->RemovePeer(Peer);
-	}
-
-	// Find spawn point in map
-	Map->FindEvent(EventType, EventData, Player->Position);
-
-	// Set state
-	Player->State = _Object::STATE_WALK;
-
-	// Send new object list
 	if(Map != OldMap) {
 
-		// Update pointers
+		// Delete old player
+		if(Player)
+			Player->Deleted = true;
+
+		// Create new player
+		Player = CreatePlayer(Peer);
+		Player->NetworkID = Map->GenerateObjectID();
 		Player->Map = Map;
+		Player->State = _Object::STATE_WALK;
+
+		// Find spawn point in map
+		Map->FindEvent(_Map::EVENT_SPAWN, Player->SpawnPoint, Player->Position);
+
+		// Add player to map
+		Map->AddObject(Player);
 
 		// Send new map id
 		_Buffer Packet;
@@ -747,16 +675,20 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData) 
 		Packet.Write<int32_t>(MapID);
 		Network->SendPacket(Packet, Peer);
 
-		// Add player to map
+		// Add peer to map
 		Map->AddPeer(Peer);
-		Map->AddObject(Player);
 
-		// Send object list to the player
+		// Set player object list
 		Map->SendObjectList(Peer);
-	}
-	else
-		SendPlayerPosition(Player);
 
+		// Set full player data to peer
+		SendPlayerInfo(Peer);
+	}
+	else {
+		//Map->FindEvent(EventType, EventData, Player->Position);
+
+		//SendPlayerPosition(Player);
+	}
 }
 
 // Gets a map from the manager. Loads the level if it doesn't exist
@@ -778,6 +710,139 @@ _Map *_Server::GetMap(int MapID) {
 	return NewMap;
 }
 
+// Create player object and load stats from save
+_Object *_Server::CreatePlayer(_Peer *Peer) {
+
+	// Create object
+	_Object *Player = new _Object();
+	Player->Peer = Peer;
+	Player->Stats = Stats;
+	Peer->Object = Player;
+
+	std::stringstream Query;
+
+	// Get character
+	Query << "SELECT * FROM Characters WHERE ID = " << Peer->CharacterID;
+	Database->RunDataQuery(Query.str());
+	Query.str("");
+
+	// Get row
+	if(!Database->FetchRow()) {
+		Database->CloseQuery();
+		return nullptr;
+	}
+
+	// Set properties
+	Peer->CharacterID = Database->GetInt(0);
+	Player->CharacterID = Database->GetInt(0);
+	Player->SpawnMapID = Database->GetInt(2);
+	Player->SpawnPoint = Database->GetInt(3);
+	Player->Name = Database->GetString(4);
+	Player->PortraitID = Database->GetInt(5);
+	Player->Experience = Database->GetInt(6);
+	Player->Gold = Database->GetInt(7);
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		uint32_t SkillID = Database->GetInt(i + 8);
+		Player->ActionBar[i] = Stats->Skills[SkillID];
+	}
+	Player->PlayTime = Database->GetInt(16);
+	Player->Deaths = Database->GetInt(17);
+	Player->MonsterKills = Database->GetInt(18);
+	Player->PlayerKills = Database->GetInt(19);
+	Player->Bounty = Database->GetInt(20);
+
+	// Set inventory
+	Query << "SELECT Slot, ItemsID, Count FROM Inventory WHERE CharactersID = " << Player->CharacterID;
+	Database->RunDataQuery(Query.str());
+	int ItemCount = 0;
+	while(Database->FetchRow()) {
+		Player->SetInventory(Database->GetInt(0), Database->GetInt(1), Database->GetInt(2));
+		ItemCount++;
+	}
+	Database->CloseQuery();
+	Query.str("");
+
+	// Set skills
+	Query << "SELECT SkillsID, Level FROM SkillLevel WHERE CharactersID = " << Player->CharacterID;
+	Database->RunDataQuery(Query.str());
+	int SkillCount = 0;
+	while(Database->FetchRow()) {
+		int SkillLevel = Database->GetInt(1);
+		Player->SetSkillLevel(Database->GetInt(0), SkillLevel);
+		if(SkillLevel > 0)
+			SkillCount++;
+	}
+	Database->CloseQuery();
+	Query.str("");
+
+	// Get stats
+	Player->CalculatePlayerStats();
+	Player->RestoreHealthMana();
+
+	return Player;
+}
+
+// Send player stats to peer
+void _Server::SendPlayerInfo(_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Send character packet
+	_Buffer Packet;
+	Packet.Write<char>(Packet::WORLD_YOURCHARACTERINFO);
+	Packet.WriteString(Player->Name.c_str());
+	Packet.Write<int32_t>(Player->PortraitID);
+	Packet.Write<int32_t>(Player->Experience);
+	Packet.Write<int32_t>(Player->Gold);
+	Packet.Write<int32_t>(Player->PlayTime);
+	Packet.Write<int32_t>(Player->Deaths);
+	Packet.Write<int32_t>(Player->MonsterKills);
+	Packet.Write<int32_t>(Player->PlayerKills);
+	Packet.Write<int32_t>(Player->Bounty);
+
+	// Get item count
+	int ItemCount = 0;
+	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
+		if(Player->Inventory[i].Item)
+			ItemCount++;
+	}
+
+	// Write items
+	Packet.Write<char>(ItemCount);
+	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
+		if(Player->Inventory[i].Item) {
+			Packet.Write<char>(i);
+			Packet.Write<char>(Player->Inventory[i].Count);
+			Packet.Write<int32_t>(Player->Inventory[i].Item->ID);
+		}
+	}
+
+	// Get skill count
+	int SkillCount = 0;
+	for(const auto &SkillLevel : Player->SkillLevels) {
+		if(SkillLevel.second > 0)
+			SkillCount++;
+	}
+
+	// Write skills
+	Packet.Write<char>(SkillCount);
+	for(const auto &SkillLevel : Player->SkillLevels) {
+		if(SkillLevel.second > 0) {
+			Packet.Write<uint32_t>(SkillLevel.first);
+			Packet.Write<int32_t>(SkillLevel.second);
+		}
+	}
+
+	// Write skill bar
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		Packet.Write<uint32_t>(Player->GetActionBarID(i));
+	}
+
+	Network->SendPacket(Packet, Peer);
+}
+
 // Validate a peer's attributes
 bool _Server::ValidatePeer(_Peer *Peer) {
 	if(!Peer->AccountID)
@@ -794,8 +859,7 @@ void _Server::SendPlayerPosition(_Object *Player) {
 
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_POSITION);
-	Packet.Write<char>(Player->Position.x);
-	Packet.Write<char>(Player->Position.y);
+	Packet.Write<glm::ivec2>(Player->Position);
 
 	Network->SendPacket(Packet, Player->Peer);
 }

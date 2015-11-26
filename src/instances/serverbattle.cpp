@@ -99,7 +99,7 @@ void _ServerBattle::StartBattle() {
 			_Object *Monster = (_Object *)Fighters[i];
 
 			// Monster ID
-			Packet.Write<int32_t>(Monster->ID);
+			Packet.Write<int32_t>(Monster->DatabaseID);
 		}
 	}
 
@@ -311,7 +311,7 @@ void _ServerBattle::CheckEnd() {
 				// Generate monster drops in player vs monster situations
 				std::vector<int> MonsterDrops;
 				for(size_t i = 0; i < Monsters.size(); i++) {
-					Stats->GenerateMonsterDrops(Monsters[i]->ID, 1, MonsterDrops);
+					Stats->GenerateMonsterDrops(Monsters[i]->DatabaseID, 1, MonsterDrops);
 				}
 
 				// Get a list of players that receive items

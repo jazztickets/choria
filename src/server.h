@@ -44,6 +44,7 @@ class _Server {
 
 		void Update(double FrameTime);
 		void StartThread();
+		void JoinThread();
 		void StopServer();
 
 		// State
@@ -69,7 +70,9 @@ class _Server {
 
 	private:
 
-		void SpawnPlayer(_Peer *Peer, int MapID, int EventType, int EventData);
+		_Object *CreatePlayer(_Peer *Peer);
+		void SendPlayerInfo(_Peer *Peer);
+		void SpawnPlayer(_Peer *Peer, int MapID);
 		bool ValidatePeer(_Peer *Peer);
 		void SendPlayerPosition(_Object *Player);
 

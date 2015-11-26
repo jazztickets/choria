@@ -87,7 +87,6 @@ class _Object {
 			INVENTORY_COUNT = INVENTORY_TRADE + PLAYER_TRADEITEMS,
 		};
 
-		//_Object() { }
 		_Object();
 		virtual ~_Object();
 
@@ -229,7 +228,7 @@ class _Object {
 
 		// Monster
 		std::vector<_Object *> Opponents;
-		int ID;
+		int DatabaseID;
 		int ExperienceGiven, GoldGiven;
 		int AI;
 

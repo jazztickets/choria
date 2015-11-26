@@ -44,6 +44,7 @@ class _ClientState : public _State {
 
 		// Network
 		void Connect(bool IsLocal);
+		void StopLocalServer();
 
 		// Input
 		bool HandleAction(int InputType, int Action, int Value) override;
@@ -65,8 +66,9 @@ class _ClientState : public _State {
 		_Stats *Stats;
 		_LogFile Log;
 
-		// Entities
+		// Objects
 		_Object *Player;
+		_Map *Map;
 
 		// HUD
 		_HUD *HUD;
@@ -85,9 +87,10 @@ class _ClientState : public _State {
 
 		void StartLocalServer();
 
+		void HandleConnect();
+		void HandleDisconnect();
 		void HandlePacket(_Buffer &Data);
 
-		void HandleConnect();
 		void HandleYourCharacterInfo(_Buffer &Data);
 		void HandleChangeMaps(_Buffer &Data);
 		void HandleObjectList(_Buffer &Data);

@@ -58,10 +58,11 @@ _ClientState::_ClientState() :
 // Load level and set up objects
 void _ClientState::Init() {
 	Server = nullptr;
+	Player = nullptr;
+	Map = nullptr;
 
 	HUD = new _HUD();
 	Stats = new _Stats();
-	Player = new _Object();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
@@ -82,8 +83,7 @@ void _ClientState::Close() {
 
 	delete Camera;
 	delete HUD;
-	if(Player->Map)
-		delete Player->Map;
+	delete Map;
 	delete Network;
 	delete Server;
 	delete Stats;
@@ -102,14 +102,23 @@ void _ClientState::Connect(bool IsLocal) {
 	}
 }
 
-// Start local server in thread
-void _ClientState::StartLocalServer() {
+// Stops the server thread
+void _ClientState::StopLocalServer() {
 
 	// Kill existing server
 	if(Server) {
 		Server->StopServer();
+		Server->JoinThread();
 		delete Server;
+		Server = nullptr;
 	}
+}
+
+// Start local server in thread
+void _ClientState::StartLocalServer() {
+
+	// Stop existing server
+	StopLocalServer();
 
 	// Start server in thread
 	Server = new _Server(DEFAULT_NETWORKPORT_ALT);
@@ -150,8 +159,8 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 			switch(Action) {
 				case _Actions::MENU:
 					if(IsTesting)
-						Framework.Done = true;
-						//Network->Disconnect();
+						//Framework.Done = true;
+						Network->Disconnect();
 					else
 						HUD->ToggleMenu();
 				break;
@@ -281,7 +290,7 @@ void _ClientState::Update(double FrameTime) {
 				HandleConnect();
 			} break;
 			case _NetworkEvent::DISCONNECT:
-				Menu.HandleDisconnect();
+				HandleDisconnect();
 			break;
 			case _NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
@@ -293,7 +302,7 @@ void _ClientState::Update(double FrameTime) {
 	// Update menu
 	Menu.Update(FrameTime);
 
-	if(!Player || !Player->Map)
+	if(!Player || !Map)
 		return;
 
 	// Set input
@@ -308,7 +317,7 @@ void _ClientState::Update(double FrameTime) {
 		Player->InputState |= _Object::MOVE_RIGHT;
 
 	// Update objects
-	Player->Map->Update(FrameTime);
+	Map->Update(FrameTime);
 	if(Player->Moved) {
 		_Buffer Packet;
 		Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
@@ -347,7 +356,7 @@ void _ClientState::Update(double FrameTime) {
 void _ClientState::Render(double BlendFactor) {
 	Menu.Render();
 
-	if(!Player || !Player->Map)
+	if(!Player || !Map)
 		return;
 
 	Graphics.Setup3D();
@@ -356,10 +365,10 @@ void _ClientState::Render(double BlendFactor) {
 
 	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
 	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv"]->AmbientLight = Player->Map->AmbientLight;
+	Assets.Programs["pos_uv"]->AmbientLight = Map->AmbientLight;
 	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
 	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv_norm"]->AmbientLight = Player->Map->AmbientLight;
+	Assets.Programs["pos_uv_norm"]->AmbientLight = Map->AmbientLight;
 
 	// Setup the viewing matrix
 	Graphics.Setup3D();
@@ -374,7 +383,7 @@ void _ClientState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Draw map and objects
-	Player->Map->Render(Camera, Stats, Player);
+	Map->Render(Camera, Stats, Player);
 
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["text"]);
@@ -481,8 +490,23 @@ void _ClientState::HandleConnect() {
 	Menu.HandleConnect();
 }
 
+// Handle disconnects
+void _ClientState::HandleDisconnect() {
+	ClientState.StopLocalServer();
+	Menu.HandleDisconnect();
+	if(Player) {
+		if(Map) {
+			delete Map;
+			Map = nullptr;
+		}
+	}
+}
+
 // Called once to synchronize your stats with the servers
 void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
+	if(!Player)
+		return;
+
 	Log << "HandleYourCharacterInfo" << std::endl;
 
 	Player->WorldImage = Assets.Textures["players/basic.png"];
@@ -528,22 +552,21 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 
 // Called when the player changes maps
 void _ClientState::HandleChangeMaps(_Buffer &Data) {
-	if(!Player)
-		return;
-
 	Menu.InitPlay();
 
 	// Load map
 	int MapID = Data.Read<int32_t>();
 
 	// Delete old map and create new
-	if(!Player->Map || Player->Map->ID != MapID) {
-		if(Player->Map)
-			delete Player->Map;
+	if(!Map || Map->ID != MapID) {
+		if(Map)
+			delete Map;
 
-		Player->Map = new _Map(MapID, Stats);
+		Map = new _Map(MapID, Stats);
+		Player = nullptr;
 	}
 
+	/*
 	// Delete the battle
 	if(Player->Battle) {
 		delete Player->Battle;
@@ -551,57 +574,53 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 	}
 
 	Player->State = _Object::STATE_WALK;
+	*/
 }
 
 // Handle objectlist
 void _ClientState::HandleObjectList(_Buffer &Data) {
-	if(!Player->Map)
-		throw std::runtime_error("Player does not have a map!");
 
-	// Get object count for map
-	int ObjectCount = Data.Read<int32_t>();
+	// Read header
+	NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
+	NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
 
 	// Create objects
-	for(int i = 0; i < ObjectCount; i++) {
+	for(NetworkIDType i = 0; i < ObjectCount; i++) {
 
 		// Read data
-		glm::ivec2 GridPosition;
-		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-		GridPosition.x = Data.Read<char>();
-		GridPosition.y = Data.Read<char>();
-		int Type = Data.Read<char>();
-		std::string Name(Data.ReadString());
-		int PortraitID = Data.Read<char>();
-		int Invisible = Data.ReadBit();
+		_Object *Object = new _Object();
+		Object->NetworkID = Data.Read<NetworkIDType>();
+		Object->Position = Data.Read<glm::ivec2>();
+		Object->Type = Data.Read<char>();
+		Object->Name = Data.ReadString();
+		Object->PortraitID = Data.Read<char>();
+		Object->Portrait = Stats->Portraits[Object->PortraitID].Image;
+		Object->InvisPower = Data.ReadBit();
 
-		// Information for your player
-		if(NetworkID == Player->NetworkID) {
-			Player->Position = GridPosition;
-			Camera->ForcePosition(glm::vec3(GridPosition, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
-		}
-		else if(Type >= 0) {
-			_Object *Object = new _Object();
-			Object->Position = GridPosition;
-			Object->Name = Name;
-			Object->Map = Player->Map;
-			Object->PortraitID = PortraitID;
-			Object->Portrait = Stats->Portraits[PortraitID].Image;
-			Object->InvisPower = Invisible;
-			Player->Map->AddObject(Object, NetworkID);
-		}
+		Map->AddObject(Object, Object->NetworkID);
+		Object->Map = Map;
+
+		// Set player pointer
+		if(Object->NetworkID == ClientNetworkID)
+			Player = Object;
+	}
+
+	if(Player) {
+		Camera->ForcePosition(glm::vec3(Player->Position, CAMERA_DISTANCE) + glm::vec3(0.5, 0.5, 0));
+	}
+	else {
+		// Error
 	}
 }
 
 // Creates an object
 void _ClientState::HandleCreateObject(_Buffer &Data) {
-	if(!Player->Map)
+	if(!Map)
 		throw std::runtime_error("No map!");
 
 	// Read packet
-	glm::ivec2 Position;
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-	Position.x = Data.Read<char>();
-	Position.y = Data.Read<char>();
+	glm::ivec2 Position = Data.Read<glm::ivec2>();
 	int Type = Data.Read<char>();
 
 	// Create the object
@@ -617,7 +636,7 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 		Object->PortraitID = PortraitID;
 		Object->Portrait = Stats->Portraits[PortraitID].Image;
 		Object->InvisPower = Invisible;
-		Object->Map = Player->Map;
+		Object->Map = Map;
 		Object->Type = Type;
 	}
 	else
@@ -627,15 +646,24 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 		Object->Position = Position;
 
 		// Add it to the manager
-		Player->Map->AddObject(Object, NetworkID);
+		Map->AddObject(Object, NetworkID);
 	}
 }
 
 // Deletes an object
 void _ClientState::HandleDeleteObject(_Buffer &Data) {
+	if(!Player || !Map)
+		return;
+
+	uint8_t MapID = Data.Read<uint8_t>();
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
-	_Object *Object = Player->Map->GetObjectByID(NetworkID);
+	// Check for same map
+	if(Map->ID != MapID)
+		return;
+
+	// Get object
+	_Object *Object = Map->GetObjectByID(NetworkID);
 	if(Object) {
 		switch(Player->State) {
 			case _Object::STATE_BATTLE:
@@ -644,10 +672,6 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 		}
 		Object->Deleted = true;
 	}
-	else
-		printf("failed to delete object with networkid=%d\n", NetworkID);
-
-	//printf("HandleDeleteObject: NetworkID=%d\n", NetworkID);
 }
 
 // Sends a move command to the server
@@ -664,8 +688,10 @@ void _ClientState::SendMoveCommand(int Direction) {
 
 // Handles player position
 void _ClientState::HandlePlayerPosition(_Buffer &Data) {
-	Player->Position.x = Data.Read<char>();
-	Player->Position.y = Data.Read<char>();
+	if(!Player)
+		return;
+
+	Player->Position = Data.Read<glm::ivec2>();
 }
 
 /*

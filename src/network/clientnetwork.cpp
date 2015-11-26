@@ -62,16 +62,18 @@ void _ClientNetwork::Connect(const std::string &HostAddress, int Port) {
 void _ClientNetwork::Disconnect(bool Force) {
 
 	// Soft disconnect
-	if(CanDisconnect()) {
+	if(CanDisconnect() || Force) {
 
 		// Disconnect from host
-		enet_peer_disconnect(Peer->ENetPeer, 0);
-		ConnectionState = DISCONNECTING;
-	}
+		if(Peer->ENetPeer)
+			enet_peer_disconnect(Peer->ENetPeer, 0);
 
-	// Hard disconnect
-	if(Force)
-		ConnectionState = DISCONNECTED;
+		// Force disconnection state
+		if(Force)
+			ConnectionState = DISCONNECTED;
+		else
+			ConnectionState = DISCONNECTING;
+	}
 }
 
 // Create a _NetworkEvent from an enet event

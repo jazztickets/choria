@@ -24,6 +24,7 @@
 class _Buffer;
 class _Peer;
 
+// Classes
 class _ClientNetwork : public _Network {
 
 	public:
@@ -54,7 +55,7 @@ class _ClientNetwork : public _Network {
 		bool IsConnected() { return ConnectionState == CONNECTED; }
 		bool CanConnect() { return IsDisconnected(); }
 		bool CanDisconnect() { return ConnectionState == CONNECTED; }
-		const ConnectionStateType &GetConnectionState() const {return ConnectionState;}
+		const ConnectionStateType &GetConnectionState() const { return ConnectionState; }
 
 	private:
 
