@@ -148,26 +148,13 @@ void _Server::Update(double FrameTime) {
 
 	// Check if updates should be sent
 	if(Network->NeedsUpdate()) {
-		//Log << "NeedsUpdate " << TimeSteps << std::endl;
 		Network->ResetUpdateTimer();
-		if(0 && (rand() % 10) == 0) {
-		}
-		else if(Network->GetPeers().size() > 0) {
+		if(Network->GetPeers().size() > 0) {
 
-			// Notify
-			/*
+			// Send object updates
 			for(auto &Map : Maps) {
-				_Buffer Buffer;
-				Buffer.Write<char>(Packet::OBJECT_UPDATES);
-				Buffer.Write<uint8_t>(Map->ID);
-				Buffer.Write<uint16_t>(TimeSteps);
-				Map->BuildObjectUpdate(Buffer, TimeSteps);
-
-				const std::list<const _Peer *> Peers = Map->GetPeers();
-				for(auto &Peer : Peers) {
-					Network->SendPacket(Buffer, Peer, _Network::UNSEQUENCED, 1);
-				}
-			}*/
+				Map->SendObjectUpdates();
+			}
 		}
 	}
 
@@ -454,7 +441,7 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	int CharacterID = 0;
 
 	// Get character ID
-	Query << "SELECT ID FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Index << ", 1";
+	Query << "SELECT id FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Index << ", 1";
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		CharacterID = Save->Database->GetInt(0);
@@ -489,7 +476,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT ID FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
+	Query << "SELECT id FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		Peer->CharacterID = Save->Database->GetInt(0);

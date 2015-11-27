@@ -423,10 +423,10 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::WORLD_POSITION:
 			HandlePlayerPosition(Data);
 		break;
-			/*
 		case Packet::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
 		break;
+		/*
 		case Packet::WORLD_STARTBATTLE:
 			HandleStartBattle(Data);
 		break;
@@ -667,6 +667,56 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 	}
 }
 
+// Handles position updates from the server
+void _ClientState::HandleObjectUpdates(_Buffer &Data) {
+	if(!Player || !Map)
+		return;
+
+	// Check map id
+	int MapID = Data.Read<char>();
+	if(MapID != Map->ID)
+		return;
+
+	// Get object count
+	NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
+
+	// Iterate over objects
+	for(NetworkIDType i = 0; i < ObjectCount; i++) {
+
+		// Read packet
+		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+		int PlayerState = Data.Read<char>();
+		glm::ivec2 Position = Data.Read<glm::ivec2>();
+		int Invisible = Data.ReadBit();
+
+		// Find object
+		_Object *Object = Map->GetObjectByID(NetworkID);
+		if(Object) {
+
+			if(Object == Player) {
+
+			}
+			else {
+				Object->Position = Position;
+				Object->State = PlayerState;
+				Object->InvisPower = Invisible;
+			}
+
+			switch(PlayerState) {
+				case _Object::STATE_WALK:
+					Object->StateImage = nullptr;
+				break;
+				case _Object::STATE_TRADE:
+					Object->StateImage = Assets.Textures["world/trade.png"];
+				break;
+				default:
+					Object->StateImage = Assets.Textures["world/busy.png"];
+				break;
+			}
+		}
+	}
+}
+
 // Handles player position
 void _ClientState::HandlePlayerPosition(_Buffer &Data) {
 	if(!Player)
@@ -682,55 +732,6 @@ void _ClientState::SendBusy(bool Value) {
 	Packet.Write<char>(Packet::WORLD_BUSY);
 	Packet.Write<char>(Value);
 	Network->SendPacket(Packet);
-}
-
-// Handles position updates from the server
-void _ClientState::HandleObjectUpdates(_Buffer &Data) {
-
-	// Get object Count
-	char ObjectCount = Data.Read<char>();
-
-	//printf("HandleObjectUpdates: ServerTime=%d, ClientTime=%d, ObjectCount=%d\n", ServerTime, ClientTime, ObjectCount);
-	for(int i = 0; i < ObjectCount; i++) {
-		glm::ivec2 Position;
-
-		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-		int PlayerState = Data.Read<char>();
-		Position.x = Data.Read<char>();
-		Position.y = Data.Read<char>();
-		int Invisible = Data.ReadBit();
-
-		//printf("NetworkID=%d invis=%d\n", NetworkID, Invisible);
-
-		_Object *OtherPlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
-		if(OtherPlayer) {
-
-			OtherPlayer->State = PlayerState;
-			if(Player == OtherPlayer) {
-
-				// Return from teleport state
-				if(PlayerState == _Object::STATE_WALK && Player->State == _Object::STATE_TELEPORT) {
-					Player->State = _Object::STATE_WALK;
-				}
-			}
-			else {
-				OtherPlayer->Position = Position;
-				OtherPlayer->InvisPower = Invisible;
-			}
-
-			switch(PlayerState) {
-				case _Object::STATE_WALK:
-					OtherPlayer->StateImage = nullptr;
-				break;
-				case _Object::STATE_TRADE:
-					OtherPlayer->StateImage = Assets.Textures["world/trade.png"];
-				break;
-				default:
-					OtherPlayer->StateImage = Assets.Textures["world/busy.png"];
-				break;
-			}
-		}
-	}
 }
 
 // Handles the start of a battle

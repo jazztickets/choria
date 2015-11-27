@@ -594,41 +594,36 @@ void _Map::SendObjectList(_Peer *Peer) {
 // Sends object position information to all the clients in the map
 void _Map::SendObjectUpdates() {
 
+	// Create packet
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_OBJECTUPDATES);
+	Packet.Write<char>(ID);
 
-	// Get object count
-	int ObjectCount = Objects.size();
-	Packet.Write<char>(ObjectCount);
+	// Write object count
+	Packet.Write<NetworkIDType>(Objects.size());
 
 	// Iterate over objects
 	for(const auto &Object : Objects) {
-		int State = 0;
-		bool Invisible = false;
-		if(Object->Type == _Object::PLAYER) {
-			_Object *Player = (_Object *)Object;
-			State = Player->State;
-			Invisible = Player->IsInvisible();
-		}
 
+		// Write object data
 		Packet.Write<NetworkIDType>(Object->NetworkID);
-		Packet.Write<char>(State);
-		Packet.Write<char>(Object->Position.x);
-		Packet.Write<char>(Object->Position.y);
-		Packet.WriteBit(Invisible);
+		Packet.Write<char>(Object->State);
+		Packet.Write<glm::ivec2>(Object->Position);
+		Packet.WriteBit(Object->IsInvisible());
 	}
 
-	//SendPacketToPlayers(&Packet, nullptr, _OldNetwork::UNSEQUENCED);
+	// Send packet to players in map
+	BroadcastPacket(Packet, _Network::UNSEQUENCED);
 }
 
 // Broadcast a packet to all peers in the map
-void _Map::BroadcastPacket(_Buffer &Buffer) {
+void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
 	if(!ServerNetwork)
 		return;
 
-	for(auto &Peer : Peers) {
-		ServerNetwork->SendPacket(Buffer, Peer);
-	}
+	// Send packet to peers
+	for(auto &Peer : Peers)
+		ServerNetwork->SendPacket(Buffer, Peer, Type, Type == _Network::UNSEQUENCED);
 }
 
 // Get a valid position within the grid

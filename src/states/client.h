@@ -96,8 +96,8 @@ class _ClientState : public _State {
 		void HandleObjectList(_Buffer &Data);
 		void HandleCreateObject(_Buffer &Data);
 		void HandleDeleteObject(_Buffer &Data);
-		void HandlePlayerPosition(_Buffer &Data);
 		void HandleObjectUpdates(_Buffer &Data);
+		void HandlePlayerPosition(_Buffer &Data);
 		void HandleStartBattle(_Buffer &Data);
 		void HandleBattleTurnResults(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);

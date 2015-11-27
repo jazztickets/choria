@@ -76,15 +76,15 @@ class _Map {
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position);
 
-		// Object management
-		NetworkIDType GenerateObjectID();
-
 		// Peer management
-		void BroadcastPacket(_Buffer &Buffer);
+		void BroadcastPacket(_Buffer &Buffer, _Network::SendType Type=_Network::RELIABLE);
 		const std::list<const _Peer *> &GetPeers() const { return Peers; }
 		void AddPeer(const _Peer *Peer) { Peers.push_back(Peer); }
 		void RemovePeer(const _Peer *Peer);
 
+		// Object management
+		NetworkIDType GenerateObjectID();
+		void SendObjectUpdates();
 		void DeleteObjects();
 		_Object *GetObjectByID(NetworkIDType ObjectID);
 		void AddObject(_Object *Object);
@@ -140,8 +140,6 @@ class _Map {
 
 		void AllocateMap();
 		void FreeMap();
-
-		void SendObjectUpdates();
 
 		void GetTextureListFromMap(std::vector<const _Texture *> &SearchTextures);
 		int GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture);
