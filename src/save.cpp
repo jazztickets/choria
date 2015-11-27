@@ -31,7 +31,7 @@ _Save::_Save() {
 	Database = new _Database();
 
 	// Open database
-	std::string DatabasePath = Config.ConfigPath + "save.dat";
+	std::string DatabasePath = Config.ConfigPath + "save.db";
 	if(!Database->OpenDatabase(DatabasePath.c_str())) {
 
 		// Create a new database
@@ -67,10 +67,10 @@ void _Save::CreateDefaultDatabase() {
 
 	// Accounts
 	Database->RunQuery(
-				"CREATE TABLE account("
-				"'id' INTEGER PRIMARY KEY,"
-				"'username' TEXT,"
-				"'password' TEXT"
+				"CREATE TABLE account(\n"
+				"	'id' INTEGER PRIMARY KEY,\n"
+				"	'username' TEXT,\n"
+				"	'password' TEXT\n"
 				")"
 	);
 
@@ -80,47 +80,48 @@ void _Save::CreateDefaultDatabase() {
 
 	// Characters
 	Database->RunQuery(
-				"CREATE TABLE character("
-				"'id' INTEGER PRIMARY KEY,"
-				"'account_id' INTEGER DEFAULT(0),"
-				"'map_id' INTEGER DEFAULT(1),"
-				"'spawnpoint' INTEGER DEFAULT(0),"
-				"'name' TEXT,"
-				"'portrait_id' INTEGER DEFAULT(1),"
-				"'experience' INTEGER DEFAULT(0),"
-				"'gold' INTEGER DEFAULT(0),"
-				"'actionbar0' INTEGER DEFAULT(0),"
-				"'actionbar1' INTEGER DEFAULT(0),"
-				"'actionbar2' INTEGER DEFAULT(0),"
-				"'actionbar3' INTEGER DEFAULT(0),"
-				"'actionbar4' INTEGER DEFAULT(0),"
-				"'actionbar5' INTEGER DEFAULT(0),"
-				"'actionbar6' INTEGER DEFAULT(0),"
-				"'actionbar7' INTEGER DEFAULT(0),"
-				"'playtime' INTEGER DEFAULT(0),"
-				"'deaths' INTEGER DEFAULT(0),"
-				"'monsterkills' INTEGER DEFAULT(0),"
-				"'playerkills' INTEGER DEFAULT(0),"
-				"'bounty' INTEGER DEFAULT(0)"
+				"CREATE TABLE character(\n"
+				"	'id' INTEGER PRIMARY KEY,\n"
+				"	'account_id' INTEGER DEFAULT(0),\n"
+				"	'slot' INTEGER DEFAULT(0),\n"
+				"	'map_id' INTEGER DEFAULT(1),\n"
+				"	'spawnpoint' INTEGER DEFAULT(0),\n"
+				"	'name' TEXT,\n"
+				"	'portrait_id' INTEGER DEFAULT(1),\n"
+				"	'experience' INTEGER DEFAULT(0),\n"
+				"	'gold' INTEGER DEFAULT(0),\n"
+				"	'actionbar0' INTEGER DEFAULT(0),\n"
+				"	'actionbar1' INTEGER DEFAULT(0),\n"
+				"	'actionbar2' INTEGER DEFAULT(0),\n"
+				"	'actionbar3' INTEGER DEFAULT(0),\n"
+				"	'actionbar4' INTEGER DEFAULT(0),\n"
+				"	'actionbar5' INTEGER DEFAULT(0),\n"
+				"	'actionbar6' INTEGER DEFAULT(0),\n"
+				"	'actionbar7' INTEGER DEFAULT(0),\n"
+				"	'playtime' INTEGER DEFAULT(0),\n"
+				"	'deaths' INTEGER DEFAULT(0),\n"
+				"	'monsterkills' INTEGER DEFAULT(0),\n"
+				"	'playerkills' INTEGER DEFAULT(0),\n"
+				"	'bounty' INTEGER DEFAULT(0)\n"
 				")"
 	);
 
 	// Inventory
 	Database->RunQuery(
-				"CREATE TABLE inventory("
-				"'character_id' INTEGER,"
-				"'slot' INTEGER,"
-				"'item_id' INTEGER,"
-				"'count' INTEGER"
+				"CREATE TABLE inventory(\n"
+				"	'character_id' INTEGER,\n"
+				"	'slot' INTEGER,\n"
+				"	'item_id' INTEGER,\n"
+				"	'count' INTEGER\n"
 				")"
 	);
 
 	// Skill levels
 	Database->RunQuery(
-				"CREATE TABLE skilllevel("
-				"'character_id' INTEGER,"
-				"'skill_id' INTEGER,"
-				"'level' INTEGER"
+				"CREATE TABLE skilllevel(\n"
+				"	'character_id' INTEGER,\n"
+				"	'skill_id' INTEGER,\n"
+				"	'level' INTEGER\n"
 				")"
 	);
 

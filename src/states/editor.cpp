@@ -41,6 +41,7 @@ _EditorState::_EditorState() :
 
 // Initializes the state
 void _EditorState::Init() {
+	Stats = new _Stats();
 
 	// Create brush
 	Brush = new _Tile();
@@ -71,6 +72,7 @@ void _EditorState::Init() {
 
 // Shuts the state down
 void _EditorState::Close() {
+	delete Stats;
 	delete Camera;
 	delete Brush;
 
@@ -138,7 +140,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Render map
 	if(Map)
-		Map->Render(Camera, nullptr, nullptr, Filter);
+		Map->Render(Camera, Stats, nullptr, Filter);
 
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["text"]);

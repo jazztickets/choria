@@ -473,13 +473,17 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Read packet
 	int Slot = Data.Read<char>();
+	int MapID = 0;
+	//int SpawnPoint = 0;
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT id FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
+	Query << "SELECT id, map_id, spawnpoint FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		Peer->CharacterID = Save->Database->GetInt(0);
+		MapID = Save->Database->GetInt(1);
+		//SpawnPoint = Save->Database->GetInt(2);
 	}
 	Save->Database->CloseQuery();
 	Query.str("");
@@ -491,7 +495,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Send map and players to new player
-	SpawnPlayer(Peer, _Map::EVENT_SPAWN);
+	SpawnPlayer(Peer, MapID, _Map::EVENT_SPAWN);
 }
 
 // Handles move commands from a client
@@ -504,81 +508,7 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 	/*
 	if(Player->MovePlayer(Direction)) {
 
-		// Handle events
-		const _Tile *Tile = Player->GetTile();
-		switch(Tile->EventType) {
-			case _Map::EVENT_SPAWN:
-				Player->SpawnMapID = Player->Map->ID;
-				Player->SpawnPoint = Tile->EventData;
-				Player->RestoreHealthMana();
-				SendHUD(Player);
-				Player->Save();
-			break;
-			case _Map::EVENT_MAPCHANGE:
-				Player->GenerateNextBattle();
-				SpawnPlayer(Player, Tile->EventData, _Map::EVENT_MAPCHANGE, Player->Map->ID);
-			break;
-			case _Map::EVENT_VENDOR:
-				Player->State = _Object::STATE_VENDOR;
-				Player->Vendor = Stats->GetVendor(Tile->EventData);
-				SendEvent(Player, Tile->EventType, Tile->EventData);
-			break;
-			case _Map::EVENT_TRADER:
-				Player->State = _Object::STATE_TRADER;
-				Player->Trader = Stats->GetTrader(Tile->EventData);
-				SendEvent(Player, Tile->EventType, Tile->EventData);
-			break;
-			default:
 
-				// Start a battle
-				if(Player->NextBattle <= 0) {
-
-					// Get monsters
-					std::vector<int> Monsters;
-					Stats->GenerateMonsterListFromZone(Player->GetCurrentZone(), Monsters);
-					size_t MonsterCount = Monsters.size();
-					if(MonsterCount > 0) {
-
-						// Create a new battle instance
-						_ServerBattle *Battle = new _ServerBattle();
-						Battles.push_back(Battle);
-
-						// Add players
-						Battle->AddFighter(Player, 0);
-						if(1) {
-
-							// Get a list of players
-							std::list<_Object *> Players;
-							Player->Map->GetClosePlayers(Player, 7*7, Players);
-
-							// Add players to battle
-							int PlayersAdded = 0;
-							for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
-								_Object *PartyPlayer = *Iterator;
-								if(PartyPlayer->State == _Object::STATE_WALK && !PartyPlayer->IsInvisible()) {
-									SendPlayerPosition(PartyPlayer);
-									Battle->AddFighter(PartyPlayer, 0);
-									PlayersAdded++;
-									if(PlayersAdded == 2)
-										break;
-								}
-							}
-						}
-
-						// Add monsters
-						for(size_t i = 0; i < Monsters.size(); i++) {
-							_Object *Monster = new _Object(Monsters[i]);
-							Monster->ID = Monsters[i];
-							Monster->Type = _Object::MONSTER;
-							Stats->GetMonsterStats(Monsters[i], Monster);
-							Battle->AddFighter(Monster, 1);
-						}
-
-						Battle->StartBattle();
-					}
-				}
-			break;
-		}
 	}*/
 
 }
@@ -613,7 +543,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Peer *Peer, int MapID) {
+void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 	if(!Peer->AccountID || !Peer->CharacterID)
 		return;
 
@@ -642,7 +572,10 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID) {
 		Player->State = _Object::STATE_WALK;
 
 		// Find spawn point in map
-		Map->FindEvent(_Map::EVENT_SPAWN, Player->SpawnPoint, Player->Position);
+		int SpawnPoint = Player->SpawnPoint;
+		if(EventType == _Map::EVENT_MAPCHANGE)
+			SpawnPoint = OldMap->ID;
+		Map->FindEvent(EventType, SpawnPoint, Player->Position);
 
 		// Add player to map
 		Map->AddObject(Player);
@@ -682,7 +615,7 @@ _Map *_Server::GetMap(int MapID) {
 
 	// Not found, so create it
 	_Map *NewMap = new _Map(MapID, Stats);
-	NewMap->ServerNetwork = Network.get();
+	NewMap->Server = this;
 	Maps.push_back(NewMap);
 
 	return NewMap;
@@ -711,23 +644,22 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	}
 
 	// Set properties
-	Peer->CharacterID = Save->Database->GetInt(0);
 	Player->CharacterID = Save->Database->GetInt(0);
-	Player->SpawnMapID = Save->Database->GetInt(2);
-	Player->SpawnPoint = Save->Database->GetInt(3);
-	Player->Name = Save->Database->GetString(4);
-	Player->PortraitID = Save->Database->GetInt(5);
-	Player->Experience = Save->Database->GetInt(6);
-	Player->Gold = Save->Database->GetInt(7);
+	Player->SpawnMapID = Save->Database->GetInt(3);
+	Player->SpawnPoint = Save->Database->GetInt(4);
+	Player->Name = Save->Database->GetString(5);
+	Player->PortraitID = Save->Database->GetInt(6);
+	Player->Experience = Save->Database->GetInt(7);
+	Player->Gold = Save->Database->GetInt(8);
 	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		uint32_t SkillID = Save->Database->GetInt(i + 8);
+		uint32_t SkillID = Save->Database->GetInt(i + 9);
 		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
-	Player->PlayTime = Save->Database->GetInt(16);
-	Player->Deaths = Save->Database->GetInt(17);
-	Player->MonsterKills = Save->Database->GetInt(18);
-	Player->PlayerKills = Save->Database->GetInt(19);
-	Player->Bounty = Save->Database->GetInt(20);
+	Player->PlayTime = Save->Database->GetInt(17);
+	Player->Deaths = Save->Database->GetInt(18);
+	Player->MonsterKills = Save->Database->GetInt(19);
+	Player->PlayerKills = Save->Database->GetInt(20);
+	Player->Bounty = Save->Database->GetInt(21);
 	Save->Database->CloseQuery();
 
 	// Set inventory

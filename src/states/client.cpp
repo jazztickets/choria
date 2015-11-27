@@ -507,7 +507,7 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Log << "HandleYourCharacterInfo" << std::endl;
+	//Log << "HandleYourCharacterInfo" << std::endl;
 
 	Player->WorldImage = Assets.Textures["players/basic.png"];
 	Player->Stats = Stats;

@@ -26,7 +26,7 @@ _Stats::_Stats() {
 
 	// Load database that stores game data
 	Database = new _Database();
-	if(!Database->OpenDatabaseCreate("database/data.s3db"))
+	if(!Database->OpenDatabaseCreate("database/data.db"))
 		throw std::runtime_error("OpenDatabaseCreate failed");
 
 	// Load spreadsheet data

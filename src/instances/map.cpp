@@ -18,6 +18,7 @@
 #include <instances/map.h>
 #include <network/servernetwork.h>
 #include <network/peer.h>
+#include <server.h>
 #include <graphics.h>
 #include <constants.h>
 #include <stats.h>
@@ -41,7 +42,7 @@
 
 // Constructor for the map editor: new map
 _Map::_Map()
-:	ServerNetwork(nullptr) {
+:	Server(nullptr) {
 
 }
 
@@ -127,6 +128,10 @@ void _Map::Update(double FrameTime) {
 		// Update the object
 		Object->Update(FrameTime);
 
+		// Check for events
+		if(Object->Moved)
+			CheckEvents(Object);
+
 		// Delete old objects
 		if(Object->Deleted) {
 			if(Object->Peer) {
@@ -144,6 +149,89 @@ void _Map::Update(double FrameTime) {
 
 			++Iterator;
 		}
+	}
+}
+
+// Check for events
+void _Map::CheckEvents(_Object *Object) {
+	if(!Server)
+		return;
+
+	// Handle events
+	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
+	switch(Tile->EventType) {
+		case _Map::EVENT_SPAWN:
+			//Object->SpawnMapID = Object->Map->ID;
+			//Object->SpawnPoint = Tile->EventData;
+			//Object->RestoreHealthMana();
+			//SendHUD(Player);
+			//Object->Save();
+		break;
+		case _Map::EVENT_MAPCHANGE:
+			//Object->GenerateNextBattle();
+			Server->SpawnPlayer(Object->Peer, Tile->EventData, Tile->EventType);
+		break;
+			/*
+		case _Map::EVENT_VENDOR:
+			Object->State = _Object::STATE_VENDOR;
+			Object->Vendor = Stats->GetVendor(Tile->EventData);
+			SendEvent(Player, Tile->EventType, Tile->EventData);
+		break;
+		case _Map::EVENT_TRADER:
+			Object->State = _Object::STATE_TRADER;
+			Object->Trader = Stats->GetTrader(Tile->EventData);
+			SendEvent(Player, Tile->EventType, Tile->EventData);
+		break;
+		default:
+
+			// Start a battle
+			if(Object->NextBattle <= 0) {
+
+				// Get monsters
+				std::vector<int> Monsters;
+				Stats->GenerateMonsterListFromZone(Object->GetCurrentZone(), Monsters);
+				size_t MonsterCount = Monsters.size();
+				if(MonsterCount > 0) {
+
+					// Create a new battle instance
+					_ServerBattle *Battle = new _ServerBattle();
+					Battles.push_back(Battle);
+
+					// Add players
+					Battle->AddFighter(Player, 0);
+					if(1) {
+
+						// Get a list of players
+						std::list<_Object *> Players;
+						Object->Map->GetClosePlayers(Player, 7*7, Players);
+
+						// Add players to battle
+						int PlayersAdded = 0;
+						for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
+							_Object *PartyPlayer = *Iterator;
+							if(PartyPlayer->State == _Object::STATE_WALK && !PartyPlayer->IsInvisible()) {
+								SendPlayerPosition(PartyPlayer);
+								Battle->AddFighter(PartyPlayer, 0);
+								PlayersAdded++;
+								if(PlayersAdded == 2)
+									break;
+							}
+						}
+					}
+
+					// Add monsters
+					for(size_t i = 0; i < Monsters.size(); i++) {
+						_Object *Monster = new _Object(Monsters[i]);
+						Monster->ID = Monsters[i];
+						Monster->Type = _Object::MONSTER;
+						Stats->GetMonsterStats(Monsters[i], Monster);
+						Battle->AddFighter(Monster, 1);
+					}
+
+					Battle->StartBattle();
+				}
+			}
+		break;*/
 	}
 }
 
@@ -433,7 +521,7 @@ NetworkIDType _Map::GenerateObjectID() {
 void _Map::RemoveObject(const _Object *RemoveObject) {
 
 	// Notify peers
-	if(ServerNetwork) {
+	if(Server) {
 
 		// Create packet
 		_Buffer Packet;
@@ -481,7 +569,7 @@ _Object *_Map::GetObjectByID(NetworkIDType ObjectID) {
 
 // Adds an object to the map
 void _Map::AddObject(_Object *Object) {
-	if(!ServerNetwork)
+	if(!Server)
 		return;
 
 	// Create packet for the new object
@@ -566,7 +654,7 @@ bool _Map::FindEvent(int EventType, int EventData, glm::ivec2 &Position) {
 
 // Send complete object list to player
 void _Map::SendObjectList(_Peer *Peer) {
-	if(!ServerNetwork)
+	if(!Server)
 		return;
 
 	if(!Peer->Object)
@@ -588,7 +676,7 @@ void _Map::SendObjectList(_Peer *Peer) {
 		Packet.WriteBit((Object->IsInvisible()));
 	}
 
-	ServerNetwork->SendPacket(Packet, Peer);
+	Server->Network->SendPacket(Packet, Peer);
 }
 
 // Sends object position information to all the clients in the map
@@ -618,12 +706,12 @@ void _Map::SendObjectUpdates() {
 
 // Broadcast a packet to all peers in the map
 void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
-	if(!ServerNetwork)
+	if(!Server)
 		return;
 
 	// Send packet to peers
 	for(auto &Peer : Peers)
-		ServerNetwork->SendPacket(Buffer, Peer, Type, Type == _Network::UNSEQUENCED);
+		Server->Network->SendPacket(Buffer, Peer, Type, Type == _Network::UNSEQUENCED);
 }
 
 // Get a valid position within the grid

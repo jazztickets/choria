@@ -25,6 +25,7 @@ struct _Tile;
 class _Camera;
 class _Map;
 class _Texture;
+class _Stats;
 
 enum FilterType {
 	FILTER_TEXTURE   = (1 << 1),
@@ -113,6 +114,7 @@ class _EditorState : public _State {
 
 		// General
 		int State;
+		_Stats *Stats;
 
 		// Graphics
 		_Camera *Camera;

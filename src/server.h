@@ -47,6 +47,8 @@ class _Server {
 		void JoinThread();
 		void StopServer();
 
+		void SpawnPlayer(_Peer *Peer, int MapID, int EventType);
+
 		// State
 		bool Done;
 		bool StartShutdown;
@@ -66,13 +68,11 @@ class _Server {
 		std::list<_Battle *>Battles;
 		uint8_t NextMapID;
 
-		_Map *GetMap(int MapID);
-
 	private:
 
+		_Map *GetMap(int MapID);
 		_Object *CreatePlayer(_Peer *Peer);
 		void SendPlayerInfo(_Peer *Peer);
-		void SpawnPlayer(_Peer *Peer, int MapID);
 		bool ValidatePeer(_Peer *Peer);
 		void SendPlayerPosition(_Object *Player);
 
