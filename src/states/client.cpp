@@ -140,6 +140,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
+	// Check for player
 	if(!Player)
 		return true;
 
@@ -161,6 +162,11 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	if(!Player->WaitForServer) {
 		switch(Action) {
 			case _Actions::MENU:
+
+				// Close windows if open
+				if(HUD->CloseWindows())
+					break;
+
 				if(IsTesting)
 					//Framework.Done = true;
 					Network->Disconnect();
@@ -320,7 +326,7 @@ void _ClientState::Update(double FrameTime) {
 		return;
 
 	// Set input
-	if(Player->AcceptingMoveInput()) {
+	if(Player->AcceptingMoveInput() && !HUD->IsChatting()) {
 		Player->InputState = 0;
 		if(Actions.GetState(_Actions::UP))
 			Player->InputState |= _Object::MOVE_UP;

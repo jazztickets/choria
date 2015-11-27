@@ -106,7 +106,7 @@ class _HUD {
 		void InitTrader();
 		void InitSkills();
 		void InitTrade();
-		void CloseWindows();
+		bool CloseWindows();
 
 		// Chat
 		void ToggleChat();
@@ -115,7 +115,7 @@ class _HUD {
 		void CloseChat();
 
 		// Trade
-		void CloseTrade(bool SendNotify=true);
+		bool CloseTrade(bool SendNotify=true);
 		bool IsTypingGold();
 		void ResetAcceptButton();
 		void UpdateTradeStatus(bool Accepted);
@@ -123,10 +123,10 @@ class _HUD {
 
 	private:
 
-		void CloseInventory();
-		void CloseVendor();
-		void CloseTrader();
-		void CloseSkills();
+		bool CloseInventory();
+		bool CloseVendor();
+		bool CloseTrader();
+		bool CloseSkills();
 
 		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawInventory();

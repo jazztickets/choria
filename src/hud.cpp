@@ -679,28 +679,31 @@ void _HUD::CloseChat() {
 }
 
 // Close inventory screen
-void _HUD::CloseInventory() {
-	//if(InventoryElement->Visible)
-		//OldClientState.SendBusy(false);
+bool _HUD::CloseInventory() {
+	bool WasOpen = InventoryElement->Visible;
 	Cursor.Reset();
 	InventoryElement->SetVisible(false);
 	CharacterElement->SetVisible(false);
+
+	return WasOpen;
 }
 
 // Close the vendor
-void _HUD::CloseVendor() {
+bool _HUD::CloseVendor() {
 	if(!Player->Vendor)
-		return;
+		return false;
 
+	bool WasOpen = VendorElement->Visible;
 	CloseInventory();
 	Player->Vendor = nullptr;
 	VendorElement->SetVisible(false);
 	Cursor.Reset();
+
+	return WasOpen;
 }
 
 // Close the skills screen
-void _HUD::CloseSkills() {
-	Cursor.Reset();
+bool _HUD::CloseSkills() {
 
 	// Send new skill bar to server
 	if(ActionBarChanged) {
@@ -712,53 +715,63 @@ void _HUD::CloseSkills() {
 		ClientState.Network->SendPacket(Packet);
 	}
 
+	bool WasOpen = SkillsElement->Visible;
+
 	// No longer busy
 	//OldClientState.SendBusy(false);
 	SkillsElement->SetVisible(false);
+	Cursor.Reset();
+
+	return WasOpen;
 }
 
 // Closes the trade system
-void _HUD::CloseTrade(bool SendNotify) {
-	return;
-	//if(!(Player->State == _Object::STATE_TRADE))
-		//return;
+bool _HUD::CloseTrade(bool SendNotify) {
 
-	FocusedElement = nullptr;
+	bool WasOpen = TradeElement->Visible;
 
 	// Close inventory
 	CloseInventory();
 	TradeElement->SetVisible(false);
+	FocusedElement = nullptr;
 
 	// Notify server
 	if(SendNotify)
 		SendTradeCancel();
 
 	Player->TradePlayer = nullptr;
+
+	return WasOpen;
 }
 
 // Close the trader
-void _HUD::CloseTrader() {
+bool _HUD::CloseTrader() {
 	if(!Player->Trader)
-		return;
+		return false;
 
-	Cursor.Reset();
+	bool WasOpen = TraderElement->Visible;
 	TraderElement->SetVisible(false);
+	Player->Trader = nullptr;
+	Cursor.Reset();
 
 	// Notify server
-	_Buffer Packet;
-	Packet.Write<char>(Packet::EVENT_END);
-	ClientState.Network->SendPacket(Packet);
+	//_Buffer Packet;
+	//Packet.Write<char>(Packet::EVENT_END);
+	//ClientState.Network->SendPacket(Packet);
 
-	Player->Trader = nullptr;
+	return WasOpen;
 }
 
 // Closes all windows
-void _HUD::CloseWindows() {
-	CloseInventory();
-	CloseVendor();
-	CloseSkills();
-	CloseTrade();
-	CloseTrader();
+bool _HUD::CloseWindows() {
+	bool WasOpen = false;
+	WasOpen |= CloseInventory();
+	WasOpen |= CloseVendor();
+	WasOpen |= CloseSkills();
+	WasOpen |= CloseTrade();
+	WasOpen |= CloseTrader();
+
+	return WasOpen;
 }
 
 // Draws chat messages
