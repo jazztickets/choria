@@ -154,33 +154,33 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
-	switch(Player->State) {
-		case _Object::STATE_WALK:
-			switch(Action) {
-				case _Actions::MENU:
-					if(IsTesting)
-						//Framework.Done = true;
-						Network->Disconnect();
-					else
-						HUD->ToggleMenu();
-				break;
-				case _Actions::INVENTORY:
-					HUD->ToggleInventory();
-				break;
-				case _Actions::TELEPORT:
-					HUD->ToggleTeleport();
-				break;
-				case _Actions::TRADE:
-					HUD->ToggleTrade();
-				break;
-				case _Actions::SKILLS:
-					HUD->ToggleSkills();
-				break;
-				case _Actions::ATTACK:
-					//SendAttackPlayer();
-				break;
-			}
+	// Handle HUD keys
+	switch(Action) {
+		case _Actions::MENU:
+			if(IsTesting)
+				//Framework.Done = true;
+				Network->Disconnect();
+			else
+				HUD->ToggleInGameMenu();
 		break;
+		case _Actions::INVENTORY:
+			HUD->ToggleInventory();
+		break;
+		case _Actions::TELEPORT:
+			HUD->ToggleTeleport();
+		break;
+		case _Actions::TRADE:
+			HUD->ToggleTrade();
+		break;
+		case _Actions::SKILLS:
+			HUD->ToggleSkills();
+		break;
+		case _Actions::ATTACK:
+			//SendAttackPlayer();
+		break;
+	}
+/*
+	switch(Player->State) {
 		case _Object::STATE_BATTLE:
 			Player->Battle->HandleAction(Action);
 		break;
@@ -237,7 +237,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 			HUD->CloseWindows();
 		break;
 	}
-
+*/
 	return true;
 }
 
@@ -426,6 +426,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
 		break;
+		case Packet::EVENT_START:
+			HandleEventStart(Data);
+		break;
 		/*
 		case Packet::WORLD_STARTBATTLE:
 			HandleStartBattle(Data);
@@ -441,9 +444,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		break;
 		case Packet::BATTLE_COMMAND:
 			HandleBattleCommand(Data);
-		break;
-		case Packet::EVENT_START:
-			HandleEventStart(Data);
 		break;
 		case Packet::INVENTORY_USE:
 			HandleInventoryUse(Data);
@@ -573,7 +573,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 		Player->Battle = nullptr;
 	}
 
-	Player->State = _Object::STATE_WALK;
+	Player->State = _Object::STATE_NONE;
 	*/
 }
 
@@ -704,7 +704,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 			Object->ServerPosition = Position;
 
 			switch(PlayerState) {
-				case _Object::STATE_WALK:
+				case _Object::STATE_NONE:
 					Object->StateImage = nullptr;
 				break;
 				case _Object::STATE_TRADE:
@@ -724,6 +724,29 @@ void _ClientState::HandlePlayerPosition(_Buffer &Data) {
 		return;
 
 	Player->Position = Data.Read<glm::ivec2>();
+}
+
+// Handles the start of an event
+void _ClientState::HandleEventStart(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	// Read packet
+	int32_t EventType = Data.Read<int32_t>();
+	int32_t EventData = Data.Read<int32_t>();
+	Player->Position = Data.Read<glm::ivec2>();
+
+	// Handle event
+	switch(EventType) {
+		case _Map::EVENT_VENDOR:
+			Player->Vendor = ClientState.Stats->GetVendor(EventData);
+			HUD->InitVendor();
+		break;
+		case _Map::EVENT_TRADER:
+			HUD->InitTrader(EventData);
+			//Player->State = _Object::STATE_TRADER;
+		break;
+	}
 }
 
 /*
@@ -836,25 +859,6 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->HealthAccumulator = Data.Read<float>();
 	Player->ManaAccumulator = Data.Read<float>();
 	Player->CalculatePlayerStats();
-}
-
-// Handles the start of an event
-void _ClientState::HandleEventStart(_Buffer &Data) {
-	int Type = Data.Read<char>();
-	int Data = Data.Read<int32_t>();
-	Player->Position.x = Data.Read<char>();
-	Player->Position.y = Data.Read<char>();
-
-	switch(Type) {
-		case _Map::EVENT_VENDOR:
-			HUD->InitVendor(Data);
-			Player->State = _Object::STATE_VENDOR;
-		break;
-		case _Map::EVENT_TRADER:
-			HUD->InitTrader(Data);
-			Player->State = _Object::STATE_TRADER;
-		break;
-	}
 }
 
 // Handles the use of an inventory item

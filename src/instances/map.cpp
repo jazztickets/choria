@@ -161,6 +161,7 @@ void _Map::CheckEvents(_Object *Object) {
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
 	switch(Tile->EventType) {
 		case _Map::EVENT_SPAWN:
+			//Server->Log << Object->Map->ID << " " << Tile->EventData << std::endl;
 			//Object->SpawnMapID = Object->Map->ID;
 			//Object->SpawnPoint = Tile->EventData;
 			//Object->RestoreHealthMana();
@@ -171,19 +172,36 @@ void _Map::CheckEvents(_Object *Object) {
 			//Object->GenerateNextBattle();
 			Server->SpawnPlayer(Object->Peer, Tile->EventData, Tile->EventType);
 		break;
-			/*
-		case _Map::EVENT_VENDOR:
-			Object->State = _Object::STATE_VENDOR;
-			Object->Vendor = Stats->GetVendor(Tile->EventData);
-			SendEvent(Player, Tile->EventType, Tile->EventData);
-		break;
-		case _Map::EVENT_TRADER:
-			Object->State = _Object::STATE_TRADER;
-			Object->Trader = Stats->GetTrader(Tile->EventData);
-			SendEvent(Player, Tile->EventType, Tile->EventData);
-		break;
-		default:
+		case _Map::EVENT_VENDOR: {
+			//Server->Log << Tile->EventType << " " << Tile->EventData << std::endl;
+			//Object->State = _Object::STATE_VENDOR;
+			Object->Vendor = Server->Stats->GetVendor(Tile->EventData);
 
+			// Send data
+			_Buffer Packet;
+			Packet.Write<char>(Packet::EVENT_START);
+			Packet.Write<int32_t>(Tile->EventType);
+			Packet.Write<int32_t>(Tile->EventData);
+			Packet.Write<glm::ivec2>(Object->Position);
+			Server->Network->SendPacket(Packet, Object->Peer);
+		} break;
+		case _Map::EVENT_TRADER: {
+			//Server->Log << Tile->EventType << " " << Tile->EventData << std::endl;
+			//Object->State = _Object::STATE_TRADER;
+			Object->Trader = Server->Stats->GetTrader(Tile->EventData);
+
+			// Send data
+			_Buffer Packet;
+			Packet.Write<char>(Packet::EVENT_START);
+			Packet.Write<int32_t>(Tile->EventType);
+			Packet.Write<int32_t>(Tile->EventData);
+			Packet.Write<glm::ivec2>(Object->Position);
+			Server->Network->SendPacket(Packet, Object->Peer);
+		} break;
+		default:
+			Object->Vendor = nullptr;
+			Object->Trader = nullptr;
+/*
 			// Start a battle
 			if(Object->NextBattle <= 0) {
 
@@ -209,7 +227,7 @@ void _Map::CheckEvents(_Object *Object) {
 						int PlayersAdded = 0;
 						for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
 							_Object *PartyPlayer = *Iterator;
-							if(PartyPlayer->State == _Object::STATE_WALK && !PartyPlayer->IsInvisible()) {
+							if(PartyPlayer->State == _Object::STATE_NONE && !PartyPlayer->IsInvisible()) {
 								SendPlayerPosition(PartyPlayer);
 								Battle->AddFighter(PartyPlayer, 0);
 								PlayersAdded++;
@@ -231,7 +249,8 @@ void _Map::CheckEvents(_Object *Object) {
 					Battle->StartBattle();
 				}
 			}
-		break;*/
+		*/
+		break;
 	}
 }
 

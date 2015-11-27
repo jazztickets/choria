@@ -55,7 +55,7 @@ class _Object {
 		};
 
 		enum PlayerStateType {
-			STATE_WALK,
+			STATE_NONE,
 			STATE_BATTLE,
 			STATE_VENDOR,
 			STATE_TRADER,

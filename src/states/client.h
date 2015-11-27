@@ -82,7 +82,6 @@ class _ClientState : public _State {
 		std::string HostAddress;
 		uint16_t ConnectPort;
 
-
 	protected:
 
 		void StartLocalServer();

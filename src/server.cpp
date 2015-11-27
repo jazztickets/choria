@@ -569,7 +569,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		Player = CreatePlayer(Peer);
 		Player->NetworkID = Map->GenerateObjectID();
 		Player->Map = Map;
-		Player->State = _Object::STATE_WALK;
+		Player->State = _Object::STATE_NONE;
 
 		// Find spawn point in map
 		int SpawnPoint = Player->SpawnPoint;
@@ -903,7 +903,7 @@ void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	Player->Vendor = nullptr;
-	Player->State = _Object::STATE_WALK;
+	Player->State = _Object::STATE_NONE;
 }
 
 // Handles a vendor exchange message
@@ -1120,7 +1120,7 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Set state back to normal
-	Player->State = _Object::STATE_WALK;
+	Player->State = _Object::STATE_NONE;
 }
 
 // Handle a trade gold update
@@ -1195,11 +1195,11 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 				OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
 			}
 
-			Player->State = _Object::STATE_WALK;
+			Player->State = _Object::STATE_NONE;
 			Player->TradePlayer = nullptr;
 			Player->TradeGold = 0;
 			Player->MoveTradeToInventory();
-			TradePlayer->State = _Object::STATE_WALK;
+			TradePlayer->State = _Object::STATE_NONE;
 			TradePlayer->TradePlayer = nullptr;
 			TradePlayer->TradeGold = 0;
 			TradePlayer->MoveTradeToInventory();
@@ -1243,7 +1243,7 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	// Exchange items
 	Player->AcceptTrader(RequiredItemSlots, RewardSlot);
 	Player->Trader = nullptr;
-	Player->State = _Object::STATE_WALK;
+	Player->State = _Object::STATE_NONE;
 	Player->CalculatePlayerStats();
 }
 
@@ -1273,20 +1273,6 @@ void _OldServerState::SendHUD(_Object *Player) {
 	Packet.Write<int32_t>(Player->Mana);
 	Packet.Write<float>(Player->HealthAccumulator);
 	Packet.Write<float>(Player->ManaAccumulator);
-
-	Network->SendPacket(Packet, Peer);
-}
-
-// Sends a player an event message
-void _OldServerState::SendEvent(_Object *Player, int Type, int Data) {
-
-	// Create packet
-	_Buffer Packet;
-	Packet.Write<char>(Packet::EVENT_START);
-	Packet.Write<char>(Type);
-	Packet.Write<int32_t>(Data);
-	Packet.Write<char>(Player->Position.x);
-	Packet.Write<char>(Player->Position.y);
 
 	Network->SendPacket(Packet, Peer);
 }

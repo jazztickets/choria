@@ -66,7 +66,7 @@ _Object::_Object()
 	Portrait(nullptr),
 
 	CharacterID(0),
-	State(STATE_WALK),
+	State(STATE_NONE),
 	MoveTime(0),
 	PortraitID(0),
 	WorldImage(nullptr),
@@ -425,7 +425,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 
 // Moves the player
 int _Object::Move() {
-	if(State != STATE_WALK || InputState == 0)
+	if(State != STATE_NONE || InputState == 0)
 		return 0;
 
 	// Get new position
@@ -498,7 +498,7 @@ void _Object::StartBattle(_Battle *Battle) {
 
 // Stop a battle
 void _Object::StopBattle() {
-	State = STATE_WALK;
+	State = STATE_NONE;
 	Battle = nullptr;
 	GenerateNextBattle();
 }
@@ -506,7 +506,7 @@ void _Object::StopBattle() {
 // Determines if a player can attack
 bool _Object::CanAttackPlayer() {
 
-	return State == _Object::STATE_WALK && AttackPlayerTime > PLAYER_ATTACKTIME;
+	return State == _Object::STATE_NONE && AttackPlayerTime > PLAYER_ATTACKTIME;
 }
 
 // Update gold amount
@@ -958,19 +958,19 @@ void _Object::CalculateSkillPoints() {
 // Toggles the player's busy state
 void _Object::SetBusy(bool Value) {
 
-	if(Value && State == STATE_WALK) {
+	if(Value && State == STATE_NONE) {
 		State = STATE_BUSY;
 	}
 	else if(!Value && State == STATE_BUSY) {
-		State = STATE_WALK;
+		State = STATE_NONE;
 	}
 }
 
 // Starts the teleport process
 void _Object::StartTeleport() {
 	if(State == STATE_TELEPORT)
-		State = STATE_WALK;
-	else if(State == STATE_WALK)
+		State = STATE_NONE;
+	else if(State == STATE_NONE)
 		State = STATE_TELEPORT;
 
 	TeleportTime = 0;

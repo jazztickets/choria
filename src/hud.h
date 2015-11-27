@@ -98,11 +98,11 @@ class _HUD {
 		void ToggleInventory();
 		void ToggleTrade();
 		void ToggleSkills();
-		void ToggleMenu();
+		void ToggleInGameMenu();
 
 		// Windows
 		void InitInventory(bool SendBusy);
-		void InitVendor(int VendorID);
+		void InitVendor();
 		void InitTrader(int TraderID);
 		void InitSkills();
 		void InitTrade();

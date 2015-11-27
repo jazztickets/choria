@@ -180,7 +180,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				ToggleSkills();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_menu") {
-				ToggleMenu();
+				ToggleInGameMenu();
 			}
 		}
 		// Check skill level up/down
@@ -470,13 +470,13 @@ void _HUD::ToggleTeleport() {
 void _HUD::ToggleInventory() {
 	Cursor.Reset();
 
-	if(!InventoryElement->Visible) {
+	if(!InventoryElement->Visible && !Player->Trader) {
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
 		//OldClientState.SendBusy(true);
 	}
 	else {
-		CloseInventory();
+		CloseWindows();
 	}
 }
 
@@ -502,19 +502,13 @@ void _HUD::ToggleSkills() {
 }
 
 // Open/close menu
-void _HUD::ToggleMenu() {
+void _HUD::ToggleInGameMenu() {
 	Menu.InitInGame();
 }
 
 // Initialize the vendor
-void _HUD::InitVendor(int VendorID) {
-	if(Player->State == _Object::STATE_VENDOR)
-		return;
-
+void _HUD::InitVendor() {
 	Cursor.Reset();
-
-	// Get vendor stats
-	Player->Vendor = ClientState.Stats->GetVendor(VendorID);
 
 	// Open inventory
 	InventoryElement->SetVisible(true);
@@ -524,7 +518,7 @@ void _HUD::InitVendor(int VendorID) {
 
 // Initialize the trade system
 void _HUD::InitTrade() {
-	if(Player->State != _Object::STATE_WALK)
+	if(Player->State != _Object::STATE_NONE)
 		return;
 
 	InventoryElement->SetVisible(true);
@@ -690,7 +684,7 @@ void _HUD::CloseChat() {
 
 // Close inventory screen
 void _HUD::CloseInventory() {
-	if(InventoryElement->Visible)
+	//if(InventoryElement->Visible)
 		//OldClientState.SendBusy(false);
 	InventoryElement->SetVisible(false);
 	CharacterElement->SetVisible(false);
@@ -698,7 +692,7 @@ void _HUD::CloseInventory() {
 
 // Close the vendor
 void _HUD::CloseVendor() {
-	if(Player->State != _Object::STATE_VENDOR)
+	if(!Player->Vendor)
 		return;
 
 	Cursor.Reset();
@@ -737,8 +731,9 @@ void _HUD::CloseSkills() {
 
 // Closes the trade system
 void _HUD::CloseTrade(bool SendNotify) {
-	if(!(Player->State == _Object::STATE_TRADE || Player->State == _Object::STATE_TRADE))
-		return;
+	return;
+	//if(!(Player->State == _Object::STATE_TRADE))
+		//return;
 
 	FocusedElement = nullptr;
 
@@ -755,7 +750,7 @@ void _HUD::CloseTrade(bool SendNotify) {
 
 // Close the trader
 void _HUD::CloseTrader() {
-	if(Player->State != _Object::STATE_TRADER)
+	if(!Player->Trader)
 		return;
 
 	Cursor.Reset();
@@ -1033,18 +1028,22 @@ void _HUD::DrawCharacter() {
 	DrawPosition.y += SpacingY;
 
 	// HP Regen
-	Buffer << std::setprecision(3) << Player->HealthRegen;
-	Assets.Fonts["hud_small"]->DrawText("HP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
+	if(Player->HealthRegen != 0) {
+		Buffer << std::setprecision(3) << Player->HealthRegen;
+		Assets.Fonts["hud_small"]->DrawText("HP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// MP Regen
-	Buffer << std::setprecision(3) << Player->ManaRegen;
-	Assets.Fonts["hud_small"]->DrawText("MP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
+	if(Player->ManaRegen != 0) {
+		Buffer << std::setprecision(3) << Player->ManaRegen;
+		Assets.Fonts["hud_small"]->DrawText("MP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Separator
 	DrawPosition.y += SpacingY;
@@ -1062,25 +1061,31 @@ void _HUD::DrawCharacter() {
 	DrawPosition.y += SpacingY;
 
 	// Deaths
-	Buffer << Player->Deaths;
-	Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
+	if(Player->Deaths > 0) {
+		Buffer << Player->Deaths;
+		Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Monster kills
-	Buffer << Player->MonsterKills;
-	Assets.Fonts["hud_small"]->DrawText("Monster kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
+	if(Player->MonsterKills > 0) {
+		Buffer << Player->MonsterKills;
+		Assets.Fonts["hud_small"]->DrawText("Monster kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Player kills
-	Buffer << Player->PlayerKills;
-	Assets.Fonts["hud_small"]->DrawText("Player kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
+	if(Player->PlayerKills > 0) {
+		Buffer << Player->PlayerKills;
+		Assets.Fonts["hud_small"]->DrawText("Player kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 }
 
 // Draws the skill page
