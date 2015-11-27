@@ -198,6 +198,7 @@ class _Object {
 		int Moved;
 		bool Deleted;
 		glm::ivec2 Position;
+		glm::ivec2 ServerPosition;
 		NetworkIDType NetworkID;
 
 		// -- FIGHTER  --

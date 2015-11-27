@@ -40,7 +40,8 @@ _Object::_Object()
 	Type(0),
 	Moved(false),
 	Deleted(false),
-	Position(-1, -1),
+	Position(0, 0),
+	ServerPosition(0, 0),
 	NetworkID(0),
 
 	Name(""),
@@ -396,14 +397,21 @@ void _Object::Render(const _Object *ClientPlayer) {
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
-		Graphics.SetColor(Color);
-		Graphics.SetVBO(VBO_QUAD);
-
 		Graphics.SetDepthTest(false);
 		Graphics.SetDepthMask(false);
+		Graphics.SetVBO(VBO_QUAD);
 
-		glm::vec3 DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
+
+		glm::vec3 DrawPosition;
+		if(0) {
+			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
+			Graphics.DrawSprite(DrawPosition, WorldImage);
+		}
+
+		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+		Graphics.SetColor(Color);
 		Graphics.DrawSprite(DrawPosition, WorldImage);
 		if(StateImage) {
 			Graphics.DrawSprite(DrawPosition, StateImage);

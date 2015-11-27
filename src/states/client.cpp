@@ -701,6 +701,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 				Object->State = PlayerState;
 				Object->InvisPower = Invisible;
 			}
+			Object->ServerPosition = Position;
 
 			switch(PlayerState) {
 				case _Object::STATE_WALK:
