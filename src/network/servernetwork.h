@@ -28,7 +28,7 @@ class _ServerNetwork : public _Network {
 
 	public:
 
-		_ServerNetwork(int NetworkPort);
+		_ServerNetwork(size_t MaxPeers, uint16_t NetworkPort);
 		~_ServerNetwork();
 
 		// Connections

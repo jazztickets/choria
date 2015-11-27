@@ -22,14 +22,13 @@
 #include <stdexcept>
 
 // Constructor
-_ClientNetwork::_ClientNetwork() {
-	ConnectionState = State::DISCONNECTED;
-	Connection = nullptr;
-	Peer = nullptr;
+_ClientNetwork::_ClientNetwork()
+:	ConnectionState(State::DISCONNECTED),
+	Peer(nullptr) {
 
 	// Create client connection
 	Connection = enet_host_create(nullptr, 1, 0, 0, 0);
-	if(Connection == nullptr)
+	if(!Connection)
 		throw std::runtime_error("enet_host_create failed");
 
 	Peer = new _Peer(nullptr);

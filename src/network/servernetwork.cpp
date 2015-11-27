@@ -17,18 +17,18 @@
 *******************************************************************************/
 #include <network/servernetwork.h>
 #include <network/peer.h>
+#include <enet/enet.h>
 #include <buffer.h>
 #include <stdexcept>
-#include <enet/enet.h>
 
 // Constructor
-_ServerNetwork::_ServerNetwork(int NetworkPort) {
+_ServerNetwork::_ServerNetwork(size_t MaxPeers, uint16_t NetworkPort) {
 	ENetAddress Address;
 	Address.host = ENET_HOST_ANY;
 	Address.port = NetworkPort;
 
 	// Create listener connection
-	Connection = enet_host_create(&Address, 32, 0, 0, 0);
+	Connection = enet_host_create(&Address, MaxPeers, 0, 0, 0);
 }
 
 // Destructor

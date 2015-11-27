@@ -22,15 +22,15 @@
 #include <stdexcept>
 
 // Constructor
-_Network::_Network() {
-	Connection = nullptr;
-	Time = 0.0f;
-	UpdateTimer = 0.0f;
-	UpdatePeriod = 1 / 20.0f;
-	FakeLag = 0.0f;
-	SentSpeed = 0;
-	ReceiveSpeed = 0;
-	SecondTimer = 0.0f;
+_Network::_Network()
+:	Connection(nullptr),
+	Time(0.0f),
+	UpdateTimer(0.0f),
+	UpdatePeriod(1 / 20.0f),
+	SentSpeed(0),
+	ReceiveSpeed(0),
+	SecondTimer(0.0f),
+	FakeLag(0.0f) {
 }
 
 // Destructor
@@ -43,7 +43,6 @@ _Network::~_Network() {
 
 // Initializes enet
 void _Network::InitializeSystem() {
-
 	if(enet_initialize() != 0)
 		throw std::runtime_error("enet_initialize() error");
 }
