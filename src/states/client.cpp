@@ -182,6 +182,12 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 			case _Actions::ATTACK:
 				//SendAttackPlayer();
 			break;
+			case _Actions::UP:
+			case _Actions::DOWN:
+			case _Actions::LEFT:
+			case _Actions::RIGHT:
+				HUD->CloseWindows();
+			break;
 		}
 	}
 /*
@@ -314,15 +320,17 @@ void _ClientState::Update(double FrameTime) {
 		return;
 
 	// Set input
-	Player->InputState = 0;
-	if(Actions.GetState(_Actions::UP))
-		Player->InputState |= _Object::MOVE_UP;
-	if(Actions.GetState(_Actions::DOWN))
-		Player->InputState |= _Object::MOVE_DOWN;
-	if(Actions.GetState(_Actions::LEFT))
-		Player->InputState |= _Object::MOVE_LEFT;
-	if(Actions.GetState(_Actions::RIGHT))
-		Player->InputState |= _Object::MOVE_RIGHT;
+	if(Player->AcceptingMoveInput()) {
+		Player->InputState = 0;
+		if(Actions.GetState(_Actions::UP))
+			Player->InputState |= _Object::MOVE_UP;
+		if(Actions.GetState(_Actions::DOWN))
+			Player->InputState |= _Object::MOVE_DOWN;
+		if(Actions.GetState(_Actions::LEFT))
+			Player->InputState |= _Object::MOVE_LEFT;
+		if(Actions.GetState(_Actions::RIGHT))
+			Player->InputState |= _Object::MOVE_RIGHT;
+	}
 
 	// Handle input
 	/*
@@ -351,7 +359,8 @@ void _ClientState::Update(double FrameTime) {
 		Packet.Write<char>(Player->Moved);
 		Network->SendPacket(Packet);
 
-		HUD->CloseWindows();
+		if(!Player->WaitForServer)
+			HUD->CloseWindows();
 	}
 
 	// Update camera

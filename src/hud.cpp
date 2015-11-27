@@ -692,18 +692,10 @@ void _HUD::CloseVendor() {
 	if(!Player->Vendor)
 		return;
 
-	Cursor.Reset();
-
-	// Close inventory
 	CloseInventory();
-	VendorElement->SetVisible(false);
-
-	// Notify server
-	_Buffer Packet;
-	Packet.Write<char>(Packet::EVENT_END);
-	ClientState.Network->SendPacket(Packet);
-
 	Player->Vendor = nullptr;
+	VendorElement->SetVisible(false);
+	Cursor.Reset();
 }
 
 // Close the skills screen

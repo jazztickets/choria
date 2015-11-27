@@ -154,6 +154,7 @@ class _Object {
 		void SplitStack(int Slot, int Count);
 
 		// Movement
+		bool AcceptingMoveInput();
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
 		int Move();
 		int GetCurrentZone();

@@ -848,6 +848,20 @@ void _Object::SplitStack(int Slot, int Count) {
 	}
 }
 
+// Determines if the player can accept movement keys held down
+bool _Object::AcceptingMoveInput() {
+	if(WaitForServer)
+		return false;
+
+	if(Vendor)
+		return false;
+
+	if(Trader)
+		return false;
+
+	return true;
+}
+
 // Determines if the player's backpack is full
 bool _Object::IsBackpackFull() {
 
