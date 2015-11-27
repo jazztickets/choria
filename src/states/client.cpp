@@ -50,6 +50,7 @@ _ClientState::_ClientState() :
 	IsTesting(true),
 	FromEditor(false),
 	Stats(nullptr),
+	Time(0.0),
 	Server(nullptr),
 	HostAddress("127.0.0.1"),
 	ConnectPort(DEFAULT_NETWORKPORT) {
@@ -308,6 +309,7 @@ void _ClientState::Update(double FrameTime) {
 	// Update menu
 	Menu.Update(FrameTime);
 
+	// Check for objects
 	if(!Player || !Map)
 		return;
 
@@ -321,24 +323,6 @@ void _ClientState::Update(double FrameTime) {
 		Player->InputState |= _Object::MOVE_LEFT;
 	if(Actions.GetState(_Actions::RIGHT))
 		Player->InputState |= _Object::MOVE_RIGHT;
-
-	// Update objects
-	Map->Update(FrameTime);
-	if(Player->Moved) {
-		_Buffer Packet;
-		Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
-		Packet.Write<char>(Player->Moved);
-		Network->SendPacket(Packet);
-
-		HUD->CloseWindows();
-	}
-
-	// Update camera
-	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
-	Camera->Update(FrameTime);
-
-	// Update the HUD
-	HUD->Update(FrameTime);
 
 	// Handle input
 	/*
@@ -358,6 +342,26 @@ void _ClientState::Update(double FrameTime) {
 			} break;
 		}
 	}*/
+
+	// Update objects
+	Map->Update(FrameTime);
+	if(Player->Moved) {
+		_Buffer Packet;
+		Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
+		Packet.Write<char>(Player->Moved);
+		Network->SendPacket(Packet);
+
+		HUD->CloseWindows();
+	}
+
+	// Update camera
+	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
+	Camera->Update(FrameTime);
+
+	// Update the HUD
+	HUD->Update(FrameTime);
+
+	Time += FrameTime;
 }
 
 // Render the state
@@ -398,7 +402,7 @@ void _ClientState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
 	// Draw HUD
-	HUD->Render();
+	HUD->Render(Time);
 
 	// Draw states
 	if(Player->Battle)
@@ -437,6 +441,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::EVENT_START:
 			HandleEventStart(Data);
 		break;
+		case Packet::CHAT_MESSAGE:
+			HandleChatMessage(Data);
+		break;
 		/*
 		case Packet::WORLD_STARTBATTLE:
 			HandleStartBattle(Data);
@@ -455,9 +462,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		break;
 		case Packet::INVENTORY_USE:
 			HandleInventoryUse(Data);
-		break;
-		case Packet::CHAT_MESSAGE:
-			HandleChatMessage(Data);
 		break;
 		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(Data);
@@ -759,6 +763,18 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 	}
 }
 
+// Handles a chat message
+void _ClientState::HandleChatMessage(_Buffer &Data) {
+
+	// Read packet
+	_ChatMessage Chat;
+	Chat.Color = Data.Read<glm::vec4>();
+	Chat.Message = Data.ReadString();
+	Chat.Time = Time;
+
+	HUD->AddChatMessage(Chat);
+}
+
 /*
 // Send the busy signal to server
 void _ClientState::SendBusy(bool Value) {
@@ -875,18 +891,6 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 void _ClientState::HandleInventoryUse(_Buffer &Data) {
 	int Slot = Data.Read<char>();
 	Player->UpdateInventory(Slot, -1);
-}
-
-// Handles a chat message
-void _ClientState::HandleChatMessage(_Buffer &Data) {
-
-	// Read packet
-	_ChatMessage Chat;
-	Chat.Color = Data.Read<glm::vec4>();
-	Chat.Message = Data.ReadString();
-	Chat.Time = ClientTime;
-
-	HUD->AddChatMessage(Chat);
 }
 
 // Handles a trade request

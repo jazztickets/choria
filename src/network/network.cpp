@@ -24,13 +24,13 @@
 // Constructor
 _Network::_Network()
 :	Connection(nullptr),
-	Time(0.0f),
-	UpdateTimer(0.0f),
-	UpdatePeriod(1 / 20.0f),
+	Time(0.0),
+	UpdateTimer(0.0),
+	UpdatePeriod(1 / 20.0),
 	SentSpeed(0),
 	ReceiveSpeed(0),
-	SecondTimer(0.0f),
-	FakeLag(0.0f) {
+	SecondTimer(0.0),
+	FakeLag(0.0) {
 }
 
 // Destructor
@@ -94,11 +94,11 @@ void _Network::Update(double FrameTime) {
 	}
 
 	// Update speed variables
-	if(SecondTimer >= 1.0f) {
+	if(SecondTimer >= 1.0) {
 		SentSpeed = Connection->totalSentData / SecondTimer;
 		ReceiveSpeed = Connection->totalReceivedData / SecondTimer;
 		Connection->totalSentData = 0;
 		Connection->totalReceivedData = 0;
-		SecondTimer -= 1.0f;
+		SecondTimer -= 1.0;
 	}
 }

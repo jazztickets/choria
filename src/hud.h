@@ -88,7 +88,7 @@ class _HUD {
 		void HandleEnter();
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
-		void Render();
+		void Render(double Time);
 
 		// Objects
 		void SetPlayer(_Object *Player);
@@ -128,7 +128,7 @@ class _HUD {
 		void CloseTrader();
 		void CloseSkills();
 
-		void DrawChat(bool IgnoreTimeout);
+		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawInventory();
 		void DrawTeleport();
 		void DrawCharacter();

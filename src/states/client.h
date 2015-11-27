@@ -65,6 +65,7 @@ class _ClientState : public _State {
 		// Game
 		_Stats *Stats;
 		_LogFile Log;
+		double Time;
 
 		// Objects
 		_Object *Player;

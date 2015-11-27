@@ -247,6 +247,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
+		case Packet::CHAT_MESSAGE:
+			HandleChatMessage(Data, Peer);
+		break;
 		/*
 		case Packet::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
@@ -286,9 +289,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case Packet::WORLD_TELEPORT:
 			HandleTeleport(Data, Peer);
-		break;
-		case Packet::CHAT_MESSAGE:
-			HandleChatMessage(Data, Peer);
 		break;
 		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(Data, Peer);
@@ -513,6 +513,33 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 
 	}*/
 
+}
+
+// Handle a chat message
+void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+
+	// Get message
+	std::string Message = Data.ReadString();
+	if(Message.length() > NETWORKING_CHAT_SIZE)
+		Message.resize(NETWORKING_CHAT_SIZE);
+
+	// Append name
+	Message = Player->Name + ": " + Message;
+
+	// Send message to other players
+	_Buffer Packet;
+	Packet.Write<char>(Packet::CHAT_MESSAGE);
+	Packet.Write<glm::vec4>(COLOR_WHITE);
+	Packet.WriteString(Message.c_str());
+
+	// Broadcast message
+	for(auto &ReceivePeer : Network->GetPeers()) {
+		Network->SendPacket(Packet, ReceivePeer);
+	}
 }
 
 // Send character list
@@ -1036,33 +1063,6 @@ void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
 				break;
 			}
 		}
-	}
-}
-
-// Handle a chat message
-void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Get message
-	std::string Message = Data.ReadString();
-	if(Message.length() > NETWORKING_CHAT_SIZE)
-		Message.resize(NETWORKING_CHAT_SIZE);
-
-	// Append name
-	Message = Player->Name + ": " + Message;
-
-	// Send message to other players
-	_Buffer NewPacket;
-	NewPacket.Write<char>(Packet::CHAT_MESSAGE);
-	NewPacket.Write<glm::vec4>(COLOR_WHITE);
-	NewPacket.WriteString(Message.c_str());
-
-	// Broadcast message
-	auto &Objects = ObjectManager->GetObjects();
-	for(auto &Object : Objects) {
-		OldServerNetwork->SendPacketToPeer(&NewPacket, Object->OldPeer);
 	}
 }
 

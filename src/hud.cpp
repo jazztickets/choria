@@ -357,10 +357,10 @@ void _HUD::Update(double FrameTime) {
 }
 
 // Draws the HUD elements
-void _HUD::Render() {
+void _HUD::Render(double Time) {
 
 	// Draw chat messages
-	DrawChat(IsChatting());
+	DrawChat(Time, IsChatting());
 
 	Assets.Elements["element_hud"]->Render();
 	ButtonBarElement->Render();
@@ -770,8 +770,8 @@ void _HUD::CloseWindows() {
 }
 
 // Draws chat messages
-void _HUD::DrawChat(bool IgnoreTimeout) {
-/*
+void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
+
 	// Draw window
 	ChatElement->Render();
 
@@ -785,7 +785,7 @@ void _HUD::DrawChat(bool IgnoreTimeout) {
 	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		_ChatMessage &ChatMessage = (*Iterator);
 
-		float TimeLeft = ChatMessage.Time - OldClientState.GetTime() + CHAT_MESSAGE_TIMEOUT;
+		float TimeLeft = ChatMessage.Time - Time + CHAT_MESSAGE_TIMEOUT;
 		if(Index >= CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
 			break;
 
@@ -799,7 +799,7 @@ void _HUD::DrawChat(bool IgnoreTimeout) {
 		DrawPosition.y += SpacingY;
 
 		Index++;
-	}*/
+	}
 }
 
 // Draw the teleport sequence

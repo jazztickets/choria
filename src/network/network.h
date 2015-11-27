@@ -28,7 +28,6 @@ class _Buffer;
 class _Peer;
 typedef struct _ENetEvent ENetEvent;
 typedef struct _ENetHost ENetHost;
-struct _ENetAddress;
 
 // Network Event
 struct _NetworkEvent {
@@ -78,7 +77,7 @@ class _Network {
 		void SetUpdatePeriod(double UpdatePeriod) { this->UpdatePeriod = UpdatePeriod; }
 		double GetUpdatePeriod() const { return UpdatePeriod; }
 		bool NeedsUpdate() { return UpdateTimer >= UpdatePeriod; }
-		void ResetUpdateTimer() { UpdateTimer = 0.0f; }
+		void ResetUpdateTimer() { UpdateTimer = 0.0; }
 
 		// Static functions
 		static void InitializeSystem();
