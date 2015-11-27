@@ -313,52 +313,31 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	std::string Username(Data.ReadString());
 	std::string Password(Data.ReadString());
 
-	std::stringstream Query;
-
 	// Create account or login
 	if(CreateAccount) {
 
 		// Check for existing account
-		Query << "SELECT id FROM account WHERE username = '" << Username << "'";
-		Save->Database->RunDataQuery(Query.str());
-		int Result = Save->Database->FetchRow();
-		Save->Database->CloseQuery();
-		Query.str("");
-
-		if(Result) {
-			_Buffer NewPacket;
-			NewPacket.Write<char>(Packet::ACCOUNT_EXISTS);
-			Network->SendPacket(NewPacket, Peer);
+		if(Save->CheckUsername(Username)) {
+			_Buffer Packet;
+			Packet.Write<char>(Packet::ACCOUNT_EXISTS);
+			Network->SendPacket(Packet, Peer);
 			return;
 		}
-		else {
-			Query << "INSERT INTO account(username, password) VALUES('" << Username << "', '" << Password << "')";
-			Save->Database->RunQuery(Query.str());
-			Query.str("");
-		}
+		else
+			Save->CreateAccount(Username, Password);
 	}
 
-	// Get account information
-	Query << "SELECT id FROM account WHERE username = '" << Username << "' AND password = '" << Password << "'";
-	Save->Database->RunDataQuery(Query.str());
-	if(Save->Database->FetchRow()) {
-		Peer->AccountID = Save->Database->GetInt(0);
-	}
-	Save->Database->CloseQuery();
-	Query.str("");
+	// Get account id
+	Peer->AccountID = Save->GetAccountID(Username, Password);
 
 	// Make sure account exists
-	if(Peer->AccountID == 0) {
-		_Buffer Packet;
+	_Buffer Packet;
+	if(Peer->AccountID == 0)
 		Packet.Write<char>(Packet::ACCOUNT_NOTFOUND);
-		Network->SendPacket(Packet, Peer);
-	}
-	else {
-
-		_Buffer Packet;
+	else
 		Packet.Write<char>(Packet::ACCOUNT_SUCCESS);
-		Network->SendPacket(Packet, Peer);
-	}
+
+	Network->SendPacket(Packet, Peer);
 }
 
 // Sends a player his/her character list
@@ -376,7 +355,8 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Get character information
 	std::string Name(Data.ReadString());
-	int PortraitID = Data.Read<int32_t>();
+	uint32_t PortraitID = Data.Read<uint32_t>();
+	int Slot = Data.Read<int>();
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
 
@@ -406,7 +386,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Create the character
 	Save->Database->RunQuery("BEGIN TRANSACTION");
-	Query << "INSERT INTO character(account_id, name, portrait_id, actionbar0) VALUES(" << Peer->AccountID << ", '" << Name << "', " << PortraitID << ", 1)";
+	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << Peer->AccountID << ", " << Slot << ", '" << Name << "', " << PortraitID << ", 1)";
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -439,17 +419,21 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	std::stringstream Query;
 
 	// Get delete slot
-	int Index = Data.Read<char>();
+	int32_t Slot = Data.Read<int32_t>();
 	int CharacterID = 0;
 
 	// Get character ID
-	Query << "SELECT id FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Index << ", 1";
+	Query << "SELECT id FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		CharacterID = Save->Database->GetInt(0);
 	}
 	Save->Database->CloseQuery();
 	Query.str("");
+
+	// Character not found
+	if(!CharacterID)
+		return;
 
 	// Delete character
 	Query << "DELETE FROM character WHERE id = " << CharacterID;
@@ -480,7 +464,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT id, map_id, spawnpoint FROM character WHERE account_id = " << Peer->AccountID << " LIMIT " << Slot << ", 1";
+	Query << "SELECT id, map_id, spawnpoint FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
 	Save->Database->RunDataQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		Peer->CharacterID = Save->Database->GetInt(0);
@@ -557,12 +541,13 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
-	Query << "SELECT name, portrait_id, experience FROM character WHERE account_id = " << Peer->AccountID;
+	Query << "SELECT slot, name, portrait_id, experience FROM character WHERE account_id = " << Peer->AccountID;
 	Save->Database->RunDataQuery(Query.str());
 	while(Save->Database->FetchRow()) {
-		Packet.WriteString(Save->Database->GetString(0));
-		Packet.Write<int32_t>(Save->Database->GetInt(1));
+		Packet.Write<int32_t>(Save->Database->GetInt(0));
+		Packet.WriteString(Save->Database->GetString(1));
 		Packet.Write<int32_t>(Save->Database->GetInt(2));
+		Packet.Write<int32_t>(Save->Database->GetInt(3));
 	}
 	Save->Database->CloseQuery();
 	Query.str("");
@@ -733,7 +718,7 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_YOURCHARACTERINFO);
 	Packet.WriteString(Player->Name.c_str());
-	Packet.Write<int32_t>(Player->PortraitID);
+	Packet.Write<uint32_t>(Player->PortraitID);
 	Packet.Write<int32_t>(Player->Experience);
 	Packet.Write<int32_t>(Player->Gold);
 	Packet.Write<int32_t>(Player->PlayTime);

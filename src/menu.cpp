@@ -176,7 +176,7 @@ void _Menu::InitAccount() {
 }
 
 // Get the selected portrait id
-int _Menu::GetSelectedPortraitID() {
+uint32_t _Menu::GetSelectedPortraitID() {
 
 	// Check for selected portrait
 	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
@@ -186,7 +186,7 @@ int _Menu::GetSelectedPortraitID() {
 			return (intptr_t)Button->UserData;
 	}
 
-	return -1;
+	return 0;
 }
 
 // Get the selected character slot
@@ -210,19 +210,28 @@ int _Menu::GetSelectedCharacter() {
 
 // Create character
 void _Menu::CreateCharacter() {
+
+	// Check length
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	if(Name->Text.length() == 0)
 		return;
 
-	int PortraitID = GetSelectedPortraitID();
-	if(PortraitID == -1)
+	// Get portraid id
+	uint32_t PortraitID = GetSelectedPortraitID();
+	if(PortraitID == 0)
+		return;
+
+	// Get slot
+	int SelectedSlot = GetSelectedCharacter();
+	if(SelectedSlot == -1)
 		return;
 
 	// Send information
 	_Buffer Packet;
 	Packet.Write<char>(Packet::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
-	Packet.Write<int32_t>(PortraitID);
+	Packet.Write<uint32_t>(PortraitID);
+	Packet.Write<int>(SelectedSlot);
 	ClientState.Network->SendPacket(Packet);
 }
 
@@ -361,8 +370,7 @@ void _Menu::LoadPortraitButtons() {
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
-
-	int PortraitID = GetSelectedPortraitID();
+	uint32_t PortraitID = GetSelectedPortraitID();
 
 	// Check name length
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
@@ -373,7 +381,7 @@ void _Menu::ValidateCreateCharacter() {
 		FocusedElement = Name;
 
 	// Enable button
-	if(PortraitID != -1 && NameValid)
+	if(PortraitID != 0 && NameValid)
 		CreateButton->Enabled = true;
 	else
 		CreateButton->Enabled = false;
@@ -437,12 +445,12 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 						ClientState.Network->Disconnect();
 					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-						int SelectedCharacter = GetSelectedCharacter();
-						if(SelectedCharacter == -1)
-							SelectedCharacter = 0;
+						int SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot == -1)
+							SelectedSlot = 0;
 
-						if(CharacterSlots[SelectedCharacter].Used) {
-							PlayCharacter(SelectedCharacter);
+						if(CharacterSlots[SelectedSlot].Used) {
+							PlayCharacter(SelectedSlot);
 						}
 					}
 				}
@@ -531,7 +539,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
 							_Buffer Packet;
 							Packet.Write<char>(Packet::CHARACTERS_DELETE);
-							Packet.Write<char>(SelectedSlot);
+							Packet.Write<int32_t>(SelectedSlot);
 							ClientState.Network->SendPacket(Packet);
 						}
 					}
@@ -555,11 +563,12 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							}
 						}
 
+						// Set selection
 						int SelectedSlot = (intptr_t)Clicked->UserData;
-						if(CharacterSlots[SelectedSlot].Used) {
-							CharacterSlots[SelectedSlot].Button->Checked = true;
-						}
-						else
+						CharacterSlots[SelectedSlot].Button->Checked = true;
+
+						// Open new character screen
+						if(!CharacterSlots[SelectedSlot].Used)
 							InitNewCharacter();
 
 						UpdateCharacterButtons();
@@ -771,16 +780,17 @@ void _Menu::HandlePacket(_Buffer &Buffer, char PacketType) {
 
 			// Get characters
 			for(int i = 0; i < CharacterCount; i++) {
-				CharacterSlots[i].Name->Text = Buffer.ReadString();
+				int32_t Slot = Buffer.Read<int32_t>();
+				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
 				int32_t PortraitIndex = Buffer.Read<int32_t>();
 				int32_t Experience = Buffer.Read<int32_t>();
 
 				std::stringstream Buffer;
 				Buffer << "Level " << ClientState.Stats->FindLevel(Experience)->Level;
-				CharacterSlots[i].Level->Text = Buffer.str();
-				CharacterSlots[i].Used = true;
+				CharacterSlots[Slot].Level->Text = Buffer.str();
+				CharacterSlots[Slot].Used = true;
 				const _Texture *PortraitImage = ClientState.Stats->Portraits[PortraitIndex].Image;
-				CharacterSlots[i].Image->Texture = PortraitImage;
+				CharacterSlots[Slot].Image->Texture = PortraitImage;
 			}
 
 			// Disable ui buttons

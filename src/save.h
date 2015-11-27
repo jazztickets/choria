@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <string>
 
 // Forward Declarations
 class _Database;
@@ -32,6 +33,11 @@ class _Save {
 		~_Save();
 
 		_Database *Database;
+
+		// Accounts
+		bool CheckUsername(const std::string &Username);
+		void CreateAccount(const std::string &Username, const std::string &Password);
+		uint32_t GetAccountID(const std::string &Username, const std::string &Password);
 
 		void SavePlayer(const _Object *Player);
 

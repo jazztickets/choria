@@ -539,7 +539,7 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	Player->WorldImage = Assets.Textures["players/basic.png"];
 	Player->Stats = Stats;
 	Player->Name = Data.ReadString();
-	Player->PortraitID = Data.Read<int32_t>();
+	Player->PortraitID = Data.Read<uint32_t>();
 	Player->Experience = Data.Read<int32_t>();
 	Player->Gold = Data.Read<int32_t>();
 	Player->PlayTime = Data.Read<int32_t>();
@@ -620,7 +620,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 		Object->Position = Data.Read<glm::ivec2>();
 		Object->Type = Data.Read<char>();
 		Object->Name = Data.ReadString();
-		Object->PortraitID = Data.Read<char>();
+		Object->PortraitID = Data.Read<uint32_t>();
 		Object->Portrait = Stats->Portraits[Object->PortraitID].Image;
 		Object->InvisPower = Data.ReadBit();
 		Object->WorldImage = Assets.Textures["players/basic.png"];
@@ -658,7 +658,7 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 		Object->Position = Data.Read<glm::ivec2>();
 		Object->Type = Data.Read<char>();
 		Object->Name = Data.ReadString();
-		Object->PortraitID = Data.Read<char>();
+		Object->PortraitID = Data.Read<uint32_t>();
 		Object->InvisPower = Data.ReadBit();
 
 		Object->Portrait = Stats->Portraits[Object->PortraitID].Image;

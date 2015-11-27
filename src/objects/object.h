@@ -240,7 +240,7 @@ class _Object {
 		double MoveTime;
 
 		// Texture
-		int PortraitID;
+		uint32_t PortraitID;
 		const _Texture *WorldImage;
 		const _Texture *StateImage;
 

@@ -605,7 +605,7 @@ void _Map::AddObject(_Object *Object) {
 	Packet.Write<glm::ivec2>(Object->Position);
 	Packet.Write<char>(Object->Type);
 	Packet.WriteString(Object->Name.c_str());
-	Packet.Write<char>(Object->PortraitID);
+	Packet.Write<uint32_t>(Object->PortraitID);
 	Packet.WriteBit(Object->IsInvisible());
 
 	// Notify other players of the new object
@@ -698,7 +698,7 @@ void _Map::SendObjectList(_Peer *Peer) {
 		Packet.Write<glm::ivec2>(Object->Position);
 		Packet.Write<char>(Object->Type);
 		Packet.WriteString(Object->Name.c_str());
-		Packet.Write<char>(Object->PortraitID);
+		Packet.Write<uint32_t>(Object->PortraitID);
 		Packet.WriteBit((Object->IsInvisible()));
 	}
 

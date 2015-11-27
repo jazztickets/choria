@@ -21,7 +21,6 @@
 #include <database.h>
 #include <config.h>
 #include <constants.h>
-#include <string>
 #include <stdexcept>
 
 // Constructor
@@ -47,6 +46,39 @@ _Save::_Save() {
 _Save::~_Save() {
 
 	delete Database;
+}
+
+// Check for a username
+bool _Save::CheckUsername(const std::string &Username) {
+	std::stringstream Query;
+	Query << "SELECT id FROM account WHERE username = '" << Username << "'";
+	Database->RunDataQuery(Query.str());
+	int Result = Database->FetchRow();
+	Database->CloseQuery();
+
+	return Result;
+}
+
+// Create account
+void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
+	std::stringstream Query;
+	Query << "INSERT INTO account(username, password) VALUES('" << Username << "', '" << Password << "')";
+	Database->RunQuery(Query.str());
+}
+
+// Get account id from login credentials
+uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Password) {
+	uint32_t AccountID = 0;
+
+	// Get account information
+	std::stringstream Query;
+	Query << "SELECT id FROM account WHERE username = '" << Username << "' AND password = '" << Password << "'";
+	Database->RunDataQuery(Query.str());
+	if(Database->FetchRow())
+		AccountID = Database->GetInt(0);
+	Database->CloseQuery();
+
+	return AccountID;
 }
 
 // Create default save database

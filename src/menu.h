@@ -99,7 +99,7 @@ class _Menu {
 
 		void ChangeLayout(const std::string &ElementIdentifier);
 
-		int GetSelectedPortraitID();
+		uint32_t GetSelectedPortraitID();
 		int GetSelectedCharacter();
 		void LoadPortraitButtons();
 		void ValidateCreateCharacter();
