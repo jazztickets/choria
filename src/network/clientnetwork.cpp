@@ -22,7 +22,7 @@
 
 // Constructor
 _ClientNetwork::_ClientNetwork() {
-	ConnectionState = DISCONNECTED;
+	ConnectionState = State::DISCONNECTED;
 	Connection = nullptr;
 	Peer = nullptr;
 
@@ -55,7 +55,7 @@ void _ClientNetwork::Connect(const std::string &HostAddress, int Port) {
 		throw std::runtime_error("enet_host_connect returned nullptr");
 
 	Peer->ENetPeer = ENetPeer;
-	ConnectionState = CONNECTING;
+	ConnectionState = State::CONNECTING;
 }
 
 // Disconnect from the host
@@ -70,9 +70,9 @@ void _ClientNetwork::Disconnect(bool Force) {
 
 		// Force disconnection state
 		if(Force)
-			ConnectionState = DISCONNECTED;
+			ConnectionState = State::DISCONNECTED;
 		else
-			ConnectionState = DISCONNECTING;
+			ConnectionState = State::DISCONNECTING;
 	}
 }
 
@@ -90,10 +90,10 @@ void _ClientNetwork::HandleEvent(_NetworkEvent &Event, ENetEvent &EEvent) {
 	// Add peer
 	switch(Event.Type) {
 		case _NetworkEvent::CONNECT: {
-			ConnectionState = CONNECTED;
+			ConnectionState = State::CONNECTED;
 		} break;
 		case _NetworkEvent::DISCONNECT:
-			ConnectionState = DISCONNECTED;
+			ConnectionState = State::DISCONNECTED;
 		break;
 		case _NetworkEvent::PACKET: {
 			Event.Data = new _Buffer((char *)EEvent.packet->data, EEvent.packet->dataLength);

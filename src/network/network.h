@@ -58,14 +58,6 @@ class _Network {
 			UNSEQUENCED = 2,
 		};
 
-		// Different states for connection
-		enum ConnectionStateType {
-			DISCONNECTED,
-			CONNECTING,
-			CONNECTED,
-			DISCONNECTING,
-		};
-
 		_Network();
 		virtual ~_Network();
 

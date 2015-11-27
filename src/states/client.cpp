@@ -91,6 +91,8 @@ void _ClientState::Close() {
 
 // Connect to a server
 void _ClientState::Connect(bool IsLocal) {
+	if(Network->GetConnectionState() != _ClientNetwork::State::DISCONNECTED)
+		return;
 
 	// Start a local server
 	if(IsLocal) {

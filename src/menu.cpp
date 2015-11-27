@@ -259,6 +259,8 @@ void _Menu::PlayCharacter(int Slot) {
 	Packet.Write<char>(Packet::CHARACTERS_PLAY);
 	Packet.Write<char>(Slot);
 	ClientState.Network->SendPacket(Packet);
+
+	CharactersState = CHARACTERS_PLAYSENT;
 }
 
 // Send login info

@@ -59,6 +59,7 @@ class _Menu {
 		enum CharactersStateType {
 			CHARACTERS_NONE,
 			CHARACTERS_CREATE,
+			CHARACTERS_PLAYSENT,
 		};
 
 		enum KeyLabelType {

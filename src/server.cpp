@@ -226,6 +226,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 	char PacketType = Data.Read<char>();
 
+	//std::cout << (int)PacketType << std::endl;
 	switch(PacketType) {
 		case Packet::ACCOUNT_LOGININFO:
 			HandleLoginInfo(Data, Peer);
