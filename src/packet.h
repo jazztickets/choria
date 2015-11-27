@@ -17,6 +17,13 @@
 *******************************************************************************/
 #pragma once
 
+// Libraries
+#include <cstdint>
+
+// Types
+typedef uint16_t NetworkIDType;
+
+// Enumerations
 namespace Packet {
 
 	enum Types {

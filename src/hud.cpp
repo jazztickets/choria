@@ -316,10 +316,12 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_TRADER: {
-				if((size_t)Tooltip.Slot < Player->Trader->TraderItems.size())
-					Tooltip.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
-				else if(Tooltip.Slot == 8)
-					Tooltip.Item = Player->Trader->RewardItem;
+				if(Player->Trader) {
+					if((size_t)Tooltip.Slot < Player->Trader->TraderItems.size())
+						Tooltip.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
+					else if(Tooltip.Slot == 8)
+						Tooltip.Item = Player->Trader->RewardItem;
+				}
 			} break;
 			case WINDOW_SKILLS: {
 				Tooltip.Skill = ClientState.Stats->Skills[Tooltip.Slot];
@@ -540,12 +542,7 @@ void _HUD::InitTrade() {
 }
 
 // Initialize the trader
-void _HUD::InitTrader(int TraderID) {
-	if(Player->State == _Object::STATE_TRADER)
-		return;
-
-	// Get trader stats
-	Player->Trader = ClientState.Stats->GetTrader(TraderID);
+void _HUD::InitTrader() {
 
 	// Check for required items
 	RewardItemSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
@@ -672,7 +669,6 @@ void _HUD::InitSkills() {
 
 	RefreshSkillButtons();
 	Cursor.Reset();
-	Tooltip.Reset();
 	ActionBarChanged = false;
 }
 
@@ -686,6 +682,7 @@ void _HUD::CloseChat() {
 void _HUD::CloseInventory() {
 	//if(InventoryElement->Visible)
 		//OldClientState.SendBusy(false);
+	Cursor.Reset();
 	InventoryElement->SetVisible(false);
 	CharacterElement->SetVisible(false);
 }
@@ -712,7 +709,6 @@ void _HUD::CloseVendor() {
 // Close the skills screen
 void _HUD::CloseSkills() {
 	Cursor.Reset();
-	Tooltip.Reset();
 
 	// Send new skill bar to server
 	if(ActionBarChanged) {
@@ -856,8 +852,10 @@ void _HUD::DrawInventory() {
 
 // Draw the vendor
 void _HUD::DrawVendor() {
-	if(!VendorElement->Visible)
+	if(!Player->Vendor) {
+		VendorElement->Visible = false;
 		return;
+	}
 
 	VendorElement->Render();
 
@@ -932,8 +930,10 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 // Draw the trader screen
 void _HUD::DrawTrader() {
-	if(!TraderElement->Visible)
+	if(!Player->Trader) {
+		TraderElement->Visible = false;
 		return;
+	}
 
 	TraderElement->Render();
 

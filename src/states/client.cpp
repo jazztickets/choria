@@ -157,29 +157,31 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	}
 
 	// Handle HUD keys
-	switch(Action) {
-		case _Actions::MENU:
-			if(IsTesting)
-				//Framework.Done = true;
-				Network->Disconnect();
-			else
-				HUD->ToggleInGameMenu();
-		break;
-		case _Actions::INVENTORY:
-			HUD->ToggleInventory();
-		break;
-		case _Actions::TELEPORT:
-			HUD->ToggleTeleport();
-		break;
-		case _Actions::TRADE:
-			HUD->ToggleTrade();
-		break;
-		case _Actions::SKILLS:
-			HUD->ToggleSkills();
-		break;
-		case _Actions::ATTACK:
-			//SendAttackPlayer();
-		break;
+	if(!Player->WaitForServer) {
+		switch(Action) {
+			case _Actions::MENU:
+				if(IsTesting)
+					//Framework.Done = true;
+					Network->Disconnect();
+				else
+					HUD->ToggleInGameMenu();
+			break;
+			case _Actions::INVENTORY:
+				HUD->ToggleInventory();
+			break;
+			case _Actions::TELEPORT:
+				HUD->ToggleTeleport();
+			break;
+			case _Actions::TRADE:
+				HUD->ToggleTrade();
+			break;
+			case _Actions::SKILLS:
+				HUD->ToggleSkills();
+			break;
+			case _Actions::ATTACK:
+				//SendAttackPlayer();
+			break;
+		}
 	}
 /*
 	switch(Player->State) {
@@ -279,6 +281,8 @@ void _ClientState::WindowEvent(uint8_t Event) {
 // Update
 void _ClientState::Update(double FrameTime) {
 	Graphics.Element->Update(FrameTime, Input.GetMouse());
+	//if(Graphics.Element->HitElement)
+		//std::cout << Graphics.Element->HitElement->Identifier << std::endl;
 
 	// Update network
 	Network->Update(FrameTime);
@@ -325,6 +329,8 @@ void _ClientState::Update(double FrameTime) {
 		Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
 		Packet.Write<char>(Player->Moved);
 		Network->SendPacket(Packet);
+
+		HUD->CloseWindows();
 	}
 
 	// Update camera
@@ -742,11 +748,13 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 	switch(EventType) {
 		case _Map::EVENT_VENDOR:
 			Player->Vendor = ClientState.Stats->GetVendor(EventData);
+			Player->WaitForServer = false;
 			HUD->InitVendor();
 		break;
 		case _Map::EVENT_TRADER:
-			HUD->InitTrader(EventData);
-			//Player->State = _Object::STATE_TRADER;
+			Player->Trader = ClientState.Stats->GetTrader(EventData);
+			Player->WaitForServer = false;
+			HUD->InitTrader();
 		break;
 	}
 }

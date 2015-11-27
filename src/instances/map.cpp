@@ -154,8 +154,6 @@ void _Map::Update(double FrameTime) {
 
 // Check for events
 void _Map::CheckEvents(_Object *Object) {
-	if(!Server)
-		return;
 
 	// Handle events
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
@@ -170,37 +168,46 @@ void _Map::CheckEvents(_Object *Object) {
 		break;
 		case _Map::EVENT_MAPCHANGE:
 			//Object->GenerateNextBattle();
-			Server->SpawnPlayer(Object->Peer, Tile->EventData, Tile->EventType);
+			if(Server)
+				Server->SpawnPlayer(Object->Peer, Tile->EventData, Tile->EventType);
+			else
+				Object->WaitForServer = true;
 		break;
 		case _Map::EVENT_VENDOR: {
-			//Server->Log << Tile->EventType << " " << Tile->EventData << std::endl;
-			//Object->State = _Object::STATE_VENDOR;
-			Object->Vendor = Server->Stats->GetVendor(Tile->EventData);
+			if(Server) {
+				Object->Vendor = Server->Stats->GetVendor(Tile->EventData);
 
-			// Send data
-			_Buffer Packet;
-			Packet.Write<char>(Packet::EVENT_START);
-			Packet.Write<int32_t>(Tile->EventType);
-			Packet.Write<int32_t>(Tile->EventData);
-			Packet.Write<glm::ivec2>(Object->Position);
-			Server->Network->SendPacket(Packet, Object->Peer);
+				// Notify client
+				_Buffer Packet;
+				Packet.Write<char>(Packet::EVENT_START);
+				Packet.Write<int32_t>(Tile->EventType);
+				Packet.Write<int32_t>(Tile->EventData);
+				Packet.Write<glm::ivec2>(Object->Position);
+				Server->Network->SendPacket(Packet, Object->Peer);
+			}
+			else
+				Object->WaitForServer = true;
 		} break;
 		case _Map::EVENT_TRADER: {
-			//Server->Log << Tile->EventType << " " << Tile->EventData << std::endl;
-			//Object->State = _Object::STATE_TRADER;
-			Object->Trader = Server->Stats->GetTrader(Tile->EventData);
+			if(Server) {
+				Object->Trader = Server->Stats->GetTrader(Tile->EventData);
 
-			// Send data
-			_Buffer Packet;
-			Packet.Write<char>(Packet::EVENT_START);
-			Packet.Write<int32_t>(Tile->EventType);
-			Packet.Write<int32_t>(Tile->EventData);
-			Packet.Write<glm::ivec2>(Object->Position);
-			Server->Network->SendPacket(Packet, Object->Peer);
+				// Notify client
+				_Buffer Packet;
+				Packet.Write<char>(Packet::EVENT_START);
+				Packet.Write<int32_t>(Tile->EventType);
+				Packet.Write<int32_t>(Tile->EventData);
+				Packet.Write<glm::ivec2>(Object->Position);
+				Server->Network->SendPacket(Packet, Object->Peer);
+			}
+			else
+				Object->WaitForServer = true;
 		} break;
 		default:
-			Object->Vendor = nullptr;
-			Object->Trader = nullptr;
+			if(Server) {
+				Object->Vendor = nullptr;
+				Object->Trader = nullptr;
+			}
 /*
 			// Start a battle
 			if(Object->NextBattle <= 0) {

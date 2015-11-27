@@ -19,11 +19,11 @@
 
 // Libraries
 #include <constants.h>
-#include <cstdint>
 #include <glm/vec2.hpp>
+#include <packet.h>
 #include <vector>
-#include <network/network.h>
 #include <unordered_map>
+#include <cstdint>
 
 // Forward Declarations
 class _Map;
@@ -192,11 +192,12 @@ class _Object {
 
 		// -- OBJECT  --
 		_Map *Map;
-		ENetPeer *OldPeer;
 		_Peer *Peer;
 		int Type;
+		int InputState;
 		int Moved;
 		bool Deleted;
+		bool WaitForServer;
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 		NetworkIDType NetworkID;
@@ -222,7 +223,7 @@ class _Object {
 
 		// Render
 		const _Texture *Portrait;
-		glm::ivec2 Offset;
+		glm::ivec2 BattleOffset;
 
 		// Monster
 		std::vector<_Object *> Opponents;
@@ -279,7 +280,6 @@ class _Object {
 		bool TradeAccepted;
 		_Object *TradePlayer;
 
-		int InputState;
 		_Stats *Stats;
 
 	protected:

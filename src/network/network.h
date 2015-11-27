@@ -22,13 +22,13 @@
 #include <list>
 #include <queue>
 #include <cstdint>
-#include <enet/enet.h>
 
 // Forward Declarations
 class _Buffer;
 class _Peer;
-
-typedef uint16_t NetworkIDType;
+typedef struct _ENetEvent ENetEvent;
+typedef struct _ENetHost ENetHost;
+struct _ENetAddress;
 
 // Network Event
 struct _NetworkEvent {

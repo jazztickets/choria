@@ -35,11 +35,12 @@
 // Constructor
 _Object::_Object()
 :	Map(nullptr),
-	OldPeer(nullptr),
 	Peer(nullptr),
 	Type(0),
+	InputState(0),
 	Moved(false),
 	Deleted(false),
+	WaitForServer(false),
 	Position(0, 0),
 	ServerPosition(0, 0),
 	NetworkID(0),
@@ -64,6 +65,7 @@ _Object::_Object()
 	SkillUsing(nullptr),
 	SkillUsed(nullptr),
 	Portrait(nullptr),
+	BattleOffset(0, 0),
 
 	CharacterID(0),
 	State(STATE_NONE),
@@ -94,6 +96,7 @@ _Object::_Object()
 	AttackPlayerTime(0),
 	InvisPower(0),
 	Vendor(nullptr),
+	Trader(nullptr),
 	SkillPoints(0),
 	SkillPointsUsed(0),
 	TradeGold(0),
@@ -105,10 +108,6 @@ _Object::_Object()
 	for(int i = 0; i < ACTIONBAR_SIZE; i++)
 		ActionBar[i] = nullptr;
 
-	Offset.x = Offset.y = 0;
-	Position.x = 0;
-	Position.y = 0;
-
 	for(int i = 0; i < 2; i++)
 		MaxPotions[i] = PotionsLeft[i] = 0;
 
@@ -116,8 +115,6 @@ _Object::_Object()
 		Inventory[i].Item = nullptr;
 		Inventory[i].Count = 0;
 	}
-
-	InputState = 0;
 }
 
 // Destructor
@@ -135,7 +132,7 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 		Slot = Assets.Elements["element_side_right"];
 
 	// Draw slot
-	Slot->Offset = Offset;
+	Slot->Offset = BattleOffset;
 	Slot->CalculateBounds();
 	Slot->SetVisible(true);
 	Slot->Render();
@@ -404,7 +401,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 
 		glm::vec3 DrawPosition;
-		if(0) {
+		if(1) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 			Graphics.DrawSprite(DrawPosition, WorldImage);
@@ -425,7 +422,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 
 // Moves the player
 int _Object::Move() {
-	if(State != STATE_NONE || InputState == 0)
+	if(WaitForServer || InputState == 0)
 		return 0;
 
 	// Get new position

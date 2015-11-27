@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <network/network.h>
 #include <network/peer.h>
+#include <enet/enet.h>
 #include <buffer.h>
 #include <stdexcept>
 

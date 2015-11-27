@@ -68,7 +68,7 @@ void _ClientBattle::StartBattle(_Object *Player) {
 	glm::ivec2 Offset;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		GetPositionFromSlot(Fighters[i]->BattleSlot, Offset);
-		Fighters[i]->Offset = Offset;
+		Fighters[i]->BattleOffset = Offset;
 		Fighters[i]->SkillUsed = nullptr;
 		Fighters[i]->SkillUsing = nullptr;
 	}

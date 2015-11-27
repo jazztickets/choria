@@ -103,7 +103,7 @@ class _HUD {
 		// Windows
 		void InitInventory(bool SendBusy);
 		void InitVendor();
-		void InitTrader(int TraderID);
+		void InitTrader();
 		void InitSkills();
 		void InitTrade();
 		void CloseWindows();

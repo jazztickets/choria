@@ -19,6 +19,7 @@
 
 // Libraries
 #include <network/network.h>
+#include <packet.h>
 #include <texture.h>
 #include <vector>
 #include <list>
