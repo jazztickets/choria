@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <enet/enet.h>
 #include <string>
 #include <list>
 #include <queue>
@@ -26,8 +27,6 @@
 // Forward Declarations
 class _Buffer;
 class _Peer;
-typedef struct _ENetEvent ENetEvent;
-typedef struct _ENetHost ENetHost;
 
 // Network Event
 struct _NetworkEvent {
