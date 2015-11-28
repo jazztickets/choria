@@ -360,24 +360,12 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
 
-	std::stringstream Query;
-
-	// Check character limit
-	Query << "SELECT count(id) FROM character WHERE account_id = " << Peer->AccountID;
-	int CharacterCount = Save->Database->RunCountQuery(Query.str());
-	if(CharacterCount >= SAVE_COUNT)
+	// Check number of characters in account
+	if(Save->GetCharacterCount(Peer->AccountID) >= SAVE_COUNT)
 		return;
-	Query.str("");
-
-	// Check for existing names
-	Query << "SELECT id FROM character WHERE name = '" << Name << "'";
-	Save->Database->RunDataQuery(Query.str());
-	int FindResult = Save->Database->FetchRow();
-	Save->Database->CloseQuery();
-	Query.str("");
 
 	// Found an existing name
-	if(FindResult) {
+	if(Save->GetCharacterIDByName(Name) != 0) {
 		_Buffer NewPacket;
 		NewPacket.Write<char>(Packet::CREATECHARACTER_INUSE);
 		Network->SendPacket(NewPacket, Peer);
@@ -385,25 +373,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Create the character
-	Save->Database->RunQuery("BEGIN TRANSACTION");
-	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << Peer->AccountID << ", " << Slot << ", '" << Name << "', " << PortraitID << ", 1)";
-	Save->Database->RunQuery(Query.str());
-	Query.str("");
-
-	int CharacterID = Save->Database->GetLastInsertID();
-	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 1, 2, 1)";
-	Save->Database->RunQuery(Query.str());
-	Query.str("");
-
-	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 3, 1, 1)";
-	Save->Database->RunQuery(Query.str());
-	Query.str("");
-
-	Query << "INSERT INTO skilllevel VALUES(" << CharacterID << ", 1, 1)";
-	Save->Database->RunQuery(Query.str());
-	Query.str("");
-
-	Save->Database->RunQuery("END TRANSACTION");
+	Save->CreateCharacter(Peer->AccountID, Slot, Name, PortraitID);
 
 	// Notify the client
 	_Buffer NewPacket;

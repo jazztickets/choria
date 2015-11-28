@@ -81,6 +81,50 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 	return AccountID;
 }
 
+// Get character count for an account
+uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
+	std::stringstream Query;
+	Query << "SELECT count(id) FROM character WHERE account_id = " << AccountID;
+
+	return Database->RunCountQuery(Query.str());
+}
+
+// Find character id by character name
+uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
+
+	std::stringstream Query;
+	Query << "SELECT id FROM character WHERE name = '" << Name << "'";
+	Database->RunDataQuery(Query.str());
+	uint32_t CharacterID = Database->FetchRow();
+	Database->CloseQuery();
+
+	return CharacterID;
+}
+
+// Create character
+void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Name, uint32_t PortraitID) {
+	std::stringstream Query;
+	Database->RunQuery("BEGIN TRANSACTION");
+	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << AccountID << ", " << Slot << ", '" << Name << "', " << PortraitID << ", 1)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	int64_t CharacterID = Database->GetLastInsertID();
+	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 1, 2, 1)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 3, 1, 1)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	Query << "INSERT INTO skilllevel VALUES(" << CharacterID << ", 1, 1)";
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	Database->RunQuery("END TRANSACTION");
+}
+
 // Create default save database
 void _Save::CreateDefaultDatabase() {
 

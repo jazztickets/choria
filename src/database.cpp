@@ -101,7 +101,6 @@ int _Database::RunCountQuery(const std::string &Query) {
 	RunDataQuery(Query);
 	FetchRow();
 	int Count = GetInt(0);
-
 	CloseQuery();
 
 	return Count;
