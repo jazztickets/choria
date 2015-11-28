@@ -154,7 +154,7 @@ const char *_Database::GetString(int ColumnIndex, int Handle) {
 
 // Bind integer to parameter
 void _Database::BindInt(int ColumnIndex, int Value, int Handle) {
-	int Result = sqlite3_bind_int(QueryHandle[Handle], 1, Value);
+	int Result = sqlite3_bind_int(QueryHandle[Handle], ColumnIndex, Value);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 }

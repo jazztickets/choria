@@ -52,9 +52,8 @@ _Save::~_Save() {
 // Check for a username
 bool _Save::CheckUsername(const std::string &Username) {
 
-	std::stringstream Query;
-	Query << "SELECT id FROM account WHERE username = '" << EscapeString(TrimString(Username)) << "'";
-	Database->RunDataQuery(Query.str());
+	Database->RunDataQuery("SELECT id FROM account WHERE username = @username");
+	Database->BindString(1, TrimString(Username));
 	int Result = Database->FetchRow();
 	Database->CloseQuery();
 
@@ -63,9 +62,11 @@ bool _Save::CheckUsername(const std::string &Username) {
 
 // Create account
 void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
-	std::stringstream Query;
-	Query << "INSERT INTO account(username, password) VALUES('" << EscapeString(TrimString(Username)) << "', '" << EscapeString(Password) << "')";
-	Database->RunQuery(Query.str());
+	Database->RunDataQuery("INSERT INTO account(username, password) VALUES(@username, @password)");
+	Database->BindString(1, TrimString(Username));
+	Database->BindString(2, TrimString(Password));
+	Database->FetchRow();
+	Database->CloseQuery();
 }
 
 // Get account id from login credentials
@@ -73,9 +74,9 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 	uint32_t AccountID = 0;
 
 	// Get account information
-	std::stringstream Query;
-	Query << "SELECT id FROM account WHERE username = '" << EscapeString(TrimString(Username)) << "' AND password = '" << EscapeString(Password) << "'";
-	Database->RunDataQuery(Query.str());
+	Database->RunDataQuery("SELECT id FROM account WHERE username = @username AND password = @password");
+	Database->BindString(1, TrimString(Username));
+	Database->BindString(2, TrimString(Password));
 	if(Database->FetchRow())
 		AccountID = Database->GetInt(0);
 	Database->CloseQuery();
@@ -85,19 +86,21 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 
 // Get character count for an account
 uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
-	std::stringstream Query;
-	Query << "SELECT count(id) FROM character WHERE account_id = " << AccountID;
+	Database->RunDataQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
+	Database->BindInt(1, AccountID);
+	Database->FetchRow();
+	int Count = Database->GetInt(0);
+	Database->CloseQuery();
 
-	return Database->RunCountQuery(Query.str());
+	return Count;
 }
 
 // Find character id by character name
 uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
-
-	std::stringstream Query;
-	Query << "SELECT id FROM character WHERE name = '" << EscapeString(TrimString(Name)) << "'";
-	Database->RunDataQuery(Query.str());
-	uint32_t CharacterID = Database->FetchRow();
+	Database->RunDataQuery("SELECT id FROM character WHERE name = @name");
+	Database->BindString(1, TrimString(Name));
+	Database->FetchRow();
+	uint32_t CharacterID = Database->GetInt(0);
 	Database->CloseQuery();
 
 	return CharacterID;
@@ -107,23 +110,24 @@ uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Name, uint32_t PortraitID) {
 	Database->RunQuery("BEGIN TRANSACTION");
 
-	std::stringstream Query;
-	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << AccountID << ", " << Slot << ", '" << EscapeString(TrimString(Name)) << "', " << PortraitID << ", 1)";
-	Database->RunQuery(Query.str());
-	Query.str("");
+	Database->RunDataQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(@account_id, @slot, @name, @portrait_id, 1)");
+	Database->BindInt(1, AccountID);
+	Database->BindInt(2, Slot);
+	Database->BindString(3, TrimString(Name));
+	Database->BindInt(4, PortraitID);
+	Database->FetchRow();
+	Database->CloseQuery();
 
 	int64_t CharacterID = Database->GetLastInsertID();
-	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 1, 2, 1)";
-	Database->RunQuery(Query.str());
-	Query.str("");
+	Database->RunDataQuery("INSERT INTO inventory VALUES(@character_id, 1, 2, 1), (@character_id, 3, 1, 1)");
+	Database->BindInt(1, CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
 
-	Query << "INSERT INTO inventory VALUES(" << CharacterID << ", 3, 1, 1)";
-	Database->RunQuery(Query.str());
-	Query.str("");
-
-	Query << "INSERT INTO skilllevel VALUES(" << CharacterID << ", 1, 1)";
-	Database->RunQuery(Query.str());
-	Query.str("");
+	Database->RunDataQuery("INSERT INTO skilllevel VALUES(@character_id, 1, 1)");
+	Database->BindInt(1, CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
 
 	Database->RunQuery("END TRANSACTION");
 }
@@ -189,12 +193,6 @@ void _Save::SavePlayer(const _Object *Player) {
 	}
 
 	Database->RunQuery("END TRANSACTION");
-}
-
-// Replace ' with ''
-std::string _Save::EscapeString(const std::string &String) {
-	std::regex Regex("'");
-	return std::regex_replace(String, Regex, "''");
 }
 
 // Trim whitespace from string
