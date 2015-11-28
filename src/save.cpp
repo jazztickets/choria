@@ -22,6 +22,7 @@
 #include <config.h>
 #include <constants.h>
 #include <stdexcept>
+#include <regex>
 
 // Constructor
 _Save::_Save() {
@@ -51,7 +52,7 @@ _Save::~_Save() {
 // Check for a username
 bool _Save::CheckUsername(const std::string &Username) {
 	std::stringstream Query;
-	Query << "SELECT id FROM account WHERE username = '" << Username << "'";
+	Query << "SELECT id FROM account WHERE username = '" << EscapeString(Username) << "'";
 	Database->RunDataQuery(Query.str());
 	int Result = Database->FetchRow();
 	Database->CloseQuery();
@@ -62,7 +63,7 @@ bool _Save::CheckUsername(const std::string &Username) {
 // Create account
 void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
 	std::stringstream Query;
-	Query << "INSERT INTO account(username, password) VALUES('" << Username << "', '" << Password << "')";
+	Query << "INSERT INTO account(username, password) VALUES('" << EscapeString(Username) << "', '" << EscapeString(Password) << "')";
 	Database->RunQuery(Query.str());
 }
 
@@ -72,7 +73,7 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 
 	// Get account information
 	std::stringstream Query;
-	Query << "SELECT id FROM account WHERE username = '" << Username << "' AND password = '" << Password << "'";
+	Query << "SELECT id FROM account WHERE username = '" << EscapeString(Username) << "' AND password = '" << EscapeString(Password) << "'";
 	Database->RunDataQuery(Query.str());
 	if(Database->FetchRow())
 		AccountID = Database->GetInt(0);
@@ -93,7 +94,7 @@ uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
 uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 
 	std::stringstream Query;
-	Query << "SELECT id FROM character WHERE name = '" << Name << "'";
+	Query << "SELECT id FROM character WHERE name = '" << EscapeString(Name) << "'";
 	Database->RunDataQuery(Query.str());
 	uint32_t CharacterID = Database->FetchRow();
 	Database->CloseQuery();
@@ -103,9 +104,10 @@ uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 
 // Create character
 void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Name, uint32_t PortraitID) {
-	std::stringstream Query;
 	Database->RunQuery("BEGIN TRANSACTION");
-	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << AccountID << ", " << Slot << ", '" << Name << "', " << PortraitID << ", 1)";
+
+	std::stringstream Query;
+	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << AccountID << ", " << Slot << ", '" << EscapeString(Name) << "', " << PortraitID << ", 1)";
 	Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -123,6 +125,76 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 	Query.str("");
 
 	Database->RunQuery("END TRANSACTION");
+}
+
+// Saves the player
+void _Save::SavePlayer(const _Object *Player) {
+	if(Player->CharacterID == 0)
+		return;
+
+	Database->RunQuery("BEGIN TRANSACTION");
+
+	// Save character stats
+	std::stringstream Query;
+	Query
+		<< "UPDATE character SET "
+		<< "  map_id = " << Player->SpawnMapID
+		<< ", spawnpoint = " << Player->SpawnPoint
+		<< ", experience = " <<Player->Experience
+		<< ", gold = " << Player->Gold
+		<< ", actionbar0 = " << Player->GetActionBarID(0)
+		<< ", actionbar1 = " << Player->GetActionBarID(1)
+		<< ", actionbar2 = " << Player->GetActionBarID(2)
+		<< ", actionbar3 = " << Player->GetActionBarID(3)
+		<< ", actionbar4 = " << Player->GetActionBarID(4)
+		<< ", actionbar5 = " << Player->GetActionBarID(5)
+		<< ", actionbar6 = " << Player->GetActionBarID(6)
+		<< ", actionbar7 = " << Player->GetActionBarID(7)
+		<< ", playtime = " << Player->PlayTime
+		<< ", deaths = " << Player->Deaths
+		<< ", monsterkills = " << Player->MonsterKills
+		<< ", playerkills = " << Player->PlayerKills
+		<< ", bounty = " << Player->Bounty
+		<< " WHERE id = " << Player->CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	// Save items
+	Query << "DELETE FROM inventory WHERE character_id = " << Player->CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	const _InventorySlot *Item;
+	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
+		Item = &Player->Inventory[i];
+		if(Item->Item) {
+			Query << "INSERT INTO inventory VALUES(" << Player->CharacterID << ", " << i << ", " << Item->Item->ID << ", " << Item->Count << ")";;
+			Database->RunQuery(Query.str());
+			Query.str("");
+		}
+	}
+
+	// Save skill points
+	Query << "DELETE FROM skilllevel WHERE character_id = " << Player->CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	for(auto &SkillLevel : Player->SkillLevels) {
+		if(SkillLevel.second > 0) {
+			Query << "INSERT INTO skilllevel VALUES(" << Player->CharacterID << ", " << SkillLevel.first << ", " << SkillLevel.second << ")";
+			Database->RunQuery(Query.str());
+			Query.str("");
+		}
+	}
+
+	Database->RunQuery("END TRANSACTION");
+}
+
+// Replace ' with ''
+std::string _Save::EscapeString(const std::string &String) {
+	//std::regex Regex("^[ ]+|[ ]+$");
+	std::regex Regex("'");
+	return std::regex_replace(String, Regex, "''");
 }
 
 // Create default save database
@@ -204,67 +276,4 @@ void _Save::CreateDefaultDatabase() {
 	Database->RunQuery(
 				"END TRANSACTION"
 	);
-}
-
-// Saves the player
-void _Save::SavePlayer(const _Object *Player) {
-	if(Player->CharacterID == 0)
-		return;
-
-	Database->RunQuery("BEGIN TRANSACTION");
-
-	// Save character stats
-	std::stringstream Query;
-	Query
-		<< "UPDATE character SET "
-		<< "  map_id = " << Player->SpawnMapID
-		<< ", spawnpoint = " << Player->SpawnPoint
-		<< ", experience = " <<Player->Experience
-		<< ", gold = " << Player->Gold
-		<< ", actionbar0 = " << Player->GetActionBarID(0)
-		<< ", actionbar1 = " << Player->GetActionBarID(1)
-		<< ", actionbar2 = " << Player->GetActionBarID(2)
-		<< ", actionbar3 = " << Player->GetActionBarID(3)
-		<< ", actionbar4 = " << Player->GetActionBarID(4)
-		<< ", actionbar5 = " << Player->GetActionBarID(5)
-		<< ", actionbar6 = " << Player->GetActionBarID(6)
-		<< ", actionbar7 = " << Player->GetActionBarID(7)
-		<< ", playtime = " << Player->PlayTime
-		<< ", deaths = " << Player->Deaths
-		<< ", monsterkills = " << Player->MonsterKills
-		<< ", playerkills = " << Player->PlayerKills
-		<< ", bounty = " << Player->Bounty
-		<< " WHERE id = " << Player->CharacterID;
-	Database->RunQuery(Query.str());
-	Query.str("");
-
-	// Save items
-	Query << "DELETE FROM inventory WHERE character_id = " << Player->CharacterID;
-	Database->RunQuery(Query.str());
-	Query.str("");
-
-	const _InventorySlot *Item;
-	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		Item = &Player->Inventory[i];
-		if(Item->Item) {
-			Query << "INSERT INTO inventory VALUES(" << Player->CharacterID << ", " << i << ", " << Item->Item->ID << ", " << Item->Count << ")";;
-			Database->RunQuery(Query.str());
-			Query.str("");
-		}
-	}
-
-	// Save skill points
-	Query << "DELETE FROM skilllevel WHERE character_id = " << Player->CharacterID;
-	Database->RunQuery(Query.str());
-	Query.str("");
-
-	for(auto &SkillLevel : Player->SkillLevels) {
-		if(SkillLevel.second > 0) {
-			Query << "INSERT INTO skilllevel VALUES(" << Player->CharacterID << ", " << SkillLevel.first << ", " << SkillLevel.second << ")";
-			Database->RunQuery(Query.str());
-			Query.str("");
-		}
-	}
-
-	Database->RunQuery("END TRANSACTION");
 }

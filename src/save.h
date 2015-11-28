@@ -46,6 +46,7 @@ class _Save {
 
 	private:
 
+		std::string EscapeString(const std::string &String);
 		void CreateDefaultDatabase();
 
 };

@@ -461,12 +461,6 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 	Player->InputState = Data.Read<char>();
-	/*
-	if(Player->MovePlayer(Direction)) {
-
-
-	}*/
-
 }
 
 // Handle a chat message
