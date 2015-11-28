@@ -229,9 +229,8 @@ void _Stats::LoadTraders() {
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 	// Run query
-	char QueryString[256];
-	sprintf(QueryString, "SELECT * FROM monster WHERE id = %d", MonsterID);
-	Database->RunDataQuery(QueryString);
+	Database->RunDataQuery("SELECT * FROM monster WHERE id = @monster_id");
+	Database->BindInt(1, MonsterID);
 
 	// Get data
 	float Value, Range;
@@ -299,12 +298,11 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 	if(ZoneID == 0)
 		return;
 
-	char QueryString[256];
 	int MonsterCount = 0;
 
 	// Get zone info
-	sprintf(QueryString, "SELECT monstercount FROM zone WHERE id = %d", ZoneID);
-	Database->RunDataQuery(QueryString);
+	Database->RunDataQuery("SELECT monstercount FROM zone WHERE id = @zone_id");
+	Database->BindInt(1, ZoneID);
 	if(Database->FetchRow()) {
 		MonsterCount = Database->GetInt("monstercount");
 	}
@@ -315,8 +313,8 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 		return;
 
 	// Run query
-	sprintf(QueryString, "SELECT monster_id, odds FROM zonedata WHERE zone_id = %d", ZoneID);
-	Database->RunDataQuery(QueryString);
+	Database->RunDataQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
+	Database->BindInt(1, ZoneID);
 
 	// Get monsters in zone
 	std::vector<_Zone> Zone;
@@ -358,9 +356,8 @@ void _Stats::GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Dr
 		return;
 
 	// Run query
-	char QueryString[256];
-	sprintf(QueryString, "SELECT item_id, odds FROM monsterdrop WHERE monster_id = %d", MonsterID);
-	Database->RunDataQuery(QueryString);
+	Database->RunDataQuery("SELECT item_id, odds FROM monsterdrop WHERE monster_id = @monster_id");
+	Database->BindInt(1, MonsterID);
 
 	// Get items from monster
 	std::vector<_MonsterDrop> MonsterDrop;
