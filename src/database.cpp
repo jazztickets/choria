@@ -134,6 +134,12 @@ int64_t _Database::GetLastInsertID() {
 	return sqlite3_last_insert_rowid(Database);
 }
 
+// Get column name by index
+const char *_Database::GetColumnName(int ColumnIndex, int Handle) {
+
+	return sqlite3_column_name(QueryHandle[Handle], ColumnIndex);
+}
+
 // Returns an integer column
 int _Database::GetInt(int ColumnIndex, int Handle) {
 

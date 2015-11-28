@@ -43,6 +43,8 @@ class _Database {
 		int CloseQuery(int Handle=0);
 		int64_t GetLastInsertID();
 
+		const char *GetColumnName(int ColumnIndex, int Handle=0);
+
 		int GetInt(int ColumnIndex, int Handle=0);
 		float GetFloat(int ColumnIndex, int Handle=0);
 		const char *GetString(int ColumnIndex, int Handle=0);

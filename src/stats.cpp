@@ -20,6 +20,7 @@
 #include <database.h>
 #include <random.h>
 #include <assets.h>
+#include <iostream>
 
 // Constructor
 _Stats::_Stats() {
@@ -53,7 +54,7 @@ _Stats::~_Stats() {
 void _Stats::LoadPortraits() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Portraits");
+	Database->RunDataQuery("SELECT * FROM portrait");
 
 	// Get events
 	_Portrait Portrait;
@@ -69,7 +70,7 @@ void _Stats::LoadPortraits() {
 void _Stats::LoadMaps() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Maps");
+	Database->RunDataQuery("SELECT * FROM map");
 
 	// Get events
 	_MapStat Map;
@@ -84,7 +85,7 @@ void _Stats::LoadMaps() {
 void _Stats::LoadEvents() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Events");
+	Database->RunDataQuery("SELECT * FROM event");
 
 	// Get events
 	_Event Event;
@@ -100,7 +101,7 @@ void _Stats::LoadEvents() {
 void _Stats::LoadLevels() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Levels");
+	Database->RunDataQuery("SELECT * FROM level");
 
 	// Get events
 	_Level Level;
@@ -120,7 +121,7 @@ void _Stats::LoadLevels() {
 void _Stats::LoadSkills() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Skills");
+	Database->RunDataQuery("SELECT * FROM skill");
 
 	// Get events
 	while(Database->FetchRow()) {
@@ -148,7 +149,7 @@ void _Stats::LoadSkills() {
 void _Stats::LoadItems() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Items");
+	Database->RunDataQuery("SELECT * FROM item");
 
 	// Get events
 	_Item Item;
@@ -182,7 +183,7 @@ void _Stats::LoadVendors() {
 	Vendors.clear();
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Vendors");
+	Database->RunDataQuery("SELECT * FROM vendor");
 
 	// Get vendors
 	char Buffer[256];
@@ -196,7 +197,7 @@ void _Stats::LoadVendors() {
 		Vendor.Items.clear();
 
 		// Get items
-		sprintf(Buffer, "SELECT ItemsID FROM VendorItems, Items where VendorItems.VendorsID = %d and Items.ID = VendorItems.ItemsID order by Items.Cost", Vendor.ID);
+		sprintf(Buffer, "SELECT item_id FROM vendoritem, item where vendoritem.vendor_id = %d and item.id = vendoritem.item_id order by item.cost", Vendor.ID);
 		Database->RunDataQuery(Buffer, 1);
 		while(Database->FetchRow(1)) {
 			Vendor.Items.push_back(GetItem(Database->GetInt(0, 1)));
@@ -213,7 +214,7 @@ void _Stats::LoadTraders() {
 	Traders.clear();
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM Traders");
+	Database->RunDataQuery("SELECT * FROM trader");
 
 	// Get traders
 	char Buffer[256];
@@ -226,7 +227,7 @@ void _Stats::LoadTraders() {
 		Trader.TraderItems.clear();
 
 		// Get items
-		sprintf(Buffer, "SELECT ItemsID, Count FROM TraderItems where TradersID = %d", Trader.ID);
+		sprintf(Buffer, "SELECT item_id, count FROM traderitem where trader_id = %d", Trader.ID);
 		Database->RunDataQuery(Buffer, 1);
 		while(Database->FetchRow(1)) {
 			_TraderItem TraderItem;
@@ -246,7 +247,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 	// Run query
 	char QueryString[256];
-	sprintf(QueryString, "SELECT * FROM Monsters WHERE ID = %d", MonsterID);
+	sprintf(QueryString, "SELECT * FROM monster WHERE id = %d", MonsterID);
 	Database->RunDataQuery(QueryString);
 
 	// Get data
@@ -288,7 +289,7 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 	int MonsterCount = 0;
 
 	// Get zone info
-	sprintf(QueryString, "SELECT MonsterCount FROM Zones WHERE ID = %d", ZoneID);
+	sprintf(QueryString, "SELECT monstercount FROM zone WHERE id = %d", ZoneID);
 	Database->RunDataQuery(QueryString);
 	if(Database->FetchRow()) {
 		MonsterCount = Database->GetInt(0);
@@ -300,7 +301,7 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 		return;
 
 	// Run query
-	sprintf(QueryString, "SELECT MonstersID, Odds FROM ZoneData WHERE ZonesID = %d", ZoneID);
+	sprintf(QueryString, "SELECT monster_id, odds FROM zonedata WHERE zone_id = %d", ZoneID);
 	Database->RunDataQuery(QueryString);
 
 	// Get monsters in zone
@@ -344,7 +345,7 @@ void _Stats::GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Dr
 
 	// Run query
 	char QueryString[256];
-	sprintf(QueryString, "SELECT ItemsID, Odds FROM MonsterDrops WHERE MonstersID = %d", MonsterID);
+	sprintf(QueryString, "SELECT item_id, odds FROM monsterdrop WHERE monster_id = %d", MonsterID);
 	Database->RunDataQuery(QueryString);
 
 	// Get items from monster
