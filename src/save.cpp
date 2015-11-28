@@ -41,6 +41,8 @@ _Save::_Save() {
 		// Populate data
 		CreateDefaultDatabase();
 	}
+
+	Database->RunQuery("PRAGMA foreign_keys = ON");
 }
 
 // Destructor
@@ -261,7 +263,7 @@ void _Save::CreateDefaultDatabase() {
 	// Inventory
 	Database->RunQuery(
 				"CREATE TABLE inventory(\n"
-				"	'character_id' INTEGER,\n"
+				"	'character_id' INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
 				"	'slot' INTEGER,\n"
 				"	'item_id' INTEGER,\n"
 				"	'count' INTEGER\n"
@@ -271,7 +273,7 @@ void _Save::CreateDefaultDatabase() {
 	// Skill levels
 	Database->RunQuery(
 				"CREATE TABLE skilllevel(\n"
-				"	'character_id' INTEGER,\n"
+				"	'character_id' INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
 				"	'skill_id' INTEGER,\n"
 				"	'level' INTEGER\n"
 				")"

@@ -409,16 +409,6 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	Save->Database->RunQuery(Query.str());
 	Query.str("");
 
-	// Delete items
-	Query << "DELETE FROM inventory WHERE character_id = " << CharacterID;
-	Save->Database->RunQuery(Query.str());
-	Query.str("");
-
-	// Delete skill levels
-	Query << "DELETE FROM skilllevel WHERE character_id = " << CharacterID;
-	Save->Database->RunQuery(Query.str());
-	Query.str("");
-
 	// Update the player
 	SendCharacterList(Peer);
 }
