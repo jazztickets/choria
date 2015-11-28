@@ -252,24 +252,21 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::INVENTORY_MOVE:
 			HandleInventoryMove(Data, Peer);
 		break;
-		/*
 		case Packet::INVENTORY_USE:
 			HandleInventoryUse(Data, Peer);
 		break;
 		case Packet::INVENTORY_SPLIT:
 			HandleInventorySplit(Data, Peer);
 		break;
-		case Packet::EVENT_END:
-			HandleEventEnd(Data, Peer);
+		case Packet::VENDOR_EXCHANGE:
+			HandleVendorExchange(Data, Peer);
 		break;
+		/*
 		case Packet::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
 		break;
 		case Packet::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
-		break;
-		case Packet::VENDOR_EXCHANGE:
-			HandleVendorExchange(Data, Peer);
 		break;
 		case Packet::TRADER_ACCEPT:
 			HandleTraderAccept(Data, Peer);
@@ -300,7 +297,11 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case Packet::TRADE_ACCEPT:
 			HandleTradeAccept(Data, Peer);
-		break;*/
+		break;
+		case Packet::EVENT_END:
+			HandleEventEnd(Data, Peer);
+		break;
+*/
 	}
 }
 
@@ -515,16 +516,20 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 
 	// Remove old player if map has changed
 	if(Map != OldMap) {
+		int OldInvisPower = 0;
 
 		// Delete old player
-		if(Player)
+		if(Player) {
 			Player->Deleted = true;
+			OldInvisPower = Player->InvisPower;
+		}
 
 		// Create new player
 		Player = CreatePlayer(Peer);
 		Player->NetworkID = Map->GenerateObjectID();
 		Player->Map = Map;
 		Player->State = _Object::STATE_NONE;
+		Player->InvisPower = OldInvisPower;
 
 		// Find spawn point in map
 		int SpawnPoint = Player->SpawnPoint;
@@ -667,6 +672,7 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 	Packet.Write<int32_t>(Player->MonsterKills);
 	Packet.Write<int32_t>(Player->PlayerKills);
 	Packet.Write<int32_t>(Player->Bounty);
+	Packet.Write<int32_t>(Player->InvisPower);
 
 	// Get item count
 	int ItemCount = 0;
@@ -783,22 +789,24 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 		Network->SendPacket(Packet, TradePlayer->Peer);
 	}
 }
-/*
+
 // Handle a player's inventory use request
 void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
+	if(!ValidatePeer(Peer))
 		return;
 
+	_Object *Player = Peer->Object;
+
 	// Use an item
-	Player->UseInventory(Packet->Read<char>());
+	Player->UseInventory(Data.Read<char>());
 }
 
 // Handle a player's inventory split stack request
 void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
+	if(!ValidatePeer(Peer))
 		return;
+
+	_Object *Player = Peer->Object;
 
 	int Slot = Data.Read<char>();
 	int Count = Data.Read<char>();
@@ -810,6 +818,57 @@ void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
 	Player->SplitStack(Slot, Count);
 }
 
+// Handles a vendor exchange message
+void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Get vendor
+	const _Vendor *Vendor = Player->Vendor;
+	if(!Vendor)
+		return;
+
+	// Get info
+	bool Buy = Data.ReadBit();
+	int Amount = Data.Read<char>();
+	int Slot = Data.Read<char>();
+	if(Slot < 0)
+		return;
+
+	// Update player
+	if(Buy) {
+		if(Slot >= (int)Vendor->Items.size())
+			return;
+
+		// Get optional inventory slot
+		int TargetSlot = Data.Read<char>();
+
+		// Get item info
+		const _Item *Item = Vendor->Items[Slot];
+		int Price = Item->GetPrice(Vendor, Amount, Buy);
+
+		// Update player
+		Player->UpdateGold(-Price);
+		Player->AddItem(Item, Amount, TargetSlot);
+		Player->CalculatePlayerStats();
+	}
+	else {
+		if(Slot >= _Object::INVENTORY_COUNT)
+			return;
+
+		// Get item info
+		_InventorySlot *Item = &Player->Inventory[Slot];
+		if(Item && Item->Item) {
+			int Price = Item->Item->GetPrice(Vendor, Amount, Buy);
+			Player->UpdateGold(Price);
+			Player->UpdateInventory(Slot, -Amount);
+		}
+	}
+}
+
+/*
 // Handles a player's event end message
 void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
@@ -859,55 +918,6 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 
 	// Send updates
 	SendHUD(Player);
-}
-
-// Handles a vendor exchange message
-void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Get vendor
-	const _Vendor *Vendor = Player->Vendor;
-	if(!Vendor)
-		return;
-
-	// Get info
-	bool Buy = Data.ReadBit();
-	int Amount = Data.Read<char>();
-	int Slot = Data.Read<char>();
-	if(Slot < 0)
-		return;
-
-	// Update player
-	if(Buy) {
-		if(Slot >= (int)Vendor->Items.size())
-			return;
-
-		// Get optional inventory slot
-		int TargetSlot = Data.Read<char>();
-
-		// Get item info
-		const _Item *Item = Vendor->Items[Slot];
-		int Price = Item->GetPrice(Vendor, Amount, Buy);
-
-		// Update player
-		Player->UpdateGold(-Price);
-		Player->AddItem(Item, Amount, TargetSlot);
-		Player->CalculatePlayerStats();
-	}
-	else {
-		if(Slot >= _Object::INVENTORY_COUNT)
-			return;
-
-		// Get item info
-		_InventorySlot *Item = &Player->Inventory[Slot];
-		if(Item && Item->Item) {
-			int Price = Item->Item->GetPrice(Vendor, Amount, Buy);
-			Player->UpdateGold(Price);
-			Player->UpdateInventory(Slot, -Amount);
-		}
-	}
 }
 
 // Handle a skill bar change

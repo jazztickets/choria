@@ -89,10 +89,10 @@ class _Server {
 		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
 		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
 		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
+		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
 		void HandleEventEnd(_Buffer &Data, _Peer *Peer);
 		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
-		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
 		void HandleActionBar(_Buffer &Data, _Peer *Peer);
 		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerBusy(_Buffer &Data, _Peer *Peer);

@@ -85,7 +85,7 @@ class _Object {
 		};
 
 		_Object();
-		virtual ~_Object();
+		~_Object();
 
 		void Render(const _Object *ClientPlayer=nullptr);
 		void Update(double FrameTime);

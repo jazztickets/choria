@@ -459,25 +459,10 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::CHAT_MESSAGE:
 			HandleChatMessage(Data);
 		break;
-		/*
-		case Packet::WORLD_STARTBATTLE:
-			HandleStartBattle(Data);
-		break;
-		case Packet::WORLD_HUD:
-			HandleHUD(Data);
-		break;
-		case Packet::BATTLE_TURNRESULTS:
-			HandleBattleTurnResults(Data);
-		break;
-		case Packet::BATTLE_END:
-			HandleBattleEnd(Data);
-		break;
-		case Packet::BATTLE_COMMAND:
-			HandleBattleCommand(Data);
-		break;
 		case Packet::INVENTORY_USE:
 			HandleInventoryUse(Data);
 		break;
+		/*
 		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;
@@ -495,7 +480,23 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		break;
 		case Packet::TRADE_EXCHANGE:
 			HandleTradeExchange(Data);
-		break;*/
+		break;
+		case Packet::WORLD_STARTBATTLE:
+			HandleStartBattle(Data);
+		break;
+		case Packet::WORLD_HUD:
+			HandleHUD(Data);
+		break;
+		case Packet::BATTLE_TURNRESULTS:
+			HandleBattleTurnResults(Data);
+		break;
+		case Packet::BATTLE_END:
+			HandleBattleEnd(Data);
+		break;
+		case Packet::BATTLE_COMMAND:
+			HandleBattleCommand(Data);
+		break;
+*/
 		default:
 			Menu.HandlePacket(Data, PacketType);
 		break;
@@ -547,6 +548,7 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	Player->MonsterKills = Data.Read<int32_t>();
 	Player->PlayerKills = Data.Read<int32_t>();
 	Player->Bounty = Data.Read<int32_t>();
+	Player->InvisPower = Data.Read<int32_t>();
 	HUD->SetPlayer(Player);
 
 	// Read items
@@ -790,15 +792,13 @@ void _ClientState::HandleChatMessage(_Buffer &Data) {
 	HUD->AddChatMessage(Chat);
 }
 
-/*
-// Send the busy signal to server
-void _ClientState::SendBusy(bool Value) {
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_BUSY);
-	Packet.Write<char>(Value);
-	Network->SendPacket(Packet);
+// Handles the use of an inventory item
+void _ClientState::HandleInventoryUse(_Buffer &Data) {
+	int Slot = Data.Read<char>();
+	Player->UpdateInventory(Slot, -1);
 }
 
+/*
 // Handles the start of a battle
 void _ClientState::HandleStartBattle(_Buffer &Data) {
 
@@ -900,12 +900,6 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->HealthAccumulator = Data.Read<float>();
 	Player->ManaAccumulator = Data.Read<float>();
 	Player->CalculatePlayerStats();
-}
-
-// Handles the use of an inventory item
-void _ClientState::HandleInventoryUse(_Buffer &Data) {
-	int Slot = Data.Read<char>();
-	Player->UpdateInventory(Slot, -1);
 }
 
 // Handles a trade request
@@ -1028,4 +1022,13 @@ void _ClientState::SendAttackPlayer() {
 		Network->SendPacket(Packet);
 	}
 }
+
+// Send the busy signal to server
+void _ClientState::SendBusy(bool Value) {
+	_Buffer Packet;
+	Packet.Write<char>(Packet::WORLD_BUSY);
+	Packet.Write<char>(Value);
+	Network->SendPacket(Packet);
+}
+
 */
