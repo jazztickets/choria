@@ -332,9 +332,12 @@ void _Menu::LoadPortraitButtons() {
 	glm::ivec2 Offset(10, 0);
 	size_t i = 0;
 
+	// Load portraits
+	std::list<_Portrait> Portraits;
+	ClientState.Stats->GetPortraits(Portraits);
+
 	// Iterate over portraits
-	for(auto &PortraitIterator : ClientState.Stats->Portraits) {
-		_Portrait &Portrait = PortraitIterator.second;
+	for(const auto &Portrait : Portraits) {
 
 		// Create style
 		_Style *Style = new _Style();
@@ -784,15 +787,14 @@ void _Menu::HandlePacket(_Buffer &Buffer, char PacketType) {
 			for(int i = 0; i < CharacterCount; i++) {
 				int32_t Slot = Buffer.Read<int32_t>();
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
-				int32_t PortraitIndex = Buffer.Read<int32_t>();
+				int32_t PortraitID = Buffer.Read<int32_t>();
 				int32_t Experience = Buffer.Read<int32_t>();
 
 				std::stringstream Buffer;
 				Buffer << "Level " << ClientState.Stats->FindLevel(Experience)->Level;
 				CharacterSlots[Slot].Level->Text = Buffer.str();
 				CharacterSlots[Slot].Used = true;
-				const _Texture *PortraitImage = ClientState.Stats->Portraits[PortraitIndex].Image;
-				CharacterSlots[Slot].Image->Texture = PortraitImage;
+				CharacterSlots[Slot].Image->Texture = ClientState.Stats->GetPortraitImage(PortraitID);
 			}
 
 			// Disable ui buttons

@@ -621,7 +621,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 		Object->Type = Data.Read<char>();
 		Object->Name = Data.ReadString();
 		Object->PortraitID = Data.Read<uint32_t>();
-		Object->Portrait = Stats->Portraits[Object->PortraitID].Image;
+		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
 		Object->InvisPower = Data.ReadBit();
 		Object->WorldImage = Assets.Textures["players/basic.png"];
 
@@ -661,7 +661,7 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 		Object->PortraitID = Data.Read<uint32_t>();
 		Object->InvisPower = Data.ReadBit();
 
-		Object->Portrait = Stats->Portraits[Object->PortraitID].Image;
+		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
 		Object->Map = Map;
 		Object->WorldImage = Assets.Textures["players/basic.png"];
 

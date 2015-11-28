@@ -102,30 +102,32 @@ class _Stats {
 		const _Vendor *GetVendor(uint32_t VendorID) { return &Vendors[VendorID]; }
 		const _Trader *GetTrader(uint32_t TraderID) { return &Traders[TraderID]; }
 
+		// Portraits
+		void GetPortraits(std::list<_Portrait> &Portraits);
+		const _Texture *GetPortraitImage(uint32_t PortraitID);
+
 		// Monsters
 		void GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters);
 		void GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Drops);
-
-		std::vector<_Event> Events;
-		std::vector<_Level> Levels;
-
-		std::map<uint32_t, _Portrait> Portraits;
-		std::map<uint32_t, _MapStat> Maps;
-		std::map<uint32_t, _Item> Items;
-		std::map<uint32_t, _Vendor> Vendors;
-		std::map<uint32_t, _Trader> Traders;
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[Level-1]; }
 		const _Level *FindLevel(int Experience) const;
 		int GetMaxLevel() const { return Levels.size(); }
 
+		std::vector<_Event> Events;
+		std::vector<_Level> Levels;
+
+		std::map<uint32_t, _MapStat> Maps;
+		std::map<uint32_t, _Item> Items;
+		std::map<uint32_t, _Vendor> Vendors;
+		std::map<uint32_t, _Trader> Traders;
+
 		// Skills
 		std::unordered_map<uint32_t, const _Skill *> Skills;
 
 	private:
 
-		void LoadPortraits();
 		void LoadMaps();
 		void LoadEvents();
 		void LoadLevels();

@@ -30,7 +30,6 @@ _Stats::_Stats() {
 	Database->OpenDatabase("stats/stats.db");
 
 	// Load spreadsheet data
-	LoadPortraits();
 	LoadMaps();
 	LoadEvents();
 	LoadLevels();
@@ -48,22 +47,6 @@ _Stats::~_Stats() {
 	delete Database;
 	Database = nullptr;
 	Events.clear();
-}
-
-// Load portrait data
-void _Stats::LoadPortraits() {
-
-	// Run query
-	Database->RunDataQuery("SELECT * FROM portrait");
-
-	// Get events
-	_Portrait Portrait;
-	while(Database->FetchRow()) {
-		Portrait.ID = Database->GetInt(0);
-		Portrait.Image = Assets.Textures[std::string("portraits/") + Database->GetString(1)];
-		Portraits[Portrait.ID] = Portrait;
-	}
-	Database->CloseQuery();
 }
 
 // Load map data
@@ -278,6 +261,37 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 	// Free memory
 	Database->CloseQuery();
+}
+
+// Get list of portraits
+void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
+
+	// Run query
+	Database->RunDataQuery("SELECT * FROM portrait");
+	while(Database->FetchRow()) {
+		_Portrait Portrait;
+		Portrait.ID = Database->GetInt(0);
+		Portrait.Image = Assets.Textures[std::string("portraits/") + Database->GetString(1)];
+
+		Portraits.push_back(Portrait);
+	}
+
+	Database->CloseQuery();
+}
+
+// Get portrait texture by id
+const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
+	const _Texture *Image = nullptr;
+
+	// Run query
+	Database->RunDataQuery("SELECT image FROM portrait where id = @portrait_id");
+	Database->BindInt(1, PortraitID);
+	if(Database->FetchRow()) {
+		Image = Assets.Textures[std::string("portraits/") + Database->GetString(0)];
+	}
+	Database->CloseQuery();
+
+	return Image;
 }
 
 // Randomly generates a list of monsters from a zone
