@@ -385,29 +385,17 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 	if(!Peer->AccountID)
 		return;
 
-	std::stringstream Query;
-
 	// Get delete slot
 	int32_t Slot = Data.Read<int32_t>();
 	int CharacterID = 0;
 
-	// Get character ID
-	Query << "SELECT id FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
-	Save->Database->RunDataQuery(Query.str());
-	if(Save->Database->FetchRow()) {
-		CharacterID = Save->Database->GetInt(0);
-	}
-	Save->Database->CloseQuery();
-	Query.str("");
-
-	// Character not found
+	// Get character id
+	CharacterID = Save->GetCharacterIDBySlot(Peer->AccountID, Slot);
 	if(!CharacterID)
 		return;
 
 	// Delete character
-	Query << "DELETE FROM character WHERE id = " << CharacterID;
-	Save->Database->RunQuery(Query.str());
-	Query.str("");
+	Save->DeleteCharacter(CharacterID);
 
 	// Update the player
 	SendCharacterList(Peer);

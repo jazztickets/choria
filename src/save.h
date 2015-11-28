@@ -40,6 +40,8 @@ class _Save {
 		uint32_t GetAccountID(const std::string &Username, const std::string &Password);
 		uint32_t GetCharacterCount(uint32_t AccountID);
 		uint32_t GetCharacterIDByName(const std::string &Name);
+		uint32_t GetCharacterIDBySlot(uint32_t AccountID, int Slot);
+		void DeleteCharacter(uint32_t CharacterID);
 		void CreateCharacter(uint32_t AccountID, int Slot, const std::string &Name, uint32_t PortraitID);
 
 		void SavePlayer(const _Object *Player);

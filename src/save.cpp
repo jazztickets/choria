@@ -108,6 +108,26 @@ uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 	return CharacterID;
 }
 
+// Find character id by slot number
+uint32_t _Save::GetCharacterIDBySlot(uint32_t AccountID, int Slot) {
+	Database->RunDataQuery("SELECT id FROM character WHERE account_id = @account_id AND slot = @slot");
+	Database->BindInt(1, AccountID);
+	Database->BindInt(2, Slot);
+	Database->FetchRow();
+	uint32_t CharacterID = Database->GetInt(0);
+	Database->CloseQuery();
+
+	return CharacterID;
+}
+
+// Delete character by id
+void _Save::DeleteCharacter(uint32_t CharacterID) {
+	Database->RunDataQuery("DELETE FROM character WHERE id = @character_id");
+	Database->BindInt(1, CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
+}
+
 // Create character
 void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Name, uint32_t PortraitID) {
 	Database->RunQuery("BEGIN TRANSACTION");
