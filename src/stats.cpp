@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <stats.h>
 #include <objects/object.h>
+#include <objects/skill.h>
 #include <database.h>
 #include <random.h>
 #include <assets.h>
@@ -169,7 +170,6 @@ void _Stats::LoadVendors() {
 	Database->RunDataQuery("SELECT * FROM vendor");
 
 	// Get vendors
-	char Buffer[256];
 	_Vendor Vendor;
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt("id");
@@ -180,8 +180,8 @@ void _Stats::LoadVendors() {
 		Vendor.Items.clear();
 
 		// Get items
-		sprintf(Buffer, "SELECT item_id FROM vendoritem, item where vendoritem.vendor_id = %d and item.id = vendoritem.item_id order by item.cost", Vendor.ID);
-		Database->RunDataQuery(Buffer, 1);
+		Database->RunDataQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
+		Database->BindInt(1, Vendor.ID, 1);
 		while(Database->FetchRow(1)) {
 			Vendor.Items.push_back(GetItem(Database->GetInt("item_id", 1)));
 		}
@@ -200,7 +200,6 @@ void _Stats::LoadTraders() {
 	Database->RunDataQuery("SELECT * FROM trader");
 
 	// Get traders
-	char Buffer[256];
 	_Trader Trader;
 	while(Database->FetchRow()) {
 		Trader.ID = Database->GetInt("id");
@@ -210,8 +209,8 @@ void _Stats::LoadTraders() {
 		Trader.TraderItems.clear();
 
 		// Get items
-		sprintf(Buffer, "SELECT item_id, count FROM traderitem where trader_id = %d", Trader.ID);
-		Database->RunDataQuery(Buffer, 1);
+		Database->RunDataQuery("SELECT item_id, count FROM traderitem where trader_id = @trader_id", 1);
+		Database->BindInt(1, Trader.ID, 1);
 		while(Database->FetchRow(1)) {
 			_TraderItem TraderItem;
 			TraderItem.Item = GetItem(Database->GetInt("item_id", 1));

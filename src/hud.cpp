@@ -18,6 +18,10 @@
 #include <hud.h>
 #include <states/client.h>
 #include <network/clientnetwork.h>
+#include <instances/map.h>
+#include <objects/object.h>
+#include <objects/skill.h>
+#include <objects/item.h>
 #include <framework.h>
 #include <graphics.h>
 #include <input.h>
@@ -35,9 +39,6 @@
 #include <ui/textbox.h>
 #include <ui/image.h>
 #include <ui/style.h>
-#include <objects/object.h>
-#include <instances/map.h>
-#include <objects/item.h>
 #include <vector>
 #include <algorithm>
 #include <sstream>

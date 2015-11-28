@@ -18,6 +18,8 @@
 #include <instances/clientbattle.h>
 #include <states/client.h>
 #include <network/clientnetwork.h>
+#include <objects/object.h>
+#include <objects/skill.h>
 #include <graphics.h>
 #include <stats.h>
 #include <buffer.h>
@@ -29,7 +31,6 @@
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
-#include <objects/object.h>
 
 // Constructor
 _ClientBattle::_ClientBattle()

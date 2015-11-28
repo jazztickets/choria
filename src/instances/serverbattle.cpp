@@ -16,12 +16,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/serverbattle.h>
+#include <objects/object.h>
+#include <objects/skill.h>
 #include <stats.h>
 #include <constants.h>
 #include <buffer.h>
 #include <packet.h>
 #include <random.h>
-#include <objects/object.h>
 
 // Constructor
 _ServerBattle::_ServerBattle()

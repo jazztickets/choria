@@ -19,8 +19,6 @@
 
 // Libraries
 #include <objects/item.h>
-#include <objects/skill.h>
-#include <map>
 #include <unordered_map>
 #include <list>
 #include <vector>
@@ -28,6 +26,7 @@
 // Forward Declarations
 class _Database;
 class _Object;
+class _Skill;
 
 // Structures
 struct _MapStat {
@@ -118,10 +117,10 @@ class _Stats {
 		std::vector<_Event> Events;
 		std::vector<_Level> Levels;
 
-		std::map<uint32_t, _MapStat> Maps;
-		std::map<uint32_t, _Item> Items;
-		std::map<uint32_t, _Vendor> Vendors;
-		std::map<uint32_t, _Trader> Traders;
+		std::unordered_map<uint32_t, _MapStat> Maps;
+		std::unordered_map<uint32_t, _Item> Items;
+		std::unordered_map<uint32_t, _Vendor> Vendors;
+		std::unordered_map<uint32_t, _Trader> Traders;
 
 		// Skills
 		std::unordered_map<uint32_t, const _Skill *> Skills;
