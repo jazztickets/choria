@@ -1,40 +1,40 @@
 <?
 	include("topinclude.php");
 	$ZoneID = intval($_GET["id"]);
-	
+
 	if(isset($_POST["Submit"])) {
 
 		// Make sure there are monsters
 		if(isset($_POST["MDMonsters"])) {
-			
+
 			// Delete old data
-			$Database->query("delete from ZoneData where ZonesID = $ZoneID");
-			
+			$Database->query("delete from ZoneData where zone_id = $ZoneID");
+
 			// Get new data
 			$MDMonsters = $_POST["MDMonsters"];
 			$MDOdds = $_POST["MDOdds"];
 			$ItemCount = count($MDMonsters);
-			
+
 			// Add MonsterSpawn
 			for($i = 0; $i < $ItemCount; $i++) {
 				$MonsterID = $MDMonsters[$i];
 				$Odds = $MDOdds[$i];
-				$Database->query("insert into ZoneData(ZonesID, MonstersID, Odds) values($ZoneID, $MonsterID, $Odds)");
+				$Database->query("insert into ZoneData(zone_id, monster_id, odds) values($ZoneID, $MonsterID, $Odds)");
 			}
 		}
-		
+
 		header("Location: zonedata.php?id=$ZoneID&changed=true");
-		exit;	
+		exit;
 	}
-	
-	$ZonesQuery = $Database->query("select * from Zones where ID = $ZoneID");
+
+	$ZonesQuery = $Database->query("select * from zone where ID = $ZoneID");
 	$ZonesResult = $ZonesQuery->fetch();
 
-	$MonsterSpawnQuery = $Database->query("select ZD.Odds, M.ID, M.Name, M.Level from ZoneData ZD left join Monsters M on ZD.MonstersID = M.ID where ZD.ZonesID = $ZoneID order by Odds desc");
+	$MonsterSpawnQuery = $Database->query("select ZD.Odds, M.ID, M.Name, M.Level from ZoneData ZD left join monster M on ZD.monster_id = M.ID where ZD.zone_id = $ZoneID order by odds desc");
 	$MonsterSpawnResult = $MonsterSpawnQuery->fetchAll();
 	$MonsterSpawnCount = count($MonsterSpawnResult);
 
-	$MonstersQuery = $Database->query("select * from Monsters order by Level");
+	$MonstersQuery = $Database->query("select * from monster order by Level");
 	$MonstersResult = $MonstersQuery->fetchAll();
 	$MonstersCount = count($MonstersResult);
 

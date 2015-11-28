@@ -1,40 +1,40 @@
 <?
 	include("topinclude.php");
 	$TraderID = intval($_GET["id"]);
-	
+
 	if(isset($_POST["Submit"])) {
 
 		// Make sure there are items
 		if(isset($_POST["MDItems"])) {
-			
+
 			// Delete old data
-			$Database->query("delete from TraderItems where TradersID = $TraderID");
-			
+			$Database->query("delete from traderitem where trader_id = $TraderID");
+
 			// Get new data
 			$MDItems = $_POST["MDItems"];
 			$MDOdds = $_POST["MDOdds"];
 			$ItemCount = count($MDItems);
-			
+
 			// Add TraderItems
 			for($i = 0; $i < $ItemCount; $i++) {
 				$ItemID = $MDItems[$i];
 				$Count = $MDOdds[$i];
-				$Database->query("insert into TraderItems(TradersID, ItemsID, Count) values($TraderID, $ItemID, $Count)");
+				$Database->query("insert into traderitem(trader_id, item_id, Count) values($TraderID, $ItemID, $Count)");
 			}
 		}
-		
+
 		header("Location: traderitems.php?id=$TraderID&changed=true");
-		exit;	
+		exit;
 	}
-	
-	$TraderQuery = $Database->query("select * from Traders where ID = $TraderID");
+
+	$TraderQuery = $Database->query("select * from trader where ID = $TraderID");
 	$TraderResult = $TraderQuery->fetch();
 
-	$TraderItemsQuery = $Database->query("select TI.Count, I.ID, I.Name, I.Level from TraderItems TI left join Items I on TI.ItemsID = I.ID where TI.TradersID = $TraderID");
+	$TraderItemsQuery = $Database->query("select TI.Count, I.ID, I.Name, I.Level from traderitem TI left join item I on TI.item_id = I.ID where TI.trader_id = $TraderID");
 	$TraderItemsResult = $TraderItemsQuery->fetchAll();
 	$TraderItemsCount = count($TraderItemsResult);
 
-	$ItemsQuery = $Database->query("select * from Items order by Name");
+	$ItemsQuery = $Database->query("select * from item order by Name");
 	$ItemsResult = $ItemsQuery->fetchAll();
 	$ItemsCount = count($ItemsResult);
 

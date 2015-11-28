@@ -1,40 +1,40 @@
 <?
 	include("topinclude.php");
 	$MonsterID = intval($_GET["id"]);
-	
+
 	if(isset($_POST["Submit"])) {
 
 		// Make sure there are items
 		if(isset($_POST["MDItems"])) {
-			
+
 			// Delete old data
-			$Database->query("delete from MonsterDrops where MonstersID = $MonsterID");
-			
+			$Database->query("delete from monsterdrop where monster_id = $MonsterID");
+
 			// Get new data
 			$MDItems = $_POST["MDItems"];
 			$MDOdds = $_POST["MDOdds"];
 			$ItemCount = count($MDItems);
-			
+
 			// Add drops
 			for($i = 0; $i < $ItemCount; $i++) {
 				$ItemID = $MDItems[$i];
 				$Odds = $MDOdds[$i];
-				$Database->query("insert into MonsterDrops(MonstersID, ItemsID, Odds) values($MonsterID, $ItemID, $Odds)");
+				$Database->query("insert into monsterdrop(monster_id, item_id, odds) values($MonsterID, $ItemID, $Odds)");
 			}
 		}
-		
+
 		header("Location: monsterdrops.php?id=$MonsterID&changed=true");
-		exit;	
+		exit;
 	}
-	
-	$MonsterQuery = $Database->query("select * from Monsters where ID = $MonsterID");
+
+	$MonsterQuery = $Database->query("select * from monster where ID = $MonsterID");
 	$MonsterResult = $MonsterQuery->fetch();
 
-	$DropsQuery = $Database->query("select MD.Odds, I.ID, I.Name, I.Level from MonsterDrops MD left join Items I on MD.ItemsID = I.ID where MD.MonstersID = $MonsterID order by Odds desc");
+	$DropsQuery = $Database->query("select MD.Odds, I.ID, I.Name, I.Level from monsterdrop MD left join item I on MD.item_id = I.ID where MD.monster_id = $MonsterID order by odds desc");
 	$DropsResult = $DropsQuery->fetchAll();
 	$DropsCount = count($DropsResult);
 
-	$ItemsQuery = $Database->query("select * from Items order by Name");
+	$ItemsQuery = $Database->query("select * from item order by Name");
 	$ItemsResult = $ItemsQuery->fetchAll();
 	$ItemsCount = count($ItemsResult);
 

@@ -1,6 +1,6 @@
 <?
 	include("topinclude.php");
-	$VendorsID = intval($_GET["id"]);
+	$vendor_id = intval($_GET["id"]);
 	
 	if(isset($_POST["Submit"])) {
 
@@ -8,7 +8,7 @@
 		if(isset($_POST["MDItems"])) {
 			
 			// Delete old data
-			if(!$Database->query("delete from VendorItems where VendorsID = $VendorsID")) {
+			if(!$Database->query("delete from vendoritem where vendor_id = $vendor_id")) {
 				print_r($Database->errorInfo());
 				exit();
 			}
@@ -20,25 +20,25 @@
 			// Add items
 			for($i = 0; $i < $ItemCount; $i++) {
 				$ItemID = $MDItems[$i];
-				if(!$Database->query("insert into VendorItems(VendorsID, ItemsID) values($VendorsID, $ItemID)")) {
+				if(!$Database->query("insert into vendoritem(vendor_id, item_id) values($vendor_id, $ItemID)")) {
 					print_r($Database->errorInfo());
 					exit();
 				}
 			}
 		}
 		
-		header("Location: vendoritems.php?id=$VendorsID&changed=true");
+		header("Location: vendoritems.php?id=$vendor_id&changed=true");
 		exit;	
 	}
 	
-	$VendorsQuery = $Database->query("select * from Vendors where ID = $VendorsID");
+	$VendorsQuery = $Database->query("select * from vendor where ID = $vendor_id");
 	$VendorsResult = $VendorsQuery->fetch();
 
-	$VendorItemsQuery = $Database->query("select I.ID, I.Name, I.Level from VendorItems VI left join Items I on VI.ItemsID = I.ID where VI.VendorsID = $VendorsID");
+	$VendorItemsQuery = $Database->query("select I.ID, I.Name, I.Level from vendoritem VI left join item I on VI.item_id = I.ID where VI.vendor_id = $vendor_id");
 	$VendorItemsResult = $VendorItemsQuery->fetchAll();
 	$VendorItemsCount = count($VendorItemsResult);
 
-	$ItemsQuery = $Database->query("select * from Items order by Name");
+	$ItemsQuery = $Database->query("select * from item order by Name");
 	$ItemsResult = $ItemsQuery->fetchAll();
 	$ItemsCount = count($ItemsResult);
 
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 	</form>
-	<form name="Form" action="vendoritems.php?id=<?=$VendorsID?>" method="post" onSubmit="return SubmitForm();">
+	<form name="Form" action="vendoritems.php?id=<?=$vendor_id?>" method="post" onSubmit="return SubmitForm();">
 
 		<div style="float: left;">
 			<div class="selectheader">

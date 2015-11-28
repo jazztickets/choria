@@ -9,7 +9,7 @@
 		<td></td>
 	</tr>
 <?
-	$Query = $Database->query("select ID, MonsterCount from Zones");
+	$Query = $Database->query("select ID, MonsterCount from zone");
 	$Result = $Query->fetchAll();
 
 	$Count = count($Result);
@@ -20,10 +20,10 @@
 		<td><?=$ZoneID?></td>
 		<td><?=$Result[$i][1]?></td>
 	<?
-		$ZoneCountQuery = $Database->query("select count(ZD.ID) from ZoneData ZD where ZD.ZonesID = $ZoneID");
+		$ZoneCountQuery = $Database->query("select count(ZD.ID) from ZoneData ZD where ZD.zone_id = $ZoneID");
 		$ZoneCount = $ZoneCountQuery->fetch();
 	?>
-		<td><a href="zonedata.php?id=<?=$Result[$i][0]?>">Edit Monsters (<?=$ZoneCount[0]?>)</a></td>
+		<td><a href="zonedata.php?id=<?=$Result[$i][0]?>">Edit monster (<?=$ZoneCount[0]?>)</a></td>
 	</tr>
 <?
 	}

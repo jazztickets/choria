@@ -9,7 +9,7 @@
 		<td></td>
 	</tr>
 <?
-	$Query = $Database->query("select ID, Name from Vendors");
+	$Query = $Database->query("select ID, Name from vendor");
 	$Result = $Query->fetchAll();
 
 	$Count = count($Result);
@@ -20,10 +20,10 @@
 		<td><?=$VendorID?></td>
 		<td><?=$Result[$i][1]?></td>
 	<?
-		$DropsCountQuery = $Database->query("select count(VI.ID) from VendorItems VI where VI.VendorsID = $VendorID");
+		$DropsCountQuery = $Database->query("select count(VI.ID) from vendoritem VI where VI.vendor_id = $VendorID");
 		$DropCount = $DropsCountQuery->fetch();
 	?>
-		<td><a href="vendoritems.php?id=<?=$Result[$i][0]?>">Edit Items (<?=$DropCount[0]?>)</a></td>
+		<td><a href="vendoritems.php?id=<?=$Result[$i][0]?>">Edit item (<?=$DropCount[0]?>)</a></td>
 	</tr>
 <?
 	}
