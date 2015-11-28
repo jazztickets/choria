@@ -83,9 +83,16 @@ void _Database::RunDataQuery(const std::string &Query, int Handle) {
 	if(QueryHandle[Handle])
 		throw std::runtime_error("Query handle already exists!");
 
+	// Prepare query
 	int Result = sqlite3_prepare_v2(Database, Query.c_str(), -1, &QueryHandle[Handle], 0);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
+
+	// Load column name map
+	int ColumnCount = sqlite3_column_count(QueryHandle[Handle]);
+	for(int i = 0; i < ColumnCount; i++) {
+		ColumnIndexes[Handle][sqlite3_column_name(QueryHandle[Handle], i)] = i;
+	}
 }
 
 // Runs a query that counts a row and returns the result
@@ -124,6 +131,7 @@ int _Database::CloseQuery(int Handle) {
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 
 	QueryHandle[Handle] = nullptr;
+	ColumnIndexes[Handle].clear();
 
 	return 1;
 }
@@ -135,9 +143,11 @@ int64_t _Database::GetLastInsertID() {
 }
 
 // Get column name by index
-const char *_Database::GetColumnName(int ColumnIndex, int Handle) {
+int _Database::GetColumnIndex(const std::string &Name, int Handle) {
+	if(ColumnIndexes[Handle].find(Name) == ColumnIndexes[Handle].end())
+		throw std::runtime_error("unknown column " + Name);
 
-	return sqlite3_column_name(QueryHandle[Handle], ColumnIndex);
+	return ColumnIndexes[Handle][Name];
 }
 
 // Returns an integer column
@@ -146,16 +156,34 @@ int _Database::GetInt(int ColumnIndex, int Handle) {
 	return sqlite3_column_int(QueryHandle[Handle], ColumnIndex);
 }
 
+// Returns an integer column by column name
+int _Database::GetInt(const std::string &ColumnName, int Handle) {
+
+	return sqlite3_column_int(QueryHandle[Handle], GetColumnIndex(ColumnName, Handle));
+}
+
 // Returns a float column
 float _Database::GetFloat(int ColumnIndex, int Handle) {
 
 	return (float)sqlite3_column_double(QueryHandle[Handle], ColumnIndex);
 }
 
+// Returns an float column by column name
+float _Database::GetFloat(const std::string &ColumnName, int Handle) {
+
+	return (float)sqlite3_column_double(QueryHandle[Handle], GetColumnIndex(ColumnName, Handle));
+}
+
 // Returns a string column
 const char *_Database::GetString(int ColumnIndex, int Handle) {
 
 	return (const char *)sqlite3_column_text(QueryHandle[Handle], ColumnIndex);
+}
+
+// Returns a string column by column name
+const char *_Database::GetString(const std::string &ColumnName, int Handle) {
+
+	return (const char *)sqlite3_column_text(QueryHandle[Handle], GetColumnIndex(ColumnName, Handle));
 }
 
 // Bind integer to parameter

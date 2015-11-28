@@ -19,6 +19,7 @@
 
 // Libraries
 #include <string>
+#include <unordered_map>
 #include <cstdint>
 
 // Forward Declarations
@@ -43,11 +44,14 @@ class _Database {
 		int CloseQuery(int Handle=0);
 		int64_t GetLastInsertID();
 
-		const char *GetColumnName(int ColumnIndex, int Handle=0);
+		int GetColumnIndex(const std::string &Name, int Handle);
 
 		int GetInt(int ColumnIndex, int Handle=0);
+		int GetInt(const std::string &ColumnName, int Handle=0);
 		float GetFloat(int ColumnIndex, int Handle=0);
+		float GetFloat(const std::string &ColumnName, int Handle=0);
 		const char *GetString(int ColumnIndex, int Handle=0);
+		const char *GetString(const std::string &ColumnName, int Handle=0);
 
 		void BindInt(int ColumnIndex, int Value, int Handle=0);
 		void BindString(int ColumnIndex, const std::string &String, int Handle=0);
@@ -56,5 +60,7 @@ class _Database {
 
 		sqlite3 *Database;
 		sqlite3_stmt *QueryHandle[2];
+
+		std::unordered_map<std::string, int> ColumnIndexes[2];
 
 };

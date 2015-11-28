@@ -58,8 +58,8 @@ void _Stats::LoadMaps() {
 	// Get events
 	_MapStat Map;
 	while(Database->FetchRow()) {
-		Map.File = std::string("maps/") + Database->GetString(1);
-		Maps[Database->GetInt(0)] = Map;
+		Map.File = std::string("maps/") + Database->GetString("file");
+		Maps[Database->GetInt("id")] = Map;
 	}
 	Database->CloseQuery();
 }
@@ -73,8 +73,8 @@ void _Stats::LoadEvents() {
 	// Get events
 	_Event Event;
 	while(Database->FetchRow()) {
-		Event.Name = Database->GetString(1);
-		Event.ShortName = Database->GetString(2);
+		Event.Name = Database->GetString("name");
+		Event.ShortName = Database->GetString("shortname");
 		Events.push_back(Event);
 	}
 	Database->CloseQuery();
@@ -89,12 +89,12 @@ void _Stats::LoadLevels() {
 	// Get events
 	_Level Level;
 	while(Database->FetchRow()) {
-		Level.Level = Database->GetInt(0);
-		Level.Experience = Database->GetInt(1);
-		Level.NextLevel = Database->GetInt(2);
-		Level.Health = Database->GetInt(3);
-		Level.Mana = Database->GetInt(4);
-		Level.SkillPoints = Database->GetInt(5);
+		Level.Level = Database->GetInt("level");
+		Level.Experience = Database->GetInt("experience");
+		Level.NextLevel = Database->GetInt("nextlevel");
+		Level.Health = Database->GetInt("health");
+		Level.Mana = Database->GetInt("mana");
+		Level.SkillPoints = Database->GetInt("skillpoints");
 		Levels.push_back(Level);
 	}
 	Database->CloseQuery();
@@ -109,18 +109,18 @@ void _Stats::LoadSkills() {
 	// Get events
 	while(Database->FetchRow()) {
 		_Skill *Skill = new _Skill;
-		Skill->ID = Database->GetInt(0);
-		Skill->Name = Database->GetString(1);
-		Skill->Info = Database->GetString(2);
-		Skill->Image = Assets.Textures[Database->GetString(3)];
-		Skill->Type = Database->GetInt(4);
-		Skill->SkillCost = Database->GetInt(5);
-		Skill->ManaCostBase = Database->GetFloat(6);
-		Skill->ManaCost = Database->GetFloat(7);
-		Skill->PowerBase = Database->GetFloat(8);
-		Skill->PowerRangeBase = Database->GetFloat(9);
-		Skill->Power = Database->GetFloat(10);
-		Skill->PowerRange = Database->GetFloat(11);
+		Skill->ID = Database->GetInt("id");
+		Skill->Name = Database->GetString("name");
+		Skill->Info = Database->GetString("description");
+		Skill->Image = Assets.Textures[Database->GetString("icon")];
+		Skill->Type = Database->GetInt("type");
+		Skill->SkillCost = Database->GetInt("skillcost");
+		Skill->ManaCostBase = Database->GetFloat("manacostbase");
+		Skill->ManaCost = Database->GetFloat("manacost");
+		Skill->PowerBase = Database->GetFloat("powerbase");
+		Skill->PowerRangeBase = Database->GetFloat("powerrangebase");
+		Skill->Power = Database->GetFloat("power");
+		Skill->PowerRange = Database->GetFloat("powerrange");
 		Skills[Skill->ID] = Skill;
 	}
 	Database->CloseQuery();
@@ -137,25 +137,25 @@ void _Stats::LoadItems() {
 	// Get events
 	_Item Item;
 	while(Database->FetchRow()) {
-		Item.ID = Database->GetInt(0);
-		Item.Name = Database->GetString(1);
-		Item.Level = Database->GetInt(2);
-		Item.Type = Database->GetInt(3);
-		Item.Image = Assets.Textures[std::string("items/") + Database->GetString(4)];
-		Item.LevelRequired = Database->GetInt(5);
-		Item.Cost = Database->GetInt(6);
-		Item.Damage = Database->GetFloat(7);
-		Item.DamageRange = Database->GetFloat(8);
-		Item.Defense = Database->GetFloat(9);
-		Item.DefenseRange = Database->GetFloat(10);
-		Item.DamageType = Database->GetInt(11);
-		Item.HealthRestore = Database->GetInt(12);
-		Item.ManaRestore = Database->GetInt(13);
-		Item.MaxHealth = Database->GetInt(14);
-		Item.MaxMana = Database->GetInt(15);
-		Item.HealthRegen = Database->GetFloat(16);
-		Item.ManaRegen = Database->GetFloat(17);
-		Item.InvisPower = Database->GetInt(18);
+		Item.ID = Database->GetInt("id");
+		Item.Name = Database->GetString("name");
+		Item.Level = Database->GetInt("level");
+		Item.Type = Database->GetInt("type");
+		Item.Image = Assets.Textures[std::string("items/") + Database->GetString("image")];
+		Item.LevelRequired = Database->GetInt("levelrequired");
+		Item.Cost = Database->GetInt("cost");
+		Item.Damage = Database->GetFloat("damage");
+		Item.DamageRange = Database->GetFloat("damagerange");
+		Item.Defense = Database->GetFloat("defense");
+		Item.DefenseRange = Database->GetFloat("defenserange");
+		Item.DamageType = Database->GetInt("damagetype");
+		Item.HealthRestore = Database->GetInt("healthrestore");
+		Item.ManaRestore = Database->GetInt("manarestore");
+		Item.MaxHealth = Database->GetInt("maxhealth");
+		Item.MaxMana = Database->GetInt("maxmana");
+		Item.HealthRegen = Database->GetFloat("healthregen");
+		Item.ManaRegen = Database->GetFloat("manaregen");
+		Item.InvisPower = Database->GetInt("invispower");
 		Items[Item.ID] = Item;
 	}
 	Database->CloseQuery();
@@ -172,18 +172,18 @@ void _Stats::LoadVendors() {
 	char Buffer[256];
 	_Vendor Vendor;
 	while(Database->FetchRow()) {
-		Vendor.ID = Database->GetInt(0);
-		Vendor.Name = Database->GetString(1);
-		Vendor.Info = Database->GetString(2);
-		Vendor.BuyPercent = Database->GetFloat(3);
-		Vendor.SellPercent = Database->GetFloat(4);
+		Vendor.ID = Database->GetInt("id");
+		Vendor.Name = Database->GetString("name");
+		Vendor.Info = Database->GetString("info");
+		Vendor.BuyPercent = Database->GetFloat("buypercent");
+		Vendor.SellPercent = Database->GetFloat("sellpercent");
 		Vendor.Items.clear();
 
 		// Get items
 		sprintf(Buffer, "SELECT item_id FROM vendoritem, item where vendoritem.vendor_id = %d and item.id = vendoritem.item_id order by item.cost", Vendor.ID);
 		Database->RunDataQuery(Buffer, 1);
 		while(Database->FetchRow(1)) {
-			Vendor.Items.push_back(GetItem(Database->GetInt(0, 1)));
+			Vendor.Items.push_back(GetItem(Database->GetInt("item_id", 1)));
 		}
 		Database->CloseQuery(1);
 
@@ -203,10 +203,10 @@ void _Stats::LoadTraders() {
 	char Buffer[256];
 	_Trader Trader;
 	while(Database->FetchRow()) {
-		Trader.ID = Database->GetInt(0);
-		Trader.Name = Database->GetString(1);
-		Trader.RewardItem = GetItem(Database->GetInt(2));
-		Trader.Count = Database->GetInt(3);
+		Trader.ID = Database->GetInt("id");
+		Trader.Name = Database->GetString("name");
+		Trader.RewardItem = GetItem(Database->GetInt("item_id"));
+		Trader.Count = Database->GetInt("count");
 		Trader.TraderItems.clear();
 
 		// Get items
@@ -214,8 +214,8 @@ void _Stats::LoadTraders() {
 		Database->RunDataQuery(Buffer, 1);
 		while(Database->FetchRow(1)) {
 			_TraderItem TraderItem;
-			TraderItem.Item = GetItem(Database->GetInt(0, 1));
-			TraderItem.Count = Database->GetInt(1, 1);
+			TraderItem.Item = GetItem(Database->GetInt("item_id", 1));
+			TraderItem.Count = Database->GetInt("count", 1);
 			Trader.TraderItems.push_back(TraderItem);
 		}
 		Database->CloseQuery(1);
@@ -236,25 +236,25 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 	// Get data
 	float Value, Range;
 	if(Database->FetchRow()) {
-		Monster->Level = Database->GetInt(1);
-		Monster->Name = Database->GetString(2);
-		Monster->Portrait = Assets.Textures[std::string("monsters/") + Database->GetString(3)];
-		Monster->Health = Monster->MaxHealth = Database->GetInt(4);
-		Monster->Mana = Monster->MaxMana = Database->GetInt(5);
-		Monster->ExperienceGiven = Database->GetInt(6);
-		Monster->GoldGiven = Database->GetInt(7);
+		Monster->Level = Database->GetInt("level");
+		Monster->Name = Database->GetString("name");
+		Monster->Portrait = Assets.Textures[std::string("monsters/") + Database->GetString("portrait")];
+		Monster->Health = Monster->MaxHealth = Database->GetInt("health");
+		Monster->Mana = Monster->MaxMana = Database->GetInt("mana");
+		Monster->ExperienceGiven = Database->GetInt("experience");
+		Monster->GoldGiven = Database->GetInt("gold");
 
-		Value = Database->GetFloat(8);
-		Range = Database->GetFloat(9);
+		Value = Database->GetFloat("damage");
+		Range = Database->GetFloat("damagerange");
 		Monster->MinDamage = (int)(Value - Range);
 		Monster->MaxDamage = (int)(Value + Range);
 
-		Value = Database->GetFloat(10);
-		Range = Database->GetFloat(11);
+		Value = Database->GetFloat("defense");
+		Range = Database->GetFloat("defenserange");
 		Monster->MinDefense = (int)(Value - Range);
 		Monster->MaxDefense = (int)(Value + Range);
 
-		Monster->AI = Database->GetInt(12);
+		Monster->AI = Database->GetInt("ai");
 
 		Monster->ActionBar[0] = Skills[1];
 	}
@@ -270,8 +270,8 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
 	Database->RunDataQuery("SELECT * FROM portrait");
 	while(Database->FetchRow()) {
 		_Portrait Portrait;
-		Portrait.ID = Database->GetInt(0);
-		Portrait.Image = Assets.Textures[std::string("portraits/") + Database->GetString(1)];
+		Portrait.ID = Database->GetInt("id");
+		Portrait.Image = Assets.Textures[std::string("portraits/") + Database->GetString("image")];
 
 		Portraits.push_back(Portrait);
 	}
@@ -287,7 +287,7 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 	Database->RunDataQuery("SELECT image FROM portrait where id = @portrait_id");
 	Database->BindInt(1, PortraitID);
 	if(Database->FetchRow()) {
-		Image = Assets.Textures[std::string("portraits/") + Database->GetString(0)];
+		Image = Assets.Textures[std::string("portraits/") + Database->GetString("image")];
 	}
 	Database->CloseQuery();
 
@@ -306,7 +306,7 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 	sprintf(QueryString, "SELECT monstercount FROM zone WHERE id = %d", ZoneID);
 	Database->RunDataQuery(QueryString);
 	if(Database->FetchRow()) {
-		MonsterCount = Database->GetInt(0);
+		MonsterCount = Database->GetInt("monstercount");
 	}
 	Database->CloseQuery();
 
@@ -322,8 +322,8 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 	std::vector<_Zone> Zone;
 	int OddsSum = 0;
 	while(Database->FetchRow()) {
-		int MonsterID = Database->GetInt(0);
-		int Odds = Database->GetInt(1);
+		int MonsterID = Database->GetInt("monster_id");
+		int Odds = Database->GetInt("odds");
 		OddsSum += Odds;
 
 		Zone.push_back(_Zone(MonsterID, OddsSum));
@@ -366,8 +366,8 @@ void _Stats::GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Dr
 	std::vector<_MonsterDrop> MonsterDrop;
 	int OddsSum = 0;
 	while(Database->FetchRow()) {
-		int ItemID = Database->GetInt(0);
-		int Odds = Database->GetInt(1);
+		int ItemID = Database->GetInt("item_id");
+		int Odds = Database->GetInt("odds");
 		OddsSum += Odds;
 
 		MonsterDrop.push_back(_MonsterDrop(ItemID, OddsSum));
