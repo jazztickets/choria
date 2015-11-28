@@ -33,8 +33,8 @@ class _Database {
 		_Database();
 		~_Database();
 
-		int OpenDatabase(const std::string &Path);
-		int OpenDatabaseCreate(const std::string &Path);
+		void OpenDatabase(const std::string &Path);
+		void OpenDatabaseCreate(const std::string &Path);
 
 		void RunQuery(const std::string &Query);
 		void RunDataQuery(const std::string &Query, int Handle=0);
@@ -46,6 +46,9 @@ class _Database {
 		int GetInt(int ColumnIndex, int Handle=0);
 		float GetFloat(int ColumnIndex, int Handle=0);
 		const char *GetString(int ColumnIndex, int Handle=0);
+
+		void BindInt(int ColumnIndex, int Value, int Handle=0);
+		void BindString(int ColumnIndex, const std::string &String, int Handle=0);
 
 	private:
 

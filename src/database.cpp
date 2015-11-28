@@ -18,7 +18,6 @@
 #include <database.h>
 #include <sqlite3.h>
 #include <stdexcept>
-#include <cstdio>
 
 // Constructor
 _Database::_Database()
@@ -37,41 +36,36 @@ _Database::~_Database() {
 }
 
 // Load a database file
-int _Database::OpenDatabase(const std::string &Path) {
+void _Database::OpenDatabase(const std::string &Path) {
 
 	// Open database file
 	int Result = sqlite3_open_v2(Path.c_str(), &Database, SQLITE_OPEN_READWRITE, nullptr);
 	if(Result != SQLITE_OK) {
-		printf("OpenDatabase: %s\n", sqlite3_errmsg(Database));
+		std::string Error = sqlite3_errmsg(Database);
 		sqlite3_close(Database);
 
-		return 0;
+		throw std::runtime_error(Error);
 	}
-
-	return 1;
 }
 
 // Load a database file
-int _Database::OpenDatabaseCreate(const std::string &Path) {
+void _Database::OpenDatabaseCreate(const std::string &Path) {
 
 	// Open database file
 	int Result = sqlite3_open_v2(Path.c_str(), &Database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
 	if(Result != SQLITE_OK) {
-		printf("OpenDatabaseCreate: %s\n", sqlite3_errmsg(Database));
+		std::string Error = sqlite3_errmsg(Database);
 		sqlite3_close(Database);
 
-		return 0;
+		throw std::runtime_error(Error);
 	}
-
-	return 1;
 }
 
 // Runs a query
 void _Database::RunQuery(const std::string &Query) {
 
 	sqlite3_stmt *NewQueryHandle;
-	const char *Tail;
-	int Result = sqlite3_prepare_v2(Database, Query.c_str(), Query.length(), &NewQueryHandle, &Tail);
+	int Result = sqlite3_prepare_v2(Database, Query.c_str(), -1, &NewQueryHandle, 0);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 
@@ -89,8 +83,7 @@ void _Database::RunDataQuery(const std::string &Query, int Handle) {
 	if(QueryHandle[Handle])
 		throw std::runtime_error("Query handle already exists!");
 
-	const char *Tail;
-	int Result = sqlite3_prepare_v2(Database, Query.c_str(), Query.length(), &QueryHandle[Handle], &Tail);
+	int Result = sqlite3_prepare_v2(Database, Query.c_str(), -1, &QueryHandle[Handle], 0);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 }
@@ -157,4 +150,18 @@ float _Database::GetFloat(int ColumnIndex, int Handle) {
 const char *_Database::GetString(int ColumnIndex, int Handle) {
 
 	return (const char *)sqlite3_column_text(QueryHandle[Handle], ColumnIndex);
+}
+
+// Bind integer to parameter
+void _Database::BindInt(int ColumnIndex, int Value, int Handle) {
+	int Result = sqlite3_bind_int(QueryHandle[Handle], 1, Value);
+	if(Result != SQLITE_OK)
+		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
+}
+
+// Bind string to parameter
+void _Database::BindString(int ColumnIndex, const std::string &String, int Handle) {
+	int Result = sqlite3_bind_text(QueryHandle[Handle], ColumnIndex, String.c_str(), -1, SQLITE_STATIC);
+	if(Result != SQLITE_OK)
+		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 }

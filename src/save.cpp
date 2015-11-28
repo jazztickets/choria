@@ -32,11 +32,11 @@ _Save::_Save() {
 
 	// Open database
 	std::string DatabasePath = Config.ConfigPath + "save.db";
-	if(!Database->OpenDatabase(DatabasePath.c_str())) {
-
-		// Create a new database
-		if(!Database->OpenDatabaseCreate(DatabasePath.c_str()))
-			throw std::runtime_error("OpenDatabaseCreate failed");
+	try {
+		Database->OpenDatabase(DatabasePath);
+	}
+	catch(std::exception &Error) {
+		Database->OpenDatabaseCreate(DatabasePath);
 
 		// Populate data
 		CreateDefaultDatabase();
