@@ -86,12 +86,12 @@ class _Server {
 		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
 		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
-		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
-		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
 		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
 		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
 		void HandleEventEnd(_Buffer &Data, _Peer *Peer);
+		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
+		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
 		void HandleActionBar(_Buffer &Data, _Peer *Peer);
 		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);

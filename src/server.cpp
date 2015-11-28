@@ -208,7 +208,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 
 		_Buffer Packet;
 		Packet.Write<char>(Packet::TRADE_CANCEL);
-		OldServerNetwork->SendPacketToPeer(&Packet, TradePlayer->OldPeer);
+		Network->SendPacket(&Packet, TradePlayer->OldPeer);
 	}
 
 	// Remove from battle
@@ -249,16 +249,10 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::CHAT_MESSAGE:
 			HandleChatMessage(Data, Peer);
 		break;
-		/*
-		case Packet::BATTLE_COMMAND:
-			HandleBattleCommand(Data, Peer);
-		break;
-		case Packet::BATTLE_CLIENTDONE:
-			HandleBattleFinished(Data, Peer);
-		break;
 		case Packet::INVENTORY_MOVE:
 			HandleInventoryMove(Data, Peer);
 		break;
+		/*
 		case Packet::INVENTORY_USE:
 			HandleInventoryUse(Data, Peer);
 		break;
@@ -267,6 +261,12 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case Packet::EVENT_END:
 			HandleEventEnd(Data, Peer);
+		break;
+		case Packet::BATTLE_COMMAND:
+			HandleBattleCommand(Data, Peer);
+		break;
+		case Packet::BATTLE_CLIENTDONE:
+			HandleBattleFinished(Data, Peer);
 		break;
 		case Packet::VENDOR_EXCHANGE:
 			HandleVendorExchange(Data, Peer);
@@ -730,7 +730,96 @@ void _Server::SendPlayerPosition(_Object *Player) {
 	Network->SendPacket(Packet, Player->Peer);
 }
 
+// Handles a player's inventory move
+void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	int OldSlot = Data.Read<char>();
+	int NewSlot = Data.Read<char>();
+
+	// Move items
+	Player->MoveInventory(OldSlot, NewSlot);
+	Player->CalculatePlayerStats();
+
+	// Check for trading players
+	_Object *TradePlayer = Player->TradePlayer;
+	if(Player->State == _Object::STATE_TRADE && TradePlayer && (_Object::IsSlotTrade(OldSlot) || _Object::IsSlotTrade(NewSlot))) {
+
+		// Reset agreement
+		Player->TradeAccepted = false;
+		TradePlayer->TradeAccepted = false;
+
+		// Send item updates to trading player
+		_InventorySlot *OldSlotItem = &Player->Inventory[OldSlot];
+		_InventorySlot *NewSlotItem = &Player->Inventory[NewSlot];
+
+		// Get item information
+		int OldItemID = 0, NewItemID = 0, OldItemCount = 0, NewItemCount = 0;
+		if(OldSlotItem->Item) {
+			OldItemID = OldSlotItem->Item->ID;
+			OldItemCount = OldSlotItem->Count;
+		}
+		if(NewSlotItem->Item) {
+			NewItemID = NewSlotItem->Item->ID;
+			NewItemCount = NewSlotItem->Count;
+		}
+
+		// Build packet
+		_Buffer Packet;
+		Packet.Write<char>(Packet::TRADE_ITEM);
+		Packet.Write<int32_t>(OldItemID);
+		Packet.Write<char>(OldSlot);
+		if(OldItemID > 0)
+			Packet.Write<char>(OldItemCount);
+		Packet.Write<int32_t>(NewItemID);
+		Packet.Write<char>(NewSlot);
+		if(NewItemID > 0)
+			Packet.Write<char>(NewItemCount);
+
+		// Send updates
+		Network->SendPacket(Packet, TradePlayer->Peer);
+	}
+}
 /*
+// Handle a player's inventory use request
+void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
+	_Object *Player = (_Object *)Peer->data;
+	if(!Player)
+		return;
+
+	// Use an item
+	Player->UseInventory(Packet->Read<char>());
+}
+
+// Handle a player's inventory split stack request
+void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
+	_Object *Player = (_Object *)Peer->data;
+	if(!Player)
+		return;
+
+	int Slot = Data.Read<char>();
+	int Count = Data.Read<char>();
+
+	// Inventory only
+	if(!_Object::IsSlotInventory(Slot))
+		return;
+
+	Player->SplitStack(Slot, Count);
+}
+
+// Handles a player's event end message
+void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
+	_Object *Player = (_Object *)Peer->data;
+	if(!Player)
+		return;
+
+	Player->Vendor = nullptr;
+	Player->State = _Object::STATE_NONE;
+}
+
 // Handles battle commands from a client
 void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
@@ -770,95 +859,6 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 
 	// Send updates
 	SendHUD(Player);
-}
-
-// Handles a player's inventory move
-void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	int OldSlot = Data.Read<char>();
-	int NewSlot = Data.Read<char>();
-
-	// Move items
-	Player->MoveInventory(OldSlot, NewSlot);
-	Player->CalculatePlayerStats();
-
-	// Check for trading players
-	_Object *TradePlayer = Player->TradePlayer;
-	if(Player->State == _Object::STATE_TRADE && TradePlayer && (_Object::IsSlotTrade(OldSlot) || _Object::IsSlotTrade(NewSlot))) {
-
-		// Reset agreement
-		Player->TradeAccepted = false;
-		TradePlayer->TradeAccepted = false;
-
-		// Send item updates to trading player
-		_InventorySlot *OldSlotItem = &Player->Inventory[OldSlot];
-		_InventorySlot *NewSlotItem = &Player->Inventory[NewSlot];
-
-		// Get item information
-		int OldItemID = 0, NewItemID = 0, OldItemCount = 0, NewItemCount = 0;
-		if(OldSlotItem->Item) {
-			OldItemID = OldSlotItem->Item->ID;
-			OldItemCount = OldSlotItem->Count;
-		}
-		if(NewSlotItem->Item) {
-			NewItemID = NewSlotItem->Item->ID;
-			NewItemCount = NewSlotItem->Count;
-		}
-
-		// Build packet
-		_Buffer NewPacket;
-		NewPacket.Write<char>(Packet::TRADE_ITEM);
-		NewPacket.Write<int32_t>(OldItemID);
-		NewPacket.Write<char>(OldSlot);
-		if(OldItemID > 0)
-			NewPacket.Write<char>(OldItemCount);
-		NewPacket.Write<int32_t>(NewItemID);
-		NewPacket.Write<char>(NewSlot);
-		if(NewItemID > 0)
-			NewPacket.Write<char>(NewItemCount);
-
-		// Send updates
-		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
-	}
-}
-
-// Handle a player's inventory use request
-void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Use an item
-	Player->UseInventory(Packet->Read<char>());
-}
-
-// Handle a player's inventory split stack request
-void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	int Slot = Data.Read<char>();
-	int Count = Data.Read<char>();
-
-	// Inventory only
-	if(!_Object::IsSlotInventory(Slot))
-		return;
-
-	Player->SplitStack(Slot, Count);
-}
-
-// Handles a player's event end message
-void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	Player->Vendor = nullptr;
-	Player->State = _Object::STATE_NONE;
 }
 
 // Handles a vendor exchange message
@@ -1044,7 +1044,7 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 
 		_Buffer NewPacket;
 		NewPacket.Write<char>(Packet::TRADE_CANCEL);
-		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
+		Network->SendPacket(Packet);(&NewPacket, TradePlayer->OldPeer);
 	}
 
 	// Set state back to normal
@@ -1074,7 +1074,7 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 		_Buffer NewPacket;
 		NewPacket.Write<char>(Packet::TRADE_GOLD);
 		NewPacket.Write<int32_t>(Gold);
-		OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
+		Network->SendPacket(&NewPacket, TradePlayer->OldPeer);
 	}
 }
 
@@ -1114,13 +1114,13 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 				_Buffer NewPacket;
 				NewPacket.Write<char>(Packet::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(Player, &NewPacket, Player->Gold);
-				OldServerNetwork->SendPacketToPeer(&NewPacket, Player->OldPeer);
+				Network->SendPacket(&NewPacket, Player->OldPeer);
 			}
 			{
 				_Buffer NewPacket;
 				NewPacket.Write<char>(Packet::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(TradePlayer, &NewPacket, TradePlayer->Gold);
-				OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
+				Network->SendPacket(&NewPacket, TradePlayer->OldPeer);
 			}
 
 			Player->State = _Object::STATE_NONE;
@@ -1138,7 +1138,7 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			_Buffer NewPacket;
 			NewPacket.Write<char>(Packet::TRADE_ACCEPT);
 			NewPacket.Write<char>(Accepted);
-			OldServerNetwork->SendPacketToPeer(&NewPacket, TradePlayer->OldPeer);
+			Network->SendPacket(&NewPacket, TradePlayer->OldPeer);
 		}
 	}
 }
@@ -1213,7 +1213,7 @@ void _OldServerState::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	Packet.Write<char>(Packet::TRADE_REQUEST);
 	Packet.Write<NetworkIDType>(Sender->NetworkID);
 	BuildTradeItemsPacket(Sender, &Packet, Sender->TradeGold);
-	OldServerNetwork->SendPacketToPeer(&Packet, Receiver->OldPeer);
+	Network->SendPacket(&Packet, Receiver->OldPeer);
 }
 
 // Adds trade item information to a packet
