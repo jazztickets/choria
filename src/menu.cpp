@@ -36,7 +36,6 @@
 #include <stats.h>
 #include <packet.h>
 #include <sstream>
-#include <SDL_mouse.h>
 
 _Menu Menu;
 
@@ -65,7 +64,10 @@ void _Menu::ChangeLayout(const std::string &ElementIdentifier) {
 }
 
 // Initialize
-void _Menu::InitTitle() {
+void _Menu::InitTitle(bool Disconnect) {
+	if(Disconnect)
+		ClientState.Network->Disconnect(true);
+
 	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
 	Assets.Labels["label_menu_title_version"]->Visible = true;
 
@@ -469,7 +471,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 		case STATE_CONNECT: {
 			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-					InitTitle();
+					InitTitle(true);
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					ConnectToHost();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
@@ -609,7 +611,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					ConnectToHost();
 				}
 				else if(Clicked->Identifier == "button_connect_back") {
-					InitTitle();
+					InitTitle(true);
 				}
 			} break;
 			case STATE_ACCOUNT: {

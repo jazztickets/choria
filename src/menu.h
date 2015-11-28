@@ -68,7 +68,7 @@ class _Menu {
 
 		_Menu();
 
-		void InitTitle();
+		void InitTitle(bool Disconnect=false);
 		void InitCharacters();
 		void InitNewCharacter();
 		void InitConnect(bool ConnectNow=false);

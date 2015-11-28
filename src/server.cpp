@@ -29,7 +29,6 @@
 #include <constants.h>
 #include <config.h>
 #include <SDL_timer.h>
-#include <enet/enet.h>
 
 // Function to run the server thread
 void RunThread(void *Arguments) {
