@@ -51,8 +51,9 @@ _Save::~_Save() {
 
 // Check for a username
 bool _Save::CheckUsername(const std::string &Username) {
+
 	std::stringstream Query;
-	Query << "SELECT id FROM account WHERE username = '" << EscapeString(Username) << "'";
+	Query << "SELECT id FROM account WHERE username = '" << EscapeString(TrimString(Username)) << "'";
 	Database->RunDataQuery(Query.str());
 	int Result = Database->FetchRow();
 	Database->CloseQuery();
@@ -63,7 +64,7 @@ bool _Save::CheckUsername(const std::string &Username) {
 // Create account
 void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
 	std::stringstream Query;
-	Query << "INSERT INTO account(username, password) VALUES('" << EscapeString(Username) << "', '" << EscapeString(Password) << "')";
+	Query << "INSERT INTO account(username, password) VALUES('" << EscapeString(TrimString(Username)) << "', '" << EscapeString(Password) << "')";
 	Database->RunQuery(Query.str());
 }
 
@@ -73,7 +74,7 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 
 	// Get account information
 	std::stringstream Query;
-	Query << "SELECT id FROM account WHERE username = '" << EscapeString(Username) << "' AND password = '" << EscapeString(Password) << "'";
+	Query << "SELECT id FROM account WHERE username = '" << EscapeString(TrimString(Username)) << "' AND password = '" << EscapeString(Password) << "'";
 	Database->RunDataQuery(Query.str());
 	if(Database->FetchRow())
 		AccountID = Database->GetInt(0);
@@ -94,7 +95,7 @@ uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
 uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 
 	std::stringstream Query;
-	Query << "SELECT id FROM character WHERE name = '" << EscapeString(Name) << "'";
+	Query << "SELECT id FROM character WHERE name = '" << EscapeString(TrimString(Name)) << "'";
 	Database->RunDataQuery(Query.str());
 	uint32_t CharacterID = Database->FetchRow();
 	Database->CloseQuery();
@@ -107,7 +108,7 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 	Database->RunQuery("BEGIN TRANSACTION");
 
 	std::stringstream Query;
-	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << AccountID << ", " << Slot << ", '" << EscapeString(Name) << "', " << PortraitID << ", 1)";
+	Query << "INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(" << AccountID << ", " << Slot << ", '" << EscapeString(TrimString(Name)) << "', " << PortraitID << ", 1)";
 	Database->RunQuery(Query.str());
 	Query.str("");
 
@@ -192,9 +193,14 @@ void _Save::SavePlayer(const _Object *Player) {
 
 // Replace ' with ''
 std::string _Save::EscapeString(const std::string &String) {
-	//std::regex Regex("^[ ]+|[ ]+$");
 	std::regex Regex("'");
 	return std::regex_replace(String, Regex, "''");
+}
+
+// Trim whitespace from string
+std::string _Save::TrimString(const std::string &String) {
+	std::regex Regex("^[ \t]+|[ \t]+$");
+	return std::regex_replace(String, Regex, "");
 }
 
 // Create default save database
