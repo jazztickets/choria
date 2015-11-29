@@ -410,7 +410,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	// Get character info
 	std::stringstream Query;
 	Query << "SELECT id, map_id, spawnpoint FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
-	Save->Database->RunDataQuery(Query.str());
+	Save->Database->PrepareQuery(Query.str());
 	if(Save->Database->FetchRow()) {
 		Peer->CharacterID = Save->Database->GetInt(0);
 		MapID = Save->Database->GetInt(1);
@@ -467,12 +467,13 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 
 // Send character list
 void _Server::SendCharacterList(_Peer *Peer) {
-	std::stringstream Query;
 
 	// Get a count of the account's characters
-	Query << "SELECT count(id) FROM character WHERE account_id = " << Peer->AccountID;
-	int CharacterCount = Save->Database->RunCountQuery(Query.str());
-	Query.str("");
+	Save->Database->PrepareQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
+	Save->Database->BindInt(1, Peer->AccountID);
+	Save->Database->FetchRow();
+	int CharacterCount = Save->Database->GetInt(0);
+	Save->Database->CloseQuery();
 
 	// Create the packet
 	_Buffer Packet;
@@ -480,16 +481,15 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
-	Query << "SELECT slot, name, portrait_id, experience FROM character WHERE account_id = " << Peer->AccountID;
-	Save->Database->RunDataQuery(Query.str());
+	Save->Database->PrepareQuery("SELECT slot, name, portrait_id, experience FROM character WHERE account_id = @account_id");
+	Save->Database->BindInt(1, Peer->AccountID);
 	while(Save->Database->FetchRow()) {
-		Packet.Write<int32_t>(Save->Database->GetInt(0));
-		Packet.WriteString(Save->Database->GetString(1));
-		Packet.Write<int32_t>(Save->Database->GetInt(2));
-		Packet.Write<int32_t>(Save->Database->GetInt(3));
+		Packet.Write<int32_t>(Save->Database->GetInt("slot"));
+		Packet.WriteString(Save->Database->GetString("name"));
+		Packet.Write<int32_t>(Save->Database->GetInt("portrait_id"));
+		Packet.Write<int32_t>(Save->Database->GetInt("experience"));
 	}
 	Save->Database->CloseQuery();
-	Query.str("");
 
 	// Send list
 	Network->SendPacket(Packet, Peer);
@@ -582,7 +582,7 @@ _Map *_Server::GetMap(int MapID) {
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	// Get character
-	Save->Database->RunDataQuery("SELECT * FROM character WHERE id = @character_id");
+	Save->Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
 	Save->Database->BindInt(1, Peer->CharacterID);
 	if(!Save->Database->FetchRow()) {
 		Save->Database->CloseQuery();
@@ -615,7 +615,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Save->Database->CloseQuery();
 
 	// Set inventory
-	Save->Database->RunDataQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
+	Save->Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
 	Save->Database->BindInt(1, Peer->CharacterID);
 	int ItemCount = 0;
 	while(Save->Database->FetchRow()) {
@@ -625,7 +625,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Save->Database->CloseQuery();
 
 	// Set skills
-	Save->Database->RunDataQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
+	Save->Database->PrepareQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
 	Save->Database->BindInt(1, Peer->CharacterID);
 	int SkillCount = 0;
 	while(Save->Database->FetchRow()) {

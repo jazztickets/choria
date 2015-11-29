@@ -67,7 +67,7 @@ _Save::~_Save() {
 bool _Save::CheckUsername(const std::string &Username) {
 	std::string TrimmedUsername = TrimString(Username);
 
-	Database->RunDataQuery("SELECT id FROM account WHERE username = @username");
+	Database->PrepareQuery("SELECT id FROM account WHERE username = @username");
 	Database->BindString(1, TrimmedUsername);
 	int Result = Database->FetchRow();
 	Database->CloseQuery();
@@ -79,7 +79,7 @@ bool _Save::CheckUsername(const std::string &Username) {
 void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
 	std::string TrimmedUsername = TrimString(Username);
 
-	Database->RunDataQuery("INSERT INTO account(username, password) VALUES(@username, @password)");
+	Database->PrepareQuery("INSERT INTO account(username, password) VALUES(@username, @password)");
 	Database->BindString(1, TrimmedUsername);
 	Database->BindString(2, Password);
 	Database->FetchRow();
@@ -93,7 +93,7 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 	std::string TrimmedUsername = TrimString(Username);
 
 	// Get account information
-	Database->RunDataQuery("SELECT id FROM account WHERE username = @username AND password = @password");
+	Database->PrepareQuery("SELECT id FROM account WHERE username = @username AND password = @password");
 	Database->BindString(1, TrimmedUsername);
 	Database->BindString(2, Password);
 	if(Database->FetchRow())
@@ -105,7 +105,7 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 
 // Get character count for an account
 uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
-	Database->RunDataQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
+	Database->PrepareQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
 	Database->BindInt(1, AccountID);
 	Database->FetchRow();
 	int Count = Database->GetInt(0);
@@ -118,7 +118,7 @@ uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
 uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 	std::string TrimmedName = TrimString(Name);
 
-	Database->RunDataQuery("SELECT id FROM character WHERE name = @name");
+	Database->PrepareQuery("SELECT id FROM character WHERE name = @name");
 	Database->BindString(1, TrimmedName);
 	Database->FetchRow();
 	uint32_t CharacterID = Database->GetInt(0);
@@ -129,7 +129,7 @@ uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 
 // Find character id by slot number
 uint32_t _Save::GetCharacterIDBySlot(uint32_t AccountID, int Slot) {
-	Database->RunDataQuery("SELECT id FROM character WHERE account_id = @account_id AND slot = @slot");
+	Database->PrepareQuery("SELECT id FROM character WHERE account_id = @account_id AND slot = @slot");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
 	Database->FetchRow();
@@ -141,7 +141,7 @@ uint32_t _Save::GetCharacterIDBySlot(uint32_t AccountID, int Slot) {
 
 // Delete character by id
 void _Save::DeleteCharacter(uint32_t CharacterID) {
-	Database->RunDataQuery("DELETE FROM character WHERE id = @character_id");
+	Database->PrepareQuery("DELETE FROM character WHERE id = @character_id");
 	Database->BindInt(1, CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
@@ -153,7 +153,7 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 
 	std::string TrimmedName = TrimString(Name);
 
-	Database->RunDataQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(@account_id, @slot, @name, @portrait_id, 1)");
+	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(@account_id, @slot, @name, @portrait_id, 1)");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
 	Database->BindString(3, TrimmedName);
@@ -162,12 +162,12 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 	Database->CloseQuery();
 
 	int64_t CharacterID = Database->GetLastInsertID();
-	Database->RunDataQuery("INSERT INTO inventory VALUES(@character_id, 1, 2, 1), (@character_id, 3, 1, 1)");
+	Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, 1, 2, 1), (@character_id, 3, 1, 1)");
 	Database->BindInt(1, CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
 
-	Database->RunDataQuery("INSERT INTO skilllevel VALUES(@character_id, 1, 1)");
+	Database->PrepareQuery("INSERT INTO skilllevel VALUES(@character_id, 1, 1)");
 	Database->BindInt(1, CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
@@ -246,7 +246,7 @@ std::string _Save::TrimString(const std::string &String) {
 
 // Get save version from database
 int _Save::GetSaveVersion() {
-	Database->RunDataQuery("SELECT version FROM settings");
+	Database->PrepareQuery("SELECT version FROM settings");
 	Database->FetchRow();
 	int Version = Database->GetInt("version");
 	Database->CloseQuery();

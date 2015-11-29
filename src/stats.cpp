@@ -53,7 +53,7 @@ _Stats::~_Stats() {
 void _Stats::LoadMaps() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM map");
+	Database->PrepareQuery("SELECT * FROM map");
 
 	// Get events
 	_MapStat Map;
@@ -68,7 +68,7 @@ void _Stats::LoadMaps() {
 void _Stats::LoadEvents() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM event");
+	Database->PrepareQuery("SELECT * FROM event");
 
 	// Get events
 	_Event Event;
@@ -84,7 +84,7 @@ void _Stats::LoadEvents() {
 void _Stats::LoadLevels() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM level");
+	Database->PrepareQuery("SELECT * FROM level");
 
 	// Get events
 	_Level Level;
@@ -104,7 +104,7 @@ void _Stats::LoadLevels() {
 void _Stats::LoadSkills() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM skill");
+	Database->PrepareQuery("SELECT * FROM skill");
 
 	// Get events
 	while(Database->FetchRow()) {
@@ -132,7 +132,7 @@ void _Stats::LoadSkills() {
 void _Stats::LoadItems() {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM item");
+	Database->PrepareQuery("SELECT * FROM item");
 
 	// Get events
 	_Item Item;
@@ -166,7 +166,7 @@ void _Stats::LoadVendors() {
 	Vendors.clear();
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM vendor");
+	Database->PrepareQuery("SELECT * FROM vendor");
 
 	// Get vendors
 	_Vendor Vendor;
@@ -179,7 +179,7 @@ void _Stats::LoadVendors() {
 		Vendor.Items.clear();
 
 		// Get items
-		Database->RunDataQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
+		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
 		Database->BindInt(1, Vendor.ID, 1);
 		while(Database->FetchRow(1)) {
 			Vendor.Items.push_back(GetItem(Database->GetInt("item_id", 1)));
@@ -196,7 +196,7 @@ void _Stats::LoadTraders() {
 	Traders.clear();
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM trader");
+	Database->PrepareQuery("SELECT * FROM trader");
 
 	// Get traders
 	_Trader Trader;
@@ -208,7 +208,7 @@ void _Stats::LoadTraders() {
 		Trader.TraderItems.clear();
 
 		// Get items
-		Database->RunDataQuery("SELECT item_id, count FROM traderitem where trader_id = @trader_id", 1);
+		Database->PrepareQuery("SELECT item_id, count FROM traderitem where trader_id = @trader_id", 1);
 		Database->BindInt(1, Trader.ID, 1);
 		while(Database->FetchRow(1)) {
 			_TraderItem TraderItem;
@@ -227,7 +227,7 @@ void _Stats::LoadTraders() {
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM monster WHERE id = @monster_id");
+	Database->PrepareQuery("SELECT * FROM monster WHERE id = @monster_id");
 	Database->BindInt(1, MonsterID);
 
 	// Get data
@@ -264,7 +264,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
 
 	// Run query
-	Database->RunDataQuery("SELECT * FROM portrait");
+	Database->PrepareQuery("SELECT * FROM portrait");
 	while(Database->FetchRow()) {
 		_Portrait Portrait;
 		Portrait.ID = Database->GetInt("id");
@@ -281,7 +281,7 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 	const _Texture *Image = nullptr;
 
 	// Run query
-	Database->RunDataQuery("SELECT image FROM portrait where id = @portrait_id");
+	Database->PrepareQuery("SELECT image FROM portrait where id = @portrait_id");
 	Database->BindInt(1, PortraitID);
 	if(Database->FetchRow()) {
 		Image = Assets.Textures[std::string("portraits/") + Database->GetString("image")];
@@ -299,7 +299,7 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 	int MonsterCount = 0;
 
 	// Get zone info
-	Database->RunDataQuery("SELECT monstercount FROM zone WHERE id = @zone_id");
+	Database->PrepareQuery("SELECT monstercount FROM zone WHERE id = @zone_id");
 	Database->BindInt(1, ZoneID);
 	if(Database->FetchRow()) {
 		MonsterCount = Database->GetInt("monstercount");
@@ -311,7 +311,7 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters)
 		return;
 
 	// Run query
-	Database->RunDataQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
+	Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
 	Database->BindInt(1, ZoneID);
 
 	// Get monsters in zone
@@ -354,7 +354,7 @@ void _Stats::GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Dr
 		return;
 
 	// Run query
-	Database->RunDataQuery("SELECT item_id, odds FROM monsterdrop WHERE monster_id = @monster_id");
+	Database->PrepareQuery("SELECT item_id, odds FROM monsterdrop WHERE monster_id = @monster_id");
 	Database->BindInt(1, MonsterID);
 
 	// Get items from monster

@@ -61,7 +61,7 @@ void _Database::RunQuery(const std::string &Query) {
 }
 
 // Runs a query that returns data
-void _Database::RunDataQuery(const std::string &Query, int Handle) {
+void _Database::PrepareQuery(const std::string &Query, int Handle) {
 	if(QueryHandle[Handle])
 		throw std::runtime_error("Query handle already exists!");
 
@@ -75,17 +75,6 @@ void _Database::RunDataQuery(const std::string &Query, int Handle) {
 	for(int i = 0; i < ColumnCount; i++) {
 		ColumnIndexes[Handle][sqlite3_column_name(QueryHandle[Handle], i)] = i;
 	}
-}
-
-// Runs a query that counts a row and returns the result
-int _Database::RunCountQuery(const std::string &Query) {
-
-	RunDataQuery(Query);
-	FetchRow();
-	int Count = GetInt(0);
-	CloseQuery();
-
-	return Count;
 }
 
 // Fetch 1 row from a query

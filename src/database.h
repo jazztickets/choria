@@ -34,12 +34,8 @@ class _Database {
 		_Database(const std::string &Path);
 		~_Database();
 
-		void OpenDatabase(const std::string &Path);
-		void OpenDatabaseCreate(const std::string &Path);
-
 		void RunQuery(const std::string &Query);
-		void RunDataQuery(const std::string &Query, int Handle=0);
-		int RunCountQuery(const std::string &Query);
+		void PrepareQuery(const std::string &Query, int Handle=0);
 		int FetchRow(int Handle=0);
 		int CloseQuery(int Handle=0);
 		int64_t GetLastInsertID();
