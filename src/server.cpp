@@ -257,6 +257,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::VENDOR_EXCHANGE:
 			HandleVendorExchange(Data, Peer);
 		break;
+		case Packet::TRADER_ACCEPT:
+			HandleTraderAccept(Data, Peer);
+		break;
 		case Packet::HUD_ACTIONBAR:
 			HandleActionBar(Data, Peer);
 		break;
@@ -713,7 +716,6 @@ bool _Server::ValidatePeer(_Peer *Peer) {
 
 // Send position to player
 void _Server::SendPlayerPosition(_Object *Player) {
-
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_POSITION);
 	Packet.Write<glm::ivec2>(Player->Position);
@@ -851,6 +853,25 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			Player->UpdateInventory(Slot, -Amount);
 		}
 	}
+}
+
+// Handles a trader accept
+void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Get trader information
+	int RequiredItemSlots[8];
+	int RewardSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
+	if(RewardSlot == -1)
+		return;
+
+	// Exchange items
+	Player->AcceptTrader(RequiredItemSlots, RewardSlot);
+	Player->Trader = nullptr;
+	Player->CalculatePlayerStats();
 }
 
 // Handle a skill bar change
@@ -1151,29 +1172,6 @@ void _Server::HandleTeleport(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	Player->StartTeleport();
-}
-
-// Handles a trader accept
-void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	const _Trader *Trader = Player->Trader;
-	if(!Trader)
-		return;
-
-	// Get trader information
-	int RequiredItemSlots[8];
-	int RewardSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
-	if(RewardSlot == -1)
-		return;
-
-	// Exchange items
-	Player->AcceptTrader(RequiredItemSlots, RewardSlot);
-	Player->Trader = nullptr;
-	Player->State = _Object::STATE_NONE;
-	Player->CalculatePlayerStats();
 }
 
 // Send a message to the player
