@@ -62,7 +62,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 				EditorState.SetFilename(Arguments[++i]);
 		}
 		else if(Token == "-connect") {
-			//NullState.StartupMode = _NullState::CONNECT;
+			ClientState.ConnectNow = true;
 		}
 		else if(Token == "-username" && TokensRemaining > 0) {
 			Menu.SetUsername(Arguments[++i]);

@@ -61,6 +61,7 @@ class _ClientState : public _State {
 		// Parameters
 		bool IsTesting;
 		bool FromEditor;
+		bool ConnectNow;
 
 		// Game
 		_Stats *Stats;

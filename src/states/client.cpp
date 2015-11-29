@@ -49,6 +49,7 @@ _ClientState ClientState;
 _ClientState::_ClientState() :
 	IsTesting(true),
 	FromEditor(false),
+	ConnectNow(false),
 	Stats(nullptr),
 	Time(0.0),
 	Server(nullptr),
@@ -75,7 +76,10 @@ void _ClientState::Init() {
 
 	Actions.ResetState();
 
-	Menu.InitTitle();
+	if(ConnectNow)
+		Menu.InitConnect(true);
+	else
+		Menu.InitTitle();
 }
 
 // Close map
