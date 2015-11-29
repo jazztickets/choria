@@ -623,23 +623,20 @@ void _Map::AddObject(_Object *Object, NetworkIDType NetworkID) {
 	ObjectIDs[NetworkID] = true;
 	Objects.push_back(Object);
 }
-/*
+
 // Returns a list of players close to a player
 void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players) {
 
 	for(const auto &Object : Objects) {
-		if(Object->Type == _Object::PLAYER) {
-			_Object *TestPlayer = (_Object *)Object;
-			if(TestPlayer != Player) {
-				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
-				if((float)(Delta.x * Delta.x + Delta.y * Delta.y) <= DistanceSquared) {
-					Players.push_back(TestPlayer);
-				}
+		if(Object != Player) {
+			glm::ivec2 Delta = Object->Position - Player->Position;
+			if((float)(Delta.x * Delta.x + Delta.y * Delta.y) <= DistanceSquared) {
+				Players.push_back(Object);
 			}
 		}
 	}
 }
-*/
+
 // Returns the closest player
 _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) {
 
