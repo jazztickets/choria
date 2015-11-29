@@ -162,6 +162,7 @@ void _Menu::InitAccount() {
 
 	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
 	Password->Text = DefaultPassword;
+	Password->Password = true;
 
 	_Label *Label = Assets.Labels["label_menu_account_message"];
 	Label->Color = COLOR_WHITE;

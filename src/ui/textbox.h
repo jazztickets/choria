@@ -41,6 +41,7 @@ class _TextBox : public _Element {
 		void ResetCursor() { CursorTimer = 0; }
 
 		std::string Text;
+		bool Password;
 
 		const _Font *Font;
 		glm::vec2 TextOffset;

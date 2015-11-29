@@ -22,6 +22,7 @@
 
 // Constructor
 _TextBox::_TextBox() :
+	Password(false),
 	Font(nullptr),
 	MaxLength(0),
 	CursorTimer(0) {
@@ -83,11 +84,16 @@ void _TextBox::Render() const {
 	if(!Visible)
 		return;
 
+	// Get text to render
 	std::string RenderText;
-	if(CursorTimer < 0.5 && FocusedElement == this)
-		RenderText = Text + "|";
+	if(Password)
+		RenderText = std::string(Text.length(), '*');
 	else
 		RenderText = Text;
+
+	// Add cursor
+	if(CursorTimer < 0.5 && FocusedElement == this)
+		RenderText += "|";
 
 	_Element::Render();
 
