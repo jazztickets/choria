@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <utils.h>
+#include <regex>
 
 // Reads in a string that is TSV formatted
 std::string GetTSVText(std::ifstream &Stream, bool *EndOfLine) {
@@ -38,26 +39,6 @@ std::string GetTSVText(std::ifstream &Stream, bool *EndOfLine) {
 	}
 
 	return Text;
-}
-
-// Reads in a string that is TSV formatted
-void GetTSVToken(std::ifstream &Stream, std::string &ReturnString, bool *EndOfLine) {
-	char Char;
-
-	while(1) {
-		Stream.get(Char);
-		if(Char == '\n') {
-			if(EndOfLine)
-				*EndOfLine = true;
-			return;
-		}
-		if(Char == '\t') {
-			return;
-		}
-		else {
-			ReturnString += Char;
-		}
-	}
 }
 
 // Loads a file into a string
@@ -85,20 +66,6 @@ const char *LoadFileIntoMemory(const char *Path) {
 	return Data;
 }
 
-// Write a chunk to a stream
-void WriteChunk(std::ofstream &File, int Type, const char *Data, size_t Size) {
-	File.write((char *)&Type, sizeof(Type));
-	File.write((char *)&Size, sizeof(Size));
-	File.write(Data, Size);
-}
-
-// Generates a random point inside of a circle
-glm::vec2 GenerateRandomPointInCircle(float Radius) {
-	// TODO fix
-	//return glm::vec2(Random.Generate() * 360.0) * Radius * sqrt(Random.Generate());
-	return glm::vec2();
-}
-
 // Remove extension from a filename
 std::string RemoveExtension(const std::string &Path) {
 	size_t SuffixPosition = Path.find_last_of(".");
@@ -106,4 +73,10 @@ std::string RemoveExtension(const std::string &Path) {
 		return Path;
 
 	return Path.substr(0, SuffixPosition);
+}
+
+// Trim whitespace from string
+std::string TrimString(const std::string &String) {
+	std::regex Regex("^[ \t]+|[ \t]+$");
+	return std::regex_replace(String, Regex, "");
 }

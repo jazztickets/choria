@@ -48,8 +48,6 @@ class _Save {
 
 	private:
 
-		std::string TrimString(const std::string &String);
-
 		int GetSaveVersion();
 		void CreateDefaultDatabase();
 

@@ -21,8 +21,8 @@
 #include <database.h>
 #include <config.h>
 #include <constants.h>
+#include <utils.h>
 #include <stdexcept>
-#include <regex>
 #include <cstdio>
 
 // Constructor
@@ -236,12 +236,6 @@ void _Save::SavePlayer(const _Object *Player) {
 	}
 
 	Database->RunQuery("END TRANSACTION");
-}
-
-// Trim whitespace from string
-std::string _Save::TrimString(const std::string &String) {
-	std::regex Regex("^[ \t]+|[ \t]+$");
-	return std::regex_replace(String, Regex, "");
 }
 
 // Get save version from database
