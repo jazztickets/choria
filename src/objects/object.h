@@ -179,7 +179,6 @@ class _Object {
 		const _Tile *GetTile();
 
 		// World
-		void SetBusy(bool Value);
 		void StartTeleport();
 
 		// PVP

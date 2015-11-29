@@ -483,7 +483,7 @@ void _HUD::ToggleInventory() {
 	if(!InventoryElement->Visible && !Player->Trader) {
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
-		//OldClientState.SendBusy(true);
+		//OldClientState.SendStatus(true);
 	}
 	else {
 		CloseWindows();
@@ -539,7 +539,7 @@ void _HUD::InitVendor() {
 	// Open inventory
 	InventoryElement->SetVisible(true);
 	VendorElement->SetVisible(true);
-	//OldClientState.SendBusy(true);
+	//OldClientState.SendStatus(true);
 }
 
 // Initialize the trade system
@@ -578,7 +578,7 @@ void _HUD::InitTrader() {
 
 // Initialize the skills screen
 void _HUD::InitSkills() {
-	//OldClientState.SendBusy(true);
+	//OldClientState.SendStatus(true);
 
 	// Clear old children
 	ClearSkills();
@@ -738,7 +738,7 @@ bool _HUD::CloseSkills() {
 	bool WasOpen = SkillsElement->Visible;
 
 	// No longer busy
-	//OldClientState.SendBusy(false);
+	//OldClientState.SendStatus(false);
 	SkillsElement->SetVisible(false);
 	Cursor.Reset();
 

@@ -45,6 +45,7 @@ class _ClientState : public _State {
 		// Network
 		void Connect(bool IsLocal);
 		void StopLocalServer();
+		void SendStatus(int Status);
 
 		// Input
 		bool HandleAction(int InputType, int Action, int Value) override;
@@ -55,8 +56,6 @@ class _ClientState : public _State {
 		// Update
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
-
-		//void SendBusy(bool Value);
 
 		// Parameters
 		bool IsTesting;

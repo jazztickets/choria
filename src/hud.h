@@ -101,7 +101,7 @@ class _HUD {
 		void ToggleInGameMenu();
 
 		// Windows
-		void InitInventory(bool SendBusy);
+		void InitInventory(bool SendStatus);
 		void InitVendor();
 		void InitTrader();
 		void InitSkills();

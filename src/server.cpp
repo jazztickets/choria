@@ -278,15 +278,15 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::TRADE_ACCEPT:
 			HandleTradeAccept(Data, Peer);
 		break;
+		case Packet::PLAYER_STATUS:
+			HandlePlayerStatus(Data, Peer);
+		break;
 			/*
 		case Packet::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
 		break;
 		case Packet::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
-		break;
-		case Packet::WORLD_BUSY:
-			HandlePlayerBusy(Data, Peer);
 		break;
 		case Packet::WORLD_ATTACKPLAYER:
 			HandleAttackPlayer(Data, Peer);
@@ -1056,6 +1056,21 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 		}
 	}
 }
+
+// Handles player status change
+void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Read packet
+	int Status = Data.Read<char>();
+
+	// Set status
+	Player->Status = Status;
+}
+
 /*
 // Handles a player's event end message
 void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
@@ -1106,18 +1121,6 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 
 	// Send updates
 	SendHUD(Player);
-}
-
-// Handles a player's request to not start a battle with other players
-void _Server::HandlePlayerBusy(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	bool Value = Data.ReadBit();
-	Player->SetBusy(Value);
-
-	//printf("HandlePlayerBusy: Value=%d\n", Value);
 }
 
 // Handles a player's request to attack another player

@@ -979,10 +979,6 @@ void _Object::CalculateSkillPoints() {
 	}
 }
 
-// Toggles the player's busy state
-void _Object::SetBusy(bool Value) {
-}
-
 // Starts the teleport process
 void _Object::StartTeleport() {
 	/*

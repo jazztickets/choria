@@ -835,6 +835,15 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 	// Close window
 	HUD->CloseTrade(false);
 }
+
+// Send status to server
+void _ClientState::SendStatus(int Status) {
+	_Buffer Packet;
+	Packet.Write<char>(Packet::PLAYER_STATUS);
+	Packet.Write<char>(Status);
+	Network->SendPacket(Packet);
+}
+
 /*
 // Handles the start of a battle
 void _ClientState::HandleBattleStart(_Buffer &Data) {
@@ -947,14 +956,6 @@ void _ClientState::SendAttackPlayer() {
 		Packet.Write<char>(Packet::WORLD_ATTACKPLAYER);
 		Network->SendPacket(Packet);
 	}
-}
-
-// Send the busy signal to server
-void _ClientState::SendBusy(bool Value) {
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_BUSY);
-	Packet.Write<char>(Value);
-	Network->SendPacket(Packet);
 }
 
 */

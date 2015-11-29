@@ -88,7 +88,7 @@ void _Menu::InitCharacters() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 
-	//OldClientState.SendBusy(true);
+	//OldClientState.SendStatus(true);
 	State = STATE_INGAME;
 }
 
@@ -98,7 +98,7 @@ void _Menu::InitPlay() {
 		CurrentLayout->SetVisible(false);
 	CurrentLayout = nullptr;
 
-	//OldClientState.SendBusy(false);
+	//OldClientState.SendStatus(false);
 	State = STATE_NONE;
 }
 
