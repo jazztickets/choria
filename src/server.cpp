@@ -358,7 +358,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Check number of characters in account
-	if(Save->GetCharacterCount(Peer->AccountID) >= SAVE_COUNT)
+	if(Save->GetCharacterCount(Peer->AccountID) >= ACCOUNT_MAX_CHARACTER_SLOTS)
 		return;
 
 	// Found an existing name

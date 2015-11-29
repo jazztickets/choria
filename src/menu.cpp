@@ -742,7 +742,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, char PacketType) {
 			int CharacterCount = Buffer.Read<char>();
 
 			// Reset character slots
-			for(int i = 0; i < SAVE_COUNT; i++) {
+			for(int i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
 				std::stringstream Buffer;
 
 				// Set slot name

@@ -121,7 +121,7 @@ class _Menu {
 
 		// UI
 		_Element *CurrentLayout;
-		_CharacterSlot CharacterSlots[SAVE_COUNT];
+		_CharacterSlot CharacterSlots[ACCOUNT_MAX_CHARACTER_SLOTS];
 
 		// Double click
 		_Element *PreviousClick;
