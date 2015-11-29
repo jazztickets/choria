@@ -72,7 +72,6 @@ bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 			return true;
 		}
 		else if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-			return true;
 		}
 	}
 

@@ -263,6 +263,8 @@ void _Menu::ConnectToHost() {
 
 	_Button *Button = Assets.Buttons["button_connect_connect"];
 	Button->Enabled = false;
+
+	FocusedElement = nullptr;
 }
 
 // Send character to play
@@ -299,6 +301,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 		return;
 	}
 
+	// Update UI
 	Label->Color = COLOR_WHITE;
 	Label->Text = "Logging in...";
 
@@ -312,6 +315,8 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
 	ClientState.Network->SendPacket(Packet);
+
+	FocusedElement = nullptr;
 }
 
 // Request character list from server
