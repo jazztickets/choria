@@ -196,65 +196,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 			break;
 		}
 	}
-/*
-	switch(Player->State) {
-		case _Object::STATE_BATTLE:
-			Player->Battle->HandleAction(Action);
-		break;
-		case _Object::STATE_TELEPORT:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::TELEPORT:
-					HUD->ToggleTeleport();
-				break;
-			}
-		break;
-		case _Object::STATE_VENDOR:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD->CloseWindows();
-				break;
-			}
-		break;
-		case _Object::STATE_TRADER:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-					HUD->CloseWindows();
-				break;
-			}
-		break;
-		case _Object::STATE_TRADE:
-			switch(Action) {
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
-				case _Actions::MENU:
-				case _Actions::INVENTORY:
-				case _Actions::TRADE:
-					HUD->CloseWindows();
-				break;
-			}
-		break;
-		case _Object::STATE_BUSY:
-			HUD->CloseWindows();
-		break;
-	}
-*/
+
 	return true;
 }
 
@@ -462,10 +404,10 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::INVENTORY_USE:
 			HandleInventoryUse(Data);
 		break;
-	/*
 		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;
+/*
 		case Packet::TRADE_CANCEL:
 			HandleTradeCancel(Data);
 		break;
@@ -482,7 +424,7 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 			HandleTradeExchange(Data);
 		break;
 		case Packet::WORLD_STARTBATTLE:
-			HandleStartBattle(Data);
+			HandleBattleStart(Data);
 		break;
 		case Packet::WORLD_HUD:
 			HandleHUD(Data);
@@ -798,118 +740,16 @@ void _ClientState::HandleInventoryUse(_Buffer &Data) {
 	Player->UpdateInventory(Slot, -1);
 }
 
-/*
-// Handles the start of a battle
-void _ClientState::HandleStartBattle(_Buffer &Data) {
-
-	// Already in a battle
-	if(Player->Battle)
-		return;
-
-	// Create a new battle instance
-	Player->Battle = new _ClientBattle();;
-
-	// Get fighter count
-	int FighterCount = Data.Read<char>();
-
-	// Get fighter information
-	for(int i = 0; i < FighterCount; i++) {
-
-		// Get fighter type
-		int Type = Data.ReadBit();
-		int Side = Data.ReadBit();
-		if(Type == _Object::PLAYER) {
-
-			// Network ID
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-
-			// Player stats
-			int Health = Data.Read<int32_t>();
-			int MaxHealth = Data.Read<int32_t>();
-			int Mana = Data.Read<int32_t>();
-			int MaxMana = Data.Read<int32_t>();
-
-			// Get player object
-			_Object *NewPlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
-			if(NewPlayer != nullptr) {
-				NewPlayer->Health = Health;
-				NewPlayer->MaxHealth = MaxHealth;
-				NewPlayer->Mana = Mana;
-				NewPlayer->MaxMana = MaxMana;
-				NewPlayer->Battle = Player->Battle;
-
-				Player->Battle->AddFighter(NewPlayer, Side);
-			}
-		}
-		else {
-
-			// Monster ID
-			int MonsterID = Data.Read<int32_t>();
-			_Object *Monster = new _Object(MonsterID);
-			Monster->ID = MonsterID;
-			Monster->Type = _Object::MONSTER;
-			Stats->GetMonsterStats(MonsterID, Monster);
-
-			Player->Battle->AddFighter(Monster, Side);
-		}
-	}
-
-	// Start the battle
-	HUD->CloseWindows();
-	((_ClientBattle *)Player->Battle)->StartBattle(Player);
-}
-
-// Handles the result of a turn in battle
-void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
-
-	// Check for a battle in progress
-	if(!Player->Battle)
-		return;
-
-	((_ClientBattle *)Player->Battle)->ResolveTurn(Packet);
-}
-
-// Handles the end of a battle
-void _ClientState::HandleBattleEnd(_Buffer &Data) {
-
-	// Check for a battle in progress
-	if(!Player->Battle)
-		return;
-
-	((_ClientBattle *)Player->Battle)->EndBattle(Packet);
-}
-
-// Handles a battle command from other players
-void _ClientState::HandleBattleCommand(_Buffer &Data) {
-
-	// Check for a battle in progress
-	if(!Player->Battle)
-		return;
-
-	int Slot = Data.Read<char>();
-	int SkillID = Data.Read<char>();
-	((_ClientBattle *)Player->Battle)->HandleCommand(Slot, SkillID);
-}
-
-// Handles HUD updates
-void _ClientState::HandleHUD(_Buffer &Data) {
-	Player->Experience = Data.Read<int32_t>();
-	Player->Gold = Data.Read<int32_t>();
-	Player->Health = Data.Read<int32_t>();
-	Player->Mana = Data.Read<int32_t>();
-	Player->HealthAccumulator = Data.Read<float>();
-	Player->ManaAccumulator = Data.Read<float>();
-	Player->CalculatePlayerStats();
-}
-
 // Handles a trade request
 void _ClientState::HandleTradeRequest(_Buffer &Data) {
+	if(!Player || !Map)
+		return;
 
 	// Read packet
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Get trading player
-	Player->TradePlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
+	Player->TradePlayer = Map->GetObjectByID(NetworkID);
 	if(!Player->TradePlayer)
 		return;
 
@@ -1011,6 +851,109 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 
 	// Close window
 	HUD->CloseTrade(false);
+}
+/*
+// Handles the start of a battle
+void _ClientState::HandleBattleStart(_Buffer &Data) {
+
+	// Already in a battle
+	if(Player->Battle)
+		return;
+
+	// Create a new battle instance
+	Player->Battle = new _ClientBattle();;
+
+	// Get fighter count
+	int FighterCount = Data.Read<char>();
+
+	// Get fighter information
+	for(int i = 0; i < FighterCount; i++) {
+
+		// Get fighter type
+		int Type = Data.ReadBit();
+		int Side = Data.ReadBit();
+		if(Type == _Object::PLAYER) {
+
+			// Network ID
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+
+			// Player stats
+			int Health = Data.Read<int32_t>();
+			int MaxHealth = Data.Read<int32_t>();
+			int Mana = Data.Read<int32_t>();
+			int MaxMana = Data.Read<int32_t>();
+
+			// Get player object
+			_Object *NewPlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
+			if(NewPlayer != nullptr) {
+				NewPlayer->Health = Health;
+				NewPlayer->MaxHealth = MaxHealth;
+				NewPlayer->Mana = Mana;
+				NewPlayer->MaxMana = MaxMana;
+				NewPlayer->Battle = Player->Battle;
+
+				Player->Battle->AddFighter(NewPlayer, Side);
+			}
+		}
+		else {
+
+			// Monster ID
+			int MonsterID = Data.Read<int32_t>();
+			_Object *Monster = new _Object(MonsterID);
+			Monster->ID = MonsterID;
+			Monster->Type = _Object::MONSTER;
+			Stats->GetMonsterStats(MonsterID, Monster);
+
+			Player->Battle->AddFighter(Monster, Side);
+		}
+	}
+
+	// Start the battle
+	HUD->CloseWindows();
+	((_ClientBattle *)Player->Battle)->StartBattle(Player);
+}
+
+// Handles the result of a turn in battle
+void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
+
+	// Check for a battle in progress
+	if(!Player->Battle)
+		return;
+
+	((_ClientBattle *)Player->Battle)->ResolveTurn(Packet);
+}
+
+// Handles the end of a battle
+void _ClientState::HandleBattleEnd(_Buffer &Data) {
+
+	// Check for a battle in progress
+	if(!Player->Battle)
+		return;
+
+	((_ClientBattle *)Player->Battle)->EndBattle(Packet);
+}
+
+// Handles a battle command from other players
+void _ClientState::HandleBattleCommand(_Buffer &Data) {
+
+	// Check for a battle in progress
+	if(!Player->Battle)
+		return;
+
+	int Slot = Data.Read<char>();
+	int SkillID = Data.Read<char>();
+	((_ClientBattle *)Player->Battle)->HandleCommand(Slot, SkillID);
+}
+
+// Handles HUD updates
+void _ClientState::HandleHUD(_Buffer &Data) {
+	Player->Experience = Data.Read<int32_t>();
+	Player->Gold = Data.Read<int32_t>();
+	Player->Health = Data.Read<int32_t>();
+	Player->Mana = Data.Read<int32_t>();
+	Player->HealthAccumulator = Data.Read<float>();
+	Player->ManaAccumulator = Data.Read<float>();
+	Player->CalculatePlayerStats();
 }
 
 // Requests an attack to another a player

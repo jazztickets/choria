@@ -94,7 +94,7 @@ class _Map {
 		void RemoveObject(const _Object *RemoveObject);
 		void SendObjectList(_Peer *Peer);
 		//void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
-		//_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
+		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
 
 		// Map editing

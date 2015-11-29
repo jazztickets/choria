@@ -208,7 +208,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 
 		_Buffer Packet;
 		Packet.Write<char>(Packet::TRADE_CANCEL);
-		Network->SendPacket(&Packet, TradePlayer->OldPeer);
+		Network->SendPacket(&Packet, TradePlayer->Peer);
 	}
 
 	// Remove from battle
@@ -267,25 +267,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::SKILLS_SKILLADJUST:
 			HandleSkillAdjust(Data, Peer);
 		break;
-		/*
-		case Packet::BATTLE_COMMAND:
-			HandleBattleCommand(Data, Peer);
-		break;
-		case Packet::BATTLE_CLIENTDONE:
-			HandleBattleFinished(Data, Peer);
-		break;
-		case Packet::TRADER_ACCEPT:
-			HandleTraderAccept(Data, Peer);
-		break;
-		case Packet::WORLD_BUSY:
-			HandlePlayerBusy(Data, Peer);
-		break;
-		case Packet::WORLD_ATTACKPLAYER:
-			HandleAttackPlayer(Data, Peer);
-		break;
-		case Packet::WORLD_TELEPORT:
-			HandleTeleport(Data, Peer);
-		break;
 		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(Data, Peer);
 		break;
@@ -297,6 +278,22 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case Packet::TRADE_ACCEPT:
 			HandleTradeAccept(Data, Peer);
+		break;
+			/*
+		case Packet::BATTLE_COMMAND:
+			HandleBattleCommand(Data, Peer);
+		break;
+		case Packet::BATTLE_CLIENTDONE:
+			HandleBattleFinished(Data, Peer);
+		break;
+		case Packet::WORLD_BUSY:
+			HandlePlayerBusy(Data, Peer);
+		break;
+		case Packet::WORLD_ATTACKPLAYER:
+			HandleAttackPlayer(Data, Peer);
+		break;
+		case Packet::WORLD_TELEPORT:
+			HandleTeleport(Data, Peer);
 		break;
 		case Packet::EVENT_END:
 			HandleEventEnd(Data, Peer);
@@ -905,6 +902,160 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 	Player->CalculatePlayerStats();
 }
 
+// Handle a trade request
+void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Get map object
+	_Map *Map = Player->Map;
+	if(!Map)
+		return;
+
+	// Find the nearest player to trade with
+	_Object *TradePlayer = Map->FindTradePlayer(Player, 2.0f * 2.0f);
+	if(TradePlayer == nullptr) {
+
+		// Set up trade post
+		Player->State = _Object::STATE_TRADE;
+		Player->TradeGold = 0;
+		Player->TradeAccepted = false;
+		Player->TradePlayer = nullptr;
+	}
+	else {
+
+		// Set up trade screen for both players
+		SendTradeInformation(Player, TradePlayer);
+		SendTradeInformation(TradePlayer, Player);
+
+		Player->TradePlayer = TradePlayer;
+		Player->TradeAccepted = false;
+		TradePlayer->TradePlayer = Player;
+		TradePlayer->TradeAccepted = false;
+
+		Player->State = _Object::STATE_TRADE;
+		TradePlayer->State = _Object::STATE_TRADE;
+	}
+}
+
+// Handles a trade cancel
+void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Notify trading player
+	_Object *TradePlayer = Player->TradePlayer;
+	if(TradePlayer) {
+		TradePlayer->State = _Object::STATE_TRADE;
+		TradePlayer->TradePlayer = nullptr;
+		TradePlayer->TradeAccepted = false;
+
+		_Buffer Packet;
+		Packet.Write<char>(Packet::TRADE_CANCEL);
+		Network->SendPacket(Packet, TradePlayer->Peer);
+	}
+
+	// Set state back to normal
+	Player->State = _Object::STATE_NONE;
+}
+
+// Handle a trade gold update
+void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Set gold amount
+	int Gold = Data.Read<int32_t>();
+	if(Gold < 0)
+		Gold = 0;
+	else if(Gold > Player->Gold)
+		Gold = Player->Gold;
+	Player->TradeGold = Gold;
+	Player->TradeAccepted = false;
+
+	// Notify player
+	_Object *TradePlayer = Player->TradePlayer;
+	if(TradePlayer) {
+		TradePlayer->TradeAccepted = false;
+
+		_Buffer Packet;
+		Packet.Write<char>(Packet::TRADE_GOLD);
+		Packet.Write<int32_t>(Gold);
+		Network->SendPacket(Packet, TradePlayer->Peer);
+	}
+}
+
+// Handles a trade accept from a player
+void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Get trading player
+	_Object *TradePlayer = Player->TradePlayer;
+	if(TradePlayer) {
+
+		// Set the player's state
+		bool Accepted = !!Data.Read<char>();
+		Player->TradeAccepted = Accepted;
+
+		// Check if both player's agree
+		if(Accepted && TradePlayer->TradeAccepted) {
+
+			// Exchange items
+			_InventorySlot TempItems[PLAYER_TRADEITEMS];
+			for(int i = 0; i < PLAYER_TRADEITEMS; i++) {
+				int InventorySlot = i + _Object::INVENTORY_TRADE;
+				TempItems[i] = Player->Inventory[InventorySlot];
+
+				Player->SetInventory(InventorySlot, &TradePlayer->Inventory[InventorySlot]);
+				TradePlayer->SetInventory(InventorySlot, &TempItems[i]);
+			}
+
+			// Exchange gold
+			Player->UpdateGold(TradePlayer->TradeGold - Player->TradeGold);
+			TradePlayer->UpdateGold(Player->TradeGold - TradePlayer->TradeGold);
+
+			// Send packet to players
+			{
+				_Buffer Packet;
+				Packet.Write<char>(Packet::TRADE_EXCHANGE);
+				BuildTradeItemsPacket(Player, Packet, Player->Gold);
+				Network->SendPacket(Packet, Player->Peer);
+			}
+			{
+				_Buffer Packet;
+				Packet.Write<char>(Packet::TRADE_EXCHANGE);
+				BuildTradeItemsPacket(TradePlayer, Packet, TradePlayer->Gold);
+				Network->SendPacket(Packet, TradePlayer->Peer);
+			}
+
+			Player->State = _Object::STATE_NONE;
+			Player->TradePlayer = nullptr;
+			Player->TradeGold = 0;
+			Player->MoveTradeToInventory();
+			TradePlayer->State = _Object::STATE_NONE;
+			TradePlayer->TradePlayer = nullptr;
+			TradePlayer->TradeGold = 0;
+			TradePlayer->MoveTradeToInventory();
+		}
+		else {
+
+			// Notify trading player
+			_Buffer Packet;
+			Packet.Write<char>(Packet::TRADE_ACCEPT);
+			Packet.Write<char>(Accepted);
+			Network->SendPacket(Packet, TradePlayer->Peer);
+		}
+	}
+}
 /*
 // Handles a player's event end message
 void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
@@ -1005,157 +1156,6 @@ void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
 	}
 }
 
-// Handle a trade request
-void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Get map object
-	_Map *Map = Player->Map;
-	if(!Map)
-		return;
-
-	// Find the nearest player to trade with
-	_Object *TradePlayer = Map->FindTradePlayer(Player, 2.0f * 2.0f);
-	if(TradePlayer == nullptr) {
-
-		// Set up trade post
-		Player->State = _Object::STATE_TRADE;
-		Player->TradeGold = 0;
-		Player->TradeAccepted = false;
-		Player->TradePlayer = nullptr;
-	}
-	else {
-
-		// Set up trade screen for both players
-		SendTradeInformation(Player, TradePlayer);
-		SendTradeInformation(TradePlayer, Player);
-
-		Player->TradePlayer = TradePlayer;
-		Player->TradeAccepted = false;
-		TradePlayer->TradePlayer = Player;
-		TradePlayer->TradeAccepted = false;
-
-		Player->State = _Object::STATE_TRADE;
-		TradePlayer->State = _Object::STATE_TRADE;
-	}
-}
-
-// Handles a trade cancel
-void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Notify trading player
-	_Object *TradePlayer = Player->TradePlayer;
-	if(TradePlayer) {
-		TradePlayer->State = _Object::STATE_TRADE;
-		TradePlayer->TradePlayer = nullptr;
-		TradePlayer->TradeAccepted = false;
-
-		_Buffer NewPacket;
-		NewPacket.Write<char>(Packet::TRADE_CANCEL);
-		Network->SendPacket(Packet);(&NewPacket, TradePlayer->OldPeer);
-	}
-
-	// Set state back to normal
-	Player->State = _Object::STATE_NONE;
-}
-
-// Handle a trade gold update
-void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Set gold amount
-	int Gold = Data.Read<int32_t>();
-	if(Gold < 0)
-		Gold = 0;
-	else if(Gold > Player->Gold)
-		Gold = Player->Gold;
-	Player->TradeGold = Gold;
-	Player->TradeAccepted = false;
-
-	// Notify player
-	_Object *TradePlayer = Player->TradePlayer;
-	if(TradePlayer) {
-		TradePlayer->TradeAccepted = false;
-
-		_Buffer NewPacket;
-		NewPacket.Write<char>(Packet::TRADE_GOLD);
-		NewPacket.Write<int32_t>(Gold);
-		Network->SendPacket(&NewPacket, TradePlayer->OldPeer);
-	}
-}
-
-// Handles a trade accept from a player
-void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Get trading player
-	_Object *TradePlayer = Player->TradePlayer;
-	if(TradePlayer) {
-
-		// Set the player's state
-		bool Accepted = !!Packet->Read<char>();
-		Player->TradeAccepted = Accepted;
-
-		// Check if both player's agree
-		if(Accepted && TradePlayer->TradeAccepted) {
-
-			// Exchange items
-			_InventorySlot TempItems[PLAYER_TRADEITEMS];
-			for(int i = 0; i < PLAYER_TRADEITEMS; i++) {
-				int InventorySlot = i + _Object::INVENTORY_TRADE;
-				TempItems[i] = Player->Inventory[InventorySlot];
-
-				Player->SetInventory(InventorySlot, &TradePlayer->Inventory[InventorySlot]);
-				TradePlayer->SetInventory(InventorySlot, &TempItems[i]);
-			}
-
-			// Exchange gold
-			Player->UpdateGold(TradePlayer->TradeGold - Player->TradeGold);
-			TradePlayer->UpdateGold(Player->TradeGold - TradePlayer->TradeGold);
-
-			// Send packet to players
-			{
-				_Buffer NewPacket;
-				NewPacket.Write<char>(Packet::TRADE_EXCHANGE);
-				BuildTradeItemsPacket(Player, &NewPacket, Player->Gold);
-				Network->SendPacket(&NewPacket, Player->OldPeer);
-			}
-			{
-				_Buffer NewPacket;
-				NewPacket.Write<char>(Packet::TRADE_EXCHANGE);
-				BuildTradeItemsPacket(TradePlayer, &NewPacket, TradePlayer->Gold);
-				Network->SendPacket(&NewPacket, TradePlayer->OldPeer);
-			}
-
-			Player->State = _Object::STATE_NONE;
-			Player->TradePlayer = nullptr;
-			Player->TradeGold = 0;
-			Player->MoveTradeToInventory();
-			TradePlayer->State = _Object::STATE_NONE;
-			TradePlayer->TradePlayer = nullptr;
-			TradePlayer->TradeGold = 0;
-			TradePlayer->MoveTradeToInventory();
-		}
-		else {
-
-			// Notify trading player
-			_Buffer NewPacket;
-			NewPacket.Write<char>(Packet::TRADE_ACCEPT);
-			NewPacket.Write<char>(Accepted);
-			Network->SendPacket(&NewPacket, TradePlayer->OldPeer);
-		}
-	}
-}
-
 // Handles a teleport request
 void _Server::HandleTeleport(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
@@ -1189,7 +1189,7 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 }
 
 // Send a message to the player
-void _OldServerState::SendMessage(_Object *Player, const std::string &Message, const glm::vec4 &Color) {
+void _Server::SendMessage(_Object *Player, const std::string &Message, const glm::vec4 &Color) {
 	if(!Player)
 		return;
 
@@ -1204,7 +1204,7 @@ void _OldServerState::SendMessage(_Object *Player, const std::string &Message, c
 }
 
 // Updates the player's HUD
-void _OldServerState::SendHUD(_Object *Player) {
+void _Server::SendHUD(_Object *Player) {
 
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_HUD);
@@ -1218,32 +1218,8 @@ void _OldServerState::SendHUD(_Object *Player) {
 	Network->SendPacket(Packet, Peer);
 }
 
-// Sends information to another player about items they're trading
-void _OldServerState::SendTradeInformation(_Object *Sender, _Object *Receiver) {
-
-	// Send items to trader player
-	_Buffer Packet;
-	Packet.Write<char>(Packet::TRADE_REQUEST);
-	Packet.Write<NetworkIDType>(Sender->NetworkID);
-	BuildTradeItemsPacket(Sender, &Packet, Sender->TradeGold);
-	Network->SendPacket(&Packet, Receiver->OldPeer);
-}
-
-// Adds trade item information to a packet
-void _OldServerState::BuildTradeItemsPacket(_Object *Player, _Buffer *Packet, int Gold) {
-	Packet->Write<int32_t>(Gold);
-	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
-		if(Player->Inventory[i].Item) {
-			Packet->Write<int32_t>(Player->Inventory[i].Item->ID);
-			Packet->Write<char>(Player->Inventory[i].Count);
-		}
-		else
-			Packet->Write<int32_t>(0);
-	}
-}
-
 // Removes a player from a battle and deletes the battle if necessary
-void _OldServerState::RemovePlayerFromBattle(_Object *Player) {
+void _Server::RemovePlayerFromBattle(_Object *Player) {
 	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
 	if(!Battle)
 		return;
@@ -1263,10 +1239,34 @@ void _OldServerState::RemovePlayerFromBattle(_Object *Player) {
 }
 
 // Teleports a player back to town
-void _OldServerState::PlayerTeleport(_Object *Player) {
+void _Server::PlayerTeleport(_Object *Player) {
 	Player->RestoreHealthMana();
 	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 	SendHUD(Player);
 	Player->Save();
 }
 */
+
+// Adds trade item information to a packet
+void _Server::BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold) {
+	Packet.Write<int32_t>(Gold);
+	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
+		if(Player->Inventory[i].Item) {
+			Packet.Write<int32_t>(Player->Inventory[i].Item->ID);
+			Packet.Write<char>(Player->Inventory[i].Count);
+		}
+		else
+			Packet.Write<int32_t>(0);
+	}
+}
+
+// Sends information to another player about items they're trading
+void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
+
+	// Send items to trader player
+	_Buffer Packet;
+	Packet.Write<char>(Packet::TRADE_REQUEST);
+	Packet.Write<NetworkIDType>(Sender->NetworkID);
+	BuildTradeItemsPacket(Sender, Packet, Sender->TradeGold);
+	Network->SendPacket(Packet, Receiver->Peer);
+}

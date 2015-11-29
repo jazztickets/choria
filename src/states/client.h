@@ -98,11 +98,6 @@ class _ClientState : public _State {
 		void HandleDeleteObject(_Buffer &Data);
 		void HandleObjectUpdates(_Buffer &Data);
 		void HandlePlayerPosition(_Buffer &Data);
-		void HandleStartBattle(_Buffer &Data);
-		void HandleBattleTurnResults(_Buffer &Data);
-		void HandleBattleEnd(_Buffer &Data);
-		void HandleBattleCommand(_Buffer &Data);
-		void HandleHUD(_Buffer &Data);
 		void HandleEventStart(_Buffer &Data);
 		void HandleInventoryUse(_Buffer &Data);
 		void HandleChatMessage(_Buffer &Data);
@@ -112,29 +107,13 @@ class _ClientState : public _State {
 		void HandleTradeGold(_Buffer &Data);
 		void HandleTradeAccept(_Buffer &Data);
 		void HandleTradeExchange(_Buffer &Data);
+		void HandleBattleStart(_Buffer &Data);
+		void HandleBattleTurnResults(_Buffer &Data);
+		void HandleBattleEnd(_Buffer &Data);
+		void HandleBattleCommand(_Buffer &Data);
+		void HandleHUD(_Buffer &Data);
 
-	/*
-
-	private:
-
-
-		void SendAttackPlayer();
-		void SynchronizeTime();
-
-		// States
-		int CharacterSlot;
-		bool IsTesting;
-
-		// Time
-		double ClientTime;
-
-		// Objects
-		_Object *Player;
-		_Camera *Camera;
-		_ObjectManager *ObjectManager;
-	*/
-
-		bool IsPaused();
+		//void SendAttackPlayer();
 
 };
 

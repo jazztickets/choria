@@ -639,29 +639,26 @@ void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, std::li
 		}
 	}
 }
-
+*/
 // Returns the closest player
 _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) {
 
 	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
 	for(const auto &Object : Objects) {
-		if(Object->Type == _Object::PLAYER) {
-			_Object *TestPlayer = (_Object *)Object;
-			if(TestPlayer != Player && TestPlayer->State == _Object::STATE_TRADE && TestPlayer->TradePlayer == nullptr) {
-				glm::ivec2 Delta = TestPlayer->Position - Player->Position;
-				float DistanceSquared = (float)(Delta.x * Delta.x + Delta.y * Delta.y);
-				if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
-					ClosestDistanceSquared = DistanceSquared;
-					ClosestPlayer = TestPlayer;
-				}
+		if(Object != Player && Object->State == _Object::STATE_TRADE && Object->TradePlayer == nullptr) {
+			glm::ivec2 Delta = Object->Position - Player->Position;
+			float DistanceSquared = (float)(Delta.x * Delta.x + Delta.y * Delta.y);
+			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
+				ClosestDistanceSquared = DistanceSquared;
+				ClosestPlayer = Object;
 			}
 		}
 	}
 
 	return ClosestPlayer;
 }
-*/
+
 // Find an event on the map, returns true on found
 bool _Map::FindEvent(int EventType, int EventData, glm::ivec2 &Position) {
 

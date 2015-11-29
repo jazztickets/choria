@@ -93,10 +93,6 @@ class _Server {
 		void HandleActionBar(_Buffer &Data, _Peer *Peer);
 		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
 		void HandleEventEnd(_Buffer &Data, _Peer *Peer);
-		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
-		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
-		void HandlePlayerBusy(_Buffer &Data, _Peer *Peer);
-		void HandleAttackPlayer(_Buffer &Data, _Peer *Peer);
 		void HandleChatMessage(_Buffer &Data, _Peer *Peer);
 		void HandleTradeRequest(_Buffer &Data, _Peer *Peer);
 		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
@@ -104,9 +100,15 @@ class _Server {
 		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
 		void HandleTeleport(_Buffer &Data, _Peer *Peer);
 		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
+		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
+		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
+		void HandlePlayerBusy(_Buffer &Data, _Peer *Peer);
+		void HandleAttackPlayer(_Buffer &Data, _Peer *Peer);
 
 		void SendCharacterList(_Peer *Peer);
 		void SendObjectList(_Peer *Peer);
+		void BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold);
+		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 
 		// Threading
 		std::thread *Thread;
