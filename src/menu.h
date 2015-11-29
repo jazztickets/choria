@@ -87,7 +87,7 @@ class _Menu {
 
 		// Network
 		void HandleConnect();
-		void HandleDisconnect();
+		void HandleDisconnect(bool WasSinglePlayer);
 		void HandlePacket(_Buffer &Buffer, char PacketType);
 
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }

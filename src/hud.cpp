@@ -258,7 +258,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		}
 
 		switch(Player->State) {
-			case _Object::STATE_VENDOR:
 			case _Object::STATE_TRADE:
 				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 					if(!Cursor.Item) {

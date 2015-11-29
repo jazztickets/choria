@@ -462,8 +462,8 @@ void _ClientState::HandleConnect() {
 
 // Handle disconnects
 void _ClientState::HandleDisconnect() {
+	Menu.HandleDisconnect(Server != nullptr);
 	ClientState.StopLocalServer();
-	Menu.HandleDisconnect();
 	if(Player) {
 		if(Map) {
 			delete Map;
@@ -491,7 +491,6 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	Player->PlayerKills = Data.Read<int32_t>();
 	Player->Bounty = Data.Read<int32_t>();
 	Player->InvisPower = Data.Read<int32_t>();
-	HUD->SetPlayer(Player);
 
 	// Read items
 	int ItemCount = Data.Read<char>();
@@ -573,8 +572,10 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 		Object->Map = Map;
 
 		// Set player pointer
-		if(Object->NetworkID == ClientNetworkID)
+		if(Object->NetworkID == ClientNetworkID) {
 			Player = Object;
+			HUD->SetPlayer(Player);
+		}
 	}
 
 	if(Player) {

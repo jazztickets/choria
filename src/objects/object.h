@@ -57,8 +57,6 @@ class _Object {
 		enum PlayerStateType {
 			STATE_NONE,
 			STATE_BATTLE,
-			STATE_VENDOR,
-			STATE_TRADER,
 			STATE_TRADE,
 			STATE_TELEPORT,
 			STATE_BUSY,

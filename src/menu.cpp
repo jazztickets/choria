@@ -710,21 +710,17 @@ void _Menu::HandleConnect() {
 }
 
 // Disconnect
-void _Menu::HandleDisconnect() {
-	switch(State) {
-		case STATE_NONE:
-		case STATE_CHARACTERS: {
-			InitTitle();
-		} break;
-		case STATE_CONNECT: {
-			InitConnect();
+void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 
-			_Label *Label = Assets.Labels["label_menu_connect_message"];
-			Label->Color = COLOR_RED;
-			Label->Text = "Disconnected from server";
-		} break;
-		default:
-		break;
+	if(WasSinglePlayer) {
+		InitTitle();
+	}
+	else {
+		InitConnect();
+
+		_Label *Label = Assets.Labels["label_menu_connect_message"];
+		Label->Color = COLOR_RED;
+		Label->Text = "Disconnected from server";
 	}
 }
 

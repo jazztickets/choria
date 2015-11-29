@@ -581,58 +581,52 @@ _Map *_Server::GetMap(int MapID) {
 // Create player object and load stats from save
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
-	// Create object
-	_Object *Player = new _Object();
-	Player->Peer = Peer;
-	Player->Stats = Stats;
-	Peer->Object = Player;
-
-	std::stringstream Query;
-
 	// Get character
-	Query << "SELECT * FROM character WHERE id = " << Peer->CharacterID;
-	Save->Database->RunDataQuery(Query.str());
-	Query.str("");
-
-	// Get row
+	Save->Database->RunDataQuery("SELECT * FROM character WHERE id = @character_id");
+	Save->Database->BindInt(1, Peer->CharacterID);
 	if(!Save->Database->FetchRow()) {
 		Save->Database->CloseQuery();
 		return nullptr;
 	}
 
+	// Create object
+	_Object *Player = new _Object();
+	Peer->Object = Player;
+	Player->Peer = Peer;
+	Player->Stats = Stats;
+
 	// Set properties
-	Player->CharacterID = Save->Database->GetInt(0);
-	Player->SpawnMapID = Save->Database->GetInt(3);
-	Player->SpawnPoint = Save->Database->GetInt(4);
-	Player->Name = Save->Database->GetString(5);
-	Player->PortraitID = Save->Database->GetInt(6);
-	Player->Experience = Save->Database->GetInt(7);
-	Player->Gold = Save->Database->GetInt(8);
+	Player->CharacterID = Save->Database->GetInt("id");
+	Player->SpawnMapID = Save->Database->GetInt("map_id");
+	Player->SpawnPoint = Save->Database->GetInt("spawnpoint");
+	Player->Name = Save->Database->GetString("name");
+	Player->PortraitID = Save->Database->GetInt("portrait_id");
+	Player->Experience = Save->Database->GetInt("experience");
+	Player->Gold = Save->Database->GetInt("gold");
 	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		uint32_t SkillID = Save->Database->GetInt(i + 9);
+		uint32_t SkillID = Save->Database->GetInt("actionbar" + std::to_string(i));
 		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
-	Player->PlayTime = Save->Database->GetInt(17);
-	Player->Deaths = Save->Database->GetInt(18);
-	Player->MonsterKills = Save->Database->GetInt(19);
-	Player->PlayerKills = Save->Database->GetInt(20);
-	Player->Bounty = Save->Database->GetInt(21);
+	Player->PlayTime = Save->Database->GetInt("playtime");
+	Player->Deaths = Save->Database->GetInt("deaths");
+	Player->MonsterKills = Save->Database->GetInt("monsterkills");
+	Player->PlayerKills = Save->Database->GetInt("playerkills");
+	Player->Bounty = Save->Database->GetInt("bounty");
 	Save->Database->CloseQuery();
 
 	// Set inventory
-	Query << "SELECT slot, item_id, count FROM inventory WHERE character_id = " << Player->CharacterID;
-	Save->Database->RunDataQuery(Query.str());
+	Save->Database->RunDataQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
+	Save->Database->BindInt(1, Peer->CharacterID);
 	int ItemCount = 0;
 	while(Save->Database->FetchRow()) {
 		Player->SetInventory(Save->Database->GetInt(0), Save->Database->GetInt(1), Save->Database->GetInt(2));
 		ItemCount++;
 	}
 	Save->Database->CloseQuery();
-	Query.str("");
 
 	// Set skills
-	Query << "SELECT skill_id, level FROM skilllevel WHERE character_id = " << Player->CharacterID;
-	Save->Database->RunDataQuery(Query.str());
+	Save->Database->RunDataQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
+	Save->Database->BindInt(1, Peer->CharacterID);
 	int SkillCount = 0;
 	while(Save->Database->FetchRow()) {
 		int SkillLevel = Save->Database->GetInt(1);
@@ -641,7 +635,6 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 			SkillCount++;
 	}
 	Save->Database->CloseQuery();
-	Query.str("");
 
 	// Get stats
 	Player->CalculatePlayerStats();
