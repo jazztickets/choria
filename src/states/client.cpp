@@ -407,7 +407,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;
-/*
 		case Packet::TRADE_CANCEL:
 			HandleTradeCancel(Data);
 		break;
@@ -423,6 +422,7 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::TRADE_EXCHANGE:
 			HandleTradeExchange(Data);
 		break;
+	/*
 		case Packet::WORLD_STARTBATTLE:
 			HandleBattleStart(Data);
 		break;
@@ -479,7 +479,7 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 
 	//Log << "HandleYourCharacterInfo" << std::endl;
 
-	Player->WorldImage = Assets.Textures["players/basic.png"];
+	Player->WorldTexture = Assets.Textures["players/basic.png"];
 	Player->Stats = Stats;
 	Player->Name = Data.ReadString();
 	Player->PortraitID = Data.Read<uint32_t>();
@@ -566,7 +566,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 		Object->PortraitID = Data.Read<uint32_t>();
 		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
 		Object->InvisPower = Data.ReadBit();
-		Object->WorldImage = Assets.Textures["players/basic.png"];
+		Object->WorldTexture = Assets.Textures["players/basic.png"];
 
 		Map->AddObject(Object, Object->NetworkID);
 		Object->Map = Map;
@@ -608,7 +608,7 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 
 		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
 		Object->Map = Map;
-		Object->WorldImage = Assets.Textures["players/basic.png"];
+		Object->WorldTexture = Assets.Textures["players/basic.png"];
 
 		// Add to map
 		Map->AddObject(Object, NetworkID);
@@ -630,11 +630,9 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 	// Get object
 	_Object *Object = Map->GetObjectByID(NetworkID);
 	if(Object) {
-		switch(Player->State) {
-			case _Object::STATE_BATTLE:
-				Player->Battle->RemoveFighter(Object);
-			break;
-		}
+		if(Player->Battle)
+			Player->Battle->RemoveFighter(Object);
+
 		Object->Deleted = true;
 	}
 }
@@ -657,33 +655,31 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 
 		// Read packet
 		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-		int PlayerState = Data.Read<char>();
 		glm::ivec2 Position = Data.Read<glm::ivec2>();
+		int Status = Data.Read<char>();
 		int Invisible = Data.ReadBit();
 
 		// Find object
 		_Object *Object = Map->GetObjectByID(NetworkID);
 		if(Object) {
+			Object->Status = Status;
 
 			if(Object == Player) {
-
 			}
 			else {
 				Object->Position = Position;
-				Object->State = PlayerState;
 				Object->InvisPower = Invisible;
 			}
 			Object->ServerPosition = Position;
 
-			switch(PlayerState) {
-				case _Object::STATE_NONE:
-					Object->StateImage = nullptr;
+			switch(Status) {
+				case _Object::STATUS_NONE:
+					Object->StatusTexture = nullptr;
 				break;
-				//case _Object::STATE_TRADE:
-				//	Object->StateImage = Assets.Textures["world/trade.png"];
-				//break;
+				case _Object::STATUS_TRADE:
+					Object->StatusTexture = Assets.Textures["world/trade.png"];
+				break;
 				default:
-					Object->StateImage = Assets.Textures["world/busy.png"];
 				break;
 			}
 		}
@@ -772,6 +768,7 @@ void _ClientState::HandleTradeCancel(_Buffer &Data) {
 
 	// Reset agreement
 	HUD->ResetAcceptButton();
+	HUD->ResetTradeTheirsWindow();
 }
 
 // Handles a trade item update

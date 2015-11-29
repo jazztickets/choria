@@ -54,11 +54,14 @@ class _Object {
 			MONSTER,
 		};
 
-		enum PlayerStateType {
-			STATE_NONE,
-			STATE_BATTLE,
-			STATE_TELEPORT,
-			STATE_BUSY,
+		enum StatusImageType {
+			STATUS_NONE,
+			STATUS_INVENTORY,
+			STATUS_VENDOR,
+			STATUS_SKILLS,
+			STATUS_TRADE,
+			STATUS_TRADER,
+			STATUS_BATTLE,
 		};
 
 		enum MoveDirectionType {
@@ -233,13 +236,13 @@ class _Object {
 		int CharacterID;
 
 		// States
-		int State;
 		double MoveTime;
 
 		// Texture
+		int Status;
 		uint32_t PortraitID;
-		const _Texture *WorldImage;
-		const _Texture *StateImage;
+		const _Texture *WorldTexture;
+		const _Texture *StatusTexture;
 
 		// Map
 		int SpawnMapID, SpawnPoint;

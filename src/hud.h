@@ -118,6 +118,7 @@ class _HUD {
 		bool CloseTrade(bool SendNotify=true);
 		bool IsTypingGold();
 		void ResetAcceptButton();
+		void ResetTradeTheirsWindow();
 		void UpdateTradeStatus(bool Accepted);
 		void ValidateTradeGold();
 

@@ -195,28 +195,24 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 			Player->Map->RemovePeer(Event.Peer);
 		}
 
+		// Leave trading screen
+		_Object *TradePlayer = Player->TradePlayer;
+		if(TradePlayer) {
+			TradePlayer->TradePlayer = nullptr;
+
+			_Buffer Packet;
+			Packet.Write<char>(Packet::TRADE_CANCEL);
+			Network->SendPacket(Packet, TradePlayer->Peer);
+		}
+
+		// Remove from battle
+		//RemovePlayerFromBattle(Player);
+
 		// Save player
 		Save->SavePlayer(Player);
 
 		Player->Deleted = true;
 	}
-
-	// Leave trading screen
-	/*_Object *TradePlayer = Player->TradePlayer;
-	if(TradePlayer) {
-		TradePlayer->TradePlayer = nullptr;
-
-		_Buffer Packet;
-		Packet.Write<char>(Packet::TRADE_CANCEL);
-		Network->SendPacket(&Packet, TradePlayer->Peer);
-	}
-
-	// Remove from battle
-	RemovePlayerFromBattle(Player);
-
-	// Save character info
-	Player->Save();
-	*/
 
 	// Delete peer from network
 	Network->DeletePeer(Event.Peer);
@@ -525,7 +521,6 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		Player = CreatePlayer(Peer);
 		Player->NetworkID = Map->GenerateObjectID();
 		Player->Map = Map;
-		Player->State = _Object::STATE_NONE;
 		Player->InvisPower = OldInvisPower;
 
 		// Find spawn point in map
@@ -907,12 +902,14 @@ void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 	if(!Map)
 		return;
 
+	// Set status
+	Player->WaitingForTrade = true;
+
 	// Find the nearest player to trade with
 	_Object *TradePlayer = Map->FindTradePlayer(Player, 2.0f * 2.0f);
 	if(TradePlayer == nullptr) {
 
 		// Set up trade post
-		Player->WaitingForTrade = true;
 		Player->TradeGold = 0;
 		Player->TradeAccepted = false;
 		Player->TradePlayer = nullptr;
@@ -927,8 +924,6 @@ void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 		Player->TradeAccepted = false;
 		TradePlayer->TradePlayer = Player;
 		TradePlayer->TradeAccepted = false;
-
-		Player->WaitingForTrade = true;
 		TradePlayer->WaitingForTrade = true;
 	}
 }
@@ -943,7 +938,6 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 	// Notify trading player
 	_Object *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->WaitingForTrade = true;
 		TradePlayer->TradePlayer = nullptr;
 		TradePlayer->TradeAccepted = false;
 
@@ -953,7 +947,8 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Set state back to normal
-	Player->State = _Object::STATE_NONE;
+	Player->TradePlayer = nullptr;
+	Player->WaitingForTrade = false;
 }
 
 // Handle a trade gold update
@@ -1030,11 +1025,11 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 				Network->SendPacket(Packet, TradePlayer->Peer);
 			}
 
-			Player->State = _Object::STATE_NONE;
+			Player->WaitingForTrade = false;
 			Player->TradePlayer = nullptr;
 			Player->TradeGold = 0;
 			Player->MoveTradeToInventory();
-			TradePlayer->State = _Object::STATE_NONE;
+			TradePlayer->WaitingForTrade = false;
 			TradePlayer->TradePlayer = nullptr;
 			TradePlayer->TradeGold = 0;
 			TradePlayer->MoveTradeToInventory();

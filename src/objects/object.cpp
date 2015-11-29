@@ -74,11 +74,11 @@ _Object::_Object()
 	AI(0),
 
 	CharacterID(0),
-	State(STATE_NONE),
 	MoveTime(0),
+	Status(0),
 	PortraitID(0),
-	WorldImage(nullptr),
-	StateImage(nullptr),
+	WorldTexture(nullptr),
+	StatusTexture(nullptr),
 	SpawnMapID(1),
 	SpawnPoint(0),
 	TeleportTime(0),
@@ -382,6 +382,10 @@ void _Object::Update(double FrameTime) {
 	if(Moved)
 		InputState = 0;
 
+	Status = STATUS_NONE;
+	if(WaitingForTrade)
+		Status = STATUS_TRADE;
+
 	// Update timers
 	MoveTime += FrameTime;
 	AttackPlayerTime += FrameTime;
@@ -395,7 +399,7 @@ void _Object::Update(double FrameTime) {
 
 // Renders the player while walking around the world
 void _Object::Render(const _Object *ClientPlayer) {
-	if(Map && WorldImage) {
+	if(Map && WorldTexture) {
 
 		float Alpha = 1.0f;
 		if(IsInvisible())
@@ -414,18 +418,18 @@ void _Object::Render(const _Object *ClientPlayer) {
 		if(0) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
-			Graphics.DrawSprite(DrawPosition, WorldImage);
+			Graphics.DrawSprite(DrawPosition, WorldTexture);
 		}
 
 		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 		Graphics.SetColor(Color);
-		Graphics.DrawSprite(DrawPosition, WorldImage);
-		if(StateImage) {
-			Graphics.DrawSprite(DrawPosition, StateImage);
+		Graphics.DrawSprite(DrawPosition, WorldTexture);
+		if(StatusTexture) {
+			Graphics.DrawSprite(DrawPosition, StatusTexture);
 		}
 
 		if(ClientPlayer != this) {
-			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldImage->Size.x);
+			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
 		}
 	}
 }
@@ -496,7 +500,6 @@ void _Object::GenerateNextBattle() {
 
 // Starts a battle
 void _Object::StartBattle(_Battle *Battle) {
-	State = STATE_BATTLE;
 	this->Battle = Battle;
 	Command = -1;
 	for(int i = 0; i < 2; i++)
@@ -505,7 +508,6 @@ void _Object::StartBattle(_Battle *Battle) {
 
 // Stop a battle
 void _Object::StopBattle() {
-	State = STATE_NONE;
 	Battle = nullptr;
 	GenerateNextBattle();
 }
@@ -513,7 +515,7 @@ void _Object::StopBattle() {
 // Determines if a player can attack
 bool _Object::CanAttackPlayer() {
 
-	return State == _Object::STATE_NONE && AttackPlayerTime > PLAYER_ATTACKTIME;
+	return false; //AttackPlayerTime > PLAYER_ATTACKTIME;
 }
 
 // Update gold amount
@@ -978,23 +980,13 @@ void _Object::CalculateSkillPoints() {
 
 // Toggles the player's busy state
 void _Object::SetBusy(bool Value) {
-
-	if(Value && State == STATE_NONE) {
-		State = STATE_BUSY;
-	}
-	else if(!Value && State == STATE_BUSY) {
-		State = STATE_NONE;
-	}
 }
 
 // Starts the teleport process
 void _Object::StartTeleport() {
-	if(State == STATE_TELEPORT)
-		State = STATE_NONE;
-	else if(State == STATE_NONE)
-		State = STATE_TELEPORT;
-
+	/*
 	TeleportTime = 0;
+	*/
 }
 
 // Calculates all of the player stats

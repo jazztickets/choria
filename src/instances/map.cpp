@@ -715,8 +715,8 @@ void _Map::SendObjectUpdates() {
 
 		// Write object data
 		Packet.Write<NetworkIDType>(Object->NetworkID);
-		Packet.Write<char>(Object->State);
 		Packet.Write<glm::ivec2>(Object->Position);
+		Packet.Write<char>(Object->Status);
 		Packet.WriteBit(Object->IsInvisible());
 	}
 

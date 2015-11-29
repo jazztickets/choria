@@ -454,12 +454,13 @@ void _HUD::ToggleTeleport() {
 	ClientState.Network->SendPacket(Packet);
 	Player->StartTeleport();
 
+	/*
 	if(Player->State == _Object::STATE_TELEPORT) {
 		TeleportElement->SetVisible(false);
 	}
 	else {
 		TeleportElement->SetVisible(true);
-	}
+	}*/
 }
 
 // Open/close inventory
@@ -514,9 +515,10 @@ void _HUD::InitVendor() {
 
 // Initialize the trade system
 void _HUD::InitTrade() {
-	if(Player->State != _Object::STATE_NONE)
+	if(Player->WaitingForTrade)
 		return;
 
+	Player->WaitingForTrade = true;
 	InventoryElement->SetVisible(true);
 	TradeElement->SetVisible(true);
 
@@ -526,13 +528,8 @@ void _HUD::InitTrade() {
 	// Reset UI
 	ResetAcceptButton();
 
-	TradeTheirsElement->SetVisible(false);
-	Assets.Labels["label_trade_status"]->SetVisible(true);
-	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
-	Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = "0";
-	Assets.TextBoxes["textbox_trade_gold_yours"]->Text = "0";
-	Assets.Labels["label_trade_name_yours"]->Text = Player->Name;
-	Assets.Images["image_trade_portrait_yours"]->Texture = Player->Portrait;
+	// Reset their trade UI
+	ResetTradeTheirsWindow();
 }
 
 // Initialize the trader
@@ -733,6 +730,7 @@ bool _HUD::CloseTrade(bool SendNotify) {
 	if(SendNotify)
 		SendTradeCancel();
 
+	Player->WaitingForTrade = false;
 	Player->TradePlayer = nullptr;
 
 	return WasOpen;
@@ -1387,6 +1385,17 @@ void _HUD::ResetAcceptButton() {
 	UpdateAcceptButton();
 
 	UpdateTradeStatus(false);
+}
+
+// Resets upper trade window status
+void _HUD::ResetTradeTheirsWindow() {
+	TradeTheirsElement->SetVisible(false);
+	Assets.Labels["label_trade_status"]->SetVisible(true);
+	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
+	Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = "0";
+	Assets.TextBoxes["textbox_trade_gold_yours"]->Text = "0";
+	Assets.Labels["label_trade_name_yours"]->Text = Player->Name;
+	Assets.Images["image_trade_portrait_yours"]->Texture = Player->Portrait;
 }
 
 // Update their status label
