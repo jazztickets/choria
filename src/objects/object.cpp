@@ -109,6 +109,7 @@ _Object::_Object()
 	SkillPoints(0),
 	SkillPointsUsed(0),
 	TradeGold(0),
+	WaitingForTrade(false),
 	TradeAccepted(false),
 	TradePlayer(nullptr),
 

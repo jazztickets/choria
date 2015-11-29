@@ -258,26 +258,24 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			}
 		}
 
-		switch(Player->State) {
-			case _Object::STATE_TRADE:
-				if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-					if(!Cursor.Item) {
+		if(Player->WaitingForTrade) {
+			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+				if(!Cursor.Item) {
 
-						// Check for accept button
-						_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
-						if(TradeElement->GetClickedElement() == AcceptButton) {
-							AcceptButton->Checked = !AcceptButton->Checked;
-							UpdateAcceptButton();
+					// Check for accept button
+					_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+					if(TradeElement->GetClickedElement() == AcceptButton) {
+						AcceptButton->Checked = !AcceptButton->Checked;
+						UpdateAcceptButton();
 
-							//_Buffer Packet;
-							_Buffer Packet;
-							Packet.Write<char>(Packet::TRADE_ACCEPT);
-							Packet.Write<char>(AcceptButton->Checked);
-							ClientState.Network->SendPacket(Packet);
-						}
+						//_Buffer Packet;
+						_Buffer Packet;
+						Packet.Write<char>(Packet::TRADE_ACCEPT);
+						Packet.Write<char>(AcceptButton->Checked);
+						ClientState.Network->SendPacket(Packet);
 					}
 				}
-			break;
+			}
 		}
 
 		Cursor.Reset();
@@ -333,22 +331,17 @@ void _HUD::Update(double FrameTime) {
 		}
 	}
 
-	switch(Player->State) {
-		case _Object::STATE_TRADE: {
+	// Get trade items
+	if(Player->WaitingForTrade) {
+		TradeTheirsElement->SetVisible(false);
+		if(Player->TradePlayer) {
+			TradeTheirsElement->SetVisible(true);
+			Assets.Labels["label_trade_status"]->SetVisible(false);
 
-			// Get trade items
-			if(Player->State == _Object::STATE_TRADE) {
-				TradeTheirsElement->SetVisible(false);
-				if(Player->TradePlayer) {
-					TradeTheirsElement->SetVisible(true);
-					Assets.Labels["label_trade_status"]->SetVisible(false);
-
-					Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
-					Assets.Labels["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
-					Assets.Images["image_trade_portrait_theirs"]->Texture = Player->TradePlayer->Portrait;
-				}
-			}
-		} break;
+			Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
+			Assets.Labels["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
+			Assets.Images["image_trade_portrait_theirs"]->Texture = Player->TradePlayer->Portrait;
+		}
 	}
 
 	if(IsChatting()) {

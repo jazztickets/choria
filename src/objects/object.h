@@ -57,7 +57,6 @@ class _Object {
 		enum PlayerStateType {
 			STATE_NONE,
 			STATE_BATTLE,
-			STATE_TRADE,
 			STATE_TELEPORT,
 			STATE_BUSY,
 		};
@@ -276,6 +275,7 @@ class _Object {
 
 		// Trading
 		int TradeGold;
+		bool WaitingForTrade;
 		bool TradeAccepted;
 		_Object *TradePlayer;
 

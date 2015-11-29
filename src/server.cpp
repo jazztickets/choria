@@ -742,7 +742,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 
 	// Check for trading players
 	_Object *TradePlayer = Player->TradePlayer;
-	if(Player->State == _Object::STATE_TRADE && TradePlayer && (_Object::IsSlotTrade(OldSlot) || _Object::IsSlotTrade(NewSlot))) {
+	if(Player->WaitingForTrade && TradePlayer && (_Object::IsSlotTrade(OldSlot) || _Object::IsSlotTrade(NewSlot))) {
 
 		// Reset agreement
 		Player->TradeAccepted = false;
@@ -912,7 +912,7 @@ void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 	if(TradePlayer == nullptr) {
 
 		// Set up trade post
-		Player->State = _Object::STATE_TRADE;
+		Player->WaitingForTrade = true;
 		Player->TradeGold = 0;
 		Player->TradeAccepted = false;
 		Player->TradePlayer = nullptr;
@@ -928,8 +928,8 @@ void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 		TradePlayer->TradePlayer = Player;
 		TradePlayer->TradeAccepted = false;
 
-		Player->State = _Object::STATE_TRADE;
-		TradePlayer->State = _Object::STATE_TRADE;
+		Player->WaitingForTrade = true;
+		TradePlayer->WaitingForTrade = true;
 	}
 }
 
@@ -943,7 +943,7 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 	// Notify trading player
 	_Object *TradePlayer = Player->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->State = _Object::STATE_TRADE;
+		TradePlayer->WaitingForTrade = true;
 		TradePlayer->TradePlayer = nullptr;
 		TradePlayer->TradeAccepted = false;
 

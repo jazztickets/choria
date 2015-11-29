@@ -643,7 +643,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
 	for(const auto &Object : Objects) {
-		if(Object != Player && Object->State == _Object::STATE_TRADE && Object->TradePlayer == nullptr) {
+		if(Object != Player && Object->WaitingForTrade && Object->TradePlayer == nullptr) {
 			glm::ivec2 Delta = Object->Position - Player->Position;
 			float DistanceSquared = (float)(Delta.x * Delta.x + Delta.y * Delta.y);
 			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {

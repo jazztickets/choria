@@ -679,9 +679,9 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 				case _Object::STATE_NONE:
 					Object->StateImage = nullptr;
 				break;
-				case _Object::STATE_TRADE:
-					Object->StateImage = Assets.Textures["world/trade.png"];
-				break;
+				//case _Object::STATE_TRADE:
+				//	Object->StateImage = Assets.Textures["world/trade.png"];
+				//break;
 				default:
 					Object->StateImage = Assets.Textures["world/busy.png"];
 				break;
