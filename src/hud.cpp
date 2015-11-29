@@ -378,6 +378,16 @@ void _HUD::Render(double Time) {
 	Assets.Labels["label_hud_gold"]->Text = Buffer.str();
 	Buffer.str("");
 
+	/*
+	Buffer << ClientState.Network->GetSentSpeed() / 1024.0f << "KB/s";
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::ivec2(10, 150));
+	Buffer.str("");
+
+	Buffer << ClientState.Network->GetReceiveSpeed() / 1024.0f << "KB/s";
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::ivec2(10, 180));
+	Buffer.str("");
+	*/
+
 	// Draw experience bar
 	Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
 	Assets.Labels["label_hud_experience"]->Text = Buffer.str();
@@ -478,12 +488,12 @@ void _HUD::ToggleInventory() {
 	if(Player->WaitForServer)
 		return;
 
-	Cursor.Reset();
+	if(!InventoryElement->Visible) {
+		CloseWindows();
 
-	if(!InventoryElement->Visible && !Player->Trader) {
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
-		//OldClientState.SendStatus(true);
+		ClientState.SendStatus(_Object::STATUS_INVENTORY);
 	}
 	else {
 		CloseWindows();
@@ -496,10 +506,11 @@ void _HUD::ToggleTrade() {
 		return;
 
 	if(!TradeElement->Visible) {
+		CloseWindows();
 		InitTrade();
 	}
 	else {
-		CloseTrade();
+		CloseWindows();
 	}
 }
 
@@ -508,12 +519,12 @@ void _HUD::ToggleSkills() {
 	if(Player->WaitForServer)
 		return;
 
-	SkillsElement->SetVisible(!SkillsElement->Visible);
-	if(SkillsElement->Visible) {
+	if(!SkillsElement->Visible) {
+		CloseWindows();
 		InitSkills();
 	}
 	else {
-		CloseSkills();
+		CloseWindows();
 	}
 }
 
@@ -528,8 +539,9 @@ void _HUD::ToggleInGameMenu() {
 
 	if(ClientState.IsTesting)
 		ClientState.Network->Disconnect();
-	else
+	else {
 		Menu.InitInGame();
+	}
 }
 
 // Initialize the vendor
@@ -539,7 +551,6 @@ void _HUD::InitVendor() {
 	// Open inventory
 	InventoryElement->SetVisible(true);
 	VendorElement->SetVisible(true);
-	//OldClientState.SendStatus(true);
 }
 
 // Initialize the trade system
@@ -578,7 +589,6 @@ void _HUD::InitTrader() {
 
 // Initialize the skills screen
 void _HUD::InitSkills() {
-	//OldClientState.SendStatus(true);
 
 	// Clear old children
 	ClearSkills();
@@ -690,6 +700,8 @@ void _HUD::InitSkills() {
 	RefreshSkillButtons();
 	Cursor.Reset();
 	ActionBarChanged = false;
+
+	ClientState.SendStatus(_Object::STATUS_SKILLS);
 }
 
 // Closes the chat window
@@ -737,8 +749,6 @@ bool _HUD::CloseSkills() {
 
 	bool WasOpen = SkillsElement->Visible;
 
-	// No longer busy
-	//OldClientState.SendStatus(false);
 	SkillsElement->SetVisible(false);
 	Cursor.Reset();
 
@@ -775,11 +785,6 @@ bool _HUD::CloseTrader() {
 	Player->Trader = nullptr;
 	Cursor.Reset();
 
-	// Notify server
-	//_Buffer Packet;
-	//Packet.Write<PacketType>(PacketType::EVENT_END);
-	//ClientState.Network->SendPacket(Packet);
-
 	return WasOpen;
 }
 
@@ -791,6 +796,9 @@ bool _HUD::CloseWindows() {
 	WasOpen |= CloseSkills();
 	WasOpen |= CloseTrade();
 	WasOpen |= CloseTrader();
+
+	if(WasOpen)
+		ClientState.SendStatus(_Object::STATUS_NONE);
 
 	return WasOpen;
 }

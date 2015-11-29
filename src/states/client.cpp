@@ -669,8 +669,23 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 				case _Object::STATUS_NONE:
 					Object->StatusTexture = nullptr;
 				break;
+				case _Object::STATUS_PAUSE:
+					Object->StatusTexture = Assets.Textures["hud/pause.png"];
+				break;
+				case _Object::STATUS_INVENTORY:
+					Object->StatusTexture = Assets.Textures["hud/bag.png"];
+				break;
+				case _Object::STATUS_VENDOR:
+					Object->StatusTexture = Assets.Textures["hud/vendor.png"];
+				break;
+				case _Object::STATUS_SKILLS:
+					Object->StatusTexture = Assets.Textures["hud/skills.png"];
+				break;
 				case _Object::STATUS_TRADE:
-					Object->StatusTexture = Assets.Textures["world/trade.png"];
+					Object->StatusTexture = Assets.Textures["hud/trade.png"];
+				break;
+				case _Object::STATUS_TRADER:
+					Object->StatusTexture = Assets.Textures["hud/vendor.png"];
 				break;
 				default:
 				break;

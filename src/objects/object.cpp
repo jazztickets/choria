@@ -16,7 +16,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/object.h>
+#include <objects/skill.h>
 #include <instances/map.h>
+#include <instances/battle.h>
 #include <ui/element.h>
 #include <ui/image.h>
 #include <assets.h>
@@ -26,8 +28,6 @@
 #include <font.h>
 #include <program.h>
 #include <constants.h>
-#include <instances/battle.h>
-#include <objects/skill.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <sstream>
@@ -74,6 +74,7 @@ _Object::_Object()
 	AI(0),
 
 	CharacterID(0),
+	Paused(false),
 	MoveTime(0),
 	Status(0),
 	PortraitID(0),
@@ -104,8 +105,10 @@ _Object::_Object()
 	NextBattle(0),
 	AttackPlayerTime(0),
 	InvisPower(0),
+	InventoryOpen(false),
 	Vendor(nullptr),
 	Trader(nullptr),
+	SkillsOpen(false),
 	SkillPoints(0),
 	SkillPointsUsed(0),
 	TradeGold(0),
@@ -386,6 +389,16 @@ void _Object::Update(double FrameTime) {
 	Status = STATUS_NONE;
 	if(WaitingForTrade)
 		Status = STATUS_TRADE;
+	else if(Vendor)
+		Status = STATUS_VENDOR;
+	else if(Trader)
+		Status = STATUS_TRADER;
+	else if(InventoryOpen)
+		Status = STATUS_INVENTORY;
+	else if(SkillsOpen)
+		Status = STATUS_SKILLS;
+	else if(Paused)
+		Status = STATUS_PAUSE;
 
 	// Update timers
 	MoveTime += FrameTime;

@@ -294,9 +294,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_TELEPORT:
 			HandleTeleport(Data, Peer);
 		break;
-		case PacketType::EVENT_END:
-			HandleEventEnd(Data, Peer);
-		break;
 	*/
 		default:
 		break;
@@ -1068,21 +1065,30 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 
 	// Read packet
 	int Status = Data.Read<char>();
+	switch(Status) {
+		case _Object::STATUS_NONE:
+			Player->InventoryOpen = false;
+			Player->SkillsOpen = false;
+			Player->Paused = false;
+			Player->Vendor = nullptr;
+			Player->Trader = nullptr;
+		break;
+		case _Object::STATUS_PAUSE:
+			Player->Paused = true;
+		break;
+		case _Object::STATUS_INVENTORY:
+			Player->InventoryOpen = true;
+		break;
+		case _Object::STATUS_SKILLS:
+			Player->SkillsOpen = true;
+		break;
+		default:
+		break;
+	}
 
-	// Set status
-	Player->Status = Status;
 }
 
 /*
-// Handles a player's event end message
-void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	Player->Vendor = nullptr;
-	Player->State = _Object::STATE_NONE;
-}
 
 // Handles battle commands from a client
 void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {

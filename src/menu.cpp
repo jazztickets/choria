@@ -25,6 +25,7 @@
 #include <ui/image.h>
 #include <ui/style.h>
 #include <ui/textbox.h>
+#include <objects/object.h>
 #include <constants.h>
 #include <input.h>
 #include <actions.h>
@@ -88,7 +89,7 @@ void _Menu::InitCharacters() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 
-	//OldClientState.SendStatus(true);
+	ClientState.SendStatus(_Object::STATUS_PAUSE);
 	State = STATE_INGAME;
 }
 
@@ -98,7 +99,7 @@ void _Menu::InitPlay() {
 		CurrentLayout->SetVisible(false);
 	CurrentLayout = nullptr;
 
-	//OldClientState.SendStatus(false);
+	ClientState.SendStatus(_Object::STATUS_NONE);
 	State = STATE_NONE;
 }
 

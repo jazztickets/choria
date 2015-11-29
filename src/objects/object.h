@@ -56,6 +56,7 @@ class _Object {
 
 		enum StatusImageType {
 			STATUS_NONE,
+			STATUS_PAUSE,
 			STATUS_INVENTORY,
 			STATUS_VENDOR,
 			STATUS_SKILLS,
@@ -235,6 +236,7 @@ class _Object {
 		int CharacterID;
 
 		// States
+		bool Paused;
 		double MoveTime;
 
 		// Texture
@@ -266,11 +268,13 @@ class _Object {
 		int InvisPower;
 
 		// Items
+		bool InventoryOpen;
 		_InventorySlot Inventory[INVENTORY_COUNT];
 		const _Vendor *Vendor;
 		const _Trader *Trader;
 
 		// Skills
+		bool SkillsOpen;
 		std::unordered_map<uint32_t, int32_t> SkillLevels;
 		int SkillPoints, SkillPointsUsed;
 		int PotionsLeft[2], MaxPotions[2];
