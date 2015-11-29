@@ -247,11 +247,13 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 		return 0;
 
 	// Calculate
-	int Price;
+	float Percent;
 	if(Buy)
-		Price = (int)(Cost * Vendor->BuyPercent) * QueryCount;
+		Percent = Vendor->BuyPercent;
 	else
-		Price = (int)(Cost * Vendor->SellPercent) * QueryCount;
+		Percent = Vendor->SellPercent;
+
+	int Price = (int)(Cost * Percent) * QueryCount;
 
 	// Cap
 	if(Price < 0)

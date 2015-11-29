@@ -302,6 +302,8 @@ void _HUD::Update(double FrameTime) {
 					_InventorySlot *InventorySlot = &Player->Inventory[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
+					if(Tooltip.Item && Player->Vendor)
+						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, Tooltip.Count, false);
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
@@ -314,10 +316,9 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_VENDOR: {
 				if(Player->Vendor && (size_t)Tooltip.Slot < Player->Vendor->Items.size()) {
 					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
-					if(Tooltip.Item) {
-						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, 1, true);
-						Tooltip.Count = 1;
-					}
+					Tooltip.Count = 1;
+					if(Tooltip.Item)
+						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, Tooltip.Count, true);
 				}
 			} break;
 			case WINDOW_TRADER: {
