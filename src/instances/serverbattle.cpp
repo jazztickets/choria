@@ -64,7 +64,7 @@ void _ServerBattle::StartBattle() {
 
 	// Build packet
 	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_STARTBATTLE);
+	Packet.Write<PacketType>(PacketType::WORLD_STARTBATTLE);
 
 	// Write fighter count
 	int FighterCount = Fighters.size();
@@ -209,7 +209,7 @@ void _ServerBattle::ResolveTurn() {
 
 	// Build packet for results
 	_Buffer Packet;
-	Packet.Write<char>(Packet::BATTLE_TURNRESULTS);
+	Packet.Write<PacketType>(PacketType::BATTLE_TURNRESULTS);
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i]) {
@@ -371,7 +371,7 @@ void _ServerBattle::CheckEnd() {
 
 			// Write results
 			_Buffer Packet;
-			Packet.Write<char>(Packet::BATTLE_END);
+			Packet.Write<PacketType>(PacketType::BATTLE_END);
 			Packet.WriteBit(Side[0].Dead);
 			Packet.WriteBit(Side[1].Dead);
 			Packet.Write<char>(OppositeSide->PlayerCount);
@@ -429,7 +429,7 @@ void _ServerBattle::SendSkillToPlayers(_Object *Player) {
 
 	// Build packet
 	_Buffer Packet;
-	Packet.Write<char>(Packet::BATTLE_COMMAND);
+	Packet.Write<PacketType>(PacketType::BATTLE_COMMAND);
 	Packet.Write<char>(Player->BattleSlot);
 	Packet.Write<char>(SkillID);
 

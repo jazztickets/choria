@@ -179,7 +179,7 @@ void _Map::CheckEvents(_Object *Object) {
 
 				// Notify client
 				_Buffer Packet;
-				Packet.Write<char>(Packet::EVENT_START);
+				Packet.Write<PacketType>(PacketType::EVENT_START);
 				Packet.Write<int32_t>(Tile->EventType);
 				Packet.Write<int32_t>(Tile->EventData);
 				Packet.Write<glm::ivec2>(Object->Position);
@@ -194,7 +194,7 @@ void _Map::CheckEvents(_Object *Object) {
 
 				// Notify client
 				_Buffer Packet;
-				Packet.Write<char>(Packet::EVENT_START);
+				Packet.Write<PacketType>(PacketType::EVENT_START);
 				Packet.Write<int32_t>(Tile->EventType);
 				Packet.Write<int32_t>(Tile->EventData);
 				Packet.Write<glm::ivec2>(Object->Position);
@@ -551,7 +551,7 @@ void _Map::RemoveObject(const _Object *RemoveObject) {
 
 		// Create packet
 		_Buffer Packet;
-		Packet.Write<char>(Packet::WORLD_DELETEOBJECT);
+		Packet.Write<PacketType>(PacketType::WORLD_DELETEOBJECT);
 		Packet.Write<uint8_t>(ID);
 		Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
 
@@ -600,7 +600,7 @@ void _Map::AddObject(_Object *Object) {
 
 	// Create packet for the new object
 	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_CREATEOBJECT);
+	Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
 	Packet.Write<NetworkIDType>(Object->NetworkID);
 	Packet.Write<glm::ivec2>(Object->Position);
 	Packet.Write<char>(Object->Type);
@@ -682,7 +682,7 @@ void _Map::SendObjectList(_Peer *Peer) {
 
 	// Create packet
 	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_OBJECTLIST);
+	Packet.Write<PacketType>(PacketType::WORLD_OBJECTLIST);
 	Packet.Write<NetworkIDType>(Peer->Object->NetworkID);
 
 	// Write object data
@@ -704,7 +704,7 @@ void _Map::SendObjectUpdates() {
 
 	// Create packet
 	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_OBJECTUPDATES);
+	Packet.Write<PacketType>(PacketType::WORLD_OBJECTUPDATES);
 	Packet.Write<char>(ID);
 
 	// Write object count

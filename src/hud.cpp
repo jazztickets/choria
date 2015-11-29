@@ -138,7 +138,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						}
 						else if(Player->UseInventory(Tooltip.Slot)) {
 							_Buffer Packet;
-							Packet.Write<char>(Packet::INVENTORY_USE);
+							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 							Packet.Write<char>(Tooltip.Slot);
 							ClientState.Network->SendPacket(Packet);
 						}
@@ -197,7 +197,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		// Accept trader button
 		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
 			_Buffer Packet;
-			Packet.Write<char>(Packet::TRADER_ACCEPT);
+			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			ClientState.Network->SendPacket(Packet);
 			Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
 			Player->CalculatePlayerStats();
@@ -222,7 +222,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 							if(Tooltip.Slot >= 0 && Player->MoveInventory(Cursor.Slot, Tooltip.Slot)) {
 								_Buffer Packet;
-								Packet.Write<char>(Packet::INVENTORY_MOVE);
+								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
 								Packet.Write<char>(Cursor.Slot);
 								Packet.Write<char>(Tooltip.Slot);
 								ClientState.Network->SendPacket(Packet);
@@ -270,7 +270,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						//_Buffer Packet;
 						_Buffer Packet;
-						Packet.Write<char>(Packet::TRADE_ACCEPT);
+						Packet.Write<PacketType>(PacketType::TRADE_ACCEPT);
 						Packet.Write<char>(AcceptButton->Checked);
 						ClientState.Network->SendPacket(Packet);
 					}
@@ -440,7 +440,7 @@ void _HUD::ToggleChat() {
 
 			// Send message to server
 			_Buffer Packet;
-			Packet.Write<char>(Packet::CHAT_MESSAGE);
+			Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
 			Packet.WriteString(ChatTextBox->Text.c_str());
 			ClientState.Network->SendPacket(Packet);
 		}
@@ -460,7 +460,7 @@ void _HUD::ToggleTeleport() {
 		return;
 
 	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_TELEPORT);
+	Packet.Write<PacketType>(PacketType::WORLD_TELEPORT);
 	ClientState.Network->SendPacket(Packet);
 	Player->StartTeleport();
 
@@ -728,7 +728,7 @@ bool _HUD::CloseSkills() {
 	// Send new skill bar to server
 	if(ActionBarChanged) {
 		_Buffer Packet;
-		Packet.Write<char>(Packet::HUD_ACTIONBAR);
+		Packet.Write<PacketType>(PacketType::HUD_ACTIONBAR);
 		for(int i = 0; i < ACTIONBAR_SIZE; i++)
 			Packet.Write<int32_t>(Player->GetActionBarID(i));
 
@@ -777,7 +777,7 @@ bool _HUD::CloseTrader() {
 
 	// Notify server
 	//_Buffer Packet;
-	//Packet.Write<char>(Packet::EVENT_END);
+	//Packet.Write<PacketType>(PacketType::EVENT_END);
 	//ClientState.Network->SendPacket(Packet);
 
 	return WasOpen;
@@ -1181,7 +1181,7 @@ void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
 
 		// Notify server
 		_Buffer Packet;
-		Packet.Write<char>(Packet::VENDOR_EXCHANGE);
+		Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 		Packet.WriteBit(1);
 		Packet.Write<char>(Item->Count);
 		Packet.Write<char>(Item->Slot);
@@ -1204,7 +1204,7 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 
 	// Notify server
 	_Buffer Packet;
-	Packet.Write<char>(Packet::VENDOR_EXCHANGE);
+	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
 	Packet.Write<char>(Amount);
 	Packet.Write<char>(Item->Slot);
@@ -1222,7 +1222,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 		return;
 
 	_Buffer Packet;
-	Packet.Write<char>(Packet::SKILLS_SKILLADJUST);
+	Packet.Write<PacketType>(PacketType::SKILLS_SKILLADJUST);
 
 	// Sell skill
 	if(Direction < 0) {
@@ -1349,14 +1349,14 @@ void _HUD::RefreshSkillButtons() {
 // Trade with another player
 void _HUD::SendTradeRequest() {
 	_Buffer Packet;
-	Packet.Write<char>(Packet::TRADE_REQUEST);
+	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
 	ClientState.Network->SendPacket(Packet);
 }
 
 // Cancel a trade
 void _HUD::SendTradeCancel() {
 	_Buffer Packet;
-	Packet.Write<char>(Packet::TRADE_CANCEL);
+	Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 	ClientState.Network->SendPacket(Packet);
 
 	Player->TradePlayer = nullptr;
@@ -1384,7 +1384,7 @@ void _HUD::ValidateTradeGold() {
 	// Send amount
 	if(Player->TradePlayer) {
 		_Buffer Packet;
-		Packet.Write<char>(Packet::TRADE_GOLD);
+		Packet.Write<PacketType>(PacketType::TRADE_GOLD);
 		Packet.Write<int32_t>(Gold);
 		ClientState.Network->SendPacket(Packet);
 	}
@@ -1449,7 +1449,7 @@ void _HUD::SplitStack(int Slot, int Count) {
 
 	// Build packet
 	_Buffer Packet;
-	Packet.Write<char>(Packet::INVENTORY_SPLIT);
+	Packet.Write<PacketType>(PacketType::INVENTORY_SPLIT);
 	Packet.Write<char>(Slot);
 	Packet.Write<char>(Count);
 

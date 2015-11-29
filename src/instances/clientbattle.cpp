@@ -129,7 +129,7 @@ void _ClientBattle::HandleAction(int Action) {
 				State = STATE_DELETE;
 
 				_Buffer Packet;
-				Packet.Write<char>(Packet::BATTLE_CLIENTDONE);
+				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
 				ClientState.Network->SendPacket(Packet);
 			}
 		}
@@ -367,7 +367,7 @@ void _ClientBattle::SendSkill(int SkillSlot) {
 		return;
 
 	_Buffer Packet;
-	Packet.Write<char>(Packet::BATTLE_COMMAND);
+	Packet.Write<PacketType>(PacketType::BATTLE_COMMAND);
 	Packet.Write<char>(SkillSlot);
 	Packet.Write<char>(ClientPlayer->Target);
 

@@ -231,7 +231,7 @@ void _Menu::CreateCharacter() {
 
 	// Send information
 	_Buffer Packet;
-	Packet.Write<char>(Packet::CREATECHARACTER_INFO);
+	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<uint32_t>(PortraitID);
 	Packet.Write<int>(SelectedSlot);
@@ -270,7 +270,7 @@ void _Menu::ConnectToHost() {
 // Send character to play
 void _Menu::PlayCharacter(int Slot) {
 	_Buffer Packet;
-	Packet.Write<char>(Packet::CHARACTERS_PLAY);
+	Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
 	Packet.Write<char>(Slot);
 	ClientState.Network->SendPacket(Packet);
 
@@ -310,7 +310,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 
 	// Send information
 	_Buffer Packet;
-	Packet.Write<char>(Packet::ACCOUNT_LOGININFO);
+	Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
@@ -324,7 +324,7 @@ void _Menu::RequestCharacterList() {
 
 	// Request character list
 	_Buffer Packet;
-	Packet.Write<char>(Packet::CHARACTERS_REQUEST);
+	Packet.Write<PacketType>(PacketType::CHARACTERS_REQUEST);
 	ClientState.Network->SendPacket(Packet);
 }
 
@@ -549,7 +549,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						int SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
 							_Buffer Packet;
-							Packet.Write<char>(Packet::CHARACTERS_DELETE);
+							Packet.Write<PacketType>(PacketType::CHARACTERS_DELETE);
 							Packet.Write<int32_t>(SelectedSlot);
 							ClientState.Network->SendPacket(Packet);
 						}
@@ -731,18 +731,18 @@ void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 }
 
 // Handle packet
-void _Menu::HandlePacket(_Buffer &Buffer, char PacketType) {
-	switch(PacketType) {
-		case Packet::VERSION: {
+void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
+	switch(Type) {
+		case PacketType::VERSION: {
 			std::string Version(Buffer.ReadString());
 			if(Version != GAME_VERSION) {
 				throw std::runtime_error("Wrong game version");
 			}
 		} break;
-		case Packet::ACCOUNT_SUCCESS: {
+		case PacketType::ACCOUNT_SUCCESS: {
 			RequestCharacterList();
 		} break;
-		case Packet::CHARACTERS_LIST: {
+		case PacketType::CHARACTERS_LIST: {
 
 			// Get count
 			int CharacterCount = Buffer.Read<char>();
@@ -805,25 +805,27 @@ void _Menu::HandlePacket(_Buffer &Buffer, char PacketType) {
 			// Set state
 			InitCharacters();
 		} break;
-		case Packet::CREATECHARACTER_SUCCESS: {
+		case PacketType::CREATECHARACTER_SUCCESS: {
 
 			// Close new character screen
 			RequestCharacterList();
 		} break;
-		case Packet::CREATECHARACTER_INUSE: {
+		case PacketType::CREATECHARACTER_INUSE: {
 			_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
 			Label->Text = "Name in use";
 			Label->Color = COLOR_RED;
 		} break;
-		case Packet::ACCOUNT_EXISTS: {
+		case PacketType::ACCOUNT_EXISTS: {
 			SetAccountMessage("Account already exists");
 		} break;
-		case Packet::ACCOUNT_NOTFOUND: {
+		case PacketType::ACCOUNT_NOTFOUND: {
 			SetAccountMessage("Username/password wrong");
 		} break;
-		case Packet::ACCOUNT_ALREADYLOGGEDIN: {
+		case PacketType::ACCOUNT_ALREADYLOGGEDIN: {
 			SetAccountMessage("Account in use");
 		} break;
+		default:
+		break;
 	}
 }
 

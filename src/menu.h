@@ -20,6 +20,7 @@
 // Libraries
 #include <string>
 #include <constants.h>
+#include <packet.h>
 
 // Forward Declarations
 class _Element;
@@ -88,7 +89,7 @@ class _Menu {
 		// Network
 		void HandleConnect();
 		void HandleDisconnect(bool WasSinglePlayer);
-		void HandlePacket(_Buffer &Buffer, char PacketType);
+		void HandlePacket(_Buffer &Buffer, PacketType Type);
 
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }

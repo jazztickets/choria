@@ -176,7 +176,7 @@ void _Server::HandleConnect(_NetworkEvent &Event) {
 
 	// Send game version
 	_Buffer Packet;
-	Packet.Write<char>(Packet::VERSION);
+	Packet.Write<PacketType>(PacketType::VERSION);
 	Packet.WriteString(GAME_VERSION);
 	Network->SendPacket(Packet, Event.Peer);
 }
@@ -201,7 +201,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 			TradePlayer->TradePlayer = nullptr;
 
 			_Buffer Packet;
-			Packet.Write<char>(Packet::TRADE_CANCEL);
+			Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 			Network->SendPacket(Packet, TradePlayer->Peer);
 		}
 
@@ -220,84 +220,86 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 
 // Handle packet data
 void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
-	char PacketType = Data.Read<char>();
+	PacketType Type = Data.Read<PacketType>();
 
 	//std::cout << (int)PacketType << std::endl;
-	switch(PacketType) {
-		case Packet::ACCOUNT_LOGININFO:
+	switch(Type) {
+		case PacketType::ACCOUNT_LOGININFO:
 			HandleLoginInfo(Data, Peer);
 		break;
-		case Packet::CHARACTERS_REQUEST:
+		case PacketType::CHARACTERS_REQUEST:
 			HandleCharacterListRequest(Data, Peer);
 		break;
-		case Packet::CHARACTERS_PLAY:
+		case PacketType::CHARACTERS_PLAY:
 			HandleCharacterPlay(Data, Peer);
 		break;
-		case Packet::CREATECHARACTER_INFO:
+		case PacketType::CREATECHARACTER_INFO:
 			HandleCharacterCreate(Data, Peer);
 		break;
-		case Packet::CHARACTERS_DELETE:
+		case PacketType::CHARACTERS_DELETE:
 			HandleCharacterDelete(Data, Peer);
 		break;
-		case Packet::WORLD_MOVECOMMAND:
+		case PacketType::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
-		case Packet::CHAT_MESSAGE:
+		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data, Peer);
 		break;
-		case Packet::INVENTORY_MOVE:
+		case PacketType::INVENTORY_MOVE:
 			HandleInventoryMove(Data, Peer);
 		break;
-		case Packet::INVENTORY_USE:
+		case PacketType::INVENTORY_USE:
 			HandleInventoryUse(Data, Peer);
 		break;
-		case Packet::INVENTORY_SPLIT:
+		case PacketType::INVENTORY_SPLIT:
 			HandleInventorySplit(Data, Peer);
 		break;
-		case Packet::VENDOR_EXCHANGE:
+		case PacketType::VENDOR_EXCHANGE:
 			HandleVendorExchange(Data, Peer);
 		break;
-		case Packet::TRADER_ACCEPT:
+		case PacketType::TRADER_ACCEPT:
 			HandleTraderAccept(Data, Peer);
 		break;
-		case Packet::HUD_ACTIONBAR:
+		case PacketType::HUD_ACTIONBAR:
 			HandleActionBar(Data, Peer);
 		break;
-		case Packet::SKILLS_SKILLADJUST:
+		case PacketType::SKILLS_SKILLADJUST:
 			HandleSkillAdjust(Data, Peer);
 		break;
-		case Packet::TRADE_REQUEST:
+		case PacketType::TRADE_REQUEST:
 			HandleTradeRequest(Data, Peer);
 		break;
-		case Packet::TRADE_CANCEL:
+		case PacketType::TRADE_CANCEL:
 			HandleTradeCancel(Data, Peer);
 		break;
-		case Packet::TRADE_GOLD:
+		case PacketType::TRADE_GOLD:
 			HandleTradeGold(Data, Peer);
 		break;
-		case Packet::TRADE_ACCEPT:
+		case PacketType::TRADE_ACCEPT:
 			HandleTradeAccept(Data, Peer);
 		break;
-		case Packet::PLAYER_STATUS:
+		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
-			/*
-		case Packet::BATTLE_COMMAND:
+	/*
+		case PacketType::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
 		break;
-		case Packet::BATTLE_CLIENTDONE:
+		case PacketType::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
 		break;
-		case Packet::WORLD_ATTACKPLAYER:
+		case PacketType::WORLD_ATTACKPLAYER:
 			HandleAttackPlayer(Data, Peer);
 		break;
-		case Packet::WORLD_TELEPORT:
+		case PacketType::WORLD_TELEPORT:
 			HandleTeleport(Data, Peer);
 		break;
-		case Packet::EVENT_END:
+		case PacketType::EVENT_END:
 			HandleEventEnd(Data, Peer);
 		break;
-*/
+	*/
+		default:
+		break;
 	}
 }
 
@@ -315,7 +317,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 		// Check for existing account
 		if(Save->CheckUsername(Username)) {
 			_Buffer Packet;
-			Packet.Write<char>(Packet::ACCOUNT_EXISTS);
+			Packet.Write<PacketType>(PacketType::ACCOUNT_EXISTS);
 			Network->SendPacket(Packet, Peer);
 			return;
 		}
@@ -329,9 +331,9 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	// Make sure account exists
 	_Buffer Packet;
 	if(Peer->AccountID == 0)
-		Packet.Write<char>(Packet::ACCOUNT_NOTFOUND);
+		Packet.Write<PacketType>(PacketType::ACCOUNT_NOTFOUND);
 	else
-		Packet.Write<char>(Packet::ACCOUNT_SUCCESS);
+		Packet.Write<PacketType>(PacketType::ACCOUNT_SUCCESS);
 
 	Network->SendPacket(Packet, Peer);
 }
@@ -363,7 +365,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	// Found an existing name
 	if(Save->GetCharacterIDByName(Name) != 0) {
 		_Buffer NewPacket;
-		NewPacket.Write<char>(Packet::CREATECHARACTER_INUSE);
+		NewPacket.Write<PacketType>(PacketType::CREATECHARACTER_INUSE);
 		Network->SendPacket(NewPacket, Peer);
 		return;
 	}
@@ -373,7 +375,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Notify the client
 	_Buffer NewPacket;
-	NewPacket.Write<char>(Packet::CREATECHARACTER_SUCCESS);
+	NewPacket.Write<PacketType>(PacketType::CREATECHARACTER_SUCCESS);
 	Network->SendPacket(NewPacket, Peer);
 }
 
@@ -454,7 +456,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 
 	// Send message to other players
 	_Buffer Packet;
-	Packet.Write<char>(Packet::CHAT_MESSAGE);
+	Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
 	Packet.Write<glm::vec4>(COLOR_WHITE);
 	Packet.WriteString(Message.c_str());
 
@@ -476,7 +478,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 
 	// Create the packet
 	_Buffer Packet;
-	Packet.Write<char>(Packet::CHARACTERS_LIST);
+	Packet.Write<PacketType>(PacketType::CHARACTERS_LIST);
 	Packet.Write<char>(CharacterCount);
 
 	// Generate a list of characters
@@ -537,7 +539,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 
 		// Send new map id
 		_Buffer Packet;
-		Packet.Write<char>(Packet::WORLD_CHANGEMAPS);
+		Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
 		Packet.Write<int32_t>(MapID);
 		Network->SendPacket(Packet, Peer);
 
@@ -650,7 +652,7 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 
 	// Send character packet
 	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_YOURCHARACTERINFO);
+	Packet.Write<PacketType>(PacketType::WORLD_YOURCHARACTERINFO);
 	Packet.WriteString(Player->Name.c_str());
 	Packet.Write<uint32_t>(Player->PortraitID);
 	Packet.Write<int32_t>(Player->Experience);
@@ -753,7 +755,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 
 		// Build packet
 		_Buffer Packet;
-		Packet.Write<char>(Packet::TRADE_ITEM);
+		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
 		Packet.Write<int32_t>(OldItemID);
 		Packet.Write<char>(OldSlot);
 		if(OldItemID > 0)
@@ -954,7 +956,7 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 		TradePlayer->TradeAccepted = false;
 
 		_Buffer Packet;
-		Packet.Write<char>(Packet::TRADE_CANCEL);
+		Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 		Network->SendPacket(Packet, TradePlayer->Peer);
 	}
 
@@ -985,7 +987,7 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 		TradePlayer->TradeAccepted = false;
 
 		_Buffer Packet;
-		Packet.Write<char>(Packet::TRADE_GOLD);
+		Packet.Write<PacketType>(PacketType::TRADE_GOLD);
 		Packet.Write<int32_t>(Gold);
 		Network->SendPacket(Packet, TradePlayer->Peer);
 	}
@@ -1026,13 +1028,13 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			// Send packet to players
 			{
 				_Buffer Packet;
-				Packet.Write<char>(Packet::TRADE_EXCHANGE);
+				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(Player, Packet, Player->Gold);
 				Network->SendPacket(Packet, Player->Peer);
 			}
 			{
 				_Buffer Packet;
-				Packet.Write<char>(Packet::TRADE_EXCHANGE);
+				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
 				BuildTradeItemsPacket(TradePlayer, Packet, TradePlayer->Gold);
 				Network->SendPacket(Packet, TradePlayer->Peer);
 			}
@@ -1050,7 +1052,7 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 
 			// Notify trading player
 			_Buffer Packet;
-			Packet.Write<char>(Packet::TRADE_ACCEPT);
+			Packet.Write<PacketType>(PacketType::TRADE_ACCEPT);
 			Packet.Write<char>(Accepted);
 			Network->SendPacket(Packet, TradePlayer->Peer);
 		}
@@ -1175,7 +1177,7 @@ void _Server::SendMessage(_Object *Player, const std::string &Message, const glm
 
 	// Build message
 	_Buffer Packet;
-	Packet.Write<char>(Packet::CHAT_MESSAGE);
+	Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
 	Packet.Write<glm::vec4>(Color);
 	Packet.WriteString(Message.c_str());
 
@@ -1187,7 +1189,7 @@ void _Server::SendMessage(_Object *Player, const std::string &Message, const glm
 void _Server::SendHUD(_Object *Player) {
 
 	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_HUD);
+	Packet.Write<PacketType>(PacketType::WORLD_HUD);
 	Packet.Write<int32_t>(Player->Experience);
 	Packet.Write<int32_t>(Player->Gold);
 	Packet.Write<int32_t>(Player->Health);
@@ -1245,7 +1247,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 	// Send items to trader player
 	_Buffer Packet;
-	Packet.Write<char>(Packet::TRADE_REQUEST);
+	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
 	Packet.Write<NetworkIDType>(Sender->NetworkID);
 	BuildTradeItemsPacket(Sender, Packet, Sender->TradeGold);
 	Network->SendPacket(Packet, Receiver->Peer);

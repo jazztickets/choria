@@ -297,7 +297,7 @@ void _ClientState::Update(double FrameTime) {
 	Map->Update(FrameTime);
 	if(Player->Moved) {
 		_Buffer Packet;
-		Packet.Write<char>(Packet::WORLD_MOVECOMMAND);
+		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
 		Packet.Write<char>(Player->Moved);
 		Network->SendPacket(Packet);
 
@@ -365,73 +365,73 @@ void _ClientState::Render(double BlendFactor) {
 
 // Handle packet from server
 void _ClientState::HandlePacket(_Buffer &Data) {
-	char PacketType = Data.Read<char>();
+	PacketType Type = Data.Read<PacketType>();
 
-	switch(PacketType) {
-		case Packet::WORLD_YOURCHARACTERINFO:
+	switch(Type) {
+		case PacketType::WORLD_YOURCHARACTERINFO:
 			HandleYourCharacterInfo(Data);
 		break;
-		case Packet::WORLD_CHANGEMAPS:
+		case PacketType::WORLD_CHANGEMAPS:
 			HandleChangeMaps(Data);
 		break;
-		case Packet::WORLD_OBJECTLIST:
+		case PacketType::WORLD_OBJECTLIST:
 			HandleObjectList(Data);
 		break;
-		case Packet::WORLD_CREATEOBJECT:
+		case PacketType::WORLD_CREATEOBJECT:
 			HandleCreateObject(Data);
 		break;
-		case Packet::WORLD_DELETEOBJECT:
+		case PacketType::WORLD_DELETEOBJECT:
 			HandleDeleteObject(Data);
 		break;
-		case Packet::WORLD_OBJECTUPDATES:
+		case PacketType::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
 		break;
-		case Packet::EVENT_START:
+		case PacketType::EVENT_START:
 			HandleEventStart(Data);
 		break;
-		case Packet::CHAT_MESSAGE:
+		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data);
 		break;
-		case Packet::INVENTORY_USE:
+		case PacketType::INVENTORY_USE:
 			HandleInventoryUse(Data);
 		break;
-		case Packet::TRADE_REQUEST:
+		case PacketType::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;
-		case Packet::TRADE_CANCEL:
+		case PacketType::TRADE_CANCEL:
 			HandleTradeCancel(Data);
 		break;
-		case Packet::TRADE_ITEM:
+		case PacketType::TRADE_ITEM:
 			HandleTradeItem(Data);
 		break;
-		case Packet::TRADE_GOLD:
+		case PacketType::TRADE_GOLD:
 			HandleTradeGold(Data);
 		break;
-		case Packet::TRADE_ACCEPT:
+		case PacketType::TRADE_ACCEPT:
 			HandleTradeAccept(Data);
 		break;
-		case Packet::TRADE_EXCHANGE:
+		case PacketType::TRADE_EXCHANGE:
 			HandleTradeExchange(Data);
 		break;
 	/*
-		case Packet::WORLD_STARTBATTLE:
+		case PacketType::WORLD_STARTBATTLE:
 			HandleBattleStart(Data);
 		break;
-		case Packet::WORLD_HUD:
+		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
 		break;
-		case Packet::BATTLE_TURNRESULTS:
+		case PacketType::BATTLE_TURNRESULTS:
 			HandleBattleTurnResults(Data);
 		break;
-		case Packet::BATTLE_END:
+		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
 		break;
-		case Packet::BATTLE_COMMAND:
+		case PacketType::BATTLE_COMMAND:
 			HandleBattleCommand(Data);
 		break;
 */
 		default:
-			Menu.HandlePacket(Data, PacketType);
+			Menu.HandlePacket(Data, Type);
 		break;
 	}
 }
@@ -441,7 +441,7 @@ void _ClientState::HandleConnect() {
 
 	if(Server) {
 		_Buffer Packet;
-		Packet.Write<char>(Packet::ACCOUNT_LOGININFO);
+		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 		Packet.WriteBit(0);
 		Packet.WriteString("choria_singleplayer");
 		Packet.WriteString("choria_singleplayer");
@@ -839,7 +839,7 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 // Send status to server
 void _ClientState::SendStatus(int Status) {
 	_Buffer Packet;
-	Packet.Write<char>(Packet::PLAYER_STATUS);
+	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 	Packet.Write<char>(Status);
 	Network->SendPacket(Packet);
 }
@@ -953,7 +953,7 @@ void _ClientState::SendAttackPlayer() {
 	if(Player->CanAttackPlayer()) {
 		Player->ResetAttackPlayerTime();
 		_Buffer Packet;
-		Packet.Write<char>(Packet::WORLD_ATTACKPLAYER);
+		Packet.Write<PacketType>(PacketType::WORLD_ATTACKPLAYER);
 		Network->SendPacket(Packet);
 	}
 }
