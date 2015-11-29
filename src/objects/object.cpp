@@ -112,6 +112,7 @@ _Object::_Object()
 	WaitingForTrade(false),
 	TradeAccepted(false),
 	TradePlayer(nullptr),
+	Stats(nullptr),
 
 	Dummy(0) {
 

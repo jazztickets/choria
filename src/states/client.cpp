@@ -571,6 +571,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
 		Object->InvisPower = Data.ReadBit();
 		Object->WorldTexture = Assets.Textures["players/basic.png"];
+		Object->Stats = Stats;
 
 		Map->AddObject(Object, Object->NetworkID);
 		Object->Map = Map;
@@ -609,6 +610,7 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 		Object->Name = Data.ReadString();
 		Object->PortraitID = Data.Read<uint32_t>();
 		Object->InvisPower = Data.ReadBit();
+		Object->Stats = Stats;
 
 		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
 		Object->Map = Map;

@@ -297,7 +297,6 @@ void _HUD::Update(double FrameTime) {
 
 		switch(Tooltip.Window) {
 			case WINDOW_INVENTORY:
-			case WINDOW_TRADETHEIRS:
 			case WINDOW_TRADEYOURS: {
 				if(Tooltip.Slot >= 0) {
 					_InventorySlot *InventorySlot = &Player->Inventory[Tooltip.Slot];
@@ -305,6 +304,13 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.Count = InventorySlot->Count;
 				}
 			} break;
+			case WINDOW_TRADETHEIRS: {
+				if(Player->TradePlayer && Tooltip.Slot >= 0) {
+					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory[Tooltip.Slot];
+					Tooltip.Item = InventorySlot->Item;
+					Tooltip.Count = InventorySlot->Count;
+				}
+			}
 			case WINDOW_VENDOR: {
 				if(Player->Vendor && (size_t)Tooltip.Slot < Player->Vendor->Items.size()) {
 					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
