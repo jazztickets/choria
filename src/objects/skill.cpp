@@ -123,11 +123,11 @@ void _Skill::DrawDescription(int SkillLevel, glm::ivec2 &DrawPosition, int Width
 		break;
 		case _Skill::TYPE_SPELL:
 			switch(ID) {
-				case 3:
+				case 4:
 					sprintf(Buffer, Info.c_str(), PowerMaxRound);
 				break;
-				case 6:
-				case 11:
+				case 7:
+				case 12:
 					sprintf(Buffer, Info.c_str(), PowerMinRound, PowerMaxRound);
 				break;
 			}
@@ -145,16 +145,16 @@ void _Skill::DrawDescription(int SkillLevel, glm::ivec2 &DrawPosition, int Width
 		break;
 		case _Skill::TYPE_PASSIVE:
 			switch(ID) {
-				case 4:
 				case 5:
+				case 6:
 					sprintf(Buffer, Info.c_str(), PowerMaxRound);
 				break;
-				case 7:
 				case 8:
+				case 9:
 					sprintf(Buffer, Info.c_str(), PowerMaxFloat);
 				break;
-				case 9:
 				case 10:
+				case 11:
 					sprintf(Buffer, Info.c_str(), PowerMax);
 				break;
 			}
@@ -239,12 +239,12 @@ void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) co
 		case TYPE_SPELL:
 			switch(ID) {
 				// Heal
-				case 3:
+				case 4:
 					Healing += GetPower(SkillLevel);
 				break;
 				// Flame, Lightning bolt
-				case 6:
-				case 11:
+				case 7:
+				case 12:
 					Damage = GetPower(SkillLevel);
 				break;
 			}
@@ -255,7 +255,7 @@ void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) co
 				_Object *Player = (_Object *)Fighter;
 
 				// Use the potion
-				int Type = (ID == 2);
+				int Type = (ID == 3);
 				int Slot = Player->GetPotionBattle(Type);
 				if(Slot != -1) {
 					int HealthChange = 0, ManaChange = 0;
@@ -303,7 +303,7 @@ bool _Skill::CanUse(_Object *Fighter) const {
 			return false;
 
 		_Object *Player = (_Object *)Fighter;
-		return Player->GetPotionBattle(ID == 2) != -1;
+		return Player->GetPotionBattle(ID == 3) != -1;
 	}
 
 	return true;

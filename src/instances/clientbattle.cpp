@@ -376,7 +376,7 @@ void _ClientBattle::SendSkill(int SkillSlot) {
 
 	// Update potion count
 	if(SkillSlot != 9 && Skill->Type == _Skill::TYPE_USEPOTION)
-		ClientPlayer->UpdatePotionsLeft(Skill->ID == 2);
+		ClientPlayer->UpdatePotionsLeft(Skill->ID == 3);
 
 	State = STATE_WAIT;
 }

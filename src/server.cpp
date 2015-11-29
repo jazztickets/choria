@@ -877,7 +877,7 @@ void _Server::HandleActionBar(_Buffer &Data, _Peer *Peer) {
 
 	// Read skills
 	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		int SkillID = Data.Read<char>();
+		int SkillID = Data.Read<int32_t>();
 		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
 
@@ -893,7 +893,7 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 
 	// Process packet
 	bool Spend = Data.ReadBit();
-	int SkillID = Data.Read<char>();
+	int SkillID = Data.Read<int32_t>();
 	if(Spend) {
 		Player->AdjustSkillLevel(SkillID, 1);
 	}

@@ -711,7 +711,7 @@ bool _HUD::CloseSkills() {
 		_Buffer Packet;
 		Packet.Write<char>(Packet::HUD_ACTIONBAR);
 		for(int i = 0; i < ACTIONBAR_SIZE; i++)
-			Packet.Write<char>(Player->GetActionBarID(i));
+			Packet.Write<int32_t>(Player->GetActionBarID(i));
 
 		ClientState.Network->SendPacket(Packet);
 	}
@@ -1220,7 +1220,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 			if(Skill) {
 				int Direction, Slot;
 				if(Skill->Type == _Skill::TYPE_PASSIVE) {
-					Slot = 7;
+					Slot = ACTIONBAR_SIZE-1;
 					Direction = -1;
 				}
 				else {
@@ -1237,7 +1237,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 			}
 		}
 	}
-	Packet.Write<char>(SkillID);
+	Packet.Write<int32_t>(SkillID);
 	ClientState.Network->SendPacket(Packet);
 
 	// Update player
