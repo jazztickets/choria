@@ -47,7 +47,7 @@ _ClientState ClientState;
 
 // Constructor
 _ClientState::_ClientState() :
-	IsTesting(true),
+	IsTesting(false),
 	FromEditor(false),
 	ConnectNow(false),
 	Stats(nullptr),
@@ -163,42 +163,32 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	}
 
 	// Handle HUD keys
-	if(!Player->WaitForServer) {
-		switch(Action) {
-			case _Actions::MENU:
-
-				// Close windows if open
-				if(HUD->CloseWindows())
-					break;
-
-				if(IsTesting)
-					//Framework.Done = true;
-					Network->Disconnect();
-				else
-					HUD->ToggleInGameMenu();
-			break;
-			case _Actions::INVENTORY:
-				HUD->ToggleInventory();
-			break;
-			case _Actions::TELEPORT:
-				HUD->ToggleTeleport();
-			break;
-			case _Actions::TRADE:
-				HUD->ToggleTrade();
-			break;
-			case _Actions::SKILLS:
-				HUD->ToggleSkills();
-			break;
-			case _Actions::ATTACK:
-				//SendAttackPlayer();
-			break;
-			case _Actions::UP:
-			case _Actions::DOWN:
-			case _Actions::LEFT:
-			case _Actions::RIGHT:
+	switch(Action) {
+		case _Actions::MENU:
+			HUD->ToggleInGameMenu();
+		break;
+		case _Actions::INVENTORY:
+			HUD->ToggleInventory();
+		break;
+		case _Actions::TELEPORT:
+			HUD->ToggleTeleport();
+		break;
+		case _Actions::TRADE:
+			HUD->ToggleTrade();
+		break;
+		case _Actions::SKILLS:
+			HUD->ToggleSkills();
+		break;
+		case _Actions::ATTACK:
+			//SendAttackPlayer();
+		break;
+		case _Actions::UP:
+		case _Actions::DOWN:
+		case _Actions::LEFT:
+		case _Actions::RIGHT:
+			if(!Player->WaitForServer)
 				HUD->CloseWindows();
-			break;
-		}
+		break;
 	}
 
 	return true;
@@ -272,7 +262,7 @@ void _ClientState::Update(double FrameTime) {
 		return;
 
 	// Set input
-	if(Player->AcceptingMoveInput() && !HUD->IsChatting()) {
+	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && Menu.State == _Menu::STATE_NONE) {
 		Player->InputState = 0;
 		if(Actions.GetState(_Actions::UP))
 			Player->InputState |= _Object::MOVE_UP;
@@ -392,9 +382,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		break;
 		case Packet::WORLD_DELETEOBJECT:
 			HandleDeleteObject(Data);
-		break;
-		case Packet::WORLD_POSITION:
-			HandlePlayerPosition(Data);
 		break;
 		case Packet::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
@@ -690,14 +677,6 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 			}
 		}
 	}
-}
-
-// Handles player position
-void _ClientState::HandlePlayerPosition(_Buffer &Data) {
-	if(!Player)
-		return;
-
-	Player->Position = Data.Read<glm::ivec2>();
 }
 
 // Handles the start of an event

@@ -45,8 +45,6 @@ _Stats::~_Stats() {
 		delete Skill.second;
 
 	delete Database;
-	Database = nullptr;
-	Events.clear();
 }
 
 // Load map data

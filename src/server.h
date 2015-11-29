@@ -74,7 +74,6 @@ class _Server {
 		_Object *CreatePlayer(_Peer *Peer);
 		void SendPlayerInfo(_Peer *Peer);
 		bool ValidatePeer(_Peer *Peer);
-		void SendPlayerPosition(_Object *Player);
 
 		void HandleConnect(_NetworkEvent &Event);
 		void HandleDisconnect(_NetworkEvent &Event);

@@ -714,15 +714,6 @@ bool _Server::ValidatePeer(_Peer *Peer) {
 	return true;
 }
 
-// Send position to player
-void _Server::SendPlayerPosition(_Object *Player) {
-	_Buffer Packet;
-	Packet.Write<char>(Packet::WORLD_POSITION);
-	Packet.Write<glm::ivec2>(Player->Position);
-
-	Network->SendPacket(Packet, Player->Peer);
-}
-
 // Handles a player's inventory move
 void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))

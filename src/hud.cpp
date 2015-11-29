@@ -456,6 +456,9 @@ void _HUD::ToggleChat() {
 
 // Toggles the teleport state
 void _HUD::ToggleTeleport() {
+	if(Player->WaitForServer)
+		return;
+
 	_Buffer Packet;
 	Packet.Write<char>(Packet::WORLD_TELEPORT);
 	ClientState.Network->SendPacket(Packet);
@@ -472,6 +475,9 @@ void _HUD::ToggleTeleport() {
 
 // Open/close inventory
 void _HUD::ToggleInventory() {
+	if(Player->WaitForServer)
+		return;
+
 	Cursor.Reset();
 
 	if(!InventoryElement->Visible && !Player->Trader) {
@@ -486,6 +492,9 @@ void _HUD::ToggleInventory() {
 
 // Open/close trade
 void _HUD::ToggleTrade() {
+	if(Player->WaitForServer)
+		return;
+
 	if(!TradeElement->Visible) {
 		InitTrade();
 	}
@@ -496,6 +505,9 @@ void _HUD::ToggleTrade() {
 
 // Open/close skills
 void _HUD::ToggleSkills() {
+	if(Player->WaitForServer)
+		return;
+
 	SkillsElement->SetVisible(!SkillsElement->Visible);
 	if(SkillsElement->Visible) {
 		InitSkills();
@@ -507,7 +519,17 @@ void _HUD::ToggleSkills() {
 
 // Open/close menu
 void _HUD::ToggleInGameMenu() {
-	Menu.InitInGame();
+	if(Player->WaitForServer)
+		return;
+
+	// Close windows if open
+	if(CloseWindows())
+		return;
+
+	if(ClientState.IsTesting)
+		ClientState.Network->Disconnect();
+	else
+		Menu.InitInGame();
 }
 
 // Initialize the vendor
