@@ -27,8 +27,7 @@
 _Stats::_Stats() {
 
 	// Load database that stores game data
-	Database = new _Database();
-	Database->OpenDatabase("stats/stats.db");
+	Database = new _Database("stats/stats.db");
 
 	// Load spreadsheet data
 	LoadMaps();

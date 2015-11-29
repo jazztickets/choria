@@ -31,7 +31,7 @@ class _Database {
 
 	public:
 
-		_Database();
+		_Database(const std::string &Path);
 		~_Database();
 
 		void OpenDatabase(const std::string &Path);

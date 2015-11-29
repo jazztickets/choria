@@ -47,6 +47,7 @@
 // Initialize
 _HUD::_HUD() {
 	Player = nullptr;
+	ActionBarChanged = false;
 	Tooltip.Reset();
 	Cursor.Reset();
 	RewardItemSlot = -1;

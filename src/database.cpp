@@ -20,36 +20,10 @@
 #include <stdexcept>
 
 // Constructor
-_Database::_Database()
-:	Database(nullptr) {
-
+_Database::_Database(const std::string &Path) {
+	Database = nullptr;
 	QueryHandle[0] = nullptr;
 	QueryHandle[1] = nullptr;
-}
-
-// Destructor
-_Database::~_Database() {
-
-	// Close database
-	if(Database)
-		sqlite3_close(Database);
-}
-
-// Load a database file
-void _Database::OpenDatabase(const std::string &Path) {
-
-	// Open database file
-	int Result = sqlite3_open_v2(Path.c_str(), &Database, SQLITE_OPEN_READWRITE, nullptr);
-	if(Result != SQLITE_OK) {
-		std::string Error = sqlite3_errmsg(Database);
-		sqlite3_close(Database);
-
-		throw std::runtime_error(Error);
-	}
-}
-
-// Load a database file
-void _Database::OpenDatabaseCreate(const std::string &Path) {
 
 	// Open database file
 	int Result = sqlite3_open_v2(Path.c_str(), &Database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
@@ -59,6 +33,14 @@ void _Database::OpenDatabaseCreate(const std::string &Path) {
 
 		throw std::runtime_error(Error);
 	}
+}
+
+// Destructor
+_Database::~_Database() {
+
+	// Close database
+	if(Database)
+		sqlite3_close(Database);
 }
 
 // Runs a query

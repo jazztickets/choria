@@ -23,22 +23,34 @@
 #include <constants.h>
 #include <stdexcept>
 #include <regex>
+#include <cstdio>
 
 // Constructor
 _Save::_Save() {
+	std::string SavePath = Config.ConfigPath + "save.db";
 
-	// Create connection
-	Database = new _Database();
+	// Open file
+	Database = new _Database(SavePath);
 
-	// Open database
-	std::string DatabasePath = Config.ConfigPath + "save.db";
+	// Get save version
+	int SaveVersion = 0;
 	try {
-		Database->OpenDatabase(DatabasePath);
+		SaveVersion = GetSaveVersion();
 	}
 	catch(std::exception &Error) {
-		Database->OpenDatabaseCreate(DatabasePath);
+	}
 
-		// Populate data
+	// Check version
+	if(SaveVersion != SAVE_VERSION) {
+
+		// Rename old file
+		if(SaveVersion > 0) {
+			delete Database;
+			std::rename(SavePath.c_str(), (SavePath + "." + std::to_string(SaveVersion)).c_str());
+			Database = new _Database(SavePath);
+		}
+
+		// Load defaults
 		CreateDefaultDatabase();
 	}
 
@@ -232,6 +244,16 @@ std::string _Save::TrimString(const std::string &String) {
 	return std::regex_replace(String, Regex, "");
 }
 
+// Get save version from database
+int _Save::GetSaveVersion() {
+	Database->RunDataQuery("SELECT version FROM settings");
+	Database->FetchRow();
+	int Version = Database->GetInt("version");
+	Database->CloseQuery();
+
+	return Version;
+}
+
 // Create default save database
 void _Save::CreateDefaultDatabase() {
 
@@ -265,7 +287,7 @@ void _Save::CreateDefaultDatabase() {
 	Database->RunQuery(
 				"CREATE TABLE character(\n"
 				"	id INTEGER PRIMARY KEY,\n"
-				"	account_id INTEGER DEFAULT(0),\n"
+				"	account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,\n"
 				"	slot INTEGER DEFAULT(0),\n"
 				"	map_id INTEGER DEFAULT(1),\n"
 				"	spawnpoint INTEGER DEFAULT(0),\n"

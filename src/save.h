@@ -50,6 +50,7 @@ class _Save {
 
 		std::string TrimString(const std::string &String);
 
+		int GetSaveVersion();
 		void CreateDefaultDatabase();
 
 };
