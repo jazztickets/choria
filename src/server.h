@@ -104,6 +104,7 @@ class _Server {
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 		void HandleAttackPlayer(_Buffer &Data, _Peer *Peer);
 
+		void SendPlayerPosition(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
 		void SendObjectList(_Peer *Peer);
 		void BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold);

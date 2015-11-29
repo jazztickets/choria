@@ -463,6 +463,20 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 	}
 }
 
+// Send position to player
+void _Server::SendPlayerPosition(_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_POSITION);
+	Packet.Write<glm::ivec2>(Player->Position);
+
+	Network->SendPacket(Packet, Player->Peer);
+}
+
 // Send character list
 void _Server::SendCharacterList(_Peer *Peer) {
 
@@ -551,9 +565,8 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		SendPlayerInfo(Peer);
 	}
 	else {
-		//Map->FindEvent(EventType, EventData, Player->Position);
-
-		//SendPlayerPosition(Player);
+		Map->FindEvent(EventType, Player->SpawnPoint, Player->Position);
+		SendPlayerPosition(Peer);
 	}
 }
 
@@ -1082,6 +1095,9 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 		break;
 		case _Object::STATUS_SKILLS:
 			Player->SkillsOpen = true;
+		break;
+		case _Object::STATUS_TELEPORT:
+			Player->TeleportTime = GAME_TELEPORT_TIME;
 		break;
 		default:
 		break;

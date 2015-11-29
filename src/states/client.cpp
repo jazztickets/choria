@@ -386,6 +386,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
 		break;
+		case PacketType::WORLD_POSITION:
+			HandlePlayerPosition(Data);
+		break;
 		case PacketType::EVENT_START:
 			HandleEventStart(Data);
 		break;
@@ -471,7 +474,6 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	//Log << "HandleYourCharacterInfo" << std::endl;
 
 	Player->WorldTexture = Assets.Textures["players/basic.png"];
-	Player->Stats = Stats;
 	Player->Name = Data.ReadString();
 	Player->PortraitID = Data.Read<uint32_t>();
 	Player->Experience = Data.Read<int32_t>();
@@ -533,8 +535,6 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 		delete Player->Battle;
 		Player->Battle = nullptr;
 	}
-
-	Player->State = _Object::STATE_NONE;
 	*/
 }
 
@@ -662,11 +662,22 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 				case _Object::STATUS_TRADER:
 					Object->StatusTexture = Assets.Textures["hud/vendor.png"];
 				break;
+				case _Object::STATUS_TELEPORT:
+					Object->StatusTexture = Assets.Textures["hud/teleport.png"];
+				break;
 				default:
 				break;
 			}
 		}
 	}
+}
+
+// Handles player position
+void _ClientState::HandlePlayerPosition(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->Position = Data.Read<glm::ivec2>();
 }
 
 // Handles the start of an event

@@ -75,6 +75,7 @@ _Object::_Object()
 	AI(0),
 
 	CharacterID(0),
+	CheckEvent(false),
 	Paused(false),
 	MoveTime(0),
 	Status(0),
@@ -83,7 +84,7 @@ _Object::_Object()
 	StatusTexture(nullptr),
 	SpawnMapID(1),
 	SpawnPoint(0),
-	TeleportTime(0),
+	TeleportTime(-1),
 	PlayTime(0),
 	PlayTimeAccumulator(0),
 	Deaths(0),
@@ -381,11 +382,14 @@ void _Object::UpdateTarget(const std::vector<_Object *> &Fighters) {
 
 // Updates the player
 void _Object::Update(double FrameTime) {
+	CheckEvent = false;
 
 	// Update player position
 	Moved = Move();
-	if(Moved)
+	if(Moved) {
 		InputState = 0;
+		CheckEvent = true;
+	}
 
 	Status = STATUS_NONE;
 	if(WaitingForTrade)
@@ -404,8 +408,19 @@ void _Object::Update(double FrameTime) {
 	// Update timers
 	MoveTime += FrameTime;
 	AttackPlayerTime += FrameTime;
+
+	// Update teleport time
+	if(TeleportTime > 0.0) {
+		Status = STATUS_TELEPORT;
+		TeleportTime -= FrameTime;
+		if(TeleportTime <= 0.0) {
+			CheckEvent = true;
+			TeleportTime = 0.0;
+		}
+	}
+
+	// Update playtime
 	PlayTimeAccumulator += FrameTime;
-	TeleportTime += FrameTime;
 	if(PlayTimeAccumulator >= 1.0) {
 		PlayTimeAccumulator -= 1.0;
 		PlayTime++;
@@ -1020,13 +1035,6 @@ void _Object::CalculateSkillPoints() {
 		if(Skill)
 			SkillPointsUsed += Skill->SkillCost * SkillLevel.second;
 	}
-}
-
-// Starts the teleport process
-void _Object::StartTeleport() {
-	/*
-	TeleportTime = 0;
-	*/
 }
 
 // Calculates all of the player stats

@@ -469,18 +469,16 @@ void _HUD::ToggleTeleport() {
 	if(Player->WaitForServer)
 		return;
 
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::WORLD_TELEPORT);
-	ClientState.Network->SendPacket(Packet);
-	Player->StartTeleport();
+	if(!TeleportElement->Visible) {
+		CloseWindows();
+		ClientState.SendStatus(_Object::STATUS_TELEPORT);
 
-	/*
-	if(Player->State == _Object::STATE_TELEPORT) {
-		TeleportElement->SetVisible(false);
+		//Player->StartTeleport();
+		//TeleportElement->SetVisible(true);
 	}
 	else {
-		TeleportElement->SetVisible(true);
-	}*/
+		CloseWindows();
+	}
 }
 
 // Open/close inventory

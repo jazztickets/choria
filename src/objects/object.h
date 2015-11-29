@@ -64,6 +64,7 @@ class _Object {
 			STATUS_TRADE,
 			STATUS_TRADER,
 			STATUS_BATTLE,
+			STATUS_TELEPORT,
 		};
 
 		enum MoveDirectionType {
@@ -180,9 +181,6 @@ class _Object {
 		// Map
 		const _Tile *GetTile();
 
-		// World
-		void StartTeleport();
-
 		// PVP
 		bool CanAttackPlayer();
 		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
@@ -237,6 +235,7 @@ class _Object {
 		int CharacterID;
 
 		// States
+		bool CheckEvent;
 		bool Paused;
 		double MoveTime;
 
