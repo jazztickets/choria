@@ -21,6 +21,7 @@
 #include <instances/battle.h>
 #include <ui/element.h>
 #include <ui/image.h>
+#include <buffer.h>
 #include <assets.h>
 #include <graphics.h>
 #include <random.h>
@@ -409,6 +410,35 @@ void _Object::Update(double FrameTime) {
 		PlayTimeAccumulator -= 1.0;
 		PlayTime++;
 	}
+}
+
+// Serialize for ObjectCreate
+void _Object::Serialize(_Buffer &Packet) {
+	Packet.Write<NetworkIDType>(NetworkID);
+	Packet.Write<glm::ivec2>(Position);
+	Packet.Write<char>(Type);
+	Packet.WriteString(Name.c_str());
+	Packet.Write<uint32_t>(PortraitID);
+	Packet.WriteBit(IsInvisible());
+}
+
+// Serialize for ObjectUpdate
+void _Object::SerializeUpdate(_Buffer &Packet) {
+	Packet.Write<NetworkIDType>(NetworkID);
+	Packet.Write<glm::ivec2>(Position);
+	Packet.Write<char>(Status);
+	Packet.WriteBit(IsInvisible());
+}
+
+// Unserialize for ObjectCreate
+void _Object::Unserialize(_Buffer &Packet) {
+	Position = Packet.Read<glm::ivec2>();
+	Type = Packet.Read<char>();
+	Name = Packet.ReadString();
+	PortraitID = Packet.Read<uint32_t>();
+	Portrait = Stats->GetPortraitImage(PortraitID);
+	InvisPower = Packet.ReadBit();
+	WorldTexture = Assets.Textures["players/basic.png"];
 }
 
 // Renders the player while walking around the world

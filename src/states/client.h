@@ -19,6 +19,7 @@
 
 #include <state.h>
 #include <log.h>
+#include <packet.h>
 
 // Forward Declarations
 class _Font;
@@ -111,6 +112,8 @@ class _ClientState : public _State {
 		void HandleBattleEnd(_Buffer &Data);
 		void HandleBattleCommand(_Buffer &Data);
 		void HandleHUD(_Buffer &Data);
+
+		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
 
 		//void SendAttackPlayer();
 

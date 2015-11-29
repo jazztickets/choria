@@ -601,12 +601,7 @@ void _Map::AddObject(_Object *Object) {
 	// Create packet for the new object
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
-	Packet.Write<NetworkIDType>(Object->NetworkID);
-	Packet.Write<glm::ivec2>(Object->Position);
-	Packet.Write<char>(Object->Type);
-	Packet.WriteString(Object->Name.c_str());
-	Packet.Write<uint32_t>(Object->PortraitID);
-	Packet.WriteBit(Object->IsInvisible());
+	Object->Serialize(Packet);
 
 	// Notify other players of the new object
 	BroadcastPacket(Packet);
@@ -688,12 +683,7 @@ void _Map::SendObjectList(_Peer *Peer) {
 	// Write object data
 	Packet.Write<NetworkIDType>(Objects.size());
 	for(auto &Object : Objects) {
-		Packet.Write<NetworkIDType>(Object->NetworkID);
-		Packet.Write<glm::ivec2>(Object->Position);
-		Packet.Write<char>(Object->Type);
-		Packet.WriteString(Object->Name.c_str());
-		Packet.Write<uint32_t>(Object->PortraitID);
-		Packet.WriteBit((Object->IsInvisible()));
+		Object->Serialize(Packet);
 	}
 
 	Server->Network->SendPacket(Packet, Peer);
@@ -705,19 +695,14 @@ void _Map::SendObjectUpdates() {
 	// Create packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_OBJECTUPDATES);
-	Packet.Write<char>(ID);
+	Packet.Write<uint8_t>(ID);
 
 	// Write object count
 	Packet.Write<NetworkIDType>(Objects.size());
 
 	// Iterate over objects
 	for(const auto &Object : Objects) {
-
-		// Write object data
-		Packet.Write<NetworkIDType>(Object->NetworkID);
-		Packet.Write<glm::ivec2>(Object->Position);
-		Packet.Write<char>(Object->Status);
-		Packet.WriteBit(Object->IsInvisible());
+		Object->SerializeUpdate(Packet);
 	}
 
 	// Send packet to players in map

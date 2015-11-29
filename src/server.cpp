@@ -515,6 +515,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 
 		// Delete old player
 		if(Player) {
+			Save->SavePlayer(Player);
 			Player->Deleted = true;
 			OldInvisPower = Player->InvisPower;
 		}

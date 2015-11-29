@@ -33,6 +33,7 @@ class _Battle;
 class _Skill;
 class _Item;
 class _Stats;
+class _Buffer;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
@@ -90,6 +91,9 @@ class _Object {
 
 		void Render(const _Object *ClientPlayer=nullptr);
 		void Update(double FrameTime);
+		void Serialize(_Buffer &Packet);
+		void SerializeUpdate(_Buffer &Packet);
+		void Unserialize(_Buffer &Packet);
 
 		// -- FROM FIGHTER --
 
@@ -124,9 +128,6 @@ class _Object {
 		// -- FROM PLAYER --
 		//void UpdateExperience(int Value) { Experience += Value; }
 		//int GetGoldGiven() const { return (int)(Gold * 0.1f); }
-
-		// Account
-		void Save();
 
 		// Stats
 		void CalculatePlayerStats();

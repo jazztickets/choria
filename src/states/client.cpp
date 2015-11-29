@@ -547,21 +547,10 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 
 	// Create objects
 	for(NetworkIDType i = 0; i < ObjectCount; i++) {
+		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
-		// Read data
-		_Object *Object = new _Object();
-		Object->NetworkID = Data.Read<NetworkIDType>();
-		Object->Position = Data.Read<glm::ivec2>();
-		Object->Type = Data.Read<char>();
-		Object->Name = Data.ReadString();
-		Object->PortraitID = Data.Read<uint32_t>();
-		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
-		Object->InvisPower = Data.ReadBit();
-		Object->WorldTexture = Assets.Textures["players/basic.png"];
-		Object->Stats = Stats;
-
-		Map->AddObject(Object, Object->NetworkID);
-		Object->Map = Map;
+		// Create object
+		_Object *Object = CreateObject(Data, NetworkID);
 
 		// Set player pointer
 		if(Object->NetworkID == ClientNetworkID) {
@@ -590,21 +579,7 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 	if(NetworkID != Player->NetworkID) {
 
 		// Create object
-		_Object *Object = new _Object();
-		Object->NetworkID = NetworkID;
-		Object->Position = Data.Read<glm::ivec2>();
-		Object->Type = Data.Read<char>();
-		Object->Name = Data.ReadString();
-		Object->PortraitID = Data.Read<uint32_t>();
-		Object->InvisPower = Data.ReadBit();
-		Object->Stats = Stats;
-
-		Object->Portrait = Stats->GetPortraitImage(Object->PortraitID);
-		Object->Map = Map;
-		Object->WorldTexture = Assets.Textures["players/basic.png"];
-
-		// Add to map
-		Map->AddObject(Object, NetworkID);
+		CreateObject(Data, NetworkID);
 	}
 }
 
@@ -636,7 +611,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 		return;
 
 	// Check map id
-	int MapID = Data.Read<char>();
+	int MapID = Data.Read<uint8_t>();
 	if(MapID != Map->ID)
 		return;
 
@@ -849,6 +824,22 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 
 	// Close window
 	HUD->CloseTrade(false);
+}
+
+// Creates an object from a buffer
+_Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
+
+	// Create object
+	_Object *Object = new _Object();
+	Object->Stats = Stats;
+	Object->Map = Map;
+	Object->NetworkID = NetworkID;
+	Object->Unserialize(Data);
+
+	// Add to map
+	Map->AddObject(Object, Object->NetworkID);
+
+	return Object;
 }
 
 // Send status to server
