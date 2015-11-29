@@ -462,7 +462,7 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case Packet::INVENTORY_USE:
 			HandleInventoryUse(Data);
 		break;
-		/*
+	/*
 		case Packet::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;

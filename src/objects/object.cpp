@@ -945,7 +945,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 
 		// Update skill bar
 		if(SkillLevels[SkillID] == 0) {
-			for(int i = 0; i < 8; i++) {
+			for(int i = 0; i < ACTIONBAR_SIZE; i++) {
 				if(ActionBar[i] == Skill) {
 					ActionBar[i] = nullptr;
 					break;
@@ -1075,7 +1075,7 @@ void _Object::CalculateGearStats() {
 void _Object::CalculateSkillStats() {
 
 	// Go through each skill bar
-	for(int i = 0; i < 8; i++) {
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
 		const _Skill *Skill = ActionBar[i];
 		if(Skill) {
 			int Min, Max, MinRound, MaxRound;
@@ -1085,32 +1085,32 @@ void _Object::CalculateSkillStats() {
 			Skill->GetPowerRange(SkillLevels[Skill->ID], MinFloat, MaxFloat);
 
 			switch(Skill->ID) {
-				case 0:
+				case 1:
 					WeaponDamageModifier = MaxFloat;
 				break;
-				case 1:
+				case 2:
 					MaxPotions[0] = Min;
 				break;
-				case 2:
+				case 3:
 					MaxPotions[1] = Min;
 				break;
-				case 4:
+				case 5:
 					MaxHealth += MaxRound;
 				break;
-				case 5:
+				case 6:
 					MaxMana += MaxRound;
 				break;
-				case 7:
+				case 8:
 					HealthRegen += MaxFloat;
 				break;
-				case 8:
+				case 9:
 					ManaRegen += MaxFloat;
 				break;
-				case 9:
+				case 10:
 					MinDamageBonus += Max;
 					MaxDamageBonus += Max;
 				break;
-				case 10:
+				case 11:
 					MaxDefenseBonus += Max;
 				break;
 			}

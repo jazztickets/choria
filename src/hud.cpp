@@ -1227,7 +1227,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 					Slot = 0;
 					Direction = 1;
 				}
-				for(int i = 0; i < 8; i++) {
+				for(int i = 0; i < ACTIONBAR_SIZE; i++) {
 					if(Player->GetActionBar(Slot) == nullptr) {
 						SetActionBar(Slot, -1, Skill);
 						break;
@@ -1255,7 +1255,7 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Skill *Skill) {
 	if(OldSlot == -1) {
 
 		// Remove duplicate skills
-		for(int i = 0; i < 8; i++) {
+		for(int i = 0; i < ACTIONBAR_SIZE; i++) {
 			if(Player->GetActionBar(i) == Skill)
 				Player->ActionBar[i] = nullptr;
 		}

@@ -261,6 +261,12 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case Packet::VENDOR_EXCHANGE:
 			HandleVendorExchange(Data, Peer);
 		break;
+		case Packet::HUD_ACTIONBAR:
+			HandleActionBar(Data, Peer);
+		break;
+		case Packet::SKILLS_SKILLADJUST:
+			HandleSkillAdjust(Data, Peer);
+		break;
 		/*
 		case Packet::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
@@ -270,12 +276,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case Packet::TRADER_ACCEPT:
 			HandleTraderAccept(Data, Peer);
-		break;
-		case Packet::HUD_ACTIONBAR:
-			HandleActionBar(Data, Peer);
-		break;
-		case Packet::SKILLS_SKILLADJUST:
-			HandleSkillAdjust(Data, Peer);
 		break;
 		case Packet::WORLD_BUSY:
 			HandlePlayerBusy(Data, Peer);
@@ -868,6 +868,43 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 	}
 }
 
+// Handle a skill bar change
+void _Server::HandleActionBar(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Read skills
+	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		int SkillID = Data.Read<char>();
+		Player->ActionBar[i] = Stats->Skills[SkillID];
+	}
+
+	Player->CalculatePlayerStats();
+}
+
+// Handles a skill adjust
+void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Process packet
+	bool Spend = Data.ReadBit();
+	int SkillID = Data.Read<char>();
+	if(Spend) {
+		Player->AdjustSkillLevel(SkillID, 1);
+	}
+	else {
+		Player->AdjustSkillLevel(SkillID, -1);
+	}
+
+	Player->CalculateSkillPoints();
+	Player->CalculatePlayerStats();
+}
+
 /*
 // Handles a player's event end message
 void _Server::HandleEventEnd(_Buffer &Data, _Peer *Peer) {
@@ -918,40 +955,6 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 
 	// Send updates
 	SendHUD(Player);
-}
-
-// Handle a skill bar change
-void _Server::HandleActionBar(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Read skills
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		Player->SetActionBar(i, Stats->GetSkill(Packet->Read<char>()));
-	}
-
-	Player->CalculatePlayerStats();
-}
-
-// Handles a skill adjust
-void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	// Process packet
-	bool Spend = Data.ReadBit();
-	int SkillID = Data.Read<char>();
-	if(Spend) {
-		Player->AdjustSkillLevel(SkillID, 1);
-	}
-	else {
-		Player->AdjustSkillLevel(SkillID, -1);
-	}
-
-	Player->CalculateSkillPoints();
-	Player->CalculatePlayerStats();
 }
 
 // Handles a player's request to not start a battle with other players
