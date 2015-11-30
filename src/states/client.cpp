@@ -207,6 +207,10 @@ void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 
 	if(!HUD->IsChatting())
 		HUD->ValidateTradeGold();
+
+	// Toggle network stats
+	if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_F2)
+		HUD->ShowStats = !HUD->ShowStats;
 }
 
 // Mouse handler

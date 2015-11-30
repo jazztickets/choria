@@ -122,6 +122,9 @@ class _HUD {
 		void UpdateTradeStatus(bool Accepted);
 		void ValidateTradeGold();
 
+		// Stats
+		bool ShowStats;
+
 	private:
 
 		bool CloseInventory();
