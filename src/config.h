@@ -56,6 +56,7 @@ class _Config {
 		float MusicVolume;
 
 		// Networking
+		size_t MaxClients;
 		double FakeLag;
 		double NetworkRate;
 		uint16_t NetworkPort;

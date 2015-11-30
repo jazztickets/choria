@@ -71,6 +71,7 @@ void _Config::SetDefaults() {
 	SoundVolume = 1.0f;
 	MusicVolume = 1.0f;
 
+	MaxClients = DEFAULT_MAXCLIENTS;
 	FakeLag = 0.0f;
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
@@ -178,6 +179,7 @@ void _Config::Load() {
 	GetValue("sound_volume", SoundVolume);
 	GetValue("music_volume", MusicVolume);
 	GetValue("fake_lag", FakeLag);
+	GetValue("max_clients", MaxClients);
 	GetValue("network_rate", NetworkRate);
 	GetValue("network_port", NetworkPort);
 	GetValue("last_host", LastHost);
@@ -231,6 +233,7 @@ void _Config::Save() {
 	File << "sound_volume=" << SoundVolume << std::endl;
 	File << "music_volume=" << MusicVolume << std::endl;
 	File << "fake_lag=" << FakeLag << std::endl;
+	File << "max_clients=" << MaxClients << std::endl;
 	File << "network_rate=" << NetworkRate << std::endl;
 	File << "network_port=" << NetworkPort << std::endl;
 	File << "last_host=" << LastHost << std::endl;
