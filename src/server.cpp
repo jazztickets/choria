@@ -193,6 +193,12 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 	if(Player) {
 		if(Player->Map) {
 			Player->Map->RemovePeer(Event.Peer);
+
+			// Broadcast message
+			for(auto &ReceivePeer : Network->GetPeers()) {
+				if(ReceivePeer != Event.Peer)
+					SendMessage(ReceivePeer, Player->Name + " has left the server", COLOR_GRAY);
+			}
 		}
 
 		// Leave trading screen
@@ -403,16 +409,16 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	// Read packet
 	int Slot = Data.Read<char>();
 	int MapID = 0;
-	//int SpawnPoint = 0;
+	std::string Name;
 
 	// Get character info
 	std::stringstream Query;
-	Query << "SELECT id, map_id, spawnpoint FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
+	Query << "SELECT id, map_id, name FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
 	Save->Database->PrepareQuery(Query.str());
 	if(Save->Database->FetchRow()) {
-		Peer->CharacterID = Save->Database->GetInt(0);
-		MapID = Save->Database->GetInt(1);
-		//SpawnPoint = Save->Database->GetInt(2);
+		Peer->CharacterID = Save->Database->GetInt("id");
+		MapID = Save->Database->GetInt("map_id");
+		Name = Save->Database->GetString("name");
 	}
 	Save->Database->CloseQuery();
 	Query.str("");
@@ -425,6 +431,12 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Send map and players to new player
 	SpawnPlayer(Peer, MapID, _Map::EVENT_SPAWN);
+
+	// Broadcast message
+	for(auto &ReceivePeer : Network->GetPeers()) {
+		if(ReceivePeer != Peer)
+			SendMessage(ReceivePeer, Name + " has joined the server", COLOR_GRAY);
+	}
 }
 
 // Handles move commands from a client
@@ -1110,7 +1122,6 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 }
 
 /*
-
 // Handles battle commands from a client
 void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = (_Object *)Peer->data;
@@ -1188,30 +1199,6 @@ void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
 	}
 }
 
-// Handles a teleport request
-void _Server::HandleTeleport(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
-	if(!Player)
-		return;
-
-	Player->StartTeleport();
-}
-
-// Send a message to the player
-void _Server::SendMessage(_Object *Player, const std::string &Message, const glm::vec4 &Color) {
-	if(!Player)
-		return;
-
-	// Build message
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
-	Packet.Write<glm::vec4>(Color);
-	Packet.WriteString(Message.c_str());
-
-	// Send
-	Network->SendPacket(Packet, Peer);
-}
-
 // Updates the player's HUD
 void _Server::SendHUD(_Object *Player) {
 
@@ -1246,15 +1233,22 @@ void _Server::RemovePlayerFromBattle(_Object *Player) {
 		}
 	}
 }
-
-// Teleports a player back to town
-void _Server::PlayerTeleport(_Object *Player) {
-	Player->RestoreHealthMana();
-	SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
-	SendHUD(Player);
-	Player->Save();
-}
 */
+
+// Send a message to the player
+void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	// Build message
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
+	Packet.Write<glm::vec4>(Color);
+	Packet.WriteString(Message.c_str());
+
+	// Send
+	Network->SendPacket(Packet, Peer);
+}
 
 // Adds trade item information to a packet
 void _Server::BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold) {

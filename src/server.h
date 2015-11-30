@@ -22,6 +22,7 @@
 #include <memory>
 #include <thread>
 #include <list>
+#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _ServerNetwork;
@@ -92,13 +93,11 @@ class _Server {
 		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
 		void HandleActionBar(_Buffer &Data, _Peer *Peer);
 		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
-		void HandleEventEnd(_Buffer &Data, _Peer *Peer);
 		void HandleChatMessage(_Buffer &Data, _Peer *Peer);
 		void HandleTradeRequest(_Buffer &Data, _Peer *Peer);
 		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
 		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
 		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
-		void HandleTeleport(_Buffer &Data, _Peer *Peer);
 		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
@@ -106,7 +105,7 @@ class _Server {
 
 		void SendPlayerPosition(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
-		void SendObjectList(_Peer *Peer);
+		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 
