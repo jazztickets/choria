@@ -32,6 +32,8 @@ const int MAP_TILE_HEIGHT = 32;
 const int NETWORKING_CHAT_SIZE = 100;
 
 const int ACTIONBAR_SIZE = 8;
+const int BATTLE_MINSTEPS = 5;
+const int BATTLE_MAXSTEPS = 14;
 const int BATTLE_MAXFIGHTERS = 6;
 const double BATTLE_ROUNDTIME = 5.0;
 const double BATTLE_SHOWRESULTTIME = 2.0;

@@ -42,9 +42,9 @@ class _Peer;
 struct _Tile {
 	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
 	const _Texture *Texture;
-	int32_t Zone;
-	int32_t EventType;
-	int32_t EventData;
+	int Zone;
+	int EventType;
+	int EventData;
 	bool Wall;
 	bool PVP;
 };

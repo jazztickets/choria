@@ -539,12 +539,6 @@ int _Object::Move() {
 	return 0;
 }
 
-// Get the zone that the player is standing in
-int _Object::GetCurrentZone() {
-
-	return GetTile()->Zone;
-}
-
 // Gets the tile that the player is currently standing on
 const _Tile *_Object::GetTile() {
 
@@ -553,7 +547,7 @@ const _Tile *_Object::GetTile() {
 
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
-	std::uniform_int_distribution<int> Distribution(4, 14);
+	std::uniform_int_distribution<int> Distribution(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
 	NextBattle = Distribution(RandomGenerator);
 }
 

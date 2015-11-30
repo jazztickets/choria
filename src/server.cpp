@@ -674,6 +674,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Save->Database->CloseQuery();
 
 	// Get stats
+	Player->GenerateNextBattle();
 	Player->CalculatePlayerStats();
 	Player->RestoreHealthMana();
 
@@ -1286,4 +1287,52 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	Packet.Write<NetworkIDType>(Sender->NetworkID);
 	BuildTradeItemsPacket(Sender, Packet, Sender->TradeGold);
 	Network->SendPacket(Packet, Receiver->Peer);
+}
+
+// Start a battle event
+void _Server::StartBattle(_Object *Object, int Zone) {
+	return;
+	Zone = 1;
+
+	// Get monsters
+	std::vector<int> Monsters;
+	Stats->GenerateMonsterListFromZone(Zone, Monsters);
+	size_t MonsterCount = Monsters.size();
+	if(MonsterCount > 0) {
+
+		// Create a new battle instance
+		_Battle *Battle = new _Battle();
+		Battles.push_back(Battle);
+
+		// Add players
+		Battle->AddFighter(Object, 0);
+
+		// Get a list of players
+		std::list<_Object *> Players;
+		Object->Map->GetClosePlayers(Object, 7*7, Players);
+
+		// Add players to battle
+		int PlayersAdded = 0;
+		for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
+			_Object *PartyPlayer = *Iterator;
+			if(PartyPlayer->Status == _Object::STATUS_NONE && !PartyPlayer->IsInvisible()) {
+				SendPlayerPosition(PartyPlayer->Peer);
+				Battle->AddFighter(PartyPlayer, 0);
+				PlayersAdded++;
+				if(PlayersAdded == 2)
+					break;
+			}
+		}
+
+		// Add monsters
+		for(size_t i = 0; i < Monsters.size(); i++) {
+			_Object *Monster = new _Object();
+			Monster->DatabaseID = Monsters[i];
+			Monster->Type = _Object::MONSTER;
+			Stats->GetMonsterStats(Monsters[i], Monster);
+			Battle->AddFighter(Monster, 1);
+		}
+
+		Battle->StartBattleServer();
+	}
 }

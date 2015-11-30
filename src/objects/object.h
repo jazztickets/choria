@@ -160,7 +160,6 @@ class _Object {
 		bool AcceptingMoveInput();
 		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
 		int Move();
-		int GetCurrentZone();
 		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills

@@ -19,7 +19,7 @@
 #include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <instances/map.h>
-#include <instances/clientbattle.h>
+#include <instances/battle.h>
 #include <ui/element.h>
 #include <constants.h>
 #include <framework.h>
@@ -606,7 +606,7 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 	_Object *Object = Map->GetObjectByID(NetworkID);
 	if(Object) {
 		if(Player->Battle)
-			Player->Battle->RemoveFighter(Object);
+			Player->Battle->RemoveFighterClient(Object);
 
 		Object->Deleted = true;
 	}

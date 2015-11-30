@@ -49,6 +49,7 @@ class _Server {
 		void StopServer();
 
 		void SpawnPlayer(_Peer *Peer, int MapID, int EventType);
+		void StartBattle(_Object *Object, int Zone);
 
 		// State
 		bool Done;

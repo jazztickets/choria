@@ -188,8 +188,8 @@ void _Map::CheckEvents(_Object *Object) {
 				// Notify client
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<int32_t>(Tile->EventType);
-				Packet.Write<int32_t>(Tile->EventData);
+				Packet.Write<int>(Tile->EventType);
+				Packet.Write<int>(Tile->EventData);
 				Packet.Write<glm::ivec2>(Object->Position);
 				Server->Network->SendPacket(Packet, Object->Peer);
 			}
@@ -203,8 +203,8 @@ void _Map::CheckEvents(_Object *Object) {
 				// Notify client
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<int32_t>(Tile->EventType);
-				Packet.Write<int32_t>(Tile->EventData);
+				Packet.Write<int>(Tile->EventType);
+				Packet.Write<int>(Tile->EventData);
 				Packet.Write<glm::ivec2>(Object->Position);
 				Server->Network->SendPacket(Packet, Object->Peer);
 			}
@@ -215,56 +215,11 @@ void _Map::CheckEvents(_Object *Object) {
 			if(Server) {
 				Object->Vendor = nullptr;
 				Object->Trader = nullptr;
-			}
-/*
-			// Start a battle
-			if(Object->NextBattle <= 0) {
 
-				// Get monsters
-				std::vector<int> Monsters;
-				Stats->GenerateMonsterListFromZone(Object->GetCurrentZone(), Monsters);
-				size_t MonsterCount = Monsters.size();
-				if(MonsterCount > 0) {
-
-					// Create a new battle instance
-					_ServerBattle *Battle = new _ServerBattle();
-					Battles.push_back(Battle);
-
-					// Add players
-					Battle->AddFighter(Player, 0);
-					if(1) {
-
-						// Get a list of players
-						std::list<_Object *> Players;
-						Object->Map->GetClosePlayers(Player, 7*7, Players);
-
-						// Add players to battle
-						int PlayersAdded = 0;
-						for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
-							_Object *PartyPlayer = *Iterator;
-							if(PartyPlayer->State == _Object::STATE_NONE && !PartyPlayer->IsInvisible()) {
-								SendPlayerPosition(PartyPlayer);
-								Battle->AddFighter(PartyPlayer, 0);
-								PlayersAdded++;
-								if(PlayersAdded == 2)
-									break;
-							}
-						}
-					}
-
-					// Add monsters
-					for(size_t i = 0; i < Monsters.size(); i++) {
-						_Object *Monster = new _Object(Monsters[i]);
-						Monster->ID = Monsters[i];
-						Monster->Type = _Object::MONSTER;
-						Stats->GetMonsterStats(Monsters[i], Monster);
-						Battle->AddFighter(Monster, 1);
-					}
-
-					Battle->StartBattle();
+				if(1 || Object->NextBattle <= 0) {
+					Server->StartBattle(Object, Tile->Zone);
 				}
 			}
-		*/
 		break;
 	}
 }
