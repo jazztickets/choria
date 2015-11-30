@@ -125,6 +125,9 @@ class _Stats {
 		// Skills
 		std::unordered_map<uint32_t, const _Skill *> Skills;
 
+		// Database
+		_Database *Database;
+
 	private:
 
 		void LoadMaps();
@@ -134,7 +137,5 @@ class _Stats {
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();
-
-		_Database *Database;
 
 };

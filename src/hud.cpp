@@ -16,6 +16,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <hud.h>
+#include <ui/element.h>
+#include <ui/button.h>
+#include <ui/label.h>
+#include <ui/textbox.h>
+#include <ui/image.h>
+#include <ui/style.h>
 #include <states/client.h>
 #include <network/clientnetwork.h>
 #include <instances/map.h>
@@ -33,12 +39,7 @@
 #include <actions.h>
 #include <menu.h>
 #include <packet.h>
-#include <ui/element.h>
-#include <ui/button.h>
-#include <ui/label.h>
-#include <ui/textbox.h>
-#include <ui/image.h>
-#include <ui/style.h>
+#include <database.h>
 #include <vector>
 #include <algorithm>
 #include <sstream>
@@ -605,8 +606,9 @@ void _HUD::InitSkills() {
 	size_t i = 0;
 
 	// Iterate over skills
-	for(const auto &SkillIterator : ClientState.Stats->Skills) {
-		const _Skill *Skill = SkillIterator.second;
+	ClientState.Stats->Database->PrepareQuery("SELECT id FROM skill ORDER BY rank");
+	while(ClientState.Stats->Database->FetchRow()) {
+		const _Skill *Skill = ClientState.Stats->Skills[ClientState.Stats->Database->GetInt(0)];
 		if(!Skill)
 			continue;
 
@@ -696,6 +698,8 @@ void _HUD::InitSkills() {
 
 		i++;
 	}
+	ClientState.Stats->Database->CloseQuery();
+
 	SkillsElement->CalculateBounds();
 	SkillsElement->SetVisible(true);
 
