@@ -175,7 +175,6 @@ void _Map::CheckEvents(_Object *Object) {
 			//Object->Save();
 		break;
 		case _Map::EVENT_MAPCHANGE:
-			//Object->GenerateNextBattle();
 			if(Server)
 				Server->SpawnPlayer(Object->Peer, Tile->EventData, Tile->EventType);
 			else
@@ -587,8 +586,8 @@ void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, std::li
 
 	for(const auto &Object : Objects) {
 		if(Object != Player) {
-			glm::ivec2 Delta = Object->Position - Player->Position;
-			if((float)(Delta.x * Delta.x + Delta.y * Delta.y) <= DistanceSquared) {
+			glm::vec2 Delta = Object->Position - Player->Position;
+			if(glm::dot(Delta, Delta) <= DistanceSquared) {
 				Players.push_back(Object);
 			}
 		}
@@ -602,8 +601,8 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 	float ClosestDistanceSquared = HUGE_VAL;
 	for(const auto &Object : Objects) {
 		if(Object != Player && Object->WaitingForTrade && Object->TradePlayer == nullptr) {
-			glm::ivec2 Delta = Object->Position - Player->Position;
-			float DistanceSquared = (float)(Delta.x * Delta.x + Delta.y * Delta.y);
+			glm::vec2 Delta = Object->Position - Player->Position;
+			float DistanceSquared = glm::dot(Delta, Delta);
 			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {
 				ClosestDistanceSquared = DistanceSquared;
 				ClosestPlayer = Object;

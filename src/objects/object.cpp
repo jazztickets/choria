@@ -32,6 +32,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <sstream>
+#include <iostream>
 
 // Constructor
 _Object::_Object()
@@ -392,7 +393,9 @@ void _Object::Update(double FrameTime) {
 	}
 
 	Status = STATUS_NONE;
-	if(WaitingForTrade)
+	if(Battle)
+		Status = STATUS_BATTLE;
+	else if(WaitingForTrade)
 		Status = STATUS_TRADE;
 	else if(Vendor)
 		Status = STATUS_VENDOR;
@@ -474,7 +477,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 
 		glm::vec3 DrawPosition;
-		if(0) {
+		if(1) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 			Graphics.DrawSprite(DrawPosition, WorldTexture);
@@ -495,7 +498,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 
 // Moves the player
 int _Object::Move() {
-	if(WaitForServer || InputState == 0)
+	if(WaitForServer || InputState == 0 || Battle)
 		return 0;
 
 	// Get new position
@@ -915,6 +918,9 @@ void _Object::SplitStack(int Slot, int Count) {
 
 // Determines if the player can accept movement keys held down
 bool _Object::AcceptingMoveInput() {
+	if(Battle)
+		return false;
+
 	if(WaitForServer)
 		return false;
 
@@ -1029,6 +1035,11 @@ void _Object::CalculateSkillPoints() {
 		if(Skill)
 			SkillPointsUsed += Skill->SkillCost * SkillLevel.second;
 	}
+}
+
+// Can enter battle
+bool _Object::CanBattle() {
+	return Status == STATUS_NONE && !IsInvisible();
 }
 
 // Calculates all of the player stats

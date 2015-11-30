@@ -423,10 +423,10 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::TRADE_EXCHANGE:
 			HandleTradeExchange(Data);
 		break;
-	/*
-		case PacketType::WORLD_STARTBATTLE:
+		case PacketType::BATTLE_START:
 			HandleBattleStart(Data);
 		break;
+	/*
 		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
 		break;
@@ -877,7 +877,6 @@ void _ClientState::SendStatus(int Status) {
 	Network->SendPacket(Packet);
 }
 
-/*
 // Handles the start of a battle
 void _ClientState::HandleBattleStart(_Buffer &Data) {
 
@@ -886,7 +885,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 		return;
 
 	// Create a new battle instance
-	Player->Battle = new _ClientBattle();;
+	Player->Battle = new _Battle();
 
 	// Get fighter count
 	int FighterCount = Data.Read<char>();
@@ -895,12 +894,13 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	for(int i = 0; i < FighterCount; i++) {
 
 		// Get fighter type
-		int Type = Data.ReadBit();
-		int Side = Data.ReadBit();
+		int Type = Data.Read<char>();
+		int Side = Data.Read<char>();
 		if(Type == _Object::PLAYER) {
 
 			// Network ID
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			glm::ivec2 Position = Data.Read<glm::ivec2>();
 
 			// Player stats
 			int Health = Data.Read<int32_t>();
@@ -909,23 +909,25 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			int MaxMana = Data.Read<int32_t>();
 
 			// Get player object
-			_Object *NewPlayer = (_Object *)ObjectManager->GetObjectFromNetworkID(NetworkID);
-			if(NewPlayer != nullptr) {
-				NewPlayer->Health = Health;
-				NewPlayer->MaxHealth = MaxHealth;
-				NewPlayer->Mana = Mana;
-				NewPlayer->MaxMana = MaxMana;
-				NewPlayer->Battle = Player->Battle;
+			_Object *Fighter = Map->GetObjectByID(NetworkID);
+			if(Fighter != nullptr) {
+				Fighter->InputState = 0;
+				Fighter->Position = Position;
+				Fighter->Health = Health;
+				Fighter->MaxHealth = MaxHealth;
+				Fighter->Mana = Mana;
+				Fighter->MaxMana = MaxMana;
+				Fighter->Battle = Player->Battle;
 
-				Player->Battle->AddFighter(NewPlayer, Side);
+				Player->Battle->AddFighter(Fighter, Side);
 			}
 		}
 		else {
 
 			// Monster ID
 			int MonsterID = Data.Read<int32_t>();
-			_Object *Monster = new _Object(MonsterID);
-			Monster->ID = MonsterID;
+			_Object *Monster = new _Object();
+			Monster->DatabaseID = MonsterID;
 			Monster->Type = _Object::MONSTER;
 			Stats->GetMonsterStats(MonsterID, Monster);
 
@@ -935,9 +937,10 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 	// Start the battle
 	HUD->CloseWindows();
-	((_ClientBattle *)Player->Battle)->StartBattle(Player);
+	Player->Battle->StartBattleClient(Player);
 }
 
+/*
 // Handles the result of a turn in battle
 void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
 

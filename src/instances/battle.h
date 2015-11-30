@@ -28,6 +28,7 @@ class _Stats;
 class _Item;
 class _Buffer;
 class _Element;
+class _ServerNetwork;
 
 // Structures
 struct _ActionResult {
@@ -56,6 +57,7 @@ class _Battle {
 	public:
 
 		enum StateType {
+			STATE_NONE,
 			// server
 			STATE_INPUT,
 			STATE_RESOLVETURN,
@@ -125,10 +127,11 @@ class _Battle {
 		void ResolveTurn();
 		void CheckEnd();
 
-		void SendPacketToPlayers(_Buffer *Packet);
+		void BroadcastPacket(_Buffer &Packet);
 		void SendSkillToPlayers(_Object *Player);
 
 		_Stats *Stats;
+		_ServerNetwork *ServerNetwork;
 
 	protected:
 

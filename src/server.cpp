@@ -1139,7 +1139,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 /*
 // Handles battle commands from a client
 void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
+	_Object *Player = Peer->data;
 	if(!Player)
 		return;
 
@@ -1156,7 +1156,7 @@ void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
 
 // The client is done with the battle results screen
 void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
+	_Object *Player = Peer->data;
 	if(!Player)
 		return;
 
@@ -1180,7 +1180,7 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 
 // Handles a player's request to attack another player
 void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = (_Object *)Peer->data;
+	_Object *Player = Peer->data;
 	if(!Player || !Player->CanAttackPlayer())
 		return;
 
@@ -1291,17 +1291,17 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	return;
 	Zone = 1;
 
 	// Get monsters
-	std::vector<int> Monsters;
-	Stats->GenerateMonsterListFromZone(Zone, Monsters);
-	size_t MonsterCount = Monsters.size();
-	if(MonsterCount > 0) {
+	std::list<int> MonsterIDs;
+	Stats->GenerateMonsterListFromZone(Zone, MonsterIDs);
+	if(MonsterIDs.size()) {
 
 		// Create a new battle instance
 		_Battle *Battle = new _Battle();
+		Battle->Stats = Stats;
+		Battle->ServerNetwork = Network.get();
 		Battles.push_back(Battle);
 
 		// Add players
@@ -1313,10 +1313,8 @@ void _Server::StartBattle(_Object *Object, int Zone) {
 
 		// Add players to battle
 		int PlayersAdded = 0;
-		for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
-			_Object *PartyPlayer = *Iterator;
-			if(PartyPlayer->Status == _Object::STATUS_NONE && !PartyPlayer->IsInvisible()) {
-				SendPlayerPosition(PartyPlayer->Peer);
+		for(auto &PartyPlayer : Players) {
+			if(PartyPlayer->CanBattle()) {
 				Battle->AddFighter(PartyPlayer, 0);
 				PlayersAdded++;
 				if(PlayersAdded == 2)
@@ -1325,14 +1323,15 @@ void _Server::StartBattle(_Object *Object, int Zone) {
 		}
 
 		// Add monsters
-		for(size_t i = 0; i < Monsters.size(); i++) {
+		for(auto &MonsterID : MonsterIDs) {
 			_Object *Monster = new _Object();
-			Monster->DatabaseID = Monsters[i];
+			Monster->DatabaseID = MonsterID;
 			Monster->Type = _Object::MONSTER;
-			Stats->GetMonsterStats(Monsters[i], Monster);
+			Stats->GetMonsterStats(MonsterID, Monster);
 			Battle->AddFighter(Monster, 1);
 		}
 
+		// Send messages out
 		Battle->StartBattleServer();
 	}
 }

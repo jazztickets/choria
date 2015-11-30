@@ -169,6 +169,7 @@ class _Object {
 		void CalculateSkillPoints();
 
 		// Battles
+		bool CanBattle();
 		void GenerateNextBattle();
 		void StartBattle(_Battle *Battle);
 		void StopBattle();

@@ -106,7 +106,7 @@ class _Stats {
 		const _Texture *GetPortraitImage(uint32_t PortraitID);
 
 		// Monsters
-		void GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters);
+		void GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters);
 		void GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Drops);
 
 		// Levels

@@ -290,7 +290,7 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int ZoneID, std::vector<int> &Monsters) {
+void _Stats::GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters) {
 	if(ZoneID == 0)
 		return;
 

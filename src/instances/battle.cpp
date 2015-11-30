@@ -21,6 +21,7 @@
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
+#include <network/servernetwork.h>
 #include <actions.h>
 #include <buffer.h>
 #include <graphics.h>
@@ -33,17 +34,25 @@
 
 // Constructor
 _Battle::_Battle() :
+	Stats(nullptr),
+	ServerNetwork(nullptr),
+	State(STATE_NONE),
+	TargetState(STATE_NONE),
+	Timer(0),
+	RoundTime(0),
+	LeftFighterCount(0),
+	RightFighterCount(0),
+	PlayerCount(0),
+	MonsterCount(0),
 	ResultTimer(0),
+	ShowResults(false),
+	TotalExperience(0),
+	TotalGold(0),
 	BattleElement(nullptr),
 	BattleWinElement(nullptr),
-	BattleLoseElement(nullptr) {
+	BattleLoseElement(nullptr),
+	ClientPlayer(nullptr) {
 
-	Timer = 0;
-	RoundTime = 0;
-	LeftFighterCount = 0;
-	RightFighterCount = 0;
-	PlayerCount = 0;
-	MonsterCount = 0;
 }
 
 // Destructor
@@ -195,7 +204,7 @@ void _Battle::SendSkill(int SkillSlot) {
 		return;
 
 	const _Skill *Skill = ClientPlayer->GetActionBar(SkillSlot);
-	if(SkillSlot != 9 && (Skill == nullptr || !Skill->CanUse(ClientPlayer)))
+	if(Skill == nullptr || !Skill->CanUse(ClientPlayer))
 		return;
 
 	_Buffer Packet;
@@ -207,12 +216,11 @@ void _Battle::SendSkill(int SkillSlot) {
 	ClientPlayer->SkillUsing = Skill;
 
 	// Update potion count
-	if(SkillSlot != 9 && Skill->Type == _Skill::TYPE_USEPOTION)
+	if(Skill->Type == _Skill::TYPE_USEPOTION)
 		ClientPlayer->UpdatePotionsLeft(Skill->ID == 3);
 
 	State = STATE_WAIT;
 }
-
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction) {
@@ -297,7 +305,7 @@ void _Battle::GetMonsterList(std::vector<_Object *> &Monsters) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->Type == _Object::MONSTER) {
-			Monsters.push_back((_Object *)Fighters[i]);
+			Monsters.push_back(Fighters[i]);
 		}
 	}
 }
@@ -307,7 +315,7 @@ void _Battle::GetPlayerList(int Side, std::vector<_Object *> &Players) {
 
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->Type == _Object::PLAYER) {
-			Players.push_back((_Object *)Fighters[i]);
+			Players.push_back(Fighters[i]);
 		}
 	}
 }
@@ -322,7 +330,6 @@ int _Battle::GetFighterFromSlot(int Slot) {
 
 	return -1;
 }
-
 
 // Starts the battle on the client
 void _Battle::StartBattleClient(_Object *Player) {
@@ -509,7 +516,7 @@ int _Battle::RemoveFighterServer(_Object *RemoveFighter) {
 	int Count = 0;
 	for(size_t i = 0; i < Fighters.size(); i++) {
 		if(Fighters[i] && Fighters[i]->Type == _Object::PLAYER) {
-			_Object *Player = (_Object *)Fighters[i];
+			_Object *Player = Fighters[i];
 			if(Player == RemoveFighter) {
 				Player->StopBattle();
 				Fighters[i] = nullptr;
@@ -531,7 +538,7 @@ void _Battle::StartBattleServer() {
 
 	// Build packet
 	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::WORLD_STARTBATTLE);
+	Packet.Write<PacketType>(PacketType::BATTLE_START);
 
 	// Write fighter count
 	int FighterCount = Fighters.size();
@@ -541,15 +548,15 @@ void _Battle::StartBattleServer() {
 	for(int i = 0; i < FighterCount; i++) {
 
 		// Write fighter type
-		int Type = Fighters[i]->Type;
-		Packet.WriteBit(!!Type);
-		Packet.WriteBit(!!Fighters[i]->GetSide());
+		Packet.Write<char>(Fighters[i]->Type);
+		Packet.Write<char>(Fighters[i]->GetSide());
 
-		if(Type == _Object::PLAYER) {
-			_Object *Player = (_Object *)Fighters[i];
+		if(Fighters[i]->Type == _Object::PLAYER) {
+			_Object *Player = Fighters[i];
 
 			// Network ID
 			Packet.Write<NetworkIDType>(Player->NetworkID);
+			Packet.Write<glm::ivec2>(Player->Position);
 
 			// Player stats
 			Packet.Write<int32_t>(Player->Health);
@@ -561,7 +568,7 @@ void _Battle::StartBattleServer() {
 			Player->StartBattle(this);
 		}
 		else {
-			_Object *Monster = (_Object *)Fighters[i];
+			_Object *Monster = Fighters[i];
 
 			// Monster ID
 			Packet.Write<int32_t>(Monster->DatabaseID);
@@ -569,7 +576,7 @@ void _Battle::StartBattleServer() {
 	}
 
 	// Send packet to players
-	SendPacketToPlayers(&Packet);
+	BroadcastPacket(Packet);
 
 	State = STATE_INPUT;
 }
@@ -696,7 +703,7 @@ void _Battle::ResolveTurn() {
 	}
 
 	// Send packet
-	SendPacketToPlayers(&Packet);
+	BroadcastPacket(Packet);
 }
 
 // Checks for the end of a battle
@@ -720,7 +727,7 @@ void _Battle::CheckEnd() {
 
 			// Keep track of players
 			if(SideFighters[j]->Type == _Object::PLAYER) {
-				Players.push_back((_Object *)SideFighters[j]);
+				Players.push_back(SideFighters[j]);
 				Side[i].PlayerCount++;
 			}
 			else
@@ -868,13 +875,12 @@ void _Battle::CheckEnd() {
 }
 
 // Send a packet to all players
-void _Battle::SendPacketToPlayers(_Buffer *Packet) {
+void _Battle::BroadcastPacket(_Buffer &Packet) {
 
 	// Send packet to all players
 	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->Type == _Object::PLAYER) {
-			//_Object *Player = (_Object *)Fighters[i];
-			//OldServerNetwork->SendPacketToPeer(Packet, Player->Peer);
+		if(Fighters[i] && Fighters[i]->Peer) {
+			ServerNetwork->SendPacket(Packet, Fighters[i]->Peer);
 		}
 	}
 }
