@@ -108,6 +108,7 @@ _Object::_Object()
 	NextBattle(0),
 	AttackPlayerTime(0),
 	InvisPower(0),
+	TurnTimer(0),
 	InventoryOpen(false),
 	Vendor(nullptr),
 	Trader(nullptr),
@@ -169,17 +170,16 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 
 	// Health/mana bars
 	glm::ivec2 BarSize(90, 22);
-	glm::ivec2 BarOffset(Portrait->Size.x/2 + 10, -15);
-	if(MaxMana == 0)
-		BarOffset.y = 0;
+	glm::ivec2 BarOffset(Slot->Size.x/2 + 10, -Slot->Size.y/2);
+	float BarPaddingY = 6;
 
 	// Get health percent
 	float HealthPercent = MaxHealth > 0 ? Health / (float)MaxHealth : 0;
 
 	// Get ui size
 	_Bounds BarBounds;
-	BarBounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
-	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
+	BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
+	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::ivec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2;
 	glm::ivec2 HealthBarCenter = BarCenter;
 	int BarEndX = BarBounds.End.x;
@@ -190,7 +190,7 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
-	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * HealthPercent, BarSize.y/2) + BarOffset;
+	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * HealthPercent, BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_full"]->Texture, true);
 
 	// Draw health text
@@ -204,9 +204,9 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 		float ManaPercent = MaxMana > 0 ? Mana / (float)MaxMana : 0;
 
 		// Get ui size
-		BarOffset.y = -BarOffset.y;
-		BarBounds.Start = SlotPosition + glm::ivec2(0, -BarSize.y/2) + BarOffset;
-		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y/2) + BarOffset;
+		BarOffset.y += BarSize.y + BarPaddingY;
+		BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
+		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
 		BarCenter = (BarBounds.Start + BarBounds.End) / 2;
 
 		// Draw empty bar
@@ -215,7 +215,7 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_empty"]->Texture, true);
 
 		// Draw full bar
-		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * ManaPercent, BarSize.y/2) + BarOffset;
+		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * ManaPercent, BarSize.y) + BarOffset;
 		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
@@ -223,6 +223,21 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), COLOR_WHITE, CENTER_BASELINE);
 		Buffer.str("");
 	}
+
+	// Draw turn timer
+	BarOffset.y += BarSize.y + BarPaddingY;
+	BarSize.y = 8;
+	BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
+	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
+
+	// Draw empty bar
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.SetVBO(VBO_NONE);
+	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_empty"]->Texture, true);
+
+	// Draw full bar
+	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
+	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
 	// Show results of last turn
 	if(ShowResults) {

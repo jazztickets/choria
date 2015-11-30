@@ -266,6 +266,7 @@ class _Object {
 		int NextBattle;
 		double AttackPlayerTime;
 		int InvisPower;
+		double TurnTimer;
 
 		// Items
 		bool InventoryOpen;

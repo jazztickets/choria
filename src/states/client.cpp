@@ -278,25 +278,6 @@ void _ClientState::Update(double FrameTime) {
 			Player->InputState |= _Object::MOVE_RIGHT;
 	}
 
-	// Handle input
-	/*
-	if(Menu.GetState() == _Menu::STATE_NONE) {
-		switch(Player->State) {
-			case _Object::STATE_BATTLE: {
-
-				// Send key input
-				if(!HUD->IsChatting()) {
-					for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-						if(Actions.GetState(_Actions::SKILL1+i)) {
-							Player->Battle->HandleAction(_Actions::SKILL1+i);
-							break;
-						}
-					}
-				}
-			} break;
-		}
-	}*/
-
 	// Update objects
 	Map->Update(FrameTime);
 	if(Player->Moved) {
@@ -308,6 +289,10 @@ void _ClientState::Update(double FrameTime) {
 		if(!Player->WaitForServer)
 			HUD->CloseWindows();
 	}
+
+	// Update battle system
+	if(Player->Battle)
+		Player->Battle->Update(FrameTime);
 
 	// Update camera
 	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));

@@ -110,6 +110,20 @@ void _Battle::HandleAction(int Action) {
 
 // Update battle
 void _Battle::Update(double FrameTime) {
+	for(size_t i = 0; i < Fighters.size(); i++) {
+		if(Fighters[i]) {
+			Fighters[i]->TurnTimer += FrameTime;
+			if(Fighters[i]->TurnTimer > 1.0)
+				Fighters[i]->TurnTimer = 1.0;
+		}
+	}
+
+	if(ServerNetwork) {
+		UpdateServer(FrameTime);
+	}
+	else {
+		UpdateClient(FrameTime);
+	}
 
 }
 
@@ -370,9 +384,10 @@ void _Battle::HandleCommand(int Slot, uint32_t SkillID) {
 
 // Update the battle system for the client
 void _Battle::UpdateClient(double FrameTime) {
-
+	/*
 	ResultTimer += FrameTime;
 	Timer += FrameTime;
+
 	switch(State) {
 		case STATE_GETINPUT:
 		break;
@@ -399,7 +414,7 @@ void _Battle::UpdateClient(double FrameTime) {
 		break;
 		default:
 		break;
-	}
+	}*/
 }
 
 // Displays turn results from the server
