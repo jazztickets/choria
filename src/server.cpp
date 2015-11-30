@@ -1096,9 +1096,13 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 		case _Object::STATUS_SKILLS:
 			Player->SkillsOpen = true;
 		break;
-		case _Object::STATUS_TELEPORT:
+		case _Object::STATUS_TELEPORT: {
 			Player->TeleportTime = GAME_TELEPORT_TIME;
-		break;
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::WORLD_TELEPORTSTART);
+			Packet.Write<double>(Player->TeleportTime);
+			Network->SendPacket(Packet, Peer);
+		} break;
 		default:
 		break;
 	}

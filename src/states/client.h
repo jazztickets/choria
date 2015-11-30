@@ -99,6 +99,7 @@ class _ClientState : public _State {
 		void HandleDeleteObject(_Buffer &Data);
 		void HandleObjectUpdates(_Buffer &Data);
 		void HandlePlayerPosition(_Buffer &Data);
+		void HandleTeleportStart(_Buffer &Data);
 		void HandleEventStart(_Buffer &Data);
 		void HandleInventoryUse(_Buffer &Data);
 		void HandleChatMessage(_Buffer &Data);

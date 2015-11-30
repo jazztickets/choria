@@ -389,6 +389,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::WORLD_POSITION:
 			HandlePlayerPosition(Data);
 		break;
+		case PacketType::WORLD_TELEPORTSTART:
+			HandleTeleportStart(Data);
+		break;
 		case PacketType::EVENT_START:
 			HandleEventStart(Data);
 		break;
@@ -678,6 +681,15 @@ void _ClientState::HandlePlayerPosition(_Buffer &Data) {
 		return;
 
 	Player->Position = Data.Read<glm::ivec2>();
+	Player->WaitForServer = false;
+}
+
+// Start teleport event
+void _ClientState::HandleTeleportStart(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->TeleportTime = Data.Read<double>();
 }
 
 // Handles the start of an event

@@ -472,9 +472,7 @@ void _HUD::ToggleTeleport() {
 	if(!TeleportElement->Visible) {
 		CloseWindows();
 		ClientState.SendStatus(_Object::STATUS_TELEPORT);
-
-		//Player->StartTeleport();
-		//TeleportElement->SetVisible(true);
+		Player->WaitForServer = true;
 	}
 	else {
 		CloseWindows();
@@ -836,14 +834,16 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 
 // Draw the teleport sequence
 void _HUD::DrawTeleport() {
-	double Timeleft = GAME_TELEPORT_TIME - Player->TeleportTime;
-	if(Timeleft > 0) {
-		Assets.Elements["element_teleport"]->Render();
+	if(Player->TeleportTime <= 0.0)
+		return;
 
-		std::stringstream Buffer;
-		Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Timeleft;
-		Assets.Labels["label_teleport_timeleft"]->Text = Buffer.str();
-	}
+	TeleportElement->SetVisible(true);
+	TeleportElement->Render();
+	TeleportElement->SetVisible(false);
+
+	std::stringstream Buffer;
+	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->TeleportTime;
+	Assets.Labels["label_teleport_timeleft"]->Text = Buffer.str();
 }
 
 // Draws the player's inventory

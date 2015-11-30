@@ -156,7 +156,7 @@ void _Map::Update(double FrameTime) {
 void _Map::CheckEvents(_Object *Object) {
 
 	// Check for teleporting
-	if(Object->TeleportTime == 0.0) {
+	if(Server && Object->TeleportTime == 0.0) {
 		Object->TeleportTime = -1.0;
 		Object->Status = _Object::STATUS_NONE;
 		Server->SpawnPlayer(Object->Peer, Object->SpawnMapID, _Map::EVENT_SPAWN);
