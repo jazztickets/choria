@@ -333,10 +333,24 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 
 	// Make sure account exists
 	_Buffer Packet;
-	if(Peer->AccountID == 0)
+	if(Peer->AccountID == 0) {
 		Packet.Write<PacketType>(PacketType::ACCOUNT_NOTFOUND);
-	else
-		Packet.Write<PacketType>(PacketType::ACCOUNT_SUCCESS);
+	}
+	else {
+		bool AccountInUse = false;
+		for(auto &CheckPeer : Network->GetPeers()) {
+			if(CheckPeer != Peer && CheckPeer->AccountID == Peer->AccountID) {
+				AccountInUse = true;
+				Peer->AccountID = 0;
+				break;
+			}
+		}
+
+		if(AccountInUse)
+			Packet.Write<PacketType>(PacketType::ACCOUNT_INUSE);
+		else
+			Packet.Write<PacketType>(PacketType::ACCOUNT_SUCCESS);
+	}
 
 	Network->SendPacket(Packet, Peer);
 }

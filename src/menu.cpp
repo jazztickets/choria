@@ -822,7 +822,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 		case PacketType::ACCOUNT_NOTFOUND: {
 			SetAccountMessage("Username/password wrong");
 		} break;
-		case PacketType::ACCOUNT_ALREADYLOGGEDIN: {
+		case PacketType::ACCOUNT_INUSE: {
 			SetAccountMessage("Account in use");
 		} break;
 		default:
