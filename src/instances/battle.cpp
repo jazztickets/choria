@@ -40,9 +40,7 @@ _Battle::_Battle() :
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	State(STATE_NONE),
-	TargetState(STATE_NONE),
 	Timer(0),
-	RoundTime(0),
 	LeftFighterCount(0),
 	RightFighterCount(0),
 	PlayerCount(0),
@@ -75,7 +73,17 @@ _Battle::~_Battle() {
 void _Battle::ClientHandleAction(int Action) {
 
 	switch(State) {
-		case STATE_GETINPUT: {
+		case STATE_WIN:
+		case STATE_LOSE: {
+			if(Timer > BATTLE_WAITENDTIME) {
+
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
+				//ClientState.Network->SendPacket(Packet);
+			}
+		}
+		break;
+		default:
 			switch(Action) {
 				case _Actions::SKILL1:
 				case _Actions::SKILL2:
@@ -94,19 +102,6 @@ void _Battle::ClientHandleAction(int Action) {
 					ChangeTarget(1);
 				break;
 			}
-		} break;
-		case STATE_WIN:
-		case STATE_LOSE: {
-			if(Timer > BATTLE_WAITENDTIME) {
-				State = STATE_DELETE;
-
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
-				//ClientState.Network->SendPacket(Packet);
-			}
-		}
-		break;
-		default:
 		break;
 	}
 }
@@ -115,22 +110,22 @@ void _Battle::ClientHandleAction(int Action) {
 void _Battle::Update(double FrameTime) {
 	for(auto &Fighter : Fighters) {
 		if(Fighter) {
-			Fighter->TurnTimer += FrameTime;
+			Fighter->TurnTimer += FrameTime * 0.5f;
 			if(Fighter->TurnTimer > 1.0) {
 				Fighter->TurnTimer = 1.0;
 
-				if(Fighter->BattleActionUsing != -1) {
-
+				if(ServerNetwork) {
+					if(Fighter->BattleActionUsing != -1) {
+						ResolveAction(Fighter);
+					}
 				}
 			}
 		}
 	}
 
 	if(ServerNetwork) {
-		UpdateServer(FrameTime);
 	}
 	else {
-		UpdateClient(FrameTime);
 	}
 
 }
@@ -139,11 +134,6 @@ void _Battle::Update(double FrameTime) {
 void _Battle::Render(double BlendFactor) {
 
 	switch(State) {
-		case STATE_GETINPUT:
-		case STATE_WAIT:
-		case STATE_TURNRESULTS:
-			RenderBattle();
-		break;
 		case STATE_INITWIN:
 		case STATE_WIN:
 			RenderBattleWin();
@@ -152,8 +142,10 @@ void _Battle::Render(double BlendFactor) {
 		case STATE_LOSE:
 			RenderBattleLose();
 		break;
+		default:
+			RenderBattle();
+		break;
 	}
-
 }
 
 // Renders the battle part
@@ -161,9 +153,10 @@ void _Battle::RenderBattle() {
 	BattleElement->Render();
 
 	// Draw fighters
+	int SideIndex[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
-		if(Fighter)
-			Fighter->RenderBattle(ClientPlayer->BattleTarget == Fighter->BattleSlot);
+		Fighter->RenderBattle(ClientPlayer->BattleTargetSide == Fighter->BattleSide && ClientPlayer->BattleTarget == SideIndex[Fighter->BattleSide]);
+		SideIndex[Fighter->BattleSide]++;
 	}
 }
 
@@ -208,6 +201,67 @@ void _Battle::RenderBattleLose() {
 	BattleLoseElement->Render();
 }
 
+// Resolves the turn and sends the result to each player
+void _Battle::ResolveAction(_Object *SourceFighter) {
+
+	//SourceFighter->BattleTarget;
+
+	// Handle each fighter's action
+	//_ActionResult Results[BATTLE_MAXFIGHTERS];
+	//for(auto &Fighter : Fighters) {
+		//_ActionResult *Result = &Results[i];
+		/*Result->Fighter = Fighter;
+
+		// Ignore dead fighters
+		if(Fighter->Health > 0) {
+			Result->Target = Fighter->Target;
+
+			// Get skill used
+			const _Skill *Skill = Fighter->GetActionBar(Fighter->GetCommand());
+			if(Skill && Skill->CanUse(Result->Fighter)) {
+				int TargetFighterIndex = GetFighterFromSlot(Result->Target);
+				Result->SkillID = Skill->ID;
+
+				// Update fighters
+				_ActionResult *TargetResult = &Results[TargetFighterIndex];
+				TargetResult->Fighter = Fighters[TargetFighterIndex];
+				Skill->ResolveSkill(Result, TargetResult);
+			}
+
+			// Update health and mana regen
+			int HealthUpdate, ManaUpdate;
+			Fighter->UpdateRegen(HealthUpdate, ManaUpdate);
+			Result->HealthChange += HealthUpdate;
+			Result->ManaChange += ManaUpdate;
+		}*/
+	//}
+/*
+	// Build packet for results
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::BATTLE_TURNRESULTS);
+
+	for(auto &Fighter : Fighters) {
+		if(Fighter) {
+
+			// Update fighters
+			Fighter->UpdateHealth(Results[i].HealthChange);
+			Fighter->UpdateMana(Results[i].ManaChange);
+			Fighter->Command = -1;
+
+			Packet.Write<char>(Results[i].Target);
+			Packet.Write<int32_t>(Results[i].SkillID);
+			Packet.Write<int32_t>(Results[i].DamageDealt);
+			Packet.Write<int32_t>(Results[i].HealthChange);
+			Packet.Write<int32_t>(Fighter->Health);
+			Packet.Write<int32_t>(Fighter->Mana);
+		}
+	}
+
+	// Send packet
+	BroadcastPacket(Packet);
+	*/
+}
+
 // Sends an action selection to the server
 void _Battle::ClientSetAction(int ActionBarSlot) {
 	if(ClientPlayer->Health == 0 || ClientPlayer->BattleActionUsing != -1)
@@ -234,11 +288,11 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 void _Battle::ChangeTarget(int Direction) {
 	if(ClientPlayer->Health == 0)
 		return;
-
+/*
 	// Get a list of fighters on the opposite side
 	std::list<_Object *> SideFighters;
-	GetFighterList(!ClientPlayer->GetSide(), SideFighters);
-/*
+	GetFighterList(!ClientPlayer->BattleSide, SideFighters);
+
 	// Find next available target
 	int StartIndex, Index;
 	StartIndex = Index = ClientPlayer->Target / 2;
@@ -259,17 +313,18 @@ void _Battle::ChangeTarget(int Direction) {
 // Add a fighter to the battle
 void _Battle::AddFighter(_Object *Fighter, int Side) {
 	Fighter->Battle = this;
+	Fighter->BattleSide = Side;
 	Fighter->BattleActionUsing = -1;
 	for(int i = 0; i < 2; i++)
 		Fighter->PotionsLeft[i] = Fighter->MaxPotions[i];
 
 	// Count fighters and set slots
 	if(Side == 0) {
-		Fighter->BattleSlot = Side + LeftFighterCount * 2;
+		//Fighter->BattleSlot = Side + LeftFighterCount * 2;
 		LeftFighterCount++;
 	}
 	else {
-		Fighter->BattleSlot = Side + RightFighterCount * 2;
+		//Fighter->BattleSlot = Side + RightFighterCount * 2;
 		RightFighterCount++;
 	}
 
@@ -285,7 +340,7 @@ void _Battle::AddFighter(_Object *Fighter, int Side) {
 void _Battle::GetFighterList(int Side, std::list<_Object *> &SideFighters) {
 
 	for(auto &Fighter : Fighters) {
-		if(Fighter && Fighter->GetSide() == Side) {
+		if(Fighter->BattleSide == Side) {
 			SideFighters.push_back(Fighter);
 		}
 	}
@@ -295,18 +350,8 @@ void _Battle::GetFighterList(int Side, std::list<_Object *> &SideFighters) {
 void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters) {
 
 	for(auto &Fighter : Fighters) {
-		if(Fighter && Fighter->GetSide() == Side && Fighter->Health > 0) {
+		if(Fighter->BattleSide == Side && Fighter->Health > 0) {
 			AliveFighters.push_back(Fighter);
-		}
-	}
-}
-
-// Get a list of monster from the right side
-void _Battle::GetMonsterList(std::list<_Object *> &Monsters) {
-
-	for(auto &Fighter : Fighters) {
-		if(Fighter && Fighter->GetSide() == 1 && Fighter->Type == _Object::MONSTER) {
-			Monsters.push_back(Fighter);
 		}
 	}
 }
@@ -315,7 +360,7 @@ void _Battle::GetMonsterList(std::list<_Object *> &Monsters) {
 void _Battle::GetPlayerList(int Side, std::list<_Object *> &Players) {
 
 	for(auto &Fighter : Fighters) {
-		if(Fighter && Fighter->GetSide() == Side && Fighter->Peer) {
+		if(Fighter->BattleSide == Side && Fighter->Peer) {
 			Players.push_back(Fighter);
 		}
 	}
@@ -323,11 +368,11 @@ void _Battle::GetPlayerList(int Side, std::list<_Object *> &Players) {
 
 // Gets a fighter index from a slot number
 int _Battle::GetFighterFromSlot(int Slot) {
-	for(auto &Fighter : Fighters) {
-		if(Fighter && Fighter->BattleSlot == Slot) {
+	/*for(auto &Fighter : Fighters) {
+		if(Fighter->BattleSlot == Slot) {
 			return Fighter->BattleSlot;
 		}
-	}
+	}*/
 
 	return -1;
 }
@@ -339,21 +384,12 @@ void _Battle::StartBattleClient() {
 	BattleLoseElement = Assets.Elements["element_battlelose"];
 	BattleElement->SetVisible(true);
 
-	// Set target
-	if(ClientPlayer->GetSide() == 0)
-		ClientPlayer->BattleTarget = 1;
-	else
-		ClientPlayer->BattleTarget = 0;
-
 	// Set fighter position offsets
-	glm::ivec2 Offset;
+	int SideIndex[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
-		GetPositionFromSlot(Fighter->BattleSlot, Offset);
-		Fighter->BattleOffset = Offset;
+		GetBattleOffset(SideIndex[Fighter->BattleSide], Fighter);
+		SideIndex[Fighter->BattleSide]++;
 	}
-
-	State = STATE_GETINPUT;
-	TargetState = -1;
 }
 
 // Handles a command from an other player
@@ -362,41 +398,6 @@ void _Battle::HandleCommand(int Slot, uint32_t SkillID) {
 	//if(Index != -1) {
 	//	Fighters[Index]->SkillUsing = Stats->Skills[SkillID];
 	//}
-}
-
-// Update the battle system for the client
-void _Battle::UpdateClient(double FrameTime) {
-	/*
-	ResultTimer += FrameTime;
-	Timer += FrameTime;
-
-	switch(State) {
-		case STATE_GETINPUT:
-		break;
-		case STATE_WAIT:
-		break;
-		case STATE_TURNRESULTS:
-			if(Timer > BATTLE_WAITRESULTTIME) {
-				State = TargetState;
-				TargetState = -1;
-			}
-		break;
-		case STATE_INITWIN:
-			UpdateStats();
-			Timer = 0;
-			State = STATE_WIN;
-		break;
-		case STATE_WIN:
-		break;
-		case STATE_INITLOSE:
-			Timer = 0;
-			State = STATE_LOSE;
-		break;
-		case STATE_LOSE:
-		break;
-		default:
-		break;
-	}*/
 }
 
 // Displays turn results from the server
@@ -430,7 +431,7 @@ void _Battle::ClientResolveAction(_Buffer *Packet) {
 
 // End of a battle
 void _Battle::EndBattle(_Buffer *Packet) {
-
+/*
 	// Get ending stats
 	bool SideDead[2];
 	SideDead[0] = Packet->ReadBit();
@@ -448,7 +449,7 @@ void _Battle::EndBattle(_Buffer *Packet) {
 	}
 
 	// Check win or death
-	int PlayerSide = ClientPlayer->GetSide();
+	int PlayerSide = ClientPlayer->BattleSide;
 	int OtherSide = !PlayerSide;
 	if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
 		ClientPlayer->PlayerKills += PlayerKills;
@@ -459,44 +460,39 @@ void _Battle::EndBattle(_Buffer *Packet) {
 		ClientPlayer->Deaths++;
 		TargetState = STATE_INITLOSE;
 	}
-
+*/
 	// Go to the ending state immediately
+	/*
 	if(State != STATE_TURNRESULTS) {
 		State = TargetState;
 		TargetState = -1;
-	}
+	}*/
 }
 
 // Calculates a screen position for a slot
-void _Battle::GetPositionFromSlot(int Slot, glm::ivec2 &Position) {
+void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 	_Element *BattleElement = Assets.Elements["element_battle"];
 	glm::ivec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2;
 
-	// Get side
-	int Side = Slot & 1;
-
 	// Check sides
 	int SideCount;
-	if(Side == 0) {
-		Position.x = Center.x - 180;
+	if(Fighter->BattleSide == 0) {
+		Fighter->BattleOffset.x = Center.x - 180;
 		SideCount = LeftFighterCount;
 	}
 	else {
-		Position.x = Center.x + 100;
+		Fighter->BattleOffset.x = Center.x + 100;
 		SideCount = RightFighterCount;
 	}
-
-	// Get an index into the side
-	int SideIndex = Slot / 2;
 
 	// Divide space into SideCount parts, then divide that by 2
 	int SpacingY = (BattleElement->Size.y / SideCount) / 2;
 
 	// Place slots in between main divisions
-	Position.y = BattleElement->Bounds.Start.y + SpacingY * (2 * SideIndex + 1) + 10;
+	Fighter->BattleOffset.y = BattleElement->Bounds.Start.y + SpacingY * (2 * SideIndex + 1) + 10;
 
 	// Convert position to relative offset from center
-	Position = Position - Center;
+	Fighter->BattleOffset = Fighter->BattleOffset - Center;
 }
 
 // Updates player stats
@@ -522,6 +518,14 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 	}
 }
 
+// Give each fighter an initial target
+void _Battle::SetDefaultTargets() {
+	for(auto &Fighter : Fighters) {
+		Fighter->BattleTargetSide = !Fighter->BattleSide;
+		Fighter->BattleTarget = 0;
+	}
+}
+
 // Get number of peers in battle
 int _Battle::GetPeerCount() {
 	int PeerCount = 0;
@@ -536,46 +540,42 @@ int _Battle::GetPeerCount() {
 // Starts the battle and notifies the players
 void _Battle::StartBattleServer() {
 
+	// Set targets
+	SetDefaultTargets();
+
 	// Build packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_START);
 
 	// Write fighter count
 	int FighterCount = Fighters.size();
-	Packet.Write<char>(FighterCount);
+	Packet.Write<int>(FighterCount);
 
 	// Write fighter information
 	for(auto &Fighter : Fighters) {
 
 		// Write fighter type
-		Packet.Write<char>(Fighter->Type);
-		Packet.Write<char>(Fighter->GetSide());
+		Packet.Write<int>(Fighter->DatabaseID);
+		Packet.Write<char>(Fighter->BattleSide);
+		Packet.Write<char>(Fighter->BattleTargetSide);
+		Packet.Write<char>(Fighter->BattleTarget);
 
-		if(Fighter->Type == _Object::PLAYER) {
-			_Object *Player = Fighter;
+		if(Fighter->DatabaseID == 0) {
 
 			// Network ID
-			Packet.Write<NetworkIDType>(Player->NetworkID);
-			Packet.Write<glm::ivec2>(Player->Position);
+			Packet.Write<NetworkIDType>(Fighter->NetworkID);
+			Packet.Write<glm::ivec2>(Fighter->Position);
 
 			// Player stats
-			Packet.Write<int32_t>(Player->Health);
-			Packet.Write<int32_t>(Player->MaxHealth);
-			Packet.Write<int32_t>(Player->Mana);
-			Packet.Write<int32_t>(Player->MaxMana);
-		}
-		else {
-			_Object *Monster = Fighter;
-
-			// Monster ID
-			Packet.Write<int32_t>(Monster->DatabaseID);
+			Packet.Write<int32_t>(Fighter->Health);
+			Packet.Write<int32_t>(Fighter->MaxHealth);
+			Packet.Write<int32_t>(Fighter->Mana);
+			Packet.Write<int32_t>(Fighter->MaxMana);
 		}
 	}
 
 	// Send packet to players
 	BroadcastPacket(Packet);
-
-	State = STATE_INPUT;
 }
 
 // Handles input from the client
@@ -589,103 +589,6 @@ void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 		// Notify other players
 		SendActionToPlayers(Fighter);
 	}
-}
-
-// Update the battle system for the server
-void _Battle::UpdateServer(double FrameTime) {
-
-	switch(State) {
-		case STATE_INPUT:
-			RoundTime += FrameTime;
-			if(RoundTime > BATTLE_ROUNDTIME)
-				State = STATE_RESOLVETURN;
-		break;
-		case STATE_RESOLVETURN:
-			ResolveAction();
-			CheckEnd();
-		break;
-		case STATE_END:
-		break;
-	}
-}
-
-// Resolves the turn and sends the result to each player
-void _Battle::ResolveAction() {
-	RoundTime = 0;
-/*
-	// Get a monster list
-	std::list<_Object *> Monsters;
-	GetMonsterList(Monsters);
-
-	// Update AI
-	if(Monsters.size() > 0) {
-
-		// Get a list of humans on the left side
-		std::list<_Object *> Humans;
-		GetAliveFighterList(0, Humans);
-
-		// Update the monster's target
-		for(size_t i = 0; i < Monsters.size(); i++) {
-			Monsters[i]->UpdateTarget(Humans);
-		}
-	}
-
-	// Handle each fighter's action
-	_ActionResult Results[BATTLE_MAXFIGHTERS];
-	for(auto &Fighter : Fighters) {
-		if(Fighter) {
-			_ActionResult *Result = &Results[i];
-			Result->Fighter = Fighter;
-
-			// Ignore dead fighters
-			if(Fighter->Health > 0) {
-				Result->Target = Fighter->Target;
-
-				// Get skill used
-				const _Skill *Skill = Fighter->GetActionBar(Fighter->GetCommand());
-				if(Skill && Skill->CanUse(Result->Fighter)) {
-					int TargetFighterIndex = GetFighterFromSlot(Result->Target);
-					Result->SkillID = Skill->ID;
-
-					// Update fighters
-					_ActionResult *TargetResult = &Results[TargetFighterIndex];
-					TargetResult->Fighter = Fighters[TargetFighterIndex];
-					Skill->ResolveSkill(Result, TargetResult);
-				}
-
-				// Update health and mana regen
-				int HealthUpdate, ManaUpdate;
-				Fighter->UpdateRegen(HealthUpdate, ManaUpdate);
-				Result->HealthChange += HealthUpdate;
-				Result->ManaChange += ManaUpdate;
-			}
-		}
-	}
-
-	// Build packet for results
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_TURNRESULTS);
-
-	for(auto &Fighter : Fighters) {
-		if(Fighter) {
-
-			// Update fighters
-			Fighter->UpdateHealth(Results[i].HealthChange);
-			Fighter->UpdateMana(Results[i].ManaChange);
-			Fighter->Command = -1;
-
-			Packet.Write<char>(Results[i].Target);
-			Packet.Write<int32_t>(Results[i].SkillID);
-			Packet.Write<int32_t>(Results[i].DamageDealt);
-			Packet.Write<int32_t>(Results[i].HealthChange);
-			Packet.Write<int32_t>(Fighter->Health);
-			Packet.Write<int32_t>(Fighter->Mana);
-		}
-	}
-
-	// Send packet
-	BroadcastPacket(Packet);
-	*/
 }
 
 // Checks for the end of a battle
@@ -796,8 +699,8 @@ void _Battle::CheckEnd() {
 			// Get rewards
 			int ExperienceEarned = 0;
 			int GoldEarned = 0;
-			_BattleResult *PlayerSide = &Side[Players[i]->GetSide()];
-			_BattleResult *OppositeSide = &Side[!Players[i]->GetSide()];
+			_BattleResult *PlayerSide = &Side[Players[i]->BattleSide];
+			_BattleResult *OppositeSide = &Side[!Players[i]->BattleSide];
 			if(PlayerSide->Dead) {
 				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
 				Players[i]->Deaths++;
@@ -874,7 +777,7 @@ void _Battle::SendActionToPlayers(_Object *Player) {
 /*
 	// Get all the players on the player's side
 	std::list<_Object *> SidePlayers;
-	GetPlayerList(Player->GetSide(), SidePlayers);
+	GetPlayerList(Player->BattleSide, SidePlayers);
 	if(SidePlayers.size() == 1)
 		return;
 

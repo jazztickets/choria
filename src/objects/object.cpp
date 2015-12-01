@@ -62,8 +62,9 @@ _Object::_Object()
 	HealthAccumulator(0.0f),
 	ManaAccumulator(0.0f),
 	Battle(nullptr),
+	BattleSide(0),
 	BattleTarget(0),
-	BattleSlot(-1),
+	BattleTargetSide(0),
 	BattleActionUsing(-1),
 	BattleActionUsed(nullptr),
 	Portrait(nullptr),
@@ -143,7 +144,7 @@ void _Object::RenderBattle(bool IsTarget) {
 
 	// Get slot ui element depending on side
 	_Element *Slot;
-	if(GetSide() == 0)
+	if(BattleSide == 0)
 		Slot = Assets.Elements["element_side_left"];
 	else
 		Slot = Assets.Elements["element_side_right"];
@@ -381,13 +382,13 @@ const _Skill *_Object::GetActionBar(int Slot) {
 void _Object::UpdateTarget(const std::vector<_Object *> &Fighters) {
 
 	// Get count of fighters
-	int Count = Fighters.size();
+	//int Count = Fighters.size();
 
 	// Get a random index
-	std::uniform_int_distribution<int> Distribution(0, Count-1);
-	int RandomIndex = Distribution(RandomGenerator);
+	//std::uniform_int_distribution<int> Distribution(0, Count-1);
+	//int RandomIndex = Distribution(RandomGenerator);
 
-	BattleTarget = Fighters[RandomIndex]->BattleSlot;
+	//BattleTarget = Fighters[RandomIndex]->BattleSlot;
 }
 
 // Updates the player

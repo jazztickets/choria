@@ -898,15 +898,19 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	Battle->ClientNetwork = Network;
 
 	// Get fighter count
-	int FighterCount = Data.Read<char>();
+	int FighterCount = Data.Read<int>();
 
 	// Get fighter information
 	for(int i = 0; i < FighterCount; i++) {
 
 		// Get fighter type
-		int Type = Data.Read<char>();
+		int DatabaseID = Data.Read<int>();
 		int Side = Data.Read<char>();
-		if(Type == _Object::PLAYER) {
+		int BattleTargetSide = Data.Read<char>();
+		int BattleTarget = Data.Read<char>();
+
+		_Object *Fighter = nullptr;
+		if(DatabaseID == 0) {
 
 			// Network ID
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
@@ -919,7 +923,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			int MaxMana = Data.Read<int32_t>();
 
 			// Get player object
-			_Object *Fighter = Map->GetObjectByID(NetworkID);
+			Fighter = Map->GetObjectByID(NetworkID);
 			if(Fighter != nullptr) {
 				Fighter->InputState = 0;
 				Fighter->Position = Position;
@@ -932,16 +936,15 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			}
 		}
 		else {
+			Fighter = new _Object();
+			Fighter->DatabaseID = DatabaseID;
+			Stats->GetMonsterStats(DatabaseID, Fighter);
 
-			// Monster ID
-			int MonsterID = Data.Read<int32_t>();
-			_Object *Monster = new _Object();
-			Monster->DatabaseID = MonsterID;
-			Monster->Type = _Object::MONSTER;
-			Stats->GetMonsterStats(MonsterID, Monster);
-
-			Battle->AddFighter(Monster, Side);
+			Battle->AddFighter(Fighter, Side);
 		}
+
+		Fighter->BattleTargetSide = BattleTargetSide;
+		Fighter->BattleTarget = BattleTarget;
 	}
 
 	// Start the battle

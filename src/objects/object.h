@@ -109,7 +109,6 @@ class _Object {
 		void UpdateRegen(int &HealthUpdate, int &ManaUpdate);
 
 		// Battles
-		int GetSide() const { return BattleSlot & 1; }
 		int GenerateDamage();
 		int GenerateDefense();
 		void UpdateTarget(const std::vector<_Object *> &Fighters);
@@ -216,7 +215,9 @@ class _Object {
 
 		// Battle
 		_Battle *Battle;
-		int BattleTarget, BattleSlot;
+		int BattleSide;
+		int BattleTarget;
+		int BattleTargetSide;
 		int BattleActionUsing;
 		const _Skill *BattleActionUsed;
 

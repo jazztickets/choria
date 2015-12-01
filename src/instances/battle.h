@@ -60,18 +60,12 @@ class _Battle {
 		enum StateType {
 			STATE_NONE,
 			// server
-			STATE_INPUT,
-			STATE_RESOLVETURN,
 			STATE_END,
 			// client
-			STATE_GETINPUT,
-			STATE_WAIT,
-			STATE_TURNRESULTS,
 			STATE_INITWIN,
 			STATE_WIN,
 			STATE_INITLOSE,
 			STATE_LOSE,
-			STATE_DELETE,
 		};
 
 		_Battle();
@@ -80,12 +74,15 @@ class _Battle {
 		// Objects
 		void AddFighter(_Object *Fighter, int Side);
 		void RemoveFighter(_Object *RemoveFighter);
+		void SetDefaultTargets();
 		int GetPeerCount();
 
 		// Updates
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
 		void ClientHandleAction(int Action);
+
+		void ResolveAction(_Object *SourceFighter);
 
 		// CLIENT BATTLE
 
@@ -95,11 +92,8 @@ class _Battle {
 		// Input
 		void HandleCommand(int Slot, uint32_t SkillID);
 
-		// Updates
-		void UpdateClient(double FrameTime);
-
 		// Render
-		void GetPositionFromSlot(int Slot, glm::ivec2 &Position);
+		void GetBattleOffset(int SideIndex, _Object *Fighter);
 
 		// Resolve
 		void ClientResolveAction(_Buffer *Packet);
@@ -115,11 +109,7 @@ class _Battle {
 		// Input
 		void ServerHandleAction(_Object *Fighter, int ActionBarSlot);
 
-		// Updates
-		void UpdateServer(double FrameTime);
-
 		// Resolve
-		void ResolveAction();
 		void CheckEnd();
 
 		void BroadcastPacket(_Buffer &Packet);
@@ -137,7 +127,6 @@ class _Battle {
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
-		void GetMonsterList(std::list<_Object *> &Monsters);
 		void GetPlayerList(int Side, std::list<_Object *> &Players);
 		int GetFighterFromSlot(int Slot);
 
@@ -146,9 +135,8 @@ class _Battle {
 		void RenderBattleLose();
 
 		// State
-		int State, TargetState;
+		int State;
 		double Timer;
-		double RoundTime;
 
 		// Objects
 		std::list<_Object *> Fighters;

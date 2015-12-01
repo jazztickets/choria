@@ -1146,11 +1146,8 @@ void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	int ActionBarSlot = Data.Read<char>();
-	//int Target = Data.Read<char>();
 
 	Player->Battle->ServerHandleAction(Player, ActionBarSlot);
-
-	Log << ActionBarSlot << std::endl;
 }
 
 // Removes a player from a battle and deletes the battle if necessary
@@ -1293,7 +1290,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	Zone = 1;
+	Zone = 3;
 
 	// Get monsters
 	std::list<int> MonsterIDs;
