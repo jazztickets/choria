@@ -357,12 +357,12 @@ void _ClientState::Render(double BlendFactor) {
 	Graphics.SetProgram(Assets.Programs["text"]);
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
-	// Draw HUD
-	HUD->Render(Time);
-
 	// Draw states
 	if(Battle)
 		Battle->Render(BlendFactor);
+
+	// Draw HUD
+	HUD->Render(Time);
 
 	// Draw menu
 	Menu.Render();
@@ -430,13 +430,14 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_ACTION:
 			HandleBattleAction(Data);
 		break;
+		case PacketType::BATTLE_ACTIONRESULTS:
+			HandleBattleTurnResults(Data);
+		break;
 	/*
 		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
 		break;
-		case PacketType::BATTLE_TURNRESULTS:
-			HandleBattleTurnResults(Data);
-		break;
+
 		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
 		break;
@@ -961,27 +962,23 @@ void _ClientState::HandleBattleAction(_Buffer &Data) {
 	Battle->ClientHandlePlayerAction(Data);
 }
 
-/*
+
 // Handles the result of a turn in battle
 void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
-
-	// Check for a battle in progress
-	if(!Battle)
+	if(!Player || !Battle)
 		return;
 
-	((_ClientBattle *)Player->Battle)->ResolveTurn(Packet);
+	Battle->ClientResolveAction(Data);
 }
 
 // Handles the end of a battle
 void _ClientState::HandleBattleEnd(_Buffer &Data) {
-
-	// Check for a battle in progress
-	if(!Player->Battle)
+	if(!Player || !Battle)
 		return;
 
-	((_ClientBattle *)Player->Battle)->EndBattle(Packet);
+	Battle->EndBattle(Data);
 }
-
+/*
 // Handles HUD updates
 void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->Experience = Data.Read<int32_t>();

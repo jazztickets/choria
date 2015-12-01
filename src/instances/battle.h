@@ -24,22 +24,36 @@
 
 // Forward Declarations
 class _Object;
-class _Stats;
+class _Skill;
 class _Item;
 class _Buffer;
 class _Element;
+class _Stats;
 class _ServerNetwork;
 class _ClientNetwork;
 
 // Structures
 struct _ActionResult {
-	_ActionResult() : Fighter(nullptr), SkillID(-1), Target(-1), DamageDealt(0), HealthChange(0), ManaChange(0) { }
-	_Object *Fighter;
-	int SkillID;
-	int Target;
+	_ActionResult() :
+		SourceFighter(nullptr),
+		TargetFighter(nullptr),
+		SkillUsed(nullptr),
+		ItemUsed(nullptr),
+		DamageDealt(0),
+		SourceHealthChange(0),
+		SourceManaChange(0),
+		TargetHealthChange(0),
+		TargetManaChange(0) { }
+
+	_Object *SourceFighter;
+	_Object *TargetFighter;
+	const _Skill *SkillUsed;
+	const _Item *ItemUsed;
 	int DamageDealt;
-	int HealthChange;
-	int ManaChange;
+	int SourceHealthChange;
+	int SourceManaChange;
+	int TargetHealthChange;
+	int TargetManaChange;
 };
 
 struct _BattleResult {
@@ -91,8 +105,8 @@ class _Battle {
 		void StartBattleClient();
 
 		// Resolve
-		void ClientResolveAction(_Buffer *Packet);
-		void EndBattle(_Buffer *Packet);
+		void ClientResolveAction(_Buffer &Data);
+		void EndBattle(_Buffer &Data);
 
 		void UpdateStats();
 
@@ -123,7 +137,6 @@ class _Battle {
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
-		void GetPlayerList(int Side, std::list<_Object *> &Players);
 
 		void RenderBattle();
 		void RenderBattleWin();

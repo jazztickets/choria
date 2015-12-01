@@ -226,15 +226,13 @@ void _Skill::GetPowerRange(int Level, float &Min, float &Max) const {
 }
 
 // Resolves the use of a skill in battle.
-void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) const {
-	_Object *Fighter = Result->Fighter;
-	_Object *TargetFighter = TargetResult->Fighter;
-	int SkillLevel = Fighter->SkillLevels[ID];
+void _Skill::ResolveUse(_ActionResult &ActionResult) const {
+	int SkillLevel = ActionResult.SourceFighter->SkillLevels[ID];
 
 	int Damage = 0, Healing = 0, ManaRestore = 0, ManaCost = 0;
 	switch(Type) {
 		case TYPE_ATTACK:
-			Damage = Fighter->GenerateDamage();
+			Damage = ActionResult.SourceFighter->GenerateDamage();
 		break;
 		case TYPE_SPELL:
 			switch(ID) {
@@ -250,16 +248,15 @@ void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) co
 			}
 			ManaCost = GetManaCost(SkillLevel);
 		break;
-		case TYPE_USEPOTION:
-			if(Fighter->DatabaseID == 0) {
-				_Object *Player = Fighter;
+		/*case TYPE_USEPOTION:
+			if(ActionResult.SourceFighter->DatabaseID == 0) {
 
 				// Use the potion
 				int Type = (ID == 3);
-				int Slot = Player->GetPotionBattle(Type);
+				int Slot = ActionResult.SourceFighter->GetPotionBattle(Type);
 				if(Slot != -1) {
 					int HealthChange = 0, ManaChange = 0;
-					Player->UsePotionBattle(Slot, Type, HealthChange, ManaChange);
+					ActionResult.SourceFighter->UsePotionBattle(Slot, Type, HealthChange, ManaChange);
 					Healing += HealthChange;
 					ManaRestore += ManaChange;
 
@@ -270,19 +267,19 @@ void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) co
 					//OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
 				}
 			}
-		break;
+		break;*/
 	}
 
 	// Generate defense
-	Damage -= TargetFighter->GenerateDefense();
+	Damage -= ActionResult.TargetFighter->GenerateDefense();
 	if(Damage < 0)
 		Damage = 0;
 
 	// Update results
-	Result->DamageDealt = Damage;
-	TargetResult->HealthChange += -Damage;
-	Result->HealthChange += Healing;
-	Result->ManaChange += ManaRestore - ManaCost;
+	ActionResult.DamageDealt = Damage;
+	ActionResult.TargetHealthChange += -Damage;
+	ActionResult.SourceHealthChange += Healing;
+	ActionResult.SourceManaChange += ManaRestore - ManaCost;
 }
 
 // Determines if a skill can be used

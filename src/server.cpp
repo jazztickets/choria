@@ -228,7 +228,6 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 	PacketType Type = Data.Read<PacketType>();
 
-	//std::cout << (int)PacketType << std::endl;
 	switch(Type) {
 		case PacketType::ACCOUNT_LOGININFO:
 			HandleLoginInfo(Data, Peer);
@@ -1307,7 +1306,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	Zone = 3;
+	Zone = 2;
 
 	// Get monsters
 	std::list<int> MonsterIDs;

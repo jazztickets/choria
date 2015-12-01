@@ -67,7 +67,6 @@ _Object::_Object()
 	BattleTargetIndex(0),
 	BattleTargetSide(0),
 	BattleTarget(nullptr),
-	BattleActionUsed(nullptr),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
 
@@ -281,10 +280,10 @@ void _Object::RenderBattle(bool IsTarget) {
 	}
 */
 	// Draw the skill used
-	if(BattleActionUsing.Skill) {
-		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleActionUsing.Skill->Image->Size.x/2 + 10, 0);
+	if(BattleAction.Skill) {
+		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Image->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SkillUsingPosition, BattleActionUsing.Skill->Image);
+		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Image);
 	}
 
 	// Draw target

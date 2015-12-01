@@ -47,7 +47,7 @@ class _Skill {
 		void GetPowerRangeRound(int Level, int &Min, int &Max) const;
 		void GetPowerRange(int Level, float &Min, float &Max) const;
 
-		void ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) const;
+		void ResolveUse(_ActionResult &ActionResult) const;
 		bool CanUse(_Object *Fighter) const;
 
 		uint32_t ID;
