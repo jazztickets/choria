@@ -862,30 +862,6 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 	HUD->CloseTrade(false);
 }
 
-// Creates an object from a buffer
-_Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
-
-	// Create object
-	_Object *Object = new _Object();
-	Object->Stats = Stats;
-	Object->Map = Map;
-	Object->NetworkID = NetworkID;
-	Object->Unserialize(Data);
-
-	// Add to map
-	Map->AddObject(Object, Object->NetworkID);
-
-	return Object;
-}
-
-// Send status to server
-void _ClientState::SendStatus(int Status) {
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
-	Packet.Write<char>(Status);
-	Network->SendPacket(Packet);
-}
-
 // Handles the start of a battle
 void _ClientState::HandleBattleStart(_Buffer &Data) {
 
@@ -962,7 +938,6 @@ void _ClientState::HandleBattleAction(_Buffer &Data) {
 	Battle->ClientHandlePlayerAction(Data);
 }
 
-
 // Handles the result of a turn in battle
 void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
 	if(!Player || !Battle)
@@ -978,9 +953,12 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 
 	Battle->EndBattle(Data);
 }
-/*
+
 // Handles HUD updates
 void _ClientState::HandleHUD(_Buffer &Data) {
+	if(!Player)
+		return;
+
 	Player->Experience = Data.Read<int32_t>();
 	Player->Gold = Data.Read<int32_t>();
 	Player->Health = Data.Read<int32_t>();
@@ -988,6 +966,30 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->HealthAccumulator = Data.Read<float>();
 	Player->ManaAccumulator = Data.Read<float>();
 	Player->CalculatePlayerStats();
+}
+
+// Creates an object from a buffer
+_Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
+
+	// Create object
+	_Object *Object = new _Object();
+	Object->Stats = Stats;
+	Object->Map = Map;
+	Object->NetworkID = NetworkID;
+	Object->Unserialize(Data);
+
+	// Add to map
+	Map->AddObject(Object, Object->NetworkID);
+
+	return Object;
+}
+
+// Send status to server
+void _ClientState::SendStatus(int Status) {
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
+	Packet.Write<char>(Status);
+	Network->SendPacket(Packet);
 }
 
 // Requests an attack to another a player
@@ -999,5 +1001,3 @@ void _ClientState::SendAttackPlayer() {
 		Network->SendPacket(Packet);
 	}
 }
-
-*/

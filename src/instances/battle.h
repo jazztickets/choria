@@ -18,7 +18,6 @@
 #pragma once
 
 // Libraries
-#include <constants.h>
 #include <list>
 #include <cstdint>
 
@@ -57,7 +56,14 @@ struct _ActionResult {
 };
 
 struct _BattleResult {
-	_BattleResult() : FighterCount(0), PlayerCount(0), MonsterCount(0), ExperienceGiven(0), GoldGiven(0), Dead(true) { }
+	_BattleResult() :
+		FighterCount(0),
+		PlayerCount(0),
+		MonsterCount(0),
+		ExperienceGiven(0),
+		GoldGiven(0),
+		Dead(true) { }
+
 	int FighterCount;
 	int PlayerCount;
 	int MonsterCount;
@@ -73,12 +79,8 @@ class _Battle {
 
 		enum StateType {
 			STATE_NONE,
-			// server
 			STATE_END,
-			// client
-			STATE_INITWIN,
 			STATE_WIN,
-			STATE_INITLOSE,
 			STATE_LOSE,
 		};
 
@@ -95,32 +97,22 @@ class _Battle {
 		// Updates
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
-		void ClientHandleInput(int Action);
-
-		void ResolveAction(_Object *SourceFighter);
-
-		// CLIENT BATTLE
+		void CheckEnd();
 
 		// Setup
 		void StartBattleClient();
-
-		// Resolve
-		void ClientResolveAction(_Buffer &Data);
-		void EndBattle(_Buffer &Data);
-
-		void UpdateStats();
-
-		// SERVER BATTLE
-
-		// Setup
 		void StartBattleServer();
 
+		// Resolve
+		void ResolveAction(_Object *SourceFighter);
+		void ClientResolveAction(_Buffer &Data);
+		void EndBattle(_Buffer &Data);
+		void UpdateStats();
+
 		// Input
+		void ClientHandleInput(int Action);
 		void ServerHandleAction(_Object *Fighter, int ActionBarSlot);
 		void ClientHandlePlayerAction(_Buffer &Data);
-
-		// Resolve
-		void CheckEnd();
 
 		_Stats *Stats;
 		_ServerNetwork *ServerNetwork;
@@ -149,8 +141,6 @@ class _Battle {
 		// Objects
 		std::list<_Object *> Fighters;
 		int SideCount[2];
-
-		// CLIENT BATTLE
 
 		// Battle results
 		int TotalExperience, TotalGold;

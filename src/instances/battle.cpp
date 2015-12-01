@@ -50,7 +50,6 @@ _Battle::_Battle() :
 
 	SideCount[0] = 0;
 	SideCount[1] = 0;
-
 }
 
 // Destructor
@@ -69,82 +68,37 @@ _Battle::~_Battle() {
 	}
 }
 
-// Handle player input
-void _Battle::ClientHandleInput(int Action) {
-
-	switch(State) {
-		case STATE_WIN:
-		case STATE_LOSE: {
-			if(Timer > BATTLE_WAITENDTIME) {
-
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
-				//ClientState.Network->SendPacket(Packet);
-			}
-		}
-		break;
-		default:
-			switch(Action) {
-				case _Actions::SKILL1:
-				case _Actions::SKILL2:
-				case _Actions::SKILL3:
-				case _Actions::SKILL4:
-				case _Actions::SKILL5:
-				case _Actions::SKILL6:
-				case _Actions::SKILL7:
-				case _Actions::SKILL8:
-					ClientSetAction(Action - _Actions::SKILL1);
-				break;
-				case _Actions::UP:
-					ChangeTarget(-1, 0);
-				break;
-				case _Actions::DOWN:
-					ChangeTarget(1, 0);
-				break;
-				case _Actions::LEFT:
-					ChangeTarget(0, -1);
-				break;
-				case _Actions::RIGHT:
-					ChangeTarget(0, 1);
-				break;
-			}
-		break;
-	}
-}
-
 // Update battle
 void _Battle::Update(double FrameTime) {
-	for(auto &Fighter : Fighters) {
-		if(Fighter) {
-			Fighter->TurnTimer += FrameTime * 0.5f;
-			if(Fighter->TurnTimer > 1.0) {
-				Fighter->TurnTimer = 1.0;
 
-				if(ServerNetwork) {
-					if(Fighter->BattleAction.IsSet()) {
-						ResolveAction(Fighter);
-					}
+	int AliveCount[2] = { 0, 0 };
+	for(auto &Fighter : Fighters) {
+
+		// Count alive fighters for each side
+		if(Fighter->Health > 0)
+			AliveCount[Fighter->BattleSide]++;
+
+		// Check turn timer
+		Fighter->TurnTimer += FrameTime * 0.5f;
+		if(Fighter->TurnTimer > 1.0) {
+			Fighter->TurnTimer = 1.0;
+
+			if(ServerNetwork) {
+				if(Fighter->BattleAction.IsSet()) {
+					ResolveAction(Fighter);
 				}
 			}
 		}
 	}
-
-	if(ServerNetwork) {
-	}
-	else {
-	}
-
 }
 
 // Render the battle system
 void _Battle::Render(double BlendFactor) {
 
 	switch(State) {
-		case STATE_INITWIN:
 		case STATE_WIN:
 			RenderBattleWin();
 		break;
-		case STATE_INITLOSE:
 		case STATE_LOSE:
 			RenderBattleLose();
 		break;
@@ -205,6 +159,54 @@ void _Battle::RenderBattleLose() {
 	BattleLoseElement->Render();
 }
 
+// Sends an action selection to the server
+void _Battle::ClientSetAction(int ActionBarSlot) {
+	if(ClientPlayer->Health == 0)
+		return;
+
+	// Get skill
+	const _Skill *Skill = ClientPlayer->GetActionBar(ActionBarSlot);
+	if(Skill == nullptr || !Skill->CanUse(ClientPlayer))
+		return;
+
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
+	Packet.Write<char>(ActionBarSlot);
+
+	ClientNetwork->SendPacket(Packet);
+	ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot];
+
+	// Update potion count
+	if(Skill->Type == _Skill::TYPE_USEPOTION)
+		ClientPlayer->UpdatePotionsLeft(Skill->ID == 3);
+}
+
+// Changes targets
+void _Battle::ChangeTarget(int Direction, int SideDirection) {
+	if(!ClientNetwork || ClientPlayer->Health == 0)
+		return;
+
+	// Change sides
+	if(SideDirection != 0)
+		ClientPlayer->BattleTargetSide = !ClientPlayer->BattleTargetSide;
+
+	// Update target
+	ClientPlayer->BattleTargetIndex += Direction;
+	if(ClientPlayer->BattleTargetIndex < 0)
+		ClientPlayer->BattleTargetIndex = SideCount[ClientPlayer->BattleTargetSide]-1;
+	else if(ClientPlayer->BattleTargetIndex >= SideCount[ClientPlayer->BattleTargetSide])
+		ClientPlayer->BattleTargetIndex = 0;
+
+	ClientPlayer->BattleTarget = GetObjectFromIndex(ClientPlayer->BattleTargetSide, ClientPlayer->BattleTargetIndex);
+
+	// Send packet
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::BATTLE_CHANGETARGET);
+	Packet.Write<char>(ClientPlayer->BattleTargetSide);
+	Packet.Write<char>(ClientPlayer->BattleTargetIndex);
+	ClientNetwork->SendPacket(Packet);
+}
+
 // Resolves an action and sends the result to each player
 void _Battle::ResolveAction(_Object *SourceFighter) {
 	if(SourceFighter->Health <= 0)
@@ -261,52 +263,49 @@ void _Battle::ResolveAction(_Object *SourceFighter) {
 	SourceFighter->BattleAction.Unset();
 }
 
-// Sends an action selection to the server
-void _Battle::ClientSetAction(int ActionBarSlot) {
-	if(ClientPlayer->Health == 0)
-		return;
+// Displays turn results from the server
+void _Battle::ClientResolveAction(_Buffer &Data) {
 
-	// Get skill
-	const _Skill *Skill = ClientPlayer->GetActionBar(ActionBarSlot);
-	if(Skill == nullptr || !Skill->CanUse(ClientPlayer))
-		return;
+	_ActionResult ActionResult;
+	int SourceBattleSide = Data.Read<char>();
+	int SourceBattleIndex = Data.Read<char>();
+	int TargetBattleSide = Data.Read<char>();
+	int TargetBattleIndex = Data.Read<char>();
 
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
-	Packet.Write<char>(ActionBarSlot);
+	int SkillID = Data.Read<uint32_t>();
+	ActionResult.SkillUsed = Stats->Skills[SkillID];
+	ActionResult.DamageDealt = Data.Read<int32_t>();
+	ActionResult.SourceHealthChange = Data.Read<int32_t>();
+	ActionResult.SourceManaChange = Data.Read<int32_t>();
+	ActionResult.TargetHealthChange = Data.Read<int32_t>();
+	ActionResult.TargetManaChange = Data.Read<int32_t>();
+	int SourceFighterHealth = Data.Read<int32_t>();
+	int SourceFighterMana = Data.Read<int32_t>();
+	int TargetFighterHealth = Data.Read<int32_t>();
+	int TargetFighterMana = Data.Read<int32_t>();
 
-	ClientNetwork->SendPacket(Packet);
-	ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot];
+	// Update source fighter
+	ActionResult.SourceFighter = GetObjectFromIndex(SourceBattleSide, SourceBattleIndex);
+	if(ActionResult.SourceFighter) {
+		ActionResult.SourceFighter->Health = SourceFighterHealth;
+		ActionResult.SourceFighter->Mana = SourceFighterMana;
+		ActionResult.SourceFighter->TurnTimer = 0.0;
+		ActionResult.SourceFighter->BattleAction.Unset();
+	}
 
-	// Update potion count
-	if(Skill->Type == _Skill::TYPE_USEPOTION)
-		ClientPlayer->UpdatePotionsLeft(Skill->ID == 3);
-}
+	// Update target fighter
+	ActionResult.TargetFighter = GetObjectFromIndex(TargetBattleSide, TargetBattleIndex);
+	if(ActionResult.TargetFighter) {
+		ActionResult.TargetFighter->Health = TargetFighterHealth;
+		ActionResult.TargetFighter->Mana = TargetFighterMana;
+	}
 
-// Changes targets
-void _Battle::ChangeTarget(int Direction, int SideDirection) {
-	if(!ClientNetwork || ClientPlayer->Health == 0)
-		return;
-
-	// Change sides
-	if(SideDirection != 0)
-		ClientPlayer->BattleTargetSide = !ClientPlayer->BattleTargetSide;
-
-	// Update target
-	ClientPlayer->BattleTargetIndex += Direction;
-	if(ClientPlayer->BattleTargetIndex < 0)
-		ClientPlayer->BattleTargetIndex = SideCount[ClientPlayer->BattleTargetSide]-1;
-	else if(ClientPlayer->BattleTargetIndex >= SideCount[ClientPlayer->BattleTargetSide])
-		ClientPlayer->BattleTargetIndex = 0;
-
-	ClientPlayer->BattleTarget = GetObjectFromIndex(ClientPlayer->BattleTargetSide, ClientPlayer->BattleTargetIndex);
-
-	// Send packet
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_CHANGETARGET);
-	Packet.Write<char>(ClientPlayer->BattleTargetSide);
-	Packet.Write<char>(ClientPlayer->BattleTargetIndex);
-	ClientNetwork->SendPacket(Packet);
+/*
+	// Change targets if the old one died
+	int TargetIndex = GetFighterFromSlot(ClientPlayer->Target);
+	if(TargetIndex != -1 && Fighters[TargetIndex]->Health == 0)
+		ChangeTarget(1);
+*/
 }
 
 // Get the object pointer from index and side
@@ -366,51 +365,6 @@ void _Battle::StartBattleClient() {
 		GetBattleOffset(Fighter->BattleIndex, Fighter);
 		Fighter->BattleTarget = GetObjectFromIndex(Fighter->BattleTargetSide, Fighter->BattleTargetIndex);
 	}
-}
-
-// Displays turn results from the server
-void _Battle::ClientResolveAction(_Buffer &Data) {
-
-	_ActionResult ActionResult;
-	int SourceBattleSide = Data.Read<char>();
-	int SourceBattleIndex = Data.Read<char>();
-	int TargetBattleSide = Data.Read<char>();
-	int TargetBattleIndex = Data.Read<char>();
-
-	int SkillID = Data.Read<uint32_t>();
-	ActionResult.SkillUsed = Stats->Skills[SkillID];
-	ActionResult.DamageDealt = Data.Read<int32_t>();
-	ActionResult.SourceHealthChange = Data.Read<int32_t>();
-	ActionResult.SourceManaChange = Data.Read<int32_t>();
-	ActionResult.TargetHealthChange = Data.Read<int32_t>();
-	ActionResult.TargetManaChange = Data.Read<int32_t>();
-	int SourceFighterHealth = Data.Read<int32_t>();
-	int SourceFighterMana = Data.Read<int32_t>();
-	int TargetFighterHealth = Data.Read<int32_t>();
-	int TargetFighterMana = Data.Read<int32_t>();
-
-	// Update source fighter
-	ActionResult.SourceFighter = GetObjectFromIndex(SourceBattleSide, SourceBattleIndex);
-	if(ActionResult.SourceFighter) {
-		ActionResult.SourceFighter->Health = SourceFighterHealth;
-		ActionResult.SourceFighter->Mana = SourceFighterMana;
-		ActionResult.SourceFighter->TurnTimer = 0.0;
-		ActionResult.SourceFighter->BattleAction.Unset();
-	}
-
-	// Update target fighter
-	ActionResult.TargetFighter = GetObjectFromIndex(TargetBattleSide, TargetBattleIndex);
-	if(ActionResult.TargetFighter) {
-		ActionResult.TargetFighter->Health = TargetFighterHealth;
-		ActionResult.TargetFighter->Mana = TargetFighterMana;
-	}
-
-/*
-	// Change targets if the old one died
-	int TargetIndex = GetFighterFromSlot(ClientPlayer->Target);
-	if(TargetIndex != -1 && Fighters[TargetIndex]->Health == 0)
-		ChangeTarget(1);
-*/
 }
 
 // End of a battle
@@ -489,6 +443,7 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 	for(auto Iterator = Fighters.begin(); Iterator != Fighters.end(); ++Iterator) {
 		_Object *Fighter = *Iterator;
 		if(Fighter == RemoveFighter) {
+			SideCount[Fighter->BattleSide]--;
 			Fighter->StopBattle();
 			if(Fighter->DatabaseID)
 				delete Fighter;
@@ -560,6 +515,49 @@ void _Battle::StartBattleServer() {
 	BroadcastPacket(Packet);
 }
 
+// Handle player input
+void _Battle::ClientHandleInput(int Action) {
+
+	switch(State) {
+		case STATE_WIN:
+		case STATE_LOSE: {
+			if(Timer > BATTLE_WAITENDTIME) {
+
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
+				//ClientState.Network->SendPacket(Packet);
+			}
+		}
+		break;
+		default:
+			switch(Action) {
+				case _Actions::SKILL1:
+				case _Actions::SKILL2:
+				case _Actions::SKILL3:
+				case _Actions::SKILL4:
+				case _Actions::SKILL5:
+				case _Actions::SKILL6:
+				case _Actions::SKILL7:
+				case _Actions::SKILL8:
+					ClientSetAction(Action - _Actions::SKILL1);
+				break;
+				case _Actions::UP:
+					ChangeTarget(-1, 0);
+				break;
+				case _Actions::DOWN:
+					ChangeTarget(1, 0);
+				break;
+				case _Actions::LEFT:
+					ChangeTarget(0, -1);
+				break;
+				case _Actions::RIGHT:
+					ChangeTarget(0, 1);
+				break;
+			}
+		break;
+	}
+}
+
 // Handles input from the client
 void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 
@@ -584,7 +582,7 @@ void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 	}
 }
 
-// Handle actino from another player
+// Handle action from another player
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
 	int BattleSide = Data.Read<char>();

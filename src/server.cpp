@@ -1306,7 +1306,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	Zone = 2;
+	Zone = 3;
 
 	// Get monsters
 	std::list<int> MonsterIDs;
