@@ -58,7 +58,8 @@ const int HUD_KEYNAME_LENGTH = 3;
 const int SAVE_VERSION = 2;
 
 //     Config
-const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(800,600);
+const  int          DEFAULT_VERSION                =  1;
+const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(1280,720);
 const  int          DEFAULT_FULLSCREEN             =  0;
 const  int          DEFAULT_AUDIOENABLED           =  1;
 const  int          DEFAULT_VSYNC                  =  1;

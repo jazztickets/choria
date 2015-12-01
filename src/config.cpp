@@ -60,6 +60,7 @@ void _Config::SetDefaults() {
 	FullscreenSize = glm::ivec2(0, 0);
 
 	// Set defaults
+	Version = DEFAULT_VERSION;
 	WindowSize = DEFAULT_WINDOW_SIZE;
 	MSAA = 0;
 	Anisotropy = DEFAULT_ANISOTROPY;
@@ -92,16 +93,12 @@ void _Config::LoadDefaultInputBindings() {
 	// Movement
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_UP, _Actions::UP, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_E, _Actions::UP, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_K, _Actions::UP, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_DOWN, _Actions::DOWN, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_D, _Actions::DOWN, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_J, _Actions::DOWN, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_LEFT, _Actions::LEFT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_S, _Actions::LEFT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_H, _Actions::LEFT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, _Actions::RIGHT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F, _Actions::RIGHT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_L, _Actions::RIGHT, 1.0f, -1.0f, false);
 
 	// Misc
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, _Actions::MENU, 1.0f, -1.0f, false);
@@ -165,6 +162,15 @@ void _Config::Load() {
 	// Close
 	File.close();
 
+	// Read version
+	int ReadVersion = 0;
+	GetValue("version", ReadVersion);
+	if(ReadVersion != Version) {
+		std::rename(ConfigFile.c_str(), (ConfigFile + "." + std::to_string(ReadVersion)).c_str());
+		Save();
+		return;
+	}
+
 	// Read config
 	GetValue("window_width", WindowSize.x);
 	GetValue("window_height", WindowSize.y);
@@ -220,6 +226,7 @@ void _Config::Save() {
 		return;
 
 	// Write variables
+	File << "version=" << Version << std::endl;
 	File << "window_width=" << WindowSize.x << std::endl;
 	File << "window_height=" << WindowSize.y << std::endl;
 	File << "fullscreen_width=" << FullscreenSize.x << std::endl;
