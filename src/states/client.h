@@ -25,6 +25,7 @@
 class _Font;
 class _HUD;
 class _Map;
+class _Battle;
 class _Object;
 class _Item;
 class _Camera;
@@ -71,6 +72,7 @@ class _ClientState : public _State {
 		// Objects
 		_Object *Player;
 		_Map *Map;
+		_Battle *Battle;
 
 		// HUD
 		_HUD *HUD;

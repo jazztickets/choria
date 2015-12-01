@@ -212,7 +212,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 		}
 
 		// Remove from battle
-		//RemovePlayerFromBattle(Player);
+		RemovePlayerFromBattle(Player);
 
 		// Save player
 		Save->SavePlayer(Player);
@@ -287,10 +287,10 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
-	/*
 		case PacketType::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
 		break;
+			/*
 		case PacketType::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
 		break;
@@ -1136,24 +1136,46 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 
 }
 
-/*
 // Handles battle commands from a client
 void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = Peer->data;
-	if(!Player)
+	if(!ValidatePeer(Peer))
 		return;
 
-	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
-	if(!Battle)
+	_Object *Player = Peer->Object;
+	if(!Player->Battle)
 		return;
 
-	int Command = Data.Read<char>();
-	int Target = Data.Read<char>();
-	Battle->HandleInput(Player, Command, Target);
+	int ActionBarSlot = Data.Read<char>();
+	//int Target = Data.Read<char>();
 
-	//printf("HandleBattleCommand: %d\n", Command);
+	Player->Battle->ServerHandleAction(Player, ActionBarSlot);
+
+	Log << ActionBarSlot << std::endl;
 }
 
+// Removes a player from a battle and deletes the battle if necessary
+void _Server::RemovePlayerFromBattle(_Object *Player) {
+	if(!Player->Battle)
+		return;
+
+	// Save pointer to battle
+	_Battle *Battle = Player->Battle;
+
+	// Delete instance
+	Battle->RemoveFighter(Player);
+	if(Battle->GetPeerCount() == 0) {
+
+		// Loop through loaded battles
+		for(auto BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
+			if(*BattleIterator == Battle) {
+				Battles.erase(BattleIterator);
+				delete Battle;
+				break;
+			}
+		}
+	}
+}
+/*
 // The client is done with the battle results screen
 void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->data;
@@ -1227,26 +1249,6 @@ void _Server::SendHUD(_Object *Player) {
 	Packet.Write<float>(Player->ManaAccumulator);
 
 	Network->SendPacket(Packet, Peer);
-}
-
-// Removes a player from a battle and deletes the battle if necessary
-void _Server::RemovePlayerFromBattle(_Object *Player) {
-	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
-	if(!Battle)
-		return;
-
-	// Delete instance
-	if(Battle->RemoveFighter(Player) == 0) {
-
-		// Loop through loaded battles
-		for(auto BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
-			if(*BattleIterator == Battle) {
-				Battles.erase(BattleIterator);
-				delete Battle;
-				return;
-			}
-		}
-	}
 }
 */
 

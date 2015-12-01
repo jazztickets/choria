@@ -299,11 +299,7 @@ bool _Skill::CanUse(_Object *Fighter) const {
 
 	// Potions
 	if(Type == TYPE_USEPOTION) {
-		if(Fighter->Type == _Object::MONSTER)
-			return false;
-
-		_Object *Player = Fighter;
-		return Player->GetPotionBattle(ID == 3) != -1;
+		return Fighter->GetPotionBattle(ID == 3) != -1;
 	}
 
 	return true;

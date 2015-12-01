@@ -62,6 +62,7 @@ void _ClientState::Init() {
 	Server = nullptr;
 	Player = nullptr;
 	Map = nullptr;
+	Battle = nullptr;
 
 	HUD = new _HUD();
 	Stats = new _Stats();
@@ -86,6 +87,7 @@ void _ClientState::Init() {
 void _ClientState::Close() {
 	Menu.Close();
 
+	delete Battle;
 	delete Camera;
 	delete HUD;
 	delete Map;
@@ -162,33 +164,47 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
-	// Handle HUD keys
-	switch(Action) {
-		case _Actions::MENU:
-			HUD->ToggleInGameMenu();
-		break;
-		case _Actions::INVENTORY:
-			HUD->ToggleInventory();
-		break;
-		case _Actions::TELEPORT:
-			HUD->ToggleTeleport();
-		break;
-		case _Actions::TRADE:
-			HUD->ToggleTrade();
-		break;
-		case _Actions::SKILLS:
-			HUD->ToggleSkills();
-		break;
-		case _Actions::ATTACK:
-			//SendAttackPlayer();
-		break;
-		case _Actions::UP:
-		case _Actions::DOWN:
-		case _Actions::LEFT:
-		case _Actions::RIGHT:
-			if(!Player->WaitForServer)
-				HUD->CloseWindows();
-		break;
+	// Battle
+	if(Battle) {
+		switch(Action) {
+			case _Actions::MENU:
+				HUD->ToggleInGameMenu();
+			break;
+			default:
+				Battle->ClientHandleAction(Action);
+			break;
+		}
+	}
+	else {
+
+		// Handle HUD keys
+		switch(Action) {
+			case _Actions::MENU:
+				HUD->ToggleInGameMenu();
+			break;
+			case _Actions::INVENTORY:
+				HUD->ToggleInventory();
+			break;
+			case _Actions::TELEPORT:
+				HUD->ToggleTeleport();
+			break;
+			case _Actions::TRADE:
+				HUD->ToggleTrade();
+			break;
+			case _Actions::SKILLS:
+				HUD->ToggleSkills();
+			break;
+			case _Actions::ATTACK:
+				//SendAttackPlayer();
+			break;
+			case _Actions::UP:
+			case _Actions::DOWN:
+			case _Actions::LEFT:
+			case _Actions::RIGHT:
+				if(!Player->WaitForServer)
+					HUD->CloseWindows();
+			break;
+		}
 	}
 
 	return true;
@@ -291,8 +307,8 @@ void _ClientState::Update(double FrameTime) {
 	}
 
 	// Update battle system
-	if(Player->Battle)
-		Player->Battle->Update(FrameTime);
+	if(Battle)
+		Battle->Update(FrameTime);
 
 	// Update camera
 	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
@@ -345,8 +361,8 @@ void _ClientState::Render(double BlendFactor) {
 	HUD->Render(Time);
 
 	// Draw states
-	if(Player->Battle)
-		Player->Battle->Render(BlendFactor);
+	if(Battle)
+		Battle->Render(BlendFactor);
 
 	// Draw menu
 	Menu.Render();
@@ -451,6 +467,10 @@ void _ClientState::HandleDisconnect() {
 	Menu.HandleDisconnect(Server != nullptr);
 	ClientState.StopLocalServer();
 	if(Player) {
+		if(Battle) {
+			delete Battle;
+			Battle = nullptr;
+		}
 		if(Map) {
 			delete Map;
 			Map = nullptr;
@@ -523,9 +543,9 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 	/*
 	// Delete the battle
-	if(Player->Battle) {
-		delete Player->Battle;
-		Player->Battle = nullptr;
+	if(Battle) {
+		delete Battle;
+		Battle = nullptr;
 	}
 	*/
 }
@@ -590,8 +610,8 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 	// Get object
 	_Object *Object = Map->GetObjectByID(NetworkID);
 	if(Object) {
-		if(Player->Battle)
-			Player->Battle->RemoveFighterClient(Object);
+		if(Battle)
+			Battle->RemoveFighter(Object);
 
 		Object->Deleted = true;
 	}
@@ -656,6 +676,9 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 				break;
 				case _Object::STATUS_TELEPORT:
 					Object->StatusTexture = Assets.Textures["hud/teleport.png"];
+				break;
+				case _Object::STATUS_BATTLE:
+					Object->StatusTexture = Assets.Textures["hud/battle.png"];
 				break;
 				default:
 				break;
@@ -866,11 +889,13 @@ void _ClientState::SendStatus(int Status) {
 void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 	// Already in a battle
-	if(Player->Battle)
+	if(Battle)
 		return;
 
 	// Create a new battle instance
-	Player->Battle = new _Battle();
+	Battle = new _Battle();
+	Battle->ClientPlayer = Player;
+	Battle->ClientNetwork = Network;
 
 	// Get fighter count
 	int FighterCount = Data.Read<char>();
@@ -902,9 +927,8 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 				Fighter->MaxHealth = MaxHealth;
 				Fighter->Mana = Mana;
 				Fighter->MaxMana = MaxMana;
-				Fighter->Battle = Player->Battle;
 
-				Player->Battle->AddFighter(Fighter, Side);
+				Battle->AddFighter(Fighter, Side);
 			}
 		}
 		else {
@@ -916,13 +940,13 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			Monster->Type = _Object::MONSTER;
 			Stats->GetMonsterStats(MonsterID, Monster);
 
-			Player->Battle->AddFighter(Monster, Side);
+			Battle->AddFighter(Monster, Side);
 		}
 	}
 
 	// Start the battle
 	HUD->CloseWindows();
-	Player->Battle->StartBattleClient(Player);
+	Battle->StartBattleClient();
 }
 
 /*
@@ -930,7 +954,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
 
 	// Check for a battle in progress
-	if(!Player->Battle)
+	if(!Battle)
 		return;
 
 	((_ClientBattle *)Player->Battle)->ResolveTurn(Packet);

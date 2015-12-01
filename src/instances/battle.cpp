@@ -16,12 +16,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/battle.h>
+#include <network/servernetwork.h>
+#include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
-#include <network/servernetwork.h>
 #include <actions.h>
 #include <buffer.h>
 #include <graphics.h>
@@ -36,6 +37,8 @@
 _Battle::_Battle() :
 	Stats(nullptr),
 	ServerNetwork(nullptr),
+	ClientNetwork(nullptr),
+	ClientPlayer(nullptr),
 	State(STATE_NONE),
 	TargetState(STATE_NONE),
 	Timer(0),
@@ -44,32 +47,32 @@ _Battle::_Battle() :
 	RightFighterCount(0),
 	PlayerCount(0),
 	MonsterCount(0),
-	ResultTimer(0),
-	ShowResults(false),
 	TotalExperience(0),
 	TotalGold(0),
 	BattleElement(nullptr),
 	BattleWinElement(nullptr),
-	BattleLoseElement(nullptr),
-	ClientPlayer(nullptr) {
+	BattleLoseElement(nullptr) {
 
 }
 
 // Destructor
 _Battle::~_Battle() {
-	BattleElement->SetVisible(false);
-	BattleWinElement->SetVisible(false);
-	BattleLoseElement->SetVisible(false);
+	if(BattleElement)
+		BattleElement->SetVisible(false);
+	if(BattleWinElement)
+		BattleWinElement->SetVisible(false);
+	if(BattleLoseElement)
+		BattleLoseElement->SetVisible(false);
 
 	// Delete monsters
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->Type == _Object::MONSTER)
-			delete Fighters[i];
+	for(auto &Fighter : Fighters) {
+		if(Fighter->DatabaseID)
+			delete Fighter;
 	}
 }
 
 // Handle player input
-void _Battle::HandleAction(int Action) {
+void _Battle::ClientHandleAction(int Action) {
 
 	switch(State) {
 		case STATE_GETINPUT: {
@@ -82,7 +85,7 @@ void _Battle::HandleAction(int Action) {
 				case _Actions::SKILL6:
 				case _Actions::SKILL7:
 				case _Actions::SKILL8:
-					SendSkill(Action - _Actions::SKILL1);
+					ClientSetAction(Action - _Actions::SKILL1);
 				break;
 				case _Actions::UP:
 					ChangeTarget(-1);
@@ -110,11 +113,16 @@ void _Battle::HandleAction(int Action) {
 
 // Update battle
 void _Battle::Update(double FrameTime) {
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i]) {
-			Fighters[i]->TurnTimer += FrameTime;
-			if(Fighters[i]->TurnTimer > 1.0)
-				Fighters[i]->TurnTimer = 1.0;
+	for(auto &Fighter : Fighters) {
+		if(Fighter) {
+			Fighter->TurnTimer += FrameTime;
+			if(Fighter->TurnTimer > 1.0) {
+				Fighter->TurnTimer = 1.0;
+
+				if(Fighter->BattleActionUsing != -1) {
+
+				}
+			}
 		}
 	}
 
@@ -129,19 +137,12 @@ void _Battle::Update(double FrameTime) {
 
 // Render the battle system
 void _Battle::Render(double BlendFactor) {
-	if(ShowResults && ResultTimer >= BATTLE_SHOWRESULTTIME) {
-		ShowResults = false;
-		for(size_t i = 0; i < Fighters.size(); i++) {
-			if(Fighters[i])
-				Fighters[i]->SkillUsed = nullptr;
-		}
-	}
 
 	switch(State) {
 		case STATE_GETINPUT:
 		case STATE_WAIT:
 		case STATE_TURNRESULTS:
-			RenderBattle(ShowResults);
+			RenderBattle();
 		break;
 		case STATE_INITWIN:
 		case STATE_WIN:
@@ -156,18 +157,13 @@ void _Battle::Render(double BlendFactor) {
 }
 
 // Renders the battle part
-void _Battle::RenderBattle(bool ShowResults) {
+void _Battle::RenderBattle() {
 	BattleElement->Render();
 
-	// Get a percent of the results timer
-	float TimerPercent = 0;
-	if(ResultTimer <= BATTLE_SHOWRESULTTIME)
-		TimerPercent = 1.0f - (float)ResultTimer / BATTLE_SHOWRESULTTIME;
-
 	// Draw fighters
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i])
-			Fighters[i]->RenderBattle(ShowResults, TimerPercent, &Results[i], ClientPlayer->Target == Fighters[i]->BattleSlot);
+	for(auto &Fighter : Fighters) {
+		if(Fighter)
+			Fighter->RenderBattle(ClientPlayer->BattleTarget == Fighter->BattleSlot);
 	}
 }
 
@@ -189,8 +185,8 @@ void _Battle::RenderBattleWin() {
 		glm::ivec2 DrawPosition(StartPosition);
 
 		// Draw items found
-		for(size_t i = 0; i < MonsterDrops.size(); i++) {
-			const _Texture *Texture = MonsterDrops[i]->Image;
+		for(auto &MonsterDrop : MonsterDrops) {
+			const _Texture *Texture = MonsterDrop->Image;
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Texture);
 
@@ -212,28 +208,26 @@ void _Battle::RenderBattleLose() {
 	BattleLoseElement->Render();
 }
 
-// Sends a skill selection to the server
-void _Battle::SendSkill(int SkillSlot) {
-	if(ClientPlayer->Health == 0)
+// Sends an action selection to the server
+void _Battle::ClientSetAction(int ActionBarSlot) {
+	if(ClientPlayer->Health == 0 || ClientPlayer->BattleActionUsing != -1)
 		return;
 
-	const _Skill *Skill = ClientPlayer->GetActionBar(SkillSlot);
+	// Get skill
+	const _Skill *Skill = ClientPlayer->GetActionBar(ActionBarSlot);
 	if(Skill == nullptr || !Skill->CanUse(ClientPlayer))
 		return;
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_COMMAND);
-	Packet.Write<char>(SkillSlot);
-	Packet.Write<char>(ClientPlayer->Target);
+	Packet.Write<char>(ActionBarSlot);
 
-	//ClientState.Network->SendPacket(Packet);
-	ClientPlayer->SkillUsing = Skill;
+	ClientNetwork->SendPacket(Packet);
+	ClientPlayer->BattleActionUsing = ActionBarSlot;
 
 	// Update potion count
 	if(Skill->Type == _Skill::TYPE_USEPOTION)
 		ClientPlayer->UpdatePotionsLeft(Skill->ID == 3);
-
-	State = STATE_WAIT;
 }
 
 // Changes targets
@@ -242,9 +236,9 @@ void _Battle::ChangeTarget(int Direction) {
 		return;
 
 	// Get a list of fighters on the opposite side
-	std::vector<_Object *> SideFighters;
+	std::list<_Object *> SideFighters;
 	GetFighterList(!ClientPlayer->GetSide(), SideFighters);
-
+/*
 	// Find next available target
 	int StartIndex, Index;
 	StartIndex = Index = ClientPlayer->Target / 2;
@@ -259,10 +253,15 @@ void _Battle::ChangeTarget(int Direction) {
 
 	// Set new target
 	ClientPlayer->Target = SideFighters[Index]->BattleSlot;
+	*/
 }
 
 // Add a fighter to the battle
 void _Battle::AddFighter(_Object *Fighter, int Side) {
+	Fighter->Battle = this;
+	Fighter->BattleActionUsing = -1;
+	for(int i = 0; i < 2; i++)
+		Fighter->PotionsLeft[i] = Fighter->MaxPotions[i];
 
 	// Count fighters and set slots
 	if(Side == 0) {
@@ -282,63 +281,51 @@ void _Battle::AddFighter(_Object *Fighter, int Side) {
 	Fighters.push_back(Fighter);
 }
 
-// Removes a player from battle
-int _Battle::RemoveFighterClient(_Object *Fighter) {
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] == Fighter) {
-			Fighters[i] = nullptr;
-			break;
-		}
-	}
-
-	return 0;
-}
-
 // Get a list of fighters from a side
-void _Battle::GetFighterList(int Side, std::vector<_Object *> &SideFighters) {
+void _Battle::GetFighterList(int Side, std::list<_Object *> &SideFighters) {
 
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetSide() == Side) {
-			SideFighters.push_back(Fighters[i]);
+	for(auto &Fighter : Fighters) {
+		if(Fighter && Fighter->GetSide() == Side) {
+			SideFighters.push_back(Fighter);
 		}
 	}
 }
 
 // Get a list of alive fighters from a side
-void _Battle::GetAliveFighterList(int Side, std::vector<_Object *> &AliveFighters) {
+void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters) {
 
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->Health > 0) {
-			AliveFighters.push_back(Fighters[i]);
+	for(auto &Fighter : Fighters) {
+		if(Fighter && Fighter->GetSide() == Side && Fighter->Health > 0) {
+			AliveFighters.push_back(Fighter);
 		}
 	}
 }
 
 // Get a list of monster from the right side
-void _Battle::GetMonsterList(std::vector<_Object *> &Monsters) {
+void _Battle::GetMonsterList(std::list<_Object *> &Monsters) {
 
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetSide() == 1 && Fighters[i]->Type == _Object::MONSTER) {
-			Monsters.push_back(Fighters[i]);
+	for(auto &Fighter : Fighters) {
+		if(Fighter && Fighter->GetSide() == 1 && Fighter->Type == _Object::MONSTER) {
+			Monsters.push_back(Fighter);
 		}
 	}
 }
 
 // Get a list of players from a side
-void _Battle::GetPlayerList(int Side, std::vector<_Object *> &Players) {
+void _Battle::GetPlayerList(int Side, std::list<_Object *> &Players) {
 
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->GetSide() == Side && Fighters[i]->Type == _Object::PLAYER) {
-			Players.push_back(Fighters[i]);
+	for(auto &Fighter : Fighters) {
+		if(Fighter && Fighter->GetSide() == Side && Fighter->Peer) {
+			Players.push_back(Fighter);
 		}
 	}
 }
 
 // Gets a fighter index from a slot number
 int _Battle::GetFighterFromSlot(int Slot) {
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->BattleSlot == Slot) {
-			return i;
+	for(auto &Fighter : Fighters) {
+		if(Fighter && Fighter->BattleSlot == Slot) {
+			return Fighter->BattleSlot;
 		}
 	}
 
@@ -346,40 +333,35 @@ int _Battle::GetFighterFromSlot(int Slot) {
 }
 
 // Starts the battle on the client
-void _Battle::StartBattleClient(_Object *Player) {
+void _Battle::StartBattleClient() {
 	BattleElement = Assets.Elements["element_battle"];
 	BattleWinElement = Assets.Elements["element_battlewin"];
 	BattleLoseElement = Assets.Elements["element_battlelose"];
 	BattleElement->SetVisible(true);
 
-	// Save the client's player
-	ClientPlayer = Player;
+	// Set target
 	if(ClientPlayer->GetSide() == 0)
-		ClientPlayer->Target = 1;
+		ClientPlayer->BattleTarget = 1;
 	else
-		ClientPlayer->Target = 0;
-	ClientPlayer->StartBattle(this);
+		ClientPlayer->BattleTarget = 0;
 
 	// Set fighter position offsets
 	glm::ivec2 Offset;
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		GetPositionFromSlot(Fighters[i]->BattleSlot, Offset);
-		Fighters[i]->BattleOffset = Offset;
-		Fighters[i]->SkillUsed = nullptr;
-		Fighters[i]->SkillUsing = nullptr;
+	for(auto &Fighter : Fighters) {
+		GetPositionFromSlot(Fighter->BattleSlot, Offset);
+		Fighter->BattleOffset = Offset;
 	}
 
 	State = STATE_GETINPUT;
 	TargetState = -1;
-	ShowResults = false;
 }
 
 // Handles a command from an other player
 void _Battle::HandleCommand(int Slot, uint32_t SkillID) {
-	int Index = GetFighterFromSlot(Slot);
-	if(Index != -1) {
-		Fighters[Index]->SkillUsing = Stats->Skills[SkillID];
-	}
+	//int Index = GetFighterFromSlot(Slot);
+	//if(Index != -1) {
+	//	Fighters[Index]->SkillUsing = Stats->Skills[SkillID];
+	//}
 }
 
 // Update the battle system for the client
@@ -418,18 +400,18 @@ void _Battle::UpdateClient(double FrameTime) {
 }
 
 // Displays turn results from the server
-void _Battle::ResolveTurn(_Buffer *Packet) {
-
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i]) {
-			Results[i].SkillID = Packet->Read<char>();
-			Results[i].Target = Packet->Read<int32_t>();
-			Results[i].DamageDealt = Packet->Read<int32_t>();
-			Results[i].HealthChange = Packet->Read<int32_t>();
-			Fighters[i]->Health = Packet->Read<int32_t>();
-			Fighters[i]->Mana = Packet->Read<int32_t>();
-			Fighters[i]->SkillUsed = Fighters[i]->SkillUsing;
-			Fighters[i]->SkillUsing = nullptr;
+void _Battle::ClientResolveAction(_Buffer *Packet) {
+/*
+	for(auto &Fighter : Fighters) {
+		if(Fighter) {
+			Results[Fighter->BattleSlot].SkillID = Packet->Read<char>();
+			Results[Fighter->BattleSlot].Target = Packet->Read<int32_t>();
+			Results[Fighter->BattleSlot].DamageDealt = Packet->Read<int32_t>();
+			Results[Fighter->BattleSlot].HealthChange = Packet->Read<int32_t>();
+			Fighter->Health = Packet->Read<int32_t>();
+			Fighter->Mana = Packet->Read<int32_t>();
+			Fighter->BattleActionUsed = Fighter->SkillUsing;
+			Fighter->SkillUsing = nullptr;
 		}
 	}
 
@@ -443,6 +425,7 @@ void _Battle::ResolveTurn(_Buffer *Packet) {
 	ShowResults = true;
 	State = STATE_TURNRESULTS;
 	TargetState = STATE_GETINPUT;
+	*/
 }
 
 // End of a battle
@@ -523,29 +506,31 @@ void _Battle::UpdateStats() {
 	ClientPlayer->CalculatePlayerStats();
 }
 
-
-
 // Removes a player from the battle, return remaining player count
-int _Battle::RemoveFighterServer(_Object *RemoveFighter) {
+void _Battle::RemoveFighter(_Object *RemoveFighter) {
 
-	int Count = 0;
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->Type == _Object::PLAYER) {
-			_Object *Player = Fighters[i];
-			if(Player == RemoveFighter) {
-				Player->StopBattle();
-				Fighters[i] = nullptr;
-			}
+	for(auto Iterator = Fighters.begin(); Iterator != Fighters.end(); ++Iterator) {
+		_Object *Fighter = *Iterator;
+		if(Fighter == RemoveFighter) {
+			Fighter->StopBattle();
+			if(Fighter->DatabaseID)
+				delete Fighter;
 
-			if(Fighters[i])
-				Count++;
+			Fighters.erase(Iterator);
+			return;
 		}
 	}
-	PlayerCount = Count;
+}
 
-	CheckEnd();
+// Get number of peers in battle
+int _Battle::GetPeerCount() {
+	int PeerCount = 0;
+	for(auto &Fighter : Fighters) {
+		if(Fighter->Peer)
+			PeerCount++;
+	}
 
-	return Count;
+	return PeerCount;
 }
 
 // Starts the battle and notifies the players
@@ -560,14 +545,14 @@ void _Battle::StartBattleServer() {
 	Packet.Write<char>(FighterCount);
 
 	// Write fighter information
-	for(int i = 0; i < FighterCount; i++) {
+	for(auto &Fighter : Fighters) {
 
 		// Write fighter type
-		Packet.Write<char>(Fighters[i]->Type);
-		Packet.Write<char>(Fighters[i]->GetSide());
+		Packet.Write<char>(Fighter->Type);
+		Packet.Write<char>(Fighter->GetSide());
 
-		if(Fighters[i]->Type == _Object::PLAYER) {
-			_Object *Player = Fighters[i];
+		if(Fighter->Type == _Object::PLAYER) {
+			_Object *Player = Fighter;
 
 			// Network ID
 			Packet.Write<NetworkIDType>(Player->NetworkID);
@@ -578,12 +563,9 @@ void _Battle::StartBattleServer() {
 			Packet.Write<int32_t>(Player->MaxHealth);
 			Packet.Write<int32_t>(Player->Mana);
 			Packet.Write<int32_t>(Player->MaxMana);
-
-			// Start the battle for the player
-			Player->StartBattle(this);
 		}
 		else {
-			_Object *Monster = Fighters[i];
+			_Object *Monster = Fighter;
 
 			// Monster ID
 			Packet.Write<int32_t>(Monster->DatabaseID);
@@ -597,31 +579,15 @@ void _Battle::StartBattleServer() {
 }
 
 // Handles input from the client
-void _Battle::HandleInput(_Object *Player, int Command, int Target) {
+void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 
-	if(State == STATE_INPUT) {
+	// Check for needed commands
+	if(Fighter->BattleActionUsing == -1) {
+		Fighter->BattleActionUsing = ActionBarSlot;
+		//Player->Target = Target;
 
-		// Check for needed commands
-		if(Player->GetCommand() == -1) {
-			Player->Command = Command;
-			Player->Target = Target;
-
-			// Notify other players
-			SendSkillToPlayers(Player);
-
-			// Check for all commands
-			bool Ready = true;
-			for(size_t i = 0; i < Fighters.size(); i++) {
-				if(Fighters[i] && Fighters[i]->Health > 0 && Fighters[i]->GetCommand() == -1) {
-					Ready = false;
-					break;
-				}
-			}
-
-			// All players are ready
-			if(Ready)
-				State = STATE_RESOLVETURN;
-		}
+		// Notify other players
+		SendActionToPlayers(Fighter);
 	}
 }
 
@@ -635,7 +601,7 @@ void _Battle::UpdateServer(double FrameTime) {
 				State = STATE_RESOLVETURN;
 		break;
 		case STATE_RESOLVETURN:
-			ResolveTurn();
+			ResolveAction();
 			CheckEnd();
 		break;
 		case STATE_END:
@@ -644,18 +610,18 @@ void _Battle::UpdateServer(double FrameTime) {
 }
 
 // Resolves the turn and sends the result to each player
-void _Battle::ResolveTurn() {
+void _Battle::ResolveAction() {
 	RoundTime = 0;
-
+/*
 	// Get a monster list
-	std::vector<_Object *> Monsters;
+	std::list<_Object *> Monsters;
 	GetMonsterList(Monsters);
 
 	// Update AI
 	if(Monsters.size() > 0) {
 
 		// Get a list of humans on the left side
-		std::vector<_Object *> Humans;
+		std::list<_Object *> Humans;
 		GetAliveFighterList(0, Humans);
 
 		// Update the monster's target
@@ -666,17 +632,17 @@ void _Battle::ResolveTurn() {
 
 	// Handle each fighter's action
 	_ActionResult Results[BATTLE_MAXFIGHTERS];
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i]) {
+	for(auto &Fighter : Fighters) {
+		if(Fighter) {
 			_ActionResult *Result = &Results[i];
-			Result->Fighter = Fighters[i];
+			Result->Fighter = Fighter;
 
 			// Ignore dead fighters
-			if(Fighters[i]->Health > 0) {
-				Result->Target = Fighters[i]->Target;
+			if(Fighter->Health > 0) {
+				Result->Target = Fighter->Target;
 
 				// Get skill used
-				const _Skill *Skill = Fighters[i]->GetActionBar(Fighters[i]->GetCommand());
+				const _Skill *Skill = Fighter->GetActionBar(Fighter->GetCommand());
 				if(Skill && Skill->CanUse(Result->Fighter)) {
 					int TargetFighterIndex = GetFighterFromSlot(Result->Target);
 					Result->SkillID = Skill->ID;
@@ -689,7 +655,7 @@ void _Battle::ResolveTurn() {
 
 				// Update health and mana regen
 				int HealthUpdate, ManaUpdate;
-				Fighters[i]->UpdateRegen(HealthUpdate, ManaUpdate);
+				Fighter->UpdateRegen(HealthUpdate, ManaUpdate);
 				Result->HealthChange += HealthUpdate;
 				Result->ManaChange += ManaUpdate;
 			}
@@ -700,41 +666,43 @@ void _Battle::ResolveTurn() {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_TURNRESULTS);
 
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i]) {
+	for(auto &Fighter : Fighters) {
+		if(Fighter) {
 
 			// Update fighters
-			Fighters[i]->UpdateHealth(Results[i].HealthChange);
-			Fighters[i]->UpdateMana(Results[i].ManaChange);
-			Fighters[i]->Command = -1;
+			Fighter->UpdateHealth(Results[i].HealthChange);
+			Fighter->UpdateMana(Results[i].ManaChange);
+			Fighter->Command = -1;
 
 			Packet.Write<char>(Results[i].Target);
 			Packet.Write<int32_t>(Results[i].SkillID);
 			Packet.Write<int32_t>(Results[i].DamageDealt);
 			Packet.Write<int32_t>(Results[i].HealthChange);
-			Packet.Write<int32_t>(Fighters[i]->Health);
-			Packet.Write<int32_t>(Fighters[i]->Mana);
+			Packet.Write<int32_t>(Fighter->Health);
+			Packet.Write<int32_t>(Fighter->Mana);
 		}
 	}
 
 	// Send packet
 	BroadcastPacket(Packet);
+	*/
 }
 
 // Checks for the end of a battle
 void _Battle::CheckEnd() {
+	/*
 	if(State == STATE_END)
 		return;
 
 	// Players that get a reward
-	std::vector<_Object *> Players;
+	std::list<_Object *> Players;
 
 	// Get statistics for each side
 	_BattleResult Side[2];
 	for(int i = 0; i < 2; i++) {
 
 		// Get a list of fighters that are still in the battle
-		std::vector<_Object *> SideFighters;
+		std::list<_Object *> SideFighters;
 		GetFighterList(i, SideFighters);
 
 		// Loop through fighters
@@ -785,24 +753,24 @@ void _Battle::CheckEnd() {
 		}
 
 		// Hand out monster drops
-		std::vector<int> PlayerItems[3];
+		std::list<int> PlayerItems[3];
 		if(!Side[0].Dead) {
 
 			// Get a monster list
-			std::vector<_Object *> Monsters;
+			std::list<_Object *> Monsters;
 			GetMonsterList(Monsters);
 
 			// Make sure there are monsters
 			if(Monsters.size() > 0) {
 
 				// Generate monster drops in player vs monster situations
-				std::vector<int> MonsterDrops;
+				std::list<int> MonsterDrops;
 				for(size_t i = 0; i < Monsters.size(); i++) {
 					Stats->GenerateMonsterDrops(Monsters[i]->DatabaseID, 1, MonsterDrops);
 				}
 
 				// Get a list of players that receive items
-				std::vector<_Object *> LeftSidePlayers;
+				std::list<_Object *> LeftSidePlayers;
 				GetPlayerList(0, LeftSidePlayers);
 
 				// Give out rewards round robin style
@@ -887,24 +855,25 @@ void _Battle::CheckEnd() {
 	}
 	else
 		State = STATE_INPUT;
+		*/
 }
 
 // Send a packet to all players
 void _Battle::BroadcastPacket(_Buffer &Packet) {
 
 	// Send packet to all players
-	for(size_t i = 0; i < Fighters.size(); i++) {
-		if(Fighters[i] && Fighters[i]->Peer) {
-			ServerNetwork->SendPacket(Packet, Fighters[i]->Peer);
+	for(auto &Fighter : Fighters) {
+		if(Fighter->Peer) {
+			ServerNetwork->SendPacket(Packet, Fighter->Peer);
 		}
 	}
 }
 
-// Send the player's skill to the other players
-void _Battle::SendSkillToPlayers(_Object *Player) {
-
+// Send the player's action to the other players
+void _Battle::SendActionToPlayers(_Object *Player) {
+/*
 	// Get all the players on the player's side
-	std::vector<_Object *> SidePlayers;
+	std::list<_Object *> SidePlayers;
 	GetPlayerList(Player->GetSide(), SidePlayers);
 	if(SidePlayers.size() == 1)
 		return;
@@ -927,4 +896,5 @@ void _Battle::SendSkillToPlayers(_Object *Player) {
 			//OldServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->Peer);
 		}
 	}
+	*/
 }

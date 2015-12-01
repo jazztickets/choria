@@ -99,7 +99,7 @@ class _Object {
 		// -- FROM FIGHTER --
 
 		// Render
-		void RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *Result, bool IsTarget);
+		void RenderBattle(bool IsTarget);
 
 		// Stats
 		void UpdateHealth(int Value);
@@ -109,7 +109,6 @@ class _Object {
 		void UpdateRegen(int &HealthUpdate, int &ManaUpdate);
 
 		// Battles
-		int GetCommand();
 		int GetSide() const { return BattleSlot & 1; }
 		int GenerateDamage();
 		int GenerateDefense();
@@ -171,7 +170,6 @@ class _Object {
 		// Battles
 		bool CanBattle();
 		void GenerateNextBattle();
-		void StartBattle(_Battle *Battle);
 		void StopBattle();
 
 		// Trader
@@ -218,8 +216,9 @@ class _Object {
 
 		// Battle
 		_Battle *Battle;
-		int Command, Target, BattleSlot;
-		const _Skill *SkillUsing, *SkillUsed;
+		int BattleTarget, BattleSlot;
+		int BattleActionUsing;
+		const _Skill *BattleActionUsed;
 
 		// Render
 		const _Texture *Portrait;

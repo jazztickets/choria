@@ -62,11 +62,10 @@ _Object::_Object()
 	HealthAccumulator(0.0f),
 	ManaAccumulator(0.0f),
 	Battle(nullptr),
-	Command(-1),
-	Target(0),
+	BattleTarget(0),
 	BattleSlot(-1),
-	SkillUsing(nullptr),
-	SkillUsed(nullptr),
+	BattleActionUsing(-1),
+	BattleActionUsed(nullptr),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
 
@@ -140,7 +139,7 @@ _Object::~_Object() {
 }
 
 // Renders the fighter during a battle
-void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *Result, bool IsTarget) {
+void _Object::RenderBattle(bool IsTarget) {
 
 	// Get slot ui element depending on side
 	_Element *Slot;
@@ -181,7 +180,7 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 	BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::ivec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2;
-	glm::ivec2 HealthBarCenter = BarCenter;
+	//glm::ivec2 HealthBarCenter = BarCenter;
 	int BarEndX = BarBounds.End.x;
 
 	// Draw empty bar
@@ -239,6 +238,7 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
+	/*
 	// Show results of last turn
 	if(ShowResults) {
 
@@ -263,25 +263,27 @@ void _Object::RenderBattle(bool ShowResults, float TimerPercent, _ActionResult *
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), HealthBarCenter + glm::ivec2(0, -20), Color, CENTER_BASELINE);
 
 		const _Texture *SkillTexture;
-		if(SkillUsed)
-			SkillTexture = SkillUsed->Image;
+		if(BattleActionUsed)
+			SkillTexture = BattleActionUsed->Image;
 		else
 			SkillTexture = Assets.Textures["skills/attack.png"];
 
 		// Draw skill icon
 		glm::vec4 WhiteAlpha = glm::vec4(1.0f, 1.0f, 1.0f, AlphaPercent);
-		glm::ivec2 SkillUsedPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
+		glm::ivec2 BattleActionUsedPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SkillUsedPosition, SkillTexture, WhiteAlpha);
+		Graphics.DrawCenteredImage(BattleActionUsedPosition, SkillTexture, WhiteAlpha);
 
 		// Draw damage dealt
-		Assets.Fonts["hud_medium"]->DrawText(std::to_string(Result->DamageDealt).c_str(), SkillUsedPosition, WhiteAlpha, CENTER_MIDDLE);
+		Assets.Fonts["hud_medium"]->DrawText(std::to_string(Result->DamageDealt).c_str(), BattleActionUsedPosition, WhiteAlpha, CENTER_MIDDLE);
 	}
+*/
 	// Draw the skill used
-	if(SkillUsing) {
-		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + SkillUsing->Image->Size.x/2 + 10, 0);
+	if(BattleActionUsing != -1) {
+		const _Skill *Skill = GetActionBar(BattleActionUsing);
+		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + Skill->Image->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SkillUsingPosition, SkillUsing->Image);
+		Graphics.DrawCenteredImage(SkillUsingPosition, Skill->Image);
 	}
 
 	// Draw target
@@ -347,14 +349,6 @@ void _Object::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
 	}
 }
 
-// Command input
-int _Object::GetCommand() {
-	 if(Type == MONSTER)
-		 return 0;
-	 else
-		 return Command;
-}
-
 // Generate damage
 int _Object::GenerateDamage() {
 	std::uniform_int_distribution<int> Distribution(MinDamage, MaxDamage);
@@ -393,7 +387,7 @@ void _Object::UpdateTarget(const std::vector<_Object *> &Fighters) {
 	std::uniform_int_distribution<int> Distribution(0, Count-1);
 	int RandomIndex = Distribution(RandomGenerator);
 
-	Target = Fighters[RandomIndex]->BattleSlot;
+	BattleTarget = Fighters[RandomIndex]->BattleSlot;
 }
 
 // Updates the player
@@ -567,14 +561,6 @@ const _Tile *_Object::GetTile() {
 void _Object::GenerateNextBattle() {
 	std::uniform_int_distribution<int> Distribution(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
 	NextBattle = Distribution(RandomGenerator);
-}
-
-// Starts a battle
-void _Object::StartBattle(_Battle *Battle) {
-	this->Battle = Battle;
-	Command = -1;
-	for(int i = 0; i < 2; i++)
-		PotionsLeft[i] = MaxPotions[i];
 }
 
 // Stop a battle

@@ -19,7 +19,7 @@
 
 // Libraries
 #include <constants.h>
-#include <vector>
+#include <list>
 #include <cstdint>
 
 // Forward Declarations
@@ -29,6 +29,7 @@ class _Item;
 class _Buffer;
 class _Element;
 class _ServerNetwork;
+class _ClientNetwork;
 
 // Structures
 struct _ActionResult {
@@ -74,25 +75,22 @@ class _Battle {
 		};
 
 		_Battle();
-		virtual ~_Battle();
+		~_Battle();
 
 		// Objects
 		void AddFighter(_Object *Fighter, int Side);
-		virtual int RemoveFighter(_Object *RemoveFighter) { return 0; }
-		int RemoveFighterClient(_Object *Fighter);
+		void RemoveFighter(_Object *RemoveFighter);
+		int GetPeerCount();
 
 		// Updates
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
-		void HandleAction(int Action);
-
-		// States
-		int GetState() const { return State; }
+		void ClientHandleAction(int Action);
 
 		// CLIENT BATTLE
 
 		// Setup
-		void StartBattleClient(_Object *Player);
+		void StartBattleClient();
 
 		// Input
 		void HandleCommand(int Slot, uint32_t SkillID);
@@ -104,7 +102,7 @@ class _Battle {
 		void GetPositionFromSlot(int Slot, glm::ivec2 &Position);
 
 		// Resolve
-		void ResolveTurn(_Buffer *Packet);
+		void ClientResolveAction(_Buffer *Packet);
 		void EndBattle(_Buffer *Packet);
 
 		void UpdateStats();
@@ -114,37 +112,36 @@ class _Battle {
 		// Setup
 		void StartBattleServer();
 
-		// Objects
-		int RemoveFighterServer(_Object *RemoveFighterServer);
-
 		// Input
-		void HandleInput(_Object *Player, int Command, int Target);
+		void ServerHandleAction(_Object *Fighter, int ActionBarSlot);
 
 		// Updates
 		void UpdateServer(double FrameTime);
 
 		// Resolve
-		void ResolveTurn();
+		void ResolveAction();
 		void CheckEnd();
 
 		void BroadcastPacket(_Buffer &Packet);
-		void SendSkillToPlayers(_Object *Player);
+		void SendActionToPlayers(_Object *Player);
 
 		_Stats *Stats;
 		_ServerNetwork *ServerNetwork;
+		_ClientNetwork *ClientNetwork;
+		_Object *ClientPlayer;
 
 	protected:
 
-		void SendSkill(int SkillSlot);
+		void ClientSetAction(int ActionBarSlot);
 		void ChangeTarget(int Direction);
 
-		void GetFighterList(int Side, std::vector<_Object *> &SideFighters);
-		void GetAliveFighterList(int Side, std::vector<_Object *> &AliveFighters);
-		void GetMonsterList(std::vector<_Object *> &Monsters);
-		void GetPlayerList(int Side, std::vector<_Object *> &Players);
+		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
+		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
+		void GetMonsterList(std::list<_Object *> &Monsters);
+		void GetPlayerList(int Side, std::list<_Object *> &Players);
 		int GetFighterFromSlot(int Slot);
 
-		void RenderBattle(bool ShowResults);
+		void RenderBattle();
 		void RenderBattleWin();
 		void RenderBattleLose();
 
@@ -154,15 +151,13 @@ class _Battle {
 		double RoundTime;
 
 		// Objects
-		std::vector<_Object *> Fighters;
+		std::list<_Object *> Fighters;
 		int LeftFighterCount, RightFighterCount;
 		int PlayerCount, MonsterCount;
 
 		// CLIENT BATTLE
 
 		// Battle results
-		double ResultTimer;
-		bool ShowResults;
 		int TotalExperience, TotalGold;
 
 		// UI
@@ -170,12 +165,6 @@ class _Battle {
 		_Element *BattleWinElement;
 		_Element *BattleLoseElement;
 
-		// Actions
-		_ActionResult Results[BATTLE_MAXFIGHTERS];
-
-		// Client's player
-		_Object *ClientPlayer;
-
 		// Items
-		std::vector<const _Item *> MonsterDrops;
+		std::list<const _Item *> MonsterDrops;
 };
