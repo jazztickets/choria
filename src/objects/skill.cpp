@@ -251,7 +251,7 @@ void _Skill::ResolveSkill(_ActionResult *Result, _ActionResult *TargetResult) co
 			ManaCost = GetManaCost(SkillLevel);
 		break;
 		case TYPE_USEPOTION:
-			if(Fighter->Type == _Object::PLAYER) {
+			if(Fighter->DatabaseID == 0) {
 				_Object *Player = Fighter;
 
 				// Use the potion

@@ -100,6 +100,7 @@ class _Server {
 		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
 		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
 		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
+		void HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer);
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 		void HandleAttackPlayer(_Buffer &Data, _Peer *Peer);

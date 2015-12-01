@@ -290,6 +290,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::BATTLE_COMMAND:
 			HandleBattleCommand(Data, Peer);
 		break;
+		case PacketType::BATTLE_CHANGETARGET:
+			HandleBattleChangeTarget(Data, Peer);
+		break;
 			/*
 		case PacketType::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
@@ -1150,6 +1153,21 @@ void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
 	Player->Battle->ServerHandleAction(Player, ActionBarSlot);
 }
 
+// Handles battle commands from a client
+void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+	if(!Player->Battle)
+		return;
+
+	Player->BattleTargetSide = Data.Read<char>();
+	Player->BattleTarget = Data.Read<char>();
+
+	Log << Player->BattleTargetSide  << " " << Player->BattleTarget << std::endl;
+}
+
 // Removes a player from a battle and deletes the battle if necessary
 void _Server::RemovePlayerFromBattle(_Object *Player) {
 	if(!Player->Battle)
@@ -1325,7 +1343,6 @@ void _Server::StartBattle(_Object *Object, int Zone) {
 		for(auto &MonsterID : MonsterIDs) {
 			_Object *Monster = new _Object();
 			Monster->DatabaseID = MonsterID;
-			Monster->Type = _Object::MONSTER;
 			Stats->GetMonsterStats(MonsterID, Monster);
 			Battle->AddFighter(Monster, 1);
 		}

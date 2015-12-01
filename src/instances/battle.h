@@ -123,7 +123,7 @@ class _Battle {
 	protected:
 
 		void ClientSetAction(int ActionBarSlot);
-		void ChangeTarget(int Direction);
+		void ChangeTarget(int Direction, int SideDirection);
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
@@ -140,8 +140,7 @@ class _Battle {
 
 		// Objects
 		std::list<_Object *> Fighters;
-		int LeftFighterCount, RightFighterCount;
-		int PlayerCount, MonsterCount;
+		int SideCount[2];
 
 		// CLIENT BATTLE
 

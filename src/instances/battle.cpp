@@ -41,15 +41,14 @@ _Battle::_Battle() :
 	ClientPlayer(nullptr),
 	State(STATE_NONE),
 	Timer(0),
-	LeftFighterCount(0),
-	RightFighterCount(0),
-	PlayerCount(0),
-	MonsterCount(0),
 	TotalExperience(0),
 	TotalGold(0),
 	BattleElement(nullptr),
 	BattleWinElement(nullptr),
 	BattleLoseElement(nullptr) {
+
+	SideCount[0] = 0;
+	SideCount[1] = 0;
 
 }
 
@@ -96,10 +95,16 @@ void _Battle::ClientHandleAction(int Action) {
 					ClientSetAction(Action - _Actions::SKILL1);
 				break;
 				case _Actions::UP:
-					ChangeTarget(-1);
+					ChangeTarget(-1, 0);
 				break;
 				case _Actions::DOWN:
-					ChangeTarget(1);
+					ChangeTarget(1, 0);
+				break;
+				case _Actions::LEFT:
+					ChangeTarget(0, -1);
+				break;
+				case _Actions::RIGHT:
+					ChangeTarget(0, 1);
 				break;
 			}
 		break;
@@ -264,7 +269,7 @@ void _Battle::ResolveAction(_Object *SourceFighter) {
 
 // Sends an action selection to the server
 void _Battle::ClientSetAction(int ActionBarSlot) {
-	if(ClientPlayer->Health == 0 || ClientPlayer->BattleActionUsing != -1)
+	if(ClientPlayer->Health == 0)
 		return;
 
 	// Get skill
@@ -285,29 +290,27 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 }
 
 // Changes targets
-void _Battle::ChangeTarget(int Direction) {
-	if(ClientPlayer->Health == 0)
+void _Battle::ChangeTarget(int Direction, int SideDirection) {
+	if(!ClientNetwork || ClientPlayer->Health == 0)
 		return;
-/*
-	// Get a list of fighters on the opposite side
-	std::list<_Object *> SideFighters;
-	GetFighterList(!ClientPlayer->BattleSide, SideFighters);
 
-	// Find next available target
-	int StartIndex, Index;
-	StartIndex = Index = ClientPlayer->Target / 2;
-	do {
-		Index += Direction;
-		if(Index >= (int)SideFighters.size())
-			Index = 0;
-		else if(Index < 0)
-			Index = SideFighters.size()-1;
+	// Change sides
+	if(SideDirection != 0)
+		ClientPlayer->BattleTargetSide = !ClientPlayer->BattleTargetSide;
 
-	} while(StartIndex != Index && SideFighters[Index]->Health == 0);
+	// Update target
+	ClientPlayer->BattleTarget += Direction;
+	if(ClientPlayer->BattleTarget < 0)
+		ClientPlayer->BattleTarget = SideCount[ClientPlayer->BattleTargetSide];
+	if(ClientPlayer->BattleTarget >= SideCount[ClientPlayer->BattleTargetSide])
+		ClientPlayer->BattleTarget = 0;
 
-	// Set new target
-	ClientPlayer->Target = SideFighters[Index]->BattleSlot;
-	*/
+	// Send packet
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::BATTLE_CHANGETARGET);
+	Packet.Write<char>(ClientPlayer->BattleTargetSide);
+	Packet.Write<char>(ClientPlayer->BattleTarget);
+	ClientNetwork->SendPacket(Packet);
 }
 
 // Add a fighter to the battle
@@ -319,20 +322,7 @@ void _Battle::AddFighter(_Object *Fighter, int Side) {
 		Fighter->PotionsLeft[i] = Fighter->MaxPotions[i];
 
 	// Count fighters and set slots
-	if(Side == 0) {
-		//Fighter->BattleSlot = Side + LeftFighterCount * 2;
-		LeftFighterCount++;
-	}
-	else {
-		//Fighter->BattleSlot = Side + RightFighterCount * 2;
-		RightFighterCount++;
-	}
-
-	if(Fighter->Type == _Object::PLAYER)
-		PlayerCount++;
-	else
-		MonsterCount++;
-
+	SideCount[Side]++;
 	Fighters.push_back(Fighter);
 }
 
@@ -475,18 +465,15 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 	glm::ivec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2;
 
 	// Check sides
-	int SideCount;
 	if(Fighter->BattleSide == 0) {
 		Fighter->BattleOffset.x = Center.x - 180;
-		SideCount = LeftFighterCount;
 	}
 	else {
 		Fighter->BattleOffset.x = Center.x + 100;
-		SideCount = RightFighterCount;
 	}
 
 	// Divide space into SideCount parts, then divide that by 2
-	int SpacingY = (BattleElement->Size.y / SideCount) / 2;
+	int SpacingY = (BattleElement->Size.y / SideCount[Fighter->BattleSide]) / 2;
 
 	// Place slots in between main divisions
 	Fighter->BattleOffset.y = BattleElement->Bounds.Start.y + SpacingY * (2 * SideIndex + 1) + 10;

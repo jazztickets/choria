@@ -50,11 +50,6 @@ class _Object {
 
 	public:
 
-		enum Type {
-			PLAYER,
-			MONSTER,
-		};
-
 		enum StatusImageType {
 			STATUS_NONE,
 			STATUS_PAUSE,
