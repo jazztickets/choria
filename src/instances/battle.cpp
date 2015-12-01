@@ -32,6 +32,7 @@
 #include <font.h>
 #include <packet.h>
 #include <random.h>
+#include <algorithm>
 #include <iostream>
 
 // Constructor
@@ -42,6 +43,7 @@ _Battle::_Battle() :
 	ClientPlayer(nullptr),
 	State(STATE_NONE),
 	Timer(0),
+	NextID(0),
 	TotalExperience(0),
 	TotalGold(0),
 	BattleElement(nullptr),
@@ -170,7 +172,7 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 		return;
 
 	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
+	Packet.Write<PacketType>(PacketType::BATTLE_SETACTION);
 	Packet.Write<char>(ActionBarSlot);
 
 	ClientNetwork->SendPacket(Packet);
@@ -186,24 +188,56 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	if(!ClientNetwork || ClientPlayer->Health == 0)
 		return;
 
+	// Get current target side
+	int BattleTargetSide = ClientPlayer->BattleTarget->BattleSide;
+
 	// Change sides
 	if(SideDirection != 0)
-		ClientPlayer->BattleTargetSide = !ClientPlayer->BattleTargetSide;
+		BattleTargetSide = !BattleTargetSide;
 
-	// Update target
-	ClientPlayer->BattleTargetIndex += Direction;
-	if(ClientPlayer->BattleTargetIndex < 0)
-		ClientPlayer->BattleTargetIndex = SideCount[ClientPlayer->BattleTargetSide]-1;
-	else if(ClientPlayer->BattleTargetIndex >= SideCount[ClientPlayer->BattleTargetSide])
-		ClientPlayer->BattleTargetIndex = 0;
+	// Get list of fighters on target side
+	std::list<_Object *> FighterList;
+	GetFighterList(BattleTargetSide, FighterList);
 
-	ClientPlayer->BattleTarget = GetObjectFromIndex(ClientPlayer->BattleTargetSide, ClientPlayer->BattleTargetIndex);
+	// Get new target
+	_Object *NewTarget = nullptr;
+	if(FighterList.size()) {
+
+		// Get iterator to current target
+		auto Iterator = std::find(FighterList.begin(), FighterList.end(), ClientPlayer->BattleTarget);
+
+		if(Iterator == FighterList.end())
+			Iterator = FighterList.begin();
+
+		// Update target
+		if(Direction > 0) {
+			Iterator++;
+			if(Iterator == FighterList.end())
+				Iterator = FighterList.begin();
+
+			NewTarget = *Iterator;
+		}
+		else if(Direction < 0) {
+			if(Iterator == FighterList.begin())
+				NewTarget = FighterList.back();
+			else {
+				Iterator--;
+				NewTarget = *Iterator;
+			}
+		}
+		else
+			NewTarget = *Iterator;
+	}
+
+	ClientPlayer->BattleTarget = NewTarget;
+	int BattleTargetID = -1;
+	if(ClientPlayer->BattleTarget)
+		BattleTargetID = ClientPlayer->BattleTarget->BattleID;
 
 	// Send packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_CHANGETARGET);
-	Packet.Write<char>(ClientPlayer->BattleTargetSide);
-	Packet.Write<char>(ClientPlayer->BattleTargetIndex);
+	Packet.Write<char>(BattleTargetID);
 	ClientNetwork->SendPacket(Packet);
 }
 
@@ -241,10 +275,8 @@ void _Battle::ResolveAction(_Object *SourceFighter) {
 	if(ActionResult.SkillUsed)
 		SkillID = ActionResult.SkillUsed->ID;
 
-	Packet.Write<char>(ActionResult.SourceFighter->BattleSide);
-	Packet.Write<char>(ActionResult.SourceFighter->BattleIndex);
-	Packet.Write<char>(ActionResult.TargetFighter->BattleSide);
-	Packet.Write<char>(ActionResult.TargetFighter->BattleIndex);
+	Packet.Write<char>(ActionResult.SourceFighter->BattleID);
+	Packet.Write<char>(ActionResult.TargetFighter->BattleID);
 	Packet.Write<uint32_t>(SkillID);
 	Packet.Write<int32_t>(ActionResult.DamageDealt);
 	Packet.Write<int32_t>(ActionResult.SourceHealthChange);
@@ -267,10 +299,8 @@ void _Battle::ResolveAction(_Object *SourceFighter) {
 void _Battle::ClientResolveAction(_Buffer &Data) {
 
 	_ActionResult ActionResult;
-	int SourceBattleSide = Data.Read<char>();
-	int SourceBattleIndex = Data.Read<char>();
-	int TargetBattleSide = Data.Read<char>();
-	int TargetBattleIndex = Data.Read<char>();
+	int SourceBattleID = Data.Read<char>();
+	int TargetBattleID = Data.Read<char>();
 
 	int SkillID = Data.Read<uint32_t>();
 	ActionResult.SkillUsed = Stats->Skills[SkillID];
@@ -285,7 +315,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	int TargetFighterMana = Data.Read<int32_t>();
 
 	// Update source fighter
-	ActionResult.SourceFighter = GetObjectFromIndex(SourceBattleSide, SourceBattleIndex);
+	ActionResult.SourceFighter = GetObjectByID(SourceBattleID);
 	if(ActionResult.SourceFighter) {
 		ActionResult.SourceFighter->Health = SourceFighterHealth;
 		ActionResult.SourceFighter->Mana = SourceFighterMana;
@@ -294,7 +324,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	}
 
 	// Update target fighter
-	ActionResult.TargetFighter = GetObjectFromIndex(TargetBattleSide, TargetBattleIndex);
+	ActionResult.TargetFighter = GetObjectByID(TargetBattleID);
 	if(ActionResult.TargetFighter) {
 		ActionResult.TargetFighter->Health = TargetFighterHealth;
 		ActionResult.TargetFighter->Mana = TargetFighterMana;
@@ -308,12 +338,15 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 */
 }
 
-// Get the object pointer from index and side
-_Object *_Battle::GetObjectFromIndex(int BattleSide, int BattleIndex) {
+// Get the object pointer battle id
+_Object *_Battle::GetObjectByID(int BattleID) {
+	if(BattleID == -1)
+		return nullptr;
+
+	// Search fighters
 	for(auto &Fighter : Fighters) {
-		if(Fighter->BattleSide == BattleSide && Fighter->BattleIndex == BattleIndex) {
+		if(Fighter->BattleID == BattleID)
 			return Fighter;
-		}
 	}
 
 	return nullptr;
@@ -322,8 +355,8 @@ _Object *_Battle::GetObjectFromIndex(int BattleSide, int BattleIndex) {
 // Add a fighter to the battle
 void _Battle::AddFighter(_Object *Fighter, int Side) {
 	Fighter->Battle = this;
+	Fighter->BattleID = NextID++;
 	Fighter->BattleSide = Side;
-	Fighter->BattleIndex = SideCount[Side];
 	Fighter->BattleAction.Unset();
 	for(int i = 0; i < 2; i++)
 		Fighter->PotionsLeft[i] = Fighter->MaxPotions[i];
@@ -353,6 +386,45 @@ void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters)
 	}
 }
 
+// Starts the battle and notifies the players
+void _Battle::StartBattleServer() {
+
+	// Set targets
+	SetDefaultTargets();
+
+	// Build packet
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::BATTLE_START);
+
+	// Write fighter count
+	int FighterCount = Fighters.size();
+	Packet.Write<int>(FighterCount);
+
+	// Write fighter information
+	for(auto &Fighter : Fighters) {
+
+		// Write fighter type
+		Packet.Write<int>(Fighter->DatabaseID);
+		Packet.Write<char>(Fighter->BattleSide);
+
+		if(Fighter->DatabaseID == 0) {
+
+			// Network ID
+			Packet.Write<NetworkIDType>(Fighter->NetworkID);
+			Packet.Write<glm::ivec2>(Fighter->Position);
+
+			// Player stats
+			Packet.Write<int32_t>(Fighter->Health);
+			Packet.Write<int32_t>(Fighter->MaxHealth);
+			Packet.Write<int32_t>(Fighter->Mana);
+			Packet.Write<int32_t>(Fighter->MaxMana);
+		}
+	}
+
+	// Send packet to players
+	BroadcastPacket(Packet);
+}
+
 // Starts the battle on the client
 void _Battle::StartBattleClient() {
 	BattleElement = Assets.Elements["element_battle"];
@@ -360,10 +432,14 @@ void _Battle::StartBattleClient() {
 	BattleLoseElement = Assets.Elements["element_battlelose"];
 	BattleElement->SetVisible(true);
 
+	// Set up targets
+	SetDefaultTargets();
+
 	// Set fighter position offsets
+	int SideCount[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
-		GetBattleOffset(Fighter->BattleIndex, Fighter);
-		Fighter->BattleTarget = GetObjectFromIndex(Fighter->BattleTargetSide, Fighter->BattleTargetIndex);
+		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
+		SideCount[Fighter->BattleSide]++;
 	}
 }
 
@@ -456,10 +532,17 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 
 // Give each fighter an initial target
 void _Battle::SetDefaultTargets() {
-	for(auto &Fighter : Fighters) {
-		Fighter->BattleTargetSide = !Fighter->BattleSide;
-		Fighter->BattleTargetIndex = 0;
-		Fighter->BattleTarget = GetObjectFromIndex(Fighter->BattleTargetSide, Fighter->BattleTargetIndex);
+
+	// Get list of fighters on each side
+	std::list<_Object *> FighterList[2];
+	GetFighterList(0, FighterList[0]);
+	GetFighterList(1, FighterList[1]);
+
+	// Set opposite targets
+	for(int i = 0; i < 2; i++) {
+		for(auto &Fighter :  FighterList[i]) {
+			Fighter->BattleTarget = *FighterList[!i].begin();
+		}
 	}
 }
 
@@ -472,47 +555,6 @@ int _Battle::GetPeerCount() {
 	}
 
 	return PeerCount;
-}
-
-// Starts the battle and notifies the players
-void _Battle::StartBattleServer() {
-
-	// Set targets
-	SetDefaultTargets();
-
-	// Build packet
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_START);
-
-	// Write fighter count
-	int FighterCount = Fighters.size();
-	Packet.Write<int>(FighterCount);
-
-	// Write fighter information
-	for(auto &Fighter : Fighters) {
-
-		// Write fighter type
-		Packet.Write<int>(Fighter->DatabaseID);
-		Packet.Write<char>(Fighter->BattleSide);
-		Packet.Write<char>(Fighter->BattleTargetSide);
-		Packet.Write<char>(Fighter->BattleTargetIndex);
-
-		if(Fighter->DatabaseID == 0) {
-
-			// Network ID
-			Packet.Write<NetworkIDType>(Fighter->NetworkID);
-			Packet.Write<glm::ivec2>(Fighter->Position);
-
-			// Player stats
-			Packet.Write<int32_t>(Fighter->Health);
-			Packet.Write<int32_t>(Fighter->MaxHealth);
-			Packet.Write<int32_t>(Fighter->Mana);
-			Packet.Write<int32_t>(Fighter->MaxMana);
-		}
-	}
-
-	// Send packet to players
-	BroadcastPacket(Packet);
 }
 
 // Handle player input
@@ -573,8 +615,7 @@ void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
-		Packet.Write<char>(Fighter->BattleSide);
-		Packet.Write<char>(Fighter->BattleIndex);
+		Packet.Write<char>(Fighter->BattleID);
 		Packet.Write<int>(SkillID);
 		Packet.Write<int>(0);
 
@@ -585,12 +626,11 @@ void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 // Handle action from another player
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
-	int BattleSide = Data.Read<char>();
-	int BattleIndex = Data.Read<char>();
+	int BattleID = Data.Read<char>();
 	int SkillID = Data.Read<int>();
 	//int ItemID = Data.Read<int>();
 
-	_Object *Fighter = GetObjectFromIndex(BattleSide, BattleIndex);
+	_Object *Fighter = GetObjectByID(BattleID);
 	if(Fighter)
 		Fighter->BattleAction.Skill = Stats->Skills[SkillID];
 }

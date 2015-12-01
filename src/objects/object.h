@@ -220,10 +220,8 @@ class _Object {
 
 		// Battle
 		_Battle *Battle;
+		int BattleID;
 		int BattleSide;
-		int BattleIndex;
-		int BattleTargetIndex;
-		int BattleTargetSide;
 		_Object *BattleTarget;
 		_Action BattleAction;
 

@@ -884,8 +884,6 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 		// Get fighter type
 		int DatabaseID = Data.Read<int>();
 		int Side = Data.Read<char>();
-		int BattleTargetSide = Data.Read<char>();
-		int BattleTarget = Data.Read<char>();
 
 		_Object *Fighter = nullptr;
 		if(DatabaseID == 0) {
@@ -920,9 +918,6 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 			Battle->AddFighter(Fighter, Side);
 		}
-
-		Fighter->BattleTargetSide = BattleTargetSide;
-		Fighter->BattleTargetIndex = BattleTarget;
 	}
 
 	// Start the battle

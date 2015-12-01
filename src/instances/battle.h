@@ -91,7 +91,7 @@ class _Battle {
 		void AddFighter(_Object *Fighter, int Side);
 		void RemoveFighter(_Object *RemoveFighter);
 		void SetDefaultTargets();
-		_Object *GetObjectFromIndex(int BattleSide, int BattleIndex);
+		_Object *GetObjectByID(int BattleID);
 		int GetPeerCount();
 
 		// Updates
@@ -100,8 +100,8 @@ class _Battle {
 		void CheckEnd();
 
 		// Setup
-		void StartBattleClient();
 		void StartBattleServer();
+		void StartBattleClient();
 
 		// Resolve
 		void ResolveAction(_Object *SourceFighter);
@@ -141,9 +141,11 @@ class _Battle {
 		// Objects
 		std::list<_Object *> Fighters;
 		int SideCount[2];
+		int NextID;
 
 		// Battle results
-		int TotalExperience, TotalGold;
+		int TotalExperience;
+		int TotalGold;
 
 		// UI
 		_Element *BattleElement;

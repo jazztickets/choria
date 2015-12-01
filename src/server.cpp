@@ -286,7 +286,7 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
-		case PacketType::BATTLE_ACTION:
+		case PacketType::BATTLE_SETACTION:
 			HandleBattleAction(Data, Peer);
 		break;
 		case PacketType::BATTLE_CHANGETARGET:
@@ -1161,9 +1161,8 @@ void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
 	if(!Player->Battle)
 		return;
 
-	Player->BattleTargetSide = Data.Read<char>();
-	Player->BattleTargetIndex = Data.Read<char>();
-	Player->BattleTarget = Player->Battle->GetObjectFromIndex(Player->BattleTargetSide, Player->BattleTargetIndex);
+	int BattleTargetID = Data.Read<char>();
+	Player->BattleTarget = Player->Battle->GetObjectByID(BattleTargetID);
 }
 
 // Removes a player from a battle and deletes the battle if necessary
@@ -1306,7 +1305,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	Zone = 3;
+	Zone = 4;
 
 	// Get monsters
 	std::list<int> MonsterIDs;
