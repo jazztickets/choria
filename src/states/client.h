@@ -112,9 +112,9 @@ class _ClientState : public _State {
 		void HandleTradeAccept(_Buffer &Data);
 		void HandleTradeExchange(_Buffer &Data);
 		void HandleBattleStart(_Buffer &Data);
+		void HandleBattleAction(_Buffer &Data);
 		void HandleBattleTurnResults(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
-		void HandleBattleCommand(_Buffer &Data);
 		void HandleHUD(_Buffer &Data);
 
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);

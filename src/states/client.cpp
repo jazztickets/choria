@@ -171,7 +171,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				HUD->ToggleInGameMenu();
 			break;
 			default:
-				Battle->ClientHandleAction(Action);
+				Battle->ClientHandleInput(Action);
 			break;
 		}
 	}
@@ -427,6 +427,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_START:
 			HandleBattleStart(Data);
 		break;
+		case PacketType::BATTLE_ACTION:
+			HandleBattleAction(Data);
+		break;
 	/*
 		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
@@ -436,9 +439,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		break;
 		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
-		break;
-		case PacketType::BATTLE_COMMAND:
-			HandleBattleCommand(Data);
 		break;
 */
 		default:
@@ -894,6 +894,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 	// Create a new battle instance
 	Battle = new _Battle();
+	Battle->Stats = Stats;
 	Battle->ClientPlayer = Player;
 	Battle->ClientNetwork = Network;
 
@@ -952,6 +953,14 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	Battle->StartBattleClient();
 }
 
+// Handles a battle action set from another player
+void _ClientState::HandleBattleAction(_Buffer &Data) {
+	if(!Player || !Battle)
+		return;
+
+	Battle->ClientHandlePlayerAction(Data);
+}
+
 /*
 // Handles the result of a turn in battle
 void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
@@ -971,18 +980,6 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 		return;
 
 	((_ClientBattle *)Player->Battle)->EndBattle(Packet);
-}
-
-// Handles a battle command from other players
-void _ClientState::HandleBattleCommand(_Buffer &Data) {
-
-	// Check for a battle in progress
-	if(!Player->Battle)
-		return;
-
-	int Slot = Data.Read<char>();
-	int SkillID = Data.Read<char>();
-	((_ClientBattle *)Player->Battle)->HandleCommand(Slot, SkillID);
 }
 
 // Handles HUD updates

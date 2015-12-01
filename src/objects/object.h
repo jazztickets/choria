@@ -45,6 +45,16 @@ struct _InventorySlot {
 	int Count;
 };
 
+struct _Action {
+	_Action() : Skill(nullptr), Item(nullptr) { }
+
+	bool IsSet() { return Skill != nullptr && Item != nullptr; }
+	void Unset() { Skill = nullptr; Item = nullptr; }
+
+	const _Skill *Skill;
+	const _Item *Item;
+};
+
 // Classes
 class _Object {
 
@@ -211,10 +221,11 @@ class _Object {
 		// Battle
 		_Battle *Battle;
 		int BattleSide;
+		int BattleIndex;
 		int BattleTargetIndex;
 		int BattleTargetSide;
 		_Object *BattleTarget;
-		int BattleActionUsing;
+		_Action BattleActionUsing;
 		const _Skill *BattleActionUsed;
 
 		// Render

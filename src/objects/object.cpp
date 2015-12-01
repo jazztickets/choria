@@ -63,10 +63,10 @@ _Object::_Object()
 	ManaAccumulator(0.0f),
 	Battle(nullptr),
 	BattleSide(0),
+	BattleIndex(0),
 	BattleTargetIndex(0),
 	BattleTargetSide(0),
 	BattleTarget(nullptr),
-	BattleActionUsing(-1),
 	BattleActionUsed(nullptr),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
@@ -281,11 +281,10 @@ void _Object::RenderBattle(bool IsTarget) {
 	}
 */
 	// Draw the skill used
-	if(BattleActionUsing != -1) {
-		const _Skill *Skill = GetActionBar(BattleActionUsing);
-		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + Skill->Image->Size.x/2 + 10, 0);
+	if(BattleActionUsing.Skill) {
+		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleActionUsing.Skill->Image->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SkillUsingPosition, Skill->Image);
+		Graphics.DrawCenteredImage(SkillUsingPosition, BattleActionUsing.Skill->Image);
 	}
 
 	// Draw target

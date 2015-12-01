@@ -70,7 +70,7 @@ _Battle::~_Battle() {
 }
 
 // Handle player input
-void _Battle::ClientHandleAction(int Action) {
+void _Battle::ClientHandleInput(int Action) {
 
 	switch(State) {
 		case STATE_WIN:
@@ -121,9 +121,9 @@ void _Battle::Update(double FrameTime) {
 				Fighter->TurnTimer = 1.0;
 
 				if(ServerNetwork) {
-					if(Fighter->BattleActionUsing != -1) {
-						ResolveAction(Fighter);
-					}
+					//if(Fighter->BattleActionUsing != -1) {
+					//	ResolveAction(Fighter);
+					//}
 				}
 			}
 		}
@@ -277,11 +277,11 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 		return;
 
 	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_COMMAND);
+	Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
 	Packet.Write<char>(ActionBarSlot);
 
 	ClientNetwork->SendPacket(Packet);
-	ClientPlayer->BattleActionUsing = ActionBarSlot;
+	ClientPlayer->BattleActionUsing.Skill = ClientPlayer->ActionBar[ActionBarSlot];
 
 	// Update potion count
 	if(Skill->Type == _Skill::TYPE_USEPOTION)
@@ -300,11 +300,11 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	// Update target
 	ClientPlayer->BattleTargetIndex += Direction;
 	if(ClientPlayer->BattleTargetIndex < 0)
-		ClientPlayer->BattleTargetIndex = SideCount[ClientPlayer->BattleTargetSide];
-	if(ClientPlayer->BattleTargetIndex >= SideCount[ClientPlayer->BattleTargetSide])
+		ClientPlayer->BattleTargetIndex = SideCount[ClientPlayer->BattleTargetSide]-1;
+	else if(ClientPlayer->BattleTargetIndex >= SideCount[ClientPlayer->BattleTargetSide])
 		ClientPlayer->BattleTargetIndex = 0;
 
-	ClientPlayer->BattleTarget = GetObjectFromTarget(ClientPlayer->BattleTargetIndex, ClientPlayer->BattleTargetSide);
+	ClientPlayer->BattleTarget = GetObjectFromIndex(ClientPlayer->BattleTargetSide, ClientPlayer->BattleTargetIndex);
 
 	// Send packet
 	_Buffer Packet;
@@ -315,14 +315,11 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 }
 
 // Get the object pointer from index and side
-_Object *_Battle::GetObjectFromTarget(int TargetIndex, int TargetSide) {
-	int SideIndex[2] = { 0, 0 };
+_Object *_Battle::GetObjectFromIndex(int BattleSide, int BattleIndex) {
 	for(auto &Fighter : Fighters) {
-		if(Fighter->BattleSide == TargetSide && TargetIndex == SideIndex[Fighter->BattleSide]) {
+		if(Fighter->BattleSide == BattleSide && Fighter->BattleIndex == BattleIndex) {
 			return Fighter;
 		}
-
-		SideIndex[Fighter->BattleSide]++;
 	}
 
 	return nullptr;
@@ -332,7 +329,8 @@ _Object *_Battle::GetObjectFromTarget(int TargetIndex, int TargetSide) {
 void _Battle::AddFighter(_Object *Fighter, int Side) {
 	Fighter->Battle = this;
 	Fighter->BattleSide = Side;
-	Fighter->BattleActionUsing = -1;
+	Fighter->BattleIndex = SideCount[Side];
+	Fighter->BattleActionUsing.Unset();
 	for(int i = 0; i < 2; i++)
 		Fighter->PotionsLeft[i] = Fighter->MaxPotions[i];
 
@@ -380,21 +378,10 @@ void _Battle::StartBattleClient() {
 	BattleElement->SetVisible(true);
 
 	// Set fighter position offsets
-	int SideIndex[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
-		GetBattleOffset(SideIndex[Fighter->BattleSide], Fighter);
-		SideIndex[Fighter->BattleSide]++;
-
-		Fighter->BattleTarget = GetObjectFromTarget(Fighter->BattleTargetIndex, Fighter->BattleTargetSide);
+		GetBattleOffset(Fighter->BattleIndex, Fighter);
+		Fighter->BattleTarget = GetObjectFromIndex(Fighter->BattleTargetSide, Fighter->BattleTargetIndex);
 	}
-}
-
-// Handles a command from an other player
-void _Battle::HandleCommand(int Slot, uint32_t SkillID) {
-	//int Index = GetFighterFromSlot(Slot);
-	//if(Index != -1) {
-	//	Fighters[Index]->SkillUsing = Stats->Skills[SkillID];
-	//}
 }
 
 // Displays turn results from the server
@@ -517,7 +504,7 @@ void _Battle::SetDefaultTargets() {
 	for(auto &Fighter : Fighters) {
 		Fighter->BattleTargetSide = !Fighter->BattleSide;
 		Fighter->BattleTargetIndex = 0;
-		Fighter->BattleTarget = GetObjectFromTarget(Fighter->BattleTargetIndex, Fighter->BattleTargetSide);
+		Fighter->BattleTarget = GetObjectFromIndex(Fighter->BattleTargetSide, Fighter->BattleTargetIndex);
 	}
 }
 
@@ -577,13 +564,37 @@ void _Battle::StartBattleServer() {
 void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 
 	// Check for needed commands
-	if(Fighter->BattleActionUsing == -1) {
-		Fighter->BattleActionUsing = ActionBarSlot;
-		//Player->Target = Target;
+	if(!Fighter->BattleActionUsing.IsSet()) {
 
-		// Notify other players
-		SendActionToPlayers(Fighter);
+		int SkillID = 0;
+		if(ActionBarSlot != -1) {
+			Fighter->BattleActionUsing.Skill = Fighter->ActionBar[ActionBarSlot];
+			if(Fighter->BattleActionUsing.Skill)
+				SkillID = Fighter->BattleActionUsing.Skill->ID;
+		}
+
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
+		Packet.Write<char>(Fighter->BattleSide);
+		Packet.Write<char>(Fighter->BattleIndex);
+		Packet.Write<int>(SkillID);
+		Packet.Write<int>(0);
+
+		BroadcastPacket(Packet);
 	}
+}
+
+// Handle actino from another player
+void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
+
+	int BattleSide = Data.Read<char>();
+	int BattleIndex = Data.Read<char>();
+	int SkillID = Data.Read<int>();
+	int ItemID = Data.Read<int>();
+
+	_Object *Fighter = GetObjectFromIndex(BattleSide, BattleIndex);
+	if(Fighter)
+		Fighter->BattleActionUsing.Skill = Stats->Skills[SkillID];
 }
 
 // Checks for the end of a battle
@@ -767,32 +778,3 @@ void _Battle::BroadcastPacket(_Buffer &Packet) {
 	}
 }
 
-// Send the player's action to the other players
-void _Battle::SendActionToPlayers(_Object *Player) {
-/*
-	// Get all the players on the player's side
-	std::list<_Object *> SidePlayers;
-	GetPlayerList(Player->BattleSide, SidePlayers);
-	if(SidePlayers.size() == 1)
-		return;
-
-	// Get skill id
-	const _Skill *Skill = Player->GetActionBar(Player->GetCommand());
-	uint32_t SkillID = 0;
-	if(Skill)
-		SkillID = Skill->ID;
-
-	// Build packet
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_COMMAND);
-	Packet.Write<char>(Player->BattleSlot);
-	Packet.Write<char>(SkillID);
-
-	// Send packet to all players
-	for(size_t i = 0; i < SidePlayers.size(); i++) {
-		if(SidePlayers[i] != Player) {
-			//OldServerNetwork->SendPacketToPeer(&Packet, SidePlayers[i]->Peer);
-		}
-	}
-	*/
-}

@@ -75,12 +75,13 @@ class _Battle {
 		void AddFighter(_Object *Fighter, int Side);
 		void RemoveFighter(_Object *RemoveFighter);
 		void SetDefaultTargets();
+		_Object *GetObjectFromIndex(int BattleSide, int BattleIndex);
 		int GetPeerCount();
 
 		// Updates
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
-		void ClientHandleAction(int Action);
+		void ClientHandleInput(int Action);
 
 		void ResolveAction(_Object *SourceFighter);
 
@@ -88,12 +89,6 @@ class _Battle {
 
 		// Setup
 		void StartBattleClient();
-
-		// Input
-		void HandleCommand(int Slot, uint32_t SkillID);
-
-		// Render
-		void GetBattleOffset(int SideIndex, _Object *Fighter);
 
 		// Resolve
 		void ClientResolveAction(_Buffer *Packet);
@@ -108,12 +103,10 @@ class _Battle {
 
 		// Input
 		void ServerHandleAction(_Object *Fighter, int ActionBarSlot);
+		void ClientHandlePlayerAction(_Buffer &Data);
 
 		// Resolve
 		void CheckEnd();
-
-		void BroadcastPacket(_Buffer &Packet);
-		void SendActionToPlayers(_Object *Player);
 
 		_Stats *Stats;
 		_ServerNetwork *ServerNetwork;
@@ -122,9 +115,11 @@ class _Battle {
 
 	protected:
 
+		void BroadcastPacket(_Buffer &Packet);
+
+		void GetBattleOffset(int SideIndex, _Object *Fighter);
 		void ClientSetAction(int ActionBarSlot);
 		void ChangeTarget(int Direction, int SideDirection);
-		_Object *GetObjectFromTarget(int TargetIndex, int TargetSide);
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);

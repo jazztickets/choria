@@ -99,7 +99,7 @@ class _Server {
 		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
 		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
 		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
-		void HandleBattleCommand(_Buffer &Data, _Peer *Peer);
+		void HandleBattleAction(_Buffer &Data, _Peer *Peer);
 		void HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer);
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);

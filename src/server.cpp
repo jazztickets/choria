@@ -287,8 +287,8 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
-		case PacketType::BATTLE_COMMAND:
-			HandleBattleCommand(Data, Peer);
+		case PacketType::BATTLE_ACTION:
+			HandleBattleAction(Data, Peer);
 		break;
 		case PacketType::BATTLE_CHANGETARGET:
 			HandleBattleChangeTarget(Data, Peer);
@@ -1140,7 +1140,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handles battle commands from a client
-void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleBattleAction(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1164,6 +1164,7 @@ void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
 
 	Player->BattleTargetSide = Data.Read<char>();
 	Player->BattleTargetIndex = Data.Read<char>();
+	Player->BattleTarget = Player->Battle->GetObjectFromIndex(Player->BattleTargetSide, Player->BattleTargetIndex);
 }
 
 // Removes a player from a battle and deletes the battle if necessary
