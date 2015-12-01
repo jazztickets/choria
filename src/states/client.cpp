@@ -944,7 +944,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 		}
 
 		Fighter->BattleTargetSide = BattleTargetSide;
-		Fighter->BattleTarget = BattleTarget;
+		Fighter->BattleTargetIndex = BattleTarget;
 	}
 
 	// Start the battle

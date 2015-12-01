@@ -32,6 +32,7 @@
 #include <font.h>
 #include <packet.h>
 #include <random.h>
+#include <iostream>
 
 // Constructor
 _Battle::_Battle() :
@@ -158,10 +159,8 @@ void _Battle::RenderBattle() {
 	BattleElement->Render();
 
 	// Draw fighters
-	int SideIndex[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
-		Fighter->RenderBattle(ClientPlayer->BattleTargetSide == Fighter->BattleSide && ClientPlayer->BattleTarget == SideIndex[Fighter->BattleSide]);
-		SideIndex[Fighter->BattleSide]++;
+		Fighter->RenderBattle(ClientPlayer->BattleTarget == Fighter);
 	}
 }
 
@@ -299,18 +298,34 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 		ClientPlayer->BattleTargetSide = !ClientPlayer->BattleTargetSide;
 
 	// Update target
-	ClientPlayer->BattleTarget += Direction;
-	if(ClientPlayer->BattleTarget < 0)
-		ClientPlayer->BattleTarget = SideCount[ClientPlayer->BattleTargetSide];
-	if(ClientPlayer->BattleTarget >= SideCount[ClientPlayer->BattleTargetSide])
-		ClientPlayer->BattleTarget = 0;
+	ClientPlayer->BattleTargetIndex += Direction;
+	if(ClientPlayer->BattleTargetIndex < 0)
+		ClientPlayer->BattleTargetIndex = SideCount[ClientPlayer->BattleTargetSide];
+	if(ClientPlayer->BattleTargetIndex >= SideCount[ClientPlayer->BattleTargetSide])
+		ClientPlayer->BattleTargetIndex = 0;
+
+	ClientPlayer->BattleTarget = GetObjectFromTarget(ClientPlayer->BattleTargetIndex, ClientPlayer->BattleTargetSide);
 
 	// Send packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_CHANGETARGET);
 	Packet.Write<char>(ClientPlayer->BattleTargetSide);
-	Packet.Write<char>(ClientPlayer->BattleTarget);
+	Packet.Write<char>(ClientPlayer->BattleTargetIndex);
 	ClientNetwork->SendPacket(Packet);
+}
+
+// Get the object pointer from index and side
+_Object *_Battle::GetObjectFromTarget(int TargetIndex, int TargetSide) {
+	int SideIndex[2] = { 0, 0 };
+	for(auto &Fighter : Fighters) {
+		if(Fighter->BattleSide == TargetSide && TargetIndex == SideIndex[Fighter->BattleSide]) {
+			return Fighter;
+		}
+
+		SideIndex[Fighter->BattleSide]++;
+	}
+
+	return nullptr;
 }
 
 // Add a fighter to the battle
@@ -356,16 +371,6 @@ void _Battle::GetPlayerList(int Side, std::list<_Object *> &Players) {
 	}
 }
 
-// Gets a fighter index from a slot number
-int _Battle::GetFighterFromSlot(int Slot) {
-	/*for(auto &Fighter : Fighters) {
-		if(Fighter->BattleSlot == Slot) {
-			return Fighter->BattleSlot;
-		}
-	}*/
-
-	return -1;
-}
 
 // Starts the battle on the client
 void _Battle::StartBattleClient() {
@@ -379,6 +384,8 @@ void _Battle::StartBattleClient() {
 	for(auto &Fighter : Fighters) {
 		GetBattleOffset(SideIndex[Fighter->BattleSide], Fighter);
 		SideIndex[Fighter->BattleSide]++;
+
+		Fighter->BattleTarget = GetObjectFromTarget(Fighter->BattleTargetIndex, Fighter->BattleTargetSide);
 	}
 }
 
@@ -509,7 +516,8 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 void _Battle::SetDefaultTargets() {
 	for(auto &Fighter : Fighters) {
 		Fighter->BattleTargetSide = !Fighter->BattleSide;
-		Fighter->BattleTarget = 0;
+		Fighter->BattleTargetIndex = 0;
+		Fighter->BattleTarget = GetObjectFromTarget(Fighter->BattleTargetIndex, Fighter->BattleTargetSide);
 	}
 }
 
@@ -545,7 +553,7 @@ void _Battle::StartBattleServer() {
 		Packet.Write<int>(Fighter->DatabaseID);
 		Packet.Write<char>(Fighter->BattleSide);
 		Packet.Write<char>(Fighter->BattleTargetSide);
-		Packet.Write<char>(Fighter->BattleTarget);
+		Packet.Write<char>(Fighter->BattleTargetIndex);
 
 		if(Fighter->DatabaseID == 0) {
 

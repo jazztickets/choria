@@ -124,11 +124,11 @@ class _Battle {
 
 		void ClientSetAction(int ActionBarSlot);
 		void ChangeTarget(int Direction, int SideDirection);
+		_Object *GetObjectFromTarget(int TargetIndex, int TargetSide);
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
 		void GetPlayerList(int Side, std::list<_Object *> &Players);
-		int GetFighterFromSlot(int Slot);
 
 		void RenderBattle();
 		void RenderBattleWin();

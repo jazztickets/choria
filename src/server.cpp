@@ -1153,7 +1153,7 @@ void _Server::HandleBattleCommand(_Buffer &Data, _Peer *Peer) {
 	Player->Battle->ServerHandleAction(Player, ActionBarSlot);
 }
 
-// Handles battle commands from a client
+// Handles battle target changes
 void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
@@ -1163,9 +1163,7 @@ void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	Player->BattleTargetSide = Data.Read<char>();
-	Player->BattleTarget = Data.Read<char>();
-
-	Log << Player->BattleTargetSide  << " " << Player->BattleTarget << std::endl;
+	Player->BattleTargetIndex = Data.Read<char>();
 }
 
 // Removes a player from a battle and deletes the battle if necessary

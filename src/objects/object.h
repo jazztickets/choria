@@ -211,8 +211,9 @@ class _Object {
 		// Battle
 		_Battle *Battle;
 		int BattleSide;
-		int BattleTarget;
+		int BattleTargetIndex;
 		int BattleTargetSide;
+		_Object *BattleTarget;
 		int BattleActionUsing;
 		const _Skill *BattleActionUsed;
 
