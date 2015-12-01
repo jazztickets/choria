@@ -80,10 +80,10 @@ struct _Trader {
 	std::vector<_TraderItem> TraderItems;
 };
 
-struct _MonsterDrop {
-	_MonsterDrop(int ItemID, int Odds) : ItemID(ItemID), Odds(Odds) { }
-	int ItemID;
-	int Odds;
+struct _ItemDrop {
+	_ItemDrop(uint32_t ItemID, uint32_t Odds) : ItemID(ItemID), Odds(Odds) { }
+	uint32_t ItemID;
+	uint32_t Odds;
 };
 
 // Classes
@@ -107,7 +107,7 @@ class _Stats {
 
 		// Monsters
 		void GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters);
-		void GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Drops);
+		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops);
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[Level-1]; }

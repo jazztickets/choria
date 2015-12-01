@@ -292,15 +292,12 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::BATTLE_CHANGETARGET:
 			HandleBattleChangeTarget(Data, Peer);
 		break;
-			/*
 		case PacketType::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
 		break;
+	/*
 		case PacketType::WORLD_ATTACKPLAYER:
 			HandleAttackPlayer(Data, Peer);
-		break;
-		case PacketType::WORLD_TELEPORT:
-			HandleTeleport(Data, Peer);
 		break;
 	*/
 		default:
@@ -1165,6 +1162,26 @@ void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
 	Player->BattleTarget = Player->Battle->GetObjectByID(BattleTargetID);
 }
 
+// The client is done with the battle results screen
+void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Check for the last player leaving the battle
+	RemovePlayerFromBattle(Player);
+
+	// Check for death
+	if(Player->Health == 0) {
+		Player->RestoreHealthMana();
+		//SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
+	}
+
+	// Refresh player's hud
+	SendHUD(Peer);
+}
+
 // Removes a player from a battle and deletes the battle if necessary
 void _Server::RemovePlayerFromBattle(_Object *Player) {
 	if(!Player->Battle)
@@ -1187,31 +1204,8 @@ void _Server::RemovePlayerFromBattle(_Object *Player) {
 		}
 	}
 }
+
 /*
-// The client is done with the battle results screen
-void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = Peer->data;
-	if(!Player)
-		return;
-
-	_ServerBattle *Battle = (_ServerBattle *)Player->Battle;
-	if(!Battle)
-		return;
-
-	// Check for the last player leaving the battle
-	RemovePlayerFromBattle(Player);
-
-	// Check for death
-	if(Player->Health == 0) {
-		Player->RestoreHealthMana();
-		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
-		Player->Save();
-	}
-
-	// Send updates
-	SendHUD(Player);
-}
-
 // Handles a player's request to attack another player
 void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->data;
@@ -1247,9 +1241,14 @@ void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
 		}
 	}
 }
+*/
 
 // Updates the player's HUD
-void _Server::SendHUD(_Object *Player) {
+void _Server::SendHUD(_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
@@ -1262,7 +1261,6 @@ void _Server::SendHUD(_Object *Player) {
 
 	Network->SendPacket(Packet, Peer);
 }
-*/
 
 // Send a message to the player
 void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color) {
@@ -1305,7 +1303,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	Zone = 4;
+	Zone = 1;
 
 	// Get monsters
 	std::list<int> MonsterIDs;
@@ -1345,6 +1343,6 @@ void _Server::StartBattle(_Object *Object, int Zone) {
 		}
 
 		// Send messages out
-		Battle->StartBattleServer();
+		Battle->ServerStartBattle();
 	}
 }

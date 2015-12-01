@@ -170,9 +170,13 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 			case _Actions::MENU:
 				HUD->ToggleInGameMenu();
 			break;
-			default:
-				Battle->ClientHandleInput(Action);
-			break;
+			default: {
+				bool BattleFinished = Battle->ClientHandleInput(Action);
+				if(BattleFinished) {
+					delete Battle;
+					Player->Battle = Battle = nullptr;
+				}
+			} break;
 		}
 	}
 	else {
@@ -433,15 +437,12 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_ACTIONRESULTS:
 			HandleBattleTurnResults(Data);
 		break;
-	/*
-		case PacketType::WORLD_HUD:
-			HandleHUD(Data);
-		break;
-
 		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
 		break;
-*/
+		case PacketType::WORLD_HUD:
+			HandleHUD(Data);
+		break;
 		default:
 			Menu.HandlePacket(Data, Type);
 		break;
@@ -922,7 +923,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 	// Start the battle
 	HUD->CloseWindows();
-	Battle->StartBattleClient();
+	Battle->ClientStartBattle();
 }
 
 // Handles a battle action set from another player
@@ -946,7 +947,7 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
-	Battle->EndBattle(Data);
+	Battle->ClientEndBattle(Data);
 }
 
 // Handles HUD updates

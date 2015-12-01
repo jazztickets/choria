@@ -375,19 +375,6 @@ const _Skill *_Object::GetActionBar(int Slot) {
 	return ActionBar[Slot];
 }
 
-// Updates the monster's target based on AI
-void _Object::UpdateTarget(const std::vector<_Object *> &Fighters) {
-
-	// Get count of fighters
-	//int Count = Fighters.size();
-
-	// Get a random index
-	//std::uniform_int_distribution<int> Distribution(0, Count-1);
-	//int RandomIndex = Distribution(RandomGenerator);
-
-	//BattleTarget = Fighters[RandomIndex]->BattleSlot;
-}
-
 // Updates the player
 void _Object::Update(double FrameTime) {
 	CheckEvent = false;
@@ -1069,6 +1056,8 @@ void _Object::CalculatePlayerStats() {
 
 // Calculates the base level stats
 void _Object::CalculateLevelStats() {
+	if(!Stats)
+		return;
 
 	// Cap min experience
 	if(Experience < 0)

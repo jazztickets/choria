@@ -32,6 +32,7 @@
 #include <font.h>
 #include <packet.h>
 #include <random.h>
+#include <vector>
 #include <algorithm>
 #include <iostream>
 
@@ -42,10 +43,11 @@ _Battle::_Battle() :
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	State(STATE_NONE),
+	Done(false),
 	Timer(0),
 	NextID(0),
-	TotalExperience(0),
-	TotalGold(0),
+	ClientExperienceReceived(0),
+	ClientGoldReceived(0),
 	BattleElement(nullptr),
 	BattleWinElement(nullptr),
 	BattleLoseElement(nullptr) {
@@ -73,24 +75,37 @@ _Battle::~_Battle() {
 // Update battle
 void _Battle::Update(double FrameTime) {
 
-	int AliveCount[2] = { 0, 0 };
-	for(auto &Fighter : Fighters) {
+	if(!Done) {
 
-		// Count alive fighters for each side
-		if(Fighter->Health > 0)
-			AliveCount[Fighter->BattleSide]++;
+		// Update fighters
+		int AliveCount[2] = { 0, 0 };
+		for(auto &Fighter : Fighters) {
 
-		// Check turn timer
-		Fighter->TurnTimer += FrameTime * 0.5f;
-		if(Fighter->TurnTimer > 1.0) {
-			Fighter->TurnTimer = 1.0;
+			// Count alive fighters for each side
+			if(Fighter->Health > 0)
+				AliveCount[Fighter->BattleSide]++;
 
-			if(ServerNetwork) {
-				if(Fighter->BattleAction.IsSet()) {
-					ResolveAction(Fighter);
+			// Check turn timer
+			Fighter->TurnTimer += FrameTime * 0.5f;
+			if(Fighter->TurnTimer > 1.0) {
+				Fighter->TurnTimer = 1.0;
+
+				if(ServerNetwork) {
+					if(Fighter->BattleAction.IsSet()) {
+						ResolveAction(Fighter);
+					}
 				}
 			}
 		}
+
+		// Check for end
+		if(ServerNetwork) {
+			if(AliveCount[0] == 0 || AliveCount[1] == 0) {
+				ServerEndBattle();
+			}
+		}
+
+		Timer += FrameTime;
 	}
 }
 
@@ -123,13 +138,13 @@ void _Battle::RenderBattle() {
 // Renders the battle win screen
 void _Battle::RenderBattleWin() {
 	BattleWinElement->SetVisible(true);
-	Assets.Labels["label_battlewin_experience"]->Text = std::to_string(TotalExperience) + " experience";
-	Assets.Labels["label_battlewin_coins"]->Text = std::to_string(TotalGold) + " gold";
-	Assets.Labels["label_battlewin_chest"]->Visible = MonsterDrops.size() == 0;
+	Assets.Labels["label_battlewin_experience"]->Text = std::to_string(ClientExperienceReceived) + " experience";
+	Assets.Labels["label_battlewin_coins"]->Text = std::to_string(ClientGoldReceived) + " gold";
+	Assets.Labels["label_battlewin_chest"]->Visible = ClientItemDrops.size() == 0;
 	BattleWinElement->Render();
 
 	// Draw item drops
-	if(MonsterDrops.size() > 0) {
+	if(ClientItemDrops.size() > 0) {
 
 		// Get positions
 		_Image *Image = Assets.Images["image_battlewin_chest"];
@@ -138,7 +153,7 @@ void _Battle::RenderBattleWin() {
 		glm::ivec2 DrawPosition(StartPosition);
 
 		// Draw items found
-		for(auto &MonsterDrop : MonsterDrops) {
+		for(auto &MonsterDrop : ClientItemDrops) {
 			const _Texture *Texture = MonsterDrop->Image;
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Texture);
@@ -155,7 +170,7 @@ void _Battle::RenderBattleWin() {
 
 // Renders the battle lost screen
 void _Battle::RenderBattleLose() {
-	Assets.Labels["label_battlelose_gold"]->Text = "You lost " + std::to_string(std::abs(TotalGold)) + " gold";
+	Assets.Labels["label_battlelose_gold"]->Text = "You lost " + std::to_string(std::abs(ClientGoldReceived)) + " gold";
 
 	BattleLoseElement->SetVisible(true);
 	BattleLoseElement->Render();
@@ -387,7 +402,7 @@ void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters)
 }
 
 // Starts the battle and notifies the players
-void _Battle::StartBattleServer() {
+void _Battle::ServerStartBattle() {
 
 	// Set targets
 	SetDefaultTargets();
@@ -426,7 +441,7 @@ void _Battle::StartBattleServer() {
 }
 
 // Starts the battle on the client
-void _Battle::StartBattleClient() {
+void _Battle::ClientStartBattle() {
 	BattleElement = Assets.Elements["element_battle"];
 	BattleWinElement = Assets.Elements["element_battlewin"];
 	BattleLoseElement = Assets.Elements["element_battlelose"];
@@ -443,22 +458,163 @@ void _Battle::StartBattleClient() {
 	}
 }
 
+// Checks for the end of a battle
+void _Battle::ServerEndBattle() {
+
+	// Get statistics for each side
+	_BattleResult SideStats[2];
+	std::list<_Object *> SideFighters[2];
+	for(int Side = 0; Side < 2; Side++) {
+
+		// Get a list of fighters that are still in the battle
+		GetFighterList(Side, SideFighters[Side]);
+
+		// Loop through fighters
+		for(auto &Fighter : SideFighters[Side]) {
+
+			// Keep track of players
+			if(Fighter->DatabaseID == 0) {
+				SideStats[Side].PlayerCount++;
+			}
+			else
+				SideStats[Side].MonsterCount++;
+
+			// Tally alive fighters
+			if(Fighter->Health > 0) {
+				SideStats[Side].Dead = false;
+			}
+
+			// Sum experience and gold
+			SideStats[Side].TotalExperienceGiven += Fighter->GetExperienceGiven();
+			SideStats[Side].TotalGoldGiven += Fighter->GetGoldGiven();
+			SideStats[Side].FighterCount++;
+		}
+	}
+
+	// Get winning side
+	int WinningSide;
+	if(SideStats[0].Dead && SideStats[1].Dead)
+		WinningSide = -1;
+	else if(SideStats[0].Dead)
+		WinningSide = 1;
+	else
+		WinningSide = 0;
+
+	// Check for a winning side
+	if(WinningSide != -1 && SideFighters[WinningSide].size()) {
+
+		// Divide up rewards
+		for(int Side = 0; Side < 2; Side++) {
+			int OtherSide = !Side;
+
+			// Divide experience up
+			if(SideStats[OtherSide].TotalExperienceGiven > 0) {
+				SideStats[Side].ExperiencePerFighter = SideStats[OtherSide].TotalExperienceGiven / SideStats[Side].FighterCount;
+				if(SideStats[Side].ExperiencePerFighter <= 0)
+					SideStats[Side].ExperiencePerFighter = 1;
+			}
+
+			// Divide gold up
+			if(SideStats[OtherSide].TotalGoldGiven > 0) {
+				SideStats[Side].GoldPerFighter = SideStats[OtherSide].TotalGoldGiven / SideStats[Side].FighterCount;
+				if(SideStats[Side].GoldPerFighter <= 0)
+					SideStats[Side].GoldPerFighter = 1;
+			}
+		}
+
+		// Convert winning side list to array
+		std::vector<_Object *> FighterArray { std::begin(SideFighters[WinningSide]), std::end(SideFighters[WinningSide]) };
+
+		// Generate items drops
+		std::list<uint32_t> ItemDrops;
+		for(auto &Fighter : SideFighters[!WinningSide]) {
+			if(Fighter->DatabaseID)
+				Stats->GenerateItemDrops(Fighter->DatabaseID, 1, ItemDrops);
+		}
+
+		// Give out drops
+		for(auto &ItemID : ItemDrops) {
+			std::shuffle(FighterArray.begin(), FighterArray.end(), RandomGenerator);
+			_Object *Fighter = FighterArray[0];
+			Fighter->ItemDropsReceived.push_back(ItemID);
+		}
+	}
+
+	// Send data
+	for(auto &Fighter : Fighters) {
+
+		// Get rewards
+		int ExperienceEarned = 0;
+		int GoldEarned = 0;
+		if(Fighter->BattleSide != WinningSide) {
+			GoldEarned = (int)(-Fighter->Gold * 0.1f);
+			Fighter->Deaths++;
+
+			//OldServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
+		}
+		else {
+			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
+			GoldEarned = SideStats[WinningSide].GoldPerFighter;
+			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
+			Fighter->MonsterKills += SideStats[!WinningSide].MonsterCount;
+		}
+
+		// Update stats
+		int CurrentLevel = Fighter->Level;
+		Fighter->Experience += ExperienceEarned;
+		Fighter->UpdateGold(GoldEarned);
+		Fighter->CalculatePlayerStats();
+		int NewLevel = Fighter->Level;
+		if(NewLevel > CurrentLevel) {
+			Fighter->RestoreHealthMana();
+			//OldServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
+		}
+
+		// Write results
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::BATTLE_END);
+		Packet.WriteBit(SideStats[0].Dead);
+		Packet.WriteBit(SideStats[1].Dead);
+		Packet.Write<char>(SideStats[!Fighter->BattleSide].PlayerCount);
+		Packet.Write<char>(SideStats[!Fighter->BattleSide].MonsterCount);
+		Packet.Write<int32_t>(ExperienceEarned);
+		Packet.Write<int32_t>(GoldEarned);
+
+		// Write items
+		int ItemCount = Fighter->ItemDropsReceived.size();
+		Packet.Write<char>(ItemCount);
+
+		// Write items
+		for(auto &ItemID : Fighter->ItemDropsReceived) {
+			Packet.Write<uint32_t>(ItemID);
+			Fighter->AddItem(Stats->GetItem(ItemID), 1, -1);
+		}
+		Fighter->ItemDropsReceived.clear();
+
+		// Send info
+		if(Fighter->Peer)
+			ServerNetwork->SendPacket(Packet, Fighter->Peer);
+	}
+
+	Done = true;
+}
+
 // End of a battle
-void _Battle::EndBattle(_Buffer &Data) {
-/*
+void _Battle::ClientEndBattle(_Buffer &Data) {
+
 	// Get ending stats
 	bool SideDead[2];
-	SideDead[0] = Packet->ReadBit();
-	SideDead[1] = Packet->ReadBit();
-	int PlayerKills = Packet->Read<char>();
-	int MonsterKills = Packet->Read<char>();
-	TotalExperience = Packet->Read<int32_t>();
-	TotalGold = Packet->Read<int32_t>();
-	int ItemCount = Packet->Read<char>();
+	SideDead[0] = Data.ReadBit();
+	SideDead[1] = Data.ReadBit();
+	int PlayerKills = Data.Read<char>();
+	int MonsterKills = Data.Read<char>();
+	ClientExperienceReceived = Data.Read<int32_t>();
+	ClientGoldReceived = Data.Read<int32_t>();
+	int ItemCount = Data.Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
-		int ItemID = Packet->Read<int32_t>();
+		int ItemID = Data.Read<int32_t>();
 		const _Item *Item = Stats->GetItem(ItemID);
-		MonsterDrops.push_back(Item);
+		ClientItemDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
 	}
 
@@ -468,19 +624,14 @@ void _Battle::EndBattle(_Buffer &Data) {
 	if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
 		ClientPlayer->PlayerKills += PlayerKills;
 		ClientPlayer->MonsterKills += MonsterKills;
-		TargetState = STATE_INITWIN;
+		State = STATE_WIN;
 	}
 	else {
 		ClientPlayer->Deaths++;
-		TargetState = STATE_INITLOSE;
+		State = STATE_LOSE;
 	}
-*/
-	// Go to the ending state immediately
-	/*
-	if(State != STATE_TURNRESULTS) {
-		State = TargetState;
-		TargetState = -1;
-	}*/
+
+	Timer = 0.0;
 }
 
 // Calculates a screen position for a slot
@@ -504,13 +655,6 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 
 	// Convert position to relative offset from center
 	Fighter->BattleOffset = Fighter->BattleOffset - Center;
-}
-
-// Updates player stats
-void _Battle::UpdateStats() {
-	ClientPlayer->UpdateExperience(TotalExperience);
-	ClientPlayer->UpdateGold(TotalGold);
-	ClientPlayer->CalculatePlayerStats();
 }
 
 // Removes a player from the battle, return remaining player count
@@ -558,16 +702,17 @@ int _Battle::GetPeerCount() {
 }
 
 // Handle player input
-void _Battle::ClientHandleInput(int Action) {
+bool _Battle::ClientHandleInput(int Action) {
 
 	switch(State) {
 		case STATE_WIN:
 		case STATE_LOSE: {
 			if(Timer > BATTLE_WAITENDTIME) {
-
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
-				//ClientState.Network->SendPacket(Packet);
+				ClientNetwork->SendPacket(Packet);
+
+				return true;
 			}
 		}
 		break;
@@ -598,6 +743,8 @@ void _Battle::ClientHandleInput(int Action) {
 			}
 		break;
 	}
+
+	return false;
 }
 
 // Handles input from the client
@@ -635,176 +782,6 @@ void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 		Fighter->BattleAction.Skill = Stats->Skills[SkillID];
 }
 
-// Checks for the end of a battle
-void _Battle::CheckEnd() {
-	/*
-	if(State == STATE_END)
-		return;
-
-	// Players that get a reward
-	std::list<_Object *> Players;
-
-	// Get statistics for each side
-	_BattleResult Side[2];
-	for(int i = 0; i < 2; i++) {
-
-		// Get a list of fighters that are still in the battle
-		std::list<_Object *> SideFighters;
-		GetFighterList(i, SideFighters);
-
-		// Loop through fighters
-		for(size_t j = 0; j < SideFighters.size(); j++) {
-
-			// Keep track of players
-			if(SideFighters[j]->Type == _Object::PLAYER) {
-				Players.push_back(SideFighters[j]);
-				Side[i].PlayerCount++;
-			}
-			else
-				Side[i].MonsterCount++;
-
-			// Tally alive fighters
-			if(SideFighters[j]->Health > 0) {
-				Side[i].Dead = false;
-			}
-
-			// Sum experience and gold
-			Side[i].ExperienceGiven += SideFighters[j]->GetExperienceGiven();
-			Side[i].GoldGiven += SideFighters[j]->GetGoldGiven();
-			Side[i].FighterCount++;
-		}
-	}
-
-	// Check end conditions
-	if(Side[0].Dead || Side[1].Dead || Side[0].FighterCount == 0 || Side[1].FighterCount == 0) {
-
-		// Cap experience
-		for(int i = 0; i < 2; i++) {
-			if(Side[i].FighterCount > 0) {
-				int OtherSide = !i;
-
-				// Divide experience up
-				if(Side[OtherSide].ExperienceGiven > 0) {
-					Side[OtherSide].ExperienceGiven /= Side[i].FighterCount;
-					if(Side[OtherSide].ExperienceGiven <= 0)
-						Side[OtherSide].ExperienceGiven = 1;
-				}
-
-				// Divide gold up
-				if(Side[OtherSide].GoldGiven > 0) {
-					Side[OtherSide].GoldGiven /= Side[i].FighterCount;
-					if(Side[OtherSide].GoldGiven <= 0)
-						Side[OtherSide].GoldGiven = 1;
-				}
-			}
-		}
-
-		// Hand out monster drops
-		std::list<int> PlayerItems[3];
-		if(!Side[0].Dead) {
-
-			// Get a monster list
-			std::list<_Object *> Monsters;
-			GetMonsterList(Monsters);
-
-			// Make sure there are monsters
-			if(Monsters.size() > 0) {
-
-				// Generate monster drops in player vs monster situations
-				std::list<int> MonsterDrops;
-				for(size_t i = 0; i < Monsters.size(); i++) {
-					Stats->GenerateMonsterDrops(Monsters[i]->DatabaseID, 1, MonsterDrops);
-				}
-
-				// Get a list of players that receive items
-				std::list<_Object *> LeftSidePlayers;
-				GetPlayerList(0, LeftSidePlayers);
-
-				// Give out rewards round robin style
-				std::uniform_int_distribution<size_t> Distribution(0, LeftSidePlayers.size()-1);
-				size_t PlayerIndex = Distribution(RandomGenerator);
-				for(size_t i = 0; i < MonsterDrops.size(); i++) {
-					int LeftSideSlot = LeftSidePlayers[PlayerIndex]->BattleSlot / 2;
-					if(MonsterDrops[i] > 0) {
-						PlayerItems[LeftSideSlot].push_back(MonsterDrops[i]);
-
-						// Go to next player
-						PlayerIndex++;
-						if(PlayerIndex >= LeftSidePlayers.size())
-							PlayerIndex = 0;
-					}
-				}
-			}
-		}
-
-		// Award each player
-		for(size_t i = 0; i < Players.size(); i++) {
-
-			// Get rewards
-			int ExperienceEarned = 0;
-			int GoldEarned = 0;
-			_BattleResult *PlayerSide = &Side[Players[i]->BattleSide];
-			_BattleResult *OppositeSide = &Side[!Players[i]->BattleSide];
-			if(PlayerSide->Dead) {
-				GoldEarned = (int)(-Players[i]->Gold * 0.1f);
-				Players[i]->Deaths++;
-
-				//OldServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
-			}
-			else {
-				ExperienceEarned = OppositeSide->ExperienceGiven;
-				GoldEarned = OppositeSide->GoldGiven;
-				Players[i]->PlayerKills += OppositeSide->PlayerCount;
-				Players[i]->MonsterKills += OppositeSide->MonsterCount;
-
-				// Revive dead players and give them one health
-				//if(Players[i]->Health == 0)
-				//	Players[i]->Health = 1;
-			}
-
-			// Update stats
-			int CurrentLevel = Players[i]->Level;
-			Players[i]->UpdateExperience(ExperienceEarned);
-			Players[i]->UpdateGold(GoldEarned);
-			Players[i]->CalculatePlayerStats();
-			int NewLevel = Players[i]->Level;
-			if(NewLevel > CurrentLevel) {
-				Players[i]->RestoreHealthMana();
-				//OldServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
-			}
-
-			// Write results
-			_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::BATTLE_END);
-			Packet.WriteBit(Side[0].Dead);
-			Packet.WriteBit(Side[1].Dead);
-			Packet.Write<char>(OppositeSide->PlayerCount);
-			Packet.Write<char>(OppositeSide->MonsterCount);
-			Packet.Write<int32_t>(ExperienceEarned);
-			Packet.Write<int32_t>(GoldEarned);
-
-			// Write items
-			int PlayerIndex = Players[i]->BattleSlot / 2;
-			int ItemCount = PlayerItems[PlayerIndex].size();
-			Packet.Write<char>(ItemCount);
-
-			// Write items
-			for(int j = 0; j < ItemCount; j++) {
-				int ItemID = PlayerItems[PlayerIndex][j];
-				Packet.Write<int32_t>(ItemID);
-				Players[i]->AddItem(Stats->GetItem(ItemID), 1, -1);
-			}
-
-			//OldServerNetwork->SendPacketToPeer(&Packet, Players[i]->Peer);
-		}
-
-		State = STATE_END;
-	}
-	else
-		State = STATE_INPUT;
-		*/
-}
-
 // Send a packet to all players
 void _Battle::BroadcastPacket(_Buffer &Packet) {
 
@@ -815,4 +792,3 @@ void _Battle::BroadcastPacket(_Buffer &Packet) {
 		}
 	}
 }
-

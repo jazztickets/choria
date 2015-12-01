@@ -19,7 +19,7 @@
 		$MonsterID = $Result[$i][0];
 ?>
 	<tr>
-		<td><a href="data_ae.php?id=<?=$Result[$i][0]?>&table=monsters&mode=edit"><?=$MonsterID?></a></td>
+		<td><a href="data_ae.php?id=<?=$Result[$i][0]?>&idname=id&table=monster&mode=edit"><?=$MonsterID?></a></td>
 		<td><?=$Result[$i][1]?></td>
 	<?
 		$DropsCountQuery = $Database->query("select count(MD.ID) from monsterdrop MD left join item I on MD.item_id = I.ID where MD.monster_id = $MonsterID");

@@ -347,7 +347,7 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters) {
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Drops) {
+void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops) {
 	if(MonsterID == 0)
 		return;
 
@@ -355,36 +355,38 @@ void _Stats::GenerateMonsterDrops(int MonsterID, int Count, std::vector<int> &Dr
 	Database->PrepareQuery("SELECT item_id, odds FROM monsterdrop WHERE monster_id = @monster_id");
 	Database->BindInt(1, MonsterID);
 
-	// Get items from monster
-	std::vector<_MonsterDrop> MonsterDrop;
-	int OddsSum = 0;
+	// Get list of possible drops and build CDT
+	std::list<_ItemDrop> PossibleItemDrops;
+	uint32_t OddsSum = 0;
 	while(Database->FetchRow()) {
-		int ItemID = Database->GetInt("item_id");
-		int Odds = Database->GetInt("odds");
+		uint32_t ItemID = Database->GetInt("item_id");
+		uint32_t Odds = Database->GetInt("odds");
 		OddsSum += Odds;
 
-		MonsterDrop.push_back(_MonsterDrop(ItemID, OddsSum));
+		PossibleItemDrops.push_back(_ItemDrop(ItemID, OddsSum));
 	}
-
-	// Free memory
 	Database->CloseQuery();
 
 	// Check for items
 	if(OddsSum > 0) {
 
 		// Generate items
-		int RandomNumber;
-		size_t ItemIndex;
-		for(int i = 0; i < Count; i++) {
-			std::uniform_int_distribution<int> Distribution(1, OddsSum);
-			RandomNumber = Distribution(RandomGenerator);
-			for(ItemIndex = 0; ItemIndex < MonsterDrop.size(); ItemIndex++) {
-				if(RandomNumber <= MonsterDrop[ItemIndex].Odds)
+		for(uint32_t i = 0; i < Count; i++) {
+			std::uniform_int_distribution<uint32_t> Distribution(1, OddsSum);
+			uint32_t RandomNumber = Distribution(RandomGenerator);
+
+			// Find item id in CDT
+			uint32_t ItemID = 0;
+			for(auto &MonsterDrop : PossibleItemDrops) {
+				if(RandomNumber <= MonsterDrop.Odds) {
+					ItemID = MonsterDrop.ItemID;
 					break;
+				}
 			}
 
 			// Populate item list
-			Drops.push_back(MonsterDrop[ItemIndex].ItemID);
+			if(ItemID)
+				ItemDrops.push_back(ItemID);
 		}
 	}
 }

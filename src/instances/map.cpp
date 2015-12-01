@@ -215,7 +215,7 @@ void _Map::CheckEvents(_Object *Object) {
 				Object->Vendor = nullptr;
 				Object->Trader = nullptr;
 
-				if(1 || Object->NextBattle <= 0) {
+				if(Object->NextBattle <= 0) {
 					Server->StartBattle(Object, Tile->Zone);
 				}
 			}

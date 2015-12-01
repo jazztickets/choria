@@ -60,15 +60,19 @@ struct _BattleResult {
 		FighterCount(0),
 		PlayerCount(0),
 		MonsterCount(0),
-		ExperienceGiven(0),
-		GoldGiven(0),
+		TotalExperienceGiven(0),
+		TotalGoldGiven(0),
+		ExperiencePerFighter(0),
+		GoldPerFighter(0),
 		Dead(true) { }
 
 	int FighterCount;
 	int PlayerCount;
 	int MonsterCount;
-	int ExperienceGiven;
-	int GoldGiven;
+	int TotalExperienceGiven;
+	int TotalGoldGiven;
+	int ExperiencePerFighter;
+	int GoldPerFighter;
 	bool Dead;
 };
 
@@ -79,7 +83,6 @@ class _Battle {
 
 		enum StateType {
 			STATE_NONE,
-			STATE_END,
 			STATE_WIN,
 			STATE_LOSE,
 		};
@@ -97,20 +100,19 @@ class _Battle {
 		// Updates
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
-		void CheckEnd();
 
 		// Setup
-		void StartBattleServer();
-		void StartBattleClient();
+		void ServerStartBattle();
+		void ClientStartBattle();
+		void ServerEndBattle();
+		void ClientEndBattle(_Buffer &Data);
 
 		// Resolve
 		void ResolveAction(_Object *SourceFighter);
 		void ClientResolveAction(_Buffer &Data);
-		void EndBattle(_Buffer &Data);
-		void UpdateStats();
 
 		// Input
-		void ClientHandleInput(int Action);
+		bool ClientHandleInput(int Action);
 		void ServerHandleAction(_Object *Fighter, int ActionBarSlot);
 		void ClientHandlePlayerAction(_Buffer &Data);
 
@@ -136,6 +138,7 @@ class _Battle {
 
 		// State
 		int State;
+		bool Done;
 		double Timer;
 
 		// Objects
@@ -143,15 +146,14 @@ class _Battle {
 		int SideCount[2];
 		int NextID;
 
-		// Battle results
-		int TotalExperience;
-		int TotalGold;
+		// Client battle results
+		int ClientExperienceReceived;
+		int ClientGoldReceived;
+		std::list<const _Item *> ClientItemDrops;
 
 		// UI
 		_Element *BattleElement;
 		_Element *BattleWinElement;
 		_Element *BattleLoseElement;
 
-		// Items
-		std::list<const _Item *> MonsterDrops;
 };

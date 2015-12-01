@@ -21,8 +21,8 @@
 #include <constants.h>
 #include <glm/vec2.hpp>
 #include <packet.h>
-#include <vector>
 #include <unordered_map>
+#include <list>
 #include <cstdint>
 
 // Forward Declarations
@@ -116,12 +116,9 @@ class _Object {
 		// Battles
 		int GenerateDamage();
 		int GenerateDefense();
-		void UpdateTarget(const std::vector<_Object *> &Fighters);
 
 		int GetExperienceGiven() const { return ExperienceGiven; }
 		int GetGoldGiven() const { return GoldGiven; }
-
-		void UpdateExperience(int Value) { }
 
 		// Skills
 		const _Skill *GetActionBar(int Slot);
@@ -224,13 +221,13 @@ class _Object {
 		int BattleSide;
 		_Object *BattleTarget;
 		_Action BattleAction;
+		std::list<uint32_t> ItemDropsReceived;
 
 		// Render
 		const _Texture *Portrait;
 		glm::ivec2 BattleOffset;
 
 		// Monster
-		std::vector<_Object *> Opponents;
 		int DatabaseID;
 		int ExperienceGiven, GoldGiven;
 		int AI;
