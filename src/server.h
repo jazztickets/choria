@@ -34,6 +34,7 @@ class _Battle;
 class _Stats;
 class _Save;
 class _Object;
+class _Scripting;
 struct _NetworkEvent;
 
 // Server class
@@ -67,6 +68,9 @@ class _Server {
 
 		// Network
 		std::unique_ptr<_ServerNetwork> Network;
+
+		// Scripting
+		_Scripting *Scripting;
 
 		// Map manager
 		std::list<_Map *> Maps;

@@ -255,10 +255,6 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 
 	ClientNetwork->SendPacket(Packet);
 	ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot];
-
-	// Update potion count
-	if(Skill->Type == _Skill::TYPE_USEPOTION)
-		ClientPlayer->UpdatePotionsLeft(Skill->ID == 3);
 }
 
 // Changes targets

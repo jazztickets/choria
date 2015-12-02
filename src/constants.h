@@ -96,6 +96,9 @@ const  float        MENU_ACCEPTINPUT_FADE          =  0.7f;
 const  float        MENU_PAUSE_FADE                =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME          =  0.250;
 const  double       MENU_CURSOR_PERIOD             =  0.5;
+//     Scripts
+const  std::string  SCRIPTS_PATH                   =  "scripts/";
+const  std::string  SCRIPTS_DEFAULT                =  "default.lua";
 //     Textures
 const  std::string  TEXTURES_PATH                  =  "textures/";
 const  std::string  TEXTURES_BATTLE                =  "battle/";

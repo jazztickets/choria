@@ -21,6 +21,7 @@
 #include <objects/object.h>
 #include <instances/map.h>
 #include <instances/battle.h>
+#include <scripting.h>
 #include <save.h>
 #include <database.h>
 #include <buffer.h>
@@ -76,6 +77,10 @@ _Server::_Server(uint16_t NetworkPort)
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
 	Save = new _Save();
+
+	Scripting = new _Scripting();
+	Scripting->Server = this;
+	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_DEFAULT);
 }
 
 // Destructor
@@ -89,6 +94,7 @@ _Server::~_Server() {
 	}
 	Maps.clear();
 
+	delete Scripting;
 	delete Save;
 	delete Thread;
 }
@@ -1300,7 +1306,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	//Zone = 4;
+	Zone = 4;
 
 	// Get monsters
 	std::list<int> MonsterIDs;

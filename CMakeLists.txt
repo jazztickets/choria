@@ -11,6 +11,11 @@ project(choria)
 # add extra find modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
+# check for -DLUA_VERSION=x.x
+if(NOT LUA_VERSION)
+	set(LUA_VERSION "5.3")
+endif()
+
 # windows only options
 if(MSVC)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
@@ -49,6 +54,11 @@ if(NOT SDL2_FOUND)
 	message(SEND_ERROR "Could not find SDL2!")
 endif()
 
+find_package(Lua ${LUA_VERSION} REQUIRED)
+if(NOT LUA_FOUND)
+	message(SEND_ERROR "Could not find Lua " ${LUA_VERSION} "!")
+endif()
+
 find_package(Freetype REQUIRED)
 if(NOT FREETYPE_FOUND)
 	message(SEND_ERROR "Could not find Freetype 2!")
@@ -77,6 +87,7 @@ endif()
 # set include directories
 include_directories("src")
 include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${LUA_INCLUDE_DIR})
 include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
@@ -121,6 +132,7 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
 target_link_libraries(${CMAKE_PROJECT_NAME}
 	${OPENGL_gl_LIBRARY}
 	${SDL2_LIBRARY}
+	${LUA_LIBRARIES}
 	${FREETYPE_LIBRARIES}
 	${SQLITE_LIBRARIES}
 	${ZLIB_LIBRARIES}
