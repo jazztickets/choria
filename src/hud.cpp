@@ -796,6 +796,8 @@ bool _HUD::CloseTrader() {
 
 // Closes all windows
 bool _HUD::CloseWindows() {
+	Cursor.Reset();
+
 	bool WasOpen = false;
 	WasOpen |= CloseInventory();
 	WasOpen |= CloseVendor();
