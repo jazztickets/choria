@@ -132,8 +132,7 @@ _Object::_Object()
 		Inventory[i].Count = 0;
 	}
 
-	std::uniform_real_distribution<float> Distribution(-5.0f, 5.0f);
-	AITimer = Distribution(RandomGenerator);
+	AITimer = GetRandomDouble(1.0, 7.0);
 }
 
 // Destructor
@@ -316,11 +315,10 @@ void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 	if(!AI)
 		return;
 
-	AITimer += FrameTime;
+	AITimer -= FrameTime;
 
-	if(!BattleAction.IsSet() && AITimer > 3) {
-		std::uniform_real_distribution<float> Distribution(1.0f, 5.0f);
-		AITimer -= Distribution(RandomGenerator);
+	if(!BattleAction.IsSet() && AITimer <= 0) {
+		AITimer = GetRandomDouble(1, 7);
 
 		BattleAction.Skill = ActionBar[0];
 	}
@@ -331,14 +329,12 @@ void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 
 // Generate damage
 int _Object::GenerateDamage() {
-	std::uniform_int_distribution<int> Distribution(MinDamage, MaxDamage);
-	return Distribution(RandomGenerator);
+	return GetRandomInt(MinDamage, MaxDamage);
 }
 
 // Generate defense
 int _Object::GenerateDefense() {
-	std::uniform_int_distribution<int> Distribution(MinDefense, MaxDefense);
-	return Distribution(RandomGenerator);
+	return GetRandomInt(MinDefense, MaxDefense);
 }
 
 // Gets a skill id from the skill bar
@@ -526,8 +522,7 @@ const _Tile *_Object::GetTile() {
 
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
-	std::uniform_int_distribution<int> Distribution(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
-	NextBattle = Distribution(RandomGenerator);
+	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
 }
 
 // Stop a battle

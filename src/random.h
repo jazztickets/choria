@@ -19,3 +19,7 @@
 
 #include <random>
 extern std::mt19937 RandomGenerator;
+
+int GetRandomInt(int Min, int Max);
+uint32_t GetRandomInt(uint32_t Min, uint32_t Max);
+double GetRandomDouble(double Min, double Max);

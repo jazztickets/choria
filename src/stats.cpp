@@ -333,8 +333,7 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters) {
 		int RandomNumber;
 		size_t MonsterIndex;
 		for(int i = 0; i < MonsterCount; i++) {
-			std::uniform_int_distribution<int> Distribution(1, OddsSum);
-			RandomNumber = Distribution(RandomGenerator);
+			RandomNumber = GetRandomInt(1, OddsSum);
 			for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
 				if(RandomNumber <= Zone[MonsterIndex].Odds)
 					break;
@@ -372,8 +371,7 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 
 		// Generate items
 		for(uint32_t i = 0; i < Count; i++) {
-			std::uniform_int_distribution<uint32_t> Distribution(1, OddsSum);
-			uint32_t RandomNumber = Distribution(RandomGenerator);
+			uint32_t RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
 
 			// Find item id in CDT
 			uint32_t ItemID = 0;

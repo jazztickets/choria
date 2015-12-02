@@ -18,3 +18,18 @@
 #include <random.h>
 
 std::mt19937 RandomGenerator;
+
+int GetRandomInt(int Min, int Max) {
+	std::uniform_int_distribution<int> Distribution(Min, Max);
+	return Distribution(RandomGenerator);
+}
+
+uint32_t GetRandomInt(uint32_t Min, uint32_t Max) {
+	std::uniform_int_distribution<int> Distribution(Min, Max);
+	return Distribution(RandomGenerator);
+}
+
+double GetRandomDouble(double Min, double Max) {
+	std::uniform_real_distribution<double> Distribution(Min, Max);
+	return Distribution(RandomGenerator);
+}

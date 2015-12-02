@@ -184,9 +184,8 @@ int _Skill::GetPower(int Level) const {
 	// Get range
 	int Min, Max;
 	GetPowerRangeRound(Level, Min, Max);
-	std::uniform_int_distribution<int> Distribution(Min, Max);
 
-	return Distribution(RandomGenerator);
+	return GetRandomInt(Min, Max);
 }
 
 // Returns the range of power
