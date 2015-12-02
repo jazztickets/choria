@@ -16,26 +16,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <scripting.h>
-#include <objects/object.h>
-#include <server.h>
 #include <stdexcept>
 
 // Constructor
 _Scripting::_Scripting() :
-	Server(nullptr),
 	LuaState(nullptr) {
 
 	// Initialize lua object
 	LuaState = luaL_newstate();
 	luaopen_base(LuaState);
 	luaopen_math(LuaState);
-
-	// Set globals
-	lua_pushlightuserdata(LuaState, this);
-	lua_setglobal(LuaState, "param_scripting");
-
-	// Register C++ functions used by lua
-	lua_register(LuaState, "map_change", &MapChangeFunction);
 }
 
 // Destructor
@@ -54,35 +44,44 @@ void _Scripting::LoadScript(const std::string &Path) {
 		throw std::runtime_error("Failed to load script " + Path + "\n" + std::string(lua_tostring(LuaState, -1)));
 }
 
-// Execute lua code
-void _Scripting::ExecuteLua(const std::string &Code, _Object *Object) {
-	lua_pushlightuserdata(LuaState, Object);
-	lua_setglobal(LuaState, "param_object");
-
-	int ReturnCode = luaL_dostring(LuaState, Code.c_str());
-	if(ReturnCode)
-		throw std::runtime_error(lua_tostring(LuaState, -1));
+// Push pointer onto stack
+void _Scripting::PushData(void *Data) {
+	lua_pushlightuserdata(LuaState, Data);
 }
 
-// Change maps
-int _Scripting::MapChangeFunction(lua_State *LuaState) {
-	int ArgumentCount = lua_gettop(LuaState);
-	if(ArgumentCount != 1)
-		throw std::runtime_error("Wrong argument count for function map_change(map)");
+// Start a call to a lua class method, return table index
+int _Scripting::StartMethodCall(const std::string &TableName, const std::string &Function) {
 
-	// Get parameters
-	std::string Map = lua_tostring(LuaState, 1);
+	// Find table
+	lua_getglobal(LuaState, TableName.c_str());
+	if(!lua_istable(LuaState, -1)) {
+		lua_pop(LuaState, 1);
 
-	// Get object
-	//lua_getglobal(LuaState, "param_object");
-	//_Object *Object = (_Object *)lua_topointer(LuaState, -1);
+		throw std::runtime_error("Failed to find table " + TableName);
+	}
 
-	// Get scripting pointer
-	//lua_getglobal(LuaState, "param_scripting");
-	//_Scripting *Scripting = (_Scripting *)lua_topointer(LuaState, -1);
+	// Save table index
+	int TableIndex = lua_gettop(LuaState);
 
-	// Change maps
-	//Scripting->Server->ChangePlayerMap(Map, Object->Peer);
+	// Get function
+	lua_getfield(LuaState, TableIndex, Function.c_str());
+	if(!lua_isfunction(LuaState, -1)) {
+		lua_pop(LuaState, 1);
 
-	return 0;
+		throw std::runtime_error("Failed to find function " + Function);
+	}
+
+	return TableIndex;
+}
+
+// Run the function started by StartMethodCall
+void _Scripting::FinishMethodCall(int TableIndex, int Parameters) {
+
+	// Call function
+	if(lua_pcall(LuaState, Parameters, 0, 0)) {
+		throw std::runtime_error(lua_tostring(LuaState, -1));
+	}
+
+	// Restore stack
+	lua_settop(LuaState, TableIndex - 1);
 }

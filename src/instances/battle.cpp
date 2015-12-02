@@ -88,7 +88,8 @@ void _Battle::Update(double FrameTime) {
 				AliveCount[Fighter->BattleSide]++;
 
 				// Update AI
-				Fighter->UpdateAI(Fighters, FrameTime);
+				if(Server)
+					Fighter->UpdateAI(Server->Scripting, Fighters, FrameTime);
 
 				// Check turn timer
 				Fighter->TurnTimer += FrameTime * Fighter->BattleSpeed;

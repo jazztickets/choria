@@ -22,8 +22,6 @@
 #include <lua.hpp>
 
 // Forward Declarations
-class _Object;
-class _Server;
 
 // Classes
 class _Scripting {
@@ -35,13 +33,11 @@ class _Scripting {
 
 		void LoadScript(const std::string &Path);
 
-		void ExecuteLua(const std::string &Code, _Object *Object);
-
-		_Server *Server;
+		void PushData(void *Data);
+		int StartMethodCall(const std::string &TableName, const std::string &Function);
+		void FinishMethodCall(int TableIndex, int Parameters);
 
 	private:
-
-		static int MapChangeFunction(lua_State *LuaState);
 
 		lua_State *LuaState;
 

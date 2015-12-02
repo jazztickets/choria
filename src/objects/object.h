@@ -34,6 +34,7 @@ class _Skill;
 class _Item;
 class _Stats;
 class _Buffer;
+class _Scripting;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
@@ -114,7 +115,7 @@ class _Object {
 		void UpdateRegen(int &HealthUpdate, int &ManaUpdate);
 
 		// Battles
-		void UpdateAI(const std::list<_Object *> &Fighters, double FrameTime);
+		void UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
 		int GenerateDefense();
 		int GetExperienceGiven() const { return ExperienceGiven; }

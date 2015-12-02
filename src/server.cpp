@@ -79,8 +79,9 @@ _Server::_Server(uint16_t NetworkPort)
 	Save = new _Save();
 
 	Scripting = new _Scripting();
-	Scripting->Server = this;
+	//Scripting->Server = this;
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_DEFAULT);
+
 }
 
 // Destructor

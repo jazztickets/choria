@@ -27,6 +27,7 @@
 #include <random.h>
 #include <stats.h>
 #include <font.h>
+#include <scripting.h>
 #include <program.h>
 #include <constants.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -131,8 +132,6 @@ _Object::_Object()
 		Inventory[i].Item = nullptr;
 		Inventory[i].Count = 0;
 	}
-
-	AITimer = GetRandomDouble(1.0, 7.0);
 }
 
 // Destructor
@@ -311,17 +310,24 @@ void _Object::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
 }
 
 // Update AI during battle
-void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
+void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime) {
 	if(!AI)
 		return;
 
-	AITimer -= FrameTime;
+	// Check ai timer
+	AITimer += FrameTime;
+	if(AITimer >= 1.0) {
+		AITimer = 0.0;
 
-	if(!BattleAction.IsSet() && AITimer <= 0) {
-		AITimer = GetRandomDouble(1, 7);
-
-		BattleAction.Skill = ActionBar[0];
+		int TableIndex = Scripting->StartMethodCall("ai_dumb", "update");
+		Scripting->PushData(this);
+		Scripting->FinishMethodCall(TableIndex, 1);
 	}
+	//if(!BattleAction.IsSet() && AITimer <= 0) {
+		//AITimer = GetRandomDouble(1, 7);
+
+		//BattleAction.Skill = ActionBar[0];
+	//}
 
 	//for(auto &Fighter : Fighters) {
 	//}
