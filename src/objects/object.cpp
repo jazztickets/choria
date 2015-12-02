@@ -117,9 +117,7 @@ _Object::_Object()
 	WaitingForTrade(false),
 	TradeAccepted(false),
 	TradePlayer(nullptr),
-	Stats(nullptr),
-
-	Dummy(0) {
+	Stats(nullptr) {
 
 	for(int i = 0; i < ACTIONBAR_SIZE; i++)
 		ActionBar[i] = nullptr;
@@ -180,6 +178,7 @@ void _Object::RenderBattle(bool IsTarget) {
 	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::ivec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2;
 	//glm::ivec2 HealthBarCenter = BarCenter;
+	ResultPosition = SlotPosition;
 	int BarEndX = BarBounds.End.x;
 
 	// Draw empty bar
@@ -237,46 +236,6 @@ void _Object::RenderBattle(bool IsTarget) {
 	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
-	/*
-	// Show results of last turn
-	if(ShowResults) {
-
-		float AlphaPercent;
-		if(TimerPercent > 0.75f)
-			AlphaPercent = 1;
-		else
-			AlphaPercent = TimerPercent / 0.75f;
-
-		char Sign = ' ';
-		glm::vec4 Color = COLOR_GRAY;
-		if(Result->HealthChange > 0) {
-			Sign = '+';
-			Color = COLOR_GREEN;
-		}
-		else if(Result->HealthChange < 0) {
-			Color = COLOR_RED;
-		}
-		Color.a = AlphaPercent;
-
-		Buffer << Sign << Result->HealthChange;
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), HealthBarCenter + glm::ivec2(0, -20), Color, CENTER_BASELINE);
-
-		const _Texture *SkillTexture;
-		if(BattleActionUsed)
-			SkillTexture = BattleActionUsed->Image;
-		else
-			SkillTexture = Assets.Textures["skills/attack.png"];
-
-		// Draw skill icon
-		glm::vec4 WhiteAlpha = glm::vec4(1.0f, 1.0f, 1.0f, AlphaPercent);
-		glm::ivec2 BattleActionUsedPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(BattleActionUsedPosition, SkillTexture, WhiteAlpha);
-
-		// Draw damage dealt
-		Assets.Fonts["hud_medium"]->DrawText(std::to_string(Result->DamageDealt).c_str(), BattleActionUsedPosition, WhiteAlpha, CENTER_MIDDLE);
-	}
-*/
 	// Draw the skill used
 	if(BattleAction.Skill) {
 		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Image->Size.x/2 + 10, 0);

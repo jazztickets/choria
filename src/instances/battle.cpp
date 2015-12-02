@@ -23,6 +23,7 @@
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
+#include <server.h>
 #include <actions.h>
 #include <buffer.h>
 #include <graphics.h>
@@ -35,11 +36,12 @@
 #include <vector>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 // Constructor
 _Battle::_Battle() :
 	Stats(nullptr),
-	ServerNetwork(nullptr),
+	Server(nullptr),
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	State(STATE_NONE),
@@ -90,23 +92,36 @@ void _Battle::Update(double FrameTime) {
 			if(Fighter->TurnTimer > 1.0) {
 				Fighter->TurnTimer = 1.0;
 
-				if(ServerNetwork) {
+				if(Server) {
 					if(Fighter->BattleAction.IsSet()) {
-						ResolveAction(Fighter);
+						ServerResolveAction(Fighter);
 					}
 				}
 			}
 		}
 
 		// Check for end
-		if(ServerNetwork) {
+		if(Server) {
 			if(AliveCount[0] == 0 || AliveCount[1] == 0) {
 				ServerEndBattle();
 			}
 		}
+		else {
 
-		Timer += FrameTime;
+			// Update action results
+			for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
+				_ActionResult &ActionResult = *Iterator;
+				ActionResult.Time += FrameTime;
+				if(ActionResult.Time >= ACTIONRESULT_TIMEOUT) {
+					Iterator = ActionResults.erase(Iterator);
+				}
+				else
+					++Iterator;
+			}
+		}
 	}
+
+	Timer += FrameTime;
 }
 
 // Render the battle system
@@ -133,6 +148,48 @@ void _Battle::RenderBattle() {
 	for(auto &Fighter : Fighters) {
 		Fighter->RenderBattle(ClientPlayer->BattleTarget == Fighter);
 	}
+
+	// Draw action results
+	for(auto &ActionResult : ActionResults) {
+		RenderActionResults(ActionResult);
+	}
+}
+
+// Render results of an action
+void _Battle::RenderActionResults(_ActionResult &ActionResult) {
+	glm::ivec2 TargetDrawPosition = ActionResult.TargetFighter->ResultPosition;
+	glm::ivec2 SourceDrawPosition = ActionResult.SourceFighter->ResultPosition;
+	TargetDrawPosition.y -= ActionResult.Time * ACTIONRESULT_SPEED;
+
+	// Get alpha
+	double TimeLeft = ACTIONRESULT_TIMEOUT - ActionResult.Time;
+	float AlphaPercent = 1.0f;
+	if(TimeLeft < ACTIONRESULT_FADETIME)
+		AlphaPercent = TimeLeft / ACTIONRESULT_FADETIME;
+
+	// Get skill used
+	const _Texture *SkillTexture;
+	if(ActionResult.SkillUsed)
+		SkillTexture = ActionResult.SkillUsed->Image;
+	else
+		SkillTexture = Assets.Textures["skills/attack.png"];
+
+	// Get color
+	glm::vec4 Color = COLOR_WHITE;
+	Color.a = AlphaPercent;
+
+	// Draw skill icon
+	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.DrawCenteredImage(TargetDrawPosition, SkillTexture, WhiteAlpha);
+
+	glm::ivec2 BattleActionUsedPosition = SourceDrawPosition - glm::ivec2(ActionResult.SourceFighter->Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
+	Graphics.DrawCenteredImage(BattleActionUsedPosition, SkillTexture, Color);
+
+	// Draw damage dealt
+	std::stringstream Buffer;
+	Buffer << std::abs(ActionResult.TargetHealthChange);
+	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), TargetDrawPosition + glm::ivec2(0, 7), Color, CENTER_BASELINE);
 }
 
 // Renders the battle win screen
@@ -257,7 +314,7 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 }
 
 // Resolves an action and sends the result to each player
-void _Battle::ResolveAction(_Object *SourceFighter) {
+void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	if(SourceFighter->Health <= 0)
 		return;
 
@@ -345,6 +402,8 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		ActionResult.TargetFighter->Mana = TargetFighterMana;
 	}
 
+	ActionResults.push_back(ActionResult);
+
 /*
 	// Change targets if the old one died
 	int TargetIndex = GetFighterFromSlot(ClientPlayer->Target);
@@ -369,6 +428,7 @@ _Object *_Battle::GetObjectByID(int BattleID) {
 
 // Add a fighter to the battle
 void _Battle::AddFighter(_Object *Fighter, int Side) {
+	Fighter->TurnTimer = 0.0;
 	Fighter->Battle = this;
 	Fighter->BattleID = NextID++;
 	Fighter->BattleSide = Side;
@@ -550,7 +610,8 @@ void _Battle::ServerEndBattle() {
 			GoldEarned = (int)(-Fighter->Gold * 0.1f);
 			Fighter->Deaths++;
 
-			//OldServerState.SendMessage(Players[i], std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
+			if(Fighter->Peer)
+				Server->SendMessage(Fighter->Peer, std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
 		}
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
@@ -567,7 +628,8 @@ void _Battle::ServerEndBattle() {
 		int NewLevel = Fighter->Level;
 		if(NewLevel > CurrentLevel) {
 			Fighter->RestoreHealthMana();
-			//OldServerState.SendMessage(Players[i], std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
+			if(Fighter->Peer)
+				Server->SendMessage(Fighter->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
 		}
 
 		// Write results
@@ -592,8 +654,10 @@ void _Battle::ServerEndBattle() {
 		Fighter->ItemDropsReceived.clear();
 
 		// Send info
-		if(Fighter->Peer)
-			ServerNetwork->SendPacket(Packet, Fighter->Peer);
+		if(Fighter->Peer) {
+			Server->Network->SendPacket(Packet, Fighter->Peer);
+			Server->SendHUD(Fighter->Peer);
+		}
 	}
 
 	Done = true;
@@ -631,6 +695,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 		State = STATE_LOSE;
 	}
 
+	Done = true;
 	Timer = 0.0;
 }
 
@@ -788,7 +853,7 @@ void _Battle::BroadcastPacket(_Buffer &Packet) {
 	// Send packet to all players
 	for(auto &Fighter : Fighters) {
 		if(Fighter->Peer) {
-			ServerNetwork->SendPacket(Packet, Fighter->Peer);
+			Server->Network->SendPacket(Packet, Fighter->Peer);
 		}
 	}
 }

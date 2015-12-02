@@ -277,8 +277,7 @@ void _Skill::ResolveUse(_ActionResult &ActionResult) const {
 
 	// Update results
 	ActionResult.DamageDealt = Damage;
-	ActionResult.TargetHealthChange += -Damage;
-	ActionResult.SourceHealthChange += Healing;
+	ActionResult.TargetHealthChange += Healing - Damage;
 	ActionResult.SourceManaChange += ManaRestore - ManaCost;
 }
 

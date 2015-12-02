@@ -28,7 +28,7 @@ class _Item;
 class _Buffer;
 class _Element;
 class _Stats;
-class _ServerNetwork;
+class _Server;
 class _ClientNetwork;
 
 // Structures
@@ -42,7 +42,8 @@ struct _ActionResult {
 		SourceHealthChange(0),
 		SourceManaChange(0),
 		TargetHealthChange(0),
-		TargetManaChange(0) { }
+		TargetManaChange(0),
+		Time(0.0) { }
 
 	_Object *SourceFighter;
 	_Object *TargetFighter;
@@ -53,6 +54,7 @@ struct _ActionResult {
 	int SourceManaChange;
 	int TargetHealthChange;
 	int TargetManaChange;
+	double Time;
 };
 
 struct _BattleResult {
@@ -108,7 +110,7 @@ class _Battle {
 		void ClientEndBattle(_Buffer &Data);
 
 		// Resolve
-		void ResolveAction(_Object *SourceFighter);
+		void ServerResolveAction(_Object *SourceFighter);
 		void ClientResolveAction(_Buffer &Data);
 
 		// Input
@@ -117,11 +119,11 @@ class _Battle {
 		void ClientHandlePlayerAction(_Buffer &Data);
 
 		_Stats *Stats;
-		_ServerNetwork *ServerNetwork;
+		_Server *Server;
 		_ClientNetwork *ClientNetwork;
 		_Object *ClientPlayer;
 
-	protected:
+	private:
 
 		void BroadcastPacket(_Buffer &Packet);
 
@@ -133,6 +135,7 @@ class _Battle {
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
 
 		void RenderBattle();
+		void RenderActionResults(_ActionResult &ActionResult);
 		void RenderBattleWin();
 		void RenderBattleLose();
 
@@ -155,5 +158,6 @@ class _Battle {
 		_Element *BattleElement;
 		_Element *BattleWinElement;
 		_Element *BattleLoseElement;
+		std::list<_ActionResult> ActionResults;
 
 };

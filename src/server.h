@@ -51,6 +51,8 @@ class _Server {
 
 		void SpawnPlayer(_Peer *Peer, int MapID, int EventType);
 		void StartBattle(_Object *Object, int Zone);
+		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
+		void SendHUD(_Peer *Peer);
 
 		// State
 		bool Done;
@@ -109,8 +111,6 @@ class _Server {
 		void SendPlayerPosition(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
 		void RemovePlayerFromBattle(_Object *Player);
-		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
-		void SendHUD(_Peer *Peer);
 		void BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 

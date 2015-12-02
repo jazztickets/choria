@@ -1177,9 +1177,6 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 		Player->RestoreHealthMana();
 		//SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
 	}
-
-	// Refresh player's hud
-	SendHUD(Peer);
 }
 
 // Removes a player from a battle and deletes the battle if necessary
@@ -1303,7 +1300,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	Zone = 1;
+	Zone = 4;
 
 	// Get monsters
 	std::list<int> MonsterIDs;
@@ -1313,7 +1310,7 @@ void _Server::StartBattle(_Object *Object, int Zone) {
 		// Create a new battle instance
 		_Battle *Battle = new _Battle();
 		Battle->Stats = Stats;
-		Battle->ServerNetwork = Network.get();
+		Battle->Server = this;
 		Battles.push_back(Battle);
 
 		// Add players

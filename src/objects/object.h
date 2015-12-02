@@ -126,10 +126,6 @@ class _Object {
 
 		// -- END FROM FIGHTER --
 
-		// -- FROM PLAYER --
-		//void UpdateExperience(int Value) { Experience += Value; }
-		//int GetGoldGiven() const { return (int)(Gold * 0.1f); }
-
 		// Stats
 		void CalculatePlayerStats();
 
@@ -187,8 +183,6 @@ class _Object {
 		static bool IsSlotInventory(int Slot) { return Slot >= INVENTORY_BACKPACK && Slot < INVENTORY_TRADE; }
 		static bool IsSlotTrade(int Slot) { return Slot >= INVENTORY_TRADE && Slot < INVENTORY_COUNT; }
 
-		// -- END FROM PLAYER --
-
 		// -- OBJECT  --
 		_Map *Map;
 		_Peer *Peer;
@@ -226,6 +220,7 @@ class _Object {
 		// Render
 		const _Texture *Portrait;
 		glm::ivec2 BattleOffset;
+		glm::ivec2 ResultPosition;
 
 		// Monster
 		int DatabaseID;
@@ -298,7 +293,5 @@ class _Object {
 
 		bool CanEquipItem(int Slot, const _Item *Item);
 		void SwapItem(int Slot, int OldSlot);
-
-		int Dummy;
 
 };
