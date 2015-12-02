@@ -35,6 +35,7 @@ const int ACTIONBAR_SIZE = 8;
 const int BATTLE_MINSTEPS = 5;
 const int BATTLE_MAXSTEPS = 14;
 const int BATTLE_MAXFIGHTERS = 6;
+const float BATTLE_DEFAULTSPEED = (1/3.0f);
 const double BATTLE_ROUNDTIME = 5.0;
 const double BATTLE_SHOWRESULTTIME = 2.0;
 const double BATTLE_WAITRESULTTIME = 0.375;

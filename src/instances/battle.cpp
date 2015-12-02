@@ -84,20 +84,26 @@ void _Battle::Update(double FrameTime) {
 		for(auto &Fighter : Fighters) {
 
 			// Count alive fighters for each side
-			if(Fighter->Health > 0)
+			if(Fighter->Health > 0) {
 				AliveCount[Fighter->BattleSide]++;
 
-			// Check turn timer
-			Fighter->TurnTimer += FrameTime * 0.5f;
-			if(Fighter->TurnTimer > 1.0) {
-				Fighter->TurnTimer = 1.0;
+				// Update AI
+				Fighter->UpdateAI(Fighters, FrameTime);
 
-				if(Server) {
-					if(Fighter->BattleAction.IsSet()) {
-						ServerResolveAction(Fighter);
+				// Check turn timer
+				Fighter->TurnTimer += FrameTime * Fighter->BattleSpeed;
+				if(Fighter->TurnTimer > 1.0) {
+					Fighter->TurnTimer = 1.0;
+
+					if(Server) {
+						if(Fighter->BattleAction.IsSet()) {
+							ServerResolveAction(Fighter);
+						}
 					}
 				}
 			}
+			else
+				Fighter->TurnTimer = 0;
 		}
 
 		// Check for end
@@ -146,7 +152,7 @@ void _Battle::RenderBattle() {
 
 	// Draw fighters
 	for(auto &Fighter : Fighters) {
-		Fighter->RenderBattle(ClientPlayer->BattleTarget == Fighter);
+		Fighter->RenderBattle(ClientPlayer->BattleTarget == Fighter, ClientPlayer->BattleSide == Fighter->BattleSide);
 	}
 
 	// Draw action results

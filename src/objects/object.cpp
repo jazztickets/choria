@@ -62,6 +62,9 @@ _Object::_Object()
 	HealthAccumulator(0.0f),
 	ManaAccumulator(0.0f),
 	Battle(nullptr),
+	BattleSpeed(BATTLE_DEFAULTSPEED),
+	TurnTimer(0.0),
+	AITimer(0.0),
 	BattleID(-1),
 	BattleSide(0),
 	BattleTarget(nullptr),
@@ -106,7 +109,6 @@ _Object::_Object()
 	NextBattle(0),
 	AttackPlayerTime(0),
 	InvisPower(0),
-	TurnTimer(0),
 	InventoryOpen(false),
 	Vendor(nullptr),
 	Trader(nullptr),
@@ -129,6 +131,9 @@ _Object::_Object()
 		Inventory[i].Item = nullptr;
 		Inventory[i].Count = 0;
 	}
+
+	std::uniform_real_distribution<float> Distribution(-5.0f, 5.0f);
+	AITimer = Distribution(RandomGenerator);
 }
 
 // Destructor
@@ -136,7 +141,7 @@ _Object::~_Object() {
 }
 
 // Renders the fighter during a battle
-void _Object::RenderBattle(bool IsTarget) {
+void _Object::RenderBattle(bool IsTarget, bool OnPlayerSide) {
 
 	// Get slot ui element depending on side
 	_Element *Slot;
@@ -237,7 +242,7 @@ void _Object::RenderBattle(bool IsTarget) {
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
 	// Draw the skill used
-	if(BattleAction.Skill) {
+	if(OnPlayerSide && BattleAction.Skill) {
 		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Image->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Image);
@@ -304,6 +309,24 @@ void _Object::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
 	else if(ManaAccumulator < 0.0f) {
 		ManaAccumulator = 0;
 	}
+}
+
+// Update AI during battle
+void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
+	if(!AI)
+		return;
+
+	AITimer += FrameTime;
+
+	if(!BattleAction.IsSet() && AITimer > 3) {
+		std::uniform_real_distribution<float> Distribution(1.0f, 5.0f);
+		AITimer -= Distribution(RandomGenerator);
+
+		BattleAction.Skill = ActionBar[0];
+	}
+
+	//for(auto &Fighter : Fighters) {
+	//}
 }
 
 // Generate damage

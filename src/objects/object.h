@@ -104,7 +104,7 @@ class _Object {
 		// -- FROM FIGHTER --
 
 		// Render
-		void RenderBattle(bool IsTarget);
+		void RenderBattle(bool IsTarget, bool OnPlayerSide);
 
 		// Stats
 		void UpdateHealth(int Value);
@@ -114,9 +114,9 @@ class _Object {
 		void UpdateRegen(int &HealthUpdate, int &ManaUpdate);
 
 		// Battles
+		void UpdateAI(const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
 		int GenerateDefense();
-
 		int GetExperienceGiven() const { return ExperienceGiven; }
 		int GetGoldGiven() const { return GoldGiven; }
 
@@ -211,6 +211,9 @@ class _Object {
 
 		// Battle
 		_Battle *Battle;
+		float BattleSpeed;
+		double TurnTimer;
+		double AITimer;
 		int BattleID;
 		int BattleSide;
 		_Object *BattleTarget;
@@ -262,7 +265,6 @@ class _Object {
 		int NextBattle;
 		double AttackPlayerTime;
 		int InvisPower;
-		double TurnTimer;
 
 		// Items
 		bool InventoryOpen;
