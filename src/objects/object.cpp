@@ -324,16 +324,18 @@ void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighte
 		for(const auto &Fighter : Fighters) {
 			if(Fighter->BattleSide == BattleSide)
 				Allies.push_back(Fighter);
-			else
+			else if(Fighter->Health > 0)
 				Enemies.push_back(Fighter);
 		}
 
 		// Call lua script
-		Scripting->StartMethodCall("AI_Dumb", "Update");
-		Scripting->PushObject(this);
-		Scripting->PushObjectList(Enemies);
-		Scripting->PushObjectList(Allies);
-		Scripting->FinishMethodCall(3);
+		if(Enemies.size()) {
+			Scripting->StartMethodCall("AI_Dumb", "Update");
+			Scripting->PushObject(this);
+			Scripting->PushObjectList(Enemies);
+			Scripting->PushObjectList(Allies);
+			Scripting->FinishMethodCall(3);
+		}
 	}
 }
 
@@ -459,7 +461,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 
 		glm::vec3 DrawPosition;
-		if(0) {
+		if(1) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 			Graphics.DrawSprite(DrawPosition, WorldTexture);
@@ -533,6 +535,7 @@ const _Tile *_Object::GetTile() {
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
 	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
+	//NextBattle = 5;
 }
 
 // Stop a battle

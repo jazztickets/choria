@@ -904,7 +904,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			Fighter = Map->GetObjectByID(NetworkID);
 			if(Fighter != nullptr) {
 				Fighter->InputState = 0;
-				Fighter->Position = Position;
+				Fighter->Position = Fighter->ServerPosition = Position;
 				Fighter->Health = Health;
 				Fighter->MaxHealth = MaxHealth;
 				Fighter->Mana = Mana;
@@ -950,7 +950,10 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
+	Player->WaitForServer = false;
 	Battle->ClientEndBattle(Data);
+	if(Player->Health == 0)
+		Player->WaitForServer = true;
 }
 
 // Handles HUD updates

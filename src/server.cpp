@@ -80,7 +80,6 @@ _Server::_Server(uint16_t NetworkPort)
 
 	Scripting = new _Scripting();
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_DEFAULT);
-
 }
 
 // Destructor
@@ -598,6 +597,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 	else {
 		Map->FindEvent(EventType, Player->SpawnPoint, Player->Position);
 		SendPlayerPosition(Peer);
+		SendHUD(Peer);
 	}
 }
 
@@ -1181,7 +1181,7 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 	// Check for death
 	if(Player->Health == 0) {
 		Player->RestoreHealthMana();
-		//SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN, Player->SpawnPoint);
+		SpawnPlayer(Player->Peer, Player->SpawnMapID, _Map::EVENT_SPAWN);
 	}
 }
 
@@ -1306,7 +1306,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
-	Zone = 4;
+	Zone = 1;
 
 	// Get monsters
 	std::list<int> MonsterIDs;

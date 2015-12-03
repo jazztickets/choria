@@ -164,6 +164,9 @@ void _Battle::RenderBattle() {
 
 // Render results of an action
 void _Battle::RenderActionResults(_ActionResult &ActionResult) {
+	if(!ActionResult.TargetFighter || !ActionResult.SourceFighter)
+		return;
+
 	glm::ivec2 TargetDrawPosition = ActionResult.TargetFighter->ResultPosition;
 	glm::ivec2 SourceDrawPosition = ActionResult.SourceFighter->ResultPosition;
 	TargetDrawPosition.y -= ActionResult.Time * ACTIONRESULT_SPEED;
@@ -606,6 +609,7 @@ void _Battle::ServerEndBattle() {
 
 	// Send data
 	for(auto &Fighter : Fighters) {
+		Fighter->InputState = 0;
 
 		// Get rewards
 		int ExperienceEarned = 0;
