@@ -16,7 +16,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <scripting.h>
+#include <objects/object.h>
+#include <random.h>
 #include <stdexcept>
+#include <iostream>
+
+// Controls
+luaL_Reg _Scripting::RandomFunctions[] = {
+	{"GetInt", &_Scripting::RandomGetInt},
+	{nullptr, nullptr}
+};
+
+// Lua library functions
+int luaopen_Object(lua_State *LuaState) {
+	luaL_newlib(LuaState, _Scripting::RandomFunctions);
+	return 1;
+}
 
 // Constructor
 _Scripting::_Scripting() :
@@ -26,6 +41,8 @@ _Scripting::_Scripting() :
 	LuaState = luaL_newstate();
 	luaopen_base(LuaState);
 	luaopen_math(LuaState);
+
+	luaL_requiref(LuaState, "Random", luaopen_Object, 1);
 }
 
 // Destructor
@@ -47,6 +64,21 @@ void _Scripting::LoadScript(const std::string &Path) {
 // Push pointer onto stack
 void _Scripting::PushData(void *Data) {
 	lua_pushlightuserdata(LuaState, Data);
+}
+
+// Push pointer onto stack
+void _Scripting::PushObject(_Object *Object) {
+	lua_newtable(LuaState);
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectSetTarget, 1);
+	lua_setfield(LuaState, -2, "SetTarget");
+
+	lua_pushinteger(LuaState, Object->BattleSide);
+	lua_setfield(LuaState, -2, "BattleSide");
+
+	lua_pushinteger(LuaState, Object->Health);
+	lua_setfield(LuaState, -2, "Health");
 }
 
 // Start a call to a lua class method, return table index
@@ -84,4 +116,50 @@ void _Scripting::FinishMethodCall(int TableIndex, int Parameters) {
 
 	// Restore stack
 	lua_settop(LuaState, TableIndex - 1);
+}
+
+// Random.GetInt(min, max)
+int _Scripting::RandomGetInt(lua_State *LuaState) {
+	int Min = lua_tointeger(LuaState, 1);
+	int Max = lua_tointeger(LuaState, 2);
+
+	lua_pushinteger(LuaState, GetRandomInt(Min, Max));
+
+	return 1;
+}
+
+// Print lua stack
+void _Scripting::PrintStack(lua_State *LuaState) {
+	for(int i = lua_gettop(LuaState); i >= 0; i--) {
+		if(lua_isnumber(LuaState, i))
+			std::cout << i << ": number : " << lua_tonumber(LuaState, i) << std::endl;
+		else if(lua_isstring(LuaState, i))
+			std::cout << i << ": string : " << lua_tostring(LuaState, i) << std::endl;
+		else if(lua_istable(LuaState, i))
+			std::cout << i << ": table" << std::endl;
+		else if(lua_iscfunction(LuaState, i))
+			std::cout << i << ": cfunction" << std::endl;
+		else if(lua_isfunction(LuaState, i))
+			std::cout << i << ": function" << std::endl;
+		else if(lua_isuserdata(LuaState, i))
+			std::cout << i << ": userdata" << std::endl;
+		else if(lua_isnil(LuaState, i))
+			std::cout << i << ": nil" << std::endl;
+		else if(lua_islightuserdata(LuaState, i))
+			std::cout << i << ": light userdata" << std::endl;
+		else if(lua_isboolean(LuaState, i))
+			std::cout << i << ": boolean : " << lua_toboolean(LuaState, i) << std::endl;
+	}
+
+	std::cout << "-----------------" << std::endl;
+}
+
+// Set battle target
+int _Scripting::ObjectSetTarget(lua_State *LuaState) {
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	int Target = lua_tointeger(LuaState, 1);
+
+	std::cout << "Target: " << Object->Name << ":" << Target << std::endl;
+
+	return 0;
 }

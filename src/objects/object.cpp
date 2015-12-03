@@ -65,7 +65,7 @@ _Object::_Object()
 	Battle(nullptr),
 	BattleSpeed(BATTLE_DEFAULTSPEED),
 	TurnTimer(0.0),
-	AITimer(0.0),
+	AITimer(1.0),
 	BattleID(-1),
 	BattleSide(0),
 	BattleTarget(nullptr),
@@ -319,8 +319,8 @@ void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighte
 	if(AITimer >= 1.0) {
 		AITimer = 0.0;
 
-		int TableIndex = Scripting->StartMethodCall("ai_dumb", "update");
-		Scripting->PushData(this);
+		int TableIndex = Scripting->StartMethodCall("AI_Dumb", "Update");
+		Scripting->PushObject(this);
 		Scripting->FinishMethodCall(TableIndex, 1);
 	}
 	//if(!BattleAction.IsSet() && AITimer <= 0) {

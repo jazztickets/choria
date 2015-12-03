@@ -1,6 +1,6 @@
-ai_dumb = {}
+AI_Dumb = {}
 
-function ai_dumb.update(obj)
-	print("in update")
-	print(obj)
+function AI_Dumb.Update(Object)
+	--print(Random.GetInt(1, 6))
+	Object.SetTarget(3)
 end

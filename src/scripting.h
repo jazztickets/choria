@@ -22,6 +22,7 @@
 #include <lua.hpp>
 
 // Forward Declarations
+class _Object;
 
 // Classes
 class _Scripting {
@@ -34,10 +35,18 @@ class _Scripting {
 		void LoadScript(const std::string &Path);
 
 		void PushData(void *Data);
+		void PushObject(_Object *Object);
 		int StartMethodCall(const std::string &TableName, const std::string &Function);
 		void FinishMethodCall(int TableIndex, int Parameters);
 
+		static void PrintStack(lua_State *LuaState);
+
+		static luaL_Reg RandomFunctions[];
+
 	private:
+
+		static int RandomGetInt(lua_State *LuaState);
+		static int ObjectSetTarget(lua_State *LuaState);
 
 		lua_State *LuaState;
 
