@@ -35,13 +35,12 @@ int luaopen_Object(lua_State *LuaState) {
 
 // Constructor
 _Scripting::_Scripting() :
-	LuaState(nullptr) {
+	LuaState(nullptr),
+	CurrentTableIndex(0) {
 
 	// Initialize lua object
 	LuaState = luaL_newstate();
-	luaopen_base(LuaState);
-	luaopen_math(LuaState);
-
+	luaL_openlibs(LuaState);
 	luaL_requiref(LuaState, "Random", luaopen_Object, 1);
 }
 
@@ -57,7 +56,7 @@ _Scripting::~_Scripting() {
 void _Scripting::LoadScript(const std::string &Path) {
 
 	// Load the file
-	if(luaL_dofile(LuaState, Path.c_str()) != 0)
+	if(luaL_dofile(LuaState, Path.c_str()))
 		throw std::runtime_error("Failed to load script " + Path + "\n" + std::string(lua_tostring(LuaState, -1)));
 }
 
@@ -71,18 +70,49 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_newtable(LuaState);
 
 	lua_pushlightuserdata(LuaState, Object);
-	lua_pushcclosure(LuaState, &ObjectSetTarget, 1);
-	lua_setfield(LuaState, -2, "SetTarget");
+	lua_pushcclosure(LuaState, &ObjectSetBattleTarget, 1);
+	lua_setfield(LuaState, -2, "SetBattleTarget");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectSetAction, 1);
+	lua_setfield(LuaState, -2, "SetAction");
+
+	lua_pushboolean(LuaState, Object->BattleAction.IsSet());
+	lua_setfield(LuaState, -2, "BattleActionIsSet");
+
+	lua_pushlightuserdata(LuaState, Object->BattleTarget);
+	lua_setfield(LuaState, -2, "BattleTarget");
 
 	lua_pushinteger(LuaState, Object->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
 
 	lua_pushinteger(LuaState, Object->Health);
 	lua_setfield(LuaState, -2, "Health");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_setfield(LuaState, -2, "Pointer");
+}
+
+// Push list of objects
+void _Scripting::PushObjectList(std::list<_Object *> &Objects) {
+	lua_newtable(LuaState);
+
+	int Index = 1;
+	for(const auto &Object : Objects) {
+		PushObject(Object);
+		lua_rawseti(LuaState, -2, Index);
+
+		Index++;
+	}
+}
+
+// Push int value
+void _Scripting::PushInt(int Value) {
+	lua_pushinteger(LuaState, Value);
 }
 
 // Start a call to a lua class method, return table index
-int _Scripting::StartMethodCall(const std::string &TableName, const std::string &Function) {
+void _Scripting::StartMethodCall(const std::string &TableName, const std::string &Function) {
 
 	// Find table
 	lua_getglobal(LuaState, TableName.c_str());
@@ -93,29 +123,27 @@ int _Scripting::StartMethodCall(const std::string &TableName, const std::string 
 	}
 
 	// Save table index
-	int TableIndex = lua_gettop(LuaState);
+	CurrentTableIndex = lua_gettop(LuaState);
 
 	// Get function
-	lua_getfield(LuaState, TableIndex, Function.c_str());
+	lua_getfield(LuaState, CurrentTableIndex, Function.c_str());
 	if(!lua_isfunction(LuaState, -1)) {
 		lua_pop(LuaState, 1);
 
 		throw std::runtime_error("Failed to find function " + Function);
 	}
-
-	return TableIndex;
 }
 
 // Run the function started by StartMethodCall
-void _Scripting::FinishMethodCall(int TableIndex, int Parameters) {
+void _Scripting::FinishMethodCall(int ParameterCount) {
 
 	// Call function
-	if(lua_pcall(LuaState, Parameters, 0, 0)) {
+	if(lua_pcall(LuaState, ParameterCount, 0, 0)) {
 		throw std::runtime_error(lua_tostring(LuaState, -1));
 	}
 
 	// Restore stack
-	lua_settop(LuaState, TableIndex - 1);
+	lua_settop(LuaState, CurrentTableIndex - 1);
 }
 
 // Random.GetInt(min, max)
@@ -126,6 +154,38 @@ int _Scripting::RandomGetInt(lua_State *LuaState) {
 	lua_pushinteger(LuaState, GetRandomInt(Min, Max));
 
 	return 1;
+}
+
+// Set battle target
+int _Scripting::ObjectSetBattleTarget(lua_State *LuaState) {
+	if(!lua_istable(LuaState, 1))
+		throw std::runtime_error("ObjectSetBattleTarget: Target is not a table!");
+
+	// Get self pointer
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+
+	// Get pointer of target table
+	lua_pushstring(LuaState, "Pointer");
+	lua_gettable(LuaState, -2);
+	_Object *Target = (_Object *)lua_touserdata(LuaState, -1);
+
+	Object->BattleTarget = Target;
+
+	return 0;
+}
+
+// Set battle action
+int _Scripting::ObjectSetAction(lua_State *LuaState) {
+
+	// Get self pointer
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+
+	// Set skill used
+	int ActionBarIndex = lua_tointeger(LuaState, 1);
+	if(ActionBarIndex >= 0 && ActionBarIndex < ACTIONBAR_SIZE)
+		Object->BattleAction.Skill = Object->ActionBar[ActionBarIndex];
+
+	return 0;
 }
 
 // Print lua stack
@@ -152,14 +212,4 @@ void _Scripting::PrintStack(lua_State *LuaState) {
 	}
 
 	std::cout << "-----------------" << std::endl;
-}
-
-// Set battle target
-int _Scripting::ObjectSetTarget(lua_State *LuaState) {
-	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	int Target = lua_tointeger(LuaState, 1);
-
-	std::cout << "Target: " << Object->Name << ":" << Target << std::endl;
-
-	return 0;
 }

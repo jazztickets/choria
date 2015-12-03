@@ -314,23 +314,27 @@ void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighte
 	if(!AI)
 		return;
 
-	// Check ai timer
+	// Update AI every second
 	AITimer += FrameTime;
-	if(AITimer >= 1.0) {
+	if(AITimer >= BATTLE_AI_UPDATE_PERIOD) {
 		AITimer = 0.0;
 
-		int TableIndex = Scripting->StartMethodCall("AI_Dumb", "Update");
+		// Separate fighter list
+		std::list<_Object *> Enemies, Allies;
+		for(const auto &Fighter : Fighters) {
+			if(Fighter->BattleSide == BattleSide)
+				Allies.push_back(Fighter);
+			else
+				Enemies.push_back(Fighter);
+		}
+
+		// Call lua script
+		Scripting->StartMethodCall("AI_Dumb", "Update");
 		Scripting->PushObject(this);
-		Scripting->FinishMethodCall(TableIndex, 1);
+		Scripting->PushObjectList(Enemies);
+		Scripting->PushObjectList(Allies);
+		Scripting->FinishMethodCall(3);
 	}
-	//if(!BattleAction.IsSet() && AITimer <= 0) {
-		//AITimer = GetRandomDouble(1, 7);
-
-		//BattleAction.Skill = ActionBar[0];
-	//}
-
-	//for(auto &Fighter : Fighters) {
-	//}
 }
 
 // Generate damage

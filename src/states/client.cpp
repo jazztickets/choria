@@ -885,6 +885,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 		// Get fighter type
 		int DatabaseID = Data.Read<int>();
 		int Side = Data.Read<char>();
+		float TurnTimer = Data.Read<float>();
 
 		_Object *Fighter = nullptr;
 		if(DatabaseID == 0) {
@@ -908,6 +909,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 				Fighter->MaxHealth = MaxHealth;
 				Fighter->Mana = Mana;
 				Fighter->MaxMana = MaxMana;
+				Fighter->TurnTimer = TurnTimer;
 
 				Battle->AddFighter(Fighter, Side);
 			}
@@ -915,6 +917,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 		else {
 			Fighter = new _Object();
 			Fighter->DatabaseID = DatabaseID;
+			Fighter->TurnTimer = TurnTimer;
 			Stats->GetMonsterStats(DatabaseID, Fighter);
 
 			Battle->AddFighter(Fighter, Side);

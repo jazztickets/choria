@@ -431,7 +431,6 @@ _Object *_Battle::GetObjectByID(int BattleID) {
 
 // Add a fighter to the battle
 void _Battle::AddFighter(_Object *Fighter, int Side) {
-	Fighter->TurnTimer = 0.0;
 	Fighter->Battle = this;
 	Fighter->BattleID = NextID++;
 	Fighter->BattleSide = Side;
@@ -480,10 +479,12 @@ void _Battle::ServerStartBattle() {
 
 	// Write fighter information
 	for(auto &Fighter : Fighters) {
+		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 		// Write fighter type
 		Packet.Write<int>(Fighter->DatabaseID);
 		Packet.Write<char>(Fighter->BattleSide);
+		Packet.Write<float>(Fighter->TurnTimer);
 
 		if(Fighter->DatabaseID == 0) {
 
@@ -728,6 +729,17 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 // Removes a player from the battle, return remaining player count
 void _Battle::RemoveFighter(_Object *RemoveFighter) {
 
+	// Remove action results
+	for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
+		_ActionResult &ActionResult = *Iterator;
+		if(ActionResult.SourceFighter == RemoveFighter || ActionResult.TargetFighter == RemoveFighter) {
+			Iterator = ActionResults.erase(Iterator);
+		}
+		else
+			++Iterator;
+	}
+
+	// Remove fighters
 	for(auto Iterator = Fighters.begin(); Iterator != Fighters.end(); ++Iterator) {
 		_Object *Fighter = *Iterator;
 		if(Fighter == RemoveFighter) {

@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <list>
 #include <string>
 #include <lua.hpp>
 
@@ -36,8 +37,11 @@ class _Scripting {
 
 		void PushData(void *Data);
 		void PushObject(_Object *Object);
-		int StartMethodCall(const std::string &TableName, const std::string &Function);
-		void FinishMethodCall(int TableIndex, int Parameters);
+		void PushObjectList(std::list<_Object *> &Objects);
+		void PushInt(int Value);
+
+		void StartMethodCall(const std::string &TableName, const std::string &Function);
+		void FinishMethodCall(int ParameterCount);
 
 		static void PrintStack(lua_State *LuaState);
 
@@ -46,8 +50,11 @@ class _Scripting {
 	private:
 
 		static int RandomGetInt(lua_State *LuaState);
-		static int ObjectSetTarget(lua_State *LuaState);
+
+		static int ObjectSetBattleTarget(lua_State *LuaState);
+		static int ObjectSetAction(lua_State *LuaState);
 
 		lua_State *LuaState;
+		int CurrentTableIndex;
 
 };

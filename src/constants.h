@@ -40,6 +40,8 @@ const double BATTLE_ROUNDTIME = 5.0;
 const double BATTLE_SHOWRESULTTIME = 2.0;
 const double BATTLE_WAITRESULTTIME = 0.375;
 const double BATTLE_WAITENDTIME = 0.30;
+const double BATTLE_MAX_START_TURNTIMER = 0.7;
+const double BATTLE_AI_UPDATE_PERIOD = 1.0;
 
 const double PLAYER_MOVETIME = 0.125;
 const int PLAYER_TRADEITEMS = 8;
