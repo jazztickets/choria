@@ -438,8 +438,6 @@ void _Battle::AddFighter(_Object *Fighter, int Side) {
 	Fighter->BattleID = NextID++;
 	Fighter->BattleSide = Side;
 	Fighter->BattleAction.Unset();
-	for(int i = 0; i < 2; i++)
-		Fighter->PotionsLeft[i] = Fighter->MaxPotions[i];
 
 	// Count fighters and set slots
 	SideCount[Side]++;

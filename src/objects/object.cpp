@@ -125,9 +125,6 @@ _Object::_Object()
 	for(int i = 0; i < ACTIONBAR_SIZE; i++)
 		ActionBar[i] = nullptr;
 
-	for(int i = 0; i < 2; i++)
-		MaxPotions[i] = PotionsLeft[i] = 0;
-
 	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
 		Inventory[i].Item = nullptr;
 		Inventory[i].Count = 0;
@@ -620,36 +617,6 @@ void _Object::AcceptTrader(int *Slots, int RewardSlot) {
 	AddItem(Trader->RewardItem, Trader->Count, RewardSlot);
 }
 
-// Finds a potion in the player's inventory for use in battle
-int _Object::GetPotionBattle(int PotionType) {
-
-	// Check for skill uses
-	if(PotionsLeft[PotionType] <= 0)
-		return -1;
-
-	// Search
-	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		if(Inventory[i].Item && Inventory[i].Item->IsPotionType(PotionType))
-			return i;
-	}
-
-	return -1;
-}
-
-// Uses a potion in battle
-bool _Object::UsePotionBattle(int Slot, int SkillType, int &HealthChange, int &ManaChange) {
-	const _Item *Item = GetInventoryItem(Slot);
-	if(Item == nullptr || Item->Type != _Item::TYPE_POTION)
-		return false;
-
-	HealthChange = Item->HealthRestore;
-	ManaChange = Item->ManaRestore;
-	UpdatePotionsLeft(SkillType);
-	UpdateInventory(Slot, -1);
-
-	return true;
-}
-
 // Uses a potion in the world
 bool _Object::UsePotionWorld(int Slot) {
 	const _Item *Item = GetInventoryItem(Slot);
@@ -1120,12 +1087,6 @@ void _Object::CalculateSkillStats() {
 			switch(Skill->ID) {
 				case 1:
 					WeaponDamageModifier = MaxFloat;
-				break;
-				case 2:
-					MaxPotions[0] = Min;
-				break;
-				case 3:
-					MaxPotions[1] = Min;
 				break;
 				case 5:
 					MaxHealth += MaxRound;

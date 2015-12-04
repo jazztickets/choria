@@ -137,9 +137,6 @@ class _Object {
 		void UpdateGold(int Value);
 
 		// Inventory
-		void UpdatePotionsLeft(int PotionType) { PotionsLeft[PotionType]--; }
-		int GetPotionBattle(int PotionType);
-		bool UsePotionBattle(int Slot, int SkillType, int &HealthChange, int &ManaChange);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);
 		void SetInventory(int Slot, int ItemID, int Count);
@@ -277,7 +274,6 @@ class _Object {
 		bool SkillsOpen;
 		std::unordered_map<uint32_t, int32_t> SkillLevels;
 		int SkillPoints, SkillPointsUsed;
-		int PotionsLeft[2], MaxPotions[2];
 
 		// Trading
 		int TradeGold;

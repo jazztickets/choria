@@ -35,7 +35,6 @@ class _Skill {
 			TYPE_ATTACK,
 			TYPE_SPELL,
 			TYPE_PASSIVE,
-			TYPE_USEPOTION,
 		};
 
 		void DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;

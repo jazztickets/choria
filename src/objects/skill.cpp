@@ -138,11 +138,6 @@ void _Skill::DrawDescription(int SkillLevel, glm::ivec2 &DrawPosition, int Width
 			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_BLUE, LEFT_BASELINE);
 			DrawPosition.y += 15;
 		break;
-		case _Skill::TYPE_USEPOTION:
-			sprintf(Buffer, Info.c_str(), PowerMin);
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		break;
 		case _Skill::TYPE_PASSIVE:
 			switch(ID) {
 				case 5:
@@ -291,11 +286,6 @@ bool _Skill::CanUse(_Object *Fighter) const {
 	// Spell cost
 	if(Fighter->Mana < GetManaCost(Level))
 		return false;
-
-	// Potions
-	if(Type == TYPE_USEPOTION) {
-		return Fighter->GetPotionBattle(ID == 3) != -1;
-	}
 
 	return true;
 }
