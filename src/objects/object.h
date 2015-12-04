@@ -105,7 +105,7 @@ class _Object {
 		// -- FROM FIGHTER --
 
 		// Render
-		void RenderBattle(bool IsTarget, bool OnPlayerSide);
+		void RenderBattle(_Object *ClientPlayer, double Time);
 
 		// Stats
 		void UpdateHealth(int Value);
@@ -216,6 +216,7 @@ class _Object {
 		int BattleSide;
 		_Object *BattleTarget;
 		_Action BattleAction;
+		_Action PotentialAction;
 		std::list<uint32_t> ItemDropsReceived;
 
 		// Render

@@ -1150,9 +1150,7 @@ void _Server::HandleBattleAction(_Buffer &Data, _Peer *Peer) {
 	if(!Player->Battle)
 		return;
 
-	int ActionBarSlot = Data.Read<char>();
-
-	Player->Battle->ServerHandleAction(Player, ActionBarSlot);
+	Player->Battle->ServerHandleAction(Player, Data);
 }
 
 // Handles battle target changes
@@ -1160,12 +1158,12 @@ void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
-	_Object *Player = Peer->Object;
-	if(!Player->Battle)
-		return;
+	//_Object *Player = Peer->Object;
+	//if(!Player->Battle)
+	//	return;
 
-	int BattleTargetID = Data.Read<char>();
-	Player->BattleTarget = Player->Battle->GetObjectByID(BattleTargetID);
+	//int BattleTargetID = Data.Read<char>();
+	//Player->BattleTarget = Player->Battle->GetObjectByID(BattleTargetID);
 }
 
 // The client is done with the battle results screen

@@ -95,7 +95,6 @@ class _Battle {
 		// Objects
 		void AddFighter(_Object *Fighter, int Side);
 		void RemoveFighter(_Object *RemoveFighter);
-		void SetDefaultTargets();
 		_Object *GetObjectByID(int BattleID);
 		int GetPeerCount();
 
@@ -115,7 +114,7 @@ class _Battle {
 
 		// Input
 		bool ClientHandleInput(int Action);
-		void ServerHandleAction(_Object *Fighter, int ActionBarSlot);
+		void ServerHandleAction(_Object *Fighter, _Buffer &Data);
 		void ClientHandlePlayerAction(_Buffer &Data);
 
 		_Stats *Stats;

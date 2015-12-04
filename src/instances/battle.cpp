@@ -156,7 +156,7 @@ void _Battle::RenderBattle() {
 
 	// Draw fighters
 	for(auto &Fighter : Fighters) {
-		Fighter->RenderBattle(ClientPlayer->BattleTarget == Fighter, ClientPlayer->BattleSide == Fighter->BattleSide);
+		Fighter->RenderBattle(ClientPlayer, Timer);
 	}
 
 	// Draw action results
@@ -248,25 +248,75 @@ void _Battle::RenderBattleLose() {
 
 // Sends an action selection to the server
 void _Battle::ClientSetAction(int ActionBarSlot) {
+
+	// Check for dead
 	if(ClientPlayer->Health == 0)
+		return;
+
+	// Player already locked in
+	if(ClientPlayer->BattleAction.IsSet())
 		return;
 
 	// Get skill
 	const _Skill *Skill = ClientPlayer->GetActionBar(ActionBarSlot);
-	if(Skill == nullptr || !Skill->CanUse(ClientPlayer))
-		return;
+	if(Skill && !Skill->CanUse(ClientPlayer))
+		Skill = nullptr;
 
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_SETACTION);
-	Packet.Write<char>(ActionBarSlot);
+	// Check for changing an action
+	bool ChangingAction = false;
+	if(ClientPlayer->PotentialAction.IsSet() && Skill != ClientPlayer->PotentialAction.Skill)
+		ChangingAction = true;
 
-	ClientNetwork->SendPacket(Packet);
-	ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot];
+	// Choose an action to use
+	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
+
+		// Find first alive target
+		if(Skill) {
+
+			// Get opposite side
+			int StartingSide = !ClientPlayer->BattleSide;
+
+			// Pick sides depending on action
+			bool HealAction = false;
+			if(Skill->ID == 4) {
+				HealAction = true;
+				StartingSide = ClientPlayer->BattleSide;
+			}
+
+			// Get list of fighters on each side
+			std::list<_Object *> FighterList;
+			GetFighterList(StartingSide, FighterList);
+
+			// Find first target
+			for(auto &Fighter :  FighterList) {
+				if((!HealAction && Fighter->Health > 0) || HealAction) {
+					ClientPlayer->BattleTarget = Fighter;
+					break;
+				}
+			}
+		}
+
+		// Set potential skill
+		ClientPlayer->PotentialAction.Skill = Skill;
+	}
+	// Apply action
+	else if(ClientPlayer->BattleTarget) {
+
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::BATTLE_SETACTION);
+		Packet.Write<char>(ActionBarSlot);
+		Packet.Write<char>(ClientPlayer->BattleTarget->BattleID);
+
+		ClientNetwork->SendPacket(Packet);
+
+		ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot];
+		ClientPlayer->PotentialAction.Unset();
+	}
 }
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, int SideDirection) {
-	if(!ClientNetwork || ClientPlayer->Health == 0)
+	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || ClientPlayer->Health == 0)
 		return;
 
 	// Get current target side
@@ -311,15 +361,6 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	}
 
 	ClientPlayer->BattleTarget = NewTarget;
-	int BattleTargetID = -1;
-	if(ClientPlayer->BattleTarget)
-		BattleTargetID = ClientPlayer->BattleTarget->BattleID;
-
-	// Send packet
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_CHANGETARGET);
-	Packet.Write<char>(BattleTargetID);
-	ClientNetwork->SendPacket(Packet);
 }
 
 // Resolves an action and sends the result to each player
@@ -372,8 +413,10 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	// Send packet
 	BroadcastPacket(Packet);
 
+	// Reset fighter
 	SourceFighter->TurnTimer = 0.0;
 	SourceFighter->BattleAction.Unset();
+	SourceFighter->BattleTarget = nullptr;
 }
 
 // Displays turn results from the server
@@ -402,6 +445,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		ActionResult.SourceFighter->Mana = SourceFighterMana;
 		ActionResult.SourceFighter->TurnTimer = 0.0;
 		ActionResult.SourceFighter->BattleAction.Unset();
+		ActionResult.SourceFighter->BattleTarget = nullptr;
 	}
 
 	// Update target fighter
@@ -412,13 +456,6 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	}
 
 	ActionResults.push_back(ActionResult);
-
-/*
-	// Change targets if the old one died
-	int TargetIndex = GetFighterFromSlot(ClientPlayer->Target);
-	if(TargetIndex != -1 && Fighters[TargetIndex]->Health == 0)
-		ChangeTarget(1);
-*/
 }
 
 // Get the object pointer battle id
@@ -440,7 +477,9 @@ void _Battle::AddFighter(_Object *Fighter, int Side) {
 	Fighter->Battle = this;
 	Fighter->BattleID = NextID++;
 	Fighter->BattleSide = Side;
+	Fighter->BattleTarget = nullptr;
 	Fighter->BattleAction.Unset();
+	Fighter->PotentialAction.Unset();
 
 	// Count fighters and set slots
 	SideCount[Side]++;
@@ -469,9 +508,6 @@ void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters)
 
 // Starts the battle and notifies the players
 void _Battle::ServerStartBattle() {
-
-	// Set targets
-	SetDefaultTargets();
 
 	// Build packet
 	_Buffer Packet;
@@ -514,9 +550,6 @@ void _Battle::ClientStartBattle() {
 	BattleWinElement = Assets.Elements["element_battlewin"];
 	BattleLoseElement = Assets.Elements["element_battlelose"];
 	BattleElement->SetVisible(true);
-
-	// Set up targets
-	SetDefaultTargets();
 
 	// Set fighter position offsets
 	int SideCount[2] = { 0, 0 };
@@ -759,22 +792,6 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 	}
 }
 
-// Give each fighter an initial target
-void _Battle::SetDefaultTargets() {
-
-	// Get list of fighters on each side
-	std::list<_Object *> FighterList[2];
-	GetFighterList(0, FighterList[0]);
-	GetFighterList(1, FighterList[1]);
-
-	// Set opposite targets
-	for(int i = 0; i < 2; i++) {
-		for(auto &Fighter :  FighterList[i]) {
-			Fighter->BattleTarget = *FighterList[!i].begin();
-		}
-	}
-}
-
 // Get number of peers in battle
 int _Battle::GetPeerCount() {
 	int PeerCount = 0;
@@ -820,10 +837,10 @@ bool _Battle::ClientHandleInput(int Action) {
 					ChangeTarget(1, 0);
 				break;
 				case _Actions::LEFT:
-					ChangeTarget(0, -1);
+					//ChangeTarget(0, -1);
 				break;
 				case _Actions::RIGHT:
-					ChangeTarget(0, 1);
+					//ChangeTarget(0, 1);
 				break;
 			}
 		break;
@@ -833,11 +850,18 @@ bool _Battle::ClientHandleInput(int Action) {
 }
 
 // Handles input from the client
-void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
+void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
+
+	int ActionBarSlot = Data.Read<char>();
+	int TargetID = Data.Read<char>();
+
+	// Get target
+	_Object *Target = GetObjectByID(TargetID);
 
 	// Check for needed commands
 	if(!Fighter->BattleAction.IsSet()) {
 
+		// Set skill
 		int SkillID = 0;
 		if(ActionBarSlot != -1) {
 			Fighter->BattleAction.Skill = Fighter->ActionBar[ActionBarSlot];
@@ -845,6 +869,10 @@ void _Battle::ServerHandleAction(_Object *Fighter, int ActionBarSlot) {
 				SkillID = Fighter->BattleAction.Skill->ID;
 		}
 
+		// Set target
+		Fighter->BattleTarget = Target;
+
+		// Notify other players of action
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
 		Packet.Write<char>(Fighter->BattleID);

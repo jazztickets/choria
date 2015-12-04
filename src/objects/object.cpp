@@ -136,7 +136,7 @@ _Object::~_Object() {
 }
 
 // Renders the fighter during a battle
-void _Object::RenderBattle(bool IsTarget, bool OnPlayerSide) {
+void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Get slot ui element depending on side
 	_Element *Slot;
@@ -237,17 +237,21 @@ void _Object::RenderBattle(bool IsTarget, bool OnPlayerSide) {
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
 	// Draw the skill used
-	if(OnPlayerSide && BattleAction.Skill) {
+	if(ClientPlayer->BattleSide == BattleSide && BattleAction.Skill) {
 		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Image->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Image);
 	}
 
-	// Draw target
-	if(IsTarget) {
-		const _Texture *Texture = Assets.Textures["battle/target.png"];
+	// Draw potential skill to use
+	if(ClientPlayer->BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
+		const _Texture *Texture = ClientPlayer->PotentialAction.Skill->Image;
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture);
+		glm::vec4 Color(COLOR_WHITE);
+		if(Time - (int)Time < 0.5f)
+			Color.a = 0.5f;
+
+		Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture, Color);
 	}
 }
 
