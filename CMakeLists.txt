@@ -16,9 +16,13 @@ if(NOT LUA_VERSION)
 	set(LUA_VERSION "5.3")
 endif()
 
-# windows only options
-if(MSVC)
+# mingw and visual studio
+if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
+endif()
+
+# visual studio only options
+if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 	add_definitions("-DNOMINMAX")
