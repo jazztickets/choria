@@ -1,21 +1,22 @@
 AI_Dumb = {}
 
 function AI_Dumb.Update(Object, Enemies, Allies)
-	if not BattleActionIsSet then
+	if Object.TurnTimer >= 1.0 then
+		if not Object.BattleActionIsSet then
 
-		-- Chance to do nothing
-		if Random.GetInt(1, 10) <= 5 then
-			return
+			-- Chance to do nothing
+			if Random.GetInt(1, 2) == 1 then
+				return
+			end
+
+			-- Get random target
+			Target = Random.GetInt(1, #Enemies)
+
+			-- Set target
+			Object.SetBattleTarget(Enemies[Target])
+
+			-- Set skill
+			Object.SetAction(0)
 		end
-
-		-- Get random target
-		Target = Random.GetInt(1, #Enemies)
-
-		-- Set target
-		Object.SetBattleTarget(Enemies[Target])
-
-		-- Set skill
-		Object.SetAction(0)
 	end
 end
-

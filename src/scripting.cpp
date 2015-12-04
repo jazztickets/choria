@@ -77,6 +77,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushcclosure(LuaState, &ObjectSetAction, 1);
 	lua_setfield(LuaState, -2, "SetAction");
 
+	lua_pushnumber(LuaState, Object->TurnTimer);
+	lua_setfield(LuaState, -2, "TurnTimer");
+
 	lua_pushboolean(LuaState, Object->BattleAction.IsSet());
 	lua_setfield(LuaState, -2, "BattleActionIsSet");
 
