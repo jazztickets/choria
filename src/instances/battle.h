@@ -143,6 +143,7 @@ class _Battle {
 		int State;
 		bool Done;
 		double Timer;
+		double WaitTimer;
 
 		// Objects
 		std::list<_Object *> Fighters;

@@ -47,6 +47,7 @@ _Battle::_Battle() :
 	State(STATE_NONE),
 	Done(false),
 	Timer(0),
+	WaitTimer(0),
 	NextID(0),
 	ClientExperienceReceived(0),
 	ClientGoldReceived(0),
@@ -110,7 +111,9 @@ void _Battle::Update(double FrameTime) {
 		// Check for end
 		if(Server) {
 			if(AliveCount[0] == 0 || AliveCount[1] == 0) {
-				ServerEndBattle();
+				WaitTimer += FrameTime;
+				if(WaitTimer >= BATTLE_WAITDEADTIME)
+					ServerEndBattle();
 			}
 		}
 		else {

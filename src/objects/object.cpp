@@ -75,7 +75,7 @@ _Object::_Object()
 	DatabaseID(0),
 	ExperienceGiven(0),
 	GoldGiven(0),
-	AI(0),
+	AI(""),
 
 	CharacterID(0),
 	CheckEvent(false),
@@ -308,7 +308,7 @@ void _Object::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
 
 // Update AI during battle
 void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime) {
-	if(!AI)
+	if(!AI.length())
 		return;
 
 	// Update AI every second
@@ -327,7 +327,7 @@ void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighte
 
 		// Call lua script
 		if(Enemies.size()) {
-			Scripting->StartMethodCall("AI_Dumb", "Update");
+			Scripting->StartMethodCall(AI, "Update");
 			Scripting->PushObject(this);
 			Scripting->PushObjectList(Enemies);
 			Scripting->PushObjectList(Allies);
@@ -458,7 +458,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 
 		glm::vec3 DrawPosition;
-		if(1) {
+		if(0) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 			Graphics.DrawSprite(DrawPosition, WorldTexture);

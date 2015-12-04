@@ -225,7 +225,7 @@ void _Stats::LoadTraders() {
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 	// Run query
-	Database->PrepareQuery("SELECT * FROM monster WHERE id = @monster_id");
+	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.id = @monster_id");
 	Database->BindInt(1, MonsterID);
 
 	// Get data
@@ -249,7 +249,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->MinDefense = (int)(Value - Range);
 		Monster->MaxDefense = (int)(Value + Range);
 
-		Monster->AI = Database->GetInt("ai");
+		Monster->AI = Database->GetString("ai_name");
 
 		Monster->ActionBar[0] = Skills[1];
 	}

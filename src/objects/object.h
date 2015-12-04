@@ -226,7 +226,7 @@ class _Object {
 		// Monster
 		int DatabaseID;
 		int ExperienceGiven, GoldGiven;
-		int AI;
+		std::string AI;
 
 		// -- PLAYER  --
 		int CharacterID;
