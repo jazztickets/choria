@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/editor.h>
+#include <ui/element.h>
 #include <framework.h>
 #include <input.h>
 #include <graphics.h>
@@ -36,11 +37,15 @@ _EditorState EditorState;
 
 // Constructor
 _EditorState::_EditorState() :
-	Map(nullptr) {
+	Map(nullptr),
+	EditorNewMapElement(nullptr) {
 }
 
 // Initializes the state
 void _EditorState::Init() {
+	EditorNewMapElement = Assets.Elements["element_editor_newmap"];
+	EditorNewMapElement->SetVisible(true);
+
 	Stats = new _Stats();
 
 	// Create brush
@@ -79,8 +84,181 @@ void _EditorState::Close() {
 	CloseMap();
 }
 
+// Key events
+void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
+	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
+
+	if(KeyEvent.Repeat)
+		return;
+
+	switch(State) {
+		case STATE_MAIN:
+			switch(KeyEvent.Scancode) {
+				case SDL_SCANCODE_ESCAPE:
+					Framework.Done = true;
+				break;
+				case SDL_SCANCODE_1:
+					Filter = 0;
+					Filter |= FILTER_TEXTURE;
+					Filter |= FILTER_WALL;
+				break;
+				case SDL_SCANCODE_2:
+					Filter = 0;
+					Filter |= FILTER_ZONE;
+				break;
+				case SDL_SCANCODE_3:
+					Filter = 0;
+					Filter |= FILTER_PVP;
+				break;
+				case SDL_SCANCODE_4:
+					Filter = 0;
+					Filter |= FILTER_EVENTTYPE;
+					Filter |= FILTER_EVENTDATA;
+				break;
+				case SDL_SCANCODE_N:
+					InitNewMap();
+				break;
+				case SDL_SCANCODE_W:
+					Brush->Wall = !Brush->Wall;
+				break;
+				case SDL_SCANCODE_P:
+					Brush->PVP = !Brush->PVP;
+				break;
+				case SDL_SCANCODE_S:
+					if(Map)
+						Map->Save(Map->Path);
+				break;
+				case SDL_SCANCODE_L:
+					InitLoadMap();
+				break;
+				case SDL_SCANCODE_T:
+					InitTexturePalette();
+				break;
+				case SDL_SCANCODE_B:
+					InitBrushOptions();
+				break;
+				case SDL_SCANCODE_MINUS:
+					if(Brush->EventData > 0)
+						Brush->EventData--;
+				break;
+				case SDL_SCANCODE_EQUALS:
+					Brush->EventData++;
+				break;
+				case SDL_SCANCODE_F1:
+					BrushSize = 0;
+				break;
+				case SDL_SCANCODE_F2:
+					BrushSize = 1;
+				break;
+				case SDL_SCANCODE_F3:
+					BrushSize = 2;
+				break;
+				case SDL_SCANCODE_F4:
+					BrushSize = 3;
+				break;
+				default:
+				break;
+			}
+		break;
+	/*
+		case STATE_NEWMAP:
+			switch(TKey) {
+				case SDL_SCANCODE_ESCAPE:
+					CloseWindow(NEWMAP_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+		case STATE_LOADMAP:
+			switch(TKey) {
+				case SDL_SCANCODE_ESCAPE:
+					CloseWindow(NEWMAP_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+		case STATE_TEXTUREPALETTE:
+			switch(TKey) {
+				case SDL_SCANCODE_ESCAPE:
+					CloseWindow(TEXTUREPALETTE_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+		case STATE_BRUSHOPTIONS:
+			switch(TKey) {
+				case SDL_SCANCODE_ESCAPE:
+					CloseWindow(BRUSHOPTIONS_WINDOW);
+					State = STATE_MAIN;
+				break;
+				default:
+					return false;
+				break;
+			}
+		break;
+	*/
+	}
+}
+
+// Mouse events
+void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
+	FocusedElement = nullptr;
+	Graphics.Element->HandleInput(MouseEvent.Pressed);
+
+	if(Map) {
+		if(MouseEvent.Pressed) {
+			switch(MouseEvent.Button) {
+				// Eyedropper tool
+				case SDL_BUTTON_LEFT:
+					if(Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor))
+						*Brush = *Map->GetTile(WorldCursor);
+				break;
+				// Scroll map
+				case SDL_BUTTON_RIGHT:
+					Camera->Set2DPosition(WorldCursor);
+				break;
+			}
+		}
+	}
+}
+
+// Mouse scroll wheel
+void _EditorState::MouseWheelEvent(int Direction) {
+	if(Input.ModKeyDown(KMOD_CTRL)) {
+		Brush->Zone += Direction;
+		if(Brush->Zone < 0)
+			Brush->Zone = 0;
+	}
+	else {
+
+		// Zoom
+		float Multiplier = 1.0f * Direction;
+		if(Input.ModKeyDown(KMOD_SHIFT))
+			Multiplier = 10.0f * Direction;
+
+		Camera->UpdateDistance(-Multiplier);
+	}
+}
+
+// Window events
+void _EditorState::WindowEvent(uint8_t Event) {
+	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
+		Camera->CalculateFrustum(Graphics.AspectRatio);
+}
+
 // Updates the current state
 void _EditorState::Update(double FrameTime) {
+	Graphics.Element->Update(FrameTime, Input.GetMouse());
+
 	if(!Map)
 		return;
 
@@ -119,6 +297,7 @@ void _EditorState::Update(double FrameTime) {
 
 // Draws the current state
 void _EditorState::Render(double BlendFactor) {
+
 	Graphics.Setup3D();
 
 	// Set lights
@@ -153,6 +332,10 @@ void _EditorState::Render(double BlendFactor) {
 	std::stringstream Buffer;
 	Buffer << std::fixed << std::setprecision(1) << WorldCursor.x << ", " << WorldCursor.y;
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
+
+	if(EditorNewMapElement->Visible)
+		EditorNewMapElement->Render();
+
 }
 
 // GUI events
@@ -280,172 +463,6 @@ void _MapEditorState::HandleGUI(gui::EGUI_EVENT_TYPE EventType, gui::IGUIElement
 	}
 }
 */
-
-// Key events
-void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
-	if(KeyEvent.Repeat)
-		return;
-
-	switch(State) {
-		case STATE_MAIN:
-			switch(KeyEvent.Scancode) {
-				case SDL_SCANCODE_ESCAPE:
-					Framework.Done = true;
-				break;
-				case SDL_SCANCODE_1:
-					Filter = 0;
-					Filter |= FILTER_TEXTURE;
-					Filter |= FILTER_WALL;
-				break;
-				case SDL_SCANCODE_2:
-					Filter = 0;
-					Filter |= FILTER_ZONE;
-				break;
-				case SDL_SCANCODE_3:
-					Filter = 0;
-					Filter |= FILTER_PVP;
-				break;
-				case SDL_SCANCODE_4:
-					Filter = 0;
-					Filter |= FILTER_EVENTTYPE;
-					Filter |= FILTER_EVENTDATA;
-				break;
-				case SDL_SCANCODE_N:
-					InitNewMap();
-				break;
-				case SDL_SCANCODE_W:
-					Brush->Wall = !Brush->Wall;
-				break;
-				case SDL_SCANCODE_P:
-					Brush->PVP = !Brush->PVP;
-				break;
-				case SDL_SCANCODE_S:
-					if(Map)
-						Map->Save(Map->Path);
-				break;
-				case SDL_SCANCODE_L:
-					InitLoadMap();
-				break;
-				case SDL_SCANCODE_T:
-					InitTexturePalette();
-				break;
-				case SDL_SCANCODE_B:
-					InitBrushOptions();
-				break;
-				case SDL_SCANCODE_MINUS:
-					if(Brush->EventData > 0)
-						Brush->EventData--;
-				break;
-				case SDL_SCANCODE_EQUALS:
-					Brush->EventData++;
-				break;
-				case SDL_SCANCODE_F1:
-					BrushSize = 0;
-				break;
-				case SDL_SCANCODE_F2:
-					BrushSize = 1;
-				break;
-				case SDL_SCANCODE_F3:
-					BrushSize = 2;
-				break;
-				case SDL_SCANCODE_F4:
-					BrushSize = 3;
-				break;
-				default:
-				break;
-			}
-		break;
-	/*
-		case STATE_NEWMAP:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(NEWMAP_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-		case STATE_LOADMAP:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(NEWMAP_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-		case STATE_TEXTUREPALETTE:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(TEXTUREPALETTE_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-		case STATE_BRUSHOPTIONS:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(BRUSHOPTIONS_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-	*/
-	}
-}
-
-// Mouse events
-void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
-	if(Map) {
-		if(MouseEvent.Pressed) {
-			switch(MouseEvent.Button) {
-				// Eyedropper tool
-				case SDL_BUTTON_LEFT:
-					if(Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor))
-						*Brush = *Map->GetTile(WorldCursor);
-				break;
-				// Scroll map
-				case SDL_BUTTON_RIGHT:
-					Camera->Set2DPosition(WorldCursor);
-				break;
-			}
-		}
-	}
-}
-
-// Mouse scroll wheel
-void _EditorState::MouseWheelEvent(int Direction) {
-	if(Input.ModKeyDown(KMOD_CTRL)) {
-		Brush->Zone += Direction;
-		if(Brush->Zone < 0)
-			Brush->Zone = 0;
-	}
-	else {
-
-		// Zoom
-		float Multiplier = 1.0f * Direction;
-		if(Input.ModKeyDown(KMOD_SHIFT))
-			Multiplier = 10.0f * Direction;
-
-		Camera->UpdateDistance(-Multiplier);
-	}
-}
-
-// Window events
-void _EditorState::WindowEvent(uint8_t Event) {
-	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
-		Camera->CalculateFrustum(Graphics.AspectRatio);
-}
 
 // Close a window by element
 void _EditorState::CloseWindow(int Element) {

@@ -26,6 +26,7 @@ class _Camera;
 class _Map;
 class _Texture;
 class _Stats;
+class _Element;
 
 enum FilterType {
 	FILTER_TEXTURE   = (1 << 1),
@@ -80,13 +81,15 @@ class _EditorState : public _State {
 		void Init() override;
 		void Close() override;
 
-		void Update(double FrameTime) override;
-		void Render(double BlendFactor) override;
-
+		// Events
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 		void MouseWheelEvent(int Direction) override;
 		void WindowEvent(uint8_t Event) override;
+
+		// Update
+		void Update(double FrameTime) override;
+		void Render(double BlendFactor) override;
 
 		void SetPath(const std::string &Path) { this->Path = Path; }
 
@@ -134,6 +137,8 @@ class _EditorState : public _State {
 
 		// Filter
 		int Filter;
+
+		_Element *EditorNewMapElement;
 };
 
 extern _EditorState EditorState;

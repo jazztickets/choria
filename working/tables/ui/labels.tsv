@@ -70,3 +70,9 @@ label_trade_status_theirs	button_trade_accept_theirs	hud_small			0	17	0	0	1	3
 label_trade_status_yours	button_trade_accept_yours	hud_small		Accept	0	17	0	0	1	3
 label_menu_ingame_resume	button_ingame_resume	menu_buttons		Resume	0	32	0	0	1	3
 label_menu_ingame_disconnect	button_ingame_disconnect	menu_buttons		Disconnect	0	32	0	0	1	3
+label_editor_newmap_title	element_editor_newmap	battle_large		New Map	0	50	0	0	1	3
+label_editor_newmap_filename	textbox_editor_newmap_filename	hud_medium		Filename	0	22	215	0	2	3
+label_editor_newmap_width	textbox_editor_newmap_width	hud_medium		Width	0	22	90	0	2	3
+label_editor_newmap_height	textbox_editor_newmap_height	hud_medium		Height	0	22	90	0	2	3
+label_editor_newmap_create	button_editor_newmap_create	hud_medium		Create	0	23	0	0	1	3
+label_editor_newmap_cancel	button_editor_newmap_cancel	hud_medium		Cancel	0	23	0	0	1	3
