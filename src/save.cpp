@@ -241,8 +241,13 @@ void _Save::SavePlayer(const _Object *Player) {
 
 	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 		if(Player->ActionBar[i].IsSet()) {
-			uint32_t SkillID = Player->ActionBar[i].Skill->ID;
+			uint32_t SkillID = 0;
 			uint32_t ItemID = 0;
+			if(Player->ActionBar[i].Skill)
+				SkillID = Player->ActionBar[i].Skill->ID;
+			if(Player->ActionBar[i].Item)
+				ItemID = Player->ActionBar[i].Item->ID;
+
 			Query << "INSERT INTO actionbar VALUES(" << Player->CharacterID << ", " << i << ", " << SkillID << ", " << ItemID << ")";
 			Database->RunQuery(Query.str());
 			Query.str("");

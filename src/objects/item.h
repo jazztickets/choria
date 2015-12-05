@@ -54,7 +54,7 @@ class _Item {
 		void GetType(std::string &String) const;
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 
-		int ID;
+		uint32_t ID;
 		std::string Name;
 		int Level;
 		int Type;

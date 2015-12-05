@@ -30,6 +30,7 @@ class _Item;
 class _Skill;
 class _Element;
 class _TextBox;
+struct _Action;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
@@ -151,7 +152,7 @@ class _HUD {
 		void SellItem(_Cursor *Item, int Amount);
 
 		void AdjustSkillLevel(uint32_t SkillID, int Direction);
-		void SetActionBar(int Slot, int OldSlot, const _Skill *Skill);
+		void SetActionBar(int Slot, int OldSlot, const _Action &Action);
 		void ClearSkills();
 
 		void RefreshSkillButtons();

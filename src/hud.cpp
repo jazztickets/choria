@@ -156,11 +156,18 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							SellItem(&Tooltip, 1);
 					}
 				break;
+				case WINDOW_ACTIONBAR:
+					if(InventoryElement->Visible) {
+						if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+							Cursor = Tooltip;
+						}
+					}
+				break;
 			}
 		}
 		else if(Tooltip.Skill && SkillsElement->Visible) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-				if(Tooltip.Skill && Player->SkillLevels[Tooltip.Skill->ID] > 0)
+				if(Player->SkillLevels[Tooltip.Skill->ID] > 0)
 					Cursor = Tooltip;
 			}
 		}
@@ -210,11 +217,13 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		}
 		// Released an item
 		else if(Cursor.Item) {
-			switch(Cursor.Window) {
 
-				// Coming from inventory
+			// Check source window
+			switch(Cursor.Window) {
 				case WINDOW_TRADEYOURS:
 				case WINDOW_INVENTORY:
+
+					// Check destination window
 					switch(Tooltip.Window) {
 
 						// Send inventory move packet
@@ -237,6 +246,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							SellItem(&Cursor, 1);
 						break;
 						case WINDOW_ACTIONBAR:
+							if(Cursor.Window == WINDOW_INVENTORY)
+								SetActionBar(Tooltip.Slot, -1, Cursor.Item);
+							else if(Cursor.Window == WINDOW_ACTIONBAR)
+								SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Item);
 						break;
 					}
 				break;
@@ -244,6 +257,26 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				case WINDOW_VENDOR:
 					if(Tooltip.Window == WINDOW_INVENTORY) {
 						BuyItem(&Cursor, Tooltip.Slot);
+					}
+				break;
+				// Drag item from actionbar
+				case WINDOW_ACTIONBAR:
+					switch(Tooltip.Window) {
+						// Onto inventory
+						case WINDOW_INVENTORY:
+							SetActionBar(Cursor.Slot, -1, Tooltip.Item);
+						break;
+						// Swap action
+						case WINDOW_ACTIONBAR:
+							SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Item);
+						break;
+						default:
+							// Remove action
+							if(Tooltip.Slot == -1 || Tooltip.Window == -1) {
+								_Action Action;
+								SetActionBar(Cursor.Slot, -1, Action);
+							}
+						break;
 					}
 				break;
 			}
@@ -257,7 +290,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Skill);
 			}
 			else if(Cursor.Window == WINDOW_ACTIONBAR && (Tooltip.Slot == -1 || Tooltip.Window == -1)) {
-				SetActionBar(Cursor.Slot, -1, nullptr);
+				_Action Action;
+				SetActionBar(Cursor.Slot, -1, Action);
 			}
 		}
 
@@ -337,6 +371,7 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_ACTIONBAR: {
 				Tooltip.Skill = Player->ActionBar[Tooltip.Slot].Skill;
+				Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
 			} break;
 		}
 	}
@@ -1039,6 +1074,13 @@ void _HUD::DrawActionBar() {
 			Graphics.DrawCenteredImage(DrawPosition, Skill->Image);
 		}
 
+		// Draw item icon
+		const _Item *Item = Player->ActionBar[i].Item;
+		if(Item) {
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Image);
+		}
+
 		// Draw hotkey
 		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction(_Actions::SKILL1 + i), DrawPosition + glm::ivec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
 	}
@@ -1287,25 +1329,25 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 }
 
 // Sets the player's skill bar
-void _HUD::SetActionBar(int Slot, int OldSlot, const _Skill *Skill) {
-	if(Player->ActionBar[Slot].Skill == Skill)
+void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
+	if(Player->ActionBar[Slot] == Action)
 		return;
 
-	// Check for swapping
+	// Check for bringing new skill/item onto bar
 	if(OldSlot == -1) {
 
 		// Remove duplicate skills
 		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-			if(Player->ActionBar[i].Skill == Skill)
+			if(Player->ActionBar[i] == Action)
 				Player->ActionBar[i].Unset();
 		}
 	}
+	// Rearrange action bar
 	else {
-		const _Skill *OldSkill = Player->ActionBar[Slot].Skill;
-		Player->ActionBar[OldSlot].Skill = OldSkill;
+		Player->ActionBar[OldSlot] = Player->ActionBar[Slot];
 	}
 
-	Player->ActionBar[Slot].Skill = Skill;
+	Player->ActionBar[Slot] = Action;
 	Player->CalculatePlayerStats();
 	ActionBarChanged = true;
 }
