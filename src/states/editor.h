@@ -68,14 +68,6 @@ class _EditorState : public _State {
 			TEXTURES_ID=100,
 		};
 
-		enum StateType {
-			STATE_MAIN,
-			STATE_NEWMAP,
-			STATE_LOADMAP,
-			STATE_TEXTUREPALETTE,
-			STATE_BRUSHOPTIONS,
-		};
-
 		_EditorState();
 
 		void Init() override;
@@ -95,15 +87,14 @@ class _EditorState : public _State {
 
 	private:
 
-		void CloseWindow(int Element);
 		void CloseMap();
-
-		// New
-		void InitNewMap();
 		void CreateMap();
 
-		// Loading
+		void ToggleNewMap();
+
+		void InitNewMap();
 		void InitLoadMap();
+		bool CloseWindows();
 
 		// Texture palette
 		void InitTexturePalette();
@@ -116,7 +107,6 @@ class _EditorState : public _State {
 		void RenderBrush();
 
 		// General
-		int State;
 		_Stats *Stats;
 
 		// Graphics
