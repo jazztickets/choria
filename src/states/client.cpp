@@ -529,10 +529,10 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	// Read skill bar
 	uint8_t ActionBarSize = Data.Read<uint8_t>();
 	Player->ActionBar.resize(ActionBarSize);
-	for(size_t i = 0; i < ActionBarSize; i++) {
+	for(size_t i = 0; i < ActionBarSize; i++)
 		Player->ActionBar[i].Unserialize(Data, Stats);
-	}
 
+	Player->RefreshActionBarCount();
 	Player->CalculateSkillPoints();
 	Player->CalculatePlayerStats();
 	Player->RestoreHealthMana();

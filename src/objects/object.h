@@ -49,20 +49,22 @@ struct _InventorySlot {
 
 // Action
 struct _Action {
-	_Action() : Skill(nullptr), Item(nullptr) { }
+	_Action() : Skill(nullptr), Item(nullptr), Count(0) { }
 	_Action(const _Skill *Skill) : _Action() { this->Skill = Skill; }
 	_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
 	bool operator==(const _Action &Action) { return Action.Skill == Skill && Action.Item == Item; }
+	bool operator!=(const _Action &Action) { return !(Action.Skill == Skill && Action.Item == Item); }
 
 	void Serialize(_Buffer &Data);
 	void Unserialize(_Buffer &Data, _Stats *Stats);
 
 	bool IsSet() const { return !(Skill == nullptr && Item == nullptr); }
-	void Unset() { Skill = nullptr; Item = nullptr; }
+	void Unset() { Skill = nullptr; Item = nullptr; Count = 0; }
 
 	const _Skill *Skill;
 	const _Item *Item;
+	int Count;
 };
 
 // Classes
@@ -140,6 +142,9 @@ class _Object {
 		void UpdateGold(int Value);
 
 		// Inventory
+		bool FindItem(const _Item *Item, int &Slot);
+		int CountItem(const _Item *Item);
+		void RefreshActionBarCount();
 		bool UseAction(uint8_t Slot);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);

@@ -926,7 +926,7 @@ void _HUD::DrawInventory() {
 
 			// Draw count
 			if(Item->Count > 1)
-				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 		}
 	}
 }
@@ -1002,7 +1002,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 			// Draw count
 			if(Item->Count > 1)
-				Assets.Fonts["hud_small"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 		}
 
 		BagIndex++;
@@ -1079,6 +1079,8 @@ void _HUD::DrawActionBar() {
 		if(Item) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Item->Image);
+
+			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::ivec2(20, 19), COLOR_WHITE, RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
@@ -1202,7 +1204,7 @@ void _HUD::DrawCursorItem() {
 		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->Image);
 		DrawItemPrice(Cursor.Item, Cursor.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
 		if(Cursor.Count > 1)
-			Assets.Fonts["hud_small"]->DrawText(std::to_string(Cursor.Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Cursor.Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 	}
 }
 
@@ -1230,7 +1232,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPos
 	else
 		Color = COLOR_LIGHTGOLD;
 
-	Assets.Fonts["hud_small"]->DrawText(std::to_string(Price).c_str(), DrawPosition + glm::ivec2(20, -8), Color, RIGHT_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price).c_str(), DrawPosition + glm::ivec2(20, -11), Color, RIGHT_BASELINE);
 }
 
 // Buys an item from the vendor
@@ -1348,6 +1350,8 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
 	}
 
 	Player->ActionBar[Slot] = Action;
+	Player->RefreshActionBarCount();
+
 	Player->CalculatePlayerStats();
 	ActionBarChanged = true;
 }

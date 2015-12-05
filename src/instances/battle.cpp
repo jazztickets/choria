@@ -184,6 +184,8 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult) {
 	const _Texture *SkillTexture;
 	if(ActionResult.SkillUsed)
 		SkillTexture = ActionResult.SkillUsed->Image;
+	else if(ActionResult.ItemUsed)
+		SkillTexture = ActionResult.ItemUsed->Image;
 	else
 		SkillTexture = Assets.Textures["skills/attack.png"];
 
@@ -200,6 +202,9 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult) {
 	Graphics.DrawCenteredImage(BattleActionUsedPosition, SkillTexture, Color);
 
 	// Draw damage dealt
+	if(ActionResult.TargetHealthChange > 0)
+		Color = COLOR_GREEN;
+
 	std::stringstream Buffer;
 	Buffer << std::abs(ActionResult.TargetHealthChange);
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), TargetDrawPosition + glm::ivec2(0, 7), Color, CENTER_BASELINE);
@@ -247,7 +252,7 @@ void _Battle::RenderBattleLose() {
 }
 
 // Sends an action selection to the server
-void _Battle::ClientSetAction(int ActionBarSlot) {
+void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 	// Check for dead
 	if(ClientPlayer->Health == 0)
@@ -258,27 +263,33 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 		return;
 
 	// Get skill
-	const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
-	if(Skill && !Skill->CanUse(ClientPlayer))
-		Skill = nullptr;
+	_Action Action = ClientPlayer->ActionBar[ActionBarSlot];
 
 	// Check for changing an action
 	bool ChangingAction = false;
-	if(ClientPlayer->PotentialAction.IsSet() && Skill != ClientPlayer->PotentialAction.Skill)
+	if(ClientPlayer->PotentialAction.IsSet() && Action != ClientPlayer->PotentialAction)
 		ChangingAction = true;
 
 	// Choose an action to use
 	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
 
+		const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
+		if(Skill && !Skill->CanUse(ClientPlayer))
+			Skill = nullptr;
+
+		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
+		if(Item && Item->Type != _Item::TYPE_POTION)
+			Item = nullptr;
+
 		// Find first alive target
-		if(Skill) {
+		if(Skill || Item) {
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->BattleSide;
 
 			// Pick sides depending on action
 			bool HealAction = false;
-			if(Skill->ID == 4) {
+			if((Skill && Skill->ID == 4) || (Item && Item->Type == _Item::TYPE_POTION)) {
 				HealAction = true;
 				StartingSide = ClientPlayer->BattleSide;
 			}
@@ -298,18 +309,20 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 
 		// Set potential skill
 		ClientPlayer->PotentialAction.Skill = Skill;
+		ClientPlayer->PotentialAction.Item = Item;
 	}
 	// Apply action
 	else if(ClientPlayer->BattleTarget) {
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_SETACTION);
-		Packet.Write<char>(ActionBarSlot);
+		Packet.Write<uint8_t>(ActionBarSlot);
 		Packet.Write<char>(ClientPlayer->BattleTarget->BattleID);
 
 		ClientNetwork->SendPacket(Packet);
 
 		ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
+		ClientPlayer->BattleAction.Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		ClientPlayer->PotentialAction.Unset();
 	}
 }
@@ -372,10 +385,20 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	ActionResult.SourceFighter = SourceFighter;
 	ActionResult.TargetFighter = SourceFighter->BattleTarget;
 	ActionResult.SkillUsed = SourceFighter->BattleAction.Skill;
+	ActionResult.ItemUsed = SourceFighter->BattleAction.Item;
 
 	// Update fighters
-	if(ActionResult.SkillUsed)
+	if(ActionResult.SkillUsed) {
 		ActionResult.SkillUsed->ResolveUse(ActionResult);
+	}
+	else if(ActionResult.ItemUsed) {
+		int Index = -1;
+		if(ActionResult.SourceFighter->FindItem(ActionResult.ItemUsed, Index)) {
+			ActionResult.SourceFighter->UpdateInventory(Index, -1);
+			ActionResult.TargetHealthChange = ActionResult.ItemUsed->HealthRestore;
+			ActionResult.TargetManaChange = ActionResult.ItemUsed->ManaRestore;
+		}
+	}
 
 	// Update source health and mana
 	int HealthUpdate, ManaUpdate;
@@ -393,13 +416,17 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_ACTIONRESULTS);
 
-	int SkillID = 0;
+	uint32_t SkillID = 0;
+	uint32_t ItemID = 0;
 	if(ActionResult.SkillUsed)
 		SkillID = ActionResult.SkillUsed->ID;
+	if(ActionResult.ItemUsed)
+		ItemID = ActionResult.ItemUsed->ID;
 
 	Packet.Write<char>(ActionResult.SourceFighter->BattleID);
 	Packet.Write<char>(ActionResult.TargetFighter->BattleID);
 	Packet.Write<uint32_t>(SkillID);
+	Packet.Write<uint32_t>(ItemID);
 	Packet.Write<int32_t>(ActionResult.DamageDealt);
 	Packet.Write<int32_t>(ActionResult.SourceHealthChange);
 	Packet.Write<int32_t>(ActionResult.SourceManaChange);
@@ -426,8 +453,10 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	int SourceBattleID = Data.Read<char>();
 	int TargetBattleID = Data.Read<char>();
 
-	int SkillID = Data.Read<uint32_t>();
+	uint32_t SkillID = Data.Read<uint32_t>();
+	uint32_t ItemID = Data.Read<uint32_t>();
 	ActionResult.SkillUsed = Stats->Skills[SkillID];
+	ActionResult.ItemUsed = Stats->Items[ItemID];
 	ActionResult.DamageDealt = Data.Read<int32_t>();
 	ActionResult.SourceHealthChange = Data.Read<int32_t>();
 	ActionResult.SourceManaChange = Data.Read<int32_t>();
@@ -446,6 +475,15 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		ActionResult.SourceFighter->TurnTimer = 0.0;
 		ActionResult.SourceFighter->BattleAction.Unset();
 		ActionResult.SourceFighter->BattleTarget = nullptr;
+
+		// Use item on client
+		if(ClientPlayer == ActionResult.SourceFighter && ActionResult.ItemUsed) {
+			int Index = -1;
+			if(ClientPlayer->FindItem(ActionResult.ItemUsed, Index)) {
+				ClientPlayer->UpdateInventory(Index, -1);
+				ClientPlayer->RefreshActionBarCount();
+			}
+		}
 	}
 
 	// Update target fighter
@@ -852,7 +890,7 @@ bool _Battle::ClientHandleInput(int Action) {
 // Handles input from the client
 void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 
-	int ActionBarSlot = Data.Read<char>();
+	uint8_t ActionBarSlot = Data.Read<uint8_t>();
 	int TargetID = Data.Read<char>();
 
 	// Get target
@@ -862,11 +900,15 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 	if(!Fighter->BattleAction.IsSet()) {
 
 		// Set skill
-		int SkillID = 0;
-		if(ActionBarSlot != -1) {
+		uint32_t SkillID = 0;
+		uint32_t ItemID = 0;
+		if(ActionBarSlot < Fighter->ActionBar.size()) {
 			Fighter->BattleAction.Skill = Fighter->ActionBar[ActionBarSlot].Skill;
+			Fighter->BattleAction.Item = Fighter->ActionBar[ActionBarSlot].Item;
 			if(Fighter->BattleAction.Skill)
 				SkillID = Fighter->BattleAction.Skill->ID;
+			else if(Fighter->BattleAction.Item)
+				ItemID = Fighter->BattleAction.Item->ID;
 		}
 
 		// Set target
@@ -876,8 +918,8 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
 		Packet.Write<char>(Fighter->BattleID);
-		Packet.Write<int>(SkillID);
-		Packet.Write<int>(0);
+		Packet.Write<uint32_t>(SkillID);
+		Packet.Write<uint32_t>(ItemID);
 
 		BroadcastPacket(Packet);
 	}
@@ -887,12 +929,14 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
 	int BattleID = Data.Read<char>();
-	int SkillID = Data.Read<int>();
-	//int ItemID = Data.Read<int>();
+	int SkillID = Data.Read<uint32_t>();
+	int ItemID = Data.Read<uint32_t>();
 
 	_Object *Fighter = GetObjectByID(BattleID);
-	if(Fighter)
+	if(Fighter) {
 		Fighter->BattleAction.Skill = Stats->Skills[SkillID];
+		Fighter->BattleAction.Item = Stats->Items[ItemID];
+	}
 }
 
 // Send a packet to all players

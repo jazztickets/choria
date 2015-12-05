@@ -127,7 +127,7 @@ class _Battle {
 		void BroadcastPacket(_Buffer &Packet);
 
 		void GetBattleOffset(int SideIndex, _Object *Fighter);
-		void ClientSetAction(int ActionBarSlot);
+		void ClientSetAction(uint8_t ActionBarSlot);
 		void ChangeTarget(int Direction, int SideDirection);
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);

@@ -242,7 +242,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw potential skill to use
 	if(ClientPlayer->BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
-		const _Texture *Texture = ClientPlayer->PotentialAction.Skill->Image;
+		const _Texture *Texture = nullptr;
+		if(ClientPlayer->PotentialAction.Skill)
+			Texture = ClientPlayer->PotentialAction.Skill->Image;
+		else if(ClientPlayer->PotentialAction.Item)
+			Texture = ClientPlayer->PotentialAction.Item->Image;
+
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		glm::vec4 Color(COLOR_WHITE);
 		if(Time - (int)Time < 0.5f)
@@ -542,6 +547,39 @@ void _Object::UpdateGold(int Value) {
 		Gold = STATS_MAXGOLD;
 }
 
+// Search for an item in the inventory
+bool _Object::FindItem(const _Item *Item, int &Slot) {
+	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
+		if(Inventory[i].Item == Item) {
+			Slot = i;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Count the number of a certain item in inventory
+int _Object::CountItem(const _Item *Item) {
+	int Count = 0;
+	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
+		if(Inventory[i].Item == Item)
+			Count += Inventory[i].Count;
+	}
+
+	return Count;
+}
+
+// Update counts on action bar
+void _Object::RefreshActionBarCount() {
+	for(size_t i = 0; i < ActionBar.size(); i++) {
+		if(ActionBar[i].Item)
+			ActionBar[i].Count = CountItem(ActionBar[i].Item);
+		else
+			ActionBar[i].Count = 0;
+	}
+}
+
 // Use an action, return true if used
 bool _Object::UseAction(uint8_t Slot) {
 	if(Slot >= ActionBar.size())
@@ -554,11 +592,10 @@ bool _Object::UseAction(uint8_t Slot) {
 
 	}
 	else if(ActionBar[Slot].Item) {
-		for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-			if(Inventory[i].Item == ActionBar[Slot].Item) {
-				if(UseInventory(i))
-					return true;
-			}
+		int Index = -1;
+		if(FindItem(ActionBar[Slot].Item, Index)) {
+			if(UseInventory(Index))
+				return true;
 		}
 	}
 
