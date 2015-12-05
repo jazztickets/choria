@@ -545,7 +545,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 	Menu.InitPlay();
 
 	// Load map
-	int MapID = Data.Read<int32_t>();
+	uint32_t MapID = Data.Read<uint32_t>();
 
 	// Delete old map and create new
 	if(!Map || Map->ID != MapID) {
@@ -630,7 +630,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 		return;
 
 	// Check map id
-	int MapID = Data.Read<uint8_t>();
+	uint32_t MapID = Data.Read<uint8_t>();
 	if(MapID != Map->ID)
 		return;
 

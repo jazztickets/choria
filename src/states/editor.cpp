@@ -57,8 +57,8 @@ void _EditorState::Init() {
 
 	// Default map
 	Map = nullptr;
-	if(Filename != "") {
-		Map = new _Map(Filename);
+	if(Path != "") {
+		Map = new _Map();
 		Map->Load();
 	}
 
@@ -321,7 +321,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				break;
 				case SDL_SCANCODE_S:
 					if(Map)
-						Map->Save(Map->Filename);
+						Map->Save(Map->Path);
 				break;
 				case SDL_SCANCODE_L:
 					InitLoadMap();

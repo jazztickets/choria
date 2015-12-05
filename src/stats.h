@@ -48,9 +48,9 @@ struct _Level {
 };
 
 struct _Zone {
-	_Zone(int MonsterID, int Odds) : MonsterID(MonsterID), Odds(Odds) { }
-	int MonsterID;
-	int Odds;
+	_Zone(uint32_t MonsterID, uint32_t Odds) : MonsterID(MonsterID), Odds(Odds) { }
+	uint32_t MonsterID;
+	uint32_t Odds;
 };
 
 struct _Event {
@@ -105,7 +105,7 @@ class _Stats {
 		const _Texture *GetPortraitImage(uint32_t PortraitID);
 
 		// Monsters
-		void GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters);
+		void GenerateMonsterListFromZone(uint32_t ZoneID, std::list<int> &Monsters);
 		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops);
 
 		// Levels

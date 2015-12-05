@@ -64,8 +64,6 @@ class _Map {
 		};
 
 		_Map();
-		_Map(const std::string &Filename, const glm::ivec2 &Size);
-		_Map(const std::string &Filename);
 		_Map(int ID, _Stats *Stats);
 		~_Map();
 
@@ -110,8 +108,8 @@ class _Map {
 		void Save(const std::string &String);
 
 		// Map file
-		int ID;
-		std::string Filename;
+		uint32_t ID;
+		std::string Path;
 
 		// Map data
 		_Tile **Tiles;
@@ -130,20 +128,15 @@ class _Map {
 
 	private:
 
-		// Network
-		std::list<const _Peer *> Peers;
-
-		// Objects
-		std::unordered_map<NetworkIDType, bool> ObjectIDs;
-		NetworkIDType NextObjectID;
-		NetworkIDType ObjectUpdateCount;
-
-		void Init();
-
 		void AllocateMap();
 		void FreeMap();
 
-		void GetTextureListFromMap(std::vector<const _Texture *> &SearchTextures);
-		int GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture);
+		// Network
+		std::list<const _Peer *> Peers;
+		NetworkIDType ObjectUpdateCount;
+
+		// Object creation
+		std::unordered_map<NetworkIDType, bool> ObjectIDs;
+		NetworkIDType NextObjectID;
 
 };

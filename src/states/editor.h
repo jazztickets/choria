@@ -88,7 +88,7 @@ class _EditorState : public _State {
 		void MouseWheelEvent(int Direction) override;
 		void WindowEvent(uint8_t Event) override;
 
-		void SetFilename(const std::string &Filename) { this->Filename = Filename; }
+		void SetPath(const std::string &Path) { this->Path = Path; }
 
 	private:
 
@@ -122,7 +122,7 @@ class _EditorState : public _State {
 
 		// Map
 		_Map *Map;
-		std::string Filename;
+		std::string Path;
 		std::string WorkingDirectory;
 
 		// Textures

@@ -18,12 +18,12 @@
 #include <instances/map.h>
 #include <network/servernetwork.h>
 #include <network/peer.h>
+#include <objects/object.h>
 #include <server.h>
 #include <graphics.h>
 #include <constants.h>
 #include <stats.h>
 #include <buffer.h>
-#include <objects/object.h>
 #include <texture.h>
 #include <assets.h>
 #include <font.h>
@@ -40,31 +40,21 @@
 #include <limits>
 #include <stdexcept>
 
-// Constructor for the map editor: new map
-_Map::_Map()
-:	Server(nullptr) {
+// Constructor
+_Map::_Map() :
+	ID(0),
+	Tiles(nullptr),
+	AmbientLight(MAP_AMBIENT_LIGHT),
+	NoZoneTexture(nullptr),
+	ObjectUpdateTime(0),
+	Server(nullptr),
+	ObjectUpdateCount(0),
+	NextObjectID(0) {
 
-}
-
-_Map::_Map(const std::string &Filename, const glm::ivec2 &Size) : _Map() {
-	Init();
-
-	this->Filename = Filename;
-	this->Size = Size;
-
-	AllocateMap();
-}
-
-// Constructor for the map editor: load map
-_Map::_Map(const std::string &Filename) : _Map() {
-	Init();
-
-	this->Filename = Filename;
 }
 
 // Constructor for maps already created in the database
 _Map::_Map(int ID, _Stats *Stats) : _Map() {
-	Init();
 
 	// Set ID
 	this->ID = ID;
@@ -73,7 +63,7 @@ _Map::_Map(int ID, _Stats *Stats) : _Map() {
 	const _MapStat *Map = Stats->GetMap(ID);
 
 	// Load map
-	Filename = Map->File;
+	Path = Map->File;
 	Load();
 }
 
@@ -85,14 +75,15 @@ _Map::~_Map() {
 	FreeMap();
 }
 
-// Initialize variables
-void _Map::Init() {
-	NextObjectID = 0;
-	ObjectUpdateTime = 0;
-	ID = 0;
-	NoZoneTexture = nullptr;
-	Tiles = nullptr;
-	AmbientLight = MAP_AMBIENT_LIGHT;
+// Allocates memory for the map
+void _Map::AllocateMap() {
+	if(Tiles)
+		return;
+
+	Tiles = new _Tile*[Size.x];
+	for(int i = 0; i < Size.x; i++) {
+		Tiles[i] = new _Tile[Size.y];
+	}
 }
 
 // Free memory used by the tiles
@@ -103,17 +94,6 @@ void _Map::FreeMap() {
 		delete[] Tiles;
 
 		Tiles = nullptr;
-	}
-}
-
-// Allocates memory for the map
-void _Map::AllocateMap() {
-	if(Tiles)
-		return;
-
-	Tiles = new _Tile*[Size.x];
-	for(int i = 0; i < Size.x; i++) {
-		Tiles[i] = new _Tile[Size.y];
 	}
 }
 
@@ -144,7 +124,6 @@ void _Map::Update(double FrameTime) {
 			Iterator = Objects.erase(Iterator);
 		}
 		else {
-			//if(Object->SendUpdate)
 			ObjectUpdateCount++;
 
 			++Iterator;
@@ -292,16 +271,9 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 
 // Load map
 void _Map::Load() {
-	/*this->Stats = Stats;
-	this->ID = ID;
-	this->Filename = Path;
-	this->ServerNetwork = ServerNetwork;
-	std::string AtlasPath = TEXTURES_TILES + MAP_DEFAULT_TILESET;
-	*/
-	//bool TilesInitialized = false;
 
 	// Load file
-	gzifstream File(Filename.c_str());
+	gzifstream File(Path.c_str());
 	try {
 		_Tile *Tile = nullptr;
 		while(!File.eof() && File.peek() != EOF) {
@@ -417,12 +389,12 @@ void _Map::Save(const std::string &String) {
 	if(String == "")
 		throw std::runtime_error("Empty file name");
 
-	Filename = String;
+	Path = String;
 
 	// Open file
-	gzofstream Output(Filename.c_str());
+	gzofstream Output(Path.c_str());
 	if(!Output)
-		throw std::runtime_error("Cannot create file: " + Filename);
+		throw std::runtime_error("Cannot create file: " + Path);
 
 	// Header
 	Output << "V " << MAP_VERSION << '\n';
@@ -449,34 +421,6 @@ void _Map::Save(const std::string &String) {
 	}
 
 	Output.close();
-}
-
-// Builds an array of textures that are used in the map
-void _Map::GetTextureListFromMap(std::vector<const _Texture *> &SearchTextures) {
-
-	SearchTextures.clear();
-
-	// Go through map
-	for(int i = 0; i < Size.x; i++) {
-		for(int j = 0; j < Size.y; j++) {
-
-			// Check for new textures
-			if(GetTextureIndex(SearchTextures, Tiles[i][j].Texture) == -1) {
-				SearchTextures.push_back(Tiles[i][j].Texture);
-			}
-		}
-	}
-}
-
-// Returns the index of a texture in an array
-int _Map::GetTextureIndex(std::vector<const _Texture *> &SearchTextures, const _Texture *Texture) {
-
-	for(size_t i = 0; i < SearchTextures.size(); i++) {
-		if(SearchTextures[i] == Texture)
-			return (int)i;
-	}
-
-	return -1;
 }
 
 // Determines if a square can be moved to

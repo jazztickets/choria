@@ -297,7 +297,7 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters) {
+void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<int> &Monsters) {
 	if(ZoneID == 0)
 		return;
 
@@ -321,10 +321,10 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters) {
 
 	// Get monsters in zone
 	std::vector<_Zone> Zone;
-	int OddsSum = 0;
+	uint32_t OddsSum = 0;
 	while(Database->FetchRow()) {
-		int MonsterID = Database->GetInt("monster_id");
-		int Odds = Database->GetInt("odds");
+		uint32_t MonsterID = Database->GetInt("monster_id");
+		uint32_t Odds = Database->GetInt("odds");
 		OddsSum += Odds;
 
 		Zone.push_back(_Zone(MonsterID, OddsSum));
@@ -337,10 +337,10 @@ void _Stats::GenerateMonsterListFromZone(int ZoneID, std::list<int> &Monsters) {
 	if(OddsSum > 0) {
 
 		// Generate monsters
-		int RandomNumber;
+		uint32_t RandomNumber;
 		size_t MonsterIndex;
 		for(int i = 0; i < MonsterCount; i++) {
-			RandomNumber = GetRandomInt(1, OddsSum);
+			RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
 			for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
 				if(RandomNumber <= Zone[MonsterIndex].Odds)
 					break;

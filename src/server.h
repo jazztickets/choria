@@ -79,7 +79,7 @@ class _Server {
 
 	private:
 
-		_Map *GetMap(int MapID);
+		_Map *GetMap(uint32_t MapID);
 		_Object *CreatePlayer(_Peer *Peer);
 		void SendPlayerInfo(_Peer *Peer);
 		bool ValidatePeer(_Peer *Peer);

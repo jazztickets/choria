@@ -597,7 +597,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		// Send new map id
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
-		Packet.Write<int32_t>(MapID);
+		Packet.Write<uint32_t>(MapID);
 		Network->SendPacket(Packet, Peer);
 
 		// Add peer to map
@@ -617,7 +617,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 }
 
 // Gets a map from the manager. Loads the level if it doesn't exist
-_Map *_Server::GetMap(int MapID) {
+_Map *_Server::GetMap(uint32_t MapID) {
 
 	// Loop through loaded maps
 	for(auto &Map : Maps) {
