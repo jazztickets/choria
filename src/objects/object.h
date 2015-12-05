@@ -23,6 +23,7 @@
 #include <packet.h>
 #include <unordered_map>
 #include <list>
+#include <vector>
 #include <cstdint>
 
 // Forward Declarations
@@ -122,7 +123,7 @@ class _Object {
 		int GetGoldGiven() const { return GoldGiven; }
 
 		// Skills
-		const _Skill *GetActionBar(int Slot);
+		const _Skill *GetActionBar(size_t Slot);
 		uint32_t GetActionBarID(int Slot) const;
 
 		// -- END FROM FIGHTER --
@@ -196,7 +197,7 @@ class _Object {
 		// -- FIGHTER  --
 
 		// Action bar
-		const _Skill *ActionBar[ACTIONBAR_SIZE];
+		std::vector<const _Skill *>ActionBar;
 
 		// Stats
 		std::string Name;

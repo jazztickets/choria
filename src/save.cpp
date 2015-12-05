@@ -18,6 +18,7 @@
 #include <save.h>
 #include <objects/object.h>
 #include <objects/item.h>
+#include <objects/skill.h>
 #include <database.h>
 #include <config.h>
 #include <constants.h>
@@ -153,11 +154,12 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 
 	std::string TrimmedName = TrimString(Name);
 
-	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar0) VALUES(@account_id, @slot, @name, @portrait_id, 1)");
+	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar_size) VALUES(@account_id, @slot, @name, @portrait_id, @actionbar_size)");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
 	Database->BindString(3, TrimmedName);
 	Database->BindInt(4, PortraitID);
+	Database->BindInt(5, ACTIONBAR_STARTING_SIZE);
 	Database->FetchRow();
 	Database->CloseQuery();
 
@@ -168,6 +170,11 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 	Database->CloseQuery();
 
 	Database->PrepareQuery("INSERT INTO skilllevel VALUES(@character_id, 1, 1)");
+	Database->BindInt(1, CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
+
+	Database->PrepareQuery("INSERT INTO actionbar VALUES(@character_id, 0, 1, 0)");
 	Database->BindInt(1, CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
@@ -190,14 +197,6 @@ void _Save::SavePlayer(const _Object *Player) {
 		<< ", spawnpoint = " << Player->SpawnPoint
 		<< ", experience = " <<Player->Experience
 		<< ", gold = " << Player->Gold
-		<< ", actionbar0 = " << Player->GetActionBarID(0)
-		<< ", actionbar1 = " << Player->GetActionBarID(1)
-		<< ", actionbar2 = " << Player->GetActionBarID(2)
-		<< ", actionbar3 = " << Player->GetActionBarID(3)
-		<< ", actionbar4 = " << Player->GetActionBarID(4)
-		<< ", actionbar5 = " << Player->GetActionBarID(5)
-		<< ", actionbar6 = " << Player->GetActionBarID(6)
-		<< ", actionbar7 = " << Player->GetActionBarID(7)
 		<< ", playtime = " << Player->PlayTime
 		<< ", deaths = " << Player->Deaths
 		<< ", monsterkills = " << Player->MonsterKills
@@ -230,6 +229,21 @@ void _Save::SavePlayer(const _Object *Player) {
 	for(auto &SkillLevel : Player->SkillLevels) {
 		if(SkillLevel.second > 0) {
 			Query << "INSERT INTO skilllevel VALUES(" << Player->CharacterID << ", " << SkillLevel.first << ", " << SkillLevel.second << ")";
+			Database->RunQuery(Query.str());
+			Query.str("");
+		}
+	}
+
+	// Save actionbar
+	Query << "DELETE FROM actionbar WHERE character_id = " << Player->CharacterID;
+	Database->RunQuery(Query.str());
+	Query.str("");
+
+	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+		if(Player->ActionBar[i]) {
+			uint32_t SkillID = Player->ActionBar[i]->ID;
+			uint32_t ItemID = 0;
+			Query << "INSERT INTO actionbar VALUES(" << Player->CharacterID << ", " << i << ", " << SkillID << ", " << ItemID << ")";
 			Database->RunQuery(Query.str());
 			Query.str("");
 		}
@@ -287,21 +301,25 @@ void _Save::CreateDefaultDatabase() {
 				"	spawnpoint INTEGER DEFAULT(0),\n"
 				"	name TEXT,\n"
 				"	portrait_id INTEGER DEFAULT(1),\n"
+				"	actionbar_size INTEGER DEFAULT(0),\n"
 				"	experience INTEGER DEFAULT(0),\n"
 				"	gold INTEGER DEFAULT(0),\n"
-				"	actionbar0 INTEGER DEFAULT(0),\n"
-				"	actionbar1 INTEGER DEFAULT(0),\n"
-				"	actionbar2 INTEGER DEFAULT(0),\n"
-				"	actionbar3 INTEGER DEFAULT(0),\n"
-				"	actionbar4 INTEGER DEFAULT(0),\n"
-				"	actionbar5 INTEGER DEFAULT(0),\n"
-				"	actionbar6 INTEGER DEFAULT(0),\n"
-				"	actionbar7 INTEGER DEFAULT(0),\n"
+				"	battletime INTEGER DEFAULT(0),\n"
 				"	playtime INTEGER DEFAULT(0),\n"
 				"	deaths INTEGER DEFAULT(0),\n"
 				"	monsterkills INTEGER DEFAULT(0),\n"
 				"	playerkills INTEGER DEFAULT(0),\n"
 				"	bounty INTEGER DEFAULT(0)\n"
+				")"
+	);
+
+	// Actionbar
+	Database->RunQuery(
+				"CREATE TABLE actionbar(\n"
+				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
+				"	slot INTEGER DEFAULT(0),\n"
+				"	skill_id INTEGER DEFAULT(0),\n"
+				"	item_id INTEGER DEFAULT(0)\n"
 				")"
 	);
 

@@ -517,7 +517,9 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	}
 
 	// Read skill bar
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+	uint8_t ActionBarSize = Data.Read<uint8_t>();
+	Player->ActionBar.resize(ActionBarSize);
+	for(size_t i = 0; i < ActionBarSize; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
 		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
@@ -525,6 +527,8 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	Player->CalculateSkillPoints();
 	Player->CalculatePlayerStats();
 	Player->RestoreHealthMana();
+
+	HUD->SetActionBarSize(Player->ActionBar.size());
 }
 
 // Called when the player changes maps

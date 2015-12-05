@@ -92,6 +92,7 @@ class _HUD {
 
 		// Objects
 		void SetPlayer(_Object *Player);
+		void SetActionBarSize(size_t Size);
 
 		// Button bar
 		void ToggleTeleport();

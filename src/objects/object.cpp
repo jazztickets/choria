@@ -122,9 +122,6 @@ _Object::_Object()
 	TradePlayer(nullptr),
 	Stats(nullptr) {
 
-	for(int i = 0; i < ACTIONBAR_SIZE; i++)
-		ActionBar[i] = nullptr;
-
 	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
 		Inventory[i].Item = nullptr;
 		Inventory[i].Count = 0;
@@ -359,8 +356,8 @@ uint32_t _Object::GetActionBarID(int Slot) const {
 }
 
 // Get a skill from the skill bar
-const _Skill *_Object::GetActionBar(int Slot) {
-	if(Slot < 0 || Slot >= ACTIONBAR_SIZE)
+const _Skill *_Object::GetActionBar(size_t Slot) {
+	if(Slot >= ActionBar.size())
 		return nullptr;
 
 	return ActionBar[Slot];
@@ -963,7 +960,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 
 		// Update skill bar
 		if(SkillLevels[SkillID] == 0) {
-			for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+			for(size_t i = 0; i < ActionBar.size(); i++) {
 				if(ActionBar[i] == Skill) {
 					ActionBar[i] = nullptr;
 					break;
@@ -1079,7 +1076,7 @@ void _Object::CalculateGearStats() {
 void _Object::CalculateSkillStats() {
 
 	// Go through each skill bar
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+	for(size_t i = 0; i < ActionBar.size(); i++) {
 		const _Skill *Skill = ActionBar[i];
 		if(Skill) {
 			int Min, Max, MinRound, MaxRound;

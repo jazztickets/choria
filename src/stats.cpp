@@ -251,6 +251,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 		Monster->AI = Database->GetString("ai_name");
 
+		Monster->ActionBar.resize(ACTIONBAR_STARTING_SIZE);
 		Monster->ActionBar[0] = Skills[1];
 	}
 

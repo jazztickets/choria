@@ -31,7 +31,8 @@ const int MAP_TILE_HEIGHT = 32;
 
 const int NETWORKING_CHAT_SIZE = 100;
 
-const int ACTIONBAR_SIZE = 8;
+const int ACTIONBAR_MAX_SIZE = 8;
+const int ACTIONBAR_STARTING_SIZE = 4;
 const int BATTLE_MINSTEPS = 5;
 const int BATTLE_MAXSTEPS = 14;
 const int BATTLE_MAXFIGHTERS = 6;
@@ -63,7 +64,7 @@ const double ACTIONRESULT_TIMEOUT = 1.5;
 const float ACTIONRESULT_FADETIME = 0.75f;
 const float ACTIONRESULT_SPEED = 15.0f;
 
-const int SAVE_VERSION = 2;
+const int SAVE_VERSION = 3;
 
 //     Config
 const  int          DEFAULT_VERSION                =  1;

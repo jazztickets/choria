@@ -747,8 +747,8 @@ bool _HUD::CloseSkills() {
 	if(ActionBarChanged) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::HUD_ACTIONBAR);
-		for(int i = 0; i < ACTIONBAR_SIZE; i++)
-			Packet.Write<int32_t>(Player->GetActionBarID(i));
+		for(size_t i = 0; i < Player->ActionBar.size(); i++)
+			Packet.Write<uint32_t>(Player->GetActionBarID(i));
 
 		ClientState.Network->SendPacket(Packet);
 	}
@@ -1022,7 +1022,7 @@ void _HUD::DrawActionBar() {
 	ActionBarElement->Render();
 
 	// Draw trader items
-	for(size_t i = 0; i < ACTIONBAR_SIZE; i++) {
+	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 
 		// Get button position
 		std::stringstream Buffer;
@@ -1258,14 +1258,14 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 			if(Skill) {
 				int Direction, Slot;
 				if(Skill->Type == _Skill::TYPE_PASSIVE) {
-					Slot = ACTIONBAR_SIZE-1;
+					Slot = Player->ActionBar.size()-1;
 					Direction = -1;
 				}
 				else {
 					Slot = 0;
 					Direction = 1;
 				}
-				for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+				for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 					if(Player->GetActionBar(Slot) == nullptr) {
 						SetActionBar(Slot, -1, Skill);
 						break;
@@ -1293,7 +1293,7 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Skill *Skill) {
 	if(OldSlot == -1) {
 
 		// Remove duplicate skills
-		for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 			if(Player->GetActionBar(i) == Skill)
 				Player->ActionBar[i] = nullptr;
 		}
@@ -1490,4 +1490,21 @@ void _HUD::SetPlayer(_Object *Player) {
 	this->Player = Player;
 
 	Assets.Labels["label_hud_name"]->Text = Player->Name;
+}
+
+// Resize action bar
+void _HUD::SetActionBarSize(size_t Size) {
+
+	// Set all off
+	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
+		Assets.Buttons["button_actionbar_" + std::to_string(i)]->SetVisible(false);
+
+	// Turn on
+	for(size_t i = 0; i < Size; i++)
+		Assets.Buttons["button_actionbar_" + std::to_string(i)]->SetVisible(true);
+
+	// Center actionbar
+	_Button *Button = Assets.Buttons["button_actionbar_0"];
+	ActionBarElement->Size.x = Button->Size.x * Size;
+	ActionBarElement->CalculateBounds();
 }

@@ -645,10 +645,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Player->PortraitID = Save->Database->GetInt("portrait_id");
 	Player->Experience = Save->Database->GetInt("experience");
 	Player->Gold = Save->Database->GetInt("gold");
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		uint32_t SkillID = Save->Database->GetInt("actionbar" + std::to_string(i));
-		Player->ActionBar[i] = Stats->Skills[SkillID];
-	}
+	Player->ActionBar.resize(Save->Database->GetInt("actionbar_size"));
 	Player->PlayTime = Save->Database->GetInt("playtime");
 	Player->Deaths = Save->Database->GetInt("deaths");
 	Player->MonsterKills = Save->Database->GetInt("monsterkills");
@@ -659,22 +656,27 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	// Set inventory
 	Save->Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
 	Save->Database->BindInt(1, Peer->CharacterID);
-	int ItemCount = 0;
 	while(Save->Database->FetchRow()) {
 		Player->SetInventory(Save->Database->GetInt(0), Save->Database->GetInt(1), Save->Database->GetInt(2));
-		ItemCount++;
 	}
 	Save->Database->CloseQuery();
 
 	// Set skills
 	Save->Database->PrepareQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
 	Save->Database->BindInt(1, Peer->CharacterID);
-	int SkillCount = 0;
 	while(Save->Database->FetchRow()) {
 		int SkillLevel = Save->Database->GetInt(1);
 		Player->SetSkillLevel(Save->Database->GetInt(0), SkillLevel);
-		if(SkillLevel > 0)
-			SkillCount++;
+	}
+	Save->Database->CloseQuery();
+
+	// Set actionbar
+	Save->Database->PrepareQuery("SELECT slot, skill_id, item_id FROM actionbar WHERE character_id = @character_id");
+	Save->Database->BindInt(1, Peer->CharacterID);
+	while(Save->Database->FetchRow()) {
+		uint32_t Slot = Save->Database->GetInt("slot");
+		uint32_t SkillID = Save->Database->GetInt("skill_id");
+		Player->ActionBar[Slot] = Stats->Skills[SkillID];
 	}
 	Save->Database->CloseQuery();
 
@@ -741,7 +743,8 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 	}
 
 	// Write skill bar
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
+	Packet.Write<uint8_t>(Player->ActionBar.size());
+	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 		Packet.Write<uint32_t>(Player->GetActionBarID(i));
 	}
 
@@ -918,8 +921,8 @@ void _Server::HandleActionBar(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Read skills
-	for(int i = 0; i < ACTIONBAR_SIZE; i++) {
-		int SkillID = Data.Read<int32_t>();
+	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+		uint32_t SkillID = Data.Read<uint32_t>();
 		Player->ActionBar[i] = Stats->Skills[SkillID];
 	}
 
