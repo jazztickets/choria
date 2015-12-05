@@ -278,7 +278,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			Skill = nullptr;
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
-		if(Item && Item->Type != _Item::TYPE_POTION)
+		if(Item && (Item->Type != _Item::TYPE_POTION || ClientPlayer->ActionBar[ActionBarSlot].Count == 0))
 			Item = nullptr;
 
 		// Find first alive target
