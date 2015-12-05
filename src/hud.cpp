@@ -27,6 +27,7 @@
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <objects/item.h>
+#include <instances/battle.h>
 #include <framework.h>
 #include <graphics.h>
 #include <input.h>
@@ -294,8 +295,13 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				SetActionBar(Cursor.Slot, -1, Action);
 			}
 		}
+		// Use action
 		else if(ActionBarElement->GetClickedElement()) {
-			//std::cout << (intptr_t)ActionBarElement->GetClickedElement()->UserData << std::endl;
+			int Slot = (intptr_t)ActionBarElement->GetClickedElement()->UserData;
+			if(Player->Battle)
+				Player->Battle->ClientHandleInput(_Actions::SKILL1 + Slot);
+			else
+				Player->UseAction(Slot);
 		}
 
 		if(Player->WaitingForTrade) {

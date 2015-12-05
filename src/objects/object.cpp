@@ -692,13 +692,18 @@ bool _Object::UseInventory(int Slot) {
 		return false;
 
 	// Handle item types
+	bool Used = false;
 	switch(Item->Type) {
 		case _Item::TYPE_POTION:
-			return UsePotionWorld(Slot);
+			Used = UsePotionWorld(Slot);
 		break;
 	}
 
-	return true;
+	// Update action bar counts
+	if(Used)
+		RefreshActionBarCount();
+
+	return Used;
 }
 
 // Sets an item in the inventory
