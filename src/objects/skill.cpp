@@ -242,26 +242,6 @@ void _Skill::ResolveUse(_ActionResult &ActionResult) const {
 			}
 			ManaCost = GetManaCost(SkillLevel);
 		break;
-		/*case TYPE_USEPOTION:
-			if(ActionResult.SourceFighter->DatabaseID == 0) {
-
-				// Use the potion
-				int Type = (ID == 3);
-				int Slot = ActionResult.SourceFighter->GetPotionBattle(Type);
-				if(Slot != -1) {
-					int HealthChange = 0, ManaChange = 0;
-					ActionResult.SourceFighter->UsePotionBattle(Slot, Type, HealthChange, ManaChange);
-					Healing += HealthChange;
-					ManaRestore += ManaChange;
-
-					// Write packet
-					_Buffer Packet;
-					Packet.Write<PacketType>(PacketType::INVENTORY_USE);
-					Packet.Write<char>(Slot);
-					//OldServerNetwork->SendPacketToPeer(&Packet, Player->Peer);
-				}
-			}
-		break;*/
 	}
 
 	// Generate defense

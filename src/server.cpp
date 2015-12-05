@@ -252,6 +252,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
+		case PacketType::WORLD_ACTIONBAR_USE:
+			HandleActionBarUse(Data, Peer);
+		break;
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data, Peer);
 		break;
@@ -270,8 +273,8 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::TRADER_ACCEPT:
 			HandleTraderAccept(Data, Peer);
 		break;
-		case PacketType::HUD_ACTIONBAR:
-			HandleActionBar(Data, Peer);
+		case PacketType::ACTIONBAR_CHANGED:
+			HandleActionBarChanged(Data, Peer);
 		break;
 		case PacketType::SKILLS_SKILLADJUST:
 			HandleSkillAdjust(Data, Peer);
@@ -464,6 +467,18 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 	Player->InputState = Data.Read<char>();
+}
+
+// Handle player using action outside of battle
+void _Server::HandleActionBarUse(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+
+	uint8_t Slot = Data.Read<uint8_t>();
+	if(Player->UseAction(Slot))
+		SendHUD(Player->Peer);
 }
 
 // Handle a chat message
@@ -916,7 +931,7 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle a skill bar change
-void _Server::HandleActionBar(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 

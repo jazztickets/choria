@@ -183,6 +183,16 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 
 		// Handle HUD keys
 		switch(Action) {
+			case _Actions::SKILL1:
+			case _Actions::SKILL2:
+			case _Actions::SKILL3:
+			case _Actions::SKILL4:
+			case _Actions::SKILL5:
+			case _Actions::SKILL6:
+			case _Actions::SKILL7:
+			case _Actions::SKILL8:
+				SendActionBarUse(Action - _Actions::SKILL1);
+			break;
 			case _Actions::MENU:
 				HUD->ToggleInGameMenu();
 			break;
@@ -545,14 +555,6 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 		Map = new _Map(MapID, Stats);
 		Player = nullptr;
 	}
-
-	/*
-	// Delete the battle
-	if(Battle) {
-		delete Battle;
-		Battle = nullptr;
-	}
-	*/
 }
 
 // Handle object list
@@ -987,6 +989,27 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Map->AddObject(Object, Object->NetworkID);
 
 	return Object;
+}
+
+// Send action to server outside of battle
+void _ClientState::SendActionBarUse(uint8_t Slot) {
+	if(!Player)
+		return;
+
+	if(Slot >= Player->ActionBar.size())
+		return;
+
+	if(!Player->ActionBar[Slot].IsSet())
+		return;
+
+	// Client prediction
+	Player->UseAction(Slot);
+
+	// Send use to server
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_ACTIONBAR_USE);
+	Packet.Write<uint8_t>(Slot);
+	Network->SendPacket(Packet);
 }
 
 // Send status to server

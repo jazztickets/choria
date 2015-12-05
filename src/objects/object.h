@@ -140,6 +140,7 @@ class _Object {
 		void UpdateGold(int Value);
 
 		// Inventory
+		bool UseAction(uint8_t Slot);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);
 		void SetInventory(int Slot, int ItemID, int Count);

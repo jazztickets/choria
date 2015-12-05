@@ -118,6 +118,7 @@ class _ClientState : public _State {
 		void HandleHUD(_Buffer &Data);
 
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
+		void SendActionBarUse(uint8_t Slot);
 		void SendAttackPlayer();
 };
 

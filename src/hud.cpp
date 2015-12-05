@@ -782,7 +782,7 @@ bool _HUD::CloseSkills() {
 	// Send new skill bar to server
 	if(ActionBarChanged) {
 		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::HUD_ACTIONBAR);
+		Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
 		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 			Player->ActionBar[i].Serialize(Packet);
 		}

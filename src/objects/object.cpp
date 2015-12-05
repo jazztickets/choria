@@ -542,6 +542,29 @@ void _Object::UpdateGold(int Value) {
 		Gold = STATS_MAXGOLD;
 }
 
+// Use an action, return true if used
+bool _Object::UseAction(uint8_t Slot) {
+	if(Slot >= ActionBar.size())
+		return false;
+
+	if(!ActionBar[Slot].IsSet())
+		return false;
+
+	if(ActionBar[Slot].Skill) {
+
+	}
+	else if(ActionBar[Slot].Item) {
+		for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
+			if(Inventory[i].Item == ActionBar[Slot].Item) {
+				if(UseInventory(i))
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 // Get the percentage to the next level
 float _Object::GetNextLevelPercent() const {
 	float Percent = 0;
