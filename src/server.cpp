@@ -676,7 +676,9 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	while(Save->Database->FetchRow()) {
 		uint32_t Slot = Save->Database->GetInt("slot");
 		uint32_t SkillID = Save->Database->GetInt("skill_id");
-		Player->ActionBar[Slot] = Stats->Skills[SkillID];
+		uint32_t ItemID = Save->Database->GetInt("item_id");
+		Player->ActionBar[Slot].Skill = Stats->Skills[SkillID];
+		Player->ActionBar[Slot].Item = Stats->Items[ItemID];
 	}
 	Save->Database->CloseQuery();
 
@@ -745,7 +747,7 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 	// Write skill bar
 	Packet.Write<uint8_t>(Player->ActionBar.size());
 	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-		Packet.Write<uint32_t>(Player->GetActionBarID(i));
+		Player->ActionBar[i].Serialize(Packet);
 	}
 
 	Network->SendPacket(Packet, Peer);
@@ -921,10 +923,8 @@ void _Server::HandleActionBar(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Read skills
-	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-		uint32_t SkillID = Data.Read<uint32_t>();
-		Player->ActionBar[i] = Stats->Skills[SkillID];
-	}
+	for(size_t i = 0; i < Player->ActionBar.size(); i++)
+		Player->ActionBar[i].Unserialize(Data, Stats);
 
 	Player->CalculatePlayerStats();
 }

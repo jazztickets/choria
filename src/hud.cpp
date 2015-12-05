@@ -24,7 +24,6 @@
 #include <ui/style.h>
 #include <states/client.h>
 #include <network/clientnetwork.h>
-#include <instances/map.h>
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <objects/item.h>
@@ -237,6 +236,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						case WINDOW_VENDOR:
 							SellItem(&Cursor, 1);
 						break;
+						case WINDOW_ACTIONBAR:
+						break;
 					}
 				break;
 				// Buy an item
@@ -335,7 +336,7 @@ void _HUD::Update(double FrameTime) {
 				Tooltip.Skill = ClientState.Stats->Skills[Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
-				Tooltip.Skill = Player->GetActionBar(Tooltip.Slot);
+				Tooltip.Skill = Player->ActionBar[Tooltip.Slot].Skill;
 			} break;
 		}
 	}
@@ -747,8 +748,9 @@ bool _HUD::CloseSkills() {
 	if(ActionBarChanged) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::HUD_ACTIONBAR);
-		for(size_t i = 0; i < Player->ActionBar.size(); i++)
-			Packet.Write<uint32_t>(Player->GetActionBarID(i));
+		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+			Player->ActionBar[i].Serialize(Packet);
+		}
 
 		ClientState.Network->SendPacket(Packet);
 	}
@@ -1031,7 +1033,7 @@ void _HUD::DrawActionBar() {
 		glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
 
 		// Draw skill icon
-		const _Skill *Skill = Player->GetActionBar(i);
+		const _Skill *Skill = Player->ActionBar[i].Skill;
 		if(Skill) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Skill->Image);
@@ -1266,7 +1268,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 					Direction = 1;
 				}
 				for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-					if(Player->GetActionBar(Slot) == nullptr) {
+					if(!Player->ActionBar[Slot].IsSet()) {
 						SetActionBar(Slot, -1, Skill);
 						break;
 					}
@@ -1286,7 +1288,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 
 // Sets the player's skill bar
 void _HUD::SetActionBar(int Slot, int OldSlot, const _Skill *Skill) {
-	if(Player->GetActionBar(Slot) == Skill)
+	if(Player->ActionBar[Slot].Skill == Skill)
 		return;
 
 	// Check for swapping
@@ -1294,16 +1296,16 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Skill *Skill) {
 
 		// Remove duplicate skills
 		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-			if(Player->GetActionBar(i) == Skill)
-				Player->ActionBar[i] = nullptr;
+			if(Player->ActionBar[i].Skill == Skill)
+				Player->ActionBar[i].Unset();
 		}
 	}
 	else {
-		const _Skill *OldSkill = Player->GetActionBar(Slot);
-		Player->ActionBar[OldSlot] = OldSkill;
+		const _Skill *OldSkill = Player->ActionBar[Slot].Skill;
+		Player->ActionBar[OldSlot].Skill = OldSkill;
 	}
 
-	Player->ActionBar[Slot] = Skill;
+	Player->ActionBar[Slot].Skill = Skill;
 	Player->CalculatePlayerStats();
 	ActionBarChanged = true;
 }

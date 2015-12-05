@@ -97,7 +97,6 @@ class _Stats {
 		// General Stats
 		void GetMonsterStats(uint32_t MonsterID, _Object *Monster);
 		const _MapStat *GetMap(uint32_t MapID) { return &Maps[MapID]; }
-		const _Item *GetItem(uint32_t ItemID) { return &Items[ItemID]; }
 		const _Vendor *GetVendor(uint32_t VendorID) { return &Vendors[VendorID]; }
 		const _Trader *GetTrader(uint32_t TraderID) { return &Traders[TraderID]; }
 
@@ -118,11 +117,9 @@ class _Stats {
 		std::vector<_Level> Levels;
 
 		std::unordered_map<uint32_t, _MapStat> Maps;
-		std::unordered_map<uint32_t, _Item> Items;
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
-
-		// Skills
+		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Skill *> Skills;
 
 		// Database

@@ -520,8 +520,7 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	uint8_t ActionBarSize = Data.Read<uint8_t>();
 	Player->ActionBar.resize(ActionBarSize);
 	for(size_t i = 0; i < ActionBarSize; i++) {
-		uint32_t SkillID = Data.Read<uint32_t>();
-		Player->ActionBar[i] = Stats->Skills[SkillID];
+		Player->ActionBar[i].Unserialize(Data, Stats);
 	}
 
 	Player->CalculateSkillPoints();

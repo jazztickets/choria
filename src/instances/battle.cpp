@@ -258,7 +258,7 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 		return;
 
 	// Get skill
-	const _Skill *Skill = ClientPlayer->GetActionBar(ActionBarSlot);
+	const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
 	if(Skill && !Skill->CanUse(ClientPlayer))
 		Skill = nullptr;
 
@@ -309,7 +309,7 @@ void _Battle::ClientSetAction(int ActionBarSlot) {
 
 		ClientNetwork->SendPacket(Packet);
 
-		ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot];
+		ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
 		ClientPlayer->PotentialAction.Unset();
 	}
 }
@@ -586,8 +586,8 @@ void _Battle::ServerEndBattle() {
 			}
 
 			// Sum experience and gold
-			SideStats[Side].TotalExperienceGiven += Fighter->GetExperienceGiven();
-			SideStats[Side].TotalGoldGiven += Fighter->GetGoldGiven();
+			SideStats[Side].TotalExperienceGiven += Fighter->ExperienceGiven;
+			SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
 			SideStats[Side].FighterCount++;
 		}
 	}
@@ -691,7 +691,7 @@ void _Battle::ServerEndBattle() {
 		// Write items
 		for(auto &ItemID : Fighter->ItemDropsReceived) {
 			Packet.Write<uint32_t>(ItemID);
-			Fighter->AddItem(Stats->GetItem(ItemID), 1, -1);
+			Fighter->AddItem(Stats->Items[ItemID], 1, -1);
 		}
 		Fighter->ItemDropsReceived.clear();
 
@@ -719,7 +719,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 	int ItemCount = Data.Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
 		int ItemID = Data.Read<int32_t>();
-		const _Item *Item = Stats->GetItem(ItemID);
+		const _Item *Item = Stats->Items[ItemID];
 		ClientItemDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
 	}
@@ -864,7 +864,7 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 		// Set skill
 		int SkillID = 0;
 		if(ActionBarSlot != -1) {
-			Fighter->BattleAction.Skill = Fighter->ActionBar[ActionBarSlot];
+			Fighter->BattleAction.Skill = Fighter->ActionBar[ActionBarSlot].Skill;
 			if(Fighter->BattleAction.Skill)
 				SkillID = Fighter->BattleAction.Skill->ID;
 		}

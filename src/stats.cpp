@@ -41,6 +41,10 @@ _Stats::_Stats() {
 
 // Destructor
 _Stats::~_Stats() {
+
+	for(const auto &Item : Items)
+		delete Item.second;
+
 	for(const auto &Skill : Skills)
 		delete Skill.second;
 
@@ -133,30 +137,32 @@ void _Stats::LoadItems() {
 	Database->PrepareQuery("SELECT * FROM item");
 
 	// Get events
-	_Item Item;
 	while(Database->FetchRow()) {
-		Item.ID = Database->GetInt("id");
-		Item.Name = Database->GetString("name");
-		Item.Level = Database->GetInt("level");
-		Item.Type = Database->GetInt("type");
-		Item.Image = Assets.Textures[std::string("items/") + Database->GetString("image")];
-		Item.LevelRequired = Database->GetInt("levelrequired");
-		Item.Cost = Database->GetInt("cost");
-		Item.Damage = Database->GetFloat("damage");
-		Item.DamageRange = Database->GetFloat("damagerange");
-		Item.Defense = Database->GetFloat("defense");
-		Item.DefenseRange = Database->GetFloat("defenserange");
-		Item.DamageType = Database->GetInt("damagetype");
-		Item.HealthRestore = Database->GetInt("healthrestore");
-		Item.ManaRestore = Database->GetInt("manarestore");
-		Item.MaxHealth = Database->GetInt("maxhealth");
-		Item.MaxMana = Database->GetInt("maxmana");
-		Item.HealthRegen = Database->GetFloat("healthregen");
-		Item.ManaRegen = Database->GetFloat("manaregen");
-		Item.InvisPower = Database->GetInt("invispower");
-		Items[Item.ID] = Item;
+		_Item *Item = new _Item;
+		Item->ID = Database->GetInt("id");
+		Item->Name = Database->GetString("name");
+		Item->Level = Database->GetInt("level");
+		Item->Type = Database->GetInt("type");
+		Item->Image = Assets.Textures[std::string("items/") + Database->GetString("image")];
+		Item->LevelRequired = Database->GetInt("levelrequired");
+		Item->Cost = Database->GetInt("cost");
+		Item->Damage = Database->GetFloat("damage");
+		Item->DamageRange = Database->GetFloat("damagerange");
+		Item->Defense = Database->GetFloat("defense");
+		Item->DefenseRange = Database->GetFloat("defenserange");
+		Item->DamageType = Database->GetInt("damagetype");
+		Item->HealthRestore = Database->GetInt("healthrestore");
+		Item->ManaRestore = Database->GetInt("manarestore");
+		Item->MaxHealth = Database->GetInt("maxhealth");
+		Item->MaxMana = Database->GetInt("maxmana");
+		Item->HealthRegen = Database->GetFloat("healthregen");
+		Item->ManaRegen = Database->GetFloat("manaregen");
+		Item->InvisPower = Database->GetInt("invispower");
+		Items[Item->ID] = Item;
 	}
 	Database->CloseQuery();
+
+	Items[0] = nullptr;
 }
 
 // Loads vendor data
@@ -180,7 +186,7 @@ void _Stats::LoadVendors() {
 		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
 		Database->BindInt(1, Vendor.ID, 1);
 		while(Database->FetchRow(1)) {
-			Vendor.Items.push_back(GetItem(Database->GetInt("item_id", 1)));
+			Vendor.Items.push_back(Items[Database->GetInt("item_id", 1)]);
 		}
 		Database->CloseQuery(1);
 
@@ -201,7 +207,7 @@ void _Stats::LoadTraders() {
 	while(Database->FetchRow()) {
 		Trader.ID = Database->GetInt("id");
 		Trader.Name = Database->GetString("name");
-		Trader.RewardItem = GetItem(Database->GetInt("item_id"));
+		Trader.RewardItem = Items[Database->GetInt("item_id")];
 		Trader.Count = Database->GetInt("count");
 		Trader.TraderItems.clear();
 
@@ -210,7 +216,7 @@ void _Stats::LoadTraders() {
 		Database->BindInt(1, Trader.ID, 1);
 		while(Database->FetchRow(1)) {
 			_TraderItem TraderItem;
-			TraderItem.Item = GetItem(Database->GetInt("item_id", 1));
+			TraderItem.Item = Items[Database->GetInt("item_id", 1)];
 			TraderItem.Count = Database->GetInt("count", 1);
 			Trader.TraderItems.push_back(TraderItem);
 		}
@@ -252,7 +258,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->AI = Database->GetString("ai_name");
 
 		Monster->ActionBar.resize(ACTIONBAR_STARTING_SIZE);
-		Monster->ActionBar[0] = Skills[1];
+		Monster->ActionBar[0].Skill = Skills[1];
 	}
 
 	// Free memory

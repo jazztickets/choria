@@ -47,10 +47,16 @@ struct _InventorySlot {
 	int Count;
 };
 
+// Action
 struct _Action {
 	_Action() : Skill(nullptr), Item(nullptr) { }
+	_Action(const _Skill *Skill) : _Action() { this->Skill = Skill; }
+	_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
-	bool IsSet() { return !(Skill == nullptr && Item == nullptr); }
+	void Serialize(_Buffer &Data);
+	void Unserialize(_Buffer &Data, _Stats *Stats);
+
+	bool IsSet() const { return !(Skill == nullptr && Item == nullptr); }
 	void Unset() { Skill = nullptr; Item = nullptr; }
 
 	const _Skill *Skill;
@@ -119,12 +125,6 @@ class _Object {
 		void UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
 		int GenerateDefense();
-		int GetExperienceGiven() const { return ExperienceGiven; }
-		int GetGoldGiven() const { return GoldGiven; }
-
-		// Skills
-		const _Skill *GetActionBar(size_t Slot);
-		uint32_t GetActionBarID(int Slot) const;
 
 		// -- END FROM FIGHTER --
 
@@ -197,7 +197,7 @@ class _Object {
 		// -- FIGHTER  --
 
 		// Action bar
-		std::vector<const _Skill *>ActionBar;
+		std::vector<_Action>ActionBar;
 
 		// Stats
 		std::string Name;

@@ -347,22 +347,6 @@ int _Object::GenerateDefense() {
 	return GetRandomInt(MinDefense, MaxDefense);
 }
 
-// Gets a skill id from the skill bar
-uint32_t _Object::GetActionBarID(int Slot) const {
-	if(ActionBar[Slot] == nullptr)
-		return 0;
-
-	return ActionBar[Slot]->ID;
-}
-
-// Get a skill from the skill bar
-const _Skill *_Object::GetActionBar(size_t Slot) {
-	if(Slot >= ActionBar.size())
-		return nullptr;
-
-	return ActionBar[Slot];
-}
-
 // Updates the player
 void _Object::Update(double FrameTime) {
 	CheckEvent = false;
@@ -665,7 +649,7 @@ void _Object::SetInventory(int Slot, int ItemID, int Count) {
 		Inventory[Slot].Count = 0;
 	}
 	else {
-		Inventory[Slot].Item = Stats->GetItem(ItemID);
+		Inventory[Slot].Item = Stats->Items[ItemID];
 		Inventory[Slot].Count = Count;
 	}
 }
@@ -961,8 +945,8 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 		// Update skill bar
 		if(SkillLevels[SkillID] == 0) {
 			for(size_t i = 0; i < ActionBar.size(); i++) {
-				if(ActionBar[i] == Skill) {
-					ActionBar[i] = nullptr;
+				if(ActionBar[i].Skill == Skill) {
+					ActionBar[i].Unset();
 					break;
 				}
 			}
@@ -1077,7 +1061,7 @@ void _Object::CalculateSkillStats() {
 
 	// Go through each skill bar
 	for(size_t i = 0; i < ActionBar.size(); i++) {
-		const _Skill *Skill = ActionBar[i];
+		const _Skill *Skill = ActionBar[i].Skill;
 		if(Skill) {
 			int Min, Max, MinRound, MaxRound;
 			float MinFloat, MaxFloat;
@@ -1128,4 +1112,29 @@ void _Object::CalculateFinalStats() {
 		MinDefense = 0;
 	if(MaxDefense < 0)
 		MaxDefense = 0;
+}
+
+// Serialize action
+void _Action::Serialize(_Buffer &Data) {
+
+	uint32_t SkillID = 0;
+	if(Skill)
+		SkillID = Skill->ID;
+
+	uint32_t ItemID = 0;
+	if(Item)
+		ItemID = Item->ID;
+
+	Data.Write<uint32_t>(SkillID);
+	Data.Write<uint32_t>(ItemID);
+}
+
+// Unserialize action
+void _Action::Unserialize(_Buffer &Data, _Stats *Stats) {
+
+	uint32_t SkillID = Data.Read<uint32_t>();
+	uint32_t ItemID = Data.Read<uint32_t>();
+
+	Skill = Stats->Skills[SkillID];
+	Item = Stats->Items[ItemID];
 }
