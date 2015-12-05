@@ -164,7 +164,7 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 	Database->CloseQuery();
 
 	int64_t CharacterID = Database->GetLastInsertID();
-	Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, 1, 2, 1), (@character_id, 3, 1, 1), (@character_id, 7, 6, 2)");
+	Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, 1, 2, 1), (@character_id, 3, 1, 1), (@character_id, 7, 6, 3)");
 	Database->BindInt(1, CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();

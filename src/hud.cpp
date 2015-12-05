@@ -157,7 +157,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 				break;
 				case WINDOW_ACTIONBAR:
-					if(InventoryElement->Visible) {
+					if(SkillsElement->Visible || InventoryElement->Visible) {
 						if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 							Cursor = Tooltip;
 						}
@@ -165,7 +165,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				break;
 			}
 		}
-		else if(Tooltip.Skill && SkillsElement->Visible) {
+		else if(Tooltip.Skill && (SkillsElement->Visible || InventoryElement->Visible)) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 				if(Player->SkillLevels[Tooltip.Skill->ID] > 0)
 					Cursor = Tooltip;
@@ -293,6 +293,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				_Action Action;
 				SetActionBar(Cursor.Slot, -1, Action);
 			}
+		}
+		else if(ActionBarElement->GetClickedElement()) {
+			//std::cout << (intptr_t)ActionBarElement->GetClickedElement()->UserData << std::endl;
 		}
 
 		if(Player->WaitingForTrade) {
