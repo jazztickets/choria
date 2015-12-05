@@ -17,6 +17,9 @@
 *******************************************************************************/
 #include <states/editor.h>
 #include <ui/element.h>
+#include <ui/label.h>
+#include <ui/textbox.h>
+#include <ui/button.h>
 #include <framework.h>
 #include <input.h>
 #include <graphics.h>
@@ -38,12 +41,16 @@ _EditorState EditorState;
 // Constructor
 _EditorState::_EditorState() :
 	Map(nullptr),
-	EditorNewMapElement(nullptr) {
+	EditorNewMapElement(nullptr),
+	NewMapWidthTextBox(nullptr),
+	NewMapHeightTextBox(nullptr) {
 }
 
 // Initializes the state
 void _EditorState::Init() {
 	EditorNewMapElement = Assets.Elements["element_editor_newmap"];
+	NewMapWidthTextBox = Assets.TextBoxes["textbox_editor_newmap_width"];
+	NewMapHeightTextBox = Assets.TextBoxes["textbox_editor_newmap_height"];
 
 	Stats = new _Stats();
 
@@ -86,126 +93,80 @@ void _EditorState::Close() {
 // Key events
 void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
-
 	if(Handled)
 		return;
 
 	if(KeyEvent.Repeat)
 		return;
 
-	switch(KeyEvent.Scancode) {
-		case SDL_SCANCODE_ESCAPE:
-			Framework.Done = true;
-		break;
-		case SDL_SCANCODE_1:
-			Filter = 0;
-			Filter |= FILTER_TEXTURE;
-			Filter |= FILTER_WALL;
-		break;
-		case SDL_SCANCODE_2:
-			Filter = 0;
-			Filter |= FILTER_ZONE;
-		break;
-		case SDL_SCANCODE_3:
-			Filter = 0;
-			Filter |= FILTER_PVP;
-		break;
-		case SDL_SCANCODE_4:
-			Filter = 0;
-			Filter |= FILTER_EVENTTYPE;
-			Filter |= FILTER_EVENTDATA;
-		break;
-		case SDL_SCANCODE_N:
-			InitNewMap();
-		break;
-		case SDL_SCANCODE_W:
-			Brush->Wall = !Brush->Wall;
-		break;
-		case SDL_SCANCODE_P:
-			Brush->PVP = !Brush->PVP;
-		break;
-		case SDL_SCANCODE_S:
-			if(Map)
-				Map->Save(Map->Path);
-		break;
-		case SDL_SCANCODE_L:
-			InitLoadMap();
-		break;
-		case SDL_SCANCODE_T:
-			InitTexturePalette();
-		break;
-		case SDL_SCANCODE_B:
-			InitBrushOptions();
-		break;
-		case SDL_SCANCODE_MINUS:
-			if(Brush->EventData > 0)
-				Brush->EventData--;
-		break;
-		case SDL_SCANCODE_EQUALS:
-			Brush->EventData++;
-		break;
-		case SDL_SCANCODE_F1:
-			BrushSize = 0;
-		break;
-		case SDL_SCANCODE_F2:
-			BrushSize = 1;
-		break;
-		case SDL_SCANCODE_F3:
-			BrushSize = 2;
-		break;
-		case SDL_SCANCODE_F4:
-			BrushSize = 3;
-		break;
-		default:
-		break;
+	if(KeyEvent.Pressed) {
+		switch(KeyEvent.Scancode) {
+			case SDL_SCANCODE_ESCAPE:
+				Framework.Done = true;
+			break;
+			case SDL_SCANCODE_1:
+				Filter = 0;
+				Filter |= FILTER_TEXTURE;
+				Filter |= FILTER_WALL;
+			break;
+			case SDL_SCANCODE_2:
+				Filter = 0;
+				Filter |= FILTER_ZONE;
+			break;
+			case SDL_SCANCODE_3:
+				Filter = 0;
+				Filter |= FILTER_PVP;
+			break;
+			case SDL_SCANCODE_4:
+				Filter = 0;
+				Filter |= FILTER_EVENTTYPE;
+				Filter |= FILTER_EVENTDATA;
+			break;
+			case SDL_SCANCODE_N:
+				ToggleNewMap();
+			break;
+			case SDL_SCANCODE_W:
+				Brush->Wall = !Brush->Wall;
+			break;
+			case SDL_SCANCODE_P:
+				Brush->PVP = !Brush->PVP;
+			break;
+			case SDL_SCANCODE_S:
+				if(Map)
+					Map->Save(Map->Path);
+			break;
+			case SDL_SCANCODE_L:
+				InitLoadMap();
+			break;
+			case SDL_SCANCODE_T:
+				InitTexturePalette();
+			break;
+			case SDL_SCANCODE_B:
+				InitBrushOptions();
+			break;
+			case SDL_SCANCODE_MINUS:
+				if(Brush->EventData > 0)
+					Brush->EventData--;
+			break;
+			case SDL_SCANCODE_EQUALS:
+				Brush->EventData++;
+			break;
+			case SDL_SCANCODE_F1:
+				BrushSize = 0;
+			break;
+			case SDL_SCANCODE_F2:
+				BrushSize = 1;
+			break;
+			case SDL_SCANCODE_F3:
+				BrushSize = 2;
+			break;
+			case SDL_SCANCODE_F4:
+				BrushSize = 3;
+			break;
+			default:
+			break;
+		}
 	}
-	/*
-		case STATE_NEWMAP:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(NEWMAP_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-		case STATE_LOADMAP:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(NEWMAP_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-		case STATE_TEXTUREPALETTE:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(TEXTUREPALETTE_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-		case STATE_BRUSHOPTIONS:
-			switch(TKey) {
-				case SDL_SCANCODE_ESCAPE:
-					CloseWindow(BRUSHOPTIONS_WINDOW);
-					State = STATE_MAIN;
-				break;
-				default:
-					return false;
-				break;
-			}
-		break;
-	}
-	*/
 }
 
 // Mouse events
@@ -234,8 +195,10 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 		// New map screen
 		if(EditorNewMapElement->GetClickedElement()) {
 			if(EditorNewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_create") {
+				CreateMap();
 			}
 			else if(EditorNewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_cancel") {
+				CloseWindows();
 			}
 		}
 	}
@@ -325,7 +288,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Render map
 	if(Map)
-		Map->Render(Camera, Stats, nullptr, Filter);
+		Map->Render(Camera, Stats, nullptr, Filter | FILTER_BOUNDARY);
 
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["text"]);
@@ -339,14 +302,21 @@ void _EditorState::Render(double BlendFactor) {
 	Buffer << std::fixed << std::setprecision(1) << WorldCursor.x << ", " << WorldCursor.y;
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
 
+	// Draw UI
 	if(EditorNewMapElement->Visible)
 		EditorNewMapElement->Render();
-
 }
 
 // Initializes the new map screen
 void _EditorState::InitNewMap() {
 	EditorNewMapElement->SetVisible(true);
+
+	_TextBox *FilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
+	FilenameTextBox->Text = "";
+	FocusedElement = FilenameTextBox;
+
+	NewMapWidthTextBox->Text = "100";
+	NewMapHeightTextBox->Text = "100";
 }
 
 // Close all open windows
@@ -358,6 +328,17 @@ bool _EditorState::CloseWindows() {
 
 // Creates a map with the given parameters
 void _EditorState::CreateMap() {
+	CloseMap();
+
+	// Get parameters
+	glm::ivec2 Size(0, 0);
+	std::stringstream Buffer(NewMapWidthTextBox->Text + " " + NewMapHeightTextBox->Text);
+	Buffer >> Size.x >> Size.y;
+
+	// Create map
+	Map = new _Map(Size);
+
+	CloseWindows();
 }
 
 // Initialize the load map screen
@@ -365,7 +346,6 @@ void _EditorState::InitLoadMap() {
 
 	// Main dialog window
 	std::string StartPath = std::string(Config.ConfigPath.c_str());
-	//irrGUI->addFileOpenDialog(L"Load Map", true, 0, -1, true, (std::string::char_type *)StartPath.c_str());
 }
 
 // Opens the texture palette dialog

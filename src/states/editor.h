@@ -27,14 +27,16 @@ class _Map;
 class _Texture;
 class _Stats;
 class _Element;
+class _TextBox;
 
 enum FilterType {
-	FILTER_TEXTURE   = (1 << 1),
-	FILTER_WALL      = (1 << 2),
-	FILTER_PVP       = (1 << 3),
-	FILTER_ZONE      = (1 << 4),
-	FILTER_EVENTTYPE = (1 << 5),
-	FILTER_EVENTDATA = (1 << 6),
+	FILTER_BOUNDARY  = (1 << 1),
+	FILTER_TEXTURE   = (1 << 2),
+	FILTER_WALL      = (1 << 3),
+	FILTER_PVP       = (1 << 4),
+	FILTER_ZONE      = (1 << 5),
+	FILTER_EVENTTYPE = (1 << 6),
+	FILTER_EVENTDATA = (1 << 7),
 };
 
 // Classes
@@ -128,7 +130,10 @@ class _EditorState : public _State {
 		// Filter
 		int Filter;
 
+		// UI
 		_Element *EditorNewMapElement;
+		_TextBox *NewMapWidthTextBox;
+		_TextBox *NewMapHeightTextBox;
 };
 
 extern _EditorState EditorState;

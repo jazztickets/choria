@@ -44,6 +44,7 @@
 _Map::_Map() :
 	ID(0),
 	Tiles(nullptr),
+	Size(0, 0),
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	NoZoneTexture(nullptr),
 	ObjectUpdateTime(0),
@@ -51,6 +52,12 @@ _Map::_Map() :
 	ObjectUpdateCount(0),
 	NextObjectID(0) {
 
+}
+
+// Create new map with given size
+_Map::_Map(const glm::ivec2 &Size) : _Map() {
+	this->Size = Size;
+	AllocateMap();
 }
 
 // Constructor for maps already created in the database
@@ -238,6 +245,15 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 	if(!RenderFlags)
 		return;
 
+	// Draw map boundaries
+	if(RenderFlags & FILTER_BOUNDARY) {
+		Graphics.SetProgram(Assets.Programs["pos"]);
+		Graphics.SetDepthTest(false);
+		Graphics.SetVBO(VBO_NONE);
+		Graphics.SetColor(COLOR_RED);
+		Graphics.DrawRectangle(glm::vec2(-0.01f, -0.01f), glm::vec2(Size.x + 0.01f, Size.y + 0.01f));
+	}
+
 	// Draw text overlay
 	for(int j = Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = Bounds[0]; i < Bounds[2]; i++) {
@@ -295,7 +311,6 @@ void _Map::Load() {
 					File >> Size.x >> Size.y;
 					FreeMap();
 					AllocateMap();
-					//TilesInitialized = true;
 				} break;
 				// No-zone textuer
 				case 'N': {
@@ -348,9 +363,6 @@ void _Map::Load() {
 	catch(std::exception &Error) {
 		std::cout << Error.what() << std::endl;
 	}
-
-	//if(!TilesInitialized)
-	//	Grid->InitTiles();
 
 	// Initialize 2d tile rendering
 	//if(!OldServerNetwork) {

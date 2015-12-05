@@ -64,6 +64,7 @@ class _Map {
 		};
 
 		_Map();
+		_Map(const glm::ivec2 &Size);
 		_Map(int ID, _Stats *Stats);
 		~_Map();
 
