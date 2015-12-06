@@ -7,6 +7,8 @@ textbox_account_password	element_menu_account	style_menu_textbox	hud_medium	0	-1
 textbox_trade_gold_theirs	element_trade_theirs	style_menu_textbox	hud_medium	50	44	130	30	0	2	10
 textbox_trade_gold_yours	element_trade_yours	style_menu_textbox	hud_medium	50	44	130	30	0	2	10
 textbox_chat	element_chat	style_menu_textbox	hud_small	3	-2	346	20	0	2	100
-textbox_editor_newmap_filename	element_editor_newmap	style_menu_textbox	hud_medium	150	90	200	30	0	0	20
+textbox_editor_newmap_filename	element_editor_newmap	style_menu_textbox	hud_medium	150	90	200	30	0	0	32
 textbox_editor_newmap_width	element_editor_newmap	style_menu_textbox	hud_medium	150	140	75	30	0	0	3
 textbox_editor_newmap_height	element_editor_newmap	style_menu_textbox	hud_medium	150	190	75	30	0	0	3
+textbox_editor_savemap	element_editor_savemap	style_menu_textbox	hud_medium	75	0	250	30	0	0	32
+textbox_editor_loadmap	element_editor_loadmap	style_menu_textbox	hud_medium	75	0	250	30	0	0	32

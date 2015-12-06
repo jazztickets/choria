@@ -6,11 +6,7 @@ style_menu_window	menu_button	menu_button_border	ortho_pos			0
 style_menu_textbox	menu_button	menu_button_border	ortho_pos			0
 style_menu_portrait_hover	highlight		ortho_pos			0
 style_hud_bg	dark		ortho_pos			0
-style_buttonbar_teleport			ortho_pos_uv	hud/slot_small.png		0
-style_buttonbar_inventory			ortho_pos_uv	hud/slot_small.png		0
-style_buttonbar_trade			ortho_pos_uv	hud/slot_small.png		0
-style_buttonbar_skills			ortho_pos_uv	hud/slot_small.png		0
-style_buttonbar_menu			ortho_pos_uv	hud/slot_small.png		0
+style_buttonbar_slot			ortho_pos_uv	hud/slot_small.png		0
 style_hud_slot			ortho_pos_uv	hud/slot.png		0
 style_hud_slot_alpha			ortho_pos_uv	hud/slot.png	inventory_slot_trans	0
 style_hud_item_tooltip_bg	item_tooltip_bg		ortho_pos			0

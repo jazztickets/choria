@@ -70,8 +70,7 @@ _Map::_Map(int ID, _Stats *Stats) : _Map() {
 	const _MapStat *Map = Stats->GetMap(ID);
 
 	// Load map
-	Path = Map->File;
-	Load();
+	Load(Map->File);
 }
 
 // Destructor
@@ -286,83 +285,81 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 }
 
 // Load map
-void _Map::Load() {
+void _Map::Load(const std::string &Path) {
 
 	// Load file
 	gzifstream File(Path.c_str());
-	try {
-		_Tile *Tile = nullptr;
-		while(!File.eof() && File.peek() != EOF) {
+	if(!File)
+		throw std::runtime_error("Cannot load map: " + Path);
 
-			// Read chunk type
-			char ChunkType;
-			File >> ChunkType;
+	_Tile *Tile = nullptr;
+	while(!File.eof() && File.peek() != EOF) {
 
-			switch(ChunkType) {
-				// Map version
-				case 'V': {
-					int FileVersion;
-					File >> FileVersion;
-					if(FileVersion != MAP_VERSION)
-						throw std::runtime_error("Level version mismatch: ");
-				} break;
-				// Map size
-				case 'S': {
-					File >> Size.x >> Size.y;
-					FreeMap();
-					AllocateMap();
-				} break;
-				// No-zone textuer
-				case 'N': {
-					std::string TextureIdentifier;
-					File >> TextureIdentifier;
-					if(TextureIdentifier == "none")
-						NoZoneTexture = nullptr;
-					else
-						NoZoneTexture = Assets.Textures[TextureIdentifier];
-				} break;
-				// Ambient light
-				case 'A': {
-					File >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
-				}
-				// Atlas texture
-				case 'a': {
-					//File >> AtlasPath;
-				} break;
-				// Tile
-				case 'T': {
-					glm::ivec2 Coordinate;
-					File >> Coordinate.x >> Coordinate.y;
-					Tile = &Tiles[Coordinate.x][Coordinate.y];
-				} break;
-				case 't': {
-					std::string TextureIdentifier;
-					File >> TextureIdentifier;
-					if(TextureIdentifier == "none")
-						Tile->Texture = nullptr;
-					else
-						Tile->Texture = Assets.Textures[TextureIdentifier];
-				} break;
-				case 'z': {
-					File >> Tile->Zone;
-				} break;
-				case 'e': {
-					File >> Tile->EventType >> Tile->EventData;
-				} break;
-				case 'w': {
-					File >> Tile->Wall;
-				} break;
-				case 'p': {
-					File >> Tile->PVP;
-				} break;
+		// Read chunk type
+		char ChunkType;
+		File >> ChunkType;
+
+		switch(ChunkType) {
+			// Map version
+			case 'V': {
+				int FileVersion;
+				File >> FileVersion;
+				if(FileVersion != MAP_VERSION)
+					throw std::runtime_error("Level version mismatch: ");
+			} break;
+			// Map size
+			case 'S': {
+				File >> Size.x >> Size.y;
+				FreeMap();
+				AllocateMap();
+			} break;
+			// No-zone textuer
+			case 'N': {
+				std::string TextureIdentifier;
+				File >> TextureIdentifier;
+				if(TextureIdentifier == "none")
+					NoZoneTexture = nullptr;
+				else
+					NoZoneTexture = Assets.Textures[TextureIdentifier];
+			} break;
+			// Ambient light
+			case 'A': {
+				File >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
 			}
+			// Atlas texture
+			case 'a': {
+				//File >> AtlasPath;
+			} break;
+			// Tile
+			case 'T': {
+				glm::ivec2 Coordinate;
+				File >> Coordinate.x >> Coordinate.y;
+				Tile = &Tiles[Coordinate.x][Coordinate.y];
+			} break;
+			case 't': {
+				std::string TextureIdentifier;
+				File >> TextureIdentifier;
+				if(TextureIdentifier == "none")
+					Tile->Texture = nullptr;
+				else
+					Tile->Texture = Assets.Textures[TextureIdentifier];
+			} break;
+			case 'z': {
+				File >> Tile->Zone;
+			} break;
+			case 'e': {
+				File >> Tile->EventType >> Tile->EventData;
+			} break;
+			case 'w': {
+				File >> Tile->Wall;
+			} break;
+			case 'p': {
+				File >> Tile->PVP;
+			} break;
 		}
+	}
 
-		File.close();
-	}
-	catch(std::exception &Error) {
-		std::cout << Error.what() << std::endl;
-	}
+	File.close();
 
 	// Initialize 2d tile rendering
 	//if(!OldServerNetwork) {
@@ -397,11 +394,9 @@ void _Map::Load() {
 }
 
 // Saves the level to a file
-void _Map::Save(const std::string &String) {
-	if(String == "")
-		throw std::runtime_error("Empty file name");
-
-	Path = String;
+bool _Map::Save(const std::string &Path) {
+	if(Path == "")
+		return false;
 
 	// Open file
 	gzofstream Output(Path.c_str());
@@ -433,6 +428,8 @@ void _Map::Save(const std::string &String) {
 	}
 
 	Output.close();
+
+	return true;
 }
 
 // Determines if a square can be moved to

@@ -76,3 +76,8 @@ label_editor_newmap_width	textbox_editor_newmap_width	hud_medium		Width	0	22	90	
 label_editor_newmap_height	textbox_editor_newmap_height	hud_medium		Height	0	22	90	0	2	3
 label_editor_newmap_create	button_editor_newmap_create	hud_medium		Create	0	23	0	0	1	3
 label_editor_newmap_cancel	button_editor_newmap_cancel	hud_medium		Cancel	0	23	0	0	1	3
+label_editor_savemap	textbox_editor_savemap	hud_medium		Save	0	23	260	0	2	3
+label_editor_loadmap	textbox_editor_loadmap	hud_medium		Load	0	23	260	0	2	3
+label_editor_buttonbar_new	button_editor_buttonbar_new	hud_tiny		New	3	20	0	0	0	3
+label_editor_buttonbar_save	button_editor_buttonbar_save	hud_tiny		Save	3	20	0	0	0	3
+label_editor_buttonbar_load	button_editor_buttonbar_load	hud_tiny		Load	3	20	0	0	0	3

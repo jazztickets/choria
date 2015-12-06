@@ -106,12 +106,11 @@ class _Map {
 		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
 
 		// File IO
-		void Load();
-		void Save(const std::string &String);
+		void Load(const std::string &Path);
+		bool Save(const std::string &Path);
 
 		// Map file
 		uint32_t ID;
-		std::string Path;
 
 		// Map data
 		_Tile **Tiles;

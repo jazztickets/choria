@@ -85,16 +85,21 @@ class _EditorState : public _State {
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
-		void SetPath(const std::string &Path) { this->Path = Path; }
+		void SetFilePath(const std::string &FilePath) { this->FilePath = FilePath; }
 
 	private:
 
 		void CloseMap();
 		void CreateMap();
+		void SaveMap();
+		void LoadMap();
 
 		void ToggleNewMap();
+		void ToggleSaveMap();
+		void ToggleLoadMap();
 
 		void InitNewMap();
+		void InitSaveMap();
 		void InitLoadMap();
 		bool CloseWindows();
 
@@ -116,7 +121,7 @@ class _EditorState : public _State {
 
 		// Map
 		_Map *Map;
-		std::string Path;
+		std::string FilePath;
 		std::string WorkingDirectory;
 
 		// Textures
@@ -130,9 +135,16 @@ class _EditorState : public _State {
 		int Filter;
 
 		// UI
-		_Element *EditorNewMapElement;
+		bool IgnoreFirstChar;
+		_Element *ButtonBarElement;
+		_Element *NewMapElement;
+		_Element *SaveMapElement;
+		_Element *LoadMapElement;
+		_TextBox *NewMapFilenameTextBox;
 		_TextBox *NewMapWidthTextBox;
 		_TextBox *NewMapHeightTextBox;
+		_TextBox *SaveMapTextBox;
+		_TextBox *LoadMapTextBox;
 };
 
 extern _EditorState EditorState;

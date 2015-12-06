@@ -29,4 +29,7 @@ element_side_right		style_battle_slot_red	0	0	64	64	1	1	0	0	-1
 element_battlewin		style_hud_bg	0	0	560	360	1	1	0	0	-1
 element_battlelose		style_hud_bg	0	0	560	360	1	1	0	0	-1
 element_chat			25	-100	0	0	0	2	0	1	-1
+element_editor_buttonbar			0	0	96	32	2	0	0	1	-1
 element_editor_newmap		style_menu_window	0	0	400	320	1	1	0	1	-1
+element_editor_savemap			100	-10	250	30	0	2	0	1	-1
+element_editor_loadmap			100	-10	250	30	0	2	0	1	-1

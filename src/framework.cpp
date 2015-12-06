@@ -59,7 +59,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else if(Token == "-editor") {
 			State = &EditorState;
 			if(TokensRemaining && Arguments[i+1][0] != '-')
-				EditorState.SetPath(Arguments[++i]);
+				EditorState.SetFilePath(Arguments[++i]);
 		}
 		else if(Token == "-connect") {
 			ClientState.ConnectNow = true;

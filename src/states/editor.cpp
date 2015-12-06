@@ -41,17 +41,35 @@ _EditorState EditorState;
 // Constructor
 _EditorState::_EditorState() :
 	Map(nullptr),
-	EditorNewMapElement(nullptr),
+	ButtonBarElement(nullptr),
+	NewMapElement(nullptr),
+	SaveMapElement(nullptr),
+	LoadMapElement(nullptr),
+	NewMapFilenameTextBox(nullptr),
 	NewMapWidthTextBox(nullptr),
-	NewMapHeightTextBox(nullptr) {
+	NewMapHeightTextBox(nullptr),
+	SaveMapTextBox(nullptr),
+	LoadMapTextBox(nullptr) {
 }
 
 // Initializes the state
 void _EditorState::Init() {
-	EditorNewMapElement = Assets.Elements["element_editor_newmap"];
+	ButtonBarElement = Assets.Elements["element_editor_buttonbar"];
+	NewMapElement = Assets.Elements["element_editor_newmap"];
+	SaveMapElement = Assets.Elements["element_editor_savemap"];
+	LoadMapElement = Assets.Elements["element_editor_loadmap"];
+	NewMapFilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
 	NewMapWidthTextBox = Assets.TextBoxes["textbox_editor_newmap_width"];
 	NewMapHeightTextBox = Assets.TextBoxes["textbox_editor_newmap_height"];
+	SaveMapTextBox = Assets.TextBoxes["textbox_editor_savemap"];
+	LoadMapTextBox = Assets.TextBoxes["textbox_editor_loadmap"];
+	ButtonBarElement->SetVisible(true);
+	NewMapElement->SetVisible(false);
+	SaveMapElement->SetVisible(false);
+	LoadMapElement->SetVisible(false);
+	IgnoreFirstChar = false;
 
+	// Load stats database
 	Stats = new _Stats();
 
 	// Create brush
@@ -66,13 +84,6 @@ void _EditorState::Init() {
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
-	// Default map
-	Map = nullptr;
-	if(Path != "") {
-		Map = new _Map();
-		Map->Load();
-	}
-
 	Brush->Texture = Assets.Textures["map/grass0.png"];
 
 	// Set filters
@@ -80,7 +91,14 @@ void _EditorState::Init() {
 	Filter |= FILTER_TEXTURE;
 	Filter |= FILTER_WALL;
 
-	InitNewMap();
+	// Default map
+	Map = nullptr;
+	if(FilePath != "") {
+		LoadMapTextBox->Text = FilePath;
+		LoadMap();
+	}
+	else
+		ToggleNewMap();
 }
 
 // Shuts the state down
@@ -94,6 +112,11 @@ void _EditorState::Close() {
 
 // Key events
 void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
+	if(IgnoreFirstChar) {
+		IgnoreFirstChar = false;
+		return;
+	}
+
 	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
 	if(Handled)
 		return;
@@ -101,7 +124,23 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 	if(KeyEvent.Repeat)
 		return;
 
+
 	if(KeyEvent.Pressed) {
+		if(FocusedElement) {
+			if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
+				CloseWindows();
+			else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
+				if(SaveMapElement->Visible) {
+					SaveMap();
+				}
+				else if(LoadMapElement->Visible) {
+					LoadMap();
+				}
+			}
+
+			return;
+		}
+
 		switch(KeyEvent.Scancode) {
 			case SDL_SCANCODE_ESCAPE:
 				Framework.Done = true;
@@ -125,6 +164,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				Filter |= FILTER_EVENTDATA;
 			break;
 			case SDL_SCANCODE_N:
+				IgnoreFirstChar = true;
 				ToggleNewMap();
 			break;
 			case SDL_SCANCODE_W:
@@ -134,11 +174,12 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				Brush->PVP = !Brush->PVP;
 			break;
 			case SDL_SCANCODE_S:
-				if(Map)
-					Map->Save(Map->Path);
+				IgnoreFirstChar = true;
+				ToggleSaveMap();
 			break;
 			case SDL_SCANCODE_L:
-				InitLoadMap();
+				IgnoreFirstChar = true;
+				ToggleLoadMap();
 			break;
 			case SDL_SCANCODE_T:
 				InitTexturePalette();
@@ -198,11 +239,19 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
 		// New map screen
-		if(EditorNewMapElement->GetClickedElement()) {
-			if(EditorNewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_create") {
+		if(ButtonBarElement->GetClickedElement()) {
+			if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_new")
+				ToggleNewMap();
+			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_save")
+				ToggleSaveMap();
+			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_load")
+				ToggleLoadMap();
+		}
+		if(NewMapElement->GetClickedElement()) {
+			if(NewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_create") {
 				CreateMap();
 			}
-			else if(EditorNewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_cancel") {
+			else if(NewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_cancel") {
 				CloseWindows();
 			}
 		}
@@ -249,7 +298,7 @@ void _EditorState::Update(double FrameTime) {
 		WorldCursor = Map->GetValidPosition(WorldCursor);
 	}
 
-	if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL))) {
+	if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL)) && Graphics.Element->HitElement == Graphics.Element) {
 		ApplyBrush(WorldCursor);
 	}
 }
@@ -295,8 +344,11 @@ void _EditorState::Render(double BlendFactor) {
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
 
 	// Draw UI
-	if(EditorNewMapElement->Visible)
-		EditorNewMapElement->Render();
+	ButtonBarElement->Render();
+	SaveMapElement->Render();
+	LoadMapElement->Render();
+	NewMapElement->Render();
+
 }
 
 // Draw information about the brush
@@ -317,7 +369,7 @@ void _EditorState::RenderBrush() {
 	std::stringstream Buffer;
 	glm::vec4 Color(COLOR_WHITE);
 
-	DrawPosition.y += Brush->Texture->Size.y + 8;
+	DrawPosition.y += 32 + 8;
 
 	// Draw wall
 	if(Brush->Wall)
@@ -369,9 +421,42 @@ void _EditorState::RenderBrush() {
 	Buffer.str("");
 }
 
+// Toggle new map screen
+void _EditorState::ToggleNewMap() {
+	if(!NewMapElement->Visible) {
+		CloseWindows();
+		InitNewMap();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
+// Show save map screen
+void _EditorState::ToggleSaveMap() {
+	if(!SaveMapElement->Visible) {
+		CloseWindows();
+		InitSaveMap();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
+// Show load map screen
+void _EditorState::ToggleLoadMap() {
+	if(!LoadMapElement->Visible) {
+		CloseWindows();
+		InitLoadMap();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Initializes the new map screen
 void _EditorState::InitNewMap() {
-	EditorNewMapElement->SetVisible(true);
+	NewMapElement->SetVisible(true);
 
 	_TextBox *FilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
 	FilenameTextBox->Text = "";
@@ -381,9 +466,34 @@ void _EditorState::InitNewMap() {
 	NewMapHeightTextBox->Text = "100";
 }
 
+// Save map
+void _EditorState::InitSaveMap() {
+	SaveMapElement->SetVisible(true);
+	FocusedElement = SaveMapTextBox;
+	//if(Map)
+	//	Map->Save(Map->Path);
+}
+
+// Initialize the load map screen
+void _EditorState::InitLoadMap() {
+	LoadMapElement->SetVisible(true);
+	FocusedElement = LoadMapTextBox;
+}
+
+// Opens the texture palette dialog
+void _EditorState::InitTexturePalette() {
+}
+
+// Opens the brush filter dialog
+void _EditorState::InitBrushOptions() {
+}
+
 // Close all open windows
 bool _EditorState::CloseWindows() {
-	EditorNewMapElement->SetVisible(false);
+	NewMapElement->SetVisible(false);
+	SaveMapElement->SetVisible(false);
+	LoadMapElement->SetVisible(false);
+	FocusedElement = nullptr;
 
 	return true;
 }
@@ -399,23 +509,68 @@ void _EditorState::CreateMap() {
 
 	// Create map
 	Map = new _Map(Size);
+	SaveMapTextBox->Text = NewMapFilenameTextBox->Text;
 
 	CloseWindows();
 }
 
-// Initialize the load map screen
-void _EditorState::InitLoadMap() {
+// Save the map
+void _EditorState::SaveMap() {
 
-	// Main dialog window
-	std::string StartPath = std::string(Config.ConfigPath.c_str());
+	// Get textbox value
+	std::string Path = SaveMapTextBox->Text;
+	if(Path == "")
+		return;
+
+	// Check for path prefix
+	if(Path.find(ASSETS_MAPS_PATH, 0) == std::string::npos)
+		Path = ASSETS_MAPS_PATH + Path;
+
+	// Check for extension
+	if(Path.find(".map.gz", 0) == std::string::npos)
+		Path = Path + ".map.gz";
+
+	// Save map
+	Map->Save(Path);
+
+	// Close
+	CloseWindows();
 }
 
-// Opens the texture palette dialog
-void _EditorState::InitTexturePalette() {
-}
+// Load the map
+void _EditorState::LoadMap() {
 
-// Opens the brush filter dialog
-void _EditorState::InitBrushOptions() {
+	// Get textbox value
+	std::string Path = LoadMapTextBox->Text;
+	if(Path == "")
+		return;
+
+	// Check for path prefix
+	if(Path.find(ASSETS_MAPS_PATH, 0) == std::string::npos)
+		Path = ASSETS_MAPS_PATH + Path;
+
+	// Check for extension
+	if(Path.find(".map.gz", 0) == std::string::npos)
+		Path = Path + ".map.gz";
+
+	// Attempt to load map
+	_Map *NewMap = new _Map();
+	try {
+		NewMap->Load(Path);
+	}
+	catch(std::exception &Error) {
+		delete NewMap;
+		NewMap = nullptr;
+	}
+
+	// Set new map
+	if(NewMap) {
+		CloseMap();
+		Map = NewMap;
+		SaveMapTextBox->Text = LoadMapTextBox->Text;
+	}
+
+	CloseWindows();
 }
 
 // Loads all map textures from a directory
@@ -464,15 +619,4 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 void _EditorState::CloseMap() {
 	delete Map;
 	Map = nullptr;
-}
-
-// Toggle new map screen
-void _EditorState::ToggleNewMap() {
-	if(!EditorNewMapElement->Visible) {
-		CloseWindows();
-		InitNewMap();
-	}
-	else {
-		CloseWindows();
-	}
 }
