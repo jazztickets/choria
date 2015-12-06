@@ -129,7 +129,10 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 			if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 				CloseWindows();
 			else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-				if(SaveMapElement->Visible) {
+				if(NewMapElement->Visible) {
+					CreateMap();
+				}
+				else if(SaveMapElement->Visible) {
 					SaveMap();
 				}
 				else if(LoadMapElement->Visible) {
