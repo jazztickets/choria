@@ -124,7 +124,6 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 	if(KeyEvent.Repeat)
 		return;
 
-
 	if(KeyEvent.Pressed) {
 		if(FocusedElement) {
 			if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
@@ -184,9 +183,6 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_T:
 				InitTexturePalette();
 			break;
-			case SDL_SCANCODE_B:
-				InitBrushOptions();
-			break;
 			case SDL_SCANCODE_MINUS:
 				if(Brush->EventData > 0)
 					Brush->EventData--;
@@ -220,6 +216,7 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
 	Graphics.Element->HandleInput(MouseEvent.Pressed);
 
+	// Mouse press
 	if(MouseEvent.Pressed) {
 		if(Map) {
 			switch(MouseEvent.Button) {
@@ -238,7 +235,7 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 	// Release left mouse button
 	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
-		// New map screen
+		// Button bar
 		if(ButtonBarElement->GetClickedElement()) {
 			if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_new")
 				ToggleNewMap();
@@ -247,7 +244,8 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_load")
 				ToggleLoadMap();
 		}
-		if(NewMapElement->GetClickedElement()) {
+		// New map screen
+		else if(NewMapElement->GetClickedElement()) {
 			if(NewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_create") {
 				CreateMap();
 			}
@@ -470,22 +468,20 @@ void _EditorState::InitNewMap() {
 void _EditorState::InitSaveMap() {
 	SaveMapElement->SetVisible(true);
 	FocusedElement = SaveMapTextBox;
-	//if(Map)
-	//	Map->Save(Map->Path);
+
+	SaveMapTextBox->Text = FilePath;
 }
 
 // Initialize the load map screen
 void _EditorState::InitLoadMap() {
 	LoadMapElement->SetVisible(true);
 	FocusedElement = LoadMapTextBox;
+
+	LoadMapTextBox->Text = FilePath;
 }
 
 // Opens the texture palette dialog
 void _EditorState::InitTexturePalette() {
-}
-
-// Opens the brush filter dialog
-void _EditorState::InitBrushOptions() {
 }
 
 // Close all open windows
@@ -509,7 +505,7 @@ void _EditorState::CreateMap() {
 
 	// Create map
 	Map = new _Map(Size);
-	SaveMapTextBox->Text = NewMapFilenameTextBox->Text;
+	FilePath = NewMapFilenameTextBox->Text;
 
 	CloseWindows();
 }
@@ -532,6 +528,7 @@ void _EditorState::SaveMap() {
 
 	// Save map
 	Map->Save(Path);
+	FilePath = SaveMapTextBox->Text;
 
 	// Close
 	CloseWindows();
@@ -567,7 +564,7 @@ void _EditorState::LoadMap() {
 	if(NewMap) {
 		CloseMap();
 		Map = NewMap;
-		SaveMapTextBox->Text = LoadMapTextBox->Text;
+		FilePath = LoadMapTextBox->Text;
 	}
 
 	CloseWindows();

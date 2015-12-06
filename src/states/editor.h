@@ -108,7 +108,6 @@ class _EditorState : public _State {
 		void RefreshTexturePalette();
 
 		// Brushes
-		void InitBrushOptions();
 		void ApplyBrush(const glm::vec2 &Position);
 		void RenderBrush();
 
