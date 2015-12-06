@@ -641,3 +641,8 @@ void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
 glm::vec2 _Map::GetValidPosition(const glm::vec2 &Position) {
 	return glm::clamp(Position, glm::vec2(0.0f), glm::vec2(Size));
 }
+
+// Get a valid position within the grid
+glm::ivec2 _Map::GetValidCoord(const glm::ivec2 &Position) {
+	return glm::clamp(Position, glm::ivec2(0), Size - 1);
+}

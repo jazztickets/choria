@@ -56,7 +56,7 @@ void _EditorState::Init() {
 
 	// Create brush
 	Brush = new _Tile();
-	BrushSize = 0;
+	BrushRadius = 0.5f;
 	Brush->Texture = nullptr;
 	RefreshTexturePalette();
 	if(TexturePalette.size() > 0)
@@ -72,6 +72,8 @@ void _EditorState::Init() {
 		Map = new _Map();
 		Map->Load();
 	}
+
+	Brush->Texture = Assets.Textures["map/grass0.png"];
 
 	// Set filters
 	Filter = 0;
@@ -152,16 +154,19 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				Brush->EventData++;
 			break;
 			case SDL_SCANCODE_F1:
-				BrushSize = 0;
+				BrushRadius = 0.5f;
 			break;
 			case SDL_SCANCODE_F2:
-				BrushSize = 1;
+				BrushRadius = 1.5f;
 			break;
 			case SDL_SCANCODE_F3:
-				BrushSize = 2;
+				BrushRadius = 2.5f;
 			break;
 			case SDL_SCANCODE_F4:
-				BrushSize = 3;
+				BrushRadius = 5.0f;
+			break;
+			case SDL_SCANCODE_F5:
+				BrushRadius = 10.0f;
 			break;
 			default:
 			break;
@@ -245,22 +250,7 @@ void _EditorState::Update(double FrameTime) {
 	}
 
 	if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL))) {
-		switch(BrushSize) {
-			case 0:
-				ApplyBrush(WorldCursor);
-				//if(!Map->IsValidPosition(BrushPosition.x, BrushPosition.y))
-				//	Map->SetNoZoneTexture(Brush->Texture);
-			break;
-			case 1:
-				ApplyBrushSize(WorldCursor, 3);
-			break;
-			case 2:
-				ApplyBrushSize(WorldCursor, 6);
-			break;
-			case 3:
-				ApplyBrushSize(WorldCursor, 12);
-			break;
-		}
+		ApplyBrush(WorldCursor);
 	}
 }
 
@@ -291,6 +281,8 @@ void _EditorState::Render(double BlendFactor) {
 		Map->Render(Camera, Stats, nullptr, Filter | FILTER_BOUNDARY);
 
 	Graphics.Setup2D();
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	glUniformMatrix4fv(Assets.Programs["ortho_pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 	Graphics.SetProgram(Assets.Programs["text"]);
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
@@ -305,6 +297,76 @@ void _EditorState::Render(double BlendFactor) {
 	// Draw UI
 	if(EditorNewMapElement->Visible)
 		EditorNewMapElement->Render();
+}
+
+// Draw information about the brush
+void _EditorState::RenderBrush() {
+	glm::ivec2 DrawPosition = Graphics.Element->Bounds.End - glm::ivec2(50, 125);
+
+	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+	Graphics.SetVBO(VBO_NONE);
+	Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
+	Graphics.DrawRectangle(DrawPosition - glm::ivec2(32, 32), DrawPosition + glm::ivec2(32, 110), true);
+
+	// Draw texture
+	if(Brush->Texture) {
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(DrawPosition, Brush->Texture);
+	}
+
+	std::stringstream Buffer;
+	glm::vec4 Color(COLOR_WHITE);
+
+	DrawPosition.y += Brush->Texture->Size.y + 8;
+
+	// Draw wall
+	if(Brush->Wall)
+		Buffer << "Wall";
+	else
+		Buffer << "Floor";
+
+	Filter & FILTER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
+	Buffer.str("");
+
+	DrawPosition.y += 15;
+
+	// Draw zone
+	Buffer << "Zone " << Brush->Zone;
+
+	Filter & FILTER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
+	Buffer.str("");
+
+	DrawPosition.y += 15;
+
+	// Draw PVP
+	if(Brush->PVP)
+		Buffer << "PVP";
+	else
+		Buffer << "Safe";
+
+	Filter & FILTER_PVP ? Color.a = 1.0f : Color.a = 0.5f;
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
+	Buffer.str("");
+
+	DrawPosition.y += 15;
+
+	// Draw event type
+	Buffer << "Event " << Brush->EventType;
+
+	Filter & FILTER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
+	Buffer.str("");
+
+	DrawPosition.y += 15;
+
+	// Draw event data
+	Buffer << "Data " << Brush->EventData;
+
+	Filter & FILTER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
+	Buffer.str("");
 }
 
 // Initializes the new map screen
@@ -360,105 +422,42 @@ void _EditorState::InitBrushOptions() {
 void _EditorState::RefreshTexturePalette() {
 }
 
-// Applys a brush of varying size
-void _EditorState::ApplyBrushSize(const glm::vec2 &Position, int BrushSize) {
-
-	for(int i = 0; i < BrushSize; i++) {
-		for(int j = 0; j < BrushSize; j++) {
-			glm::vec2 Offset = glm::vec2(j, i) - glm::vec2(BrushSize/2);
-
-			if(Offset.x * Offset.x + Offset.y * Offset.y >= BrushSize - 1)
-				continue;
-
-			ApplyBrush(Position + Offset);
-		}
-	}
-}
-
-// Draws a texture on the map with the current brush
+// Apply brush to map
 void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
-	if(Map) {
-		if(!Map->IsValidPosition(Position))
-			return;
+	for(int j = 0; j < BrushRadius * 2; j++) {
+		for(int i = 0; i < BrushRadius * 2; i++) {
 
-		// Get existing tile
-		_Tile Tile;
-		Map->GetTile(Position, Tile);
+			// Get offset from center
+			glm::ivec2 Offset(i - (int)BrushRadius, j - (int)BrushRadius);
+			if(Offset.x * Offset.x + Offset.y * Offset.y > BrushRadius * BrushRadius)
+				continue;
 
-		// Apply filters
-		if(Filter & FILTER_TEXTURE)
-			Tile.Texture = Brush->Texture;
-		if(Filter & FILTER_WALL)
-			Tile.Wall = Brush->Wall;
-		if(Filter & FILTER_ZONE)
-			Tile.Zone = Brush->Zone;
-		if(Filter & FILTER_PVP)
-			Tile.PVP = Brush->PVP;
-		if(Filter & FILTER_EVENTTYPE)
-			Tile.EventType = Brush->EventType;
-		if(Filter & FILTER_EVENTDATA)
-			Tile.EventData = Brush->EventData;
+			// Get valid position of tile
+			glm::ivec2 TilePosition = Map->GetValidCoord(WorldCursor + glm::vec2(Offset));
 
-		// Set new tile
-		Map->SetTile(Position, &Tile);
+			// Get existing tile
+			_Tile Tile;
+			Map->GetTile(TilePosition, Tile);
+
+			// Apply filters
+			if(Filter & FILTER_TEXTURE)
+				Tile.Texture = Brush->Texture;
+			if(Filter & FILTER_WALL)
+				Tile.Wall = Brush->Wall;
+			if(Filter & FILTER_ZONE)
+				Tile.Zone = Brush->Zone;
+			if(Filter & FILTER_PVP)
+				Tile.PVP = Brush->PVP;
+			if(Filter & FILTER_EVENTTYPE)
+				Tile.EventType = Brush->EventType;
+			if(Filter & FILTER_EVENTDATA)
+				Tile.EventData = Brush->EventData;
+
+			// Set new tile
+			Map->SetTile(TilePosition, &Tile);
+		}
 	}
-}
-
-// Draw information about the brush
-void _EditorState::RenderBrush() {
-
-	/*
-	video::SColor Color(255, 255, 255, 255);
-	int StartX = 750, StartY = 480;
-	Graphics.DrawBackground(_Graphics::IMAGE_BLACK, 705, StartY - 10, 90, 125);
-
-	// Draw texture
-	StartY += 15;
-	if(Brush->Texture != nullptr) {
-		Filters[FILTER_TEXTURE] ? Color.setAlpha(255) : Color.setAlpha(80);
-		Graphics.DrawCenteredImage(Brush->Texture, StartX, StartY, Color);
-	}
-
-	// Get wall text
-	const char *WallText = "Floor";
-	if(Brush->Wall)
-		WallText = "Wall";
-
-	// Draw wall info
-	StartY += 20;
-	Filters[FILTER_WALL] ? Color.setAlpha(255) : Color.setAlpha(128);
-	//Graphics.SetFont(_Graphics::FONT_8);
-	//Graphics.RenderText(WallText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
-
-	// Draw zone info
-	StartY += 15;
-	Filters[FILTER_ZONE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	std::string ZoneText = std::string("Zone ") + std::to_string(Brush->Zone);
-	//Graphics.RenderText(ZoneText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
-
-	// Get PVP text
-	const char *PVPText = "Safe";
-	if(Brush->PVP)
-		PVPText = "PVP";
-
-	// Draw pvp info
-	StartY += 15;
-	Filters[FILTER_PVP] ? Color.setAlpha(255) : Color.setAlpha(128);
-	//Graphics.RenderText(PVPText, StartX, StartY, _Graphics::ALIGN_CENTER, Color);
-
-	// Draw event info
-	StartY += 15;
-	Filters[FILTER_EVENTTYPE] ? Color.setAlpha(255) : Color.setAlpha(128);
-	std::string EventTypeText = std::string("Event: ") + Stats.GetEvent(Brush->EventType)->ShortName;
-	//Graphics.RenderText(EventTypeText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
-
-	// Draw event info
-	StartY += 15;
-	Filters[FILTER_EVENTDATA] ? Color.setAlpha(255) : Color.setAlpha(128);
-	std::string EventDataText = std::string("Event Data: ") + std::to_string(Brush->EventData);
-	//Graphics.RenderText(EventDataText.c_str(), StartX, StartY, _Graphics::ALIGN_CENTER, Color);
-	*/
 }
 
 // Deletes the map

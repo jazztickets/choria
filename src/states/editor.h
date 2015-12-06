@@ -104,7 +104,6 @@ class _EditorState : public _State {
 
 		// Brushes
 		void InitBrushOptions();
-		void ApplyBrushSize(const glm::vec2 &Position, int BrushSize);
 		void ApplyBrush(const glm::vec2 &Position);
 		void RenderBrush();
 
@@ -124,7 +123,7 @@ class _EditorState : public _State {
 		std::vector<_Texture *> TexturePalette;
 
 		// Brush
-		int BrushSize;
+		float BrushRadius;
 		_Tile *Brush;
 
 		// Filter

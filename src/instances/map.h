@@ -99,6 +99,7 @@ class _Map {
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
 		glm::vec2 GetValidPosition(const glm::vec2 &Position);
+		glm::ivec2 GetValidCoord(const glm::ivec2 &Position);
 
 		void GetTile(const glm::ivec2 &Position, _Tile &Tile) const { Tile = Tiles[Position.x][Position.y]; }
 		const _Tile *GetTile(const glm::ivec2 &Position) const { return &Tiles[Position.x][Position.y]; }
