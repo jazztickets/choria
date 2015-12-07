@@ -264,7 +264,7 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 		Graphics.SetDepthTest(false);
 		Graphics.SetVBO(VBO_NONE);
 		Graphics.SetColor(COLOR_RED);
-		Graphics.DrawRectangle(glm::vec2(-0.01f, -0.01f), glm::vec2(Size.x + 0.01f, Size.y + 0.01f));
+		Graphics.DrawRectangle(glm::vec2(-0.51f, -0.51f), glm::vec2(Size.x - 0.49f, Size.y - 0.49f));
 	}
 
 	// Draw text overlay
