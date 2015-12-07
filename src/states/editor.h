@@ -63,22 +63,22 @@ class _EditorState : public _State {
 
 	private:
 
+		void ClearTextures();
 		void CloseMap();
 		void CreateMap();
 		void SaveMap();
 		void LoadMap();
 
+		void ToggleTextures();
 		void ToggleNewMap();
 		void ToggleSaveMap();
 		void ToggleLoadMap();
 
+		void InitTextures();
 		void InitNewMap();
 		void InitSaveMap();
 		void InitLoadMap();
 		bool CloseWindows();
-
-		// Texture palette
-		void InitTexturePalette();
 
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
@@ -105,6 +105,7 @@ class _EditorState : public _State {
 		// UI
 		bool IgnoreFirstChar;
 		_Element *ButtonBarElement;
+		_Element *TexturesElement;
 		_Element *NewMapElement;
 		_Element *SaveMapElement;
 		_Element *LoadMapElement;

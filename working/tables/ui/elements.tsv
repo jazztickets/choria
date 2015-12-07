@@ -33,3 +33,4 @@ element_editor_buttonbar			0	0	96	32	2	0	0	1	-1
 element_editor_newmap		style_menu_window	0	0	400	320	1	1	0	1	-1
 element_editor_savemap			100	-10	250	30	0	2	0	1	-1
 element_editor_loadmap			100	-10	250	30	0	2	0	1	-1
+element_editor_textures		style_hud_item_tooltip_bg	0	0	700	500	1	1	0	1	-1

@@ -16,10 +16,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/editor.h>
+#include <instances/map.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/textbox.h>
 #include <ui/button.h>
+#include <ui/style.h>
 #include <framework.h>
 #include <input.h>
 #include <graphics.h>
@@ -31,7 +33,6 @@
 #include <atlas.h>
 #include <program.h>
 #include <font.h>
-#include <instances/map.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <sstream>
@@ -43,6 +44,7 @@ _EditorState EditorState;
 _EditorState::_EditorState() :
 	Map(nullptr),
 	ButtonBarElement(nullptr),
+	TexturesElement(nullptr),
 	NewMapElement(nullptr),
 	SaveMapElement(nullptr),
 	LoadMapElement(nullptr),
@@ -56,6 +58,7 @@ _EditorState::_EditorState() :
 // Initializes the state
 void _EditorState::Init() {
 	ButtonBarElement = Assets.Elements["element_editor_buttonbar"];
+	TexturesElement = Assets.Elements["element_editor_textures"];
 	NewMapElement = Assets.Elements["element_editor_newmap"];
 	SaveMapElement = Assets.Elements["element_editor_savemap"];
 	LoadMapElement = Assets.Elements["element_editor_loadmap"];
@@ -65,6 +68,7 @@ void _EditorState::Init() {
 	SaveMapTextBox = Assets.TextBoxes["textbox_editor_savemap"];
 	LoadMapTextBox = Assets.TextBoxes["textbox_editor_loadmap"];
 	ButtonBarElement->SetVisible(true);
+	TexturesElement->SetVisible(false);
 	NewMapElement->SetVisible(false);
 	SaveMapElement->SetVisible(false);
 	LoadMapElement->SetVisible(false);
@@ -104,6 +108,7 @@ void _EditorState::Close() {
 	delete Camera;
 	delete Brush;
 
+	ClearTextures();
 	CloseMap();
 }
 
@@ -180,8 +185,8 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				IgnoreFirstChar = true;
 				ToggleLoadMap();
 			break;
-			case SDL_SCANCODE_T:
-				InitTexturePalette();
+			case SDL_SCANCODE_SPACE:
+				ToggleTextures();
 			break;
 			case SDL_SCANCODE_MINUS:
 				if(Brush->EventData > 0)
@@ -243,6 +248,14 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 				ToggleSaveMap();
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_load")
 				ToggleLoadMap();
+		}
+		// Texture select
+		else if(TexturesElement->GetClickedElement()) {
+			if(TexturesElement->GetClickedElement() != TexturesElement) {
+				_Button *Button = (_Button *)TexturesElement->GetClickedElement();
+				Brush->TextureIndex = Button->TextureIndex;
+				CloseWindows();
+			}
 		}
 		// New map screen
 		else if(NewMapElement->GetClickedElement()) {
@@ -343,6 +356,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Draw UI
 	ButtonBarElement->Render();
+	TexturesElement->Render();
 	SaveMapElement->Render();
 	LoadMapElement->Render();
 	NewMapElement->Render();
@@ -432,6 +446,17 @@ void _EditorState::ToggleNewMap() {
 	}
 }
 
+// Show the texture select screen
+void _EditorState::ToggleTextures() {
+	if(!TexturesElement->Visible) {
+		CloseWindows();
+		InitTextures();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Show save map screen
 void _EditorState::ToggleSaveMap() {
 	if(!SaveMapElement->Visible) {
@@ -454,7 +479,66 @@ void _EditorState::ToggleLoadMap() {
 	}
 }
 
-// Initializes the new map screen
+// Delete memory used by textures screen
+void _EditorState::ClearTextures() {
+	std::vector<_Element *> &Children = TexturesElement->Children;
+	for(size_t i = 0; i < Children.size(); i++) {
+		if(Children[i]->Style && Children[i]->Style->UserCreated)
+			delete Children[i]->Style;
+
+		if(Children[i]->UserCreated)
+			delete Children[i];
+	}
+	Children.clear();
+}
+
+// Init texture select
+void _EditorState::InitTextures() {
+
+	// Clear old children
+	ClearTextures();
+
+	glm::ivec2 Start(10, 25);
+	glm::ivec2 Offset(Start);
+	glm::ivec2 Spacing(10, 10);
+
+	int TextureCount = Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y);
+
+	// Iterate over textures
+	for(int i = 0; i < TextureCount; i++) {
+
+		// Create style
+		_Style *Style = new _Style();
+		Style->TextureColor = COLOR_WHITE;
+		Style->Atlas = Map->TileAtlas;
+		Style->Program = Assets.Programs["ortho_pos_uv"];
+		Style->UserCreated = true;
+
+		// Add button
+		_Button *Button = new _Button();
+		Button->Identifier = "button_skills_skill";
+		Button->Parent = TexturesElement;
+		Button->Offset = Offset;
+		Button->Size = Map->TileAtlas->Size;
+		Button->Alignment = LEFT_TOP;
+		Button->Style = Style;
+		Button->UserCreated = true;
+		Button->TextureIndex = i;
+		TexturesElement->Children.push_back(Button);
+
+		// Update position
+		Offset.x += Map->TileAtlas->Size.x + Spacing.x;
+		if(Offset.x > TexturesElement->Size.x - Map->TileAtlas->Size.x) {
+			Offset.y += Map->TileAtlas->Size.y + Spacing.y;
+			Offset.x = Start.x;
+		}
+	}
+
+	TexturesElement->CalculateBounds();
+	TexturesElement->SetVisible(true);
+}
+
+// Init new map
 void _EditorState::InitNewMap() {
 	NewMapElement->SetVisible(true);
 
@@ -466,7 +550,7 @@ void _EditorState::InitNewMap() {
 	NewMapHeightTextBox->Text = "100";
 }
 
-// Save map
+// Init save map
 void _EditorState::InitSaveMap() {
 	SaveMapElement->SetVisible(true);
 	FocusedElement = SaveMapTextBox;
@@ -474,7 +558,7 @@ void _EditorState::InitSaveMap() {
 	SaveMapTextBox->Text = FilePath;
 }
 
-// Initialize the load map screen
+// Init load map
 void _EditorState::InitLoadMap() {
 	LoadMapElement->SetVisible(true);
 	FocusedElement = LoadMapTextBox;
@@ -482,12 +566,9 @@ void _EditorState::InitLoadMap() {
 	LoadMapTextBox->Text = FilePath;
 }
 
-// Opens the texture palette dialog
-void _EditorState::InitTexturePalette() {
-}
-
 // Close all open windows
 bool _EditorState::CloseWindows() {
+	TexturesElement->SetVisible(false);
 	NewMapElement->SetVisible(false);
 	SaveMapElement->SetVisible(false);
 	LoadMapElement->SetVisible(false);
