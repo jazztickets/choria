@@ -104,7 +104,8 @@ void _ClientState::Connect(bool IsLocal) {
 	// Start a local server
 	if(IsLocal) {
 		StartLocalServer();
-		Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT_ALT);
+		if(Server)
+			Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT_ALT);
 	}
 	else {
 		Network->Connect(HostAddress.c_str(), ConnectPort);
@@ -130,9 +131,14 @@ void _ClientState::StartLocalServer() {
 	StopLocalServer();
 
 	// Start server in thread
-	Server = new _Server(DEFAULT_NETWORKPORT_ALT);
-	Server->Stats = Stats;
-	Server->StartThread();
+	try {
+		Server = new _Server(DEFAULT_NETWORKPORT_ALT);
+		Server->Stats = Stats;
+		Server->StartThread();
+	}
+	catch(std::exception &Error) {
+		Menu.SetTitleMessage(Error.what());
+	}
 }
 
 // Action handler

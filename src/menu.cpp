@@ -71,6 +71,7 @@ void _Menu::InitTitle(bool Disconnect) {
 
 	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
 	Assets.Labels["label_menu_title_version"]->Visible = true;
+	Assets.Labels["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
 
@@ -838,6 +839,13 @@ void _Menu::SetAccountMessage(const std::string &Message) {
 
 	_Button *Button = Assets.Buttons["button_account_login"];
 	Button->Enabled = true;
+}
+
+// Set message for title screen
+void _Menu::SetTitleMessage(const std::string &Message) {
+	_Label *Label = Assets.Labels["label_menu_title_message"];
+	Label->Text = Message;
+	Label->Color = COLOR_RED;
 }
 
 // Cycle focused elements

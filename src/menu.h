@@ -93,6 +93,7 @@ class _Menu {
 
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
+		void SetTitleMessage(const std::string &Message);
 
 		StateType State;
 

@@ -4,6 +4,7 @@ label_menu_title_multiplayer	button_title_multiplayer	menu_buttons		Multiplayer	
 label_menu_title_mapeditor	button_title_mapeditor	menu_buttons		Map Editor	0	32	0	0	1	3
 label_menu_title_exit	button_title_exit	menu_buttons		Exit	0	32	0	0	1	3
 label_menu_title_version		hud_small			20	-20	0	0	0	2
+label_menu_title_message	button_title_exit	menu_buttons			0	100	0	0	1	3
 label_menu_characters_title	element_menu_characters	hud_large		Characters	0	-250	0	0	1	1
 label_menu_characters_slot_name0	button_characters_slot0	hud_medium		Empty Slot	0	150	0	0	1	3
 label_menu_characters_slot_name1	button_characters_slot1	hud_medium		Empty Slot	0	150	0	0	1	3
