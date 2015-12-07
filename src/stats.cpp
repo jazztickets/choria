@@ -73,11 +73,11 @@ void _Stats::LoadEvents() {
 	Database->PrepareQuery("SELECT * FROM event");
 
 	// Get events
-	_Event Event;
+	_EventName Event;
 	while(Database->FetchRow()) {
 		Event.Name = Database->GetString("name");
 		Event.ShortName = Database->GetString("shortname");
-		Events.push_back(Event);
+		EventNames.push_back(Event);
 	}
 	Database->CloseQuery();
 }

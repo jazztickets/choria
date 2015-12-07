@@ -291,7 +291,7 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 
 			// Draw event info
 			if(Tile->EventType > 0) {
-				std::string EventText = Stats->Events[Tile->EventType].ShortName + std::string(" ") + std::to_string(Tile->EventData);
+				std::string EventText = Stats->EventNames[Tile->EventType].ShortName + std::string(" ") + std::to_string(Tile->EventData);
 				Assets.Fonts["hud_small"]->DrawText(EventText, glm::vec2(DrawPosition), COLOR_CYAN, CENTER_MIDDLE, 1.0f / 32.0f);
 			}
 		}

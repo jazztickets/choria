@@ -175,6 +175,17 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				Filter |= FILTER_EVENTTYPE;
 				Filter |= FILTER_EVENTDATA;
 			break;
+			case SDL_SCANCODE_E:
+				if(Input.ModKeyDown(KMOD_SHIFT))
+					Brush->EventType--;
+				else
+					Brush->EventType++;
+
+				if(Brush->EventType >= _Map::EVENT_COUNT)
+					Brush->EventType = _Map::EVENT_NONE;
+				else if(Brush->EventType < _Map::EVENT_NONE)
+					Brush->EventType = _Map::EVENT_COUNT-1;
+			break;
 			case SDL_SCANCODE_W:
 				Brush->Wall = !Brush->Wall;
 			break;
@@ -398,7 +409,7 @@ void _EditorState::RenderBrush() {
 	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
-	Graphics.DrawRectangle(DrawPosition - glm::ivec2(32, 32), DrawPosition + glm::ivec2(32, 125), true);
+	Graphics.DrawRectangle(DrawPosition - glm::ivec2(40, 32), DrawPosition + glm::ivec2(40, 125), true);
 
 	// Draw texture
 	_Bounds TextureBounds;
@@ -457,7 +468,7 @@ void _EditorState::RenderBrush() {
 	DrawPosition.y += 15;
 
 	// Draw event type
-	Buffer << "Event " << Brush->EventType;
+	Buffer << Stats->EventNames[Brush->EventType].Name;
 
 	Filter & FILTER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);

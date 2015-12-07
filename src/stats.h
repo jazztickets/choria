@@ -53,7 +53,7 @@ struct _Zone {
 	uint32_t Odds;
 };
 
-struct _Event {
+struct _EventName {
 	std::string Name;
 	std::string ShortName;
 };
@@ -113,7 +113,7 @@ class _Stats {
 		const _Level *FindLevel(int Experience) const;
 		int GetMaxLevel() const { return Levels.size(); }
 
-		std::vector<_Event> Events;
+		std::vector<_EventName> EventNames;
 		std::vector<_Level> Levels;
 
 		std::unordered_map<uint32_t, _MapStat> Maps;
