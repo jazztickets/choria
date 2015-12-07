@@ -34,6 +34,10 @@ class _Save {
 
 		_Database *Database;
 
+		// Misc
+		double GetClock();
+		void SaveClock(double Time);
+
 		// Accounts
 		bool CheckUsername(const std::string &Username);
 		void CreateAccount(const std::string &Username, const std::string &Password);

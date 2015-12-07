@@ -64,7 +64,7 @@ const double ACTIONRESULT_TIMEOUT = 1.5;
 const float ACTIONRESULT_FADETIME = 0.75f;
 const float ACTIONRESULT_SPEED = 15.0f;
 
-const int SAVE_VERSION = 3;
+const int SAVE_VERSION = 4;
 
 //     Config
 const  int          DEFAULT_VERSION                =  1;

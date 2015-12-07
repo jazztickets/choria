@@ -63,7 +63,7 @@ _Server::_Server(uint16_t NetworkPort)
 	StartShutdown(false),
 	TimeSteps(0),
 	Time(0.0),
-	Clock(MAP_CLOCK_START),
+	Clock(0.0),
 	Stats(nullptr),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	NextMapID(0),
@@ -78,6 +78,7 @@ _Server::_Server(uint16_t NetworkPort)
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
 	Save = new _Save();
+	Clock = Save->GetClock();
 
 	Scripting = new _Scripting();
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_AI);
@@ -93,6 +94,8 @@ _Server::~_Server() {
 		delete Map;
 	}
 	Maps.clear();
+
+	Save->SaveClock(Clock);
 
 	delete Scripting;
 	delete Save;

@@ -64,6 +64,26 @@ _Save::~_Save() {
 	delete Database;
 }
 
+// Get clock
+double _Save::GetClock() {
+	double Time = 0.0;
+
+	Database->PrepareQuery("SELECT time FROM clock");
+	if(Database->FetchRow())
+		Time = Database->GetReal(0);
+	Database->CloseQuery();
+
+	return Time;
+}
+
+// Save clock
+void _Save::SaveClock(double Time) {
+	Database->PrepareQuery("UPDATE clock SET time = @time");
+	Database->BindReal(1, Time);
+	Database->FetchRow();
+	Database->CloseQuery();
+}
+
 // Check for a username
 bool _Save::CheckUsername(const std::string &Username) {
 	std::string TrimmedUsername = TrimString(Username);
@@ -281,6 +301,15 @@ void _Save::CreateDefaultDatabase() {
 
 	Database->RunQuery(
 				"INSERT INTO settings(version) VALUES(" + std::to_string(SAVE_VERSION) + ")"
+	);
+
+	// Clock
+	Database->RunQuery(
+				"CREATE TABLE clock(time REAL DEFAULT(0))"
+	);
+
+	Database->RunQuery(
+				"INSERT INTO clock(time) VALUES(" + std::to_string(MAP_CLOCK_START) + ")"
 	);
 
 	// Accounts

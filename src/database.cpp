@@ -134,15 +134,15 @@ int _Database::GetInt(const std::string &ColumnName, int Handle) {
 }
 
 // Returns a float column
-float _Database::GetFloat(int ColumnIndex, int Handle) {
+double _Database::GetReal(int ColumnIndex, int Handle) {
 
-	return (float)sqlite3_column_double(QueryHandle[Handle], ColumnIndex);
+	return sqlite3_column_double(QueryHandle[Handle], ColumnIndex);
 }
 
 // Returns an float column by column name
-float _Database::GetFloat(const std::string &ColumnName, int Handle) {
+double _Database::GetReal(const std::string &ColumnName, int Handle) {
 
-	return (float)sqlite3_column_double(QueryHandle[Handle], GetColumnIndex(ColumnName, Handle));
+	return sqlite3_column_double(QueryHandle[Handle], GetColumnIndex(ColumnName, Handle));
 }
 
 // Returns a string column
@@ -160,6 +160,13 @@ const char *_Database::GetString(const std::string &ColumnName, int Handle) {
 // Bind integer to parameter
 void _Database::BindInt(int ColumnIndex, int Value, int Handle) {
 	int Result = sqlite3_bind_int(QueryHandle[Handle], ColumnIndex, Value);
+	if(Result != SQLITE_OK)
+		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
+}
+
+// Bind real to parameter
+void _Database::BindReal(int ColumnIndex, double Value, int Handle) {
+	int Result = sqlite3_bind_double(QueryHandle[Handle], ColumnIndex, Value);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 }

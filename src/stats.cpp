@@ -117,12 +117,12 @@ void _Stats::LoadSkills() {
 		Skill->Image = Assets.Textures[Database->GetString("icon")];
 		Skill->Type = Database->GetInt("type");
 		Skill->SkillCost = Database->GetInt("skillcost");
-		Skill->ManaCostBase = Database->GetFloat("manacostbase");
-		Skill->ManaCost = Database->GetFloat("manacost");
-		Skill->PowerBase = Database->GetFloat("powerbase");
-		Skill->PowerRangeBase = Database->GetFloat("powerrangebase");
-		Skill->Power = Database->GetFloat("power");
-		Skill->PowerRange = Database->GetFloat("powerrange");
+		Skill->ManaCostBase = Database->GetReal("manacostbase");
+		Skill->ManaCost = Database->GetReal("manacost");
+		Skill->PowerBase = Database->GetReal("powerbase");
+		Skill->PowerRangeBase = Database->GetReal("powerrangebase");
+		Skill->Power = Database->GetReal("power");
+		Skill->PowerRange = Database->GetReal("powerrange");
 		Skills[Skill->ID] = Skill;
 	}
 	Database->CloseQuery();
@@ -146,17 +146,17 @@ void _Stats::LoadItems() {
 		Item->Image = Assets.Textures[std::string("items/") + Database->GetString("image")];
 		Item->LevelRequired = Database->GetInt("levelrequired");
 		Item->Cost = Database->GetInt("cost");
-		Item->Damage = Database->GetFloat("damage");
-		Item->DamageRange = Database->GetFloat("damagerange");
-		Item->Defense = Database->GetFloat("defense");
-		Item->DefenseRange = Database->GetFloat("defenserange");
+		Item->Damage = Database->GetReal("damage");
+		Item->DamageRange = Database->GetReal("damagerange");
+		Item->Defense = Database->GetReal("defense");
+		Item->DefenseRange = Database->GetReal("defenserange");
 		Item->DamageType = Database->GetInt("damagetype");
 		Item->HealthRestore = Database->GetInt("healthrestore");
 		Item->ManaRestore = Database->GetInt("manarestore");
 		Item->MaxHealth = Database->GetInt("maxhealth");
 		Item->MaxMana = Database->GetInt("maxmana");
-		Item->HealthRegen = Database->GetFloat("healthregen");
-		Item->ManaRegen = Database->GetFloat("manaregen");
+		Item->HealthRegen = Database->GetReal("healthregen");
+		Item->ManaRegen = Database->GetReal("manaregen");
 		Item->InvisPower = Database->GetInt("invispower");
 		Items[Item->ID] = Item;
 	}
@@ -178,8 +178,8 @@ void _Stats::LoadVendors() {
 		Vendor.ID = Database->GetInt("id");
 		Vendor.Name = Database->GetString("name");
 		Vendor.Info = Database->GetString("info");
-		Vendor.BuyPercent = Database->GetFloat("buypercent");
-		Vendor.SellPercent = Database->GetFloat("sellpercent");
+		Vendor.BuyPercent = Database->GetReal("buypercent");
+		Vendor.SellPercent = Database->GetReal("sellpercent");
 		Vendor.Items.clear();
 
 		// Get items
@@ -245,13 +245,13 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->ExperienceGiven = Database->GetInt("experience");
 		Monster->GoldGiven = Database->GetInt("gold");
 
-		Value = Database->GetFloat("damage");
-		Range = Database->GetFloat("damagerange");
+		Value = Database->GetReal("damage");
+		Range = Database->GetReal("damagerange");
 		Monster->MinDamage = (int)(Value - Range);
 		Monster->MaxDamage = (int)(Value + Range);
 
-		Value = Database->GetFloat("defense");
-		Range = Database->GetFloat("defenserange");
+		Value = Database->GetReal("defense");
+		Range = Database->GetReal("defenserange");
 		Monster->MinDefense = (int)(Value - Range);
 		Monster->MaxDefense = (int)(Value + Range);
 
