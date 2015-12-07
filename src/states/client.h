@@ -48,6 +48,7 @@ class _ClientState : public _State {
 		void Connect(bool IsLocal);
 		void StopLocalServer();
 		void SendStatus(int Status);
+		void SendActionBarUse(uint8_t Slot);
 
 		// Input
 		bool HandleAction(int InputType, int Action, int Value) override;
@@ -118,7 +119,6 @@ class _ClientState : public _State {
 		void HandleHUD(_Buffer &Data);
 
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
-		void SendActionBarUse(uint8_t Slot);
 		void SendAttackPlayer();
 };
 

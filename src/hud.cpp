@@ -305,7 +305,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			if(Player->Battle)
 				Player->Battle->ClientHandleInput(_Actions::SKILL1 + Slot);
 			else
-				Player->UseAction(Slot);
+				ClientState.SendActionBarUse(Slot);
 		}
 
 		if(Player->WaitingForTrade) {
