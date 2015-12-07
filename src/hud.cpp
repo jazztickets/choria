@@ -151,8 +151,12 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						if(Tooltip.Window == WINDOW_VENDOR)
-							BuyItem(&Tooltip, -1);
+						if(Tooltip.Window == WINDOW_VENDOR) {
+							if(Input.ModKeyDown(KMOD_SHIFT))
+								BuyItem(&Tooltip, -1);
+							else
+								BuyItem(&Tooltip, -1);
+						}
 						else if(Tooltip.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
 							SellItem(&Tooltip, 1);
 					}
@@ -362,7 +366,11 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_VENDOR: {
 				if(Player->Vendor && (size_t)Tooltip.Slot < Player->Vendor->Items.size()) {
 					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
-					Tooltip.Count = 1;
+					if(Input.ModKeyDown(KMOD_SHIFT))
+						Tooltip.Count = 5;
+					else
+						Tooltip.Count = 1;
+
 					if(Tooltip.Item)
 						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, Tooltip.Count, true);
 				}
@@ -469,13 +477,6 @@ void _HUD::Render(double Time) {
 	Assets.Images["image_hud_mana_bar_full"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x * ManaPercent);
 	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x);
 	Assets.Elements["element_hud_mana"]->Render();
-	/*
-		// Draw PVP icon
-		if(Player->GetTile()->PVP) {
-			if(!Player->CanAttackPlayer())
-				Graphics.DrawImage(_Graphics::IMAGE_PVP, StartX, StartY + 8, PVPColor);
-		}
-	*/
 
 	DrawInventory();
 	DrawCharacter();
@@ -1215,7 +1216,8 @@ void _HUD::DrawCursorItem() {
 		glm::ivec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->Image);
-		DrawItemPrice(Cursor.Item, Cursor.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
+		if(Cursor.Window != WINDOW_ACTIONBAR)
+			DrawItemPrice(Cursor.Item, Cursor.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
 		if(Cursor.Count > 1)
 			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Cursor.Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 	}
@@ -1250,7 +1252,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPos
 
 // Buys an item from the vendor
 void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
-	if(Player->Gold >= Item->Cost && Player->AddItem(Item->Item, Item->Count, TargetSlot)) {
+	if(Player->Gold >= Item->Cost * Item->Count && Player->AddItem(Item->Item, Item->Count, TargetSlot)) {
 
 		// Update player
 		int Price = Item->Item->GetPrice(Player->Vendor, Item->Count, true);

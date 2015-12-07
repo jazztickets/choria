@@ -169,7 +169,7 @@ void _Item::DrawTooltip(const _Object *Player, const _Cursor &Tooltip) const {
 		DrawPosition.y += SpacingY;
 		if(Tooltip.Window == _HUD::WINDOW_VENDOR) {
 			std::stringstream Buffer;
-			Buffer << "Buy for " << Tooltip.Cost << " gold";
+			Buffer << "Buy " << Tooltip.Count << "x for " << Tooltip.Cost << " gold";
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GOLD, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
 			Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
