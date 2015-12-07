@@ -234,7 +234,7 @@ class _Object {
 		glm::ivec2 ResultPosition;
 
 		// Monster
-		int DatabaseID;
+		uint32_t DatabaseID;
 		int ExperienceGiven, GoldGiven;
 		std::string AI;
 

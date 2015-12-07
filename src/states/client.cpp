@@ -890,7 +890,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	for(int i = 0; i < FighterCount; i++) {
 
 		// Get fighter type
-		int DatabaseID = Data.Read<int>();
+		uint32_t DatabaseID = Data.Read<uint32_t>();
 		int Side = Data.Read<char>();
 		float TurnTimer = Data.Read<float>();
 

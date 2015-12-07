@@ -560,7 +560,7 @@ void _Battle::ServerStartBattle() {
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 		// Write fighter type
-		Packet.Write<int>(Fighter->DatabaseID);
+		Packet.Write<uint32_t>(Fighter->DatabaseID);
 		Packet.Write<char>(Fighter->BattleSide);
 		Packet.Write<float>(Fighter->TurnTimer);
 
