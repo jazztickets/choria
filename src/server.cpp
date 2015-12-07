@@ -598,6 +598,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
 		Packet.Write<uint32_t>(MapID);
+		Packet.Write<double>(Map->Clock);
 		Network->SendPacket(Packet, Peer);
 
 		// Add peer to map

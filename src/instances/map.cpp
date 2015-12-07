@@ -49,6 +49,7 @@ _Map::_Map() :
 	Size(0, 0),
 	TileAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
+	Clock(0),
 	ObjectUpdateTime(0),
 	Server(nullptr),
 	TileVertexBufferID(0),
@@ -133,6 +134,12 @@ void _Map::FreeMap() {
 
 // Updates the map and sends object updates
 void _Map::Update(double FrameTime) {
+
+	// Update clock
+	Clock += FrameTime;
+	if(Clock >= MAP_DAY_LENGTH)
+		Clock -= MAP_DAY_LENGTH;
+
 	ObjectUpdateCount = 0;
 
 	// Update objects
@@ -238,6 +245,17 @@ void _Map::CheckEvents(_Object *Object) {
 
 // Renders the map
 void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags) {
+
+	// Setup lights
+	glm::vec3 LightPosition(glm::vec3(ClientPlayer->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
+	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
+
+	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
+	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
+	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
+	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
+	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
 
 	// Render bounds
 	glm::vec4 Bounds = Camera->GetAABB();

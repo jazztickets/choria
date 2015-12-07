@@ -348,15 +348,6 @@ void _ClientState::Render(double BlendFactor) {
 		return;
 
 	Graphics.Setup3D();
-	glm::vec3 LightPosition(glm::vec3(Player->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
-	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
-
-	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
-	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv"]->AmbientLight = Map->AmbientLight;
-	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
-	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv_norm"]->AmbientLight = Map->AmbientLight;
 
 	// Setup the viewing matrix
 	Graphics.Setup3D();
@@ -554,6 +545,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 	// Load map
 	uint32_t MapID = Data.Read<uint32_t>();
+	double Clock = Data.Read<double>();
 
 	// Delete old map and create new
 	if(!Map || Map->ID != MapID) {
@@ -562,6 +554,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 		Map = new _Map();
 		Map->ID = MapID;
+		Map->Clock = Clock;
 		Map->Load(Stats->GetMap(MapID)->File);
 		Player = nullptr;
 	}

@@ -135,6 +135,7 @@ class _Map {
 		// Graphics
 		const _Atlas *TileAtlas;
 		glm::vec4 AmbientLight;
+		double Clock;
 
 		// Objects
 		std::list<_Object *> Objects;
