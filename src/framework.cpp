@@ -107,6 +107,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		_WindowSettings WindowSettings;
 		WindowSettings.WindowTitle = "choria";
 		WindowSettings.Fullscreen = Config.Fullscreen;
+		WindowSettings.Vsync = Config.Vsync;
 		if(Config.Fullscreen)
 			WindowSettings.Size = Config.FullscreenSize;
 		else

@@ -427,16 +427,20 @@ void _HUD::Render(double Time) {
 
 	// Show network stats
 	if(ShowStats) {
-		Buffer << ClientState.Network->GetSentSpeed() / 1024.0f << " KB/s";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120));
+		Buffer << Graphics.FramesPerSecond << " FPS";
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 0));
 		Buffer.str("");
 
-		Buffer << ClientState.Network->GetReceiveSpeed() / 1024.0f << " KB/s";
+		Buffer << ClientState.Network->GetSentSpeed() / 1024.0f << " KB/s";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 1));
 		Buffer.str("");
 
-		Buffer << ClientState.Network->GetRTT() << "ms";
+		Buffer << ClientState.Network->GetReceiveSpeed() / 1024.0f << " KB/s";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 2));
+		Buffer.str("");
+
+		Buffer << ClientState.Network->GetRTT() << "ms";
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 3));
 		Buffer.str("");
 	}
 
