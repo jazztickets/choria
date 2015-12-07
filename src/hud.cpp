@@ -1557,6 +1557,9 @@ bool _HUD::IsChatting() {
 void _HUD::SetPlayer(_Object *Player) {
 	this->Player = Player;
 
+	Tooltip.Reset();
+	Cursor.Reset();
+
 	if(Player)
 		Assets.Labels["label_hud_name"]->Text = Player->Name;
 }
