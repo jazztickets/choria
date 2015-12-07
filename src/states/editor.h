@@ -96,6 +96,7 @@ class _EditorState : public _State {
 		std::string FilePath;
 
 		// Brush
+		int Layer;
 		float BrushRadius;
 		_Tile *Brush;
 

@@ -76,6 +76,7 @@ class _Map {
 
 		// Graphics
 		void Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags=0);
+		void RenderLayer(glm::vec4 &Bounds, int Layer);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position);

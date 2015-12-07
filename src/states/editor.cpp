@@ -85,9 +85,8 @@ void _EditorState::Init() {
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
-	Brush->TextureIndex[0] = 0;
-
 	// Set filters
+	Layer = 0;
 	Filter = 0;
 	Filter |= FILTER_TEXTURE;
 	Filter |= FILTER_WALL;
@@ -168,15 +167,15 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				Filter |= FILTER_EVENTTYPE;
 				Filter |= FILTER_EVENTDATA;
 			break;
-			case SDL_SCANCODE_N:
-				IgnoreFirstChar = true;
-				ToggleNewMap();
-			break;
 			case SDL_SCANCODE_W:
 				Brush->Wall = !Brush->Wall;
 			break;
 			case SDL_SCANCODE_P:
 				Brush->PVP = !Brush->PVP;
+			break;
+			case SDL_SCANCODE_N:
+				IgnoreFirstChar = true;
+				ToggleNewMap();
 			break;
 			case SDL_SCANCODE_S:
 				IgnoreFirstChar = true;
@@ -185,6 +184,9 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_L:
 				IgnoreFirstChar = true;
 				ToggleLoadMap();
+			break;
+			case SDL_SCANCODE_TAB:
+				Layer = !Layer;
 			break;
 			case SDL_SCANCODE_SPACE:
 				ToggleTextures();
@@ -254,7 +256,7 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
 				_Button *Button = (_Button *)TexturesElement->GetClickedElement();
-				Brush->TextureIndex[0] = Button->TextureIndex;
+				Brush->TextureIndex[Layer] = Button->TextureIndex;
 				CloseWindows();
 			}
 		}
@@ -354,6 +356,11 @@ void _EditorState::Render(double BlendFactor) {
 	std::stringstream Buffer;
 	Buffer << std::fixed << std::setprecision(1) << WorldCursor.x << ", " << WorldCursor.y;
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
+	Buffer.str("");
+
+	Buffer << Graphics.FramesPerSecond << " FPS";
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(15, 25));
+	Buffer.str("");
 
 	// Draw UI
 	ButtonBarElement->Render();
@@ -366,12 +373,12 @@ void _EditorState::Render(double BlendFactor) {
 
 // Draw information about the brush
 void _EditorState::RenderBrush() {
-	glm::ivec2 DrawPosition = Graphics.Element->Bounds.End - glm::ivec2(50, 125);
+	glm::ivec2 DrawPosition = Graphics.Element->Bounds.End - glm::ivec2(50, 140);
 
 	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
-	Graphics.DrawRectangle(DrawPosition - glm::ivec2(32, 32), DrawPosition + glm::ivec2(32, 110), true);
+	Graphics.DrawRectangle(DrawPosition - glm::ivec2(32, 32), DrawPosition + glm::ivec2(32, 125), true);
 
 	// Draw texture
 	_Bounds TextureBounds;
@@ -379,12 +386,22 @@ void _EditorState::RenderBrush() {
 	TextureBounds.End = DrawPosition + glm::ivec2(Map->TileAtlas->Size)/2;
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetColor(COLOR_WHITE);
-	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[0]));
+	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
 
 	std::stringstream Buffer;
 	glm::vec4 Color(COLOR_WHITE);
 
 	DrawPosition.y += 32 + 8;
+
+	// Draw layer
+	if(Layer)
+		Buffer << "Fore";
+	else
+		Buffer << "Back";
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
+	Buffer.str("");
+
+	DrawPosition.y += 15;
 
 	// Draw wall
 	if(Brush->Wall)
@@ -654,6 +671,7 @@ void _EditorState::LoadMap() {
 		CloseMap();
 		Map = NewMap;
 		FilePath = LoadMapTextBox->Text;
+		Camera->ForcePosition(glm::vec3(0, 0, CAMERA_DISTANCE));
 	}
 
 	CloseWindows();
@@ -679,7 +697,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 			// Apply filters
 			if(Filter & FILTER_TEXTURE)
-				Tile.TextureIndex[0] = Brush->TextureIndex[0];
+				Tile.TextureIndex[Layer] = Brush->TextureIndex[Layer];
 			if(Filter & FILTER_WALL)
 				Tile.Wall = Brush->Wall;
 			if(Filter & FILTER_ZONE)

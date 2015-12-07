@@ -238,47 +238,16 @@ void _Map::CheckEvents(_Object *Object) {
 
 // Renders the map
 void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags) {
-	Graphics.SetProgram(Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-	Graphics.SetColor(COLOR_WHITE);
-	Graphics.SetDepthTest(false);
-	Graphics.SetDepthMask(false);
 
-	int VertexIndex = 0;
-	int FaceIndex = 0;
+	// Render bounds
 	glm::vec4 Bounds = Camera->GetAABB();
 	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Size.x);
 	Bounds[1] = glm::clamp(Bounds[1], 0.0f, (float)Size.y);
 	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Size.x);
 	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
-	for(int j = Bounds[1]; j < Bounds[3]; j++) {
-		for(int i = Bounds[0]; i < Bounds[2]; i++) {
-			glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[0]);
-			TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
-			TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
-			TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
-			TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
 
-			FaceIndex += 2;
-		}
-	}
-
-	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
-	GLsizeiptr ElementBufferSize = FaceIndex * sizeof(glm::u32vec3);
-
-	glBindTexture(GL_TEXTURE_2D, TileAtlas->Texture->ID);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)sizeof(glm::vec2));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
-	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
-
-	Graphics.DirtyState();
+	RenderLayer(Bounds, 0);
+	RenderLayer(Bounds, 1);
 
 	// Render objects
 	for(const auto &Object : Objects) {
@@ -329,6 +298,47 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 	}
 }
 
+// Render either floor or foreground texture tiles
+void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
+	Graphics.SetProgram(Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+	Graphics.SetColor(COLOR_WHITE);
+	Graphics.SetDepthTest(false);
+	Graphics.SetDepthMask(false);
+
+	int VertexIndex = 0;
+	int FaceIndex = 0;
+
+	for(int j = Bounds[1]; j < Bounds[3]; j++) {
+		for(int i = Bounds[0]; i < Bounds[2]; i++) {
+			glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[Layer]);
+			TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
+			TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
+			TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
+			TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
+
+			FaceIndex += 2;
+		}
+	}
+
+	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
+	GLsizeiptr ElementBufferSize = FaceIndex * sizeof(glm::u32vec3);
+
+	glBindTexture(GL_TEXTURE_2D, TileAtlas->Texture->ID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)sizeof(glm::vec2));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
+	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
+
+	Graphics.DirtyState();
+}
+
 // Load map
 void _Map::Load(const std::string &Path) {
 	std::string AtlasPath;
@@ -351,7 +361,7 @@ void _Map::Load(const std::string &Path) {
 				int FileVersion;
 				File >> FileVersion;
 				if(FileVersion != MAP_VERSION)
-					throw std::runtime_error("Level version mismatch: ");
+					throw std::runtime_error("Level version mismatch: " + FileVersion);
 			} break;
 			// Map size
 			case 'S': {
@@ -374,8 +384,12 @@ void _Map::Load(const std::string &Path) {
 				Tile = &Tiles[Coordinate.x][Coordinate.y];
 			} break;
 			// Texture index
-			case 'i': {
+			case 'b': {
 				File >> Tile->TextureIndex[0];
+			} break;
+			// Foreground texture index
+			case 'f': {
+				File >> Tile->TextureIndex[1];
 			} break;
 			// Zone
 			case 'z': {
@@ -426,7 +440,8 @@ bool _Map::Save(const std::string &Path) {
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			Output << "T " << i << " " << j << '\n';
-			Output << "i " << Tiles[i][j].TextureIndex << '\n';
+			Output << "b " << Tiles[i][j].TextureIndex[0] << '\n';
+			Output << "f " << Tiles[i][j].TextureIndex[1] << '\n';
 			Output << "z " << Tiles[i][j].Zone << '\n';
 			Output << "e " << Tiles[i][j].EventType << " " << Tiles[i][j].EventData << '\n';
 			Output << "w " << Tiles[i][j].Wall << '\n';

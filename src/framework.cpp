@@ -119,7 +119,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Assets.Init(false);
 		Graphics.SetStaticUniforms();
 
-		FrameLimit = new _FrameLimit(120.0, false);
+		FrameLimit = new _FrameLimit(Config.MaxFPS, false);
 	}
 
 	Timer = SDL_GetPerformanceCounter();
