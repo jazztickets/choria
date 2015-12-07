@@ -493,6 +493,8 @@ void _ClientState::HandleDisconnect() {
 			delete Map;
 			Map = nullptr;
 		}
+		Player = nullptr;
+		HUD->SetPlayer(nullptr);
 	}
 }
 

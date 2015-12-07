@@ -1550,7 +1550,8 @@ bool _HUD::IsChatting() {
 void _HUD::SetPlayer(_Object *Player) {
 	this->Player = Player;
 
-	Assets.Labels["label_hud_name"]->Text = Player->Name;
+	if(Player)
+		Assets.Labels["label_hud_name"]->Text = Player->Name;
 }
 
 // Resize action bar
