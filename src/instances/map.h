@@ -30,6 +30,7 @@
 #include <glm/vec4.hpp>
 #include <glm/detail/func_common.hpp>
 #include <unordered_map>
+#include <map>
 
 // Forward Declarations
 class _Object;
@@ -42,16 +43,21 @@ class _Peer;
 
 // Structures
 struct _Event {
-	int EventType;
-	int EventData;
+	_Event() : Type(0), Data(0) { }
+	_Event(uint32_t Type, int Data) : Type(Type), Data(Data) { }
+
+	bool operator==(const _Event &Event) const { return Event.Type == Type && Event.Data == Data; }
+	bool operator<(const _Event &Event) const { return std::tie(Event.Type, Event.Data) < std::tie(Type, Data); }
+
+	uint32_t Type;
+	int Data;
 };
 
 struct _Tile {
-	_Tile() : TextureIndex{0, 0}, Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
+	_Tile() : TextureIndex{0, 0}, Zone(0), Wall(false), PVP(true) { }
 	uint32_t TextureIndex[2];
 	int Zone;
-	int EventType;
-	int EventData;
+	_Event Event;
 	bool Wall;
 	bool PVP;
 };
@@ -103,7 +109,7 @@ class _Map {
 		void SendObjectList(_Peer *Peer);
 		void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
-		bool FindEvent(int EventType, int EventData, glm::ivec2 &Position);
+		bool FindEvent(const _Event &Event, glm::ivec2 &Position);
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
@@ -124,6 +130,7 @@ class _Map {
 		// Map data
 		_Tile **Tiles;
 		glm::ivec2 Size;
+		std::map<_Event, glm::ivec2> IndexedEvents;
 
 		// Graphics
 		const _Atlas *TileAtlas;

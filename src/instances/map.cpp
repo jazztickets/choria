@@ -178,30 +178,30 @@ void _Map::CheckEvents(_Object *Object) {
 
 	// Handle events
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
-	switch(Tile->EventType) {
+	switch(Tile->Event.Type) {
 		case _Map::EVENT_SPAWN:
-			//Server->Log << Object->Map->ID << " " << Tile->EventData << std::endl;
+			//Server->Log << Object->Map->ID << " " << Tile->Event.Data << std::endl;
 			//Object->SpawnMapID = Object->Map->ID;
-			//Object->SpawnPoint = Tile->EventData;
+			//Object->SpawnPoint = Tile->Event.Data;
 			//Object->RestoreHealthMana();
 			//SendHUD(Player);
 			//Object->Save();
 		break;
 		case _Map::EVENT_MAPCHANGE:
 			if(Server)
-				Server->SpawnPlayer(Object->Peer, Tile->EventData, Tile->EventType);
+				Server->SpawnPlayer(Object->Peer, Tile->Event.Data, Tile->Event.Type);
 			else
 				Object->WaitForServer = true;
 		break;
 		case _Map::EVENT_VENDOR: {
 			if(Server) {
-				Object->Vendor = Server->Stats->GetVendor(Tile->EventData);
+				Object->Vendor = Server->Stats->GetVendor(Tile->Event.Data);
 
 				// Notify client
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<int>(Tile->EventType);
-				Packet.Write<int>(Tile->EventData);
+				Packet.Write<int>(Tile->Event.Type);
+				Packet.Write<int>(Tile->Event.Data);
 				Packet.Write<glm::ivec2>(Object->Position);
 				Server->Network->SendPacket(Packet, Object->Peer);
 			}
@@ -210,13 +210,13 @@ void _Map::CheckEvents(_Object *Object) {
 		} break;
 		case _Map::EVENT_TRADER: {
 			if(Server) {
-				Object->Trader = Server->Stats->GetTrader(Tile->EventData);
+				Object->Trader = Server->Stats->GetTrader(Tile->Event.Data);
 
 				// Notify client
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<int>(Tile->EventType);
-				Packet.Write<int>(Tile->EventData);
+				Packet.Write<int>(Tile->Event.Type);
+				Packet.Write<int>(Tile->Event.Data);
 				Packet.Write<glm::ivec2>(Object->Position);
 				Server->Network->SendPacket(Packet, Object->Peer);
 			}
@@ -290,8 +290,8 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 			}
 
 			// Draw event info
-			if(Tile->EventType > 0) {
-				std::string EventText = Stats->EventNames[Tile->EventType].ShortName + std::string(" ") + std::to_string(Tile->EventData);
+			if(Tile->Event.Type > 0) {
+				std::string EventText = Stats->EventNames[Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
 				Assets.Fonts["hud_small"]->DrawText(EventText, glm::vec2(DrawPosition), COLOR_CYAN, CENTER_MIDDLE, 1.0f / 32.0f);
 			}
 		}
@@ -348,6 +348,8 @@ void _Map::Load(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Cannot load map: " + Path);
 
+	IndexedEvents.clear();
+
 	_Tile *Tile = nullptr;
 	while(!File.eof() && File.peek() != EOF) {
 
@@ -397,7 +399,7 @@ void _Map::Load(const std::string &Path) {
 			} break;
 			// Event
 			case 'e': {
-				File >> Tile->EventType >> Tile->EventData;
+				File >> Tile->Event.Type >> Tile->Event.Data;
 			} break;
 			// Wall
 			case 'w': {
@@ -414,6 +416,16 @@ void _Map::Load(const std::string &Path) {
 	}
 
 	File.close();
+
+	// Build event index
+	for(int j = 0; j < Size.y; j++) {
+		for(int i = 0; i < Size.x; i++) {
+			const _Tile &Tile = Tiles[i][j];
+			if(Tile.Event.Type != EVENT_NONE) {
+				IndexedEvents[Tile.Event] = glm::ivec2(i, j);
+			}
+		}
+	}
 
 	// Initialize 2d tile rendering
 	if(!Server) {
@@ -439,13 +451,20 @@ bool _Map::Save(const std::string &Path) {
 	// Write tile map
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
+			const _Tile &Tile = Tiles[i][j];
 			Output << "T " << i << " " << j << '\n';
-			Output << "b " << Tiles[i][j].TextureIndex[0] << '\n';
-			Output << "f " << Tiles[i][j].TextureIndex[1] << '\n';
-			Output << "z " << Tiles[i][j].Zone << '\n';
-			Output << "e " << Tiles[i][j].EventType << " " << Tiles[i][j].EventData << '\n';
-			Output << "w " << Tiles[i][j].Wall << '\n';
-			Output << "p " << Tiles[i][j].PVP << '\n';
+			if(Tile.TextureIndex[0])
+				Output << "b " << Tile.TextureIndex[0] << '\n';
+			if(Tile.TextureIndex[1])
+				Output << "f " << Tile.TextureIndex[1] << '\n';
+			if(Tile.Zone)
+				Output << "z " << Tile.Zone << '\n';
+			if(Tile.Event.Type)
+				Output << "e " << Tile.Event.Type << " " << Tiles[i][j].Event.Data << '\n';
+			if(Tile.Wall)
+				Output << "w " << Tile.Wall << '\n';
+			if(Tile.PVP)
+				Output << "p " << Tile.PVP << '\n';
 		}
 		Output << '\n';
 	}
@@ -590,19 +609,17 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 }
 
 // Find an event on the map, returns true on found
-bool _Map::FindEvent(int EventType, int EventData, glm::ivec2 &Position) {
+bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) {
 
-	for(int j = 0; j < Size.y; j++) {
-		for(int i = 0; i < Size.x; i++) {
-			if(Tiles[i][j].EventType == EventType && Tiles[i][j].EventData == EventData) {
-				Position.x = i;
-				Position.y = j;
-				return true;
-			}
-		}
-	}
+	// Find event
+	auto Iterator = IndexedEvents.find(Event);
+	if(Iterator == IndexedEvents.end())
+		return false;
 
-	return false;
+	// Return position
+	Position = Iterator->second;
+
+	return true;
 }
 
 // Send complete object list to player

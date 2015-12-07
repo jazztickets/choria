@@ -53,8 +53,8 @@ struct _Action {
 	_Action(const _Skill *Skill) : _Action() { this->Skill = Skill; }
 	_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
-	bool operator==(const _Action &Action) { return Action.Skill == Skill && Action.Item == Item; }
-	bool operator!=(const _Action &Action) { return !(Action.Skill == Skill && Action.Item == Item); }
+	bool operator==(const _Action &Action) const { return Action.Skill == Skill && Action.Item == Item; }
+	bool operator!=(const _Action &Action) const { return !(Action.Skill == Skill && Action.Item == Item); }
 
 	void Serialize(_Buffer &Data);
 	void Unserialize(_Buffer &Data, _Stats *Stats);

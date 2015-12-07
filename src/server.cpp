@@ -589,7 +589,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		int SpawnPoint = Player->SpawnPoint;
 		if(EventType == _Map::EVENT_MAPCHANGE)
 			SpawnPoint = OldMap->ID;
-		Map->FindEvent(EventType, SpawnPoint, Player->Position);
+		Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position);
 
 		// Add player to map
 		Map->AddObject(Player);
@@ -610,7 +610,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		SendPlayerInfo(Peer);
 	}
 	else {
-		Map->FindEvent(EventType, Player->SpawnPoint, Player->Position);
+		Map->FindEvent(_Event(EventType, Player->SpawnPoint), Player->Position);
 		SendPlayerPosition(Peer);
 		SendHUD(Peer);
 	}

@@ -177,14 +177,14 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 			break;
 			case SDL_SCANCODE_E:
 				if(Input.ModKeyDown(KMOD_SHIFT))
-					Brush->EventType--;
+					Brush->Event.Type--;
 				else
-					Brush->EventType++;
+					Brush->Event.Type++;
 
-				if(Brush->EventType >= _Map::EVENT_COUNT)
-					Brush->EventType = _Map::EVENT_NONE;
-				else if(Brush->EventType < _Map::EVENT_NONE)
-					Brush->EventType = _Map::EVENT_COUNT-1;
+				if(Brush->Event.Type >= _Map::EVENT_COUNT)
+					Brush->Event.Type = _Map::EVENT_NONE;
+				else if(Brush->Event.Type < _Map::EVENT_NONE)
+					Brush->Event.Type = _Map::EVENT_COUNT-1;
 			break;
 			case SDL_SCANCODE_W:
 				Brush->Wall = !Brush->Wall;
@@ -211,11 +211,11 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				ToggleTextures();
 			break;
 			case SDL_SCANCODE_MINUS:
-				if(Brush->EventData > 0)
-					Brush->EventData--;
+				if(Brush->Event.Data > 0)
+					Brush->Event.Data--;
 			break;
 			case SDL_SCANCODE_EQUALS:
-				Brush->EventData++;
+				Brush->Event.Data++;
 			break;
 			case SDL_SCANCODE_F1:
 				BrushRadius = 0.5f;
@@ -468,7 +468,7 @@ void _EditorState::RenderBrush() {
 	DrawPosition.y += 15;
 
 	// Draw event type
-	Buffer << Stats->EventNames[Brush->EventType].Name;
+	Buffer << Stats->EventNames[Brush->Event.Type].Name;
 
 	Filter & FILTER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
@@ -477,7 +477,7 @@ void _EditorState::RenderBrush() {
 	DrawPosition.y += 15;
 
 	// Draw event data
-	Buffer << "Data " << Brush->EventData;
+	Buffer << "Data " << Brush->Event.Data;
 
 	Filter & FILTER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
@@ -744,9 +744,9 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 			if(Filter & FILTER_PVP)
 				Tile.PVP = Brush->PVP;
 			if(Filter & FILTER_EVENTTYPE)
-				Tile.EventType = Brush->EventType;
+				Tile.Event.Type = Brush->Event.Type;
 			if(Filter & FILTER_EVENTDATA)
-				Tile.EventData = Brush->EventData;
+				Tile.Event.Data = Brush->Event.Data;
 
 			// Set new tile
 			Map->SetTile(TilePosition, &Tile);
