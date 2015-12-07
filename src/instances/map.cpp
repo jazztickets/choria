@@ -253,7 +253,7 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
 	for(int j = Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = Bounds[0]; i < Bounds[2]; i++) {
-			glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex);
+			glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[0]);
 			TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
 			TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
 			TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
@@ -375,7 +375,7 @@ void _Map::Load(const std::string &Path) {
 			} break;
 			// Texture index
 			case 'i': {
-				File >> Tile->TextureIndex;
+				File >> Tile->TextureIndex[0];
 			} break;
 			// Zone
 			case 'z': {

@@ -42,8 +42,8 @@ class _Peer;
 
 // Structures
 struct _Tile {
-	_Tile() : TextureIndex(0), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
-	uint32_t TextureIndex;
+	_Tile() : TextureIndex{0, 0}, Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
+	uint32_t TextureIndex[2];
 	int Zone;
 	int EventType;
 	int EventData;

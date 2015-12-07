@@ -85,7 +85,7 @@ void _EditorState::Init() {
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
-	Brush->TextureIndex = 0;
+	Brush->TextureIndex[0] = 0;
 
 	// Set filters
 	Filter = 0;
@@ -147,7 +147,8 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 
 		switch(KeyEvent.Scancode) {
 			case SDL_SCANCODE_ESCAPE:
-				Framework.Done = true;
+				if(!CloseWindows())
+					Framework.Done = true;
 			break;
 			case SDL_SCANCODE_1:
 				Filter = 0;
@@ -253,7 +254,7 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
 				_Button *Button = (_Button *)TexturesElement->GetClickedElement();
-				Brush->TextureIndex = Button->TextureIndex;
+				Brush->TextureIndex[0] = Button->TextureIndex;
 				CloseWindows();
 			}
 		}
@@ -378,7 +379,7 @@ void _EditorState::RenderBrush() {
 	TextureBounds.End = DrawPosition + glm::ivec2(Map->TileAtlas->Size)/2;
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetColor(COLOR_WHITE);
-	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex));
+	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[0]));
 
 	std::stringstream Buffer;
 	glm::vec4 Color(COLOR_WHITE);
@@ -568,13 +569,15 @@ void _EditorState::InitLoadMap() {
 
 // Close all open windows
 bool _EditorState::CloseWindows() {
+	bool WasOpen = TexturesElement->Visible | NewMapElement->Visible | SaveMapElement->Visible | LoadMapElement->Visible;
+
 	TexturesElement->SetVisible(false);
 	NewMapElement->SetVisible(false);
 	SaveMapElement->SetVisible(false);
 	LoadMapElement->SetVisible(false);
 	FocusedElement = nullptr;
 
-	return true;
+	return WasOpen;
 }
 
 // Creates a map with the given parameters
@@ -676,7 +679,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 			// Apply filters
 			if(Filter & FILTER_TEXTURE)
-				Tile.TextureIndex = Brush->TextureIndex;
+				Tile.TextureIndex[0] = Brush->TextureIndex[0];
 			if(Filter & FILTER_WALL)
 				Tile.Wall = Brush->Wall;
 			if(Filter & FILTER_ZONE)
