@@ -333,9 +333,9 @@ void _EditorState::Render(double BlendFactor) {
 	// Set lights
 	glm::vec4 AmbientLight(1.0f, 1.0f, 1.0f, 1.0f);
 	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
-	Assets.Programs["pos_uv"]->LightPosition = glm::vec3(0, 0, 10000);
+	Assets.Programs["pos_uv"]->LightPosition = glm::vec3(0, 0, 0);
 	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
-	Assets.Programs["pos_uv_norm"]->LightPosition = glm::vec3(0, 0, 10000);
+	Assets.Programs["pos_uv_norm"]->LightPosition = glm::vec3(0, 0, 0);
 
 	// Setup the viewing matrix
 	Graphics.Setup3D();
@@ -497,6 +497,9 @@ void _EditorState::ToggleTextures() {
 
 // Show save map screen
 void _EditorState::ToggleSaveMap() {
+	if(!Map)
+		return;
+
 	if(!SaveMapElement->Visible) {
 		CloseWindows();
 		InitSaveMap();
@@ -641,6 +644,8 @@ void _EditorState::CreateMap() {
 
 // Save the map
 void _EditorState::SaveMap() {
+	if(!Map)
+		return;
 
 	// Get textbox value
 	std::string Path = SaveMapTextBox->Text;
