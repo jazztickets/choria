@@ -58,6 +58,8 @@ _Font::_Font(const std::string &FontFile, const _Program *Program, int FontSize,
 	_Font(Program) {
 	HasKerning = false;
 	MaxHeight = 0.0f;
+	MaxAbove = 0.0f;
+	MaxBelow = 0.0f;
 
 	// Zero out glyphs
 	for(int i = 0; i < 256; i++) {
@@ -131,14 +133,21 @@ void _Font::SortCharacters(FT_Face &Face, const std::string &Characters, std::st
 		// Add character to the list
 		Character.Character = Characters[i];
 		Character.Height = Glyph->bitmap.rows;
+
+		// Save maxes
+		if(Character.Height > MaxHeight)
+			MaxHeight = Character.Height;
+		if(Glyph->bitmap_top > MaxAbove)
+			MaxAbove = Glyph->bitmap_top;
+		if((int)(-Glyph->bitmap_top + Glyph->bitmap.rows) > MaxBelow)
+			MaxBelow = (int)(-Glyph->bitmap_top + Glyph->bitmap.rows);
+
 		CharacterList.push(Character);
 	}
 
 	// Build sorted string
 	while(!CharacterList.empty()) {
 		const CharacterSortStruct &Character = CharacterList.top();
-		if(Character.Height > MaxHeight)
-			MaxHeight = Character.Height;
 		SortedCharacters.push_back(Character.Character);
 		CharacterList.pop();
 	}
@@ -244,7 +253,7 @@ void _Font::CreateFontTexture(std::string SortedCharacters, int TextureWidth) {
 }
 
 // Draws a string
-void _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color, const _Alignment &Alignment, float Scale) const {
+float _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color, const _Alignment &Alignment, float Scale) const {
 	Graphics.SetProgram(Program);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(Color);
@@ -309,7 +318,10 @@ void _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::vec
 
 		Position.x += Scale * Glyph.Advance;
 	}
+
+	return Position.x;
 }
+
 // Get width and height of a string
 void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds) const {
 	if(Text.size() == 0) {

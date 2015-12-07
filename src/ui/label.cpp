@@ -40,7 +40,7 @@ void _Label::Render() const {
 	if(Texts.size()) {
 
 		// Center box
-		float LineHeight = Font->GetMaxHeight() + 2;
+		float LineHeight = Font->MaxHeight + 2;
 		float Y = Bounds.Start.y - (int)((LineHeight * Texts.size() - LineHeight) / 2);
 		for(size_t i = 0; i < Texts.size(); i++) {
 			Font->DrawText(Texts[i], glm::vec2(Bounds.Start.x, Y), RenderColor, Alignment);

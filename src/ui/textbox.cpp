@@ -18,6 +18,8 @@
 #include <ui/textbox.h>
 #include <font.h>
 #include <input.h>
+#include <graphics.h>
+#include <assets.h>
 #include <SDL_keycode.h>
 
 // Constructor
@@ -90,11 +92,16 @@ void _TextBox::Render() const {
 	else
 		RenderText = Text;
 
-	// Add cursor
-	if(CursorTimer < 0.5 && FocusedElement == this)
-		RenderText += "|";
-
+	// Render base element
 	_Element::Render();
 
-	Font->DrawText(RenderText, glm::vec2(Bounds.Start) + TextOffset, glm::vec4(1.0f));
+	// Draw text
+	glm::vec2 StartPosition = glm::vec2(Bounds.Start) + TextOffset;
+	float EndX = Font->DrawText(RenderText, StartPosition, glm::vec4(1.0f));
+
+	// Draw cursor
+	if(CursorTimer < 0.5 && FocusedElement == this) {
+		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+		Graphics.DrawRectangle(glm::ivec2(EndX+1, StartPosition.y - Font->MaxAbove), glm::ivec2(EndX+2, StartPosition.y + Font->MaxBelow));
+	}
 }

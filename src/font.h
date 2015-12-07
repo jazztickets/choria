@@ -52,10 +52,13 @@ class _Font {
 		_Font(const std::string &FontFile, const _Program *Program, int FontSize=12, int TextureWidth=256);
 		~_Font();
 
-		void DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color=glm::vec4(1.0f), const _Alignment &Alignment=LEFT_BASELINE, float Scale=1.0f) const;
+		float DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color=glm::vec4(1.0f), const _Alignment &Alignment=LEFT_BASELINE, float Scale=1.0f) const;
 		void GetStringDimensions(const std::string &Text, _TextBounds &TestBounds) const;
 		void BreakupString(const std::string &Text, float Width, std::vector<std::string> &Strings) const;
-		float GetMaxHeight() const { return MaxHeight; }
+
+		float MaxHeight;
+		float MaxAbove;
+		float MaxBelow;
 
 	private:
 
@@ -64,7 +67,6 @@ class _Font {
 
 		// Glyphs
 		GlyphStruct Glyphs[256];
-		float MaxHeight;
 
 		// Graphics
 		const _Program *Program;
