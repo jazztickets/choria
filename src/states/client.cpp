@@ -892,7 +892,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 		// Get fighter type
 		uint32_t DatabaseID = Data.Read<uint32_t>();
 		int Side = Data.Read<char>();
-		float TurnTimer = Data.Read<float>();
+		double TurnTimer = Data.Read<double>();
 
 		_Object *Fighter = nullptr;
 		if(DatabaseID == 0) {

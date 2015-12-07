@@ -562,7 +562,7 @@ void _Battle::ServerStartBattle() {
 		// Write fighter type
 		Packet.Write<uint32_t>(Fighter->DatabaseID);
 		Packet.Write<char>(Fighter->BattleSide);
-		Packet.Write<float>(Fighter->TurnTimer);
+		Packet.Write<double>(Fighter->TurnTimer);
 
 		if(Fighter->DatabaseID == 0) {
 
