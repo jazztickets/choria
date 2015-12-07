@@ -446,6 +446,7 @@ bool _Map::Save(const std::string &Path) {
 	// Header
 	Output << "V " << MAP_VERSION << '\n';
 	Output << "S " << Size.x << " " << Size.y << '\n';
+	Output << "A " << AmbientLight.r << " " << AmbientLight.g << " " << AmbientLight.b << '\n';
 	Output << "a " << TileAtlas->Texture->Identifier << '\n';
 
 	// Write tile map
