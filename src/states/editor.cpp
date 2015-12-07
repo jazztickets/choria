@@ -140,6 +140,14 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 					LoadMap();
 				}
 			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_TAB) {
+				if(FocusedElement == NewMapFilenameTextBox)
+					FocusedElement = NewMapWidthTextBox;
+				else if(FocusedElement == NewMapWidthTextBox)
+					FocusedElement = NewMapHeightTextBox;
+				else if(FocusedElement == NewMapHeightTextBox)
+					FocusedElement = NewMapFilenameTextBox;
+			}
 
 			return;
 		}
@@ -325,7 +333,9 @@ void _EditorState::Render(double BlendFactor) {
 	// Set lights
 	glm::vec4 AmbientLight(1.0f, 1.0f, 1.0f, 1.0f);
 	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+	Assets.Programs["pos_uv"]->LightPosition = glm::vec3(0, 0, 10000);
 	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
+	Assets.Programs["pos_uv_norm"]->LightPosition = glm::vec3(0, 0, 10000);
 
 	// Setup the viewing matrix
 	Graphics.Setup3D();
@@ -615,6 +625,9 @@ void _EditorState::CreateMap() {
 	glm::ivec2 Size(0, 0);
 	std::stringstream Buffer(NewMapWidthTextBox->Text + " " + NewMapHeightTextBox->Text);
 	Buffer >> Size.x >> Size.y;
+
+	// Clamp size
+	Size = glm::clamp(Size, 0, 255);
 
 	// Create map
 	Map = new _Map();
