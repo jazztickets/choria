@@ -769,6 +769,7 @@ void _HUD::InitSkills() {
 void _HUD::CloseChat() {
 	ChatElement->SetVisible(false);
 	ChatTextBox->Text = "";
+	FocusedElement = nullptr;
 }
 
 // Close inventory screen
@@ -1468,12 +1469,10 @@ void _HUD::ValidateTradeGold() {
 	GoldTextBox->Text = std::to_string(Gold);
 
 	// Send amount
-	if(Player->TradePlayer) {
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::TRADE_GOLD);
-		Packet.Write<int32_t>(Gold);
-		ClientState.Network->SendPacket(Packet);
-	}
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::TRADE_GOLD);
+	Packet.Write<int32_t>(Gold);
+	ClientState.Network->SendPacket(Packet);
 
 	// Reset agreement
 	ResetAcceptButton();

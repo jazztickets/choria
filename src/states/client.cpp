@@ -188,43 +188,51 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 	}
 	else {
 
-		// Handle HUD keys
-		switch(Action) {
-			case _Actions::SKILL1:
-			case _Actions::SKILL2:
-			case _Actions::SKILL3:
-			case _Actions::SKILL4:
-			case _Actions::SKILL5:
-			case _Actions::SKILL6:
-			case _Actions::SKILL7:
-			case _Actions::SKILL8:
-				SendActionBarUse(Action - _Actions::SKILL1);
-			break;
-			case _Actions::MENU:
-				HUD->ToggleInGameMenu();
-			break;
-			case _Actions::INVENTORY:
-				HUD->ToggleInventory();
-			break;
-			case _Actions::TELEPORT:
-				HUD->ToggleTeleport();
-			break;
-			case _Actions::TRADE:
-				HUD->ToggleTrade();
-			break;
-			case _Actions::SKILLS:
-				HUD->ToggleSkills();
-			break;
-			case _Actions::ATTACK:
-				//SendAttackPlayer();
-			break;
-			case _Actions::UP:
-			case _Actions::DOWN:
-			case _Actions::LEFT:
-			case _Actions::RIGHT:
-				if(!Player->WaitForServer)
-					HUD->CloseWindows();
-			break;
+		// Currently typing
+		if(FocusedElement != nullptr) {
+			if(Action == _Actions::MENU)
+				FocusedElement = nullptr;
+		}
+		else {
+
+			// Handle HUD keys
+			switch(Action) {
+				case _Actions::SKILL1:
+				case _Actions::SKILL2:
+				case _Actions::SKILL3:
+				case _Actions::SKILL4:
+				case _Actions::SKILL5:
+				case _Actions::SKILL6:
+				case _Actions::SKILL7:
+				case _Actions::SKILL8:
+					SendActionBarUse(Action - _Actions::SKILL1);
+				break;
+				case _Actions::MENU:
+					HUD->ToggleInGameMenu();
+				break;
+				case _Actions::INVENTORY:
+					HUD->ToggleInventory();
+				break;
+				case _Actions::TELEPORT:
+					HUD->ToggleTeleport();
+				break;
+				case _Actions::TRADE:
+					HUD->ToggleTrade();
+				break;
+				case _Actions::SKILLS:
+					HUD->ToggleSkills();
+				break;
+				case _Actions::ATTACK:
+					//SendAttackPlayer();
+				break;
+				case _Actions::UP:
+				case _Actions::DOWN:
+				case _Actions::LEFT:
+				case _Actions::RIGHT:
+					if(!Player->WaitForServer)
+						HUD->CloseWindows();
+				break;
+			}
 		}
 	}
 
@@ -303,7 +311,7 @@ void _ClientState::Update(double FrameTime) {
 		return;
 
 	// Set input
-	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && Menu.State == _Menu::STATE_NONE) {
+	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
 		Player->InputState = 0;
 		if(Actions.GetState(_Actions::UP))
 			Player->InputState |= _Object::MOVE_UP;
