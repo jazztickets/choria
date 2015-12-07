@@ -28,6 +28,7 @@
 #include <objects/skill.h>
 #include <objects/item.h>
 #include <instances/battle.h>
+#include <instances/map.h>
 #include <framework.h>
 #include <graphics.h>
 #include <input.h>
@@ -431,6 +432,10 @@ void _HUD::Render(double Time) {
 
 	Buffer << Player->Gold << " Gold";
 	Assets.Labels["label_hud_gold"]->Text = Buffer.str();
+	Buffer.str("");
+
+	Player->Map->GetClockAsString(Buffer);
+	Assets.Labels["label_hud_clock"]->Text = Buffer.str();
 	Buffer.str("");
 
 	// Show network stats

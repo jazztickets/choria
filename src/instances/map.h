@@ -31,6 +31,7 @@
 #include <glm/detail/func_common.hpp>
 #include <unordered_map>
 #include <map>
+#include <sstream>
 
 // Forward Declarations
 class _Object;
@@ -84,6 +85,8 @@ class _Map {
 
 		void Update(double FrameTime);
 		void CheckEvents(_Object *Object);
+		void GetClockAsString(std::stringstream &Buffer);
+		void SetAmbientLightByClock();
 
 		// Graphics
 		void Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags=0);
@@ -135,6 +138,7 @@ class _Map {
 		// Graphics
 		const _Atlas *TileAtlas;
 		glm::vec4 AmbientLight;
+		int IsOutside;
 		double Clock;
 
 		// Objects

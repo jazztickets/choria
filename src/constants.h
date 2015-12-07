@@ -94,7 +94,9 @@ const  int          ACCOUNT_MAX_PASSWORD_SIZE      =  15;
 const  int          ACCOUNT_MAX_CHARACTER_SLOTS    =  6;
 //     Map
 const  int          MAP_VERSION                    =  1;
-const  double       MAP_DAY_LENGTH                 =  (24.0*60.0);
+const  double       MAP_CLOCK_START                =  8.0*60.0;
+const  double       MAP_DAY_LENGTH                 =  24.0*60.0;
+const  double       MAP_CLOCK_SPEED                =  1.0;
 const  glm::vec4    MAP_AMBIENT_LIGHT              =  glm::vec4(0.3,0.3,0.3,1);
 const  std::string  MAP_DEFAULT_TILESET            =  "atlas0.png";
 //     Menu

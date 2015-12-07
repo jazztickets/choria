@@ -41,6 +41,7 @@
 #include <fstream>
 #include <limits>
 #include <stdexcept>
+#include <iomanip>
 
 // Constructor
 _Map::_Map() :
@@ -49,6 +50,7 @@ _Map::_Map() :
 	Size(0, 0),
 	TileAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
+	IsOutside(true),
 	Clock(0),
 	ObjectUpdateTime(0),
 	Server(nullptr),
@@ -134,12 +136,6 @@ void _Map::FreeMap() {
 
 // Updates the map and sends object updates
 void _Map::Update(double FrameTime) {
-
-	// Update clock
-	Clock += FrameTime;
-	if(Clock >= MAP_DAY_LENGTH)
-		Clock -= MAP_DAY_LENGTH;
-
 	ObjectUpdateCount = 0;
 
 	// Update objects
@@ -243,19 +239,103 @@ void _Map::CheckEvents(_Object *Object) {
 	}
 }
 
+// Convert clock time to text
+void _Map::GetClockAsString(std::stringstream &Buffer) {
+
+	int Hours = (int)(Clock / 60.0);
+	if(Hours == 0)
+		Hours = 12;
+	else if(Hours > 12)
+		Hours -= 12;
+
+	int Minutes = (int)std::fmod(Clock, 60.0);
+
+	if(Clock < MAP_DAY_LENGTH / 2)
+		Buffer << Hours << ":" << std::setfill('0') << std::setw(2) << Minutes << " AM";
+	else
+		Buffer << Hours << ":" << std::setfill('0') << std::setw(2) << Minutes << " PM";
+}
+
+// Set ambient light for map
+void _Map::SetAmbientLightByClock() {
+
+	std::vector<glm::vec4> Cycles = {
+		{0.05f, 0.05f, 0.3f, 1},
+		{0.10f, 0.10f, 0.1f, 1},
+		{0.6f, 0.6f, 0.45f, 1},
+		{0.55f, 0.45f, 0.30f, 1},
+		{0.5, 0.4f, 0.3f, 1},
+	};
+
+	std::vector<double> CyclesTime = {
+		0.0 * 60.0,
+		6.0 * 60.0,
+		12.5 * 60.0,
+		16.5 * 60.0,
+		18.0 * 60.0,
+	};
+
+	// Find index by time
+	size_t NextCycle = CyclesTime.size();
+	for(size_t i = 0; i < CyclesTime.size(); i++) {
+		if(Clock < CyclesTime[i]) {
+			NextCycle = i;
+			break;
+		}
+	}
+
+	// Get indices for current and next cycle
+	size_t CurrentCycle = NextCycle - 1;
+	if(CurrentCycle >= CyclesTime.size())
+		CurrentCycle = 0;
+	if(NextCycle >= CyclesTime.size())
+		NextCycle = 0;
+
+	// Get current time diff
+	double Diff = Clock - CyclesTime[CurrentCycle];
+	if(Diff < 0)
+		Diff += MAP_DAY_LENGTH;
+
+	// Get length of cycle
+	double Length = CyclesTime[NextCycle] - CyclesTime[CurrentCycle];
+	if(Length < 0)
+		Length += MAP_DAY_LENGTH;
+
+	// Get percent to next cycle
+	float Percent = Diff / Length;
+
+	// Set color
+	AmbientLight = glm::mix(Cycles[CurrentCycle], Cycles[NextCycle], Percent);
+}
+
 // Renders the map
 void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags) {
 
-	// Setup lights
-	glm::vec3 LightPosition(glm::vec3(ClientPlayer->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
-	glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
+	// Set lights for editor
+	if(!ClientPlayer) {
+		glm::vec4 AmbientLightEditor(1.0f, 1.0f, 1.0f, 1.0f);
+		Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
+		Assets.Programs["pos_uv"]->LightPosition = glm::vec3(0, 0, 0);
+		Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLightEditor;
+		Assets.Programs["pos_uv_norm"]->LightPosition = glm::vec3(0, 0, 0);
+	}
+	else {
 
-	Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
-	Assets.Programs["pos_uv"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
-	Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
-	Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
-	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
+		// Setup day night cycle
+		if(IsOutside)
+			SetAmbientLightByClock();
+
+		// Setup lights
+		glm::vec3 LightPosition(glm::vec3(ClientPlayer->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
+		glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
+
+		Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
+		Assets.Programs["pos_uv"]->LightPosition = LightPosition;
+		Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+		Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
+		Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
+		Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
+	}
 
 	// Render bounds
 	glm::vec4 Bounds = Camera->GetAABB();
@@ -393,6 +473,10 @@ void _Map::Load(const std::string &Path) {
 			case 'A': {
 				File >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
 			} break;
+			// Outside
+			case 'O': {
+				File >> IsOutside;
+			} break;
 			// Atlas texture
 			case 'a': {
 				File >> AtlasPath;
@@ -465,6 +549,7 @@ bool _Map::Save(const std::string &Path) {
 	Output << "V " << MAP_VERSION << '\n';
 	Output << "S " << Size.x << " " << Size.y << '\n';
 	Output << "A " << AmbientLight.r << " " << AmbientLight.g << " " << AmbientLight.b << '\n';
+	Output << "O " << IsOutside << '\n';
 	Output << "a " << TileAtlas->Texture->Identifier << '\n';
 
 	// Write tile map

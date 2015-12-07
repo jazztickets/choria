@@ -63,6 +63,7 @@ _Server::_Server(uint16_t NetworkPort)
 	StartShutdown(false),
 	TimeSteps(0),
 	Time(0.0),
+	Clock(MAP_CLOCK_START),
 	Stats(nullptr),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	NextMapID(0),
@@ -120,7 +121,6 @@ void _Server::StopServer() {
 
 // Update
 void _Server::Update(double FrameTime) {
-	//Log << "ServerUpdate " << Time << std::endl;
 
 	// Update network
 	Network->Update(FrameTime);
@@ -144,8 +144,10 @@ void _Server::Update(double FrameTime) {
 	}
 
 	// Update maps
-	for(auto &Map : Maps)
+	for(auto &Map : Maps) {
+		Map->Clock = Clock;
 		Map->Update(FrameTime);
+	}
 
 	// Update maps
 	for(auto &Battle : Battles)
@@ -170,6 +172,12 @@ void _Server::Update(double FrameTime) {
 
 	TimeSteps++;
 	Time += FrameTime;
+
+	// Update clock
+	Clock += FrameTime * MAP_CLOCK_SPEED;
+	if(Clock >= MAP_DAY_LENGTH)
+		Clock -= MAP_DAY_LENGTH;
+
 }
 
 // Handle client connect
@@ -598,7 +606,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
 		Packet.Write<uint32_t>(MapID);
-		Packet.Write<double>(Map->Clock);
+		Packet.Write<double>(Clock);
 		Network->SendPacket(Packet, Peer);
 
 		// Add peer to map

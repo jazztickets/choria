@@ -51,7 +51,6 @@ _ClientState::_ClientState() :
 	FromEditor(false),
 	ConnectNow(false),
 	Stats(nullptr),
-	Time(0.0),
 	Server(nullptr),
 	HostAddress("127.0.0.1"),
 	ConnectPort(DEFAULT_NETWORKPORT) {
@@ -63,6 +62,8 @@ void _ClientState::Init() {
 	Player = nullptr;
 	Map = nullptr;
 	Battle = nullptr;
+	Time = 0.0;
+	Clock = 0.0;
 
 	HUD = new _HUD();
 	Stats = new _Stats();
@@ -315,6 +316,7 @@ void _ClientState::Update(double FrameTime) {
 	}
 
 	// Update objects
+	Map->Clock = Clock;
 	Map->Update(FrameTime);
 	if(Player->Moved) {
 		_Buffer Packet;
@@ -338,6 +340,12 @@ void _ClientState::Update(double FrameTime) {
 	HUD->Update(FrameTime);
 
 	Time += FrameTime;
+
+	// Update clock
+	Clock += FrameTime * MAP_CLOCK_SPEED;
+	if(Clock >= MAP_DAY_LENGTH)
+		Clock -= MAP_DAY_LENGTH;
+
 }
 
 // Render the state
@@ -545,7 +553,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 	// Load map
 	uint32_t MapID = Data.Read<uint32_t>();
-	double Clock = Data.Read<double>();
+	Clock = Data.Read<double>();
 
 	// Delete old map and create new
 	if(!Map || Map->ID != MapID) {
@@ -554,7 +562,6 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 		Map = new _Map();
 		Map->ID = MapID;
-		Map->Clock = Clock;
 		Map->Load(Stats->GetMap(MapID)->File);
 		Player = nullptr;
 	}

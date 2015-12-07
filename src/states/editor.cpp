@@ -341,13 +341,6 @@ void _EditorState::Render(double BlendFactor) {
 
 	Graphics.Setup3D();
 
-	// Set lights
-	glm::vec4 AmbientLight(1.0f, 1.0f, 1.0f, 1.0f);
-	Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
-	Assets.Programs["pos_uv"]->LightPosition = glm::vec3(0, 0, 0);
-	Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
-	Assets.Programs["pos_uv_norm"]->LightPosition = glm::vec3(0, 0, 0);
-
 	// Setup the viewing matrix
 	Graphics.Setup3D();
 	Camera->Set3DProjection(BlendFactor);
