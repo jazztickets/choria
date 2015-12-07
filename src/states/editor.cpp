@@ -343,6 +343,13 @@ void _EditorState::Render(double BlendFactor) {
 	if(Map)
 		Map->Render(Camera, Stats, nullptr, Filter | FILTER_BOUNDARY);
 
+	Graphics.SetColor(COLOR_WHITE);
+	Graphics.SetProgram(Assets.Programs["pos"]);
+	Graphics.SetVBO(VBO_CIRCLE);
+	Graphics.SetDepthTest(false);
+	Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
+	Graphics.SetDepthTest(true);
+
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["ortho_pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
@@ -373,6 +380,9 @@ void _EditorState::Render(double BlendFactor) {
 
 // Draw information about the brush
 void _EditorState::RenderBrush() {
+	if(!Map)
+		return;
+
 	glm::ivec2 DrawPosition = Graphics.Element->Bounds.End - glm::ivec2(50, 140);
 
 	Graphics.SetProgram(Assets.Programs["ortho_pos"]);

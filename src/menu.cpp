@@ -104,6 +104,17 @@ void _Menu::InitPlay() {
 	State = STATE_NONE;
 }
 
+// Start map editor
+void _Menu::InitEditor() {
+	if(CurrentLayout)
+		CurrentLayout->SetVisible(false);
+	CurrentLayout = nullptr;
+
+	State = STATE_NONE;
+
+	Framework.ChangeState(&EditorState);
+}
+
 // Init new player popup
 void _Menu::InitNewCharacter() {
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
@@ -538,7 +549,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitConnect();
 				}
 				else if(Clicked->Identifier == "button_title_mapeditor") {
-					Framework.ChangeState(&EditorState);
+					InitEditor();
 				}
 				else if(Clicked->Identifier == "button_title_exit") {
 					Framework.Done = true;

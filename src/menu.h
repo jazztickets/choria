@@ -77,6 +77,7 @@ class _Menu {
 		void InitOptions();
 		void InitInGame();
 		void InitPlay();
+		void InitEditor();
 		void Close();
 
 		void HandleAction(int InputType, int Action, int Value);
