@@ -75,16 +75,12 @@ void _EditorState::Init() {
 	// Create brush
 	Brush = new _Tile();
 	BrushRadius = 0.5f;
-	Brush->Texture = nullptr;
-	RefreshTexturePalette();
-	if(TexturePalette.size() > 0)
-		Brush->Texture = TexturePalette[0];
 
 	// Create camera
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
-	Brush->Texture = Assets.Textures["map/grass0.png"];
+	Brush->TextureIndex = 0;
 
 	// Set filters
 	Filter = 0;
@@ -362,10 +358,8 @@ void _EditorState::RenderBrush() {
 	Graphics.DrawRectangle(DrawPosition - glm::ivec2(32, 32), DrawPosition + glm::ivec2(32, 110), true);
 
 	// Draw texture
-	if(Brush->Texture) {
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Brush->Texture);
-	}
+	//Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	//Graphics.DrawCenteredImage(DrawPosition, Brush->Texture);
 
 	std::stringstream Buffer;
 	glm::vec4 Color(COLOR_WHITE);
@@ -507,7 +501,10 @@ void _EditorState::CreateMap() {
 	Buffer >> Size.x >> Size.y;
 
 	// Create map
-	Map = new _Map(Size);
+	Map = new _Map();
+	Map->Size = Size;
+	Map->InitAtlas(TEXTURES_MAP + MAP_DEFAULT_TILESET);
+	Map->AllocateMap();
 	FilePath = NewMapFilenameTextBox->Text;
 
 	CloseWindows();
@@ -573,10 +570,6 @@ void _EditorState::LoadMap() {
 	CloseWindows();
 }
 
-// Loads all map textures from a directory
-void _EditorState::RefreshTexturePalette() {
-}
-
 // Apply brush to map
 void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
@@ -597,7 +590,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 			// Apply filters
 			if(Filter & FILTER_TEXTURE)
-				Tile.Texture = Brush->Texture;
+				Tile.TextureIndex = Brush->TextureIndex;
 			if(Filter & FILTER_WALL)
 				Tile.Wall = Brush->Wall;
 			if(Filter & FILTER_ZONE)

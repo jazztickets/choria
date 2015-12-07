@@ -44,32 +44,6 @@ class _EditorState : public _State {
 
 	public:
 
-		enum ElementType {
-			NEWMAP_WINDOW,
-			NEWMAP_FILE,
-			NEWMAP_WIDTH,
-			NEWMAP_HEIGHT,
-			NEWMAP_CREATE,
-			NEWMAP_CANCEL,
-			NEWMAP_ERROR,
-			BRUSHOPTIONS_WINDOW,
-			BRUSHOPTIONS_WALL,
-			BRUSHOPTIONS_PVP,
-			BRUSHOPTIONS_ZONE,
-			BRUSHOPTIONS_EVENTTYPE,
-			BRUSHOPTIONS_EVENTDATA,
-			BRUSHOPTIONS_FILTERTEXTURE,
-			BRUSHOPTIONS_FILTERWALL,
-			BRUSHOPTIONS_FILTERZONE,
-			BRUSHOPTIONS_FILTERPVP,
-			BRUSHOPTIONS_FILTEREVENTTYPE,
-			BRUSHOPTIONS_FILTEREVENTDATA,
-			BRUSHOPTIONS_FILTERCLOSE,
-			LOADMAP_WINDOW,
-			TEXTUREPALETTE_WINDOW,
-			TEXTURES_ID=100,
-		};
-
 		_EditorState();
 
 		void Init() override;
@@ -105,7 +79,6 @@ class _EditorState : public _State {
 
 		// Texture palette
 		void InitTexturePalette();
-		void RefreshTexturePalette();
 
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
@@ -121,10 +94,6 @@ class _EditorState : public _State {
 		// Map
 		_Map *Map;
 		std::string FilePath;
-		std::string WorkingDirectory;
-
-		// Textures
-		std::vector<_Texture *> TexturePalette;
 
 		// Brush
 		float BrushRadius;

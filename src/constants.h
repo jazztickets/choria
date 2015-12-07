@@ -95,6 +95,7 @@ const  int          ACCOUNT_MAX_CHARACTER_SLOTS    =  6;
 //     Map
 const  int          MAP_VERSION                    =  1;
 const  glm::vec4    MAP_AMBIENT_LIGHT              =  glm::vec4(0.3,0.3,0.3,1);
+const  std::string  MAP_DEFAULT_TILESET            =  "atlas0.png";
 //     Menu
 const  float        MENU_ACCEPTINPUT_FADE          =  0.7f;
 const  float        MENU_PAUSE_FADE                =  0.7f;

@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <instances/map.h>
+#include <states/editor.h>
 #include <network/servernetwork.h>
 #include <network/peer.h>
 #include <objects/object.h>
@@ -26,6 +27,7 @@
 #include <buffer.h>
 #include <texture.h>
 #include <assets.h>
+#include <atlas.h>
 #include <font.h>
 #include <program.h>
 #include <camera.h>
@@ -45,36 +47,29 @@ _Map::_Map() :
 	ID(0),
 	Tiles(nullptr),
 	Size(0, 0),
+	TileAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
-	NoZoneTexture(nullptr),
 	ObjectUpdateTime(0),
 	Server(nullptr),
+	TileVertexBufferID(0),
+	TileElementBufferID(0),
+	TileVertices(nullptr),
+	TileFaces(nullptr),
 	ObjectUpdateCount(0),
 	NextObjectID(0) {
 
 }
 
-// Create new map with given size
-_Map::_Map(const glm::ivec2 &Size) : _Map() {
-	this->Size = Size;
-	AllocateMap();
-}
-
-// Constructor for maps already created in the database
-_Map::_Map(int ID, _Stats *Stats) : _Map() {
-
-	// Set ID
-	this->ID = ID;
-
-	// Get map info
-	const _MapStat *Map = Stats->GetMap(ID);
-
-	// Load map
-	Load(Map->File);
-}
-
 // Destructor
 _Map::~_Map() {
+	if(!Server) {
+		delete TileAtlas;
+		delete[] TileVertices;
+		delete[] TileFaces;
+		glDeleteBuffers(1, &TileVertexBufferID);
+		glDeleteBuffers(1, &TileElementBufferID);
+	}
+
 	DeleteObjects();
 
 	// Delete map data
@@ -90,6 +85,39 @@ void _Map::AllocateMap() {
 	for(int i = 0; i < Size.x; i++) {
 		Tiles[i] = new _Tile[Size.y];
 	}
+}
+
+// Initialize the texture atlas
+void _Map::InitAtlas(const std::string AtlasPath) {
+	const _Texture *AtlasTexture = Assets.Textures[AtlasPath];
+	if(!AtlasTexture)
+		throw std::runtime_error("Can't find atlas: " + AtlasPath);
+
+	TileAtlas = new _Atlas(AtlasTexture, glm::ivec2(32, 32), 1);
+
+	GLuint TileVertexCount = 4 * Size.x * Size.y;
+	GLuint TileFaceCount = 2 * Size.x * Size.y;
+
+	TileVertices = new glm::vec4[TileVertexCount];
+	TileFaces = new glm::u32vec3[TileFaceCount];
+
+	int FaceIndex = 0;
+	int VertexIndex = 0;
+	for(int j = 0; j < Size.y; j++) {
+		for(int i = 0; i < Size.x; i++) {
+			TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 1, VertexIndex + 0 };
+			TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 3, VertexIndex + 1 };
+			VertexIndex += 4;
+		}
+	}
+
+	glGenBuffers(1, &TileVertexBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &TileElementBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
 }
 
 // Free memory used by the tiles
@@ -213,10 +241,11 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	Graphics.SetColor(COLOR_WHITE);
-	Graphics.SetVBO(VBO_QUAD);
-
 	Graphics.SetDepthTest(false);
 	Graphics.SetDepthMask(false);
+
+	int VertexIndex = 0;
+	int FaceIndex = 0;
 	glm::vec4 Bounds = Camera->GetAABB();
 	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Size.x);
 	Bounds[1] = glm::clamp(Bounds[1], 0.0f, (float)Size.y);
@@ -224,16 +253,32 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
 	for(int j = Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = Bounds[0]; i < Bounds[2]; i++) {
-			_Tile *Tile = &Tiles[i][j];
+			glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex);
+			TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
+			TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
+			TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
+			TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
 
-			glm::vec3 DrawPosition = glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0);
-			if(NoZoneTexture)
-				Graphics.DrawSprite(DrawPosition, NoZoneTexture);
-
-			if(Tile->Texture)
-				Graphics.DrawSprite(DrawPosition, Tile->Texture);
+			FaceIndex += 2;
 		}
 	}
+
+	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
+	GLsizeiptr ElementBufferSize = FaceIndex * sizeof(glm::u32vec3);
+
+	glBindTexture(GL_TEXTURE_2D, TileAtlas->Texture->ID);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)sizeof(glm::vec2));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
+	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
+	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
+
+	Graphics.DirtyState();
 
 	// Render objects
 	for(const auto &Object : Objects) {
@@ -286,6 +331,7 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 
 // Load map
 void _Map::Load(const std::string &Path) {
+	std::string AtlasPath;
 
 	// Load file
 	gzifstream File(Path.c_str());
@@ -313,22 +359,13 @@ void _Map::Load(const std::string &Path) {
 				FreeMap();
 				AllocateMap();
 			} break;
-			// No-zone textuer
-			case 'N': {
-				std::string TextureIdentifier;
-				File >> TextureIdentifier;
-				if(TextureIdentifier == "none")
-					NoZoneTexture = nullptr;
-				else
-					NoZoneTexture = Assets.Textures[TextureIdentifier];
-			} break;
 			// Ambient light
 			case 'A': {
 				File >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
-			}
+			} break;
 			// Atlas texture
 			case 'a': {
-				//File >> AtlasPath;
+				File >> AtlasPath;
 			} break;
 			// Tile
 			case 'T': {
@@ -336,61 +373,38 @@ void _Map::Load(const std::string &Path) {
 				File >> Coordinate.x >> Coordinate.y;
 				Tile = &Tiles[Coordinate.x][Coordinate.y];
 			} break;
-			case 't': {
-				std::string TextureIdentifier;
-				File >> TextureIdentifier;
-				if(TextureIdentifier == "none")
-					Tile->Texture = nullptr;
-				else
-					Tile->Texture = Assets.Textures[TextureIdentifier];
+			// Texture index
+			case 'i': {
+				File >> Tile->TextureIndex;
 			} break;
+			// Zone
 			case 'z': {
 				File >> Tile->Zone;
 			} break;
+			// Event
 			case 'e': {
 				File >> Tile->EventType >> Tile->EventData;
 			} break;
+			// Wall
 			case 'w': {
 				File >> Tile->Wall;
 			} break;
+			// PVP
 			case 'p': {
 				File >> Tile->PVP;
 			} break;
+			default:
+				File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			break;
 		}
 	}
 
 	File.close();
 
 	// Initialize 2d tile rendering
-	//if(!OldServerNetwork) {
-		/*
-		TileAtlas = new _Atlas(Assets.Textures[AtlasPath], glm::ivec2(64, 64), 1);
-
-		GLuint TileVertexCount = 4 * Grid->Size.x * Grid->Size.y;
-		GLuint TileFaceCount = 2 * Grid->Size.x * Grid->Size.y;
-
-		TileVertices = new glm::vec4[TileVertexCount];
-		TileFaces = new glm::u32vec3[TileFaceCount];
-
-		int FaceIndex = 0;
-		int VertexIndex = 0;
-		for(int j = 0; j < Grid->Size.y; j++) {
-			for(int i = 0; i < Grid->Size.x; i++) {
-				TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 1, VertexIndex + 0 };
-				TileFaces[FaceIndex++] = { VertexIndex + 2, VertexIndex + 3, VertexIndex + 1 };
-				VertexIndex += 4;
-			}
-		}
-
-		glGenBuffers(1, &TileVertexBufferID);
-		glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
-
-		glGenBuffers(1, &TileElementBufferID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
-		*/
-	//}
+	if(!Server) {
+		InitAtlas(AtlasPath);
+	}
 }
 
 // Saves the level to a file
@@ -406,19 +420,13 @@ bool _Map::Save(const std::string &Path) {
 	// Header
 	Output << "V " << MAP_VERSION << '\n';
 	Output << "S " << Size.x << " " << Size.y << '\n';
-	if(NoZoneTexture)
-		Output << "N " << NoZoneTexture->Identifier << '\n';
-	else
-		Output << "N none\n";
+	Output << "a " << TileAtlas->Texture->Identifier << '\n';
 
 	// Write tile map
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			Output << "T " << i << " " << j << '\n';
-			if(Tiles[i][j].Texture)
-				Output << "t " << Tiles[i][j].Texture->Identifier << '\n';
-			else
-				Output << "t none\n";
+			Output << "i " << Tiles[i][j].TextureIndex << '\n';
 			Output << "z " << Tiles[i][j].Zone << '\n';
 			Output << "e " << Tiles[i][j].EventType << " " << Tiles[i][j].EventData << '\n';
 			Output << "w " << Tiles[i][j].Wall << '\n';

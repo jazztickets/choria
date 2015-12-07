@@ -25,14 +25,16 @@
 #include <list>
 #include <cstdint>
 #include <string>
-#include <states/editor.h>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/detail/func_common.hpp>
 #include <unordered_map>
 
 // Forward Declarations
 class _Object;
 class _Buffer;
+class _Atlas;
 class _Camera;
 class _Server;
 class _Stats;
@@ -40,8 +42,8 @@ class _Peer;
 
 // Structures
 struct _Tile {
-	_Tile() : Texture(nullptr), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
-	const _Texture *Texture;
+	_Tile() : TextureIndex(0), Zone(0), EventType(0), EventData(0), Wall(false), PVP(true) { }
+	uint32_t TextureIndex;
 	int Zone;
 	int EventType;
 	int EventData;
@@ -64,9 +66,10 @@ class _Map {
 		};
 
 		_Map();
-		_Map(const glm::ivec2 &Size);
-		_Map(int ID, _Stats *Stats);
 		~_Map();
+
+		void AllocateMap();
+		void InitAtlas(const std::string AtlasPath);
 
 		void Update(double FrameTime);
 		void CheckEvents(_Object *Object);
@@ -117,8 +120,8 @@ class _Map {
 		glm::ivec2 Size;
 
 		// Graphics
+		const _Atlas *TileAtlas;
 		glm::vec4 AmbientLight;
-		const _Texture *NoZoneTexture;
 
 		// Objects
 		std::list<_Object *> Objects;
@@ -129,8 +132,13 @@ class _Map {
 
 	private:
 
-		void AllocateMap();
 		void FreeMap();
+
+		// Rendering
+		uint32_t TileVertexBufferID;
+		uint32_t TileElementBufferID;
+		glm::vec4 *TileVertices;
+		glm::u32vec3 *TileFaces;
 
 		// Network
 		std::list<const _Peer *> Peers;

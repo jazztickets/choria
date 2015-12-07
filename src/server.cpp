@@ -628,8 +628,10 @@ _Map *_Server::GetMap(uint32_t MapID) {
 	}
 
 	// Not found, so create it
-	_Map *NewMap = new _Map(MapID, Stats);
+	_Map *NewMap = new _Map();
+	NewMap->ID = MapID;
 	NewMap->Server = this;
+	NewMap->Load(Stats->GetMap(MapID)->File);
 	Maps.push_back(NewMap);
 
 	return NewMap;

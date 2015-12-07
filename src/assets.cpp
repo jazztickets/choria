@@ -44,7 +44,7 @@ void _Assets::Init(bool IsServer) {
 	LoadTextureDirectory(TEXTURES_HUD_REPEAT, IsServer, true);
 	LoadTextureDirectory(TEXTURES_INTERFACE, IsServer);
 	LoadTextureDirectory(TEXTURES_ITEMS, IsServer);
-	LoadTextureDirectory(TEXTURES_MAP, IsServer, true);
+	LoadTextureDirectory(TEXTURES_MAP, IsServer);
 	LoadTextureDirectory(TEXTURES_MENU, IsServer);
 	LoadTextureDirectory(TEXTURES_MONSTERS, IsServer);
 	LoadTextureDirectory(TEXTURES_PLAYERS, IsServer);

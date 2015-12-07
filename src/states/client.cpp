@@ -552,7 +552,9 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 		if(Map)
 			delete Map;
 
-		Map = new _Map(MapID, Stats);
+		Map = new _Map();
+		Map->ID = MapID;
+		Map->Load(Stats->GetMap(MapID)->File);
 		Player = nullptr;
 	}
 }
