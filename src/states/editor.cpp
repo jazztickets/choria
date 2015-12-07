@@ -28,6 +28,7 @@
 #include <constants.h>
 #include <camera.h>
 #include <assets.h>
+#include <atlas.h>
 #include <program.h>
 #include <font.h>
 #include <instances/map.h>
@@ -358,8 +359,12 @@ void _EditorState::RenderBrush() {
 	Graphics.DrawRectangle(DrawPosition - glm::ivec2(32, 32), DrawPosition + glm::ivec2(32, 110), true);
 
 	// Draw texture
-	//Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	//Graphics.DrawCenteredImage(DrawPosition, Brush->Texture);
+	_Bounds TextureBounds;
+	TextureBounds.Start = DrawPosition - glm::ivec2(Map->TileAtlas->Size)/2;
+	TextureBounds.End = DrawPosition + glm::ivec2(Map->TileAtlas->Size)/2;
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.SetColor(COLOR_WHITE);
+	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex));
 
 	std::stringstream Buffer;
 	glm::vec4 Color(COLOR_WHITE);

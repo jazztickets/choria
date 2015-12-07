@@ -372,10 +372,10 @@ void _Graphics::DrawAtlas(const _Bounds &Bounds, const _Texture *Texture, const 
 
 	// Vertex data for quad
 	float Vertices[] = {
-		(float)Bounds.End.x,   (float)Bounds.Start.y, TextureCoords[0], TextureCoords[1],
-		(float)Bounds.Start.x, (float)Bounds.Start.y, TextureCoords[2], TextureCoords[1],
-		(float)Bounds.End.x,   (float)Bounds.End.y,   TextureCoords[0], TextureCoords[3],
-		(float)Bounds.Start.x, (float)Bounds.End.y,   TextureCoords[2], TextureCoords[3],
+		(float)Bounds.End.x,   (float)Bounds.Start.y, TextureCoords[2], TextureCoords[1],
+		(float)Bounds.Start.x, (float)Bounds.Start.y, TextureCoords[0], TextureCoords[1],
+		(float)Bounds.End.x,   (float)Bounds.End.y,   TextureCoords[2], TextureCoords[3],
+		(float)Bounds.Start.x, (float)Bounds.End.y,   TextureCoords[0], TextureCoords[3],
 	};
 	if(LastAttribLevel != 2)
 		throw std::runtime_error("bad");
