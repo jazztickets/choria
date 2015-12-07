@@ -651,7 +651,7 @@ void _HUD::InitSkills() {
 	glm::ivec2 Spacing(10, 50);
 	glm::ivec2 PlusOffset(-12, 37);
 	glm::ivec2 MinusOffset(12, 37);
-	glm::ivec2 LabelOffset(-1, 3);
+	glm::ivec2 LabelOffset(0, 3);
 	size_t i = 0;
 
 	// Iterate over skills

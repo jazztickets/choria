@@ -405,10 +405,10 @@ void _Graphics::DrawMask(const _Bounds &Bounds) {
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 
 	float Vertices[] = {
-		(float)Bounds.Start.x, (float)Bounds.End.y,
-		(float)Bounds.End.x,   (float)Bounds.End.y,
-		(float)Bounds.Start.x, (float)Bounds.Start.y,
-		(float)Bounds.End.x,   (float)Bounds.Start.y,
+		(float)Bounds.Start.x + 0.5f, (float)Bounds.End.y   + 0.5f,
+		(float)Bounds.End.x   + 0.5f, (float)Bounds.End.y   + 0.5f,
+		(float)Bounds.Start.x + 0.5f, (float)Bounds.Start.y + 0.5f,
+		(float)Bounds.End.x   + 0.5f, (float)Bounds.Start.y + 0.5f,
 	};
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
@@ -523,10 +523,10 @@ void _Graphics::DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool
 
 	if(Filled) {
 		float Vertices[] = {
-			Start.x, End.y,
-			End.x,   End.y,
-			Start.x, Start.y,
-			End.x,   Start.y,
+			Start.x + 0.5f, End.y   + 0.5f,
+			End.x   + 0.5f, End.y   + 0.5f,
+			Start.x + 0.5f, Start.y + 0.5f,
+			End.x   + 0.5f, Start.y + 0.5f,
 		};
 
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
@@ -534,10 +534,10 @@ void _Graphics::DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool
 	}
 	else {
 		float Vertices[] = {
-			Start.x, Start.y,
-			End.x,   Start.y,
-			End.x,   End.y,
-			Start.x, End.y,
+			Start.x + 0.5f, Start.y + 0.5f,
+			End.x   + 0.5f, Start.y + 0.5f,
+			End.x   + 0.5f, End.y   + 0.5f,
+			Start.x + 0.5f, End.y   + 0.5f,
 		};
 
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
