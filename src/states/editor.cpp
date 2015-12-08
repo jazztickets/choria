@@ -588,11 +588,11 @@ void _EditorState::InitNewMap() {
 	NewMapElement->SetVisible(true);
 
 	_TextBox *FilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
-	FilenameTextBox->Text = "";
+	FilenameTextBox->SetText("");
 	FocusedElement = FilenameTextBox;
 
-	NewMapWidthTextBox->Text = "100";
-	NewMapHeightTextBox->Text = "100";
+	NewMapWidthTextBox->SetText("100");
+	NewMapHeightTextBox->SetText("100");
 }
 
 // Init save map
@@ -600,7 +600,7 @@ void _EditorState::InitSaveMap() {
 	SaveMapElement->SetVisible(true);
 	FocusedElement = SaveMapTextBox;
 
-	SaveMapTextBox->Text = FilePath;
+	SaveMapTextBox->SetText(FilePath);
 }
 
 // Init load map
@@ -608,7 +608,7 @@ void _EditorState::InitLoadMap() {
 	LoadMapElement->SetVisible(true);
 	FocusedElement = LoadMapTextBox;
 
-	LoadMapTextBox->Text = FilePath;
+	LoadMapTextBox->SetText(FilePath);
 }
 
 // Close all open windows

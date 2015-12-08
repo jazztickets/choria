@@ -57,7 +57,7 @@ _HUD::_HUD() {
 	ChatHistory.clear();
 
 	ChatTextBox = Assets.TextBoxes["textbox_chat"];
-	ChatTextBox->TextOffset = glm::vec2(5, 15);
+	ChatTextBox->ParentOffset = glm::vec2(5, 15);
 
 	Assets.Labels["label_buttonbar_teleport"]->Text = Actions.GetInputNameForAction(_Actions::TELEPORT).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(_Actions::INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
@@ -768,7 +768,7 @@ void _HUD::InitSkills() {
 // Closes the chat window
 void _HUD::CloseChat() {
 	ChatElement->SetVisible(false);
-	ChatTextBox->Text = "";
+	ChatTextBox->Clear();
 	FocusedElement = nullptr;
 }
 
@@ -1466,7 +1466,7 @@ void _HUD::ValidateTradeGold() {
 		Gold = Player->Gold;
 
 	// Set text
-	GoldTextBox->Text = std::to_string(Gold);
+	GoldTextBox->SetText(std::to_string(Gold));
 
 	// Send amount
 	_Buffer Packet;
@@ -1506,8 +1506,8 @@ void _HUD::ResetTradeTheirsWindow() {
 	TradeTheirsElement->SetVisible(false);
 	Assets.Labels["label_trade_status"]->SetVisible(true);
 	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
-	Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = "0";
-	Assets.TextBoxes["textbox_trade_gold_yours"]->Text = "0";
+	Assets.TextBoxes["textbox_trade_gold_theirs"]->SetText("0");
+	Assets.TextBoxes["textbox_trade_gold_yours"]->SetText("0");
 	Assets.Labels["label_trade_name_yours"]->Text = Player->Name;
 	Assets.Images["image_trade_portrait_yours"]->Texture = Player->Portrait;
 }

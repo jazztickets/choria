@@ -21,16 +21,18 @@
 #include <graphics.h>
 #include <assets.h>
 #include <SDL_keycode.h>
+#include <iostream>
 
 // Constructor
 _TextBox::_TextBox() :
-	Password(false),
 	Font(nullptr),
 	MaxLength(0),
-	CursorTimer(0) {
+	CursorPosition(0),
+	CursorTimer(0),
+	Password(false) {
 
 	//TODO fix
-	TextOffset = glm::vec2(5.0f, 22.0f);
+	ParentOffset = glm::vec2(5.0f, 22.0f);
 }
 
 // Destructor
@@ -60,20 +62,64 @@ void _TextBox::HandleInput(bool Pressed) {
 // Handle key event
 bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 
-	if(FocusedElement == this && Visible) {
+	if(FocusedElement == this && Visible && KeyEvent.Pressed) {
 		if(Text.length() < MaxLength && KeyEvent.Text[0] >= 32 && KeyEvent.Text[0] <= 126) {
-			Text += KeyEvent.Text[0];
-			ResetCursor();
+			if(CursorPosition > Text.length())
+				CursorPosition = Text.length();
 
+			Text.insert(CursorPosition, 1, KeyEvent.Text[0]);
+			CursorPosition++;
+
+			ResetCursor();
 			return true;
 		}
-		else if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_BACKSPACE && Text.length() > 0) {
-			Text.erase(Text.length() - 1, 1);
-			ResetCursor();
+		else if(KeyEvent.Scancode == SDL_SCANCODE_BACKSPACE && Text.length() > 0 && CursorPosition > 0) {
+			Text.erase(CursorPosition - 1, 1);
+			if(CursorPosition > 0)
+				CursorPosition--;
 
+			ResetCursor();
 			return true;
 		}
-		else if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
+		else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
+		}
+		else if(KeyEvent.Scancode == SDL_SCANCODE_DELETE) {
+			Text.erase(CursorPosition, 1);
+			if(CursorPosition >= Text.length())
+				CursorPosition = Text.length();
+
+			ResetCursor();
+			return true;
+		}
+		else if(KeyEvent.Scancode == SDL_SCANCODE_LEFT) {
+			if(Input.ModKeyDown(KMOD_ALT))
+				CursorPosition = 0;
+			else if(CursorPosition > 0)
+				CursorPosition--;
+
+			ResetCursor();
+			return true;
+		}
+		else if(KeyEvent.Scancode == SDL_SCANCODE_RIGHT) {
+			if(Input.ModKeyDown(KMOD_ALT))
+				CursorPosition = Text.length();
+			else if(CursorPosition < Text.length())
+				CursorPosition++;
+
+			ResetCursor();
+			return true;
+		}
+		else if(KeyEvent.Scancode == SDL_SCANCODE_HOME) {
+			CursorPosition = 0;
+
+			ResetCursor();
+			return true;
+		}
+		else if(KeyEvent.Scancode == SDL_SCANCODE_END) {
+			CursorPosition = Text.length();
+
+			ResetCursor();
+			return true;
 		}
 	}
 
@@ -95,13 +141,30 @@ void _TextBox::Render() const {
 	// Render base element
 	_Element::Render();
 
+	// Mask outside of bounds
+	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+	Graphics.EnableStencilTest();
+	Graphics.DrawMask(Bounds);
+
+	// Get width at cursor position
+	_TextBounds TextBounds;
+	Font->GetStringDimensions(RenderText.substr(0, CursorPosition), TextBounds);
+
 	// Draw text
-	glm::vec2 StartPosition = glm::vec2(Bounds.Start) + TextOffset;
-	float EndX = Font->DrawText(RenderText, StartPosition, glm::vec4(1.0f));
+	glm::vec2 StartPosition = glm::vec2(Bounds.Start) + ParentOffset;
+	Font->DrawText(RenderText, StartPosition, glm::vec4(1.0f));
 
 	// Draw cursor
 	if(CursorTimer < 0.5 && FocusedElement == this) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-		Graphics.DrawRectangle(glm::ivec2(EndX+1, StartPosition.y - Font->MaxAbove), glm::ivec2(EndX+2, StartPosition.y + Font->MaxBelow));
+		Graphics.DrawRectangle(glm::ivec2(StartPosition.x + TextBounds.Width+1, StartPosition.y - Font->MaxAbove), glm::ivec2(StartPosition.x + TextBounds.Width+2, StartPosition.y + Font->MaxBelow));
 	}
+
+	// Disable mask
+	Graphics.DisableStencilTest();
+
+	//Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+	//Graphics.SetColor(glm::vec4(1,0,0,1));
+	//Graphics.DrawRectangle(glm::vec2(StartPosition.x, StartPosition.y - Font->MaxAbove), glm::vec2(StartPosition.x + TextBounds.Width, StartPosition.y + TextBounds.BelowBase), false);
+	//Graphics.DrawRectangle(Bounds, false);
 }

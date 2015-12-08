@@ -121,7 +121,7 @@ void _Menu::InitNewCharacter() {
 	CreateButton->Enabled = false;
 
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
-	Name->Text = "";
+	Name->SetText("");
 
 	_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
 	Label->Text = "Name";
@@ -145,10 +145,10 @@ void _Menu::InitConnect(bool ConnectNow) {
 	ChangeLayout("element_menu_connect");
 
 	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
-	Host->Text = Config.LastHost;
+	Host->SetText(Config.LastHost);
 
 	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
-	Port->Text = Config.LastPort;
+	Port->SetText(Config.LastPort);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Color = COLOR_WHITE;
@@ -171,10 +171,10 @@ void _Menu::InitAccount() {
 	ChangeLayout("element_menu_account");
 
 	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
-	Username->Text = DefaultUsername;
+	Username->SetText(DefaultUsername);
 
 	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
-	Password->Text = DefaultPassword;
+	Password->SetText(DefaultPassword);
 	Password->Password = true;
 
 	_Label *Label = Assets.Labels["label_menu_account_message"];

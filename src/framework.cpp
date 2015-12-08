@@ -179,7 +179,7 @@ void _Framework::Update() {
 					}
 				} break;
 				case SDL_TEXTINPUT: {
-					_KeyEvent KeyEvent(Event.text.text, 0, 0, 1);
+					_KeyEvent KeyEvent(Event.text.text, 0, 1, 1);
 					State->KeyEvent(KeyEvent);
 				} break;
 				case SDL_MOUSEBUTTONDOWN:

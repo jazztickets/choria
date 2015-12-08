@@ -21,6 +21,7 @@
 #include <ui/element.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <string>
 
 // Forward Declarations
 class _Font;
@@ -38,16 +39,21 @@ class _TextBox : public _Element {
 		void HandleInput(bool Pressed) override;
 		void Render() const override;
 
+		void SetText(const std::string &Text) { this->Text = Text; CursorPosition = Text.length(); }
+		void Clear() { CursorTimer = 0; Text = ""; CursorPosition = 0; }
 		void ResetCursor() { CursorTimer = 0; }
 
-		std::string Text;
-		bool Password;
-
 		const _Font *Font;
-		glm::vec2 TextOffset;
+
+		std::string Text;
 		size_t MaxLength;
 
+		// Graphics
+		glm::vec2 ParentOffset;
+
+		size_t CursorPosition;
 		double CursorTimer;
+		bool Password;
 
 	private:
 

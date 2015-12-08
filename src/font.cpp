@@ -350,12 +350,6 @@ void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds
 		if(Glyph->OffsetY > (int)TestBounds.AboveBase)
 			TestBounds.AboveBase = (int)Glyph->OffsetY;
 	}
-
-	// Fix last char since it should be using width
-	if(Glyph) {
-		TestBounds.Width -= (int)Glyph->Advance;
-		TestBounds.Width += (int)(Glyph->Width + Glyph->OffsetX);
-	}
 }
 
 // Break up text into multiple strings based on max width
