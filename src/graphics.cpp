@@ -168,7 +168,7 @@ void _Graphics::SetupOpenGL() {
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnableVertexAttribArray(0);
@@ -395,7 +395,6 @@ void _Graphics::DrawMask(const _Bounds &Bounds) {
 
 	// Enable stencil
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glDepthMask(GL_FALSE);
 	glStencilMask(0x01);
 
 	// Write 1 to stencil buffer
@@ -415,7 +414,6 @@ void _Graphics::DrawMask(const _Bounds &Bounds) {
 	// Then draw element only where stencil is 1
 	glStencilFunc(GL_EQUAL, 0x01, 0x01);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthMask(GL_TRUE);
 	glStencilMask(0x00);
 }
 
@@ -704,7 +702,7 @@ void _Graphics::DirtyState() {
 	LastAttribLevel = -1;
 	LastColor = glm::vec4(-1, -1, -1, -1);
 	LastProgram = nullptr;
-	LastDepthTest = true;
+	LastDepthTest = false;
 }
 
 void _Graphics::SetDepthMask(bool Value) { glDepthMask(Value); }

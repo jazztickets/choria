@@ -69,58 +69,44 @@ bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 
 			Text.insert(CursorPosition, 1, KeyEvent.Text[0]);
 			CursorPosition++;
-
-			ResetCursor();
-			return true;
 		}
 		else if(KeyEvent.Scancode == SDL_SCANCODE_BACKSPACE && Text.length() > 0 && CursorPosition > 0) {
 			Text.erase(CursorPosition - 1, 1);
 			if(CursorPosition > 0)
 				CursorPosition--;
-
-			ResetCursor();
-			return true;
 		}
 		else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
+			return false;
 		}
 		else if(KeyEvent.Scancode == SDL_SCANCODE_DELETE) {
 			Text.erase(CursorPosition, 1);
 			if(CursorPosition >= Text.length())
 				CursorPosition = Text.length();
-
-			ResetCursor();
-			return true;
 		}
 		else if(KeyEvent.Scancode == SDL_SCANCODE_LEFT) {
 			if(Input.ModKeyDown(KMOD_ALT))
 				CursorPosition = 0;
 			else if(CursorPosition > 0)
 				CursorPosition--;
-
-			ResetCursor();
-			return true;
 		}
 		else if(KeyEvent.Scancode == SDL_SCANCODE_RIGHT) {
 			if(Input.ModKeyDown(KMOD_ALT))
 				CursorPosition = Text.length();
 			else if(CursorPosition < Text.length())
 				CursorPosition++;
-
-			ResetCursor();
-			return true;
 		}
 		else if(KeyEvent.Scancode == SDL_SCANCODE_HOME) {
 			CursorPosition = 0;
-
-			ResetCursor();
-			return true;
 		}
 		else if(KeyEvent.Scancode == SDL_SCANCODE_END) {
 			CursorPosition = Text.length();
-
-			ResetCursor();
-			return true;
 		}
+		else {
+			return false;
+		}
+
+		ResetCursor();
+		return true;
 	}
 
 	return false;
@@ -162,9 +148,4 @@ void _TextBox::Render() const {
 
 	// Disable mask
 	Graphics.DisableStencilTest();
-
-	//Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-	//Graphics.SetColor(glm::vec4(1,0,0,1));
-	//Graphics.DrawRectangle(glm::vec2(StartPosition.x, StartPosition.y - Font->MaxAbove), glm::vec2(StartPosition.x + TextBounds.Width, StartPosition.y + TextBounds.BelowBase), false);
-	//Graphics.DrawRectangle(Bounds, false);
 }

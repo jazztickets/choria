@@ -340,10 +340,9 @@ void _EditorState::Update(double FrameTime) {
 void _EditorState::Render(double BlendFactor) {
 
 	Graphics.Setup3D();
+	Camera->Set3DProjection(BlendFactor);
 
 	// Setup the viewing matrix
-	Graphics.Setup3D();
-	Camera->Set3DProjection(BlendFactor);
 	Graphics.SetProgram(Assets.Programs["pos"]);
 	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
@@ -360,9 +359,7 @@ void _EditorState::Render(double BlendFactor) {
 	Graphics.SetColor(COLOR_WHITE);
 	Graphics.SetProgram(Assets.Programs["pos"]);
 	Graphics.SetVBO(VBO_CIRCLE);
-	Graphics.SetDepthTest(false);
 	Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
-	Graphics.SetDepthTest(true);
 
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);

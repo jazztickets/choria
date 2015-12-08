@@ -429,6 +429,8 @@ void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
 	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
+
+	Graphics.DirtyState();
 }
 
 // Load map
