@@ -353,43 +353,41 @@ void _ClientState::Update(double FrameTime) {
 	Clock += FrameTime * MAP_CLOCK_SPEED;
 	if(Clock >= MAP_DAY_LENGTH)
 		Clock -= MAP_DAY_LENGTH;
-
 }
 
 // Render the state
 void _ClientState::Render(double BlendFactor) {
-	Menu.Render();
 
-	if(!Player || !Map)
-		return;
+	// Render in game
+	if(Player && Map) {
+		Graphics.Setup3D();
+		Camera->Set3DProjection(BlendFactor);
 
-	Graphics.Setup3D();
+		// Setup the viewing matrix
+		Graphics.SetProgram(Assets.Programs["pos"]);
+		glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		Graphics.SetProgram(Assets.Programs["pos_uv"]);
+		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
+		glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		Graphics.SetProgram(Assets.Programs["text"]);
+		glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
-	// Setup the viewing matrix
-	Graphics.Setup3D();
-	Camera->Set3DProjection(BlendFactor);
-	Graphics.SetProgram(Assets.Programs["pos"]);
-	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["text"]);
-	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		// Draw map and objects
+		Map->Render(Camera, Stats, Player);
 
-	// Draw map and objects
-	Map->Render(Camera, Stats, Player);
+		Graphics.Setup2D();
+		Graphics.SetStaticUniforms();
+		Graphics.SetProgram(Assets.Programs["text"]);
+		glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
-	Graphics.Setup2D();
-	Graphics.SetProgram(Assets.Programs["text"]);
-	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
+		// Draw states
+		if(Battle)
+			Battle->Render(BlendFactor);
 
-	// Draw states
-	if(Battle)
-		Battle->Render(BlendFactor);
-
-	// Draw HUD
-	HUD->Render(Time);
+		// Draw HUD
+		HUD->Render(Time);
+	}
 
 	// Draw menu
 	Menu.Render();

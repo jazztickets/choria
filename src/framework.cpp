@@ -116,6 +116,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 		// Set up subsystems
 		Graphics.Init(WindowSettings);
+		Graphics.SetDepthTest(false);
+		Graphics.SetDepthMask(false);
 		Assets.Init(false);
 		Graphics.SetStaticUniforms();
 

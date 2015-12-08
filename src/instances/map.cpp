@@ -359,7 +359,6 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 	// Draw map boundaries
 	if(RenderFlags & FILTER_BOUNDARY) {
 		Graphics.SetProgram(Assets.Programs["pos"]);
-		Graphics.SetDepthTest(false);
 		Graphics.SetVBO(VBO_NONE);
 		Graphics.SetColor(COLOR_RED);
 		Graphics.DrawRectangle(glm::vec2(-0.51f, -0.51f), glm::vec2(Size.x - 0.49f, Size.y - 0.49f));
@@ -401,8 +400,6 @@ void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	Graphics.SetColor(COLOR_WHITE);
-	Graphics.SetDepthTest(false);
-	Graphics.SetDepthMask(false);
 
 	int VertexIndex = 0;
 	int FaceIndex = 0;
@@ -422,9 +419,8 @@ void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
 	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
 	GLsizeiptr ElementBufferSize = FaceIndex * sizeof(glm::u32vec3);
 
-	glBindTexture(GL_TEXTURE_2D, TileAtlas->Texture->ID);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+	Graphics.SetTextureID(TileAtlas->Texture->ID);
+	Graphics.EnableAttribs(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices);
@@ -433,8 +429,6 @@ void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
 	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
-
-	Graphics.DirtyState();
 }
 
 // Load map

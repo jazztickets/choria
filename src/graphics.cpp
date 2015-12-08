@@ -307,7 +307,6 @@ void _Graphics::ClearScreen() {
 // Set up modelview matrix
 void _Graphics::Setup3D() {
 	glViewport(0, WindowSize.y - ViewportSize.y, ViewportSize.x, ViewportSize.y);
-	Graphics.SetDepthTest(true);
 }
 
 // Sets up the projection matrix for drawing 2D objects
@@ -315,7 +314,6 @@ void _Graphics::Setup2D() {
 
 	// Set viewport
 	glViewport(0, 0, WindowSize.x, WindowSize.y);
-	Graphics.SetDepthTest(false);
 }
 
 // Fade the screen
@@ -405,10 +403,10 @@ void _Graphics::DrawMask(const _Bounds &Bounds) {
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 
 	float Vertices[] = {
-		(float)Bounds.Start.x + 0.5f, (float)Bounds.End.y   + 0.5f,
-		(float)Bounds.End.x   + 0.5f, (float)Bounds.End.y   + 0.5f,
-		(float)Bounds.Start.x + 0.5f, (float)Bounds.Start.y + 0.5f,
-		(float)Bounds.End.x   + 0.5f, (float)Bounds.Start.y + 0.5f,
+		(float)Bounds.Start.x + 0.0f, (float)Bounds.End.y   + 1.0f,
+		(float)Bounds.End.x   + 1.0f, (float)Bounds.End.y   + 1.0f,
+		(float)Bounds.Start.x + 0.0f, (float)Bounds.Start.y + 0.0f,
+		(float)Bounds.End.x   + 1.0f, (float)Bounds.Start.y + 0.0f,
 	};
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
@@ -418,6 +416,7 @@ void _Graphics::DrawMask(const _Bounds &Bounds) {
 	glStencilFunc(GL_EQUAL, 0x01, 0x01);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDepthMask(GL_TRUE);
+	glStencilMask(0x00);
 }
 
 // Draw 3d sprite
@@ -523,10 +522,10 @@ void _Graphics::DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool
 
 	if(Filled) {
 		float Vertices[] = {
-			Start.x + 0.5f, End.y   + 0.5f,
-			End.x   + 0.5f, End.y   + 0.5f,
-			Start.x + 0.5f, Start.y + 0.5f,
-			End.x   + 0.5f, Start.y + 0.5f,
+			Start.x + 0.0f, End.y   + 1.0f,
+			End.x   + 1.0f, End.y   + 1.0f,
+			Start.x + 0.0f, Start.y + 0.0f,
+			End.x   + 1.0f, Start.y + 0.0f,
 		};
 
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);

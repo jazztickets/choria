@@ -441,8 +441,6 @@ void _Object::Render(const _Object *ClientPlayer) {
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-		Graphics.SetDepthTest(false);
-		Graphics.SetDepthMask(false);
 		Graphics.SetVBO(VBO_QUAD);
 
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
