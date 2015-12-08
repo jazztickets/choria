@@ -89,11 +89,19 @@ void _Camera::Update(double FrameTime) {
 	glm::vec2 Delta(TargetPosition - Position);
 	if(std::abs(Delta.x) > 0.01f)
 		Position.x += Delta.x / UpdateDivisor;
+	else
+		Position.x = TargetPosition.x;
+
 	if(std::abs(Delta.y) > 0.01f)
 		Position.y += Delta.y / UpdateDivisor;
+	else
+		Position.y = TargetPosition.y;
 
 	// Update distance
 	float DeltaZ = TargetPosition.z - Position.z;
 	if(std::abs(DeltaZ) > 0.01f)
 		Position.z += DeltaZ / UpdateDivisor;
+	else
+		Position.z = TargetPosition.z;
+
 }
