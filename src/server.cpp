@@ -82,6 +82,7 @@ _Server::_Server(uint16_t NetworkPort)
 
 	Scripting = new _Scripting();
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_AI);
+	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
 }
 
 // Destructor
@@ -1336,9 +1337,9 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, int Zone) {
+	//Zone = 1;
 	if(!Zone)
 		return;
-	//Zone = 1;
 
 	// Get monsters
 	std::list<int> MonsterIDs;

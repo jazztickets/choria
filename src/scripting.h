@@ -24,6 +24,7 @@
 
 // Forward Declarations
 class _Object;
+struct _ActionResult;
 
 // Classes
 class _Scripting {
@@ -37,11 +38,16 @@ class _Scripting {
 
 		void PushData(void *Data);
 		void PushObject(_Object *Object);
+		void PushActionResult(_ActionResult *ActionResult);
 		void PushObjectList(std::list<_Object *> &Objects);
 		void PushInt(int Value);
 
+		int GetInt(int Index);
+		void GetActionResult(int Index, _ActionResult &ActionResult);
+
 		void StartMethodCall(const std::string &TableName, const std::string &Function);
-		void FinishMethodCall(int ParameterCount);
+		void MethodCall(int ParameterCount, int ReturnCount);
+		void FinishMethodCall();
 
 		static void PrintStack(lua_State *LuaState);
 
@@ -53,6 +59,8 @@ class _Scripting {
 
 		static int ObjectSetBattleTarget(lua_State *LuaState);
 		static int ObjectSetAction(lua_State *LuaState);
+		static int ObjectGenerateDamage(lua_State *LuaState);
+		static int ObjectGenerateDefense(lua_State *LuaState);
 
 		lua_State *LuaState;
 		int CurrentTableIndex;

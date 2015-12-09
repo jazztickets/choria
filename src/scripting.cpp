@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <scripting.h>
 #include <objects/object.h>
+#include <instances/battle.h>
 #include <random.h>
 #include <stdexcept>
 #include <iostream>
@@ -77,6 +78,14 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushcclosure(LuaState, &ObjectSetAction, 1);
 	lua_setfield(LuaState, -2, "SetAction");
 
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGenerateDamage, 1);
+	lua_setfield(LuaState, -2, "GenerateDamage");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGenerateDefense, 1);
+	lua_setfield(LuaState, -2, "GenerateDefense");
+
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
 
@@ -96,6 +105,17 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "Pointer");
 }
 
+// Push action result onto stack
+void _Scripting::PushActionResult(_ActionResult *ActionResult) {
+	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, ActionResult->DamageDealt);
+	lua_setfield(LuaState, -2, "DamageDealt");
+
+	lua_pushinteger(LuaState, ActionResult->TargetHealthChange);
+	lua_setfield(LuaState, -2, "TargetHealthChange");
+}
+
 // Push list of objects
 void _Scripting::PushObjectList(std::list<_Object *> &Objects) {
 	lua_newtable(LuaState);
@@ -112,6 +132,28 @@ void _Scripting::PushObjectList(std::list<_Object *> &Objects) {
 // Push int value
 void _Scripting::PushInt(int Value) {
 	lua_pushinteger(LuaState, Value);
+}
+
+// Get return value as int
+int _Scripting::GetInt(int Index) {
+
+	return lua_tointeger(LuaState, Index + CurrentTableIndex);
+}
+
+// Get return value as action result
+void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
+	if(!lua_istable(LuaState, Index + CurrentTableIndex))
+		throw std::runtime_error("GetActionResult: Value is not a table!");
+
+	lua_pushstring(LuaState, "DamageDealt");
+	lua_gettable(LuaState, -2);
+	ActionResult.DamageDealt = lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "TargetHealthChange");
+	lua_gettable(LuaState, -2);
+	ActionResult.TargetHealthChange = lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
 }
 
 // Start a call to a lua class method, return table index
@@ -138,12 +180,16 @@ void _Scripting::StartMethodCall(const std::string &TableName, const std::string
 }
 
 // Run the function started by StartMethodCall
-void _Scripting::FinishMethodCall(int ParameterCount) {
+void _Scripting::MethodCall(int ParameterCount, int ReturnCount) {
 
 	// Call function
-	if(lua_pcall(LuaState, ParameterCount, 0, 0)) {
+	if(lua_pcall(LuaState, ParameterCount, ReturnCount, 0)) {
 		throw std::runtime_error(lua_tostring(LuaState, -1));
 	}
+}
+
+// Restore state
+void _Scripting::FinishMethodCall() {
 
 	// Restore stack
 	lua_settop(LuaState, CurrentTableIndex - 1);
@@ -171,6 +217,7 @@ int _Scripting::ObjectSetBattleTarget(lua_State *LuaState) {
 	lua_pushstring(LuaState, "Pointer");
 	lua_gettable(LuaState, -2);
 	_Object *Target = (_Object *)lua_touserdata(LuaState, -1);
+	lua_pop(LuaState, 1);
 
 	Object->BattleTarget = Target;
 
@@ -189,6 +236,24 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 		Object->BattleAction.Skill = Object->ActionBar[ActionBarIndex].Skill;
 
 	return 0;
+}
+
+// Generate damage
+int _Scripting::ObjectGenerateDamage(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	lua_pushinteger(LuaState, Object->GenerateDamage());
+
+	return 1;
+}
+
+// Generate defense
+int _Scripting::ObjectGenerateDefense(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	lua_pushinteger(LuaState, Object->GenerateDefense());
+
+	return 1;
 }
 
 // Print lua stack

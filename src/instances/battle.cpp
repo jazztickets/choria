@@ -27,6 +27,7 @@
 #include <actions.h>
 #include <buffer.h>
 #include <graphics.h>
+#include <scripting.h>
 #include <stats.h>
 #include <program.h>
 #include <assets.h>
@@ -389,7 +390,13 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 
 	// Update fighters
 	if(ActionResult.SkillUsed) {
-		ActionResult.SkillUsed->ResolveUse(ActionResult);
+		Server->Scripting->StartMethodCall("Skill_Attack", "ResolveBattleUse");
+		Server->Scripting->PushObject(ActionResult.SourceFighter);
+		Server->Scripting->PushObject(ActionResult.TargetFighter);
+		Server->Scripting->PushActionResult(&ActionResult);
+		Server->Scripting->MethodCall(3, 1);
+		Server->Scripting->GetActionResult(1, ActionResult);
+		Server->Scripting->FinishMethodCall();
 	}
 	else if(ActionResult.ItemUsed) {
 		int Index = -1;
@@ -557,7 +564,8 @@ void _Battle::ServerStartBattle() {
 
 	// Write fighter information
 	for(auto &Fighter : Fighters) {
-		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
+		//Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
+		Fighter->TurnTimer = 1;
 
 		// Write fighter type
 		Packet.Write<uint32_t>(Fighter->DatabaseID);

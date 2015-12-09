@@ -219,42 +219,6 @@ void _Skill::GetPowerRange(int Level, float &Min, float &Max) const {
 	Max = FinalPower + FinalPowerRange;
 }
 
-// Resolves the use of a skill in battle.
-void _Skill::ResolveUse(_ActionResult &ActionResult) const {
-	int SkillLevel = ActionResult.SourceFighter->SkillLevels[ID];
-
-	int Damage = 0, Healing = 0, ManaRestore = 0, ManaCost = 0;
-	switch(Type) {
-		case TYPE_ATTACK:
-			Damage = ActionResult.SourceFighter->GenerateDamage();
-		break;
-		case TYPE_SPELL:
-			switch(ID) {
-				// Heal
-				case 4:
-					Healing += GetPower(SkillLevel);
-				break;
-				// Flame, Lightning bolt
-				case 7:
-				case 12:
-					Damage = GetPower(SkillLevel);
-				break;
-			}
-			ManaCost = GetManaCost(SkillLevel);
-		break;
-	}
-
-	// Generate defense
-	Damage -= ActionResult.TargetFighter->GenerateDefense();
-	if(Damage < 0)
-		Damage = 0;
-
-	// Update results
-	ActionResult.DamageDealt = Damage;
-	ActionResult.TargetHealthChange += Healing - Damage;
-	ActionResult.SourceManaChange += ManaRestore - ManaCost;
-}
-
 // Determines if a skill can be used
 bool _Skill::CanUse(_Object *Fighter) const {
 	int Level = Fighter->SkillLevels[ID];

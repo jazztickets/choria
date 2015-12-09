@@ -337,7 +337,8 @@ void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighte
 			Scripting->PushObject(this);
 			Scripting->PushObjectList(Enemies);
 			Scripting->PushObjectList(Allies);
-			Scripting->FinishMethodCall(3);
+			Scripting->MethodCall(3, 0);
+			Scripting->FinishMethodCall();
 		}
 	}
 }
@@ -520,7 +521,7 @@ const _Tile *_Object::GetTile() {
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
 	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
-	//NextBattle = 5;
+	//NextBattle = 1;
 }
 
 // Stop a battle
