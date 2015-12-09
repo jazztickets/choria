@@ -653,64 +653,14 @@ _Map *_Server::GetMap(uint32_t MapID) {
 // Create player object and load stats from save
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
-	// Get character
-	Save->Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
-	Save->Database->BindInt(1, Peer->CharacterID);
-	if(!Save->Database->FetchRow()) {
-		Save->Database->CloseQuery();
-		return nullptr;
-	}
-
 	// Create object
 	_Object *Player = new _Object();
 	Peer->Object = Player;
+	Player->CharacterID = Peer->CharacterID;
 	Player->Peer = Peer;
 	Player->Stats = Stats;
 
-	// Set properties
-	Player->CharacterID = Save->Database->GetInt("id");
-	Player->SpawnMapID = Save->Database->GetInt("map_id");
-	Player->SpawnPoint = Save->Database->GetInt("spawnpoint");
-	Player->Name = Save->Database->GetString("name");
-	Player->PortraitID = Save->Database->GetInt("portrait_id");
-	Player->Experience = Save->Database->GetInt("experience");
-	Player->Gold = Save->Database->GetInt("gold");
-	Player->ActionBar.resize(Save->Database->GetInt("actionbar_size"));
-	Player->PlayTime = Save->Database->GetInt("playtime");
-	Player->Deaths = Save->Database->GetInt("deaths");
-	Player->MonsterKills = Save->Database->GetInt("monsterkills");
-	Player->PlayerKills = Save->Database->GetInt("playerkills");
-	Player->Bounty = Save->Database->GetInt("bounty");
-	Save->Database->CloseQuery();
-
-	// Set inventory
-	Save->Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
-	Save->Database->BindInt(1, Peer->CharacterID);
-	while(Save->Database->FetchRow()) {
-		Player->SetInventory(Save->Database->GetInt(0), Save->Database->GetInt(1), Save->Database->GetInt(2));
-	}
-	Save->Database->CloseQuery();
-
-	// Set skills
-	Save->Database->PrepareQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
-	Save->Database->BindInt(1, Peer->CharacterID);
-	while(Save->Database->FetchRow()) {
-		int SkillLevel = Save->Database->GetInt(1);
-		Player->SetSkillLevel(Save->Database->GetInt(0), SkillLevel);
-	}
-	Save->Database->CloseQuery();
-
-	// Set actionbar
-	Save->Database->PrepareQuery("SELECT slot, skill_id, item_id FROM actionbar WHERE character_id = @character_id");
-	Save->Database->BindInt(1, Peer->CharacterID);
-	while(Save->Database->FetchRow()) {
-		uint32_t Slot = Save->Database->GetInt("slot");
-		uint32_t SkillID = Save->Database->GetInt("skill_id");
-		uint32_t ItemID = Save->Database->GetInt("item_id");
-		Player->ActionBar[Slot].Skill = Stats->Skills[SkillID];
-		Player->ActionBar[Slot].Item = Stats->Items[ItemID];
-	}
-	Save->Database->CloseQuery();
+	Save->LoadPlayer(Player);
 
 	// Get stats
 	Player->GenerateNextBattle();

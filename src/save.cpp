@@ -21,6 +21,7 @@
 #include <objects/skill.h>
 #include <database.h>
 #include <config.h>
+#include <stats.h>
 #include <constants.h>
 #include <utils.h>
 #include <stdexcept>
@@ -200,6 +201,58 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 	Database->CloseQuery();
 
 	Database->RunQuery("END TRANSACTION");
+}
+
+// Load player from database
+void _Save::LoadPlayer(_Object *Player) {
+
+	// Get character info
+	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	if(Database->FetchRow()) {
+		Player->SpawnMapID = Database->GetInt("map_id");
+		Player->SpawnPoint = Database->GetInt("spawnpoint");
+		Player->Name = Database->GetString("name");
+		Player->PortraitID = Database->GetInt("portrait_id");
+		Player->Experience = Database->GetInt("experience");
+		Player->Gold = Database->GetInt("gold");
+		Player->ActionBar.resize(Database->GetInt("actionbar_size"));
+		Player->PlayTime = Database->GetInt("playtime");
+		Player->Deaths = Database->GetInt("deaths");
+		Player->MonsterKills = Database->GetInt("monsterkills");
+		Player->PlayerKills = Database->GetInt("playerkills");
+		Player->Bounty = Database->GetInt("bounty");
+	}
+	Database->CloseQuery();
+
+	// Set inventory
+	Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	while(Database->FetchRow()) {
+		Player->SetInventory(Database->GetInt(0), Database->GetInt(1), Database->GetInt(2));
+	}
+	Database->CloseQuery();
+
+	// Set skills
+	Database->PrepareQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	while(Database->FetchRow()) {
+		int SkillLevel = Database->GetInt(1);
+		Player->SetSkillLevel(Database->GetInt(0), SkillLevel);
+	}
+	Database->CloseQuery();
+
+	// Set actionbar
+	Database->PrepareQuery("SELECT slot, skill_id, item_id FROM actionbar WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	while(Database->FetchRow()) {
+		uint32_t Slot = Database->GetInt("slot");
+		uint32_t SkillID = Database->GetInt("skill_id");
+		uint32_t ItemID = Database->GetInt("item_id");
+		Player->ActionBar[Slot].Skill = Player->Stats->Skills[SkillID];
+		Player->ActionBar[Slot].Item = Player->Stats->Items[ItemID];
+	}
+	Database->CloseQuery();
 }
 
 // Saves the player
