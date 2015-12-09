@@ -353,7 +353,7 @@ void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds
 }
 
 // Break up text into multiple strings based on max width
-void _Font::BreakupString(const std::string &Text, float Width, std::vector<std::string> &Strings) const {
+void _Font::BreakupString(const std::string &Text, float Width, std::list<std::string> &Strings) const {
 
 	float X = 0;
 	FT_UInt PreviousGlyphIndex = 0;

@@ -18,12 +18,13 @@
 #pragma once
 
 // Libraries
-#include <texture.h>
+#include <glm/vec2.hpp>
+#include <string>
 
 // Forward Declarations
 class _Object;
-struct _Vendor;
-struct _ActionResult;
+class _Texture;
+class _Scripting;
 struct _Cursor;
 
 // Classes
@@ -31,36 +32,13 @@ class _Skill {
 
 	public:
 
-		enum SkillType {
-			TYPE_ATTACK,
-			TYPE_SPELL,
-			TYPE_PASSIVE,
-		};
-
-		void DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
-		void DrawDescription(int SkillLevel, glm::ivec2 &DrawPosition, int Width) const;
-
-		int GetManaCost(int Level) const;
-		int GetPower(int Level) const;
-		void GetPowerRange(int Level, int &Min, int &Max) const;
-		void GetPowerRangeRound(int Level, int &Min, int &Max) const;
-		void GetPowerRange(int Level, float &Min, float &Max) const;
-
-		bool CanUse(_Object *Fighter) const;
+		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
+		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &DrawPosition, int Width) const;
 
 		uint32_t ID;
-		int Type;
 		std::string Name;
-		std::string Info;
+		std::string Script;
 		const _Texture *Image;
-		int SkillCost;
-
-		float ManaCostBase;
-		float ManaCost;
-		float PowerBase;
-		float PowerRangeBase;
-		float Power;
-		float PowerRange;
 
 	private:
 

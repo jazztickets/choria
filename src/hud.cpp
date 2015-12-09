@@ -499,7 +499,7 @@ void _HUD::Render(double Time) {
 	// Draw skill information
 	DrawCursorSkill();
 	if(Tooltip.Skill)
-		Tooltip.Skill->DrawTooltip(Player, Tooltip, SkillsElement->Visible);
+		Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, Tooltip, SkillsElement->Visible);
 }
 
 // Starts the chat box
@@ -1324,11 +1324,11 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 			const _Skill *Skill = ClientState.Stats->Skills[SkillID];
 			if(Skill) {
 				int Direction, Slot;
-				if(Skill->Type == _Skill::TYPE_PASSIVE) {
+				/*if(Skill->Type == _Skill::TYPE_PASSIVE) {
 					Slot = Player->ActionBar.size()-1;
 					Direction = -1;
 				}
-				else {
+				else*/ {
 					Slot = 0;
 					Direction = 1;
 				}
@@ -1414,8 +1414,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (intptr_t)Button->Parent->UserData;
-			const _Skill *Skill = ClientState.Stats->Skills[SkillID];
-			if(Skill->SkillCost > SkillPointsRemaining || Player->SkillLevels[SkillID] >= 255)
+			if(SkillPointsRemaining == 0 || Player->SkillLevels[SkillID] >= 255)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);

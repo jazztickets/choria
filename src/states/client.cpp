@@ -26,22 +26,21 @@
 #include <graphics.h>
 #include <menu.h>
 #include <camera.h>
+#include <scripting.h>
 #include <assets.h>
 #include <stats.h>
 #include <hud.h>
+#include <program.h>
 #include <config.h>
 #include <actions.h>
 #include <buffer.h>
 #include <server.h>
 #include <packet.h>
 #include <log.h>
-#include <iostream>
-#include <sstream>
-
-#include <font.h>
-#include <program.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
+#include <sstream>
 
 _ClientState ClientState;
 
@@ -70,6 +69,9 @@ void _ClientState::Init() {
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
+	Scripting = new _Scripting();
+	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
+
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
@@ -88,6 +90,7 @@ void _ClientState::Init() {
 void _ClientState::Close() {
 	Menu.Close();
 
+	delete Scripting;
 	delete Battle;
 	delete Camera;
 	delete HUD;

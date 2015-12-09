@@ -43,6 +43,7 @@ class _Scripting {
 		void PushInt(int Value);
 
 		int GetInt(int Index);
+		std::string GetString(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 
 		void StartMethodCall(const std::string &TableName, const std::string &Function);

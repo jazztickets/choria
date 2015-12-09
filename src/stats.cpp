@@ -113,16 +113,8 @@ void _Stats::LoadSkills() {
 		_Skill *Skill = new _Skill;
 		Skill->ID = Database->GetInt("id");
 		Skill->Name = Database->GetString("name");
-		Skill->Info = Database->GetString("description");
+		Skill->Script = Database->GetString("script");
 		Skill->Image = Assets.Textures[Database->GetString("icon")];
-		Skill->Type = Database->GetInt("type");
-		Skill->SkillCost = Database->GetInt("skillcost");
-		Skill->ManaCostBase = Database->GetReal("manacostbase");
-		Skill->ManaCost = Database->GetReal("manacost");
-		Skill->PowerBase = Database->GetReal("powerbase");
-		Skill->PowerRangeBase = Database->GetReal("powerrangebase");
-		Skill->Power = Database->GetReal("power");
-		Skill->PowerRange = Database->GetReal("powerrange");
 		Skills[Skill->ID] = Skill;
 	}
 	Database->CloseQuery();

@@ -33,6 +33,7 @@ class _ClientNetwork;
 class _Server;
 class _Buffer;
 class _Stats;
+class _Scripting;
 
 // Play state
 class _ClientState : public _State {
@@ -70,6 +71,9 @@ class _ClientState : public _State {
 		_LogFile Log;
 		double Time;
 		double Clock;
+
+		// Scripting
+		_Scripting *Scripting;
 
 		// Objects
 		_Object *Player;

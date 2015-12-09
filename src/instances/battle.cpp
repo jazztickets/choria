@@ -275,8 +275,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
 
 		const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
-		if(Skill && !Skill->CanUse(ClientPlayer))
-			Skill = nullptr;
+		//if(Skill && !Skill->CanUse(ClientPlayer))
+		//	Skill = nullptr;
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		if(Item && (Item->Type != _Item::TYPE_POTION || ClientPlayer->ActionBar[ActionBarSlot].Count == 0))
@@ -389,12 +389,13 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	ActionResult.ItemUsed = SourceFighter->BattleAction.Item;
 
 	// Update fighters
-	if(ActionResult.SkillUsed) {
-		Server->Scripting->StartMethodCall("Skill_Attack", "ResolveBattleUse");
+	if(ActionResult.SkillUsed && ActionResult.SkillUsed->Script.length()) {
+		Server->Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "ResolveBattleUse");
+		Server->Scripting->PushInt(ActionResult.SourceFighter->SkillLevels[ActionResult.SkillUsed->ID]);
 		Server->Scripting->PushObject(ActionResult.SourceFighter);
 		Server->Scripting->PushObject(ActionResult.TargetFighter);
 		Server->Scripting->PushActionResult(&ActionResult);
-		Server->Scripting->MethodCall(3, 1);
+		Server->Scripting->MethodCall(4, 1);
 		Server->Scripting->GetActionResult(1, ActionResult);
 		Server->Scripting->FinishMethodCall();
 	}

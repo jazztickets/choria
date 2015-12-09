@@ -20,7 +20,7 @@
 // Libraries
 #include <ui/element.h>
 #include <glm/vec4.hpp>
-#include <vector>
+#include <list>
 
 // Forward Declarations
 class _Font;
@@ -44,6 +44,6 @@ class _Label : public _Element {
 
 	private:
 
-		std::vector<std::string> Texts;
+		std::list<std::string> Texts;
 
 };

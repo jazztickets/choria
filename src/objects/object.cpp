@@ -521,7 +521,7 @@ const _Tile *_Object::GetTile() {
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
 	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
-	//NextBattle = 1;
+	NextBattle = 1;
 }
 
 // Stop a battle
@@ -989,7 +989,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 
 	// Buying
 	if(Adjust > 0) {
-		if(Skill->SkillCost > GetSkillPointsRemaining() || SkillLevels[SkillID] >= 255)
+		if(GetSkillPointsRemaining() == 0 || SkillLevels[SkillID] >= 255)
 			return;
 
 		// Update level
@@ -1025,7 +1025,7 @@ void _Object::CalculateSkillPoints() {
 	for(const auto &SkillLevel : SkillLevels) {
 		const _Skill *Skill = Stats->Skills[SkillLevel.first];
 		if(Skill)
-			SkillPointsUsed += Skill->SkillCost * SkillLevel.second;
+			SkillPointsUsed += SkillLevel.second;
 	}
 }
 
@@ -1122,7 +1122,7 @@ void _Object::CalculateGearStats() {
 
 // Calculates skill bonuses
 void _Object::CalculateSkillStats() {
-
+/*
 	// Go through each skill bar
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		const _Skill *Skill = ActionBar[i].Skill;
@@ -1159,6 +1159,7 @@ void _Object::CalculateSkillStats() {
 			}
 		}
 	}
+	*/
 }
 
 // Combine all stats

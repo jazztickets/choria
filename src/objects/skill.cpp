@@ -16,22 +16,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/skill.h>
-#include <stats.h>
-#include <random.h>
-#include <buffer.h>
+#include <ui/element.h>
+#include <ui/label.h>
+#include <objects/object.h>
+#include <scripting.h>
 #include <font.h>
 #include <graphics.h>
 #include <input.h>
 #include <assets.h>
-#include <packet.h>
-#include <instances/battle.h>
-#include <objects/object.h>
-#include <ui/label.h>
-#include <ui/element.h>
-#include <algorithm>
+#include <sstream>
+#include <iostream>
 
 // Draw tooltip
-void _Skill::DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
+void _Skill::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
 	_Element *TooltipElement = Assets.Elements["element_skills_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_skills_tooltip_name"];
 	TooltipElement->SetVisible(true);
@@ -74,162 +71,53 @@ void _Skill::DrawTooltip(const _Object *Player, const _Cursor &Tooltip, bool Dra
 	// Get current level description
 	Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
 	DrawPosition.y += 25;
-	DrawDescription(SkillLevel, DrawPosition, Size.x);
+	DrawDescription(Scripting, SkillLevel, DrawPosition, Size.x);
 
 	// Get next level description
 	if(DrawNextLevel && SkillLevel > 0) {
 		DrawPosition.y += 25;
 		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += 25;
-		DrawDescription(SkillLevel+1, DrawPosition, Size.x);
+		DrawDescription(Scripting, SkillLevel+1, DrawPosition, Size.x);
 	}
 
 	// Additional information
-	switch(Type) {
+	/*switch(Type) {
 		case _Skill::TYPE_PASSIVE:
 			DrawPosition.y += 25;
 			Assets.Fonts["hud_small"]->DrawText("Passive skills must be equipped to the actionbar", DrawPosition, COLOR_GRAY, LEFT_BASELINE);
 		break;
-	}
+	}*/
 }
 
 // Draw skill description
-void _Skill::DrawDescription(int SkillLevel, glm::ivec2 &DrawPosition, int Width) const {
+void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &DrawPosition, int Width) const {
+	if(!Script.length())
+		return;
 
-	// Get power range
-	int PowerMin, PowerMax;
-	GetPowerRange(SkillLevel, PowerMin, PowerMax);
+	// Show unskilled levels as level 1
+	if(SkillLevel == 0)
+		SkillLevel = 1;
 
-	// Get power range rounded
-	int PowerMinRound, PowerMaxRound;
-	GetPowerRangeRound(SkillLevel, PowerMinRound, PowerMaxRound);
+	// Get skill description
+	Scripting->StartMethodCall(Script, "GetInfo");
+	Scripting->PushInt(SkillLevel);
+	Scripting->MethodCall(1, 1);
+	std::string Info = Scripting->GetString(1);
+	Scripting->FinishMethodCall();
 
-	// Get floating point range
-	float PowerMinFloat, PowerMaxFloat;
-	GetPowerRange(SkillLevel, PowerMinFloat, PowerMaxFloat);
+	int SpacingY = 18;
 
-	// Get percent
-	int PowerPercent = (int)std::roundf(PowerMaxFloat * 100);
+	std::stringstream Buffer(Info);
+	std::string Token;
 
 	// Draw description
-	int SpacingY = 25;
-	char Buffer[512];
-	Buffer[0] = 0;
-	switch(Type) {
-		case _Skill::TYPE_ATTACK:
-			sprintf(Buffer, Info.c_str(), PowerPercent);
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+	while(std::getline(Buffer, Token, '\n')) {
+		std::list<std::string> Strings;
+		Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings);
+		for(const auto &LineToken : Strings) {
+			Assets.Fonts["hud_small"]->DrawText(LineToken, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
-		break;
-		case _Skill::TYPE_SPELL:
-			switch(ID) {
-				case 4:
-					sprintf(Buffer, Info.c_str(), PowerMaxRound);
-				break;
-				case 7:
-				case 12:
-					sprintf(Buffer, Info.c_str(), PowerMinRound, PowerMaxRound);
-				break;
-			}
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-
-			sprintf(Buffer, "%d Mana", GetManaCost(SkillLevel));
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_BLUE, LEFT_BASELINE);
-			DrawPosition.y += 15;
-		break;
-		case _Skill::TYPE_PASSIVE:
-			switch(ID) {
-				case 5:
-				case 6:
-					sprintf(Buffer, Info.c_str(), PowerMaxRound);
-				break;
-				case 8:
-				case 9:
-					sprintf(Buffer, Info.c_str(), PowerMaxFloat);
-				break;
-				case 10:
-				case 11:
-					sprintf(Buffer, Info.c_str(), PowerMax);
-				break;
-			}
-			Assets.Fonts["hud_small"]->DrawText(Buffer, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		break;
-		default:
-			Assets.Fonts["hud_small"]->DrawText(Info.c_str(), DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		break;
+		}
 	}
-}
-
-// Gets the mana cost of a skill
-int _Skill::GetManaCost(int Level) const {
-	if(Level < 1)
-		Level = 1;
-
-	return (int)(ManaCostBase + ManaCost * (Level - 1));
-}
-
-// Gets a random number between min and max power
-int _Skill::GetPower(int Level) const {
-	if(Level < 1)
-		Level = 1;
-
-	// Get range
-	int Min, Max;
-	GetPowerRangeRound(Level, Min, Max);
-
-	return GetRandomInt(Min, Max);
-}
-
-// Returns the range of power
-void _Skill::GetPowerRange(int Level, int &Min, int &Max) const {
-	if(Level < 1)
-		Level = 1;
-
-	int FinalPower = (int)(PowerBase + Power * (Level - 1));
-	int FinalPowerRange = (int)(PowerRangeBase + PowerRange * (Level - 1));
-
-	Min = FinalPower - FinalPowerRange;
-	Max = FinalPower + FinalPowerRange;
-}
-
-// Returns the range of power rounded
-void _Skill::GetPowerRangeRound(int Level, int &Min, int &Max) const {
-	if(Level < 1)
-		Level = 1;
-
-	int FinalPower = (int)(std::roundf(PowerBase + Power * (Level - 1)));
-	int FinalPowerRange = (int)(std::roundf(PowerRangeBase + PowerRange * (Level - 1)));
-
-	Min = FinalPower - FinalPowerRange;
-	Max = FinalPower + FinalPowerRange;
-}
-
-// Returns the range of power
-void _Skill::GetPowerRange(int Level, float &Min, float &Max) const {
-	if(Level < 1)
-		Level = 1;
-
-	float FinalPower = PowerBase + Power * (Level - 1);
-	float FinalPowerRange = PowerRangeBase + PowerRange * (Level - 1);
-
-	Min = FinalPower - FinalPowerRange;
-	Max = FinalPower + FinalPowerRange;
-}
-
-// Determines if a skill can be used
-bool _Skill::CanUse(_Object *Fighter) const {
-	int Level = Fighter->SkillLevels[ID];
-
-	// Check for bad types
-	if(Type == TYPE_PASSIVE)
-		return false;
-
-	// Spell cost
-	if(Fighter->Mana < GetManaCost(Level))
-		return false;
-
-	return true;
 }

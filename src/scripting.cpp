@@ -140,6 +140,12 @@ int _Scripting::GetInt(int Index) {
 	return lua_tointeger(LuaState, Index + CurrentTableIndex);
 }
 
+// Get return value as string
+std::string _Scripting::GetString(int Index) {
+
+	return lua_tostring(LuaState, Index + CurrentTableIndex);
+}
+
 // Get return value as action result
 void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	if(!lua_istable(LuaState, Index + CurrentTableIndex))

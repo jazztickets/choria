@@ -22,7 +22,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <string>
-#include <vector>
+#include <list>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -54,7 +54,7 @@ class _Font {
 
 		float DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color=glm::vec4(1.0f), const _Alignment &Alignment=LEFT_BASELINE, float Scale=1.0f) const;
 		void GetStringDimensions(const std::string &Text, _TextBounds &TestBounds) const;
-		void BreakupString(const std::string &Text, float Width, std::vector<std::string> &Strings) const;
+		void BreakupString(const std::string &Text, float Width, std::list<std::string> &Strings) const;
 
 		float MaxHeight;
 		float MaxAbove;
