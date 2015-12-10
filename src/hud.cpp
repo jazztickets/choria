@@ -674,7 +674,7 @@ void _HUD::InitSkills() {
 		_Style *Style = new _Style();
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->Texture = Skill->Image;
+		Style->Texture = Skill->Texture;
 		Style->UserCreated = true;
 
 		// Add skill icon
@@ -682,7 +682,7 @@ void _HUD::InitSkills() {
 		Button->Identifier = "button_skills_skill";
 		Button->Parent = SkillsElement;
 		Button->Offset = Offset;
-		Button->Size = Skill->Image->Size;
+		Button->Size = Skill->Texture->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
 		Button->UserData = (void *)(intptr_t)Skill->ID;
@@ -748,9 +748,9 @@ void _HUD::InitSkills() {
 		MinusButton->Children.push_back(MinusLabel);
 
 		// Update position
-		Offset.x += Skill->Image->Size.x + Spacing.x;
-		if(Offset.x > SkillsElement->Size.x - Skill->Image->Size.x) {
-			Offset.y += Skill->Image->Size.y + Spacing.y;
+		Offset.x += Skill->Texture->Size.x + Spacing.x;
+		if(Offset.x > SkillsElement->Size.x - Skill->Texture->Size.x) {
+			Offset.y += Skill->Texture->Size.y + Spacing.y;
 			Offset.x = Start.x;
 		}
 
@@ -1094,7 +1094,7 @@ void _HUD::DrawActionBar() {
 		const _Skill *Skill = Player->ActionBar[i].Skill;
 		if(Skill) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Skill->Image);
+			Graphics.DrawCenteredImage(DrawPosition, Skill->Texture);
 		}
 
 		// Draw item icon
@@ -1237,7 +1237,7 @@ void _HUD::DrawCursorSkill() {
 	if(Cursor.Skill) {
 		glm::ivec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.Skill->Image);
+		Graphics.DrawCenteredImage(DrawPosition, Cursor.Skill->Texture);
 	}
 }
 

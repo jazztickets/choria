@@ -39,7 +39,7 @@ class _Skill {
 		uint32_t ID;
 		std::string Name;
 		std::string Script;
-		const _Texture *Image;
+		const _Texture *Texture;
 		TargetType TargetID;
 		bool TargetAlive;
 

@@ -234,9 +234,9 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw the skill used
 	if(ClientPlayer->BattleSide == BattleSide && BattleAction.Skill) {
-		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Image->Size.x/2 + 10, 0);
+		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Texture->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Image);
+		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture);
 	}
 
 	// Draw potential skill to use
@@ -244,7 +244,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		if(BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
 			const _Texture *Texture = nullptr;
 			if(ClientPlayer->PotentialAction.Skill)
-				Texture = ClientPlayer->PotentialAction.Skill->Image;
+				Texture = ClientPlayer->PotentialAction.Skill->Texture;
 			else if(ClientPlayer->PotentialAction.Item)
 				Texture = ClientPlayer->PotentialAction.Item->Image;
 

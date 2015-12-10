@@ -20,11 +20,13 @@
 // Libraries
 #include <list>
 #include <cstdint>
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Object;
 class _Skill;
 class _Item;
+class _Texture;
 class _Buffer;
 class _Element;
 class _Stats;
@@ -47,6 +49,9 @@ struct _ActionResult {
 	_ActionResult() :
 		SourceFighter(nullptr),
 		TargetFighter(nullptr),
+		LastPosition(0, 0),
+		Position(0, 0),
+		Texture(nullptr),
 		SkillUsed(nullptr),
 		ItemUsed(nullptr),
 		DamageDealt(0),
@@ -58,6 +63,9 @@ struct _ActionResult {
 
 	_Object *SourceFighter;
 	_Object *TargetFighter;
+	glm::vec2 LastPosition;
+	glm::vec2 Position;
+	const _Texture *Texture;
 	const _Skill *SkillUsed;
 	const _Item *ItemUsed;
 	int DamageDealt;
@@ -144,8 +152,8 @@ class _Battle {
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
 
-		void RenderBattle();
-		void RenderActionResults(_ActionResult &ActionResult);
+		void RenderBattle(double BlendFactor);
+		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
 		void RenderBattleWin();
 		void RenderBattleLose();
 

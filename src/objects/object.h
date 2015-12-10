@@ -230,8 +230,8 @@ class _Object {
 
 		// Render
 		const _Texture *Portrait;
-		glm::ivec2 BattleOffset;
-		glm::ivec2 ResultPosition;
+		glm::vec2 BattleOffset;
+		glm::vec2 ResultPosition;
 
 		// Monster
 		uint32_t DatabaseID;

@@ -220,7 +220,7 @@ void _Framework::Update() {
 				TimeStepAccumulator -= TimeStep;
 			}
 
-			State->Render(TimeStepAccumulator);
+			State->Render(TimeStepAccumulator / TimeStep);
 		} break;
 		case CLOSE: {
 			if(State)

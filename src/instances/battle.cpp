@@ -123,6 +123,16 @@ void _Battle::Update(double FrameTime) {
 			// Update action results
 			for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
 				_ActionResult &ActionResult = *Iterator;
+
+				// Find start position
+				glm::vec2 StartPosition = ActionResult.SourceFighter->ResultPosition - glm::vec2(ActionResult.SourceFighter->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
+				ActionResult.LastPosition = ActionResult.Position;
+
+				// Interpolate between start and end position of action used
+				ActionResult.Position = glm::mix(StartPosition, ActionResult.TargetFighter->ResultPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
+				if(ActionResult.Time == 0)
+					ActionResult.LastPosition = ActionResult.Position;
+
 				ActionResult.Time += FrameTime;
 				if(ActionResult.Time >= ACTIONRESULT_TIMEOUT) {
 					Iterator = ActionResults.erase(Iterator);
@@ -147,13 +157,13 @@ void _Battle::Render(double BlendFactor) {
 			RenderBattleLose();
 		break;
 		default:
-			RenderBattle();
+			RenderBattle(BlendFactor);
 		break;
 	}
 }
 
 // Renders the battle part
-void _Battle::RenderBattle() {
+void _Battle::RenderBattle(double BlendFactor) {
 	BattleElement->Render();
 
 	// Draw fighters
@@ -163,17 +173,14 @@ void _Battle::RenderBattle() {
 
 	// Draw action results
 	for(auto &ActionResult : ActionResults) {
-		RenderActionResults(ActionResult);
+		RenderActionResults(ActionResult, BlendFactor);
 	}
 }
 
 // Render results of an action
-void _Battle::RenderActionResults(_ActionResult &ActionResult) {
+void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFactor) {
 	if(!ActionResult.TargetFighter || !ActionResult.SourceFighter)
 		return;
-
-	glm::ivec2 TargetDrawPosition = ActionResult.TargetFighter->ResultPosition;
-	glm::ivec2 SourceDrawPosition = ActionResult.SourceFighter->ResultPosition;
 
 	// Get alpha
 	double TimeLeft = ACTIONRESULT_TIMEOUT - ActionResult.Time;
@@ -181,22 +188,13 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult) {
 	if(TimeLeft < ACTIONRESULT_FADETIME)
 		AlphaPercent = TimeLeft / ACTIONRESULT_FADETIME;
 
-	// Get skill used
-	const _Texture *SkillTexture;
-	if(ActionResult.SkillUsed)
-		SkillTexture = ActionResult.SkillUsed->Image;
-	else if(ActionResult.ItemUsed)
-		SkillTexture = ActionResult.ItemUsed->Image;
-	else
-		SkillTexture = Assets.Textures["skills/attack.png"];
+	// Get final draw position
+	glm::vec2 DrawPosition = glm::mix(ActionResult.LastPosition, ActionResult.Position, BlendFactor);
 
-	// Draw skill icon used on target
-	glm::ivec2 BattleActionUsedPosition = SourceDrawPosition - glm::ivec2(ActionResult.SourceFighter->Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
-	glm::vec2 IconPosition = glm::mix(BattleActionUsedPosition, TargetDrawPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
-
+	// Draw icon
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.DrawCenteredImage(IconPosition, SkillTexture, WhiteAlpha);
+	Graphics.DrawCenteredImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
 
 	// Draw damage dealt
 	glm::vec4 TextColor = COLOR_WHITE;
@@ -205,7 +203,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult) {
 
 	std::stringstream Buffer;
 	Buffer << std::abs(ActionResult.TargetHealthChange);
-	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), IconPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 
 // Renders the battle win screen
@@ -492,6 +490,14 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	ActionResult.SourceManaChange = Data.Read<int32_t>();
 	int SourceFighterHealth = Data.Read<int32_t>();
 	int SourceFighterMana = Data.Read<int32_t>();
+
+	// Set texture
+	if(ActionResult.SkillUsed)
+		ActionResult.Texture = ActionResult.SkillUsed->Texture;
+	else if(ActionResult.ItemUsed)
+		ActionResult.Texture = ActionResult.ItemUsed->Image;
+	else
+		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
 	// Update source fighter
 	ActionResult.SourceFighter = GetObjectByID(SourceBattleID);
@@ -820,7 +826,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 // Calculates a screen position for a slot
 void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 	_Element *BattleElement = Assets.Elements["element_battle"];
-	glm::ivec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2;
+	glm::vec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2;
 
 	// Check sides
 	if(Fighter->BattleSide == 0) {
