@@ -411,6 +411,7 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		ActionResult.SourceFighter->UpdateInventory(Index, -1);
 	}
 
+	// Apply costs
 	if(ActionResult.SkillUsed) {
 		if(!ActionResult.SkillUsed->CanUse(Scripting, SourceFighter))
 			return;
@@ -463,12 +464,6 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		// Update target
 		ActionResult.TargetFighter->UpdateHealth(ActionResult.TargetHealthChange);
 		ActionResult.TargetFighter->UpdateMana(ActionResult.TargetManaChange);
-
-		// Update source health and mana
-		//int HealthUpdate, ManaUpdate;
-		//SourceFighter->UpdateRegen(HealthUpdate, ManaUpdate);
-		//ActionResult.SourceHealthChange += HealthUpdate;
-		//ActionResult.SourceManaChange += ManaUpdate;
 
 		Packet.Write<char>(ActionResult.TargetFighter->BattleID);
 		Packet.Write<int32_t>(ActionResult.DamageDealt);
@@ -810,7 +805,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 	ClientGoldReceived = Data.Read<int32_t>();
 	int ItemCount = Data.Read<char>();
 	for(int i = 0; i < ItemCount; i++) {
-		int ItemID = Data.Read<int32_t>();
+		uint32_t ItemID = Data.Read<uint32_t>();
 		const _Item *Item = Stats->Items[ItemID];
 		ClientItemDrops.push_back(Item);
 		ClientPlayer->AddItem(Item, 1, -1);
