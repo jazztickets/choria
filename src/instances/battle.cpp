@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <glm/gtc/type_ptr.hpp>
 
 // Constructor
 _Battle::_Battle() :
@@ -173,7 +174,6 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult) {
 
 	glm::ivec2 TargetDrawPosition = ActionResult.TargetFighter->ResultPosition;
 	glm::ivec2 SourceDrawPosition = ActionResult.SourceFighter->ResultPosition;
-	TargetDrawPosition.y -= ActionResult.Time * ACTIONRESULT_SPEED;
 
 	// Get alpha
 	double TimeLeft = ACTIONRESULT_TIMEOUT - ActionResult.Time;
@@ -190,25 +190,22 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult) {
 	else
 		SkillTexture = Assets.Textures["skills/attack.png"];
 
-	// Get color
-	glm::vec4 Color = COLOR_WHITE;
-	Color.a = AlphaPercent;
+	// Draw skill icon used on target
+	glm::ivec2 BattleActionUsedPosition = SourceDrawPosition - glm::ivec2(ActionResult.SourceFighter->Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
+	glm::vec2 IconPosition = glm::mix(BattleActionUsedPosition, TargetDrawPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
 
-	// Draw skill icon
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.DrawCenteredImage(TargetDrawPosition, SkillTexture, WhiteAlpha);
-
-	glm::ivec2 BattleActionUsedPosition = SourceDrawPosition - glm::ivec2(ActionResult.SourceFighter->Portrait->Size.x/2 + SkillTexture->Size.x/2 + 10, 0);
-	Graphics.DrawCenteredImage(BattleActionUsedPosition, SkillTexture, Color);
+	Graphics.DrawCenteredImage(IconPosition, SkillTexture, WhiteAlpha);
 
 	// Draw damage dealt
+	glm::vec4 TextColor = COLOR_WHITE;
 	if(ActionResult.TargetHealthChange > 0)
-		Color = COLOR_GREEN;
+		TextColor = COLOR_GREEN;
 
 	std::stringstream Buffer;
 	Buffer << std::abs(ActionResult.TargetHealthChange);
-	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), TargetDrawPosition + glm::ivec2(0, 7), Color, CENTER_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), IconPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 
 // Renders the battle win screen
