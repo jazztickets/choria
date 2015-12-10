@@ -68,7 +68,6 @@ _Object::_Object()
 	AITimer(1.0),
 	BattleID(-1),
 	BattleSide(0),
-	BattleTarget(nullptr),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
 
@@ -241,19 +240,21 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 
 	// Draw potential skill to use
-	if(ClientPlayer->BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
-		const _Texture *Texture = nullptr;
-		if(ClientPlayer->PotentialAction.Skill)
-			Texture = ClientPlayer->PotentialAction.Skill->Image;
-		else if(ClientPlayer->PotentialAction.Item)
-			Texture = ClientPlayer->PotentialAction.Item->Image;
+	for(auto &BattleTarget : ClientPlayer->BattleTargets) {
+		if(BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
+			const _Texture *Texture = nullptr;
+			if(ClientPlayer->PotentialAction.Skill)
+				Texture = ClientPlayer->PotentialAction.Skill->Image;
+			else if(ClientPlayer->PotentialAction.Item)
+				Texture = ClientPlayer->PotentialAction.Item->Image;
 
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		glm::vec4 Color(COLOR_WHITE);
-		if(Time - (int)Time < 0.5f)
-			Color.a = 0.5f;
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			glm::vec4 Color(COLOR_WHITE);
+			if(Time - (int)Time < 0.5f)
+				Color.a = 0.5f;
 
-		Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture, Color);
+			Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture, Color);
+		}
 	}
 }
 

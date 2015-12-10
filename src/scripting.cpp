@@ -92,7 +92,7 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushboolean(LuaState, Object->BattleAction.IsSet());
 	lua_setfield(LuaState, -2, "BattleActionIsSet");
 
-	lua_pushlightuserdata(LuaState, Object->BattleTarget);
+	lua_pushlightuserdata(LuaState, Object->BattleTargets.front());
 	lua_setfield(LuaState, -2, "BattleTarget");
 
 	lua_pushinteger(LuaState, Object->BattleSide);
@@ -225,7 +225,7 @@ int _Scripting::ObjectSetBattleTarget(lua_State *LuaState) {
 	_Object *Target = (_Object *)lua_touserdata(LuaState, -1);
 	lua_pop(LuaState, 1);
 
-	Object->BattleTarget = Target;
+	Object->BattleTargets.push_back(Target);
 
 	return 0;
 }

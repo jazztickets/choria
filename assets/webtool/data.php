@@ -45,10 +45,11 @@
 		$id = $result[$array_keys[0]];
 ?>
 	<tr>
-		<td><a href="data_ae.php?id=<?=$id?>&idname=<?=$array_keys[0]?>&table=<?=$table?>&mode=edit"><?=$id?></a></td>
+		<td><?=$id?></td>
 		<? for($i = 1; $i < $key_count; $i++) { ?>
 		<td><?=$result[$array_keys[$i]]?></td>
 		<? } ?>
+		<td><a href="data_ae.php?id=<?=$id?>&idname=<?=$array_keys[0]?>&table=<?=$table?>&mode=edit">Edit</a></td>
 		<td><a href="data_ae.php?id=<?=$id?>&idname=<?=$array_keys[0]?>&table=<?=$table?>&mode=remove" onclick="return confirm('Sure about that?');">Remove</a></td>
 	</tr>
 <?

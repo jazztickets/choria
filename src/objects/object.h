@@ -223,7 +223,7 @@ class _Object {
 		double AITimer;
 		int BattleID;
 		int BattleSide;
-		_Object *BattleTarget;
+		std::list<_Object *> BattleTargets;
 		_Action BattleAction;
 		_Action PotentialAction;
 		std::list<uint32_t> ItemDropsReceived;
