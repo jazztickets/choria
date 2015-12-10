@@ -1036,7 +1036,7 @@ bool _Object::CanBattle() {
 }
 
 // Calculates all of the player stats
-void _Object::CalculatePlayerStats() {
+void _Object::CalculateStats() {
 	HealthRegen = ManaRegen = 0.0f;
 	MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
 	MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
@@ -1059,6 +1059,8 @@ void _Object::CalculatePlayerStats() {
 	// Cap stats
 	UpdateHealth(0);
 	UpdateMana(0);
+
+	RefreshActionBarCount();
 }
 
 // Calculates the base level stats

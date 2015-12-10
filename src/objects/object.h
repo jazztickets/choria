@@ -133,7 +133,7 @@ class _Object {
 		// -- END FROM FIGHTER --
 
 		// Stats
-		void CalculatePlayerStats();
+		void CalculateStats();
 
 		// Experience
 		float GetNextLevelPercent() const;

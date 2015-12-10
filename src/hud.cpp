@@ -214,7 +214,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			ClientState.Network->SendPacket(Packet);
 			Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
-			Player->CalculatePlayerStats();
+			Player->CalculateStats();
 			CloseWindows();
 		}
 		// Cancel trader button
@@ -244,7 +244,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 								ClientState.Network->SendPacket(Packet);
 
 								ResetAcceptButton();
-								Player->CalculatePlayerStats();
+								Player->CalculateStats();
 							}
 						break;
 						// Sell an item
@@ -1276,7 +1276,7 @@ void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
 		Packet.Write<char>(TargetSlot);
 		ClientState.Network->SendPacket(Packet);
 
-		Player->CalculatePlayerStats();
+		Player->CalculateStats();
 	}
 }
 
@@ -1301,7 +1301,7 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	if(Deleted)
 		Item->Reset();
 
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 }
 
 // Adjust skill level
@@ -1350,7 +1350,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 
 	// Update player
 	Player->CalculateSkillPoints();
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 	RefreshSkillButtons();
 }
 
@@ -1376,7 +1376,7 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
 	Player->ActionBar[Slot] = Action;
 	Player->RefreshActionBarCount();
 
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 	ActionBarChanged = true;
 }
 

@@ -550,7 +550,7 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 
 	Player->RefreshActionBarCount();
 	Player->CalculateSkillPoints();
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 	Player->RestoreHealthMana();
 
 	HUD->SetActionBarSize(Player->ActionBar.size());
@@ -991,7 +991,7 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->Mana = Data.Read<int32_t>();
 	Player->HealthAccumulator = Data.Read<float>();
 	Player->ManaAccumulator = Data.Read<float>();
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 }
 
 // Creates an object from a buffer

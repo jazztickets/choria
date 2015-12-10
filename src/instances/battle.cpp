@@ -413,11 +413,29 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	int Index = -1;
 	if(ActionResult.ItemUsed && ActionResult.SourceFighter->FindItem(ActionResult.ItemUsed, Index)) {
 		ActionResult.SourceFighter->UpdateInventory(Index, -1);
-		ActionResult.TargetHealthChange = ActionResult.ItemUsed->HealthRestore;
-		ActionResult.TargetManaChange = ActionResult.ItemUsed->ManaRestore;
 	}
+	//ActionResult.SourceFighter->UpdateHealth(ActionResult.SourceHealthChange);
+	//ActionResult.SourceFighter->UpdateMana(ActionResult.SourceManaChange);
+
+	// Build packet for results
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::BATTLE_ACTIONRESULTS);
+
+	// Source fighter
+	Packet.Write<uint8_t>(ActionResult.SourceFighter->BattleID);
+
+	// Write action used
+	uint32_t SkillID = ActionResult.SkillUsed ? ActionResult.SkillUsed->ID : 0;
+	uint32_t ItemID = ActionResult.ItemUsed ? ActionResult.ItemUsed->ID : 0;
+	Packet.Write<uint32_t>(SkillID);
+	Packet.Write<uint32_t>(ItemID);
+	Packet.Write<int32_t>(ActionResult.SourceHealthChange);
+	Packet.Write<int32_t>(ActionResult.SourceManaChange);
+	Packet.Write<int32_t>(ActionResult.SourceFighter->Health);
+	Packet.Write<int32_t>(ActionResult.SourceFighter->Mana);
 
 	// Update each target
+	Packet.Write<uint8_t>(SourceFighter->BattleTargets.size());
 	for(auto &BattleTarget : SourceFighter->BattleTargets) {
 		ActionResult.TargetFighter = BattleTarget;
 
@@ -432,6 +450,14 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 			Server->Scripting->GetActionResult(1, ActionResult);
 			Server->Scripting->FinishMethodCall();
 		}
+		else if(ActionResult.ItemUsed) {
+			ActionResult.TargetHealthChange = ActionResult.ItemUsed->HealthRestore;
+			ActionResult.TargetManaChange = ActionResult.ItemUsed->ManaRestore;
+		}
+
+		// Update target
+		ActionResult.TargetFighter->UpdateHealth(ActionResult.TargetHealthChange);
+		ActionResult.TargetFighter->UpdateMana(ActionResult.TargetManaChange);
 
 		// Update source health and mana
 		//int HealthUpdate, ManaUpdate;
@@ -439,42 +465,16 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		//ActionResult.SourceHealthChange += HealthUpdate;
 		//ActionResult.SourceManaChange += ManaUpdate;
 
-		//TODO move outside loop
-		ActionResult.SourceFighter->UpdateHealth(ActionResult.SourceHealthChange);
-		ActionResult.SourceFighter->UpdateMana(ActionResult.SourceManaChange);
-
-		// Update fighters
-		ActionResult.TargetFighter->UpdateHealth(ActionResult.TargetHealthChange);
-		ActionResult.TargetFighter->UpdateMana(ActionResult.TargetManaChange);
-
-		// Build packet for results
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::BATTLE_ACTIONRESULTS);
-
-		uint32_t SkillID = 0;
-		uint32_t ItemID = 0;
-		if(ActionResult.SkillUsed)
-			SkillID = ActionResult.SkillUsed->ID;
-		if(ActionResult.ItemUsed)
-			ItemID = ActionResult.ItemUsed->ID;
-
-		Packet.Write<char>(ActionResult.SourceFighter->BattleID);
 		Packet.Write<char>(ActionResult.TargetFighter->BattleID);
-		Packet.Write<uint32_t>(SkillID);
-		Packet.Write<uint32_t>(ItemID);
 		Packet.Write<int32_t>(ActionResult.DamageDealt);
-		Packet.Write<int32_t>(ActionResult.SourceHealthChange);
-		Packet.Write<int32_t>(ActionResult.SourceManaChange);
 		Packet.Write<int32_t>(ActionResult.TargetHealthChange);
 		Packet.Write<int32_t>(ActionResult.TargetManaChange);
-		Packet.Write<int32_t>(ActionResult.SourceFighter->Health);
-		Packet.Write<int32_t>(ActionResult.SourceFighter->Mana);
 		Packet.Write<int32_t>(ActionResult.TargetFighter->Health);
 		Packet.Write<int32_t>(ActionResult.TargetFighter->Mana);
-
-		// Send packet
-		BroadcastPacket(Packet);
 	}
+
+	// Send packet
+	BroadcastPacket(Packet);
 
 	// Reset fighter
 	SourceFighter->TurnTimer = 0.0;
@@ -486,22 +486,15 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 void _Battle::ClientResolveAction(_Buffer &Data) {
 
 	_ActionResult ActionResult;
-	int SourceBattleID = Data.Read<char>();
-	int TargetBattleID = Data.Read<char>();
-
+	uint8_t SourceBattleID = Data.Read<uint8_t>();
 	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 	ActionResult.SkillUsed = Stats->Skills[SkillID];
 	ActionResult.ItemUsed = Stats->Items[ItemID];
-	ActionResult.DamageDealt = Data.Read<int32_t>();
 	ActionResult.SourceHealthChange = Data.Read<int32_t>();
 	ActionResult.SourceManaChange = Data.Read<int32_t>();
-	ActionResult.TargetHealthChange = Data.Read<int32_t>();
-	ActionResult.TargetManaChange = Data.Read<int32_t>();
 	int SourceFighterHealth = Data.Read<int32_t>();
 	int SourceFighterMana = Data.Read<int32_t>();
-	int TargetFighterHealth = Data.Read<int32_t>();
-	int TargetFighterMana = Data.Read<int32_t>();
 
 	// Update source fighter
 	ActionResult.SourceFighter = GetObjectByID(SourceBattleID);
@@ -522,14 +515,25 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		}
 	}
 
-	// Update target fighter
-	ActionResult.TargetFighter = GetObjectByID(TargetBattleID);
-	if(ActionResult.TargetFighter) {
-		ActionResult.TargetFighter->Health = TargetFighterHealth;
-		ActionResult.TargetFighter->Mana = TargetFighterMana;
-	}
+	// Update targets
+	uint8_t TargetCount = Data.Read<uint8_t>();
+	for(uint8_t i = 0; i < TargetCount; i++) {
+		uint8_t TargetBattleID = Data.Read<uint8_t>();
+		ActionResult.DamageDealt = Data.Read<int32_t>();
+		ActionResult.TargetHealthChange = Data.Read<int32_t>();
+		ActionResult.TargetManaChange = Data.Read<int32_t>();
+		int TargetFighterHealth = Data.Read<int32_t>();
+		int TargetFighterMana = Data.Read<int32_t>();
 
-	ActionResults.push_back(ActionResult);
+		// Update target fighter
+		ActionResult.TargetFighter = GetObjectByID(TargetBattleID);
+		if(ActionResult.TargetFighter) {
+			ActionResult.TargetFighter->Health = TargetFighterHealth;
+			ActionResult.TargetFighter->Mana = TargetFighterMana;
+		}
+
+		ActionResults.push_back(ActionResult);
+	}
 }
 
 // Get the object pointer battle id
@@ -741,7 +745,7 @@ void _Battle::ServerEndBattle() {
 		int CurrentLevel = Fighter->Level;
 		Fighter->Experience += ExperienceEarned;
 		Fighter->UpdateGold(GoldEarned);
-		Fighter->CalculatePlayerStats();
+		Fighter->CalculateStats();
 		int NewLevel = Fighter->Level;
 		if(NewLevel > CurrentLevel) {
 			Fighter->RestoreHealthMana();

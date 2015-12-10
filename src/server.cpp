@@ -664,7 +664,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	// Get stats
 	Player->GenerateNextBattle();
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 	Player->RestoreHealthMana();
 
 	return Player;
@@ -756,7 +756,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 
 	// Move items
 	Player->MoveInventory(OldSlot, NewSlot);
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 
 	// Check for trading players
 	_Object *TradePlayer = Player->TradePlayer;
@@ -860,7 +860,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		// Update player
 		Player->UpdateGold(-Price);
 		Player->AddItem(Item, Amount, TargetSlot);
-		Player->CalculatePlayerStats();
+		Player->CalculateStats();
 	}
 	else {
 		if(Slot >= _Object::INVENTORY_COUNT)
@@ -892,7 +892,7 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	// Exchange items
 	Player->AcceptTrader(RequiredItemSlots, RewardSlot);
 	Player->Trader = nullptr;
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 }
 
 // Handle a skill bar change
@@ -906,7 +906,7 @@ void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 	for(size_t i = 0; i < Player->ActionBar.size(); i++)
 		Player->ActionBar[i].Unserialize(Data, Stats);
 
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 }
 
 // Handles a skill adjust
@@ -927,7 +927,7 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 	}
 
 	Player->CalculateSkillPoints();
-	Player->CalculatePlayerStats();
+	Player->CalculateStats();
 }
 
 // Handle a trade request
