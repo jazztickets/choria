@@ -30,6 +30,7 @@ class _Texture;
 class _Buffer;
 class _Element;
 class _Stats;
+class _Scripting;
 class _Server;
 class _ClientNetwork;
 
@@ -138,6 +139,7 @@ class _Battle {
 
 		_Stats *Stats;
 		_Server *Server;
+		_Scripting *Scripting;
 		_ClientNetwork *ClientNetwork;
 		_Object *ClientPlayer;
 
@@ -160,7 +162,7 @@ class _Battle {
 		// State
 		int State;
 		bool Done;
-		double Timer;
+		double Time;
 		double WaitTimer;
 
 		// Objects

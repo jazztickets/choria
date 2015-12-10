@@ -26,6 +26,7 @@
 class _Object;
 class _Texture;
 class _Scripting;
+struct _ActionResult;
 struct _Cursor;
 
 // Classes
@@ -35,6 +36,9 @@ class _Skill {
 
 		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
 		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &DrawPosition, int Width) const;
+
+		bool CanUse(_Scripting *Scripting, _Object *Object) const;
+		void ApplyCost(_Scripting *Scripting, _Object *Object, _ActionResult &ActionResult) const;
 
 		uint32_t ID;
 		std::string Name;

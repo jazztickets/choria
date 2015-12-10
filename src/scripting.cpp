@@ -101,6 +101,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Health);
 	lua_setfield(LuaState, -2, "Health");
 
+	lua_pushinteger(LuaState, Object->Mana);
+	lua_setfield(LuaState, -2, "Mana");
+
 	lua_pushlightuserdata(LuaState, Object);
 	lua_setfield(LuaState, -2, "Pointer");
 }
@@ -114,6 +117,9 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 
 	lua_pushinteger(LuaState, ActionResult->TargetHealthChange);
 	lua_setfield(LuaState, -2, "TargetHealthChange");
+
+	lua_pushinteger(LuaState, ActionResult->SourceManaChange);
+	lua_setfield(LuaState, -2, "SourceManaChange");
 }
 
 // Push list of objects
@@ -159,6 +165,11 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	lua_pushstring(LuaState, "TargetHealthChange");
 	lua_gettable(LuaState, -2);
 	ActionResult.TargetHealthChange = lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "SourceManaChange");
+	lua_gettable(LuaState, -2);
+	ActionResult.SourceManaChange = lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 }
 

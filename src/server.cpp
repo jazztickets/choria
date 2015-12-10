@@ -1300,6 +1300,7 @@ void _Server::StartBattle(_Object *Object, int Zone) {
 		_Battle *Battle = new _Battle();
 		Battle->Stats = Stats;
 		Battle->Server = this;
+		Battle->Scripting = Scripting;
 		Battles.push_back(Battle);
 
 		// Add players

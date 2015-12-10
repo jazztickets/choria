@@ -121,3 +121,25 @@ void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &
 		}
 	}
 }
+
+// Return true if the skill can be used
+bool _Skill::CanUse(_Scripting *Scripting, _Object *Object) const {
+	Scripting->StartMethodCall(Script, "CanUse");
+	Scripting->PushInt(Object->SkillLevels[ID]);
+	Scripting->PushObject(Object);
+	Scripting->MethodCall(2, 1);
+	int Value = Scripting->GetInt(1);
+	Scripting->FinishMethodCall();
+
+	return Value;
+}
+
+// Apply the cost
+void _Skill::ApplyCost(_Scripting *Scripting, _Object *Object, _ActionResult &ActionResult) const {
+	Scripting->StartMethodCall(Script, "ApplyCost");
+	Scripting->PushInt(Object->SkillLevels[ID]);
+	Scripting->PushActionResult(&ActionResult);
+	Scripting->MethodCall(2, 1);
+	Scripting->GetActionResult(1, ActionResult);
+	Scripting->FinishMethodCall();
+}

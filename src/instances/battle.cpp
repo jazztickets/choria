@@ -44,11 +44,12 @@
 _Battle::_Battle() :
 	Stats(nullptr),
 	Server(nullptr),
+	Scripting(nullptr),
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	State(STATE_NONE),
 	Done(false),
-	Timer(0),
+	Time(0),
 	WaitTimer(0),
 	NextID(0),
 	ClientExperienceReceived(0),
@@ -92,7 +93,7 @@ void _Battle::Update(double FrameTime) {
 
 				// Update AI
 				if(Server)
-					Fighter->UpdateAI(Server->Scripting, Fighters, FrameTime);
+					Fighter->UpdateAI(Scripting, Fighters, FrameTime);
 
 				// Check turn timer
 				Fighter->TurnTimer += FrameTime * Fighter->BattleSpeed;
@@ -143,7 +144,7 @@ void _Battle::Update(double FrameTime) {
 		}
 	}
 
-	Timer += FrameTime;
+	Time += FrameTime;
 }
 
 // Render the battle system
@@ -168,7 +169,7 @@ void _Battle::RenderBattle(double BlendFactor) {
 
 	// Draw fighters
 	for(auto &Fighter : Fighters) {
-		Fighter->RenderBattle(ClientPlayer, Timer);
+		Fighter->RenderBattle(ClientPlayer, Time);
 	}
 
 	// Draw action results
@@ -270,8 +271,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
 
 		const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
-		//if(Skill && !Skill->CanUse(ClientPlayer))
-		//	Skill = nullptr;
+		if(Skill && !Skill->CanUse(Scripting, ClientPlayer))
+			Skill = nullptr;
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		if(Item && (Item->Type != _Item::TYPE_POTION || ClientPlayer->ActionBar[ActionBarSlot].Count == 0))
@@ -409,8 +410,16 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	if(ActionResult.ItemUsed && ActionResult.SourceFighter->FindItem(ActionResult.ItemUsed, Index)) {
 		ActionResult.SourceFighter->UpdateInventory(Index, -1);
 	}
-	//ActionResult.SourceFighter->UpdateHealth(ActionResult.SourceHealthChange);
-	//ActionResult.SourceFighter->UpdateMana(ActionResult.SourceManaChange);
+
+	if(ActionResult.SkillUsed) {
+		if(!ActionResult.SkillUsed->CanUse(Scripting, SourceFighter))
+			return;
+
+		ActionResult.SkillUsed->ApplyCost(Scripting, SourceFighter, ActionResult);
+	}
+
+	ActionResult.SourceFighter->UpdateHealth(ActionResult.SourceHealthChange);
+	ActionResult.SourceFighter->UpdateMana(ActionResult.SourceManaChange);
 
 	// Build packet for results
 	_Buffer Packet;
@@ -436,14 +445,14 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 
 		// Update fighters
 		if(ActionResult.SkillUsed && ActionResult.SkillUsed->Script.length()) {
-			Server->Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "ResolveBattleUse");
-			Server->Scripting->PushInt(ActionResult.SourceFighter->SkillLevels[ActionResult.SkillUsed->ID]);
-			Server->Scripting->PushObject(ActionResult.SourceFighter);
-			Server->Scripting->PushObject(ActionResult.TargetFighter);
-			Server->Scripting->PushActionResult(&ActionResult);
-			Server->Scripting->MethodCall(4, 1);
-			Server->Scripting->GetActionResult(1, ActionResult);
-			Server->Scripting->FinishMethodCall();
+			Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "ResolveBattleUse");
+			Scripting->PushInt(ActionResult.SourceFighter->SkillLevels[ActionResult.SkillUsed->ID]);
+			Scripting->PushObject(ActionResult.SourceFighter);
+			Scripting->PushObject(ActionResult.TargetFighter);
+			Scripting->PushActionResult(&ActionResult);
+			Scripting->MethodCall(4, 1);
+			Scripting->GetActionResult(1, ActionResult);
+			Scripting->FinishMethodCall();
 		}
 		else if(ActionResult.ItemUsed) {
 			ActionResult.TargetHealthChange = ActionResult.ItemUsed->HealthRestore;
@@ -820,7 +829,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 	}
 
 	Done = true;
-	Timer = 0.0;
+	Time = 0.0;
 }
 
 // Calculates a screen position for a slot
@@ -891,7 +900,7 @@ bool _Battle::ClientHandleInput(int Action) {
 	switch(State) {
 		case STATE_WIN:
 		case STATE_LOSE: {
-			if(Timer > BATTLE_WAITENDTIME) {
+			if(Time > BATTLE_WAITENDTIME) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
 				ClientNetwork->SendPacket(Packet);

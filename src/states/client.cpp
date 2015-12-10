@@ -897,6 +897,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	// Create a new battle instance
 	Battle = new _Battle();
 	Battle->Stats = Stats;
+	Battle->Scripting = Scripting;
 	Battle->ClientPlayer = Player;
 	Battle->ClientNetwork = Network;
 
