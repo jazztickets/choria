@@ -1,3 +1,5 @@
+-- Basic attack --
+
 Skill_Attack = {}
 
 function Skill_Attack.GetInfo(Level)
@@ -18,7 +20,9 @@ function Skill_Attack.ResolveBattleUse(Level, Source, Target, Result)
 	return Result
 end
 
-Skill_Heal = { ManaCost = 5 }
+-- Heal --
+
+Skill_Heal = { ManaCostBase = 2, HealBase = 10 }
 
 function Skill_Heal:GetInfo(Level)
 
@@ -27,11 +31,13 @@ end
 
 function Skill_Heal.ResolveBattleUse(Level, Source, Target, Result)
 
+	Result.TargetHealthChange = Skill_Heal.HealBase + Level * 5
+
 	return Result
 end
 
 function Skill_Heal.CanUse(Level, Object)
-	if Object.Mana >= Skill_Heal.ManaCost then
+	if Object.Mana >= Skill_Heal.ManaCostBase then
 		return 1
 	end
 
@@ -39,7 +45,7 @@ function Skill_Heal.CanUse(Level, Object)
 end
 
 function Skill_Heal.ApplyCost(Level, Result)
-	Result.SourceManaChange = -Skill_Heal.ManaCost;
+	Result.SourceManaChange = -Skill_Heal.ManaCostBase;
 
 	return Result
 end
