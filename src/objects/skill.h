@@ -46,6 +46,7 @@ class _Skill {
 		const _Texture *Texture;
 		TargetType TargetID;
 		bool TargetAlive;
+		ScopeType Scope;
 
 	private:
 

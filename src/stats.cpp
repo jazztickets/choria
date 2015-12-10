@@ -117,6 +117,7 @@ void _Stats::LoadSkills() {
 		Skill->Texture = Assets.Textures[Database->GetString("icon")];
 		Skill->TargetID = (TargetType)Database->GetInt("target_id");
 		Skill->TargetAlive = Database->GetInt("target_alive");
+		Skill->Scope = (ScopeType)Database->GetInt("scope");
 		Skills[Skill->ID] = Skill;
 	}
 	Database->CloseQuery();

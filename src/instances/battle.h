@@ -45,6 +45,12 @@ enum class TargetType : uint32_t {
 	ALL,
 };
 
+enum class ScopeType : uint8_t {
+	WORLD,
+	BATTLE,
+	ALL
+};
+
 // Structures
 struct _ActionResult {
 	_ActionResult() :
