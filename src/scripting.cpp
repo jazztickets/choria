@@ -174,14 +174,14 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 }
 
 // Start a call to a lua class method, return table index
-void _Scripting::StartMethodCall(const std::string &TableName, const std::string &Function) {
+bool _Scripting::StartMethodCall(const std::string &TableName, const std::string &Function) {
 
 	// Find table
 	lua_getglobal(LuaState, TableName.c_str());
 	if(!lua_istable(LuaState, -1)) {
 		lua_pop(LuaState, 1);
 
-		throw std::runtime_error("Failed to find table " + TableName);
+		return false;
 	}
 
 	// Save table index
@@ -191,9 +191,12 @@ void _Scripting::StartMethodCall(const std::string &TableName, const std::string
 	lua_getfield(LuaState, CurrentTableIndex, Function.c_str());
 	if(!lua_isfunction(LuaState, -1)) {
 		lua_pop(LuaState, 1);
+		FinishMethodCall();
 
-		throw std::runtime_error("Failed to find function " + Function);
+		return false;
 	}
+
+	return true;
 }
 
 // Run the function started by StartMethodCall

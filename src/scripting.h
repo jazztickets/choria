@@ -46,7 +46,7 @@ class _Scripting {
 		std::string GetString(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 
-		void StartMethodCall(const std::string &TableName, const std::string &Function);
+		bool StartMethodCall(const std::string &TableName, const std::string &Function);
 		void MethodCall(int ParameterCount, int ReturnCount);
 		void FinishMethodCall();
 

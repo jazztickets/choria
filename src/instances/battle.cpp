@@ -445,14 +445,15 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 
 		// Update fighters
 		if(ActionResult.SkillUsed && ActionResult.SkillUsed->Script.length()) {
-			Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "ResolveBattleUse");
-			Scripting->PushInt(ActionResult.SourceFighter->SkillLevels[ActionResult.SkillUsed->ID]);
-			Scripting->PushObject(ActionResult.SourceFighter);
-			Scripting->PushObject(ActionResult.TargetFighter);
-			Scripting->PushActionResult(&ActionResult);
-			Scripting->MethodCall(4, 1);
-			Scripting->GetActionResult(1, ActionResult);
-			Scripting->FinishMethodCall();
+			if(Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "ResolveBattleUse")) {
+				Scripting->PushInt(ActionResult.SourceFighter->SkillLevels[ActionResult.SkillUsed->ID]);
+				Scripting->PushObject(ActionResult.SourceFighter);
+				Scripting->PushObject(ActionResult.TargetFighter);
+				Scripting->PushActionResult(&ActionResult);
+				Scripting->MethodCall(4, 1);
+				Scripting->GetActionResult(1, ActionResult);
+				Scripting->FinishMethodCall();
+			}
 		}
 		else if(ActionResult.ItemUsed) {
 			ActionResult.TargetHealthChange = ActionResult.ItemUsed->HealthRestore;

@@ -334,12 +334,13 @@ void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighte
 
 		// Call lua script
 		if(Enemies.size()) {
-			Scripting->StartMethodCall(AI, "Update");
-			Scripting->PushObject(this);
-			Scripting->PushObjectList(Enemies);
-			Scripting->PushObjectList(Allies);
-			Scripting->MethodCall(3, 0);
-			Scripting->FinishMethodCall();
+			if(Scripting->StartMethodCall(AI, "Update")) {
+				Scripting->PushObject(this);
+				Scripting->PushObjectList(Enemies);
+				Scripting->PushObjectList(Allies);
+				Scripting->MethodCall(3, 0);
+				Scripting->FinishMethodCall();
+			}
 		}
 	}
 }

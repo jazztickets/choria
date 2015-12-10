@@ -100,11 +100,13 @@ void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &
 		SkillLevel = 1;
 
 	// Get skill description
-	Scripting->StartMethodCall(Script, "GetInfo");
-	Scripting->PushInt(SkillLevel);
-	Scripting->MethodCall(1, 1);
-	std::string Info = Scripting->GetString(1);
-	Scripting->FinishMethodCall();
+	std::string Info = "";
+	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+		Scripting->PushInt(SkillLevel);
+		Scripting->MethodCall(1, 1);
+		Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+	}
 
 	int SpacingY = 18;
 
@@ -124,22 +126,26 @@ void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &
 
 // Return true if the skill can be used
 bool _Skill::CanUse(_Scripting *Scripting, _Object *Object) const {
-	Scripting->StartMethodCall(Script, "CanUse");
-	Scripting->PushInt(Object->SkillLevels[ID]);
-	Scripting->PushObject(Object);
-	Scripting->MethodCall(2, 1);
-	int Value = Scripting->GetInt(1);
-	Scripting->FinishMethodCall();
+	if(Scripting->StartMethodCall(Script, "CanUse")) {
+		Scripting->PushInt(Object->SkillLevels[ID]);
+		Scripting->PushObject(Object);
+		Scripting->MethodCall(2, 1);
+		int Value = Scripting->GetInt(1);
+		Scripting->FinishMethodCall();
 
-	return Value;
+		return Value;
+	}
+
+	return true;
 }
 
 // Apply the cost
 void _Skill::ApplyCost(_Scripting *Scripting, _Object *Object, _ActionResult &ActionResult) const {
-	Scripting->StartMethodCall(Script, "ApplyCost");
-	Scripting->PushInt(Object->SkillLevels[ID]);
-	Scripting->PushActionResult(&ActionResult);
-	Scripting->MethodCall(2, 1);
-	Scripting->GetActionResult(1, ActionResult);
-	Scripting->FinishMethodCall();
+	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
+		Scripting->PushInt(Object->SkillLevels[ID]);
+		Scripting->PushActionResult(&ActionResult);
+		Scripting->MethodCall(2, 1);
+		Scripting->GetActionResult(1, ActionResult);
+		Scripting->FinishMethodCall();
+	}
 }
