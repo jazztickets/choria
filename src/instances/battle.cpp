@@ -289,9 +289,20 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			int StartingSide = !ClientPlayer->BattleSide;
 
 			// Pick sides depending on action
-			bool HealAction = false;
-			if((Skill && Skill->ID == 4) || (Item && Item->Type == _Item::TYPE_POTION)) {
-				HealAction = true;
+			bool TargetAlive = true;
+			if(Skill) {
+				switch(Skill->TargetID) {
+					case TargetType::SELF:
+					case TargetType::ALLY:
+						StartingSide = ClientPlayer->BattleSide;
+					break;
+					default:
+					break;
+				}
+
+				TargetAlive = Skill->TargetAlive;
+			}
+			else if(Item && Item->Type == _Item::TYPE_POTION) {
 				StartingSide = ClientPlayer->BattleSide;
 			}
 
@@ -301,7 +312,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 			// Find first target
 			for(auto &Fighter :  FighterList) {
-				if((!HealAction && Fighter->Health > 0) || HealAction) {
+				if((TargetAlive && Fighter->Health > 0) || !TargetAlive) {
 					ClientPlayer->BattleTarget = Fighter;
 					break;
 				}

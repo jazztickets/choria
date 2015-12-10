@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <instances/battle.h>
 #include <glm/vec2.hpp>
 #include <string>
 
@@ -39,6 +40,8 @@ class _Skill {
 		std::string Name;
 		std::string Script;
 		const _Texture *Image;
+		TargetType TargetID;
+		bool TargetAlive;
 
 	private:
 

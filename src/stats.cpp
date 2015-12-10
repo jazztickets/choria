@@ -115,6 +115,8 @@ void _Stats::LoadSkills() {
 		Skill->Name = Database->GetString("name");
 		Skill->Script = Database->GetString("script");
 		Skill->Image = Assets.Textures[Database->GetString("icon")];
+		Skill->TargetID = (TargetType)Database->GetInt("target_id");
+		Skill->TargetAlive = Database->GetInt("target_alive");
 		Skills[Skill->ID] = Skill;
 	}
 	Database->CloseQuery();

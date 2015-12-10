@@ -31,6 +31,17 @@ class _Stats;
 class _Server;
 class _ClientNetwork;
 
+// Types of targets
+enum class TargetType : uint32_t {
+	NONE,
+	SELF,
+	ENEMY,
+	ALLY,
+	ENEMY_ALL,
+	ALLY_ALL,
+	ALL,
+};
+
 // Structures
 struct _ActionResult {
 	_ActionResult() :

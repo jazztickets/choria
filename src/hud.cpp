@@ -343,8 +343,11 @@ void _HUD::Update(double FrameTime) {
 	_Element *HitElement = Graphics.Element->HitElement;
 	if(HitElement) {
 		Tooltip.Slot = (intptr_t)HitElement->UserData;
-		if(HitElement->Parent)
+
+		// Get window id, stored in parent's userdata field
+		if(HitElement->Parent && Tooltip.Slot != -1) {
 			Tooltip.Window = (intptr_t)HitElement->Parent->UserData;
+		}
 
 		switch(Tooltip.Window) {
 			case WINDOW_INVENTORY:
