@@ -51,7 +51,7 @@ class _Server {
 		void StopServer();
 
 		void SpawnPlayer(_Peer *Peer, uint32_t MapID, uint32_t EventType);
-		void StartBattle(_Object *Object, int Zone);
+		void StartBattle(_Object *Object, uint32_t Zone);
 		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void SendHUD(_Peer *Peer);
 

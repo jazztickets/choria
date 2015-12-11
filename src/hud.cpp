@@ -143,7 +143,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						else if(Player->UseInventory(Tooltip.Slot)) {
 							_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
-							Packet.Write<char>(Tooltip.Slot);
+							Packet.Write<char>((char)Tooltip.Slot);
 							ClientState.Network->SendPacket(Packet);
 						}
 					}
@@ -203,10 +203,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		// Check skill level up/down
 		else if(SkillsElement->GetClickedElement()) {
 			if(SkillsElement->GetClickedElement()->Identifier == "button_skills_plus") {
-				AdjustSkillLevel((intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, 1);
+				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, 1);
 			}
 			else if(SkillsElement->GetClickedElement()->Identifier == "button_skills_minus") {
-				AdjustSkillLevel((intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, -1);
+				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, -1);
 			}
 		}
 		// Accept trader button
@@ -240,8 +240,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							if(Tooltip.Slot >= 0 && Player->MoveInventory(Cursor.Slot, Tooltip.Slot)) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
-								Packet.Write<char>(Cursor.Slot);
-								Packet.Write<char>(Tooltip.Slot);
+								Packet.Write<char>((char)Cursor.Slot);
+								Packet.Write<char>((char)Tooltip.Slot);
 								ClientState.Network->SendPacket(Packet);
 
 								ResetAcceptButton();
@@ -303,7 +303,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		}
 		// Use action
 		else if(ActionBarElement->GetClickedElement()) {
-			int Slot = (intptr_t)ActionBarElement->GetClickedElement()->UserData;
+			uint8_t Slot = (uint8_t)(intptr_t)ActionBarElement->GetClickedElement()->UserData;
 			if(Player->Battle)
 				Player->Battle->ClientHandleInput(_Actions::SKILL1 + Slot);
 			else
@@ -343,11 +343,11 @@ void _HUD::Update(double FrameTime) {
 
 	_Element *HitElement = Graphics.Element->HitElement;
 	if(HitElement) {
-		Tooltip.Slot = (intptr_t)HitElement->UserData;
+		Tooltip.Slot = (int)(intptr_t)HitElement->UserData;
 
 		// Get window id, stored in parent's userdata field
 		if(HitElement->Parent && Tooltip.Slot != -1) {
-			Tooltip.Window = (intptr_t)HitElement->Parent->UserData;
+			Tooltip.Window = (int)(intptr_t)HitElement->Parent->UserData;
 		}
 
 		switch(Tooltip.Window) {
@@ -370,7 +370,7 @@ void _HUD::Update(double FrameTime) {
 			}
 			case WINDOW_VENDOR: {
 				if(Player->Vendor && (size_t)Tooltip.Slot < Player->Vendor->Items.size()) {
-					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
+					Tooltip.Item = Player->Vendor->Items[(size_t)Tooltip.Slot];
 					if(Input.ModKeyDown(KMOD_SHIFT))
 						Tooltip.Count = 5;
 					else
@@ -383,17 +383,17 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_TRADER: {
 				if(Player->Trader) {
 					if((size_t)Tooltip.Slot < Player->Trader->TraderItems.size())
-						Tooltip.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
+						Tooltip.Item = Player->Trader->TraderItems[(size_t)Tooltip.Slot].Item;
 					else if(Tooltip.Slot == 8)
 						Tooltip.Item = Player->Trader->RewardItem;
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Skill = ClientState.Stats->Skills[Tooltip.Slot];
+				Tooltip.Skill = ClientState.Stats->Skills[(uint32_t)Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
-				Tooltip.Skill = Player->ActionBar[Tooltip.Slot].Skill;
-				Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
+				Tooltip.Skill = Player->ActionBar[(size_t)Tooltip.Slot].Skill;
+				Tooltip.Item = Player->ActionBar[(size_t)Tooltip.Slot].Item;
 			} break;
 		}
 	}
@@ -667,7 +667,7 @@ void _HUD::InitSkills() {
 	// Iterate over skills
 	ClientState.Stats->Database->PrepareQuery("SELECT id FROM skill ORDER BY rank");
 	while(ClientState.Stats->Database->FetchRow()) {
-		const _Skill *Skill = ClientState.Stats->Skills[ClientState.Stats->Database->GetInt(0)];
+		const _Skill *Skill = ClientState.Stats->Skills[(uint32_t)ClientState.Stats->Database->GetInt(0)];
 		if(!Skill)
 			continue;
 
@@ -888,14 +888,14 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		_ChatMessage &ChatMessage = (*Iterator);
 
-		float TimeLeft = ChatMessage.Time - Time + CHAT_MESSAGE_TIMEOUT;
+		double TimeLeft = ChatMessage.Time - Time + CHAT_MESSAGE_TIMEOUT;
 		if(Index >= CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
 			break;
 
 		// Set color
 		glm::vec4 Color = ChatMessage.Color;
 		if(!IgnoreTimeout && TimeLeft <= CHAT_MESSAGE_FADETIME)
-			Color.a = TimeLeft;
+			Color.a = (float)TimeLeft;
 
 		// Draw text
 		Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message.c_str(), DrawPosition, Color);
@@ -967,7 +967,7 @@ void _HUD::DrawVendor() {
 	// Draw vendor items
 	for(size_t i = 0; i < Player->Vendor->Items.size(); i++) {
 		const _Item *Item = Player->Vendor->Items[i];
-		if(Item && !Cursor.IsEqual(i, WINDOW_VENDOR)) {
+		if(Item && !Cursor.IsEqual((int)i, WINDOW_VENDOR)) {
 
 			// Get bag button
 			std::stringstream Buffer;
@@ -1108,7 +1108,7 @@ void _HUD::DrawActionBar() {
 		}
 
 		// Draw hotkey
-		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction(_Actions::SKILL1 + i), DrawPosition + glm::vec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction((int)(_Actions::SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
 	}
 }
 
@@ -1142,7 +1142,7 @@ void _HUD::DrawCharacter() {
 	DrawPosition.y += SpacingY;
 
 	// HP Regen
-	if(Player->HealthRegen != 0) {
+	if(Player->HealthRegen != 0.0f) {
 		Buffer << std::setprecision(3) << Player->HealthRegen;
 		Assets.Fonts["hud_small"]->DrawText("HP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
@@ -1151,7 +1151,7 @@ void _HUD::DrawCharacter() {
 	}
 
 	// MP Regen
-	if(Player->ManaRegen != 0) {
+	if(Player->ManaRegen != 0.0f) {
 		Buffer << std::setprecision(3) << Player->ManaRegen;
 		Assets.Fonts["hud_small"]->DrawText("MP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
@@ -1272,9 +1272,9 @@ void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 		Packet.WriteBit(1);
-		Packet.Write<char>(Item->Count);
-		Packet.Write<char>(Item->Slot);
-		Packet.Write<char>(TargetSlot);
+		Packet.Write<char>((char)Item->Count);
+		Packet.Write<char>((char)Item->Slot);
+		Packet.Write<char>((char)TargetSlot);
 		ClientState.Network->SendPacket(Packet);
 
 		Player->CalculateStats();
@@ -1295,8 +1295,8 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
-	Packet.Write<char>(Amount);
-	Packet.Write<char>(Item->Slot);
+	Packet.Write<char>((char)Amount);
+	Packet.Write<char>((char)Item->Slot);
 	ClientState.Network->SendPacket(Packet);
 
 	if(Deleted)
@@ -1337,7 +1337,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 					Direction = 1;
 				}
 				for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-					if(!Player->ActionBar[Slot].IsSet()) {
+					if(!Player->ActionBar[(uint8_t)Slot].IsSet()) {
 						SetActionBar(Slot, -1, Skill);
 						break;
 					}
@@ -1357,7 +1357,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 
 // Sets the player's skill bar
 void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
-	if(Player->ActionBar[Slot] == Action)
+	if(Player->ActionBar[(uint8_t)Slot] == Action)
 		return;
 
 	// Check for bringing new skill/item onto bar
@@ -1371,10 +1371,10 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
 	}
 	// Rearrange action bar
 	else {
-		Player->ActionBar[OldSlot] = Player->ActionBar[Slot];
+		Player->ActionBar[(uint8_t)OldSlot] = Player->ActionBar[(uint8_t)Slot];
 	}
 
-	Player->ActionBar[Slot] = Action;
+	Player->ActionBar[(uint8_t)Slot] = Action;
 	Player->RefreshActionBarCount();
 
 	Player->CalculateStats();
@@ -1538,8 +1538,8 @@ void _HUD::SplitStack(int Slot, int Count) {
 	// Build packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_SPLIT);
-	Packet.Write<char>(Slot);
-	Packet.Write<char>(Count);
+	Packet.Write<char>((char)Slot);
+	Packet.Write<char>((char)Count);
 
 	ClientState.Network->SendPacket(Packet);
 	Player->SplitStack(Slot, Count);

@@ -422,7 +422,7 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 
 	// Get delete slot
 	int32_t Slot = Data.Read<int32_t>();
-	int CharacterID = 0;
+	uint32_t CharacterID = 0;
 
 	// Get character id
 	CharacterID = Save->GetCharacterIDBySlot(Peer->AccountID, Slot);
@@ -441,7 +441,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Read packet
 	int Slot = Data.Read<char>();
-	int MapID = 0;
+	uint32_t MapID = 0;
 	std::string Name;
 
 	// Get character info
@@ -449,8 +449,8 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	Query << "SELECT id, map_id, name FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
 	Save->Database->PrepareQuery(Query.str());
 	if(Save->Database->FetchRow()) {
-		Peer->CharacterID = Save->Database->GetInt("id");
-		MapID = Save->Database->GetInt("map_id");
+		Peer->CharacterID = (uint32_t)Save->Database->GetInt("id");
+		MapID = (uint32_t)Save->Database->GetInt("map_id");
 		Name = Save->Database->GetString("name");
 	}
 	Save->Database->CloseQuery();
@@ -1287,13 +1287,13 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 }
 
 // Start a battle event
-void _Server::StartBattle(_Object *Object, int Zone) {
+void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 	//Zone = 1;
 	if(!Zone)
 		return;
 
 	// Get monsters
-	std::list<int> MonsterIDs;
+	std::list<uint32_t> MonsterIDs;
 	Stats->GenerateMonsterListFromZone(Zone, MonsterIDs);
 	if(MonsterIDs.size()) {
 

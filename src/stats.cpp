@@ -317,11 +317,11 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<int> &Monsters) {
+void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<uint32_t> &Monsters) {
 	if(ZoneID == 0)
 		return;
 
-	int MonsterCount = 0;
+	uint32_t MonsterCount = 0;
 
 	// Get zone info
 	Database->PrepareQuery("SELECT monstercount FROM zone WHERE id = @zone_id");
@@ -359,7 +359,7 @@ void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<int> &Monste
 		// Generate monsters
 		uint32_t RandomNumber;
 		size_t MonsterIndex;
-		for(int i = 0; i < MonsterCount; i++) {
+		for(uint32_t i = 0; i < MonsterCount; i++) {
 			RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
 			for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
 				if(RandomNumber <= Zone[MonsterIndex].Odds)
