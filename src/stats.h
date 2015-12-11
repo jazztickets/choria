@@ -27,6 +27,7 @@
 class _Database;
 class _Object;
 class _Skill;
+class _Buff;
 
 // Structures
 struct _MapStat {
@@ -121,6 +122,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _Trader> Traders;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Skill *> Skills;
+		std::unordered_map<uint32_t, const _Buff *> Buffs;
 
 		// Database
 		_Database *Database;
@@ -131,6 +133,7 @@ class _Stats {
 		void LoadEvents();
 		void LoadLevels();
 		void LoadSkills();
+		void LoadBuffs();
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();

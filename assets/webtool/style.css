@@ -1,6 +1,23 @@
 body {
-	font-size: 0.9em;
-	font-family: Arial
+	font-size: 14px;
+	font-family: Arial;
+	color: #CCC;
+	background-color: #111;
+}
+
+input, button, select {
+	background-color: #111;
+	color: #CCC;
+	border: solid 1px #555;
+	padding: 4px;
+}
+
+a {
+	color: #784;
+}
+
+a:hover {
+	color: #654;
 }
 
 td {
@@ -21,7 +38,7 @@ td {
 }
 
 .changed {
-	color: #FF0000;
+	color: #AA0000;
 	font-weight: bold;
 	margin-bottom: 15px;
 }

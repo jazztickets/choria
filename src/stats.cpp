@@ -18,6 +18,7 @@
 #include <stats.h>
 #include <objects/object.h>
 #include <objects/skill.h>
+#include <objects/buff.h>
 #include <database.h>
 #include <random.h>
 #include <assets.h>
@@ -34,6 +35,7 @@ _Stats::_Stats() {
 	LoadEvents();
 	LoadLevels();
 	LoadSkills();
+	LoadBuffs();
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
@@ -47,6 +49,9 @@ _Stats::~_Stats() {
 
 	for(const auto &Skill : Skills)
 		delete Skill.second;
+
+	for(const auto &Buff : Buffs)
+		delete Buff.second;
 
 	delete Database;
 }
@@ -123,6 +128,26 @@ void _Stats::LoadSkills() {
 	Database->CloseQuery();
 
 	Skills[0] = nullptr;
+}
+
+// Load buffs
+void _Stats::LoadBuffs() {
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM buff");
+
+	// Get events
+	while(Database->FetchRow()) {
+		_Buff *Buff = new _Buff;
+		Buff->ID = Database->GetInt("id");
+		Buff->Name = Database->GetString("name");
+		Buff->Script = Database->GetString("script");
+		Buff->Texture = Assets.Textures[Database->GetString("icon")];
+		Buffs[Buff->ID] = Buff;
+	}
+	Database->CloseQuery();
+
+	Buffs[0] = nullptr;
 }
 
 // Load items
