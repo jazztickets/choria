@@ -827,25 +827,30 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 
 // Calculates a screen position for a slot
 void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
-	_Element *BattleElement = Assets.Elements["element_battle"];
 	glm::vec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2;
+	int Column = SideIndex / BATTLE_ROWS_PER_SIDE;
 
 	// Check sides
-	if(Fighter->BattleSide == 0) {
-		Fighter->BattleOffset.x = Center.x - 180;
-	}
-	else {
-		Fighter->BattleOffset.x = Center.x + 100;
-	}
+	if(Fighter->BattleSide == 0)
+		Fighter->BattleOffset.x = Center.x - 160 - Column * 230;
+	else
+		Fighter->BattleOffset.x = Center.x + 80 + Column * 230;
 
-	// Divide space into SideCount parts, then divide that by 2
-	int SpacingY = (BattleElement->Size.y / SideCount[Fighter->BattleSide]) / 2;
+	// Get row count for a given column
+	float RowCount = (float)SideCount[Fighter->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
+	if(RowCount >= 1)
+		RowCount = BATTLE_ROWS_PER_SIDE;
+	else
+		RowCount *= BATTLE_ROWS_PER_SIDE;
+
+	// Divide space into RowCount parts, then divide that by 2
+	int SpacingY = (BattleElement->Size.y / RowCount) / 2;
 
 	// Place slots in between main divisions
-	Fighter->BattleOffset.y = BattleElement->Bounds.Start.y + SpacingY * (2 * SideIndex + 1) + 10;
+	Fighter->BattleOffset.y = BattleElement->Bounds.Start.y + SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1);
 
 	// Convert position to relative offset from center
-	Fighter->BattleOffset = Fighter->BattleOffset - Center;
+	Fighter->BattleOffset = Fighter->BattleOffset - Center + glm::vec2(BattleElement->Offset);
 }
 
 // Removes a player from the battle, return remaining player count

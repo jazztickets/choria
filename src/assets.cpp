@@ -39,6 +39,7 @@ _Assets Assets;
 // Initialize
 void _Assets::Init(bool IsServer) {
 	LoadTextureDirectory(TEXTURES_BATTLE, IsServer);
+	LoadTextureDirectory(TEXTURES_BUFFS, IsServer);
 	LoadTextureDirectory(TEXTURES_EDITOR, IsServer);
 	LoadTextureDirectory(TEXTURES_HUD, IsServer);
 	LoadTextureDirectory(TEXTURES_HUD_REPEAT, IsServer, true);

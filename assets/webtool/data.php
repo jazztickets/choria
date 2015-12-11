@@ -23,10 +23,12 @@
 	if(!$query) {
 		print_r($Database->errorInfo());
 	}
+
 	$results = $query->fetchAll(PDO::FETCH_ASSOC);
-	//print_r($results);
-	$array_keys = array_keys($results[0]);
-	$key_count = count($array_keys);
+	if(count($results)) {
+		$array_keys = array_keys($results[0]);
+		$key_count = count($array_keys);
+	}
 ?>
 	<tr class="header">
 		<? for($i = 0; $i < $key_count; $i++) {

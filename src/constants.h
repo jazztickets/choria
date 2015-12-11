@@ -35,7 +35,8 @@ const int ACTIONBAR_MAX_SIZE = 8;
 const int ACTIONBAR_STARTING_SIZE = 4;
 const int BATTLE_MINSTEPS = 5;
 const int BATTLE_MAXSTEPS = 14;
-const int BATTLE_MAXFIGHTERS = 6;
+const int BATTLE_MAXFIGHTERS_SIDE = 8;
+const int BATTLE_ROWS_PER_SIDE = 4;
 const float BATTLE_DEFAULTSPEED = (1/3.0f);
 const double BATTLE_ROUNDTIME = 5.0;
 const double BATTLE_SHOWRESULTTIME = 2.0;
@@ -110,6 +111,7 @@ const  std::string  SCRIPTS_SKILLS                 =  "skills.lua";
 //     Textures
 const  std::string  TEXTURES_PATH                  =  "textures/";
 const  std::string  TEXTURES_BATTLE                =  "battle/";
+const  std::string  TEXTURES_BUFFS                 =  "buffs/";
 const  std::string  TEXTURES_EDITOR                =  "editor/";
 const  std::string  TEXTURES_HUD                   =  "hud/";
 const  std::string  TEXTURES_HUD_REPEAT            =  "hud_repeat/";

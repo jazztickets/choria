@@ -457,7 +457,7 @@ void _Map::Load(const std::string &Path) {
 				int FileVersion;
 				File >> FileVersion;
 				if(FileVersion != MAP_VERSION)
-					throw std::runtime_error("Level version mismatch: " + FileVersion);
+					throw std::runtime_error("Level version mismatch: " + std::to_string(FileVersion));
 			} break;
 			// Map size
 			case 'S': {

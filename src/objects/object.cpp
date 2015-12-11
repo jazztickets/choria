@@ -133,6 +133,12 @@ _Object::~_Object() {
 
 // Renders the fighter during a battle
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
+	glm::vec4 GlobalColor(COLOR_WHITE);
+	float Fade = 1.0f;
+	if(Health == 0)
+		Fade = 0.2f;
+
+	GlobalColor.a = Fade;
 
 	// Get slot ui element depending on side
 	_Element *Slot;
@@ -145,6 +151,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Slot->Offset = BattleOffset;
 	Slot->CalculateBounds();
 	Slot->SetVisible(true);
+	Slot->Fade = Fade;
 	Slot->Render();
 	Slot->SetVisible(false);
 
@@ -152,12 +159,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	glm::ivec2 SlotPosition = (Slot->Bounds.Start + Slot->Bounds.End) / 2;
 
 	// Name
-	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), Slot->Bounds.Start + glm::ivec2(32, -10), COLOR_WHITE, CENTER_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), SlotPosition + glm::ivec2(-Slot->Size.x/2, -Slot->Size.y/2 - 12), GlobalColor, LEFT_BASELINE);
+	Graphics.SetColor(GlobalColor);
 
 	// Portrait
 	if(Portrait) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SlotPosition, Portrait);
+		Graphics.DrawCenteredImage(SlotPosition, Portrait, GlobalColor);
 	}
 
 	// Health/mana bars
@@ -173,7 +181,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::ivec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2;
-	//glm::ivec2 HealthBarCenter = BarCenter;
 	ResultPosition = SlotPosition;
 	int BarEndX = BarBounds.End.x;
 
@@ -189,7 +196,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw health text
 	std::stringstream Buffer;
 	Buffer << Health << " / " << MaxHealth;
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), COLOR_WHITE, CENTER_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), GlobalColor, CENTER_BASELINE);
 	Buffer.str("");
 
 	// Draw mana
@@ -213,7 +220,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 		// Draw mana text
 		Buffer << Mana << " / " << MaxMana;
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), COLOR_WHITE, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), GlobalColor, CENTER_BASELINE);
 		Buffer.str("");
 	}
 
@@ -236,7 +243,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	if(ClientPlayer->BattleSide == BattleSide && BattleAction.Skill) {
 		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Texture->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture);
+		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture, GlobalColor);
 	}
 
 	// Draw potential skill to use

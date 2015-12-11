@@ -1316,7 +1316,7 @@ void _Server::StartBattle(_Object *Object, int Zone) {
 			if(PartyPlayer->CanBattle()) {
 				Battle->AddFighter(PartyPlayer, 0);
 				PlayersAdded++;
-				if(PlayersAdded == 2)
+				if(PlayersAdded == BATTLE_MAXFIGHTERS_SIDE-1)
 					break;
 			}
 		}
