@@ -37,6 +37,7 @@ const int BATTLE_MINSTEPS = 5;
 const int BATTLE_MAXSTEPS = 14;
 const int BATTLE_MAXFIGHTERS_SIDE = 8;
 const int BATTLE_ROWS_PER_SIDE = 4;
+const int BATTLE_COLUMN_SPACING = 230;
 const float BATTLE_DEFAULTSPEED = (1/3.0f);
 const double BATTLE_ROUNDTIME = 5.0;
 const double BATTLE_SHOWRESULTTIME = 2.0;

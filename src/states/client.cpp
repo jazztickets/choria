@@ -902,7 +902,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	Battle->ClientNetwork = Network;
 
 	// Get fighter count
-	int FighterCount = Data.Read<int>();
+	int FighterCount = Data.Read<uint8_t>();
 
 	// Get fighter information
 	for(int i = 0; i < FighterCount; i++) {

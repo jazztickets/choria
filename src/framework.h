@@ -32,9 +32,7 @@ class _Framework {
 
 		enum StateType {
 			INIT,
-			FADEIN,
 			UPDATE,
-			FADEOUT,
 			CLOSE
 		};
 

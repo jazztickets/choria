@@ -204,7 +204,7 @@ void _Graphics::BuildVertexBuffers() {
 
 		// Get vertices
 		for(int i = 0; i < GRAPHICS_CIRCLE_VERTICES; i++) {
-			float Radians = ((float)i / GRAPHICS_CIRCLE_VERTICES) * (MATH_PI * 2);
+			float Radians = ((float)i / GRAPHICS_CIRCLE_VERTICES) * ((float)MATH_PI * 2.0f);
 			Triangles[i * 2] = std::cos(Radians);
 			Triangles[i * 2 + 1] = std::sin(Radians);
 		}
@@ -351,10 +351,10 @@ void _Graphics::DrawImage(const _Bounds &Bounds, const _Texture *Texture, bool S
 
 	// Vertex data for quad
 	float Vertices[] = {
-		(float)Bounds.End.x,   (float)Bounds.Start.y, S,    0.0f,
-		(float)Bounds.Start.x, (float)Bounds.Start.y, 0.0f, 0.0f,
-		(float)Bounds.End.x,   (float)Bounds.End.y,   S,    T,
-		(float)Bounds.Start.x, (float)Bounds.End.y,   0.0f, T,
+		Bounds.End.x,   Bounds.Start.y, S,    0.0f,
+		Bounds.Start.x, Bounds.Start.y, 0.0f, 0.0f,
+		Bounds.End.x,   Bounds.End.y,   S,    T,
+		Bounds.Start.x, Bounds.End.y,   0.0f, T,
 	};
 	if(LastAttribLevel != 2)
 		throw std::runtime_error("bad");
@@ -370,10 +370,10 @@ void _Graphics::DrawAtlas(const _Bounds &Bounds, const _Texture *Texture, const 
 
 	// Vertex data for quad
 	float Vertices[] = {
-		(float)Bounds.End.x,   (float)Bounds.Start.y, TextureCoords[2], TextureCoords[1],
-		(float)Bounds.Start.x, (float)Bounds.Start.y, TextureCoords[0], TextureCoords[1],
-		(float)Bounds.End.x,   (float)Bounds.End.y,   TextureCoords[2], TextureCoords[3],
-		(float)Bounds.Start.x, (float)Bounds.End.y,   TextureCoords[0], TextureCoords[3],
+		Bounds.End.x,   Bounds.Start.y, TextureCoords[2], TextureCoords[1],
+		Bounds.Start.x, Bounds.Start.y, TextureCoords[0], TextureCoords[1],
+		Bounds.End.x,   Bounds.End.y,   TextureCoords[2], TextureCoords[3],
+		Bounds.Start.x, Bounds.End.y,   TextureCoords[0], TextureCoords[3],
 	};
 	if(LastAttribLevel != 2)
 		throw std::runtime_error("bad");
@@ -402,10 +402,10 @@ void _Graphics::DrawMask(const _Bounds &Bounds) {
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
 
 	float Vertices[] = {
-		(float)Bounds.Start.x + 0.0f, (float)Bounds.End.y   + 1.0f,
-		(float)Bounds.End.x   + 1.0f, (float)Bounds.End.y   + 1.0f,
-		(float)Bounds.Start.x + 0.0f, (float)Bounds.Start.y + 0.0f,
-		(float)Bounds.End.x   + 1.0f, (float)Bounds.Start.y + 0.0f,
+		Bounds.Start.x + 0.0f, Bounds.End.y   + 1.0f,
+		Bounds.End.x   + 1.0f, Bounds.End.y   + 1.0f,
+		Bounds.Start.x + 0.0f, Bounds.Start.y + 0.0f,
+		Bounds.End.x   + 1.0f, Bounds.Start.y + 0.0f,
 	};
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
@@ -697,8 +697,8 @@ void _Graphics::SetDepthTest(bool DepthTest) {
 
 // Resets all the last used variables
 void _Graphics::DirtyState() {
-	LastVertexBufferID = -1;
-	LastTextureID = -1;
+	LastVertexBufferID = (GLuint)-1;
+	LastTextureID = (GLuint)-1;
 	LastAttribLevel = -1;
 	LastColor = glm::vec4(-1, -1, -1, -1);
 	LastProgram = nullptr;

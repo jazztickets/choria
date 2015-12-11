@@ -462,7 +462,7 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		ActionResult.TargetObject->UpdateHealth(ActionResult.TargetHealthChange);
 		ActionResult.TargetObject->UpdateMana(ActionResult.TargetManaChange);
 
-		Packet.Write<char>(ActionResult.TargetObject->BattleID);
+		Packet.Write<uint8_t>(ActionResult.TargetObject->BattleID);
 		Packet.Write<int32_t>(ActionResult.DamageDealt);
 		Packet.Write<int32_t>(ActionResult.TargetHealthChange);
 		Packet.Write<int32_t>(ActionResult.TargetManaChange);
@@ -597,8 +597,8 @@ void _Battle::ServerStartBattle() {
 	Packet.Write<PacketType>(PacketType::BATTLE_START);
 
 	// Write fighter count
-	int FighterCount = Fighters.size();
-	Packet.Write<int>(FighterCount);
+	size_t FighterCount = Fighters.size();
+	Packet.Write<uint8_t>(FighterCount);
 
 	// Write fighter information
 	for(auto &Fighter : Fighters) {
@@ -769,7 +769,7 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<int32_t>(GoldEarned);
 
 		// Write items
-		int ItemCount = Fighter->ItemDropsReceived.size();
+		size_t ItemCount = Fighter->ItemDropsReceived.size();
 		Packet.Write<char>(ItemCount);
 
 		// Write items
@@ -832,9 +832,9 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 
 	// Check sides
 	if(Fighter->BattleSide == 0)
-		Fighter->BattleOffset.x = Center.x - 160 - Column * 230;
+		Fighter->BattleOffset.x = Center.x - 160 - Column * BATTLE_COLUMN_SPACING;
 	else
-		Fighter->BattleOffset.x = Center.x + 80 + Column * 230;
+		Fighter->BattleOffset.x = Center.x + 80 + Column * BATTLE_COLUMN_SPACING;
 
 	// Get row count for a given column
 	float RowCount = (float)SideCount[Fighter->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
@@ -844,7 +844,7 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 		RowCount *= BATTLE_ROWS_PER_SIDE;
 
 	// Divide space into RowCount parts, then divide that by 2
-	int SpacingY = (BattleElement->Size.y / RowCount) / 2;
+	int SpacingY = (int)((BattleElement->Size.y / RowCount) / 2);
 
 	// Place slots in between main divisions
 	Fighter->BattleOffset.y = BattleElement->Bounds.Start.y + SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1);
