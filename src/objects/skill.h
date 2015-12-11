@@ -37,7 +37,8 @@ class _Skill {
 		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
 		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &DrawPosition, int Width) const;
 
-		bool CanUse(_Scripting *Scripting, _Object *Object) const;
+		void Use(_Scripting *Scripting, _Object *Object, _ActionResult &ActionResult, ScopeType Scope) const;
+		bool CanUse(_Scripting *Scripting, _Object *Object, ScopeType Scope) const;
 		void ApplyCost(_Scripting *Scripting, _Object *Object, _ActionResult &ActionResult) const;
 
 		uint32_t ID;

@@ -124,8 +124,24 @@ void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &
 	}
 }
 
+// Use a skill
+void _Skill::Use(_Scripting *Scripting, _Object *Object, _ActionResult &ActionResult, ScopeType Scope) const {
+	if(Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "Use")) {
+		Scripting->PushInt(ActionResult.SourceFighter->SkillLevels[ActionResult.SkillUsed->ID]);
+		Scripting->PushObject(ActionResult.SourceFighter);
+		Scripting->PushObject(ActionResult.TargetFighter);
+		Scripting->PushActionResult(&ActionResult);
+		Scripting->MethodCall(4, 1);
+		Scripting->GetActionResult(1, ActionResult);
+		Scripting->FinishMethodCall();
+	}
+}
+
 // Return true if the skill can be used
-bool _Skill::CanUse(_Scripting *Scripting, _Object *Object) const {
+bool _Skill::CanUse(_Scripting *Scripting, _Object *Object, ScopeType Scope) const {
+	if(this->Scope != ScopeType::ALL && this->Scope != Scope)
+		return false;
+
 	if(Scripting->StartMethodCall(Script, "CanUse")) {
 		Scripting->PushInt(Object->SkillLevels[ID]);
 		Scripting->PushObject(Object);

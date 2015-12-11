@@ -1023,13 +1023,14 @@ void _ClientState::SendActionBarUse(uint8_t Slot) {
 		return;
 
 	// Client prediction
-	Player->UseAction(Slot);
+	if(Player->UseActionWorld(Scripting, Slot)) {
 
-	// Send use to server
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::WORLD_ACTIONBAR_USE);
-	Packet.Write<uint8_t>(Slot);
-	Network->SendPacket(Packet);
+		// Send use to server
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::WORLD_ACTIONBAR_USE);
+		Packet.Write<uint8_t>(Slot);
+		Network->SendPacket(Packet);
+	}
 }
 
 // Send status to server

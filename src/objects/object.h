@@ -145,7 +145,7 @@ class _Object {
 		bool FindItem(const _Item *Item, int &Slot);
 		int CountItem(const _Item *Item);
 		void RefreshActionBarCount();
-		bool UseAction(uint8_t Slot);
+		bool UseActionWorld(_Scripting *Scripting, uint8_t Slot);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);
 		void SetInventory(int Slot, int ItemID, int Count);

@@ -489,7 +489,7 @@ void _Server::HandleActionBarUse(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	uint8_t Slot = Data.Read<uint8_t>();
-	if(Player->UseAction(Slot))
+	if(Player->UseActionWorld(Scripting, Slot))
 		SendHUD(Player->Peer);
 }
 

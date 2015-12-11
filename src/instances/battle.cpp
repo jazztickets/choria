@@ -271,7 +271,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
 
 		const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
-		if(Skill && !Skill->CanUse(Scripting, ClientPlayer))
+		if(Skill && !Skill->CanUse(Scripting, ClientPlayer, ScopeType::BATTLE))
 			Skill = nullptr;
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
@@ -413,7 +413,7 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 
 	// Apply costs
 	if(ActionResult.SkillUsed) {
-		if(!ActionResult.SkillUsed->CanUse(Scripting, SourceFighter))
+		if(!ActionResult.SkillUsed->CanUse(Scripting, SourceFighter, ScopeType::BATTLE))
 			return;
 
 		ActionResult.SkillUsed->ApplyCost(Scripting, SourceFighter, ActionResult);
@@ -445,16 +445,8 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		ActionResult.TargetFighter = BattleTarget;
 
 		// Update fighters
-		if(ActionResult.SkillUsed && ActionResult.SkillUsed->Script.length()) {
-			if(Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "ResolveBattleUse")) {
-				Scripting->PushInt(ActionResult.SourceFighter->SkillLevels[ActionResult.SkillUsed->ID]);
-				Scripting->PushObject(ActionResult.SourceFighter);
-				Scripting->PushObject(ActionResult.TargetFighter);
-				Scripting->PushActionResult(&ActionResult);
-				Scripting->MethodCall(4, 1);
-				Scripting->GetActionResult(1, ActionResult);
-				Scripting->FinishMethodCall();
-			}
+		if(ActionResult.SkillUsed) {
+			ActionResult.SkillUsed->Use(Scripting, SourceFighter, ActionResult, ScopeType::BATTLE);
 		}
 		else if(ActionResult.ItemUsed) {
 			ActionResult.TargetHealthChange = ActionResult.ItemUsed->HealthRestore;

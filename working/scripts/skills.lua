@@ -8,7 +8,7 @@ function Skill_Attack.GetInfo(Level)
 	return "Attack with your weapon.\n" .. Chance .. "% chance to deal 200% extra damage."
 end
 
-function Skill_Attack.ResolveBattleUse(Level, Source, Target, Result)
+function Skill_Attack.Use(Level, Source, Target, Result)
 	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
 	if Random.GetInt(1, 100) <= 4 + Level then
 		Damage = Damage * 3
@@ -29,7 +29,7 @@ function Skill_Heal:GetInfo(Level)
 	return "Heal"
 end
 
-function Skill_Heal.ResolveBattleUse(Level, Source, Target, Result)
+function Skill_Heal.Use(Level, Source, Target, Result)
 
 	Result.TargetHealthChange = Skill_Heal.HealBase + Level * 5
 

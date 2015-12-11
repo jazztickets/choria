@@ -582,7 +582,7 @@ void _Object::RefreshActionBarCount() {
 }
 
 // Use an action, return true if used
-bool _Object::UseAction(uint8_t Slot) {
+bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 	if(Slot >= ActionBar.size())
 		return false;
 
@@ -590,7 +590,28 @@ bool _Object::UseAction(uint8_t Slot) {
 		return false;
 
 	if(ActionBar[Slot].Skill) {
+		_ActionResult ActionResult;
+		ActionResult.SourceFighter = this;
+		ActionResult.TargetFighter = this;
 
+		// Validate use
+		ActionResult.SkillUsed = ActionBar[Slot].Skill;
+		if(!ActionResult.SkillUsed->CanUse(Scripting, this, ScopeType::WORLD))
+			return false;
+
+		// Apply costs
+		ActionResult.SkillUsed->ApplyCost(Scripting, this, ActionResult);
+
+		// Use
+		ActionResult.SkillUsed->Use(Scripting, this, ActionResult, ScopeType::WORLD);
+
+		// Apply changes
+		UpdateHealth(ActionResult.SourceHealthChange);
+		UpdateHealth(ActionResult.TargetHealthChange);
+		UpdateMana(ActionResult.SourceManaChange);
+		UpdateMana(ActionResult.TargetManaChange);
+
+		return true;
 	}
 	else if(ActionBar[Slot].Item) {
 		int Index = -1;
