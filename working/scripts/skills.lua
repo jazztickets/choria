@@ -24,9 +24,9 @@ end
 
 Skill_Heal = { ManaCostBase = 2, HealBase = 10 }
 
-function Skill_Heal:GetInfo(Level)
+function Skill_Heal.GetInfo(Level)
 
-	return "Heal"
+	return "Heal target for " .. (Skill_Heal.HealBase + Level * 5) .. "HP"
 end
 
 function Skill_Heal.Use(Level, Source, Target, Result)
