@@ -192,7 +192,7 @@ class _Object {
 		_Map *Map;
 		_Peer *Peer;
 		int InputState;
-		bool Moved;
+		int Moved;
 		bool Deleted;
 		bool WaitForServer;
 		glm::ivec2 Position;

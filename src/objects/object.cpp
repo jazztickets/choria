@@ -40,7 +40,7 @@ _Object::_Object()
 :	Map(nullptr),
 	Peer(nullptr),
 	InputState(0),
-	Moved(false),
+	Moved(0),
 	Deleted(false),
 	WaitForServer(false),
 	Position(0, 0),

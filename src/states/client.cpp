@@ -332,7 +332,7 @@ void _ClientState::Update(double FrameTime) {
 	if(Player->Moved) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
-		Packet.Write<char>(Player->Moved);
+		Packet.Write<char>((char)Player->Moved);
 		Network->SendPacket(Packet);
 
 		if(!Player->WaitForServer)
