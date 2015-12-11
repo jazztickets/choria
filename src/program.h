@@ -35,11 +35,11 @@ class _Program {
 		void Use() const;
 
 		GLuint ID;
-		GLuint ViewProjectionTransformID;
-		GLuint ModelTransformID;
-		GLuint LightPositionID;
-		GLuint LightAttenuationID;
-		GLuint AmbientLightID;
+		GLint ViewProjectionTransformID;
+		GLint ModelTransformID;
+		GLint LightPositionID;
+		GLint LightAttenuationID;
+		GLint AmbientLightID;
 		int Attribs;
 
 		glm::vec3 LightPosition;
@@ -48,7 +48,7 @@ class _Program {
 
 	private:
 
-		GLuint SamplerIDs[4];
+		GLint SamplerIDs[4];
 
 };
 

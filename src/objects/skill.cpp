@@ -28,7 +28,7 @@
 #include <iostream>
 
 // Draw tooltip
-void _Skill::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
+void _Skill::DrawTooltip(_Scripting *Scripting, const _Object *Player, bool DrawNextLevel) const {
 	_Element *TooltipElement = Assets.Elements["element_skills_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_skills_tooltip_name"];
 	TooltipElement->SetVisible(true);
@@ -37,10 +37,10 @@ void _Skill::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cu
 	TooltipName->Text = Name;
 
 	// Get window width
-	glm::ivec2 Size = TooltipElement->Size;
+	glm::vec2 Size = TooltipElement->Size;
 
 	// Position window
-	glm::ivec2 WindowOffset = Input.GetMouse();
+	glm::vec2 WindowOffset = Input.GetMouse();
 	WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
 	WindowOffset.y += -Size.y / 2;
 
@@ -59,7 +59,7 @@ void _Skill::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cu
 	TooltipElement->SetVisible(false);
 
 	// Set draw position to center of window
-	glm::ivec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
+	glm::vec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
 	DrawPosition.y += 30;
 
 	// Get current skill level
@@ -91,7 +91,7 @@ void _Skill::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cu
 }
 
 // Draw skill description
-void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &DrawPosition, int Width) const {
+void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, float Width) const {
 	if(!Script.length())
 		return;
 
@@ -108,7 +108,7 @@ void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &
 		Scripting->FinishMethodCall();
 	}
 
-	int SpacingY = 18;
+	float SpacingY = 18;
 
 	std::stringstream Buffer(Info);
 	std::string Token;

@@ -37,10 +37,10 @@ void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	TooltipName->Text = Name;
 
 	// Get window width
-	glm::ivec2 Size = TooltipElement->Size;
+	glm::vec2 Size = TooltipElement->Size;
 
 	// Position window
-	glm::ivec2 WindowOffset = Input.GetMouse();
+	glm::vec2 WindowOffset = Input.GetMouse();
 	WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
 	WindowOffset.y += -Size.y / 2;
 
@@ -59,7 +59,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	TooltipElement->SetVisible(false);
 
 	// Set draw position to center of window
-	glm::ivec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
+	glm::vec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
 	DrawPosition.y += 30;
 
 	// Get current skill level
@@ -83,7 +83,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 }
 
 // Draw skill description
-void _Buff::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &DrawPosition, int Width) const {
+void _Buff::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, int Width) const {
 	/*if(!Script.length())
 		return;
 

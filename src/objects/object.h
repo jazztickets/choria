@@ -123,8 +123,6 @@ class _Object {
 		void UpdateMana(int Value);
 		void RestoreHealthMana();
 
-		void UpdateRegen(int &HealthUpdate, int &ManaUpdate);
-
 		// Battles
 		void UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
@@ -148,7 +146,7 @@ class _Object {
 		bool UseActionWorld(_Scripting *Scripting, uint8_t Slot);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);
-		void SetInventory(int Slot, int ItemID, int Count);
+		void SetInventory(int Slot, uint32_t ItemID, int Count);
 		void SetInventory(int Slot, _InventorySlot *Item);
 		const _Item *GetInventoryItem(int Slot);
 		bool MoveInventory(int OldSlot, int NewSlot);

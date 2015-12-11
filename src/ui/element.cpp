@@ -90,12 +90,12 @@ _Element *_Element::GetClickedElement() {
 }
 
 // Handle mouse movement
-void _Element::Update(double FrameTime, const glm::ivec2 &Mouse) {
+void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 	HitElement = nullptr;
 	ReleasedElement = nullptr;
 
 	// Test element first
-	if(Bounds.PointInside(Mouse) && Visible && Clickable && Enabled) {
+	if(Mouse.x >= Bounds.Start.x && Mouse.y >= Bounds.Start.y && Mouse.x < Bounds.End.x && Mouse.y < Bounds.End.y && Visible && Clickable && Enabled) {
 		HitElement = this;
 	}
 	else if(MaskOutside) {

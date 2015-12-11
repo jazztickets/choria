@@ -49,7 +49,7 @@ _Program::_Program(const _Shader *VertexShader, const _Shader *FragmentShader, i
 		glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &ResultLength);
 
 		// Get message
-		std::string ErrorMessage(ResultLength, 0);
+		std::string ErrorMessage((size_t)ResultLength, 0);
 		glGetProgramInfoLog(ID, ResultLength, NULL, (GLchar *)ErrorMessage.data());
 
 		throw std::runtime_error(ErrorMessage);
@@ -78,16 +78,16 @@ void _Program::Use() const {
 	glUseProgram(ID);
 
 	// Set uniforms
-	if(SamplerIDs[0] != (GLuint)-1)
+	if(SamplerIDs[0] != -1)
 		glUniform1i(SamplerIDs[0], 0);
 
-	if(LightPositionID != (GLuint)-1)
+	if(LightPositionID != -1)
 		glUniform3fv(LightPositionID, 1, &LightPosition[0]);
 
-	if(LightAttenuationID != (GLuint)-1)
+	if(LightAttenuationID != -1)
 		glUniform3fv(LightAttenuationID, 1, &LightAttenuation[0]);
 
-	if(AmbientLightID != (GLuint)-1)
+	if(AmbientLightID != -1)
 		glUniform4fv(AmbientLightID, 1, &AmbientLight[0]);
 }
 
@@ -118,7 +118,7 @@ _Shader::_Shader(const std::string &Path, GLenum ProgramType) {
 		glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &ResultLength);
 
 		// Get message
-		std::string ErrorMessage(ResultLength, 0);
+		std::string ErrorMessage((size_t)ResultLength, 0);
 		glGetShaderInfoLog(ID, ResultLength, NULL, (GLchar *)ErrorMessage.data());
 
 		throw std::runtime_error("Error in " + Path + '\n' + ErrorMessage);

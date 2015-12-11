@@ -131,7 +131,7 @@ void _Battle::Update(double FrameTime) {
 
 				// Interpolate between start and end position of action used
 				ActionResult.Position = glm::mix(StartPosition, ActionResult.TargetObject->ResultPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
-				if(ActionResult.Time == 0)
+				if(ActionResult.Time == 0.0)
 					ActionResult.LastPosition = ActionResult.Position;
 
 				ActionResult.Time += FrameTime;
@@ -185,7 +185,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	// Get alpha
 	double TimeLeft = ACTIONRESULT_TIMEOUT - ActionResult.Time;
-	float AlphaPercent = 1.0f;
+	double AlphaPercent = 1.0;
 	if(TimeLeft < ACTIONRESULT_FADETIME)
 		AlphaPercent = TimeLeft / ACTIONRESULT_FADETIME;
 
@@ -220,9 +220,9 @@ void _Battle::RenderBattleWin() {
 
 		// Get positions
 		_Image *Image = Assets.Images["image_battlewin_chest"];
-		glm::ivec2 StartPosition = (Image->Bounds.Start + Image->Bounds.End) / 2;
+		glm::vec2 StartPosition = (Image->Bounds.Start + Image->Bounds.End) / 2.0f;
 		StartPosition.x += Image->Size.x;
-		glm::ivec2 DrawPosition(StartPosition);
+		glm::vec2 DrawPosition(StartPosition);
 
 		// Draw items found
 		for(auto &MonsterDrop : ClientItemDrops) {
@@ -827,7 +827,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 
 // Calculates a screen position for a slot
 void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
-	glm::vec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2;
+	glm::vec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2.0f;
 	int Column = SideIndex / BATTLE_ROWS_PER_SIDE;
 
 	// Check sides
@@ -983,8 +983,8 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
 	int BattleID = Data.Read<char>();
-	int SkillID = Data.Read<uint32_t>();
-	int ItemID = Data.Read<uint32_t>();
+	uint32_t SkillID = Data.Read<uint32_t>();
+	uint32_t ItemID = Data.Read<uint32_t>();
 
 	_Object *Fighter = GetObjectByID(BattleID);
 	if(Fighter) {

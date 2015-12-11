@@ -34,7 +34,7 @@ class _Element {
 		_Element();
 		virtual ~_Element();
 
-		virtual void Update(double FrameTime, const glm::ivec2 &Mouse);
+		virtual void Update(double FrameTime, const glm::vec2 &Mouse);
 
 		virtual void CalculateBounds();
 		virtual void Render() const;
@@ -42,14 +42,14 @@ class _Element {
 		virtual void HandleInput(bool Pressed);
 		_Element *GetClickedElement();
 
-		void UpdateChildrenOffset(const glm::ivec2 &Update) { ChildrenOffset += Update; CalculateChildrenBounds(); }
+		void UpdateChildrenOffset(const glm::vec2 &Update) { ChildrenOffset += Update; CalculateChildrenBounds(); }
 		void CalculateChildrenBounds();
 
 		void SetDebug(int Debug);
 		void SetVisible(bool Visible);
-		void SetOffset(const glm::ivec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
-		void SetWidth(int Width) { Size.x = Width; CalculateBounds(); }
-		void SetHeight(int Height) { Size.y = Height; CalculateBounds(); }
+		void SetOffset(const glm::vec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
+		void SetWidth(float Width) { Size.x = Width; CalculateBounds(); }
+		void SetHeight(float Height) { Size.y = Height; CalculateBounds(); }
 
 		// Attributes
 		size_t GlobalID;
@@ -73,8 +73,8 @@ class _Element {
 		// Layout
 		_Bounds Bounds;
 		_Alignment Alignment;
-		glm::ivec2 Size;
-		glm::ivec2 Offset;
+		glm::vec2 Size;
+		glm::vec2 Offset;
 
 		// Input
 		_Element *HitElement;
@@ -83,7 +83,7 @@ class _Element {
 
 		// Children
 		std::vector<_Element *> Children;
-		glm::ivec2 ChildrenOffset;
+		glm::vec2 ChildrenOffset;
 
 	protected:
 

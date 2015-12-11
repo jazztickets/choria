@@ -348,7 +348,7 @@ void _Menu::LoadPortraitButtons() {
 	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
 	ClearPortraits();
 
-	glm::ivec2 Offset(10, 0);
+	glm::vec2 Offset(10, 0);
 	size_t i = 0;
 
 	// Load portraits

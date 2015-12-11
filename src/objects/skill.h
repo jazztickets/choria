@@ -34,8 +34,8 @@ class _Skill {
 
 	public:
 
-		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
-		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::ivec2 &DrawPosition, int Width) const;
+		void DrawTooltip(_Scripting *Scripting, const _Object *Player, bool DrawNextLevel) const;
+		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, float Width) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;

@@ -48,7 +48,7 @@ void _Item::DrawTooltip(const _Object *Player, const _Cursor &Tooltip) const {
 	Width = std::max(Width, TextBounds.Width) + 20;
 
 	// Position window
-	glm::ivec2 WindowOffset = Input.GetMouse();
+	glm::vec2 WindowOffset = Input.GetMouse();
 	WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
 	WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
@@ -64,10 +64,10 @@ void _Item::DrawTooltip(const _Object *Player, const _Cursor &Tooltip) const {
 	TooltipElement->SetVisible(false);
 
 	// Set draw position to center of window
-	glm::ivec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
+	glm::vec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
 	DrawPosition.y += 40;
 
-	glm::ivec2 Spacing(10, 0);
+	glm::vec2 Spacing(10, 0);
 	int SpacingY = 25;
 
 	// Render damage

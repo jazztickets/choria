@@ -40,7 +40,7 @@ _TextBox::~_TextBox() {
 }
 
 // Update cursor
-void _TextBox::Update(double FrameTime, const glm::ivec2 &Mouse) {
+void _TextBox::Update(double FrameTime, const glm::vec2 &Mouse) {
 	_Element::Update(FrameTime, Mouse);
 
 	if(FocusedElement == this) {
@@ -143,7 +143,7 @@ void _TextBox::Render() const {
 	// Draw cursor
 	if(CursorTimer < 0.5 && FocusedElement == this) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-		Graphics.DrawRectangle(glm::ivec2(StartPosition.x + TextBounds.Width+1, StartPosition.y - Font->MaxAbove), glm::ivec2(StartPosition.x + TextBounds.Width+2, StartPosition.y + Font->MaxBelow));
+		Graphics.DrawRectangle(glm::vec2(StartPosition.x + TextBounds.Width+1, StartPosition.y - Font->MaxAbove), glm::vec2(StartPosition.x + TextBounds.Width+2, StartPosition.y + Font->MaxBelow));
 	}
 
 	// Disable mask

@@ -156,10 +156,10 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Slot->SetVisible(false);
 
 	// Get slot center
-	glm::ivec2 SlotPosition = (Slot->Bounds.Start + Slot->Bounds.End) / 2;
+	glm::vec2 SlotPosition = (Slot->Bounds.Start + Slot->Bounds.End) / 2.0f;
 
 	// Name
-	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), SlotPosition + glm::ivec2(-Slot->Size.x/2, -Slot->Size.y/2 - 12), GlobalColor, LEFT_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), SlotPosition + glm::vec2(-Slot->Size.x/2, -Slot->Size.y/2 - 12), GlobalColor, LEFT_BASELINE);
 	Graphics.SetColor(GlobalColor);
 
 	// Portrait
@@ -169,8 +169,8 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 
 	// Health/mana bars
-	glm::ivec2 BarSize(90, 22);
-	glm::ivec2 BarOffset(Slot->Size.x/2 + 10, -Slot->Size.y/2);
+	glm::vec2 BarSize(90, 22);
+	glm::vec2 BarOffset(Slot->Size.x/2 + 10, -Slot->Size.y/2);
 	float BarPaddingY = 6;
 
 	// Get health percent
@@ -178,11 +178,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Get ui size
 	_Bounds BarBounds;
-	BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
-	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
-	glm::ivec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2;
+	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
+	glm::vec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
 	ResultPosition = SlotPosition;
-	int BarEndX = BarBounds.End.x;
+	float BarEndX = BarBounds.End.x;
 
 	// Draw empty bar
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -190,13 +190,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
-	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * HealthPercent, BarSize.y) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * HealthPercent, BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_full"]->Texture, true);
 
 	// Draw health text
 	std::stringstream Buffer;
 	Buffer << Health << " / " << MaxHealth;
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), GlobalColor, CENTER_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
 	Buffer.str("");
 
 	// Draw mana
@@ -205,9 +205,9 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 		// Get ui size
 		BarOffset.y += BarSize.y + BarPaddingY;
-		BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
-		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
-		BarCenter = (BarBounds.Start + BarBounds.End) / 2;
+		BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
+		BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
+		BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
 
 		// Draw empty bar
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -215,20 +215,20 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_empty"]->Texture, true);
 
 		// Draw full bar
-		BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * ManaPercent, BarSize.y) + BarOffset;
+		BarBounds.End = SlotPosition + glm::vec2(BarSize.x * ManaPercent, BarSize.y) + BarOffset;
 		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
 		Buffer << Mana << " / " << MaxMana;
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::ivec2(0, 5), GlobalColor, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
 		Buffer.str("");
 	}
 
 	// Draw turn timer
 	BarOffset.y += BarSize.y + BarPaddingY;
 	BarSize.y = 8;
-	BarBounds.Start = SlotPosition + glm::ivec2(0, 0) + BarOffset;
-	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x, BarSize.y) + BarOffset;
+	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
 
 	// Draw empty bar
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -236,12 +236,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_empty"]->Texture, true);
 
 	// Draw full bar
-	BarBounds.End = SlotPosition + glm::ivec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
 	// Draw the skill used
 	if(ClientPlayer->BattleSide == BattleSide && BattleAction.Skill) {
-		glm::ivec2 SkillUsingPosition = SlotPosition - glm::ivec2(Portrait->Size.x/2 + BattleAction.Skill->Texture->Size.x/2 + 10, 0);
+		glm::vec2 SkillUsingPosition = SlotPosition - glm::vec2(Portrait->Size.x/2 + BattleAction.Skill->Texture->Size.x/2 + 10, 0);
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture, GlobalColor);
 	}
@@ -289,35 +289,6 @@ void _Object::UpdateMana(int Value) {
 void _Object::RestoreHealthMana() {
 	Health = MaxHealth;
 	Mana = MaxMana;
-}
-
-// Updates the fighter's regen
-void _Object::UpdateRegen(int &HealthUpdate, int &ManaUpdate) {
-
-	HealthUpdate = 0;
-	ManaUpdate = 0;
-	HealthAccumulator += HealthRegen * 0.01f * MaxHealth;
-	ManaAccumulator += ManaRegen * 0.01f * MaxMana;
-
-	if(HealthAccumulator >= 1.0f) {
-		int IntegerAccumulator = (int)HealthAccumulator;
-
-		HealthUpdate = IntegerAccumulator;
-		HealthAccumulator -= IntegerAccumulator;
-	}
-	else if(HealthAccumulator < 0.0f) {
-		HealthAccumulator = 0;
-	}
-
-	if(ManaAccumulator >= 1.0f) {
-		int IntegerAccumulator = (int)ManaAccumulator;
-
-		ManaUpdate = IntegerAccumulator;
-		ManaAccumulator -= IntegerAccumulator;
-	}
-	else if(ManaAccumulator < 0.0f) {
-		ManaAccumulator = 0;
-	}
 }
 
 // Update AI during battle
@@ -508,10 +479,10 @@ int _Object::Move() {
 			NextBattle--;
 
 		// Update regen
-		int HealthUpdate, ManaUpdate;
-		UpdateRegen(HealthUpdate, ManaUpdate);
-		UpdateHealth(HealthUpdate);
-		UpdateMana(ManaUpdate);
+		//int HealthUpdate, ManaUpdate;
+		//UpdateRegen(HealthUpdate, ManaUpdate);
+		//UpdateHealth(HealthUpdate);
+		//UpdateMana(ManaUpdate);
 
 		MoveTime = 0;
 
@@ -737,7 +708,7 @@ bool _Object::UseInventory(int Slot) {
 }
 
 // Sets an item in the inventory
-void _Object::SetInventory(int Slot, int ItemID, int Count) {
+void _Object::SetInventory(int Slot, uint32_t ItemID, int Count) {
 
 	if(ItemID == 0) {
 		Inventory[Slot].Item = nullptr;

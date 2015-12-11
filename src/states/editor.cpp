@@ -377,7 +377,7 @@ void _EditorState::Render(double BlendFactor) {
 	Buffer.str("");
 
 	Buffer << Graphics.FramesPerSecond << " FPS";
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(15, 25));
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(15, 25));
 	Buffer.str("");
 
 	// Draw UI
@@ -394,17 +394,17 @@ void _EditorState::RenderBrush() {
 	if(!Map)
 		return;
 
-	glm::ivec2 DrawPosition = Graphics.Element->Bounds.End - glm::ivec2(50, 140);
+	glm::vec2 DrawPosition = Graphics.Element->Bounds.End - glm::vec2(50, 140);
 
 	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
-	Graphics.DrawRectangle(DrawPosition - glm::ivec2(40, 32), DrawPosition + glm::ivec2(40, 125), true);
+	Graphics.DrawRectangle(DrawPosition - glm::vec2(40, 32), DrawPosition + glm::vec2(40, 125), true);
 
 	// Draw texture
 	_Bounds TextureBounds;
-	TextureBounds.Start = DrawPosition - glm::ivec2(Map->TileAtlas->Size)/2;
-	TextureBounds.End = DrawPosition + glm::ivec2(Map->TileAtlas->Size)/2;
+	TextureBounds.Start = DrawPosition - glm::vec2(Map->TileAtlas->Size) / 2.0f;
+	TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetColor(COLOR_WHITE);
 	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
@@ -540,9 +540,9 @@ void _EditorState::InitTextures() {
 	// Clear old children
 	ClearTextures();
 
-	glm::ivec2 Start(10, 25);
-	glm::ivec2 Offset(Start);
-	glm::ivec2 Spacing(10, 10);
+	glm::vec2 Start(10, 25);
+	glm::vec2 Offset(Start);
+	glm::vec2 Spacing(10, 10);
 
 	int TextureCount = Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y);
 

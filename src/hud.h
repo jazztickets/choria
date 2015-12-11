@@ -143,7 +143,7 @@ class _HUD {
 		void DrawTrader();
 		void DrawActionBar();
 		void DrawSkills();
-		void DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy);
+		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
 		void DrawCursorSkill();
 		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);

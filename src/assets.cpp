@@ -373,7 +373,7 @@ void _Assets::LoadElements(const std::string &Path) {
 			throw std::runtime_error("Duplicate element identifier: " + Identifier);
 
 		// Read attributes
-		glm::ivec2 Offset, Size;
+		glm::vec2 Offset, Size;
 		_Alignment Alignment;
 		bool MaskOutside;
 		bool Clickable;
@@ -437,7 +437,7 @@ void _Assets::LoadLabels(const std::string &Path) {
 			throw std::runtime_error("Unable to find font: " + FontIdentifier);
 
 		// Read attributes
-		glm::ivec2 Offset, Size;
+		glm::vec2 Offset, Size;
 		_Alignment Alignment;
 		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical;
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -487,7 +487,7 @@ void _Assets::LoadImages(const std::string &Path) {
 			throw std::runtime_error("Duplicate element identifier: " + Identifier);
 
 		// Read attributes
-		glm::ivec2 Offset, Size;
+		glm::vec2 Offset, Size;
 		_Alignment Alignment;
 		int Stretch;
 		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical >> Stretch;
@@ -558,7 +558,7 @@ void _Assets::LoadButtons(const std::string &Path) {
 			throw std::runtime_error("Unable to find style: " + HoverStyleIdentifier + " for button: " + Identifier);
 
 		// Read attributes
-		glm::ivec2 Offset, Size;
+		glm::vec2 Offset, Size;
 		_Alignment Alignment;
 		intptr_t UserData;
 		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical >> UserData;
@@ -622,7 +622,7 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 		_Style *Style = Styles[StyleIdentifier];
 
 		// Read attributes
-		glm::ivec2 Offset, Size;
+		glm::vec2 Offset, Size;
 		_Alignment Alignment;
 		int MaxLength;
 		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical >> MaxLength;

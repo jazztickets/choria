@@ -444,19 +444,19 @@ void _HUD::Render(double Time) {
 	// Show network stats
 	if(ShowStats) {
 		Buffer << Graphics.FramesPerSecond << " FPS";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 0));
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
 		Buffer.str("");
 
 		Buffer << ClientState.Network->GetSentSpeed() / 1024.0f << " KB/s";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 1));
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 1));
 		Buffer.str("");
 
 		Buffer << ClientState.Network->GetReceiveSpeed() / 1024.0f << " KB/s";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 2));
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 2));
 		Buffer.str("");
 
 		Buffer << ClientState.Network->GetRTT() << "ms";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::ivec2(20, 120 + 15 * 3));
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 3));
 		Buffer.str("");
 	}
 
@@ -502,7 +502,7 @@ void _HUD::Render(double Time) {
 	// Draw skill information
 	DrawCursorSkill();
 	if(Tooltip.Skill)
-		Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, Tooltip, SkillsElement->Visible);
+		Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, SkillsElement->Visible);
 }
 
 // Starts the chat box
@@ -654,13 +654,13 @@ void _HUD::InitSkills() {
 	// Clear old children
 	ClearSkills();
 
-	glm::ivec2 Start(10, 25);
-	glm::ivec2 Offset(Start);
-	glm::ivec2 LevelOffset(0, -4);
-	glm::ivec2 Spacing(10, 50);
-	glm::ivec2 PlusOffset(-12, 37);
-	glm::ivec2 MinusOffset(12, 37);
-	glm::ivec2 LabelOffset(0, 3);
+	glm::vec2 Start(10, 25);
+	glm::vec2 Offset(Start);
+	glm::vec2 LevelOffset(0, -4);
+	glm::vec2 Spacing(10, 50);
+	glm::vec2 PlusOffset(-12, 37);
+	glm::vec2 MinusOffset(12, 37);
+	glm::vec2 LabelOffset(0, 3);
 	size_t i = 0;
 
 	// Iterate over skills
@@ -705,7 +705,7 @@ void _HUD::InitSkills() {
 		_Button *PlusButton = new _Button();
 		PlusButton->Identifier = "button_skills_plus";
 		PlusButton->Parent = Button;
-		PlusButton->Size = glm::ivec2(16, 16);
+		PlusButton->Size = glm::vec2(16, 16);
 		PlusButton->Offset = PlusOffset;
 		PlusButton->Alignment = CENTER_MIDDLE;
 		PlusButton->Style = Assets.Styles["style_menu_button"];
@@ -717,7 +717,7 @@ void _HUD::InitSkills() {
 		_Button *MinusButton = new _Button();
 		MinusButton->Identifier = "button_skills_minus";
 		MinusButton->Parent = Button;
-		MinusButton->Size = glm::ivec2(16, 16);
+		MinusButton->Size = glm::vec2(16, 16);
 		MinusButton->Offset = MinusOffset;
 		MinusButton->Alignment = CENTER_MIDDLE;
 		MinusButton->Style = Assets.Styles["style_menu_button"];
@@ -879,7 +879,7 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 
 	// Set up UI position
 	int SpacingY = -20;
-	glm::ivec2 DrawPosition = glm::ivec2(ChatElement->Bounds.Start.x + 10, ChatElement->Bounds.End.y);
+	glm::vec2 DrawPosition = glm::vec2(ChatElement->Bounds.Start.x + 10, ChatElement->Bounds.End.y);
 	DrawPosition.y += SpacingY + -20;
 
 	// Draw messages
@@ -938,7 +938,7 @@ void _HUD::DrawInventory() {
 			_Button *Button = Assets.Buttons[Buffer.str()];
 
 			// Get position of slot
-			glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -949,7 +949,7 @@ void _HUD::DrawInventory() {
 
 			// Draw count
 			if(Item->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 		}
 	}
 }
@@ -974,7 +974,7 @@ void _HUD::DrawVendor() {
 			_Button *Button = Assets.Buttons[Buffer.str()];
 
 			// Get position of slot
-			glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -1017,7 +1017,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 			_Button *Button = Assets.Buttons[Buffer.str()];
 
 			// Get position of slot
-			glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -1025,7 +1025,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 			// Draw count
 			if(Item->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 		}
 
 		BagIndex++;
@@ -1048,7 +1048,7 @@ void _HUD::DrawTrader() {
 		std::stringstream Buffer;
 		Buffer << "button_trader_bag_" << i;
 		_Button *Button = Assets.Buttons[Buffer.str()];
-		glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item
 		const _Item *Item = Player->Trader->TraderItems[i].Item;
@@ -1061,17 +1061,17 @@ void _HUD::DrawTrader() {
 		else
 			Color = COLOR_WHITE;
 
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->TraderItems[i].Count).c_str(), DrawPosition + glm::ivec2(0, -32), Color, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->TraderItems[i].Count).c_str(), DrawPosition + glm::vec2(0, -32), Color, CENTER_BASELINE);
 	}
 
 	// Get reward button
 	_Button *RewardButton = Assets.Buttons["button_trader_bag_reward"];
-	glm::ivec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2;
+	glm::vec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2.0f;
 
 	// Draw item
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->Image);
-	Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count).c_str(), DrawPosition + glm::ivec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count).c_str(), DrawPosition + glm::vec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
 }
 
 // Draw the action bar
@@ -1088,7 +1088,7 @@ void _HUD::DrawActionBar() {
 		std::stringstream Buffer;
 		Buffer << "button_actionbar_" << i;
 		_Button *Button = Assets.Buttons[Buffer.str()];
-		glm::ivec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2;
+		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw skill icon
 		const _Skill *Skill = Player->ActionBar[i].Skill;
@@ -1103,11 +1103,11 @@ void _HUD::DrawActionBar() {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Item->Image);
 
-			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::ivec2(20, 19), COLOR_WHITE, RIGHT_BASELINE);
+			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), COLOR_WHITE, RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
-		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction(_Actions::SKILL1 + i), DrawPosition + glm::ivec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction(_Actions::SKILL1 + i), DrawPosition + glm::vec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
 	}
 }
 
@@ -1120,8 +1120,8 @@ void _HUD::DrawCharacter() {
 
 	// Set up UI
 	int SpacingY = 20;
-	glm::ivec2 Spacing(15, 0);
-	glm::ivec2 DrawPosition = CharacterElement->Bounds.Start;
+	glm::vec2 Spacing(15, 0);
+	glm::vec2 DrawPosition = CharacterElement->Bounds.Start;
 	DrawPosition.x += CharacterElement->Size.x/2;
 	DrawPosition.y += 20 + SpacingY;
 	std::stringstream Buffer;
@@ -1215,34 +1215,34 @@ void _HUD::DrawSkills() {
 	else
 		SkillPointsText	= std::to_string(Player->GetSkillPointsRemaining()) + " Skill Point";
 
-	glm::ivec2 DrawPosition = glm::ivec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
+	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
 	Assets.Fonts["hud_medium"]->DrawText(SkillPointsText.c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
 }
 
 // Draws the item under the cursor
 void _HUD::DrawCursorItem() {
 	if(Cursor.Item) {
-		glm::ivec2 DrawPosition = Input.GetMouse();
+		glm::vec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->Image);
 		if(Cursor.Window != WINDOW_ACTIONBAR)
 			DrawItemPrice(Cursor.Item, Cursor.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
 		if(Cursor.Count > 1)
-			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Cursor.Count).c_str(), DrawPosition + glm::ivec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Cursor.Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 	}
 }
 
 // Draws the skill under the cursor
 void _HUD::DrawCursorSkill() {
 	if(Cursor.Skill) {
-		glm::ivec2 DrawPosition = Input.GetMouse();
+		glm::vec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Cursor.Skill->Texture);
 	}
 }
 
 // Draws an item's price
-void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPosition, bool Buy) {
+void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy) {
 	if(!Player->Vendor)
 		return;
 
@@ -1256,7 +1256,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::ivec2 &DrawPos
 	else
 		Color = COLOR_LIGHTGOLD;
 
-	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price).c_str(), DrawPosition + glm::ivec2(20, -11), Color, RIGHT_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price).c_str(), DrawPosition + glm::vec2(20, -11), Color, RIGHT_BASELINE);
 }
 
 // Buys an item from the vendor
