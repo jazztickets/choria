@@ -96,9 +96,9 @@ struct _BattleResult {
 		GoldPerFighter(0),
 		Dead(true) { }
 
-	int FighterCount;
-	int PlayerCount;
-	int MonsterCount;
+	uint8_t FighterCount;
+	uint8_t PlayerCount;
+	uint8_t MonsterCount;
 	int TotalExperienceGiven;
 	int TotalGoldGiven;
 	int ExperiencePerFighter;
@@ -121,9 +121,9 @@ class _Battle {
 		~_Battle();
 
 		// Objects
-		void AddFighter(_Object *Fighter, int Side);
+		void AddFighter(_Object *Fighter, uint8_t Side);
 		void RemoveFighter(_Object *RemoveFighter);
-		_Object *GetObjectByID(int BattleID);
+		_Object *GetObjectByID(uint8_t BattleID);
 		int GetPeerCount();
 
 		// Updates
@@ -176,7 +176,7 @@ class _Battle {
 		// Objects
 		std::list<_Object *> Fighters;
 		int SideCount[2];
-		int NextID;
+		uint8_t NextID;
 
 		// Client battle results
 		int ClientExperienceReceived;

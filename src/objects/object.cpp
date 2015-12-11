@@ -65,7 +65,7 @@ _Object::_Object()
 	BattleSpeed(BATTLE_DEFAULTSPEED),
 	TurnTimer(0.0),
 	AITimer(1.0),
-	BattleID(-1),
+	BattleID(0),
 	BattleSide(0),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
@@ -394,7 +394,7 @@ void _Object::Serialize(_Buffer &Packet) {
 void _Object::SerializeUpdate(_Buffer &Packet) {
 	Packet.Write<NetworkIDType>(NetworkID);
 	Packet.Write<glm::ivec2>(Position);
-	Packet.Write<char>(Status);
+	Packet.Write<uint8_t>(Status);
 	Packet.WriteBit(IsInvisible());
 }
 

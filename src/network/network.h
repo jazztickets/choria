@@ -41,7 +41,7 @@ struct _NetworkEvent {
 	_NetworkEvent() : Data(nullptr), Peer(nullptr) { }
 
 	EventType Type;
-	float Time;
+	double Time;
 	_Buffer *Data;
 	_Peer *Peer;
 };

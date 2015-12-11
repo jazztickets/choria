@@ -218,8 +218,8 @@ class _Object {
 		float BattleSpeed;
 		double TurnTimer;
 		double AITimer;
-		int BattleID;
-		int BattleSide;
+		uint8_t BattleID;
+		uint8_t BattleSide;
 		std::list<_Object *> BattleTargets;
 		_Action BattleAction;
 		_Action PotentialAction;
@@ -236,7 +236,7 @@ class _Object {
 		std::string AI;
 
 		// -- PLAYER  --
-		int CharacterID;
+		uint32_t CharacterID;
 
 		// States
 		bool CheckEvent;
@@ -244,13 +244,14 @@ class _Object {
 		double MoveTime;
 
 		// Texture
-		int Status;
+		uint8_t Status;
 		uint32_t PortraitID;
 		const _Texture *WorldTexture;
 		const _Texture *StatusTexture;
 
 		// Map
-		int SpawnMapID, SpawnPoint;
+		uint32_t SpawnMapID;
+		uint32_t SpawnPoint;
 		double TeleportTime;
 
 		// Stats

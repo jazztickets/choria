@@ -544,10 +544,10 @@ void _EditorState::InitTextures() {
 	glm::vec2 Offset(Start);
 	glm::vec2 Spacing(10, 10);
 
-	int TextureCount = Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y);
+	uint32_t TextureCount = (uint32_t)(Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y));
 
 	// Iterate over textures
-	for(int i = 0; i < TextureCount; i++) {
+	for(uint32_t i = 0; i < TextureCount; i++) {
 
 		// Create style
 		_Style *Style = new _Style();
@@ -718,7 +718,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 				continue;
 
 			// Get valid position of tile
-			glm::ivec2 TilePosition = Map->GetValidCoord(WorldCursor + glm::vec2(Offset));
+			glm::ivec2 TilePosition = Map->GetValidCoord(Position + glm::vec2(Offset));
 
 			// Get existing tile
 			_Tile Tile;

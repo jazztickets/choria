@@ -36,7 +36,7 @@ class _Button : public _Element {
 		// Attributes
 		const _Style *HoverStyle;
 		bool Checked;
-		int TextureIndex;
+		uint32_t TextureIndex;
 
 	private:
 

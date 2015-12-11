@@ -48,7 +48,7 @@ class _ClientState : public _State {
 		// Network
 		void Connect(bool IsLocal);
 		void StopLocalServer();
-		void SendStatus(int Status);
+		void SendStatus(uint8_t Status);
 		void SendActionBarUse(uint8_t Slot);
 
 		// Input

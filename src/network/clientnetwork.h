@@ -41,7 +41,7 @@ class _ClientNetwork : public _Network {
 		~_ClientNetwork();
 
 		// Connections
-		void Connect(const std::string &HostAddress, int Port);
+		void Connect(const std::string &HostAddress, uint16_t Port);
 		void Disconnect(bool Force=false);
 
 		// Stats

@@ -337,7 +337,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_SETACTION);
 		Packet.Write<uint8_t>(ActionBarSlot);
-		Packet.Write<uint8_t>(ClientPlayer->BattleTargets.size());
+		Packet.Write<uint8_t>((uint8_t)ClientPlayer->BattleTargets.size());
 		for(const auto &BattleTarget : ClientPlayer->BattleTargets)
 			Packet.Write<uint8_t>(BattleTarget->BattleID);
 
@@ -445,7 +445,7 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	Packet.Write<int32_t>(ActionResult.SourceObject->Mana);
 
 	// Update each target
-	Packet.Write<uint8_t>(SourceFighter->BattleTargets.size());
+	Packet.Write<uint8_t>((uint8_t)SourceFighter->BattleTargets.size());
 	for(auto &BattleTarget : SourceFighter->BattleTargets) {
 		ActionResult.TargetObject = BattleTarget;
 
@@ -542,9 +542,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 }
 
 // Get the object pointer battle id
-_Object *_Battle::GetObjectByID(int BattleID) {
-	if(BattleID == -1)
-		return nullptr;
+_Object *_Battle::GetObjectByID(uint8_t BattleID) {
 
 	// Search fighters
 	for(auto &Fighter : Fighters) {
@@ -556,7 +554,7 @@ _Object *_Battle::GetObjectByID(int BattleID) {
 }
 
 // Add a fighter to the battle
-void _Battle::AddFighter(_Object *Fighter, int Side) {
+void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Battle = this;
 	Fighter->BattleID = NextID++;
 	Fighter->BattleSide = Side;
@@ -598,7 +596,7 @@ void _Battle::ServerStartBattle() {
 
 	// Write fighter count
 	size_t FighterCount = Fighters.size();
-	Packet.Write<uint8_t>(FighterCount);
+	Packet.Write<uint8_t>((uint8_t)FighterCount);
 
 	// Write fighter information
 	for(auto &Fighter : Fighters) {
@@ -607,7 +605,7 @@ void _Battle::ServerStartBattle() {
 
 		// Write fighter type
 		Packet.Write<uint32_t>(Fighter->DatabaseID);
-		Packet.Write<char>(Fighter->BattleSide);
+		Packet.Write<uint8_t>(Fighter->BattleSide);
 		Packet.Write<double>(Fighter->TurnTimer);
 
 		if(Fighter->DatabaseID == 0) {
@@ -763,14 +761,14 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
 		Packet.WriteBit(SideStats[0].Dead);
 		Packet.WriteBit(SideStats[1].Dead);
-		Packet.Write<char>(SideStats[!Fighter->BattleSide].PlayerCount);
-		Packet.Write<char>(SideStats[!Fighter->BattleSide].MonsterCount);
+		Packet.Write<uint8_t>(SideStats[!Fighter->BattleSide].PlayerCount);
+		Packet.Write<uint8_t>(SideStats[!Fighter->BattleSide].MonsterCount);
 		Packet.Write<int32_t>(ExperienceEarned);
 		Packet.Write<int32_t>(GoldEarned);
 
 		// Write items
 		size_t ItemCount = Fighter->ItemDropsReceived.size();
-		Packet.Write<char>(ItemCount);
+		Packet.Write<uint8_t>((uint8_t)ItemCount);
 
 		// Write items
 		for(auto &ItemID : Fighter->ItemDropsReceived) {
@@ -796,12 +794,12 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 	bool SideDead[2];
 	SideDead[0] = Data.ReadBit();
 	SideDead[1] = Data.ReadBit();
-	int PlayerKills = Data.Read<char>();
-	int MonsterKills = Data.Read<char>();
+	int PlayerKills = Data.Read<uint8_t>();
+	int MonsterKills = Data.Read<uint8_t>();
 	ClientExperienceReceived = Data.Read<int32_t>();
 	ClientGoldReceived = Data.Read<int32_t>();
-	int ItemCount = Data.Read<char>();
-	for(int i = 0; i < ItemCount; i++) {
+	uint8_t ItemCount = Data.Read<uint8_t>();
+	for(uint8_t i = 0; i < ItemCount; i++) {
 		uint32_t ItemID = Data.Read<uint32_t>();
 		const _Item *Item = Stats->Items[ItemID];
 		ClientItemDrops.push_back(Item);
@@ -917,7 +915,7 @@ bool _Battle::ClientHandleInput(int Action) {
 				case _Actions::SKILL6:
 				case _Actions::SKILL7:
 				case _Actions::SKILL8:
-					ClientSetAction(Action - _Actions::SKILL1);
+					ClientSetAction((uint8_t)(Action - _Actions::SKILL1));
 				break;
 				case _Actions::UP:
 					ChangeTarget(-1, 0);
@@ -971,7 +969,7 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 		// Notify other players of action
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
-		Packet.Write<char>(Fighter->BattleID);
+		Packet.Write<uint8_t>(Fighter->BattleID);
 		Packet.Write<uint32_t>(SkillID);
 		Packet.Write<uint32_t>(ItemID);
 
@@ -982,7 +980,7 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 // Handle action from another player
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
-	int BattleID = Data.Read<char>();
+	uint8_t BattleID = Data.Read<uint8_t>();
 	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 

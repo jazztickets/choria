@@ -39,7 +39,7 @@ _ClientNetwork::~_ClientNetwork() {
 }
 
 // Connect to a host
-void _ClientNetwork::Connect(const std::string &HostAddress, int Port) {
+void _ClientNetwork::Connect(const std::string &HostAddress, uint16_t Port) {
 	if(!CanConnect())
 		return;
 

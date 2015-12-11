@@ -208,7 +208,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::SKILL6:
 				case _Actions::SKILL7:
 				case _Actions::SKILL8:
-					SendActionBarUse(Action - _Actions::SKILL1);
+					SendActionBarUse((uint8_t)(Action - _Actions::SKILL1));
 				break;
 				case _Actions::MENU:
 					HUD->ToggleInGameMenu();
@@ -526,17 +526,17 @@ void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
 	Player->InvisPower = Data.Read<int32_t>();
 
 	// Read items
-	int ItemCount = Data.Read<char>();
-	for(int i = 0; i < ItemCount; i++) {
-		int Slot = Data.Read<char>();
-		int Count = (uint8_t)Data.Read<char>();
-		int ItemID = Data.Read<int32_t>();
+	uint8_t ItemCount = Data.Read<uint8_t>();
+	for(uint8_t i = 0; i < ItemCount; i++) {
+		uint8_t Slot = Data.Read<uint8_t>();
+		uint8_t Count = (uint8_t)Data.Read<uint8_t>();
+		uint32_t ItemID = Data.Read<uint32_t>();
 		Player->SetInventory(Slot, ItemID, Count);
 	}
 
 	// Read skills
-	int SkillCount = Data.Read<char>();
-	for(int i = 0; i < SkillCount; i++) {
+	uint32_t SkillCount = Data.Read<uint32_t>();
+	for(uint32_t i = 0; i < SkillCount; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
 		int32_t Points = Data.Read<int32_t>();
 		Player->SkillLevels[SkillID] = Points;
@@ -662,7 +662,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 		// Read packet
 		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 		glm::ivec2 Position = Data.Read<glm::ivec2>();
-		int Status = Data.Read<char>();
+		uint8_t Status = Data.Read<uint8_t>();
 		int Invisible = Data.ReadBit();
 
 		// Find object
@@ -815,14 +815,14 @@ void _ClientState::HandleTradeItem(_Buffer &Data) {
 		return;
 
 	// Get old slot information
-	int OldItemID = Data.Read<int32_t>();
+	uint32_t OldItemID = Data.Read<uint32_t>();
 	int OldSlot = Data.Read<char>();
 	int OldCount = 0;
 	if(OldItemID > 0)
 		OldCount = Data.Read<char>();
 
 	// Get new slot information
-	int NewItemID = Data.Read<int32_t>();
+	uint32_t NewItemID = Data.Read<uint32_t>();
 	int NewSlot = Data.Read<char>();
 	int NewCount = 0;
 	if(NewItemID > 0)
@@ -872,10 +872,10 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 	int Gold = Data.Read<int32_t>();
 	Player->Gold = Gold;
 	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
-		int ItemID = Data.Read<int32_t>();
-		int Count = 0;
+		uint32_t ItemID = Data.Read<uint32_t>();
+		uint8_t Count = 0;
 		if(ItemID != 0)
-			Count = Data.Read<char>();
+			Count = Data.Read<uint8_t>();
 
 		Player->SetInventory(i, ItemID, Count);
 	}
@@ -909,7 +909,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 		// Get fighter type
 		uint32_t DatabaseID = Data.Read<uint32_t>();
-		int Side = Data.Read<char>();
+		uint8_t Side = Data.Read<uint8_t>();
 		double TurnTimer = Data.Read<double>();
 
 		_Object *Fighter = nullptr;
@@ -1034,10 +1034,10 @@ void _ClientState::SendActionBarUse(uint8_t Slot) {
 }
 
 // Send status to server
-void _ClientState::SendStatus(int Status) {
+void _ClientState::SendStatus(uint8_t Status) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
-	Packet.Write<char>(Status);
+	Packet.Write<uint8_t>(Status);
 	Network->SendPacket(Packet);
 }
 

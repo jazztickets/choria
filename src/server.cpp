@@ -565,7 +565,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
+void _Server::SpawnPlayer(_Peer *Peer, uint32_t MapID, uint32_t EventType) {
 	if(!Peer->AccountID || !Peer->CharacterID)
 		return;
 
@@ -598,7 +598,7 @@ void _Server::SpawnPlayer(_Peer *Peer, int MapID, int EventType) {
 		Player->InvisPower = OldInvisPower;
 
 		// Find spawn point in map
-		int SpawnPoint = Player->SpawnPoint;
+		uint32_t SpawnPoint = Player->SpawnPoint;
 		if(EventType == _Map::EVENT_MAPCHANGE)
 			SpawnPoint = OldMap->ID;
 		Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position);
@@ -692,31 +692,31 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 	Packet.Write<int32_t>(Player->InvisPower);
 
 	// Get item count
-	int ItemCount = 0;
-	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
+	uint8_t ItemCount = 0;
+	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
 		if(Player->Inventory[i].Item)
 			ItemCount++;
 	}
 
 	// Write items
-	Packet.Write<char>(ItemCount);
-	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
+	Packet.Write<uint8_t>(ItemCount);
+	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
 		if(Player->Inventory[i].Item) {
-			Packet.Write<char>(i);
-			Packet.Write<char>(Player->Inventory[i].Count);
-			Packet.Write<int32_t>(Player->Inventory[i].Item->ID);
+			Packet.Write<uint8_t>(i);
+			Packet.Write<uint8_t>(Player->Inventory[i].Count);
+			Packet.Write<uint32_t>(Player->Inventory[i].Item->ID);
 		}
 	}
 
 	// Get skill count
-	int SkillCount = 0;
+	uint32_t SkillCount = 0;
 	for(const auto &SkillLevel : Player->SkillLevels) {
 		if(SkillLevel.second > 0)
 			SkillCount++;
 	}
 
 	// Write skills
-	Packet.Write<char>(SkillCount);
+	Packet.Write<uint32_t>(SkillCount);
 	for(const auto &SkillLevel : Player->SkillLevels) {
 		if(SkillLevel.second > 0) {
 			Packet.Write<uint32_t>(SkillLevel.first);
@@ -725,7 +725,7 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 	}
 
 	// Write skill bar
-	Packet.Write<uint8_t>(Player->ActionBar.size());
+	Packet.Write<uint8_t>((uint8_t)Player->ActionBar.size());
 	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 		Player->ActionBar[i].Serialize(Packet);
 	}
@@ -771,7 +771,8 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 		_InventorySlot *NewSlotItem = &Player->Inventory[NewSlot];
 
 		// Get item information
-		int OldItemID = 0, NewItemID = 0, OldItemCount = 0, NewItemCount = 0;
+		uint32_t OldItemID = 0, NewItemID = 0;
+		int OldItemCount = 0, NewItemCount = 0;
 		if(OldSlotItem->Item) {
 			OldItemID = OldSlotItem->Item->ID;
 			OldItemCount = OldSlotItem->Count;
@@ -784,11 +785,11 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 		// Build packet
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
-		Packet.Write<int32_t>(OldItemID);
+		Packet.Write<uint32_t>(OldItemID);
 		Packet.Write<char>(OldSlot);
 		if(OldItemID > 0)
 			Packet.Write<char>(OldItemCount);
-		Packet.Write<int32_t>(NewItemID);
+		Packet.Write<uint32_t>(NewItemID);
 		Packet.Write<char>(NewSlot);
 		if(NewItemID > 0)
 			Packet.Write<char>(NewItemCount);
@@ -1093,7 +1094,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Read packet
-	int Status = Data.Read<char>();
+	uint8_t Status = Data.Read<uint8_t>();
 	switch(Status) {
 		case _Object::STATUS_NONE:
 			Player->InventoryOpen = false;
@@ -1267,7 +1268,7 @@ void _Server::BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold) 
 	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
 		if(Player->Inventory[i].Item) {
 			Packet.Write<uint32_t>(Player->Inventory[i].Item->ID);
-			Packet.Write<char>(Player->Inventory[i].Count);
+			Packet.Write<uint8_t>(Player->Inventory[i].Count);
 		}
 		else
 			Packet.Write<uint32_t>(0);

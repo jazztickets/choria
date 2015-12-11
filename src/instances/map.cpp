@@ -98,8 +98,8 @@ void _Map::InitAtlas(const std::string AtlasPath) {
 
 	TileAtlas = new _Atlas(AtlasTexture, glm::ivec2(32, 32), 1);
 
-	GLuint TileVertexCount = 4 * Size.x * Size.y;
-	GLuint TileFaceCount = 2 * Size.x * Size.y;
+	GLuint TileVertexCount = (GLuint)(4 * Size.x * Size.y);
+	GLuint TileFaceCount = (GLuint)(2 * Size.x * Size.y);
 
 	TileVertices = new glm::vec4[TileVertexCount];
 	TileFaces = new glm::u32vec3[TileFaceCount];
@@ -302,7 +302,7 @@ void _Map::SetAmbientLightByClock() {
 		Length += MAP_DAY_LENGTH;
 
 	// Get percent to next cycle
-	float Percent = Diff / Length;
+	float Percent = (float)(Diff / Length);
 
 	// Set color
 	AmbientLight = glm::mix(Cycles[CurrentCycle], Cycles[NextCycle], Percent);
@@ -365,8 +365,8 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 	}
 
 	// Draw text overlay
-	for(int j = Bounds[1]; j < Bounds[3]; j++) {
-		for(int i = Bounds[0]; i < Bounds[2]; i++) {
+	for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
+		for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
 			_Tile *Tile = &Tiles[i][j];
 			glm::vec3 DrawPosition = glm::vec3(i, j, 0) + glm::vec3(0.5f, 0.5f, 0);
 
@@ -401,11 +401,11 @@ void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
 	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	Graphics.SetColor(COLOR_WHITE);
 
-	int VertexIndex = 0;
+	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;
 
-	for(int j = Bounds[1]; j < Bounds[3]; j++) {
-		for(int i = Bounds[0]; i < Bounds[2]; i++) {
+	for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
+		for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
 			glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[Layer]);
 			TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
 			TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
@@ -417,7 +417,7 @@ void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
 	}
 
 	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
-	GLsizeiptr ElementBufferSize = FaceIndex * sizeof(glm::u32vec3);
+	GLsizeiptr ElementBufferSize = FaceIndex * (int)sizeof(glm::u32vec3);
 
 	Graphics.SetTextureID(TileAtlas->Texture->ID);
 	Graphics.EnableAttribs(2);
@@ -609,7 +609,7 @@ void _Map::RemoveObject(const _Object *RemoveObject) {
 		// Create packet
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_DELETEOBJECT);
-		Packet.Write<uint8_t>(ID);
+		Packet.Write<uint8_t>((uint8_t)ID);
 		Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
 
 		// Send to everyone
@@ -736,7 +736,7 @@ void _Map::SendObjectList(_Peer *Peer) {
 	Packet.Write<NetworkIDType>(Peer->Object->NetworkID);
 
 	// Write object data
-	Packet.Write<NetworkIDType>(Objects.size());
+	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());
 	for(auto &Object : Objects) {
 		Object->Serialize(Packet);
 	}
@@ -750,10 +750,10 @@ void _Map::SendObjectUpdates() {
 	// Create packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_OBJECTUPDATES);
-	Packet.Write<uint8_t>(ID);
+	Packet.Write<uint8_t>((uint8_t)ID);
 
 	// Write object count
-	Packet.Write<NetworkIDType>(Objects.size());
+	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());
 
 	// Iterate over objects
 	for(const auto &Object : Objects) {
