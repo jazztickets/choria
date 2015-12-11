@@ -42,7 +42,7 @@ _Camera::~_Camera() {
 
 // Calculate the frustum
 void _Camera::CalculateFrustum(float AspectRatio) {
-	Frustum.y = std::tan(Fovy / 360 * MATH_PI) * Near;
+	Frustum.y = (float)std::tan(Fovy / 360 * MATH_PI) * Near;
 	Frustum.x = Frustum.y * AspectRatio;
 	Projection = glm::frustum(-Frustum.x, Frustum.x, Frustum.y, -Frustum.y, Near, Far);
 }
@@ -71,8 +71,8 @@ void _Camera::ConvertScreenToWorld(const glm::ivec2 &Point, glm::vec2 &WorldPosi
 
 // Converts world space to screen space
 void _Camera::ConvertWorldToScreen(const glm::vec2 &WorldPosition, glm::ivec2 &Point) {
-	Point.x = Graphics.ViewportSize.x * (0.5f + ((WorldPosition.x - Position.x) / (Position.z * Graphics.AspectRatio * 2)));
-	Point.y = Graphics.ViewportSize.y * (0.5f + ((WorldPosition.y - Position.y) / (Position.z * 2)));
+	Point.x = (int)(Graphics.ViewportSize.x * (0.5f + ((WorldPosition.x - Position.x) / (Position.z * Graphics.AspectRatio * 2))));
+	Point.y = (int)(Graphics.ViewportSize.y * (0.5f + ((WorldPosition.y - Position.y) / (Position.z * 2))));
 }
 
 // Update camera

@@ -45,7 +45,7 @@ class _Config {
 		// Graphics
 		glm::ivec2 WindowSize;
 		glm::ivec2 FullscreenSize;
-		int MaxFPS;
+		double MaxFPS;
 		int Vsync;
 		int MSAA;
 		int Anisotropy;

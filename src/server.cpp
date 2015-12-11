@@ -555,7 +555,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	while(Save->Database->FetchRow()) {
 		Packet.Write<int32_t>(Save->Database->GetInt("slot"));
 		Packet.WriteString(Save->Database->GetString("name"));
-		Packet.Write<int32_t>(Save->Database->GetInt("portrait_id"));
+		Packet.Write<uint32_t>(Save->Database->GetInt("portrait_id"));
 		Packet.Write<int32_t>(Save->Database->GetInt("experience"));
 	}
 	Save->Database->CloseQuery();

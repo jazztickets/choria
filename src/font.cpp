@@ -39,7 +39,7 @@ inline uint32_t GetNextPowerOf2(uint32_t Value) {
 // Struct used when sorting glyphs by height
 struct CharacterSortStruct {
 	FT_UInt Character;
-	int Height;
+	FT_UInt Height;
 };
 
 // Comparison operator for priority queue
@@ -54,7 +54,7 @@ _Font::_Font(const _Program *Program) :
 }
 
 // Load a font file
-_Font::_Font(const std::string &FontFile, const _Program *Program, int FontSize, int TextureWidth) :
+_Font::_Font(const std::string &FontFile, const _Program *Program, uint32_t FontSize, uint32_t TextureWidth) :
 	_Font(Program) {
 	HasKerning = false;
 	MaxHeight = 0.0f;
@@ -127,11 +127,11 @@ void _Font::SortCharacters(FT_Face &Face, const std::string &Characters, std::st
 	for(size_t i = 0; i < Characters.size(); i++) {
 
 		// Load a character
-		FT_Load_Char(Face, Characters[i], LoadFlags);
+		FT_Load_Char(Face, (FT_ULong)Characters[i], LoadFlags);
 		FT_GlyphSlot &Glyph = Face->glyph;
 
 		// Add character to the list
-		Character.Character = Characters[i];
+		Character.Character = (FT_UInt)Characters[i];
 		Character.Height = Glyph->bitmap.rows;
 
 		// Save maxes
@@ -139,8 +139,8 @@ void _Font::SortCharacters(FT_Face &Face, const std::string &Characters, std::st
 			MaxHeight = Character.Height;
 		if(Glyph->bitmap_top > MaxAbove)
 			MaxAbove = Glyph->bitmap_top;
-		if((int)(-Glyph->bitmap_top + Glyph->bitmap.rows) > MaxBelow)
-			MaxBelow = (int)(-Glyph->bitmap_top + Glyph->bitmap.rows);
+		if((float)Glyph->bitmap.rows - Glyph->bitmap_top > MaxBelow)
+			MaxBelow = (float)Glyph->bitmap.rows - Glyph->bitmap_top;
 
 		CharacterList.push(Character);
 	}
@@ -148,32 +148,32 @@ void _Font::SortCharacters(FT_Face &Face, const std::string &Characters, std::st
 	// Build sorted string
 	while(!CharacterList.empty()) {
 		const CharacterSortStruct &Character = CharacterList.top();
-		SortedCharacters.push_back(Character.Character);
+		SortedCharacters.push_back((char)Character.Character);
 		CharacterList.pop();
 	}
 }
 
 // Renders all the glyphs to a texture
-void _Font::CreateFontTexture(std::string SortedCharacters, int TextureWidth) {
-	int X = 0;
-	int Y = 0;
-	int SpacingX = 1;
-	int SpacingY = 1;
-	int MaxRows = 0;
+void _Font::CreateFontTexture(std::string SortedCharacters, uint32_t TextureWidth) {
+	uint32_t X = 0;
+	uint32_t Y = 0;
+	uint32_t SpacingX = 1;
+	uint32_t SpacingY = 1;
+	uint32_t MaxRows = 0;
 
 	// Determine Glyph UVs and texture height given a texture width
 	for(size_t i = 0; i < SortedCharacters.size(); i++) {
 
 		// Load a character
-		FT_Load_Char(Face, SortedCharacters[i], LoadFlags);
+		FT_Load_Char(Face, (FT_ULong)SortedCharacters[i], LoadFlags);
 
 		// Get glyph
 		FT_GlyphSlot &GlyphSlot = Face->glyph;
 		FT_Bitmap *Bitmap = &GlyphSlot->bitmap;
 
 		// Get width and height of glyph
-		int Width = Bitmap->width + SpacingX;
-		int Rows = Bitmap->rows;
+		uint32_t Width = Bitmap->width + SpacingX;
+		uint32_t Rows = Bitmap->rows;
 
 		// Start a new line if no room left
 		if(X + Width > TextureWidth) {
@@ -188,15 +188,15 @@ void _Font::CreateFontTexture(std::string SortedCharacters, int TextureWidth) {
 
 		// Add character to list
 		GlyphStruct Glyph;
-		Glyph.Left = (float)X;
-		Glyph.Top = (float)Y;
-		Glyph.Right = (float)X + Bitmap->width;
-		Glyph.Bottom = (float)Y + Bitmap->rows;
-		Glyph.Width = (float)Bitmap->width;
-		Glyph.Height = (float)Bitmap->rows;
-		Glyph.Advance = (float)(GlyphSlot->advance.x >> 6);
-		Glyph.OffsetX = (float)GlyphSlot->bitmap_left;
-		Glyph.OffsetY = (float)GlyphSlot->bitmap_top;
+		Glyph.Left = X;
+		Glyph.Top = Y;
+		Glyph.Right = X + Bitmap->width;
+		Glyph.Bottom = Y + Bitmap->rows;
+		Glyph.Width = Bitmap->width;
+		Glyph.Height = Bitmap->rows;
+		Glyph.Advance = GlyphSlot->advance.x >> 6;
+		Glyph.OffsetX = GlyphSlot->bitmap_left;
+		Glyph.OffsetY = GlyphSlot->bitmap_top;
 		Glyphs[(FT_Byte)SortedCharacters[i]] = Glyph;
 
 		// Update draw position
@@ -207,10 +207,10 @@ void _Font::CreateFontTexture(std::string SortedCharacters, int TextureWidth) {
 	Y += MaxRows;
 
 	// Round to next power of 2
-	int TextureHeight = (int)GetNextPowerOf2(Y);
+	uint32_t TextureHeight = GetNextPowerOf2(Y);
 
 	// Create image buffer
-	int TextureSize = TextureWidth * TextureHeight;
+	uint32_t TextureSize = TextureWidth * TextureHeight;
 	uint8_t *Image = new uint8_t[TextureSize];
 	memset(Image, 0, TextureSize);
 
@@ -219,7 +219,7 @@ void _Font::CreateFontTexture(std::string SortedCharacters, int TextureWidth) {
 		GlyphStruct &Glyph = Glyphs[(FT_Byte)SortedCharacters[i]];
 
 		// Load a character
-		FT_Load_Char(Face, SortedCharacters[i], LoadFlags);
+		FT_Load_Char(Face, (FT_ULong)SortedCharacters[i], LoadFlags);
 
 		// Get glyph
 		FT_GlyphSlot &GlyphSlot = Face->glyph;
@@ -228,11 +228,11 @@ void _Font::CreateFontTexture(std::string SortedCharacters, int TextureWidth) {
 		// Write character bitmap data
 		for(FT_UInt y = 0; y < Bitmap->rows; y++) {
 
-			int DrawY = (int)Glyph.Top + y;
+			int DrawY = (int)Glyph.Top + (int)y;
 			for(FT_UInt x = 0; x < Bitmap->width; x++) {
-				int DrawX = (int)Glyph.Left + x;
-				int Destination = DrawX + DrawY * TextureWidth;
-				int Source = x + y * Bitmap->pitch;
+				int DrawX = (int)Glyph.Left + (int)x;
+				int Destination = DrawX + DrawY * (int)TextureWidth;
+				int Source = (int)x + (int)y * Bitmap->pitch;
 
 				// Copy to texture
 				Image[Destination] = Bitmap->buffer[Source];
@@ -290,7 +290,7 @@ float _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::ve
 	float DrawX, DrawY;
 	FT_UInt PreviousGlyphIndex = 0;
 	for(size_t i = 0; i < Text.size(); i++) {
-		FT_UInt GlyphIndex = FT_Get_Char_Index(Face, Text[i]);
+		FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
 
 		// Handle kerning
 		if(HasKerning && i) {
@@ -365,7 +365,7 @@ void _Font::BreakupString(const std::string &Text, float Width, std::list<std::s
 		if(Text[i] == ' ')
 			LastSpace = i;
 
-		FT_UInt GlyphIndex = FT_Get_Char_Index(Face, Text[i]);
+		FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
 
 		// Handle kerning
 		if(HasKerning && i) {
@@ -390,7 +390,7 @@ void _Font::BreakupString(const std::string &Text, float Width, std::list<std::s
 			// Add to list of strings
 			Strings.push_back(Text.substr(StartCut, LastSpace - StartCut));
 			StartCut = LastSpace+Adjust;
-			LastSpace = -1;
+			LastSpace = std::string::npos;
 			i = StartCut;
 
 			X = 0;

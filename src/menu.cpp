@@ -200,7 +200,7 @@ uint32_t _Menu::GetSelectedPortraitID() {
 	for(auto &Element : PortraitsElement->Children) {
 		_Button *Button = (_Button *)Element;
 		if(Button->Checked)
-			return (intptr_t)Button->UserData;
+			return (uint32_t)(intptr_t)Button->UserData;
 	}
 
 	return 0;
@@ -803,7 +803,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 			for(int i = 0; i < CharacterCount; i++) {
 				int32_t Slot = Buffer.Read<int32_t>();
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
-				int32_t PortraitID = Buffer.Read<int32_t>();
+				uint32_t PortraitID = Buffer.Read<uint32_t>();
 				int32_t Experience = Buffer.Read<int32_t>();
 
 				std::stringstream Buffer;
