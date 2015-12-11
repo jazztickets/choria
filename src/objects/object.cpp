@@ -591,19 +591,20 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 
 	if(ActionBar[Slot].Skill) {
 		_ActionResult ActionResult;
-		ActionResult.SourceFighter = this;
-		ActionResult.TargetFighter = this;
+		ActionResult.SourceObject = this;
+		ActionResult.TargetObject = this;
+		ActionResult.Scope = ScopeType::WORLD;
 
 		// Validate use
 		ActionResult.SkillUsed = ActionBar[Slot].Skill;
-		if(!ActionResult.SkillUsed->CanUse(Scripting, this, ScopeType::WORLD))
+		if(!ActionResult.SkillUsed->CanUse(Scripting, ActionResult))
 			return false;
 
 		// Apply costs
-		ActionResult.SkillUsed->ApplyCost(Scripting, this, ActionResult);
+		ActionResult.SkillUsed->ApplyCost(Scripting, ActionResult);
 
 		// Use
-		ActionResult.SkillUsed->Use(Scripting, this, ActionResult, ScopeType::WORLD);
+		ActionResult.SkillUsed->Use(Scripting, ActionResult);
 
 		// Apply changes
 		UpdateHealth(ActionResult.SourceHealthChange);

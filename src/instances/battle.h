@@ -54,8 +54,8 @@ enum class ScopeType : uint8_t {
 // Structures
 struct _ActionResult {
 	_ActionResult() :
-		SourceFighter(nullptr),
-		TargetFighter(nullptr),
+		SourceObject(nullptr),
+		TargetObject(nullptr),
 		LastPosition(0, 0),
 		Position(0, 0),
 		Texture(nullptr),
@@ -66,10 +66,11 @@ struct _ActionResult {
 		SourceManaChange(0),
 		TargetHealthChange(0),
 		TargetManaChange(0),
-		Time(0.0) { }
+		Time(0.0),
+		Scope(ScopeType::ALL) { }
 
-	_Object *SourceFighter;
-	_Object *TargetFighter;
+	_Object *SourceObject;
+	_Object *TargetObject;
 	glm::vec2 LastPosition;
 	glm::vec2 Position;
 	const _Texture *Texture;
@@ -81,6 +82,7 @@ struct _ActionResult {
 	int TargetHealthChange;
 	int TargetManaChange;
 	double Time;
+	ScopeType Scope;
 };
 
 struct _BattleResult {

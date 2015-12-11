@@ -126,11 +126,11 @@ void _Battle::Update(double FrameTime) {
 				_ActionResult &ActionResult = *Iterator;
 
 				// Find start position
-				glm::vec2 StartPosition = ActionResult.SourceFighter->ResultPosition - glm::vec2(ActionResult.SourceFighter->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
+				glm::vec2 StartPosition = ActionResult.SourceObject->ResultPosition - glm::vec2(ActionResult.SourceObject->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
 				ActionResult.LastPosition = ActionResult.Position;
 
 				// Interpolate between start and end position of action used
-				ActionResult.Position = glm::mix(StartPosition, ActionResult.TargetFighter->ResultPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
+				ActionResult.Position = glm::mix(StartPosition, ActionResult.TargetObject->ResultPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
 				if(ActionResult.Time == 0)
 					ActionResult.LastPosition = ActionResult.Position;
 
@@ -180,7 +180,7 @@ void _Battle::RenderBattle(double BlendFactor) {
 
 // Render results of an action
 void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFactor) {
-	if(!ActionResult.TargetFighter || !ActionResult.SourceFighter)
+	if(!ActionResult.TargetObject || !ActionResult.SourceObject)
 		return;
 
 	// Get alpha
@@ -270,8 +270,12 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	// Choose an action to use
 	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
 
+		_ActionResult ActionResult;
+		ActionResult.SourceObject = ClientPlayer;
+		ActionResult.Scope = ScopeType::BATTLE;
+
 		const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
-		if(Skill && !Skill->CanUse(Scripting, ClientPlayer, ScopeType::BATTLE))
+		if(Skill && !Skill->CanUse(Scripting, ActionResult))
 			Skill = nullptr;
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
@@ -401,33 +405,34 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		return;
 
 	_ActionResult ActionResult;
-	ActionResult.SourceFighter = SourceFighter;
+	ActionResult.SourceObject = SourceFighter;
+	ActionResult.Scope = ScopeType::BATTLE;
 	ActionResult.SkillUsed = SourceFighter->BattleAction.Skill;
 	ActionResult.ItemUsed = SourceFighter->BattleAction.Item;
 
 	// Use item
 	int Index = -1;
-	if(ActionResult.ItemUsed && ActionResult.SourceFighter->FindItem(ActionResult.ItemUsed, Index)) {
-		ActionResult.SourceFighter->UpdateInventory(Index, -1);
+	if(ActionResult.ItemUsed && ActionResult.SourceObject->FindItem(ActionResult.ItemUsed, Index)) {
+		ActionResult.SourceObject->UpdateInventory(Index, -1);
 	}
 
 	// Apply costs
 	if(ActionResult.SkillUsed) {
-		if(!ActionResult.SkillUsed->CanUse(Scripting, SourceFighter, ScopeType::BATTLE))
+		if(!ActionResult.SkillUsed->CanUse(Scripting, ActionResult))
 			return;
 
-		ActionResult.SkillUsed->ApplyCost(Scripting, SourceFighter, ActionResult);
+		ActionResult.SkillUsed->ApplyCost(Scripting, ActionResult);
 	}
 
-	ActionResult.SourceFighter->UpdateHealth(ActionResult.SourceHealthChange);
-	ActionResult.SourceFighter->UpdateMana(ActionResult.SourceManaChange);
+	ActionResult.SourceObject->UpdateHealth(ActionResult.SourceHealthChange);
+	ActionResult.SourceObject->UpdateMana(ActionResult.SourceManaChange);
 
 	// Build packet for results
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_ACTIONRESULTS);
 
 	// Source fighter
-	Packet.Write<uint8_t>(ActionResult.SourceFighter->BattleID);
+	Packet.Write<uint8_t>(ActionResult.SourceObject->BattleID);
 
 	// Write action used
 	uint32_t SkillID = ActionResult.SkillUsed ? ActionResult.SkillUsed->ID : 0;
@@ -436,17 +441,17 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	Packet.Write<uint32_t>(ItemID);
 	Packet.Write<int32_t>(ActionResult.SourceHealthChange);
 	Packet.Write<int32_t>(ActionResult.SourceManaChange);
-	Packet.Write<int32_t>(ActionResult.SourceFighter->Health);
-	Packet.Write<int32_t>(ActionResult.SourceFighter->Mana);
+	Packet.Write<int32_t>(ActionResult.SourceObject->Health);
+	Packet.Write<int32_t>(ActionResult.SourceObject->Mana);
 
 	// Update each target
 	Packet.Write<uint8_t>(SourceFighter->BattleTargets.size());
 	for(auto &BattleTarget : SourceFighter->BattleTargets) {
-		ActionResult.TargetFighter = BattleTarget;
+		ActionResult.TargetObject = BattleTarget;
 
 		// Update fighters
 		if(ActionResult.SkillUsed) {
-			ActionResult.SkillUsed->Use(Scripting, SourceFighter, ActionResult, ScopeType::BATTLE);
+			ActionResult.SkillUsed->Use(Scripting, ActionResult);
 		}
 		else if(ActionResult.ItemUsed) {
 			ActionResult.TargetHealthChange = ActionResult.ItemUsed->HealthRestore;
@@ -454,15 +459,15 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		}
 
 		// Update target
-		ActionResult.TargetFighter->UpdateHealth(ActionResult.TargetHealthChange);
-		ActionResult.TargetFighter->UpdateMana(ActionResult.TargetManaChange);
+		ActionResult.TargetObject->UpdateHealth(ActionResult.TargetHealthChange);
+		ActionResult.TargetObject->UpdateMana(ActionResult.TargetManaChange);
 
-		Packet.Write<char>(ActionResult.TargetFighter->BattleID);
+		Packet.Write<char>(ActionResult.TargetObject->BattleID);
 		Packet.Write<int32_t>(ActionResult.DamageDealt);
 		Packet.Write<int32_t>(ActionResult.TargetHealthChange);
 		Packet.Write<int32_t>(ActionResult.TargetManaChange);
-		Packet.Write<int32_t>(ActionResult.TargetFighter->Health);
-		Packet.Write<int32_t>(ActionResult.TargetFighter->Mana);
+		Packet.Write<int32_t>(ActionResult.TargetObject->Health);
+		Packet.Write<int32_t>(ActionResult.TargetObject->Mana);
 	}
 
 	// Send packet
@@ -497,16 +502,16 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
 	// Update source fighter
-	ActionResult.SourceFighter = GetObjectByID(SourceBattleID);
-	if(ActionResult.SourceFighter) {
-		ActionResult.SourceFighter->Health = SourceFighterHealth;
-		ActionResult.SourceFighter->Mana = SourceFighterMana;
-		ActionResult.SourceFighter->TurnTimer = 0.0;
-		ActionResult.SourceFighter->BattleAction.Unset();
-		ActionResult.SourceFighter->BattleTargets.clear();
+	ActionResult.SourceObject = GetObjectByID(SourceBattleID);
+	if(ActionResult.SourceObject) {
+		ActionResult.SourceObject->Health = SourceFighterHealth;
+		ActionResult.SourceObject->Mana = SourceFighterMana;
+		ActionResult.SourceObject->TurnTimer = 0.0;
+		ActionResult.SourceObject->BattleAction.Unset();
+		ActionResult.SourceObject->BattleTargets.clear();
 
 		// Use item on client
-		if(ClientPlayer == ActionResult.SourceFighter && ActionResult.ItemUsed) {
+		if(ClientPlayer == ActionResult.SourceObject && ActionResult.ItemUsed) {
 			int Index = -1;
 			if(ClientPlayer->FindItem(ActionResult.ItemUsed, Index)) {
 				ClientPlayer->UpdateInventory(Index, -1);
@@ -526,10 +531,10 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		int TargetFighterMana = Data.Read<int32_t>();
 
 		// Update target fighter
-		ActionResult.TargetFighter = GetObjectByID(TargetBattleID);
-		if(ActionResult.TargetFighter) {
-			ActionResult.TargetFighter->Health = TargetFighterHealth;
-			ActionResult.TargetFighter->Mana = TargetFighterMana;
+		ActionResult.TargetObject = GetObjectByID(TargetBattleID);
+		if(ActionResult.TargetObject) {
+			ActionResult.TargetObject->Health = TargetFighterHealth;
+			ActionResult.TargetObject->Mana = TargetFighterMana;
 		}
 
 		ActionResults.push_back(ActionResult);
@@ -849,7 +854,7 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 	// Remove action results
 	for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
 		_ActionResult &ActionResult = *Iterator;
-		if(ActionResult.SourceFighter == RemoveFighter || ActionResult.TargetFighter == RemoveFighter) {
+		if(ActionResult.SourceObject == RemoveFighter || ActionResult.TargetObject == RemoveFighter) {
 			Iterator = ActionResults.erase(Iterator);
 		}
 		else
