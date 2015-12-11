@@ -316,13 +316,13 @@ void _ClientState::Update(double FrameTime) {
 	// Set input
 	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
 		Player->InputState = 0;
-		if(Actions.GetState(_Actions::UP))
+		if(Actions.GetState(_Actions::UP) > 0.0f)
 			Player->InputState |= _Object::MOVE_UP;
-		if(Actions.GetState(_Actions::DOWN))
+		if(Actions.GetState(_Actions::DOWN) > 0.0f)
 			Player->InputState |= _Object::MOVE_DOWN;
-		if(Actions.GetState(_Actions::LEFT))
+		if(Actions.GetState(_Actions::LEFT) > 0.0f)
 			Player->InputState |= _Object::MOVE_LEFT;
-		if(Actions.GetState(_Actions::RIGHT))
+		if(Actions.GetState(_Actions::RIGHT) > 0.0f)
 			Player->InputState |= _Object::MOVE_RIGHT;
 	}
 
@@ -736,8 +736,8 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 		return;
 
 	// Read packet
-	int32_t EventType = Data.Read<int32_t>();
-	int32_t EventData = Data.Read<int32_t>();
+	uint32_t EventType = Data.Read<uint32_t>();
+	uint32_t EventData = Data.Read<uint32_t>();
 	Player->Position = Data.Read<glm::ivec2>();
 
 	// Handle event
@@ -789,7 +789,7 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 	// Get gold offer
 	Player->TradePlayer->TradeGold = Data.Read<int32_t>();
 	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
-		int ItemID = Data.Read<int32_t>();
+		uint32_t ItemID = Data.Read<uint32_t>();
 		int Count = 0;
 		if(ItemID != 0)
 			Count = Data.Read<char>();

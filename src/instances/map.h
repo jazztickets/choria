@@ -45,13 +45,13 @@ class _Peer;
 // Structures
 struct _Event {
 	_Event() : Type(0), Data(0) { }
-	_Event(uint32_t Type, int Data) : Type(Type), Data(Data) { }
+	_Event(uint32_t Type, uint32_t Data) : Type(Type), Data(Data) { }
 
 	bool operator==(const _Event &Event) const { return Event.Type == Type && Event.Data == Data; }
 	bool operator<(const _Event &Event) const { return std::tie(Event.Type, Event.Data) < std::tie(Type, Data); }
 
 	uint32_t Type;
-	int Data;
+	uint32_t Data;
 };
 
 struct _Tile {

@@ -1408,7 +1408,7 @@ void _HUD::RefreshSkillButtons() {
 	// Loop through buttons
 	for(auto &Element : SkillsElement->Children) {
 		if(Element->Identifier == "label_skills_level") {
-			int SkillID = (intptr_t)Element->UserData;
+			uint32_t SkillID = (intptr_t)Element->UserData;
 			_Label *Label = (_Label *)Element;
 			Label->Text = std::to_string(Player->SkillLevels[SkillID]);
 		}
@@ -1426,7 +1426,7 @@ void _HUD::RefreshSkillButtons() {
 			_Button *Button = (_Button *)Element;
 
 			// Get skill
-			int SkillID = (intptr_t)Button->Parent->UserData;
+			uint32_t SkillID = (intptr_t)Button->Parent->UserData;
 			if(Player->SkillLevels[SkillID] == 0)
 				Button->SetVisible(false);
 			else

@@ -25,8 +25,6 @@
 
 // Constants
 const int ACTIONS_MAXINPUTS = SDL_NUM_SCANCODES;
-const float ACTIONS_SCALE = 1.0f;
-const float ACTIONS_DEADZONE = 0.05f;
 
 struct _ActionMap {
 	_ActionMap(int Action, float Scale, float DeadZone) : Action(Action), DeadZone(DeadZone), Scale(Scale) { }

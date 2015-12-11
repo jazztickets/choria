@@ -39,7 +39,6 @@
 _Object::_Object()
 :	Map(nullptr),
 	Peer(nullptr),
-	Type(0),
 	InputState(0),
 	Moved(false),
 	Deleted(false),
@@ -386,7 +385,6 @@ void _Object::Update(double FrameTime) {
 void _Object::Serialize(_Buffer &Packet) {
 	Packet.Write<NetworkIDType>(NetworkID);
 	Packet.Write<glm::ivec2>(Position);
-	Packet.Write<char>(Type);
 	Packet.WriteString(Name.c_str());
 	Packet.Write<uint32_t>(PortraitID);
 	Packet.WriteBit(IsInvisible());
@@ -403,7 +401,6 @@ void _Object::SerializeUpdate(_Buffer &Packet) {
 // Unserialize for ObjectCreate
 void _Object::Unserialize(_Buffer &Packet) {
 	Position = Packet.Read<glm::ivec2>();
-	Type = Packet.Read<char>();
 	Name = Packet.ReadString();
 	PortraitID = Packet.Read<uint32_t>();
 	Portrait = Stats->GetPortraitImage(PortraitID);

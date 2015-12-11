@@ -1266,11 +1266,11 @@ void _Server::BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold) 
 	Packet.Write<int32_t>(Gold);
 	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
 		if(Player->Inventory[i].Item) {
-			Packet.Write<int32_t>(Player->Inventory[i].Item->ID);
+			Packet.Write<uint32_t>(Player->Inventory[i].Item->ID);
 			Packet.Write<char>(Player->Inventory[i].Count);
 		}
 		else
-			Packet.Write<int32_t>(0);
+			Packet.Write<uint32_t>(0);
 	}
 }
 

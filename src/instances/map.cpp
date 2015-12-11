@@ -203,8 +203,8 @@ void _Map::CheckEvents(_Object *Object) {
 				// Notify client
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<int>(Tile->Event.Type);
-				Packet.Write<int>(Tile->Event.Data);
+				Packet.Write<uint32_t>(Tile->Event.Type);
+				Packet.Write<uint32_t>(Tile->Event.Data);
 				Packet.Write<glm::ivec2>(Object->Position);
 				Server->Network->SendPacket(Packet, Object->Peer);
 			}
@@ -218,8 +218,8 @@ void _Map::CheckEvents(_Object *Object) {
 				// Notify client
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<int>(Tile->Event.Type);
-				Packet.Write<int>(Tile->Event.Data);
+				Packet.Write<uint32_t>(Tile->Event.Type);
+				Packet.Write<uint32_t>(Tile->Event.Data);
 				Packet.Write<glm::ivec2>(Object->Position);
 				Server->Network->SendPacket(Packet, Object->Peer);
 			}

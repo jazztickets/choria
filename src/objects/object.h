@@ -164,7 +164,7 @@ class _Object {
 		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
-		void SetSkillLevel(int SkillID, int Points) { SkillLevels[SkillID] = Points; }
+		void SetSkillLevel(uint32_t SkillID, int Points) { SkillLevels[SkillID] = Points; }
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Adjust);
 		void CalculateSkillPoints();
@@ -191,9 +191,8 @@ class _Object {
 		// -- OBJECT  --
 		_Map *Map;
 		_Peer *Peer;
-		int Type;
 		int InputState;
-		int Moved;
+		bool Moved;
 		bool Deleted;
 		bool WaitForServer;
 		glm::ivec2 Position;
