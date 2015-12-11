@@ -116,10 +116,10 @@ std::string _Actions::GetInputNameForAction(int Action) {
 			switch(i) {
 				case _Input::KEYBOARD:
 					return _Input::GetKeyName(Input);
-				break;
+				//break;
 				case _Input::MOUSE_BUTTON:
-					return _Input::GetMouseButtonName(Input);
-				break;
+					return _Input::GetMouseButtonName((uint32_t)Input);
+				//break;
 			}
 		}
 	}

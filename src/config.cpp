@@ -23,6 +23,7 @@
 #include <sstream>
 #include <fstream>
 #include <SDL_filesystem.h>
+#include <SDL_video.h>
 
 // Globals
 _Config Config;

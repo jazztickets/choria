@@ -919,7 +919,7 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 
 	// Process packet
 	bool Spend = Data.ReadBit();
-	int SkillID = Data.Read<int32_t>();
+	uint32_t SkillID = Data.Read<uint32_t>();
 	if(Spend) {
 		Player->AdjustSkillLevel(SkillID, 1);
 	}

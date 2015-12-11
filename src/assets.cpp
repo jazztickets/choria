@@ -624,7 +624,7 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 		// Read attributes
 		glm::vec2 Offset, Size;
 		_Alignment Alignment;
-		int MaxLength;
+		size_t MaxLength;
 		File >> Offset.x >> Offset.y >> Size.x >> Size.y >> Alignment.Horizontal >> Alignment.Vertical >> MaxLength;
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 

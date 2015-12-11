@@ -20,8 +20,6 @@
 // Libraries
 #include <string>
 #include <glm/vec2.hpp>
-#include <SDL_keyboard.h>
-#include <SDL_mouse.h>
 
 struct _KeyEvent {
 	_KeyEvent(const char *Text, int Scancode, bool Pressed, bool Repeat) : Text(Text), Scancode(Scancode), Pressed(Pressed), Repeat(Repeat) { }
@@ -58,18 +56,18 @@ class _Input {
 
 		int KeyDown(int Key) { return KeyState[Key]; }
 		bool ModKeyDown(int Key);
-		bool MouseDown(Uint32 Button);
+		bool MouseDown(uint32_t Button);
 
 		const glm::ivec2 &GetMouse() { return Mouse; }
 
 		static const char *GetKeyName(int Key);
-		static const std::string &GetMouseButtonName(Uint32 Button);
+		static const std::string &GetMouseButtonName(uint32_t Button);
 
 	private:
 
 		// States
-		const Uint8 *KeyState;
-		Uint32 MouseState;
+		const uint8_t *KeyState;
+		uint32_t MouseState;
 		glm::ivec2 Mouse;
 };
 

@@ -71,7 +71,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			Menu.SetPassword(Arguments[++i]);
 		}
 		else if(Token == "-port" && TokensRemaining > 0) {
-			NetworkPort = atoi(Arguments[++i]);
+			NetworkPort = (uint16_t)atoi(Arguments[++i]);
 		}
 		else if(Token == "-test") {
 			ClientState.IsTesting = true;
@@ -229,8 +229,6 @@ void _Framework::Update() {
 			State = RequestedState;
 			FrameworkState = INIT;
 		} break;
-		default:
-		break;
 	}
 
 	Graphics.Flip(FrameTime);

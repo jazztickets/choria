@@ -37,6 +37,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <sstream>
 #include <iomanip>
+#include <SDL_keyboard.h>
 
 _EditorState EditorState;
 

@@ -45,6 +45,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <SDL_keyboard.h>
 
 // Initialize
 _HUD::_HUD() {
@@ -1345,7 +1346,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 			}
 		}
 	}
-	Packet.Write<int32_t>(SkillID);
+	Packet.Write<uint32_t>(SkillID);
 	ClientState.Network->SendPacket(Packet);
 
 	// Update player
@@ -1408,7 +1409,7 @@ void _HUD::RefreshSkillButtons() {
 	// Loop through buttons
 	for(auto &Element : SkillsElement->Children) {
 		if(Element->Identifier == "label_skills_level") {
-			uint32_t SkillID = (intptr_t)Element->UserData;
+			uint32_t SkillID = (uint32_t)(intptr_t)Element->UserData;
 			_Label *Label = (_Label *)Element;
 			Label->Text = std::to_string(Player->SkillLevels[SkillID]);
 		}
@@ -1416,7 +1417,7 @@ void _HUD::RefreshSkillButtons() {
 			_Button *Button = (_Button *)Element;
 
 			// Get skill
-			uint32_t SkillID = (intptr_t)Button->Parent->UserData;
+			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
 			if(SkillPointsRemaining == 0 || Player->SkillLevels[SkillID] >= 255)
 				Button->SetVisible(false);
 			else
@@ -1426,7 +1427,7 @@ void _HUD::RefreshSkillButtons() {
 			_Button *Button = (_Button *)Element;
 
 			// Get skill
-			uint32_t SkillID = (intptr_t)Button->Parent->UserData;
+			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
 			if(Player->SkillLevels[SkillID] == 0)
 				Button->SetVisible(false);
 			else

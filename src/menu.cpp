@@ -37,6 +37,7 @@
 #include <stats.h>
 #include <packet.h>
 #include <sstream>
+#include <SDL_keyboard.h>
 
 _Menu Menu;
 
