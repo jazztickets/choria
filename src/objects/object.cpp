@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/object.h>
 #include <objects/skill.h>
+#include <objects/buff.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <ui/element.h>
@@ -261,6 +262,14 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 			Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture, Color);
 		}
+	}
+
+	// Draw status effects
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	glm::vec2 StatusPosition(SlotPosition + glm::vec2(-Slot->Size.x/2, Slot->Size.y/2 + 4));
+	for(auto &StatusEffect : StatusEffects) {
+		Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect.Buff->Texture->Size/2), StatusEffect.Buff->Texture, GlobalColor);
+		StatusPosition.x += StatusEffect.Buff->Texture->Size.x + 2;
 	}
 }
 

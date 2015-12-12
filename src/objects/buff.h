@@ -36,9 +36,7 @@ class _Buff {
 
 		void DrawTooltip(_Scripting *Scripting, const _Object *Player) const;
 
-		//bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		//void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		//void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void Update(_Scripting *Scripting, _ActionResult &ActionResult) const;
 
 		uint32_t ID;
 		std::string Name;

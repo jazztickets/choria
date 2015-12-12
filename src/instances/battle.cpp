@@ -20,6 +20,7 @@
 #include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <objects/skill.h>
+#include <objects/buff.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
@@ -105,6 +106,27 @@ void _Battle::Update(double FrameTime) {
 							ServerResolveAction(Fighter);
 						}
 					}
+				}
+
+				// Update status effects
+				for(auto Iterator = Fighter->StatusEffects.begin(); Iterator != Fighter->StatusEffects.end(); ) {
+					_StatusEffect &StatusEffect = *Iterator;
+					StatusEffect.Time += FrameTime;
+
+					if(StatusEffect.Time >= 1.0) {
+						StatusEffect.Time -= 1.0;
+
+						// Update
+						if(Server)
+							ServerResolveStatusEffect(Fighter, StatusEffect);
+
+						// Reduce count
+						StatusEffect.Count--;
+						if(StatusEffect.Count <= 0)
+							Iterator = Fighter->StatusEffects.erase(Iterator);
+					}
+					else
+						++Iterator;
 				}
 			}
 			else
@@ -458,6 +480,14 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 			ActionResult.TargetManaChange = ActionResult.ItemUsed->ManaRestore;
 		}
 
+		// Add buffs
+		_StatusEffect StatusEffect;
+		if(ActionResult.Buff) {
+			StatusEffect.Buff = ActionResult.Buff;
+			StatusEffect.Count = 5;
+			ActionResult.TargetObject->StatusEffects.push_back(StatusEffect);
+		}
+
 		// Update target
 		ActionResult.TargetObject->UpdateHealth(ActionResult.TargetHealthChange);
 		ActionResult.TargetObject->UpdateMana(ActionResult.TargetManaChange);
@@ -468,6 +498,13 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		Packet.Write<int32_t>(ActionResult.TargetManaChange);
 		Packet.Write<int32_t>(ActionResult.TargetObject->Health);
 		Packet.Write<int32_t>(ActionResult.TargetObject->Mana);
+
+		if(StatusEffect.Buff) {
+			Packet.Write<uint32_t>(StatusEffect.Buff->ID);
+			Packet.Write<int>(StatusEffect.Count);
+		}
+		else
+			Packet.Write<uint32_t>(0);
 	}
 
 	// Send packet
@@ -530,15 +567,35 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		int TargetFighterHealth = Data.Read<int32_t>();
 		int TargetFighterMana = Data.Read<int32_t>();
 
+		// Read status effect
+		uint32_t BuffID = Data.Read<uint32_t>();
+		_StatusEffect StatusEffect;
+		if(BuffID > 0) {
+			StatusEffect.Buff = Stats->Buffs[BuffID];
+			StatusEffect.Count = Data.Read<int>();
+		}
+
 		// Update target fighter
 		ActionResult.TargetObject = GetObjectByID(TargetBattleID);
 		if(ActionResult.TargetObject) {
 			ActionResult.TargetObject->Health = TargetFighterHealth;
 			ActionResult.TargetObject->Mana = TargetFighterMana;
+
+			// Add status effect
+			if(StatusEffect.Buff) {
+				ActionResult.TargetObject->StatusEffects.push_back(StatusEffect);
+			}
 		}
 
 		ActionResults.push_back(ActionResult);
 	}
+}
+
+// Update a status effect
+void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect &StatusEffect) {
+	_ActionResult ActionResult;
+	ActionResult.SourceObject = Object;
+	StatusEffect.Buff->Update(Scripting, ActionResult);
 }
 
 // Get the object pointer battle id

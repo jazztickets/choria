@@ -32,6 +32,7 @@ class _Peer;
 class _Texture;
 class _Battle;
 class _Skill;
+class _Buff;
 class _Item;
 class _Stats;
 class _Buffer;
@@ -64,6 +65,14 @@ struct _Action {
 
 	const _Skill *Skill;
 	const _Item *Item;
+	int Count;
+};
+
+struct _StatusEffect {
+	_StatusEffect() : Buff(nullptr), Time(0.0), Count(0) { }
+
+	const _Buff *Buff;
+	double Time;
 	int Count;
 };
 
@@ -224,6 +233,7 @@ class _Object {
 		_Action BattleAction;
 		_Action PotentialAction;
 		std::list<uint32_t> ItemDropsReceived;
+		std::list<_StatusEffect> StatusEffects;
 
 		// Render
 		const _Texture *Portrait;

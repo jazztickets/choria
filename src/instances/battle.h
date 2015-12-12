@@ -35,6 +35,7 @@ class _Stats;
 class _Scripting;
 class _Server;
 class _ClientNetwork;
+struct _StatusEffect;
 
 // Types of targets
 enum class TargetType : uint32_t {
@@ -143,6 +144,7 @@ class _Battle {
 		// Resolve
 		void ServerResolveAction(_Object *SourceFighter);
 		void ClientResolveAction(_Buffer &Data);
+		void ServerResolveStatusEffect(_Object *Object, _StatusEffect &StatusEffect);
 
 		// Input
 		bool ClientHandleInput(int Action);

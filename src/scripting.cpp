@@ -194,10 +194,10 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	ActionResult.SourceManaChange = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
-	//lua_pushstring(LuaState, "BuffID");
-	//lua_gettable(LuaState, -2);
-	//ActionResult.BuffID = (int)lua_tointeger(LuaState, -1);
-	//lua_pop(LuaState, 1);
+	lua_pushstring(LuaState, "Buff");
+	lua_gettable(LuaState, -2);
+	ActionResult.Buff = (_Buff *)lua_touserdata(LuaState, -1);
+	lua_pop(LuaState, 1);
 }
 
 // Start a call to a lua class method, return table index

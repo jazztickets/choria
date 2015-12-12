@@ -66,7 +66,7 @@ void _Stats::LoadMaps() {
 	_MapStat Map;
 	while(Database->FetchRow()) {
 		Map.File = std::string("maps/") + Database->GetString("file");
-		Maps[Database->GetInt<int>("id")] = Map;
+		Maps[Database->GetInt<uint32_t>("id")] = Map;
 	}
 	Database->CloseQuery();
 }

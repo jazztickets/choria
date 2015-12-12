@@ -75,6 +75,7 @@ void _DedicatedState::Close() {
 		delete Thread;
 	}
 
+	delete Stats;
 	delete Server;
 }
 

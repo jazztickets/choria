@@ -82,46 +82,14 @@ void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player) const {
 	}*/
 }
 
-/*
-// Return true if the skill can be used
-bool _Buff::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(this->Scope != ScopeType::ALL && this->Scope != ActionResult.Scope)
-		return false;
-
-	if(Scripting->StartMethodCall(Script, "CanUse")) {
-		Scripting->PushInt(ActionResult.SourceObject->SkillLevels[ID]);
+// Call the update script
+void _Buff::Update(_Scripting *Scripting, _ActionResult &ActionResult) const {
+	if(Scripting->StartMethodCall(Script, "Update")) {
+		Scripting->PushInt(1);
 		Scripting->PushObject(ActionResult.SourceObject);
-		Scripting->MethodCall(2, 1);
-		int Value = Scripting->GetInt(1);
-		Scripting->FinishMethodCall();
-
-		return Value;
-	}
-
-	return true;
-}
-
-// Apply the cost
-void _Buff::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
-		Scripting->PushInt(ActionResult.SourceObject->SkillLevels[ID]);
 		Scripting->PushActionResult(&ActionResult);
-		Scripting->MethodCall(2, 1);
+		Scripting->MethodCall(3, 1);
 		Scripting->GetActionResult(1, ActionResult);
 		Scripting->FinishMethodCall();
 	}
 }
-
-// Use a skill
-void _Buff::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "Use")) {
-		Scripting->PushInt(ActionResult.SourceObject->SkillLevels[ActionResult.SkillUsed->ID]);
-		Scripting->PushObject(ActionResult.SourceObject);
-		Scripting->PushObject(ActionResult.TargetObject);
-		Scripting->PushActionResult(&ActionResult);
-		Scripting->MethodCall(4, 1);
-		Scripting->GetActionResult(1, ActionResult);
-		Scripting->FinishMethodCall();
-	}
-}
-*/
