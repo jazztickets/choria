@@ -38,6 +38,7 @@ class _Item;
 class _Stats;
 class _Buffer;
 class _Scripting;
+class _StatChange;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
@@ -109,6 +110,7 @@ class _Object {
 		void RenderBattle(_Object *ClientPlayer, double Time);
 
 		// Stats
+		void UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int Value);
 		void UpdateMana(int Value);
 		void RestoreHealthMana();

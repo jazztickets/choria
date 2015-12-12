@@ -21,6 +21,7 @@
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <objects/buff.h>
+#include <objects/statchange.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
@@ -107,30 +108,30 @@ void _Battle::Update(double FrameTime) {
 						}
 					}
 				}
-
-				// Update status effects
-				for(auto Iterator = Fighter->StatusEffects.begin(); Iterator != Fighter->StatusEffects.end(); ) {
-					_StatusEffect &StatusEffect = *Iterator;
-					StatusEffect.Time += FrameTime;
-
-					if(StatusEffect.Time >= 1.0) {
-						StatusEffect.Time -= 1.0;
-
-						// Update
-						if(Server)
-							ServerResolveStatusEffect(Fighter, StatusEffect);
-
-						// Reduce count
-						StatusEffect.Count--;
-						if(StatusEffect.Count <= 0)
-							Iterator = Fighter->StatusEffects.erase(Iterator);
-					}
-					else
-						++Iterator;
-				}
 			}
 			else
 				Fighter->TurnTimer = 0;
+
+			// Update status effects
+			for(auto Iterator = Fighter->StatusEffects.begin(); Iterator != Fighter->StatusEffects.end(); ) {
+				_StatusEffect &StatusEffect = *Iterator;
+				StatusEffect.Time += FrameTime;
+
+				if(StatusEffect.Time >= 1.0) {
+					StatusEffect.Time -= 1.0;
+
+					// Update
+					if(Server)
+						ServerResolveStatusEffect(Fighter, StatusEffect);
+
+					// Reduce count
+					StatusEffect.Count--;
+					if(StatusEffect.Count <= 0)
+						Iterator = Fighter->StatusEffects.erase(Iterator);
+				}
+				else
+					++Iterator;
+			}
 		}
 
 		// Check for end
@@ -593,9 +594,28 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 
 // Update a status effect
 void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect &StatusEffect) {
-	_ActionResult ActionResult;
-	ActionResult.SourceObject = Object;
-	StatusEffect.Buff->Update(Scripting, ActionResult);
+	_StatChange StatChange;
+	StatChange.Object = Object;
+	StatusEffect.Buff->Update(Scripting, StatChange);
+	StatChange.Object->UpdateStats(StatChange);
+
+	// Send update
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+	StatChange.SerializeBattle(Packet);
+
+	// Send packet to players
+	BroadcastPacket(Packet);
+}
+
+// Resolve a stat change on the client
+void _Battle::ClientResolveStatChange(_Buffer &Data) {
+
+	_StatChange StatChange;
+	StatChange.UnserializeBattle(Data, this);
+
+	if(StatChange.Object)
+		StatChange.Object->UpdateStats(StatChange);
 }
 
 // Get the object pointer battle id

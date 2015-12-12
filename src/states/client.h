@@ -121,6 +121,7 @@ class _ClientState : public _State {
 		void HandleBattleAction(_Buffer &Data);
 		void HandleBattleTurnResults(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
+		void HandleStatChange(_Buffer &Data);
 		void HandleHUD(_Buffer &Data);
 
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);

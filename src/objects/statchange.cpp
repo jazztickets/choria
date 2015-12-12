@@ -16,22 +16,27 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/statchange.h>
+#include <objects/object.h>
+#include <instances/battle.h>
 #include <stats.h>
 #include <buffer.h>
+#include <stdexcept>
 
 // Serialize change
-void _StatChange::Serialize(_Buffer &Data) {
+void _StatChange::SerializeBattle(_Buffer &Data) {
+	if(!Object)
+		throw std::runtime_error("_StatChange::Serialize: Object is null!");
 
-	//Data.Write<uint32_t>(SkillID);
-	//Data.Write<uint32_t>(ItemID);
+	Data.Write<uint8_t>(Object->BattleID);
+	Data.Write<int>(HealthChange);
+	Data.Write<int>(ManaChange);
 }
 
 // Unserialize change
-void _StatChange::Unserialize(_Buffer &Data, _Stats *Stats) {
+void _StatChange::UnserializeBattle(_Buffer &Data, _Battle *Battle) {
 
-	//uint32_t SkillID = Data.Read<uint32_t>();
-	//uint32_t ItemID = Data.Read<uint32_t>();
-
-	//Skill = Stats->Skills[SkillID];
-	//Item = Stats->Items[ItemID];
+	uint8_t BattleID = Data.Read<uint8_t>();
+	Object = Battle->GetObjectByID(BattleID);
+	HealthChange = Data.Read<int>();
+	ManaChange = Data.Read<int>();
 }

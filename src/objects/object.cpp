@@ -18,6 +18,7 @@
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <objects/buff.h>
+#include <objects/statchange.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <ui/element.h>
@@ -271,6 +272,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect.Buff->Texture->Size/2), StatusEffect.Buff->Texture, GlobalColor);
 		StatusPosition.x += StatusEffect.Buff->Texture->Size.x + 2;
 	}
+}
+
+// Update stats
+void _Object::UpdateStats(_StatChange &StatChange) {
+
+	UpdateHealth(StatChange.HealthChange);
+	UpdateMana(StatChange.ManaChange);
 }
 
 // Update health

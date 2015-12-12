@@ -18,6 +18,7 @@
 #include <scripting.h>
 #include <objects/object.h>
 #include <objects/buff.h>
+#include <objects/statchange.h>
 #include <instances/battle.h>
 #include <stats.h>
 #include <random.h>
@@ -144,6 +145,17 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 	lua_setfield(LuaState, -2, "SourceManaChange");
 }
 
+// Push stat change struct onto stack
+void _Scripting::PushStatChange(_StatChange *StatChange) {
+	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, StatChange->HealthChange);
+	lua_setfield(LuaState, -2, "HealthChanges");
+
+	lua_pushinteger(LuaState, StatChange->ManaChange);
+	lua_setfield(LuaState, -2, "ManaChange");
+}
+
 // Push list of objects
 void _Scripting::PushObjectList(std::list<_Object *> &Objects) {
 	lua_newtable(LuaState);
@@ -197,6 +209,22 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	lua_pushstring(LuaState, "Buff");
 	lua_gettable(LuaState, -2);
 	ActionResult.Buff = (_Buff *)lua_touserdata(LuaState, -1);
+	lua_pop(LuaState, 1);
+}
+
+// Get return value as stat change
+void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
+	if(!lua_istable(LuaState, Index + CurrentTableIndex))
+		throw std::runtime_error("GetStatChange: Value is not a table!");
+
+	lua_pushstring(LuaState, "HealthChange");
+	lua_gettable(LuaState, -2);
+	StatChange.HealthChange = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "ManaChange");
+	lua_gettable(LuaState, -2);
+	StatChange.ManaChange = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 }
 

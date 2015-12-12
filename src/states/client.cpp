@@ -465,6 +465,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
 		break;
+		case PacketType::STAT_CHANGE:
+			HandleStatChange(Data);
+		break;
 		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
 		break;
@@ -980,6 +983,15 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	Battle->ClientEndBattle(Data);
 	if(Player->Health == 0)
 		Player->WaitForServer = true;
+}
+
+// Handles a stat change
+void _ClientState::HandleStatChange(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	if(Battle)
+		Battle->ClientResolveStatChange(Data);
 }
 
 // Handles HUD updates

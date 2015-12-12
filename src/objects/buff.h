@@ -25,7 +25,7 @@
 class _Object;
 class _Texture;
 class _Scripting;
-struct _ActionResult;
+struct _StatChange;
 
 // Classes
 class _Buff {
@@ -34,7 +34,7 @@ class _Buff {
 
 		void DrawTooltip(_Scripting *Scripting, const _Object *Player) const;
 
-		void Update(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void Update(_Scripting *Scripting, _StatChange &StatChange) const;
 
 		uint32_t ID;
 		std::string Name;

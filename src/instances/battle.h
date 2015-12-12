@@ -84,6 +84,7 @@ class _Battle {
 		void ServerResolveAction(_Object *SourceFighter);
 		void ClientResolveAction(_Buffer &Data);
 		void ServerResolveStatusEffect(_Object *Object, _StatusEffect &StatusEffect);
+		void ClientResolveStatChange(_Buffer &Data);
 
 		// Input
 		bool ClientHandleInput(int Action);

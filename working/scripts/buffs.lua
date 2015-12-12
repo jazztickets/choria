@@ -10,9 +10,7 @@ end
 function Buff_Bleeding.Update(Level, Source, Result)
 	print("Bleeding!")
 
-	Damage = 1
-	Result.DamageDealt = Damage
-	Result.TargetHealthChange = -Damage
+	Result.HealthChange = -1
 
 	return Result
 end

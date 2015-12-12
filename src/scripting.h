@@ -25,6 +25,7 @@
 // Forward Declarations
 class _Object;
 class _Stats;
+class _StatChange;
 struct _ActionResult;
 
 // Classes
@@ -41,12 +42,14 @@ class _Scripting {
 		void PushData(void *Data);
 		void PushObject(_Object *Object);
 		void PushActionResult(_ActionResult *ActionResult);
+		void PushStatChange(_StatChange *StatChange);
 		void PushObjectList(std::list<_Object *> &Objects);
 		void PushInt(int Value);
 
 		int GetInt(int Index);
 		std::string GetString(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
+		void GetStatChange(int Index, _StatChange &StatChange);
 
 		bool StartMethodCall(const std::string &TableName, const std::string &Function);
 		void MethodCall(int ParameterCount, int ReturnCount);

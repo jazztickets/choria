@@ -20,7 +20,8 @@
 // Libraries
 
 // Forward Declarations
-class _Stats;
+class _Object;
+class _Battle;
 class _Buffer;
 
 // Stat changes
@@ -30,9 +31,10 @@ class _StatChange {
 
 		_StatChange() { }
 
-		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data, _Stats *Stats);
+		void SerializeBattle(_Buffer &Data);
+		void UnserializeBattle(_Buffer &Data, _Battle *Battle);
 
+		_Object *Object;
 		int HealthChange;
 		int ManaChange;
 

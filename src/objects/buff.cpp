@@ -19,6 +19,7 @@
 #include <ui/element.h>
 #include <ui/label.h>
 #include <objects/object.h>
+#include <objects/statchange.h>
 #include <scripting.h>
 #include <font.h>
 #include <graphics.h>
@@ -83,13 +84,13 @@ void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player) const {
 }
 
 // Call the update script
-void _Buff::Update(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Buff::Update(_Scripting *Scripting, _StatChange &StatChange) const {
 	if(Scripting->StartMethodCall(Script, "Update")) {
 		Scripting->PushInt(1);
-		Scripting->PushObject(ActionResult.SourceObject);
-		Scripting->PushActionResult(&ActionResult);
+		Scripting->PushObject(StatChange.Object);
+		Scripting->PushStatChange(&StatChange);
 		Scripting->MethodCall(3, 1);
-		Scripting->GetActionResult(1, ActionResult);
+		Scripting->GetStatChange(1, StatChange);
 		Scripting->FinishMethodCall();
 	}
 }
