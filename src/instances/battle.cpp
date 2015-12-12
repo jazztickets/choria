@@ -167,9 +167,32 @@ void _Battle::Update(double FrameTime) {
 				if(ActionResult.Time == 0.0)
 					ActionResult.LastPosition = ActionResult.Position;
 
+				// Update timer
 				ActionResult.Time += FrameTime;
 				if(ActionResult.Time >= ACTIONRESULT_TIMEOUT) {
 					Iterator = ActionResults.erase(Iterator);
+				}
+				else
+					++Iterator;
+			}
+
+			// Update stat changes
+			for(auto Iterator = StatChanges.begin(); Iterator != StatChanges.end(); ) {
+				_StatChange &StatChange = *Iterator;
+
+				// Find start position
+				glm::vec2 StartPosition = StatChange.Object->ResultPosition + glm::vec2(StatChange.Object->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -StatChange.Object->Portrait->Size.y/2);
+				StatChange.LastPosition = StatChange.Position;
+
+				// Interpolate between start and end position
+				StatChange.Position = glm::mix(StartPosition, StartPosition + glm::vec2(0, -20), StatChange.Time / STATCHANGE_TIMEOUT);
+				if(StatChange.Time == 0.0)
+					StatChange.LastPosition = StatChange.Position;
+
+				// Update timer
+				StatChange.Time += FrameTime;
+				if(StatChange.Time >= STATCHANGE_TIMEOUT) {
+					Iterator = StatChanges.erase(Iterator);
 				}
 				else
 					++Iterator;
@@ -211,6 +234,11 @@ void _Battle::RenderBattle(double BlendFactor) {
 		RenderActionResults(ActionResult, BlendFactor);
 	}
 
+	// Draw action results
+	for(auto &StatChange : StatChanges) {
+		RenderStatChanges(StatChange, BlendFactor);
+	}
+
 	// Draw tooltips
 	_Element *HitElement = Graphics.Element->HitElement;
 	if(HitElement) {
@@ -247,6 +275,38 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	std::stringstream Buffer;
 	Buffer << std::abs(ActionResult.TargetHealthChange);
+	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
+}
+
+// Render recent stat changes
+void _Battle::RenderStatChanges(_StatChange &StatChange, double BlendFactor) {
+	if(!StatChange.Object)
+		return;
+
+	// Get text color
+	glm::vec4 TextColor = COLOR_WHITE;
+	char Sign = ' ';
+	if(StatChange.HealthChange > 0) {
+		TextColor = COLOR_GREEN;
+		Sign = '+';
+	}
+	else if(StatChange.HealthChange < 0) {
+		TextColor = COLOR_RED;
+		Sign = '-';
+	}
+
+	// Get alpha
+	double TimeLeft = STATCHANGE_TIMEOUT - StatChange.Time;
+	TextColor.a = 1.0f;
+	if(TimeLeft < ACTIONRESULT_FADETIME)
+		TextColor.a = (float)(TimeLeft / ACTIONRESULT_FADETIME);
+
+	// Get final draw position
+	glm::vec2 DrawPosition = glm::mix(StatChange.LastPosition, StatChange.Position, BlendFactor);
+
+	// Draw stat
+	std::stringstream Buffer;
+	Buffer << Sign << std::abs(StatChange.HealthChange);
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 
@@ -643,6 +703,8 @@ void _Battle::ClientResolveStatChange(_Buffer &Data) {
 
 	if(StatChange.Object)
 		StatChange.Object->UpdateStats(StatChange);
+
+	StatChanges.push_back(StatChange);
 }
 
 // Get the object pointer battle id

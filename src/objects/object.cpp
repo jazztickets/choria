@@ -172,7 +172,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 
 	// Health/mana bars
-	glm::vec2 BarSize(90, 22);
+	glm::vec2 BarSize(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT);
 	glm::vec2 BarOffset(Slot->Size.x/2 + 10, -Slot->Size.y/2);
 	float BarPaddingY = 6;
 

@@ -24,6 +24,10 @@
 
 // Constructor
 _StatChange::_StatChange() :
+	Object(nullptr),
+	LastPosition(0, 0),
+	Position(0, 0),
+	Time(0.0),
 	HealthChange(0),
 	ManaChange(0) {
 

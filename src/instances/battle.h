@@ -19,6 +19,7 @@
 
 // Libraries
 #include <objects/action.h>
+#include <objects/statchange.h>
 #include <list>
 #include <cstdint>
 
@@ -110,6 +111,7 @@ class _Battle {
 
 		void RenderBattle(double BlendFactor);
 		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
+		void RenderStatChanges(_StatChange &StatChange, double BlendFactor);
 		void RenderBattleWin();
 		void RenderBattleLose();
 
@@ -135,5 +137,6 @@ class _Battle {
 		_Element *BattleWinElement;
 		_Element *BattleLoseElement;
 		std::list<_ActionResult> ActionResults;
+		std::list<_StatChange> StatChanges;
 
 };

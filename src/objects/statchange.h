@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Object;
@@ -35,6 +36,9 @@ class _StatChange {
 		void UnserializeBattle(_Buffer &Data, _Battle *Battle);
 
 		_Object *Object;
+		glm::vec2 LastPosition;
+		glm::vec2 Position;
+		double Time;
 		int HealthChange;
 		int ManaChange;
 

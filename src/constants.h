@@ -46,6 +46,8 @@ const double BATTLE_WAITDEADTIME = 0.75;
 const double BATTLE_WAITENDTIME = 0.30;
 const double BATTLE_MAX_START_TURNTIMER = 0.7;
 const double BATTLE_AI_UPDATE_PERIOD = 1.0;
+const float BATTLE_HEALTHBAR_WIDTH = 90;
+const float BATTLE_HEALTHBAR_HEIGHT = 22;
 
 const double PLAYER_MOVETIME = 0.125;
 const int PLAYER_TRADEITEMS = 8;
@@ -65,6 +67,9 @@ const int HUD_KEYNAME_LENGTH = 3;
 const double ACTIONRESULT_TIMEOUT = 2.5;
 const double ACTIONRESULT_FADETIME = 1.0;
 const double ACTIONRESULT_SPEED = 3.0;
+
+const double STATCHANGE_TIMEOUT = 1;
+const double STATCHANGE_FADETIME = 0.3;
 
 const int SAVE_VERSION = 4;
 
