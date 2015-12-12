@@ -24,6 +24,7 @@
 #include <graphics.h>
 #include <input.h>
 #include <assets.h>
+#include <algorithm>
 #include <sstream>
 #include <iostream>
 
