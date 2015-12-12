@@ -216,7 +216,7 @@ void _Save::LoadPlayer(_Object *Player) {
 		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
 		Player->Experience = Database->GetInt<int>("experience");
 		Player->Gold = Database->GetInt<int>("gold");
-		Player->ActionBar.resize(Database->GetInt<size_t>("actionbar_size"));
+		Player->ActionBar.resize(Database->GetInt<uint32_t>("actionbar_size"));
 		Player->PlayTime = Database->GetInt<int>("playtime");
 		Player->Deaths = Database->GetInt<int>("deaths");
 		Player->MonsterKills = Database->GetInt<int>("monsterkills");

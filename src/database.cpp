@@ -182,4 +182,3 @@ template int _Database::GetInt<int>(int ColumnIndex, int Handle);
 template uint32_t _Database::GetInt<uint32_t>(int ColumnIndex, int Handle);
 template int _Database::GetInt(const std::string &ColumnName, int Handle);
 template uint32_t _Database::GetInt(const std::string &ColumnName, int Handle);
-template size_t _Database::GetInt(const std::string &ColumnName, int Handle);
