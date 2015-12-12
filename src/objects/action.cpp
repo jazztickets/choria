@@ -15,40 +15,33 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
-
-// Libraries
 #include <objects/action.h>
-#include <glm/vec2.hpp>
-#include <string>
+#include <objects/skill.h>
+#include <objects/item.h>
+#include <stats.h>
+#include <buffer.h>
 
-// Forward Declarations
-class _Object;
-class _Texture;
-class _Scripting;
-struct _ActionResult;
-struct _Cursor;
+// Serialize action
+void _Action::Serialize(_Buffer &Data) {
 
-// Classes
-class _Skill {
+	uint32_t SkillID = 0;
+	if(Skill)
+		SkillID = Skill->ID;
 
-	public:
+	uint32_t ItemID = 0;
+	if(Item)
+		ItemID = Item->ID;
 
-		void DrawTooltip(_Scripting *Scripting, const _Object *Player, bool DrawNextLevel) const;
-		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, float Width) const;
+	Data.Write<uint32_t>(SkillID);
+	Data.Write<uint32_t>(ItemID);
+}
 
-		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
+// Unserialize action
+void _Action::Unserialize(_Buffer &Data, _Stats *Stats) {
 
-		uint32_t ID;
-		std::string Name;
-		std::string Script;
-		const _Texture *Texture;
-		TargetType TargetID;
-		bool TargetAlive;
-		ScopeType Scope;
+	uint32_t SkillID = Data.Read<uint32_t>();
+	uint32_t ItemID = Data.Read<uint32_t>();
 
-	private:
-
-};
+	Skill = Stats->Skills[SkillID];
+	Item = Stats->Items[ItemID];
+}

@@ -18,16 +18,14 @@
 #pragma once
 
 // Libraries
-#include <instances/battle.h>
-#include <glm/vec2.hpp>
 #include <string>
+#include <cstdint>
 
 // Forward Declarations
 class _Object;
 class _Texture;
 class _Scripting;
 struct _ActionResult;
-struct _Cursor;
 
 // Classes
 class _Buff {

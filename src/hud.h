@@ -30,7 +30,7 @@ class _Item;
 class _Skill;
 class _Element;
 class _TextBox;
-struct _Action;
+class _Action;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;

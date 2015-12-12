@@ -1188,28 +1188,3 @@ void _Object::CalculateFinalStats() {
 	if(MaxDefense < 0)
 		MaxDefense = 0;
 }
-
-// Serialize action
-void _Action::Serialize(_Buffer &Data) {
-
-	uint32_t SkillID = 0;
-	if(Skill)
-		SkillID = Skill->ID;
-
-	uint32_t ItemID = 0;
-	if(Item)
-		ItemID = Item->ID;
-
-	Data.Write<uint32_t>(SkillID);
-	Data.Write<uint32_t>(ItemID);
-}
-
-// Unserialize action
-void _Action::Unserialize(_Buffer &Data, _Stats *Stats) {
-
-	uint32_t SkillID = Data.Read<uint32_t>();
-	uint32_t ItemID = Data.Read<uint32_t>();
-
-	Skill = Stats->Skills[SkillID];
-	Item = Stats->Items[ItemID];
-}

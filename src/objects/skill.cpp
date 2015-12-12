@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/skill.h>
+#include <objects/action.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <objects/object.h>

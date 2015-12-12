@@ -18,77 +18,16 @@
 #pragma once
 
 // Libraries
+#include <objects/action.h>
 #include <list>
 #include <cstdint>
-#include <glm/vec2.hpp>
-#include <string>
 
 // Forward Declarations
-class _Object;
-class _Skill;
-class _Buff;
-class _Item;
-class _Texture;
-class _Buffer;
 class _Element;
-class _Stats;
 class _Scripting;
 class _Server;
 class _ClientNetwork;
 struct _StatusEffect;
-
-// Types of targets
-enum class TargetType : uint32_t {
-	NONE,
-	SELF,
-	ENEMY,
-	ALLY,
-	ENEMY_ALL,
-	ALLY_ALL,
-	ALL,
-};
-
-enum class ScopeType : uint8_t {
-	WORLD,
-	BATTLE,
-	ALL
-};
-
-// Structures
-struct _ActionResult {
-	_ActionResult() :
-		SourceObject(nullptr),
-		TargetObject(nullptr),
-		LastPosition(0, 0),
-		Position(0, 0),
-		Texture(nullptr),
-		SkillUsed(nullptr),
-		ItemUsed(nullptr),
-		Buff(nullptr),
-		DamageDealt(0),
-		SourceHealthChange(0),
-		SourceManaChange(0),
-		TargetHealthChange(0),
-		TargetManaChange(0),
-		Time(0.0),
-		Scope(ScopeType::ALL) { }
-
-	_Object *SourceObject;
-	_Object *TargetObject;
-	glm::vec2 LastPosition;
-	glm::vec2 Position;
-	const _Texture *Texture;
-	const _Skill *SkillUsed;
-	const _Item *ItemUsed;
-	const _Buff *Buff;
-	int DamageDealt;
-	int SourceHealthChange;
-	int SourceManaChange;
-	int TargetHealthChange;
-	int TargetManaChange;
-	double Time;
-	ScopeType Scope;
-};
 
 struct _BattleResult {
 	_BattleResult() :

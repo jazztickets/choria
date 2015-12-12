@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/action.h>
 #include <constants.h>
 #include <glm/vec2.hpp>
 #include <packet.h>
@@ -44,26 +45,6 @@ struct _ActionResult;
 
 // Structures
 struct _InventorySlot {
-	const _Item *Item;
-	int Count;
-};
-
-// Action
-struct _Action {
-	_Action() : Skill(nullptr), Item(nullptr), Count(0) { }
-	_Action(const _Skill *Skill) : _Action() { this->Skill = Skill; }
-	_Action(const _Item *Item) : _Action() { this->Item = Item; }
-
-	bool operator==(const _Action &Action) const { return Action.Skill == Skill && Action.Item == Item; }
-	bool operator!=(const _Action &Action) const { return !(Action.Skill == Skill && Action.Item == Item); }
-
-	void Serialize(_Buffer &Data);
-	void Unserialize(_Buffer &Data, _Stats *Stats);
-
-	bool IsSet() const { return !(Skill == nullptr && Item == nullptr); }
-	void Unset() { Skill = nullptr; Item = nullptr; Count = 0; }
-
-	const _Skill *Skill;
 	const _Item *Item;
 	int Count;
 };
