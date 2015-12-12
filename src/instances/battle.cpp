@@ -494,7 +494,6 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		ActionResult.TargetObject->UpdateMana(ActionResult.TargetManaChange);
 
 		Packet.Write<uint8_t>(ActionResult.TargetObject->BattleID);
-		Packet.Write<int32_t>(ActionResult.DamageDealt);
 		Packet.Write<int32_t>(ActionResult.TargetHealthChange);
 		Packet.Write<int32_t>(ActionResult.TargetManaChange);
 		Packet.Write<int32_t>(ActionResult.TargetObject->Health);
@@ -562,7 +561,6 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
 		uint8_t TargetBattleID = Data.Read<uint8_t>();
-		ActionResult.DamageDealt = Data.Read<int32_t>();
 		ActionResult.TargetHealthChange = Data.Read<int32_t>();
 		ActionResult.TargetManaChange = Data.Read<int32_t>();
 		int TargetFighterHealth = Data.Read<int32_t>();

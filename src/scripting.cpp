@@ -135,9 +135,6 @@ void _Scripting::PushObject(_Object *Object) {
 void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 	lua_newtable(LuaState);
 
-	lua_pushinteger(LuaState, ActionResult->DamageDealt);
-	lua_setfield(LuaState, -2, "DamageDealt");
-
 	lua_pushinteger(LuaState, ActionResult->TargetHealthChange);
 	lua_setfield(LuaState, -2, "TargetHealthChange");
 
@@ -190,11 +187,6 @@ std::string _Scripting::GetString(int Index) {
 void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	if(!lua_istable(LuaState, Index + CurrentTableIndex))
 		throw std::runtime_error("GetActionResult: Value is not a table!");
-
-	lua_pushstring(LuaState, "DamageDealt");
-	lua_gettable(LuaState, -2);
-	ActionResult.DamageDealt = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "TargetHealthChange");
 	lua_gettable(LuaState, -2);

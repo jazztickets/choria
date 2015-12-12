@@ -14,7 +14,6 @@ function Skill_Attack.Use(Level, Source, Target, Result)
 		Damage = Damage * 3
 	end
 
-	Result.DamageDealt = Damage
 	Result.TargetHealthChange = -Damage
 	Result.Buff = Buffs["Buff_Bleeding"]
 

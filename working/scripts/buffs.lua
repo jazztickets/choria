@@ -8,7 +8,6 @@ function Buff_Bleeding.GetInfo(Level)
 end
 
 function Buff_Bleeding.Update(Level, Source, Result)
-	print("Bleeding!")
 
 	Result.HealthChange = -1
 

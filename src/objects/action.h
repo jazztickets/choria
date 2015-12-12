@@ -59,7 +59,6 @@ struct _ActionResult {
 		SkillUsed(nullptr),
 		ItemUsed(nullptr),
 		Buff(nullptr),
-		DamageDealt(0),
 		SourceHealthChange(0),
 		SourceManaChange(0),
 		TargetHealthChange(0),
@@ -75,7 +74,6 @@ struct _ActionResult {
 	const _Skill *SkillUsed;
 	const _Item *ItemUsed;
 	const _Buff *Buff;
-	int DamageDealt;
 	int SourceHealthChange;
 	int SourceManaChange;
 	int TargetHealthChange;
