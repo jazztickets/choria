@@ -534,16 +534,14 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_ACTIONRESULTS);
 
-	// Source fighter
-	Packet.Write<uint8_t>(ActionResult.Source.Object->BattleID);
-
 	// Write action used
 	uint32_t SkillID = ActionResult.SkillUsed ? ActionResult.SkillUsed->ID : 0;
 	uint32_t ItemID = ActionResult.ItemUsed ? ActionResult.ItemUsed->ID : 0;
 	Packet.Write<uint32_t>(SkillID);
 	Packet.Write<uint32_t>(ItemID);
-	Packet.Write<int32_t>(ActionResult.Source.HealthChange);
-	Packet.Write<int32_t>(ActionResult.Source.ManaChange);
+
+	// Source fighter
+	ActionResult.Source.SerializeBattle(Packet);
 	Packet.Write<int32_t>(ActionResult.Source.Object->Health);
 	Packet.Write<int32_t>(ActionResult.Source.Object->Mana);
 
@@ -565,9 +563,7 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		ActionResult.Target.Object->UpdateHealth(ActionResult.Target.HealthChange);
 		ActionResult.Target.Object->UpdateMana(ActionResult.Target.ManaChange);
 
-		Packet.Write<uint8_t>(ActionResult.Target.Object->BattleID);
-		Packet.Write<int32_t>(ActionResult.Target.HealthChange);
-		Packet.Write<int32_t>(ActionResult.Target.ManaChange);
+		ActionResult.Target.SerializeBattle(Packet);
 		Packet.Write<int32_t>(ActionResult.Target.Object->Health);
 		Packet.Write<int32_t>(ActionResult.Target.Object->Mana);
 
@@ -597,16 +593,12 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 // Displays turn results from the server
 void _Battle::ClientResolveAction(_Buffer &Data) {
 
+	// Create result
 	_ActionResult ActionResult;
-	uint8_t SourceBattleID = Data.Read<uint8_t>();
 	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 	ActionResult.SkillUsed = Stats->Skills[SkillID];
 	ActionResult.ItemUsed = Stats->Items[ItemID];
-	ActionResult.Source.HealthChange = Data.Read<int32_t>();
-	ActionResult.Source.ManaChange = Data.Read<int32_t>();
-	int SourceFighterHealth = Data.Read<int32_t>();
-	int SourceFighterMana = Data.Read<int32_t>();
 
 	// Set texture
 	if(ActionResult.SkillUsed)
@@ -616,8 +608,15 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	else
 		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
+	// Get source change
+	ActionResult.Source.UnserializeBattle(Data, this);
+	int SourceFighterHealth = Data.Read<int32_t>();
+	int SourceFighterMana = Data.Read<int32_t>();
+
+	//if(ActionResult.Source.IsChanged())
+		//StatChanges.push_back(ActionResult.Source);
+
 	// Update source fighter
-	ActionResult.Source.Object = GetObjectByID(SourceBattleID);
 	if(ActionResult.Source.Object) {
 		ActionResult.Source.Object->Health = SourceFighterHealth;
 		ActionResult.Source.Object->Mana = SourceFighterMana;
@@ -638,9 +637,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	// Update targets
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
-		uint8_t TargetBattleID = Data.Read<uint8_t>();
-		ActionResult.Target.HealthChange = Data.Read<int32_t>();
-		ActionResult.Target.ManaChange = Data.Read<int32_t>();
+		ActionResult.Target.UnserializeBattle(Data, this);
 		int TargetFighterHealth = Data.Read<int32_t>();
 		int TargetFighterMana = Data.Read<int32_t>();
 
@@ -654,7 +651,6 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		}
 
 		// Update target fighter
-		ActionResult.Target.Object = GetObjectByID(TargetBattleID);
 		if(ActionResult.Target.Object) {
 			ActionResult.Target.Object->Health = TargetFighterHealth;
 			ActionResult.Target.Object->Mana = TargetFighterMana;
@@ -671,10 +667,11 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 				StatusEffect->Element->Visible = true;
 				StatusEffect->Element->UserData = (void *)StatusEffect;
 				BattleEffectsElement->Children.push_back(StatusEffect->Element);
-				//BattleEffectsElement->SetDebug(1);
 			}
 		}
 
+		if(ActionResult.Target.IsChanged())
+			StatChanges.push_back(ActionResult.Target);
 		ActionResults.push_back(ActionResult);
 	}
 }

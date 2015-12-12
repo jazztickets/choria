@@ -32,6 +32,7 @@ class _StatChange {
 
 		_StatChange();
 
+		bool IsChanged();
 		void SerializeBattle(_Buffer &Data);
 		void UnserializeBattle(_Buffer &Data, _Battle *Battle);
 

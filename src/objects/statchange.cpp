@@ -33,6 +33,12 @@ _StatChange::_StatChange() :
 
 }
 
+// Return true if there are stat changes
+bool _StatChange::IsChanged() {
+
+	return HealthChange != 0 || ManaChange != 0;
+}
+
 // Serialize change
 void _StatChange::SerializeBattle(_Buffer &Data) {
 	if(!Object)
