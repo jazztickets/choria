@@ -1383,21 +1383,20 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
 
 // Delete memory used by skill page
 void _HUD::ClearSkills() {
-	std::vector<_Element *> &Children = SkillsElement->Children;
-	for(size_t i = 0; i < Children.size(); i++) {
-		if(Children[i]->Style && Children[i]->Style->UserCreated)
-			delete Children[i]->Style;
+	for(auto &Child : SkillsElement->Children) {
+		if(Child->Style && Child->Style->UserCreated)
+			delete Child->Style;
 
 		// Delete labels
-		for(size_t j = 0; j < Children[i]->Children.size(); j++) {
-			if(Children[i]->Children[j]->UserCreated)
-				delete Children[i]->Children[j];
+		for(auto &LabelChild : Child->Children) {
+			if(LabelChild->UserCreated)
+				delete LabelChild;
 		}
 
-		if(Children[i]->UserCreated)
-			delete Children[i];
+		if(Child->UserCreated)
+			delete Child;
 	}
-	Children.clear();
+	SkillsElement->Children.clear();
 }
 
 // Shows or hides the plus/minus buttons

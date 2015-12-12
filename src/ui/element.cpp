@@ -54,8 +54,8 @@ _Element::~_Element() {
 bool _Element::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 
 	// Pass event to children
-	for(size_t i = 0; i < Children.size(); i++) {
-		if(Children[i]->HandleKeyEvent(KeyEvent))
+	for(auto &Child : Children) {
+		if(Child->HandleKeyEvent(KeyEvent))
 			return true;
 	}
 
@@ -68,8 +68,8 @@ void _Element::HandleInput(bool Pressed) {
 		return;
 
 	// Pass event to children
-	for(size_t i = 0; i < Children.size(); i++)
-		Children[i]->HandleInput(Pressed);
+	for(auto &Child : Children)
+		Child->HandleInput(Pressed);
 
 	// Set pressed element
 	if(Pressed)
@@ -116,10 +116,10 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 
 	// Test children
 	if(Visible) {
-		for(size_t i = 0; i < Children.size(); i++) {
-			Children[i]->Update(FrameTime, Mouse);
-			if(Children[i]->HitElement)
-				HitElement = Children[i]->HitElement;
+		for(auto &Child : Children) {
+			Child->Update(FrameTime, Mouse);
+			if(Child->HitElement)
+				HitElement = Child->HitElement;
 		}
 	}
 }
@@ -171,8 +171,8 @@ void _Element::CalculateBounds() {
 void _Element::CalculateChildrenBounds() {
 
 	// Update children
-	for(size_t i = 0; i < Children.size(); i++)
-		Children[i]->CalculateBounds();
+	for(auto &Child : Children)
+		Child->CalculateBounds();
 }
 
 // Render the element
@@ -205,9 +205,9 @@ void _Element::Render() const {
 	}
 
 	// Render all children
-	for(size_t i = 0; i < Children.size(); i++) {
-		Children[i]->Fade = Fade;
-		Children[i]->Render();
+	for(auto &Child : Children) {
+		Child->Fade = Fade;
+		Child->Render();
 	}
 
 	if(MaskOutside)
@@ -226,14 +226,14 @@ void _Element::Render() const {
 void _Element::SetDebug(int Debug) {
 	this->Debug = Debug;
 
-	for(size_t i = 0; i < Children.size(); i++)
-		Children[i]->SetDebug(Debug + 1);
+	for(auto &Child : Children)
+		Child->SetDebug(Debug + 1);
 }
 
 // Set visibility of element and children
 void _Element::SetVisible(bool Visible) {
 	this->Visible = Visible;
 
-	for(size_t i = 0; i < Children.size(); i++)
-		Children[i]->SetVisible(Visible);
+	for(auto &Child : Children)
+		Child->SetVisible(Visible);
 }

@@ -20,7 +20,7 @@
 // Libraries
 #include <ui/ui.h>
 #include <string>
-#include <vector>
+#include <list>
 
 // Forward Declarations
 struct _Style;
@@ -83,7 +83,7 @@ class _Element {
 		_Element *ReleasedElement;
 
 		// Children
-		std::vector<_Element *> Children;
+		std::list<_Element *> Children;
 		glm::vec2 ChildrenOffset;
 
 	protected:

@@ -116,7 +116,7 @@ void _Button::Render() const {
 	}
 
 	// Render all children
-	for(size_t i = 0; i < Children.size(); i++) {
-		Children[i]->Render();
+	for(auto &Child : Children) {
+		Child->Render();
 	}
 }

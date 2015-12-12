@@ -892,10 +892,10 @@ void _Menu::FocusNextElement() {
 
 // Clear memory used by portraits
 void _Menu::ClearPortraits() {
-	std::vector<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
-	for(size_t i = 0; i < Children.size(); i++) {
-		delete Children[i]->Style;
-		delete Children[i];
+	std::list<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
+	for(auto &Child : Children) {
+		delete Child->Style;
+		delete Child;
 	}
 	Children.clear();
 }

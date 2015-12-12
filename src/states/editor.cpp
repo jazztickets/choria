@@ -524,15 +524,15 @@ void _EditorState::ToggleLoadMap() {
 
 // Delete memory used by textures screen
 void _EditorState::ClearTextures() {
-	std::vector<_Element *> &Children = TexturesElement->Children;
-	for(size_t i = 0; i < Children.size(); i++) {
-		if(Children[i]->Style && Children[i]->Style->UserCreated)
-			delete Children[i]->Style;
+	for(auto &Child : TexturesElement->Children) {
+		if(Child->Style && Child->Style->UserCreated)
+			delete Child->Style;
 
-		if(Children[i]->UserCreated)
-			delete Children[i];
+		if(Child->UserCreated)
+			delete Child;
 	}
-	Children.clear();
+
+	TexturesElement->Children.clear();
 }
 
 // Init texture select
