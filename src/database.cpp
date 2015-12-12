@@ -122,15 +122,15 @@ int _Database::GetColumnIndex(const std::string &Name, int Handle) {
 }
 
 // Returns an integer column
-int _Database::GetInt(int ColumnIndex, int Handle) {
+template<typename T> T _Database::GetInt(int ColumnIndex, int Handle) {
 
-	return sqlite3_column_int(QueryHandle[Handle], ColumnIndex);
+	return (T)sqlite3_column_int(QueryHandle[Handle], ColumnIndex);
 }
 
 // Returns an integer column by column name
-int _Database::GetInt(const std::string &ColumnName, int Handle) {
+template<typename T> T _Database::GetInt(const std::string &ColumnName, int Handle) {
 
-	return sqlite3_column_int(QueryHandle[Handle], GetColumnIndex(ColumnName, Handle));
+	return (T)sqlite3_column_int(QueryHandle[Handle], GetColumnIndex(ColumnName, Handle));
 }
 
 // Returns a float column
@@ -158,8 +158,8 @@ const char *_Database::GetString(const std::string &ColumnName, int Handle) {
 }
 
 // Bind integer to parameter
-void _Database::BindInt(int ColumnIndex, int Value, int Handle) {
-	int Result = sqlite3_bind_int(QueryHandle[Handle], ColumnIndex, Value);
+void _Database::BindInt(int ColumnIndex, uint32_t Value, int Handle) {
+	int Result = sqlite3_bind_int(QueryHandle[Handle], ColumnIndex, (int)Value);
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 }
@@ -177,3 +177,9 @@ void _Database::BindString(int ColumnIndex, const std::string &String, int Handl
 	if(Result != SQLITE_OK)
 		throw std::runtime_error(std::string(sqlite3_errmsg(Database)));
 }
+
+template int _Database::GetInt<int>(int ColumnIndex, int Handle);
+template uint32_t _Database::GetInt<uint32_t>(int ColumnIndex, int Handle);
+template int _Database::GetInt(const std::string &ColumnName, int Handle);
+template uint32_t _Database::GetInt(const std::string &ColumnName, int Handle);
+template size_t _Database::GetInt(const std::string &ColumnName, int Handle);

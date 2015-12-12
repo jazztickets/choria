@@ -42,14 +42,14 @@ class _Database {
 
 		int GetColumnIndex(const std::string &Name, int Handle);
 
-		int GetInt(int ColumnIndex, int Handle=0);
-		int GetInt(const std::string &ColumnName, int Handle=0);
+		template<typename T> T GetInt(int ColumnIndex, int Handle=0);
+		template<typename T> T GetInt(const std::string &ColumnName, int Handle=0);
 		double GetReal(int ColumnIndex, int Handle=0);
 		double GetReal(const std::string &ColumnName, int Handle=0);
 		const char *GetString(int ColumnIndex, int Handle=0);
 		const char *GetString(const std::string &ColumnName, int Handle=0);
 
-		void BindInt(int ColumnIndex, int Value, int Handle=0);
+		void BindInt(int ColumnIndex, uint32_t Value, int Handle=0);
 		void BindReal(int ColumnIndex, double Value, int Handle=0);
 		void BindString(int ColumnIndex, const std::string &String, int Handle=0);
 

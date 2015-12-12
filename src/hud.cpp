@@ -667,7 +667,7 @@ void _HUD::InitSkills() {
 	// Iterate over skills
 	ClientState.Stats->Database->PrepareQuery("SELECT id FROM skill ORDER BY rank");
 	while(ClientState.Stats->Database->FetchRow()) {
-		const _Skill *Skill = ClientState.Stats->Skills[(uint32_t)ClientState.Stats->Database->GetInt(0)];
+		const _Skill *Skill = ClientState.Stats->Skills[ClientState.Stats->Database->GetInt<uint32_t>(0)];
 		if(!Skill)
 			continue;
 

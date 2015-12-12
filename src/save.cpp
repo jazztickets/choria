@@ -119,7 +119,7 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 	Database->BindString(1, TrimmedUsername);
 	Database->BindString(2, Password);
 	if(Database->FetchRow())
-		AccountID = Database->GetInt(0);
+		AccountID = Database->GetInt<uint32_t>(0);
 	Database->CloseQuery();
 
 	return AccountID;
@@ -130,7 +130,7 @@ uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
 	Database->PrepareQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
 	Database->BindInt(1, AccountID);
 	Database->FetchRow();
-	int Count = Database->GetInt(0);
+	uint32_t Count = Database->GetInt<uint32_t>(0);
 	Database->CloseQuery();
 
 	return Count;
@@ -143,7 +143,7 @@ uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 	Database->PrepareQuery("SELECT id FROM character WHERE name = @name");
 	Database->BindString(1, TrimmedName);
 	Database->FetchRow();
-	uint32_t CharacterID = Database->GetInt(0);
+	uint32_t CharacterID = Database->GetInt<uint32_t>(0);
 	Database->CloseQuery();
 
 	return CharacterID;
@@ -155,7 +155,7 @@ uint32_t _Save::GetCharacterIDBySlot(uint32_t AccountID, int Slot) {
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
 	Database->FetchRow();
-	uint32_t CharacterID = Database->GetInt(0);
+	uint32_t CharacterID = Database->GetInt<uint32_t>(0);
 	Database->CloseQuery();
 
 	return CharacterID;
@@ -184,7 +184,7 @@ void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Nam
 	Database->FetchRow();
 	Database->CloseQuery();
 
-	int64_t CharacterID = Database->GetLastInsertID();
+	uint32_t CharacterID = (uint32_t)Database->GetLastInsertID();
 	Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, 1, 2, 1), (@character_id, 3, 1, 1), (@character_id, 7, 6, 3)");
 	Database->BindInt(1, CharacterID);
 	Database->FetchRow();
@@ -210,18 +210,18 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	if(Database->FetchRow()) {
-		Player->SpawnMapID = Database->GetInt("map_id");
-		Player->SpawnPoint = Database->GetInt("spawnpoint");
+		Player->SpawnMapID = Database->GetInt<uint32_t>("map_id");
+		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
 		Player->Name = Database->GetString("name");
-		Player->PortraitID = Database->GetInt("portrait_id");
-		Player->Experience = Database->GetInt("experience");
-		Player->Gold = Database->GetInt("gold");
-		Player->ActionBar.resize(Database->GetInt("actionbar_size"));
-		Player->PlayTime = Database->GetInt("playtime");
-		Player->Deaths = Database->GetInt("deaths");
-		Player->MonsterKills = Database->GetInt("monsterkills");
-		Player->PlayerKills = Database->GetInt("playerkills");
-		Player->Bounty = Database->GetInt("bounty");
+		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
+		Player->Experience = Database->GetInt<int>("experience");
+		Player->Gold = Database->GetInt<int>("gold");
+		Player->ActionBar.resize(Database->GetInt<size_t>("actionbar_size"));
+		Player->PlayTime = Database->GetInt<int>("playtime");
+		Player->Deaths = Database->GetInt<int>("deaths");
+		Player->MonsterKills = Database->GetInt<int>("monsterkills");
+		Player->PlayerKills = Database->GetInt<int>("playerkills");
+		Player->Bounty = Database->GetInt<int>("bounty");
 	}
 	Database->CloseQuery();
 
@@ -229,7 +229,7 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
-		Player->SetInventory(Database->GetInt(0), Database->GetInt(1), Database->GetInt(2));
+		Player->SetInventory(Database->GetInt<int>(0), Database->GetInt<uint32_t>(1), Database->GetInt<int>(2));
 	}
 	Database->CloseQuery();
 
@@ -237,8 +237,8 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
-		int SkillLevel = Database->GetInt(1);
-		Player->SetSkillLevel(Database->GetInt(0), SkillLevel);
+		int SkillLevel = Database->GetInt<int>(1);
+		Player->SetSkillLevel(Database->GetInt<uint32_t>(0), SkillLevel);
 	}
 	Database->CloseQuery();
 
@@ -246,9 +246,9 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT slot, skill_id, item_id FROM actionbar WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
-		uint32_t Slot = Database->GetInt("slot");
-		uint32_t SkillID = Database->GetInt("skill_id");
-		uint32_t ItemID = Database->GetInt("item_id");
+		uint32_t Slot = Database->GetInt<uint32_t>("slot");
+		uint32_t SkillID = Database->GetInt<uint32_t>("skill_id");
+		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
 		Player->ActionBar[Slot].Skill = Player->Stats->Skills[SkillID];
 		Player->ActionBar[Slot].Item = Player->Stats->Items[ItemID];
 	}
@@ -334,7 +334,7 @@ void _Save::SavePlayer(const _Object *Player) {
 int _Save::GetSaveVersion() {
 	Database->PrepareQuery("SELECT version FROM settings");
 	Database->FetchRow();
-	int Version = Database->GetInt("version");
+	int Version = Database->GetInt<int>("version");
 	Database->CloseQuery();
 
 	return Version;

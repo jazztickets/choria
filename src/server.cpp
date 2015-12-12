@@ -449,8 +449,8 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	Query << "SELECT id, map_id, name FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
 	Save->Database->PrepareQuery(Query.str());
 	if(Save->Database->FetchRow()) {
-		Peer->CharacterID = (uint32_t)Save->Database->GetInt("id");
-		MapID = (uint32_t)Save->Database->GetInt("map_id");
+		Peer->CharacterID = (uint32_t)Save->Database->GetInt<int>("id");
+		MapID = (uint32_t)Save->Database->GetInt<int>("map_id");
 		Name = Save->Database->GetString("name");
 	}
 	Save->Database->CloseQuery();
@@ -541,7 +541,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Save->Database->PrepareQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
 	Save->Database->BindInt(1, Peer->AccountID);
 	Save->Database->FetchRow();
-	int CharacterCount = Save->Database->GetInt(0);
+	int CharacterCount = Save->Database->GetInt<int>(0);
 	Save->Database->CloseQuery();
 
 	// Create the packet
@@ -553,10 +553,10 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Save->Database->PrepareQuery("SELECT slot, name, portrait_id, experience FROM character WHERE account_id = @account_id");
 	Save->Database->BindInt(1, Peer->AccountID);
 	while(Save->Database->FetchRow()) {
-		Packet.Write<int32_t>(Save->Database->GetInt("slot"));
+		Packet.Write<int32_t>(Save->Database->GetInt<int>("slot"));
 		Packet.WriteString(Save->Database->GetString("name"));
-		Packet.Write<uint32_t>(Save->Database->GetInt("portrait_id"));
-		Packet.Write<int32_t>(Save->Database->GetInt("experience"));
+		Packet.Write<uint32_t>(Save->Database->GetInt<int>("portrait_id"));
+		Packet.Write<int32_t>(Save->Database->GetInt<int>("experience"));
 	}
 	Save->Database->CloseQuery();
 
