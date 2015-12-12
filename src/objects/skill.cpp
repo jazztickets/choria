@@ -132,8 +132,8 @@ bool _Skill::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 		return false;
 
 	if(Scripting->StartMethodCall(Script, "CanUse")) {
-		Scripting->PushInt(ActionResult.SourceObject->SkillLevels[ID]);
-		Scripting->PushObject(ActionResult.SourceObject);
+		Scripting->PushInt(ActionResult.Source.Object->SkillLevels[ID]);
+		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->MethodCall(2, 1);
 		int Value = Scripting->GetInt(1);
 		Scripting->FinishMethodCall();
@@ -147,7 +147,7 @@ bool _Skill::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 // Apply the cost
 void _Skill::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
-		Scripting->PushInt(ActionResult.SourceObject->SkillLevels[ID]);
+		Scripting->PushInt(ActionResult.Source.Object->SkillLevels[ID]);
 		Scripting->PushActionResult(&ActionResult);
 		Scripting->MethodCall(2, 1);
 		Scripting->GetActionResult(1, ActionResult);
@@ -158,9 +158,9 @@ void _Skill::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const
 // Use a skill
 void _Skill::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "Use")) {
-		Scripting->PushInt(ActionResult.SourceObject->SkillLevels[ActionResult.SkillUsed->ID]);
-		Scripting->PushObject(ActionResult.SourceObject);
-		Scripting->PushObject(ActionResult.TargetObject);
+		Scripting->PushInt(ActionResult.Source.Object->SkillLevels[ActionResult.SkillUsed->ID]);
+		Scripting->PushObject(ActionResult.Source.Object);
+		Scripting->PushObject(ActionResult.Target.Object);
 		Scripting->PushActionResult(&ActionResult);
 		Scripting->MethodCall(4, 1);
 		Scripting->GetActionResult(1, ActionResult);

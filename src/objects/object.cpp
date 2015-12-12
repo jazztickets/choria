@@ -587,8 +587,8 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 
 	if(ActionBar[Slot].Skill) {
 		_ActionResult ActionResult;
-		ActionResult.SourceObject = this;
-		ActionResult.TargetObject = this;
+		ActionResult.Source.Object = this;
+		ActionResult.Target.Object = this;
 		ActionResult.Scope = ScopeType::WORLD;
 
 		// Validate use
@@ -603,10 +603,10 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 		ActionResult.SkillUsed->Use(Scripting, ActionResult);
 
 		// Apply changes
-		UpdateHealth(ActionResult.SourceHealthChange);
-		UpdateHealth(ActionResult.TargetHealthChange);
-		UpdateMana(ActionResult.SourceManaChange);
-		UpdateMana(ActionResult.TargetManaChange);
+		UpdateHealth(ActionResult.Source.HealthChange);
+		UpdateHealth(ActionResult.Target.HealthChange);
+		UpdateMana(ActionResult.Source.ManaChange);
+		UpdateMana(ActionResult.Target.ManaChange);
 
 		return true;
 	}

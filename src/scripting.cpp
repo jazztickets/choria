@@ -135,10 +135,10 @@ void _Scripting::PushObject(_Object *Object) {
 void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 	lua_newtable(LuaState);
 
-	lua_pushinteger(LuaState, ActionResult->TargetHealthChange);
+	lua_pushinteger(LuaState, ActionResult->Target.HealthChange);
 	lua_setfield(LuaState, -2, "TargetHealthChange");
 
-	lua_pushinteger(LuaState, ActionResult->SourceManaChange);
+	lua_pushinteger(LuaState, ActionResult->Source.ManaChange);
 	lua_setfield(LuaState, -2, "SourceManaChange");
 }
 
@@ -190,12 +190,12 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 
 	lua_pushstring(LuaState, "TargetHealthChange");
 	lua_gettable(LuaState, -2);
-	ActionResult.TargetHealthChange = (int)lua_tointeger(LuaState, -1);
+	ActionResult.Target.HealthChange = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "SourceManaChange");
 	lua_gettable(LuaState, -2);
-	ActionResult.SourceManaChange = (int)lua_tointeger(LuaState, -1);
+	ActionResult.Source.ManaChange = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Buff");

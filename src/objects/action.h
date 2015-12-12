@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/statchange.h>
 #include <glm/vec2.hpp>
 #include <cstdint>
 
@@ -51,33 +52,23 @@ enum class ScopeType : uint8_t {
 // Structures
 struct _ActionResult {
 	_ActionResult() :
-		SourceObject(nullptr),
-		TargetObject(nullptr),
 		LastPosition(0, 0),
 		Position(0, 0),
 		Texture(nullptr),
 		SkillUsed(nullptr),
 		ItemUsed(nullptr),
 		Buff(nullptr),
-		SourceHealthChange(0),
-		SourceManaChange(0),
-		TargetHealthChange(0),
-		TargetManaChange(0),
 		Time(0.0),
 		Scope(ScopeType::ALL) { }
 
-	_Object *SourceObject;
-	_Object *TargetObject;
+	_StatChange Source;
+	_StatChange Target;
 	glm::vec2 LastPosition;
 	glm::vec2 Position;
 	const _Texture *Texture;
 	const _Skill *SkillUsed;
 	const _Item *ItemUsed;
 	const _Buff *Buff;
-	int SourceHealthChange;
-	int SourceManaChange;
-	int TargetHealthChange;
-	int TargetManaChange;
 	double Time;
 	ScopeType Scope;
 };
