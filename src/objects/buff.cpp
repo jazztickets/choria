@@ -28,7 +28,7 @@
 #include <iostream>
 
 // Draw tooltip
-void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
+void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player) const {
 	/*_Element *TooltipElement = Assets.Elements["element_Buffs_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_Buffs_tooltip_name"];
 	TooltipElement->SetVisible(true);
