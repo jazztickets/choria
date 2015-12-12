@@ -114,7 +114,7 @@ class _Menu {
 		void RequestCharacterList();
 
 		void SetAccountMessage(const std::string &Message);
-		void FocusNextElement(bool ShiftDown=false);
+		void FocusNextElement();
 
 		void ClearPortraits();
 

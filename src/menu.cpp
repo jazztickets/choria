@@ -498,7 +498,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					ConnectToHost();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
-					FocusNextElement(Input.ModKeyDown(KMOD_SHIFT));
+					FocusNextElement();
 			}
 		} break;
 		case STATE_ACCOUNT: {
@@ -508,7 +508,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					SendAccountInfo();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
-					FocusNextElement(Input.ModKeyDown(KMOD_SHIFT));
+					FocusNextElement();
 			}
 		} break;
 		case STATE_INGAME: {
@@ -861,7 +861,7 @@ void _Menu::SetTitleMessage(const std::string &Message) {
 }
 
 // Cycle focused elements
-void _Menu::FocusNextElement(bool ShiftDown) {
+void _Menu::FocusNextElement() {
 	switch(State) {
 		case STATE_CONNECT: {
 			_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
