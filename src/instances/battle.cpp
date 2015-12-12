@@ -126,12 +126,12 @@ void _Battle::Update(double FrameTime) {
 					StatusEffect->Time -= 1.0;
 
 					// Update
-					if(Server)
+					if(Server && Fighter->Health > 0)
 						ServerResolveStatusEffect(Fighter, StatusEffect);
 
 					// Reduce count
 					StatusEffect->Count--;
-					if(StatusEffect->Count <= 0) {
+					if(StatusEffect->Count <= 0 || Fighter->Health <= 0) {
 						if(!Server)
 							BattleEffectsElement->RemoveChild(StatusEffect->Element);
 
