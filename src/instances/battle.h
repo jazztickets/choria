@@ -83,7 +83,7 @@ class _Battle {
 		// Resolve
 		void ServerResolveAction(_Object *SourceFighter);
 		void ClientResolveAction(_Buffer &Data);
-		void ServerResolveStatusEffect(_Object *Object, _StatusEffect &StatusEffect);
+		void ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEffect);
 		void ClientResolveStatChange(_Buffer &Data);
 
 		// Input
@@ -131,6 +131,7 @@ class _Battle {
 
 		// UI
 		_Element *BattleElement;
+		_Element *BattleEffectsElement;
 		_Element *BattleWinElement;
 		_Element *BattleLoseElement;
 		std::list<_ActionResult> ActionResults;

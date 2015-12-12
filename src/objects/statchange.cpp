@@ -22,6 +22,13 @@
 #include <buffer.h>
 #include <stdexcept>
 
+// Constructor
+_StatChange::_StatChange() :
+	HealthChange(0),
+	ManaChange(0) {
+
+}
+
 // Serialize change
 void _StatChange::SerializeBattle(_Buffer &Data) {
 	if(!Object)

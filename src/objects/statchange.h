@@ -29,7 +29,7 @@ class _StatChange {
 
 	public:
 
-		_StatChange() { }
+		_StatChange();
 
 		void SerializeBattle(_Buffer &Data);
 		void UnserializeBattle(_Buffer &Data, _Battle *Battle);

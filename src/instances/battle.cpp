@@ -57,6 +57,7 @@ _Battle::_Battle() :
 	ClientExperienceReceived(0),
 	ClientGoldReceived(0),
 	BattleElement(nullptr),
+	BattleEffectsElement(nullptr),
 	BattleWinElement(nullptr),
 	BattleLoseElement(nullptr) {
 
@@ -68,6 +69,10 @@ _Battle::_Battle() :
 _Battle::~_Battle() {
 	if(BattleElement)
 		BattleElement->SetVisible(false);
+	if(BattleEffectsElement) {
+		BattleEffectsElement->SetVisible(false);
+		BattleEffectsElement->Children.clear();
+	}
 	if(BattleWinElement)
 		BattleWinElement->SetVisible(false);
 	if(BattleLoseElement)
@@ -114,20 +119,25 @@ void _Battle::Update(double FrameTime) {
 
 			// Update status effects
 			for(auto Iterator = Fighter->StatusEffects.begin(); Iterator != Fighter->StatusEffects.end(); ) {
-				_StatusEffect &StatusEffect = *Iterator;
-				StatusEffect.Time += FrameTime;
+				_StatusEffect *StatusEffect = *Iterator;
+				StatusEffect->Time += FrameTime;
 
-				if(StatusEffect.Time >= 1.0) {
-					StatusEffect.Time -= 1.0;
+				if(StatusEffect->Time >= 1.0) {
+					StatusEffect->Time -= 1.0;
 
 					// Update
 					if(Server)
 						ServerResolveStatusEffect(Fighter, StatusEffect);
 
 					// Reduce count
-					StatusEffect.Count--;
-					if(StatusEffect.Count <= 0)
+					StatusEffect->Count--;
+					if(StatusEffect->Count <= 0) {
+						if(!Server)
+							BattleEffectsElement->RemoveChild(StatusEffect->Element);
+
+						delete StatusEffect;
 						Iterator = Fighter->StatusEffects.erase(Iterator);
+					}
 				}
 				else
 					++Iterator;
@@ -189,6 +199,7 @@ void _Battle::Render(double BlendFactor) {
 // Renders the battle part
 void _Battle::RenderBattle(double BlendFactor) {
 	BattleElement->Render();
+	BattleEffectsElement->Render();
 
 	// Draw fighters
 	for(auto &Fighter : Fighters) {
@@ -198,6 +209,15 @@ void _Battle::RenderBattle(double BlendFactor) {
 	// Draw action results
 	for(auto &ActionResult : ActionResults) {
 		RenderActionResults(ActionResult, BlendFactor);
+	}
+
+	// Draw tooltips
+	_Element *HitElement = Graphics.Element->HitElement;
+	if(HitElement) {
+		if(HitElement->Identifier == "buff") {
+			_StatusEffect *StatusEffect = (_StatusEffect *)HitElement->UserData;
+			StatusEffect->Buff->DrawTooltip(Scripting);
+		}
 	}
 }
 
@@ -481,14 +501,6 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 			ActionResult.TargetManaChange = ActionResult.ItemUsed->ManaRestore;
 		}
 
-		// Add buffs
-		_StatusEffect StatusEffect;
-		if(ActionResult.Buff) {
-			StatusEffect.Buff = ActionResult.Buff;
-			StatusEffect.Count = 5;
-			ActionResult.TargetObject->StatusEffects.push_back(StatusEffect);
-		}
-
 		// Update target
 		ActionResult.TargetObject->UpdateHealth(ActionResult.TargetHealthChange);
 		ActionResult.TargetObject->UpdateMana(ActionResult.TargetManaChange);
@@ -499,9 +511,15 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		Packet.Write<int32_t>(ActionResult.TargetObject->Health);
 		Packet.Write<int32_t>(ActionResult.TargetObject->Mana);
 
-		if(StatusEffect.Buff) {
-			Packet.Write<uint32_t>(StatusEffect.Buff->ID);
-			Packet.Write<int>(StatusEffect.Count);
+		// Add buffs
+		if(ActionResult.Buff) {
+			_StatusEffect *StatusEffect = new _StatusEffect();
+			StatusEffect->Buff = ActionResult.Buff;
+			StatusEffect->Count = 5;
+			ActionResult.TargetObject->StatusEffects.push_back(StatusEffect);
+
+			Packet.Write<uint32_t>(StatusEffect->Buff->ID);
+			Packet.Write<int>(StatusEffect->Count);
 		}
 		else
 			Packet.Write<uint32_t>(0);
@@ -568,10 +586,11 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 
 		// Read status effect
 		uint32_t BuffID = Data.Read<uint32_t>();
-		_StatusEffect StatusEffect;
+		_StatusEffect *StatusEffect = nullptr;
 		if(BuffID > 0) {
-			StatusEffect.Buff = Stats->Buffs[BuffID];
-			StatusEffect.Count = Data.Read<int>();
+			StatusEffect = new _StatusEffect();
+			StatusEffect->Buff = Stats->Buffs[BuffID];
+			StatusEffect->Count = Data.Read<int>();
 		}
 
 		// Update target fighter
@@ -581,8 +600,18 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 			ActionResult.TargetObject->Mana = TargetFighterMana;
 
 			// Add status effect
-			if(StatusEffect.Buff) {
+			if(StatusEffect) {
 				ActionResult.TargetObject->StatusEffects.push_back(StatusEffect);
+
+				StatusEffect->Element = new _Element();
+				StatusEffect->Element->Identifier = "buff";
+				StatusEffect->Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
+				StatusEffect->Element->Alignment = LEFT_TOP;
+				StatusEffect->Element->UserCreated = true;
+				StatusEffect->Element->Visible = true;
+				StatusEffect->Element->UserData = (void *)StatusEffect;
+				BattleEffectsElement->Children.push_back(StatusEffect->Element);
+				//BattleEffectsElement->SetDebug(1);
 			}
 		}
 
@@ -591,10 +620,10 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 }
 
 // Update a status effect
-void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect &StatusEffect) {
+void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEffect) {
 	_StatChange StatChange;
 	StatChange.Object = Object;
-	StatusEffect.Buff->Update(Scripting, StatChange);
+	StatusEffect->Buff->Update(Scripting, StatChange);
 	StatChange.Object->UpdateStats(StatChange);
 
 	// Send update
@@ -704,9 +733,11 @@ void _Battle::ServerStartBattle() {
 // Starts the battle on the client
 void _Battle::ClientStartBattle() {
 	BattleElement = Assets.Elements["element_battle"];
+	BattleEffectsElement = Assets.Elements["element_battle_effects"];
 	BattleWinElement = Assets.Elements["element_battlewin"];
 	BattleLoseElement = Assets.Elements["element_battlelose"];
 	BattleElement->SetVisible(true);
+	BattleEffectsElement->SetVisible(true);
 
 	// Set fighter position offsets
 	int SideCount[2] = { 0, 0 };

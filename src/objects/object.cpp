@@ -130,6 +130,8 @@ _Object::_Object()
 
 // Destructor
 _Object::~_Object() {
+	for(auto &StatusEffect : StatusEffects)
+		delete StatusEffect;
 }
 
 // Renders the fighter during a battle
@@ -269,8 +271,10 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	glm::vec2 StatusPosition(SlotPosition + glm::vec2(-Slot->Size.x/2, Slot->Size.y/2 + 4));
 	for(auto &StatusEffect : StatusEffects) {
-		Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect.Buff->Texture->Size/2), StatusEffect.Buff->Texture, GlobalColor);
-		StatusPosition.x += StatusEffect.Buff->Texture->Size.x + 2;
+		StatusEffect->Element->Offset = StatusPosition;
+		StatusEffect->Element->CalculateBounds();
+		Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect->Buff->Texture->Size/2), StatusEffect->Buff->Texture, GlobalColor);
+		StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
 	}
 }
 
@@ -1195,4 +1199,8 @@ void _Object::CalculateFinalStats() {
 		MinDefense = 0;
 	if(MaxDefense < 0)
 		MaxDefense = 0;
+}
+
+_StatusEffect::~_StatusEffect() {
+	delete Element;
 }

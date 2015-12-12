@@ -21,6 +21,7 @@
 #include <input.h>
 #include <assets.h>
 #include <constants.h>
+#include <algorithm>
 
 const glm::vec4 DebugColors[] = { COLOR_CYAN, COLOR_YELLOW, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
@@ -87,6 +88,16 @@ _Element *_Element::GetClickedElement() {
 		return HitElement;
 
 	return nullptr;
+}
+
+// Remove a child element
+void _Element::RemoveChild(_Element *Element) {
+	auto Iterator = std::find(Children.begin(), Children.end(), Element);
+	if(Iterator != Children.end()) {
+		if(Graphics.Element->HitElement == Element)
+			Graphics.Element->HitElement = nullptr;
+		Children.erase(Iterator);
+	}
 }
 
 // Handle mouse movement

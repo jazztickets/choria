@@ -42,6 +42,7 @@ class _Element {
 		virtual void HandleInput(bool Pressed);
 		_Element *GetClickedElement();
 
+		void RemoveChild(_Element *Element);
 		void UpdateChildrenOffset(const glm::vec2 &Update) { ChildrenOffset += Update; CalculateChildrenBounds(); }
 		void CalculateChildrenBounds();
 

@@ -29,9 +29,9 @@
 #include <iostream>
 
 // Draw tooltip
-void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player) const {
-	/*_Element *TooltipElement = Assets.Elements["element_Buffs_tooltip"];
-	_Label *TooltipName = Assets.Labels["label_Buffs_tooltip_name"];
+void _Buff::DrawTooltip(_Scripting *Scripting) const {
+	_Element *TooltipElement = Assets.Elements["element_buffs_tooltip"];
+	_Label *TooltipName = Assets.Labels["label_buffs_tooltip_name"];
 	TooltipElement->SetVisible(true);
 
 	// Set label values
@@ -63,24 +63,32 @@ void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player) const {
 	glm::vec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
 	DrawPosition.y += 30;
 
-	// Get current skill level
-	int32_t SkillLevel = 0;
-	auto SkillLevelIterator = Player->SkillLevels.find(ID);
-	if(SkillLevelIterator != Player->SkillLevels.end())
-		SkillLevel = SkillLevelIterator->second;
+	if(!Script.length())
+		return;
 
-	// Get current level description
-	Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
-	DrawPosition.y += 25;
-	DrawDescription(Scripting, SkillLevel, DrawPosition, Size.x);
+	// Get description
+	std::string Info = "";
+	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+		Scripting->PushInt(1);
+		Scripting->MethodCall(1, 1);
+		Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+	}
 
-	// Get next level description
-	if(DrawNextLevel && SkillLevel > 0) {
-		DrawPosition.y += 25;
-		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
-		DrawPosition.y += 25;
-		DrawDescription(Scripting, SkillLevel+1, DrawPosition, Size.x);
-	}*/
+	float SpacingY = 18;
+
+	std::stringstream Buffer(Info);
+	std::string Token;
+
+	// Draw description
+	while(std::getline(Buffer, Token, '\n')) {
+		std::list<std::string> Strings;
+		Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings);
+		for(const auto &LineToken : Strings) {
+			Assets.Fonts["hud_small"]->DrawText(LineToken, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			DrawPosition.y += SpacingY;
+		}
+	}
 }
 
 // Call the update script

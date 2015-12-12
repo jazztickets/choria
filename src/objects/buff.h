@@ -32,7 +32,7 @@ class _Buff {
 
 	public:
 
-		void DrawTooltip(_Scripting *Scripting, const _Object *Player) const;
+		void DrawTooltip(_Scripting *Scripting) const;
 
 		void Update(_Scripting *Scripting, _StatChange &StatChange) const;
 

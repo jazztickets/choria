@@ -39,6 +39,7 @@ class _Stats;
 class _Buffer;
 class _Scripting;
 class _StatChange;
+class _Element;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
@@ -51,9 +52,11 @@ struct _InventorySlot {
 };
 
 struct _StatusEffect {
-	_StatusEffect() : Buff(nullptr), Time(0.0), Count(0) { }
+	_StatusEffect() : Buff(nullptr), Element(nullptr), Time(0.0), Count(0) { }
+	~_StatusEffect();
 
 	const _Buff *Buff;
+	_Element *Element;
 	double Time;
 	int Count;
 };
@@ -216,7 +219,7 @@ class _Object {
 		_Action BattleAction;
 		_Action PotentialAction;
 		std::list<uint32_t> ItemDropsReceived;
-		std::list<_StatusEffect> StatusEffects;
+		std::list<_StatusEffect *> StatusEffects;
 
 		// Render
 		const _Texture *Portrait;
