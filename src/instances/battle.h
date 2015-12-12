@@ -21,10 +21,12 @@
 #include <list>
 #include <cstdint>
 #include <glm/vec2.hpp>
+#include <string>
 
 // Forward Declarations
 class _Object;
 class _Skill;
+class _Buff;
 class _Item;
 class _Texture;
 class _Buffer;
@@ -61,6 +63,7 @@ struct _ActionResult {
 		Texture(nullptr),
 		SkillUsed(nullptr),
 		ItemUsed(nullptr),
+		Buff(nullptr),
 		DamageDealt(0),
 		SourceHealthChange(0),
 		SourceManaChange(0),
@@ -76,6 +79,7 @@ struct _ActionResult {
 	const _Texture *Texture;
 	const _Skill *SkillUsed;
 	const _Item *ItemUsed;
+	const _Buff *Buff;
 	int DamageDealt;
 	int SourceHealthChange;
 	int SourceManaChange;

@@ -82,39 +82,6 @@ void _Buff::DrawTooltip(_Scripting *Scripting, const _Object *Player) const {
 	}*/
 }
 
-// Draw skill description
-void _Buff::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, int Width) const {
-	/*if(!Script.length())
-		return;
-
-	// Show unskilled levels as level 1
-	if(SkillLevel == 0)
-		SkillLevel = 1;
-
-	// Get skill description
-	std::string Info = "";
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
-		Scripting->PushInt(SkillLevel);
-		Scripting->MethodCall(1, 1);
-		Info = Scripting->GetString(1);
-		Scripting->FinishMethodCall();
-	}
-
-	int SpacingY = 18;
-
-	std::stringstream Buffer(Info);
-	std::string Token;
-
-	// Draw description
-	while(std::getline(Buffer, Token, '\n')) {
-		std::list<std::string> Strings;
-		Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings);
-		for(const auto &LineToken : Strings) {
-			Assets.Fonts["hud_small"]->DrawText(LineToken, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
-			DrawPosition.y += SpacingY;
-		}
-	}*/
-}
 /*
 // Return true if the skill can be used
 bool _Buff::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {

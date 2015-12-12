@@ -17,7 +17,9 @@
 *******************************************************************************/
 #include <scripting.h>
 #include <objects/object.h>
+#include <objects/buff.h>
 #include <instances/battle.h>
+#include <stats.h>
 #include <random.h>
 #include <stdexcept>
 #include <iostream>
@@ -59,6 +61,26 @@ void _Scripting::LoadScript(const std::string &Path) {
 	// Load the file
 	if(luaL_dofile(LuaState, Path.c_str()))
 		throw std::runtime_error("Failed to load script " + Path + "\n" + std::string(lua_tostring(LuaState, -1)));
+}
+
+// Load global state with stat info
+void _Scripting::InjectStats(_Stats *Stats) {
+	lua_newtable(LuaState);
+
+	// Iterate through buffs
+	for(const auto &Iterator : Stats->Buffs) {
+		const _Buff *Buff = Iterator.second;
+		if(Buff) {
+
+			// Add pointer to table
+			lua_pushstring(LuaState, Buff->Script.c_str());
+			lua_pushlightuserdata(LuaState, (void *)Buff);
+			lua_settable(LuaState, -3);
+		}
+	}
+
+	// Assign table a name
+	lua_setglobal(LuaState, "Buffs");
 }
 
 // Push pointer onto stack
@@ -143,7 +165,7 @@ void _Scripting::PushInt(int Value) {
 // Get return value as int
 int _Scripting::GetInt(int Index) {
 
-	return lua_tointeger(LuaState, Index + CurrentTableIndex);
+	return (int)lua_tointeger(LuaState, Index + CurrentTableIndex);
 }
 
 // Get return value as string
@@ -159,18 +181,23 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 
 	lua_pushstring(LuaState, "DamageDealt");
 	lua_gettable(LuaState, -2);
-	ActionResult.DamageDealt = lua_tointeger(LuaState, -1);
+	ActionResult.DamageDealt = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "TargetHealthChange");
 	lua_gettable(LuaState, -2);
-	ActionResult.TargetHealthChange = lua_tointeger(LuaState, -1);
+	ActionResult.TargetHealthChange = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "SourceManaChange");
 	lua_gettable(LuaState, -2);
-	ActionResult.SourceManaChange = lua_tointeger(LuaState, -1);
+	ActionResult.SourceManaChange = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
+
+	//lua_pushstring(LuaState, "BuffID");
+	//lua_gettable(LuaState, -2);
+	//ActionResult.BuffID = (int)lua_tointeger(LuaState, -1);
+	//lua_pop(LuaState, 1);
 }
 
 // Start a call to a lua class method, return table index
@@ -217,8 +244,8 @@ void _Scripting::FinishMethodCall() {
 
 // Random.GetInt(min, max)
 int _Scripting::RandomGetInt(lua_State *LuaState) {
-	int Min = lua_tointeger(LuaState, 1);
-	int Max = lua_tointeger(LuaState, 2);
+	int Min = (int)lua_tointeger(LuaState, 1);
+	int Max = (int)lua_tointeger(LuaState, 2);
 
 	lua_pushinteger(LuaState, GetRandomInt(Min, Max));
 
@@ -251,7 +278,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 
 	// Set skill used
-	size_t ActionBarIndex = lua_tointeger(LuaState, 1);
+	size_t ActionBarIndex = (size_t)lua_tointeger(LuaState, 1);
 	if(ActionBarIndex < Object->ActionBar.size())
 		Object->BattleAction.Skill = Object->ActionBar[ActionBarIndex].Skill;
 

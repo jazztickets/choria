@@ -35,7 +35,7 @@ struct _MapStat {
 };
 
 struct _Portrait {
-	int ID;
+	uint32_t ID;
 	const _Texture *Image;
 };
 
@@ -60,7 +60,7 @@ struct _EventName {
 };
 
 struct _Vendor {
-	int ID;
+	uint32_t ID;
 	std::string Name;
 	std::string Info;
 	float BuyPercent;
@@ -74,7 +74,7 @@ struct _TraderItem {
 };
 
 struct _Trader {
-	int ID;
+	uint32_t ID;
 	std::string Name;
 	const _Item *RewardItem;
 	int Count;

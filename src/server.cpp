@@ -58,13 +58,13 @@ void RunThread(void *Arguments) {
 }
 
 // Constructor
-_Server::_Server(uint16_t NetworkPort)
+_Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 :	Done(false),
 	StartShutdown(false),
 	TimeSteps(0),
 	Time(0.0),
 	Clock(0.0),
-	Stats(nullptr),
+	Stats(Stats),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	NextMapID(0),
 	Thread(nullptr) {
@@ -81,8 +81,10 @@ _Server::_Server(uint16_t NetworkPort)
 	Clock = Save->GetClock();
 
 	Scripting = new _Scripting();
+	Scripting->InjectStats(Stats);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_AI);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
+	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_BUFFS);
 }
 
 // Destructor
@@ -1288,7 +1290,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	//Zone = 1;
+	Zone = 1;
 	if(!Zone)
 		return;
 

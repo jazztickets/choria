@@ -54,8 +54,8 @@ void _DedicatedState::Init() {
 
 	// Setup server
 	try {
-		Server = new _Server(NetworkPort);
-		Server->Stats = new _Stats();
+		Stats = new _Stats();
+		Server = new _Server(Stats, NetworkPort);
 
 		std::cout << "Listening on port " << NetworkPort << std::endl;
 
@@ -63,6 +63,7 @@ void _DedicatedState::Init() {
 	}
 	catch(std::exception &Error) {
 		std::cerr << Error.what() << std::endl;
+		delete Stats;
 		Framework.Done = true;
 	}
 }
@@ -74,8 +75,6 @@ void _DedicatedState::Close() {
 		delete Thread;
 	}
 
-	if(Server)
-		delete Server->Stats;
 	delete Server;
 }
 

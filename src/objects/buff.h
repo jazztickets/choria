@@ -35,7 +35,6 @@ class _Buff {
 	public:
 
 		void DrawTooltip(_Scripting *Scripting, const _Object *Player) const;
-		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, int Width) const;
 
 		//bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		//void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;

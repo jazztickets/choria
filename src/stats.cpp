@@ -116,7 +116,7 @@ void _Stats::LoadSkills() {
 	// Get events
 	while(Database->FetchRow()) {
 		_Skill *Skill = new _Skill;
-		Skill->ID = Database->GetInt<int>("id");
+		Skill->ID = Database->GetInt<uint32_t>("id");
 		Skill->Name = Database->GetString("name");
 		Skill->Script = Database->GetString("script");
 		Skill->Texture = Assets.Textures[Database->GetString("icon")];
@@ -139,7 +139,7 @@ void _Stats::LoadBuffs() {
 	// Get events
 	while(Database->FetchRow()) {
 		_Buff *Buff = new _Buff;
-		Buff->ID = Database->GetInt<int>("id");
+		Buff->ID = Database->GetInt<uint32_t>("id");
 		Buff->Name = Database->GetString("name");
 		Buff->Script = Database->GetString("script");
 		Buff->Texture = Assets.Textures[Database->GetString("icon")];
@@ -159,7 +159,7 @@ void _Stats::LoadItems() {
 	// Get events
 	while(Database->FetchRow()) {
 		_Item *Item = new _Item;
-		Item->ID = Database->GetInt<int>("id");
+		Item->ID = Database->GetInt<uint32_t>("id");
 		Item->Name = Database->GetString("name");
 		Item->Level = Database->GetInt<int>("level");
 		Item->Type = Database->GetInt<int>("type");
@@ -195,7 +195,7 @@ void _Stats::LoadVendors() {
 	// Get vendors
 	_Vendor Vendor;
 	while(Database->FetchRow()) {
-		Vendor.ID = Database->GetInt<int>("id");
+		Vendor.ID = Database->GetInt<uint32_t>("id");
 		Vendor.Name = Database->GetString("name");
 		Vendor.Info = Database->GetString("info");
 		Vendor.BuyPercent = Database->GetReal("buypercent");
@@ -206,7 +206,7 @@ void _Stats::LoadVendors() {
 		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
 		Database->BindInt(1, Vendor.ID, 1);
 		while(Database->FetchRow(1)) {
-			Vendor.Items.push_back(Items[Database->GetInt<int>("item_id", 1)]);
+			Vendor.Items.push_back(Items[Database->GetInt<uint32_t>("item_id", 1)]);
 		}
 		Database->CloseQuery(1);
 
@@ -227,7 +227,7 @@ void _Stats::LoadTraders() {
 	while(Database->FetchRow()) {
 		Trader.ID = Database->GetInt<int>("id");
 		Trader.Name = Database->GetString("name");
-		Trader.RewardItem = Items[Database->GetInt<int>("item_id")];
+		Trader.RewardItem = Items[Database->GetInt<uint32_t>("item_id")];
 		Trader.Count = Database->GetInt<int>("count");
 		Trader.TraderItems.clear();
 
@@ -236,7 +236,7 @@ void _Stats::LoadTraders() {
 		Database->BindInt(1, Trader.ID, 1);
 		while(Database->FetchRow(1)) {
 			_TraderItem TraderItem;
-			TraderItem.Item = Items[Database->GetInt<int>("item_id", 1)];
+			TraderItem.Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
 			TraderItem.Count = Database->GetInt<int>("count", 1);
 			Trader.TraderItems.push_back(TraderItem);
 		}
@@ -292,7 +292,7 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
 	Database->PrepareQuery("SELECT * FROM portrait");
 	while(Database->FetchRow()) {
 		_Portrait Portrait;
-		Portrait.ID = Database->GetInt<int>("id");
+		Portrait.ID = Database->GetInt<uint32_t>("id");
 		Portrait.Image = Assets.Textures[std::string("portraits/") + Database->GetString("image")];
 
 		Portraits.push_back(Portrait);
@@ -327,7 +327,7 @@ void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<uint32_t> &M
 	Database->PrepareQuery("SELECT monstercount FROM zone WHERE id = @zone_id");
 	Database->BindInt(1, ZoneID);
 	if(Database->FetchRow()) {
-		MonsterCount = Database->GetInt<int>("monstercount");
+		MonsterCount = Database->GetInt<uint32_t>("monstercount");
 	}
 	Database->CloseQuery();
 
@@ -343,8 +343,8 @@ void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<uint32_t> &M
 	std::vector<_Zone> Zone;
 	uint32_t OddsSum = 0;
 	while(Database->FetchRow()) {
-		uint32_t MonsterID = Database->GetInt<int>("monster_id");
-		uint32_t Odds = Database->GetInt<int>("odds");
+		uint32_t MonsterID = Database->GetInt<uint32_t>("monster_id");
+		uint32_t Odds = Database->GetInt<uint32_t>("odds");
 		OddsSum += Odds;
 
 		Zone.push_back(_Zone(MonsterID, OddsSum));
@@ -385,8 +385,8 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 	std::list<_ItemDrop> PossibleItemDrops;
 	uint32_t OddsSum = 0;
 	while(Database->FetchRow()) {
-		uint32_t ItemID = Database->GetInt<int>("item_id");
-		uint32_t Odds = Database->GetInt<int>("odds");
+		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
+		uint32_t Odds = Database->GetInt<uint32_t>("odds");
 		OddsSum += Odds;
 
 		PossibleItemDrops.push_back(_ItemDrop(ItemID, OddsSum));

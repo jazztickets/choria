@@ -42,7 +42,7 @@ class _Server {
 
 	public:
 
-		_Server(uint16_t NetworkPort);
+		_Server(_Stats *Stats, uint16_t NetworkPort);
 		~_Server();
 
 		void Update(double FrameTime);

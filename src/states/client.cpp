@@ -70,7 +70,9 @@ void _ClientState::Init() {
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	Scripting = new _Scripting();
+	Scripting->InjectStats(Stats);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
+	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_BUFFS);
 
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
@@ -136,8 +138,7 @@ void _ClientState::StartLocalServer() {
 
 	// Start server in thread
 	try {
-		Server = new _Server(DEFAULT_NETWORKPORT_ALT);
-		Server->Stats = Stats;
+		Server = new _Server(Stats, DEFAULT_NETWORKPORT_ALT);
 		Server->StartThread();
 	}
 	catch(std::exception &Error) {

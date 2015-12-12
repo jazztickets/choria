@@ -24,6 +24,7 @@
 
 // Forward Declarations
 class _Object;
+class _Stats;
 struct _ActionResult;
 
 // Classes
@@ -35,6 +36,7 @@ class _Scripting {
 		~_Scripting();
 
 		void LoadScript(const std::string &Path);
+		void InjectStats(_Stats *Stats);
 
 		void PushData(void *Data);
 		void PushObject(_Object *Object);
