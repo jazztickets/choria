@@ -45,8 +45,7 @@ void _Inventory::Serialize(_Buffer &Data) {
 	for(uint8_t i = 0; i < InventoryType::COUNT; i++) {
 		if(Slots[i].Item) {
 			Data.Write<uint8_t>(i);
-			Data.Write<uint8_t>((uint8_t)Slots[i].Count);
-			Data.Write<uint32_t>(Slots[i].Item->ID);
+			Slots[i].Serialize(Data);
 		}
 	}
 
@@ -59,10 +58,7 @@ void _Inventory::Unserialize(_Buffer &Data, _Stats *Stats) {
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		uint8_t Slot = Data.Read<uint8_t>();
-		uint8_t Count = (uint8_t)Data.Read<uint8_t>();
-		uint32_t ItemID = Data.Read<uint32_t>();
-		Slots[Slot].Item = Stats->Items[ItemID];
-		Slots[Slot].Count = Count;
+		Slots[Slot].Unserialize(Data, Stats);
 	}
 }
 
@@ -139,7 +135,7 @@ bool _Inventory::CanEquipItem(int Slot, const _Item *Item) {
 }
 
 // Moves an item from one slot to another
-bool _Inventory::MoveInventory(int OldSlot, int NewSlot) {
+bool _Inventory::MoveInventory(_Buffer &Data, int OldSlot, int NewSlot) {
 	if(OldSlot == NewSlot)
 		return false;
 
@@ -158,15 +154,22 @@ bool _Inventory::MoveInventory(int OldSlot, int NewSlot) {
 		}
 		else
 			Slots[OldSlot].Item = nullptr;
+
 	}
 	else {
 
-		// Disable reverse equip for now
+		// Check for swapping a non-equippable item
 		if(OldSlot < InventoryType::BAG && !CanEquipItem(OldSlot, Slots[NewSlot].Item))
 			return false;
 
 		SwapItem(NewSlot, OldSlot);
 	}
+
+	// Build packet
+	Data.Write<char>((char)NewSlot);
+	Slots[NewSlot].Serialize(Data);
+	Data.Write<char>((char)OldSlot);
+	Slots[OldSlot].Serialize(Data);
 
 	return true;
 }
@@ -314,4 +317,28 @@ int _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<int> &Ba
 	}
 
 	return RewardItemSlot;
+}
+
+// Serialize a slot
+void _InventorySlot::Serialize(_Buffer &Data) {
+	if(Item) {
+		Data.Write<uint32_t>(Item->ID);
+		Data.Write<uint8_t>((uint8_t)Count);
+	}
+	else
+		Data.Write<uint32_t>(0);
+}
+
+// Unserialize a slot
+void _InventorySlot::Unserialize(_Buffer &Data, _Stats *Stats) {
+
+	uint32_t ItemID = Data.Read<uint32_t>();
+	if(ItemID) {
+		Item = Stats->Items[ItemID];
+		Count = Data.Read<uint8_t>();
+	}
+	else {
+		Item = nullptr;
+		Count = 0;
+	}
 }

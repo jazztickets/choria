@@ -110,6 +110,7 @@ class _ClientState : public _State {
 		void HandleTeleportStart(_Buffer &Data);
 		void HandleEventStart(_Buffer &Data);
 		void HandleInventoryUse(_Buffer &Data);
+		void HandleInventorySwap(_Buffer &Data);
 		void HandleChatMessage(_Buffer &Data);
 		void HandleTradeRequest(_Buffer &Data);
 		void HandleTradeCancel(_Buffer &Data);

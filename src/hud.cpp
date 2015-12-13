@@ -240,15 +240,12 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						case WINDOW_TRADEYOURS:
 						case WINDOW_INVENTORY:
 
-							if(Tooltip.Slot >= 0 && Player->Inventory->MoveInventory(Cursor.Slot, Tooltip.Slot)) {
+							if(Tooltip.Slot >= 0) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
 								Packet.Write<char>((char)Cursor.Slot);
 								Packet.Write<char>((char)Tooltip.Slot);
 								ClientState.Network->SendPacket(Packet);
-
-								ResetAcceptButton();
-								Player->CalculateStats();
 							}
 						break;
 						// Sell an item

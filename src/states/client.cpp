@@ -437,6 +437,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::INVENTORY_USE:
 			HandleInventoryUse(Data);
 		break;
+		case PacketType::INVENTORY_SWAP:
+			HandleInventorySwap(Data);
+		break;
 		case PacketType::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;
@@ -736,8 +739,26 @@ void _ClientState::HandleChatMessage(_Buffer &Data) {
 
 // Handles the use of an inventory item
 void _ClientState::HandleInventoryUse(_Buffer &Data) {
+	if(!Player)
+		return;
+
 	int Slot = Data.Read<char>();
 	Player->Inventory->UpdateInventory(Slot, -1);
+}
+
+// Handles a inventory swap
+void _ClientState::HandleInventorySwap(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	int NewSlot = Data.Read<char>();
+	Player->Inventory->Slots[NewSlot].Unserialize(Data, Stats);
+
+	int OldSlot = Data.Read<char>();
+	Player->Inventory->Slots[OldSlot].Unserialize(Data, Stats);
+
+	HUD->ResetAcceptButton();
+	Player->CalculateStats();
 }
 
 // Handles a trade request
@@ -782,22 +803,12 @@ void _ClientState::HandleTradeItem(_Buffer &Data) {
 		return;
 
 	// Get old slot information
-	uint32_t OldItemID = Data.Read<uint32_t>();
 	int OldSlot = Data.Read<char>();
-	int OldCount = 0;
-	if(OldItemID > 0)
-		OldCount = Data.Read<char>();
+	Player->TradePlayer->Inventory->Slots[OldSlot].Unserialize(Data, Stats);
 
 	// Get new slot information
-	uint32_t NewItemID = Data.Read<uint32_t>();
 	int NewSlot = Data.Read<char>();
-	int NewCount = 0;
-	if(NewItemID > 0)
-		NewCount = Data.Read<char>();
-
-	// Update player
-	Player->TradePlayer->Inventory->Slots[OldSlot] = _InventorySlot(Stats->Items[OldItemID], OldCount);
-	Player->TradePlayer->Inventory->Slots[NewSlot] = _InventorySlot(Stats->Items[NewItemID], NewCount);
+	Player->TradePlayer->Inventory->Slots[NewSlot].Unserialize(Data, Stats);
 
 	// Reset agreement
 	Player->TradePlayer->TradeAccepted = false;

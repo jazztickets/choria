@@ -34,6 +34,9 @@ struct _InventorySlot {
 	_InventorySlot() : Item(nullptr), Count(0) { }
 	_InventorySlot(const _Item *Item, int Count) : Item(Item), Count(Count) { }
 
+	void Serialize(_Buffer &Data);
+	void Unserialize(_Buffer &Data, _Stats *Stats);
+
 	const _Item *Item;
 	int Count;
 };
@@ -67,7 +70,7 @@ class _Inventory {
 		int CountItem(const _Item *Item);
 
 		const _Item *GetBagItem(int Slot);
-		bool MoveInventory(int OldSlot, int NewSlot);
+		bool MoveInventory(_Buffer &Data, int OldSlot, int NewSlot);
 		bool UpdateInventory(int Slot, int Amount);
 		int FindSlotForItem(const _Item *Item, int Count);
 		bool AddItem(const _Item *Item, int Count, int Slot);

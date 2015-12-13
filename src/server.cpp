@@ -711,8 +711,14 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 	int NewSlot = Data.Read<char>();
 
 	// Move items
-	Player->Inventory->MoveInventory(OldSlot, NewSlot);
-	Player->CalculateStats();
+	{
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
+		if(Player->Inventory->MoveInventory(Packet, OldSlot, NewSlot)) {
+			Network->SendPacket(Packet, Peer);
+			Player->CalculateStats();
+		}
+	}
 
 	// Check for trading players
 	_Object *TradePlayer = Player->TradePlayer;
@@ -726,29 +732,25 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 		_InventorySlot *OldSlotItem = &Player->Inventory->Slots[OldSlot];
 		_InventorySlot *NewSlotItem = &Player->Inventory->Slots[NewSlot];
 
-		// Get item information
-		uint32_t OldItemID = 0, NewItemID = 0;
-		int OldItemCount = 0, NewItemCount = 0;
-		if(OldSlotItem->Item) {
-			OldItemID = OldSlotItem->Item->ID;
-			OldItemCount = OldSlotItem->Count;
-		}
-		if(NewSlotItem->Item) {
-			NewItemID = NewSlotItem->Item->ID;
-			NewItemCount = NewSlotItem->Count;
-		}
-
 		// Build packet
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
-		Packet.Write<uint32_t>(OldItemID);
+
+		// Build packet
+		Data.Write<char>((char)NewSlot);
+		OldSlotItem->Serialize(Data);
+		Data.Write<char>((char)OldSlot);
+		NewSlotItem->Serialize(Data);
+/*
 		Packet.Write<char>(OldSlot);
+		Packet.Write<uint32_t>(OldItemID);
 		if(OldItemID > 0)
 			Packet.Write<char>(OldItemCount);
-		Packet.Write<uint32_t>(NewItemID);
+
 		Packet.Write<char>(NewSlot);
+		Packet.Write<uint32_t>(NewItemID);
 		if(NewItemID > 0)
-			Packet.Write<char>(NewItemCount);
+			Packet.Write<char>(NewItemCount);*/
 
 		// Send updates
 		Network->SendPacket(Packet, TradePlayer->Peer);
