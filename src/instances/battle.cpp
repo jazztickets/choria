@@ -21,10 +21,12 @@
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <objects/buff.h>
+#include <objects/inventory.h>
 #include <objects/statchange.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
+#include <constants.h>
 #include <server.h>
 #include <actions.h>
 #include <buffer.h>
@@ -515,8 +517,8 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 
 	// Use item
 	int Index = -1;
-	if(ActionResult.ItemUsed && ActionResult.Source.Object->FindItem(ActionResult.ItemUsed, Index)) {
-		ActionResult.Source.Object->UpdateInventory(Index, -1);
+	if(ActionResult.ItemUsed && ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
+		ActionResult.Source.Object->Inventory->UpdateInventory(Index, -1);
 	}
 
 	// Apply costs
@@ -626,8 +628,8 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		// Use item on client
 		if(ClientPlayer == ActionResult.Source.Object && ActionResult.ItemUsed) {
 			int Index = -1;
-			if(ClientPlayer->FindItem(ActionResult.ItemUsed, Index)) {
-				ClientPlayer->UpdateInventory(Index, -1);
+			if(ClientPlayer->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
+				ClientPlayer->Inventory->UpdateInventory(Index, -1);
 				ClientPlayer->RefreshActionBarCount();
 			}
 		}
@@ -937,7 +939,7 @@ void _Battle::ServerEndBattle() {
 		// Write items
 		for(auto &ItemID : Fighter->ItemDropsReceived) {
 			Packet.Write<uint32_t>(ItemID);
-			Fighter->AddItem(Stats->Items[ItemID], 1, -1);
+			Fighter->Inventory->AddItem(Stats->Items[ItemID], 1, -1);
 		}
 		Fighter->ItemDropsReceived.clear();
 
@@ -967,7 +969,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 		uint32_t ItemID = Data.Read<uint32_t>();
 		const _Item *Item = Stats->Items[ItemID];
 		ClientItemDrops.push_back(Item);
-		ClientPlayer->AddItem(Item, 1, -1);
+		ClientPlayer->Inventory->AddItem(Item, 1, -1);
 	}
 
 	// Check win or death

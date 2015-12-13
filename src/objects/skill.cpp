@@ -20,6 +20,7 @@
 #include <ui/element.h>
 #include <ui/label.h>
 #include <objects/object.h>
+#include <constants.h>
 #include <scripting.h>
 #include <font.h>
 #include <graphics.h>

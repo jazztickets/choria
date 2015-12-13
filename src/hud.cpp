@@ -27,6 +27,7 @@
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <objects/item.h>
+#include <objects/inventory.h>
 #include <instances/battle.h>
 #include <instances/map.h>
 #include <framework.h>
@@ -239,7 +240,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						case WINDOW_TRADEYOURS:
 						case WINDOW_INVENTORY:
 
-							if(Tooltip.Slot >= 0 && Player->MoveInventory(Cursor.Slot, Tooltip.Slot)) {
+							if(Tooltip.Slot >= 0 && Player->Inventory->MoveInventory(Cursor.Slot, Tooltip.Slot)) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
 								Packet.Write<char>((char)Cursor.Slot);
@@ -356,7 +357,7 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_INVENTORY:
 			case WINDOW_TRADEYOURS: {
 				if(Tooltip.Slot >= 0) {
-					_InventorySlot *InventorySlot = &Player->Inventory[Tooltip.Slot];
+					_InventorySlot *InventorySlot = &Player->Inventory->Inventory[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
 					if(Tooltip.Item && Player->Vendor)
@@ -365,7 +366,7 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_TRADETHEIRS: {
 				if(Player->TradePlayer && Tooltip.Slot >= 0) {
-					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory[Tooltip.Slot];
+					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory->Inventory[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
 				}
@@ -929,10 +930,10 @@ void _HUD::DrawInventory() {
 	InventoryElement->Render();
 
 	// Draw player's items
-	for(int i = 0; i < _Object::INVENTORY_TRADE; i++) {
+	for(int i = 0; i < InventoryType::TRADE; i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = &Player->Inventory[i];
+		_InventorySlot *Item = &Player->Inventory->Inventory[i];
 		if(Item->Item && !Cursor.IsEqual(i, WINDOW_INVENTORY)) {
 
 			// Get bag button
@@ -1008,10 +1009,10 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 	// Draw offered items
 	int BagIndex = 0;
-	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
+	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = &Player->Inventory[i];
+		_InventorySlot *Item = &Player->Inventory->Inventory[i];
 		if(Item->Item && !Cursor.IsEqual(i, Window)) {
 
 			// Get bag button
@@ -1264,7 +1265,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 
 // Buys an item from the vendor
 void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
-	if(Player->Gold >= Item->Cost * Item->Count && Player->AddItem(Item->Item, Item->Count, TargetSlot)) {
+	if(Player->Gold >= Item->Cost * Item->Count && Player->Inventory->AddItem(Item->Item, Item->Count, TargetSlot)) {
 
 		// Update player
 		int Price = Item->Item->GetPrice(Player->Vendor, Item->Count, true);
@@ -1291,7 +1292,7 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	// Update player
 	int Price = Item->Item->GetPrice(Player->Vendor, Amount, 0);
 	Player->UpdateGold(Price);
-	bool Deleted = Player->UpdateInventory(Item->Slot, -Amount);
+	bool Deleted = Player->Inventory->UpdateInventory(Item->Slot, -Amount);
 
 	// Notify server
 	_Buffer Packet;
@@ -1533,7 +1534,7 @@ void _HUD::UpdateTradeStatus(bool Accepted) {
 void _HUD::SplitStack(int Slot, int Count) {
 
 	// Split only inventory items
-	if(!_Object::IsSlotInventory(Slot))
+	if(!_Inventory::IsSlotInventory(Slot))
 		return;
 
 	// Build packet
@@ -1543,7 +1544,7 @@ void _HUD::SplitStack(int Slot, int Count) {
 	Packet.Write<char>((char)Count);
 
 	ClientState.Network->SendPacket(Packet);
-	Player->SplitStack(Slot, Count);
+	Player->Inventory->SplitStack(Slot, Count);
 }
 
 // Return true if player is typing gold

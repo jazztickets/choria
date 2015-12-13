@@ -19,7 +19,6 @@
 
 // Libraries
 #include <objects/action.h>
-#include <constants.h>
 #include <glm/vec2.hpp>
 #include <packet.h>
 #include <unordered_map>
@@ -34,7 +33,7 @@ class _Texture;
 class _Battle;
 class _Skill;
 class _Buff;
-class _Item;
+class _Inventory;
 class _Stats;
 class _Buffer;
 class _Scripting;
@@ -44,12 +43,6 @@ struct _Tile;
 struct _Vendor;
 struct _Trader;
 struct _ActionResult;
-
-// Structures
-struct _InventorySlot {
-	const _Item *Item;
-	int Count;
-};
 
 struct _StatusEffect {
 	_StatusEffect() : Buff(nullptr), Element(nullptr), Time(0.0), Count(0) { }
@@ -83,19 +76,6 @@ class _Object {
 			MOVE_DOWN  = (1 << 1),
 			MOVE_LEFT  = (1 << 2),
 			MOVE_RIGHT = (1 << 3),
-		};
-
-		enum InventoryType {
-			INVENTORY_HEAD,
-			INVENTORY_BODY,
-			INVENTORY_LEGS,
-			INVENTORY_HAND1,
-			INVENTORY_HAND2,
-			INVENTORY_RING1,
-			INVENTORY_RING2,
-			INVENTORY_BACKPACK,
-			INVENTORY_TRADE = INVENTORY_BACKPACK + 24,
-			INVENTORY_COUNT = INVENTORY_TRADE + PLAYER_TRADEITEMS,
 		};
 
 		_Object();
@@ -137,26 +117,14 @@ class _Object {
 		void UpdateGold(int Value);
 
 		// Inventory
-		bool FindItem(const _Item *Item, int &Slot);
-		int CountItem(const _Item *Item);
 		void RefreshActionBarCount();
 		bool UseActionWorld(_Scripting *Scripting, uint8_t Slot);
 		bool UsePotionWorld(int Slot);
 		bool UseInventory(int Slot);
-		void SetInventory(int Slot, uint32_t ItemID, int Count);
-		void SetInventory(int Slot, _InventorySlot *Item);
-		const _Item *GetInventoryItem(int Slot);
-		bool MoveInventory(int OldSlot, int NewSlot);
-		bool UpdateInventory(int Slot, int Amount);
-		bool AddItem(const _Item *Item, int Count, int Slot);
-		bool IsBackpackFull();
-		bool IsEmptySlot(int Slot) { return Inventory[Slot].Item == nullptr; }
-		void MoveTradeToInventory();
-		void SplitStack(int Slot, int Count);
 
 		// Movement
 		bool AcceptingMoveInput();
-		bool CanMove() { return MoveTime > PLAYER_MOVETIME; }
+		bool CanMove();
 		int Move();
 		bool IsInvisible() const { return InvisPower > 0; }
 
@@ -181,9 +149,6 @@ class _Object {
 		// PVP
 		bool CanAttackPlayer();
 		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
-
-		static bool IsSlotInventory(int Slot) { return Slot >= INVENTORY_BACKPACK && Slot < INVENTORY_TRADE; }
-		static bool IsSlotTrade(int Slot) { return Slot >= INVENTORY_TRADE && Slot < INVENTORY_COUNT; }
 
 		// -- OBJECT  --
 		_Map *Map;
@@ -272,7 +237,7 @@ class _Object {
 
 		// Items
 		bool InventoryOpen;
-		_InventorySlot Inventory[INVENTORY_COUNT];
+		_Inventory *Inventory;
 		const _Vendor *Vendor;
 		const _Trader *Trader;
 
@@ -295,8 +260,5 @@ class _Object {
 		void CalculateGearStats();
 		void CalculateSkillStats();
 		void CalculateFinalStats();
-
-		bool CanEquipItem(int Slot, const _Item *Item);
-		void SwapItem(int Slot, int OldSlot);
 
 };

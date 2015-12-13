@@ -18,6 +18,7 @@
 #include <states/client.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>
+#include <objects/inventory.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <ui/element.h>
@@ -736,7 +737,7 @@ void _ClientState::HandleChatMessage(_Buffer &Data) {
 // Handles the use of an inventory item
 void _ClientState::HandleInventoryUse(_Buffer &Data) {
 	int Slot = Data.Read<char>();
-	Player->UpdateInventory(Slot, -1);
+	Player->Inventory->UpdateInventory(Slot, -1);
 }
 
 // Handles a trade request
@@ -754,13 +755,13 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 
 	// Get gold offer
 	Player->TradePlayer->TradeGold = Data.Read<int32_t>();
-	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
+	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
 		uint32_t ItemID = Data.Read<uint32_t>();
 		int Count = 0;
 		if(ItemID != 0)
 			Count = Data.Read<char>();
 
-		Player->TradePlayer->SetInventory(i, ItemID, Count);
+		Player->TradePlayer->Inventory->SetInventory(i, _InventorySlot(Stats->Items[ItemID], Count));
 	}
 }
 
@@ -795,8 +796,8 @@ void _ClientState::HandleTradeItem(_Buffer &Data) {
 		NewCount = Data.Read<char>();
 
 	// Update player
-	Player->TradePlayer->SetInventory(OldSlot, OldItemID, OldCount);
-	Player->TradePlayer->SetInventory(NewSlot, NewItemID, NewCount);
+	Player->TradePlayer->Inventory->SetInventory(OldSlot, _InventorySlot(Stats->Items[OldItemID], OldCount));
+	Player->TradePlayer->Inventory->SetInventory(NewSlot, _InventorySlot(Stats->Items[NewItemID], NewCount));
 
 	// Reset agreement
 	Player->TradePlayer->TradeAccepted = false;
@@ -837,17 +838,17 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 	// Get gold offer
 	int Gold = Data.Read<int32_t>();
 	Player->Gold = Gold;
-	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
+	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
 		uint32_t ItemID = Data.Read<uint32_t>();
 		uint8_t Count = 0;
 		if(ItemID != 0)
 			Count = Data.Read<uint8_t>();
 
-		Player->SetInventory(i, ItemID, Count);
+		Player->Inventory->SetInventory(i, _InventorySlot(Stats->Items[ItemID], Count));
 	}
 
 	// Move traded items to backpack
-	Player->MoveTradeToInventory();
+	Player->Inventory->MoveTradeToInventory();
 
 	// Close window
 	HUD->CloseTrade(false);

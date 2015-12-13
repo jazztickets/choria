@@ -19,6 +19,7 @@
 #include <network/servernetwork.h>
 #include <network/peer.h>
 #include <objects/object.h>
+#include <objects/inventory.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <scripting.h>
@@ -710,20 +711,20 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 	int NewSlot = Data.Read<char>();
 
 	// Move items
-	Player->MoveInventory(OldSlot, NewSlot);
+	Player->Inventory->MoveInventory(OldSlot, NewSlot);
 	Player->CalculateStats();
 
 	// Check for trading players
 	_Object *TradePlayer = Player->TradePlayer;
-	if(Player->WaitingForTrade && TradePlayer && (_Object::IsSlotTrade(OldSlot) || _Object::IsSlotTrade(NewSlot))) {
+	if(Player->WaitingForTrade && TradePlayer && (_Inventory::IsSlotTrade(OldSlot) || _Inventory::IsSlotTrade(NewSlot))) {
 
 		// Reset agreement
 		Player->TradeAccepted = false;
 		TradePlayer->TradeAccepted = false;
 
 		// Send item updates to trading player
-		_InventorySlot *OldSlotItem = &Player->Inventory[OldSlot];
-		_InventorySlot *NewSlotItem = &Player->Inventory[NewSlot];
+		_InventorySlot *OldSlotItem = &Player->Inventory->Inventory[OldSlot];
+		_InventorySlot *NewSlotItem = &Player->Inventory->Inventory[NewSlot];
 
 		// Get item information
 		uint32_t OldItemID = 0, NewItemID = 0;
@@ -776,10 +777,10 @@ void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
 	int Count = Data.Read<char>();
 
 	// Inventory only
-	if(!_Object::IsSlotInventory(Slot))
+	if(!_Inventory::IsSlotInventory(Slot))
 		return;
 
-	Player->SplitStack(Slot, Count);
+	Player->Inventory->SplitStack(Slot, Count);
 }
 
 // Handles a vendor exchange message
@@ -815,19 +816,19 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 		// Update player
 		Player->UpdateGold(-Price);
-		Player->AddItem(Item, Amount, TargetSlot);
+		Player->Inventory->AddItem(Item, Amount, TargetSlot);
 		Player->CalculateStats();
 	}
 	else {
-		if(Slot >= _Object::INVENTORY_COUNT)
+		if(Slot >= InventoryType::COUNT)
 			return;
 
 		// Get item info
-		_InventorySlot *Item = &Player->Inventory[Slot];
+		_InventorySlot *Item = &Player->Inventory->Inventory[Slot];
 		if(Item && Item->Item) {
 			int Price = Item->Item->GetPrice(Vendor, Amount, Buy);
 			Player->UpdateGold(Price);
-			Player->UpdateInventory(Slot, -Amount);
+			Player->Inventory->UpdateInventory(Slot, -Amount);
 		}
 	}
 }
@@ -996,11 +997,11 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			// Exchange items
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
 			for(int i = 0; i < PLAYER_TRADEITEMS; i++) {
-				int InventorySlot = i + _Object::INVENTORY_TRADE;
-				TempItems[i] = Player->Inventory[InventorySlot];
+				int InventorySlot = i + InventoryType::TRADE;
+				TempItems[i] = Player->Inventory->Inventory[InventorySlot];
 
-				Player->SetInventory(InventorySlot, &TradePlayer->Inventory[InventorySlot]);
-				TradePlayer->SetInventory(InventorySlot, &TempItems[i]);
+				Player->Inventory->SetInventory(InventorySlot, TradePlayer->Inventory->Inventory[InventorySlot]);
+				TradePlayer->Inventory->SetInventory(InventorySlot, TempItems[i]);
 			}
 
 			// Exchange gold
@@ -1024,11 +1025,11 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			Player->WaitingForTrade = false;
 			Player->TradePlayer = nullptr;
 			Player->TradeGold = 0;
-			Player->MoveTradeToInventory();
+			Player->Inventory->MoveTradeToInventory();
 			TradePlayer->WaitingForTrade = false;
 			TradePlayer->TradePlayer = nullptr;
 			TradePlayer->TradeGold = 0;
-			TradePlayer->MoveTradeToInventory();
+			TradePlayer->Inventory->MoveTradeToInventory();
 		}
 		else {
 
@@ -1220,10 +1221,10 @@ void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::ve
 // Adds trade item information to a packet
 void _Server::BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold) {
 	Packet.Write<int32_t>(Gold);
-	for(int i = _Object::INVENTORY_TRADE; i < _Object::INVENTORY_COUNT; i++) {
-		if(Player->Inventory[i].Item) {
-			Packet.Write<uint32_t>(Player->Inventory[i].Item->ID);
-			Packet.Write<uint8_t>(Player->Inventory[i].Count);
+	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
+		if(Player->Inventory->Inventory[i].Item) {
+			Packet.Write<uint32_t>(Player->Inventory->Inventory[i].Item->ID);
+			Packet.Write<uint8_t>(Player->Inventory->Inventory[i].Count);
 		}
 		else
 			Packet.Write<uint32_t>(0);

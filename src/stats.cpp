@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/skill.h>
 #include <objects/buff.h>
+#include <constants.h>
 #include <database.h>
 #include <random.h>
 #include <assets.h>

@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/item.h>
 #include <objects/skill.h>
+#include <objects/inventory.h>
 #include <database.h>
 #include <config.h>
 #include <stats.h>
@@ -229,7 +230,10 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
-		Player->SetInventory(Database->GetInt<int>(0), Database->GetInt<uint32_t>(1), Database->GetInt<int>(2));
+		_InventorySlot InventorySlot;
+		InventorySlot.Item = Player->Stats->Items[Database->GetInt<uint32_t>(1)];
+		InventorySlot.Count = Database->GetInt<int>(2);
+		Player->Inventory->SetInventory(Database->GetInt<int>(0), InventorySlot);
 	}
 	Database->CloseQuery();
 
@@ -285,8 +289,8 @@ void _Save::SavePlayer(const _Object *Player) {
 	Query.str("");
 
 	const _InventorySlot *Item;
-	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		Item = &Player->Inventory[i];
+	for(int i = 0; i < InventoryType::COUNT; i++) {
+		Item = &Player->Inventory->Inventory[i];
 		if(Item->Item) {
 			Query << "INSERT INTO inventory VALUES(" << Player->CharacterID << ", " << i << ", " << Item->Item->ID << ", " << Item->Count << ")";;
 			Database->RunQuery(Query.str());

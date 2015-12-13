@@ -19,6 +19,7 @@
 #include <objects/skill.h>
 #include <objects/buff.h>
 #include <objects/statchange.h>
+#include <objects/inventory.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <ui/element.h>
@@ -111,6 +112,7 @@ _Object::_Object()
 	AttackPlayerTime(0),
 	InvisPower(0),
 	InventoryOpen(false),
+	Inventory(nullptr),
 	Vendor(nullptr),
 	Trader(nullptr),
 	SkillsOpen(false),
@@ -122,16 +124,15 @@ _Object::_Object()
 	TradePlayer(nullptr),
 	Stats(nullptr) {
 
-	for(int i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		Inventory[i].Item = nullptr;
-		Inventory[i].Count = 0;
-	}
+	Inventory = new _Inventory();
 }
 
 // Destructor
 _Object::~_Object() {
 	for(auto &StatusEffect : StatusEffects)
 		delete StatusEffect;
+
+	delete Inventory;
 }
 
 // Renders the fighter during a battle
@@ -434,18 +435,18 @@ void _Object::SerializeStats(_Buffer &Data) {
 
 	// Get item count
 	uint8_t ItemCount = 0;
-	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		if(Inventory[i].Item)
+	for(uint8_t i = 0; i < InventoryType::COUNT; i++) {
+		if(Inventory->Inventory[i].Item)
 			ItemCount++;
 	}
 
 	// Write items
 	Data.Write<uint8_t>(ItemCount);
-	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		if(Inventory[i].Item) {
+	for(uint8_t i = 0; i < InventoryType::COUNT; i++) {
+		if(Inventory->Inventory[i].Item) {
 			Data.Write<uint8_t>(i);
-			Data.Write<uint8_t>((uint8_t)Inventory[i].Count);
-			Data.Write<uint32_t>(Inventory[i].Item->ID);
+			Data.Write<uint8_t>((uint8_t)Inventory->Inventory[i].Count);
+			Data.Write<uint32_t>(Inventory->Inventory[i].Item->ID);
 		}
 	}
 
@@ -502,7 +503,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 		uint8_t Slot = Data.Read<uint8_t>();
 		uint8_t Count = (uint8_t)Data.Read<uint8_t>();
 		uint32_t ItemID = Data.Read<uint32_t>();
-		SetInventory(Slot, ItemID, Count);
+		Inventory->SetInventory(Slot, _InventorySlot(Stats->Items[ItemID], Count));
 	}
 
 	// Read skills
@@ -639,34 +640,11 @@ void _Object::UpdateGold(int Value) {
 		Gold = STATS_MAXGOLD;
 }
 
-// Search for an item in the inventory
-bool _Object::FindItem(const _Item *Item, int &Slot) {
-	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		if(Inventory[i].Item == Item) {
-			Slot = i;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-// Count the number of a certain item in inventory
-int _Object::CountItem(const _Item *Item) {
-	int Count = 0;
-	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		if(Inventory[i].Item == Item)
-			Count += Inventory[i].Count;
-	}
-
-	return Count;
-}
-
 // Update counts on action bar
 void _Object::RefreshActionBarCount() {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		if(ActionBar[i].Item)
-			ActionBar[i].Count = CountItem(ActionBar[i].Item);
+			ActionBar[i].Count = Inventory->CountItem(ActionBar[i].Item);
 		else
 			ActionBar[i].Count = 0;
 	}
@@ -707,7 +685,7 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 	}
 	else if(ActionBar[Slot].Item) {
 		int Index = -1;
-		if(FindItem(ActionBar[Slot].Item, Index)) {
+		if(Inventory->FindItem(ActionBar[Slot].Item, Index)) {
 			if(UseInventory(Index))
 				return true;
 		}
@@ -716,92 +694,9 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 	return false;
 }
 
-// Get the percentage to the next level
-float _Object::GetNextLevelPercent() const {
-	float Percent = 0;
-
-	if(ExperienceNextLevel > 0)
-		Percent = 1.0f - (float)ExperienceNeeded / ExperienceNextLevel;
-
-	return Percent;
-}
-
-// Fills an array with inventory indices correlating to a trader's required items
-int _Object::GetRequiredItemSlots(int *Slots) {
-	int RewardItemSlot = -1;
-
-	// Check for an open reward slot
-	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		_InventorySlot *InventoryItem = &Inventory[i];
-		if(InventoryItem->Item == nullptr || (InventoryItem->Item == Trader->RewardItem && InventoryItem->Count + Trader->Count <= INVENTORY_MAX_STACK)) {
-			RewardItemSlot = i;
-			break;
-		}
-	}
-
-	// Go through required items
-	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
-		const _Item *RequiredItem = Trader->TraderItems[i].Item;
-		int RequiredCount = Trader->TraderItems[i].Count;
-		Slots[i] = -1;
-
-		// Search for the required item
-		for(int j = INVENTORY_HEAD; j < INVENTORY_TRADE; j++) {
-			_InventorySlot *InventoryItem = &Inventory[j];
-			if(InventoryItem->Item == RequiredItem && InventoryItem->Count >= RequiredCount) {
-				Slots[i] = j;
-				break;
-			}
-		}
-
-		// Didn't find an item
-		if(Slots[i] == -1)
-			RewardItemSlot = -1;
-	}
-
-	return RewardItemSlot;
-}
-
-// Accept a trade from a trader
-void _Object::AcceptTrader(int *Slots, int RewardSlot) {
-	if(Trader == nullptr || !IsSlotInventory(RewardSlot))
-		return;
-
-	// Trade in required items
-	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++) {
-		UpdateInventory(Slots[i], -Trader->TraderItems[i].Count);
-	}
-
-	// Give player reward
-	AddItem(Trader->RewardItem, Trader->Count, RewardSlot);
-}
-
-// Uses a potion in the world
-bool _Object::UsePotionWorld(int Slot) {
-	const _Item *Item = GetInventoryItem(Slot);
-	if(Item == nullptr)
-		return false;
-
-	// Get potion stats
-	int HealthRestore = Item->HealthRestore;
-	int ManaRestore = Item->ManaRestore;
-	int ItemInvisPower = Item->InvisPower;
-
-	// Use only if needed
-	if((Item->IsHealthPotion() && Health < MaxHealth) || (Item->IsManaPotion() && Mana < MaxMana) || Item->IsInvisPotion()) {
-		UpdateHealth(HealthRestore);
-		UpdateMana(ManaRestore);
-		InvisPower = ItemInvisPower;
-		UpdateInventory(Slot, -1);
-		return true;
-	}
-
-	return false;
-}
-
 // Uses an item from the inventory
 bool _Object::UseInventory(int Slot) {
-	const _Item *Item = GetInventoryItem(Slot);
+	const _Item *Item = Inventory->GetInventoryItem(Slot);
 	if(Item == nullptr)
 		return false;
 
@@ -820,189 +715,87 @@ bool _Object::UseInventory(int Slot) {
 	return Used;
 }
 
-// Sets an item in the inventory
-void _Object::SetInventory(int Slot, uint32_t ItemID, int Count) {
+// Get the percentage to the next level
+float _Object::GetNextLevelPercent() const {
+	float Percent = 0;
 
-	if(ItemID == 0) {
-		Inventory[Slot].Item = nullptr;
-		Inventory[Slot].Count = 0;
-	}
-	else {
-		Inventory[Slot].Item = Stats->Items[ItemID];
-		Inventory[Slot].Count = Count;
-	}
+	if(ExperienceNextLevel > 0)
+		Percent = 1.0f - (float)ExperienceNeeded / ExperienceNextLevel;
+
+	return Percent;
 }
 
-// Sets an item in the inventory
-void _Object::SetInventory(int Slot, _InventorySlot *Item) {
+// Fills an array with inventory indices correlating to a trader's required items
+int _Object::GetRequiredItemSlots(int *Slots) {
+	int RewardItemSlot = -1;
 
-	if(Item->Item == nullptr) {
-		Inventory[Slot].Item = nullptr;
-		Inventory[Slot].Count = 0;
-	}
-	else {
-		Inventory[Slot].Item = Item->Item;
-		Inventory[Slot].Count = Item->Count;
-	}
-}
-
-// Gets an inventory item
-const _Item *_Object::GetInventoryItem(int Slot) {
-
-	// Check for bad slots
-	if(Slot < INVENTORY_BACKPACK || Slot >= INVENTORY_TRADE || !Inventory[Slot].Item)
-		return nullptr;
-
-	return Inventory[Slot].Item;
-}
-
-// Moves an item from one slot to another
-bool _Object::MoveInventory(int OldSlot, int NewSlot) {
-	if(OldSlot == NewSlot)
-		return false;
-
-	// Check if the item is even equippable
-	if(NewSlot < INVENTORY_BACKPACK && !CanEquipItem(NewSlot, Inventory[OldSlot].Item))
-		return false;
-
-	// Add to stack
-	if(Inventory[NewSlot].Item == Inventory[OldSlot].Item) {
-		Inventory[NewSlot].Count += Inventory[OldSlot].Count;
-
-		// Group stacks
-		if(Inventory[NewSlot].Count > INVENTORY_MAX_STACK) {
-			Inventory[OldSlot].Count = Inventory[NewSlot].Count - INVENTORY_MAX_STACK;
-			Inventory[NewSlot].Count = INVENTORY_MAX_STACK;
+	// Check for an open reward slot
+	for(int i = InventoryType::BACKPACK; i < InventoryType::TRADE; i++) {
+		_InventorySlot *InventoryItem = &Inventory->Inventory[i];
+		if(InventoryItem->Item == nullptr || (InventoryItem->Item == Trader->RewardItem && InventoryItem->Count + Trader->Count <= INVENTORY_MAX_STACK)) {
+			RewardItemSlot = i;
+			break;
 		}
-		else
-			Inventory[OldSlot].Item = nullptr;
-	}
-	else {
-
-		// Disable reverse equip for now
-		if(OldSlot < INVENTORY_BACKPACK && !CanEquipItem(OldSlot, Inventory[NewSlot].Item))
-			return false;
-
-		SwapItem(NewSlot, OldSlot);
 	}
 
-	return true;
-}
+	// Go through required items
+	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
+		const _Item *RequiredItem = Trader->TraderItems[i].Item;
+		int RequiredCount = Trader->TraderItems[i].Count;
+		Slots[i] = -1;
 
-// Swaps two items
-void _Object::SwapItem(int Slot, int OldSlot) {
-	_InventorySlot TempItem;
-
-	// Swap items
-	TempItem = Inventory[Slot];
-	Inventory[Slot] = Inventory[OldSlot];
-	Inventory[OldSlot] = TempItem;
-}
-
-// Updates an item's count, deleting if necessary
-bool _Object::UpdateInventory(int Slot, int Amount) {
-
-	Inventory[Slot].Count += Amount;
-	if(Inventory[Slot].Count <= 0) {
-		Inventory[Slot].Item = nullptr;
-		Inventory[Slot].Count = 0;
-		return true;
-	}
-
-	return false;
-}
-
-// Attempts to add an item to the inventory
-bool _Object::AddItem(const _Item *Item, int Count, int Slot) {
-
-	// Place somewhere in backpack
-	if(Slot == -1) {
-
-		// Find existing item
-		int EmptySlot = -1;
-		for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-			if(Inventory[i].Item == Item && Inventory[i].Count + Count <= INVENTORY_MAX_STACK) {
-				Inventory[i].Count += Count;
-				return true;
+		// Search for the required item
+		for(int j = InventoryType::HEAD; j < InventoryType::TRADE; j++) {
+			_InventorySlot *InventoryItem = &Inventory->Inventory[j];
+			if(InventoryItem->Item == RequiredItem && InventoryItem->Count >= RequiredCount) {
+				Slots[i] = j;
+				break;
 			}
-
-			// Keep track of the first empty slot
-			if(Inventory[i].Item == nullptr && EmptySlot == -1)
-				EmptySlot = i;
 		}
 
-		// Found an empty slot
-		if(EmptySlot != -1) {
-			Inventory[EmptySlot].Item = Item;
-			Inventory[EmptySlot].Count = Count;
-			return true;
-		}
-
-		return false;
-	}
-	// Trying to equip an item
-	else if(Slot < INVENTORY_BACKPACK) {
-
-		// Make sure it can be equipped
-		if(!CanEquipItem(Slot, Item))
-			return false;
-
-		// Set item
-		Inventory[Slot].Item = Item;
-		Inventory[Slot].Count = Count;
-
-		return true;
+		// Didn't find an item
+		if(Slots[i] == -1)
+			RewardItemSlot = -1;
 	}
 
-	// Add item
-	if(Inventory[Slot].Item == Item && Inventory[Slot].Count + Count <= INVENTORY_MAX_STACK) {
-		Inventory[Slot].Count += Count;
-		return true;
-	}
-	else if(Inventory[Slot].Item == nullptr) {
-		Inventory[Slot].Item = Item;
-		Inventory[Slot].Count = Count;
-		return true;
-	}
-
-	return false;
+	return RewardItemSlot;
 }
 
-// Moves the player's trade items to their backpack
-void _Object::MoveTradeToInventory() {
-
-	for(int i = INVENTORY_TRADE; i < INVENTORY_COUNT; i++) {
-		if(Inventory[i].Item && AddItem(Inventory[i].Item, Inventory[i].Count, -1))
-			Inventory[i].Item = nullptr;
-	}
-}
-
-// Splits a stack
-void _Object::SplitStack(int Slot, int Count) {
-	if(Slot < 0 || Slot >= INVENTORY_COUNT)
+// Accept a trade from a trader
+void _Object::AcceptTrader(int *Slots, int RewardSlot) {
+	if(Trader == nullptr || !Inventory->IsSlotInventory(RewardSlot))
 		return;
 
-	// Make sure stack is large enough
-	_InventorySlot *SplitItem = &Inventory[Slot];
-	if(SplitItem->Item && SplitItem->Count > Count) {
-
-		// Find an empty slot or existing item
-		int EmptySlot = Slot;
-		_InventorySlot *Item;
-		do {
-			EmptySlot++;
-			if(EmptySlot >= INVENTORY_TRADE)
-				EmptySlot = INVENTORY_BACKPACK;
-
-			Item = &Inventory[EmptySlot];
-		} while(!(EmptySlot == Slot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= INVENTORY_MAX_STACK - Count)));
-
-		// Split item
-		if(EmptySlot != Slot) {
-			SplitItem->Count -= Count;
-			AddItem(SplitItem->Item, Count, EmptySlot);
-		}
+	// Trade in required items
+	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++) {
+		Inventory->UpdateInventory(Slots[i], -Trader->TraderItems[i].Count);
 	}
+
+	// Give player reward
+	Inventory->AddItem(Trader->RewardItem, Trader->Count, RewardSlot);
+}
+
+// Uses a potion in the world
+bool _Object::UsePotionWorld(int Slot) {
+	const _Item *Item = Inventory->GetInventoryItem(Slot);
+	if(Item == nullptr)
+		return false;
+
+	// Get potion stats
+	int HealthRestore = Item->HealthRestore;
+	int ManaRestore = Item->ManaRestore;
+	int ItemInvisPower = Item->InvisPower;
+
+	// Use only if needed
+	if((Item->IsHealthPotion() && Health < MaxHealth) || (Item->IsManaPotion() && Mana < MaxMana) || Item->IsInvisPotion()) {
+		UpdateHealth(HealthRestore);
+		UpdateMana(ManaRestore);
+		InvisPower = ItemInvisPower;
+		Inventory->UpdateInventory(Slot, -1);
+		return true;
+	}
+
+	return false;
 }
 
 // Determines if the player can accept movement keys held down
@@ -1022,55 +815,9 @@ bool _Object::AcceptingMoveInput() {
 	return true;
 }
 
-// Determines if the player's backpack is full
-bool _Object::IsBackpackFull() {
-
-	// Search backpack
-	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-		if(Inventory[i].Item == nullptr)
-			return false;
-	}
-
-	return true;
-}
-
-// Checks if an item can be equipped
-bool _Object::CanEquipItem(int Slot, const _Item *Item) {
-	if(!Item)
-		return true;
-
-	// Check type
-	switch(Slot) {
-		case INVENTORY_HEAD:
-			if(Item->Type == _Item::TYPE_HEAD)
-				return true;
-		break;
-		case INVENTORY_BODY:
-			if(Item->Type == _Item::TYPE_BODY)
-				return true;
-		break;
-		case INVENTORY_LEGS:
-			if(Item->Type == _Item::TYPE_LEGS)
-				return true;
-		break;
-		case INVENTORY_HAND1:
-			if(Item->Type == _Item::TYPE_WEAPON1HAND)
-				return true;
-		break;
-		case INVENTORY_HAND2:
-			if(Item->Type == _Item::TYPE_SHIELD)
-				return true;
-		break;
-		case INVENTORY_RING1:
-		case INVENTORY_RING2:
-			if(Item->Type == _Item::TYPE_RING)
-				return true;
-		break;
-		default:
-		break;
-	}
-
-	return false;
+// Check move timer
+bool _Object::CanMove() {
+	return MoveTime > PLAYER_MOVETIME;
 }
 
 // Updates a skill level
@@ -1189,12 +936,12 @@ void _Object::CalculateLevelStats() {
 void _Object::CalculateGearStats() {
 
 	// Get stats
-	if(!Inventory[INVENTORY_HAND1].Item)
+	if(!Inventory->Inventory[InventoryType::HAND1].Item)
 		WeaponMinDamage = WeaponMaxDamage = 1;
 
 	// Check each item
-	for(int i = 0; i < INVENTORY_BACKPACK; i++) {
-		const _Item *Item = Inventory[i].Item;
+	for(int i = 0; i < InventoryType::BACKPACK; i++) {
+		const _Item *Item = Inventory->Inventory[i].Item;
 		if(Item) {
 			int Min, Max;
 

@@ -50,7 +50,6 @@ const float BATTLE_HEALTHBAR_WIDTH = 90;
 const float BATTLE_HEALTHBAR_HEIGHT = 22;
 
 const double PLAYER_MOVETIME = 0.125;
-const int PLAYER_TRADEITEMS = 8;
 const double PLAYER_ATTACKTIME = 1.0;
 
 const int STATS_MAXGOLD = 1000000;
