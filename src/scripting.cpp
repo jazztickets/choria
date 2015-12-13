@@ -124,8 +124,14 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Health);
 	lua_setfield(LuaState, -2, "Health");
 
+	lua_pushinteger(LuaState, Object->MaxHealth);
+	lua_setfield(LuaState, -2, "MaxHealth");
+
 	lua_pushinteger(LuaState, Object->Mana);
 	lua_setfield(LuaState, -2, "Mana");
+
+	lua_pushinteger(LuaState, Object->MaxMana);
+	lua_setfield(LuaState, -2, "MaxMana");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_setfield(LuaState, -2, "Pointer");

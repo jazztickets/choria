@@ -161,6 +161,7 @@ void _Stats::LoadItems() {
 		_Item *Item = new _Item;
 		Item->ID = Database->GetInt<uint32_t>("id");
 		Item->Name = Database->GetString("name");
+		Item->Script = Database->GetString("script");
 		Item->Level = Database->GetInt<int>("level");
 		Item->Type = Database->GetInt<int>("type");
 		Item->Image = Assets.Textures[std::string("items/") + Database->GetString("image")];
@@ -178,6 +179,7 @@ void _Stats::LoadItems() {
 		Item->HealthRegen = Database->GetReal("healthregen");
 		Item->ManaRegen = Database->GetReal("manaregen");
 		Item->InvisPower = Database->GetInt<int>("invispower");
+		Item->Scope = ScopeType::ALL;
 		Items[Item->ID] = Item;
 	}
 	Database->CloseQuery();

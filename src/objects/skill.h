@@ -27,7 +27,6 @@ class _Object;
 class _Texture;
 class _Scripting;
 struct _ActionResult;
-struct _Cursor;
 
 // Classes
 class _Skill {

@@ -18,12 +18,15 @@
 #pragma once
 
 // Libraries
+#include <objects/action.h>
 #include <texture.h>
 
 // Forward Declarations
+class _Object;
+class _Texture;
+class _Scripting;
 struct _Vendor;
 struct _Cursor;
-class _Object;
 
 // Classes
 class _Item {
@@ -54,8 +57,13 @@ class _Item {
 		void GetType(std::string &String) const;
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 
+		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
+
 		uint32_t ID;
 		std::string Name;
+		std::string Script;
 		int Level;
 		int Type;
 		const _Texture *Image;
@@ -73,6 +81,7 @@ class _Item {
 		float HealthRegen;
 		float ManaRegen;
 		int InvisPower;
+		ScopeType Scope;
 
 	private:
 

@@ -16,7 +16,7 @@ function AI_Dumb.Update(Object, Enemies, Allies)
 			Object.SetBattleTarget(Enemies[Target])
 
 			-- Set skill
-			--Object.SetAction(0)
+			Object.SetAction(0)
 		end
 	end
 end

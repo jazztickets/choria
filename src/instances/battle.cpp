@@ -382,7 +382,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			Skill = nullptr;
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
-		if(Item && (Item->Type != _Item::TYPE_POTION || ClientPlayer->ActionBar[ActionBarSlot].Count == 0))
+		if(Item && (ClientPlayer->ActionBar[ActionBarSlot].Count == 0 || !Item->CanUse(Scripting, ActionResult)))
 			Item = nullptr;
 
 		// Set up initial target
@@ -555,8 +555,7 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 			ActionResult.SkillUsed->Use(Scripting, ActionResult);
 		}
 		else if(ActionResult.ItemUsed) {
-			ActionResult.Target.HealthChange = ActionResult.ItemUsed->HealthRestore;
-			ActionResult.Target.ManaChange = ActionResult.ItemUsed->ManaRestore;
+			ActionResult.ItemUsed->Use(Scripting, ActionResult);
 		}
 
 		// Update target

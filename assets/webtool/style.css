@@ -24,6 +24,10 @@ td {
 	padding-right: 10px;
 }
 
+tr:hover {
+	background-color: #151515;
+}
+
 .main {
 	margin-top: 20px;
 }

@@ -16,13 +16,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/item.h>
+#include <objects/object.h>
+#include <ui/label.h>
+#include <ui/element.h>
+#include <scripting.h>
 #include <stats.h>
 #include <constants.h>
 #include <font.h>
 #include <hud.h>
-#include <objects/object.h>
-#include <ui/label.h>
-#include <ui/element.h>
 #include <graphics.h>
 #include <input.h>
 #include <assets.h>
@@ -262,4 +263,49 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 		Price = STATS_MAXGOLD;
 
 	return Price;
+}
+
+// Return true if the item can be used
+bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
+	if(Type != TYPE_POTION)
+		return false;
+
+	if(this->Scope != ScopeType::ALL && this->Scope != ActionResult.Scope)
+		return false;
+
+	if(Scripting->StartMethodCall(Script, "CanUse")) {
+		Scripting->PushInt(Level);
+		Scripting->PushObject(ActionResult.Source.Object);
+		Scripting->MethodCall(2, 1);
+		int Value = Scripting->GetInt(1);
+		Scripting->FinishMethodCall();
+
+		return Value;
+	}
+
+	return true;
+}
+
+// Apply the cost
+void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
+	/*if(Scripting->StartMethodCall(Script, "ApplyCost")) {
+		Scripting->PushInt(Level);
+		Scripting->PushActionResult(&ActionResult);
+		Scripting->MethodCall(2, 1);
+		Scripting->GetActionResult(1, ActionResult);
+		Scripting->FinishMethodCall();
+	}*/
+}
+
+// Use an item
+void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
+	if(Scripting->StartMethodCall(ActionResult.ItemUsed->Script, "Use")) {
+		Scripting->PushInt(Level);
+		Scripting->PushObject(ActionResult.Source.Object);
+		Scripting->PushObject(ActionResult.Target.Object);
+		Scripting->PushActionResult(&ActionResult);
+		Scripting->MethodCall(4, 1);
+		Scripting->GetActionResult(1, ActionResult);
+		Scripting->FinishMethodCall();
+	}
 }
