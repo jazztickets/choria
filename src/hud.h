@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <vector>
 #include <list>
 #include <string>
 #include <cstdint>
@@ -188,7 +189,8 @@ class _HUD {
 		bool ActionBarChanged;
 
 		// Traders
-		int RequiredItemSlots[8], RewardItemSlot;
+		std::vector<int> RequiredItemSlots;
+		int RewardItemSlot;
 };
 
 extern _HUD HUD;

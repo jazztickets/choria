@@ -357,7 +357,7 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_INVENTORY:
 			case WINDOW_TRADEYOURS: {
 				if(Tooltip.Slot >= 0) {
-					_InventorySlot *InventorySlot = &Player->Inventory->Inventory[Tooltip.Slot];
+					_InventorySlot *InventorySlot = &Player->Inventory->Slots[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
 					if(Tooltip.Item && Player->Vendor)
@@ -366,7 +366,7 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_TRADETHEIRS: {
 				if(Player->TradePlayer && Tooltip.Slot >= 0) {
-					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory->Inventory[Tooltip.Slot];
+					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory->Slots[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
 				}
@@ -641,6 +641,7 @@ void _HUD::InitTrade() {
 void _HUD::InitTrader() {
 
 	// Check for required items
+	RequiredItemSlots.resize(Player->Trader->TraderItems.size(), -1);
 	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
 
 	// Disable accept button if requirements not met
@@ -933,7 +934,7 @@ void _HUD::DrawInventory() {
 	for(int i = 0; i < InventoryType::TRADE; i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = &Player->Inventory->Inventory[i];
+		_InventorySlot *Item = &Player->Inventory->Slots[i];
 		if(Item->Item && !Cursor.IsEqual(i, WINDOW_INVENTORY)) {
 
 			// Get bag button
@@ -1012,7 +1013,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = &Player->Inventory->Inventory[i];
+		_InventorySlot *Item = &Player->Inventory->Slots[i];
 		if(Item->Item && !Cursor.IsEqual(i, Window)) {
 
 			// Get bag button

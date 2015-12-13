@@ -706,7 +706,7 @@ float _Object::GetNextLevelPercent() const {
 }
 
 // Accept a trade from a trader
-void _Object::AcceptTrader(int *Slots, int RewardSlot) {
+void _Object::AcceptTrader(std::vector<int> &Slots, int RewardSlot) {
 	if(Trader == nullptr || !Inventory->IsSlotInventory(RewardSlot))
 		return;
 
@@ -880,12 +880,12 @@ void _Object::CalculateLevelStats() {
 void _Object::CalculateGearStats() {
 
 	// Get stats
-	if(!Inventory->Inventory[InventoryType::HAND1].Item)
+	if(!Inventory->Slots[InventoryType::HAND1].Item)
 		WeaponMinDamage = WeaponMaxDamage = 1;
 
 	// Check each item
 	for(int i = 0; i < InventoryType::BAG; i++) {
-		const _Item *Item = Inventory->Inventory[i].Item;
+		const _Item *Item = Inventory->Slots[i].Item;
 		if(Item) {
 			int Min, Max;
 

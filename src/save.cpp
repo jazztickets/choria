@@ -290,7 +290,7 @@ void _Save::SavePlayer(const _Object *Player) {
 
 	const _InventorySlot *Item;
 	for(int i = 0; i < InventoryType::COUNT; i++) {
-		Item = &Player->Inventory->Inventory[i];
+		Item = &Player->Inventory->Slots[i];
 		if(Item->Item) {
 			Query << "INSERT INTO inventory VALUES(" << Player->CharacterID << ", " << i << ", " << Item->Item->ID << ", " << Item->Count << ")";;
 			Database->RunQuery(Query.str());

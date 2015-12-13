@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <vector>
 #include <string>
 #include <cstdint>
 
@@ -71,14 +72,14 @@ class _Inventory {
 		bool UpdateInventory(int Slot, int Amount);
 		bool AddItem(const _Item *Item, int Count, int Slot);
 		bool IsBagFull();
-		bool IsEmptySlot(int Slot) { return Inventory[Slot].Item == nullptr; }
+		bool IsEmptySlot(int Slot) { return Slots[Slot].Item == nullptr; }
 		void MoveTradeToInventory();
 		void SplitStack(int Slot, int Count);
 
 		// Traders
-		int GetRequiredItemSlots(const _Trader *Trader, int *Slots);
+		int GetRequiredItemSlots(const _Trader *Trader, std::vector<int> &SlotIndices);
 
-		_InventorySlot Inventory[InventoryType::COUNT];
+		_InventorySlot Slots[InventoryType::COUNT];
 
 		static bool IsSlotInventory(int Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
 		static bool IsSlotTrade(int Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }

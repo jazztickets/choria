@@ -140,7 +140,7 @@ class _Object {
 		void StopBattle();
 
 		// Trader
-		void AcceptTrader(int *Slots, int RewardSlot);
+		void AcceptTrader(std::vector<int> &Slots, int RewardSlot);
 
 		// Map
 		const _Tile *GetTile();
