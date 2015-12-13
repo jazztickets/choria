@@ -680,58 +680,10 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
-	// Send character packet
+	// Build packet
 	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::WORLD_YOURCHARACTERINFO);
-	Packet.WriteString(Player->Name.c_str());
-	Packet.Write<uint32_t>(Player->PortraitID);
-	Packet.Write<int32_t>(Player->Experience);
-	Packet.Write<int32_t>(Player->Gold);
-	Packet.Write<int32_t>(Player->PlayTime);
-	Packet.Write<int32_t>(Player->Deaths);
-	Packet.Write<int32_t>(Player->MonsterKills);
-	Packet.Write<int32_t>(Player->PlayerKills);
-	Packet.Write<int32_t>(Player->Bounty);
-	Packet.Write<int32_t>(Player->InvisPower);
-
-	// Get item count
-	uint8_t ItemCount = 0;
-	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		if(Player->Inventory[i].Item)
-			ItemCount++;
-	}
-
-	// Write items
-	Packet.Write<uint8_t>(ItemCount);
-	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
-		if(Player->Inventory[i].Item) {
-			Packet.Write<uint8_t>(i);
-			Packet.Write<uint8_t>(Player->Inventory[i].Count);
-			Packet.Write<uint32_t>(Player->Inventory[i].Item->ID);
-		}
-	}
-
-	// Get skill count
-	uint32_t SkillCount = 0;
-	for(const auto &SkillLevel : Player->SkillLevels) {
-		if(SkillLevel.second > 0)
-			SkillCount++;
-	}
-
-	// Write skills
-	Packet.Write<uint32_t>(SkillCount);
-	for(const auto &SkillLevel : Player->SkillLevels) {
-		if(SkillLevel.second > 0) {
-			Packet.Write<uint32_t>(SkillLevel.first);
-			Packet.Write<int32_t>(SkillLevel.second);
-		}
-	}
-
-	// Write skill bar
-	Packet.Write<uint8_t>((uint8_t)Player->ActionBar.size());
-	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-		Player->ActionBar[i].Serialize(Packet);
-	}
+	Packet.Write<PacketType>(PacketType::OBJECT_STATS);
+	Player->SerializeStats(Packet);
 
 	Network->SendPacket(Packet, Peer);
 }

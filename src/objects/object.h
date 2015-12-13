@@ -103,9 +103,11 @@ class _Object {
 
 		void Render(const _Object *ClientPlayer=nullptr);
 		void Update(double FrameTime);
-		void Serialize(_Buffer &Packet);
-		void SerializeUpdate(_Buffer &Packet);
-		void Unserialize(_Buffer &Packet);
+		void SerializeCreate(_Buffer &Data);
+		void SerializeUpdate(_Buffer &Data);
+		void SerializeStats(_Buffer &Data);
+		void UnserializeCreate(_Buffer &Data);
+		void UnserializeStats(_Buffer &Data);
 
 		// -- FROM FIGHTER --
 

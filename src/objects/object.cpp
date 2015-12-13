@@ -403,30 +403,125 @@ void _Object::Update(double FrameTime) {
 }
 
 // Serialize for ObjectCreate
-void _Object::Serialize(_Buffer &Packet) {
-	Packet.Write<NetworkIDType>(NetworkID);
-	Packet.Write<glm::ivec2>(Position);
-	Packet.WriteString(Name.c_str());
-	Packet.Write<uint32_t>(PortraitID);
-	Packet.WriteBit(IsInvisible());
+void _Object::SerializeCreate(_Buffer &Data) {
+	Data.Write<NetworkIDType>(NetworkID);
+	Data.Write<glm::ivec2>(Position);
+	Data.WriteString(Name.c_str());
+	Data.Write<uint32_t>(PortraitID);
+	Data.WriteBit(IsInvisible());
 }
 
 // Serialize for ObjectUpdate
-void _Object::SerializeUpdate(_Buffer &Packet) {
-	Packet.Write<NetworkIDType>(NetworkID);
-	Packet.Write<glm::ivec2>(Position);
-	Packet.Write<uint8_t>(Status);
-	Packet.WriteBit(IsInvisible());
+void _Object::SerializeUpdate(_Buffer &Data) {
+	Data.Write<NetworkIDType>(NetworkID);
+	Data.Write<glm::ivec2>(Position);
+	Data.Write<uint8_t>(Status);
+	Data.WriteBit(IsInvisible());
+}
+
+// Serialize object stats
+void _Object::SerializeStats(_Buffer &Data) {
+	Data.WriteString(Name.c_str());
+	Data.Write<uint32_t>(PortraitID);
+	Data.Write<int32_t>(Experience);
+	Data.Write<int32_t>(Gold);
+	Data.Write<int32_t>(PlayTime);
+	Data.Write<int32_t>(Deaths);
+	Data.Write<int32_t>(MonsterKills);
+	Data.Write<int32_t>(PlayerKills);
+	Data.Write<int32_t>(Bounty);
+	Data.Write<int32_t>(InvisPower);
+
+	// Get item count
+	uint8_t ItemCount = 0;
+	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
+		if(Inventory[i].Item)
+			ItemCount++;
+	}
+
+	// Write items
+	Data.Write<uint8_t>(ItemCount);
+	for(uint8_t i = 0; i < _Object::INVENTORY_COUNT; i++) {
+		if(Inventory[i].Item) {
+			Data.Write<uint8_t>(i);
+			Data.Write<uint8_t>((uint8_t)Inventory[i].Count);
+			Data.Write<uint32_t>(Inventory[i].Item->ID);
+		}
+	}
+
+	// Get skill count
+	uint32_t SkillCount = 0;
+	for(const auto &SkillLevel : SkillLevels) {
+		if(SkillLevel.second > 0)
+			SkillCount++;
+	}
+
+	// Write skills
+	Data.Write<uint32_t>(SkillCount);
+	for(const auto &SkillLevel : SkillLevels) {
+		if(SkillLevel.second > 0) {
+			Data.Write<uint32_t>(SkillLevel.first);
+			Data.Write<int32_t>(SkillLevel.second);
+		}
+	}
+
+	// Write skill bar
+	Data.Write<uint8_t>((uint8_t)ActionBar.size());
+	for(size_t i = 0; i < ActionBar.size(); i++) {
+		ActionBar[i].Serialize(Data);
+	}
 }
 
 // Unserialize for ObjectCreate
-void _Object::Unserialize(_Buffer &Packet) {
-	Position = Packet.Read<glm::ivec2>();
-	Name = Packet.ReadString();
-	PortraitID = Packet.Read<uint32_t>();
+void _Object::UnserializeCreate(_Buffer &Data) {
+	Position = Data.Read<glm::ivec2>();
+	Name = Data.ReadString();
+	PortraitID = Data.Read<uint32_t>();
 	Portrait = Stats->GetPortraitImage(PortraitID);
-	InvisPower = Packet.ReadBit();
+	InvisPower = Data.ReadBit();
 	WorldTexture = Assets.Textures["players/basic.png"];
+}
+
+// Unserialize object stats
+void _Object::UnserializeStats(_Buffer &Data) {
+	WorldTexture = Assets.Textures["players/basic.png"];
+	Name = Data.ReadString();
+	PortraitID = Data.Read<uint32_t>();
+	Experience = Data.Read<int32_t>();
+	Gold = Data.Read<int32_t>();
+	PlayTime = Data.Read<int32_t>();
+	Deaths = Data.Read<int32_t>();
+	MonsterKills = Data.Read<int32_t>();
+	PlayerKills = Data.Read<int32_t>();
+	Bounty = Data.Read<int32_t>();
+	InvisPower = Data.Read<int32_t>();
+
+	// Read items
+	uint8_t ItemCount = Data.Read<uint8_t>();
+	for(uint8_t i = 0; i < ItemCount; i++) {
+		uint8_t Slot = Data.Read<uint8_t>();
+		uint8_t Count = (uint8_t)Data.Read<uint8_t>();
+		uint32_t ItemID = Data.Read<uint32_t>();
+		SetInventory(Slot, ItemID, Count);
+	}
+
+	// Read skills
+	uint32_t SkillCount = Data.Read<uint32_t>();
+	for(uint32_t i = 0; i < SkillCount; i++) {
+		uint32_t SkillID = Data.Read<uint32_t>();
+		int32_t Points = Data.Read<int32_t>();
+		SkillLevels[SkillID] = Points;
+	}
+
+	// Read skill bar
+	uint8_t ActionBarSize = Data.Read<uint8_t>();
+	ActionBar.resize(ActionBarSize);
+	for(size_t i = 0; i < ActionBarSize; i++)
+		ActionBar[i].Unserialize(Data, Stats);
+
+	RefreshActionBarCount();
+	CalculateSkillPoints();
+	CalculateStats();
 }
 
 // Renders the player while walking around the world

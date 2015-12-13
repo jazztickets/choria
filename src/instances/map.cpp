@@ -658,7 +658,7 @@ void _Map::AddObject(_Object *Object) {
 	// Create packet for the new object
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
-	Object->Serialize(Packet);
+	Object->SerializeCreate(Packet);
 
 	// Notify other players of the new object
 	BroadcastPacket(Packet);
@@ -738,7 +738,7 @@ void _Map::SendObjectList(_Peer *Peer) {
 	// Write object data
 	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());
 	for(auto &Object : Objects) {
-		Object->Serialize(Packet);
+		Object->SerializeCreate(Packet);
 	}
 
 	Server->Network->SendPacket(Packet, Peer);

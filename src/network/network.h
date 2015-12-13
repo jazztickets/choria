@@ -69,8 +69,8 @@ class _Network {
 		bool HasConnection() { return Connection != nullptr; }
 
 		// Stats
-		uint32_t GetSentSpeed() { return SentSpeed; }
-		uint32_t GetReceiveSpeed() { return ReceiveSpeed; }
+		double GetSentSpeed() { return SentSpeed; }
+		double GetReceiveSpeed() { return ReceiveSpeed; }
 
 		// Internals
 		void SetUpdatePeriod(double UpdatePeriod) { this->UpdatePeriod = UpdatePeriod; }
@@ -100,7 +100,8 @@ class _Network {
 		double UpdateTimer, UpdatePeriod;
 
 		// Stats
-		uint32_t SentSpeed, ReceiveSpeed;
+		double SentSpeed;
+		double ReceiveSpeed;
 		double SecondTimer;
 
 		// Fake lag

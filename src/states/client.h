@@ -100,7 +100,7 @@ class _ClientState : public _State {
 		void HandleDisconnect();
 		void HandlePacket(_Buffer &Data);
 
-		void HandleYourCharacterInfo(_Buffer &Data);
+		void HandleObjectStats(_Buffer &Data);
 		void HandleChangeMaps(_Buffer &Data);
 		void HandleObjectList(_Buffer &Data);
 		void HandleCreateObject(_Buffer &Data);

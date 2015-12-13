@@ -403,8 +403,8 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 	PacketType Type = Data.Read<PacketType>();
 
 	switch(Type) {
-		case PacketType::WORLD_YOURCHARACTERINFO:
-			HandleYourCharacterInfo(Data);
+		case PacketType::OBJECT_STATS:
+			HandleObjectStats(Data);
 		break;
 		case PacketType::WORLD_CHANGEMAPS:
 			HandleChangeMaps(Data);
@@ -512,50 +512,11 @@ void _ClientState::HandleDisconnect() {
 }
 
 // Called once to synchronize your stats with the servers
-void _ClientState::HandleYourCharacterInfo(_Buffer &Data) {
+void _ClientState::HandleObjectStats(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	//Log << "HandleYourCharacterInfo" << std::endl;
-
-	Player->WorldTexture = Assets.Textures["players/basic.png"];
-	Player->Name = Data.ReadString();
-	Player->PortraitID = Data.Read<uint32_t>();
-	Player->Experience = Data.Read<int32_t>();
-	Player->Gold = Data.Read<int32_t>();
-	Player->PlayTime = Data.Read<int32_t>();
-	Player->Deaths = Data.Read<int32_t>();
-	Player->MonsterKills = Data.Read<int32_t>();
-	Player->PlayerKills = Data.Read<int32_t>();
-	Player->Bounty = Data.Read<int32_t>();
-	Player->InvisPower = Data.Read<int32_t>();
-
-	// Read items
-	uint8_t ItemCount = Data.Read<uint8_t>();
-	for(uint8_t i = 0; i < ItemCount; i++) {
-		uint8_t Slot = Data.Read<uint8_t>();
-		uint8_t Count = (uint8_t)Data.Read<uint8_t>();
-		uint32_t ItemID = Data.Read<uint32_t>();
-		Player->SetInventory(Slot, ItemID, Count);
-	}
-
-	// Read skills
-	uint32_t SkillCount = Data.Read<uint32_t>();
-	for(uint32_t i = 0; i < SkillCount; i++) {
-		uint32_t SkillID = Data.Read<uint32_t>();
-		int32_t Points = Data.Read<int32_t>();
-		Player->SkillLevels[SkillID] = Points;
-	}
-
-	// Read skill bar
-	uint8_t ActionBarSize = Data.Read<uint8_t>();
-	Player->ActionBar.resize(ActionBarSize);
-	for(size_t i = 0; i < ActionBarSize; i++)
-		Player->ActionBar[i].Unserialize(Data, Stats);
-
-	Player->RefreshActionBarCount();
-	Player->CalculateSkillPoints();
-	Player->CalculateStats();
+	Player->UnserializeStats(Data);
 	Player->RestoreHealthMana();
 
 	HUD->SetActionBarSize(Player->ActionBar.size());
@@ -1017,7 +978,7 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Object->Stats = Stats;
 	Object->Map = Map;
 	Object->NetworkID = NetworkID;
-	Object->Unserialize(Data);
+	Object->UnserializeCreate(Data);
 
 	// Add to map
 	Map->AddObject(Object, Object->NetworkID);
