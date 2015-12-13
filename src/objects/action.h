@@ -44,6 +44,7 @@ enum class TargetType : uint32_t {
 
 // Scope of action
 enum class ScopeType : uint8_t {
+	NONE,
 	WORLD,
 	BATTLE,
 	ALL

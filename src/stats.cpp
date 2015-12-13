@@ -179,7 +179,7 @@ void _Stats::LoadItems() {
 		Item->HealthRegen = Database->GetReal("healthregen");
 		Item->ManaRegen = Database->GetReal("manaregen");
 		Item->InvisPower = Database->GetInt<int>("invispower");
-		Item->Scope = ScopeType::ALL;
+		Item->Scope = (ScopeType)Database->GetInt<int>("scope");
 		Items[Item->ID] = Item;
 	}
 	Database->CloseQuery();
