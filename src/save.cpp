@@ -230,10 +230,11 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
+		int Slot = Database->GetInt<int>(0);
 		_InventorySlot InventorySlot;
 		InventorySlot.Item = Player->Stats->Items[Database->GetInt<uint32_t>(1)];
 		InventorySlot.Count = Database->GetInt<int>(2);
-		Player->Inventory->SetInventory(Database->GetInt<int>(0), InventorySlot);
+		Player->Inventory->Slots[Slot] = InventorySlot;
 	}
 	Database->CloseQuery();
 

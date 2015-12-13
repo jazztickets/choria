@@ -777,7 +777,7 @@ void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
 	int Count = Data.Read<char>();
 
 	// Inventory only
-	if(!_Inventory::IsSlotInventory(Slot))
+	if(!_Inventory::IsSlotBag(Slot))
 		return;
 
 	Player->Inventory->SplitStack(Slot, Count);
@@ -1000,8 +1000,8 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 				int InventorySlot = i + InventoryType::TRADE;
 				TempItems[i] = Player->Inventory->Slots[InventorySlot];
 
-				Player->Inventory->SetInventory(InventorySlot, TradePlayer->Inventory->Slots[InventorySlot]);
-				TradePlayer->Inventory->SetInventory(InventorySlot, TempItems[i]);
+				Player->Inventory->Slots[InventorySlot] = TradePlayer->Inventory->Slots[InventorySlot];
+				TradePlayer->Inventory->Slots[InventorySlot] = TempItems[i];
 			}
 
 			// Exchange gold

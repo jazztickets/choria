@@ -761,7 +761,7 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 		if(ItemID != 0)
 			Count = Data.Read<char>();
 
-		Player->TradePlayer->Inventory->SetInventory(i, _InventorySlot(Stats->Items[ItemID], Count));
+		Player->TradePlayer->Inventory->Slots[i] = _InventorySlot(Stats->Items[ItemID], Count);
 	}
 }
 
@@ -796,8 +796,8 @@ void _ClientState::HandleTradeItem(_Buffer &Data) {
 		NewCount = Data.Read<char>();
 
 	// Update player
-	Player->TradePlayer->Inventory->SetInventory(OldSlot, _InventorySlot(Stats->Items[OldItemID], OldCount));
-	Player->TradePlayer->Inventory->SetInventory(NewSlot, _InventorySlot(Stats->Items[NewItemID], NewCount));
+	Player->TradePlayer->Inventory->Slots[OldSlot] = _InventorySlot(Stats->Items[OldItemID], OldCount);
+	Player->TradePlayer->Inventory->Slots[NewSlot] = _InventorySlot(Stats->Items[NewItemID], NewCount);
 
 	// Reset agreement
 	Player->TradePlayer->TradeAccepted = false;
@@ -844,7 +844,7 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 		if(ItemID != 0)
 			Count = Data.Read<uint8_t>();
 
-		Player->Inventory->SetInventory(i, _InventorySlot(Stats->Items[ItemID], Count));
+		Player->Inventory->Slots[i] = _InventorySlot(Stats->Items[ItemID], Count);
 	}
 
 	// Move traded items to bag

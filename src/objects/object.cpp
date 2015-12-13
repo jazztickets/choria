@@ -707,7 +707,7 @@ float _Object::GetNextLevelPercent() const {
 
 // Accept a trade from a trader
 void _Object::AcceptTrader(std::vector<int> &Slots, int RewardSlot) {
-	if(Trader == nullptr || !Inventory->IsSlotInventory(RewardSlot))
+	if(!Trader)
 		return;
 
 	// Trade in required items

@@ -1535,7 +1535,7 @@ void _HUD::UpdateTradeStatus(bool Accepted) {
 void _HUD::SplitStack(int Slot, int Count) {
 
 	// Split only inventory items
-	if(!_Inventory::IsSlotInventory(Slot))
+	if(!_Inventory::IsSlotBag(Slot))
 		return;
 
 	// Build packet

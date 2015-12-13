@@ -66,22 +66,21 @@ class _Inventory {
 		bool FindItem(const _Item *Item, int &Slot);
 		int CountItem(const _Item *Item);
 
-		void SetInventory(int Slot, const _InventorySlot &Item);
 		const _Item *GetBagItem(int Slot);
 		bool MoveInventory(int OldSlot, int NewSlot);
 		bool UpdateInventory(int Slot, int Amount);
+		int FindSlotForItem(const _Item *Item, int Count);
 		bool AddItem(const _Item *Item, int Count, int Slot);
-		bool IsBagFull();
 		bool IsEmptySlot(int Slot) { return Slots[Slot].Item == nullptr; }
 		void MoveTradeToInventory();
 		void SplitStack(int Slot, int Count);
 
 		// Traders
-		int GetRequiredItemSlots(const _Trader *Trader, std::vector<int> &SlotIndices);
+		int GetRequiredItemSlots(const _Trader *Trader, std::vector<int> &BagIndex);
 
 		_InventorySlot Slots[InventoryType::COUNT];
 
-		static bool IsSlotInventory(int Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
+		static bool IsSlotBag(int Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
 		static bool IsSlotTrade(int Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }
 
 	private:
