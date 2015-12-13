@@ -140,7 +140,6 @@ class _Object {
 		void StopBattle();
 
 		// Trader
-		int GetRequiredItemSlots(int *Slots);
 		void AcceptTrader(int *Slots, int RewardSlot);
 
 		// Map

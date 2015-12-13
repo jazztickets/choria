@@ -433,22 +433,8 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int32_t>(Bounty);
 	Data.Write<int32_t>(InvisPower);
 
-	// Get item count
-	uint8_t ItemCount = 0;
-	for(uint8_t i = 0; i < InventoryType::COUNT; i++) {
-		if(Inventory->Inventory[i].Item)
-			ItemCount++;
-	}
-
-	// Write items
-	Data.Write<uint8_t>(ItemCount);
-	for(uint8_t i = 0; i < InventoryType::COUNT; i++) {
-		if(Inventory->Inventory[i].Item) {
-			Data.Write<uint8_t>(i);
-			Data.Write<uint8_t>((uint8_t)Inventory->Inventory[i].Count);
-			Data.Write<uint32_t>(Inventory->Inventory[i].Item->ID);
-		}
-	}
+	// Write inventory
+	Inventory->Serialize(Data);
 
 	// Get skill count
 	uint32_t SkillCount = 0;
@@ -497,14 +483,8 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Bounty = Data.Read<int32_t>();
 	InvisPower = Data.Read<int32_t>();
 
-	// Read items
-	uint8_t ItemCount = Data.Read<uint8_t>();
-	for(uint8_t i = 0; i < ItemCount; i++) {
-		uint8_t Slot = Data.Read<uint8_t>();
-		uint8_t Count = (uint8_t)Data.Read<uint8_t>();
-		uint32_t ItemID = Data.Read<uint32_t>();
-		Inventory->SetInventory(Slot, _InventorySlot(Stats->Items[ItemID], Count));
-	}
+	// Read inventory
+	Inventory->Unserialize(Data, Stats);
 
 	// Read skills
 	uint32_t SkillCount = Data.Read<uint32_t>();
@@ -696,7 +676,7 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 
 // Uses an item from the inventory
 bool _Object::UseInventory(int Slot) {
-	const _Item *Item = Inventory->GetInventoryItem(Slot);
+	const _Item *Item = Inventory->GetBagItem(Slot);
 	if(Item == nullptr)
 		return false;
 
@@ -725,42 +705,6 @@ float _Object::GetNextLevelPercent() const {
 	return Percent;
 }
 
-// Fills an array with inventory indices correlating to a trader's required items
-int _Object::GetRequiredItemSlots(int *Slots) {
-	int RewardItemSlot = -1;
-
-	// Check for an open reward slot
-	for(int i = InventoryType::BACKPACK; i < InventoryType::TRADE; i++) {
-		_InventorySlot *InventoryItem = &Inventory->Inventory[i];
-		if(InventoryItem->Item == nullptr || (InventoryItem->Item == Trader->RewardItem && InventoryItem->Count + Trader->Count <= INVENTORY_MAX_STACK)) {
-			RewardItemSlot = i;
-			break;
-		}
-	}
-
-	// Go through required items
-	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
-		const _Item *RequiredItem = Trader->TraderItems[i].Item;
-		int RequiredCount = Trader->TraderItems[i].Count;
-		Slots[i] = -1;
-
-		// Search for the required item
-		for(int j = InventoryType::HEAD; j < InventoryType::TRADE; j++) {
-			_InventorySlot *InventoryItem = &Inventory->Inventory[j];
-			if(InventoryItem->Item == RequiredItem && InventoryItem->Count >= RequiredCount) {
-				Slots[i] = j;
-				break;
-			}
-		}
-
-		// Didn't find an item
-		if(Slots[i] == -1)
-			RewardItemSlot = -1;
-	}
-
-	return RewardItemSlot;
-}
-
 // Accept a trade from a trader
 void _Object::AcceptTrader(int *Slots, int RewardSlot) {
 	if(Trader == nullptr || !Inventory->IsSlotInventory(RewardSlot))
@@ -777,7 +721,7 @@ void _Object::AcceptTrader(int *Slots, int RewardSlot) {
 
 // Uses a potion in the world
 bool _Object::UsePotionWorld(int Slot) {
-	const _Item *Item = Inventory->GetInventoryItem(Slot);
+	const _Item *Item = Inventory->GetBagItem(Slot);
 	if(Item == nullptr)
 		return false;
 
@@ -940,7 +884,7 @@ void _Object::CalculateGearStats() {
 		WeaponMinDamage = WeaponMaxDamage = 1;
 
 	// Check each item
-	for(int i = 0; i < InventoryType::BACKPACK; i++) {
+	for(int i = 0; i < InventoryType::BAG; i++) {
 		const _Item *Item = Inventory->Inventory[i].Item;
 		if(Item) {
 			int Min, Max;

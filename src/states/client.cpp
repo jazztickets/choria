@@ -847,7 +847,7 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 		Player->Inventory->SetInventory(i, _InventorySlot(Stats->Items[ItemID], Count));
 	}
 
-	// Move traded items to backpack
+	// Move traded items to bag
 	Player->Inventory->MoveTradeToInventory();
 
 	// Close window

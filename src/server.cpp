@@ -842,7 +842,7 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 
 	// Get trader information
 	int RequiredItemSlots[8];
-	int RewardSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
+	int RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
 	if(RewardSlot == -1)
 		return;
 

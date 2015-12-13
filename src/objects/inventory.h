@@ -24,6 +24,9 @@
 // Forward Declarations
 class _Object;
 class _Item;
+class _Buffer;
+class _Stats;
+class _Trader;
 
 // Structures
 struct _InventorySlot {
@@ -44,8 +47,8 @@ enum InventoryType : int {
 	HAND2,
 	RING1,
 	RING2,
-	BACKPACK,
-	TRADE = BACKPACK + 24,
+	BAG,
+	TRADE = BAG + 24,
 	COUNT = TRADE + PLAYER_TRADEITEMS,
 };
 
@@ -56,22 +59,28 @@ class _Inventory {
 
 		_Inventory();
 
+		void Serialize(_Buffer &Data);
+		void Unserialize(_Buffer &Data, _Stats *Stats);
+
 		bool FindItem(const _Item *Item, int &Slot);
 		int CountItem(const _Item *Item);
 
 		void SetInventory(int Slot, const _InventorySlot &Item);
-		const _Item *GetInventoryItem(int Slot);
+		const _Item *GetBagItem(int Slot);
 		bool MoveInventory(int OldSlot, int NewSlot);
 		bool UpdateInventory(int Slot, int Amount);
 		bool AddItem(const _Item *Item, int Count, int Slot);
-		bool IsBackpackFull();
+		bool IsBagFull();
 		bool IsEmptySlot(int Slot) { return Inventory[Slot].Item == nullptr; }
 		void MoveTradeToInventory();
 		void SplitStack(int Slot, int Count);
 
+		// Traders
+		int GetRequiredItemSlots(const _Trader *Trader, int *Slots);
+
 		_InventorySlot Inventory[InventoryType::COUNT];
 
-		static bool IsSlotInventory(int Slot) { return Slot >= InventoryType::BACKPACK && Slot < InventoryType::TRADE; }
+		static bool IsSlotInventory(int Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
 		static bool IsSlotTrade(int Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }
 
 	private:

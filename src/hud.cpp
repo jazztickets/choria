@@ -641,7 +641,7 @@ void _HUD::InitTrade() {
 void _HUD::InitTrader() {
 
 	// Check for required items
-	RewardItemSlot = Player->GetRequiredItemSlots(RequiredItemSlots);
+	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
 
 	// Disable accept button if requirements not met
 	if(RewardItemSlot == -1)
