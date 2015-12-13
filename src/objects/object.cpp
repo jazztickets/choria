@@ -733,7 +733,7 @@ int _Object::GetRequiredItemSlots(int *Slots) {
 	// Check for an open reward slot
 	for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
 		_InventorySlot *InventoryItem = &Inventory[i];
-		if(InventoryItem->Item == nullptr || (InventoryItem->Item == Trader->RewardItem && InventoryItem->Count + Trader->Count <= 255)) {
+		if(InventoryItem->Item == nullptr || (InventoryItem->Item == Trader->RewardItem && InventoryItem->Count + Trader->Count <= INVENTORY_MAX_STACK)) {
 			RewardItemSlot = i;
 			break;
 		}
@@ -861,50 +861,32 @@ bool _Object::MoveInventory(int OldSlot, int NewSlot) {
 	if(OldSlot == NewSlot)
 		return false;
 
-	// Equippable items
-	if(NewSlot < INVENTORY_BACKPACK) {
+	// Check if the item is even equippable
+	if(NewSlot < INVENTORY_BACKPACK && !CanEquipItem(NewSlot, Inventory[OldSlot].Item))
+		return false;
 
-		// Check if the item is even equippable
-		if(!CanEquipItem(NewSlot, Inventory[OldSlot].Item))
-			return false;
+	// Add to stack
+	if(Inventory[NewSlot].Item == Inventory[OldSlot].Item) {
+		Inventory[NewSlot].Count += Inventory[OldSlot].Count;
 
-		// Split stacks
-		if(Inventory[OldSlot].Count > 1) {
-			Inventory[NewSlot].Item = Inventory[OldSlot].Item;
-			Inventory[NewSlot].Count = 1;
-			Inventory[OldSlot].Count--;
+		// Group stacks
+		if(Inventory[NewSlot].Count > INVENTORY_MAX_STACK) {
+			Inventory[OldSlot].Count = Inventory[NewSlot].Count - INVENTORY_MAX_STACK;
+			Inventory[NewSlot].Count = INVENTORY_MAX_STACK;
 		}
 		else
-			SwapItem(NewSlot, OldSlot);
-
-		return true;
+			Inventory[OldSlot].Item = nullptr;
 	}
-	// Back pack
 	else {
 
-		// Add to stack
-		if(Inventory[NewSlot].Item == Inventory[OldSlot].Item) {
-			Inventory[NewSlot].Count += Inventory[OldSlot].Count;
+		// Disable reverse equip for now
+		if(OldSlot < INVENTORY_BACKPACK && !CanEquipItem(OldSlot, Inventory[NewSlot].Item))
+			return false;
 
-			// Group stacks
-			if(Inventory[NewSlot].Count > 255) {
-				Inventory[OldSlot].Count = Inventory[NewSlot].Count - 255;
-				Inventory[NewSlot].Count = 255;
-			}
-			else
-				Inventory[OldSlot].Item = nullptr;
-		}
-		else {
-
-			// Disable reverse equip for now
-			if(OldSlot < INVENTORY_BACKPACK && Inventory[NewSlot].Item)
-				return false;
-
-			SwapItem(NewSlot, OldSlot);
-		}
-
-		return true;
+		SwapItem(NewSlot, OldSlot);
 	}
+
+	return true;
 }
 
 // Swaps two items
@@ -939,7 +921,7 @@ bool _Object::AddItem(const _Item *Item, int Count, int Slot) {
 		// Find existing item
 		int EmptySlot = -1;
 		for(int i = INVENTORY_BACKPACK; i < INVENTORY_TRADE; i++) {
-			if(Inventory[i].Item == Item && Inventory[i].Count + Count <= 255) {
+			if(Inventory[i].Item == Item && Inventory[i].Count + Count <= INVENTORY_MAX_STACK) {
 				Inventory[i].Count += Count;
 				return true;
 			}
@@ -973,7 +955,7 @@ bool _Object::AddItem(const _Item *Item, int Count, int Slot) {
 	}
 
 	// Add item
-	if(Inventory[Slot].Item == Item && Inventory[Slot].Count + Count <= 255) {
+	if(Inventory[Slot].Item == Item && Inventory[Slot].Count + Count <= INVENTORY_MAX_STACK) {
 		Inventory[Slot].Count += Count;
 		return true;
 	}
@@ -1013,7 +995,7 @@ void _Object::SplitStack(int Slot, int Count) {
 				EmptySlot = INVENTORY_BACKPACK;
 
 			Item = &Inventory[EmptySlot];
-		} while(!(EmptySlot == Slot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= 255 - Count)));
+		} while(!(EmptySlot == Slot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= INVENTORY_MAX_STACK - Count)));
 
 		// Split item
 		if(EmptySlot != Slot) {
@@ -1054,10 +1036,8 @@ bool _Object::IsBackpackFull() {
 
 // Checks if an item can be equipped
 bool _Object::CanEquipItem(int Slot, const _Item *Item) {
-
-	// Already equipped
-	if(Inventory[Slot].Item)
-		return false;
+	if(!Item)
+		return true;
 
 	// Check type
 	switch(Slot) {
@@ -1104,13 +1084,13 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 
 	// Buying
 	if(Adjust > 0) {
-		if(GetSkillPointsRemaining() == 0 || SkillLevels[SkillID] >= 255)
+		if(GetSkillPointsRemaining() == 0 || SkillLevels[SkillID] >= SKILL_MAX_LEVEL)
 			return;
 
 		// Update level
 		SkillLevels[SkillID] += Adjust;
-		if(SkillLevels[SkillID] > 255)
-			SkillLevels[SkillID] = 255;
+		if(SkillLevels[SkillID] > SKILL_MAX_LEVEL)
+			SkillLevels[SkillID] = SKILL_MAX_LEVEL;
 	}
 	else if(Adjust < 0) {
 		if(SkillLevels[SkillID] == 0)

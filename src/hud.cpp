@@ -146,6 +146,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							Packet.Write<char>((char)Tooltip.Slot);
 							ClientState.Network->SendPacket(Packet);
 						}
+						else {
+						}
 					}
 				break;
 				case WINDOW_VENDOR:
@@ -1417,7 +1419,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
-			if(SkillPointsRemaining == 0 || Player->SkillLevels[SkillID] >= 255)
+			if(SkillPointsRemaining == 0 || Player->SkillLevels[SkillID] >= SKILL_MAX_LEVEL)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);

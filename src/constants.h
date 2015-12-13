@@ -58,6 +58,9 @@ const int PLAYER_NAME_SIZE = 10;
 const float PLAYER_INVIS_ALPHA = 0.27f;
 const int INVENTORY_TOOLTIP_OFFSET = 20;
 const int INVENTORY_TOOLTIP_PADDING = 10;
+const int INVENTORY_MAX_STACK = 255;
+
+const int SKILL_MAX_LEVEL = 255;
 
 const int CHAT_MESSAGES = 15;
 const int CHAT_MESSAGE_TIMEOUT = 10;
