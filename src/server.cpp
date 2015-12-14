@@ -394,7 +394,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	// Get character information
 	std::string Name(Data.ReadString());
 	uint32_t PortraitID = Data.Read<uint32_t>();
-	int Slot = Data.Read<int>();
+	uint32_t Slot = Data.Read<uint32_t>();
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
 
@@ -796,7 +796,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Get optional inventory slot
-		int TargetSlot = Data.Read<char>();
+		size_t TargetSlot = (size_t)Data.Read<uint8_t>();
 
 		// Get item info
 		const _Item *Item = Vendor->Items[Slot];
@@ -807,11 +807,11 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Find open slot for new item
-		if(TargetSlot == -1)
+		if(TargetSlot >= Player->Inventory->Slots.size())
 			TargetSlot = Player->Inventory->FindSlotForItem(Item, Amount);
 
 		// No room
-		if(TargetSlot == -1)
+		if(TargetSlot >= Player->Inventory->Slots.size())
 			return;
 
 		// Attempt to add item
@@ -879,9 +879,9 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get trader information
-	std::vector<int> RequiredItemSlots(Player->Trader->TraderItems.size(), -1);
-	int RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
-	if(RewardSlot == -1)
+	std::vector<size_t> RequiredItemSlots(Player->Trader->TraderItems.size(), Player->Inventory->Slots.size());
+	size_t RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
+	if(RewardSlot >= Player->Inventory->Slots.size())
 		return;
 
 	// Exchange items and notify client
@@ -1035,8 +1035,8 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 
 			// Exchange items
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
-			for(int i = 0; i < PLAYER_TRADEITEMS; i++) {
-				int InventorySlot = i + InventoryType::TRADE;
+			for(size_t i = 0; i < PLAYER_TRADEITEMS; i++) {
+				size_t InventorySlot = i + InventoryType::TRADE;
 				TempItems[i] = Player->Inventory->Slots[InventorySlot];
 
 				Player->Inventory->Slots[InventorySlot] = TradePlayer->Inventory->Slots[InventorySlot];

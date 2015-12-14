@@ -171,7 +171,7 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-void _Save::CreateCharacter(uint32_t AccountID, int Slot, const std::string &Name, uint32_t PortraitID) {
+void _Save::CreateCharacter(uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID) {
 	Database->RunQuery("BEGIN TRANSACTION");
 
 	std::string TrimmedName = TrimString(Name);
@@ -230,7 +230,7 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
-		int Slot = Database->GetInt<int>(0);
+		size_t Slot = Database->GetInt<uint32_t>(0);
 		_InventorySlot InventorySlot;
 		InventorySlot.Item = Player->Stats->Items[Database->GetInt<uint32_t>(1)];
 		InventorySlot.Count = Database->GetInt<int>(2);
@@ -290,7 +290,7 @@ void _Save::SavePlayer(const _Object *Player) {
 	Query.str("");
 
 	const _InventorySlot *Item;
-	for(int i = 0; i < InventoryType::COUNT; i++) {
+	for(size_t i = 0; i < InventoryType::COUNT; i++) {
 		Item = &Player->Inventory->Slots[i];
 		if(Item->Item) {
 			Query << "INSERT INTO inventory VALUES(" << Player->CharacterID << ", " << i << ", " << Item->Item->ID << ", " << Item->Count << ")";;

@@ -55,7 +55,7 @@ _HUD::_HUD() {
 	ActionBarChanged = false;
 	Tooltip.Reset();
 	Cursor.Reset();
-	RewardItemSlot = -1;
+	RewardItemSlot = (size_t)-1;
 	ChatHistory.clear();
 
 	ChatTextBox = Assets.TextBoxes["textbox_chat"];
@@ -158,9 +158,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(Tooltip.Window == WINDOW_VENDOR) {
 							if(Input.ModKeyDown(KMOD_SHIFT))
-								BuyItem(&Tooltip, -1);
+								BuyItem(&Tooltip, Player->Inventory->Slots.size());
 							else
-								BuyItem(&Tooltip, -1);
+								BuyItem(&Tooltip, Player->Inventory->Slots.size());
 						}
 						else if(Tooltip.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
 							SellItem(&Tooltip, 1);
@@ -238,7 +238,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						case WINDOW_TRADEYOURS:
 						case WINDOW_INVENTORY:
 
-							if(Tooltip.Slot >= 0) {
+							if(Tooltip.Slot < Player->Inventory->Slots.size()) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
 								Packet.Write<uint8_t>((uint8_t)Cursor.Slot);
@@ -252,7 +252,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						break;
 						case WINDOW_ACTIONBAR:
 							if(Cursor.Window == WINDOW_INVENTORY)
-								SetActionBar(Tooltip.Slot, -1, Cursor.Item);
+								SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.Item);
 							else if(Cursor.Window == WINDOW_ACTIONBAR)
 								SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Item);
 						break;
@@ -269,7 +269,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					switch(Tooltip.Window) {
 						// Onto inventory
 						case WINDOW_INVENTORY:
-							SetActionBar(Cursor.Slot, -1, Tooltip.Item);
+							SetActionBar(Cursor.Slot, Player->ActionBar.size(), Tooltip.Item);
 						break;
 						// Swap action
 						case WINDOW_ACTIONBAR:
@@ -277,9 +277,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						break;
 						default:
 							// Remove action
-							if(Tooltip.Slot == -1 || Tooltip.Window == -1) {
+							if(Tooltip.Slot >= Player->ActionBar.size() || Tooltip.Window == -1) {
 								_Action Action;
-								SetActionBar(Cursor.Slot, -1, Action);
+								SetActionBar(Cursor.Slot, Player->ActionBar.size(), Action);
 							}
 						break;
 					}
@@ -290,13 +290,13 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		else if(Cursor.Skill) {
 			if(Tooltip.Window == WINDOW_ACTIONBAR) {
 				if(Cursor.Window == WINDOW_SKILLS)
-					SetActionBar(Tooltip.Slot, -1, Cursor.Skill);
+					SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.Skill);
 				else if(Cursor.Window == WINDOW_ACTIONBAR)
 					SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Skill);
 			}
-			else if(Cursor.Window == WINDOW_ACTIONBAR && (Tooltip.Slot == -1 || Tooltip.Window == -1)) {
+			else if(Cursor.Window == WINDOW_ACTIONBAR && (Tooltip.Slot >= Player->ActionBar.size() || Tooltip.Window == -1)) {
 				_Action Action;
-				SetActionBar(Cursor.Slot, -1, Action);
+				SetActionBar(Cursor.Slot, Player->ActionBar.size(), Action);
 			}
 		}
 		// Use action
@@ -341,17 +341,17 @@ void _HUD::Update(double FrameTime) {
 
 	_Element *HitElement = Graphics.Element->HitElement;
 	if(HitElement) {
-		Tooltip.Slot = (int)(intptr_t)HitElement->UserData;
+		Tooltip.Slot = (size_t)(intptr_t)HitElement->UserData;
 
 		// Get window id, stored in parent's userdata field
-		if(HitElement->Parent && Tooltip.Slot != -1) {
+		if(HitElement->Parent && Tooltip.Slot != (size_t)-1) {
 			Tooltip.Window = (int)(intptr_t)HitElement->Parent->UserData;
 		}
 
 		switch(Tooltip.Window) {
 			case WINDOW_INVENTORY:
 			case WINDOW_TRADEYOURS: {
-				if(Tooltip.Slot >= 0) {
+				if(Tooltip.Slot < Player->Inventory->Slots.size()) {
 					_InventorySlot *InventorySlot = &Player->Inventory->Slots[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
@@ -360,7 +360,7 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
-				if(Player->TradePlayer && Tooltip.Slot >= 0) {
+				if(Player->TradePlayer && Tooltip.Slot < Player->Inventory->Slots.size()) {
 					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory->Slots[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
@@ -636,11 +636,11 @@ void _HUD::InitTrade() {
 void _HUD::InitTrader() {
 
 	// Check for required items
-	RequiredItemSlots.resize(Player->Trader->TraderItems.size(), -1);
+	RequiredItemSlots.resize(Player->Trader->TraderItems.size(), Player->Inventory->Slots.size());
 	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
 
 	// Disable accept button if requirements not met
-	if(RewardItemSlot == -1)
+	if(RewardItemSlot >= Player->Inventory->Slots.size())
 		Assets.Buttons["button_trader_accept"]->Enabled = false;
 	else
 		Assets.Buttons["button_trader_accept"]->Enabled = true;
@@ -926,7 +926,7 @@ void _HUD::DrawInventory() {
 	InventoryElement->Render();
 
 	// Draw player's items
-	for(int i = 0; i < InventoryType::TRADE; i++) {
+	for(size_t i = 0; i < InventoryType::TRADE; i++) {
 
 		// Get inventory slot
 		_InventorySlot *Item = &Player->Inventory->Slots[i];
@@ -966,7 +966,7 @@ void _HUD::DrawVendor() {
 	// Draw vendor items
 	for(size_t i = 0; i < Player->Vendor->Items.size(); i++) {
 		const _Item *Item = Player->Vendor->Items[i];
-		if(Item && !Cursor.IsEqual((int)i, WINDOW_VENDOR)) {
+		if(Item && !Cursor.IsEqual(i, WINDOW_VENDOR)) {
 
 			// Get bag button
 			std::stringstream Buffer;
@@ -1005,7 +1005,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 	// Draw offered items
 	int BagIndex = 0;
-	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
+	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
 
 		// Get inventory slot
 		_InventorySlot *Item = &Player->Inventory->Slots[i];
@@ -1056,7 +1056,7 @@ void _HUD::DrawTrader() {
 		Graphics.DrawCenteredImage(DrawPosition, Item->Image);
 
 		glm::vec4 Color;
-		if(RequiredItemSlots[i] == -1)
+		if(RequiredItemSlots[i] >= Player->Inventory->Slots.size())
 			Color = COLOR_RED;
 		else
 			Color = COLOR_WHITE;
@@ -1260,7 +1260,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 }
 
 // Buys an item from the vendor
-void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
+void _HUD::BuyItem(_Cursor *Item, size_t TargetSlot) {
 
 	// Notify server
 	_Buffer Packet;
@@ -1268,7 +1268,7 @@ void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
 	Packet.WriteBit(1);
 	Packet.Write<uint8_t>((uint8_t)Item->Count);
 	Packet.Write<uint8_t>((uint8_t)Item->Slot);
-	Packet.Write<char>((char)TargetSlot);
+	Packet.Write<uint8_t>((uint8_t)TargetSlot);
 	ClientState.Network->SendPacket(Packet);
 }
 
@@ -1308,21 +1308,13 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 			// Equip new skills
 			const _Skill *Skill = ClientState.Stats->Skills[SkillID];
 			if(Skill) {
-				int Direction, Slot;
-				/*if(Skill->Type == _Skill::TYPE_PASSIVE) {
-					Slot = Player->ActionBar.size()-1;
-					Direction = -1;
-				}
-				else*/ {
-					Slot = 0;
-					Direction = 1;
-				}
+				size_t Slot = 0;
 				for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-					if(!Player->ActionBar[(uint8_t)Slot].IsSet()) {
-						SetActionBar(Slot, -1, Skill);
+					if(!Player->ActionBar[Slot].IsSet()) {
+						SetActionBar(Slot, Player->ActionBar.size(), Skill);
 						break;
 					}
-					Slot += Direction;
+					Slot++;
 				}
 			}
 		}
@@ -1337,12 +1329,12 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 }
 
 // Sets the player's skill bar
-void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
-	if(Player->ActionBar[(uint8_t)Slot] == Action)
+void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
+	if(Player->ActionBar[Slot] == Action)
 		return;
 
 	// Check for bringing new skill/item onto bar
-	if(OldSlot == -1) {
+	if(OldSlot >= Player->ActionBar.size()) {
 
 		// Remove duplicate skills
 		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
@@ -1352,10 +1344,10 @@ void _HUD::SetActionBar(int Slot, int OldSlot, const _Action &Action) {
 	}
 	// Rearrange action bar
 	else {
-		Player->ActionBar[(uint8_t)OldSlot] = Player->ActionBar[(uint8_t)Slot];
+		Player->ActionBar[OldSlot] = Player->ActionBar[Slot];
 	}
 
-	Player->ActionBar[(uint8_t)Slot] = Action;
+	Player->ActionBar[Slot] = Action;
 	Player->RefreshActionBarCount();
 
 	Player->CalculateStats();

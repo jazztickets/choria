@@ -706,7 +706,7 @@ float _Object::GetNextLevelPercent() const {
 }
 
 // Accept a trade from a trader
-void _Object::AcceptTrader(_Buffer &Data, std::vector<int> &Slots, int RewardSlot) {
+void _Object::AcceptTrader(_Buffer &Data, std::vector<size_t> &Slots, size_t RewardSlot) {
 	if(!Trader)
 		return;
 

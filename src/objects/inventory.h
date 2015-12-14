@@ -43,7 +43,7 @@ struct _InventorySlot {
 
 const int PLAYER_TRADEITEMS = 8;
 
-enum InventoryType : int {
+enum InventoryType : size_t {
 	HEAD,
 	BODY,
 	LEGS,
@@ -74,13 +74,13 @@ class _Inventory {
 		const _Item *GetBagItem(size_t Slot);
 		bool MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot);
 		bool DecrementItemCount(size_t Slot, int Amount);
-		int FindSlotForItem(const _Item *Item, int Count);
-		bool AddItem(const _Item *Item, int Count, int Slot);
+		size_t FindSlotForItem(const _Item *Item, int Count);
+		bool AddItem(const _Item *Item, int Count, size_t Slot);
 		void MoveTradeToInventory();
 		bool SplitStack(_Buffer &Data, size_t Slot, int Count);
 
 		// Traders
-		int GetRequiredItemSlots(const _Trader *Trader, std::vector<int> &BagIndex);
+		size_t GetRequiredItemSlots(const _Trader *Trader, std::vector<size_t> &BagIndex);
 
 		std::vector<_InventorySlot> Slots;
 

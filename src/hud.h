@@ -45,17 +45,17 @@ struct _Cursor {
 		Skill = nullptr;
 		Cost = 0;
 		Count = 0;
-		Slot = -1;
+		Slot = (size_t)-1;
 		Window = -1;
 	}
 
-	bool IsEqual(int Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
+	bool IsEqual(size_t Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
 
 	const _Item *Item;
 	const _Skill *Skill;
 	int Cost;
 	int Count;
-	int Slot;
+	size_t Slot;
 	int Window;
 };
 
@@ -149,11 +149,11 @@ class _HUD {
 		void DrawCursorSkill();
 		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
 
-		void BuyItem(_Cursor *Item, int TargetSlot);
+		void BuyItem(_Cursor *Item, size_t TargetSlot);
 		void SellItem(_Cursor *Item, int Amount);
 
 		void AdjustSkillLevel(uint32_t SkillID, int Direction);
-		void SetActionBar(int Slot, int OldSlot, const _Action &Action);
+		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
 		void ClearSkills();
 
 		void RefreshSkillButtons();
@@ -189,8 +189,8 @@ class _HUD {
 		bool ActionBarChanged;
 
 		// Traders
-		std::vector<int> RequiredItemSlots;
-		int RewardItemSlot;
+		std::vector<size_t> RequiredItemSlots;
+		size_t RewardItemSlot;
 };
 
 extern _HUD HUD;

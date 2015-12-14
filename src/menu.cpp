@@ -248,7 +248,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<uint32_t>(PortraitID);
-	Packet.Write<int>(SelectedSlot);
+	Packet.Write<uint32_t>(SelectedSlot);
 	ClientState.Network->SendPacket(Packet);
 }
 
