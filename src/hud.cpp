@@ -1261,34 +1261,21 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 
 // Buys an item from the vendor
 void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
-	if(Player->Gold >= Item->Cost * Item->Count && Player->Inventory->AddItem(Item->Item, Item->Count, TargetSlot)) {
 
-		// Update player
-		int Price = Item->Item->GetPrice(Player->Vendor, Item->Count, true);
-		Player->UpdateGold(-Price);
-
-		// Notify server
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
-		Packet.WriteBit(1);
-		Packet.Write<uint8_t>((uint8_t)Item->Count);
-		Packet.Write<uint8_t>((uint8_t)Item->Slot);
-		Packet.Write<char>((char)TargetSlot);
-		ClientState.Network->SendPacket(Packet);
-
-		Player->CalculateStats();
-	}
+	// Notify server
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
+	Packet.WriteBit(1);
+	Packet.Write<uint8_t>((uint8_t)Item->Count);
+	Packet.Write<uint8_t>((uint8_t)Item->Slot);
+	Packet.Write<char>((char)TargetSlot);
+	ClientState.Network->SendPacket(Packet);
 }
 
 // Sells an item
 void _HUD::SellItem(_Cursor *Item, int Amount) {
 	if(!Item->Item || !Player->Vendor)
 		return;
-
-	// Update player
-	int Price = Item->Item->GetPrice(Player->Vendor, Amount, 0);
-	Player->UpdateGold(Price);
-	bool Deleted = Player->Inventory->DecrementItemCount(Item->Slot, -Amount);
 
 	// Notify server
 	_Buffer Packet;
@@ -1297,11 +1284,6 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	Packet.Write<uint8_t>((uint8_t)Amount);
 	Packet.Write<uint8_t>((uint8_t)Item->Slot);
 	ClientState.Network->SendPacket(Packet);
-
-	if(Deleted)
-		Item->Reset();
-
-	Player->CalculateStats();
 }
 
 // Adjust skill level

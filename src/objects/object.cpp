@@ -714,14 +714,12 @@ void _Object::AcceptTrader(_Buffer &Data, std::vector<int> &Slots, int RewardSlo
 	Data.Write<uint8_t>((uint8_t)Trader->TraderItems.size() + 1);
 	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++) {
 		Inventory->DecrementItemCount(Slots[i], -Trader->TraderItems[i].Count);
-		Data.Write<uint8_t>((uint8_t)Slots[i]);
-		Inventory->Slots[Slots[i]].Serialize(Data);
+		Inventory->SerializeSlot(Data, Slots[i]);
 	}
 
 	// Give player reward
 	Inventory->AddItem(Trader->RewardItem, Trader->Count, RewardSlot);
-	Data.Write<uint8_t>((uint8_t)RewardSlot);
-	Inventory->Slots[RewardSlot].Serialize(Data);
+	Inventory->SerializeSlot(Data, RewardSlot);
 
 	// Update player
 	Trader = nullptr;
@@ -893,7 +891,7 @@ void _Object::CalculateGearStats() {
 		WeaponMinDamage = WeaponMaxDamage = 1;
 
 	// Check each item
-	for(int i = 0; i < InventoryType::BAG; i++) {
+	for(size_t i = 0; i < InventoryType::BAG; i++) {
 		const _Item *Item = Inventory->Slots[i].Item;
 		if(Item) {
 			int Min, Max;

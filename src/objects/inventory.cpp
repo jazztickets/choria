@@ -207,7 +207,7 @@ bool _Inventory::DecrementItemCount(size_t Slot, int Amount) {
 int _Inventory::FindSlotForItem(const _Item *Item, int Count) {
 
 	int EmptySlot = -1;
-	for(int i = InventoryType::HEAD; i < InventoryType::TRADE; i++) {
+	for(size_t i = InventoryType::HEAD; i < InventoryType::TRADE; i++) {
 
 		// Try to find an existing stack first
 		if(Slots[i].Item == Item && Slots[i].Count + Count <= INVENTORY_MAX_STACK)
@@ -277,22 +277,27 @@ bool _Inventory::SplitStack(_Buffer &Data, size_t Slot, int Count) {
 	_InventorySlot *SplitItem = &Slots[Slot];
 	if(SplitItem->Item && SplitItem->Count > Count) {
 
-		// Find an empty slot or existing item starting from bag
+		// Get starting search position
 		size_t EmptySlot = Slot;
 		if(EmptySlot < InventoryType::BAG)
 			EmptySlot = InventoryType::BAG;
 
-		_InventorySlot *Item;
-		do {
+		// Find an empty slot or existing item starting from bag
+		bool Found = false;
+		for(size_t i = InventoryType::BAG; i < InventoryType::TRADE; i++) {
 			EmptySlot++;
 			if(EmptySlot >= InventoryType::TRADE)
 				EmptySlot = InventoryType::BAG;
 
-			Item = &Slots[EmptySlot];
-		} while(!(EmptySlot == Slot || Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= INVENTORY_MAX_STACK - Count)));
+			_InventorySlot *Item = &Slots[EmptySlot];
+			if(Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= INVENTORY_MAX_STACK - Count)) {
+				Found = true;
+				break;
+			}
+		}
 
 		// Split item
-		if(EmptySlot != Slot) {
+		if(Found && EmptySlot != Slot) {
 			SplitItem->Count -= Count;
 			AddItem(SplitItem->Item, Count, EmptySlot);
 

@@ -790,7 +790,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 	uint8_t Amount = Data.Read<uint8_t>();
 	size_t Slot = Data.Read<uint8_t>();
 
-	// Update player
+	// Buy item
 	if(Buy) {
 		if(Slot >= Vendor->Items.size())
 			return;
@@ -802,21 +802,71 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		const _Item *Item = Vendor->Items[Slot];
 		int Price = Item->GetPrice(Vendor, Amount, Buy);
 
-		// Update player
+		// Not enough gold
+		if(Price > Player->Gold)
+			return;
+
+		// Find open slot for new item
+		if(TargetSlot == -1)
+			TargetSlot = Player->Inventory->FindSlotForItem(Item, Amount);
+
+		// No room
+		if(TargetSlot == -1)
+			return;
+
+		// Attempt to add item
+		if(!Player->Inventory->AddItem(Item, Amount, TargetSlot))
+			return;
+
+		// Update gold
 		Player->UpdateGold(-Price);
-		Player->Inventory->AddItem(Item, Amount, TargetSlot);
+		{
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
+			Packet.Write<int32_t>(Player->Gold);
+			Network->SendPacket(Packet, Peer);
+		}
+
+		// Update items
+		{
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
+			Packet.Write<uint8_t>(1);
+			Player->Inventory->SerializeSlot(Packet, TargetSlot);
+			Network->SendPacket(Packet, Peer);
+		}
+
 		Player->CalculateStats();
 	}
+	// Sell item
 	else {
-		if(Slot >= InventoryType::COUNT)
+		if(Slot >= Player->Inventory->Slots.size())
 			return;
 
 		// Get item info
-		_InventorySlot *Item = &Player->Inventory->Slots[Slot];
-		if(Item && Item->Item) {
-			int Price = Item->Item->GetPrice(Vendor, Amount, Buy);
+		const _Item *Item = Player->Inventory->Slots[Slot].Item;
+		if(Item) {
+			int Price = Item->GetPrice(Vendor, Amount, Buy);
+
+			// Update gold
 			Player->UpdateGold(Price);
+			{
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
+				Packet.Write<int32_t>(Player->Gold);
+				Network->SendPacket(Packet, Peer);
+			}
+
+			// Update items
 			Player->Inventory->DecrementItemCount(Slot, -Amount);
+
+			{
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
+				Packet.Write<uint8_t>(1);
+				Player->Inventory->SerializeSlot(Packet, Slot);
+				Network->SendPacket(Packet, Peer);
+			}
 		}
 	}
 }

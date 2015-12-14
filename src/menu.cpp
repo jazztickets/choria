@@ -759,10 +759,10 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 		case PacketType::CHARACTERS_LIST: {
 
 			// Get count
-			int CharacterCount = Buffer.Read<uint8_t>();
+			uint8_t CharacterCount = Buffer.Read<uint8_t>();
 
 			// Reset character slots
-			for(int i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
+			for(size_t i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
 				std::stringstream Buffer;
 
 				// Set slot name
@@ -800,7 +800,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 			}
 
 			// Get characters
-			for(int i = 0; i < CharacterCount; i++) {
+			for(size_t i = 0; i < CharacterCount; i++) {
 				int32_t Slot = Buffer.Read<int32_t>();
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
 				uint32_t PortraitID = Buffer.Read<uint32_t>();

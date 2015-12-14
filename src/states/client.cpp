@@ -443,6 +443,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::INVENTORY_UPDATE:
 			HandleInventoryUpdate(Data);
 		break;
+		case PacketType::INVENTORY_GOLD:
+			HandleInventoryGold(Data);
+		break;
 		case PacketType::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;
@@ -769,6 +772,15 @@ void _ClientState::HandleInventoryUpdate(_Buffer &Data) {
 	uint8_t Count = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < Count; i++)
 		Player->Inventory->UnserializeSlot(Data, Stats);
+}
+
+// Handle gold update
+void _ClientState::HandleInventoryGold(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->Gold = Data.Read<int32_t>();
+	Player->CalculateStats();
 }
 
 // Handles a trade request
