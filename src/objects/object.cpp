@@ -572,12 +572,6 @@ int _Object::Move() {
 		else
 			NextBattle--;
 
-		// Update regen
-		//int HealthUpdate, ManaUpdate;
-		//UpdateRegen(HealthUpdate, ManaUpdate);
-		//UpdateHealth(HealthUpdate);
-		//UpdateMana(ManaUpdate);
-
 		MoveTime = 0;
 
 		return InputState;

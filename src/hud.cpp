@@ -367,8 +367,8 @@ void _HUD::Update(double FrameTime) {
 				}
 			}
 			case WINDOW_VENDOR: {
-				if(Player->Vendor && (size_t)Tooltip.Slot < Player->Vendor->Items.size()) {
-					Tooltip.Item = Player->Vendor->Items[(size_t)Tooltip.Slot];
+				if(Player->Vendor && Tooltip.Slot < Player->Vendor->Items.size()) {
+					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
 					if(Input.ModKeyDown(KMOD_SHIFT))
 						Tooltip.Count = 5;
 					else
@@ -380,8 +380,8 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_TRADER: {
 				if(Player->Trader) {
-					if((size_t)Tooltip.Slot < Player->Trader->TraderItems.size())
-						Tooltip.Item = Player->Trader->TraderItems[(size_t)Tooltip.Slot].Item;
+					if(Tooltip.Slot < Player->Trader->TraderItems.size())
+						Tooltip.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
 					else if(Tooltip.Slot == 8)
 						Tooltip.Item = Player->Trader->RewardItem;
 				}
@@ -390,8 +390,8 @@ void _HUD::Update(double FrameTime) {
 				Tooltip.Skill = ClientState.Stats->Skills[(uint32_t)Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
-				Tooltip.Skill = Player->ActionBar[(size_t)Tooltip.Slot].Skill;
-				Tooltip.Item = Player->ActionBar[(size_t)Tooltip.Slot].Item;
+				Tooltip.Skill = Player->ActionBar[Tooltip.Slot].Skill;
+				Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
 			} break;
 		}
 	}

@@ -158,7 +158,7 @@ void _Actions::InputEvent(int InputType, int Input, float Value) {
 		float InputValue = Value * MapIterator.Scale;
 
 		// If true is returned, stop handling the same key
-		if(Framework.GetState()->HandleAction(InputType, MapIterator.Action, InputValue))
+		if(Framework.GetState()->HandleAction(InputType, MapIterator.Action, (int)InputValue))
 			break;
 	}
 }

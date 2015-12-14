@@ -795,7 +795,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Get optional inventory slot
-		size_t TargetSlot = (size_t)Data.Read<uint8_t>();
+		size_t TargetSlot = Data.Read<uint8_t>();
 
 		// Get item info
 		const _Item *Item = Vendor->Items[Slot];
