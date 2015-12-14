@@ -177,15 +177,16 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				Filter |= FILTER_EVENTDATA;
 			break;
 			case SDL_SCANCODE_E:
-				if(Input.ModKeyDown(KMOD_SHIFT))
+				if(Input.ModKeyDown(KMOD_SHIFT)) {
 					Brush->Event.Type--;
-				else
+					if(Brush->Event.Type >= _Map::EVENT_COUNT)
+						Brush->Event.Type = _Map::EVENT_COUNT-1;
+				}
+				else {
 					Brush->Event.Type++;
-
-				if(Brush->Event.Type >= _Map::EVENT_COUNT)
-					Brush->Event.Type = _Map::EVENT_NONE;
-				else if(Brush->Event.Type < _Map::EVENT_NONE)
-					Brush->Event.Type = _Map::EVENT_COUNT-1;
+					if(Brush->Event.Type >= _Map::EVENT_COUNT)
+						Brush->Event.Type = _Map::EVENT_NONE;
+				}
 			break;
 			case SDL_SCANCODE_W:
 				Brush->Wall = !Brush->Wall;
@@ -295,9 +296,15 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 // Mouse scroll wheel
 void _EditorState::MouseWheelEvent(int Direction) {
 	if(Input.ModKeyDown(KMOD_CTRL)) {
-		Brush->Zone += Direction;
-		if(Brush->Zone < 0)
-			Brush->Zone = 0;
+		if(Direction < 0) {
+			uint32_t OldZone = Brush->Zone;
+			Brush->Zone--;
+			if(Brush->Zone > OldZone)
+				Brush->Zone = 0;
+		}
+		else {
+			Brush->Zone++;
+		}
 	}
 	else {
 

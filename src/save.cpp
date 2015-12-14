@@ -151,7 +151,7 @@ uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
 }
 
 // Find character id by slot number
-uint32_t _Save::GetCharacterIDBySlot(uint32_t AccountID, int Slot) {
+uint32_t _Save::GetCharacterIDBySlot(uint32_t AccountID, uint32_t Slot) {
 	Database->PrepareQuery("SELECT id FROM character WHERE account_id = @account_id AND slot = @slot");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);

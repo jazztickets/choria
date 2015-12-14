@@ -54,6 +54,7 @@ _Menu::_Menu() {
 	CurrentLayout = nullptr;
 	CharactersState = CHARACTERS_NONE;
 	PreviousClickTimer = 0.0;
+	CharacterSlots.resize(ACCOUNT_MAX_CHARACTER_SLOTS);
 }
 
 // Change the current layout
@@ -207,8 +208,8 @@ uint32_t _Menu::GetSelectedPortraitID() {
 }
 
 // Get the selected character slot
-int _Menu::GetSelectedCharacter() {
-	int Index = 0;
+size_t _Menu::GetSelectedCharacter() {
+	size_t Index = 0;
 
 	// Check for selected character
 	_Element *CharactersElement = Assets.Elements["element_menu_characters"];
@@ -222,7 +223,7 @@ int _Menu::GetSelectedCharacter() {
 		}
 	}
 
-	return -1;
+	return CharacterSlots.size();
 }
 
 // Create character
@@ -239,8 +240,8 @@ void _Menu::CreateCharacter() {
 		return;
 
 	// Get slot
-	int SelectedSlot = GetSelectedCharacter();
-	if(SelectedSlot == -1)
+	size_t SelectedSlot = GetSelectedCharacter();
+	if(SelectedSlot >= CharacterSlots.size())
 		return;
 
 	// Send information
@@ -248,7 +249,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<uint32_t>(PortraitID);
-	Packet.Write<uint32_t>(SelectedSlot);
+	Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 	ClientState.Network->SendPacket(Packet);
 }
 
@@ -282,10 +283,10 @@ void _Menu::ConnectToHost() {
 }
 
 // Send character to play
-void _Menu::PlayCharacter(int Slot) {
+void _Menu::PlayCharacter(size_t Slot) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
-	Packet.Write<char>(Slot);
+	Packet.Write<uint8_t>((uint8_t)Slot);
 	ClientState.Network->SendPacket(Packet);
 
 	CharactersState = CHARACTERS_PLAYSENT;
@@ -419,8 +420,8 @@ void _Menu::UpdateCharacterButtons() {
 	DeleteButton->Enabled = false;
 	PlayButton->Enabled = false;
 
-	int SelectedSlot = GetSelectedCharacter();
-	if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
+	size_t SelectedSlot = GetSelectedCharacter();
+	if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 		DeleteButton->Enabled = true;
 		PlayButton->Enabled = true;
 	}
@@ -470,8 +471,8 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 						ClientState.Network->Disconnect();
 					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-						int SelectedSlot = GetSelectedCharacter();
-						if(SelectedSlot == -1)
+						size_t SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot >= CharacterSlots.size())
 							SelectedSlot = 0;
 
 						if(CharacterSlots[SelectedSlot].Used) {
@@ -560,17 +561,17 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 				if(CharactersState == CHARACTERS_NONE) {
 
 					if(Clicked->Identifier == "button_characters_delete") {
-						int SelectedSlot = GetSelectedCharacter();
-						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
+						size_t SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 							_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::CHARACTERS_DELETE);
-							Packet.Write<int32_t>(SelectedSlot);
+							Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 							ClientState.Network->SendPacket(Packet);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
-						int SelectedSlot = GetSelectedCharacter();
-						if(SelectedSlot != -1 && CharacterSlots[SelectedSlot].Used) {
+						size_t SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 							PlayCharacter(SelectedSlot);
 						}
 					}
@@ -589,7 +590,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						}
 
 						// Set selection
-						int SelectedSlot = (intptr_t)Clicked->UserData;
+						size_t SelectedSlot = (size_t)(intptr_t)Clicked->UserData;
 						CharacterSlots[SelectedSlot].Button->Checked = true;
 
 						// Open new character screen
@@ -598,20 +599,20 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 						UpdateCharacterButtons();
 
-						if(DoubleClick && SelectedSlot != -1) {
+						if(DoubleClick && SelectedSlot < CharacterSlots.size()) {
 							PlayCharacter(SelectedSlot);
 						}
 					}
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
 					if(Clicked->Identifier == NewCharacterPortraitPrefix) {
-						int SelectedID = (intptr_t)Clicked->UserData;
+						size_t SelectedID = (size_t)(intptr_t)Clicked->UserData;
 
 						// Unselect all portraits and select the clicked element
 						for(auto &Element : Clicked->Parent->Children) {
 							_Button *Button = (_Button *)Element;
 							Button->Checked = false;
-							if((intptr_t)Button->UserData == SelectedID) {
+							if((size_t)(intptr_t)Button->UserData == SelectedID) {
 								_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 								FocusedElement = Name;
 								Name->ResetCursor();
@@ -801,7 +802,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 
 			// Get characters
 			for(size_t i = 0; i < CharacterCount; i++) {
-				int32_t Slot = Buffer.Read<int32_t>();
+				size_t Slot = Buffer.Read<uint8_t>();
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
 				uint32_t PortraitID = Buffer.Read<uint32_t>();
 				int32_t Experience = Buffer.Read<int32_t>();

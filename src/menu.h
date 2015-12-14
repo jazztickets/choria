@@ -18,9 +18,9 @@
 #pragma once
 
 // Libraries
-#include <string>
-#include <constants.h>
 #include <packet.h>
+#include <string>
+#include <vector>
 
 // Forward Declarations
 class _Element;
@@ -103,13 +103,13 @@ class _Menu {
 		void ChangeLayout(const std::string &ElementIdentifier);
 
 		uint32_t GetSelectedPortraitID();
-		int GetSelectedCharacter();
+		size_t GetSelectedCharacter();
 		void LoadPortraitButtons();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();
 		void CreateCharacter();
 		void ConnectToHost();
-		void PlayCharacter(int Slot);
+		void PlayCharacter(size_t Slot);
 		void SendAccountInfo(bool CreateAccount=false);
 		void RequestCharacterList();
 
@@ -124,7 +124,7 @@ class _Menu {
 
 		// UI
 		_Element *CurrentLayout;
-		_CharacterSlot CharacterSlots[ACCOUNT_MAX_CHARACTER_SLOTS];
+		std::vector<_CharacterSlot> CharacterSlots;
 
 		// Double click
 		_Element *PreviousClick;

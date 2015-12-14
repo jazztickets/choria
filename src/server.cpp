@@ -394,7 +394,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	// Get character information
 	std::string Name(Data.ReadString());
 	uint32_t PortraitID = Data.Read<uint32_t>();
-	uint32_t Slot = Data.Read<uint32_t>();
+	uint32_t Slot = Data.Read<uint8_t>();
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
 
@@ -425,7 +425,7 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Get delete slot
-	int32_t Slot = Data.Read<int32_t>();
+	uint32_t Slot = Data.Read<uint8_t>();
 	uint32_t CharacterID = 0;
 
 	// Get character id
@@ -444,21 +444,20 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Read packet
-	int Slot = Data.Read<char>();
+	uint32_t Slot = Data.Read<uint8_t>();
 	uint32_t MapID = 0;
 	std::string Name;
 
 	// Get character info
-	std::stringstream Query;
-	Query << "SELECT id, map_id, name FROM character WHERE account_id = " << Peer->AccountID << " and slot = " << Slot;
-	Save->Database->PrepareQuery(Query.str());
+	Save->Database->PrepareQuery("SELECT id, map_id, name FROM character WHERE account_id = @account_id and slot = @slot");
+	Save->Database->BindInt(1, Peer->AccountID);
+	Save->Database->BindInt(2, Slot);
 	if(Save->Database->FetchRow()) {
-		Peer->CharacterID = (uint32_t)Save->Database->GetInt<int>("id");
-		MapID = (uint32_t)Save->Database->GetInt<int>("map_id");
+		Peer->CharacterID = Save->Database->GetInt<uint32_t>("id");
+		MapID = Save->Database->GetInt<uint32_t>("map_id");
 		Name = Save->Database->GetString("name");
 	}
 	Save->Database->CloseQuery();
-	Query.str("");
 
 	// Check for valid character id
 	if(!Peer->CharacterID) {
@@ -557,7 +556,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Save->Database->PrepareQuery("SELECT slot, name, portrait_id, experience FROM character WHERE account_id = @account_id");
 	Save->Database->BindInt(1, Peer->AccountID);
 	while(Save->Database->FetchRow()) {
-		Packet.Write<int32_t>(Save->Database->GetInt<int>("slot"));
+		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Save->Database->GetInt<uint32_t>("portrait_id"));
 		Packet.Write<int32_t>(Save->Database->GetInt<int>("experience"));
