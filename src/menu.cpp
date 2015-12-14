@@ -759,7 +759,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 		case PacketType::CHARACTERS_LIST: {
 
 			// Get count
-			int CharacterCount = Buffer.Read<char>();
+			int CharacterCount = Buffer.Read<uint8_t>();
 
 			// Reset character slots
 			for(int i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {

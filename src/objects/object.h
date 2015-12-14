@@ -119,8 +119,8 @@ class _Object {
 		// Inventory
 		void RefreshActionBarCount();
 		bool UseActionWorld(_Scripting *Scripting, uint8_t Slot);
-		bool UsePotionWorld(int Slot);
-		bool UseInventory(int Slot);
+		bool UsePotionWorld(size_t Slot);
+		bool UseInventory(size_t Slot);
 
 		// Movement
 		bool AcceptingMoveInput();
@@ -140,7 +140,7 @@ class _Object {
 		void StopBattle();
 
 		// Trader
-		void AcceptTrader(std::vector<int> &Slots, int RewardSlot);
+		void AcceptTrader(_Buffer &Data, std::vector<int> &Slots, int RewardSlot);
 
 		// Map
 		const _Tile *GetTile();

@@ -545,13 +545,13 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Save->Database->PrepareQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
 	Save->Database->BindInt(1, Peer->AccountID);
 	Save->Database->FetchRow();
-	int CharacterCount = Save->Database->GetInt<int>(0);
+	uint8_t CharacterCount = Save->Database->GetInt<uint8_t>(0);
 	Save->Database->CloseQuery();
 
 	// Create the packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_LIST);
-	Packet.Write<char>(CharacterCount);
+	Packet.Write<uint8_t>(CharacterCount);
 
 	// Generate a list of characters
 	Save->Database->PrepareQuery("SELECT slot, name, portrait_id, experience FROM character WHERE account_id = @account_id");
@@ -559,7 +559,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	while(Save->Database->FetchRow()) {
 		Packet.Write<int32_t>(Save->Database->GetInt<int>("slot"));
 		Packet.WriteString(Save->Database->GetString("name"));
-		Packet.Write<uint32_t>(Save->Database->GetInt<int>("portrait_id"));
+		Packet.Write<uint32_t>(Save->Database->GetInt<uint32_t>("portrait_id"));
 		Packet.Write<int32_t>(Save->Database->GetInt<int>("experience"));
 	}
 	Save->Database->CloseQuery();
@@ -707,8 +707,8 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
-	int OldSlot = Data.Read<char>();
-	int NewSlot = Data.Read<char>();
+	size_t OldSlot = Data.Read<uint8_t>();
+	size_t NewSlot = Data.Read<uint8_t>();
 
 	// Move items
 	{
@@ -728,29 +728,13 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 		Player->TradeAccepted = false;
 		TradePlayer->TradeAccepted = false;
 
-		// Send item updates to trading player
-		_InventorySlot *OldSlotItem = &Player->Inventory->Slots[OldSlot];
-		_InventorySlot *NewSlotItem = &Player->Inventory->Slots[NewSlot];
-
 		// Build packet
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
 
-		// Build packet
-		Data.Write<char>((char)NewSlot);
-		OldSlotItem->Serialize(Data);
-		Data.Write<char>((char)OldSlot);
-		NewSlotItem->Serialize(Data);
-/*
-		Packet.Write<char>(OldSlot);
-		Packet.Write<uint32_t>(OldItemID);
-		if(OldItemID > 0)
-			Packet.Write<char>(OldItemCount);
-
-		Packet.Write<char>(NewSlot);
-		Packet.Write<uint32_t>(NewItemID);
-		if(NewItemID > 0)
-			Packet.Write<char>(NewItemCount);*/
+		// Write slots
+		Player->Inventory->SerializeSlot(Packet, NewSlot);
+		Player->Inventory->SerializeSlot(Packet, OldSlot);
 
 		// Send updates
 		Network->SendPacket(Packet, TradePlayer->Peer);
@@ -765,7 +749,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Use an item
-	Player->UseInventory(Data.Read<char>());
+	Player->UseInventory(Data.Read<uint8_t>());
 }
 
 // Handle a player's inventory split stack request
@@ -775,14 +759,18 @@ void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
-	int Slot = Data.Read<char>();
-	int Count = Data.Read<char>();
+	uint8_t Slot = Data.Read<uint8_t>();
+	uint8_t Count = Data.Read<uint8_t>();
 
 	// Inventory only
-	if(!_Inventory::IsSlotBag(Slot))
+	if(_Inventory::IsSlotTrade(Slot))
 		return;
 
-	Player->Inventory->SplitStack(Slot, Count);
+	// Split items
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
+	if(Player->Inventory->SplitStack(Packet, Slot, Count))
+		Network->SendPacket(Packet, Peer);
 }
 
 // Handles a vendor exchange message
@@ -799,14 +787,12 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 	// Get info
 	bool Buy = Data.ReadBit();
-	int Amount = Data.Read<char>();
-	int Slot = Data.Read<char>();
-	if(Slot < 0)
-		return;
+	uint8_t Amount = Data.Read<uint8_t>();
+	size_t Slot = Data.Read<uint8_t>();
 
 	// Update player
 	if(Buy) {
-		if(Slot >= (int)Vendor->Items.size())
+		if(Slot >= Vendor->Items.size())
 			return;
 
 		// Get optional inventory slot
@@ -830,7 +816,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		if(Item && Item->Item) {
 			int Price = Item->Item->GetPrice(Vendor, Amount, Buy);
 			Player->UpdateGold(Price);
-			Player->Inventory->UpdateInventory(Slot, -Amount);
+			Player->Inventory->DecrementItemCount(Slot, -Amount);
 		}
 	}
 }
@@ -848,10 +834,11 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	if(RewardSlot == -1)
 		return;
 
-	// Exchange items
-	Player->AcceptTrader(RequiredItemSlots, RewardSlot);
-	Player->Trader = nullptr;
-	Player->CalculateStats();
+	// Exchange items and notify client
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
+	Player->AcceptTrader(Packet, RequiredItemSlots, RewardSlot);
+	Network->SendPacket(Packet, Peer);
 }
 
 // Handle a skill bar change
@@ -1223,14 +1210,8 @@ void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::ve
 // Adds trade item information to a packet
 void _Server::BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold) {
 	Packet.Write<int32_t>(Gold);
-	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
-		if(Player->Inventory->Slots[i].Item) {
-			Packet.Write<uint32_t>(Player->Inventory->Slots[i].Item->ID);
-			Packet.Write<uint8_t>(Player->Inventory->Slots[i].Count);
-		}
-		else
-			Packet.Write<uint32_t>(0);
-	}
+	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
+		Player->Inventory->SerializeSlot(Packet, i);
 }
 
 // Sends information to another player about items they're trading

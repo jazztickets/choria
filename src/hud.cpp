@@ -132,7 +132,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 						if(Input.ModKeyDown(KMOD_CTRL))
-							SplitStack(Tooltip.Slot, 1);
+							SplitStack((uint8_t)Tooltip.Slot, 1);
 						else
 							Cursor = Tooltip;
 					}
@@ -144,7 +144,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						else if(Player->UseInventory(Tooltip.Slot)) {
 							_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
-							Packet.Write<char>((char)Tooltip.Slot);
+							Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
 							ClientState.Network->SendPacket(Packet);
 						}
 						else {
@@ -217,8 +217,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			ClientState.Network->SendPacket(Packet);
-			Player->AcceptTrader(RequiredItemSlots, RewardItemSlot);
-			Player->CalculateStats();
 			CloseWindows();
 		}
 		// Cancel trader button
@@ -243,8 +241,8 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							if(Tooltip.Slot >= 0) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
-								Packet.Write<char>((char)Cursor.Slot);
-								Packet.Write<char>((char)Tooltip.Slot);
+								Packet.Write<uint8_t>((uint8_t)Cursor.Slot);
+								Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
 								ClientState.Network->SendPacket(Packet);
 							}
 						break;
@@ -1273,8 +1271,8 @@ void _HUD::BuyItem(_Cursor *Item, int TargetSlot) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 		Packet.WriteBit(1);
-		Packet.Write<char>((char)Item->Count);
-		Packet.Write<char>((char)Item->Slot);
+		Packet.Write<uint8_t>((uint8_t)Item->Count);
+		Packet.Write<uint8_t>((uint8_t)Item->Slot);
 		Packet.Write<char>((char)TargetSlot);
 		ClientState.Network->SendPacket(Packet);
 
@@ -1290,14 +1288,14 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	// Update player
 	int Price = Item->Item->GetPrice(Player->Vendor, Amount, 0);
 	Player->UpdateGold(Price);
-	bool Deleted = Player->Inventory->UpdateInventory(Item->Slot, -Amount);
+	bool Deleted = Player->Inventory->DecrementItemCount(Item->Slot, -Amount);
 
 	// Notify server
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
-	Packet.Write<char>((char)Amount);
-	Packet.Write<char>((char)Item->Slot);
+	Packet.Write<uint8_t>((uint8_t)Amount);
+	Packet.Write<uint8_t>((uint8_t)Item->Slot);
 	ClientState.Network->SendPacket(Packet);
 
 	if(Deleted)
@@ -1529,20 +1527,19 @@ void _HUD::UpdateTradeStatus(bool Accepted) {
 }
 
 // Split a stack of items
-void _HUD::SplitStack(int Slot, int Count) {
+void _HUD::SplitStack(uint8_t Slot, uint8_t Count) {
 
-	// Split only inventory items
-	if(!_Inventory::IsSlotBag(Slot))
+	// Don't split trade items
+	if(_Inventory::IsSlotTrade(Slot))
 		return;
 
 	// Build packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_SPLIT);
-	Packet.Write<char>((char)Slot);
-	Packet.Write<char>((char)Count);
+	Packet.Write<uint8_t>(Slot);
+	Packet.Write<uint8_t>(Count);
 
 	ClientState.Network->SendPacket(Packet);
-	Player->Inventory->SplitStack(Slot, Count);
 }
 
 // Return true if player is typing gold

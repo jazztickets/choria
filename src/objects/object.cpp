@@ -664,7 +664,7 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 		return true;
 	}
 	else if(ActionBar[Slot].Item) {
-		int Index = -1;
+		size_t Index;
 		if(Inventory->FindItem(ActionBar[Slot].Item, Index)) {
 			if(UseInventory(Index))
 				return true;
@@ -675,7 +675,7 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 }
 
 // Uses an item from the inventory
-bool _Object::UseInventory(int Slot) {
+bool _Object::UseInventory(size_t Slot) {
 	const _Item *Item = Inventory->GetBagItem(Slot);
 	if(Item == nullptr)
 		return false;
@@ -706,21 +706,30 @@ float _Object::GetNextLevelPercent() const {
 }
 
 // Accept a trade from a trader
-void _Object::AcceptTrader(std::vector<int> &Slots, int RewardSlot) {
+void _Object::AcceptTrader(_Buffer &Data, std::vector<int> &Slots, int RewardSlot) {
 	if(!Trader)
 		return;
 
 	// Trade in required items
+	Data.Write<uint8_t>((uint8_t)Trader->TraderItems.size() + 1);
 	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++) {
-		Inventory->UpdateInventory(Slots[i], -Trader->TraderItems[i].Count);
+		Inventory->DecrementItemCount(Slots[i], -Trader->TraderItems[i].Count);
+		Data.Write<uint8_t>((uint8_t)Slots[i]);
+		Inventory->Slots[Slots[i]].Serialize(Data);
 	}
 
 	// Give player reward
 	Inventory->AddItem(Trader->RewardItem, Trader->Count, RewardSlot);
+	Data.Write<uint8_t>((uint8_t)RewardSlot);
+	Inventory->Slots[RewardSlot].Serialize(Data);
+
+	// Update player
+	Trader = nullptr;
+	CalculateStats();
 }
 
 // Uses a potion in the world
-bool _Object::UsePotionWorld(int Slot) {
+bool _Object::UsePotionWorld(size_t Slot) {
 	const _Item *Item = Inventory->GetBagItem(Slot);
 	if(Item == nullptr)
 		return false;
@@ -735,7 +744,7 @@ bool _Object::UsePotionWorld(int Slot) {
 		UpdateHealth(HealthRestore);
 		UpdateMana(ManaRestore);
 		InvisPower = ItemInvisPower;
-		Inventory->UpdateInventory(Slot, -1);
+		Inventory->DecrementItemCount(Slot, -1);
 		return true;
 	}
 

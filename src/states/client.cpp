@@ -440,6 +440,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::INVENTORY_SWAP:
 			HandleInventorySwap(Data);
 		break;
+		case PacketType::INVENTORY_UPDATE:
+			HandleInventoryUpdate(Data);
+		break;
 		case PacketType::TRADE_REQUEST:
 			HandleTradeRequest(Data);
 		break;
@@ -742,8 +745,8 @@ void _ClientState::HandleInventoryUse(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	int Slot = Data.Read<char>();
-	Player->Inventory->UpdateInventory(Slot, -1);
+	size_t Slot = Data.Read<uint8_t>();
+	Player->Inventory->DecrementItemCount(Slot, -1);
 }
 
 // Handles a inventory swap
@@ -751,14 +754,21 @@ void _ClientState::HandleInventorySwap(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	int NewSlot = Data.Read<char>();
-	Player->Inventory->Slots[NewSlot].Unserialize(Data, Stats);
-
-	int OldSlot = Data.Read<char>();
-	Player->Inventory->Slots[OldSlot].Unserialize(Data, Stats);
+	Player->Inventory->UnserializeSlot(Data, Stats);
+	Player->Inventory->UnserializeSlot(Data, Stats);
 
 	HUD->ResetAcceptButton();
 	Player->CalculateStats();
+}
+
+// Handle an inventory update
+void _ClientState::HandleInventoryUpdate(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	uint8_t Count = Data.Read<uint8_t>();
+	for(uint8_t i = 0; i < Count; i++)
+		Player->Inventory->UnserializeSlot(Data, Stats);
 }
 
 // Handles a trade request
@@ -776,14 +786,8 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 
 	// Get gold offer
 	Player->TradePlayer->TradeGold = Data.Read<int32_t>();
-	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
-		uint32_t ItemID = Data.Read<uint32_t>();
-		int Count = 0;
-		if(ItemID != 0)
-			Count = Data.Read<char>();
-
-		Player->TradePlayer->Inventory->Slots[i] = _InventorySlot(Stats->Items[ItemID], Count);
-	}
+	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
+		Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 }
 
 // Handles a trade cancel
@@ -802,13 +806,9 @@ void _ClientState::HandleTradeItem(_Buffer &Data) {
 	if(!Player->TradePlayer)
 		return;
 
-	// Get old slot information
-	int OldSlot = Data.Read<char>();
-	Player->TradePlayer->Inventory->Slots[OldSlot].Unserialize(Data, Stats);
-
-	// Get new slot information
-	int NewSlot = Data.Read<char>();
-	Player->TradePlayer->Inventory->Slots[NewSlot].Unserialize(Data, Stats);
+	// Get slot updates
+	Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
+	Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 
 	// Reset agreement
 	Player->TradePlayer->TradeAccepted = false;
@@ -849,14 +849,8 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 	// Get gold offer
 	int Gold = Data.Read<int32_t>();
 	Player->Gold = Gold;
-	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
-		uint32_t ItemID = Data.Read<uint32_t>();
-		uint8_t Count = 0;
-		if(ItemID != 0)
-			Count = Data.Read<uint8_t>();
-
-		Player->Inventory->Slots[i] = _InventorySlot(Stats->Items[ItemID], Count);
-	}
+	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
+		Player->Inventory->UnserializeSlot(Data, Stats);
 
 	// Move traded items to bag
 	Player->Inventory->MoveTradeToInventory();

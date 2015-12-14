@@ -516,9 +516,9 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 	ActionResult.ItemUsed = SourceFighter->BattleAction.Item;
 
 	// Use item
-	int Index = -1;
+	size_t Index;
 	if(ActionResult.ItemUsed && ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
-		ActionResult.Source.Object->Inventory->UpdateInventory(Index, -1);
+		ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
 	}
 
 	// Apply costs
@@ -627,9 +627,9 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 
 		// Use item on client
 		if(ClientPlayer == ActionResult.Source.Object && ActionResult.ItemUsed) {
-			int Index = -1;
+			size_t Index;
 			if(ClientPlayer->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
-				ClientPlayer->Inventory->UpdateInventory(Index, -1);
+				ClientPlayer->Inventory->DecrementItemCount(Index, -1);
 				ClientPlayer->RefreshActionBarCount();
 			}
 		}

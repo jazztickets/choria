@@ -64,31 +64,32 @@ class _Inventory {
 		_Inventory();
 
 		void Serialize(_Buffer &Data);
+		void SerializeSlot(_Buffer &Data, size_t Slot);
 		void Unserialize(_Buffer &Data, _Stats *Stats);
+		void UnserializeSlot(_Buffer &Data, _Stats *Stats);
 
-		bool FindItem(const _Item *Item, int &Slot);
+		bool FindItem(const _Item *Item, size_t &Slot);
 		int CountItem(const _Item *Item);
 
-		const _Item *GetBagItem(int Slot);
-		bool MoveInventory(_Buffer &Data, int OldSlot, int NewSlot);
-		bool UpdateInventory(int Slot, int Amount);
+		const _Item *GetBagItem(size_t Slot);
+		bool MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot);
+		bool DecrementItemCount(size_t Slot, int Amount);
 		int FindSlotForItem(const _Item *Item, int Count);
 		bool AddItem(const _Item *Item, int Count, int Slot);
-		bool IsEmptySlot(int Slot) { return Slots[Slot].Item == nullptr; }
 		void MoveTradeToInventory();
-		void SplitStack(int Slot, int Count);
+		bool SplitStack(_Buffer &Data, size_t Slot, int Count);
 
 		// Traders
 		int GetRequiredItemSlots(const _Trader *Trader, std::vector<int> &BagIndex);
 
-		_InventorySlot Slots[InventoryType::COUNT];
+		std::vector<_InventorySlot> Slots;
 
-		static bool IsSlotBag(int Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
-		static bool IsSlotTrade(int Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }
+		static bool IsSlotBag(size_t Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
+		static bool IsSlotTrade(size_t Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }
 
 	private:
 
-		bool CanEquipItem(int Slot, const _Item *Item);
-		void SwapItem(int Slot, int OldSlot);
+		bool CanEquipItem(size_t Slot, const _Item *Item);
+		void SwapItem(size_t Slot, size_t OldSlot);
 
 };

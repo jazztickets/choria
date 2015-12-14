@@ -24,10 +24,7 @@
 // Constructor
 _Inventory::_Inventory() {
 
-	for(int i = 0; i < InventoryType::COUNT; i++) {
-		Slots[i].Item = nullptr;
-		Slots[i].Count = 0;
-	}
+	Slots.resize(InventoryType::COUNT);
 }
 
 // Serialize
@@ -51,20 +48,31 @@ void _Inventory::Serialize(_Buffer &Data) {
 
 }
 
+// Serialize a inventory slot
+void _Inventory::SerializeSlot(_Buffer &Data, size_t Slot) {
+	Data.Write<uint8_t>((uint8_t)Slot);
+	Slots[Slot].Serialize(Data);
+}
+
 // Unserialize
 void _Inventory::Unserialize(_Buffer &Data, _Stats *Stats) {
 
 	// Read items
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
-		uint8_t Slot = Data.Read<uint8_t>();
-		Slots[Slot].Unserialize(Data, Stats);
+		UnserializeSlot(Data, Stats);
 	}
 }
 
+// Unserialize one slot
+void _Inventory::UnserializeSlot(_Buffer &Data, _Stats *Stats) {
+	size_t Slot = Data.Read<uint8_t>();
+	Slots[Slot].Unserialize(Data, Stats);
+}
+
 // Search for an item in the inventory
-bool _Inventory::FindItem(const _Item *Item, int &Slot) {
-	for(int i = InventoryType::BAG; i < InventoryType::TRADE; i++) {
+bool _Inventory::FindItem(const _Item *Item, size_t &Slot) {
+	for(size_t i = InventoryType::BAG; i < InventoryType::TRADE; i++) {
 		if(Slots[i].Item == Item) {
 			Slot = i;
 			return true;
@@ -77,7 +85,7 @@ bool _Inventory::FindItem(const _Item *Item, int &Slot) {
 // Count the number of a certain item in inventory
 int _Inventory::CountItem(const _Item *Item) {
 	int Count = 0;
-	for(int i = InventoryType::BAG; i < InventoryType::TRADE; i++) {
+	for(size_t i = InventoryType::BAG; i < InventoryType::TRADE; i++) {
 		if(Slots[i].Item == Item)
 			Count += Slots[i].Count;
 	}
@@ -86,7 +94,7 @@ int _Inventory::CountItem(const _Item *Item) {
 }
 
 // Gets an item from the inventory bag
-const _Item *_Inventory::GetBagItem(int Slot) {
+const _Item *_Inventory::GetBagItem(size_t Slot) {
 
 	// Check for bad slots
 	if(Slot < InventoryType::BAG || Slot >= InventoryType::TRADE || !Slots[Slot].Item)
@@ -96,7 +104,7 @@ const _Item *_Inventory::GetBagItem(int Slot) {
 }
 
 // Checks if an item can be equipped
-bool _Inventory::CanEquipItem(int Slot, const _Item *Item) {
+bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 	if(!Item)
 		return true;
 
@@ -135,7 +143,7 @@ bool _Inventory::CanEquipItem(int Slot, const _Item *Item) {
 }
 
 // Moves an item from one slot to another
-bool _Inventory::MoveInventory(_Buffer &Data, int OldSlot, int NewSlot) {
+bool _Inventory::MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot) {
 	if(OldSlot == NewSlot)
 		return false;
 
@@ -166,16 +174,14 @@ bool _Inventory::MoveInventory(_Buffer &Data, int OldSlot, int NewSlot) {
 	}
 
 	// Build packet
-	Data.Write<char>((char)NewSlot);
-	Slots[NewSlot].Serialize(Data);
-	Data.Write<char>((char)OldSlot);
-	Slots[OldSlot].Serialize(Data);
+	SerializeSlot(Data, NewSlot);
+	SerializeSlot(Data, OldSlot);
 
 	return true;
 }
 
 // Swaps two items
-void _Inventory::SwapItem(int Slot, int OldSlot) {
+void _Inventory::SwapItem(size_t Slot, size_t OldSlot) {
 	_InventorySlot TempItem;
 
 	// Swap items
@@ -185,7 +191,7 @@ void _Inventory::SwapItem(int Slot, int OldSlot) {
 }
 
 // Updates an item's count, deleting if necessary
-bool _Inventory::UpdateInventory(int Slot, int Amount) {
+bool _Inventory::DecrementItemCount(size_t Slot, int Amount) {
 
 	Slots[Slot].Count += Amount;
 	if(Slots[Slot].Count <= 0) {
@@ -256,23 +262,26 @@ bool _Inventory::AddItem(const _Item *Item, int Count, int Slot) {
 // Moves the player's trade items to their bag
 void _Inventory::MoveTradeToInventory() {
 
-	for(int i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
+	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
 		if(Slots[i].Item && AddItem(Slots[i].Item, Slots[i].Count, -1))
 			Slots[i].Item = nullptr;
 	}
 }
 
 // Splits a stack
-void _Inventory::SplitStack(int Slot, int Count) {
-	if(Slot < 0 || Slot >= InventoryType::COUNT)
-		return;
+bool _Inventory::SplitStack(_Buffer &Data, size_t Slot, int Count) {
+	if(Slot >= Slots.size())
+		return false;
 
 	// Make sure stack is large enough
 	_InventorySlot *SplitItem = &Slots[Slot];
 	if(SplitItem->Item && SplitItem->Count > Count) {
 
-		// Find an empty slot or existing item
-		int EmptySlot = Slot;
+		// Find an empty slot or existing item starting from bag
+		size_t EmptySlot = Slot;
+		if(EmptySlot < InventoryType::BAG)
+			EmptySlot = InventoryType::BAG;
+
 		_InventorySlot *Item;
 		do {
 			EmptySlot++;
@@ -286,8 +295,17 @@ void _Inventory::SplitStack(int Slot, int Count) {
 		if(EmptySlot != Slot) {
 			SplitItem->Count -= Count;
 			AddItem(SplitItem->Item, Count, EmptySlot);
+
+			// Write old and new slot
+			Data.Write<uint8_t>(2);
+			SerializeSlot(Data, Slot);
+			SerializeSlot(Data, EmptySlot);
+
+			return true;
 		}
 	}
+
+	return false;
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
@@ -303,7 +321,7 @@ int _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<int> &Ba
 		BagIndex[i] = -1;
 
 		// Search for the required item
-		for(int j = InventoryType::HEAD; j < InventoryType::TRADE; j++) {
+		for(size_t j = InventoryType::HEAD; j < InventoryType::TRADE; j++) {
 			_InventorySlot *InventoryItem = &Slots[j];
 			if(InventoryItem->Item == RequiredItem && InventoryItem->Count >= RequiredCount) {
 				BagIndex[i] = j;

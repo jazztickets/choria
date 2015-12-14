@@ -161,7 +161,7 @@ class _HUD {
 		void SendTradeCancel();
 		void UpdateAcceptButton();
 
-		void SplitStack(int Slot, int Count);
+		void SplitStack(uint8_t Slot, uint8_t Count);
 
 		// Objects
 		_Object *Player;
