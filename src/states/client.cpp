@@ -772,6 +772,8 @@ void _ClientState::HandleInventoryUpdate(_Buffer &Data) {
 	uint8_t Count = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < Count; i++)
 		Player->Inventory->UnserializeSlot(Data, Stats);
+
+	Player->CalculateStats();
 }
 
 // Handle gold update
@@ -863,6 +865,7 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 	// Get gold offer
 	Player->Gold = Data.Read<int32_t>();
 	Player->Inventory->Unserialize(Data, Stats);
+	Player->CalculateStats();
 
 	// Close window
 	HUD->CloseTrade(false);
