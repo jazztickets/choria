@@ -266,7 +266,7 @@ bool _Inventory::AddItem(const _Item *Item, int Count, size_t Slot) {
 void _Inventory::MoveTradeToInventory() {
 
 	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
-		if(Slots[i].Item && AddItem(Slots[i].Item, Slots[i].Count, Slots.size()))
+		if(Slots[i].Item && AddItem(Slots[i].Item, Slots[i].Count))
 			Slots[i].Item = nullptr;
 	}
 }

@@ -939,7 +939,7 @@ void _Battle::ServerEndBattle() {
 		// Write items
 		for(auto &ItemID : Fighter->ItemDropsReceived) {
 			Packet.Write<uint32_t>(ItemID);
-			Fighter->Inventory->AddItem(Stats->Items[ItemID], 1, -1);
+			Fighter->Inventory->AddItem(Stats->Items[ItemID], 1);
 		}
 		Fighter->ItemDropsReceived.clear();
 
@@ -969,7 +969,7 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 		uint32_t ItemID = Data.Read<uint32_t>();
 		const _Item *Item = Stats->Items[ItemID];
 		ClientItemDrops.push_back(Item);
-		ClientPlayer->Inventory->AddItem(Item, 1, -1);
+		ClientPlayer->Inventory->AddItem(Item, 1);
 	}
 
 	// Check win or death

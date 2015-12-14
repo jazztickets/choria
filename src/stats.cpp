@@ -228,7 +228,7 @@ void _Stats::LoadTraders() {
 	// Get traders
 	_Trader Trader;
 	while(Database->FetchRow()) {
-		Trader.ID = Database->GetInt<int>("id");
+		Trader.ID = Database->GetInt<uint32_t>("id");
 		Trader.Name = Database->GetString("name");
 		Trader.RewardItem = Items[Database->GetInt<uint32_t>("item_id")];
 		Trader.Count = Database->GetInt<int>("count");
