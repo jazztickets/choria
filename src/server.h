@@ -96,12 +96,12 @@ class _Server {
 		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
 		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
 		void HandleActionBarUse(_Buffer &Data, _Peer *Peer);
+		void HandleActionBarChanged(_Buffer &Data, _Peer *Peer);
 		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
 		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
 		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
 		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
 		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
-		void HandleActionBarChanged(_Buffer &Data, _Peer *Peer);
 		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
 		void HandleChatMessage(_Buffer &Data, _Peer *Peer);
 		void HandleTradeRequest(_Buffer &Data, _Peer *Peer);
@@ -117,7 +117,6 @@ class _Server {
 		void SendPlayerPosition(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
 		void RemovePlayerFromBattle(_Object *Player);
-		void BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 
 		// Threading

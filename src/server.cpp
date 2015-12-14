@@ -496,6 +496,20 @@ void _Server::HandleActionBarUse(_Buffer &Data, _Peer *Peer) {
 		SendHUD(Player->Peer);
 }
 
+// Handle a skill bar change
+void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Read skills
+	for(size_t i = 0; i < Player->ActionBar.size(); i++)
+		Player->ActionBar[i].Unserialize(Data, Stats);
+
+	Player->CalculateStats();
+}
+
 // Handle a chat message
 void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
@@ -858,7 +872,6 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 			// Update items
 			Player->Inventory->DecrementItemCount(Slot, -Amount);
-
 			{
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
@@ -888,20 +901,6 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 	Player->AcceptTrader(Packet, RequiredItemSlots, RewardSlot);
 	Network->SendPacket(Packet, Peer);
-}
-
-// Handle a skill bar change
-void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
-		return;
-
-	_Object *Player = Peer->Object;
-
-	// Read skills
-	for(size_t i = 0; i < Player->ActionBar.size(); i++)
-		Player->ActionBar[i].Unserialize(Data, Stats);
-
-	Player->CalculateStats();
 }
 
 // Handles a skill adjust
@@ -1046,20 +1045,7 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			Player->UpdateGold(TradePlayer->TradeGold - Player->TradeGold);
 			TradePlayer->UpdateGold(Player->TradeGold - TradePlayer->TradeGold);
 
-			// Send packet to players
-			{
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				BuildTradeItemsPacket(Player, Packet, Player->Gold);
-				Network->SendPacket(Packet, Player->Peer);
-			}
-			{
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				BuildTradeItemsPacket(TradePlayer, Packet, TradePlayer->Gold);
-				Network->SendPacket(Packet, TradePlayer->Peer);
-			}
-
+			// Move items to inventory and reset
 			Player->WaitingForTrade = false;
 			Player->TradePlayer = nullptr;
 			Player->TradeGold = 0;
@@ -1068,6 +1054,23 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			TradePlayer->TradePlayer = nullptr;
 			TradePlayer->TradeGold = 0;
 			TradePlayer->Inventory->MoveTradeToInventory();
+
+			// Send packet to players
+			{
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
+				Packet.Write<int32_t>(Player->Gold);
+				Player->Inventory->Serialize(Packet);
+				Network->SendPacket(Packet, Player->Peer);
+			}
+			{
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
+				Packet.Write<int32_t>(TradePlayer->Gold);
+				TradePlayer->Inventory->Serialize(Packet);
+				Network->SendPacket(Packet, TradePlayer->Peer);
+			}
+
 		}
 		else {
 
@@ -1256,13 +1259,6 @@ void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::ve
 	Network->SendPacket(Packet, Peer);
 }
 
-// Adds trade item information to a packet
-void _Server::BuildTradeItemsPacket(_Object *Player, _Buffer &Packet, int Gold) {
-	Packet.Write<int32_t>(Gold);
-	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
-		Player->Inventory->SerializeSlot(Packet, i);
-}
-
 // Sends information to another player about items they're trading
 void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
@@ -1270,7 +1266,10 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
 	Packet.Write<NetworkIDType>(Sender->NetworkID);
-	BuildTradeItemsPacket(Sender, Packet, Sender->TradeGold);
+	Packet.Write<int32_t>(Sender->TradeGold);
+	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
+		Sender->Inventory->SerializeSlot(Packet, i);
+
 	Network->SendPacket(Packet, Receiver->Peer);
 }
 

@@ -57,6 +57,9 @@ void _Inventory::SerializeSlot(_Buffer &Data, size_t Slot) {
 // Unserialize
 void _Inventory::Unserialize(_Buffer &Data, _Stats *Stats) {
 
+	// Reset inventory
+	std::fill(Slots.begin(), Slots.end(), _InventorySlot(nullptr, 0));
+
 	// Read items
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {

@@ -857,15 +857,12 @@ void _ClientState::HandleTradeAccept(_Buffer &Data) {
 
 // Handles a trade exchange
 void _ClientState::HandleTradeExchange(_Buffer &Data) {
+	if(!Player)
+		return;
 
 	// Get gold offer
-	int Gold = Data.Read<int32_t>();
-	Player->Gold = Gold;
-	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
-		Player->Inventory->UnserializeSlot(Data, Stats);
-
-	// Move traded items to bag
-	Player->Inventory->MoveTradeToInventory();
+	Player->Gold = Data.Read<int32_t>();
+	Player->Inventory->Unserialize(Data, Stats);
 
 	// Close window
 	HUD->CloseTrade(false);
