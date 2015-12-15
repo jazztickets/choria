@@ -313,9 +313,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::BATTLE_SETACTION:
 			HandleBattleAction(Data, Peer);
 		break;
-		case PacketType::BATTLE_CHANGETARGET:
-			HandleBattleChangeTarget(Data, Peer);
-		break;
 		case PacketType::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
 		break;
@@ -1132,19 +1129,6 @@ void _Server::HandleBattleAction(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	Player->Battle->ServerHandleAction(Player, Data);
-}
-
-// Handles battle target changes
-void _Server::HandleBattleChangeTarget(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
-		return;
-
-	//_Object *Player = Peer->Object;
-	//if(!Player->Battle)
-	//	return;
-
-	//int BattleTargetID = Data.Read<char>();
-	//Player->BattleTarget = Player->Battle->GetObjectByID(BattleTargetID);
 }
 
 // The client is done with the battle results screen

@@ -16,6 +16,7 @@ function Skill_Attack.Use(Level, Source, Target, Result)
 
 	Result.TargetHealthChange = -Damage
 	--Result.Buff = Buffs["Buff_Bleeding"]
+	--Result.BuffDuration = 5
 
 	return Result
 end

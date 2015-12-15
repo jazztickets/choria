@@ -59,6 +59,8 @@ struct _ActionResult {
 		SkillUsed(nullptr),
 		ItemUsed(nullptr),
 		Buff(nullptr),
+		BuffLevel(0),
+		BuffDuration(0),
 		Time(0.0),
 		Scope(ScopeType::ALL) { }
 
@@ -70,6 +72,8 @@ struct _ActionResult {
 	const _Skill *SkillUsed;
 	const _Item *ItemUsed;
 	const _Buff *Buff;
+	int BuffLevel;
+	int BuffDuration;
 	double Time;
 	ScopeType Scope;
 };

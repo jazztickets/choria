@@ -208,6 +208,16 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	lua_gettable(LuaState, -2);
 	ActionResult.Buff = (_Buff *)lua_touserdata(LuaState, -1);
 	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "BuffLevel");
+	lua_gettable(LuaState, -2);
+	ActionResult.BuffLevel = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "BuffDuration");
+	lua_gettable(LuaState, -2);
+	ActionResult.BuffDuration = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
 }
 
 // Get return value as stat change

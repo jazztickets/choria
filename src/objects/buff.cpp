@@ -30,7 +30,7 @@
 #include <iostream>
 
 // Draw tooltip
-void _Buff::DrawTooltip(_Scripting *Scripting) const {
+void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 	_Element *TooltipElement = Assets.Elements["element_buffs_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_buffs_tooltip_name"];
 	TooltipElement->SetVisible(true);
@@ -70,7 +70,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting) const {
 	// Get description
 	std::string Info = "";
 	if(Scripting->StartMethodCall(Script, "GetInfo")) {
-		Scripting->PushInt(1);
+		Scripting->PushInt(Level);
 		Scripting->MethodCall(1, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -93,9 +93,9 @@ void _Buff::DrawTooltip(_Scripting *Scripting) const {
 }
 
 // Call the update script
-void _Buff::Update(_Scripting *Scripting, _StatChange &StatChange) const {
+void _Buff::Update(_Scripting *Scripting, int Level, _StatChange &StatChange) const {
 	if(Scripting->StartMethodCall(Script, "Update")) {
-		Scripting->PushInt(1);
+		Scripting->PushInt(Level);
 		Scripting->PushObject(StatChange.Object);
 		Scripting->PushStatChange(&StatChange);
 		Scripting->MethodCall(3, 1);

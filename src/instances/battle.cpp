@@ -246,7 +246,7 @@ void _Battle::RenderBattle(double BlendFactor) {
 	if(HitElement) {
 		if(HitElement->Identifier == "buff") {
 			_StatusEffect *StatusEffect = (_StatusEffect *)HitElement->UserData;
-			StatusEffect->Buff->DrawTooltip(Scripting);
+			StatusEffect->Buff->DrawTooltip(Scripting, StatusEffect->Level);
 		}
 	}
 }
@@ -572,10 +572,12 @@ void _Battle::ServerResolveAction(_Object *SourceFighter) {
 		if(ActionResult.Buff) {
 			_StatusEffect *StatusEffect = new _StatusEffect();
 			StatusEffect->Buff = ActionResult.Buff;
-			StatusEffect->Count = 5;
+			StatusEffect->Level = ActionResult.BuffLevel;
+			StatusEffect->Count = ActionResult.BuffDuration;
 			ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
 
 			Packet.Write<uint32_t>(StatusEffect->Buff->ID);
+			Packet.Write<int>(StatusEffect->Level);
 			Packet.Write<int>(StatusEffect->Count);
 		}
 		else
@@ -648,6 +650,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		if(BuffID > 0) {
 			StatusEffect = new _StatusEffect();
 			StatusEffect->Buff = Stats->Buffs[BuffID];
+			StatusEffect->Level = Data.Read<int>();
 			StatusEffect->Count = Data.Read<int>();
 		}
 
@@ -681,7 +684,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEffect) {
 	_StatChange StatChange;
 	StatChange.Object = Object;
-	StatusEffect->Buff->Update(Scripting, StatChange);
+	StatusEffect->Buff->Update(Scripting, StatusEffect->Level, StatChange);
 	StatChange.Object->UpdateStats(StatChange);
 
 	// Send update
