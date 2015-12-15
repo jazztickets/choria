@@ -40,6 +40,7 @@ class _Atlas;
 class _Camera;
 class _Server;
 class _Stats;
+class _Factory;
 class _Peer;
 
 // Structures
@@ -83,7 +84,7 @@ class _Map {
 		void AllocateMap();
 		void InitAtlas(const std::string AtlasPath);
 
-		void Update(double FrameTime);
+		void Update(_Factory *Factory, double FrameTime);
 		void CheckEvents(_Object *Object);
 		void GetClockAsString(std::stringstream &Buffer);
 		void SetAmbientLightByClock();
@@ -102,12 +103,8 @@ class _Map {
 		void RemovePeer(const _Peer *Peer);
 
 		// Object management
-		NetworkIDType GenerateObjectID();
 		void SendObjectUpdates();
-		void DeleteObjects();
-		_Object *GetObjectByID(NetworkIDType ObjectID);
 		void AddObject(_Object *Object);
-		void AddObject(_Object *Object, NetworkIDType NetworkID);
 		void RemoveObject(const _Object *RemoveObject);
 		void SendObjectList(_Peer *Peer);
 		void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
@@ -161,9 +158,5 @@ class _Map {
 		// Network
 		std::list<const _Peer *> Peers;
 		NetworkIDType ObjectUpdateCount;
-
-		// Object creation
-		std::unordered_map<NetworkIDType, bool> ObjectIDs;
-		NetworkIDType NextObjectID;
 
 };

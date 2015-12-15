@@ -27,6 +27,7 @@
 #include <constants.h>
 #include <framework.h>
 #include <graphics.h>
+#include <factory.h>
 #include <menu.h>
 #include <camera.h>
 #include <scripting.h>
@@ -67,6 +68,8 @@ void _ClientState::Init() {
 	Time = 0.0;
 	Clock = 0.0;
 
+	Factory = new _Factory();
+
 	Stats = new _Stats();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
@@ -98,6 +101,7 @@ void _ClientState::Init() {
 void _ClientState::Close() {
 	Menu.Close();
 
+	delete Factory;
 	delete Scripting;
 	delete Battle;
 	delete Camera;
@@ -335,7 +339,7 @@ void _ClientState::Update(double FrameTime) {
 
 	// Update objects
 	Map->Clock = Clock;
-	Map->Update(FrameTime);
+	Map->Update(Factory, FrameTime);
 	if(Player->Moved) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
@@ -617,7 +621,7 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 		return;
 
 	// Get object
-	_Object *Object = Map->GetObjectByID(NetworkID);
+	_Object *Object = Factory->Objects[NetworkID];
 	if(Object) {
 		if(Battle)
 			Battle->RemoveFighter(Object);
@@ -649,7 +653,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 		int Invisible = Data.ReadBit();
 
 		// Find object
-		_Object *Object = Map->GetObjectByID(NetworkID);
+		_Object *Object = Factory->Objects[NetworkID];
 		if(Object) {
 			Object->Status = Status;
 
@@ -842,7 +846,7 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Get trading player
-	Player->TradePlayer = Map->GetObjectByID(NetworkID);
+	Player->TradePlayer = Factory->Objects[NetworkID];
 	if(!Player->TradePlayer)
 		return;
 
@@ -958,7 +962,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			int MaxMana = Data.Read<int32_t>();
 
 			// Get player object
-			Fighter = Map->GetObjectByID(NetworkID);
+			Fighter = Factory->Objects[NetworkID];
 			if(Fighter != nullptr) {
 				Fighter->InputState = 0;
 				Fighter->Position = Fighter->ServerPosition = Position;
@@ -1040,14 +1044,13 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	// Create object
-	_Object *Object = new _Object();
+	_Object *Object = Factory->CreateObjectWithID(NetworkID);
 	Object->Stats = Stats;
 	Object->Map = Map;
-	Object->NetworkID = NetworkID;
 	Object->UnserializeCreate(Data);
 
 	// Add to map
-	Map->AddObject(Object, Object->NetworkID);
+	Map->AddObject(Object);
 
 	return Object;
 }

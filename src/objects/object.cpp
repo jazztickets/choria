@@ -573,8 +573,8 @@ void _Object::Render(const _Object *ClientPlayer) {
 			Graphics.DrawSprite(DrawPosition, StatusTexture);
 		}
 
-		if(ClientPlayer != this) {
-			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
+		if(1 || ClientPlayer != this) {
+			Assets.Fonts["hud_small"]->DrawText((Name + " " + std::to_string(NetworkID)).c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
 		}
 	}
 }
@@ -628,7 +628,7 @@ const _Tile *_Object::GetTile() {
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
 	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
-	NextBattle = 1;
+	//NextBattle = 1;
 }
 
 // Stop a battle

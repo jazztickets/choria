@@ -24,6 +24,7 @@
 #include <instances/battle.h>
 #include <scripting.h>
 #include <save.h>
+#include <factory.h>
 #include <database.h>
 #include <buffer.h>
 #include <packet.h>
@@ -78,6 +79,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
+	Factory = new _Factory();
 	Save = new _Save();
 	Clock = Save->GetClock();
 
@@ -102,6 +104,7 @@ _Server::~_Server() {
 
 	Save->SaveClock(Clock);
 
+	delete Factory;
 	delete Scripting;
 	delete Save;
 	delete Thread;
@@ -154,7 +157,7 @@ void _Server::Update(double FrameTime) {
 	// Update maps
 	for(auto &Map : Maps) {
 		Map->Clock = Clock;
-		Map->Update(FrameTime);
+		Map->Update(Factory, FrameTime);
 	}
 
 	// Update maps
@@ -578,7 +581,6 @@ void _Server::SpawnPlayer(_Peer *Peer, uint32_t MapID, uint32_t EventType) {
 
 		// Create new player
 		Player = CreatePlayer(Peer);
-		Player->NetworkID = Map->GenerateObjectID();
 		Player->Map = Map;
 		Player->InvisPower = OldInvisPower;
 
@@ -639,7 +641,7 @@ _Map *_Server::GetMap(uint32_t MapID) {
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	// Create object
-	_Object *Player = new _Object();
+	_Object *Player = Factory->CreateObject();
 	Peer->Object = Player;
 	Player->CharacterID = Peer->CharacterID;
 	Player->Peer = Peer;
@@ -727,7 +729,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
-	_Object *Player = Peer->Object;
+	//_Object *Player = Peer->Object;
 
 	// Use an item
 	//Player->UseInventory(Data.Read<uint8_t>());
@@ -1253,7 +1255,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	Zone = 4;
+	Zone = 0;
 	if(!Zone)
 		return;
 

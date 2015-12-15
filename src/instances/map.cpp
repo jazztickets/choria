@@ -25,6 +25,7 @@
 #include <constants.h>
 #include <stats.h>
 #include <buffer.h>
+#include <factory.h>
 #include <texture.h>
 #include <assets.h>
 #include <atlas.h>
@@ -58,8 +59,7 @@ _Map::_Map() :
 	TileElementBufferID(0),
 	TileVertices(nullptr),
 	TileFaces(nullptr),
-	ObjectUpdateCount(0),
-	NextObjectID(0) {
+	ObjectUpdateCount(0) {
 
 }
 
@@ -73,7 +73,12 @@ _Map::~_Map() {
 		glDeleteBuffers(1, &TileElementBufferID);
 	}
 
-	DeleteObjects();
+	// Delete objects
+	for(auto &Object : Objects) {
+		delete Object;
+	}
+
+	Objects.clear();
 
 	// Delete map data
 	FreeMap();
@@ -135,7 +140,7 @@ void _Map::FreeMap() {
 }
 
 // Updates the map and sends object updates
-void _Map::Update(double FrameTime) {
+void _Map::Update(_Factory *Factory, double FrameTime) {
 	ObjectUpdateCount = 0;
 
 	// Update objects
@@ -155,7 +160,8 @@ void _Map::Update(double FrameTime) {
 				RemovePeer(Object->Peer);
 			}
 			RemoveObject(Object);
-			ObjectIDs[Object->NetworkID] = false;
+			if(Factory)
+				Factory->Objects[Object->NetworkID] = nullptr;
 
 			delete Object;
 			Iterator = Objects.erase(Iterator);
@@ -584,22 +590,6 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position) {
 	return !Tiles[Position.x][Position.y].Wall;
 }
 
-// Generate network id
-NetworkIDType _Map::GenerateObjectID() {
-
-	// Search for an empty slot
-	for(NetworkIDType i = 0; i <= std::numeric_limits<NetworkIDType>::max(); i++) {
-		if(ObjectIDs[NextObjectID] == false) {
-			ObjectIDs[NextObjectID] = true;
-			return NextObjectID;
-		}
-
-		NextObjectID++;
-	}
-
-	throw std::runtime_error("Ran out of object ids");
-}
-
 // Removes an object from the map
 void _Map::RemoveObject(const _Object *RemoveObject) {
 
@@ -627,52 +617,20 @@ void _Map::RemovePeer(const _Peer *Peer) {
 	}
 }
 
-// Delete all objects
-void _Map::DeleteObjects() {
-
-	// Delete objects
-	for(auto &Object : Objects) {
-		delete Object;
-	}
-
-	Objects.clear();
-	ObjectIDs.clear();
-	NextObjectID = 0;
-}
-
-// Get object by id
-_Object *_Map::GetObjectByID(NetworkIDType ObjectID) {
-	for(auto &Object : Objects) {
-		if(Object->NetworkID == ObjectID)
-			return Object;
-	}
-
-	return nullptr;
-}
-
 // Adds an object to the map
 void _Map::AddObject(_Object *Object) {
-	if(!Server)
-		return;
+	if(Server) {
 
-	// Create packet for the new object
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
-	Object->SerializeCreate(Packet);
+		// Create packet for the new object
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
+		Object->SerializeCreate(Packet);
 
-	// Notify other players of the new object
-	BroadcastPacket(Packet);
+		// Notify other players of the new object
+		BroadcastPacket(Packet);
+	}
 
 	// Add object to map
-	Objects.push_back(Object);
-}
-
-// Add object with network
-void _Map::AddObject(_Object *Object, NetworkIDType NetworkID) {
-	if(ObjectIDs[NetworkID])
-		throw std::runtime_error(std::string("NetworkID already taken: ") + std::to_string(NetworkID));
-
-	ObjectIDs[NetworkID] = true;
 	Objects.push_back(Object);
 }
 

@@ -23,6 +23,7 @@
 #include <memory>
 #include <thread>
 #include <list>
+#include <unordered_map>
 #include <glm/vec4.hpp>
 
 // Forward Declarations
@@ -30,6 +31,7 @@ class _ServerNetwork;
 class _Buffer;
 class _Peer;
 class _Map;
+class _Factory;
 class _Battle;
 class _Stats;
 class _Save;
@@ -73,7 +75,8 @@ class _Server {
 		// Scripting
 		_Scripting *Scripting;
 
-		// Map manager
+		// Objects
+		_Factory *Factory;
 		std::list<_Map *> Maps;
 		std::list<_Battle *>Battles;
 		uint8_t NextMapID;
