@@ -29,6 +29,7 @@
 class _Object;
 class _Item;
 class _Skill;
+class _StatusEffect;
 class _Element;
 class _TextBox;
 class _Action;
@@ -44,6 +45,7 @@ struct _Cursor {
 	void Reset() {
 		Item = nullptr;
 		Skill = nullptr;
+		StatusEffect = nullptr;
 		Cost = 0;
 		Count = 0;
 		Slot = (size_t)-1;
@@ -54,6 +56,7 @@ struct _Cursor {
 
 	const _Item *Item;
 	const _Skill *Skill;
+	const _StatusEffect *StatusEffect;
 	int Cost;
 	int Count;
 	size_t Slot;
@@ -81,7 +84,9 @@ class _HUD {
 			WINDOW_TRADETHEIRS,
 			WINDOW_TRADEYOURS,
 			WINDOW_SKILLS,
-			WINDOW_ACTIONBAR
+			WINDOW_ACTIONBAR,
+			WINDOW_BATTLE,
+			WINDOW_HUD_EFFECTS,
 		};
 
 		_HUD();

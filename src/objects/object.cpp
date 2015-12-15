@@ -27,6 +27,7 @@
 #include <buffer.h>
 #include <assets.h>
 #include <graphics.h>
+#include <hud.h>
 #include <random.h>
 #include <stats.h>
 #include <font.h>
@@ -65,6 +66,7 @@ _Object::_Object()
 	HealthAccumulator(0.0f),
 	ManaAccumulator(0.0f),
 	Battle(nullptr),
+	BattleElement(nullptr),
 	BattleSpeed(BATTLE_DEFAULTSPEED),
 	TurnTimer(0.0),
 	AITimer(1.0),
@@ -133,6 +135,8 @@ _Object::~_Object() {
 		delete StatusEffect;
 
 	delete Inventory;
+
+	RemoveBattleElement();
 }
 
 // Renders the fighter during a battle
@@ -144,37 +148,27 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	GlobalColor.a = Fade;
 
-	// Get slot ui element depending on side
-	_Element *Slot;
-	if(BattleSide == 0)
-		Slot = Assets.Elements["element_side_left"];
-	else
-		Slot = Assets.Elements["element_side_right"];
-
 	// Draw slot
-	Slot->Offset = BattleOffset;
-	Slot->CalculateBounds();
-	Slot->SetVisible(true);
-	Slot->Fade = Fade;
-	Slot->Render();
-	Slot->SetVisible(false);
+	BattleElement->Fade = Fade;
+	BattleElement->Render();
 
 	// Get slot center
-	glm::vec2 SlotPosition = (Slot->Bounds.Start + Slot->Bounds.End) / 2.0f;
+	glm::vec2 SlotPosition = BattleElement->Bounds.Start;
+	ResultPosition = SlotPosition + BattleElement->Size / 2.0f;
 
 	// Name
-	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), SlotPosition + glm::vec2(-Slot->Size.x/2, -Slot->Size.y/2 - 12), GlobalColor, LEFT_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), SlotPosition + glm::vec2(0, -12), GlobalColor, LEFT_BASELINE);
 	Graphics.SetColor(GlobalColor);
 
 	// Portrait
 	if(Portrait) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SlotPosition, Portrait, GlobalColor);
+		Graphics.DrawCenteredImage(SlotPosition + glm::vec2(Portrait->Size/2), Portrait, GlobalColor);
 	}
 
 	// Health/mana bars
 	glm::vec2 BarSize(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT);
-	glm::vec2 BarOffset(Slot->Size.x/2 + 10, -Slot->Size.y/2);
+	glm::vec2 BarOffset(BattleElement->Size.x + 10, 0);
 	float BarPaddingY = 6;
 
 	// Get health percent
@@ -185,7 +179,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::vec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
-	ResultPosition = SlotPosition;
 	float BarEndX = BarBounds.End.x;
 
 	// Draw empty bar
@@ -247,12 +240,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	if(ClientPlayer->BattleSide == BattleSide) {
 
 		if(BattleAction.Skill) {
-			glm::vec2 SkillUsingPosition = SlotPosition - glm::vec2(Portrait->Size.x/2 + BattleAction.Skill->Texture->Size.x/2 + 10, 0);
+			glm::vec2 SkillUsingPosition = SlotPosition + glm::vec2(-BattleAction.Skill->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture, GlobalColor);
 		}
 		else if(BattleAction.Item) {
-			glm::vec2 ItemUsingPosition = SlotPosition - glm::vec2(Portrait->Size.x/2 + BattleAction.Item->Texture->Size.x/2 + 10, 0);
+			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-BattleAction.Item->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(ItemUsingPosition, BattleAction.Item->Texture, GlobalColor);
 		}
@@ -272,17 +265,17 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			if(Time - (int)Time < 0.5f)
 				Color.a = 0.5f;
 
-			Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y), Texture, Color);
+			Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y + BattleElement->Size.y/2), Texture, Color);
 		}
 	}
 
 	// Draw status effects
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	glm::vec2 StatusPosition(SlotPosition + glm::vec2(-Slot->Size.x/2, Slot->Size.y/2 + 4));
+	glm::vec2 StatusPosition(glm::vec2(0, BattleElement->Size.y + 4));
 	for(auto &StatusEffect : StatusEffects) {
 		StatusEffect->BattleElement->Offset = StatusPosition;
 		StatusEffect->BattleElement->CalculateBounds();
-		Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect->Buff->Texture->Size/2), StatusEffect->Buff->Texture, GlobalColor);
+		Graphics.DrawImage(StatusEffect->BattleElement->Bounds, StatusEffect->Buff->Texture);
 		StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
 	}
 }
@@ -360,6 +353,43 @@ int _Object::GenerateDamage() {
 // Generate defense
 int _Object::GenerateDefense() {
 	return GetRandomInt(MinDefense, MaxDefense);
+}
+
+// Create a UI element for battle
+void _Object::CreateBattleElement(_Element *Parent) {
+	if(BattleElement)
+		throw std::runtime_error("_Object::CreateBattleElement: BattleElement already exists!");
+
+	BattleElement = new _Element();
+	if(BattleSide == 0)
+		BattleElement->Style = Assets.Styles["style_battle_slot_green"];
+	else
+		BattleElement->Style = Assets.Styles["style_battle_slot_red"];
+	BattleElement->Identifier = "battle_element";
+	BattleElement->Size = glm::vec2(64, 64);
+	BattleElement->Offset = BattleOffset;
+	BattleElement->Alignment = CENTER_MIDDLE;
+	BattleElement->UserCreated = true;
+	BattleElement->Visible = true;
+	BattleElement->UserData = (void *)_HUD::WINDOW_BATTLE;
+	BattleElement->Parent = Parent;
+	Parent->Children.push_back(BattleElement);
+}
+
+// Remove battle element
+void _Object::RemoveBattleElement() {
+
+	if(BattleElement) {
+		if(BattleElement->Parent)
+			BattleElement->Parent->RemoveChild(BattleElement);
+
+		for(auto &Child : BattleElement->Children) {
+			Child->Parent = nullptr;
+		}
+
+		delete BattleElement;
+		BattleElement = nullptr;
+	}
 }
 
 // Updates the player
@@ -977,6 +1007,17 @@ void _Object::CalculateFinalStats() {
 }
 
 _StatusEffect::~_StatusEffect() {
-	delete BattleElement;
-	delete HUDElement;
+	if(BattleElement) {
+		if(BattleElement->Parent)
+			BattleElement->Parent->RemoveChild(BattleElement);
+
+		delete BattleElement;
+	}
+
+	if(HUDElement) {
+		if(HUDElement->Parent)
+			HUDElement->Parent->RemoveChild(HUDElement);
+
+		delete HUDElement;
+	}
 }

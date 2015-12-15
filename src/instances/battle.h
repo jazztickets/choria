@@ -68,6 +68,7 @@ class _Battle {
 		// Objects
 		void AddFighter(_Object *Fighter, uint8_t Side);
 		void RemoveFighter(_Object *RemoveFighter);
+		void RemoveFighters();
 		_Object *GetObjectByID(uint8_t BattleID);
 		int GetPeerCount();
 
@@ -133,7 +134,6 @@ class _Battle {
 
 		// UI
 		_Element *BattleElement;
-		_Element *BattleEffectsElement;
 		_Element *BattleWinElement;
 		_Element *BattleLoseElement;
 		std::list<_ActionResult> ActionResults;

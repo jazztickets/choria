@@ -1275,6 +1275,14 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 		Battle->Scripting = Scripting;
 		Battles.push_back(Battle);
 
+		/*
+		for(int i = 0; i < 7; i++) {
+			_Object *Monster = new _Object();
+			Monster->DatabaseID = 1;
+			Stats->GetMonsterStats(1, Monster);
+			Battle->AddFighter(Monster, 0);
+		}*/
+
 		// Add players
 		Battle->AddFighter(Object, 0);
 

@@ -59,7 +59,6 @@ _Battle::_Battle() :
 	ClientExperienceReceived(0),
 	ClientGoldReceived(0),
 	BattleElement(nullptr),
-	BattleEffectsElement(nullptr),
 	BattleWinElement(nullptr),
 	BattleLoseElement(nullptr) {
 
@@ -71,20 +70,12 @@ _Battle::_Battle() :
 _Battle::~_Battle() {
 	if(BattleElement)
 		BattleElement->SetVisible(false);
-	if(BattleEffectsElement) {
-		BattleEffectsElement->SetVisible(false);
-		BattleEffectsElement->Children.clear();
-	}
 	if(BattleWinElement)
 		BattleWinElement->SetVisible(false);
 	if(BattleLoseElement)
 		BattleLoseElement->SetVisible(false);
 
-	// Delete monsters
-	for(auto &Fighter : Fighters) {
-		if(Fighter->DatabaseID)
-			delete Fighter;
-	}
+	RemoveFighters();
 }
 
 // Update battle
@@ -134,9 +125,6 @@ void _Battle::Update(double FrameTime) {
 					// Reduce count
 					StatusEffect->Count--;
 					if(StatusEffect->Count <= 0 || Fighter->Health <= 0) {
-						if(!Server)
-							BattleEffectsElement->RemoveChild(StatusEffect->BattleElement);
-
 						delete StatusEffect;
 						Iterator = Fighter->StatusEffects.erase(Iterator);
 					}
@@ -224,7 +212,6 @@ void _Battle::Render(double BlendFactor) {
 // Renders the battle part
 void _Battle::RenderBattle(double BlendFactor) {
 	BattleElement->Render();
-	BattleEffectsElement->Render();
 
 	// Draw fighters
 	for(auto &Fighter : Fighters) {
@@ -239,15 +226,6 @@ void _Battle::RenderBattle(double BlendFactor) {
 	// Draw action results
 	for(auto &StatChange : StatChanges) {
 		RenderStatChanges(StatChange, BlendFactor);
-	}
-
-	// Draw tooltips
-	_Element *HitElement = Graphics.Element->HitElement;
-	if(HitElement) {
-		if(HitElement->Identifier == "buff") {
-			_StatusEffect *StatusEffect = (_StatusEffect *)HitElement->UserData;
-			StatusEffect->Buff->DrawTooltip(Scripting, StatusEffect->Level);
-		}
 	}
 }
 
@@ -662,27 +640,30 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 			// Add status effect
 			if(StatusEffect) {
 				ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
+				_Element *Element = new _Element();
+				Element->Identifier = "buff";
+				Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
+				Element->Alignment = LEFT_TOP;
+				Element->UserCreated = true;
+				Element->Visible = true;
+				Element->UserData = (void *)StatusEffect;
+				Element->Parent = ActionResult.Target.Object->BattleElement;
+				Element->Parent->Children.push_back(Element);
+				StatusEffect->BattleElement = Element;
+				//Element->Parent->SetDebug(0);
 
-				StatusEffect->BattleElement = new _Element();
-				StatusEffect->BattleElement->Identifier = "buff";
-				StatusEffect->BattleElement->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
-				StatusEffect->BattleElement->Alignment = LEFT_TOP;
-				StatusEffect->BattleElement->UserCreated = true;
-				StatusEffect->BattleElement->Visible = true;
-				StatusEffect->BattleElement->UserData = (void *)StatusEffect;
-				//StatusEffect->BattleElement->Parent = BattleEffectsElement;
-				BattleEffectsElement->Children.push_back(StatusEffect->BattleElement);
-
-				if(0 && ActionResult.Target.Object == ClientPlayer) {
-					StatusEffect->HUDElement = new _Element();
-					StatusEffect->HUDElement->Identifier = "hudbuff";
-					StatusEffect->HUDElement->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
-					StatusEffect->HUDElement->Alignment = LEFT_TOP;
-					StatusEffect->HUDElement->UserCreated = true;
-					StatusEffect->HUDElement->Visible = true;
-					StatusEffect->HUDElement->UserData = (void *)StatusEffect;
-					//StatusEffect->HUDElement->Parent = Assets.Elements["element_hud_statuseffects"];
-					Assets.Elements["element_hud_statuseffects"]->Children.push_back(StatusEffect->HUDElement);
+				if(ActionResult.Target.Object == ClientPlayer) {
+					Element = new _Element();
+					Element->Identifier = "hudbuff";
+					Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
+					Element->Alignment = LEFT_TOP;
+					Element->UserCreated = true;
+					Element->Visible = true;
+					Element->UserData = (void *)StatusEffect;
+					Element->Parent = Assets.Elements["element_hud_statuseffects"];
+					Assets.Elements["element_hud_statuseffects"]->Children.push_back(Element);
+					StatusEffect->HUDElement = Element;
+					//Assets.Elements["element_hud_statuseffects"]->SetDebug(1);
 				}
 			}
 		}
@@ -809,18 +790,23 @@ void _Battle::ServerStartBattle() {
 // Starts the battle on the client
 void _Battle::ClientStartBattle() {
 	BattleElement = Assets.Elements["element_battle"];
-	BattleEffectsElement = Assets.Elements["element_battle_effects"];
 	BattleWinElement = Assets.Elements["element_battlewin"];
 	BattleLoseElement = Assets.Elements["element_battlelose"];
 	BattleElement->SetVisible(true);
-	BattleEffectsElement->SetVisible(true);
+	BattleWinElement->SetVisible(false);
+	BattleLoseElement->SetVisible(false);
 
-	// Set fighter position offsets
+	// Set fighter position offsets and create ui elements
 	int SideCount[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
 		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
 		SideCount[Fighter->BattleSide]++;
+
+		Fighter->CreateBattleElement(BattleElement);
 	}
+
+	BattleElement->CalculateChildrenBounds();
+	//BattleElement->SetDebug(1);
 }
 
 // Checks for the end of a battle
@@ -971,6 +957,7 @@ void _Battle::ServerEndBattle() {
 
 // End of a battle
 void _Battle::ClientEndBattle(_Buffer &Data) {
+	RemoveFighters();
 
 	// Get ending stats
 	bool SideDead[2];
@@ -1007,14 +994,13 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 
 // Calculates a screen position for a slot
 void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
-	glm::vec2 Center = (BattleElement->Bounds.End + BattleElement->Bounds.Start) / 2.0f;
 	int Column = SideIndex / BATTLE_ROWS_PER_SIDE;
 
 	// Check sides
 	if(Fighter->BattleSide == 0)
-		Fighter->BattleOffset.x = Center.x - 160 - Column * BATTLE_COLUMN_SPACING;
+		Fighter->BattleOffset.x = -170 - Column * BATTLE_COLUMN_SPACING;
 	else
-		Fighter->BattleOffset.x = Center.x + 80 + Column * BATTLE_COLUMN_SPACING;
+		Fighter->BattleOffset.x = 70 + Column * BATTLE_COLUMN_SPACING;
 
 	// Get row count for a given column
 	float RowCount = (float)SideCount[Fighter->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
@@ -1027,10 +1013,7 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 	int SpacingY = (int)((BattleElement->Size.y / RowCount) / 2);
 
 	// Place slots in between main divisions
-	Fighter->BattleOffset.y = BattleElement->Bounds.Start.y + SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1);
-
-	// Convert position to relative offset from center
-	Fighter->BattleOffset = Fighter->BattleOffset - Center + glm::vec2(BattleElement->Offset);
+	Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
 }
 
 // Removes a player from the battle, return remaining player count
@@ -1052,6 +1035,7 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 		if(Fighter == RemoveFighter) {
 			SideCount[Fighter->BattleSide]--;
 			Fighter->StopBattle();
+			Fighter->RemoveBattleElement();
 			if(Fighter->DatabaseID)
 				delete Fighter;
 
@@ -1059,6 +1043,23 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 			return;
 		}
 	}
+}
+
+// Remove all fighters
+void _Battle::RemoveFighters() {
+
+	// Delete monsters and remove battle elements
+	for(auto &Fighter : Fighters) {
+
+		if(Fighter->DatabaseID)
+			delete Fighter;
+		else {
+			Fighter->StopBattle();
+			Fighter->RemoveBattleElement();
+		}
+	}
+
+	Fighters.clear();
 }
 
 // Get number of peers in battle

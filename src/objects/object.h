@@ -106,6 +106,8 @@ class _Object {
 		void UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
 		int GenerateDefense();
+		void CreateBattleElement(_Element *Parent);
+		void RemoveBattleElement();
 
 		// -- END FROM FIGHTER --
 
@@ -178,6 +180,7 @@ class _Object {
 
 		// Battle
 		_Battle *Battle;
+		_Element *BattleElement;
 		float BattleSpeed;
 		double TurnTimer;
 		double AITimer;

@@ -400,6 +400,10 @@ void _HUD::Update(double FrameTime) {
 				Tooltip.Skill = Player->ActionBar[Tooltip.Slot].Skill;
 				Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
 			} break;
+			case WINDOW_BATTLE:
+			case WINDOW_HUD_EFFECTS: {
+				Tooltip.StatusEffect = (_StatusEffect *)HitElement->UserData;
+			} break;
 		}
 	}
 
@@ -497,13 +501,13 @@ void _HUD::Render(double Time) {
 	// Draw status effects
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);
-	glm::vec2 StatusPosition(StatusEffectsElement->Bounds.Start);
+	Graphics.SetColor(COLOR_WHITE);
+	glm::vec2 StatusPosition(0, 0);
 	for(auto &StatusEffect : Player->StatusEffects) {
 		if(StatusEffect->HUDElement) {
-			StatusEffect->HUDElement->Visible = true;
 			StatusEffect->HUDElement->Offset = StatusPosition;
 			StatusEffect->HUDElement->CalculateBounds();
-			Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect->Buff->Texture->Size/2), StatusEffect->Buff->Texture);
+			Graphics.DrawImage(StatusEffect->HUDElement->Bounds, StatusEffect->Buff->Texture);
 			StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}
@@ -526,15 +530,9 @@ void _HUD::Render(double Time) {
 	if(Tooltip.Skill)
 		Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, SkillsElement->Visible);
 
-	// Draw tooltips
-	_Element *HitElement = Graphics.Element->HitElement;
-	if(HitElement) {
-		if(0 && HitElement->Identifier == "hudbuff") {
-			_StatusEffect *StatusEffect = (_StatusEffect *)HitElement->UserData;
-			StatusEffect->Buff->DrawTooltip(Scripting, StatusEffect->Level);
-		}
-	}
-
+	// Draw status effects
+	if(Tooltip.StatusEffect)
+		Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level);
 }
 
 // Starts the chat box
