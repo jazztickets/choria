@@ -17,26 +17,30 @@
 *******************************************************************************/
 #include <factory.h>
 #include <objects/object.h>
+#include <instances/map.h>
 #include <limits>
 
 // Constructor
-_Factory::_Factory() :
+template <class T>
+_Factory<T>::_Factory() :
 	NextID(0) {
 
 }
 
 // Destructor
-_Factory::~_Factory() {
+template <class T>
+_Factory<T>::~_Factory() {
 
 }
 
 // Generate object with new network id
-_Object *_Factory::CreateObject() {
+template <class T>
+T *_Factory<T>::Create() {
 
 	// Search for an empty slot
 	for(NetworkIDType i = 0; i <= std::numeric_limits<NetworkIDType>::max(); i++) {
 		if(!Objects[NextID]) {
-			_Object *Object = new _Object();
+			T *Object = new T;
 			Object->NetworkID = NextID;
 			Objects[NextID] = Object;
 
@@ -50,11 +54,15 @@ _Object *_Factory::CreateObject() {
 }
 
 // Create object with existing id
-_Object *_Factory::CreateObjectWithID(NetworkIDType ID) {
-	_Object *Object = new _Object();
+template <class T>
+T *_Factory<T>::CreateWithID(NetworkIDType ID) {
+	T *Object = new T;
 	Object->NetworkID = ID;
 
 	Objects[ID] = Object;
 
 	return Object;
 }
+
+template class _Factory<_Object>;
+template class _Factory<_Map>;

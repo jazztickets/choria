@@ -68,7 +68,7 @@ void _ClientState::Init() {
 	Time = 0.0;
 	Clock = 0.0;
 
-	Factory = new _Factory();
+	Factory = new _Factory<_Object>();
 
 	Stats = new _Stats();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
@@ -1044,7 +1044,7 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	// Create object
-	_Object *Object = Factory->CreateObjectWithID(NetworkID);
+	_Object *Object = Factory->CreateWithID(NetworkID);
 	Object->Stats = Stats;
 	Object->Map = Map;
 	Object->UnserializeCreate(Data);

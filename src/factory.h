@@ -21,11 +21,8 @@
 #include <packet.h>
 #include <unordered_map>
 
-// Forward Declarations
-class _Object;
-
 // Classes
-class _Factory {
+template<class T> class _Factory {
 
 	public:
 
@@ -33,11 +30,11 @@ class _Factory {
 		~_Factory();
 
 		// Object management
-		_Object *CreateObject();
-		_Object *CreateObjectWithID(NetworkIDType ID);
+		T *Create();
+		T *CreateWithID(NetworkIDType ID);
 
 		// Objects
-		std::unordered_map<NetworkIDType, _Object *> Objects;
+		std::unordered_map<NetworkIDType, T*> Objects;
 
 	private:
 

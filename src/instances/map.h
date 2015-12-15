@@ -21,6 +21,7 @@
 #include <network/network.h>
 #include <packet.h>
 #include <texture.h>
+#include <factory.h>
 #include <vector>
 #include <list>
 #include <cstdint>
@@ -40,7 +41,6 @@ class _Atlas;
 class _Camera;
 class _Server;
 class _Stats;
-class _Factory;
 class _Peer;
 
 // Structures
@@ -84,7 +84,7 @@ class _Map {
 		void AllocateMap();
 		void InitAtlas(const std::string AtlasPath);
 
-		void Update(_Factory *Factory, double FrameTime);
+		void Update(_Factory<_Object> *Factory, double FrameTime);
 		void CheckEvents(_Object *Object);
 		void GetClockAsString(std::stringstream &Buffer);
 		void SetAmbientLightByClock();
@@ -143,6 +143,7 @@ class _Map {
 		double ObjectUpdateTime;
 
 		// Network
+		NetworkIDType NetworkID;
 		_Server *Server;
 
 	private:

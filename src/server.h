@@ -23,6 +23,7 @@
 #include <memory>
 #include <thread>
 #include <list>
+#include <factory.h>
 #include <unordered_map>
 #include <glm/vec4.hpp>
 
@@ -31,7 +32,6 @@ class _ServerNetwork;
 class _Buffer;
 class _Peer;
 class _Map;
-class _Factory;
 class _Battle;
 class _Stats;
 class _Save;
@@ -76,7 +76,7 @@ class _Server {
 		_Scripting *Scripting;
 
 		// Objects
-		_Factory *Factory;
+		_Factory<_Object> *Factory;
 		std::list<_Map *> Maps;
 		std::list<_Battle *>Battles;
 		uint8_t NextMapID;

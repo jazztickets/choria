@@ -79,7 +79,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
-	Factory = new _Factory();
+	Factory = new _Factory<_Object>();
 	Save = new _Save();
 	Clock = Save->GetClock();
 
@@ -641,7 +641,7 @@ _Map *_Server::GetMap(uint32_t MapID) {
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	// Create object
-	_Object *Player = Factory->CreateObject();
+	_Object *Player = Factory->Create();
 	Peer->Object = Player;
 	Player->CharacterID = Peer->CharacterID;
 	Player->Peer = Peer;

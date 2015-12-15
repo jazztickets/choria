@@ -20,6 +20,7 @@
 // Libraries
 #include <objects/action.h>
 #include <objects/statchange.h>
+#include <packet.h>
 #include <list>
 #include <cstdint>
 
@@ -115,6 +116,9 @@ class _Battle {
 		void RenderStatChanges(_StatChange &StatChange, double BlendFactor);
 		void RenderBattleWin();
 		void RenderBattleLose();
+
+		// Network
+		NetworkIDType NetworkID;
 
 		// State
 		int State;

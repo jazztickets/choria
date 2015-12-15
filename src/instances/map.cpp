@@ -140,7 +140,7 @@ void _Map::FreeMap() {
 }
 
 // Updates the map and sends object updates
-void _Map::Update(_Factory *Factory, double FrameTime) {
+void _Map::Update(_Factory<_Object> *Factory, double FrameTime) {
 	ObjectUpdateCount = 0;
 
 	// Update objects
