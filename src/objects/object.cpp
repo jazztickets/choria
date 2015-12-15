@@ -20,6 +20,7 @@
 #include <objects/buff.h>
 #include <objects/statchange.h>
 #include <objects/inventory.h>
+#include <objects/statuseffect.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <ui/element.h>
@@ -663,18 +664,20 @@ void _Object::RefreshActionBarCount() {
 }
 
 // Use an action, return true if used
-bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
+bool _Object::UseActionWorld(_Buffer &Data, _Scripting *Scripting, uint8_t Slot) {
 	if(Slot >= ActionBar.size())
 		return false;
 
 	if(!ActionBar[Slot].IsSet())
 		return false;
 
-	if(ActionBar[Slot].Skill) {
-		_ActionResult ActionResult;
-		ActionResult.Source.Object = this;
-		ActionResult.Target.Object = this;
-		ActionResult.Scope = ScopeType::WORLD;
+	_ActionResult ActionResult;
+	ActionResult.Source.Object = this;
+	ActionResult.Target.Object = this;
+	ActionResult.SkillUsed = ActionBar[Slot].Skill;
+	ActionResult.ItemUsed = ActionBar[Slot].Item;
+	ActionResult.Scope = ScopeType::WORLD;
+	if(ActionResult.SkillUsed) {
 
 		// Validate use
 		ActionResult.SkillUsed = ActionBar[Slot].Skill;
@@ -687,44 +690,49 @@ bool _Object::UseActionWorld(_Scripting *Scripting, uint8_t Slot) {
 		// Use
 		ActionResult.SkillUsed->Use(Scripting, ActionResult);
 
-		// Apply changes
-		UpdateHealth(ActionResult.Source.HealthChange);
-		UpdateHealth(ActionResult.Target.HealthChange);
-		UpdateMana(ActionResult.Source.ManaChange);
-		UpdateMana(ActionResult.Target.ManaChange);
-
-		return true;
+		Data.Write<uint32_t>(ActionResult.SkillUsed->ID);
 	}
-	else if(ActionBar[Slot].Item) {
+	else
+		Data.Write<uint32_t>(0);
+
+	if(ActionResult.ItemUsed) {
+
+		// Use item
 		size_t Index;
-		if(Inventory->FindItem(ActionBar[Slot].Item, Index)) {
-			if(UseInventory(Index))
-				return true;
+		if(ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
+			ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
+			ActionResult.ItemUsed->Use(Scripting, ActionResult);
 		}
+		else
+			return false;
+
+		Data.Write<uint32_t>(ActionResult.ItemUsed->ID);
+		Data.Write<uint8_t>((uint8_t)Index);
 	}
+	else
+		Data.Write<uint32_t>(0);
 
-	return false;
-}
+	// Add buffs
+	if(ActionResult.Buff) {
+		_StatusEffect *StatusEffect = new _StatusEffect();
+		StatusEffect->Buff = ActionResult.Buff;
+		StatusEffect->Level = ActionResult.BuffLevel;
+		StatusEffect->Count = ActionResult.BuffDuration;
+		StatusEffects.push_back(StatusEffect);
 
-// Uses an item from the inventory
-bool _Object::UseInventory(size_t Slot) {
-	const _Item *Item = Inventory->GetBagItem(Slot);
-	if(Item == nullptr)
-		return false;
-
-	// Handle item types
-	bool Used = false;
-	switch(Item->Type) {
-		case _Item::TYPE_POTION:
-			Used = UsePotionWorld(Slot);
-		break;
+		Data.Write<uint32_t>(ActionResult.Buff->ID);
+		StatusEffect->Serialize(Data);
 	}
+	else
+		Data.Write<uint32_t>(0);
 
-	// Update action bar counts
-	if(Used)
-		RefreshActionBarCount();
+	// Apply changes
+	UpdateHealth(ActionResult.Source.HealthChange);
+	UpdateHealth(ActionResult.Target.HealthChange);
+	UpdateMana(ActionResult.Source.ManaChange);
+	UpdateMana(ActionResult.Target.ManaChange);
 
-	return Used;
+	return true;
 }
 
 // Get the percentage to the next level
@@ -756,29 +764,6 @@ void _Object::AcceptTrader(_Buffer &Data, std::vector<size_t> &Slots, size_t Rew
 	// Update player
 	Trader = nullptr;
 	CalculateStats();
-}
-
-// Uses a potion in the world
-bool _Object::UsePotionWorld(size_t Slot) {
-	const _Item *Item = Inventory->GetBagItem(Slot);
-	if(Item == nullptr)
-		return false;
-
-	// Get potion stats
-	int HealthRestore = Item->HealthRestore;
-	int ManaRestore = Item->ManaRestore;
-	int ItemInvisPower = Item->InvisPower;
-
-	// Use only if needed
-	if((Item->IsHealthPotion() && Health < MaxHealth) || (Item->IsManaPotion() && Mana < MaxMana) || Item->IsInvisPotion()) {
-		UpdateHealth(HealthRestore);
-		UpdateMana(ManaRestore);
-		InvisPower = ItemInvisPower;
-		Inventory->DecrementItemCount(Slot, -1);
-		return true;
-	}
-
-	return false;
 }
 
 // Determines if the player can accept movement keys held down
@@ -1004,20 +989,4 @@ void _Object::CalculateFinalStats() {
 		MinDefense = 0;
 	if(MaxDefense < 0)
 		MaxDefense = 0;
-}
-
-_StatusEffect::~_StatusEffect() {
-	if(BattleElement) {
-		if(BattleElement->Parent)
-			BattleElement->Parent->RemoveChild(BattleElement);
-
-		delete BattleElement;
-	}
-
-	if(HUDElement) {
-		if(HUDElement->Parent)
-			HUDElement->Parent->RemoveChild(HUDElement);
-
-		delete HUDElement;
-	}
 }

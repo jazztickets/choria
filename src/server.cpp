@@ -268,8 +268,8 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
-		case PacketType::WORLD_ACTIONBAR_USE:
-			HandleActionBarUse(Data, Peer);
+		case PacketType::PLAYER_USEACTION:
+			HandlePlayerUseAction(Data, Peer);
 		break;
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data, Peer);
@@ -309,9 +309,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
-		break;
-		case PacketType::BATTLE_SETACTION:
-			HandleBattleAction(Data, Peer);
 		break;
 		case PacketType::BATTLE_CLIENTDONE:
 			HandleBattleFinished(Data, Peer);
@@ -479,32 +476,6 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 	Player->InputState = Data.Read<char>();
-}
-
-// Handle player using action outside of battle
-void _Server::HandleActionBarUse(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
-	   return;
-
-	_Object *Player = Peer->Object;
-
-	uint8_t Slot = Data.Read<uint8_t>();
-	if(Player->UseActionWorld(Scripting, Slot))
-		SendHUD(Player->Peer);
-}
-
-// Handle a skill bar change
-void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
-		return;
-
-	_Object *Player = Peer->Object;
-
-	// Read skills
-	for(size_t i = 0; i < Player->ActionBar.size(); i++)
-		Player->ActionBar[i].Unserialize(Data, Stats);
-
-	Player->CalculateStats();
 }
 
 // Handle a chat message
@@ -759,7 +730,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Use an item
-	Player->UseInventory(Data.Read<uint8_t>());
+	//Player->UseInventory(Data.Read<uint8_t>());
 }
 
 // Handle a player's inventory split stack request
@@ -1119,16 +1090,39 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 
 }
 
-// Handles battle commands from a client
-void _Server::HandleBattleAction(_Buffer &Data, _Peer *Peer) {
+// Handle player using action outside of battle
+void _Server::HandlePlayerUseAction(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+
+	if(Player->Battle) {
+		Player->Battle->ServerHandleAction(Player, Data);
+	}
+	else {
+		uint8_t Slot = Data.Read<uint8_t>();
+
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::PLAYER_ACTIONRESULTS);
+		if(Player->UseActionWorld(Packet, Scripting, Slot)) {
+			Network->SendPacket(Packet, Peer);
+		}
+	}
+}
+
+// Handle a skill bar change
+void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
 	_Object *Player = Peer->Object;
-	if(!Player->Battle)
-		return;
 
-	Player->Battle->ServerHandleAction(Player, Data);
+	// Read skills
+	for(size_t i = 0; i < Player->ActionBar.size(); i++)
+		Player->ActionBar[i].Unserialize(Data, Stats);
+
+	Player->CalculateStats();
 }
 
 // The client is done with the battle results screen

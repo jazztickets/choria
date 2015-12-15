@@ -28,7 +28,7 @@ class _Element;
 class _Scripting;
 class _Server;
 class _ClientNetwork;
-struct _StatusEffect;
+class _StatusEffect;
 
 struct _BattleResult {
 	_BattleResult() :

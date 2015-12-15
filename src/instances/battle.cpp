@@ -23,6 +23,7 @@
 #include <objects/buff.h>
 #include <objects/inventory.h>
 #include <objects/statchange.h>
+#include <objects/statuseffect.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/image.h>
@@ -418,7 +419,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	else if(ClientPlayer->BattleTargets.size()) {
 
 		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::BATTLE_SETACTION);
+		Packet.Write<PacketType>(PacketType::PLAYER_USEACTION);
 		Packet.Write<uint8_t>(ActionBarSlot);
 		Packet.Write<uint8_t>((uint8_t)ClientPlayer->BattleTargets.size());
 		for(const auto &BattleTarget : ClientPlayer->BattleTargets)
@@ -593,9 +594,6 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	ActionResult.Source.UnserializeBattle(Data, this);
 	int SourceFighterHealth = Data.Read<int32_t>();
 	int SourceFighterMana = Data.Read<int32_t>();
-
-	//if(ActionResult.Source.IsChanged())
-		//StatChanges.push_back(ActionResult.Source);
 
 	// Update source fighter
 	if(ActionResult.Source.Object) {
@@ -1127,6 +1125,8 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 
 		uint8_t ActionBarSlot = Data.Read<uint8_t>();
 		uint8_t TargetCount = Data.Read<uint8_t>();
+		if(!TargetCount)
+			return;
 
 		// Get targets
 		Fighter->BattleTargets.clear();

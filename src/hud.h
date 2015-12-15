@@ -144,6 +144,7 @@ class _HUD {
 		bool CloseSkills();
 
 		void DrawChat(double Time, bool IgnoreTimeout);
+		void DrawHudEffects();
 		void DrawInventory();
 		void DrawTeleport();
 		void DrawCharacter();

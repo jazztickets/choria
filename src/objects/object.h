@@ -38,23 +38,12 @@ class _Stats;
 class _Buffer;
 class _Scripting;
 class _StatChange;
+class _StatusEffect;
 class _Element;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
 struct _ActionResult;
-
-struct _StatusEffect {
-	_StatusEffect() : Buff(nullptr), BattleElement(nullptr), HUDElement(nullptr), Time(0.0), Level(0), Count(0) { }
-	~_StatusEffect();
-
-	const _Buff *Buff;
-	_Element *BattleElement;
-	_Element *HUDElement;
-	double Time;
-	int Level;
-	int Count;
-};
 
 // Classes
 class _Object {
@@ -122,9 +111,7 @@ class _Object {
 
 		// Inventory
 		void RefreshActionBarCount();
-		bool UseActionWorld(_Scripting *Scripting, uint8_t Slot);
-		bool UsePotionWorld(size_t Slot);
-		bool UseInventory(size_t Slot);
+		bool UseActionWorld(_Buffer &Data, _Scripting *Scripting, uint8_t Slot);
 
 		// Movement
 		bool AcceptingMoveInput();

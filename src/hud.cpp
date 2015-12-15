@@ -28,6 +28,7 @@
 #include <objects/skill.h>
 #include <objects/item.h>
 #include <objects/inventory.h>
+#include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <instances/battle.h>
 #include <instances/map.h>
@@ -148,13 +149,11 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						if(Input.ModKeyDown(KMOD_SHIFT)) {
 							SellItem(&Tooltip, 1);
 						}
-						else if(Player->UseInventory(Tooltip.Slot)) {
+						else {
 							_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 							Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
 							ClientState.Network->SendPacket(Packet);
-						}
-						else {
 						}
 					}
 				break;
@@ -312,7 +311,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			if(Player->Battle)
 				Player->Battle->ClientHandleInput(_Actions::SKILL1 + Slot);
 			else
-				ClientState.SendActionBarUse(Slot);
+				ClientState.SendActionUse(Slot);
 		}
 
 		if(Player->WaitingForTrade) {
@@ -496,22 +495,7 @@ void _HUD::Render(double Time) {
 	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x);
 	Assets.Elements["element_hud_mana"]->Render();
 
-	StatusEffectsElement->Render();
-
-	// Draw status effects
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.SetColor(COLOR_WHITE);
-	glm::vec2 StatusPosition(0, 0);
-	for(auto &StatusEffect : Player->StatusEffects) {
-		if(StatusEffect->HUDElement) {
-			StatusEffect->HUDElement->Offset = StatusPosition;
-			StatusEffect->HUDElement->CalculateBounds();
-			Graphics.DrawImage(StatusEffect->HUDElement->Bounds, StatusEffect->Buff->Texture);
-			StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
-		}
-	}
-
+	DrawHudEffects();
 	DrawInventory();
 	DrawCharacter();
 	DrawVendor();
@@ -932,6 +916,25 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 		DrawPosition.y += SpacingY;
 
 		Index++;
+	}
+}
+
+// Draws player's status effects
+void _HUD::DrawHudEffects() {
+	StatusEffectsElement->Render();
+
+	// Draw status effects
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.SetVBO(VBO_NONE);
+	Graphics.SetColor(COLOR_WHITE);
+	glm::vec2 StatusPosition(0, 0);
+	for(auto &StatusEffect : Player->StatusEffects) {
+		if(StatusEffect->HUDElement) {
+			StatusEffect->HUDElement->Offset = StatusPosition;
+			StatusEffect->HUDElement->CalculateBounds();
+			Graphics.DrawImage(StatusEffect->HUDElement->Bounds, StatusEffect->Buff->Texture);
+			StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
+		}
 	}
 }
 

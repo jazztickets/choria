@@ -19,6 +19,8 @@
 #include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
+#include <objects/statuseffect.h>
+#include <objects/buff.h>
 #include <instances/map.h>
 #include <instances/battle.h>
 #include <ui/element.h>
@@ -213,7 +215,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::SKILL6:
 				case _Actions::SKILL7:
 				case _Actions::SKILL8:
-					SendActionBarUse((uint8_t)(Action - _Actions::SKILL1));
+					SendActionUse((uint8_t)(Action - _Actions::SKILL1));
 				break;
 				case _Actions::MENU:
 					HUD->ToggleInGameMenu();
@@ -432,6 +434,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		break;
 		case PacketType::EVENT_START:
 			HandleEventStart(Data);
+		break;
+		case PacketType::PLAYER_ACTIONRESULTS:
+			HandleActionResults(Data);
 		break;
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data);
@@ -733,6 +738,47 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 	}
 }
 
+// Handle an action use result
+void _ClientState::HandleActionResults(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	// Read skill used
+	uint32_t SkillID = Data.Read<uint32_t>();
+	if(SkillID) {
+	}
+
+	// Read item used
+	uint32_t ItemID = Data.Read<uint32_t>();
+	if(ItemID) {
+		size_t Slot = Data.Read<uint8_t>();
+		Player->Inventory->DecrementItemCount(Slot, -1);
+		Player->RefreshActionBarCount();
+	}
+
+	// Read buff
+	uint32_t BuffID = Data.Read<uint32_t>();
+	if(BuffID) {
+		_StatusEffect *StatusEffect = new _StatusEffect();
+		StatusEffect->Buff = Stats->Buffs[BuffID];
+		StatusEffect->Unserialize(Data);
+		Player->StatusEffects.push_back(StatusEffect);
+
+		_Element *Element = new _Element();
+		Element->Identifier = "hudbuff";
+		Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
+		Element->Alignment = LEFT_TOP;
+		Element->UserCreated = true;
+		Element->Visible = true;
+		Element->UserData = (void *)StatusEffect;
+		Element->Parent = Assets.Elements["element_hud_statuseffects"];
+		Assets.Elements["element_hud_statuseffects"]->Children.push_back(Element);
+		StatusEffect->HUDElement = Element;
+	}
+
+	Player->CalculateStats();
+}
+
 // Handles a chat message
 void _ClientState::HandleChatMessage(_Buffer &Data) {
 
@@ -1006,8 +1052,8 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	return Object;
 }
 
-// Send action to server outside of battle
-void _ClientState::SendActionBarUse(uint8_t Slot) {
+// Send action to server
+void _ClientState::SendActionUse(uint8_t Slot) {
 	if(!Player)
 		return;
 
@@ -1017,15 +1063,12 @@ void _ClientState::SendActionBarUse(uint8_t Slot) {
 	if(!Player->ActionBar[Slot].IsSet())
 		return;
 
-	// Client prediction
-	if(Player->UseActionWorld(Scripting, Slot)) {
-
-		// Send use to server
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::WORLD_ACTIONBAR_USE);
-		Packet.Write<uint8_t>(Slot);
-		Network->SendPacket(Packet);
-	}
+	// Send use to server
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::PLAYER_USEACTION);
+	Packet.Write<uint8_t>(Slot);
+	Packet.Write<uint8_t>(0);
+	Network->SendPacket(Packet);
 }
 
 // Send status to server

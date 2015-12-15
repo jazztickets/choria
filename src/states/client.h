@@ -49,7 +49,7 @@ class _ClientState : public _State {
 		void Connect(bool IsLocal);
 		void StopLocalServer();
 		void SendStatus(uint8_t Status);
-		void SendActionBarUse(uint8_t Slot);
+		void SendActionUse(uint8_t Slot);
 
 		// Input
 		bool HandleAction(int InputType, int Action, int Value) override;
@@ -109,6 +109,7 @@ class _ClientState : public _State {
 		void HandlePlayerPosition(_Buffer &Data);
 		void HandleTeleportStart(_Buffer &Data);
 		void HandleEventStart(_Buffer &Data);
+		void HandleActionResults(_Buffer &Data);
 		void HandleInventoryUse(_Buffer &Data);
 		void HandleInventorySwap(_Buffer &Data);
 		void HandleInventoryUpdate(_Buffer &Data);
