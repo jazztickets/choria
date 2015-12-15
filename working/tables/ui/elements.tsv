@@ -10,6 +10,7 @@ element_hud			0	0	150	80	0	0	0	0	-1
 element_hud_health			-300	-19	150	32	1	2	0	0	-1
 element_hud_mana			300	-19	150	32	1	2	0	0	-1
 element_hud_experience			0	-70	350	8	1	2	0	0	-1
+element_hud_statuseffects			0	-100	350	32	1	2	0	1	-1
 element_buttonbar			0	0	160	32	2	0	0	1	0
 element_inventory			-215	0	362	288	1	1	0	1	1
 element_vendor			215	0	362	288	1	1	0	1	2
@@ -23,8 +24,8 @@ element_character		style_hud_bg	0	0	250	400	2	1	0	1	-1
 element_trade		style_hud_bg	212	0	304	288	1	1	0	1	-1
 element_teleport		style_hud_bg	0	-100	150	48	1	1	0	0	-1
 element_skills_tooltip		style_hud_item_tooltip_bg	0	0	370	250	0	0	0	0	-1
-element_battle		style_hud_bg	0	-10	950	570	1	1	0	0	-1
-element_battle_effects			0	-10	950	570	1	1	0	1	-1
+element_battle		style_hud_bg	0	-35	950	570	1	1	0	0	-1
+element_battle_effects			0	-35	950	570	1	1	0	1	-1
 element_battlewin		style_hud_bg	0	0	560	360	1	1	0	0	-1
 element_battlelose		style_hud_bg	0	0	560	360	1	1	0	0	-1
 element_side_left		style_battle_slot_green	0	0	64	64	1	1	0	0	-1

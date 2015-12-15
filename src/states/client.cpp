@@ -65,7 +65,6 @@ void _ClientState::Init() {
 	Time = 0.0;
 	Clock = 0.0;
 
-	HUD = new _HUD();
 	Stats = new _Stats();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
@@ -75,6 +74,9 @@ void _ClientState::Init() {
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_ITEMS);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_BUFFS);
+
+	HUD = new _HUD();
+	HUD->Scripting = Scripting;
 
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);

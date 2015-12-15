@@ -28,6 +28,7 @@
 #include <objects/skill.h>
 #include <objects/item.h>
 #include <objects/inventory.h>
+#include <objects/buff.h>
 #include <instances/battle.h>
 #include <instances/map.h>
 #include <framework.h>
@@ -35,6 +36,7 @@
 #include <input.h>
 #include <stats.h>
 #include <font.h>
+#include <scripting.h>
 #include <constants.h>
 #include <buffer.h>
 #include <assets.h>
@@ -67,6 +69,7 @@ _HUD::_HUD() {
 	Assets.Labels["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(_Actions::SKILLS).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(_Actions::MENU).substr(0, HUD_KEYNAME_LENGTH);
 
+	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = Assets.Elements["element_actionbar"];
 	ButtonBarElement = Assets.Elements["element_buttonbar"];
 	InventoryElement = Assets.Elements["element_inventory"];
@@ -79,6 +82,10 @@ _HUD::_HUD() {
 	TeleportElement = Assets.Elements["element_teleport"];
 	ChatElement = Assets.Elements["element_chat"];
 
+	Assets.Labels["label_hud_gold"]->Size.x = ButtonBarElement->Size.x;
+	Assets.Labels["label_hud_gold"]->CalculateBounds();
+
+	StatusEffectsElement->SetVisible(true);
 	ActionBarElement->SetVisible(true);
 	ButtonBarElement->SetVisible(true);
 	InventoryElement->SetVisible(false);
@@ -485,6 +492,22 @@ void _HUD::Render(double Time) {
 	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x);
 	Assets.Elements["element_hud_mana"]->Render();
 
+	StatusEffectsElement->Render();
+
+	// Draw status effects
+	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.SetVBO(VBO_NONE);
+	glm::vec2 StatusPosition(StatusEffectsElement->Bounds.Start);
+	for(auto &StatusEffect : Player->StatusEffects) {
+		if(StatusEffect->HUDElement) {
+			StatusEffect->HUDElement->Visible = true;
+			StatusEffect->HUDElement->Offset = StatusPosition;
+			StatusEffect->HUDElement->CalculateBounds();
+			Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect->Buff->Texture->Size/2), StatusEffect->Buff->Texture);
+			StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
+		}
+	}
+
 	DrawInventory();
 	DrawCharacter();
 	DrawVendor();
@@ -502,6 +525,16 @@ void _HUD::Render(double Time) {
 	DrawCursorSkill();
 	if(Tooltip.Skill)
 		Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, SkillsElement->Visible);
+
+	// Draw tooltips
+	_Element *HitElement = Graphics.Element->HitElement;
+	if(HitElement) {
+		if(0 && HitElement->Identifier == "hudbuff") {
+			_StatusEffect *StatusEffect = (_StatusEffect *)HitElement->UserData;
+			StatusEffect->Buff->DrawTooltip(Scripting, StatusEffect->Level);
+		}
+	}
+
 }
 
 // Starts the chat box
@@ -942,7 +975,7 @@ void _HUD::DrawInventory() {
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Image);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Texture);
 
 			// Draw price if using vendor
 			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
@@ -978,7 +1011,7 @@ void _HUD::DrawVendor() {
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Image);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			// Draw price
 			DrawItemPrice(Item, 1, DrawPosition, true);
@@ -1021,7 +1054,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Image);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Texture);
 
 			// Draw count
 			if(Item->Count > 1)
@@ -1053,7 +1086,7 @@ void _HUD::DrawTrader() {
 		// Draw item
 		const _Item *Item = Player->Trader->TraderItems[i].Item;
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Item->Image);
+		Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 		glm::vec4 Color;
 		if(RequiredItemSlots[i] >= Player->Inventory->Slots.size())
@@ -1070,7 +1103,7 @@ void _HUD::DrawTrader() {
 
 	// Draw item
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->Image);
+	Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->Texture);
 	Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count).c_str(), DrawPosition + glm::vec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
 }
 
@@ -1101,7 +1134,7 @@ void _HUD::DrawActionBar() {
 		const _Item *Item = Player->ActionBar[i].Item;
 		if(Item) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Image);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), COLOR_WHITE, RIGHT_BASELINE);
 		}
@@ -1224,7 +1257,7 @@ void _HUD::DrawCursorItem() {
 	if(Cursor.Item) {
 		glm::vec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->Image);
+		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->Texture);
 		if(Cursor.Window != WINDOW_ACTIONBAR)
 			DrawItemPrice(Cursor.Item, Cursor.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
 		if(Cursor.Count > 1)

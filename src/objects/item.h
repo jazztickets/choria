@@ -68,7 +68,7 @@ class _Item {
 		std::string Script;
 		int Level;
 		int Type;
-		const _Texture *Image;
+		const _Texture *Texture;
 		int LevelRequired;
 		int Cost;
 		float Damage;

@@ -135,7 +135,7 @@ void _Battle::Update(double FrameTime) {
 					StatusEffect->Count--;
 					if(StatusEffect->Count <= 0 || Fighter->Health <= 0) {
 						if(!Server)
-							BattleEffectsElement->RemoveChild(StatusEffect->Element);
+							BattleEffectsElement->RemoveChild(StatusEffect->BattleElement);
 
 						delete StatusEffect;
 						Iterator = Fighter->StatusEffects.erase(Iterator);
@@ -331,7 +331,7 @@ void _Battle::RenderBattleWin() {
 
 		// Draw items found
 		for(auto &MonsterDrop : ClientItemDrops) {
-			const _Texture *Texture = MonsterDrop->Image;
+			const _Texture *Texture = MonsterDrop->Texture;
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Texture);
 
@@ -607,7 +607,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	if(ActionResult.SkillUsed)
 		ActionResult.Texture = ActionResult.SkillUsed->Texture;
 	else if(ActionResult.ItemUsed)
-		ActionResult.Texture = ActionResult.ItemUsed->Image;
+		ActionResult.Texture = ActionResult.ItemUsed->Texture;
 	else
 		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
@@ -663,14 +663,27 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 			if(StatusEffect) {
 				ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
 
-				StatusEffect->Element = new _Element();
-				StatusEffect->Element->Identifier = "buff";
-				StatusEffect->Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
-				StatusEffect->Element->Alignment = LEFT_TOP;
-				StatusEffect->Element->UserCreated = true;
-				StatusEffect->Element->Visible = true;
-				StatusEffect->Element->UserData = (void *)StatusEffect;
-				BattleEffectsElement->Children.push_back(StatusEffect->Element);
+				StatusEffect->BattleElement = new _Element();
+				StatusEffect->BattleElement->Identifier = "buff";
+				StatusEffect->BattleElement->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
+				StatusEffect->BattleElement->Alignment = LEFT_TOP;
+				StatusEffect->BattleElement->UserCreated = true;
+				StatusEffect->BattleElement->Visible = true;
+				StatusEffect->BattleElement->UserData = (void *)StatusEffect;
+				//StatusEffect->BattleElement->Parent = BattleEffectsElement;
+				BattleEffectsElement->Children.push_back(StatusEffect->BattleElement);
+
+				if(0 && ActionResult.Target.Object == ClientPlayer) {
+					StatusEffect->HUDElement = new _Element();
+					StatusEffect->HUDElement->Identifier = "hudbuff";
+					StatusEffect->HUDElement->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
+					StatusEffect->HUDElement->Alignment = LEFT_TOP;
+					StatusEffect->HUDElement->UserCreated = true;
+					StatusEffect->HUDElement->Visible = true;
+					StatusEffect->HUDElement->UserData = (void *)StatusEffect;
+					//StatusEffect->HUDElement->Parent = Assets.Elements["element_hud_statuseffects"];
+					Assets.Elements["element_hud_statuseffects"]->Children.push_back(StatusEffect->HUDElement);
+				}
 			}
 		}
 

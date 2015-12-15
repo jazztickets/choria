@@ -45,11 +45,12 @@ struct _Trader;
 struct _ActionResult;
 
 struct _StatusEffect {
-	_StatusEffect() : Buff(nullptr), Element(nullptr), Time(0.0), Level(0), Count(0) { }
+	_StatusEffect() : Buff(nullptr), BattleElement(nullptr), HUDElement(nullptr), Time(0.0), Level(0), Count(0) { }
 	~_StatusEffect();
 
 	const _Buff *Buff;
-	_Element *Element;
+	_Element *BattleElement;
+	_Element *HUDElement;
 	double Time;
 	int Level;
 	int Count;

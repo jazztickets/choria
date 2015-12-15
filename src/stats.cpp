@@ -165,7 +165,7 @@ void _Stats::LoadItems() {
 		Item->Script = Database->GetString("script");
 		Item->Level = Database->GetInt<int>("level");
 		Item->Type = Database->GetInt<int>("type");
-		Item->Image = Assets.Textures[std::string("items/") + Database->GetString("image")];
+		Item->Texture = Assets.Textures[std::string("items/") + Database->GetString("image")];
 		Item->LevelRequired = Database->GetInt<int>("levelrequired");
 		Item->Cost = Database->GetInt<int>("cost");
 		Item->Damage = Database->GetReal("damage");

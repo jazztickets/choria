@@ -244,10 +244,18 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
 	// Draw the skill used
-	if(ClientPlayer->BattleSide == BattleSide && BattleAction.Skill) {
-		glm::vec2 SkillUsingPosition = SlotPosition - glm::vec2(Portrait->Size.x/2 + BattleAction.Skill->Texture->Size.x/2 + 10, 0);
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture, GlobalColor);
+	if(ClientPlayer->BattleSide == BattleSide) {
+
+		if(BattleAction.Skill) {
+			glm::vec2 SkillUsingPosition = SlotPosition - glm::vec2(Portrait->Size.x/2 + BattleAction.Skill->Texture->Size.x/2 + 10, 0);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture, GlobalColor);
+		}
+		else if(BattleAction.Item) {
+			glm::vec2 ItemUsingPosition = SlotPosition - glm::vec2(Portrait->Size.x/2 + BattleAction.Item->Texture->Size.x/2 + 10, 0);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(ItemUsingPosition, BattleAction.Item->Texture, GlobalColor);
+		}
 	}
 
 	// Draw potential skill to use
@@ -257,7 +265,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			if(ClientPlayer->PotentialAction.Skill)
 				Texture = ClientPlayer->PotentialAction.Skill->Texture;
 			else if(ClientPlayer->PotentialAction.Item)
-				Texture = ClientPlayer->PotentialAction.Item->Image;
+				Texture = ClientPlayer->PotentialAction.Item->Texture;
 
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			glm::vec4 Color(COLOR_WHITE);
@@ -272,8 +280,8 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	glm::vec2 StatusPosition(SlotPosition + glm::vec2(-Slot->Size.x/2, Slot->Size.y/2 + 4));
 	for(auto &StatusEffect : StatusEffects) {
-		StatusEffect->Element->Offset = StatusPosition;
-		StatusEffect->Element->CalculateBounds();
+		StatusEffect->BattleElement->Offset = StatusPosition;
+		StatusEffect->BattleElement->CalculateBounds();
 		Graphics.DrawCenteredImage(StatusPosition + glm::vec2(StatusEffect->Buff->Texture->Size/2), StatusEffect->Buff->Texture, GlobalColor);
 		StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
 	}
@@ -969,5 +977,6 @@ void _Object::CalculateFinalStats() {
 }
 
 _StatusEffect::~_StatusEffect() {
-	delete Element;
+	delete BattleElement;
+	delete HUDElement;
 }

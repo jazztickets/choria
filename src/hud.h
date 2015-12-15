@@ -32,6 +32,7 @@ class _Skill;
 class _Element;
 class _TextBox;
 class _Action;
+class _Scripting;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
@@ -128,6 +129,8 @@ class _HUD {
 		// Stats
 		bool ShowStats;
 
+		_Scripting *Scripting;
+
 	private:
 
 		bool CloseInventory();
@@ -167,6 +170,7 @@ class _HUD {
 		_Object *Player;
 
 		// UI
+		_Element *StatusEffectsElement;
 		_Element *ActionBarElement;
 		_Element *ButtonBarElement;
 		_Element *InventoryElement;
