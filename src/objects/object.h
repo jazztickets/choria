@@ -72,24 +72,25 @@ class _Object {
 		_Object();
 		~_Object();
 
-		void Render(const _Object *ClientPlayer=nullptr);
 		void Update(double FrameTime);
+		void Render(const _Object *ClientPlayer=nullptr);
+		void RenderBattle(_Object *ClientPlayer, double Time);
+
+		// Network
 		void SerializeCreate(_Buffer &Data);
 		void SerializeUpdate(_Buffer &Data);
 		void SerializeStats(_Buffer &Data);
 		void UnserializeCreate(_Buffer &Data);
 		void UnserializeStats(_Buffer &Data);
 
-		// -- FROM FIGHTER --
-
-		// Render
-		void RenderBattle(_Object *ClientPlayer, double Time);
-
 		// Stats
 		void UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int Value);
 		void UpdateMana(int Value);
 		void RestoreHealthMana();
+		void CalculateStats();
+		float GetNextLevelPercent() const;
+		void UpdateGold(int Value);
 
 		// Battles
 		void UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime);
@@ -97,19 +98,11 @@ class _Object {
 		int GenerateDefense();
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();
+		bool CanBattle();
+		void GenerateNextBattle();
+		void StopBattle();
 
-		// -- END FROM FIGHTER --
-
-		// Stats
-		void CalculateStats();
-
-		// Experience
-		float GetNextLevelPercent() const;
-
-		// Gold
-		void UpdateGold(int Value);
-
-		// Inventory
+		// Actions
 		void RefreshActionBarCount();
 		bool UseActionWorld(_Buffer &Data, _Scripting *Scripting, uint8_t Slot);
 
@@ -125,11 +118,6 @@ class _Object {
 		void AdjustSkillLevel(uint32_t SkillID, int Adjust);
 		void CalculateSkillPoints();
 
-		// Battles
-		bool CanBattle();
-		void GenerateNextBattle();
-		void StopBattle();
-
 		// Trader
 		void AcceptTrader(_Buffer &Data, std::vector<size_t> &Slots, size_t RewardSlot);
 
@@ -140,7 +128,6 @@ class _Object {
 		bool CanAttackPlayer();
 		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
 
-		// -- OBJECT  --
 		_Map *Map;
 		_Peer *Peer;
 		int InputState;
@@ -150,8 +137,6 @@ class _Object {
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 		NetworkIDType NetworkID;
-
-		// -- FIGHTER  --
 
 		// Action bar
 		std::vector<_Action>ActionBar;

@@ -140,6 +140,122 @@ _Object::~_Object() {
 	RemoveBattleElement();
 }
 
+// Updates the player
+void _Object::Update(double FrameTime) {
+	CheckEvent = false;
+
+	// Update player position
+	Moved = Move();
+	if(Moved) {
+		InputState = 0;
+		CheckEvent = true;
+	}
+
+	Status = STATUS_NONE;
+	if(Battle)
+		Status = STATUS_BATTLE;
+	else if(WaitingForTrade)
+		Status = STATUS_TRADE;
+	else if(Vendor)
+		Status = STATUS_VENDOR;
+	else if(Trader)
+		Status = STATUS_TRADER;
+	else if(InventoryOpen)
+		Status = STATUS_INVENTORY;
+	else if(SkillsOpen)
+		Status = STATUS_SKILLS;
+	else if(Paused)
+		Status = STATUS_PAUSE;
+
+	// Update timers
+	MoveTime += FrameTime;
+	AttackPlayerTime += FrameTime;
+
+	// Update teleport time
+	if(TeleportTime > 0.0) {
+		Status = STATUS_TELEPORT;
+		TeleportTime -= FrameTime;
+		if(TeleportTime <= 0.0) {
+			CheckEvent = true;
+			TeleportTime = 0.0;
+		}
+	}
+
+	// Update playtime
+	PlayTimeAccumulator += FrameTime;
+	if(PlayTimeAccumulator >= 1.0) {
+		PlayTimeAccumulator -= 1.0;
+		PlayTime++;
+	}
+}
+
+// Update AI during battle
+void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime) {
+	if(!AI.length())
+		return;
+
+	// Update AI every second
+	AITimer += FrameTime;
+	if(AITimer >= BATTLE_AI_UPDATE_PERIOD) {
+		AITimer = 0.0;
+
+		// Separate fighter list
+		std::list<_Object *> Enemies, Allies;
+		for(const auto &Fighter : Fighters) {
+			if(Fighter->BattleSide == BattleSide)
+				Allies.push_back(Fighter);
+			else if(Fighter->Health > 0)
+				Enemies.push_back(Fighter);
+		}
+
+		// Call lua script
+		if(Enemies.size()) {
+			if(Scripting->StartMethodCall(AI, "Update")) {
+				Scripting->PushObject(this);
+				Scripting->PushObjectList(Enemies);
+				Scripting->PushObjectList(Allies);
+				Scripting->MethodCall(3, 0);
+				Scripting->FinishMethodCall();
+			}
+		}
+	}
+}
+
+// Renders the player while walking around the world
+void _Object::Render(const _Object *ClientPlayer) {
+	if(Map && WorldTexture) {
+
+		float Alpha = 1.0f;
+		if(IsInvisible())
+			Alpha = PLAYER_INVIS_ALPHA;
+
+		Graphics.SetProgram(Assets.Programs["pos_uv"]);
+		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+
+		Graphics.SetVBO(VBO_QUAD);
+
+		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
+
+		glm::vec3 DrawPosition;
+		if(0) {
+			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
+			Graphics.DrawSprite(DrawPosition, WorldTexture);
+		}
+
+		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
+		Graphics.SetColor(Color);
+		Graphics.DrawSprite(DrawPosition, WorldTexture);
+		if(StatusTexture) {
+			Graphics.DrawSprite(DrawPosition, StatusTexture);
+		}
+
+		if(1 || ClientPlayer != this) {
+			Assets.Fonts["hud_small"]->DrawText((Name + " " + std::to_string(NetworkID)).c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
+		}
+	}
+}
+
 // Renders the fighter during a battle
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	glm::vec4 GlobalColor(COLOR_WHITE);
@@ -281,71 +397,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 }
 
-// Update stats
-void _Object::UpdateStats(_StatChange &StatChange) {
-
-	UpdateHealth(StatChange.HealthChange);
-	UpdateMana(StatChange.ManaChange);
-}
-
-// Update health
-void _Object::UpdateHealth(int Value) {
-	Health += Value;
-
-	if(Health < 0)
-		Health = 0;
-	else if(Health > MaxHealth)
-		Health = MaxHealth;
-}
-
-// Update mana
-void _Object::UpdateMana(int Value) {
-	Mana += Value;
-
-	if(Mana < 0)
-		Mana = 0;
-	else if(Mana > MaxMana)
-		Mana = MaxMana;
-}
-
-// Set health and mana to max
-void _Object::RestoreHealthMana() {
-	Health = MaxHealth;
-	Mana = MaxMana;
-}
-
-// Update AI during battle
-void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime) {
-	if(!AI.length())
-		return;
-
-	// Update AI every second
-	AITimer += FrameTime;
-	if(AITimer >= BATTLE_AI_UPDATE_PERIOD) {
-		AITimer = 0.0;
-
-		// Separate fighter list
-		std::list<_Object *> Enemies, Allies;
-		for(const auto &Fighter : Fighters) {
-			if(Fighter->BattleSide == BattleSide)
-				Allies.push_back(Fighter);
-			else if(Fighter->Health > 0)
-				Enemies.push_back(Fighter);
-		}
-
-		// Call lua script
-		if(Enemies.size()) {
-			if(Scripting->StartMethodCall(AI, "Update")) {
-				Scripting->PushObject(this);
-				Scripting->PushObjectList(Enemies);
-				Scripting->PushObjectList(Allies);
-				Scripting->MethodCall(3, 0);
-				Scripting->FinishMethodCall();
-			}
-		}
-	}
-}
-
 // Generate damage
 int _Object::GenerateDamage() {
 	return GetRandomInt(MinDamage, MaxDamage);
@@ -390,55 +441,6 @@ void _Object::RemoveBattleElement() {
 
 		delete BattleElement;
 		BattleElement = nullptr;
-	}
-}
-
-// Updates the player
-void _Object::Update(double FrameTime) {
-	CheckEvent = false;
-
-	// Update player position
-	Moved = Move();
-	if(Moved) {
-		InputState = 0;
-		CheckEvent = true;
-	}
-
-	Status = STATUS_NONE;
-	if(Battle)
-		Status = STATUS_BATTLE;
-	else if(WaitingForTrade)
-		Status = STATUS_TRADE;
-	else if(Vendor)
-		Status = STATUS_VENDOR;
-	else if(Trader)
-		Status = STATUS_TRADER;
-	else if(InventoryOpen)
-		Status = STATUS_INVENTORY;
-	else if(SkillsOpen)
-		Status = STATUS_SKILLS;
-	else if(Paused)
-		Status = STATUS_PAUSE;
-
-	// Update timers
-	MoveTime += FrameTime;
-	AttackPlayerTime += FrameTime;
-
-	// Update teleport time
-	if(TeleportTime > 0.0) {
-		Status = STATUS_TELEPORT;
-		TeleportTime -= FrameTime;
-		if(TeleportTime <= 0.0) {
-			CheckEvent = true;
-			TeleportTime = 0.0;
-		}
-	}
-
-	// Update playtime
-	PlayTimeAccumulator += FrameTime;
-	if(PlayTimeAccumulator >= 1.0) {
-		PlayTimeAccumulator -= 1.0;
-		PlayTime++;
 	}
 }
 
@@ -544,39 +546,37 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	CalculateStats();
 }
 
-// Renders the player while walking around the world
-void _Object::Render(const _Object *ClientPlayer) {
-	if(Map && WorldTexture) {
+// Update stats
+void _Object::UpdateStats(_StatChange &StatChange) {
 
-		float Alpha = 1.0f;
-		if(IsInvisible())
-			Alpha = PLAYER_INVIS_ALPHA;
+	UpdateHealth(StatChange.HealthChange);
+	UpdateMana(StatChange.ManaChange);
+}
 
-		Graphics.SetProgram(Assets.Programs["pos_uv"]);
-		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+// Update health
+void _Object::UpdateHealth(int Value) {
+	Health += Value;
 
-		Graphics.SetVBO(VBO_QUAD);
+	if(Health < 0)
+		Health = 0;
+	else if(Health > MaxHealth)
+		Health = MaxHealth;
+}
 
-		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
+// Update mana
+void _Object::UpdateMana(int Value) {
+	Mana += Value;
 
-		glm::vec3 DrawPosition;
-		if(0) {
-			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
-			Graphics.DrawSprite(DrawPosition, WorldTexture);
-		}
+	if(Mana < 0)
+		Mana = 0;
+	else if(Mana > MaxMana)
+		Mana = MaxMana;
+}
 
-		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-		Graphics.SetColor(Color);
-		Graphics.DrawSprite(DrawPosition, WorldTexture);
-		if(StatusTexture) {
-			Graphics.DrawSprite(DrawPosition, StatusTexture);
-		}
-
-		if(1 || ClientPlayer != this) {
-			Assets.Fonts["hud_small"]->DrawText((Name + " " + std::to_string(NetworkID)).c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
-		}
-	}
+// Set health and mana to max
+void _Object::RestoreHealthMana() {
+	Health = MaxHealth;
+	Mana = MaxMana;
 }
 
 // Moves the player
@@ -934,44 +934,6 @@ void _Object::CalculateGearStats() {
 
 // Calculates skill bonuses
 void _Object::CalculateSkillStats() {
-/*
-	// Go through each skill bar
-	for(size_t i = 0; i < ActionBar.size(); i++) {
-		const _Skill *Skill = ActionBar[i].Skill;
-		if(Skill) {
-			int Min, Max, MinRound, MaxRound;
-			float MinFloat, MaxFloat;
-			Skill->GetPowerRange(SkillLevels[Skill->ID], Min, Max);
-			Skill->GetPowerRangeRound(SkillLevels[Skill->ID], MinRound, MaxRound);
-			Skill->GetPowerRange(SkillLevels[Skill->ID], MinFloat, MaxFloat);
-
-			switch(Skill->ID) {
-				case 1:
-					WeaponDamageModifier = MaxFloat;
-				break;
-				case 5:
-					MaxHealth += MaxRound;
-				break;
-				case 6:
-					MaxMana += MaxRound;
-				break;
-				case 8:
-					HealthRegen += MaxFloat;
-				break;
-				case 9:
-					ManaRegen += MaxFloat;
-				break;
-				case 10:
-					MinDamageBonus += Max;
-					MaxDamageBonus += Max;
-				break;
-				case 11:
-					MaxDefenseBonus += Max;
-				break;
-			}
-		}
-	}
-	*/
 }
 
 // Combine all stats
