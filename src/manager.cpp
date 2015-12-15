@@ -15,27 +15,27 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <factory.h>
+#include <manager.h>
 #include <objects/object.h>
 #include <instances/map.h>
 #include <limits>
 
 // Constructor
 template <class T>
-_Factory<T>::_Factory() :
+_Manager<T>::_Manager() :
 	NextID(0) {
 
 }
 
 // Destructor
 template <class T>
-_Factory<T>::~_Factory() {
+_Manager<T>::~_Manager() {
 
 }
 
 // Generate object with new network id
 template <class T>
-T *_Factory<T>::Create() {
+T *_Manager<T>::Create() {
 
 	// Search for an empty slot
 	for(NetworkIDType i = 0; i <= std::numeric_limits<NetworkIDType>::max(); i++) {
@@ -55,7 +55,7 @@ T *_Factory<T>::Create() {
 
 // Create object with existing id
 template <class T>
-T *_Factory<T>::CreateWithID(NetworkIDType ID) {
+T *_Manager<T>::CreateWithID(NetworkIDType ID) {
 	T *Object = new T;
 	Object->NetworkID = ID;
 
@@ -64,5 +64,5 @@ T *_Factory<T>::CreateWithID(NetworkIDType ID) {
 	return Object;
 }
 
-template class _Factory<_Object>;
-template class _Factory<_Map>;
+template class _Manager<_Object>;
+template class _Manager<_Map>;

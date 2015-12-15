@@ -27,7 +27,7 @@
 #include <constants.h>
 #include <framework.h>
 #include <graphics.h>
-#include <factory.h>
+#include <manager.h>
 #include <menu.h>
 #include <camera.h>
 #include <scripting.h>
@@ -68,7 +68,7 @@ void _ClientState::Init() {
 	Time = 0.0;
 	Clock = 0.0;
 
-	Factory = new _Factory<_Object>();
+	Factory = new _Manager<_Object>();
 
 	Stats = new _Stats();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);

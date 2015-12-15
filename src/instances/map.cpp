@@ -25,7 +25,7 @@
 #include <constants.h>
 #include <stats.h>
 #include <buffer.h>
-#include <factory.h>
+#include <manager.h>
 #include <texture.h>
 #include <assets.h>
 #include <atlas.h>
@@ -140,7 +140,7 @@ void _Map::FreeMap() {
 }
 
 // Updates the map and sends object updates
-void _Map::Update(_Factory<_Object> *Factory, double FrameTime) {
+void _Map::Update(_Manager<_Object> *Factory, double FrameTime) {
 	ObjectUpdateCount = 0;
 
 	// Update objects

@@ -24,7 +24,7 @@
 #include <instances/battle.h>
 #include <scripting.h>
 #include <save.h>
-#include <factory.h>
+#include <manager.h>
 #include <database.h>
 #include <buffer.h>
 #include <packet.h>
@@ -79,7 +79,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
-	Factory = new _Factory<_Object>();
+	Factory = new _Manager<_Object>();
 	Save = new _Save();
 	Clock = Save->GetClock();
 

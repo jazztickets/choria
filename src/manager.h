@@ -22,12 +22,12 @@
 #include <unordered_map>
 
 // Classes
-template<class T> class _Factory {
+template<class T> class _Manager {
 
 	public:
 
-		_Factory();
-		~_Factory();
+		_Manager();
+		~_Manager();
 
 		// Object management
 		T *Create();

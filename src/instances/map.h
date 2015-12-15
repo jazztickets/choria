@@ -21,7 +21,7 @@
 #include <network/network.h>
 #include <packet.h>
 #include <texture.h>
-#include <factory.h>
+#include <manager.h>
 #include <vector>
 #include <list>
 #include <cstdint>
@@ -84,7 +84,7 @@ class _Map {
 		void AllocateMap();
 		void InitAtlas(const std::string AtlasPath);
 
-		void Update(_Factory<_Object> *Factory, double FrameTime);
+		void Update(_Manager<_Object> *Factory, double FrameTime);
 		void CheckEvents(_Object *Object);
 		void GetClockAsString(std::stringstream &Buffer);
 		void SetAmbientLightByClock();

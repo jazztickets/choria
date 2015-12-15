@@ -20,7 +20,7 @@
 #include <state.h>
 #include <log.h>
 #include <packet.h>
-#include <factory.h>
+#include <manager.h>
 #include <unordered_map>
 
 // Forward Declarations
@@ -78,7 +78,7 @@ class _ClientState : public _State {
 		_Scripting *Scripting;
 
 		// Objects
-		_Factory<_Object> *Factory;
+		_Manager<_Object> *Factory;
 		_Object *Player;
 		_Map *Map;
 		_Battle *Battle;

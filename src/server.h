@@ -23,7 +23,7 @@
 #include <memory>
 #include <thread>
 #include <list>
-#include <factory.h>
+#include <manager.h>
 #include <unordered_map>
 #include <glm/vec4.hpp>
 
@@ -76,7 +76,7 @@ class _Server {
 		_Scripting *Scripting;
 
 		// Objects
-		_Factory<_Object> *Factory;
+		_Manager<_Object> *Factory;
 		std::list<_Map *> Maps;
 		std::list<_Battle *>Battles;
 		uint8_t NextMapID;
