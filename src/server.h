@@ -52,7 +52,7 @@ class _Server {
 		void JoinThread();
 		void StopServer();
 
-		void SpawnPlayer(_Peer *Peer, NetworkIDType MapID, uint32_t EventType);
+		void SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType);
 		void StartBattle(_Object *Object, uint32_t Zone);
 		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void SendHUD(_Peer *Peer);

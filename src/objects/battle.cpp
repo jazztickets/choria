@@ -82,6 +82,9 @@ _Battle::~_Battle() {
 // Update battle
 void _Battle::Update(double FrameTime) {
 
+	if(GetPeerCount() == 0)
+		Deleted = true;
+
 	if(!Done) {
 
 		// Update fighters

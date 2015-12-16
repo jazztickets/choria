@@ -20,6 +20,7 @@
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <limits>
+#include <stdexcept>
 
 // Constructor
 template <class T>
@@ -93,18 +94,6 @@ T *_Manager<T>::CreateWithID(NetworkIDType ID) {
 	IDMap[ID] = Object;
 
 	return Object;
-}
-
-// Delete object
-template <class T>
-void _Manager<T>::Delete(T *Object) {
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
-		if(*Iterator == Object) {
-			Objects.erase(Iterator);
-			delete Object;
-			break;
-		}
-	}
 }
 
 // Delete all objects and reset

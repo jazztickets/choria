@@ -36,7 +36,6 @@ template<class T> class _Manager {
 		// Object management
 		T *Create();
 		T *CreateWithID(NetworkIDType ID);
-		void Delete(T *Object);
 		void Clear();
 
 		// Storage

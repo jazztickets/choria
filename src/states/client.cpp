@@ -66,7 +66,6 @@ void _ClientState::Init() {
 	Map = nullptr;
 	Battle = nullptr;
 	Time = 0.0;
-	Clock = 0.0;
 
 	ObjectManager = new _Manager<_Object>();
 
@@ -340,7 +339,6 @@ void _ClientState::Update(double FrameTime) {
 	ObjectManager->Update(FrameTime);
 
 	// Update objects
-	Map->Clock = Clock;
 	Map->Update(FrameTime);
 	if(Player->Moved) {
 		_Buffer Packet;
@@ -364,11 +362,6 @@ void _ClientState::Update(double FrameTime) {
 	HUD->Update(FrameTime);
 
 	Time += FrameTime;
-
-	// Update clock
-	Clock += FrameTime * MAP_CLOCK_SPEED;
-	if(Clock >= MAP_DAY_LENGTH)
-		Clock -= MAP_DAY_LENGTH;
 }
 
 // Render the state
@@ -551,7 +544,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 	// Load map
 	NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
-	Clock = Data.Read<double>();
+	double Clock = Data.Read<double>();
 
 	// Delete old map and create new
 	if(!Map || Map->NetworkID != MapID) {
@@ -559,6 +552,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 			delete Map;
 
 		Map = new _Map();
+		Map->Clock = Clock;
 		Map->NetworkID = MapID;
 		Map->Load(Stats->GetMap(MapID)->File);
 		Player = nullptr;

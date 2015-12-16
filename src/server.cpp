@@ -155,10 +155,7 @@ void _Server::Update(double FrameTime) {
 	ObjectManager->Update(FrameTime);
 
 	// Update maps
-	for(auto &Map : MapManager->Objects) {
-		Map->Clock = Clock;
-		Map->Update(FrameTime);
-	}
+	MapManager->Update(FrameTime);
 
 	// Update battles
 	BattleManager->Update(FrameTime);
@@ -214,8 +211,9 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 	// Get object
 	_Object *Player = Event.Peer->Object;
 	if(Player) {
+		Player->Peer = nullptr;
+
 		if(Player->Map) {
-			Player->Map->RemovePeer(Event.Peer);
 
 			// Broadcast message
 			for(auto &ReceivePeer : Network->GetPeers()) {
@@ -233,9 +231,6 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 			Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 			Network->SendPacket(Packet, TradePlayer->Peer);
 		}
-
-		// Remove from battle
-		RemovePlayerFromBattle(Player);
 
 		// Save player
 		Save->SavePlayer(Player);
@@ -463,7 +458,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Send map and players to new player
 	Peer->Object = CreatePlayer(Peer);
-	SpawnPlayer(Peer, MapID, _Map::EVENT_SPAWN);
+	SpawnPlayer(Peer->Object, MapID, _Map::EVENT_SPAWN);
 
 	// Broadcast message
 	for(auto &ReceivePeer : Network->GetPeers()) {
@@ -553,12 +548,9 @@ void _Server::SendCharacterList(_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Peer *Peer, NetworkIDType MapID, uint32_t EventType) {
-	if(!Peer->AccountID || !Peer->CharacterID)
-		return;
-
-	// Get player object
-	_Object *Player = Peer->Object;
+void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType) {
+	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
+	   return;
 
 	// Get map
 	_Map *Map = MapManager->IDMap[MapID];
@@ -566,6 +558,7 @@ void _Server::SpawnPlayer(_Peer *Peer, NetworkIDType MapID, uint32_t EventType) 
 	// Load map
 	if(!Map) {
 		Map = MapManager->CreateWithID(MapID);
+		Map->Clock = Clock;
 		Map->Server = this;
 		Map->Load(Stats->GetMap(MapID)->File);
 	}
@@ -577,7 +570,6 @@ void _Server::SpawnPlayer(_Peer *Peer, NetworkIDType MapID, uint32_t EventType) 
 	if(Map != OldMap) {
 		if(OldMap) {
 			OldMap->RemoveObject(Player);
-			OldMap->RemovePeer(Peer);
 		}
 
 		Player->Map = Map;
@@ -596,21 +588,18 @@ void _Server::SpawnPlayer(_Peer *Peer, NetworkIDType MapID, uint32_t EventType) 
 		Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
 		Packet.Write<uint32_t>(MapID);
 		Packet.Write<double>(Clock);
-		Network->SendPacket(Packet, Peer);
-
-		// Add peer to map
-		Map->AddPeer(Peer);
+		Network->SendPacket(Packet, Player->Peer);
 
 		// Set player object list
-		Map->SendObjectList(Peer);
+		Map->SendObjectList(Player->Peer);
 
 		// Set full player data to peer
-		SendPlayerInfo(Peer);
+		SendPlayerInfo(Player->Peer);
 	}
 	else {
 		Map->FindEvent(_Event(EventType, Player->SpawnPoint), Player->Position);
-		SendPlayerPosition(Peer);
-		SendHUD(Peer);
+		SendPlayerPosition(Player->Peer);
+		SendHUD(Player->Peer);
 	}
 }
 
@@ -1117,7 +1106,7 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 	// Check for death
 	if(Player->Health == 0) {
 		Player->RestoreHealthMana();
-		SpawnPlayer(Player->Peer, Player->SpawnMapID, _Map::EVENT_SPAWN);
+		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
 	}
 }
 
@@ -1131,9 +1120,6 @@ void _Server::RemovePlayerFromBattle(_Object *Player) {
 
 	// Delete instance
 	Battle->RemoveFighter(Player);
-	if(Battle->GetPeerCount() == 0) {
-		Battle->Deleted = true;
-	}
 }
 
 /*

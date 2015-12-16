@@ -133,6 +133,11 @@ void _Map::FreeMap() {
 
 // Updates the map and sends object updates
 void _Map::Update(double FrameTime) {
+
+	// Update clock
+	Clock += FrameTime * MAP_CLOCK_SPEED;
+	if(Clock >= MAP_DAY_LENGTH)
+		Clock -= MAP_DAY_LENGTH;
 }
 
 // Check for events
@@ -142,7 +147,7 @@ void _Map::CheckEvents(_Object *Object) {
 	if(Server && Object->TeleportTime == 0.0) {
 		Object->TeleportTime = -1.0;
 		Object->Status = _Object::STATUS_NONE;
-		Server->SpawnPlayer(Object->Peer, Object->SpawnMapID, _Map::EVENT_SPAWN);
+		Server->SpawnPlayer(Object, Object->SpawnMapID, _Map::EVENT_SPAWN);
 		return;
 	}
 
@@ -159,7 +164,7 @@ void _Map::CheckEvents(_Object *Object) {
 		break;
 		case _Map::EVENT_MAPCHANGE:
 			if(Server)
-				Server->SpawnPlayer(Object->Peer, Tile->Event.Data, Tile->Event.Type);
+				Server->SpawnPlayer(Object, Tile->Event.Data, Tile->Event.Type);
 			else
 				Object->WaitForServer = true;
 		break;
@@ -573,13 +578,6 @@ void _Map::RemoveObject(const _Object *RemoveObject) {
 		Objects.erase(Iterator);
 }
 
-// Remove a peer
-void _Map::RemovePeer(const _Peer *Peer) {
-	auto Iterator = std::find(Peers.begin(), Peers.end(), Peer);
-	if(Iterator != Peers.end())
-		Peers.erase(Iterator);
-}
-
 // Adds an object to the map
 void _Map::AddObject(_Object *Object) {
 	if(Server) {
@@ -691,8 +689,10 @@ void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
 		return;
 
 	// Send packet to peers
-	for(auto &Peer : Peers)
-		Server->Network->SendPacket(Buffer, Peer, Type, Type == _Network::UNSEQUENCED);
+	for(auto &Object : Objects) {
+		if(Object->Peer)
+			Server->Network->SendPacket(Buffer, Object->Peer, Type, Type == _Network::UNSEQUENCED);
+	}
 }
 
 // Get a valid position within the grid

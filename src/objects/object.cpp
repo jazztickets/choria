@@ -195,12 +195,11 @@ void _Object::Update(double FrameTime) {
 // Called when object is deleted
 void _Object::OnDelete() {
 
-	if(Map) {
-		if(Peer)
-			Map->RemovePeer(Peer);
-
+	if(Map)
 		Map->RemoveObject(this);
-	}
+
+	if(Battle)
+		Battle->RemoveFighter(this);
 }
 
 // Update AI during battle

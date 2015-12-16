@@ -100,9 +100,6 @@ class _Map : public _ManagerBase {
 
 		// Peer management
 		void BroadcastPacket(_Buffer &Buffer, _Network::SendType Type=_Network::RELIABLE);
-		const std::list<const _Peer *> &GetPeers() const { return Peers; }
-		void AddPeer(const _Peer *Peer) { Peers.push_back(Peer); }
-		void RemovePeer(const _Peer *Peer);
 
 		// Object management
 		void SendObjectUpdates();

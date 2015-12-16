@@ -189,7 +189,7 @@ class _Object : public _ManagerBase {
 		const _Texture *StatusTexture;
 
 		// Map
-		uint32_t SpawnMapID;
+		NetworkIDType SpawnMapID;
 		uint32_t SpawnPoint;
 		double TeleportTime;
 

@@ -72,7 +72,6 @@ class _ClientState : public _State {
 		_Stats *Stats;
 		_LogFile Log;
 		double Time;
-		double Clock;
 
 		// Scripting
 		_Scripting *Scripting;
