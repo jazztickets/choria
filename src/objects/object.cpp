@@ -25,6 +25,7 @@
 #include <objects/battle.h>
 #include <ui/element.h>
 #include <ui/image.h>
+#include <network/servernetwork.h>
 #include <buffer.h>
 #include <assets.h>
 #include <graphics.h>
@@ -192,6 +193,8 @@ void _Object::Update(double FrameTime) {
 				Action.Resolve(Packet, this, Scope);
 				if(Battle)
 					Battle->BroadcastPacket(Packet);
+				else
+					Server->Network->SendPacket(Packet, Peer);
 			}
 		}
 	}
@@ -788,13 +791,13 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 	if(!Action.IsSet()) {
 
 		uint8_t ActionBarSlot = Data.Read<uint8_t>();
-		uint8_t TargetCount = Data.Read<uint8_t>();
+		int TargetCount = Data.Read<uint8_t>();
 		if(!TargetCount)
 			return;
 
 		// Get targets
 		Targets.clear();
-		for(uint8_t i = 0; i < TargetCount; i++) {
+		for(int i = 0; i < TargetCount; i++) {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 			_Object *Target = ObjectManager->IDMap[NetworkID];
 			if(Target)

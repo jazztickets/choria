@@ -981,7 +981,8 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 			// Add status effect
 			if(StatusEffect) {
 				ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
-				StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement);
+				if(ActionResult.Target.Object->BattleElement)
+					StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement);
 
 				// Create hud element
 				if(ActionResult.Target.Object == Player) {
@@ -1052,7 +1053,8 @@ void _ClientState::SendActionUse(uint8_t Slot) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_USE);
 	Packet.Write<uint8_t>(Slot);
-	Packet.Write<uint8_t>(0);
+	Packet.Write<uint8_t>(1);
+	Packet.Write<uint32_t>(Player->NetworkID);
 	Network->SendPacket(Packet);
 }
 
