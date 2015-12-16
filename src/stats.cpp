@@ -252,6 +252,7 @@ void _Stats::LoadTraders() {
 
 // Gets monsters stats from the database
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
+	Monster->DatabaseID = MonsterID;
 
 	// Run query
 	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.id = @monster_id");

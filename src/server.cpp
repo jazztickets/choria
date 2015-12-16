@@ -1250,7 +1250,10 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 			Battle->AddFighter(Monster, 1);
 		}
 
-		// Send messages out
-		Battle->ServerStartBattle();
+		// Send battle to players
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::BATTLE_START);
+		Battle->Serialize(Packet);
+		Battle->BroadcastPacket(Packet);
 	}
 }

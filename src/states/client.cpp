@@ -923,6 +923,9 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	if(Battle)
 		return;
 
+	// Reset hud
+	HUD->CloseWindows();
+
 	// Create a new battle instance
 	Battle = new _Battle();
 	Battle->Manager = ObjectManager;
@@ -931,55 +934,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	Battle->ClientPlayer = Player;
 	Battle->ClientNetwork = Network;
 
-	// Get fighter count
-	int FighterCount = Data.Read<uint8_t>();
-
-	// Get fighter information
-	for(int i = 0; i < FighterCount; i++) {
-
-		// Get fighter type
-		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-		uint32_t DatabaseID = Data.Read<uint32_t>();
-		uint8_t Side = Data.Read<uint8_t>();
-		double TurnTimer = Data.Read<double>();
-
-		_Object *Fighter = nullptr;
-		if(DatabaseID == 0) {
-
-			// Player stats
-			glm::ivec2 Position = Data.Read<glm::ivec2>();
-			int Health = Data.Read<int32_t>();
-			int MaxHealth = Data.Read<int32_t>();
-			int Mana = Data.Read<int32_t>();
-			int MaxMana = Data.Read<int32_t>();
-
-			// Get player object
-			Fighter = ObjectManager->IDMap[NetworkID];
-			if(Fighter != nullptr) {
-				Fighter->InputState = 0;
-				Fighter->Position = Fighter->ServerPosition = Position;
-				Fighter->Health = Health;
-				Fighter->MaxHealth = MaxHealth;
-				Fighter->Mana = Mana;
-				Fighter->MaxMana = MaxMana;
-				Fighter->TurnTimer = TurnTimer;
-
-				Battle->AddFighter(Fighter, Side);
-			}
-		}
-		else {
-			Fighter = ObjectManager->CreateWithID(NetworkID);
-			Fighter->DatabaseID = DatabaseID;
-			Fighter->TurnTimer = TurnTimer;
-			Stats->GetMonsterStats(DatabaseID, Fighter);
-
-			Battle->AddFighter(Fighter, Side);
-		}
-	}
-
-	// Start the battle
-	HUD->CloseWindows();
-	Battle->ClientStartBattle();
+	Battle->Unserialize(Data);
 }
 
 // Handles a battle action set from another player

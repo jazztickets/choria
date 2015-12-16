@@ -82,8 +82,10 @@ class _Object : public _ManagerBase {
 		void SerializeCreate(_Buffer &Data);
 		void SerializeUpdate(_Buffer &Data);
 		void SerializeStats(_Buffer &Data);
+		void SerializeBattle(_Buffer &Data);
 		void UnserializeCreate(_Buffer &Data);
 		void UnserializeStats(_Buffer &Data);
+		void UnserializeBattle(_Buffer &Data);
 
 		// Stats
 		void UpdateStats(_StatChange &StatChange);

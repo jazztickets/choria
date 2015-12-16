@@ -220,6 +220,56 @@ void _Battle::Render(double BlendFactor) {
 	}
 }
 
+// Unserialize for network
+void _Battle::Unserialize(_Buffer &Data) {
+
+	// Get fighter count
+	int FighterCount = Data.Read<uint8_t>();
+
+	// Get fighter information
+	for(int i = 0; i < FighterCount; i++) {
+
+		// Get object data
+		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+		uint32_t DatabaseID = Data.Read<uint32_t>();
+
+		// Get object pointers
+		_Object *Fighter = nullptr;
+		if(DatabaseID) {
+			Fighter = Manager->CreateWithID(NetworkID);
+			Stats->GetMonsterStats(DatabaseID, Fighter);
+		}
+		else
+			Fighter = Manager->IDMap[NetworkID];
+
+		// Get battle stats
+		Fighter->UnserializeBattle(Data);
+
+		// Add fighter
+		AddFighter(Fighter, Fighter->BattleSide);
+	}
+
+	// Set up ui
+	BattleElement = Assets.Elements["element_battle"];
+	BattleWinElement = Assets.Elements["element_battlewin"];
+	BattleLoseElement = Assets.Elements["element_battlelose"];
+	BattleElement->SetVisible(true);
+	BattleWinElement->SetVisible(false);
+	BattleLoseElement->SetVisible(false);
+
+	// Set fighter position offsets and create ui elements
+	int SideCount[2] = { 0, 0 };
+	for(auto &Fighter : Fighters) {
+		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
+		SideCount[Fighter->BattleSide]++;
+
+		Fighter->CreateBattleElement(BattleElement);
+	}
+
+	BattleElement->CalculateChildrenBounds();
+	//BattleElement->SetDebug(1);
+}
+
 // Renders the battle part
 void _Battle::RenderBattle(double BlendFactor) {
 	BattleElement->Render();
@@ -744,64 +794,19 @@ void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters)
 }
 
 // Starts the battle and notifies the players
-void _Battle::ServerStartBattle() {
-
-	// Build packet
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_START);
+void _Battle::Serialize(_Buffer &Data) {
 
 	// Write fighter count
 	size_t FighterCount = Fighters.size();
-	Packet.Write<uint8_t>((uint8_t)FighterCount);
+	Data.Write<uint8_t>((uint8_t)FighterCount);
 
 	// Write fighter information
 	for(auto &Fighter : Fighters) {
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 		//Fighter->TurnTimer = 1;
 
-		// Write fighter type
-		Packet.Write<NetworkIDType>(Fighter->NetworkID);
-		Packet.Write<uint32_t>(Fighter->DatabaseID);
-		Packet.Write<uint8_t>(Fighter->BattleSide);
-		Packet.Write<double>(Fighter->TurnTimer);
-
-		if(Fighter->DatabaseID == 0) {
-
-			// Network ID
-			Packet.Write<glm::ivec2>(Fighter->Position);
-
-			// Player stats
-			Packet.Write<int32_t>(Fighter->Health);
-			Packet.Write<int32_t>(Fighter->MaxHealth);
-			Packet.Write<int32_t>(Fighter->Mana);
-			Packet.Write<int32_t>(Fighter->MaxMana);
-		}
+		Fighter->SerializeBattle(Data);
 	}
-
-	// Send packet to players
-	BroadcastPacket(Packet);
-}
-
-// Starts the battle on the client
-void _Battle::ClientStartBattle() {
-	BattleElement = Assets.Elements["element_battle"];
-	BattleWinElement = Assets.Elements["element_battlewin"];
-	BattleLoseElement = Assets.Elements["element_battlelose"];
-	BattleElement->SetVisible(true);
-	BattleWinElement->SetVisible(false);
-	BattleLoseElement->SetVisible(false);
-
-	// Set fighter position offsets and create ui elements
-	int SideCount[2] = { 0, 0 };
-	for(auto &Fighter : Fighters) {
-		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
-		SideCount[Fighter->BattleSide]++;
-
-		Fighter->CreateBattleElement(BattleElement);
-	}
-
-	BattleElement->CalculateChildrenBounds();
-	//BattleElement->SetDebug(1);
 }
 
 // Checks for the end of a battle
@@ -1151,12 +1156,12 @@ void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 }
 
 // Send a packet to all players
-void _Battle::BroadcastPacket(_Buffer &Packet) {
+void _Battle::BroadcastPacket(_Buffer &Data) {
 
 	// Send packet to all players
 	for(auto &Fighter : Fighters) {
 		if(Fighter->Peer) {
-			Server->Network->SendPacket(Packet, Fighter->Peer);
+			Server->Network->SendPacket(Data, Fighter->Peer);
 		}
 	}
 }

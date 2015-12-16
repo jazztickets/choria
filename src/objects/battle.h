@@ -77,9 +77,12 @@ class _Battle : public _ManagerBase {
 		void OnDelete() override { }
 		void Render(double BlendFactor);
 
+		// Network
+		void Serialize(_Buffer &Data);
+		void Unserialize(_Buffer &Data);
+		void BroadcastPacket(_Buffer &Data);
+
 		// Setup
-		void ServerStartBattle();
-		void ClientStartBattle();
 		void ServerEndBattle();
 		void ClientEndBattle(_Buffer &Data);
 
@@ -102,8 +105,6 @@ class _Battle : public _ManagerBase {
 		_Manager<_Object> *Manager;
 
 	private:
-
-		void BroadcastPacket(_Buffer &Packet);
 
 		void GetBattleOffset(int SideIndex, _Object *Fighter);
 		void ClientSetAction(uint8_t ActionBarSlot);

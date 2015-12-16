@@ -8,11 +8,11 @@ function Item_HealthPotion.GetInfo(Level)
 end
 
 function Item_HealthPotion.CanUse(Level, Object)
-	if Object.Health < Object.MaxHealth then
-		return 1
-	end
+	--if Object.Health < Object.MaxHealth then
+	--	return 1
+	--end
 
-	return 0
+	return 1
 end
 
 function Item_HealthPotion.Use(Level, Source, Target, Result)

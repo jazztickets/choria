@@ -514,6 +514,19 @@ void _Object::SerializeStats(_Buffer &Data) {
 	}
 }
 
+// Serialize object for battle
+void _Object::SerializeBattle(_Buffer &Data) {
+	Data.Write<NetworkIDType>(NetworkID);
+	Data.Write<uint32_t>(DatabaseID);
+	Data.Write<glm::ivec2>(Position);
+	Data.Write<double>(TurnTimer);
+	Data.Write<int32_t>(Health);
+	Data.Write<int32_t>(MaxHealth);
+	Data.Write<int32_t>(Mana);
+	Data.Write<int32_t>(MaxMana);
+	Data.Write<uint8_t>(BattleSide);
+}
+
 // Unserialize for ObjectCreate
 void _Object::UnserializeCreate(_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
@@ -558,6 +571,20 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	RefreshActionBarCount();
 	CalculateSkillPoints();
 	CalculateStats();
+}
+
+// Unserialize battle stats
+void _Object::UnserializeBattle(_Buffer &Data) {
+	InputState = 0;
+
+	// Get fighter type
+	Position = ServerPosition = Data.Read<glm::ivec2>();
+	TurnTimer = Data.Read<double>();
+	Health = Data.Read<int32_t>();
+	MaxHealth = Data.Read<int32_t>();
+	Mana = Data.Read<int32_t>();
+	MaxMana = Data.Read<int32_t>();
+	BattleSide = Data.Read<uint8_t>();
 }
 
 // Update stats
@@ -642,7 +669,7 @@ const _Tile *_Object::GetTile() {
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
 	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
-	//NextBattle = 1;
+	NextBattle = 1;
 }
 
 // Stop a battle
