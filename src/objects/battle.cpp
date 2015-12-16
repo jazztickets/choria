@@ -220,56 +220,6 @@ void _Battle::Render(double BlendFactor) {
 	}
 }
 
-// Unserialize for network
-void _Battle::Unserialize(_Buffer &Data) {
-
-	// Get fighter count
-	int FighterCount = Data.Read<uint8_t>();
-
-	// Get fighter information
-	for(int i = 0; i < FighterCount; i++) {
-
-		// Get object data
-		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-		uint32_t DatabaseID = Data.Read<uint32_t>();
-
-		// Get object pointers
-		_Object *Fighter = nullptr;
-		if(DatabaseID) {
-			Fighter = Manager->CreateWithID(NetworkID);
-			Stats->GetMonsterStats(DatabaseID, Fighter);
-		}
-		else
-			Fighter = Manager->IDMap[NetworkID];
-
-		// Get battle stats
-		Fighter->UnserializeBattle(Data);
-
-		// Add fighter
-		AddFighter(Fighter, Fighter->BattleSide);
-	}
-
-	// Set up ui
-	BattleElement = Assets.Elements["element_battle"];
-	BattleWinElement = Assets.Elements["element_battlewin"];
-	BattleLoseElement = Assets.Elements["element_battlelose"];
-	BattleElement->SetVisible(true);
-	BattleWinElement->SetVisible(false);
-	BattleLoseElement->SetVisible(false);
-
-	// Set fighter position offsets and create ui elements
-	int SideCount[2] = { 0, 0 };
-	for(auto &Fighter : Fighters) {
-		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
-		SideCount[Fighter->BattleSide]++;
-
-		Fighter->CreateBattleElement(BattleElement);
-	}
-
-	BattleElement->CalculateChildrenBounds();
-	//BattleElement->SetDebug(1);
-}
-
 // Renders the battle part
 void _Battle::RenderBattle(double BlendFactor) {
 	BattleElement->Render();
@@ -807,6 +757,56 @@ void _Battle::Serialize(_Buffer &Data) {
 
 		Fighter->SerializeBattle(Data);
 	}
+}
+
+// Unserialize for network
+void _Battle::Unserialize(_Buffer &Data) {
+
+	// Get fighter count
+	int FighterCount = Data.Read<uint8_t>();
+
+	// Get fighter information
+	for(int i = 0; i < FighterCount; i++) {
+
+		// Get object data
+		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+		uint32_t DatabaseID = Data.Read<uint32_t>();
+
+		// Get object pointers
+		_Object *Fighter = nullptr;
+		if(DatabaseID) {
+			Fighter = Manager->CreateWithID(NetworkID);
+			Stats->GetMonsterStats(DatabaseID, Fighter);
+		}
+		else
+			Fighter = Manager->IDMap[NetworkID];
+
+		// Get battle stats
+		Fighter->UnserializeBattle(Data);
+
+		// Add fighter
+		AddFighter(Fighter, Fighter->BattleSide);
+	}
+
+	// Set up ui
+	BattleElement = Assets.Elements["element_battle"];
+	BattleWinElement = Assets.Elements["element_battlewin"];
+	BattleLoseElement = Assets.Elements["element_battlelose"];
+	BattleElement->SetVisible(true);
+	BattleWinElement->SetVisible(false);
+	BattleLoseElement->SetVisible(false);
+
+	// Set fighter position offsets and create ui elements
+	int SideCount[2] = { 0, 0 };
+	for(auto &Fighter : Fighters) {
+		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
+		SideCount[Fighter->BattleSide]++;
+
+		Fighter->CreateBattleElement(BattleElement);
+	}
+
+	BattleElement->CalculateChildrenBounds();
+	//BattleElement->SetDebug(1);
 }
 
 // Checks for the end of a battle

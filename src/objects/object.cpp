@@ -129,11 +129,9 @@ _Object::_Object()
 
 // Destructor
 _Object::~_Object() {
-	for(auto &StatusEffect : StatusEffects)
-		delete StatusEffect;
-
 	delete Inventory;
 
+	DeleteStatusEffects();
 	RemoveBattleElement();
 }
 
@@ -525,6 +523,11 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<int32_t>(Mana);
 	Data.Write<int32_t>(MaxMana);
 	Data.Write<uint8_t>(BattleSide);
+
+	Data.Write<uint8_t>((uint8_t)StatusEffects.size());
+	for(auto &StatusEffect : StatusEffects) {
+		StatusEffect->Serialize(Data);
+	}
 }
 
 // Unserialize for ObjectCreate
@@ -585,6 +588,14 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	Mana = Data.Read<int32_t>();
 	MaxMana = Data.Read<int32_t>();
 	BattleSide = Data.Read<uint8_t>();
+
+	DeleteStatusEffects();
+	int StatusEffectCount = Data.Read<uint8_t>();
+	for(int i = 0; i < StatusEffectCount; i++) {
+		_StatusEffect *StatusEffect = new _StatusEffect();
+		StatusEffect->Unserialize(Data, Stats);
+		StatusEffects.push_back(StatusEffect);
+	}
 }
 
 // Update stats
@@ -684,6 +695,14 @@ bool _Object::CanAttackPlayer() {
 	return false; //AttackPlayerTime > PLAYER_ATTACKTIME;
 }
 
+// Delete memory used by status effects
+void _Object::DeleteStatusEffects() {
+	for(auto &StatusEffect : StatusEffects)
+		delete StatusEffect;
+
+	StatusEffects.clear();
+}
+
 // Update gold amount
 void _Object::UpdateGold(int Value) {
 
@@ -755,17 +774,18 @@ bool _Object::UseActionWorld(_Buffer &Data, _Scripting *Scripting, uint8_t Slot)
 
 	// Add buffs
 	if(ActionResult.Buff) {
+		Data.Write<uint8_t>(1);
+
 		_StatusEffect *StatusEffect = new _StatusEffect();
 		StatusEffect->Buff = ActionResult.Buff;
 		StatusEffect->Level = ActionResult.BuffLevel;
 		StatusEffect->Count = ActionResult.BuffDuration;
-		StatusEffects.push_back(StatusEffect);
-
-		Data.Write<uint32_t>(ActionResult.Buff->ID);
 		StatusEffect->Serialize(Data);
+
+		StatusEffects.push_back(StatusEffect);
 	}
 	else
-		Data.Write<uint32_t>(0);
+		Data.Write<uint8_t>(0);
 
 	// Apply changes
 	UpdateHealth(ActionResult.Source.HealthChange);

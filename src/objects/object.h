@@ -233,6 +233,7 @@ class _Object : public _ManagerBase {
 
 	protected:
 
+		void DeleteStatusEffects();
 		void CalculateLevelStats();
 		void CalculateGearStats();
 		void CalculateSkillStats();

@@ -24,6 +24,7 @@
 class _Buff;
 class _Element;
 class _Buffer;
+class _Stats;
 
 // Classes
 class _StatusEffect {
@@ -34,7 +35,9 @@ class _StatusEffect {
 		~_StatusEffect();
 
 		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data);
+		void Unserialize(_Buffer &Data, _Stats *Stats);
+
+		_Element *CreateUIElement(_Element *Parent);
 
 		const _Buff *Buff;
 		_Element *BattleElement;

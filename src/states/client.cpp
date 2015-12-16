@@ -754,23 +754,14 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	}
 
 	// Read buff
-	uint32_t BuffID = Data.Read<uint32_t>();
-	if(BuffID) {
+	int StatusEffectCount = Data.Read<uint8_t>();
+	for(int i = 0; i < StatusEffectCount; i++) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = Stats->Buffs[BuffID];
-		StatusEffect->Unserialize(Data);
+		StatusEffect->Unserialize(Data, Stats);
 		Player->StatusEffects.push_back(StatusEffect);
 
-		_Element *Element = new _Element();
-		Element->Identifier = "hudbuff";
-		Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
-		Element->Alignment = LEFT_TOP;
-		Element->UserCreated = true;
-		Element->Visible = true;
-		Element->UserData = (void *)StatusEffect;
-		Element->Parent = Assets.Elements["element_hud_statuseffects"];
-		Assets.Elements["element_hud_statuseffects"]->Children.push_back(Element);
-		StatusEffect->HUDElement = Element;
+		// Create hud element
+		StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 	}
 
 	Player->CalculateStats();

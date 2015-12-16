@@ -19,6 +19,7 @@
 #include <objects/buff.h>
 #include <ui/element.h>
 #include <buffer.h>
+#include <stats.h>
 #include <stdexcept>
 
 // Constructor
@@ -51,12 +52,30 @@ _StatusEffect::~_StatusEffect() {
 
 // Serialize for network
 void _StatusEffect::Serialize(_Buffer &Data) {
+	Data.Write<uint32_t>(Buff->ID);
 	Data.Write<int>(Level);
 	Data.Write<int>(Count);
 }
 
 // Unserialize from network
-void _StatusEffect::Unserialize(_Buffer &Data) {
+void _StatusEffect::Unserialize(_Buffer &Data, _Stats *Stats) {
+	uint32_t BuffID = Data.Read<uint32_t>();
+	Buff = Stats->Buffs[BuffID];
 	Level = Data.Read<int>();
 	Count = Data.Read<int>();
+}
+
+// Create element for hud
+_Element *_StatusEffect::CreateUIElement(_Element *Parent) {
+
+	_Element *Element = new _Element();
+	Element->Size = glm::vec2(Buff->Texture->Size);
+	Element->Alignment = LEFT_TOP;
+	Element->UserCreated = true;
+	Element->Visible = true;
+	Element->UserData = (void *)this;
+	Element->Parent = Parent;
+	Parent->Children.push_back(Element);
+
+	return Element;
 }
