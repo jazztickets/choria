@@ -78,7 +78,7 @@ class _ClientState : public _State {
 		_Scripting *Scripting;
 
 		// Objects
-		_Manager<_Object> *Factory;
+		_Manager<_Object> *ObjectManager;
 		_Object *Player;
 		_Map *Map;
 		_Battle *Battle;
@@ -106,8 +106,8 @@ class _ClientState : public _State {
 		void HandleObjectStats(_Buffer &Data);
 		void HandleChangeMaps(_Buffer &Data);
 		void HandleObjectList(_Buffer &Data);
-		void HandleCreateObject(_Buffer &Data);
-		void HandleDeleteObject(_Buffer &Data);
+		void HandleObjectCreate(_Buffer &Data);
+		void HandleObjectDelete(_Buffer &Data);
 		void HandleObjectUpdates(_Buffer &Data);
 		void HandlePlayerPosition(_Buffer &Data);
 		void HandleTeleportStart(_Buffer &Data);

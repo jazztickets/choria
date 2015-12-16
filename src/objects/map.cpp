@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <instances/map.h>
+#include <objects/map.h>
 #include <states/editor.h>
 #include <network/servernetwork.h>
 #include <network/peer.h>
@@ -41,12 +41,12 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <algorithm>
 #include <stdexcept>
 #include <iomanip>
 
 // Constructor
 _Map::_Map() :
-	ID(0),
 	Tiles(nullptr),
 	Size(0, 0),
 	TileAtlas(nullptr),
@@ -58,8 +58,7 @@ _Map::_Map() :
 	TileVertexBufferID(0),
 	TileElementBufferID(0),
 	TileVertices(nullptr),
-	TileFaces(nullptr),
-	ObjectUpdateCount(0) {
+	TileFaces(nullptr) {
 
 }
 
@@ -72,13 +71,6 @@ _Map::~_Map() {
 		glDeleteBuffers(1, &TileVertexBufferID);
 		glDeleteBuffers(1, &TileElementBufferID);
 	}
-
-	// Delete objects
-	for(auto &Object : Objects) {
-		delete Object;
-	}
-
-	Objects.clear();
 
 	// Delete map data
 	FreeMap();
@@ -140,38 +132,7 @@ void _Map::FreeMap() {
 }
 
 // Updates the map and sends object updates
-void _Map::Update(_Manager<_Object> *Factory, double FrameTime) {
-	ObjectUpdateCount = 0;
-
-	// Update objects
-	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
-		_Object *Object = *Iterator;
-
-		// Update the object
-		Object->Update(FrameTime);
-
-		// Check for events
-		if(Object->CheckEvent)
-			CheckEvents(Object);
-
-		// Delete old objects
-		if(Object->Deleted) {
-			if(Object->Peer) {
-				RemovePeer(Object->Peer);
-			}
-			RemoveObject(Object);
-			if(Factory)
-				Factory->Objects[Object->NetworkID] = nullptr;
-
-			delete Object;
-			Iterator = Objects.erase(Iterator);
-		}
-		else {
-			ObjectUpdateCount++;
-
-			++Iterator;
-		}
-	}
+void _Map::Update(double FrameTime) {
 }
 
 // Check for events
@@ -599,22 +560,24 @@ void _Map::RemoveObject(const _Object *RemoveObject) {
 		// Create packet
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_DELETEOBJECT);
-		Packet.Write<uint8_t>((uint8_t)ID);
+		Packet.Write<uint8_t>((uint8_t)NetworkID);
 		Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
 
 		// Send to everyone
 		BroadcastPacket(Packet);
 	}
+
+	// Remove object
+	auto Iterator = std::find(Objects.begin(), Objects.end(), RemoveObject);
+	if(Iterator != Objects.end())
+		Objects.erase(Iterator);
 }
 
 // Remove a peer
 void _Map::RemovePeer(const _Peer *Peer) {
-	for(auto Iterator = Peers.begin(); Iterator != Peers.end(); ++Iterator) {
-		if(*Iterator == Peer) {
-			Peers.erase(Iterator);
-			return;
-		}
-	}
+	auto Iterator = std::find(Peers.begin(), Peers.end(), Peer);
+	if(Iterator != Peers.end())
+		Peers.erase(Iterator);
 }
 
 // Adds an object to the map
@@ -708,7 +671,7 @@ void _Map::SendObjectUpdates() {
 	// Create packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_OBJECTUPDATES);
-	Packet.Write<uint8_t>((uint8_t)ID);
+	Packet.Write<uint8_t>((uint8_t)NetworkID);
 
 	// Write object count
 	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());

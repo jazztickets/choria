@@ -21,8 +21,8 @@
 #include <objects/statchange.h>
 #include <objects/inventory.h>
 #include <objects/statuseffect.h>
-#include <instances/map.h>
-#include <instances/battle.h>
+#include <objects/map.h>
+#include <objects/battle.h>
 #include <ui/element.h>
 #include <ui/image.h>
 #include <buffer.h>
@@ -46,11 +46,9 @@ _Object::_Object()
 	Peer(nullptr),
 	InputState(0),
 	Moved(0),
-	Deleted(false),
 	WaitForServer(false),
 	Position(0, 0),
 	ServerPosition(0, 0),
-	NetworkID(0),
 
 	Name(""),
 	Level(0),
@@ -151,6 +149,7 @@ void _Object::Update(double FrameTime) {
 		CheckEvent = true;
 	}
 
+	// Update status
 	Status = STATUS_NONE;
 	if(Battle)
 		Status = STATUS_BATTLE;
@@ -186,6 +185,21 @@ void _Object::Update(double FrameTime) {
 	if(PlayTimeAccumulator >= 1.0) {
 		PlayTimeAccumulator -= 1.0;
 		PlayTime++;
+	}
+
+	// Check events
+	if(Map && CheckEvent)
+		Map->CheckEvents(this);
+}
+
+// Called when object is deleted
+void _Object::OnDelete() {
+
+	if(Map) {
+		if(Peer)
+			Map->RemovePeer(Peer);
+
+		Map->RemoveObject(this);
 	}
 }
 

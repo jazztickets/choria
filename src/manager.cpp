@@ -17,7 +17,8 @@
 *******************************************************************************/
 #include <manager.h>
 #include <objects/object.h>
-#include <instances/map.h>
+#include <objects/map.h>
+#include <objects/battle.h>
 #include <limits>
 
 // Constructor
@@ -31,6 +32,33 @@ _Manager<T>::_Manager() :
 template <class T>
 _Manager<T>::~_Manager() {
 
+	for(auto &Object : Objects)
+		delete Object;
+}
+
+// Update
+template <class T>
+void _Manager<T>::Update(double FrameTime) {
+
+	// Update objects
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ) {
+		T *Object = *Iterator;
+
+		// Update the object
+		Object->Update(FrameTime);
+
+		// Delete old objects
+		if(Object->Deleted) {
+			Object->OnDelete();
+			IDMap[Object->NetworkID] = nullptr;
+
+			delete Object;
+			Iterator = Objects.erase(Iterator);
+		}
+		else {
+			++Iterator;
+		}
+	}
 }
 
 // Generate object with new network id
@@ -39,10 +67,12 @@ T *_Manager<T>::Create() {
 
 	// Search for an empty slot
 	for(NetworkIDType i = 0; i <= std::numeric_limits<NetworkIDType>::max(); i++) {
-		if(!Objects[NextID]) {
+		if(!IDMap[NextID]) {
 			T *Object = new T;
 			Object->NetworkID = NextID;
-			Objects[NextID] = Object;
+
+			Objects.push_back(Object);
+			IDMap[NextID] = Object;
 
 			return Object;
 		}
@@ -59,10 +89,36 @@ T *_Manager<T>::CreateWithID(NetworkIDType ID) {
 	T *Object = new T;
 	Object->NetworkID = ID;
 
-	Objects[ID] = Object;
+	Objects.push_back(Object);
+	IDMap[ID] = Object;
 
 	return Object;
 }
 
+// Delete object
+template <class T>
+void _Manager<T>::Delete(T *Object) {
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		if(*Iterator == Object) {
+			Objects.erase(Iterator);
+			delete Object;
+			break;
+		}
+	}
+}
+
+// Delete all objects and reset
+template <class T>
+void _Manager<T>::Clear() {
+
+	for(auto Object : Objects)
+		delete Object;
+
+	IDMap.clear();
+	Objects.clear();
+	NextID = 0;
+}
+
 template class _Manager<_Object>;
 template class _Manager<_Map>;
+template class _Manager<_Battle>;

@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <objects/statchange.h>
 #include <objects/object.h>
-#include <instances/battle.h>
+#include <objects/battle.h>
 #include <stats.h>
 #include <buffer.h>
 #include <stdexcept>

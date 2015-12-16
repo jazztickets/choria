@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/managerbase.h>
 #include <objects/action.h>
 #include <glm/vec2.hpp>
 #include <packet.h>
@@ -46,7 +47,7 @@ struct _Trader;
 struct _ActionResult;
 
 // Classes
-class _Object {
+class _Object : public _ManagerBase {
 
 	public:
 
@@ -72,7 +73,8 @@ class _Object {
 		_Object();
 		~_Object();
 
-		void Update(double FrameTime);
+		void Update(double FrameTime) override;
+		void OnDelete() override;
 		void Render(const _Object *ClientPlayer=nullptr);
 		void RenderBattle(_Object *ClientPlayer, double Time);
 
@@ -132,11 +134,9 @@ class _Object {
 		_Peer *Peer;
 		int InputState;
 		int Moved;
-		bool Deleted;
 		bool WaitForServer;
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
-		NetworkIDType NetworkID;
 
 		// Action bar
 		std::vector<_Action>ActionBar;

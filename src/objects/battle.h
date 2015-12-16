@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/managerbase.h>
 #include <objects/action.h>
 #include <objects/statchange.h>
 #include <packet.h>
@@ -53,7 +54,7 @@ struct _BattleResult {
 };
 
 // Classes
-class _Battle {
+class _Battle : public _ManagerBase {
 
 	public:
 
@@ -74,7 +75,8 @@ class _Battle {
 		int GetPeerCount();
 
 		// Updates
-		void Update(double FrameTime);
+		void Update(double FrameTime) override;
+		void OnDelete() override { }
 		void Render(double BlendFactor);
 
 		// Setup
@@ -116,9 +118,6 @@ class _Battle {
 		void RenderStatChanges(_StatChange &StatChange, double BlendFactor);
 		void RenderBattleWin();
 		void RenderBattleLose();
-
-		// Network
-		NetworkIDType NetworkID;
 
 		// State
 		int State;

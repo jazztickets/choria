@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/editor.h>
-#include <instances/map.h>
+#include <objects/map.h>
 #include <ui/element.h>
 #include <ui/label.h>
 #include <ui/textbox.h>

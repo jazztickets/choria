@@ -19,7 +19,7 @@
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/statchange.h>
-#include <instances/battle.h>
+#include <objects/battle.h>
 #include <stats.h>
 #include <random.h>
 #include <stdexcept>

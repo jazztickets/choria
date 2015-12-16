@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/managerbase.h>
 #include <network/network.h>
 #include <packet.h>
 #include <texture.h>
@@ -65,7 +66,7 @@ struct _Tile {
 };
 
 // Classes
-class _Map {
+class _Map : public _ManagerBase {
 
 	public:
 
@@ -84,7 +85,8 @@ class _Map {
 		void AllocateMap();
 		void InitAtlas(const std::string AtlasPath);
 
-		void Update(_Manager<_Object> *Factory, double FrameTime);
+		void Update(double FrameTime) override;
+		void OnDelete() override { }
 		void CheckEvents(_Object *Object);
 		void GetClockAsString(std::stringstream &Buffer);
 		void SetAmbientLightByClock();
@@ -124,9 +126,6 @@ class _Map {
 		void Load(const std::string &Path);
 		bool Save(const std::string &Path);
 
-		// Map file
-		uint32_t ID;
-
 		// Map data
 		_Tile **Tiles;
 		glm::ivec2 Size;
@@ -143,7 +142,6 @@ class _Map {
 		double ObjectUpdateTime;
 
 		// Network
-		NetworkIDType NetworkID;
 		_Server *Server;
 
 	private:
@@ -158,6 +156,5 @@ class _Map {
 
 		// Network
 		std::list<const _Peer *> Peers;
-		NetworkIDType ObjectUpdateCount;
 
 };

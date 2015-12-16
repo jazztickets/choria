@@ -19,32 +19,24 @@
 
 // Libraries
 #include <packet.h>
-#include <unordered_map>
-#include <list>
+
+// Forward Declarations
 
 // Classes
-template<class T> class _Manager {
+class _ManagerBase {
 
 	public:
 
-		_Manager();
-		~_Manager();
+		_ManagerBase();
+		virtual ~_ManagerBase();
 
-		// Updates
-		void Update(double FrameTime);
+		virtual void Update(double FrameTime) = 0;
+		virtual void OnDelete() = 0;
 
-		// Object management
-		T *Create();
-		T *CreateWithID(NetworkIDType ID);
-		void Delete(T *Object);
-		void Clear();
+		NetworkIDType NetworkID;
 
-		// Storage
-		std::unordered_map<NetworkIDType, T *> IDMap;
-		std::list<T *> Objects;
+		bool Deleted;
 
-	private:
-
-		NetworkIDType NextID;
+	protected:
 
 };

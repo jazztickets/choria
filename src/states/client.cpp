@@ -21,8 +21,8 @@
 #include <objects/inventory.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
-#include <instances/map.h>
-#include <instances/battle.h>
+#include <objects/map.h>
+#include <objects/battle.h>
 #include <ui/element.h>
 #include <constants.h>
 #include <framework.h>
@@ -68,7 +68,7 @@ void _ClientState::Init() {
 	Time = 0.0;
 	Clock = 0.0;
 
-	Factory = new _Manager<_Object>();
+	ObjectManager = new _Manager<_Object>();
 
 	Stats = new _Stats();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
@@ -101,7 +101,7 @@ void _ClientState::Init() {
 void _ClientState::Close() {
 	Menu.Close();
 
-	delete Factory;
+	delete ObjectManager;
 	delete Scripting;
 	delete Battle;
 	delete Camera;
@@ -337,9 +337,11 @@ void _ClientState::Update(double FrameTime) {
 			Player->InputState |= _Object::MOVE_RIGHT;
 	}
 
+	ObjectManager->Update(FrameTime);
+
 	// Update objects
 	Map->Clock = Clock;
-	Map->Update(Factory, FrameTime);
+	Map->Update(FrameTime);
 	if(Player->Moved) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
@@ -422,10 +424,10 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 			HandleObjectList(Data);
 		break;
 		case PacketType::WORLD_CREATEOBJECT:
-			HandleCreateObject(Data);
+			HandleObjectCreate(Data);
 		break;
 		case PacketType::WORLD_DELETEOBJECT:
-			HandleDeleteObject(Data);
+			HandleObjectDelete(Data);
 		break;
 		case PacketType::WORLD_OBJECTUPDATES:
 			HandleObjectUpdates(Data);
@@ -548,16 +550,16 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 	Menu.InitPlay();
 
 	// Load map
-	uint32_t MapID = Data.Read<uint32_t>();
+	NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
 	Clock = Data.Read<double>();
 
 	// Delete old map and create new
-	if(!Map || Map->ID != MapID) {
+	if(!Map || Map->NetworkID != MapID) {
 		if(Map)
 			delete Map;
 
 		Map = new _Map();
-		Map->ID = MapID;
+		Map->NetworkID = MapID;
 		Map->Load(Stats->GetMap(MapID)->File);
 		Player = nullptr;
 	}
@@ -565,6 +567,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 // Handle object list
 void _ClientState::HandleObjectList(_Buffer &Data) {
+	ObjectManager->Clear();
 
 	// Read header
 	NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
@@ -593,7 +596,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 }
 
 // Creates an object
-void _ClientState::HandleCreateObject(_Buffer &Data) {
+void _ClientState::HandleObjectCreate(_Buffer &Data) {
 	if(!Map || !Player)
 		return;
 
@@ -609,7 +612,7 @@ void _ClientState::HandleCreateObject(_Buffer &Data) {
 }
 
 // Deletes an object
-void _ClientState::HandleDeleteObject(_Buffer &Data) {
+void _ClientState::HandleObjectDelete(_Buffer &Data) {
 	if(!Player || !Map)
 		return;
 
@@ -617,11 +620,11 @@ void _ClientState::HandleDeleteObject(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Check for same map
-	if(Map->ID != MapID)
+	if(Map->NetworkID != MapID)
 		return;
 
 	// Get object
-	_Object *Object = Factory->Objects[NetworkID];
+	_Object *Object = ObjectManager->IDMap[NetworkID];
 	if(Object) {
 		if(Battle)
 			Battle->RemoveFighter(Object);
@@ -636,8 +639,8 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 		return;
 
 	// Check map id
-	uint32_t MapID = Data.Read<uint8_t>();
-	if(MapID != Map->ID)
+	NetworkIDType MapID = Data.Read<uint8_t>();
+	if(MapID != Map->NetworkID)
 		return;
 
 	// Get object count
@@ -653,7 +656,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 		int Invisible = Data.ReadBit();
 
 		// Find object
-		_Object *Object = Factory->Objects[NetworkID];
+		_Object *Object = ObjectManager->IDMap[NetworkID];
 		if(Object) {
 			Object->Status = Status;
 
@@ -846,7 +849,7 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Get trading player
-	Player->TradePlayer = Factory->Objects[NetworkID];
+	Player->TradePlayer = ObjectManager->IDMap[NetworkID];
 	if(!Player->TradePlayer)
 		return;
 
@@ -962,7 +965,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			int MaxMana = Data.Read<int32_t>();
 
 			// Get player object
-			Fighter = Factory->Objects[NetworkID];
+			Fighter = ObjectManager->IDMap[NetworkID];
 			if(Fighter != nullptr) {
 				Fighter->InputState = 0;
 				Fighter->Position = Fighter->ServerPosition = Position;
@@ -1044,7 +1047,7 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	// Create object
-	_Object *Object = Factory->CreateWithID(NetworkID);
+	_Object *Object = ObjectManager->CreateWithID(NetworkID);
 	Object->Stats = Stats;
 	Object->Map = Map;
 	Object->UnserializeCreate(Data);

@@ -15,36 +15,16 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
+#include <objects/managerbase.h>
 
-// Libraries
-#include <packet.h>
-#include <unordered_map>
-#include <list>
+// Constructor
+_ManagerBase::_ManagerBase() :
+	NetworkID(0),
+	Deleted(false) {
 
-// Classes
-template<class T> class _Manager {
+}
 
-	public:
+// Destructor
+_ManagerBase::~_ManagerBase() {
 
-		_Manager();
-		~_Manager();
-
-		// Updates
-		void Update(double FrameTime);
-
-		// Object management
-		T *Create();
-		T *CreateWithID(NetworkIDType ID);
-		void Delete(T *Object);
-		void Clear();
-
-		// Storage
-		std::unordered_map<NetworkIDType, T *> IDMap;
-		std::list<T *> Objects;
-
-	private:
-
-		NetworkIDType NextID;
-
-};
+}

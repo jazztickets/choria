@@ -20,8 +20,8 @@
 #include <network/peer.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
-#include <instances/map.h>
-#include <instances/battle.h>
+#include <objects/map.h>
+#include <objects/battle.h>
 #include <scripting.h>
 #include <save.h>
 #include <manager.h>
@@ -68,7 +68,6 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 	Clock(0.0),
 	Stats(Stats),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
-	NextMapID(0),
 	Thread(nullptr) {
 
 	Log.Open((Config.ConfigPath + "server.log").c_str());
@@ -79,7 +78,9 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
-	Factory = new _Manager<_Object>();
+	ObjectManager = new _Manager<_Object>();
+	MapManager = new _Manager<_Map>();
+	BattleManager = new _Manager<_Battle>();
 	Save = new _Save();
 	Clock = Save->GetClock();
 
@@ -96,15 +97,11 @@ _Server::~_Server() {
 	Done = true;
 	JoinThread();
 
-	// Delete maps
-	for(auto &Map : Maps) {
-		delete Map;
-	}
-	Maps.clear();
-
 	Save->SaveClock(Clock);
 
-	delete Factory;
+	delete ObjectManager;
+	delete MapManager;
+	delete BattleManager;
 	delete Scripting;
 	delete Save;
 	delete Thread;
@@ -154,15 +151,17 @@ void _Server::Update(double FrameTime) {
 		}
 	}
 
-	// Update maps
-	for(auto &Map : Maps) {
-		Map->Clock = Clock;
-		Map->Update(Factory, FrameTime);
-	}
+	// Update objects
+	ObjectManager->Update(FrameTime);
 
 	// Update maps
-	for(auto &Battle : Battles)
-		Battle->Update(FrameTime);
+	for(auto &Map : MapManager->Objects) {
+		Map->Clock = Clock;
+		Map->Update(FrameTime);
+	}
+
+	// Update battles
+	BattleManager->Update(FrameTime);
 
 	// Check if updates should be sent
 	if(Network->NeedsUpdate()) {
@@ -170,7 +169,7 @@ void _Server::Update(double FrameTime) {
 		if(Network->GetPeers().size() > 0) {
 
 			// Send object updates
-			for(auto &Map : Maps) {
+			for(auto &Map : MapManager->Objects) {
 				Map->SendObjectUpdates();
 			}
 		}
@@ -442,7 +441,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Read packet
 	uint32_t Slot = Data.Read<uint8_t>();
-	uint32_t MapID = 0;
+	NetworkIDType MapID = 0;
 	std::string Name;
 
 	// Get character info
@@ -451,7 +450,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	Save->Database->BindInt(2, Slot);
 	if(Save->Database->FetchRow()) {
 		Peer->CharacterID = Save->Database->GetInt<uint32_t>("id");
-		MapID = Save->Database->GetInt<uint32_t>("map_id");
+		MapID = (NetworkIDType)Save->Database->GetInt<uint32_t>("map_id");
 		Name = Save->Database->GetString("name");
 	}
 	Save->Database->CloseQuery();
@@ -463,6 +462,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Send map and players to new player
+	Peer->Object = CreatePlayer(Peer);
 	SpawnPlayer(Peer, MapID, _Map::EVENT_SPAWN);
 
 	// Broadcast message
@@ -553,41 +553,39 @@ void _Server::SendCharacterList(_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Peer *Peer, uint32_t MapID, uint32_t EventType) {
+void _Server::SpawnPlayer(_Peer *Peer, NetworkIDType MapID, uint32_t EventType) {
 	if(!Peer->AccountID || !Peer->CharacterID)
 		return;
 
 	// Get player object
 	_Object *Player = Peer->Object;
 
-	// Get new map
-	_Map *Map = GetMap(MapID);
+	// Get map
+	_Map *Map = MapManager->IDMap[MapID];
+
+	// Load map
+	if(!Map) {
+		Map = MapManager->CreateWithID(MapID);
+		Map->Server = this;
+		Map->Load(Stats->GetMap(MapID)->File);
+	}
 
 	// Get old map
-	_Map *OldMap = nullptr;
-	if(Player)
-		OldMap = Player->Map;
+	_Map *OldMap = Player->Map;
 
-	// Remove old player if map has changed
+	// Place player in new map
 	if(Map != OldMap) {
-		int OldInvisPower = 0;
-
-		// Delete old player
-		if(Player) {
-			Save->SavePlayer(Player);
-			Player->Deleted = true;
-			OldInvisPower = Player->InvisPower;
+		if(OldMap) {
+			OldMap->RemoveObject(Player);
+			OldMap->RemovePeer(Peer);
 		}
 
-		// Create new player
-		Player = CreatePlayer(Peer);
 		Player->Map = Map;
-		Player->InvisPower = OldInvisPower;
 
 		// Find spawn point in map
 		uint32_t SpawnPoint = Player->SpawnPoint;
 		if(EventType == _Map::EVENT_MAPCHANGE)
-			SpawnPoint = OldMap->ID;
+			SpawnPoint = OldMap->NetworkID;
 		Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position);
 
 		// Add player to map
@@ -616,32 +614,11 @@ void _Server::SpawnPlayer(_Peer *Peer, uint32_t MapID, uint32_t EventType) {
 	}
 }
 
-// Gets a map from the manager. Loads the level if it doesn't exist
-_Map *_Server::GetMap(uint32_t MapID) {
-
-	// Loop through loaded maps
-	for(auto &Map : Maps) {
-
-		// Check id
-		if(Map->ID == MapID)
-			return Map;
-	}
-
-	// Not found, so create it
-	_Map *NewMap = new _Map();
-	NewMap->ID = MapID;
-	NewMap->Server = this;
-	NewMap->Load(Stats->GetMap(MapID)->File);
-	Maps.push_back(NewMap);
-
-	return NewMap;
-}
-
 // Create player object and load stats from save
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	// Create object
-	_Object *Player = Factory->Create();
+	_Object *Player = ObjectManager->Create();
 	Peer->Object = Player;
 	Player->CharacterID = Peer->CharacterID;
 	Player->Peer = Peer;
@@ -1155,15 +1132,7 @@ void _Server::RemovePlayerFromBattle(_Object *Player) {
 	// Delete instance
 	Battle->RemoveFighter(Player);
 	if(Battle->GetPeerCount() == 0) {
-
-		// Loop through loaded battles
-		for(auto BattleIterator = Battles.begin(); BattleIterator != Battles.end(); ++BattleIterator) {
-			if(*BattleIterator == Battle) {
-				Battles.erase(BattleIterator);
-				delete Battle;
-				break;
-			}
-		}
+		Battle->Deleted = true;
 	}
 }
 
@@ -1265,11 +1234,10 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 	if(MonsterIDs.size()) {
 
 		// Create a new battle instance
-		_Battle *Battle = new _Battle();
+		_Battle *Battle = BattleManager->Create();
 		Battle->Stats = Stats;
 		Battle->Server = this;
 		Battle->Scripting = Scripting;
-		Battles.push_back(Battle);
 
 		/*
 		for(int i = 0; i < 7; i++) {

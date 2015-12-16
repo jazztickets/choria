@@ -52,7 +52,7 @@ class _Server {
 		void JoinThread();
 		void StopServer();
 
-		void SpawnPlayer(_Peer *Peer, uint32_t MapID, uint32_t EventType);
+		void SpawnPlayer(_Peer *Peer, NetworkIDType MapID, uint32_t EventType);
 		void StartBattle(_Object *Object, uint32_t Zone);
 		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void SendHUD(_Peer *Peer);
@@ -76,14 +76,12 @@ class _Server {
 		_Scripting *Scripting;
 
 		// Objects
-		_Manager<_Object> *Factory;
-		std::list<_Map *> Maps;
-		std::list<_Battle *>Battles;
-		uint8_t NextMapID;
+		_Manager<_Object> *ObjectManager;
+		_Manager<_Map> *MapManager;
+		_Manager<_Battle> *BattleManager;
 
 	private:
 
-		_Map *GetMap(uint32_t MapID);
 		_Object *CreatePlayer(_Peer *Peer);
 		void SendPlayerInfo(_Peer *Peer);
 		bool ValidatePeer(_Peer *Peer);

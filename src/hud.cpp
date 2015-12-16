@@ -30,8 +30,8 @@
 #include <objects/inventory.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
-#include <instances/battle.h>
-#include <instances/map.h>
+#include <objects/battle.h>
+#include <objects/map.h>
 #include <framework.h>
 #include <graphics.h>
 #include <input.h>
