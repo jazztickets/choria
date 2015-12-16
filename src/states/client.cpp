@@ -21,6 +21,7 @@
 #include <objects/inventory.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
+#include <objects/skill.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <ui/element.h>
@@ -472,9 +473,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::EVENT_START:
 			HandleEventStart(Data);
 		break;
-		case PacketType::PLAYER_ACTIONRESULTS:
-			HandleActionResults(Data);
-		break;
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data);
 		break;
@@ -514,11 +512,11 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_ACTION:
 			HandleBattleAction(Data);
 		break;
-		case PacketType::BATTLE_ACTIONRESULTS:
-			HandleBattleTurnResults(Data);
-		break;
 		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
+		break;
+		case PacketType::ACTION_RESULTS:
+			HandleActionResults(Data);
 		break;
 		case PacketType::STAT_CHANGE:
 			HandleStatChange(Data);
@@ -735,38 +733,6 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 	}
 }
 
-// Handle an action use result
-void _ClientState::HandleActionResults(_Buffer &Data) {
-	if(!Player)
-		return;
-
-	// Read skill used
-	uint32_t SkillID = Data.Read<uint32_t>();
-	if(SkillID) {
-	}
-
-	// Read item used
-	uint32_t ItemID = Data.Read<uint32_t>();
-	if(ItemID) {
-		size_t Slot = Data.Read<uint8_t>();
-		Player->Inventory->DecrementItemCount(Slot, -1);
-		Player->RefreshActionBarCount();
-	}
-
-	// Read buff
-	int StatusEffectCount = Data.Read<uint8_t>();
-	for(int i = 0; i < StatusEffectCount; i++) {
-		_StatusEffect *StatusEffect = new _StatusEffect();
-		StatusEffect->Unserialize(Data, Stats);
-		Player->StatusEffects.push_back(StatusEffect);
-
-		// Create hud element
-		StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
-	}
-
-	Player->CalculateStats();
-}
-
 // Handles a chat message
 void _ClientState::HandleChatMessage(_Buffer &Data) {
 
@@ -936,14 +902,6 @@ void _ClientState::HandleBattleAction(_Buffer &Data) {
 	Battle->ClientHandlePlayerAction(Data);
 }
 
-// Handles the result of a turn in battle
-void _ClientState::HandleBattleTurnResults(_Buffer &Data) {
-	if(!Player || !Battle)
-		return;
-
-	Battle->ClientResolveAction(Data);
-}
-
 // Handles the end of a battle
 void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	if(!Player || !Battle)
@@ -953,6 +911,91 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	Battle->ClientEndBattle(Data);
 	if(Player->Health == 0)
 		Player->WaitForServer = true;
+}
+
+// Handles the result of a turn in battle
+void _ClientState::HandleActionResults(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	// Create result
+	_ActionResult ActionResult;
+	uint32_t SkillID = Data.Read<uint32_t>();
+	uint32_t ItemID = Data.Read<uint32_t>();
+	ActionResult.SkillUsed = Stats->Skills[SkillID];
+	ActionResult.ItemUsed = Stats->Items[ItemID];
+
+	// Set texture
+	if(ActionResult.SkillUsed)
+		ActionResult.Texture = ActionResult.SkillUsed->Texture;
+	else if(ActionResult.ItemUsed)
+		ActionResult.Texture = ActionResult.ItemUsed->Texture;
+	else
+		ActionResult.Texture = Assets.Textures["skills/attack.png"];
+
+	// Get source change
+	ActionResult.Source.UnserializeBattle(Data, ObjectManager);
+	int SourceFighterHealth = Data.Read<int32_t>();
+	int SourceFighterMana = Data.Read<int32_t>();
+
+	// Update source fighter
+	if(ActionResult.Source.Object) {
+		ActionResult.Source.Object->Health = SourceFighterHealth;
+		ActionResult.Source.Object->Mana = SourceFighterMana;
+		ActionResult.Source.Object->TurnTimer = 0.0;
+		ActionResult.Source.Object->Action.Unset();
+		ActionResult.Source.Object->Targets.clear();
+
+		// Use item on client
+		if(Player == ActionResult.Source.Object && ActionResult.ItemUsed) {
+			size_t Index;
+			if(Player->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
+				Player->Inventory->DecrementItemCount(Index, -1);
+				Player->RefreshActionBarCount();
+			}
+		}
+	}
+
+	// Update targets
+	uint8_t TargetCount = Data.Read<uint8_t>();
+	for(uint8_t i = 0; i < TargetCount; i++) {
+		ActionResult.Target.UnserializeBattle(Data, ObjectManager);
+		int TargetFighterHealth = Data.Read<int32_t>();
+		int TargetFighterMana = Data.Read<int32_t>();
+
+		// Read status effect
+		uint32_t BuffID = Data.Read<uint32_t>();
+		_StatusEffect *StatusEffect = nullptr;
+		if(BuffID > 0) {
+			StatusEffect = new _StatusEffect();
+			StatusEffect->Buff = Stats->Buffs[BuffID];
+			StatusEffect->Level = Data.Read<int>();
+			StatusEffect->Count = Data.Read<int>();
+		}
+
+		// Update target fighter
+		if(ActionResult.Target.Object) {
+			ActionResult.Target.Object->Health = TargetFighterHealth;
+			ActionResult.Target.Object->Mana = TargetFighterMana;
+
+			// Add status effect
+			if(StatusEffect) {
+				ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
+				StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement);
+
+				// Create hud element
+				if(ActionResult.Target.Object == Player) {
+					StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+				}
+			}
+		}
+
+		if(Battle) {
+			if(ActionResult.Target.IsChanged())
+				Battle->StatChanges.push_back(ActionResult.Target);
+			Battle->ActionResults.push_back(ActionResult);
+		}
+	}
 }
 
 // Handles a stat change
@@ -983,6 +1026,7 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);
+	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
 	Object->UnserializeCreate(Data);
@@ -1006,7 +1050,7 @@ void _ClientState::SendActionUse(uint8_t Slot) {
 
 	// Send use to server
 	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::PLAYER_USEACTION);
+	Packet.Write<PacketType>(PacketType::ACTION_USE);
 	Packet.Write<uint8_t>(Slot);
 	Packet.Write<uint8_t>(0);
 	Network->SendPacket(Packet);

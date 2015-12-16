@@ -29,6 +29,7 @@
 #include <assets.h>
 #include <graphics.h>
 #include <hud.h>
+#include <server.h>
 #include <random.h>
 #include <stats.h>
 #include <font.h>
@@ -41,8 +42,10 @@
 #include <iostream>
 
 // Constructor
-_Object::_Object()
-:	Map(nullptr),
+_Object::_Object() :
+	Map(nullptr),
+	Scripting(nullptr),
+	Server(nullptr),
 	Peer(nullptr),
 	InputState(0),
 	Moved(0),
@@ -163,6 +166,61 @@ void _Object::Update(double FrameTime) {
 	else if(Paused)
 		Status = STATUS_PAUSE;
 
+	// Update actions and battle
+	if(Health > 0) {
+
+		// Update AI
+		//if(Server)
+		//	UpdateAI(Fighters, FrameTime);
+
+		// Check turn timer
+		if(Battle)
+			TurnTimer += FrameTime * BattleSpeed;
+		else
+			TurnTimer = 1.0;
+
+		// Resolve action
+		if(TurnTimer >= 1.0) {
+			TurnTimer = 1.0;
+
+			if(Server && Action.IsSet()) {
+				ScopeType Scope = ScopeType::WORLD;
+				if(Battle)
+					Scope = ScopeType::BATTLE;
+
+				_Buffer Packet;
+				Action.Resolve(Packet, this, Scope);
+				if(Battle)
+					Battle->BroadcastPacket(Packet);
+			}
+		}
+	}
+	else
+		TurnTimer = 0.0;
+
+	// Update status effects
+	for(auto Iterator = StatusEffects.begin(); Iterator != StatusEffects.end(); ) {
+		_StatusEffect *StatusEffect = *Iterator;
+		StatusEffect->Time += FrameTime;
+
+		if(StatusEffect->Time >= 1.0) {
+			StatusEffect->Time -= 1.0;
+
+			// Update
+			//if(Server && Fighter->Health > 0)
+			//	ServerResolveStatusEffect(Fighter, StatusEffect);
+
+			// Reduce count
+			StatusEffect->Count--;
+			if(StatusEffect->Count <= 0 || Health <= 0) {
+				delete StatusEffect;
+				Iterator = StatusEffects.erase(Iterator);
+			}
+		}
+		else
+			++Iterator;
+	}
+
 	// Update timers
 	MoveTime += FrameTime;
 	AttackPlayerTime += FrameTime;
@@ -200,7 +258,7 @@ void _Object::OnDelete() {
 }
 
 // Update AI during battle
-void _Object::UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime) {
+void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 	if(!AI.length())
 		return;
 
@@ -366,20 +424,20 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw the skill used
 	if(ClientPlayer->BattleSide == BattleSide) {
 
-		if(BattleAction.Skill) {
-			glm::vec2 SkillUsingPosition = SlotPosition + glm::vec2(-BattleAction.Skill->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
+		if(Action.Skill) {
+			glm::vec2 SkillUsingPosition = SlotPosition + glm::vec2(-Action.Skill->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(SkillUsingPosition, BattleAction.Skill->Texture, GlobalColor);
+			Graphics.DrawCenteredImage(SkillUsingPosition, Action.Skill->Texture, GlobalColor);
 		}
-		else if(BattleAction.Item) {
-			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-BattleAction.Item->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
+		else if(Action.Item) {
+			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-Action.Item->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(ItemUsingPosition, BattleAction.Item->Texture, GlobalColor);
+			Graphics.DrawCenteredImage(ItemUsingPosition, Action.Item->Texture, GlobalColor);
 		}
 	}
 
 	// Draw potential skill to use
-	for(auto &BattleTarget : ClientPlayer->BattleTargets) {
+	for(auto &BattleTarget : ClientPlayer->Targets) {
 		if(BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
 			const _Texture *Texture = nullptr;
 			if(ClientPlayer->PotentialAction.Skill)
@@ -723,77 +781,32 @@ void _Object::RefreshActionBarCount() {
 	}
 }
 
-// Use an action, return true if used
-bool _Object::UseActionWorld(_Buffer &Data, _Scripting *Scripting, uint8_t Slot) {
-	if(Slot >= ActionBar.size())
-		return false;
+// Set action and targets
+void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 
-	if(!ActionBar[Slot].IsSet())
-		return false;
+	// Check for needed commands
+	if(!Action.IsSet()) {
 
-	_ActionResult ActionResult;
-	ActionResult.Source.Object = this;
-	ActionResult.Target.Object = this;
-	ActionResult.SkillUsed = ActionBar[Slot].Skill;
-	ActionResult.ItemUsed = ActionBar[Slot].Item;
-	ActionResult.Scope = ScopeType::WORLD;
-	if(ActionResult.SkillUsed) {
+		uint8_t ActionBarSlot = Data.Read<uint8_t>();
+		uint8_t TargetCount = Data.Read<uint8_t>();
+		if(!TargetCount)
+			return;
 
-		// Validate use
-		ActionResult.SkillUsed = ActionBar[Slot].Skill;
-		if(!ActionResult.SkillUsed->CanUse(Scripting, ActionResult))
-			return false;
-
-		// Apply costs
-		ActionResult.SkillUsed->ApplyCost(Scripting, ActionResult);
-
-		// Use
-		ActionResult.SkillUsed->Use(Scripting, ActionResult);
-
-		Data.Write<uint32_t>(ActionResult.SkillUsed->ID);
-	}
-	else
-		Data.Write<uint32_t>(0);
-
-	if(ActionResult.ItemUsed) {
-
-		// Use item
-		size_t Index;
-		if(ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
-			ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
-			ActionResult.ItemUsed->Use(Scripting, ActionResult);
+		// Get targets
+		Targets.clear();
+		for(uint8_t i = 0; i < TargetCount; i++) {
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			_Object *Target = ObjectManager->IDMap[NetworkID];
+			if(Target)
+				Targets.push_back(Target);
 		}
-		else
-			return false;
 
-		Data.Write<uint32_t>(ActionResult.ItemUsed->ID);
-		Data.Write<uint8_t>((uint8_t)Index);
+		// Set skill
+		if(ActionBarSlot < ActionBar.size()) {
+			Action.Skill = ActionBar[ActionBarSlot].Skill;
+			Action.Item = ActionBar[ActionBarSlot].Item;
+		}
 	}
-	else
-		Data.Write<uint32_t>(0);
-
-	// Add buffs
-	if(ActionResult.Buff) {
-		Data.Write<uint8_t>(1);
-
-		_StatusEffect *StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = ActionResult.Buff;
-		StatusEffect->Level = ActionResult.BuffLevel;
-		StatusEffect->Count = ActionResult.BuffDuration;
-		StatusEffect->Serialize(Data);
-
-		StatusEffects.push_back(StatusEffect);
-	}
-	else
-		Data.Write<uint8_t>(0);
-
-	// Apply changes
-	UpdateHealth(ActionResult.Source.HealthChange);
-	UpdateHealth(ActionResult.Target.HealthChange);
-	UpdateMana(ActionResult.Source.ManaChange);
-	UpdateMana(ActionResult.Target.ManaChange);
-
-	return true;
 }
 
 // Get the percentage to the next level

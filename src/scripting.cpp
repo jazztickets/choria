@@ -112,10 +112,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
 
-	lua_pushboolean(LuaState, Object->BattleAction.IsSet());
+	lua_pushboolean(LuaState, Object->Action.IsSet());
 	lua_setfield(LuaState, -2, "BattleActionIsSet");
 
-	lua_pushlightuserdata(LuaState, Object->BattleTargets.front());
+	lua_pushlightuserdata(LuaState, Object->Targets.front());
 	lua_setfield(LuaState, -2, "BattleTarget");
 
 	lua_pushinteger(LuaState, Object->BattleSide);
@@ -302,7 +302,7 @@ int _Scripting::ObjectSetBattleTarget(lua_State *LuaState) {
 	_Object *Target = (_Object *)lua_touserdata(LuaState, -1);
 	lua_pop(LuaState, 1);
 
-	Object->BattleTargets.push_back(Target);
+	Object->Targets.push_back(Target);
 
 	return 0;
 }
@@ -316,7 +316,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 	// Set skill used
 	size_t ActionBarIndex = (size_t)lua_tointeger(LuaState, 1);
 	if(ActionBarIndex < Object->ActionBar.size())
-		Object->BattleAction.Skill = Object->ActionBar[ActionBarIndex].Skill;
+		Object->Action.Skill = Object->ActionBar[ActionBarIndex].Skill;
 
 	return 0;
 }

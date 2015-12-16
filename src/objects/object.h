@@ -36,6 +36,7 @@ class _Skill;
 class _Buff;
 class _Inventory;
 class _Stats;
+class _Server;
 class _Buffer;
 class _Scripting;
 class _StatChange;
@@ -97,7 +98,7 @@ class _Object : public _ManagerBase {
 		void UpdateGold(int Value);
 
 		// Battles
-		void UpdateAI(_Scripting *Scripting, const std::list<_Object *> &Fighters, double FrameTime);
+		void UpdateAI(const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
 		int GenerateDefense();
 		void CreateBattleElement(_Element *Parent);
@@ -108,7 +109,7 @@ class _Object : public _ManagerBase {
 
 		// Actions
 		void RefreshActionBarCount();
-		bool UseActionWorld(_Buffer &Data, _Scripting *Scripting, uint8_t Slot);
+		void SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager);
 
 		// Movement
 		bool AcceptingMoveInput();
@@ -133,6 +134,8 @@ class _Object : public _ManagerBase {
 		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
 
 		_Map *Map;
+		_Scripting *Scripting;
+		_Server *Server;
 		_Peer *Peer;
 		int InputState;
 		int Moved;
@@ -159,11 +162,13 @@ class _Object : public _ManagerBase {
 		double TurnTimer;
 		double AITimer;
 		uint8_t BattleSide;
-		std::list<_Object *> BattleTargets;
-		_Action BattleAction;
 		_Action PotentialAction;
 		std::list<uint32_t> ItemDropsReceived;
 		std::list<_StatusEffect *> StatusEffects;
+
+		// Actions
+		std::list<_Object *> Targets;
+		_Action Action;
 
 		// Render
 		const _Texture *Portrait;

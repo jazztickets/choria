@@ -93,6 +93,8 @@ class _Action {
 		void Serialize(_Buffer &Data);
 		void Unserialize(_Buffer &Data, _Stats *Stats);
 
+		void Resolve(_Buffer &Data, _Object *Source, ScopeType Scope);
+
 		bool IsSet() const { return !(Skill == nullptr && Item == nullptr); }
 		void Unset() { Skill = nullptr; Item = nullptr; Count = 0; }
 

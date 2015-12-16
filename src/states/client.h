@@ -111,7 +111,6 @@ class _ClientState : public _State {
 		void HandlePlayerPosition(_Buffer &Data);
 		void HandleTeleportStart(_Buffer &Data);
 		void HandleEventStart(_Buffer &Data);
-		void HandleActionResults(_Buffer &Data);
 		void HandleInventoryUse(_Buffer &Data);
 		void HandleInventorySwap(_Buffer &Data);
 		void HandleInventoryUpdate(_Buffer &Data);
@@ -125,8 +124,8 @@ class _ClientState : public _State {
 		void HandleTradeExchange(_Buffer &Data);
 		void HandleBattleStart(_Buffer &Data);
 		void HandleBattleAction(_Buffer &Data);
-		void HandleBattleTurnResults(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
+		void HandleActionResults(_Buffer &Data);
 		void HandleStatChange(_Buffer &Data);
 		void HandleHUD(_Buffer &Data);
 

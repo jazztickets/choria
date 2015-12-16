@@ -94,59 +94,17 @@ void _Battle::Update(double FrameTime) {
 
 	if(!Done) {
 
-		// Update fighters
-		int AliveCount[2] = { 0, 0 };
-		for(auto &Fighter : Fighters) {
-
-			// Count alive fighters for each side
-			if(Fighter->Health > 0) {
-				AliveCount[Fighter->BattleSide]++;
-
-				// Update AI
-				if(Server)
-					Fighter->UpdateAI(Scripting, Fighters, FrameTime);
-
-				// Check turn timer
-				Fighter->TurnTimer += FrameTime * Fighter->BattleSpeed;
-				if(Fighter->TurnTimer > 1.0) {
-					Fighter->TurnTimer = 1.0;
-
-					if(Server) {
-						if(Fighter->BattleAction.IsSet()) {
-							ServerResolveAction(Fighter);
-						}
-					}
-				}
-			}
-			else
-				Fighter->TurnTimer = 0;
-
-			// Update status effects
-			for(auto Iterator = Fighter->StatusEffects.begin(); Iterator != Fighter->StatusEffects.end(); ) {
-				_StatusEffect *StatusEffect = *Iterator;
-				StatusEffect->Time += FrameTime;
-
-				if(StatusEffect->Time >= 1.0) {
-					StatusEffect->Time -= 1.0;
-
-					// Update
-					if(Server && Fighter->Health > 0)
-						ServerResolveStatusEffect(Fighter, StatusEffect);
-
-					// Reduce count
-					StatusEffect->Count--;
-					if(StatusEffect->Count <= 0 || Fighter->Health <= 0) {
-						delete StatusEffect;
-						Iterator = Fighter->StatusEffects.erase(Iterator);
-					}
-				}
-				else
-					++Iterator;
-			}
-		}
-
 		// Check for end
 		if(Server) {
+
+			// Count alive fighters for each side
+			int AliveCount[2] = { 0, 0 };
+			for(auto &Fighter : Fighters) {
+				if(Fighter->Health > 0)
+					AliveCount[Fighter->BattleSide]++;
+			}
+
+			// Check for end conditions
 			if(AliveCount[0] == 0 || AliveCount[1] == 0) {
 				WaitTimer += FrameTime;
 				if(WaitTimer >= BATTLE_WAITDEADTIME)
@@ -344,13 +302,15 @@ void _Battle::RenderBattleLose() {
 
 // Sends an action selection to the server
 void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
+	if(ActionBarSlot >= ClientPlayer->ActionBar.size())
+		return;
 
 	// Check for dead
 	if(ClientPlayer->Health == 0)
 		return;
 
 	// Player already locked in
-	if(ClientPlayer->BattleAction.IsSet())
+	if(ClientPlayer->Action.IsSet())
 		return;
 
 	// Get skill
@@ -411,10 +371,10 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			GetFighterList(StartingSide, FighterList);
 
 			// Find targets
-			ClientPlayer->BattleTargets.clear();
+			ClientPlayer->Targets.clear();
 			for(auto &Fighter :  FighterList) {
 				if((TargetAlive && Fighter->Health > 0) || !TargetAlive) {
-					ClientPlayer->BattleTargets.push_back(Fighter);
+					ClientPlayer->Targets.push_back(Fighter);
 					if(!Multiple)
 						break;
 				}
@@ -426,30 +386,30 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ClientPlayer->PotentialAction.Item = Item;
 	}
 	// Apply action
-	else if(ClientPlayer->BattleTargets.size()) {
+	else if(ClientPlayer->Targets.size()) {
 
 		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::PLAYER_USEACTION);
+		Packet.Write<PacketType>(PacketType::ACTION_USE);
 		Packet.Write<uint8_t>(ActionBarSlot);
-		Packet.Write<uint8_t>((uint8_t)ClientPlayer->BattleTargets.size());
-		for(const auto &BattleTarget : ClientPlayer->BattleTargets)
+		Packet.Write<uint8_t>((uint8_t)ClientPlayer->Targets.size());
+		for(const auto &BattleTarget : ClientPlayer->Targets)
 			Packet.Write<NetworkIDType>(BattleTarget->NetworkID);
 
 		ClientNetwork->SendPacket(Packet);
 
-		ClientPlayer->BattleAction.Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
-		ClientPlayer->BattleAction.Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
+		ClientPlayer->Action.Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
+		ClientPlayer->Action.Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		ClientPlayer->PotentialAction.Unset();
 	}
 }
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, int SideDirection) {
-	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || ClientPlayer->Health == 0 || ClientPlayer->BattleTargets.size() > 1)
+	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || ClientPlayer->Health == 0 || ClientPlayer->Targets.size() > 1)
 		return;
 
 	// Get current target side
-	int BattleTargetSide = ClientPlayer->BattleTargets.front()->BattleSide;
+	int BattleTargetSide = ClientPlayer->Targets.front()->BattleSide;
 
 	// Change sides
 	if(SideDirection != 0)
@@ -464,7 +424,7 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	if(FighterList.size()) {
 
 		// Get iterator to current target
-		auto Iterator = std::find(FighterList.begin(), FighterList.end(), ClientPlayer->BattleTargets.front());
+		auto Iterator = std::find(FighterList.begin(), FighterList.end(), ClientPlayer->Targets.front());
 
 		if(Iterator == FighterList.end())
 			Iterator = FighterList.begin();
@@ -489,197 +449,8 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 			NewTarget = *Iterator;
 	}
 
-	ClientPlayer->BattleTargets.clear();
-	ClientPlayer->BattleTargets.push_back(NewTarget);
-}
-
-// Resolves an action and sends the result to each player
-void _Battle::ServerResolveAction(_Object *SourceFighter) {
-	if(SourceFighter->Health <= 0)
-		return;
-
-	_ActionResult ActionResult;
-	ActionResult.Source.Object = SourceFighter;
-	ActionResult.Scope = ScopeType::BATTLE;
-	ActionResult.SkillUsed = SourceFighter->BattleAction.Skill;
-	ActionResult.ItemUsed = SourceFighter->BattleAction.Item;
-
-	// Use item
-	size_t Index;
-	if(ActionResult.ItemUsed && ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
-		ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
-	}
-
-	// Apply costs
-	if(ActionResult.SkillUsed) {
-		if(!ActionResult.SkillUsed->CanUse(Scripting, ActionResult))
-			return;
-
-		ActionResult.SkillUsed->ApplyCost(Scripting, ActionResult);
-	}
-
-	ActionResult.Source.Object->UpdateHealth(ActionResult.Source.HealthChange);
-	ActionResult.Source.Object->UpdateMana(ActionResult.Source.ManaChange);
-
-	// Build packet for results
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::BATTLE_ACTIONRESULTS);
-
-	// Write action used
-	uint32_t SkillID = ActionResult.SkillUsed ? ActionResult.SkillUsed->ID : 0;
-	uint32_t ItemID = ActionResult.ItemUsed ? ActionResult.ItemUsed->ID : 0;
-	Packet.Write<uint32_t>(SkillID);
-	Packet.Write<uint32_t>(ItemID);
-
-	// Source fighter
-	ActionResult.Source.SerializeBattle(Packet);
-	Packet.Write<int32_t>(ActionResult.Source.Object->Health);
-	Packet.Write<int32_t>(ActionResult.Source.Object->Mana);
-
-	// Update each target
-	Packet.Write<uint8_t>((uint8_t)SourceFighter->BattleTargets.size());
-	for(auto &BattleTarget : SourceFighter->BattleTargets) {
-		ActionResult.Target.Object = BattleTarget;
-
-		// Update fighters
-		if(ActionResult.SkillUsed) {
-			ActionResult.SkillUsed->Use(Scripting, ActionResult);
-		}
-		else if(ActionResult.ItemUsed) {
-			ActionResult.ItemUsed->Use(Scripting, ActionResult);
-		}
-
-		// Update target
-		ActionResult.Target.Object->UpdateHealth(ActionResult.Target.HealthChange);
-		ActionResult.Target.Object->UpdateMana(ActionResult.Target.ManaChange);
-
-		ActionResult.Target.SerializeBattle(Packet);
-		Packet.Write<int32_t>(ActionResult.Target.Object->Health);
-		Packet.Write<int32_t>(ActionResult.Target.Object->Mana);
-
-		// Add buffs
-		if(ActionResult.Buff) {
-			_StatusEffect *StatusEffect = new _StatusEffect();
-			StatusEffect->Buff = ActionResult.Buff;
-			StatusEffect->Level = ActionResult.BuffLevel;
-			StatusEffect->Count = ActionResult.BuffDuration;
-			ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
-
-			Packet.Write<uint32_t>(StatusEffect->Buff->ID);
-			Packet.Write<int>(StatusEffect->Level);
-			Packet.Write<int>(StatusEffect->Count);
-		}
-		else
-			Packet.Write<uint32_t>(0);
-	}
-
-	// Send packet
-	BroadcastPacket(Packet);
-
-	// Reset fighter
-	SourceFighter->TurnTimer = 0.0;
-	SourceFighter->BattleAction.Unset();
-	SourceFighter->BattleTargets.clear();
-}
-
-// Displays turn results from the server
-void _Battle::ClientResolveAction(_Buffer &Data) {
-
-	// Create result
-	_ActionResult ActionResult;
-	uint32_t SkillID = Data.Read<uint32_t>();
-	uint32_t ItemID = Data.Read<uint32_t>();
-	ActionResult.SkillUsed = Stats->Skills[SkillID];
-	ActionResult.ItemUsed = Stats->Items[ItemID];
-
-	// Set texture
-	if(ActionResult.SkillUsed)
-		ActionResult.Texture = ActionResult.SkillUsed->Texture;
-	else if(ActionResult.ItemUsed)
-		ActionResult.Texture = ActionResult.ItemUsed->Texture;
-	else
-		ActionResult.Texture = Assets.Textures["skills/attack.png"];
-
-	// Get source change
-	ActionResult.Source.UnserializeBattle(Data, Manager);
-	int SourceFighterHealth = Data.Read<int32_t>();
-	int SourceFighterMana = Data.Read<int32_t>();
-
-	// Update source fighter
-	if(ActionResult.Source.Object) {
-		ActionResult.Source.Object->Health = SourceFighterHealth;
-		ActionResult.Source.Object->Mana = SourceFighterMana;
-		ActionResult.Source.Object->TurnTimer = 0.0;
-		ActionResult.Source.Object->BattleAction.Unset();
-		ActionResult.Source.Object->BattleTargets.clear();
-
-		// Use item on client
-		if(ClientPlayer == ActionResult.Source.Object && ActionResult.ItemUsed) {
-			size_t Index;
-			if(ClientPlayer->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
-				ClientPlayer->Inventory->DecrementItemCount(Index, -1);
-				ClientPlayer->RefreshActionBarCount();
-			}
-		}
-	}
-
-	// Update targets
-	uint8_t TargetCount = Data.Read<uint8_t>();
-	for(uint8_t i = 0; i < TargetCount; i++) {
-		ActionResult.Target.UnserializeBattle(Data, Manager);
-		int TargetFighterHealth = Data.Read<int32_t>();
-		int TargetFighterMana = Data.Read<int32_t>();
-
-		// Read status effect
-		uint32_t BuffID = Data.Read<uint32_t>();
-		_StatusEffect *StatusEffect = nullptr;
-		if(BuffID > 0) {
-			StatusEffect = new _StatusEffect();
-			StatusEffect->Buff = Stats->Buffs[BuffID];
-			StatusEffect->Level = Data.Read<int>();
-			StatusEffect->Count = Data.Read<int>();
-		}
-
-		// Update target fighter
-		if(ActionResult.Target.Object) {
-			ActionResult.Target.Object->Health = TargetFighterHealth;
-			ActionResult.Target.Object->Mana = TargetFighterMana;
-
-			// Add status effect
-			if(StatusEffect) {
-				ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
-				_Element *Element = new _Element();
-				Element->Identifier = "buff";
-				Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
-				Element->Alignment = LEFT_TOP;
-				Element->UserCreated = true;
-				Element->Visible = true;
-				Element->UserData = (void *)StatusEffect;
-				Element->Parent = ActionResult.Target.Object->BattleElement;
-				Element->Parent->Children.push_back(Element);
-				StatusEffect->BattleElement = Element;
-				//Element->Parent->SetDebug(0);
-
-				if(ActionResult.Target.Object == ClientPlayer) {
-					Element = new _Element();
-					Element->Identifier = "hudbuff";
-					Element->Size = glm::vec2(StatusEffect->Buff->Texture->Size);
-					Element->Alignment = LEFT_TOP;
-					Element->UserCreated = true;
-					Element->Visible = true;
-					Element->UserData = (void *)StatusEffect;
-					Element->Parent = Assets.Elements["element_hud_statuseffects"];
-					Assets.Elements["element_hud_statuseffects"]->Children.push_back(Element);
-					StatusEffect->HUDElement = Element;
-					//Assets.Elements["element_hud_statuseffects"]->SetDebug(1);
-				}
-			}
-		}
-
-		if(ActionResult.Target.IsChanged())
-			StatChanges.push_back(ActionResult.Target);
-		ActionResults.push_back(ActionResult);
-	}
+	ClientPlayer->Targets.clear();
+	ClientPlayer->Targets.push_back(NewTarget);
 }
 
 // Update a status effect
@@ -714,8 +485,8 @@ void _Battle::ClientResolveStatChange(_Buffer &Data) {
 void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Battle = this;
 	Fighter->BattleSide = Side;
-	Fighter->BattleTargets.clear();
-	Fighter->BattleAction.Unset();
+	Fighter->Targets.clear();
+	Fighter->Action.Unset();
 	Fighter->PotentialAction.Unset();
 
 	// Count fighters and set slots
@@ -1104,49 +875,6 @@ bool _Battle::ClientHandleInput(int Action) {
 	return false;
 }
 
-// Handles input from the client
-void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
-
-	// Check for needed commands
-	if(!Fighter->BattleAction.IsSet()) {
-
-		uint8_t ActionBarSlot = Data.Read<uint8_t>();
-		uint8_t TargetCount = Data.Read<uint8_t>();
-		if(!TargetCount)
-			return;
-
-		// Get targets
-		Fighter->BattleTargets.clear();
-		for(uint8_t i = 0; i < TargetCount; i++) {
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-			_Object *Target = Manager->IDMap[NetworkID];
-			if(Target)
-				Fighter->BattleTargets.push_back(Target);
-		}
-
-		// Set skill
-		uint32_t SkillID = 0;
-		uint32_t ItemID = 0;
-		if(ActionBarSlot < Fighter->ActionBar.size()) {
-			Fighter->BattleAction.Skill = Fighter->ActionBar[ActionBarSlot].Skill;
-			Fighter->BattleAction.Item = Fighter->ActionBar[ActionBarSlot].Item;
-			if(Fighter->BattleAction.Skill)
-				SkillID = Fighter->BattleAction.Skill->ID;
-			else if(Fighter->BattleAction.Item)
-				ItemID = Fighter->BattleAction.Item->ID;
-		}
-
-		// Notify other players of action
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
-		Packet.Write<NetworkIDType>(Fighter->NetworkID);
-		Packet.Write<uint32_t>(SkillID);
-		Packet.Write<uint32_t>(ItemID);
-
-		BroadcastPacket(Packet);
-	}
-}
-
 // Handle action from another player
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
@@ -1156,8 +884,8 @@ void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
 	_Object *Fighter = Manager->IDMap[NetworkID];
 	if(Fighter) {
-		Fighter->BattleAction.Skill = Stats->Skills[SkillID];
-		Fighter->BattleAction.Item = Stats->Items[ItemID];
+		Fighter->Action.Skill = Stats->Skills[SkillID];
+		Fighter->Action.Item = Stats->Items[ItemID];
 	}
 }
 

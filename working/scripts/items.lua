@@ -1,6 +1,6 @@
 -- Health Potion --
 
-Item_HealthPotion = { HealBase = 3, Duration = 50 }
+Item_HealthPotion = { HealBase = 3, Duration = 5 }
 
 function Item_HealthPotion.GetInfo(Level)
 

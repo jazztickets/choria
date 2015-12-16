@@ -21,6 +21,7 @@
 #include <objects/object.h>
 #include <objects/inventory.h>
 #include <objects/map.h>
+#include <objects/skill.h>
 #include <objects/battle.h>
 #include <scripting.h>
 #include <save.h>
@@ -267,8 +268,8 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
-		case PacketType::PLAYER_USEACTION:
-			HandlePlayerUseAction(Data, Peer);
+		case PacketType::ACTION_USE:
+			HandleActionUse(Data, Peer);
 		break;
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data, Peer);
@@ -610,10 +611,12 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	// Create object
 	_Object *Player = ObjectManager->Create();
-	Peer->Object = Player;
+	Player->Scripting = Scripting;
+	Player->Server = this;
 	Player->CharacterID = Peer->CharacterID;
 	Player->Peer = Peer;
 	Player->Stats = Stats;
+	Peer->Object = Player;
 
 	Save->LoadPlayer(Player);
 
@@ -1060,24 +1063,34 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 
 }
 
-// Handle player using action outside of battle
-void _Server::HandlePlayerUseAction(_Buffer &Data, _Peer *Peer) {
+// Handle action use by player
+void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
 	_Object *Player = Peer->Object;
 
-	if(Player->Battle) {
-		Player->Battle->ServerHandleAction(Player, Data);
-	}
-	else {
-		uint8_t Slot = Data.Read<uint8_t>();
+	// Set action used
+	Player->SetActionUsing(Data, ObjectManager);
 
+	// Check for battle
+	if(Player->Battle) {
+
+		// Notify other players of action
 		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::PLAYER_ACTIONRESULTS);
-		if(Player->UseActionWorld(Packet, Scripting, Slot)) {
-			Network->SendPacket(Packet, Peer);
-		}
+		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
+		Packet.Write<NetworkIDType>(Player->NetworkID);
+		if(Player->Action.Skill)
+			Packet.Write<uint32_t>(Player->Action.Skill->ID);
+		else
+			Packet.Write<uint32_t>(0);
+
+		if(Player->Action.Item)
+			Packet.Write<uint32_t>(Player->Action.Item->ID);
+		else
+			Packet.Write<uint32_t>(0);
+
+		Player->Battle->BroadcastPacket(Packet);
 	}
 }
 
@@ -1219,6 +1232,8 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 		/*
 		for(int i = 0; i < 7; i++) {
 			_Object *Monster = ObjectManager->Create();
+			Monster->Scripting = Scripting;
+			Monster->Server = this;
 			Monster->DatabaseID = 1;
 			Stats->GetMonsterStats(1, Monster);
 			Battle->AddFighter(Monster, 0);
@@ -1245,6 +1260,8 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 		// Add monsters
 		for(auto &MonsterID : MonsterIDs) {
 			_Object *Monster = ObjectManager->Create();
+			Monster->Server = this;
+			Monster->Scripting = Scripting;
 			Monster->DatabaseID = MonsterID;
 			Stats->GetMonsterStats(MonsterID, Monster);
 			Battle->AddFighter(Monster, 1);

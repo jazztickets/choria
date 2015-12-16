@@ -87,14 +87,11 @@ class _Battle : public _ManagerBase {
 		void ClientEndBattle(_Buffer &Data);
 
 		// Resolve
-		void ServerResolveAction(_Object *SourceFighter);
-		void ClientResolveAction(_Buffer &Data);
 		void ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEffect);
 		void ClientResolveStatChange(_Buffer &Data);
 
 		// Input
 		bool ClientHandleInput(int Action);
-		void ServerHandleAction(_Object *Fighter, _Buffer &Data);
 		void ClientHandlePlayerAction(_Buffer &Data);
 
 		_Stats *Stats;
@@ -103,6 +100,9 @@ class _Battle : public _ManagerBase {
 		_ClientNetwork *ClientNetwork;
 		_Object *ClientPlayer;
 		_Manager<_Object> *Manager;
+
+		std::list<_ActionResult> ActionResults;
+		std::list<_StatChange> StatChanges;
 
 	private:
 
@@ -139,7 +139,5 @@ class _Battle : public _ManagerBase {
 		_Element *BattleElement;
 		_Element *BattleWinElement;
 		_Element *BattleLoseElement;
-		std::list<_ActionResult> ActionResults;
-		std::list<_StatChange> StatChanges;
 
 };
