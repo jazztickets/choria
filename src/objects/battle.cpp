@@ -455,18 +455,7 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 
 // Update a status effect
 void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEffect) {
-	_StatChange StatChange;
-	StatChange.Object = Object;
-	StatusEffect->Buff->Update(Scripting, StatusEffect->Level, StatChange);
-	StatChange.Object->UpdateStats(StatChange);
 
-	// Send update
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-	StatChange.SerializeBattle(Packet);
-
-	// Send packet to players
-	BroadcastPacket(Packet);
 }
 
 // Resolve a stat change on the client
@@ -570,16 +559,20 @@ void _Battle::Unserialize(_Buffer &Data) {
 	// Set fighter position offsets and create ui elements
 	int SideCount[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
+
+		// Get position on screen
 		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
 		SideCount[Fighter->BattleSide]++;
 
+		// Create ui element
 		Fighter->CreateBattleElement(BattleElement);
-	}
 
-	// Create ui elements for status effects
-	for(auto &StatusEffect : ClientPlayer->StatusEffects) {
-		StatusEffect->BattleElement = StatusEffect->CreateUIElement(ClientPlayer->BattleElement);
-		StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+		// Create ui elements for status effects
+		for(auto &StatusEffect : Fighter->StatusEffects) {
+			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
+			if(ClientPlayer == Fighter)
+				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+		}
 	}
 
 	BattleElement->CalculateChildrenBounds();

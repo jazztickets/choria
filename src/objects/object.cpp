@@ -193,7 +193,7 @@ void _Object::Update(double FrameTime) {
 				Action.Resolve(Packet, this, Scope);
 				if(Battle)
 					Battle->BroadcastPacket(Packet);
-				else
+				else if(Peer)
 					Server->Network->SendPacket(Packet, Peer);
 			}
 		}
@@ -209,9 +209,24 @@ void _Object::Update(double FrameTime) {
 		if(StatusEffect->Time >= 1.0) {
 			StatusEffect->Time -= 1.0;
 
-			// Update
-			//if(Server && Fighter->Health > 0)
-			//	ServerResolveStatusEffect(Fighter, StatusEffect);
+			// Resolve effects
+			if(Server && Health > 0) {
+				_StatChange StatChange;
+				StatChange.Object = this;
+				StatusEffect->Buff->Update(Scripting, StatusEffect->Level, StatChange);
+				StatChange.Object->UpdateStats(StatChange);
+
+				// Send update
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+				StatChange.SerializeBattle(Packet);
+
+				// Send packet to players
+				if(Battle)
+					Battle->BroadcastPacket(Packet);
+				else if(Peer)
+					Server->Network->SendPacket(Packet, Peer);
+			}
 
 			// Reduce count
 			StatusEffect->Count--;
