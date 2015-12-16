@@ -19,6 +19,7 @@
 
 // Libraries
 #include <glm/vec2.hpp>
+#include <manager.h>
 
 // Forward Declarations
 class _Object;
@@ -34,7 +35,7 @@ class _StatChange {
 
 		bool IsChanged();
 		void SerializeBattle(_Buffer &Data);
-		void UnserializeBattle(_Buffer &Data, _Battle *Battle);
+		void UnserializeBattle(_Buffer &Data, _Manager<_Object> *Manager);
 
 		_Object *Object;
 		glm::vec2 LastPosition;

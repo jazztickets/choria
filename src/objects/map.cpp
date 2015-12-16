@@ -565,7 +565,6 @@ void _Map::RemoveObject(const _Object *RemoveObject) {
 		// Create packet
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_DELETEOBJECT);
-		Packet.Write<uint8_t>((uint8_t)NetworkID);
 		Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
 
 		// Send to everyone

@@ -156,7 +156,6 @@ class _Object : public _ManagerBase {
 		float BattleSpeed;
 		double TurnTimer;
 		double AITimer;
-		uint8_t BattleID;
 		uint8_t BattleSide;
 		std::list<_Object *> BattleTargets;
 		_Action BattleAction;

@@ -69,7 +69,6 @@ _Object::_Object()
 	BattleSpeed(BATTLE_DEFAULTSPEED),
 	TurnTimer(0.0),
 	AITimer(1.0),
-	BattleID(0),
 	BattleSide(0),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
@@ -403,10 +402,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	glm::vec2 StatusPosition(glm::vec2(0, BattleElement->Size.y + 4));
 	for(auto &StatusEffect : StatusEffects) {
-		StatusEffect->BattleElement->Offset = StatusPosition;
-		StatusEffect->BattleElement->CalculateBounds();
-		Graphics.DrawImage(StatusEffect->BattleElement->Bounds, StatusEffect->Buff->Texture);
-		StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
+		if(StatusEffect->BattleElement) {
+			StatusEffect->BattleElement->Offset = StatusPosition;
+			StatusEffect->BattleElement->CalculateBounds();
+			Graphics.DrawImage(StatusEffect->BattleElement->Bounds, StatusEffect->Buff->Texture);
+			StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
+		}
 	}
 }
 

@@ -129,6 +129,8 @@ void _Server::StopServer() {
 
 // Update
 void _Server::Update(double FrameTime) {
+	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
+	//	std::cout << "Server: O=" << ObjectManager->Objects.size() << " B=" << BattleManager->Objects.size() << std::endl;
 
 	// Update network
 	Network->Update(FrameTime);
@@ -1100,26 +1102,14 @@ void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
-	// Check for the last player leaving the battle
-	RemovePlayerFromBattle(Player);
+	// Take player out of battle
+	Player->Battle->RemoveFighter(Player);
 
 	// Check for death
 	if(Player->Health == 0) {
 		Player->RestoreHealthMana();
 		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
 	}
-}
-
-// Removes a player from a battle and deletes the battle if necessary
-void _Server::RemovePlayerFromBattle(_Object *Player) {
-	if(!Player->Battle)
-		return;
-
-	// Save pointer to battle
-	_Battle *Battle = Player->Battle;
-
-	// Delete instance
-	Battle->RemoveFighter(Player);
 }
 
 /*
@@ -1210,7 +1200,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	Zone = 0;
+	Zone = 4;
 	if(!Zone)
 		return;
 
@@ -1221,13 +1211,14 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 
 		// Create a new battle instance
 		_Battle *Battle = BattleManager->Create();
+		Battle->Manager = ObjectManager;
 		Battle->Stats = Stats;
 		Battle->Server = this;
 		Battle->Scripting = Scripting;
 
 		/*
 		for(int i = 0; i < 7; i++) {
-			_Object *Monster = new _Object();
+			_Object *Monster = ObjectManager->Create();
 			Monster->DatabaseID = 1;
 			Stats->GetMonsterStats(1, Monster);
 			Battle->AddFighter(Monster, 0);
@@ -1253,7 +1244,7 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 
 		// Add monsters
 		for(auto &MonsterID : MonsterIDs) {
-			_Object *Monster = new _Object();
+			_Object *Monster = ObjectManager->Create();
 			Monster->DatabaseID = MonsterID;
 			Stats->GetMonsterStats(MonsterID, Monster);
 			Battle->AddFighter(Monster, 1);

@@ -295,6 +295,9 @@ void _ClientState::Update(double FrameTime) {
 	//if(Graphics.Element->HitElement)
 		//std::cout << Graphics.Element->HitElement->Identifier << std::endl;
 
+	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
+	//	std::cout << "Client: O=" << ObjectManager->Objects.size() << " B=" << (int)(Battle != nullptr) << std::endl;
+
 	// Update network
 	Network->Update(FrameTime);
 
@@ -607,24 +610,15 @@ void _ClientState::HandleObjectCreate(_Buffer &Data) {
 
 // Deletes an object
 void _ClientState::HandleObjectDelete(_Buffer &Data) {
-	if(!Player || !Map)
+	if(!Player)
 		return;
 
-	uint8_t MapID = Data.Read<uint8_t>();
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-
-	// Check for same map
-	if(Map->NetworkID != MapID)
-		return;
 
 	// Get object
 	_Object *Object = ObjectManager->IDMap[NetworkID];
-	if(Object) {
-		if(Battle)
-			Battle->RemoveFighter(Object);
-
+	if(Object)
 		Object->Deleted = true;
-	}
 }
 
 // Handles position updates from the server
@@ -929,6 +923,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 	// Create a new battle instance
 	Battle = new _Battle();
+	Battle->Manager = ObjectManager;
 	Battle->Stats = Stats;
 	Battle->Scripting = Scripting;
 	Battle->ClientPlayer = Player;
@@ -941,6 +936,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	for(int i = 0; i < FighterCount; i++) {
 
 		// Get fighter type
+		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 		uint32_t DatabaseID = Data.Read<uint32_t>();
 		uint8_t Side = Data.Read<uint8_t>();
 		double TurnTimer = Data.Read<double>();
@@ -948,11 +944,8 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 		_Object *Fighter = nullptr;
 		if(DatabaseID == 0) {
 
-			// Network ID
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-			glm::ivec2 Position = Data.Read<glm::ivec2>();
-
 			// Player stats
+			glm::ivec2 Position = Data.Read<glm::ivec2>();
 			int Health = Data.Read<int32_t>();
 			int MaxHealth = Data.Read<int32_t>();
 			int Mana = Data.Read<int32_t>();
@@ -973,7 +966,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 			}
 		}
 		else {
-			Fighter = new _Object();
+			Fighter = ObjectManager->CreateWithID(NetworkID);
 			Fighter->DatabaseID = DatabaseID;
 			Fighter->TurnTimer = TurnTimer;
 			Stats->GetMonsterStats(DatabaseID, Fighter);

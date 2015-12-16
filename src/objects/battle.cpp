@@ -52,6 +52,7 @@ _Battle::_Battle() :
 	Scripting(nullptr),
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
+	Manager(nullptr),
 	State(STATE_NONE),
 	Done(false),
 	Time(0),
@@ -76,7 +77,13 @@ _Battle::~_Battle() {
 	if(BattleLoseElement)
 		BattleLoseElement->SetVisible(false);
 
-	RemoveFighters();
+	// Remove fighters
+	for(auto &Fighter : Fighters) {
+		if(Fighter->DatabaseID)
+			Fighter->Deleted = true;
+		Fighter->StopBattle();
+		Fighter->RemoveBattleElement();
+	}
 }
 
 // Update battle
@@ -426,7 +433,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		Packet.Write<uint8_t>(ActionBarSlot);
 		Packet.Write<uint8_t>((uint8_t)ClientPlayer->BattleTargets.size());
 		for(const auto &BattleTarget : ClientPlayer->BattleTargets)
-			Packet.Write<uint8_t>(BattleTarget->BattleID);
+			Packet.Write<NetworkIDType>(BattleTarget->NetworkID);
 
 		ClientNetwork->SendPacket(Packet);
 
@@ -594,7 +601,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
 	// Get source change
-	ActionResult.Source.UnserializeBattle(Data, this);
+	ActionResult.Source.UnserializeBattle(Data, Manager);
 	int SourceFighterHealth = Data.Read<int32_t>();
 	int SourceFighterMana = Data.Read<int32_t>();
 
@@ -619,7 +626,7 @@ void _Battle::ClientResolveAction(_Buffer &Data) {
 	// Update targets
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
-		ActionResult.Target.UnserializeBattle(Data, this);
+		ActionResult.Target.UnserializeBattle(Data, Manager);
 		int TargetFighterHealth = Data.Read<int32_t>();
 		int TargetFighterMana = Data.Read<int32_t>();
 
@@ -695,7 +702,7 @@ void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEf
 void _Battle::ClientResolveStatChange(_Buffer &Data) {
 
 	_StatChange StatChange;
-	StatChange.UnserializeBattle(Data, this);
+	StatChange.UnserializeBattle(Data, Manager);
 
 	if(StatChange.Object)
 		StatChange.Object->UpdateStats(StatChange);
@@ -703,22 +710,9 @@ void _Battle::ClientResolveStatChange(_Buffer &Data) {
 	StatChanges.push_back(StatChange);
 }
 
-// Get the object pointer battle id
-_Object *_Battle::GetObjectByID(uint8_t BattleID) {
-
-	// Search fighters
-	for(auto &Fighter : Fighters) {
-		if(Fighter->BattleID == BattleID)
-			return Fighter;
-	}
-
-	return nullptr;
-}
-
 // Add a fighter to the battle
 void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Battle = this;
-	Fighter->BattleID = NextID++;
 	Fighter->BattleSide = Side;
 	Fighter->BattleTargets.clear();
 	Fighter->BattleAction.Unset();
@@ -766,6 +760,7 @@ void _Battle::ServerStartBattle() {
 		//Fighter->TurnTimer = 1;
 
 		// Write fighter type
+		Packet.Write<NetworkIDType>(Fighter->NetworkID);
 		Packet.Write<uint32_t>(Fighter->DatabaseID);
 		Packet.Write<uint8_t>(Fighter->BattleSide);
 		Packet.Write<double>(Fighter->TurnTimer);
@@ -773,7 +768,6 @@ void _Battle::ServerStartBattle() {
 		if(Fighter->DatabaseID == 0) {
 
 			// Network ID
-			Packet.Write<NetworkIDType>(Fighter->NetworkID);
 			Packet.Write<glm::ivec2>(Fighter->Position);
 
 			// Player stats
@@ -958,7 +952,6 @@ void _Battle::ServerEndBattle() {
 
 // End of a battle
 void _Battle::ClientEndBattle(_Buffer &Data) {
-	RemoveFighters();
 
 	// Get ending stats
 	bool SideDead[2];
@@ -1017,7 +1010,7 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 	Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
 }
 
-// Removes a player from the battle, return remaining player count
+// Removes a player from the battle
 void _Battle::RemoveFighter(_Object *RemoveFighter) {
 
 	// Remove action results
@@ -1037,30 +1030,10 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 			SideCount[Fighter->BattleSide]--;
 			Fighter->StopBattle();
 			Fighter->RemoveBattleElement();
-			if(Fighter->DatabaseID)
-				delete Fighter;
-
 			Fighters.erase(Iterator);
 			return;
 		}
 	}
-}
-
-// Remove all fighters
-void _Battle::RemoveFighters() {
-
-	// Delete monsters and remove battle elements
-	for(auto &Fighter : Fighters) {
-
-		if(Fighter->DatabaseID)
-			delete Fighter;
-		else {
-			Fighter->StopBattle();
-			Fighter->RemoveBattleElement();
-		}
-	}
-
-	Fighters.clear();
 }
 
 // Get number of peers in battle
@@ -1134,8 +1107,8 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 		// Get targets
 		Fighter->BattleTargets.clear();
 		for(uint8_t i = 0; i < TargetCount; i++) {
-			uint8_t TargetID = Data.Read<uint8_t>();
-			_Object *Target = GetObjectByID(TargetID);
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			_Object *Target = Manager->IDMap[NetworkID];
 			if(Target)
 				Fighter->BattleTargets.push_back(Target);
 		}
@@ -1155,7 +1128,7 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 		// Notify other players of action
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
-		Packet.Write<uint8_t>(Fighter->BattleID);
+		Packet.Write<NetworkIDType>(Fighter->NetworkID);
 		Packet.Write<uint32_t>(SkillID);
 		Packet.Write<uint32_t>(ItemID);
 
@@ -1166,11 +1139,11 @@ void _Battle::ServerHandleAction(_Object *Fighter, _Buffer &Data) {
 // Handle action from another player
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
-	uint8_t BattleID = Data.Read<uint8_t>();
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 
-	_Object *Fighter = GetObjectByID(BattleID);
+	_Object *Fighter = Manager->IDMap[NetworkID];
 	if(Fighter) {
 		Fighter->BattleAction.Skill = Stats->Skills[SkillID];
 		Fighter->BattleAction.Item = Stats->Items[ItemID];

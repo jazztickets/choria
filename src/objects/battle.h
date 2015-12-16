@@ -70,8 +70,6 @@ class _Battle : public _ManagerBase {
 		// Objects
 		void AddFighter(_Object *Fighter, uint8_t Side);
 		void RemoveFighter(_Object *RemoveFighter);
-		void RemoveFighters();
-		_Object *GetObjectByID(uint8_t BattleID);
 		int GetPeerCount();
 
 		// Updates
@@ -101,6 +99,7 @@ class _Battle : public _ManagerBase {
 		_Scripting *Scripting;
 		_ClientNetwork *ClientNetwork;
 		_Object *ClientPlayer;
+		_Manager<_Object> *Manager;
 
 	private:
 

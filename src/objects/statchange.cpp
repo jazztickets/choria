@@ -17,7 +17,6 @@
 *******************************************************************************/
 #include <objects/statchange.h>
 #include <objects/object.h>
-#include <objects/battle.h>
 #include <stats.h>
 #include <buffer.h>
 #include <stdexcept>
@@ -44,16 +43,16 @@ void _StatChange::SerializeBattle(_Buffer &Data) {
 	if(!Object)
 		throw std::runtime_error("_StatChange::Serialize: Object is null!");
 
-	Data.Write<uint8_t>(Object->BattleID);
+	Data.Write<NetworkIDType>(Object->NetworkID);
 	Data.Write<int>(HealthChange);
 	Data.Write<int>(ManaChange);
 }
 
 // Unserialize change
-void _StatChange::UnserializeBattle(_Buffer &Data, _Battle *Battle) {
+void _StatChange::UnserializeBattle(_Buffer &Data, _Manager<_Object> *Manager) {
 
-	uint8_t BattleID = Data.Read<uint8_t>();
-	Object = Battle->GetObjectByID(BattleID);
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	Object = Manager->IDMap[NetworkID];
 	HealthChange = Data.Read<int>();
 	ManaChange = Data.Read<int>();
 }

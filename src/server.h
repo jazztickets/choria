@@ -115,7 +115,6 @@ class _Server {
 
 		void SendPlayerPosition(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
-		void RemovePlayerFromBattle(_Object *Player);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 
 		// Threading
