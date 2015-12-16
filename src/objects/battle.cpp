@@ -805,6 +805,12 @@ void _Battle::Unserialize(_Buffer &Data) {
 		Fighter->CreateBattleElement(BattleElement);
 	}
 
+	// Create ui elements for status effects
+	for(auto &StatusEffect : ClientPlayer->StatusEffects) {
+		StatusEffect->BattleElement = StatusEffect->CreateUIElement(ClientPlayer->BattleElement);
+		StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+	}
+
 	BattleElement->CalculateChildrenBounds();
 	//BattleElement->SetDebug(1);
 }
