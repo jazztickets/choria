@@ -405,6 +405,41 @@ void _ClientState::Render(double BlendFactor) {
 	Menu.Render();
 }
 
+// Handle connection to server
+void _ClientState::HandleConnect() {
+
+	if(Server) {
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
+		Packet.WriteBit(0);
+		Packet.WriteString("choria_singleplayer");
+		Packet.WriteString("choria_singleplayer");
+		Network->SendPacket(Packet);
+	}
+
+	Menu.HandleConnect();
+}
+
+// Handle disconnects
+void _ClientState::HandleDisconnect() {
+	Menu.HandleDisconnect(Server != nullptr);
+	ClientState.StopLocalServer();
+	if(Battle) {
+		delete Battle;
+		Battle = nullptr;
+	}
+	if(Map) {
+		delete Map;
+		Map = nullptr;
+	}
+	if(Player) {
+		Player = nullptr;
+		HUD->SetPlayer(nullptr);
+	}
+
+	ObjectManager->Clear();
+}
+
 // Handle packet from server
 void _ClientState::HandlePacket(_Buffer &Data) {
 	PacketType Type = Data.Read<PacketType>();
@@ -494,39 +529,6 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		default:
 			Menu.HandlePacket(Data, Type);
 		break;
-	}
-}
-
-// Handle connection to server
-void _ClientState::HandleConnect() {
-
-	if(Server) {
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
-		Packet.WriteBit(0);
-		Packet.WriteString("choria_singleplayer");
-		Packet.WriteString("choria_singleplayer");
-		Network->SendPacket(Packet);
-	}
-
-	Menu.HandleConnect();
-}
-
-// Handle disconnects
-void _ClientState::HandleDisconnect() {
-	Menu.HandleDisconnect(Server != nullptr);
-	ClientState.StopLocalServer();
-	if(Player) {
-		if(Battle) {
-			delete Battle;
-			Battle = nullptr;
-		}
-		if(Map) {
-			delete Map;
-			Map = nullptr;
-		}
-		Player = nullptr;
-		HUD->SetPlayer(nullptr);
 	}
 }
 
