@@ -57,7 +57,7 @@ struct _Event {
 };
 
 struct _Tile {
-	_Tile() : TextureIndex{0, 0}, Zone(0), Wall(false), PVP(true) { }
+	_Tile() : TextureIndex{0, 0}, Zone(0), Wall(false), PVP(false) { }
 	uint32_t TextureIndex[2];
 	uint32_t Zone;
 	_Event Event;
