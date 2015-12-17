@@ -82,6 +82,8 @@ _HUD::_HUD() {
 	SkillsElement = Assets.Elements["element_skills"];
 	TeleportElement = Assets.Elements["element_teleport"];
 	ChatElement = Assets.Elements["element_chat"];
+	HealthElement = Assets.Elements["element_hud_health"];
+	ManaElement = Assets.Elements["element_hud_mana"];
 
 	Assets.Labels["label_hud_gold"]->Size.x = ButtonBarElement->Size.x;
 	Assets.Labels["label_hud_gold"]->CalculateBounds();
@@ -98,10 +100,10 @@ _HUD::_HUD() {
 	SkillsElement->SetVisible(false);
 	TeleportElement->SetVisible(false);
 	ChatElement->SetVisible(false);
+	HealthElement->SetVisible(true);
+	ManaElement->SetVisible(true);
 
 	Assets.Elements["element_hud"]->SetVisible(true);
-	Assets.Elements["element_hud_health"]->SetVisible(true);
-	Assets.Elements["element_hud_mana"]->SetVisible(true);
 	Assets.Elements["element_hud_experience"]->SetVisible(true);
 
 	CloseChat();
@@ -431,9 +433,9 @@ void _HUD::Update(double FrameTime) {
 		// Find start position
 		glm::vec2 StartPosition;
 		if(StatChange.Object->Battle && !StatChange.Object->Battle->Done)
-			StartPosition = StatChange.Object->ResultPosition + glm::vec2(StatChange.Object->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -StatChange.Object->Portrait->Size.y/2);
+			StartPosition = StatChange.Object->StatPosition;
 		else if(StatChange.Object == Player)
-			StartPosition = Assets.Elements["element_hud_health"]->Bounds.Start + Assets.Elements["element_hud_health"]->Size / 2.0f;
+			StartPosition = HealthElement->Bounds.Start + HealthElement->Size / 2.0f;
 		StatChange.LastPosition = StatChange.Position;
 
 		// Interpolate between start and end position
@@ -509,18 +511,18 @@ void _HUD::Render(double BlendFactor, double Time) {
 	Buffer << Player->Health << " / " << Player->MaxHealth;
 	Assets.Labels["label_hud_health"]->Text = Buffer.str();
 	Buffer.str("");
-	Assets.Images["image_hud_health_bar_full"]->SetWidth(Assets.Elements["element_hud_health"]->Size.x * HealthPercent);
-	Assets.Images["image_hud_health_bar_empty"]->SetWidth(Assets.Elements["element_hud_health"]->Size.x);
-	Assets.Elements["element_hud_health"]->Render();
+	Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * HealthPercent);
+	Assets.Images["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
+	HealthElement->Render();
 
 	// Draw mana bar
 	float ManaPercent = Player->MaxMana > 0 ? Player->Mana / (float)Player->MaxMana : 0;
 	Buffer << Player->Mana << " / " << Player->MaxMana;
 	Assets.Labels["label_hud_mana"]->Text = Buffer.str();
 	Buffer.str("");
-	Assets.Images["image_hud_mana_bar_full"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x * ManaPercent);
-	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(Assets.Elements["element_hud_mana"]->Size.x);
-	Assets.Elements["element_hud_mana"]->Render();
+	Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * ManaPercent);
+	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
+	ManaElement->Render();
 
 	DrawHudEffects();
 	DrawInventory();

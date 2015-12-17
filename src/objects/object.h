@@ -174,6 +174,7 @@ class _Object : public _ManagerBase {
 		const _Texture *Portrait;
 		glm::vec2 BattleOffset;
 		glm::vec2 ResultPosition;
+		glm::vec2 StatPosition;
 
 		// Monster
 		uint32_t DatabaseID;

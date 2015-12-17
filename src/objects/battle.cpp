@@ -499,9 +499,6 @@ void _Battle::Unserialize(_Buffer &Data) {
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 		}
 	}
-
-	BattleElement->CalculateChildrenBounds();
-	//BattleElement->SetDebug(1);
 }
 
 // Checks for the end of a battle
