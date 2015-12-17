@@ -53,8 +53,8 @@ _Battle::_Battle() :
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	Manager(nullptr),
-	State(STATE_NONE),
 	Done(false),
+	State(STATE_NONE),
 	Time(0),
 	WaitTimer(0),
 	NextID(0),
@@ -135,27 +135,6 @@ void _Battle::Update(double FrameTime) {
 					++Iterator;
 			}
 
-			// Update stat changes
-			for(auto Iterator = StatChanges.begin(); Iterator != StatChanges.end(); ) {
-				_StatChange &StatChange = *Iterator;
-
-				// Find start position
-				glm::vec2 StartPosition = StatChange.Object->ResultPosition + glm::vec2(StatChange.Object->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -StatChange.Object->Portrait->Size.y/2);
-				StatChange.LastPosition = StatChange.Position;
-
-				// Interpolate between start and end position
-				StatChange.Position = glm::mix(StartPosition, StartPosition + glm::vec2(0, -20), StatChange.Time / STATCHANGE_TIMEOUT);
-				if(StatChange.Time == 0.0)
-					StatChange.LastPosition = StatChange.Position;
-
-				// Update timer
-				StatChange.Time += FrameTime;
-				if(StatChange.Time >= STATCHANGE_TIMEOUT) {
-					Iterator = StatChanges.erase(Iterator);
-				}
-				else
-					++Iterator;
-			}
 		}
 	}
 
@@ -191,11 +170,6 @@ void _Battle::RenderBattle(double BlendFactor) {
 	for(auto &ActionResult : ActionResults) {
 		RenderActionResults(ActionResult, BlendFactor);
 	}
-
-	// Draw action results
-	for(auto &StatChange : StatChanges) {
-		RenderStatChanges(StatChange, BlendFactor);
-	}
 }
 
 // Render results of an action
@@ -224,38 +198,6 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	std::stringstream Buffer;
 	Buffer << std::abs(ActionResult.Target.HealthChange);
-	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
-}
-
-// Render recent stat changes
-void _Battle::RenderStatChanges(_StatChange &StatChange, double BlendFactor) {
-	if(!StatChange.Object)
-		return;
-
-	// Get text color
-	glm::vec4 TextColor = COLOR_WHITE;
-	char Sign = ' ';
-	if(StatChange.HealthChange > 0) {
-		TextColor = COLOR_GREEN;
-		Sign = '+';
-	}
-	else if(StatChange.HealthChange < 0) {
-		TextColor = COLOR_RED;
-		Sign = '-';
-	}
-
-	// Get alpha
-	double TimeLeft = STATCHANGE_TIMEOUT - StatChange.Time;
-	TextColor.a = 1.0f;
-	if(TimeLeft < ACTIONRESULT_FADETIME)
-		TextColor.a = (float)(TimeLeft / ACTIONRESULT_FADETIME);
-
-	// Get final draw position
-	glm::vec2 DrawPosition = glm::mix(StatChange.LastPosition, StatChange.Position, BlendFactor);
-
-	// Draw stat
-	std::stringstream Buffer;
-	Buffer << Sign << std::abs(StatChange.HealthChange);
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 
@@ -453,23 +395,6 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	ClientPlayer->Targets.push_back(NewTarget);
 }
 
-// Update a status effect
-void _Battle::ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEffect) {
-
-}
-
-// Resolve a stat change on the client
-void _Battle::ClientResolveStatChange(_Buffer &Data) {
-
-	_StatChange StatChange;
-	StatChange.UnserializeBattle(Data, Manager);
-
-	if(StatChange.Object)
-		StatChange.Object->UpdateStats(StatChange);
-
-	StatChanges.push_back(StatChange);
-}
-
 // Add a fighter to the battle
 void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Battle = this;
@@ -664,6 +589,8 @@ void _Battle::ServerEndBattle() {
 	// Send data
 	for(auto &Fighter : Fighters) {
 		Fighter->InputState = 0;
+		Fighter->PotentialAction.Unset();
+		Fighter->Action.Unset();
 
 		// Get rewards
 		int ExperienceEarned = 0;

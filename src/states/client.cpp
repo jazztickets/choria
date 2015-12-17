@@ -66,6 +66,7 @@ void _ClientState::Init() {
 	Player = nullptr;
 	Map = nullptr;
 	Battle = nullptr;
+	HUD = nullptr;
 	Time = 0.0;
 
 	ObjectManager = new _Manager<_Object>();
@@ -79,9 +80,6 @@ void _ClientState::Init() {
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_ITEMS);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_BUFFS);
-
-	HUD = new _HUD();
-	HUD->Scripting = Scripting;
 
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
@@ -399,7 +397,7 @@ void _ClientState::Render(double BlendFactor) {
 			Battle->Render(BlendFactor);
 
 		// Draw HUD
-		HUD->Render(Time);
+		HUD->Render(BlendFactor, Time);
 	}
 
 	// Draw menu
@@ -419,24 +417,24 @@ void _ClientState::HandleConnect() {
 	}
 
 	Menu.HandleConnect();
+
+	HUD = new _HUD();
+	HUD->Scripting = Scripting;
 }
 
 // Handle disconnects
 void _ClientState::HandleDisconnect() {
 	Menu.HandleDisconnect(Server != nullptr);
 	ClientState.StopLocalServer();
-	if(Battle) {
-		delete Battle;
-		Battle = nullptr;
-	}
-	if(Map) {
-		delete Map;
-		Map = nullptr;
-	}
-	if(Player) {
-		Player = nullptr;
-		HUD->SetPlayer(nullptr);
-	}
+
+	delete Battle;
+	delete Map;
+	delete HUD;
+
+	Battle = nullptr;
+	Map = nullptr;
+	HUD = nullptr;
+	Player = nullptr;
 
 	ObjectManager->Clear();
 }
@@ -934,7 +932,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
 	// Get source change
-	ActionResult.Source.UnserializeBattle(Data, ObjectManager);
+	ActionResult.Source.Unserialize(Data, ObjectManager);
 	int SourceFighterHealth = Data.Read<int32_t>();
 	int SourceFighterMana = Data.Read<int32_t>();
 
@@ -959,7 +957,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	// Update targets
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
-		ActionResult.Target.UnserializeBattle(Data, ObjectManager);
+		ActionResult.Target.Unserialize(Data, ObjectManager);
 		int TargetFighterHealth = Data.Read<int32_t>();
 		int TargetFighterMana = Data.Read<int32_t>();
 
@@ -993,7 +991,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 
 		if(Battle) {
 			if(ActionResult.Target.IsChanged())
-				Battle->StatChanges.push_back(ActionResult.Target);
+				HUD->AddStatChange(ActionResult.Target);
 			Battle->ActionResults.push_back(ActionResult);
 		}
 	}
@@ -1004,8 +1002,16 @@ void _ClientState::HandleStatChange(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	if(Battle)
-		Battle->ClientResolveStatChange(Data);
+	// Get stats
+	_StatChange StatChange;
+	StatChange.Unserialize(Data, ObjectManager);
+
+	// Add to list
+	if(StatChange.Object) {
+		StatChange.Object->UpdateStats(StatChange);
+
+		HUD->AddStatChange(StatChange);
+	}
 }
 
 // Handles HUD updates

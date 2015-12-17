@@ -423,10 +423,37 @@ void _HUD::Update(double FrameTime) {
 		if(ChatTextBox != FocusedElement)
 			CloseChat();
 	}
+
+	// Update stat changes
+	for(auto Iterator = StatChanges.begin(); Iterator != StatChanges.end(); ) {
+		_StatChange &StatChange = *Iterator;
+
+		// Find start position
+		glm::vec2 StartPosition;
+		if(StatChange.Object->Battle && !StatChange.Object->Battle->Done)
+			StartPosition = StatChange.Object->ResultPosition + glm::vec2(StatChange.Object->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -StatChange.Object->Portrait->Size.y/2);
+		else if(StatChange.Object == Player)
+			StartPosition = Assets.Elements["element_hud_health"]->Bounds.Start + Assets.Elements["element_hud_health"]->Size / 2.0f;
+		StatChange.LastPosition = StatChange.Position;
+
+		// Interpolate between start and end position
+		StatChange.Position = glm::mix(StartPosition, StartPosition + glm::vec2(0, -20), StatChange.Time / STATCHANGE_TIMEOUT);
+		if(StatChange.Time == 0.0)
+			StatChange.LastPosition = StatChange.Position;
+
+		// Update timer
+		StatChange.Time += FrameTime;
+		if(StatChange.Time >= STATCHANGE_TIMEOUT) {
+			Iterator = StatChanges.erase(Iterator);
+		}
+		else
+			++Iterator;
+	}
+
 }
 
 // Draws the HUD elements
-void _HUD::Render(double Time) {
+void _HUD::Render(double BlendFactor, double Time) {
 
 	// Draw chat messages
 	DrawChat(Time, IsChatting());
@@ -503,6 +530,11 @@ void _HUD::Render(double Time) {
 	DrawTrader();
 	DrawSkills();
 	DrawTeleport();
+
+	// Draw stat changes
+	for(auto &StatChange : StatChanges) {
+		StatChange.Render(BlendFactor);
+	}
 
 	// Draw item information
 	DrawCursorItem();

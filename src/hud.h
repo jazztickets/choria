@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/statchange.h>
 #include <vector>
 #include <list>
 #include <string>
@@ -96,11 +97,12 @@ class _HUD {
 		void HandleEnter();
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
-		void Render(double Time);
+		void Render(double BlendFactor, double Time);
 
 		// Objects
 		void SetPlayer(_Object *Player);
 		void SetActionBarSize(size_t Size);
+		void AddStatChange(_StatChange &StatChange) { StatChanges.push_back(StatChange); }
 
 		// Button bar
 		void ToggleTeleport();
@@ -172,9 +174,6 @@ class _HUD {
 
 		void SplitStack(uint8_t Slot, uint8_t Count);
 
-		// Objects
-		_Object *Player;
-
 		// UI
 		_Element *StatusEffectsElement;
 		_Element *ActionBarElement;
@@ -190,6 +189,10 @@ class _HUD {
 		_Element *ChatElement;
 		_Cursor Cursor;
 		_Cursor Tooltip;
+
+		// Objects
+		_Object *Player;
+		std::list<_StatChange> StatChanges;
 
 		// Chat
 		std::list<_ChatMessage> ChatHistory;

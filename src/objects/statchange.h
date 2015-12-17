@@ -33,9 +33,11 @@ class _StatChange {
 
 		_StatChange();
 
+		void Serialize(_Buffer &Data);
+		void Unserialize(_Buffer &Data, _Manager<_Object> *Manager);
+		void Render(double BlendFactor);
+
 		bool IsChanged();
-		void SerializeBattle(_Buffer &Data);
-		void UnserializeBattle(_Buffer &Data, _Manager<_Object> *Manager);
 
 		_Object *Object;
 		glm::vec2 LastPosition;

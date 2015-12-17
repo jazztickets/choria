@@ -51,7 +51,7 @@ void _Action::Unserialize(_Buffer &Data, _Stats *Stats) {
 }
 
 // Resolve action
-void _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
+bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;
@@ -68,7 +68,7 @@ void _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	// Apply costs
 	if(ActionResult.SkillUsed) {
 		if(!ActionResult.SkillUsed->CanUse(Source->Scripting, ActionResult))
-			return;
+			return false;
 
 		ActionResult.SkillUsed->ApplyCost(Source->Scripting, ActionResult);
 	}
@@ -86,7 +86,7 @@ void _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Data.Write<uint32_t>(ItemID);
 
 	// Write source updates
-	ActionResult.Source.SerializeBattle(Data);
+	ActionResult.Source.Serialize(Data);
 	Data.Write<int32_t>(ActionResult.Source.Object->Health);
 	Data.Write<int32_t>(ActionResult.Source.Object->Mana);
 
@@ -107,7 +107,7 @@ void _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object->UpdateHealth(ActionResult.Target.HealthChange);
 		ActionResult.Target.Object->UpdateMana(ActionResult.Target.ManaChange);
 
-		ActionResult.Target.SerializeBattle(Data);
+		ActionResult.Target.Serialize(Data);
 		Data.Write<int32_t>(ActionResult.Target.Object->Health);
 		Data.Write<int32_t>(ActionResult.Target.Object->Mana);
 
@@ -131,4 +131,6 @@ void _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Source->TurnTimer = 0.0;
 	Source->Action.Unset();
 	Source->Targets.clear();
+
+	return true;
 }

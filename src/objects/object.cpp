@@ -171,8 +171,8 @@ void _Object::Update(double FrameTime) {
 	if(Health > 0) {
 
 		// Update AI
-		//if(Server)
-		//	UpdateAI(Fighters, FrameTime);
+		if(Server && Battle)
+			UpdateAI(Battle->Fighters, FrameTime);
 
 		// Check turn timer
 		if(Battle)
@@ -190,11 +190,12 @@ void _Object::Update(double FrameTime) {
 					Scope = ScopeType::BATTLE;
 
 				_Buffer Packet;
-				Action.Resolve(Packet, this, Scope);
-				if(Battle)
-					Battle->BroadcastPacket(Packet);
-				else if(Peer)
-					Server->Network->SendPacket(Packet, Peer);
+				if(Action.Resolve(Packet, this, Scope)) {
+					if(Battle)
+						Battle->BroadcastPacket(Packet);
+					else if(Peer)
+						Server->Network->SendPacket(Packet, Peer);
+				}
 			}
 		}
 	}
@@ -219,7 +220,7 @@ void _Object::Update(double FrameTime) {
 				// Send update
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-				StatChange.SerializeBattle(Packet);
+				StatChange.Serialize(Packet);
 
 				// Send packet to players
 				if(Battle)

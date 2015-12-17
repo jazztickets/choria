@@ -20,7 +20,6 @@
 // Libraries
 #include <objects/managerbase.h>
 #include <objects/action.h>
-#include <objects/statchange.h>
 #include <packet.h>
 #include <list>
 #include <cstdint>
@@ -86,10 +85,6 @@ class _Battle : public _ManagerBase {
 		void ServerEndBattle();
 		void ClientEndBattle(_Buffer &Data);
 
-		// Resolve
-		void ServerResolveStatusEffect(_Object *Object, _StatusEffect *StatusEffect);
-		void ClientResolveStatChange(_Buffer &Data);
-
 		// Input
 		bool ClientHandleInput(int Action);
 		void ClientHandlePlayerAction(_Buffer &Data);
@@ -101,8 +96,10 @@ class _Battle : public _ManagerBase {
 		_Object *ClientPlayer;
 		_Manager<_Object> *Manager;
 
+		std::list<_Object *> Fighters;
 		std::list<_ActionResult> ActionResults;
-		std::list<_StatChange> StatChanges;
+
+		bool Done;
 
 	private:
 
@@ -121,12 +118,10 @@ class _Battle : public _ManagerBase {
 
 		// State
 		int State;
-		bool Done;
 		double Time;
 		double WaitTimer;
 
 		// Objects
-		std::list<_Object *> Fighters;
 		int SideCount[2];
 		uint8_t NextID;
 
