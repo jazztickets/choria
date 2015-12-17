@@ -562,6 +562,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 
 // Handle object list
 void _ClientState::HandleObjectList(_Buffer &Data) {
+	HUD->StatChanges.clear();
 	ObjectManager->Clear();
 
 	// Read header

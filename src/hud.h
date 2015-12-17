@@ -137,6 +137,7 @@ class _HUD {
 		bool ShowStats;
 
 		_Scripting *Scripting;
+		std::list<_StatChange> StatChanges;
 
 	private:
 
@@ -194,7 +195,6 @@ class _HUD {
 
 		// Objects
 		_Object *Player;
-		std::list<_StatChange> StatChanges;
 
 		// Chat
 		std::list<_ChatMessage> ChatHistory;
