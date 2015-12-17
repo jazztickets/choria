@@ -977,10 +977,9 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 			ActionResult.Target.Object->Mana = TargetFighterMana;
 
 			// Add status effect
-			if(StatusEffect) {
-				ActionResult.Target.Object->StatusEffects.push_back(StatusEffect);
+			if(ActionResult.Target.Object->AddStatusEffect(StatusEffect)) {
 				if(ActionResult.Target.Object->BattleElement)
-					StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement);
+					StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement, glm::vec2(0, ActionResult.Target.Object->BattleElement->Size.y + 4));
 
 				// Create hud element
 				if(ActionResult.Target.Object == Player) {

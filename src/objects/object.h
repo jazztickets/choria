@@ -107,6 +107,9 @@ class _Object : public _ManagerBase {
 		void GenerateNextBattle();
 		void StopBattle();
 
+		// Status effects
+		bool AddStatusEffect(_StatusEffect *StatusEffect);
+
 		// Actions
 		void RefreshActionBarCount();
 		void SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager);

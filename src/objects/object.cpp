@@ -346,15 +346,12 @@ void _Object::Render(const _Object *ClientPlayer) {
 // Renders the fighter during a battle
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	glm::vec4 GlobalColor(COLOR_WHITE);
-	float Fade = 1.0f;
+	GlobalColor.a = 1.0f;
 	if(Health == 0)
-		Fade = 0.2f;
-
-	GlobalColor.a = Fade;
+		GlobalColor.a = 0.2f;
 
 	// Draw slot
-	BattleElement->Fade = Fade;
-	BattleElement->Render();
+	BattleElement->Fade = GlobalColor.a;
 
 	// Get slot center
 	glm::vec2 SlotPosition = BattleElement->Bounds.Start;
@@ -473,15 +470,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 
 	// Draw status effects
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetColor(COLOR_WHITE);
-	glm::vec2 StatusPosition(glm::vec2(0, BattleElement->Size.y + 4));
+	glm::vec2 Offset(0, 0);
 	for(auto &StatusEffect : StatusEffects) {
 		if(StatusEffect->BattleElement) {
-			StatusEffect->BattleElement->Offset = StatusPosition;
-			StatusEffect->BattleElement->CalculateBounds();
-			Graphics.DrawImage(StatusEffect->BattleElement->Bounds, StatusEffect->Buff->Texture);
-			StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
+			StatusEffect->Render(StatusEffect->BattleElement, Offset);
+			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}
 }
@@ -769,6 +762,25 @@ void _Object::GenerateNextBattle() {
 void _Object::StopBattle() {
 	Battle = nullptr;
 	GenerateNextBattle();
+}
+
+// Add status effect to object
+bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
+	if(!StatusEffect)
+		return false;
+
+	// Find existing buff
+	for(auto &ExistingEffect : StatusEffects) {
+
+		// If buff existing, refresh duration
+		if(StatusEffect->Buff == ExistingEffect->Buff) {
+			ExistingEffect->Count = StatusEffect->Count;
+			return false;
+		}
+	}
+
+	StatusEffects.push_back(StatusEffect);
+	return true;
 }
 
 // Determines if a player can attack

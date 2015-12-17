@@ -206,7 +206,6 @@ void _Element::Render() const {
 
 	// Render all children
 	for(auto &Child : Children) {
-		Child->Fade = Fade;
 		Child->Render();
 	}
 

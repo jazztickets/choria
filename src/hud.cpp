@@ -958,16 +958,11 @@ void _HUD::DrawHudEffects() {
 	StatusEffectsElement->Render();
 
 	// Draw status effects
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.SetColor(COLOR_WHITE);
-	glm::vec2 StatusPosition(0, 0);
+	glm::vec2 Offset(0, 0);
 	for(auto &StatusEffect : Player->StatusEffects) {
 		if(StatusEffect->HUDElement) {
-			StatusEffect->HUDElement->Offset = StatusPosition;
-			StatusEffect->HUDElement->CalculateBounds();
-			Graphics.DrawImage(StatusEffect->HUDElement->Bounds, StatusEffect->Buff->Texture);
-			StatusPosition.x += StatusEffect->Buff->Texture->Size.x + 2;
+			StatusEffect->Render(StatusEffect->HUDElement, Offset);
+			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}
 }
