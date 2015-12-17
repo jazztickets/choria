@@ -53,17 +53,6 @@
 
 // Initialize
 _HUD::_HUD() {
-	Reset();
-}
-
-// Shutdown
-_HUD::~_HUD() {
-	ChatTextBox = nullptr;
-	ClearSkills();
-}
-
-// Reset state
-void _HUD::Reset() {
 	ShowStats = false;
 	Player = nullptr;
 	ActionBarChanged = false;
@@ -116,9 +105,12 @@ void _HUD::Reset() {
 
 	Assets.Elements["element_hud"]->SetVisible(true);
 	Assets.Elements["element_hud_experience"]->SetVisible(true);
+}
 
+// Shutdown
+_HUD::~_HUD() {
+	ChatTextBox = nullptr;
 	ClearSkills();
-	StatChanges.clear();
 }
 
 // Handle the enter key

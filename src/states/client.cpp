@@ -63,13 +63,13 @@ _ClientState::_ClientState() :
 // Load level and set up objects
 void _ClientState::Init() {
 	Server = nullptr;
-	Player = nullptr;
 	Map = nullptr;
 	Battle = nullptr;
 	HUD = nullptr;
 	Time = 0.0;
 
 	Stats = new _Stats();
+
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
@@ -87,10 +87,7 @@ void _ClientState::Init() {
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
 	ObjectManager = new _Manager<_Object>();
-
-	Graphics.ChangeViewport(Graphics.WindowSize);
-
-	Actions.ResetState();
+	AssignPlayer(nullptr);
 
 	if(ConnectNow)
 		Menu.InitConnect(true);
@@ -102,10 +99,11 @@ void _ClientState::Init() {
 void _ClientState::Close() {
 	Menu.Close();
 
+	AssignPlayer(nullptr);
 	delete ObjectManager;
+	DeleteBattle();
+	DeleteMap();
 	delete Network;
-	delete Battle;
-	delete Map;
 	delete HUD;
 	delete Scripting;
 	delete Camera;
@@ -195,8 +193,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 			default: {
 				bool BattleFinished = Battle->ClientHandleInput(Action);
 				if(BattleFinished) {
-					delete Battle;
-					Battle = nullptr;
+					DeleteBattle();
 				}
 			} break;
 		}
@@ -428,15 +425,11 @@ void _ClientState::HandleDisconnect() {
 	Menu.HandleDisconnect(Server != nullptr);
 	ClientState.StopLocalServer();
 
-	HUD->Reset();
 	ObjectManager->Clear();
-	Player = nullptr;
+	AssignPlayer(nullptr);
 
-	delete Battle;
-	delete Map;
-
-	Battle = nullptr;
-	Map = nullptr;
+	DeleteBattle();
+	DeleteMap();
 }
 
 // Handle packet from server
@@ -550,22 +543,20 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 	// Delete old map and create new
 	if(!Map || Map->NetworkID != MapID) {
 		if(Map)
-			delete Map;
+			DeleteMap();
 
 		Map = new _Map();
 		Map->Clock = Clock;
 		Map->NetworkID = MapID;
 		Map->Load(Stats->GetMap(MapID)->File);
-		Player = nullptr;
-		HUD->Reset();
+		AssignPlayer(nullptr);
 	}
 }
 
 // Handle object list
 void _ClientState::HandleObjectList(_Buffer &Data) {
-	HUD->Reset();
 	ObjectManager->Clear();
-	Player = nullptr;
+	AssignPlayer(nullptr);
 
 	// Read header
 	NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
@@ -580,8 +571,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 
 		// Set player pointer
 		if(Object->NetworkID == ClientNetworkID) {
-			Player = Object;
-			HUD->SetPlayer(Player);
+			AssignPlayer(Object);
 		}
 	}
 
@@ -1076,12 +1066,27 @@ void _ClientState::SendStatus(uint8_t Status) {
 	Network->SendPacket(Packet);
 }
 
-// Requests an attack to another a player
-void _ClientState::SendAttackPlayer() {
-	if(Player->CanAttackPlayer()) {
-		Player->ResetAttackPlayerTime();
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::WORLD_ATTACKPLAYER);
-		Network->SendPacket(Packet);
+// Assigns the client player pointer
+void _ClientState::AssignPlayer(_Object *Object) {
+	Player = Object;
+	if(HUD) {
+		HUD->SetPlayer(Player);
+		HUD->StatChanges.clear();
 	}
+
+	if(Battle) {
+		Battle->ClientPlayer = Player;
+	}
+}
+
+// Delete battle instance
+void _ClientState::DeleteBattle() {
+	delete Battle;
+	Battle = nullptr;
+}
+
+// Delete map
+void _ClientState::DeleteMap() {
+	delete Map;
+	Map = nullptr;
 }

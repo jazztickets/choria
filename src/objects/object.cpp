@@ -778,6 +778,7 @@ void _Object::GenerateNextBattle() {
 // Stop a battle
 void _Object::StopBattle() {
 	Battle = nullptr;
+	RemoveBattleElement();
 	GenerateNextBattle();
 }
 

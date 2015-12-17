@@ -130,7 +130,10 @@ class _ClientState : public _State {
 		void HandleHUD(_Buffer &Data);
 
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
-		void SendAttackPlayer();
+
+		void AssignPlayer(_Object *Object);
+		void DeleteBattle();
+		void DeleteMap();
 };
 
 extern _ClientState ClientState;

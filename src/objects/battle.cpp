@@ -82,7 +82,6 @@ _Battle::~_Battle() {
 		if(Fighter->DatabaseID)
 			Fighter->Deleted = true;
 		Fighter->StopBattle();
-		Fighter->RemoveBattleElement();
 	}
 }
 
@@ -729,7 +728,6 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 		if(Fighter == RemoveFighter) {
 			SideCount[Fighter->BattleSide]--;
 			Fighter->StopBattle();
-			Fighter->RemoveBattleElement();
 			Fighters.erase(Iterator);
 			return;
 		}

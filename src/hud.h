@@ -95,7 +95,6 @@ class _HUD {
 		~_HUD();
 
 		// Updates
-		void Reset();
 		void HandleEnter();
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
