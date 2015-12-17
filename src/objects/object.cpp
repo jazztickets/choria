@@ -358,6 +358,10 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Get slot center
 	glm::vec2 SlotPosition = BattleElement->Bounds.Start;
 
+	// Save positions
+	ResultPosition = BattleElement->Bounds.Start + BattleElement->Size / 2.0f;
+	StatPosition = ResultPosition + glm::vec2(Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Portrait->Size.y/2);
+
 	// Name
 	Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), SlotPosition + glm::vec2(0, -12), GlobalColor, LEFT_BASELINE);
 	Graphics.SetColor(GlobalColor);
@@ -514,9 +518,6 @@ void _Object::CreateBattleElement(_Element *Parent) {
 	BattleElement->Parent = Parent;
 	BattleElement->CalculateBounds();
 	Parent->Children.push_back(BattleElement);
-
-	ResultPosition = BattleElement->Bounds.Start + BattleElement->Size / 2.0f;
-	StatPosition = ResultPosition + glm::vec2(Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Portrait->Size.y/2);
 }
 
 // Remove battle element
