@@ -42,6 +42,7 @@ class _Scripting;
 class _StatChange;
 class _StatusEffect;
 class _Element;
+class _HUD;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
@@ -137,6 +138,7 @@ class _Object : public _ManagerBase {
 		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
 
 		_Map *Map;
+		_HUD *HUD;
 		_Scripting *Scripting;
 		_Server *Server;
 		_Peer *Peer;

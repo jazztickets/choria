@@ -45,6 +45,7 @@
 // Constructor
 _Object::_Object() :
 	Map(nullptr),
+	HUD(nullptr),
 	Scripting(nullptr),
 	Server(nullptr),
 	Peer(nullptr),
@@ -133,10 +134,7 @@ _Object::_Object() :
 
 // Destructor
 _Object::~_Object() {
-	delete Inventory;
-
-	DeleteStatusEffects();
-	RemoveBattleElement();
+	OnDelete();
 }
 
 // Updates the player
@@ -270,12 +268,26 @@ void _Object::Update(double FrameTime) {
 
 // Called when object is deleted via deleted flag
 void _Object::OnDelete() {
+	delete Inventory;
+	Inventory = nullptr;
 
-	if(Map)
+	if(Map) {
 		Map->RemoveObject(this);
+		Map = nullptr;
+	}
 
-	if(Battle)
+	if(Battle) {
 		Battle->RemoveFighter(this);
+		Battle = nullptr;
+	}
+
+	if(HUD) {
+		HUD->RemoveStatChanges(this);
+		HUD = nullptr;
+	}
+
+	DeleteStatusEffects();
+	RemoveBattleElement();
 }
 
 // Update AI during battle

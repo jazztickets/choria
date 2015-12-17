@@ -69,8 +69,6 @@ void _ClientState::Init() {
 	HUD = nullptr;
 	Time = 0.0;
 
-	ObjectManager = new _Manager<_Object>();
-
 	Stats = new _Stats();
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
@@ -81,9 +79,14 @@ void _ClientState::Init() {
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
 	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_BUFFS);
 
+	HUD = new _HUD();
+	HUD->Scripting = Scripting;
+
 	Network = new _ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
+
+	ObjectManager = new _Manager<_Object>();
 
 	Graphics.ChangeViewport(Graphics.WindowSize);
 
@@ -99,15 +102,15 @@ void _ClientState::Init() {
 void _ClientState::Close() {
 	Menu.Close();
 
+	delete ObjectManager;
+	delete Network;
 	delete Battle;
-	delete HUD;
 	delete Map;
+	delete HUD;
 	delete Scripting;
 	delete Camera;
-	delete Network;
 	delete Server;
 	delete Stats;
-	delete ObjectManager;
 }
 
 // Connect to a server
@@ -397,7 +400,7 @@ void _ClientState::Render(double BlendFactor) {
 			Battle->Render(BlendFactor);
 
 		// Draw HUD
-		HUD->Render(BlendFactor, Time);
+		HUD->Render(Map, BlendFactor, Time);
 	}
 
 	// Draw menu
@@ -418,8 +421,6 @@ void _ClientState::HandleConnect() {
 
 	Menu.HandleConnect();
 
-	HUD = new _HUD();
-	HUD->Scripting = Scripting;
 }
 
 // Handle disconnects
@@ -427,16 +428,15 @@ void _ClientState::HandleDisconnect() {
 	Menu.HandleDisconnect(Server != nullptr);
 	ClientState.StopLocalServer();
 
+	HUD->Reset();
+	ObjectManager->Clear();
+
 	delete Battle;
 	delete Map;
-	delete HUD;
 
 	Battle = nullptr;
 	Map = nullptr;
-	HUD = nullptr;
 	Player = nullptr;
-
-	ObjectManager->Clear();
 }
 
 // Handle packet from server
@@ -557,12 +557,13 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 		Map->NetworkID = MapID;
 		Map->Load(Stats->GetMap(MapID)->File);
 		Player = nullptr;
+		HUD->Reset();
 	}
 }
 
 // Handle object list
 void _ClientState::HandleObjectList(_Buffer &Data) {
-	HUD->StatChanges.clear();
+	HUD->Reset();
 	ObjectManager->Clear();
 
 	// Read header
@@ -890,7 +891,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	Battle->ClientPlayer = Player;
 	Battle->ClientNetwork = Network;
 
-	Battle->Unserialize(Data);
+	Battle->Unserialize(Data, HUD);
 }
 
 // Handles a battle action set from another player
@@ -1033,6 +1034,7 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);
+	Object->HUD = HUD;
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;

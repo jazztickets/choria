@@ -53,6 +53,17 @@
 
 // Initialize
 _HUD::_HUD() {
+	Reset();
+}
+
+// Shutdown
+_HUD::~_HUD() {
+	ChatTextBox = nullptr;
+	ClearSkills();
+}
+
+// Reset state
+void _HUD::Reset() {
 	ShowStats = false;
 	Player = nullptr;
 	ActionBarChanged = false;
@@ -105,12 +116,9 @@ _HUD::_HUD() {
 
 	Assets.Elements["element_hud"]->SetVisible(true);
 	Assets.Elements["element_hud_experience"]->SetVisible(true);
-}
 
-// Shutdown
-_HUD::~_HUD() {
-	ChatTextBox = nullptr;
 	ClearSkills();
+	StatChanges.clear();
 }
 
 // Handle the enter key
@@ -453,7 +461,7 @@ void _HUD::Update(double FrameTime) {
 }
 
 // Draws the HUD elements
-void _HUD::Render(double BlendFactor, double Time) {
+void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 	// Draw chat messages
 	DrawChat(Time, IsChatting());
@@ -473,7 +481,7 @@ void _HUD::Render(double BlendFactor, double Time) {
 	Assets.Labels["label_hud_gold"]->Text = Buffer.str();
 	Buffer.str("");
 
-	Player->Map->GetClockAsString(Buffer);
+	Map->GetClockAsString(Buffer);
 	Assets.Labels["label_hud_clock"]->Text = Buffer.str();
 	Buffer.str("");
 
@@ -1489,7 +1497,7 @@ void _HUD::SendTradeCancel() {
 
 // Make sure the trade gold box is valid and send gold to player
 void _HUD::ValidateTradeGold() {
-	if(!Player)
+	if(!Player || !TradeElement->Visible)
 		return;
 
 	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
@@ -1615,4 +1623,17 @@ void _HUD::SetActionBarSize(size_t Size) {
 	_Button *Button = Assets.Buttons["button_actionbar_0"];
 	ActionBarElement->Size.x = Button->Size.x * Size;
 	ActionBarElement->CalculateBounds();
+}
+
+// Remove stat changes owned by an object
+void _HUD::RemoveStatChanges(_Object *Owner) {
+
+	for(auto Iterator = StatChanges.begin(); Iterator != StatChanges.end(); ) {
+		_Object *StatObject = Iterator->Object;
+		if(StatObject == Owner) {
+			Iterator = StatChanges.erase(Iterator);
+		}
+		else
+			++Iterator;
+	}
 }

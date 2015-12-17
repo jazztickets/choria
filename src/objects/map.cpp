@@ -74,6 +74,9 @@ _Map::~_Map() {
 
 	// Delete map data
 	FreeMap();
+
+	for(auto &Object : Objects)
+		Object->Map = nullptr;
 }
 
 // Allocates memory for the map

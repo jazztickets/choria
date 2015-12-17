@@ -35,6 +35,7 @@ class _Element;
 class _TextBox;
 class _Action;
 class _Scripting;
+class _Map;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
@@ -94,14 +95,16 @@ class _HUD {
 		~_HUD();
 
 		// Updates
+		void Reset();
 		void HandleEnter();
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
-		void Render(double BlendFactor, double Time);
+		void Render(_Map *Map, double BlendFactor, double Time);
 
 		// Objects
 		void SetPlayer(_Object *Player);
 		void SetActionBarSize(size_t Size);
+		void RemoveStatChanges(_Object *Owner);
 		void AddStatChange(_StatChange &StatChange) { StatChanges.push_back(StatChange); }
 
 		// Button bar

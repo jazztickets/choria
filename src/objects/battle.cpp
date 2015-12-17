@@ -445,7 +445,7 @@ void _Battle::Serialize(_Buffer &Data) {
 }
 
 // Unserialize for network
-void _Battle::Unserialize(_Buffer &Data) {
+void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 
 	// Get fighter count
 	int FighterCount = Data.Read<uint8_t>();
@@ -468,6 +468,7 @@ void _Battle::Unserialize(_Buffer &Data) {
 
 		// Get battle stats
 		Fighter->UnserializeBattle(Data);
+		Fighter->HUD = HUD;
 
 		// Add fighter
 		AddFighter(Fighter, Fighter->BattleSide);

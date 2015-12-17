@@ -30,6 +30,7 @@ class _Scripting;
 class _Server;
 class _ClientNetwork;
 class _StatusEffect;
+class _HUD;
 
 struct _BattleResult {
 	_BattleResult() :
@@ -78,7 +79,7 @@ class _Battle : public _ManagerBase {
 
 		// Network
 		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data);
+		void Unserialize(_Buffer &Data, _HUD *HUD);
 		void BroadcastPacket(_Buffer &Data);
 
 		// Setup
@@ -112,7 +113,6 @@ class _Battle : public _ManagerBase {
 
 		void RenderBattle(double BlendFactor);
 		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
-		void RenderStatChanges(_StatChange &StatChange, double BlendFactor);
 		void RenderBattleWin();
 		void RenderBattleLose();
 
