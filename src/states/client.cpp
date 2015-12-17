@@ -196,7 +196,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				bool BattleFinished = Battle->ClientHandleInput(Action);
 				if(BattleFinished) {
 					delete Battle;
-					Player->Battle = Battle = nullptr;
+					Battle = nullptr;
 				}
 			} break;
 		}
@@ -430,13 +430,13 @@ void _ClientState::HandleDisconnect() {
 
 	HUD->Reset();
 	ObjectManager->Clear();
+	Player = nullptr;
 
 	delete Battle;
 	delete Map;
 
 	Battle = nullptr;
 	Map = nullptr;
-	Player = nullptr;
 }
 
 // Handle packet from server
@@ -565,6 +565,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 void _ClientState::HandleObjectList(_Buffer &Data) {
 	HUD->Reset();
 	ObjectManager->Clear();
+	Player = nullptr;
 
 	// Read header
 	NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
@@ -617,8 +618,9 @@ void _ClientState::HandleObjectDelete(_Buffer &Data) {
 
 	// Get object
 	_Object *Object = ObjectManager->IDMap[NetworkID];
-	if(Object)
+	if(Object && Object != Player) {
 		Object->Deleted = true;
+	}
 }
 
 // Handles position updates from the server

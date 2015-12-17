@@ -462,6 +462,8 @@ void _HUD::Update(double FrameTime) {
 
 // Draws the HUD elements
 void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
+	if(!Player)
+		return;
 
 	// Draw chat messages
 	DrawChat(Time, IsChatting());
@@ -1147,7 +1149,7 @@ void _HUD::DrawTrader() {
 
 // Draw the action bar
 void _HUD::DrawActionBar() {
-	if(!ActionBarElement->Visible)
+	if(!Player || !ActionBarElement->Visible)
 		return;
 
 	ActionBarElement->Render();
