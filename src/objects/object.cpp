@@ -337,7 +337,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 			Graphics.DrawSprite(DrawPosition, StatusTexture);
 		}
 
-		if(1 || ClientPlayer != this) {
+		if(ClientPlayer != this) {
 			Assets.Fonts["hud_small"]->DrawText((Name + " " + std::to_string(NetworkID)).c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
 		}
 	}
@@ -475,6 +475,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw status effects
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	Graphics.SetColor(COLOR_WHITE);
 	glm::vec2 StatusPosition(glm::vec2(0, BattleElement->Size.y + 4));
 	for(auto &StatusEffect : StatusEffects) {
 		if(StatusEffect->BattleElement) {
