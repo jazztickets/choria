@@ -963,7 +963,7 @@ void _HUD::DrawHudEffects() {
 		if(StatusEffect->HUDElement) {
 			StatusEffect->HUDElement->Offset = Offset;
 			StatusEffect->HUDElement->CalculateBounds();
-			StatusEffect->Render(StatusEffect->HUDElement);
+			StatusEffect->Render(StatusEffect->HUDElement, COLOR_WHITE);
 			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}

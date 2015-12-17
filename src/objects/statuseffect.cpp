@@ -85,11 +85,13 @@ _Element *_StatusEffect::CreateUIElement(_Element *Parent) {
 }
 
 // Render the status effect
-void _StatusEffect::Render(_Element *Element) {
+void _StatusEffect::Render(_Element *Element, const glm::vec4 &Color) {
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);
-	Graphics.SetColor(COLOR_WHITE);
+	Graphics.SetColor(Color);
 	Graphics.DrawImage(Element->Bounds, Buff->Texture);
 
-	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Count), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), COLOR_LIGHTGRAY, RIGHT_BASELINE);
+	glm::vec4 TextColor = COLOR_LIGHTGRAY;
+	TextColor.a = Color.a;
+	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Count), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), TextColor, RIGHT_BASELINE);
 }

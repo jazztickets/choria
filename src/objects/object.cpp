@@ -493,7 +493,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		if(StatusEffect->BattleElement) {
 			StatusEffect->BattleElement->Offset = Offset;
 			StatusEffect->BattleElement->CalculateBounds();
-			StatusEffect->Render(StatusEffect->BattleElement);
+			StatusEffect->Render(StatusEffect->BattleElement, GlobalColor);
 			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}
@@ -602,6 +602,12 @@ void _Object::SerializeStats(_Buffer &Data) {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		ActionBar[i].Serialize(Data);
 	}
+
+	// Write status effects
+	Data.Write<uint8_t>((uint8_t)StatusEffects.size());
+	for(const auto &StatusEffect : StatusEffects) {
+		StatusEffect->Serialize(Data);
+	}
 }
 
 // Serialize object for battle
@@ -658,10 +664,20 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	}
 
 	// Read skill bar
-	uint8_t ActionBarSize = Data.Read<uint8_t>();
+	size_t ActionBarSize = Data.Read<uint8_t>();
 	ActionBar.resize(ActionBarSize);
 	for(size_t i = 0; i < ActionBarSize; i++)
 		ActionBar[i].Unserialize(Data, Stats);
+
+	// Read status effects
+	DeleteStatusEffects();
+	size_t StatusEffectsSize = Data.Read<uint8_t>();
+	for(size_t i = 0; i < StatusEffectsSize; i++) {
+		_StatusEffect *StatusEffect = new _StatusEffect();
+		StatusEffect->Unserialize(Data, Stats);
+		StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+		StatusEffects.push_back(StatusEffect);
+	}
 
 	RefreshActionBarCount();
 	CalculateSkillPoints();

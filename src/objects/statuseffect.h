@@ -39,7 +39,7 @@ class _StatusEffect {
 
 		_Element *CreateUIElement(_Element *Parent);
 
-		void Render(_Element *Element);
+		void Render(_Element *Element, const glm::vec4 &Color);
 
 		const _Buff *Buff;
 		_Element *BattleElement;
