@@ -347,7 +347,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, int SideDirection) {
-	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || ClientPlayer->Health == 0 || ClientPlayer->Targets.size() > 1)
+	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || ClientPlayer->Health == 0 || ClientPlayer->Targets.size() != 1)
 		return;
 
 	// Get current target side

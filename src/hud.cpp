@@ -105,8 +105,6 @@ _HUD::_HUD() {
 
 	Assets.Elements["element_hud"]->SetVisible(true);
 	Assets.Elements["element_hud_experience"]->SetVisible(true);
-
-	CloseChat();
 }
 
 // Shutdown
