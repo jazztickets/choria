@@ -70,7 +70,7 @@ void _StatusEffect::Unserialize(_Buffer &Data, _Stats *Stats) {
 }
 
 // Create element for hud
-_Element *_StatusEffect::CreateUIElement(_Element *Parent, const glm::vec2 &Offset) {
+_Element *_StatusEffect::CreateUIElement(_Element *Parent) {
 
 	_Element *Element = new _Element();
 	Element->Size = glm::vec2(Buff->Texture->Size);
@@ -79,23 +79,17 @@ _Element *_StatusEffect::CreateUIElement(_Element *Parent, const glm::vec2 &Offs
 	Element->Visible = true;
 	Element->UserData = (void *)this;
 	Element->Parent = Parent;
-	Element->Offset = Offset;
-	Element->CalculateBounds();
 	Parent->Children.push_back(Element);
 
 	return Element;
 }
 
 // Render the status effect
-void _StatusEffect::Render(_Element *Element, const glm::vec2 &Offset) {
-	_Bounds Bounds = Element->Bounds;
-	Bounds.Start += Offset;
-	Bounds.End += Offset;
-
+void _StatusEffect::Render(_Element *Element) {
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(COLOR_WHITE);
-	Graphics.DrawImage(Bounds, Buff->Texture);
+	Graphics.DrawImage(Element->Bounds, Buff->Texture);
 
-	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Count), glm::vec2(Bounds.End.x-3, Bounds.End.y-2), COLOR_LIGHTGRAY, RIGHT_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Count), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), COLOR_LIGHTGRAY, RIGHT_BASELINE);
 }

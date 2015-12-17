@@ -196,6 +196,8 @@ void _Object::Update(double FrameTime) {
 					else if(Peer)
 						Server->Network->SendPacket(Packet, Peer);
 				}
+
+				Action.Unset();
 			}
 		}
 	}
@@ -470,10 +472,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 
 	// Draw status effects
-	glm::vec2 Offset(0, 0);
+	glm::vec2 Offset(0, BattleElement->Size.y + 4);
 	for(auto &StatusEffect : StatusEffects) {
 		if(StatusEffect->BattleElement) {
-			StatusEffect->Render(StatusEffect->BattleElement, Offset);
+			StatusEffect->BattleElement->Offset = Offset;
+			StatusEffect->BattleElement->CalculateBounds();
+			StatusEffect->Render(StatusEffect->BattleElement);
 			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}

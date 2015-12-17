@@ -961,7 +961,9 @@ void _HUD::DrawHudEffects() {
 	glm::vec2 Offset(0, 0);
 	for(auto &StatusEffect : Player->StatusEffects) {
 		if(StatusEffect->HUDElement) {
-			StatusEffect->Render(StatusEffect->HUDElement, Offset);
+			StatusEffect->HUDElement->Offset = Offset;
+			StatusEffect->HUDElement->CalculateBounds();
+			StatusEffect->Render(StatusEffect->HUDElement);
 			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}

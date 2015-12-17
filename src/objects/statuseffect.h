@@ -37,14 +37,13 @@ class _StatusEffect {
 		void Serialize(_Buffer &Data);
 		void Unserialize(_Buffer &Data, _Stats *Stats);
 
-		_Element *CreateUIElement(_Element *Parent, const glm::vec2 &Offset=glm::vec2(0, 0));
+		_Element *CreateUIElement(_Element *Parent);
 
-		void Render(_Element *Element, const glm::vec2 &Offset);
+		void Render(_Element *Element);
 
 		const _Buff *Buff;
 		_Element *BattleElement;
 		_Element *HUDElement;
-		glm::vec2 Position;
 		double Time;
 		int Level;
 		int Count;

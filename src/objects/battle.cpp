@@ -494,7 +494,7 @@ void _Battle::Unserialize(_Buffer &Data) {
 
 		// Create ui elements for status effects
 		for(auto &StatusEffect : Fighter->StatusEffects) {
-			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement, glm::vec2(0, Fighter->BattleElement->Size.y + 4));
+			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
 			if(ClientPlayer == Fighter)
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 		}

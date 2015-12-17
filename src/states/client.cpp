@@ -979,7 +979,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 			// Add status effect
 			if(ActionResult.Target.Object->AddStatusEffect(StatusEffect)) {
 				if(ActionResult.Target.Object->BattleElement)
-					StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement, glm::vec2(0, ActionResult.Target.Object->BattleElement->Size.y + 4));
+					StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement);
 
 				// Create hud element
 				if(ActionResult.Target.Object == Player) {
