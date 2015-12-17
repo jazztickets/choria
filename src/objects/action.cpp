@@ -117,11 +117,14 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 			StatusEffect->Buff = ActionResult.Buff;
 			StatusEffect->Level = ActionResult.BuffLevel;
 			StatusEffect->Count = ActionResult.BuffDuration;
-			ActionResult.Target.Object->AddStatusEffect(StatusEffect);
+			bool Added = ActionResult.Target.Object->AddStatusEffect(StatusEffect);
 
 			Data.Write<uint32_t>(StatusEffect->Buff->ID);
 			Data.Write<int>(StatusEffect->Level);
 			Data.Write<int>(StatusEffect->Count);
+
+			if(!Added)
+				delete StatusEffect;
 		}
 		else
 			Data.Write<uint32_t>(0);

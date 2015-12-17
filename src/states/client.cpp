@@ -957,18 +957,20 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 
 		// Read status effect
 		uint32_t BuffID = Data.Read<uint32_t>();
-		_StatusEffect *StatusEffect = nullptr;
-		if(BuffID > 0) {
-			StatusEffect = new _StatusEffect();
-			StatusEffect->Buff = Stats->Buffs[BuffID];
-			StatusEffect->Level = Data.Read<int>();
-			StatusEffect->Count = Data.Read<int>();
-		}
 
 		// Update target fighter
 		if(ActionResult.Target.Object) {
 			ActionResult.Target.Object->Health = TargetFighterHealth;
 			ActionResult.Target.Object->Mana = TargetFighterMana;
+
+			// Create status effect
+			_StatusEffect *StatusEffect = nullptr;
+			if(BuffID > 0) {
+				StatusEffect = new _StatusEffect();
+				StatusEffect->Buff = Stats->Buffs[BuffID];
+				StatusEffect->Level = Data.Read<int>();
+				StatusEffect->Count = Data.Read<int>();
+			}
 
 			// Add status effect
 			if(ActionResult.Target.Object->AddStatusEffect(StatusEffect)) {
@@ -980,6 +982,8 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 					StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 				}
 			}
+			else
+				delete StatusEffect;
 		}
 
 		if(Battle) {

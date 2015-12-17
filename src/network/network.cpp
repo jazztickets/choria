@@ -35,6 +35,12 @@ _Network::_Network()
 // Destructor
 _Network::~_Network() {
 
+	// Delete events
+	while(!NetworkEvents.empty()) {
+		delete NetworkEvents.front().Data;
+		NetworkEvents.pop();
+	}
+
 	// Destroy connection
 	if(Connection)
 		enet_host_destroy(Connection);
