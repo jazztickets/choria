@@ -268,7 +268,7 @@ void _Object::Update(double FrameTime) {
 		Map->CheckEvents(this);
 }
 
-// Called when object is deleted
+// Called when object is deleted via deleted flag
 void _Object::OnDelete() {
 
 	if(Map)

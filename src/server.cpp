@@ -100,9 +100,9 @@ _Server::~_Server() {
 
 	Save->SaveClock(Clock);
 
-	delete ObjectManager;
 	delete MapManager;
 	delete BattleManager;
+	delete ObjectManager;
 	delete Scripting;
 	delete Save;
 	delete Thread;

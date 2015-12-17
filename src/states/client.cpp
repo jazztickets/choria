@@ -99,15 +99,15 @@ void _ClientState::Init() {
 void _ClientState::Close() {
 	Menu.Close();
 
-	delete ObjectManager;
-	delete Scripting;
 	delete Battle;
-	delete Camera;
 	delete HUD;
 	delete Map;
+	delete Scripting;
+	delete Camera;
 	delete Network;
 	delete Server;
 	delete Stats;
+	delete ObjectManager;
 }
 
 // Connect to a server
