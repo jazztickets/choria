@@ -129,7 +129,7 @@ void _Skill::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &D
 
 // Return true if the skill can be used
 bool _Skill::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(this->Scope != ScopeType::ALL && this->Scope != ActionResult.Scope)
+	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != ActionResult.Scope))
 		return false;
 
 	if(Scripting->StartMethodCall(Script, "CanUse")) {

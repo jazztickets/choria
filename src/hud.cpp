@@ -434,8 +434,12 @@ void _HUD::Update(double FrameTime) {
 		glm::vec2 StartPosition;
 		if(StatChange.Object->Battle)
 			StartPosition = StatChange.Object->StatPosition;
-		else if(StatChange.Object == Player)
-			StartPosition = HealthElement->Bounds.Start + HealthElement->Size / 2.0f;
+		else if(StatChange.Object == Player) {
+			if(StatChange.HealthChange != 0)
+				StartPosition = HealthElement->Bounds.Start + HealthElement->Size / 2.0f;
+			else if(StatChange.ManaChange != 0)
+				StartPosition = ManaElement->Bounds.Start + ManaElement->Size / 2.0f;
+		}
 		StatChange.LastPosition = StatChange.Position;
 
 		// Interpolate between start and end position

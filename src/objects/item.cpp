@@ -270,7 +270,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Type != TYPE_POTION)
 		return false;
 
-	if(this->Scope != ScopeType::ALL && this->Scope != ActionResult.Scope)
+	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != ActionResult.Scope))
 		return false;
 
 	if(Scripting->StartMethodCall(Script, "CanUse")) {

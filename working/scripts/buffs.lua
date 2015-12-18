@@ -29,3 +29,19 @@ function Buff_Healing.Update(Level, Source, Result)
 
 	return Result
 end
+
+-- Mana buff --
+
+Buff_Mana = { Mana = 1 }
+
+function Buff_Mana.GetInfo(Level)
+
+	return "Slowly regaining mana"
+end
+
+function Buff_Mana.Update(Level, Source, Result)
+
+	Result.ManaChange = Buff_Mana.Mana * Level
+
+	return Result
+end

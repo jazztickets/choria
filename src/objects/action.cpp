@@ -61,7 +61,10 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Use item
 	size_t Index;
-	if(ActionResult.ItemUsed && ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
+	if(ActionResult.ItemUsed) {
+		if(!ActionResult.ItemUsed->CanUse(Source->Scripting, ActionResult) || !ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index))
+			return false;
+
 		ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
 	}
 

@@ -81,6 +81,11 @@ void _StatChange::Render(double BlendFactor) {
 		Sign = '-';
 	}
 
+	if(ManaChange > 0) {
+		TextColor = COLOR_LIGHTBLUE;
+		Sign = '+';
+	}
+
 	// Get alpha
 	double TimeLeft = STATCHANGE_TIMEOUT - Time;
 	TextColor.a = 1.0f;
@@ -92,6 +97,10 @@ void _StatChange::Render(double BlendFactor) {
 
 	// Draw stat
 	std::stringstream Buffer;
-	Buffer << Sign << std::abs(HealthChange);
+	Buffer << Sign;
+	if(HealthChange != 0)
+		Buffer << std::abs(HealthChange);
+	else if(ManaChange != 0)
+		Buffer << std::abs(ManaChange);
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
