@@ -527,7 +527,6 @@ void _ClientState::HandleObjectStats(_Buffer &Data) {
 		return;
 
 	Player->UnserializeStats(Data);
-	Player->RestoreHealthMana();
 
 	HUD->SetActionBarSize(Player->ActionBar.size());
 }

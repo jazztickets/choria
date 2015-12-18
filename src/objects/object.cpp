@@ -569,6 +569,10 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(PortraitID);
+	Data.Write<int32_t>(Health);
+	Data.Write<int32_t>(MaxHealth);
+	Data.Write<int32_t>(Mana);
+	Data.Write<int32_t>(MaxMana);
 	Data.Write<int32_t>(Experience);
 	Data.Write<int32_t>(Gold);
 	Data.Write<int32_t>(PlayTime);
@@ -643,6 +647,10 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	WorldTexture = Assets.Textures["players/basic.png"];
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
+	Health = Data.Read<int32_t>();
+	MaxHealth = Data.Read<int32_t>();
+	Mana = Data.Read<int32_t>();
+	MaxMana = Data.Read<int32_t>();
 	Experience = Data.Read<int32_t>();
 	Gold = Data.Read<int32_t>();
 	PlayTime = Data.Read<int32_t>();
