@@ -83,9 +83,35 @@ void _Menu::InitTitle(bool Disconnect) {
 // Init single player
 void _Menu::InitCharacters() {
 	ChangeLayout("element_menu_characters");
+	Assets.Elements["element_menu_characters"]->SetClickable(true, 2);
 
 	CharactersState = CHARACTERS_NONE;
 	State = STATE_CHARACTERS;
+}
+
+// Init new player popup
+void _Menu::InitNewCharacter() {
+	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
+	CreateButton->Enabled = false;
+
+	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+	Name->SetText("");
+
+	_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
+	Label->Text = "Name";
+	Label->Color = COLOR_WHITE;
+
+	LoadPortraitButtons();
+
+	FocusedElement = Name;
+	Name->ResetCursor();
+
+	Assets.Elements["element_menu_characters"]->SetClickable(false, 2);
+
+	CurrentLayout = Assets.Elements["element_menu_new"];
+	CurrentLayout->SetVisible(true);
+
+	CharactersState = CHARACTERS_CREATE;
 }
 
 // In-game menu
@@ -115,29 +141,6 @@ void _Menu::InitEditor() {
 	State = STATE_NONE;
 
 	Framework.ChangeState(&EditorState);
-}
-
-// Init new player popup
-void _Menu::InitNewCharacter() {
-	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
-	CreateButton->Enabled = false;
-
-	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
-	Name->SetText("");
-
-	_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
-	Label->Text = "Name";
-	Label->Color = COLOR_WHITE;
-
-	LoadPortraitButtons();
-
-	FocusedElement = Name;
-	Name->ResetCursor();
-
-	CurrentLayout = Assets.Elements["element_menu_new"];
-	CurrentLayout->SetVisible(true);
-
-	CharactersState = CHARACTERS_CREATE;
 }
 
 // Init connect screen

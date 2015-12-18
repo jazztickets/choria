@@ -229,6 +229,20 @@ void _Element::SetDebug(int Debug) {
 		Child->SetDebug(Debug + 1);
 }
 
+// Set clickable flag of element and children. Depth=-1 is full recursion
+void _Element::SetClickable(bool Clickable, int Depth) {
+	if(Depth == 0)
+		return;
+
+	this->Clickable = Clickable;
+
+	if(Depth != -1)
+		Depth--;
+
+	for(auto &Child : Children)
+		Child->SetClickable(Clickable, Depth);
+}
+
 // Set visibility of element and children
 void _Element::SetVisible(bool Visible) {
 	this->Visible = Visible;

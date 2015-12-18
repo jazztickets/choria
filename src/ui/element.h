@@ -47,6 +47,7 @@ class _Element {
 		void CalculateChildrenBounds();
 
 		void SetDebug(int Debug);
+		void SetClickable(bool Clickable, int Depth=-1);
 		void SetVisible(bool Visible);
 		void SetOffset(const glm::vec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
 		void SetWidth(float Width) { Size.x = Width; CalculateBounds(); }
