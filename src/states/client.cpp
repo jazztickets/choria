@@ -900,6 +900,9 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 
 	Player->WaitForServer = false;
 
+	_StatChange StatChange;
+	StatChange.Object = Player;
+
 	// Client battle results
 	std::list<const _Item *> ClientItemDrops;
 
@@ -909,8 +912,8 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	SideDead[1] = Data.ReadBit();
 	int PlayerKills = Data.Read<uint8_t>();
 	int MonsterKills = Data.Read<uint8_t>();
-	int ClientExperienceReceived = Data.Read<int32_t>();
-	int ClientGoldReceived = Data.Read<int32_t>();
+	StatChange.Experience = Data.Read<int32_t>();
+	StatChange.Gold = Data.Read<int32_t>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		uint32_t ItemID = Data.Read<uint32_t>();
@@ -930,18 +933,6 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 		Player->Deaths++;
 	}
 
-	// Add experience
-	_StatChange StatChange;
-	StatChange.Object = Player;
-	StatChange.TimeOut = STATCHANGE_TIMEOUT_LONG;
-
-	StatChange.Experience = ClientExperienceReceived;
-	StatChange.Direction = -2.0f;
-	HUD->AddStatChange(StatChange);
-	StatChange.Experience = 0;
-
-	StatChange.Gold = ClientGoldReceived;
-	StatChange.Direction = 1.5f;
 	HUD->AddStatChange(StatChange);
 
 	DeleteBattle();
@@ -1029,9 +1020,15 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 		}
 
 		if(Battle) {
-			if(ActionResult.Target.IsChanged())
+			if(ActionResult.Target.GetChangedFlag()) {
+				HUD->AddStatChange(ActionResult.Source);
 				HUD->AddStatChange(ActionResult.Target);
+			}
 			Battle->ActionResults.push_back(ActionResult);
+		}
+		else if(ActionResult.Target.Object == Player) {
+			HUD->AddStatChange(ActionResult.Source);
+			HUD->AddStatChange(ActionResult.Target);
 		}
 	}
 }

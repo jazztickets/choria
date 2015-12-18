@@ -431,44 +431,19 @@ void _HUD::Update(double FrameTime) {
 
 	// Update stat changes
 	for(auto Iterator = StatChanges.begin(); Iterator != StatChanges.end(); ) {
-		_StatChange &StatChange = *Iterator;
+		_StatChangeUI &StatChangeUI = *Iterator;
 
 		// Find start position
-		glm::vec2 StartPosition;
-
-		if(StatChange.Object == Player) {
-			if(StatChange.HealthChange != 0) {
-				if(StatChange.Object->Battle)
-					StartPosition = StatChange.Object->StatPosition;
-				else
-					StartPosition = HealthElement->Bounds.Start + HealthElement->Size / 2.0f;
-			}
-			else if(StatChange.ManaChange != 0) {
-				if(StatChange.Object->Battle)
-					StartPosition = StatChange.Object->StatPosition;
-				else
-					StartPosition = ManaElement->Bounds.Start + ManaElement->Size / 2.0f;
-			}
-			else if(StatChange.Experience != 0)
-				StartPosition = ExperienceElement->Bounds.Start + ExperienceElement->Size / 2.0f;
-			else if(StatChange.Gold != 0) {
-				StartPosition = GoldElement->Bounds.Start;
-				StartPosition.x += -45;
-			}
-		}
-		else if(StatChange.Object->Battle)
-			StartPosition = StatChange.Object->StatPosition;
-
-		StatChange.LastPosition = StatChange.Position;
+		StatChangeUI.LastPosition = StatChangeUI.Position;
 
 		// Interpolate between start and end position
-		StatChange.Position = glm::mix(StartPosition, StartPosition + glm::vec2(0, STATCHANGE_DISTANCE * StatChange.Direction), StatChange.Time / StatChange.TimeOut);
-		if(StatChange.Time == 0.0)
-			StatChange.LastPosition = StatChange.Position;
+		StatChangeUI.Position = glm::mix(StatChangeUI.StartPosition, StatChangeUI.StartPosition + glm::vec2(0, STATCHANGE_DISTANCE * StatChangeUI.Direction), StatChangeUI.Time / StatChangeUI.TimeOut);
+		if(StatChangeUI.Time == 0.0)
+			StatChangeUI.LastPosition = StatChangeUI.Position;
 
 		// Update timer
-		StatChange.Time += FrameTime;
-		if(StatChange.Time >= StatChange.TimeOut) {
+		StatChangeUI.Time += FrameTime;
+		if(StatChangeUI.Time >= StatChangeUI.TimeOut) {
 			Iterator = StatChanges.erase(Iterator);
 		}
 		else
@@ -1672,5 +1647,62 @@ void _HUD::RemoveStatChanges(_Object *Owner) {
 		}
 		else
 			++Iterator;
+	}
+}
+
+// Add multiple statchange ui elements
+void _HUD::AddStatChange(_StatChange &StatChange) {
+
+	int ChangedFlag = StatChange.GetChangedFlag();
+
+	if(ChangedFlag & StatType::HEALTH) {
+		_StatChangeUI StatChangeUI;
+		StatChangeUI.Object = StatChange.Object;
+		if(StatChangeUI.Object->Battle)
+			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition;
+		else
+			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
+		StatChangeUI.Change = StatChange.Health;
+		StatChangeUI.Font = Assets.Fonts["hud_medium"];
+		StatChangeUI.SetText(COLOR_RED, COLOR_GREEN);
+		StatChanges.push_back(StatChangeUI);
+	}
+
+	if(ChangedFlag & StatType::MANA) {
+		_StatChangeUI StatChangeUI;
+		StatChangeUI.Object = StatChange.Object;
+		if(StatChangeUI.Object->Battle)
+			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition + glm::vec2(0, 32);
+		else
+			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
+		StatChangeUI.Change = StatChange.Mana;
+		StatChangeUI.Font = Assets.Fonts["hud_medium"];
+		StatChangeUI.SetText(COLOR_BLUE, COLOR_LIGHTBLUE);
+		StatChanges.push_back(StatChangeUI);
+	}
+
+	if(ChangedFlag & StatType::EXPERIENCE) {
+		_StatChangeUI StatChangeUI;
+		StatChangeUI.Object = StatChange.Object;
+		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + ExperienceElement->Size / 2.0f;
+		StatChangeUI.Change = StatChange.Experience;
+		StatChangeUI.Direction = -2.0f;
+		StatChangeUI.TimeOut = STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Font = Assets.Fonts["battle_large"];
+		StatChangeUI.SetText(COLOR_WHITE, COLOR_WHITE);
+		StatChanges.push_back(StatChangeUI);
+	}
+
+	if(ChangedFlag & StatType::GOLD) {
+		_StatChangeUI StatChangeUI;
+		StatChangeUI.Object = StatChange.Object;
+		StatChangeUI.StartPosition = GoldElement->Bounds.Start;
+		StatChangeUI.StartPosition.x += -45;
+		StatChangeUI.Change = StatChange.Gold;
+		StatChangeUI.Direction = 1.5f;
+		StatChangeUI.TimeOut = STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
+		StatChangeUI.SetText(COLOR_GOLD, COLOR_GOLD);
+		StatChanges.push_back(StatChangeUI);
 	}
 }

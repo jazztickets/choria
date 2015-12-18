@@ -21,8 +21,6 @@
 #include <buffer.h>
 #include <constants.h>
 #include <font.h>
-#include <assets.h>
-#include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 #include <sstream>
@@ -30,31 +28,20 @@
 // Constructor
 _StatChange::_StatChange() :
 	Object(nullptr),
-	LastPosition(0, 0),
-	Position(0, 0),
-	Direction(-1.0f),
-	Time(0.0),
-	TimeOut(STATCHANGE_TIMEOUT),
-	HealthChange(0),
-	ManaChange(0),
+	Health(0),
+	Mana(0),
 	Experience(0),
 	Gold(0) {
 
-}
-
-// Return true if there are stat changes
-bool _StatChange::IsChanged() {
-
-	return HealthChange != 0 || ManaChange != 0 || Experience != 0 || Gold != 0;
 }
 
 // Get bit field of fields changed
 int _StatChange::GetChangedFlag() {
 	int Flag = 0;
 
-	if(HealthChange != 0)
+	if(Health != 0)
 		Flag |= StatType::HEALTH;
-	if(ManaChange != 0)
+	if(Mana != 0)
 		Flag |= StatType::MANA;
 	if(Experience != 0)
 		Flag |= StatType::EXPERIENCE;
@@ -73,9 +60,9 @@ void _StatChange::Serialize(_Buffer &Data) {
 	Data.Write<NetworkIDType>(Object->NetworkID);
 	Data.Write<int>(ChangedFlag);
 	if(ChangedFlag & StatType::HEALTH)
-		Data.Write<int>(HealthChange);
+		Data.Write<int>(Health);
 	if(ChangedFlag & StatType::MANA)
-		Data.Write<int>(ManaChange);
+		Data.Write<int>(Mana);
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Data.Write<int>(Experience);
 	if(ChangedFlag & StatType::GOLD)
@@ -89,71 +76,66 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 
 	int ChangedFlag = Data.Read<int>();
 	if(ChangedFlag & StatType::HEALTH)
-		HealthChange = Data.Read<int>();
+		Health = Data.Read<int>();
 	if(ChangedFlag & StatType::MANA)
-		ManaChange = Data.Read<int>();
+		Mana = Data.Read<int>();
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)
 		Gold = Data.Read<int>();
 }
 
-// Render recent stat changes
-void _StatChange::Render(double BlendFactor) {
-	if(!Object)
+// Constructor
+_StatChangeUI::_StatChangeUI() :
+	Object(nullptr),
+	Font(nullptr),
+	Color(1.0f),
+	LastPosition(0, 0),
+	Position(0, 0),
+	Direction(-1.0f),
+	Time(0.0),
+	TimeOut(STATCHANGE_TIMEOUT),
+	Change(0) {
+
+}
+
+// Render stat change
+void _StatChangeUI::Render(double BlendFactor) {
+	if(!Object || Change == 0)
 		return;
-
-	// Get text color
-	std::string Font = "hud_medium";
-	glm::vec4 TextColor = COLOR_WHITE;
-	char Sign = ' ';
-
-	if(HealthChange > 0) {
-		TextColor = COLOR_GREEN;
-		Sign = '+';
-	}
-	else if(HealthChange < 0) {
-		TextColor = COLOR_RED;
-		Sign = '-';
-	}
-
-	if(ManaChange > 0) {
-		TextColor = COLOR_LIGHTBLUE;
-		Sign = '+';
-	}
-
-	if(Experience > 0) {
-		Font = "battle_large";
-		TextColor = COLOR_WHITE;
-		Sign = '+';
-	}
-
-	if(Gold > 0) {
-		Font = "menu_buttons";
-		TextColor = COLOR_GOLD;
-		Sign = '+';
-	}
 
 	// Get alpha
 	double TimeLeft = TimeOut - Time;
-	TextColor.a = 1.0f;
+	Color.a = 1.0f;
 	if(TimeLeft < ACTIONRESULT_FADETIME)
-		TextColor.a = (float)(TimeLeft / ACTIONRESULT_FADETIME);
+		Color.a = (float)(TimeLeft / ACTIONRESULT_FADETIME);
 
 	// Get final draw position
 	glm::vec2 DrawPosition = glm::mix(LastPosition, Position, BlendFactor);
 
-	// Draw stat
-	std::stringstream Buffer;
-	Buffer << Sign;
-	if(HealthChange != 0)
-		Buffer << std::abs(HealthChange);
-	else if(ManaChange != 0)
-		Buffer << std::abs(ManaChange);
-	else if(Experience != 0)
-		Buffer << std::abs(Experience);
-	else if(Gold != 0)
-		Buffer << std::abs(Gold);
+	// Draw text
+	Font->DrawText(Text.c_str(), DrawPosition + glm::vec2(0, 7), Color, CENTER_BASELINE);
+}
 
-	Assets.Fonts[Font]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
+// Set text and color
+void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor) {
+
+	// Get text color
+	std::stringstream Buffer;
+	if(Change > 0) {
+		Color = PositiveColor;
+		Buffer << "+";
+	}
+	else if(Change < 0) {
+		Color = NegativeColor;
+		Buffer << "-";
+	}
+	else {
+		Color = COLOR_WHITE;
+		Buffer << " ";
+	}
+
+	// Set text
+	Buffer << std::abs(Change);
+	Text = Buffer.str();
 }

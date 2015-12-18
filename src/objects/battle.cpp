@@ -165,11 +165,11 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	// Draw damage dealt
 	glm::vec4 TextColor = COLOR_WHITE;
-	if(ActionResult.Target.HealthChange > 0)
+	if(ActionResult.Target.Health > 0)
 		TextColor = COLOR_GREEN;
 
 	std::stringstream Buffer;
-	Buffer << std::abs(ActionResult.Target.HealthChange);
+	Buffer << std::abs(ActionResult.Target.Health);
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 

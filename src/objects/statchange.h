@@ -18,13 +18,16 @@
 #pragma once
 
 // Libraries
-#include <glm/vec2.hpp>
 #include <manager.h>
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+#include <string>
 
 // Forward Declarations
 class _Object;
 class _Battle;
 class _Buffer;
+class _Font;
 
 // Types of stats
 enum StatType : int {
@@ -43,20 +46,38 @@ class _StatChange {
 
 		void Serialize(_Buffer &Data);
 		void Unserialize(_Buffer &Data, _Manager<_Object> *Manager);
-		void Render(double BlendFactor);
 
-		bool IsChanged();
 		int GetChangedFlag();
 
 		_Object *Object;
+		int Health;
+		int Mana;
+		int Experience;
+		int Gold;
+
+};
+
+// Graphical stat change
+class _StatChangeUI {
+
+	public:
+
+		_StatChangeUI();
+
+		void Render(double BlendFactor);
+		void SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor);
+
+		_Object *Object;
+		const _Font *Font;
+		std::string Text;
+		glm::vec4 Color;
+		glm::vec2 StartPosition;
 		glm::vec2 LastPosition;
 		glm::vec2 Position;
 		float Direction;
 		double Time;
 		double TimeOut;
-		int HealthChange;
-		int ManaChange;
-		int Experience;
-		int Gold;
+		int Change;
 
 };
+

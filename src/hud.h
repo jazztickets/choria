@@ -105,7 +105,7 @@ class _HUD {
 		void SetPlayer(_Object *Player);
 		void SetActionBarSize(size_t Size);
 		void RemoveStatChanges(_Object *Owner);
-		void AddStatChange(_StatChange &StatChange) { StatChanges.push_back(StatChange); }
+		void AddStatChange(_StatChange &StatChange);
 
 		// Button bar
 		void ToggleTeleport();
@@ -140,7 +140,7 @@ class _HUD {
 		bool ShowStats;
 
 		_Scripting *Scripting;
-		std::list<_StatChange> StatChanges;
+		std::list<_StatChangeUI> StatChanges;
 
 	private:
 

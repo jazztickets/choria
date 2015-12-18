@@ -141,13 +141,13 @@ void _Scripting::PushObject(_Object *Object) {
 void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 	lua_newtable(LuaState);
 
-	lua_pushinteger(LuaState, ActionResult->Target.HealthChange);
+	lua_pushinteger(LuaState, ActionResult->Target.Health);
 	lua_setfield(LuaState, -2, "TargetHealthChange");
 
-	lua_pushinteger(LuaState, ActionResult->Target.ManaChange);
+	lua_pushinteger(LuaState, ActionResult->Target.Mana);
 	lua_setfield(LuaState, -2, "TargetManaChange");
 
-	lua_pushinteger(LuaState, ActionResult->Source.ManaChange);
+	lua_pushinteger(LuaState, ActionResult->Source.Mana);
 	lua_setfield(LuaState, -2, "SourceManaChange");
 }
 
@@ -155,10 +155,10 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 void _Scripting::PushStatChange(_StatChange *StatChange) {
 	lua_newtable(LuaState);
 
-	lua_pushinteger(LuaState, StatChange->HealthChange);
+	lua_pushinteger(LuaState, StatChange->Health);
 	lua_setfield(LuaState, -2, "HealthChanges");
 
-	lua_pushinteger(LuaState, StatChange->ManaChange);
+	lua_pushinteger(LuaState, StatChange->Mana);
 	lua_setfield(LuaState, -2, "ManaChange");
 }
 
@@ -199,17 +199,17 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 
 	lua_pushstring(LuaState, "TargetHealthChange");
 	lua_gettable(LuaState, -2);
-	ActionResult.Target.HealthChange = (int)lua_tointeger(LuaState, -1);
+	ActionResult.Target.Health = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "TargetManaChange");
 	lua_gettable(LuaState, -2);
-	ActionResult.Target.ManaChange = (int)lua_tointeger(LuaState, -1);
+	ActionResult.Target.Mana = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "SourceManaChange");
 	lua_gettable(LuaState, -2);
-	ActionResult.Source.ManaChange = (int)lua_tointeger(LuaState, -1);
+	ActionResult.Source.Mana = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Buff");
@@ -235,12 +235,12 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 
 	lua_pushstring(LuaState, "HealthChange");
 	lua_gettable(LuaState, -2);
-	StatChange.HealthChange = (int)lua_tointeger(LuaState, -1);
+	StatChange.Health = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "ManaChange");
 	lua_gettable(LuaState, -2);
-	StatChange.ManaChange = (int)lua_tointeger(LuaState, -1);
+	StatChange.Mana = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 }
 

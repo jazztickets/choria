@@ -729,8 +729,8 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 // Update stats
 void _Object::UpdateStats(_StatChange &StatChange) {
 
-	UpdateHealth(StatChange.HealthChange);
-	UpdateMana(StatChange.ManaChange);
+	UpdateHealth(StatChange.Health);
+	UpdateMana(StatChange.Mana);
 }
 
 // Update health

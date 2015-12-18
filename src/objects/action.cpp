@@ -76,8 +76,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.SkillUsed->ApplyCost(Source->Scripting, ActionResult);
 	}
 
-	ActionResult.Source.Object->UpdateHealth(ActionResult.Source.HealthChange);
-	ActionResult.Source.Object->UpdateMana(ActionResult.Source.ManaChange);
+	ActionResult.Source.Object->UpdateHealth(ActionResult.Source.Health);
+	ActionResult.Source.Object->UpdateMana(ActionResult.Source.Mana);
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
@@ -107,8 +107,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		}
 
 		// Update target
-		ActionResult.Target.Object->UpdateHealth(ActionResult.Target.HealthChange);
-		ActionResult.Target.Object->UpdateMana(ActionResult.Target.ManaChange);
+		ActionResult.Target.Object->UpdateHealth(ActionResult.Target.Health);
+		ActionResult.Target.Object->UpdateMana(ActionResult.Target.Mana);
 
 		ActionResult.Target.Serialize(Data);
 		Data.Write<int32_t>(ActionResult.Target.Object->Health);
