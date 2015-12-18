@@ -454,7 +454,10 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
 
-	// Draw the skill used
+	// Get background for items used
+	const _Texture *ItemBackTexture = Assets.Textures["hud/item_back.png"];
+
+	// Draw the action used
 	if(ClientPlayer->BattleSide == BattleSide) {
 
 		if(Action.Skill) {
@@ -463,13 +466,14 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			Graphics.DrawCenteredImage(SkillUsingPosition, Action.Skill->Texture, GlobalColor);
 		}
 		else if(Action.Item) {
-			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-Action.Item->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
+			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
 			Graphics.DrawCenteredImage(ItemUsingPosition, Action.Item->Texture, GlobalColor);
 		}
 	}
 
-	// Draw potential skill to use
+	// Draw potential action to use
 	for(auto &BattleTarget : ClientPlayer->Targets) {
 		if(BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
 			const _Texture *Texture = nullptr;
@@ -483,7 +487,15 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			if(Time - (int)Time < 0.5f)
 				Color.a = 0.5f;
 
-			Graphics.DrawCenteredImage(glm::ivec2(BarEndX + Texture->Size.x/2 + 10, SlotPosition.y + BattleElement->Size.y/2), Texture, Color);
+			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + BattleElement->Size.y/2);
+			if(ClientPlayer->PotentialAction.Item) {
+				DrawPosition.x += ItemBackTexture->Size.x/2;
+				Graphics.DrawCenteredImage(DrawPosition, ItemBackTexture, Color);
+			}
+			else
+				DrawPosition.x += Texture->Size.x/2;
+
+			Graphics.DrawCenteredImage(DrawPosition, Texture, Color);
 		}
 	}
 
