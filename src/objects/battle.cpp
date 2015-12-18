@@ -173,40 +173,6 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 
-// Renders the battle win screen
-void _Battle::RenderBattleWin() {
-	/*
-	BattleWinElement->SetVisible(true);
-	Assets.Labels["label_battlewin_experience"]->Text = std::to_string(ClientExperienceReceived) + " experience";
-	Assets.Labels["label_battlewin_coins"]->Text = std::to_string(ClientGoldReceived) + " gold";
-	Assets.Labels["label_battlewin_chest"]->Visible = ClientItemDrops.size() == 0;
-	BattleWinElement->Render();
-
-	// Draw item drops
-	if(ClientItemDrops.size() > 0) {
-
-		// Get positions
-		_Image *Image = Assets.Images["image_battlewin_chest"];
-		glm::vec2 StartPosition = (Image->Bounds.Start + Image->Bounds.End) / 2.0f;
-		StartPosition.x += Image->Size.x;
-		glm::vec2 DrawPosition(StartPosition);
-
-		// Draw items found
-		for(auto &MonsterDrop : ClientItemDrops) {
-			const _Texture *Texture = MonsterDrop->Texture;
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Texture);
-
-			// Move draw position down
-			DrawPosition.x += Texture->Size.x + 10;
-			if(DrawPosition.x > BattleWinElement->Bounds.End.x) {
-				DrawPosition.x = StartPosition.x;
-				DrawPosition.y += Texture->Size.y + 10;;
-			}
-		}
-	}*/
-}
-
 // Sends an action selection to the server
 void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	if(ActionBarSlot >= ClientPlayer->ActionBar.size())
@@ -590,16 +556,23 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<int32_t>(ExperienceEarned);
 		Packet.Write<int32_t>(GoldEarned);
 
-		// Write items
-		size_t ItemCount = Fighter->ItemDropsReceived.size();
+		// Sort item drops
+		std::unordered_map<uint32_t, int> SortedItems;
+		for(auto &ItemID : Fighter->ItemDropsReceived) {
+			SortedItems[ItemID]++;
+		}
+		Fighter->ItemDropsReceived.clear();
+
+		// Write item count
+		size_t ItemCount = SortedItems.size();
 		Packet.Write<uint8_t>((uint8_t)ItemCount);
 
 		// Write items
-		for(auto &ItemID : Fighter->ItemDropsReceived) {
-			Packet.Write<uint32_t>(ItemID);
-			Fighter->Inventory->AddItem(Stats->Items[ItemID], 1);
+		for(auto &Iterator : SortedItems) {
+			Packet.Write<uint32_t>(Iterator.first);
+			Packet.Write<uint8_t>((uint8_t)Iterator.second);
+			Fighter->Inventory->AddItem(Stats->Items[Iterator.first], Iterator.second);
 		}
-		Fighter->ItemDropsReceived.clear();
 
 		// Send info
 		if(Fighter->Peer) {

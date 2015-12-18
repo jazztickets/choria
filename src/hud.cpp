@@ -56,6 +56,7 @@ _HUD::_HUD() {
 	ShowStats = false;
 	Player = nullptr;
 	ActionBarChanged = false;
+	LowestRecentItemTime = 0.0;
 	Tooltip.Reset();
 	Cursor.Reset();
 	RewardItemSlot = (size_t)-1;
@@ -86,6 +87,7 @@ _HUD::_HUD() {
 	HealthElement = Assets.Elements["element_hud_health"];
 	ManaElement = Assets.Elements["element_hud_mana"];
 	ExperienceElement = Assets.Elements["element_hud_experience"];
+	RecentItemsElement = Assets.Elements["element_hud_recentitems"];
 	GoldElement = Assets.Labels["label_hud_gold"];
 
 	GoldElement->Size.x = ButtonBarElement->Size.x;
@@ -108,6 +110,7 @@ _HUD::_HUD() {
 	ManaElement->SetVisible(true);
 	ExperienceElement->SetVisible(true);
 	GoldElement->SetVisible(true);
+	RecentItemsElement->SetVisible(false);
 
 	Assets.Elements["element_hud"]->SetVisible(true);
 }
@@ -445,6 +448,23 @@ void _HUD::Update(double FrameTime) {
 		StatChangeUI.Time += FrameTime;
 		if(StatChangeUI.Time >= StatChangeUI.TimeOut) {
 			Iterator = StatChanges.erase(Iterator);
+		}
+		else
+			++Iterator;
+	}
+
+	// Update recent items
+	LowestRecentItemTime = std::numeric_limits<double>::infinity();
+	for(auto Iterator = RecentItems.begin(); Iterator != RecentItems.end(); ) {
+		_RecentItem &RecentItem = *Iterator;
+
+		// Update timer
+		RecentItem.Time += FrameTime;
+		if(RecentItem.Time < LowestRecentItemTime)
+			LowestRecentItemTime = RecentItem.Time;
+
+		if(RecentItem.Time >= RECENTITEM_TIMEOUT) {
+			Iterator = RecentItems.erase(Iterator);
 		}
 		else
 			++Iterator;
@@ -1300,6 +1320,46 @@ void _HUD::DrawSkills() {
 
 	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
 	Assets.Fonts["hud_medium"]->DrawText(SkillPointsText.c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+}
+
+// Draw recently acquired items
+void _HUD::DrawRecentItems() {
+	if(!RecentItems.size() || Player->Health <= 0)
+		return;
+
+	// Draw label
+	double TimeLeft = RECENTITEM_TIMEOUT - LowestRecentItemTime;
+	RecentItemsElement->SetFade(1.0f);
+	if(TimeLeft < RECENTITEM_FADETIME)
+		RecentItemsElement->SetFade((float)(TimeLeft / RECENTITEM_FADETIME));
+
+	RecentItemsElement->SetVisible(true);
+	RecentItemsElement->Render();
+
+	// Draw items
+	glm::vec2 DrawPosition = Assets.Elements["element_hud_recentitems"]->Bounds.Start;
+	DrawPosition.y += 25;
+	for(auto &RecentItem : RecentItems) {
+
+		// Get alpha
+		double TimeLeft = RECENTITEM_TIMEOUT - RecentItem.Time;
+		glm::vec4 Color(COLOR_WHITE);
+		Color.a = 1.0f;
+		if(TimeLeft < RECENTITEM_FADETIME)
+			Color.a = (float)(TimeLeft / RECENTITEM_FADETIME);
+
+		// Draw item
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.DrawCenteredImage(DrawPosition, RecentItem.Item->Texture, Color);
+
+		// Draw count
+		if(RecentItem.Count > 1)
+			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(RecentItem.Count).c_str(), DrawPosition + glm::vec2(20, 20), Color, RIGHT_BASELINE);
+
+		DrawPosition.y += RecentItem.Item->Texture->Size.y + 5;
+	}
+
+	RecentItemsElement->SetVisible(false);
 }
 
 // Draws the item under the cursor

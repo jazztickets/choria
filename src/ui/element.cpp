@@ -250,3 +250,11 @@ void _Element::SetVisible(bool Visible) {
 	for(auto &Child : Children)
 		Child->SetVisible(Visible);
 }
+
+// Set fade of element and children
+void _Element::SetFade(float Fade) {
+	this->Fade = Fade;
+
+	for(auto &Child : Children)
+		Child->SetFade(Fade);
+}

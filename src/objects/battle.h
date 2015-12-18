@@ -104,7 +104,6 @@ class _Battle : public _ManagerBase {
 
 		void RenderBattle(double BlendFactor);
 		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
-		void RenderBattleWin();
 
 		// State
 		double Time;

@@ -74,6 +74,14 @@ struct _ChatMessage {
 	double Time;
 };
 
+struct _RecentItem {
+	_RecentItem() : Item(nullptr), Count(0), Time(0.0) { }
+
+	const _Item *Item;
+	int Count;
+	double Time;
+};
+
 // Classes
 class _HUD {
 
@@ -99,7 +107,10 @@ class _HUD {
 		void HandleEnter();
 		void MouseEvent(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
+
+		// Render
 		void Render(_Map *Map, double BlendFactor, double Time);
+		void DrawRecentItems();
 
 		// Objects
 		void SetPlayer(_Object *Player);
@@ -139,8 +150,12 @@ class _HUD {
 		// Stats
 		bool ShowStats;
 
+		// Scripting
 		_Scripting *Scripting;
+
+		// UI
 		std::list<_StatChangeUI> StatChanges;
+		std::list<_RecentItem> RecentItems;
 
 	private:
 
@@ -195,13 +210,14 @@ class _HUD {
 		_Element *HealthElement;
 		_Element *ManaElement;
 		_Element *ExperienceElement;
+		_Element *RecentItemsElement;
 		_Label *GoldElement;
 		_Cursor Cursor;
 		_Cursor Tooltip;
 
 		// Objects
 		_Object *Player;
-		std::list<_InventorySlot> RecentItems;
+		double LowestRecentItemTime;
 
 		// Chat
 		std::list<_ChatMessage> ChatHistory;

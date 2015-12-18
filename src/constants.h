@@ -75,6 +75,9 @@ const double STATCHANGE_TIMEOUT_LONG = 3.0;
 const double STATCHANGE_FADETIME = 0.3;
 const float STATCHANGE_DISTANCE = 20.0f;
 
+const double RECENTITEM_TIMEOUT = 10.0;
+const double RECENTITEM_FADETIME = 2.0;
+
 const int SAVE_VERSION = 4;
 
 //     Config

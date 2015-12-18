@@ -159,8 +159,12 @@ void _Stats::LoadItems() {
 
 	// Get events
 	while(Database->FetchRow()) {
+		uint32_t ItemID = Database->GetInt<uint32_t>("id");
+		if(ItemID == 0)
+			continue;
+
 		_Item *Item = new _Item;
-		Item->ID = Database->GetInt<uint32_t>("id");
+		Item->ID = ItemID;
 		Item->Name = Database->GetString("name");
 		Item->Script = Database->GetString("script");
 		Item->Level = Database->GetInt<int>("level");

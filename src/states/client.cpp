@@ -392,6 +392,8 @@ void _ClientState::Render(double BlendFactor) {
 		Graphics.SetProgram(Assets.Programs["text"]);
 		glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
+		HUD->DrawRecentItems();
+
 		// Draw states
 		if(Battle)
 			Battle->Render(BlendFactor);
@@ -903,9 +905,6 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	_StatChange StatChange;
 	StatChange.Object = Player;
 
-	// Client battle results
-	std::list<const _Item *> ClientItemDrops;
-
 	// Get ending stats
 	bool SideDead[2];
 	SideDead[0] = Data.ReadBit();
@@ -916,10 +915,15 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	StatChange.Gold = Data.Read<int32_t>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
+		_RecentItem RecentItem;
+
 		uint32_t ItemID = Data.Read<uint32_t>();
-		const _Item *Item = Stats->Items[ItemID];
-		ClientItemDrops.push_back(Item);
-		Player->Inventory->AddItem(Item, 1);
+		RecentItem.Item = Stats->Items[ItemID];
+		RecentItem.Count = (int)Data.Read<uint8_t>();
+
+		// Add items
+		HUD->RecentItems.push_back(RecentItem);
+		Player->Inventory->AddItem(RecentItem.Item, RecentItem.Count);
 	}
 
 	// Check win or death
