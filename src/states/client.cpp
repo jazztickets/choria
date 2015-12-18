@@ -191,10 +191,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				HUD->ToggleInGameMenu();
 			break;
 			default: {
-				bool BattleFinished = Battle->ClientHandleInput(Action);
-				if(BattleFinished) {
-					DeleteBattle();
-				}
+				Battle->ClientHandleInput(Action);
 			} break;
 		}
 	}
@@ -338,10 +335,13 @@ void _ClientState::Update(double FrameTime) {
 			Player->InputState |= _Object::MOVE_RIGHT;
 	}
 
+	// Update objects
 	ObjectManager->Update(FrameTime);
 
-	// Update objects
+	// Update map
 	Map->Update(FrameTime);
+
+	// Send input to server
 	if(Player->Moved) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
@@ -901,8 +901,7 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 
 	Player->WaitForServer = false;
 	Battle->ClientEndBattle(Data);
-	if(Player->Health == 0)
-		Player->WaitForServer = true;
+	DeleteBattle();
 }
 
 // Handles the result of a turn in battle

@@ -70,6 +70,7 @@ _HUD::_HUD() {
 	Assets.Labels["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(_Actions::SKILLS).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(_Actions::MENU).substr(0, HUD_KEYNAME_LENGTH);
 
+	DiedElement = Assets.Elements["element_died"];
 	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = Assets.Elements["element_actionbar"];
 	ButtonBarElement = Assets.Elements["element_buttonbar"];
@@ -88,6 +89,7 @@ _HUD::_HUD() {
 	Assets.Labels["label_hud_gold"]->Size.x = ButtonBarElement->Size.x;
 	Assets.Labels["label_hud_gold"]->CalculateBounds();
 
+	DiedElement->SetVisible(false);
 	StatusEffectsElement->SetVisible(true);
 	ActionBarElement->SetVisible(true);
 	ButtonBarElement->SetVisible(true);
@@ -430,7 +432,7 @@ void _HUD::Update(double FrameTime) {
 
 		// Find start position
 		glm::vec2 StartPosition;
-		if(StatChange.Object->Battle && !StatChange.Object->Battle->Done)
+		if(StatChange.Object->Battle)
 			StartPosition = StatChange.Object->StatPosition;
 		else if(StatChange.Object == Player)
 			StartPosition = HealthElement->Bounds.Start + HealthElement->Size / 2.0f;
@@ -460,27 +462,10 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	// Draw chat messages
 	DrawChat(Time, IsChatting());
 
-	Assets.Elements["element_hud"]->Render();
-	ButtonBarElement->Render();
-	DrawActionBar();
-
-	std::stringstream Buffer;
-
-	// Set hud values
-	Buffer << "Level " << Player->Level;
-	Assets.Labels["label_hud_level"]->Text = Buffer.str();
-	Buffer.str("");
-
-	Buffer << Player->Gold << " Gold";
-	Assets.Labels["label_hud_gold"]->Text = Buffer.str();
-	Buffer.str("");
-
-	Map->GetClockAsString(Buffer);
-	Assets.Labels["label_hud_clock"]->Text = Buffer.str();
-	Buffer.str("");
-
 	// Show network stats
 	if(ShowStats) {
+		std::stringstream Buffer;
+
 		Buffer << Graphics.FramesPerSecond << " FPS";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
 		Buffer.str("");
@@ -498,59 +483,94 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer.str("");
 	}
 
-	// Draw experience bar
-	Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
-	Assets.Labels["label_hud_experience"]->Text = Buffer.str();
-	Buffer.str("");
-	Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
-	Assets.Images["image_hud_experience_bar_empty"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x);
-	Assets.Elements["element_hud_experience"]->Render();
+	// Draw button bar
+	ButtonBarElement->Render();
 
-	// Draw health bar
-	float HealthPercent = Player->MaxHealth > 0 ? Player->Health / (float)Player->MaxHealth : 0;
-	Buffer << Player->Health << " / " << Player->MaxHealth;
-	Assets.Labels["label_hud_health"]->Text = Buffer.str();
-	Buffer.str("");
-	Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * HealthPercent);
-	Assets.Images["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
-	HealthElement->Render();
+	// Draw hud elements while alive or in battle
+	if(Player->Health > 0 || Player->Battle) {
+		std::stringstream Buffer;
 
-	// Draw mana bar
-	float ManaPercent = Player->MaxMana > 0 ? Player->Mana / (float)Player->MaxMana : 0;
-	Buffer << Player->Mana << " / " << Player->MaxMana;
-	Assets.Labels["label_hud_mana"]->Text = Buffer.str();
-	Buffer.str("");
-	Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * ManaPercent);
-	Assets.Images["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
-	ManaElement->Render();
+		Assets.Elements["element_hud"]->Render();
+		DrawActionBar();
 
-	DrawHudEffects();
-	DrawInventory();
-	DrawCharacter();
-	DrawVendor();
-	DrawTrade();
-	DrawTrader();
-	DrawSkills();
-	DrawTeleport();
+		// Set hud values
+		Buffer << "Level " << Player->Level;
+		Assets.Labels["label_hud_level"]->Text = Buffer.str();
+		Buffer.str("");
 
-	// Draw stat changes
-	for(auto &StatChange : StatChanges) {
-		StatChange.Render(BlendFactor);
+		Buffer << Player->Gold << " Gold";
+		Assets.Labels["label_hud_gold"]->Text = Buffer.str();
+		Buffer.str("");
+
+		Map->GetClockAsString(Buffer);
+		Assets.Labels["label_hud_clock"]->Text = Buffer.str();
+		Buffer.str("");
+
+		// Draw experience bar
+		Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
+		Assets.Labels["label_hud_experience"]->Text = Buffer.str();
+		Buffer.str("");
+		Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
+		Assets.Images["image_hud_experience_bar_empty"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x);
+		Assets.Elements["element_hud_experience"]->Render();
+
+		// Draw health bar
+		float HealthPercent = Player->MaxHealth > 0 ? Player->Health / (float)Player->MaxHealth : 0;
+		Buffer << Player->Health << " / " << Player->MaxHealth;
+		Assets.Labels["label_hud_health"]->Text = Buffer.str();
+		Buffer.str("");
+		Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * HealthPercent);
+		Assets.Images["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
+		HealthElement->Render();
+
+		// Draw mana bar
+		float ManaPercent = Player->MaxMana > 0 ? Player->Mana / (float)Player->MaxMana : 0;
+		Buffer << Player->Mana << " / " << Player->MaxMana;
+		Assets.Labels["label_hud_mana"]->Text = Buffer.str();
+		Buffer.str("");
+		Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * ManaPercent);
+		Assets.Images["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
+		ManaElement->Render();
+
+		DrawHudEffects();
+		DrawInventory();
+		DrawCharacter();
+		DrawVendor();
+		DrawTrade();
+		DrawTrader();
+		DrawSkills();
+		DrawTeleport();
+
+		// Draw stat changes
+		for(auto &StatChange : StatChanges) {
+			StatChange.Render(BlendFactor);
+		}
+
+		// Draw item information
+		DrawCursorItem();
+		if(Tooltip.Item)
+			Tooltip.Item->DrawTooltip(Player, Tooltip);
+
+		// Draw skill information
+		DrawCursorSkill();
+		if(Tooltip.Skill)
+			Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, SkillsElement->Visible);
+
+		// Draw status effects
+		if(Tooltip.StatusEffect)
+			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level);
+	}
+	else {
+
+		// Dead outside of combat
+
+		//Assets.Labels["label_died_gold"]->Text = "You lost " + std::to_string(std::abs(100)) + " gold";
+		DiedElement->Size = Graphics.WindowSize;
+		DiedElement->CalculateBounds();
+		DiedElement->SetVisible(true);
+		DiedElement->Render();
 	}
 
-	// Draw item information
-	DrawCursorItem();
-	if(Tooltip.Item)
-		Tooltip.Item->DrawTooltip(Player, Tooltip);
-
-	// Draw skill information
-	DrawCursorSkill();
-	if(Tooltip.Skill)
-		Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, SkillsElement->Visible);
-
-	// Draw status effects
-	if(Tooltip.StatusEffect)
-		Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level);
 }
 
 // Starts the chat box
@@ -579,7 +599,7 @@ void _HUD::ToggleChat() {
 
 // Toggles the teleport state
 void _HUD::ToggleTeleport() {
-	if(Player->WaitForServer)
+	if(Player->WaitForServer || Player->Health <= 0)
 		return;
 
 	if(!TeleportElement->Visible) {
@@ -594,7 +614,7 @@ void _HUD::ToggleTeleport() {
 
 // Open/close inventory
 void _HUD::ToggleInventory() {
-	if(Player->WaitForServer)
+	if(Player->WaitForServer || Player->Health <= 0)
 		return;
 
 	if(!InventoryElement->Visible) {
@@ -611,7 +631,7 @@ void _HUD::ToggleInventory() {
 
 // Open/close trade
 void _HUD::ToggleTrade() {
-	if(Player->WaitForServer)
+	if(Player->WaitForServer || Player->Health <= 0)
 		return;
 
 	if(!TradeElement->Visible) {
@@ -625,7 +645,7 @@ void _HUD::ToggleTrade() {
 
 // Open/close skills
 void _HUD::ToggleSkills() {
-	if(Player->WaitForServer)
+	if(Player->WaitForServer || Player->Health <= 0)
 		return;
 
 	if(!SkillsElement->Visible) {

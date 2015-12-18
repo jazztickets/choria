@@ -178,6 +178,7 @@ class _HUD {
 		void SplitStack(uint8_t Slot, uint8_t Count);
 
 		// UI
+		_Element *DiedElement;
 		_Element *StatusEffectsElement;
 		_Element *ActionBarElement;
 		_Element *ButtonBarElement;

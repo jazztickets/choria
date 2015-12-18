@@ -310,9 +310,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
-		case PacketType::BATTLE_CLIENTDONE:
-			HandleBattleFinished(Data, Peer);
-		break;
 	/*
 		case PacketType::WORLD_ATTACKPLAYER:
 			HandleAttackPlayer(Data, Peer);
@@ -1069,6 +1066,15 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	   return;
 
 	_Object *Player = Peer->Object;
+	if(Player->Health <= 0) {
+		if(Player->Battle)
+			return;
+
+		// Check for death
+		Player->RestoreHealthMana();
+		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
+		return;
+	}
 
 	// Set action used
 	Player->SetActionUsing(Data, ObjectManager);
@@ -1106,23 +1112,6 @@ void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 		Player->ActionBar[i].Unserialize(Data, Stats);
 
 	Player->CalculateStats();
-}
-
-// The client is done with the battle results screen
-void _Server::HandleBattleFinished(_Buffer &Data, _Peer *Peer) {
-	if(!ValidatePeer(Peer))
-		return;
-
-	_Object *Player = Peer->Object;
-
-	// Take player out of battle
-	Player->Battle->RemoveFighter(Player);
-
-	// Check for death
-	if(Player->Health == 0) {
-		Player->RestoreHealthMana();
-		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
-	}
 }
 
 /*
@@ -1213,7 +1202,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	//Zone = 2;
+	//Zone = 1;
 	if(!Zone)
 		return;
 
@@ -1230,12 +1219,11 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 		Battle->Scripting = Scripting;
 
 		/*
-		for(int i = 0; i < 7; i++) {
+		for(int i = 0; i < 5; i++) {
 			_Object *Monster = ObjectManager->Create();
 			Monster->Scripting = Scripting;
 			Monster->Server = this;
-			Monster->DatabaseID = 1;
-			Stats->GetMonsterStats(1, Monster);
+			Stats->GetMonsterStats(2, Monster);
 			Battle->AddFighter(Monster, 0);
 		}*/
 

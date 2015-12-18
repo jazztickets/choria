@@ -53,16 +53,13 @@ _Battle::_Battle() :
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	Manager(nullptr),
-	Done(false),
-	State(STATE_NONE),
 	Time(0),
 	WaitTimer(0),
 	NextID(0),
 	ClientExperienceReceived(0),
 	ClientGoldReceived(0),
 	BattleElement(nullptr),
-	BattleWinElement(nullptr),
-	BattleLoseElement(nullptr) {
+	BattleWinElement(nullptr) {
 
 	SideCount[0] = 0;
 	SideCount[1] = 0;
@@ -74,8 +71,6 @@ _Battle::~_Battle() {
 		BattleElement->SetVisible(false);
 	if(BattleWinElement)
 		BattleWinElement->SetVisible(false);
-	if(BattleLoseElement)
-		BattleLoseElement->SetVisible(false);
 
 	// Remove fighters
 	for(auto &Fighter : Fighters) {
@@ -88,53 +83,47 @@ _Battle::~_Battle() {
 // Update battle
 void _Battle::Update(double FrameTime) {
 
-	if(GetPeerCount() == 0)
-		Deleted = true;
+	// Check for end
+	if(Server) {
 
-	if(!Done) {
-
-		// Check for end
-		if(Server) {
-
-			// Count alive fighters for each side
-			int AliveCount[2] = { 0, 0 };
-			for(auto &Fighter : Fighters) {
-				if(Fighter->Health > 0)
-					AliveCount[Fighter->BattleSide]++;
-			}
-
-			// Check for end conditions
-			if(AliveCount[0] == 0 || AliveCount[1] == 0) {
-				WaitTimer += FrameTime;
-				if(WaitTimer >= BATTLE_WAITDEADTIME)
-					ServerEndBattle();
-			}
+		// Count alive fighters for each side
+		int AliveCount[2] = { 0, 0 };
+		for(auto &Fighter : Fighters) {
+			if(Fighter->Health > 0)
+				AliveCount[Fighter->BattleSide]++;
 		}
-		else {
 
-			// Update action results
-			for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
-				_ActionResult &ActionResult = *Iterator;
+		// Check for end conditions
+		if(AliveCount[0] == 0 || AliveCount[1] == 0) {
+			WaitTimer += FrameTime;
+			if(WaitTimer >= BATTLE_WAITDEADTIME)
+				ServerEndBattle();
+		}
+	}
+	else {
 
-				// Find start position
-				glm::vec2 StartPosition = ActionResult.Source.Object->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
+		// Update action results
+		for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
+			_ActionResult &ActionResult = *Iterator;
+
+			// Find start position
+			glm::vec2 StartPosition = ActionResult.Source.Object->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
+			ActionResult.LastPosition = ActionResult.Position;
+
+			// Interpolate between start and end position of action used
+			ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
+			if(ActionResult.Time == 0.0)
 				ActionResult.LastPosition = ActionResult.Position;
 
-				// Interpolate between start and end position of action used
-				ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
-				if(ActionResult.Time == 0.0)
-					ActionResult.LastPosition = ActionResult.Position;
-
-				// Update timer
-				ActionResult.Time += FrameTime;
-				if(ActionResult.Time >= ACTIONRESULT_TIMEOUT) {
-					Iterator = ActionResults.erase(Iterator);
-				}
-				else
-					++Iterator;
+			// Update timer
+			ActionResult.Time += FrameTime;
+			if(ActionResult.Time >= ACTIONRESULT_TIMEOUT) {
+				Iterator = ActionResults.erase(Iterator);
 			}
-
+			else
+				++Iterator;
 		}
+
 	}
 
 	Time += FrameTime;
@@ -142,18 +131,7 @@ void _Battle::Update(double FrameTime) {
 
 // Render the battle system
 void _Battle::Render(double BlendFactor) {
-
-	switch(State) {
-		case STATE_WIN:
-			RenderBattleWin();
-		break;
-		case STATE_LOSE:
-			RenderBattleLose();
-		break;
-		default:
-			RenderBattle(BlendFactor);
-		break;
-	}
+	RenderBattle(BlendFactor);
 }
 
 // Renders the battle part
@@ -231,14 +209,6 @@ void _Battle::RenderBattleWin() {
 			}
 		}
 	}
-}
-
-// Renders the battle lost screen
-void _Battle::RenderBattleLose() {
-	Assets.Labels["label_battlelose_gold"]->Text = "You lost " + std::to_string(std::abs(ClientGoldReceived)) + " gold";
-
-	BattleLoseElement->SetVisible(true);
-	BattleLoseElement->Render();
 }
 
 // Sends an action selection to the server
@@ -476,10 +446,8 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 	// Set up ui
 	BattleElement = Assets.Elements["element_battle"];
 	BattleWinElement = Assets.Elements["element_battlewin"];
-	BattleLoseElement = Assets.Elements["element_battlelose"];
 	BattleElement->SetVisible(true);
 	BattleWinElement->SetVisible(false);
-	BattleLoseElement->SetVisible(false);
 
 	// Set fighter position offsets and create ui elements
 	int SideCount[2] = { 0, 0 };
@@ -646,7 +614,7 @@ void _Battle::ServerEndBattle() {
 		}
 	}
 
-	Done = true;
+	Deleted = true;
 }
 
 // End of a battle
@@ -674,14 +642,12 @@ void _Battle::ClientEndBattle(_Buffer &Data) {
 	if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
 		ClientPlayer->PlayerKills += PlayerKills;
 		ClientPlayer->MonsterKills += MonsterKills;
-		State = STATE_WIN;
 	}
 	else {
 		ClientPlayer->Deaths++;
-		State = STATE_LOSE;
 	}
 
-	Done = true;
+	Deleted = true;
 	Time = 0.0;
 }
 
@@ -748,43 +714,28 @@ int _Battle::GetPeerCount() {
 // Handle player input
 bool _Battle::ClientHandleInput(int Action) {
 
-	switch(State) {
-		case STATE_WIN:
-		case STATE_LOSE: {
-			if(Time > BATTLE_WAITENDTIME) {
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::BATTLE_CLIENTDONE);
-				ClientNetwork->SendPacket(Packet);
-
-				return true;
-			}
-		}
+	switch(Action) {
+		case _Actions::SKILL1:
+		case _Actions::SKILL2:
+		case _Actions::SKILL3:
+		case _Actions::SKILL4:
+		case _Actions::SKILL5:
+		case _Actions::SKILL6:
+		case _Actions::SKILL7:
+		case _Actions::SKILL8:
+			ClientSetAction((uint8_t)(Action - _Actions::SKILL1));
 		break;
-		default:
-			switch(Action) {
-				case _Actions::SKILL1:
-				case _Actions::SKILL2:
-				case _Actions::SKILL3:
-				case _Actions::SKILL4:
-				case _Actions::SKILL5:
-				case _Actions::SKILL6:
-				case _Actions::SKILL7:
-				case _Actions::SKILL8:
-					ClientSetAction((uint8_t)(Action - _Actions::SKILL1));
-				break;
-				case _Actions::UP:
-					ChangeTarget(-1, 0);
-				break;
-				case _Actions::DOWN:
-					ChangeTarget(1, 0);
-				break;
-				case _Actions::LEFT:
-					//ChangeTarget(0, -1);
-				break;
-				case _Actions::RIGHT:
-					//ChangeTarget(0, 1);
-				break;
-			}
+		case _Actions::UP:
+			ChangeTarget(-1, 0);
+		break;
+		case _Actions::DOWN:
+			ChangeTarget(1, 0);
+		break;
+		case _Actions::LEFT:
+			//ChangeTarget(0, -1);
+		break;
+		case _Actions::RIGHT:
+			//ChangeTarget(0, 1);
 		break;
 	}
 

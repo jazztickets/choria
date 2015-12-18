@@ -19,3 +19,4 @@ item_tooltip_bg	0	0	0	0.9
 red_alpha	1	0	0	0.1
 green_alpha	0	1	0	0.1
 blue_alpha	0	0	1	0.1
+died	0.15	0	0	0.85

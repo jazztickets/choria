@@ -924,6 +924,9 @@ bool _Object::AcceptingMoveInput() {
 	if(Trader)
 		return false;
 
+	if(Health <= 0)
+		return false;
+
 	return true;
 }
 

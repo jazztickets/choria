@@ -58,12 +58,6 @@ class _Battle : public _ManagerBase {
 
 	public:
 
-		enum StateType {
-			STATE_NONE,
-			STATE_WIN,
-			STATE_LOSE,
-		};
-
 		_Battle();
 		~_Battle();
 
@@ -100,8 +94,6 @@ class _Battle : public _ManagerBase {
 		std::list<_Object *> Fighters;
 		std::list<_ActionResult> ActionResults;
 
-		bool Done;
-
 	private:
 
 		void GetBattleOffset(int SideIndex, _Object *Fighter);
@@ -114,10 +106,8 @@ class _Battle : public _ManagerBase {
 		void RenderBattle(double BlendFactor);
 		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
 		void RenderBattleWin();
-		void RenderBattleLose();
 
 		// State
-		int State;
 		double Time;
 		double WaitTimer;
 
@@ -133,6 +123,5 @@ class _Battle : public _ManagerBase {
 		// UI
 		_Element *BattleElement;
 		_Element *BattleWinElement;
-		_Element *BattleLoseElement;
 
 };
