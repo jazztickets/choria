@@ -85,9 +85,11 @@ _HUD::_HUD() {
 	ChatElement = Assets.Elements["element_chat"];
 	HealthElement = Assets.Elements["element_hud_health"];
 	ManaElement = Assets.Elements["element_hud_mana"];
+	ExperienceElement = Assets.Elements["element_hud_experience"];
+	GoldElement = Assets.Labels["label_hud_gold"];
 
-	Assets.Labels["label_hud_gold"]->Size.x = ButtonBarElement->Size.x;
-	Assets.Labels["label_hud_gold"]->CalculateBounds();
+	GoldElement->Size.x = ButtonBarElement->Size.x;
+	GoldElement->CalculateBounds();
 
 	DiedElement->SetVisible(false);
 	StatusEffectsElement->SetVisible(true);
@@ -104,9 +106,10 @@ _HUD::_HUD() {
 	ChatElement->SetVisible(false);
 	HealthElement->SetVisible(true);
 	ManaElement->SetVisible(true);
+	ExperienceElement->SetVisible(true);
+	GoldElement->SetVisible(true);
 
 	Assets.Elements["element_hud"]->SetVisible(true);
-	Assets.Elements["element_hud_experience"]->SetVisible(true);
 }
 
 // Shutdown
@@ -432,24 +435,40 @@ void _HUD::Update(double FrameTime) {
 
 		// Find start position
 		glm::vec2 StartPosition;
-		if(StatChange.Object->Battle)
-			StartPosition = StatChange.Object->StatPosition;
-		else if(StatChange.Object == Player) {
-			if(StatChange.HealthChange != 0)
-				StartPosition = HealthElement->Bounds.Start + HealthElement->Size / 2.0f;
-			else if(StatChange.ManaChange != 0)
-				StartPosition = ManaElement->Bounds.Start + ManaElement->Size / 2.0f;
+
+		if(StatChange.Object == Player) {
+			if(StatChange.HealthChange != 0) {
+				if(StatChange.Object->Battle)
+					StartPosition = StatChange.Object->StatPosition;
+				else
+					StartPosition = HealthElement->Bounds.Start + HealthElement->Size / 2.0f;
+			}
+			else if(StatChange.ManaChange != 0) {
+				if(StatChange.Object->Battle)
+					StartPosition = StatChange.Object->StatPosition;
+				else
+					StartPosition = ManaElement->Bounds.Start + ManaElement->Size / 2.0f;
+			}
+			else if(StatChange.Experience != 0)
+				StartPosition = ExperienceElement->Bounds.Start + ExperienceElement->Size / 2.0f;
+			else if(StatChange.Gold != 0) {
+				StartPosition = GoldElement->Bounds.Start;
+				StartPosition.x += -45;
+			}
 		}
+		else if(StatChange.Object->Battle)
+			StartPosition = StatChange.Object->StatPosition;
+
 		StatChange.LastPosition = StatChange.Position;
 
 		// Interpolate between start and end position
-		StatChange.Position = glm::mix(StartPosition, StartPosition + glm::vec2(0, -20), StatChange.Time / STATCHANGE_TIMEOUT);
+		StatChange.Position = glm::mix(StartPosition, StartPosition + glm::vec2(0, STATCHANGE_DISTANCE * StatChange.Direction), StatChange.Time / StatChange.TimeOut);
 		if(StatChange.Time == 0.0)
 			StatChange.LastPosition = StatChange.Position;
 
 		// Update timer
 		StatChange.Time += FrameTime;
-		if(StatChange.Time >= STATCHANGE_TIMEOUT) {
+		if(StatChange.Time >= StatChange.TimeOut) {
 			Iterator = StatChanges.erase(Iterator);
 		}
 		else
@@ -503,7 +522,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer.str("");
 
 		Buffer << Player->Gold << " Gold";
-		Assets.Labels["label_hud_gold"]->Text = Buffer.str();
+		GoldElement->Text = Buffer.str();
 		Buffer.str("");
 
 		Map->GetClockAsString(Buffer);
@@ -514,9 +533,9 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
 		Assets.Labels["label_hud_experience"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Images["image_hud_experience_bar_full"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x * Player->GetNextLevelPercent());
-		Assets.Images["image_hud_experience_bar_empty"]->SetWidth(Assets.Elements["element_hud_experience"]->Size.x);
-		Assets.Elements["element_hud_experience"]->Render();
+		Assets.Images["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->GetNextLevelPercent());
+		Assets.Images["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
+		ExperienceElement->Render();
 
 		// Draw health bar
 		float HealthPercent = Player->MaxHealth > 0 ? Player->Health / (float)Player->MaxHealth : 0;

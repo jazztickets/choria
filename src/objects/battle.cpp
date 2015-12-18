@@ -56,11 +56,7 @@ _Battle::_Battle() :
 	Time(0),
 	WaitTimer(0),
 	SideCount{0, 0},
-	NextID(0),
-	ClientExperienceReceived(0),
-	ClientGoldReceived(0),
-	BattleElement(nullptr),
-	BattleWinElement(nullptr) {
+	BattleElement(nullptr) {
 
 }
 
@@ -68,8 +64,6 @@ _Battle::_Battle() :
 _Battle::~_Battle() {
 	if(BattleElement)
 		BattleElement->SetVisible(false);
-	if(BattleWinElement)
-		BattleWinElement->SetVisible(false);
 
 	// Remove fighters
 	for(auto &Fighter : Fighters) {
@@ -181,6 +175,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 // Renders the battle win screen
 void _Battle::RenderBattleWin() {
+	/*
 	BattleWinElement->SetVisible(true);
 	Assets.Labels["label_battlewin_experience"]->Text = std::to_string(ClientExperienceReceived) + " experience";
 	Assets.Labels["label_battlewin_coins"]->Text = std::to_string(ClientGoldReceived) + " gold";
@@ -209,7 +204,7 @@ void _Battle::RenderBattleWin() {
 				DrawPosition.y += Texture->Size.y + 10;;
 			}
 		}
-	}
+	}*/
 }
 
 // Sends an action selection to the server
@@ -446,9 +441,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 
 	// Set up ui
 	BattleElement = Assets.Elements["element_battle"];
-	BattleWinElement = Assets.Elements["element_battlewin"];
 	BattleElement->SetVisible(true);
-	BattleWinElement->SetVisible(false);
 
 	// Set fighter position offsets and create ui elements
 	int SideCount[2] = { 0, 0 };
@@ -616,40 +609,6 @@ void _Battle::ServerEndBattle() {
 	}
 
 	Deleted = true;
-}
-
-// End of a battle
-void _Battle::ClientEndBattle(_Buffer &Data) {
-
-	// Get ending stats
-	bool SideDead[2];
-	SideDead[0] = Data.ReadBit();
-	SideDead[1] = Data.ReadBit();
-	int PlayerKills = Data.Read<uint8_t>();
-	int MonsterKills = Data.Read<uint8_t>();
-	ClientExperienceReceived = Data.Read<int32_t>();
-	ClientGoldReceived = Data.Read<int32_t>();
-	uint8_t ItemCount = Data.Read<uint8_t>();
-	for(uint8_t i = 0; i < ItemCount; i++) {
-		uint32_t ItemID = Data.Read<uint32_t>();
-		const _Item *Item = Stats->Items[ItemID];
-		ClientItemDrops.push_back(Item);
-		ClientPlayer->Inventory->AddItem(Item, 1);
-	}
-
-	// Check win or death
-	int PlayerSide = ClientPlayer->BattleSide;
-	int OtherSide = !PlayerSide;
-	if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
-		ClientPlayer->PlayerKills += PlayerKills;
-		ClientPlayer->MonsterKills += MonsterKills;
-	}
-	else {
-		ClientPlayer->Deaths++;
-	}
-
-	Deleted = true;
-	Time = 0.0;
 }
 
 // Calculates a screen position for a slot

@@ -51,7 +51,9 @@ class _StatChange {
 		_Object *Object;
 		glm::vec2 LastPosition;
 		glm::vec2 Position;
+		float Direction;
 		double Time;
+		double TimeOut;
 		int HealthChange;
 		int ManaChange;
 		int Experience;

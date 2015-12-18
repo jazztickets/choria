@@ -26,7 +26,6 @@ element_character		style_hud_bg	0	0	250	400	2	1	0	1	-1
 element_trade		style_hud_bg	212	0	304	288	1	1	0	1	-1
 element_teleport		style_hud_bg	0	-100	150	48	1	1	0	0	-1
 element_skills_tooltip		style_hud_item_tooltip_bg	0	0	370	250	0	0	0	0	-1
-element_battlewin		style_hud_bg	0	0	560	360	1	1	0	0	-1
 element_buffs_tooltip		style_hud_item_tooltip_bg	0	0	300	150	0	0	0	0	-1
 element_chat			25	-100	0	0	0	2	0	1	-1
 element_editor_buttonbar			0	0	96	32	2	0	0	1	-1

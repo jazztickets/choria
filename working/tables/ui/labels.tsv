@@ -60,10 +60,6 @@ label_teleport_timeleft	element_teleport	hud_medium			0	32	0	0	1	3
 label_skills_tooltip_name	element_skills_tooltip	menu_buttons			0	30	0	0	1	3
 label_buffs_tooltip_name	element_buffs_tooltip	menu_buttons			0	30	0	0	1	3
 label_battle_title	element_battle	battle_large			0	45	0	0	1	3
-label_battlewin_title	element_battlewin	battle_large		Victory	0	45	0	0	1	3
-label_battlewin_experience	image_battlewin_experience	hud_medium			90	38	0	0	0	3
-label_battlewin_coins	image_battlewin_coins	hud_medium			90	38	0	0	0	3
-label_battlewin_chest	image_battlewin_chest	hud_medium		No items found	90	38	0	0	0	3
 label_died	element_died	hud_large		You died	0	100	0	0	1	3
 label_died_gold	element_died	hud_medium		You lost gold	0	-100	0	0	1	2
 label_trade_status	element_trade	hud_medium		Waiting for other player...	0	64	0	0	1	0

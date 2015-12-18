@@ -32,7 +32,9 @@ _StatChange::_StatChange() :
 	Object(nullptr),
 	LastPosition(0, 0),
 	Position(0, 0),
+	Direction(-1.0f),
 	Time(0.0),
+	TimeOut(STATCHANGE_TIMEOUT),
 	HealthChange(0),
 	ManaChange(0),
 	Experience(0),
@@ -102,8 +104,10 @@ void _StatChange::Render(double BlendFactor) {
 		return;
 
 	// Get text color
+	std::string Font = "hud_medium";
 	glm::vec4 TextColor = COLOR_WHITE;
 	char Sign = ' ';
+
 	if(HealthChange > 0) {
 		TextColor = COLOR_GREEN;
 		Sign = '+';
@@ -118,8 +122,20 @@ void _StatChange::Render(double BlendFactor) {
 		Sign = '+';
 	}
 
+	if(Experience > 0) {
+		Font = "battle_large";
+		TextColor = COLOR_WHITE;
+		Sign = '+';
+	}
+
+	if(Gold > 0) {
+		Font = "menu_buttons";
+		TextColor = COLOR_GOLD;
+		Sign = '+';
+	}
+
 	// Get alpha
-	double TimeLeft = STATCHANGE_TIMEOUT - Time;
+	double TimeLeft = TimeOut - Time;
 	TextColor.a = 1.0f;
 	if(TimeLeft < ACTIONRESULT_FADETIME)
 		TextColor.a = (float)(TimeLeft / ACTIONRESULT_FADETIME);
@@ -134,5 +150,10 @@ void _StatChange::Render(double BlendFactor) {
 		Buffer << std::abs(HealthChange);
 	else if(ManaChange != 0)
 		Buffer << std::abs(ManaChange);
-	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
+	else if(Experience != 0)
+		Buffer << std::abs(Experience);
+	else if(Gold != 0)
+		Buffer << std::abs(Gold);
+
+	Assets.Fonts[Font]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }

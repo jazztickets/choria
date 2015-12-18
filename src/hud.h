@@ -32,6 +32,7 @@ class _Item;
 class _Skill;
 class _StatusEffect;
 class _Element;
+class _Label;
 class _TextBox;
 class _Action;
 class _Scripting;
@@ -193,6 +194,8 @@ class _HUD {
 		_Element *ChatElement;
 		_Element *HealthElement;
 		_Element *ManaElement;
+		_Element *ExperienceElement;
+		_Label *GoldElement;
 		_Cursor Cursor;
 		_Cursor Tooltip;
 

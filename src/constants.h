@@ -70,8 +70,10 @@ const double ACTIONRESULT_TIMEOUT = 2.5;
 const double ACTIONRESULT_FADETIME = 1.0;
 const double ACTIONRESULT_SPEED = 3.0;
 
-const double STATCHANGE_TIMEOUT = 1;
+const double STATCHANGE_TIMEOUT = 1.0;
+const double STATCHANGE_TIMEOUT_LONG = 3.0;
 const double STATCHANGE_FADETIME = 0.3;
+const float STATCHANGE_DISTANCE = 20.0f;
 
 const int SAVE_VERSION = 4;
 

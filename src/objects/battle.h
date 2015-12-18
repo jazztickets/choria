@@ -78,7 +78,6 @@ class _Battle : public _ManagerBase {
 
 		// Setup
 		void ServerEndBattle();
-		void ClientEndBattle(_Buffer &Data);
 
 		// Input
 		bool ClientHandleInput(int Action);
@@ -113,15 +112,8 @@ class _Battle : public _ManagerBase {
 
 		// Objects
 		int SideCount[2];
-		uint8_t NextID;
-
-		// Client battle results
-		int ClientExperienceReceived;
-		int ClientGoldReceived;
-		std::list<const _Item *> ClientItemDrops;
 
 		// UI
 		_Element *BattleElement;
-		_Element *BattleWinElement;
 
 };
