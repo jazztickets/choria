@@ -211,7 +211,7 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	if(Database->FetchRow()) {
-		Player->SpawnMapID = Database->GetInt<uint32_t>("map_id");
+		Player->SpawnMapID = (NetworkIDType)Database->GetInt<uint32_t>("map_id");
 		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
 		Player->Name = Database->GetString("name");
 		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");

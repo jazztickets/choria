@@ -198,6 +198,7 @@ class _HUD {
 
 		// Objects
 		_Object *Player;
+		std::list<_InventorySlot> RecentItems;
 
 		// Chat
 		std::list<_ChatMessage> ChatHistory;

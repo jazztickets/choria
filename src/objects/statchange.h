@@ -26,6 +26,14 @@ class _Object;
 class _Battle;
 class _Buffer;
 
+// Types of stats
+enum StatType : int {
+	HEALTH      = 0x01,
+	MANA        = 0x02,
+	EXPERIENCE  = 0x04,
+	GOLD        = 0x08,
+};
+
 // Stat changes
 class _StatChange {
 
@@ -38,6 +46,7 @@ class _StatChange {
 		void Render(double BlendFactor);
 
 		bool IsChanged();
+		int GetChangedFlag();
 
 		_Object *Object;
 		glm::vec2 LastPosition;
@@ -45,5 +54,7 @@ class _StatChange {
 		double Time;
 		int HealthChange;
 		int ManaChange;
+		int Experience;
+		int Gold;
 
 };

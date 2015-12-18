@@ -34,35 +34,67 @@ _StatChange::_StatChange() :
 	Position(0, 0),
 	Time(0.0),
 	HealthChange(0),
-	ManaChange(0) {
+	ManaChange(0),
+	Experience(0),
+	Gold(0) {
 
 }
 
 // Return true if there are stat changes
 bool _StatChange::IsChanged() {
 
-	return HealthChange != 0 || ManaChange != 0;
+	return HealthChange != 0 || ManaChange != 0 || Experience != 0 || Gold != 0;
 }
 
-// Serialize change
+// Get bit field of fields changed
+int _StatChange::GetChangedFlag() {
+	int Flag = 0;
+
+	if(HealthChange != 0)
+		Flag |= StatType::HEALTH;
+	if(ManaChange != 0)
+		Flag |= StatType::MANA;
+	if(Experience != 0)
+		Flag |= StatType::EXPERIENCE;
+	if(Gold != 0)
+		Flag |= StatType::GOLD;
+
+	return Flag;
+}
+
+// Serialize network
 void _StatChange::Serialize(_Buffer &Data) {
 	if(!Object)
 		throw std::runtime_error("_StatChange::Serialize: Object is null!");
 
+	int ChangedFlag = GetChangedFlag();
 	Data.Write<NetworkIDType>(Object->NetworkID);
-	Data.Write<int>(HealthChange);
-	Data.Write<int>(ManaChange);
+	Data.Write<int>(ChangedFlag);
+	if(ChangedFlag & StatType::HEALTH)
+		Data.Write<int>(HealthChange);
+	if(ChangedFlag & StatType::MANA)
+		Data.Write<int>(ManaChange);
+	if(ChangedFlag & StatType::EXPERIENCE)
+		Data.Write<int>(Experience);
+	if(ChangedFlag & StatType::GOLD)
+		Data.Write<int>(Gold);
 }
 
-// Unserialize change
+// Unserialize network
 void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
-
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	Object = Manager->IDMap[NetworkID];
-	HealthChange = Data.Read<int>();
-	ManaChange = Data.Read<int>();
-}
 
+	int ChangedFlag = Data.Read<int>();
+	if(ChangedFlag & StatType::HEALTH)
+		HealthChange = Data.Read<int>();
+	if(ChangedFlag & StatType::MANA)
+		ManaChange = Data.Read<int>();
+	if(ChangedFlag & StatType::EXPERIENCE)
+		Experience = Data.Read<int>();
+	if(ChangedFlag & StatType::GOLD)
+		Gold = Data.Read<int>();
+}
 
 // Render recent stat changes
 void _StatChange::Render(double BlendFactor) {

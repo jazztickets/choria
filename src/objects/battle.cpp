@@ -55,14 +55,13 @@ _Battle::_Battle() :
 	Manager(nullptr),
 	Time(0),
 	WaitTimer(0),
+	SideCount{0, 0},
 	NextID(0),
 	ClientExperienceReceived(0),
 	ClientGoldReceived(0),
 	BattleElement(nullptr),
 	BattleWinElement(nullptr) {
 
-	SideCount[0] = 0;
-	SideCount[1] = 0;
 }
 
 // Destructor

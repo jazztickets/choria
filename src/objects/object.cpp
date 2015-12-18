@@ -796,7 +796,7 @@ const _Tile *_Object::GetTile() {
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
 	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
-	//NextBattle = 1;
+	NextBattle = 1;
 }
 
 // Stop a battle
