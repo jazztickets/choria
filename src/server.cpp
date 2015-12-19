@@ -1202,13 +1202,17 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	Zone = 1;
+	//Zone = 8;
 	if(!Zone)
 		return;
 
+	// Get a list of players
+	std::list<_Object *> Players;
+	Object->Map->GetClosePlayers(Object, 7*7, Players);
+
 	// Get monsters
 	std::list<uint32_t> MonsterIDs;
-	Stats->GenerateMonsterListFromZone(Zone, MonsterIDs);
+	Stats->GenerateMonsterListFromZone((int)Players.size(), Zone, MonsterIDs);
 	if(MonsterIDs.size()) {
 
 		// Create a new battle instance
@@ -1229,10 +1233,6 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 
 		// Add players
 		Battle->AddFighter(Object, 0);
-
-		// Get a list of players
-		std::list<_Object *> Players;
-		Object->Map->GetClosePlayers(Object, 7*7, Players);
 
 		// Add players to battle
 		int PlayersAdded = 0;

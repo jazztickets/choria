@@ -259,7 +259,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 	Monster->DatabaseID = MonsterID;
 
 	// Run query
-	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.id = @monster_id");
+	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.ai_id = ai.id AND m.id = @monster_id");
 	Database->BindInt(1, MonsterID);
 
 	// Get data
@@ -286,7 +286,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->AI = Database->GetString("ai_name");
 
 		Monster->ActionBar.resize(ACTIONBAR_STARTING_SIZE);
-		Monster->ActionBar[0].Skill = Skills[1];
+		Monster->ActionBar[0].Skill = Skills[12];
 	}
 
 	// Free memory
@@ -325,17 +325,17 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<uint32_t> &Monsters) {
+void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters) {
 	if(ZoneID == 0)
 		return;
 
-	uint32_t MonsterCount = 0;
+	int MonsterCount = 0;
 
 	// Get zone info
 	Database->PrepareQuery("SELECT monstercount FROM zone WHERE id = @zone_id");
 	Database->BindInt(1, ZoneID);
 	if(Database->FetchRow()) {
-		MonsterCount = Database->GetInt<uint32_t>("monstercount");
+		MonsterCount = AdditionalCount + Database->GetInt<int>("monstercount");
 	}
 	Database->CloseQuery();
 
@@ -367,7 +367,7 @@ void _Stats::GenerateMonsterListFromZone(uint32_t ZoneID, std::list<uint32_t> &M
 		// Generate monsters
 		uint32_t RandomNumber;
 		size_t MonsterIndex;
-		for(uint32_t i = 0; i < MonsterCount; i++) {
+		for(int i = 0; i < MonsterCount; i++) {
 			RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
 			for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
 				if(RandomNumber <= Zone[MonsterIndex].Odds)
