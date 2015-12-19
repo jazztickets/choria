@@ -93,23 +93,34 @@ end
 
 -- Flame --
 
-Skill_Flame = { ManaCostBase = 5, FlameBase = 5, Mult = 2 }
+Skill_Flame = {
+	ManaCostBase = 5,
+	DamageBase = 5,
+	Mult = 2,
+	CostPerLevel = 0.5,
+	GetDamage = function(Level)
+		return Skill_Flame.DamageBase + Level * Skill_Flame.Mult
+	end,
+	GetCost = function(Level)
+		return math.floor(Skill_Flame.ManaCostBase + Level * Skill_Flame.CostPerLevel)
+	end
+}
 
 function Skill_Flame.GetInfo(Level)
 
-	return "Burn all targets for " .. (Skill_Flame.FlameBase + Level * Skill_Flame.Mult) .. "HP\nCost " .. math.floor(Skill_Flame.ManaCostBase + Level / 2) .. " mana"
+	return "Burn all targets for " .. Skill_Flame.GetDamage(Level) .. "HP\nCost " .. Skill_Flame.GetCost(Level) .. " mana"
 end
 
 function Skill_Flame.Use(Level, Source, Target, Result)
 
-	Damage = math.max((Skill_Flame.FlameBase + Level * Skill_Flame.Mult) - Target.GenerateDefense(), 0)
+	Damage = math.max(Skill_Flame.GetDamage(Level) - Target.GenerateDefense(), 0)
 	Result.TargetHealthChange = -Damage
 
 	return Result
 end
 
 function Skill_Flame.CanUse(Level, Object)
-	if Object.Mana >= Skill_Flame.ManaCostBase then
+	if Object.Mana >= Skill_Flame.GetCost(Level) then
 		return 1
 	end
 
@@ -117,30 +128,41 @@ function Skill_Flame.CanUse(Level, Object)
 end
 
 function Skill_Flame.ApplyCost(Level, Result)
-	Result.SourceManaChange = -math.floor(Skill_Flame.ManaCostBase + Level / 2)
+	Result.SourceManaChange = -Skill_Flame.GetCost(Level)
 
 	return Result
 end
 
 -- Bolt --
 
-Skill_Bolt = { ManaCostBase = 5, BoltBase = 15, Mult = 6 }
+Skill_Bolt = {
+	ManaCostBase = 5,
+	DamageBase = 15,
+	Mult = 6,
+	CostPerLevel = 1,
+	GetDamage = function(Level)
+		return Skill_Bolt.DamageBase + Level * Skill_Bolt.Mult
+	end,
+	GetCost = function(Level)
+		return math.floor(Skill_Bolt.ManaCostBase + Level * Skill_Bolt.CostPerLevel)
+	end
+}
 
 function Skill_Bolt.GetInfo(Level)
 
-	return "Strike a target for " .. (Skill_Bolt.BoltBase + Level * Skill_Bolt.Mult) .. "HP\nCost " .. math.floor(Skill_Bolt.ManaCostBase + Level) .. " mana"
+	return "Strike a target for " .. Skill_Bolt.GetDamage(Level) .. "HP\nCost " .. Skill_Bolt.GetCost(Level) .. " mana"
 end
 
 function Skill_Bolt.Use(Level, Source, Target, Result)
 
-	Damage = math.max((Skill_Bolt.BoltBase + Level * Skill_Bolt.Mult) - Target.GenerateDefense(), 0)
+	Damage = math.max(Skill_Bolt.GetDamage(Level) - Target.GenerateDefense(), 0)
 	Result.TargetHealthChange = -Damage
 
 	return Result
 end
 
 function Skill_Bolt.CanUse(Level, Object)
-	if Object.Mana >= Skill_Bolt.ManaCostBase then
+	if Object.Mana >= Skill_Bolt.GetCost(Level) then
 		return 1
 	end
 
@@ -148,7 +170,7 @@ function Skill_Bolt.CanUse(Level, Object)
 end
 
 function Skill_Bolt.ApplyCost(Level, Result)
-	Result.SourceManaChange = -math.floor(Skill_Bolt.ManaCostBase + Level)
+	Result.SourceManaChange = -Skill_Bolt.GetCost(Level)
 
 	return Result
 end
