@@ -128,7 +128,7 @@ Skill_Bolt = { ManaCostBase = 5, BoltBase = 15, Mult = 6 }
 
 function Skill_Bolt.GetInfo(Level)
 
-	return "Strike a targets for " .. (Skill_Bolt.BoltBase + Level * Skill_Bolt.Mult) .. "HP\nCost " .. math.floor(Skill_Bolt.ManaCostBase + Level) .. " mana"
+	return "Strike a target for " .. (Skill_Bolt.BoltBase + Level * Skill_Bolt.Mult) .. "HP\nCost " .. math.floor(Skill_Bolt.ManaCostBase + Level) .. " mana"
 end
 
 function Skill_Bolt.Use(Level, Source, Target, Result)
