@@ -788,7 +788,7 @@ int _Object::Move() {
 		Position += Direction;
 		if(InvisPower > 0)
 			InvisPower--;
-		else
+		else if(GetTile()->Zone > 0)
 			NextBattle--;
 
 		MoveTime = 0;
