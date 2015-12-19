@@ -699,10 +699,17 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
-	// Use an item
+	// Get item slot index
 	size_t Slot = Data.Read<uint8_t>();
 	if(Slot >= Player->Inventory->Slots.size())
 		return;
+
+	// Check for existing action
+	if(!Player->Action.IsSet()) {
+		Player->Targets.clear();
+		Player->Targets.push_back(Player);
+		Player->Action.Item = Player->Inventory->Slots[Slot].Item;
+	}
 }
 
 // Handle a player's inventory split stack request
