@@ -148,14 +148,14 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 						if(Input.ModKeyDown(KMOD_CTRL))
-							SplitStack((uint8_t)Tooltip.Slot, 1);
+							SplitStack((uint8_t)Tooltip.Slot, 1 + 4 * Input.ModKeyDown(KMOD_SHIFT));
 						else
 							Cursor = Tooltip;
 					}
 					// Use an item
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(Input.ModKeyDown(KMOD_SHIFT)) {
-							SellItem(&Tooltip, 1);
+							SellItem(&Tooltip, 1 + 4 * Input.ModKeyDown(KMOD_CTRL));
 						}
 						else {
 							_Buffer Packet;
