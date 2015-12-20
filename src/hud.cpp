@@ -847,6 +847,7 @@ void _HUD::InitSkills() {
 
 	SkillsElement->CalculateBounds();
 	SkillsElement->SetVisible(true);
+	CharacterElement->SetVisible(true);
 
 	RefreshSkillButtons();
 	Cursor.Reset();
