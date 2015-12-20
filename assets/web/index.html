@@ -1,0 +1,61 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>choria design tool</title>
+		<link rel="stylesheet" type="text/css" href="css/normalize.min.css">
+		<link rel="stylesheet" type="text/css" href="css/handsontable.full.min.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<script src="js/handsontable.full.min.js"></script>
+		<script src="js/jquery-2.1.4.min.js"></script>
+		<!--<link rel="icon" type="image/png" href="img/favicon.png">-->
+	</head>
+	<body>
+		<div class="header">
+		</div>
+		<div class="nav">
+			<ul>
+				<li><a href="/">Home</a></li>
+			</ul>
+		</div>
+		<div class="container">
+			<div id="sheet"></div>
+			<div id="buttons">
+			<input type="button" id="save" value="Save" />
+			</div>
+		</div>
+	</body>
+	<script>
+		
+		var container = document.getElementById('sheet');
+		var hot = null;
+
+		$.getJSON("/data?table=item", function(data) {
+			hot = new Handsontable(container, {
+				data: data,
+				rowHeaders: true,
+				colHeaders: true,
+				contextMenu: true
+			});
+		});
+
+		$('#save').click(function() {
+
+			// Send request
+			var request = $.ajax({
+				type: "POST",
+				url: "/save?table=test",
+				data: jQuery.param({'data': hot.getData()}),
+				dataType: "html"
+			});
+			
+			// Get return message
+			request.done(function (response, text_status, jqxhr) {
+				
+				console.log("done");
+			});
+		});
+	</script>
+</html>
