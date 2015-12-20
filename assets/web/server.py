@@ -86,11 +86,32 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 	def request_handler(self, path):
 		parts = urllib.parse.urlsplit(self.path)
 		query = urllib.parse.parse_qs(parts.query)
+		json_string = None
 		if parts.path == "/data":
 			tablename = query['table']
+			query = sql.execute("pragma table_info(" + tablename[0] + ")")
+			rows = query.fetchall()
+			names = []
+			for row in rows:
+				names.append(row[1])
+
 			query = sql.execute("select * from item");
-			results = query.fetchall()
+			results = {}
+			print(names)
+			results['columns'] = names
+			results['data'] = query.fetchall()
 			json_string = json.dumps(results)
+		elif parts.path == "/columns":
+			tablename = query['table']
+			query = sql.execute("pragma table_info(" + tablename[0] + ")")
+			results = query.fetchall()
+			names = []
+			for row in results:
+				names.append(row[1])
+
+			json_string = json.dumps(names)
+
+		if json_string:
 			self.send_response(HTTPStatus.OK)
 			self.send_header("Content-type", "application/json")
 			self.send_header("Content-Length", len(json_string))
@@ -149,4 +170,5 @@ print("Starting http://localhost:8000")
 try:
 	httpd.serve_forever()
 except KeyboardInterrupt:
+	db.close()
 	sys.exit(0)

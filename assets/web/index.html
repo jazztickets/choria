@@ -13,8 +13,6 @@
 		<!--<link rel="icon" type="image/png" href="img/favicon.png">-->
 	</head>
 	<body>
-		<div class="header">
-		</div>
 		<div class="nav">
 			<ul>
 				<li><a href="/">Home</a></li>
@@ -28,20 +26,34 @@
 		</div>
 	</body>
 	<script>
-		
+
 		var container = document.getElementById('sheet');
 		var hot = null;
 
-		$.getJSON("/data?table=item", function(data) {
+		$.getJSON("/data?table=item", function(response) {
+			columns = response['columns']
+			data = response['data']
 			hot = new Handsontable(container, {
 				data: data,
 				rowHeaders: true,
-				colHeaders: true,
-				contextMenu: true
+				colHeaders: columns,
+				columnSorting: true,
+				cells: function(row, col, prop) {
+					var cellProperties = {};
+					if(col == 0) {
+						cellProperties.readOnly = true;
+					}
+
+					return cellProperties;
+				},
 			});
 		});
 
 		$('#save').click(function() {
+			save();
+		});
+
+		function save() {
 
 			// Send request
 			var request = $.ajax({
@@ -56,6 +68,18 @@
 				
 				console.log("done");
 			});
+
+		}
+
+		// Ctrl+s hotkey
+		$(document).keydown(function(event) {
+			if(!(String.fromCharCode(event.which).toLowerCase() == 's' && event.ctrlKey) && !(event.which == 19))
+				return true;
+
+			event.preventDefault();
+			save();
+
+			return false;
 		});
 	</script>
 </html>

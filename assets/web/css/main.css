@@ -20,48 +20,17 @@ a:hover {
 	color: #654;
 }
 
-td {
-	padding-right: 10px;
-}
-
-tr:hover {
-	background-color: #151515;
-}
-
-.main {
-	margin-top: 20px;
-}
-
-.header {
-	font-weight: bold;
-}
-
-.selectheader {
-	font-weight: bold;
-	margin-bottom: 2px;
-}
-
 .changed {
 	color: #AA0000;
 	font-weight: bold;
 	margin-bottom: 15px;
 }
 
-.regularform label {
-	font-weight: bold;
-}
-
-.regularform input[type="text"], .regularform input[type="radio"], .regularform textarea, .regularform select {
-	display: block;
-	margin-top: 2px;
-	margin-bottom: 10px;
-	width: 30ex;
-}
-
 .container {
-	max-width: initial;
-	width: 100%;
-	padding: 20px;
+}
+
+#buttons {
+	margin: 15px;
 }
 
 .nav {
@@ -97,41 +66,28 @@ tr:hover {
 	background: #333;
 }
 
-label {
-	display: inline-block;
-	font-weight: initial;
-	vertical-align: middle;
-	margin-bottom: 0;
-}
-
-label input {
-	margin-bottom: 2px;
-	vertical-align: middle;
-}
-
-img.full {
-    max-width: 100%;
-    height: auto;
-}
-
-img.thumb {
-    max-width: 150px;
-    height: auto;
-}
-
-form {
-	margin-bottom: 0px;
-}
-
 .handsontable td {
 	background-color: #141414;
+	border-right: 1px solid #333;
+	border-bottom: 1px solid #333;
 }
 
 .handsontable th {
 	color: #FFF;
 	font-weight: bold;
 	background-color: #222;
+	border-right: 1px solid #666;
+	border-bottom: 1px solid #666;
 }
 
-.handsontable th {
+.handsontable tr:first-child th, .handsontable tr:first-child td {
+	border-top: 1px solid #666;
+}
+
+.handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame+th, .handsontable .htNoFrame+td {
+    border-left: 1px solid #666;
+}
+.handsontable th:last-child {
+	border-right: 1px solid #666;
+	border-bottom: 1px solid #666;
 }
