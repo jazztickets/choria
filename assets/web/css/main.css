@@ -12,6 +12,12 @@ input, button, select {
 	padding: 4px;
 }
 
+input:disabled {
+	color: #555;
+	background-color: #040404;
+	border: solid 1px #222;
+}
+
 a {
 	color: #784;
 }
@@ -30,7 +36,7 @@ a:hover {
 	margin-bottom: 10px;
 }
 
-#buttons {
+.buttons {
 	margin: 15px;
 }
 

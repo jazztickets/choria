@@ -69,11 +69,38 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 						id = escaped
 					i += 1
 				update_sql = ', '.join(pairs)
-				sql = "UPDATE {0} SET {1} WHERE {2} = {3}".format(tablename, update_sql, id_name, id)
-				db.execute(sql)
-				db.commit()
+				sql = "UPDATE {0} SET {1} WHERE {2} = ?".format(tablename, update_sql, id_name)
+				try:
+					db.execute(sql, (id, ))
+					db.commit()
+				except sqlite3.Error as e:
+					self.write_json_response({'message':sql + ": " + str(e)})
+					return
+
 
 			self.write_json_response({'message':'saved ' + str(datetime.datetime.now())})
+			return
+		elif parts.path == "/add":
+			parsed = urllib.parse.parse_qs(data, True)
+			tablename = query['table'][0]
+			sql = "INSERT INTO {0} DEFAULT VALUES".format(tablename)
+			db.execute(sql)
+			db.commit()
+
+			self.write_json_response({'message':'1 row added'})
+			return
+		elif parts.path == "/remove":
+			parsed = urllib.parse.parse_qs(data, True)
+			tablename = query['table'][0]
+			columns = get_column_names(tablename)
+			id_name = columns[0]
+
+			id = parsed[b'id'][0].decode('utf-8')
+			sql = "DELETE FROM {0} WHERE {1} = ?".format(tablename, id_name)
+			db.execute(sql, (id,))
+			db.commit()
+
+			self.write_json_response({'message':'Row deleted'})
 			return
 
 		self.send_error(HTTPStatus.NOT_FOUND, "Not found")

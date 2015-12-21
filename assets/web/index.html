@@ -24,16 +24,21 @@
 			</ul>
 		</div>
 		<div class="container">
-			<div id="buttons">
+			<div class="buttons">
+				<input type="button" id="add" value="Add Row" />
 				<input type="button" id="save" value="Save" />
 				<span id="message"></span>
 			</div>
 			<div id="sheet"></div>
+			<div class="buttons">
+				<input type="button" id="delete" value="Delete" />
+				<input type="textbox" id="delete_id" value="" />
+			</div>
 		</div>
 	</body>
 	<script>
 		$(document).ajaxError(function() {
-			  $("#message").text("ajax error");
+			  $("#message").text("check console");
 		});
 
 		var hot = null;
@@ -47,7 +52,8 @@
 
 			// Load spreadsheet
 			var container = document.getElementById('sheet');
-			$.getJSON("/data?table=" + tablename, function(response) {
+			data_url = "/data?table=" + tablename;
+			$.getJSON(data_url, function(response) {
 				columns = response['columns']
 				data = response['data']
 				hot = new Handsontable(container, {
@@ -63,9 +69,18 @@
 
 						return cellProperties;
 					},
+					afterChange: function(changes, source) {
+						update_buttons(0);
+					},
+					afterSelection: function(r, c, r2, c2) {
+						$('#delete_id').val(hot.getDataAtCell(r, 0));
+					},
 				});
+
+				update_buttons(1);
 			});
 
+			// load nav links
 			$.getJSON("/tables", function(response) {
 				tables = response;
 				for(i in tables) {
@@ -79,11 +94,26 @@
 				}
 			});
 
-			// Add save handler
-			$('#save').click(function() {
-				save();
-			});
+			// Add handlers
+			$('#save').click(function() { save(); });
+			$('#add').click(function() { add(); });
+			$('#delete').click(function() { remove(); });
 		});
+
+		// Change add row/delete button state
+		function update_buttons(state) {
+			$('#add').prop('disabled', !state);
+			$('#delete').prop('disabled', !state);
+			$('#delete_id').prop('disabled', !state);
+		}
+
+		// Reload data
+		function reload() {
+			$.getJSON(data_url, function(response) {
+				hot.loadData(response['data']);
+				update_buttons(1);
+			});
+		}
 
 		// Save data
 		function save() {
@@ -93,21 +123,65 @@
 				type: "POST",
 				url: "/save?table=" + tablename,
 				data: jQuery.param({'data': hot.getData()}),
-				success: function (response, text_status, jqxhr) {
-					result = JSON.parse(response);
-					if(text_status == "success") {
-						message = result['message'];
-						if(result['message'] != undefined)
-							$('#message').html(message);
-					}
-					else
-						$('#message').html(text_status);
+				dataType: "html",
+				success: function(response, text_status, jqxhr) {
+					ajax_success(response, text_status, jqxhr);
+					update_buttons(1);
 				},
-				error: function(jqxhr, text_status, error) {
-					$('#message').html(error);
-				},
-				dataType: "html"
+				error: ajax_error,
 			});
+		}
+
+		// Add new row
+		function add() {
+
+			// Send request
+			var request = $.ajax({
+				type: "POST",
+				url: "/add?table=" + tablename,
+				data: {},
+				dataType: "html",
+				success: function(response, text_status, jqxhr) {
+					ajax_success(response, text_status, jqxhr);
+					reload();
+				},
+				error: ajax_error,
+			});
+		}
+
+		// Delete row
+		function remove() {
+			id = parseInt($('#delete_id').val());
+			if(id <= 0 || isNaN(id) || !confirm("Sure ?"))
+				return;
+
+			// Send request
+			var request = $.ajax({
+				type: "POST",
+				url: "/remove?table=" + tablename,
+				data: {'id': id},
+				dataType: "html",
+				success: function(response, text_status, jqxhr) {
+					ajax_success(response, text_status, jqxhr);
+					reload();
+				},
+				error: ajax_error,
+			});
+		}
+
+		function ajax_success(response, text_status, jqxhr) {
+			result = JSON.parse(response);
+			if(text_status == "success") {
+				message = result['message'];
+				if(result['message'] != undefined)
+					$('#message').html(message);
+			}
+			else
+				$('#message').html(text_status);
+		}
+
+		function ajax_error(jqxhr, text_status, error) {
+			$('#message').html(error);
 		}
 
 		// Ctrl+s hotkey
