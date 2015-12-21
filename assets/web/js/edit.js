@@ -13,10 +13,16 @@ $(document).ready(function() {
 
 	// Load spreadsheet
 	var container = document.getElementById('sheet');
-	data_url = "/data?table=" + tablename;
+	data_url = "/data" + location.search;
 	$.getJSON(data_url, function(response) {
-		columns = response['columns']
-		data = response['data']
+		columns = response['columns'];
+		data = response['data'];
+		message = response['message'];
+		if(message != undefined) {
+			$('#message').html(message);
+			return;
+		}
+
 		hot = new Handsontable(container, {
 			data: data,
 			rowHeaders: true,

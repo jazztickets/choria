@@ -16,16 +16,16 @@ import sqlite3
 from http import HTTPStatus
 
 db = sqlite3.connect('../../working/stats/stats.db')
-sql = db.cursor()
+cursor = db.cursor()
 
 def get_table_names():
-	query = sql.execute("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
+	query = cursor.execute("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
 	rows = query.fetchall()
 
 	return rows
 
 def get_column_names(tablename):
-	query = sql.execute("PRAGMA table_info(" + tablename + ")")
+	query = cursor.execute("PRAGMA table_info(" + tablename + ")")
 	rows = query.fetchall()
 	names = []
 	for row in rows:
@@ -149,20 +149,38 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 	def request_handler(self, path):
 		parts = urllib.parse.urlsplit(self.path)
 		query = urllib.parse.parse_qs(parts.query)
+		params = {}
+		for var in query:
+			params[var] = query[var][0]
+
 		response = None
 		if parts.path == "/data":
-			tablename = query['table'][0]
-			columns = get_column_names(tablename)
+			columns = get_column_names(params['table'])
 
-			query = sql.execute("select * from {0}".format(tablename));
+			pairs = []
+			for param in params:
+				escaped = params[param].replace('"', '""')
+				if param != "table":
+					pairs.append(param + " = \"" + escaped + "\"")
+
+			where = ""
+			if len(pairs):
+				where = 'WHERE ' + ', '.join(pairs)
+
+			try:
+				sql = "SELECT * FROM {0} {1}".format(params['table'], where)
+				query = cursor.execute(sql);
+			except sqlite3.Error as e:
+				self.write_json_response({'message':sql + ": " + str(e)})
+				return True
+
 			results = {}
 			results['columns'] = columns
 			results['data'] = query.fetchall()
 			self.write_json_response(results)
 			return True
 		elif parts.path == "/columns":
-			tablename = query['table']
-			query = sql.execute("pragma table_info(" + tablename[0] + ")")
+			query = cursor.execute("pragma table_info(" + params['table'] + ")")
 			results = query.fetchall()
 			names = []
 			for row in results:
