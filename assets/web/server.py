@@ -39,7 +39,7 @@ def get_references(tablename):
 	row = query.fetchone()
 	references = {}
 	if row:
-		matches = re.findall('(.*?) INTEGER REFERENCES (.*?) ON', row[0])
+		matches = re.findall('(.*?) INTEGER.*?REFERENCES (.*?) ON', row[0])
 
 		for match in matches:
 			field = match[0].strip().replace('"', '')

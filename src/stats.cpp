@@ -123,7 +123,7 @@ void _Stats::LoadSkills() {
 		Skill->Texture = Assets.Textures[Database->GetString("icon")];
 		Skill->TargetID = (TargetType)Database->GetInt<int>("target_id");
 		Skill->TargetAlive = Database->GetInt<int>("target_alive");
-		Skill->Scope = (ScopeType)Database->GetInt<int>("scope");
+		Skill->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Skills[Skill->ID] = Skill;
 	}
 	Database->CloseQuery();
@@ -184,7 +184,7 @@ void _Stats::LoadItems() {
 		Item->HealthRegen = Database->GetReal("healthregen");
 		Item->ManaRegen = Database->GetReal("manaregen");
 		Item->InvisPower = Database->GetInt<int>("invispower");
-		Item->Scope = (ScopeType)Database->GetInt<int>("scope");
+		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Items[Item->ID] = Item;
 	}
 	Database->CloseQuery();
