@@ -8,6 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="css/normalize.min.css">
 		<link rel="stylesheet" type="text/css" href="css/handsontable.full.min.css">
 		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<script src="js/functions.js"></script>
 		<script src="js/handsontable.full.min.js"></script>
 		<script src="js/jquery-2.1.4.min.js"></script>
 		<!--<link rel="icon" type="image/png" href="img/favicon.png">-->
@@ -26,7 +27,7 @@
 		</div>
 	</body>
 	<script>
-		var tablename = "item";
+		var tablename = querystring["table"][0]
 		var container = document.getElementById('sheet');
 		var hot = null;
 		$.getJSON("/data?table=" + tablename, function(response) {
@@ -67,7 +68,6 @@
 				
 				console.log("done");
 			});
-
 		}
 
 		// Ctrl+s hotkey
@@ -80,5 +80,6 @@
 
 			return false;
 		});
+
 	</script>
 </html>

@@ -121,9 +121,10 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		query = urllib.parse.parse_qs(parts.query)
 		response = None
 		if parts.path == "/data":
-			columns = get_column_names(query['table'][0])
+			tablename = query['table'][0]
+			columns = get_column_names(tablename)
 
-			query = sql.execute("select * from item");
+			query = sql.execute("select * from {0}".format(tablename));
 			results = {}
 			results['columns'] = columns
 			results['data'] = query.fetchall()
@@ -185,10 +186,14 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		'': 'application/octet-stream',
 		})
 
-socketserver.TCPServer.allow_reuse_address = True
-httpd = socketserver.TCPServer(("", 8000), HttpHandler)
+Port = 8080
+if len(sys.argv) == 2:
+	Port = int(sys.argv[1])
 
-print("Starting http://localhost:8000")
+socketserver.TCPServer.allow_reuse_address = True
+httpd = socketserver.TCPServer(("", Port), HttpHandler)
+
+print("Starting http://localhost:" + str(Port))
 
 try:
 	httpd.serve_forever()
