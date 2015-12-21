@@ -48,7 +48,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		# get post data
 		length = self.headers['content-length']
 		data = self.rfile.read(int(length))
-		
+
 		# parse url
 		parts = urllib.parse.urlsplit(self.path)
 		query = urllib.parse.parse_qs(parts.query)
@@ -76,7 +76,6 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 				except sqlite3.Error as e:
 					self.write_json_response({'message':sql + ": " + str(e)})
 					return
-
 
 			self.write_json_response({'message':'saved ' + str(datetime.datetime.now())})
 			return
@@ -117,10 +116,8 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		if os.path.isdir(path):
 			parts = urllib.parse.urlsplit(self.path)
 			if not parts.path.endswith('/'):
-				# redirect browser - doing basically what apache does
 				self.send_response(HTTPStatus.MOVED_PERMANENTLY)
-				new_parts = (parts[0], parts[1], parts[2] + '/',
-							 parts[3], parts[4])
+				new_parts = (parts[0], parts[1], parts[2] + '/', parts[3], parts[4])
 				new_url = urllib.parse.urlunsplit(new_parts)
 				self.send_header("Location", new_url)
 				self.end_headers()
@@ -178,21 +175,27 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			self.write_json_response(names)
 			return True
 		elif parts.path == "/":
-			with open('layout.html', 'r') as infile:
-				layout = infile.read()
-
-			with open('edit.html', 'r') as infile:
-				content = infile.read()
-
-			layout = layout % {'content':content} 
-			self.send_response(HTTPStatus.OK)
-			self.send_header("Content-type", "text/html")
-			self.send_header("Content-Length", len(layout))
-			self.end_headers()
-			self.wfile.write(str.encode(layout))
+			content = self.get_page("edit.html")
+			self.write_page(content)
 			return True
 
 		return False
+
+	def get_page(self, page):
+		with open('layout.html', 'r') as infile:
+			layout = infile.read()
+
+		with open(page, 'r') as infile:
+			content = infile.read()
+
+		return layout % {'content':content}
+
+	def write_page(self, content):
+		self.send_response(HTTPStatus.OK)
+		self.send_header("Content-type", "text/html")
+		self.send_header("Content-Length", len(content))
+		self.end_headers()
+		self.wfile.write(str.encode(content))
 
 	def translate_path(self, path):
 		# abandon query parameters
