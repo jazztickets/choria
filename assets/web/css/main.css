@@ -27,10 +27,16 @@ a:hover {
 }
 
 .container {
+	margin-bottom: 10px;
 }
 
 #buttons {
 	margin: 15px;
+}
+
+#message {
+	color: #6D91B9;
+	margin-left: 10px;
 }
 
 .nav {

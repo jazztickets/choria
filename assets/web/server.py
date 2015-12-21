@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import cgi
+import datetime
 import html
 import http.server
 import io
@@ -17,8 +18,14 @@ from http import HTTPStatus
 db = sqlite3.connect('../../working/stats/stats.db')
 sql = db.cursor()
 
+def get_table_names():
+	query = sql.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+	rows = query.fetchall()
+
+	return rows
+
 def get_column_names(tablename):
-	query = sql.execute("pragma table_info(" + tablename + ")")
+	query = sql.execute("PRAGMA table_info(" + tablename + ")")
 	rows = query.fetchall()
 	names = []
 	for row in rows:
@@ -64,8 +71,10 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 				sql = "UPDATE {0} SET {1} WHERE id = {2}".format(tablename, update_sql, id)
 				db.execute(sql)
 				db.commit()
+				self.write_json_response({'message':'saved ' + str(datetime.datetime.now())})
+				return
 
-		self.write_json_response({'message':'saved'})
+		self.send_error(HTTPStatus.NOT_FOUND, "Not found")
 
 	def do_GET(self):
 		self.handle_request(False)
@@ -87,11 +96,6 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 				self.send_header("Location", new_url)
 				self.end_headers()
 				return
-			for index in "index.html", "index.htm":
-				index = os.path.join(path, index)
-				if os.path.exists(index):
-					path = index
-					break
 
 		if self.request_handler(path):
 			return
@@ -128,7 +132,8 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			results = {}
 			results['columns'] = columns
 			results['data'] = query.fetchall()
-			response = results
+			self.write_json_response(results)
+			return True
 		elif parts.path == "/columns":
 			tablename = query['table']
 			query = sql.execute("pragma table_info(" + tablename[0] + ")")
@@ -137,10 +142,21 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			for row in results:
 				names.append(row[1])
 
-			response = names
+			self.write_json_response(names)
+			return True
+		elif parts.path == "/tables":
+			names = get_table_names()
+			self.write_json_response(names)
+			return True
+		elif parts.path == "/":
+			with open('index.html', 'r') as infile:
+				data = infile.read()
 
-		if response:
-			self.write_json_response(response)
+			self.send_response(HTTPStatus.OK)
+			self.send_header("Content-type", "text/html")
+			self.send_header("Content-Length", len(data))
+			self.end_headers()
+			self.wfile.write(str.encode(data))
 			return True
 
 		return False
