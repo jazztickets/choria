@@ -19,7 +19,7 @@ db = sqlite3.connect('../../working/stats/stats.db')
 sql = db.cursor()
 
 def get_table_names():
-	query = sql.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+	query = sql.execute("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
 	rows = query.fetchall()
 
 	return rows
@@ -56,6 +56,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			parsed = urllib.parse.parse_qs(data, True)
 			tablename = query['table'][0]
 			columns = get_column_names(tablename)
+			id_name = columns[0]
 			for row in parsed:
 				i = 0
 				pairs = []
@@ -68,11 +69,12 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 						id = escaped
 					i += 1
 				update_sql = ', '.join(pairs)
-				sql = "UPDATE {0} SET {1} WHERE id = {2}".format(tablename, update_sql, id)
+				sql = "UPDATE {0} SET {1} WHERE {2} = {3}".format(tablename, update_sql, id_name, id)
 				db.execute(sql)
 				db.commit()
-				self.write_json_response({'message':'saved ' + str(datetime.datetime.now())})
-				return
+
+			self.write_json_response({'message':'saved ' + str(datetime.datetime.now())})
+			return
 
 		self.send_error(HTTPStatus.NOT_FOUND, "Not found")
 

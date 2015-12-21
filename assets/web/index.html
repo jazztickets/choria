@@ -19,6 +19,10 @@
 				<li><a href="/">Home</a></li>
 			</ul>
 		</div>
+		<div class="nav small">
+			<ul id="tables" >
+			</ul>
+		</div>
 		<div class="container">
 			<div id="buttons">
 				<input type="button" id="save" value="Save" />
@@ -32,36 +36,53 @@
 			  $("#message").text("ajax error");
 		});
 
-		try {
-			tablename = querystring["table"][0];
-		}
-		catch(error) {
-			tablename = "item";
-		}
-
-		var container = document.getElementById('sheet');
 		var hot = null;
-		$.getJSON("/data?table=" + tablename, function(response) {
-			columns = response['columns']
-			data = response['data']
-			hot = new Handsontable(container, {
-				data: data,
-				rowHeaders: true,
-				colHeaders: columns,
-				columnSorting: true,
-				cells: function(row, col, prop) {
-					var cellProperties = {};
-					if(col == 0) {
-						cellProperties.readOnly = true;
-					}
+		$(document).ready(function() {
+			try {
+				tablename = querystring["table"][0];
+			}
+			catch(error) {
+				tablename = "item";
+			}
 
-					return cellProperties;
-				},
+			// Load spreadsheet
+			var container = document.getElementById('sheet');
+			$.getJSON("/data?table=" + tablename, function(response) {
+				columns = response['columns']
+				data = response['data']
+				hot = new Handsontable(container, {
+					data: data,
+					rowHeaders: true,
+					colHeaders: columns,
+					columnSorting: true,
+					cells: function(row, col, prop) {
+						var cellProperties = {};
+						if(col == 0) {
+							cellProperties.readOnly = true;
+						}
+
+						return cellProperties;
+					},
+				});
 			});
-		});
 
-		$('#save').click(function() {
-			save();
+			$.getJSON("/tables", function(response) {
+				tables = response;
+				for(i in tables) {
+					table = tables[i];
+					li_element = document.createElement("li");
+					a_element = document.createElement("a");
+					$(a_element).attr("href", "/?table=" + table);
+					$(a_element).html(table);
+					$(li_element).append(a_element);
+					$('#tables').append(li_element);
+				}
+			});
+
+			// Add save handler
+			$('#save').click(function() {
+				save();
+			});
 		});
 
 		// Save data
