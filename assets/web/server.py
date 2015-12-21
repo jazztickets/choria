@@ -178,14 +178,18 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			self.write_json_response(names)
 			return True
 		elif parts.path == "/":
-			with open('index.html', 'r') as infile:
-				data = infile.read()
+			with open('layout.html', 'r') as infile:
+				layout = infile.read()
 
+			with open('edit.html', 'r') as infile:
+				content = infile.read()
+
+			layout = layout % {'content':content} 
 			self.send_response(HTTPStatus.OK)
 			self.send_header("Content-type", "text/html")
-			self.send_header("Content-Length", len(data))
+			self.send_header("Content-Length", len(layout))
 			self.end_headers()
-			self.wfile.write(str.encode(data))
+			self.wfile.write(str.encode(layout))
 			return True
 
 		return False
