@@ -362,6 +362,8 @@ void _Menu::LoadPortraitButtons() {
 
 	// Iterate over portraits
 	for(const auto &Portrait : Portraits) {
+		if(!Portrait.Image)
+			throw std::runtime_error("Cannot find texture for portrait id " + std::to_string(Portrait.ID));
 
 		// Create style
 		_Style *Style = new _Style();
