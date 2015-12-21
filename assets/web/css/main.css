@@ -117,3 +117,23 @@ a:hover {
 .handsontable td.area {
 	background-color: initial;
 }
+
+.htContextMenu table tbody tr td {
+	background-color: #111;
+}
+
+.htContextMenu table.htCore {
+	border: 1px solid #888;
+	border-bottom-width: 1px;
+	border-right-width: 1px;
+}
+
+.htContextMenu table tbody tr td.htSeparator {
+	border-top: 1px solid #666;
+	height: 0;
+	padding: 0;
+}
+
+.htContextMenu table tbody tr td.current {
+	background-color: #333;
+}

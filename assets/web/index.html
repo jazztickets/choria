@@ -61,6 +61,36 @@
 					rowHeaders: true,
 					colHeaders: columns,
 					columnSorting: true,
+					contextMenu: {
+						items: {
+							"select_column": { name: 'Select Column' },
+							"select_row": { name: 'Select Row' },
+							"hsep0": "---------",
+							"freeze_column": { name: 'Freeze Column' },
+							"freeze_row": { name: 'Freeze Row' },
+							"hsep1": "---------",
+							"undo": {},
+							"redo": {},
+						},
+						callback: function(key, options) {
+							if(key === 'select_column') {
+								var selected = hot.getSelected();
+								hot.selectCell(0, selected[1], hot.countRows()-1, selected[1], false);
+							}
+							else if(key === 'select_row') {
+								var selected = hot.getSelected();
+								hot.selectCell(selected[0], 0, selected[0], hot.countCols()-1, false);
+							}
+							else if(key === 'freeze_column') {
+								var selected = hot.getSelected();
+								hot.updateSettings({ fixedColumnsLeft: selected[1] });
+							}
+							else if(key === 'freeze_row') {
+								var selected = hot.getSelected();
+								hot.updateSettings({ fixedRowsTop: selected[0] });
+							}
+						},
+					},
 					cells: function(row, col, prop) {
 						var cellProperties = {};
 						if(col == 0) {
