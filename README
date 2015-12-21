@@ -16,6 +16,7 @@ cmake 2.8+
 opengl 2.1+
 sdl2
 freetype2
+lua 5.2+
 glm
 sqlite3
 zlib
@@ -61,7 +62,6 @@ During battle, hit 1-8 to use a skill.
 Hit C to open your inventory and see character stats.
 Hit R to open your skill page. Every level you get 3 skill points to spend. All skills must be equipped to your skillbar before they're activated.
 Hit Enter to type a message to other players in your current map.
-Hit A to attack other players in PvP zones.
 Hit T to trade with other players.
 Hit Q to teleport back to town.
 
@@ -71,8 +71,9 @@ Hit N to start a new map
 Hit L to load a map
 Hit S to save
 Hit W to change from wall/nonwall
-Hit T to open up texture list
-Hit B to change brush options
+Hit Tab to change from background/foreground layer
+Hit E/Shift-E to change event type
+Hit Space to open up texture list
 Hit +/- to change event #
 Hit 1-4 to select current brush mode
 Hit F1-F4 to change brush size
@@ -80,27 +81,16 @@ Hit F1-F4 to change brush size
 LMB places a tile
 Ctrl+LMB copies an existing tile
 RMB scrolls the map
-Mousewheel changes current zone
+Mousewheel zooms in/out
+Shift+Mousewheel zooms in/out fast
+Ctrl+Mousewheel changes current zone
 
-----DATABASE WEB TOOL----
+----DESIGN TOOL----
 
 The design tool allows you to modify the game stats easily.
 
-1. Clone the git repo
-git clone git://github.com/jazztickets/choria.git ~/choria
-cd ~/choria
+Start the web server:
+cd assets/web
+./server.py
 
-1. Install apache2, php5 and php5-sqlite packages.
-
-sudo apt-get install apache2 php5 php5-sqlite
-
-2. Create a link to [choria_path]/assets/webtool in your web directory
-
-sudo ln -s ~/choria/assets/webtool /var/www/choria
-
-3. Make the sqlite database and database directory writable by the web user (e.g. www-data)
-
-chgrp www-data ~/choria/working/database -R
-chmod g+w ~/choria/working/database -R
-
-Then open your browser and go to "http://localhost/choria"
+Then open your browser and go to "http://localhost:8080"
