@@ -87,7 +87,12 @@ a:hover {
 .handsontable th:first-child, .handsontable td:first-of-type, .handsontable .htNoFrame+th, .handsontable .htNoFrame+td {
     border-left: 1px solid #666;
 }
+
 .handsontable th:last-child {
 	border-right: 1px solid #666;
 	border-bottom: 1px solid #666;
+}
+
+.handsontable td.area {
+	background-color: initial;
 }

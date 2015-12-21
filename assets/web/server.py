@@ -17,7 +17,24 @@ from http import HTTPStatus
 db = sqlite3.connect('../../working/stats/stats.db')
 sql = db.cursor()
 
+def get_column_names(tablename):
+	query = sql.execute("pragma table_info(" + tablename + ")")
+	rows = query.fetchall()
+	names = []
+	for row in rows:
+		names.append(row[1])
+
+	return names
+
 class HttpHandler(http.server.BaseHTTPRequestHandler):
+
+	def write_json_response(self, data):
+		json_string = json.dumps(data)
+		self.send_response(HTTPStatus.OK)
+		self.send_header("Content-type", "application/json")
+		self.send_header("Content-Length", len(json_string))
+		self.end_headers()
+		self.wfile.write(str.encode(json_string))
 
 	def do_POST(self):
 
@@ -27,12 +44,28 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		
 		# parse url
 		parts = urllib.parse.urlsplit(self.path)
-		print(parts)
+		query = urllib.parse.parse_qs(parts.query)
 		if parts.path == "/save":
-			parsed = urllib.parse.parse_qs(data)
+			parsed = urllib.parse.parse_qs(data, True)
+			tablename = query['table'][0]
+			columns = get_column_names(tablename)
 			for row in parsed:
+				i = 0
+				pairs = []
+				id = -1
 				for col in parsed[row]:
-					print(col.decode('utf-8'))
+					escaped = col.decode('utf-8').replace('"', '""')
+					if i > 0:
+						pairs.append(columns[i] + " = \"" + escaped + "\"")
+					else:
+						id = escaped
+					i += 1
+				update_sql = ', '.join(pairs)
+				sql = "UPDATE {0} SET {1} WHERE id = {2}".format(tablename, update_sql, id)
+				db.execute(sql)
+				db.commit()
+
+		self.write_json_response({'message':'saved'})
 
 	def do_GET(self):
 		self.handle_request(False)
@@ -86,21 +119,15 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 	def request_handler(self, path):
 		parts = urllib.parse.urlsplit(self.path)
 		query = urllib.parse.parse_qs(parts.query)
-		json_string = None
+		response = None
 		if parts.path == "/data":
-			tablename = query['table']
-			query = sql.execute("pragma table_info(" + tablename[0] + ")")
-			rows = query.fetchall()
-			names = []
-			for row in rows:
-				names.append(row[1])
+			columns = get_column_names(query['table'][0])
 
 			query = sql.execute("select * from item");
 			results = {}
-			print(names)
-			results['columns'] = names
+			results['columns'] = columns
 			results['data'] = query.fetchall()
-			json_string = json.dumps(results)
+			response = results
 		elif parts.path == "/columns":
 			tablename = query['table']
 			query = sql.execute("pragma table_info(" + tablename[0] + ")")
@@ -109,14 +136,10 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			for row in results:
 				names.append(row[1])
 
-			json_string = json.dumps(names)
+			response = names
 
-		if json_string:
-			self.send_response(HTTPStatus.OK)
-			self.send_header("Content-type", "application/json")
-			self.send_header("Content-Length", len(json_string))
-			self.end_headers()
-			self.wfile.write(str.encode(json_string))
+		if response:
+			self.write_json_response(response)
 			return True
 
 		return False

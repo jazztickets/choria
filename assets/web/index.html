@@ -26,11 +26,10 @@
 		</div>
 	</body>
 	<script>
-
+		var tablename = "item";
 		var container = document.getElementById('sheet');
 		var hot = null;
-
-		$.getJSON("/data?table=item", function(response) {
+		$.getJSON("/data?table=" + tablename, function(response) {
 			columns = response['columns']
 			data = response['data']
 			hot = new Handsontable(container, {
@@ -58,7 +57,7 @@
 			// Send request
 			var request = $.ajax({
 				type: "POST",
-				url: "/save?table=test",
+				url: "/save?table=" + tablename,
 				data: jQuery.param({'data': hot.getData()}),
 				dataType: "html"
 			});
