@@ -137,3 +137,7 @@ a:hover {
 .htContextMenu table tbody tr td.current {
 	background-color: #333;
 }
+
+.handsontable.listbox tr td.current, .handsontable.listbox tr:hover td {
+	background: #333;
+}

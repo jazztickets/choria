@@ -8,6 +8,7 @@ import json
 import mimetypes
 import os
 import posixpath
+import re
 import shutil
 import socketserver
 import sys
@@ -32,6 +33,21 @@ def get_column_names(tablename):
 		names.append(row[1])
 
 	return names
+
+def get_references(tablename):
+	query = cursor.execute("SELECT sql FROM sqlite_master WHERE name = '{0}'".format(tablename))
+	row = query.fetchone()
+	references = {}
+	if row:
+		matches = re.findall('(.*?) INTEGER REFERENCES (.*?) ON', row[0])
+
+		for match in matches:
+			field = match[0].strip().replace('"', '')
+			id = re.search('(.*?)\((.*?)\)', match[1])
+			if id:
+				references[field] = [ id.group(1), id.group(2) ]
+
+	return references
 
 class HttpHandler(http.server.BaseHTTPRequestHandler):
 
@@ -155,8 +171,11 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 		response = None
 		if parts.path == "/data":
-			columns = get_column_names(params['table'])
+			results = {}
+			results['column_names'] = get_column_names(params['table'])
+			references = get_references(params['table'])
 
+			# build where query
 			pairs = []
 			for param in params:
 				escaped = params[param].replace('"', '""')
@@ -167,6 +186,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			if len(pairs):
 				where = 'WHERE ' + ', '.join(pairs)
 
+			# get table data
 			try:
 				sql = "SELECT * FROM {0} {1}".format(params['table'], where)
 				query = cursor.execute(sql);
@@ -174,9 +194,26 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 				self.write_json_response({'message':sql + ": " + str(e)})
 				return True
 
-			results = {}
-			results['columns'] = columns
 			results['data'] = query.fetchall()
+
+			# get references
+			for key, value in references.items():
+				ref_table = value[0]
+				ref_id = value[1]
+				try:
+					sql = "SELECT {0}, name FROM {1}".format(ref_id, ref_table)
+					query = cursor.execute(sql);
+				except sqlite3.Error as e:
+					self.write_json_response({'message':sql + ": " + str(e)})
+					return True
+
+				rows = query.fetchall()
+				references[key] = {}
+				for row in rows:
+					references[key][row[0]] = row[1]
+
+			# get results
+			results['references'] = references
 			self.write_json_response(results)
 			return True
 		elif parts.path == "/columns":

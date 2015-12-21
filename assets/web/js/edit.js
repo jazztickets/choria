@@ -4,30 +4,64 @@ $(document).ready(function() {
 		  $("#message").text("check console");
 	});
 
-	try {
-		tablename = querystring["table"][0];
-	}
-	catch(error) {
-		tablename = "item";
+	querystring = location.search;
+	if(querystring == "") {
+		querystring = "?table=item";
 	}
 
 	// Load spreadsheet
 	var container = document.getElementById('sheet');
-	data_url = "/data" + location.search;
+	data_url = "/data" + querystring;
 	$.getJSON(data_url, function(response) {
-		columns = response['columns'];
-		data = response['data'];
-		message = response['message'];
+		var column_names = response['column_names'];
+		var data = response['data'];
+		var message = response['message'];
+		references = response['references'];
 		if(message != undefined) {
 			$('#message').html(message);
 			return;
 		}
 
+		// build autocomplete data and change data array
+		var columns = [];
+		for(var i in column_names) {
+			var column = column_names[i];
+
+			// Check for foreign key reference
+			if(references.hasOwnProperty(column)) {
+				var reference = references[column];
+				var names = []
+
+				// Build drop down
+				for(var key in reference) {
+					if(reference.hasOwnProperty(key)) {
+						var value = reference[key] + " (" + key + ")";
+						names.push(value);
+					}
+				}
+
+				// Add to columns list
+				columns.push({
+					type: 'dropdown',
+					source: names,
+				});
+
+				// Change data
+				for(var data_row in data) {
+					id = data[data_row][i];
+					data[data_row][i] = reference[id] + " (" + id + ")";
+				}
+			}
+			else
+				columns.push({});
+		}
+
 		hot = new Handsontable(container, {
 			data: data,
 			rowHeaders: true,
-			colHeaders: columns,
+			colHeaders: column_names,
 			columnSorting: true,
+			columns: columns,
 			contextMenu: {
 				items: {
 					"select_column": { name: 'Select Column' },
@@ -115,11 +149,24 @@ function reload() {
 // Save data
 function save() {
 
+	// Convert dropdowns back to ids
+	var headers = hot.getColHeader();
+	var data = hot.getData();
+	for(var row in data) {
+		for(var col in headers) {
+			if(references.hasOwnProperty(headers[col])) {
+				match = data[row][col].match(/\((.*?)\)$/);
+				if(match)
+					data[row][col] = parseInt(match[1]);
+			}
+		}
+	}
+
 	// Send request
 	var request = $.ajax({
 		type: "POST",
-		url: "/save?table=" + tablename,
-		data: jQuery.param({'data': hot.getData()}),
+		url: "/save" + querystring,
+		data: jQuery.param({'data': data}),
 		dataType: "html",
 		success: function(response, text_status, jqxhr) {
 			ajax_success(response, text_status, jqxhr);
@@ -135,7 +182,7 @@ function add() {
 	// Send request
 	var request = $.ajax({
 		type: "POST",
-		url: "/add?table=" + tablename,
+		url: "/add" + querystring,
 		data: {},
 		dataType: "html",
 		success: function(response, text_status, jqxhr) {
@@ -155,7 +202,7 @@ function remove() {
 	// Send request
 	var request = $.ajax({
 		type: "POST",
-		url: "/remove?table=" + tablename,
+		url: "/remove" + querystring,
 		data: {'id': id},
 		dataType: "html",
 		success: function(response, text_status, jqxhr) {
