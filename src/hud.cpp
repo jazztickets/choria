@@ -440,13 +440,13 @@ void _HUD::Update(double FrameTime) {
 		StatChangeUI.LastPosition = StatChangeUI.Position;
 
 		// Interpolate between start and end position
-		StatChangeUI.Position = glm::mix(StatChangeUI.StartPosition, StatChangeUI.StartPosition + glm::vec2(0, STATCHANGE_DISTANCE * StatChangeUI.Direction), StatChangeUI.Time / StatChangeUI.TimeOut);
+		StatChangeUI.Position = glm::mix(StatChangeUI.StartPosition, StatChangeUI.StartPosition + glm::vec2(0, STATCHANGE_DISTANCE * StatChangeUI.Direction), StatChangeUI.Time / StatChangeUI.Timeout);
 		if(StatChangeUI.Time == 0.0)
 			StatChangeUI.LastPosition = StatChangeUI.Position;
 
 		// Update timer
 		StatChangeUI.Time += FrameTime;
-		if(StatChangeUI.Time >= StatChangeUI.TimeOut) {
+		if(StatChangeUI.Time >= StatChangeUI.Timeout) {
 			Iterator = StatChanges.erase(Iterator);
 		}
 		else
@@ -1748,7 +1748,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + ExperienceElement->Size / 2.0f;
 		StatChangeUI.Change = StatChange.Experience;
 		StatChangeUI.Direction = -2.0f;
-		StatChangeUI.TimeOut = STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Timeout = STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["battle_large"];
 		StatChangeUI.SetText(COLOR_WHITE, COLOR_WHITE);
 		StatChanges.push_back(StatChangeUI);
@@ -1761,7 +1761,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.StartPosition.x += -45;
 		StatChangeUI.Change = StatChange.Gold;
 		StatChangeUI.Direction = 1.5f;
-		StatChangeUI.TimeOut = STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Timeout = STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
 		StatChangeUI.SetText(COLOR_GOLD, COLOR_GOLD);
 		StatChanges.push_back(StatChangeUI);

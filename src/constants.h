@@ -67,8 +67,10 @@ const float CHAT_MESSAGE_FADETIME = 1.0f;
 const int HUD_KEYNAME_LENGTH = 3;
 
 const double ACTIONRESULT_TIMEOUT = 2.5;
-const double ACTIONRESULT_FADETIME = 1.0;
 const double ACTIONRESULT_SPEED = 3.0;
+const double ACTIONRESULT_TIMEOUT_SHORT = 1.0;
+const double ACTIONRESULT_SPEED_SHORT = 0.25;
+const double ACTIONRESULT_FADETIME = 1.0;
 
 const double STATCHANGE_TIMEOUT = 1.0;
 const double STATCHANGE_TIMEOUT_LONG = 3.0;

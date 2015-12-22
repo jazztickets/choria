@@ -104,13 +104,13 @@ void _Battle::Update(double FrameTime) {
 			ActionResult.LastPosition = ActionResult.Position;
 
 			// Interpolate between start and end position of action used
-			ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ACTIONRESULT_SPEED / ACTIONRESULT_TIMEOUT, 1.0));
+			ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0));
 			if(ActionResult.Time == 0.0)
 				ActionResult.LastPosition = ActionResult.Position;
 
 			// Update timer
 			ActionResult.Time += FrameTime;
-			if(ActionResult.Time >= ACTIONRESULT_TIMEOUT) {
+			if(ActionResult.Time >= ActionResult.Timeout) {
 				Iterator = ActionResults.erase(Iterator);
 			}
 			else
@@ -148,10 +148,10 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 		return;
 
 	// Get alpha
-	double TimeLeft = ACTIONRESULT_TIMEOUT - ActionResult.Time;
-	double AlphaPercent = 1.0;
+	double TimeLeft = ActionResult.Timeout - ActionResult.Time;
+	float AlphaPercent = 1.0f;
 	if(TimeLeft < ACTIONRESULT_FADETIME)
-		AlphaPercent = TimeLeft / ACTIONRESULT_FADETIME;
+		AlphaPercent = (float)(TimeLeft / ACTIONRESULT_FADETIME);
 
 	// Get final draw position
 	glm::vec2 DrawPosition = glm::mix(ActionResult.LastPosition, ActionResult.Position, BlendFactor);
@@ -167,6 +167,8 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	glm::vec4 TextColor = COLOR_WHITE;
 	if(ActionResult.Target.Health > 0)
 		TextColor = COLOR_GREEN;
+
+	TextColor.a = AlphaPercent;
 
 	std::stringstream Buffer;
 	Buffer << std::abs(ActionResult.Target.Health);

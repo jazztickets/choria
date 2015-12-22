@@ -94,7 +94,7 @@ _StatChangeUI::_StatChangeUI() :
 	Position(0, 0),
 	Direction(-1.0f),
 	Time(0.0),
-	TimeOut(STATCHANGE_TIMEOUT),
+	Timeout(STATCHANGE_TIMEOUT),
 	Change(0) {
 
 }
@@ -105,7 +105,7 @@ void _StatChangeUI::Render(double BlendFactor) {
 		return;
 
 	// Get alpha
-	double TimeLeft = TimeOut - Time;
+	double TimeLeft = Timeout - Time;
 	Color.a = 1.0f;
 	if(TimeLeft < ACTIONRESULT_FADETIME)
 		Color.a = (float)(TimeLeft / ACTIONRESULT_FADETIME);

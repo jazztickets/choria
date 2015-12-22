@@ -1040,6 +1040,13 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 				HUD->AddStatChange(ActionResult.Source);
 				HUD->AddStatChange(ActionResult.Target);
 			}
+
+			// No damage dealt
+			if((ActionResult.GetUsedTargetType() == TargetType::ENEMY || ActionResult.GetUsedTargetType() == TargetType::ENEMY_ALL) && ActionResult.Target.Health == 0) {
+				ActionResult.Timeout = ACTIONRESULT_TIMEOUT_SHORT;
+				ActionResult.Speed = ACTIONRESULT_SPEED_SHORT;
+			}
+
 			Battle->ActionResults.push_back(ActionResult);
 		}
 		else if(ActionResult.Target.Object == Player) {

@@ -52,17 +52,9 @@ enum class ScopeType : uint8_t {
 
 // Structures
 struct _ActionResult {
-	_ActionResult() :
-		LastPosition(0, 0),
-		Position(0, 0),
-		Texture(nullptr),
-		SkillUsed(nullptr),
-		ItemUsed(nullptr),
-		Buff(nullptr),
-		BuffLevel(0),
-		BuffDuration(0),
-		Time(0.0),
-		Scope(ScopeType::ALL) { }
+	_ActionResult();
+
+	TargetType GetUsedTargetType();
 
 	_StatChange Source;
 	_StatChange Target;
@@ -75,6 +67,8 @@ struct _ActionResult {
 	int BuffLevel;
 	int BuffDuration;
 	double Time;
+	double Timeout;
+	double Speed;
 	ScopeType Scope;
 };
 

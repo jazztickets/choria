@@ -22,8 +22,37 @@
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/item.h>
+#include <constants.h>
 #include <stats.h>
 #include <buffer.h>
+
+// Constructor
+_ActionResult::_ActionResult() :
+	LastPosition(0, 0),
+	Position(0, 0),
+	Texture(nullptr),
+	SkillUsed(nullptr),
+	ItemUsed(nullptr),
+	Buff(nullptr),
+	BuffLevel(0),
+	BuffDuration(0),
+	Time(0.0),
+	Timeout(ACTIONRESULT_TIMEOUT),
+	Speed(ACTIONRESULT_SPEED),
+	Scope(ScopeType::ALL) {
+}
+
+// Return target type of action used
+TargetType _ActionResult::GetUsedTargetType() {
+
+	if(SkillUsed)
+		return SkillUsed->TargetID;
+
+	if(ItemUsed)
+		return TargetType::ALLY;
+
+	return TargetType::NONE;
+}
 
 // Serialize action
 void _Action::Serialize(_Buffer &Data) {

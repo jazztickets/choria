@@ -76,7 +76,7 @@ class _StatChangeUI {
 		glm::vec2 Position;
 		float Direction;
 		double Time;
-		double TimeOut;
+		double Timeout;
 		int Change;
 
 };
