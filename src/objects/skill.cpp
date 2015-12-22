@@ -158,8 +158,8 @@ void _Skill::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const
 
 // Use a skill
 void _Skill::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(ActionResult.SkillUsed->Script, "Use")) {
-		Scripting->PushInt(ActionResult.Source.Object->SkillLevels[ActionResult.SkillUsed->ID]);
+	if(Scripting->StartMethodCall(ActionResult.ActionUsed.Skill->Script, "Use")) {
+		Scripting->PushInt(ActionResult.Source.Object->SkillLevels[ActionResult.ActionUsed.Skill->ID]);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushObject(ActionResult.Target.Object);
 		Scripting->PushActionResult(&ActionResult);

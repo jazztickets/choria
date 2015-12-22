@@ -26,34 +26,6 @@
 #include <stats.h>
 #include <buffer.h>
 
-// Constructor
-_ActionResult::_ActionResult() :
-	LastPosition(0, 0),
-	Position(0, 0),
-	Texture(nullptr),
-	SkillUsed(nullptr),
-	ItemUsed(nullptr),
-	Buff(nullptr),
-	BuffLevel(0),
-	BuffDuration(0),
-	Time(0.0),
-	Timeout(ACTIONRESULT_TIMEOUT),
-	Speed(ACTIONRESULT_SPEED),
-	Scope(ScopeType::ALL) {
-}
-
-// Return target type of action used
-TargetType _ActionResult::GetUsedTargetType() {
-
-	if(SkillUsed)
-		return SkillUsed->TargetID;
-
-	if(ItemUsed)
-		return TargetType::ALLY;
-
-	return TargetType::NONE;
-}
-
 // Serialize action
 void _Action::Serialize(_Buffer &Data) {
 
@@ -85,24 +57,24 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;
 	ActionResult.Scope = Scope;
-	ActionResult.SkillUsed = Source->Action.Skill;
-	ActionResult.ItemUsed = Source->Action.Item;
+	ActionResult.ActionUsed.Skill = Source->Action.Skill;
+	ActionResult.ActionUsed.Item = Source->Action.Item;
 
 	// Use item
 	size_t Index;
-	if(ActionResult.ItemUsed) {
-		if(!ActionResult.ItemUsed->CanUse(Source->Scripting, ActionResult) || !ActionResult.Source.Object->Inventory->FindItem(ActionResult.ItemUsed, Index))
+	if(ActionResult.ActionUsed.Item) {
+		if(!ActionResult.ActionUsed.Item->CanUse(Source->Scripting, ActionResult) || !ActionResult.Source.Object->Inventory->FindItem(ActionResult.ActionUsed.Item, Index))
 			return false;
 
 		ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
 	}
 
 	// Apply costs
-	if(ActionResult.SkillUsed) {
-		if(!ActionResult.SkillUsed->CanUse(Source->Scripting, ActionResult))
+	if(ActionResult.ActionUsed.Skill) {
+		if(!ActionResult.ActionUsed.Skill->CanUse(Source->Scripting, ActionResult))
 			return false;
 
-		ActionResult.SkillUsed->ApplyCost(Source->Scripting, ActionResult);
+		ActionResult.ActionUsed.Skill->ApplyCost(Source->Scripting, ActionResult);
 	}
 
 	ActionResult.Source.Object->UpdateHealth(ActionResult.Source.Health);
@@ -112,8 +84,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
 
 	// Write action used
-	uint32_t SkillID = ActionResult.SkillUsed ? ActionResult.SkillUsed->ID : 0;
-	uint32_t ItemID = ActionResult.ItemUsed ? ActionResult.ItemUsed->ID : 0;
+	uint32_t SkillID = ActionResult.ActionUsed.Skill ? ActionResult.ActionUsed.Skill->ID : 0;
+	uint32_t ItemID = ActionResult.ActionUsed.Item ? ActionResult.ActionUsed.Item->ID : 0;
 	Data.Write<uint32_t>(SkillID);
 	Data.Write<uint32_t>(ItemID);
 
@@ -128,11 +100,11 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object = Target;
 
 		// Update objects
-		if(ActionResult.SkillUsed) {
-			ActionResult.SkillUsed->Use(Source->Scripting, ActionResult);
+		if(ActionResult.ActionUsed.Skill) {
+			ActionResult.ActionUsed.Skill->Use(Source->Scripting, ActionResult);
 		}
-		else if(ActionResult.ItemUsed) {
-			ActionResult.ItemUsed->Use(Source->Scripting, ActionResult);
+		else if(ActionResult.ActionUsed.Item) {
+			ActionResult.ActionUsed.Item->Use(Source->Scripting, ActionResult);
 		}
 
 		// Update target
@@ -168,4 +140,30 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Source->Targets.clear();
 
 	return true;
+}
+
+// Return target type of action used
+TargetType _Action::GetTargetType() {
+
+	if(Skill)
+		return Skill->TargetID;
+
+	if(Item)
+		return TargetType::ALLY;
+
+	return TargetType::NONE;
+}
+
+// Constructor
+_ActionResult::_ActionResult() :
+	LastPosition(0, 0),
+	Position(0, 0),
+	Texture(nullptr),
+	Buff(nullptr),
+	BuffLevel(0),
+	BuffDuration(0),
+	Time(0.0),
+	Timeout(ACTIONRESULT_TIMEOUT),
+	Speed(ACTIONRESULT_SPEED),
+	Scope(ScopeType::ALL) {
 }

@@ -159,7 +159,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	// Draw icon
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	if(ActionResult.ItemUsed)
+	if(ActionResult.ActionUsed.Item)
 		Graphics.DrawCenteredImage(DrawPosition, Assets.Textures["hud/item_back.png"], WhiteAlpha);
 	Graphics.DrawCenteredImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
 

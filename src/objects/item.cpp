@@ -308,7 +308,7 @@ void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const 
 
 // Use an item
 void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(ActionResult.ItemUsed->Script, "Use")) {
+	if(Scripting->StartMethodCall(ActionResult.ActionUsed.Item->Script, "Use")) {
 		Scripting->PushInt(Level);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushObject(ActionResult.Target.Object);

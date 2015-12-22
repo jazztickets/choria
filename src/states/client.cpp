@@ -963,14 +963,14 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	_ActionResult ActionResult;
 	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
-	ActionResult.SkillUsed = Stats->Skills[SkillID];
-	ActionResult.ItemUsed = Stats->Items[ItemID];
+	ActionResult.ActionUsed.Skill = Stats->Skills[SkillID];
+	ActionResult.ActionUsed.Item = Stats->Items[ItemID];
 
 	// Set texture
-	if(ActionResult.SkillUsed)
-		ActionResult.Texture = ActionResult.SkillUsed->Texture;
-	else if(ActionResult.ItemUsed)
-		ActionResult.Texture = ActionResult.ItemUsed->Texture;
+	if(ActionResult.ActionUsed.Skill)
+		ActionResult.Texture = ActionResult.ActionUsed.Skill->Texture;
+	else if(ActionResult.ActionUsed.Item)
+		ActionResult.Texture = ActionResult.ActionUsed.Item->Texture;
 	else
 		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
@@ -988,9 +988,9 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 		ActionResult.Source.Object->Targets.clear();
 
 		// Use item on client
-		if(Player == ActionResult.Source.Object && ActionResult.ItemUsed) {
+		if(Player == ActionResult.Source.Object && ActionResult.ActionUsed.Item) {
 			size_t Index;
-			if(Player->Inventory->FindItem(ActionResult.ItemUsed, Index)) {
+			if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index)) {
 				Player->Inventory->DecrementItemCount(Index, -1);
 				Player->RefreshActionBarCount();
 			}
@@ -1042,7 +1042,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 			}
 
 			// No damage dealt
-			if((ActionResult.GetUsedTargetType() == TargetType::ENEMY || ActionResult.GetUsedTargetType() == TargetType::ENEMY_ALL) && ActionResult.Target.Health == 0) {
+			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL) && ActionResult.Target.Health == 0) {
 				ActionResult.Timeout = ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = ACTIONRESULT_SPEED_SHORT;
 			}

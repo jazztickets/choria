@@ -50,28 +50,6 @@ enum class ScopeType : uint8_t {
 	ALL
 };
 
-// Structures
-struct _ActionResult {
-	_ActionResult();
-
-	TargetType GetUsedTargetType();
-
-	_StatChange Source;
-	_StatChange Target;
-	glm::vec2 LastPosition;
-	glm::vec2 Position;
-	const _Texture *Texture;
-	const _Skill *SkillUsed;
-	const _Item *ItemUsed;
-	const _Buff *Buff;
-	int BuffLevel;
-	int BuffDuration;
-	double Time;
-	double Timeout;
-	double Speed;
-	ScopeType Scope;
-};
-
 // Action
 class _Action {
 
@@ -92,7 +70,28 @@ class _Action {
 		bool IsSet() const { return !(Skill == nullptr && Item == nullptr); }
 		void Unset() { Skill = nullptr; Item = nullptr; Count = 0; }
 
+		TargetType GetTargetType();
+
 		const _Skill *Skill;
 		const _Item *Item;
 		int Count;
+};
+
+// Structures
+struct _ActionResult {
+	_ActionResult();
+
+	_StatChange Source;
+	_StatChange Target;
+	glm::vec2 LastPosition;
+	glm::vec2 Position;
+	_Action ActionUsed;
+	const _Texture *Texture;
+	const _Buff *Buff;
+	int BuffLevel;
+	int BuffDuration;
+	double Time;
+	double Timeout;
+	double Speed;
+	ScopeType Scope;
 };
