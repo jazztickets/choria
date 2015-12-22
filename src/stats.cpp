@@ -177,13 +177,10 @@ void _Stats::LoadItems() {
 		Item->Defense = Database->GetReal("defense");
 		Item->DefenseRange = Database->GetReal("defenserange");
 		Item->DamageType = Database->GetInt<int>("damagetype");
-		Item->HealthRestore = Database->GetInt<int>("healthrestore");
-		Item->ManaRestore = Database->GetInt<int>("manarestore");
 		Item->MaxHealth = Database->GetInt<int>("maxhealth");
 		Item->MaxMana = Database->GetInt<int>("maxmana");
 		Item->HealthRegen = Database->GetReal("healthregen");
 		Item->ManaRegen = Database->GetReal("manaregen");
-		Item->InvisPower = Database->GetInt<int>("invispower");
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Items[Item->ID] = Item;
 	}

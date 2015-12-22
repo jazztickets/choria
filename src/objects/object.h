@@ -128,7 +128,7 @@ class _Object : public _ManagerBase {
 		void CalculateSkillPoints();
 
 		// Trader
-		void AcceptTrader(_Buffer &Data, std::vector<size_t> &Slots, size_t RewardSlot);
+		void AcceptTrader(std::vector<size_t> &Slots);
 
 		// Map
 		const _Tile *GetTile();

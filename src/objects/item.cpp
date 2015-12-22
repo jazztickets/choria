@@ -24,6 +24,7 @@
 #include <constants.h>
 #include <font.h>
 #include <hud.h>
+#include <scripting.h>
 #include <graphics.h>
 #include <input.h>
 #include <assets.h>
@@ -32,7 +33,7 @@
 #include <algorithm>
 
 // Draw tooltip
-void _Item::DrawTooltip(const _Object *Player, const _Cursor &Tooltip) const {
+void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const {
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
 	_Label *TooltipType = Assets.Labels["label_item_tooltip_type"];
@@ -113,24 +114,6 @@ void _Item::DrawTooltip(const _Object *Player, const _Cursor &Tooltip) const {
 				DrawPosition.y -= 20;
 				Assets.Fonts["hud_small"]->DrawText("Right-click to use", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 				DrawPosition.y += 40;
-			}
-			if(HealthRestore > 0) {
-				std::stringstream Buffer;
-				Buffer << "+" << HealthRestore << " HP";
-				Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GREEN, CENTER_BASELINE);
-				DrawPosition.y += SpacingY;
-			}
-			if(ManaRestore > 0) {
-				std::stringstream Buffer;
-				Buffer << "+" << ManaRestore << " MP";
-				Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_BLUE, CENTER_BASELINE);
-				DrawPosition.y += SpacingY;
-			}
-			if(InvisPower > 0) {
-				std::stringstream Buffer;
-				Buffer << "+" << InvisPower << " Invisibility Time";
-				Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_TWHITE, CENTER_BASELINE);
-				DrawPosition.y += SpacingY;
 			}
 		break;
 	}

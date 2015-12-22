@@ -469,6 +469,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data);
 		break;
+		case PacketType::INVENTORY:
+			HandleInventory(Data);
+		break;
 		case PacketType::INVENTORY_USE:
 			HandleInventoryUse(Data);
 		break;
@@ -724,6 +727,15 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 			HUD->InitTrader();
 		break;
 	}
+}
+
+// Handle inventory sync
+void _ClientState::HandleInventory(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->Inventory->Unserialize(Data, Stats);
+	Player->CalculateStats();
 }
 
 // Handles a chat message

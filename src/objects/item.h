@@ -46,13 +46,9 @@ class _Item {
 			TYPE_TRADE,
 		};
 
-		void DrawTooltip(const _Object *Player, const _Cursor &Tooltip) const;
+		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const;
 
 		bool IsEquippable() const { return Type <= TYPE_EQUIPPABLE; }
-		bool IsHealthPotion() const { return Type == TYPE_POTION && HealthRestore > 0; }
-		bool IsManaPotion() const { return Type == TYPE_POTION && ManaRestore > 0; }
-		bool IsInvisPotion() const { return Type == TYPE_POTION && InvisPower > 0; }
-		bool IsPotionType(int PotionType) const { return (PotionType == 0 && IsHealthPotion()) || (PotionType == 1 && IsManaPotion()); }
 
 		void GetDamageRange(int &Min, int &Max) const;
 		void GetDefenseRange(int &Min, int &Max) const;
@@ -76,13 +72,10 @@ class _Item {
 		float Defense;
 		float DefenseRange;
 		int DamageType;
-		int HealthRestore;
-		int ManaRestore;
 		int MaxHealth;
 		int MaxMana;
 		float HealthRegen;
 		float ManaRegen;
-		int InvisPower;
 		ScopeType Scope;
 
 	private:

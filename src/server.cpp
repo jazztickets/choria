@@ -843,10 +843,13 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	if(RewardSlot >= Player->Inventory->Slots.size())
 		return;
 
-	// Exchange items and notify client
+	// Update items
+	Player->AcceptTrader(RequiredItemSlots);
+
+	// Send new inventory
 	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
-	Player->AcceptTrader(Packet, RequiredItemSlots, RewardSlot);
+	Packet.Write<PacketType>(PacketType::INVENTORY);
+	Player->Inventory->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
 }
 

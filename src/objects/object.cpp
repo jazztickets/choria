@@ -910,20 +910,17 @@ float _Object::GetNextLevelPercent() const {
 }
 
 // Accept a trade from a trader
-void _Object::AcceptTrader(_Buffer &Data, std::vector<size_t> &Slots, size_t RewardSlot) {
+void _Object::AcceptTrader(std::vector<size_t> &Slots) {
 	if(!Trader)
 		return;
 
 	// Trade in required items
-	Data.Write<uint8_t>((uint8_t)Trader->TraderItems.size() + 1);
 	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++) {
 		Inventory->DecrementItemCount(Slots[i], -Trader->TraderItems[i].Count);
-		Inventory->SerializeSlot(Data, Slots[i]);
 	}
 
 	// Give player reward
-	Inventory->AddItem(Trader->RewardItem, Trader->Count, RewardSlot);
-	Inventory->SerializeSlot(Data, RewardSlot);
+	Inventory->AddItem(Trader->RewardItem, Trader->Count);
 
 	// Update player
 	Trader = nullptr;
