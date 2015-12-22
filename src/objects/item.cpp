@@ -118,6 +118,32 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		break;
 	}
 
+	// Get item description
+	std::string Info = "";
+	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+		Scripting->PushInt(Level);
+		Scripting->MethodCall(1, 1);
+		Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+
+		float TextSpacingY = 18;
+
+		std::stringstream Buffer(Info);
+		std::string Token;
+
+		// Draw description
+		while(std::getline(Buffer, Token, '\n')) {
+			std::list<std::string> Strings;
+			Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings);
+			for(const auto &LineToken : Strings) {
+				Assets.Fonts["hud_small"]->DrawText(LineToken, DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+				DrawPosition.y += TextSpacingY;
+			}
+		}
+
+		DrawPosition.y += SpacingY;
+	}
+
 	// Boosts
 	if(MaxHealth > 0) {
 		std::stringstream Buffer;
