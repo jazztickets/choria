@@ -26,8 +26,8 @@ const double GAME_TIMESTEP = 1 / 100.0f;
 const double GAME_SLEEPRATE = 1 / 120.0;
 const double GAME_AUTOSAVEPERIOD = 60.0;
 
-const int MAP_TILE_WIDTH = 32;
-const int MAP_TILE_HEIGHT = 32;
+const int MAP_TILE_WIDTH = 64;
+const int MAP_TILE_HEIGHT = 64;
 
 const int NETWORKING_CHAT_SIZE = 100;
 
@@ -98,7 +98,7 @@ const  uint16_t     DEFAULT_NETWORKPORT_ALT        =  31235;
 const  int          GRAPHICS_CIRCLE_VERTICES       =  32;
 const  double       MATH_PI                        =  3.14159265358979323846;
 //     Camera
-const  float        CAMERA_DISTANCE                =  9.375f;
+const  float        CAMERA_DISTANCE                =  6.5f;
 const  float        CAMERA_DIVISOR                 =  30.0f;
 const  float        CAMERA_EDITOR_DIVISOR          =  5.0f;
 const  float        CAMERA_FOVY                    =  90.0f;
