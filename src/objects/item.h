@@ -28,33 +28,32 @@ class _Scripting;
 struct _Vendor;
 struct _Cursor;
 
+enum class ItemType : uint32_t {
+	NONE,
+	SKILL,
+	HELMET,
+	ARMOR,
+	BOOTS,
+	ONEHANDED_WEAPON,
+	TWOHANDED_WEAPON,
+	SHIELD,
+	RING,
+	EQUIPPABLE = RING,
+	CONSUMABLE,
+	TRADABLE,
+};
+
 // Classes
 class _Item {
 
 	public:
 
-		enum Type {
-			TYPE_NONE,
-			TYPE_SKILL,
-			TYPE_HEAD,
-			TYPE_BODY,
-			TYPE_LEGS,
-			TYPE_WEAPON1HAND,
-			TYPE_WEAPON2HAND,
-			TYPE_SHIELD,
-			TYPE_RING,
-			TYPE_EQUIPPABLE = TYPE_RING,
-			TYPE_POTION,
-			TYPE_TRADE,
-		};
-
 		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const;
 
-		bool IsEquippable() const { return Type <= TYPE_EQUIPPABLE; }
+		bool IsEquippable() const { return Type <= ItemType::EQUIPPABLE; }
 
 		void GetDamageRange(int &Min, int &Max) const;
 		void GetDefenseRange(int &Min, int &Max) const;
-		void GetType(std::string &String) const;
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
@@ -65,7 +64,7 @@ class _Item {
 		std::string Name;
 		std::string Script;
 		int Level;
-		int Type;
+		ItemType Type;
 		const _Texture *Texture;
 		int LevelRequired;
 		int Cost;

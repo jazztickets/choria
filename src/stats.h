@@ -119,6 +119,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _MapStat> Maps;
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
+		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Skill *> Skills;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;
@@ -133,6 +134,7 @@ class _Stats {
 		void LoadLevels();
 		void LoadSkills();
 		void LoadBuffs();
+		void LoadItemTypes();
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();

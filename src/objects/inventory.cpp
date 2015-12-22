@@ -114,28 +114,28 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 	// Check type
 	switch(Slot) {
 		case InventoryType::HEAD:
-			if(Item->Type == _Item::TYPE_HEAD)
+			if(Item->Type == ItemType::HELMET)
 				return true;
 		break;
 		case InventoryType::BODY:
-			if(Item->Type == _Item::TYPE_BODY)
+			if(Item->Type == ItemType::ARMOR)
 				return true;
 		break;
 		case InventoryType::LEGS:
-			if(Item->Type == _Item::TYPE_LEGS)
+			if(Item->Type == ItemType::BOOTS)
 				return true;
 		break;
 		case InventoryType::HAND1:
-			if(Item->Type == _Item::TYPE_WEAPON1HAND)
+			if(Item->Type == ItemType::ONEHANDED_WEAPON)
 				return true;
 		break;
 		case InventoryType::HAND2:
-			if(Item->Type == _Item::TYPE_SHIELD)
+			if(Item->Type == ItemType::SHIELD)
 				return true;
 		break;
 		case InventoryType::RING1:
 		case InventoryType::RING2:
-			if(Item->Type == _Item::TYPE_RING)
+			if(Item->Type == ItemType::RING)
 				return true;
 		break;
 		default:

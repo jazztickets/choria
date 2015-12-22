@@ -23,6 +23,7 @@
 #include <stats.h>
 #include <constants.h>
 #include <font.h>
+#include <stats.h>
 #include <hud.h>
 #include <scripting.h>
 #include <graphics.h>
@@ -41,7 +42,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 
 	// Set label values
 	TooltipName->Text = Name;
-	GetType(TooltipType->Text);
+	TooltipType->Text = Player->Stats->ItemTypes[(uint32_t)Type];
 
 	// Set window width
 	_TextBounds TextBounds;
@@ -102,19 +103,21 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 
 	switch(Type) {
-		case _Item::TYPE_WEAPON1HAND:
-		case _Item::TYPE_WEAPON2HAND:
-		case _Item::TYPE_HEAD:
-		case _Item::TYPE_BODY:
-		case _Item::TYPE_LEGS:
-		case _Item::TYPE_SHIELD:
+		case ItemType::ONEHANDED_WEAPON:
+		case ItemType::TWOHANDED_WEAPON:
+		case ItemType::HELMET:
+		case ItemType::ARMOR:
+		case ItemType::BOOTS:
+		case ItemType::SHIELD:
 		break;
-		case _Item::TYPE_POTION:
+		case ItemType::CONSUMABLE:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY) {
 				DrawPosition.y -= 20;
 				Assets.Fonts["hud_small"]->DrawText("Right-click to use", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 				DrawPosition.y += 40;
 			}
+		break;
+		default:
 		break;
 	}
 
@@ -215,42 +218,6 @@ void _Item::GetDefenseRange(int &Min, int &Max) const {
 	Max = (int)(Defense + DefenseRange);
 }
 
-// Returns a string of the item type
-void _Item::GetType(std::string &String) const {
-
-	switch(Type) {
-		case TYPE_HEAD:
-			String = "Helmet";
-		break;
-		case TYPE_BODY:
-			String = "Armor";
-		break;
-		case TYPE_LEGS:
-			String = "Boots";
-		break;
-		case TYPE_WEAPON1HAND:
-			String = "Weapon";
-		break;
-		case TYPE_WEAPON2HAND:
-			String = "Weapon";
-		break;
-		case TYPE_SHIELD:
-			String = "Shield";
-		break;
-		case TYPE_RING:
-			String = "Ring";
-		break;
-		case TYPE_POTION:
-			String = "Potion";
-		break;
-		case TYPE_TRADE:
-			String = "Tradable";
-		break;
-		default:
-		break;
-	}
-}
-
 // Returns the item's price to/from a vendor
 int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 	if(!Vendor)
@@ -276,7 +243,7 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 
 // Return true if the item can be used
 bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Type != TYPE_POTION)
+	if(Type != ItemType::CONSUMABLE)
 		return false;
 
 	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != ActionResult.Scope))

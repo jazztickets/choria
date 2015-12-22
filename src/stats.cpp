@@ -37,6 +37,7 @@ _Stats::_Stats() {
 	LoadLevels();
 	LoadSkills();
 	LoadBuffs();
+	LoadItemTypes();
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
@@ -63,7 +64,7 @@ void _Stats::LoadMaps() {
 	// Run query
 	Database->PrepareQuery("SELECT * FROM map");
 
-	// Get events
+	// Get data
 	_MapStat Map;
 	while(Database->FetchRow()) {
 		Map.File = std::string("maps/") + Database->GetString("file");
@@ -78,7 +79,7 @@ void _Stats::LoadEvents() {
 	// Run query
 	Database->PrepareQuery("SELECT * FROM event");
 
-	// Get events
+	// Get data
 	_EventName Event;
 	while(Database->FetchRow()) {
 		Event.Name = Database->GetString("name");
@@ -94,7 +95,7 @@ void _Stats::LoadLevels() {
 	// Run query
 	Database->PrepareQuery("SELECT * FROM level");
 
-	// Get events
+	// Get data
 	_Level Level;
 	while(Database->FetchRow()) {
 		Level.Level = Database->GetInt<int>("level");
@@ -114,7 +115,7 @@ void _Stats::LoadSkills() {
 	// Run query
 	Database->PrepareQuery("SELECT * FROM skill");
 
-	// Get events
+	// Get data
 	while(Database->FetchRow()) {
 		_Skill *Skill = new _Skill;
 		Skill->ID = Database->GetInt<uint32_t>("id");
@@ -137,7 +138,7 @@ void _Stats::LoadBuffs() {
 	// Run query
 	Database->PrepareQuery("SELECT * FROM buff");
 
-	// Get events
+	// Get data
 	while(Database->FetchRow()) {
 		_Buff *Buff = new _Buff;
 		Buff->ID = Database->GetInt<uint32_t>("id");
@@ -151,13 +152,27 @@ void _Stats::LoadBuffs() {
 	Buffs[0] = nullptr;
 }
 
+// Load item types
+void _Stats::LoadItemTypes() {
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM itemtype");
+
+	// Get data
+	while(Database->FetchRow()) {
+		uint32_t ID = Database->GetInt<uint32_t>("id");
+		ItemTypes[ID] = Database->GetString("name");
+	}
+	Database->CloseQuery();
+}
+
 // Load items
 void _Stats::LoadItems() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM item");
 
-	// Get events
+	// Get data
 	while(Database->FetchRow()) {
 		uint32_t ItemID = Database->GetInt<uint32_t>("id");
 		if(ItemID == 0)
@@ -168,7 +183,7 @@ void _Stats::LoadItems() {
 		Item->Name = Database->GetString("name");
 		Item->Script = Database->GetString("script");
 		Item->Level = Database->GetInt<int>("level");
-		Item->Type = Database->GetInt<int>("itemtype_id");
+		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
 		Item->Texture = Assets.Textures[Database->GetString("image")];
 		Item->LevelRequired = Database->GetInt<int>("levelrequired");
 		Item->Cost = Database->GetInt<int>("cost");
@@ -198,7 +213,7 @@ void _Stats::LoadVendors() {
 	// Run query
 	Database->PrepareQuery("SELECT * FROM vendor");
 
-	// Get vendors
+	// Get data
 	_Vendor Vendor;
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt<uint32_t>("id");
@@ -227,7 +242,7 @@ void _Stats::LoadTraders() {
 	// Run query
 	Database->PrepareQuery("SELECT * FROM trader");
 
-	// Get traders
+	// Get data
 	_Trader Trader;
 	while(Database->FetchRow()) {
 		Trader.ID = Database->GetInt<uint32_t>("id");

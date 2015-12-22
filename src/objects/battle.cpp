@@ -237,7 +237,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 				TargetAlive = Skill->TargetAlive;
 			}
-			else if(Item && Item->Type == _Item::TYPE_POTION) {
+			else if(Item && Item->Type == ItemType::CONSUMABLE) {
 				StartingSide = ClientPlayer->BattleSide;
 			}
 
