@@ -62,7 +62,6 @@ struct _EventName {
 struct _Vendor {
 	uint32_t ID;
 	std::string Name;
-	std::string Info;
 	float BuyPercent;
 	float SellPercent;
 	std::vector<const _Item *> Items;

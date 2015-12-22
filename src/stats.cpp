@@ -168,7 +168,7 @@ void _Stats::LoadItems() {
 		Item->Name = Database->GetString("name");
 		Item->Script = Database->GetString("script");
 		Item->Level = Database->GetInt<int>("level");
-		Item->Type = Database->GetInt<int>("type");
+		Item->Type = Database->GetInt<int>("itemtype_id");
 		Item->Texture = Assets.Textures[std::string("items/") + Database->GetString("image")];
 		Item->LevelRequired = Database->GetInt<int>("levelrequired");
 		Item->Cost = Database->GetInt<int>("cost");
@@ -204,7 +204,6 @@ void _Stats::LoadVendors() {
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt<uint32_t>("id");
 		Vendor.Name = Database->GetString("name");
-		Vendor.Info = Database->GetString("info");
 		Vendor.BuyPercent = Database->GetReal("buypercent");
 		Vendor.SellPercent = Database->GetReal("sellpercent");
 		Vendor.Items.clear();
