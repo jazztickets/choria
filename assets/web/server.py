@@ -14,7 +14,6 @@ import socketserver
 import sys
 import urllib
 import sqlite3
-from http import HTTPStatus
 
 db = sqlite3.connect('../../working/stats/stats.db')
 cursor = db.cursor()
@@ -53,7 +52,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 	def write_json_response(self, data):
 		json_string = json.dumps(data)
-		self.send_response(HTTPStatus.OK)
+		self.send_response(200)
 		self.send_header("Content-type", "application/json")
 		self.send_header("Content-Length", len(json_string))
 		self.end_headers()
@@ -118,7 +117,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			self.write_json_response({'message':'Row deleted'})
 			return
 
-		self.send_error(HTTPStatus.NOT_FOUND, "Not found")
+		self.send_error(404, "Not found")
 
 	def do_GET(self):
 		self.handle_request(False)
@@ -132,7 +131,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		if os.path.isdir(path):
 			parts = urllib.parse.urlsplit(self.path)
 			if not parts.path.endswith('/'):
-				self.send_response(HTTPStatus.MOVED_PERMANENTLY)
+				self.send_response(301)
 				new_parts = (parts[0], parts[1], parts[2] + '/', parts[3], parts[4])
 				new_url = urllib.parse.urlunsplit(new_parts)
 				self.send_header("Location", new_url)
@@ -146,10 +145,10 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		try:
 			f = open(path, 'rb')
 		except OSError:
-			self.send_error(HTTPStatus.NOT_FOUND, "File not found")
+			self.send_error(404, "File not found")
 			return
 		try:
-			self.send_response(HTTPStatus.OK)
+			self.send_response(200)
 			self.send_header("Content-type", ctype)
 			fs = os.fstat(f.fileno())
 			self.send_header("Content-Length", str(fs[6]))
@@ -246,7 +245,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		return layout % {'content':content}
 
 	def write_page(self, content):
-		self.send_response(HTTPStatus.OK)
+		self.send_response(200)
 		self.send_header("Content-type", "text/html")
 		self.send_header("Content-Length", len(content))
 		self.end_headers()
