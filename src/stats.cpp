@@ -181,6 +181,8 @@ void _Stats::LoadItems() {
 		Item->MaxMana = Database->GetInt<int>("maxmana");
 		Item->HealthRegen = Database->GetReal("healthregen");
 		Item->ManaRegen = Database->GetReal("manaregen");
+		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");
+		Item->TargetAlive = Database->GetInt<int>("target_alive");
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Items[Item->ID] = Item;
 	}

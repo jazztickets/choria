@@ -34,6 +34,8 @@ class _Item {
 	public:
 
 		enum Type {
+			TYPE_NONE,
+			TYPE_SKILL,
 			TYPE_HEAD,
 			TYPE_BODY,
 			TYPE_LEGS,
@@ -76,6 +78,8 @@ class _Item {
 		int MaxMana;
 		float HealthRegen;
 		float ManaRegen;
+		TargetType TargetID;
+		bool TargetAlive;
 		ScopeType Scope;
 
 	private:
