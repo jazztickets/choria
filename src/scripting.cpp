@@ -324,7 +324,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 	// Set skill used
 	size_t ActionBarIndex = (size_t)lua_tointeger(LuaState, 1);
 	if(ActionBarIndex < Object->ActionBar.size())
-		Object->Action.Skill = Object->ActionBar[ActionBarIndex].Skill;
+		Object->Action.Item = Object->ActionBar[ActionBarIndex].Item;
 
 	return 0;
 }

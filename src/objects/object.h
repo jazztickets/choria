@@ -32,7 +32,6 @@ class _Map;
 class _Peer;
 class _Texture;
 class _Battle;
-class _Skill;
 class _Buff;
 class _Inventory;
 class _Stats;
@@ -122,7 +121,6 @@ class _Object : public _ManagerBase {
 		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
-		void SetSkillLevel(uint32_t SkillID, int Points) { SkillLevels[SkillID] = Points; }
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Adjust);
 		void CalculateSkillPoints();
@@ -231,7 +229,7 @@ class _Object : public _ManagerBase {
 
 		// Skills
 		bool SkillsOpen;
-		std::unordered_map<uint32_t, int32_t> SkillLevels;
+		std::unordered_map<uint32_t, int32_t> Skills;
 		int SkillPoints, SkillPointsUsed;
 
 		// Trading

@@ -29,7 +29,6 @@
 // Forward Declarations
 class _Object;
 class _Item;
-class _Skill;
 class _StatusEffect;
 class _Element;
 class _Label;
@@ -47,7 +46,6 @@ struct _MouseEvent;
 struct _Cursor {
 	void Reset() {
 		Item = nullptr;
-		Skill = nullptr;
 		StatusEffect = nullptr;
 		Cost = 0;
 		Count = 0;
@@ -58,7 +56,6 @@ struct _Cursor {
 	bool IsEqual(size_t Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
 
 	const _Item *Item;
-	const _Skill *Skill;
 	const _StatusEffect *StatusEffect;
 	int Cost;
 	int Count;
@@ -176,7 +173,6 @@ class _HUD {
 		void DrawSkills();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
-		void DrawCursorSkill();
 		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
 
 		void BuyItem(_Cursor *Item, size_t TargetSlot);

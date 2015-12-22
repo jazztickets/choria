@@ -21,7 +21,6 @@
 #include <objects/object.h>
 #include <objects/inventory.h>
 #include <objects/map.h>
-#include <objects/skill.h>
 #include <objects/battle.h>
 #include <scripting.h>
 #include <save.h>
@@ -402,7 +401,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Create the character
-	Save->CreateCharacter(Peer->AccountID, Slot, Name, PortraitID);
+	Save->CreateCharacter(Stats, Peer->AccountID, Slot, Name, PortraitID);
 
 	// Notify the client
 	_Buffer NewPacket;
@@ -1098,11 +1097,6 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
 		Packet.Write<NetworkIDType>(Player->NetworkID);
-		if(Player->Action.Skill)
-			Packet.Write<uint32_t>(Player->Action.Skill->ID);
-		else
-			Packet.Write<uint32_t>(0);
-
 		if(Player->Action.Item)
 			Packet.Write<uint32_t>(Player->Action.Item->ID);
 		else
@@ -1214,7 +1208,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	//Zone = 8;
+	Zone = 1;
 	if(!Zone)
 		return;
 

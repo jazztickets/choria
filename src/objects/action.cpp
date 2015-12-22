@@ -18,7 +18,6 @@
 #include <objects/action.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
-#include <objects/skill.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/item.h>
@@ -29,25 +28,18 @@
 // Serialize action
 void _Action::Serialize(_Buffer &Data) {
 
-	uint32_t SkillID = 0;
-	if(Skill)
-		SkillID = Skill->ID;
-
 	uint32_t ItemID = 0;
 	if(Item)
 		ItemID = Item->ID;
 
-	Data.Write<uint32_t>(SkillID);
 	Data.Write<uint32_t>(ItemID);
 }
 
 // Unserialize action
 void _Action::Unserialize(_Buffer &Data, _Stats *Stats) {
 
-	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 
-	Skill = Stats->Skills[SkillID];
 	Item = Stats->Items[ItemID];
 }
 
@@ -57,24 +49,23 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;
 	ActionResult.Scope = Scope;
-	ActionResult.ActionUsed.Skill = Source->Action.Skill;
 	ActionResult.ActionUsed.Item = Source->Action.Item;
 
 	// Use item
 	size_t Index;
 	if(ActionResult.ActionUsed.Item) {
-		if(!ActionResult.ActionUsed.Item->CanUse(Source->Scripting, ActionResult) || !ActionResult.Source.Object->Inventory->FindItem(ActionResult.ActionUsed.Item, Index))
-			return false;
+		if(ActionResult.ActionUsed.Item->IsSkill()) {
+			if(!ActionResult.ActionUsed.Item->CanUse(Source->Scripting, ActionResult))
+				return false;
 
-		ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
-	}
+			ActionResult.ActionUsed.Item->ApplyCost(Source->Scripting, ActionResult);
+		}
+		else {
+			if(!ActionResult.ActionUsed.Item->CanUse(Source->Scripting, ActionResult) || !ActionResult.Source.Object->Inventory->FindItem(ActionResult.ActionUsed.Item, Index))
+				return false;
 
-	// Apply costs
-	if(ActionResult.ActionUsed.Skill) {
-		if(!ActionResult.ActionUsed.Skill->CanUse(Source->Scripting, ActionResult))
-			return false;
-
-		ActionResult.ActionUsed.Skill->ApplyCost(Source->Scripting, ActionResult);
+			ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
+		}
 	}
 
 	ActionResult.Source.Object->UpdateHealth(ActionResult.Source.Health);
@@ -84,9 +75,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
 
 	// Write action used
-	uint32_t SkillID = ActionResult.ActionUsed.Skill ? ActionResult.ActionUsed.Skill->ID : 0;
 	uint32_t ItemID = ActionResult.ActionUsed.Item ? ActionResult.ActionUsed.Item->ID : 0;
-	Data.Write<uint32_t>(SkillID);
 	Data.Write<uint32_t>(ItemID);
 
 	// Write source updates
@@ -100,10 +89,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object = Target;
 
 		// Update objects
-		if(ActionResult.ActionUsed.Skill) {
-			ActionResult.ActionUsed.Skill->Use(Source->Scripting, ActionResult);
-		}
-		else if(ActionResult.ActionUsed.Item) {
+		if(ActionResult.ActionUsed.Item) {
 			ActionResult.ActionUsed.Item->Use(Source->Scripting, ActionResult);
 		}
 
@@ -145,11 +131,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 // Return target type of action used
 TargetType _Action::GetTargetType() {
 
-	if(Skill)
-		return Skill->TargetID;
-
 	if(Item)
-		return TargetType::ALLY;
+		return Item->TargetID;
 
 	return TargetType::NONE;
 }

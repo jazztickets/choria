@@ -21,7 +21,6 @@
 #include <objects/inventory.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
-#include <objects/skill.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <ui/element.h>
@@ -961,15 +960,11 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 
 	// Create result
 	_ActionResult ActionResult;
-	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
-	ActionResult.ActionUsed.Skill = Stats->Skills[SkillID];
 	ActionResult.ActionUsed.Item = Stats->Items[ItemID];
 
 	// Set texture
-	if(ActionResult.ActionUsed.Skill)
-		ActionResult.Texture = ActionResult.ActionUsed.Skill->Texture;
-	else if(ActionResult.ActionUsed.Item)
+	if(ActionResult.ActionUsed.Item)
 		ActionResult.Texture = ActionResult.ActionUsed.Item->Texture;
 	else
 		ActionResult.Texture = Assets.Textures["skills/attack.png"];

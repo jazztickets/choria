@@ -23,6 +23,7 @@
 // Forward Declarations
 class _Database;
 class _Object;
+class _Stats;
 
 // Classes
 class _Save {
@@ -46,7 +47,7 @@ class _Save {
 		uint32_t GetCharacterIDByName(const std::string &Name);
 		uint32_t GetCharacterIDBySlot(uint32_t AccountID, uint32_t Slot);
 		void DeleteCharacter(uint32_t CharacterID);
-		void CreateCharacter(uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID);
+		void CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID);
 
 		void LoadPlayer(_Object *Player);
 		void SavePlayer(const _Object *Player);

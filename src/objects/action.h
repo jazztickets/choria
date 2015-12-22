@@ -25,7 +25,6 @@
 // Forward Declarations
 class _Stats;
 class _Object;
-class _Skill;
 class _Texture;
 class _Item;
 class _Buff;
@@ -55,24 +54,22 @@ class _Action {
 
 	public:
 
-		_Action() : Skill(nullptr), Item(nullptr), Count(0) { }
-		_Action(const _Skill *Skill) : _Action() { this->Skill = Skill; }
+		_Action() : Item(nullptr), Count(0) { }
 		_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
-		bool operator==(const _Action &Action) const { return Action.Skill == Skill && Action.Item == Item; }
-		bool operator!=(const _Action &Action) const { return !(Action.Skill == Skill && Action.Item == Item); }
+		bool operator==(const _Action &Action) const { return Action.Item == Item; }
+		bool operator!=(const _Action &Action) const { return !(Action.Item == Item); }
 
 		void Serialize(_Buffer &Data);
 		void Unserialize(_Buffer &Data, _Stats *Stats);
 
 		bool Resolve(_Buffer &Data, _Object *Source, ScopeType Scope);
 
-		bool IsSet() const { return !(Skill == nullptr && Item == nullptr); }
-		void Unset() { Skill = nullptr; Item = nullptr; Count = 0; }
+		bool IsSet() const { return !(Item == nullptr); }
+		void Unset() { Item = nullptr; Count = 0; }
 
 		TargetType GetTargetType();
 
-		const _Skill *Skill;
 		const _Item *Item;
 		int Count;
 };

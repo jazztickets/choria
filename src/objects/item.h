@@ -48,9 +48,11 @@ class _Item {
 
 	public:
 
-		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const;
+		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
+		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, float Width) const;
 
 		bool IsEquippable() const { return Type <= ItemType::EQUIPPABLE; }
+		bool IsSkill() const { return Type == ItemType::SKILL; }
 
 		void GetDamageRange(int &Min, int &Max) const;
 		void GetDefenseRange(int &Min, int &Max) const;

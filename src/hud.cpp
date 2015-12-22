@@ -25,7 +25,6 @@
 #include <states/client.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>
-#include <objects/skill.h>
 #include <objects/item.h>
 #include <objects/inventory.h>
 #include <objects/statuseffect.h>
@@ -187,12 +186,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						}
 					}
 				break;
-			}
-		}
-		else if(Tooltip.Skill && (SkillsElement->Visible || InventoryElement->Visible)) {
-			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-				if(Player->SkillLevels[Tooltip.Skill->ID] > 0)
-					Cursor = Tooltip;
+				case WINDOW_SKILLS:
+					if(Player->Skills[Tooltip.Item->ID] > 0)
+						Cursor = Tooltip;
+				break;
 			}
 		}
 	}
@@ -298,19 +295,11 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						break;
 					}
 				break;
-			}
-		}
-		// Released a skill
-		else if(Cursor.Skill) {
-			if(Tooltip.Window == WINDOW_ACTIONBAR) {
-				if(Cursor.Window == WINDOW_SKILLS)
-					SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.Skill);
-				else if(Cursor.Window == WINDOW_ACTIONBAR)
-					SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Skill);
-			}
-			else if(Cursor.Window == WINDOW_ACTIONBAR && (Tooltip.Slot >= Player->ActionBar.size() || Tooltip.Window == -1)) {
-				_Action Action;
-				SetActionBar(Cursor.Slot, Player->ActionBar.size(), Action);
+				case WINDOW_SKILLS:
+					if(Tooltip.Window == WINDOW_ACTIONBAR) {
+						SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.Item);
+					}
+				break;
 			}
 		}
 		// Use action
@@ -401,10 +390,9 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Skill = ClientState.Stats->Skills[(uint32_t)Tooltip.Slot];
+				Tooltip.Item = ClientState.Stats->Items[(uint32_t)Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
-				Tooltip.Skill = Player->ActionBar[Tooltip.Slot].Skill;
 				Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
 			} break;
 			case WINDOW_BATTLE:
@@ -567,12 +555,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		// Draw item information
 		DrawCursorItem();
 		if(Tooltip.Item)
-			Tooltip.Item->DrawTooltip(ClientState.Scripting, Player, Tooltip);
-
-		// Draw skill information
-		DrawCursorSkill();
-		if(Tooltip.Skill)
-			Tooltip.Skill->DrawTooltip(ClientState.Scripting, Player, SkillsElement->Visible);
+			Tooltip.Item->DrawTooltip(ClientState.Scripting, Player, Tooltip, SkillsElement->Visible);
 
 		// Draw status effects
 		if(Tooltip.StatusEffect)
@@ -751,9 +734,8 @@ void _HUD::InitSkills() {
 	size_t i = 0;
 
 	// Iterate over skills
-	ClientState.Stats->Database->PrepareQuery("SELECT id FROM skill where rank >= 0 ORDER BY rank");
-	while(ClientState.Stats->Database->FetchRow()) {
-		const _Skill *Skill = ClientState.Stats->Skills[ClientState.Stats->Database->GetInt<uint32_t>(0)];
+	for(auto &SkillID : Player->Skills) {
+		const _Item *Skill = ClientState.Stats->Items[SkillID.first];
 		if(!Skill)
 			continue;
 
@@ -1194,20 +1176,14 @@ void _HUD::DrawActionBar() {
 		_Button *Button = Assets.Buttons[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
-		// Draw skill icon
-		const _Skill *Skill = Player->ActionBar[i].Skill;
-		if(Skill) {
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Skill->Texture);
-		}
-
 		// Draw item icon
 		const _Item *Item = Player->ActionBar[i].Item;
 		if(Item) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
-			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), COLOR_WHITE, RIGHT_BASELINE);
+			if(!Item->IsSkill())
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), COLOR_WHITE, RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
@@ -1376,15 +1352,6 @@ void _HUD::DrawCursorItem() {
 	}
 }
 
-// Draws the skill under the cursor
-void _HUD::DrawCursorSkill() {
-	if(Cursor.Skill) {
-		glm::vec2 DrawPosition = Input.GetMouse();
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.Skill->Texture);
-	}
-}
-
 // Draws an item's price
 void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy) {
 	if(!Player->Vendor)
@@ -1447,10 +1414,10 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 	else {
 		Packet.WriteBit(1);
 		Player->AdjustSkillLevel(SkillID, 1);
-		if(Player->SkillLevels[SkillID] == 1) {
+		if(Player->Skills[SkillID] == 1) {
 
 			// Equip new skills
-			const _Skill *Skill = ClientState.Stats->Skills[SkillID];
+			const _Item *Skill = ClientState.Stats->Items[SkillID];
 			if(Skill) {
 				size_t Slot = 0;
 				for(size_t i = 0; i < Player->ActionBar.size(); i++) {
@@ -1527,14 +1494,14 @@ void _HUD::RefreshSkillButtons() {
 		if(Element->Identifier == "label_skills_level") {
 			uint32_t SkillID = (uint32_t)(intptr_t)Element->UserData;
 			_Label *Label = (_Label *)Element;
-			Label->Text = std::to_string(Player->SkillLevels[SkillID]);
+			Label->Text = std::to_string(Player->Skills[SkillID]);
 		}
 		else if(Element->Identifier == "button_skills_plus") {
 			_Button *Button = (_Button *)Element;
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
-			if(SkillPointsRemaining == 0 || Player->SkillLevels[SkillID] >= SKILL_MAX_LEVEL)
+			if(SkillPointsRemaining == 0 || Player->Skills[SkillID] >= SKILL_MAX_LEVEL)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);
@@ -1544,7 +1511,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
-			if(Player->SkillLevels[SkillID] == 0)
+			if(Player->Skills[SkillID] == 0)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);

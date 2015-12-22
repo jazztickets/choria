@@ -26,7 +26,6 @@
 // Forward Declarations
 class _Database;
 class _Object;
-class _Skill;
 class _Buff;
 
 // Structures
@@ -107,6 +106,7 @@ class _Stats {
 		// Monsters
 		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters);
 		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops);
+		uint32_t GetItemIDByName(const std::string &Name);
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[Level-1]; }
@@ -121,7 +121,6 @@ class _Stats {
 		std::unordered_map<uint32_t, _Trader> Traders;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, const _Item *> Items;
-		std::unordered_map<uint32_t, const _Skill *> Skills;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;
 
 		// Database
@@ -132,7 +131,6 @@ class _Stats {
 		void LoadMaps();
 		void LoadEvents();
 		void LoadLevels();
-		void LoadSkills();
 		void LoadBuffs();
 		void LoadItemTypes();
 		void LoadItems();

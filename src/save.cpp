@@ -18,7 +18,6 @@
 #include <save.h>
 #include <objects/object.h>
 #include <objects/item.h>
-#include <objects/skill.h>
 #include <objects/inventory.h>
 #include <database.h>
 #include <config.h>
@@ -26,7 +25,6 @@
 #include <constants.h>
 #include <utils.h>
 #include <stdexcept>
-#include <cstdio>
 
 // Constructor
 _Save::_Save() {
@@ -171,7 +169,7 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-void _Save::CreateCharacter(uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID) {
+void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID) {
 	Database->RunQuery("BEGIN TRANSACTION");
 
 	std::string TrimmedName = TrimString(Name);
@@ -186,18 +184,35 @@ void _Save::CreateCharacter(uint32_t AccountID, uint32_t Slot, const std::string
 	Database->CloseQuery();
 
 	uint32_t CharacterID = (uint32_t)Database->GetLastInsertID();
-	Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, 1, 2, 1), (@character_id, 3, 1, 1), (@character_id, 7, 6, 3)");
+	uint32_t ItemIDs[4];
+	ItemIDs[0] = Stats->GetItemIDByName("Small Knife");
+	ItemIDs[1] = Stats->GetItemIDByName("Dirty Shirt");
+	ItemIDs[2] = Stats->GetItemIDByName("Small Health Potion");
+	ItemIDs[3] = Stats->GetItemIDByName("Attack");
+	Database->PrepareQuery("INSERT INTO inventory "
+						   "VALUES(@character_id, @hand_slot, @item1_id, 1) "
+						   ",(@character_id, @body_slot, @item2_id, 1) "
+						   ",(@character_id, @bag_slot, @item3_id, 3) ");
 	Database->BindInt(1, CharacterID);
+	Database->BindInt(2, (int)InventoryType::HAND1);
+	Database->BindInt(3, ItemIDs[0]);
+	Database->BindInt(4, (int)InventoryType::BODY);
+	Database->BindInt(5, ItemIDs[1]);
+	Database->BindInt(6, (int)InventoryType::BAG);
+	Database->BindInt(7, ItemIDs[2]);
 	Database->FetchRow();
 	Database->CloseQuery();
 
-	Database->PrepareQuery("INSERT INTO skilllevel VALUES(@character_id, 1, 1)");
+	Database->PrepareQuery("INSERT INTO skill VALUES(@character_id, 0, @item_id, 1)");
 	Database->BindInt(1, CharacterID);
+	Database->BindInt(2, ItemIDs[3]);
 	Database->FetchRow();
 	Database->CloseQuery();
 
-	Database->PrepareQuery("INSERT INTO actionbar VALUES(@character_id, 0, 1, 0), (@character_id, 1, 0, 6)");
+	Database->PrepareQuery("INSERT INTO actionbar VALUES(@character_id, 0, @skill_id), (@character_id, 1, @item_id)");
 	Database->BindInt(1, CharacterID);
+	Database->BindInt(2, ItemIDs[3]);
+	Database->BindInt(3, ItemIDs[2]);
 	Database->FetchRow();
 	Database->CloseQuery();
 
@@ -238,23 +253,24 @@ void _Save::LoadPlayer(_Object *Player) {
 	}
 	Database->CloseQuery();
 
+	Player->Skills.clear();
+
 	// Set skills
-	Database->PrepareQuery("SELECT skill_id, level FROM skilllevel WHERE character_id = @character_id");
+	Database->PrepareQuery("SELECT item_id, level FROM skill WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
+		uint32_t ItemID = Database->GetInt<uint32_t>(0);
 		int SkillLevel = Database->GetInt<int>(1);
-		Player->SetSkillLevel(Database->GetInt<uint32_t>(0), SkillLevel);
+		Player->Skills[ItemID] = SkillLevel;
 	}
 	Database->CloseQuery();
 
 	// Set actionbar
-	Database->PrepareQuery("SELECT slot, skill_id, item_id FROM actionbar WHERE character_id = @character_id");
+	Database->PrepareQuery("SELECT slot, item_id FROM actionbar WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
 		uint32_t Slot = Database->GetInt<uint32_t>("slot");
-		uint32_t SkillID = Database->GetInt<uint32_t>("skill_id");
 		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
-		Player->ActionBar[Slot].Skill = Player->Stats->Skills[SkillID];
 		Player->ActionBar[Slot].Item = Player->Stats->Items[ItemID];
 	}
 	Database->CloseQuery();
@@ -268,67 +284,87 @@ void _Save::SavePlayer(const _Object *Player) {
 	Database->RunQuery("BEGIN TRANSACTION");
 
 	// Save character stats
-	std::stringstream Query;
-	Query
-		<< "UPDATE character SET "
-		<< "  map_id = " << Player->SpawnMapID
-		<< ", spawnpoint = " << Player->SpawnPoint
-		<< ", experience = " <<Player->Experience
-		<< ", gold = " << Player->Gold
-		<< ", playtime = " << Player->PlayTime
-		<< ", deaths = " << Player->Deaths
-		<< ", monsterkills = " << Player->MonsterKills
-		<< ", playerkills = " << Player->PlayerKills
-		<< ", bounty = " << Player->Bounty
-		<< " WHERE id = " << Player->CharacterID;
-	Database->RunQuery(Query.str());
-	Query.str("");
+	Database->PrepareQuery(
+		"UPDATE character SET"
+		" map_id = @map_id,"
+		" spawnpoint = @spawnpoint,"
+		" experience = @experience,"
+		" gold = @gold,"
+		" playtime = @playtime,"
+		" deaths = @deaths,"
+		" monsterkills = @monsterkills,"
+		" playerkills = @playerkills,"
+		" bounty = @bounty"
+		" WHERE id = @character_id"
+	);
+	Database->BindInt(1, Player->SpawnMapID);
+	Database->BindInt(2, Player->SpawnPoint);
+	Database->BindInt(3, Player->Experience);
+	Database->BindInt(4, Player->Gold);
+	Database->BindInt(5, Player->PlayTime);
+	Database->BindInt(6, Player->Deaths);
+	Database->BindInt(7, Player->MonsterKills);
+	Database->BindInt(8, Player->PlayerKills);
+	Database->BindInt(9, Player->Bounty);
+	Database->BindInt(10, Player->CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
 
 	// Save items
-	Query << "DELETE FROM inventory WHERE character_id = " << Player->CharacterID;
-	Database->RunQuery(Query.str());
-	Query.str("");
+	Database->PrepareQuery("DELETE FROM inventory WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
 
-	const _InventorySlot *Item;
+	const _InventorySlot *InventorySlot;
 	for(size_t i = 0; i < InventoryType::COUNT; i++) {
-		Item = &Player->Inventory->Slots[i];
-		if(Item->Item) {
-			Query << "INSERT INTO inventory VALUES(" << Player->CharacterID << ", " << i << ", " << Item->Item->ID << ", " << Item->Count << ")";;
-			Database->RunQuery(Query.str());
-			Query.str("");
+		InventorySlot = &Player->Inventory->Slots[i];
+		if(InventorySlot->Item) {
+			Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, @slot, @item_id, @count)");
+			Database->BindInt(1, Player->CharacterID);
+			Database->BindInt(2, (uint32_t)i);
+			Database->BindInt(3, InventorySlot->Item->ID);
+			Database->BindInt(4, (uint32_t)InventorySlot->Count);
+			Database->FetchRow();
+			Database->CloseQuery();
 		}
 	}
 
-	// Save skill points
-	Query << "DELETE FROM skilllevel WHERE character_id = " << Player->CharacterID;
-	Database->RunQuery(Query.str());
-	Query.str("");
+	// Save skills
+	Database->PrepareQuery("DELETE FROM skill WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
 
-	for(auto &SkillLevel : Player->SkillLevels) {
-		if(SkillLevel.second > 0) {
-			Query << "INSERT INTO skilllevel VALUES(" << Player->CharacterID << ", " << SkillLevel.first << ", " << SkillLevel.second << ")";
-			Database->RunQuery(Query.str());
-			Query.str("");
+	for(auto &Skill : Player->Skills) {
+		if(Skill.second > 0) {
+			Database->PrepareQuery("INSERT INTO skill VALUES(@character_id, 0, @item_id, @level)");
+			Database->BindInt(1, Player->CharacterID);
+			Database->BindInt(2, Skill.first);
+			Database->BindInt(3, (uint32_t)Skill.second);
+			Database->FetchRow();
+			Database->CloseQuery();
 		}
 	}
 
 	// Save actionbar
-	Query << "DELETE FROM actionbar WHERE character_id = " << Player->CharacterID;
-	Database->RunQuery(Query.str());
-	Query.str("");
+	Database->PrepareQuery("DELETE FROM actionbar WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
 
 	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 		if(Player->ActionBar[i].IsSet()) {
-			uint32_t SkillID = 0;
 			uint32_t ItemID = 0;
-			if(Player->ActionBar[i].Skill)
-				SkillID = Player->ActionBar[i].Skill->ID;
 			if(Player->ActionBar[i].Item)
 				ItemID = Player->ActionBar[i].Item->ID;
 
-			Query << "INSERT INTO actionbar VALUES(" << Player->CharacterID << ", " << i << ", " << SkillID << ", " << ItemID << ")";
-			Database->RunQuery(Query.str());
-			Query.str("");
+			Database->PrepareQuery("INSERT INTO actionbar VALUES(@character_id, @slot, @item_id)");
+			Database->BindInt(1, Player->CharacterID);
+			Database->BindInt(2, (uint32_t)i);
+			Database->BindInt(3, ItemID);
+			Database->FetchRow();
+			Database->CloseQuery();
 		}
 	}
 
@@ -410,7 +446,6 @@ void _Save::CreateDefaultDatabase() {
 				"CREATE TABLE actionbar(\n"
 				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
 				"	slot INTEGER DEFAULT(0),\n"
-				"	skill_id INTEGER DEFAULT(0),\n"
 				"	item_id INTEGER DEFAULT(0)\n"
 				")"
 	);
@@ -425,12 +460,22 @@ void _Save::CreateDefaultDatabase() {
 				")"
 	);
 
-	// Skill levels
+	// Skills
 	Database->RunQuery(
-				"CREATE TABLE skilllevel(\n"
+				"CREATE TABLE skill(\n"
 				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
-				"	skill_id INTEGER,\n"
+				"	rank INTEGER,\n"
+				"	item_id INTEGER,\n"
 				"	level INTEGER\n"
+				")"
+	);
+
+	// Unlocks
+	Database->RunQuery(
+				"CREATE TABLE unlock(\n"
+				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
+				"	quest_id INTEGER,\n"
+				"	level INTEGER DEFAULT(0)\n"
 				")"
 	);
 

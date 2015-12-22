@@ -17,7 +17,6 @@
 *******************************************************************************/
 #include <stats.h>
 #include <objects/object.h>
-#include <objects/skill.h>
 #include <objects/buff.h>
 #include <constants.h>
 #include <database.h>
@@ -35,7 +34,6 @@ _Stats::_Stats() {
 	LoadMaps();
 	LoadEvents();
 	LoadLevels();
-	LoadSkills();
 	LoadBuffs();
 	LoadItemTypes();
 	LoadItems();
@@ -48,9 +46,6 @@ _Stats::~_Stats() {
 
 	for(const auto &Item : Items)
 		delete Item.second;
-
-	for(const auto &Skill : Skills)
-		delete Skill.second;
 
 	for(const auto &Buff : Buffs)
 		delete Buff.second;
@@ -107,29 +102,6 @@ void _Stats::LoadLevels() {
 		Levels.push_back(Level);
 	}
 	Database->CloseQuery();
-}
-
-// Loads skills into a map
-void _Stats::LoadSkills() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM skill");
-
-	// Get data
-	while(Database->FetchRow()) {
-		_Skill *Skill = new _Skill;
-		Skill->ID = Database->GetInt<uint32_t>("id");
-		Skill->Name = Database->GetString("name");
-		Skill->Script = Database->GetString("script");
-		Skill->Texture = Assets.Textures[Database->GetString("icon")];
-		Skill->TargetID = (TargetType)Database->GetInt<int>("target_id");
-		Skill->TargetAlive = Database->GetInt<int>("target_alive");
-		Skill->Scope = (ScopeType)Database->GetInt<int>("scope_id");
-		Skills[Skill->ID] = Skill;
-	}
-	Database->CloseQuery();
-
-	Skills[0] = nullptr;
 }
 
 // Load buffs
@@ -299,7 +271,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->AI = Database->GetString("ai_name");
 
 		Monster->ActionBar.resize(ACTIONBAR_STARTING_SIZE);
-		Monster->ActionBar[0].Skill = Skills[12];
+		Monster->ActionBar[0].Item = Items[88];
 	}
 
 	// Free memory
@@ -435,6 +407,20 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 				ItemDrops.push_back(ItemID);
 		}
 	}
+}
+
+// Find item name by name
+uint32_t _Stats::GetItemIDByName(const std::string &Name) {
+	uint32_t ID = 0;
+
+	// Run query
+	Database->PrepareQuery("SELECT id FROM item WHERE name = @name");
+	Database->BindString(1, Name);
+	if(Database->FetchRow())
+		ID = Database->GetInt<uint32_t>("id");
+	Database->CloseQuery();
+
+	return ID;
 }
 
 // Find a level from the given experience number

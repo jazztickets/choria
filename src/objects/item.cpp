@@ -34,7 +34,7 @@
 #include <algorithm>
 
 // Draw tooltip
-void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const {
+void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
 	_Label *TooltipType = Assets.Labels["label_item_tooltip_type"];
@@ -147,6 +147,26 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 	}
 
+/*	// Get current skill level
+	int32_t SkillLevel = 0;
+	auto SkillLevelIterator = Player->Skills.find(ID);
+	if(SkillLevelIterator != Player->Skills.end())
+		SkillLevel = SkillLevelIterator->second;
+
+	// Get current level description
+	Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
+	DrawPosition.y += 25;
+	DrawDescription(Scripting, SkillLevel, DrawPosition, Size.x);
+
+	// Get next level description
+	if(DrawNextLevel && SkillLevel > 0) {
+		DrawPosition.y += 25;
+		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
+		DrawPosition.y += 25;
+		DrawDescription(Scripting, SkillLevel+1, DrawPosition, Size.x);
+	}
+*/
+
 	// Boosts
 	if(MaxHealth > 0) {
 		std::stringstream Buffer;
@@ -202,6 +222,40 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 		DrawPosition.y += SpacingY;
 	}
+}
+
+// Draw skill description
+void _Item::DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, float Width) const {
+	/*if(!Script.length())
+		return;
+
+	// Show unskilled levels as level 1
+	if(SkillLevel == 0)
+		SkillLevel = 1;
+
+	// Get skill description
+	std::string Info = "";
+	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+		Scripting->PushInt(SkillLevel);
+		Scripting->MethodCall(1, 1);
+		Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+	}
+
+	float SpacingY = 18;
+
+	std::stringstream Buffer(Info);
+	std::string Token;
+
+	// Draw description
+	while(std::getline(Buffer, Token, '\n')) {
+		std::list<std::string> Strings;
+		Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings);
+		for(const auto &LineToken : Strings) {
+			Assets.Fonts["hud_small"]->DrawText(LineToken, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			DrawPosition.y += SpacingY;
+		}
+	}*/
 }
 
 // Returns the range of damage

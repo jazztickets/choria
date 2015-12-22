@@ -19,7 +19,6 @@
 #include <network/servernetwork.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>
-#include <objects/skill.h>
 #include <objects/buff.h>
 #include <objects/inventory.h>
 #include <objects/statchange.h>
@@ -203,16 +202,19 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
 
-		const _Skill *Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
-		if(Skill && !Skill->CanUse(Scripting, ActionResult))
-			Skill = nullptr;
-
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
-		if(Item && (ClientPlayer->ActionBar[ActionBarSlot].Count == 0 || !Item->CanUse(Scripting, ActionResult)))
+		if(Item) {
+			if(Item->IsSkill() && !Item->CanUse(Scripting, ActionResult)) {
+				Item = nullptr;
+			}
+			else if(!Item->IsSkill() && (ClientPlayer->ActionBar[ActionBarSlot].Count == 0 || !Item->CanUse(Scripting, ActionResult)))
+				Item = nullptr;
+		}
+		else
 			Item = nullptr;
 
 		// Set up initial target
-		if(Skill || Item) {
+		if(Item) {
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->BattleSide;
@@ -220,26 +222,21 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			// Pick sides depending on action
 			bool TargetAlive = true;
 			bool Multiple = false;
-			if(Skill) {
-				switch(Skill->TargetID) {
-					case TargetType::ALLY_ALL:
-						Multiple = true;
-					case TargetType::SELF:
-					case TargetType::ALLY:
-						StartingSide = ClientPlayer->BattleSide;
-					break;
-					case TargetType::ENEMY_ALL:
-						Multiple = true;
-					break;
-					default:
-					break;
-				}
+			switch(Item->TargetID) {
+				case TargetType::ALLY_ALL:
+					Multiple = true;
+				case TargetType::SELF:
+				case TargetType::ALLY:
+					StartingSide = ClientPlayer->BattleSide;
+				break;
+				case TargetType::ENEMY_ALL:
+					Multiple = true;
+				break;
+				default:
+				break;
+			}
 
-				TargetAlive = Skill->TargetAlive;
-			}
-			else if(Item && Item->Type == ItemType::CONSUMABLE) {
-				StartingSide = ClientPlayer->BattleSide;
-			}
+			TargetAlive = Item->TargetAlive;
 
 			// Get list of fighters on each side
 			std::list<_Object *> FighterList;
@@ -257,7 +254,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		}
 
 		// Set potential skill
-		ClientPlayer->PotentialAction.Skill = Skill;
 		ClientPlayer->PotentialAction.Item = Item;
 	}
 	// Apply action
@@ -272,7 +268,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		ClientNetwork->SendPacket(Packet);
 
-		ClientPlayer->Action.Skill = ClientPlayer->ActionBar[ActionBarSlot].Skill;
 		ClientPlayer->Action.Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		ClientPlayer->PotentialAction.Unset();
 	}
@@ -681,12 +676,10 @@ bool _Battle::ClientHandleInput(int Action) {
 void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-	uint32_t SkillID = Data.Read<uint32_t>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 
 	_Object *Fighter = Manager->IDMap[NetworkID];
 	if(Fighter) {
-		Fighter->Action.Skill = Stats->Skills[SkillID];
 		Fighter->Action.Item = Stats->Items[ItemID];
 	}
 }

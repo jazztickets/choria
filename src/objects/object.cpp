@@ -16,7 +16,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/object.h>
-#include <objects/skill.h>
 #include <objects/buff.h>
 #include <objects/statchange.h>
 #include <objects/inventory.h>
@@ -460,15 +459,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw the action used
 	if(ClientPlayer->BattleSide == BattleSide) {
 
-		if(Action.Skill) {
-			glm::vec2 SkillUsingPosition = SlotPosition + glm::vec2(-Action.Skill->Texture->Size.x/2 - 10, BattleElement->Size.y/2);
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(SkillUsingPosition, Action.Skill->Texture, GlobalColor);
-		}
-		else if(Action.Item) {
+		if(Action.Item) {
 			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
+			if(!Action.Item->IsSkill())
+				Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
 			Graphics.DrawCenteredImage(ItemUsingPosition, Action.Item->Texture, GlobalColor);
 		}
 	}
@@ -477,9 +472,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	for(auto &BattleTarget : ClientPlayer->Targets) {
 		if(BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
 			const _Texture *Texture = nullptr;
-			if(ClientPlayer->PotentialAction.Skill)
-				Texture = ClientPlayer->PotentialAction.Skill->Texture;
-			else if(ClientPlayer->PotentialAction.Item)
+			if(ClientPlayer->PotentialAction.Item)
 				Texture = ClientPlayer->PotentialAction.Item->Texture;
 
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -599,17 +592,17 @@ void _Object::SerializeStats(_Buffer &Data) {
 
 	// Get skill count
 	uint32_t SkillCount = 0;
-	for(const auto &SkillLevel : SkillLevels) {
-		if(SkillLevel.second > 0)
+	for(const auto &Skill : Skills) {
+		if(Skill.second > 0)
 			SkillCount++;
 	}
 
 	// Write skills
 	Data.Write<uint32_t>(SkillCount);
-	for(const auto &SkillLevel : SkillLevels) {
-		if(SkillLevel.second > 0) {
-			Data.Write<uint32_t>(SkillLevel.first);
-			Data.Write<int32_t>(SkillLevel.second);
+	for(const auto &Skill : Skills) {
+		if(Skill.second > 0) {
+			Data.Write<uint32_t>(Skill.first);
+			Data.Write<int32_t>(Skill.second);
 		}
 	}
 
@@ -680,7 +673,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	for(uint32_t i = 0; i < SkillCount; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
 		int32_t Points = Data.Read<int32_t>();
-		SkillLevels[SkillID] = Points;
+		Skills[SkillID] = Points;
 	}
 
 	// Read skill bar
@@ -893,7 +886,6 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 
 		// Set skill
 		if(ActionBarSlot < ActionBar.size()) {
-			Action.Skill = ActionBar[ActionBarSlot].Skill;
 			Action.Item = ActionBar[ActionBarSlot].Item;
 		}
 	}
@@ -957,33 +949,33 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 	if(SkillID == 0)
 		return;
 
-	const _Skill *Skill = Stats->Skills[SkillID];
+	const _Item *Skill = Stats->Items[SkillID];
 	if(Skill == nullptr)
 		return;
 
 	// Buying
 	if(Adjust > 0) {
-		if(GetSkillPointsRemaining() == 0 || SkillLevels[SkillID] >= SKILL_MAX_LEVEL)
+		if(GetSkillPointsRemaining() == 0 || Skills[SkillID] >= SKILL_MAX_LEVEL)
 			return;
 
 		// Update level
-		SkillLevels[SkillID] += Adjust;
-		if(SkillLevels[SkillID] > SKILL_MAX_LEVEL)
-			SkillLevels[SkillID] = SKILL_MAX_LEVEL;
+		Skills[SkillID] += Adjust;
+		if(Skills[SkillID] > SKILL_MAX_LEVEL)
+			Skills[SkillID] = SKILL_MAX_LEVEL;
 	}
 	else if(Adjust < 0) {
-		if(SkillLevels[SkillID] == 0)
+		if(Skills[SkillID] == 0)
 			return;
 
 		// Update level
-		SkillLevels[SkillID] += Adjust;
-		if(SkillLevels[SkillID] < 0)
-			SkillLevels[SkillID] = 0;
+		Skills[SkillID] += Adjust;
+		if(Skills[SkillID] < 0)
+			Skills[SkillID] = 0;
 
 		// Update skill bar
-		if(SkillLevels[SkillID] == 0) {
+		if(Skills[SkillID] == 0) {
 			for(size_t i = 0; i < ActionBar.size(); i++) {
-				if(ActionBar[i].Skill == Skill) {
+				if(ActionBar[i].Item == Skill) {
 					ActionBar[i].Unset();
 					break;
 				}
@@ -996,8 +988,8 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 void _Object::CalculateSkillPoints() {
 
 	SkillPointsUsed = 0;
-	for(const auto &SkillLevel : SkillLevels) {
-		const _Skill *Skill = Stats->Skills[SkillLevel.first];
+	for(const auto &SkillLevel : Skills) {
+		const _Item *Skill = Stats->Items[SkillLevel.first];
 		if(Skill)
 			SkillPointsUsed += SkillLevel.second;
 	}
