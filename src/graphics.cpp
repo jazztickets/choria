@@ -50,7 +50,7 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	// Set video flags
 	Uint32 VideoFlags = SDL_WINDOW_OPENGL;
 	if(WindowSettings.Fullscreen)
-		VideoFlags |= SDL_WINDOW_FULLSCREEN;
+		VideoFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
 	// Set opengl attributes
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
