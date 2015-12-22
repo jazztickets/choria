@@ -297,9 +297,6 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 
 // Return true if the item can be used
 bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Type != ItemType::CONSUMABLE)
-		return false;
-
 	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != ActionResult.Scope))
 		return false;
 
