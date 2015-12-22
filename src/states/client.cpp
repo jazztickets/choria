@@ -960,6 +960,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 
 	// Create result
 	_ActionResult ActionResult;
+	bool SkillUnlocked = Data.ReadBit();
 	uint32_t ItemID = Data.Read<uint32_t>();
 	ActionResult.ActionUsed.Item = Stats->Items[ItemID];
 
@@ -983,11 +984,20 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 		ActionResult.Source.Object->Targets.clear();
 
 		// Use item on client
-		if(Player == ActionResult.Source.Object && ActionResult.ActionUsed.Item) {
-			size_t Index;
-			if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index)) {
-				Player->Inventory->DecrementItemCount(Index, -1);
-				Player->RefreshActionBarCount();
+		if(Player == ActionResult.Source.Object) {
+			if(ActionResult.ActionUsed.Item) {
+
+				if(SkillUnlocked || !Player->HasLearned(ActionResult.ActionUsed.Item)) {
+					size_t Index;
+					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index)) {
+						Player->Inventory->DecrementItemCount(Index, -1);
+						Player->RefreshActionBarCount();
+
+						if(SkillUnlocked) {
+							Player->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+						}
+					}
+				}
 			}
 		}
 	}

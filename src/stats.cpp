@@ -116,7 +116,7 @@ void _Stats::LoadBuffs() {
 		Buff->ID = Database->GetInt<uint32_t>("id");
 		Buff->Name = Database->GetString("name");
 		Buff->Script = Database->GetString("script");
-		Buff->Texture = Assets.Textures[Database->GetString("icon")];
+		Buff->Texture = Assets.Textures[Database->GetString("texture")];
 		Buffs[Buff->ID] = Buff;
 	}
 	Database->CloseQuery();
@@ -156,7 +156,7 @@ void _Stats::LoadItems() {
 		Item->Script = Database->GetString("script");
 		Item->Level = Database->GetInt<int>("level");
 		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
-		Item->Texture = Assets.Textures[Database->GetString("image")];
+		Item->Texture = Assets.Textures[Database->GetString("texture")];
 		Item->LevelRequired = Database->GetInt<int>("levelrequired");
 		Item->Cost = Database->GetInt<int>("cost");
 		Item->Damage = Database->GetReal("damage");
@@ -243,6 +243,8 @@ void _Stats::LoadTraders() {
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 	Monster->DatabaseID = MonsterID;
 
+	uint32_t ItemID = GetItemIDByName("Monster Attack");
+
 	// Run query
 	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.ai_id = ai.id AND m.id = @monster_id");
 	Database->BindInt(1, MonsterID);
@@ -271,7 +273,9 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->AI = Database->GetString("ai_name");
 
 		Monster->ActionBar.resize(ACTIONBAR_STARTING_SIZE);
-		Monster->ActionBar[0].Item = Items[88];
+
+		Monster->ActionBar[0].Item = Items[ItemID];
+		Monster->Skills[ItemID] = 1;
 	}
 
 	// Free memory
@@ -286,7 +290,7 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
 	while(Database->FetchRow()) {
 		_Portrait Portrait;
 		Portrait.ID = Database->GetInt<uint32_t>("id");
-		Portrait.Image = Assets.Textures[std::string("portraits/") + Database->GetString("image")];
+		Portrait.Image = Assets.Textures[Database->GetString("texture")];
 
 		Portraits.push_back(Portrait);
 	}
@@ -299,10 +303,10 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 	const _Texture *Image = nullptr;
 
 	// Run query
-	Database->PrepareQuery("SELECT image FROM portrait where id = @portrait_id");
+	Database->PrepareQuery("SELECT texture FROM portrait where id = @portrait_id");
 	Database->BindInt(1, PortraitID);
 	if(Database->FetchRow()) {
-		Image = Assets.Textures[std::string("portraits/") + Database->GetString("image")];
+		Image = Assets.Textures[Database->GetString("texture")];
 	}
 	Database->CloseQuery();
 

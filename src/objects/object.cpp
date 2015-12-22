@@ -590,20 +590,11 @@ void _Object::SerializeStats(_Buffer &Data) {
 	// Write inventory
 	Inventory->Serialize(Data);
 
-	// Get skill count
-	uint32_t SkillCount = 0;
-	for(const auto &Skill : Skills) {
-		if(Skill.second > 0)
-			SkillCount++;
-	}
-
 	// Write skills
-	Data.Write<uint32_t>(SkillCount);
+	Data.Write<uint32_t>((uint32_t)Skills.size());
 	for(const auto &Skill : Skills) {
-		if(Skill.second > 0) {
-			Data.Write<uint32_t>(Skill.first);
-			Data.Write<int32_t>(Skill.second);
-		}
+		Data.Write<uint32_t>(Skill.first);
+		Data.Write<int32_t>(Skill.second);
 	}
 
 	// Write skill bar
@@ -790,6 +781,17 @@ int _Object::Move() {
 	}
 
 	return 0;
+}
+
+// Return true if the object has the skill unlocked
+bool _Object::HasLearned(const _Item *Skill) {
+	if(!Skill)
+		return false;
+
+	if(Skills.find(Skill->ID) != Skills.end())
+		return true;
+
+	return false;
 }
 
 // Gets the tile that the player is currently standing on

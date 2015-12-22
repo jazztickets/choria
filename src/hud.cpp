@@ -187,8 +187,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 				break;
 				case WINDOW_SKILLS:
-					if(Player->Skills[Tooltip.Item->ID] > 0)
-						Cursor = Tooltip;
+					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
+						if(Player->Skills[Tooltip.Item->ID] > 0)
+							Cursor = Tooltip;
+					}
 				break;
 			}
 		}
@@ -262,7 +264,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							SellItem(&Cursor, 1);
 						break;
 						case WINDOW_ACTIONBAR:
-							if(Cursor.Window == WINDOW_INVENTORY)
+							if(Cursor.Window == WINDOW_INVENTORY && !Cursor.Item->IsSkill())
 								SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.Item);
 							else if(Cursor.Window == WINDOW_ACTIONBAR)
 								SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Item);
@@ -280,7 +282,11 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 					switch(Tooltip.Window) {
 						// Onto inventory
 						case WINDOW_INVENTORY:
-							SetActionBar(Cursor.Slot, Player->ActionBar.size(), Tooltip.Item);
+							// Swap actionbar with inventory
+							if(Tooltip.Item && !Tooltip.Item->IsSkill())
+								SetActionBar(Cursor.Slot, Player->ActionBar.size(), Tooltip.Item);
+							else
+								SetActionBar(Cursor.Slot, Player->ActionBar.size(), nullptr);
 						break;
 						// Swap action
 						case WINDOW_ACTIONBAR:

@@ -54,7 +54,7 @@ class _Action {
 
 	public:
 
-		_Action() : Item(nullptr), Count(0) { }
+		_Action() : Item(nullptr), FromInventory(false), Count(0) { }
 		_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
 		bool operator==(const _Action &Action) const { return Action.Item == Item; }
@@ -71,6 +71,7 @@ class _Action {
 		TargetType GetTargetType();
 
 		const _Item *Item;
+		bool FromInventory;
 		int Count;
 };
 

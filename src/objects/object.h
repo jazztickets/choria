@@ -121,6 +121,7 @@ class _Object : public _ManagerBase {
 		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
+		bool HasLearned(const _Item *Skill);
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Adjust);
 		void CalculateSkillPoints();

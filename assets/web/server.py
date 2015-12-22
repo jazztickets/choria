@@ -67,9 +67,13 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		# parse url
 		parts = urllib.parse.urlsplit(self.path)
 		query = urllib.parse.parse_qs(parts.query)
+		parsed = urllib.parse.parse_qs(data, True)
+		params = {}
+		for var in query:
+			params[var] = query[var][0]
+		tablename = params['table']
+
 		if parts.path == "/save":
-			parsed = urllib.parse.parse_qs(data, True)
-			tablename = query['table'][0]
 			columns = get_column_names(tablename)
 			id_name = columns[0]
 			for row in parsed:
@@ -95,17 +99,28 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			self.write_json_response({'message':'saved ' + str(datetime.datetime.now())})
 			return
 		elif parts.path == "/add":
-			parsed = urllib.parse.parse_qs(data, True)
-			tablename = query['table'][0]
-			sql = "INSERT INTO {0} DEFAULT VALUES".format(tablename)
+
+			# get additional query fields
+			fields = []
+			values = []
+			for param in params:
+				escaped = params[param].replace('"', '""')
+				if param != "table":
+					fields.append(param)
+					values.append("\"" + escaped + "\"")
+
+			# add row
+			if len(fields):
+				sql = "INSERT INTO {0} ({1}) VALUES({2})".format(tablename, ', '.join(fields), ', '.join(values))
+			else:
+				sql = "INSERT INTO {0} DEFAULT VALUES".format(tablename)
+
 			db.execute(sql)
 			db.commit()
 
 			self.write_json_response({'message':'1 row added'})
 			return
 		elif parts.path == "/remove":
-			parsed = urllib.parse.parse_qs(data, True)
-			tablename = query['table'][0]
 			columns = get_column_names(tablename)
 			id_name = columns[0]
 

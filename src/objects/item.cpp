@@ -297,9 +297,20 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 
 // Return true if the item can be used
 bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
+	_Object *Object = ActionResult.Source.Object;
+	if(!Object)
+		return false;
+
+	// Unlocking skill for the first time
+	if(IsSkill() && ActionResult.ActionUsed.FromInventory) {
+		return !Object->HasLearned(this);
+	}
+
+	// Check scope
 	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != ActionResult.Scope))
 		return false;
 
+	// Check script's function
 	if(Scripting->StartMethodCall(Script, "CanUse")) {
 		Scripting->PushInt(Level);
 		Scripting->PushObject(ActionResult.Source.Object);
@@ -315,13 +326,13 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 // Apply the cost
 void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	/*if(Scripting->StartMethodCall(Script, "ApplyCost")) {
+	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
 		Scripting->PushInt(Level);
 		Scripting->PushActionResult(&ActionResult);
 		Scripting->MethodCall(2, 1);
 		Scripting->GetActionResult(1, ActionResult);
 		Scripting->FinishMethodCall();
-	}*/
+	}
 }
 
 // Use an item

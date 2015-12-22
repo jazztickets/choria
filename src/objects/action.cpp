@@ -49,22 +49,29 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;
 	ActionResult.Scope = Scope;
-	ActionResult.ActionUsed.Item = Source->Action.Item;
+	ActionResult.ActionUsed = Source->Action;
+	const _Item *ItemUsed = Source->Action.Item;
+	bool SkillUnlocked = false;
 
 	// Use item
-	size_t Index;
-	if(ActionResult.ActionUsed.Item) {
-		if(ActionResult.ActionUsed.Item->IsSkill()) {
-			if(!ActionResult.ActionUsed.Item->CanUse(Source->Scripting, ActionResult))
-				return false;
+	if(ItemUsed) {
+		if(!ItemUsed->CanUse(Source->Scripting, ActionResult))
+			return false;
 
-			ActionResult.ActionUsed.Item->ApplyCost(Source->Scripting, ActionResult);
+		if(ItemUsed->IsSkill() && Source->HasLearned(ItemUsed) && !FromInventory) {
+
+			ItemUsed->ApplyCost(Source->Scripting, ActionResult);
 		}
 		else {
-			if(!ActionResult.ActionUsed.Item->CanUse(Source->Scripting, ActionResult) || !ActionResult.Source.Object->Inventory->FindItem(ActionResult.ActionUsed.Item, Index))
+			size_t Index;
+			if(!ActionResult.Source.Object->Inventory->FindItem(ItemUsed, Index))
 				return false;
 
 			ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
+			if(ItemUsed->IsSkill()) {
+				Source->Skills[ItemUsed->ID] = 0;
+				SkillUnlocked = true;
+			}
 		}
 	}
 
@@ -73,9 +80,10 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
+	Data.WriteBit(SkillUnlocked);
 
 	// Write action used
-	uint32_t ItemID = ActionResult.ActionUsed.Item ? ActionResult.ActionUsed.Item->ID : 0;
+	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
 	Data.Write<uint32_t>(ItemID);
 
 	// Write source updates
@@ -89,9 +97,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object = Target;
 
 		// Update objects
-		if(ActionResult.ActionUsed.Item) {
-			ActionResult.ActionUsed.Item->Use(Source->Scripting, ActionResult);
-		}
+		if(!SkillUnlocked)
+			ItemUsed->Use(Source->Scripting, ActionResult);
 
 		// Update target
 		ActionResult.Target.Object->UpdateHealth(ActionResult.Target.Health);

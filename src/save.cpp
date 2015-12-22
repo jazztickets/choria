@@ -337,14 +337,12 @@ void _Save::SavePlayer(const _Object *Player) {
 	Database->CloseQuery();
 
 	for(auto &Skill : Player->Skills) {
-		if(Skill.second > 0) {
-			Database->PrepareQuery("INSERT INTO skill VALUES(@character_id, 0, @item_id, @level)");
-			Database->BindInt(1, Player->CharacterID);
-			Database->BindInt(2, Skill.first);
-			Database->BindInt(3, (uint32_t)Skill.second);
-			Database->FetchRow();
-			Database->CloseQuery();
-		}
+		Database->PrepareQuery("INSERT INTO skill VALUES(@character_id, 0, @item_id, @level)");
+		Database->BindInt(1, Player->CharacterID);
+		Database->BindInt(2, Skill.first);
+		Database->BindInt(3, (uint32_t)Skill.second);
+		Database->FetchRow();
+		Database->CloseQuery();
 	}
 
 	// Save actionbar
