@@ -1,3 +1,0 @@
-DELETE FROM Levels;
-.mode tabs
-.import levels.csv Levels
