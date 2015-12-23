@@ -32,6 +32,7 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <iostream>
 
 // Draw tooltip
 void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
@@ -48,7 +49,8 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	_TextBounds TextBounds;
 	Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
 	int Width = 250;
-	Width = std::max(Width, TextBounds.Width) + 20;
+	int SidePadding = 20;
+	Width = std::max(Width, TextBounds.Width) + SidePadding * 2;
 
 	// Position window
 	glm::vec2 WindowOffset = Input.GetMouse();
@@ -129,17 +131,16 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
 
-		float TextSpacingY = 18;
-
 		std::stringstream Buffer(Info);
 		std::string Token;
 
 		// Draw description
+		float TextSpacingY = 18;
 		while(std::getline(Buffer, Token, '\n')) {
 			std::list<std::string> Strings;
-			Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings);
+			Assets.Fonts["hud_small"]->BreakupString(Token, Width - SidePadding * 2, Strings, true);
 			for(const auto &LineToken : Strings) {
-				Assets.Fonts["hud_small"]->DrawText(LineToken, DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+				Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, CENTER_BASELINE);
 				DrawPosition.y += TextSpacingY;
 			}
 		}

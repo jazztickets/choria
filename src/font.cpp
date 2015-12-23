@@ -19,11 +19,13 @@
 #include <graphics.h>
 #include <texture.h>
 #include <program.h>
+#include <assets.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <queue>
 #include <stdexcept>
 #include <cstdint>
 #include <functional>
+#include <iostream>
 
 // Get next power of two
 inline uint32_t GetNextPowerOf2(uint32_t Value) {
@@ -252,16 +254,34 @@ void _Font::CreateFontTexture(std::string SortedCharacters, uint32_t TextureWidt
 	delete[] Image;
 }
 
-// Draws a string
-float _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color, const _Alignment &Alignment, float Scale) const {
-	Graphics.SetProgram(Program);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.SetColor(Color);
-	Graphics.SetTextureID(Texture->ID);
+// Draw one glyph
+void _Font::DrawGlyph(glm::vec2 &Position, char Char, float Scale) const {
+
+	// Get glyph data
+	const GlyphStruct &Glyph = Glyphs[(FT_Byte)Char];
+
+	// Get vertices
+	glm::vec2 DrawPosition(Position.x + Scale * Glyph.OffsetX, Position.y - Scale * Glyph.OffsetY);
+	float Vertices[] = {
+		DrawPosition.x,                       DrawPosition.y + Scale * Glyph.Height, Glyph.Left,  Glyph.Bottom,
+		DrawPosition.x + Scale * Glyph.Width, DrawPosition.y + Scale * Glyph.Height, Glyph.Right, Glyph.Bottom,
+		DrawPosition.x,                       DrawPosition.y,                        Glyph.Left,  Glyph.Top,
+		DrawPosition.x + Scale * Glyph.Width, DrawPosition.y,                        Glyph.Right, Glyph.Top,
+	};
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &Vertices[0]);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &Vertices[2]);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	Position.x += Scale * Glyph.Advance;
+}
+
+// Adjust position based on alignment
+void _Font::AdjustPosition(const std::string &Text, glm::vec2 &Position, bool UseFormatting, const _Alignment &Alignment, float Scale) const {
 
 	// Adjust for alignment
 	_TextBounds TextBounds;
-	GetStringDimensions(Text, TextBounds);
+	GetStringDimensions(Text, TextBounds, UseFormatting);
 
 	// Handle horizontal alignment
 	switch(Alignment.Horizontal) {
@@ -285,9 +305,55 @@ float _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::ve
 			Position.y -= Scale * TextBounds.BelowBase;
 		break;
 	}
+}
+
+// Draws a string
+float _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color, const _Alignment &Alignment, float Scale) const {
+	Graphics.SetProgram(Program);
+	Graphics.SetVBO(VBO_NONE);
+	Graphics.SetColor(Color);
+	Graphics.SetTextureID(Texture->ID);
+
+	// Set position
+	AdjustPosition(Text, Position, false, Alignment, Scale);
 
 	// Draw string
-	float DrawX, DrawY;
+	glm::vec2 DrawPosition;
+	FT_UInt PreviousGlyphIndex = 0;
+	for(size_t i = 0; i < Text.size(); i++) {
+		FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
+
+		// Handle kerning
+		if(HasKerning && i) {
+			FT_Vector Delta;
+			FT_Get_Kerning(Face, PreviousGlyphIndex, GlyphIndex, FT_KERNING_DEFAULT, &Delta);
+			Position.x += Scale * (float)(Delta.x >> 6);
+		}
+		PreviousGlyphIndex = GlyphIndex;
+
+		// Draw glyph
+		DrawGlyph(Position, Text[i], Scale);
+	}
+
+	return Position.x;
+}
+
+// Draw formatted text
+void _Font::DrawTextFormatted(const std::string &Text, glm::vec2 Position, const _Alignment &Alignment) const {
+	Graphics.SetProgram(Program);
+	Graphics.SetVBO(VBO_NONE);
+	Graphics.SetColor(glm::vec4(1.0f));
+	Graphics.SetTextureID(Texture->ID);
+	float Scale = 1.0f;
+	bool InTag = false;
+	int TagIndex = 0;
+	int Mode = 0;
+	std::string Attribute = "";
+
+	// Set position
+	AdjustPosition(Text, Position, true, Alignment, Scale);
+
+	// Draw string
 	FT_UInt PreviousGlyphIndex = 0;
 	for(size_t i = 0; i < Text.size(); i++) {
 		FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
@@ -301,29 +367,41 @@ float _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::ve
 		PreviousGlyphIndex = GlyphIndex;
 
 		// Get glyph data
-		const GlyphStruct &Glyph = Glyphs[(FT_Byte)Text[i]];
-		DrawX = Position.x + Scale * Glyph.OffsetX;
-		DrawY = Position.y - Scale * Glyph.OffsetY;
+		if(Text[i] == '[') {
+			InTag = true;
+			TagIndex = 0;
+		}
+		else if(Text[i] == ']') {
+			InTag = false;
 
-		float Vertices[] = {
-			DrawX,                       DrawY + Scale * Glyph.Height, Glyph.Left,  Glyph.Bottom,
-			DrawX + Scale * Glyph.Width, DrawY + Scale * Glyph.Height, Glyph.Right, Glyph.Bottom,
-			DrawX,                       DrawY,                        Glyph.Left,  Glyph.Top,
-			DrawX + Scale * Glyph.Width, DrawY,                        Glyph.Right, Glyph.Top,
-		};
+			if(Mode == 1)
+				Graphics.SetColor(Assets.Colors[Attribute]);
 
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &Vertices[0]);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &Vertices[2]);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			Attribute = "";
+			Mode = 0;
+		}
+		else if(!InTag) {
 
-		Position.x += Scale * Glyph.Advance;
+			// Draw glyph
+			DrawGlyph(Position, Text[i], Scale);
+		}
+		else {
+
+			if(TagIndex == 0) {
+				if(Text[i] == 'c')
+					Mode = 1;
+			}
+			else if(TagIndex >= 2 && Mode) {
+				Attribute += Text[i];
+			}
+
+			TagIndex++;
+		}
 	}
-
-	return Position.x;
 }
 
 // Get width and height of a string
-void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds) const {
+void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds, bool UseFormatting) const {
 	if(Text.size() == 0) {
 		TestBounds.Width = 0;
 		TestBounds.AboveBase = 0;
@@ -331,72 +409,95 @@ void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds
 		return;
 	}
 
+	bool InTag = false;
+
 	TestBounds.Width = TestBounds.AboveBase = TestBounds.BelowBase = 0;
 	const GlyphStruct *Glyph = nullptr;
 	for(size_t i = 0; i < Text.size(); i++) {
 
-		// Get glyph data
-		Glyph = &Glyphs[(FT_Byte)Text[i]];
+		if(UseFormatting && Text[i] == '[')
+			InTag = true;
+		else if(UseFormatting && Text[i] == ']')
+			InTag = false;
+		else if(!InTag) {
 
-		// Update width by advance
-		TestBounds.Width += (int)Glyph->Advance;
+			// Get glyph data
+			Glyph = &Glyphs[(FT_Byte)Text[i]];
 
-		// Get number of pixels below baseline
-		int BelowBase = (int)(-Glyph->OffsetY + Glyph->Height);
-		if(BelowBase > TestBounds.BelowBase)
-			TestBounds.BelowBase = BelowBase;
+			// Update width by advance
+			TestBounds.Width += (int)Glyph->Advance;
 
-		// Get number of pixels above baseline
-		if(Glyph->OffsetY > (int)TestBounds.AboveBase)
-			TestBounds.AboveBase = (int)Glyph->OffsetY;
+			// Get number of pixels below baseline
+			int BelowBase = (int)(-Glyph->OffsetY + Glyph->Height);
+			if(BelowBase > TestBounds.BelowBase)
+				TestBounds.BelowBase = BelowBase;
+
+			// Get number of pixels above baseline
+			if(Glyph->OffsetY > (int)TestBounds.AboveBase)
+				TestBounds.AboveBase = (int)Glyph->OffsetY;
+		}
 	}
 }
 
 // Break up text into multiple strings based on max width
-void _Font::BreakupString(const std::string &Text, float Width, std::list<std::string> &Strings) const {
+void _Font::BreakupString(const std::string &Text, float Width, std::list<std::string> &Strings, bool UseFormatting) const {
 
+	bool InTag = false;
 	float X = 0;
 	FT_UInt PreviousGlyphIndex = 0;
 	size_t StartCut = 0;
 	size_t LastSpace = std::string::npos;
 	for(size_t i = 0; i < Text.size(); i++) {
 
-		// Remember last space position
-		if(Text[i] == ' ')
-			LastSpace = i;
+		// Check for formatting codes
+		if(UseFormatting && Text[i] == '[')
+			InTag = true;
+		else if(UseFormatting && Text[i] == ']')
+			InTag = false;
+		else if(!InTag) {
 
-		FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
-
-		// Handle kerning
-		if(HasKerning && i) {
-			FT_Vector Delta;
-			FT_Get_Kerning(Face, PreviousGlyphIndex, GlyphIndex, FT_KERNING_DEFAULT, &Delta);
-			X += (float)(Delta.x >> 6);
-		}
-		PreviousGlyphIndex = GlyphIndex;
-
-		// Get glyph info
-		const GlyphStruct &Glyph = Glyphs[(FT_Byte)Text[i]];
-		X += Glyph.Advance;
-
-		// Check for max width
-		if(X > Width) {
-			size_t Adjust = 0;
-			if(LastSpace == std::string::npos)
+			// Remember last space position
+			if(Text[i] == ' ')
 				LastSpace = i;
-			else
-				Adjust = 1;
 
-			// Add to list of strings
-			Strings.push_back(Text.substr(StartCut, LastSpace - StartCut));
-			StartCut = LastSpace+Adjust;
-			LastSpace = std::string::npos;
-			i = StartCut;
+			FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
 
-			X = 0;
-			PreviousGlyphIndex = 0;
+			// Handle kerning
+			if(HasKerning && i) {
+				FT_Vector Delta;
+				FT_Get_Kerning(Face, PreviousGlyphIndex, GlyphIndex, FT_KERNING_DEFAULT, &Delta);
+				X += (float)(Delta.x >> 6);
+			}
+			PreviousGlyphIndex = GlyphIndex;
+
+			// Get glyph info
+			const GlyphStruct &Glyph = Glyphs[(FT_Byte)Text[i]];
+			X += Glyph.Advance;
+
+			// Check for max width
+			if(X >= Width) {
+				size_t Adjust = 0;
+				if(LastSpace == std::string::npos)
+					LastSpace = i;
+				else
+					Adjust = 1;
+
+				// Add to list of strings
+				Strings.push_back(Text.substr(StartCut, LastSpace - StartCut));
+				StartCut = LastSpace+Adjust;
+				LastSpace = std::string::npos;
+				i = StartCut;
+
+				// Check for formatting codes
+				if(UseFormatting && Text[i] == '[')
+					InTag = true;
+				else if(UseFormatting && Text[i] == ']')
+					InTag = false;
+
+				X = 0;
+				PreviousGlyphIndex = 0;
+			}
 		}
-
 	}
 
 	// Add last cut

@@ -53,8 +53,9 @@ class _Font {
 		~_Font();
 
 		float DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color=glm::vec4(1.0f), const _Alignment &Alignment=LEFT_BASELINE, float Scale=1.0f) const;
-		void GetStringDimensions(const std::string &Text, _TextBounds &TestBounds) const;
-		void BreakupString(const std::string &Text, float Width, std::list<std::string> &Strings) const;
+		void DrawTextFormatted(const std::string &Text, glm::vec2 Position, const _Alignment &Alignment=LEFT_BASELINE) const;
+		void GetStringDimensions(const std::string &Text, _TextBounds &TestBounds, bool UseFormatting=false) const;
+		void BreakupString(const std::string &Text, float Width, std::list<std::string> &Strings, bool UseFormatting=false) const;
 
 		float MaxHeight;
 		float MaxAbove;
@@ -64,6 +65,8 @@ class _Font {
 
 		void CreateFontTexture(std::string SortedCharacters, uint32_t TextureWidth);
 		void SortCharacters(FT_Face &Face, const std::string &Characters, std::string &SortedCharacters);
+		void DrawGlyph(glm::vec2 &Position, char Char, float Scale) const;
+		void AdjustPosition(const std::string &Text, glm::vec2 &Position, bool UseFormatting, const _Alignment &Alignment, float Scale) const;
 
 		// Glyphs
 		GlyphStruct Glyphs[256];
