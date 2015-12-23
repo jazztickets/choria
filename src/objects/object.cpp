@@ -889,6 +889,11 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 		// Set skill
 		if(ActionBarSlot < ActionBar.size()) {
 			Action.Item = ActionBar[ActionBarSlot].Item;
+
+			if(Action.Item && Action.Item->IsSkill())
+				Action.Level = Skills[Action.Item->ID];
+			else
+				Action.Level = Action.Item->Level;
 		}
 	}
 }

@@ -312,7 +312,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 	// Check script's function
 	if(Scripting->StartMethodCall(Script, "CanUse")) {
-		Scripting->PushInt(Level);
+		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->MethodCall(2, 1);
 		int Value = Scripting->GetInt(1);
@@ -327,7 +327,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 // Apply the cost
 void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
-		Scripting->PushInt(Level);
+		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushActionResult(&ActionResult);
 		Scripting->MethodCall(2, 1);
 		Scripting->GetActionResult(1, ActionResult);
@@ -338,7 +338,7 @@ void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const 
 // Use an item
 void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(ActionResult.ActionUsed.Item->Script, "Use")) {
-		Scripting->PushInt(Level);
+		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushObject(ActionResult.Target.Object);
 		Scripting->PushActionResult(&ActionResult);

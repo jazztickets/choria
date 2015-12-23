@@ -204,10 +204,10 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		if(Item) {
-			if(Item->IsSkill() && !Item->CanUse(Scripting, ActionResult)) {
+			if(!Item->CanUse(Scripting, ActionResult))
 				Item = nullptr;
-			}
-			else if(!Item->IsSkill() && (ClientPlayer->ActionBar[ActionBarSlot].Count == 0 || !Item->CanUse(Scripting, ActionResult)))
+
+			if(Item && !Item->IsSkill() && ClientPlayer->ActionBar[ActionBarSlot].Count == 0)
 				Item = nullptr;
 		}
 		else
