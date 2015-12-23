@@ -115,6 +115,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	glm::vec2 Spacing(10, 0);
 
 	// Render damage
+	bool StatDrawn = false;
 	int Min, Max;
 	GetDamageRange(Min, Max);
 	if(Min != 0 || Max != 0) {
@@ -127,6 +128,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
+		StatDrawn = true;
 	}
 
 	// Render defense
@@ -141,6 +143,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText("Defense", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
+		StatDrawn = true;
 	}
 
 	// Boosts
@@ -150,6 +153,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText("HP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
+		StatDrawn = true;
 	}
 	if(MaxMana > 0) {
 		std::stringstream Buffer;
@@ -157,6 +161,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText("MP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
+		StatDrawn = true;
 	}
 	if(HealthRegen > 0) {
 		std::stringstream Buffer;
@@ -164,6 +169,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText("HP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
+		StatDrawn = true;
 	}
 	if(ManaRegen > 0) {
 		std::stringstream Buffer;
@@ -171,13 +177,16 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText("MP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
+		StatDrawn = true;
 	}
+
+	if(StatDrawn)
+		DrawPosition.y += SpacingY;
 
 	// Vendors
 	if(Player->Vendor) {
-		DrawPosition.y += SpacingY;
+		std::stringstream Buffer;
 		if(Tooltip.Window == _HUD::WINDOW_VENDOR) {
-			std::stringstream Buffer;
 			Buffer << "Buy " << Tooltip.Count << "x for " << Tooltip.Cost << " gold";
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GOLD, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
@@ -185,7 +194,6 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 			DrawPosition.y += SpacingY;
 		}
 		else if(Tooltip.Window == _HUD::WINDOW_INVENTORY) {
-			std::stringstream Buffer;
 			Buffer << "Sell for " << Tooltip.Cost << " gold";
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GOLD, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
