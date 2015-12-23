@@ -708,6 +708,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 		Player->Targets.clear();
 		Player->Targets.push_back(Player);
 		Player->Action.Item = Player->Inventory->Slots[Slot].Item;
+		Player->Action.Level = Player->Action.Item->Level;
 		Player->Action.FromInventory = true;
 	}
 }

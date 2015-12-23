@@ -824,6 +824,7 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 		// If buff existing, refresh duration
 		if(StatusEffect->Buff == ExistingEffect->Buff) {
 			ExistingEffect->Count = StatusEffect->Count;
+			ExistingEffect->Level = StatusEffect->Level;
 			return false;
 		}
 	}

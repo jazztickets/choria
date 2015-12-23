@@ -84,9 +84,9 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 	// Draw description
 	while(std::getline(Buffer, Token, '\n')) {
 		std::list<std::string> Strings;
-		Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings);
+		Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings, true);
 		for(const auto &LineToken : Strings) {
-			Assets.Fonts["hud_small"]->DrawText(LineToken, DrawPosition, COLOR_GRAY, LEFT_BASELINE);
+			Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, LEFT_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 	}
