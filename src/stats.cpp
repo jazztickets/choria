@@ -35,6 +35,7 @@ _Stats::_Stats() {
 	LoadEvents();
 	LoadLevels();
 	LoadBuffs();
+	LoadTargetTypes();
 	LoadItemTypes();
 	LoadItems();
 	LoadVendors();
@@ -122,6 +123,20 @@ void _Stats::LoadBuffs() {
 	Database->CloseQuery();
 
 	Buffs[0] = nullptr;
+}
+
+// Load target type strings
+void _Stats::LoadTargetTypes() {
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM target");
+
+	// Get data
+	while(Database->FetchRow()) {
+		uint32_t ID = Database->GetInt<uint32_t>("id");
+		TargetTypes[ID] = Database->GetString("name");
+	}
+	Database->CloseQuery();
 }
 
 // Load item types

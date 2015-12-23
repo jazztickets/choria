@@ -36,6 +36,9 @@
 
 // Draw tooltip
 void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const {
+	if(!Player)
+		return;
+
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
 	_Label *TooltipType = Assets.Labels["label_item_tooltip_type"];
@@ -49,7 +52,8 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	_TextBounds TextBounds;
 	Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
 	int Width = 250;
-	int SidePadding = 20;
+	int SidePadding = 15;
+	int SpacingY = 25;
 	Width = std::max(Width, TextBounds.Width) + SidePadding * 2;
 
 	// Position window
@@ -72,8 +76,68 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	glm::vec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
 	DrawPosition.y += 40;
 
+	// Draw target text
+	if(TargetID != TargetType::NONE) {
+		DrawPosition.y -= 20;
+		std::string InfoText = "Target " + Player->Stats->TargetTypes[(uint32_t)TargetID];
+		Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+		DrawPosition.y += 40;
+	}
+
+	// Get level of item or skill
+	int32_t ShowLevel = Level;
+
+	// Get player skill level
+	auto SkillIterator = Player->Skills.find(ID);
+	if(SkillIterator != Player->Skills.end())
+		ShowLevel = SkillIterator->second;
+
+	// For skills set minimum of level 1
+	if(IsSkill())
+		ShowLevel = std::max(ShowLevel, 1);
+
+	/*
+
+		// Get current level description
+		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
+		DrawPosition.y += 25;
+		DrawDescription(Scripting, SkillLevel, DrawPosition, Size.x);
+
+		// Get next level description
+		if(DrawNextLevel && SkillLevel > 0) {
+			DrawPosition.y += 25;
+			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
+			DrawPosition.y += 25;
+			DrawDescription(Scripting, SkillLevel+1, DrawPosition, Size.x);
+		}
+	*/
+
+	// Get item description
+	std::string Info = "";
+	if(Scripting->StartMethodCall(Script, "GetInfo")) {
+		Scripting->PushInt(ShowLevel);
+		Scripting->MethodCall(1, 1);
+		Info = Scripting->GetString(1);
+		Scripting->FinishMethodCall();
+
+		std::stringstream Buffer(Info);
+		std::string Token;
+
+		// Draw description
+		float TextSpacingY = 18;
+		while(std::getline(Buffer, Token, '\n')) {
+			std::list<std::string> Strings;
+			Assets.Fonts["hud_small"]->BreakupString(Token, Width - SidePadding * 2, Strings, true);
+			for(const auto &LineToken : Strings) {
+				Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, CENTER_BASELINE);
+				DrawPosition.y += TextSpacingY;
+			}
+		}
+
+		DrawPosition.y += SpacingY;
+	}
+
 	glm::vec2 Spacing(10, 0);
-	int SpacingY = 25;
 
 	// Render damage
 	int Min, Max;
@@ -103,70 +167,6 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 	}
-
-	switch(Type) {
-		case ItemType::ONEHANDED_WEAPON:
-		case ItemType::TWOHANDED_WEAPON:
-		case ItemType::HELMET:
-		case ItemType::ARMOR:
-		case ItemType::BOOTS:
-		case ItemType::SHIELD:
-		break;
-		case ItemType::CONSUMABLE:
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY) {
-				DrawPosition.y -= 20;
-				Assets.Fonts["hud_small"]->DrawText("Right-click to use", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
-				DrawPosition.y += 40;
-			}
-		break;
-		default:
-		break;
-	}
-
-	// Get item description
-	std::string Info = "";
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
-		Scripting->PushInt(Level);
-		Scripting->MethodCall(1, 1);
-		Info = Scripting->GetString(1);
-		Scripting->FinishMethodCall();
-
-		std::stringstream Buffer(Info);
-		std::string Token;
-
-		// Draw description
-		float TextSpacingY = 18;
-		while(std::getline(Buffer, Token, '\n')) {
-			std::list<std::string> Strings;
-			Assets.Fonts["hud_small"]->BreakupString(Token, Width - SidePadding * 2, Strings, true);
-			for(const auto &LineToken : Strings) {
-				Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, CENTER_BASELINE);
-				DrawPosition.y += TextSpacingY;
-			}
-		}
-
-		DrawPosition.y += SpacingY;
-	}
-
-/*	// Get current skill level
-	int32_t SkillLevel = 0;
-	auto SkillLevelIterator = Player->Skills.find(ID);
-	if(SkillLevelIterator != Player->Skills.end())
-		SkillLevel = SkillLevelIterator->second;
-
-	// Get current level description
-	Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(std::max(1, SkillLevel)), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
-	DrawPosition.y += 25;
-	DrawDescription(Scripting, SkillLevel, DrawPosition, Size.x);
-
-	// Get next level description
-	if(DrawNextLevel && SkillLevel > 0) {
-		DrawPosition.y += 25;
-		Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(SkillLevel+1), DrawPosition, COLOR_WHITE, LEFT_BASELINE);
-		DrawPosition.y += 25;
-		DrawDescription(Scripting, SkillLevel+1, DrawPosition, Size.x);
-	}
-*/
 
 	// Boosts
 	if(MaxHealth > 0) {
@@ -217,6 +217,28 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 			Assets.Fonts["hud_small"]->DrawText("Shift+Right-click to sell", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
+	}
+
+	// Draw help text
+	switch(Type) {
+		case ItemType::ONEHANDED_WEAPON:
+		case ItemType::TWOHANDED_WEAPON:
+		case ItemType::HELMET:
+		case ItemType::ARMOR:
+		case ItemType::BOOTS:
+		case ItemType::SHIELD:
+		break;
+		case ItemType::CONSUMABLE: {
+			std::string InfoText;
+			if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
+				InfoText = "Right-click to use";
+			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
+				InfoText = "Left-click to use";
+			Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+			DrawPosition.y += 20;
+		} break;
+		default:
+		break;
 	}
 
 	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Count > 1) {

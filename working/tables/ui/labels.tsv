@@ -51,8 +51,8 @@ label_buttonbar_inventory	button_buttonbar_inventory	hud_tiny			3	28	0	0	0	3
 label_buttonbar_trade	button_buttonbar_trade	hud_tiny			3	28	0	0	0	3
 label_buttonbar_skills	button_buttonbar_skills	hud_tiny			3	28	0	0	0	3
 label_buttonbar_menu	button_buttonbar_menu	hud_tiny			3	28	0	0	0	3
-label_item_tooltip_name	element_item_tooltip	menu_buttons			0	30	0	0	1	3
-label_item_tooltip_type	element_item_tooltip	hud_small			0	50	0	0	1	3
+label_item_tooltip_name	element_item_tooltip	menu_buttons			0	32	0	0	1	3
+label_item_tooltip_type	element_item_tooltip	hud_small			0	55	0	0	1	3
 label_trader_lookingfor	element_trader	hud_medium		Looking for	0	35	0	0	1	3
 label_trader_reward	element_trader	hud_medium		Reward	0	240	0	0	1	3
 label_trader_accept	button_trader_accept	hud_medium		Accept	0	22	0	0	1	3

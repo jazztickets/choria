@@ -4,7 +4,7 @@ Item_HealthPotion = { HealBase = 3, Duration = 5 }
 
 function Item_HealthPotion.GetInfo(Level)
 
-	return "Restore [c green]" .. Level * Item_HealthPotion.HealBase * Item_HealthPotion.Duration .. "[c white] health over [c green]" .. Item_HealthPotion.Duration .. "[c white] seconds"
+	return "Restore [c green]" .. Level * Item_HealthPotion.HealBase * Item_HealthPotion.Duration .. "[c white] HP over [c green]" .. Item_HealthPotion.Duration .. "[c white] seconds"
 end
 
 function Item_HealthPotion.CanUse(Level, Object)

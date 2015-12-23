@@ -20,7 +20,7 @@ Skill_Attack = {}
 function Skill_Attack.GetInfo(Level)
 	Chance = 4 + Level
 
-	return "Attack with your weapon.\n" .. Chance .. "% chance to deal 200% extra damage."
+	return "Attack with your weapon\n[c green]" .. Chance .. "% [c white]chance to deal [c green]200% [c white]extra damage"
 end
 
 function Skill_Attack.Use(Level, Source, Target, Result)
@@ -44,7 +44,7 @@ Skill_Whirl = {}
 function Skill_Whirl.GetInfo(Level)
 	Chance = 9 + Level
 
-	return "Attack all enemies with 30% weapon damage.\n" .. Chance .. "% chance to cause bleeding."
+	return "Attack all enemies with [c green]30% [c white]weapon damage\n[c green]" .. Chance .. "% [c white]chance to cause [c red]bleeding"
 end
 
 function Skill_Whirl.Use(Level, Source, Target, Result)
@@ -74,7 +74,7 @@ Skill_Heal = {
 
 function Skill_Heal.GetInfo(Level)
 
-	return "Heal target for " .. (Skill_Heal.HealBase + Level * 5) .. "HP\nCost " .. Skill_Heal.GetCost(Level) .. " mana"
+	return "Heal target for [c green]" .. (Skill_Heal.HealBase + Level * 5) .. "[c white] HP\nCost [c light_blue]" .. Skill_Heal.GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_Heal.Use(Level, Source, Target, Result)
@@ -115,7 +115,7 @@ Skill_Flame = {
 
 function Skill_Flame.GetInfo(Level)
 
-	return "Burn all targets for " .. Skill_Flame.GetDamage(Level) .. "HP\nCost " .. Skill_Flame.GetCost(Level) .. " mana"
+	return "Burn all targets for [c green]" .. Skill_Flame.GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. Skill_Flame.GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_Flame.Use(Level, Source, Target, Result)
@@ -157,7 +157,7 @@ Skill_Bolt = {
 
 function Skill_Bolt.GetInfo(Level)
 
-	return "Strike a target for " .. Skill_Bolt.GetDamage(Level) .. "HP\nCost " .. Skill_Bolt.GetCost(Level) .. " mana"
+	return "Strike a target for [c green]" .. Skill_Bolt.GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. Skill_Bolt.GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_Bolt.Use(Level, Source, Target, Result)
