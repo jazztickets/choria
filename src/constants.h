@@ -98,7 +98,7 @@ const  uint16_t     DEFAULT_NETWORKPORT_ALT        =  31235;
 const  int          GRAPHICS_CIRCLE_VERTICES       =  32;
 const  double       MATH_PI                        =  3.14159265358979323846;
 //     Camera
-const  float        CAMERA_DISTANCE                =  6.5f;
+const  float        CAMERA_DISTANCE                =  8.4375f;
 const  float        CAMERA_DIVISOR                 =  30.0f;
 const  float        CAMERA_EDITOR_DIVISOR          =  5.0f;
 const  float        CAMERA_FOVY                    =  90.0f;

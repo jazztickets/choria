@@ -14,6 +14,6 @@ montage -background transparent -geometry 66x66 -tile ${cols}x out/* atlas0.png
 
 rm -rf out/
 
-gimp atlas0.png
+mogrify atlas0.png -depth 8
 
 mv atlas0.png ../../working/textures/map/
