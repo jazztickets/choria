@@ -51,6 +51,7 @@ void _Assets::Init(bool IsServer) {
 	LoadTextureDirectory(TEXTURES_PLAYERS, IsServer);
 	LoadTextureDirectory(TEXTURES_PORTRAITS, IsServer);
 	LoadTextureDirectory(TEXTURES_SKILLS, IsServer);
+	LoadTextureDirectory(TEXTURES_STATUS, IsServer);
 	LoadLayers(ASSETS_LAYERS);
 	if(!IsServer) {
 		LoadPrograms(ASSETS_PROGRAMS);

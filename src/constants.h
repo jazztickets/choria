@@ -140,6 +140,7 @@ const  std::string  TEXTURES_MONSTERS              =  "monsters/";
 const  std::string  TEXTURES_PLAYERS               =  "players/";
 const  std::string  TEXTURES_PORTRAITS             =  "portraits/";
 const  std::string  TEXTURES_SKILLS                =  "skills/";
+const  std::string  TEXTURES_STATUS                =  "status/";
 //     Assets
 const  std::string  ASSETS_FONTS_PATH              =  "fonts/";
 const  std::string  ASSETS_MAPS_PATH               =  "maps/";

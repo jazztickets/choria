@@ -656,28 +656,28 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 					Object->StatusTexture = nullptr;
 				break;
 				case _Object::STATUS_PAUSE:
-					Object->StatusTexture = Assets.Textures["hud/pause.png"];
+					Object->StatusTexture = Assets.Textures["status/pause.png"];
 				break;
 				case _Object::STATUS_INVENTORY:
-					Object->StatusTexture = Assets.Textures["hud/bag.png"];
+					Object->StatusTexture = Assets.Textures["status/bag.png"];
 				break;
 				case _Object::STATUS_VENDOR:
-					Object->StatusTexture = Assets.Textures["hud/vendor.png"];
+					Object->StatusTexture = Assets.Textures["status/vendor.png"];
 				break;
 				case _Object::STATUS_SKILLS:
-					Object->StatusTexture = Assets.Textures["hud/skills.png"];
+					Object->StatusTexture = Assets.Textures["status/skills.png"];
 				break;
 				case _Object::STATUS_TRADE:
-					Object->StatusTexture = Assets.Textures["hud/trade.png"];
+					Object->StatusTexture = Assets.Textures["status/trade.png"];
 				break;
 				case _Object::STATUS_TRADER:
-					Object->StatusTexture = Assets.Textures["hud/vendor.png"];
+					Object->StatusTexture = Assets.Textures["status/vendor.png"];
 				break;
 				case _Object::STATUS_TELEPORT:
-					Object->StatusTexture = Assets.Textures["hud/teleport.png"];
+					Object->StatusTexture = Assets.Textures["status/teleport.png"];
 				break;
 				case _Object::STATUS_BATTLE:
-					Object->StatusTexture = Assets.Textures["hud/battle.png"];
+					Object->StatusTexture = Assets.Textures["status/battle.png"];
 				break;
 				default:
 				break;
