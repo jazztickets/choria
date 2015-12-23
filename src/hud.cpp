@@ -561,7 +561,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		// Draw item information
 		DrawCursorItem();
 		if(Tooltip.Item)
-			Tooltip.Item->DrawTooltip(ClientState.Scripting, Player, Tooltip, SkillsElement->Visible);
+			Tooltip.Item->DrawTooltip(ClientState.Scripting, Player, Tooltip);
 
 		// Draw status effects
 		if(Tooltip.StatusEffect)

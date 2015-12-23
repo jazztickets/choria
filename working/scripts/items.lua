@@ -4,7 +4,7 @@ Item_HealthPotion = { HealBase = 3, Duration = 5 }
 
 function Item_HealthPotion.GetInfo(Level)
 
-	return "Restore [c green]" .. Level * Item_HealthPotion.HealBase * Item_HealthPotion.Duration .. "[c white] HP over [c green]" .. Item_HealthPotion.Duration .. "[c white] seconds"
+	return "Restore [c green]" .. Level * Item_HealthPotion.HealBase * Item_HealthPotion.Duration .. "[c white] HP over [c green]" .. Item_HealthPotion.Duration .. " [c white]seconds"
 end
 
 function Item_HealthPotion.CanUse(Level, Object)
@@ -30,7 +30,7 @@ Item_ManaPotion = { ManaBase = 3, Duration = 5 }
 
 function Item_ManaPotion.GetInfo(Level)
 
-	return "Restore " .. Level * Item_ManaPotion.ManaBase * Item_ManaPotion.Duration .. " mana over " .. Item_ManaPotion.Duration .. " seconds"
+	return "Restore [c light_blue]" .. Level * Item_ManaPotion.ManaBase * Item_ManaPotion.Duration .. " [c white]MP over [c green]" .. Item_ManaPotion.Duration .. " [c white]seconds"
 end
 
 function Item_ManaPotion.CanUse(Level, Object)

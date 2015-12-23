@@ -48,8 +48,8 @@ class _Item {
 
 	public:
 
-		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, bool DrawNextLevel) const;
-		void DrawDescription(_Scripting *Scripting, int SkillLevel, glm::vec2 &DrawPosition, float Width) const;
+		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const;
+		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsEquippable() const { return Type <= ItemType::EQUIPPABLE; }
 		bool IsSkill() const { return Type == ItemType::SKILL; }
@@ -59,6 +59,7 @@ class _Item {
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
 
