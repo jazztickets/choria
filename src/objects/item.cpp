@@ -90,26 +90,31 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 
 	// Get level of item or skill
-	int32_t ShowLevel = Level;
+	int32_t DrawLevel = Level;
 	bool IsLocked = false;
 
 	// Get player skill level
 	auto SkillIterator = Player->Skills.find(ID);
 	if(SkillIterator != Player->Skills.end())
-		ShowLevel = SkillIterator->second;
+		DrawLevel = SkillIterator->second;
 	else
 		IsLocked = true;
 
 	// For skills set minimum of level 1
 	if(IsSkill())
-		ShowLevel = std::max(ShowLevel, 1);
+		DrawLevel = std::max(DrawLevel, 1);
 
-	// Draw item description
-	DrawDescription(Scripting, DrawPosition, ShowLevel, IsSkill() && Tooltip.Window != _HUD::WINDOW_INVENTORY, Size.x - SidePadding * 2, SpacingY);
+	// Determine whether to show level
+	bool ShowLevel = false;
+	if(IsSkill() && (Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ACTIONBAR))
+		ShowLevel = true;
+
+	// Draw description
+	DrawDescription(Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS) {
-		DrawDescription(Scripting, DrawPosition, ShowLevel+1, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
 	}
 
 	glm::vec2 Spacing(10, 0);
