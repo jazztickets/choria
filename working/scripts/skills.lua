@@ -63,11 +63,18 @@ end
 
 -- Heal --
 
-Skill_Heal = { ManaCostBase = 3, HealBase = 10 }
+Skill_Heal = {
+	ManaCostBase = 3,
+	HealBase = 10,
+	CostPerLevel = 1.0 / 3.0,
+	GetCost = function(Level)
+		return math.floor(Skill_Heal.ManaCostBase + Level * Skill_Heal.CostPerLevel)
+	end
+}
 
 function Skill_Heal.GetInfo(Level)
 
-	return "Heal target for " .. (Skill_Heal.HealBase + Level * 5) .. "HP\nCost " .. math.floor(Skill_Heal.ManaCostBase + Level / 3) .. " mana"
+	return "Heal target for " .. (Skill_Heal.HealBase + Level * 5) .. "HP\nCost " .. Skill_Heal.GetCost(Level) .. " mana"
 end
 
 function Skill_Heal.Use(Level, Source, Target, Result)
@@ -78,7 +85,7 @@ function Skill_Heal.Use(Level, Source, Target, Result)
 end
 
 function Skill_Heal.CanUse(Level, Object)
-	if Object.Mana >= Skill_Heal.ManaCostBase then
+	if Object.Mana >= Skill_Heal.GetCost(Level) then
 		return 1
 	end
 
@@ -86,7 +93,7 @@ function Skill_Heal.CanUse(Level, Object)
 end
 
 function Skill_Heal.ApplyCost(Level, Result)
-	Result.SourceManaChange = -math.floor(Skill_Heal.ManaCostBase + Level / 3)
+	Result.SourceManaChange = -Skill_Heal.GetCost(Level)
 
 	return Result
 end

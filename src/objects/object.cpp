@@ -866,6 +866,25 @@ void _Object::RefreshActionBarCount() {
 	}
 }
 
+// Return an action struct from a skill bar slot
+bool _Object::GetActionFromSkillbar(_Action &ReturnAction, size_t Slot) {
+	if(Slot < ActionBar.size()) {
+		ReturnAction.Item = ActionBar[Slot].Item;
+		if(!ReturnAction.Item)
+			return false;
+
+		// Determine if item is a skill, then look at object's skill levels
+		if(ReturnAction.Item->IsSkill())
+			ReturnAction.Level = Skills[ReturnAction.Item->ID];
+		else
+			ReturnAction.Level = ReturnAction.Item->Level;
+
+		return true;
+	}
+
+	return false;
+}
+
 // Set action and targets
 void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 
@@ -877,6 +896,10 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 		if(!TargetCount)
 			return;
 
+		// Get skillbar action
+		if(!GetActionFromSkillbar(Action, ActionBarSlot))
+			return;
+
 		// Get targets
 		Targets.clear();
 		for(int i = 0; i < TargetCount; i++) {
@@ -884,16 +907,6 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 			_Object *Target = ObjectManager->IDMap[NetworkID];
 			if(Target)
 				Targets.push_back(Target);
-		}
-
-		// Set skill
-		if(ActionBarSlot < ActionBar.size()) {
-			Action.Item = ActionBar[ActionBarSlot].Item;
-
-			if(Action.Item && Action.Item->IsSkill())
-				Action.Level = Skills[Action.Item->ID];
-			else
-				Action.Level = Action.Item->Level;
 		}
 	}
 }

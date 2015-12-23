@@ -187,8 +187,9 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	if(ClientPlayer->Action.IsSet())
 		return;
 
-	// Get skill
+	// Get skillbar action
 	_Action Action = ClientPlayer->ActionBar[ActionBarSlot];
+	ClientPlayer->GetActionFromSkillbar(Action, ActionBarSlot);
 
 	// Check for changing an action
 	bool ChangingAction = false;
@@ -201,6 +202,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
+		ActionResult.ActionUsed = Action;
 
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		if(Item) {
