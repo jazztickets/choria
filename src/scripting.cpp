@@ -154,6 +154,15 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 // Push stat change struct onto stack
 void _Scripting::PushStatChange(_StatChange *StatChange) {
 	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, StatChange->Health);
+	lua_setfield(LuaState, -2, "HealthChange");
+
+	lua_pushinteger(LuaState, StatChange->Mana);
+	lua_setfield(LuaState, -2, "ManaChange");
+
+	lua_pushinteger(LuaState, StatChange->Invisible);
+	lua_setfield(LuaState, -2, "Invisible");
 }
 
 // Push list of objects

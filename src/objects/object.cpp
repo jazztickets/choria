@@ -346,7 +346,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 	if(Map && WorldTexture) {
 
 		float Alpha = 1.0f;
-		if(Invisible)
+		if(Invisible > 0)
 			Alpha = PLAYER_INVIS_ALPHA;
 
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
@@ -735,7 +735,8 @@ void _Object::UpdateStats(_StatChange &StatChange) {
 
 	UpdateHealth(StatChange.Health);
 	UpdateMana(StatChange.Mana);
-	Invisible = StatChange.Invisible;
+	if(StatChange.Invisible != -1)
+		Invisible = StatChange.Invisible;
 }
 
 // Update health
@@ -791,7 +792,7 @@ int _Object::Move() {
 	// Move player
 	if(Map->CanMoveTo(Position + Direction)) {
 		Position += Direction;
-		if(GetTile()->Zone > 0 && !Invisible)
+		if(GetTile()->Zone > 0 && Invisible <= 0)
 			NextBattle--;
 
 		MoveTime = 0;
@@ -1037,7 +1038,7 @@ void _Object::CalculateSkillPoints() {
 
 // Can enter battle
 bool _Object::CanBattle() {
-	return Status == STATUS_NONE && !Invisible;
+	return Status == STATUS_NONE && Invisible <= 0;
 }
 
 // Calculates all of the player stats
