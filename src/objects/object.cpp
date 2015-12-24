@@ -211,21 +211,7 @@ void _Object::Update(double FrameTime) {
 
 			// Resolve effects
 			if(Server && Health > 0) {
-				_StatChange StatChange;
-				StatChange.Object = this;
-				StatusEffect->Buff->Update(Scripting, StatusEffect->Level, StatChange);
-				StatChange.Object->UpdateStats(StatChange);
-
-				// Send update
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-				StatChange.Serialize(Packet);
-
-				// Send packet to players
-				if(Battle)
-					Battle->BroadcastPacket(Packet);
-				else if(Peer)
-					Server->Network->SendPacket(Packet, Peer);
+				ResolveBuff(StatusEffect, "Update");
 			}
 
 			// Reduce count
@@ -234,21 +220,7 @@ void _Object::Update(double FrameTime) {
 
 				// Call expire scripting function
 				if(Server) {
-					_StatChange StatChange;
-					StatChange.Object = this;
-					StatusEffect->Buff->End(Scripting, StatusEffect->Level, StatChange);
-					StatChange.Object->UpdateStats(StatChange);
-
-					// Send update
-					_Buffer Packet;
-					Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-					StatChange.Serialize(Packet);
-
-					// Send packet to players
-					if(Battle)
-						Battle->BroadcastPacket(Packet);
-					else if(Peer)
-						Server->Network->SendPacket(Packet, Peer);
+					ResolveBuff(StatusEffect, "End");
 				}
 
 				delete StatusEffect;
@@ -792,7 +764,7 @@ int _Object::Move() {
 	// Move player
 	if(Map->CanMoveTo(Position + Direction)) {
 		Position += Direction;
-		if(GetTile()->Zone > 0 && Invisible <= 0)
+		if(GetTile()->Zone > 0 && Invisible != 1)
 			NextBattle--;
 
 		MoveTime = 0;
@@ -851,6 +823,27 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 
 	StatusEffects.push_back(StatusEffect);
 	return true;
+}
+
+// Call begin/update/end for a buff
+void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function) {
+
+	// Call function
+	_StatChange StatChange;
+	StatChange.Object = this;
+	StatusEffect->Buff->ExecuteScript(Scripting, Function, StatusEffect->Level, StatChange);
+	StatChange.Object->UpdateStats(StatChange);
+
+	// Build packet
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+	StatChange.Serialize(Packet);
+
+	// Send packet to player
+	if(Battle)
+		Battle->BroadcastPacket(Packet);
+	else if(Peer)
+		Server->Network->SendPacket(Packet, Peer);
 }
 
 // Determines if a player can attack

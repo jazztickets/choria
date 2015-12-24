@@ -1024,6 +1024,9 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 				StatusEffect->Buff = Stats->Buffs[BuffID];
 				StatusEffect->Level = Data.Read<int>();
 				StatusEffect->Count = Data.Read<int>();
+
+				// Update stats from begin call
+				HandleStatChange(Data);
 			}
 
 			// Add status effect

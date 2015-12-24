@@ -109,6 +109,7 @@ class _Object : public _ManagerBase {
 
 		// Status effects
 		bool AddStatusEffect(_StatusEffect *StatusEffect);
+		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
 
 		// Actions
 		void RefreshActionBarCount();

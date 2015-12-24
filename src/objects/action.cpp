@@ -75,8 +75,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		}
 	}
 
-	ActionResult.Source.Object->UpdateHealth(ActionResult.Source.Health);
-	ActionResult.Source.Object->UpdateMana(ActionResult.Source.Mana);
+	// Update stats
+	ActionResult.Source.Object->UpdateStats(ActionResult.Source);
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
@@ -101,8 +101,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 			ItemUsed->Use(Source->Scripting, ActionResult);
 
 		// Update target
-		ActionResult.Target.Object->UpdateHealth(ActionResult.Target.Health);
-		ActionResult.Target.Object->UpdateMana(ActionResult.Target.Mana);
+		ActionResult.Target.Object->UpdateStats(ActionResult.Target);
 
 		ActionResult.Target.Serialize(Data);
 		Data.Write<int32_t>(ActionResult.Target.Object->Health);
@@ -116,9 +115,19 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 			StatusEffect->Count = ActionResult.BuffDuration;
 			bool Added = ActionResult.Target.Object->AddStatusEffect(StatusEffect);
 
-			Data.Write<uint32_t>(StatusEffect->Buff->ID);
-			Data.Write<int>(StatusEffect->Level);
-			Data.Write<int>(StatusEffect->Count);
+			// Write status effect
+			StatusEffect->Serialize(Data);
+
+			// Call buff's begin function
+			_StatChange StatChange;
+			StatChange.Object = ActionResult.Target.Object;
+			StatusEffect->Buff->ExecuteScript(Source->Scripting, "Begin", ActionResult.BuffLevel, StatChange);
+
+			// Update target
+			ActionResult.Target.Object->UpdateStats(StatChange);
+
+			// Write stat change from begin call
+			StatChange.Serialize(Data);
 
 			if(!Added)
 				delete StatusEffect;

@@ -55,7 +55,7 @@ function Buff_Invis.GetInfo(Level)
 	return "Avoiding combat"
 end
 
-function Buff_Invis.Update(Level, Source, Result)
+function Buff_Invis.Begin(Level, Source, Result)
 	Result.Invisible = 1
 
 	return Result

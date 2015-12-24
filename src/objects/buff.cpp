@@ -92,33 +92,9 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 	}
 }
 
-// Call the update script
-void _Buff::Update(_Scripting *Scripting, int Level, _StatChange &StatChange) const {
-	if(Scripting->StartMethodCall(Script, "Update")) {
-		Scripting->PushInt(Level);
-		Scripting->PushObject(StatChange.Object);
-		Scripting->PushStatChange(&StatChange);
-		Scripting->MethodCall(3, 1);
-		Scripting->GetStatChange(1, StatChange);
-		Scripting->FinishMethodCall();
-	}
-}
-
-// Called when the buff begins
-void _Buff::Begin(_Scripting *Scripting, int Level, _StatChange &StatChange) const {
-	if(Scripting->StartMethodCall(Script, "Begin")) {
-		Scripting->PushInt(Level);
-		Scripting->PushObject(StatChange.Object);
-		Scripting->PushStatChange(&StatChange);
-		Scripting->MethodCall(3, 1);
-		Scripting->GetStatChange(1, StatChange);
-		Scripting->FinishMethodCall();
-	}
-}
-
-// Called when the buff ends
-void _Buff::End(_Scripting *Scripting, int Level, _StatChange &StatChange) const {
-	if(Scripting->StartMethodCall(Script, "End")) {
+// Call scripting function by name
+void _Buff::ExecuteScript(_Scripting *Scripting, const std::string &Function, int Level, _StatChange &StatChange) const {
+	if(Scripting->StartMethodCall(Script, Function)) {
 		Scripting->PushInt(Level);
 		Scripting->PushObject(StatChange.Object);
 		Scripting->PushStatChange(&StatChange);
