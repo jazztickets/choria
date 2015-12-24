@@ -45,3 +45,24 @@ function Buff_Mana.Update(Level, Source, Result)
 
 	return Result
 end
+
+-- Invis buff --
+
+Buff_Invis = { }
+
+function Buff_Invis.GetInfo(Level)
+
+	return "Avoiding combat"
+end
+
+function Buff_Invis.Update(Level, Source, Result)
+	Result.Invisible = 1
+
+	return Result
+end
+
+function Buff_Invis.End(Level, Source, Result)
+	Result.Invisible = 0
+
+	return Result
+end

@@ -35,6 +35,8 @@ class _Buff {
 		void DrawTooltip(_Scripting *Scripting, int Level) const;
 
 		void Update(_Scripting *Scripting, int Level, _StatChange &StatChange) const;
+		void Begin(_Scripting *Scripting, int Level, _StatChange &StatChange) const;
+		void End(_Scripting *Scripting, int Level, _StatChange &StatChange) const;
 
 		uint32_t ID;
 		std::string Name;

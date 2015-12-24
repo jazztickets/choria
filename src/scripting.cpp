@@ -154,12 +154,6 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 // Push stat change struct onto stack
 void _Scripting::PushStatChange(_StatChange *StatChange) {
 	lua_newtable(LuaState);
-
-	lua_pushinteger(LuaState, StatChange->Health);
-	lua_setfield(LuaState, -2, "HealthChanges");
-
-	lua_pushinteger(LuaState, StatChange->Mana);
-	lua_setfield(LuaState, -2, "ManaChange");
 }
 
 // Push list of objects
@@ -241,6 +235,11 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	lua_pushstring(LuaState, "ManaChange");
 	lua_gettable(LuaState, -2);
 	StatChange.Mana = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "Invisible");
+	lua_gettable(LuaState, -2);
+	StatChange.Invisible = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 }
 

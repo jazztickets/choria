@@ -647,7 +647,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 			}
 			else {
 				Object->Position = Position;
-				Object->InvisPower = Invisible;
+				Object->Invisible = Invisible;
 			}
 			Object->ServerPosition = Position;
 

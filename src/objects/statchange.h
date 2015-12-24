@@ -35,6 +35,7 @@ enum StatType : int {
 	MANA        = 0x02,
 	EXPERIENCE  = 0x04,
 	GOLD        = 0x08,
+	INVISIBLE   = 0x10,
 };
 
 // Stat changes
@@ -54,6 +55,7 @@ class _StatChange {
 		int Mana;
 		int Experience;
 		int Gold;
+		int Invisible;
 
 };
 

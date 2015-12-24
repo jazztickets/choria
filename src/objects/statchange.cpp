@@ -31,7 +31,8 @@ _StatChange::_StatChange() :
 	Health(0),
 	Mana(0),
 	Experience(0),
-	Gold(0) {
+	Gold(0),
+	Invisible(-1) {
 
 }
 
@@ -47,6 +48,8 @@ int _StatChange::GetChangedFlag() {
 		Flag |= StatType::EXPERIENCE;
 	if(Gold != 0)
 		Flag |= StatType::GOLD;
+	if(Invisible != -1)
+		Flag |= StatType::INVISIBLE;
 
 	return Flag;
 }
@@ -67,6 +70,8 @@ void _StatChange::Serialize(_Buffer &Data) {
 		Data.Write<int>(Experience);
 	if(ChangedFlag & StatType::GOLD)
 		Data.Write<int>(Gold);
+	if(ChangedFlag & StatType::INVISIBLE)
+		Data.Write<int>(Invisible);
 }
 
 // Unserialize network
@@ -83,6 +88,8 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)
 		Gold = Data.Read<int>();
+	if(ChangedFlag & StatType::INVISIBLE)
+		Invisible = Data.Read<int>();
 }
 
 // Constructor

@@ -49,3 +49,26 @@ function Item_ManaPotion.Use(Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Invis Potion --
+
+Item_InvisPotion = { }
+
+function Item_InvisPotion.GetInfo(Level)
+
+	return "Turn invisible and avoid combat for [c_green]" .. Level .. " [c_white]seconds"
+end
+
+function Item_InvisPotion.CanUse(Level, Object)
+
+	return 1
+end
+
+function Item_InvisPotion.Use(Level, Source, Target, Result)
+
+	Result.Buff = Buffs["Buff_Invis"]
+	Result.BuffLevel = 1
+	Result.BuffDuration = Level
+
+	return Result
+end

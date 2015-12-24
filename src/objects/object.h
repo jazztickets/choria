@@ -119,7 +119,6 @@ class _Object : public _ManagerBase {
 		bool AcceptingMoveInput();
 		bool CanMove();
 		int Move();
-		bool IsInvisible() const { return InvisPower > 0; }
 
 		// Skills
 		bool HasLearned(const _Item *Skill);
@@ -221,7 +220,7 @@ class _Object : public _ManagerBase {
 		// Battle
 		int NextBattle;
 		double AttackPlayerTime;
-		int InvisPower;
+		int Invisible;
 
 		// Items
 		bool InventoryOpen;

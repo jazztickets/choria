@@ -114,7 +114,7 @@ _Object::_Object() :
 	ArmorMaxDefense(0),
 	NextBattle(0),
 	AttackPlayerTime(0),
-	InvisPower(0),
+	Invisible(0),
 	InventoryOpen(false),
 	Inventory(nullptr),
 	Vendor(nullptr),
@@ -231,6 +231,26 @@ void _Object::Update(double FrameTime) {
 			// Reduce count
 			StatusEffect->Count--;
 			if(StatusEffect->Count <= 0 || Health <= 0) {
+
+				// Call expire scripting function
+				if(Server) {
+					_StatChange StatChange;
+					StatChange.Object = this;
+					StatusEffect->Buff->End(Scripting, StatusEffect->Level, StatChange);
+					StatChange.Object->UpdateStats(StatChange);
+
+					// Send update
+					_Buffer Packet;
+					Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+					StatChange.Serialize(Packet);
+
+					// Send packet to players
+					if(Battle)
+						Battle->BroadcastPacket(Packet);
+					else if(Peer)
+						Server->Network->SendPacket(Packet, Peer);
+				}
+
 				delete StatusEffect;
 				Iterator = StatusEffects.erase(Iterator);
 			}
@@ -326,7 +346,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 	if(Map && WorldTexture) {
 
 		float Alpha = 1.0f;
-		if(IsInvisible())
+		if(Invisible)
 			Alpha = PLAYER_INVIS_ALPHA;
 
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
@@ -559,7 +579,7 @@ void _Object::SerializeCreate(_Buffer &Data) {
 	Data.Write<glm::ivec2>(Position);
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(PortraitID);
-	Data.WriteBit(IsInvisible());
+	Data.WriteBit(Invisible);
 }
 
 // Serialize for ObjectUpdate
@@ -567,7 +587,7 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<uint8_t>(Status);
-	Data.WriteBit(IsInvisible());
+	Data.WriteBit(Invisible);
 }
 
 // Serialize object stats
@@ -585,7 +605,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int32_t>(MonsterKills);
 	Data.Write<int32_t>(PlayerKills);
 	Data.Write<int32_t>(Bounty);
-	Data.Write<int32_t>(InvisPower);
+	Data.Write<int32_t>(Invisible);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -634,7 +654,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
 	Portrait = Stats->GetPortraitImage(PortraitID);
-	InvisPower = Data.ReadBit();
+	Invisible = Data.ReadBit();
 	WorldTexture = Assets.Textures["players/basic.png"];
 }
 
@@ -654,7 +674,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	MonsterKills = Data.Read<int32_t>();
 	PlayerKills = Data.Read<int32_t>();
 	Bounty = Data.Read<int32_t>();
-	InvisPower = Data.Read<int32_t>();
+	Invisible = Data.Read<int32_t>();
 
 	// Read inventory
 	Inventory->Unserialize(Data, Stats);
@@ -715,6 +735,7 @@ void _Object::UpdateStats(_StatChange &StatChange) {
 
 	UpdateHealth(StatChange.Health);
 	UpdateMana(StatChange.Mana);
+	Invisible = StatChange.Invisible;
 }
 
 // Update health
@@ -770,9 +791,7 @@ int _Object::Move() {
 	// Move player
 	if(Map->CanMoveTo(Position + Direction)) {
 		Position += Direction;
-		if(InvisPower > 0)
-			InvisPower--;
-		else if(GetTile()->Zone > 0)
+		if(GetTile()->Zone > 0 && !Invisible)
 			NextBattle--;
 
 		MoveTime = 0;
@@ -1018,7 +1037,7 @@ void _Object::CalculateSkillPoints() {
 
 // Can enter battle
 bool _Object::CanBattle() {
-	return Status == STATUS_NONE && !IsInvisible();
+	return Status == STATUS_NONE && !Invisible;
 }
 
 // Calculates all of the player stats
