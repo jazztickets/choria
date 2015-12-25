@@ -174,7 +174,7 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 
 	std::string TrimmedName = TrimString(Name);
 
-	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar_size) VALUES(@account_id, @slot, @name, @portrait_id, @actionbar_size)");
+	Database->PrepareQuery("INSERT INTO character(health, mana, account_id, slot, name, portrait_id, actionbar_size) VALUES(15, 0, @account_id, @slot, @name, @portrait_id, @actionbar_size)");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
 	Database->BindString(3, TrimmedName);
@@ -230,6 +230,8 @@ void _Save::LoadPlayer(_Object *Player) {
 		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
 		Player->Name = Database->GetString("name");
 		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
+		Player->Health = Database->GetInt<int>("health");
+		Player->Mana = Database->GetInt<int>("mana");
 		Player->Experience = Database->GetInt<int>("experience");
 		Player->Gold = Database->GetInt<int>("gold");
 		Player->ActionBar.resize(Database->GetInt<uint32_t>("actionbar_size"));
@@ -274,6 +276,10 @@ void _Save::LoadPlayer(_Object *Player) {
 		Player->ActionBar[Slot].Item = Player->Stats->Items[ItemID];
 	}
 	Database->CloseQuery();
+
+	// Max sure player has health
+	if(Player->Health <= 0)
+		Player->Health = 1;
 }
 
 // Saves the player
@@ -288,6 +294,8 @@ void _Save::SavePlayer(const _Object *Player) {
 		"UPDATE character SET"
 		" map_id = @map_id,"
 		" spawnpoint = @spawnpoint,"
+		" health = @health,"
+		" mana = @mana,"
 		" experience = @experience,"
 		" gold = @gold,"
 		" playtime = @playtime,"
@@ -297,16 +305,19 @@ void _Save::SavePlayer(const _Object *Player) {
 		" bounty = @bounty"
 		" WHERE id = @character_id"
 	);
-	Database->BindInt(1, Player->SpawnMapID);
-	Database->BindInt(2, Player->SpawnPoint);
-	Database->BindInt(3, Player->Experience);
-	Database->BindInt(4, Player->Gold);
-	Database->BindInt(5, Player->PlayTime);
-	Database->BindInt(6, Player->Deaths);
-	Database->BindInt(7, Player->MonsterKills);
-	Database->BindInt(8, Player->PlayerKills);
-	Database->BindInt(9, Player->Bounty);
-	Database->BindInt(10, Player->CharacterID);
+	int Index = 1;
+	Database->BindInt(Index++, Player->SpawnMapID);
+	Database->BindInt(Index++, Player->SpawnPoint);
+	Database->BindInt(Index++, Player->Health);
+	Database->BindInt(Index++, Player->Mana);
+	Database->BindInt(Index++, Player->Experience);
+	Database->BindInt(Index++, Player->Gold);
+	Database->BindInt(Index++, Player->PlayTime);
+	Database->BindInt(Index++, Player->Deaths);
+	Database->BindInt(Index++, Player->MonsterKills);
+	Database->BindInt(Index++, Player->PlayerKills);
+	Database->BindInt(Index++, Player->Bounty);
+	Database->BindInt(Index++, Player->CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
 
@@ -428,6 +439,8 @@ void _Save::CreateDefaultDatabase() {
 				"	name TEXT,\n"
 				"	portrait_id INTEGER DEFAULT(1),\n"
 				"	actionbar_size INTEGER DEFAULT(0),\n"
+				"	health INTEGER DEFAULT(0),\n"
+				"	mana INTEGER DEFAULT(0),\n"
 				"	experience INTEGER DEFAULT(0),\n"
 				"	gold INTEGER DEFAULT(0),\n"
 				"	battletime INTEGER DEFAULT(0),\n"
@@ -436,6 +449,16 @@ void _Save::CreateDefaultDatabase() {
 				"	monsterkills INTEGER DEFAULT(0),\n"
 				"	playerkills INTEGER DEFAULT(0),\n"
 				"	bounty INTEGER DEFAULT(0)\n"
+				")"
+	);
+
+	// Status Effects
+	Database->RunQuery(
+				"CREATE TABLE statuseffect(\n"
+				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
+				"	buff_id INTEGER DEFAULT(0),\n"
+				"	level INTEGER DEFAULT(0),\n"
+				"	count INTEGER DEFAULT(0)\n"
 				")"
 	);
 

@@ -733,12 +733,6 @@ void _Object::UpdateMana(int Value) {
 		Mana = MaxMana;
 }
 
-// Set health and mana to max
-void _Object::RestoreHealthMana() {
-	Health = MaxHealth;
-	Mana = MaxMana;
-}
-
 // Moves the player
 int _Object::Move() {
 	if(WaitForServer || InputState == 0 || Battle)

@@ -571,7 +571,6 @@ void _Battle::ServerEndBattle() {
 		Fighter->CalculateStats();
 		int NewLevel = Fighter->Level;
 		if(NewLevel > CurrentLevel) {
-			Fighter->RestoreHealthMana();
 			if(Fighter->Peer)
 				Server->SendMessage(Fighter->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
 		}

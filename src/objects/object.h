@@ -92,7 +92,6 @@ class _Object : public _ManagerBase {
 		void UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int Value);
 		void UpdateMana(int Value);
-		void RestoreHealthMana();
 		void CalculateStats();
 		float GetNextLevelPercent() const;
 		void UpdateGold(int Value);

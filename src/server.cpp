@@ -619,7 +619,6 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	// Get stats
 	Player->GenerateNextBattle();
 	Player->CalculateStats();
-	Player->RestoreHealthMana();
 
 	return Player;
 }
@@ -1079,7 +1078,6 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Check for death
-		Player->RestoreHealthMana();
 		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
 		return;
 	}
