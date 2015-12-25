@@ -8,7 +8,7 @@ end
 
 function Skill_MonsterAttack.Use(Level, Source, Target, Result)
 	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
-	Result.TargetHealthChange = -Damage
+	Result.Target.Health = -Damage
 
 	return Result
 end
@@ -29,7 +29,7 @@ function Skill_Attack.Use(Level, Source, Target, Result)
 		Damage = Damage * 3
 	end
 
-	Result.TargetHealthChange = -Damage
+	Result.Target.Health = -Damage
 
 	return Result
 end
@@ -41,14 +41,14 @@ Skill_Whirl = {}
 function Skill_Whirl.GetInfo(Level)
 	Chance = 9 + Level
 
-	return "Attack all enemies with [c green]30% [c white]weapon damage\n[c green]" .. Chance .. "% [c white]chance to cause [c red]bleeding"
+	return "Slash all enemies with [c green]30% [c white]weapon damage\n[c green]" .. Chance .. "% [c white]chance to cause [c yellow]bleeding"
 end
 
 function Skill_Whirl.Use(Level, Source, Target, Result)
 	Damage = math.floor(Source.GenerateDamage() * 0.3)
 	Damage = math.max(Damage - Target.GenerateDefense(), 0)
 
-	Result.TargetHealthChange = -Damage
+	Result.Target.Health = -Damage
 	if Random.GetInt(1, 100) <= 9 + Level then
 		Result.Buff = Buffs["Buff_Bleeding"]
 		Result.BuffLevel = 1
@@ -76,7 +76,7 @@ end
 
 function Skill_Heal.Use(Level, Source, Target, Result)
 
-	Result.TargetHealthChange = Skill_Heal.HealBase + Level * 5
+	Result.Target.Health = Skill_Heal.HealBase + Level * 5
 
 	return Result
 end
@@ -90,7 +90,7 @@ function Skill_Heal.CanUse(Level, Object)
 end
 
 function Skill_Heal.ApplyCost(Level, Result)
-	Result.SourceManaChange = -Skill_Heal.GetCost(Level)
+	Result.Source.Mana = -Skill_Heal.GetCost(Level)
 
 	return Result
 end
@@ -118,7 +118,7 @@ end
 function Skill_Flame.Use(Level, Source, Target, Result)
 
 	Damage = math.max(Skill_Flame.GetDamage(Level) - Target.GenerateDefense(), 0)
-	Result.TargetHealthChange = -Damage
+	Result.Target.Health = -Damage
 
 	return Result
 end
@@ -132,7 +132,7 @@ function Skill_Flame.CanUse(Level, Object)
 end
 
 function Skill_Flame.ApplyCost(Level, Result)
-	Result.SourceManaChange = -Skill_Flame.GetCost(Level)
+	Result.Source.Mana = -Skill_Flame.GetCost(Level)
 
 	return Result
 end
@@ -160,7 +160,7 @@ end
 function Skill_Bolt.Use(Level, Source, Target, Result)
 
 	Damage = math.max(Skill_Bolt.GetDamage(Level) - Target.GenerateDefense(), 0)
-	Result.TargetHealthChange = -Damage
+	Result.Target.Health = -Damage
 
 	return Result
 end
@@ -174,7 +174,7 @@ function Skill_Bolt.CanUse(Level, Object)
 end
 
 function Skill_Bolt.ApplyCost(Level, Result)
-	Result.SourceManaChange = -Skill_Bolt.GetCost(Level)
+	Result.Source.Mana = -Skill_Bolt.GetCost(Level)
 
 	return Result
 end

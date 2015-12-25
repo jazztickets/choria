@@ -141,14 +141,11 @@ void _Scripting::PushObject(_Object *Object) {
 void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 	lua_newtable(LuaState);
 
-	lua_pushinteger(LuaState, ActionResult->Target.Health);
-	lua_setfield(LuaState, -2, "TargetHealthChange");
+	PushStatChange(&ActionResult->Source);
+	lua_setfield(LuaState, -2, "Source");
 
-	lua_pushinteger(LuaState, ActionResult->Target.Mana);
-	lua_setfield(LuaState, -2, "TargetManaChange");
-
-	lua_pushinteger(LuaState, ActionResult->Source.Mana);
-	lua_setfield(LuaState, -2, "SourceManaChange");
+	PushStatChange(&ActionResult->Target);
+	lua_setfield(LuaState, -2, "Target");
 }
 
 // Push stat change struct onto stack
@@ -201,24 +198,23 @@ std::string _Scripting::GetString(int Index) {
 	return lua_tostring(LuaState, Index + CurrentTableIndex);
 }
 
-// Get return value as action result
+// Get return value as action result, Index=-1 means top of stack, otherwise index of return value
 void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
-	if(!lua_istable(LuaState, Index + CurrentTableIndex))
+	if(Index != -1)
+		Index += CurrentTableIndex;
+
+	// Check return value
+	if(!lua_istable(LuaState, Index))
 		throw std::runtime_error("GetActionResult: Value is not a table!");
 
-	lua_pushstring(LuaState, "TargetHealthChange");
+	lua_pushstring(LuaState, "Source");
 	lua_gettable(LuaState, -2);
-	ActionResult.Target.Health = (int)lua_tointeger(LuaState, -1);
+	GetStatChange(-1, ActionResult.Source);
 	lua_pop(LuaState, 1);
 
-	lua_pushstring(LuaState, "TargetManaChange");
+	lua_pushstring(LuaState, "Target");
 	lua_gettable(LuaState, -2);
-	ActionResult.Target.Mana = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "SourceManaChange");
-	lua_gettable(LuaState, -2);
-	ActionResult.Source.Mana = (int)lua_tointeger(LuaState, -1);
+	GetStatChange(-1, ActionResult.Target);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Buff");
@@ -239,7 +235,11 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 
 // Get return value as stat change
 void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
-	if(!lua_istable(LuaState, Index + CurrentTableIndex))
+	if(Index != -1)
+		Index += CurrentTableIndex;
+
+	// Check return value
+	if(!lua_istable(LuaState, Index))
 		throw std::runtime_error("GetStatChange: Value is not a table!");
 
 	lua_pushstring(LuaState, "Health");
