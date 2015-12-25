@@ -63,6 +63,7 @@ class _Inventory {
 
 		_Inventory();
 
+		// Network
 		void Serialize(_Buffer &Data);
 		void SerializeSlot(_Buffer &Data, size_t Slot);
 		void Unserialize(_Buffer &Data, _Stats *Stats);
@@ -82,10 +83,11 @@ class _Inventory {
 		// Traders
 		size_t GetRequiredItemSlots(const _Trader *Trader, std::vector<size_t> &BagIndex);
 
-		std::vector<_InventorySlot> Slots;
-
+		// Static functions
 		static bool IsSlotBag(size_t Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
 		static bool IsSlotTrade(size_t Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }
+
+		std::vector<_InventorySlot> Slots;
 
 	private:
 

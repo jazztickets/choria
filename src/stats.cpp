@@ -18,6 +18,7 @@
 #include <stats.h>
 #include <objects/object.h>
 #include <objects/buff.h>
+#include <objects/inventory.h>
 #include <constants.h>
 #include <database.h>
 #include <random.h>
@@ -40,6 +41,7 @@ _Stats::_Stats() {
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
+	LoadBuilds();
 }
 
 // Destructor
@@ -50,6 +52,9 @@ _Stats::~_Stats() {
 
 	for(const auto &Buff : Buffs)
 		delete Buff.second;
+
+	for(const auto &Build : Builds)
+		delete Build.second;
 
 	delete Database;
 }
@@ -252,6 +257,61 @@ void _Stats::LoadTraders() {
 		Traders[Trader.ID] = Trader;
 	}
 	Database->CloseQuery();
+}
+
+// Load preset builds
+void _Stats::LoadBuilds() {
+
+	// Get build info
+	Database->PrepareQuery("SELECT * FROM build");
+	while(Database->FetchRow()) {
+		uint32_t BuildID = Database->GetInt<uint32_t>("id");
+		if(BuildID == 0)
+			continue;
+
+		// Create object
+		_Object *Object = new _Object();
+		Object->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
+
+		// Get items
+		Database->PrepareQuery("SELECT * FROM builditem where build_id = @build_id", 1);
+		Database->BindInt(1, BuildID, 1);
+		while(Database->FetchRow(1)) {
+			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			if(Item)
+				Object->Inventory->AddItem(Item, Database->GetInt<int>("count", 1));
+		}
+		Database->CloseQuery(1);
+
+		// Get skills
+		Database->PrepareQuery("SELECT * FROM buildskill where build_id = @build_id", 1);
+		Database->BindInt(1, BuildID, 1);
+		while(Database->FetchRow(1)) {
+			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			if(Item)
+				Object->Skills[Item->ID] = Database->GetInt<int>("level", 1);
+		}
+		Database->CloseQuery(1);
+
+		// Get actionbar
+		Database->PrepareQuery("SELECT * FROM buildactionbar where build_id = @build_id", 1);
+		Database->BindInt(1, BuildID, 1);
+		while(Database->FetchRow(1)) {
+			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			if(Item) {
+				size_t Slot = (size_t)Database->GetInt<uint32_t>("slot", 1);
+				if(Slot < Object->ActionBar.size())
+					Object->ActionBar[Slot].Item = Item;
+			}
+		}
+		Database->CloseQuery(1);
+
+		// Save build
+		Builds[BuildID] = Object;
+	}
+	Database->CloseQuery();
+
+	Builds[0] = nullptr;
 }
 
 // Gets monsters stats from the database

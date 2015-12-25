@@ -33,6 +33,7 @@ $(document).ready(function() {
 			colHeaders: column_names,
 			columnSorting: true,
 			columns: columns,
+			trimDropdown: false,
 			contextMenu: {
 				items: {
 					"select_column": { name: 'Select Column' },

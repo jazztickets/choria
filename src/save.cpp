@@ -169,54 +169,37 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID) {
-	Database->RunQuery("BEGIN TRANSACTION");
+void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
+	if(!BuildID)
+		BuildID = 1;
 
-	std::string TrimmedName = TrimString(Name);
+	// Get build
+	const _Object *Build = Stats->Builds[BuildID];
+	if(!Build)
+		Build = Stats->Builds[1];
 
-	Database->PrepareQuery("INSERT INTO character(health, mana, account_id, slot, name, portrait_id, actionbar_size) VALUES(15, 0, @account_id, @slot, @name, @portrait_id, @actionbar_size)");
+	Database->PrepareQuery("INSERT INTO character(health, mana, account_id, slot, name, portrait_id, actionbar_size) VALUES(1000, 1000, @account_id, @slot, @name, @portrait_id, @actionbar_size)");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
-	Database->BindString(3, TrimmedName);
+	Database->BindString(3, TrimString(Name));
 	Database->BindInt(4, PortraitID);
-	Database->BindInt(5, ACTIONBAR_STARTING_SIZE);
+	Database->BindInt(5, (uint32_t)Build->ActionBar.size());
 	Database->FetchRow();
 	Database->CloseQuery();
 
-	uint32_t CharacterID = (uint32_t)Database->GetLastInsertID();
-	uint32_t ItemIDs[4];
-	ItemIDs[0] = Stats->GetItemIDByName("Small Knife");
-	ItemIDs[1] = Stats->GetItemIDByName("Dirty Shirt");
-	ItemIDs[2] = Stats->GetItemIDByName("Small Health Potion");
-	ItemIDs[3] = Stats->GetItemIDByName("Attack");
-	Database->PrepareQuery("INSERT INTO inventory "
-						   "VALUES(@character_id, @hand_slot, @item1_id, 1) "
-						   ",(@character_id, @body_slot, @item2_id, 1) "
-						   ",(@character_id, @bag_slot, @item3_id, 3) ");
-	Database->BindInt(1, CharacterID);
-	Database->BindInt(2, (int)InventoryType::HAND1);
-	Database->BindInt(3, ItemIDs[0]);
-	Database->BindInt(4, (int)InventoryType::BODY);
-	Database->BindInt(5, ItemIDs[1]);
-	Database->BindInt(6, (int)InventoryType::BAG);
-	Database->BindInt(7, ItemIDs[2]);
-	Database->FetchRow();
-	Database->CloseQuery();
+	_Object Object;
+	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
 
-	Database->PrepareQuery("INSERT INTO skill VALUES(@character_id, 0, @item_id, 1)");
-	Database->BindInt(1, CharacterID);
-	Database->BindInt(2, ItemIDs[3]);
-	Database->FetchRow();
-	Database->CloseQuery();
+	// Load default values
+	LoadPlayer(&Object);
 
-	Database->PrepareQuery("INSERT INTO actionbar VALUES(@character_id, 0, @skill_id), (@character_id, 1, @item_id)");
-	Database->BindInt(1, CharacterID);
-	Database->BindInt(2, ItemIDs[3]);
-	Database->BindInt(3, ItemIDs[2]);
-	Database->FetchRow();
-	Database->CloseQuery();
+	// Copy build data
+	Object.ActionBar = Build->ActionBar;
+	Object.Inventory->Slots = Build->Inventory->Slots;
+	Object.Skills = Build->Skills;
 
-	Database->RunQuery("END TRANSACTION");
+	// Save new character
+	SavePlayer(&Object);
 }
 
 // Load player from database

@@ -123,6 +123,7 @@ class _Stats {
 		std::unordered_map<uint32_t, std::string> TargetTypes;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;
+		std::unordered_map<uint32_t, const _Object *> Builds;
 
 		// Database
 		_Database *Database;
@@ -138,5 +139,6 @@ class _Stats {
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();
+		void LoadBuilds();
 
 };
