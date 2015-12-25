@@ -222,7 +222,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			int StartingSide = !ClientPlayer->BattleSide;
 
 			// Pick sides depending on action
-			bool TargetAlive = true;
 			bool Multiple = false;
 			switch(Item->TargetID) {
 				case TargetType::ALLY_ALL:
@@ -238,7 +237,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				break;
 			}
 
-			TargetAlive = Item->TargetAlive;
+			bool TargetAlive = Item->TargetAlive;
 
 			// Get list of fighters on each side
 			std::list<_Object *> FighterList;
@@ -246,11 +245,28 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 			// Find targets
 			ClientPlayer->Targets.clear();
-			for(auto &Fighter :  FighterList) {
-				if((TargetAlive && Fighter->Health > 0) || !TargetAlive) {
-					ClientPlayer->Targets.push_back(Fighter);
-					if(!Multiple)
-						break;
+
+			// Find last target
+			if(ClientPlayer->LastTarget && !Multiple) {
+				for(auto &Fighter : FighterList) {
+					if((TargetAlive && Fighter->Health > 0) || !TargetAlive) {
+						if(ClientPlayer->LastTarget == Fighter) {
+							ClientPlayer->Targets.push_back(Fighter);
+							break;
+						}
+					}
+				}
+			}
+
+			// Find first alive target
+			if(ClientPlayer->Targets.size() == 0) {
+				for(auto &Fighter : FighterList) {
+					if((TargetAlive && Fighter->Health > 0) || !TargetAlive) {
+
+						ClientPlayer->Targets.push_back(Fighter);
+						if(!Multiple)
+							break;
+					}
 				}
 			}
 		}
@@ -260,6 +276,10 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
+
+		// Remember target
+		if(ClientPlayer->Targets.size() == 1)
+			ClientPlayer->LastTarget = ClientPlayer->Targets.front();
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACTION_USE);
@@ -329,6 +349,7 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Battle = this;
 	Fighter->BattleSide = Side;
+	Fighter->LastTarget = nullptr;
 	Fighter->Targets.clear();
 	Fighter->Action.Unset();
 	Fighter->PotentialAction.Unset();

@@ -173,6 +173,7 @@ class _Object : public _ManagerBase {
 
 		// Actions
 		std::list<_Object *> Targets;
+		_Object *LastTarget;
 		_Action Action;
 
 		// Render
