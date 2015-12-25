@@ -121,16 +121,16 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
 
-	lua_pushinteger(LuaState, Object->Health);
+	lua_pushnumber(LuaState, Object->Health);
 	lua_setfield(LuaState, -2, "Health");
 
-	lua_pushinteger(LuaState, Object->MaxHealth);
+	lua_pushnumber(LuaState, Object->MaxHealth);
 	lua_setfield(LuaState, -2, "MaxHealth");
 
-	lua_pushinteger(LuaState, Object->Mana);
+	lua_pushnumber(LuaState, Object->Mana);
 	lua_setfield(LuaState, -2, "Mana");
 
-	lua_pushinteger(LuaState, Object->MaxMana);
+	lua_pushnumber(LuaState, Object->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
 	lua_pushlightuserdata(LuaState, Object);
@@ -152,16 +152,16 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 void _Scripting::PushStatChange(_StatChange *StatChange) {
 	lua_newtable(LuaState);
 
-	lua_pushinteger(LuaState, StatChange->Health);
+	lua_pushnumber(LuaState, StatChange->Health);
 	lua_setfield(LuaState, -2, "Health");
 
-	lua_pushinteger(LuaState, StatChange->MaxHealth);
+	lua_pushnumber(LuaState, StatChange->MaxHealth);
 	lua_setfield(LuaState, -2, "MaxHealth");
 
-	lua_pushinteger(LuaState, StatChange->Mana);
+	lua_pushnumber(LuaState, StatChange->Mana);
 	lua_setfield(LuaState, -2, "Mana");
 
-	lua_pushinteger(LuaState, StatChange->MaxMana);
+	lua_pushnumber(LuaState, StatChange->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
 	lua_pushinteger(LuaState, StatChange->Invisible);
@@ -244,22 +244,22 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 
 	lua_pushstring(LuaState, "Health");
 	lua_gettable(LuaState, -2);
-	StatChange.Health = (int)lua_tointeger(LuaState, -1);
+	StatChange.Health = (float)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "MaxHealth");
 	lua_gettable(LuaState, -2);
-	StatChange.MaxHealth = (int)lua_tointeger(LuaState, -1);
+	StatChange.MaxHealth = (float)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Mana");
 	lua_gettable(LuaState, -2);
-	StatChange.Mana = (int)lua_tointeger(LuaState, -1);
+	StatChange.Mana = (float)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "MaxMana");
 	lua_gettable(LuaState, -2);
-	StatChange.MaxMana = (int)lua_tointeger(LuaState, -1);
+	StatChange.MaxMana = (float)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Invisible");

@@ -499,7 +499,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	ButtonBarElement->Render();
 
 	// Draw hud elements while alive or in battle
-	if(Player->Health > 0 || Player->Battle) {
+	if(Player->IsAlive() || Player->Battle) {
 		std::stringstream Buffer;
 
 		Assets.Elements["element_hud"]->Render();
@@ -527,7 +527,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ExperienceElement->Render();
 
 		// Draw health bar
-		Buffer << Player->Health << " / " << Player->MaxHealth;
+		Buffer << std::fixed << std::setprecision(0) << Player->Health << " / " << Player->MaxHealth;
 		Assets.Labels["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
@@ -535,7 +535,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		HealthElement->Render();
 
 		// Draw mana bar
-		Buffer << Player->Mana << " / " << Player->MaxMana;
+		Buffer << std::fixed << std::setprecision(0) << Player->Mana << " / " << Player->MaxMana;
 		Assets.Labels["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());
@@ -566,7 +566,6 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level);
 	}
 	else {
-
 		// Dead outside of combat
 
 		//Assets.Labels["label_died_gold"]->Text = "You lost " + std::to_string(std::abs(100)) + " gold";
@@ -604,7 +603,7 @@ void _HUD::ToggleChat() {
 
 // Toggles the teleport state
 void _HUD::ToggleTeleport() {
-	if(Player->WaitForServer || Player->Health <= 0)
+	if(Player->WaitForServer || !Player->IsAlive())
 		return;
 
 	if(!TeleportElement->Visible) {
@@ -619,7 +618,7 @@ void _HUD::ToggleTeleport() {
 
 // Open/close inventory
 void _HUD::ToggleInventory() {
-	if(Player->WaitForServer || Player->Health <= 0)
+	if(Player->WaitForServer || !Player->IsAlive())
 		return;
 
 	if(!InventoryElement->Visible) {
@@ -636,7 +635,7 @@ void _HUD::ToggleInventory() {
 
 // Open/close trade
 void _HUD::ToggleTrade() {
-	if(Player->WaitForServer || Player->Health <= 0)
+	if(Player->WaitForServer || !Player->IsAlive())
 		return;
 
 	if(!TradeElement->Visible) {
@@ -650,7 +649,7 @@ void _HUD::ToggleTrade() {
 
 // Open/close skills
 void _HUD::ToggleSkills() {
-	if(Player->WaitForServer || Player->Health <= 0)
+	if(Player->WaitForServer || !Player->IsAlive())
 		return;
 
 	if(!SkillsElement->Visible) {
@@ -1317,7 +1316,7 @@ void _HUD::DrawSkills() {
 
 // Draw recently acquired items
 void _HUD::DrawRecentItems() {
-	if(!RecentItems.size() || Player->Health <= 0)
+	if(!RecentItems.size() || !Player->IsAlive())
 		return;
 
 	// Draw label

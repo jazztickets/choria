@@ -267,6 +267,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
+		case PacketType::WORLD_RESPAWN:
+			HandleRespawn(Data, Peer);
+		break;
 		case PacketType::ACTION_USE:
 			HandleActionUse(Data, Peer);
 		break;
@@ -472,7 +475,30 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 	   return;
 
 	_Object *Player = Peer->Object;
+	if(!Player->IsAlive())
+		return;
+
 	Player->InputState = Data.Read<char>();
+}
+
+// Handle respawn command from client
+void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+
+	// Check death
+	if(!Player->IsAlive()) {
+
+		// Wait for battle to finish
+		if(Player->Battle)
+			return;
+
+		Player->Health = 0.5f * Player->MaxHealth;
+		Player->Mana = 0.5f * Player->MaxMana;
+		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
+	}
 }
 
 // Handle a chat message
@@ -1069,14 +1095,8 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	   return;
 
 	_Object *Player = Peer->Object;
-	if(Player->Health <= 0) {
-		if(Player->Battle)
-			return;
-
-		// Check for death
-		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
+	if(!Player->IsAlive())
 		return;
-	}
 
 	// Set action used
 	Player->SetActionUsing(Data, ObjectManager);
@@ -1158,12 +1178,10 @@ void _Server::SendHUD(_Peer *Peer) {
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
+	Packet.Write<float>(Player->Health);
+	Packet.Write<float>(Player->Mana);
 	Packet.Write<int32_t>(Player->Experience);
 	Packet.Write<int32_t>(Player->Gold);
-	Packet.Write<int32_t>(Player->Health);
-	Packet.Write<int32_t>(Player->Mana);
-	Packet.Write<float>(Player->HealthAccumulator);
-	Packet.Write<float>(Player->ManaAccumulator);
 
 	Network->SendPacket(Packet, Peer);
 }

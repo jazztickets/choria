@@ -266,12 +266,12 @@ void _Save::LoadPlayer(_Object *Player) {
 	// Get stats
 	Player->GenerateNextBattle();
 	Player->CalculateStats();
-	Player->Health = (int)(HealthPercent * Player->MaxHealth);
-	Player->Mana = (int)(ManaPercent * Player->MaxMana);
+	Player->Health = HealthPercent * Player->MaxHealth;
+	Player->Mana = ManaPercent * Player->MaxMana;
 
 	// Max sure player has health
-	if(Player->Health <= 0)
-		Player->Health = 1;
+	if(!Player->IsAlive())
+		Player->Health = 1.0f;
 }
 
 // Saves the player

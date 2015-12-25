@@ -88,8 +88,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Write source updates
 	ActionResult.Source.Serialize(Data);
-	Data.Write<int32_t>(ActionResult.Source.Object->Health);
-	Data.Write<int32_t>(ActionResult.Source.Object->Mana);
+	Data.Write<float>(ActionResult.Source.Object->Health);
+	Data.Write<float>(ActionResult.Source.Object->Mana);
 
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Targets.size());
@@ -104,8 +104,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object->UpdateStats(ActionResult.Target);
 
 		ActionResult.Target.Serialize(Data);
-		Data.Write<int32_t>(ActionResult.Target.Object->Health);
-		Data.Write<int32_t>(ActionResult.Target.Object->Mana);
+		Data.Write<float>(ActionResult.Target.Object->Health);
+		Data.Write<float>(ActionResult.Target.Object->Mana);
 
 		// Add buffs
 		if(ActionResult.Buff) {

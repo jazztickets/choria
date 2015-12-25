@@ -81,7 +81,7 @@ void _Battle::Update(double FrameTime) {
 		// Count alive fighters for each side
 		int AliveCount[2] = { 0, 0 };
 		for(auto &Fighter : Fighters) {
-			if(Fighter->Health > 0)
+			if(Fighter->IsAlive())
 				AliveCount[Fighter->BattleSide]++;
 		}
 
@@ -180,7 +180,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		return;
 
 	// Check for dead
-	if(ClientPlayer->Health == 0)
+	if(!ClientPlayer->IsAlive())
 		return;
 
 	// Player already locked in
@@ -249,7 +249,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			// Find last target
 			if(ClientPlayer->LastTarget && !Multiple) {
 				for(auto &Fighter : FighterList) {
-					if((TargetAlive && Fighter->Health > 0) || !TargetAlive) {
+					if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
 						if(ClientPlayer->LastTarget == Fighter) {
 							ClientPlayer->Targets.push_back(Fighter);
 							break;
@@ -261,7 +261,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			// Find first alive target
 			if(ClientPlayer->Targets.size() == 0) {
 				for(auto &Fighter : FighterList) {
-					if((TargetAlive && Fighter->Health > 0) || !TargetAlive) {
+					if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
 
 						ClientPlayer->Targets.push_back(Fighter);
 						if(!Multiple)
@@ -297,7 +297,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, int SideDirection) {
-	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || ClientPlayer->Health == 0 || ClientPlayer->Targets.size() != 1)
+	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || ClientPlayer->Targets.size() != 1)
 		return;
 
 	// Get current target side
@@ -347,7 +347,7 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 			NewTarget = *Iterator;
 
 		// Check break condition
-		if(NewTarget->Health > 0)
+		if(NewTarget->IsAlive())
 			break;
 	}
 
@@ -383,7 +383,7 @@ void _Battle::GetFighterList(int Side, std::list<_Object *> &SideFighters) {
 void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters) {
 
 	for(auto &Fighter : Fighters) {
-		if(Fighter->BattleSide == Side && Fighter->Health > 0) {
+		if(Fighter->BattleSide == Side && Fighter->IsAlive()) {
 			AliveFighters.push_back(Fighter);
 		}
 	}
@@ -481,7 +481,7 @@ void _Battle::ServerEndBattle() {
 				SideStats[Side].MonsterCount++;
 
 			// Tally alive fighters
-			if(Fighter->Health > 0) {
+			if(Fighter->IsAlive()) {
 				SideStats[Side].Dead = false;
 			}
 

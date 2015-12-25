@@ -183,6 +183,14 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 		return true;
 	}
 
+	// Respawn
+	if(!Player->IsAlive()) {
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
+		Network->SendPacket(Packet);
+		return true;
+	}
+
 	// Battle
 	if(Battle) {
 		switch(Action) {
@@ -972,8 +980,8 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 
 	// Get source change
 	ActionResult.Source.Unserialize(Data, ObjectManager);
-	int SourceFighterHealth = Data.Read<int32_t>();
-	int SourceFighterMana = Data.Read<int32_t>();
+	float SourceFighterHealth = Data.Read<float>();
+	float SourceFighterMana = Data.Read<float>();
 
 	// Update source fighter
 	if(ActionResult.Source.Object) {
@@ -1006,8 +1014,8 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
 		ActionResult.Target.Unserialize(Data, ObjectManager);
-		int TargetFighterHealth = Data.Read<int32_t>();
-		int TargetFighterMana = Data.Read<int32_t>();
+		float TargetFighterHealth = Data.Read<float>();
+		float TargetFighterMana = Data.Read<float>();
 
 		// Read status effect
 		uint32_t BuffID = Data.Read<uint32_t>();
@@ -1050,7 +1058,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 			}
 
 			// No damage dealt
-			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL) && ActionResult.Target.Health == 0) {
+			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL) && ActionResult.Target.Health == 0.0f) {
 				ActionResult.Timeout = ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = ACTIONRESULT_SPEED_SHORT;
 			}
@@ -1086,12 +1094,10 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	if(!Player)
 		return;
 
+	Player->Health = Data.Read<float>();
+	Player->Mana = Data.Read<float>();
 	Player->Experience = Data.Read<int32_t>();
 	Player->Gold = Data.Read<int32_t>();
-	Player->Health = Data.Read<int32_t>();
-	Player->Mana = Data.Read<int32_t>();
-	Player->HealthAccumulator = Data.Read<float>();
-	Player->ManaAccumulator = Data.Read<float>();
 	Player->CalculateStats();
 }
 

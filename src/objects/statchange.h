@@ -53,10 +53,10 @@ class _StatChange {
 		int GetChangedFlag();
 
 		_Object *Object;
-		int Health;
-		int MaxHealth;
-		int Mana;
-		int MaxMana;
+		float Health;
+		float MaxHealth;
+		float Mana;
+		float MaxMana;
 		int Experience;
 		int Gold;
 		int Invisible;

@@ -40,6 +40,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 _Object::_Object() :
@@ -56,18 +57,16 @@ _Object::_Object() :
 
 	Name(""),
 	Level(0),
-	Health(0),
-	MaxHealth(0),
-	Mana(0),
-	MaxMana(0),
+	Health(0.0f),
+	MaxHealth(0.0f),
+	Mana(0.0f),
+	MaxMana(0.0f),
 	MinDamage(0),
 	MaxDamage(0),
 	MinDefense(0),
 	MaxDefense(0),
 	HealthRegen(0.0f),
 	ManaRegen(0.0f),
-	HealthAccumulator(0.0f),
-	ManaAccumulator(0.0f),
 	Battle(nullptr),
 	BattleElement(nullptr),
 	BattleSpeed(BATTLE_DEFAULTSPEED),
@@ -167,7 +166,7 @@ void _Object::Update(double FrameTime) {
 		Status = STATUS_PAUSE;
 
 	// Update actions and battle
-	if(Health > 0) {
+	if(IsAlive()) {
 
 		// Update AI
 		if(Server && Battle)
@@ -212,13 +211,13 @@ void _Object::Update(double FrameTime) {
 			StatusEffect->Time -= 1.0;
 
 			// Resolve effects
-			if(Server && Health > 0) {
+			if(Server && IsAlive()) {
 				ResolveBuff(StatusEffect, "Update");
 			}
 
 			// Reduce count
 			StatusEffect->Count--;
-			if(StatusEffect->Count <= 0 || Health <= 0) {
+			if(StatusEffect->Count <= 0 || !IsAlive()) {
 
 				// Call expire scripting function
 				if(Server) {
@@ -298,7 +297,7 @@ void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 		for(const auto &Fighter : Fighters) {
 			if(Fighter->BattleSide == BattleSide)
 				Allies.push_back(Fighter);
-			else if(Fighter->Health > 0)
+			else if(Fighter->IsAlive())
 				Enemies.push_back(Fighter);
 		}
 
@@ -354,7 +353,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	glm::vec4 GlobalColor(COLOR_WHITE);
 	GlobalColor.a = 1.0f;
-	if(Health == 0)
+	if(!IsAlive())
 		GlobalColor.a = 0.2f;
 
 	// Draw slot
@@ -400,7 +399,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw health text
 	std::stringstream Buffer;
-	Buffer << Health << " / " << MaxHealth;
+	Buffer << std::fixed << std::setprecision(0) << Health << " / " << MaxHealth;
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
 	Buffer.str("");
 
@@ -424,7 +423,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
-		Buffer << Mana << " / " << MaxMana;
+		Buffer << std::fixed << std::setprecision(0) << Mana << " / " << MaxMana;
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
 		Buffer.str("");
 	}
@@ -565,10 +564,10 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(PortraitID);
-	Data.Write<int32_t>(Health);
-	Data.Write<int32_t>(MaxHealth);
-	Data.Write<int32_t>(Mana);
-	Data.Write<int32_t>(MaxMana);
+	Data.Write<float>(Health);
+	Data.Write<float>(MaxHealth);
+	Data.Write<float>(Mana);
+	Data.Write<float>(MaxMana);
 	Data.Write<int32_t>(Experience);
 	Data.Write<int32_t>(Gold);
 	Data.Write<int32_t>(PlayTime);
@@ -607,10 +606,10 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<uint32_t>(DatabaseID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<double>(TurnTimer);
-	Data.Write<int32_t>(Health);
-	Data.Write<int32_t>(MaxHealth);
-	Data.Write<int32_t>(Mana);
-	Data.Write<int32_t>(MaxMana);
+	Data.Write<float>(Health);
+	Data.Write<float>(MaxHealth);
+	Data.Write<float>(Mana);
+	Data.Write<float>(MaxMana);
 	Data.Write<uint8_t>(BattleSide);
 
 	Data.Write<uint8_t>((uint8_t)StatusEffects.size());
@@ -634,10 +633,10 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	WorldTexture = Assets.Textures["players/basic.png"];
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
-	Health = Data.Read<int32_t>();
-	MaxHealth = Data.Read<int32_t>();
-	Mana = Data.Read<int32_t>();
-	MaxMana = Data.Read<int32_t>();
+	Health = Data.Read<float>();
+	MaxHealth = Data.Read<float>();
+	Mana = Data.Read<float>();
+	MaxMana = Data.Read<float>();
 	Experience = Data.Read<int32_t>();
 	Gold = Data.Read<int32_t>();
 	PlayTime = Data.Read<int32_t>();
@@ -686,10 +685,10 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	// Get fighter type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
 	TurnTimer = Data.Read<double>();
-	Health = Data.Read<int32_t>();
-	MaxHealth = Data.Read<int32_t>();
-	Mana = Data.Read<int32_t>();
-	MaxMana = Data.Read<int32_t>();
+	Health = Data.Read<float>();
+	MaxHealth = Data.Read<float>();
+	Mana = Data.Read<float>();
+	MaxMana = Data.Read<float>();
 	BattleSide = Data.Read<uint8_t>();
 
 	DeleteStatusEffects();
@@ -711,7 +710,7 @@ void _Object::UpdateStats(_StatChange &StatChange) {
 }
 
 // Update health
-void _Object::UpdateHealth(int Value) {
+void _Object::UpdateHealth(float Value) {
 	Health += Value;
 
 	if(Health < 0)
@@ -721,7 +720,7 @@ void _Object::UpdateHealth(int Value) {
 }
 
 // Update mana
-void _Object::UpdateMana(int Value) {
+void _Object::UpdateMana(float Value) {
 	Mana += Value;
 
 	if(Mana < 0)
@@ -966,7 +965,7 @@ bool _Object::AcceptingMoveInput() {
 	if(Trader)
 		return false;
 
-	if(Health <= 0)
+	if(!IsAlive())
 		return false;
 
 	return true;
@@ -1033,6 +1032,11 @@ bool _Object::CanBattle() {
 
 // Calculates all of the player stats
 void _Object::CalculateStats() {
+
+	// Save stat percentages
+	float HealthPercent = GetHealthPercent();
+	float ManaPercent = GetManaPercent();
+
 	HealthRegen = ManaRegen = 0.0f;
 	MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
 	MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
@@ -1052,9 +1056,9 @@ void _Object::CalculateStats() {
 	// Combine all stats
 	CalculateFinalStats();
 
-	// Cap stats
-	UpdateHealth(0);
-	UpdateMana(0);
+	// Set health/mana
+	Health = HealthPercent * MaxHealth;
+	Mana = ManaPercent * MaxMana;
 
 	RefreshActionBarCount();
 }

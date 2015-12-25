@@ -89,11 +89,12 @@ class _Object : public _ManagerBase {
 		void UnserializeBattle(_Buffer &Data);
 
 		// Stats
+		bool IsAlive() const { return Health > 0.0f; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 		void UpdateStats(_StatChange &StatChange);
-		void UpdateHealth(int Value);
-		void UpdateMana(int Value);
+		void UpdateHealth(float Value);
+		void UpdateMana(float Value);
 		void CalculateStats();
 		float GetNextLevelPercent() const;
 		void UpdateGold(int Value);
@@ -155,11 +156,13 @@ class _Object : public _ManagerBase {
 		// Stats
 		std::string Name;
 		int Level;
-		int Health, MaxHealth;
-		int Mana, MaxMana;
+		float Health;
+		float MaxHealth;
+		float Mana;
+		float MaxMana;
 		int MinDamage, MaxDamage;
 		int MinDefense, MaxDefense;
-		float HealthRegen, ManaRegen, HealthAccumulator, ManaAccumulator;
+		float HealthRegen, ManaRegen;
 
 		// Battle
 		_Battle *Battle;

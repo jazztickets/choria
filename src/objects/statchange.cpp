@@ -42,13 +42,13 @@ _StatChange::_StatChange() :
 int _StatChange::GetChangedFlag() {
 	int Flag = 0;
 
-	if(Health != 0)
+	if(Health != 0.0f)
 		Flag |= StatType::HEALTH;
-	if(MaxHealth != 0)
+	if(MaxHealth != 0.0f)
 		Flag |= StatType::MAXHEALTH;
-	if(Mana != 0)
+	if(Mana != 0.0f)
 		Flag |= StatType::MANA;
-	if(MaxMana != 0)
+	if(MaxMana != 0.0f)
 		Flag |= StatType::MAXMANA;
 	if(Experience != 0)
 		Flag |= StatType::EXPERIENCE;
@@ -69,13 +69,13 @@ void _StatChange::Serialize(_Buffer &Data) {
 	Data.Write<NetworkIDType>(Object->NetworkID);
 	Data.Write<int>(ChangedFlag);
 	if(ChangedFlag & StatType::HEALTH)
-		Data.Write<int>(Health);
+		Data.Write<float>(Health);
 	if(ChangedFlag & StatType::MAXHEALTH)
-		Data.Write<int>(MaxHealth);
+		Data.Write<float>(MaxHealth);
 	if(ChangedFlag & StatType::MANA)
-		Data.Write<int>(Mana);
+		Data.Write<float>(Mana);
 	if(ChangedFlag & StatType::MAXMANA)
-		Data.Write<int>(MaxMana);
+		Data.Write<float>(MaxMana);
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Data.Write<int>(Experience);
 	if(ChangedFlag & StatType::GOLD)
@@ -91,13 +91,13 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 
 	int ChangedFlag = Data.Read<int>();
 	if(ChangedFlag & StatType::HEALTH)
-		Health = Data.Read<int>();
+		Health = Data.Read<float>();
 	if(ChangedFlag & StatType::MAXHEALTH)
-		MaxHealth = Data.Read<int>();
+		MaxHealth = Data.Read<float>();
 	if(ChangedFlag & StatType::MANA)
-		Mana = Data.Read<int>();
+		Mana = Data.Read<float>();
 	if(ChangedFlag & StatType::MAXMANA)
-		MaxMana = Data.Read<int>();
+		MaxMana = Data.Read<float>();
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)

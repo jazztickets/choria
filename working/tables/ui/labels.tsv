@@ -62,7 +62,7 @@ label_skills_tooltip_name	element_skills_tooltip	menu_buttons			0	30	0	0	1	3
 label_buffs_tooltip_name	element_buffs_tooltip	menu_buttons			0	30	0	0	1	3
 label_battle_title	element_battle	battle_large			0	45	0	0	1	3
 label_died	element_died	hud_large		You died	0	100	0	0	1	3
-label_died_gold	element_died	hud_medium		You lost gold	0	-100	0	0	1	2
+label_died_gold	element_died	hud_medium			0	-100	0	0	1	2
 label_trade_status	element_trade	hud_medium		Waiting for other player...	0	64	0	0	1	0
 label_trade_name_theirs	image_trade_portrait_theirs	hud_small			0	-12	0	0	1	3
 label_trade_name_yours	image_trade_portrait_yours	hud_small			0	-12	0	0	1	3
