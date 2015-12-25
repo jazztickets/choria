@@ -29,7 +29,9 @@
 _StatChange::_StatChange() :
 	Object(nullptr),
 	Health(0),
+	MaxHealth(0),
 	Mana(0),
+	MaxMana(0),
 	Experience(0),
 	Gold(0),
 	Invisible(-1) {
@@ -42,8 +44,12 @@ int _StatChange::GetChangedFlag() {
 
 	if(Health != 0)
 		Flag |= StatType::HEALTH;
+	if(MaxHealth != 0)
+		Flag |= StatType::MAXHEALTH;
 	if(Mana != 0)
 		Flag |= StatType::MANA;
+	if(MaxMana != 0)
+		Flag |= StatType::MAXMANA;
 	if(Experience != 0)
 		Flag |= StatType::EXPERIENCE;
 	if(Gold != 0)
@@ -64,8 +70,12 @@ void _StatChange::Serialize(_Buffer &Data) {
 	Data.Write<int>(ChangedFlag);
 	if(ChangedFlag & StatType::HEALTH)
 		Data.Write<int>(Health);
+	if(ChangedFlag & StatType::MAXHEALTH)
+		Data.Write<int>(MaxHealth);
 	if(ChangedFlag & StatType::MANA)
 		Data.Write<int>(Mana);
+	if(ChangedFlag & StatType::MAXMANA)
+		Data.Write<int>(MaxMana);
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Data.Write<int>(Experience);
 	if(ChangedFlag & StatType::GOLD)
@@ -82,8 +92,12 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 	int ChangedFlag = Data.Read<int>();
 	if(ChangedFlag & StatType::HEALTH)
 		Health = Data.Read<int>();
+	if(ChangedFlag & StatType::MAXHEALTH)
+		MaxHealth = Data.Read<int>();
 	if(ChangedFlag & StatType::MANA)
 		Mana = Data.Read<int>();
+	if(ChangedFlag & StatType::MAXMANA)
+		MaxMana = Data.Read<int>();
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)

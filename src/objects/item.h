@@ -62,6 +62,7 @@ class _Item {
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void Stats(_Scripting *Scripting, _ActionResult &ActionResult) const;
 
 		uint32_t ID;
 		std::string Name;

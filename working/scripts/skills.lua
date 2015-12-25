@@ -30,9 +30,6 @@ function Skill_Attack.Use(Level, Source, Target, Result)
 	end
 
 	Result.TargetHealthChange = -Damage
-	--Result.Buff = Buffs["Buff_Bleeding"]
-	--Result.BuffLevel = 1
-	--Result.BuffDuration = 5
 
 	return Result
 end
@@ -180,4 +177,34 @@ function Skill_Bolt.ApplyCost(Level, Result)
 	Result.SourceManaChange = -Skill_Bolt.GetCost(Level)
 
 	return Result
+end
+
+-- Toughness --
+
+Skill_Toughness = { PerLevel = 4 }
+
+function Skill_Toughness.GetInfo(Level)
+
+	return "Increase max HP by [c green]" .. Skill_Toughness.PerLevel * Level
+end
+
+function Skill_Toughness.Stats(Level, Object, Change)
+	Change.MaxHealth = Skill_Toughness.PerLevel * Level
+
+	return Change
+end
+
+-- Arcane Mastery --
+
+Skill_ArcaneMastery = { PerLevel = 2 }
+
+function Skill_ArcaneMastery.GetInfo(Level)
+
+	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Level
+end
+
+function Skill_ArcaneMastery.Stats(Level, Object, Change)
+	Change.MaxMana = Skill_ArcaneMastery.PerLevel * Level
+
+	return Change
 end

@@ -228,10 +228,9 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 				if(IsLocked)
 					InfoText = "Right-click to learn";
 				else
-
 					InfoText = "Already learned";
 			}
-			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
+			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD) && TargetID != TargetType::NONE)
 				InfoText = "Left-click to use";
 		break;
 		default:
@@ -375,13 +374,25 @@ void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const 
 
 // Use an item
 void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(ActionResult.ActionUsed.Item->Script, "Use")) {
+	if(Scripting->StartMethodCall(Script, "Use")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushObject(ActionResult.Target.Object);
 		Scripting->PushActionResult(&ActionResult);
 		Scripting->MethodCall(4, 1);
 		Scripting->GetActionResult(1, ActionResult);
+		Scripting->FinishMethodCall();
+	}
+}
+
+// Get passive stats
+void _Item::Stats(_Scripting *Scripting, _ActionResult &ActionResult) const {
+	if(Scripting->StartMethodCall(Script, "Stats")) {
+		Scripting->PushInt(ActionResult.ActionUsed.Level);
+		Scripting->PushObject(ActionResult.Source.Object);
+		Scripting->PushStatChange(&ActionResult.Source);
+		Scripting->MethodCall(3, 1);
+		Scripting->GetStatChange(1, ActionResult.Source);
 		Scripting->FinishMethodCall();
 	}
 }

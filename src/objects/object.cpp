@@ -1123,6 +1123,19 @@ void _Object::CalculateGearStats() {
 
 // Calculates skill bonuses
 void _Object::CalculateSkillStats() {
+	for(size_t i = 0; i < ActionBar.size(); i++) {
+		_ActionResult ActionResult;
+		ActionResult.Source.Object = this;
+		if(GetActionFromSkillbar(ActionResult.ActionUsed, i)) {
+			const _Item *Skill = ActionResult.ActionUsed.Item;
+			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
+
+				Skill->Stats(Scripting, ActionResult);
+				MaxHealth += ActionResult.Source.MaxHealth;
+				MaxMana += ActionResult.Source.MaxMana;
+			}
+		}
+	}
 }
 
 // Combine all stats

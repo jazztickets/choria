@@ -156,10 +156,16 @@ void _Scripting::PushStatChange(_StatChange *StatChange) {
 	lua_newtable(LuaState);
 
 	lua_pushinteger(LuaState, StatChange->Health);
-	lua_setfield(LuaState, -2, "HealthChange");
+	lua_setfield(LuaState, -2, "Health");
+
+	lua_pushinteger(LuaState, StatChange->MaxHealth);
+	lua_setfield(LuaState, -2, "MaxHealth");
 
 	lua_pushinteger(LuaState, StatChange->Mana);
-	lua_setfield(LuaState, -2, "ManaChange");
+	lua_setfield(LuaState, -2, "Mana");
+
+	lua_pushinteger(LuaState, StatChange->MaxMana);
+	lua_setfield(LuaState, -2, "MaxMana");
 
 	lua_pushinteger(LuaState, StatChange->Invisible);
 	lua_setfield(LuaState, -2, "Invisible");
@@ -236,14 +242,24 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	if(!lua_istable(LuaState, Index + CurrentTableIndex))
 		throw std::runtime_error("GetStatChange: Value is not a table!");
 
-	lua_pushstring(LuaState, "HealthChange");
+	lua_pushstring(LuaState, "Health");
 	lua_gettable(LuaState, -2);
 	StatChange.Health = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
-	lua_pushstring(LuaState, "ManaChange");
+	lua_pushstring(LuaState, "MaxHealth");
+	lua_gettable(LuaState, -2);
+	StatChange.MaxHealth = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "Mana");
 	lua_gettable(LuaState, -2);
 	StatChange.Mana = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "MaxMana");
+	lua_gettable(LuaState, -2);
+	StatChange.MaxMana = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Invisible");

@@ -31,11 +31,13 @@ class _Font;
 
 // Types of stats
 enum StatType : int {
-	HEALTH      = 0x01,
-	MANA        = 0x02,
-	EXPERIENCE  = 0x04,
-	GOLD        = 0x08,
-	INVISIBLE   = 0x10,
+	HEALTH      = (1 << 1),
+	MAXHEALTH   = (1 << 2),
+	MANA        = (1 << 3),
+	MAXMANA     = (1 << 4),
+	EXPERIENCE  = (1 << 5),
+	GOLD        = (1 << 6),
+	INVISIBLE   = (1 << 7),
 };
 
 // Stat changes
@@ -52,7 +54,9 @@ class _StatChange {
 
 		_Object *Object;
 		int Health;
+		int MaxHealth;
 		int Mana;
+		int MaxMana;
 		int Experience;
 		int Gold;
 		int Invisible;
