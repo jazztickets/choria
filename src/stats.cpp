@@ -318,8 +318,6 @@ void _Stats::LoadBuilds() {
 void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 	Monster->DatabaseID = MonsterID;
 
-	uint32_t ItemID = GetItemIDByName("Monster Attack");
-
 	// Run query
 	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.ai_id = ai.id AND m.id = @monster_id");
 	Database->BindInt(1, MonsterID);
@@ -347,10 +345,16 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 		Monster->AI = Database->GetString("ai_name");
 
-		Monster->ActionBar.resize(ACTIONBAR_STARTING_SIZE);
+		// Load build
+		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
+		const _Object *Build = Builds[BuildID];
+		if(!Build)
+			throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
 
-		Monster->ActionBar[0].Item = Items[ItemID];
-		Monster->Skills[ItemID] = 1;
+		// Copy build
+		Monster->ActionBar = Build->ActionBar;
+		Monster->Inventory->Slots = Build->Inventory->Slots;
+		Monster->Skills = Build->Skills;
 	}
 
 	// Free memory
@@ -486,20 +490,6 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 				ItemDrops.push_back(ItemID);
 		}
 	}
-}
-
-// Find item name by name
-uint32_t _Stats::GetItemIDByName(const std::string &Name) {
-	uint32_t ID = 0;
-
-	// Run query
-	Database->PrepareQuery("SELECT id FROM item WHERE name = @name");
-	Database->BindString(1, Name);
-	if(Database->FetchRow())
-		ID = Database->GetInt<uint32_t>("id");
-	Database->CloseQuery();
-
-	return ID;
 }
 
 // Find a level from the given experience number

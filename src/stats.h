@@ -106,7 +106,6 @@ class _Stats {
 		// Monsters
 		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters);
 		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops);
-		uint32_t GetItemIDByName(const std::string &Name);
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[Level-1]; }
