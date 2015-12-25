@@ -124,7 +124,7 @@ class _Object : public _ManagerBase {
 		// Skills
 		bool HasLearned(const _Item *Skill);
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
-		void AdjustSkillLevel(uint32_t SkillID, int Adjust);
+		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void CalculateSkillPoints();
 
 		// Trader

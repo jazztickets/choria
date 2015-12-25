@@ -219,10 +219,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		// Check skill level up/down
 		else if(SkillsElement->GetClickedElement()) {
 			if(SkillsElement->GetClickedElement()->Identifier == "button_skills_plus") {
-				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, 1);
+				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, 1 + 4 * Input.ModKeyDown(KMOD_SHIFT));
 			}
 			else if(SkillsElement->GetClickedElement()->Identifier == "button_skills_minus") {
-				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, -1);
+				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, -(1 + 4 * Input.ModKeyDown(KMOD_SHIFT)));
 			}
 		}
 		// Accept trader button
@@ -1404,7 +1404,7 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 }
 
 // Adjust skill level
-void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
+void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(SkillID == 0)
 		return;
 
@@ -1412,31 +1412,28 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Direction) {
 	Packet.Write<PacketType>(PacketType::SKILLS_SKILLADJUST);
 
 	// Sell skill
-	if(Direction < 0) {
-		Packet.WriteBit(0);
-		Player->AdjustSkillLevel(SkillID, -1);
-	}
-	// Buy skill
-	else {
-		Packet.WriteBit(1);
-		Player->AdjustSkillLevel(SkillID, 1);
-		if(Player->Skills[SkillID] == 1) {
+	Packet.Write<uint32_t>(SkillID);
+	Packet.Write<int>(Amount);
 
-			// Equip new skills
-			const _Item *Skill = ClientState.Stats->Items[SkillID];
-			if(Skill) {
-				size_t Slot = 0;
-				for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-					if(!Player->ActionBar[Slot].IsSet()) {
-						SetActionBar(Slot, Player->ActionBar.size(), Skill);
-						break;
-					}
-					Slot++;
+	int OldSkillLevel = Player->Skills[SkillID];
+	Player->AdjustSkillLevel(SkillID, Amount);
+
+	// Equip new skills
+	if(Amount > 0 && OldSkillLevel == 0) {
+
+		const _Item *Skill = ClientState.Stats->Items[SkillID];
+		if(Skill) {
+			size_t Slot = 0;
+			for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+				if(!Player->ActionBar[Slot].IsSet()) {
+					SetActionBar(Slot, Player->ActionBar.size(), Skill);
+					break;
 				}
+				Slot++;
 			}
 		}
 	}
-	Packet.Write<uint32_t>(SkillID);
+
 	ClientState.Network->SendPacket(Packet);
 
 	// Update player

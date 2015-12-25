@@ -178,7 +178,7 @@ class _HUD {
 		void BuyItem(_Cursor *Item, size_t TargetSlot);
 		void SellItem(_Cursor *Item, int Amount);
 
-		void AdjustSkillLevel(uint32_t SkillID, int Direction);
+		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
 		void ClearSkills();
 

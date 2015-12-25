@@ -862,14 +862,9 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Process packet
-	bool Spend = Data.ReadBit();
 	uint32_t SkillID = Data.Read<uint32_t>();
-	if(Spend) {
-		Player->AdjustSkillLevel(SkillID, 1);
-	}
-	else {
-		Player->AdjustSkillLevel(SkillID, -1);
-	}
+	int Amount = Data.Read<int>();
+	Player->AdjustSkillLevel(SkillID, Amount);
 
 	Player->CalculateSkillPoints();
 	Player->CalculateStats();

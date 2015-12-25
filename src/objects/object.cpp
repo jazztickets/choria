@@ -980,7 +980,7 @@ bool _Object::CanMove() {
 }
 
 // Updates a skill level
-void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
+void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(SkillID == 0)
 		return;
 
@@ -989,25 +989,23 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Adjust) {
 		return;
 
 	// Buying
-	if(Adjust > 0) {
-		if(GetSkillPointsRemaining() == 0 || Skills[SkillID] >= SKILL_MAX_LEVEL)
-			return;
+	if(Amount > 0) {
+
+		// Cap points
+		int PointsToSpend = std::min(GetSkillPointsRemaining(), Amount);
+		PointsToSpend = std::max(PointsToSpend, Skills[SkillID] - SKILL_MAX_LEVEL);
 
 		// Update level
-		Skills[SkillID] += Adjust;
-		if(Skills[SkillID] > SKILL_MAX_LEVEL)
-			Skills[SkillID] = SKILL_MAX_LEVEL;
+		Skills[SkillID] += PointsToSpend;
 	}
-	else if(Adjust < 0) {
-		if(Skills[SkillID] == 0)
-			return;
+	else if(Amount < 0) {
 
 		// Update level
-		Skills[SkillID] += Adjust;
+		Skills[SkillID] += Amount;
 		if(Skills[SkillID] < 0)
 			Skills[SkillID] = 0;
 
-		// Update skill bar
+		// Update action bar
 		if(Skills[SkillID] == 0) {
 			for(size_t i = 0; i < ActionBar.size(); i++) {
 				if(ActionBar[i].Item == Skill) {
