@@ -311,13 +311,16 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	std::list<_Object *> FighterList;
 	GetFighterList(BattleTargetSide, FighterList);
 
-	// Get new target
+	// Get iterator to current target
+	auto Iterator = FighterList.begin();
+	if(FighterList.size())
+	   Iterator = std::find(FighterList.begin(), FighterList.end(), ClientPlayer->Targets.front());
+
+	// Search for valid target
 	_Object *NewTarget = nullptr;
-	if(FighterList.size()) {
+	for(size_t i = 0; i < FighterList.size(); i++) {
 
-		// Get iterator to current target
-		auto Iterator = std::find(FighterList.begin(), FighterList.end(), ClientPlayer->Targets.front());
-
+		// Wrap around
 		if(Iterator == FighterList.end())
 			Iterator = FighterList.begin();
 
@@ -330,15 +333,22 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 			NewTarget = *Iterator;
 		}
 		else if(Direction < 0) {
-			if(Iterator == FighterList.begin())
-				NewTarget = FighterList.back();
+			if(Iterator == FighterList.begin()) {
+				Iterator = FighterList.end();
+				Iterator--;
+			}
 			else {
 				Iterator--;
-				NewTarget = *Iterator;
 			}
+
+			NewTarget = *Iterator;
 		}
 		else
 			NewTarget = *Iterator;
+
+		// Check break condition
+		if(NewTarget->Health > 0)
+			break;
 	}
 
 	ClientPlayer->Targets.clear();
