@@ -123,6 +123,7 @@ _Object::_Object() :
 	SkillsOpen(false),
 	SkillPoints(0),
 	SkillPointsUsed(0),
+	SkillPointsOnActionBar(0),
 	TradeGold(0),
 	WaitingForTrade(false),
 	TradeAccepted(false),
@@ -873,9 +874,15 @@ void _Object::UpdateGold(int Value) {
 
 // Update counts on action bar
 void _Object::RefreshActionBarCount() {
+	SkillPointsOnActionBar = 0;
 	for(size_t i = 0; i < ActionBar.size(); i++) {
-		if(ActionBar[i].Item)
-			ActionBar[i].Count = Inventory->CountItem(ActionBar[i].Item);
+		const _Item *Item = ActionBar[i].Item;
+		if(Item) {
+			if(Item->IsSkill())
+				SkillPointsOnActionBar += Skills[Item->ID];
+			else
+				ActionBar[i].Count = Inventory->CountItem(Item);
+		}
 		else
 			ActionBar[i].Count = 0;
 	}

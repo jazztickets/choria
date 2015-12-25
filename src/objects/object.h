@@ -233,7 +233,9 @@ class _Object : public _ManagerBase {
 		// Skills
 		bool SkillsOpen;
 		std::unordered_map<uint32_t, int32_t> Skills;
-		int SkillPoints, SkillPointsUsed;
+		int SkillPoints;
+		int SkillPointsUsed;
+		int SkillPointsOnActionBar;
 
 		// Trading
 		int TradeGold;

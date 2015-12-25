@@ -230,8 +230,14 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 				else
 					InfoText = "Already learned";
 			}
-			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD) && TargetID != TargetType::NONE)
-				InfoText = "Left-click to use";
+			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
+				if(CheckScope(ScopeType::WORLD) && TargetID != TargetType::NONE)
+					InfoText = "Left-click to use";
+			}
+			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
+				if(TargetID == TargetType::NONE)
+					InfoText = "Passive skills must be equipped";
+			}
 		break;
 		default:
 		break;

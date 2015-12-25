@@ -1295,14 +1295,26 @@ void _HUD::DrawSkills() {
 	SkillsElement->Render();
 
 	// Show remaining skill points
-	std::string SkillPointsText;
+	std::string Text = std::to_string(Player->GetSkillPointsRemaining()) + " skill point";
 	if(Player->GetSkillPointsRemaining() != 1)
-		SkillPointsText	= std::to_string(Player->GetSkillPointsRemaining()) + " Skill Points";
-	else
-		SkillPointsText	= std::to_string(Player->GetSkillPointsRemaining()) + " Skill Point";
+		Text += "s";
 
 	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
-	Assets.Fonts["hud_medium"]->DrawText(SkillPointsText.c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Text.c_str(), DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+
+	// Show skill points unused
+	int SkillPointsUnused = Player->SkillPointsUsed - Player->SkillPointsOnActionBar;
+	if(SkillPointsUnused > 0) {
+		DrawPosition.y += 21;
+
+		Text = std::to_string(SkillPointsUnused) + " skill point";
+		if(SkillPointsUnused != 1)
+			Text += "s";
+
+		Text += " unused";
+
+		Assets.Fonts["hud_small"]->DrawText(Text.c_str(), DrawPosition, COLOR_RED, CENTER_BASELINE);
+	}
 }
 
 // Draw recently acquired items
@@ -1462,7 +1474,6 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	}
 
 	Player->ActionBar[Slot] = Action;
-	Player->RefreshActionBarCount();
 
 	Player->CalculateStats();
 	ActionBarChanged = true;

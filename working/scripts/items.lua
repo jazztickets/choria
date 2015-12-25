@@ -26,7 +26,7 @@ end
 
 -- Mana Potion --
 
-Item_ManaPotion = { ManaBase = 3, Duration = 5 }
+Item_ManaPotion = { ManaBase = 1, Duration = 10 }
 
 function Item_ManaPotion.GetInfo(Level)
 
