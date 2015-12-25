@@ -527,20 +527,18 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ExperienceElement->Render();
 
 		// Draw health bar
-		float HealthPercent = Player->MaxHealth > 0 ? Player->Health / (float)Player->MaxHealth : 0;
 		Buffer << Player->Health << " / " << Player->MaxHealth;
 		Assets.Labels["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * HealthPercent);
+		Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
 		Assets.Images["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
 		HealthElement->Render();
 
 		// Draw mana bar
-		float ManaPercent = Player->MaxMana > 0 ? Player->Mana / (float)Player->MaxMana : 0;
 		Buffer << Player->Mana << " / " << Player->MaxMana;
 		Assets.Labels["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * ManaPercent);
+		Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());
 		Assets.Images["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
 		ManaElement->Render();
 

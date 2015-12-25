@@ -89,6 +89,8 @@ class _Object : public _ManagerBase {
 		void UnserializeBattle(_Buffer &Data);
 
 		// Stats
+		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
+		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 		void UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int Value);
 		void UpdateMana(int Value);

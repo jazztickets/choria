@@ -382,9 +382,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	glm::vec2 BarOffset(BattleElement->Size.x + 10, 0);
 	float BarPaddingY = 6;
 
-	// Get health percent
-	float HealthPercent = MaxHealth > 0 ? Health / (float)MaxHealth : 0;
-
 	// Get ui size
 	_Bounds BarBounds;
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
@@ -398,7 +395,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
-	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * HealthPercent, BarSize.y) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * GetHealthPercent(), BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_full"]->Texture, true);
 
 	// Draw health text

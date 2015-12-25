@@ -616,10 +616,6 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 	Save->LoadPlayer(Player);
 
-	// Get stats
-	Player->GenerateNextBattle();
-	Player->CalculateStats();
-
 	return Player;
 }
 

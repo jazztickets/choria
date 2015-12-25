@@ -178,7 +178,7 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 	if(!Build)
 		Build = Stats->Builds[1];
 
-	Database->PrepareQuery("INSERT INTO character(health, mana, account_id, slot, name, portrait_id, actionbar_size) VALUES(1000, 1000, @account_id, @slot, @name, @portrait_id, @actionbar_size)");
+	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar_size) VALUES(@account_id, @slot, @name, @portrait_id, @actionbar_size)");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
 	Database->BindString(3, TrimString(Name));
@@ -188,6 +188,7 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 	Database->CloseQuery();
 
 	_Object Object;
+	Object.Stats = Stats;
 	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
 
 	// Load default values
@@ -204,6 +205,8 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 
 // Load player from database
 void _Save::LoadPlayer(_Object *Player) {
+	float HealthPercent = 1.0f;
+	float ManaPercent = 1.0f;
 
 	// Get character info
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
@@ -213,8 +216,8 @@ void _Save::LoadPlayer(_Object *Player) {
 		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
 		Player->Name = Database->GetString("name");
 		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
-		Player->Health = Database->GetInt<int>("health");
-		Player->Mana = Database->GetInt<int>("mana");
+		HealthPercent = (float)Database->GetReal("healthpercent");
+		ManaPercent = (float)Database->GetReal("manapercent");
 		Player->Experience = Database->GetInt<int>("experience");
 		Player->Gold = Database->GetInt<int>("gold");
 		Player->ActionBar.resize(Database->GetInt<uint32_t>("actionbar_size"));
@@ -260,6 +263,12 @@ void _Save::LoadPlayer(_Object *Player) {
 	}
 	Database->CloseQuery();
 
+	// Get stats
+	Player->GenerateNextBattle();
+	Player->CalculateStats();
+	Player->Health = (int)(HealthPercent * Player->MaxHealth);
+	Player->Mana = (int)(ManaPercent * Player->MaxMana);
+
 	// Max sure player has health
 	if(Player->Health <= 0)
 		Player->Health = 1;
@@ -277,8 +286,8 @@ void _Save::SavePlayer(const _Object *Player) {
 		"UPDATE character SET"
 		" map_id = @map_id,"
 		" spawnpoint = @spawnpoint,"
-		" health = @health,"
-		" mana = @mana,"
+		" healthpercent = @healthpercent,"
+		" manapercent = @manapercent,"
 		" experience = @experience,"
 		" gold = @gold,"
 		" playtime = @playtime,"
@@ -291,8 +300,8 @@ void _Save::SavePlayer(const _Object *Player) {
 	int Index = 1;
 	Database->BindInt(Index++, Player->SpawnMapID);
 	Database->BindInt(Index++, Player->SpawnPoint);
-	Database->BindInt(Index++, Player->Health);
-	Database->BindInt(Index++, Player->Mana);
+	Database->BindReal(Index++, Player->GetHealthPercent());
+	Database->BindReal(Index++, Player->GetManaPercent());
 	Database->BindInt(Index++, Player->Experience);
 	Database->BindInt(Index++, Player->Gold);
 	Database->BindInt(Index++, Player->PlayTime);
@@ -422,8 +431,8 @@ void _Save::CreateDefaultDatabase() {
 				"	name TEXT,\n"
 				"	portrait_id INTEGER DEFAULT(1),\n"
 				"	actionbar_size INTEGER DEFAULT(0),\n"
-				"	health INTEGER DEFAULT(0),\n"
-				"	mana INTEGER DEFAULT(0),\n"
+				"	healthpercent REAL DEFAULT(1),\n"
+				"	manapercent REAL DEFAULT(1),\n"
 				"	experience INTEGER DEFAULT(0),\n"
 				"	gold INTEGER DEFAULT(0),\n"
 				"	battletime INTEGER DEFAULT(0),\n"
