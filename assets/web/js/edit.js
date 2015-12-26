@@ -167,6 +167,9 @@ function save() {
 	var data = hot.getData();
 	for(var row in data) {
 		for(var col in headers) {
+			if(data[row][col] == null)
+				data[row][col] = "";
+
 			if(references.hasOwnProperty(headers[col])) {
 				match = data[row][col].match(/\((.*?)\)$/);
 				if(match)

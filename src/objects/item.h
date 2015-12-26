@@ -38,7 +38,6 @@ enum class ItemType : uint32_t {
 	TWOHANDED_WEAPON,
 	SHIELD,
 	RING,
-	EQUIPPABLE = RING,
 	CONSUMABLE,
 	TRADABLE,
 };
@@ -51,7 +50,6 @@ class _Item {
 		void DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const;
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
-		bool IsEquippable() const { return Type <= ItemType::EQUIPPABLE; }
 		bool IsSkill() const { return Type == ItemType::SKILL; }
 
 		void GetDamageRange(int &Min, int &Max) const;
