@@ -81,3 +81,9 @@ function Item_ActionSlot.GetInfo(Level)
 
 	return "Increase your action bar size"
 end
+
+function Item_ActionSlot.Use(Level, Source, Target, Result)
+
+	print("unlocked!")
+	return Result
+end

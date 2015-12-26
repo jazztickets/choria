@@ -259,7 +259,10 @@ void _Save::LoadPlayer(_Object *Player) {
 	while(Database->FetchRow()) {
 		uint32_t Slot = Database->GetInt<uint32_t>("slot");
 		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
-		Player->ActionBar[Slot].Item = Player->Stats->Items[ItemID];
+		const _Item *Item = Player->Stats->Items[ItemID];
+		if(Item->IsSkill() && !Player->HasLearned(Item))
+			Item = nullptr;
+		Player->ActionBar[Slot].Item = Item;
 	}
 	Database->CloseQuery();
 

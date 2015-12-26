@@ -587,10 +587,17 @@ void _Object::SerializeStats(_Buffer &Data) {
 		Data.Write<int32_t>(Skill.second);
 	}
 
-	// Write skill bar
+	// Write action bar
 	Data.Write<uint8_t>((uint8_t)ActionBar.size());
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		ActionBar[i].Serialize(Data);
+	}
+
+	// Write unlocks
+	Data.Write<uint32_t>((uint32_t)Unlocks.size());
+	for(const auto &Unlock : Unlocks) {
+		Data.Write<uint32_t>(Unlock.first);
+		Data.Write<int32_t>(Unlock.second.Level);
 	}
 
 	// Write status effects
@@ -657,11 +664,19 @@ void _Object::UnserializeStats(_Buffer &Data) {
 		Skills[SkillID] = Points;
 	}
 
-	// Read skill bar
+	// Read action bar
 	size_t ActionBarSize = Data.Read<uint8_t>();
 	ActionBar.resize(ActionBarSize);
 	for(size_t i = 0; i < ActionBarSize; i++)
 		ActionBar[i].Unserialize(Data, Stats);
+
+	// Read unlocks
+	uint32_t UnlockCount = Data.Read<uint32_t>();
+	for(uint32_t i = 0; i < UnlockCount; i++) {
+		uint32_t UnlockID = Data.Read<uint32_t>();
+		int32_t Level = Data.Read<int32_t>();
+		Unlocks[UnlockID].Level = Level;
+	}
 
 	// Read status effects
 	DeleteStatusEffects();
@@ -879,7 +894,7 @@ void _Object::RefreshActionBarCount() {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		const _Item *Item = ActionBar[i].Item;
 		if(Item) {
-			if(Item->IsSkill())
+			if(Item->IsSkill() && HasLearned(Item))
 				SkillPointsOnActionBar += Skills[Item->ID];
 			else
 				ActionBar[i].Count = Inventory->CountItem(Item);
@@ -889,7 +904,7 @@ void _Object::RefreshActionBarCount() {
 	}
 }
 
-// Return an action struct from a skill bar slot
+// Return an action struct from an action bar slot
 bool _Object::GetActionFromSkillbar(_Action &ReturnAction, size_t Slot) {
 	if(Slot < ActionBar.size()) {
 		ReturnAction.Item = ActionBar[Slot].Item;
@@ -897,7 +912,7 @@ bool _Object::GetActionFromSkillbar(_Action &ReturnAction, size_t Slot) {
 			return false;
 
 		// Determine if item is a skill, then look at object's skill levels
-		if(ReturnAction.Item->IsSkill())
+		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
 			ReturnAction.Level = Skills[ReturnAction.Item->ID];
 		else
 			ReturnAction.Level = ReturnAction.Item->Level;

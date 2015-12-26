@@ -875,7 +875,7 @@ bool _HUD::CloseVendor() {
 // Close the skills screen
 bool _HUD::CloseSkills() {
 
-	// Send new skill bar to server
+	// Send new action bar to server
 	if(ActionBarChanged) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
@@ -1452,7 +1452,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	RefreshSkillButtons();
 }
 
-// Sets the player's skill bar
+// Sets the player's action bar
 void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	if(Player->ActionBar[Slot] == Action)
 		return;

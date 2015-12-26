@@ -1118,7 +1118,7 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	}
 }
 
-// Handle a skill bar change
+// Handle an action bar change
 void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;

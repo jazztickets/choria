@@ -52,6 +52,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	ActionResult.ActionUsed = Source->Action;
 	const _Item *ItemUsed = Source->Action.Item;
 	bool SkillUnlocked = false;
+	bool ItemUnlocked = false;
+	bool DecrementItem = false;
 
 	// Use item
 	if(ItemUsed) {
@@ -68,9 +70,14 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 				return false;
 
 			ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
+			DecrementItem = true;
 			if(ItemUsed->IsSkill()) {
 				Source->Skills[ItemUsed->ID] = 0;
 				SkillUnlocked = true;
+			}
+			else if(ItemUsed->IsUnlockable()) {
+				Source->Unlocks[ItemUsed->UnlockID].Level = 1;
+				ItemUnlocked = true;
 			}
 		}
 	}
@@ -80,7 +87,9 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
+	Data.WriteBit(DecrementItem);
 	Data.WriteBit(SkillUnlocked);
+	Data.WriteBit(ItemUnlocked);
 
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;

@@ -224,19 +224,21 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 				InfoText = "Left-click to use";
 		break;
 		case ItemType::SKILL:
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY) {
-				if(IsLocked)
-					InfoText = "Right-click to learn";
-				else
-					InfoText = "Already learned";
-			}
-			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
+			if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
 				if(CheckScope(ScopeType::WORLD) && TargetID != TargetType::NONE)
 					InfoText = "Left-click to use";
 			}
 			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
 				if(TargetID == TargetType::NONE)
 					InfoText = "Passive skills must be equipped";
+			}
+			else {
+				if(IsLocked) {
+					if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
+						InfoText = "Right-click to learn";
+				}
+				else
+					InfoText = "Already learned";
 			}
 		break;
 		case ItemType::UNLOCKABLE: {
