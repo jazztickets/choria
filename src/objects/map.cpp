@@ -456,31 +456,40 @@ void _Map::Load(const std::string &Path) {
 			case 'T': {
 				glm::ivec2 Coordinate;
 				File >> Coordinate.x >> Coordinate.y;
-				Tile = &Tiles[Coordinate.x][Coordinate.y];
+				if(Coordinate.x < Size.x && Coordinate.y < Size.y)
+					Tile = &Tiles[Coordinate.x][Coordinate.y];
+				else
+					Tile = nullptr;
 			} break;
 			// Texture index
 			case 'b': {
-				File >> Tile->TextureIndex[0];
+				if(Tile)
+					File >> Tile->TextureIndex[0];
 			} break;
 			// Foreground texture index
 			case 'f': {
-				File >> Tile->TextureIndex[1];
+				if(Tile)
+					File >> Tile->TextureIndex[1];
 			} break;
 			// Zone
 			case 'z': {
-				File >> Tile->Zone;
+				if(Tile)
+					File >> Tile->Zone;
 			} break;
 			// Event
 			case 'e': {
-				File >> Tile->Event.Type >> Tile->Event.Data;
+				if(Tile)
+					File >> Tile->Event.Type >> Tile->Event.Data;
 			} break;
 			// Wall
 			case 'w': {
-				File >> Tile->Wall;
+				if(Tile)
+					File >> Tile->Wall;
 			} break;
 			// PVP
 			case 'p': {
-				File >> Tile->PVP;
+				if(Tile)
+					File >> Tile->PVP;
 			} break;
 			default:
 				File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
