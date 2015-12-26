@@ -79,7 +79,7 @@ void _Config::SetDefaults() {
 	NetworkPort = DEFAULT_NETWORKPORT;
 
 #ifdef _WIN32
-	BrowserCommand = "start";
+	BrowserCommand = "explorer";
 #else
 	BrowserCommand = "xdg-open";
 #endif

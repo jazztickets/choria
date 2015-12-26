@@ -58,6 +58,9 @@ _EditorState::_EditorState() :
 
 // Initializes the state
 void _EditorState::Init() {
+	Graphics.Element->SetVisible(false);
+	Graphics.Element->Visible = true;
+
 	ButtonBarElement = Assets.Elements["element_editor_buttonbar"];
 	TexturesElement = Assets.Elements["element_editor_textures"];
 	NewMapElement = Assets.Elements["element_editor_newmap"];

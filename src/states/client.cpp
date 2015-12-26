@@ -67,6 +67,9 @@ void _ClientState::Init() {
 	HUD = nullptr;
 	Time = 0.0;
 
+	Graphics.Element->SetVisible(false);
+	Graphics.Element->Visible = true;
+
 	Stats = new _Stats();
 
 	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR);
