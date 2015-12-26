@@ -62,6 +62,9 @@ class _Config {
 		double NetworkRate;
 		uint16_t NetworkPort;
 
+		// Editor
+		std::string BrowserCommand;
+
 		std::string LastHost;
 		std::string LastPort;
 

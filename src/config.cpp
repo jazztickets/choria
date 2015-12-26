@@ -78,6 +78,12 @@ void _Config::SetDefaults() {
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
 
+#ifdef _WIN32
+	EditorBrowserCommand = "start";
+#else
+	BrowserCommand = "xdg-open";
+#endif
+
 	LastHost = "127.0.0.1";
 	LastPort = std::to_string(DEFAULT_NETWORKPORT);
 
@@ -131,6 +137,8 @@ void _Config::SetDefaultFullscreenSize() {
 		Config.FullscreenSize = DEFAULT_WINDOW_SIZE;
 	else
 		Config.FullscreenSize = glm::ivec2(DisplayMode.w, DisplayMode.h);
+
+	Config.Save();
 }
 
 // Load the config file
@@ -189,6 +197,7 @@ void _Config::Load() {
 	GetValue("max_clients", MaxClients);
 	GetValue("network_rate", NetworkRate);
 	GetValue("network_port", NetworkPort);
+	GetValue("browser_command", BrowserCommand);
 	GetValue("last_host", LastHost);
 	GetValue("last_port", LastPort);
 
@@ -244,6 +253,7 @@ void _Config::Save() {
 	File << "max_clients=" << MaxClients << std::endl;
 	File << "network_rate=" << NetworkRate << std::endl;
 	File << "network_port=" << NetworkPort << std::endl;
+	File << "browser_command=" << BrowserCommand << std::endl;
 	File << "last_host=" << LastHost << std::endl;
 	File << "last_port=" << LastPort << std::endl;
 

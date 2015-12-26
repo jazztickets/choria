@@ -335,6 +335,16 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 					FilePath = Stats->Maps[Tile->Event.Data].File;
 					ToggleLoadMap();
 				} break;
+				case _Map::EVENT_VENDOR: {
+					std::stringstream Buffer;
+					Buffer << Config.BrowserCommand << " \"http://localhost:8080/?table=vendoritem&vendor_id=" << Tile->Event.Data << "\"";
+					system(Buffer.str().c_str());
+				} break;
+				case _Map::EVENT_TRADER: {
+					std::stringstream Buffer;
+					Buffer << Config.BrowserCommand << " \"http://localhost:8080/?table=traderitem&trader_id=" << Tile->Event.Data << "\"";
+					system(Buffer.str().c_str());
+				} break;
 			}
 		}
 	}
