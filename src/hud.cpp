@@ -1067,7 +1067,8 @@ void _HUD::DrawVendor() {
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+			if(Item->Texture)
+				Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			// Draw price
 			DrawItemPrice(Item, 1, DrawPosition, true);
