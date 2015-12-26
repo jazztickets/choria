@@ -524,9 +524,10 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		case PacketType::ACTION_RESULTS:
 			HandleActionResults(Data);
 		break;
-		case PacketType::STAT_CHANGE:
-			HandleStatChange(Data);
-		break;
+		case PacketType::STAT_CHANGE: {
+			_StatChange StatChange;
+			HandleStatChange(Data, StatChange);
+		} break;
 		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
 		break;
@@ -981,18 +982,12 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	// Set texture
 	if(ActionResult.ActionUsed.Item)
 		ActionResult.Texture = ActionResult.ActionUsed.Item->Texture;
-	else
-		ActionResult.Texture = Assets.Textures["skills/attack.png"];
 
 	// Get source change
-	ActionResult.Source.Unserialize(Data, ObjectManager);
-	float SourceFighterHealth = Data.Read<float>();
-	float SourceFighterMana = Data.Read<float>();
+	HandleStatChange(Data, ActionResult.Source);
 
 	// Update source fighter
 	if(ActionResult.Source.Object) {
-		ActionResult.Source.Object->Health = SourceFighterHealth;
-		ActionResult.Source.Object->Mana = SourceFighterMana;
 		ActionResult.Source.Object->TurnTimer = 0.0;
 		ActionResult.Source.Object->Action.Unset();
 		ActionResult.Source.Object->Targets.clear();
@@ -1023,17 +1018,13 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	// Update targets
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
-		ActionResult.Target.Unserialize(Data, ObjectManager);
-		float TargetFighterHealth = Data.Read<float>();
-		float TargetFighterMana = Data.Read<float>();
+		HandleStatChange(Data, ActionResult.Target);
 
 		// Read status effect
 		uint32_t BuffID = Data.Read<uint32_t>();
 
 		// Update target fighter
 		if(ActionResult.Target.Object) {
-			ActionResult.Target.Object->Health = TargetFighterHealth;
-			ActionResult.Target.Object->Mana = TargetFighterMana;
 
 			// Create status effect
 			_StatusEffect *StatusEffect = nullptr;
@@ -1044,7 +1035,8 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 				StatusEffect->Count = Data.Read<int>();
 
 				// Update stats from begin call
-				HandleStatChange(Data);
+				_StatChange StatChange;
+				HandleStatChange(Data, StatChange);
 			}
 
 			// Add status effect
@@ -1083,18 +1075,22 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 }
 
 // Handles a stat change
-void _ClientState::HandleStatChange(_Buffer &Data) {
+void _ClientState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 	if(!Player)
 		return;
 
 	// Get stats
-	_StatChange StatChange;
 	StatChange.Unserialize(Data, ObjectManager);
 
 	// Add to list
 	if(StatChange.Object) {
 		StatChange.Object->UpdateStats(StatChange);
 
+		// Update action bar
+		if(StatChange.Object == Player && StatChange.GetChangedFlag() & StatType::ACTIONBARSIZE)
+			HUD->SetActionBarSize(Player->ActionBar.size());
+
+		// Add stat change
 		HUD->AddStatChange(StatChange);
 	}
 }

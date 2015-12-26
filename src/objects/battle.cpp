@@ -506,6 +506,9 @@ void _Battle::ServerEndBattle() {
 
 		// Divide up rewards
 		for(int Side = 0; Side < 2; Side++) {
+			if(!SideStats[Side].FighterCount)
+				break;
+
 			int OtherSide = !Side;
 
 			// Divide experience up

@@ -35,6 +35,7 @@ class _ClientNetwork;
 class _Server;
 class _Buffer;
 class _Stats;
+class _StatChange;
 class _Scripting;
 
 // Play state
@@ -127,7 +128,7 @@ class _ClientState : public _State {
 		void HandleBattleAction(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
 		void HandleActionResults(_Buffer &Data);
-		void HandleStatChange(_Buffer &Data);
+		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);
 		void HandleHUD(_Buffer &Data);
 
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
