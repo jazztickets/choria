@@ -34,7 +34,8 @@ _StatChange::_StatChange() :
 	MaxMana(0),
 	Experience(0),
 	Gold(0),
-	Invisible(-1) {
+	Invisible(-1),
+	ActionBarSize(0) {
 
 }
 
@@ -56,6 +57,8 @@ int _StatChange::GetChangedFlag() {
 		Flag |= StatType::GOLD;
 	if(Invisible != -1)
 		Flag |= StatType::INVISIBLE;
+	if(ActionBarSize != 0)
+		Flag |= StatType::ACTIONBARSIZE;
 
 	return Flag;
 }
@@ -82,6 +85,8 @@ void _StatChange::Serialize(_Buffer &Data) {
 		Data.Write<int>(Gold);
 	if(ChangedFlag & StatType::INVISIBLE)
 		Data.Write<int>(Invisible);
+	if(ChangedFlag & StatType::ACTIONBARSIZE)
+		Data.Write<int>(ActionBarSize);
 }
 
 // Unserialize network
@@ -102,8 +107,8 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)
 		Gold = Data.Read<int>();
-	if(ChangedFlag & StatType::INVISIBLE)
-		Invisible = Data.Read<int>();
+	if(ChangedFlag & StatType::ACTIONBARSIZE)
+		ActionBarSize = Data.Read<int>();
 }
 
 // Constructor

@@ -166,6 +166,9 @@ void _Scripting::PushStatChange(_StatChange *StatChange) {
 
 	lua_pushinteger(LuaState, StatChange->Invisible);
 	lua_setfield(LuaState, -2, "Invisible");
+
+	lua_pushinteger(LuaState, StatChange->ActionBarSize);
+	lua_setfield(LuaState, -2, "ActionBarSize");
 }
 
 // Push list of objects
@@ -265,6 +268,11 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	lua_pushstring(LuaState, "Invisible");
 	lua_gettable(LuaState, -2);
 	StatChange.Invisible = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "ActionBarSize");
+	lua_gettable(LuaState, -2);
+	StatChange.ActionBarSize = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 }
 

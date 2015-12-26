@@ -299,6 +299,7 @@ void _Save::SavePlayer(const _Object *Player) {
 		"UPDATE character SET"
 		" map_id = @map_id,"
 		" spawnpoint = @spawnpoint,"
+		" actionbar_size = @actionbar_size,"
 		" healthpercent = @healthpercent,"
 		" manapercent = @manapercent,"
 		" experience = @experience,"
@@ -313,6 +314,7 @@ void _Save::SavePlayer(const _Object *Player) {
 	int Index = 1;
 	Database->BindInt(Index++, Player->SpawnMapID);
 	Database->BindInt(Index++, Player->SpawnPoint);
+	Database->BindInt(Index++, (int)Player->ActionBar.size());
 	Database->BindReal(Index++, Player->GetHealthPercent());
 	Database->BindReal(Index++, Player->GetManaPercent());
 	Database->BindInt(Index++, Player->Experience);

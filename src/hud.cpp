@@ -1171,7 +1171,7 @@ void _HUD::DrawActionBar() {
 
 	ActionBarElement->Render();
 
-	// Draw trader items
+	// Draw action bar
 	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
 
 		// Get button position

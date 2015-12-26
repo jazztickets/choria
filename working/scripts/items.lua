@@ -84,6 +84,7 @@ end
 
 function Item_ActionSlot.Use(Level, Source, Target, Result)
 
-	print("unlocked!")
+	Result.Target.ActionBarSize = 1
+
 	return Result
 end

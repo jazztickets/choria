@@ -720,8 +720,17 @@ void _Object::UpdateStats(_StatChange &StatChange) {
 
 	UpdateHealth(StatChange.Health);
 	UpdateMana(StatChange.Mana);
+
 	if(StatChange.Invisible != -1)
 		Invisible = StatChange.Invisible;
+
+	if(StatChange.ActionBarSize != 0) {
+		size_t NewSize = ActionBar.size() + (size_t)StatChange.ActionBarSize;
+		if(NewSize >= ACTIONBAR_MAX_SIZE)
+			NewSize = ACTIONBAR_MAX_SIZE;
+
+		ActionBar.resize(NewSize);
+	}
 }
 
 // Update health
