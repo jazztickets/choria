@@ -72,3 +72,12 @@ function Item_InvisPotion.Use(Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Action Slot --
+
+Item_ActionSlot = { }
+
+function Item_ActionSlot.GetInfo(Level)
+
+	return "Increase your action bar size"
+end

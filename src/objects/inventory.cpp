@@ -74,12 +74,18 @@ void _Inventory::UnserializeSlot(_Buffer &Data, _Stats *Stats) {
 }
 
 // Search for an item in the inventory
-bool _Inventory::FindItem(const _Item *Item, size_t &Slot) {
+bool _Inventory::FindItem(const _Item *Item, size_t &Slot, size_t StartSlot) {
+
 	for(size_t i = InventoryType::BAG; i < InventoryType::TRADE; i++) {
-		if(Slots[i].Item == Item) {
-			Slot = i;
+		if(StartSlot >= InventoryType::TRADE)
+			StartSlot = InventoryType::BAG;
+
+		if(Slots[StartSlot].Item == Item) {
+			Slot = StartSlot;
 			return true;
 		}
+
+		StartSlot++;
 	}
 
 	return false;

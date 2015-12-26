@@ -264,7 +264,7 @@ void _Save::LoadPlayer(_Object *Player) {
 	Database->CloseQuery();
 
 	// Set unlocks
-	Database->PrepareQuery("SELECT quest_id, level FROM unlock WHERE character_id = @character_id");
+	Database->PrepareQuery("SELECT unlock_id, level FROM unlock WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
 		uint32_t UnlockID = Database->GetInt<uint32_t>(0);
@@ -512,7 +512,7 @@ void _Save::CreateDefaultDatabase() {
 	Database->RunQuery(
 				"CREATE TABLE unlock(\n"
 				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
-				"	quest_id INTEGER,\n"
+				"	unlock_id INTEGER,\n"
 				"	level INTEGER DEFAULT(0)\n"
 				")"
 	);

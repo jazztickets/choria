@@ -58,13 +58,13 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		if(!ItemUsed->CanUse(Source->Scripting, ActionResult))
 			return false;
 
-		if(ItemUsed->IsSkill() && Source->HasLearned(ItemUsed) && !FromInventory) {
+		if(ItemUsed->IsSkill() && Source->HasLearned(ItemUsed) && InventorySlot == -1) {
 
 			ItemUsed->ApplyCost(Source->Scripting, ActionResult);
 		}
 		else {
 			size_t Index;
-			if(!ActionResult.Source.Object->Inventory->FindItem(ItemUsed, Index))
+			if(!ActionResult.Source.Object->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
 				return false;
 
 			ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
@@ -85,6 +85,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
 	Data.Write<uint32_t>(ItemID);
+	Data.Write<char>((char)ActionResult.ActionUsed.InventorySlot);
 
 	// Write source updates
 	ActionResult.Source.Serialize(Data);

@@ -130,7 +130,8 @@ class _Object : public _ManagerBase {
 		int Move();
 
 		// Skills
-		bool HasLearned(const _Item *Skill);
+		bool HasLearned(const _Item *Skill) const;
+		bool HasUnlocked(const _Item *Item) const;
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void CalculateSkillPoints();

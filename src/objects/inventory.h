@@ -69,7 +69,7 @@ class _Inventory {
 		void Unserialize(_Buffer &Data, _Stats *Stats);
 		void UnserializeSlot(_Buffer &Data, _Stats *Stats);
 
-		bool FindItem(const _Item *Item, size_t &Slot);
+		bool FindItem(const _Item *Item, size_t &Slot, size_t StartSlot);
 		int CountItem(const _Item *Item);
 
 		const _Item *GetBagItem(size_t Slot);

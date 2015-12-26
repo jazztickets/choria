@@ -768,11 +768,22 @@ int _Object::Move() {
 }
 
 // Return true if the object has the skill unlocked
-bool _Object::HasLearned(const _Item *Skill) {
+bool _Object::HasLearned(const _Item *Skill) const {
 	if(!Skill)
 		return false;
 
 	if(Skills.find(Skill->ID) != Skills.end())
+		return true;
+
+	return false;
+}
+
+// Return true if the object has the item unlocked
+bool _Object::HasUnlocked(const _Item *Item) const {
+	if(!Item)
+		return false;
+
+	if(Unlocks.find(Item->UnlockID) != Unlocks.end())
 		return true;
 
 	return false;

@@ -40,6 +40,7 @@ enum class ItemType : uint32_t {
 	RING,
 	CONSUMABLE,
 	TRADABLE,
+	UNLOCKABLE,
 };
 
 // Classes
@@ -51,6 +52,7 @@ class _Item {
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsSkill() const { return Type == ItemType::SKILL; }
+		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 
 		void GetDamageRange(int &Min, int &Max) const;
 		void GetDefenseRange(int &Min, int &Max) const;
@@ -82,6 +84,7 @@ class _Item {
 		TargetType TargetID;
 		bool TargetAlive;
 		ScopeType Scope;
+		uint32_t UnlockID;
 
 	private:
 

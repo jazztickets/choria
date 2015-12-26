@@ -973,6 +973,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	_ActionResult ActionResult;
 	bool SkillUnlocked = Data.ReadBit();
 	uint32_t ItemID = Data.Read<uint32_t>();
+	int InventorySlot = (int)Data.Read<char>();
 	ActionResult.ActionUsed.Item = Stats->Items[ItemID];
 
 	// Set texture
@@ -1000,7 +1001,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 
 				if(SkillUnlocked || !Player->HasLearned(ActionResult.ActionUsed.Item)) {
 					size_t Index;
-					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index)) {
+					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
 						Player->Inventory->DecrementItemCount(Index, -1);
 						Player->RefreshActionBarCount();
 

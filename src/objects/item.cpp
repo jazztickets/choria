@@ -239,6 +239,12 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 					InfoText = "Passive skills must be equipped";
 			}
 		break;
+		case ItemType::UNLOCKABLE: {
+			if(!Player->HasUnlocked(this))
+				InfoText = "Right-click to unlock";
+			else
+				InfoText = "Already unlocked";
+		} break;
 		default:
 		break;
 	}
@@ -335,8 +341,13 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 		return false;
 
 	// Unlocking skill for the first time
-	if(IsSkill() && ActionResult.ActionUsed.FromInventory) {
+	if(IsSkill() && ActionResult.ActionUsed.InventorySlot != -1) {
 		return !Object->HasLearned(this);
+	}
+
+	// Unlocking item
+	if(IsUnlockable()) {
+		return !Object->HasUnlocked(this);
 	}
 
 	// Check scope

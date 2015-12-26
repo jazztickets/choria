@@ -54,7 +54,7 @@ class _Action {
 
 	public:
 
-		_Action() : Item(nullptr), Level(0), Count(0), FromInventory(false) { }
+		_Action() : Item(nullptr), Level(0), Count(0), InventorySlot(-1) { }
 		_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
 		bool operator==(const _Action &Action) const { return Action.Item == Item; }
@@ -66,14 +66,14 @@ class _Action {
 		bool Resolve(_Buffer &Data, _Object *Source, ScopeType Scope);
 
 		bool IsSet() const { return !(Item == nullptr); }
-		void Unset() { Item = nullptr; Count = 0; Level = 0; FromInventory = false; }
+		void Unset() { Item = nullptr; Count = 0; Level = 0; InventorySlot = -1; }
 
 		TargetType GetTargetType();
 
 		const _Item *Item;
 		int Level;
 		int Count;
-		bool FromInventory;
+		int InventorySlot;
 };
 
 // Structures
