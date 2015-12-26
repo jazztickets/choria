@@ -387,6 +387,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	// Get character information
 	std::string Name(Data.ReadString());
 	uint32_t PortraitID = Data.Read<uint32_t>();
+	uint32_t BuildID = Data.Read<uint32_t>();
 	uint32_t Slot = Data.Read<uint8_t>();
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
@@ -404,7 +405,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Create the character
-	Save->CreateCharacter(Stats, Peer->AccountID, Slot, Name, PortraitID, 1);
+	Save->CreateCharacter(Stats, Peer->AccountID, Slot, Name, PortraitID, BuildID);
 
 	// Notify the client
 	_Buffer NewPacket;

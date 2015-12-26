@@ -47,6 +47,7 @@ const std::string CharacterNamePrefix = "label_menu_characters_slot_name";
 const std::string CharacterLevelPrefix = "label_menu_characters_slot_level";
 const std::string CharacterImagePrefix = "image_menu_characters_slot";
 const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
+const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
 
 // Constructor
 _Menu::_Menu() {
@@ -102,6 +103,7 @@ void _Menu::InitNewCharacter() {
 	Label->Color = COLOR_WHITE;
 
 	LoadPortraitButtons();
+	LoadBuildButtons();
 
 	FocusedElement = Name;
 	Name->ResetCursor();
@@ -197,11 +199,10 @@ void _Menu::InitAccount() {
 }
 
 // Get the selected portrait id
-uint32_t _Menu::GetSelectedPortraitID() {
+uint32_t _Menu::GetSelectedIconID(_Element *ParentElement) {
 
 	// Check for selected portrait
-	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
-	for(auto &Element : PortraitsElement->Children) {
+	for(auto &Element : ParentElement->Children) {
 		_Button *Button = (_Button *)Element;
 		if(Button->Checked)
 			return (uint32_t)(intptr_t)Button->UserData;
@@ -237,9 +238,14 @@ void _Menu::CreateCharacter() {
 	if(Name->Text.length() == 0)
 		return;
 
-	// Get portraid id
-	uint32_t PortraitID = GetSelectedPortraitID();
+	// Get portrait id
+	uint32_t PortraitID = GetSelectedIconID(Assets.Elements["element_menu_new_portraits"]);
 	if(PortraitID == 0)
+		return;
+
+	// Get build id
+	uint32_t BuildID = GetSelectedIconID(Assets.Elements["element_menu_new_builds"]);
+	if(BuildID == 0)
 		return;
 
 	// Get slot
@@ -252,6 +258,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<uint32_t>(PortraitID);
+	Packet.Write<uint32_t>(BuildID);
 	Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 	ClientState.Network->SendPacket(Packet);
 }
@@ -353,7 +360,7 @@ void _Menu::LoadPortraitButtons() {
 	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
 	ClearPortraits();
 
-	glm::vec2 Offset(10, 0);
+	glm::vec2 Offset(10, 50);
 	size_t i = 0;
 
 	// Load portraits
@@ -398,10 +405,110 @@ void _Menu::LoadPortraitButtons() {
 	PortraitsElement->CalculateBounds();
 }
 
+// Clear memory used by portraits
+void _Menu::ClearPortraits() {
+
+	std::list<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
+	for(auto &Child : Children) {
+		if(Child->UserCreated) {
+			delete Child->Style;
+			delete Child;
+		}
+	}
+
+	Children.clear();
+}
+
+// Load builds
+void _Menu::LoadBuildButtons() {
+
+	// Clear old children
+	_Element *BuildsElement = Assets.Elements["element_menu_new_builds"];
+	ClearBuilds();
+
+	glm::vec2 Offset(10, 50);
+	size_t i = 0;
+
+	// Load builds
+	std::list<_Build> Builds;
+	ClientState.Stats->GetStartingBuilds(Builds);
+
+	// Iterate over builds
+	for(const auto &Build : Builds) {
+		if(!Build.Image)
+			throw std::runtime_error("Cannot find texture for build id " + std::to_string(Build.ID));
+
+		// Create style
+		_Style *Style = new _Style();
+		Style->TextureColor = COLOR_WHITE;
+		Style->Program = Assets.Programs["ortho_pos_uv"];
+		Style->Texture = Build.Image;
+		Style->UserCreated = true;
+
+		// Add button
+		_Button *Button = new _Button();
+		Button->Identifier = NewCharacterBuildPrefix;
+		Button->Parent = BuildsElement;
+		Button->Offset = Offset;
+		Button->Size = Build.Image->Size;
+		Button->Alignment = LEFT_TOP;
+		Button->Style = Style;
+		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
+		Button->UserData = (void *)(intptr_t)Build.ID;
+		Button->UserCreated = true;
+		BuildsElement->Children.push_back(Button);
+
+		// Add label
+		_Label *Label = new _Label();
+		Label->Font = Assets.Fonts["hud_small"];
+		Label->Text = Build.Name;
+		Label->Color = COLOR_WHITE;
+		Label->Parent = Button;
+		Label->Offset = glm::vec2(0, 80);
+		Label->Alignment = CENTER_BASELINE;
+		Label->UserCreated = true;
+		Label->Clickable = false;
+		Button->Children.push_back(Label);
+
+		// Update position
+		Offset.x += Build.Image->Size.x + 10;
+		if(Offset.x > BuildsElement->Size.x - Build.Image->Size.x - 10) {
+			Offset.y += Build.Image->Size.y + 10;
+			Offset.x = 10;
+		}
+
+		i++;
+	}
+
+	BuildsElement->CalculateBounds();
+}
+
+// Clear memory used by portraits
+void _Menu::ClearBuilds() {
+
+	std::list<_Element *> &Children = Assets.Elements["element_menu_new_builds"]->Children;
+	for(auto &Child : Children) {
+		if(Child->UserCreated) {
+			delete Child->Style;
+
+			// Delete labels
+			for(auto &LabelChild : Child->Children) {
+				if(LabelChild->UserCreated)
+					delete LabelChild;
+			}
+
+			delete Child;
+		}
+	}
+
+	Children.clear();
+}
+
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
-	uint32_t PortraitID = GetSelectedPortraitID();
+	uint32_t PortraitID = GetSelectedIconID(Assets.Elements["element_menu_new_portraits"]);
+	uint32_t BuildID = GetSelectedIconID(Assets.Elements["element_menu_new_builds"]);
 
 	// Check name length
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
@@ -412,7 +519,7 @@ void _Menu::ValidateCreateCharacter() {
 		FocusedElement = Name;
 
 	// Enable button
-	if(PortraitID != 0 && NameValid)
+	if(PortraitID != 0 && BuildID != 0 && NameValid)
 		CreateButton->Enabled = true;
 	else
 		CreateButton->Enabled = false;
@@ -435,6 +542,7 @@ void _Menu::UpdateCharacterButtons() {
 // Shutdown
 void _Menu::Close() {
 	ClearPortraits();
+	ClearBuilds();
 }
 
 // Handle actions
@@ -610,7 +718,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
-					if(Clicked->Identifier == NewCharacterPortraitPrefix) {
+					if(Clicked->Identifier == NewCharacterPortraitPrefix || Clicked->Identifier == NewCharacterBuildPrefix) {
 						size_t SelectedID = (size_t)(intptr_t)Clicked->UserData;
 
 						// Unselect all portraits and select the clicked element
@@ -894,14 +1002,4 @@ void _Menu::FocusNextElement() {
 		default:
 		break;
 	}
-}
-
-// Clear memory used by portraits
-void _Menu::ClearPortraits() {
-	std::list<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
-	for(auto &Child : Children) {
-		delete Child->Style;
-		delete Child;
-	}
-	Children.clear();
 }

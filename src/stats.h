@@ -38,6 +38,12 @@ struct _Portrait {
 	const _Texture *Image;
 };
 
+struct _Build {
+	uint32_t ID;
+	std::string Name;
+	const _Texture *Image;
+};
+
 struct _Level {
 	int Level;
 	int Experience;
@@ -99,8 +105,9 @@ class _Stats {
 		const _Vendor *GetVendor(uint32_t VendorID) { return &Vendors[VendorID]; }
 		const _Trader *GetTrader(uint32_t TraderID) { return &Traders[TraderID]; }
 
-		// Portraits
+		// Menu
 		void GetPortraits(std::list<_Portrait> &Portraits);
+		void GetStartingBuilds(std::list<_Build> &Builds);
 		const _Texture *GetPortraitImage(uint32_t PortraitID);
 
 		// Monsters

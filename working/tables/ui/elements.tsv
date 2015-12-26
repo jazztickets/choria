@@ -1,8 +1,9 @@
 identifier	parent	style	offset x	offset y	width	height	alignment x	alignment y	mask outside	clickable	user data
 element_menu_title			0	0	512	400	1	1	0	1	-1
 element_menu_characters			0	0	512	400	1	1	0	1	-1
-element_menu_new		style_menu_window	0	0	380	350	1	1	0	1	-1
-element_menu_new_portraits	element_menu_new		0	40	380	350	1	1	0	1	-1
+element_menu_new		style_menu_window	0	0	600	600	1	1	0	1	-1
+element_menu_new_portraits	element_menu_new		0	0	600	250	1	0	0	1	-1
+element_menu_new_builds	element_menu_new		0	250	600	250	1	0	0	1	-1
 element_menu_connect			0	0	512	400	1	1	0	1	-1
 element_menu_account			0	0	512	400	1	1	0	1	-1
 element_menu_ingame			0	0	250	400	1	1	0	1	-1

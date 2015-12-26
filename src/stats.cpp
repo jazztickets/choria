@@ -377,6 +377,23 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
 	Database->CloseQuery();
 }
 
+// Get list of builds
+void _Stats::GetStartingBuilds(std::list<_Build> &Builds) {
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM build WHERE starting = 1");
+	while(Database->FetchRow()) {
+		_Build Build;
+		Build.ID = Database->GetInt<uint32_t>("id");
+		Build.Name = Database->GetString("name");
+		Build.Image = Assets.Textures[Database->GetString("texture")];
+
+		Builds.push_back(Build);
+	}
+
+	Database->CloseQuery();
+}
+
 // Get portrait texture by id
 const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 	const _Texture *Image = nullptr;

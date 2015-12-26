@@ -129,6 +129,7 @@ const  std::string  SCRIPTS_BUFFS                  =  "buffs.lua";
 const  std::string  TEXTURES_PATH                  =  "textures/";
 const  std::string  TEXTURES_BATTLE                =  "battle/";
 const  std::string  TEXTURES_BUFFS                 =  "buffs/";
+const  std::string  TEXTURES_BUILDS                =  "builds/";
 const  std::string  TEXTURES_EDITOR                =  "editor/";
 const  std::string  TEXTURES_HUD                   =  "hud/";
 const  std::string  TEXTURES_HUD_REPEAT            =  "hud_repeat/";

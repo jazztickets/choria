@@ -102,9 +102,10 @@ class _Menu {
 
 		void ChangeLayout(const std::string &ElementIdentifier);
 
-		uint32_t GetSelectedPortraitID();
+		uint32_t GetSelectedIconID(_Element *ParentElement);
 		size_t GetSelectedCharacter();
 		void LoadPortraitButtons();
+		void LoadBuildButtons();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();
 		void CreateCharacter();
@@ -117,6 +118,7 @@ class _Menu {
 		void FocusNextElement();
 
 		void ClearPortraits();
+		void ClearBuilds();
 
 		// States
 		std::string DefaultUsername;
