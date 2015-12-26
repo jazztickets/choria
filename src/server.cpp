@@ -1184,6 +1184,8 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
 	Packet.Write<float>(Player->Health);
 	Packet.Write<float>(Player->Mana);
+	Packet.Write<float>(Player->MaxHealth);
+	Packet.Write<float>(Player->MaxMana);
 	Packet.Write<int32_t>(Player->Experience);
 	Packet.Write<int32_t>(Player->Gold);
 

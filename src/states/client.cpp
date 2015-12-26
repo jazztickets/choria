@@ -1102,6 +1102,8 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 
 	Player->Health = Data.Read<float>();
 	Player->Mana = Data.Read<float>();
+	Player->MaxHealth = Data.Read<float>();
+	Player->MaxMana = Data.Read<float>();
 	Player->Experience = Data.Read<int32_t>();
 	Player->Gold = Data.Read<int32_t>();
 	Player->CalculateStats();
