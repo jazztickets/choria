@@ -47,6 +47,12 @@ struct _Vendor;
 struct _Trader;
 struct _ActionResult;
 
+struct _Unlock {
+	_Unlock() : Level(0) { }
+
+	int Level;
+};
+
 // Classes
 class _Object : public _ManagerBase {
 
@@ -246,6 +252,8 @@ class _Object : public _ManagerBase {
 		bool WaitingForTrade;
 		bool TradeAccepted;
 		_Object *TradePlayer;
+
+		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
 		_Stats *Stats;
 

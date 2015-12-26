@@ -263,6 +263,16 @@ void _Save::LoadPlayer(_Object *Player) {
 	}
 	Database->CloseQuery();
 
+	// Set unlocks
+	Database->PrepareQuery("SELECT quest_id, level FROM unlock WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	while(Database->FetchRow()) {
+		uint32_t UnlockID = Database->GetInt<uint32_t>(0);
+		int Level = Database->GetInt<int>(1);
+		Player->Unlocks[UnlockID].Level = Level;
+	}
+	Database->CloseQuery();
+
 	// Get stats
 	Player->GenerateNextBattle();
 	Player->CalculateStats();
@@ -367,6 +377,21 @@ void _Save::SavePlayer(const _Object *Player) {
 			Database->FetchRow();
 			Database->CloseQuery();
 		}
+	}
+
+	// Save unlocks
+	Database->PrepareQuery("DELETE FROM unlock WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
+
+	for(auto &Unlock : Player->Unlocks) {
+		Database->PrepareQuery("INSERT INTO unlock VALUES(@character_id, @unlock_id, @level)");
+		Database->BindInt(1, Player->CharacterID);
+		Database->BindInt(2, Unlock.first);
+		Database->BindInt(3, Unlock.second.Level);
+		Database->FetchRow();
+		Database->CloseQuery();
 	}
 
 	Database->RunQuery("END TRANSACTION");
