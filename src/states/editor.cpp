@@ -463,12 +463,12 @@ void _EditorState::RenderBrush() {
 	if(!Map)
 		return;
 
-	glm::vec2 DrawPosition = Graphics.Element->Bounds.End - glm::vec2(50, 140);
+	glm::vec2 DrawPosition = Graphics.Element->Bounds.End - glm::vec2(60, 150);
 
 	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
-	Graphics.DrawRectangle(DrawPosition - glm::vec2(40, 40), DrawPosition + glm::vec2(40, 133), true);
+	Graphics.DrawRectangle(DrawPosition - glm::vec2(45, 45), DrawPosition + glm::vec2(45, 138), true);
 
 	// Draw texture
 	_Bounds TextureBounds;
@@ -481,7 +481,7 @@ void _EditorState::RenderBrush() {
 	std::stringstream Buffer;
 	glm::vec4 Color(COLOR_WHITE);
 
-	DrawPosition.y += 40 + 8;
+	DrawPosition.y += 52;
 
 	// Draw layer
 	if(Layer)
