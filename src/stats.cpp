@@ -492,6 +492,18 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uin
 	}
 }
 
+// Get map id by path
+uint32_t _Stats::GetMapIDByPath(const std::string &Path) {
+
+	for(const auto &MapStat : Maps) {
+		if(MapStat.second.File == Path) {
+			return MapStat.first;
+		}
+	}
+
+	return 0;
+}
+
 // Find a level from the given experience number
 const _Level *_Stats::FindLevel(int Experience) const {
 

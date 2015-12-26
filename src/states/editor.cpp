@@ -100,6 +100,7 @@ void _EditorState::Init() {
 
 	// Default map
 	Map = nullptr;
+	MapID = 0;
 	if(FilePath != "") {
 		LoadMapTextBox->Text = FilePath;
 		LoadMap();
@@ -320,6 +321,20 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 			}
 			else if(ResizeMapElement->GetClickedElement()->Identifier == "button_editor_resizemap_cancel") {
 				CloseWindows();
+			}
+		}
+	}
+	// Release middle mouse
+	else if(MouseEvent.Button == SDL_BUTTON_MIDDLE) {
+
+		// Event inspector
+		if(Map->IsValidPosition(WorldCursor)) {
+			const _Tile *Tile = Map->GetTile(WorldCursor);
+			switch(Tile->Event.Type) {
+				case _Map::EVENT_MAPCHANGE: {
+					FilePath = Stats->Maps[Tile->Event.Data].File;
+					ToggleLoadMap();
+				} break;
 			}
 		}
 	}
@@ -794,9 +809,20 @@ void _EditorState::LoadMap() {
 	// Set new map
 	if(NewMap) {
 		CloseMap();
+
+		// Set map
 		Map = NewMap;
 		FilePath = LoadMapTextBox->Text;
-		Camera->ForcePosition(glm::vec3(0, 0, CAMERA_DISTANCE));
+
+		// Set camera position
+		glm::ivec2 Position(0, 0);
+		if(!Map->FindEvent(_Event(_Map::EVENT_SPAWN, 0), Position)) {
+			Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, MapID), Position);
+		}
+		Camera->ForcePosition(glm::vec3(Position, CAMERA_DISTANCE));
+
+		// Save map id
+		MapID = Stats->GetMapIDByPath(Path);
 	}
 
 	CloseWindows();

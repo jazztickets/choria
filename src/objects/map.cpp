@@ -125,6 +125,9 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 	Size = NewSize;
 	if(OldTextureAtlas != "")
 		InitAtlas(OldTextureAtlas);
+
+	// Update index
+	IndexEvents();
 }
 
 // Initialize the texture atlas
@@ -263,6 +266,21 @@ void _Map::CheckEvents(_Object *Object) {
 				}
 			}
 		break;
+	}
+}
+
+// Build indexed events list
+void _Map::IndexEvents() {
+	IndexedEvents.clear();
+
+	// Build event index
+	for(int j = 0; j < Size.y; j++) {
+		for(int i = 0; i < Size.x; i++) {
+			const _Tile &Tile = Tiles[i][j];
+			if(Tile.Event.Type != EVENT_NONE) {
+				IndexedEvents[Tile.Event] = glm::ivec2(i, j);
+			}
+		}
 	}
 }
 
@@ -469,8 +487,6 @@ void _Map::Load(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Cannot load map: " + Path);
 
-	IndexedEvents.clear();
-
 	_Tile *Tile = nullptr;
 	while(!File.eof() && File.peek() != EOF) {
 
@@ -551,15 +567,8 @@ void _Map::Load(const std::string &Path) {
 
 	File.close();
 
-	// Build event index
-	for(int j = 0; j < Size.y; j++) {
-		for(int i = 0; i < Size.x; i++) {
-			const _Tile &Tile = Tiles[i][j];
-			if(Tile.Event.Type != EVENT_NONE) {
-				IndexedEvents[Tile.Event] = glm::ivec2(i, j);
-			}
-		}
-	}
+	// Index events
+	IndexEvents();
 
 	// Initialize 2d tile rendering
 	if(!Server) {

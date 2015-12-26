@@ -89,7 +89,10 @@ class _Map : public _ManagerBase {
 
 		void Update(double FrameTime) override;
 		void OnDelete() override { }
+
+		// Events
 		void CheckEvents(_Object *Object);
+		void IndexEvents();
 		void GetClockAsString(std::stringstream &Buffer);
 		void SetAmbientLightByClock();
 

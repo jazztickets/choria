@@ -96,6 +96,7 @@ class _EditorState : public _State {
 
 		// Map
 		_Map *Map;
+		uint32_t MapID;
 		std::string FilePath;
 
 		// Brush
