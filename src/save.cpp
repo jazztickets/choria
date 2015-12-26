@@ -262,7 +262,8 @@ void _Save::LoadPlayer(_Object *Player) {
 		const _Item *Item = Player->Stats->Items[ItemID];
 		if(Item->IsSkill() && !Player->HasLearned(Item))
 			Item = nullptr;
-		Player->ActionBar[Slot].Item = Item;
+		if(Slot < Player->ActionBar.size())
+			Player->ActionBar[Slot].Item = Item;
 	}
 	Database->CloseQuery();
 
