@@ -602,9 +602,12 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 
 		// Find spawn point in map
 		uint32_t SpawnPoint = Player->SpawnPoint;
-		if(EventType == _Map::EVENT_MAPCHANGE)
+		if(EventType == _Map::EVENT_MAPENTRANCE)
 			SpawnPoint = OldMap->NetworkID;
-		Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position);
+
+		// Default to mapchange event if entrance not found
+		if(!Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position))
+			Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, SpawnPoint), Player->Position);
 
 		// Add player to map
 		Map->AddObject(Player);

@@ -220,9 +220,10 @@ void _Map::CheckEvents(_Object *Object) {
 			//SendHUD(Player);
 			//Object->Save();
 		break;
+		case _Map::EVENT_MAPENTRANCE:
 		case _Map::EVENT_MAPCHANGE:
 			if(Server)
-				Server->SpawnPlayer(Object, Tile->Event.Data, Tile->Event.Type);
+				Server->SpawnPlayer(Object, (NetworkIDType)Tile->Event.Data, _Map::EVENT_MAPENTRANCE);
 			else
 				Object->WaitForServer = true;
 		break;
