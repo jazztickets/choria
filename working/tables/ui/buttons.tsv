@@ -126,6 +126,9 @@ button_ingame_resume	element_menu_ingame	style_menu_button	style_menu_button_dis
 button_ingame_disconnect	element_menu_ingame	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	20	200	48	1	1	0
 button_editor_newmap_create	element_editor_newmap	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-75	-25	128	32	1	2	0
 button_editor_newmap_cancel	element_editor_newmap	style_menu_button	style_menu_button_disabled	style_menu_button_hover	75	-25	128	32	1	2	0
+button_editor_resizemap_resize	element_editor_resizemap	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-75	-25	128	32	1	2	0
+button_editor_resizemap_cancel	element_editor_resizemap	style_menu_button	style_menu_button_disabled	style_menu_button_hover	75	-25	128	32	1	2	0
 button_editor_buttonbar_new	element_editor_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	0	0	32	32	0	0	0
-button_editor_buttonbar_save	element_editor_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	32	0	32	32	0	0	0
-button_editor_buttonbar_load	element_editor_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	64	0	32	32	0	0	0
+button_editor_buttonbar_resize	element_editor_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	32	0	32	32	0	0	0
+button_editor_buttonbar_save	element_editor_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	64	0	32	32	0	0	0
+button_editor_buttonbar_load	element_editor_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	96	0	32	32	0	0	0

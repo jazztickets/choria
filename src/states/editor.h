@@ -66,16 +66,19 @@ class _EditorState : public _State {
 		void ClearTextures();
 		void CloseMap();
 		void CreateMap();
+		void ResizeMap();
 		void SaveMap();
 		void LoadMap();
 
 		void ToggleTextures();
 		void ToggleNewMap();
+		void ToggleResize();
 		void ToggleSaveMap();
 		void ToggleLoadMap();
 
 		void InitTextures();
 		void InitNewMap();
+		void InitResize();
 		void InitSaveMap();
 		void InitLoadMap();
 		bool CloseWindows();
@@ -108,11 +111,16 @@ class _EditorState : public _State {
 		_Element *ButtonBarElement;
 		_Element *TexturesElement;
 		_Element *NewMapElement;
+		_Element *ResizeMapElement;
 		_Element *SaveMapElement;
 		_Element *LoadMapElement;
 		_TextBox *NewMapFilenameTextBox;
 		_TextBox *NewMapWidthTextBox;
 		_TextBox *NewMapHeightTextBox;
+		_TextBox *ResizeMinXTextBox;
+		_TextBox *ResizeMinYTextBox;
+		_TextBox *ResizeMaxXTextBox;
+		_TextBox *ResizeMaxYTextBox;
 		_TextBox *SaveMapTextBox;
 		_TextBox *LoadMapTextBox;
 };

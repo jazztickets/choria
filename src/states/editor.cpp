@@ -61,16 +61,22 @@ void _EditorState::Init() {
 	ButtonBarElement = Assets.Elements["element_editor_buttonbar"];
 	TexturesElement = Assets.Elements["element_editor_textures"];
 	NewMapElement = Assets.Elements["element_editor_newmap"];
+	ResizeMapElement = Assets.Elements["element_editor_resizemap"];
 	SaveMapElement = Assets.Elements["element_editor_savemap"];
 	LoadMapElement = Assets.Elements["element_editor_loadmap"];
 	NewMapFilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
 	NewMapWidthTextBox = Assets.TextBoxes["textbox_editor_newmap_width"];
 	NewMapHeightTextBox = Assets.TextBoxes["textbox_editor_newmap_height"];
+	ResizeMinXTextBox = Assets.TextBoxes["textbox_editor_resizemap_minx"];
+	ResizeMinYTextBox = Assets.TextBoxes["textbox_editor_resizemap_miny"];
+	ResizeMaxXTextBox = Assets.TextBoxes["textbox_editor_resizemap_maxx"];
+	ResizeMaxYTextBox = Assets.TextBoxes["textbox_editor_resizemap_maxy"];
 	SaveMapTextBox = Assets.TextBoxes["textbox_editor_savemap"];
 	LoadMapTextBox = Assets.TextBoxes["textbox_editor_loadmap"];
 	ButtonBarElement->SetVisible(true);
 	TexturesElement->SetVisible(false);
 	NewMapElement->SetVisible(false);
+	ResizeMapElement->SetVisible(false);
 	SaveMapElement->SetVisible(false);
 	LoadMapElement->SetVisible(false);
 	IgnoreFirstChar = false;
@@ -134,6 +140,9 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				if(NewMapElement->Visible) {
 					CreateMap();
 				}
+				else if(ResizeMapElement->Visible) {
+					ResizeMap();
+				}
 				else if(SaveMapElement->Visible) {
 					SaveMap();
 				}
@@ -148,6 +157,14 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 					FocusedElement = NewMapHeightTextBox;
 				else if(FocusedElement == NewMapHeightTextBox)
 					FocusedElement = NewMapFilenameTextBox;
+				else if(FocusedElement == ResizeMinXTextBox)
+					FocusedElement = ResizeMinYTextBox;
+				else if(FocusedElement == ResizeMinYTextBox)
+					FocusedElement = ResizeMaxXTextBox;
+				else if(FocusedElement == ResizeMaxXTextBox)
+					FocusedElement = ResizeMaxYTextBox;
+				else if(FocusedElement == ResizeMaxYTextBox)
+					FocusedElement = ResizeMinXTextBox;
 			}
 
 			return;
@@ -197,6 +214,10 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_N:
 				IgnoreFirstChar = true;
 				ToggleNewMap();
+			break;
+			case SDL_SCANCODE_R:
+				IgnoreFirstChar = true;
+				ToggleResize();
 			break;
 			case SDL_SCANCODE_S:
 				IgnoreFirstChar = true;
@@ -268,6 +289,8 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 		if(ButtonBarElement->GetClickedElement()) {
 			if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_new")
 				ToggleNewMap();
+			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_resize")
+				ToggleResize();
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_save")
 				ToggleSaveMap();
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_load")
@@ -287,6 +310,15 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 				CreateMap();
 			}
 			else if(NewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_cancel") {
+				CloseWindows();
+			}
+		}
+		// Resize map screen
+		else if(ResizeMapElement->GetClickedElement()) {
+			if(ResizeMapElement->GetClickedElement()->Identifier == "button_editor_resizemap_resize") {
+				ResizeMap();
+			}
+			else if(ResizeMapElement->GetClickedElement()->Identifier == "button_editor_resizemap_cancel") {
 				CloseWindows();
 			}
 		}
@@ -391,9 +423,10 @@ void _EditorState::Render(double BlendFactor) {
 	// Draw UI
 	ButtonBarElement->Render();
 	TexturesElement->Render();
+	NewMapElement->Render();
+	ResizeMapElement->Render();
 	SaveMapElement->Render();
 	LoadMapElement->Render();
-	NewMapElement->Render();
 
 }
 
@@ -487,6 +520,17 @@ void _EditorState::ToggleNewMap() {
 	if(!NewMapElement->Visible) {
 		CloseWindows();
 		InitNewMap();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
+// Toggle resize map screen
+void _EditorState::ToggleResize() {
+	if(!ResizeMapElement->Visible) {
+		CloseWindows();
+		InitResize();
 	}
 	else {
 		CloseWindows();
@@ -600,8 +644,24 @@ void _EditorState::InitNewMap() {
 	NewMapHeightTextBox->SetText("100");
 }
 
+// Init resize map screen
+void _EditorState::InitResize() {
+	if(!Map)
+		return;
+
+	ResizeMapElement->SetVisible(true);
+
+	ResizeMinXTextBox->SetText("0");
+	ResizeMinYTextBox->SetText("0");
+	ResizeMaxXTextBox->SetText(std::to_string(Map->Size.x-1));
+	ResizeMaxYTextBox->SetText(std::to_string(Map->Size.y-1));
+}
+
 // Init save map
 void _EditorState::InitSaveMap() {
+	if(!Map)
+		return;
+
 	SaveMapElement->SetVisible(true);
 	FocusedElement = SaveMapTextBox;
 
@@ -618,10 +678,11 @@ void _EditorState::InitLoadMap() {
 
 // Close all open windows
 bool _EditorState::CloseWindows() {
-	bool WasOpen = TexturesElement->Visible | NewMapElement->Visible | SaveMapElement->Visible | LoadMapElement->Visible;
+	bool WasOpen = TexturesElement->Visible | NewMapElement->Visible | ResizeMapElement->Visible | SaveMapElement->Visible | LoadMapElement->Visible;
 
 	TexturesElement->SetVisible(false);
 	NewMapElement->SetVisible(false);
+	ResizeMapElement->SetVisible(false);
 	SaveMapElement->SetVisible(false);
 	LoadMapElement->SetVisible(false);
 	FocusedElement = nullptr;
@@ -648,6 +709,13 @@ void _EditorState::CreateMap() {
 	Map->AllocateMap();
 	FilePath = NewMapFilenameTextBox->Text;
 
+	CloseWindows();
+}
+
+// Resize the map
+void _EditorState::ResizeMap() {
+
+	// Close
 	CloseWindows();
 }
 

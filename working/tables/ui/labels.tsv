@@ -70,14 +70,22 @@ label_trade_status_theirs	button_trade_accept_theirs	hud_small			0	17	0	0	1	3
 label_trade_status_yours	button_trade_accept_yours	hud_small		Accept	0	17	0	0	1	3
 label_menu_ingame_resume	button_ingame_resume	menu_buttons		Resume	0	32	0	0	1	3
 label_menu_ingame_disconnect	button_ingame_disconnect	menu_buttons		Disconnect	0	32	0	0	1	3
-label_editor_newmap_title	element_editor_newmap	battle_large		New Map	0	50	0	0	1	3
+label_editor_newmap_title	element_editor_newmap	menu_buttons		New Map	0	35	0	0	1	3
 label_editor_newmap_filename	textbox_editor_newmap_filename	hud_medium		Filename	0	22	215	0	2	3
 label_editor_newmap_width	textbox_editor_newmap_width	hud_medium		Width	0	22	90	0	2	3
 label_editor_newmap_height	textbox_editor_newmap_height	hud_medium		Height	0	22	90	0	2	3
 label_editor_newmap_create	button_editor_newmap_create	hud_medium		Create	0	23	0	0	1	3
 label_editor_newmap_cancel	button_editor_newmap_cancel	hud_medium		Cancel	0	23	0	0	1	3
+label_editor_resizemap_title	element_editor_resizemap	menu_buttons		Resize Map	0	35	0	0	1	3
+label_editor_resizemap_minx	textbox_editor_resizemap_minx	hud_medium		Min X	0	22	90	0	2	3
+label_editor_resizemap_miny	textbox_editor_resizemap_miny	hud_medium		Min Y	0	22	90	0	2	3
+label_editor_resizemap_maxx	textbox_editor_resizemap_maxx	hud_medium		Max X	0	22	90	0	2	3
+label_editor_resizemap_maxy	textbox_editor_resizemap_maxy	hud_medium		Max Y	0	22	90	0	2	3
+label_editor_resizemap_create	button_editor_resizemap_resize	hud_medium		Resize	0	23	0	0	1	3
+label_editor_resizemap_cancel	button_editor_resizemap_cancel	hud_medium		Cancel	0	23	0	0	1	3
 label_editor_savemap	textbox_editor_savemap	hud_medium		Save	0	23	260	0	2	3
 label_editor_loadmap	textbox_editor_loadmap	hud_medium		Load	0	23	260	0	2	3
 label_editor_buttonbar_new	button_editor_buttonbar_new	hud_tiny		New	3	20	0	0	0	3
+label_editor_buttonbar_resize	button_editor_buttonbar_resize	hud_tiny		Resize	3	20	0	0	0	3
 label_editor_buttonbar_save	button_editor_buttonbar_save	hud_tiny		Save	3	20	0	0	0	3
 label_editor_buttonbar_load	button_editor_buttonbar_load	hud_tiny		Load	3	20	0	0	0	3
