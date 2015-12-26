@@ -107,6 +107,8 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)
 		Gold = Data.Read<int>();
+	if(ChangedFlag & StatType::INVISIBLE)
+		Invisible = Data.Read<int>();
 	if(ChangedFlag & StatType::ACTIONBARSIZE)
 		ActionBarSize = Data.Read<int>();
 }
