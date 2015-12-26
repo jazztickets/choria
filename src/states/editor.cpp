@@ -653,8 +653,8 @@ void _EditorState::InitResize() {
 
 	ResizeMinXTextBox->SetText("0");
 	ResizeMinYTextBox->SetText("0");
-	ResizeMaxXTextBox->SetText(std::to_string(Map->Size.x-1));
-	ResizeMaxYTextBox->SetText(std::to_string(Map->Size.y-1));
+	ResizeMaxXTextBox->SetText(std::to_string(Map->Size.x));
+	ResizeMaxYTextBox->SetText(std::to_string(Map->Size.y));
 }
 
 // Init save map
@@ -700,7 +700,7 @@ void _EditorState::CreateMap() {
 	Buffer >> Size.x >> Size.y;
 
 	// Clamp size
-	Size = glm::clamp(Size, 0, 255);
+	Size = glm::clamp(Size, 2, 255);
 
 	// Create map
 	Map = new _Map();
@@ -714,6 +714,26 @@ void _EditorState::CreateMap() {
 
 // Resize the map
 void _EditorState::ResizeMap() {
+
+	// Get min parameters
+	glm::ivec2 Min(0, 0);
+	{
+		std::stringstream Buffer(ResizeMinXTextBox->Text + " " + ResizeMinYTextBox->Text);
+		Buffer >> Min.x >> Min.y;
+	}
+
+	// Get max parameters
+	glm::ivec2 Max(0, 0);
+	{
+		std::stringstream Buffer(ResizeMaxXTextBox->Text + " " + ResizeMaxYTextBox->Text);
+		Buffer >> Max.x >> Max.y;
+	}
+
+	// Validate new size
+	glm::ivec2 NewSize = glm::clamp(Max - Min, 2, 255);
+
+	// Resize map
+	Map->ResizeMap(Min, NewSize);
 
 	// Close
 	CloseWindows();

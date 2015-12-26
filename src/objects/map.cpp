@@ -65,11 +65,7 @@ _Map::_Map() :
 // Destructor
 _Map::~_Map() {
 	if(!Server) {
-		delete TileAtlas;
-		delete[] TileVertices;
-		delete[] TileFaces;
-		glDeleteBuffers(1, &TileVertexBufferID);
-		glDeleteBuffers(1, &TileElementBufferID);
+		CloseAtlas();
 	}
 
 	// Delete map data
@@ -88,6 +84,47 @@ void _Map::AllocateMap() {
 	for(int i = 0; i < Size.x; i++) {
 		Tiles[i] = new _Tile[Size.y];
 	}
+}
+
+// Resize tile data
+void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
+
+	// Create new map
+	_Tile **NewTiles = new _Tile*[NewSize.x];
+	for(int i = 0; i < NewSize.x; i++) {
+		NewTiles[i] = new _Tile[NewSize.y];
+	}
+
+	// Copy data
+	glm::ivec2 TileIndex;
+	for(int j = 0; j < Size.y; j++) {
+		TileIndex.y = j - Offset.y;
+		if(TileIndex.y < 0 || TileIndex.y >= NewSize.y)
+			continue;
+
+		for(int i = 0; i < Size.x; i++) {
+			TileIndex.x = i - Offset.x;
+			if(TileIndex.x < 0 || TileIndex.x >= NewSize.x)
+				continue;
+
+			NewTiles[TileIndex.x][TileIndex.y] = Tiles[i][j];
+		}
+	}
+
+	// Save old texture atlas name
+	std::string OldTextureAtlas = "";
+	if(TileAtlas)
+		OldTextureAtlas = TileAtlas->Texture->Identifier;
+
+	// Delete data
+	CloseAtlas();
+	FreeMap();
+
+	// Init new data
+	Tiles = NewTiles;
+	Size = NewSize;
+	if(OldTextureAtlas != "")
+		InitAtlas(OldTextureAtlas);
 }
 
 // Initialize the texture atlas
@@ -121,6 +158,21 @@ void _Map::InitAtlas(const std::string AtlasPath) {
 	glGenBuffers(1, &TileElementBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
+}
+
+// Free memory used by texture atlas
+void _Map::CloseAtlas() {
+	delete TileAtlas;
+	delete[] TileVertices;
+	delete[] TileFaces;
+	glDeleteBuffers(1, &TileVertexBufferID);
+	glDeleteBuffers(1, &TileElementBufferID);
+
+	TileVertexBufferID = 0;
+	TileElementBufferID = 0;
+	TileAtlas = nullptr;
+	TileVertices = nullptr;
+	TileFaces = nullptr;
 }
 
 // Free memory used by the tiles

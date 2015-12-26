@@ -83,7 +83,9 @@ class _Map : public _ManagerBase {
 		~_Map();
 
 		void AllocateMap();
+		void ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize);
 		void InitAtlas(const std::string AtlasPath);
+		void CloseAtlas();
 
 		void Update(double FrameTime) override;
 		void OnDelete() override { }
