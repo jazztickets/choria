@@ -213,12 +213,8 @@ void _Map::CheckEvents(_Object *Object) {
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
 	switch(Tile->Event.Type) {
 		case _Map::EVENT_SPAWN:
-			//Server->Log << Object->Map->ID << " " << Tile->Event.Data << std::endl;
-			//Object->SpawnMapID = Object->Map->ID;
-			//Object->SpawnPoint = Tile->Event.Data;
-			//Object->RestoreHealthMana();
-			//SendHUD(Player);
-			//Object->Save();
+			Object->SpawnMapID = NetworkID;
+			Object->SpawnPoint = Tile->Event.Data;
 		break;
 		case _Map::EVENT_MAPENTRANCE:
 		case _Map::EVENT_MAPCHANGE:
