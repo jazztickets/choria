@@ -85,6 +85,7 @@ class _Item {
 		bool TargetAlive;
 		ScopeType Scope;
 		uint32_t UnlockID;
+		bool Tradable;
 
 	private:
 

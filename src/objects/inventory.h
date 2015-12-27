@@ -94,5 +94,6 @@ class _Inventory {
 
 		bool CanEquipItem(size_t Slot, const _Item *Item);
 		void SwapItem(size_t Slot, size_t OldSlot);
+		bool CanSwap(size_t OldSlot, size_t NewSlot);
 
 };

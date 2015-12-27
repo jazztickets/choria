@@ -260,6 +260,11 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 		DrawPosition.y += SpacingY;
 	}
+
+	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
+		Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, COLOR_RED, CENTER_BASELINE);
+		DrawPosition.y += 20;
+	}
 }
 
 // Draw item description

@@ -192,6 +192,7 @@ void _Stats::LoadItems() {
 		Item->TargetAlive = Database->GetInt<int>("target_alive");
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
+		Item->Tradable = Database->GetInt<int>("tradable");
 		Items[Item->ID] = Item;
 	}
 	Database->CloseQuery();

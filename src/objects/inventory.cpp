@@ -163,11 +163,7 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 
 // Moves an item from one slot to another
 bool _Inventory::MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot) {
-	if(OldSlot == NewSlot)
-		return false;
-
-	// Check if the item is even equippable
-	if(NewSlot < InventoryType::BAG && !CanEquipItem(NewSlot, Slots[OldSlot].Item))
+	if(!CanSwap(OldSlot, NewSlot))
 		return false;
 
 	// Add to stack
@@ -185,8 +181,8 @@ bool _Inventory::MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot) {
 	}
 	else {
 
-		// Check for swapping a non-equippable item
-		if(OldSlot < InventoryType::BAG && !CanEquipItem(OldSlot, Slots[NewSlot].Item))
+		// Check for reverse swap
+		if(!CanSwap(NewSlot, OldSlot))
 			return false;
 
 		SwapItem(NewSlot, OldSlot);
@@ -207,6 +203,21 @@ void _Inventory::SwapItem(size_t Slot, size_t OldSlot) {
 	TempItem = Slots[Slot];
 	Slots[Slot] = Slots[OldSlot];
 	Slots[OldSlot] = TempItem;
+}
+
+// Determine if an item can be swapped
+bool _Inventory::CanSwap(size_t OldSlot, size_t NewSlot) {
+	if(OldSlot == NewSlot)
+		return false;
+
+	// Check if the item is even equippable
+	if(NewSlot < InventoryType::BAG && !CanEquipItem(NewSlot, Slots[OldSlot].Item))
+		return false;
+
+	if(NewSlot >= InventoryType::TRADE && Slots[OldSlot].Item && !Slots[OldSlot].Item->Tradable)
+		return false;
+
+	return true;
 }
 
 // Updates an item's count, deleting if necessary

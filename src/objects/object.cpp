@@ -344,7 +344,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		}
 
 		if(ClientPlayer != this) {
-			Assets.Fonts["hud_small"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
+			Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
 		}
 	}
 }
