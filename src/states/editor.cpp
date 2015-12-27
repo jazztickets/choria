@@ -110,6 +110,10 @@ void _EditorState::Init() {
 	}
 	else
 		ToggleNewMap();
+
+	DrawBounds = false;
+	CopyStart = glm::ivec2(0, 0);
+	CopyEnd = glm::ivec2(0, 0);
 }
 
 // Shuts the state down
@@ -231,6 +235,9 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				IgnoreFirstChar = true;
 				ToggleLoadMap();
 			break;
+			case SDL_SCANCODE_V:
+				Paste();
+			break;
 			case SDL_SCANCODE_TAB:
 				Layer = !Layer;
 			break;
@@ -276,6 +283,10 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 				case SDL_BUTTON_RIGHT:
 					Camera->Set2DPosition(WorldCursor);
 				break;
+				case SDL_BUTTON_MIDDLE: {
+					DrawBounds = true;
+					CopyStart = Map->GetValidCoord(WorldCursor);
+				} break;
 			}
 		}
 	}
@@ -342,6 +353,10 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 					system(Buffer.str().c_str());
 				} break;
 			}
+		}
+		else {
+			DrawBounds = false;
+			GetDrawBounds(CopyStart, CopyEnd);
 		}
 	}
 }
@@ -416,6 +431,15 @@ void _EditorState::Render(double BlendFactor) {
 	Graphics.SetProgram(Assets.Programs["pos"]);
 	Graphics.SetVBO(VBO_CIRCLE);
 	Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
+
+	if(DrawBounds) {
+		Graphics.SetVBO(VBO_NONE);
+		Graphics.SetColor(COLOR_TGRAY);
+
+		glm::ivec2 Start, End;
+		GetDrawBounds(Start, End);
+		Graphics.DrawRectangle(Start, End, true);
+	}
 
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -542,6 +566,36 @@ void _EditorState::AdjustValue(uint32_t *Value, int Direction) {
 	else {
 		(*Value)++;
 	}
+}
+
+// Paste tiles
+void _EditorState::Paste() {
+
+	// Get offsets
+	glm::ivec2 CopyPosition = CopyStart;
+	glm::ivec2 PastePosition = Map->GetValidCoord(WorldCursor);
+
+	// Copy tiles
+	for(int j = 0; j < CopyEnd.y - CopyStart.y + 1; j++) {
+		for(int i = 0; i < CopyEnd.x - CopyStart.x + 1; i++) {
+			glm::ivec2 CopyCoord = glm::ivec2(i, j) + CopyPosition;
+			glm::ivec2 PasteCoord = glm::ivec2(i, j) + PastePosition;
+			if(Map->IsValidPosition(CopyCoord) && Map->IsValidPosition(PasteCoord)) {
+				Map->Tiles[PasteCoord.x][PasteCoord.y] = Map->Tiles[CopyCoord.x][CopyCoord.y];
+			}
+		}
+	}
+}
+
+// Get tile range from anchor point to world cursor
+void _EditorState::GetDrawBounds(glm::ivec2 &Start, glm::ivec2 &End) {
+	Start = CopyStart;
+	End = Map->GetValidCoord(WorldCursor);
+
+	if(End.x < Start.x)
+		std::swap(Start.x, End.x);
+	if(End.y < Start.y)
+		std::swap(Start.y, End.y);
 }
 
 // Toggle new map screen

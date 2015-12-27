@@ -20,6 +20,7 @@
 // Libraries
 #include <state.h>
 #include <vector>
+#include <glm/vec2.hpp>
 
 struct _Tile;
 class _Camera;
@@ -88,6 +89,10 @@ class _EditorState : public _State {
 		void RenderBrush();
 		void AdjustValue(uint32_t *Value, int Direction);
 
+		// Copy/Paste
+		void Paste();
+		void GetDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
+
 		// General
 		_Stats *Stats;
 
@@ -99,6 +104,11 @@ class _EditorState : public _State {
 		_Map *Map;
 		uint32_t MapID;
 		std::string FilePath;
+
+		// Copy paste
+		bool DrawBounds;
+		glm::ivec2 CopyStart;
+		glm::ivec2 CopyEnd;
 
 		// Brush
 		int Layer;
