@@ -4,6 +4,7 @@ build*
 *.swp
 *.~lock*
 src/tags
+export/
 working/stats/*.txt
 CMakeLists.txt.user
 deployment/*.exe
