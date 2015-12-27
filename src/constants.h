@@ -80,7 +80,7 @@ const float STATCHANGE_DISTANCE = 20.0f;
 const double RECENTITEM_TIMEOUT = 10.0;
 const double RECENTITEM_FADETIME = 2.0;
 
-const double HUDMESSAGE_TIMEOUT = 5.0;
+const double HUDMESSAGE_TIMEOUT = 10.0;
 const double HUDMESSAGE_FADETIME = 2.0;
 
 const int SAVE_VERSION = 6;

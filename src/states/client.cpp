@@ -1105,6 +1105,8 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	if(!Player)
 		return;
 
+	int OldLevel = Player->Level;
+
 	Player->Health = Data.Read<float>();
 	Player->Mana = Data.Read<float>();
 	Player->MaxHealth = Data.Read<float>();
@@ -1112,6 +1114,9 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->Experience = Data.Read<int32_t>();
 	Player->Gold = Data.Read<int32_t>();
 	Player->CalculateStats();
+
+	if(Player->Level > OldLevel)
+		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill points");
 }
 
 // Creates an object from a buffer
