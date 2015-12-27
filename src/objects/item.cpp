@@ -92,22 +92,27 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	// Get level of item or skill
 	int32_t DrawLevel = Level;
 	bool IsLocked = false;
+	bool ShowLevel = false;
+	if(IsSkill()) {
 
-	// Get player skill level
-	auto SkillIterator = Player->Skills.find(ID);
-	if(SkillIterator != Player->Skills.end())
-		DrawLevel = SkillIterator->second;
-	else
-		IsLocked = true;
+		// Get skill level
+		auto SkillIterator = Player->Skills.find(ID);
+		if(SkillIterator != Player->Skills.end())
+			DrawLevel = SkillIterator->second;
+		else
+			IsLocked = true;
 
-	// For skills set minimum of level 1
-	if(IsSkill())
+		// For skills set minimum of level 1
 		DrawLevel = std::max(DrawLevel, 1);
 
-	// Determine whether to show level
-	bool ShowLevel = false;
-	if(IsSkill() && (Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ACTIONBAR))
-		ShowLevel = true;
+		// Show vendor skills at level 1
+		if(Tooltip.Window == _HUD::WINDOW_INVENTORY|| Tooltip.Window == _HUD::WINDOW_VENDOR)
+			DrawLevel = 1;
+
+		// Determine whether to show level
+		if(Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
+			ShowLevel = true;
+	}
 
 	// Draw description
 	DrawDescription(Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
