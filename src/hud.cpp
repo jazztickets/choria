@@ -1384,6 +1384,11 @@ void _HUD::DrawRecentItems() {
 
 // Set hud message
 void _HUD::SetMessage(const std::string &Text) {
+	if(!Text.length()) {
+		MessageElement->SetVisible(false);
+		return;
+	}
+
 	Message.Time = 0;
 	MessageLabel->Text = Text;
 
