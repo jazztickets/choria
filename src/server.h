@@ -62,6 +62,7 @@ class _Server {
 		bool StartShutdown;
 		uint16_t TimeSteps;
 		double Time;
+		double SaveTime;
 		double Clock;
 		_LogFile Log;
 

@@ -65,6 +65,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 	StartShutdown(false),
 	TimeSteps(0),
 	Time(0.0),
+	SaveTime(0.0),
 	Clock(0.0),
 	Stats(Stats),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
@@ -187,6 +188,16 @@ void _Server::Update(double FrameTime) {
 	if(Clock >= MAP_DAY_LENGTH)
 		Clock -= MAP_DAY_LENGTH;
 
+	// Update autosave
+	SaveTime += FrameTime;
+	if(SaveTime >= DEFAULT_AUTOSAVE_PERIOD) {
+		SaveTime = 0;
+
+		// Save players
+		for(auto &Object : ObjectManager->Objects) {
+			Save->SavePlayer(Object);
+		}
+	}
 }
 
 // Handle client connect
