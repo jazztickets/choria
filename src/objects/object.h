@@ -172,13 +172,11 @@ class _Object : public _ManagerBase {
 		int MaxDamage;
 		int MinDefense;
 		int MaxDefense;
-		float HealthRegen;
-		float ManaRegen;
+		double BattleSpeed;
 
 		// Battle
 		_Battle *Battle;
 		_Element *BattleElement;
-		float BattleSpeed;
 		double TurnTimer;
 		double AITimer;
 		uint8_t BattleSide;

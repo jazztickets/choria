@@ -78,6 +78,7 @@ class _Item {
 		int MaxDefense;
 		int MaxHealth;
 		int MaxMana;
+		double BattleSpeed;
 		bool Tradable;
 		bool TargetAlive;
 		TargetType TargetID;

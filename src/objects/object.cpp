@@ -69,11 +69,9 @@ _Object::_Object() :
 	MaxDamage(0),
 	MinDefense(0),
 	MaxDefense(0),
-	HealthRegen(0.0f),
-	ManaRegen(0.0f),
+	BattleSpeed(1.0f),
 	Battle(nullptr),
 	BattleElement(nullptr),
-	BattleSpeed(BATTLE_DEFAULTSPEED),
 	TurnTimer(0.0),
 	AITimer(1.0),
 	BattleSide(0),
@@ -178,7 +176,7 @@ void _Object::Update(double FrameTime) {
 
 		// Check turn timer
 		if(Battle)
-			TurnTimer += FrameTime * BattleSpeed;
+			TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * BattleSpeed;
 		else
 			TurnTimer = 1.0;
 
@@ -1065,12 +1063,12 @@ void _Object::CalculateStats() {
 	float HealthPercent = GetHealthPercent();
 	float ManaPercent = GetManaPercent();
 
-	HealthRegen = ManaRegen = 0.0f;
 	MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
 	MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
 	WeaponMinDamage = WeaponMaxDamage = 0;
 	ArmorMinDefense = ArmorMaxDefense = 0;
 	WeaponDamageModifier = 1.0f;
+	BattleSpeed = 1.0f;
 
 	// Get base stats
 	CalculateLevelStats();
@@ -1130,7 +1128,6 @@ void _Object::CalculateGearStats() {
 	for(size_t i = 0; i < InventoryType::BAG; i++) {
 		const _Item *Item = Inventory->Slots[i].Item;
 		if(Item) {
-			int Min, Max;
 
 			// Add damage
 			WeaponMinDamage += Item->MinDamage;
@@ -1143,6 +1140,7 @@ void _Object::CalculateGearStats() {
 			// Boosts
 			MaxHealth += Item->MaxHealth;
 			MaxMana += Item->MaxMana;
+			BattleSpeed += Item->BattleSpeed;
 		}
 	}
 }

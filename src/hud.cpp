@@ -1229,6 +1229,14 @@ void _HUD::DrawCharacter() {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
+	// Battle speed
+	Buffer << Player->BattleSpeed * 100 << "%";
+	Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
+
+	/*
 	// HP Regen
 	if(Player->HealthRegen != 0.0f) {
 		Buffer << std::setprecision(3) << Player->HealthRegen;
@@ -1245,7 +1253,7 @@ void _HUD::DrawCharacter() {
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
-	}
+	}*/
 
 	// Separator
 	DrawPosition.y += SpacingY;
