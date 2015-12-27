@@ -126,14 +126,12 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 
 	// Render damage
 	bool StatDrawn = false;
-	int Min, Max;
-	GetDamageRange(Min, Max);
-	if(Min != 0 || Max != 0) {
+	if(MinDamage != 0 || MaxDamage != 0) {
 		std::stringstream Buffer;
-		if(Min != Max)
-			Buffer << Min << " - " << Max;
+		if(MinDamage != MaxDamage)
+			Buffer << MinDamage << " - " << MaxDamage;
 		else
-			Buffer << Min;
+			Buffer << MinDamage;
 
 		Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
@@ -142,13 +140,12 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 
 	// Render defense
-	GetDefenseRange(Min, Max);
-	if(Min != 0 || Max != 0) {
+	if(MinDefense != 0 || MaxDefense != 0) {
 		std::stringstream Buffer;
-		if(Min != Max)
-			Buffer << Min << " - " << Max;
+		if(MinDefense != MaxDefense)
+			Buffer << MinDefense << " - " << MaxDefense;
 		else
-			Buffer << Min;
+			Buffer << MinDefense;
 
 		Assets.Fonts["hud_medium"]->DrawText("Defense", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
@@ -308,20 +305,6 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 
 		DrawPosition.y += SpacingY;
 	}
-}
-
-// Returns the range of damage
-void _Item::GetDamageRange(int &Min, int &Max) const {
-
-	Min = (int)(MinDamage - MaxDamage);
-	Max = (int)(MinDamage + MaxDamage);
-}
-
-// Returns the range of defense
-void _Item::GetDefenseRange(int &Min, int &Max) const {
-
-	Min = (int)(MinDefense - MaxDefense);
-	Max = (int)(MinDefense + MaxDefense);
 }
 
 // Returns the item's price to/from a vendor

@@ -1133,14 +1133,12 @@ void _Object::CalculateGearStats() {
 			int Min, Max;
 
 			// Add damage
-			Item->GetDamageRange(Min, Max);
-			WeaponMinDamage += Min;
-			WeaponMaxDamage += Max;
+			WeaponMinDamage += Item->MinDamage;
+			WeaponMaxDamage += Item->MaxDamage;
 
 			// Add defense
-			Item->GetDefenseRange(Min, Max);
-			ArmorMinDefense += Min;
-			ArmorMaxDefense += Max;
+			ArmorMinDefense += Item->MinDefense;
+			ArmorMaxDefense += Item->MaxDefense;
 
 			// Boosts
 			MaxHealth += Item->MaxHealth;

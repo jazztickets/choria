@@ -105,7 +105,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			values = []
 			for param in params:
 				escaped = params[param].replace('"', '""')
-				if param != "table":
+				if param != "table" and param.find('!') == -1:
 					fields.append(param)
 					values.append("\"" + escaped + "\"")
 
@@ -194,7 +194,12 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			for param in params:
 				escaped = params[param].replace('"', '""')
 				if param != "table":
-					pairs.append(param + " = \"" + escaped + "\"")
+					op = " = "
+					if param.find('!') != -1:
+						op = " <> "
+
+					param = param.replace('!', '')
+					pairs.append(param + op + "\"" + escaped + "\"")
 
 			where = ""
 			if len(pairs):

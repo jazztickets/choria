@@ -54,8 +54,6 @@ class _Item {
 		bool IsSkill() const { return Type == ItemType::SKILL; }
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 
-		void GetDamageRange(int &Min, int &Max) const;
-		void GetDefenseRange(int &Min, int &Max) const;
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
