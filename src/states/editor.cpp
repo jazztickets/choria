@@ -237,13 +237,6 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_SPACE:
 				ToggleTextures();
 			break;
-			case SDL_SCANCODE_MINUS:
-				if(Brush->Event.Data > 0)
-					Brush->Event.Data--;
-			break;
-			case SDL_SCANCODE_EQUALS:
-				Brush->Event.Data++;
-			break;
 			case SDL_SCANCODE_F1:
 				BrushRadius = 0.5f;
 			break;
@@ -331,7 +324,7 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 	else if(MouseEvent.Button == SDL_BUTTON_MIDDLE) {
 
 		// Event inspector
-		if(Map->IsValidPosition(WorldCursor)) {
+		if(Map->IsValidPosition(WorldCursor) && Input.ModKeyDown(KMOD_CTRL)) {
 			const _Tile *Tile = Map->GetTile(WorldCursor);
 			switch(Tile->Event.Type) {
 				case _Map::EVENT_MAPCHANGE: {
@@ -356,15 +349,10 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 // Mouse scroll wheel
 void _EditorState::MouseWheelEvent(int Direction) {
 	if(Input.ModKeyDown(KMOD_CTRL)) {
-		if(Direction < 0) {
-			uint32_t OldZone = Brush->Zone;
-			Brush->Zone--;
-			if(Brush->Zone > OldZone)
-				Brush->Zone = 0;
-		}
-		else {
-			Brush->Zone++;
-		}
+		if(Filter & FILTER_ZONE)
+			AdjustValue(&Brush->Zone, Direction);
+		else if(Filter & FILTER_EVENTDATA)
+			AdjustValue(&Brush->Event.Data, Direction);
 	}
 	else {
 
@@ -541,6 +529,19 @@ void _EditorState::RenderBrush() {
 	Filter & FILTER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str().c_str(), DrawPosition, Color, CENTER_BASELINE);
 	Buffer.str("");
+}
+
+// Update generic value
+void _EditorState::AdjustValue(uint32_t *Value, int Direction) {
+	if(Direction < 0) {
+		uint32_t OldValue = *Value;
+		(*Value)--;
+		if(*Value > OldValue)
+			*Value = 0;
+	}
+	else {
+		(*Value)++;
+	}
 }
 
 // Toggle new map screen
