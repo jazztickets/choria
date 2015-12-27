@@ -173,6 +173,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+	/*
 	if(HealthRegen > 0) {
 		std::stringstream Buffer;
 		Buffer << "+" << std::setprecision(2) << HealthRegen << "%";
@@ -188,7 +189,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
-	}
+	}*/
 
 	if(StatDrawn)
 		DrawPosition.y += SpacingY;
@@ -312,15 +313,15 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 // Returns the range of damage
 void _Item::GetDamageRange(int &Min, int &Max) const {
 
-	Min = (int)(Damage - DamageRange);
-	Max = (int)(Damage + DamageRange);
+	Min = (int)(MinDamage - MaxDamage);
+	Max = (int)(MinDamage + MaxDamage);
 }
 
 // Returns the range of defense
 void _Item::GetDefenseRange(int &Min, int &Max) const {
 
-	Min = (int)(Defense - DefenseRange);
-	Max = (int)(Defense + DefenseRange);
+	Min = (int)(MinDefense - MaxDefense);
+	Max = (int)(MinDefense + MaxDefense);
 }
 
 // Returns the item's price to/from a vendor

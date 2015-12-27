@@ -173,26 +173,25 @@ void _Stats::LoadItems() {
 		_Item *Item = new _Item;
 		Item->ID = ItemID;
 		Item->Name = Database->GetString("name");
-		Item->Script = Database->GetString("script");
-		Item->Level = Database->GetInt<int>("level");
-		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
 		Item->Texture = Assets.Textures[Database->GetString("texture")];
+		Item->Script = Database->GetString("script");
+		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
+		Item->Level = Database->GetInt<int>("level");
+		Item->MaxLevel = Database->GetInt<int>("maxlevel");
 		Item->LevelRequired = Database->GetInt<int>("levelrequired");
 		Item->Cost = Database->GetInt<int>("cost");
-		Item->Damage = Database->GetReal("damage");
-		Item->DamageRange = Database->GetReal("damagerange");
-		Item->Defense = Database->GetReal("defense");
-		Item->DefenseRange = Database->GetReal("defenserange");
-		Item->DamageType = Database->GetInt<int>("damagetype");
+		Item->DamageType = Database->GetInt<int>("damagetype_id");
+		Item->MinDamage = Database->GetInt<int>("mindamage");
+		Item->MaxDamage = Database->GetInt<int>("maxdamage");
+		Item->MinDefense = Database->GetInt<int>("mindefense");
+		Item->MaxDefense = Database->GetInt<int>("maxdefense");
 		Item->MaxHealth = Database->GetInt<int>("maxhealth");
 		Item->MaxMana = Database->GetInt<int>("maxmana");
-		Item->HealthRegen = Database->GetReal("healthregen");
-		Item->ManaRegen = Database->GetReal("manaregen");
-		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");
+		Item->Tradable = Database->GetInt<int>("tradable");
 		Item->TargetAlive = Database->GetInt<int>("target_alive");
+		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
-		Item->Tradable = Database->GetInt<int>("tradable");
 		Items[Item->ID] = Item;
 	}
 	Database->CloseQuery();
@@ -212,8 +211,8 @@ void _Stats::LoadVendors() {
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt<uint32_t>("id");
 		Vendor.Name = Database->GetString("name");
-		Vendor.BuyPercent = Database->GetReal("buypercent");
-		Vendor.SellPercent = Database->GetReal("sellpercent");
+		Vendor.BuyPercent = (float)Database->GetReal("buy_percent");
+		Vendor.SellPercent = (float)Database->GetReal("sell_percent");
 		Vendor.Items.clear();
 
 		// Get items
@@ -325,25 +324,20 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 	Database->BindInt(1, MonsterID);
 
 	// Get data
-	float Value, Range;
 	if(Database->FetchRow()) {
 		Monster->Level = Database->GetInt<int>("level");
 		Monster->Name = Database->GetString("name");
-		Monster->Portrait = Assets.Textures[std::string("monsters/") + Database->GetString("portrait")];
+		Monster->Portrait = Assets.Textures[Database->GetString("portrait")];
 		Monster->Health = Monster->MaxHealth = Database->GetInt<int>("health");
 		Monster->Mana = Monster->MaxMana = Database->GetInt<int>("mana");
 		Monster->ExperienceGiven = Database->GetInt<int>("experience");
 		Monster->GoldGiven = Database->GetInt<int>("gold");
 
-		Value = Database->GetReal("damage");
-		Range = Database->GetReal("damagerange");
-		Monster->MinDamage = (int)(Value - Range);
-		Monster->MaxDamage = (int)(Value + Range);
+		Monster->MinDamage = Database->GetInt<int>("mindamage");
+		Monster->MaxDamage = Database->GetInt<int>("maxdamage");
 
-		Value = Database->GetReal("defense");
-		Range = Database->GetReal("defenserange");
-		Monster->MinDefense = (int)(Value - Range);
-		Monster->MaxDefense = (int)(Value + Range);
+		Monster->MinDefense = Database->GetInt<int>("mindefense");
+		Monster->MaxDefense = Database->GetInt<int>("maxdefense");
 
 		Monster->AI = Database->GetString("ai_name");
 

@@ -1145,8 +1145,6 @@ void _Object::CalculateGearStats() {
 			// Boosts
 			MaxHealth += Item->MaxHealth;
 			MaxMana += Item->MaxMana;
-			HealthRegen += Item->HealthRegen;
-			ManaRegen += Item->ManaRegen;
 		}
 	}
 }

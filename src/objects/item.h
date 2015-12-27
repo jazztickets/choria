@@ -67,25 +67,24 @@ class _Item {
 		uint32_t ID;
 		std::string Name;
 		std::string Script;
-		int Level;
-		ItemType Type;
 		const _Texture *Texture;
+		ItemType Type;
+		int Level;
+		int MaxLevel;
 		int LevelRequired;
 		int Cost;
-		float Damage;
-		float DamageRange;
-		float Defense;
-		float DefenseRange;
 		int DamageType;
+		int MinDamage;
+		int MaxDamage;
+		int MinDefense;
+		int MaxDefense;
 		int MaxHealth;
 		int MaxMana;
-		float HealthRegen;
-		float ManaRegen;
-		TargetType TargetID;
+		bool Tradable;
 		bool TargetAlive;
+		TargetType TargetID;
 		ScopeType Scope;
 		uint32_t UnlockID;
-		bool Tradable;
 
 	private:
 
