@@ -619,15 +619,25 @@ bool _Map::Save(const std::string &Path) {
 }
 
 // Determines if a square can be moved to
-bool _Map::CanMoveTo(const glm::ivec2 &Position, const _Object *Object) {
+bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 
 	// Bounds
 	if(Position.x < 0 || Position.x >= Size.x || Position.y < 0 || Position.y >= Size.y)
 		return false;
 
 	const _Tile *Tile = &Tiles[Position.x][Position.y];
-	if(Tile->Event.Type == _Map::EVENT_KEY && Object->Inventory->HasItemID(Tile->Event.Data)) {
-		return true;
+	if(Tile->Event.Type == _Map::EVENT_KEY) {
+		if(Object->Inventory->HasItemID(Tile->Event.Data))
+			return true;
+
+		// Set message for client
+		if(!Server) {
+			const _Item *Item = Object->Stats->Items[Tile->Event.Data];
+			if(Item)
+				Object->ClientMessage = "You need a " + Item->Name;
+		}
+
+		return false;
 	}
 
 	return !Tile->Wall;

@@ -126,7 +126,6 @@ class _Object : public _ManagerBase {
 
 		// Movement
 		bool AcceptingMoveInput();
-		bool CanMove();
 		int Move();
 
 		// Skills
@@ -205,6 +204,7 @@ class _Object : public _ManagerBase {
 		bool CheckEvent;
 		bool Paused;
 		double MoveTime;
+		std::string ClientMessage;
 
 		// Texture
 		uint8_t Status;

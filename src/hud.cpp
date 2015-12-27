@@ -88,6 +88,8 @@ _HUD::_HUD() {
 	ExperienceElement = Assets.Elements["element_hud_experience"];
 	RecentItemsElement = Assets.Elements["element_hud_recentitems"];
 	GoldElement = Assets.Labels["label_hud_gold"];
+	MessageElement = Assets.Elements["element_hud_message"];
+	MessageLabel = Assets.Labels["label_hud_message"];
 
 	GoldElement->Size.x = ButtonBarElement->Size.x;
 	GoldElement->CalculateBounds();
@@ -109,6 +111,7 @@ _HUD::_HUD() {
 	ManaElement->SetVisible(true);
 	ExperienceElement->SetVisible(true);
 	GoldElement->SetVisible(true);
+	MessageElement->SetVisible(false);
 	RecentItemsElement->SetVisible(false);
 
 	Assets.Elements["element_hud"]->SetVisible(true);
@@ -464,6 +467,7 @@ void _HUD::Update(double FrameTime) {
 			++Iterator;
 	}
 
+	Message.Time += FrameTime;
 }
 
 // Draws the HUD elements
@@ -542,6 +546,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Assets.Images["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
 		ManaElement->Render();
 
+		DrawMessage();
 		DrawHudEffects();
 		DrawInventory();
 		DrawCharacter();
@@ -958,7 +963,7 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 	// Draw messages
 	int Index = 0;
 	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
-		_ChatMessage &ChatMessage = (*Iterator);
+		_Message &ChatMessage = (*Iterator);
 
 		double TimeLeft = ChatMessage.Time - Time + CHAT_MESSAGE_TIMEOUT;
 		if(Index >= CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
@@ -1315,6 +1320,28 @@ void _HUD::DrawSkills() {
 	}
 }
 
+// Draw hud message
+void _HUD::DrawMessage() {
+	if(!MessageElement->Visible)
+		return;
+
+	// Get time left
+	double TimeLeft = HUDMESSAGE_TIMEOUT - Message.Time;
+	if(TimeLeft > 0) {
+
+		// Get alpha
+		float Fade = 1.0f;
+		if(TimeLeft < HUDMESSAGE_FADETIME)
+			Fade = (float)(TimeLeft / HUDMESSAGE_FADETIME);
+
+		MessageElement->SetFade(Fade);
+		MessageElement->Render();
+	}
+	else {
+		MessageElement->SetVisible(false);
+	}
+}
+
 // Draw recently acquired items
 void _HUD::DrawRecentItems() {
 	if(!RecentItems.size() || !Player->IsAlive())
@@ -1353,6 +1380,18 @@ void _HUD::DrawRecentItems() {
 	}
 
 	RecentItemsElement->SetVisible(false);
+}
+
+// Set hud message
+void _HUD::SetMessage(const std::string &Text) {
+	Message.Time = 0;
+	MessageLabel->Text = Text;
+
+	_TextBounds Bounds;
+	MessageLabel->Font->GetStringDimensions(Text, Bounds, true);
+	MessageElement->Size = glm::vec2(Bounds.Width + 100, Bounds.AboveBase + Bounds.BelowBase + 26);
+	MessageElement->SetVisible(true);
+	MessageElement->CalculateBounds();
 }
 
 // Draws the item under the cursor

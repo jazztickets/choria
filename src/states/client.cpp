@@ -370,6 +370,10 @@ void _ClientState::Update(double FrameTime) {
 	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
 	Camera->Update(FrameTime);
 
+	// Set HUD message
+	if(Player->ClientMessage.length())
+		HUD->SetMessage(Player->ClientMessage);
+
 	// Update the HUD
 	HUD->Update(FrameTime);
 
@@ -753,7 +757,7 @@ void _ClientState::HandleInventory(_Buffer &Data) {
 void _ClientState::HandleChatMessage(_Buffer &Data) {
 
 	// Read packet
-	_ChatMessage Chat;
+	_Message Chat;
 	Chat.Color = Data.Read<glm::vec4>();
 	Chat.Message = Data.ReadString();
 	Chat.Time = Time;

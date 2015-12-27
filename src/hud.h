@@ -63,8 +63,8 @@ struct _Cursor {
 	int Window;
 };
 
-struct _ChatMessage {
-	_ChatMessage() : Message(""), Color(1.0f), Time(0) { }
+struct _Message {
+	_Message() : Message(""), Color(1.0f), Time(0) { }
 
 	std::string Message;
 	glm::vec4 Color;
@@ -109,6 +109,9 @@ class _HUD {
 		void Render(_Map *Map, double BlendFactor, double Time);
 		void DrawRecentItems();
 
+		// Events
+		void SetMessage(const std::string &Text);
+
 		// Objects
 		void SetPlayer(_Object *Player);
 		void SetActionBarSize(size_t Size);
@@ -133,7 +136,7 @@ class _HUD {
 		// Chat
 		void ToggleChat();
 		bool IsChatting();
-		void AddChatMessage(_ChatMessage &Chat) { ChatHistory.push_back(Chat); }
+		void AddChatMessage(_Message &Chat) { ChatHistory.push_back(Chat); }
 		void CloseChat();
 
 		// Trade
@@ -171,6 +174,7 @@ class _HUD {
 		void DrawTrader();
 		void DrawActionBar();
 		void DrawSkills();
+		void DrawMessage();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
 		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
@@ -207,16 +211,21 @@ class _HUD {
 		_Element *ManaElement;
 		_Element *ExperienceElement;
 		_Element *RecentItemsElement;
+		_Element *MessageElement;
 		_Label *GoldElement;
+		_Label *MessageLabel;
 		_Cursor Cursor;
 		_Cursor Tooltip;
+
+		// HUD
+		_Message Message;
 
 		// Objects
 		_Object *Player;
 		double LowestRecentItemTime;
 
 		// Chat
-		std::list<_ChatMessage> ChatHistory;
+		std::list<_Message> ChatHistory;
 		_TextBox *ChatTextBox;
 
 		// Skills
