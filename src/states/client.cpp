@@ -242,7 +242,6 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 					HUD->ToggleSkills();
 				break;
 				case _Actions::ATTACK:
-					//SendAttackPlayer();
 				break;
 				case _Actions::UP:
 				case _Actions::DOWN:

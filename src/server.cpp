@@ -312,11 +312,6 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
-	/*
-		case PacketType::WORLD_ATTACKPLAYER:
-			HandleAttackPlayer(Data, Peer);
-		break;
-	*/
 		default:
 		break;
 	}
@@ -1134,44 +1129,6 @@ void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 
 	Player->CalculateStats();
 }
-
-/*
-// Handles a player's request to attack another player
-void _Server::HandleAttackPlayer(_Buffer &Data, _Peer *Peer) {
-	_Object *Player = Peer->data;
-	if(!Player || !Player->CanAttackPlayer())
-		return;
-
-	_Map *Map = Player->Map;
-	if(!Map)
-		return;
-
-	// Check for a valid pvp tile
-	if(Player->GetTile()->PVP) {
-
-		// Reset timer
-		Player->ResetAttackPlayerTime();
-
-		// Get a list of players next to the player
-		std::list<_Object *> Players;
-		Map->GetClosePlayers(Player, 1.5f * 1.5f, Players);
-
-		// Find a suitable player to attack
-		for(std::list<_Object *>::iterator Iterator = Players.begin(); Iterator != Players.end(); ++Iterator) {
-			_Object *VictimPlayer = *Iterator;
-			if(VictimPlayer->State != _Object::STATE_BATTLE) {
-				_ServerBattle *Battle = new _ServerBattle();
-				Battles.push_back(Battle);
-
-				Battle->AddFighter(Player, 1);
-				Battle->AddFighter(VictimPlayer, 0);
-				Battle->StartBattle();
-				break;
-			}
-		}
-	}
-}
-*/
 
 // Updates the player's HUD
 void _Server::SendHUD(_Peer *Peer) {

@@ -112,7 +112,6 @@ class _Server {
 		void HandleActionBarChanged(_Buffer &Data, _Peer *Peer);
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
-		void HandleAttackPlayer(_Buffer &Data, _Peer *Peer);
 
 		void SendPlayerPosition(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);

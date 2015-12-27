@@ -44,6 +44,7 @@
 
 // Constructor
 _Object::_Object() :
+	Stats(nullptr),
 	Map(nullptr),
 	HUD(nullptr),
 	Scripting(nullptr),
@@ -52,6 +53,9 @@ _Object::_Object() :
 	InputState(0),
 	Moved(0),
 	WaitForServer(false),
+	CheckEvent(false),
+	Paused(false),
+	MoveTime(0),
 	Position(0, 0),
 	ServerPosition(0, 0),
 
@@ -83,9 +87,7 @@ _Object::_Object() :
 	AI(""),
 
 	CharacterID(0),
-	CheckEvent(false),
-	Paused(false),
-	MoveTime(0),
+
 	Status(0),
 	PortraitID(0),
 	WorldTexture(nullptr),
@@ -126,8 +128,7 @@ _Object::_Object() :
 	TradeGold(0),
 	WaitingForTrade(false),
 	TradeAccepted(false),
-	TradePlayer(nullptr),
-	Stats(nullptr) {
+	TradePlayer(nullptr) {
 
 	Inventory = new _Inventory();
 }
@@ -874,12 +875,6 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 		Battle->BroadcastPacket(Packet);
 	else if(Peer)
 		Server->Network->SendPacket(Packet, Peer);
-}
-
-// Determines if a player can attack
-bool _Object::CanAttackPlayer() {
-
-	return false; //AttackPlayerTime > PLAYER_ATTACKTIME;
 }
 
 // Delete memory used by status effects

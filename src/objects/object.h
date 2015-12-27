@@ -141,10 +141,8 @@ class _Object : public _ManagerBase {
 		// Map
 		const _Tile *GetTile();
 
-		// PVP
-		bool CanAttackPlayer();
-		void ResetAttackPlayerTime() { AttackPlayerTime = 0; }
-
+		// Client
+		_Stats *Stats;
 		_Map *Map;
 		_HUD *HUD;
 		_Scripting *Scripting;
@@ -153,6 +151,10 @@ class _Object : public _ManagerBase {
 		int InputState;
 		int Moved;
 		bool WaitForServer;
+		bool CheckEvent;
+		bool Paused;
+		double MoveTime;
+		std::string ClientMessage;
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 
@@ -166,9 +168,12 @@ class _Object : public _ManagerBase {
 		float MaxHealth;
 		float Mana;
 		float MaxMana;
-		int MinDamage, MaxDamage;
-		int MinDefense, MaxDefense;
-		float HealthRegen, ManaRegen;
+		int MinDamage;
+		int MaxDamage;
+		int MinDefense;
+		int MaxDefense;
+		float HealthRegen;
+		float ManaRegen;
 
 		// Battle
 		_Battle *Battle;
@@ -194,17 +199,12 @@ class _Object : public _ManagerBase {
 
 		// Monster
 		uint32_t DatabaseID;
-		int ExperienceGiven, GoldGiven;
+		int ExperienceGiven;
+		int GoldGiven;
 		std::string AI;
 
-		// -- PLAYER  --
+		// Account
 		uint32_t CharacterID;
-
-		// States
-		bool CheckEvent;
-		bool Paused;
-		double MoveTime;
-		std::string ClientMessage;
 
 		// Texture
 		uint8_t Status;
@@ -220,15 +220,26 @@ class _Object : public _ManagerBase {
 		// Stats
 		int PlayTime;
 		double PlayTimeAccumulator;
-		int Deaths, MonsterKills, PlayerKills, Bounty;
+		int Deaths;
+		int MonsterKills;
+		int PlayerKills;
+		int Bounty;
 		int Gold;
-		int Experience, ExperienceNeeded, ExperienceNextLevel;
-		int MinDamageBonus, MaxDamageBonus, MinDefenseBonus, MaxDefenseBonus;
+		int Experience;
+		int ExperienceNeeded;
+		int ExperienceNextLevel;
+		int MinDamageBonus;
+		int MaxDamageBonus;
+		int MinDefenseBonus;
+		int MaxDefenseBonus;
+		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
 		// Item stats
 		float WeaponDamageModifier;
-		int WeaponMinDamage, WeaponMaxDamage;
-		int ArmorMinDefense, ArmorMaxDefense;
+		int WeaponMinDamage;
+		int WeaponMaxDamage;
+		int ArmorMinDefense;
+		int ArmorMaxDefense;
 
 		// Battle
 		int NextBattle;
@@ -254,11 +265,7 @@ class _Object : public _ManagerBase {
 		bool TradeAccepted;
 		_Object *TradePlayer;
 
-		std::unordered_map<uint32_t, _Unlock> Unlocks;
-
-		_Stats *Stats;
-
-	protected:
+	private:
 
 		void DeleteStatusEffects();
 		void CalculateLevelStats();
