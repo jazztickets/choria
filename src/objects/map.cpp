@@ -16,6 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/map.h>
+#include <objects/object.h>
+#include <objects/inventory.h>
 #include <states/editor.h>
 #include <network/servernetwork.h>
 #include <network/peer.h>
@@ -617,13 +619,18 @@ bool _Map::Save(const std::string &Path) {
 }
 
 // Determines if a square can be moved to
-bool _Map::CanMoveTo(const glm::ivec2 &Position) {
+bool _Map::CanMoveTo(const glm::ivec2 &Position, const _Object *Object) {
 
 	// Bounds
 	if(Position.x < 0 || Position.x >= Size.x || Position.y < 0 || Position.y >= Size.y)
 		return false;
 
-	return !Tiles[Position.x][Position.y].Wall;
+	const _Tile *Tile = &Tiles[Position.x][Position.y];
+	if(Tile->Event.Type == _Map::EVENT_KEY && Object->Inventory->HasItemID(Tile->Event.Data)) {
+		return true;
+	}
+
+	return !Tile->Wall;
 }
 
 // Removes an object from the map

@@ -103,7 +103,7 @@ class _Map : public _ManagerBase {
 		void RenderLayer(glm::vec4 &Bounds, int Layer);
 
 		// Collision
-		bool CanMoveTo(const glm::ivec2 &Position);
+		bool CanMoveTo(const glm::ivec2 &Position, const _Object *Object);
 
 		// Peer management
 		void BroadcastPacket(_Buffer &Buffer, _Network::SendType Type=_Network::RELIABLE);

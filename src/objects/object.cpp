@@ -778,7 +778,7 @@ int _Object::Move() {
 		return 0;
 
 	// Move player
-	if(Map->CanMoveTo(Position + Direction)) {
+	if(Map->CanMoveTo(Position + Direction, this)) {
 		Position += Direction;
 		if(GetTile()->Zone > 0 && Invisible != 1)
 			NextBattle--;

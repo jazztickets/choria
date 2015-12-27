@@ -91,6 +91,16 @@ bool _Inventory::FindItem(const _Item *Item, size_t &Slot, size_t StartSlot) {
 	return false;
 }
 
+// Return true if a certain item id is in the inventory
+bool _Inventory::HasItemID(uint32_t ItemID) {
+	for(size_t i = InventoryType::HEAD; i < InventoryType::COUNT; i++) {
+		if(Slots[i].Item && Slots[i].Item->ID == ItemID)
+			return true;
+	}
+
+	return false;
+}
+
 // Count the number of a certain item in inventory
 int _Inventory::CountItem(const _Item *Item) {
 	int Count = 0;
