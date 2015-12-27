@@ -1065,8 +1065,8 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 
 			// No damage dealt
 			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL) && ActionResult.Target.Health == 0.0f) {
-				ActionResult.Timeout = ACTIONRESULT_TIMEOUT_SHORT;
-				ActionResult.Speed = ACTIONRESULT_SPEED_SHORT;
+				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
+				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 			}
 
 			Battle->ActionResults.push_back(ActionResult);

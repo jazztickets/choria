@@ -21,157 +21,149 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-const double GAME_TELEPORT_TIME = 3.0;
-const double GAME_TIMESTEP = 1 / 100.0f;
-const double GAME_SLEEPRATE = 1 / 120.0;
-const double GAME_AUTOSAVEPERIOD = 60.0;
-
-const int MAP_TILE_WIDTH = 64;
-const int MAP_TILE_HEIGHT = 64;
-
-const int NETWORKING_CHAT_SIZE = 100;
-
-const int ACTIONBAR_MAX_SIZE = 8;
-const int ACTIONBAR_STARTING_SIZE = 4;
-const int BATTLE_MINSTEPS = 9;
-const int BATTLE_MAXSTEPS = 30;
-const int BATTLE_MAXFIGHTERS_SIDE = 8;
-const int BATTLE_ROWS_PER_SIDE = 4;
-const int BATTLE_COLUMN_SPACING = 230;
-const float BATTLE_DEFAULTSPEED = (1/3.0f);
-const double BATTLE_ROUNDTIME = 5.0;
-const double BATTLE_SHOWRESULTTIME = 2.0;
-const double BATTLE_WAITRESULTTIME = 0.375;
-const double BATTLE_WAITDEADTIME = 0.75;
-const double BATTLE_WAITENDTIME = 0.30;
-const double BATTLE_MAX_START_TURNTIMER = 0.7;
-const double BATTLE_AI_UPDATE_PERIOD = 1.0;
-const float BATTLE_HEALTHBAR_WIDTH = 90;
-const float BATTLE_HEALTHBAR_HEIGHT = 22;
-
-const double PLAYER_MOVETIME = 0.125;
-const double PLAYER_ATTACKTIME = 1.0;
-
-const int STATS_MAXGOLD = 1000000;
-const int PLAYER_NAME_SIZE = 10;
-const float PLAYER_INVIS_ALPHA = 0.27f;
-const int INVENTORY_TOOLTIP_OFFSET = 20;
-const int INVENTORY_TOOLTIP_PADDING = 10;
-const int INVENTORY_MAX_STACK = 255;
-
-const int SKILL_MAX_LEVEL = 255;
-
-const int CHAT_MESSAGES = 15;
-const int CHAT_MESSAGE_TIMEOUT = 10;
-const float CHAT_MESSAGE_FADETIME = 1.0f;
-const int HUD_KEYNAME_LENGTH = 3;
-
-const double ACTIONRESULT_TIMEOUT = 2.5;
-const double ACTIONRESULT_SPEED = 3.0;
-const double ACTIONRESULT_TIMEOUT_SHORT = 1.0;
-const double ACTIONRESULT_SPEED_SHORT = 0.25;
-const double ACTIONRESULT_FADETIME = 1.0;
-
-const double STATCHANGE_TIMEOUT = 1.0;
-const double STATCHANGE_TIMEOUT_LONG = 3.0;
-const double STATCHANGE_FADETIME = 0.3;
-const float STATCHANGE_DISTANCE = 20.0f;
-
-const double RECENTITEM_TIMEOUT = 10.0;
-const double RECENTITEM_FADETIME = 2.0;
-
-const double HUDMESSAGE_TIMEOUT = 10.0;
-const double HUDMESSAGE_FADETIME = 2.0;
-
-const int SAVE_VERSION = 6;
-
 //     Config
-const  int          DEFAULT_VERSION                =  1;
-const  glm::ivec2   DEFAULT_WINDOW_SIZE            =  glm::ivec2(1024,768);
-const  int          DEFAULT_FULLSCREEN             =  0;
-const  int          DEFAULT_AUDIOENABLED           =  1;
-const  int          DEFAULT_VSYNC                  =  1;
-const  int          DEFAULT_ANISOTROPY             =  0;
-const  double       DEFAULT_MAXFPS                 =  120.0;
-const  size_t       DEFAULT_MAXCLIENTS             =  100;
-const  double       DEFAULT_NETWORKRATE            =  1.0/20.0;
-const  uint16_t     DEFAULT_NETWORKPORT            =  31234;
-const  uint16_t     DEFAULT_NETWORKPORT_ALT        =  31235;
+const  int          DEFAULT_CONFIG_VERSION          =  1;
+const  int          DEFAULT_SAVE_VERSION            =  6;
+const  glm::ivec2   DEFAULT_WINDOW_SIZE             =  glm::ivec2(1024,768);
+const  int          DEFAULT_FULLSCREEN              =  0;
+const  int          DEFAULT_AUDIOENABLED            =  1;
+const  int          DEFAULT_VSYNC                   =  1;
+const  int          DEFAULT_ANISOTROPY              =  0;
+const  double       DEFAULT_MAXFPS                  =  120.0;
+const  size_t       DEFAULT_MAXCLIENTS              =  100;
+const  double       DEFAULT_NETWORKRATE             =  1.0/20.0;
+const  uint16_t     DEFAULT_NETWORKPORT             =  31234;
+const  uint16_t     DEFAULT_NETWORKPORT_ALT         =  31235;
+const  double       DEFAULT_TIMESTEP                =  1/100.0;
+const  double       DEFAULT_SLEEPRATE               =  1/120.0;
+const  double       DEFAULT_AUTOSAVE_PERIOD         =  60.0;
 //     Graphics
-const  int          GRAPHICS_CIRCLE_VERTICES       =  32;
-const  double       MATH_PI                        =  3.14159265358979323846;
+const  int          GRAPHICS_CIRCLE_VERTICES        =  32;
 //     Camera
-const  float        CAMERA_DISTANCE                =  8.4375f;
-const  float        CAMERA_DIVISOR                 =  30.0f;
-const  float        CAMERA_EDITOR_DIVISOR          =  5.0f;
-const  float        CAMERA_FOVY                    =  90.0f;
-const  float        CAMERA_NEAR                    =  0.1f;
-const  float        CAMERA_FAR                     =  100.0f;
+const  float        CAMERA_DISTANCE                 =  8.4375f;
+const  float        CAMERA_DIVISOR                  =  30.0f;
+const  float        CAMERA_EDITOR_DIVISOR           =  5.0f;
+const  float        CAMERA_FOVY                     =  90.0f;
+const  float        CAMERA_NEAR                     =  0.1f;
+const  float        CAMERA_FAR                      =  100.0f;
 //     Account
-const  int          ACCOUNT_MAX_USERNAME_SIZE      =  15;
-const  int          ACCOUNT_MAX_PASSWORD_SIZE      =  15;
-const  int          ACCOUNT_MAX_CHARACTER_SLOTS    =  6;
+const  int          ACCOUNT_MAX_USERNAME_SIZE       =  15;
+const  int          ACCOUNT_MAX_PASSWORD_SIZE       =  15;
+const  int          ACCOUNT_MAX_CHARACTER_SLOTS     =  6;
 //     Map
-const  int          MAP_VERSION                    =  1;
-const  double       MAP_CLOCK_START                =  8.0*60.0;
-const  double       MAP_DAY_LENGTH                 =  24.0*60.0;
-const  double       MAP_CLOCK_SPEED                =  1.0;
-const  glm::vec4    MAP_AMBIENT_LIGHT              =  glm::vec4(0.3,0.3,0.3,1);
-const  std::string  MAP_DEFAULT_TILESET            =  "atlas0.png";
+const  int          MAP_VERSION                     =  1;
+const  int          MAP_TILE_WIDTH                  =  64;
+const  int          MAP_TILE_HEIGHT                 =  64;
+const  double       MAP_CLOCK_START                 =  8.0*60.0;
+const  double       MAP_DAY_LENGTH                  =  24.0*60.0;
+const  double       MAP_CLOCK_SPEED                 =  1.0;
+const  glm::vec4    MAP_AMBIENT_LIGHT               =  glm::vec4(0.3,0.3,0.3,1);
+const  std::string  MAP_DEFAULT_TILESET             =  "atlas0.png";
+//     HUD
+const  int          HUD_CHAT_MESSAGES               =  15;
+const  int          HUD_CHAT_TIMEOUT                =  10;
+const  double       HUD_CHAT_FADETIME               =  1.0;
+const  int          HUD_CHAT_SIZE                   =  100;
+const  int          HUD_KEYNAME_LENGTH              =  3;
+const  double       HUD_RECENTITEM_TIMEOUT          =  10.0;
+const  double       HUD_RECENTITEM_FADETIME         =  2.0;
+const  double       HUD_MESSAGE_TIMEOUT             =  10.0;
+const  double       HUD_MESSAGE_FADETIME            =  2.0;
+const  double       HUD_ACTIONRESULT_TIMEOUT        =  2.5;
+const  double       HUD_ACTIONRESULT_SPEED          =  3.0;
+const  double       HUD_ACTIONRESULT_TIMEOUT_SHORT  =  1.0;
+const  double       HUD_ACTIONRESULT_SPEED_SHORT    =  0.25;
+const  double       HUD_ACTIONRESULT_FADETIME       =  1.0;
+const  double       HUD_STATCHANGE_TIMEOUT          =  1.0;
+const  double       HUD_STATCHANGE_TIMEOUT_LONG     =  3.0;
+const  double       HUD_STATCHANGE_FADETIME         =  0.3;
+const  float        HUD_STATCHANGE_DISTANCE         =  20.0f;
+//     Battle
+const  int          BATTLE_MINSTEPS                 =  9;
+const  int          BATTLE_MAXSTEPS                 =  30;
+const  int          BATTLE_MAXFIGHTERS_SIDE         =  8;
+const  int          BATTLE_ROWS_PER_SIDE            =  4;
+const  int          BATTLE_COLUMN_SPACING           =  230;
+const  float        BATTLE_DEFAULTSPEED             =  (1/3.0f);
+const  double       BATTLE_ROUNDTIME                =  5.0;
+const  double       BATTLE_SHOWRESULTTIME           =  2.0;
+const  double       BATTLE_WAITRESULTTIME           =  0.375;
+const  double       BATTLE_WAITDEADTIME             =  0.75;
+const  double       BATTLE_WAITENDTIME              =  0.30;
+const  double       BATTLE_MAX_START_TURNTIMER      =  0.7;
+const  double       BATTLE_AI_UPDATE_PERIOD         =  1.0;
+const  float        BATTLE_HEALTHBAR_WIDTH          =  90;
+const  float        BATTLE_HEALTHBAR_HEIGHT         =  22;
+//     Player
+const  double       PLAYER_TELEPORT_TIME            =  3.0;
+const  double       PLAYER_MOVETIME                 =  0.125;
+const  double       PLAYER_ATTACKTIME               =  1.0;
+const  int          PLAYER_NAME_SIZE                =  10;
+const  float        PLAYER_INVIS_ALPHA              =  0.27f;
+const  int          PLAYER_MAX_GOLD                 =  1000000;
+const  int          PLAYER_MAX_SKILL_LEVEL          =  255;
+//     Actionbar
+const  int          ACTIONBAR_MAX_SIZE              =  8;
+const  int          ACTIONBAR_STARTING_SIZE         =  4;
+//     Inventory
+const  int          INVENTORY_TOOLTIP_OFFSET        =  20;
+const  int          INVENTORY_TOOLTIP_PADDING       =  10;
+const  int          INVENTORY_MAX_STACK             =  255;
 //     Menu
-const  float        MENU_ACCEPTINPUT_FADE          =  0.7f;
-const  float        MENU_PAUSE_FADE                =  0.7f;
-const  double       MENU_DOUBLECLICK_TIME          =  0.250;
-const  double       MENU_CURSOR_PERIOD             =  0.5;
-const  std::string  SCRIPTS_PATH                   =  "scripts/";
-const  std::string  SCRIPTS_ITEMS                  =  "items.lua";
-const  std::string  SCRIPTS_AI                     =  "ai.lua";
-const  std::string  SCRIPTS_SKILLS                 =  "skills.lua";
-const  std::string  SCRIPTS_BUFFS                  =  "buffs.lua";
+const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;
+const  float        MENU_PAUSE_FADE                 =  0.7f;
+const  double       MENU_DOUBLECLICK_TIME           =  0.250;
+const  double       MENU_CURSOR_PERIOD              =  0.5;
+//     Scripting
+const  std::string  SCRIPTS_PATH                    =  "scripts/";
+const  std::string  SCRIPTS_ITEMS                   =  "items.lua";
+const  std::string  SCRIPTS_AI                      =  "ai.lua";
+const  std::string  SCRIPTS_SKILLS                  =  "skills.lua";
+const  std::string  SCRIPTS_BUFFS                   =  "buffs.lua";
 //     Textures
-const  std::string  TEXTURES_PATH                  =  "textures/";
-const  std::string  TEXTURES_BATTLE                =  "battle/";
-const  std::string  TEXTURES_BUFFS                 =  "buffs/";
-const  std::string  TEXTURES_BUILDS                =  "builds/";
-const  std::string  TEXTURES_EDITOR                =  "editor/";
-const  std::string  TEXTURES_HUD                   =  "hud/";
-const  std::string  TEXTURES_HUD_REPEAT            =  "hud_repeat/";
-const  std::string  TEXTURES_INTERFACE             =  "interface/";
-const  std::string  TEXTURES_ITEMS                 =  "items/";
-const  std::string  TEXTURES_MAP                   =  "map/";
-const  std::string  TEXTURES_MENU                  =  "menu/";
-const  std::string  TEXTURES_MONSTERS              =  "monsters/";
-const  std::string  TEXTURES_PLAYERS               =  "players/";
-const  std::string  TEXTURES_PORTRAITS             =  "portraits/";
-const  std::string  TEXTURES_SKILLS                =  "skills/";
-const  std::string  TEXTURES_STATUS                =  "status/";
+const  std::string  TEXTURES_PATH                   =  "textures/";
+const  std::string  TEXTURES_BATTLE                 =  "battle/";
+const  std::string  TEXTURES_BUFFS                  =  "buffs/";
+const  std::string  TEXTURES_BUILDS                 =  "builds/";
+const  std::string  TEXTURES_EDITOR                 =  "editor/";
+const  std::string  TEXTURES_HUD                    =  "hud/";
+const  std::string  TEXTURES_HUD_REPEAT             =  "hud_repeat/";
+const  std::string  TEXTURES_INTERFACE              =  "interface/";
+const  std::string  TEXTURES_ITEMS                  =  "items/";
+const  std::string  TEXTURES_MAP                    =  "map/";
+const  std::string  TEXTURES_MENU                   =  "menu/";
+const  std::string  TEXTURES_MONSTERS               =  "monsters/";
+const  std::string  TEXTURES_PLAYERS                =  "players/";
+const  std::string  TEXTURES_PORTRAITS              =  "portraits/";
+const  std::string  TEXTURES_SKILLS                 =  "skills/";
+const  std::string  TEXTURES_STATUS                 =  "status/";
 //     Assets
-const  std::string  ASSETS_FONTS_PATH              =  "fonts/";
-const  std::string  ASSETS_MAPS_PATH               =  "maps/";
-const  std::string  ASSETS_PROGRAMS                =  "tables/programs.tsv";
-const  std::string  ASSETS_COLORS                  =  "tables/colors.tsv";
-const  std::string  ASSETS_FONTS                   =  "tables/fonts.tsv";
-const  std::string  ASSETS_LAYERS                  =  "tables/layers.tsv";
-const  std::string  ASSETS_STRINGS                 =  "tables/strings.tsv";
-const  std::string  ASSETS_UI_BUTTONS              =  "tables/ui/buttons.tsv";
-const  std::string  ASSETS_UI_ELEMENTS             =  "tables/ui/elements.tsv";
-const  std::string  ASSETS_UI_IMAGES               =  "tables/ui/images.tsv";
-const  std::string  ASSETS_UI_LABELS               =  "tables/ui/labels.tsv";
-const  std::string  ASSETS_UI_STYLES               =  "tables/ui/styles.tsv";
-const  std::string  ASSETS_UI_TEXTBOXES            =  "tables/ui/textboxes.tsv";
+const  std::string  ASSETS_FONTS_PATH               =  "fonts/";
+const  std::string  ASSETS_MAPS_PATH                =  "maps/";
+const  std::string  ASSETS_PROGRAMS                 =  "tables/programs.tsv";
+const  std::string  ASSETS_COLORS                   =  "tables/colors.tsv";
+const  std::string  ASSETS_FONTS                    =  "tables/fonts.tsv";
+const  std::string  ASSETS_LAYERS                   =  "tables/layers.tsv";
+const  std::string  ASSETS_STRINGS                  =  "tables/strings.tsv";
+const  std::string  ASSETS_UI_BUTTONS               =  "tables/ui/buttons.tsv";
+const  std::string  ASSETS_UI_ELEMENTS              =  "tables/ui/elements.tsv";
+const  std::string  ASSETS_UI_IMAGES                =  "tables/ui/images.tsv";
+const  std::string  ASSETS_UI_LABELS                =  "tables/ui/labels.tsv";
+const  std::string  ASSETS_UI_STYLES                =  "tables/ui/styles.tsv";
+const  std::string  ASSETS_UI_TEXTBOXES             =  "tables/ui/textboxes.tsv";
 //     Colors
-const  glm::vec4    COLOR_WHITE                    =  {1.0f,1.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_TWHITE                   =  {1.0f,1.0f,1.0f,0.5f};
-const  glm::vec4    COLOR_DARK                     =  {0.3f,0.3f,0.3f,1.0f};
-const  glm::vec4    COLOR_TGRAY                    =  {1.0f,1.0f,1.0f,0.2f};
-const  glm::vec4    COLOR_RED                      =  {1.0f,0.0f,0.0f,1.0f};
-const  glm::vec4    COLOR_GREEN                    =  {0.0f,1.0f,0.0f,1.0f};
-const  glm::vec4    COLOR_BLUE                     =  {0.0f,0.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_YELLOW                   =  {1.0f,1.0f,0.0f,1.0f};
-const  glm::vec4    COLOR_MAGENTA                  =  {1.0f,0.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_CYAN                     =  {0.0f,1.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_GOLD                     =  {0.76f,0.73f,0.173f,1.0f};
-const  glm::vec4    COLOR_LIGHTBLUE                =  {0.0f,0.45f,1.0f,1.0f};
-const  glm::vec4    COLOR_LIGHTGOLD                =  {0.88f,0.85f,0.33f,1.0f};
-const  glm::vec4    COLOR_GRAY                     =  {0.6f,0.6f,0.6f,1.0f};
-const  glm::vec4    COLOR_LIGHTGRAY                =  {0.78f,0.78f,0.78f,1.0f};
+const  glm::vec4    COLOR_WHITE                     =  {1.0f,1.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_TWHITE                    =  {1.0f,1.0f,1.0f,0.5f};
+const  glm::vec4    COLOR_DARK                      =  {0.3f,0.3f,0.3f,1.0f};
+const  glm::vec4    COLOR_TGRAY                     =  {1.0f,1.0f,1.0f,0.2f};
+const  glm::vec4    COLOR_RED                       =  {1.0f,0.0f,0.0f,1.0f};
+const  glm::vec4    COLOR_GREEN                     =  {0.0f,1.0f,0.0f,1.0f};
+const  glm::vec4    COLOR_BLUE                      =  {0.0f,0.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_YELLOW                    =  {1.0f,1.0f,0.0f,1.0f};
+const  glm::vec4    COLOR_MAGENTA                   =  {1.0f,0.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_CYAN                      =  {0.0f,1.0f,1.0f,1.0f};
+const  glm::vec4    COLOR_GOLD                      =  {0.76f,0.73f,0.173f,1.0f};
+const  glm::vec4    COLOR_LIGHTBLUE                 =  {0.0f,0.45f,1.0f,1.0f};
+const  glm::vec4    COLOR_LIGHTGOLD                 =  {0.88f,0.85f,0.33f,1.0f};
+const  glm::vec4    COLOR_GRAY                      =  {0.6f,0.6f,0.6f,1.0f};
+const  glm::vec4    COLOR_LIGHTGRAY                 =  {0.78f,0.78f,0.78f,1.0f};

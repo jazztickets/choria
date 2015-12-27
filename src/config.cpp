@@ -61,7 +61,7 @@ void _Config::SetDefaults() {
 	FullscreenSize = glm::ivec2(0, 0);
 
 	// Set defaults
-	Version = DEFAULT_VERSION;
+	Version = DEFAULT_CONFIG_VERSION;
 	WindowSize = DEFAULT_WINDOW_SIZE;
 	MSAA = 0;
 	Anisotropy = DEFAULT_ANISOTROPY;

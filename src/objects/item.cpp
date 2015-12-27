@@ -340,8 +340,8 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 	// Cap
 	if(Price < 0)
 		Price = 0;
-	else if(Price > STATS_MAXGOLD)
-		Price = STATS_MAXGOLD;
+	else if(Price > PLAYER_MAX_GOLD)
+		Price = PLAYER_MAX_GOLD;
 
 	return Price;
 }

@@ -891,8 +891,8 @@ void _Object::UpdateGold(int Value) {
 	Gold += Value;
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > STATS_MAXGOLD)
-		Gold = STATS_MAXGOLD;
+	else if(Gold > PLAYER_MAX_GOLD)
+		Gold = PLAYER_MAX_GOLD;
 }
 
 // Update counts on action bar
@@ -1018,7 +1018,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 		// Cap points
 		int PointsToSpend = std::min(GetSkillPointsRemaining(), Amount);
-		PointsToSpend = std::max(PointsToSpend, Skills[SkillID] - SKILL_MAX_LEVEL);
+		PointsToSpend = std::max(PointsToSpend, Skills[SkillID] - PLAYER_MAX_SKILL_LEVEL);
 
 		// Update level
 		Skills[SkillID] += PointsToSpend;

@@ -42,7 +42,7 @@ _Save::_Save() {
 	}
 
 	// Check version
-	if(SaveVersion != SAVE_VERSION) {
+	if(SaveVersion != DEFAULT_SAVE_VERSION) {
 
 		// Rename old file
 		if(SaveVersion > 0) {
@@ -426,7 +426,7 @@ void _Save::CreateDefaultDatabase() {
 	);
 
 	Database->RunQuery(
-				"INSERT INTO settings(version) VALUES(" + std::to_string(SAVE_VERSION) + ")"
+				"INSERT INTO settings(version) VALUES(" + std::to_string(DEFAULT_SAVE_VERSION) + ")"
 	);
 
 	// Clock

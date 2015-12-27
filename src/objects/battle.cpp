@@ -149,8 +149,8 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	// Get alpha
 	double TimeLeft = ActionResult.Timeout - ActionResult.Time;
 	float AlphaPercent = 1.0f;
-	if(TimeLeft < ACTIONRESULT_FADETIME)
-		AlphaPercent = (float)(TimeLeft / ACTIONRESULT_FADETIME);
+	if(TimeLeft < HUD_ACTIONRESULT_FADETIME)
+		AlphaPercent = (float)(TimeLeft / HUD_ACTIONRESULT_FADETIME);
 
 	// Get final draw position
 	glm::vec2 DrawPosition = glm::mix(ActionResult.LastPosition, ActionResult.Position, BlendFactor);

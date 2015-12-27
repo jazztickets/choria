@@ -42,7 +42,7 @@ void RunThread(void *Arguments) {
 	// Init timer
 	Uint64 Timer = SDL_GetPerformanceCounter();
 	double TimeStepAccumulator = 0.0;
-	double TimeStep = GAME_TIMESTEP;
+	double TimeStep = DEFAULT_TIMESTEP;
 	while(!Server->Done) {
 		double FrameTime = (SDL_GetPerformanceCounter() - Timer) / (double)SDL_GetPerformanceFrequency();
 		Timer = SDL_GetPerformanceCounter();
@@ -506,8 +506,8 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 
 	// Get message
 	std::string Message = Data.ReadString();
-	if(Message.length() > NETWORKING_CHAT_SIZE)
-		Message.resize(NETWORKING_CHAT_SIZE);
+	if(Message.length() > HUD_CHAT_SIZE)
+		Message.resize(HUD_CHAT_SIZE);
 
 	// Append name
 	Message = Player->Name + ": " + Message;
@@ -1076,7 +1076,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 			Player->SkillsOpen = true;
 		break;
 		case _Object::STATUS_TELEPORT: {
-			Player->TeleportTime = GAME_TELEPORT_TIME;
+			Player->TeleportTime = PLAYER_TELEPORT_TIME;
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::WORLD_TELEPORTSTART);
 			Packet.Write<double>(Player->TeleportTime);

@@ -437,7 +437,7 @@ void _HUD::Update(double FrameTime) {
 		StatChangeUI.LastPosition = StatChangeUI.Position;
 
 		// Interpolate between start and end position
-		StatChangeUI.Position = glm::mix(StatChangeUI.StartPosition, StatChangeUI.StartPosition + glm::vec2(0, STATCHANGE_DISTANCE * StatChangeUI.Direction), StatChangeUI.Time / StatChangeUI.Timeout);
+		StatChangeUI.Position = glm::mix(StatChangeUI.StartPosition, StatChangeUI.StartPosition + glm::vec2(0, HUD_STATCHANGE_DISTANCE * StatChangeUI.Direction), StatChangeUI.Time / StatChangeUI.Timeout);
 		if(StatChangeUI.Time == 0.0)
 			StatChangeUI.LastPosition = StatChangeUI.Position;
 
@@ -460,7 +460,7 @@ void _HUD::Update(double FrameTime) {
 		if(RecentItem.Time < LowestRecentItemTime)
 			LowestRecentItemTime = RecentItem.Time;
 
-		if(RecentItem.Time >= RECENTITEM_TIMEOUT) {
+		if(RecentItem.Time >= HUD_RECENTITEM_TIMEOUT) {
 			Iterator = RecentItems.erase(Iterator);
 		}
 		else
@@ -965,13 +965,13 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 	for(auto Iterator = ChatHistory.rbegin(); Iterator != ChatHistory.rend(); ++Iterator) {
 		_Message &ChatMessage = (*Iterator);
 
-		double TimeLeft = ChatMessage.Time - Time + CHAT_MESSAGE_TIMEOUT;
-		if(Index >= CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
+		double TimeLeft = ChatMessage.Time - Time + HUD_CHAT_TIMEOUT;
+		if(Index >= HUD_CHAT_MESSAGES || (!IgnoreTimeout && TimeLeft <= 0))
 			break;
 
 		// Set color
 		glm::vec4 Color = ChatMessage.Color;
-		if(!IgnoreTimeout && TimeLeft <= CHAT_MESSAGE_FADETIME)
+		if(!IgnoreTimeout && TimeLeft <= HUD_CHAT_FADETIME)
 			Color.a = (float)TimeLeft;
 
 		// Draw text
@@ -1326,13 +1326,13 @@ void _HUD::DrawMessage() {
 		return;
 
 	// Get time left
-	double TimeLeft = HUDMESSAGE_TIMEOUT - Message.Time;
+	double TimeLeft = HUD_MESSAGE_TIMEOUT - Message.Time;
 	if(TimeLeft > 0) {
 
 		// Get alpha
 		float Fade = 1.0f;
-		if(TimeLeft < HUDMESSAGE_FADETIME)
-			Fade = (float)(TimeLeft / HUDMESSAGE_FADETIME);
+		if(TimeLeft < HUD_MESSAGE_FADETIME)
+			Fade = (float)(TimeLeft / HUD_MESSAGE_FADETIME);
 
 		MessageElement->SetFade(Fade);
 		MessageElement->Render();
@@ -1348,10 +1348,10 @@ void _HUD::DrawRecentItems() {
 		return;
 
 	// Draw label
-	double TimeLeft = RECENTITEM_TIMEOUT - LowestRecentItemTime;
+	double TimeLeft = HUD_RECENTITEM_TIMEOUT - LowestRecentItemTime;
 	RecentItemsElement->SetFade(1.0f);
-	if(TimeLeft < RECENTITEM_FADETIME)
-		RecentItemsElement->SetFade((float)(TimeLeft / RECENTITEM_FADETIME));
+	if(TimeLeft < HUD_RECENTITEM_FADETIME)
+		RecentItemsElement->SetFade((float)(TimeLeft / HUD_RECENTITEM_FADETIME));
 
 	RecentItemsElement->SetVisible(true);
 	RecentItemsElement->Render();
@@ -1362,11 +1362,11 @@ void _HUD::DrawRecentItems() {
 	for(auto &RecentItem : RecentItems) {
 
 		// Get alpha
-		double TimeLeft = RECENTITEM_TIMEOUT - RecentItem.Time;
+		double TimeLeft = HUD_RECENTITEM_TIMEOUT - RecentItem.Time;
 		glm::vec4 Color(COLOR_WHITE);
 		Color.a = 1.0f;
-		if(TimeLeft < RECENTITEM_FADETIME)
-			Color.a = (float)(TimeLeft / RECENTITEM_FADETIME);
+		if(TimeLeft < HUD_RECENTITEM_FADETIME)
+			Color.a = (float)(TimeLeft / HUD_RECENTITEM_FADETIME);
 
 		// Draw item
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -1557,7 +1557,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
-			if(SkillPointsRemaining == 0 || Player->Skills[SkillID] >= SKILL_MAX_LEVEL)
+			if(SkillPointsRemaining == 0 || Player->Skills[SkillID] >= PLAYER_MAX_SKILL_LEVEL)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);
@@ -1771,7 +1771,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + ExperienceElement->Size / 2.0f;
 		StatChangeUI.Change = StatChange.Experience;
 		StatChangeUI.Direction = -2.0f;
-		StatChangeUI.Timeout = STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["battle_large"];
 		StatChangeUI.SetText(COLOR_WHITE, COLOR_WHITE);
 		StatChanges.push_back(StatChangeUI);
@@ -1784,7 +1784,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.StartPosition.x += -45;
 		StatChangeUI.Change = StatChange.Gold;
 		StatChangeUI.Direction = 1.5f;
-		StatChangeUI.Timeout = STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
 		StatChangeUI.SetText(COLOR_GOLD, COLOR_GOLD);
 		StatChanges.push_back(StatChangeUI);

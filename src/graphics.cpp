@@ -25,6 +25,7 @@
 #include <pnglite/pnglite.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/constants.hpp>
 #include <stdexcept>
 
 _Graphics Graphics;
@@ -204,7 +205,7 @@ void _Graphics::BuildVertexBuffers() {
 
 		// Get vertices
 		for(int i = 0; i < GRAPHICS_CIRCLE_VERTICES; i++) {
-			float Radians = ((float)i / GRAPHICS_CIRCLE_VERTICES) * ((float)MATH_PI * 2.0f);
+			float Radians = ((float)i / GRAPHICS_CIRCLE_VERTICES) * (glm::pi<float>() * 2.0f);
 			Triangles[i * 2] = std::cos(Radians);
 			Triangles[i * 2 + 1] = std::sin(Radians);
 		}

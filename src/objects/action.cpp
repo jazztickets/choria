@@ -169,7 +169,7 @@ _ActionResult::_ActionResult() :
 	BuffLevel(0),
 	BuffDuration(0),
 	Time(0.0),
-	Timeout(ACTIONRESULT_TIMEOUT),
-	Speed(ACTIONRESULT_SPEED),
+	Timeout(HUD_ACTIONRESULT_TIMEOUT),
+	Speed(HUD_ACTIONRESULT_SPEED),
 	Scope(ScopeType::ALL) {
 }
