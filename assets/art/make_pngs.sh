@@ -13,7 +13,7 @@ fi
 density=$((45 * $size/32))
 
 # get list of objects
-names=`grep id=\"layer $file -C 3 | grep label | grep =.* -o | tr -d '="' | tac`
+names=`grep id=\"layer $file -C 3 | grep label | grep =.* -o | tr -d '="<>' | tac`
 
 # export pngs
 convert -density ${density} -background none ${file} -crop ${size}x${size} -depth 8 +repage PNG32:export/_out.png
