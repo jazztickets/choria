@@ -144,9 +144,12 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 		case InventoryType::HAND1:
 			if(Item->Type == ItemType::ONEHANDED_WEAPON)
 				return true;
+
+			if(Item->Type == ItemType::TWOHANDED_WEAPON && Slots[InventoryType::HAND2].Item == nullptr)
+				return true;
 		break;
 		case InventoryType::HAND2:
-			if(Item->Type == ItemType::SHIELD)
+			if(Item->Type == ItemType::SHIELD && (Slots[InventoryType::HAND1].Item == nullptr || Slots[InventoryType::HAND1].Item->Type != ItemType::TWOHANDED_WEAPON))
 				return true;
 		break;
 		case InventoryType::RING1:
