@@ -179,6 +179,48 @@ function Skill_Bolt.ApplyCost(Level, Result)
 	return Result
 end
 
+-- Spark --
+
+Skill_Spark = {
+	ManaCostBase = 1,
+	DamageBase = 1,
+	Mult = 2,
+	CostPerLevel = 1 / 3,
+	GetDamage = function(Level)
+		return Skill_Spark.DamageBase + Level * Skill_Spark.Mult
+	end,
+	GetCost = function(Level)
+		return math.floor(Skill_Spark.ManaCostBase + Level * Skill_Spark.CostPerLevel)
+	end
+}
+
+function Skill_Spark.GetInfo(Level)
+
+	return "Shock a target for [c green]" .. Skill_Spark.GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. Skill_Spark.GetCost(Level) .. " [c white]MP"
+end
+
+function Skill_Spark.Use(Level, Source, Target, Result)
+
+	Damage = math.max(Skill_Spark.GetDamage(Level) - Target.GenerateDefense(), 0)
+	Result.Target.Health = -Damage
+
+	return Result
+end
+
+function Skill_Spark.CanUse(Level, Object)
+	if Object.Mana >= Skill_Spark.GetCost(Level) then
+		return 1
+	end
+
+	return 0
+end
+
+function Skill_Spark.ApplyCost(Level, Result)
+	Result.Source.Mana = -Skill_Spark.GetCost(Level)
+
+	return Result
+end
+
 -- Toughness --
 
 Skill_Toughness = { PerLevel = 4 }
