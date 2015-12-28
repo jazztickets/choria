@@ -61,8 +61,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 	TooltipElement->SetVisible(false);
 
 	// Set draw position to center of window
-	glm::vec2 DrawPosition(WindowOffset.x + 20, TooltipName->Bounds.End.y);
-	DrawPosition.y += 30;
+	glm::vec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, (int)(TooltipName->Bounds.End.y + 40));
 
 	if(!Script.length())
 		return;
@@ -86,7 +85,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 		std::list<std::string> Strings;
 		Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings, true);
 		for(const auto &LineToken : Strings) {
-			Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, LEFT_BASELINE);
+			Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 	}

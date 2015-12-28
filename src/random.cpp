@@ -25,7 +25,7 @@ int GetRandomInt(int Min, int Max) {
 }
 
 uint32_t GetRandomInt(uint32_t Min, uint32_t Max) {
-	std::uniform_int_distribution<int> Distribution(Min, Max);
+	std::uniform_int_distribution<uint32_t> Distribution(Min, Max);
 	return Distribution(RandomGenerator);
 }
 
