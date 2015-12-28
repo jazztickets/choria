@@ -96,7 +96,7 @@ const  float        BATTLE_HEALTHBAR_WIDTH          =  90;
 const  float        BATTLE_HEALTHBAR_HEIGHT         =  22;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
-const  double       PLAYER_MOVETIME                 =  0.125;
+const  double       PLAYER_MOVETIME                 =  0.15;
 const  double       PLAYER_ATTACKTIME               =  1.0;
 const  double       PLAYER_MIN_BATTLESPEED          =  0.1;
 const  int          PLAYER_NAME_SIZE                =  10;

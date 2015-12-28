@@ -49,7 +49,9 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 
 	// Set label values
 	TooltipName->Text = Name;
-	TooltipType->Text = Player->Stats->ItemTypes[(uint32_t)Type];
+	TooltipType->Text = "";
+	if(Type != ItemType::NONE)
+		TooltipType->Text = Player->Stats->ItemTypes[(uint32_t)Type];
 
 	// Set window width
 	_TextBounds TextBounds;
