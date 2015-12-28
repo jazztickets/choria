@@ -1,6 +1,6 @@
 AI_Dumb = {}
 
-function AI_Dumb.Update(Object, Enemies, Allies)
+function AI_Dumb.Update(self, Object, Enemies, Allies)
 	if Object.TurnTimer >= 1.0 then
 		if not Object.BattleActionIsSet then
 
@@ -23,7 +23,7 @@ end
 
 AI_Smart = {}
 
-function AI_Smart.Update(Object, Enemies, Allies)
+function AI_Smart.Update(self, Object, Enemies, Allies)
 	if Object.TurnTimer >= 1.0 then
 		if not Object.BattleActionIsSet then
 

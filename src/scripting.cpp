@@ -299,6 +299,9 @@ bool _Scripting::StartMethodCall(const std::string &TableName, const std::string
 		return false;
 	}
 
+	// Push self parameter
+	lua_getglobal(LuaState, TableName.c_str());
+
 	return true;
 }
 
@@ -306,7 +309,7 @@ bool _Scripting::StartMethodCall(const std::string &TableName, const std::string
 void _Scripting::MethodCall(int ParameterCount, int ReturnCount) {
 
 	// Call function
-	if(lua_pcall(LuaState, ParameterCount, ReturnCount, 0)) {
+	if(lua_pcall(LuaState, ParameterCount+1, ReturnCount, 0)) {
 		throw std::runtime_error(lua_tostring(LuaState, -1));
 	}
 }

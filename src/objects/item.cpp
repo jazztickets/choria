@@ -285,17 +285,17 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 	std::string Info = "";
 	if(Scripting->StartMethodCall(Script, "GetInfo")) {
 
-		// Draw level text
-		if(ShowLevel) {
-			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, COLOR_GRAY, CENTER_BASELINE);
-			DrawPosition.y += SpacingY;
-		}
-
 		// Get description from script
 		Scripting->PushInt(DrawLevel);
 		Scripting->MethodCall(1, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
+
+		// Draw level text
+		if(ShowLevel) {
+			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+			DrawPosition.y += SpacingY;
+		}
 
 		std::stringstream Buffer(Info);
 		std::string Token;

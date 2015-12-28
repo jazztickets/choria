@@ -1,29 +1,85 @@
+-- Base Attack Skill --
+Base_Attack = {
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetInfo = function(self, Level)
+		return ""
+	end,
+
+	Use = function(self, Level, Source, Target, Result)
+		Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+		Result.Target.Health = -Damage
+
+		return Result
+	end
+}
+
+-- Base Spell Skill --
+Base_Spell = {
+	ManaCostBase = 0,
+	DamageBase = 0,
+	Multiplier = 0,
+	CostPerLevel = 0,
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetDamage = function(self, Level)
+		return self.DamageBase + Level * self.Multiplier
+	end,
+
+	GetCost = function(self, Level)
+		return math.floor(self.ManaCostBase + Level * self.CostPerLevel)
+	end,
+
+	ApplyCost = function(self, Level, Result)
+		Result.Source.Mana = -self:GetCost(Level)
+
+		return Result
+	end,
+
+	CanUse = function(self, Level, Object)
+		if Object.Mana >= self:GetCost(Level) then
+			return 1
+		end
+
+		return 0
+	end,
+
+	Use = function(self, Level, Source, Target, Result)
+
+		Damage = math.max(self:GetDamage(Level) - Target.GenerateDefense(), 0)
+		Result.Target.Health = -Damage
+
+		return Result
+	end
+}
+
 -- Monster attack --
 
-Skill_MonsterAttack = {}
-
-function Skill_MonsterAttack.GetInfo(Level)
-	return ""
-end
-
-function Skill_MonsterAttack.Use(Level, Source, Target, Result)
-	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
-	Result.Target.Health = -Damage
-
-	return Result
-end
+Skill_MonsterAttack = Base_Attack:New()
 
 -- Basic attack --
 
-Skill_Attack = {}
+Skill_Attack = Base_Attack:New()
 
-function Skill_Attack.GetInfo(Level)
+function Skill_Attack.GetInfo(self, Level)
 	Chance = 4 + Level
 
 	return "Attack with your weapon\n[c green]" .. Chance .. "% [c white]chance to deal [c green]200% [c white]extra damage"
 end
 
-function Skill_Attack.Use(Level, Source, Target, Result)
+function Skill_Attack.Use(self, Level, Source, Target, Result)
 	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
 	if Random.GetInt(1, 100) <= 4 + Level then
 		Damage = Damage * 3
@@ -36,15 +92,15 @@ end
 
 -- Whirl --
 
-Skill_Whirl = {}
+Skill_Whirl = Base_Attack:New()
 
-function Skill_Whirl.GetInfo(Level)
+function Skill_Whirl.GetInfo(self, Level)
 	Chance = 9 + Level
 
 	return "Slash all enemies with [c green]30% [c white]weapon damage\n[c green]" .. Chance .. "% [c white]chance to cause [c yellow]bleeding"
 end
 
-function Skill_Whirl.Use(Level, Source, Target, Result)
+function Skill_Whirl.Use(self, Level, Source, Target, Result)
 	Damage = math.floor(Source.GenerateDamage() * 0.3)
 	Damage = math.max(Damage - Target.GenerateDefense(), 0)
 
@@ -60,178 +116,45 @@ end
 
 -- Heal --
 
-Skill_Heal = {
-	ManaCostBase = 3,
-	HealBase = 10,
-	CostPerLevel = 1.0 / 3.0,
-	GetCost = function(Level)
-		return math.floor(Skill_Heal.ManaCostBase + Level * Skill_Heal.CostPerLevel)
-	end
-}
+Skill_Heal = Base_Spell:New()
+Skill_Heal.ManaCostBase = 3
+Skill_Heal.HealBase = 10
+Skill_Heal.CostPerLevel = 1.0 / 3.0
 
-function Skill_Heal.GetInfo(Level)
+function Skill_Heal.GetInfo(self, Level)
 
-	return "Heal target for [c green]" .. (Skill_Heal.HealBase + Level * 5) .. "[c white] HP\nCost [c light_blue]" .. Skill_Heal.GetCost(Level) .. " [c white]MP"
+	return "Heal target for [c green]" .. (self.HealBase + Level * 5) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
-function Skill_Heal.Use(Level, Source, Target, Result)
+function Skill_Heal.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Health = Skill_Heal.HealBase + Level * 5
-
-	return Result
-end
-
-function Skill_Heal.CanUse(Level, Object)
-	if Object.Mana >= Skill_Heal.GetCost(Level) then
-		return 1
-	end
-
-	return 0
-end
-
-function Skill_Heal.ApplyCost(Level, Result)
-	Result.Source.Mana = -Skill_Heal.GetCost(Level)
-
-	return Result
-end
-
--- Flame --
-
-Skill_Flame = {
-	ManaCostBase = 5,
-	DamageBase = 5,
-	Mult = 2,
-	CostPerLevel = 0.5,
-	GetDamage = function(Level)
-		return Skill_Flame.DamageBase + Level * Skill_Flame.Mult
-	end,
-	GetCost = function(Level)
-		return math.floor(Skill_Flame.ManaCostBase + Level * Skill_Flame.CostPerLevel)
-	end
-}
-
-function Skill_Flame.GetInfo(Level)
-
-	return "Burn all targets for [c green]" .. Skill_Flame.GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. Skill_Flame.GetCost(Level) .. " [c white]MP"
-end
-
-function Skill_Flame.Use(Level, Source, Target, Result)
-
-	Damage = math.max(Skill_Flame.GetDamage(Level) - Target.GenerateDefense(), 0)
-	Result.Target.Health = -Damage
-
-	return Result
-end
-
-function Skill_Flame.CanUse(Level, Object)
-	if Object.Mana >= Skill_Flame.GetCost(Level) then
-		return 1
-	end
-
-	return 0
-end
-
-function Skill_Flame.ApplyCost(Level, Result)
-	Result.Source.Mana = -Skill_Flame.GetCost(Level)
-
-	return Result
-end
-
--- Bolt --
-
-Skill_Bolt = {
-	ManaCostBase = 5,
-	DamageBase = 15,
-	Mult = 6,
-	CostPerLevel = 1,
-	GetDamage = function(Level)
-		return Skill_Bolt.DamageBase + Level * Skill_Bolt.Mult
-	end,
-	GetCost = function(Level)
-		return math.floor(Skill_Bolt.ManaCostBase + Level * Skill_Bolt.CostPerLevel)
-	end
-}
-
-function Skill_Bolt.GetInfo(Level)
-
-	return "Strike a target for [c green]" .. Skill_Bolt.GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. Skill_Bolt.GetCost(Level) .. " [c white]MP"
-end
-
-function Skill_Bolt.Use(Level, Source, Target, Result)
-
-	Damage = math.max(Skill_Bolt.GetDamage(Level) - Target.GenerateDefense(), 0)
-	Result.Target.Health = -Damage
-
-	return Result
-end
-
-function Skill_Bolt.CanUse(Level, Object)
-	if Object.Mana >= Skill_Bolt.GetCost(Level) then
-		return 1
-	end
-
-	return 0
-end
-
-function Skill_Bolt.ApplyCost(Level, Result)
-	Result.Source.Mana = -Skill_Bolt.GetCost(Level)
+	Result.Target.Health = self.HealBase + Level * 5
 
 	return Result
 end
 
 -- Spark --
+Skill_Spark = Base_Spell:New()
+Skill_Spark.ManaCostBase = 1
+Skill_Spark.DamageBase = 1
+Skill_Spark.Multiplier = 2
+Skill_Spark.CostPerLevel = 1 / 3
 
-Skill_Spark = {
-	ManaCostBase = 1,
-	DamageBase = 1,
-	Mult = 2,
-	CostPerLevel = 1 / 3,
-	GetDamage = function(Level)
-		return Skill_Spark.DamageBase + Level * Skill_Spark.Mult
-	end,
-	GetCost = function(Level)
-		return math.floor(Skill_Spark.ManaCostBase + Level * Skill_Spark.CostPerLevel)
-	end
-}
-
-function Skill_Spark.GetInfo(Level)
-
-	return "Shock a target for [c green]" .. Skill_Spark.GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. Skill_Spark.GetCost(Level) .. " [c white]MP"
-end
-
-function Skill_Spark.Use(Level, Source, Target, Result)
-
-	Damage = math.max(Skill_Spark.GetDamage(Level) - Target.GenerateDefense(), 0)
-	Result.Target.Health = -Damage
-
-	return Result
-end
-
-function Skill_Spark.CanUse(Level, Object)
-	if Object.Mana >= Skill_Spark.GetCost(Level) then
-		return 1
-	end
-
-	return 0
-end
-
-function Skill_Spark.ApplyCost(Level, Result)
-	Result.Source.Mana = -Skill_Spark.GetCost(Level)
-
-	return Result
+function Skill_Spark.GetInfo(self, Level)
+	return "Shock a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 -- Toughness --
 
 Skill_Toughness = { PerLevel = 4 }
 
-function Skill_Toughness.GetInfo(Level)
+function Skill_Toughness.GetInfo(self, Level)
 
 	return "Increase max HP by [c green]" .. Skill_Toughness.PerLevel * Level
 end
 
-function Skill_Toughness.Stats(Level, Object, Change)
-	Change.MaxHealth = Skill_Toughness.PerLevel * Level
+function Skill_Toughness.Stats(self, Level, Object, Change)
+	Change.MaxHealth = self.PerLevel * Level
 
 	return Change
 end
@@ -240,13 +163,13 @@ end
 
 Skill_ArcaneMastery = { PerLevel = 2 }
 
-function Skill_ArcaneMastery.GetInfo(Level)
+function Skill_ArcaneMastery.GetInfo(self, Level)
 
 	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Level
 end
 
-function Skill_ArcaneMastery.Stats(Level, Object, Change)
-	Change.MaxMana = Skill_ArcaneMastery.PerLevel * Level
+function Skill_ArcaneMastery.Stats(self, Level, Object, Change)
+	Change.MaxMana = self.PerLevel * Level
 
 	return Change
 end

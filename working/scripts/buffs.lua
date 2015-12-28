@@ -2,13 +2,13 @@
 
 Buff_Bleeding = { Damage = 1 }
 
-function Buff_Bleeding.GetInfo(Level)
+function Buff_Bleeding.GetInfo(self, Level)
 
-	return "Slowly bleeding for [c red]" .. Buff_Bleeding.Damage * Level .. " [c white]damage"
+	return "Slowly bleeding for [c red]" .. self.Damage * Level .. " [c white]damage"
 end
 
-function Buff_Bleeding.Update(Level, Source, Change)
-	Change.Health = -Buff_Bleeding.Damage * Level
+function Buff_Bleeding.Update(self, Level, Source, Change)
+	Change.Health = -self.Damage * Level
 
 	return Change
 end
@@ -17,13 +17,13 @@ end
 
 Buff_Healing = { Heal = 3 }
 
-function Buff_Healing.GetInfo(Level)
+function Buff_Healing.GetInfo(self, Level)
 
-	return "Slowly healing for [c green]" .. Buff_Healing.Heal * Level .. " [c white]HP"
+	return "Slowly healing for [c green]" .. self.Heal * Level .. " [c white]HP"
 end
 
-function Buff_Healing.Update(Level, Source, Change)
-	Change.Health = Buff_Healing.Heal * Level
+function Buff_Healing.Update(self, Level, Source, Change)
+	Change.Health = self.Heal * Level
 
 	return Change
 end
@@ -32,13 +32,13 @@ end
 
 Buff_Mana = { Mana = 1 }
 
-function Buff_Mana.GetInfo(Level)
+function Buff_Mana.GetInfo(self, Level)
 
-	return "Slowly regaining [c light_blue]" .. Buff_Mana.Mana * Level .. " [c white]MP"
+	return "Slowly regaining [c light_blue]" .. self.Mana * Level .. " [c white]MP"
 end
 
-function Buff_Mana.Update(Level, Source, Change)
-	Change.Mana = Buff_Mana.Mana * Level
+function Buff_Mana.Update(self, Level, Source, Change)
+	Change.Mana = self.Mana * Level
 
 	return Change
 end
@@ -47,18 +47,18 @@ end
 
 Buff_Invis = { }
 
-function Buff_Invis.GetInfo(Level)
+function Buff_Invis.GetInfo(self, Level)
 
 	return "Avoiding combat"
 end
 
-function Buff_Invis.Begin(Level, Source, Change)
+function Buff_Invis.Begin(self, Level, Source, Change)
 	Change.Invisible = 1
 
 	return Change
 end
 
-function Buff_Invis.End(Level, Source, Change)
+function Buff_Invis.End(self, Level, Source, Change)
 	Change.Invisible = 0
 
 	return Change
