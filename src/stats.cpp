@@ -411,19 +411,28 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 	if(ZoneID == 0)
 		return;
 
-	int MonsterCount = 0;
 
 	// Get zone info
-	Database->PrepareQuery("SELECT monstercount FROM zone WHERE id = @zone_id");
+	Database->PrepareQuery("SELECT minspawn, maxspawn FROM zone WHERE id = @zone_id");
 	Database->BindInt(1, ZoneID);
+
+	// Get spawn range
+	int MinSpawn = 0;
+	int MaxSpawn = 0;
 	if(Database->FetchRow()) {
-		MonsterCount = AdditionalCount + Database->GetInt<int>("monstercount");
+		MinSpawn = Database->GetInt<int>("minspawn");
+		MaxSpawn = Database->GetInt<int>("maxspawn");
 	}
 	Database->CloseQuery();
+
+	// Get monster count
+	int MonsterCount = GetRandomInt(MinSpawn, MaxSpawn);
 
 	// No monsters
 	if(MonsterCount == 0)
 		return;
+
+	MonsterCount += AdditionalCount;
 
 	// Run query
 	Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
