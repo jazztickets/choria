@@ -24,6 +24,7 @@
 
 // Forward Declarations
 class _Object;
+class _Item;
 class _Stats;
 class _StatChange;
 struct _ActionResult;
@@ -39,7 +40,6 @@ class _Scripting {
 		void LoadScript(const std::string &Path);
 		void InjectStats(_Stats *Stats);
 
-		void PushData(void *Data);
 		void PushObject(_Object *Object);
 		void PushActionResult(_ActionResult *ActionResult);
 		void PushStatChange(_StatChange *StatChange);
@@ -47,6 +47,7 @@ class _Scripting {
 		void PushInt(int Value);
 
 		int GetInt(int Index);
+		int GetBoolean(int Index);
 		std::string GetString(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 		void GetStatChange(int Index, _StatChange &StatChange);
@@ -61,12 +62,17 @@ class _Scripting {
 
 	private:
 
+		static void PushItem(lua_State *LuaState, const _Item *Item);
+
 		static int RandomGetInt(lua_State *LuaState);
 
 		static int ObjectSetBattleTarget(lua_State *LuaState);
+		static int ObjectGetInventoryItem(lua_State *LuaState);
 		static int ObjectSetAction(lua_State *LuaState);
 		static int ObjectGenerateDamage(lua_State *LuaState);
 		static int ObjectGenerateDefense(lua_State *LuaState);
+
+		static int ItemGenerateDefense(lua_State *LuaState);
 
 		lua_State *LuaState;
 		int CurrentTableIndex;

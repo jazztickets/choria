@@ -12,7 +12,7 @@ function Item_HealingSalve.CanUse(self, Level, Object)
 	--	return 1
 	--end
 
-	return 1
+	return true
 end
 
 function Item_HealingSalve.Use(self, Level, Source, Target, Result)
@@ -38,7 +38,7 @@ function Item_ManaCider.CanUse(self, Level, Object)
 	--	return 1
 	--end
 
-	return 1
+	return true
 end
 
 function Item_ManaCider.Use(self, Level, Source, Target, Result)
@@ -61,7 +61,7 @@ end
 
 function Item_InvisPotion.CanUse(self, Level, Object)
 
-	return 1
+	return true
 end
 
 function Item_InvisPotion.Use(self, Level, Source, Target, Result)

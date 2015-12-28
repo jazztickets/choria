@@ -20,6 +20,7 @@
 #include <objects/buff.h>
 #include <objects/statchange.h>
 #include <objects/battle.h>
+#include <objects/inventory.h>
 #include <stats.h>
 #include <random.h>
 #include <stdexcept>
@@ -82,20 +83,35 @@ void _Scripting::InjectStats(_Stats *Stats) {
 
 	// Assign table a name
 	lua_setglobal(LuaState, "Buffs");
+
+	// Push inventory slot types
+	lua_pushinteger(LuaState, InventoryType::HEAD);
+	lua_setglobal(LuaState, "INVENTORY_HEAD");
+	lua_pushinteger(LuaState, InventoryType::BODY);
+	lua_setglobal(LuaState, "INVENTORY_BODY");
+	lua_pushinteger(LuaState, InventoryType::LEGS);
+	lua_setglobal(LuaState, "INVENTORY_LEGS");
+	lua_pushinteger(LuaState, InventoryType::HAND1);
+	lua_setglobal(LuaState, "INVENTORY_HAND1");
+	lua_pushinteger(LuaState, InventoryType::HAND2);
+	lua_setglobal(LuaState, "INVENTORY_HAND2");
+	lua_pushinteger(LuaState, InventoryType::RING1);
+	lua_setglobal(LuaState, "INVENTORY_RING1");
+	lua_pushinteger(LuaState, InventoryType::RING2);
+	lua_setglobal(LuaState, "INVENTORY_RING2");
 }
 
-// Push pointer onto stack
-void _Scripting::PushData(void *Data) {
-	lua_pushlightuserdata(LuaState, Data);
-}
-
-// Push pointer onto stack
+// Push object onto stack
 void _Scripting::PushObject(_Object *Object) {
 	lua_newtable(LuaState);
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectSetBattleTarget, 1);
 	lua_setfield(LuaState, -2, "SetBattleTarget");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetInventoryItem, 1);
+	lua_setfield(LuaState, -2, "GetInventoryItem");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectSetAction, 1);
@@ -134,6 +150,23 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "MaxMana");
 
 	lua_pushlightuserdata(LuaState, Object);
+	lua_setfield(LuaState, -2, "Pointer");
+}
+
+// Push item onto stack
+void _Scripting::PushItem(lua_State *LuaState, const _Item *Item) {
+	if(!Item) {
+		lua_pushnil(LuaState);
+		return;
+	}
+
+	lua_newtable(LuaState);
+
+	lua_pushlightuserdata(LuaState, (void *)Item);
+	lua_pushcclosure(LuaState, &ItemGenerateDefense, 1);
+	lua_setfield(LuaState, -2, "GenerateDefense");
+
+	lua_pushlightuserdata(LuaState, (void *)Item);
 	lua_setfield(LuaState, -2, "Pointer");
 }
 
@@ -193,6 +226,12 @@ void _Scripting::PushInt(int Value) {
 int _Scripting::GetInt(int Index) {
 
 	return (int)lua_tointeger(LuaState, Index + CurrentTableIndex);
+}
+
+// Get return value as bool
+int _Scripting::GetBoolean(int Index) {
+
+	return lua_toboolean(LuaState, Index + CurrentTableIndex);
 }
 
 // Get return value as string
@@ -355,6 +394,27 @@ int _Scripting::ObjectSetBattleTarget(lua_State *LuaState) {
 	return 0;
 }
 
+// Return an item from the object's inventory
+int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
+	if(!lua_isinteger(LuaState, 1))
+		throw std::runtime_error("ObjectGetInventoryItem: Slot is not an integer!");
+
+	// Get self pointer
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+
+	const _Item *Item = nullptr;
+
+	// Get item
+	size_t Slot = (size_t)lua_tointeger(LuaState, 1);
+	if(Slot < Object->Inventory->Slots.size())
+		Item = Object->Inventory->Slots[Slot].Item;
+
+	// Push item
+	PushItem(LuaState, Item);
+
+	return 1;
+}
+
 // Set battle action
 int _Scripting::ObjectSetAction(lua_State *LuaState) {
 
@@ -383,6 +443,16 @@ int _Scripting::ObjectGenerateDefense(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	lua_pushinteger(LuaState, Object->GenerateDefense());
+
+	return 1;
+}
+
+// Generate a random defense value for an item
+int _Scripting::ItemGenerateDefense(lua_State *LuaState) {
+
+	// Get self pointer
+	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	lua_pushinteger(LuaState, GetRandomInt(Item->MinDefense, Item->MaxDefense));
 
 	return 1;
 }

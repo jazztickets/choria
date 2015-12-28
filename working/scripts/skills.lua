@@ -50,10 +50,10 @@ Base_Spell = {
 
 	CanUse = function(self, Level, Object)
 		if Object.Mana >= self:GetCost(Level) then
-			return 1
+			return true
 		end
 
-		return 0
+		return false
 	end,
 
 	Use = function(self, Level, Source, Target, Result)
@@ -83,6 +83,47 @@ function Skill_Attack.Use(self, Level, Source, Target, Result)
 	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
 	if Random.GetInt(1, 100) <= 4 + Level then
 		Damage = Damage * 3
+	end
+
+	Result.Target.Health = -Damage
+
+	return Result
+end
+
+-- Shield Bash --
+
+Skill_ShieldBash = Base_Attack:New()
+Skill_ShieldBash.BaseChance = 23
+Skill_ShieldBash.ChancePerLevel = 2
+Skill_ShieldBash.Duration = 3
+
+function Skill_ShieldBash.GetInfo(self, Level)
+	return "Bash with your enemy with a shield\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to stun for [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Skill_ShieldBash.GetChance(self, Level)
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+end
+
+function Skill_ShieldBash.CanUse(self, Level, Object)
+	Shield = Object.GetInventoryItem(INVENTORY_HAND2)
+
+	return Shield ~= nil
+end
+
+function Skill_ShieldBash.Use(self, Level, Source, Target, Result)
+	Shield = Source.GetInventoryItem(INVENTORY_HAND2)
+	if Shield == nil then
+		return Result
+	end
+
+	ShieldDamage = Shield.GenerateDefense()
+	Damage = math.max(ShieldDamage - Target.GenerateDefense(), 0)
+
+	if Random.GetInt(1, 100) <= self:GetChance(Level) then
+		Result.Buff = Buffs["Buff_Stunned"]
+		Result.BuffLevel = 1
+		Result.BuffDuration = self.Duration
 	end
 
 	Result.Target.Health = -Damage

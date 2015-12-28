@@ -365,7 +365,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->MethodCall(2, 1);
-		int Value = Scripting->GetInt(1);
+		int Value = Scripting->GetBoolean(1);
 		Scripting->FinishMethodCall();
 
 		return Value;
