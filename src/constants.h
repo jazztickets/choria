@@ -116,10 +116,7 @@ const  double       MENU_DOUBLECLICK_TIME           =  0.250;
 const  double       MENU_CURSOR_PERIOD              =  0.5;
 //     Scripting
 const  std::string  SCRIPTS_PATH                    =  "scripts/";
-const  std::string  SCRIPTS_ITEMS                   =  "items.lua";
-const  std::string  SCRIPTS_AI                      =  "ai.lua";
-const  std::string  SCRIPTS_SKILLS                  =  "skills.lua";
-const  std::string  SCRIPTS_BUFFS                   =  "buffs.lua";
+const  std::string  SCRIPTS_GAME                    =  "game.lua";
 //     Textures
 const  std::string  TEXTURES_PATH                   =  "textures/";
 const  std::string  TEXTURES_BATTLE                 =  "battle/";

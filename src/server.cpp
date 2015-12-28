@@ -87,10 +87,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 
 	Scripting = new _Scripting();
 	Scripting->InjectStats(Stats);
-	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_ITEMS);
-	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_AI);
-	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_SKILLS);
-	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_BUFFS);
+	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_GAME);
 }
 
 // Destructor
