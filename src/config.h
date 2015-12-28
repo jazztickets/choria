@@ -64,6 +64,7 @@ class _Config {
 
 		// Editor
 		std::string BrowserCommand;
+		std::string DesignToolURL;
 
 		std::string LastHost;
 		std::string LastPort;
