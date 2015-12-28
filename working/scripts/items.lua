@@ -1,13 +1,13 @@
--- Health Potion --
+-- Healing Salve  --
 
-Item_HealthPotion = { HealBase = 3, Duration = 5 }
+Item_HealingSalve = { HealBase = 3, Duration = 5 }
 
-function Item_HealthPotion.GetInfo(Level)
+function Item_HealingSalve.GetInfo(self, Level)
 
-	return "Restore [c green]" .. Level * Item_HealthPotion.HealBase * Item_HealthPotion.Duration .. "[c white] HP over [c green]" .. Item_HealthPotion.Duration .. " [c white]seconds"
+	return "Restore [c green]" .. Level * self.HealBase * self.Duration .. "[c white] HP over [c green]" .. self.Duration .. " [c white]seconds"
 end
 
-function Item_HealthPotion.CanUse(Level, Object)
+function Item_HealingSalve.CanUse(self, Level, Object)
 	--if Object.Health < Object.MaxHealth then
 	--	return 1
 	--end
@@ -15,25 +15,25 @@ function Item_HealthPotion.CanUse(Level, Object)
 	return 1
 end
 
-function Item_HealthPotion.Use(Level, Source, Target, Result)
+function Item_HealingSalve.Use(self, Level, Source, Target, Result)
 
 	Result.Buff = Buffs["Buff_Healing"]
 	Result.BuffLevel = Level
-	Result.BuffDuration = Item_HealthPotion.Duration
+	Result.BuffDuration = self.Duration
 
 	return Result
 end
 
--- Mana Potion --
+-- Mana Cider --
 
-Item_ManaPotion = { ManaBase = 1, Duration = 10 }
+Item_ManaCider = { ManaBase = 1, Duration = 10 }
 
-function Item_ManaPotion.GetInfo(Level)
+function Item_ManaCider.GetInfo(self, Level)
 
-	return "Restore [c light_blue]" .. Level * Item_ManaPotion.ManaBase * Item_ManaPotion.Duration .. " [c white]MP over [c green]" .. Item_ManaPotion.Duration .. " [c white]seconds"
+	return "Restore [c light_blue]" .. Level * self.ManaBase * self.Duration .. " [c white]MP over [c green]" .. self.Duration .. " [c white]seconds"
 end
 
-function Item_ManaPotion.CanUse(Level, Object)
+function Item_ManaCider.CanUse(self, Level, Object)
 	--if Object.Mana < Object.MaxMana then
 	--	return 1
 	--end
@@ -41,11 +41,11 @@ function Item_ManaPotion.CanUse(Level, Object)
 	return 1
 end
 
-function Item_ManaPotion.Use(Level, Source, Target, Result)
+function Item_ManaCider.Use(self, Level, Source, Target, Result)
 
 	Result.Buff = Buffs["Buff_Mana"]
 	Result.BuffLevel = Level
-	Result.BuffDuration = Item_ManaPotion.Duration
+	Result.BuffDuration = self.Duration
 
 	return Result
 end
@@ -54,17 +54,17 @@ end
 
 Item_InvisPotion = { }
 
-function Item_InvisPotion.GetInfo(Level)
+function Item_InvisPotion.GetInfo(self, Level)
 
 	return "Turn invisible and avoid combat for [c_green]" .. Level .. " [c_white]seconds"
 end
 
-function Item_InvisPotion.CanUse(Level, Object)
+function Item_InvisPotion.CanUse(self, Level, Object)
 
 	return 1
 end
 
-function Item_InvisPotion.Use(Level, Source, Target, Result)
+function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 
 	Result.Buff = Buffs["Buff_Invis"]
 	Result.BuffLevel = 1
@@ -77,12 +77,12 @@ end
 
 Item_ActionSlot = { }
 
-function Item_ActionSlot.GetInfo(Level)
+function Item_ActionSlot.GetInfo(self, Level)
 
 	return "Increase your action bar size"
 end
 
-function Item_ActionSlot.Use(Level, Source, Target, Result)
+function Item_ActionSlot.Use(self, Level, Source, Target, Result)
 
 	Result.Target.ActionBarSize = 1
 
