@@ -93,4 +93,4 @@ Start the web server:
 cd assets/web
 ./server.py
 
-Then open your browser and go to "http://localhost:8080"
+Then open your browser and go to "http://localhost:8000"

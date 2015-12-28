@@ -235,6 +235,10 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 				IgnoreFirstChar = true;
 				ToggleLoadMap();
 			break;
+			case SDL_SCANCODE_G:
+				IgnoreFirstChar = true;
+				Go();
+			break;
 			case SDL_SCANCODE_V:
 				Paste();
 			break;
@@ -333,31 +337,8 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 	}
 	// Release middle mouse
 	else if(MouseEvent.Button == SDL_BUTTON_MIDDLE) {
-
-		// Event inspector
-		if(Map->IsValidPosition(WorldCursor) && Input.ModKeyDown(KMOD_CTRL)) {
-			const _Tile *Tile = Map->GetTile(WorldCursor);
-			switch(Tile->Event.Type) {
-				case _Map::EVENT_MAPCHANGE: {
-					FilePath = Stats->Maps[Tile->Event.Data].File;
-					ToggleLoadMap();
-				} break;
-				case _Map::EVENT_VENDOR: {
-					std::stringstream Buffer;
-					Buffer << Config.BrowserCommand << " \"http://localhost:8080/?table=vendoritem&vendor_id=" << Tile->Event.Data << "\"";
-					system(Buffer.str().c_str());
-				} break;
-				case _Map::EVENT_TRADER: {
-					std::stringstream Buffer;
-					Buffer << Config.BrowserCommand << " \"http://localhost:8080/?table=traderitem&trader_id=" << Tile->Event.Data << "\"";
-					system(Buffer.str().c_str());
-				} break;
-			}
-		}
-		else {
-			DrawBounds = false;
-			GetDrawBounds(CopyStart, CopyEnd);
-		}
+		DrawBounds = false;
+		GetDrawBounds(CopyStart, CopyEnd);
 	}
 }
 
@@ -894,6 +875,32 @@ void _EditorState::LoadMap() {
 	}
 
 	CloseWindows();
+}
+
+// Open browser or load map under cursor
+void _EditorState::Go() {
+
+	// Event inspector
+	if(Map->IsValidPosition(WorldCursor)) {
+		const _Tile *Tile = Map->GetTile(WorldCursor);
+		switch(Tile->Event.Type) {
+			case _Map::EVENT_MAPENTRANCE:
+			case _Map::EVENT_MAPCHANGE: {
+				FilePath = Stats->Maps[Tile->Event.Data].File;
+				ToggleLoadMap();
+			} break;
+			case _Map::EVENT_VENDOR: {
+				std::stringstream Buffer;
+				Buffer << Config.BrowserCommand << " \"http://localhost:8000/?table=vendoritem&vendor_id=" << Tile->Event.Data << "\"";
+				system(Buffer.str().c_str());
+			} break;
+			case _Map::EVENT_TRADER: {
+				std::stringstream Buffer;
+				Buffer << Config.BrowserCommand << " \"http://localhost:8000/?table=traderitem&trader_id=" << Tile->Event.Data << "\"";
+				system(Buffer.str().c_str());
+			} break;
+		}
+	}
 }
 
 // Apply brush to map

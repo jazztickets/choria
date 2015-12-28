@@ -312,7 +312,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 		'': 'application/octet-stream',
 		})
 
-Port = 8080
+Port = 8000
 if len(sys.argv) == 2:
 	Port = int(sys.argv[1])
 

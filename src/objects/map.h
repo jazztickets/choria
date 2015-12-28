@@ -73,10 +73,10 @@ class _Map : public _ManagerBase {
 		enum EventType {
 			EVENT_NONE,
 			EVENT_SPAWN,
+			EVENT_MAPENTRANCE,
 			EVENT_MAPCHANGE,
 			EVENT_VENDOR,
 			EVENT_TRADER,
-			EVENT_MAPENTRANCE,
 			EVENT_KEY,
 			EVENT_COUNT
 		};

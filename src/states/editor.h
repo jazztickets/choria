@@ -70,6 +70,7 @@ class _EditorState : public _State {
 		void ResizeMap();
 		void SaveMap();
 		void LoadMap();
+		void Go();
 
 		void ToggleTextures();
 		void ToggleNewMap();
