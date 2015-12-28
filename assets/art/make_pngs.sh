@@ -1,16 +1,22 @@
 #!/bin/bash
 
 file=$1
+size=$2
 if [ -z "$file" ]; then
 	echo "No input .svg file"
 	exit
 fi
 
+if [ -z "$size" ]; then
+	size=64
+fi
+density=$((45 * $size/32))
+
 # get list of objects
-names=`grep "title[0-9]" "$file" | egrep ">[a-z_]+<" -o | tr -d '<>'`
+names=`grep id=\"layer $file -C 3 | grep label | grep =.* -o | tr -d '="' | tac`
 
 # export pngs
-convert -density 45 -background none $file -crop 32x32 -depth 8 +repage PNG32:export/_out.png
+convert -density ${density} -background none ${file} -crop ${size}x${size} -depth 8 +repage PNG32:export/_out.png
 
 # name files
 i=0
