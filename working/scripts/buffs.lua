@@ -72,3 +72,18 @@ function Buff_Slow.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Stunned buff --
+
+Buff_Stunned = { }
+
+function Buff_Stunned.GetInfo(self, Level)
+
+	return "Unable to act"
+end
+
+function Buff_Stunned.Stats(self, Level, Source, Change)
+	Change.BattleSpeed = -10000
+
+	return Change
+end
