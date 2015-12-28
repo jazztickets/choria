@@ -52,14 +52,23 @@ function Buff_Invis.GetInfo(self, Level)
 	return "Avoiding combat"
 end
 
-function Buff_Invis.Begin(self, Level, Source, Change)
+function Buff_Invis.Stats(self, Level, Source, Change)
 	Change.Invisible = 1
 
 	return Change
 end
 
-function Buff_Invis.End(self, Level, Source, Change)
-	Change.Invisible = 0
+-- Slow buff --
+
+Buff_Slow = { Increments = 10 }
+
+function Buff_Slow.GetInfo(self, Level)
+
+	return "Battle speed reduced"
+end
+
+function Buff_Slow.Stats(self, Level, Source, Change)
+	Change.BattleSpeed = -self.Increments * Level / 100
 
 	return Change
 end

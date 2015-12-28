@@ -265,6 +265,11 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	StatChange.MaxMana = (float)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
+	lua_pushstring(LuaState, "BattleSpeed");
+	lua_gettable(LuaState, -2);
+	StatChange.BattleSpeed = (float)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
 	lua_pushstring(LuaState, "Invisible");
 	lua_gettable(LuaState, -2);
 	StatChange.Invisible = (int)lua_tointeger(LuaState, -1);

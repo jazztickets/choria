@@ -107,6 +107,7 @@ _Object::_Object() :
 	MaxDamageBonus(0),
 	MinDefenseBonus(0),
 	MaxDefenseBonus(0),
+	BattleSpeedBonus(0.0),
 	WeaponDamageModifier(0.0f),
 	WeaponMinDamage(0),
 	WeaponMaxDamage(0),
@@ -228,6 +229,8 @@ void _Object::Update(double FrameTime) {
 
 				delete StatusEffect;
 				Iterator = StatusEffects.erase(Iterator);
+
+				CalculateStats();
 			}
 		}
 		else
@@ -723,9 +726,6 @@ void _Object::UpdateStats(_StatChange &StatChange) {
 	UpdateHealth(StatChange.Health);
 	UpdateMana(StatChange.Mana);
 
-	if(StatChange.Invisible != -1)
-		Invisible = StatChange.Invisible;
-
 	if(StatChange.ActionBarSize != 0) {
 		size_t NewSize = ActionBar.size() + (size_t)StatChange.ActionBarSize;
 		if(NewSize >= ACTIONBAR_MAX_SIZE)
@@ -851,6 +851,9 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 	}
 
 	StatusEffects.push_back(StatusEffect);
+
+	CalculateStats();
+
 	return true;
 }
 
@@ -1068,7 +1071,9 @@ void _Object::CalculateStats() {
 	WeaponMinDamage = WeaponMaxDamage = 0;
 	ArmorMinDefense = ArmorMaxDefense = 0;
 	WeaponDamageModifier = 1.0f;
+	Invisible = 0;
 	BattleSpeed = 1.0f;
+	BattleSpeedBonus = 0.0;
 
 	// Get base stats
 	CalculateLevelStats();
@@ -1078,6 +1083,9 @@ void _Object::CalculateStats() {
 
 	// Get skill bonus
 	CalculateSkillStats();
+
+	// Get buff stats
+	CalculateBuffStats();
 
 	// Combine all stats
 	CalculateFinalStats();
@@ -1162,6 +1170,18 @@ void _Object::CalculateSkillStats() {
 	}
 }
 
+// Calculate stat changes from buffs
+void _Object::CalculateBuffStats() {
+	for(const auto &StatusEffect : StatusEffects) {
+		_StatChange StatChange;
+		StatChange.Object = this;
+		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
+
+		BattleSpeedBonus += StatChange.BattleSpeed;
+		Invisible = StatChange.Invisible;
+	}
+}
+
 // Combine all stats
 void _Object::CalculateFinalStats() {
 	MinDamage = MinDamageBonus + (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
@@ -1177,4 +1197,8 @@ void _Object::CalculateFinalStats() {
 		MinDefense = 0;
 	if(MaxDefense < 0)
 		MaxDefense = 0;
+
+	BattleSpeed += BattleSpeedBonus;
+	if(BattleSpeed < PLAYER_MIN_BATTLESPEED)
+		BattleSpeed = PLAYER_MIN_BATTLESPEED;
 }

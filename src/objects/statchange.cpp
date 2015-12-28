@@ -32,9 +32,10 @@ _StatChange::_StatChange() :
 	MaxHealth(0),
 	Mana(0),
 	MaxMana(0),
+	BattleSpeed(0),
 	Experience(0),
 	Gold(0),
-	Invisible(-1),
+	Invisible(0),
 	ActionBarSize(0) {
 
 }
@@ -51,11 +52,13 @@ int _StatChange::GetChangedFlag() {
 		Flag |= StatType::MANA;
 	if(MaxMana != 0.0f)
 		Flag |= StatType::MAXMANA;
+	if(BattleSpeed != 0.0f)
+		Flag |= StatType::BATTLESPEED;
 	if(Experience != 0)
 		Flag |= StatType::EXPERIENCE;
 	if(Gold != 0)
 		Flag |= StatType::GOLD;
-	if(Invisible != -1)
+	if(Invisible != 0)
 		Flag |= StatType::INVISIBLE;
 	if(ActionBarSize != 0)
 		Flag |= StatType::ACTIONBARSIZE;
@@ -79,6 +82,8 @@ void _StatChange::Serialize(_Buffer &Data) {
 		Data.Write<float>(Mana);
 	if(ChangedFlag & StatType::MAXMANA)
 		Data.Write<float>(MaxMana);
+	if(ChangedFlag & StatType::BATTLESPEED)
+		Data.Write<float>(BattleSpeed);
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Data.Write<int>(Experience);
 	if(ChangedFlag & StatType::GOLD)
@@ -103,6 +108,8 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 		Mana = Data.Read<float>();
 	if(ChangedFlag & StatType::MAXMANA)
 		MaxMana = Data.Read<float>();
+	if(ChangedFlag & StatType::BATTLESPEED)
+		BattleSpeed = Data.Read<float>();
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)

@@ -230,6 +230,7 @@ class _Object : public _ManagerBase {
 		int MaxDamageBonus;
 		int MinDefenseBonus;
 		int MaxDefenseBonus;
+		double BattleSpeedBonus;
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
 		// Item stats
@@ -269,6 +270,7 @@ class _Object : public _ManagerBase {
 		void CalculateLevelStats();
 		void CalculateGearStats();
 		void CalculateSkillStats();
+		void CalculateBuffStats();
 		void CalculateFinalStats();
 
 };
