@@ -1023,27 +1023,35 @@ void _HUD::DrawInventory() {
 	for(size_t i = 0; i < InventoryType::TRADE; i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = &Player->Inventory->Slots[i];
-		if(Item->Item && !Cursor.IsEqual(i, WINDOW_INVENTORY)) {
+		_InventorySlot *Slot = &Player->Inventory->Slots[i];
+		if(Slot->Item && !Cursor.IsEqual(i, WINDOW_INVENTORY)) {
 
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << "button_inventory_bag_" << i;
 			_Button *Button = Assets.Buttons[Buffer.str()];
+			Buffer.str("");
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 			// Draw item
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Texture);
+			Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
+
+			// Draw two handed weapon twice
+			if(i == InventoryType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
+				Buffer << "button_inventory_bag_" << InventoryType::HAND2;
+				_Button *Button = Assets.Buttons[Buffer.str()];
+				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, COLOR_ITEMFADE);
+			}
 
 			// Draw price if using vendor
-			DrawItemPrice(Item->Item, Item->Count, DrawPosition, false);
+			DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false);
 
 			// Draw count
-			if(Item->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+			if(Slot->Count > 1)
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 		}
 	}
 }

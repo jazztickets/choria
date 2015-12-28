@@ -165,3 +165,4 @@ const  glm::vec4    COLOR_LIGHTBLUE                 =  {0.0f,0.45f,1.0f,1.0f};
 const  glm::vec4    COLOR_LIGHTGOLD                 =  {0.88f,0.85f,0.33f,1.0f};
 const  glm::vec4    COLOR_GRAY                      =  {0.6f,0.6f,0.6f,1.0f};
 const  glm::vec4    COLOR_LIGHTGRAY                 =  {0.78f,0.78f,0.78f,1.0f};
+const  glm::vec4    COLOR_ITEMFADE                  =  {1.0f,1.0f,1.0f,0.5f};
