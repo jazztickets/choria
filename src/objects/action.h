@@ -86,9 +86,6 @@ struct _ActionResult {
 	glm::vec2 Position;
 	_Action ActionUsed;
 	const _Texture *Texture;
-	const _Buff *Buff;
-	int BuffLevel;
-	int BuffDuration;
 	double Time;
 	double Timeout;
 	double Speed;

@@ -46,5 +46,5 @@ class _StatusEffect {
 		_Element *HUDElement;
 		double Time;
 		int Level;
-		int Count;
+		int Duration;
 };

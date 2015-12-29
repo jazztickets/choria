@@ -114,34 +114,6 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 		// Write stat changes
 		ActionResult.Target.Serialize(Data);
-
-		// Add buffs
-		if(ActionResult.Buff) {
-			_StatusEffect *StatusEffect = new _StatusEffect();
-			StatusEffect->Buff = ActionResult.Buff;
-			StatusEffect->Level = ActionResult.BuffLevel;
-			StatusEffect->Count = ActionResult.BuffDuration;
-			bool Added = ActionResult.Target.Object->AddStatusEffect(StatusEffect);
-
-			// Write status effect
-			StatusEffect->Serialize(Data);
-
-			// Call buff's begin function
-			_StatChange StatChange;
-			StatChange.Object = ActionResult.Target.Object;
-			StatusEffect->Buff->ExecuteScript(Source->Scripting, "Begin", ActionResult.BuffLevel, StatChange);
-
-			// Update target
-			ActionResult.Target.Object->UpdateStats(StatChange);
-
-			// Write stat change from begin call
-			StatChange.Serialize(Data);
-
-			if(!Added)
-				delete StatusEffect;
-		}
-		else
-			Data.Write<uint32_t>(0);
 	}
 
 	// Reset object
@@ -166,9 +138,6 @@ _ActionResult::_ActionResult() :
 	LastPosition(0, 0),
 	Position(0, 0),
 	Texture(nullptr),
-	Buff(nullptr),
-	BuffLevel(0),
-	BuffDuration(0),
 	Time(0.0),
 	Timeout(HUD_ACTIONRESULT_TIMEOUT),
 	Speed(HUD_ACTIONRESULT_SPEED),

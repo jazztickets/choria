@@ -98,7 +98,7 @@ class _Object : public _ManagerBase {
 		bool IsAlive() const { return Health > 0.0f; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
-		void UpdateStats(_StatChange &StatChange);
+		_StatusEffect *UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(float Value);
 		void UpdateMana(float Value);
 		void CalculateStats();

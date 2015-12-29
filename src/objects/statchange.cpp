@@ -48,6 +48,8 @@ void _StatChange::Reset() {
 int _StatChange::GetChangedFlag() {
 	int Flag = 0;
 
+	if(StatusEffect.Buff != nullptr)
+		Flag |= StatType::STATUSEFFECT;
 	if(Health != 0.0f)
 		Flag |= StatType::HEALTH;
 	if(MaxHealth != 0.0f)
@@ -78,6 +80,9 @@ void _StatChange::Serialize(_Buffer &Data) {
 	int ChangedFlag = GetChangedFlag();
 	Data.Write<NetworkIDType>(Object->NetworkID);
 	Data.Write<int>(ChangedFlag);
+
+	if(ChangedFlag & StatType::STATUSEFFECT)
+		StatusEffect.Serialize(Data);
 	if(ChangedFlag & StatType::HEALTH)
 		Data.Write<float>(Health);
 	if(ChangedFlag & StatType::MAXHEALTH)
@@ -106,6 +111,8 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 	Object = Manager->IDMap[NetworkID];
 
 	int ChangedFlag = Data.Read<int>();
+	if(ChangedFlag & StatType::STATUSEFFECT)
+		StatusEffect.Unserialize(Data, Object->Stats);
 	if(ChangedFlag & StatType::HEALTH)
 		Health = Data.Read<float>();
 	if(ChangedFlag & StatType::MAXHEALTH)

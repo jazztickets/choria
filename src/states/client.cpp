@@ -1022,39 +1022,6 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	for(uint8_t i = 0; i < TargetCount; i++) {
 		HandleStatChange(Data, ActionResult.Target);
 
-		// Read status effect
-		uint32_t BuffID = Data.Read<uint32_t>();
-
-		// Update target fighter
-		if(ActionResult.Target.Object) {
-
-			// Create status effect
-			_StatusEffect *StatusEffect = nullptr;
-			if(BuffID > 0) {
-				StatusEffect = new _StatusEffect();
-				StatusEffect->Buff = Stats->Buffs[BuffID];
-				StatusEffect->Level = Data.Read<int>();
-				StatusEffect->Count = Data.Read<int>();
-
-				// Update stats from begin call
-				_StatChange StatChange;
-				HandleStatChange(Data, StatChange);
-			}
-
-			// Add status effect
-			if(ActionResult.Target.Object->AddStatusEffect(StatusEffect)) {
-				if(ActionResult.Target.Object->BattleElement)
-					StatusEffect->BattleElement = StatusEffect->CreateUIElement(ActionResult.Target.Object->BattleElement);
-
-				// Create hud element
-				if(ActionResult.Target.Object == Player) {
-					StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
-				}
-			}
-			else
-				delete StatusEffect;
-		}
-
 		if(Battle) {
 			if(ActionResult.Target.GetChangedFlag()) {
 				HUD->AddStatChange(ActionResult.Source);
@@ -1083,14 +1050,21 @@ void _ClientState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 
 	// Get stats
 	StatChange.Unserialize(Data, ObjectManager);
-
-	// Add to list
 	if(StatChange.Object) {
-		StatChange.Object->UpdateStats(StatChange);
 
-		// Update action bar
-		if(StatChange.Object == Player && StatChange.GetChangedFlag() & StatType::ACTIONBARSIZE)
-			HUD->SetActionBarSize(Player->ActionBar.size());
+		// Update object
+		_StatusEffect *StatusEffect = StatChange.Object->UpdateStats(StatChange);
+
+		if(StatChange.Object == Player) {
+
+			// Create hud element for status effects
+			if(StatusEffect)
+				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+
+			// Update action bar
+			if(StatChange.GetChangedFlag() & StatType::ACTIONBARSIZE)
+				HUD->SetActionBarSize(Player->ActionBar.size());
+		}
 
 		// Add stat change
 		HUD->AddStatChange(StatChange);

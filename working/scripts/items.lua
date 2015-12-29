@@ -14,9 +14,9 @@ end
 
 function Item_HealingSalve.Use(self, Level, Source, Target, Result)
 
-	Result.Buff = Buffs["Buff_Healing"]
-	Result.BuffLevel = Level
-	Result.BuffDuration = self.Duration
+	Result.Target.Buff = Buffs["Buff_Healing"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
 
 	return Result
 end
@@ -37,9 +37,9 @@ end
 
 function Item_ManaCider.Use(self, Level, Source, Target, Result)
 
-	Result.Buff = Buffs["Buff_Mana"]
-	Result.BuffLevel = Level
-	Result.BuffDuration = self.Duration
+	Result.Target.Buff = Buffs["Buff_Mana"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
 
 	return Result
 end
@@ -60,9 +60,9 @@ end
 
 function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 
-	Result.Buff = Buffs["Buff_Invis"]
-	Result.BuffLevel = 1
-	Result.BuffDuration = Level
+	Result.Target.Buff = Buffs["Buff_Invis"]
+	Result.Target.BuffLevel = 1
+	Result.Target.BuffDuration = Level
 
 	return Result
 end
@@ -83,9 +83,9 @@ end
 
 function Item_HastePotion.Use(self, Level, Source, Target, Result)
 
-	Result.Buff = Buffs["Buff_Hasted"]
-	Result.BuffLevel = Level
-	Result.BuffDuration = self.Duration
+	Result.Target.Buff = Buffs["Buff_Hasted"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
 
 	return Result
 end

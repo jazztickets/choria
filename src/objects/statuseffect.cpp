@@ -33,7 +33,7 @@ _StatusEffect::_StatusEffect() :
 	HUDElement(nullptr),
 	Time(0.0),
 	Level(0),
-	Count(0) {
+	Duration(0) {
 
 }
 
@@ -58,7 +58,7 @@ _StatusEffect::~_StatusEffect() {
 void _StatusEffect::Serialize(_Buffer &Data) {
 	Data.Write<uint32_t>(Buff->ID);
 	Data.Write<int>(Level);
-	Data.Write<int>(Count);
+	Data.Write<int>(Duration);
 }
 
 // Unserialize from network
@@ -66,7 +66,7 @@ void _StatusEffect::Unserialize(_Buffer &Data, _Stats *Stats) {
 	uint32_t BuffID = Data.Read<uint32_t>();
 	Buff = Stats->Buffs[BuffID];
 	Level = Data.Read<int>();
-	Count = Data.Read<int>();
+	Duration = Data.Read<int>();
 }
 
 // Create element for hud
@@ -93,5 +93,5 @@ void _StatusEffect::Render(_Element *Element, const glm::vec4 &Color) {
 
 	glm::vec4 TextColor = COLOR_LIGHTGRAY;
 	TextColor.a = Color.a;
-	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Count), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), TextColor, RIGHT_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Duration), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), TextColor, RIGHT_BASELINE);
 }

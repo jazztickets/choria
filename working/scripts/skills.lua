@@ -78,9 +78,9 @@ function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
 	Result.Target.Health = -Damage
 
 	if Random.GetInt(1, 100) <= 15 then
-		Result.Buff = Buffs["Buff_Slowed"]
-		Result.BuffLevel = Level
-		Result.BuffDuration = 5
+		Result.Target.Buff = Buffs["Buff_Slowed"]
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
 	end
 
 	return Result
@@ -138,9 +138,9 @@ function Skill_ShieldBash.Use(self, Level, Source, Target, Result)
 	Damage = math.max(ShieldDamage - Target.GenerateDefense(), 0)
 
 	if Random.GetInt(1, 100) <= self:GetChance(Level) then
-		Result.Buff = Buffs["Buff_Stunned"]
-		Result.BuffLevel = 1
-		Result.BuffDuration = self.Duration
+		Result.Target.Buff = Buffs["Buff_Stunned"]
+		Result.Target.BuffLevel = 1
+		Result.Target.BuffDuration = self.Duration
 	end
 
 	Result.Target.Health = -Damage
@@ -159,6 +159,14 @@ function Skill_Whirlwind.GetDamage(self, Level)
 	return Skill_Whirlwind.DamageBase + Skill_Whirlwind.DamagePerLevel * Level
 end
 
+function Skill_Whirlwind.ApplyCost(self, Level, Result)
+	Result.Source.Buff = Buffs["Buff_Slowed"]
+	Result.Source.BuffLevel = 3
+	Result.Source.BuffDuration = 3
+
+	return Result
+end
+
 function Skill_Whirlwind.GetInfo(self, Level)
 	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses fatigue for [c green]" .. self.SlowDuration .." [c white]seconds"
 end
@@ -168,10 +176,6 @@ function Skill_Whirlwind.Use(self, Level, Source, Target, Result)
 	Damage = math.max(Damage - Target.GenerateDefense(), 0)
 
 	Result.Target.Health = -Damage
-
-	--Result.Buff = Buffs["Buff_Slowed"]
-	--Result.BuffLevel = 3
-	--Result.BuffDuration = 3
 
 	return Result
 end

@@ -219,13 +219,8 @@ void _Object::Update(double FrameTime) {
 			}
 
 			// Reduce count
-			StatusEffect->Count--;
-			if(StatusEffect->Count <= 0 || !IsAlive()) {
-
-				// Call expire scripting function
-				if(Server) {
-					ResolveBuff(StatusEffect, "End");
-				}
+			StatusEffect->Duration--;
+			if(StatusEffect->Duration <= 0 || !IsAlive()) {
 
 				delete StatusEffect;
 				Iterator = StatusEffects.erase(Iterator);
@@ -721,7 +716,25 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 }
 
 // Update stats
-void _Object::UpdateStats(_StatChange &StatChange) {
+_StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
+	_StatusEffect *StatusEffect = nullptr;
+
+	// Add buffs
+	if(StatChange.StatusEffect.Buff) {
+		StatusEffect = new _StatusEffect();
+		StatusEffect->Buff = StatChange.StatusEffect.Buff;
+		StatusEffect->Level = StatChange.StatusEffect.Level;
+		StatusEffect->Duration = StatChange.StatusEffect.Duration;
+
+		if(AddStatusEffect(StatusEffect)) {
+			if(BattleElement)
+				StatusEffect->BattleElement = StatusEffect->CreateUIElement(BattleElement);
+		}
+		else {
+			delete StatusEffect;
+			StatusEffect = nullptr;
+		}
+	}
 
 	UpdateHealth(StatChange.Health);
 	UpdateMana(StatChange.Mana);
@@ -733,6 +746,8 @@ void _Object::UpdateStats(_StatChange &StatChange) {
 
 		ActionBar.resize(NewSize);
 	}
+
+	return StatusEffect;
 }
 
 // Update health
@@ -824,7 +839,6 @@ const _Tile *_Object::GetTile() {
 // Generates the number of moves until the next battle
 void _Object::GenerateNextBattle() {
 	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
-	//NextBattle = 1;
 }
 
 // Stop a battle
@@ -844,7 +858,7 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 
 		// If buff existing, refresh duration
 		if(StatusEffect->Buff == ExistingEffect->Buff) {
-			ExistingEffect->Count = StatusEffect->Count;
+			ExistingEffect->Duration = StatusEffect->Duration;
 			ExistingEffect->Level = StatusEffect->Level;
 			return false;
 		}
@@ -857,8 +871,10 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 	return true;
 }
 
-// Call begin/update/end for a buff
+// Call update function for buff
 void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function) {
+	if(!Server)
+		return;
 
 	// Call function
 	_StatChange StatChange;

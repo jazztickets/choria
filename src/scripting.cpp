@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/statchange.h>
+#include <objects/statuseffect.h>
 #include <objects/battle.h>
 #include <objects/inventory.h>
 #include <stats.h>
@@ -258,21 +259,6 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	lua_gettable(LuaState, -2);
 	GetStatChange(-1, ActionResult.Target);
 	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "Buff");
-	lua_gettable(LuaState, -2);
-	ActionResult.Buff = (_Buff *)lua_touserdata(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "BuffLevel");
-	lua_gettable(LuaState, -2);
-	ActionResult.BuffLevel = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "BuffDuration");
-	lua_gettable(LuaState, -2);
-	ActionResult.BuffDuration = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
 }
 
 // Get return value as stat change
@@ -283,6 +269,21 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	// Check return value
 	if(!lua_istable(LuaState, Index))
 		throw std::runtime_error("GetStatChange: Value is not a table!");
+
+	lua_pushstring(LuaState, "Buff");
+	lua_gettable(LuaState, -2);
+	StatChange.StatusEffect.Buff = (_Buff *)lua_touserdata(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "BuffLevel");
+	lua_gettable(LuaState, -2);
+	StatChange.StatusEffect.Level = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "BuffDuration");
+	lua_gettable(LuaState, -2);
+	StatChange.StatusEffect.Duration = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
 
 	lua_pushstring(LuaState, "Health");
 	lua_gettable(LuaState, -2);

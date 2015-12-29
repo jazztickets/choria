@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/statuseffect.h>
 #include <manager.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
@@ -31,15 +32,16 @@ class _Font;
 
 // Types of stats
 enum StatType : int {
-	HEALTH          = (1 << 1),
-	MAXHEALTH       = (1 << 2),
-	MANA            = (1 << 3),
-	MAXMANA         = (1 << 4),
-	BATTLESPEED     = (1 << 5),
-	EXPERIENCE      = (1 << 6),
-	GOLD            = (1 << 7),
-	INVISIBLE       = (1 << 8),
-	ACTIONBARSIZE   = (1 << 9),
+	STATUSEFFECT    = (1 << 1),
+	HEALTH          = (1 << 2),
+	MAXHEALTH       = (1 << 3),
+	MANA            = (1 << 4),
+	MAXMANA         = (1 << 5),
+	BATTLESPEED     = (1 << 6),
+	EXPERIENCE      = (1 << 7),
+	GOLD            = (1 << 8),
+	INVISIBLE       = (1 << 9),
+	ACTIONBARSIZE   = (1 << 10),
 };
 
 // Stat changes
@@ -56,6 +58,7 @@ class _StatChange {
 		int GetChangedFlag();
 
 		_Object *Object;
+		_StatusEffect StatusEffect;
 		float Health;
 		float MaxHealth;
 		float Mana;
