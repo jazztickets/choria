@@ -1178,7 +1178,8 @@ void _Object::CalculateBuffStats() {
 		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
 
 		BattleSpeedBonus += StatChange.BattleSpeed;
-		Invisible = StatChange.Invisible;
+		if(StatChange.Invisible != -1)
+			Invisible = StatChange.Invisible;
 	}
 }
 

@@ -35,7 +35,7 @@ _StatChange::_StatChange() :
 	BattleSpeed(0),
 	Experience(0),
 	Gold(0),
-	Invisible(0),
+	Invisible(-1),
 	ActionBarSize(0) {
 
 }
@@ -58,7 +58,7 @@ int _StatChange::GetChangedFlag() {
 		Flag |= StatType::EXPERIENCE;
 	if(Gold != 0)
 		Flag |= StatType::GOLD;
-	if(Invisible != 0)
+	if(Invisible != -1)
 		Flag |= StatType::INVISIBLE;
 	if(ActionBarSize != 0)
 		Flag |= StatType::ACTIONBARSIZE;
