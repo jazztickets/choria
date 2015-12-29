@@ -58,22 +58,22 @@ function Buff_Invis.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Slow buff --
+-- Slowed debuff --
 
-Buff_Slow = { Increments = 10 }
+Buff_Slowed = { Increments = 10 }
 
-function Buff_Slow.GetInfo(self, Level)
+function Buff_Slowed.GetInfo(self, Level)
 
 	return "Battle speed reduced"
 end
 
-function Buff_Slow.Stats(self, Level, Source, Change)
+function Buff_Slowed.Stats(self, Level, Source, Change)
 	Change.BattleSpeed = -self.Increments * Level / 100
 
 	return Change
 end
 
--- Stunned buff --
+-- Stunned debuff --
 
 Buff_Stunned = { }
 

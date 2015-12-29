@@ -24,52 +24,64 @@
   <defs
      id="defs3442">
     <linearGradient
-       id="linearGradient5175"
-       inkscape:collect="always">
+       inkscape:collect="always"
+       id="linearGradient4603">
       <stop
-         id="stop5177"
+         style="stop-color:#800000;stop-opacity:1"
          offset="0"
-         style="stop-color:#00ff00;stop-opacity:1" />
+         id="stop4605" />
       <stop
-         id="stop5179"
+         style="stop-color:#000000;stop-opacity:0"
          offset="1"
-         style="stop-color:#000000;stop-opacity:0" />
+         id="stop4607" />
     </linearGradient>
     <linearGradient
-       id="linearGradient5169"
-       inkscape:collect="always">
+       inkscape:collect="always"
+       id="linearGradient4596">
       <stop
-         style="stop-color:#000000;stop-opacity:1"
+         style="stop-color:#008000;stop-opacity:1"
          offset="0"
-         id="stop5171" />
+         id="stop4598" />
       <stop
-         style="stop-color:#00ff00;stop-opacity:1"
+         style="stop-color:#000000;stop-opacity:0"
          offset="1"
-         id="stop5173" />
+         id="stop4600" />
     </linearGradient>
     <linearGradient
-       id="linearGradient5163"
-       inkscape:collect="always">
+       inkscape:collect="always"
+       id="linearGradient4590">
       <stop
-         id="stop5165"
+         id="stop4592"
          offset="0"
-         style="stop-color:#ff0101;stop-opacity:1" />
+         style="stop-color:#000000;stop-opacity:1" />
       <stop
-         id="stop5167"
+         id="stop4594"
          offset="1"
-         style="stop-color:#000000;stop-opacity:0" />
+         style="stop-color:#008000;stop-opacity:1" />
     </linearGradient>
     <linearGradient
-       id="linearGradient5149"
-       inkscape:collect="always">
+       inkscape:collect="always"
+       id="linearGradient4584">
       <stop
-         style="stop-color:#000000;stop-opacity:1"
+         id="stop4586"
          offset="0"
-         id="stop5151" />
+         style="stop-color:#000000;stop-opacity:1" />
+      <stop
+         id="stop4588"
+         offset="1"
+         style="stop-color:#800000;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4494">
       <stop
          style="stop-color:#ff0000;stop-opacity:1"
+         offset="0"
+         id="stop4498" />
+      <stop
+         style="stop-color:#290000;stop-opacity:1"
          offset="1"
-         id="stop5153" />
+         id="stop4496" />
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
@@ -1013,7 +1025,7 @@
     </filter>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient5149"
+       xlink:href="#linearGradient4584"
        id="linearGradient4383"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.1479821,0,0,1.2132701,-23.24663,-5.763032)"
@@ -1023,7 +1035,7 @@
        y2="57.573223" />
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient5163"
+       xlink:href="#linearGradient4603"
        id="linearGradient4385"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(0,-4.065864)"
@@ -1165,7 +1177,7 @@
     </filter>
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient5169"
+       xlink:href="#linearGradient4590"
        id="linearGradient4707"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.1479821,0,0,1.2132701,-23.24663,-5.763032)"
@@ -1175,7 +1187,7 @@
        y2="57.573223" />
     <linearGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient5175"
+       xlink:href="#linearGradient4596"
        id="linearGradient4709"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(0,-4.065864)"
@@ -1559,6 +1571,337 @@
          stdDeviation="0.8125"
          id="feGaussianBlur5183" />
     </filter>
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4747-0-8">
+      <rect
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4737-0-9);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="rect4749-7-0"
+         width="64"
+         height="64"
+         x="127.99997"
+         y="9.983778e-07"
+         ry="12.085538" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter4737-0-9">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur4739-9-46" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite4741-9-7" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite4743-8-2" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite4745-3-7" />
+    </filter>
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4747-0-8-5">
+      <rect
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4737-0-9-3);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="rect4749-7-0-1"
+         width="64"
+         height="64"
+         x="127.99997"
+         y="9.983778e-07"
+         ry="12.085538" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter4737-0-9-3">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur4739-9-46-1" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite4741-9-7-1" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite4743-8-2-3" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite4745-3-7-3" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4494"
+       id="linearGradient4505"
+       x1="385.72672"
+       y1="-5.5884914"
+       x2="325.09232"
+       y2="56.813683"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.64076263,0,0,0.6410412,126.45154,11.532865)" />
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4747-2-6">
+      <rect
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4737-1-0);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="rect4749-6-8"
+         width="64"
+         height="64"
+         x="127.99997"
+         y="9.983778e-07"
+         ry="12.085538" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter4737-1-0">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur4739-2-7" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite4741-0-5" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite4743-6-3" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite4745-8-1" />
+    </filter>
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4747-0-6">
+      <rect
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4737-0-4);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="rect4749-7-04"
+         width="64"
+         height="64"
+         x="127.99997"
+         y="9.983778e-07"
+         ry="12.085538" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter4737-0-4">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur4739-9-43" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite4741-9-5" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite4743-8-1" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite4745-3-4" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5393-6-4"
+       x="-0.039000001"
+       width="1.0779999"
+       y="-0.13"
+       height="1.26">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.8125"
+         id="feGaussianBlur5395-2-7" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4584"
+       id="linearGradient4673"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1479821,0,0,1.2132701,-23.24663,-5.763032)"
+       x1="158.99997"
+       y1="-2.8383894"
+       x2="158.99997"
+       y2="57.573223" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4603"
+       id="linearGradient4675"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-4.065864)"
+       x1="159.99997"
+       y1="11.784009"
+       x2="159.99997"
+       y2="18.625" />
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4747-0-6-4">
+      <rect
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4737-0-4-3);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="rect4749-7-04-8"
+         width="64"
+         height="64"
+         x="127.99997"
+         y="9.983778e-07"
+         ry="12.085538" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter4737-0-4-3">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur4739-9-43-5" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite4741-9-5-4" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite4743-8-1-1" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite4745-3-4-6" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5393-6-4-6"
+       x="-0.039000001"
+       width="1.0779999"
+       y="-0.13"
+       height="1.26">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.8125"
+         id="feGaussianBlur5395-2-7-1" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4584"
+       id="linearGradient4744"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1479821,0,0,1.2132701,-23.24663,-5.763032)"
+       x1="158.99997"
+       y1="-2.8383894"
+       x2="158.99997"
+       y2="57.573223" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4603"
+       id="linearGradient4746"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-4.065864)"
+       x1="159.99997"
+       y1="11.784009"
+       x2="159.99997"
+       y2="18.625" />
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4747-2-62">
+      <rect
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4737-1-1);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="rect4749-6-0"
+         width="64"
+         height="64"
+         x="127.99997"
+         y="9.983778e-07"
+         ry="12.085538" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter4737-1-1">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur4739-2-5" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite4741-0-6" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite4743-6-7" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite4745-8-0" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5181-4"
+       x="-0.039000001"
+       width="1.0779999"
+       y="-0.13"
+       height="1.26">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.8125"
+         id="feGaussianBlur5183-0" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4590"
+       id="linearGradient4812"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1479821,0,0,1.2132701,-23.24663,-5.763032)"
+       x1="158.99997"
+       y1="-2.8383894"
+       x2="158.99997"
+       y2="57.573223" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4596"
+       id="linearGradient4814"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-4.065864)"
+       x1="159.99997"
+       y1="11.784009"
+       x2="159.99997"
+       y2="18.625" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -1568,10 +1911,10 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="4"
-     inkscape:cx="151.11143"
-     inkscape:cy="647.77915"
+     inkscape:cx="252.625"
+     inkscape:cy="593.18274"
      inkscape:document-units="px"
-     inkscape:current-layer="g5397-8"
+     inkscape:current-layer="layer4"
      showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1031"
@@ -1706,36 +2049,64 @@
   <g
      inkscape:groupmode="layer"
      id="layer4"
-     inkscape:label="buff"
+     inkscape:label="healing"
      style="display:inline">
     <g
-       transform="translate(-2.5000003e-6,10e-7)"
-       id="g5397-8"
-       style="display:inline;">
+       transform="translate(192,5.008111e-7)"
+       id="g5397-8-1"
+       style="display:inline">
       <rect
-         mask="url(#mask4747-2)"
+         mask="url(#mask4747-2-62)"
          ry="15.014471"
          y="0"
          x="127.99997"
          height="64"
          width="64"
-         id="rect4526-7"
-         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4707);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;" />
+         id="rect4526-7-5"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4812);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
       <rect
          ry="3.3088236"
          y="3.4341364"
          x="134.49997"
          height="15"
          width="50"
-         id="rect4751-4"
-         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.63300003;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4709);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;filter:url(#filter5181)" />
+         id="rect4751-4-0"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.63300003;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4814);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5181-4);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
     </g>
+    <path
+       style="display:inline;fill:url(#linearGradient4505);fill-opacity:1;fill-rule:evenodd;stroke:#2b0000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 337.21329,25.264933 c 0.56066,-10.73744 11.93742,-12.934244 14.78668,-0.689458 2.84926,-12.244785 14.22601,-10.047981 14.78668,0.689458 0.11095,7.661395 -10.50554,13.211291 -14.78668,22.138628 -4.28114,-8.927337 -14.89763,-14.477233 -14.78668,-22.138628 z"
+       id="path4614"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer19"
      inkscape:label="stunned"
      style="display:inline">
+    <g
+       transform="translate(128,5.008111e-7)"
+       id="g5397-1-2-6"
+       style="display:inline">
+      <rect
+         mask="url(#mask4747-0-6-4)"
+         ry="15.014471"
+         y="0"
+         x="127.99997"
+         height="64"
+         width="64"
+         id="rect4526-2-7-0"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4744);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <rect
+         ry="3.3088236"
+         y="3.4341364"
+         x="134.49997"
+         height="15"
+         width="50"
+         id="rect4751-5-5-9"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.63300003;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4746);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5393-6-4-6);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    </g>
     <g
        style="display:inline;opacity:1"
        id="g4318"
@@ -1899,6 +2270,28 @@
      inkscape:label="slowed"
      style="display:inline">
     <g
+       transform="translate(64.000005,1e-6)"
+       id="g5397-1-2"
+       style="display:inline">
+      <rect
+         mask="url(#mask4747-0-6)"
+         ry="15.014471"
+         y="0"
+         x="127.99997"
+         height="64"
+         width="64"
+         id="rect4526-2-7"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4673);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <rect
+         ry="3.3088236"
+         y="3.4341364"
+         x="134.49997"
+         height="15"
+         width="50"
+         id="rect4751-5-5"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.63300003;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4675);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5393-6-4);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    </g>
+    <g
        style="display:inline"
        id="g4517"
        transform="translate(190.54755,-0.143295)">
@@ -1952,13 +2345,41 @@
   </g>
   <g
      inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="buff"
+     style="display:inline">
+    <g
+       transform="translate(-2.5000001e-6,1e-6)"
+       id="g5397-8"
+       style="display:inline">
+      <rect
+         mask="url(#mask4747-2)"
+         ry="15.014471"
+         y="0"
+         x="127.99997"
+         height="64"
+         width="64"
+         id="rect4526-7"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4707);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <rect
+         ry="3.3088236"
+         y="3.4341364"
+         x="134.49997"
+         height="15"
+         width="50"
+         id="rect4751-4"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.63300003;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4709);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5181);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="debuff"
      style="display:inline">
     <g
-       transform="translate(-64.000001,10e-7)"
+       transform="translate(-64.000001,1e-6)"
        id="g5397-1"
-       style="display:inline;">
+       style="display:inline">
       <rect
          mask="url(#mask4747-0)"
          ry="15.014471"
@@ -1967,7 +2388,7 @@
          height="64"
          width="64"
          id="rect4526-2"
-         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4383);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;" />
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4383);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
       <rect
          ry="3.3088236"
          y="3.4341364"
