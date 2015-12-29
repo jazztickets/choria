@@ -87,3 +87,18 @@ function Buff_Stunned.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Hasted buff --
+
+Buff_Hasted = { Increments = 10 }
+
+function Buff_Hasted.GetInfo(self, Level)
+
+	return "Battle speed increased"
+end
+
+function Buff_Hasted.Stats(self, Level, Source, Change)
+	Change.BattleSpeed = self.Increments * Level / 100
+
+	return Change
+end

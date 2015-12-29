@@ -67,6 +67,29 @@ function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Haste Potion --
+
+Item_HastePotion = { Duration = 10 }
+
+function Item_HastePotion.GetInfo(self, Level)
+
+	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white] for [c_green]" .. self.Duration .. " [c_white]seconds"
+end
+
+function Item_HastePotion.CanUse(self, Level, Object)
+
+	return true
+end
+
+function Item_HastePotion.Use(self, Level, Source, Target, Result)
+
+	Result.Buff = Buffs["Buff_Hasted"]
+	Result.BuffLevel = Level
+	Result.BuffDuration = self.Duration
+
+	return Result
+end
+
 -- Action Slot --
 
 Item_ActionSlot = { }
