@@ -150,24 +150,28 @@ end
 
 -- Whirl --
 
-Skill_Whirl = Base_Attack:New()
+Skill_Whirlwind = Base_Attack:New()
+Skill_Whirlwind.DamageBase = 29
+Skill_Whirlwind.DamagePerLevel = 1
+Skill_Whirlwind.SlowDuration = 3
 
-function Skill_Whirl.GetInfo(self, Level)
-	Chance = 9 + Level
-
-	return "Slash all enemies with [c green]30% [c white]weapon damage\n[c green]" .. Chance .. "% [c white]chance to cause [c yellow]bleeding"
+function Skill_Whirlwind.GetDamage(self, Level)
+	return Skill_Whirlwind.DamageBase + Skill_Whirlwind.DamagePerLevel * Level
 end
 
-function Skill_Whirl.Use(self, Level, Source, Target, Result)
-	Damage = math.floor(Source.GenerateDamage() * 0.3)
+function Skill_Whirlwind.GetInfo(self, Level)
+	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses fatigue for [c green]" .. self.SlowDuration .." [c white]seconds"
+end
+
+function Skill_Whirlwind.Use(self, Level, Source, Target, Result)
+	Damage = math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
 	Damage = math.max(Damage - Target.GenerateDefense(), 0)
 
 	Result.Target.Health = -Damage
-	if Random.GetInt(1, 100) <= 9 + Level then
-		Result.Buff = Buffs["Buff_Bleeding"]
-		Result.BuffLevel = 1
-		Result.BuffDuration = 10
-	end
+
+	--Result.Buff = Buffs["Buff_Slowed"]
+	--Result.BuffLevel = 3
+	--Result.BuffDuration = 3
 
 	return Result
 end
@@ -200,6 +204,17 @@ Skill_Spark.CostPerLevel = 1 / 3
 
 function Skill_Spark.GetInfo(self, Level)
 	return "Shock a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+-- Fire Blast --
+Skill_FireBlast = Base_Spell:New()
+Skill_FireBlast.ManaCostBase = 9
+Skill_FireBlast.DamageBase = 5
+Skill_FireBlast.Multiplier = 2
+Skill_FireBlast.CostPerLevel = 1
+
+function Skill_FireBlast.GetInfo(self, Level)
+	return "Blast all targets with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 -- Toughness --

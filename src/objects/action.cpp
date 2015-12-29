@@ -24,6 +24,7 @@
 #include <constants.h>
 #include <stats.h>
 #include <buffer.h>
+#include <iostream>
 
 // Serialize action
 void _Action::Serialize(_Buffer &Data) {

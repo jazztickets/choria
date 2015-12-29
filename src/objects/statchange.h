@@ -49,6 +49,7 @@ class _StatChange {
 
 		_StatChange();
 
+		void Reset();
 		void Serialize(_Buffer &Data);
 		void Unserialize(_Buffer &Data, _Manager<_Object> *Manager);
 

@@ -26,18 +26,22 @@
 #include <sstream>
 
 // Constructor
-_StatChange::_StatChange() :
-	Object(nullptr),
-	Health(0),
-	MaxHealth(0),
-	Mana(0),
-	MaxMana(0),
-	BattleSpeed(0),
-	Experience(0),
-	Gold(0),
-	Invisible(-1),
-	ActionBarSize(0) {
+_StatChange::_StatChange() {
+	Reset();
+}
 
+// Reset stats
+void _StatChange::Reset() {
+	Object = nullptr;
+	Health = 0;
+	MaxHealth = 0;
+	Mana = 0;
+	MaxMana = 0;
+	BattleSpeed = 0;
+	Experience = 0;
+	Gold = 0;
+	Invisible = -1;
+	ActionBarSize = 0;
 }
 
 // Get bit field of fields changed
@@ -96,6 +100,8 @@ void _StatChange::Serialize(_Buffer &Data) {
 
 // Unserialize network
 void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
+	Reset();
+
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	Object = Manager->IDMap[NetworkID];
 
