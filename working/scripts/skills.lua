@@ -49,7 +49,7 @@ Base_Spell = {
 	end,
 
 	CanUse = function(self, Level, Object)
-		if Object.Mana >= self:GetCost(Level) then
+		if math.ceil(Object.Mana) >= self:GetCost(Level) then
 			return true
 		end
 

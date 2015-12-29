@@ -8,9 +8,6 @@ function Item_HealingSalve.GetInfo(self, Level)
 end
 
 function Item_HealingSalve.CanUse(self, Level, Object)
-	--if Object.Health < Object.MaxHealth then
-	--	return 1
-	--end
 
 	return true
 end
@@ -34,9 +31,6 @@ function Item_ManaCider.GetInfo(self, Level)
 end
 
 function Item_ManaCider.CanUse(self, Level, Object)
-	--if Object.Mana < Object.MaxMana then
-	--	return 1
-	--end
 
 	return true
 end
