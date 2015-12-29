@@ -44,6 +44,12 @@ struct _Build {
 	const _Texture *Image;
 };
 
+struct _Script {
+	uint32_t ID;
+	std::string Name;
+	int Level;
+};
+
 struct _Level {
 	int Level;
 	int Experience;
@@ -128,6 +134,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _MapStat> Maps;
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
+		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
 		std::unordered_map<uint32_t, const _Item *> Items;
@@ -149,5 +156,6 @@ class _Stats {
 		void LoadVendors();
 		void LoadTraders();
 		void LoadBuilds();
+		void LoadScripts();
 
 };

@@ -42,6 +42,7 @@ _Stats::_Stats() {
 	LoadVendors();
 	LoadTraders();
 	LoadBuilds();
+	LoadScripts();
 }
 
 // Destructor
@@ -314,6 +315,25 @@ void _Stats::LoadBuilds() {
 	Database->CloseQuery();
 
 	Builds[0] = nullptr;
+}
+
+// Load scripts
+void _Stats::LoadScripts(){
+	Scripts.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM script");
+
+	// Get data
+	_Script Script;
+	while(Database->FetchRow()) {
+		Script.ID = Database->GetInt<uint32_t>("id");
+		Script.Name = Database->GetString("name");
+		Script.Level = Database->GetInt<int>("level");
+
+		Scripts[Script.ID] = Script;
+	}
+	Database->CloseQuery();
 }
 
 // Gets monsters stats from the database

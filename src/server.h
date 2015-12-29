@@ -56,6 +56,7 @@ class _Server {
 		void StartBattle(_Object *Object, uint32_t Zone);
 		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void SendHUD(_Peer *Peer);
+		void RunEventScript(uint32_t ScriptID, _Object *Object);
 
 		// State
 		bool Done;

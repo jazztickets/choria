@@ -255,6 +255,10 @@ void _Map::CheckEvents(_Object *Object) {
 			else
 				Object->WaitForServer = true;
 		} break;
+		case _Map::EVENT_SCRIPT: {
+			if(Server)
+				Server->RunEventScript(Tile->Event.Data, Object);
+		} break;
 		default:
 			if(Server) {
 				Object->Vendor = nullptr;
