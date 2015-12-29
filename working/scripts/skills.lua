@@ -69,6 +69,23 @@ Base_Spell = {
 
 Skill_MonsterAttack = Base_Attack:New()
 
+-- Spider bite --
+
+Skill_SpiderBite = Base_Attack:New()
+
+function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
+	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Result.Target.Health = -Damage
+
+	if Random.GetInt(1, 100) <= 15 then
+		Result.Buff = Buffs["Buff_Slowed"]
+		Result.BuffLevel = Level
+		Result.BuffDuration = 5
+	end
+
+	return Result
+end
+
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()
