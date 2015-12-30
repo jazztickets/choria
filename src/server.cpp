@@ -1221,7 +1221,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	//Zone = 1;
+	//Zone = 7;
 	if(!Zone)
 		return;
 

@@ -103,6 +103,23 @@ function Skill_FangBite.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Swoop attack --
+
+Skill_Swoop = Base_Attack:New()
+
+function Skill_Swoop.Use(self, Level, Source, Target, Result)
+	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Result.Target.Health = -Damage
+
+	if Random.GetInt(1, 100) <= 75 then
+		Result.Target.Buff = Buffs["Buff_Stunned"]
+		Result.Target.BuffLevel = 1
+		Result.Target.BuffDuration = 3
+	end
+
+	return Result
+end
+
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()

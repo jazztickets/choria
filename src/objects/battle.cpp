@@ -223,10 +223,13 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 			// Pick sides depending on action
 			bool Multiple = false;
+			bool Self = false;
 			switch(Item->TargetID) {
+				case TargetType::SELF:
+					Self = true;
+				break;
 				case TargetType::ALLY_ALL:
 					Multiple = true;
-				case TargetType::SELF:
 				case TargetType::ALLY:
 					StartingSide = ClientPlayer->BattleSide;
 				break;
@@ -239,33 +242,39 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 			bool TargetAlive = Item->TargetAlive;
 
-			// Get list of fighters on each side
-			std::list<_Object *> FighterList;
-			GetFighterList(StartingSide, FighterList);
-
-			// Find targets
+			// Clear existing targets
 			ClientPlayer->Targets.clear();
 
-			// Find last target
-			if(ClientPlayer->LastTarget && !Multiple) {
-				for(auto &Fighter : FighterList) {
-					if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
-						if(ClientPlayer->LastTarget == Fighter) {
-							ClientPlayer->Targets.push_back(Fighter);
-							break;
+			if(Self) {
+				ClientPlayer->Targets.push_back(ClientPlayer);
+			}
+			else {
+
+				// Get list of fighters on each side
+				std::list<_Object *> FighterList;
+				GetFighterList(StartingSide, FighterList);
+
+				// Find last target
+				if(ClientPlayer->LastTarget && !Multiple) {
+					for(auto &Fighter : FighterList) {
+						if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
+							if(ClientPlayer->LastTarget == Fighter) {
+								ClientPlayer->Targets.push_back(Fighter);
+								break;
+							}
 						}
 					}
 				}
-			}
 
-			// Find first alive target
-			if(ClientPlayer->Targets.size() == 0) {
-				for(auto &Fighter : FighterList) {
-					if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
+				// Find first alive target
+				if(ClientPlayer->Targets.size() == 0) {
+					for(auto &Fighter : FighterList) {
+						if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
 
-						ClientPlayer->Targets.push_back(Fighter);
-						if(!Multiple)
-							break;
+							ClientPlayer->Targets.push_back(Fighter);
+							if(!Multiple)
+								break;
+						}
 					}
 				}
 			}
@@ -298,6 +307,9 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 // Changes targets
 void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || ClientPlayer->Targets.size() != 1)
+		return;
+
+	if(ClientPlayer->PotentialAction.Item->TargetID == TargetType::SELF)
 		return;
 
 	// Get current target side
