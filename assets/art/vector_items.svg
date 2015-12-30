@@ -24,6 +24,17 @@
   <defs
      id="defs3442">
     <linearGradient
+       id="linearGradient4533">
+      <stop
+         id="stop4535"
+         offset="0"
+         style="stop-color:#ffffff;stop-opacity:1" />
+      <stop
+         id="stop4537"
+         offset="1"
+         style="stop-color:#101010;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient4530">
       <stop
          id="stop4532"
@@ -1587,6 +1598,16 @@
        y1="46.657146"
        x2="204.82829"
        y2="48.680035" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4533"
+       id="linearGradient4531"
+       x1="291.22015"
+       y1="146.89751"
+       x2="287.92642"
+       y2="145.89709"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.9891458,-1.1950162,1.1950162,1.9891458,-462.87211,205.75285)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -1595,18 +1616,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8284271"
-     inkscape:cx="174.3641"
-     inkscape:cy="458.3761"
+     inkscape:zoom="16"
+     inkscape:cx="282.13413"
+     inkscape:cy="492.37199"
      inkscape:document-units="px"
-     inkscape:current-layer="layer24"
+     inkscape:current-layer="layer25"
      showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1031"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     showguides="true"
+     showguides="false"
      inkscape:guide-bbox="true"
      inkscape:snap-grids="false"
      inkscape:snap-to-guides="true"
@@ -1733,6 +1754,25 @@
       </cc:License>
     </rdf:RDF>
   </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer25"
+     inkscape:label="fang">
+    <path
+       style="fill:url(#linearGradient4531);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 292.27684,179.84685 c 0,0 5.52977,-40.21702 -9.48992,-39.68854 -2.87066,0.57298 9.48992,39.68854 9.48992,39.68854 z"
+       id="path4522"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <ellipse
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.44999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       id="path4526"
+       cx="166.97162"
+       cy="283.03091"
+       rx="1.1877162"
+       ry="2.3875153"
+       transform="matrix(0.82170137,-0.56991829,0.53080901,0.84749147,0,0)" />
+  </g>
   <g
      inkscape:groupmode="layer"
      id="layer24"
