@@ -13,7 +13,7 @@ Base_Attack = {
 	end,
 
 	Use = function(self, Level, Source, Target, Result)
-		Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+		Damage = Battle_ResolveDamage(Source, Target, Result)
 		Result.Target.Health = -Damage
 
 		return Result
@@ -74,7 +74,7 @@ Skill_MonsterAttack = Base_Attack:New()
 Skill_SpiderBite = Base_Attack:New()
 
 function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
-	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Damage = Battle_ResolveDamage(Source, Target, Result)
 	Result.Target.Health = -Damage
 
 	if Random.GetInt(1, 100) <= 15 then
@@ -91,7 +91,7 @@ end
 Skill_FangBite = Base_Attack:New()
 
 function Skill_FangBite.Use(self, Level, Source, Target, Result)
-	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Damage = Battle_ResolveDamage(Source, Target, Result)
 	Result.Target.Health = -Damage
 
 	if Random.GetInt(1, 100) <= 15 then
@@ -108,7 +108,7 @@ end
 Skill_Swoop = Base_Attack:New()
 
 function Skill_Swoop.Use(self, Level, Source, Target, Result)
-	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Damage = Battle_ResolveDamage(Source, Target, Result)
 	Result.Target.Health = -Damage
 
 	if Random.GetInt(1, 100) <= 75 then
@@ -131,7 +131,7 @@ function Skill_Attack.GetInfo(self, Level)
 end
 
 function Skill_Attack.Use(self, Level, Source, Target, Result)
-	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Damage = Battle_ResolveDamage(Source, Target, Result)
 	if Random.GetInt(1, 100) <= 4 + Level then
 		Damage = Damage * 3
 	end
@@ -160,7 +160,7 @@ function Skill_Gash.GetInfo(self, Level)
 end
 
 function Skill_Gash.Use(self, Level, Source, Target, Result)
-	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Damage = Battle_ResolveDamage(Source, Target, Result)
 	Result.Target.Health = -Damage
 
 	if Random.GetInt(1, 100) <= self:GetChance(Level) then
