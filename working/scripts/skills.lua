@@ -86,6 +86,23 @@ function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Spider bite --
+
+Skill_FangBite = Base_Attack:New()
+
+function Skill_FangBite.Use(self, Level, Source, Target, Result)
+	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Result.Target.Health = -Damage
+
+	if Random.GetInt(1, 100) <= 15 then
+		Result.Target.Buff = Buffs["Buff_Bleeding"]
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+
+	return Result
+end
+
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()
