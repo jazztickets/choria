@@ -614,7 +614,6 @@ bool _Map::Save(const std::string &Path) {
 			if(Tile.PVP)
 				Output << "p " << Tile.PVP << '\n';
 		}
-		Output << '\n';
 	}
 
 	Output.close();
