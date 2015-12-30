@@ -164,7 +164,7 @@ end
 -- Gash --
 
 Skill_Gash = Base_Attack:New()
-Skill_Gash.BaseChance = 15
+Skill_Gash.BaseChance = 14
 Skill_Gash.ChancePerLevel = 1
 Skill_Gash.Duration = 5
 Skill_Gash.BleedingLevel = 1
@@ -353,7 +353,7 @@ end
 
 function Skill_Evasion.GetInfo(self, Level)
 
-	return "Increase evasion by [c green]" .. math.floor(Skill_Evasion:GetChance(Level) * 100)
+	return "Increase evasion by [c green]" .. math.floor(Skill_Evasion:GetChance(Level) * 100) .. "%"
 end
 
 function Skill_Evasion.Stats(self, Level, Object, Change)
