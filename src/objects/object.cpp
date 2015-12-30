@@ -1188,6 +1188,8 @@ void _Object::CalculateSkillStats() {
 				Skill->Stats(Scripting, ActionResult);
 				MaxHealth += ActionResult.Source.MaxHealth;
 				MaxMana += ActionResult.Source.MaxMana;
+				HitChance += ActionResult.Source.HitChance;
+				Evasion += ActionResult.Source.Evasion;
 			}
 		}
 	}

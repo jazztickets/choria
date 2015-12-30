@@ -327,6 +327,11 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	StatChange.ActionBarSize = (int)lua_tointeger(LuaState, -1);
 	lua_pop(LuaState, 1);
 
+	lua_pushstring(LuaState, "Evasion");
+	lua_gettable(LuaState, -2);
+	StatChange.Evasion = (float)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
 	lua_pushstring(LuaState, "Miss");
 	lua_gettable(LuaState, -2);
 	StatChange.Miss = lua_toboolean(LuaState, -1);

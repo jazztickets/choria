@@ -341,3 +341,23 @@ function Skill_ArcaneMastery.Stats(self, Level, Object, Change)
 
 	return Change
 end
+
+-- Evasion --
+
+Skill_Evasion = { ChancePerLevel = 0.01, BaseChance = 0.14 }
+
+function Skill_Evasion.GetChance(self, Level)
+
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, 1)
+end
+
+function Skill_Evasion.GetInfo(self, Level)
+
+	return "Increase evasion by [c green]" .. math.floor(Skill_Evasion:GetChance(Level) * 100)
+end
+
+function Skill_Evasion.Stats(self, Level, Object, Change)
+	Change.Evasion = self:GetChance(Level)
+
+	return Change
+end

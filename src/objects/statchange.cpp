@@ -43,6 +43,7 @@ void _StatChange::Reset() {
 	BattleSpeed = 0;
 	Evasion = 0;
 	HitChance = 0;
+	Evasion = 0;
 	Experience = 0;
 	Gold = 0;
 	Invisible = -1;
@@ -68,6 +69,8 @@ int _StatChange::GetChangedFlag() {
 		Flag |= StatType::BATTLESPEED;
 	if(HitChance != 0.0f)
 		Flag |= StatType::HITCHANCE;
+	if(Evasion != 0.0f)
+		Flag |= StatType::EVASION;
 	if(Experience != 0)
 		Flag |= StatType::EXPERIENCE;
 	if(Gold != 0)
@@ -105,6 +108,8 @@ void _StatChange::Serialize(_Buffer &Data) {
 		Data.Write<float>(BattleSpeed);
 	if(ChangedFlag & StatType::HITCHANCE)
 		Data.Write<float>(HitChance);
+	if(ChangedFlag & StatType::EVASION)
+		Data.Write<float>(Evasion);
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Data.Write<int>(Experience);
 	if(ChangedFlag & StatType::GOLD)

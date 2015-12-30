@@ -1251,6 +1251,13 @@ void _HUD::DrawCharacter() {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
+	// Evasion
+	Buffer << Player->Evasion * 100 << "%";
+	Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
+
 	// Separator
 	DrawPosition.y += SpacingY;
 
