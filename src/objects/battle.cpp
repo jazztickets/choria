@@ -170,7 +170,10 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	TextColor.a = AlphaPercent;
 
 	std::stringstream Buffer;
-	Buffer << std::abs(ActionResult.Target.Health);
+	if(ActionResult.Target.Miss)
+		Buffer << "miss";
+	else
+		Buffer << std::abs(ActionResult.Target.Health);
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 

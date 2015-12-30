@@ -141,5 +141,6 @@ _ActionResult::_ActionResult() :
 	Time(0.0),
 	Timeout(HUD_ACTIONRESULT_TIMEOUT),
 	Speed(HUD_ACTIONRESULT_SPEED),
+	Miss(false),
 	Scope(ScopeType::ALL) {
 }

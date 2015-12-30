@@ -173,6 +173,7 @@ class _Object : public _ManagerBase {
 		int MinDefense;
 		int MaxDefense;
 		double BaseBattleSpeed;
+		float Evasion;
 		float HitChance;
 
 		// Battle

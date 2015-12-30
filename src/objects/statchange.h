@@ -43,6 +43,7 @@ enum StatType : int {
 	GOLD            = (1 << 9),
 	INVISIBLE       = (1 << 10),
 	ACTIONBARSIZE   = (1 << 11),
+	MISS            = (1 << 12),
 };
 
 // Stat changes
@@ -65,11 +66,13 @@ class _StatChange {
 		float Mana;
 		float MaxMana;
 		float BattleSpeed;
+		float Evasion;
 		float HitChance;
 		int Experience;
 		int Gold;
 		int Invisible;
 		int ActionBarSize;
+		int Miss;
 
 };
 

@@ -41,10 +41,12 @@ void _StatChange::Reset() {
 	Mana = 0;
 	MaxMana = 0;
 	BattleSpeed = 0;
+	Evasion = 0;
 	HitChance = 0;
 	Experience = 0;
 	Gold = 0;
 	Invisible = -1;
+	Miss = -1;
 	ActionBarSize = 0;
 }
 
@@ -74,6 +76,8 @@ int _StatChange::GetChangedFlag() {
 		Flag |= StatType::INVISIBLE;
 	if(ActionBarSize != 0)
 		Flag |= StatType::ACTIONBARSIZE;
+	if(Miss != -1)
+		Flag |= StatType::MISS;
 
 	return Flag;
 }
@@ -109,6 +113,8 @@ void _StatChange::Serialize(_Buffer &Data) {
 		Data.Write<int>(Invisible);
 	if(ChangedFlag & StatType::ACTIONBARSIZE)
 		Data.Write<int>(ActionBarSize);
+	if(ChangedFlag & StatType::MISS)
+		Data.Write<int>(Miss);
 }
 
 // Unserialize network
@@ -141,6 +147,8 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 		Invisible = Data.Read<int>();
 	if(ChangedFlag & StatType::ACTIONBARSIZE)
 		ActionBarSize = Data.Read<int>();
+	if(ChangedFlag & StatType::MISS)
+		Miss = Data.Read<int>();
 }
 
 // Constructor

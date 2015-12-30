@@ -70,6 +70,7 @@ _Object::_Object() :
 	MinDefense(0),
 	MaxDefense(0),
 	BaseBattleSpeed(1.0f),
+	Evasion(0.0f),
 	HitChance(1.0f),
 	Battle(nullptr),
 	BattleElement(nullptr),
@@ -1091,6 +1092,7 @@ void _Object::CalculateStats() {
 		WeaponMinDamage = WeaponMaxDamage = 0;
 		ArmorMinDefense = ArmorMaxDefense = 0;
 		WeaponDamageModifier = 1.0f;
+		Evasion = 0.0f;
 		Invisible = 0;
 	}
 	BattleSpeed = BaseBattleSpeed;

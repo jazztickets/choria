@@ -89,5 +89,6 @@ struct _ActionResult {
 	double Time;
 	double Timeout;
 	double Speed;
+	bool Miss;
 	ScopeType Scope;
 };

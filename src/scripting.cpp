@@ -150,6 +150,12 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
+	lua_pushnumber(LuaState, Object->HitChance);
+	lua_setfield(LuaState, -2, "HitChance");
+
+	lua_pushnumber(LuaState, Object->Evasion);
+	lua_setfield(LuaState, -2, "Evasion");
+
 	lua_pushlightuserdata(LuaState, Object);
 	lua_setfield(LuaState, -2, "Pointer");
 }
@@ -259,6 +265,7 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	lua_gettable(LuaState, -2);
 	GetStatChange(-1, ActionResult.Target);
 	lua_pop(LuaState, 1);
+
 }
 
 // Get return value as stat change
@@ -318,6 +325,11 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	lua_pushstring(LuaState, "ActionBarSize");
 	lua_gettable(LuaState, -2);
 	StatChange.ActionBarSize = (int)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_pushstring(LuaState, "Miss");
+	lua_gettable(LuaState, -2);
+	StatChange.Miss = lua_toboolean(LuaState, -1);
 	lua_pop(LuaState, 1);
 }
 
