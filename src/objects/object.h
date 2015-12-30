@@ -161,7 +161,7 @@ class _Object : public _ManagerBase {
 		// Action bar
 		std::vector<_Action>ActionBar;
 
-		// Stats
+		// Base stats
 		std::string Name;
 		int Level;
 		float Health;
@@ -172,7 +172,8 @@ class _Object : public _ManagerBase {
 		int MaxDamage;
 		int MinDefense;
 		int MaxDefense;
-		double BattleSpeed;
+		double BaseBattleSpeed;
+		float HitChance;
 
 		// Battle
 		_Battle *Battle;
@@ -230,6 +231,7 @@ class _Object : public _ManagerBase {
 		int MaxDamageBonus;
 		int MinDefenseBonus;
 		int MaxDefenseBonus;
+		double BattleSpeed;
 		double BattleSpeedBonus;
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
 

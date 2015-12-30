@@ -86,7 +86,7 @@ function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
--- Spider bite --
+-- Fang bite --
 
 Skill_FangBite = Base_Attack:New()
 
@@ -124,6 +124,37 @@ function Skill_Attack.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Gash --
+
+Skill_Gash = Base_Attack:New()
+Skill_Gash.BaseChance = 15
+Skill_Gash.ChancePerLevel = 1
+Skill_Gash.Duration = 5
+Skill_Gash.BleedingLevel = 1
+
+function Skill_Gash.GetChance(self, Level)
+
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+end
+
+function Skill_Gash.GetInfo(self, Level)
+
+	return "Slice your enemy\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to cause [c yellow]bleeding"
+end
+
+function Skill_Gash.Use(self, Level, Source, Target, Result)
+	Damage = math.max(Source.GenerateDamage() - Target.GenerateDefense(), 0)
+	Result.Target.Health = -Damage
+
+	if Random.GetInt(1, 100) <= self:GetChance(Level) then
+		Result.Target.Buff = Buffs["Buff_Bleeding"]
+		Result.Target.BuffLevel = self.BleedingLevel
+		Result.Target.BuffDuration = self.Duration
+	end
+
+	return Result
+end
+
 -- Shield Bash --
 
 Skill_ShieldBash = Base_Attack:New()
@@ -132,10 +163,12 @@ Skill_ShieldBash.ChancePerLevel = 2
 Skill_ShieldBash.Duration = 3
 
 function Skill_ShieldBash.GetInfo(self, Level)
+
 	return "Bash with your enemy with a shield\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to stun for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Skill_ShieldBash.GetChance(self, Level)
+
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 

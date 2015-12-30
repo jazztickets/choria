@@ -33,11 +33,15 @@ _StatChange::_StatChange() {
 // Reset stats
 void _StatChange::Reset() {
 	Object = nullptr;
+	StatusEffect.Buff = nullptr;
+	StatusEffect.Level = 0;
+	StatusEffect.Duration = 0;
 	Health = 0;
 	MaxHealth = 0;
 	Mana = 0;
 	MaxMana = 0;
 	BattleSpeed = 0;
+	HitChance = 0;
 	Experience = 0;
 	Gold = 0;
 	Invisible = -1;
@@ -60,6 +64,8 @@ int _StatChange::GetChangedFlag() {
 		Flag |= StatType::MAXMANA;
 	if(BattleSpeed != 0.0f)
 		Flag |= StatType::BATTLESPEED;
+	if(HitChance != 0.0f)
+		Flag |= StatType::HITCHANCE;
 	if(Experience != 0)
 		Flag |= StatType::EXPERIENCE;
 	if(Gold != 0)
@@ -93,6 +99,8 @@ void _StatChange::Serialize(_Buffer &Data) {
 		Data.Write<float>(MaxMana);
 	if(ChangedFlag & StatType::BATTLESPEED)
 		Data.Write<float>(BattleSpeed);
+	if(ChangedFlag & StatType::HITCHANCE)
+		Data.Write<float>(HitChance);
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Data.Write<int>(Experience);
 	if(ChangedFlag & StatType::GOLD)
@@ -123,6 +131,8 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 		MaxMana = Data.Read<float>();
 	if(ChangedFlag & StatType::BATTLESPEED)
 		BattleSpeed = Data.Read<float>();
+	if(ChangedFlag & StatType::HITCHANCE)
+		HitChance = Data.Read<float>();
 	if(ChangedFlag & StatType::EXPERIENCE)
 		Experience = Data.Read<int>();
 	if(ChangedFlag & StatType::GOLD)

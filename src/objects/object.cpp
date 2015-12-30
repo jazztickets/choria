@@ -69,7 +69,8 @@ _Object::_Object() :
 	MaxDamage(0),
 	MinDefense(0),
 	MaxDefense(0),
-	BattleSpeed(1.0f),
+	BaseBattleSpeed(1.0f),
+	HitChance(1.0f),
 	Battle(nullptr),
 	BattleElement(nullptr),
 	TurnTimer(0.0),
@@ -107,6 +108,7 @@ _Object::_Object() :
 	MaxDamageBonus(0),
 	MinDefenseBonus(0),
 	MaxDefenseBonus(0),
+	BattleSpeed(1.0f),
 	BattleSpeedBonus(0.0),
 	WeaponDamageModifier(0.0f),
 	WeaponMinDamage(0),
@@ -1082,13 +1084,16 @@ void _Object::CalculateStats() {
 	float HealthPercent = GetHealthPercent();
 	float ManaPercent = GetManaPercent();
 
-	MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
-	MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
-	WeaponMinDamage = WeaponMaxDamage = 0;
-	ArmorMinDefense = ArmorMaxDefense = 0;
-	WeaponDamageModifier = 1.0f;
-	Invisible = 0;
-	BattleSpeed = 1.0f;
+	// TODO fix
+	if(!DatabaseID) {
+		MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
+		MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
+		WeaponMinDamage = WeaponMaxDamage = 0;
+		ArmorMinDefense = ArmorMaxDefense = 0;
+		WeaponDamageModifier = 1.0f;
+		Invisible = 0;
+	}
+	BattleSpeed = BaseBattleSpeed;
 	BattleSpeedBonus = 0.0;
 
 	// Get base stats
@@ -1115,7 +1120,7 @@ void _Object::CalculateStats() {
 
 // Calculates the base level stats
 void _Object::CalculateLevelStats() {
-	if(!Stats)
+	if(!Stats || DatabaseID)
 		return;
 
 	// Cap min experience
@@ -1146,7 +1151,7 @@ void _Object::CalculateGearStats() {
 
 	// Get stats
 	if(!Inventory->Slots[InventoryType::HAND1].Item)
-		WeaponMinDamage = WeaponMaxDamage = 1;
+		WeaponMaxDamage = 1;
 
 	// Check each item
 	for(size_t i = 0; i < InventoryType::BAG; i++) {
@@ -1201,15 +1206,21 @@ void _Object::CalculateBuffStats() {
 
 // Combine all stats
 void _Object::CalculateFinalStats() {
-	MinDamage = MinDamageBonus + (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
-	MaxDamage = MaxDamageBonus + (int)std::roundf(WeaponMaxDamage * WeaponDamageModifier);
+	if(!DatabaseID) {
+		MinDamage = MinDamageBonus + (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
+		MaxDamage = MaxDamageBonus + (int)std::roundf(WeaponMaxDamage * WeaponDamageModifier);
+	}
+
 	if(MinDamage < 0)
 		MinDamage = 0;
 	if(MaxDamage < 0)
 		MaxDamage = 0;
 
-	MinDefense = ArmorMinDefense + MinDefenseBonus;
-	MaxDefense = ArmorMaxDefense + MaxDefenseBonus;
+	if(!DatabaseID) {
+		MinDefense = ArmorMinDefense + MinDefenseBonus;
+		MaxDefense = ArmorMaxDefense + MaxDefenseBonus;
+	}
+
 	if(MinDefense < 0)
 		MinDefense = 0;
 	if(MaxDefense < 0)

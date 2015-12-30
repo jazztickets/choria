@@ -1244,24 +1244,12 @@ void _HUD::DrawCharacter() {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
-	/*
-	// HP Regen
-	if(Player->HealthRegen != 0.0f) {
-		Buffer << std::setprecision(3) << Player->HealthRegen;
-		Assets.Fonts["hud_small"]->DrawText("HP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// MP Regen
-	if(Player->ManaRegen != 0.0f) {
-		Buffer << std::setprecision(3) << Player->ManaRegen;
-		Assets.Fonts["hud_small"]->DrawText("MP regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}*/
+	// Hit chance
+	Buffer << Player->HitChance * 100 << "%";
+	Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
 
 	// Separator
 	DrawPosition.y += SpacingY;

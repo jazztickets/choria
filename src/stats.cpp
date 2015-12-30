@@ -360,6 +360,8 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->MinDefense = Database->GetInt<int>("mindefense");
 		Monster->MaxDefense = Database->GetInt<int>("maxdefense");
 
+		Monster->BaseBattleSpeed = Database->GetReal("battlespeed");
+
 		Monster->AI = Database->GetString("ai_name");
 
 		// Load build

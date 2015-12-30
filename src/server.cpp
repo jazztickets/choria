@@ -1270,7 +1270,9 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 			Monster->Server = this;
 			Monster->Scripting = Scripting;
 			Monster->DatabaseID = MonsterID;
+			Monster->Stats = Stats;
 			Stats->GetMonsterStats(MonsterID, Monster);
+			Monster->CalculateStats();
 			Battle->AddFighter(Monster, 1);
 		}
 
