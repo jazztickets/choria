@@ -59,6 +59,39 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 
+	BaseMaxHealth(0),
+	BaseMaxMana(0),
+	BaseMinDamage(0),
+	BaseMaxDamage(0),
+	BaseMinDefense(0),
+	BaseMaxDefense(0),
+	BaseBattleSpeed(1.0),
+	BaseEvasion(0.0f),
+	BaseHitChance(1.0f),
+
+	CalcStats(true),
+	PlayTime(0.0),
+	Deaths(0),
+	MonsterKills(0),
+	PlayerKills(0),
+	Bounty(0),
+	Gold(0),
+	Experience(0),
+	ExperienceNeeded(0),
+	ExperienceNextLevel(0),
+	MinDamageBonus(0),
+	MaxDamageBonus(0),
+	MinDefenseBonus(0),
+	MaxDefenseBonus(0),
+	BattleSpeed(1.0f),
+	BattleSpeedBonus(0.0),
+
+	WeaponDamageModifier(0.0f),
+	WeaponMinDamage(0),
+	WeaponMaxDamage(0),
+	ArmorMinDefense(0),
+	ArmorMaxDefense(0),
+
 	Name(""),
 	Level(0),
 	Health(0.0f),
@@ -69,7 +102,6 @@ _Object::_Object() :
 	MaxDamage(0),
 	MinDefense(0),
 	MaxDefense(0),
-	BaseBattleSpeed(1.0f),
 	Evasion(0.0f),
 	HitChance(1.0f),
 	Battle(nullptr),
@@ -95,28 +127,7 @@ _Object::_Object() :
 	SpawnMapID(1),
 	SpawnPoint(0),
 	TeleportTime(-1),
-	CalcStats(true),
-	PlayTime(0),
-	PlayTimeAccumulator(0),
-	Deaths(0),
-	MonsterKills(0),
-	PlayerKills(0),
-	Bounty(0),
-	Gold(0),
-	Experience(0),
-	ExperienceNeeded(0),
-	ExperienceNextLevel(0),
-	MinDamageBonus(0),
-	MaxDamageBonus(0),
-	MinDefenseBonus(0),
-	MaxDefenseBonus(0),
-	BattleSpeed(1.0f),
-	BattleSpeedBonus(0.0),
-	WeaponDamageModifier(0.0f),
-	WeaponMinDamage(0),
-	WeaponMaxDamage(0),
-	ArmorMinDefense(0),
-	ArmorMaxDefense(0),
+
 	NextBattle(0),
 	AttackPlayerTime(0),
 	Invisible(0),
@@ -251,11 +262,7 @@ void _Object::Update(double FrameTime) {
 	}
 
 	// Update playtime
-	PlayTimeAccumulator += FrameTime;
-	if(PlayTimeAccumulator >= 1.0) {
-		PlayTimeAccumulator -= 1.0;
-		PlayTime++;
-	}
+	PlayTime += FrameTime;
 
 	// Check events
 	if(Map && CheckEvent)

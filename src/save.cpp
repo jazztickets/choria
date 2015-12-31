@@ -320,7 +320,7 @@ void _Save::SavePlayer(const _Object *Player) {
 	Database->BindReal(Index++, Player->GetManaPercent());
 	Database->BindInt(Index++, Player->Experience);
 	Database->BindInt(Index++, Player->Gold);
-	Database->BindInt(Index++, Player->PlayTime);
+	Database->BindReal(Index++, Player->PlayTime);
 	Database->BindInt(Index++, Player->Deaths);
 	Database->BindInt(Index++, Player->MonsterKills);
 	Database->BindInt(Index++, Player->PlayerKills);
@@ -466,8 +466,8 @@ void _Save::CreateDefaultDatabase() {
 				"	manapercent REAL DEFAULT(1),\n"
 				"	experience INTEGER DEFAULT(0),\n"
 				"	gold INTEGER DEFAULT(0),\n"
-				"	battletime INTEGER DEFAULT(0),\n"
-				"	playtime INTEGER DEFAULT(0),\n"
+				"	battletime REAL DEFAULT(0),\n"
+				"	playtime REAL DEFAULT(0),\n"
 				"	deaths INTEGER DEFAULT(0),\n"
 				"	monsterkills INTEGER DEFAULT(0),\n"
 				"	playerkills INTEGER DEFAULT(0),\n"

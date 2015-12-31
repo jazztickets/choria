@@ -1261,13 +1261,15 @@ void _HUD::DrawCharacter() {
 	// Separator
 	DrawPosition.y += SpacingY;
 
-	// Playtime
-	if(Player->PlayTime < 60)
-		Buffer << Player->PlayTime << "s";
-	else if(Player->PlayTime < 3600)
-		Buffer << Player->PlayTime / 60 << "m";
+	// Play time
+	int64_t PlayTime = (int64_t)Player->PlayTime;
+	if(PlayTime < 60)
+		Buffer << PlayTime << "s";
+	else if(PlayTime < 3600)
+		Buffer << PlayTime / 60 << "m";
 	else
-		Buffer << Player->PlayTime / 3600 << "h" << (Player->PlayTime / 60 % 60) << "m";
+		Buffer << PlayTime / 3600 << "h" << (PlayTime / 60 % 60) << "m";
+
 	Assets.Fonts["hud_small"]->DrawText("Play time", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");

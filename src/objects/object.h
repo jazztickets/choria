@@ -162,6 +162,43 @@ class _Object : public _ManagerBase {
 		std::vector<_Action>ActionBar;
 
 		// Base stats
+		float BaseMaxHealth;
+		float BaseMaxMana;
+		int BaseMinDamage;
+		int BaseMaxDamage;
+		int BaseMinDefense;
+		int BaseMaxDefense;
+		double BaseBattleSpeed;
+		float BaseEvasion;
+		float BaseHitChance;
+
+		// Stats
+		bool CalcStats;
+		double PlayTime;
+		int Deaths;
+		int MonsterKills;
+		int PlayerKills;
+		int Bounty;
+		int Gold;
+		int Experience;
+		int ExperienceNeeded;
+		int ExperienceNextLevel;
+		int MinDamageBonus;
+		int MaxDamageBonus;
+		int MinDefenseBonus;
+		int MaxDefenseBonus;
+		double BattleSpeed;
+		double BattleSpeedBonus;
+		std::unordered_map<uint32_t, _Unlock> Unlocks;
+
+		// Item stats
+		float WeaponDamageModifier;
+		int WeaponMinDamage;
+		int WeaponMaxDamage;
+		int ArmorMinDefense;
+		int ArmorMaxDefense;
+
+		// Final stats
 		std::string Name;
 		int Level;
 		float Health;
@@ -172,9 +209,10 @@ class _Object : public _ManagerBase {
 		int MaxDamage;
 		int MinDefense;
 		int MaxDefense;
-		double BaseBattleSpeed;
 		float Evasion;
 		float HitChance;
+
+		// Player stats
 
 		// Battle
 		_Battle *Battle;
@@ -217,32 +255,6 @@ class _Object : public _ManagerBase {
 		uint32_t SpawnPoint;
 		double TeleportTime;
 
-		// Stats
-		bool CalcStats;
-		int PlayTime;
-		double PlayTimeAccumulator;
-		int Deaths;
-		int MonsterKills;
-		int PlayerKills;
-		int Bounty;
-		int Gold;
-		int Experience;
-		int ExperienceNeeded;
-		int ExperienceNextLevel;
-		int MinDamageBonus;
-		int MaxDamageBonus;
-		int MinDefenseBonus;
-		int MaxDefenseBonus;
-		double BattleSpeed;
-		double BattleSpeedBonus;
-		std::unordered_map<uint32_t, _Unlock> Unlocks;
-
-		// Item stats
-		float WeaponDamageModifier;
-		int WeaponMinDamage;
-		int WeaponMaxDamage;
-		int ArmorMinDefense;
-		int ArmorMaxDefense;
 
 		// Battle
 		int NextBattle;
