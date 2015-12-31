@@ -456,6 +456,9 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 
 	MonsterCount += AdditionalCount;
 
+	// Cap monster count
+	MonsterCount = std::min(MonsterCount, BATTLE_MAXFIGHTERS_SIDE);
+
 	// Run query
 	Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
 	Database->BindInt(1, ZoneID);
@@ -488,8 +491,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 			}
 
 			// Populate monster list
-			if(Monsters.size() < 8)
-				Monsters.push_back(Zone[MonsterIndex].MonsterID);
+			Monsters.push_back(Zone[MonsterIndex].MonsterID);
 		}
 	}
 }
