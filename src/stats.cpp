@@ -349,23 +349,19 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->Level = Database->GetInt<int>("level");
 		Monster->Name = Database->GetString("name");
 		Monster->Portrait = Assets.Textures[Database->GetString("portrait")];
-		Monster->Health = Monster->MaxHealth = Database->GetInt<int>("health");
-		Monster->Mana = Monster->MaxMana = Database->GetInt<int>("mana");
 		Monster->ExperienceGiven = Database->GetInt<int>("experience");
 		Monster->GoldGiven = Database->GetInt<int>("gold");
-
-		Monster->MinDamage = Database->GetInt<int>("mindamage");
-		Monster->MaxDamage = Database->GetInt<int>("maxdamage");
-
-		Monster->MinDefense = Database->GetInt<int>("mindefense");
-		Monster->MaxDefense = Database->GetInt<int>("maxdefense");
-
+		Monster->BaseMaxHealth = Database->GetInt<int>("health");
+		Monster->BaseMaxMana = Database->GetInt<int>("mana");
+		Monster->BaseMinDamage = Database->GetInt<int>("mindamage");
+		Monster->BaseMaxDamage = Database->GetInt<int>("maxdamage");
+		Monster->BaseMinDefense = Database->GetInt<int>("mindefense");
+		Monster->BaseMaxDefense = Database->GetInt<int>("maxdefense");
 		Monster->BaseBattleSpeed = Database->GetReal("battlespeed");
-
 		Monster->AI = Database->GetString("ai_name");
+		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 
 		// Load build
-		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 		const _Object *Build = Builds[BuildID];
 		if(!Build)
 			throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
@@ -374,6 +370,10 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->ActionBar = Build->ActionBar;
 		Monster->Inventory->Slots = Build->Inventory->Slots;
 		Monster->Skills = Build->Skills;
+
+		Monster->Health = Monster->MaxHealth = Monster->BaseMaxHealth;
+		Monster->Mana = Monster->MaxMana = Monster->BaseMaxMana;
+		Monster->CalcLevelStats = false;
 	}
 
 	// Free memory

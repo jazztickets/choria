@@ -447,6 +447,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 		Fighter->HUD = HUD;
 		Fighter->Scripting = Scripting;
 		Fighter->Stats = Stats;
+		Fighter->CalculateStats();
 
 		// Add fighter
 		AddFighter(Fighter, Fighter->BattleSide);

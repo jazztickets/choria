@@ -585,12 +585,12 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 
 		// Create object
 		_Object *Object = CreateObject(Data, NetworkID);
-		Object->CalcStats = false;
 
 		// Set player pointer
-		if(Object->NetworkID == ClientNetworkID) {
+		if(Object->NetworkID == ClientNetworkID)
 			AssignPlayer(Object);
-		}
+		else
+			Object->CalcLevelStats = false;
 	}
 
 	if(Player) {
@@ -1100,7 +1100,7 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
-	Object->CalcStats = false;
+	Object->CalcLevelStats = false;
 	Object->UnserializeCreate(Data);
 
 	// Add to map
@@ -1141,16 +1141,15 @@ void _ClientState::SendStatus(uint8_t Status) {
 void _ClientState::AssignPlayer(_Object *Object) {
 	Player = Object;
 	if(Player)
-		Player->CalcStats = true;
+		Player->CalcLevelStats = true;
 
 	if(HUD) {
 		HUD->SetPlayer(Player);
 		HUD->StatChanges.clear();
 	}
 
-	if(Battle) {
+	if(Battle)
 		Battle->ClientPlayer = Player;
-	}
 }
 
 // Delete battle instance

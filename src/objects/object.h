@@ -173,30 +173,8 @@ class _Object : public _ManagerBase {
 		float BaseHitChance;
 
 		// Stats
-		bool CalcStats;
-		double PlayTime;
-		int Deaths;
-		int MonsterKills;
-		int PlayerKills;
-		int Bounty;
-		int Gold;
-		int Experience;
-		int ExperienceNeeded;
-		int ExperienceNextLevel;
-		int MinDamageBonus;
-		int MaxDamageBonus;
-		int MinDefenseBonus;
-		int MaxDefenseBonus;
-		double BattleSpeed;
-		double BattleSpeedBonus;
+		bool CalcLevelStats;
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
-
-		// Item stats
-		float WeaponDamageModifier;
-		int WeaponMinDamage;
-		int WeaponMaxDamage;
-		int ArmorMinDefense;
-		int ArmorMaxDefense;
 
 		// Final stats
 		std::string Name;
@@ -209,10 +187,20 @@ class _Object : public _ManagerBase {
 		int MaxDamage;
 		int MinDefense;
 		int MaxDefense;
+		double BattleSpeed;
 		float Evasion;
 		float HitChance;
 
 		// Player stats
+		double PlayTime;
+		int Deaths;
+		int MonsterKills;
+		int PlayerKills;
+		int Bounty;
+		int Gold;
+		int Experience;
+		int ExperienceNeeded;
+		int ExperienceNextLevel;
 
 		// Battle
 		_Battle *Battle;
@@ -284,9 +272,5 @@ class _Object : public _ManagerBase {
 
 		void DeleteStatusEffects();
 		void CalculateLevelStats();
-		void CalculateGearStats();
-		void CalculateSkillStats();
-		void CalculateBuffStats();
-		void CalculateFinalStats();
 
 };

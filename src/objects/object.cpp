@@ -62,35 +62,14 @@ _Object::_Object() :
 	BaseMaxHealth(0),
 	BaseMaxMana(0),
 	BaseMinDamage(0),
-	BaseMaxDamage(0),
+	BaseMaxDamage(1),
 	BaseMinDefense(0),
 	BaseMaxDefense(0),
 	BaseBattleSpeed(1.0),
 	BaseEvasion(0.0f),
 	BaseHitChance(1.0f),
 
-	CalcStats(true),
-	PlayTime(0.0),
-	Deaths(0),
-	MonsterKills(0),
-	PlayerKills(0),
-	Bounty(0),
-	Gold(0),
-	Experience(0),
-	ExperienceNeeded(0),
-	ExperienceNextLevel(0),
-	MinDamageBonus(0),
-	MaxDamageBonus(0),
-	MinDefenseBonus(0),
-	MaxDefenseBonus(0),
-	BattleSpeed(1.0f),
-	BattleSpeedBonus(0.0),
-
-	WeaponDamageModifier(0.0f),
-	WeaponMinDamage(0),
-	WeaponMaxDamage(0),
-	ArmorMinDefense(0),
-	ArmorMaxDefense(0),
+	CalcLevelStats(true),
 
 	Name(""),
 	Level(0),
@@ -102,8 +81,20 @@ _Object::_Object() :
 	MaxDamage(0),
 	MinDefense(0),
 	MaxDefense(0),
+	BattleSpeed(1.0),
 	Evasion(0.0f),
 	HitChance(1.0f),
+
+	PlayTime(0.0),
+	Deaths(0),
+	MonsterKills(0),
+	PlayerKills(0),
+	Bounty(0),
+	Gold(0),
+	Experience(0),
+	ExperienceNeeded(0),
+	ExperienceNextLevel(0),
+
 	Battle(nullptr),
 	BattleElement(nullptr),
 	TurnTimer(0.0),
@@ -355,7 +346,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		}
 
 		if(ClientPlayer != this) {
-			Assets.Fonts["hud_medium"]->DrawText(Name.c_str(), glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
+			Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
 		}
 	}
 }
@@ -652,9 +643,9 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
 	Health = Data.Read<float>();
-	MaxHealth = Data.Read<float>();
+	BaseMaxHealth = MaxHealth = Data.Read<float>();
 	Mana = Data.Read<float>();
-	MaxMana = Data.Read<float>();
+	BaseMaxMana = MaxMana = Data.Read<float>();
 	Experience = Data.Read<int32_t>();
 	Gold = Data.Read<int32_t>();
 	PlayTime = Data.Read<int32_t>();
@@ -712,9 +703,9 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	Position = ServerPosition = Data.Read<glm::ivec2>();
 	TurnTimer = Data.Read<double>();
 	Health = Data.Read<float>();
-	MaxHealth = Data.Read<float>();
+	BaseMaxHealth = MaxHealth = Data.Read<float>();
 	Mana = Data.Read<float>();
-	MaxMana = Data.Read<float>();
+	BaseMaxMana = MaxMana = Data.Read<float>();
 	BattleSide = Data.Read<uint8_t>();
 
 	DeleteStatusEffects();
@@ -1093,78 +1084,29 @@ void _Object::CalculateStats() {
 	float HealthPercent = GetHealthPercent();
 	float ManaPercent = GetManaPercent();
 
-	// TODO fix
-	if(!DatabaseID || CalcStats) {
-		MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
-		MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
-		WeaponMinDamage = WeaponMaxDamage = 0;
-		ArmorMinDefense = ArmorMaxDefense = 0;
-		WeaponDamageModifier = 1.0f;
-		Evasion = 0.0f;
-		Invisible = 0;
-	}
-	BattleSpeed = BaseBattleSpeed;
-	BattleSpeedBonus = 0.0;
-
 	// Get base stats
 	CalculateLevelStats();
 
-	// Get gear stats
-	CalculateGearStats();
+	MaxHealth = BaseMaxHealth;
+	MaxMana = BaseMaxMana;
+	BattleSpeed = BaseBattleSpeed;
+	Evasion = BaseEvasion;
+	HitChance = BaseHitChance;
+	MinDamage = BaseMinDamage;
+	MaxDamage = BaseMaxDamage;
+	MinDefense = BaseMinDefense;
+	MaxDefense = BaseMaxDefense;
+	Invisible = 0;
 
-	// Get skill bonus
-	CalculateSkillStats();
-
-	// Get buff stats
-	CalculateBuffStats();
-
-	// Combine all stats
-	CalculateFinalStats();
-
-	// Set health/mana
-	Health = HealthPercent * MaxHealth;
-	Mana = ManaPercent * MaxMana;
-
-	RefreshActionBarCount();
-}
-
-// Calculates the base level stats
-void _Object::CalculateLevelStats() {
-	if(!Stats || DatabaseID || !CalcStats)
-		return;
-
-	// Cap min experience
-	if(Experience < 0)
-		Experience = 0;
-
-	// Cap max experience
-	const _Level *MaxLevelStat = Stats->GetLevel(Stats->GetMaxLevel());
-	if(Experience > MaxLevelStat->Experience)
-		Experience = MaxLevelStat->Experience;
-
-	// Find current level
-	const _Level *LevelStat = Stats->FindLevel(Experience);
-	Level = LevelStat->Level;
-	MaxHealth = LevelStat->Health;
-	MaxMana = LevelStat->Mana;
-	SkillPoints = LevelStat->SkillPoints;
-	ExperienceNextLevel = LevelStat->NextLevel;
-	if(Level == Stats->GetMaxLevel())
-		ExperienceNeeded = 0;
-	else
-		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);
-
-}
-
-// Calculates stats from equipped items
-void _Object::CalculateGearStats() {
-
-	// Get stats
-	if(!Inventory->Slots[InventoryType::HAND1].Item)
-		WeaponMaxDamage = 1;
-
-	// Check each item
+	// Get item stats
+	int WeaponMinDamage = 0;
+	int WeaponMaxDamage = 0;
+	int ArmorMinDefense = 0;
+	int ArmorMaxDefense = 0;
+	float WeaponDamageModifier = 1.0f;
 	for(size_t i = 0; i < InventoryType::BAG; i++) {
+
+		// Check each item
 		const _Item *Item = Inventory->Slots[i].Item;
 		if(Item) {
 
@@ -1176,16 +1118,14 @@ void _Object::CalculateGearStats() {
 			ArmorMinDefense += Item->MinDefense;
 			ArmorMaxDefense += Item->MaxDefense;
 
-			// Boosts
+			// Stat changes
 			MaxHealth += Item->MaxHealth;
 			MaxMana += Item->MaxMana;
 			BattleSpeed += Item->BattleSpeed;
 		}
 	}
-}
 
-// Calculates skill bonuses
-void _Object::CalculateSkillStats() {
+	// Get skill bonus
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = this;
@@ -1201,44 +1141,65 @@ void _Object::CalculateSkillStats() {
 			}
 		}
 	}
-}
 
-// Calculate stat changes from buffs
-void _Object::CalculateBuffStats() {
+	// Get buff stats
 	for(const auto &StatusEffect : StatusEffects) {
 		_StatChange StatChange;
 		StatChange.Object = this;
 		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
 
-		BattleSpeedBonus += StatChange.BattleSpeed;
+		BattleSpeed += StatChange.BattleSpeed;
 		if(StatChange.Invisible != -1)
 			Invisible = StatChange.Invisible;
 	}
+
+	// Get damage
+	MinDamage += (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
+	MaxDamage += (int)std::roundf(WeaponMaxDamage * WeaponDamageModifier);
+
+	// Get defense
+	MinDefense += ArmorMinDefense;
+	MaxDefense += ArmorMaxDefense;
+
+	MinDamage = std::max(MinDamage, 0);
+	MaxDamage = std::max(MaxDamage, 0);
+	MinDefense = std::max(MinDefense, 0);
+	MaxDefense = std::max(MaxDefense, 0);
+
+	if(BattleSpeed < BATTLE_MIN_SPEED)
+		BattleSpeed = BATTLE_MIN_SPEED;
+
+	// Set health/mana
+	Health = HealthPercent * MaxHealth;
+	Mana = ManaPercent * MaxMana;
+
+	RefreshActionBarCount();
 }
 
-// Combine all stats
-void _Object::CalculateFinalStats() {
-	if(!DatabaseID || CalcStats) {
-		MinDamage = MinDamageBonus + (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
-		MaxDamage = MaxDamageBonus + (int)std::roundf(WeaponMaxDamage * WeaponDamageModifier);
-	}
+// Calculates the base level stats
+void _Object::CalculateLevelStats() {
+	if(!Stats || !CalcLevelStats)
+		return;
 
-	if(MinDamage < 0)
-		MinDamage = 0;
-	if(MaxDamage < 0)
-		MaxDamage = 0;
+	// Cap min experience
+	if(Experience < 0)
+		Experience = 0;
 
-	if(!DatabaseID || CalcStats) {
-		MinDefense = ArmorMinDefense + MinDefenseBonus;
-		MaxDefense = ArmorMaxDefense + MaxDefenseBonus;
-	}
+	// Cap max experience
+	const _Level *MaxLevelStat = Stats->GetLevel(Stats->GetMaxLevel());
+	if(Experience > MaxLevelStat->Experience)
+		Experience = MaxLevelStat->Experience;
 
-	if(MinDefense < 0)
-		MinDefense = 0;
-	if(MaxDefense < 0)
-		MaxDefense = 0;
+	// Find current level
+	const _Level *LevelStat = Stats->FindLevel(Experience);
+	Level = LevelStat->Level;
+	BaseMaxHealth = LevelStat->Health;
+	BaseMaxMana = LevelStat->Mana;
+	SkillPoints = LevelStat->SkillPoints;
+	ExperienceNextLevel = LevelStat->NextLevel;
+	if(Level == Stats->GetMaxLevel())
+		ExperienceNeeded = 0;
+	else
+		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);
 
-	BattleSpeed += BattleSpeedBonus;
-	if(BattleSpeed < PLAYER_MIN_BATTLESPEED)
-		BattleSpeed = PLAYER_MIN_BATTLESPEED;
 }
