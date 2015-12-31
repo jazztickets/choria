@@ -334,7 +334,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 
 		glm::vec3 DrawPosition;
-		if(0) {
+		if(HUD && HUD->ShowStats) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 			Graphics.DrawSprite(DrawPosition, WorldTexture);
