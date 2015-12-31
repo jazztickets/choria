@@ -585,6 +585,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 
 		// Create object
 		_Object *Object = CreateObject(Data, NetworkID);
+		Object->CalcStats = false;
 
 		// Set player pointer
 		if(Object->NetworkID == ClientNetworkID) {
@@ -1099,6 +1100,7 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
+	Object->CalcStats = false;
 	Object->UnserializeCreate(Data);
 
 	// Add to map
@@ -1138,6 +1140,9 @@ void _ClientState::SendStatus(uint8_t Status) {
 // Assigns the client player pointer
 void _ClientState::AssignPlayer(_Object *Object) {
 	Player = Object;
+	if(Player)
+		Player->CalcStats = true;
+
 	if(HUD) {
 		HUD->SetPlayer(Player);
 		HUD->StatChanges.clear();

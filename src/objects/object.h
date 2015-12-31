@@ -111,7 +111,7 @@ class _Object : public _ManagerBase {
 		int GenerateDefense();
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();
-		bool CanBattle();
+		bool CanBattle() const;
 		void GenerateNextBattle();
 		void StopBattle();
 
@@ -218,6 +218,7 @@ class _Object : public _ManagerBase {
 		double TeleportTime;
 
 		// Stats
+		bool CalcStats;
 		int PlayTime;
 		double PlayTimeAccumulator;
 		int Deaths;

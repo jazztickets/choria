@@ -95,6 +95,7 @@ _Object::_Object() :
 	SpawnMapID(1),
 	SpawnPoint(0),
 	TeleportTime(-1),
+	CalcStats(true),
 	PlayTime(0),
 	PlayTimeAccumulator(0),
 	Deaths(0),
@@ -1074,7 +1075,7 @@ void _Object::CalculateSkillPoints() {
 }
 
 // Can enter battle
-bool _Object::CanBattle() {
+bool _Object::CanBattle() const {
 	return Status == STATUS_NONE && Invisible <= 0;
 }
 
@@ -1086,7 +1087,7 @@ void _Object::CalculateStats() {
 	float ManaPercent = GetManaPercent();
 
 	// TODO fix
-	if(!DatabaseID) {
+	if(!DatabaseID || CalcStats) {
 		MinDamage = MaxDamage = MinDefense = MaxDefense = 0;
 		MinDamageBonus = MaxDamageBonus = MinDefenseBonus = MaxDefenseBonus = 0;
 		WeaponMinDamage = WeaponMaxDamage = 0;
@@ -1122,7 +1123,7 @@ void _Object::CalculateStats() {
 
 // Calculates the base level stats
 void _Object::CalculateLevelStats() {
-	if(!Stats || DatabaseID)
+	if(!Stats || DatabaseID || !CalcStats)
 		return;
 
 	// Cap min experience
@@ -1210,7 +1211,7 @@ void _Object::CalculateBuffStats() {
 
 // Combine all stats
 void _Object::CalculateFinalStats() {
-	if(!DatabaseID) {
+	if(!DatabaseID || CalcStats) {
 		MinDamage = MinDamageBonus + (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
 		MaxDamage = MaxDamageBonus + (int)std::roundf(WeaponMaxDamage * WeaponDamageModifier);
 	}
@@ -1220,7 +1221,7 @@ void _Object::CalculateFinalStats() {
 	if(MaxDamage < 0)
 		MaxDamage = 0;
 
-	if(!DatabaseID) {
+	if(!DatabaseID || CalcStats) {
 		MinDefense = ArmorMinDefense + MinDefenseBonus;
 		MaxDefense = ArmorMaxDefense + MaxDefenseBonus;
 	}

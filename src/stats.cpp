@@ -488,7 +488,8 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 			}
 
 			// Populate monster list
-			Monsters.push_back(Zone[MonsterIndex].MonsterID);
+			if(Monsters.size() < 8)
+				Monsters.push_back(Zone[MonsterIndex].MonsterID);
 		}
 	}
 }

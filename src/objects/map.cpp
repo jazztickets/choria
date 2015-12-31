@@ -690,7 +690,7 @@ void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, std::li
 	for(const auto &Object : Objects) {
 		if(Object != Player) {
 			glm::vec2 Delta = Object->Position - Player->Position;
-			if(glm::dot(Delta, Delta) <= DistanceSquared) {
+			if(glm::dot(Delta, Delta) <= DistanceSquared && Player->CanBattle()) {
 				Players.push_back(Object);
 			}
 		}
