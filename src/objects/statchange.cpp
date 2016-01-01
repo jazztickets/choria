@@ -115,8 +115,8 @@ void _StatChangeUI::Render(double BlendFactor) {
 	// Get alpha
 	double TimeLeft = Timeout - Time;
 	Color.a = 1.0f;
-	if(TimeLeft < HUD_ACTIONRESULT_FADETIME)
-		Color.a = (float)(TimeLeft / HUD_ACTIONRESULT_FADETIME);
+	if(TimeLeft < HUD_STATCHANGE_FADETIME)
+		Color.a = (float)(TimeLeft / HUD_STATCHANGE_FADETIME);
 
 	// Get final draw position
 	glm::vec2 DrawPosition = glm::mix(LastPosition, Position, BlendFactor);

@@ -103,34 +103,6 @@ void _Assets::Close() {
 	AllElements.clear();
 }
 
-// Loads the strings
-void _Assets::LoadStrings(const std::string &Path) {
-
-	// Load file
-	std::ifstream File(Path.c_str(), std::ios::in);
-	if(!File)
-		throw std::runtime_error("Error loading: " + Path);
-
-	// Ignore the first line
-	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-	// Read the file
-	while(!File.eof() && File.peek() != EOF) {
-
-		// Load data
-		std::string Identifier = GetTSVText(File);
-		std::string Text = GetTSVText(File);
-
-		// Check for duplicates
-		if(Strings[Identifier] != "")
-			throw std::runtime_error("LoadStringTable - Duplicate entry: " + Identifier);
-
-		Strings[Identifier] = Text;
-	}
-
-	File.close();
-}
-
 // Loads the fonts
 void _Assets::LoadFonts(const std::string &Path) {
 

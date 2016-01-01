@@ -75,7 +75,7 @@ const  double       HUD_ACTIONRESULT_SPEED_SHORT    =  0.25;
 const  double       HUD_ACTIONRESULT_FADETIME       =  1.0;
 const  double       HUD_STATCHANGE_TIMEOUT          =  1.0;
 const  double       HUD_STATCHANGE_TIMEOUT_LONG     =  3.0;
-const  double       HUD_STATCHANGE_FADETIME         =  0.3;
+const  double       HUD_STATCHANGE_FADETIME         =  0.5;
 const  float        HUD_STATCHANGE_DISTANCE         =  20.0f;
 //     Battle
 const  int          BATTLE_MINSTEPS                 =  9;
@@ -99,7 +99,6 @@ const  float        PLAYER_INVIS_ALPHA              =  0.27f;
 const  int          PLAYER_MAX_GOLD                 =  1000000;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
-const  int          ACTIONBAR_STARTING_SIZE         =  4;
 //     Inventory
 const  int          INVENTORY_TOOLTIP_OFFSET        =  20;
 const  int          INVENTORY_TOOLTIP_PADDING       =  10;
@@ -108,7 +107,6 @@ const  int          INVENTORY_MAX_STACK             =  255;
 const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;
 const  float        MENU_PAUSE_FADE                 =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME           =  0.250;
-const  double       MENU_CURSOR_PERIOD              =  0.5;
 //     Scripting
 const  std::string  SCRIPTS_PATH                    =  "scripts/";
 const  std::string  SCRIPTS_GAME                    =  "game.lua";
@@ -136,7 +134,6 @@ const  std::string  ASSETS_PROGRAMS                 =  "tables/programs.tsv";
 const  std::string  ASSETS_COLORS                   =  "tables/colors.tsv";
 const  std::string  ASSETS_FONTS                    =  "tables/fonts.tsv";
 const  std::string  ASSETS_LAYERS                   =  "tables/layers.tsv";
-const  std::string  ASSETS_STRINGS                  =  "tables/strings.tsv";
 const  std::string  ASSETS_UI_BUTTONS               =  "tables/ui/buttons.tsv";
 const  std::string  ASSETS_UI_ELEMENTS              =  "tables/ui/elements.tsv";
 const  std::string  ASSETS_UI_IMAGES                =  "tables/ui/images.tsv";

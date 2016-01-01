@@ -51,7 +51,6 @@ class _Assets {
 		void Init(bool IsServer);
 		void Close();
 
-		std::unordered_map<std::string, std::string> Strings;
 		std::unordered_map<std::string, const _Font *> Fonts;
 		std::unordered_map<std::string, _Layer> Layers;
 		std::unordered_map<std::string, const _Texture *> Textures;
@@ -68,7 +67,6 @@ class _Assets {
 
 	private:
 
-		void LoadStrings(const std::string &Path);
 		void LoadColors(const std::string &Path);
 		void LoadTextureDirectory(const std::string &Path, bool IsServer, bool Repeat=false, bool MipMaps=false);
 		void LoadFonts(const std::string &Path);
