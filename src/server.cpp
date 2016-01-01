@@ -32,6 +32,7 @@
 #include <constants.h>
 #include <config.h>
 #include <SDL_timer.h>
+#include <algorithm>
 
 // Function to run the server thread
 void RunThread(void *Arguments) {
@@ -332,9 +333,14 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	bool CreateAccount = Data.ReadBit();
 	std::string Username(Data.ReadString());
 	std::string Password(Data.ReadString());
+	uint64_t Secret = Data.Read<uint64_t>();
 
-	Username.resize(ACCOUNT_MAX_USERNAME_SIZE);
-	Password.resize(ACCOUNT_MAX_PASSWORD_SIZE);
+	Username.resize(std::min(ACCOUNT_MAX_USERNAME_SIZE, Username.length()));
+	Password.resize(std::min(ACCOUNT_MAX_PASSWORD_SIZE, Password.length()));
+
+	// Validate singleplayer
+	if(!Username.length() && !Password.length() && Secret != Save->GetSecret())
+		return;
 
 	// Create account or login
 	if(CreateAccount) {

@@ -26,6 +26,7 @@
 #include <ui/element.h>
 #include <constants.h>
 #include <framework.h>
+#include <save.h>
 #include <graphics.h>
 #include <manager.h>
 #include <menu.h>
@@ -424,8 +425,9 @@ void _ClientState::HandleConnect() {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 		Packet.WriteBit(0);
-		Packet.WriteString("choria_singleplayer");
-		Packet.WriteString("choria_singleplayer");
+		Packet.WriteString("");
+		Packet.WriteString("");
+		Packet.Write<uint64_t>(Server->Save->GetSecret());
 		Network->SendPacket(Packet);
 	}
 

@@ -20,11 +20,13 @@
 #include <objects/item.h>
 #include <objects/inventory.h>
 #include <database.h>
+#include <random.h>
 #include <config.h>
 #include <stats.h>
 #include <constants.h>
 #include <utils.h>
 #include <stdexcept>
+#include <limits>
 
 // Constructor
 _Save::_Save() {
@@ -82,6 +84,18 @@ void _Save::SaveClock(double Time) {
 	Database->BindReal(1, Time);
 	Database->FetchRow();
 	Database->CloseQuery();
+}
+
+// Get secret number
+uint64_t _Save::GetSecret() {
+	uint64_t Secret = 0;
+
+	Database->PrepareQuery("SELECT secret FROM settings");
+	if(Database->FetchRow())
+		Secret = Database->GetInt<uint64_t>(0);
+	Database->CloseQuery();
+
+	return Secret;
 }
 
 // Check for a username
@@ -422,11 +436,14 @@ void _Save::CreateDefaultDatabase() {
 
 	// Settings
 	Database->RunQuery(
-				"CREATE TABLE settings(version INTEGER)"
+				"CREATE TABLE settings(\n"
+				"	version INTEGER,\n"
+				"	secret INTEGER\n"
+				")"
 	);
 
 	Database->RunQuery(
-				"INSERT INTO settings(version) VALUES(" + std::to_string(DEFAULT_SAVE_VERSION) + ")"
+				"INSERT INTO settings VALUES(" + std::to_string(DEFAULT_SAVE_VERSION) + ", " + std::to_string(GetRandomInt((uint64_t)1, std::numeric_limits<uint64_t>::max())) + ")"
 	);
 
 	// Clock
@@ -448,7 +465,7 @@ void _Save::CreateDefaultDatabase() {
 	);
 
 	Database->RunQuery(
-				"INSERT INTO account(username, password) VALUES('choria_singleplayer', 'choria_singleplayer')"
+				"INSERT INTO account(id, username, password) VALUES(1, '', '')"
 	);
 
 	// Characters

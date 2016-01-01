@@ -38,6 +38,7 @@ class _Save {
 		// Misc
 		double GetClock();
 		void SaveClock(double Time);
+		uint64_t GetSecret();
 
 		// Accounts
 		bool CheckUsername(const std::string &Username);

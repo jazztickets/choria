@@ -187,8 +187,10 @@ void _Database::BindString(int ColumnIndex, const std::string &String, int Handl
 
 template uint8_t _Database::GetInt<uint8_t>(int ColumnIndex, int Handle);
 template uint32_t _Database::GetInt<uint32_t>(int ColumnIndex, int Handle);
+template uint64_t _Database::GetInt<uint64_t>(int ColumnIndex, int Handle);
 template int _Database::GetInt<int>(int ColumnIndex, int Handle);
 
 template uint8_t _Database::GetInt(const std::string &ColumnName, int Handle);
 template uint32_t _Database::GetInt(const std::string &ColumnName, int Handle);
+template uint64_t _Database::GetInt(const std::string &ColumnName, int Handle);
 template int _Database::GetInt(const std::string &ColumnName, int Handle);

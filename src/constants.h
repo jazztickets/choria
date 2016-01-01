@@ -23,7 +23,7 @@
 
 //     Config
 const  int          DEFAULT_CONFIG_VERSION          =  1;
-const  int          DEFAULT_SAVE_VERSION            =  6;
+const  int          DEFAULT_SAVE_VERSION            =  7;
 const  glm::ivec2   DEFAULT_WINDOW_SIZE             =  glm::ivec2(1024,768);
 const  int          DEFAULT_FULLSCREEN              =  0;
 const  int          DEFAULT_AUDIOENABLED            =  1;
@@ -46,8 +46,8 @@ const  float        CAMERA_FOVY                     =  90.0f;
 const  float        CAMERA_NEAR                     =  0.1f;
 const  float        CAMERA_FAR                      =  100.0f;
 //     Account
-const  int          ACCOUNT_MAX_USERNAME_SIZE       =  20;
-const  int          ACCOUNT_MAX_PASSWORD_SIZE       =  20;
+const  size_t       ACCOUNT_MAX_USERNAME_SIZE       =  20;
+const  size_t       ACCOUNT_MAX_PASSWORD_SIZE       =  20;
 const  int          ACCOUNT_MAX_CHARACTER_SLOTS     =  6;
 //     Map
 const  int          MAP_VERSION                     =  1;

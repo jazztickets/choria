@@ -29,6 +29,11 @@ uint32_t GetRandomInt(uint32_t Min, uint32_t Max) {
 	return Distribution(RandomGenerator);
 }
 
+uint64_t GetRandomInt(uint64_t Min, uint64_t Max) {
+	std::uniform_int_distribution<uint64_t> Distribution(Min, Max);
+	return Distribution(RandomGenerator);
+}
+
 double GetRandomReal(double Min, double Max) {
 	std::uniform_real_distribution<double> Distribution(Min, Max);
 	return Distribution(RandomGenerator);

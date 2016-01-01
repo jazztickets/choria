@@ -339,6 +339,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
+	Packet.Write<uint64_t>(0);
 	ClientState.Network->SendPacket(Packet);
 
 	FocusedElement = nullptr;
