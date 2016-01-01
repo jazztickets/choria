@@ -87,7 +87,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	// Check state
 	if(State == &DedicatedState) {
 		Assets.Init(true);
-		FrameLimit = new _FrameLimit(120.0, false);
+		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
 
 		DedicatedState.SetNetworkPort(NetworkPort);
 	}

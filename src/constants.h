@@ -35,7 +35,6 @@ const  double       DEFAULT_NETWORKRATE             =  1.0/20.0;
 const  uint16_t     DEFAULT_NETWORKPORT             =  31234;
 const  uint16_t     DEFAULT_NETWORKPORT_ALT         =  31235;
 const  double       DEFAULT_TIMESTEP                =  1/100.0;
-const  double       DEFAULT_SLEEPRATE               =  1/120.0;
 const  double       DEFAULT_AUTOSAVE_PERIOD         =  60.0;
 //     Graphics
 const  int          GRAPHICS_CIRCLE_VERTICES        =  32;
@@ -47,8 +46,8 @@ const  float        CAMERA_FOVY                     =  90.0f;
 const  float        CAMERA_NEAR                     =  0.1f;
 const  float        CAMERA_FAR                      =  100.0f;
 //     Account
-const  int          ACCOUNT_MAX_USERNAME_SIZE       =  15;
-const  int          ACCOUNT_MAX_PASSWORD_SIZE       =  15;
+const  int          ACCOUNT_MAX_USERNAME_SIZE       =  20;
+const  int          ACCOUNT_MAX_PASSWORD_SIZE       =  20;
 const  int          ACCOUNT_MAX_CHARACTER_SLOTS     =  6;
 //     Map
 const  int          MAP_VERSION                     =  1;
@@ -85,11 +84,7 @@ const  int          BATTLE_MAXFIGHTERS_SIDE         =  8;
 const  int          BATTLE_ROWS_PER_SIDE            =  4;
 const  int          BATTLE_COLUMN_SPACING           =  230;
 const  double       BATTLE_DEFAULTSPEED             =  (1.0/2.0);
-const  double       BATTLE_ROUNDTIME                =  5.0;
-const  double       BATTLE_SHOWRESULTTIME           =  2.0;
-const  double       BATTLE_WAITRESULTTIME           =  0.375;
 const  double       BATTLE_WAITDEADTIME             =  0.75;
-const  double       BATTLE_WAITENDTIME              =  0.30;
 const  double       BATTLE_MAX_START_TURNTIMER      =  0.7;
 const  double       BATTLE_AI_UPDATE_PERIOD         =  1.0;
 const  float        BATTLE_HEALTHBAR_WIDTH          =  90;

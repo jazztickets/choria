@@ -333,6 +333,9 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	std::string Username(Data.ReadString());
 	std::string Password(Data.ReadString());
 
+	Username.resize(ACCOUNT_MAX_USERNAME_SIZE);
+	Password.resize(ACCOUNT_MAX_PASSWORD_SIZE);
+
 	// Create account or login
 	if(CreateAccount) {
 
