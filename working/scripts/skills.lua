@@ -137,6 +137,7 @@ function Skill_Attack.Use(self, Level, Source, Target, Result)
 
 	if Hit and Random.GetInt(1, 100) <= self:GetChance(Level) then
 		Result.Target.Health = Result.Target.Health * 3
+		Result.Target.Crit = true
 	end
 
 	return Result

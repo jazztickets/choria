@@ -166,6 +166,8 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	glm::vec4 TextColor = COLOR_WHITE;
 	if(ActionResult.Target.Values[StatType::HEALTH].Float > 0)
 		TextColor = COLOR_GREEN;
+	else if(ActionResult.Target.HasStat(StatType::CRIT))
+		TextColor = COLOR_YELLOW;
 
 	TextColor.a = AlphaPercent;
 
