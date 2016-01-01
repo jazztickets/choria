@@ -129,7 +129,7 @@ void _Assets::LoadFonts(const std::string &Path) {
 		   throw std::runtime_error(std::string(__FUNCTION__) + " - Cannot find program: " + ProgramIdentifier);
 
 		// Get size
-		int Size;
+		uint32_t Size;
 		File >> Size;
 
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');

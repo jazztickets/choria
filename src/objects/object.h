@@ -148,7 +148,7 @@ class _Object : public _ManagerBase {
 		_Scripting *Scripting;
 		_Server *Server;
 		_Peer *Peer;
-		int InputState;
+		std::list<int> InputStates;
 		int Moved;
 		bool WaitForServer;
 		bool CheckEvent;

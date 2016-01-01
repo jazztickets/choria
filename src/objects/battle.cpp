@@ -566,7 +566,7 @@ void _Battle::ServerEndBattle() {
 
 	// Send data
 	for(auto &Fighter : Fighters) {
-		Fighter->InputState = 0;
+		Fighter->InputStates.clear();
 		Fighter->PotentialAction.Unset();
 		Fighter->Action.Unset();
 

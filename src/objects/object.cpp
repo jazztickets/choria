@@ -50,7 +50,6 @@ _Object::_Object() :
 	Scripting(nullptr),
 	Server(nullptr),
 	Peer(nullptr),
-	InputState(0),
 	Moved(0),
 	WaitForServer(false),
 	CheckEvent(false),
@@ -153,7 +152,6 @@ void _Object::Update(double FrameTime) {
 	// Update player position
 	Moved = Move();
 	if(Moved) {
-		InputState = 0;
 		CheckEvent = true;
 	}
 
@@ -697,7 +695,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 
 // Unserialize battle stats
 void _Object::UnserializeBattle(_Buffer &Data) {
-	InputState = 0;
+	InputStates.clear();
 
 	// Get fighter type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
@@ -777,8 +775,16 @@ void _Object::UpdateMana(float Value) {
 
 // Moves the player
 int _Object::Move() {
-	if(WaitForServer || InputState == 0 || Battle)
+	if(WaitForServer || Battle || InputStates.size() == 0)
 		return 0;
+
+	// Check timer
+	if(MoveTime < PLAYER_MOVETIME)
+		return 0;
+
+	MoveTime = 0;
+	int InputState = InputStates.front();
+	InputStates.pop_front();
 
 	// Get new position
 	glm::ivec2 Direction(0, 0);
@@ -795,17 +801,11 @@ int _Object::Move() {
 	if(Direction.x != 0 && Direction.y != 0)
 		Direction.x = 0;
 
-	// Check timer
-	if(MoveTime < PLAYER_MOVETIME)
-		return 0;
-
 	// Move player
 	if(Map->CanMoveTo(Position + Direction, this)) {
 		Position += Direction;
 		if(GetTile()->Zone > 0 && Invisible != 1)
 			NextBattle--;
-
-		MoveTime = 0;
 
 		return InputState;
 	}

@@ -491,7 +491,7 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 	if(!Player->IsAlive())
 		return;
 
-	Player->InputState = Data.Read<char>();
+	Player->InputStates.push_back(Data.Read<char>());
 }
 
 // Handle respawn command from client

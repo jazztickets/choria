@@ -332,15 +332,19 @@ void _ClientState::Update(double FrameTime) {
 
 	// Set input
 	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
-		Player->InputState = 0;
+		int InputState = 0;
 		if(Actions.GetState(_Actions::UP) > 0.0f)
-			Player->InputState |= _Object::MOVE_UP;
+			InputState |= _Object::MOVE_UP;
 		if(Actions.GetState(_Actions::DOWN) > 0.0f)
-			Player->InputState |= _Object::MOVE_DOWN;
+			InputState |= _Object::MOVE_DOWN;
 		if(Actions.GetState(_Actions::LEFT) > 0.0f)
-			Player->InputState |= _Object::MOVE_LEFT;
+			InputState |= _Object::MOVE_LEFT;
 		if(Actions.GetState(_Actions::RIGHT) > 0.0f)
-			Player->InputState |= _Object::MOVE_RIGHT;
+			InputState |= _Object::MOVE_RIGHT;
+
+		Player->InputStates.clear();
+		if(InputState)
+			Player->InputStates.push_back(InputState);
 	}
 
 	// Update objects
