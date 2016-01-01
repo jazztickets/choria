@@ -133,7 +133,6 @@ class _Object : public _ManagerBase {
 		bool HasUnlocked(const _Item *Item) const;
 		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
-		void CalculateSkillPoints();
 
 		// Trader
 		void AcceptTrader(std::vector<size_t> &Slots);

@@ -1160,6 +1160,7 @@ void _ClientState::AssignPlayer(_Object *Object) {
 		HUD->SetPlayer(Player);
 		HUD->StatChanges.clear();
 		HUD->RecentItems.clear();
+		HUD->StopTeleport();
 	}
 
 	if(Battle)

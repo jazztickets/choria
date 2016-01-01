@@ -1521,7 +1521,6 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	ClientState.Network->SendPacket(Packet);
 
 	// Update player
-	Player->CalculateSkillPoints();
 	Player->CalculateStats();
 	RefreshSkillButtons();
 }

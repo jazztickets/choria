@@ -903,7 +903,6 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 	int Amount = Data.Read<int>();
 	Player->AdjustSkillLevel(SkillID, Amount);
 
-	Player->CalculateSkillPoints();
 	Player->CalculateStats();
 }
 

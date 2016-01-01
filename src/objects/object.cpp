@@ -689,7 +689,6 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	}
 
 	RefreshActionBarCount();
-	CalculateSkillPoints();
 	CalculateStats();
 }
 
@@ -1064,17 +1063,6 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	}
 }
 
-// Calculates the number of skill points used
-void _Object::CalculateSkillPoints() {
-
-	SkillPointsUsed = 0;
-	for(const auto &SkillLevel : Skills) {
-		const _Item *Skill = Stats->Items[SkillLevel.first];
-		if(Skill)
-			SkillPointsUsed += SkillLevel.second;
-	}
-}
-
 // Can enter battle
 bool _Object::CanBattle() const {
 	return Status == STATUS_NONE && Invisible <= 0;
@@ -1126,6 +1114,13 @@ void _Object::CalculateStats() {
 			MaxMana += Item->MaxMana;
 			BattleSpeed += Item->BattleSpeed;
 		}
+	}
+
+	SkillPointsUsed = 0;
+	for(const auto &SkillLevel : Skills) {
+		const _Item *Skill = Stats->Items[SkillLevel.first];
+		if(Skill)
+			SkillPointsUsed += SkillLevel.second;
 	}
 
 	// Get skill bonus
@@ -1209,5 +1204,4 @@ void _Object::CalculateLevelStats() {
 		ExperienceNeeded = 0;
 	else
 		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);
-
 }
