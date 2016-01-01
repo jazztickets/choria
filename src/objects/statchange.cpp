@@ -69,7 +69,7 @@ void _StatChange::Serialize(_Buffer &Data) {
 			Data.Write<uint32_t>(Buff->ID);
 		}
 		else
-			Data.Write<_Value>(Iterator.second);
+			Data.Write<int>(Iterator.second.Integer);
 	}
 }
 
@@ -88,7 +88,7 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 				Values[(StatType)i].Pointer = (void *)Object->Stats->Buffs[BuffID];
 			}
 			else
-				Values[(StatType)i] = Data.Read<_Value>();
+				Values[(StatType)i].Integer = Data.Read<int>();
 		}
 	}
 }
