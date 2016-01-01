@@ -344,7 +344,7 @@ end
 
 -- Evasion --
 
-Skill_Evasion = { ChancePerLevel = 0.01, BaseChance = 0.14 }
+Skill_Evasion = { ChancePerLevel = 0.01, BaseChance = 0.09 }
 
 function Skill_Evasion.GetChance(self, Level)
 

@@ -102,7 +102,6 @@ const  double       PLAYER_ATTACKTIME               =  1.0;
 const  int          PLAYER_NAME_SIZE                =  10;
 const  float        PLAYER_INVIS_ALPHA              =  0.27f;
 const  int          PLAYER_MAX_GOLD                 =  1000000;
-const  int          PLAYER_MAX_SKILL_LEVEL          =  255;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 const  int          ACTIONBAR_STARTING_SIZE         =  4;

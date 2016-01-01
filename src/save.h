@@ -49,7 +49,7 @@ class _Save {
 		void DeleteCharacter(uint32_t CharacterID);
 		void CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
 
-		void LoadPlayer(_Object *Player);
+		void LoadPlayer(_Stats *Stats, _Object *Player);
 		void SavePlayer(const _Object *Player);
 
 	private:

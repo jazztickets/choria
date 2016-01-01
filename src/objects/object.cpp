@@ -1037,7 +1037,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 		// Cap points
 		int PointsToSpend = std::min(GetSkillPointsRemaining(), Amount);
-		PointsToSpend = std::max(PointsToSpend, Skills[SkillID] - PLAYER_MAX_SKILL_LEVEL);
+		PointsToSpend = std::min(PointsToSpend, Skill->MaxLevel - Skills[SkillID]);
 
 		// Update level
 		Skills[SkillID] += PointsToSpend;

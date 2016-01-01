@@ -647,7 +647,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Player->Stats = Stats;
 	Peer->Object = Player;
 
-	Save->LoadPlayer(Player);
+	Save->LoadPlayer(Stats, Player);
 
 	return Player;
 }

@@ -192,7 +192,7 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
 
 	// Load default values
-	LoadPlayer(&Object);
+	LoadPlayer(Stats, &Object);
 
 	// Copy build data
 	Object.ActionBar = Build->ActionBar;
@@ -204,7 +204,7 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 }
 
 // Load player from database
-void _Save::LoadPlayer(_Object *Player) {
+void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 	float HealthPercent = 1.0f;
 	float ManaPercent = 1.0f;
 
@@ -249,7 +249,7 @@ void _Save::LoadPlayer(_Object *Player) {
 	while(Database->FetchRow()) {
 		uint32_t ItemID = Database->GetInt<uint32_t>(0);
 		int SkillLevel = Database->GetInt<int>(1);
-		Player->Skills[ItemID] = SkillLevel;
+		Player->Skills[ItemID] = std::min(SkillLevel, Stats->Items[ItemID]->MaxLevel);
 	}
 	Database->CloseQuery();
 
