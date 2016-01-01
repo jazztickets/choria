@@ -59,7 +59,6 @@ _HUD::_HUD() {
 	Tooltip.Reset();
 	Cursor.Reset();
 	RewardItemSlot = (size_t)-1;
-	ChatHistory.clear();
 
 	ChatTextBox = Assets.TextBoxes["textbox_chat"];
 	ChatTextBox->ParentOffset = glm::vec2(5, 15);
@@ -1750,39 +1749,37 @@ void _HUD::RemoveStatChanges(_Object *Owner) {
 // Add multiple statchange ui elements
 void _HUD::AddStatChange(_StatChange &StatChange) {
 
-	int ChangedFlag = StatChange.GetChangedFlag();
-
-	if(ChangedFlag & StatType::HEALTH) {
+	if(StatChange.HasStat(StatType::HEALTH)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		if(StatChangeUI.Object->Battle)
 			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition;
 		else
 			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = StatChange.Health;
+		StatChangeUI.Change = (int)StatChange.Values[StatType::HEALTH].Float;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(COLOR_RED, COLOR_GREEN);
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(ChangedFlag & StatType::MANA) {
+	if(StatChange.HasStat(StatType::MANA)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		if(StatChangeUI.Object->Battle)
 			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition + glm::vec2(0, 32);
 		else
 			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = StatChange.Mana;
+		StatChangeUI.Change = (int)StatChange.Values[StatType::MANA].Float;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(COLOR_BLUE, COLOR_LIGHTBLUE);
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(ChangedFlag & StatType::EXPERIENCE) {
+	if(StatChange.HasStat(StatType::EXPERIENCE)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.StartPosition = ExperienceElement->Bounds.Start + ExperienceElement->Size / 2.0f;
-		StatChangeUI.Change = StatChange.Experience;
+		StatChangeUI.Change = StatChange.Values[StatType::EXPERIENCE].Integer;
 		StatChangeUI.Direction = -2.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["battle_large"];
@@ -1790,12 +1787,12 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(ChangedFlag & StatType::GOLD) {
+	if(StatChange.HasStat(StatType::GOLD)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		StatChangeUI.StartPosition = GoldElement->Bounds.Start;
 		StatChangeUI.StartPosition.x += -45;
-		StatChangeUI.Change = StatChange.Gold;
+		StatChangeUI.Change = StatChange.Values[StatType::GOLD].Integer;
 		StatChangeUI.Direction = 1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["menu_buttons"];

@@ -164,16 +164,16 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	// Draw damage dealt
 	glm::vec4 TextColor = COLOR_WHITE;
-	if(ActionResult.Target.Health > 0)
+	if(ActionResult.Target.Values[StatType::HEALTH].Float > 0)
 		TextColor = COLOR_GREEN;
 
 	TextColor.a = AlphaPercent;
 
 	std::stringstream Buffer;
-	if(ActionResult.Target.Miss)
+	if(ActionResult.Target.HasStat(StatType::MISS))
 		Buffer << "miss";
 	else
-		Buffer << std::abs(ActionResult.Target.Health);
+		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Float);
 	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 

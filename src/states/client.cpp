@@ -937,8 +937,8 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	SideDead[1] = Data.ReadBit();
 	int PlayerKills = Data.Read<uint8_t>();
 	int MonsterKills = Data.Read<uint8_t>();
-	StatChange.Experience = Data.Read<int32_t>();
-	StatChange.Gold = Data.Read<int32_t>();
+	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int32_t>();
+	StatChange.Values[StatType::GOLD].Integer = Data.Read<int32_t>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		_RecentItem RecentItem;
@@ -1030,7 +1030,8 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 			}
 
 			// No damage dealt
-			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL) && (ActionResult.Target.Health == 0.0f || ActionResult.Target.Miss)) {
+			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
+			   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Float == 0.0f) || ActionResult.Target.HasStat(StatType::MISS))) {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 			}
@@ -1063,7 +1064,7 @@ void _ClientState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 
 			// Update action bar
-			if(StatChange.GetChangedFlag() & StatType::ACTIONBARSIZE)
+			if(StatChange.HasStat(StatType::ACTIONBARSIZE))
 				HUD->SetActionBarSize(Player->ActionBar.size());
 		}
 
@@ -1146,6 +1147,7 @@ void _ClientState::AssignPlayer(_Object *Object) {
 	if(HUD) {
 		HUD->SetPlayer(Player);
 		HUD->StatChanges.clear();
+		HUD->RecentItems.clear();
 	}
 
 	if(Battle)

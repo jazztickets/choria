@@ -17,8 +17,9 @@ Base_Attack = {
 
 		if Hit then
 			Result.Target.Health = -Damage
+		else
+			Result.Target.Miss = true
 		end
-		Result.Target.Miss = not Hit
 
 		return Result
 	end
@@ -82,8 +83,9 @@ function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
 
 	if Hit then
 		Result.Target.Health = -Damage
+	else
+		Result.Target.Miss = true
 	end
-	Result.Target.Miss = not Hit
 
 	if Random.GetInt(1, 100) <= 15 then
 		Result.Target.Buff = Buffs["Buff_Slowed"]
@@ -104,8 +106,9 @@ function Skill_FangBite.Use(self, Level, Source, Target, Result)
 
 	if Hit then
 		Result.Target.Health = -Damage
+	else
+		Result.Target.Miss = true
 	end
-	Result.Target.Miss = not Hit
 
 	if Random.GetInt(1, 100) <= 15 then
 		Result.Target.Buff = Buffs["Buff_Bleeding"]
@@ -125,8 +128,9 @@ function Skill_Swoop.Use(self, Level, Source, Target, Result)
 
 	if Hit then
 		Result.Target.Health = -Damage
+	else
+		Result.Target.Miss = true
 	end
-	Result.Target.Miss = not Hit
 
 	if Random.GetInt(1, 100) <= 75 then
 		Result.Target.Buff = Buffs["Buff_Stunned"]
@@ -155,8 +159,9 @@ function Skill_Attack.Use(self, Level, Source, Target, Result)
 
 	if Hit then
 		Result.Target.Health = -Damage
+	else
+		Result.Target.Miss = true
 	end
-	Result.Target.Miss = not Hit
 
 	return Result
 end
@@ -184,8 +189,9 @@ function Skill_Gash.Use(self, Level, Source, Target, Result)
 
 	if Hit then
 		Result.Target.Health = -Damage
+	else
+		Result.Target.Miss = true
 	end
-	Result.Target.Miss = not Hit
 
 	if Hit and Random.GetInt(1, 100) <= self:GetChance(Level) then
 		Result.Target.Buff = Buffs["Buff_Bleeding"]

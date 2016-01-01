@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/statchange.h>
 #include <objects/object.h>
+#include <objects/buff.h>
 #include <stats.h>
 #include <buffer.h>
 #include <constants.h>
@@ -33,56 +34,24 @@ _StatChange::_StatChange() {
 // Reset stats
 void _StatChange::Reset() {
 	Object = nullptr;
-	StatusEffect.Buff = nullptr;
-	StatusEffect.Level = 0;
-	StatusEffect.Duration = 0;
-	Health = 0;
-	MaxHealth = 0;
-	Mana = 0;
-	MaxMana = 0;
-	BattleSpeed = 0;
-	Evasion = 0;
-	HitChance = 0;
-	Evasion = 0;
-	Experience = 0;
-	Gold = 0;
-	Invisible = -1;
-	Miss = -1;
-	ActionBarSize = 0;
+	Values.clear();
 }
 
 // Get bit field of fields changed
 int _StatChange::GetChangedFlag() {
 	int Flag = 0;
 
-	if(StatusEffect.Buff != nullptr)
-		Flag |= StatType::STATUSEFFECT;
-	if(Health != 0.0f)
-		Flag |= StatType::HEALTH;
-	if(MaxHealth != 0.0f)
-		Flag |= StatType::MAXHEALTH;
-	if(Mana != 0.0f)
-		Flag |= StatType::MANA;
-	if(MaxMana != 0.0f)
-		Flag |= StatType::MAXMANA;
-	if(BattleSpeed != 0.0f)
-		Flag |= StatType::BATTLESPEED;
-	if(HitChance != 0.0f)
-		Flag |= StatType::HITCHANCE;
-	if(Evasion != 0.0f)
-		Flag |= StatType::EVASION;
-	if(Experience != 0)
-		Flag |= StatType::EXPERIENCE;
-	if(Gold != 0)
-		Flag |= StatType::GOLD;
-	if(Invisible != -1)
-		Flag |= StatType::INVISIBLE;
-	if(ActionBarSize != 0)
-		Flag |= StatType::ACTIONBARSIZE;
-	if(Miss != -1)
-		Flag |= StatType::MISS;
+	for(auto Iterator : Values) {
+		Flag |= (1 << (int)Iterator.first);
+	}
 
 	return Flag;
+}
+
+// Return true if a stat was changed
+bool _StatChange::HasStat(StatType Type) {
+
+	return Values.find(Type) != Values.end();
 }
 
 // Serialize network
@@ -94,32 +63,14 @@ void _StatChange::Serialize(_Buffer &Data) {
 	Data.Write<NetworkIDType>(Object->NetworkID);
 	Data.Write<int>(ChangedFlag);
 
-	if(ChangedFlag & StatType::STATUSEFFECT)
-		StatusEffect.Serialize(Data);
-	if(ChangedFlag & StatType::HEALTH)
-		Data.Write<float>(Health);
-	if(ChangedFlag & StatType::MAXHEALTH)
-		Data.Write<float>(MaxHealth);
-	if(ChangedFlag & StatType::MANA)
-		Data.Write<float>(Mana);
-	if(ChangedFlag & StatType::MAXMANA)
-		Data.Write<float>(MaxMana);
-	if(ChangedFlag & StatType::BATTLESPEED)
-		Data.Write<float>(BattleSpeed);
-	if(ChangedFlag & StatType::HITCHANCE)
-		Data.Write<float>(HitChance);
-	if(ChangedFlag & StatType::EVASION)
-		Data.Write<float>(Evasion);
-	if(ChangedFlag & StatType::EXPERIENCE)
-		Data.Write<int>(Experience);
-	if(ChangedFlag & StatType::GOLD)
-		Data.Write<int>(Gold);
-	if(ChangedFlag & StatType::INVISIBLE)
-		Data.Write<int>(Invisible);
-	if(ChangedFlag & StatType::ACTIONBARSIZE)
-		Data.Write<int>(ActionBarSize);
-	if(ChangedFlag & StatType::MISS)
-		Data.Write<int>(Miss);
+	for(auto Iterator : Values) {
+		if(Iterator.first == StatType::BUFF) {
+			_Buff *Buff = (_Buff *)(Iterator.second.Pointer);
+			Data.Write<uint32_t>(Buff->ID);
+		}
+		else
+			Data.Write<_Value>(Iterator.second);
+	}
 }
 
 // Unserialize network
@@ -130,30 +81,16 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 	Object = Manager->IDMap[NetworkID];
 
 	int ChangedFlag = Data.Read<int>();
-	if(ChangedFlag & StatType::STATUSEFFECT)
-		StatusEffect.Unserialize(Data, Object->Stats);
-	if(ChangedFlag & StatType::HEALTH)
-		Health = Data.Read<float>();
-	if(ChangedFlag & StatType::MAXHEALTH)
-		MaxHealth = Data.Read<float>();
-	if(ChangedFlag & StatType::MANA)
-		Mana = Data.Read<float>();
-	if(ChangedFlag & StatType::MAXMANA)
-		MaxMana = Data.Read<float>();
-	if(ChangedFlag & StatType::BATTLESPEED)
-		BattleSpeed = Data.Read<float>();
-	if(ChangedFlag & StatType::HITCHANCE)
-		HitChance = Data.Read<float>();
-	if(ChangedFlag & StatType::EXPERIENCE)
-		Experience = Data.Read<int>();
-	if(ChangedFlag & StatType::GOLD)
-		Gold = Data.Read<int>();
-	if(ChangedFlag & StatType::INVISIBLE)
-		Invisible = Data.Read<int>();
-	if(ChangedFlag & StatType::ACTIONBARSIZE)
-		ActionBarSize = Data.Read<int>();
-	if(ChangedFlag & StatType::MISS)
-		Miss = Data.Read<int>();
+	for(int i = 0; i < (int)StatType::COUNT; i++) {
+		if(ChangedFlag & (1 << i)) {
+			if(i == (int)StatType::BUFF) {
+				uint32_t BuffID = Data.Read<uint32_t>();
+				Values[(StatType)i].Pointer = (void *)Object->Stats->Buffs[BuffID];
+			}
+			else
+				Values[(StatType)i] = Data.Read<_Value>();
+		}
+	}
 }
 
 // Constructor

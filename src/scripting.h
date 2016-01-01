@@ -57,6 +57,7 @@ class _Scripting {
 		void FinishMethodCall();
 
 		static void PrintStack(lua_State *LuaState);
+		static void PrintTable(lua_State *LuaState);
 
 		static luaL_Reg RandomFunctions[];
 

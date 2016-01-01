@@ -191,24 +191,6 @@ void _Scripting::PushActionResult(_ActionResult *ActionResult) {
 // Push stat change struct onto stack
 void _Scripting::PushStatChange(_StatChange *StatChange) {
 	lua_newtable(LuaState);
-
-	lua_pushnumber(LuaState, StatChange->Health);
-	lua_setfield(LuaState, -2, "Health");
-
-	lua_pushnumber(LuaState, StatChange->MaxHealth);
-	lua_setfield(LuaState, -2, "MaxHealth");
-
-	lua_pushnumber(LuaState, StatChange->Mana);
-	lua_setfield(LuaState, -2, "Mana");
-
-	lua_pushnumber(LuaState, StatChange->MaxMana);
-	lua_setfield(LuaState, -2, "MaxMana");
-
-	lua_pushinteger(LuaState, StatChange->Invisible);
-	lua_setfield(LuaState, -2, "Invisible");
-
-	lua_pushinteger(LuaState, StatChange->ActionBarSize);
-	lua_setfield(LuaState, -2, "ActionBarSize");
 }
 
 // Push list of objects
@@ -277,65 +259,40 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 	if(!lua_istable(LuaState, Index))
 		throw std::runtime_error("GetStatChange: Value is not a table!");
 
-	lua_pushstring(LuaState, "Buff");
-	lua_gettable(LuaState, -2);
-	StatChange.StatusEffect.Buff = (_Buff *)lua_touserdata(LuaState, -1);
-	lua_pop(LuaState, 1);
+	// Iterate over StatChange table
+	lua_pushnil(LuaState);
+	while(lua_next(LuaState, -2) != 0) 	{
 
-	lua_pushstring(LuaState, "BuffLevel");
-	lua_gettable(LuaState, -2);
-	StatChange.StatusEffect.Level = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get key name
+		std::string Key = lua_tostring(LuaState, -2);
 
-	lua_pushstring(LuaState, "BuffDuration");
-	lua_gettable(LuaState, -2);
-	StatChange.StatusEffect.Duration = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Turn key into StatType
+		auto Iterator = StatStringToType.find(Key);
 
-	lua_pushstring(LuaState, "Health");
-	lua_gettable(LuaState, -2);
-	StatChange.Health = (float)lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get value type
+		StatValueType Type;
+		if(Iterator == StatStringToType.end())
+			throw std::runtime_error("GetStatChange: Key=" + Key + " is not a valid stat!");
 
-	lua_pushstring(LuaState, "MaxHealth");
-	lua_gettable(LuaState, -2);
-	StatChange.MaxHealth = (float)lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
+		// Get value from lua
+		Type = StatValueTypes[(int)Iterator->second].ValueType;
+		switch(Type) {
+			case StatValueType::INTEGER:
+				StatChange.Values[Iterator->second].Integer = (int)lua_tointeger(LuaState, -1);
+			break;
+			case StatValueType::FLOAT:
+				StatChange.Values[Iterator->second].Float = (float)lua_tonumber(LuaState, -1);
+			break;
+			case StatValueType::BOOLEAN:
+				StatChange.Values[Iterator->second].Integer = lua_toboolean(LuaState, -1);
+			break;
+			case StatValueType::POINTER:
+				StatChange.Values[Iterator->second].Pointer = lua_touserdata(LuaState, -1);
+			break;
+		}
 
-	lua_pushstring(LuaState, "Mana");
-	lua_gettable(LuaState, -2);
-	StatChange.Mana = (float)lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "MaxMana");
-	lua_gettable(LuaState, -2);
-	StatChange.MaxMana = (float)lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "BattleSpeed");
-	lua_gettable(LuaState, -2);
-	StatChange.BattleSpeed = (float)lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "Invisible");
-	lua_gettable(LuaState, -2);
-	StatChange.Invisible = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "ActionBarSize");
-	lua_gettable(LuaState, -2);
-	StatChange.ActionBarSize = (int)lua_tointeger(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "Evasion");
-	lua_gettable(LuaState, -2);
-	StatChange.Evasion = (float)lua_tonumber(LuaState, -1);
-	lua_pop(LuaState, 1);
-
-	lua_pushstring(LuaState, "Miss");
-	lua_gettable(LuaState, -2);
-	StatChange.Miss = lua_toboolean(LuaState, -1);
-	lua_pop(LuaState, 1);
+		lua_pop(LuaState, 1);
+	}
 }
 
 // Start a call to a lua class method, return table index
@@ -498,4 +455,20 @@ void _Scripting::PrintStack(lua_State *LuaState) {
 	}
 
 	std::cout << "-----------------" << std::endl;
+}
+
+// Print lua table
+void _Scripting::PrintTable(lua_State *LuaState) {
+	lua_pushnil(LuaState);
+
+	while(lua_next(LuaState, -2) != 0) 	{
+		if(lua_isstring(LuaState, -1))
+			std::cout << lua_tostring(LuaState, -2) << " = " << lua_tostring(LuaState, -1) << std::endl;
+		else if(lua_isnumber(LuaState, -1))
+			std::cout << lua_tostring(LuaState, -2) << " = " << lua_tonumber(LuaState, -1) << std::endl;
+		else if(lua_istable(LuaState, -1))
+			PrintTable(LuaState);
+
+		lua_pop(LuaState, 1);
+	}
 }

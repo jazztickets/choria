@@ -23,6 +23,7 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <string>
+#include <map>
 
 // Forward Declarations
 class _Object;
@@ -31,20 +32,77 @@ class _Buffer;
 class _Font;
 
 // Types of stats
-enum StatType : int {
-	STATUSEFFECT    = (1 << 1),
-	HEALTH          = (1 << 2),
-	MAXHEALTH       = (1 << 3),
-	MANA            = (1 << 4),
-	MAXMANA         = (1 << 5),
-	BATTLESPEED     = (1 << 6),
-	HITCHANCE       = (1 << 7),
-	EVASION         = (1 << 8),
-	EXPERIENCE      = (1 << 9),
-	GOLD            = (1 << 10),
-	INVISIBLE       = (1 << 11),
-	ACTIONBARSIZE   = (1 << 12),
-	MISS            = (1 << 13),
+enum class StatType : int {
+	BUFF,
+	BUFFLEVEL,
+	BUFFDURATION,
+	HEALTH,
+	MAXHEALTH,
+	MANA,
+	MAXMANA,
+	BATTLESPEED,
+	HITCHANCE,
+	EVASION,
+	EXPERIENCE,
+	GOLD,
+	INVISIBLE,
+	ACTIONBARSIZE,
+	MISS,
+	COUNT,
+};
+
+enum class StatValueType : int {
+	BOOLEAN,
+	INTEGER,
+	FLOAT,
+	POINTER,
+};
+
+struct _StatStorage {
+	StatType Type;
+	StatValueType ValueType;
+};
+
+const std::map<std::string, StatType> StatStringToType = {
+	{ "Buff", StatType::BUFF },
+	{ "BuffLevel", StatType::BUFFLEVEL },
+	{ "BuffDuration", StatType::BUFFDURATION },
+	{ "Health", StatType::HEALTH },
+	{ "MaxHealth", StatType::MAXHEALTH },
+	{ "Mana", StatType::MANA },
+	{ "MaxMana", StatType::MAXMANA },
+	{ "BattleSpeed", StatType::BATTLESPEED },
+	{ "HitChance", StatType::HITCHANCE },
+	{ "Evasion", StatType::EVASION },
+	{ "Experience", StatType::EXPERIENCE },
+	{ "Gold", StatType::GOLD },
+	{ "Invisible", StatType::INVISIBLE },
+	{ "ActionBarSize", StatType::ACTIONBARSIZE },
+	{ "Miss", StatType::MISS },
+};
+
+const _StatStorage StatValueTypes[] = {
+	{ StatType::BUFF,          StatValueType::POINTER },
+	{ StatType::BUFFLEVEL,     StatValueType::INTEGER },
+	{ StatType::BUFFDURATION,  StatValueType::INTEGER },
+	{ StatType::HEALTH,        StatValueType::FLOAT   },
+	{ StatType::MAXHEALTH,     StatValueType::FLOAT   },
+	{ StatType::MANA,          StatValueType::FLOAT   },
+	{ StatType::MAXMANA,       StatValueType::FLOAT   },
+	{ StatType::BATTLESPEED,   StatValueType::FLOAT   },
+	{ StatType::HITCHANCE,     StatValueType::FLOAT   },
+	{ StatType::EVASION,       StatValueType::FLOAT   },
+	{ StatType::EXPERIENCE,    StatValueType::INTEGER },
+	{ StatType::GOLD,          StatValueType::INTEGER },
+	{ StatType::INVISIBLE,     StatValueType::BOOLEAN },
+	{ StatType::ACTIONBARSIZE, StatValueType::INTEGER },
+	{ StatType::MISS,          StatValueType::BOOLEAN },
+};
+
+union _Value {
+	int Integer;
+	float Float;
+	void *Pointer;
 };
 
 // Stat changes
@@ -59,22 +117,13 @@ class _StatChange {
 		void Unserialize(_Buffer &Data, _Manager<_Object> *Manager);
 
 		int GetChangedFlag();
+		bool HasStat(StatType Type);
 
+		// Owner
 		_Object *Object;
-		_StatusEffect StatusEffect;
-		float Health;
-		float MaxHealth;
-		float Mana;
-		float MaxMana;
-		float BattleSpeed;
-		float HitChance;
-		float Evasion;
-		int Experience;
-		int Gold;
-		int Invisible;
-		int ActionBarSize;
-		int Miss;
 
+		// Data
+		std::map<StatType, _Value> Values;
 };
 
 // Graphical stat change

@@ -722,11 +722,11 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 	_StatusEffect *StatusEffect = nullptr;
 
 	// Add buffs
-	if(StatChange.StatusEffect.Buff) {
+	if(StatChange.HasStat(StatType::BUFF)) {
 		StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = StatChange.StatusEffect.Buff;
-		StatusEffect->Level = StatChange.StatusEffect.Level;
-		StatusEffect->Duration = StatChange.StatusEffect.Duration;
+		StatusEffect->Buff = (_Buff *)StatChange.Values[StatType::BUFF].Pointer;
+		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
+		StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Integer;
 
 		if(AddStatusEffect(StatusEffect)) {
 			if(BattleElement)
@@ -738,11 +738,14 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 		}
 	}
 
-	UpdateHealth(StatChange.Health);
-	UpdateMana(StatChange.Mana);
+	if(StatChange.HasStat(StatType::HEALTH))
+		UpdateHealth(StatChange.Values[StatType::HEALTH].Float);
 
-	if(StatChange.ActionBarSize != 0) {
-		size_t NewSize = ActionBar.size() + (size_t)StatChange.ActionBarSize;
+	if(StatChange.HasStat(StatType::MANA))
+		UpdateMana(StatChange.Values[StatType::MANA].Float);
+
+	if(StatChange.HasStat(StatType::ACTIONBARSIZE)) {
+		size_t NewSize = ActionBar.size() + (size_t)StatChange.Values[StatType::ACTIONBARSIZE].Integer;
 		if(NewSize >= ACTIONBAR_MAX_SIZE)
 			NewSize = ACTIONBAR_MAX_SIZE;
 
@@ -1134,10 +1137,14 @@ void _Object::CalculateStats() {
 			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
 
 				Skill->Stats(Scripting, ActionResult);
-				MaxHealth += ActionResult.Source.MaxHealth;
-				MaxMana += ActionResult.Source.MaxMana;
-				HitChance += ActionResult.Source.HitChance;
-				Evasion += ActionResult.Source.Evasion;
+				if(ActionResult.Source.HasStat(StatType::MAXHEALTH))
+					MaxHealth += ActionResult.Source.Values[StatType::MAXHEALTH].Float;
+				if(ActionResult.Source.HasStat(StatType::MAXMANA))
+					MaxMana += ActionResult.Source.Values[StatType::MAXMANA].Float;
+				if(ActionResult.Source.HasStat(StatType::HITCHANCE))
+					HitChance += ActionResult.Source.Values[StatType::HITCHANCE].Float;
+				if(ActionResult.Source.HasStat(StatType::EVASION))
+					Evasion += ActionResult.Source.Values[StatType::EVASION].Float;
 			}
 		}
 	}
@@ -1148,9 +1155,10 @@ void _Object::CalculateStats() {
 		StatChange.Object = this;
 		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
 
-		BattleSpeed += StatChange.BattleSpeed;
-		if(StatChange.Invisible != -1)
-			Invisible = StatChange.Invisible;
+		if(StatChange.HasStat(StatType::BATTLESPEED))
+			BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Float;
+		if(StatChange.HasStat(StatType::INVISIBLE))
+			Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
 	}
 
 	// Get damage
