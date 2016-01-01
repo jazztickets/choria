@@ -13,13 +13,7 @@ Base_Attack = {
 	end,
 
 	Use = function(self, Level, Source, Target, Result)
-		Damage, Hit = Battle_ResolveDamage(Source, Target, Result)
-
-		if Hit then
-			Result.Target.Health = -Damage
-		else
-			Result.Target.Miss = true
-		end
+		Hit = Battle_ResolveDamage(Source, Target, Result)
 
 		return Result
 	end
@@ -79,15 +73,9 @@ Skill_MonsterAttack = Base_Attack:New()
 Skill_SpiderBite = Base_Attack:New()
 
 function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
-	Damage, Hit = Battle_ResolveDamage(Source, Target, Result)
+	Hit = Battle_ResolveDamage(Source, Target, Result)
 
-	if Hit then
-		Result.Target.Health = -Damage
-	else
-		Result.Target.Miss = true
-	end
-
-	if Random.GetInt(1, 100) <= 15 then
+	if Hit and Random.GetInt(1, 100) <= 15 then
 		Result.Target.Buff = Buffs["Buff_Slowed"]
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
@@ -101,16 +89,9 @@ end
 Skill_FangBite = Base_Attack:New()
 
 function Skill_FangBite.Use(self, Level, Source, Target, Result)
-	Damage, Hit = Battle_ResolveDamage(Source, Target, Result)
-	Result.Target.Health = -Damage
+	Hit = Battle_ResolveDamage(Source, Target, Result)
 
-	if Hit then
-		Result.Target.Health = -Damage
-	else
-		Result.Target.Miss = true
-	end
-
-	if Random.GetInt(1, 100) <= 15 then
+	if Hit and Random.GetInt(1, 100) <= 15 then
 		Result.Target.Buff = Buffs["Buff_Bleeding"]
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
@@ -124,15 +105,9 @@ end
 Skill_Swoop = Base_Attack:New()
 
 function Skill_Swoop.Use(self, Level, Source, Target, Result)
-	Damage, Hit = Battle_ResolveDamage(Source, Target, Result)
+	Hit = Battle_ResolveDamage(Source, Target, Result)
 
-	if Hit then
-		Result.Target.Health = -Damage
-	else
-		Result.Target.Miss = true
-	end
-
-	if Random.GetInt(1, 100) <= 75 then
+	if Hit and Random.GetInt(1, 100) <= 75 then
 		Result.Target.Buff = Buffs["Buff_Stunned"]
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = 3
@@ -144,23 +119,24 @@ end
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()
+Skill_Attack.BaseChance = 4
+Skill_Attack.ChancePerLevel = 1
+
+function Skill_Attack.GetChance(self, Level)
+
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+end
 
 function Skill_Attack.GetInfo(self, Level)
-	Chance = 4 + Level
 
-	return "Attack with your weapon\n[c green]" .. Chance .. "% [c white]chance to deal [c green]200% [c white]extra damage"
+	return "Attack with your weapon\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
 end
 
 function Skill_Attack.Use(self, Level, Source, Target, Result)
-	Damage, Hit = Battle_ResolveDamage(Source, Target, Result)
-	if Hit and Random.GetInt(1, 100) <= 4 + Level then
-		Damage = Damage * 3
-	end
+	Hit = Battle_ResolveDamage(Source, Target, Result)
 
-	if Hit then
-		Result.Target.Health = -Damage
-	else
-		Result.Target.Miss = true
+	if Hit and Random.GetInt(1, 100) <= self:GetChance(Level) then
+		Result.Target.Health = Result.Target.Health * 3
 	end
 
 	return Result
@@ -185,13 +161,7 @@ function Skill_Gash.GetInfo(self, Level)
 end
 
 function Skill_Gash.Use(self, Level, Source, Target, Result)
-	Damage, Hit = Battle_ResolveDamage(Source, Target, Result)
-
-	if Hit then
-		Result.Target.Health = -Damage
-	else
-		Result.Target.Miss = true
-	end
+	Hit = Battle_ResolveDamage(Source, Target, Result)
 
 	if Hit and Random.GetInt(1, 100) <= self:GetChance(Level) then
 		Result.Target.Buff = Buffs["Buff_Bleeding"]
