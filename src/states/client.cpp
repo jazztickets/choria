@@ -1030,7 +1030,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 			}
 
 			// No damage dealt
-			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL) && ActionResult.Target.Health == 0.0f) {
+			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL) && (ActionResult.Target.Health == 0.0f || ActionResult.Target.Miss)) {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 			}
