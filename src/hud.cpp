@@ -607,22 +607,23 @@ void _HUD::ToggleChat() {
 
 // Toggles the teleport state
 void _HUD::ToggleTeleport() {
-	if(Player->WaitForServer || !Player->IsAlive())
+	if(!Player->CanTeleport())
 		return;
 
-	if(!TeleportElement->Visible) {
+	if(!Player->WaitForServer && !TeleportElement->Visible) {
 		CloseWindows();
 		ClientState.SendStatus(_Object::STATUS_TELEPORT);
 		Player->WaitForServer = true;
 	}
 	else {
+		Player->WaitForServer = false;
 		CloseWindows();
 	}
 }
 
 // Open/close inventory
 void _HUD::ToggleInventory() {
-	if(Player->WaitForServer || !Player->IsAlive())
+	if(Player->WaitForServer || !Player->CanOpenInventory())
 		return;
 
 	if(!InventoryElement->Visible) {
@@ -639,7 +640,7 @@ void _HUD::ToggleInventory() {
 
 // Open/close trade
 void _HUD::ToggleTrade() {
-	if(Player->WaitForServer || !Player->IsAlive())
+	if(Player->WaitForServer || !Player->CanOpenTrade())
 		return;
 
 	if(!TradeElement->Visible) {
@@ -653,7 +654,7 @@ void _HUD::ToggleTrade() {
 
 // Open/close skills
 void _HUD::ToggleSkills() {
-	if(Player->WaitForServer || !Player->IsAlive())
+	if(Player->WaitForServer || !Player->CanOpenInventory())
 		return;
 
 	if(!SkillsElement->Visible) {
@@ -898,6 +899,14 @@ bool _HUD::CloseSkills() {
 	return WasOpen;
 }
 
+// Cancel teleport
+bool _HUD::CloseTeleport() {
+	bool WasOpen = TeleportElement->Visible;
+	TeleportElement->SetVisible(false);
+
+	return WasOpen;
+}
+
 // Closes the trade system
 bool _HUD::CloseTrade(bool SendNotify) {
 
@@ -941,6 +950,7 @@ bool _HUD::CloseWindows() {
 	WasOpen |= CloseSkills();
 	WasOpen |= CloseTrade();
 	WasOpen |= CloseTrader();
+	WasOpen |= CloseTeleport();
 
 	if(WasOpen)
 		ClientState.SendStatus(_Object::STATUS_NONE);
@@ -999,12 +1009,10 @@ void _HUD::DrawHudEffects() {
 
 // Draw the teleport sequence
 void _HUD::DrawTeleport() {
-	if(Player->TeleportTime <= 0.0)
+	if(!TeleportElement->Visible)
 		return;
 
-	TeleportElement->SetVisible(true);
 	TeleportElement->Render();
-	TeleportElement->SetVisible(false);
 
 	std::stringstream Buffer;
 	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->TeleportTime;
@@ -1409,6 +1417,16 @@ void _HUD::SetMessage(const std::string &Text) {
 	MessageElement->Size = glm::vec2(Bounds.Width + 100, Bounds.AboveBase + Bounds.BelowBase + 26);
 	MessageElement->SetVisible(true);
 	MessageElement->CalculateBounds();
+}
+
+// Show the teleport window
+void _HUD::StartTeleport() {
+	TeleportElement->SetVisible(true);
+}
+
+// Stop teleporting
+void _HUD::StopTeleport() {
+	TeleportElement->SetVisible(false);
 }
 
 // Draws the item under the cursor

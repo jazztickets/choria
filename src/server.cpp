@@ -1072,6 +1072,8 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	_Object *Player = Peer->Object;
+	if(Player->Battle)
+		return;
 
 	// Read packet
 	uint8_t Status = Data.Read<uint8_t>();
@@ -1082,6 +1084,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 			Player->Paused = false;
 			Player->Vendor = nullptr;
 			Player->Trader = nullptr;
+			Player->TeleportTime = -1.0;
 		break;
 		case _Object::STATUS_PAUSE:
 			Player->Paused = true;
@@ -1230,7 +1233,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_Object *Object, uint32_t Zone) {
-	//Zone = 7;
+	//Zone = 1;
 	if(!Zone)
 		return;
 

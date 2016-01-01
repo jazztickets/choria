@@ -141,6 +141,12 @@ class _Object : public _ManagerBase {
 		// Map
 		const _Tile *GetTile();
 
+		// Input
+		bool CanOpenTrade() { return IsAlive() && !Battle; }
+		bool CanOpenSkills() { return IsAlive() && !Battle; }
+		bool CanOpenInventory() { return IsAlive() && !Battle; }
+		bool CanTeleport() { return IsAlive() && !Battle; }
+
 		// Client
 		_Stats *Stats;
 		_Map *Map;

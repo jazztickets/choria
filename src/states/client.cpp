@@ -714,6 +714,8 @@ void _ClientState::HandlePlayerPosition(_Buffer &Data) {
 
 	Player->Position = Data.Read<glm::ivec2>();
 	Player->WaitForServer = false;
+	Player->TeleportTime = -1;
+	HUD->StopTeleport();
 }
 
 // Start teleport event
@@ -722,6 +724,7 @@ void _ClientState::HandleTeleportStart(_Buffer &Data) {
 		return;
 
 	Player->TeleportTime = Data.Read<double>();
+	HUD->StartTeleport();
 }
 
 // Handles the start of an event
@@ -904,6 +907,9 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 	// Already in a battle
 	if(Battle)
 		return;
+
+	// Allow player to hit menu buttons
+	Player->WaitForServer = false;
 
 	// Reset hud
 	HUD->CloseWindows();

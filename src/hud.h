@@ -111,6 +111,8 @@ class _HUD {
 
 		// Events
 		void SetMessage(const std::string &Text);
+		void StartTeleport();
+		void StopTeleport();
 
 		// Objects
 		void SetPlayer(_Object *Player);
@@ -163,6 +165,7 @@ class _HUD {
 		bool CloseVendor();
 		bool CloseTrader();
 		bool CloseSkills();
+		bool CloseTeleport();
 
 		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawHudEffects();
