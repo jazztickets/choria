@@ -90,6 +90,29 @@ function Item_HastePotion.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Death Potion --
+
+Item_DeathPotion = { Duration = 10 }
+
+function Item_DeathPotion.GetInfo(self, Level)
+
+	return "Do not drink"
+end
+
+function Item_DeathPotion.CanUse(self, Level, Object)
+
+	return true
+end
+
+function Item_DeathPotion.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Bleeding"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
+
 -- Action Slot --
 
 Item_ActionSlot = { }
