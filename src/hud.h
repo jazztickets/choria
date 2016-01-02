@@ -100,6 +100,8 @@ class _HUD {
 		_HUD();
 		~_HUD();
 
+		void Reset();
+
 		// Updates
 		void HandleEnter();
 		void MouseEvent(const _MouseEvent &MouseEvent);
@@ -133,7 +135,7 @@ class _HUD {
 		void InitTrader();
 		void InitSkills();
 		void InitTrade();
-		bool CloseWindows();
+		bool CloseWindows(bool SendNotify=true);
 
 		// Chat
 		void ToggleChat();
@@ -230,9 +232,6 @@ class _HUD {
 		// Chat
 		std::list<_Message> ChatHistory;
 		_TextBox *ChatTextBox;
-
-		// Skills
-		bool ActionBarChanged;
 
 		// Traders
 		std::vector<size_t> RequiredItemSlots;

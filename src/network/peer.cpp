@@ -18,24 +18,19 @@
 #pragma once
 
 // Libraries
-#include <cstdint>
+#include <network/peer.h>
+#include <enet/enet.h>
 
-// Forward Declarations
-struct _ENetPeer;
-class _Object;
+// Constructor
+_Peer::_Peer(_ENetPeer *ENetPeer) :
+	ENetPeer(ENetPeer),
+	Object(nullptr),
+	AccountID(0),
+	LastAck(0) {
+}
 
-// Peer
-class _Peer {
-
-	public:
-
-		_Peer(_ENetPeer *ENetPeer);
-		~_Peer();
-
-		_ENetPeer *ENetPeer;
-		_Object *Object;
-		uint32_t AccountID;
-		uint32_t CharacterID;
-		uint16_t LastAck;
-
-};
+// Destructor
+_Peer::~_Peer() {
+	if(ENetPeer)
+		enet_peer_reset(ENetPeer);
+}

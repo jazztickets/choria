@@ -444,7 +444,7 @@ void _ClientState::HandleDisconnect() {
 	Menu.HandleDisconnect(Server != nullptr);
 	ClientState.StopLocalServer();
 
-	HUD->SetMessage("");
+	HUD->Reset();
 	ObjectManager->Clear();
 	AssignPlayer(nullptr);
 

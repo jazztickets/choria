@@ -54,7 +54,6 @@
 _HUD::_HUD() {
 	ShowStats = false;
 	Player = nullptr;
-	ActionBarChanged = false;
 	LowestRecentItemTime = 0.0;
 	Tooltip.Reset();
 	Cursor.Reset();
@@ -118,8 +117,16 @@ _HUD::_HUD() {
 
 // Shutdown
 _HUD::~_HUD() {
-	ChatTextBox = nullptr;
+	Reset();
+}
+
+// Reset state
+void _HUD::Reset() {
+	CloseWindows(false);
 	ClearSkills();
+
+	SetMessage("");
+	ChatHistory.clear();
 }
 
 // Handle the enter key
@@ -841,7 +848,6 @@ void _HUD::InitSkills() {
 
 	RefreshSkillButtons();
 	Cursor.Reset();
-	ActionBarChanged = false;
 
 	ClientState.SendStatus(_Object::STATUS_SKILLS);
 }
@@ -865,12 +871,11 @@ bool _HUD::CloseInventory() {
 
 // Close the vendor
 bool _HUD::CloseVendor() {
-	if(!Player->Vendor)
-		return false;
-
 	bool WasOpen = VendorElement->Visible;
 	CloseInventory();
-	Player->Vendor = nullptr;
+	if(Player)
+		Player->Vendor = nullptr;
+
 	VendorElement->SetVisible(false);
 	Cursor.Reset();
 
@@ -879,18 +884,6 @@ bool _HUD::CloseVendor() {
 
 // Close the skills screen
 bool _HUD::CloseSkills() {
-
-	// Send new action bar to server
-	if(ActionBarChanged) {
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
-		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-			Player->ActionBar[i].Serialize(Packet);
-		}
-
-		ClientState.Network->SendPacket(Packet);
-	}
-
 	bool WasOpen = SkillsElement->Visible;
 
 	SkillsElement->SetVisible(false);
@@ -921,34 +914,35 @@ bool _HUD::CloseTrade(bool SendNotify) {
 	if(SendNotify)
 		SendTradeCancel();
 
-	Player->WaitingForTrade = false;
-	Player->TradePlayer = nullptr;
+	if(Player) {
+		Player->WaitingForTrade = false;
+		Player->TradePlayer = nullptr;
+	}
 
 	return WasOpen;
 }
 
 // Close the trader
 bool _HUD::CloseTrader() {
-	if(!Player->Trader)
-		return false;
-
 	bool WasOpen = TraderElement->Visible;
 	TraderElement->SetVisible(false);
-	Player->Trader = nullptr;
 	Cursor.Reset();
+
+	if(Player)
+		Player->Trader = nullptr;
 
 	return WasOpen;
 }
 
 // Closes all windows
-bool _HUD::CloseWindows() {
+bool _HUD::CloseWindows(bool SendNotify) {
 	Cursor.Reset();
 
 	bool WasOpen = false;
 	WasOpen |= CloseInventory();
 	WasOpen |= CloseVendor();
 	WasOpen |= CloseSkills();
-	WasOpen |= CloseTrade();
+	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseTrader();
 	WasOpen |= CloseTeleport();
 
@@ -1544,10 +1538,18 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 		Player->ActionBar[OldSlot] = Player->ActionBar[Slot];
 	}
 
+	// Update player
 	Player->ActionBar[Slot] = Action;
-
 	Player->CalculateStats();
-	ActionBarChanged = true;
+
+	// Notify server
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
+	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+		Player->ActionBar[i].Serialize(Packet);
+	}
+
+	ClientState.Network->SendPacket(Packet);
 }
 
 // Delete memory used by skill page
@@ -1613,6 +1615,9 @@ void _HUD::SendTradeRequest() {
 
 // Cancel a trade
 void _HUD::SendTradeCancel() {
+	if(!Player)
+		return;
+
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 	ClientState.Network->SendPacket(Packet);
