@@ -102,3 +102,18 @@ function Buff_Hasted.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Blinded debuff --
+
+Buff_Blinded = { Increments = 10 }
+
+function Buff_Blinded.GetInfo(self, Level)
+
+	return "Hit chance reduced"
+end
+
+function Buff_Blinded.Stats(self, Level, Source, Change)
+	Change.HitChance = -self.Increments * Level / 100
+
+	return Change
+end
