@@ -2,6 +2,18 @@
 
 Skill_MonsterAttack = Base_Attack:New()
 
+-- Crow attack --
+
+Skill_CrowAttack = Base_Attack:New()
+
+function Skill_CrowAttack.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buffs["Buff_Blinded"]
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
 -- Spider bite --
 
 Skill_SpiderBite = Base_Attack:New()

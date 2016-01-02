@@ -1161,6 +1161,10 @@ void _Object::CalculateStats() {
 
 		if(StatChange.HasStat(StatType::BATTLESPEED))
 			BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Float;
+		if(StatChange.HasStat(StatType::HITCHANCE))
+			HitChance += StatChange.Values[StatType::HITCHANCE].Float;
+		if(StatChange.HasStat(StatType::EVASION))
+			Evasion += StatChange.Values[StatType::EVASION].Float;
 		if(StatChange.HasStat(StatType::INVISIBLE))
 			Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
 	}
