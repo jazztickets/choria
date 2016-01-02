@@ -72,8 +72,8 @@ _Object::_Object() :
 
 	Name(""),
 	Level(0),
-	Health(0.0f),
-	MaxHealth(0.0f),
+	Health(1.0f),
+	MaxHealth(1.0f),
 	Mana(0.0f),
 	MaxMana(0.0f),
 	MinDamage(0),
