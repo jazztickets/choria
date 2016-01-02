@@ -37,8 +37,11 @@ class _Scripting {
 		_Scripting();
 		~_Scripting();
 
+		void Setup(_Stats *Stats, const std::string &BaseScript);
+
 		void LoadScript(const std::string &Path);
 		void InjectStats(_Stats *Stats);
+		void InjectItems(_Stats *Stats);
 
 		void PushObject(_Object *Object);
 		void PushActionResult(_ActionResult *ActionResult);
@@ -73,6 +76,7 @@ class _Scripting {
 		static int ObjectGenerateDamage(lua_State *LuaState);
 		static int ObjectGenerateDefense(lua_State *LuaState);
 
+		static int ItemGenerateDamage(lua_State *LuaState);
 		static int ItemGenerateDefense(lua_State *LuaState);
 
 		lua_State *LuaState;

@@ -83,13 +83,13 @@
     <linearGradient
        id="linearGradient4530">
       <stop
-         id="stop4532"
+         style="stop-color:#151515;stop-opacity:1"
          offset="0"
-         style="stop-color:#111111;stop-opacity:1" />
+         id="stop4534" />
       <stop
-         id="stop4534"
+         style="stop-color:#111111;stop-opacity:1"
          offset="1"
-         style="stop-color:#151515;stop-opacity:1" />
+         id="stop4532" />
     </linearGradient>
     <pattern
        inkscape:collect="always"
@@ -1908,6 +1908,36 @@
        y1="144.43871"
        x2="202.42091"
        y2="144.43158" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6624"
+       id="linearGradient4638"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(14.172926,0,0,0.86456304,-1653.0894,-454.64523)"
+       x1="109.24535"
+       y1="68.21006"
+       x2="110.0935"
+       y2="69.666519" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient12541"
+       id="linearGradient4645"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.3418973,-0.11692684,0.01873825,2.7505866,-129.68784,-753.4549)"
+       x1="233.29424"
+       y1="144.05345"
+       x2="235.32159"
+       y2="144.16002" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4530"
+       id="linearGradient4647"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(3.5704375,0.01015778,-0.02236132,6.3598128,-293.57447,-204.39896)"
+       x1="109.17964"
+       y1="68.952354"
+       x2="110.18306"
+       y2="68.969254" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -1916,18 +1946,18 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="71.462207"
-     inkscape:cy="428.617"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="66.418603"
+     inkscape:cy="414.80159"
      inkscape:document-units="px"
-     inkscape:current-layer="g4669"
+     inkscape:current-layer="g4651"
      showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1031"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     showguides="false"
+     showguides="true"
      inkscape:guide-bbox="true"
      inkscape:snap-grids="false"
      inkscape:snap-to-guides="true"
@@ -2045,7 +2075,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:description>sword
@@ -2078,7 +2108,8 @@ bat_trophy
 iron_buckler
 battleaxe
 stiletto
-death_potion</dc:description>
+death_potion
+throwing_knives</dc:description>
       </cc:Work>
       <cc:License
          rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
@@ -3306,6 +3337,34 @@ death_potion</dc:description>
          d="m 66.786967,-254.84832 -0.0158,5.19752"
          id="path4553-8-8-1"
          inkscape:connector-curvature="0" />
+    </g>
+    <g
+       transform="matrix(0.62090062,0,0,0.62093012,7.4082373,-16.094022)"
+       style="display:inline"
+       id="g6886-8">
+      <title
+         id="title6891-7">dagger</title>
+      <g
+         id="g4651"
+         transform="translate(7.7914064,5.4917007e-7)">
+        <g
+           id="g4723"
+           style="opacity:1"
+           transform="translate(-1.1369995,2.6170417)">
+          <path
+             sodipodi:nodetypes="cccccc"
+             inkscape:connector-curvature="0"
+             id="rect6758-1"
+             d="m 187.0363,-392.66414 0.54305,-0.003 c 2.02636,2.57355 4.68784,31.34331 2.7753,37.58395 l -6.15337,0.004 c -2.21453,-6.24064 0.65748,-35.16602 2.83502,-37.58547 z"
+             style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4645);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.39563829;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+          <path
+             id="rect6807-0"
+             transform="matrix(1.6105637,0,0,1.6104872,31.45736,-722.70391)"
+             d="m 94.712891,227.92773 -0.04883,13.89258 4.035157,0.01 0.04883,-13.89063 -4.035156,-0.0117 z m 1.978515,2.2168 a 1.1028452,1.1042424 49.278529 0 1 0.84961,0.38086 1.1028452,1.1042424 49.278529 0 1 -0.113282,1.55664 1.1028452,1.1042424 49.278529 0 1 -1.55664,-0.11133 1.1028452,1.1042424 49.278529 0 1 0.113281,-1.55664 1.1028452,1.1042424 49.278529 0 1 0.707031,-0.26953 z m 0,3.63086 a 1.1028452,1.1042423 49.279115 0 1 0.84961,0.38086 1.1028452,1.1042423 49.279115 0 1 -0.113282,1.55664 1.1028452,1.1042423 49.279115 0 1 -1.55664,-0.10937 1.1028452,1.1042423 49.279115 0 1 0.113281,-1.55664 1.1028452,1.1042423 49.279115 0 1 0.707031,-0.27149 z m -0.0059,3.89649 a 1.4562056,1.4580493 49.175923 0 1 1.123047,0.50195 1.4562056,1.4580493 49.175923 0 1 -0.148438,2.05664 1.4562056,1.4580493 49.175923 0 1 -2.05664,-0.14649 1.4562056,1.4580493 49.175923 0 1 0.148437,-2.05468 1.4562056,1.4580493 49.175923 0 1 0.933594,-0.35742 z"
+             style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4647);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.19037028;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+             inkscape:connector-curvature="0" />
+        </g>
+      </g>
     </g>
   </g>
 </svg>

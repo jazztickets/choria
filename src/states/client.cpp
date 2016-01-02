@@ -77,8 +77,7 @@ void _ClientState::Init() {
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	Scripting = new _Scripting();
-	Scripting->InjectStats(Stats);
-	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_GAME);
+	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
 
 	HUD = new _HUD();
 	HUD->Scripting = Scripting;

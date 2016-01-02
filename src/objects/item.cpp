@@ -233,7 +233,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		case ItemType::CONSUMABLE:
 			if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
 				InfoText = "Right-click to use";
-			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
+			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
 				InfoText = "Left-click to use";
 		break;
 		case ItemType::SKILL:

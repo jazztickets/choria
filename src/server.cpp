@@ -87,8 +87,8 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort)
 	Clock = Save->GetClock();
 
 	Scripting = new _Scripting();
-	Scripting->InjectStats(Stats);
-	Scripting->LoadScript(SCRIPTS_PATH + SCRIPTS_GAME);
+	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
+
 }
 
 // Destructor

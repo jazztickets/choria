@@ -128,3 +128,24 @@ function Item_ActionSlot.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Throwing Knives --
+
+Item_ThrowingKnives = { ManaBase = 1, Duration = 10 }
+
+function Item_ThrowingKnives.GetInfo(self, Level)
+
+	return "Throw a knife at your enemy"
+end
+
+function Item_ThrowingKnives.CanUse(self, Level, Object)
+
+	return true
+end
+
+function Item_ThrowingKnives.Use(self, Level, Source, Target, Result)
+
+	--Hit = Battle_ResolveDamage(Source, Target, Result)
+
+	return Result
+end

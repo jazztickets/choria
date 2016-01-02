@@ -58,6 +58,13 @@ _Scripting::~_Scripting() {
 		lua_close(LuaState);
 }
 
+// Set up scripting environment
+void _Scripting::Setup(_Stats *Stats, const std::string &BaseScript) {
+	InjectStats(Stats);
+	LoadScript(BaseScript);
+	InjectItems(Stats);
+}
+
 // Load a script file
 void _Scripting::LoadScript(const std::string &Path) {
 
@@ -70,7 +77,7 @@ void _Scripting::LoadScript(const std::string &Path) {
 void _Scripting::InjectStats(_Stats *Stats) {
 	lua_newtable(LuaState);
 
-	// Iterate through buffs
+	// Add buffs
 	for(const auto &Iterator : Stats->Buffs) {
 		const _Buff *Buff = Iterator.second;
 		if(Buff) {
@@ -81,8 +88,6 @@ void _Scripting::InjectStats(_Stats *Stats) {
 			lua_settable(LuaState, -3);
 		}
 	}
-
-	// Assign table a name
 	lua_setglobal(LuaState, "Buffs");
 
 	// Push inventory slot types
@@ -100,6 +105,30 @@ void _Scripting::InjectStats(_Stats *Stats) {
 	lua_setglobal(LuaState, "INVENTORY_RING1");
 	lua_pushinteger(LuaState, InventoryType::RING2);
 	lua_setglobal(LuaState, "INVENTORY_RING2");
+}
+
+// Inject items
+void _Scripting::InjectItems(_Stats *Stats) {
+
+	// Add item pointers to lua tables
+	for(const auto &Iterator : Stats->Items) {
+		const _Item *Item = Iterator.second;
+		if(!Item)
+			continue;
+
+		// Find table
+		lua_getglobal(LuaState, Item->Script.c_str());
+		if(!lua_istable(LuaState, -1)) {
+			lua_pop(LuaState, 1);
+			continue;
+		}
+
+		// Add item pointer
+		PushItem(LuaState, Item);
+		lua_setfield(LuaState, -2, "Item");
+
+		lua_pop(LuaState, 1);
+	}
 }
 
 // Push object onto stack
@@ -168,6 +197,10 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item) {
 	}
 
 	lua_newtable(LuaState);
+
+	lua_pushlightuserdata(LuaState, (void *)Item);
+	lua_pushcclosure(LuaState, &ItemGenerateDamage, 1);
+	lua_setfield(LuaState, -2, "GenerateDamage");
 
 	lua_pushlightuserdata(LuaState, (void *)Item);
 	lua_pushcclosure(LuaState, &ItemGenerateDefense, 1);
@@ -417,6 +450,16 @@ int _Scripting::ObjectGenerateDefense(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	lua_pushinteger(LuaState, Object->GenerateDefense());
+
+	return 1;
+}
+
+// Generate a random damage value for an item
+int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
+
+	// Get self pointer
+	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	lua_pushinteger(LuaState, GetRandomInt(Item->MinDamage, Item->MaxDamage));
 
 	return 1;
 }
