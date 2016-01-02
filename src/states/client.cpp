@@ -1047,6 +1047,10 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 			}
+			else {
+				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT;
+				ActionResult.Speed = HUD_ACTIONRESULT_SPEED;
+			}
 
 			Battle->ActionResults.push_back(ActionResult);
 		}
