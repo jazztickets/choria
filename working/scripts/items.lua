@@ -131,7 +131,12 @@ end
 
 -- Throwing Knives --
 
-Item_ThrowingKnives = { ManaBase = 1, Duration = 10 }
+Item_ThrowingKnives = Base_Attack:New()
+
+function Item_ThrowingKnives.GenerateDamage(self, Level, Source)
+
+	return self.Item.GenerateDamage()
+end
 
 function Item_ThrowingKnives.GetInfo(self, Level)
 
@@ -145,7 +150,7 @@ end
 
 function Item_ThrowingKnives.Use(self, Level, Source, Target, Result)
 
-	--Hit = Battle_ResolveDamage(Source, Target, Result)
+	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 	return Result
 end
