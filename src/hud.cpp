@@ -201,6 +201,9 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						if(Player->Skills[Tooltip.Item->ID] > 0)
 							Cursor = Tooltip;
 					}
+					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
+						EquipSkill(Tooltip.Item->ID);
+					}
 				break;
 			}
 		}
@@ -1499,18 +1502,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 	// Equip new skills
 	if(Amount > 0 && OldSkillLevel == 0) {
-
-		const _Item *Skill = ClientState.Stats->Items[SkillID];
-		if(Skill) {
-			size_t Slot = 0;
-			for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-				if(!Player->ActionBar[Slot].IsSet()) {
-					SetActionBar(Slot, Player->ActionBar.size(), Skill);
-					break;
-				}
-				Slot++;
-			}
-		}
+		EquipSkill(SkillID);
 	}
 
 	ClientState.Network->SendPacket(Packet);
@@ -1551,6 +1543,34 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	}
 
 	ClientState.Network->SendPacket(Packet);
+}
+
+// Equip a skill
+void _HUD::EquipSkill(uint32_t SkillID) {
+	const _Item *Skill = ClientState.Stats->Items[SkillID];
+	if(Skill) {
+
+		// Check skill
+		if(!Player->HasLearned(Skill))
+			return;
+
+		if(!Player->Skills[SkillID])
+			return;
+
+		// Find existing action
+		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+			if(Player->ActionBar[i].Item == Skill)
+				return;
+		}
+
+		// Find an empty slot
+		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+			if(!Player->ActionBar[i].IsSet()) {
+				SetActionBar(i, Player->ActionBar.size(), Skill);
+				return;
+			}
+		}
+	}
 }
 
 // Delete memory used by skill page

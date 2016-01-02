@@ -189,6 +189,7 @@ class _HUD {
 
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
+		void EquipSkill(uint32_t SkillID);
 		void ClearSkills();
 
 		void RefreshSkillButtons();
