@@ -99,15 +99,15 @@ void _ServerNetwork::HandleEvent(_NetworkEvent &Event, ENetEvent &EEvent) {
 
 // Send a packet
 void _ServerNetwork::SendPacket(const _Buffer &Buffer, const _Peer *Peer, SendType Type, uint8_t Channel) {
-	if(Peer->ENetPeer->state != ENET_PEER_STATE_CONNECTED)
-		return;
 
 	// Create enet packet
 	ENetPacket *EPacket = enet_packet_create(Buffer.GetData(), Buffer.GetCurrentSize(), Type);
 
 	// Send packet
-	enet_peer_send(Peer->ENetPeer, Channel, EPacket);
-	enet_host_flush(Connection);
+	if(enet_peer_send(Peer->ENetPeer, Channel, EPacket) == 0)
+		enet_host_flush(Connection);
+	else
+		enet_packet_destroy(EPacket);
 }
 
 // Send a packet to all peers
