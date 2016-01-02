@@ -142,15 +142,3 @@ function Item_ThrowingKnives.GetInfo(self, Level)
 
 	return "Throw a knife at your enemy"
 end
-
-function Item_ThrowingKnives.CanUse(self, Level, Object)
-
-	return true
-end
-
-function Item_ThrowingKnives.Use(self, Level, Source, Target, Result)
-
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
-
-	return Result
-end

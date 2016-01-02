@@ -6,48 +6,36 @@ Skill_MonsterAttack = Base_Attack:New()
 
 Skill_SpiderBite = Base_Attack:New()
 
-function Skill_SpiderBite.Use(self, Level, Source, Target, Result)
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
-
-	if Hit and Random.GetInt(1, 100) <= 15 then
+function Skill_SpiderBite.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 15 then
 		Result.Target.Buff = Buffs["Buff_Slowed"]
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
-
-	return Result
 end
 
 -- Fang bite --
 
 Skill_FangBite = Base_Attack:New()
 
-function Skill_FangBite.Use(self, Level, Source, Target, Result)
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
-
-	if Hit and Random.GetInt(1, 100) <= 15 then
+function Skill_FangBite.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 15 then
 		Result.Target.Buff = Buffs["Buff_Bleeding"]
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
-
-	return Result
 end
 
 -- Swoop attack --
 
 Skill_Swoop = Base_Attack:New()
 
-function Skill_Swoop.Use(self, Level, Source, Target, Result)
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
-
-	if Hit and Random.GetInt(1, 100) <= 75 then
+function Skill_Swoop.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 75 then
 		Result.Target.Buff = Buffs["Buff_Stunned"]
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = 3
 	end
-
-	return Result
 end
 
 -- Basic attack --
@@ -66,15 +54,16 @@ function Skill_Attack.GetInfo(self, Level)
 	return "Attack with your weapon\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
 end
 
-function Skill_Attack.Use(self, Level, Source, Target, Result)
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
+function Skill_Attack.GenerateDamage(self, Level, Source)
+	Damage = Source.GenerateDamage()
 
-	if Hit and Random.GetInt(1, 100) <= self:GetChance(Level) then
-		Result.Target.Health = Result.Target.Health * 3
-		Result.Target.Crit = true
+	Crit = false
+	if Random.GetInt(1, 100) <= self:GetChance(Level) then
+		Damage = Damage * 3
+		Crit = true
 	end
 
-	return Result
+	return Damage, Crit
 end
 
 -- Gash --
@@ -95,16 +84,12 @@ function Skill_Gash.GetInfo(self, Level)
 	return "Slice your enemy\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to cause [c yellow]bleeding"
 end
 
-function Skill_Gash.Use(self, Level, Source, Target, Result)
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
-
-	if Hit and Random.GetInt(1, 100) <= self:GetChance(Level) then
+function Skill_Gash.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= self:GetChance(Level) then
 		Result.Target.Buff = Buffs["Buff_Bleeding"]
 		Result.Target.BuffLevel = self.BleedingLevel
 		Result.Target.BuffDuration = self.Duration
 	end
-
-	return Result
 end
 
 -- Shield Bash --
@@ -119,6 +104,15 @@ function Skill_ShieldBash.GetInfo(self, Level)
 	return "Bash with your enemy with a shield\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to stun for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
+function Skill_ShieldBash.GenerateDamage(self, Level, Source)
+	Shield = Source.GetInventoryItem(INVENTORY_HAND2)
+	if Shield == nil then
+		return 0
+	end
+
+	return Shield.GenerateDefense()
+end
+
 function Skill_ShieldBash.GetChance(self, Level)
 
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
@@ -130,24 +124,12 @@ function Skill_ShieldBash.CanUse(self, Level, Object)
 	return Shield ~= nil
 end
 
-function Skill_ShieldBash.Use(self, Level, Source, Target, Result)
-	Shield = Source.GetInventoryItem(INVENTORY_HAND2)
-	if Shield == nil then
-		return Result
-	end
-
-	ShieldDamage = Shield.GenerateDefense()
-	Damage = math.max(ShieldDamage - Target.GenerateDefense(), 0)
-
-	if Random.GetInt(1, 100) <= self:GetChance(Level) then
+function Skill_ShieldBash.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= self:GetChance(Level) then
 		Result.Target.Buff = Buffs["Buff_Stunned"]
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = self.Duration
 	end
-
-	Result.Target.Health = -Damage
-
-	return Result
 end
 
 -- Whirl --
@@ -166,6 +148,10 @@ function Skill_Whirlwind.GetDamage(self, Level)
 	return Skill_Whirlwind.DamageBase + Skill_Whirlwind.DamagePerLevel * Level
 end
 
+function Skill_Whirlwind.GenerateDamage(self, Level, Source)
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+end
+
 function Skill_Whirlwind.ApplyCost(self, Level, Result)
 	Result.Source.Buff = Buffs["Buff_Slowed"]
 	Result.Source.BuffLevel = 3
@@ -176,15 +162,6 @@ end
 
 function Skill_Whirlwind.GetInfo(self, Level)
 	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses fatigue for [c green]" .. self:GetDuration(Level) .." [c white]seconds"
-end
-
-function Skill_Whirlwind.Use(self, Level, Source, Target, Result)
-	Damage = math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
-	Damage = math.max(Damage - Target.GenerateDefense(), 0)
-
-	Result.Target.Health = -Damage
-
-	return Result
 end
 
 -- Heal --

@@ -18,8 +18,17 @@ Base_Attack = {
 		return Damage
 	end,
 
+	Proc = function(self, Roll, Level, Source, Target, Result)
+
+		return Result
+	end,
+
 	Use = function(self, Level, Source, Target, Result)
 		Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+		if Hit then
+			self:Proc(Random.GetInt(1, 100), Level, Source, Target, Result)
+		end
 
 		return Result
 	end
@@ -72,11 +81,16 @@ Base_Spell = {
 
 -- Calculate basic weapon damage vs target's armor
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
-	Damage = math.max(Action:GenerateDamage(Level, Source) - Target.GenerateDefense(), 0)
+	SourceDamage, Crit = Action:GenerateDamage(Level, Source)
+	TargetDefense = Target.GenerateDefense()
+	Damage = math.max(SourceDamage - TargetDefense, 0)
 
 	if Random.GetInt(1, 100) <= (Source.HitChance - Target.Evasion) * 100 then
 		Result.Target.Health = -Damage
 		Hit = true
+		if Crit == true then
+			Result.Target.Crit = true
+		end
 	else
 		Result.Target.Miss = true
 		Hit = false
