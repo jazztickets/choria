@@ -104,12 +104,12 @@ void _ClientState::Close() {
 	delete ObjectManager;
 	DeleteBattle();
 	DeleteMap();
-	delete Network;
 	delete HUD;
 	delete Scripting;
 	delete Camera;
 	delete Server;
 	delete Stats;
+	delete Network;
 }
 
 // Connect to a server
