@@ -971,9 +971,6 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 		Player->PlayerKills += PlayerKills;
 		Player->MonsterKills += MonsterKills;
 	}
-	else {
-		Player->Deaths++;
-	}
 
 	HUD->AddStatChange(StatChange);
 

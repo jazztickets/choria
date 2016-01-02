@@ -575,7 +575,6 @@ void _Battle::ServerEndBattle() {
 		int GoldEarned = 0;
 		if(Fighter->BattleSide != WinningSide) {
 			GoldEarned = (int)(-Fighter->Gold * 0.1f);
-			Fighter->Deaths++;
 
 			if(Fighter->Peer)
 				Server->SendMessage(Fighter->Peer, std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);

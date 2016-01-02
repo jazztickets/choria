@@ -571,7 +571,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<float>(MaxMana);
 	Data.Write<int32_t>(Experience);
 	Data.Write<int32_t>(Gold);
-	Data.Write<int32_t>(PlayTime);
+	Data.Write<double>(PlayTime);
 	Data.Write<int32_t>(Deaths);
 	Data.Write<int32_t>(MonsterKills);
 	Data.Write<int32_t>(PlayerKills);
@@ -647,7 +647,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	BaseMaxMana = MaxMana = Data.Read<float>();
 	Experience = Data.Read<int32_t>();
 	Gold = Data.Read<int32_t>();
-	PlayTime = Data.Read<int32_t>();
+	PlayTime = Data.Read<double>();
 	Deaths = Data.Read<int32_t>();
 	MonsterKills = Data.Read<int32_t>();
 	PlayerKills = Data.Read<int32_t>();
@@ -736,8 +736,16 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 		}
 	}
 
+	bool WasAlive = IsAlive();
 	if(StatChange.HasStat(StatType::HEALTH))
 		UpdateHealth(StatChange.Values[StatType::HEALTH].Float);
+
+	// Just died
+	if(WasAlive && !IsAlive()) {
+		PotentialAction.Unset();
+		Action.Unset();
+		Deaths++;
+	}
 
 	if(StatChange.HasStat(StatType::MANA))
 		UpdateMana(StatChange.Values[StatType::MANA].Float);
