@@ -33,6 +33,7 @@
 #include <random.h>
 #include <stats.h>
 #include <font.h>
+#include <utils.h>
 #include <scripting.h>
 #include <program.h>
 #include <constants.h>
@@ -399,7 +400,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw health text
 	std::stringstream Buffer;
-	Buffer << std::fixed << std::setprecision(0) << Health << " / " << MaxHealth;
+	Buffer << Round(Health) << " / " << Round(MaxHealth);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
 	Buffer.str("");
 
@@ -423,7 +424,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
-		Buffer << std::fixed << std::setprecision(0) << Mana << " / " << MaxMana;
+		Buffer << Round(Mana) << " / " << Round(MaxMana);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
 		Buffer.str("");
 	}

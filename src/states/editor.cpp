@@ -433,7 +433,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Draw world cursor
 	std::stringstream Buffer;
-	Buffer << std::fixed << std::setprecision(1) << WorldCursor.x << ", " << WorldCursor.y;
+	Buffer << (int)WorldCursor.x << ", " << (int)WorldCursor.y;
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
 	Buffer.str("");
 

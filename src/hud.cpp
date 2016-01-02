@@ -43,6 +43,7 @@
 #include <actions.h>
 #include <menu.h>
 #include <packet.h>
+#include <utils.h>
 #include <database.h>
 #include <vector>
 #include <algorithm>
@@ -537,7 +538,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ExperienceElement->Render();
 
 		// Draw health bar
-		Buffer << std::fixed << std::setprecision(0) << Player->Health << " / " << Player->MaxHealth;
+		Buffer << Round(Player->Health) << " / " << Round(Player->MaxHealth);
 		Assets.Labels["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
@@ -545,7 +546,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		HealthElement->Render();
 
 		// Draw mana bar
-		Buffer << std::fixed << std::setprecision(0) << Player->Mana << " / " << Player->MaxMana;
+		Buffer << Round(Player->Mana) << " / " << Round(Player->MaxMana);
 		Assets.Labels["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());

@@ -48,7 +48,7 @@ Base_Spell = {
 	end,
 
 	CanUse = function(self, Level, Object)
-		if math.ceil(Object.Mana) >= self:GetCost(Level) then
+		if Object.Mana >= self:GetCost(Level) then
 			return true
 		end
 
@@ -256,9 +256,9 @@ end
 -- Heal --
 
 Skill_Heal = Base_Spell:New()
-Skill_Heal.ManaCostBase = 3
 Skill_Heal.HealBase = 10
 Skill_Heal.CostPerLevel = 1.0 / 3.0
+Skill_Heal.ManaCostBase = 3 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)
 
@@ -335,7 +335,7 @@ end
 
 function Skill_Evasion.GetInfo(self, Level)
 
-	return "Increase evasion by [c green]" .. math.floor(Skill_Evasion:GetChance(Level) * 100) .. "%"
+	return "Increase evasion by [c green]" .. math.floor(self:GetChance(Level) * 100) .. "%"
 end
 
 function Skill_Evasion.Stats(self, Level, Object, Change)
