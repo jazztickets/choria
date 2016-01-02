@@ -221,7 +221,12 @@ end
 Skill_Whirlwind = Base_Attack:New()
 Skill_Whirlwind.DamageBase = 29
 Skill_Whirlwind.DamagePerLevel = 1
-Skill_Whirlwind.SlowDuration = 3
+Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 3.0
+Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
+
+function Skill_Whirlwind.GetDuration(self, Level)
+	return math.floor(Skill_Whirlwind.SlowDuration + Skill_Whirlwind.SlowDurationPerLevel * Level)
+end
 
 function Skill_Whirlwind.GetDamage(self, Level)
 	return Skill_Whirlwind.DamageBase + Skill_Whirlwind.DamagePerLevel * Level
@@ -230,13 +235,13 @@ end
 function Skill_Whirlwind.ApplyCost(self, Level, Result)
 	Result.Source.Buff = Buffs["Buff_Slowed"]
 	Result.Source.BuffLevel = 3
-	Result.Source.BuffDuration = 3
+	Result.Source.BuffDuration = self:GetDuration(Level)
 
 	return Result
 end
 
 function Skill_Whirlwind.GetInfo(self, Level)
-	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses fatigue for [c green]" .. self.SlowDuration .." [c white]seconds"
+	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses fatigue for [c green]" .. self:GetDuration(Level) .." [c white]seconds"
 end
 
 function Skill_Whirlwind.Use(self, Level, Source, Target, Result)
