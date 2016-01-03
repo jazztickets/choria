@@ -81,25 +81,31 @@ end
 -- Gash --
 
 Skill_Gash = Base_Attack:New()
-Skill_Gash.BaseChance = 14
-Skill_Gash.ChancePerLevel = 1
+Skill_Gash.BaseChance = 25
+Skill_Gash.ChancePerLevel = 0
 Skill_Gash.Duration = 5
-Skill_Gash.BleedingLevel = 1
+Skill_Gash.IncreasePerLevel = 1.0 / 3.0
+Skill_Gash.BleedingLevel = 1 - Skill_Gash.IncreasePerLevel
 
 function Skill_Gash.GetChance(self, Level)
 
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
 end
 
+function Skill_Gash.GetBleedLevel(self, Level)
+
+	return math.floor(self.BleedingLevel + self.IncreasePerLevel * Level)
+end
+
 function Skill_Gash.GetInfo(self, Level)
 
-	return "Slice your enemy\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to cause [c yellow]bleeding"
+	return "Slice your enemy\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to cause level [c green]" .. self:GetBleedLevel(Level) .. " [c yellow]bleeding"
 end
 
 function Skill_Gash.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= self:GetChance(Level) then
 		Result.Target.Buff = Buffs["Buff_Bleeding"]
-		Result.Target.BuffLevel = self.BleedingLevel
+		Result.Target.BuffLevel = self:GetBleedLevel(Level)
 		Result.Target.BuffDuration = self.Duration
 	end
 end
