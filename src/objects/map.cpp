@@ -47,6 +47,16 @@
 #include <stdexcept>
 #include <iomanip>
 
+// Color overlays for zones
+const glm::vec4 ZoneColors[] = {
+	{ 1.0f, 0.0f, 0.0f, 0.4f},
+	{ 0.0f, 1.0f, 0.0f, 0.4f},
+	{ 0.0f, 0.0f, 1.0f, 0.4f},
+	{ 1.0f, 1.0f, 0.0f, 0.4f},
+	{ 0.0f, 1.0f, 1.0f, 0.4f},
+	{ 1.0f, 0.0f, 1.0f, 0.4f},
+};
+
 // Constructor
 _Map::_Map() :
 	Tiles(nullptr),
@@ -426,8 +436,14 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 			else {
 
 				// Draw zone number
-				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0)
+				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0) {
+					Graphics.SetProgram(Assets.Programs["pos"]);
+					Graphics.SetVBO(VBO_NONE);
+					Graphics.SetColor(ZoneColors[Tile->Zone % 6]);
+					Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i, j), true);
+
 					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone).c_str(), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 64.0f);
+				}
 
 				// Draw PVP
 				if((RenderFlags & FILTER_PVP) && Tile->PVP)
