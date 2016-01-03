@@ -1238,7 +1238,7 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 
 	// Get a list of players
 	std::list<_Object *> Players;
-	Object->Map->GetClosePlayers(Object, 7*7, Players);
+	Object->Map->GetClosePlayers(Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
 
 	// Get monsters
 	std::list<uint32_t> MonsterIDs;
@@ -1261,18 +1261,15 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 			Battle->AddFighter(Monster, 0);
 		}*/
 
-		// Add players
-		Battle->AddFighter(Object, 0);
+		// Add player
+		Players.push_back(Object);
+
+		// Sort by network id
+		Players.sort();
 
 		// Add players to battle
-		int PlayersAdded = 0;
 		for(auto &PartyPlayer : Players) {
-			if(PartyPlayer->CanBattle()) {
-				Battle->AddFighter(PartyPlayer, 0);
-				PlayersAdded++;
-				if(PlayersAdded == BATTLE_MAXFIGHTERS_SIDE-1)
-					break;
-			}
+			Battle->AddFighter(PartyPlayer, 0);
 		}
 
 		// Add monsters

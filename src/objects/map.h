@@ -114,7 +114,7 @@ class _Map : public _ManagerBase {
 		void AddObject(_Object *Object);
 		void RemoveObject(const _Object *RemoveObject);
 		void SendObjectList(_Peer *Peer);
-		void GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players);
+		void GetClosePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(const _Event &Event, glm::ivec2 &Position);
 

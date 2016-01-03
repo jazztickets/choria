@@ -433,7 +433,6 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 	if(ZoneID == 0)
 		return;
 
-
 	// Get zone info
 	Database->PrepareQuery("SELECT minspawn, maxspawn FROM zone WHERE id = @zone_id");
 	Database->BindInt(1, ZoneID);

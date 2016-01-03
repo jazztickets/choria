@@ -701,13 +701,15 @@ void _Map::AddObject(_Object *Object) {
 }
 
 // Returns a list of players close to a player
-void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, std::list<_Object *> &Players) {
+void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players) {
 
 	for(const auto &Object : Objects) {
 		if(Object != Player) {
 			glm::vec2 Delta = Object->Position - Player->Position;
 			if(glm::dot(Delta, Delta) <= DistanceSquared && Object->CanBattle()) {
 				Players.push_back(Object);
+				if(Players.size() >= Max)
+					return;
 			}
 		}
 	}
