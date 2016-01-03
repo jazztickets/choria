@@ -49,12 +49,12 @@
 
 // Color overlays for zones
 const glm::vec4 ZoneColors[] = {
-	{ 1.0f, 0.0f, 0.0f, 0.4f},
-	{ 0.0f, 1.0f, 0.0f, 0.4f},
-	{ 0.0f, 0.0f, 1.0f, 0.4f},
-	{ 1.0f, 1.0f, 0.0f, 0.4f},
-	{ 0.0f, 1.0f, 1.0f, 0.4f},
-	{ 1.0f, 0.0f, 1.0f, 0.4f},
+	{ 1.0f, 0.0f, 0.0f, 0.4f },
+	{ 0.0f, 1.0f, 0.0f, 0.4f },
+	{ 0.0f, 0.0f, 1.0f, 0.4f },
+	{ 1.0f, 1.0f, 0.0f, 0.4f },
+	{ 0.0f, 1.0f, 1.0f, 0.4f },
+	{ 1.0f, 0.0f, 1.0f, 0.4f },
 };
 
 // Constructor
@@ -422,6 +422,23 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 		Graphics.DrawRectangle(glm::vec2(-0.51f, -0.51f), glm::vec2(Size.x - 0.49f, Size.y - 0.49f));
 	}
 
+	// Draw zone overlays
+	if((RenderFlags & FILTER_ZONE)) {
+		Graphics.SetProgram(Assets.Programs["pos"]);
+		Graphics.SetVBO(VBO_NONE);
+		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
+			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
+				_Tile *Tile = &Tiles[i][j];
+
+				// Draw zone color
+				if(!Tile->Wall && Tile->Zone > 0) {
+					Graphics.SetColor(ZoneColors[Tile->Zone % 6]);
+					Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i, j), true);
+				}
+			}
+		}
+	}
+
 	// Draw text overlay
 	for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 		for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
@@ -436,14 +453,8 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 			else {
 
 				// Draw zone number
-				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0) {
-					Graphics.SetProgram(Assets.Programs["pos"]);
-					Graphics.SetVBO(VBO_NONE);
-					Graphics.SetColor(ZoneColors[Tile->Zone % 6]);
-					Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i, j), true);
-
+				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0)
 					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone).c_str(), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 64.0f);
-				}
 
 				// Draw PVP
 				if((RenderFlags & FILTER_PVP) && Tile->PVP)
