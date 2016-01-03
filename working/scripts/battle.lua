@@ -79,6 +79,27 @@ Base_Spell = {
 	end
 }
 
+-- Base Buff --
+Base_Buff = {
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	GetInfo = function(self, Level)
+		return ""
+	end,
+
+	GetChange = function(self, Level)
+		return self.Increments * Level / 100
+	end,
+
+	Increments = 10
+}
+
 -- Calculate basic weapon damage vs target's armor
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 	SourceDamage, Crit = Action:GenerateDamage(Level, Source)

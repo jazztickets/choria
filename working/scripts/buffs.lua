@@ -60,15 +60,15 @@ end
 
 -- Slowed debuff --
 
-Buff_Slowed = { Increments = 10 }
+Buff_Slowed = Base_Buff:New()
 
 function Buff_Slowed.GetInfo(self, Level)
 
-	return "Battle speed reduced"
+	return "Battle speed reduced by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
 end
 
 function Buff_Slowed.Stats(self, Level, Source, Change)
-	Change.BattleSpeed = -self.Increments * Level / 100
+	Change.BattleSpeed = -self:GetChange(Level)
 
 	return Change
 end
@@ -90,30 +90,30 @@ end
 
 -- Hasted buff --
 
-Buff_Hasted = { Increments = 10 }
+Buff_Hasted = Base_Buff:New()
 
 function Buff_Hasted.GetInfo(self, Level)
 
-	return "Battle speed increased"
+	return "Battle speed increased by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
 end
 
 function Buff_Hasted.Stats(self, Level, Source, Change)
-	Change.BattleSpeed = self.Increments * Level / 100
+	Change.BattleSpeed = self:GetChange(Level)
 
 	return Change
 end
 
 -- Blinded debuff --
 
-Buff_Blinded = { Increments = 10 }
+Buff_Blinded = Base_Buff:New()
 
 function Buff_Blinded.GetInfo(self, Level)
 
-	return "Hit chance reduced"
+	return "Hit chance reduced by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
 end
 
 function Buff_Blinded.Stats(self, Level, Source, Change)
-	Change.HitChance = -self.Increments * Level / 100
+	Change.HitChance = -self:GetChange(Level)
 
 	return Change
 end
