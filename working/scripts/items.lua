@@ -7,11 +7,6 @@ function Item_HealingSalve.GetInfo(self, Level)
 	return "Restore [c green]" .. Level * self.HealBase * self.Duration .. "[c white] HP over [c green]" .. self.Duration .. " [c white]seconds"
 end
 
-function Item_HealingSalve.CanUse(self, Level, Object)
-
-	return true
-end
-
 function Item_HealingSalve.Use(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buffs["Buff_Healing"]
@@ -28,11 +23,6 @@ Item_ManaCider = { ManaBase = 1, Duration = 10 }
 function Item_ManaCider.GetInfo(self, Level)
 
 	return "Restore [c light_blue]" .. Level * self.ManaBase * self.Duration .. " [c white]MP over [c green]" .. self.Duration .. " [c white]seconds"
-end
-
-function Item_ManaCider.CanUse(self, Level, Object)
-
-	return true
 end
 
 function Item_ManaCider.Use(self, Level, Source, Target, Result)
@@ -53,11 +43,6 @@ function Item_InvisPotion.GetInfo(self, Level)
 	return "Turn invisible and avoid combat for [c_green]" .. Level .. " [c_white]seconds"
 end
 
-function Item_InvisPotion.CanUse(self, Level, Object)
-
-	return true
-end
-
 function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buffs["Buff_Invis"]
@@ -76,11 +61,6 @@ function Item_HastePotion.GetInfo(self, Level)
 	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white] for [c_green]" .. self.Duration .. " [c_white]seconds"
 end
 
-function Item_HastePotion.CanUse(self, Level, Object)
-
-	return true
-end
-
 function Item_HastePotion.Use(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buffs["Buff_Hasted"]
@@ -97,11 +77,6 @@ Item_DeathPotion = { Duration = 10 }
 function Item_DeathPotion.GetInfo(self, Level)
 
 	return "Do not drink"
-end
-
-function Item_DeathPotion.CanUse(self, Level, Object)
-
-	return true
 end
 
 function Item_DeathPotion.Use(self, Level, Source, Target, Result)
@@ -141,4 +116,22 @@ end
 function Item_ThrowingKnives.GetInfo(self, Level)
 
 	return "Throw a knife at your enemy"
+end
+
+-- Crab Legs --
+
+Item_CrabLegs = { Duration = 30 }
+
+function Item_CrabLegs.GetInfo(self, Level)
+
+	return "Gain [c green]1 [c white]defense for [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Item_CrabLegs.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Hardened"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
 end

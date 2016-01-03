@@ -1159,6 +1159,15 @@ void _Object::CalculateStats() {
 		StatChange.Object = this;
 		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
 
+		if(StatChange.HasStat(StatType::MINDAMAGE))
+			MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
+		if(StatChange.HasStat(StatType::MAXDAMAGE))
+			MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
+		if(StatChange.HasStat(StatType::MINDEFENSE))
+			MinDefense += StatChange.Values[StatType::MINDEFENSE].Integer;
+		if(StatChange.HasStat(StatType::MAXDEFENSE))
+			MaxDefense += StatChange.Values[StatType::MAXDEFENSE].Integer;
+
 		if(StatChange.HasStat(StatType::BATTLESPEED))
 			BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Float;
 		if(StatChange.HasStat(StatType::HITCHANCE))

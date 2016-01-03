@@ -117,3 +117,19 @@ function Buff_Blinded.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Hardened debuff --
+
+Buff_Hardened = Base_Buff:New()
+
+function Buff_Hardened.GetInfo(self, Level)
+
+	return "Defense increased by [c green]" .. Level
+end
+
+function Buff_Hardened.Stats(self, Level, Source, Change)
+	Change.MinDefense = Level
+	Change.MaxDefense = Level
+
+	return Change
+end

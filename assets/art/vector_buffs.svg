@@ -2528,6 +2528,87 @@
        r="1.8128119"
        gradientTransform="matrix(1.2300866,0.00715022,-0.01072901,1.8457615,17.233969,-40.482171)"
        gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5915"
+       id="radialGradient3292"
+       cx="152.48676"
+       cy="102.68816"
+       fx="152.48676"
+       fy="102.68816"
+       r="10.050019"
+       gradientTransform="matrix(1.9113631,1.2393109e-6,-3.9420203e-6,6.0857537,-164.00126,-1057.9765)"
+       gradientUnits="userSpaceOnUse" />
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask4747-2-5">
+      <rect
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ffffff;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter4737-1-9);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+         id="rect4749-6-1"
+         width="64"
+         height="64"
+         x="127.99997"
+         y="9.983778e-07"
+         ry="12.085538" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Feather"
+       id="filter4737-1-9">
+      <feGaussianBlur
+         stdDeviation="2"
+         result="blur"
+         id="feGaussianBlur4739-2-4" />
+      <feComposite
+         in="SourceGraphic"
+         in2="blur"
+         operator="atop"
+         result="composite1"
+         id="feComposite4741-0-7" />
+      <feComposite
+         in2="composite1"
+         operator="in"
+         result="composite2"
+         id="feComposite4743-6-1" />
+      <feComposite
+         in2="composite2"
+         operator="in"
+         result="composite3"
+         id="feComposite4745-8-5" />
+    </filter>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5181-0"
+       x="-0.039000001"
+       width="1.0779999"
+       y="-0.13"
+       height="1.26">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.8125"
+         id="feGaussianBlur5183-5" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4590"
+       id="linearGradient4748"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1479821,0,0,1.2132701,-23.24663,-5.763032)"
+       x1="158.99997"
+       y1="-2.8383894"
+       x2="158.99997"
+       y2="57.573223" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4596"
+       id="linearGradient4750"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-4.065864)"
+       x1="159.99997"
+       y1="11.784009"
+       x2="159.99997"
+       y2="18.625" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2536,9 +2617,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="587.96205"
-     inkscape:cy="615.26545"
+     inkscape:zoom="0.5"
+     inkscape:cx="75.71979"
+     inkscape:cy="563.53462"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="true"
@@ -2669,7 +2750,8 @@ healing
 mana
 bleeding
 hasted
-blinded</dc:description>
+blinded
+hardened</dc:description>
       </cc:Work>
       <cc:License
          rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
@@ -3463,5 +3545,46 @@ blinded</dc:description>
        id="path4913-7-0-3"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="csc" />
+    <g
+       transform="translate(-128,64.000003)"
+       id="g5397-8-4"
+       style="display:inline">
+      <rect
+         mask="url(#mask4747-2-5)"
+         ry="15.014471"
+         y="0"
+         x="127.99997"
+         height="64"
+         width="64"
+         id="rect4526-7-3"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4748);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+      <rect
+         ry="3.3088236"
+         y="3.4341364"
+         x="134.49997"
+         height="15"
+         width="50"
+         id="rect4751-4-4"
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:0.63300003;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient4750);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.14581126;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter5181-0);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+    </g>
+    <g
+       transform="matrix(0.5401244,0,0,0.54144498,-36.858748,331.2596)"
+       style="display:inline"
+       id="g4470">
+      <title
+         id="title4474">wooden_shield</title>
+      <path
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccc"
+         id="path4831"
+         d="m 105.98271,-462.11613 42.73051,0 0.2158,32.3786 c 0,0 0.21581,25.77075 -21.36524,25.77075 -21.58107,0 -21.58107,-27.22449 -21.58107,-27.22449 l 0,-30.92486 z"
+         style="display:inline;fill:url(#radialGradient3292);fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.88193041;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccc"
+         id="path4907"
+         d="m 110.22193,-459.33382 34.52969,0 0,28.06935 c 0,0 0,21.59181 -17.26485,21.59181 -17.26484,0 -17.26484,-21.59181 -17.26484,-21.59181 l 0,-28.06935"
+         style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.88193041;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
   </g>
 </svg>
