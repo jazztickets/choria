@@ -1,6 +1,6 @@
 identifier	parent	font	color	text	offset x	offset y	width	height	alignment x	alignment y
-label_menu_title_singleplayer	button_title_singleplayer	menu_buttons		Single Player	0	32	0	0	1	3
-label_menu_title_multiplayer	button_title_multiplayer	menu_buttons		Multiplayer	0	32	0	0	1	3
+label_menu_title_play	button_title_play	menu_buttons		Play	0	32	0	0	1	3
+label_menu_title_joinserver	button_title_joinserver	menu_buttons		Join Server	0	32	0	0	1	3
 label_menu_title_mapeditor	button_title_mapeditor	menu_buttons		Map Editor	0	32	0	0	1	3
 label_menu_title_exit	button_title_exit	menu_buttons		Exit	0	32	0	0	1	3
 label_menu_title_version		hud_small			20	-20	0	0	0	2

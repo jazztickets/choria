@@ -658,10 +658,10 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 
 		switch(State) {
 			case STATE_TITLE: {
-				if(Clicked->Identifier == "button_title_singleplayer") {
+				if(Clicked->Identifier == "button_title_play") {
 					ClientState.Connect(true);
 				}
-				else if(Clicked->Identifier == "button_title_multiplayer") {
+				else if(Clicked->Identifier == "button_title_joinserver") {
 					InitConnect();
 				}
 				else if(Clicked->Identifier == "button_title_mapeditor") {

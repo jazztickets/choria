@@ -1,6 +1,6 @@
 identifier	parent	style	disabled style	hover style	offset x	offset y	width	height	alignment x	alignment y	userdata
-button_title_singleplayer	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	-60	200	48	1	1	0
-button_title_multiplayer	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	20	200	48	1	1	0
+button_title_play	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	-60	200	48	1	1	0
+button_title_joinserver	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	20	200	48	1	1	0
 button_title_mapeditor	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	100	200	48	1	1	0
 button_title_exit	element_menu_title	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	180	200	48	1	1	0
 button_characters_slot0	element_menu_characters	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-170	-120	128	128	1	1	0
