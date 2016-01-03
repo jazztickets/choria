@@ -22,7 +22,7 @@
 #include <glm/vec4.hpp>
 
 //     Config
-const  int          DEFAULT_CONFIG_VERSION          =  1;
+const  int          DEFAULT_CONFIG_VERSION          =  2;
 const  int          DEFAULT_SAVE_VERSION            =  7;
 const  glm::ivec2   DEFAULT_WINDOW_SIZE             =  glm::ivec2(1024,768);
 const  int          DEFAULT_FULLSCREEN              =  0;
