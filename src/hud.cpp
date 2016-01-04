@@ -128,6 +128,7 @@ void _HUD::Reset() {
 
 	SetMessage("");
 	ChatHistory.clear();
+	RecentItems.clear();
 }
 
 // Handle the enter key
