@@ -21,6 +21,7 @@
 #include <stats.h>
 #include <buffer.h>
 #include <constants.h>
+#include <utils.h>
 #include <font.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
@@ -103,13 +104,13 @@ _StatChangeUI::_StatChangeUI() :
 	Direction(-1.0f),
 	Time(0.0),
 	Timeout(HUD_STATCHANGE_TIMEOUT),
-	Change(0) {
+	Change(0.0f) {
 
 }
 
 // Render stat change
 void _StatChangeUI::Render(double BlendFactor) {
-	if(!Object || Change == 0)
+	if(!Object || Change == 0.0f)
 		return;
 
 	// Get alpha
@@ -130,11 +131,11 @@ void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &Pos
 
 	// Get text color
 	std::stringstream Buffer;
-	if(Change > 0) {
+	if(Change > 0.0f) {
 		Color = PositiveColor;
 		Buffer << "+";
 	}
-	else if(Change < 0) {
+	else if(Change < 0.0f) {
 		Color = NegativeColor;
 		Buffer << "-";
 	}
@@ -144,6 +145,6 @@ void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &Pos
 	}
 
 	// Set text
-	Buffer << std::abs(Change);
+	Buffer << Round(std::abs(Change));
 	Text = Buffer.str();
 }

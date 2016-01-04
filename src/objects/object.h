@@ -182,6 +182,7 @@ class _Object : public _ManagerBase {
 		float BaseHitChance;
 
 		// Stats
+		double UpdateTimer;
 		bool CalcLevelStats;
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
@@ -254,7 +255,6 @@ class _Object : public _ManagerBase {
 		uint32_t SpawnPoint;
 		double TeleportTime;
 
-
 		// Battle
 		int NextBattle;
 		double AttackPlayerTime;
@@ -283,5 +283,7 @@ class _Object : public _ManagerBase {
 
 		void DeleteStatusEffects();
 		void CalculateLevelStats();
+
+		void SendPacket(_Buffer &Packet);
 
 };

@@ -196,6 +196,8 @@ void _Stats::LoadItems() {
 		Item->MaxDefense = Database->GetInt<int>("maxdefense");
 		Item->MaxHealth = Database->GetInt<int>("maxhealth");
 		Item->MaxMana = Database->GetInt<int>("maxmana");
+		Item->HealthRegen = (float)Database->GetReal("healthregen");
+		Item->ManaRegen = (float)Database->GetReal("manaregen");
 		Item->BattleSpeed = Database->GetReal("battlespeed");
 		Item->Tradable = Database->GetInt<int>("tradable");
 		Item->TargetAlive = Database->GetInt<int>("target_alive");

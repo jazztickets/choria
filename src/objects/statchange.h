@@ -161,7 +161,7 @@ class _StatChangeUI {
 		float Direction;
 		double Time;
 		double Timeout;
-		int Change;
+		float Change;
 
 };
 

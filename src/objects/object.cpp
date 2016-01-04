@@ -71,6 +71,7 @@ _Object::_Object() :
 	BaseEvasion(0.0f),
 	BaseHitChance(1.0f),
 
+	UpdateTimer(0.0),
 	CalcLevelStats(true),
 
 	Name(""),
@@ -199,10 +200,7 @@ void _Object::Update(double FrameTime) {
 
 				_Buffer Packet;
 				if(Action.Resolve(Packet, this, Scope)) {
-					if(Battle)
-						Battle->BroadcastPacket(Packet);
-					else if(Peer)
-						Server->Network->SendPacket(Packet, Peer);
+					SendPacket(Packet);
 				}
 
 				Action.Unset();
@@ -237,6 +235,35 @@ void _Object::Update(double FrameTime) {
 		}
 		else
 			++Iterator;
+	}
+
+	// Generic update timer
+	UpdateTimer += FrameTime;
+	if(UpdateTimer >= 1.0) {
+		UpdateTimer -= 1.0;
+
+		// Update stats
+		if(Server && IsAlive()) {
+			_StatChange StatChange;
+			StatChange.Object = this;
+
+			// Update regen
+			if(Health < MaxHealth && HealthRegen != 0.0f)
+				StatChange.Values[StatType::HEALTH].Float = HealthRegen;
+			if(Mana < MaxMana && ManaRegen != 0.0f)
+				StatChange.Values[StatType::MANA].Float = ManaRegen;
+
+			// Update object
+			UpdateStats(StatChange);
+
+			// Build packet
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+			StatChange.Serialize(Packet);
+
+			// Send packet to player
+			SendPacket(Packet);
+		}
 	}
 
 	// Update timers
@@ -903,10 +930,7 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 	StatChange.Serialize(Packet);
 
 	// Send packet to player
-	if(Battle)
-		Battle->BroadcastPacket(Packet);
-	else if(Peer)
-		Server->Network->SendPacket(Packet, Peer);
+	SendPacket(Packet);
 }
 
 // Delete memory used by status effects
@@ -1234,4 +1258,12 @@ void _Object::CalculateLevelStats() {
 		ExperienceNeeded = 0;
 	else
 		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);
+}
+
+// Send packet to player or broadcast during battle
+void _Object::SendPacket(_Buffer &Packet) {
+	if(Battle)
+		Battle->BroadcastPacket(Packet);
+	else if(Peer)
+		Server->Network->SendPacket(Packet, Peer);
 }

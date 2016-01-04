@@ -78,6 +78,8 @@ class _Item {
 		int MaxDefense;
 		int MaxHealth;
 		int MaxMana;
+		float HealthRegen;
+		float ManaRegen;
 		double BattleSpeed;
 		bool Tradable;
 		bool TargetAlive;

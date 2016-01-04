@@ -1800,7 +1800,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition;
 		else
 			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = (int)StatChange.Values[StatType::HEALTH].Float;
+		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Float;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(COLOR_RED, COLOR_GREEN);
 		StatChanges.push_back(StatChangeUI);
@@ -1813,7 +1813,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition + glm::vec2(0, 32);
 		else
 			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = (int)StatChange.Values[StatType::MANA].Float;
+		StatChangeUI.Change = StatChange.Values[StatType::MANA].Float;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(COLOR_BLUE, COLOR_LIGHTBLUE);
 		StatChanges.push_back(StatChangeUI);
