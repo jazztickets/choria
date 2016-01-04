@@ -102,13 +102,21 @@ void _Stats::LoadLevels() {
 	while(Database->FetchRow()) {
 		Level.Level = Database->GetInt<int>("level");
 		Level.Experience = Database->GetInt<int>("experience");
-		Level.NextLevel = Database->GetInt<int>("nextlevel");
+		Level.SkillPoints = Database->GetInt<int>("skillpoints");
 		Level.Health = Database->GetInt<int>("health");
 		Level.Mana = Database->GetInt<int>("mana");
-		Level.SkillPoints = Database->GetInt<int>("skillpoints");
+		Level.Damage = Database->GetInt<int>("damage");
+		Level.Defense = Database->GetInt<int>("defense");
 		Levels.push_back(Level);
 	}
 	Database->CloseQuery();
+
+	// Calculate next level
+	for(size_t i = 1; i < Levels.size(); i++) {
+		Levels[i-1].NextLevel = Levels[i].Experience - Levels[i-1].Experience;
+	}
+
+	Levels[Levels.size()-1].NextLevel = 0;
 }
 
 // Load buffs

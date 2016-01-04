@@ -171,6 +171,8 @@ class _Object : public _ManagerBase {
 		// Base stats
 		float BaseMaxHealth;
 		float BaseMaxMana;
+		float BaseHealthRegen;
+		float BaseManaRegen;
 		int BaseMinDamage;
 		int BaseMaxDamage;
 		int BaseMinDefense;
@@ -190,6 +192,8 @@ class _Object : public _ManagerBase {
 		float MaxHealth;
 		float Mana;
 		float MaxMana;
+		float HealthRegen;
+		float ManaRegen;
 		int MinDamage;
 		int MaxDamage;
 		int MinDefense;

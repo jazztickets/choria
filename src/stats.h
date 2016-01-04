@@ -56,6 +56,8 @@ struct _Level {
 	int NextLevel;
 	int Health;
 	int Mana;
+	int Damage;
+	int Defense;
 	int SkillPoints;
 };
 

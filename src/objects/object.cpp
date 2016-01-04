@@ -59,10 +59,12 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 
-	BaseMaxHealth(0),
-	BaseMaxMana(0),
+	BaseMaxHealth(0.0f),
+	BaseMaxMana(0.0f),
+	BaseHealthRegen(0.0f),
+	BaseManaRegen(0.0f),
 	BaseMinDamage(0),
-	BaseMaxDamage(1),
+	BaseMaxDamage(0),
 	BaseMinDefense(0),
 	BaseMaxDefense(0),
 	BaseBattleSpeed(1.0),
@@ -1089,6 +1091,8 @@ void _Object::CalculateStats() {
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
+	HealthRegen = BaseHealthRegen;
+	ManaRegen = BaseManaRegen;
 	BattleSpeed = BaseBattleSpeed;
 	Evasion = BaseEvasion;
 	HitChance = BaseHitChance;
@@ -1220,6 +1224,10 @@ void _Object::CalculateLevelStats() {
 	Level = LevelStat->Level;
 	BaseMaxHealth = LevelStat->Health;
 	BaseMaxMana = LevelStat->Mana;
+	BaseMinDamage = LevelStat->Damage;
+	BaseMaxDamage = LevelStat->Damage+1;
+	BaseMinDefense = LevelStat->Defense;
+	BaseMaxDefense = LevelStat->Defense;
 	SkillPoints = LevelStat->SkillPoints;
 	ExperienceNextLevel = LevelStat->NextLevel;
 	if(Level == Stats->GetMaxLevel())
