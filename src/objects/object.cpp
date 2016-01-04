@@ -1149,6 +1149,8 @@ void _Object::CalculateStats() {
 			// Stat changes
 			MaxHealth += Item->MaxHealth;
 			MaxMana += Item->MaxMana;
+			HealthRegen += Item->HealthRegen;
+			ManaRegen += Item->ManaRegen;
 			BattleSpeed += Item->BattleSpeed;
 		}
 	}

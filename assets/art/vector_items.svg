@@ -24,6 +24,28 @@
   <defs
      id="defs3442">
     <linearGradient
+       id="linearGradient4743">
+      <stop
+         id="stop4745"
+         offset="0"
+         style="stop-color:#1f1f1f;stop-opacity:1" />
+      <stop
+         id="stop4747"
+         offset="1"
+         style="stop-color:#ebebeb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4656">
+      <stop
+         style="stop-color:#1f1f1f;stop-opacity:1"
+         offset="0"
+         id="stop4660" />
+      <stop
+         style="stop-color:#ebebeb;stop-opacity:1"
+         offset="1"
+         id="stop4658" />
+    </linearGradient>
+    <linearGradient
        inkscape:collect="always"
        id="linearGradient4736">
       <stop
@@ -2073,6 +2095,36 @@
          stdDeviation="0.89814421"
          id="feGaussianBlur5736" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4743"
+       id="linearGradient4654"
+       x1="682.41058"
+       y1="-135.30704"
+       x2="693.72235"
+       y2="-145.235"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.2276477,0,0,1.2276475,-156.21085,30.885431)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4656"
+       id="linearGradient4654-7"
+       x1="682.41058"
+       y1="-135.30704"
+       x2="693.72235"
+       y2="-145.235"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(3.2449722,0,0,3.244686,-2209.6234,462.66884)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4743"
+       id="linearGradient4753"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.2276477,0,0,1.2276475,-156.21085,30.885431)"
+       x1="684.87592"
+       y1="-137.11769"
+       x2="677.81311"
+       y2="-130.6342" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2081,9 +2133,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5"
-     inkscape:cx="224.56678"
-     inkscape:cy="411.05173"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="293.15019"
+     inkscape:cy="423.46267"
      inkscape:document-units="px"
      inkscape:current-layer="g5810"
      showgrid="true"
@@ -2246,7 +2298,8 @@ stiletto
 death_potion
 throwing_knives
 crab_legs
-magic_tome</dc:description>
+magic_tome
+ring</dc:description>
       </cc:Work>
       <cc:License
          rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
@@ -3655,6 +3708,22 @@ magic_tome</dc:description>
                id="path4684-9-7"
                d="m 510.4922,-436.62486 5.24542,-2.89314"
                style="display:inline;fill:none;fill-rule:evenodd;stroke:#2b0000;stroke-width:0.37833968px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+            <ellipse
+               style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#0e0704;fill-opacity:0;fill-rule:nonzero;stroke:url(#linearGradient4654);stroke-width:1.32418883;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+               id="path4645"
+               cx="685.68573"
+               cy="-138.22261"
+               transform="matrix(0.87404958,-0.48583673,0.48571296,0.87411837,0,0)"
+               rx="5.2830892"
+               ry="5.2835536" />
+            <ellipse
+               style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#0e0704;fill-opacity:0;fill-rule:nonzero;stroke:url(#linearGradient4753);stroke-width:0.56750952;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;filter-blend-mode:normal;filter-gaussianBlur-deviation:0"
+               id="path4645-0"
+               cx="685.68573"
+               cy="-138.22263"
+               rx="4.6683178"
+               ry="4.6687274"
+               transform="matrix(0.87404959,-0.48583672,0.48571297,0.87411836,0,0)" />
           </g>
         </g>
       </g>

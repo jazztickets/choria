@@ -173,7 +173,7 @@ class _HUD {
 		void DrawHudEffects();
 		void DrawInventory();
 		void DrawTeleport();
-		void DrawCharacter();
+		void DrawCharacterStats();
 		void DrawVendor();
 		void DrawTrade();
 		void DrawTrader();

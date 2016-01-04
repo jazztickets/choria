@@ -560,7 +560,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawMessage();
 		DrawHudEffects();
 		DrawInventory();
-		DrawCharacter();
+		DrawCharacterStats();
 		DrawVendor();
 		DrawTrade();
 		DrawTrader();
@@ -1215,7 +1215,7 @@ void _HUD::DrawActionBar() {
 }
 
 // Draw the character stats page
-void _HUD::DrawCharacter() {
+void _HUD::DrawCharacterStats() {
 	if(!CharacterElement->Visible)
 		return;
 
@@ -1242,6 +1242,24 @@ void _HUD::DrawCharacter() {
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
+
+	// Health Regen
+	if(Player->HealthRegen != 0.0f) {
+		Buffer << Round(Player->HealthRegen);
+		Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Mana Regen
+	if(Player->ManaRegen != 0.0f) {
+		Buffer << Round(Player->ManaRegen);
+		Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Battle speed
 	Buffer << Player->BattleSpeed * 100 << "%";

@@ -25,6 +25,7 @@
 #include <font.h>
 #include <stats.h>
 #include <hud.h>
+#include <utils.h>
 #include <scripting.h>
 #include <graphics.h>
 #include <input.h>
@@ -180,23 +181,22 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	/*
-	if(HealthRegen > 0) {
+	if(HealthRegen != 0.0f) {
 		std::stringstream Buffer;
-		Buffer << "+" << std::setprecision(2) << HealthRegen << "%";
+		Buffer << "+" << Round(HealthRegen);
 		Assets.Fonts["hud_medium"]->DrawText("HP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(ManaRegen > 0) {
+	if(ManaRegen != 0.0f) {
 		std::stringstream Buffer;
-		Buffer << "+" << std::setprecision(2) << ManaRegen << "%";
+		Buffer << "+" << Round(ManaRegen);
 		Assets.Fonts["hud_medium"]->DrawText("MP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
-	}*/
+	}
 
 	if(StatDrawn)
 		DrawPosition.y += SpacingY;
