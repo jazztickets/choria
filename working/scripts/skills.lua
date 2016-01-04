@@ -186,17 +186,18 @@ end
 
 Skill_Heal = Base_Spell:New()
 Skill_Heal.HealBase = 10
+Skill_Heal.HealPerLevel = 3
 Skill_Heal.CostPerLevel = 1.0 / 3.0
 Skill_Heal.ManaCostBase = 3 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)
 
-	return "Heal target for [c green]" .. (self.HealBase + Level * 5) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Heal target for [c green]" .. (self.HealBase + self.HealPerLevel * Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_Heal.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Health = self.HealBase + Level * 5
+	Result.Target.Health = self.HealBase + self.HealPerLevel * Level
 
 	return Result
 end
