@@ -160,7 +160,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	if(MaxHealth > 0) {
 		std::stringstream Buffer;
 		Buffer << "+" << MaxHealth;
-		Assets.Fonts["hud_medium"]->DrawText("HP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText("Health", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -168,7 +168,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	if(MaxMana > 0) {
 		std::stringstream Buffer;
 		Buffer << "+" << MaxMana;
-		Assets.Fonts["hud_medium"]->DrawText("MP", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText("Mana", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -184,7 +184,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	if(HealthRegen != 0.0f) {
 		std::stringstream Buffer;
 		Buffer << "+" << Round(HealthRegen);
-		Assets.Fonts["hud_medium"]->DrawText("HP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText("Health Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -192,7 +192,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	if(ManaRegen != 0.0f) {
 		std::stringstream Buffer;
 		Buffer << "+" << Round(ManaRegen);
-		Assets.Fonts["hud_medium"]->DrawText("MP Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText("Mana Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
