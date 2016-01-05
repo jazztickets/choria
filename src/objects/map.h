@@ -79,6 +79,7 @@ class _Map : public _ManagerBase {
 			EVENT_TRADER,
 			EVENT_KEY,
 			EVENT_SCRIPT,
+			EVENT_PORTAL,
 			EVENT_COUNT
 		};
 

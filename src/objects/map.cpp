@@ -269,6 +269,16 @@ void _Map::CheckEvents(_Object *Object) {
 			if(Server)
 				Server->RunEventScript(Tile->Event.Data, Object);
 		} break;
+		case _Map::EVENT_PORTAL: {
+			if(Server) {
+
+				// Find matching even/odd event
+				FindEvent(_Event(Tile->Event.Type, Tile->Event.Data ^ 1), Object->Position);
+				Server->SendPlayerPosition(Object->Peer);
+			}
+			else
+				Object->WaitForServer = true;
+		} break;
 		default:
 			if(Server) {
 				Object->Vendor = nullptr;

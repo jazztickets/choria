@@ -24,6 +24,18 @@
   <defs
      id="defs3442">
     <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5011">
+      <stop
+         style="stop-color:#2a0f00;stop-opacity:1"
+         offset="0"
+         id="stop5013" />
+      <stop
+         style="stop-color:#000000;stop-opacity:1"
+         offset="1"
+         id="stop5015" />
+    </linearGradient>
+    <linearGradient
        id="linearGradient5526"
        inkscape:collect="always">
       <stop
@@ -2928,6 +2940,28 @@
        r="15.732851"
        gradientTransform="matrix(1.4131473,0.02386503,-0.02158238,1.2779818,-143.90146,113.86704)"
        gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5011"
+       id="linearGradient5017"
+       x1="351.97278"
+       y1="11.707031"
+       x2="351.97278"
+       y2="43.743904"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter4913"
+       x="-0.16340541"
+       width="1.3268108"
+       y="-0.25409932"
+       height="1.5081986">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="2.765977"
+         id="feGaussianBlur4915" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -2936,11 +2970,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="296.96182"
-     inkscape:cy="614.02401"
+     inkscape:zoom="2.8284271"
+     inkscape:cx="334.53526"
+     inkscape:cy="608.95007"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g7763"
      showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1031"
@@ -3055,14 +3089,15 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:description>32_door
 33_table
 16_cavestairs
 28_town
-29_cave0</dc:description>
+29_cave0
+17_hole</dc:description>
       </cc:Work>
       <cc:License
          rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
@@ -3085,6 +3120,14 @@
        style=""
        id="g7763"
        transform="translate(31.658773,-467.48408)">
+      <ellipse
+         style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#0a0400;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.25765181;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;filter:url(#filter4913)"
+         id="path4678-0"
+         cx="352.43155"
+         cy="37.32893"
+         rx="20.3125"
+         ry="13.0625"
+         transform="matrix(1.184372,0,0,1.2010845,-64.978499,-7.5062675)" />
       <path
          style="display:inline;fill:url(#linearGradient4541);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          d="m 157.46914,60.86817 -28.30215,-17.191821 7.77526,-2.523371 28.30214,17.191833 z"
@@ -3163,6 +3206,23 @@
            d="m 140.71964,36.847113 22.875,13.8125"
            id="path6533-17"
            inkscape:connector-curvature="0" />
+      </g>
+      <g
+         id="g4685">
+        <ellipse
+           ry="13.0625"
+           rx="20.3125"
+           cy="37.32893"
+           cx="352.43155"
+           id="path4678"
+           style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:url(#linearGradient5017);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+        <ellipse
+           ry="10.6875"
+           rx="18.90625"
+           cy="39.76643"
+           cx="352.4628"
+           id="path5019"
+           style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
       </g>
     </g>
     <path
@@ -3481,15 +3541,15 @@
       <ellipse
          ry="0.28125"
          rx="0.34375"
-         cy="-423.98315"
-         cx="322.3443"
+         cy="-423.71799"
+         cx="321.08478"
          id="path5460"
          style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#6e6e00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.30000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
       <ellipse
          ry="0.28125"
          rx="0.34375"
-         cy="-423.96765"
-         cx="324.21533"
+         cy="-423.70248"
+         cx="322.95581"
          id="path5460-4"
          style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#6e6e00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.30000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
     </g>

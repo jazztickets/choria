@@ -56,6 +56,7 @@ class _Server {
 		void StartBattle(_Object *Object, uint32_t Zone);
 		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void SendHUD(_Peer *Peer);
+		void SendPlayerPosition(_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
 
 		// State
@@ -115,7 +116,6 @@ class _Server {
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 
-		void SendPlayerPosition(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 
