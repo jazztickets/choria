@@ -1593,11 +1593,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="533.46146"
-     inkscape:cy="610.67605"
+     inkscape:zoom="2"
+     inkscape:cx="560.3926"
+     inkscape:cy="571.0756"
      inkscape:document-units="px"
-     inkscape:current-layer="g4422"
+     inkscape:current-layer="g4378-9"
      showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1031"
@@ -1711,7 +1711,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <cc:license
            rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:description>crow
@@ -2785,33 +2785,35 @@ ghost</dc:description>
       </g>
     </g>
     <path
-       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#e6e6e6;fill-opacity:0.06698564;fill-rule:evenodd;stroke:none;stroke-width:0.254008;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;filter:url(#filter12838)"
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#e6e6e6;fill-opacity:0.06698567;fill-rule:evenodd;stroke:none;stroke-width:0.254008;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter12838);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="m 69.982937,-373.61457 c 0,3.42699 -0.0039,2.44756 -2.237206,6.41956 -3.341957,5.9436 1.648295,10.20059 1.031037,13.08162 -0.617257,2.88104 -3.840318,-0.0152 -5.14623,-1.16425 -0.78135,-0.68749 -3.5475,3.86851 -4.152794,0.98748 -0.605295,-2.88104 0.91184,-9.10865 0.273272,-12.90485 -0.375363,-2.23149 -2.178311,-2.99257 -2.178311,-6.41956 0,-3.42699 1.932315,-4.73894 2.803311,-6.68912 0.870995,-1.95017 1.261415,-4.50626 3.34291,-4.50626 2.081494,0 2.00557,2.55609 2.901805,4.50626 0.896235,1.95018 3.362206,3.26213 3.362206,6.68912 z"
        id="path9549"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="sssssssssss" />
+       sodipodi:nodetypes="sssssssssss"
+       transform="matrix(1.7131551,0,0,1.5832231,-45.483479,215.11755)" />
     <circle
-       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.254008;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;filter:url(#filter13170)"
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.254008;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter13170);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="path10160"
        cx="62.577377"
        cy="-380.4989"
-       r="0.625" />
+       r="0.625"
+       transform="matrix(1.7131551,0,0,1.5832231,-45.483479,215.11755)" />
     <use
        x="0"
        y="0"
        xlink:href="#path10160"
        id="use10162"
-       transform="translate(2.40625,0)"
+       transform="translate(4.1222794,1.7674268e-8)"
        width="100%"
        height="100%"
        style="filter:url(#filter13166)" />
     <ellipse
-       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.254008;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;filter:url(#filter13762)"
+       style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.254008;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter13762);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        id="path10164"
        cx="63.796501"
        cy="-375.15955"
        rx="2.0992234"
        ry="3.4802911"
-       transform="matrix(1,0,0,2.2069397,0,459.89235)" />
+       transform="matrix(1.7131551,0,0,3.4940779,-45.483479,943.22975)" />
   </g>
 </svg>

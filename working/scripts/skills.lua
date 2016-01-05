@@ -38,6 +38,17 @@ function Skill_FangBite.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+-- Ghost attack --
+
+Skill_GhostAttack = Base_Attack:New()
+
+function Skill_GhostAttack.Use(self, Level, Source, Target, Result)
+	Target.GenerateDefense = function() return 0 end
+	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+	return Result
+end
+
 -- Swoop attack --
 
 Skill_Swoop = Base_Attack:New()
@@ -47,6 +58,18 @@ function Skill_Swoop.Proc(self, Roll, Level, Source, Target, Result)
 		Result.Target.Buff = Buffs["Buff_Stunned"]
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = 3
+	end
+end
+
+-- Pincer attack --
+
+Skill_PincerAttack = Base_Attack:New()
+
+function Skill_PincerAttack.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 50 then
+		Result.Target.Buff = Buffs["Buff_Bleeding"]
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
 	end
 end
 

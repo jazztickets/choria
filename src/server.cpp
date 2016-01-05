@@ -1243,6 +1243,9 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 	// Get monsters
 	std::list<uint32_t> MonsterIDs;
 	Stats->GenerateMonsterListFromZone((int)Players.size(), Zone, MonsterIDs);
+	//MonsterIDs.clear();
+	//MonsterIDs.push_back(10);
+
 	if(MonsterIDs.size()) {
 
 		// Create a new battle instance
@@ -1255,9 +1258,12 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone) {
 		/*
 		for(int i = 0; i < 5; i++) {
 			_Object *Monster = ObjectManager->Create();
-			Monster->Scripting = Scripting;
 			Monster->Server = this;
-			Stats->GetMonsterStats(2, Monster);
+			Monster->Scripting = Scripting;
+			Monster->DatabaseID = 3;
+			Monster->Stats = Stats;
+			Stats->GetMonsterStats(Monster->DatabaseID, Monster);
+			Monster->CalculateStats();
 			Battle->AddFighter(Monster, 0);
 		}*/
 

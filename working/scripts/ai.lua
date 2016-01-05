@@ -24,7 +24,7 @@ end
 AI_Smart = {}
 
 function AI_Smart.Update(self, Object, Enemies, Allies)
-	if Object.TurnTimer >= 1.0 then
+	if Object.TurnTimer >= 0.7 then
 		if not Object.BattleActionIsSet then
 
 			-- Get random target
@@ -42,7 +42,7 @@ end
 AI_Boss = {}
 
 function AI_Boss.Update(self, Object, Enemies, Allies)
-	if Object.TurnTimer >= 1.0 then
+	if Object.TurnTimer >= 0.7 then
 		if not Object.BattleActionIsSet then
 
 			-- Chance to do special attack
