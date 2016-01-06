@@ -57,6 +57,24 @@ const glm::vec4 ZoneColors[] = {
 	{ 1.0f, 0.0f, 1.0f, 0.4f },
 };
 
+// Colors of each time cycle
+const std::vector<glm::vec4> DayCycles = {
+	{0.05f, 0.05f, 0.3f, 1},
+	{0.10f, 0.10f, 0.1f, 1},
+	{0.6f, 0.6f, 0.45f, 1},
+	{0.55f, 0.45f, 0.30f, 1},
+	{0.5, 0.4f, 0.3f, 1},
+};
+
+// Time of each cycle change
+const std::vector<double> DayCyclesTime = {
+	0.0 * 60.0,
+	6.0 * 60.0,
+	12.5 * 60.0,
+	16.5 * 60.0,
+	18.0 * 60.0,
+};
+
 // Constructor
 _Map::_Map() :
 	Tiles(nullptr),
@@ -327,26 +345,10 @@ void _Map::GetClockAsString(std::stringstream &Buffer) {
 // Set ambient light for map
 void _Map::SetAmbientLightByClock() {
 
-	std::vector<glm::vec4> Cycles = {
-		{0.05f, 0.05f, 0.3f, 1},
-		{0.10f, 0.10f, 0.1f, 1},
-		{0.6f, 0.6f, 0.45f, 1},
-		{0.55f, 0.45f, 0.30f, 1},
-		{0.5, 0.4f, 0.3f, 1},
-	};
-
-	std::vector<double> CyclesTime = {
-		0.0 * 60.0,
-		6.0 * 60.0,
-		12.5 * 60.0,
-		16.5 * 60.0,
-		18.0 * 60.0,
-	};
-
 	// Find index by time
-	size_t NextCycle = CyclesTime.size();
-	for(size_t i = 0; i < CyclesTime.size(); i++) {
-		if(Clock < CyclesTime[i]) {
+	size_t NextCycle = DayCyclesTime.size();
+	for(size_t i = 0; i < DayCyclesTime.size(); i++) {
+		if(Clock < DayCyclesTime[i]) {
 			NextCycle = i;
 			break;
 		}
@@ -354,18 +356,18 @@ void _Map::SetAmbientLightByClock() {
 
 	// Get indices for current and next cycle
 	size_t CurrentCycle = NextCycle - 1;
-	if(CurrentCycle >= CyclesTime.size())
+	if(CurrentCycle >= DayCyclesTime.size())
 		CurrentCycle = 0;
-	if(NextCycle >= CyclesTime.size())
+	if(NextCycle >= DayCyclesTime.size())
 		NextCycle = 0;
 
 	// Get current time diff
-	double Diff = Clock - CyclesTime[CurrentCycle];
+	double Diff = Clock - DayCyclesTime[CurrentCycle];
 	if(Diff < 0)
 		Diff += MAP_DAY_LENGTH;
 
 	// Get length of cycle
-	double Length = CyclesTime[NextCycle] - CyclesTime[CurrentCycle];
+	double Length = DayCyclesTime[NextCycle] - DayCyclesTime[CurrentCycle];
 	if(Length < 0)
 		Length += MAP_DAY_LENGTH;
 
@@ -373,7 +375,7 @@ void _Map::SetAmbientLightByClock() {
 	float Percent = (float)(Diff / Length);
 
 	// Set color
-	AmbientLight = glm::mix(Cycles[CurrentCycle], Cycles[NextCycle], Percent);
+	AmbientLight = glm::mix(DayCycles[CurrentCycle], DayCycles[NextCycle], Percent);
 }
 
 // Renders the map
