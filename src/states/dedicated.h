@@ -42,6 +42,10 @@ class _DedicatedState : public _State {
 		// State parameters
 		void SetNetworkPort(uint16_t NetworkPort) { this->NetworkPort = NetworkPort; }
 
+		// Commands
+		void ShowPlayers();
+		void ShowBattles();
+
 	protected:
 
 		_Server *Server;

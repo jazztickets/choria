@@ -16,27 +16,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/dedicated.h>
+#include <network/servernetwork.h>
+#include <network/peer.h>
+#include <objects/object.h>
+#include <objects/battle.h>
 #include <framework.h>
 #include <server.h>
 #include <stats.h>
+#include <iomanip>
 
 _DedicatedState DedicatedState;
 
 // Command loop
 void RunCommandThread(_Server *Server) {
-	std::cout << "Type stop to stop the server" << std::endl;
+	Server->Log << "Type stop to stop the server" << std::endl;
 
 	bool Done = false;
 	while(!Done) {
 		std::string Input;
 		std::getline(std::cin, Input);
-		if(Input == "stop")
+		if(Input == "stop" || std::cin.eof() == 1)
 			Done = true;
+		else if(Input == "p" || Input == "players")
+			DedicatedState.ShowPlayers();
+		else if(Input == "b" || Input == "battles")
+			DedicatedState.ShowBattles();
 		else
-			std::cout << "Command not recognized" << std::endl;
+			Server->Log << "Command not recognized" << std::endl;
 	}
 
-	std::cout << "Stopping..." << std::endl;
+	Server->Log << "Stopping..." << std::endl;
 
 	Server->StopServer();
 }
@@ -57,7 +66,7 @@ void _DedicatedState::Init() {
 		Stats = new _Stats();
 		Server = new _Server(Stats, NetworkPort);
 
-		std::cout << "Listening on port " << NetworkPort << std::endl;
+		Server->Log << "Listening on port " << NetworkPort << std::endl;
 
 		Thread = new std::thread(RunCommandThread, Server);
 	}
@@ -86,4 +95,43 @@ void _DedicatedState::Update(double FrameTime) {
 	if(Server->Done) {
 		Framework.Done = true;
 	}
+}
+
+// Show all players
+void _DedicatedState::ShowPlayers() {
+	auto &Peers = Server->Network->GetPeers();
+
+	Server->Log << "peer count=" << Peers.size() << std::endl;
+	size_t i = 0;
+	for(auto &Peer : Peers) {
+		Server->Log << std::setw(3) << i << ": account_id=" << Peer->AccountID;
+		if(Peer->Object) {
+			Server->Log << ", player_name=" << Peer->Object->Name << ", network_id=" << Peer->Object->NetworkID;
+		}
+
+		Server->Log << std::endl;
+		i++;
+	}
+
+	Server->Log << std::endl;
+}
+
+// Show all battles
+void _DedicatedState::ShowBattles() {
+	auto &Battles = Server->BattleManager->Objects;
+
+	Server->Log << "battle count=" << Battles.size() << std::endl;
+	size_t i = 0;
+	for(auto &Battle : Battles) {
+		Server->Log << i << ": id=" << Battle->NetworkID << std::endl;
+		for(auto &Object : Battle->Fighters) {
+			if(Object->Peer) {
+				Server->Log << "\tplayer_name=" << Object->Name << ", network_id=" << Object->NetworkID;
+			}
+		}
+
+		i++;
+	}
+
+	Server->Log << std::endl;
 }
