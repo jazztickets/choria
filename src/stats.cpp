@@ -383,6 +383,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 
 		Monster->Health = Monster->MaxHealth = Monster->BaseMaxHealth;
 		Monster->Mana = Monster->MaxMana = Monster->BaseMaxMana;
+		Monster->Gold = Monster->GoldGiven;
 		Monster->CalcLevelStats = false;
 	}
 

@@ -1810,6 +1810,8 @@ void _HUD::RemoveStatChanges(_Object *Owner) {
 
 // Add multiple statchange ui elements
 void _HUD::AddStatChange(_StatChange &StatChange) {
+	if(StatChange.GetChangedFlag() == 0)
+		return;
 
 	if(StatChange.HasStat(StatType::HEALTH)) {
 		_StatChangeUI StatChangeUI;
@@ -1852,8 +1854,13 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::GOLD)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.StartPosition = GoldElement->Bounds.Start;
-		StatChangeUI.StartPosition.x += -45;
+		if(StatChangeUI.Object->Battle) {
+			StatChangeUI.StartPosition = StatChangeUI.Object->ResultPosition + glm::vec2(0, 32);
+		}
+		else  {
+			StatChangeUI.StartPosition = GoldElement->Bounds.Start;
+			StatChangeUI.StartPosition.x += -45;
+		}
 		StatChangeUI.Change = StatChange.Values[StatType::GOLD].Integer;
 		StatChangeUI.Direction = 1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;

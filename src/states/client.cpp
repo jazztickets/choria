@@ -1048,13 +1048,12 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 	// Update targets
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
+		HandleStatChange(Data, ActionResult.Source);
 		HandleStatChange(Data, ActionResult.Target);
 
 		if(Battle) {
-			if(ActionResult.Target.GetChangedFlag()) {
-				HUD->AddStatChange(ActionResult.Source);
-				HUD->AddStatChange(ActionResult.Target);
-			}
+			HUD->AddStatChange(ActionResult.Source);
+			HUD->AddStatChange(ActionResult.Target);
 
 			// No damage dealt
 			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)

@@ -167,6 +167,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
 
+	lua_pushinteger(LuaState, Object->Gold);
+	lua_setfield(LuaState, -2, "Gold");
+
 	lua_pushnumber(LuaState, Object->Health);
 	lua_setfield(LuaState, -2, "Health");
 

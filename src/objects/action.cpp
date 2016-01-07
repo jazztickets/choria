@@ -105,16 +105,20 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Targets.size());
 	for(auto &Target : Source->Targets) {
+		ActionResult.Source.Reset();
+		ActionResult.Source.Object = Source;
 		ActionResult.Target.Object = Target;
 
 		// Update objects
 		if(!SkillUnlocked)
 			ItemUsed->Use(Source->Scripting, ActionResult);
 
-		// Update target
+		// Update objects
+		ActionResult.Source.Object->UpdateStats(ActionResult.Source);
 		ActionResult.Target.Object->UpdateStats(ActionResult.Target);
 
 		// Write stat changes
+		ActionResult.Source.Serialize(Data);
 		ActionResult.Target.Serialize(Data);
 	}
 

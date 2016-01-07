@@ -254,15 +254,17 @@ void _Object::Update(double FrameTime) {
 				StatChange.Values[StatType::MANA].Float = ManaRegen;
 
 			// Update object
-			UpdateStats(StatChange);
+			if(StatChange.GetChangedFlag() != 0) {
+				UpdateStats(StatChange);
 
-			// Build packet
-			_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-			StatChange.Serialize(Packet);
+				// Build packet
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+				StatChange.Serialize(Packet);
 
-			// Send packet to player
-			SendPacket(Packet);
+				// Send packet to player
+				SendPacket(Packet);
+			}
 		}
 	}
 
@@ -763,6 +765,16 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 			delete StatusEffect;
 			StatusEffect = nullptr;
 		}
+	}
+
+	// Update gold
+	if(StatChange.HasStat(StatType::GOLD)) {
+		UpdateGold(StatChange.Values[StatType::GOLD].Integer);
+	}
+
+	// Update experience
+	if(StatChange.HasStat(StatType::EXPERIENCE)) {
+		Experience += StatChange.Values[StatType::EXPERIENCE].Integer;
 	}
 
 	bool WasAlive = IsAlive();

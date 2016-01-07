@@ -324,3 +324,36 @@ function Skill_Flee.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Pickpocket --
+
+Skill_Pickpocket = {}
+Skill_Pickpocket.BaseChance = 23
+Skill_Pickpocket.ChancePerLevel = 2
+
+function Skill_Pickpocket.GetChance(self, Level)
+
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+end
+
+function Skill_Pickpocket.GetInfo(self, Level)
+
+	return "[c green]" .. self:GetChance(Level) .. "% [c white]chance to steal gold from an enemy"
+end
+
+function Skill_Pickpocket.Proc(self, Roll, Level, Source, Target, Result)
+
+	if Roll <= self:GetChance(Level) then
+		HalfGold = math.ceil(Target.Gold / 2)
+		if HalfGold <= Target.Gold then
+			Result.Target.Gold = -HalfGold
+			Result.Source.Gold = HalfGold
+		end
+	end
+end
+
+function Skill_Pickpocket.Use(self, Level, Source, Target, Result)
+	self:Proc(Random.GetInt(1, 100), Level, Source, Target, Result)
+
+	return Result
+end
