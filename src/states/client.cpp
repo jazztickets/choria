@@ -990,6 +990,8 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 		Player->MonsterKills += MonsterKills;
 	}
 
+	Player->Battle = nullptr;
+	HUD->ClearBattleStatChanges();
 	HUD->AddStatChange(StatChange);
 
 	DeleteBattle();

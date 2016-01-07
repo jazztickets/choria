@@ -121,6 +121,7 @@ class _HUD {
 		void SetActionBarSize(size_t Size);
 		void RemoveStatChanges(_Object *Owner);
 		void AddStatChange(_StatChange &StatChange);
+		void ClearBattleStatChanges();
 
 		// Button bar
 		void ToggleTeleport();

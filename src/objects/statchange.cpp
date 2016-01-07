@@ -104,7 +104,8 @@ _StatChangeUI::_StatChangeUI() :
 	Direction(-1.0f),
 	Time(0.0),
 	Timeout(HUD_STATCHANGE_TIMEOUT),
-	Change(0.0f) {
+	Change(0.0f),
+	Battle(false) {
 
 }
 

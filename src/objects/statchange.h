@@ -165,6 +165,7 @@ class _StatChangeUI {
 		double Time;
 		double Timeout;
 		float Change;
+		bool Battle;
 
 };
 

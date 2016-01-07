@@ -1816,8 +1816,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::HEALTH)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		if(StatChangeUI.Object->Battle)
+		if(StatChangeUI.Object->Battle) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition;
+			StatChangeUI.Battle = true;
+		}
 		else
 			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
 		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Float;
@@ -1829,8 +1831,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::MANA)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		if(StatChangeUI.Object->Battle)
+		if(StatChangeUI.Object->Battle) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition + glm::vec2(0, 32);
+			StatChangeUI.Battle = true;
+		}
 		else
 			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
 		StatChangeUI.Change = StatChange.Values[StatType::MANA].Float;
@@ -1856,6 +1860,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Object = StatChange.Object;
 		if(StatChangeUI.Object->Battle) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->ResultPosition + glm::vec2(0, 32);
+			StatChangeUI.Battle = true;
 		}
 		else  {
 			StatChangeUI.StartPosition = GoldElement->Bounds.Start;
@@ -1867,5 +1872,15 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
 		StatChangeUI.SetText(COLOR_GOLD, COLOR_GOLD);
 		StatChanges.push_back(StatChangeUI);
+	}
+}
+
+// Remove all battle stat changes
+void _HUD::ClearBattleStatChanges() {
+
+	// Draw stat changes
+	for(auto &StatChange : StatChanges) {
+		if(StatChange.Battle)
+			StatChange.Time = StatChange.Timeout;
 	}
 }
