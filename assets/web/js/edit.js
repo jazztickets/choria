@@ -74,7 +74,7 @@ $(document).ready(function() {
 				if(col == 0) {
 					cellProperties.readOnly = true;
 				}
-				else if(prop == "link") {
+				else if(column_names[col] == "") {
 					cellProperties.editor = false;
 					cellProperties.disableVisualSelection = true;
 				}
@@ -114,20 +114,7 @@ $(document).ready(function() {
 
 // Function to render related table links
 function link_renderer(instance, td, row, col, prop, value, cellProperties) {
-
-	// Get parent id
-	var id = instance.getData()[row][0];
-
-	// Build link list
-	td.innerHTML = '';
-	for(var child in children) {
-		var field_name = children[child][0];
-		var count = 0;
-		var link = '<a href="/?table=' + child + '&' + field_name + '=' + id + '">' + child + '</a>&nbsp;';
-
-		td.innerHTML += link;
-	}
-
+	td.innerHTML = value;
 	td.className = 'empty';
 
 	return td;
@@ -179,7 +166,17 @@ function transform_data(data, columns) {
 	// Add children links
 	if(Object.keys(children).length > 0) {
 		column_names.push('');
-		columns.push({ data: 'link', class: 'empty', renderer: link_renderer });
+		columns.push({ renderer: link_renderer });
+		for(var row in data) {
+			var id = data[row][0];
+			var link = '';
+			for(var child in children) {
+				var field_name = children[child][0];
+				link += '<a href="/?table=' + child + '&' + field_name + '=' + id + '">' + child + '</a>&nbsp;';
+			}
+
+			data[row].push(link);
+		}
 	}
 }
 
