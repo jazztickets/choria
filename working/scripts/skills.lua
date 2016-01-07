@@ -142,7 +142,7 @@ Skill_ShieldBash.Duration = 3
 
 function Skill_ShieldBash.GetInfo(self, Level)
 
-	return "Bash with your enemy with a shield\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to stun for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Bash with your enemy with a shield\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
@@ -202,7 +202,7 @@ function Skill_Whirlwind.ApplyCost(self, Level, Result)
 end
 
 function Skill_Whirlwind.GetInfo(self, Level)
-	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses fatigue for [c green]" .. self:GetDuration(Level) .." [c white]seconds"
+	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Level) .." [c white]seconds"
 end
 
 -- Heal --
