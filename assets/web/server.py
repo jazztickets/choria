@@ -33,6 +33,25 @@ def get_column_names(tablename):
 
 	return names
 
+def get_children(tablename):
+	query = cursor.execute("SELECT sql FROM sqlite_master WHERE sql LIKE '%REFERENCES {0}(%'".format(tablename))
+	results = query.fetchall()
+	children = {}
+	for row in results:
+
+		# get related table name
+		matches = re.findall('CREATE TABLE "(.*?)"', row[0])
+		related_table = matches[0]
+		children[related_table] = []
+
+		# get foreign key fields
+		matches = re.findall("(.*?) INTEGER.*?REFERENCES {0}\(".format(tablename), row[0])
+		for match in matches:
+			field = match.strip().replace('"', '')
+			children[related_table].append(field)
+
+	return children
+
 def get_references(tablename):
 	query = cursor.execute("SELECT sql FROM sqlite_master WHERE name = '{0}'".format(tablename))
 	row = query.fetchone()
@@ -188,6 +207,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			results = {}
 			results['column_names'] = get_column_names(params['table'])
 			references = get_references(params['table'])
+			children = get_children(params['table'])
 
 			# build where query
 			pairs = []
@@ -233,6 +253,7 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 			# get results
 			results['references'] = references
+			results['children'] = children
 			self.write_json_response(results)
 			return True
 		elif parts.path == "/columns":

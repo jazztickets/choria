@@ -17,6 +17,9 @@ $(document).ready(function() {
 		var message = response['message'];
 		column_names = response['column_names'];
 		references = response['references'];
+		children = response['children'];
+
+		// Show messages
 		if(message != undefined) {
 			$('#message').html(message);
 			return;
@@ -71,6 +74,10 @@ $(document).ready(function() {
 				if(col == 0) {
 					cellProperties.readOnly = true;
 				}
+				else if(prop == "link") {
+					cellProperties.editor = false;
+					cellProperties.disableVisualSelection = true;
+				}
 
 				return cellProperties;
 			},
@@ -104,6 +111,27 @@ $(document).ready(function() {
 	$('#add').click(function() { add(); });
 	$('#delete').click(function() { remove(); });
 });
+
+// Function to render related table links
+function link_renderer(instance, td, row, col, prop, value, cellProperties) {
+
+	// Get parent id
+	var id = instance.getData()[row][0];
+
+	// Build link list
+	td.innerHTML = '';
+	for(var child in children) {
+		var field_name = children[child][0];
+		var count = 0;
+		var link = '<a href="/?table=' + child + '&' + field_name + '=' + id + '">' + child + '</a>&nbsp;';
+
+		td.innerHTML += link;
+	}
+
+	td.className = 'empty';
+
+	return td;
+}
 
 // Change add row/delete button state
 function update_buttons(state) {
@@ -147,6 +175,12 @@ function transform_data(data, columns) {
 		else
 			columns.push({});
 	}
+
+	// Add children links
+	if(Object.keys(children).length > 0) {
+		column_names.push('');
+		columns.push({ data: 'link', class: 'empty', renderer: link_renderer });
+	}
 }
 
 // Reload data
@@ -169,9 +203,18 @@ function save() {
 	var data = hot.getData();
 	for(var row in data) {
 		for(var col in headers) {
+
+			// Remove empty columns from data array
+			if(column_names[col] == "") {
+				data[row].splice(col, 1);
+				continue;
+			}
+
+			// Set null values to empty string
 			if(data[row][col] == null)
 				data[row][col] = "";
 
+			// Parse id from dropdown data
 			if(references.hasOwnProperty(headers[col])) {
 				match = data[row][col].match(/\((.*?)\)$/);
 				if(match)

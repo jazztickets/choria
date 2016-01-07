@@ -141,3 +141,8 @@ a:hover {
 .handsontable.listbox tr td.current, .handsontable.listbox tr:hover td {
 	background: #333;
 }
+
+td.empty {
+	border: none;
+	background: none;
+}
