@@ -829,7 +829,7 @@ void _Object::UpdateMana(float Value) {
 
 // Moves the player
 int _Object::Move() {
-	if(WaitForServer || Battle || InputStates.size() == 0)
+	if(WaitForServer || Battle || InputStates.size() == 0 || !IsAlive())
 		return 0;
 
 	// Check timer

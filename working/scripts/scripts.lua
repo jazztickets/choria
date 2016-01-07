@@ -6,3 +6,11 @@ function Script_Rejuv.Activate(self, Level, Source, Change)
 
 	return Change
 end
+
+Script_Lava = { BaseHealth = -10 }
+
+function Script_Lava.Activate(self, Level, Source, Change)
+	Change.Health = self.BaseHealth * Level
+
+	return Change
+end
