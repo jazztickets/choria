@@ -787,6 +787,11 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 		ActionBar.resize(NewSize);
 	}
 
+	if(StatChange.HasStat(StatType::FLEE)) {
+		if(Battle)
+			Battle->RemoveFighter(this);
+	}
+
 	return StatusEffect;
 }
 

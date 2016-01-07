@@ -676,6 +676,15 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 	for(auto Iterator = Fighters.begin(); Iterator != Fighters.end(); ++Iterator) {
 		_Object *Fighter = *Iterator;
 		if(Fighter == RemoveFighter) {
+
+			// Broadcast fighter leaving
+			if(Server) {
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::BATTLE_LEAVE);
+				Packet.Write<NetworkIDType>(Fighter->NetworkID);
+				BroadcastPacket(Packet);
+			}
+
 			SideCount[Fighter->BattleSide]--;
 			Fighter->StopBattle();
 			Fighters.erase(Iterator);

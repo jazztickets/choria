@@ -61,10 +61,12 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		if(!ItemUsed->CanUse(Source->Scripting, ActionResult))
 			return false;
 
+		// Apply skill cost
 		if(ItemUsed->IsSkill() && Source->HasLearned(ItemUsed) && InventorySlot == -1) {
 
 			ItemUsed->ApplyCost(Source->Scripting, ActionResult);
 		}
+		// Apply item cost
 		else {
 			size_t Index;
 			if(!ActionResult.Source.Object->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))

@@ -126,6 +126,7 @@ class _ClientState : public _State {
 		void HandleTradeExchange(_Buffer &Data);
 		void HandleBattleStart(_Buffer &Data);
 		void HandleBattleAction(_Buffer &Data);
+		void HandleBattleLeave(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
 		void HandleActionResults(_Buffer &Data);
 		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);

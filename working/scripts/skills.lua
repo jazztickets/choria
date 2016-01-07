@@ -296,3 +296,31 @@ function Skill_Evasion.Stats(self, Level, Object, Change)
 
 	return Change
 end
+
+-- Flee --
+
+Skill_Flee = {}
+Skill_Flee.BaseChance = 22
+Skill_Flee.ChancePerLevel = 3
+
+function Skill_Flee.GetChance(self, Level)
+
+	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
+end
+
+function Skill_Flee.GetInfo(self, Level)
+
+	return "[c green]" .. self:GetChance(Level) .. "% [c white]chance to run away from combat"
+end
+
+function Skill_Flee.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= self:GetChance(Level) then
+		Result.Target.Flee = true
+	end
+end
+
+function Skill_Flee.Use(self, Level, Source, Target, Result)
+	self:Proc(Random.GetInt(1, 100), Level, Source, Target, Result)
+
+	return Result
+end

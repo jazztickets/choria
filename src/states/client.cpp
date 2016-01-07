@@ -364,8 +364,12 @@ void _ClientState::Update(double FrameTime) {
 	}
 
 	// Update battle system
-	if(Battle)
-		Battle->Update(FrameTime);
+	if(Battle) {
+		if(!Player->Battle)
+			DeleteBattle();
+		else
+			Battle->Update(FrameTime);
+	}
 
 	// Update camera
 	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
@@ -524,6 +528,9 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 		break;
 		case PacketType::BATTLE_ACTION:
 			HandleBattleAction(Data);
+		break;
+		case PacketType::BATTLE_LEAVE:
+			HandleBattleLeave(Data);
 		break;
 		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
@@ -930,6 +937,18 @@ void _ClientState::HandleBattleAction(_Buffer &Data) {
 		return;
 
 	Battle->ClientHandlePlayerAction(Data);
+}
+
+// Handle a fighter leaving battle
+void _ClientState::HandleBattleLeave(_Buffer &Data) {
+	if(!Player || !Battle)
+		return;
+
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	_Object *Object = ObjectManager->IDMap[NetworkID];
+	if(Object) {
+		Battle->RemoveFighter(Object);
+	}
 }
 
 // Handles the end of a battle
