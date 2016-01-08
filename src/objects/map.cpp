@@ -87,9 +87,9 @@ _Map::_Map() :
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
 	Server(nullptr),
-	TileVertexBufferID(0),
+	TileVertexBufferID{0, 0},
 	TileElementBufferID(0),
-	TileVertices(nullptr),
+	TileVertices{nullptr, nullptr},
 	TileFaces(nullptr) {
 
 }
@@ -168,7 +168,7 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 }
 
 // Initialize the texture atlas
-void _Map::InitAtlas(const std::string AtlasPath) {
+void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
 	const _Texture *AtlasTexture = Assets.Textures[AtlasPath];
 	if(!AtlasTexture)
 		throw std::runtime_error("Can't find atlas: " + AtlasPath);
@@ -178,7 +178,6 @@ void _Map::InitAtlas(const std::string AtlasPath) {
 	GLuint TileVertexCount = (GLuint)(4 * Size.x * Size.y);
 	GLuint TileFaceCount = (GLuint)(2 * Size.x * Size.y);
 
-	TileVertices = new glm::vec4[TileVertexCount];
 	TileFaces = new glm::u32vec3[TileFaceCount];
 
 	int FaceIndex = 0;
@@ -191,27 +190,62 @@ void _Map::InitAtlas(const std::string AtlasPath) {
 		}
 	}
 
-	glGenBuffers(1, &TileVertexBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
+	// Create a static vbo
+	if(Static) {
+		uint32_t VertexIndex = 0;
+		TileVertices[0] = new glm::vec4[TileVertexCount];
+		TileVertices[1] = new glm::vec4[TileVertexCount];
 
-	glGenBuffers(1, &TileElementBufferID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
+		for(int k = 0; k < 2; k++) {
+			VertexIndex = 0;
+			for(int j = 0; j < Size.y; j++) {
+				for(int i = 0; i < Size.x; i++) {
+					glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[k]);
+					TileVertices[k][VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
+					TileVertices[k][VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
+					TileVertices[k][VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
+					TileVertices[k][VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
+				}
+			}
+
+			glGenBuffers(1, &TileVertexBufferID[k]);
+			glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[k]);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, TileVertices[k], GL_STATIC_DRAW);
+		}
+
+		glGenBuffers(1, &TileElementBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, TileFaces, GL_STATIC_DRAW);
+	}
+	else {
+		TileVertices[0] = new glm::vec4[TileVertexCount];
+
+		glGenBuffers(1, &TileVertexBufferID[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[0]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
+
+		glGenBuffers(1, &TileElementBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, nullptr, GL_DYNAMIC_DRAW);
+	}
 }
 
 // Free memory used by texture atlas
 void _Map::CloseAtlas() {
 	delete TileAtlas;
-	delete[] TileVertices;
+	delete[] TileVertices[0];
+	delete[] TileVertices[1];
 	delete[] TileFaces;
-	glDeleteBuffers(1, &TileVertexBufferID);
+	glDeleteBuffers(1, &TileVertexBufferID[0]);
+	glDeleteBuffers(1, &TileVertexBufferID[1]);
 	glDeleteBuffers(1, &TileElementBufferID);
 
-	TileVertexBufferID = 0;
+	TileVertexBufferID[0] = 0;
+	TileVertexBufferID[1] = 0;
 	TileElementBufferID = 0;
 	TileAtlas = nullptr;
-	TileVertices = nullptr;
+	TileVertices[0] = nullptr;
+	TileVertices[1] = nullptr;
 	TileFaces = nullptr;
 }
 
@@ -430,8 +464,8 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double 
 		BackgroundBounds[2] = glm::clamp(Width + DrawPosition.x, 0.0f, (float)BackgroundMap->Size.x);
 		BackgroundBounds[3] = glm::clamp(Height + DrawPosition.y, 0.0f, (float)BackgroundMap->Size.y);
 
-		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 0);
-		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 1);
+		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 0, true);
+		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 1, true);
 	}
 
 	// Get render bounds
@@ -511,7 +545,7 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double 
 }
 
 // Render either floor or foreground texture tiles
-void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer) {
+void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static) {
 	Graphics.SetProgram(Assets.Programs[Program]);
 	glUniformMatrix4fv(Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
 	Graphics.SetColor(COLOR_WHITE);
@@ -519,16 +553,23 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;
 
-	for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
-		for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
-			glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[Layer]);
-			TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
-			TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
-			TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
-			TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
+	if(!Static) {
+		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
+			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
+				glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[Layer]);
+				TileVertices[0][VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
+				TileVertices[0][VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
+				TileVertices[0][VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
+				TileVertices[0][VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
 
-			FaceIndex += 2;
+				FaceIndex += 2;
+			}
 		}
+		Layer = 0;
+	}
+	else {
+		VertexIndex = (uint32_t)(Size.x * Size.y * 4);
+		FaceIndex = Size.x * Size.y * 2;
 	}
 
 	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
@@ -537,19 +578,21 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 	Graphics.SetTextureID(TileAtlas->Texture->ID);
 	Graphics.EnableAttribs(2);
 
-	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices);
+	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[Layer]);
+	if(!Static)
+		glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices[Layer]);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)sizeof(glm::vec2));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
-	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
+	if(!Static)
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
 	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
 
 	Graphics.DirtyState();
 }
 
 // Load map
-void _Map::Load(const std::string &Path) {
+void _Map::Load(const std::string &Path, bool Static) {
 	std::string AtlasPath;
 
 	// Load file
@@ -592,7 +635,7 @@ void _Map::Load(const std::string &Path) {
 
 					BackgroundMap = new _Map();
 					try {
-						BackgroundMap->Load(BackgroundMapFile);
+						BackgroundMap->Load(BackgroundMapFile, true);
 					}
 					catch(std::exception &Error) {
 						delete BackgroundMap;
@@ -660,7 +703,7 @@ void _Map::Load(const std::string &Path) {
 
 	// Initialize 2d tile rendering
 	if(!Server) {
-		InitAtlas(AtlasPath);
+		InitAtlas(AtlasPath, Static);
 	}
 }
 

@@ -88,7 +88,7 @@ class _Map : public _ManagerBase {
 
 		void AllocateMap();
 		void ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize);
-		void InitAtlas(const std::string AtlasPath);
+		void InitAtlas(const std::string AtlasPath, bool Static=false);
 		void CloseAtlas();
 
 		void Update(double FrameTime) override;
@@ -102,7 +102,7 @@ class _Map : public _ManagerBase {
 
 		// Graphics
 		void Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
-		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer);
+		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static=false);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position, _Object *Object);
@@ -129,7 +129,7 @@ class _Map : public _ManagerBase {
 		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
 
 		// File IO
-		void Load(const std::string &Path);
+		void Load(const std::string &Path, bool Static=false);
 		bool Save(const std::string &Path);
 
 		// Map data
@@ -160,9 +160,9 @@ class _Map : public _ManagerBase {
 		void FreeMap();
 
 		// Rendering
-		uint32_t TileVertexBufferID;
+		uint32_t TileVertexBufferID[2];
 		uint32_t TileElementBufferID;
-		glm::vec4 *TileVertices;
+		glm::vec4 *TileVertices[2];
 		glm::u32vec3 *TileFaces;
 
 		// Network
