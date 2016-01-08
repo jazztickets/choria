@@ -44,6 +44,7 @@ class _Camera {
 		void Set2DPosition(const glm::vec2 &Position) { this->TargetPosition = glm::vec3(Position.x, Position.y, this->Position.z); }
 		void SetDistance(float Distance) { this->TargetPosition.z = Distance; }
 
+		void GetDrawPosition(double BlendFactor, glm::vec3 &DrawPosition);
 		const glm::vec3 &GetPosition() const { return Position; }
 		const glm::vec4 &GetAABB() const { return AABB; }
 		glm::mat4 Transform;

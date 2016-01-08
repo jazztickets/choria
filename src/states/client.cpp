@@ -398,13 +398,13 @@ void _ClientState::Render(double BlendFactor) {
 		glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		Graphics.SetProgram(Assets.Programs["pos_uv_norm"]);
-		glUniformMatrix4fv(Assets.Programs["pos_uv_norm"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
+		glUniformMatrix4fv(Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 		Graphics.SetProgram(Assets.Programs["text"]);
 		glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 		// Draw map and objects
-		Map->Render(Camera, Stats, Player);
+		Map->Render(Camera, Stats, Player, BlendFactor);
 
 		Graphics.Setup2D();
 		Graphics.SetStaticUniforms();

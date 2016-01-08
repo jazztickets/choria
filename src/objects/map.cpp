@@ -83,6 +83,8 @@ _Map::_Map() :
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	IsOutside(true),
 	Clock(0),
+	BackgroundOffset(0.0f),
+	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
 	Server(nullptr),
 	TileVertexBufferID(0),
@@ -94,13 +96,18 @@ _Map::_Map() :
 
 // Destructor
 _Map::~_Map() {
-	if(!Server) {
+
+	// Delete background layer
+	delete BackgroundMap;
+
+	// Delete atlas
+	if(!Server)
 		CloseAtlas();
-	}
 
 	// Delete map data
 	FreeMap();
 
+	// Update objects
 	for(auto &Object : Objects)
 		Object->Map = nullptr;
 }
@@ -379,15 +386,14 @@ void _Map::SetAmbientLightByClock() {
 }
 
 // Renders the map
-void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags) {
+void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
 	// Set lights for editor
 	if(!ClientPlayer) {
 		glm::vec4 AmbientLightEditor(1.0f, 1.0f, 1.0f, 1.0f);
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
 		Assets.Programs["pos_uv"]->LightPosition = glm::vec3(0, 0, 0);
-		Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLightEditor;
-		Assets.Programs["pos_uv_norm"]->LightPosition = glm::vec3(0, 0, 0);
+		Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
 	}
 	else {
 
@@ -402,20 +408,42 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 		Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
 		Assets.Programs["pos_uv"]->LightPosition = LightPosition;
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
-		Assets.Programs["pos_uv_norm"]->LightAttenuation = LightAttenuation;
-		Assets.Programs["pos_uv_norm"]->LightPosition = LightPosition;
-		Assets.Programs["pos_uv_norm"]->AmbientLight = AmbientLight;
+		Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLight;
 	}
 
-	// Render bounds
+	// Draw background map
+	if(BackgroundMap) {
+
+		// Get camera position
+		glm::vec3 DrawPosition;
+		Camera->GetDrawPosition(BlendFactor, DrawPosition);
+		DrawPosition -= BackgroundOffset;
+
+		//BackgroundOffset.z = -10.0f;
+		float Width = DrawPosition.z * Graphics.AspectRatio;
+		float Height = DrawPosition.z;
+
+		// Get render bounds of background tiles
+		glm::vec4 BackgroundBounds;
+		BackgroundBounds[0] = glm::clamp(-Width + DrawPosition.x, 0.0f, (float)BackgroundMap->Size.x);
+		BackgroundBounds[1] = glm::clamp(-Height + DrawPosition.y, 0.0f, (float)BackgroundMap->Size.y);
+		BackgroundBounds[2] = glm::clamp(Width + DrawPosition.x, 0.0f, (float)BackgroundMap->Size.x);
+		BackgroundBounds[3] = glm::clamp(Height + DrawPosition.y, 0.0f, (float)BackgroundMap->Size.y);
+
+		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 0);
+		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 1);
+	}
+
+	// Get render bounds
 	glm::vec4 Bounds = Camera->GetAABB();
 	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Size.x);
 	Bounds[1] = glm::clamp(Bounds[1], 0.0f, (float)Size.y);
 	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Size.x);
 	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
 
-	RenderLayer(Bounds, 0);
-	RenderLayer(Bounds, 1);
+	// Draw layers
+	RenderLayer("pos_uv", Bounds, glm::vec3(0.0f), 0);
+	RenderLayer("pos_uv", Bounds, glm::vec3(0.0f), 1);
 
 	// Render objects
 	for(const auto &Object : Objects) {
@@ -483,9 +511,9 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int Ren
 }
 
 // Render either floor or foreground texture tiles
-void _Map::RenderLayer(glm::vec4 &Bounds, int Layer) {
-	Graphics.SetProgram(Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer) {
+	Graphics.SetProgram(Assets.Programs[Program]);
+	glUniformMatrix4fv(Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
 	Graphics.SetColor(COLOR_WHITE);
 
 	uint32_t VertexIndex = 0;
@@ -557,6 +585,24 @@ void _Map::Load(const std::string &Path) {
 			// Outside
 			case 'O': {
 				File >> IsOutside;
+			} break;
+			case 'B': {
+				if(!Server) {
+					File >> BackgroundMapFile;
+
+					BackgroundMap = new _Map();
+					try {
+						BackgroundMap->Load(BackgroundMapFile);
+					}
+					catch(std::exception &Error) {
+						delete BackgroundMap;
+						BackgroundMap = nullptr;
+					}
+				}
+			} break;
+			case 'Z': {
+				if(!Server)
+					File >> BackgroundOffset.x >> BackgroundOffset.y >> BackgroundOffset.z;
 			} break;
 			// Atlas texture
 			case 'a': {
@@ -633,6 +679,10 @@ bool _Map::Save(const std::string &Path) {
 	Output << "S " << Size.x << " " << Size.y << '\n';
 	Output << "A " << AmbientLight.r << " " << AmbientLight.g << " " << AmbientLight.b << '\n';
 	Output << "O " << IsOutside << '\n';
+	if(BackgroundMapFile.length()) {
+		Output << "B " << BackgroundMapFile << '\n';
+		Output << "Z " << BackgroundOffset.x << " " << BackgroundOffset.y << " " << BackgroundOffset.z << '\n';
+	}
 	Output << "a " << TileAtlas->Texture->Identifier << '\n';
 
 	// Write tile map

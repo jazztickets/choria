@@ -49,7 +49,8 @@ void _Camera::CalculateFrustum(float AspectRatio) {
 
 // Set up 3d projection matrix
 void _Camera::Set3DProjection(double BlendFactor) {
-	glm::vec3 DrawPosition(Position * (float)BlendFactor + LastPosition * (1.0f - (float)BlendFactor));
+	glm::vec3 DrawPosition;
+	GetDrawPosition(BlendFactor, DrawPosition);
 
 	float Width = DrawPosition.z * Graphics.AspectRatio;
 	float Height = DrawPosition.z;
@@ -104,4 +105,9 @@ void _Camera::Update(double FrameTime) {
 	else
 		Position.z = TargetPosition.z;
 
+}
+
+// Interpolate between position and last position
+void _Camera::GetDrawPosition(double BlendFactor, glm::vec3 &DrawPosition) {
+	DrawPosition = Position * (float)BlendFactor + LastPosition * (1.0f - (float)BlendFactor);
 }

@@ -101,8 +101,8 @@ class _Map : public _ManagerBase {
 		void SetAmbientLightByClock();
 
 		// Graphics
-		void Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, int RenderFlags=0);
-		void RenderLayer(glm::vec4 &Bounds, int Layer);
+		void Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
+		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position, _Object *Object);
@@ -142,6 +142,11 @@ class _Map : public _ManagerBase {
 		glm::vec4 AmbientLight;
 		int IsOutside;
 		double Clock;
+
+		// Background
+		std::string BackgroundMapFile;
+		glm::vec3 BackgroundOffset;
+		_Map *BackgroundMap;
 
 		// Objects
 		std::list<_Object *> Objects;
