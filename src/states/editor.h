@@ -61,6 +61,7 @@ class _EditorState : public _State {
 		void Render(double BlendFactor) override;
 
 		void SetFilePath(const std::string &FilePath) { this->FilePath = FilePath; }
+		std::string GetCleanMapName(const std::string &Path);
 
 	private:
 
@@ -76,13 +77,13 @@ class _EditorState : public _State {
 		void ToggleNewMap();
 		void ToggleResize();
 		void ToggleSaveMap();
-		void ToggleLoadMap();
+		void ToggleLoadMap(const std::string &TempPath = "");
 
 		void InitTextures();
 		void InitNewMap();
 		void InitResize();
 		void InitSaveMap();
-		void InitLoadMap();
+		void InitLoadMap(const std::string &TempPath = "");
 		bool CloseWindows();
 
 		// Brushes

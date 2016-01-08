@@ -433,12 +433,16 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Draw world cursor
 	std::stringstream Buffer;
+	Buffer << FilePath;
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, 25), COLOR_WHITE);
+	Buffer.str("");
+
 	Buffer << (int)WorldCursor.x << ", " << (int)WorldCursor.y;
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
 	Buffer.str("");
 
 	Buffer << Graphics.FramesPerSecond << " FPS";
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(15, 25));
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(15, 50));
 	Buffer.str("");
 
 	// Draw UI
@@ -449,6 +453,25 @@ void _EditorState::Render(double BlendFactor) {
 	SaveMapElement->Render();
 	LoadMapElement->Render();
 
+}
+
+// Get clean map name
+std::string _EditorState::GetCleanMapName(const std::string &Path) {
+	std::string CleanName = Path;
+
+	// Remove preceding path
+	std::string Prefix = "maps/";
+	size_t PrefixStart = CleanName.find(Prefix);
+	if(PrefixStart != std::string::npos)
+		CleanName = CleanName.substr(Prefix.length());
+
+	// Remove extension
+	std::string Suffix = ".map.gz";
+	size_t SuffixStart = CleanName.find(Suffix);
+	if(SuffixStart != std::string::npos)
+		CleanName = CleanName.substr(0, SuffixStart);
+
+	return CleanName;
 }
 
 // Draw information about the brush
@@ -627,10 +650,10 @@ void _EditorState::ToggleSaveMap() {
 }
 
 // Show load map screen
-void _EditorState::ToggleLoadMap() {
+void _EditorState::ToggleLoadMap(const std::string &TempPath) {
 	if(!LoadMapElement->Visible) {
 		CloseWindows();
-		InitLoadMap();
+		InitLoadMap(TempPath);
 	}
 	else {
 		CloseWindows();
@@ -733,11 +756,14 @@ void _EditorState::InitSaveMap() {
 }
 
 // Init load map
-void _EditorState::InitLoadMap() {
+void _EditorState::InitLoadMap(const std::string &TempPath) {
 	LoadMapElement->SetVisible(true);
 	FocusedElement = LoadMapTextBox;
 
-	LoadMapTextBox->SetText(FilePath);
+	if(TempPath != "")
+		LoadMapTextBox->SetText(TempPath);
+	else
+		LoadMapTextBox->SetText(FilePath);
 }
 
 // Close all open windows
@@ -886,8 +912,7 @@ void _EditorState::Go() {
 		switch(Tile->Event.Type) {
 			case _Map::EVENT_MAPENTRANCE:
 			case _Map::EVENT_MAPCHANGE: {
-				FilePath = Stats->Maps[Tile->Event.Data].File;
-				ToggleLoadMap();
+				ToggleLoadMap(GetCleanMapName(Stats->Maps[Tile->Event.Data].File));
 			} break;
 			case _Map::EVENT_VENDOR: {
 				std::stringstream Buffer;
