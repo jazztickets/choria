@@ -80,6 +80,7 @@ class _Map : public _ManagerBase {
 			EVENT_KEY,
 			EVENT_SCRIPT,
 			EVENT_PORTAL,
+			EVENT_JUMP,
 			EVENT_COUNT
 		};
 

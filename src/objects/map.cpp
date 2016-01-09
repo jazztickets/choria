@@ -338,6 +338,16 @@ void _Map::CheckEvents(_Object *Object) {
 			else
 				Object->WaitForServer = true;
 		} break;
+		case _Map::EVENT_JUMP: {
+			if(Server) {
+
+				// Find next jump
+				FindEvent(_Event(Tile->Event.Type, Tile->Event.Data + 1), Object->Position);
+				Server->SendPlayerPosition(Object->Peer);
+			}
+			else
+				Object->WaitForServer = true;
+		} break;
 		default:
 			if(Server) {
 				Object->Vendor = nullptr;
