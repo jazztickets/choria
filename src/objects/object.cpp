@@ -777,6 +777,7 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 		Experience += StatChange.Values[StatType::EXPERIENCE].Integer;
 	}
 
+	// Update health
 	bool WasAlive = IsAlive();
 	if(StatChange.HasStat(StatType::HEALTH))
 		UpdateHealth(StatChange.Values[StatType::HEALTH].Float);
@@ -788,9 +789,11 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 		Deaths++;
 	}
 
+	// Mana change
 	if(StatChange.HasStat(StatType::MANA))
 		UpdateMana(StatChange.Values[StatType::MANA].Float);
 
+	// Action bar upgrade
 	if(StatChange.HasStat(StatType::ACTIONBARSIZE)) {
 		size_t NewSize = ActionBar.size() + (size_t)StatChange.Values[StatType::ACTIONBARSIZE].Integer;
 		if(NewSize >= ACTIONBAR_MAX_SIZE)
@@ -799,9 +802,15 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 		ActionBar.resize(NewSize);
 	}
 
+	// Flee from battle
 	if(StatChange.HasStat(StatType::FLEE)) {
 		if(Battle)
 			Battle->RemoveFighter(this);
+	}
+
+	// Start battle
+	if(Server && StatChange.HasStat(StatType::BATTLE)) {
+		Server->StartBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true);
 	}
 
 	return StatusEffect;

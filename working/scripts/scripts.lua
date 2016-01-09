@@ -14,3 +14,11 @@ function Script_Lava.Activate(self, Level, Source, Change)
 
 	return Change
 end
+
+Script_Boss = {}
+
+function Script_Boss.Activate(self, Level, Source, Change)
+	Change.Battle = Level
+
+	return Change
+end
