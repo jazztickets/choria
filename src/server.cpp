@@ -181,6 +181,9 @@ void _Server::Update(double FrameTime) {
 	TimeSteps++;
 	Time += FrameTime;
 
+	// Update scripting environment
+	Scripting->InjectTime(Time);
+
 	// Update clock
 	Clock += FrameTime * MAP_CLOCK_SPEED;
 	if(Clock >= MAP_DAY_LENGTH)

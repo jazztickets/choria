@@ -131,6 +131,14 @@ void _Scripting::InjectItems(_Stats *Stats) {
 	}
 }
 
+// Inject server clock
+void _Scripting::InjectTime(double Time) {
+
+	// Push time
+	lua_pushnumber(LuaState, Time);
+	lua_setglobal(LuaState, "ServerTime");
+}
+
 // Push object onto stack
 void _Scripting::PushObject(_Object *Object) {
 	lua_newtable(LuaState);
@@ -187,6 +195,9 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushnumber(LuaState, Object->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
+
+	lua_pushinteger(LuaState, Object->CharacterID);
+	lua_setfield(LuaState, -2, "CharacterID");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_setfield(LuaState, -2, "Pointer");
