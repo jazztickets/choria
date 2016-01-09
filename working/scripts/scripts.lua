@@ -1,4 +1,4 @@
-Script_Rejuv = { BaseHealth = 3, BaseMana = 1 }
+Script_Rejuv = { BaseHealth = 5, BaseMana = 5 }
 
 function Script_Rejuv.Activate(self, Level, Object, Change)
 	Change.Health = self.BaseHealth * Level
