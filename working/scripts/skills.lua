@@ -249,30 +249,55 @@ end
 
 -- Toughness --
 
-Skill_Toughness = { PerLevel = 4 }
+Skill_Toughness = {}
+Skill_Toughness.PerLevel = 4
+Skill_Toughness.Defense = 1
+
+function Skill_Toughness.GetDefense(self, Level)
+
+	return self.Defense * math.floor(Level / 10)
+end
 
 function Skill_Toughness.GetInfo(self, Level)
+	BonusText = ""
+	if Level >= 10 then
+		BonusText = "\n[c white]Increase defense by [c green]" .. self:GetDefense(Level)
+	end
 
-	return "Increase max HP by [c green]" .. Skill_Toughness.PerLevel * Level
+	return "Increase max HP by [c green]" .. Skill_Toughness.PerLevel * Level .. BonusText
 end
 
 function Skill_Toughness.Stats(self, Level, Object, Change)
 	Change.MaxHealth = self.PerLevel * Level
+	Change.MinDefense = self:GetDefense(Level)
+	Change.MaxDefense = self:GetDefense(Level)
 
 	return Change
 end
 
 -- Arcane Mastery --
 
-Skill_ArcaneMastery = { PerLevel = 2 }
+Skill_ArcaneMastery = {}
+Skill_ArcaneMastery.PerLevel = 2
+Skill_ArcaneMastery.ManaRegen = 0.1
+
+function Skill_ArcaneMastery.GetManaRegen(self, Level)
+
+	return self.ManaRegen * math.floor(Level / 5)
+end
 
 function Skill_ArcaneMastery.GetInfo(self, Level)
+	BonusText = ""
+	if Level >= 5 then
+		BonusText = "\n[c white]Increase mana regen by [c green]" .. self:GetManaRegen(Level)
+	end
 
-	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Level
+	return "Increase max MP by [c light_blue]" .. Skill_ArcaneMastery.PerLevel * Level .. BonusText
 end
 
 function Skill_ArcaneMastery.Stats(self, Level, Object, Change)
 	Change.MaxMana = self.PerLevel * Level
+	Change.ManaRegen = self:GetManaRegen(Level)
 
 	return Change
 end

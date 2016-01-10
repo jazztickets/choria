@@ -1204,10 +1204,24 @@ void _Object::CalculateStats() {
 					MaxHealth += ActionResult.Source.Values[StatType::MAXHEALTH].Float;
 				if(ActionResult.Source.HasStat(StatType::MAXMANA))
 					MaxMana += ActionResult.Source.Values[StatType::MAXMANA].Float;
+				if(ActionResult.Source.HasStat(StatType::HEALTHREGEN))
+					HealthRegen += ActionResult.Source.Values[StatType::HEALTHREGEN].Float;
+				if(ActionResult.Source.HasStat(StatType::MANAREGEN))
+					ManaRegen += ActionResult.Source.Values[StatType::MANAREGEN].Float;
+
 				if(ActionResult.Source.HasStat(StatType::HITCHANCE))
 					HitChance += ActionResult.Source.Values[StatType::HITCHANCE].Float;
 				if(ActionResult.Source.HasStat(StatType::EVASION))
 					Evasion += ActionResult.Source.Values[StatType::EVASION].Float;
+
+				if(ActionResult.Source.HasStat(StatType::MINDAMAGE))
+					MinDamage += ActionResult.Source.Values[StatType::MINDAMAGE].Integer;
+				if(ActionResult.Source.HasStat(StatType::MAXDAMAGE))
+					MaxDamage += ActionResult.Source.Values[StatType::MAXDAMAGE].Integer;
+				if(ActionResult.Source.HasStat(StatType::MINDEFENSE))
+					MinDefense += ActionResult.Source.Values[StatType::MINDEFENSE].Integer;
+				if(ActionResult.Source.HasStat(StatType::MAXDEFENSE))
+					MaxDefense += ActionResult.Source.Values[StatType::MAXDEFENSE].Integer;
 			}
 		}
 	}
