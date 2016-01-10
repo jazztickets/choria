@@ -302,6 +302,7 @@ end
 Skill_Flee = {}
 Skill_Flee.BaseChance = 22
 Skill_Flee.ChancePerLevel = 3
+Skill_Flee.Duration = 20
 
 function Skill_Flee.GetChance(self, Level)
 
@@ -310,12 +311,23 @@ end
 
 function Skill_Flee.GetInfo(self, Level)
 
-	return "[c green]" .. self:GetChance(Level) .. "% [c white]chance to run away from combat"
+	return "[c green]" .. self:GetChance(Level) .. "% [c white]chance to run away from combat\nCauses [c yellow]fatigue [c white]for [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Skill_Flee.ApplyCost(self, Level, Result)
+	Result.Source.Buff = Buffs["Buff_Slowed"]
+	Result.Source.BuffLevel = 3
+	Result.Source.BuffDuration = 5
+
+	return Result
 end
 
 function Skill_Flee.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= self:GetChance(Level) then
 		Result.Target.Flee = true
+		Result.Target.Buff = Buffs["Buff_Slowed"]
+		Result.Target.BuffLevel = 7
+		Result.Target.BuffDuration = self.Duration
 	end
 end
 
