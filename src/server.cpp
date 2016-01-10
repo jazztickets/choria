@@ -155,6 +155,12 @@ void _Server::Update(double FrameTime) {
 	// Update objects
 	ObjectManager->Update(FrameTime);
 
+	// Spawn battles
+	for(auto &BattleEvent : BattleEvents)
+		StartBattle(BattleEvent);
+
+	BattleEvents.clear();
+
 	// Update maps
 	MapManager->Update(FrameTime);
 
@@ -558,6 +564,21 @@ void _Server::SendPlayerPosition(_Peer *Peer) {
 	Network->SendPacket(Packet, Player->Peer);
 }
 
+// Send player stats to peer
+void _Server::SendPlayerInfo(_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	_Object *Player = Peer->Object;
+
+	// Build packet
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::OBJECT_STATS);
+	Player->SerializeStats(Packet);
+
+	Network->SendPacket(Packet, Peer);
+}
+
 // Send character list
 void _Server::SendCharacterList(_Peer *Peer) {
 
@@ -647,6 +668,16 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 	}
 }
 
+// Queue a battle for an object
+void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted) {
+	_BattleEvent BattleEvent;
+	BattleEvent.Object = Object;
+	BattleEvent.Zone = Zone;
+	BattleEvent.Scripted = Scripted;
+
+	BattleEvents.push_back(BattleEvent);
+}
+
 // Create player object and load stats from save
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
@@ -662,21 +693,6 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Save->LoadPlayer(Stats, Player);
 
 	return Player;
-}
-
-// Send player stats to peer
-void _Server::SendPlayerInfo(_Peer *Peer) {
-	if(!ValidatePeer(Peer))
-		return;
-
-	_Object *Player = Peer->Object;
-
-	// Build packet
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::OBJECT_STATS);
-	Player->SerializeStats(Packet);
-
-	Network->SendPacket(Packet, Peer);
 }
 
 // Validate a peer's attributes
@@ -1234,22 +1250,21 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 }
 
 // Start a battle event
-void _Server::StartBattle(_Object *Object, uint32_t Zone, bool Scripted) {
-	//Zone = 1;
-	if(!Zone)
+void _Server::StartBattle(_BattleEvent &BattleEvent) {
+	if(!BattleEvent.Zone)
 		return;
 
 	// Get a list of players
 	std::list<_Object *> Players;
-	Object->Map->GetClosePlayers(Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
+	BattleEvent.Object->Map->GetClosePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
 	int AdditionalCount = 0;
-	if(!Scripted)
+	if(!BattleEvent.Scripted)
 		AdditionalCount = (int)Players.size();
 
 	// Get monsters
 	std::list<uint32_t> MonsterIDs;
 	bool Boss = false;
-	Stats->GenerateMonsterListFromZone(AdditionalCount, Zone, MonsterIDs, Boss);
+	Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss);
 	//MonsterIDs.clear();
 	//MonsterIDs.push_back(10);
 
@@ -1276,7 +1291,7 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone, bool Scripted) {
 		}*/
 
 		// Add player
-		Players.push_back(Object);
+		Players.push_back(BattleEvent.Object);
 
 		// Sort by network id
 		Players.sort();

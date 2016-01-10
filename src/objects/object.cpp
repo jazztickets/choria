@@ -809,8 +809,8 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 	}
 
 	// Start battle
-	if(Server && StatChange.HasStat(StatType::BATTLE)) {
-		Server->StartBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true);
+	if(Server && !Battle && StatChange.HasStat(StatType::BATTLE)) {
+		Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true);
 	}
 
 	return StatusEffect;

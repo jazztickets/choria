@@ -135,3 +135,18 @@ function Item_CrabLegs.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Battle Potion --
+
+Item_BattlePotion = { }
+
+function Item_BattlePotion.GetInfo(self, Level)
+
+	return "Get into a fight"
+end
+
+function Item_BattlePotion.Use(self, Level, Source, Target, Result)
+	Result.Target.Battle = Level
+
+	return Result
+end

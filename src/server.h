@@ -39,6 +39,12 @@ class _Object;
 class _Scripting;
 struct _NetworkEvent;
 
+struct _BattleEvent {
+	_Object *Object;
+	uint32_t Zone;
+	bool Scripted;
+};
+
 // Server class
 class _Server {
 
@@ -53,7 +59,7 @@ class _Server {
 		void StopServer();
 
 		void SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType);
-		void StartBattle(_Object *Object, uint32_t Zone, bool Scripted);
+		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted);
 		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void SendHUD(_Peer *Peer);
 		void SendPlayerPosition(_Peer *Peer);
@@ -82,12 +88,13 @@ class _Server {
 		_Manager<_Object> *ObjectManager;
 		_Manager<_Map> *MapManager;
 		_Manager<_Battle> *BattleManager;
+		std::list<_BattleEvent> BattleEvents;
 
 	private:
 
 		_Object *CreatePlayer(_Peer *Peer);
-		void SendPlayerInfo(_Peer *Peer);
 		bool ValidatePeer(_Peer *Peer);
+		void StartBattle(_BattleEvent &BattleEvent);
 
 		void HandleConnect(_NetworkEvent &Event);
 		void HandleDisconnect(_NetworkEvent &Event);
@@ -116,6 +123,7 @@ class _Server {
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 
+		void SendPlayerInfo(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 

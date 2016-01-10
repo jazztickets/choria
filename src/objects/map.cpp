@@ -354,7 +354,7 @@ void _Map::CheckEvents(_Object *Object) {
 				Object->Trader = nullptr;
 
 				if(Object->NextBattle <= 0) {
-					Server->StartBattle(Object, Tile->Zone, false);
+					Server->QueueBattle(Object, Tile->Zone, false);
 				}
 			}
 		break;
