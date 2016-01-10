@@ -924,7 +924,7 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 	// Find existing buff
 	for(auto &ExistingEffect : StatusEffects) {
 
-		// If buff existing, refresh duration
+		// If buff exists, refresh duration
 		if(StatusEffect->Buff == ExistingEffect->Buff) {
 			ExistingEffect->Duration = StatusEffect->Duration;
 			ExistingEffect->Level = StatusEffect->Level;

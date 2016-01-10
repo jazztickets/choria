@@ -440,68 +440,86 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters) {
+void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss) {
 	if(ZoneID == 0)
 		return;
 
 	// Get zone info
-	Database->PrepareQuery("SELECT minspawn, maxspawn FROM zone WHERE id = @zone_id");
+	Database->PrepareQuery("SELECT boss, minspawn, maxspawn FROM zone WHERE id = @zone_id");
 	Database->BindInt(1, ZoneID);
 
 	// Get spawn range
 	int MinSpawn = 0;
 	int MaxSpawn = 0;
 	if(Database->FetchRow()) {
+		Boss = Database->GetInt<int>("boss");
 		MinSpawn = Database->GetInt<int>("minspawn");
 		MaxSpawn = Database->GetInt<int>("maxspawn");
 	}
 	Database->CloseQuery();
 
-	// Get monster count
-	int MonsterCount = GetRandomInt(MinSpawn, MaxSpawn);
+	// If boss zone then use odds parameter as monster count
+	if(Boss) {
 
-	// No monsters
-	if(MonsterCount == 0)
-		return;
-
-	MonsterCount += AdditionalCount;
-
-	// Cap monster count
-	MonsterCount = std::min(MonsterCount, BATTLE_MAXFIGHTERS_SIDE);
-
-	// Run query
-	Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
-	Database->BindInt(1, ZoneID);
-
-	// Get monsters in zone
-	std::vector<_Zone> Zone;
-	uint32_t OddsSum = 0;
-	while(Database->FetchRow()) {
-		uint32_t MonsterID = Database->GetInt<uint32_t>("monster_id");
-		uint32_t Odds = Database->GetInt<uint32_t>("odds");
-		OddsSum += Odds;
-
-		Zone.push_back(_Zone(MonsterID, OddsSum));
-	}
-
-	// Free memory
-	Database->CloseQuery();
-
-	// Check for monsters in zone
-	if(OddsSum > 0) {
-
-		// Generate monsters
-		uint32_t RandomNumber;
-		size_t MonsterIndex;
-		for(int i = 0; i < MonsterCount; i++) {
-			RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
-			for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
-				if(RandomNumber <= Zone[MonsterIndex].Odds)
-					break;
-			}
+		// Run query
+		Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
+		Database->BindInt(1, ZoneID);
+		while(Database->FetchRow()) {
+			uint32_t MonsterID = Database->GetInt<uint32_t>("monster_id");
+			uint32_t Count = Database->GetInt<uint32_t>("odds");
 
 			// Populate monster list
-			Monsters.push_back(Zone[MonsterIndex].MonsterID);
+			for(uint32_t i = 0; i < Count; i++)
+				Monsters.push_back(MonsterID);
+		}
+		Database->CloseQuery();
+	}
+	else {
+
+		// Get monster count
+		int MonsterCount = GetRandomInt(MinSpawn, MaxSpawn);
+
+		// No monsters
+		if(MonsterCount == 0)
+			return;
+
+		MonsterCount += AdditionalCount;
+
+		// Cap monster count
+		MonsterCount = std::min(MonsterCount, BATTLE_MAXFIGHTERS_SIDE);
+
+		// Run query
+		Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
+		Database->BindInt(1, ZoneID);
+
+		// Get monsters in zone
+		std::vector<_Zone> Zone;
+		uint32_t OddsSum = 0;
+		while(Database->FetchRow()) {
+			uint32_t MonsterID = Database->GetInt<uint32_t>("monster_id");
+			uint32_t Odds = Database->GetInt<uint32_t>("odds");
+			OddsSum += Odds;
+
+			Zone.push_back(_Zone(MonsterID, OddsSum));
+		}
+		Database->CloseQuery();
+
+		// Check for monsters in zone
+		if(OddsSum > 0) {
+
+			// Generate monsters
+			uint32_t RandomNumber;
+			size_t MonsterIndex;
+			for(int i = 0; i < MonsterCount; i++) {
+				RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
+				for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
+					if(RandomNumber <= Zone[MonsterIndex].Odds)
+						break;
+				}
+
+				// Populate monster list
+				Monsters.push_back(Zone[MonsterIndex].MonsterID);
+			}
 		}
 	}
 }

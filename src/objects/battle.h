@@ -93,6 +93,8 @@ class _Battle : public _ManagerBase {
 		std::list<_Object *> Fighters;
 		std::list<_ActionResult> ActionResults;
 
+		bool Boss;
+
 	private:
 
 		void GetBattleOffset(int SideIndex, _Object *Fighter);

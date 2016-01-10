@@ -52,6 +52,7 @@ _Battle::_Battle() :
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	Manager(nullptr),
+	Boss(false),
 	Time(0),
 	WaitTimer(0),
 	SideCount{0, 0},
@@ -479,7 +480,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 	}
 }
 
-// Checks for the end of a battle
+// End battle and give rewards
 void _Battle::ServerEndBattle() {
 
 	// Get statistics for each side
@@ -556,11 +557,21 @@ void _Battle::ServerEndBattle() {
 				Stats->GenerateItemDrops(Fighter->DatabaseID, 1, ItemDrops);
 		}
 
-		// Give out drops
-		for(auto &ItemID : ItemDrops) {
-			std::shuffle(FighterArray.begin(), FighterArray.end(), RandomGenerator);
-			_Object *Fighter = FighterArray[0];
-			Fighter->ItemDropsReceived.push_back(ItemID);
+		// Boss drops aren't divided up
+		if(Boss) {
+			for(auto &ItemID : ItemDrops) {
+				for(auto &Fighter : SideFighters[WinningSide]) {
+					Fighter->ItemDropsReceived.push_back(ItemID);
+				}
+			}
+		}
+		// Give out drops randomly
+		else {
+			for(auto &ItemID : ItemDrops) {
+				std::shuffle(FighterArray.begin(), FighterArray.end(), RandomGenerator);
+				_Object *Fighter = FighterArray[0];
+				Fighter->ItemDropsReceived.push_back(ItemID);
+			}
 		}
 	}
 

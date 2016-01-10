@@ -1248,7 +1248,8 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone, bool Scripted) {
 
 	// Get monsters
 	std::list<uint32_t> MonsterIDs;
-	Stats->GenerateMonsterListFromZone(AdditionalCount, Zone, MonsterIDs);
+	bool Boss = false;
+	Stats->GenerateMonsterListFromZone(AdditionalCount, Zone, MonsterIDs, Boss);
 	//MonsterIDs.clear();
 	//MonsterIDs.push_back(10);
 
@@ -1259,6 +1260,7 @@ void _Server::StartBattle(_Object *Object, uint32_t Zone, bool Scripted) {
 		Battle->Manager = ObjectManager;
 		Battle->Stats = Stats;
 		Battle->Server = this;
+		Battle->Boss = Boss;
 		Battle->Scripting = Scripting;
 
 		/*
