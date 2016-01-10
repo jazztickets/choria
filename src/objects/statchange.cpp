@@ -81,7 +81,12 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	Object = Manager->IDMap[NetworkID];
 
+	// Get changes
 	int ChangedFlag = Data.Read<int>();
+	if(!ChangedFlag)
+		return;
+
+	// Update values
 	for(int i = 0; i < (int)StatType::COUNT; i++) {
 		if(ChangedFlag & (1 << i)) {
 			if(i == (int)StatType::BUFF) {

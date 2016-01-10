@@ -765,6 +765,8 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 			delete StatusEffect;
 			StatusEffect = nullptr;
 		}
+
+		CalculateStats();
 	}
 
 	// Update gold
@@ -928,13 +930,12 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 		if(StatusEffect->Buff == ExistingEffect->Buff) {
 			ExistingEffect->Duration = StatusEffect->Duration;
 			ExistingEffect->Level = StatusEffect->Level;
+
 			return false;
 		}
 	}
 
 	StatusEffects.push_back(StatusEffect);
-
-	CalculateStats();
 
 	return true;
 }
