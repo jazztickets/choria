@@ -282,6 +282,8 @@ class _Object : public _ManagerBase {
 	private:
 
 		void DeleteStatusEffects();
+
+		void CalculateStatBonuses(_StatChange &StatChange);
 		void CalculateLevelStats();
 
 		void SendPacket(_Buffer &Packet);

@@ -381,6 +381,12 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Targets.clear();
 	Fighter->Action.Unset();
 	Fighter->PotentialAction.Unset();
+	Fighter->InventoryOpen = false;
+	Fighter->SkillsOpen = false;
+	Fighter->Paused = false;
+	Fighter->Vendor = nullptr;
+	Fighter->Trader = nullptr;
+	Fighter->TeleportTime = -1.0;
 
 	// Count fighters and set slots
 	SideCount[Side]++;

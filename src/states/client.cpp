@@ -1153,6 +1153,9 @@ void _ClientState::SendActionUse(uint8_t Slot) {
 	if(!Player->ActionBar[Slot].IsSet())
 		return;
 
+	if(Player->WaitForServer)
+		return;
+
 	// Send use to server
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_USE);

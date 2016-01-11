@@ -1199,29 +1199,9 @@ void _Object::CalculateStats() {
 			const _Item *Skill = ActionResult.ActionUsed.Item;
 			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
 
+				// Get passive stat changes
 				Skill->Stats(Scripting, ActionResult);
-				if(ActionResult.Source.HasStat(StatType::MAXHEALTH))
-					MaxHealth += ActionResult.Source.Values[StatType::MAXHEALTH].Float;
-				if(ActionResult.Source.HasStat(StatType::MAXMANA))
-					MaxMana += ActionResult.Source.Values[StatType::MAXMANA].Float;
-				if(ActionResult.Source.HasStat(StatType::HEALTHREGEN))
-					HealthRegen += ActionResult.Source.Values[StatType::HEALTHREGEN].Float;
-				if(ActionResult.Source.HasStat(StatType::MANAREGEN))
-					ManaRegen += ActionResult.Source.Values[StatType::MANAREGEN].Float;
-
-				if(ActionResult.Source.HasStat(StatType::HITCHANCE))
-					HitChance += ActionResult.Source.Values[StatType::HITCHANCE].Float;
-				if(ActionResult.Source.HasStat(StatType::EVASION))
-					Evasion += ActionResult.Source.Values[StatType::EVASION].Float;
-
-				if(ActionResult.Source.HasStat(StatType::MINDAMAGE))
-					MinDamage += ActionResult.Source.Values[StatType::MINDAMAGE].Integer;
-				if(ActionResult.Source.HasStat(StatType::MAXDAMAGE))
-					MaxDamage += ActionResult.Source.Values[StatType::MAXDAMAGE].Integer;
-				if(ActionResult.Source.HasStat(StatType::MINDEFENSE))
-					MinDefense += ActionResult.Source.Values[StatType::MINDEFENSE].Integer;
-				if(ActionResult.Source.HasStat(StatType::MAXDEFENSE))
-					MaxDefense += ActionResult.Source.Values[StatType::MAXDEFENSE].Integer;
+				CalculateStatBonuses(ActionResult.Source);
 			}
 		}
 	}
@@ -1231,24 +1211,7 @@ void _Object::CalculateStats() {
 		_StatChange StatChange;
 		StatChange.Object = this;
 		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
-
-		if(StatChange.HasStat(StatType::MINDAMAGE))
-			MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
-		if(StatChange.HasStat(StatType::MAXDAMAGE))
-			MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
-		if(StatChange.HasStat(StatType::MINDEFENSE))
-			MinDefense += StatChange.Values[StatType::MINDEFENSE].Integer;
-		if(StatChange.HasStat(StatType::MAXDEFENSE))
-			MaxDefense += StatChange.Values[StatType::MAXDEFENSE].Integer;
-
-		if(StatChange.HasStat(StatType::BATTLESPEED))
-			BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Float;
-		if(StatChange.HasStat(StatType::HITCHANCE))
-			HitChance += StatChange.Values[StatType::HITCHANCE].Float;
-		if(StatChange.HasStat(StatType::EVASION))
-			Evasion += StatChange.Values[StatType::EVASION].Float;
-		if(StatChange.HasStat(StatType::INVISIBLE))
-			Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
+		CalculateStatBonuses(StatChange);
 	}
 
 	// Get damage
@@ -1272,6 +1235,37 @@ void _Object::CalculateStats() {
 	Mana = ManaPercent * MaxMana;
 
 	RefreshActionBarCount();
+}
+
+// Update an object's stats from a statchange
+void _Object::CalculateStatBonuses(_StatChange &StatChange) {
+	if(StatChange.HasStat(StatType::MAXHEALTH))
+		MaxHealth += StatChange.Values[StatType::MAXHEALTH].Float;
+	if(StatChange.HasStat(StatType::MAXMANA))
+		MaxMana += StatChange.Values[StatType::MAXMANA].Float;
+	if(StatChange.HasStat(StatType::HEALTHREGEN))
+		HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Float;
+	if(StatChange.HasStat(StatType::MANAREGEN))
+		ManaRegen += StatChange.Values[StatType::MANAREGEN].Float;
+
+	if(StatChange.HasStat(StatType::BATTLESPEED))
+		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Float;
+	if(StatChange.HasStat(StatType::HITCHANCE))
+		HitChance += StatChange.Values[StatType::HITCHANCE].Float;
+	if(StatChange.HasStat(StatType::EVASION))
+		Evasion += StatChange.Values[StatType::EVASION].Float;
+
+	if(StatChange.HasStat(StatType::MINDAMAGE))
+		MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
+	if(StatChange.HasStat(StatType::MAXDAMAGE))
+		MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
+	if(StatChange.HasStat(StatType::MINDEFENSE))
+		MinDefense += StatChange.Values[StatType::MINDEFENSE].Integer;
+	if(StatChange.HasStat(StatType::MAXDEFENSE))
+		MaxDefense += StatChange.Values[StatType::MAXDEFENSE].Integer;
+
+	if(StatChange.HasStat(StatType::INVISIBLE))
+		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
 }
 
 // Calculates the base level stats
