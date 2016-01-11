@@ -759,13 +759,32 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 	if(Slot >= Player->Inventory->Slots.size())
 		return;
 
-	// Check for existing action
-	if(!Player->Action.IsSet()) {
-		Player->Targets.clear();
-		Player->Targets.push_back(Player);
-		Player->Action.Item = Player->Inventory->Slots[Slot].Item;
-		Player->Action.Level = Player->Action.Item->Level;
-		Player->Action.InventorySlot = (int)Slot;
+	// Get item
+	const _Item *Item = Player->Inventory->Slots[Slot].Item;
+	if(!Item)
+		return;
+
+	// Check for equipment
+	if(Item->IsEquippable()) {
+
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
+		if(Player->Inventory->MoveInventory(Packet, Slot, Item->GetEquipmentSlot())) {
+			Network->SendPacket(Packet, Peer);
+			Player->CalculateStats();
+		}
+	}
+	// Handle consumables
+	else {
+
+		// Check for existing action
+		if(!Player->Action.IsSet()) {
+			Player->Targets.clear();
+			Player->Targets.push_back(Player);
+			Player->Action.Item = Item;
+			Player->Action.Level = Item->Level;
+			Player->Action.InventorySlot = (int)Slot;
+		}
 	}
 }
 

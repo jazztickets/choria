@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/item.h>
 #include <objects/object.h>
+#include <objects/inventory.h>
 #include <ui/label.h>
 #include <ui/element.h>
 #include <scripting.h>
@@ -315,6 +316,37 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 
 		DrawPosition.y += SpacingY;
 	}
+}
+
+// Return a valid equipment slot for an item
+size_t _Item::GetEquipmentSlot() const {
+
+	size_t Slot = (size_t)-1;
+	switch(Type) {
+		case ItemType::HELMET:
+			Slot = InventoryType::HEAD;
+		break;
+		case ItemType::ARMOR:
+			Slot = InventoryType::BODY;
+		break;
+		case ItemType::BOOTS:
+			Slot = InventoryType::LEGS;
+		break;
+		case ItemType::ONEHANDED_WEAPON:
+		case ItemType::TWOHANDED_WEAPON:
+			Slot = InventoryType::HAND1;
+		break;
+		case ItemType::SHIELD:
+			Slot = InventoryType::HAND2;
+		break;
+		case ItemType::RING:
+			Slot = InventoryType::RING1;
+		break;
+		default:
+		break;
+	}
+
+	return Slot;
 }
 
 // Returns the item's price to/from a vendor
