@@ -102,7 +102,7 @@ const std::map<std::string, StatType> StatStringToType = {
 const _StatStorage StatValueTypes[] = {
 	{ StatType::BUFF,          StatValueType::POINTER },
 	{ StatType::BUFFLEVEL,     StatValueType::INTEGER },
-	{ StatType::BUFFDURATION,  StatValueType::INTEGER },
+	{ StatType::BUFFDURATION,  StatValueType::FLOAT },
 	{ StatType::HEALTH,        StatValueType::FLOAT   },
 	{ StatType::MAXHEALTH,     StatValueType::FLOAT   },
 	{ StatType::MANA,          StatValueType::FLOAT   },

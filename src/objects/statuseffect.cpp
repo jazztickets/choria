@@ -21,10 +21,13 @@
 #include <constants.h>
 #include <buffer.h>
 #include <assets.h>
+#include <utils.h>
 #include <font.h>
 #include <graphics.h>
 #include <stats.h>
 #include <stdexcept>
+#include <sstream>
+#include <iomanip>
 
 // Constructor
 _StatusEffect::_StatusEffect() :
@@ -33,7 +36,7 @@ _StatusEffect::_StatusEffect() :
 	HUDElement(nullptr),
 	Time(0.0),
 	Level(0),
-	Duration(0) {
+	Duration(0.0) {
 
 }
 
@@ -58,7 +61,7 @@ _StatusEffect::~_StatusEffect() {
 void _StatusEffect::Serialize(_Buffer &Data) {
 	Data.Write<uint32_t>(Buff->ID);
 	Data.Write<int>(Level);
-	Data.Write<int>(Duration);
+	Data.Write<float>((float)Duration);
 }
 
 // Unserialize from network
@@ -66,7 +69,7 @@ void _StatusEffect::Unserialize(_Buffer &Data, _Stats *Stats) {
 	uint32_t BuffID = Data.Read<uint32_t>();
 	Buff = Stats->Buffs[BuffID];
 	Level = Data.Read<int>();
-	Duration = Data.Read<int>();
+	Duration = Data.Read<float>();
 }
 
 // Create element for hud
@@ -93,5 +96,8 @@ void _StatusEffect::Render(_Element *Element, const glm::vec4 &Color) {
 
 	glm::vec4 TextColor = COLOR_LIGHTGRAY;
 	TextColor.a = Color.a;
-	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Duration), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), TextColor, RIGHT_BASELINE);
+
+	std::stringstream Buffer;
+	Buffer << std::fixed << std::setprecision(1) << Round((float)Duration);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), TextColor, RIGHT_BASELINE);
 }

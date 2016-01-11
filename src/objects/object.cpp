@@ -215,6 +215,7 @@ void _Object::Update(double FrameTime) {
 		_StatusEffect *StatusEffect = *Iterator;
 		StatusEffect->Time += FrameTime;
 
+		// Call status effect's update every second
 		if(StatusEffect->Time >= 1.0) {
 			StatusEffect->Time -= 1.0;
 
@@ -222,16 +223,16 @@ void _Object::Update(double FrameTime) {
 			if(Server && IsAlive()) {
 				ResolveBuff(StatusEffect, "Update");
 			}
+		}
 
-			// Reduce count
-			StatusEffect->Duration--;
-			if(StatusEffect->Duration <= 0 || !IsAlive()) {
+		// Reduce count
+		StatusEffect->Duration -= FrameTime;
+		if(StatusEffect->Duration <= 0 || !IsAlive()) {
 
-				delete StatusEffect;
-				Iterator = StatusEffects.erase(Iterator);
+			delete StatusEffect;
+			Iterator = StatusEffects.erase(Iterator);
 
-				CalculateStats();
-			}
+			CalculateStats();
 		}
 		else
 			++Iterator;
@@ -755,7 +756,7 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 		StatusEffect = new _StatusEffect();
 		StatusEffect->Buff = (_Buff *)StatChange.Values[StatType::BUFF].Pointer;
 		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
-		StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Integer;
+		StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
 
 		if(AddStatusEffect(StatusEffect)) {
 			if(BattleElement)
