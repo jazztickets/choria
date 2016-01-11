@@ -407,3 +407,30 @@ function Skill_Pickpocket.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Parry --
+
+Skill_Parry = {}
+Skill_Parry.StaminaGain = 0.2
+Skill_Parry.DamageReduction = 0.5
+Skill_Parry.Duration = 0.4
+Skill_Parry.DurationPerLevel = 0.1
+
+function Skill_Parry.GetDuration(self, Level)
+
+	return self.Duration + self.DurationPerLevel * Level
+end
+
+function Skill_Parry.GetInfo(self, Level)
+
+	return "Block [c green]" .. math.floor(self.DamageReduction * 100) .. "% [c white]damage for [c green]" .. self:GetDuration(Level) .. " [c white]seconds\n" ..
+	"Gain [c green]" .. self.StaminaGain .. " [c yellow]stamina [c white]for each attack blocked"
+end
+
+function Skill_Parry.Use(self, Level, Source, Target, Result)
+	Result.Target.Buff = Buffs["Buff_Parry"]
+	Result.Target.BuffLevel = 1
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end

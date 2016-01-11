@@ -133,3 +133,17 @@ function Buff_Hardened.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Parry debuff --
+
+Buff_Parry = Base_Buff:New()
+
+function Buff_Parry.GetInfo(self, Level)
+
+	return "Blocking attacks"
+end
+
+function Buff_Parry.Stats(self, Level, Source, Change)
+
+	return Change
+end
