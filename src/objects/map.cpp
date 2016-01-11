@@ -395,6 +395,8 @@ void _Map::GetClockAsString(std::stringstream &Buffer) {
 
 // Set ambient light for map
 void _Map::SetAmbientLightByClock() {
+	if(!IsOutside)
+		return;
 
 	// Find index by time
 	size_t NextCycle = DayCyclesTime.size();
@@ -442,8 +444,7 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double 
 	else {
 
 		// Setup day night cycle
-		if(IsOutside)
-			SetAmbientLightByClock();
+		SetAmbientLightByClock();
 
 		// Setup lights
 		glm::vec3 LightPosition(glm::vec3(ClientPlayer->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
@@ -452,11 +453,15 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double 
 		Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
 		Assets.Programs["pos_uv"]->LightPosition = LightPosition;
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
-		Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLight;
 	}
 
 	// Draw background map
 	if(BackgroundMap) {
+		BackgroundMap->Clock = Clock;
+		BackgroundMap->SetAmbientLightByClock();
+		if(!ClientPlayer)
+			BackgroundMap->AmbientLight = glm::vec4(1.0f);
+		Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight;
 
 		// Get camera position
 		glm::vec3 DrawPosition;
