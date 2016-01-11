@@ -89,7 +89,7 @@ class _EditorState : public _State {
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
 		void RenderBrush();
-		void AdjustValue(uint32_t *Value, int Direction);
+		void AdjustValue(uint32_t &Value, int Direction);
 
 		// Copy/Paste
 		void Paste();

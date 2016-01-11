@@ -345,10 +345,15 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 // Mouse scroll wheel
 void _EditorState::MouseWheelEvent(int Direction) {
 	if(Input.ModKeyDown(KMOD_CTRL)) {
-		if(Filter & FILTER_ZONE)
-			AdjustValue(&Brush->Zone, Direction);
-		else if(Filter & FILTER_EVENTDATA)
-			AdjustValue(&Brush->Event.Data, Direction);
+		if(Input.ModKeyDown(KMOD_SHIFT))
+			Direction *= 10;
+
+		if(Filter & FILTER_ZONE) {
+			AdjustValue(Brush->Zone, Direction);
+		}
+		else if(Filter & FILTER_EVENTDATA) {
+			AdjustValue(Brush->Event.Data, Direction);
+		}
 	}
 	else {
 
@@ -560,16 +565,13 @@ void _EditorState::RenderBrush() {
 }
 
 // Update generic value
-void _EditorState::AdjustValue(uint32_t *Value, int Direction) {
-	if(Direction < 0) {
-		uint32_t OldValue = *Value;
-		(*Value)--;
-		if(*Value > OldValue)
-			*Value = 0;
-	}
-	else {
-		(*Value)++;
-	}
+void _EditorState::AdjustValue(uint32_t &Value, int Direction) {
+	int IntVal = (int)Value;
+	IntVal += Direction;
+	if(IntVal < 0)
+		IntVal = 0;
+
+	Value = (uint32_t)IntVal;
 }
 
 // Paste tiles
