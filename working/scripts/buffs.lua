@@ -151,3 +151,18 @@ function Buff_Parry.OnHit(self, Level, Change)
 
 	return Change
 end
+
+-- Poisoned debuff --
+
+Buff_Poisoned = { Damage = 1 }
+
+function Buff_Poisoned.GetInfo(self, Level)
+
+	return "Healing reduced and taking [c red]" .. self.Damage * Level .. " [c white]damage"
+end
+
+function Buff_Poisoned.Update(self, Level, Source, Change)
+	Change.Health = -self.Damage * Level
+
+	return Change
+end

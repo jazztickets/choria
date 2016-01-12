@@ -150,3 +150,21 @@ function Item_BattlePotion.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Poison Potion --
+
+Item_PoisonPotion = { Duration = 30 }
+
+function Item_PoisonPotion.GetInfo(self, Level)
+
+	return "Do not drink"
+end
+
+function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Poisoned"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
