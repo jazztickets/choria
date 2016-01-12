@@ -434,3 +434,40 @@ function Skill_Parry.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Defend --
+
+Skill_Defend = {}
+Skill_Defend.Defense = 3
+Skill_Defend.DefensePerLevel = 1 / 4
+Skill_Defend.Duration = 2.9
+Skill_Defend.DurationPerLevel = 0.1
+
+function Skill_Defend.GetDefense(self, Level)
+
+	return math.floor(self.Defense + self.DefensePerLevel * Level)
+end
+
+function Skill_Defend.GetDuration(self, Level)
+
+	return self.Duration + self.DurationPerLevel * Level
+end
+
+function Skill_Defend.GetInfo(self, Level)
+
+	return "Gain [c green]" .. self:GetDefense(Level) .. " [c white]defense [c white]for [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nRequires a shield"
+end
+
+function Skill_Defend.CanUse(self, Level, Object)
+	Shield = Object.GetInventoryItem(INVENTORY_HAND2)
+
+	return Shield ~= nil
+end
+
+function Skill_Defend.Use(self, Level, Source, Target, Result)
+	Result.Target.Buff = Buffs["Buff_Hardened"]
+	Result.Target.BuffLevel = self:GetDefense(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
