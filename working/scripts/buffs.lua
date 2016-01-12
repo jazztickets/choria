@@ -137,13 +137,20 @@ end
 -- Parry debuff --
 
 Buff_Parry = Base_Buff:New()
+Buff_Parry.DamageReduction = 0.5
+Buff_Parry.StaminaGain = 0.2
 
 function Buff_Parry.GetInfo(self, Level)
 
 	return "Blocking attacks"
 end
 
-function Buff_Parry.Stats(self, Level, Source, Change)
+function Buff_Parry.OnHit(self, Level, Change)
 
-	return Change
+	--print("before " .. Change.Damage)
+
+	--Damage = math.floor(Damage * self.DamageReduction)
+	--print("after " .. Change.Damage)
+
+	--return Result
 end

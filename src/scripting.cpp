@@ -143,6 +143,9 @@ void _Scripting::InjectTime(double Time) {
 void _Scripting::PushObject(_Object *Object) {
 	lua_newtable(LuaState);
 
+	PushObjectStatusEffects(Object);
+	lua_setfield(LuaState, -2, "StatusEffects");
+
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectSetBattleTarget, 1);
 	lua_setfield(LuaState, -2, "SetBattleTarget");
@@ -240,6 +243,21 @@ void _Scripting::PushStatChange(_StatChange *StatChange) {
 	lua_newtable(LuaState);
 }
 
+// Push status effect
+void _Scripting::PushStatusEffect(_StatusEffect *StatusEffect) {
+	lua_newtable(LuaState);
+
+	//lua_pushstring(LuaState, StatusEffect->Buff->Script.c_str());
+	lua_getglobal(LuaState, StatusEffect->Buff->Script.c_str());
+	lua_setfield(LuaState, -2, "Buff");
+
+	lua_pushinteger(LuaState, StatusEffect->Level);
+	lua_setfield(LuaState, -2, "Level");
+
+	lua_pushnumber(LuaState, StatusEffect->Duration);
+	lua_setfield(LuaState, -2, "Duration");
+}
+
 // Push list of objects
 void _Scripting::PushObjectList(std::list<_Object *> &Objects) {
 	lua_newtable(LuaState);
@@ -247,6 +265,19 @@ void _Scripting::PushObjectList(std::list<_Object *> &Objects) {
 	int Index = 1;
 	for(const auto &Object : Objects) {
 		PushObject(Object);
+		lua_rawseti(LuaState, -2, Index);
+
+		Index++;
+	}
+}
+
+// Push list of object's current status effects
+void _Scripting::PushObjectStatusEffects(_Object *Object) {
+	lua_newtable(LuaState);
+
+	int Index = 1;
+	for(auto &StatusEffect : Object->StatusEffects) {
+		PushStatusEffect(StatusEffect);
 		lua_rawseti(LuaState, -2, Index);
 
 		Index++;
@@ -318,24 +349,24 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 
 		// Get value type
 		StatValueType Type;
-		if(Iterator == StatStringToType.end())
-			throw std::runtime_error("GetStatChange: Key=" + Key + " is not a valid stat!");
+		if(Iterator != StatStringToType.end()) {
 
-		// Get value from lua
-		Type = StatValueTypes[(int)Iterator->second].ValueType;
-		switch(Type) {
-			case StatValueType::INTEGER:
-				StatChange.Values[Iterator->second].Integer = (int)lua_tointeger(LuaState, -1);
-			break;
-			case StatValueType::FLOAT:
-				StatChange.Values[Iterator->second].Float = (float)lua_tonumber(LuaState, -1);
-			break;
-			case StatValueType::BOOLEAN:
-				StatChange.Values[Iterator->second].Integer = lua_toboolean(LuaState, -1);
-			break;
-			case StatValueType::POINTER:
-				StatChange.Values[Iterator->second].Pointer = lua_touserdata(LuaState, -1);
-			break;
+			// Get value from lua
+			Type = StatValueTypes[(int)Iterator->second].ValueType;
+			switch(Type) {
+				case StatValueType::INTEGER:
+					StatChange.Values[Iterator->second].Integer = (int)lua_tointeger(LuaState, -1);
+				break;
+				case StatValueType::FLOAT:
+					StatChange.Values[Iterator->second].Float = (float)lua_tonumber(LuaState, -1);
+				break;
+				case StatValueType::BOOLEAN:
+					StatChange.Values[Iterator->second].Integer = lua_toboolean(LuaState, -1);
+				break;
+				case StatValueType::POINTER:
+					StatChange.Values[Iterator->second].Pointer = lua_touserdata(LuaState, -1);
+				break;
+			}
 		}
 
 		lua_pop(LuaState, 1);

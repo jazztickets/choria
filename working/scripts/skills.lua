@@ -411,8 +411,8 @@ end
 -- Parry --
 
 Skill_Parry = {}
-Skill_Parry.StaminaGain = 0.2
-Skill_Parry.DamageReduction = 0.5
+Skill_Parry.StaminaGain = Buff_Parry.StaminaGain
+Skill_Parry.DamageReduction = Buff_Parry.DamageReduction
 Skill_Parry.Duration = 0.4
 Skill_Parry.DurationPerLevel = 0.1
 

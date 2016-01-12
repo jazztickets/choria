@@ -102,16 +102,22 @@ Base_Buff = {
 
 -- Calculate basic weapon damage vs target's armor
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
-	SourceDamage, Crit = Action:GenerateDamage(Level, Source)
-	TargetDefense = Target.GenerateDefense()
-	Damage = math.max(SourceDamage - TargetDefense, 0)
 
 	if Random.GetInt(1, 100) <= (Source.HitChance - Target.Evasion) * 100 then
-		Result.Target.Health = -Damage
-		Hit = true
+		Damage, Crit = Action:GenerateDamage(Level, Source)
 		if Crit == true then
 			Result.Target.Crit = true
 		end
+
+		print("HIT")
+		for i = 1, #Target.StatusEffects do
+			print(Target.StatusEffects[i].Buff)
+			print(Target.StatusEffects[i].Level)
+			print(Target.StatusEffects[i].Duration)
+
+		--Result = Target.OnHit(Change)
+		end
+		Hit = true
 	else
 		Result.Target.Miss = true
 		Hit = false

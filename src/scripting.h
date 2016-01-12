@@ -27,6 +27,7 @@ class _Object;
 class _Item;
 class _Stats;
 class _StatChange;
+class _StatusEffect;
 struct _ActionResult;
 
 // Classes
@@ -47,7 +48,9 @@ class _Scripting {
 		void PushObject(_Object *Object);
 		void PushActionResult(_ActionResult *ActionResult);
 		void PushStatChange(_StatChange *StatChange);
+		void PushStatusEffect(_StatusEffect *StatusEffect);
 		void PushObjectList(std::list<_Object *> &Objects);
+		void PushObjectStatusEffects(_Object *Object);
 		void PushInt(int Value);
 
 		int GetInt(int Index);
