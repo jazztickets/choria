@@ -104,19 +104,30 @@ Base_Buff = {
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
 	if Random.GetInt(1, 100) <= (Source.HitChance - Target.Evasion) * 100 then
-		Damage, Crit = Action:GenerateDamage(Level, Source)
+
+		-- Get damage
+		Change = {}
+		Change.Damage, Crit = Action:GenerateDamage(Level, Source)
 		if Crit == true then
 			Result.Target.Crit = true
 		end
 
-		print("HIT")
+		-- Call OnHit methods for buffs
+		Result.Target.Stamina = 0
 		for i = 1, #Target.StatusEffects do
-			print(Target.StatusEffects[i].Buff)
-			print(Target.StatusEffects[i].Level)
-			print(Target.StatusEffects[i].Duration)
-
-		--Result = Target.OnHit(Change)
+			Effect = Target.StatusEffects[i]
+			if Effect.Buff.OnHit ~= nil then
+				Effect.Buff:OnHit(Effect.Level, Change)
+				Result.Target.Stamina = Result.Target.Stamina + Change.Stamina
+			end
 		end
+
+		-- Apply defense
+		Defense = Target.GenerateDefense()
+		Change.Damage = math.max(Change.Damage - Defense, 0)
+
+		-- Update health
+		Result.Target.Health = -Change.Damage
 		Hit = true
 	else
 		Result.Target.Miss = true

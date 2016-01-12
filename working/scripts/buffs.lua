@@ -146,11 +146,8 @@ function Buff_Parry.GetInfo(self, Level)
 end
 
 function Buff_Parry.OnHit(self, Level, Change)
+	Change.Damage = math.floor(Damage * self.DamageReduction)
+	Change.Stamina = self.StaminaGain
 
-	--print("before " .. Change.Damage)
-
-	--Damage = math.floor(Damage * self.DamageReduction)
-	--print("after " .. Change.Damage)
-
-	--return Result
+	return Change
 end

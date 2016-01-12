@@ -796,6 +796,12 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::MANA))
 		UpdateMana(StatChange.Values[StatType::MANA].Float);
 
+	// Stamina change
+	if(StatChange.HasStat(StatType::STAMINA)) {
+		TurnTimer += StatChange.Values[StatType::STAMINA].Float;
+		TurnTimer = glm::clamp(TurnTimer, 0.0, 1.0);
+	}
+
 	// Action bar upgrade
 	if(StatChange.HasStat(StatType::ACTIONBARSIZE)) {
 		size_t NewSize = ActionBar.size() + (size_t)StatChange.Values[StatType::ACTIONBARSIZE].Integer;
