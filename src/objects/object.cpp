@@ -63,6 +63,7 @@ _Object::_Object() :
 	BaseMaxMana(0.0f),
 	BaseHealthRegen(0.0f),
 	BaseManaRegen(0.0f),
+	BaseHealPower(1.0f),
 	BaseMinDamage(0),
 	BaseMaxDamage(0),
 	BaseMinDefense(0),
@@ -80,6 +81,7 @@ _Object::_Object() :
 	MaxHealth(1.0f),
 	Mana(0.0f),
 	MaxMana(0.0f),
+	HealPower(0.0f),
 	MinDamage(0),
 	MaxDamage(0),
 	MinDefense(0),
@@ -826,7 +828,10 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 }
 
 // Update health
-void _Object::UpdateHealth(float Value) {
+void _Object::UpdateHealth(float &Value) {
+	if(Server && Value > 0)
+		Value *= HealPower;
+
 	Health += Value;
 
 	if(Health < 0)
@@ -1153,6 +1158,7 @@ void _Object::CalculateStats() {
 	MaxMana = BaseMaxMana;
 	HealthRegen = BaseHealthRegen;
 	ManaRegen = BaseManaRegen;
+	HealPower = BaseHealPower;
 	BattleSpeed = BaseBattleSpeed;
 	Evasion = BaseEvasion;
 	HitChance = BaseHitChance;
@@ -1254,6 +1260,9 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 		HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Float;
 	if(StatChange.HasStat(StatType::MANAREGEN))
 		ManaRegen += StatChange.Values[StatType::MANAREGEN].Float;
+
+	if(StatChange.HasStat(StatType::HEALPOWER))
+		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
 		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Float;

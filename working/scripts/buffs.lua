@@ -155,7 +155,7 @@ end
 -- Poisoned debuff --
 
 Buff_Poisoned = {}
-Buff_Poisoned.HealReduction = 0.5
+Buff_Poisoned.HealPower = -0.5
 Buff_Poisoned.Damage = 1
 
 function Buff_Poisoned.GetInfo(self, Level)
@@ -163,14 +163,14 @@ function Buff_Poisoned.GetInfo(self, Level)
 	return "Healing reduced and taking [c red]" .. self.Damage * Level .. " [c white]damage"
 end
 
-function Buff_Poisoned.OnHeal(self, Level, Change)
-	Change.Health = math.floor(Change.Health * self.HealReduction)
+function Buff_Poisoned.Update(self, Level, Source, Change)
+	Change.Health = -self.Damage * Level
 
 	return Change
 end
 
-function Buff_Poisoned.Update(self, Level, Source, Change)
-	Change.Health = -self.Damage * Level
+function Buff_Poisoned.Stats(self, Level, Source, Change)
+	Change.HealPower = self.HealPower
 
 	return Change
 end

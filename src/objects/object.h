@@ -101,7 +101,7 @@ class _Object : public _ManagerBase {
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
-		void UpdateHealth(float Value);
+		void UpdateHealth(float &Value);
 		void UpdateMana(float Value);
 		void CalculateStats();
 		float GetNextLevelPercent() const;
@@ -173,6 +173,7 @@ class _Object : public _ManagerBase {
 		float BaseMaxMana;
 		float BaseHealthRegen;
 		float BaseManaRegen;
+		float BaseHealPower;
 		int BaseMinDamage;
 		int BaseMaxDamage;
 		int BaseMinDefense;
@@ -195,6 +196,7 @@ class _Object : public _ManagerBase {
 		float MaxMana;
 		float HealthRegen;
 		float ManaRegen;
+		float HealPower;
 		int MinDamage;
 		int MaxDamage;
 		int MinDefense;
