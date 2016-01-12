@@ -45,7 +45,7 @@ end
 
 -- Invis buff --
 
-Buff_Invis = { }
+Buff_Invis = {}
 
 function Buff_Invis.GetInfo(self, Level)
 
@@ -75,7 +75,7 @@ end
 
 -- Stunned debuff --
 
-Buff_Stunned = { }
+Buff_Stunned = {}
 
 function Buff_Stunned.GetInfo(self, Level)
 
@@ -146,7 +146,7 @@ function Buff_Parry.GetInfo(self, Level)
 end
 
 function Buff_Parry.OnHit(self, Level, Change)
-	Change.Damage = math.floor(Damage * self.DamageReduction)
+	Change.Damage = math.floor(Change.Damage * self.DamageReduction)
 	Change.Stamina = self.StaminaGain
 
 	return Change
@@ -154,11 +154,19 @@ end
 
 -- Poisoned debuff --
 
-Buff_Poisoned = { Damage = 1 }
+Buff_Poisoned = {}
+Buff_Poisoned.HealReduction = 0.5
+Buff_Poisoned.Damage = 1
 
 function Buff_Poisoned.GetInfo(self, Level)
 
 	return "Healing reduced and taking [c red]" .. self.Damage * Level .. " [c white]damage"
+end
+
+function Buff_Poisoned.OnHeal(self, Level, Change)
+	Change.Health = math.floor(Change.Health * self.HealReduction)
+
+	return Change
 end
 
 function Buff_Poisoned.Update(self, Level, Source, Change)
