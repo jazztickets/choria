@@ -200,6 +200,7 @@ void _Stats::LoadItems() {
 		Item->HealthRegen = (float)Database->GetReal("healthregen");
 		Item->ManaRegen = (float)Database->GetReal("manaregen");
 		Item->BattleSpeed = Database->GetReal("battlespeed");
+		Item->MoveSpeed = (float)Database->GetReal("movespeed");
 		Item->Tradable = Database->GetInt<int>("tradable");
 		Item->TargetAlive = Database->GetInt<int>("target_alive");
 		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");

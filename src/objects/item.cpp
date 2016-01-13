@@ -174,6 +174,14 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+	if(MoveSpeed != 0.0f) {
+		std::stringstream Buffer;
+		Buffer << (BattleSpeed < 0 ? "" : "+") << std::setprecision(2) << MoveSpeed * 100 << "%";
+		Assets.Fonts["hud_medium"]->DrawText("Move Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
 	if(BattleSpeed != 0.0) {
 		std::stringstream Buffer;
 		Buffer << (BattleSpeed < 0 ? "" : "+") << std::setprecision(2) << BattleSpeed * 100 << "%";

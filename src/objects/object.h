@@ -178,6 +178,7 @@ class _Object : public _ManagerBase {
 		int BaseMaxDamage;
 		int BaseMinDefense;
 		int BaseMaxDefense;
+		float BaseMoveSpeed;
 		double BaseBattleSpeed;
 		float BaseEvasion;
 		float BaseHitChance;
@@ -201,6 +202,7 @@ class _Object : public _ManagerBase {
 		int MaxDamage;
 		int MinDefense;
 		int MaxDefense;
+		float MoveSpeed;
 		double BattleSpeed;
 		float Evasion;
 		float HitChance;

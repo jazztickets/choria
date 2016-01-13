@@ -93,6 +93,7 @@ const  double       BATTLE_MIN_SPEED                =  0.01;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
+const  double       PLAYER_MIN_MOVESPEED            =  0.1f;
 const  double       PLAYER_ATTACKTIME               =  1.0;
 const  int          PLAYER_NAME_SIZE                =  10;
 const  float        PLAYER_INVIS_ALPHA              =  0.27f;

@@ -69,6 +69,7 @@ _Object::_Object() :
 	BaseMaxDamage(0),
 	BaseMinDefense(0),
 	BaseMaxDefense(0),
+	BaseMoveSpeed(1.0f),
 	BaseBattleSpeed(1.0),
 	BaseEvasion(0.0f),
 	BaseHitChance(1.0f),
@@ -87,6 +88,7 @@ _Object::_Object() :
 	MaxDamage(0),
 	MinDefense(0),
 	MaxDefense(0),
+	MoveSpeed(1.0f),
 	BattleSpeed(1.0),
 	Evasion(0.0f),
 	HitChance(1.0f),
@@ -857,7 +859,7 @@ int _Object::Move() {
 		return 0;
 
 	// Check timer
-	if(MoveTime < PLAYER_MOVETIME)
+	if(MoveTime < PLAYER_MOVETIME / MoveSpeed)
 		return 0;
 
 	MoveTime = 0;
@@ -1167,6 +1169,7 @@ void _Object::CalculateStats() {
 	MaxDamage = BaseMaxDamage;
 	MinDefense = BaseMinDefense;
 	MaxDefense = BaseMaxDefense;
+	MoveSpeed = BaseMoveSpeed;
 	Invisible = 0;
 
 	// Get item stats
@@ -1195,6 +1198,7 @@ void _Object::CalculateStats() {
 			HealthRegen += Item->HealthRegen;
 			ManaRegen += Item->ManaRegen;
 			BattleSpeed += Item->BattleSpeed;
+			MoveSpeed += Item->MoveSpeed;
 		}
 	}
 
@@ -1244,6 +1248,9 @@ void _Object::CalculateStats() {
 	if(BattleSpeed < BATTLE_MIN_SPEED)
 		BattleSpeed = BATTLE_MIN_SPEED;
 
+	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
+		MoveSpeed = PLAYER_MIN_MOVESPEED;
+
 	// Set health/mana
 	Health = HealthPercent * MaxHealth;
 	Mana = ManaPercent * MaxMana;
@@ -1280,6 +1287,9 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 		MinDefense += StatChange.Values[StatType::MINDEFENSE].Integer;
 	if(StatChange.HasStat(StatType::MAXDEFENSE))
 		MaxDefense += StatChange.Values[StatType::MAXDEFENSE].Integer;
+
+	if(StatChange.HasStat(StatType::MOVESPEED))
+		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Float;
 
 	if(StatChange.HasStat(StatType::INVISIBLE))
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;

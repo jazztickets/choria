@@ -1261,6 +1261,13 @@ void _HUD::DrawCharacterStats() {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Move speed
+	Buffer << Player->MoveSpeed * 100 << "%";
+	Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
+
 	// Battle speed
 	Buffer << Player->BattleSpeed * 100 << "%";
 	Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);

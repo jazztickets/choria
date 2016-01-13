@@ -84,6 +84,7 @@ class _Item {
 		float HealthRegen;
 		float ManaRegen;
 		double BattleSpeed;
+		float MoveSpeed;
 		bool Tradable;
 		bool TargetAlive;
 		TargetType TargetID;
