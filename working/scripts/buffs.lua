@@ -174,3 +174,19 @@ function Buff_Poisoned.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Burning debuff --
+
+Buff_Burning = {}
+Buff_Burning.Damage = 3
+
+function Buff_Burning.GetInfo(self, Level)
+
+	return "Burning for [c red]" .. self.Damage * Level .. " [c white]damage"
+end
+
+function Buff_Burning.Update(self, Level, Source, Change)
+	Change.Health = -self.Damage * Level
+
+	return Change
+end
