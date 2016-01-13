@@ -27,6 +27,7 @@
 #include <utils.h>
 #include <stdexcept>
 #include <limits>
+#include <algorithm>
 
 // Constructor
 _Save::_Save() {

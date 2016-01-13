@@ -23,6 +23,7 @@
 #include <database.h>
 #include <random.h>
 #include <assets.h>
+#include <algorithm>
 #include <iostream>
 
 // Constructor
