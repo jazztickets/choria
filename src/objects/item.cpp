@@ -230,9 +230,11 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		case ItemType::ARMOR:
 		case ItemType::BOOTS:
 		case ItemType::SHIELD:
+			if(Tooltip.Slot >= InventoryType::BAG)
+				InfoText = "Right-click to equip";
 		break;
 		case ItemType::CONSUMABLE:
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
+			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && CheckScope(ScopeType::WORLD))
 				InfoText = "Right-click to use";
 			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
 				InfoText = "Left-click to use";
