@@ -21,21 +21,6 @@
 // Setup function pointers
 void InitGLFunctions() {
 #ifdef _WIN32
-	glBlendColor = (PFNGLBLENDCOLORPROC)SDL_GL_GetProcAddress("glBlendColor");
-	glBlendEquation = (PFNGLBLENDEQUATIONPROC)SDL_GL_GetProcAddress("glBlendEquation");
-	glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC)SDL_GL_GetProcAddress("glDrawRangeElements");
-	glTexImage3D = (PFNGLTEXIMAGE3DPROC)SDL_GL_GetProcAddress("glTexImage3D");
-	glTexSubImage3D = (PFNGLTEXSUBIMAGE3DPROC)SDL_GL_GetProcAddress("glTexSubImage3D");
-	glCopyTexSubImage3D = (PFNGLCOPYTEXSUBIMAGE3DPROC)SDL_GL_GetProcAddress("glCopyTexSubImage3D");
-	glActiveTexture = (PFNGLACTIVETEXTUREPROC)SDL_GL_GetProcAddress("glActiveTexture");
-	glSampleCoverage = (PFNGLSAMPLECOVERAGEPROC)SDL_GL_GetProcAddress("glSampleCoverage");
-	glCompressedTexImage3D = (PFNGLCOMPRESSEDTEXIMAGE3DPROC)SDL_GL_GetProcAddress("glCompressedTexImage3D");
-	glCompressedTexImage2D = (PFNGLCOMPRESSEDTEXIMAGE2DPROC)SDL_GL_GetProcAddress("glCompressedTexImage2D");
-	glCompressedTexImage1D = (PFNGLCOMPRESSEDTEXIMAGE1DPROC)SDL_GL_GetProcAddress("glCompressedTexImage1D");
-	glCompressedTexSubImage3D = (PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC)SDL_GL_GetProcAddress("glCompressedTexSubImage3D");
-	glCompressedTexSubImage2D = (PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC)SDL_GL_GetProcAddress("glCompressedTexSubImage2D");
-	glCompressedTexSubImage1D = (PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC)SDL_GL_GetProcAddress("glCompressedTexSubImage1D");
-	glGetCompressedTexImage = (PFNGLGETCOMPRESSEDTEXIMAGEPROC)SDL_GL_GetProcAddress("glGetCompressedTexImage");
 	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC)SDL_GL_GetProcAddress("glBlendFuncSeparate");
 	glMultiDrawArrays = (PFNGLMULTIDRAWARRAYSPROC)SDL_GL_GetProcAddress("glMultiDrawArrays");
 	glMultiDrawElements = (PFNGLMULTIDRAWELEMENTSPROC)SDL_GL_GetProcAddress("glMultiDrawElements");
@@ -165,21 +150,6 @@ void InitGLFunctions() {
 }
 
 #ifdef _WIN32
-PFNGLBLENDCOLORPROC glBlendColor;
-PFNGLBLENDEQUATIONPROC glBlendEquation;
-PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
-PFNGLTEXIMAGE3DPROC glTexImage3D;
-PFNGLTEXSUBIMAGE3DPROC glTexSubImage3D;
-PFNGLCOPYTEXSUBIMAGE3DPROC glCopyTexSubImage3D;
-PFNGLACTIVETEXTUREPROC glActiveTexture;
-PFNGLSAMPLECOVERAGEPROC glSampleCoverage;
-PFNGLCOMPRESSEDTEXIMAGE3DPROC glCompressedTexImage3D;
-PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D;
-PFNGLCOMPRESSEDTEXIMAGE1DPROC glCompressedTexImage1D;
-PFNGLCOMPRESSEDTEXSUBIMAGE3DPROC glCompressedTexSubImage3D;
-PFNGLCOMPRESSEDTEXSUBIMAGE2DPROC glCompressedTexSubImage2D;
-PFNGLCOMPRESSEDTEXSUBIMAGE1DPROC glCompressedTexSubImage1D;
-PFNGLGETCOMPRESSEDTEXIMAGEPROC glGetCompressedTexImage;
 PFNGLBLENDFUNCSEPARATEPROC glBlendFuncSeparate;
 PFNGLMULTIDRAWARRAYSPROC glMultiDrawArrays;
 PFNGLMULTIDRAWELEMENTSPROC glMultiDrawElements;
