@@ -29,13 +29,15 @@ _DedicatedState DedicatedState;
 
 // Command loop
 void RunCommandThread(_Server *Server) {
-	Server->Log << "Type stop to stop the server" << std::endl;
+	Server->Log << "Type help to list commands" << std::endl;
 
 	bool Done = false;
 	while(!Done) {
 		std::string Input;
 		std::getline(std::cin, Input);
-		if(Input == "stop" || std::cin.eof() == 1)
+		if(Input == "help")
+			DedicatedState.ShowCommands();
+		else if(Input == "stop" || std::cin.eof() == 1)
 			Done = true;
 		else if(Input == "p" || Input == "players")
 			DedicatedState.ShowPlayers();
@@ -95,6 +97,15 @@ void _DedicatedState::Update(double FrameTime) {
 	if(Server->Done) {
 		Framework.Done = true;
 	}
+}
+
+// List available commands
+void _DedicatedState::ShowCommands() {
+
+	Server->Log << std::endl;
+	Server->Log << "stop" << std::endl;
+	Server->Log << "players" << std::endl;
+	Server->Log << "battles" << std::endl;
 }
 
 // Show all players

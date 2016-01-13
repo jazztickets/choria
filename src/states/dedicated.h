@@ -43,6 +43,7 @@ class _DedicatedState : public _State {
 		void SetNetworkPort(uint16_t NetworkPort) { this->NetworkPort = NetworkPort; }
 
 		// Commands
+		void ShowCommands();
 		void ShowPlayers();
 		void ShowBattles();
 
