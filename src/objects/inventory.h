@@ -23,11 +23,11 @@
 #include <cstdint>
 
 // Forward Declarations
+struct _Trader;
 class _Object;
 class _Item;
 class _Buffer;
 class _Stats;
-class _Trader;
 
 // Structures
 struct _InventorySlot {
