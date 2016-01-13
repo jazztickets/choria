@@ -94,10 +94,25 @@ void _StatusEffect::Render(_Element *Element, const glm::vec4 &Color) {
 	Graphics.SetColor(Color);
 	Graphics.DrawImage(Element->Bounds, Buff->Texture);
 
-	glm::vec4 TextColor = COLOR_LIGHTGRAY;
+	glm::vec4 TextColor = COLOR_WHITE;
 	TextColor.a = Color.a;
 
+	// Build string
 	std::stringstream Buffer;
 	Buffer << std::fixed << std::setprecision(1) << Round((float)Duration);
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2), TextColor, RIGHT_BASELINE);
+
+	// Get text dimensions
+	_TextBounds TextBounds;
+	Assets.Fonts["hud_tiny"]->GetStringDimensions(Buffer.str(), TextBounds, false);
+
+	glm::vec2 StartPosition = glm::vec2(Element->Bounds.End.x-3, Element->Bounds.End.y-2);
+
+	// Draw text bg
+	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+	Graphics.SetVBO(VBO_NONE);
+	Graphics.SetColor(glm::vec4(0, 0, 0, 0.5f));
+	Graphics.DrawRectangle(glm::vec2(StartPosition.x - TextBounds.Width, StartPosition.y - TextBounds.AboveBase), glm::vec2(StartPosition.x, StartPosition.y + TextBounds.BelowBase), true);
+
+	// Draw text
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), StartPosition, TextColor, RIGHT_BASELINE);
 }
