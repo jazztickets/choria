@@ -97,7 +97,7 @@ class _Object : public _ManagerBase {
 		void UnserializeBattle(_Buffer &Data);
 
 		// Stats
-		bool IsAlive() const { return Health > 0.0f; }
+		bool IsAlive() const { return Health > 0.001f; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
