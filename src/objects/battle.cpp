@@ -30,6 +30,7 @@
 #include <server.h>
 #include <actions.h>
 #include <buffer.h>
+#include <hud.h>
 #include <graphics.h>
 #include <scripting.h>
 #include <stats.h>
@@ -204,7 +205,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 	// Choose an action to use
 	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
-
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
@@ -223,6 +223,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Set up initial target
 		if(Item) {
+			if(ClientPlayer->Level == 1 && ClientPlayer->HUD)
+				ClientPlayer->HUD->SetMessage("Hit up/down to change targets. Press " + Actions.GetInputNameForAction(_Actions::SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->BattleSide;
@@ -293,6 +295,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
+		if(ClientPlayer->Level == 1 && ClientPlayer->HUD)
+			ClientPlayer->HUD->SetMessage("");
 
 		// Remember target
 		if(ClientPlayer->Targets.size() == 1)

@@ -919,6 +919,8 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 	// Reset hud
 	HUD->CloseWindows();
+	if(Player->Level == 1)
+		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(_Actions::SKILL1) + " key to attack");
 
 	// Create a new battle instance
 	Battle = new _Battle();
@@ -955,6 +957,8 @@ void _ClientState::HandleBattleLeave(_Buffer &Data) {
 void _ClientState::HandleBattleEnd(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
+
+	HUD->SetMessage("");
 
 	Player->WaitForServer = false;
 
@@ -1121,7 +1125,7 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->CalculateStats();
 
 	if(Player->Level > OldLevel)
-		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill points");
+		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill points. Press " + Actions.GetInputNameForAction(_Actions::SKILLS) + " to use them.");
 }
 
 // Creates an object from a buffer
