@@ -476,9 +476,22 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 
 	// Set skill used
 	size_t ActionBarIndex = (size_t)lua_tointeger(LuaState, 1);
-	Object->GetActionFromSkillbar(Object->Action, ActionBarIndex);
+	if(!Object->GetActionFromSkillbar(Object->Action, ActionBarIndex)) {
+		lua_pushboolean(LuaState, false);
+		return 1;
+	}
 
-	return 0;
+	// Check that the action can be used
+	_ActionResult ActionResult;
+	ActionResult.Source.Object = Object;
+	ActionResult.Scope = ScopeType::BATTLE;
+	ActionResult.ActionUsed = Object->Action;
+	if(Object->Action.Item->CanUse(Object->Scripting, ActionResult))
+		lua_pushboolean(LuaState, true);
+	else
+		lua_pushboolean(LuaState, false);
+
+	return 1;
 }
 
 // Generate damage
