@@ -220,7 +220,7 @@ end
 Skill_Heal = Base_Spell:New()
 Skill_Heal.HealBase = 10
 Skill_Heal.HealPerLevel = 3
-Skill_Heal.CostPerLevel = 1.0 / 3.0
+Skill_Heal.CostPerLevel = 1 / 2
 Skill_Heal.ManaCostBase = 3 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)
@@ -237,10 +237,10 @@ end
 
 -- Spark --
 Skill_Spark = Base_Spell:New()
-Skill_Spark.ManaCostBase = 1
 Skill_Spark.DamageBase = 1
 Skill_Spark.Multiplier = 2
-Skill_Spark.CostPerLevel = 1 / 3
+Skill_Spark.CostPerLevel = 1 / 5
+Skill_Spark.ManaCostBase = 1 - Skill_Spark.CostPerLevel
 
 function Skill_Spark.GetInfo(self, Level)
 	return "Shock a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
@@ -248,13 +248,46 @@ end
 
 -- Fire Blast --
 Skill_FireBlast = Base_Spell:New()
-Skill_FireBlast.ManaCostBase = 9
 Skill_FireBlast.DamageBase = 5
 Skill_FireBlast.Multiplier = 2
-Skill_FireBlast.CostPerLevel = 1
+Skill_FireBlast.CostPerLevel = 1 / 2
+Skill_FireBlast.ManaCostBase = 9 - Skill_FireBlast.CostPerLevel
 
 function Skill_FireBlast.GetInfo(self, Level)
 	return "Blast all targets with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+-- Ignite --
+Skill_Ignite = Base_Spell:New()
+Skill_Ignite.BurnLevel = 1
+Skill_Ignite.BurnLevelPerLevel = 1 / 5
+Skill_Ignite.CostPerLevel = 1 / 2
+Skill_Ignite.DurationPerLevel = 1 / 10
+Skill_Ignite.Duration = 6 - Skill_Ignite.DurationPerLevel
+Skill_Ignite.ManaCostBase = 3 - Skill_Ignite.CostPerLevel
+
+function Skill_Ignite.GetBurnLevel(self, Level)
+	return math.floor(self.BurnLevel + self.BurnLevelPerLevel * Level)
+end
+
+function Skill_Ignite.GetDamage(self, Level)
+	return Buff_Burning.Damage * self:GetBurnLevel(Level) * self:GetDuration(Level)
+end
+
+function Skill_Ignite.GetDuration(self, Level)
+	return math.floor(self.Duration + self.DurationPerLevel * Level)
+end
+
+function Skill_Ignite.GetInfo(self, Level)
+	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Level) .. "[c white] damage over [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+function Skill_Ignite.Use(self, Level, Source, Target, Result)
+	Result.Target.Buff = Buffs["Buff_Burning"]
+	Result.Target.BuffLevel = self:GetBurnLevel(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
 end
 
 -- Toughness --
