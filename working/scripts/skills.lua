@@ -73,6 +73,16 @@ function Skill_PincerAttack.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+-- Chew attack --
+
+Skill_ChewAttack = Base_Attack:New()
+
+function Skill_ChewAttack.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 75 then
+		Result.Source.Health = -Result.Target.Health
+	end
+end
+
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()
