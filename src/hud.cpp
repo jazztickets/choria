@@ -1516,6 +1516,11 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(SkillID == 0)
 		return;
 
+	if(Amount < 0 && Player->GetTile()->Event.Type != _Map::EVENT_SPAWN) {
+		SetMessage("You can only respec on spawn points");
+		return;
+	}
+
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::SKILLS_SKILLADJUST);
 
