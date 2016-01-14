@@ -1297,16 +1297,17 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Boss = Boss;
 		Battle->Scripting = Scripting;
 
-		for(int i = 0; i < 7; i++) {
+		/*
+		for(int i = 0; i < 5; i++) {
 			_Object *Monster = ObjectManager->Create();
 			Monster->Server = this;
 			Monster->Scripting = Scripting;
-			Monster->DatabaseID = 8;
+			Monster->DatabaseID = 3;
 			Monster->Stats = Stats;
 			Stats->GetMonsterStats(Monster->DatabaseID, Monster);
 			Monster->CalculateStats();
 			Battle->AddFighter(Monster, 0);
-		}
+		}*/
 
 		// Add player
 		Players.push_back(BattleEvent.Object);
