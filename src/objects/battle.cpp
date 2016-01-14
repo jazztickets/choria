@@ -238,6 +238,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 					Multiple = true;
 				case TargetType::ALLY:
 					StartingSide = ClientPlayer->BattleSide;
+					if(!ClientPlayer->LastTarget)
+						ClientPlayer->LastTarget = ClientPlayer;
 				break;
 				case TargetType::ENEMY_ALL:
 					Multiple = true;
