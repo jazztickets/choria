@@ -247,7 +247,6 @@ void _Scripting::PushStatChange(_StatChange *StatChange) {
 void _Scripting::PushStatusEffect(_StatusEffect *StatusEffect) {
 	lua_newtable(LuaState);
 
-	//lua_pushstring(LuaState, StatusEffect->Buff->Script.c_str());
 	lua_getglobal(LuaState, StatusEffect->Buff->Script.c_str());
 	lua_setfield(LuaState, -2, "Buff");
 

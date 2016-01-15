@@ -514,3 +514,33 @@ function Skill_Defend.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Backstab --
+
+Skill_Backstab = Base_Attack:New()
+Skill_Backstab.BaseDamage = 0.5
+Skill_Backstab.DamagePerLevel = 0.1
+Skill_Backstab.DamageMultiplier = 1.5 - Skill_Backstab.DamagePerLevel
+
+function Skill_Backstab.GetDamage(self, Level)
+
+	return self.DamageMultiplier + self.DamagePerLevel * Level
+end
+
+function Skill_Backstab.GetInfo(self, Level)
+
+	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Level) * 100) .. "% [c white]damage to stunned enemies"
+end
+
+function Skill_Backstab.Proc(self, Roll, Level, Source, Target, Result)
+	for i = 1, #Target.StatusEffects do
+		Effect = Target.StatusEffects[i]
+		if Effect.Buff == Buff_Stunned then
+			Result.Target.Health = math.floor(Result.Target.Health * self:GetDamage(Level))
+			Result.Target.Crit = true
+			return
+		end
+	end
+
+	Result.Target.Health = math.floor(Result.Target.Health * self.BaseDamage)
+end
