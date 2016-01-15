@@ -284,6 +284,7 @@ void _Menu::ConnectToHost() {
 	ClientState.Connect(false);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
+	Label->Color = COLOR_WHITE;
 	Label->Text = "Connecting...";
 
 	_Button *Button = Assets.Buttons["button_connect_connect"];
