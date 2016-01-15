@@ -34,6 +34,7 @@
 #include <graphics.h>
 #include <scripting.h>
 #include <stats.h>
+#include <config.h>
 #include <program.h>
 #include <assets.h>
 #include <font.h>
@@ -223,7 +224,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Set up initial target
 		if(Item) {
-			if(ClientPlayer->Level == 1 && ClientPlayer->HUD)
+			if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
 				ClientPlayer->HUD->SetMessage("Hit up/down to change targets. Press " + Actions.GetInputNameForAction(_Actions::SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
@@ -295,7 +296,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
-		if(ClientPlayer->Level == 1 && ClientPlayer->HUD)
+		if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
 			ClientPlayer->HUD->SetMessage("");
 
 		// Remember target

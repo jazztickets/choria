@@ -919,7 +919,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 
 	// Reset hud
 	HUD->CloseWindows();
-	if(Player->Level == 1)
+	if(Config.ShowTutorial && Player->Level == 1)
 		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(_Actions::SKILL1) + " key to attack");
 
 	// Create a new battle instance
@@ -1124,8 +1124,14 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 	Player->Gold = Data.Read<int32_t>();
 	Player->CalculateStats();
 
-	if(Player->Level > OldLevel)
+	if(Player->Level > OldLevel) {
 		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill points. Press " + Actions.GetInputNameForAction(_Actions::SKILLS) + " to use them.");
+
+		if(Player->Level == 2) {
+			Config.ShowTutorial = 0;
+			Config.Save();
+		}
+	}
 }
 
 // Creates an object from a buffer

@@ -66,6 +66,8 @@ class _Config {
 		std::string BrowserCommand;
 		std::string DesignToolURL;
 
+		// Misc
+		int ShowTutorial;
 		std::string LastHost;
 		std::string LastPort;
 
