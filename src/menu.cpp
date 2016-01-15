@@ -146,23 +146,25 @@ void _Menu::InitEditor() {
 }
 
 // Init connect screen
-void _Menu::InitConnect(bool ConnectNow) {
+void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 	ClientState.Network->Disconnect();
 
 	ChangeLayout("element_menu_connect");
 
 	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
-	Host->SetText(Config.LastHost);
+	if(UseConfig)
+		Host->SetText(Config.LastHost);
 
 	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
-	Port->SetText(Config.LastPort);
+	if(UseConfig)
+		Port->SetText(Config.LastPort);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Color = COLOR_WHITE;
 	Label->Text = "";
 
 	_Button *Button = Assets.Buttons["button_connect_connect"];
-	Button->Enabled = true;
+	((_Label *)Button->Children.front())->Text = "Connect";
 
 	// Set focus
 	FocusedElement = Host;
@@ -288,7 +290,7 @@ void _Menu::ConnectToHost() {
 	Label->Text = "Connecting...";
 
 	_Button *Button = Assets.Buttons["button_connect_connect"];
-	Button->Enabled = false;
+	((_Label *)Button->Children.front())->Text = "Cancel";
 
 	FocusedElement = nullptr;
 }
@@ -620,7 +622,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 		case STATE_ACCOUNT: {
 			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-					InitConnect();
+					InitConnect(true);
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
 					SendAccountInfo();
 				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
@@ -663,7 +665,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					ClientState.Connect(true);
 				}
 				else if(Clicked->Identifier == "button_title_joinserver") {
-					InitConnect();
+					InitConnect(true);
 				}
 				else if(Clicked->Identifier == "button_title_mapeditor") {
 					InitEditor();
@@ -747,7 +749,12 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 			} break;
 			case STATE_CONNECT: {
 				if(Clicked->Identifier == "button_connect_connect") {
-					ConnectToHost();
+					if(!ClientState.Network->IsDisconnected()) {
+						ClientState.Network->Disconnect(true);
+						InitConnect(false);
+					}
+					else
+						ConnectToHost();
 				}
 				else if(Clicked->Identifier == "button_connect_back") {
 					InitTitle(true);
@@ -761,7 +768,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					SendAccountInfo(true);
 				}
 				else if(Clicked->Identifier == "button_account_back") {
-					InitConnect();
+					InitConnect(true);
 				}
 			} break;
 			case STATE_INGAME: {
@@ -852,7 +859,7 @@ void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 		InitTitle();
 	}
 	else {
-		InitConnect();
+		InitConnect(true);
 
 		_Label *Label = Assets.Labels["label_menu_connect_message"];
 		Label->Color = COLOR_RED;

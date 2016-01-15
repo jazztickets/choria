@@ -72,7 +72,7 @@ class _Menu {
 		void InitTitle(bool Disconnect=false);
 		void InitCharacters();
 		void InitNewCharacter();
-		void InitConnect(bool ConnectNow=false);
+		void InitConnect(bool UseConfig, bool ConnectNow=false);
 		void InitAccount();
 		void InitOptions();
 		void InitInGame();

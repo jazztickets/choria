@@ -90,7 +90,7 @@ void _ClientState::Init() {
 	AssignPlayer(nullptr);
 
 	if(ConnectNow)
-		Menu.InitConnect(true);
+		Menu.InitConnect(true, true);
 	else
 		Menu.InitTitle();
 }
