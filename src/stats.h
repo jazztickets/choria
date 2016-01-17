@@ -61,6 +61,10 @@ struct _Level {
 	int SkillPoints;
 };
 
+struct _Resistance {
+	std::string Name;
+};
+
 struct _Zone {
 	_Zone(uint32_t MonsterID, uint32_t Odds) : MonsterID(MonsterID), Odds(Odds) { }
 	uint32_t MonsterID;
@@ -139,6 +143,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
+		std::unordered_map<uint32_t, std::string> ResistanceTypes;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;
 		std::unordered_map<uint32_t, const _Object *> Builds;
@@ -152,8 +157,9 @@ class _Stats {
 		void LoadEvents();
 		void LoadLevels();
 		void LoadBuffs();
-		void LoadTargetTypes();
 		void LoadItemTypes();
+		void LoadTargetTypes();
+		void LoadResistanceTypes();
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();

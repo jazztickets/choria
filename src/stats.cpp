@@ -37,8 +37,9 @@ _Stats::_Stats() {
 	LoadEvents();
 	LoadLevels();
 	LoadBuffs();
-	LoadTargetTypes();
 	LoadItemTypes();
+	LoadTargetTypes();
+	LoadResistanceTypes();
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
@@ -140,6 +141,20 @@ void _Stats::LoadBuffs() {
 	Buffs[0] = nullptr;
 }
 
+// Load item types
+void _Stats::LoadItemTypes() {
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM itemtype");
+
+	// Get data
+	while(Database->FetchRow()) {
+		uint32_t ID = Database->GetInt<uint32_t>("id");
+		ItemTypes[ID] = Database->GetString("name");
+	}
+	Database->CloseQuery();
+}
+
 // Load target type strings
 void _Stats::LoadTargetTypes() {
 
@@ -154,16 +169,16 @@ void _Stats::LoadTargetTypes() {
 	Database->CloseQuery();
 }
 
-// Load item types
-void _Stats::LoadItemTypes() {
+// Load resistance type names
+void _Stats::LoadResistanceTypes() {
 
 	// Run query
-	Database->PrepareQuery("SELECT * FROM itemtype");
+	Database->PrepareQuery("SELECT * FROM restype");
 
 	// Get data
 	while(Database->FetchRow()) {
 		uint32_t ID = Database->GetInt<uint32_t>("id");
-		ItemTypes[ID] = Database->GetString("name");
+		ResistanceTypes[ID] = Database->GetString("name");
 	}
 	Database->CloseQuery();
 }
