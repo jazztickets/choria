@@ -237,6 +237,7 @@ end
 
 -- Spark --
 Skill_Spark = Base_Spell:New()
+Skill_Spark.DamageType = DamageType["Lightning"]
 Skill_Spark.DamageBase = 1
 Skill_Spark.Multiplier = 2
 Skill_Spark.CostPerLevel = 1 / 5
@@ -248,6 +249,7 @@ end
 
 -- Fire Blast --
 Skill_FireBlast = Base_Spell:New()
+Skill_FireBlast.DamageType = DamageType["Fire"]
 Skill_FireBlast.DamageBase = 5
 Skill_FireBlast.Multiplier = 2
 Skill_FireBlast.CostPerLevel = 1 / 2

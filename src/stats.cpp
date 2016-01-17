@@ -39,7 +39,7 @@ _Stats::_Stats() {
 	LoadBuffs();
 	LoadItemTypes();
 	LoadTargetTypes();
-	LoadResistanceTypes();
+	LoadDamageTypes();
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
@@ -169,16 +169,16 @@ void _Stats::LoadTargetTypes() {
 	Database->CloseQuery();
 }
 
-// Load resistance type names
-void _Stats::LoadResistanceTypes() {
+// Load damage types
+void _Stats::LoadDamageTypes() {
 
 	// Run query
-	Database->PrepareQuery("SELECT * FROM restype");
+	Database->PrepareQuery("SELECT * FROM damagetype");
 
 	// Get data
 	while(Database->FetchRow()) {
 		uint32_t ID = Database->GetInt<uint32_t>("id");
-		ResistanceTypes[ID] = Database->GetString("name");
+		DamageTypes[ID] = Database->GetString("name");
 	}
 	Database->CloseQuery();
 }
@@ -216,6 +216,8 @@ void _Stats::LoadItems() {
 		Item->ManaRegen = (float)Database->GetReal("manaregen");
 		Item->BattleSpeed = Database->GetReal("battlespeed");
 		Item->MoveSpeed = (float)Database->GetReal("movespeed");
+		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
+		Item->Resistance = (float)Database->GetReal("res");
 		Item->Tradable = Database->GetInt<int>("tradable");
 		Item->TargetAlive = Database->GetInt<int>("target_alive");
 		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");

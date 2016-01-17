@@ -85,6 +85,8 @@ class _Item {
 		float ManaRegen;
 		double BattleSpeed;
 		float MoveSpeed;
+		uint32_t ResistanceTypeID;
+		float Resistance;
 		bool Tradable;
 		bool TargetAlive;
 		TargetType TargetID;

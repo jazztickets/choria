@@ -90,6 +90,17 @@ void _Scripting::InjectStats(_Stats *Stats) {
 	}
 	lua_setglobal(LuaState, "Buffs");
 
+	// Add damage types
+	lua_newtable(LuaState);
+	for(const auto &Iterator : Stats->DamageTypes) {
+
+		// Add pointer to table
+		lua_pushstring(LuaState, Iterator.second.c_str());
+		lua_pushinteger(LuaState, Iterator.first);
+		lua_settable(LuaState, -3);
+	}
+	lua_setglobal(LuaState, "DamageType");
+
 	// Push inventory slot types
 	lua_pushinteger(LuaState, InventoryType::HEAD);
 	lua_setglobal(LuaState, "INVENTORY_HEAD");
@@ -165,6 +176,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectGenerateDefense, 1);
 	lua_setfield(LuaState, -2, "GenerateDefense");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetResistance, 1);
+	lua_setfield(LuaState, -2, "GetResistance");
 
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
@@ -507,6 +522,17 @@ int _Scripting::ObjectGenerateDefense(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	lua_pushinteger(LuaState, Object->GenerateDefense());
+
+	return 1;
+}
+
+// Get resistance for a certain damage type
+int _Scripting::ObjectGetResistance(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
+
+	lua_pushnumber(LuaState, Object->Resistances[DamageTypeID]);
 
 	return 1;
 }

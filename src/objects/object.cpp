@@ -1170,6 +1170,7 @@ void _Object::CalculateStats() {
 	MinDefense = BaseMinDefense;
 	MaxDefense = BaseMaxDefense;
 	MoveSpeed = BaseMoveSpeed;
+	Resistances.clear();
 	Invisible = 0;
 
 	// Get item stats
@@ -1199,6 +1200,8 @@ void _Object::CalculateStats() {
 			ManaRegen += Item->ManaRegen;
 			BattleSpeed += Item->BattleSpeed;
 			MoveSpeed += Item->MoveSpeed;
+
+			Resistances[Item->ResistanceTypeID] += Item->Resistance;
 		}
 	}
 

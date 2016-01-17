@@ -206,6 +206,7 @@ class _Object : public _ManagerBase {
 		double BattleSpeed;
 		float Evasion;
 		float HitChance;
+		std::unordered_map<uint32_t, float> Resistances;
 
 		// Player stats
 		double PlayTime;

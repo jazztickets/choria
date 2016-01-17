@@ -61,7 +61,7 @@ struct _Level {
 	int SkillPoints;
 };
 
-struct _Resistance {
+struct _DamageType {
 	std::string Name;
 };
 
@@ -143,7 +143,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
-		std::unordered_map<uint32_t, std::string> ResistanceTypes;
+		std::unordered_map<uint32_t, std::string> DamageTypes;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;
 		std::unordered_map<uint32_t, const _Object *> Builds;
@@ -159,7 +159,7 @@ class _Stats {
 		void LoadBuffs();
 		void LoadItemTypes();
 		void LoadTargetTypes();
-		void LoadResistanceTypes();
+		void LoadDamageTypes();
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();

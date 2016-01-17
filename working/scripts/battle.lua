@@ -36,6 +36,7 @@ Base_Attack = {
 
 -- Base Spell Skill --
 Base_Spell = {
+	DamageType = 0,
 	ManaCostBase = 0,
 	DamageBase = 0,
 	Multiplier = 0,
@@ -71,8 +72,10 @@ Base_Spell = {
 	end,
 
 	Use = function(self, Level, Source, Target, Result)
+		Damage = self:GetDamage(Level)
+		Damage = math.floor(Damage * (1 - Target.GetResistance(self.DamageType)))
+		Damage = math.max(Damage, 0)
 
-		Damage = math.max(self:GetDamage(Level) - Target.GenerateDefense(), 0)
 		Result.Target.Health = -Damage
 
 		return Result
