@@ -239,8 +239,6 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::SKILLS:
 					HUD->ToggleSkills();
 				break;
-				case _Actions::ATTACK:
-				break;
 				case _Actions::UP:
 				case _Actions::DOWN:
 				case _Actions::LEFT:

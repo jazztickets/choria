@@ -1,6 +1,26 @@
-choria 0.5.0 - 
-- Removed irrlicht
-- Added SDL2
+choria 0.9.0 -
+- Replaced irrlicht with a custom SDL2/OpenGL based engine
+- Resolution can now be changed in the config file
+- Reworked entire UI and all artwork
+- Added Lua for scripting
+- Added starting builds to create character screen
+- Added alt-enter to toggle fullscreen/windowed mode
+- Added per-pixel lighting and smooth camera scrolling
+- Added server clock and day/night cycle
+- Added background maps
+- Reworked skill system and all skills
+- Reworked battle system to use individual timers instead of turns
+- Battles can now support up to 8 fighters on each side
+- Removed battle results screen
+- Added animations to stat changes and action results
+- Added status effects
+- Action bar can now hold items
+- Reworked all maps/monsters/items
+- Added various map events: doors, portals, custom scripts
+- Bosses are event based now and have fighting cooldowns
+- Added various commands to dedicated server
+- Switched to mingw for Windows builds
+- Reworked design tool to use python/ajax instead of apache/php
 
 choria 0.4.2 - 2015-09-29
 - Linux save data now in ~/.local/share/choria

@@ -53,7 +53,7 @@ class _Actions {
 			SKILLS,
 			TELEPORT,
 			MENU,
-			ATTACK,
+			UNUSED,
 			TRADE,
 			CHAT,
 			SKILL1,
