@@ -485,7 +485,7 @@ end
 Skill_Defend = {}
 Skill_Defend.Defense = 3
 Skill_Defend.DefensePerLevel = 1 / 4
-Skill_Defend.Duration = 2.9
+Skill_Defend.Duration = 3.4
 Skill_Defend.DurationPerLevel = 0.1
 
 function Skill_Defend.GetDefense(self, Level)
