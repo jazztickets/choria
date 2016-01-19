@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "choria"
-!define PRODUCT_VERSION "0.5.0"
+!define PRODUCT_VERSION "0.9.0"
 !define PRODUCT_PUBLISHER "Alan Witkowski"
 !define PRODUCT_WEB_SITE "https://github.com/jazztickets/choria"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\choria.exe"
