@@ -33,7 +33,10 @@ void _Label::Render() const {
 	if(!Visible)
 		return;
 
+	// Set color
 	glm::vec4 RenderColor(Color.r, Color.g, Color.b, Color.a*Fade);
+	if(!Enabled)
+		RenderColor.a *= 0.5f;
 
 	Graphics.SetProgram(Assets.Programs["pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);

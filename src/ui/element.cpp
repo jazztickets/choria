@@ -258,3 +258,11 @@ void _Element::SetFade(float Fade) {
 	for(auto &Child : Children)
 		Child->SetFade(Fade);
 }
+
+// Set enabled state of element
+void _Element::SetEnabled(bool Enabled) {
+	this->Enabled = Enabled;
+
+	for(auto &Child : Children)
+		Child->SetEnabled(Enabled);
+}

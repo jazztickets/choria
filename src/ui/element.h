@@ -50,6 +50,7 @@ class _Element {
 		void SetClickable(bool Clickable, int Depth=-1);
 		void SetVisible(bool Visible);
 		void SetFade(float Fade);
+		void SetEnabled(bool Enabled);
 		void SetOffset(const glm::vec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
 		void SetWidth(float Width) { Size.x = Width; CalculateBounds(); }
 		void SetHeight(float Height) { Size.y = Height; CalculateBounds(); }

@@ -731,9 +731,9 @@ void _HUD::InitTrader() {
 
 	// Disable accept button if requirements not met
 	if(RewardItemSlot >= Player->Inventory->Slots.size())
-		Assets.Buttons["button_trader_accept"]->Enabled = false;
+		Assets.Buttons["button_trader_accept"]->SetEnabled(false);
 	else
-		Assets.Buttons["button_trader_accept"]->Enabled = true;
+		Assets.Buttons["button_trader_accept"]->SetEnabled(true);
 
 	TraderElement->SetVisible(true);
 }

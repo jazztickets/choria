@@ -93,7 +93,7 @@ void _Menu::InitCharacters() {
 // Init new player popup
 void _Menu::InitNewCharacter() {
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
-	CreateButton->Enabled = false;
+	CreateButton->SetEnabled(false);
 
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	Name->SetText("");
@@ -191,7 +191,7 @@ void _Menu::InitAccount() {
 	Label->Text = "";
 
 	_Button *Button = Assets.Buttons["button_account_login"];
-	Button->Enabled = true;
+	Button->SetEnabled(true);
 
 	// Set focus
 	FocusedElement = Username;
@@ -334,7 +334,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Label->Text = "Logging in...";
 
 	_Button *Button = Assets.Buttons["button_account_login"];
-	Button->Enabled = false;
+	Button->SetEnabled(false);
 
 	// Send information
 	_Buffer Packet;
@@ -524,22 +524,22 @@ void _Menu::ValidateCreateCharacter() {
 
 	// Enable button
 	if(PortraitID != 0 && BuildID != 0 && NameValid)
-		CreateButton->Enabled = true;
+		CreateButton->SetEnabled(true);
 	else
-		CreateButton->Enabled = false;
+		CreateButton->SetEnabled(false);
 }
 
 // Validate characters ui elements
 void _Menu::UpdateCharacterButtons() {
 	_Button *DeleteButton = Assets.Buttons["button_characters_delete"];
 	_Button *PlayButton = Assets.Buttons["button_characters_play"];
-	DeleteButton->Enabled = false;
-	PlayButton->Enabled = false;
+	DeleteButton->SetEnabled(false);
+	PlayButton->SetEnabled(false);
 
 	size_t SelectedSlot = GetSelectedCharacter();
 	if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
-		DeleteButton->Enabled = true;
-		PlayButton->Enabled = true;
+		DeleteButton->SetEnabled(true);
+		PlayButton->SetEnabled(true);
 	}
 }
 
@@ -973,7 +973,7 @@ void _Menu::SetAccountMessage(const std::string &Message) {
 	Label->Color = COLOR_RED;
 
 	_Button *Button = Assets.Buttons["button_account_login"];
-	Button->Enabled = true;
+	Button->SetEnabled(true);
 }
 
 // Set message for title screen
