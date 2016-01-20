@@ -1,10 +1,11 @@
 *.dll
 *.swp
 *.~lock*
+*.zip
 CMakeLists.txt.user
 bin/
 build/
-build-mingw/
+build-mingw*
 export/
 src/tags
 working/stats/*.txt

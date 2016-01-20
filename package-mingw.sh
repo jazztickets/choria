@@ -1,26 +1,42 @@
 #!/bin/bash
 git pull
-cd build-mingw
 
-make -j4
+build() {
 
-if [ $? -ne 0 ]; then
-	echo "failed"
-	exit
-fi
+	ver=$1
 
-cd ..
+	if [ $ver -eq "32" ]; then
+		arch=i686-w64-mingw32
+	else
+		arch=x86_64-w64-mingw32
+	fi
 
-#ver=`git log --pretty=format:'%h' -n 1`
-ver=`git rev-list --all --count`
-cp bin/Release/choria.exe working/
-rm -f choria*.7z
-rm -f choria*.zip
+	builddir=build-mingw$ver
+	cd $builddir
 
-archive=choria-${ver}.zip
-#7za a $archive working
-zip -r $archive working
+	make -j4
 
-rm working/choria.exe
+	if [ $? -ne 0 ]; then
+		echo "failed $builddir"
+		exit
+	fi
 
-scp $archive workcomp:downloads/
+	cd ..
+
+	cp /usr/$arch/bin/{libbz2-1.dll,libfreetype-6.dll,libgcc_*.dll,libsqlite3-0.dll,libstdc++-6.dll,libwinpthread-1.dll,lua53.dll,SDL2.dll,zlib1.dll} working/
+
+	gitver=`git rev-list --all --count`
+	mv bin/Release/choria.exe working/
+	rm -f choria*.zip
+
+	archive=choria${ver}-${gitver}.zip
+	zip -r $archive working
+
+	rm working/choria.exe
+	rm working/*.dll
+
+	scp $archive workcomp:downloads/
+}
+
+build 32
+build 64
