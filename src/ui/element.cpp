@@ -176,8 +176,8 @@ void _Element::CalculateChildrenBounds() {
 }
 
 // Render the element
-void _Element::Render() const {
-	if(!Visible)
+void _Element::Render(bool IgnoreVisible) const {
+	if(!Visible && !IgnoreVisible)
 		return;
 
 	if(MaskOutside) {

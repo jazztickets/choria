@@ -37,7 +37,7 @@ class _Element {
 		virtual void Update(double FrameTime, const glm::vec2 &Mouse);
 
 		virtual void CalculateBounds();
-		virtual void Render() const;
+		virtual void Render(bool IgnoreVisible=false) const;
 		virtual bool HandleKeyEvent(const _KeyEvent &KeyEvent);
 		virtual void HandleInput(bool Pressed);
 		_Element *GetClickedElement();

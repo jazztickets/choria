@@ -36,8 +36,8 @@ _Button::~_Button() {
 }
 
 // Render the element
-void _Button::Render() const {
-	if(!Visible)
+void _Button::Render(bool IgnoreVisible) const {
+	if(!Visible && !IgnoreVisible)
 		return;
 
 	if(Enabled) {

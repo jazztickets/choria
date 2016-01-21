@@ -113,8 +113,8 @@ bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
 }
 
 // Render the element
-void _TextBox::Render() const {
-	if(!Visible)
+void _TextBox::Render(bool IgnoreVisible) const {
+	if(!Visible && !IgnoreVisible)
 		return;
 
 	// Get text to render

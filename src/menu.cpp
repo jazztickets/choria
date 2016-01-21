@@ -73,7 +73,6 @@ void _Menu::InitTitle(bool Disconnect) {
 		ClientState.Network->Disconnect(true);
 
 	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
-	Assets.Labels["label_menu_title_version"]->Visible = true;
 	Assets.Labels["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
@@ -804,7 +803,8 @@ void _Menu::Render() {
 		case STATE_TITLE: {
 			if(CurrentLayout)
 				CurrentLayout->Render();
-			Assets.Labels["label_menu_title_version"]->Render();
+			Assets.Labels["label_menu_title_version"]->Render(true);
+			Assets.Images["image_title_logo"]->Render(true);
 		} break;
 		case STATE_CHARACTERS: {
 			Assets.Elements["element_menu_characters"]->Render();

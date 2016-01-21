@@ -33,7 +33,7 @@ class _Label : public _Element {
 		_Label();
 		~_Label() override;
 
-		void Render() const override;
+		void Render(bool IgnoreVisible=false) const override;
 
 		void SetWrap(float Width);
 

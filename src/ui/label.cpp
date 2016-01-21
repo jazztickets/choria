@@ -29,8 +29,8 @@ _Label::~_Label() {
 }
 
 // Render the element
-void _Label::Render() const {
-	if(!Visible)
+void _Label::Render(bool IgnoreVisible) const {
+	if(!Visible && !IgnoreVisible)
 		return;
 
 	// Set color

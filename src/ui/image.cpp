@@ -30,8 +30,8 @@ _Image::~_Image() {
 }
 
 // Render the element
-void _Image::Render() const {
-	if(!Visible)
+void _Image::Render(bool IgnoreVisible) const {
+	if(!Visible && !IgnoreVisible)
 		return;
 
 	Graphics.SetColor(Color);

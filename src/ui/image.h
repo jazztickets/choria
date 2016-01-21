@@ -32,7 +32,7 @@ class _Image : public _Element {
 		_Image();
 		~_Image() override;
 
-		void Render() const override;
+		void Render(bool IgnoreVisible=false) const override;
 
 		// Attributes
 		const _Texture *Texture;

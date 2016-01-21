@@ -31,7 +31,7 @@ class _Button : public _Element {
 		_Button();
 		~_Button() override;
 
-		void Render() const override;
+		void Render(bool IgnoreVisible=false) const override;
 
 		// Attributes
 		const _Style *HoverStyle;
