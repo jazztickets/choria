@@ -19,6 +19,7 @@
 #include <states/editor.h>
 #include <states/client.h>
 #include <states/dedicated.h>
+#include <states/bot.h>
 #include <network/network.h>
 #include <graphics.h>
 #include <input.h>
@@ -64,6 +65,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else if(Token == "-connect") {
 			ClientState.ConnectNow = true;
 		}
+		else if(Token == "-bot") {
+			State = &BotState;
+		}
 		else if(Token == "-username" && TokensRemaining > 0) {
 			Menu.SetUsername(Arguments[++i]);
 		}
@@ -90,6 +94,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
 
 		DedicatedState.SetNetworkPort(NetworkPort);
+	}
+	else if(State == &BotState) {
+		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
 	}
 	else {
 
