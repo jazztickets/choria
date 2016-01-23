@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <string>
 
 // Forward Declarations
 class _Stats;
@@ -29,7 +30,7 @@ class _Bot {
 
 	public:
 
-		_Bot();
+		_Bot(const std::string &HostAddress, uint16_t Port);
 		~_Bot();
 
 		// Update
@@ -37,4 +38,7 @@ class _Bot {
 		void HandlePacket(_Buffer &Data);
 
 		_ClientNetwork *Network;
+
+		std::string Username;
+		std::string Password;
 };

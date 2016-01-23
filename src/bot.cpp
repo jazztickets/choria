@@ -25,8 +25,10 @@
 #include <iomanip>
 
 // Constructor
-_Bot::_Bot() {
+_Bot::_Bot(const std::string &HostAddress, uint16_t Port) {
+
 	Network = new _ClientNetwork();
+	Network->Connect(HostAddress, Port);
 }
 
 // Destructor
@@ -55,8 +57,6 @@ void _Bot::Update(double FrameTime) {
 				Network->SendPacket(Packet);
 			} break;
 			case _NetworkEvent::DISCONNECT:
-				//if(Done)
-				//	Framework.Done = true;
 			break;
 			case _NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
