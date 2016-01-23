@@ -19,7 +19,7 @@
 #include <states/editor.h>
 #include <states/client.h>
 #include <states/dedicated.h>
-#include <states/bot.h>
+#include <states/bots.h>
 #include <network/network.h>
 #include <graphics.h>
 #include <input.h>

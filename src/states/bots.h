@@ -19,19 +19,21 @@
 
 // Libraries
 #include <state.h>
+#include <list>
 #include <thread>
 
 // Forward Declarations
 class _Stats;
 class _ClientNetwork;
 class _Buffer;
+class _Bot;
 
 // Dedicated server state
-class _BotState : public _State {
+class _BotsState : public _State {
 
 	public:
 
-		_BotState();
+		_BotsState();
 
 		// Setup
 		void Init() override;
@@ -41,20 +43,13 @@ class _BotState : public _State {
 		// Update
 		void Update(double FrameTime) override;
 
-		// State parameters
-		void SetNetworkPort(uint16_t NetworkPort) { this->NetworkPort = NetworkPort; }
-
-		_ClientNetwork *Network;
 		bool Done;
 
 	protected:
 
-		void HandlePacket(_Buffer &Data);
-
-		std::string HostAddress;
-		uint16_t NetworkPort;
-
 		std::thread *Thread;
+
+		std::list<_Bot *> Bots;
 };
 
-extern _BotState BotState;
+extern _BotsState BotState;

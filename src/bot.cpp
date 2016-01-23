@@ -15,82 +15,27 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <states/bot.h>
+#include <bot.h>
 #include <network/peer.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <objects/battle.h>
-#include <framework.h>
 #include <buffer.h>
-#include <stats.h>
+#include <iostream>
 #include <iomanip>
 
-_BotState BotState;
-
-// Command loop
-void RunCommandThread() {
-	std::cout << "start" << std::endl;
-
-	bool Done = false;
-	while(!Done) {
-		std::string Input;
-		std::getline(std::cin, Input);
-		if(Input == "stop" || std::cin.eof() == 1) {
-			BotState.Quit();
-			Done = true;
-		}
-		else if(Input == "d" || Input == "disconnect")
-			BotState.Network->Disconnect();
-		else
-			std::cout << "Command not recognized" << std::endl;
-	}
-}
-
 // Constructor
-_BotState::_BotState() :
-	Done(false),
-	Thread(nullptr) {
-
-}
-
-// Init
-void _BotState::Init() {
-
-	try {
-		Thread = new std::thread(RunCommandThread);
-	}
-	catch(std::exception &Error) {
-		std::cerr << Error.what() << std::endl;
-		Framework.Done = true;
-	}
-
+_Bot::_Bot() {
 	Network = new _ClientNetwork();
-	Network->Connect("127.0.0.1", 31234);
 }
 
-// Close
-void _BotState::Close() {
-	if(Thread) {
-		Thread->join();
-		delete Thread;
-	}
-
-	if(Network)
-		Network->Disconnect();
-
+// Destructor
+_Bot::~_Bot() {
 	delete Network;
 }
 
-// Exit
-void _BotState::Quit() {
-	Done = true;
-
-	if(Network->IsConnected())
-		Network->Disconnect();
-}
-
 // Update
-void _BotState::Update(double FrameTime) {
+void _Bot::Update(double FrameTime) {
 
 	// Update network
 	Network->Update(FrameTime);
@@ -110,8 +55,8 @@ void _BotState::Update(double FrameTime) {
 				Network->SendPacket(Packet);
 			} break;
 			case _NetworkEvent::DISCONNECT:
-				if(Done)
-					Framework.Done = true;
+				//if(Done)
+				//	Framework.Done = true;
 			break;
 			case _NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
@@ -123,7 +68,7 @@ void _BotState::Update(double FrameTime) {
 }
 
 // Handle packet
-void _BotState::HandlePacket(_Buffer &Data) {
+void _Bot::HandlePacket(_Buffer &Data) {
 	PacketType Type = Data.Read<PacketType>();
 
 	//std::cout << (int)Type << std::endl;
