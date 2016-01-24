@@ -79,6 +79,7 @@ const std::vector<double> DayCyclesTime = {
 _Map::_Map() :
 	Tiles(nullptr),
 	Size(0, 0),
+	UseAtlas(false),
 	TileAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	IsOutside(true),
@@ -101,7 +102,7 @@ _Map::~_Map() {
 	delete BackgroundMap;
 
 	// Delete atlas
-	if(!Server)
+	if(UseAtlas)
 		CloseAtlas();
 
 	// Delete map data
@@ -645,7 +646,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 				File >> IsOutside;
 			} break;
 			case 'B': {
-				if(!Server) {
+				if(UseAtlas) {
 					File >> BackgroundMapFile;
 
 					BackgroundMap = new _Map();
@@ -659,7 +660,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 				}
 			} break;
 			case 'Z': {
-				if(!Server)
+				if(UseAtlas)
 					File >> BackgroundOffset.x >> BackgroundOffset.y >> BackgroundOffset.z;
 			} break;
 			// Atlas texture
@@ -717,7 +718,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 	IndexEvents();
 
 	// Initialize 2d tile rendering
-	if(!Server) {
+	if(UseAtlas) {
 		InitAtlas(AtlasPath, Static);
 	}
 }

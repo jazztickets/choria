@@ -27,8 +27,9 @@ class _Stats;
 class _ClientNetwork;
 class _Buffer;
 class _Bot;
+class _Stats;
 
-// Dedicated server state
+// Bot manager class
 class _BotsState : public _State {
 
 	public:
@@ -38,17 +39,24 @@ class _BotsState : public _State {
 		// Setup
 		void Init() override;
 		void Close() override;
-		void Quit();
 
 		// Update
 		void Update(double FrameTime) override;
 
-		bool Done;
+		// Commands
+		void Add();
+		void DisconnectAll();
+		void Quit();
 
 	protected:
 
+		bool Done;
 		std::thread *Thread;
 
+		std::string HostAddress;
+		uint16_t Port;
+
+		_Stats *Stats;
 		std::list<_Bot *> Bots;
 };
 

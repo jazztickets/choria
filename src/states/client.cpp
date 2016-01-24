@@ -573,6 +573,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 			DeleteMap();
 
 		Map = new _Map();
+		Map->UseAtlas = true;
 		Map->Clock = Clock;
 		Map->NetworkID = MapID;
 		Map->Load(Stats->GetMap(MapID)->File);

@@ -20,20 +20,26 @@
 #include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <objects/battle.h>
+#include <objects/map.h>
+#include <stats.h>
 #include <buffer.h>
 #include <iostream>
 #include <iomanip>
 
 // Constructor
-_Bot::_Bot(const std::string &HostAddress, uint16_t Port) {
+_Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
+	Network(new _ClientNetwork()),
+	Map(nullptr),
+	Stats(Stats) {
 
-	Network = new _ClientNetwork();
+	Username = "a";
+	Password = "a";
 	Network->Connect(HostAddress, Port);
 }
 
 // Destructor
 _Bot::~_Bot() {
-	delete Network;
+	delete Map;
 }
 
 // Update
@@ -51,8 +57,8 @@ void _Bot::Update(double FrameTime) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 				Packet.WriteBit(0);
-				Packet.WriteString("a");
-				Packet.WriteString("a");
+				Packet.WriteString(Username.c_str());
+				Packet.WriteString(Password.c_str());
 				Packet.Write<uint64_t>(0);
 				Network->SendPacket(Packet);
 			} break;
@@ -95,9 +101,27 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::OBJECT_STATS:
 			//HandleObjectStats(Data);
 		break;
-		case PacketType::WORLD_CHANGEMAPS:
+		case PacketType::WORLD_CHANGEMAPS: {
 			//HandleChangeMaps(Data);
-		break;
+
+			// Load map
+			NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
+			double Clock = Data.Read<double>();
+
+			// Delete old map and create new
+			if(!Map || Map->NetworkID != MapID) {
+				if(Map) {
+					delete Map;
+					Map = nullptr;
+				}
+
+				Map = new _Map();
+				Map->Clock = Clock;
+				Map->NetworkID = MapID;
+				Map->Load(Stats->GetMap(MapID)->File);
+				//AssignPlayer(nullptr);
+			}
+		} break;
 		case PacketType::WORLD_OBJECTLIST:
 			//HandleObjectList(Data);
 		break;

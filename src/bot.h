@@ -19,25 +19,31 @@
 
 // Libraries
 #include <string>
+#include <memory>
 
 // Forward Declarations
 class _Stats;
 class _ClientNetwork;
 class _Buffer;
+class _Map;
+class _Stats;
 
 // Bot class
 class _Bot {
 
 	public:
 
-		_Bot(const std::string &HostAddress, uint16_t Port);
+		_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port);
 		~_Bot();
 
 		// Update
 		void Update(double FrameTime);
 		void HandlePacket(_Buffer &Data);
 
-		_ClientNetwork *Network;
+		std::unique_ptr<_ClientNetwork> Network;
+
+		_Map *Map;
+		_Stats *Stats;
 
 		std::string Username;
 		std::string Password;

@@ -139,6 +139,7 @@ class _Map : public _ManagerBase {
 		std::map<_Event, glm::ivec2> IndexedEvents;
 
 		// Graphics
+		bool UseAtlas;
 		const _Atlas *TileAtlas;
 		glm::vec4 AmbientLight;
 		int IsOutside;
