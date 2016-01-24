@@ -796,6 +796,7 @@ void _EditorState::CreateMap() {
 
 	// Create map
 	Map = new _Map();
+	Map->UseAtlas = true;
 	Map->Size = Size;
 	Map->InitAtlas(TEXTURES_MAP + MAP_DEFAULT_TILESET);
 	Map->AllocateMap();
@@ -875,6 +876,7 @@ void _EditorState::LoadMap() {
 
 	// Attempt to load map
 	_Map *NewMap = new _Map();
+	NewMap->UseAtlas = true;
 	try {
 		NewMap->Load(Path);
 	}
