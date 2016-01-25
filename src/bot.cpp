@@ -22,6 +22,8 @@
 #include <objects/battle.h>
 #include <objects/map.h>
 #include <stats.h>
+#include <constants.h>
+#include <scripting.h>
 #include <buffer.h>
 #include <iostream>
 #include <iomanip>
@@ -30,7 +32,13 @@
 _Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
 	Network(new _ClientNetwork()),
 	Map(nullptr),
+	Player(nullptr),
 	Stats(Stats) {
+
+	ObjectManager = new _Manager<_Object>();
+
+	Scripting = new _Scripting();
+	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
 
 	Username = "a";
 	Password = "a";
@@ -39,7 +47,11 @@ _Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
 
 // Destructor
 _Bot::~_Bot() {
+
+	delete ObjectManager;
+	//DeleteBattle();
 	delete Map;
+	delete Scripting;
 }
 
 // Update
@@ -99,10 +111,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Network->SendPacket(Packet);
 		} break;
 		case PacketType::OBJECT_STATS:
-			//HandleObjectStats(Data);
+			if(Player)
+				Player->UnserializeStats(Data);
 		break;
 		case PacketType::WORLD_CHANGEMAPS: {
-			//HandleChangeMaps(Data);
 
 			// Load map
 			NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
@@ -119,12 +131,35 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				Map->Clock = Clock;
 				Map->NetworkID = MapID;
 				Map->Load(Stats->GetMap(MapID)->File);
-				//AssignPlayer(nullptr);
+				Player = nullptr;
 			}
 		} break;
-		case PacketType::WORLD_OBJECTLIST:
-			//HandleObjectList(Data);
-		break;
+		case PacketType::WORLD_OBJECTLIST: {
+
+			// Read header
+			NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
+			NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
+
+			// Create objects
+			for(NetworkIDType i = 0; i < ObjectCount; i++) {
+				NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+
+				// Create object
+				_Object *Object = CreateObject(Data, NetworkID);
+
+				// Set player pointer
+				if(Object->NetworkID == ClientNetworkID)
+					AssignPlayer(Object);
+				else
+					Object->CalcLevelStats = false;
+			}
+
+			if(Player) {
+			}
+			else {
+				// Error
+			}
+		} break;
 		case PacketType::WORLD_CREATEOBJECT:
 			//HandleObjectCreate(Data);
 		break;
@@ -204,4 +239,31 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		default:
 		break;
 	}
+}
+
+// Assigns the client player pointer
+void _Bot::AssignPlayer(_Object *Object) {
+	Player = Object;
+	if(Player)
+		Player->CalcLevelStats = true;
+
+	//if(Battle)
+	//	Battle->ClientPlayer = Player;
+}
+
+// Creates an object from a buffer
+_Object *_Bot::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
+
+	// Create object
+	_Object *Object = ObjectManager->CreateWithID(NetworkID);
+	Object->Scripting = Scripting;
+	Object->Stats = Stats;
+	Object->Map = Map;
+	Object->CalcLevelStats = false;
+	Object->UnserializeCreate(Data);
+
+	// Add to map
+	Map->AddObject(Object);
+
+	return Object;
 }

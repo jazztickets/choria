@@ -18,6 +18,8 @@
 #pragma once
 
 // Libraries
+#include <packet.h>
+#include <manager.h>
 #include <string>
 #include <memory>
 
@@ -25,8 +27,10 @@
 class _Stats;
 class _ClientNetwork;
 class _Buffer;
+class _Object;
 class _Map;
 class _Stats;
+class _Scripting;
 
 // Bot class
 class _Bot {
@@ -38,11 +42,19 @@ class _Bot {
 
 		// Update
 		void Update(double FrameTime);
+
+		// Network
 		void HandlePacket(_Buffer &Data);
+		void AssignPlayer(_Object *Object);
+		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
 
 		std::unique_ptr<_ClientNetwork> Network;
 
+		_Manager<_Object> *ObjectManager;
+
+		_Scripting *Scripting;
 		_Map *Map;
+		_Object *Player;
 		_Stats *Stats;
 
 		std::string Username;
