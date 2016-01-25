@@ -943,3 +943,28 @@ glm::vec2 _Map::GetValidPosition(const glm::vec2 &Position) {
 glm::ivec2 _Map::GetValidCoord(const glm::ivec2 &Position) {
 	return glm::clamp(Position, glm::ivec2(0), Size - 1);
 }
+
+// Distance between two points
+float _Map::LeastCostEstimate(void *StateStart, void *StateEnd) {
+	glm::ivec2 StartPosition;
+	NodeToPosition(StateStart, StartPosition);
+
+	glm::ivec2 EndPosition;
+	NodeToPosition(StateStart, EndPosition);
+
+	return std::abs(StartPosition.x - EndPosition.x) + std::abs(StartPosition.y - EndPosition.y);
+}
+
+// Generate successors from a state
+void _Map::AdjacentCost(void *State, std::vector<micropather::StateCost> *Neighbors) {
+	glm::ivec2 Position;
+	NodeToPosition(State, Position);
+
+	glm::ivec2 Directions[4] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+	for(int i = 0; i < 4; i++) {
+		glm::ivec2 NewPosition = Position + Directions[i];
+		float Cost = Tiles[NewPosition.x][NewPosition.y].Wall ? FLT_MAX : 1.0f;
+		micropather::StateCost NodeCost = { PositionToNode(NewPosition), Cost };
+		Neighbors->push_back(NodeCost);
+	}
+}

@@ -22,6 +22,7 @@
 #include <manager.h>
 #include <string>
 #include <memory>
+#include <vector>
 
 // Forward Declarations
 class _Stats;
@@ -31,6 +32,10 @@ class _Object;
 class _Map;
 class _Stats;
 class _Scripting;
+
+namespace micropather {
+	class MicroPather;
+}
 
 // Bot class
 class _Bot {
@@ -56,6 +61,9 @@ class _Bot {
 		_Map *Map;
 		_Object *Player;
 		_Stats *Stats;
+
+		micropather::MicroPather *Pather;
+		std::vector<void *> PathFound;
 
 		std::string Username;
 		std::string Password;

@@ -33,7 +33,8 @@ _Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
 	Network(new _ClientNetwork()),
 	Map(nullptr),
 	Player(nullptr),
-	Stats(Stats) {
+	Stats(Stats),
+	Pather(nullptr) {
 
 	ObjectManager = new _Manager<_Object>();
 
@@ -123,7 +124,9 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			// Delete old map and create new
 			if(!Map || Map->NetworkID != MapID) {
 				if(Map) {
+					delete Pather;
 					delete Map;
+					Pather = nullptr;
 					Map = nullptr;
 				}
 
@@ -132,6 +135,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				Map->NetworkID = MapID;
 				Map->Load(Stats->GetMap(MapID)->File);
 				Player = nullptr;
+
+				//Pather = new micropather::MicroPather(Map, (unsigned)(Map->Size.x * Map->Size.y), 4);
+				//float TotalCost;
+				//int Result = Pather->Solve(Map->PositionToNode(glm::ivec2(76, 89)), Map->PositionToNode(glm::ivec2(25, 14)), &PathFound, &TotalCost);
 			}
 		} break;
 		case PacketType::WORLD_OBJECTLIST: {
@@ -160,18 +167,40 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				// Error
 			}
 		} break;
-		case PacketType::WORLD_CREATEOBJECT:
-			//HandleObjectCreate(Data);
-		break;
-		case PacketType::WORLD_DELETEOBJECT:
-			//HandleObjectDelete(Data);
-		break;
+		case PacketType::WORLD_CREATEOBJECT: {
+			if(!Map || !Player)
+				break;
+
+			// Read packet
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+
+			// Check id
+			if(NetworkID != Player->NetworkID) {
+
+				// Create object
+				CreateObject(Data, NetworkID);
+			}
+		} break;
+		case PacketType::WORLD_DELETEOBJECT: {
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+
+			// Get object
+			_Object *Object = ObjectManager->IDMap[NetworkID];
+			if(Object && Object != Player) {
+				Object->Deleted = true;
+			}
+		} break;
 		case PacketType::WORLD_OBJECTUPDATES:
 			//HandleObjectUpdates(Data);
 		break;
-		case PacketType::WORLD_POSITION:
-			//HandlePlayerPosition(Data);
-		break;
+		case PacketType::WORLD_POSITION: {
+			if(!Player)
+				break;
+
+			Player->Position = Data.Read<glm::ivec2>();
+			Player->WaitForServer = false;
+			Player->TeleportTime = -1;
+		} break;
 		case PacketType::WORLD_TELEPORTSTART:
 			//HandleTeleportStart(Data);
 		break;

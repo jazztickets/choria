@@ -107,6 +107,7 @@ file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
 file(GLOB SRC_UI "src/ui/*.cpp" "src/ui/*.h")
 file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
 file(GLOB SRC_ZLIB "src/zlib/*.cc" "src/zlib/*.h")
+file(GLOB SRC_PATH "src/path/*.cpp" "src/path/*.h")
 
 file(GLOB SRC_ALL
 	${SRC_MAIN}
@@ -118,6 +119,7 @@ file(GLOB SRC_ALL
 	${SRC_UI}
 	${SRC_PNGLITE}
 	${SRC_ZLIB}
+	${SRC_PATH}
 )
 
 # add virtual folders
@@ -128,6 +130,7 @@ source_group(network FILES ${SRC_NETWORK})
 source_group(objects FILES ${SRC_OBJECTS})
 source_group(enet FILES ${SRC_ENET})
 source_group(pnglite FILES ${SRC_PNGLITE})
+source_group(path FILES ${SRC_PATH})
 
 # build exe
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)

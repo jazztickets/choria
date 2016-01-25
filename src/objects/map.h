@@ -27,6 +27,7 @@
 #include <list>
 #include <cstdint>
 #include <string>
+#include <path/micropather.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
@@ -66,7 +67,7 @@ struct _Tile {
 };
 
 // Classes
-class _Map : public _ManagerBase {
+class _Map : public _ManagerBase, public micropather::Graph {
 
 	public:
 
@@ -133,6 +134,14 @@ class _Map : public _ManagerBase {
 		void Load(const std::string &Path, bool Static=false);
 		bool Save(const std::string &Path);
 
+		void NodeToPosition(void *Node, glm::ivec2 &Position) {
+			int Index = (int)(intptr_t)Node;
+			Position.y = Index / Size.x;
+			Position.x = Index - Position.y * Size.x;
+		}
+
+		void *PositionToNode(const glm::ivec2 &Position) { return (void *)(intptr_t)(Position.y * Size.x + Position.x); }
+
 		// Map data
 		_Tile **Tiles;
 		glm::ivec2 Size;
@@ -160,6 +169,11 @@ class _Map : public _ManagerBase {
 	private:
 
 		void FreeMap();
+
+		// Path finding
+		float LeastCostEstimate(void *StateStart, void *StateEnd) override;
+		void AdjacentCost(void *State, std::vector<micropather::StateCost> *Neighbors) override;
+		void PrintStateInfo(void *State) override { }
 
 		// Rendering
 		uint32_t TileVertexBufferID[2];
