@@ -868,14 +868,7 @@ int _Object::Move() {
 
 	// Get new position
 	glm::ivec2 Direction(0, 0);
-	if(InputState & MOVE_UP)
-		Direction.y += -1;
-	if(InputState & MOVE_DOWN)
-		Direction.y += 1;
-	if(InputState & MOVE_LEFT)
-		Direction.x += -1;
-	if(InputState & MOVE_RIGHT)
-		Direction.x += 1;
+	GetDirectionFromInput(InputState, Direction);
 
 	// Remove diagonols
 	if(Direction.x != 0 && Direction.y != 0)
@@ -1102,6 +1095,20 @@ bool _Object::AcceptingMoveInput() {
 		return false;
 
 	return true;
+}
+
+// Convert input state bitfield to direction
+void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
+
+	// Get new position
+	if(InputState & MOVE_UP)
+		Direction.y += -1;
+	if(InputState & MOVE_DOWN)
+		Direction.y += 1;
+	if(InputState & MOVE_LEFT)
+		Direction.x += -1;
+	if(InputState & MOVE_RIGHT)
+		Direction.x += 1;
 }
 
 // Updates a skill level

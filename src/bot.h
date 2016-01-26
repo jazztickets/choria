@@ -30,17 +30,28 @@ class _Stats;
 class _ClientNetwork;
 class _Buffer;
 class _Object;
+class _Battle;
 class _Map;
 class _Stats;
 class _Scripting;
+struct _Event;
+struct _StatChange;
 
 namespace micropather {
 	class MicroPather;
 }
 
+enum class GoalStateType : int {
+	NONE,
+	FARMING,
+	HEALING
+};
+
 enum class BotStateType : int {
 	IDLE,
-	MOVING
+	MOVE_PATH,
+	MOVE_RANDOM,
+	MOVE_HEAL,
 };
 
 // Bot class
@@ -57,11 +68,16 @@ class _Bot {
 		// Network
 		void HandlePacket(_Buffer &Data);
 		void AssignPlayer(_Object *Object);
+		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
 
 		// AI
+		void EvaluateGoal();
+		void DetermineNextGoal();
+		bool FindEvent(const _Event &Event, glm::ivec2 &Position);
 		void MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
 		int GetNextInputState();
+		void SetGoal(GoalStateType NewGoal);
 
 		std::unique_ptr<_ClientNetwork> Network;
 
@@ -69,13 +85,17 @@ class _Bot {
 
 		_Scripting *Scripting;
 		_Map *Map;
+		_Battle *Battle;
 		_Object *Player;
 		_Stats *Stats;
 
 		micropather::MicroPather *Pather;
 		std::list<void *> Path;
+
+		GoalStateType GoalState;
 		BotStateType BotState;
 
 		std::string Username;
 		std::string Password;
+
 };

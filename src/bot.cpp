@@ -21,8 +21,11 @@
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>
+#include <objects/inventory.h>
 #include <stats.h>
 #include <constants.h>
+#include <actions.h>
+#include <random.h>
 #include <scripting.h>
 #include <buffer.h>
 #include <iostream>
@@ -32,9 +35,12 @@
 _Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
 	Network(new _ClientNetwork()),
 	Map(nullptr),
+	Battle(nullptr),
 	Player(nullptr),
 	Stats(Stats),
-	Pather(nullptr) {
+	Pather(nullptr),
+	GoalState(GoalStateType::NONE),
+	BotState(BotStateType::IDLE) {
 
 	ObjectManager = new _Manager<_Object>();
 
@@ -50,7 +56,7 @@ _Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
 _Bot::~_Bot() {
 
 	delete ObjectManager;
-	//DeleteBattle();
+	delete Battle;
 	delete Map;
 	delete Pather;
 	delete Scripting;
@@ -91,6 +97,9 @@ void _Bot::Update(double FrameTime) {
 	if(!Player || !Map)
 		return;
 
+	// Update goals
+	EvaluateGoal();
+
 	// Set input
 	if(Player->AcceptingMoveInput()) {
 		int InputState = GetNextInputState();
@@ -108,8 +117,9 @@ void _Bot::Update(double FrameTime) {
 
 	// Send input to server
 	if(Player->Moved) {
-		Path.erase(Path.begin());
-		std::cout << Path.size() << std::endl;
+		if(Path.size())
+			Path.erase(Path.begin());
+		//std::cout << Path.size() << std::endl;
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
@@ -117,15 +127,19 @@ void _Bot::Update(double FrameTime) {
 		Network->SendPacket(Packet);
 	}
 
-	/*
 	// Update battle system
 	if(Battle) {
-		if(!Player->Battle)
-			DeleteBattle();
-		else
-			Battle->Update(FrameTime);
-	}*/
+		if(!Player->PotentialAction.IsSet()) {
+			Battle->ClientHandleInput(_Actions::SKILL1);
+			Battle->ClientHandleInput(_Actions::SKILL1);
+		}
 
+		if(!Player->Battle) {
+			delete Battle;
+			Battle = nullptr;
+		} else
+			Battle->Update(FrameTime);
+	}
 }
 
 // Handle packet
@@ -162,6 +176,8 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			// Load map
 			NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
 			double Clock = Data.Read<double>();
+
+			std::cout << "WORLD_CHANGEMAPS " << MapID << std::endl;
 
 			// Delete old map and create new
 			if(!Map || Map->NetworkID != MapID) {
@@ -202,7 +218,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			}
 
 			if(Player) {
-				MoveTo(Player->Position, glm::ivec2(19, 12));
 			}
 			else {
 				// Error
@@ -243,7 +258,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->TeleportTime = -1;
 		} break;
 		case PacketType::WORLD_TELEPORTSTART:
-			//HandleTeleportStart(Data);
+			Player->TeleportTime = Data.Read<double>();
 		break;
 		case PacketType::EVENT_START:
 			//HandleEventStart(Data);
@@ -284,30 +299,176 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::TRADE_EXCHANGE:
 			//HandleTradeExchange(Data);
 		break;
-		case PacketType::BATTLE_START:
-			//HandleBattleStart(Data);
-		break;
+		case PacketType::BATTLE_START: {
+			std::cout << "BATTLE_START" << std::endl;
+
+			// Already in a battle
+			if(Battle)
+				break;
+
+			// Allow player to hit menu buttons
+			Player->WaitForServer = false;
+
+			// Create a new battle instance
+			Battle = new _Battle();
+			Battle->Manager = ObjectManager;
+			Battle->Stats = Stats;
+			Battle->Scripting = Scripting;
+			Battle->ClientPlayer = Player;
+			Battle->ClientNetwork = Network.get();
+
+			Battle->Unserialize(Data, nullptr);
+		} break;
 		case PacketType::BATTLE_ACTION:
 			//HandleBattleAction(Data);
 		break;
 		case PacketType::BATTLE_LEAVE:
 			//HandleBattleLeave(Data);
 		break;
-		case PacketType::BATTLE_END:
-			//HandleBattleEnd(Data);
-		break;
-		case PacketType::ACTION_RESULTS:
-			//HandleActionResults(Data);
-		break;
+		case PacketType::BATTLE_END: {
+			if(!Player || !Battle)
+				return;
+
+			std::cout << "BATTLE_END" << std::endl;
+
+			Player->WaitForServer = false;
+
+			_StatChange StatChange;
+			StatChange.Object = Player;
+
+			// Get ending stats
+			bool SideDead[2];
+			SideDead[0] = Data.ReadBit();
+			SideDead[1] = Data.ReadBit();
+			int PlayerKills = Data.Read<uint8_t>();
+			int MonsterKills = Data.Read<uint8_t>();
+			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int32_t>();
+			StatChange.Values[StatType::GOLD].Integer = Data.Read<int32_t>();
+			uint8_t ItemCount = Data.Read<uint8_t>();
+			for(uint8_t i = 0; i < ItemCount; i++) {
+
+				uint32_t ItemID = Data.Read<uint32_t>();
+				const _Item *Item = Stats->Items[ItemID];
+				int Count = (int)Data.Read<uint8_t>();
+
+				// Add items
+				Player->Inventory->AddItem(Item, Count);
+			}
+
+			// Check win or death
+			int PlayerSide = Player->BattleSide;
+			int OtherSide = !PlayerSide;
+			if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
+				Player->PlayerKills += PlayerKills;
+				Player->MonsterKills += MonsterKills;
+			}
+
+			Player->Battle = nullptr;
+			delete Battle;
+			Battle = nullptr;
+
+			DetermineNextGoal();
+		} break;
+		case PacketType::ACTION_RESULTS: {
+			// Create result
+			_ActionResult ActionResult;
+			bool DecrementItem = Data.ReadBit();
+			bool SkillUnlocked = Data.ReadBit();
+			bool ItemUnlocked = Data.ReadBit();
+			uint32_t ItemID = Data.Read<uint32_t>();
+			int InventorySlot = (int)Data.Read<char>();
+			ActionResult.ActionUsed.Item = Stats->Items[ItemID];
+
+			// Set texture
+			if(ActionResult.ActionUsed.Item)
+				ActionResult.Texture = ActionResult.ActionUsed.Item->Texture;
+
+			// Get source change
+			HandleStatChange(Data, ActionResult.Source);
+
+			// Update source fighter
+			if(ActionResult.Source.Object) {
+				ActionResult.Source.Object->TurnTimer = 0.0;
+				ActionResult.Source.Object->Action.Unset();
+				ActionResult.Source.Object->Targets.clear();
+
+				// Use item on client
+				if(Player == ActionResult.Source.Object) {
+					if(ActionResult.ActionUsed.Item) {
+
+						if(DecrementItem) {
+							size_t Index;
+							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
+								Player->Inventory->DecrementItemCount(Index, -1);
+								Player->RefreshActionBarCount();
+							}
+						}
+
+						if(SkillUnlocked) {
+							Player->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+						}
+
+						if(ItemUnlocked) {
+							Player->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
+						}
+					}
+				}
+			}
+
+			// Update targets
+			uint8_t TargetCount = Data.Read<uint8_t>();
+			for(uint8_t i = 0; i < TargetCount; i++) {
+				HandleStatChange(Data, ActionResult.Source);
+				HandleStatChange(Data, ActionResult.Target);
+
+				if(Battle) {
+
+					// No damage dealt
+					if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
+					   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Float == 0.0f) || ActionResult.Target.HasStat(StatType::MISS))) {
+						ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
+						ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
+					}
+					else {
+						ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT;
+						ActionResult.Speed = HUD_ACTIONRESULT_SPEED;
+					}
+
+					Battle->ActionResults.push_back(ActionResult);
+				}
+				else if(ActionResult.Target.Object == Player) {
+				}
+			}
+		} break;
 		case PacketType::STAT_CHANGE: {
-			//_StatChange StatChange;
-			//HandleStatChange(Data, StatChange);
+			_StatChange StatChange;
+			HandleStatChange(Data, StatChange);
 		} break;
 		case PacketType::WORLD_HUD:
-			//HandleHUD(Data);
+			Player->Health = Data.Read<float>();
+			Player->Mana = Data.Read<float>();
+			Player->MaxHealth = Data.Read<float>();
+			Player->MaxMana = Data.Read<float>();
+			Player->Experience = Data.Read<int32_t>();
+			Player->Gold = Data.Read<int32_t>();
+			Player->CalculateStats();
 		break;
 		default:
 		break;
+	}
+}
+
+// Handles a stat change
+void _Bot::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
+	if(!Player)
+		return;
+
+	// Get stats
+	StatChange.Unserialize(Data, ObjectManager);
+	if(StatChange.Object) {
+
+		// Update object
+		StatChange.Object->UpdateStats(StatChange);
 	}
 }
 
@@ -317,8 +478,8 @@ void _Bot::AssignPlayer(_Object *Object) {
 	if(Player)
 		Player->CalcLevelStats = true;
 
-	//if(Battle)
-	//	Battle->ClientPlayer = Player;
+	if(Battle)
+		Battle->ClientPlayer = Player;
 }
 
 // Creates an object from a buffer
@@ -338,6 +499,85 @@ _Object *_Bot::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	return Object;
 }
 
+// Update bot based on goals
+void _Bot::EvaluateGoal() {
+
+	// Respawn
+	if(!Player->WaitForServer && !Player->IsAlive()) {
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
+		Network->SendPacket(Packet);
+
+		Player->WaitForServer = true;
+		return;
+	}
+
+	// Evaluate goal
+	switch(GoalState) {
+		case GoalStateType::NONE:
+			DetermineNextGoal();
+		break;
+		case GoalStateType::FARMING:
+			if(Map->NetworkID != 10) {
+				glm::ivec2 Position;
+				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
+					MoveTo(Player->Position, Position);
+			}
+			else {
+				BotState = BotStateType::MOVE_RANDOM;
+			}
+		break;
+		case GoalStateType::HEALING:
+			if(Map->NetworkID != 1) {
+				if(!Player->WaitForServer && Player->CanTeleport()) {
+				   _Buffer Packet;
+				   Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
+				   Packet.Write<uint8_t>(_Object::STATUS_TELEPORT);
+				   Network->SendPacket(Packet);
+
+				   Player->WaitForServer = true;
+				}
+			}
+			else {
+				if(Player->GetHealthPercent() < 1.0f) {
+					glm::ivec2 Position;
+					if(FindEvent(_Event(_Map::EVENT_SCRIPT, 1), Position)) {
+						if(Player->Position == Position)
+							BotState = BotStateType::MOVE_HEAL;
+						else
+							MoveTo(Player->Position, Position);
+					}
+				}
+				else
+					DetermineNextGoal();
+			}
+		break;
+	}
+
+}
+
+// Set next goal
+void _Bot::DetermineNextGoal() {
+	if(!Player)
+		return;
+
+	if(Player->GetHealthPercent() < 0.5f)
+		SetGoal(GoalStateType::HEALING);
+	else
+		SetGoal(GoalStateType::FARMING);
+}
+
+// Find an event in the map
+bool _Bot::FindEvent(const _Event &Event, glm::ivec2 &Position) {
+	auto Iterator = Map->IndexedEvents.find(Event);
+	if(Iterator == Map->IndexedEvents.end())
+		return false;
+
+	Position = Iterator->second;
+
+	return true;
+}
+
 // Create list of nodes to destination
 void _Bot::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition) {
 	if(!Pather)
@@ -353,44 +593,72 @@ void _Bot::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition
 		for(auto &Node : PathFound)
 			Path.push_back(Node);
 
-		BotState = BotStateType::MOVING;
+		BotState = BotStateType::MOVE_PATH;
 	}
 }
 
 // Set the player input state based on pathfound
 int _Bot::GetNextInputState() {
-	if(!Map || !Player || Path.size() == 0)
-		return 0;
-
-	// Find current position in list
 	int InputState = 0;
-	for(auto Iterator = Path.begin(); Iterator != Path.end(); ++Iterator) {
-		glm::ivec2 NodePosition;
-		Map->NodeToPosition(*Iterator, NodePosition);
+	if(!Map || !Player)
+		return InputState;
 
-		if(Player->Position == NodePosition) {
-			auto NextIterator = std::next(Iterator, 1);
-			if(NextIterator == Path.end()) {
-				Path.clear();
-				return 0;
+	switch(BotState) {
+		case BotStateType::IDLE:
+		break;
+		case BotStateType::MOVE_HEAL: {
+			return _Object::MOVE_LEFT;
+		}
+		case BotStateType::MOVE_PATH: {
+			if(Path.size() == 0) {
+				BotState = BotStateType::IDLE;
+				return InputState;
 			}
 
-			// Get next node position
-			Map->NodeToPosition(*NextIterator, NodePosition);
+			// Find current position in list
+			for(auto Iterator = Path.begin(); Iterator != Path.end(); ++Iterator) {
+				glm::ivec2 NodePosition;
+				Map->NodeToPosition(*Iterator, NodePosition);
 
-			// Get direction to next node
-			glm::ivec2 Direction = NodePosition - Player->Position;
-			if(Direction.x < 0)
-				InputState = _Object::MOVE_LEFT;
-			else if(Direction.x > 0)
-				InputState = _Object::MOVE_RIGHT;
-			else if(Direction.y < 0)
-				InputState = _Object::MOVE_UP;
-			else if(Direction.x > 0)
-				InputState = _Object::MOVE_DOWN;
-			break;
-		}
+				if(Player->Position == NodePosition) {
+					auto NextIterator = std::next(Iterator, 1);
+					if(NextIterator == Path.end()) {
+						Path.clear();
+						return 0;
+					}
+
+					// Get next node position
+					Map->NodeToPosition(*NextIterator, NodePosition);
+
+					// Get direction to next node
+					glm::ivec2 Direction = NodePosition - Player->Position;
+					if(Direction.x < 0)
+						InputState = _Object::MOVE_LEFT;
+					else if(Direction.x > 0)
+						InputState = _Object::MOVE_RIGHT;
+					else if(Direction.y < 0)
+						InputState = _Object::MOVE_UP;
+					else if(Direction.y > 0)
+						InputState = _Object::MOVE_DOWN;
+					break;
+				}
+			}
+
+		} break;
+		case BotStateType::MOVE_RANDOM: {
+			InputState = 1 << GetRandomInt(0, 3);
+			glm::ivec2 Direction;
+			Player->GetDirectionFromInput(InputState, Direction);
+			if(Map->GetTile(Player->Position + Direction)->Event.Type != _Map::EVENT_NONE)
+				InputState = 0;
+		} break;
 	}
 
 	return InputState;
+}
+
+// Set goal of bot
+void _Bot::SetGoal(GoalStateType NewGoal) {
+	std::cout << "SetGoal=" << (int)NewGoal << std::endl;
+	GoalState = NewGoal;
 }

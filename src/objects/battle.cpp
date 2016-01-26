@@ -101,14 +101,19 @@ void _Battle::Update(double FrameTime) {
 		for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
 			_ActionResult &ActionResult = *Iterator;
 
-			// Find start position
-			glm::vec2 StartPosition = ActionResult.Source.Object->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
-			ActionResult.LastPosition = ActionResult.Position;
+			// Update ui
+			if(BattleElement) {
 
-			// Interpolate between start and end position of action used
-			ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0));
-			if(ActionResult.Time == 0.0)
+				// Find start position
+				glm::vec2 StartPosition = ActionResult.Source.Object->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
 				ActionResult.LastPosition = ActionResult.Position;
+
+				// Interpolate between start and end position of action used
+				ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0));
+				if(ActionResult.Time == 0.0)
+					ActionResult.LastPosition = ActionResult.Position;
+
+			}
 
 			// Update timer
 			ActionResult.Time += FrameTime;
@@ -471,7 +476,8 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 
 	// Set up ui
 	BattleElement = Assets.Elements["element_battle"];
-	BattleElement->SetVisible(true);
+	if(BattleElement)
+		BattleElement->SetVisible(true);
 
 	// Set fighter position offsets and create ui elements
 	int SideCount[2] = { 0, 0 };
@@ -482,13 +488,15 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 		SideCount[Fighter->BattleSide]++;
 
 		// Create ui element
-		Fighter->CreateBattleElement(BattleElement);
+		if(BattleElement) {
+			Fighter->CreateBattleElement(BattleElement);
 
-		// Create ui elements for status effects
-		for(auto &StatusEffect : Fighter->StatusEffects) {
-			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
-			if(ClientPlayer == Fighter)
-				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+			// Create ui elements for status effects
+			for(auto &StatusEffect : Fighter->StatusEffects) {
+				StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
+				if(ClientPlayer == Fighter)
+					StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+			}
 		}
 	}
 }
@@ -661,6 +669,9 @@ void _Battle::ServerEndBattle() {
 
 // Calculates a screen position for a slot
 void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
+	if(!BattleElement)
+		return;
+
 	int Column = SideIndex / BATTLE_ROWS_PER_SIDE;
 
 	// Check sides

@@ -128,6 +128,7 @@ class _Object : public _ManagerBase {
 
 		// Movement
 		bool AcceptingMoveInput();
+		void GetDirectionFromInput(int InputState, glm::ivec2 &Direction);
 		int Move();
 
 		// Skills
