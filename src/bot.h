@@ -22,7 +22,8 @@
 #include <manager.h>
 #include <string>
 #include <memory>
-#include <vector>
+#include <list>
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Stats;
@@ -36,6 +37,11 @@ class _Scripting;
 namespace micropather {
 	class MicroPather;
 }
+
+enum class BotStateType : int {
+	IDLE,
+	MOVING
+};
 
 // Bot class
 class _Bot {
@@ -53,6 +59,10 @@ class _Bot {
 		void AssignPlayer(_Object *Object);
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
 
+		// AI
+		void MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
+		int GetNextInputState();
+
 		std::unique_ptr<_ClientNetwork> Network;
 
 		_Manager<_Object> *ObjectManager;
@@ -63,7 +73,8 @@ class _Bot {
 		_Stats *Stats;
 
 		micropather::MicroPather *Pather;
-		std::vector<void *> PathFound;
+		std::list<void *> Path;
+		BotStateType BotState;
 
 		std::string Username;
 		std::string Password;

@@ -52,6 +52,7 @@ _Bot::~_Bot() {
 	delete ObjectManager;
 	//DeleteBattle();
 	delete Map;
+	delete Pather;
 	delete Scripting;
 }
 
@@ -67,6 +68,8 @@ void _Bot::Update(double FrameTime) {
 
 		switch(NetworkEvent.Type) {
 			case _NetworkEvent::CONNECT: {
+				std::cout << Username << " connected" << std::endl;
+
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 				Packet.WriteBit(0);
@@ -76,6 +79,7 @@ void _Bot::Update(double FrameTime) {
 				Network->SendPacket(Packet);
 			} break;
 			case _NetworkEvent::DISCONNECT:
+				std::cout << Username << " disconnected" << std::endl;
 			break;
 			case _NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
@@ -83,6 +87,44 @@ void _Bot::Update(double FrameTime) {
 			break;
 		}
 	}
+
+	if(!Player || !Map)
+		return;
+
+	// Set input
+	if(Player->AcceptingMoveInput()) {
+		int InputState = GetNextInputState();
+
+		Player->InputStates.clear();
+		if(InputState)
+			Player->InputStates.push_back(InputState);
+	}
+
+	// Update objects
+	ObjectManager->Update(FrameTime);
+
+	// Update map
+	Map->Update(FrameTime);
+
+	// Send input to server
+	if(Player->Moved) {
+		Path.erase(Path.begin());
+		std::cout << Path.size() << std::endl;
+
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
+		Packet.Write<char>((char)Player->Moved);
+		Network->SendPacket(Packet);
+	}
+
+	/*
+	// Update battle system
+	if(Battle) {
+		if(!Player->Battle)
+			DeleteBattle();
+		else
+			Battle->Update(FrameTime);
+	}*/
 
 }
 
@@ -136,9 +178,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				Map->Load(Stats->GetMap(MapID)->File);
 				Player = nullptr;
 
-				//Pather = new micropather::MicroPather(Map, (unsigned)(Map->Size.x * Map->Size.y), 4);
-				//float TotalCost;
-				//int Result = Pather->Solve(Map->PositionToNode(glm::ivec2(76, 89)), Map->PositionToNode(glm::ivec2(25, 14)), &PathFound, &TotalCost);
+				Pather = new micropather::MicroPather(Map, (unsigned)(Map->Size.x * Map->Size.y), 4);
 			}
 		} break;
 		case PacketType::WORLD_OBJECTLIST: {
@@ -162,6 +202,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			}
 
 			if(Player) {
+				MoveTo(Player->Position, glm::ivec2(19, 12));
 			}
 			else {
 				// Error
@@ -295,4 +336,61 @@ _Object *_Bot::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Map->AddObject(Object);
 
 	return Object;
+}
+
+// Create list of nodes to destination
+void _Bot::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition) {
+	if(!Pather)
+		return;
+
+	float TotalCost;
+	std::vector<void *> PathFound;
+	int Result = Pather->Solve(Map->PositionToNode(StartPosition), Map->PositionToNode(EndPosition), &PathFound, &TotalCost);
+	if(Result == micropather::MicroPather::SOLVED) {
+
+		// Convert vector to list
+		Path.clear();
+		for(auto &Node : PathFound)
+			Path.push_back(Node);
+
+		BotState = BotStateType::MOVING;
+	}
+}
+
+// Set the player input state based on pathfound
+int _Bot::GetNextInputState() {
+	if(!Map || !Player || Path.size() == 0)
+		return 0;
+
+	// Find current position in list
+	int InputState = 0;
+	for(auto Iterator = Path.begin(); Iterator != Path.end(); ++Iterator) {
+		glm::ivec2 NodePosition;
+		Map->NodeToPosition(*Iterator, NodePosition);
+
+		if(Player->Position == NodePosition) {
+			auto NextIterator = std::next(Iterator, 1);
+			if(NextIterator == Path.end()) {
+				Path.clear();
+				return 0;
+			}
+
+			// Get next node position
+			Map->NodeToPosition(*NextIterator, NodePosition);
+
+			// Get direction to next node
+			glm::ivec2 Direction = NodePosition - Player->Position;
+			if(Direction.x < 0)
+				InputState = _Object::MOVE_LEFT;
+			else if(Direction.x > 0)
+				InputState = _Object::MOVE_RIGHT;
+			else if(Direction.y < 0)
+				InputState = _Object::MOVE_UP;
+			else if(Direction.x > 0)
+				InputState = _Object::MOVE_DOWN;
+			break;
+		}
+	}
+
+	return InputState;
 }
