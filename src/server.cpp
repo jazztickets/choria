@@ -479,6 +479,10 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	}
 	Save->Database->CloseQuery();
 
+	// Check for valid map
+	if(MapID == 0)
+		MapID = 1;
+
 	// Check for valid character id
 	if(!Peer->CharacterID) {
 		Log << "Character slot " << Slot << " empty!" << std::endl;
@@ -616,7 +620,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 
 // Spawns a player at a particular spawn point
 void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType) {
-	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
+	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID || !MapID)
 	   return;
 
 	// Get map
