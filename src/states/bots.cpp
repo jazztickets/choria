@@ -142,7 +142,7 @@ void _BotsState::Update(double FrameTime) {
 void _BotsState::Add() {
 
 	try {
-		std::string Credentials = "bot_" + std::to_string(NextBotNumber);
+		std::string Credentials = "bot" + std::to_string(NextBotNumber);
 		_Bot *Bot = new _Bot(Stats, Credentials, Credentials, HostAddress, Port);
 		Bots.push_back(Bot);
 		NextBotNumber++;

@@ -83,7 +83,6 @@ class _Object : public _ManagerBase {
 		bool operator<(const _Object &Object) { return this->NetworkID < Object.NetworkID; }
 
 		void Update(double FrameTime) override;
-		void OnDelete() override;
 		void Render(const _Object *ClientPlayer=nullptr);
 		void RenderBattle(_Object *ClientPlayer, double Time);
 

@@ -191,7 +191,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			// Create character
 			if(FirstSlot == -1) {
-				std::string Name = Username + std::to_string(GetRandomInt(0, 1000));
+				std::string Name = Username + "_" + std::to_string(GetRandomInt(0, 1000));
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 				Packet.WriteString(Name.c_str());

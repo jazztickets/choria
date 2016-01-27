@@ -31,7 +31,6 @@ class _ManagerBase {
 		virtual ~_ManagerBase();
 
 		virtual void Update(double FrameTime) = 0;
-		virtual void OnDelete() = 0;
 
 		NetworkIDType NetworkID;
 

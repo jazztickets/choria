@@ -303,6 +303,7 @@ void _Stats::LoadBuilds() {
 
 		// Create object
 		_Object *Object = new _Object();
+		Object->Name = std::string("build_") + Database->GetString("name");
 		Object->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
 
 		// Get items

@@ -790,7 +790,7 @@ void _Battle::BroadcastPacket(_Buffer &Data) {
 
 	// Send packet to all players
 	for(auto &Fighter : Fighters) {
-		if(Fighter->Peer) {
+		if(!Fighter->Deleted && Fighter->Peer) {
 			Server->Network->SendPacket(Data, Fighter->Peer);
 		}
 	}

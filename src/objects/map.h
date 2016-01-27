@@ -94,7 +94,6 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		void CloseAtlas();
 
 		void Update(double FrameTime) override;
-		void OnDelete() override { }
 
 		// Events
 		void CheckEvents(_Object *Object);

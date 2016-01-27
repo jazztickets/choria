@@ -68,7 +68,6 @@ class _Battle : public _ManagerBase {
 
 		// Updates
 		void Update(double FrameTime) override;
-		void OnDelete() override { }
 		void Render(double BlendFactor);
 
 		// Network

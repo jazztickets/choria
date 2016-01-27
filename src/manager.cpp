@@ -50,7 +50,6 @@ void _Manager<T>::Update(double FrameTime) {
 
 		// Delete old objects
 		if(Object->Deleted) {
-			Object->OnDelete();
 			IDMap[Object->NetworkID] = nullptr;
 
 			delete Object;

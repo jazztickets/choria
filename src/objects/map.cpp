@@ -929,7 +929,7 @@ void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
 
 	// Send packet to peers
 	for(auto &Object : Objects) {
-		if(Object->Peer)
+		if(!Object->Deleted && Object->Peer)
 			Server->Network->SendPacket(Buffer, Object->Peer, Type, Type == _Network::UNSEQUENCED);
 	}
 }

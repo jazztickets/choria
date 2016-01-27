@@ -148,7 +148,26 @@ _Object::_Object() :
 
 // Destructor
 _Object::~_Object() {
-	OnDelete();
+	delete Inventory;
+	Inventory = nullptr;
+
+	if(Map) {
+		Map->RemoveObject(this);
+		Map = nullptr;
+	}
+
+	if(Battle) {
+		Battle->RemoveFighter(this);
+		Battle = nullptr;
+	}
+
+	if(HUD) {
+		HUD->RemoveStatChanges(this);
+		HUD = nullptr;
+	}
+
+	DeleteStatusEffects();
+	RemoveBattleElement();
 }
 
 // Updates the player
@@ -296,30 +315,6 @@ void _Object::Update(double FrameTime) {
 		Map->CheckEvents(this);
 }
 
-// Called when object is deleted via deleted flag
-void _Object::OnDelete() {
-	delete Inventory;
-	Inventory = nullptr;
-
-	if(Map) {
-		Map->RemoveObject(this);
-		Map = nullptr;
-	}
-
-	if(Battle) {
-		Battle->RemoveFighter(this);
-		Battle = nullptr;
-	}
-
-	if(HUD) {
-		HUD->RemoveStatChanges(this);
-		HUD = nullptr;
-	}
-
-	DeleteStatusEffects();
-	RemoveBattleElement();
-}
-
 // Update AI during battle
 void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 	if(!AI.length())
@@ -333,6 +328,9 @@ void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 		// Separate fighter list
 		std::list<_Object *> Enemies, Allies;
 		for(const auto &Fighter : Fighters) {
+			if(Fighter->Deleted)
+				continue;
+
 			if(Fighter->BattleSide == BattleSide)
 				Allies.push_back(Fighter);
 			else if(Fighter->IsAlive())
@@ -1151,7 +1149,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 // Can enter battle
 bool _Object::CanBattle() const {
-	return Status == STATUS_NONE && Invisible <= 0;
+	return !Battle && Status == STATUS_NONE && Invisible <= 0;
 }
 
 // Calculates all of the player stats
