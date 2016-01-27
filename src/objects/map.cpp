@@ -650,6 +650,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 					File >> BackgroundMapFile;
 
 					BackgroundMap = new _Map();
+					BackgroundMap->UseAtlas = true;
 					try {
 						BackgroundMap->Load(BackgroundMapFile, true);
 					}
