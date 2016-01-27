@@ -102,7 +102,7 @@ void _Battle::Update(double FrameTime) {
 			_ActionResult &ActionResult = *Iterator;
 
 			// Update ui
-			if(BattleElement) {
+			if(BattleElement && ActionResult.Source.Object && ActionResult.Target.Object) {
 
 				// Find start position
 				glm::vec2 StartPosition = ActionResult.Source.Object->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
