@@ -476,7 +476,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Check for valid character id
 	if(!Peer->CharacterID) {
-		Log << "Character slot " << Slot << " empty!";
+		Log << "Character slot " << Slot << " empty!" << std::endl;
 		return;
 	}
 
@@ -615,7 +615,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 	   return;
 
 	// Get map
-	_Map *Map = MapManager->IDMap[MapID];
+	_Map *Map = MapManager->GetObject(MapID);
 
 	// Load map
 	if(!Map) {

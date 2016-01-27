@@ -48,16 +48,18 @@ class _BotsState : public _State {
 		void DisconnectAll();
 		void Quit();
 
+		std::string HostAddress;
+		uint16_t Port;
+
 	protected:
 
 		bool Done;
 		std::thread *Thread;
 
-		std::string HostAddress;
-		uint16_t Port;
-
 		_Stats *Stats;
 		std::list<_Bot *> Bots;
+
+		int NextBotNumber;
 };
 
 extern _BotsState BotState;

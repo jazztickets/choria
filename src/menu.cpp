@@ -36,6 +36,7 @@
 #include <buffer.h>
 #include <stats.h>
 #include <packet.h>
+#include <utils.h>
 #include <sstream>
 #include <SDL_keyboard.h>
 
@@ -277,11 +278,8 @@ void _Menu::ConnectToHost() {
 		return;
 	}
 
-	std::stringstream Buffer(Port->Text);
-	uint16_t PortNumber;
-	Buffer >> PortNumber;
 	ClientState.HostAddress = Host->Text;
-	ClientState.ConnectPort = PortNumber;
+	ClientState.ConnectPort = ToNumber(Port->Text);
 	ClientState.Connect(false);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];

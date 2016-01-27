@@ -96,6 +96,17 @@ T *_Manager<T>::CreateWithID(NetworkIDType ID) {
 	return Object;
 }
 
+// Get object from manager
+template <class T>
+T *_Manager<T>::GetObject(NetworkIDType ID) {
+
+	auto Iterator = IDMap.find(ID);
+	if(Iterator == IDMap.end())
+		return nullptr;
+
+	return Iterator->second;
+}
+
 // Delete all objects and reset
 template <class T>
 void _Manager<T>::Clear() {

@@ -636,7 +636,7 @@ void _ClientState::HandleObjectDelete(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Get object
-	_Object *Object = ObjectManager->IDMap[NetworkID];
+	_Object *Object = ObjectManager->GetObject(NetworkID);
 	if(Object && Object != Player) {
 		Object->Deleted = true;
 	}
@@ -665,7 +665,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 		int Invisible = Data.ReadBit();
 
 		// Find object
-		_Object *Object = ObjectManager->IDMap[NetworkID];
+		_Object *Object = ObjectManager->GetObject(NetworkID);
 		if(Object) {
 			Object->Status = Status;
 
@@ -829,7 +829,7 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Get trading player
-	Player->TradePlayer = ObjectManager->IDMap[NetworkID];
+	Player->TradePlayer = ObjectManager->GetObject(NetworkID);
 	if(!Player->TradePlayer)
 		return;
 
@@ -946,7 +946,7 @@ void _ClientState::HandleBattleLeave(_Buffer &Data) {
 		return;
 
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-	_Object *Object = ObjectManager->IDMap[NetworkID];
+	_Object *Object = ObjectManager->GetObject(NetworkID);
 	if(Object) {
 		Battle->RemoveFighter(Object);
 	}

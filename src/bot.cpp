@@ -32,7 +32,7 @@
 #include <iomanip>
 
 // Constructor
-_Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
+_Bot::_Bot(_Stats *Stats, const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port) :
 	Network(new _ClientNetwork()),
 	Map(nullptr),
 	Battle(nullptr),
@@ -40,15 +40,15 @@ _Bot::_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port) :
 	Stats(Stats),
 	Pather(nullptr),
 	GoalState(GoalStateType::NONE),
-	BotState(BotStateType::IDLE) {
+	BotState(BotStateType::IDLE),
+	Username(Username),
+	Password(Password) {
 
 	ObjectManager = new _Manager<_Object>();
 
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
 
-	Username = "a";
-	Password = "a";
 	Network->Connect(HostAddress, Port);
 }
 
@@ -86,6 +86,13 @@ void _Bot::Update(double FrameTime) {
 			} break;
 			case _NetworkEvent::DISCONNECT:
 				std::cout << Username << " disconnected" << std::endl;
+				ObjectManager->Clear();
+				AssignPlayer(nullptr);
+
+				delete Battle;
+				delete Map;
+				Battle = nullptr;
+				Map = nullptr;
 			break;
 			case _NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
@@ -119,7 +126,6 @@ void _Bot::Update(double FrameTime) {
 	if(Player->Moved) {
 		if(Path.size())
 			Path.erase(Path.begin());
-		//std::cout << Path.size() << std::endl;
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
@@ -156,15 +162,50 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Packet.Write<PacketType>(PacketType::CHARACTERS_REQUEST);
 			Network->SendPacket(Packet);
 		} break;
+		case PacketType::ACCOUNT_NOTFOUND: {
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
+			Packet.WriteBit(1);
+			Packet.WriteString(Username.c_str());
+			Packet.WriteString(Password.c_str());
+			Packet.Write<uint64_t>(0);
+			Network->SendPacket(Packet);
+		} break;
 		case PacketType::CHARACTERS_LIST: {
 
 			// Get count
 			uint8_t CharacterCount = Data.Read<uint8_t>();
 			std::cout << "character count: " << (int)CharacterCount << std::endl;
 
+			// Get characters
+			int FirstSlot = -1;
+			for(size_t i = 0; i < CharacterCount; i++) {
+				size_t Slot = Data.Read<uint8_t>();
+				Data.ReadString();
+				Data.Read<uint32_t>();
+				Data.Read<int32_t>();
+
+				if(FirstSlot == -1)
+					FirstSlot = (int)Slot;
+			}
+
+			// Create character
+			if(FirstSlot == -1) {
+				std::string Name = Username + std::to_string(GetRandomInt(0, 1000));
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
+				Packet.WriteString(Name.c_str());
+				Packet.Write<uint32_t>(1);
+				Packet.Write<uint32_t>(1);
+				Packet.Write<uint8_t>(0);
+				Network->SendPacket(Packet);
+
+				FirstSlot = 0;
+			}
+
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
-			Packet.Write<uint8_t>(0);
+			Packet.Write<uint8_t>((uint8_t)FirstSlot);
 			Network->SendPacket(Packet);
 		} break;
 		case PacketType::OBJECT_STATS:
@@ -177,6 +218,8 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
 			double Clock = Data.Read<double>();
 
+			if(Player)
+				std::cout << Player->NetworkID << " ";
 			std::cout << "WORLD_CHANGEMAPS " << MapID << std::endl;
 
 			// Delete old map and create new
@@ -192,18 +235,21 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				Map->Clock = Clock;
 				Map->NetworkID = MapID;
 				Map->Load(Stats->GetMap(MapID)->File);
-				Player = nullptr;
+				AssignPlayer(nullptr);
 
 				Pather = new micropather::MicroPather(Map, (unsigned)(Map->Size.x * Map->Size.y), 4);
 			}
 		} break;
 		case PacketType::WORLD_OBJECTLIST: {
+			ObjectManager->Clear();
+			AssignPlayer(nullptr);
 
 			// Read header
 			NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
 			NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
 
 			// Create objects
+			//std::cout << ClientNetworkID << " WORLD_OBJECTLIST count=" << ObjectCount << std::endl;
 			for(NetworkIDType i = 0; i < ObjectCount; i++) {
 				NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
@@ -229,6 +275,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			// Read packet
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			//std::cout << Player->NetworkID << " WORLD_CREATEOBJECT NetworkID=" << NetworkID << std::endl;
 
 			// Check id
 			if(NetworkID != Player->NetworkID) {
@@ -241,7 +288,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 			// Get object
-			_Object *Object = ObjectManager->IDMap[NetworkID];
+			_Object *Object = ObjectManager->GetObject(NetworkID);
+			if(!Object)
+			   std::cout << "WORLD_DELETEOBJECT Bad ID=" << NetworkID << std::endl;
+
 			if(Object && Object != Player) {
 				Object->Deleted = true;
 			}
@@ -322,9 +372,12 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_ACTION:
 			//HandleBattleAction(Data);
 		break;
-		case PacketType::BATTLE_LEAVE:
-			//HandleBattleLeave(Data);
-		break;
+		case PacketType::BATTLE_LEAVE: {
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			_Object *Object = ObjectManager->GetObject(NetworkID);
+			if(Object)
+				Battle->RemoveFighter(Object);
+		} break;
 		case PacketType::BATTLE_END: {
 			if(!Player || !Battle)
 				return;
@@ -370,6 +423,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			DetermineNextGoal();
 		} break;
 		case PacketType::ACTION_RESULTS: {
+
 			// Create result
 			_ActionResult ActionResult;
 			bool DecrementItem = Data.ReadBit();

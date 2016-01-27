@@ -38,7 +38,7 @@ cat install_manifest.txt | xargs sudo rm
 ----- COMMAND-LINE ARGUMENTS -----
 
 to run a dedicated server
--host
+-server
 
 change network listen port
 -port [port_number]

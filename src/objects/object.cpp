@@ -1042,7 +1042,7 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 		Targets.clear();
 		for(int i = 0; i < TargetCount; i++) {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-			_Object *Target = ObjectManager->IDMap[NetworkID];
+			_Object *Target = ObjectManager->GetObject(NetworkID);
 			if(Target)
 				Targets.push_back(Target);
 		}

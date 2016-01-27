@@ -187,9 +187,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushboolean(LuaState, Object->Action.IsSet());
 	lua_setfield(LuaState, -2, "BattleActionIsSet");
 
-	lua_pushlightuserdata(LuaState, Object->Targets.front());
-	lua_setfield(LuaState, -2, "BattleTarget");
-
 	lua_pushinteger(LuaState, Object->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
 

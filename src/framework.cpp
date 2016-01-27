@@ -45,6 +45,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	Done = false;
 
 	// Settings
+	std::string HostAddress = Config.LastHost;
 	uint16_t NetworkPort = Config.NetworkPort;
 	State = &ClientState;
 
@@ -54,7 +55,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	for(int i = 1; i < ArgumentCount; i++) {
 		Token = std::string(Arguments[i]);
 		TokensRemaining = ArgumentCount - i - 1;
-		if(Token == "-host") {
+		if(Token == "-server") {
 			State = &DedicatedState;
 		}
 		else if(Token == "-editor") {
@@ -73,6 +74,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 		else if(Token == "-password" && TokensRemaining > 0) {
 			Menu.SetPassword(Arguments[++i]);
+		}
+		else if(Token == "-host" && TokensRemaining > 0) {
+			HostAddress = Arguments[++i];
 		}
 		else if(Token == "-port" && TokensRemaining > 0) {
 			NetworkPort = (uint16_t)atoi(Arguments[++i]);
@@ -97,6 +101,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	}
 	else if(State == &BotState) {
 		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
+		BotState.HostAddress = HostAddress;
+		BotState.Port = NetworkPort;
 	}
 	else {
 

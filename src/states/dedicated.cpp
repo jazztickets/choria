@@ -136,13 +136,11 @@ void _DedicatedState::ShowBattles() {
 	for(auto &Battle : Battles) {
 		Server->Log << i << ": id=" << Battle->NetworkID << std::endl;
 		for(auto &Object : Battle->Fighters) {
-			if(Object->Peer) {
-				Server->Log << "\tplayer_name=" << Object->Name << ", network_id=" << Object->NetworkID;
-			}
+			Server->Log << "\tname=" << Object->Name << ", network_id=" << Object->NetworkID << std::endl;
 		}
 
 		i++;
+		Server->Log << std::endl;
 	}
 
-	Server->Log << std::endl;
 }

@@ -59,7 +59,7 @@ class _Bot {
 
 	public:
 
-		_Bot(_Stats *Stats, const std::string &HostAddress, uint16_t Port);
+		_Bot(_Stats *Stats, const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port);
 		~_Bot();
 
 		// Update

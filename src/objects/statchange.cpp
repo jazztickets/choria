@@ -26,6 +26,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 #include <sstream>
+#include <iostream>
 
 // Constructor
 _StatChange::_StatChange() {
@@ -79,7 +80,11 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 	Reset();
 
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-	Object = Manager->IDMap[NetworkID];
+	Object = Manager->GetObject(NetworkID);
+	if(!Object) {
+		std::cout << "_StatChange::Unserialize BadObject NetworkID=" << NetworkID << std::endl;
+		return;
+	}
 
 	// Get changes
 	int ChangedFlag = Data.Read<int>();

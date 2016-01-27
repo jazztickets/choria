@@ -25,8 +25,10 @@
 #include <buffer.h>
 #include <bot.h>
 #include <constants.h>
+#include <utils.h>
 #include <stats.h>
 #include <iomanip>
+#include <sstream>
 
 _BotsState BotState;
 
@@ -38,21 +40,44 @@ void RunCommandThread() {
 	while(!Done) {
 		std::string Input;
 		std::getline(std::cin, Input);
-		if(Input == "stop" || std::cin.eof() == 1) {
-			BotState.Quit();
+		if(std::cin.eof() == 1)
 			Done = true;
+
+		// Split by space
+		std::vector<std::string> Tokens;
+		std::stringstream Buffer(Input);
+		std::string Token;
+		while(std::getline(Buffer, Token, ' ')) {
+			Tokens.push_back(Token);
 		}
-		else if(Input == "a" || Input == "add")
-			BotState.Add();
-		else if(Input == "d" || Input == "disconnect")
-			BotState.DisconnectAll();
-		else
-			std::cout << "Command not recognized" << std::endl;
+
+		// Handle command
+		if(Tokens.size()) {
+			if(Tokens[0] == "stop")
+				Done = true;
+			else if(Tokens[0] == "a" || Tokens[0] == "add") {
+				int Count = 1;
+				if(Tokens.size() > 1) {
+					Count = ToNumber(Tokens[1]);
+				}
+
+				for(int i = 0; i < Count; i++)
+					BotState.Add();
+			}
+			else if(Tokens[0] == "d" || Tokens[0] == "disconnect")
+				BotState.DisconnectAll();
+			else
+				std::cout << "Command not recognized" << std::endl;
+		}
 	}
+
+	BotState.Quit();
 }
 
 // Constructor
 _BotsState::_BotsState() :
+	HostAddress("127.0.0.1"),
+	Port(DEFAULT_NETWORKPORT),
 	Done(false),
 	Thread(nullptr),
 	Stats(nullptr) {
@@ -61,8 +86,7 @@ _BotsState::_BotsState() :
 
 // Init
 void _BotsState::Init() {
-	HostAddress = "127.0.0.1";
-	Port = DEFAULT_NETWORKPORT;
+	NextBotNumber = 0;
 
 	try {
 		Thread = new std::thread(RunCommandThread);
@@ -118,8 +142,10 @@ void _BotsState::Update(double FrameTime) {
 void _BotsState::Add() {
 
 	try {
-		_Bot *Bot = new _Bot(Stats, HostAddress, Port);
+		std::string Credentials = "bot_" + std::to_string(NextBotNumber);
+		_Bot *Bot = new _Bot(Stats, Credentials, Credentials, HostAddress, Port);
 		Bots.push_back(Bot);
+		NextBotNumber++;
 	}
 	catch(std::exception &Error) {
 		std::cout << Error.what() << std::endl;

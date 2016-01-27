@@ -1685,9 +1685,7 @@ void _HUD::ValidateTradeGold() {
 	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
 
 	// Get gold amount
-	std::stringstream Buffer(GoldTextBox->Text);
-	int Gold = 0;
-	Buffer >> Gold;
+	int Gold = ToNumber(GoldTextBox->Text);
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Gold)
@@ -1822,7 +1820,7 @@ void _HUD::RemoveStatChanges(_Object *Owner) {
 
 // Add multiple statchange ui elements
 void _HUD::AddStatChange(_StatChange &StatChange) {
-	if(StatChange.GetChangedFlag() == 0)
+	if(StatChange.GetChangedFlag() == 0 || !StatChange.Object)
 		return;
 
 	if(StatChange.HasStat(StatType::HEALTH)) {

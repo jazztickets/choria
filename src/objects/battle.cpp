@@ -461,7 +461,10 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 			Stats->GetMonsterStats(DatabaseID, Fighter);
 		}
 		else
-			Fighter = Manager->IDMap[NetworkID];
+			Fighter = Manager->GetObject(NetworkID);
+
+		if(!Fighter)
+			std::cout << "Bad fighter id=" << NetworkID << std::endl;
 
 		// Get battle stats
 		Fighter->UnserializeBattle(Data);
@@ -776,7 +779,7 @@ void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 
-	_Object *Fighter = Manager->IDMap[NetworkID];
+	_Object *Fighter = Manager->GetObject(NetworkID);
 	if(Fighter) {
 		Fighter->Action.Item = Stats->Items[ItemID];
 	}

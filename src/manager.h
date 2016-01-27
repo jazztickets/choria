@@ -36,14 +36,16 @@ template<class T> class _Manager {
 		// Object management
 		T *Create();
 		T *CreateWithID(NetworkIDType ID);
+		T *GetObject(NetworkIDType ID);
 		void Clear();
 
 		// Storage
-		std::unordered_map<NetworkIDType, T *> IDMap;
 		std::list<T *> Objects;
 
 	private:
 
+		// IDs
+		std::unordered_map<NetworkIDType, T *> IDMap;
 		NetworkIDType NextID;
 
 };
