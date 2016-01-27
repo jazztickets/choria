@@ -289,9 +289,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			// Get object
 			_Object *Object = ObjectManager->GetObject(NetworkID);
-			if(!Object)
-			   std::cout << "WORLD_DELETEOBJECT Bad ID=" << NetworkID << std::endl;
-
 			if(Object && Object != Player) {
 				Object->Deleted = true;
 			}

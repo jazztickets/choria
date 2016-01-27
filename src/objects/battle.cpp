@@ -463,9 +463,6 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 		else
 			Fighter = Manager->GetObject(NetworkID);
 
-		if(!Fighter)
-			std::cout << "Bad fighter id=" << NetworkID << std::endl;
-
 		// Get battle stats
 		Fighter->UnserializeBattle(Data);
 		Fighter->HUD = HUD;

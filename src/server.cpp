@@ -1270,7 +1270,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_BattleEvent &BattleEvent) {
-	if(!BattleEvent.Zone)
+	if(!BattleEvent.Zone || BattleEvent.Object->Battle)
 		return;
 
 	// Get a list of players
