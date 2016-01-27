@@ -113,6 +113,7 @@ void _BotsState::Close() {
 // Exit
 void _BotsState::Quit() {
 	Done = true;
+	DisconnectAll();
 }
 
 // Update
@@ -134,7 +135,7 @@ void _BotsState::Update(double FrameTime) {
 			++Iterator;
 	}
 
-	if(Done)
+	if(Done && Bots.size() == 0)
 		Framework.Done = true;
 }
 
