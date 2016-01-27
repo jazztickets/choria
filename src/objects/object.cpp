@@ -720,7 +720,8 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	for(size_t i = 0; i < StatusEffectsSize; i++) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
 		StatusEffect->Unserialize(Data, Stats);
-		StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+		if(HUD)
+			StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 		StatusEffects.push_back(StatusEffect);
 	}
 

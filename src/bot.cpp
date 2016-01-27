@@ -238,6 +238,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				AssignPlayer(nullptr);
 
 				Pather = new micropather::MicroPather(Map, (unsigned)(Map->Size.x * Map->Size.y), 4);
+				Path.clear();
 			}
 		} break;
 		case PacketType::WORLD_OBJECTLIST: {
@@ -569,9 +570,21 @@ void _Bot::EvaluateGoal() {
 			DetermineNextGoal();
 		break;
 		case GoalStateType::FARMING:
-			if(Map->NetworkID != 10) {
+			if(Map->NetworkID != 11) {
+				if(Map->NetworkID != 10) {
+					glm::ivec2 Position;
+					if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
+						MoveTo(Player->Position, Position);
+				}
+				else if(Map->NetworkID == 10) {
+					glm::ivec2 Position;
+					if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 11), Position))
+						MoveTo(Player->Position, Position);
+				}
+			}
+			else if(Map->NetworkID == 11) {
 				glm::ivec2 Position;
-				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
+				if(FindEvent(_Event(_Map::EVENT_SCRIPT, 3), Position))
 					MoveTo(Player->Position, Position);
 			}
 			else {
@@ -631,12 +644,13 @@ bool _Bot::FindEvent(const _Event &Event, glm::ivec2 &Position) {
 
 // Create list of nodes to destination
 void _Bot::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition) {
-	if(!Pather)
+	if(!Pather || Path.size())
 		return;
 
 	float TotalCost;
 	std::vector<void *> PathFound;
 	int Result = Pather->Solve(Map->PositionToNode(StartPosition), Map->PositionToNode(EndPosition), &PathFound, &TotalCost);
+	std::cout << "SOLVE " << Player->NetworkID << " tc=" << TotalCost << std::endl;
 	if(Result == micropather::MicroPather::SOLVED) {
 
 		// Convert vector to list

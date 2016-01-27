@@ -20,8 +20,10 @@
 #include <network/peer.h>
 #include <objects/object.h>
 #include <objects/battle.h>
+#include <objects/map.h>
 #include <framework.h>
 #include <server.h>
+#include <utils.h>
 #include <stats.h>
 #include <iomanip>
 
@@ -117,7 +119,11 @@ void _DedicatedState::ShowPlayers() {
 	for(auto &Peer : Peers) {
 		Server->Log << std::setw(3) << i << ": account_id=" << Peer->AccountID;
 		if(Peer->Object) {
-			Server->Log << ", player_name=" << Peer->Object->Name << ", network_id=" << Peer->Object->NetworkID;
+			uint32_t MapID = 0;
+			if(Peer->Object->Map)
+				MapID = Peer->Object->Map->NetworkID;
+
+			Server->Log << ", network_id=" << Peer->Object->NetworkID << ", map_id=" << MapID << ", name=" << Peer->Object->Name;
 		}
 
 		Server->Log << std::endl;
@@ -136,7 +142,7 @@ void _DedicatedState::ShowBattles() {
 	for(auto &Battle : Battles) {
 		Server->Log << i << ": id=" << Battle->NetworkID << std::endl;
 		for(auto &Object : Battle->Fighters) {
-			Server->Log << "\tname=" << Object->Name << ", network_id=" << Object->NetworkID << std::endl;
+			Server->Log << "\tnetwork_id=" << Object->NetworkID << "\thealth=" << Round(Object->GetHealthPercent()) << "\tname=" << Object->Name << std::endl;
 		}
 
 		i++;

@@ -61,8 +61,9 @@ void RunThread(void *Arguments) {
 }
 
 // Constructor
-_Server::_Server(_Stats *Stats, uint16_t NetworkPort)
-:	Done(false),
+_Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
+	Done(false),
+	StartDisconnect(false),
 	StartShutdown(false),
 	TimeSteps(0),
 	Time(0.0),
@@ -122,8 +123,7 @@ void _Server::JoinThread() {
 
 // Stop the server
 void _Server::StopServer() {
-	Network->DisconnectAll();
-	StartShutdown = true;
+	StartDisconnect = true;
 }
 
 // Update
@@ -180,7 +180,12 @@ void _Server::Update(double FrameTime) {
 	}
 
 	// Wait for peers to disconnect
-	if(StartShutdown && Network->GetPeers().size() == 0) {
+	if(StartDisconnect) {
+		Network->DisconnectAll();
+		StartDisconnect = false;
+		StartShutdown = true;
+	}
+	else if(StartShutdown && Network->GetPeers().size() == 0) {
 		Done = true;
 	}
 

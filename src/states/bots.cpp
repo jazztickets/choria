@@ -29,6 +29,7 @@
 #include <stats.h>
 #include <iomanip>
 #include <sstream>
+#include <SDL_timer.h>
 
 _BotsState BotState;
 
@@ -61,8 +62,10 @@ void RunCommandThread() {
 					Count = ToNumber(Tokens[1]);
 				}
 
-				for(int i = 0; i < Count; i++)
+				for(int i = 0; i < Count; i++) {
 					BotState.Add();
+					SDL_Delay(100);
+				}
 			}
 			else if(Tokens[0] == "d" || Tokens[0] == "disconnect")
 				BotState.DisconnectAll();

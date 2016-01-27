@@ -67,6 +67,7 @@ class _Server {
 
 		// State
 		bool Done;
+		bool StartDisconnect;
 		bool StartShutdown;
 		uint16_t TimeSteps;
 		double Time;
