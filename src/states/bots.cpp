@@ -64,7 +64,7 @@ void RunCommandThread() {
 
 				for(int i = 0; i < Count; i++) {
 					BotState.Add();
-					SDL_Delay(100);
+					SDL_Delay(1);
 				}
 			}
 			else if(Tokens[0] == "d" || Tokens[0] == "disconnect")

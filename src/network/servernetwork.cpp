@@ -104,10 +104,10 @@ void _ServerNetwork::SendPacket(const _Buffer &Buffer, const _Peer *Peer, SendTy
 	ENetPacket *EPacket = enet_packet_create(Buffer.GetData(), Buffer.GetCurrentSize(), Type);
 
 	// Send packet
-	if(enet_peer_send(Peer->ENetPeer, Channel, EPacket) == 0)
-		enet_host_flush(Connection);
-	else
+	if(enet_peer_send(Peer->ENetPeer, Channel, EPacket) != 0)
 		enet_packet_destroy(EPacket);
+
+	//enet_host_flush(Connection);
 }
 
 // Send a packet to all peers

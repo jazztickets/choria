@@ -108,10 +108,10 @@ void _ClientNetwork::SendPacket(_Buffer &Buffer, SendType Type, uint8_t Channel)
 	ENetPacket *EPacket = enet_packet_create(Buffer.GetData(), Buffer.GetCurrentSize(), Type);
 
 	// Send packet
-	if(enet_peer_send(Peer->ENetPeer, Channel, EPacket) == 0)
-		enet_host_flush(Connection);
-	else
+	if(enet_peer_send(Peer->ENetPeer, Channel, EPacket) != 0)
 		enet_packet_destroy(EPacket);
+
+	//enet_host_flush(Connection);
 }
 
 // Get round trip time
