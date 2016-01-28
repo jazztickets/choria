@@ -39,12 +39,12 @@ class _StatChange;
 class _Scripting;
 
 // Play state
-class _ClientState : public _State {
+class _PlayState : public _State {
 
 	public:
 
 		// Setup
-		_ClientState();
+		_PlayState();
 		void Init() override;
 		void Close() override;
 
@@ -139,4 +139,4 @@ class _ClientState : public _State {
 		void DeleteMap();
 };
 
-extern _ClientState ClientState;
+extern _PlayState PlayState;

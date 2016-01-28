@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <states/client.h>
+#include <states/play.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
@@ -47,10 +47,10 @@
 #include <iostream>
 #include <sstream>
 
-_ClientState ClientState;
+_PlayState PlayState;
 
 // Constructor
-_ClientState::_ClientState() :
+_PlayState::_PlayState() :
 	IsTesting(false),
 	FromEditor(false),
 	ConnectNow(false),
@@ -61,7 +61,7 @@ _ClientState::_ClientState() :
 }
 
 // Load level and set up objects
-void _ClientState::Init() {
+void _PlayState::Init() {
 	Server = nullptr;
 	Map = nullptr;
 	Battle = nullptr;
@@ -96,7 +96,7 @@ void _ClientState::Init() {
 }
 
 // Close map
-void _ClientState::Close() {
+void _PlayState::Close() {
 	Menu.Close();
 
 	AssignPlayer(nullptr);
@@ -112,7 +112,7 @@ void _ClientState::Close() {
 }
 
 // Connect to a server
-void _ClientState::Connect(bool IsLocal) {
+void _PlayState::Connect(bool IsLocal) {
 	if(Network->GetConnectionState() != _ClientNetwork::State::DISCONNECTED)
 		return;
 
@@ -128,7 +128,7 @@ void _ClientState::Connect(bool IsLocal) {
 }
 
 // Stops the server thread
-void _ClientState::StopLocalServer() {
+void _PlayState::StopLocalServer() {
 
 	// Kill existing server
 	if(Server) {
@@ -140,7 +140,7 @@ void _ClientState::StopLocalServer() {
 }
 
 // Start local server in thread
-void _ClientState::StartLocalServer() {
+void _PlayState::StartLocalServer() {
 
 	// Stop existing server
 	StopLocalServer();
@@ -156,7 +156,7 @@ void _ClientState::StartLocalServer() {
 }
 
 // Action handler
-bool _ClientState::HandleAction(int InputType, int Action, int Value) {
+bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 	if(Value == 0)
 		return true;
 
@@ -254,7 +254,7 @@ bool _ClientState::HandleAction(int InputType, int Action, int Value) {
 }
 
 // Key handler
-void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
+void _PlayState::KeyEvent(const _KeyEvent &KeyEvent) {
 	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
 
 	// Pass to menu
@@ -273,7 +273,7 @@ void _ClientState::KeyEvent(const _KeyEvent &KeyEvent) {
 }
 
 // Mouse handler
-void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
+void _PlayState::MouseEvent(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
 	Graphics.Element->HandleInput(MouseEvent.Pressed);
 
@@ -285,13 +285,13 @@ void _ClientState::MouseEvent(const _MouseEvent &MouseEvent) {
 	HUD->MouseEvent(MouseEvent);
 }
 
-void _ClientState::WindowEvent(uint8_t Event) {
+void _PlayState::WindowEvent(uint8_t Event) {
 	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
 // Update
-void _ClientState::Update(double FrameTime) {
+void _PlayState::Update(double FrameTime) {
 	Graphics.Element->Update(FrameTime, Input.GetMouse());
 	//if(Graphics.Element->HitElement)
 		//std::cout << Graphics.Element->HitElement->Identifier << std::endl;
@@ -384,7 +384,7 @@ void _ClientState::Update(double FrameTime) {
 }
 
 // Render the state
-void _ClientState::Render(double BlendFactor) {
+void _PlayState::Render(double BlendFactor) {
 
 	// Render in game
 	if(Player && Map) {
@@ -424,7 +424,7 @@ void _ClientState::Render(double BlendFactor) {
 }
 
 // Handle connection to server
-void _ClientState::HandleConnect() {
+void _PlayState::HandleConnect() {
 
 	if(Server) {
 		_Buffer Packet;
@@ -441,9 +441,9 @@ void _ClientState::HandleConnect() {
 }
 
 // Handle disconnects
-void _ClientState::HandleDisconnect() {
+void _PlayState::HandleDisconnect() {
 	Menu.HandleDisconnect(Server != nullptr);
-	ClientState.StopLocalServer();
+	PlayState.StopLocalServer();
 
 	HUD->Reset();
 	ObjectManager->Clear();
@@ -454,7 +454,7 @@ void _ClientState::HandleDisconnect() {
 }
 
 // Handle packet from server
-void _ClientState::HandlePacket(_Buffer &Data) {
+void _PlayState::HandlePacket(_Buffer &Data) {
 	PacketType Type = Data.Read<PacketType>();
 
 	switch(Type) {
@@ -550,7 +550,7 @@ void _ClientState::HandlePacket(_Buffer &Data) {
 }
 
 // Called once to synchronize your stats with the servers
-void _ClientState::HandleObjectStats(_Buffer &Data) {
+void _PlayState::HandleObjectStats(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -560,7 +560,7 @@ void _ClientState::HandleObjectStats(_Buffer &Data) {
 }
 
 // Called when the player changes maps
-void _ClientState::HandleChangeMaps(_Buffer &Data) {
+void _PlayState::HandleChangeMaps(_Buffer &Data) {
 	Menu.InitPlay();
 
 	// Load map
@@ -582,7 +582,7 @@ void _ClientState::HandleChangeMaps(_Buffer &Data) {
 }
 
 // Handle object list
-void _ClientState::HandleObjectList(_Buffer &Data) {
+void _PlayState::HandleObjectList(_Buffer &Data) {
 	ObjectManager->Clear();
 	AssignPlayer(nullptr);
 
@@ -613,7 +613,7 @@ void _ClientState::HandleObjectList(_Buffer &Data) {
 }
 
 // Creates an object
-void _ClientState::HandleObjectCreate(_Buffer &Data) {
+void _PlayState::HandleObjectCreate(_Buffer &Data) {
 	if(!Map || !Player)
 		return;
 
@@ -629,7 +629,7 @@ void _ClientState::HandleObjectCreate(_Buffer &Data) {
 }
 
 // Deletes an object
-void _ClientState::HandleObjectDelete(_Buffer &Data) {
+void _PlayState::HandleObjectDelete(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -643,7 +643,7 @@ void _ClientState::HandleObjectDelete(_Buffer &Data) {
 }
 
 // Handles position updates from the server
-void _ClientState::HandleObjectUpdates(_Buffer &Data) {
+void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 	if(!Player || !Map)
 		return;
 
@@ -713,7 +713,7 @@ void _ClientState::HandleObjectUpdates(_Buffer &Data) {
 }
 
 // Handles player position
-void _ClientState::HandlePlayerPosition(_Buffer &Data) {
+void _PlayState::HandlePlayerPosition(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -724,7 +724,7 @@ void _ClientState::HandlePlayerPosition(_Buffer &Data) {
 }
 
 // Start teleport event
-void _ClientState::HandleTeleportStart(_Buffer &Data) {
+void _PlayState::HandleTeleportStart(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -733,7 +733,7 @@ void _ClientState::HandleTeleportStart(_Buffer &Data) {
 }
 
 // Handles the start of an event
-void _ClientState::HandleEventStart(_Buffer &Data) {
+void _PlayState::HandleEventStart(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -745,12 +745,12 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 	// Handle event
 	switch(EventType) {
 		case _Map::EVENT_VENDOR:
-			Player->Vendor = ClientState.Stats->GetVendor(EventData);
+			Player->Vendor = PlayState.Stats->GetVendor(EventData);
 			Player->WaitForServer = false;
 			HUD->InitVendor();
 		break;
 		case _Map::EVENT_TRADER:
-			Player->Trader = ClientState.Stats->GetTrader(EventData);
+			Player->Trader = PlayState.Stats->GetTrader(EventData);
 			Player->WaitForServer = false;
 			HUD->InitTrader();
 		break;
@@ -758,7 +758,7 @@ void _ClientState::HandleEventStart(_Buffer &Data) {
 }
 
 // Handle inventory sync
-void _ClientState::HandleInventory(_Buffer &Data) {
+void _PlayState::HandleInventory(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -767,7 +767,7 @@ void _ClientState::HandleInventory(_Buffer &Data) {
 }
 
 // Handles a chat message
-void _ClientState::HandleChatMessage(_Buffer &Data) {
+void _PlayState::HandleChatMessage(_Buffer &Data) {
 
 	// Read packet
 	_Message Chat;
@@ -779,7 +779,7 @@ void _ClientState::HandleChatMessage(_Buffer &Data) {
 }
 
 // Handles the use of an inventory item
-void _ClientState::HandleInventoryUse(_Buffer &Data) {
+void _PlayState::HandleInventoryUse(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -788,7 +788,7 @@ void _ClientState::HandleInventoryUse(_Buffer &Data) {
 }
 
 // Handles a inventory swap
-void _ClientState::HandleInventorySwap(_Buffer &Data) {
+void _PlayState::HandleInventorySwap(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -800,7 +800,7 @@ void _ClientState::HandleInventorySwap(_Buffer &Data) {
 }
 
 // Handle an inventory update
-void _ClientState::HandleInventoryUpdate(_Buffer &Data) {
+void _PlayState::HandleInventoryUpdate(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -812,7 +812,7 @@ void _ClientState::HandleInventoryUpdate(_Buffer &Data) {
 }
 
 // Handle gold update
-void _ClientState::HandleInventoryGold(_Buffer &Data) {
+void _PlayState::HandleInventoryGold(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -821,7 +821,7 @@ void _ClientState::HandleInventoryGold(_Buffer &Data) {
 }
 
 // Handles a trade request
-void _ClientState::HandleTradeRequest(_Buffer &Data) {
+void _PlayState::HandleTradeRequest(_Buffer &Data) {
 	if(!Player || !Map)
 		return;
 
@@ -840,7 +840,7 @@ void _ClientState::HandleTradeRequest(_Buffer &Data) {
 }
 
 // Handles a trade cancel
-void _ClientState::HandleTradeCancel(_Buffer &Data) {
+void _PlayState::HandleTradeCancel(_Buffer &Data) {
 	Player->TradePlayer = nullptr;
 
 	// Reset agreement
@@ -849,7 +849,7 @@ void _ClientState::HandleTradeCancel(_Buffer &Data) {
 }
 
 // Handles a trade item update
-void _ClientState::HandleTradeItem(_Buffer &Data) {
+void _PlayState::HandleTradeItem(_Buffer &Data) {
 
 	// Get trading player
 	if(!Player->TradePlayer)
@@ -865,7 +865,7 @@ void _ClientState::HandleTradeItem(_Buffer &Data) {
 }
 
 // Handles a gold update from the trading player
-void _ClientState::HandleTradeGold(_Buffer &Data) {
+void _PlayState::HandleTradeGold(_Buffer &Data) {
 
 	// Get trading player
 	if(!Player->TradePlayer)
@@ -881,7 +881,7 @@ void _ClientState::HandleTradeGold(_Buffer &Data) {
 }
 
 // Handles a trade accept
-void _ClientState::HandleTradeAccept(_Buffer &Data) {
+void _PlayState::HandleTradeAccept(_Buffer &Data) {
 
 	// Get trading player
 	if(!Player->TradePlayer)
@@ -893,7 +893,7 @@ void _ClientState::HandleTradeAccept(_Buffer &Data) {
 }
 
 // Handles a trade exchange
-void _ClientState::HandleTradeExchange(_Buffer &Data) {
+void _PlayState::HandleTradeExchange(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -907,7 +907,7 @@ void _ClientState::HandleTradeExchange(_Buffer &Data) {
 }
 
 // Handles the start of a battle
-void _ClientState::HandleBattleStart(_Buffer &Data) {
+void _PlayState::HandleBattleStart(_Buffer &Data) {
 
 	// Already in a battle
 	if(Battle)
@@ -933,7 +933,7 @@ void _ClientState::HandleBattleStart(_Buffer &Data) {
 }
 
 // Handles a battle action set from another player
-void _ClientState::HandleBattleAction(_Buffer &Data) {
+void _PlayState::HandleBattleAction(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
@@ -941,7 +941,7 @@ void _ClientState::HandleBattleAction(_Buffer &Data) {
 }
 
 // Handle a fighter leaving battle
-void _ClientState::HandleBattleLeave(_Buffer &Data) {
+void _PlayState::HandleBattleLeave(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
@@ -953,7 +953,7 @@ void _ClientState::HandleBattleLeave(_Buffer &Data) {
 }
 
 // Handles the end of a battle
-void _ClientState::HandleBattleEnd(_Buffer &Data) {
+void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
@@ -1001,7 +1001,7 @@ void _ClientState::HandleBattleEnd(_Buffer &Data) {
 }
 
 // Handles the result of a turn in battle
-void _ClientState::HandleActionResults(_Buffer &Data) {
+void _PlayState::HandleActionResults(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -1081,7 +1081,7 @@ void _ClientState::HandleActionResults(_Buffer &Data) {
 }
 
 // Handles a stat change
-void _ClientState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
+void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 	if(!Player)
 		return;
 
@@ -1109,7 +1109,7 @@ void _ClientState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 }
 
 // Handles HUD updates
-void _ClientState::HandleHUD(_Buffer &Data) {
+void _PlayState::HandleHUD(_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -1134,7 +1134,7 @@ void _ClientState::HandleHUD(_Buffer &Data) {
 }
 
 // Creates an object from a buffer
-_Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
+_Object *_PlayState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);
@@ -1152,7 +1152,7 @@ _Object *_ClientState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 }
 
 // Send action to server
-void _ClientState::SendActionUse(uint8_t Slot) {
+void _PlayState::SendActionUse(uint8_t Slot) {
 	if(!Player)
 		return;
 
@@ -1175,7 +1175,7 @@ void _ClientState::SendActionUse(uint8_t Slot) {
 }
 
 // Send status to server
-void _ClientState::SendStatus(uint8_t Status) {
+void _PlayState::SendStatus(uint8_t Status) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 	Packet.Write<uint8_t>(Status);
@@ -1183,7 +1183,7 @@ void _ClientState::SendStatus(uint8_t Status) {
 }
 
 // Assigns the client player pointer
-void _ClientState::AssignPlayer(_Object *Object) {
+void _PlayState::AssignPlayer(_Object *Object) {
 	Player = Object;
 	if(Player)
 		Player->CalcLevelStats = true;
@@ -1199,13 +1199,13 @@ void _ClientState::AssignPlayer(_Object *Object) {
 }
 
 // Delete battle instance
-void _ClientState::DeleteBattle() {
+void _PlayState::DeleteBattle() {
 	delete Battle;
 	Battle = nullptr;
 }
 
 // Delete map
-void _ClientState::DeleteMap() {
+void _PlayState::DeleteMap() {
 	delete Map;
 	Map = nullptr;
 }

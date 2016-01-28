@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <menu.h>
-#include <states/client.h>
+#include <states/play.h>
 #include <states/editor.h>
 #include <network/clientnetwork.h>
 #include <ui/element.h>
@@ -71,7 +71,7 @@ void _Menu::ChangeLayout(const std::string &ElementIdentifier) {
 // Initialize
 void _Menu::InitTitle(bool Disconnect) {
 	if(Disconnect)
-		ClientState.Network->Disconnect(true);
+		PlayState.Network->Disconnect(true);
 
 	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
 	Assets.Labels["label_menu_title_message"]->Text = "";
@@ -120,7 +120,7 @@ void _Menu::InitNewCharacter() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 
-	ClientState.SendStatus(_Object::STATUS_PAUSE);
+	PlayState.SendStatus(_Object::STATUS_PAUSE);
 	State = STATE_INGAME;
 }
 
@@ -130,7 +130,7 @@ void _Menu::InitPlay() {
 		CurrentLayout->SetVisible(false);
 	CurrentLayout = nullptr;
 
-	ClientState.SendStatus(_Object::STATUS_NONE);
+	PlayState.SendStatus(_Object::STATUS_NONE);
 	State = STATE_NONE;
 }
 
@@ -147,7 +147,7 @@ void _Menu::InitEditor() {
 
 // Init connect screen
 void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
-	ClientState.Network->Disconnect();
+	PlayState.Network->Disconnect();
 
 	ChangeLayout("element_menu_connect");
 
@@ -262,7 +262,7 @@ void _Menu::CreateCharacter() {
 	Packet.Write<uint32_t>(PortraitID);
 	Packet.Write<uint32_t>(BuildID);
 	Packet.Write<uint8_t>((uint8_t)SelectedSlot);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 }
 
 void _Menu::ConnectToHost() {
@@ -278,9 +278,9 @@ void _Menu::ConnectToHost() {
 		return;
 	}
 
-	ClientState.HostAddress = Host->Text;
-	ClientState.ConnectPort = ToNumber(Port->Text);
-	ClientState.Connect(false);
+	PlayState.HostAddress = Host->Text;
+	PlayState.ConnectPort = ToNumber(Port->Text);
+	PlayState.Connect(false);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Color = COLOR_WHITE;
@@ -297,7 +297,7 @@ void _Menu::PlayCharacter(size_t Slot) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
 	Packet.Write<uint8_t>((uint8_t)Slot);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 
 	CharactersState = CHARACTERS_PLAYSENT;
 }
@@ -340,7 +340,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.WriteString(Username->Text.c_str());
 	Packet.WriteString(Password->Text.c_str());
 	Packet.Write<uint64_t>(0);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 
 	FocusedElement = nullptr;
 }
@@ -351,7 +351,7 @@ void _Menu::RequestCharacterList() {
 	// Request character list
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_REQUEST);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 }
 
 // Load portraits
@@ -366,7 +366,7 @@ void _Menu::LoadPortraitButtons() {
 
 	// Load portraits
 	std::list<_Portrait> Portraits;
-	ClientState.Stats->GetPortraits(Portraits);
+	PlayState.Stats->GetPortraits(Portraits);
 
 	// Iterate over portraits
 	for(const auto &Portrait : Portraits) {
@@ -432,7 +432,7 @@ void _Menu::LoadBuildButtons() {
 
 	// Load builds
 	std::list<_Build> Builds;
-	ClientState.Stats->GetStartingBuilds(Builds);
+	PlayState.Stats->GetStartingBuilds(Builds);
 
 	// Iterate over builds
 	for(const auto &Build : Builds) {
@@ -575,7 +575,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 					Framework.Done = true;
 				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-					ClientState.Connect(true);
+					PlayState.Connect(true);
 				}
 			}
 		} break;
@@ -583,7 +583,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 			if(CharactersState == CHARACTERS_NONE) {
 				if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-						ClientState.Network->Disconnect();
+						PlayState.Network->Disconnect();
 					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
 						size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot >= CharacterSlots.size())
@@ -659,7 +659,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 		switch(State) {
 			case STATE_TITLE: {
 				if(Clicked->Identifier == "button_title_play") {
-					ClientState.Connect(true);
+					PlayState.Connect(true);
 				}
 				else if(Clicked->Identifier == "button_title_joinserver") {
 					InitConnect(true);
@@ -680,7 +680,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::CHARACTERS_DELETE);
 							Packet.Write<uint8_t>((uint8_t)SelectedSlot);
-							ClientState.Network->SendPacket(Packet);
+							PlayState.Network->SendPacket(Packet);
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
@@ -690,7 +690,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						}
 					}
 					else if(Clicked->Identifier == "button_characters_back") {
-						ClientState.Network->Disconnect();
+						PlayState.Network->Disconnect();
 					}
 					else if(Clicked->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
 
@@ -746,8 +746,8 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 			} break;
 			case STATE_CONNECT: {
 				if(Clicked->Identifier == "button_connect_connect") {
-					if(!ClientState.Network->IsDisconnected()) {
-						ClientState.Network->Disconnect(true);
+					if(!PlayState.Network->IsDisconnected()) {
+						PlayState.Network->Disconnect(true);
 						InitConnect(false);
 					}
 					else
@@ -773,7 +773,7 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitPlay();
 				}
 				else if(Clicked->Identifier == "button_ingame_disconnect") {
-					ClientState.Network->Disconnect();
+					PlayState.Network->Disconnect();
 				}
 			} break;
 			default:
@@ -928,10 +928,10 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				int32_t Experience = Buffer.Read<int32_t>();
 
 				std::stringstream Buffer;
-				Buffer << "Level " << ClientState.Stats->FindLevel(Experience)->Level;
+				Buffer << "Level " << PlayState.Stats->FindLevel(Experience)->Level;
 				CharacterSlots[Slot].Level->Text = Buffer.str();
 				CharacterSlots[Slot].Used = true;
-				CharacterSlots[Slot].Image->Texture = ClientState.Stats->GetPortraitImage(PortraitID);
+				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);
 			}
 
 			// Disable ui buttons

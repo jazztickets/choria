@@ -22,7 +22,7 @@
 #include <ui/textbox.h>
 #include <ui/image.h>
 #include <ui/style.h>
-#include <states/client.h>
+#include <states/play.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>
 #include <objects/item.h>
@@ -171,7 +171,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 							Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
-							ClientState.Network->SendPacket(Packet);
+							PlayState.Network->SendPacket(Packet);
 						}
 					}
 				break;
@@ -243,7 +243,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
-			ClientState.Network->SendPacket(Packet);
+			PlayState.Network->SendPacket(Packet);
 			CloseWindows();
 		}
 		// Cancel trader button
@@ -270,7 +270,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
 								Packet.Write<uint8_t>((uint8_t)Cursor.Slot);
 								Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
-								ClientState.Network->SendPacket(Packet);
+								PlayState.Network->SendPacket(Packet);
 							}
 						break;
 						// Sell an item
@@ -328,7 +328,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			if(Player->Battle)
 				Player->Battle->ClientHandleInput(_Actions::SKILL1 + Slot);
 			else
-				ClientState.SendActionUse(Slot);
+				PlayState.SendActionUse(Slot);
 		}
 
 		if(Player->WaitingForTrade) {
@@ -345,7 +345,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						_Buffer Packet;
 						Packet.Write<PacketType>(PacketType::TRADE_ACCEPT);
 						Packet.Write<char>(AcceptButton->Checked);
-						ClientState.Network->SendPacket(Packet);
+						PlayState.Network->SendPacket(Packet);
 					}
 				}
 			}
@@ -410,7 +410,7 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Item = ClientState.Stats->Items[(uint32_t)Tooltip.Slot];
+				Tooltip.Item = PlayState.Stats->Items[(uint32_t)Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
 				Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
@@ -497,15 +497,15 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
 		Buffer.str("");
 
-		Buffer << ClientState.Network->GetSentSpeed() / 1024.0f << " KB/s";
+		Buffer << PlayState.Network->GetSentSpeed() / 1024.0f << " KB/s";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 1));
 		Buffer.str("");
 
-		Buffer << ClientState.Network->GetReceiveSpeed() / 1024.0f << " KB/s";
+		Buffer << PlayState.Network->GetReceiveSpeed() / 1024.0f << " KB/s";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 2));
 		Buffer.str("");
 
-		Buffer << ClientState.Network->GetRTT() << "ms";
+		Buffer << PlayState.Network->GetRTT() << "ms";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 3));
 		Buffer.str("");
 	}
@@ -575,7 +575,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		// Draw item information
 		DrawCursorItem();
 		if(Tooltip.Item)
-			Tooltip.Item->DrawTooltip(ClientState.Scripting, Player, Tooltip);
+			Tooltip.Item->DrawTooltip(PlayState.Scripting, Player, Tooltip);
 
 		// Draw status effects
 		if(Tooltip.StatusEffect)
@@ -605,7 +605,7 @@ void _HUD::ToggleChat() {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
 			Packet.WriteString(ChatTextBox->Text.c_str());
-			ClientState.Network->SendPacket(Packet);
+			PlayState.Network->SendPacket(Packet);
 		}
 
 		CloseChat();
@@ -624,7 +624,7 @@ void _HUD::ToggleTeleport() {
 
 	if(!Player->WaitForServer && !TeleportElement->Visible) {
 		CloseWindows();
-		ClientState.SendStatus(_Object::STATUS_TELEPORT);
+		PlayState.SendStatus(_Object::STATUS_TELEPORT);
 		Player->WaitForServer = true;
 	}
 	else {
@@ -643,7 +643,7 @@ void _HUD::ToggleInventory() {
 
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
-		ClientState.SendStatus(_Object::STATUS_INVENTORY);
+		PlayState.SendStatus(_Object::STATUS_INVENTORY);
 	}
 	else {
 		CloseWindows();
@@ -687,8 +687,8 @@ void _HUD::ToggleInGameMenu() {
 	if(CloseWindows())
 		return;
 
-	if(ClientState.IsTesting)
-		ClientState.Network->Disconnect();
+	if(PlayState.IsTesting)
+		PlayState.Network->Disconnect();
 	else {
 		Menu.InitInGame();
 	}
@@ -755,7 +755,7 @@ void _HUD::InitSkills() {
 
 	// Iterate over skills
 	for(auto &SkillID : Player->Skills) {
-		const _Item *Skill = ClientState.Stats->Items[SkillID.first];
+		const _Item *Skill = PlayState.Stats->Items[SkillID.first];
 		if(!Skill)
 			continue;
 
@@ -845,7 +845,7 @@ void _HUD::InitSkills() {
 
 		i++;
 	}
-	ClientState.Stats->Database->CloseQuery();
+	PlayState.Stats->Database->CloseQuery();
 
 	SkillsElement->CalculateBounds();
 	SkillsElement->SetVisible(true);
@@ -854,7 +854,7 @@ void _HUD::InitSkills() {
 	RefreshSkillButtons();
 	Cursor.Reset();
 
-	ClientState.SendStatus(_Object::STATUS_SKILLS);
+	PlayState.SendStatus(_Object::STATUS_SKILLS);
 }
 
 // Closes the chat window
@@ -952,7 +952,7 @@ bool _HUD::CloseWindows(bool SendNotify) {
 	WasOpen |= CloseTeleport();
 
 	if(WasOpen)
-		ClientState.SendStatus(_Object::STATUS_NONE);
+		PlayState.SendStatus(_Object::STATUS_NONE);
 
 	return WasOpen;
 }
@@ -1494,7 +1494,7 @@ void _HUD::BuyItem(_Cursor *Item, size_t TargetSlot) {
 	Packet.Write<uint8_t>((uint8_t)Item->Count);
 	Packet.Write<uint8_t>((uint8_t)Item->Slot);
 	Packet.Write<uint8_t>((uint8_t)TargetSlot);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 }
 
 // Sells an item
@@ -1508,7 +1508,7 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	Packet.WriteBit(0);
 	Packet.Write<uint8_t>((uint8_t)Amount);
 	Packet.Write<uint8_t>((uint8_t)Item->Slot);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 }
 
 // Adjust skill level
@@ -1536,7 +1536,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 		EquipSkill(SkillID);
 	}
 
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 
 	// Update player
 	Player->CalculateStats();
@@ -1573,12 +1573,12 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 		Player->ActionBar[i].Serialize(Packet);
 	}
 
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 }
 
 // Equip a skill
 void _HUD::EquipSkill(uint32_t SkillID) {
-	const _Item *Skill = ClientState.Stats->Items[SkillID];
+	const _Item *Skill = PlayState.Stats->Items[SkillID];
 	if(Skill) {
 
 		// Check skill
@@ -1662,7 +1662,7 @@ void _HUD::RefreshSkillButtons() {
 void _HUD::SendTradeRequest() {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 }
 
 // Cancel a trade
@@ -1672,7 +1672,7 @@ void _HUD::SendTradeCancel() {
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 
 	Player->TradePlayer = nullptr;
 }
@@ -1698,7 +1698,7 @@ void _HUD::ValidateTradeGold() {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_GOLD);
 	Packet.Write<int32_t>(Gold);
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 
 	// Reset agreement
 	ResetAcceptButton();
@@ -1764,7 +1764,7 @@ void _HUD::SplitStack(uint8_t Slot, uint8_t Count) {
 	Packet.Write<uint8_t>(Slot);
 	Packet.Write<uint8_t>(Count);
 
-	ClientState.Network->SendPacket(Packet);
+	PlayState.Network->SendPacket(Packet);
 }
 
 // Return true if player is typing gold

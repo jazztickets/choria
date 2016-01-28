@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <framework.h>
 #include <states/editor.h>
-#include <states/client.h>
+#include <states/play.h>
 #include <states/dedicated.h>
 #include <states/bots.h>
 #include <network/network.h>
@@ -47,7 +47,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	// Settings
 	std::string HostAddress = Config.LastHost;
 	uint16_t NetworkPort = Config.NetworkPort;
-	State = &ClientState;
+	State = &PlayState;
 
 	// Process arguments
 	std::string Token;
@@ -64,7 +64,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 				EditorState.SetFilePath(Arguments[++i]);
 		}
 		else if(Token == "-connect") {
-			ClientState.ConnectNow = true;
+			PlayState.ConnectNow = true;
 		}
 		else if(Token == "-bot") {
 			State = &BotState;
@@ -82,7 +82,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			NetworkPort = (uint16_t)atoi(Arguments[++i]);
 		}
 		else if(Token == "-test") {
-			ClientState.IsTesting = true;
+			PlayState.IsTesting = true;
 		}
 	}
 
@@ -107,7 +107,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	else {
 
 		// Open log
-		ClientState.Log.Open((Config.ConfigPath + "client.log").c_str());
+		PlayState.Log.Open((Config.ConfigPath + "client.log").c_str());
 
 		// Initialize SDL
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)
