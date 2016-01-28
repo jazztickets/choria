@@ -541,6 +541,12 @@ void _Save::CreateDefaultDatabase() {
 				")"
 	);
 
+	Database->RunQuery("CREATE INDEX inventory_character_id ON inventory(character_id)");
+	Database->RunQuery("CREATE INDEX skill_character_id ON skill(character_id)");
+	Database->RunQuery("CREATE INDEX actionbar_character_id ON actionbar(character_id)");
+	Database->RunQuery("CREATE INDEX unlock_character_id ON unlock(character_id)");
+	Database->RunQuery("CREATE INDEX character_account_id ON character(account_id)");
+
 	Database->RunQuery(
 				"END TRANSACTION"
 	);
