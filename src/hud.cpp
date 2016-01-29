@@ -1293,6 +1293,7 @@ void _HUD::DrawCharacterStats() {
 	DrawPosition.y += SpacingY;
 
 	// Resistances
+	bool HasResist = false;
 	for(auto &Resistance : Player->Resistances) {
 		if(Resistance.first == 0)
 			continue;
@@ -1302,10 +1303,13 @@ void _HUD::DrawCharacterStats() {
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
+
+		HasResist = true;
 	}
 
 	// Separator
-	DrawPosition.y += SpacingY;
+	if(HasResist)
+		DrawPosition.y += SpacingY;
 
 	// Play time
 	int64_t PlayTime = (int64_t)Player->PlayTime;

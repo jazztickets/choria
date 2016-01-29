@@ -204,7 +204,7 @@ Buff_BleedResist.Increments = 5
 
 function Buff_BleedResist.GetInfo(self, Level)
 
-	return "Bleed resist increased by [c green]" .. self.Increments * Level
+	return "Bleed resist increased by [c green]" .. self.Increments * Level .. "%"
 end
 
 function Buff_BleedResist.Stats(self, Level, Source, Change)
