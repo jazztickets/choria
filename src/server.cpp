@@ -32,6 +32,7 @@
 #include <constants.h>
 #include <config.h>
 #include <SDL_timer.h>
+#include <enet/enet.h>
 #include <algorithm>
 
 // Function to run the server thread

@@ -18,6 +18,7 @@
 #include <network/clientnetwork.h>
 #include <network/peer.h>
 #include <buffer.h>
+#include <enet/enet.h>
 #include <stdexcept>
 
 // Constructor

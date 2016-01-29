@@ -19,6 +19,7 @@
 #include <network/peer.h>
 #include <buffer.h>
 #include <stdexcept>
+#include <enet/enet.h>
 
 // Constructor
 _Network::_Network()

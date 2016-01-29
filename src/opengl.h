@@ -25,6 +25,13 @@
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#undef DrawText
+	#undef DrawTextA
+	#undef CreateEvent
+	#undef CreateEventA
+	#undef GetObject
+	#undef GetObjectA
+	#undef SendMessage
+	#undef SendMessageA
 #else
 	#define GL_GLEXT_PROTOTYPES
 #endif

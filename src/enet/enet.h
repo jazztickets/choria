@@ -14,6 +14,12 @@ extern "C"
 
 #ifdef _WIN32
 #include "enet/win32.h"
+#undef CreateEvent
+#undef CreateEventA
+#undef GetObject
+#undef GetObjectA
+#undef SendMessage
+#undef SendMessageA
 #else
 #include "enet/unix.h"
 #endif

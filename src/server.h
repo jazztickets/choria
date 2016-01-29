@@ -18,7 +18,6 @@
 #pragma once
 
 // Libraries
-#include <enet/enet.h>
 #include <log.h>
 #include <memory>
 #include <thread>
