@@ -1288,6 +1288,9 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::EVASION))
 		Evasion += StatChange.Values[StatType::EVASION].Float;
 
+	if(StatChange.HasStat(StatType::RESISTTYPE))
+		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Float;
+
 	if(StatChange.HasStat(StatType::MINDAMAGE))
 		MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
 	if(StatChange.HasStat(StatType::MAXDAMAGE))

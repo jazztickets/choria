@@ -1,6 +1,8 @@
 -- Bleeding debuff --
 
-Buff_Bleeding = { Damage = 1 }
+Buff_Bleeding = {}
+Buff_Bleeding.Damage = 1
+Buff_Bleeding.DamageType = DamageType["Bleed"]
 
 function Buff_Bleeding.GetInfo(self, Level)
 
@@ -8,7 +10,11 @@ function Buff_Bleeding.GetInfo(self, Level)
 end
 
 function Buff_Bleeding.Update(self, Level, Source, Change)
-	Change.Health = -self.Damage * Level
+	Damage = self.Damage
+	Damage = Damage * (1 - Source.GetResistance(self.DamageType))
+	Damage = math.max(Damage, 0)
+
+	Change.Health = -Damage * Level
 
 	return Change
 end
@@ -187,6 +193,23 @@ end
 
 function Buff_Burning.Update(self, Level, Source, Change)
 	Change.Health = -self.Damage * Level
+
+	return Change
+end
+
+-- Bleed Resist --
+
+Buff_BleedResist = Base_Buff:New()
+Buff_BleedResist.Increments = 5
+
+function Buff_BleedResist.GetInfo(self, Level)
+
+	return "Bleed resist increased by [c green]" .. self.Increments * Level
+end
+
+function Buff_BleedResist.Stats(self, Level, Source, Change)
+	Change.ResistType = DamageType["Bleed"]
+	Change.Resist = self.Increments * Level / 100
 
 	return Change
 end

@@ -118,6 +118,24 @@ function Item_ThrowingKnives.GetInfo(self, Level)
 	return "Throw a knife at your enemy"
 end
 
+-- Glob  --
+
+Item_Glob = { Duration = 30 }
+
+function Item_Glob.GetInfo(self, Level)
+
+	return "Gain [c green]" .. Buff_BleedResist.Increments * Level .. "% [c yellow]bleed [c white]resist for [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Item_Glob.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_BleedResist"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
+
 -- Crab Legs --
 
 Item_CrabLegs = { Duration = 30 }
