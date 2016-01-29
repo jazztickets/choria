@@ -1225,7 +1225,7 @@ void _HUD::DrawCharacterStats() {
 	int SpacingY = 20;
 	glm::vec2 Spacing(15, 0);
 	glm::vec2 DrawPosition = CharacterElement->Bounds.Start;
-	DrawPosition.x += CharacterElement->Size.x/2;
+	DrawPosition.x += CharacterElement->Size.x/2 + 25;
 	DrawPosition.y += 20 + SpacingY;
 	std::stringstream Buffer;
 
@@ -1288,6 +1288,21 @@ void _HUD::DrawCharacterStats() {
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
+
+	// Separator
+	DrawPosition.y += SpacingY;
+
+	// Resistances
+	for(auto &Resistance : Player->Resistances) {
+		if(Resistance.first == 0)
+			continue;
+
+		Buffer << Resistance.second * 100 << "%";
+		Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes[Resistance.first] + " Resist", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
 
 	// Separator
 	DrawPosition.y += SpacingY;

@@ -62,6 +62,8 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	float SidePadding = 15;
 	float SpacingY = 25;
 	Size.x = std::max(Size.x, (float)TextBounds.Width) + SidePadding * 2;
+	if(ResistanceTypeID)
+		Size.x += 25;
 
 	// Position window
 	glm::vec2 WindowOffset = Input.GetMouse();
@@ -170,6 +172,14 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		std::stringstream Buffer;
 		Buffer << "+" << MaxMana;
 		Assets.Fonts["hud_medium"]->DrawText("Mana", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+	if(ResistanceTypeID) {
+		std::stringstream Buffer;
+		Buffer << (Resistance < 0 ? "" : "+") << std::setprecision(2) << Resistance * 100 << "%";
+		Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes[ResistanceTypeID] + " Resist", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
