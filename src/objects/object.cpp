@@ -185,7 +185,9 @@ void _Object::Update(double FrameTime) {
 
 	// Update status
 	Status = STATUS_NONE;
-	if(Battle)
+	if(!IsAlive())
+		Status = STATUS_DEAD;
+	else if(Battle)
 		Status = STATUS_BATTLE;
 	else if(WaitingForTrade)
 		Status = STATUS_TRADE;

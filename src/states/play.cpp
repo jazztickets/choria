@@ -705,6 +705,9 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 				case _Object::STATUS_BATTLE:
 					Object->StatusTexture = Assets.Textures["status/battle.png"];
 				break;
+				case _Object::STATUS_DEAD:
+					Object->StatusTexture = Assets.Textures["status/dead.png"];
+				break;
 				default:
 				break;
 			}

@@ -68,6 +68,7 @@ class _Object : public _ManagerBase {
 			STATUS_TRADER,
 			STATUS_BATTLE,
 			STATUS_TELEPORT,
+			STATUS_DEAD,
 		};
 
 		enum MoveDirectionType {
