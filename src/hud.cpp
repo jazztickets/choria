@@ -388,7 +388,7 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.Item = InventorySlot->Item;
 					Tooltip.Count = InventorySlot->Count;
 				}
-			}
+			} break;
 			case WINDOW_VENDOR: {
 				if(Player->Vendor && Tooltip.Slot < Player->Vendor->Items.size()) {
 					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
