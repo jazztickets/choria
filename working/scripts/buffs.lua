@@ -109,6 +109,21 @@ function Buff_Hasted.Stats(self, Level, Source, Change)
 	return Change
 end
 
+-- Fast buff --
+
+Buff_Fast = Base_Buff:New()
+
+function Buff_Fast.GetInfo(self, Level)
+
+	return "Move speed increased by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
+end
+
+function Buff_Fast.Stats(self, Level, Source, Change)
+	Change.MoveSpeed = self:GetChange(Level)
+
+	return Change
+end
+
 -- Blinded debuff --
 
 Buff_Blinded = Base_Buff:New()

@@ -136,6 +136,24 @@ function Item_Glob.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Crow Feather --
+
+Item_CrowFeather = { Duration = 30 }
+
+function Item_CrowFeather.GetInfo(self, Level)
+
+	return "Increase move speed by [c_green]" .. Level * 10 .. "% [c_white] for [c_green]" .. self.Duration .. " [c_white]seconds"
+end
+
+function Item_CrowFeather.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Fast"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
+
 -- Spider Leg --
 
 Item_SpiderLeg = { Duration = 30 }
