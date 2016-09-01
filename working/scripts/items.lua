@@ -136,6 +136,24 @@ function Item_Glob.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Spider Leg --
+
+Item_SpiderLeg = { Duration = 30 }
+
+function Item_SpiderLeg.GetInfo(self, Level)
+
+	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white] for [c_green]" .. self.Duration .. " [c_white]seconds"
+end
+
+function Item_SpiderLeg.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Hasted"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
+
 -- Crab Legs --
 
 Item_CrabLegs = { Duration = 30 }
