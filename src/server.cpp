@@ -100,6 +100,10 @@ _Server::~_Server() {
 
 	Save->SaveClock(Clock);
 
+	// Save players
+	for(auto &Object : ObjectManager->Objects)
+		Save->SavePlayer(Object, Object->GetMapID());
+
 	delete MapManager;
 	delete BattleManager;
 	delete ObjectManager;
