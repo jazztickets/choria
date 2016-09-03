@@ -208,7 +208,7 @@ void _Server::Update(double FrameTime) {
 
 		// Save players
 		for(auto &Object : ObjectManager->Objects) {
-			Save->SavePlayer(Object);
+			Save->SavePlayer(Object, Object->GetMapID());
 		}
 	}
 }
@@ -246,6 +246,15 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 				if(ReceivePeer != Event.Peer)
 					SendMessage(ReceivePeer, Player->Name + " has left the server", COLOR_GRAY);
 			}
+
+			Player->LoadMapID = Player->GetMapID();
+		}
+
+		// Penalize player for leaving battle
+		if(Player->Battle) {
+			Player->Gold *= (1.0f - BATTLE_DEATH_GOLD_PENALTY);
+			Player->Deaths++;
+			Player->LoadMapID = 0;
 		}
 
 		// Leave trading screen
@@ -259,7 +268,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 		}
 
 		// Save player
-		Save->SavePlayer(Player);
+		Save->SavePlayer(Player, Player->LoadMapID);
 
 		Player->Deleted = true;
 	}

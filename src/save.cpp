@@ -215,7 +215,7 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 	Object.Skills = Build->Skills;
 
 	// Save new character
-	SavePlayer(&Object);
+	SavePlayer(&Object, 0);
 }
 
 // Load player from database
@@ -307,7 +307,7 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 }
 
 // Saves the player
-void _Save::SavePlayer(const _Object *Player) {
+void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	if(Player->CharacterID == 0)
 		return;
 
@@ -334,7 +334,7 @@ void _Save::SavePlayer(const _Object *Player) {
 		" WHERE id = @character_id"
 	);
 	int Index = 1;
-	Database->BindInt(Index++, Player->GetMapID());
+	Database->BindInt(Index++, Player->LoadMapID);
 	Database->BindInt(Index++, Player->Position.x);
 	Database->BindInt(Index++, Player->Position.y);
 	Database->BindInt(Index++, Player->SpawnMapID);

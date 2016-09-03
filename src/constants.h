@@ -90,6 +90,7 @@ const  double       BATTLE_AI_UPDATE_PERIOD         =  1.0;
 const  float        BATTLE_HEALTHBAR_WIDTH          =  90;
 const  float        BATTLE_HEALTHBAR_HEIGHT         =  22;
 const  double       BATTLE_MIN_SPEED                =  0.01;
+const  float        BATTLE_DEATH_GOLD_PENALTY       =  0.1f;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
