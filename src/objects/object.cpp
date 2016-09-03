@@ -796,7 +796,13 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 	if(WasAlive && !IsAlive()) {
 		PotentialAction.Unset();
 		Action.Unset();
-		Deaths++;
+
+		// If not in battle apply penalty immediately
+		if(!Battle) {
+
+			// Apply penalty
+			ApplyDeathPenalty();
+		}
 	}
 
 	// Mana change
@@ -996,6 +1002,18 @@ void _Object::UpdateGold(int Value) {
 		Gold = 0;
 	else if(Gold > PLAYER_MAX_GOLD)
 		Gold = PLAYER_MAX_GOLD;
+}
+
+// Update death count and gold loss
+void _Object::ApplyDeathPenalty() {
+
+	// Notify player
+	int GoldLoss = (int)(Gold * PLAYER_DEATH_GOLD_PENALTY);
+	if(Server && Peer)
+		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldLoss) + " gold"), COLOR_RED);
+
+	Deaths++;
+	UpdateGold(-GoldLoss);
 }
 
 // Update counts on action bar

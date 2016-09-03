@@ -606,10 +606,7 @@ void _Battle::ServerEndBattle() {
 		int ExperienceEarned = 0;
 		int GoldEarned = 0;
 		if(Fighter->BattleSide != WinningSide) {
-			GoldEarned = (int)(-Fighter->Gold * BATTLE_DEATH_GOLD_PENALTY);
-
-			if(Fighter->Peer)
-				Server->SendMessage(Fighter->Peer, std::string("You lost " + std::to_string(std::abs(GoldEarned)) + " gold"), COLOR_RED);
+			Fighter->ApplyDeathPenalty();
 		}
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;

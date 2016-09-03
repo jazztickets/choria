@@ -90,7 +90,6 @@ const  double       BATTLE_AI_UPDATE_PERIOD         =  1.0;
 const  float        BATTLE_HEALTHBAR_WIDTH          =  90;
 const  float        BATTLE_HEALTHBAR_HEIGHT         =  22;
 const  double       BATTLE_MIN_SPEED                =  0.01;
-const  float        BATTLE_DEATH_GOLD_PENALTY       =  0.1f;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
@@ -99,6 +98,7 @@ const  double       PLAYER_ATTACKTIME               =  1.0;
 const  int          PLAYER_NAME_SIZE                =  10;
 const  float        PLAYER_INVIS_ALPHA              =  0.27f;
 const  int          PLAYER_MAX_GOLD                 =  1000000;
+const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.1f;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory

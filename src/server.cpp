@@ -252,8 +252,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 
 		// Penalize player for leaving battle
 		if(Player->Battle) {
-			Player->Gold *= (1.0f - BATTLE_DEATH_GOLD_PENALTY);
-			Player->Deaths++;
+			Player->ApplyDeathPenalty();
 			Player->LoadMapID = 0;
 		}
 

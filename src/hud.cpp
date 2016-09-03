@@ -582,9 +582,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level);
 	}
 	else {
-		// Dead outside of combat
 
-		//Assets.Labels["label_died_gold"]->Text = "You lost " + std::to_string(std::abs(100)) + " gold";
+		// Dead outside of combat
 		DiedElement->Size = Graphics.WindowSize;
 		DiedElement->CalculateBounds();
 		DiedElement->SetVisible(true);

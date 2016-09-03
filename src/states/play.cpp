@@ -996,6 +996,10 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 		Player->MonsterKills += MonsterKills;
 	}
 
+	// Update client death count
+	if(SideDead[PlayerSide])
+		Player->Deaths++;
+
 	Player->Battle = nullptr;
 	HUD->ClearBattleStatChanges();
 	HUD->AddStatChange(StatChange);
