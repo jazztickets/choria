@@ -1,4 +1,4 @@
--- Bleeding debuff --
+-- Bleeding --
 
 Buff_Bleeding = {}
 Buff_Bleeding.Damage = 1
@@ -19,7 +19,7 @@ function Buff_Bleeding.Update(self, Level, Source, Change)
 	return Change
 end
 
--- Healing buff --
+-- Healing --
 
 Buff_Healing = { Heal = 3 }
 
@@ -34,7 +34,7 @@ function Buff_Healing.Update(self, Level, Source, Change)
 	return Change
 end
 
--- Mana buff --
+-- Mana --
 
 Buff_Mana = { Mana = 1 }
 
@@ -49,7 +49,7 @@ function Buff_Mana.Update(self, Level, Source, Change)
 	return Change
 end
 
--- Invis buff --
+-- Invis --
 
 Buff_Invis = {}
 
@@ -64,7 +64,7 @@ function Buff_Invis.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Slowed debuff --
+-- Slowed --
 
 Buff_Slowed = Base_Buff:New()
 
@@ -79,7 +79,7 @@ function Buff_Slowed.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Stunned debuff --
+-- Stunned --
 
 Buff_Stunned = {}
 
@@ -94,7 +94,7 @@ function Buff_Stunned.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Hasted buff --
+-- Hasted --
 
 Buff_Hasted = Base_Buff:New()
 
@@ -109,7 +109,7 @@ function Buff_Hasted.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Fast buff --
+-- Fast --
 
 Buff_Fast = Base_Buff:New()
 
@@ -124,7 +124,7 @@ function Buff_Fast.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Blinded debuff --
+-- Blinded --
 
 Buff_Blinded = Base_Buff:New()
 
@@ -139,7 +139,23 @@ function Buff_Blinded.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Hardened debuff --
+-- Mighty --
+
+Buff_Mighty = Base_Buff:New()
+
+function Buff_Mighty.GetInfo(self, Level)
+
+	return "Damage increased by [c green]" .. Level
+end
+
+function Buff_Mighty.Stats(self, Level, Source, Change)
+	Change.MinDamage = Level
+	Change.MaxDamage = Level
+
+	return Change
+end
+
+-- Hardened --
 
 Buff_Hardened = Base_Buff:New()
 
@@ -155,7 +171,7 @@ function Buff_Hardened.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Parry debuff --
+-- Parry --
 
 Buff_Parry = Base_Buff:New()
 Buff_Parry.DamageReduction = 0.5
@@ -173,7 +189,7 @@ function Buff_Parry.OnHit(self, Level, Change)
 	return Change
 end
 
--- Poisoned debuff --
+-- Poisoned --
 
 Buff_Poisoned = {}
 Buff_Poisoned.HealPower = -0.5
@@ -196,7 +212,7 @@ function Buff_Poisoned.Stats(self, Level, Source, Change)
 	return Change
 end
 
--- Burning debuff --
+-- Burning --
 
 Buff_Burning = {}
 Buff_Burning.Damage = 3

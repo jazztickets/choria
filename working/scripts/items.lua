@@ -58,7 +58,7 @@ Item_HastePotion = { Duration = 10 }
 
 function Item_HastePotion.GetInfo(self, Level)
 
-	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white] for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
 end
 
 function Item_HastePotion.Use(self, Level, Source, Target, Result)
@@ -142,7 +142,7 @@ Item_CrowFeather = { Duration = 30 }
 
 function Item_CrowFeather.GetInfo(self, Level)
 
-	return "Increase move speed by [c_green]" .. Level * 10 .. "% [c_white] for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase move speed by [c_green]" .. Level * 10 .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
 end
 
 function Item_CrowFeather.Use(self, Level, Source, Target, Result)
@@ -160,12 +160,30 @@ Item_SpiderLeg = { Duration = 30 }
 
 function Item_SpiderLeg.GetInfo(self, Level)
 
-	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white] for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
 end
 
 function Item_SpiderLeg.Use(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buffs["Buff_Hasted"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
+
+-- Fang --
+
+Item_Fang = { Duration = 30 }
+
+function Item_Fang.GetInfo(self, Level)
+
+	return "Increase damage by [c_green]" .. Level .. " [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+end
+
+function Item_Fang.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Mighty"]
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
