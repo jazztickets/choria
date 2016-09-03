@@ -227,7 +227,10 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	if(Database->FetchRow()) {
-		Player->SpawnMapID = (NetworkIDType)Database->GetInt<uint32_t>("map_id");
+		Player->LoadMapID = (NetworkIDType)Database->GetInt<uint32_t>("map_id");
+		Player->Position.x = Database->GetInt<int>("map_x");
+		Player->Position.y = Database->GetInt<int>("map_y");
+		Player->SpawnMapID = (NetworkIDType)Database->GetInt<uint32_t>("spawnmap_id");
 		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
 		Player->Name = Database->GetString("name");
 		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
@@ -314,6 +317,9 @@ void _Save::SavePlayer(const _Object *Player) {
 	Database->PrepareQuery(
 		"UPDATE character SET"
 		" map_id = @map_id,"
+		" map_x = @map_x,"
+		" map_y = @map_y,"
+		" spawnmap_id = @spawnmap_id,"
 		" spawnpoint = @spawnpoint,"
 		" actionbar_size = @actionbar_size,"
 		" healthpercent = @healthpercent,"
@@ -328,6 +334,9 @@ void _Save::SavePlayer(const _Object *Player) {
 		" WHERE id = @character_id"
 	);
 	int Index = 1;
+	Database->BindInt(Index++, Player->GetMapID());
+	Database->BindInt(Index++, Player->Position.x);
+	Database->BindInt(Index++, Player->Position.y);
 	Database->BindInt(Index++, Player->SpawnMapID);
 	Database->BindInt(Index++, Player->SpawnPoint);
 	Database->BindInt(Index++, (int)Player->ActionBar.size());
@@ -475,9 +484,12 @@ void _Save::CreateDefaultDatabase() {
 				"	id INTEGER PRIMARY KEY,\n"
 				"	account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,\n"
 				"	slot INTEGER DEFAULT(0),\n"
-				"	map_id INTEGER DEFAULT(1),\n"
-				"	spawnpoint INTEGER DEFAULT(0),\n"
 				"	name TEXT,\n"
+				"	map_id INTEGER DEFAULT(0),\n"
+				"	map_x INTEGER DEFAULT(0),\n"
+				"	map_y INTEGER DEFAULT(0),\n"
+				"	spawnmap_id INTEGER DEFAULT(1),\n"
+				"	spawnpoint INTEGER DEFAULT(0),\n"
 				"	portrait_id INTEGER DEFAULT(1),\n"
 				"	actionbar_size INTEGER DEFAULT(0),\n"
 				"	healthpercent REAL DEFAULT(1),\n"

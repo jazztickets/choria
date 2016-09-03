@@ -466,23 +466,14 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Read packet
 	uint32_t Slot = Data.Read<uint8_t>();
-	NetworkIDType MapID = 0;
-	std::string Name;
 
 	// Get character info
-	Save->Database->PrepareQuery("SELECT id, map_id, name FROM character WHERE account_id = @account_id and slot = @slot");
+	Save->Database->PrepareQuery("SELECT id FROM character WHERE account_id = @account_id and slot = @slot");
 	Save->Database->BindInt(1, Peer->AccountID);
 	Save->Database->BindInt(2, Slot);
-	if(Save->Database->FetchRow()) {
+	if(Save->Database->FetchRow())
 		Peer->CharacterID = Save->Database->GetInt<uint32_t>("id");
-		MapID = (NetworkIDType)Save->Database->GetInt<uint32_t>("map_id");
-		Name = Save->Database->GetString("name");
-	}
 	Save->Database->CloseQuery();
-
-	// Check for valid map
-	if(MapID == 0)
-		MapID = 1;
 
 	// Check for valid character id
 	if(!Peer->CharacterID) {
@@ -492,12 +483,12 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Send map and players to new player
 	Peer->Object = CreatePlayer(Peer);
-	SpawnPlayer(Peer->Object, MapID, _Map::EVENT_SPAWN);
+	SpawnPlayer(Peer->Object, Peer->Object->LoadMapID, _Map::EVENT_NONE);
 
 	// Broadcast message
 	for(auto &ReceivePeer : Network->GetPeers()) {
 		if(ReceivePeer != Peer)
-			SendMessage(ReceivePeer, Name + " has joined the server", COLOR_GRAY);
+			SendMessage(ReceivePeer, Peer->Object->Name + " has joined the server", COLOR_GRAY);
 	}
 }
 
@@ -621,8 +612,16 @@ void _Server::SendCharacterList(_Peer *Peer) {
 
 // Spawns a player at a particular spawn point
 void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType) {
-	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID || !MapID)
+	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
 	   return;
+
+	// Use spawn point for new characters
+	if(MapID == 0) {
+		MapID = Player->SpawnMapID;
+		if(MapID == 0)
+			MapID = 1;
+		EventType = _Map::EVENT_SPAWN;
+	}
 
 	// Get map
 	_Map *Map = MapManager->GetObject(MapID);
@@ -640,20 +639,23 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 
 	// Place player in new map
 	if(Map != OldMap) {
-		if(OldMap) {
+		if(OldMap)
 			OldMap->RemoveObject(Player);
-		}
 
 		Player->Map = Map;
 
-		// Find spawn point in map
-		uint32_t SpawnPoint = Player->SpawnPoint;
-		if(EventType == _Map::EVENT_MAPENTRANCE)
-			SpawnPoint = OldMap->NetworkID;
+		// Check for spawning from events
+		if(EventType != _Map::EVENT_NONE) {
 
-		// Default to mapchange event if entrance not found
-		if(!Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position))
-			Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, SpawnPoint), Player->Position);
+			// Find spawn point in map
+			uint32_t SpawnPoint = Player->SpawnPoint;
+			if(EventType == _Map::EVENT_MAPENTRANCE)
+				SpawnPoint = OldMap->NetworkID;
+
+			// Default to mapchange event if entrance not found
+			if(!Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position))
+				Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, SpawnPoint), Player->Position);
+		}
 
 		// Add player to map
 		Map->AddObject(Player);

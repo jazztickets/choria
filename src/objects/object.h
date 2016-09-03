@@ -142,6 +142,7 @@ class _Object : public _ManagerBase {
 
 		// Map
 		const _Tile *GetTile();
+		NetworkIDType GetMapID() const;
 
 		// Input
 		bool CanOpenTrade() { return IsAlive() && !Battle; }
@@ -257,6 +258,7 @@ class _Object : public _ManagerBase {
 		const _Texture *StatusTexture;
 
 		// Map
+		NetworkIDType LoadMapID;
 		NetworkIDType SpawnMapID;
 		uint32_t SpawnPoint;
 		double TeleportTime;

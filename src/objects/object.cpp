@@ -123,6 +123,7 @@ _Object::_Object() :
 	PortraitID(0),
 	WorldTexture(nullptr),
 	StatusTexture(nullptr),
+	LoadMapID(0),
 	SpawnMapID(1),
 	SpawnPoint(0),
 	TeleportTime(-1),
@@ -913,6 +914,14 @@ bool _Object::HasUnlocked(const _Item *Item) const {
 const _Tile *_Object::GetTile() {
 
 	return Map->GetTile(Position);
+}
+
+// Get map id, return 0 if none
+NetworkIDType _Object::GetMapID() const {
+	if(!Map)
+		return 0;
+
+	return Map->NetworkID;
 }
 
 // Generates the number of moves until the next battle
