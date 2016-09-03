@@ -584,8 +584,12 @@ void _Bot::EvaluateGoal() {
 			}
 			else if(Map->NetworkID == 11) {
 				glm::ivec2 Position;
-				if(FindEvent(_Event(_Map::EVENT_SCRIPT, 3), Position))
-					MoveTo(Player->Position, Position);
+				if(FindEvent(_Event(_Map::EVENT_SCRIPT, 3), Position)) {
+					if(Player->Position == Position)
+						BotState = BotStateType::MOVE_RANDOM;
+					else
+						MoveTo(Player->Position, Position);
+				}
 			}
 			else {
 				BotState = BotStateType::MOVE_RANDOM;
@@ -650,7 +654,7 @@ void _Bot::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition
 	float TotalCost;
 	std::vector<void *> PathFound;
 	int Result = Pather->Solve(Map->PositionToNode(StartPosition), Map->PositionToNode(EndPosition), &PathFound, &TotalCost);
-	std::cout << "SOLVE " << Player->NetworkID << " tc=" << TotalCost << std::endl;
+	std::cout << "SOLVE " << Player->NetworkID << " sx=" << StartPosition.x << " sy=" << StartPosition.y << " tc=" << TotalCost << std::endl;
 	if(Result == micropather::MicroPather::SOLVED) {
 
 		// Convert vector to list
