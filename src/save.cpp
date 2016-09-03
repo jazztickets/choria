@@ -18,6 +18,7 @@
 #include <save.h>
 #include <objects/object.h>
 #include <objects/item.h>
+#include <objects/buff.h>
 #include <objects/inventory.h>
 #include <database.h>
 #include <random.h>
@@ -424,6 +425,22 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 		Database->CloseQuery();
 	}
 
+	// Save status effects
+	Database->PrepareQuery("DELETE FROM statuseffect WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	Database->FetchRow();
+	Database->CloseQuery();
+
+	for(auto &StatusEffect : Player->StatusEffects) {
+		Database->PrepareQuery("INSERT INTO statuseffect VALUES(@character_id, @buff_id, @level, @duration)");
+		Database->BindInt(1, Player->CharacterID);
+		Database->BindInt(2, StatusEffect->Buff->ID);
+		Database->BindInt(3, StatusEffect->Level);
+		Database->BindReal(4, StatusEffect->Duration);
+		Database->FetchRow();
+		Database->CloseQuery();
+	}
+
 	Database->RunQuery("END TRANSACTION");
 }
 
@@ -511,7 +528,7 @@ void _Save::CreateDefaultDatabase() {
 				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
 				"	buff_id INTEGER DEFAULT(0),\n"
 				"	level INTEGER DEFAULT(0),\n"
-				"	count INTEGER DEFAULT(0)\n"
+				"	duration REAL DEFAULT(0)\n"
 				")"
 	);
 
