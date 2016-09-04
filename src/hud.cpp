@@ -414,7 +414,8 @@ void _HUD::Update(double FrameTime) {
 				Tooltip.Item = PlayState.Stats->Items[(uint32_t)Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
-				Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
+				if(Tooltip.Slot < Player->ActionBar.size())
+					Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
 			} break;
 			case WINDOW_BATTLE:
 			case WINDOW_HUD_EFFECTS: {

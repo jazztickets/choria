@@ -285,6 +285,9 @@ void _Map::CheckEvents(_Object *Object) {
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
 	switch(Tile->Event.Type) {
 		case _Map::EVENT_SPAWN:
+			if(Server && !(Object->SpawnMapID == NetworkID && Object->SpawnPoint == Tile->Event.Data))
+				Server->SendMessage(Object->Peer, "Spawn point set", COLOR_YELLOW);
+
 			Object->SpawnMapID = NetworkID;
 			Object->SpawnPoint = Tile->Event.Data;
 		break;
