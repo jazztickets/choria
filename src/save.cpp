@@ -296,6 +296,24 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 	}
 	Database->CloseQuery();
 
+	// Set status effects
+	Database->PrepareQuery("SELECT buff_id, level, duration FROM statuseffect WHERE character_id = @character_id");
+	Database->BindInt(1, Player->CharacterID);
+	while(Database->FetchRow()) {
+		uint32_t BuffID = Database->GetInt<uint32_t>(0);
+		int Level = Database->GetInt<int>(1);
+		double Duration = Database->GetReal(2);
+
+		// Create status effect
+		_StatusEffect *StatusEffect = new _StatusEffect();
+		StatusEffect->Buff = Stats->Buffs[BuffID];
+		StatusEffect->Level = Level;
+		StatusEffect->Duration = Duration;
+		StatusEffect->Time = 1.0 - (Duration - (int)Duration);
+		Player->StatusEffects.push_back(StatusEffect);
+	}
+	Database->CloseQuery();
+
 	// Get stats
 	Player->GenerateNextBattle();
 	Player->CalculateStats();
