@@ -312,6 +312,10 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	if(Player->CharacterID == 0)
 		return;
 
+	// Reset spawn point if player is dead
+	if(!Player->IsAlive())
+		MapID = 0;
+
 	Database->RunQuery("BEGIN TRANSACTION");
 
 	// Save character stats
@@ -334,8 +338,9 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 		" bounty = @bounty"
 		" WHERE id = @character_id"
 	);
+
 	int Index = 1;
-	Database->BindInt(Index++, Player->LoadMapID);
+	Database->BindInt(Index++, MapID);
 	Database->BindInt(Index++, Player->Position.x);
 	Database->BindInt(Index++, Player->Position.y);
 	Database->BindInt(Index++, Player->SpawnMapID);
