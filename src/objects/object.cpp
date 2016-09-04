@@ -795,6 +795,7 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 	if(WasAlive && !IsAlive()) {
 		PotentialAction.Unset();
 		Action.Unset();
+		ResetUIState();
 
 		// If not in battle apply penalty immediately
 		if(!Battle) {
@@ -829,9 +830,16 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 			Battle->RemoveFighter(this);
 	}
 
-	// Start battle
-	if(Server && !Battle && StatChange.HasStat(StatType::BATTLE)) {
-		Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true);
+	// Run server only commands
+	if(Server) {
+		if(!Battle && IsAlive() && StatChange.HasStat(StatType::TELEPORT)) {
+			Server->StartTeleport(this, StatChange.Values[StatType::TELEPORT].Float);
+		}
+
+		// Start battle
+		if(!Battle && StatChange.HasStat(StatType::BATTLE)) {
+			Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true);
+		}
 	}
 
 	return StatusEffect;
@@ -927,6 +935,16 @@ NetworkIDType _Object::GetMapID() const {
 		return 0;
 
 	return Map->NetworkID;
+}
+
+// Reset ui state variables
+void _Object::ResetUIState() {
+	InventoryOpen = false;
+	SkillsOpen = false;
+	Paused = false;
+	Vendor = nullptr;
+	Trader = nullptr;
+	TeleportTime = -1.0;
 }
 
 // Generates the number of moves until the next battle

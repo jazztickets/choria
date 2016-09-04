@@ -136,7 +136,7 @@ class _HUD {
 		void InitTrader();
 		void InitSkills();
 		void InitTrade();
-		bool CloseWindows(bool SendNotify=true);
+		bool CloseWindows(bool SendStatus, bool SendNotify=true);
 
 		// Chat
 		void ToggleChat();

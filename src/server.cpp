@@ -702,6 +702,20 @@ void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted) {
 	BattleEvents.push_back(BattleEvent);
 }
 
+// Start teleporting a player
+void _Server::StartTeleport(_Object *Object, double Time) {
+	if(Object->Battle || !Object->IsAlive())
+		return;
+
+	Object->ResetUIState();
+	Object->TeleportTime = Time;
+
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_TELEPORTSTART);
+	Packet.Write<double>(Time);
+	Network->SendPacket(Packet, Object->Peer);
+}
+
 // Create player object and load stats from save
 _Object *_Server::CreatePlayer(_Peer *Peer) {
 
@@ -1140,12 +1154,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 	uint8_t Status = Data.Read<uint8_t>();
 	switch(Status) {
 		case _Object::STATUS_NONE:
-			Player->InventoryOpen = false;
-			Player->SkillsOpen = false;
-			Player->Paused = false;
-			Player->Vendor = nullptr;
-			Player->Trader = nullptr;
-			Player->TeleportTime = -1.0;
+			Player->ResetUIState();
 		break;
 		case _Object::STATUS_PAUSE:
 			Player->Paused = true;
@@ -1157,11 +1166,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 			Player->SkillsOpen = true;
 		break;
 		case _Object::STATUS_TELEPORT: {
-			Player->TeleportTime = PLAYER_TELEPORT_TIME;
-			_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::WORLD_TELEPORTSTART);
-			Packet.Write<double>(Player->TeleportTime);
-			Network->SendPacket(Packet, Peer);
+			StartTeleport(Player, PLAYER_TELEPORT_TIME);
 		} break;
 		default:
 		break;

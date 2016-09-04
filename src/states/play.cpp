@@ -231,7 +231,7 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 					HUD->ToggleInventory();
 				break;
 				case _Actions::TELEPORT:
-					HUD->ToggleTeleport();
+					//HUD->ToggleTeleport();
 				break;
 				case _Actions::TRADE:
 					HUD->ToggleTrade();
@@ -244,7 +244,7 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::LEFT:
 				case _Actions::RIGHT:
 					if(!Player->WaitForServer)
-						HUD->CloseWindows();
+						HUD->CloseWindows(true);
 				break;
 			}
 		}
@@ -366,7 +366,7 @@ void _PlayState::Update(double FrameTime) {
 		Network->SendPacket(Packet);
 
 		if(!Player->WaitForServer)
-			HUD->CloseWindows();
+			HUD->CloseWindows(true);
 	}
 
 	// Update battle system
@@ -740,6 +740,8 @@ void _PlayState::HandleTeleportStart(_Buffer &Data) {
 		return;
 
 	Player->TeleportTime = Data.Read<double>();
+	Player->WaitForServer = true;
+	HUD->CloseWindows(false);
 	HUD->StartTeleport();
 }
 
@@ -928,7 +930,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 	Player->WaitForServer = false;
 
 	// Reset hud
-	HUD->CloseWindows();
+	HUD->CloseWindows(true);
 	if(Config.ShowTutorial && Player->Level == 1)
 		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(_Actions::SKILL1) + " key to attack");
 

@@ -151,6 +151,9 @@ class _Object : public _ManagerBase {
 		bool CanOpenInventory() { return IsAlive() && !Battle; }
 		bool CanTeleport() { return IsAlive() && !Battle; }
 
+		// UI
+		void ResetUIState();
+
 		// Client
 		_Stats *Stats;
 		_Map *Map;

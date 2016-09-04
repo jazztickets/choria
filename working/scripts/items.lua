@@ -240,3 +240,18 @@ function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Teleport Scroll --
+
+Item_TeleportScroll = { Duration = 3 }
+
+function Item_TeleportScroll.GetInfo(self, Level)
+
+	return "Teleport home after [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Item_TeleportScroll.Use(self, Level, Source, Target, Result)
+	Result.Target.Teleport = self.Duration
+
+	return Result
+end

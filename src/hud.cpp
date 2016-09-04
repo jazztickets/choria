@@ -113,6 +113,7 @@ _HUD::_HUD() {
 	MessageElement->SetVisible(false);
 	RecentItemsElement->SetVisible(false);
 
+	Assets.Buttons["button_buttonbar_teleport"]->SetVisible(false);
 	Assets.Elements["element_hud"]->SetVisible(true);
 }
 
@@ -244,11 +245,11 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			PlayState.Network->SendPacket(Packet);
-			CloseWindows();
+			CloseWindows(true);
 		}
 		// Cancel trader button
 		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
-			CloseWindows();
+			CloseWindows(true);
 		}
 		// Released an item
 		else if(Cursor.Item) {
@@ -581,9 +582,10 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		if(Tooltip.StatusEffect)
 			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level);
 	}
+	// Dead outside of combat
 	else {
+		CloseWindows(false);
 
-		// Dead outside of combat
 		DiedElement->Size = Graphics.WindowSize;
 		DiedElement->CalculateBounds();
 		DiedElement->SetVisible(true);
@@ -622,13 +624,13 @@ void _HUD::ToggleTeleport() {
 		return;
 
 	if(!Player->WaitForServer && !TeleportElement->Visible) {
-		CloseWindows();
+		CloseWindows(true);
 		PlayState.SendStatus(_Object::STATUS_TELEPORT);
 		Player->WaitForServer = true;
 	}
 	else {
 		Player->WaitForServer = false;
-		CloseWindows();
+		CloseWindows(true);
 	}
 }
 
@@ -638,14 +640,14 @@ void _HUD::ToggleInventory() {
 		return;
 
 	if(!InventoryElement->Visible) {
-		CloseWindows();
+		CloseWindows(true);
 
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
 		PlayState.SendStatus(_Object::STATUS_INVENTORY);
 	}
 	else {
-		CloseWindows();
+		CloseWindows(true);
 	}
 }
 
@@ -655,11 +657,11 @@ void _HUD::ToggleTrade() {
 		return;
 
 	if(!TradeElement->Visible) {
-		CloseWindows();
+		CloseWindows(true);
 		InitTrade();
 	}
 	else {
-		CloseWindows();
+		CloseWindows(true);
 	}
 }
 
@@ -669,11 +671,11 @@ void _HUD::ToggleSkills() {
 		return;
 
 	if(!SkillsElement->Visible) {
-		CloseWindows();
+		CloseWindows(true);
 		InitSkills();
 	}
 	else {
-		CloseWindows();
+		CloseWindows(true);
 	}
 }
 
@@ -683,7 +685,7 @@ void _HUD::ToggleInGameMenu() {
 		return;
 
 	// Close windows if open
-	if(CloseWindows())
+	if(CloseWindows(true))
 		return;
 
 	if(PlayState.IsTesting)
@@ -939,7 +941,7 @@ bool _HUD::CloseTrader() {
 }
 
 // Closes all windows
-bool _HUD::CloseWindows(bool SendNotify) {
+bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	Cursor.Reset();
 
 	bool WasOpen = false;
@@ -950,7 +952,7 @@ bool _HUD::CloseWindows(bool SendNotify) {
 	WasOpen |= CloseTrader();
 	WasOpen |= CloseTeleport();
 
-	if(WasOpen)
+	if(WasOpen && SendStatus)
 		PlayState.SendStatus(_Object::STATUS_NONE);
 
 	return WasOpen;
