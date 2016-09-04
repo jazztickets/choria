@@ -59,6 +59,7 @@ class _PlayState : public _State {
 		void KeyEvent(const _KeyEvent &KeyEvent) override;
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 		void WindowEvent(uint8_t Event) override;
+		void QuitEvent() override;
 
 		// Update
 		void Update(double FrameTime) override;

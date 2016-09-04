@@ -55,6 +55,7 @@ class _EditorState : public _State {
 		void MouseEvent(const _MouseEvent &MouseEvent) override;
 		void MouseWheelEvent(int Direction) override;
 		void WindowEvent(uint8_t Event) override;
+		void QuitEvent() override;
 
 		// Update
 		void Update(double FrameTime) override;

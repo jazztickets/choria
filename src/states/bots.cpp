@@ -74,7 +74,7 @@ void RunCommandThread() {
 		}
 	}
 
-	BotState.Quit();
+	BotState.QuitEvent();
 }
 
 // Constructor
@@ -114,7 +114,7 @@ void _BotsState::Close() {
 }
 
 // Exit
-void _BotsState::Quit() {
+void _BotsState::QuitEvent() {
 	Done = true;
 	DisconnectAll();
 }

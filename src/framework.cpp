@@ -211,7 +211,7 @@ void _Framework::Update() {
 						State->WindowEvent(Event.window.event);
 				break;
 				case SDL_QUIT:
-					Done = true;
+					State->QuitEvent();
 				break;
 			}
 		}

@@ -46,7 +46,7 @@ class _BotsState : public _State {
 		// Commands
 		void Add();
 		void DisconnectAll();
-		void Quit();
+		void QuitEvent();
 
 		std::string HostAddress;
 		uint16_t Port;

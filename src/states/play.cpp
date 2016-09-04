@@ -290,6 +290,14 @@ void _PlayState::WindowEvent(uint8_t Event) {
 		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
+// Handle quit events
+void _PlayState::QuitEvent() {
+	if(Network)
+		Network->Disconnect();
+	else
+		Framework.Done = true;
+}
+
 // Update
 void _PlayState::Update(double FrameTime) {
 	Graphics.Element->Update(FrameTime, Input.GetMouse());

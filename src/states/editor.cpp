@@ -372,6 +372,11 @@ void _EditorState::WindowEvent(uint8_t Event) {
 		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
+// Quit
+void _EditorState::QuitEvent() {
+	Framework.Done = true;
+}
+
 // Updates the current state
 void _EditorState::Update(double FrameTime) {
 	Graphics.Element->Update(FrameTime, Input.GetMouse());

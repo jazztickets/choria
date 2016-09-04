@@ -37,6 +37,7 @@ class _State {
 		virtual void MouseEvent(const _MouseEvent &MouseEvent) { }
 		virtual void MouseWheelEvent(int Direction) { }
 		virtual void WindowEvent(uint8_t Event) { }
+		virtual void QuitEvent() { }
 
 		// Update
 		virtual void Update(double FrameTime) { }
