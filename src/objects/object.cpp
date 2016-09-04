@@ -366,8 +366,6 @@ void _Object::Render(const _Object *ClientPlayer) {
 
 		Graphics.SetVBO(VBO_QUAD);
 
-		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
-
 		glm::vec3 DrawPosition;
 		if(HUD && HUD->ShowStats) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
@@ -375,6 +373,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 			Graphics.DrawSprite(DrawPosition, WorldTexture);
 		}
 
+		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 		Graphics.SetColor(Color);
 		Graphics.DrawSprite(DrawPosition, WorldTexture);

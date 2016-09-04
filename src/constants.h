@@ -98,7 +98,7 @@ const  double       PLAYER_ATTACKTIME               =  1.0;
 const  int          PLAYER_NAME_SIZE                =  10;
 const  float        PLAYER_INVIS_ALPHA              =  0.27f;
 const  int          PLAYER_MAX_GOLD                 =  1000000;
-const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.1f;
+const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory
