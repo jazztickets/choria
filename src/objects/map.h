@@ -165,6 +165,10 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		// Network
 		_Server *Server;
 
+		// Editor
+		int MaxZoneColors;
+		int CurrentZoneColors;
+
 	private:
 
 		void FreeMap();

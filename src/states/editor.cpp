@@ -263,6 +263,13 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_F5:
 				BrushRadius = 10.0f;
 			break;
+			case SDL_SCANCODE_Z:
+				if(Map) {
+					Map->CurrentZoneColors++;
+					if(Map->CurrentZoneColors > Map->MaxZoneColors)
+						Map->CurrentZoneColors = 1;
+				}
+			break;
 			default:
 			break;
 		}

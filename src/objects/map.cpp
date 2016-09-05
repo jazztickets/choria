@@ -88,6 +88,8 @@ _Map::_Map() :
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
 	Server(nullptr),
+	MaxZoneColors(sizeof(ZoneColors) / sizeof(glm::vec4)),
+	CurrentZoneColors(MaxZoneColors),
 	TileVertexBufferID{0, 0},
 	TileElementBufferID(0),
 	TileVertices{nullptr, nullptr},
@@ -525,7 +527,7 @@ void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double 
 
 				// Draw zone color
 				if(!Tile->Wall && Tile->Zone > 0) {
-					Graphics.SetColor(ZoneColors[Tile->Zone % 6]);
+					Graphics.SetColor(ZoneColors[Tile->Zone % CurrentZoneColors]);
 					Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i, j), true);
 				}
 			}
