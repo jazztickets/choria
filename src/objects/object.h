@@ -106,6 +106,7 @@ class _Object : public _ManagerBase {
 		void CalculateStats();
 		float GetNextLevelPercent() const;
 		void UpdateGold(int Value);
+		void UpdateExperience(int Value);
 		void ApplyDeathPenalty();
 
 		// Battles

@@ -619,7 +619,7 @@ void _Battle::ServerEndBattle() {
 
 		// Update stats
 		int CurrentLevel = Fighter->Level;
-		Fighter->Experience += ExperienceEarned;
+		Fighter->UpdateExperience(ExperienceEarned);
 		Fighter->UpdateGold(GoldEarned);
 		Fighter->CalculateStats();
 		int NewLevel = Fighter->Level;

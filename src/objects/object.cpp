@@ -783,7 +783,7 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 
 	// Update experience
 	if(StatChange.HasStat(StatType::EXPERIENCE)) {
-		Experience += StatChange.Values[StatType::EXPERIENCE].Integer;
+		UpdateExperience(StatChange.Values[StatType::EXPERIENCE].Integer);
 	}
 
 	// Update health
@@ -1019,6 +1019,14 @@ void _Object::UpdateGold(int Value) {
 		Gold = 0;
 	else if(Gold > PLAYER_MAX_GOLD)
 		Gold = PLAYER_MAX_GOLD;
+}
+
+// Update experience
+void _Object::UpdateExperience(int Value) {
+
+	Experience += Value;
+	if(Experience < 0)
+		Experience = 0;
 }
 
 // Update death count and gold loss

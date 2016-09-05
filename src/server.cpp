@@ -31,9 +31,11 @@
 #include <stats.h>
 #include <constants.h>
 #include <config.h>
+#include <utils.h>
 #include <SDL_timer.h>
 #include <enet/enet.h>
 #include <algorithm>
+#include <regex>
 
 // Function to run the server thread
 void RunThread(void *Arguments) {
@@ -63,6 +65,7 @@ void RunThread(void *Arguments) {
 
 // Constructor
 _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
+	IsTesting(false),
 	Done(false),
 	StartDisconnect(false),
 	StartShutdown(false),
@@ -545,8 +548,64 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 
 	// Get message
 	std::string Message = Data.ReadString();
+	if(Message.length() == 0)
+		return;
+
+	// Resize large messages
 	if(Message.length() > HUD_CHAT_SIZE)
 		Message.resize(HUD_CHAT_SIZE);
+
+	// Check for test commands
+	if(IsTesting && Message[0] == '-') {
+		_StatChange StatChange;
+		StatChange.Object = Player;
+
+		std::smatch Match;
+		if(Message.find("-give") == 0) {
+			std::regex Regex("-give ([0-9]+) ([0-9]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
+				uint32_t ItemID = (uint32_t)ToNumber(Match.str(1));
+				int Count = std::min(ToNumber(Match.str(2)), 255);
+
+				if(Stats->Items.find(ItemID) == Stats->Items.end())
+					return;
+
+				Player->Inventory->AddItem(Stats->Items[ItemID], Count);
+
+				// Send new inventory
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::INVENTORY);
+				Player->Inventory->Serialize(Packet);
+				Network->SendPacket(Packet, Peer);
+			}
+		}
+		else if(Message.find("-gold") == 0) {
+			std::regex Regex("-gold ([0-9-]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
+				StatChange.Values[StatType::GOLD].Integer = ToNumber(Match.str(1));
+				Player->UpdateStats(StatChange);
+			}
+		}
+		else if(Message.find("-exp") == 0) {
+			std::regex Regex("-exp ([0-9-]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
+				StatChange.Values[StatType::EXPERIENCE].Integer = ToNumber(Match.str(1));
+				Player->UpdateStats(StatChange);
+			}
+		}
+
+		// Build packet
+		if(StatChange.GetChangedFlag()) {
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+			StatChange.Serialize(Packet);
+			Network->SendPacket(Packet, Player->Peer);
+
+			SendHUD(Player->Peer);
+		}
+
+		return;
+	}
 
 	// Append name
 	Message = Player->Name + ": " + Message;

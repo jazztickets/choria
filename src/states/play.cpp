@@ -148,6 +148,7 @@ void _PlayState::StartLocalServer() {
 	// Start server in thread
 	try {
 		Server = new _Server(Stats, DEFAULT_NETWORKPORT_ALT);
+		Server->IsTesting = IsTesting;
 		Server->StartThread();
 	}
 	catch(std::exception &Error) {

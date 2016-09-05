@@ -65,6 +65,9 @@ class _Server {
 		void SendPlayerPosition(_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
 
+		// Parameters
+		bool IsTesting;
+
 		// State
 		bool Done;
 		bool StartDisconnect;

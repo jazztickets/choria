@@ -1663,7 +1663,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
-			if(SkillPointsRemaining == 0 || Player->Skills[SkillID] >= Player->Stats->Items[SkillID]->MaxLevel)
+			if(SkillPointsRemaining <= 0 || Player->Skills[SkillID] >= Player->Stats->Items[SkillID]->MaxLevel)
 				Button->SetVisible(false);
 			else
 				Button->SetVisible(true);
