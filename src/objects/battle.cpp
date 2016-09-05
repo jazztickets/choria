@@ -252,6 +252,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				case TargetType::ENEMY_ALL:
 					Multiple = true;
 				break;
+				case TargetType::ANY:
+				break;
 				default:
 				break;
 			}
@@ -323,7 +325,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 }
 
 // Changes targets
-void _Battle::ChangeTarget(int Direction, int SideDirection) {
+void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || ClientPlayer->Targets.size() != 1)
 		return;
 
@@ -334,7 +336,7 @@ void _Battle::ChangeTarget(int Direction, int SideDirection) {
 	int BattleTargetSide = ClientPlayer->Targets.front()->BattleSide;
 
 	// Change sides
-	if(SideDirection != 0)
+	if(ClientPlayer->PotentialAction.Item->TargetID == TargetType::ANY && ChangeSides)
 		BattleTargetSide = !BattleTargetSide;
 
 	// Get list of fighters on target side
@@ -757,10 +759,8 @@ bool _Battle::ClientHandleInput(int Action) {
 			ChangeTarget(1, 0);
 		break;
 		case _Actions::LEFT:
-			//ChangeTarget(0, -1);
-		break;
 		case _Actions::RIGHT:
-			//ChangeTarget(0, 1);
+			ChangeTarget(0, true);
 		break;
 	}
 

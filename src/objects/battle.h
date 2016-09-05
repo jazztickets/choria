@@ -98,7 +98,7 @@ class _Battle : public _ManagerBase {
 
 		void GetBattleOffset(int SideIndex, _Object *Fighter);
 		void ClientSetAction(uint8_t ActionBarSlot);
-		void ChangeTarget(int Direction, int SideDirection);
+		void ChangeTarget(int Direction, bool SideDirection);
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
 		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);

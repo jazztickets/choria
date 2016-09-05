@@ -225,11 +225,11 @@ end
 
 -- Poison Potion --
 
-Item_PoisonPotion = { Duration = 30 }
+Item_PoisonPotion = { Duration = 10 }
 
 function Item_PoisonPotion.GetInfo(self, Level)
 
-	return "Do not drink"
+	return "Poison target for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
