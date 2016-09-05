@@ -596,13 +596,20 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		else if(Message.find("-clock") == 0) {
 			std::regex Regex("-clock ([0-9.]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Clock = (double)ToNumber<int>(Match.str(1));
+				Clock = (double)ToNumber<double>(Match.str(1));
 				if(Clock < 0)
 					Clock = 0;
 				else if(Clock >= MAP_DAY_LENGTH)
 					Clock = MAP_DAY_LENGTH;
 
 				SendHUD(Player->Peer);
+			}
+		}
+		else if(Message.find("-battle") == 0) {
+			std::regex Regex("-battle ([0-9]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
+				uint32_t ZoneID = ToNumber<uint32_t>(Match.str(1));
+				QueueBattle(Player, ZoneID, false);
 			}
 		}
 
