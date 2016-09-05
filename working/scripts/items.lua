@@ -118,6 +118,27 @@ function Item_ThrowingKnives.GetInfo(self, Level)
 	return "Throw a knife at your enemy"
 end
 
+-- Poison Knives --
+
+Item_PoisonKnives = Base_Attack:New()
+Item_PoisonKnives.Duration = 10
+
+function Item_PoisonKnives.GetInfo(self, Level)
+
+	return "Throw a poison-tipped knife at your enemy"
+end
+
+function Item_PoisonKnives.Proc(self, Roll, Level, Source, Target, Result)
+	Result.Target.Buff = Buffs["Buff_Poisoned"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+end
+
+function Item_PoisonKnives.GenerateDamage(self, Level, Source)
+
+	return self.Item.GenerateDamage()
+end
+
 -- Glob  --
 
 Item_Glob = { Duration = 30 }
