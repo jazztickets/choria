@@ -194,6 +194,7 @@ end
 Buff_Poisoned = {}
 Buff_Poisoned.HealPower = -0.5
 Buff_Poisoned.Damage = 1
+Buff_Poisoned.DamageType = DamageType["Poison"]
 
 function Buff_Poisoned.GetInfo(self, Level)
 
@@ -201,7 +202,11 @@ function Buff_Poisoned.GetInfo(self, Level)
 end
 
 function Buff_Poisoned.Update(self, Level, Source, Change)
-	Change.Health = -self.Damage * Level
+	Damage = self.Damage
+	Damage = Damage * (1 - Source.GetResistance(self.DamageType))
+	Damage = math.max(Damage, 0)
+
+	Change.Health = -Damage * Level
 
 	return Change
 end
@@ -216,6 +221,7 @@ end
 
 Buff_Burning = {}
 Buff_Burning.Damage = 3
+Buff_Burning.DamageType = DamageType["Fire"]
 
 function Buff_Burning.GetInfo(self, Level)
 
@@ -223,7 +229,11 @@ function Buff_Burning.GetInfo(self, Level)
 end
 
 function Buff_Burning.Update(self, Level, Source, Change)
-	Change.Health = -self.Damage * Level
+	Damage = self.Damage
+	Damage = Damage * (1 - Source.GetResistance(self.DamageType))
+	Damage = math.max(Damage, 0)
+
+	Change.Health = -Damage * Level
 
 	return Change
 end

@@ -38,6 +38,18 @@ function Skill_FangBite.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+-- Venom bite --
+
+Skill_VenomBite = Base_Attack:New()
+
+function Skill_VenomBite.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 15 then
+		Result.Target.Buff = Buffs["Buff_Poisoned"]
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 10
+	end
+end
+
 -- Ghost attack --
 
 Skill_GhostAttack = Base_Attack:New()
