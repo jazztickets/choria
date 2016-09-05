@@ -934,6 +934,11 @@ void _EditorState::Go() {
 				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=traderitem&trader_id=" << Tile->Event.Data << "\"";
 				system(Buffer.str().c_str());
 			} break;
+			case _Map::EVENT_SCRIPT: {
+				std::stringstream Buffer;
+				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=script\"";
+				system(Buffer.str().c_str());
+			} break;
 		}
 	}
 }

@@ -445,7 +445,6 @@ void _PlayState::HandleConnect() {
 	}
 
 	Menu.HandleConnect();
-
 }
 
 // Handle disconnects
