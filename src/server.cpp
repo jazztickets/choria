@@ -612,6 +612,13 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				QueueBattle(Player, ZoneID, false);
 			}
 		}
+		else if(Message.find("-map") == 0) {
+			std::regex Regex("-map ([0-9]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
+				NetworkIDType MapID = ToNumber<NetworkIDType>(Match.str(1));
+				SpawnPlayer(Player, MapID, _Map::EVENT_MAPENTRANCE);
+			}
+		}
 
 		// Build packet
 		if(StatChange.GetChangedFlag()) {
@@ -702,7 +709,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 
 // Spawns a player at a particular spawn point
 void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType) {
-	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
+	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID || !Stats)
 	   return;
 
 	// Use spawn point for new characters
@@ -712,6 +719,9 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 			MapID = 1;
 		EventType = _Map::EVENT_SPAWN;
 	}
+	// Verify map id
+	else if(Stats->Maps.find(MapID) == Stats->Maps.end() || Stats->Maps[MapID].File == "maps/")
+		return;
 
 	// Get map
 	_Map *Map = MapManager->GetObject(MapID);
