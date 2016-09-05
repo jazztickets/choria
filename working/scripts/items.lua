@@ -276,3 +276,21 @@ function Item_TeleportScroll.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+-- Swamp Glob --
+
+Item_SwampGlob = { Duration = 10 }
+
+function Item_SwampGlob.GetInfo(self, Level)
+
+	return "Slow target by [c green]" .. Level * 10 .. "% [c white]for [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Item_SwampGlob.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Slowed"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
