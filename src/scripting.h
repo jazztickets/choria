@@ -52,9 +52,11 @@ class _Scripting {
 		void PushObjectList(std::list<_Object *> &Objects);
 		void PushObjectStatusEffects(_Object *Object);
 		void PushInt(int Value);
+		void PushReal(double Value);
 
 		int GetInt(int Index);
 		int GetBoolean(int Index);
+		double GetReal(int Index);
 		std::string GetString(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 		void GetStatChange(int Index, _StatChange &StatChange);

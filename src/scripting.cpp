@@ -300,6 +300,11 @@ void _Scripting::PushInt(int Value) {
 	lua_pushinteger(LuaState, Value);
 }
 
+// Push real value
+void _Scripting::PushReal(double Value) {
+	lua_pushnumber(LuaState, Value);
+}
+
 // Get return value as int
 int _Scripting::GetInt(int Index) {
 
@@ -310,6 +315,12 @@ int _Scripting::GetInt(int Index) {
 int _Scripting::GetBoolean(int Index) {
 
 	return lua_toboolean(LuaState, Index + CurrentTableIndex);
+}
+
+// Get return value as real
+double _Scripting::GetReal(int Index) {
+
+	return (double)lua_tonumber(LuaState, Index + CurrentTableIndex);
 }
 
 // Get return value as string

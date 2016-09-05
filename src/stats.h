@@ -112,7 +112,7 @@ class _Stats {
 		~_Stats();
 
 		// General Stats
-		void GetMonsterStats(uint32_t MonsterID, _Object *Monster);
+		void GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty=1.0);
 		const _MapStat *GetMap(uint32_t MapID) { return &Maps[MapID]; }
 		const _Vendor *GetVendor(uint32_t VendorID) { return &Vendors[VendorID]; }
 		const _Trader *GetTrader(uint32_t TraderID) { return &Traders[TraderID]; }

@@ -367,7 +367,7 @@ void _Stats::LoadScripts(){
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
+void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty) {
 	Monster->DatabaseID = MonsterID;
 
 	// Run query
@@ -379,9 +379,9 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster) {
 		Monster->Level = Database->GetInt<int>("level");
 		Monster->Name = Database->GetString("name");
 		Monster->Portrait = Assets.Textures[Database->GetString("portrait")];
-		Monster->ExperienceGiven = Database->GetInt<int>("experience");
-		Monster->GoldGiven = Database->GetInt<int>("gold");
-		Monster->BaseMaxHealth = Database->GetInt<int>("health");
+		Monster->ExperienceGiven = (int)(Database->GetInt<int>("experience") * Difficulty);
+		Monster->GoldGiven = (int)(Database->GetInt<int>("gold") * Difficulty);
+		Monster->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
 		Monster->BaseMaxMana = Database->GetInt<int>("mana");
 		Monster->BaseMinDamage = Database->GetInt<int>("mindamage");
 		Monster->BaseMaxDamage = Database->GetInt<int>("maxdamage");

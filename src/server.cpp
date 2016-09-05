@@ -1302,6 +1302,15 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 	if(!BattleEvent.Zone || BattleEvent.Object->Battle)
 		return;
 
+	// Get difficulty
+	double Difficulty = 1.0;
+	if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
+		Scripting->PushReal(Clock);
+		Scripting->MethodCall(1, 1);
+		Difficulty = Scripting->GetReal(1);
+		Scripting->FinishMethodCall();
+	}
+
 	// Get a list of players
 	std::list<_Object *> Players;
 	BattleEvent.Object->Map->GetClosePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
@@ -1356,7 +1365,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Monster->Scripting = Scripting;
 			Monster->DatabaseID = MonsterID;
 			Monster->Stats = Stats;
-			Stats->GetMonsterStats(MonsterID, Monster);
+			Stats->GetMonsterStats(MonsterID, Monster, Difficulty);
 			Monster->CalculateStats();
 			Battle->AddFighter(Monster, 1);
 		}
