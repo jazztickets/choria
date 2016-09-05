@@ -142,6 +142,7 @@ class _HUD {
 		void ToggleChat();
 		bool IsChatting();
 		void AddChatMessage(_Message &Chat) { ChatHistory.push_back(Chat); }
+		void UpdateSentHistory(int Direction);
 		void CloseChat();
 
 		// Trade
@@ -233,6 +234,8 @@ class _HUD {
 
 		// Chat
 		std::list<_Message> ChatHistory;
+		std::list<std::string> SentHistory;
+		std::list<std::string>::iterator SentHistoryIterator;
 		_TextBox *ChatTextBox;
 
 		// Traders

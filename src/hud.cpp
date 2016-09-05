@@ -129,6 +129,7 @@ void _HUD::Reset() {
 
 	SetMessage("");
 	ChatHistory.clear();
+	SentHistory.clear();
 	RecentItems.clear();
 }
 
@@ -608,6 +609,12 @@ void _HUD::ToggleChat() {
 			Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
 			Packet.WriteString(ChatTextBox->Text.c_str());
 			PlayState.Network->SendPacket(Packet);
+
+			// Add message to history if not a repeat
+			if(SentHistory.size() == 0 || (SentHistory.size() > 0 && SentHistory.back() != ChatTextBox->Text))
+				SentHistory.push_back(ChatTextBox->Text);
+
+			SentHistoryIterator = SentHistory.end();
 		}
 
 		CloseChat();
@@ -1798,6 +1805,31 @@ bool _HUD::IsTypingGold() {
 // Return true if the chatbox is open
 bool _HUD::IsChatting() {
 	return ChatTextBox->Visible;
+}
+
+// Set chat textbox string based on history
+void _HUD::UpdateSentHistory(int Direction) {
+	if(SentHistory.size() == 0)
+		return;
+
+	if(Direction < 0 && SentHistoryIterator != SentHistory.begin()) {
+		SentHistoryIterator--;
+
+		ChatTextBox->Text = *SentHistoryIterator;
+		ChatTextBox->CursorPosition = ChatTextBox->Text.length();
+	}
+	else if(Direction > 0 && SentHistoryIterator != SentHistory.end()) {
+
+		SentHistoryIterator++;
+		if(SentHistoryIterator == SentHistory.end()) {
+			ChatTextBox->Text = "";
+			ChatTextBox->CursorPosition = 0;
+			return;
+		}
+
+		ChatTextBox->Text = *SentHistoryIterator;
+		ChatTextBox->CursorPosition = ChatTextBox->Text.length();
+	}
 }
 
 // Set player for HUD

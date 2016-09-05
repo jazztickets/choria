@@ -258,6 +258,14 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 void _PlayState::KeyEvent(const _KeyEvent &KeyEvent) {
 	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
 
+	// Message history handling
+	if(HUD->IsChatting() && KeyEvent.Pressed) {
+		if(KeyEvent.Scancode == SDL_SCANCODE_UP)
+			HUD->UpdateSentHistory(-1);
+		else if(KeyEvent.Scancode == SDL_SCANCODE_DOWN)
+			HUD->UpdateSentHistory(1);
+	}
+
 	// Pass to menu
 	if(!Handled)
 		Menu.KeyEvent(KeyEvent);
