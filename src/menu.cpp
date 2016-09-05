@@ -279,7 +279,7 @@ void _Menu::ConnectToHost() {
 	}
 
 	PlayState.HostAddress = Host->Text;
-	PlayState.ConnectPort = ToNumber(Port->Text);
+	PlayState.ConnectPort = ToNumber<int>(Port->Text);
 	PlayState.Connect(false);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];

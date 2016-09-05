@@ -564,8 +564,8 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		if(Message.find("-give") == 0) {
 			std::regex Regex("-give ([0-9]+) ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
-				uint32_t ItemID = (uint32_t)ToNumber(Match.str(1));
-				int Count = std::min(ToNumber(Match.str(2)), 255);
+				uint32_t ItemID = (uint32_t)ToNumber<int>(Match.str(1));
+				int Count = std::min(ToNumber<int>(Match.str(2)), 255);
 
 				if(Stats->Items.find(ItemID) == Stats->Items.end())
 					return;
@@ -582,15 +582,27 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		else if(Message.find("-gold") == 0) {
 			std::regex Regex("-gold ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				StatChange.Values[StatType::GOLD].Integer = ToNumber(Match.str(1));
+				StatChange.Values[StatType::GOLD].Integer = ToNumber<int>(Match.str(1));
 				Player->UpdateStats(StatChange);
 			}
 		}
 		else if(Message.find("-exp") == 0) {
 			std::regex Regex("-exp ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				StatChange.Values[StatType::EXPERIENCE].Integer = ToNumber(Match.str(1));
+				StatChange.Values[StatType::EXPERIENCE].Integer = ToNumber<int>(Match.str(1));
 				Player->UpdateStats(StatChange);
+			}
+		}
+		else if(Message.find("-clock") == 0) {
+			std::regex Regex("-clock ([0-9.]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
+				Clock = (double)ToNumber<int>(Match.str(1));
+				if(Clock < 0)
+					Clock = 0;
+				else if(Clock >= MAP_DAY_LENGTH)
+					Clock = MAP_DAY_LENGTH;
+
+				SendHUD(Player->Peer);
 			}
 		}
 
@@ -1290,6 +1302,7 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<float>(Player->MaxMana);
 	Packet.Write<int32_t>(Player->Experience);
 	Packet.Write<int32_t>(Player->Gold);
+	Packet.Write<double>(Clock);
 
 	Network->SendPacket(Packet, Peer);
 }

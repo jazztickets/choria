@@ -80,13 +80,3 @@ std::string TrimString(const std::string &String) {
 	std::regex Regex("^[ \t]+|[ \t]+$");
 	return std::regex_replace(String, Regex, "");
 }
-
-// Convert string to number
-int ToNumber(const std::string &String) {
-	int Number = 0;
-	std::stringstream Buffer(String);
-
-	Buffer >> Number;
-
-	return Number;
-}

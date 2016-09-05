@@ -20,11 +20,21 @@
 // Libraries
 #include <fstream>
 #include <string>
+#include <sstream>
 
 std::string GetTSVText(std::ifstream &Stream, bool *EndOfLine=nullptr);
 const char *LoadFileIntoMemory(const char *Path);
 std::string RemoveExtension(const std::string &Path);
 std::string TrimString(const std::string &String);
-int ToNumber(const std::string &String);
+
+template <class T>
+inline T ToNumber(const std::string &String) {
+	T Number = 0;
+
+	std::stringstream Buffer(String);
+	Buffer >> Number;
+
+	return Number;
+}
 
 inline float Round(float Number) { return (int)(Number * 10) / 10.0f; }

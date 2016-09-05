@@ -496,15 +496,20 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			_StatChange StatChange;
 			HandleStatChange(Data, StatChange);
 		} break;
-		case PacketType::WORLD_HUD:
+		case PacketType::WORLD_HUD: {
 			Player->Health = Data.Read<float>();
 			Player->Mana = Data.Read<float>();
 			Player->MaxHealth = Data.Read<float>();
 			Player->MaxMana = Data.Read<float>();
 			Player->Experience = Data.Read<int32_t>();
 			Player->Gold = Data.Read<int32_t>();
+			double Clock = Data.Read<double>();
+
 			Player->CalculateStats();
-		break;
+
+			if(Map)
+				Map->Clock = Clock;
+		} break;
 		default:
 		break;
 	}

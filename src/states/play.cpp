@@ -1146,7 +1146,12 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	Player->MaxMana = Data.Read<float>();
 	Player->Experience = Data.Read<int32_t>();
 	Player->Gold = Data.Read<int32_t>();
+	double Clock = Data.Read<double>();
+
 	Player->CalculateStats();
+
+	if(Map)
+		Map->Clock = Clock;
 
 	if(Player->Level > OldLevel) {
 		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill points. Press " + Actions.GetInputNameForAction(_Actions::SKILLS) + " to use them.");

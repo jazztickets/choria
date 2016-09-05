@@ -59,7 +59,7 @@ void RunCommandThread() {
 			else if(Tokens[0] == "a" || Tokens[0] == "add") {
 				int Count = 1;
 				if(Tokens.size() > 1) {
-					Count = ToNumber(Tokens[1]);
+					Count = ToNumber<int>(Tokens[1]);
 				}
 
 				for(int i = 0; i < Count; i++) {

@@ -1715,7 +1715,7 @@ void _HUD::ValidateTradeGold() {
 	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
 
 	// Get gold amount
-	int Gold = ToNumber(GoldTextBox->Text);
+	int Gold = ToNumber<int>(GoldTextBox->Text);
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Gold)
