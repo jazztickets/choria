@@ -83,6 +83,18 @@ function Skill_ChewAttack.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+-- Swamp attack --
+
+Skill_SwampAttack = Base_Attack:New()
+
+function Skill_SwampAttack.Proc(self, Roll, Level, Source, Target, Result)
+	if Roll <= 30 then
+		Result.Target.Buff = Buffs["Buff_Slowed"]
+		Result.Target.BuffLevel = Level
+		Result.Target.BuffDuration = 5
+	end
+end
+
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()
