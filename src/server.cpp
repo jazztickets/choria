@@ -619,6 +619,16 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				SpawnPlayer(Player, MapID, _Map::EVENT_MAPENTRANCE);
 			}
 		}
+		else if(Message.find("-pos") == 0) {
+			std::regex Regex("-pos ([0-9]+) ([0-9]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
+				if(!Player->Map)
+					return;
+
+				Player->Position = Player->Map->GetValidCoord(glm::ivec2(ToNumber<int>(Match.str(1)), ToNumber<int>(Match.str(2))));
+				SendPlayerPosition(Player->Peer);
+			}
+		}
 
 		// Build packet
 		if(StatChange.GetChangedFlag()) {
