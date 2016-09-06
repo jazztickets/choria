@@ -21,7 +21,7 @@ end
 
 -- Healing --
 
-Buff_Healing = { Heal = 3 }
+Buff_Healing = { Heal = 1 }
 
 function Buff_Healing.GetInfo(self, Level)
 

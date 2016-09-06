@@ -239,12 +239,41 @@ function Skill_Whirlwind.GetInfo(self, Level)
 	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Level) .." [c white]seconds"
 end
 
+-- Rejuvenation --
+
+Skill_Rejuvenation = Base_Spell:New()
+Skill_Rejuvenation.Duration = 5
+Skill_Rejuvenation.CostPerLevel = 1 / 2
+Skill_Rejuvenation.ManaCostBase = 3 - Skill_Rejuvenation.CostPerLevel
+
+function Skill_Rejuvenation.GetLevel(self, Level)
+	return Level + 2
+end
+
+function Skill_Rejuvenation.GetDuration(self, Level)
+	return self.Duration
+end
+
+function Skill_Rejuvenation.GetInfo(self, Level)
+
+	return "Heal [c green]" .. Buff_Healing.Heal * self:GetLevel(Level) * self:GetDuration(Level) .. " [c white]HP [c white]over [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+
+end
+
+function Skill_Rejuvenation.Use(self, Level, Source, Target, Result)
+	Result.Target.Buff = Buffs["Buff_Healing"]
+	Result.Target.BuffLevel = self:GetLevel(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
+
 -- Heal --
 
 Skill_Heal = Base_Spell:New()
 Skill_Heal.HealBase = 10
 Skill_Heal.HealPerLevel = 3
-Skill_Heal.CostPerLevel = 1 / 2
+Skill_Heal.CostPerLevel = 1
 Skill_Heal.ManaCostBase = 3 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)

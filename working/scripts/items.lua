@@ -1,10 +1,10 @@
 -- Healing Salve  --
 
-Item_HealingSalve = { HealBase = 3, Duration = 5 }
+Item_HealingSalve = { Duration = 5 }
 
 function Item_HealingSalve.GetInfo(self, Level)
 
-	return "Restore [c green]" .. Level * self.HealBase * self.Duration .. "[c white] HP over [c green]" .. self.Duration .. " [c white]seconds"
+	return "Restore [c green]" .. Level * Buff_Healing.Heal * self.Duration .. "[c white] HP over [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Item_HealingSalve.Use(self, Level, Source, Target, Result)
@@ -18,11 +18,11 @@ end
 
 -- Mana Cider --
 
-Item_ManaCider = { ManaBase = 1, Duration = 10 }
+Item_ManaCider = { Duration = 10 }
 
 function Item_ManaCider.GetInfo(self, Level)
 
-	return "Restore [c light_blue]" .. Level * self.ManaBase * self.Duration .. " [c white]MP over [c green]" .. self.Duration .. " [c white]seconds"
+	return "Restore [c light_blue]" .. Level * Buff_Mana.Mana * self.Duration .. " [c white]MP over [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Item_ManaCider.Use(self, Level, Source, Target, Result)
