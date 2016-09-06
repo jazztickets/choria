@@ -60,6 +60,7 @@ class _Item {
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		bool CanTarget(_Object *Object) const;
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;

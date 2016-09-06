@@ -216,6 +216,10 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.Scope = ScopeType::BATTLE;
 		ActionResult.ActionUsed = Action;
 
+		// Clear existing targets
+		ClientPlayer->Targets.clear();
+
+		// Check if item can be used
 		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
 		if(Item) {
 			if(!Item->CanUse(Scripting, ActionResult))
@@ -258,11 +262,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				break;
 			}
 
-			bool TargetAlive = Item->TargetAlive;
-
-			// Clear existing targets
-			ClientPlayer->Targets.clear();
-
 			if(Self) {
 				ClientPlayer->Targets.push_back(ClientPlayer);
 			}
@@ -275,7 +274,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				// Find last target
 				if(ClientPlayer->LastTarget && !Multiple) {
 					for(auto &Fighter : FighterList) {
-						if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
+						if(Item->CanTarget(Fighter)) {
 							if(ClientPlayer->LastTarget == Fighter) {
 								ClientPlayer->Targets.push_back(Fighter);
 								break;
@@ -287,8 +286,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				// Find first alive target
 				if(ClientPlayer->Targets.size() == 0) {
 					for(auto &Fighter : FighterList) {
-						if((TargetAlive && Fighter->IsAlive()) || !TargetAlive) {
-
+						if(Item->CanTarget(Fighter)) {
 							ClientPlayer->Targets.push_back(Fighter);
 							if(!Multiple)
 								break;
@@ -299,10 +297,13 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		}
 
 		// Set potential skill
-		ClientPlayer->PotentialAction.Item = Item;
+		if(ClientPlayer->Targets.size())
+			ClientPlayer->PotentialAction.Item = Item;
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
+		if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
+			ClientPlayer->HUD->SetMessage("");
 
 		// Check if action can be used
 		_ActionResult ActionResult;
@@ -315,9 +316,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			ClientPlayer->Targets.clear();
 			return;
 		}
-
-		if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
-			ClientPlayer->HUD->SetMessage("");
 
 		// Remember target
 		if(ClientPlayer->Targets.size() == 1)
@@ -342,14 +340,15 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || ClientPlayer->Targets.size() != 1)
 		return;
 
-	if(ClientPlayer->PotentialAction.Item->TargetID == TargetType::SELF)
+	const _Item *Item = ClientPlayer->PotentialAction.Item;
+	if(Item->TargetID == TargetType::SELF)
 		return;
 
 	// Get current target side
 	int BattleTargetSide = ClientPlayer->Targets.front()->BattleSide;
 
 	// Change sides
-	if(ClientPlayer->PotentialAction.Item->TargetID == TargetType::ANY && ChangeSides)
+	if(Item->TargetID == TargetType::ANY && ChangeSides)
 		BattleTargetSide = !BattleTargetSide;
 
 	// Get list of fighters on target side
@@ -392,7 +391,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 			NewTarget = *Iterator;
 
 		// Check break condition
-		if(NewTarget->IsAlive())
+		if(Item->CanTarget(NewTarget))
 			break;
 	}
 

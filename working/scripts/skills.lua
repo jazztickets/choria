@@ -259,6 +259,26 @@ function Skill_Heal.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Resurrect --
+
+Skill_Resurrect = Base_Spell:New()
+Skill_Resurrect.HealBase = -2
+Skill_Resurrect.HealPerLevel = 3
+Skill_Resurrect.CostPerLevel = 2
+Skill_Resurrect.ManaCostBase = 20 - Skill_Resurrect.CostPerLevel
+
+function Skill_Resurrect.GetInfo(self, Level)
+
+	return "Resurrect target and give [c green]" .. (self.HealBase + self.HealPerLevel * Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+function Skill_Resurrect.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Health = self.HealBase + self.HealPerLevel * Level
+
+	return Result
+end
+
 -- Spark --
 Skill_Spark = Base_Spell:New()
 Skill_Spark.DamageType = DamageType["Lightning"]
