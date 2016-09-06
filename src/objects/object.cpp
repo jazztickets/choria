@@ -1230,7 +1230,7 @@ void _Object::CalculateStats() {
 	HealthRegen = BaseHealthRegen;
 	ManaRegen = BaseManaRegen;
 	HealPower = BaseHealPower;
-	BattleSpeed = BaseBattleSpeed;
+	BattleSpeed = 0;
 	Evasion = BaseEvasion;
 	HitChance = BaseHitChance;
 	MinDamage = BaseMinDamage;
@@ -1316,6 +1316,7 @@ void _Object::CalculateStats() {
 	MinDefense = std::max(MinDefense, 0);
 	MaxDefense = std::max(MaxDefense, 0);
 
+	BattleSpeed = BaseBattleSpeed * BattleSpeed + BaseBattleSpeed;
 	if(BattleSpeed < BATTLE_MIN_SPEED)
 		BattleSpeed = BATTLE_MIN_SPEED;
 
