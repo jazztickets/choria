@@ -80,11 +80,9 @@ class _Scripting {
 		static int ObjectGetInventoryItem(lua_State *LuaState);
 		static int ObjectSetAction(lua_State *LuaState);
 		static int ObjectGenerateDamage(lua_State *LuaState);
-		static int ObjectGenerateDefense(lua_State *LuaState);
 		static int ObjectGetResistance(lua_State *LuaState);
 
 		static int ItemGenerateDamage(lua_State *LuaState);
-		static int ItemGenerateDefense(lua_State *LuaState);
 
 		lua_State *LuaState;
 		int CurrentTableIndex;

@@ -12,6 +12,10 @@ Base_Attack = {
 		return ""
 	end,
 
+	GetDamageType = function(self)
+		return DamageType["Physical"]
+	end,
+
 	GenerateDamage = function(self, Level, Source)
 		Damage = Source.GenerateDamage()
 
@@ -125,11 +129,14 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 			end
 		end
 
-		-- Apply defense
-		Defense = Target.GenerateDefense()
-		Change.Damage = math.max(Change.Damage - Defense, 0)
+		-- Apply resistance
+		Change.Damage = Change.Damage * (1 - Target.GetResistance(Action:GetDamageType(Source)))
+
+		-- Apply damage block
+		Change.Damage = math.max(Change.Damage - Target.DamageBlock, 0)
 
 		-- Update health
+		Change.Damage = math.floor(Change.Damage)
 		Result.Target.Health = -Change.Damage
 		Hit = true
 	else

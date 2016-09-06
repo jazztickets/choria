@@ -145,7 +145,7 @@ Item_Glob = { Duration = 30 }
 
 function Item_Glob.GetInfo(self, Level)
 
-	return "Gain [c green]" .. Buff_BleedResist.Increments * Level .. "% [c yellow]bleed [c white]resist for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Gain [c green]" .. Level .. "% [c yellow]bleed [c white]resist for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Item_Glob.Use(self, Level, Source, Target, Result)
@@ -217,7 +217,7 @@ Item_CrabLegs = { Duration = 30 }
 
 function Item_CrabLegs.GetInfo(self, Level)
 
-	return "Gain [c green]1 [c white]defense for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Gain [c green]" .. Level .. " [c white]armor for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Item_CrabLegs.Use(self, Level, Source, Target, Result)

@@ -67,8 +67,8 @@ _Object::_Object() :
 	BaseHealPower(1.0f),
 	BaseMinDamage(0),
 	BaseMaxDamage(0),
-	BaseMinDefense(0),
-	BaseMaxDefense(0),
+	BaseArmor(0),
+	BaseDamageBlock(0),
 	BaseMoveSpeed(1.0f),
 	BaseBattleSpeed(1.0),
 	BaseEvasion(0.0f),
@@ -86,8 +86,8 @@ _Object::_Object() :
 	HealPower(0.0f),
 	MinDamage(0),
 	MaxDamage(0),
-	MinDefense(0),
-	MaxDefense(0),
+	Armor(0),
+	DamageBlock(0),
 	MoveSpeed(1.0f),
 	BattleSpeed(1.0),
 	Evasion(0.0f),
@@ -543,11 +543,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 // Generate damage
 int _Object::GenerateDamage() {
 	return GetRandomInt(MinDamage, MaxDamage);
-}
-
-// Generate defense
-int _Object::GenerateDefense() {
-	return GetRandomInt(MinDefense, MaxDefense);
 }
 
 // Create a UI element for battle
@@ -1235,17 +1230,20 @@ void _Object::CalculateStats() {
 	HitChance = BaseHitChance;
 	MinDamage = BaseMinDamage;
 	MaxDamage = BaseMaxDamage;
-	MinDefense = BaseMinDefense;
-	MaxDefense = BaseMaxDefense;
+	Armor = BaseArmor;
+	DamageBlock = BaseDamageBlock;
 	MoveSpeed = BaseMoveSpeed;
 	Resistances.clear();
+	for(auto DamageType : Stats->DamageTypes)
+		Resistances[DamageType.first] = 1.0f;
+
 	Invisible = 0;
 
 	// Get item stats
-	int WeaponMinDamage = 0;
-	int WeaponMaxDamage = 0;
-	int ArmorMinDefense = 0;
-	int ArmorMaxDefense = 0;
+	int ItemMinDamage = 0;
+	int ItemMaxDamage = 0;
+	int ItemArmor = 0;
+	int ItemDamageBlock = 0;
 	float WeaponDamageModifier = 1.0f;
 	for(size_t i = 0; i < InventoryType::BAG; i++) {
 
@@ -1254,12 +1252,12 @@ void _Object::CalculateStats() {
 		if(Item) {
 
 			// Add damage
-			WeaponMinDamage += Item->MinDamage;
-			WeaponMaxDamage += Item->MaxDamage;
+			ItemMinDamage += Item->MinDamage;
+			ItemMaxDamage += Item->MaxDamage;
 
 			// Add defense
-			ArmorMinDefense += Item->MinDefense;
-			ArmorMaxDefense += Item->MaxDefense;
+			ItemArmor += Item->Armor;
+			ItemDamageBlock += Item->DamageBlock;
 
 			// Stat changes
 			MaxHealth += Item->MaxHealth;
@@ -1269,7 +1267,8 @@ void _Object::CalculateStats() {
 			BattleSpeed += Item->BattleSpeed;
 			MoveSpeed += Item->MoveSpeed;
 
-			Resistances[Item->ResistanceTypeID] += Item->Resistance;
+			// Add resistances multiplicatively
+			Resistances[Item->ResistanceTypeID] *= 1.0f - Item->Resistance;
 		}
 	}
 
@@ -1304,17 +1303,31 @@ void _Object::CalculateStats() {
 	}
 
 	// Get damage
-	MinDamage += (int)std::roundf(WeaponMinDamage * WeaponDamageModifier);
-	MaxDamage += (int)std::roundf(WeaponMaxDamage * WeaponDamageModifier);
-
-	// Get defense
-	MinDefense += ArmorMinDefense;
-	MaxDefense += ArmorMaxDefense;
-
+	MinDamage += (int)std::roundf(ItemMinDamage * WeaponDamageModifier);
+	MaxDamage += (int)std::roundf(ItemMaxDamage * WeaponDamageModifier);
 	MinDamage = std::max(MinDamage, 0);
 	MaxDamage = std::max(MaxDamage, 0);
-	MinDefense = std::max(MinDefense, 0);
-	MaxDefense = std::max(MaxDefense, 0);
+
+	// Get defense
+	Armor += ItemArmor;
+	DamageBlock += ItemDamageBlock;
+	DamageBlock = std::max(DamageBlock, 0);
+
+	// Get physical resistance from armor
+	float ArmorResist = (float)Armor / (30.0f + std::abs(Armor));
+
+	// Physical resist comes solely from armor
+	Resistances[2] = 1.0f - ArmorResist;
+
+	// Get final resistances and truncate decimal points
+	for(auto Iterator = Resistances.begin(); Iterator != Resistances.end(); ) {
+		if(Iterator->second != 1.0f) {
+			Resistances[Iterator->first] = ((int)((1.0f - Iterator->second) * 100.0f)) / 100.0f;
+			++Iterator;
+		}
+		else
+			Iterator = Resistances.erase(Iterator);
+	}
 
 	BattleSpeed = BaseBattleSpeed * BattleSpeed + BaseBattleSpeed;
 	if(BattleSpeed < BATTLE_MIN_SPEED)
@@ -1352,16 +1365,16 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 		Evasion += StatChange.Values[StatType::EVASION].Float;
 
 	if(StatChange.HasStat(StatType::RESISTTYPE))
-		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Float;
+		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] *= 1.0f - StatChange.Values[StatType::RESIST].Float;
 
 	if(StatChange.HasStat(StatType::MINDAMAGE))
 		MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
 	if(StatChange.HasStat(StatType::MAXDAMAGE))
 		MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
-	if(StatChange.HasStat(StatType::MINDEFENSE))
-		MinDefense += StatChange.Values[StatType::MINDEFENSE].Integer;
-	if(StatChange.HasStat(StatType::MAXDEFENSE))
-		MaxDefense += StatChange.Values[StatType::MAXDEFENSE].Integer;
+	if(StatChange.HasStat(StatType::ARMOR))
+		Armor += StatChange.Values[StatType::ARMOR].Integer;
+	if(StatChange.HasStat(StatType::DAMAGEBLOCK))
+		DamageBlock += StatChange.Values[StatType::DAMAGEBLOCK].Integer;
 
 	if(StatChange.HasStat(StatType::MOVESPEED))
 		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Float;
@@ -1391,8 +1404,8 @@ void _Object::CalculateLevelStats() {
 	BaseMaxMana = LevelStat->Mana;
 	BaseMinDamage = LevelStat->Damage;
 	BaseMaxDamage = LevelStat->Damage+1;
-	BaseMinDefense = LevelStat->Defense;
-	BaseMaxDefense = LevelStat->Defense;
+	BaseArmor = LevelStat->Armor;
+	BaseDamageBlock = LevelStat->Armor;
 	SkillPoints = LevelStat->SkillPoints;
 	ExperienceNextLevel = LevelStat->NextLevel;
 	if(Level == Stats->GetMaxLevel())

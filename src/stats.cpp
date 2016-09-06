@@ -108,7 +108,7 @@ void _Stats::LoadLevels() {
 		Level.Health = Database->GetInt<int>("health");
 		Level.Mana = Database->GetInt<int>("mana");
 		Level.Damage = Database->GetInt<int>("damage");
-		Level.Defense = Database->GetInt<int>("defense");
+		Level.Armor = Database->GetInt<int>("armor");
 		Levels.push_back(Level);
 	}
 	Database->CloseQuery();
@@ -208,8 +208,8 @@ void _Stats::LoadItems() {
 		Item->DamageType = Database->GetInt<int>("damagetype_id");
 		Item->MinDamage = Database->GetInt<int>("mindamage");
 		Item->MaxDamage = Database->GetInt<int>("maxdamage");
-		Item->MinDefense = Database->GetInt<int>("mindefense");
-		Item->MaxDefense = Database->GetInt<int>("maxdefense");
+		Item->Armor = Database->GetInt<int>("armor");
+		Item->DamageBlock = Database->GetInt<int>("block");
 		Item->MaxHealth = Database->GetInt<int>("maxhealth");
 		Item->MaxMana = Database->GetInt<int>("maxmana");
 		Item->HealthRegen = (float)Database->GetReal("healthregen");
@@ -385,8 +385,8 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		Monster->BaseMaxMana = Database->GetInt<int>("mana");
 		Monster->BaseMinDamage = Database->GetInt<int>("mindamage");
 		Monster->BaseMaxDamage = Database->GetInt<int>("maxdamage");
-		Monster->BaseMinDefense = Database->GetInt<int>("mindefense");
-		Monster->BaseMaxDefense = Database->GetInt<int>("maxdefense");
+		Monster->BaseArmor = Database->GetInt<int>("armor");
+		Monster->BaseDamageBlock = Database->GetInt<int>("block");
 		Monster->BaseBattleSpeed = Database->GetReal("battlespeed");
 		Monster->AI = Database->GetString("ai_name");
 		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");

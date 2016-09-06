@@ -1247,9 +1247,16 @@ void _HUD::DrawCharacterStats() {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
-	// Defense
-	Buffer << Player->MinDefense << " - " << Player->MaxDefense;
-	Assets.Fonts["hud_small"]->DrawText("Defense", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	// Armor
+	Buffer << Player->Armor;
+	Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
+
+	// Damage Block
+	Buffer << Player->DamageBlock;
+	Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;

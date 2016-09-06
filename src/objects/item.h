@@ -78,8 +78,8 @@ class _Item {
 		int DamageType;
 		int MinDamage;
 		int MaxDamage;
-		int MinDefense;
-		int MaxDefense;
+		int Armor;
+		int DamageBlock;
 		int MaxHealth;
 		int MaxMana;
 		float HealthRegen;

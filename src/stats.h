@@ -57,7 +57,7 @@ struct _Level {
 	int Health;
 	int Mana;
 	int Damage;
-	int Defense;
+	int Armor;
 	int SkillPoints;
 };
 

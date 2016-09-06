@@ -174,10 +174,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GenerateDamage");
 
 	lua_pushlightuserdata(LuaState, Object);
-	lua_pushcclosure(LuaState, &ObjectGenerateDefense, 1);
-	lua_setfield(LuaState, -2, "GenerateDefense");
-
-	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectGetResistance, 1);
 	lua_setfield(LuaState, -2, "GetResistance");
 
@@ -208,6 +204,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 
+	lua_pushnumber(LuaState, Object->DamageBlock);
+	lua_setfield(LuaState, -2, "DamageBlock");
+
 	lua_pushnumber(LuaState, Object->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
 
@@ -231,9 +230,11 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item) {
 	lua_pushcclosure(LuaState, &ItemGenerateDamage, 1);
 	lua_setfield(LuaState, -2, "GenerateDamage");
 
-	lua_pushlightuserdata(LuaState, (void *)Item);
-	lua_pushcclosure(LuaState, &ItemGenerateDefense, 1);
-	lua_setfield(LuaState, -2, "GenerateDefense");
+	lua_pushinteger(LuaState, Item->DamageType);
+	lua_setfield(LuaState, -2, "DamageType");
+
+	lua_pushinteger(LuaState, Item->DamageBlock);
+	lua_setfield(LuaState, -2, "DamageBlock");
 
 	lua_pushlightuserdata(LuaState, (void *)Item);
 	lua_setfield(LuaState, -2, "Pointer");
@@ -525,15 +526,6 @@ int _Scripting::ObjectGenerateDamage(lua_State *LuaState) {
 	return 1;
 }
 
-// Generate defense
-int _Scripting::ObjectGenerateDefense(lua_State *LuaState) {
-
-	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	lua_pushinteger(LuaState, Object->GenerateDefense());
-
-	return 1;
-}
-
 // Get resistance for a certain damage type
 int _Scripting::ObjectGetResistance(lua_State *LuaState) {
 
@@ -551,16 +543,6 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 	// Get self pointer
 	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	lua_pushinteger(LuaState, GetRandomInt(Item->MinDamage, Item->MaxDamage));
-
-	return 1;
-}
-
-// Generate a random defense value for an item
-int _Scripting::ItemGenerateDefense(lua_State *LuaState) {
-
-	// Get self pointer
-	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	lua_pushinteger(LuaState, GetRandomInt(Item->MinDefense, Item->MaxDefense));
 
 	return 1;
 }

@@ -145,24 +145,26 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		StatDrawn = true;
 	}
 
-	// Render defense
-	if(MinDefense != 0 || MaxDefense != 0) {
+	// Boosts
+	if(Armor != 0) {
 		std::stringstream Buffer;
-		if(MinDefense != MaxDefense)
-			Buffer << MinDefense << " - " << MaxDefense;
-		else
-			Buffer << MinDefense;
-
-		Assets.Fonts["hud_medium"]->DrawText("Defense", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
+		Buffer << (Armor < 0 ? "" : "+") << Armor;
+		Assets.Fonts["hud_medium"]->DrawText("Armor", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-
-	// Boosts
+	if(DamageBlock != 0) {
+		std::stringstream Buffer;
+		Buffer << (DamageBlock < 0 ? "" : "+") << DamageBlock;
+		Assets.Fonts["hud_medium"]->DrawText("Damage Block", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
 	if(MaxHealth > 0) {
 		std::stringstream Buffer;
-		Buffer << "+" << MaxHealth;
+		Buffer << (MaxHealth < 0 ? "" : "+") << MaxHealth;
 		Assets.Fonts["hud_medium"]->DrawText("Health", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -170,7 +172,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 	if(MaxMana > 0) {
 		std::stringstream Buffer;
-		Buffer << "+" << MaxMana;
+		Buffer << (MaxMana < 0 ? "" : "+") << MaxMana;
 		Assets.Fonts["hud_medium"]->DrawText("Mana", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -186,7 +188,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 	if(MoveSpeed != 0.0f) {
 		std::stringstream Buffer;
-		Buffer << (BattleSpeed < 0 ? "" : "+") << std::setprecision(2) << MoveSpeed * 100 << "%";
+		Buffer << (MoveSpeed < 0 ? "" : "+") << std::setprecision(2) << MoveSpeed * 100 << "%";
 		Assets.Fonts["hud_medium"]->DrawText("Move Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -202,7 +204,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 	if(HealthRegen != 0.0f) {
 		std::stringstream Buffer;
-		Buffer << "+" << Round(HealthRegen);
+		Buffer << (HealthRegen < 0 ? "" : "+") << Round(HealthRegen);
 		Assets.Fonts["hud_medium"]->DrawText("Health Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -210,7 +212,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 	if(ManaRegen != 0.0f) {
 		std::stringstream Buffer;
-		Buffer << "+" << Round(ManaRegen);
+		Buffer << (ManaRegen < 0 ? "" : "+") << Round(ManaRegen);
 		Assets.Fonts["hud_medium"]->DrawText("Mana Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;

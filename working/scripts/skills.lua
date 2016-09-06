@@ -54,11 +54,8 @@ end
 
 Skill_GhostAttack = Base_Attack:New()
 
-function Skill_GhostAttack.Use(self, Level, Source, Target, Result)
-	Target.GenerateDefense = function() return 0 end
-	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
-
-	return Result
+function Skill_GhostAttack.GetDamageType(self, Object)
+	return DamageType["Cold"]
 end
 
 -- Swoop attack --
@@ -113,6 +110,15 @@ Skill_Attack = Base_Attack:New()
 Skill_Attack.BaseChance = 4
 Skill_Attack.ChancePerLevel = 1
 
+function Skill_Attack.GetDamageType(self, Object)
+	Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+	if Weapon ~= nil then
+		return Weapon.DamageType
+	end
+
+	return DamageType["Physical"]
+end
+
 function Skill_Attack.GetChance(self, Level)
 
 	return math.min(self.BaseChance + self.ChancePerLevel * Level, 100)
@@ -141,8 +147,8 @@ Skill_Gash = Base_Attack:New()
 Skill_Gash.BaseChance = 25
 Skill_Gash.ChancePerLevel = 0
 Skill_Gash.Duration = 5
-Skill_Gash.IncreasePerLevel = 1.0 / 3.0
-Skill_Gash.BleedingLevel = 1 - Skill_Gash.IncreasePerLevel
+Skill_Gash.IncreasePerLevel = 5
+Skill_Gash.BleedingLevel = 10 - Skill_Gash.IncreasePerLevel
 
 function Skill_Gash.GetChance(self, Level)
 
@@ -185,7 +191,7 @@ function Skill_ShieldBash.GenerateDamage(self, Level, Source)
 		return 0
 	end
 
-	return Shield.GenerateDefense()
+	return Shield.GenerateDamage()
 end
 
 function Skill_ShieldBash.GetChance(self, Level)
@@ -243,11 +249,11 @@ end
 
 Skill_Rejuvenation = Base_Spell:New()
 Skill_Rejuvenation.Duration = 5
-Skill_Rejuvenation.CostPerLevel = 1 / 2
-Skill_Rejuvenation.ManaCostBase = 3 - Skill_Rejuvenation.CostPerLevel
+Skill_Rejuvenation.CostPerLevel = 5
+Skill_Rejuvenation.ManaCostBase = 30 - Skill_Rejuvenation.CostPerLevel
 
 function Skill_Rejuvenation.GetLevel(self, Level)
-	return Level + 2
+	return 10 * (Level + 2)
 end
 
 function Skill_Rejuvenation.GetDuration(self, Level)
@@ -271,10 +277,10 @@ end
 -- Heal --
 
 Skill_Heal = Base_Spell:New()
-Skill_Heal.HealBase = 10
-Skill_Heal.HealPerLevel = 3
-Skill_Heal.CostPerLevel = 1
-Skill_Heal.ManaCostBase = 3 - Skill_Heal.CostPerLevel
+Skill_Heal.HealBase = 100
+Skill_Heal.HealPerLevel = 30
+Skill_Heal.CostPerLevel = 10
+Skill_Heal.ManaCostBase = 30 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)
 
@@ -291,10 +297,10 @@ end
 -- Resurrect --
 
 Skill_Resurrect = Base_Spell:New()
-Skill_Resurrect.HealBase = -2
-Skill_Resurrect.HealPerLevel = 3
-Skill_Resurrect.CostPerLevel = 2
-Skill_Resurrect.ManaCostBase = 20 - Skill_Resurrect.CostPerLevel
+Skill_Resurrect.HealBase = -20
+Skill_Resurrect.HealPerLevel = 30
+Skill_Resurrect.CostPerLevel = 20
+Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
 function Skill_Resurrect.GetInfo(self, Level)
 
@@ -311,10 +317,10 @@ end
 -- Spark --
 Skill_Spark = Base_Spell:New()
 Skill_Spark.DamageType = DamageType["Lightning"]
-Skill_Spark.DamageBase = 1
-Skill_Spark.Multiplier = 2
-Skill_Spark.CostPerLevel = 1 / 5
-Skill_Spark.ManaCostBase = 1 - Skill_Spark.CostPerLevel
+Skill_Spark.DamageBase = 10
+Skill_Spark.Multiplier = 20
+Skill_Spark.CostPerLevel = 2
+Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 
 function Skill_Spark.GetInfo(self, Level)
 	return "Shock a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
@@ -323,10 +329,10 @@ end
 -- Fire Blast --
 Skill_FireBlast = Base_Spell:New()
 Skill_FireBlast.DamageType = DamageType["Fire"]
-Skill_FireBlast.DamageBase = 5
-Skill_FireBlast.Multiplier = 2
-Skill_FireBlast.CostPerLevel = 1 / 2
-Skill_FireBlast.ManaCostBase = 9 - Skill_FireBlast.CostPerLevel
+Skill_FireBlast.DamageBase = 50
+Skill_FireBlast.Multiplier = 20
+Skill_FireBlast.CostPerLevel = 5
+Skill_FireBlast.ManaCostBase = 90 - Skill_FireBlast.CostPerLevel
 
 function Skill_FireBlast.GetInfo(self, Level)
 	return "Blast all targets with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
@@ -334,12 +340,12 @@ end
 
 -- Ignite --
 Skill_Ignite = Base_Spell:New()
-Skill_Ignite.BurnLevel = 1
-Skill_Ignite.BurnLevelPerLevel = 1 / 5
-Skill_Ignite.CostPerLevel = 1 / 2
-Skill_Ignite.DurationPerLevel = 1 / 10
+Skill_Ignite.BurnLevel = 10
+Skill_Ignite.BurnLevelPerLevel = 2
+Skill_Ignite.CostPerLevel = 5
+Skill_Ignite.DurationPerLevel = 0
 Skill_Ignite.Duration = 6 - Skill_Ignite.DurationPerLevel
-Skill_Ignite.ManaCostBase = 3 - Skill_Ignite.CostPerLevel
+Skill_Ignite.ManaCostBase = 30 - Skill_Ignite.CostPerLevel
 
 function Skill_Ignite.GetBurnLevel(self, Level)
 	return math.floor(self.BurnLevel + self.BurnLevelPerLevel * Level)
@@ -368,27 +374,26 @@ end
 -- Toughness --
 
 Skill_Toughness = {}
-Skill_Toughness.PerLevel = 4
-Skill_Toughness.Defense = 1
+Skill_Toughness.HealthPerLevel = 40
+Skill_Toughness.Armor = 2
 
-function Skill_Toughness.GetDefense(self, Level)
+function Skill_Toughness.GetArmor(self, Level)
 
-	return self.Defense * math.floor(Level / 10)
+	return self.Armor * math.floor(Level / 5)
 end
 
 function Skill_Toughness.GetInfo(self, Level)
 	BonusText = ""
-	if self:GetDefense(Level) > 0 then
-		BonusText = "\n[c white]Increase defense by [c green]" .. self:GetDefense(Level)
+	if self:GetArmor(Level) > 0 then
+		BonusText = "\n[c white]Increase armor by [c green]" .. self:GetArmor(Level)
 	end
 
-	return "Increase max HP by [c green]" .. Skill_Toughness.PerLevel * Level .. BonusText
+	return "Increase max HP by [c green]" .. Skill_Toughness.HealthPerLevel * Level .. BonusText
 end
 
 function Skill_Toughness.Stats(self, Level, Object, Change)
-	Change.MaxHealth = self.PerLevel * Level
-	Change.MinDefense = self:GetDefense(Level)
-	Change.MaxDefense = self:GetDefense(Level)
+	Change.MaxHealth = self.HealthPerLevel * Level
+	Change.Armor = self:GetArmor(Level)
 
 	return Change
 end
@@ -396,8 +401,8 @@ end
 -- Arcane Mastery --
 
 Skill_ArcaneMastery = {}
-Skill_ArcaneMastery.PerLevel = 2
-Skill_ArcaneMastery.ManaRegen = 0.1
+Skill_ArcaneMastery.PerLevel = 20
+Skill_ArcaneMastery.ManaRegen = 1
 
 function Skill_ArcaneMastery.GetManaRegen(self, Level)
 
@@ -556,14 +561,14 @@ end
 -- Defend --
 
 Skill_Defend = {}
-Skill_Defend.Defense = 3
-Skill_Defend.DefensePerLevel = 1 / 4
+Skill_Defend.Armor = 10
+Skill_Defend.ArmorPerLevel = 1
 Skill_Defend.Duration = 3.4
 Skill_Defend.DurationPerLevel = 0.1
 
-function Skill_Defend.GetDefense(self, Level)
+function Skill_Defend.GetArmor(self, Level)
 
-	return math.floor(self.Defense + self.DefensePerLevel * Level)
+	return math.floor(self.Armor + self.ArmorPerLevel * Level)
 end
 
 function Skill_Defend.GetDuration(self, Level)
@@ -573,7 +578,7 @@ end
 
 function Skill_Defend.GetInfo(self, Level)
 
-	return "Gain [c green]" .. self:GetDefense(Level) .. " [c white]defense [c white]for [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nRequires a shield"
+	return "Gain [c green]" .. self:GetArmor(Level) .. " [c white]armor [c white]for [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nRequires a shield"
 end
 
 function Skill_Defend.CanUse(self, Level, Object)
@@ -584,7 +589,7 @@ end
 
 function Skill_Defend.Use(self, Level, Source, Target, Result)
 	Result.Target.Buff = Buffs["Buff_Hardened"]
-	Result.Target.BuffLevel = self:GetDefense(Level)
+	Result.Target.BuffLevel = self:GetArmor(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
 	return Result

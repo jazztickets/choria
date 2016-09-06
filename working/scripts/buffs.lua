@@ -161,12 +161,11 @@ Buff_Hardened = Base_Buff:New()
 
 function Buff_Hardened.GetInfo(self, Level)
 
-	return "Defense increased by [c green]" .. Level
+	return "Armor increased by [c green]" .. Level
 end
 
 function Buff_Hardened.Stats(self, Level, Source, Change)
-	Change.MinDefense = Level
-	Change.MaxDefense = Level
+	Change.Armor = Level
 
 	return Change
 end
@@ -241,16 +240,15 @@ end
 -- Bleed Resist --
 
 Buff_BleedResist = Base_Buff:New()
-Buff_BleedResist.Increments = 5
 
 function Buff_BleedResist.GetInfo(self, Level)
 
-	return "Bleed resist increased by [c green]" .. self.Increments * Level .. "%"
+	return "Bleed resist increased by [c green]" .. Level .. "%"
 end
 
 function Buff_BleedResist.Stats(self, Level, Source, Change)
 	Change.ResistType = DamageType["Bleed"]
-	Change.Resist = self.Increments * Level / 100
+	Change.Resist = Level / 100
 
 	return Change
 end

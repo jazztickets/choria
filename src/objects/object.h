@@ -112,7 +112,6 @@ class _Object : public _ManagerBase {
 		// Battles
 		void UpdateAI(const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
-		int GenerateDefense();
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();
 		bool CanBattle() const;
@@ -183,8 +182,8 @@ class _Object : public _ManagerBase {
 		float BaseHealPower;
 		int BaseMinDamage;
 		int BaseMaxDamage;
-		int BaseMinDefense;
-		int BaseMaxDefense;
+		int BaseArmor;
+		int BaseDamageBlock;
 		float BaseMoveSpeed;
 		double BaseBattleSpeed;
 		float BaseEvasion;
@@ -207,8 +206,8 @@ class _Object : public _ManagerBase {
 		float HealPower;
 		int MinDamage;
 		int MaxDamage;
-		int MinDefense;
-		int MaxDefense;
+		int Armor;
+		int DamageBlock;
 		float MoveSpeed;
 		double BattleSpeed;
 		float Evasion;
