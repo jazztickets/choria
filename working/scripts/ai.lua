@@ -101,3 +101,53 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 		end
 	end
 end
+
+AI_SlimePrince = {}
+
+function AI_SlimePrince.Update(self, Object, Enemies, Allies)
+	if Object.TurnTimer >= 0.7 then
+		if not Object.BattleActionIsSet then
+
+			CanUse = Object.SetAction(2)
+			if CanUse and Object.Mana < Object.MaxMana * 0.5 then
+
+				-- Check for existing mana buff
+				ShouldUse = true
+				for i = 1, #Object.StatusEffects do
+					if Object.StatusEffects[i].Buff == Buff_Mana then
+						ShouldUse = false
+						break
+					end
+				end
+
+				if ShouldUse == true then
+					Object.SetBattleTarget(Object)
+					return
+				end
+			end
+
+			-- Chance to resurrect
+			if Random.GetInt(1, 2) == 1 then
+
+				CanUse = Object.SetAction(1)
+				if CanUse == true then
+					for i = 1, #Allies do
+						if Allies[i].Health == 0 then
+							Object.SetBattleTarget(Allies[i])
+							return
+						end
+					end
+				end
+			end
+
+			-- Get random target
+			Target = Random.GetInt(1, #Enemies)
+
+			-- Set target
+			Object.SetBattleTarget(Enemies[Target])
+
+			-- Set skill
+			Object.SetAction(0)
+		end
+	end
+end

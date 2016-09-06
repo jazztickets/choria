@@ -259,6 +259,8 @@ size_t _Inventory::FindSlotForItem(const _Item *Item, int Count) {
 
 // Attempts to add an item to the inventory
 bool _Inventory::AddItem(const _Item *Item, int Count, size_t Slot) {
+	if(!Count)
+		return false;
 
 	// Place somewhere in bag
 	if(Slot >= Slots.size()) {

@@ -408,6 +408,13 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 		return !Object->HasUnlocked(this);
 	}
 
+	// Check for item count
+	if(!ActionResult.ActionUsed.Item->IsSkill()) {
+		size_t Index;
+		if(!Object->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)ActionResult.ActionUsed.InventorySlot))
+			return false;
+	}
+
 	// Check scope
 	if(!CheckScope(ActionResult.Scope))
 		return false;
