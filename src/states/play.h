@@ -129,6 +129,7 @@ class _PlayState : public _State {
 		void HandleBattleAction(_Buffer &Data);
 		void HandleBattleLeave(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
+		void HandleActionClear(_Buffer &Data);
 		void HandleActionResults(_Buffer &Data);
 		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);
 		void HandleHUD(_Buffer &Data);

@@ -412,6 +412,14 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(!CheckScope(ActionResult.Scope))
 		return false;
 
+	// Check if target is alive
+	if(Object->Targets.size() == 1) {
+		_Object *Target = *Object->Targets.begin();
+
+		if((TargetAlive && !Target->IsAlive()) || (!TargetAlive && Target->IsAlive()))
+			return false;
+	}
+
 	// Check script's function
 	if(Scripting->StartMethodCall(Script, "CanUse")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);

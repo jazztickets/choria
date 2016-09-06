@@ -229,6 +229,14 @@ void _Object::Update(double FrameTime) {
 				if(Action.Resolve(Packet, this, Scope)) {
 					SendPacket(Packet);
 				}
+				else {
+
+					// Can't use action so send an action clear packet
+					_Buffer FailPacket;
+					FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
+					FailPacket.Write<NetworkIDType>(NetworkID);
+					SendPacket(FailPacket);
+				}
 
 				Action.Unset();
 			}

@@ -549,6 +549,9 @@ void _PlayState::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_END:
 			HandleBattleEnd(Data);
 		break;
+		case PacketType::ACTION_CLEAR:
+			HandleActionClear(Data);
+		break;
 		case PacketType::ACTION_RESULTS:
 			HandleActionResults(Data);
 		break;
@@ -1023,6 +1026,17 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	HUD->AddStatChange(StatChange);
 
 	DeleteBattle();
+}
+
+// Clear action used and targets
+void _PlayState::HandleActionClear(_Buffer &Data) {
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	_Object *Object = ObjectManager->GetObject(NetworkID);
+	if(!Object)
+		return;
+
+	Object->Action.Unset();
+	Object->Targets.clear();
 }
 
 // Handles the result of a turn in battle

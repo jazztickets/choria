@@ -303,6 +303,19 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
+
+		// Check if action can be used
+		_ActionResult ActionResult;
+		ActionResult.Source.Object = ClientPlayer;
+		ActionResult.Scope = ScopeType::BATTLE;
+		ActionResult.ActionUsed = Action;
+		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
+		if(!Item->CanUse(Scripting, ActionResult)) {
+			ClientPlayer->PotentialAction.Unset();
+			ClientPlayer->Targets.clear();
+			return;
+		}
+
 		if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
 			ClientPlayer->HUD->SetMessage("");
 
@@ -319,7 +332,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		ClientNetwork->SendPacket(Packet);
 
-		ClientPlayer->Action.Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
+		ClientPlayer->Action.Item = Item;
 		ClientPlayer->PotentialAction.Unset();
 	}
 }
