@@ -1405,7 +1405,7 @@ void _Object::CalculateLevelStats() {
 	BaseMinDamage = LevelStat->Damage;
 	BaseMaxDamage = LevelStat->Damage+1;
 	BaseArmor = LevelStat->Armor;
-	BaseDamageBlock = LevelStat->Armor;
+	BaseDamageBlock = 0;
 	SkillPoints = LevelStat->SkillPoints;
 	ExperienceNextLevel = LevelStat->NextLevel;
 	if(Level == Stats->GetMaxLevel())

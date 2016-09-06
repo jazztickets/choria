@@ -379,8 +379,8 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		Monster->Level = Database->GetInt<int>("level");
 		Monster->Name = Database->GetString("name");
 		Monster->Portrait = Assets.Textures[Database->GetString("portrait")];
-		Monster->ExperienceGiven = (int)(Database->GetInt<int>("experience") * Difficulty);
-		Monster->GoldGiven = (int)(Database->GetInt<int>("gold") * Difficulty);
+		Monster->ExperienceGiven = (int)(Database->GetInt<int>("experience") * Difficulty + 0.5);
+		Monster->GoldGiven = (int)(Database->GetInt<int>("gold") * Difficulty + 0.5);
 		Monster->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
 		Monster->BaseMaxMana = Database->GetInt<int>("mana");
 		Monster->BaseMinDamage = Database->GetInt<int>("mindamage");
