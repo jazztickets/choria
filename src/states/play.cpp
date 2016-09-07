@@ -199,6 +199,9 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 			case _Actions::MENU:
 				HUD->ToggleInGameMenu();
 			break;
+			case _Actions::INVENTORY:
+				HUD->ToggleCharacterStats();
+			break;
 			default: {
 				Battle->ClientHandleInput(Action);
 			} break;
@@ -982,6 +985,7 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 		return;
 
 	HUD->SetMessage("");
+	HUD->CloseWindows(false);
 
 	Player->WaitForServer = false;
 

@@ -129,6 +129,7 @@ class _HUD {
 		void ToggleTrade();
 		void ToggleSkills();
 		void ToggleInGameMenu();
+		void ToggleCharacterStats();
 
 		// Windows
 		void InitInventory(bool SendStatus);

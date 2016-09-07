@@ -703,6 +703,14 @@ void _HUD::ToggleInGameMenu() {
 	}
 }
 
+// Show character stats during battle
+void _HUD::ToggleCharacterStats() {
+	if(!Player->Battle)
+		return;
+
+	CharacterElement->SetVisible(!CharacterElement->Visible);
+}
+
 // Initialize the vendor
 void _HUD::InitVendor() {
 	Cursor.Reset();
