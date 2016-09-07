@@ -1,4 +1,8 @@
 var hot = null;
+var last_search = "";
+var container = null;
+var data = null;
+
 $(document).ready(function() {
 	$(document).ajaxError(function() {
 		  $("#message").text("check console");
@@ -10,11 +14,11 @@ $(document).ready(function() {
 	}
 
 	// Load spreadsheet
-	var container = document.getElementById('sheet');
+	container = document.getElementById('sheet');
 	data_url = "/data" + querystring;
 	$.getJSON(data_url, function(response) {
-		var data = response['data'];
-		var message = response['message'];
+		data = response['data'];
+		message = response['message'];
 		column_names = response['column_names'];
 		references = response['references'];
 		children = response['children'];
@@ -110,7 +114,14 @@ $(document).ready(function() {
 	$('#save').click(function() { save(); });
 	$('#add').click(function() { add(); });
 	$('#delete').click(function() { remove(); });
+	$('#search_field').keyup({ force: 0 }, search);
 });
+
+// Highlight renderer for search
+function found(instance, td, row, col, prop, value, cellProperties) {
+	Handsontable.TextCell.renderer.apply(this, arguments);
+	td.style.background = "#595B78";
+}
 
 // Function to render related table links
 function link_renderer(instance, td, row, col, prop, value, cellProperties) {
@@ -190,6 +201,77 @@ function reload() {
 		hot.loadData(data);
 		update_buttons(1);
 	});
+}
+
+function escape_regex(string){
+	return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
+
+function get_search_parameters(search) {
+
+	var option_string = "g";
+	//if(!option_case.prop('checked'))
+	option_string += "i";
+
+	// Convert search query to regex
+	var regex;
+	/*if(option_regex.prop('checked')) {
+		try {
+			regex = new RegExp(search, option_string);
+		}
+		catch(error) {
+		}
+	} else */{
+		regex = new RegExp(escape_regex(search), option_string);
+	}
+
+	return [option_string, regex];
+}
+
+function search(event) {
+	search_field = $('#search_field');
+	var search = ('' + search_field.val());
+	if(search == "")
+		return hot.loadData(data);
+
+	// Only search when query has changed
+	if(last_search == search && event.data.force == 0)
+		return;
+
+	var search_parameters = get_search_parameters(search);
+	var option_string = search_parameters[0];
+	var regex = search_parameters[1];
+
+	var search_data = hot.getData(0, 0, hot.countRows() - 1, hot.countCols() - 1);
+	var filtered = []
+	for(var row = 0, r_len = search_data.length; row < r_len; row++) {
+		var row_found = false;
+		for(var col = 0, c_len = search_data[row].length; col < c_len; col++) {
+
+			var cell_meta = hot.getCellMeta(row, col);
+			if(cell_meta.renderer != link_renderer) {
+
+				var cell_value = ('' + search_data[row][col]);
+				if(regex)
+					regex.lastIndex = 0;
+
+				if(search != "" && regex && regex.test(cell_value)) {
+					row_found = true;
+				}
+				//else {
+					//delete cell_meta.renderer;
+				//}
+			}
+		}
+
+		if(row_found)
+			filtered.push(search_data[row])
+	}
+
+	last_search = search;
+
+	hot.loadData(filtered);
+	hot.render();
 }
 
 // Save data
@@ -286,13 +368,17 @@ function ajax_error(jqxhr, text_status, error) {
 	$('#message').html(error);
 }
 
-// Ctrl+s hotkey
+// Global hotkeys
 $(document).keydown(function(event) {
-	if(!(String.fromCharCode(event.which).toLowerCase() == 's' && event.ctrlKey) && !(event.which == 19))
-		return true;
 
-	event.preventDefault();
-	save();
+	key = String.fromCharCode(event.which).toLowerCase();
+	if(event.ctrlKey) {
+		if(key == 's') {
+			event.preventDefault();
+			save();
+			return false;
+		}
+	}
 
-	return false;
+	return true;
 });
