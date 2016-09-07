@@ -104,7 +104,7 @@ Base_Buff = {
 		return self.Increments * Level / 100
 	end,
 
-	Increments = 10
+	Increments = 1
 }
 
 -- Calculate basic weapon damage vs target's armor

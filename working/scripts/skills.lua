@@ -58,6 +58,16 @@ function Skill_GhostAttack.GetDamageType(self, Object)
 	return DamageType["Cold"]
 end
 
+function Skill_GhostAttack.Use(self, Level, Source, Target, Result)
+
+	-- Ignore target's defense
+	Target.DamageBlock = 0
+
+	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
+
+	return Result
+end
+
 -- Swoop attack --
 
 Skill_Swoop = Base_Attack:New()

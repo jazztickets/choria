@@ -58,7 +58,7 @@ Item_HastePotion = { Duration = 10 }
 
 function Item_HastePotion.GetInfo(self, Level)
 
-	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase battle speed by [c_green]" .. Level .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
 end
 
 function Item_HastePotion.Use(self, Level, Source, Target, Result)
@@ -163,7 +163,7 @@ Item_CrowFeather = { Duration = 30 }
 
 function Item_CrowFeather.GetInfo(self, Level)
 
-	return "Increase move speed by [c_green]" .. Level * 10 .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase move speed by [c_green]" .. Level .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
 end
 
 function Item_CrowFeather.Use(self, Level, Source, Target, Result)
@@ -181,7 +181,7 @@ Item_SpiderLeg = { Duration = 30 }
 
 function Item_SpiderLeg.GetInfo(self, Level)
 
-	return "Increase battle speed by [c_green]" .. Level * 10 .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase battle speed by [c_green]" .. Level .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
 end
 
 function Item_SpiderLeg.Use(self, Level, Source, Target, Result)
@@ -283,7 +283,7 @@ Item_SwampGlob = { Duration = 10 }
 
 function Item_SwampGlob.GetInfo(self, Level)
 
-	return "Slow target by [c green]" .. Level * 10 .. "% [c white]for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Slow target by [c green]" .. Level .. "% [c white]for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Item_SwampGlob.Use(self, Level, Source, Target, Result)
