@@ -50,9 +50,16 @@ _Texture::_Texture(const std::string &Path, bool IsServer, bool Repeat, bool Mip
 		throw std::runtime_error("Error loading png: " + FullPath + " reason: " + png_error_string(Result));
 
 	// Determine OpenGL format
-	GLint ColorFormat = GL_RGB;
-	if(Png.bpp == 4)
-		ColorFormat = GL_RGBA;
+	GLint ColorFormat;
+	switch(Png.bpp) {
+		case 1: ColorFormat = GL_LUMINANCE; break;
+		case 2: ColorFormat = GL_LUMINANCE_ALPHA; break;
+		case 3: ColorFormat = GL_RGB; break;
+		case 4: ColorFormat = GL_RGBA; break;
+		default:
+			throw std::runtime_error("Unsupported bpp: " + std::to_string(Png.bpp));
+		break;
+	}
 
 	// Create texture and upload to GPU
 	glGenTextures(1, &ID);

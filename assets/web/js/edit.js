@@ -242,7 +242,7 @@ function search(event) {
 	var option_string = search_parameters[0];
 	var regex = search_parameters[1];
 
-	var search_data = hot.getData(0, 0, hot.countRows() - 1, hot.countCols() - 1);
+	var search_data = data;
 	var filtered = []
 	for(var row = 0, r_len = search_data.length; row < r_len; row++) {
 		var row_found = false;

@@ -195,10 +195,12 @@ void _Stats::LoadItems() {
 		if(ItemID == 0)
 			continue;
 
+		std::string TexturePath = Database->GetString("texture");
+
 		_Item *Item = new _Item;
 		Item->ID = ItemID;
 		Item->Name = Database->GetString("name");
-		Item->Texture = Assets.Textures[Database->GetString("texture")];
+		Item->Texture = Assets.Textures[TexturePath];
 		Item->Script = Database->GetString("script");
 		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
 		Item->Level = Database->GetInt<int>("level");
@@ -223,6 +225,10 @@ void _Stats::LoadItems() {
 		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
+
+		if(Item->Texture == nullptr && TexturePath != "")
+			throw std::runtime_error("Can't find texture " + TexturePath);
+
 		Items[Item->ID] = Item;
 	}
 	Database->CloseQuery();
