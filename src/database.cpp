@@ -20,13 +20,19 @@
 #include <stdexcept>
 
 // Constructor
-_Database::_Database(const std::string &Path) {
+_Database::_Database(const std::string &Path, bool ReadOnly) {
 	Database = nullptr;
 	QueryHandle[0] = nullptr;
 	QueryHandle[1] = nullptr;
 
 	// Open database file
-	int Result = sqlite3_open_v2(Path.c_str(), &Database, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+	int Flags = 0;
+	if(ReadOnly)
+		Flags |= SQLITE_OPEN_READONLY;
+	else
+		Flags |= SQLITE_OPEN_CREATE | SQLITE_OPEN_READWRITE;
+
+	int Result = sqlite3_open_v2(Path.c_str(), &Database, Flags, nullptr);
 	if(Result != SQLITE_OK) {
 		std::string Error = sqlite3_errmsg(Database);
 		sqlite3_close(Database);

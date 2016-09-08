@@ -31,7 +31,7 @@ class _Database {
 
 	public:
 
-		_Database(const std::string &Path);
+		_Database(const std::string &Path, bool ReadOnly=false);
 		~_Database();
 
 		void RunQuery(const std::string &Query);
