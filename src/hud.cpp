@@ -152,7 +152,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 	// Press
 	if(MouseEvent.Pressed) {
-		if(Tooltip.Item) {
+		if(Tooltip.InventorySlot.Item) {
 			switch(Tooltip.Window) {
 				case WINDOW_TRADEYOURS:
 				case WINDOW_INVENTORY:
@@ -201,11 +201,11 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				break;
 				case WINDOW_SKILLS:
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(Player->Skills[Tooltip.Item->ID] > 0)
+						if(Player->Skills[Tooltip.InventorySlot.Item->ID] > 0)
 							Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						EquipSkill(Tooltip.Item->ID);
+						EquipSkill(Tooltip.InventorySlot.Item->ID);
 					}
 				break;
 			}
@@ -253,7 +253,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			CloseWindows(true);
 		}
 		// Released an item
-		else if(Cursor.Item) {
+		else if(Cursor.InventorySlot.Item) {
 
 			// Check source window
 			switch(Cursor.Window) {
@@ -280,10 +280,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 							SellItem(&Cursor, 1);
 						break;
 						case WINDOW_ACTIONBAR:
-							if(Cursor.Window == WINDOW_INVENTORY && !Cursor.Item->IsSkill())
-								SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.Item);
+							if(Cursor.Window == WINDOW_INVENTORY && !Cursor.InventorySlot.Item->IsSkill())
+								SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.InventorySlot.Item);
 							else if(Cursor.Window == WINDOW_ACTIONBAR)
-								SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Item);
+								SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.InventorySlot.Item);
 						break;
 					}
 				break;
@@ -299,14 +299,14 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						// Onto inventory
 						case WINDOW_INVENTORY:
 							// Swap actionbar with inventory
-							if(Tooltip.Item && !Tooltip.Item->IsSkill())
-								SetActionBar(Cursor.Slot, Player->ActionBar.size(), Tooltip.Item);
+							if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->IsSkill())
+								SetActionBar(Cursor.Slot, Player->ActionBar.size(), Tooltip.InventorySlot.Item);
 							else
 								SetActionBar(Cursor.Slot, Player->ActionBar.size(), nullptr);
 						break;
 						// Swap action
 						case WINDOW_ACTIONBAR:
-							SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.Item);
+							SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.InventorySlot.Item);
 						break;
 						default:
 							// Remove action
@@ -319,7 +319,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				break;
 				case WINDOW_SKILLS:
 					if(Tooltip.Window == WINDOW_ACTIONBAR) {
-						SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.Item);
+						SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.InventorySlot.Item);
 					}
 				break;
 			}
@@ -335,7 +335,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 		if(Player->WaitingForTrade) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-				if(!Cursor.Item) {
+				if(!Cursor.InventorySlot.Item) {
 
 					// Check for accept button
 					_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
@@ -378,47 +378,47 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_TRADEYOURS: {
 				if(Tooltip.Slot < Player->Inventory->Slots.size()) {
 					_InventorySlot *InventorySlot = &Player->Inventory->Slots[Tooltip.Slot];
-					Tooltip.Item = InventorySlot->Item;
-					Tooltip.Upgrades = InventorySlot->Upgrades;
-					Tooltip.Count = InventorySlot->Count;
-					if(Tooltip.Item && Player->Vendor)
-						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, Tooltip.Count, false);
+					Tooltip.InventorySlot.Item = InventorySlot->Item;
+					Tooltip.InventorySlot.Upgrades = InventorySlot->Upgrades;
+					Tooltip.InventorySlot.Count = InventorySlot->Count;
+					if(Tooltip.InventorySlot.Item && Player->Vendor)
+						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Vendor, Tooltip.InventorySlot.Count, false);
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
 				if(Player->TradePlayer && Tooltip.Slot < Player->Inventory->Slots.size()) {
 					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory->Slots[Tooltip.Slot];
-					Tooltip.Item = InventorySlot->Item;
-					Tooltip.Upgrades = InventorySlot->Upgrades;
-					Tooltip.Count = InventorySlot->Count;
+					Tooltip.InventorySlot.Item = InventorySlot->Item;
+					Tooltip.InventorySlot.Upgrades = InventorySlot->Upgrades;
+					Tooltip.InventorySlot.Count = InventorySlot->Count;
 				}
 			} break;
 			case WINDOW_VENDOR: {
 				if(Player->Vendor && Tooltip.Slot < Player->Vendor->Items.size()) {
-					Tooltip.Item = Player->Vendor->Items[Tooltip.Slot];
+					Tooltip.InventorySlot.Item = Player->Vendor->Items[Tooltip.Slot];
 					if(Input.ModKeyDown(KMOD_SHIFT))
-						Tooltip.Count = 5;
+						Tooltip.InventorySlot.Count = 5;
 					else
-						Tooltip.Count = 1;
+						Tooltip.InventorySlot.Count = 1;
 
-					if(Tooltip.Item)
-						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, Tooltip.Count, true);
+					if(Tooltip.InventorySlot.Item)
+						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Vendor, Tooltip.InventorySlot.Count, true);
 				}
 			} break;
 			case WINDOW_TRADER: {
 				if(Player->Trader) {
 					if(Tooltip.Slot < Player->Trader->TraderItems.size())
-						Tooltip.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
+						Tooltip.InventorySlot.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
 					else if(Tooltip.Slot == 8)
-						Tooltip.Item = Player->Trader->RewardItem;
+						Tooltip.InventorySlot.Item = Player->Trader->RewardItem;
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Item = PlayState.Stats->Items[(uint32_t)Tooltip.Slot];
+				Tooltip.InventorySlot.Item = PlayState.Stats->Items[(uint32_t)Tooltip.Slot];
 			} break;
 			case WINDOW_ACTIONBAR: {
 				if(Tooltip.Slot < Player->ActionBar.size())
-					Tooltip.Item = Player->ActionBar[Tooltip.Slot].Item;
+					Tooltip.InventorySlot.Item = Player->ActionBar[Tooltip.Slot].Item;
 			} break;
 			case WINDOW_BATTLE:
 			case WINDOW_HUD_EFFECTS: {
@@ -579,8 +579,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Draw item information
 		DrawCursorItem();
-		if(Tooltip.Item)
-			Tooltip.Item->DrawTooltip(PlayState.Scripting, Player, Tooltip);
+		if(Tooltip.InventorySlot.Item)
+			Tooltip.InventorySlot.Item->DrawTooltip(PlayState.Scripting, Player, Tooltip);
 
 		// Draw status effects
 		if(Tooltip.StatusEffect)
@@ -1502,14 +1502,14 @@ void _HUD::StopTeleport() {
 
 // Draws the item under the cursor
 void _HUD::DrawCursorItem() {
-	if(Cursor.Item) {
+	if(Cursor.InventorySlot.Item) {
 		glm::vec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.Item->Texture);
+		Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture);
 		if(Cursor.Window != WINDOW_ACTIONBAR)
-			DrawItemPrice(Cursor.Item, Cursor.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
-		if(Cursor.Count > 1)
-			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Cursor.Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+			DrawItemPrice(Cursor.InventorySlot.Item, Cursor.InventorySlot.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
+		if(Cursor.InventorySlot.Count > 1)
+			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Cursor.InventorySlot.Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 	}
 }
 
@@ -1538,15 +1538,15 @@ void _HUD::BuyItem(_Cursor *Item, size_t TargetSlot) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(1);
-	Packet.Write<uint8_t>((uint8_t)Item->Count);
+	Packet.Write<uint8_t>((uint8_t)Item->InventorySlot.Count);
 	Packet.Write<uint8_t>((uint8_t)Item->Slot);
 	Packet.Write<uint8_t>((uint8_t)TargetSlot);
 	PlayState.Network->SendPacket(Packet);
 }
 
 // Sells an item
-void _HUD::SellItem(_Cursor *Item, int Amount) {
-	if(!Item->Item || !Player->Vendor)
+void _HUD::SellItem(_Cursor *CursorItem, int Amount) {
+	if(!CursorItem->InventorySlot.Item || !Player->Vendor)
 		return;
 
 	// Notify server
@@ -1554,7 +1554,7 @@ void _HUD::SellItem(_Cursor *Item, int Amount) {
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
 	Packet.Write<uint8_t>((uint8_t)Amount);
-	Packet.Write<uint8_t>((uint8_t)Item->Slot);
+	Packet.Write<uint8_t>((uint8_t)CursorItem->Slot);
 	PlayState.Network->SendPacket(Packet);
 }
 

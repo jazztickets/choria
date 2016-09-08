@@ -122,8 +122,8 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	else {
 
 		// Draw upgrade level for items
-		if(Tooltip.Upgrades) {
-			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.Upgrades), DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+		if(Tooltip.InventorySlot.Upgrades) {
+			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.InventorySlot.Upgrades), DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 	}
@@ -234,7 +234,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	if(Player->Vendor) {
 		std::stringstream Buffer;
 		if(Tooltip.Window == _HUD::WINDOW_VENDOR) {
-			Buffer << "Buy " << Tooltip.Count << "x for " << Tooltip.Cost << " gold";
+			Buffer << "Buy " << Tooltip.InventorySlot.Count << "x for " << Tooltip.Cost << " gold";
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition, COLOR_GOLD, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
 			Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
@@ -300,7 +300,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += 20;
 	}
 
-	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Count > 1) {
+	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1) {
 		Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 		DrawPosition.y += SpacingY;
 	}

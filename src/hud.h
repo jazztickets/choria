@@ -19,6 +19,7 @@
 
 // Libraries
 #include <objects/statchange.h>
+#include <objects/inventory.h>
 #include <vector>
 #include <list>
 #include <string>
@@ -45,23 +46,21 @@ struct _MouseEvent;
 // Structures
 struct _Cursor {
 	void Reset() {
-		Item = nullptr;
-		StatusEffect = nullptr;
+		InventorySlot.Item = nullptr;
+		InventorySlot.Count = 0;
+		InventorySlot.Upgrades = 0;
 		Cost = 0;
-		Upgrades = 0;
-		Count = 0;
+		StatusEffect = nullptr;
 		Slot = (size_t)-1;
 		Window = -1;
 	}
 
 	bool IsEqual(size_t Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
 
-	const _Item *Item;
+	_InventorySlot InventorySlot;
 	const _StatusEffect *StatusEffect;
-	int Cost;
-	int Upgrades;
-	int Count;
 	size_t Slot;
+	int Cost;
 	int Window;
 };
 
@@ -190,7 +189,7 @@ class _HUD {
 		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
 
 		void BuyItem(_Cursor *Item, size_t TargetSlot);
-		void SellItem(_Cursor *Item, int Amount);
+		void SellItem(_Cursor *CursorItem, int Amount);
 
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
