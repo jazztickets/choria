@@ -58,7 +58,7 @@ void _Inventory::SerializeSlot(_Buffer &Data, size_t Slot) {
 void _Inventory::Unserialize(_Buffer &Data, _Stats *Stats) {
 
 	// Reset inventory
-	std::fill(Slots.begin(), Slots.end(), _InventorySlot(nullptr, 0));
+	std::fill(Slots.begin(), Slots.end(), _InventorySlot());
 
 	// Read items
 	uint8_t ItemCount = Data.Read<uint8_t>();
@@ -381,6 +381,7 @@ size_t _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<size_
 void _InventorySlot::Serialize(_Buffer &Data) {
 	if(Item) {
 		Data.Write<uint32_t>(Item->ID);
+		Data.Write<uint8_t>((uint8_t)Upgrades);
 		Data.Write<uint8_t>((uint8_t)Count);
 	}
 	else
@@ -393,6 +394,7 @@ void _InventorySlot::Unserialize(_Buffer &Data, _Stats *Stats) {
 	uint32_t ItemID = Data.Read<uint32_t>();
 	if(ItemID) {
 		Item = Stats->Items[ItemID];
+		Upgrades = Data.Read<uint8_t>();
 		Count = Data.Read<uint8_t>();
 	}
 	else {

@@ -379,6 +379,7 @@ void _HUD::Update(double FrameTime) {
 				if(Tooltip.Slot < Player->Inventory->Slots.size()) {
 					_InventorySlot *InventorySlot = &Player->Inventory->Slots[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
+					Tooltip.Upgrades = InventorySlot->Upgrades;
 					Tooltip.Count = InventorySlot->Count;
 					if(Tooltip.Item && Player->Vendor)
 						Tooltip.Cost = Tooltip.Item->GetPrice(Player->Vendor, Tooltip.Count, false);
@@ -388,6 +389,7 @@ void _HUD::Update(double FrameTime) {
 				if(Player->TradePlayer && Tooltip.Slot < Player->Inventory->Slots.size()) {
 					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory->Slots[Tooltip.Slot];
 					Tooltip.Item = InventorySlot->Item;
+					Tooltip.Upgrades = InventorySlot->Upgrades;
 					Tooltip.Count = InventorySlot->Count;
 				}
 			} break;

@@ -48,6 +48,7 @@ struct _Cursor {
 		Item = nullptr;
 		StatusEffect = nullptr;
 		Cost = 0;
+		Upgrades = 0;
 		Count = 0;
 		Slot = (size_t)-1;
 		Window = -1;
@@ -58,6 +59,7 @@ struct _Cursor {
 	const _Item *Item;
 	const _StatusEffect *StatusEffect;
 	int Cost;
+	int Upgrades;
 	int Count;
 	size_t Slot;
 	int Window;

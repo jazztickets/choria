@@ -249,13 +249,14 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 	Database->CloseQuery();
 
 	// Set inventory
-	Database->PrepareQuery("SELECT slot, item_id, count FROM inventory WHERE character_id = @character_id");
+	Database->PrepareQuery("SELECT slot, item_id, upgrades, count FROM inventory WHERE character_id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	while(Database->FetchRow()) {
 		size_t Slot = Database->GetInt<uint32_t>(0);
 		_InventorySlot InventorySlot;
 		InventorySlot.Item = Player->Stats->Items[Database->GetInt<uint32_t>(1)];
-		InventorySlot.Count = Database->GetInt<int>(2);
+		InventorySlot.Upgrades = Database->GetInt<int>(2);
+		InventorySlot.Count = Database->GetInt<int>(3);
 		Player->Inventory->Slots[Slot] = InventorySlot;
 	}
 	Database->CloseQuery();
@@ -387,11 +388,12 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	for(size_t i = 0; i < InventoryType::COUNT; i++) {
 		InventorySlot = &Player->Inventory->Slots[i];
 		if(InventorySlot->Item) {
-			Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, @slot, @item_id, @count)");
+			Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, @slot, @item_id, @upgrades, @count)");
 			Database->BindInt(1, Player->CharacterID);
 			Database->BindInt(2, (uint32_t)i);
 			Database->BindInt(3, InventorySlot->Item->ID);
-			Database->BindInt(4, (uint32_t)InventorySlot->Count);
+			Database->BindInt(4, InventorySlot->Upgrades);
+			Database->BindInt(5, InventorySlot->Count);
 			Database->FetchRow();
 			Database->CloseQuery();
 		}
@@ -407,7 +409,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 		Database->PrepareQuery("INSERT INTO skill VALUES(@character_id, 0, @item_id, @level)");
 		Database->BindInt(1, Player->CharacterID);
 		Database->BindInt(2, Skill.first);
-		Database->BindInt(3, (uint32_t)Skill.second);
+		Database->BindInt(3, Skill.second);
 		Database->FetchRow();
 		Database->CloseQuery();
 	}
@@ -570,6 +572,7 @@ void _Save::CreateDefaultDatabase() {
 				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
 				"	slot INTEGER,\n"
 				"	item_id INTEGER,\n"
+				"	upgrades INTEGER,\n"
 				"	count INTEGER\n"
 				")"
 	);

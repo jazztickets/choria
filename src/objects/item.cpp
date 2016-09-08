@@ -119,6 +119,14 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		if(Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
 			ShowLevel = true;
 	}
+	else {
+
+		// Draw upgrade level for items
+		if(Tooltip.Upgrades) {
+			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.Upgrades), DrawPosition, COLOR_GRAY, CENTER_BASELINE);
+			DrawPosition.y += SpacingY;
+		}
+	}
 
 	// Draw description
 	DrawDescription(Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);

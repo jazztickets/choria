@@ -31,13 +31,14 @@ class _Stats;
 
 // Structures
 struct _InventorySlot {
-	_InventorySlot() : Item(nullptr), Count(0) { }
-	_InventorySlot(const _Item *Item, int Count) : Item(Item), Count(Count) { }
+	_InventorySlot() : Item(nullptr), Upgrades(0), Count(0) { }
+	_InventorySlot(const _Item *Item, int Count) : Item(Item), Upgrades(0), Count(Count) { }
 
 	void Serialize(_Buffer &Data);
 	void Unserialize(_Buffer &Data, _Stats *Stats);
 
 	const _Item *Item;
+	int Upgrades;
 	int Count;
 };
 
