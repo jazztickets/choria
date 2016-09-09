@@ -142,12 +142,14 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 
 	// Render damage
 	bool StatDrawn = false;
-	if(GetMinDamage(Upgrades) != 0 || GetMaxDamage(Upgrades) != 0) {
+	int DrawMinDamage = GetMinDamage(Upgrades);
+	int DrawMaxDamage = GetMaxDamage(Upgrades);
+	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
 		std::stringstream Buffer;
-		if(GetMinDamage(Upgrades) != GetMaxDamage(Upgrades))
-			Buffer << GetMinDamage(Upgrades) << " - " << GetMaxDamage(Upgrades);
+		if(DrawMinDamage != DrawMaxDamage)
+			Buffer << DrawMinDamage << " - " << DrawMaxDamage;
 		else
-			Buffer << GetMinDamage(Upgrades);
+			Buffer << DrawMinDamage;
 
 		Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
@@ -156,9 +158,10 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 
 	// Boosts
-	if(Armor != 0) {
+	int DrawArmor = GetArmor(Upgrades);
+	if(DrawArmor != 0) {
 		std::stringstream Buffer;
-		Buffer << (Armor < 0 ? "" : "+") << Armor;
+		Buffer << (DrawArmor < 0 ? "" : "+") << DrawArmor;
 		Assets.Fonts["hud_medium"]->DrawText("Armor", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -525,4 +528,12 @@ int _Item::GetMaxDamage(int Upgrades) const {
 		return MaxDamage;
 
 	return MaxDamage + MaxDamage * Upgrades / MaxLevel;
+}
+
+// Get armor
+int _Item::GetArmor(int Upgrades) const {
+	if(MaxLevel <= 0)
+		return Armor;
+
+	return Armor + Armor * Upgrades / MaxLevel;
 }

@@ -1264,7 +1264,7 @@ void _Object::CalculateStats() {
 			ItemMaxDamage += Item->GetMaxDamage(Upgrades);
 
 			// Add defense
-			ItemArmor += Item->Armor;
+			ItemArmor += Item->GetArmor(Upgrades);
 			ItemDamageBlock += Item->DamageBlock;
 
 			// Stat changes
