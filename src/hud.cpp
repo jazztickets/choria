@@ -400,20 +400,14 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_INVENTORY:
 			case WINDOW_TRADEYOURS: {
 				if(Tooltip.Slot < Player->Inventory->Slots.size()) {
-					_InventorySlot *InventorySlot = &Player->Inventory->Slots[Tooltip.Slot];
-					Tooltip.InventorySlot.Item = InventorySlot->Item;
-					Tooltip.InventorySlot.Upgrades = InventorySlot->Upgrades;
-					Tooltip.InventorySlot.Count = InventorySlot->Count;
+					Tooltip.InventorySlot = Player->Inventory->Slots[Tooltip.Slot];
 					if(Tooltip.InventorySlot.Item && Player->Vendor)
 						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Vendor, Tooltip.InventorySlot.Count, false);
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
 				if(Player->TradePlayer && Tooltip.Slot < Player->Inventory->Slots.size()) {
-					_InventorySlot *InventorySlot = &Player->TradePlayer->Inventory->Slots[Tooltip.Slot];
-					Tooltip.InventorySlot.Item = InventorySlot->Item;
-					Tooltip.InventorySlot.Upgrades = InventorySlot->Upgrades;
-					Tooltip.InventorySlot.Count = InventorySlot->Count;
+					Tooltip.InventorySlot = Player->TradePlayer->Inventory->Slots[Tooltip.Slot];
 				}
 			} break;
 			case WINDOW_VENDOR: {
@@ -437,7 +431,10 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_BLACKSMITH: {
-				if(Player->Blacksmith) {
+				if(Player->Blacksmith && UpgradeSlot != (size_t)-1) {
+					Tooltip.InventorySlot = Player->Inventory->Slots[UpgradeSlot];
+					if(Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
+						Tooltip.InventorySlot.Upgrades++;
 				}
 			} break;
 			case WINDOW_SKILLS: {
@@ -1300,6 +1297,12 @@ void _HUD::DrawBlacksmith() {
 				UpgradeButton->SetEnabled(false);
 			else
 				UpgradeButton->SetEnabled(true);
+
+			// Max level
+			if(InventorySlot.Upgrades >= Item->MaxLevel) {
+				UpgradeButton->SetEnabled(false);
+				BlacksmithCost->Text = "";
+			}
 		}
 		else
 			UpgradeButton->SetEnabled(false);
