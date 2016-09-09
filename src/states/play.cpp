@@ -772,12 +772,12 @@ void _PlayState::HandleEventStart(_Buffer &Data) {
 	// Handle event
 	switch(EventType) {
 		case _Map::EVENT_VENDOR:
-			Player->Vendor = PlayState.Stats->GetVendor(EventData);
+			Player->Vendor = Stats->GetVendor(EventData);
 			Player->WaitForServer = false;
 			HUD->InitVendor();
 		break;
 		case _Map::EVENT_TRADER:
-			Player->Trader = PlayState.Stats->GetTrader(EventData);
+			Player->Trader = Stats->GetTrader(EventData);
 			Player->WaitForServer = false;
 			HUD->InitTrader();
 		break;
