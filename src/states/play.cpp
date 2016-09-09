@@ -721,6 +721,9 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 				case _Object::STATUS_TRADER:
 					Object->StatusTexture = Assets.Textures["status/vendor.png"];
 				break;
+				case _Object::STATUS_BLACKSMITH:
+					Object->StatusTexture = Assets.Textures["status/vendor.png"];
+				break;
 				case _Object::STATUS_TELEPORT:
 					Object->StatusTexture = Assets.Textures["status/teleport.png"];
 				break;

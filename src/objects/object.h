@@ -66,6 +66,7 @@ class _Object : public _ManagerBase {
 			STATUS_SKILLS,
 			STATUS_TRADE,
 			STATUS_TRADER,
+			STATUS_BLACKSMITH,
 			STATUS_BATTLE,
 			STATUS_TELEPORT,
 			STATUS_DEAD,

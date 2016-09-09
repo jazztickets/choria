@@ -197,6 +197,8 @@ void _Object::Update(double FrameTime) {
 		Status = STATUS_VENDOR;
 	else if(Trader)
 		Status = STATUS_TRADER;
+	else if(Blacksmith)
+		Status = STATUS_BLACKSMITH;
 	else if(InventoryOpen)
 		Status = STATUS_INVENTORY;
 	else if(SkillsOpen)
@@ -948,6 +950,7 @@ void _Object::ResetUIState() {
 	Paused = false;
 	Vendor = nullptr;
 	Trader = nullptr;
+	Blacksmith = false;
 	TeleportTime = -1.0;
 }
 
@@ -1146,6 +1149,9 @@ bool _Object::AcceptingMoveInput() {
 		return false;
 
 	if(Trader)
+		return false;
+
+	if(Blacksmith)
 		return false;
 
 	if(!IsAlive())
