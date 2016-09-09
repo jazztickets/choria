@@ -277,7 +277,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						break;
 						// Sell an item
 						case WINDOW_VENDOR:
-							SellItem(&Cursor, 1);
+							SellItem(&Cursor, Cursor.InventorySlot.Count);
 						break;
 						case WINDOW_ACTIONBAR:
 							if(Cursor.Window == WINDOW_INVENTORY && !Cursor.InventorySlot.Item->IsSkill())
