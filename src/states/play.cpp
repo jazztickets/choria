@@ -781,6 +781,11 @@ void _PlayState::HandleEventStart(_Buffer &Data) {
 			Player->WaitForServer = false;
 			HUD->InitTrader();
 		break;
+		case _Map::EVENT_BLACKSMITH:
+			Player->Blacksmith = true;
+			Player->WaitForServer = false;
+			HUD->InitBlacksmith();
+		break;
 	}
 }
 

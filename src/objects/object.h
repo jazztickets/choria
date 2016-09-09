@@ -277,6 +277,7 @@ class _Object : public _ManagerBase {
 		_Inventory *Inventory;
 		const _Vendor *Vendor;
 		const _Trader *Trader;
+		bool Blacksmith;
 
 		// Skills
 		bool SkillsOpen;

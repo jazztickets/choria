@@ -315,6 +315,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data, Peer);
 		break;
+		case PacketType::BLACKSMITH_UPGRADE:
+			HandleBlacksmithUpgrade(Data, Peer);
+		break;
 		case PacketType::INVENTORY_MOVE:
 			HandleInventoryMove(Data, Peer);
 		break;
@@ -1270,6 +1273,59 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 		break;
 	}
 
+}
+
+// Upgrade an item
+void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+
+	// Get slot
+	uint8_t Slot = Data.Read<uint8_t>();
+	if(Slot >= Player->Inventory->Slots.size())
+		return;
+
+	// Get item
+	_InventorySlot &InventorySlot = Player->Inventory->Slots[Slot];
+	if(InventorySlot.Upgrades >= InventorySlot.Item->MaxLevel)
+		return;
+
+	// Get upgrade price
+	int Price = InventorySlot.Item->GetUpgradePrice(InventorySlot.Upgrades+1);
+
+	// Check gold
+	if(Price > Player->Gold)
+		return;
+
+	// Upgrade item
+	InventorySlot.Upgrades++;
+
+	// Update gold
+	{
+		_StatChange StatChange;
+		StatChange.Object = Player;
+		StatChange.Values[StatType::GOLD].Integer = -Price;
+		Player->UpdateStats(StatChange);
+
+		// Build packet
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+		StatChange.Serialize(Packet);
+		Network->SendPacket(Packet, Player->Peer);
+	}
+
+	// Update items
+	{
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
+		Packet.Write<uint8_t>(1);
+		Player->Inventory->SerializeSlot(Packet, Slot);
+		Network->SendPacket(Packet, Peer);
+	}
+
+	Player->CalculateStats();
 }
 
 // Handle action use by player

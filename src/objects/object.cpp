@@ -135,6 +135,7 @@ _Object::_Object() :
 	Inventory(nullptr),
 	Vendor(nullptr),
 	Trader(nullptr),
+	Blacksmith(false),
 	SkillsOpen(false),
 	SkillPoints(0),
 	SkillPointsUsed(0),

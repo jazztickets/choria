@@ -82,6 +82,7 @@ class _Map : public _ManagerBase, public micropather::Graph {
 			EVENT_SCRIPT,
 			EVENT_PORTAL,
 			EVENT_JUMP,
+			EVENT_BLACKSMITH,
 			EVENT_COUNT
 		};
 

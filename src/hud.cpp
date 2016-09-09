@@ -55,6 +55,7 @@
 _HUD::_HUD() {
 	ShowStats = false;
 	Player = nullptr;
+	UpgradeSlot = (size_t)-1;
 	LowestRecentItemTime = 0.0;
 	Tooltip.Reset();
 	Cursor.Reset();
@@ -79,6 +80,7 @@ _HUD::_HUD() {
 	TradeElement = Assets.Elements["element_trade"];
 	TradeTheirsElement = Assets.Elements["element_trade_theirs"];
 	TraderElement = Assets.Elements["element_trader"];
+	BlacksmithElement = Assets.Elements["element_blacksmith"];
 	SkillsElement = Assets.Elements["element_skills"];
 	TeleportElement = Assets.Elements["element_teleport"];
 	ChatElement = Assets.Elements["element_chat"];
@@ -89,6 +91,7 @@ _HUD::_HUD() {
 	GoldElement = Assets.Labels["label_hud_gold"];
 	MessageElement = Assets.Elements["element_hud_message"];
 	MessageLabel = Assets.Labels["label_hud_message"];
+	BlacksmithCost = Assets.Labels["label_blacksmith_cost"];
 
 	GoldElement->Size.x = ButtonBarElement->Size.x;
 	GoldElement->CalculateBounds();
@@ -103,6 +106,7 @@ _HUD::_HUD() {
 	TradeElement->SetVisible(false);
 	TradeTheirsElement->SetVisible(false);
 	TraderElement->SetVisible(false);
+	BlacksmithElement->SetVisible(false);
 	SkillsElement->SetVisible(false);
 	TeleportElement->SetVisible(false);
 	ChatElement->SetVisible(false);
@@ -111,6 +115,7 @@ _HUD::_HUD() {
 	ExperienceElement->SetVisible(true);
 	GoldElement->SetVisible(true);
 	MessageElement->SetVisible(false);
+	BlacksmithCost->SetVisible(false);
 	RecentItemsElement->SetVisible(false);
 
 	Assets.Buttons["button_buttonbar_teleport"]->SetVisible(false);
@@ -252,6 +257,15 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
 			CloseWindows(true);
 		}
+		// Upgrade item
+		else if(BlacksmithElement->GetClickedElement() == Assets.Buttons["button_blacksmith_upgrade"]) {
+			if(UpgradeSlot != (size_t)-1) {
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
+				Packet.Write<uint8_t>((uint8_t)UpgradeSlot);
+				PlayState.Network->SendPacket(Packet);
+			}
+		}
 		// Released an item
 		else if(Cursor.InventorySlot.Item) {
 
@@ -267,17 +281,26 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						case WINDOW_TRADEYOURS:
 						case WINDOW_INVENTORY:
 
-							if(Tooltip.Slot < Player->Inventory->Slots.size()) {
+							if(Tooltip.Slot < Player->Inventory->Slots.size() && Cursor.Slot != Tooltip.Slot) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
 								Packet.Write<uint8_t>((uint8_t)Cursor.Slot);
 								Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
 								PlayState.Network->SendPacket(Packet);
+
+								if(Cursor.Slot == UpgradeSlot || Tooltip.Slot == UpgradeSlot)
+									UpgradeSlot = (size_t)-1;
 							}
 						break;
 						// Sell an item
 						case WINDOW_VENDOR:
 							SellItem(&Cursor, Cursor.InventorySlot.Count);
+						break;
+						// Upgrade an item
+						case WINDOW_BLACKSMITH:
+							if(Cursor.InventorySlot.Item->IsEquippable()) {
+								UpgradeSlot = Cursor.Slot;
+							}
 						break;
 						case WINDOW_ACTIONBAR:
 							if(Cursor.Window == WINDOW_INVENTORY && !Cursor.InventorySlot.Item->IsSkill())
@@ -411,6 +434,10 @@ void _HUD::Update(double FrameTime) {
 						Tooltip.InventorySlot.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
 					else if(Tooltip.Slot == 8)
 						Tooltip.InventorySlot.Item = Player->Trader->RewardItem;
+				}
+			} break;
+			case WINDOW_BLACKSMITH: {
+				if(Player->Blacksmith) {
 				}
 			} break;
 			case WINDOW_SKILLS: {
@@ -569,6 +596,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawVendor();
 		DrawTrade();
 		DrawTrader();
+		DrawBlacksmith();
 		DrawSkills();
 		DrawTeleport();
 
@@ -630,6 +658,8 @@ void _HUD::ToggleChat() {
 
 // Toggles the teleport state
 void _HUD::ToggleTeleport() {
+	return;
+
 	if(!Player->CanTeleport())
 		return;
 
@@ -755,6 +785,17 @@ void _HUD::InitTrader() {
 		Assets.Buttons["button_trader_accept"]->SetEnabled(true);
 
 	TraderElement->SetVisible(true);
+}
+
+// Initialize the blacksmith
+void _HUD::InitBlacksmith() {
+	Cursor.Reset();
+
+	InventoryElement->SetVisible(true);
+	BlacksmithElement->SetVisible(true);
+	BlacksmithCost->SetVisible(false);
+	Assets.Buttons["button_blacksmith_upgrade"]->SetEnabled(false);
+	UpgradeSlot = (size_t)-1;
 }
 
 // Initialize the skills screen
@@ -958,6 +999,22 @@ bool _HUD::CloseTrader() {
 	return WasOpen;
 }
 
+// Close the blacksmith
+bool _HUD::CloseBlacksmith() {
+	bool WasOpen = BlacksmithElement->Visible;
+	CloseInventory();
+
+	BlacksmithElement->SetVisible(false);
+	Cursor.Reset();
+
+	if(Player)
+		Player->Blacksmith = false;
+
+	UpgradeSlot = (size_t)-1;
+
+	return WasOpen;
+}
+
 // Closes all windows
 bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	Cursor.Reset();
@@ -968,6 +1025,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= CloseSkills();
 	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseTrader();
+	WasOpen |= CloseBlacksmith();
 	WasOpen |= CloseTeleport();
 
 	if(WasOpen && SendStatus)
@@ -1202,6 +1260,53 @@ void _HUD::DrawTrader() {
 		Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->Texture);
 		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count).c_str(), DrawPosition + glm::vec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
 	}
+}
+
+// Draw the blacksmith
+void _HUD::DrawBlacksmith() {
+	if(!Player->Blacksmith) {
+		BlacksmithElement->Visible = false;
+		return;
+	}
+
+	BlacksmithElement->Render();
+
+	// Draw item
+	if(UpgradeSlot != (size_t)-1) {
+
+		// Get upgrade bag button
+		_Button *BagButton = Assets.Buttons["button_blacksmith_bag"];
+		_Button *UpgradeButton = Assets.Buttons["button_blacksmith_upgrade"];
+		glm::vec2 DrawPosition = (BagButton->Bounds.Start + BagButton->Bounds.End) / 2.0f;
+
+		const _InventorySlot &InventorySlot = Player->Inventory->Slots[UpgradeSlot];
+		const _Item *Item = InventorySlot.Item;
+		if(Item) {
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+
+			BlacksmithCost->SetVisible(true);
+
+			// Get cost
+			int Cost = Item->GetUpgradePrice(InventorySlot.Upgrades+1);
+
+			// Update cost label
+			std::stringstream Buffer;
+			Buffer << Cost << " gold";
+			BlacksmithCost->Text = Buffer.str();
+
+			// Disable button
+			if(Cost > Player->Gold)
+				UpgradeButton->SetEnabled(false);
+			else
+				UpgradeButton->SetEnabled(true);
+		}
+		else
+			UpgradeButton->SetEnabled(false);
+	}
+	else
+		BlacksmithCost->SetVisible(false);
+
 }
 
 // Draw the action bar

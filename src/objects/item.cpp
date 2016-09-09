@@ -402,6 +402,12 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 	return Price;
 }
 
+// Get upgrade price
+int _Item::GetUpgradePrice(int Level) const {
+
+	return Cost / MaxLevel + Level;
+}
+
 // Return true if the item can be used
 bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	_Object *Object = ActionResult.Source.Object;

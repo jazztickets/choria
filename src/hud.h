@@ -96,6 +96,7 @@ class _HUD {
 			WINDOW_ACTIONBAR,
 			WINDOW_BATTLE,
 			WINDOW_HUD_EFFECTS,
+			WINDOW_BLACKSMITH,
 		};
 
 		_HUD();
@@ -136,6 +137,7 @@ class _HUD {
 		void InitInventory(bool SendStatus);
 		void InitVendor();
 		void InitTrader();
+		void InitBlacksmith();
 		void InitSkills();
 		void InitTrade();
 		bool CloseWindows(bool SendStatus, bool SendNotify=true);
@@ -170,6 +172,7 @@ class _HUD {
 		bool CloseInventory();
 		bool CloseVendor();
 		bool CloseTrader();
+		bool CloseBlacksmith();
 		bool CloseSkills();
 		bool CloseTeleport();
 
@@ -181,6 +184,7 @@ class _HUD {
 		void DrawVendor();
 		void DrawTrade();
 		void DrawTrader();
+		void DrawBlacksmith();
 		void DrawActionBar();
 		void DrawSkills();
 		void DrawMessage();
@@ -214,6 +218,7 @@ class _HUD {
 		_Element *TradeElement;
 		_Element *TradeTheirsElement;
 		_Element *TraderElement;
+		_Element *BlacksmithElement;
 		_Element *SkillsElement;
 		_Element *TeleportElement;
 		_Element *ChatElement;
@@ -224,6 +229,7 @@ class _HUD {
 		_Element *MessageElement;
 		_Label *GoldElement;
 		_Label *MessageLabel;
+		_Label *BlacksmithCost;
 		_Cursor Cursor;
 		_Cursor Tooltip;
 
@@ -243,6 +249,9 @@ class _HUD {
 		// Traders
 		std::vector<size_t> RequiredItemSlots;
 		size_t RewardItemSlot;
+
+		// Blacksmith
+		size_t UpgradeSlot;
 };
 
 extern _HUD HUD;

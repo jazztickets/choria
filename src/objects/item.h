@@ -59,6 +59,7 @@ class _Item {
 		size_t GetEquipmentSlot() const;
 
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
+		int GetUpgradePrice(int Level) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		bool CanTarget(_Object *Object) const;

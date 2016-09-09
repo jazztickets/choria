@@ -354,6 +354,21 @@ void _Map::CheckEvents(_Object *Object) {
 			else
 				Object->WaitForServer = true;
 		} break;
+		case _Map::EVENT_BLACKSMITH: {
+			if(Server) {
+				Object->Blacksmith = true;
+
+				// Notify client
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::EVENT_START);
+				Packet.Write<uint32_t>(Tile->Event.Type);
+				Packet.Write<uint32_t>(Tile->Event.Data);
+				Packet.Write<glm::ivec2>(Object->Position);
+				Server->Network->SendPacket(Packet, Object->Peer);
+			}
+			else
+				Object->WaitForServer = true;
+		} break;
 		default:
 			if(Server) {
 				Object->Vendor = nullptr;
