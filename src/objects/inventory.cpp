@@ -170,7 +170,7 @@ bool _Inventory::MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot) {
 		return false;
 
 	// Add to stack
-	if(Slots[NewSlot].Item == Slots[OldSlot].Item) {
+	if(Slots[NewSlot].Item == Slots[OldSlot].Item && Slots[NewSlot].Upgrades == Slots[OldSlot].Upgrades) {
 		Slots[NewSlot].Count += Slots[OldSlot].Count;
 
 		// Group stacks
@@ -237,13 +237,13 @@ bool _Inventory::DecrementItemCount(size_t Slot, int Amount) {
 }
 
 // Find a suitable slot for an item
-size_t _Inventory::FindSlotForItem(const _Item *Item, int Count) {
+size_t _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
 
 	size_t EmptySlot = Slots.size();
 	for(size_t i = InventoryType::HEAD; i < InventoryType::TRADE; i++) {
 
 		// Try to find an existing stack first
-		if(Slots[i].Item == Item && Slots[i].Count + Count <= INVENTORY_MAX_STACK)
+		if(Slots[i].Item == Item && Slots[i].Upgrades == Upgrades && Slots[i].Count + Count <= INVENTORY_MAX_STACK)
 			return i;
 
 		// Keep track of the first empty slot in case stack is not found
@@ -258,7 +258,7 @@ size_t _Inventory::FindSlotForItem(const _Item *Item, int Count) {
 }
 
 // Attempts to add an item to the inventory
-bool _Inventory::AddItem(const _Item *Item, int Count, size_t Slot) {
+bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, size_t Slot) {
 	if(!Count)
 		return false;
 
@@ -266,7 +266,7 @@ bool _Inventory::AddItem(const _Item *Item, int Count, size_t Slot) {
 	if(Slot >= Slots.size()) {
 
 		// Search for a suitable slot
-		Slot = FindSlotForItem(Item, Count);
+		Slot = FindSlotForItem(Item, Upgrades, Count);
 		if(Slot >= Slots.size())
 			return false;
 
@@ -281,12 +281,13 @@ bool _Inventory::AddItem(const _Item *Item, int Count, size_t Slot) {
 	}
 
 	// Add item
-	if(Slots[Slot].Item == Item && Slots[Slot].Count + Count <= INVENTORY_MAX_STACK) {
+	if(Slots[Slot].Item == Item && Slots[Slot].Upgrades == Upgrades && Slots[Slot].Count + Count <= INVENTORY_MAX_STACK) {
 		Slots[Slot].Count += Count;
 		return true;
 	}
 	else if(Slots[Slot].Item == nullptr) {
 		Slots[Slot].Item = Item;
+		Slots[Slot].Upgrades = Upgrades;
 		Slots[Slot].Count = Count;
 		return true;
 	}
@@ -298,7 +299,7 @@ bool _Inventory::AddItem(const _Item *Item, int Count, size_t Slot) {
 void _Inventory::MoveTradeToInventory() {
 
 	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
-		if(Slots[i].Item && AddItem(Slots[i].Item, Slots[i].Count))
+		if(Slots[i].Item && AddItem(Slots[i].Item, Slots[i].Upgrades, Slots[i].Count))
 			Slots[i].Item = nullptr;
 	}
 }
@@ -325,7 +326,7 @@ bool _Inventory::SplitStack(_Buffer &Data, size_t Slot, int Count) {
 				EmptySlot = InventoryType::BAG;
 
 			_InventorySlot *Item = &Slots[EmptySlot];
-			if(Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Count <= INVENTORY_MAX_STACK - Count)) {
+			if(Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Upgrades == SplitItem->Upgrades && Item->Count <= INVENTORY_MAX_STACK - Count)) {
 				Found = true;
 				break;
 			}
@@ -334,7 +335,7 @@ bool _Inventory::SplitStack(_Buffer &Data, size_t Slot, int Count) {
 		// Split item
 		if(Found && EmptySlot != Slot) {
 			SplitItem->Count -= Count;
-			AddItem(SplitItem->Item, Count, EmptySlot);
+			AddItem(SplitItem->Item, SplitItem->Upgrades, Count, EmptySlot);
 
 			// Write old and new slot
 			Data.Write<uint8_t>(2);
@@ -352,7 +353,7 @@ bool _Inventory::SplitStack(_Buffer &Data, size_t Slot, int Count) {
 size_t _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<size_t> &BagIndex) {
 
 	// Find a slot for the reward
-	size_t RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Count);
+	size_t RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
 
 	// Go through required items
 	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {

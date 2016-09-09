@@ -1126,7 +1126,7 @@ void _Object::AcceptTrader(std::vector<size_t> &Slots) {
 	}
 
 	// Give player reward
-	Inventory->AddItem(Trader->RewardItem, Trader->Count);
+	Inventory->AddItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
 
 	// Update player
 	Trader = nullptr;

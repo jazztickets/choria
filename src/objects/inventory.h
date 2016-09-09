@@ -77,8 +77,8 @@ class _Inventory {
 		const _Item *GetBagItem(size_t Slot);
 		bool MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot);
 		bool DecrementItemCount(size_t Slot, int Amount);
-		size_t FindSlotForItem(const _Item *Item, int Count);
-		bool AddItem(const _Item *Item, int Count, size_t Slot=(size_t)-1);
+		size_t FindSlotForItem(const _Item *Item, int Upgrades, int Count);
+		bool AddItem(const _Item *Item, int Upgrades, int Count, size_t Slot=(size_t)-1);
 		void MoveTradeToInventory();
 		bool SplitStack(_Buffer &Data, size_t Slot, int Count);
 

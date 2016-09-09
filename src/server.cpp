@@ -570,7 +570,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				if(Stats->Items.find(ItemID) == Stats->Items.end())
 					return;
 
-				Player->Inventory->AddItem(Stats->Items[ItemID], Count);
+				Player->Inventory->AddItem(Stats->Items[ItemID], 0, Count);
 
 				// Send new inventory
 				_Buffer Packet;
@@ -980,14 +980,14 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 		// Find open slot for new item
 		if(TargetSlot >= Player->Inventory->Slots.size())
-			TargetSlot = Player->Inventory->FindSlotForItem(Item, Amount);
+			TargetSlot = Player->Inventory->FindSlotForItem(Item, 0, Amount);
 
 		// No room
 		if(TargetSlot >= Player->Inventory->Slots.size())
 			return;
 
 		// Attempt to add item
-		if(!Player->Inventory->AddItem(Item, Amount, TargetSlot))
+		if(!Player->Inventory->AddItem(Item, 0, Amount, TargetSlot))
 			return;
 
 		// Update gold

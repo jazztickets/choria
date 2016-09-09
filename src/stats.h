@@ -93,6 +93,7 @@ struct _Trader {
 	uint32_t ID;
 	std::string Name;
 	const _Item *RewardItem;
+	int Upgrades;
 	int Count;
 	std::vector<_TraderItem> TraderItems;
 };

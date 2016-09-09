@@ -664,8 +664,9 @@ void _Battle::ServerEndBattle() {
 		// Write items
 		for(auto &Iterator : SortedItems) {
 			Packet.Write<uint32_t>(Iterator.first);
+			Packet.Write<uint8_t>(0);
 			Packet.Write<uint8_t>((uint8_t)Iterator.second);
-			Fighter->Inventory->AddItem(Stats->Items[Iterator.first], Iterator.second);
+			Fighter->Inventory->AddItem(Stats->Items[Iterator.first], 0, Iterator.second);
 		}
 
 		// Send info

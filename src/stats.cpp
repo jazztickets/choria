@@ -278,6 +278,7 @@ void _Stats::LoadTraders() {
 		Trader.ID = Database->GetInt<uint32_t>("id");
 		Trader.Name = Database->GetString("name");
 		Trader.RewardItem = Items[Database->GetInt<uint32_t>("item_id")];
+		Trader.Upgrades = 0;
 		Trader.Count = Database->GetInt<int>("count");
 		Trader.TraderItems.clear();
 
@@ -318,7 +319,7 @@ void _Stats::LoadBuilds() {
 		while(Database->FetchRow(1)) {
 			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item)
-				Object->Inventory->AddItem(Item, Database->GetInt<int>("count", 1));
+				Object->Inventory->AddItem(Item, 0, Database->GetInt<int>("count", 1));
 		}
 		Database->CloseQuery(1);
 

@@ -400,10 +400,11 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 				uint32_t ItemID = Data.Read<uint32_t>();
 				const _Item *Item = Stats->Items[ItemID];
+				int Upgrades = (int)Data.Read<uint8_t>();
 				int Count = (int)Data.Read<uint8_t>();
 
 				// Add items
-				Player->Inventory->AddItem(Item, Count);
+				Player->Inventory->AddItem(Item, Upgrades, Count);
 			}
 
 			// Check win or death

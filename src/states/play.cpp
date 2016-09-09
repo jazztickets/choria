@@ -1006,11 +1006,12 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 
 		uint32_t ItemID = Data.Read<uint32_t>();
 		RecentItem.Item = Stats->Items[ItemID];
+		int Upgrades = (int)Data.Read<uint8_t>();
 		RecentItem.Count = (int)Data.Read<uint8_t>();
 
 		// Add items
 		HUD->RecentItems.push_back(RecentItem);
-		Player->Inventory->AddItem(RecentItem.Item, RecentItem.Count);
+		Player->Inventory->AddItem(RecentItem.Item, Upgrades, RecentItem.Count);
 	}
 
 	// Check win or death
