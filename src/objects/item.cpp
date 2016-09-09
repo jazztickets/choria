@@ -41,6 +41,8 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	if(!Player)
 		return;
 
+	int Upgrades = Tooltip.InventorySlot.Upgrades;
+
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
 	_Label *TooltipType = Assets.Labels["label_item_tooltip_type"];
@@ -140,12 +142,12 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 
 	// Render damage
 	bool StatDrawn = false;
-	if(MinDamage != 0 || MaxDamage != 0) {
+	if(GetMinDamage(Upgrades) != 0 || GetMaxDamage(Upgrades) != 0) {
 		std::stringstream Buffer;
-		if(MinDamage != MaxDamage)
-			Buffer << MinDamage << " - " << MaxDamage;
+		if(GetMinDamage(Upgrades) != GetMaxDamage(Upgrades))
+			Buffer << GetMinDamage(Upgrades) << " - " << GetMaxDamage(Upgrades);
 		else
-			Buffer << MinDamage;
+			Buffer << GetMinDamage(Upgrades);
 
 		Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
@@ -507,4 +509,20 @@ void _Item::Stats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 		Scripting->GetStatChange(1, ActionResult.Source);
 		Scripting->FinishMethodCall();
 	}
+}
+
+// Get min damage
+int _Item::GetMinDamage(int Upgrades) const {
+	if(MaxLevel <= 0)
+		return MinDamage;
+
+	return MinDamage + MinDamage * Upgrades / MaxLevel;
+}
+
+// Get max damage
+int _Item::GetMaxDamage(int Upgrades) const {
+	if(MaxLevel <= 0)
+		return MaxDamage;
+
+	return MaxDamage + MaxDamage * Upgrades / MaxLevel;
 }

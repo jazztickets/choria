@@ -201,7 +201,7 @@ function Skill_ShieldBash.GenerateDamage(self, Level, Source)
 		return 0
 	end
 
-	return Shield.GenerateDamage()
+	return Shield.GenerateDamage(Shield.Upgrades)
 end
 
 function Skill_ShieldBash.GetChance(self, Level)

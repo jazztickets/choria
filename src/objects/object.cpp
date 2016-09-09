@@ -1250,11 +1250,12 @@ void _Object::CalculateStats() {
 
 		// Check each item
 		const _Item *Item = Inventory->Slots[i].Item;
+		int Upgrades = Inventory->Slots[i].Upgrades;
 		if(Item) {
 
 			// Add damage
-			ItemMinDamage += Item->MinDamage;
-			ItemMaxDamage += Item->MaxDamage;
+			ItemMinDamage += Item->GetMinDamage(Upgrades);
+			ItemMaxDamage += Item->GetMaxDamage(Upgrades);
 
 			// Add defense
 			ItemArmor += Item->Armor;

@@ -72,7 +72,7 @@ class _Scripting {
 
 	private:
 
-		static void PushItem(lua_State *LuaState, const _Item *Item);
+		static void PushItem(lua_State *LuaState, const _Item *Item, int Upgrades);
 
 		static int RandomGetInt(lua_State *LuaState);
 

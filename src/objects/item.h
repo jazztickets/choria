@@ -68,6 +68,9 @@ class _Item {
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Stats(_Scripting *Scripting, _ActionResult &ActionResult) const;
 
+		int GetMinDamage(int Upgrades) const;
+		int GetMaxDamage(int Upgrades) const;
+
 		uint32_t ID;
 		std::string Name;
 		std::string Script;

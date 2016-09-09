@@ -135,7 +135,7 @@ void _Scripting::InjectItems(_Stats *Stats) {
 		}
 
 		// Add item pointer
-		PushItem(LuaState, Item);
+		PushItem(LuaState, Item, 0);
 		lua_setfield(LuaState, -2, "Item");
 
 		lua_pop(LuaState, 1);
@@ -218,7 +218,7 @@ void _Scripting::PushObject(_Object *Object) {
 }
 
 // Push item onto stack
-void _Scripting::PushItem(lua_State *LuaState, const _Item *Item) {
+void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) {
 	if(!Item) {
 		lua_pushnil(LuaState);
 		return;
@@ -235,6 +235,9 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item) {
 
 	lua_pushinteger(LuaState, Item->DamageBlock);
 	lua_setfield(LuaState, -2, "DamageBlock");
+
+	lua_pushinteger(LuaState, Upgrades);
+	lua_setfield(LuaState, -2, "Upgrades");
 
 	lua_pushlightuserdata(LuaState, (void *)Item);
 	lua_setfield(LuaState, -2, "Pointer");
@@ -479,14 +482,17 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 
 	const _Item *Item = nullptr;
+	int Upgrades = 0;
 
 	// Get item
 	size_t Slot = (size_t)lua_tointeger(LuaState, 1);
-	if(Slot < Object->Inventory->Slots.size())
+	if(Slot < Object->Inventory->Slots.size()) {
 		Item = Object->Inventory->Slots[Slot].Item;
+		Upgrades = Object->Inventory->Slots[Slot].Upgrades;
+	}
 
 	// Push item
-	PushItem(LuaState, Item);
+	PushItem(LuaState, Item, Upgrades);
 
 	return 1;
 }
@@ -542,7 +548,9 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 
 	// Get self pointer
 	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	lua_pushinteger(LuaState, GetRandomInt(Item->MinDamage, Item->MaxDamage));
+	int Upgrades = (int)lua_tointeger(LuaState, 1);
+
+	lua_pushinteger(LuaState, GetRandomInt(Item->GetMinDamage(Upgrades), Item->GetMaxDamage(Upgrades)));
 
 	return 1;
 }
