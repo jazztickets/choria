@@ -78,7 +78,7 @@ class _Inventory {
 		bool MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot);
 		bool DecrementItemCount(size_t Slot, int Amount);
 		size_t FindSlotForItem(const _Item *Item, int Upgrades, int Count);
-		bool AddItem(const _Item *Item, int Upgrades, int Count, size_t Slot=(size_t)-1);
+		bool AddItem(const _Item *Item, int Upgrades, int Count, size_t TargetSlot=(size_t)-1);
 		void MoveTradeToInventory();
 		bool SplitStack(_Buffer &Data, size_t Slot, int Count);
 
@@ -88,6 +88,7 @@ class _Inventory {
 		// Static functions
 		static bool IsSlotBag(size_t Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
 		static bool IsSlotTrade(size_t Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }
+		static int GetMaxStackForSlot(size_t Slot);
 
 		std::vector<_InventorySlot> Slots;
 

@@ -170,13 +170,13 @@ bool _Inventory::MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot) {
 		return false;
 
 	// Add to stack
-	if(Slots[NewSlot].Item == Slots[OldSlot].Item && Slots[NewSlot].Upgrades == Slots[OldSlot].Upgrades) {
+	if(Slots[NewSlot].Item && Slots[NewSlot].Item->IsStackable() && Slots[NewSlot].Item == Slots[OldSlot].Item && Slots[NewSlot].Upgrades == Slots[OldSlot].Upgrades) {
 		Slots[NewSlot].Count += Slots[OldSlot].Count;
 
 		// Group stacks
-		if(Slots[NewSlot].Count > INVENTORY_MAX_STACK) {
-			Slots[OldSlot].Count = Slots[NewSlot].Count - INVENTORY_MAX_STACK;
-			Slots[NewSlot].Count = INVENTORY_MAX_STACK;
+		if(Slots[NewSlot].Count > GetMaxStackForSlot(NewSlot)) {
+			Slots[OldSlot].Count = Slots[NewSlot].Count - GetMaxStackForSlot(NewSlot);
+			Slots[NewSlot].Count = GetMaxStackForSlot(NewSlot);
 		}
 		else
 			Slots[OldSlot].Item = nullptr;
@@ -243,7 +243,7 @@ size_t _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
 	for(size_t i = InventoryType::HEAD; i < InventoryType::TRADE; i++) {
 
 		// Try to find an existing stack first
-		if(Slots[i].Item == Item && Slots[i].Upgrades == Upgrades && Slots[i].Count + Count <= INVENTORY_MAX_STACK)
+		if(Item->IsStackable() && Slots[i].Item == Item && Slots[i].Upgrades == Upgrades && Slots[i].Count + Count <= GetMaxStackForSlot(i))
 			return i;
 
 		// Keep track of the first empty slot in case stack is not found
@@ -258,41 +258,46 @@ size_t _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
 }
 
 // Attempts to add an item to the inventory
-bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, size_t Slot) {
+bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, size_t TargetSlot) {
 	if(!Count)
 		return false;
 
-	// Place somewhere in bag
-	if(Slot >= Slots.size()) {
+	bool Added = false;
+	for(int i = 0; i < Count; i++) {
+		size_t Slot = TargetSlot;
 
-		// Search for a suitable slot
-		Slot = FindSlotForItem(Item, Upgrades, Count);
-		if(Slot >= Slots.size())
-			return false;
+		// Place somewhere in bag
+		if(Slot >= Slots.size()) {
 
+			// Search for a suitable slot
+			Slot = FindSlotForItem(Item, Upgrades, 1);
+			if(Slot >= Slots.size())
+				return false;
+
+		}
+		// Trying to equip an item
+		else if(Slot < InventoryType::BAG) {
+
+			// Make sure it can be equipped
+			if(!CanEquipItem(Slot, Item))
+				return false;
+
+		}
+
+		// Add item
+		if(Item->IsStackable() && Slots[Slot].Item == Item && Slots[Slot].Upgrades == Upgrades && Slots[Slot].Count + 1 <= GetMaxStackForSlot(Slot)) {
+			Slots[Slot].Count += 1;
+			Added = true;
+		}
+		else if(Slots[Slot].Item == nullptr) {
+			Slots[Slot].Item = Item;
+			Slots[Slot].Upgrades = Upgrades;
+			Slots[Slot].Count = 1;
+			Added = true;
+		}
 	}
-	// Trying to equip an item
-	else if(Slot < InventoryType::BAG) {
 
-		// Make sure it can be equipped
-		if(!CanEquipItem(Slot, Item))
-			return false;
-
-	}
-
-	// Add item
-	if(Slots[Slot].Item == Item && Slots[Slot].Upgrades == Upgrades && Slots[Slot].Count + Count <= INVENTORY_MAX_STACK) {
-		Slots[Slot].Count += Count;
-		return true;
-	}
-	else if(Slots[Slot].Item == nullptr) {
-		Slots[Slot].Item = Item;
-		Slots[Slot].Upgrades = Upgrades;
-		Slots[Slot].Count = Count;
-		return true;
-	}
-
-	return false;
+	return Added;
 }
 
 // Moves the player's trade items to their bag
@@ -326,7 +331,7 @@ bool _Inventory::SplitStack(_Buffer &Data, size_t Slot, int Count) {
 				EmptySlot = InventoryType::BAG;
 
 			_InventorySlot *Item = &Slots[EmptySlot];
-			if(Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Upgrades == SplitItem->Upgrades && Item->Count <= INVENTORY_MAX_STACK - Count)) {
+			if(Item->Item == nullptr || (Item->Item == SplitItem->Item && Item->Upgrades == SplitItem->Upgrades && Item->Count <= GetMaxStackForSlot(EmptySlot) - Count)) {
 				Found = true;
 				break;
 			}
@@ -402,4 +407,13 @@ void _InventorySlot::Unserialize(_Buffer &Data, _Stats *Stats) {
 		Item = nullptr;
 		Count = 0;
 	}
+}
+
+// Get the max stack count for an inventory slot
+int _Inventory::GetMaxStackForSlot(size_t Slot) {
+
+	if(Slot < InventoryType::BAG)
+		return 1;
+	else
+		return INVENTORY_MAX_STACK;
 }

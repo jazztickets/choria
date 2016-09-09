@@ -54,6 +54,7 @@ class _Item {
 		bool IsSkill() const { return Type == ItemType::SKILL; }
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::RING; }
+		bool IsStackable() const { return !IsEquippable(); }
 
 		size_t GetEquipmentSlot() const;
 
