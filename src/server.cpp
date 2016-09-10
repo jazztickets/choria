@@ -559,7 +559,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		Message.resize(HUD_CHAT_SIZE);
 
 	// Check for test commands
-	if(IsTesting && Message[0] == '-') {
+	if(IsTesting && Message[0] == '-' && !Player->Battle) {
 		_StatChange StatChange;
 		StatChange.Object = Player;
 

@@ -154,10 +154,10 @@ end
 -- Gash --
 
 Skill_Gash = Base_Attack:New()
-Skill_Gash.BaseChance = 25
+Skill_Gash.BaseChance = 35
 Skill_Gash.ChancePerLevel = 0
 Skill_Gash.Duration = 5
-Skill_Gash.IncreasePerLevel = 5
+Skill_Gash.IncreasePerLevel = 3
 Skill_Gash.BleedingLevel = 10 - Skill_Gash.IncreasePerLevel
 
 function Skill_Gash.GetChance(self, Level)
