@@ -411,7 +411,7 @@ end
 -- Arcane Mastery --
 
 Skill_ArcaneMastery = {}
-Skill_ArcaneMastery.PerLevel = 20
+Skill_ArcaneMastery.PerLevel = 30
 Skill_ArcaneMastery.ManaRegen = 1
 
 function Skill_ArcaneMastery.GetManaRegen(self, Level)

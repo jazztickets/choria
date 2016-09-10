@@ -450,7 +450,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Create the character
-	Save->CreateCharacter(Stats, Peer->AccountID, Slot, Name, PortraitID, BuildID);
+	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, Name, PortraitID, BuildID);
 
 	// Notify the client
 	_Buffer NewPacket;

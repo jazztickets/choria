@@ -185,7 +185,7 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
+void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
 	if(!BuildID)
 		BuildID = 1;
 
@@ -205,15 +205,18 @@ void _Save::CreateCharacter(_Stats *Stats, uint32_t AccountID, uint32_t Slot, co
 
 	_Object Object;
 	Object.Stats = Stats;
+	Object.Scripting = Scripting;
 	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
-
-	// Load default values
-	LoadPlayer(Stats, &Object);
 
 	// Copy build data
 	Object.ActionBar = Build->ActionBar;
 	Object.Inventory->Slots = Build->Inventory->Slots;
 	Object.Skills = Build->Skills;
+	Object.CalculateStats();
+
+	// Set health/mana
+	Object.Health = Object.MaxHealth;
+	Object.Mana = Object.MaxMana;
 
 	// Save new character
 	SavePlayer(&Object, 0);

@@ -1260,8 +1260,10 @@ void _Object::CalculateStats() {
 		if(Item) {
 
 			// Add damage
-			ItemMinDamage += Item->GetMinDamage(Upgrades);
-			ItemMaxDamage += Item->GetMaxDamage(Upgrades);
+			if(Item->Type != ItemType::SHIELD) {
+				ItemMinDamage += Item->GetMinDamage(Upgrades);
+				ItemMaxDamage += Item->GetMaxDamage(Upgrades);
+			}
 
 			// Add defense
 			ItemArmor += Item->GetArmor(Upgrades);
