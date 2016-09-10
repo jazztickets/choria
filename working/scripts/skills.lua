@@ -260,7 +260,7 @@ end
 Skill_Rejuvenation = Base_Spell:New()
 Skill_Rejuvenation.Duration = 5
 Skill_Rejuvenation.CostPerLevel = 5
-Skill_Rejuvenation.ManaCostBase = 30 - Skill_Rejuvenation.CostPerLevel
+Skill_Rejuvenation.ManaCostBase = 15 - Skill_Rejuvenation.CostPerLevel
 
 function Skill_Rejuvenation.GetLevel(self, Level)
 	return 10 * (Level + 2)

@@ -194,6 +194,7 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	if(!Build)
 		Build = Stats->Builds[1];
 
+	// Create new database row
 	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar_size) VALUES(@account_id, @slot, @name, @portrait_id, @actionbar_size)");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
@@ -203,12 +204,11 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	Database->FetchRow();
 	Database->CloseQuery();
 
+	// Copy object stats from build
 	_Object Object;
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
 	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
-
-	// Copy build data
 	Object.ActionBar = Build->ActionBar;
 	Object.Inventory->Slots = Build->Inventory->Slots;
 	Object.Skills = Build->Skills;
