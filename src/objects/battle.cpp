@@ -638,6 +638,9 @@ void _Battle::ServerEndBattle() {
 		if(NewLevel > CurrentLevel) {
 			if(Fighter->Peer)
 				Server->SendMessage(Fighter->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
+
+			Fighter->Health = Fighter->MaxHealth;
+			Fighter->Mana = Fighter->MaxMana;
 		}
 
 		// Write results
