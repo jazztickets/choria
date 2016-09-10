@@ -1046,8 +1046,6 @@ void _Object::ApplyDeathPenalty() {
 
 	Deaths++;
 	UpdateGold(-GoldLoss);
-	Health = MaxHealth / 2;
-	Mana = MaxMana / 2;
 }
 
 // Update counts on action bar

@@ -260,6 +260,8 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 		// Penalize player for leaving battle
 		if(Player->Battle) {
 			Player->ApplyDeathPenalty();
+			Player->Health = Player->MaxHealth / 2;
+			Player->Mana = Player->MaxMana / 2;
 			Player->LoadMapID = 0;
 		}
 
