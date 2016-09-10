@@ -905,10 +905,16 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 
 	// Check for equipment
 	if(Item->IsEquippable()) {
+		size_t TargetSlot = Item->GetEquipmentSlot();
 
+		// Check for empty second ring slot
+		if(TargetSlot == InventoryType::RING1 && Player->Inventory->Slots[TargetSlot].Item && !Player->Inventory->Slots[InventoryType::RING2].Item)
+			TargetSlot = InventoryType::RING2;
+
+		// Attempt to move
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
-		if(Player->Inventory->MoveInventory(Packet, Slot, Item->GetEquipmentSlot())) {
+		if(Player->Inventory->MoveInventory(Packet, Slot, TargetSlot)) {
 			Network->SendPacket(Packet, Peer);
 			Player->CalculateStats();
 		}

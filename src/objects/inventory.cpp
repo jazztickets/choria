@@ -166,7 +166,7 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 
 // Moves an item from one slot to another
 bool _Inventory::MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot) {
-	if(!CanSwap(OldSlot, NewSlot))
+	if(OldSlot == (size_t)-1 || NewSlot == (size_t)-1 || !CanSwap(OldSlot, NewSlot))
 		return false;
 
 	// Add to stack
