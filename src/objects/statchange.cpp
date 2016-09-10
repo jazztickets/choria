@@ -40,11 +40,11 @@ void _StatChange::Reset() {
 }
 
 // Get bit field of fields changed
-int _StatChange::GetChangedFlag() {
-	int Flag = 0;
+uint64_t _StatChange::GetChangedFlag() {
+	uint64_t Flag = 0;
 
 	for(auto Iterator : Values) {
-		Flag |= (1 << (int)Iterator.first);
+		Flag |= (1 << (uint64_t)Iterator.first);
 	}
 
 	return Flag;
@@ -61,9 +61,9 @@ void _StatChange::Serialize(_Buffer &Data) {
 	if(!Object)
 		throw std::runtime_error("_StatChange::Serialize: Object is null!");
 
-	int ChangedFlag = GetChangedFlag();
+	uint64_t ChangedFlag = GetChangedFlag();
 	Data.Write<NetworkIDType>(Object->NetworkID);
-	Data.Write<int>(ChangedFlag);
+	Data.Write<uint64_t>(ChangedFlag);
 
 	for(auto Iterator : Values) {
 		if(Iterator.first == StatType::BUFF) {
@@ -87,14 +87,14 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 	}
 
 	// Get changes
-	int ChangedFlag = Data.Read<int>();
+	uint64_t ChangedFlag = Data.Read<uint64_t>();
 	if(!ChangedFlag)
 		return;
 
 	// Update values
-	for(int i = 0; i < (int)StatType::COUNT; i++) {
+	for(uint64_t i = 0; i < (uint64_t)StatType::COUNT; i++) {
 		if(ChangedFlag & (1 << i)) {
-			if(i == (int)StatType::BUFF) {
+			if(i == (uint64_t)StatType::BUFF) {
 				uint32_t BuffID = Data.Read<uint32_t>();
 				Values[(StatType)i].Pointer = (void *)Object->Stats->Buffs[BuffID];
 			}

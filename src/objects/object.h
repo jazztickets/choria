@@ -185,10 +185,10 @@ class _Object : public _ManagerBase {
 		int BaseMaxDamage;
 		int BaseArmor;
 		int BaseDamageBlock;
-		float BaseMoveSpeed;
-		double BaseBattleSpeed;
-		float BaseEvasion;
-		float BaseHitChance;
+		int BaseMoveSpeed;
+		int BaseBattleSpeed;
+		int BaseEvasion;
+		int BaseHitChance;
 
 		// Stats
 		double UpdateTimer;
@@ -209,10 +209,10 @@ class _Object : public _ManagerBase {
 		int MaxDamage;
 		int Armor;
 		int DamageBlock;
-		float MoveSpeed;
-		double BattleSpeed;
-		float Evasion;
-		float HitChance;
+		int MoveSpeed;
+		int BattleSpeed;
+		int Evasion;
+		int HitChance;
 		std::unordered_map<uint32_t, float> Resistances;
 
 		// Player stats

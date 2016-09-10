@@ -25,6 +25,7 @@
 class _Object;
 class _Texture;
 class _Scripting;
+class _Stats;
 struct _Vendor;
 struct _Cursor;
 
@@ -66,12 +67,19 @@ class _Item {
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void Stats(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
 
 		int GetMinDamage(int Upgrades) const;
 		int GetMaxDamage(int Upgrades) const;
 		int GetArmor(int Upgrades) const;
 		int GetDamageBlock(int Upgrades) const;
+		float GetMaxHealth(int Upgrades) const;
+		float GetMaxMana(int Upgrades) const;
+		int GetBattleSpeed(int Upgrades) const;
+		int GetMoveSpeed(int Upgrades) const;
+		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
+
+		_Stats *Stats;
 
 		uint32_t ID;
 		std::string Name;
@@ -91,8 +99,8 @@ class _Item {
 		int MaxMana;
 		float HealthRegen;
 		float ManaRegen;
-		double BattleSpeed;
-		float MoveSpeed;
+		int BattleSpeed;
+		int MoveSpeed;
 		uint32_t ResistanceTypeID;
 		float Resistance;
 		bool Tradable;

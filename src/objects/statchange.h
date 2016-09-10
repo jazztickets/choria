@@ -32,7 +32,7 @@ class _Buffer;
 class _Font;
 
 // Types of stats
-enum class StatType : int {
+enum class StatType : uint64_t {
 	BUFF,
 	BUFFLEVEL,
 	BUFFDURATION,
@@ -126,11 +126,11 @@ const _StatStorage StatValueTypes[] = {
 	{ StatType::MAXDAMAGE,     StatValueType::INTEGER },
 	{ StatType::ARMOR,         StatValueType::INTEGER },
 	{ StatType::DAMAGEBLOCK,   StatValueType::INTEGER },
-	{ StatType::MOVESPEED,     StatValueType::FLOAT   },
+	{ StatType::MOVESPEED,     StatValueType::INTEGER },
 	{ StatType::STAMINA,       StatValueType::FLOAT   },
-	{ StatType::BATTLESPEED,   StatValueType::FLOAT   },
-	{ StatType::HITCHANCE,     StatValueType::FLOAT   },
-	{ StatType::EVASION,       StatValueType::FLOAT   },
+	{ StatType::BATTLESPEED,   StatValueType::INTEGER },
+	{ StatType::HITCHANCE,     StatValueType::INTEGER },
+	{ StatType::EVASION,       StatValueType::INTEGER },
 	{ StatType::RESISTTYPE,    StatValueType::INTEGER },
 	{ StatType::RESIST,        StatValueType::FLOAT   },
 	{ StatType::EXPERIENCE,    StatValueType::INTEGER },
@@ -161,7 +161,7 @@ class _StatChange {
 		void Serialize(_Buffer &Data);
 		void Unserialize(_Buffer &Data, _Manager<_Object> *Manager);
 
-		int GetChangedFlag();
+		uint64_t GetChangedFlag();
 		bool HasStat(StatType Type);
 
 		// Owner

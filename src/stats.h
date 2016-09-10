@@ -145,6 +145,7 @@ class _Stats {
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
 		std::unordered_map<uint32_t, std::string> DamageTypes;
+		std::unordered_map<StatType, double> UpgradeScale;
 		std::unordered_map<uint32_t, const _Item *> Items;
 		std::unordered_map<uint32_t, const _Buff *> Buffs;
 		std::unordered_map<uint32_t, const _Object *> Builds;
@@ -159,6 +160,7 @@ class _Stats {
 		void LoadLevels();
 		void LoadBuffs();
 		void LoadItemTypes();
+		void LoadStatTypes();
 		void LoadTargetTypes();
 		void LoadDamageTypes();
 		void LoadItems();

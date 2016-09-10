@@ -101,7 +101,7 @@ Base_Buff = {
 	end,
 
 	GetChange = function(self, Level)
-		return self.Increments * Level / 100
+		return math.floor(self.Increments * Level)
 	end,
 
 	Increments = 1
@@ -110,7 +110,7 @@ Base_Buff = {
 -- Calculate basic weapon damage vs target's armor
 function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
-	if Random.GetInt(1, 100) <= (Source.HitChance - Target.Evasion) * 100 then
+	if Random.GetInt(1, 100) <= (Source.HitChance - Target.Evasion) then
 
 		-- Get damage
 		Change = {}

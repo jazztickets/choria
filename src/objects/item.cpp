@@ -177,17 +177,19 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(MaxHealth > 0) {
+	float DrawMaxHealth = GetMaxHealth(Upgrades);
+	if(DrawMaxHealth > 0) {
 		std::stringstream Buffer;
-		Buffer << (MaxHealth < 0 ? "" : "+") << MaxHealth;
+		Buffer << (DrawMaxHealth < 0 ? "" : "+") << DrawMaxHealth;
 		Assets.Fonts["hud_medium"]->DrawText("Health", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(MaxMana > 0) {
+	float DrawMaxMana = GetMaxMana(Upgrades);
+	if(DrawMaxMana > 0) {
 		std::stringstream Buffer;
-		Buffer << (MaxMana < 0 ? "" : "+") << MaxMana;
+		Buffer << (DrawMaxMana < 0 ? "" : "+") << DrawMaxMana;
 		Assets.Fonts["hud_medium"]->DrawText("Mana", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -201,17 +203,19 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(MoveSpeed != 0.0f) {
+	int DrawMoveSpeed = GetMoveSpeed(Upgrades);
+	if(DrawMoveSpeed != 0) {
 		std::stringstream Buffer;
-		Buffer << (MoveSpeed < 0 ? "" : "+") << std::setprecision(2) << MoveSpeed * 100 << "%";
+		Buffer << (MoveSpeed < 0 ? "" : "+") << DrawMoveSpeed << "%";
 		Assets.Fonts["hud_medium"]->DrawText("Move Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(BattleSpeed != 0.0) {
+	int DrawBattleSpeed = GetBattleSpeed(Upgrades);
+	if(DrawBattleSpeed != 0) {
 		std::stringstream Buffer;
-		Buffer << (BattleSpeed < 0 ? "" : "+") << std::setprecision(2) << BattleSpeed * 100 << "%";
+		Buffer << (DrawBattleSpeed < 0 ? "" : "+") << DrawBattleSpeed << "%";
 		Assets.Fonts["hud_medium"]->DrawText("Battle Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -505,7 +509,7 @@ void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Get passive stats
-void _Item::Stats(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Stats")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
@@ -518,32 +522,48 @@ void _Item::Stats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 // Get min damage
 int _Item::GetMinDamage(int Upgrades) const {
-	if(MaxLevel <= 0)
-		return MinDamage;
-
-	return MinDamage + MinDamage * Upgrades / MaxLevel;
+	return GetUpgradedValue<int>(StatType::MINDAMAGE, Upgrades, MinDamage);
 }
 
 // Get max damage
 int _Item::GetMaxDamage(int Upgrades) const {
-	if(MaxLevel <= 0)
-		return MaxDamage;
-
-	return MaxDamage + MaxDamage * Upgrades / MaxLevel;
+	return GetUpgradedValue<int>(StatType::MAXDAMAGE, Upgrades, MaxDamage);
 }
 
 // Get armor
 int _Item::GetArmor(int Upgrades) const {
-	if(MaxLevel <= 0)
-		return Armor;
-
-	return Armor + Armor * Upgrades / MaxLevel;
+	return GetUpgradedValue<int>(StatType::ARMOR, Upgrades, Armor);
 }
 
 // Get damage block
 int _Item::GetDamageBlock(int Upgrades) const {
-	if(MaxLevel <= 0)
-		return DamageBlock;
+	return GetUpgradedValue<int>(StatType::DAMAGEBLOCK, Upgrades, DamageBlock);
+}
 
-	return DamageBlock + DamageBlock * Upgrades / MaxLevel;
+// Get max health
+float _Item::GetMaxHealth(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MAXHEALTH, Upgrades, MaxHealth);
+}
+
+// Get max mana
+float _Item::GetMaxMana(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MAXMANA, Upgrades, MaxMana);
+}
+
+// Get battle speed
+int _Item::GetBattleSpeed(int Upgrades) const {
+	return GetUpgradedValue<int>(StatType::BATTLESPEED, Upgrades, BattleSpeed);
+}
+
+// Get move speed
+int _Item::GetMoveSpeed(int Upgrades) const {
+	return GetUpgradedValue<int>(StatType::MOVESPEED, Upgrades, MoveSpeed);
+}
+
+// Return value of a stat after upgrades
+template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Value) const {
+	if(MaxLevel <= 0)
+		return Value;
+
+	return Value + (int)(Stats->UpgradeScale[Type] * std::abs(Value) * Upgrades / MaxLevel);
 }

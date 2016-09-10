@@ -70,7 +70,7 @@ Buff_Slowed = Base_Buff:New()
 
 function Buff_Slowed.GetInfo(self, Level)
 
-	return "Battle speed reduced by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
+	return "Battle speed reduced by [c green]" .. self:GetChange(Level) .. "%"
 end
 
 function Buff_Slowed.Stats(self, Level, Source, Change)
@@ -100,7 +100,7 @@ Buff_Hasted = Base_Buff:New()
 
 function Buff_Hasted.GetInfo(self, Level)
 
-	return "Battle speed increased by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
+	return "Battle speed increased by [c green]" .. self:GetChange(Level) .. "%"
 end
 
 function Buff_Hasted.Stats(self, Level, Source, Change)
@@ -115,7 +115,7 @@ Buff_Fast = Base_Buff:New()
 
 function Buff_Fast.GetInfo(self, Level)
 
-	return "Move speed increased by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
+	return "Move speed increased by [c green]" .. self:GetChange(Level) .. "%"
 end
 
 function Buff_Fast.Stats(self, Level, Source, Change)
@@ -130,7 +130,7 @@ Buff_Blinded = Base_Buff:New()
 
 function Buff_Blinded.GetInfo(self, Level)
 
-	return "Hit chance reduced by [c green]" .. math.floor(self:GetChange(Level) * 100) .. "%"
+	return "Hit chance reduced by [c green]" .. self:GetChange(Level) .. "%"
 end
 
 function Buff_Blinded.Stats(self, Level, Source, Change)

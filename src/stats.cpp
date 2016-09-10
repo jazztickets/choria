@@ -38,6 +38,7 @@ _Stats::_Stats() {
 	LoadLevels();
 	LoadBuffs();
 	LoadItemTypes();
+	LoadStatTypes();
 	LoadTargetTypes();
 	LoadDamageTypes();
 	LoadItems();
@@ -155,6 +156,20 @@ void _Stats::LoadItemTypes() {
 	Database->CloseQuery();
 }
 
+// Load upgrade scales from stat types
+void _Stats::LoadStatTypes() {
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM stattype");
+
+	// Get data
+	while(Database->FetchRow()) {
+		StatType ID = (StatType)Database->GetInt<uint32_t>("id");
+		UpgradeScale[ID] = Database->GetReal("upgrade_scale");
+	}
+	Database->CloseQuery();
+}
+
 // Load target type strings
 void _Stats::LoadTargetTypes() {
 
@@ -198,6 +213,7 @@ void _Stats::LoadItems() {
 		std::string TexturePath = Database->GetString("texture");
 
 		_Item *Item = new _Item;
+		Item->Stats = this;
 		Item->ID = ItemID;
 		Item->Name = Database->GetString("name");
 		Item->Texture = Assets.Textures[TexturePath];

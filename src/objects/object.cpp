@@ -69,10 +69,10 @@ _Object::_Object() :
 	BaseMaxDamage(0),
 	BaseArmor(0),
 	BaseDamageBlock(0),
-	BaseMoveSpeed(1.0f),
-	BaseBattleSpeed(1.0),
-	BaseEvasion(0.0f),
-	BaseHitChance(1.0f),
+	BaseMoveSpeed(100),
+	BaseBattleSpeed(100),
+	BaseEvasion(0),
+	BaseHitChance(100),
 
 	UpdateTimer(0.0),
 	CalcLevelStats(true),
@@ -88,10 +88,10 @@ _Object::_Object() :
 	MaxDamage(0),
 	Armor(0),
 	DamageBlock(0),
-	MoveSpeed(1.0f),
-	BattleSpeed(1.0),
-	Evasion(0.0f),
-	HitChance(1.0f),
+	MoveSpeed(100),
+	BattleSpeed(100),
+	Evasion(0),
+	HitChance(100),
 
 	PlayTime(0.0),
 	Deaths(0),
@@ -215,7 +215,7 @@ void _Object::Update(double FrameTime) {
 
 		// Check turn timer
 		if(Battle)
-			TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * BattleSpeed;
+			TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * BattleSpeed / 100.0;
 		else
 			TurnTimer = 1.0;
 
@@ -880,7 +880,7 @@ int _Object::Move() {
 		return 0;
 
 	// Check timer
-	if(MoveTime < PLAYER_MOVETIME / MoveSpeed)
+	if(MoveTime < PLAYER_MOVETIME / (MoveSpeed / 100.0))
 		return 0;
 
 	MoveTime = 0;
@@ -1270,12 +1270,12 @@ void _Object::CalculateStats() {
 			ItemDamageBlock += Item->GetDamageBlock(Upgrades);
 
 			// Stat changes
-			MaxHealth += Item->MaxHealth;
-			MaxMana += Item->MaxMana;
+			MaxHealth += Item->GetMaxHealth(Upgrades);
+			MaxMana += Item->GetMaxMana(Upgrades);
 			HealthRegen += Item->HealthRegen;
 			ManaRegen += Item->ManaRegen;
-			BattleSpeed += Item->BattleSpeed;
-			MoveSpeed += Item->MoveSpeed;
+			BattleSpeed += Item->GetBattleSpeed(Upgrades);
+			MoveSpeed += Item->GetMoveSpeed(Upgrades);
 
 			// Add resistances multiplicatively
 			Resistances[Item->ResistanceTypeID] *= 1.0f - Item->Resistance;
@@ -1298,7 +1298,7 @@ void _Object::CalculateStats() {
 			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
 
 				// Get passive stat changes
-				Skill->Stats(Scripting, ActionResult);
+				Skill->GetStats(Scripting, ActionResult);
 				CalculateStatBonuses(ActionResult.Source);
 			}
 		}
@@ -1339,7 +1339,7 @@ void _Object::CalculateStats() {
 			Iterator = Resistances.erase(Iterator);
 	}
 
-	BattleSpeed = BaseBattleSpeed * BattleSpeed + BaseBattleSpeed;
+	BattleSpeed = BaseBattleSpeed * BattleSpeed / 100.0 + BaseBattleSpeed;
 	if(BattleSpeed < BATTLE_MIN_SPEED)
 		BattleSpeed = BATTLE_MIN_SPEED;
 
@@ -1368,11 +1368,11 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
-		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Float;
+		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
 	if(StatChange.HasStat(StatType::HITCHANCE))
-		HitChance += StatChange.Values[StatType::HITCHANCE].Float;
+		HitChance += StatChange.Values[StatType::HITCHANCE].Integer;
 	if(StatChange.HasStat(StatType::EVASION))
-		Evasion += StatChange.Values[StatType::EVASION].Float;
+		Evasion += StatChange.Values[StatType::EVASION].Integer;
 
 	if(StatChange.HasStat(StatType::RESISTTYPE))
 		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] *= 1.0f - StatChange.Values[StatType::RESIST].Float;
@@ -1387,7 +1387,7 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 		DamageBlock += StatChange.Values[StatType::DAMAGEBLOCK].Integer;
 
 	if(StatChange.HasStat(StatType::MOVESPEED))
-		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Float;
+		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
 
 	if(StatChange.HasStat(StatType::INVISIBLE))
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;

@@ -201,13 +201,13 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
-	lua_pushnumber(LuaState, Object->HitChance);
+	lua_pushinteger(LuaState, Object->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 
-	lua_pushnumber(LuaState, Object->DamageBlock);
+	lua_pushinteger(LuaState, Object->DamageBlock);
 	lua_setfield(LuaState, -2, "DamageBlock");
 
-	lua_pushnumber(LuaState, Object->Evasion);
+	lua_pushinteger(LuaState, Object->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
 
 	lua_pushinteger(LuaState, Object->CharacterID);

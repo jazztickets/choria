@@ -438,27 +438,27 @@ end
 -- Evasion --
 
 Skill_Evasion = {}
-Skill_Evasion.ChancePerLevel = 0.01
-Skill_Evasion.BaseChance = 0.09
-Skill_Evasion.BattleSpeed = 0.05
+Skill_Evasion.ChancePerLevel = 1
+Skill_Evasion.BaseChance = 9
+Skill_Evasion.BattleSpeed = 5
 
 function Skill_Evasion.GetChance(self, Level)
 
-	return math.min(self.BaseChance + self.ChancePerLevel * Level, 1)
+	return math.min(math.floor(self.BaseChance + self.ChancePerLevel * Level), 100)
 end
 
 function Skill_Evasion.GetBattleSpeed(self, Level)
 
-	return self.BattleSpeed * math.floor(Level / 5)
+	return math.floor(self.BattleSpeed * math.floor(Level / 5))
 end
 
 function Skill_Evasion.GetInfo(self, Level)
 	BonusText = ""
 	if self:GetBattleSpeed(Level) > 0 then
-		BonusText = "\n[c white]Increase battle speed by [c green]" .. math.floor(self:GetBattleSpeed(Level) * 100) .. "%"
+		BonusText = "\n[c white]Increase battle speed by [c green]" .. self:GetBattleSpeed(Level) .. "%"
 	end
 
-	return "Increase evasion by [c green]" .. math.floor(self:GetChance(Level) * 100) .. "%" .. BonusText
+	return "Increase evasion by [c green]" .. self:GetChance(Level) .. "%" .. BonusText
 end
 
 function Skill_Evasion.Stats(self, Level, Object, Change)

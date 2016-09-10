@@ -1398,28 +1398,28 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Move speed
-	Buffer << Player->MoveSpeed * 100 << "%";
+	Buffer << Player->MoveSpeed << "%";
 	Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Battle speed
-	Buffer << Player->BattleSpeed * 100 << "%";
+	Buffer << Player->BattleSpeed << "%";
 	Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Hit chance
-	Buffer << Player->HitChance * 100 << "%";
+	Buffer << Player->HitChance << "%";
 	Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Evasion
-	Buffer << Player->Evasion * 100 << "%";
+	Buffer << Player->Evasion << "%";
 	Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
