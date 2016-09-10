@@ -192,7 +192,7 @@ Skill_ShieldBash.Duration = 3
 
 function Skill_ShieldBash.GetInfo(self, Level)
 
-	return "Bash with your enemy with a shield\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Bash your enemy with a shield\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to [c yellow]stun [c white]for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
