@@ -383,6 +383,7 @@ void _Stats::LoadScripts(){
 		Script.ID = Database->GetInt<uint32_t>("id");
 		Script.Name = Database->GetString("name");
 		Script.Level = Database->GetInt<int>("level");
+		Script.Cooldown = Database->GetReal("cooldown");
 
 		Scripts[Script.ID] = Script;
 	}
