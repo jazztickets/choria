@@ -167,9 +167,11 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(DamageBlock != 0) {
+
+	int DrawDamageBlock = GetDamageBlock(Upgrades);
+	if(DrawDamageBlock != 0) {
 		std::stringstream Buffer;
-		Buffer << (DamageBlock < 0 ? "" : "+") << DamageBlock;
+		Buffer << (DrawDamageBlock < 0 ? "" : "+") << DrawDamageBlock;
 		Assets.Fonts["hud_medium"]->DrawText("Damage Block", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -536,4 +538,12 @@ int _Item::GetArmor(int Upgrades) const {
 		return Armor;
 
 	return Armor + Armor * Upgrades / MaxLevel;
+}
+
+// Get damage block
+int _Item::GetDamageBlock(int Upgrades) const {
+	if(MaxLevel <= 0)
+		return DamageBlock;
+
+	return DamageBlock + DamageBlock * Upgrades / MaxLevel;
 }

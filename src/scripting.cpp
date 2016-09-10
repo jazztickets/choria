@@ -233,7 +233,7 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	lua_pushinteger(LuaState, Item->DamageType);
 	lua_setfield(LuaState, -2, "DamageType");
 
-	lua_pushinteger(LuaState, Item->DamageBlock);
+	lua_pushinteger(LuaState, Item->GetDamageBlock(Upgrades));
 	lua_setfield(LuaState, -2, "DamageBlock");
 
 	lua_pushinteger(LuaState, Upgrades);

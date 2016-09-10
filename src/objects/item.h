@@ -71,6 +71,7 @@ class _Item {
 		int GetMinDamage(int Upgrades) const;
 		int GetMaxDamage(int Upgrades) const;
 		int GetArmor(int Upgrades) const;
+		int GetDamageBlock(int Upgrades) const;
 
 		uint32_t ID;
 		std::string Name;
