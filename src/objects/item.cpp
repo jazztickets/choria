@@ -197,7 +197,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 	if(ResistanceTypeID) {
 		std::stringstream Buffer;
-		Buffer << (Resistance < 0 ? "" : "+") << std::setprecision(2) << Resistance * 100 << "%";
+		Buffer << (Resistance < 0 ? "" : "+") << Resistance << "%";
 		Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes[ResistanceTypeID] + " Resist", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;

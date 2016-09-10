@@ -1046,8 +1046,8 @@ void _Object::ApplyDeathPenalty() {
 
 	Deaths++;
 	UpdateGold(-GoldLoss);
-	Health = 0;
-	Mana = 0;
+	Health = MaxHealth / 2;
+	Mana = MaxMana / 2;
 }
 
 // Update counts on action bar
@@ -1239,8 +1239,6 @@ void _Object::CalculateStats() {
 	DamageBlock = BaseDamageBlock;
 	MoveSpeed = BaseMoveSpeed;
 	Resistances.clear();
-	for(auto DamageType : Stats->DamageTypes)
-		Resistances[DamageType.first] = 1.0f;
 
 	Invisible = 0;
 
@@ -1276,7 +1274,7 @@ void _Object::CalculateStats() {
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
 
 			// Add resistances multiplicatively
-			Resistances[Item->ResistanceTypeID] *= 1.0f - Item->Resistance;
+			Resistances[Item->ResistanceTypeID] += Item->Resistance;
 		}
 	}
 
@@ -1322,20 +1320,10 @@ void _Object::CalculateStats() {
 	DamageBlock = std::max(DamageBlock, 0);
 
 	// Get physical resistance from armor
-	float ArmorResist = (float)Armor / (30.0f + std::abs(Armor));
+	float ArmorResist = Armor / (30.0f + std::abs(Armor));
 
 	// Physical resist comes solely from armor
-	Resistances[2] = 1.0f - ArmorResist;
-
-	// Get final resistances and truncate decimal points
-	for(auto Iterator = Resistances.begin(); Iterator != Resistances.end(); ) {
-		if(Iterator->second != 1.0f) {
-			Resistances[Iterator->first] = ((int)((1.0f - Iterator->second) * 100.0f)) / 100.0f;
-			++Iterator;
-		}
-		else
-			Iterator = Resistances.erase(Iterator);
-	}
+	Resistances[2] = (int)(ArmorResist * 100);
 
 	BattleSpeed = (int)(BaseBattleSpeed * BattleSpeed / 100.0 + BaseBattleSpeed);
 	if(BattleSpeed < BATTLE_MIN_SPEED)
@@ -1372,7 +1360,7 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 		Evasion += StatChange.Values[StatType::EVASION].Integer;
 
 	if(StatChange.HasStat(StatType::RESISTTYPE))
-		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] *= 1.0f - StatChange.Values[StatType::RESIST].Float;
+		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Integer;
 
 	if(StatChange.HasStat(StatType::MINDAMAGE))
 		MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;

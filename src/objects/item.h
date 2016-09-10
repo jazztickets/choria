@@ -104,7 +104,7 @@ class _Item {
 		int BattleSpeed;
 		int MoveSpeed;
 		uint32_t ResistanceTypeID;
-		float Resistance;
+		int Resistance;
 		bool Tradable;
 		bool TargetAlive;
 		TargetType TargetID;

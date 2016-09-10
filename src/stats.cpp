@@ -235,7 +235,7 @@ void _Stats::LoadItems() {
 		Item->BattleSpeed = Database->GetInt<int>("battlespeed");
 		Item->MoveSpeed = Database->GetInt<int>("movespeed");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
-		Item->Resistance = (float)Database->GetReal("res");
+		Item->Resistance = Database->GetInt<int>("res");
 		Item->Tradable = Database->GetInt<int>("tradable");
 		Item->TargetAlive = Database->GetInt<int>("target_alive");
 		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");

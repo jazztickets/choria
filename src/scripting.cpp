@@ -538,7 +538,7 @@ int _Scripting::ObjectGetResistance(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
 
-	lua_pushnumber(LuaState, Object->Resistances[DamageTypeID]);
+	lua_pushinteger(LuaState, Object->Resistances[DamageTypeID]);
 
 	return 1;
 }

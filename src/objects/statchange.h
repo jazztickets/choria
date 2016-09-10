@@ -132,7 +132,7 @@ const _StatStorage StatValueTypes[] = {
 	{ StatType::HITCHANCE,     StatValueType::INTEGER },
 	{ StatType::EVASION,       StatValueType::INTEGER },
 	{ StatType::RESISTTYPE,    StatValueType::INTEGER },
-	{ StatType::RESIST,        StatValueType::FLOAT   },
+	{ StatType::RESIST,        StatValueType::INTEGER },
 	{ StatType::EXPERIENCE,    StatValueType::INTEGER },
 	{ StatType::GOLD,          StatValueType::INTEGER },
 	{ StatType::INVISIBLE,     StatValueType::BOOLEAN },

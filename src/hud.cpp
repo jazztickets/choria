@@ -1434,7 +1434,7 @@ void _HUD::DrawCharacterStats() {
 		if(Resistance.first == 0)
 			continue;
 
-		Buffer << Resistance.second * 100 << "%";
+		Buffer << Resistance.second << "%";
 		Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes[Resistance.first] + " Resist", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		Buffer.str("");
