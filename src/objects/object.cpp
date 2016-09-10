@@ -1273,8 +1273,8 @@ void _Object::CalculateStats() {
 			BattleSpeed += Item->GetBattleSpeed(Upgrades);
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
 
-			// Add resistances multiplicatively
-			Resistances[Item->ResistanceTypeID] += Item->Resistance;
+			// Add resistances
+			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
 		}
 	}
 

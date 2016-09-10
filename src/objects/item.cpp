@@ -86,7 +86,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	TooltipElement->SetVisible(false);
 
 	// Set draw position to center of window
-	glm::vec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, TooltipType->Bounds.End.y);
+	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
 	DrawPosition.y += 40;
 
 	// Draw target text
@@ -114,7 +114,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawLevel = std::max(DrawLevel, 1);
 
 		// Show vendor skills at level 1
-		if(Tooltip.Window == _HUD::WINDOW_INVENTORY|| Tooltip.Window == _HUD::WINDOW_VENDOR)
+		if(Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR)
 			DrawLevel = 1;
 
 		// Determine whether to show level
@@ -196,8 +196,9 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		StatDrawn = true;
 	}
 	if(ResistanceTypeID) {
+		int DrawResistance = GetResistance(Upgrades);
 		std::stringstream Buffer;
-		Buffer << (Resistance < 0 ? "" : "+") << Resistance << "%";
+		Buffer << (DrawResistance < 0 ? "" : "+") << DrawResistance << "%";
 		Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes[ResistanceTypeID] + " Resist", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -572,6 +573,11 @@ int _Item::GetBattleSpeed(int Upgrades) const {
 // Get move speed
 int _Item::GetMoveSpeed(int Upgrades) const {
 	return GetUpgradedValue<int>(StatType::MOVESPEED, Upgrades, MoveSpeed);
+}
+
+// Get resistance
+int _Item::GetResistance(int Upgrades) const {
+	return GetUpgradedValue<int>(StatType::RESIST, Upgrades, Resistance);
 }
 
 // Return value of a stat after upgrades

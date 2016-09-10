@@ -79,6 +79,7 @@ class _Item {
 		int GetManaRegen(int Upgrades) const;
 		int GetBattleSpeed(int Upgrades) const;
 		int GetMoveSpeed(int Upgrades) const;
+		int GetResistance(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 
 		_Stats *Stats;
