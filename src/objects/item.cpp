@@ -417,6 +417,8 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 
 // Get upgrade price
 int _Item::GetUpgradePrice(int Level) const {
+	if(MaxLevel <= 0)
+		return 0;
 
 	return Cost / MaxLevel + Level;
 }
