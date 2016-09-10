@@ -11,7 +11,7 @@ end
 
 function Buff_Bleeding.Update(self, Level, Source, Change)
 	Damage = self.Damage
-	Damage = Damage * (1.0 - Source.GetResistance(self.DamageType) / 100.0)
+	Damage = Damage * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(Damage, 0)
 
 	Change.Health = -Damage * Level
@@ -202,7 +202,7 @@ end
 
 function Buff_Poisoned.Update(self, Level, Source, Change)
 	Damage = self.Damage
-	Damage = Damage * (1.0 - Source.GetResistance(self.DamageType) / 100.0)
+	Damage = Damage * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(Damage, 0)
 
 	Change.Health = -Damage * Level
@@ -229,7 +229,7 @@ end
 
 function Buff_Burning.Update(self, Level, Source, Change)
 	Damage = self.Damage
-	Damage = Damage * (1.0 - Source.GetResistance(self.DamageType) / 100.0)
+	Damage = Damage * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(Damage, 0)
 
 	Change.Health = -Damage * Level

@@ -77,7 +77,7 @@ Base_Spell = {
 
 	Use = function(self, Level, Source, Target, Result)
 		Damage = self:GetDamage(Level)
-		Damage = math.floor(Damage * (1.0 - Target.GetResistance(self.DamageType) / 100.0))
+		Damage = math.floor(Damage * Target.GetDamageReduction(self.DamageType))
 		Damage = math.max(Damage, 0)
 
 		Result.Target.Health = -Damage
@@ -133,7 +133,7 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		Change.Damage = math.max(Change.Damage - Target.DamageBlock, 0)
 
 		-- Apply resistance
-		Change.Damage = Change.Damage * (1.0 - Target.GetResistance(Action:GetDamageType(Source)) / 100.0)
+		Change.Damage = Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source))
 
 		-- Update health
 		Change.Damage = math.floor(Change.Damage)

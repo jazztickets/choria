@@ -174,8 +174,8 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GenerateDamage");
 
 	lua_pushlightuserdata(LuaState, Object);
-	lua_pushcclosure(LuaState, &ObjectGetResistance, 1);
-	lua_setfield(LuaState, -2, "GetResistance");
+	lua_pushcclosure(LuaState, &ObjectGetDamageReduction, 1);
+	lua_setfield(LuaState, -2, "GetDamageReduction");
 
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
@@ -532,13 +532,13 @@ int _Scripting::ObjectGenerateDamage(lua_State *LuaState) {
 	return 1;
 }
 
-// Get resistance for a certain damage type
-int _Scripting::ObjectGetResistance(lua_State *LuaState) {
+// Get damage reduction amount from a type of resistance
+int _Scripting::ObjectGetDamageReduction(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
 
-	lua_pushinteger(LuaState, Object->Resistances[DamageTypeID]);
+	lua_pushnumber(LuaState, 1.0 - (double)Object->Resistances[DamageTypeID] / 100.0);
 
 	return 1;
 }
