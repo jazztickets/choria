@@ -189,16 +189,16 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
-	lua_pushnumber(LuaState, Object->Health);
+	lua_pushinteger(LuaState, Object->Health);
 	lua_setfield(LuaState, -2, "Health");
 
-	lua_pushnumber(LuaState, Object->MaxHealth);
+	lua_pushinteger(LuaState, Object->MaxHealth);
 	lua_setfield(LuaState, -2, "MaxHealth");
 
-	lua_pushnumber(LuaState, Object->Mana);
+	lua_pushinteger(LuaState, Object->Mana);
 	lua_setfield(LuaState, -2, "Mana");
 
-	lua_pushnumber(LuaState, Object->MaxMana);
+	lua_pushinteger(LuaState, Object->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
 	lua_pushinteger(LuaState, Object->HitChance);

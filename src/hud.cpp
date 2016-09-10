@@ -571,7 +571,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ExperienceElement->Render();
 
 		// Draw health bar
-		Buffer << Round(Player->Health) << " / " << Round(Player->MaxHealth);
+		Buffer << Player->Health << " / " << Player->MaxHealth;
 		Assets.Labels["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
@@ -579,7 +579,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		HealthElement->Render();
 
 		// Draw mana bar
-		Buffer << Round(Player->Mana) << " / " << Round(Player->MaxMana);
+		Buffer << Player->Mana << " / " << Player->MaxMana;
 		Assets.Labels["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());
@@ -1380,8 +1380,8 @@ void _HUD::DrawCharacterStats() {
 	DrawPosition.y += SpacingY;
 
 	// Health Regen
-	if(Player->HealthRegen != 0.0f) {
-		Buffer << Round(Player->HealthRegen);
+	if(Player->HealthRegen != 0) {
+		Buffer << Player->HealthRegen;
 		Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		Buffer.str("");
@@ -1389,8 +1389,8 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Mana Regen
-	if(Player->ManaRegen != 0.0f) {
-		Buffer << Round(Player->ManaRegen);
+	if(Player->ManaRegen != 0) {
+		Buffer << Player->ManaRegen;
 		Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		Buffer.str("");
@@ -2012,7 +2012,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		}
 		else
 			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Float;
+		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Integer;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(COLOR_RED, COLOR_GREEN);
 		StatChanges.push_back(StatChangeUI);
@@ -2027,7 +2027,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		}
 		else
 			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
-		StatChangeUI.Change = StatChange.Values[StatType::MANA].Float;
+		StatChangeUI.Change = StatChange.Values[StatType::MANA].Integer;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
 		StatChangeUI.SetText(COLOR_BLUE, COLOR_LIGHTBLUE);
 		StatChanges.push_back(StatChangeUI);

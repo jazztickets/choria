@@ -73,8 +73,10 @@ class _Item {
 		int GetMaxDamage(int Upgrades) const;
 		int GetArmor(int Upgrades) const;
 		int GetDamageBlock(int Upgrades) const;
-		float GetMaxHealth(int Upgrades) const;
-		float GetMaxMana(int Upgrades) const;
+		int GetMaxHealth(int Upgrades) const;
+		int GetMaxMana(int Upgrades) const;
+		int GetHealthRegen(int Upgrades) const;
+		int GetManaRegen(int Upgrades) const;
 		int GetBattleSpeed(int Upgrades) const;
 		int GetMoveSpeed(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
@@ -97,8 +99,8 @@ class _Item {
 		int DamageBlock;
 		int MaxHealth;
 		int MaxMana;
-		float HealthRegen;
-		float ManaRegen;
+		int HealthRegen;
+		int ManaRegen;
 		int BattleSpeed;
 		int MoveSpeed;
 		uint32_t ResistanceTypeID;

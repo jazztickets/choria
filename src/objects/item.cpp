@@ -177,7 +177,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	float DrawMaxHealth = GetMaxHealth(Upgrades);
+	int DrawMaxHealth = GetMaxHealth(Upgrades);
 	if(DrawMaxHealth > 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxHealth < 0 ? "" : "+") << DrawMaxHealth;
@@ -186,7 +186,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	float DrawMaxMana = GetMaxMana(Upgrades);
+	int DrawMaxMana = GetMaxMana(Upgrades);
 	if(DrawMaxMana > 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxMana < 0 ? "" : "+") << DrawMaxMana;
@@ -221,17 +221,19 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(HealthRegen != 0.0f) {
+	int DrawHealthRegen = GetHealthRegen(Upgrades);
+	if(DrawHealthRegen != 0) {
 		std::stringstream Buffer;
-		Buffer << (HealthRegen < 0 ? "" : "+") << Round(HealthRegen);
+		Buffer << (DrawHealthRegen < 0 ? "" : "+") << DrawHealthRegen;
 		Assets.Fonts["hud_medium"]->DrawText("Health Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
-	if(ManaRegen != 0.0f) {
+	int DrawManaRegen = GetManaRegen(Upgrades);
+	if(DrawManaRegen != 0) {
 		std::stringstream Buffer;
-		Buffer << (ManaRegen < 0 ? "" : "+") << Round(ManaRegen);
+		Buffer << (DrawManaRegen < 0 ? "" : "+") << DrawManaRegen;
 		Assets.Fonts["hud_medium"]->DrawText("Mana Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -541,13 +543,23 @@ int _Item::GetDamageBlock(int Upgrades) const {
 }
 
 // Get max health
-float _Item::GetMaxHealth(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXHEALTH, Upgrades, MaxHealth);
+int _Item::GetMaxHealth(int Upgrades) const {
+	return GetUpgradedValue<int>(StatType::MAXHEALTH, Upgrades, MaxHealth);
 }
 
 // Get max mana
-float _Item::GetMaxMana(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::MAXMANA, Upgrades, MaxMana);
+int _Item::GetMaxMana(int Upgrades) const {
+	return GetUpgradedValue<int>(StatType::MAXMANA, Upgrades, MaxMana);
+}
+
+// Get health regen
+int _Item::GetHealthRegen(int Upgrades) const {
+	return GetUpgradedValue<int>(StatType::HEALTHREGEN, Upgrades, HealthRegen);
+}
+
+// Get mana regen
+int _Item::GetManaRegen(int Upgrades) const {
+	return GetUpgradedValue<int>(StatType::MANAREGEN, Upgrades, ManaRegen);
 }
 
 // Get battle speed

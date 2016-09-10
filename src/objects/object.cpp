@@ -60,10 +60,10 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 
-	BaseMaxHealth(0.0f),
-	BaseMaxMana(0.0f),
-	BaseHealthRegen(0.0f),
-	BaseManaRegen(0.0f),
+	BaseMaxHealth(0),
+	BaseMaxMana(0),
+	BaseHealthRegen(0),
+	BaseManaRegen(0),
 	BaseHealPower(1.0f),
 	BaseMinDamage(0),
 	BaseMaxDamage(0),
@@ -79,10 +79,10 @@ _Object::_Object() :
 
 	Name(""),
 	Level(0),
-	Health(1.0f),
-	MaxHealth(1.0f),
-	Mana(0.0f),
-	MaxMana(0.0f),
+	Health(1),
+	MaxHealth(1),
+	Mana(0),
+	MaxMana(0),
 	HealPower(0.0f),
 	MinDamage(0),
 	MaxDamage(0),
@@ -287,10 +287,10 @@ void _Object::Update(double FrameTime) {
 			StatChange.Object = this;
 
 			// Update regen
-			if(Health < MaxHealth && HealthRegen != 0.0f)
-				StatChange.Values[StatType::HEALTH].Float = HealthRegen;
-			if(Mana < MaxMana && ManaRegen != 0.0f)
-				StatChange.Values[StatType::MANA].Float = ManaRegen;
+			if(Health < MaxHealth && HealthRegen != 0)
+				StatChange.Values[StatType::HEALTH].Integer = HealthRegen;
+			if(Mana < MaxMana && ManaRegen != 0)
+				StatChange.Values[StatType::MANA].Integer = ManaRegen;
 
 			// Update object
 			if(StatChange.GetChangedFlag() != 0) {
@@ -608,18 +608,18 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(PortraitID);
-	Data.Write<float>(Health);
-	Data.Write<float>(MaxHealth);
-	Data.Write<float>(Mana);
-	Data.Write<float>(MaxMana);
-	Data.Write<int32_t>(Experience);
-	Data.Write<int32_t>(Gold);
+	Data.Write<int>(Health);
+	Data.Write<int>(MaxHealth);
+	Data.Write<int>(Mana);
+	Data.Write<int>(MaxMana);
+	Data.Write<int>(Experience);
+	Data.Write<int>(Gold);
 	Data.Write<double>(PlayTime);
-	Data.Write<int32_t>(Deaths);
-	Data.Write<int32_t>(MonsterKills);
-	Data.Write<int32_t>(PlayerKills);
-	Data.Write<int32_t>(Bounty);
-	Data.Write<int32_t>(Invisible);
+	Data.Write<int>(Deaths);
+	Data.Write<int>(MonsterKills);
+	Data.Write<int>(PlayerKills);
+	Data.Write<int>(Bounty);
+	Data.Write<int>(Invisible);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -657,10 +657,10 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<uint32_t>(DatabaseID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<double>(TurnTimer);
-	Data.Write<float>(Health);
-	Data.Write<float>(MaxHealth);
-	Data.Write<float>(Mana);
-	Data.Write<float>(MaxMana);
+	Data.Write<int>(Health);
+	Data.Write<int>(MaxHealth);
+	Data.Write<int>(Mana);
+	Data.Write<int>(MaxMana);
 	Data.Write<uint8_t>(BattleSide);
 
 	Data.Write<uint8_t>((uint8_t)StatusEffects.size());
@@ -684,18 +684,18 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	WorldTexture = Assets.Textures["players/basic.png"];
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
-	Health = Data.Read<float>();
-	BaseMaxHealth = MaxHealth = Data.Read<float>();
-	Mana = Data.Read<float>();
-	BaseMaxMana = MaxMana = Data.Read<float>();
-	Experience = Data.Read<int32_t>();
-	Gold = Data.Read<int32_t>();
+	Health = Data.Read<int>();
+	BaseMaxHealth = MaxHealth = Data.Read<int>();
+	Mana = Data.Read<int>();
+	BaseMaxMana = MaxMana = Data.Read<int>();
+	Experience = Data.Read<int>();
+	Gold = Data.Read<int>();
 	PlayTime = Data.Read<double>();
-	Deaths = Data.Read<int32_t>();
-	MonsterKills = Data.Read<int32_t>();
-	PlayerKills = Data.Read<int32_t>();
-	Bounty = Data.Read<int32_t>();
-	Invisible = Data.Read<int32_t>();
+	Deaths = Data.Read<int>();
+	MonsterKills = Data.Read<int>();
+	PlayerKills = Data.Read<int>();
+	Bounty = Data.Read<int>();
+	Invisible = Data.Read<int>();
 
 	// Read inventory
 	Inventory->Unserialize(Data, Stats);
@@ -744,10 +744,10 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	// Get fighter type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
 	TurnTimer = Data.Read<double>();
-	Health = Data.Read<float>();
-	BaseMaxHealth = MaxHealth = Data.Read<float>();
-	Mana = Data.Read<float>();
-	BaseMaxMana = MaxMana = Data.Read<float>();
+	Health = Data.Read<int>();
+	BaseMaxHealth = MaxHealth = Data.Read<int>();
+	Mana = Data.Read<int>();
+	BaseMaxMana = MaxMana = Data.Read<int>();
 	BattleSide = Data.Read<uint8_t>();
 
 	DeleteStatusEffects();
@@ -795,7 +795,7 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 	// Update health
 	bool WasAlive = IsAlive();
 	if(StatChange.HasStat(StatType::HEALTH))
-		UpdateHealth(StatChange.Values[StatType::HEALTH].Float);
+		UpdateHealth(StatChange.Values[StatType::HEALTH].Integer);
 
 	// Just died
 	if(WasAlive && !IsAlive()) {
@@ -813,7 +813,7 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 
 	// Mana change
 	if(StatChange.HasStat(StatType::MANA))
-		UpdateMana(StatChange.Values[StatType::MANA].Float);
+		UpdateMana(StatChange.Values[StatType::MANA].Integer);
 
 	// Stamina change
 	if(StatChange.HasStat(StatType::STAMINA)) {
@@ -852,7 +852,7 @@ _StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
 }
 
 // Update health
-void _Object::UpdateHealth(float &Value) {
+void _Object::UpdateHealth(int &Value) {
 	if(Server && Value > 0)
 		Value *= HealPower;
 
@@ -865,7 +865,7 @@ void _Object::UpdateHealth(float &Value) {
 }
 
 // Update mana
-void _Object::UpdateMana(float Value) {
+void _Object::UpdateMana(int Value) {
 	Mana += Value;
 
 	if(Mana < 0)
@@ -1220,10 +1220,6 @@ bool _Object::CanBattle() const {
 // Calculates all of the player stats
 void _Object::CalculateStats() {
 
-	// Save stat percentages
-	float HealthPercent = GetHealthPercent();
-	float ManaPercent = GetManaPercent();
-
 	// Get base stats
 	CalculateLevelStats();
 
@@ -1272,8 +1268,8 @@ void _Object::CalculateStats() {
 			// Stat changes
 			MaxHealth += Item->GetMaxHealth(Upgrades);
 			MaxMana += Item->GetMaxMana(Upgrades);
-			HealthRegen += Item->HealthRegen;
-			ManaRegen += Item->ManaRegen;
+			HealthRegen += Item->GetHealthRegen(Upgrades);
+			ManaRegen += Item->GetManaRegen(Upgrades);
 			BattleSpeed += Item->GetBattleSpeed(Upgrades);
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
 
@@ -1339,16 +1335,15 @@ void _Object::CalculateStats() {
 			Iterator = Resistances.erase(Iterator);
 	}
 
-	BattleSpeed = BaseBattleSpeed * BattleSpeed / 100.0 + BaseBattleSpeed;
+	BattleSpeed = (int)(BaseBattleSpeed * BattleSpeed / 100.0 + BaseBattleSpeed);
 	if(BattleSpeed < BATTLE_MIN_SPEED)
 		BattleSpeed = BATTLE_MIN_SPEED;
 
 	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
 		MoveSpeed = PLAYER_MIN_MOVESPEED;
 
-	// Set health/mana
-	Health = HealthPercent * MaxHealth;
-	Mana = ManaPercent * MaxMana;
+	Health = std::min(Health, MaxHealth);
+	Mana = std::min(Mana, MaxMana);
 
 	RefreshActionBarCount();
 }
@@ -1356,13 +1351,13 @@ void _Object::CalculateStats() {
 // Update an object's stats from a statchange
 void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::MAXHEALTH))
-		MaxHealth += StatChange.Values[StatType::MAXHEALTH].Float;
+		MaxHealth += StatChange.Values[StatType::MAXHEALTH].Integer;
 	if(StatChange.HasStat(StatType::MAXMANA))
-		MaxMana += StatChange.Values[StatType::MAXMANA].Float;
+		MaxMana += StatChange.Values[StatType::MAXMANA].Integer;
 	if(StatChange.HasStat(StatType::HEALTHREGEN))
-		HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Float;
+		HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Integer;
 	if(StatChange.HasStat(StatType::MANAREGEN))
-		ManaRegen += StatChange.Values[StatType::MANAREGEN].Float;
+		ManaRegen += StatChange.Values[StatType::MANAREGEN].Integer;
 
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;

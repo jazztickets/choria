@@ -1114,7 +1114,7 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 
 			// No damage dealt
 			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
-			   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Float == 0.0f) || ActionResult.Target.HasStat(StatType::MISS))) {
+			   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0.0f) || ActionResult.Target.HasStat(StatType::MISS))) {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 			}
@@ -1167,10 +1167,10 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 
 	int OldLevel = Player->Level;
 
-	Player->Health = Data.Read<float>();
-	Player->Mana = Data.Read<float>();
-	Player->MaxHealth = Data.Read<float>();
-	Player->MaxMana = Data.Read<float>();
+	Player->Health = Data.Read<int>();
+	Player->Mana = Data.Read<int>();
+	Player->MaxHealth = Data.Read<int>();
+	Player->MaxMana = Data.Read<int>();
 	Player->Experience = Data.Read<int32_t>();
 	Player->Gold = Data.Read<int32_t>();
 	double Clock = Data.Read<double>();

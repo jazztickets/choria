@@ -536,8 +536,8 @@ void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
 		if(Player->Battle)
 			return;
 
-		Player->Health = 0.5f * Player->MaxHealth;
-		Player->Mana = 0.5f * Player->MaxMana;
+		Player->Health = Player->MaxHealth / 2;
+		Player->Mana = Player->MaxMana / 2;
 		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
 	}
 }
@@ -1379,10 +1379,10 @@ void _Server::SendHUD(_Peer *Peer) {
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
-	Packet.Write<float>(Player->Health);
-	Packet.Write<float>(Player->Mana);
-	Packet.Write<float>(Player->MaxHealth);
-	Packet.Write<float>(Player->MaxMana);
+	Packet.Write<int>(Player->Health);
+	Packet.Write<int>(Player->Mana);
+	Packet.Write<int>(Player->MaxHealth);
+	Packet.Write<int>(Player->MaxMana);
 	Packet.Write<int32_t>(Player->Experience);
 	Packet.Write<int32_t>(Player->Gold);
 	Packet.Write<double>(Clock);

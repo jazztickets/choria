@@ -230,10 +230,10 @@ void _Stats::LoadItems() {
 		Item->DamageBlock = Database->GetInt<int>("block");
 		Item->MaxHealth = Database->GetInt<int>("maxhealth");
 		Item->MaxMana = Database->GetInt<int>("maxmana");
-		Item->HealthRegen = (float)Database->GetReal("healthregen");
-		Item->ManaRegen = (float)Database->GetReal("manaregen");
-		Item->BattleSpeed = Database->GetReal("battlespeed");
-		Item->MoveSpeed = (float)Database->GetReal("movespeed");
+		Item->HealthRegen = Database->GetInt<int>("healthregen");
+		Item->ManaRegen = Database->GetInt<int>("manaregen");
+		Item->BattleSpeed = Database->GetInt<int>("battlespeed");
+		Item->MoveSpeed = Database->GetInt<int>("movespeed");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
 		Item->Resistance = (float)Database->GetReal("res");
 		Item->Tradable = Database->GetInt<int>("tradable");
@@ -410,7 +410,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		Monster->BaseMaxDamage = Database->GetInt<int>("maxdamage");
 		Monster->BaseArmor = Database->GetInt<int>("armor");
 		Monster->BaseDamageBlock = Database->GetInt<int>("block");
-		Monster->BaseBattleSpeed = Database->GetReal("battlespeed");
+		Monster->BaseBattleSpeed = Database->GetInt<int>("battlespeed");
 		Monster->AI = Database->GetString("ai_name");
 		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 
