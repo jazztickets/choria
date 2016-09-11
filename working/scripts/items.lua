@@ -211,6 +211,24 @@ function Item_Fang.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+-- Spectral Dust --
+
+Item_SpectralDust = { Duration = 30 }
+
+function Item_SpectralDust.GetInfo(self, Level)
+
+	return "Increase evasion by [c green]" .. Level .. "% [c white] for [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Item_SpectralDust.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Evasion"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
+
 -- Crab Legs --
 
 Item_CrabLegs = { Duration = 30 }

@@ -35,7 +35,7 @@ build() {
 	rm working/choria.exe
 	rm working/*.dll
 
-	scp $archive workcomp:downloads/
+	scp $archive workcomp:web/files/
 }
 
 build 32

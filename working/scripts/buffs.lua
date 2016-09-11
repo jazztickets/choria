@@ -170,6 +170,21 @@ function Buff_Hardened.Stats(self, Level, Source, Change)
 	return Change
 end
 
+-- Evasion --
+
+Buff_Evasion = Base_Buff:New()
+
+function Buff_Evasion.GetInfo(self, Level)
+
+	return "Evasion increased by [c green]" .. self:GetChange(Level) .. "%"
+end
+
+function Buff_Evasion.Stats(self, Level, Source, Change)
+	Change.Evasion = self:GetChange(Level)
+
+	return Change
+end
+
 -- Parry --
 
 Buff_Parry = Base_Buff:New()
