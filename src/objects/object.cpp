@@ -1238,6 +1238,11 @@ void _Object::CalculateStats() {
 	MoveSpeed = BaseMoveSpeed;
 	Resistances.clear();
 
+	// Give default elemental resistances
+	Resistances[3] = 25;
+	Resistances[4] = 25;
+	Resistances[5] = 25;
+
 	Invisible = 0;
 
 	// Get item stats
@@ -1316,6 +1321,12 @@ void _Object::CalculateStats() {
 	Armor += ItemArmor;
 	DamageBlock += ItemDamageBlock;
 	DamageBlock = std::max(DamageBlock, 0);
+
+	// Cap resistances
+	for(auto &Resist : Resistances) {
+		Resist.second = std::min(Resist.second, GAME_MAX_RESISTANCE);
+		Resist.second = std::max(Resist.second, -GAME_MAX_RESISTANCE);
+	}
 
 	// Get physical resistance from armor
 	float ArmorResist = Armor / (30.0f + std::abs(Armor));
