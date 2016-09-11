@@ -38,5 +38,7 @@ build() {
 	scp $archive workcomp:web/files/
 }
 
+ssh workcomp rm web/files/choria*.zip
+
 build 32
 build 64
