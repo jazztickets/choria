@@ -629,7 +629,7 @@ void _Bot::EvaluateGoal() {
 				   Player->WaitForServer = true;
 				}*/
 			}
-			else {
+			else if(Map->NetworkID == 1) {
 				if(Player->GetHealthPercent() < 1.0f) {
 					glm::ivec2 Position;
 					if(FindEvent(_Event(_Map::EVENT_SCRIPT, 1), Position)) {
@@ -652,7 +652,7 @@ void _Bot::DetermineNextGoal() {
 	if(!Player)
 		return;
 
-	if(Player->GetHealthPercent() < 0.5f)
+	if(Player->GetHealthPercent() <= 0.5f)
 		SetGoal(GoalStateType::HEALING);
 	else
 		SetGoal(GoalStateType::FARMING);
