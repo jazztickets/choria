@@ -100,7 +100,7 @@ void _BotsState::Init() {
 		return;
 	}
 
-	Stats = new _Stats();
+	Stats = new _Stats(true);
 }
 
 // Close

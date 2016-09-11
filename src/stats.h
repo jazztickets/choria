@@ -110,7 +110,7 @@ class _Stats {
 
 	public:
 
-		_Stats();
+		_Stats(bool Headless=false);
 		~_Stats();
 
 		// General Stats
@@ -153,6 +153,7 @@ class _Stats {
 
 		// Database
 		_Database *Database;
+		bool Headless;
 
 	private:
 

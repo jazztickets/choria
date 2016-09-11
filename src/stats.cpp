@@ -27,7 +27,8 @@
 #include <iostream>
 
 // Constructor
-_Stats::_Stats() {
+_Stats::_Stats(bool Headless) :
+	Headless(Headless) {
 
 	// Load database that stores game data
 	Database = new _Database("stats/stats.db", true);
@@ -242,7 +243,7 @@ void _Stats::LoadItems() {
 		Item->Scope = (ScopeType)Database->GetInt<int>("scope_id");
 		Item->UnlockID = Database->GetInt<uint32_t>("unlock_id");
 
-		if(Item->Texture == nullptr && TexturePath != "")
+		if(!Headless && Item->Texture == nullptr && TexturePath != "")
 			throw std::runtime_error("Can't find texture " + TexturePath);
 
 		Items[Item->ID] = Item;

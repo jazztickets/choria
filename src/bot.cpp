@@ -308,6 +308,15 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::WORLD_TELEPORTSTART:
 			Player->TeleportTime = Data.Read<double>();
 		break;
+		case PacketType::ACTION_CLEAR: {
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			_Object *Object = ObjectManager->GetObject(NetworkID);
+			if(!Object)
+				return;
+
+			Object->Action.Unset();
+			Object->Targets.clear();
+		} break;
 		case PacketType::EVENT_START:
 			//HandleEventStart(Data);
 		break;
@@ -576,7 +585,7 @@ void _Bot::EvaluateGoal() {
 			DetermineNextGoal();
 		break;
 		case GoalStateType::FARMING:
-			if(Map->NetworkID != 11) {
+			/*if(Map->NetworkID != 11) {
 				if(Map->NetworkID != 10) {
 					glm::ivec2 Position;
 					if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
@@ -596,6 +605,11 @@ void _Bot::EvaluateGoal() {
 					else
 						MoveTo(Player->Position, Position);
 				}
+			}*/
+			if(Map->NetworkID != 10) {
+				glm::ivec2 Position;
+				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
+					MoveTo(Player->Position, Position);
 			}
 			else {
 				BotState = BotStateType::MOVE_RANDOM;
@@ -603,14 +617,17 @@ void _Bot::EvaluateGoal() {
 		break;
 		case GoalStateType::HEALING:
 			if(Map->NetworkID != 1) {
-				if(!Player->WaitForServer && Player->CanTeleport()) {
+				glm::ivec2 Position;
+				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 1), Position))
+					MoveTo(Player->Position, Position);
+				/*if(!Player->WaitForServer && Player->CanTeleport()) {
 				   _Buffer Packet;
 				   Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 				   Packet.Write<uint8_t>(_Object::STATUS_TELEPORT);
 				   Network->SendPacket(Packet);
 
 				   Player->WaitForServer = true;
-				}
+				}*/
 			}
 			else {
 				if(Player->GetHealthPercent() < 1.0f) {
