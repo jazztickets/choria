@@ -53,6 +53,7 @@ const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
 // Constructor
 _Menu::_Menu() {
 	State = STATE_NONE;
+	PreSelectedSlot = (size_t)-1;
 	CurrentLayout = nullptr;
 	CharactersState = CHARACTERS_NONE;
 	PreviousClickTimer = 0.0;
@@ -254,6 +255,9 @@ void _Menu::CreateCharacter() {
 	size_t SelectedSlot = GetSelectedCharacter();
 	if(SelectedSlot >= CharacterSlots.size())
 		return;
+
+	// Save selection
+	PreSelectedSlot = SelectedSlot;
 
 	// Send information
 	_Buffer Packet;
@@ -910,7 +914,10 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				// Assign button
 				Buffer << CharacterButtonPrefix << i;
 				CharacterSlots[i].Button = Assets.Buttons[Buffer.str()];
-				CharacterSlots[i].Button->Checked = false;
+				if(i == PreSelectedSlot)
+					CharacterSlots[i].Button->Checked = true;
+				else
+					CharacterSlots[i].Button->Checked = false;
 
 				// Set state
 				CharacterSlots[i].Name->Text = "Empty Slot";
@@ -933,6 +940,8 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				CharacterSlots[Slot].Used = true;
 				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);
 			}
+
+			PreSelectedSlot = (size_t)-1;
 
 			// Disable ui buttons
 			UpdateCharacterButtons();

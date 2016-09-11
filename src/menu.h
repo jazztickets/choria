@@ -97,6 +97,7 @@ class _Menu {
 		void SetTitleMessage(const std::string &Message);
 
 		StateType State;
+		size_t PreSelectedSlot;
 
 	private:
 
