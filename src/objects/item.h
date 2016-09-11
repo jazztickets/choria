@@ -68,6 +68,7 @@ class _Item {
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void PlaySound(_Scripting *Scripting) const;
 
 		int GetMinDamage(int Upgrades) const;
 		int GetMaxDamage(int Upgrades) const;

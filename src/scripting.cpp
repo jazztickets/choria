@@ -23,19 +23,32 @@
 #include <objects/battle.h>
 #include <objects/inventory.h>
 #include <stats.h>
+#include <audio.h>
+#include <assets.h>
 #include <random.h>
 #include <stdexcept>
 #include <iostream>
 
-// Controls
+// Libraries
 luaL_Reg _Scripting::RandomFunctions[] = {
 	{"GetInt", &_Scripting::RandomGetInt},
 	{nullptr, nullptr}
 };
 
-// Lua library functions
-int luaopen_Object(lua_State *LuaState) {
+luaL_Reg _Scripting::AudioFunctions[] = {
+	{"Play", &_Scripting::AudioPlay},
+	{nullptr, nullptr}
+};
+
+int luaopen_Random(lua_State *LuaState) {
 	luaL_newlib(LuaState, _Scripting::RandomFunctions);
+
+	return 1;
+}
+
+int luaopen_Audio(lua_State *LuaState) {
+	luaL_newlib(LuaState, _Scripting::AudioFunctions);
+
 	return 1;
 }
 
@@ -47,7 +60,8 @@ _Scripting::_Scripting() :
 	// Initialize lua object
 	LuaState = luaL_newstate();
 	luaL_openlibs(LuaState);
-	luaL_requiref(LuaState, "Random", luaopen_Object, 1);
+	luaL_requiref(LuaState, "Random", luaopen_Random, 1);
+	luaL_requiref(LuaState, "Audio", luaopen_Audio, 1);
 }
 
 // Destructor
@@ -450,6 +464,23 @@ int _Scripting::RandomGetInt(lua_State *LuaState) {
 	int Max = (int)lua_tointeger(LuaState, 2);
 
 	lua_pushinteger(LuaState, GetRandomInt(Min, Max));
+
+	return 1;
+}
+
+// Audio.Play(sound)
+int _Scripting::AudioPlay(lua_State *LuaState) {
+
+	// Get filename
+	std::string Filename = lua_tostring(LuaState, 1);
+
+	// Find sound
+	auto Sound = Assets.Sounds.find(Filename);
+	if(Sound == Assets.Sounds.end())
+		return 1;
+
+	// Play sound
+	Audio.Play(Sound->second);
 
 	return 1;
 }

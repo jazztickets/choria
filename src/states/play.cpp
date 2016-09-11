@@ -41,6 +41,7 @@
 #include <buffer.h>
 #include <server.h>
 #include <packet.h>
+#include <audio.h>
 #include <log.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -1114,9 +1115,16 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 
 			// No damage dealt
 			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
-			   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0.0f) || ActionResult.Target.HasStat(StatType::MISS))) {
+			   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0) || ActionResult.Target.HasStat(StatType::MISS))) {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT_SHORT;
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
+
+				if(ActionResult.Target.HasStat(StatType::MISS)) {
+					Audio.Play(Assets.Sounds["miss0.ogg"]);
+				}
+				else {
+					Audio.Play(Assets.Sounds["thud0.ogg"]);
+				}
 			}
 			else {
 				ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT;
@@ -1130,6 +1138,10 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 			HUD->AddStatChange(ActionResult.Target);
 		}
 	}
+
+	// Play audio
+	if(ActionResult.ActionUsed.Item)
+		ActionResult.ActionUsed.Item->PlaySound(Scripting);
 }
 
 // Handles a stat change

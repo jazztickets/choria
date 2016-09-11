@@ -134,6 +134,7 @@ const  std::string  TEXTURES_STATUS                 =  "status/";
 //     Assets
 const  std::string  ASSETS_FONTS_PATH               =  "fonts/";
 const  std::string  ASSETS_MAPS_PATH                =  "maps/";
+const  std::string  ASSETS_SOUND_PATH               =  "sounds/";
 const  std::string  ASSETS_PROGRAMS                 =  "tables/programs.tsv";
 const  std::string  ASSETS_COLORS                   =  "tables/colors.tsv";
 const  std::string  ASSETS_FONTS                    =  "tables/fonts.tsv";

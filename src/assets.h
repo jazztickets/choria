@@ -33,6 +33,7 @@ class _TextBox;
 class _Texture;
 class _Program;
 class _Shader;
+class _Sound;
 struct _AnimationTemplate;
 
 struct _Layer {
@@ -58,6 +59,7 @@ class _Assets {
 		std::unordered_map<std::string, const _AnimationTemplate *> AnimationTemplates;
 		std::unordered_map<std::string, glm::vec4> Colors;
 		std::unordered_map<std::string, _Style *> Styles;
+		std::unordered_map<std::string, _Sound *> Sounds;
 
 		std::unordered_map<std::string, _Element *> Elements;
 		std::unordered_map<std::string, _Label *> Labels;
@@ -69,6 +71,7 @@ class _Assets {
 
 		void LoadColors(const std::string &Path);
 		void LoadTextureDirectory(const std::string &Path, bool IsServer, bool Repeat=false, bool MipMaps=false);
+		void LoadSounds(const std::string &Path);
 		void LoadFonts(const std::string &Path);
 		void LoadLayers(const std::string &Path);
 		void LoadPrograms(const std::string &Path);

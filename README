@@ -55,6 +55,9 @@ set username on login screen
 set password on login screen
 -password [password]
 
+disable audio
+-noaudio
+
 ----- HOW TO PLAY -----
 
 Use arrow keys or ESDF to walk around.

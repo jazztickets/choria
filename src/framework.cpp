@@ -31,6 +31,7 @@
 #include <menu.h>
 #include <framelimit.h>
 #include <SDL.h>
+#include <audio.h>
 #include <string>
 
 _Framework Framework;
@@ -47,6 +48,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	// Settings
 	std::string HostAddress = Config.LastHost;
 	uint16_t NetworkPort = Config.NetworkPort;
+	bool AudioEnabled = true;
 	State = &PlayState;
 
 	// Process arguments
@@ -84,6 +86,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else if(Token == "-test") {
 			PlayState.IsTesting = true;
 		}
+		else if(Token == "-noaudio") {
+			AudioEnabled = false;
+		}
 	}
 
 	// Initialize network subsystem
@@ -112,6 +117,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		// Initialize SDL
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)
 			throw std::runtime_error("Failed to initialize SDL");
+
+		// Initialize audio
+		Audio.Init(AudioEnabled && Config.AudioEnabled);
 
 		// Get fullscreen size
 		Config.SetDefaultFullscreenSize();
@@ -147,6 +155,7 @@ void _Framework::Close() {
 	State->Close();
 
 	// Close subsystems
+	Audio.Close();
 	Assets.Close();
 	Graphics.Close();
 	Config.Close();

@@ -28,6 +28,7 @@
 #include <utils.h>
 #include <files.h>
 #include <graphics.h>
+#include <audio.h>
 #include <constants.h>
 #include <map>
 #include <stdexcept>
@@ -64,6 +65,7 @@ void _Assets::Init(bool IsServer) {
 		LoadButtons(ASSETS_UI_BUTTONS);
 		LoadTextBoxes(ASSETS_UI_TEXTBOXES);
 		LoadLabels(ASSETS_UI_LABELS);
+		LoadSounds(ASSETS_SOUND_PATH);
 
 		ResolveElementParents();
 	}
@@ -84,6 +86,9 @@ void _Assets::Close() {
 	for(const auto &Font : Fonts)
 		delete Font.second;
 
+	for(const auto &Sound : Sounds)
+		delete Sound.second;
+
 	for(const auto &Style : Styles)
 		delete Style.second;
 
@@ -94,6 +99,7 @@ void _Assets::Close() {
 	Layers.clear();
 	Textures.clear();
 	Styles.clear();
+	Sounds.clear();
 
 	Elements.clear();
 	Labels.clear();
@@ -254,6 +260,19 @@ void _Assets::LoadTextureDirectory(const std::string &Path, bool IsServer, bool 
 		std::string Identifier = Path + File;
 		if(!Assets.Textures[Identifier])
 			Assets.Textures[Identifier] = new _Texture(Identifier, IsServer, Repeat, MipMaps);
+	}
+}
+
+// Load game audio
+void _Assets::LoadSounds(const std::string &Path) {
+
+	// Get files
+	_Files Files(Path);
+
+	// Load audio
+	for(const auto &File : Files.Nodes) {
+		if(!Assets.Sounds[File])
+			Assets.Sounds[File] = Audio.Load(Path + File);
 	}
 }
 

@@ -27,7 +27,6 @@ build() {
 
 	gitver=`git rev-list --all --count`
 	mv bin/Release/choria.exe working/
-	rm -f choria*.zip
 
 	archive=choria${ver}-${gitver}.zip
 	zip -r $archive working
@@ -39,6 +38,7 @@ build() {
 }
 
 ssh workcomp rm web/files/choria*.zip
+rm -f choria*.zip
 
 build 32
 build 64

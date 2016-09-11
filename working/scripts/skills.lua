@@ -139,6 +139,10 @@ function Skill_Attack.GetInfo(self, Level)
 	return "Attack with your weapon\n[c green]" .. self:GetChance(Level) .. "% [c white]chance to deal [c green]200% [c white]extra damage"
 end
 
+function Skill_Attack.PlaySound(self, Level)
+	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 function Skill_Attack.GenerateDamage(self, Level, Source)
 	Damage = Source.GenerateDamage()
 
@@ -245,7 +249,7 @@ end
 
 function Skill_Whirlwind.ApplyCost(self, Level, Result)
 	Result.Source.Buff = Buffs["Buff_Slowed"]
-	Result.Source.BuffLevel = 3
+	Result.Source.BuffLevel = 30
 	Result.Source.BuffDuration = self:GetDuration(Level)
 
 	return Result
@@ -253,6 +257,10 @@ end
 
 function Skill_Whirlwind.GetInfo(self, Level)
 	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Level) .." [c white]seconds"
+end
+
+function Skill_Whirlwind.PlaySound(self, Level)
+	Audio.Play("multislash0.ogg")
 end
 
 -- Rejuvenation --

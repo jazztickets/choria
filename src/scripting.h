@@ -69,12 +69,14 @@ class _Scripting {
 		static void PrintTable(lua_State *LuaState);
 
 		static luaL_Reg RandomFunctions[];
+		static luaL_Reg AudioFunctions[];
 
 	private:
 
 		static void PushItem(lua_State *LuaState, const _Item *Item, int Upgrades);
 
 		static int RandomGetInt(lua_State *LuaState);
+		static int AudioPlay(lua_State *LuaState);
 
 		static int ObjectSetBattleTarget(lua_State *LuaState);
 		static int ObjectGetInventoryItem(lua_State *LuaState);

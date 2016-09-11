@@ -525,6 +525,14 @@ void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	}
 }
 
+// Play audio through scripting
+void _Item::PlaySound(_Scripting *Scripting) const {
+	if(Scripting->StartMethodCall(Script, "PlaySound")) {
+		Scripting->MethodCall(0, 0);
+		Scripting->FinishMethodCall();
+	}
+}
+
 // Get min damage
 int _Item::GetMinDamage(int Upgrades) const {
 	return GetUpgradedValue<int>(StatType::MINDAMAGE, Upgrades, MinDamage);
