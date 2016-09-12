@@ -613,7 +613,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	}
 	// Dead outside of combat
 	else {
-		CloseWindows(false);
+		if(!DiedElement->Visible)
+			CloseWindows(false);
 
 		DiedElement->Size = Graphics.WindowSize;
 		DiedElement->CalculateBounds();

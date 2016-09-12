@@ -66,6 +66,7 @@ void _Assets::Init(bool IsServer) {
 		LoadTextBoxes(ASSETS_UI_TEXTBOXES);
 		LoadLabels(ASSETS_UI_LABELS);
 		LoadSounds(ASSETS_SOUND_PATH);
+		LoadMusic(ASSETS_MUSIC_PATH);
 
 		ResolveElementParents();
 	}
@@ -89,6 +90,9 @@ void _Assets::Close() {
 	for(const auto &Sound : Sounds)
 		delete Sound.second;
 
+	for(const auto &Song : Music)
+		delete Song.second;
+
 	for(const auto &Style : Styles)
 		delete Style.second;
 
@@ -100,6 +104,7 @@ void _Assets::Close() {
 	Textures.clear();
 	Styles.clear();
 	Sounds.clear();
+	Music.clear();
 
 	Elements.clear();
 	Labels.clear();
@@ -272,7 +277,20 @@ void _Assets::LoadSounds(const std::string &Path) {
 	// Load audio
 	for(const auto &File : Files.Nodes) {
 		if(!Assets.Sounds[File])
-			Assets.Sounds[File] = Audio.Load(Path + File);
+			Assets.Sounds[File] = Audio.LoadSound(Path + File);
+	}
+}
+
+// Load music files
+void _Assets::LoadMusic(const std::string &Path) {
+
+	// Get files
+	_Files Files(Path);
+
+	// Load audio
+	for(const auto &File : Files.Nodes) {
+		if(!Assets.Music[File])
+			Assets.Music[File] = Audio.LoadMusic(Path + File);
 	}
 }
 

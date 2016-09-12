@@ -155,9 +155,9 @@ void _Framework::Close() {
 	State->Close();
 
 	// Close subsystems
-	Audio.Close();
 	Assets.Close();
 	Graphics.Close();
+	Audio.Close();
 	Config.Close();
 	delete FrameLimit;
 

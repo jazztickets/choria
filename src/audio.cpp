@@ -26,9 +26,15 @@ _Sound::~_Sound() {
 	Mix_FreeChunk(Chunk);
 }
 
+// Destructor
+_Music::~_Music() {
+	Mix_FreeMusic(Music);
+}
+
 // Constructor
 _Audio::_Audio() :
-	Enabled(false) {
+	Enabled(false),
+	SongPlaying(nullptr) {
 }
 
 // Initialize
@@ -55,7 +61,7 @@ void _Audio::Close() {
 }
 
 // Load sound
-_Sound *_Audio::Load(const std::string &Path) {
+_Sound *_Audio::LoadSound(const std::string &Path) {
 	if(!Enabled)
 		return nullptr;
 
@@ -65,10 +71,40 @@ _Sound *_Audio::Load(const std::string &Path) {
 	return Sound;
 }
 
+
+// Load music
+_Music *_Audio::LoadMusic(const std::string &Path) {
+	if(!Enabled)
+		return nullptr;
+
+	_Music *Music = new _Music();
+	Music->Music = Mix_LoadMUS(Path.c_str());
+
+	return Music;
+}
+
 // Play a sound
-void _Audio::Play(_Sound *Sound) {
+void _Audio::PlaySound(_Sound *Sound) {
 	if(!Enabled || !Sound)
 		return;
 
 	Mix_PlayChannel(-1, Sound->Chunk, 0);
+}
+
+// Play music
+void _Audio::PlayMusic(_Music *Music) {
+	if(!Enabled || !Music)
+		return;
+
+	if(SongPlaying != Music) {
+		Mix_PlayMusic(Music->Music, -1);
+
+		SongPlaying = Music;
+	}
+}
+
+// Stop all music
+void _Audio::StopMusic() {
+	Mix_HaltMusic();
+	SongPlaying = nullptr;
 }

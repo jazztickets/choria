@@ -480,7 +480,7 @@ int _Scripting::AudioPlay(lua_State *LuaState) {
 		return 1;
 
 	// Play sound
-	Audio.Play(Sound->second);
+	Audio.PlaySound(Sound->second);
 
 	return 1;
 }

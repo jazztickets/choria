@@ -1120,10 +1120,10 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 
 				if(ActionResult.Target.HasStat(StatType::MISS)) {
-					Audio.Play(Assets.Sounds["miss0.ogg"]);
+					Audio.PlaySound(Assets.Sounds["miss0.ogg"]);
 				}
 				else {
-					Audio.Play(Assets.Sounds["thud0.ogg"]);
+					Audio.PlaySound(Assets.Sounds["thud0.ogg"]);
 				}
 			}
 			else {

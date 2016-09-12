@@ -37,6 +37,7 @@
 #include <stats.h>
 #include <packet.h>
 #include <utils.h>
+#include <audio.h>
 #include <sstream>
 #include <SDL_keyboard.h>
 
@@ -78,6 +79,8 @@ void _Menu::InitTitle(bool Disconnect) {
 	Assets.Labels["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
+
+	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
 	State = STATE_TITLE;
 }
@@ -304,6 +307,8 @@ void _Menu::PlayCharacter(size_t Slot) {
 	PlayState.Network->SendPacket(Packet);
 
 	CharactersState = CHARACTERS_PLAYSENT;
+
+	Audio.StopMusic();
 }
 
 // Send login info

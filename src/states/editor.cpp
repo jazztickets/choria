@@ -32,6 +32,7 @@
 #include <assets.h>
 #include <atlas.h>
 #include <program.h>
+#include <audio.h>
 #include <font.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -60,6 +61,8 @@ _EditorState::_EditorState() :
 void _EditorState::Init() {
 	Graphics.Element->SetVisible(false);
 	Graphics.Element->Visible = true;
+
+	Audio.StopMusic();
 
 	ButtonBarElement = Assets.Elements["element_editor_buttonbar"];
 	TexturesElement = Assets.Elements["element_editor_textures"];

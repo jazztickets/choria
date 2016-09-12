@@ -413,6 +413,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Vendor = nullptr;
 	Fighter->Trader = nullptr;
 	Fighter->TeleportTime = -1.0;
+	Fighter->TurnTimer = GetRandomReal(0, 0.25);
 
 	// Count fighters and set slots
 	SideCount[Side]++;

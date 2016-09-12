@@ -21,6 +21,7 @@
 #include <string>
 
 struct Mix_Chunk;
+typedef struct _Mix_Music Mix_Music;
 
 // Sound class
 class _Sound {
@@ -33,6 +34,17 @@ class _Sound {
 		Mix_Chunk *Chunk;
 };
 
+// Music class
+class _Music {
+
+	public:
+
+		_Music() : Music(nullptr) { }
+		~_Music();
+
+		Mix_Music *Music;
+};
+
 // Classes
 class _Audio {
 
@@ -43,13 +55,17 @@ class _Audio {
 		void Init(bool Enabled);
 		void Close();
 
-		_Sound *Load(const std::string &Path);
-		void Play(_Sound *Sound);
+		_Sound *LoadSound(const std::string &Path);
+		_Music *LoadMusic(const std::string &Path);
+
+		void PlaySound(_Sound *Sound);
+		void PlayMusic(_Music *Music);
+		void StopMusic();
 
 	private:
 
 		bool Enabled;
-
+		const _Music *SongPlaying;
 };
 
 extern _Audio Audio;

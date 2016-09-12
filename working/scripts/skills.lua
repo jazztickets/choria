@@ -26,6 +26,10 @@ function Skill_SpiderBite.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+function Skill_SpiderBite.PlaySound(self, Level)
+	Audio.Play("spider0.ogg")
+end
+
 -- Fang bite --
 
 Skill_FangBite = Base_Attack:New()
@@ -36,6 +40,10 @@ function Skill_FangBite.Proc(self, Roll, Level, Source, Target, Result)
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
+end
+
+function Skill_FangBite.PlaySound(self, Level)
+	Audio.Play("bat0.ogg")
 end
 
 -- Venom bite --
@@ -66,6 +74,10 @@ function Skill_GhostAttack.Use(self, Level, Source, Target, Result)
 	Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 	return Result
+end
+
+function Skill_GhostAttack.PlaySound(self, Level)
+	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Swoop attack --
