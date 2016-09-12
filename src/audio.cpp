@@ -34,6 +34,9 @@ _Music::~_Music() {
 // Constructor
 _Audio::_Audio() :
 	Enabled(false),
+	SoundVolume(1.0f),
+	MusicVolume(1.0f),
+
 	SongPlaying(nullptr) {
 }
 
@@ -81,6 +84,20 @@ _Music *_Audio::LoadMusic(const std::string &Path) {
 	Music->Music = Mix_LoadMUS(Path.c_str());
 
 	return Music;
+}
+
+// Set sound volume
+void _Audio::SetSoundVolume(float Volume) {
+	SoundVolume = Volume;
+
+	Mix_Volume(-1, (int)(SoundVolume * MIX_MAX_VOLUME));
+}
+
+// Set music volume
+void _Audio::SetMusicVolume(float Volume) {
+	MusicVolume = Volume;
+
+	Mix_VolumeMusic((int)(MusicVolume * MIX_MAX_VOLUME));
 }
 
 // Play a sound

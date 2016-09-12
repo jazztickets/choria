@@ -120,6 +120,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 		// Initialize audio
 		Audio.Init(AudioEnabled && Config.AudioEnabled);
+		Audio.SetSoundVolume(Config.SoundVolume);
+		Audio.SetMusicVolume(Config.MusicVolume);
 
 		// Get fullscreen size
 		Config.SetDefaultFullscreenSize();
@@ -188,13 +190,8 @@ void _Framework::Update() {
 			switch(Event.type){
 				case SDL_KEYDOWN:
 				case SDL_KEYUP: {
+					if(!GlobalKeyHandler(Event)) {
 
-					// Handle alt-enter
-					if(Event.type == SDL_KEYDOWN && (Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
-						if(!Event.key.repeat)
-							Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
-					}
-					else {
 						_KeyEvent KeyEvent("", Event.key.keysym.scancode, Event.type == SDL_KEYDOWN, Event.key.repeat);
 						State->KeyEvent(KeyEvent);
 						if(!Event.key.repeat) {
@@ -257,4 +254,46 @@ void _Framework::Update() {
 
 	if(FrameLimit)
 		FrameLimit->Update();
+}
+
+// Handles global hotkeys
+int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
+
+	// Handle alt-enter
+	if(Event.type == SDL_KEYDOWN) {
+		if((Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+			if(!Event.key.repeat)
+				Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
+
+			return 1;
+		}
+		else if((Event.key.keysym.mod & KMOD_CTRL) && Event.key.keysym.scancode == SDL_SCANCODE_S) {
+			if(!Event.key.repeat) {
+				if(Config.SoundVolume > 0.0f)
+					Config.SoundVolume = 0.0f;
+				else
+					Config.SoundVolume = 1.0f;
+
+				Config.Save();
+				Audio.SetSoundVolume(Config.SoundVolume);
+			}
+
+			return 1;
+		}
+		else if((Event.key.keysym.mod & KMOD_CTRL) && Event.key.keysym.scancode == SDL_SCANCODE_M) {
+			if(!Event.key.repeat) {
+				if(Config.MusicVolume > 0.0f)
+					Config.MusicVolume = 0.0f;
+				else
+					Config.MusicVolume = 1.0f;
+
+				Config.Save();
+				Audio.SetMusicVolume(Config.MusicVolume);
+			}
+
+			return 1;
+		}
+	}
+
+	return 0;
 }

@@ -24,6 +24,7 @@
 // Forward Declarations
 class _State;
 class _FrameLimit;
+union SDL_Event;
 
 // Classes
 class _Framework {
@@ -56,6 +57,7 @@ class _Framework {
 	private:
 
 		void ResetTimer();
+		int GlobalKeyHandler(const SDL_Event &Event);
 
 		// States
 		StateType FrameworkState;

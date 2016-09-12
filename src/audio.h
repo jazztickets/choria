@@ -58,6 +58,9 @@ class _Audio {
 		_Sound *LoadSound(const std::string &Path);
 		_Music *LoadMusic(const std::string &Path);
 
+		void SetSoundVolume(float Volume);
+		void SetMusicVolume(float Volume);
+
 		void PlaySound(_Sound *Sound);
 		void PlayMusic(_Music *Music, int FadeTime=0);
 		void StopMusic(int FadeTime=0);
@@ -65,6 +68,10 @@ class _Audio {
 	private:
 
 		bool Enabled;
+
+		float SoundVolume;
+		float MusicVolume;
+
 		const _Music *SongPlaying;
 };
 
