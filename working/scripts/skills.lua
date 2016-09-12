@@ -292,7 +292,7 @@ end
 
 function Skill_Rejuvenation.GetInfo(self, Level)
 
-	return "Heal [c green]" .. Buff_Healing.Heal * self:GetLevel(Level) * self:GetDuration(Level) .. " [c white]HP [c white]over [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Heal [c green]" .. Buff_Healing.Heal * self:GetLevel(Level) * self:GetDuration(Level) .. " [c white]HP [c white]over [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 
 end
 
@@ -314,7 +314,7 @@ Skill_Heal.ManaCostBase = 30 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)
 
-	return "Heal target for [c green]" .. (self.HealBase + self.HealPerLevel * Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Heal target for [c green]" .. (self.HealBase + self.HealPerLevel * Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_Heal.Use(self, Level, Source, Target, Result)
@@ -334,7 +334,7 @@ Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
 function Skill_Resurrect.GetInfo(self, Level)
 
-	return "Resurrect target and give [c green]" .. (self.HealBase + self.HealPerLevel * Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Resurrect target and give [c green]" .. (self.HealBase + self.HealPerLevel * Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_Resurrect.Use(self, Level, Source, Target, Result)
@@ -353,7 +353,28 @@ Skill_Spark.CostPerLevel = 2
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 
 function Skill_Spark.GetInfo(self, Level)
-	return "Shock a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Shock a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+-- Icicle --
+Skill_Icicle = Base_Spell:New()
+Skill_Icicle.DamageType = DamageType["Cold"]
+Skill_Icicle.DamageBase = 20
+Skill_Icicle.Multiplier = 15
+Skill_Icicle.CostPerLevel = 2
+Skill_Icicle.Duration = 3
+Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
+
+function Skill_Icicle.GetInfo(self, Level)
+	return "Pierce a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nSlows for [c green]" .. self.Duration .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+function Skill_Icicle.Proc(self, Roll, Level, Source, Target, Result)
+	Result.Target.Buff = Buffs["Buff_Slowed"]
+	Result.Target.BuffLevel = 20
+	Result.Target.BuffDuration = 3
+
+	return Result
 end
 
 -- Fire Blast --
@@ -365,7 +386,7 @@ Skill_FireBlast.CostPerLevel = 5
 Skill_FireBlast.ManaCostBase = 90 - Skill_FireBlast.CostPerLevel
 
 function Skill_FireBlast.GetInfo(self, Level)
-	return "Blast all targets with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Blast all targets with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 -- Ignite --
@@ -390,7 +411,7 @@ function Skill_Ignite.GetDuration(self, Level)
 end
 
 function Skill_Ignite.GetInfo(self, Level)
-	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Level) .. "[c white] damage over [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nCost [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Ignite an enemy and deal [c green]" .. self:GetDamage(Level) .. "[c white] damage over [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_Ignite.Use(self, Level, Source, Target, Result)
@@ -507,7 +528,7 @@ end
 
 function Skill_Flee.ApplyCost(self, Level, Result)
 	Result.Source.Buff = Buffs["Buff_Slowed"]
-	Result.Source.BuffLevel = 3
+	Result.Source.BuffLevel = 30
 	Result.Source.BuffDuration = 5
 
 	return Result
@@ -517,7 +538,7 @@ function Skill_Flee.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= self:GetChance(Level) then
 		Result.Target.Flee = true
 		Result.Target.Buff = Buffs["Buff_Slowed"]
-		Result.Target.BuffLevel = 7
+		Result.Target.BuffLevel = 70
 		Result.Target.BuffDuration = self.Duration
 	end
 end

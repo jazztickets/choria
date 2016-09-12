@@ -75,12 +75,19 @@ Base_Spell = {
 		return false
 	end,
 
+	Proc = function(self, Roll, Level, Source, Target, Result)
+
+		return Result
+	end,
+
 	Use = function(self, Level, Source, Target, Result)
 		Damage = self:GetDamage(Level)
 		Damage = math.floor(Damage * Target.GetDamageReduction(self.DamageType))
 		Damage = math.max(Damage, 0)
 
 		Result.Target.Health = -Damage
+
+		self:Proc(Random.GetInt(1, 100), Level, Source, Target, Result)
 
 		return Result
 	end
