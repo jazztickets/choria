@@ -12,8 +12,13 @@ Base_Attack = {
 		return ""
 	end,
 
-	GetDamageType = function(self)
-		return DamageType["Physical"]
+	GetDamageType = function(self, Object)
+		Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+		if Weapon ~= nil then
+			return Weapon.DamageType
+		end
+
+		return self.Item.DamageType
 	end,
 
 	GenerateDamage = function(self, Level, Source)
@@ -82,7 +87,7 @@ Base_Spell = {
 
 	Use = function(self, Level, Source, Target, Result)
 		Damage = self:GetDamage(Level)
-		Damage = math.floor(Damage * Target.GetDamageReduction(self.DamageType))
+		Damage = math.floor(Damage * Target.GetDamageReduction(self.Item.DamageType))
 		Damage = math.max(Damage, 0)
 
 		Result.Target.Health = -Damage

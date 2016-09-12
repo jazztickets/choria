@@ -228,8 +228,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			if(Item && !Item->IsSkill() && ClientPlayer->ActionBar[ActionBarSlot].Count == 0)
 				Item = nullptr;
 		}
-		else
-			Item = nullptr;
 
 		// Set up initial target
 		if(Item) {
@@ -295,6 +293,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				}
 			}
 		}
+		else
+			ClientPlayer->PotentialAction.Unset();
 
 		// Set potential skill
 		if(ClientPlayer->Targets.size())

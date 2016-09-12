@@ -62,10 +62,6 @@ end
 
 Skill_GhostAttack = Base_Attack:New()
 
-function Skill_GhostAttack.GetDamageType(self, Object)
-	return DamageType["Cold"]
-end
-
 function Skill_GhostAttack.Use(self, Level, Source, Target, Result)
 
 	-- Ignore target's defense
@@ -131,15 +127,6 @@ end
 Skill_Attack = Base_Attack:New()
 Skill_Attack.BaseChance = 4
 Skill_Attack.ChancePerLevel = 1
-
-function Skill_Attack.GetDamageType(self, Object)
-	Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
-	if Weapon ~= nil then
-		return Weapon.DamageType
-	end
-
-	return DamageType["Physical"]
-end
 
 function Skill_Attack.GetChance(self, Level)
 
@@ -345,8 +332,8 @@ function Skill_Resurrect.Use(self, Level, Source, Target, Result)
 end
 
 -- Spark --
+
 Skill_Spark = Base_Spell:New()
-Skill_Spark.DamageType = DamageType["Lightning"]
 Skill_Spark.DamageBase = 10
 Skill_Spark.Multiplier = 20
 Skill_Spark.CostPerLevel = 2
@@ -357,8 +344,8 @@ function Skill_Spark.GetInfo(self, Level)
 end
 
 -- Icicle --
+
 Skill_Icicle = Base_Spell:New()
-Skill_Icicle.DamageType = DamageType["Cold"]
 Skill_Icicle.DamageBase = 20
 Skill_Icicle.Multiplier = 15
 Skill_Icicle.CostPerLevel = 2
@@ -378,8 +365,8 @@ function Skill_Icicle.Proc(self, Roll, Level, Source, Target, Result)
 end
 
 -- Fire Blast --
+
 Skill_FireBlast = Base_Spell:New()
-Skill_FireBlast.DamageType = DamageType["Fire"]
 Skill_FireBlast.DamageBase = 50
 Skill_FireBlast.Multiplier = 20
 Skill_FireBlast.CostPerLevel = 5
@@ -390,6 +377,7 @@ function Skill_FireBlast.GetInfo(self, Level)
 end
 
 -- Ignite --
+
 Skill_Ignite = Base_Spell:New()
 Skill_Ignite.BurnLevel = 10
 Skill_Ignite.BurnLevelPerLevel = 2
