@@ -236,7 +236,7 @@ void _Stats::LoadItems() {
 		Item->MaxLevel = Database->GetInt<int>("maxlevel");
 		Item->LevelRequired = Database->GetInt<int>("levelrequired");
 		Item->Cost = Database->GetInt<int>("cost");
-		Item->DamageType = Database->GetInt<int>("damagetype_id");
+		Item->DamageTypeID = Database->GetInt<int>("damagetype_id");
 		Item->MinDamage = Database->GetInt<int>("mindamage");
 		Item->MaxDamage = Database->GetInt<int>("maxdamage");
 		Item->Armor = Database->GetInt<int>("armor");

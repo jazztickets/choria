@@ -61,7 +61,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	_TextBounds TextBounds;
 	Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
 	Size.x = 250;
-	float SidePadding = 15;
+	float SidePadding = 25;
 	float SpacingY = 25;
 	Size.x = std::max(Size.x, (float)TextBounds.Width) + SidePadding * 2;
 	if(ResistanceTypeID)
@@ -140,8 +140,8 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 
 	glm::vec2 Spacing(10, 0);
 
-	// Render damage
 	bool StatDrawn = false;
+
 	int DrawMinDamage = GetMinDamage(Upgrades);
 	int DrawMaxDamage = GetMaxDamage(Upgrades);
 	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
@@ -157,7 +157,15 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		StatDrawn = true;
 	}
 
-	// Boosts
+	if(!IsSkill() && DamageTypeID > 1) {
+		std::stringstream Buffer;
+		Buffer << Stats->DamageTypes[DamageTypeID];
+		Assets.Fonts["hud_medium"]->DrawText("Damage Type", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
 	int DrawArmor = GetArmor(Upgrades);
 	if(DrawArmor != 0) {
 		std::stringstream Buffer;
@@ -177,6 +185,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+
 	int DrawMaxHealth = GetMaxHealth(Upgrades);
 	if(DrawMaxHealth > 0) {
 		std::stringstream Buffer;
@@ -186,6 +195,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+
 	int DrawMaxMana = GetMaxMana(Upgrades);
 	if(DrawMaxMana > 0) {
 		std::stringstream Buffer;
@@ -195,6 +205,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+
 	if(ResistanceTypeID) {
 		int DrawResistance = GetResistance(Upgrades);
 		std::stringstream Buffer;
@@ -204,6 +215,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+
 	int DrawMoveSpeed = GetMoveSpeed(Upgrades);
 	if(DrawMoveSpeed != 0) {
 		std::stringstream Buffer;
@@ -213,6 +225,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+
 	int DrawBattleSpeed = GetBattleSpeed(Upgrades);
 	if(DrawBattleSpeed != 0) {
 		std::stringstream Buffer;
@@ -222,6 +235,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+
 	int DrawHealthRegen = GetHealthRegen(Upgrades);
 	if(DrawHealthRegen != 0) {
 		std::stringstream Buffer;
@@ -231,6 +245,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
+
 	int DrawManaRegen = GetManaRegen(Upgrades);
 	if(DrawManaRegen != 0) {
 		std::stringstream Buffer;

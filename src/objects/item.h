@@ -94,7 +94,7 @@ class _Item {
 		int MaxLevel;
 		int LevelRequired;
 		int Cost;
-		int DamageType;
+		uint32_t DamageTypeID;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;

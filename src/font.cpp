@@ -413,6 +413,7 @@ void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds
 
 	TestBounds.Width = TestBounds.AboveBase = TestBounds.BelowBase = 0;
 	const GlyphStruct *Glyph = nullptr;
+	FT_UInt PreviousGlyphIndex = 0;
 	for(size_t i = 0; i < Text.size(); i++) {
 
 		if(UseFormatting && Text[i] == '[')
@@ -421,10 +422,19 @@ void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds
 			InTag = false;
 		else if(!InTag) {
 
+			// Handle kerning
+			FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
+			if(HasKerning && i) {
+				FT_Vector Delta;
+				FT_Get_Kerning(Face, PreviousGlyphIndex, GlyphIndex, FT_KERNING_DEFAULT, &Delta);
+				TestBounds.Width += (float)(Delta.x >> 6);
+			}
+			PreviousGlyphIndex = GlyphIndex;
+
 			// Get glyph data
 			Glyph = &Glyphs[(FT_Byte)Text[i]];
 
-			// Update width by advance
+			// Update width
 			TestBounds.Width += (int)Glyph->Advance;
 
 			// Get number of pixels below baseline
@@ -460,9 +470,8 @@ void _Font::BreakupString(const std::string &Text, float Width, std::list<std::s
 			if(Text[i] == ' ')
 				LastSpace = i;
 
-			FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
-
 			// Handle kerning
+			FT_UInt GlyphIndex = FT_Get_Char_Index(Face, (FT_ULong)Text[i]);
 			if(HasKerning && i) {
 				FT_Vector Delta;
 				FT_Get_Kerning(Face, PreviousGlyphIndex, GlyphIndex, FT_KERNING_DEFAULT, &Delta);
