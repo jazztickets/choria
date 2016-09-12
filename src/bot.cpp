@@ -232,9 +232,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				}
 
 				Map = new _Map();
+				Map->Stats = Stats;
 				Map->Clock = Clock;
 				Map->NetworkID = MapID;
-				Map->Load(Stats->GetMap(MapID)->File);
+				Map->Load(Stats->GetMap(MapID));
 				AssignPlayer(nullptr);
 
 				Pather = new micropather::MicroPather(Map, (unsigned)(Map->Size.x * Map->Size.y), 4);

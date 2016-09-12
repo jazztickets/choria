@@ -423,7 +423,7 @@ void _PlayState::Render(double BlendFactor) {
 		glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 		// Draw map and objects
-		Map->Render(Camera, Stats, Player, BlendFactor);
+		Map->Render(Camera, Player, BlendFactor);
 
 		Graphics.Setup2D();
 		Graphics.SetStaticUniforms();
@@ -596,10 +596,11 @@ void _PlayState::HandleChangeMaps(_Buffer &Data) {
 			DeleteMap();
 
 		Map = new _Map();
+		Map->Stats = Stats;
 		Map->UseAtlas = true;
 		Map->Clock = Clock;
 		Map->NetworkID = MapID;
-		Map->Load(Stats->GetMap(MapID)->File);
+		Map->Load(Stats->GetMap(MapID));
 		AssignPlayer(nullptr);
 	}
 }

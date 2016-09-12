@@ -87,6 +87,7 @@ _Map::_Map() :
 	BackgroundOffset(0.0f),
 	BackgroundMap(nullptr),
 	ObjectUpdateTime(0),
+	Stats(nullptr),
 	Server(nullptr),
 	MaxZoneColors(sizeof(ZoneColors) / sizeof(glm::vec4)),
 	CurrentZoneColors(MaxZoneColors),
@@ -453,7 +454,7 @@ void _Map::SetAmbientLightByClock() {
 }
 
 // Renders the map
-void _Map::Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
+void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
 	// Set lights for editor
 	if(!ClientPlayer) {
@@ -628,14 +629,34 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 }
 
 // Load map
-void _Map::Load(const std::string &Path, bool Static) {
-	std::string AtlasPath;
+void _Map::Load(const _MapStat *MapStat, bool Static) {
 
 	// Load file
-	gzifstream File(Path.c_str());
+	gzifstream File(MapStat->File.c_str());
 	if(!File)
-		throw std::runtime_error("Cannot load map: " + Path);
+		throw std::runtime_error("Cannot load map: " + MapStat->File);
 
+	// Save map stats
+	AmbientLight = MapStat->AmbientLight;
+	IsOutside = MapStat->Outside;
+	Music = MapStat->Music;
+
+	// Load background map
+	if(UseAtlas && MapStat->BackgroundMapID) {
+		BackgroundOffset = MapStat->BackgroundOffset;
+
+		BackgroundMap = new _Map();
+		BackgroundMap->UseAtlas = true;
+		try {
+			BackgroundMap->Load(Stats->GetMap(MapStat->BackgroundMapID), true);
+		}
+		catch(std::exception &Error) {
+			delete BackgroundMap;
+			BackgroundMap = nullptr;
+		}
+	}
+
+	// Load tiles
 	_Tile *Tile = nullptr;
 	while(!File.eof() && File.peek() != EOF) {
 
@@ -656,37 +677,6 @@ void _Map::Load(const std::string &Path, bool Static) {
 				File >> Size.x >> Size.y;
 				FreeMap();
 				AllocateMap();
-			} break;
-			// Ambient light
-			case 'A': {
-				File >> AmbientLight.r >> AmbientLight.g >> AmbientLight.b;
-			} break;
-			// Outside
-			case 'O': {
-				File >> IsOutside;
-			} break;
-			case 'B': {
-				if(UseAtlas) {
-					File >> BackgroundMapFile;
-
-					BackgroundMap = new _Map();
-					BackgroundMap->UseAtlas = true;
-					try {
-						BackgroundMap->Load(BackgroundMapFile, true);
-					}
-					catch(std::exception &Error) {
-						delete BackgroundMap;
-						BackgroundMap = nullptr;
-					}
-				}
-			} break;
-			case 'Z': {
-				if(UseAtlas)
-					File >> BackgroundOffset.x >> BackgroundOffset.y >> BackgroundOffset.z;
-			} break;
-			// Atlas texture
-			case 'a': {
-				File >> AtlasPath;
 			} break;
 			// Tile
 			case 'T': {
@@ -740,7 +730,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 
 	// Initialize 2d tile rendering
 	if(UseAtlas) {
-		InitAtlas(AtlasPath, Static);
+		InitAtlas(MapStat->Atlas, Static);
 	}
 }
 
@@ -757,13 +747,6 @@ bool _Map::Save(const std::string &Path) {
 	// Header
 	Output << "V " << MAP_VERSION << '\n';
 	Output << "S " << Size.x << " " << Size.y << '\n';
-	Output << "A " << AmbientLight.r << " " << AmbientLight.g << " " << AmbientLight.b << '\n';
-	Output << "O " << IsOutside << '\n';
-	if(BackgroundMapFile.length()) {
-		Output << "B " << BackgroundMapFile << '\n';
-		Output << "Z " << BackgroundOffset.x << " " << BackgroundOffset.y << " " << BackgroundOffset.z << '\n';
-	}
-	Output << "a " << TileAtlas->Texture->Identifier << '\n';
 
 	// Write tile map
 	for(int j = 0; j < Size.y; j++) {

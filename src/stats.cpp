@@ -74,6 +74,18 @@ void _Stats::LoadMaps() {
 	_MapStat Map;
 	while(Database->FetchRow()) {
 		Map.File = std::string("maps/") + Database->GetString("file");
+		Map.Atlas = std::string("map/") + Database->GetString("atlas");
+		Map.Music = Database->GetString("music");
+		Map.Outside = Database->GetInt<int>("outside");
+		Map.AmbientLight.r = (float)Database->GetReal("ambient_red");
+		Map.AmbientLight.g = (float)Database->GetReal("ambient_green");
+		Map.AmbientLight.b = (float)Database->GetReal("ambient_blue");
+		Map.AmbientLight.a = 1.0f;
+		Map.BackgroundMapID = Database->GetInt<uint32_t>("background_id");
+		Map.BackgroundOffset.x = (float)Database->GetReal("background_x");
+		Map.BackgroundOffset.y = (float)Database->GetReal("background_y");
+		Map.BackgroundOffset.z = (float)Database->GetReal("background_z");
+
 		Maps[Database->GetInt<uint32_t>("id")] = Map;
 	}
 	Database->CloseQuery();

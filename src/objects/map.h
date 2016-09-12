@@ -44,6 +44,7 @@ class _Camera;
 class _Server;
 class _Stats;
 class _Peer;
+struct _MapStat;
 
 // Structures
 struct _Event {
@@ -103,7 +104,7 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		void SetAmbientLightByClock();
 
 		// Graphics
-		void Render(_Camera *Camera, _Stats *Stats, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
+		void Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
 		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static=false);
 
 		// Collision
@@ -131,7 +132,7 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
 
 		// File IO
-		void Load(const std::string &Path, bool Static=false);
+		void Load(const _MapStat *MapStat, bool Static=false);
 		bool Save(const std::string &Path);
 
 		void NodeToPosition(void *Node, glm::ivec2 &Position) {
@@ -162,6 +163,12 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		// Objects
 		std::list<_Object *> Objects;
 		double ObjectUpdateTime;
+
+		// Stats
+		_Stats *Stats;
+
+		// Audio
+		std::string Music;
 
 		// Network
 		_Server *Server;

@@ -426,7 +426,7 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Render map
 	if(Map)
-		Map->Render(Camera, Stats, nullptr, BlendFactor, Filter | FILTER_BOUNDARY);
+		Map->Render(Camera, nullptr, BlendFactor, Filter | FILTER_BOUNDARY);
 
 	Graphics.SetColor(COLOR_WHITE);
 	Graphics.SetProgram(Assets.Programs["pos"]);
@@ -811,6 +811,7 @@ void _EditorState::CreateMap() {
 
 	// Create map
 	Map = new _Map();
+	Map->Stats = Stats;
 	Map->UseAtlas = true;
 	Map->Size = Size;
 	Map->InitAtlas(TEXTURES_MAP + MAP_DEFAULT_TILESET);
@@ -891,9 +892,11 @@ void _EditorState::LoadMap() {
 
 	// Attempt to load map
 	_Map *NewMap = new _Map();
+	NewMap->Stats = Stats;
 	NewMap->UseAtlas = true;
 	try {
-		NewMap->Load(Path);
+		MapID = Stats->GetMapIDByPath(Path);
+		NewMap->Load(Stats->GetMap(MapID));
 	}
 	catch(std::exception &Error) {
 		delete NewMap;

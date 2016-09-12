@@ -22,6 +22,7 @@
 #include <unordered_map>
 #include <list>
 #include <vector>
+#include <glm/vec3.hpp>
 
 // Forward Declarations
 class _Database;
@@ -31,6 +32,12 @@ class _Buff;
 // Structures
 struct _MapStat {
 	std::string File;
+	std::string Atlas;
+	std::string Music;
+	glm::vec4 AmbientLight;
+	glm::vec3 BackgroundOffset;
+	uint32_t BackgroundMapID;
+	bool Outside;
 };
 
 struct _Portrait {

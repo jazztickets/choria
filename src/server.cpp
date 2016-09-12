@@ -745,7 +745,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		Map = MapManager->CreateWithID(MapID);
 		Map->Clock = Clock;
 		Map->Server = this;
-		Map->Load(Stats->GetMap(MapID)->File);
+		Map->Load(Stats->GetMap(MapID));
 	}
 
 	// Get old map
