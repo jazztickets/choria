@@ -10,11 +10,11 @@ function Buff_Bleeding.GetInfo(self, Level)
 end
 
 function Buff_Bleeding.Update(self, Level, Source, Change)
-	Damage = self.Damage
+	Damage = self.Damage * Level
 	Damage = Damage * Source.GetDamageReduction(self.DamageType)
 	Damage = math.max(Damage, 0)
 
-	Change.Health = -Damage * Level
+	Change.Health = -Damage
 
 	return Change
 end
@@ -29,7 +29,7 @@ function Buff_Healing.GetInfo(self, Level)
 end
 
 function Buff_Healing.Update(self, Level, Source, Change)
-	Change.Health = self.Heal * Level
+	Change.Health = math.floor(self.Heal * Level)
 
 	return Change
 end
@@ -44,7 +44,7 @@ function Buff_Mana.GetInfo(self, Level)
 end
 
 function Buff_Mana.Update(self, Level, Source, Change)
-	Change.Mana = self.Mana * Level
+	Change.Mana = math.floor(self.Mana * Level)
 
 	return Change
 end
@@ -216,11 +216,11 @@ function Buff_Poisoned.GetInfo(self, Level)
 end
 
 function Buff_Poisoned.Update(self, Level, Source, Change)
-	Damage = self.Damage
+	Damage = self.Damage * Level
 	Damage = Damage * Source.GetDamageReduction(self.DamageType)
-	Damage = math.max(Damage, 0)
+	Damage = math.max(math.floor(Damage), 0)
 
-	Change.Health = -Damage * Level
+	Change.Health = -Damage
 
 	return Change
 end
@@ -243,11 +243,11 @@ function Buff_Burning.GetInfo(self, Level)
 end
 
 function Buff_Burning.Update(self, Level, Source, Change)
-	Damage = self.Damage
+	Damage = self.Damage * Level
 	Damage = Damage * Source.GetDamageReduction(self.DamageType)
-	Damage = math.max(Damage, 0)
+	Damage = math.max(math.floor(Damage), 0)
 
-	Change.Health = -Damage * Level
+	Change.Health = -Damage
 
 	return Change
 end

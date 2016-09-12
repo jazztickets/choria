@@ -395,7 +395,7 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 			Type = StatValueTypes[(int)Iterator->second].ValueType;
 			switch(Type) {
 				case StatValueType::INTEGER:
-					StatChange.Values[Iterator->second].Integer = (int)lua_tointeger(LuaState, -1);
+					StatChange.Values[Iterator->second].Integer = (int)lua_tonumber(LuaState, -1);
 				break;
 				case StatValueType::FLOAT:
 					StatChange.Values[Iterator->second].Float = (float)lua_tonumber(LuaState, -1);
