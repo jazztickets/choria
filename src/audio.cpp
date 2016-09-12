@@ -88,6 +88,9 @@ _Music *_Audio::LoadMusic(const std::string &Path) {
 
 // Set sound volume
 void _Audio::SetSoundVolume(float Volume) {
+	if(!Enabled)
+		return;
+
 	SoundVolume = Volume;
 
 	Mix_Volume(-1, (int)(SoundVolume * MIX_MAX_VOLUME));
@@ -95,6 +98,9 @@ void _Audio::SetSoundVolume(float Volume) {
 
 // Set music volume
 void _Audio::SetMusicVolume(float Volume) {
+	if(!Enabled)
+		return;
+
 	MusicVolume = Volume;
 
 	Mix_VolumeMusic((int)(MusicVolume * MIX_MAX_VOLUME));
