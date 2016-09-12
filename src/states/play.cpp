@@ -602,6 +602,8 @@ void _PlayState::HandleChangeMaps(_Buffer &Data) {
 		Map->NetworkID = MapID;
 		Map->Load(Stats->GetMap(MapID));
 		AssignPlayer(nullptr);
+
+		Audio.PlayMusic(Assets.Music[Map->Music], 1000);
 	}
 }
 

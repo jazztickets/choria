@@ -59,8 +59,8 @@ class _Audio {
 		_Music *LoadMusic(const std::string &Path);
 
 		void PlaySound(_Sound *Sound);
-		void PlayMusic(_Music *Music);
-		void StopMusic();
+		void PlayMusic(_Music *Music, int FadeTime=0);
+		void StopMusic(int FadeTime=0);
 
 	private:
 

@@ -92,19 +92,31 @@ void _Audio::PlaySound(_Sound *Sound) {
 }
 
 // Play music
-void _Audio::PlayMusic(_Music *Music) {
-	if(!Enabled || !Music)
+void _Audio::PlayMusic(_Music *Music, int FadeTime) {
+	if(!Enabled)
 		return;
 
+	if(!Music) {
+		StopMusic();
+		return;
+	}
+
 	if(SongPlaying != Music) {
-		Mix_PlayMusic(Music->Music, -1);
+		if(FadeTime)
+			Mix_FadeInMusic(Music->Music, -1, FadeTime);
+		else
+			Mix_PlayMusic(Music->Music, -1);
 
 		SongPlaying = Music;
 	}
 }
 
 // Stop all music
-void _Audio::StopMusic() {
-	Mix_HaltMusic();
+void _Audio::StopMusic(int FadeTime) {
+	if(FadeTime)
+		Mix_FadeOutMusic(FadeTime);
+	else
+		Mix_HaltMusic();
+
 	SongPlaying = nullptr;
 }
