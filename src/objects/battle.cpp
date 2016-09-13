@@ -284,7 +284,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				// Find first alive target
 				if(ClientPlayer->Targets.size() == 0) {
 					for(auto &Fighter : FighterList) {
-						if(Item->CanTarget(Fighter)) {
+						if(Item->TargetID == TargetType::ENEMY_ALL || Item->CanTarget(Fighter)) {
 							ClientPlayer->Targets.push_back(Fighter);
 							if(!Multiple)
 								break;

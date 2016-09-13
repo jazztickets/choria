@@ -510,15 +510,26 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw potential action to use
 	for(auto &BattleTarget : ClientPlayer->Targets) {
 		if(BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
-			const _Texture *Texture = nullptr;
-			if(ClientPlayer->PotentialAction.Item)
-				Texture = ClientPlayer->PotentialAction.Item->Texture;
 
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			// Get texture
+			const _Texture *Texture = nullptr;
+			if(ClientPlayer->PotentialAction.Item) {
+
+				// Skip dead targets
+				if(!ClientPlayer->PotentialAction.Item->CanTarget(BattleTarget))
+					break;
+
+				// Get texture
+				Texture = ClientPlayer->PotentialAction.Item->Texture;
+			}
+
+			// Make icon flash
 			glm::vec4 Color(COLOR_WHITE);
 			if(Time - (int)Time < 0.5f)
 				Color.a = 0.5f;
 
+			// Draw background icon
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + BattleElement->Size.y/2);
 			if(ClientPlayer->PotentialAction.Item) {
 				DrawPosition.x += ItemBackTexture->Size.x/2;
@@ -527,6 +538,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			else
 				DrawPosition.x += Texture->Size.x/2;
 
+			// Draw item
 			Graphics.DrawCenteredImage(DrawPosition, Texture, Color);
 		}
 	}
@@ -1103,7 +1115,7 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 		for(int i = 0; i < TargetCount; i++) {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
-			if(Target)
+			if(Target && Action.Item->CanTarget(Target))
 				Targets.push_back(Target);
 		}
 	}
