@@ -13,7 +13,7 @@ function AI_Dumb.Update(self, Object, Enemies, Allies)
 			Target = Random.GetInt(1, #Enemies)
 
 			-- Set target
-			Object.SetBattleTarget(Enemies[Target])
+			Object.AddTarget(Enemies[Target])
 
 			-- Set skill
 			Object.SetAction(0)
@@ -31,7 +31,7 @@ function AI_Smart.Update(self, Object, Enemies, Allies)
 			Target = Random.GetInt(1, #Enemies)
 
 			-- Set target
-			Object.SetBattleTarget(Enemies[Target])
+			Object.AddTarget(Enemies[Target])
 
 			-- Set skill
 			Object.SetAction(0)
@@ -48,7 +48,7 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 			-- Chance to do special attack
 			if Random.GetInt(1, 10) == 1 then
 				for i = 1, #Enemies do
-					Object.SetBattleTarget(Enemies[i])
+					Object.AddTarget(Enemies[i])
 				end
 
 				Object.SetAction(1)
@@ -59,7 +59,7 @@ function AI_Boss.Update(self, Object, Enemies, Allies)
 			Target = Random.GetInt(1, #Enemies)
 
 			-- Set target
-			Object.SetBattleTarget(Enemies[Target])
+			Object.AddTarget(Enemies[Target])
 
 			-- Set skill
 			Object.SetAction(0)
@@ -79,7 +79,7 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 				CanUse = Object.SetAction(1)
 				if CanUse == true then
 					for i = 1, #Enemies do
-						Object.SetBattleTarget(Enemies[i])
+						Object.AddTarget(Enemies[i])
 					end
 
 					return
@@ -90,7 +90,7 @@ function AI_DeadQueen.Update(self, Object, Enemies, Allies)
 			Target = Random.GetInt(1, #Enemies)
 
 			-- Set target
-			Object.SetBattleTarget(Enemies[Target])
+			Object.AddTarget(Enemies[Target])
 
 			-- Set skill
 			if Random.GetInt(1, 10) <= 7 then
@@ -121,7 +121,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 				end
 
 				if ShouldUse == true then
-					Object.SetBattleTarget(Object)
+					Object.AddTarget(Object)
 					return
 				end
 			end
@@ -133,7 +133,7 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 				if CanUse == true then
 					for i = 1, #Allies do
 						if Allies[i].Health == 0 then
-							Object.SetBattleTarget(Allies[i])
+							Object.AddTarget(Allies[i])
 							return
 						end
 					end
@@ -144,7 +144,40 @@ function AI_SlimePrince.Update(self, Object, Enemies, Allies)
 			Target = Random.GetInt(1, #Enemies)
 
 			-- Set target
-			Object.SetBattleTarget(Enemies[Target])
+			Object.AddTarget(Enemies[Target])
+
+			-- Set skill
+			Object.SetAction(0)
+		end
+	end
+end
+
+AI_SkeletonPriest = {}
+
+function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
+	if Object.TurnTimer >= 0.9 then
+		if not Object.BattleActionIsSet then
+
+			-- Heal
+			for i = 1, #Allies do
+				if Allies[i].Health > 0 and Allies[i].Health <= Allies[i].MaxHealth * 0.75 then
+
+					-- See if target can be healed
+					Object.AddTarget(Allies[i])
+					if Object.SetAction(1) == true then
+						return
+					end
+
+					-- Clear targets if heal can't be used
+					Object.ClearTargets()
+				end
+			end
+
+			-- Get random target
+			Target = Random.GetInt(1, #Enemies)
+
+			-- Set target
+			Object.AddTarget(Enemies[Target])
 
 			-- Set skill
 			Object.SetAction(0)

@@ -78,7 +78,9 @@ class _Scripting {
 		static int RandomGetInt(lua_State *LuaState);
 		static int AudioPlay(lua_State *LuaState);
 
-		static int ObjectSetBattleTarget(lua_State *LuaState);
+		static int ObjectAddTarget(lua_State *LuaState);
+		static int ObjectClearTargets(lua_State *LuaState);
+		static int ObjectClearBattleTargets(lua_State *LuaState);
 		static int ObjectGetInventoryItem(lua_State *LuaState);
 		static int ObjectSetAction(lua_State *LuaState);
 		static int ObjectGenerateDamage(lua_State *LuaState);

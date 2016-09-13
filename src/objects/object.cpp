@@ -525,7 +525,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 			// Make icon flash
 			glm::vec4 Color(COLOR_WHITE);
-			if(Time - (int)Time < 0.5f)
+			if(Time - (int)Time < 0.5)
 				Color.a = 0.5f;
 
 			// Draw background icon

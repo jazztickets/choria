@@ -172,8 +172,12 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "StatusEffects");
 
 	lua_pushlightuserdata(LuaState, Object);
-	lua_pushcclosure(LuaState, &ObjectSetBattleTarget, 1);
-	lua_setfield(LuaState, -2, "SetBattleTarget");
+	lua_pushcclosure(LuaState, &ObjectAddTarget, 1);
+	lua_setfield(LuaState, -2, "AddTarget");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectClearTargets, 1);
+	lua_setfield(LuaState, -2, "ClearTargets");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectGetInventoryItem, 1);
@@ -486,9 +490,9 @@ int _Scripting::AudioPlay(lua_State *LuaState) {
 }
 
 // Set battle target
-int _Scripting::ObjectSetBattleTarget(lua_State *LuaState) {
+int _Scripting::ObjectAddTarget(lua_State *LuaState) {
 	if(!lua_istable(LuaState, 1))
-		throw std::runtime_error("ObjectSetBattleTarget: Target is not a table!");
+		throw std::runtime_error("ObjectAddTarget: Target is not a table!");
 
 	// Get self pointer
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
@@ -500,6 +504,14 @@ int _Scripting::ObjectSetBattleTarget(lua_State *LuaState) {
 	lua_pop(LuaState, 1);
 
 	Object->Targets.push_back(Target);
+
+	return 0;
+}
+
+// Clear battle targets
+int _Scripting::ObjectClearTargets(lua_State *LuaState) {
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	Object->Targets.clear();
 
 	return 0;
 }
@@ -546,10 +558,12 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 	ActionResult.Source.Object = Object;
 	ActionResult.Scope = ScopeType::BATTLE;
 	ActionResult.ActionUsed = Object->Action;
-	if(Object->Action.Item->CanUse(Object->Scripting, ActionResult))
-		lua_pushboolean(LuaState, true);
-	else
+	if(!Object->Action.Item->CanUse(Object->Scripting, ActionResult)) {
+		Object->Action.Item = nullptr;
 		lua_pushboolean(LuaState, false);
+	}
+	else
+		lua_pushboolean(LuaState, true);
 
 	return 1;
 }
