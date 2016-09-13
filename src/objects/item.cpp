@@ -469,9 +469,6 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	// Check if target is alive
 	if(Object->Targets.size() == 1) {
 		_Object *Target = *Object->Targets.begin();
-		if(Target->Deleted)
-			return false;
-
 		if(!CanTarget(Target))
 			return false;
 	}

@@ -47,6 +47,15 @@ void _Action::Unserialize(_Buffer &Data, _Stats *Stats) {
 // Resolve action
 bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
+	// Check for deleted targets
+	for(auto Iterator = Source->Targets.begin(); Iterator != Source->Targets.end(); ) {
+		if((*Iterator)->Deleted)
+			Iterator = Source->Targets.erase(Iterator);
+		else
+			++Iterator;
+	}
+
+	// Build action result struct
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;
 	ActionResult.Scope = Scope;
@@ -105,14 +114,13 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Targets.size());
 	for(auto &Target : Source->Targets) {
-		if(Target->Deleted)
-			continue;
 
+		// Set objects
 		ActionResult.Source.Reset();
 		ActionResult.Source.Object = Source;
 		ActionResult.Target.Object = Target;
 
-		// Update objects
+		// Call Use script
 		if(!SkillUnlocked)
 			ItemUsed->Use(Source->Scripting, ActionResult);
 
