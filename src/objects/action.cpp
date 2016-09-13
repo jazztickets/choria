@@ -105,6 +105,9 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Targets.size());
 	for(auto &Target : Source->Targets) {
+		if(Target->Deleted)
+			continue;
+
 		ActionResult.Source.Reset();
 		ActionResult.Source.Object = Source;
 		ActionResult.Target.Object = Target;

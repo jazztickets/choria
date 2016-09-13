@@ -41,6 +41,7 @@ template<class T> class _Manager {
 
 		// Storage
 		std::list<T *> Objects;
+		std::list<T *> DeleteList;
 
 	private:
 

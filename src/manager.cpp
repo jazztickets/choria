@@ -48,17 +48,23 @@ void _Manager<T>::Update(double FrameTime) {
 		// Update the object
 		Object->Update(FrameTime);
 
-		// Delete old objects
+		// Move deleted objects to deleted list
 		if(Object->Deleted) {
-			IDMap[Object->NetworkID] = nullptr;
-
-			delete Object;
+			DeleteList.push_back(Object);
 			Iterator = Objects.erase(Iterator);
 		}
 		else {
 			++Iterator;
 		}
 	}
+
+	// Delete objects
+	for(auto &Object : DeleteList) {
+		IDMap[Object->NetworkID] = nullptr;
+		delete Object;
+	}
+
+	DeleteList.clear();
 }
 
 // Generate object with new network id
