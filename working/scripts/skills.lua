@@ -229,7 +229,7 @@ end
 -- Whirl --
 
 Skill_Whirlwind = Base_Attack:New()
-Skill_Whirlwind.DamageBase = 29
+Skill_Whirlwind.DamageBase = 30
 Skill_Whirlwind.DamagePerLevel = 1
 Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 3.0
 Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
@@ -468,7 +468,7 @@ end
 
 Skill_Evasion = {}
 Skill_Evasion.ChancePerLevel = 1
-Skill_Evasion.BaseChance = 9
+Skill_Evasion.BaseChance = 10
 Skill_Evasion.BattleSpeed = 5
 
 function Skill_Evasion.GetChance(self, Level)
@@ -575,7 +575,7 @@ end
 Skill_Parry = {}
 Skill_Parry.StaminaGain = Buff_Parry.StaminaGain
 Skill_Parry.DamageReduction = Buff_Parry.DamageReduction
-Skill_Parry.Duration = 0.4
+Skill_Parry.Duration = 0.5
 Skill_Parry.DurationPerLevel = 0.1
 
 function Skill_Parry.GetDuration(self, Level)
@@ -639,7 +639,7 @@ end
 Skill_Backstab = Base_Attack:New()
 Skill_Backstab.BaseDamage = 0.5
 Skill_Backstab.DamagePerLevel = 0.1
-Skill_Backstab.DamageMultiplier = 1.5 - Skill_Backstab.DamagePerLevel
+Skill_Backstab.DamageMultiplier = 1.6 - Skill_Backstab.DamagePerLevel
 
 function Skill_Backstab.GetDamage(self, Level)
 
