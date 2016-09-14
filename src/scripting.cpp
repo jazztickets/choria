@@ -130,6 +130,30 @@ void _Scripting::InjectStats(_Stats *Stats) {
 	lua_setglobal(LuaState, "INVENTORY_RING1");
 	lua_pushinteger(LuaState, InventoryType::RING2);
 	lua_setglobal(LuaState, "INVENTORY_RING2");
+
+	// Push item types
+	lua_pushinteger(LuaState, (int)ItemType::SKILL);
+	lua_setglobal(LuaState, "ITEM_SKILL");
+	lua_pushinteger(LuaState, (int)ItemType::HELMET);
+	lua_setglobal(LuaState, "ITEM_HELMET");
+	lua_pushinteger(LuaState, (int)ItemType::ARMOR);
+	lua_setglobal(LuaState, "ITEM_ARMOR");
+	lua_pushinteger(LuaState, (int)ItemType::BOOTS);
+	lua_setglobal(LuaState, "ITEM_BOOTS");
+	lua_pushinteger(LuaState, (int)ItemType::ONEHANDED_WEAPON);
+	lua_setglobal(LuaState, "ITEM_ONEHANDED_WEAPON");
+	lua_pushinteger(LuaState, (int)ItemType::TWOHANDED_WEAPON);
+	lua_setglobal(LuaState, "ITEM_TWOHANDED_WEAPON");
+	lua_pushinteger(LuaState, (int)ItemType::SHIELD);
+	lua_setglobal(LuaState, "ITEM_SHIELD");
+	lua_pushinteger(LuaState, (int)ItemType::RING);
+	lua_setglobal(LuaState, "ITEM_RING");
+	lua_pushinteger(LuaState, (int)ItemType::CONSUMABLE);
+	lua_setglobal(LuaState, "ITEM_CONSUMABLE");
+	lua_pushinteger(LuaState, (int)ItemType::TRADABLE);
+	lua_setglobal(LuaState, "ITEM_TRADABLE");
+	lua_pushinteger(LuaState, (int)ItemType::UNLOCKABLE);
+	lua_setglobal(LuaState, "ITEM_UNLOCKABLE");
 }
 
 // Inject items
@@ -243,6 +267,9 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	}
 
 	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, (int)Item->Type);
+	lua_setfield(LuaState, -2, "Type");
 
 	lua_pushlightuserdata(LuaState, (void *)Item);
 	lua_pushcclosure(LuaState, &ItemGenerateDamage, 1);

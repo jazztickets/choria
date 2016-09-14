@@ -234,6 +234,12 @@ Skill_Whirlwind.DamagePerLevel = 1
 Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 3.0
 Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
 
+function Skill_Whirlwind.CanUse(self, Level, Object)
+	Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+
+	return Weapon.Type == ITEM_TWOHANDED_WEAPON
+end
+
 function Skill_Whirlwind.GetDuration(self, Level)
 	return math.floor(Skill_Whirlwind.SlowDuration + Skill_Whirlwind.SlowDurationPerLevel * Level)
 end
@@ -255,7 +261,7 @@ function Skill_Whirlwind.ApplyCost(self, Level, Result)
 end
 
 function Skill_Whirlwind.GetInfo(self, Level)
-	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Level) .." [c white]seconds"
+	return "Slash all enemies with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage\nCauses [c yellow]fatigue [c white]for [c green]" .. self:GetDuration(Level) .." [c white]seconds\nRequires a two-handed weapon"
 end
 
 function Skill_Whirlwind.PlaySound(self, Level)
