@@ -110,6 +110,10 @@ function Skill_ChewAttack.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+function Skill_ChewAttack.PlaySound(self, Level)
+	Audio.Play("grunt" .. Random.GetInt(0, 2) .. ".ogg")
+end
+
 -- Swamp attack --
 
 Skill_SwampAttack = Base_Attack:New()

@@ -38,6 +38,7 @@ a:hover {
 
 .buttons {
 	margin: 15px;
+	clear: both;
 }
 
 #message {
@@ -73,7 +74,7 @@ a:hover {
 	display: block;
 	color: #FFF;
 	text-decoration: none;
-	padding: 0px 12px;
+	padding: 0px 8px;
 	height: 100%;
 	line-height: 35px;
 }
