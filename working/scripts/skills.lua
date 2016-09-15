@@ -14,6 +14,14 @@ function Skill_CrowAttack.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+-- Crab attack --
+
+Skill_CrabAttack = Base_Attack:New()
+
+function Skill_CrabAttack.PlaySound(self, Level)
+	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Spider bite --
 
 Skill_SpiderBite = Base_Attack:New()
@@ -321,6 +329,10 @@ function Skill_Heal.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Skill_Heal.PlaySound(self, Level)
+	Audio.Play("heal0.ogg")
+end
+
 -- Resurrect --
 
 Skill_Resurrect = Base_Spell:New()
@@ -339,6 +351,10 @@ function Skill_Resurrect.Use(self, Level, Source, Target, Result)
 	Result.Target.Health = self.HealBase + self.HealPerLevel * Level
 
 	return Result
+end
+
+function Skill_Resurrect.PlaySound(self, Level)
+	Audio.Play("choir0.ogg")
 end
 
 -- Spark --

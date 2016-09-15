@@ -1197,6 +1197,7 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 
 	if(Player->Level > OldLevel) {
 		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill points. Press " + Actions.GetInputNameForAction(_Actions::SKILLS) + " to use them.");
+		Audio.PlaySound(Assets.Sounds["success0.ogg"]);
 
 		if(Player->Level == 2) {
 			Config.ShowTutorial = 0;

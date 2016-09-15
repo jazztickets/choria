@@ -16,6 +16,10 @@ function Item_HealingSalve.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Item_HealingSalve.PlaySound(self, Level)
+	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Mana Cider --
 
 Item_ManaCider = { Duration = 10 }
@@ -32,6 +36,10 @@ function Item_ManaCider.Use(self, Level, Source, Target, Result)
 	Result.Target.BuffDuration = self.Duration
 
 	return Result
+end
+
+function Item_ManaCider.PlaySound(self, Level)
+	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Invis Potion --
@@ -52,6 +60,10 @@ function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Item_InvisPotion.PlaySound(self, Level)
+	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Haste Potion --
 
 Item_HastePotion = { Duration = 10 }
@@ -70,6 +82,10 @@ function Item_HastePotion.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Item_HastePotion.PlaySound(self, Level)
+	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Death Potion --
 
 Item_DeathPotion = { Duration = 10 }
@@ -86,6 +102,43 @@ function Item_DeathPotion.Use(self, Level, Source, Target, Result)
 	Result.Target.BuffDuration = self.Duration
 
 	return Result
+end
+
+-- Battle Potion --
+
+Item_BattlePotion = { }
+
+function Item_BattlePotion.GetInfo(self, Level)
+
+	return "Get into a fight"
+end
+
+function Item_BattlePotion.Use(self, Level, Source, Target, Result)
+	Result.Target.Battle = Level
+
+	return Result
+end
+
+-- Poison Potion --
+
+Item_PoisonPotion = { Duration = 10 }
+
+function Item_PoisonPotion.GetInfo(self, Level)
+
+	return "Poison target for [c green]" .. self.Duration .. " [c white]seconds"
+end
+
+function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
+
+	Result.Target.Buff = Buffs["Buff_Poisoned"]
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = self.Duration
+
+	return Result
+end
+
+function Item_PoisonPotion.PlaySound(self, Level)
+	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Action Slot --
@@ -241,39 +294,6 @@ end
 function Item_CrabLegs.Use(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buffs["Buff_Hardened"]
-	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
-
-	return Result
-end
-
--- Battle Potion --
-
-Item_BattlePotion = { }
-
-function Item_BattlePotion.GetInfo(self, Level)
-
-	return "Get into a fight"
-end
-
-function Item_BattlePotion.Use(self, Level, Source, Target, Result)
-	Result.Target.Battle = Level
-
-	return Result
-end
-
--- Poison Potion --
-
-Item_PoisonPotion = { Duration = 10 }
-
-function Item_PoisonPotion.GetInfo(self, Level)
-
-	return "Poison target for [c green]" .. self.Duration .. " [c white]seconds"
-end
-
-function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
-
-	Result.Target.Buff = Buffs["Buff_Poisoned"]
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
