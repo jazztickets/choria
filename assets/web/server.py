@@ -108,12 +108,14 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 					i += 1
 				update_sql = ', '.join(pairs)
 				sql = "UPDATE {0} SET {1} WHERE {2} = ?".format(tablename, update_sql, id_name)
-				try:
-					db.execute(sql, (id, ))
-					db.commit()
-				except sqlite3.Error as e:
-					self.write_json_response({'message':sql + ": " + str(e)})
-					return
+				db.execute(sql, (id, ))
+
+			# commit transaction
+			try:
+				db.commit()
+			except sqlite3.Error as e:
+				self.write_json_response({'message':sql + ": " + str(e)})
+				return
 
 			self.write_json_response({'message':'saved ' + str(datetime.datetime.now())})
 			return
