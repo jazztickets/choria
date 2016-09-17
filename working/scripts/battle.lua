@@ -132,13 +132,18 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 		end
 
 		-- Call OnHit methods for buffs
-		Result.Target.Stamina = 0
+		StaminaChange = 0
 		for i = 1, #Target.StatusEffects do
 			Effect = Target.StatusEffects[i]
 			if Effect.Buff.OnHit ~= nil then
 				Effect.Buff:OnHit(Effect.Level, Change)
-				Result.Target.Stamina = Result.Target.Stamina + Change.Stamina
+				StaminaChange = StaminaChange + Change.Stamina
 			end
+		end
+
+		-- Update stamina
+		if StaminaChange ~= 0 then
+			Result.Target.Stamina = StaminaChange
 		end
 
 		-- Apply damage block

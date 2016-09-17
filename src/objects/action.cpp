@@ -78,10 +78,10 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		// Apply item cost
 		else {
 			size_t Index;
-			if(!ActionResult.Source.Object->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
+			if(!Source->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
 				return false;
 
-			ActionResult.Source.Object->Inventory->DecrementItemCount(Index, -1);
+			Source->Inventory->DecrementItemCount(Index, -1);
 			DecrementItem = true;
 			if(ItemUsed->IsSkill()) {
 				Source->Skills[ItemUsed->ID] = 0;
@@ -95,7 +95,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	}
 
 	// Update stats
-	ActionResult.Source.Object->UpdateStats(ActionResult.Source);
+	Source->UpdateStats(ActionResult.Source);
+	Source->TurnTimer = 0.0;
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
@@ -134,7 +135,6 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	}
 
 	// Reset object
-	Source->TurnTimer = 0.0;
 	Source->Action.Unset();
 	Source->Targets.clear();
 

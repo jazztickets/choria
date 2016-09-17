@@ -166,6 +166,32 @@ function Skill_Attack.GenerateDamage(self, Level, Source)
 	return Damage, Crit
 end
 
+-- Fury --
+
+Skill_Fury = Base_Attack:New()
+Skill_Fury.StaminaPerLevel = 0.05
+Skill_Fury.BaseStamina = 0.05 - Skill_Fury.StaminaPerLevel
+
+function Skill_Fury.GetStaminaGain(self, Level)
+
+	return math.min(self.BaseStamina + self.StaminaPerLevel * Level, 1.0)
+end
+
+function Skill_Fury.GetInfo(self, Level)
+
+	return "Attack with your weapon and gain [c green]" .. self:GetStaminaGain(Level) .. " [c yellow]stamina [c white]for a killing blow"
+end
+
+function Skill_Fury.PlaySound(self, Level)
+	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+function Skill_Fury.Proc(self, Roll, Level, Source, Target, Result)
+	if Target.Health + Result.Target.Health <= 0 then
+		Result.Source.Stamina = self:GetStaminaGain(Level)
+	end
+end
+
 -- Gash --
 
 Skill_Gash = Base_Attack:New()
