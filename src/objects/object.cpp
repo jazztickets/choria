@@ -991,6 +991,7 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 			if(StatusEffect->Level >= ExistingEffect->Level) {
 				ExistingEffect->Duration = StatusEffect->Duration;
 				ExistingEffect->Level = StatusEffect->Level;
+				ExistingEffect->Time = 0.0;
 			}
 
 			return false;
