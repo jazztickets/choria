@@ -142,6 +142,10 @@ function Skill_SwampAttack.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+function Skill_SwampAttack.PlaySound(self, Level)
+	Audio.Play("sludge0.ogg")
+end
+
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()
