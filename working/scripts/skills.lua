@@ -22,6 +22,14 @@ function Skill_SlimeAttack.PlaySound(self, Level)
 	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Ant attack --
+
+Skill_AntAttack = Base_Attack:New()
+
+function Skill_AntAttack.PlaySound(self, Level)
+	Audio.Play("crunch" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Crab attack --
 
 Skill_CrabAttack = Base_Attack:New()
@@ -144,6 +152,14 @@ end
 
 function Skill_SwampAttack.PlaySound(self, Level)
 	Audio.Play("sludge0.ogg")
+end
+
+-- Skeleton attack --
+
+Skill_SkeletonAttack = Base_Attack:New()
+
+function Skill_SkeletonAttack.PlaySound(self, Level)
+	Audio.Play("bones" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Basic attack --
