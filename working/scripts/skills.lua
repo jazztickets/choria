@@ -14,6 +14,14 @@ function Skill_CrowAttack.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+-- Slime attack --
+
+Skill_SlimeAttack = Base_Attack:New()
+
+function Skill_SlimeAttack.PlaySound(self, Level)
+	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Crab attack --
 
 Skill_CrabAttack = Base_Attack:New()
