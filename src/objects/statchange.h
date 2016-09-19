@@ -31,6 +31,14 @@ class _Battle;
 class _Buffer;
 class _Font;
 
+// Hash function for StatType
+struct StatTypeHash {
+	template <typename T>
+	std::size_t operator()(T t) const {
+		return static_cast<std::uint64_t>(t);
+	}
+};
+
 // Types of stats
 enum class StatType : uint64_t {
 	BUFF,
