@@ -108,7 +108,6 @@ _Object::_Object() :
 	TurnTimer(0.0),
 	AITimer(1.0),
 	BattleSide(0),
-	LastTarget(nullptr),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
 
@@ -144,6 +143,9 @@ _Object::_Object() :
 	WaitingForTrade(false),
 	TradeAccepted(false),
 	TradePlayer(nullptr) {
+
+	LastTarget[0] = nullptr;
+	LastTarget[1] = nullptr;
 
 	Inventory = new _Inventory();
 }

@@ -238,7 +238,7 @@ class _Object : public _ManagerBase {
 
 		// Actions
 		std::list<_Object *> Targets;
-		_Object *LastTarget;
+		_Object *LastTarget[2];
 		_Action Action;
 
 		// Render

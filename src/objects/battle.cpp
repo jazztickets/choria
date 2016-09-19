@@ -248,8 +248,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 					Multiple = true;
 				case TargetType::ALLY:
 					StartingSide = ClientPlayer->BattleSide;
-					if(!ClientPlayer->LastTarget)
-						ClientPlayer->LastTarget = ClientPlayer;
+					if(!ClientPlayer->LastTarget[ClientPlayer->BattleSide])
+						ClientPlayer->LastTarget[ClientPlayer->BattleSide] = ClientPlayer;
 				break;
 				case TargetType::ENEMY_ALL:
 					Multiple = true;
@@ -273,7 +273,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				if(ClientPlayer->LastTarget && !Multiple) {
 					for(auto &Fighter : FighterList) {
 						if(Item->CanTarget(Fighter)) {
-							if(ClientPlayer->LastTarget == Fighter) {
+							if(ClientPlayer->LastTarget[StartingSide] == Fighter) {
 								ClientPlayer->Targets.push_back(Fighter);
 								break;
 							}
@@ -319,7 +319,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Remember target
 		if(ClientPlayer->Targets.size() == 1)
-			ClientPlayer->LastTarget = ClientPlayer->Targets.front();
+			ClientPlayer->LastTarget[ClientPlayer->Targets.front()->BattleSide] = ClientPlayer->Targets.front();
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACTION_USE);
@@ -403,7 +403,8 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Battle = this;
 	Fighter->BattleSide = Side;
-	Fighter->LastTarget = nullptr;
+	Fighter->LastTarget[0] = nullptr;
+	Fighter->LastTarget[1] = nullptr;
 	Fighter->Targets.clear();
 	Fighter->Action.Unset();
 	Fighter->PotentialAction.Unset();
