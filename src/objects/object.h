@@ -230,7 +230,6 @@ class _Object : public _ManagerBase {
 		_Battle *Battle;
 		_Element *BattleElement;
 		double TurnTimer;
-		double AITimer;
 		uint8_t BattleSide;
 		_Action PotentialAction;
 		std::list<uint32_t> ItemDropsReceived;

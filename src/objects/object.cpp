@@ -106,7 +106,6 @@ _Object::_Object() :
 	Battle(nullptr),
 	BattleElement(nullptr),
 	TurnTimer(0.0),
-	AITimer(1.0),
 	BattleSide(0),
 	Portrait(nullptr),
 	BattleOffset(0, 0),
@@ -336,10 +335,8 @@ void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 	if(!AI.length())
 		return;
 
-	// Update AI every second
-	AITimer += FrameTime;
-	if(AITimer >= BATTLE_AI_UPDATE_PERIOD) {
-		AITimer = 0.0;
+	// Call AI script to get action
+	if(TurnTimer >= 1.0 && !Action.IsSet()) {
 
 		// Separate fighter list
 		std::list<_Object *> Enemies, Allies;
