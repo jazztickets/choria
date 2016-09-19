@@ -1465,15 +1465,6 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 	if(!BattleEvent.Zone || BattleEvent.Object->Battle)
 		return;
 
-	// Get difficulty
-	double Difficulty = 1.0;
-	if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
-		Scripting->PushReal(Clock);
-		Scripting->MethodCall(1, 1);
-		Difficulty = Scripting->GetReal(1);
-		Scripting->FinishMethodCall();
-	}
-
 	// Get a list of players
 	std::list<_Object *> Players;
 	BattleEvent.Object->Map->GetClosePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
@@ -1485,9 +1476,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 	std::list<uint32_t> MonsterIDs;
 	bool Boss = false;
 	Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss);
-	//MonsterIDs.clear();
-	//MonsterIDs.push_back(10);
 
+	// Fight if there are monsters
 	if(MonsterIDs.size()) {
 
 		// Create a new battle instance
@@ -1498,27 +1488,27 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Boss = Boss;
 		Battle->Scripting = Scripting;
 
-		/*
-		for(int i = 0; i < 5; i++) {
-			_Object *Monster = ObjectManager->Create();
-			Monster->Server = this;
-			Monster->Scripting = Scripting;
-			Monster->DatabaseID = 3;
-			Monster->Stats = Stats;
-			Stats->GetMonsterStats(Monster->DatabaseID, Monster);
-			Monster->CalculateStats();
-			Battle->AddFighter(Monster, 0);
-		}*/
-
 		// Add player
 		Players.push_back(BattleEvent.Object);
 
 		// Sort by network id
 		Players.sort();
 
+		// Get difficulty
+		double Difficulty = 1.0;
+		if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
+			Scripting->PushReal(Clock);
+			Scripting->MethodCall(1, 1);
+			Difficulty = Scripting->GetReal(1);
+			Scripting->FinishMethodCall();
+		}
+
 		// Add players to battle
 		for(auto &PartyPlayer : Players) {
 			Battle->AddFighter(PartyPlayer, 0);
+
+			// Increase difficulty for each player
+			Difficulty += GAME_DIFFICULTY_PER_PLAYER;
 		}
 
 		// Add monsters

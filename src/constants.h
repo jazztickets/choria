@@ -101,6 +101,7 @@ const  int          PLAYER_MAX_GOLD                 =  1000000;
 const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
 //     Game
 const  int          GAME_MAX_RESISTANCE             =  75;
+const  double       GAME_DIFFICULTY_PER_PLAYER      =  0.1;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory
