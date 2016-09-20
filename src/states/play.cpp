@@ -603,7 +603,7 @@ void _PlayState::HandleChangeMaps(_Buffer &Data) {
 		Map->Load(Stats->GetMap(MapID));
 		AssignPlayer(nullptr);
 
-		Audio.PlayMusic(Assets.Music[Map->Music], 1000);
+		Audio.PlayMusic(Assets.Music[Map->Music]);
 	}
 }
 

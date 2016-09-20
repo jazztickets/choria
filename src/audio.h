@@ -19,6 +19,8 @@
 
 // Libraries
 #include <al.h>
+#include <vorbis/vorbisfile.h>
+#include <thread>
 #include <list>
 #include <string>
 
@@ -27,11 +29,10 @@ class _Sound {
 
 	public:
 
-		_Sound() : ID(0), Format(0) { }
+		_Sound() : ID(0) { }
 		~_Sound();
 
 		ALuint ID;
-		ALenum Format;
 };
 
 // Music class
@@ -39,8 +40,15 @@ class _Music {
 
 	public:
 
-		_Music() { }
+		_Music() : Loaded(false), Loop(false), Stop(false), Format(0), Frequency(0) { }
 		~_Music();
+
+		bool Loaded;
+		bool Loop;
+		bool Stop;
+		ALenum Format;
+		long Frequency;
+		OggVorbis_File Stream;
 };
 
 // Audio source class
@@ -64,12 +72,16 @@ class _Audio {
 
 	public:
 
+		static const int BUFFER_COUNT = 3;
+		static const int BUFFER_SIZE = 4096;
+
 		_Audio();
 
 		void Init(bool Enabled);
 		void Close();
 
 		void Update(double FrameTime);
+		void UpdateMusic();
 
 		_Sound *LoadSound(const std::string &Path);
 		_Music *LoadMusic(const std::string &Path);
@@ -77,20 +89,32 @@ class _Audio {
 		void SetSoundVolume(float Volume);
 		void SetMusicVolume(float Volume);
 
+		void Stop();
+		void StopSounds();
+		void StopMusic();
 		void PlaySound(_Sound *Sound);
-		void PlayMusic(_Music *Music, int FadeTime=0);
-		void StopMusic(int FadeTime=0);
+		void PlayMusic(_Music *Music, bool Loop=true);
+
+		bool Done;
 
 	private:
+
+		long ReadStream(OggVorbis_File &Stream, char *Buffer, int Size);
 
 		bool Enabled;
 
 		float SoundVolume;
 		float MusicVolume;
 
-		const _Music *SongPlaying;
+		ALuint MusicSource;
+		ALuint MusicBuffers[BUFFER_COUNT];
+
+		_Music *CurrentSong;
+		_Music *NewSong;
 
 		std::list<_AudioSource *> Sources;
+
+		std::thread *Thread;
 };
 
 extern _Audio Audio;

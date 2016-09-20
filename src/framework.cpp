@@ -157,6 +157,7 @@ void _Framework::Close() {
 	State->Close();
 
 	// Close subsystems
+	Audio.Stop();
 	Assets.Close();
 	Graphics.Close();
 	Audio.Close();

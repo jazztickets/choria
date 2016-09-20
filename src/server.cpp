@@ -38,7 +38,7 @@
 #include <regex>
 
 // Function to run the server thread
-void RunThread(void *Arguments) {
+static void RunThread(void *Arguments) {
 
 	// Get server object
 	_Server *Server = (_Server *)Arguments;
