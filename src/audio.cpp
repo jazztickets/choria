@@ -451,7 +451,9 @@ void _Audio::StopMusic() {
 	NewSong = nullptr;
 
 	// Wait for thread to kill current song
-	while(CurrentSong) { }
+	while(CurrentSong) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	}
 }
 
 // Read data from a vorbis stream
