@@ -99,8 +99,9 @@ class _Audio {
 
 	private:
 
-		long ReadStream(OggVorbis_File &Stream, char *Buffer, int Size);
+		long ReadStream(OggVorbis_File *Stream, char *Buffer, int Size);
 		void OpenVorbis(const std::string &Path, OggVorbis_File *Stream, long &Rate, int &Format);
+		bool QueueBuffers(_Music *Music, ALuint Buffer);
 
 		bool Enabled;
 

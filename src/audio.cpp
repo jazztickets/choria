@@ -212,9 +212,16 @@ void _Audio::Update(double FrameTime) {
 // Update music stream
 void _Audio::UpdateMusic() {
 
+	// Check for stopped song
+	if(CurrentSong && CurrentSong->Stop) {
+		CurrentSong = nullptr;
+	}
+
+	// Check for track change
 	if(NewSong) {
 		alSourceStop(MusicSource);
 
+		// Clear queued buffers
 		ALint Queued;
 		alGetSourcei(MusicSource, AL_BUFFERS_QUEUED, &Queued);
 		while(Queued--) {
@@ -226,22 +233,17 @@ void _Audio::UpdateMusic() {
 		ov_time_seek(&NewSong->Stream, 0);
 
 		// Load initial buffers
-		char Buffer[BUFFER_SIZE*2];
 		for(int i = 0; i < BUFFER_COUNT; i++) {
-			long TotalBytes = 0;
-			while(TotalBytes <= BUFFER_SIZE) {
-				long BytesRead = ReadStream(NewSong->Stream, Buffer + TotalBytes, BUFFER_SIZE);
-				TotalBytes += BytesRead;
 
-				if(BytesRead <= 0)
-					break;
+			// Queue buffers
+			bool End = QueueBuffers(NewSong, MusicBuffers[i]);
+			if(End) {
+				NewSong = nullptr;
+				break;
 			}
-
-			alBufferData(MusicBuffers[i], NewSong->Format, Buffer, (ALsizei)TotalBytes, (ALsizei)NewSong->Frequency);
 		}
 
 		// Play music
-		alSourceQueueBuffers(MusicSource, BUFFER_COUNT, MusicBuffers);
 		alSourcef(MusicSource, AL_GAIN, MusicVolume);
 		alSourcePlay(MusicSource);
 
@@ -252,58 +254,21 @@ void _Audio::UpdateMusic() {
 	// Get number of buffers processed
 	ALint Processed;
 	alGetSourcei(MusicSource, AL_BUFFERS_PROCESSED, &Processed);
-	if(Processed <= 0)
-		return;
 
-	while(Processed--) {
+	// Handle processed buffers
+	while(Processed-- > 0) {
 
 		// Pop buffer
 		ALuint CurrentBuffer;
 		alSourceUnqueueBuffers(MusicSource, 1, &CurrentBuffer);
 
-		// Queue up more buffers
+		// Check for song
 		if(CurrentSong) {
 
-			if(CurrentSong->Stop) {
+			// Queue buffers
+			bool End = QueueBuffers(CurrentSong, CurrentBuffer);
+			if(End)
 				CurrentSong = nullptr;
-			}
-			else {
-
-				// Decode vorbis stream
-				char Buffer[BUFFER_SIZE];
-				long TotalBytes = BUFFER_SIZE;
-				while(TotalBytes > 0) {
-
-					// Read some bytes
-					int BitStream;
-					long BytesRead = ov_read(&CurrentSong->Stream, Buffer + (BUFFER_SIZE - TotalBytes), (int)TotalBytes, 0, 2, 1, &BitStream);
-
-					// Check for errors
-					if(BytesRead < 0) {
-						CurrentSong = nullptr;
-						break;
-					}
-					// Handle track end
-					else if(BytesRead == 0) {
-						if(CurrentSong->Loop) {
-							ov_time_seek(&CurrentSong->Stream, 0);
-						}
-						else {
-							CurrentSong = nullptr;
-							break;
-						}
-					}
-					// Subtract from total bytes to read
-					else {
-						TotalBytes -= BytesRead;
-					}
-				}
-
-				if(CurrentSong) {
-					alBufferData(CurrentBuffer, CurrentSong->Format, Buffer, (ALsizei)BUFFER_SIZE, (ALsizei)CurrentSong->Frequency);
-					alSourceQueueBuffers(MusicSource, 1, &CurrentBuffer);
-				}
-			}
 		}
 	}
 }
@@ -405,11 +370,11 @@ void _Audio::StopMusic() {
 }
 
 // Read data from a vorbis stream
-long _Audio::ReadStream(OggVorbis_File &Stream, char *Buffer, int Size) {
+long _Audio::ReadStream(OggVorbis_File *Stream, char *Buffer, int Size) {
 
 	// Decode vorbis file
 	int BitStream;
-	long BytesRead = ov_read(&Stream, Buffer, Size, 0, 2, 1, &BitStream);
+	long BytesRead = ov_read(Stream, Buffer, Size, 0, 2, 1, &BitStream);
 
 	return BytesRead;
 }
@@ -437,6 +402,45 @@ void _Audio::OpenVorbis(const std::string &Path, OggVorbis_File *Stream, long &R
 		default:
 			throw std::runtime_error("Unsupported number of channels: " + std::to_string(Info->channels));
 	}
+}
+
+// Queue openal buffers with vorbis stream data, return true on stream end or error
+bool _Audio::QueueBuffers(_Music *Music, ALuint Buffer) {
+
+	// Decode vorbis stream
+	char Data[BUFFER_SIZE];
+	long BytesNeeded = BUFFER_SIZE;
+	while(BytesNeeded > 0) {
+
+		// Read some bytes
+		int BitStream;
+		long BytesRead = ov_read(&Music->Stream, Data + (BUFFER_SIZE - BytesNeeded), (int)BytesNeeded, 0, 2, 1, &BitStream);
+
+		// Check for errors
+		if(BytesRead < 0) {
+			return true;
+		}
+		// Handle track end
+		else if(BytesRead == 0) {
+			if(Music->Loop) {
+				ov_time_seek(&Music->Stream, 0);
+			}
+			else {
+				return true;
+			}
+		}
+		// Subtract from total bytes to read
+		else {
+			BytesNeeded -= BytesRead;
+		}
+	}
+
+	if(Music) {
+		alBufferData(Buffer, Music->Format, Data, (ALsizei)BUFFER_SIZE, (ALsizei)Music->Frequency);
+		alSourceQueueBuffers(MusicSource, 1, &Buffer);
+	}
+
+	return false;
 }
 
 // Set sound volume
