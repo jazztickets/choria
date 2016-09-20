@@ -16,19 +16,58 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <audio.h>
+#include <alc.h>
+#include <vorbis/vorbisfile.h>
 #include <stdexcept>
-#include <SDL_mixer.h>
+#include <vector>
 
 _Audio Audio;
 
+// Constructor
+_AudioSource::_AudioSource(const _Sound *Sound, float Volume) {
+
+	// Create source
+	alGenSources(1, &ID);
+
+	// Assign buffer to source
+	alSourcei(ID, AL_BUFFER, Sound->ID);
+	alSourcef(ID, AL_GAIN, Volume);
+}
+
+// Destructor
+_AudioSource::~_AudioSource() {
+	alDeleteSources(1, &ID);
+}
+
+// Determine if source is actively playing
+bool _AudioSource::IsPlaying() {
+
+	// Get state
+	ALenum State;
+	alGetSourcei(ID, AL_SOURCE_STATE, &State);
+
+	return State == AL_PLAYING;
+}
+
+// Play
+void _AudioSource::Play() {
+	if(ID)
+		alSourcePlay(ID);
+}
+
+// Stop
+void _AudioSource::Stop() {
+	if(ID)
+		alSourceStop(ID);
+}
+
 // Destructor
 _Sound::~_Sound() {
-	Mix_FreeChunk(Chunk);
+	alDeleteBuffers(1, &ID);
 }
 
 // Destructor
 _Music::~_Music() {
-	Mix_FreeMusic(Music);
 }
 
 // Constructor
@@ -42,24 +81,72 @@ _Audio::_Audio() :
 
 // Initialize
 void _Audio::Init(bool Enabled) {
-	if(Enabled) {
-		int MixFlags = MIX_INIT_OGG;
-		int MixInit = Mix_Init(MixFlags);
-		if((MixInit & MixFlags) != MixFlags)
-			throw std::runtime_error("Mix_Init failed: " + std::string(Mix_GetError()));
+	if(!Enabled)
+		return;
 
-		if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0)
-			throw std::runtime_error("Mix_OpenAudio failed: " + std::string(Mix_GetError()));
+	// Open device
+	ALCdevice *Device = alcOpenDevice(nullptr);
+	if(Device == nullptr)
+		throw std::runtime_error("alcOpenDevice failed");
 
-		this->Enabled = Enabled;
-	}
+	// Create context
+	ALCcontext *Context = alcCreateContext(Device, nullptr);
+
+	// Set active context
+	alcMakeContextCurrent(Context);
+
+	// Clear code
+	alGetError();
+
+	this->Enabled = Enabled;
 }
 
 // Close
 void _Audio::Close() {
-	if(Enabled) {
-		Mix_CloseAudio();
-		Mix_Quit();
+	if(!Enabled)
+		return;
+
+	// Delete sources
+	for(auto &Iterator : Sources)
+		delete Iterator;
+
+	Sources.clear();
+
+	// Get active context
+	ALCcontext *Context = alcGetCurrentContext();
+
+	// Get device for active context
+	ALCdevice *Device = alcGetContextsDevice(Context);
+
+	// Disable context
+	alcMakeContextCurrent(nullptr);
+
+	// Free context
+	alcDestroyContext(Context);
+
+	// Close device
+	alcCloseDevice(Device);
+
+	Enabled = false;
+}
+
+// Update audio
+void _Audio::Update(double FrameTime) {
+	if(!Enabled)
+		return;
+
+	// Update sources
+	for(auto Iterator = Sources.begin(); Iterator != Sources.end(); ) {
+		_AudioSource *Source = *Iterator;
+
+		// Delete source
+		if(!Source->IsPlaying()) {
+			delete Source;
+			Iterator = Sources.erase(Iterator);
+		}
+		else {
+			++Iterator;
+		}
 	}
 }
 
@@ -68,12 +155,50 @@ _Sound *_Audio::LoadSound(const std::string &Path) {
 	if(!Enabled)
 		return nullptr;
 
+	// Open vorbis stream
+	OggVorbis_File VorbisStream;
+	int ReturnCode = ov_fopen(Path.c_str(), &VorbisStream);
+	if(ReturnCode != 0)
+		throw std::runtime_error("ov_fopen failed: ReturnCode=" + std::to_string(ReturnCode));
+
+	// Get vorbis file info
+	vorbis_info *Info = ov_info(&VorbisStream, -1);
+
+	// Create new buffer
 	_Sound *Sound = new _Sound();
-	Sound->Chunk = Mix_LoadWAV(Path.c_str());
+	switch(Info->channels) {
+		case 1:
+			Sound->Format = AL_FORMAT_MONO16;
+		break;
+		case 2:
+			Sound->Format = AL_FORMAT_STEREO16;
+		break;
+		default:
+			throw std::runtime_error("Unsupported number of channels: " + std::to_string(Info->channels));
+		break;
+	}
+
+	// Alloc some memory for the samples
+	std::vector<char> Data;
+
+	// Decode vorbis file
+	long BytesRead;
+	char Buffer[4096];
+	int BitStream;
+	do {
+		BytesRead = ov_read(&VorbisStream, Buffer, 4096, 0, 2, 1, &BitStream);
+		Data.insert(Data.end(), Buffer, Buffer + BytesRead);
+	} while(BytesRead > 0);
+
+	// Create buffer
+	alGenBuffers(1, &Sound->ID);
+	alBufferData(Sound->ID, Sound->Format, &Data[0], (ALsizei)Data.size(), (ALsizei)Info->rate);
+
+	// Close vorbis file
+	ov_clear(&VorbisStream);
 
 	return Sound;
 }
-
 
 // Load music
 _Music *_Audio::LoadMusic(const std::string &Path) {
@@ -81,7 +206,6 @@ _Music *_Audio::LoadMusic(const std::string &Path) {
 		return nullptr;
 
 	_Music *Music = new _Music();
-	Music->Music = Mix_LoadMUS(Path.c_str());
 
 	return Music;
 }
@@ -92,8 +216,6 @@ void _Audio::SetSoundVolume(float Volume) {
 		return;
 
 	SoundVolume = Volume;
-
-	Mix_Volume(-1, (int)(SoundVolume * MIX_MAX_VOLUME));
 }
 
 // Set music volume
@@ -102,8 +224,6 @@ void _Audio::SetMusicVolume(float Volume) {
 		return;
 
 	MusicVolume = Volume;
-
-	Mix_VolumeMusic((int)(MusicVolume * MIX_MAX_VOLUME));
 }
 
 // Play a sound
@@ -111,7 +231,12 @@ void _Audio::PlaySound(_Sound *Sound) {
 	if(!Enabled || !Sound)
 		return;
 
-	Mix_PlayChannel(-1, Sound->Chunk, 0);
+	// Create audio source
+	_AudioSource *AudioSource = new _AudioSource(Sound, SoundVolume);
+	AudioSource->Play();
+
+	// Add to sources
+	Sources.push_back(AudioSource);
 }
 
 // Play music
@@ -125,10 +250,6 @@ void _Audio::PlayMusic(_Music *Music, int FadeTime) {
 	}
 
 	if(SongPlaying != Music) {
-		if(FadeTime)
-			Mix_FadeInMusic(Music->Music, -1, FadeTime);
-		else
-			Mix_PlayMusic(Music->Music, -1);
 
 		SongPlaying = Music;
 	}
@@ -136,10 +257,6 @@ void _Audio::PlayMusic(_Music *Music, int FadeTime) {
 
 // Stop all music
 void _Audio::StopMusic(int FadeTime) {
-	if(FadeTime)
-		Mix_FadeOutMusic(FadeTime);
-	else
-		Mix_HaltMusic();
 
 	SongPlaying = nullptr;
 }

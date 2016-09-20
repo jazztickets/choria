@@ -250,6 +250,7 @@ void _Framework::Update() {
 		} break;
 	}
 
+	Audio.Update(FrameTime);
 	Graphics.Flip(FrameTime);
 
 	if(FrameLimit)

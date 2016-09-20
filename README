@@ -12,7 +12,9 @@ Save data is in ~/.local/share/choria for linux and %APPDATA%/choria for windows
 CMake 2.8+
 OpenGL 2.1+ and GLSL 1.20
 SDL2
-SDL2_mixer
+OpenAL
+libvorbis
+libogg
 FreeType2
 Lua 5.2+
 GLM 0.9.5+

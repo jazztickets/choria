@@ -44,9 +44,6 @@ else()
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 endif()
 
-# external libraries
-add_definitions("-DTIXML_USE_STL")
-
 # find libraries
 find_package(OpenGL REQUIRED)
 if(NOT OPENGL_FOUND)
@@ -58,9 +55,19 @@ if(NOT SDL2_FOUND)
 	message(SEND_ERROR "Could not find SDL2!")
 endif()
 
-find_package(SDL2_mixer REQUIRED)
-if(NOT SDL2_MIXER_FOUND)
-	message(SEND_ERROR "Could not find SDL2_mixer!")
+find_package(OpenAL REQUIRED)
+if(NOT OPENAL_FOUND)
+	message(SEND_ERROR "Could not find OpenAL!")
+endif()
+
+find_package(Vorbis REQUIRED)
+if(NOT VORBIS_FOUND)
+	message(SEND_ERROR "Could not find libvorbis or libvorbisfile!")
+endif()
+
+find_package(Ogg REQUIRED)
+if(NOT OGG_FOUND)
+	message(SEND_ERROR "Could not find libogg!")
 endif()
 
 find_package(Lua ${LUA_VERSION} REQUIRED)
@@ -96,7 +103,9 @@ endif()
 # set include directories
 include_directories("src")
 include_directories(${SDL2_INCLUDE_DIR})
-include_directories(${SDL2_MIXER_INCLUDE_DIRS})
+include_directories(${OPENAL_INCLUDE_DIR})
+include_directories(${VORBIS_INCLUDE_DIR})
+include_directories(${OGG_INCLUDE_DIR})
 include_directories(${LUA_INCLUDE_DIR})
 include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
@@ -145,7 +154,9 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
 target_link_libraries(${CMAKE_PROJECT_NAME}
 	${OPENGL_gl_LIBRARY}
 	${SDL2_LIBRARY}
-	${SDL2_MIXER_LIBRARIES}
+	${OPENAL_LIBRARY}
+	${VORBIS_LIBRARIES}
+	${OGG_LIBRARIES}
 	${LUA_LIBRARIES}
 	${FREETYPE_LIBRARIES}
 	${SQLITE_LIBRARIES}

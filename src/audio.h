@@ -18,20 +18,20 @@
 #pragma once
 
 // Libraries
+#include <al.h>
+#include <list>
 #include <string>
-
-struct Mix_Chunk;
-typedef struct _Mix_Music Mix_Music;
 
 // Sound class
 class _Sound {
 
 	public:
 
-		_Sound() : Chunk(nullptr) { }
+		_Sound() : ID(0), Format(0) { }
 		~_Sound();
 
-		Mix_Chunk *Chunk;
+		ALuint ID;
+		ALenum Format;
 };
 
 // Music class
@@ -39,10 +39,24 @@ class _Music {
 
 	public:
 
-		_Music() : Music(nullptr) { }
+		_Music() { }
 		~_Music();
+};
 
-		Mix_Music *Music;
+// Audio source class
+class _AudioSource {
+
+	public:
+
+		_AudioSource(const _Sound *Sound, float Volume=1.0f);
+		~_AudioSource();
+
+		void Play();
+		void Stop();
+
+		bool IsPlaying();
+
+		ALuint ID;
 };
 
 // Classes
@@ -54,6 +68,8 @@ class _Audio {
 
 		void Init(bool Enabled);
 		void Close();
+
+		void Update(double FrameTime);
 
 		_Sound *LoadSound(const std::string &Path);
 		_Music *LoadMusic(const std::string &Path);
@@ -73,6 +89,8 @@ class _Audio {
 		float MusicVolume;
 
 		const _Music *SongPlaying;
+
+		std::list<_AudioSource *> Sources;
 };
 
 extern _Audio Audio;
