@@ -98,7 +98,6 @@ _Audio::_Audio() :
 
 	for(int i = 0; i < BUFFER_COUNT; i++)
 		MusicBuffers[i] = 0;
-
 }
 
 // Initialize
@@ -126,7 +125,9 @@ void _Audio::Init(bool Enabled) {
 
 	CurrentSong = nullptr;
 	NewSong = nullptr;
+	Done = false;
 
+	// Start thread
 	Thread = new std::thread(RunThread, this);
 
 	this->Enabled = Enabled;
@@ -268,27 +269,23 @@ void _Audio::UpdateMusic() {
 			}
 			else {
 
-				// Read up to buffer_size * 2
-				char Buffer[BUFFER_SIZE*2];
-				long TotalBytes = 0;
-				while(TotalBytes < BUFFER_SIZE) {
-					long BytesRead = ReadStream(CurrentSong->Stream, Buffer + TotalBytes, BUFFER_SIZE);
+				// Decode vorbis stream
+				char Buffer[BUFFER_SIZE];
+				long TotalBytes = BUFFER_SIZE;
+				while(TotalBytes > 0) {
+
+					// Read some bytes
+					int BitStream;
+					long BytesRead = ov_read(&CurrentSong->Stream, Buffer + (BUFFER_SIZE - TotalBytes), (int)TotalBytes, 0, 2, 1, &BitStream);
 
 					// Check for errors
 					if(BytesRead < 0) {
 						CurrentSong = nullptr;
 						break;
 					}
-
-					TotalBytes += BytesRead;
-
 					// Handle track end
-					if(!BytesRead) {
-						if(Done) {
-							CurrentSong = nullptr;
-							break;
-						}
-						else if(CurrentSong->Loop) {
+					else if(BytesRead == 0) {
+						if(CurrentSong->Loop) {
 							ov_time_seek(&CurrentSong->Stream, 0);
 						}
 						else {
@@ -296,10 +293,14 @@ void _Audio::UpdateMusic() {
 							break;
 						}
 					}
+					// Subtract from total bytes to read
+					else {
+						TotalBytes -= BytesRead;
+					}
 				}
 
-				if(CurrentSong && TotalBytes > 0) {
-					alBufferData(CurrentBuffer, CurrentSong->Format, Buffer, (ALsizei)TotalBytes, (ALsizei)CurrentSong->Frequency);
+				if(CurrentSong) {
+					alBufferData(CurrentBuffer, CurrentSong->Format, Buffer, (ALsizei)BUFFER_SIZE, (ALsizei)CurrentSong->Frequency);
 					alSourceQueueBuffers(MusicSource, 1, &CurrentBuffer);
 				}
 			}
@@ -312,28 +313,11 @@ _Sound *_Audio::LoadSound(const std::string &Path) {
 	if(!Enabled)
 		return nullptr;
 
-	// Open vorbis stream
+	// Open file
 	OggVorbis_File VorbisStream;
-	int ReturnCode = ov_fopen(Path.c_str(), &VorbisStream);
-	if(ReturnCode != 0)
-		throw std::runtime_error("ov_fopen failed: ReturnCode=" + std::to_string(ReturnCode));
-
-	// Get vorbis file info
-	vorbis_info *Info = ov_info(&VorbisStream, -1);
-
-	// Create new buffer
-	ALenum Format = 0;
-	switch(Info->channels) {
-		case 1:
-			Format = AL_FORMAT_MONO16;
-		break;
-		case 2:
-			Format = AL_FORMAT_STEREO16;
-		break;
-		default:
-			throw std::runtime_error("Unsupported number of channels: " + std::to_string(Info->channels));
-		break;
-	}
+	long Rate;
+	int Format;
+	OpenVorbis(Path, &VorbisStream, Rate, Format);
 
 	// Alloc some memory for the samples
 	std::vector<char> Data;
@@ -350,7 +334,7 @@ _Sound *_Audio::LoadSound(const std::string &Path) {
 	// Create buffer
 	_Sound *Sound = new _Sound();
 	alGenBuffers(1, &Sound->ID);
-	alBufferData(Sound->ID, Format, &Data[0], (ALsizei)Data.size(), (ALsizei)Info->rate);
+	alBufferData(Sound->ID, Format, &Data[0], (ALsizei)Data.size(), (ALsizei)Rate);
 
 	// Close vorbis file
 	ov_clear(&VorbisStream);
@@ -365,48 +349,11 @@ _Music *_Audio::LoadMusic(const std::string &Path) {
 
 	_Music *Music = new _Music();
 
-	// Open file
-	int ReturnCode = ov_fopen(Path.c_str(), &Music->Stream);
-	if(ReturnCode != 0)
-		throw std::runtime_error("ov_fopen failed: ReturnCode=" + std::to_string(ReturnCode));
-
 	// Get vorbis file info
-	vorbis_info *Info = ov_info(&Music->Stream, -1);
-
-	// Set format
-	switch(Info->channels) {
-		case 1:
-			Music->Format = AL_FORMAT_MONO16;
-		break;
-		case 2:
-			Music->Format = AL_FORMAT_STEREO16;
-		break;
-		default:
-			throw std::runtime_error("Unsupported number of channels: " + std::to_string(Info->channels));
-		break;
-	}
-
-	Music->Frequency = Info->rate;
+	OpenVorbis(Path, &Music->Stream, Music->Frequency, Music->Format);
 	Music->Loaded = true;
 
 	return Music;
-}
-
-// Set sound volume
-void _Audio::SetSoundVolume(float Volume) {
-	if(!Enabled)
-		return;
-
-	SoundVolume = Volume;
-}
-
-// Set music volume
-void _Audio::SetMusicVolume(float Volume) {
-	if(!Enabled)
-		return;
-
-	MusicVolume = Volume;
-	alSourcef(MusicSource, AL_GAIN, MusicVolume);
 }
 
 // Play a sound
@@ -427,6 +374,7 @@ void _Audio::PlayMusic(_Music *Music, bool Loop) {
 	if(!Enabled)
 		return;
 
+	// Stop music if playing nothing
 	if(!Music) {
 		StopMusic();
 		return;
@@ -464,4 +412,46 @@ long _Audio::ReadStream(OggVorbis_File &Stream, char *Buffer, int Size) {
 	long BytesRead = ov_read(&Stream, Buffer, Size, 0, 2, 1, &BitStream);
 
 	return BytesRead;
+}
+
+// Open vorbis file and return format/rate
+void _Audio::OpenVorbis(const std::string &Path, OggVorbis_File *Stream, long &Rate, int &Format) {
+
+	// Open file
+	int ReturnCode = ov_fopen(Path.c_str(), Stream);
+	if(ReturnCode != 0)
+		throw std::runtime_error("ov_fopen failed: ReturnCode=" + std::to_string(ReturnCode));
+
+	// Get vorbis file info
+	vorbis_info *Info = ov_info(Stream, -1);
+	Rate = Info->rate;
+
+	// Get openal format
+	switch(Info->channels) {
+		case 1:
+			Format = AL_FORMAT_MONO16;
+		break;
+		case 2:
+			Format = AL_FORMAT_STEREO16;
+		break;
+		default:
+			throw std::runtime_error("Unsupported number of channels: " + std::to_string(Info->channels));
+	}
+}
+
+// Set sound volume
+void _Audio::SetSoundVolume(float Volume) {
+	if(!Enabled)
+		return;
+
+	SoundVolume = Volume;
+}
+
+// Set music volume
+void _Audio::SetMusicVolume(float Volume) {
+	if(!Enabled)
+		return;
+
+	MusicVolume = Volume;
+	alSourcef(MusicSource, AL_GAIN, MusicVolume);
 }

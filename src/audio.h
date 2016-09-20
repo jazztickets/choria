@@ -86,20 +86,21 @@ class _Audio {
 		_Sound *LoadSound(const std::string &Path);
 		_Music *LoadMusic(const std::string &Path);
 
-		void SetSoundVolume(float Volume);
-		void SetMusicVolume(float Volume);
-
 		void Stop();
 		void StopSounds();
 		void StopMusic();
 		void PlaySound(_Sound *Sound);
 		void PlayMusic(_Music *Music, bool Loop=true);
 
+		void SetSoundVolume(float Volume);
+		void SetMusicVolume(float Volume);
+
 		bool Done;
 
 	private:
 
 		long ReadStream(OggVorbis_File &Stream, char *Buffer, int Size);
+		void OpenVorbis(const std::string &Path, OggVorbis_File *Stream, long &Rate, int &Format);
 
 		bool Enabled;
 
