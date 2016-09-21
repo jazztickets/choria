@@ -42,6 +42,7 @@
 #include <server.h>
 #include <packet.h>
 #include <audio.h>
+#include <random.h>
 #include <log.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -1123,7 +1124,9 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 				ActionResult.Speed = HUD_ACTIONRESULT_SPEED_SHORT;
 
 				if(ActionResult.Target.HasStat(StatType::MISS)) {
-					Audio.PlaySound(Assets.Sounds["miss0.ogg"]);
+					std::stringstream Buffer;
+					Buffer << "miss" << GetRandomInt(0, 2) << ".ogg";
+					Audio.PlaySound(Assets.Sounds[Buffer.str()]);
 				}
 				else {
 					Audio.PlaySound(Assets.Sounds["thud0.ogg"]);
