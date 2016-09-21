@@ -48,6 +48,7 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
+#include <regex>
 #include <iomanip>
 #include <SDL_keyboard.h>
 
@@ -631,6 +632,32 @@ void _HUD::ToggleChat() {
 
 	if(IsChatting()) {
 		if(ChatTextBox->Text != "") {
+
+			// Handle test commands
+			if(PlayState.IsTesting && ChatTextBox->Text.find("-search") == 0) {
+				std::smatch Match;
+				std::regex Regex("-search (.+) (.+)");
+				if(std::regex_search(ChatTextBox->Text, Match, Regex) && Match.size() > 2) {
+					std::string Table = Match.str(1);
+					std::string Search = "%" + Match.str(2) + "%";
+
+					// Search database for keyword
+					_Database *Database = PlayState.Stats->Database;
+					try {
+						Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
+						Database->BindString(1, Search);
+						while(Database->FetchRow()) {
+							int ID = Database->GetInt<int>("id");
+							std::string Name = Database->GetString("name");
+
+							std::cout << std::setw(3) << ID << " " << Name << std::endl;
+						}
+						Database->CloseQuery();
+					} catch(std::exception &Error) {
+						std::cout << Error.what() << std::endl;
+					}
+				}
+			}
 
 			// Send message to server
 			_Buffer Packet;
