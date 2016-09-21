@@ -332,3 +332,7 @@ function Item_SwampGlob.Use(self, Level, Source, Target, Result)
 
 	return Result
 end
+
+function Item_SwampGlob.PlaySound(self, Level)
+	Audio.Play("sludge0.ogg")
+end
