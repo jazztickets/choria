@@ -598,7 +598,7 @@ end
 Skill_Flee = {}
 Skill_Flee.BaseChance = 22
 Skill_Flee.ChancePerLevel = 3
-Skill_Flee.Duration = 20
+Skill_Flee.Duration = 10
 
 function Skill_Flee.GetChance(self, Level)
 
