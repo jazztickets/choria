@@ -423,6 +423,10 @@ function Skill_Spark.GetInfo(self, Level)
 	return "Shock a target for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
+function Skill_Spark.PlaySound(self, Level)
+	Audio.Play("shock0.ogg")
+end
+
 -- Icicle --
 
 Skill_Icicle = Base_Spell:New()
@@ -454,6 +458,10 @@ Skill_FireBlast.ManaCostBase = 90 - Skill_FireBlast.CostPerLevel
 
 function Skill_FireBlast.GetInfo(self, Level)
 	return "Blast all targets with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+function Skill_FireBlast.PlaySound(self, Level)
+	Audio.Play("blast" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Ignite --
