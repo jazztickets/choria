@@ -252,6 +252,10 @@ function Skill_Gash.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+function Skill_Gash.PlaySound(self, Level)
+	Audio.Play("gash0.ogg")
+end
+
 -- Shield Bash --
 
 Skill_ShieldBash = Base_Attack:New()
@@ -292,7 +296,11 @@ function Skill_ShieldBash.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
--- Whirl --
+function Skill_ShieldBash.PlaySound(self, Level)
+	Audio.Play("bash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
+-- Whirlwind --
 
 Skill_Whirlwind = Base_Attack:New()
 Skill_Whirlwind.DamageBase = 30
@@ -658,6 +666,10 @@ function Skill_Pickpocket.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Skill_Pickpocket.PlaySound(self, Level)
+	Audio.Play("coin" .. Random.GetInt(0, 2) .. ".ogg")
+end
+
 -- Parry --
 
 Skill_Parry = {}
@@ -750,4 +762,8 @@ function Skill_Backstab.Proc(self, Roll, Level, Source, Target, Result)
 	end
 
 	Result.Target.Health = math.floor(Result.Target.Health * self.BaseDamage)
+end
+
+function Skill_Backstab.PlaySound(self, Level)
+	Audio.Play("gash0.ogg")
 end

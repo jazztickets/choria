@@ -17,7 +17,7 @@ function Item_HealingSalve.Use(self, Level, Source, Target, Result)
 end
 
 function Item_HealingSalve.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Mana Cider --
@@ -39,7 +39,7 @@ function Item_ManaCider.Use(self, Level, Source, Target, Result)
 end
 
 function Item_ManaCider.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Invis Potion --
@@ -61,7 +61,7 @@ function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 end
 
 function Item_InvisPotion.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Haste Potion --
@@ -83,7 +83,7 @@ function Item_HastePotion.Use(self, Level, Source, Target, Result)
 end
 
 function Item_HastePotion.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Death Potion --
@@ -138,7 +138,7 @@ function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
 end
 
 function Item_PoisonPotion.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 1) .. ".ogg")
+	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Action Slot --
@@ -192,22 +192,26 @@ function Item_PoisonKnives.GenerateDamage(self, Level, Source)
 	return self.Item.GenerateDamage()
 end
 
--- Glob  --
+-- Slimy Glob --
 
-Item_Glob = { Duration = 30 }
+Item_SlimyGlob = { Duration = 30 }
 
-function Item_Glob.GetInfo(self, Level)
+function Item_SlimyGlob.GetInfo(self, Level)
 
 	return "Gain [c green]" .. Level .. "% [c yellow]bleed [c white]resist for [c green]" .. self.Duration .. " [c white]seconds"
 end
 
-function Item_Glob.Use(self, Level, Source, Target, Result)
+function Item_SlimyGlob.Use(self, Level, Source, Target, Result)
 
 	Result.Target.Buff = Buffs["Buff_BleedResist"]
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
 	return Result
+end
+
+function Item_SlimyGlob.PlaySound(self, Level)
+	Audio.Play("slime" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Crow Feather --
@@ -246,6 +250,10 @@ function Item_SpiderLeg.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Item_SpiderLeg.PlaySound(self, Level)
+	Audio.Play("spider0.ogg")
+end
+
 -- Fang --
 
 Item_Fang = { Duration = 30 }
@@ -280,6 +288,10 @@ function Item_SpectralDust.Use(self, Level, Source, Target, Result)
 	Result.Target.BuffDuration = self.Duration
 
 	return Result
+end
+
+function Item_SpectralDust.PlaySound(self, Level)
+	Audio.Play("ghost" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Crab Legs --
