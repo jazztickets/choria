@@ -65,6 +65,9 @@ class _PlayState : public _State {
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
+		// Sound
+		void PlayCoinSound();
+
 		// Parameters
 		bool IsTesting;
 		bool FromEditor;

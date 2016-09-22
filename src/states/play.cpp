@@ -445,6 +445,13 @@ void _PlayState::Render(double BlendFactor) {
 	Menu.Render();
 }
 
+// Play coin sound
+void _PlayState::PlayCoinSound() {
+	std::stringstream Buffer;
+	Buffer << "coin" << GetRandomInt(0, 2) << ".ogg";
+	Audio.PlaySound(Assets.Sounds[Buffer.str()]);
+}
+
 // Handle connection to server
 void _PlayState::HandleConnect() {
 
@@ -858,6 +865,8 @@ void _PlayState::HandleInventoryGold(_Buffer &Data) {
 
 	Player->Gold = Data.Read<int32_t>();
 	Player->CalculateStats();
+
+	PlayCoinSound();
 }
 
 // Handles a trade request
@@ -1036,8 +1045,12 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	}
 
 	// Update client death count
-	if(SideDead[PlayerSide])
+	if(SideDead[PlayerSide]) {
 		Player->Deaths++;
+	}
+	else {
+		PlayCoinSound();
+	}
 
 	Player->Battle = nullptr;
 	HUD->ClearBattleStatChanges();
@@ -1175,6 +1188,11 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 
 		// Add stat change
 		HUD->AddStatChange(StatChange);
+
+		// Play sounds
+		if(StatChange.HasStat(StatType::GOLD)) {
+			PlayCoinSound();
+		}
 	}
 }
 
