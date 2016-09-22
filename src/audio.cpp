@@ -322,12 +322,12 @@ _Music *_Audio::LoadMusic(const std::string &Path) {
 }
 
 // Play a sound
-void _Audio::PlaySound(_Sound *Sound) {
+void _Audio::PlaySound(_Sound *Sound, float Volume) {
 	if(!Enabled || !Sound)
 		return;
 
 	// Create audio source
-	_AudioSource *AudioSource = new _AudioSource(Sound, SoundVolume);
+	_AudioSource *AudioSource = new _AudioSource(Sound, SoundVolume * Volume);
 	AudioSource->Play();
 
 	// Add to sources

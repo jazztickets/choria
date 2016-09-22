@@ -89,7 +89,7 @@ class _Audio {
 		void Stop();
 		void StopSounds();
 		void StopMusic();
-		void PlaySound(_Sound *Sound);
+		void PlaySound(_Sound *Sound, float Volume=1.0f);
 		void PlayMusic(_Music *Music, bool Loop=true);
 
 		void SetSoundVolume(float Volume);

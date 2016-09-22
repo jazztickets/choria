@@ -505,13 +505,18 @@ int _Scripting::AudioPlay(lua_State *LuaState) {
 	// Get filename
 	std::string Filename = lua_tostring(LuaState, 1);
 
+	// Get volume
+	float Volume = 1.0f;
+	if(lua_gettop(LuaState) == 2)
+		Volume = (float)lua_tonumber(LuaState, 2);
+
 	// Find sound
 	auto Sound = Assets.Sounds.find(Filename);
 	if(Sound == Assets.Sounds.end())
 		return 1;
 
 	// Play sound
-	Audio.PlaySound(Sound->second);
+	Audio.PlaySound(Sound->second, Volume);
 
 	return 1;
 }

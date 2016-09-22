@@ -432,7 +432,7 @@ function Skill_Spark.GetInfo(self, Level)
 end
 
 function Skill_Spark.PlaySound(self, Level)
-	Audio.Play("shock0.ogg")
+	Audio.Play("shock0.ogg", 0.4)
 end
 
 -- Icicle --
