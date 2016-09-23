@@ -415,7 +415,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Trader = nullptr;
 	Fighter->TeleportTime = -1.0;
 	if(Fighter->Server)
-		Fighter->TurnTimer = GetRandomReal(0, 0.25);
+		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 	// Count fighters and set slots
 	SideCount[Side]++;
@@ -450,12 +450,8 @@ void _Battle::Serialize(_Buffer &Data) {
 	Data.Write<uint8_t>((uint8_t)FighterCount);
 
 	// Write fighter information
-	for(auto &Fighter : Fighters) {
-		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
-		//Fighter->TurnTimer = 1;
-
+	for(auto &Fighter : Fighters)
 		Fighter->SerializeBattle(Data);
-	}
 }
 
 // Unserialize for network
