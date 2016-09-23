@@ -81,6 +81,7 @@ void _Menu::InitTitle(bool Disconnect) {
 
 	ChangeLayout("element_menu_title");
 
+	Audio.StopSounds();
 	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
 	State = STATE_TITLE;

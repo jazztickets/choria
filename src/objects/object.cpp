@@ -771,7 +771,7 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 }
 
 // Update stats
-_StatusEffect * _Object::UpdateStats(_StatChange &StatChange) {
+_StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	_StatusEffect *StatusEffect = nullptr;
 
 	// Add buffs

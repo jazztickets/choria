@@ -67,6 +67,7 @@ class _PlayState : public _State {
 
 		// Sound
 		void PlayCoinSound();
+		void PlayDeathSound();
 
 		// Parameters
 		bool IsTesting;

@@ -452,6 +452,13 @@ void _PlayState::PlayCoinSound() {
 	Audio.PlaySound(Assets.Sounds[Buffer.str()]);
 }
 
+// Play death sound
+void _PlayState::PlayDeathSound() {
+	std::stringstream Buffer;
+	Buffer << "death" << GetRandomInt(0, 2) << ".ogg";
+	Audio.PlaySound(Assets.Sounds[Buffer.str()]);
+}
+
 // Handle connection to server
 void _PlayState::HandleConnect() {
 
@@ -1047,6 +1054,7 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	// Update client death count
 	if(SideDead[PlayerSide]) {
 		Player->Deaths++;
+		PlayDeathSound();
 	}
 	else {
 		PlayCoinSound();
@@ -1168,6 +1176,9 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 	if(!Player)
 		return;
 
+	// Check if player is alive
+	bool WasAlive = Player->IsAlive();
+
 	// Get stats
 	StatChange.Unserialize(Data, ObjectManager);
 	if(StatChange.Object) {
@@ -1184,6 +1195,10 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 			// Update action bar
 			if(StatChange.HasStat(StatType::ACTIONBARSIZE))
 				HUD->SetActionBarSize(Player->ActionBar.size());
+
+			// Play death sound
+			if(!Player->Battle && Player->Health <= 0 && WasAlive)
+				PlayDeathSound();
 		}
 
 		// Add stat change
