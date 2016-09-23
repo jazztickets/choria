@@ -232,6 +232,10 @@ function Item_CrowFeather.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Item_CrowFeather.PlaySound(self, Level)
+	Audio.Play("swoop" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Spider Leg --
 
 Item_SpiderLeg = { Duration = 30 }
