@@ -1504,6 +1504,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		}
 
 		// Add players to battle
+		Difficulty -= GAME_DIFFICULTY_PER_PLAYER;
 		for(auto &PartyPlayer : Players) {
 			Battle->AddFighter(PartyPlayer, 0);
 

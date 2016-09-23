@@ -67,6 +67,11 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	if(ResistanceTypeID)
 		Size.x += 25;
 
+	// Set window height
+	Size.y = 300;
+	if(Player->Vendor)
+		Size.y += 40;
+
 	// Position window
 	glm::vec2 WindowOffset = Input.GetMouse();
 	WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
@@ -80,6 +85,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 
 	TooltipElement->SetOffset(WindowOffset);
 	TooltipElement->SetWidth(Size.x);
+	TooltipElement->SetHeight(Size.y);
 
 	// Render tooltip
 	TooltipElement->Render();
