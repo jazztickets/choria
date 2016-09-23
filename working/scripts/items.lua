@@ -329,6 +329,10 @@ function Item_CrabLegs.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Item_CrabLegs.PlaySound(self, Level)
+	Audio.Play("crab" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Teleport Scroll --
 
 Item_TeleportScroll = { Duration = 3 }
