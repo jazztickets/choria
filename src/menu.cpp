@@ -81,7 +81,6 @@ void _Menu::InitTitle(bool Disconnect) {
 
 	ChangeLayout("element_menu_title");
 
-	Audio.StopSounds();
 	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
 	State = STATE_TITLE;
@@ -881,6 +880,8 @@ void _Menu::HandleConnect() {
 
 // Disconnect
 void _Menu::HandleDisconnect(bool WasSinglePlayer) {
+	if(CurrentLayout != Assets.Elements["element_menu_characters"])
+		Audio.StopSounds();
 
 	if(WasSinglePlayer) {
 		InitTitle();
