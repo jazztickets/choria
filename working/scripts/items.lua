@@ -1,6 +1,23 @@
+
+-- Base Potion Class --
+Base_Potion = {
+
+	New = function(self, Object)
+		Object = Object or {}
+		setmetatable(Object, self)
+		self.__index = self
+		return Object
+	end,
+
+	PlaySound = function(self, Level)
+		Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
+	end
+}
+
 -- Healing Salve  --
 
-Item_HealingSalve = { Duration = 5 }
+Item_HealingSalve = Base_Potion:New()
+Item_HealingSalve.Duration = 5
 
 function Item_HealingSalve.GetInfo(self, Level)
 
@@ -16,13 +33,10 @@ function Item_HealingSalve.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
-function Item_HealingSalve.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
-end
-
 -- Mana Cider --
 
-Item_ManaCider = { Duration = 10 }
+Item_ManaCider = Base_Potion:New()
+Item_ManaCider.Duration = 10
 
 function Item_ManaCider.GetInfo(self, Level)
 
@@ -38,13 +52,9 @@ function Item_ManaCider.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
-function Item_ManaCider.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
-end
-
 -- Invis Potion --
 
-Item_InvisPotion = { }
+Item_InvisPotion = Base_Potion:New()
 
 function Item_InvisPotion.GetInfo(self, Level)
 
@@ -60,13 +70,10 @@ function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
-function Item_InvisPotion.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
-end
-
 -- Haste Potion --
 
-Item_HastePotion = { Duration = 10 }
+Item_HastePotion = Base_Potion:New()
+Item_HastePotion.Duration = 10
 
 function Item_HastePotion.GetInfo(self, Level)
 
@@ -82,13 +89,10 @@ function Item_HastePotion.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
-function Item_HastePotion.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
-end
-
 -- Death Potion --
 
-Item_DeathPotion = { Duration = 10 }
+Item_DeathPotion = Base_Potion:New()
+Item_DeathPotion.Duration = 10
 
 function Item_DeathPotion.GetInfo(self, Level)
 
@@ -106,7 +110,7 @@ end
 
 -- Battle Potion --
 
-Item_BattlePotion = { }
+Item_BattlePotion = Base_Potion:New()
 
 function Item_BattlePotion.GetInfo(self, Level)
 
@@ -121,7 +125,8 @@ end
 
 -- Poison Potion --
 
-Item_PoisonPotion = { Duration = 10 }
+Item_PoisonPotion = Base_Potion:New()
+Item_PoisonPotion.Duration = 10
 
 function Item_PoisonPotion.GetInfo(self, Level)
 
@@ -135,10 +140,6 @@ function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
 	Result.Target.BuffDuration = self.Duration
 
 	return Result
-end
-
-function Item_PoisonPotion.PlaySound(self, Level)
-	Audio.Play("open" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Action Slot --
@@ -171,6 +172,10 @@ function Item_ThrowingKnives.GetInfo(self, Level)
 	return "Throw a knife at your enemy"
 end
 
+function Item_ThrowingKnives.PlaySound(self, Level)
+	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
+end
+
 -- Poison Knives --
 
 Item_PoisonKnives = Base_Attack:New()
@@ -190,6 +195,10 @@ end
 function Item_PoisonKnives.GenerateDamage(self, Level, Source)
 
 	return self.Item.GenerateDamage()
+end
+
+function Item_PoisonKnives.PlaySound(self, Level)
+	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Slimy Glob --
@@ -274,6 +283,10 @@ function Item_Fang.Use(self, Level, Source, Target, Result)
 	Result.Target.BuffDuration = self.Duration
 
 	return Result
+end
+
+function Item_Fang.PlaySound(self, Level)
+	Audio.Play("bat0.ogg")
 end
 
 -- Spectral Dust --
