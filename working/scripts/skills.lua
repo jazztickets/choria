@@ -375,6 +375,10 @@ function Skill_Rejuvenation.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Skill_Rejuvenation.PlaySound(self, Level)
+	Audio.Play("rejuv0.ogg")
+end
+
 -- Heal --
 
 Skill_Heal = Base_Spell:New()
@@ -458,6 +462,10 @@ function Skill_Icicle.Proc(self, Roll, Level, Source, Target, Result)
 	Result.Target.BuffDuration = 3
 
 	return Result
+end
+
+function Skill_Icicle.PlaySound(self, Level)
+	Audio.Play("ice" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Fire Blast --
@@ -635,6 +643,10 @@ function Skill_Flee.Use(self, Level, Source, Target, Result)
 	self:Proc(Random.GetInt(1, 100), Level, Source, Target, Result)
 
 	return Result
+end
+
+function Skill_Flee.PlaySound(self, Level)
+	Audio.Play("run0.ogg")
 end
 
 -- Pickpocket --
