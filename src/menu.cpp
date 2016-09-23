@@ -34,6 +34,7 @@
 #include <config.h>
 #include <framework.h>
 #include <buffer.h>
+#include <audio.h>
 #include <stats.h>
 #include <packet.h>
 #include <utils.h>
@@ -669,12 +670,15 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 			case STATE_TITLE: {
 				if(Clicked->Identifier == "button_title_play") {
 					PlayState.Connect(true);
+					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_title_joinserver") {
 					InitConnect(true);
+					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_title_mapeditor") {
 					InitEditor();
+					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_title_exit") {
 					Framework.Done = true;
@@ -691,15 +695,20 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 							Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 							PlayState.Network->SendPacket(Packet);
 						}
+
+						PlayClickSound();
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
 						size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 							PlayCharacter(SelectedSlot);
 						}
+
+						PlayClickSound();
 					}
 					else if(Clicked->Identifier == "button_characters_back") {
 						PlayState.Network->Disconnect();
+						PlayClickSound();
 					}
 					else if(Clicked->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
 
@@ -747,9 +756,11 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 					else if(Clicked->Identifier == "button_newcharacter_create") {
 						CreateCharacter();
+						PlayClickSound();
 					}
 					else if(Clicked->Identifier == "button_newcharacter_cancel") {
 						RequestCharacterList();
+						PlayClickSound();
 					}
 				}
 			} break;
@@ -761,28 +772,36 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					}
 					else
 						ConnectToHost();
+
+					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_connect_back") {
 					InitTitle(true);
+					PlayClickSound();
 				}
 			} break;
 			case STATE_ACCOUNT: {
 				if(Clicked->Identifier == "button_account_login") {
 					SendAccountInfo();
+					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_account_create") {
 					SendAccountInfo(true);
+					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_account_back") {
 					InitConnect(true);
+					PlayClickSound();
 				}
 			} break;
 			case STATE_INGAME: {
 				if(Clicked->Identifier == "button_ingame_resume") {
 					InitPlay();
+					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_ingame_disconnect") {
 					PlayState.Network->Disconnect();
+					PlayClickSound();
 				}
 			} break;
 			default:
@@ -993,6 +1012,11 @@ void _Menu::SetTitleMessage(const std::string &Message) {
 	_Label *Label = Assets.Labels["label_menu_title_message"];
 	Label->Text = Message;
 	Label->Color = COLOR_RED;
+}
+
+// Play menu click sound
+void _Menu::PlayClickSound() {
+	Audio.PlaySound(Assets.Sounds["click0.ogg"]);
 }
 
 // Cycle focused elements

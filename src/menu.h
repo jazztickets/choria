@@ -101,6 +101,8 @@ class _Menu {
 
 	private:
 
+		void PlayClickSound();
+
 		void ChangeLayout(const std::string &ElementIdentifier);
 
 		uint32_t GetSelectedIconID(_Element *ParentElement);
