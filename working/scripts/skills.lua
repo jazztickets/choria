@@ -201,8 +201,8 @@ end
 -- Fury --
 
 Skill_Fury = Base_Attack:New()
-Skill_Fury.StaminaPerLevel = 0.05
-Skill_Fury.BaseStamina = 0.05 - Skill_Fury.StaminaPerLevel
+Skill_Fury.StaminaPerLevel = 0.04
+Skill_Fury.BaseStamina = 0.10
 
 function Skill_Fury.GetStaminaGain(self, Level)
 
