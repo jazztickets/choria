@@ -45,8 +45,14 @@ struct _Portrait {
 	const _Texture *Image;
 };
 
+struct _Model {
+	uint32_t ID;
+	const _Texture *Image;
+};
+
 struct _Build {
 	uint32_t ID;
+	uint32_t ModelID;
 	std::string Name;
 	const _Texture *Image;
 };
@@ -150,6 +156,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
 		std::unordered_map<uint32_t, _Script> Scripts;
+		std::unordered_map<uint32_t, _Model> Models;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
 		std::unordered_map<uint32_t, std::string> DamageTypes;
@@ -175,6 +182,7 @@ class _Stats {
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();
+		void LoadModels();
 		void LoadBuilds();
 		void LoadScripts();
 

@@ -195,12 +195,13 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 		Build = Stats->Builds[1];
 
 	// Create new database row
-	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, actionbar_size) VALUES(@account_id, @slot, @name, @portrait_id, @actionbar_size)");
+	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, model_id, actionbar_size) VALUES(@account_id, @slot, @name, @portrait_id, @model_id, @actionbar_size)");
 	Database->BindInt(1, AccountID);
 	Database->BindInt(2, Slot);
 	Database->BindString(3, TrimString(Name));
 	Database->BindInt(4, PortraitID);
-	Database->BindInt(5, (uint32_t)Build->ActionBar.size());
+	Database->BindInt(5, Build->ModelID);
+	Database->BindInt(6, (uint32_t)Build->ActionBar.size());
 	Database->FetchRow();
 	Database->CloseQuery();
 
@@ -236,6 +237,7 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
 		Player->Name = Database->GetString("name");
 		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
+		Player->ModelID = Database->GetInt<uint32_t>("model_id");
 		Player->Health = Database->GetInt<int>("health");
 		Player->Mana = Database->GetInt<int>("mana");
 		Player->Experience = Database->GetInt<int>("experience");
@@ -532,6 +534,7 @@ void _Save::CreateDefaultDatabase() {
 				"	spawnmap_id INTEGER DEFAULT(1),\n"
 				"	spawnpoint INTEGER DEFAULT(0),\n"
 				"	portrait_id INTEGER DEFAULT(1),\n"
+				"	model_id INTEGER DEFAULT(1),\n"
 				"	actionbar_size INTEGER DEFAULT(0),\n"
 				"	health INTEGER DEFAULT(1),\n"
 				"	mana INTEGER DEFAULT(1),\n"

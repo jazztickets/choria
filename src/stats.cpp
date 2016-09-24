@@ -45,6 +45,7 @@ _Stats::_Stats(bool Headless) :
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
+	LoadModels();
 	LoadBuilds();
 	LoadScripts();
 }
@@ -327,6 +328,24 @@ void _Stats::LoadTraders() {
 	Database->CloseQuery();
 }
 
+// Load model textures
+void _Stats::LoadModels() {
+	Models.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM model");
+
+	// Get data
+	_Model Model;
+	while(Database->FetchRow()) {
+		Model.ID = Database->GetInt<uint32_t>("id");
+		Model.Image = Assets.Textures[Database->GetString("texture")];
+
+		Models[Model.ID] = Model;
+	}
+	Database->CloseQuery();
+}
+
 // Load preset builds
 void _Stats::LoadBuilds() {
 
@@ -340,6 +359,7 @@ void _Stats::LoadBuilds() {
 		// Create object
 		_Object *Object = new _Object();
 		Object->Name = std::string("build_") + Database->GetString("name");
+		Object->ModelID = Database->GetInt<uint32_t>("model_id");
 		Object->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
 
 		// Get items

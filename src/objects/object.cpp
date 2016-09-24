@@ -108,6 +108,7 @@ _Object::_Object() :
 	TurnTimer(0.0),
 	BattleSide(0),
 	Portrait(nullptr),
+	Model(nullptr),
 	BattleOffset(0, 0),
 
 	DatabaseID(0),
@@ -119,6 +120,7 @@ _Object::_Object() :
 
 	Status(0),
 	PortraitID(0),
+	ModelID(0),
 	WorldTexture(nullptr),
 	StatusTexture(nullptr),
 	LoadMapID(0),
@@ -607,6 +609,7 @@ void _Object::SerializeCreate(_Buffer &Data) {
 	Data.Write<glm::ivec2>(Position);
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(PortraitID);
+	Data.Write<uint32_t>(ModelID);
 	Data.WriteBit(Invisible);
 }
 
@@ -622,6 +625,7 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(PortraitID);
+	Data.Write<uint32_t>(ModelID);
 	Data.Write<int>(Health);
 	Data.Write<int>(MaxHealth);
 	Data.Write<int>(Mana);
@@ -688,16 +692,18 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
-	Portrait = Stats->GetPortraitImage(PortraitID);
+	ModelID = Data.Read<uint32_t>();
 	Invisible = Data.ReadBit();
-	WorldTexture = Assets.Textures["players/basic.png"];
+
+	Portrait = Stats->GetPortraitImage(PortraitID);
+	WorldTexture = Stats->Models[ModelID].Image;
 }
 
 // Unserialize object stats
 void _Object::UnserializeStats(_Buffer &Data) {
-	WorldTexture = Assets.Textures["players/basic.png"];
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
+	ModelID = Data.Read<uint32_t>();
 	Health = Data.Read<int>();
 	BaseMaxHealth = MaxHealth = Data.Read<int>();
 	Mana = Data.Read<int>();
@@ -710,6 +716,8 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	PlayerKills = Data.Read<int>();
 	Bounty = Data.Read<int>();
 	Invisible = Data.Read<int>();
+
+	WorldTexture = Stats->Models[ModelID].Image;
 
 	// Read inventory
 	Inventory->Unserialize(Data, Stats);

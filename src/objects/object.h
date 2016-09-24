@@ -242,6 +242,7 @@ class _Object : public _ManagerBase {
 
 		// Render
 		const _Texture *Portrait;
+		const _Texture *Model;
 		glm::vec2 BattleOffset;
 		glm::vec2 ResultPosition;
 		glm::vec2 StatPosition;
@@ -258,6 +259,7 @@ class _Object : public _ManagerBase {
 		// Texture
 		uint8_t Status;
 		uint32_t PortraitID;
+		uint32_t ModelID;
 		const _Texture *WorldTexture;
 		const _Texture *StatusTexture;
 

@@ -23,7 +23,7 @@
 
 //     Config
 const  int          DEFAULT_CONFIG_VERSION          =  2;
-const  int          DEFAULT_SAVE_VERSION            =  12;
+const  int          DEFAULT_SAVE_VERSION            =  13;
 const  glm::ivec2   DEFAULT_WINDOW_SIZE             =  glm::ivec2(1024,768);
 const  int          DEFAULT_FULLSCREEN              =  0;
 const  int          DEFAULT_AUDIOENABLED            =  1;
@@ -128,8 +128,8 @@ const  std::string  TEXTURES_ITEMS                  =  "items/";
 const  std::string  TEXTURES_MAP                    =  "map/";
 const  std::string  TEXTURES_MENU                   =  "menu/";
 const  std::string  TEXTURES_MONSTERS               =  "monsters/";
-const  std::string  TEXTURES_PLAYERS                =  "players/";
 const  std::string  TEXTURES_PORTRAITS              =  "portraits/";
+const  std::string  TEXTURES_MODELS                 =  "models/";
 const  std::string  TEXTURES_SKILLS                 =  "skills/";
 const  std::string  TEXTURES_STATUS                 =  "status/";
 //     Assets
