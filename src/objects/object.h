@@ -271,6 +271,7 @@ class _Object : public _ManagerBase {
 		int NextBattle;
 		double AttackPlayerTime;
 		int Invisible;
+		int Stunned;
 
 		// Items
 		bool InventoryOpen;

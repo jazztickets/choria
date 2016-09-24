@@ -129,6 +129,7 @@ _Object::_Object() :
 	NextBattle(0),
 	AttackPlayerTime(0),
 	Invisible(0),
+	Stunned(0),
 	InventoryOpen(false),
 	Inventory(nullptr),
 	Vendor(nullptr),
@@ -215,8 +216,10 @@ void _Object::Update(double FrameTime) {
 			UpdateAI(Battle->Fighters, FrameTime);
 
 		// Check turn timer
-		if(Battle)
-			TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * BattleSpeed / 100.0;
+		if(Battle) {
+			if(!Stunned)
+				TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * BattleSpeed / 100.0;
+		}
 		else
 			TurnTimer = 1.0;
 
@@ -1256,6 +1259,7 @@ void _Object::CalculateStats() {
 	Resistances[5] = 25;
 
 	Invisible = 0;
+	Stunned = 0;
 
 	// Get item stats
 	int ItemMinDamage = 0;
@@ -1379,6 +1383,8 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 		HitChance += StatChange.Values[StatType::HITCHANCE].Integer;
 	if(StatChange.HasStat(StatType::EVASION))
 		Evasion += StatChange.Values[StatType::EVASION].Integer;
+	if(StatChange.HasStat(StatType::STUNNED))
+		Stunned = StatChange.Values[StatType::STUNNED].Integer;
 
 	if(StatChange.HasStat(StatType::RESISTTYPE))
 		Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Integer;

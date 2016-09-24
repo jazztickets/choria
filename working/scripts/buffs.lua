@@ -89,7 +89,7 @@ function Buff_Stunned.GetInfo(self, Level)
 end
 
 function Buff_Stunned.Stats(self, Level, Source, Change)
-	Change.BattleSpeed = -10000
+	Change.Stunned = 1
 
 	return Change
 end
