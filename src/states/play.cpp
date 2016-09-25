@@ -361,8 +361,13 @@ void _PlayState::Update(double FrameTime) {
 		if(Actions.GetState(_Actions::RIGHT) > 0.0f)
 			InputState |= _Object::MOVE_RIGHT;
 
+		// Get player direction
+		glm::ivec2 Direction(0, 0);
+		Player->GetDirectionFromInput(InputState, Direction);
+
+		// Append input state if moving
 		Player->InputStates.clear();
-		if(InputState)
+		if(Direction.x != 0 || Direction.y != 0)
 			Player->InputStates.push_back(InputState);
 	}
 

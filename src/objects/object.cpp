@@ -913,10 +913,6 @@ int _Object::Move() {
 	glm::ivec2 Direction(0, 0);
 	GetDirectionFromInput(InputState, Direction);
 
-	// Remove diagonols
-	if(Direction.x != 0 && Direction.y != 0)
-		Direction.x = 0;
-
 	// Move player
 	if(Map->CanMoveTo(Position + Direction, this)) {
 		Position += Direction;
@@ -1195,6 +1191,10 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 		Direction.x += -1;
 	if(InputState & MOVE_RIGHT)
 		Direction.x += 1;
+
+	// Remove diagonols
+	if(Direction.x != 0 && Direction.y != 0)
+		Direction.x = 0;
 }
 
 // Updates a skill level
