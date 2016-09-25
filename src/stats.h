@@ -42,19 +42,19 @@ struct _MapStat {
 
 struct _Portrait {
 	uint32_t ID;
-	const _Texture *Image;
+	const _Texture *Texture;
 };
 
 struct _Model {
 	uint32_t ID;
-	const _Texture *Image;
+	const _Texture *Texture;
 };
 
 struct _Build {
 	uint32_t ID;
 	uint32_t ModelID;
 	std::string Name;
-	const _Texture *Image;
+	const _Texture *Texture;
 };
 
 struct _Script {

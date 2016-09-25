@@ -121,7 +121,7 @@ _Object::_Object() :
 	Status(0),
 	PortraitID(0),
 	ModelID(0),
-	WorldTexture(nullptr),
+	ModelTexture(nullptr),
 	StatusTexture(nullptr),
 	LoadMapID(0),
 	SpawnMapID(1),
@@ -370,7 +370,7 @@ void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
 
 // Renders the player while walking around the world
 void _Object::Render(const _Object *ClientPlayer) {
-	if(Map && WorldTexture) {
+	if(Map && ModelTexture) {
 
 		float Alpha = 1.0f;
 		if(Invisible > 0)
@@ -385,19 +385,19 @@ void _Object::Render(const _Object *ClientPlayer) {
 		if(HUD && HUD->ShowStats) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
-			Graphics.DrawSprite(DrawPosition, WorldTexture);
+			Graphics.DrawSprite(DrawPosition, ModelTexture);
 		}
 
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 		Graphics.SetColor(Color);
-		Graphics.DrawSprite(DrawPosition, WorldTexture);
+		Graphics.DrawSprite(DrawPosition, ModelTexture);
 		if(StatusTexture) {
 			Graphics.DrawSprite(DrawPosition, StatusTexture);
 		}
 
 		if(ClientPlayer != this) {
-			Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / WorldTexture->Size.x);
+			Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 		}
 	}
 }
@@ -696,7 +696,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 	Invisible = Data.ReadBit();
 
 	Portrait = Stats->GetPortraitImage(PortraitID);
-	WorldTexture = Stats->Models[ModelID].Image;
+	ModelTexture = Stats->Models[ModelID].Texture;
 }
 
 // Unserialize object stats
@@ -717,7 +717,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Bounty = Data.Read<int>();
 	Invisible = Data.Read<int>();
 
-	WorldTexture = Stats->Models[ModelID].Image;
+	ModelTexture = Stats->Models[ModelID].Texture;
 
 	// Read inventory
 	Inventory->Unserialize(Data, Stats);

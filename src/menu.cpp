@@ -380,14 +380,14 @@ void _Menu::LoadPortraitButtons() {
 
 	// Iterate over portraits
 	for(const auto &Portrait : Portraits) {
-		if(!Portrait.Image)
+		if(!Portrait.Texture)
 			throw std::runtime_error("Cannot find texture for portrait id " + std::to_string(Portrait.ID));
 
 		// Create style
 		_Style *Style = new _Style();
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->Texture = Portrait.Image;
+		Style->Texture = Portrait.Texture;
 		Style->UserCreated = true;
 
 		// Add button
@@ -395,7 +395,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Identifier = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->Offset = Offset;
-		Button->Size = Portrait.Image->Size;
+		Button->Size = Portrait.Texture->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
@@ -404,9 +404,9 @@ void _Menu::LoadPortraitButtons() {
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
-		Offset.x += Portrait.Image->Size.x + 10;
-		if(Offset.x > PortraitsElement->Size.x - Portrait.Image->Size.x - 10) {
-			Offset.y += Portrait.Image->Size.y + 10;
+		Offset.x += Portrait.Texture->Size.x + 10;
+		if(Offset.x > PortraitsElement->Size.x - Portrait.Texture->Size.x - 10) {
+			Offset.y += Portrait.Texture->Size.y + 10;
 			Offset.x = 10;
 		}
 
@@ -446,14 +446,14 @@ void _Menu::LoadBuildButtons() {
 
 	// Iterate over builds
 	for(const auto &Build : Builds) {
-		if(!Build.Image)
+		if(!Build.Texture)
 			throw std::runtime_error("Cannot find texture for build id " + std::to_string(Build.ID));
 
 		// Create style
 		_Style *Style = new _Style();
 		Style->TextureColor = COLOR_WHITE;
 		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->Texture = Build.Image;
+		Style->Texture = Build.Texture;
 		Style->UserCreated = true;
 
 		// Add button
@@ -461,7 +461,7 @@ void _Menu::LoadBuildButtons() {
 		Button->Identifier = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
 		Button->Offset = Offset;
-		Button->Size = Build.Image->Size;
+		Button->Size = Build.Texture->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Style = Style;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
@@ -482,9 +482,9 @@ void _Menu::LoadBuildButtons() {
 		Button->Children.push_back(Label);
 
 		// Update position
-		Offset.x += Build.Image->Size.x + 10;
-		if(Offset.x > BuildsElement->Size.x - Build.Image->Size.x - 10) {
-			Offset.y += Build.Image->Size.y + 10;
+		Offset.x += Build.Texture->Size.x + 10;
+		if(Offset.x > BuildsElement->Size.x - Build.Texture->Size.x - 10) {
+			Offset.y += Build.Texture->Size.y + 10;
 			Offset.x = 10;
 		}
 

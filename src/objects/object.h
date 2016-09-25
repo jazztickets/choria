@@ -260,7 +260,7 @@ class _Object : public _ManagerBase {
 		uint8_t Status;
 		uint32_t PortraitID;
 		uint32_t ModelID;
-		const _Texture *WorldTexture;
+		const _Texture *ModelTexture;
 		const _Texture *StatusTexture;
 
 		// Map

@@ -339,7 +339,7 @@ void _Stats::LoadModels() {
 	_Model Model;
 	while(Database->FetchRow()) {
 		Model.ID = Database->GetInt<uint32_t>("id");
-		Model.Image = Assets.Textures[Database->GetString("texture")];
+		Model.Texture = Assets.Textures[Database->GetString("texture")];
 
 		Models[Model.ID] = Model;
 	}
@@ -476,7 +476,7 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
 	while(Database->FetchRow()) {
 		_Portrait Portrait;
 		Portrait.ID = Database->GetInt<uint32_t>("id");
-		Portrait.Image = Assets.Textures[Database->GetString("texture")];
+		Portrait.Texture = Assets.Textures[Database->GetString("texture")];
 
 		Portraits.push_back(Portrait);
 	}
@@ -493,7 +493,7 @@ void _Stats::GetStartingBuilds(std::list<_Build> &Builds) {
 		_Build Build;
 		Build.ID = Database->GetInt<uint32_t>("id");
 		Build.Name = Database->GetString("name");
-		Build.Image = Assets.Textures[Database->GetString("texture")];
+		Build.Texture = Assets.Textures[Database->GetString("texture")];
 
 		Builds.push_back(Build);
 	}
