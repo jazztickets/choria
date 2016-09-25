@@ -211,7 +211,7 @@ end
 
 function Skill_Fury.GetInfo(self, Level)
 
-	return "Attack with your weapon and gain [c green]" .. self:GetStaminaGain(Level) .. " [c yellow]stamina [c white]for a killing blow"
+	return "Attack with your weapon and gain [c green]" .. math.floor(self:GetStaminaGain(Level) * 100) .. "% [c yellow]stamina [c white]for a killing blow"
 end
 
 function Skill_Fury.PlaySound(self, Level)
@@ -702,7 +702,7 @@ end
 function Skill_Parry.GetInfo(self, Level)
 
 	return "Block [c green]" .. math.floor(self.DamageReduction * 100) .. "% [c white]damage for [c green]" .. self:GetDuration(Level) .. " [c white]seconds\n" ..
-	"Gain [c green]" .. self.StaminaGain .. " [c yellow]stamina [c white]for each attack blocked"
+	"Gain [c green]" .. math.floor(self.StaminaGain * 100) .. "% [c yellow]stamina [c white]for each attack blocked"
 end
 
 function Skill_Parry.Use(self, Level, Source, Target, Result)
