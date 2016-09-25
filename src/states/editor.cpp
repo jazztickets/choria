@@ -894,6 +894,7 @@ void _EditorState::LoadMap() {
 	_Map *NewMap = new _Map();
 	NewMap->Stats = Stats;
 	NewMap->UseAtlas = true;
+	uint32_t OldMapID = MapID;
 	try {
 		MapID = Stats->GetMapIDByPath(Path);
 		NewMap->Load(Stats->GetMap(MapID));
@@ -914,8 +915,8 @@ void _EditorState::LoadMap() {
 		// Set camera position
 		glm::ivec2 Position(0, 0);
 		if(!Map->FindEvent(_Event(_Map::EVENT_SPAWN, 0), Position)) {
-			if(!Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, MapID), Position))
-				Map->FindEvent(_Event(_Map::EVENT_MAPENTRANCE, MapID), Position);
+			if(!Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, OldMapID), Position))
+				Map->FindEvent(_Event(_Map::EVENT_MAPENTRANCE, OldMapID), Position);
 		}
 		Camera->ForcePosition(glm::vec3(Position, CAMERA_DISTANCE));
 
