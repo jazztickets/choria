@@ -16,7 +16,7 @@ OpenAL
 libvorbis
 libogg
 FreeType2
-Lua 5.2+
+Lua 5.3+
 GLM 0.9.5+
 SQLite 3+
 zlib
@@ -28,9 +28,6 @@ cd build
 cmake ..
 make -j`nproc`
 cd ../working && ../bin/Release/choria
-
-Lua 5.2 can be used by setting LUA_VERSION during the cmake step
-cmake .. -DLUA_VERSION=5.2
 
 -- Installing --
 run "sudo make install" from the build directory.
