@@ -881,7 +881,7 @@ void _PlayState::HandleInventoryGold(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->Gold = Data.Read<int32_t>();
+	Player->Gold = Data.Read<int>();
 	Player->CalculateStats();
 
 	PlayCoinSound();
@@ -901,7 +901,7 @@ void _PlayState::HandleTradeRequest(_Buffer &Data) {
 		return;
 
 	// Get gold offer
-	Player->TradePlayer->TradeGold = Data.Read<int32_t>();
+	Player->TradePlayer->TradeGold = Data.Read<int>();
 	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
 		Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 }
@@ -939,7 +939,7 @@ void _PlayState::HandleTradeGold(_Buffer &Data) {
 		return;
 
 	// Set gold
-	int Gold = Data.Read<int32_t>();
+	int Gold = Data.Read<int>();
 	Player->TradePlayer->TradeGold = Gold;
 
 	// Reset agreement
@@ -965,7 +965,7 @@ void _PlayState::HandleTradeExchange(_Buffer &Data) {
 		return;
 
 	// Get gold offer
-	Player->Gold = Data.Read<int32_t>();
+	Player->Gold = Data.Read<int>();
 	Player->Inventory->Unserialize(Data, Stats);
 	Player->CalculateStats();
 
@@ -1053,10 +1053,10 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	bool SideDead[2];
 	SideDead[0] = Data.ReadBit();
 	SideDead[1] = Data.ReadBit();
-	int PlayerKills = Data.Read<uint8_t>();
-	int MonsterKills = Data.Read<uint8_t>();
-	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int32_t>();
-	StatChange.Values[StatType::GOLD].Integer = Data.Read<int32_t>();
+	Player->PlayerKills = Data.Read<int>();
+	Player->MonsterKills = Data.Read<int>();
+	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
+	StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		_RecentItem RecentItem;
@@ -1071,16 +1071,8 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 		Player->Inventory->AddItem(RecentItem.Item, Upgrades, RecentItem.Count);
 	}
 
-	// Check win or death
-	int PlayerSide = Player->BattleSide;
-	int OtherSide = !PlayerSide;
-	if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
-		Player->PlayerKills += PlayerKills;
-		Player->MonsterKills += MonsterKills;
-	}
-
 	// Update client death count
-	if(SideDead[PlayerSide]) {
+	if(SideDead[Player->BattleSide]) {
 		Player->Deaths++;
 		PlayDeathSound();
 	}
@@ -1250,8 +1242,8 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	Player->Mana = Data.Read<int>();
 	Player->MaxHealth = Data.Read<int>();
 	Player->MaxMana = Data.Read<int>();
-	Player->Experience = Data.Read<int32_t>();
-	Player->Gold = Data.Read<int32_t>();
+	Player->Experience = Data.Read<int>();
+	Player->Gold = Data.Read<int>();
 	double Clock = Data.Read<double>();
 
 	Player->CalculateStats();

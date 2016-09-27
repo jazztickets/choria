@@ -104,7 +104,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	}
 
 	// Get level of item or skill
-	int32_t DrawLevel = Level;
+	int DrawLevel = Level;
 	bool IsLocked = false;
 	bool ShowLevel = false;
 	if(IsSkill()) {

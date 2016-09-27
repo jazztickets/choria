@@ -37,15 +37,17 @@ struct _BattleResult {
 		FighterCount(0),
 		PlayerCount(0),
 		MonsterCount(0),
+		JoinedCount(0),
 		TotalExperienceGiven(0),
 		TotalGoldGiven(0),
 		ExperiencePerFighter(0),
 		GoldPerFighter(0),
 		Dead(true) { }
 
-	uint8_t FighterCount;
-	uint8_t PlayerCount;
-	uint8_t MonsterCount;
+	int FighterCount;
+	int PlayerCount;
+	int MonsterCount;
+	int JoinedCount;
 	int TotalExperienceGiven;
 	int TotalGoldGiven;
 	int ExperiencePerFighter;

@@ -414,6 +414,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighter->Vendor = nullptr;
 	Fighter->Trader = nullptr;
 	Fighter->TeleportTime = -1.0;
+	Fighter->JoinedBattle = Join;
 	if(Fighter->Server) {
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
@@ -542,6 +543,9 @@ void _Battle::ServerEndBattle() {
 			else
 				SideStats[Side].MonsterCount++;
 
+			if(Fighter->JoinedBattle)
+				SideStats[Side].JoinedCount++;
+
 			// Tally alive fighters
 			if(Fighter->IsAlive()) {
 				SideStats[Side].Dead = false;
@@ -572,24 +576,32 @@ void _Battle::ServerEndBattle() {
 				break;
 
 			int OtherSide = !Side;
+			int DivideCount = SideStats[Side].FighterCount - SideStats[Side].JoinedCount;
 
 			// Divide experience up
 			if(SideStats[OtherSide].TotalExperienceGiven > 0) {
-				SideStats[Side].ExperiencePerFighter = SideStats[OtherSide].TotalExperienceGiven / SideStats[Side].FighterCount;
+				SideStats[Side].ExperiencePerFighter = SideStats[OtherSide].TotalExperienceGiven / DivideCount;
 				if(SideStats[Side].ExperiencePerFighter <= 0)
 					SideStats[Side].ExperiencePerFighter = 1;
 			}
 
 			// Divide gold up
 			if(SideStats[OtherSide].TotalGoldGiven > 0) {
-				SideStats[Side].GoldPerFighter = SideStats[OtherSide].TotalGoldGiven / SideStats[Side].FighterCount;
+				SideStats[Side].GoldPerFighter = SideStats[OtherSide].TotalGoldGiven / DivideCount;
 				if(SideStats[Side].GoldPerFighter <= 0)
 					SideStats[Side].GoldPerFighter = 1;
 			}
 		}
 
+		// Get list of fighters that get rewards
+		std::list<_Object *> RewardFighters;
+		for(auto &Fighter : SideFighters[WinningSide]) {
+			if(!Fighter->JoinedBattle)
+				RewardFighters.push_back(Fighter);
+		}
+
 		// Convert winning side list to array
-		std::vector<_Object *> FighterArray { std::begin(SideFighters[WinningSide]), std::end(SideFighters[WinningSide]) };
+		std::vector<_Object *> FighterArray { std::begin(RewardFighters), std::end(RewardFighters) };
 
 		// Generate items drops
 		std::list<uint32_t> ItemDrops;
@@ -601,7 +613,7 @@ void _Battle::ServerEndBattle() {
 		// Boss drops aren't divided up
 		if(Boss) {
 			for(auto &ItemID : ItemDrops) {
-				for(auto &Fighter : SideFighters[WinningSide]) {
+				for(auto &Fighter : RewardFighters) {
 					Fighter->ItemDropsReceived.push_back(ItemID);
 				}
 			}
@@ -628,7 +640,7 @@ void _Battle::ServerEndBattle() {
 		if(Fighter->BattleSide != WinningSide) {
 			Fighter->ApplyDeathPenalty();
 		}
-		else {
+		else if(!Fighter->JoinedBattle) {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
 			GoldEarned = SideStats[WinningSide].GoldPerFighter;
 			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
@@ -654,10 +666,10 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
 		Packet.WriteBit(SideStats[0].Dead);
 		Packet.WriteBit(SideStats[1].Dead);
-		Packet.Write<uint8_t>(SideStats[!Fighter->BattleSide].PlayerCount);
-		Packet.Write<uint8_t>(SideStats[!Fighter->BattleSide].MonsterCount);
-		Packet.Write<int32_t>(ExperienceEarned);
-		Packet.Write<int32_t>(GoldEarned);
+		Packet.Write<int>(Fighter->PlayerKills);
+		Packet.Write<int>(Fighter->MonsterKills);
+		Packet.Write<int>(ExperienceEarned);
+		Packet.Write<int>(GoldEarned);
 
 		// Sort item drops
 		std::unordered_map<uint32_t, int> SortedItems;

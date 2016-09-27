@@ -958,7 +958,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				size_t Slot = Buffer.Read<uint8_t>();
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
 				uint32_t PortraitID = Buffer.Read<uint32_t>();
-				int32_t Experience = Buffer.Read<int32_t>();
+				int Experience = Buffer.Read<int>();
 
 				std::stringstream Buffer;
 				Buffer << "Level " << PlayState.Stats->FindLevel(Experience)->Level;

@@ -716,7 +716,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Save->Database->GetInt<uint32_t>("portrait_id"));
-		Packet.Write<int32_t>(Save->Database->GetInt<int>("experience"));
+		Packet.Write<int>(Save->Database->GetInt<int>("experience"));
 	}
 	Save->Database->CloseQuery();
 
@@ -1008,7 +1008,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		{
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-			Packet.Write<int32_t>(Player->Gold);
+			Packet.Write<int>(Player->Gold);
 			Network->SendPacket(Packet, Peer);
 		}
 
@@ -1038,7 +1038,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			{
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-				Packet.Write<int32_t>(Player->Gold);
+				Packet.Write<int>(Player->Gold);
 				Network->SendPacket(Packet, Peer);
 			}
 
@@ -1162,7 +1162,7 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Set gold amount
-	int Gold = Data.Read<int32_t>();
+	int Gold = Data.Read<int>();
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Gold)
@@ -1177,7 +1177,7 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_GOLD);
-		Packet.Write<int32_t>(Gold);
+		Packet.Write<int>(Gold);
 		Network->SendPacket(Packet, TradePlayer->Peer);
 	}
 }
@@ -1228,14 +1228,14 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			{
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int32_t>(Player->Gold);
+				Packet.Write<int>(Player->Gold);
 				Player->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, Player->Peer);
 			}
 			{
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int32_t>(TradePlayer->Gold);
+				Packet.Write<int>(TradePlayer->Gold);
 				TradePlayer->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, TradePlayer->Peer);
 			}
@@ -1417,8 +1417,8 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<int>(Player->Mana);
 	Packet.Write<int>(Player->MaxHealth);
 	Packet.Write<int>(Player->MaxMana);
-	Packet.Write<int32_t>(Player->Experience);
-	Packet.Write<int32_t>(Player->Gold);
+	Packet.Write<int>(Player->Experience);
+	Packet.Write<int>(Player->Gold);
 	Packet.Write<double>(Clock);
 
 	Network->SendPacket(Packet, Peer);
@@ -1480,7 +1480,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
 	Packet.Write<NetworkIDType>(Sender->NetworkID);
-	Packet.Write<int32_t>(Sender->TradeGold);
+	Packet.Write<int>(Sender->TradeGold);
 	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
 		Sender->Inventory->SerializeSlot(Packet, i);
 

@@ -183,7 +183,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				size_t Slot = Data.Read<uint8_t>();
 				Data.ReadString();
 				Data.Read<uint32_t>();
-				Data.Read<int32_t>();
+				Data.Read<int>();
 
 				if(FirstSlot == -1)
 					FirstSlot = (int)Slot;
@@ -409,13 +409,12 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			StatChange.Object = Player;
 
 			// Get ending stats
-			bool SideDead[2];
-			SideDead[0] = Data.ReadBit();
-			SideDead[1] = Data.ReadBit();
-			int PlayerKills = Data.Read<uint8_t>();
-			int MonsterKills = Data.Read<uint8_t>();
-			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int32_t>();
-			StatChange.Values[StatType::GOLD].Integer = Data.Read<int32_t>();
+			Data.ReadBit();
+			Data.ReadBit();
+			Player->PlayerKills = Data.Read<int>();
+			Player->MonsterKills = Data.Read<int>();
+			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
+			StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
 			uint8_t ItemCount = Data.Read<uint8_t>();
 			for(uint8_t i = 0; i < ItemCount; i++) {
 
@@ -426,14 +425,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 				// Add items
 				Player->Inventory->AddItem(Item, Upgrades, Count);
-			}
-
-			// Check win or death
-			int PlayerSide = Player->BattleSide;
-			int OtherSide = !PlayerSide;
-			if(!SideDead[PlayerSide] && SideDead[OtherSide]) {
-				Player->PlayerKills += PlayerKills;
-				Player->MonsterKills += MonsterKills;
 			}
 
 			Player->Battle = nullptr;
@@ -523,8 +514,8 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->Mana = Data.Read<int>();
 			Player->MaxHealth = Data.Read<int>();
 			Player->MaxMana = Data.Read<int>();
-			Player->Experience = Data.Read<int32_t>();
-			Player->Gold = Data.Read<int32_t>();
+			Player->Experience = Data.Read<int>();
+			Player->Gold = Data.Read<int>();
 			double Clock = Data.Read<double>();
 
 			Player->CalculateStats();

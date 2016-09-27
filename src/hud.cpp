@@ -1884,7 +1884,7 @@ void _HUD::ValidateTradeGold() {
 	// Send amount
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_GOLD);
-	Packet.Write<int32_t>(Gold);
+	Packet.Write<int>(Gold);
 	PlayState.Network->SendPacket(Packet);
 
 	// Reset agreement

@@ -229,6 +229,7 @@ class _Object : public _ManagerBase {
 		// Battle
 		_Battle *Battle;
 		_Element *BattleElement;
+		bool JoinedBattle;
 		double TurnTimer;
 		uint8_t BattleSide;
 		_Action PotentialAction;
@@ -284,7 +285,7 @@ class _Object : public _ManagerBase {
 
 		// Skills
 		bool SkillsOpen;
-		std::unordered_map<uint32_t, int32_t> Skills;
+		std::unordered_map<uint32_t, int> Skills;
 		int SkillPoints;
 		int SkillPointsUsed;
 		int SkillPointsOnActionBar;

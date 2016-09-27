@@ -105,6 +105,7 @@ _Object::_Object() :
 
 	Battle(nullptr),
 	BattleElement(nullptr),
+	JoinedBattle(false),
 	TurnTimer(0.0),
 	BattleSide(0),
 	Portrait(nullptr),
@@ -646,7 +647,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<uint32_t>((uint32_t)Skills.size());
 	for(const auto &Skill : Skills) {
 		Data.Write<uint32_t>(Skill.first);
-		Data.Write<int32_t>(Skill.second);
+		Data.Write<int>(Skill.second);
 	}
 
 	// Write action bar
@@ -659,7 +660,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<uint32_t>((uint32_t)Unlocks.size());
 	for(const auto &Unlock : Unlocks) {
 		Data.Write<uint32_t>(Unlock.first);
-		Data.Write<int32_t>(Unlock.second.Level);
+		Data.Write<int>(Unlock.second.Level);
 	}
 
 	// Write status effects
@@ -726,7 +727,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	uint32_t SkillCount = Data.Read<uint32_t>();
 	for(uint32_t i = 0; i < SkillCount; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
-		int32_t Points = Data.Read<int32_t>();
+		int Points = Data.Read<int>();
 		Skills[SkillID] = Points;
 	}
 
@@ -740,7 +741,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	uint32_t UnlockCount = Data.Read<uint32_t>();
 	for(uint32_t i = 0; i < UnlockCount; i++) {
 		uint32_t UnlockID = Data.Read<uint32_t>();
-		int32_t Level = Data.Read<int32_t>();
+		int Level = Data.Read<int>();
 		Unlocks[UnlockID].Level = Level;
 	}
 
