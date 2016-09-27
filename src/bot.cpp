@@ -380,6 +380,17 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::BATTLE_ACTION:
 			//HandleBattleAction(Data);
 		break;
+		case PacketType::BATTLE_JOIN: {
+			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			Data.Read<uint32_t>();
+
+			// Get object
+			_Object *Object = ObjectManager->GetObject(NetworkID);
+			if(Object) {
+				Object->UnserializeBattle(Data);
+				Battle->AddFighter(Object, Object->BattleSide, true);
+			}
+		} break;
 		case PacketType::BATTLE_LEAVE: {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 			_Object *Object = ObjectManager->GetObject(NetworkID);

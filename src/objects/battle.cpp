@@ -720,8 +720,12 @@ void _Battle::AdjustBattleElements(int SideIndex, _Object *Fighter) {
 
 	// Get position on screen
 	GetBattleOffset(SideIndex, Fighter);
-	Fighter->BattleElement->Offset = Fighter->BattleOffset;
-	Fighter->BattleElement->CalculateBounds();
+
+	// Update position
+	if(Fighter->BattleElement) {
+		Fighter->BattleElement->Offset = Fighter->BattleOffset;
+		Fighter->BattleElement->CalculateBounds();
+	}
 }
 
 // Create battle element for a fighter
