@@ -518,6 +518,10 @@ function Skill_Ignite.Use(self, Level, Source, Target, Result)
 	return Result
 end
 
+function Skill_Ignite.PlaySound(self, Level)
+	Audio.Play("flame0.ogg")
+end
+
 -- Toughness --
 
 Skill_Toughness = {}
