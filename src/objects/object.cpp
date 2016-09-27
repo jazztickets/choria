@@ -879,10 +879,14 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 			// Check for existing summon
 			_Object *ExistingSummon = nullptr;
+			int SideCount = 0;
 			for(auto &Fighter : Battle->Fighters) {
-				if(Fighter->BattleSide == BattleSide && Fighter->Owner == this && Fighter->DatabaseID == SummonDatabaseID) {
-					ExistingSummon = Fighter;
-					break;
+				if(Fighter->BattleSide == BattleSide) {
+					if(Fighter->Owner == this && Fighter->DatabaseID == SummonDatabaseID) {
+						ExistingSummon = Fighter;
+					}
+
+					SideCount++;
 				}
 			}
 
@@ -898,7 +902,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 				Heal.Serialize(Packet);
 				Battle->BroadcastPacket(Packet);
 			}
-			else {
+			else if(SideCount < BATTLE_MAXFIGHTERS_SIDE) {
 
 				// Create monster
 				_Object *Monster = Server->ObjectManager->Create();
