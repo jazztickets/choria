@@ -24,6 +24,7 @@
 #include <objects/inventory.h>
 #include <stats.h>
 #include <audio.h>
+#include <database.h>
 #include <assets.h>
 #include <random.h>
 #include <stdexcept>
@@ -77,6 +78,7 @@ void _Scripting::Setup(_Stats *Stats, const std::string &BaseScript) {
 	InjectStats(Stats);
 	LoadScript(BaseScript);
 	InjectItems(Stats);
+	InjectMonsters(Stats);
 }
 
 // Load a script file
@@ -89,9 +91,9 @@ void _Scripting::LoadScript(const std::string &Path) {
 
 // Load global state with stat info
 void _Scripting::InjectStats(_Stats *Stats) {
-	lua_newtable(LuaState);
 
 	// Add buffs
+	lua_newtable(LuaState);
 	for(const auto &Iterator : Stats->Buffs) {
 		const _Buff *Buff = Iterator.second;
 		if(Buff) {
@@ -178,6 +180,28 @@ void _Scripting::InjectItems(_Stats *Stats) {
 
 		lua_pop(LuaState, 1);
 	}
+}
+
+// Inject monster stats
+void _Scripting::InjectMonsters(_Stats *Stats) {
+
+	// Add monster stats to lua table
+	lua_newtable(LuaState);
+	Stats->Database->PrepareQuery("SELECT id, name FROM monster");
+	while(Stats->Database->FetchRow()) {
+		uint32_t ID = Stats->Database->GetInt<uint32_t>("id");
+		std::string Name = Stats->Database->GetString("name");
+
+		// Add stats to table
+		lua_pushstring(LuaState, Name.c_str());
+		lua_pushinteger(LuaState, ID);
+		lua_settable(LuaState, -3);
+	}
+
+	lua_setglobal(LuaState, "Monsters");
+
+	// Free memory
+	Stats->Database->CloseQuery();
 }
 
 // Inject server clock

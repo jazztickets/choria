@@ -783,3 +783,24 @@ end
 function Skill_Backstab.PlaySound(self, Level)
 	Audio.Play("gash0.ogg")
 end
+
+-- Demonic Conjuring --
+
+Skill_DemonicConjuring = Base_Spell:New()
+Skill_DemonicConjuring.CostPerLevel = 5
+Skill_DemonicConjuring.ManaCostBase = 15 - Skill_DemonicConjuring.CostPerLevel
+
+function Skill_DemonicConjuring.GetInfo(self, Level)
+
+	return "Summon a demon to fight for you\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+
+end
+
+function Skill_DemonicConjuring.Use(self, Level, Source, Target, Result)
+	Result.Target.Summon = Monsters["Demon"]
+
+	return Result
+end
+
+function Skill_DemonicConjuring.PlaySound(self, Level)
+end

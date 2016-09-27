@@ -43,6 +43,7 @@ class _Scripting {
 		void LoadScript(const std::string &Path);
 		void InjectStats(_Stats *Stats);
 		void InjectItems(_Stats *Stats);
+		void InjectMonsters(_Stats *Stats);
 		void InjectTime(double Time);
 
 		void PushObject(_Object *Object);

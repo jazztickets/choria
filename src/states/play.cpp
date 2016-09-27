@@ -1014,11 +1014,13 @@ void _PlayState::HandleBattleJoin(_Buffer &Data) {
 
 	// Read header
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-	Data.Read<uint32_t>();
+	uint32_t DatabaseID = Data.Read<uint32_t>();
 
 	// Get object
 	_Object *Object = ObjectManager->GetObject(NetworkID);
 	if(Object) {
+		if(DatabaseID)
+			Stats->GetMonsterStats(DatabaseID, Object);
 		Object->UnserializeBattle(Data);
 		Battle->AddFighter(Object, Object->BattleSide, true);
 	}

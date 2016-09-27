@@ -249,6 +249,7 @@ class _Object : public _ManagerBase {
 		glm::vec2 StatPosition;
 
 		// Monster
+		_Object *Owner;
 		uint32_t DatabaseID;
 		int ExperienceGiven;
 		int GoldGiven;

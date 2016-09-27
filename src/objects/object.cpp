@@ -112,6 +112,7 @@ _Object::_Object() :
 	Model(nullptr),
 	BattleOffset(0, 0),
 
+	Owner(nullptr),
 	DatabaseID(0),
 	ExperienceGiven(0),
 	GoldGiven(0),
@@ -868,6 +869,56 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		// Start battle
 		if(!Battle && StatChange.HasStat(StatType::BATTLE)) {
 			Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true);
+		}
+
+		// Handle summons
+		if(Battle && StatChange.HasStat(StatType::SUMMON)) {
+
+			// Get database id
+			uint32_t SummonDatabaseID = (uint32_t)StatChange.Values[StatType::SUMMON].Integer;
+
+			// Check for existing summon
+			_Object *ExistingSummon = nullptr;
+			for(auto &Fighter : Battle->Fighters) {
+				if(Fighter->BattleSide == BattleSide && Fighter->Owner == this && Fighter->DatabaseID == SummonDatabaseID) {
+					ExistingSummon = Fighter;
+					break;
+				}
+			}
+
+			// Heal summon
+			if(ExistingSummon) {
+				_StatChange Heal;
+				Heal.Object = ExistingSummon;
+				Heal.Values[StatType::HEALTH].Integer = ExistingSummon->MaxHealth / 4;
+				ExistingSummon->UpdateStats(Heal);
+
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+				Heal.Serialize(Packet);
+				Battle->BroadcastPacket(Packet);
+			}
+			else {
+
+				// Create monster
+				_Object *Monster = Server->ObjectManager->Create();
+				Monster->Server = Server;
+				Monster->Scripting = Scripting;
+				Monster->DatabaseID = SummonDatabaseID;
+				Monster->Stats = Stats;
+				Monster->Owner = this;
+				Stats->GetMonsterStats(Monster->DatabaseID, Monster);
+				Monster->CalculateStats();
+
+				// Create packet for new object
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
+				Monster->SerializeCreate(Packet);
+				Battle->BroadcastPacket(Packet);
+
+				// Add monster to battle
+				Battle->AddFighter(Monster, 0, true);
+			}
 		}
 	}
 
