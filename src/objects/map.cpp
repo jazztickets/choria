@@ -22,6 +22,7 @@
 #include <network/servernetwork.h>
 #include <network/peer.h>
 #include <objects/object.h>
+#include <objects/battle.h>
 #include <server.h>
 #include <graphics.h>
 #include <constants.h>
@@ -836,8 +837,8 @@ void _Map::AddObject(_Object *Object) {
 	Objects.push_back(Object);
 }
 
-// Returns a list of players close to a player
-void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players) {
+// Returns a list of players close to a player that can battle
+void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players) {
 
 	for(const auto &Object : Objects) {
 		if(Object != Player) {
@@ -849,6 +850,18 @@ void _Map::GetClosePlayers(const _Object *Player, float DistanceSquared, size_t 
 			}
 		}
 	}
+}
+
+// Returns a battle instance close to a player
+_Battle *_Map::GetCloseBattle(const _Object *Player) {
+	for(const auto &Object : Objects) {
+		if(Object != Player) {
+			if(Object->Position == Player->Position && Object->IsAlive() && Object->Battle && Object->Battle->SideCount[0] < BATTLE_MAXFIGHTERS_SIDE)
+				return Object->Battle;
+		}
+	}
+
+	return nullptr;
 }
 
 // Returns the closest player

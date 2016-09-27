@@ -60,7 +60,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	// Set window width
 	_TextBounds TextBounds;
 	Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
-	Size.x = 250;
+	Size.x = INVENTORY_TOOLTIP_WIDTH;
 	float SidePadding = 25;
 	float SpacingY = 25;
 	Size.x = std::max(Size.x, (float)TextBounds.Width) + SidePadding * 2;
@@ -68,7 +68,7 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Size.x += 25;
 
 	// Set window height
-	Size.y = 300;
+	Size.y = INVENTORY_TOOLTIP_HEIGHT;
 	if(Player->Vendor)
 		Size.y += 40;
 

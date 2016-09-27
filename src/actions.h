@@ -52,6 +52,7 @@ class _Actions {
 			INVENTORY,
 			SKILLS,
 			TELEPORT,
+			HELP,
 			MENU,
 			UNUSED,
 			TRADE,

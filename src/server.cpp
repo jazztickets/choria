@@ -310,6 +310,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_RESPAWN:
 			HandleRespawn(Data, Peer);
 		break;
+		case PacketType::WORLD_HELP:
+			HandleHelp(Data, Peer);
+		break;
 		case PacketType::ACTION_USE:
 			HandleActionUse(Data, Peer);
 		break;
@@ -1335,6 +1338,30 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	Player->CalculateStats();
 }
 
+// Handle help request by player
+void _Server::HandleHelp(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+	if(!Player->AcceptingMoveInput())
+		return;
+
+	// Find a nearby battle instance
+	_Battle *Battle = Player->Map->GetCloseBattle(Player);
+	if(!Battle)
+		return;
+
+	// Add player to battle
+	Battle->AddFighter(Player, 0, true);
+
+	// Send battle to new player
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::BATTLE_START);
+	Battle->Serialize(Packet);
+	Network->SendPacket(Packet, Peer);
+}
+
 // Handle action use by player
 void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
@@ -1467,7 +1494,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 	// Get a list of players
 	std::list<_Object *> Players;
-	BattleEvent.Object->Map->GetClosePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
+	BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
 	int AdditionalCount = 0;
 	if(!BattleEvent.Scripted)
 		AdditionalCount = (int)Players.size();

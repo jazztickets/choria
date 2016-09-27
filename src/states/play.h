@@ -53,6 +53,7 @@ class _PlayState : public _State {
 		void StopLocalServer();
 		void SendStatus(uint8_t Status);
 		void SendActionUse(uint8_t Slot);
+		void SendHelpRequest();
 
 		// Input
 		bool HandleAction(int InputType, int Action, int Value) override;
@@ -131,6 +132,7 @@ class _PlayState : public _State {
 		void HandleTradeExchange(_Buffer &Data);
 		void HandleBattleStart(_Buffer &Data);
 		void HandleBattleAction(_Buffer &Data);
+		void HandleBattleJoin(_Buffer &Data);
 		void HandleBattleLeave(_Buffer &Data);
 		void HandleBattleEnd(_Buffer &Data);
 		void HandleActionClear(_Buffer &Data);

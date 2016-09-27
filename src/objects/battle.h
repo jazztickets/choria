@@ -62,7 +62,7 @@ class _Battle : public _ManagerBase {
 		~_Battle();
 
 		// Objects
-		void AddFighter(_Object *Fighter, uint8_t Side);
+		void AddFighter(_Object *Fighter, uint8_t Side, bool Join=false);
 		void RemoveFighter(_Object *RemoveFighter);
 		int GetPeerCount();
 
@@ -92,11 +92,16 @@ class _Battle : public _ManagerBase {
 		std::list<_Object *> Fighters;
 		std::list<_ActionResult> ActionResults;
 
+		int SideCount[2];
+
 		bool Boss;
 
 	private:
 
 		void GetBattleOffset(int SideIndex, _Object *Fighter);
+		void AdjustBattleElements(int SideIndex, _Object *Fighter);
+		void CreateBattleElements(int SideIndex, _Object *Fighter);
+
 		void ClientSetAction(uint8_t ActionBarSlot);
 		void ChangeTarget(int Direction, bool SideDirection);
 
@@ -109,9 +114,6 @@ class _Battle : public _ManagerBase {
 		// State
 		double Time;
 		double WaitTimer;
-
-		// Objects
-		int SideCount[2];
 
 		// UI
 		_Element *BattleElement;

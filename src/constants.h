@@ -22,7 +22,7 @@
 #include <glm/vec4.hpp>
 
 //     Config
-const  int          DEFAULT_CONFIG_VERSION          =  2;
+const  int          DEFAULT_CONFIG_VERSION          =  3;
 const  int          DEFAULT_SAVE_VERSION            =  13;
 const  glm::ivec2   DEFAULT_WINDOW_SIZE             =  glm::ivec2(1024,768);
 const  int          DEFAULT_FULLSCREEN              =  0;
@@ -106,6 +106,8 @@ const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory
 const  int          INVENTORY_TOOLTIP_OFFSET        =  20;
 const  int          INVENTORY_TOOLTIP_PADDING       =  10;
+const  float        INVENTORY_TOOLTIP_WIDTH         =  250;
+const  float        INVENTORY_TOOLTIP_HEIGHT        =  300;
 const  int          INVENTORY_MAX_STACK             =  255;
 //     Menu
 const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;

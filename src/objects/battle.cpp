@@ -54,10 +54,10 @@ _Battle::_Battle() :
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	Manager(nullptr),
+	SideCount{0, 0},
 	Boss(false),
 	Time(0),
 	WaitTimer(0),
-	SideCount{0, 0},
 	BattleElement(nullptr) {
 
 }
@@ -400,7 +400,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 }
 
 // Add a fighter to the battle
-void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
+void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighter->Battle = this;
 	Fighter->BattleSide = Side;
 	Fighter->LastTarget[0] = nullptr;
@@ -414,12 +414,38 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side) {
 	Fighter->Vendor = nullptr;
 	Fighter->Trader = nullptr;
 	Fighter->TeleportTime = -1.0;
-	if(Fighter->Server)
+	if(Fighter->Server) {
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
+
+		// Send player join packet to current fighters
+		if(Join) {
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::BATTLE_JOIN);
+			Fighter->SerializeBattle(Packet);
+			BroadcastPacket(Packet);
+		}
+	}
 
 	// Count fighters and set slots
 	SideCount[Side]++;
 	Fighters.push_back(Fighter);
+
+	// Fighter joining on the client
+	if(!Fighter->Server && Join) {
+
+		// Adjust existing battle elements and create new one
+		int SideIndex = 0;
+		for(auto &AdjustFighter : Fighters) {
+			if(AdjustFighter->BattleSide == Side) {
+				if(AdjustFighter == Fighter)
+					CreateBattleElements(SideIndex, AdjustFighter);
+				else
+					AdjustBattleElements(SideIndex, AdjustFighter);
+
+				SideIndex++;
+			}
+		}
+	}
 }
 
 // Get a list of fighters from a side
@@ -487,30 +513,11 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 		AddFighter(Fighter, Fighter->BattleSide);
 	}
 
-	// Set up ui
-	BattleElement = Assets.Elements["element_battle"];
-	if(BattleElement)
-		BattleElement->SetVisible(true);
-
 	// Set fighter position offsets and create ui elements
-	int SideCount[2] = { 0, 0 };
+	int SideIndex[2] = { 0, 0 };
 	for(auto &Fighter : Fighters) {
-
-		// Get position on screen
-		GetBattleOffset(SideCount[Fighter->BattleSide], Fighter);
-		SideCount[Fighter->BattleSide]++;
-
-		// Create ui element
-		if(BattleElement) {
-			Fighter->CreateBattleElement(BattleElement);
-
-			// Create ui elements for status effects
-			for(auto &StatusEffect : Fighter->StatusEffects) {
-				StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
-				if(ClientPlayer == Fighter)
-					StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
-			}
-		}
+		CreateBattleElements(SideIndex[Fighter->BattleSide], Fighter);
+		SideIndex[Fighter->BattleSide]++;
 	}
 }
 
@@ -706,6 +713,39 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 
 	// Place slots in between main divisions
 	Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
+}
+
+// Adjust existing battle elements
+void _Battle::AdjustBattleElements(int SideIndex, _Object *Fighter) {
+
+	// Get position on screen
+	GetBattleOffset(SideIndex, Fighter);
+	Fighter->BattleElement->Offset = Fighter->BattleOffset;
+	Fighter->BattleElement->CalculateBounds();
+}
+
+// Create battle element for a fighter
+void _Battle::CreateBattleElements(int SideIndex, _Object *Fighter) {
+
+	// Set up ui
+	BattleElement = Assets.Elements["element_battle"];
+	if(BattleElement)
+		BattleElement->SetVisible(true);
+
+	// Get position on screen
+	GetBattleOffset(SideIndex, Fighter);
+
+	// Create ui element
+	if(BattleElement) {
+		Fighter->CreateBattleElement(BattleElement);
+
+		// Create ui elements for status effects
+		for(auto &StatusEffect : Fighter->StatusEffects) {
+			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
+			if(ClientPlayer == Fighter)
+				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+		}
+	}
 }
 
 // Removes a player from the battle

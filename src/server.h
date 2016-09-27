@@ -127,6 +127,7 @@ class _Server {
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 		void HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer);
+		void HandleHelp(_Buffer &Data, _Peer *Peer);
 
 		void SendPlayerInfo(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);

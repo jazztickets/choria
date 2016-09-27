@@ -43,6 +43,7 @@ class _Atlas;
 class _Camera;
 class _Server;
 class _Stats;
+class _Battle;
 class _Peer;
 struct _MapStat;
 
@@ -118,7 +119,8 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		void AddObject(_Object *Object);
 		void RemoveObject(const _Object *RemoveObject);
 		void SendObjectList(_Peer *Peer);
-		void GetClosePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players);
+		void GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players);
+		_Battle *GetCloseBattle(const _Object *Player);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(const _Event &Event, glm::ivec2 &Position);
 

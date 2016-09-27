@@ -65,6 +65,7 @@ _HUD::_HUD() {
 	ChatTextBox = Assets.TextBoxes["textbox_chat"];
 	ChatTextBox->ParentOffset = glm::vec2(5, 15);
 
+	Assets.Labels["label_buttonbar_help"]->Text = Actions.GetInputNameForAction(_Actions::HELP).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_teleport"]->Text = Actions.GetInputNameForAction(_Actions::TELEPORT).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(_Actions::INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(_Actions::TRADE).substr(0, HUD_KEYNAME_LENGTH);
@@ -223,7 +224,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 		// Check button bar
 		if(ButtonBarElement->GetClickedElement()) {
 			if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_teleport") {
-				ToggleTeleport();
+				//ToggleTeleport();
+			}
+			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_help") {
+				PlayState.SendHelpRequest();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_inventory") {
 				ToggleInventory();

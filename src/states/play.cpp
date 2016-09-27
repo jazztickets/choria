@@ -245,6 +245,9 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::SKILLS:
 					HUD->ToggleSkills();
 				break;
+				case _Actions::HELP:
+					SendHelpRequest();
+				break;
 				case _Actions::UP:
 				case _Actions::DOWN:
 				case _Actions::LEFT:
@@ -566,6 +569,9 @@ void _PlayState::HandlePacket(_Buffer &Data) {
 		break;
 		case PacketType::BATTLE_ACTION:
 			HandleBattleAction(Data);
+		break;
+		case PacketType::BATTLE_JOIN:
+			HandleBattleJoin(Data);
 		break;
 		case PacketType::BATTLE_LEAVE:
 			HandleBattleLeave(Data);
@@ -1001,6 +1007,23 @@ void _PlayState::HandleBattleAction(_Buffer &Data) {
 	Battle->ClientHandlePlayerAction(Data);
 }
 
+// Handle a fighter joining the battle
+void _PlayState::HandleBattleJoin(_Buffer &Data) {
+	if(!Player || !Battle)
+		return;
+
+	// Read header
+	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	Data.Read<uint32_t>();
+
+	// Get object
+	_Object *Object = ObjectManager->GetObject(NetworkID);
+	if(Object) {
+		Object->UnserializeBattle(Data);
+		Battle->AddFighter(Object, Object->BattleSide, true);
+	}
+}
+
 // Handle a fighter leaving battle
 void _PlayState::HandleBattleLeave(_Buffer &Data) {
 	if(!Player || !Battle)
@@ -1285,6 +1308,16 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	Packet.Write<uint8_t>(Slot);
 	Packet.Write<uint8_t>(1);
 	Packet.Write<uint32_t>(Player->NetworkID);
+	Network->SendPacket(Packet);
+}
+
+// Send help request to server
+void _PlayState::SendHelpRequest() {
+	if(!Player->AcceptingMoveInput())
+		return;
+
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_HELP);
 	Network->SendPacket(Packet);
 }
 
