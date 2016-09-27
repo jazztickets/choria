@@ -11,11 +11,6 @@ project(choria)
 # add extra find modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-# check for -DLUA_VERSION=x.x
-if(NOT LUA_VERSION)
-	set(LUA_VERSION "5.3")
-endif()
-
 # mingw and visual studio
 if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
@@ -70,9 +65,9 @@ if(NOT OGG_FOUND)
 	message(SEND_ERROR "Could not find libogg!")
 endif()
 
-find_package(Lua ${LUA_VERSION} REQUIRED)
+find_package(Lua 5.3 REQUIRED)
 if(NOT LUA_FOUND)
-	message(SEND_ERROR "Could not find Lua " ${LUA_VERSION} "!")
+	message(SEND_ERROR "Could not find Lua 5.3!")
 endif()
 
 find_package(Freetype REQUIRED)
