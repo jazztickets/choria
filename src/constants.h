@@ -86,7 +86,6 @@ const  int          BATTLE_COLUMN_SPACING           =  230;
 const  double       BATTLE_DEFAULTSPEED             =  (1.0/2.0);
 const  double       BATTLE_WAITDEADTIME             =  0.75;
 const  double       BATTLE_MAX_START_TURNTIMER      =  0.35;
-const  double       BATTLE_AI_UPDATE_PERIOD         =  1.0;
 const  float        BATTLE_HEALTHBAR_WIDTH          =  90;
 const  float        BATTLE_HEALTHBAR_HEIGHT         =  22;
 const  int          BATTLE_MIN_SPEED                =  5;
