@@ -791,17 +791,32 @@ end
 -- Demonic Conjuring --
 
 Skill_DemonicConjuring = Base_Spell:New()
-Skill_DemonicConjuring.CostPerLevel = 5
-Skill_DemonicConjuring.ManaCostBase = 15 - Skill_DemonicConjuring.CostPerLevel
+Skill_DemonicConjuring.CostPerLevel = 10
+Skill_DemonicConjuring.ManaCostBase = 25 - Skill_DemonicConjuring.CostPerLevel
+Skill_DemonicConjuring.HealthPerLevel = 20
+Skill_DemonicConjuring.DamagePerLevel = 5
+Skill_DemonicConjuring.Monster = Monsters[23]
+
+function Skill_DemonicConjuring.GetHealth(self, Level)
+	return self.Monster.Health + (Level - 1) * self.HealthPerLevel
+end
+
+function Skill_DemonicConjuring.GetDamage(self, Level)
+	AddedDamage = (Level - 1) * self.DamagePerLevel
+	return self.Monster.MinDamage + AddedDamage, self.Monster.MaxDamage + AddedDamage
+end
 
 function Skill_DemonicConjuring.GetInfo(self, Level)
+	MinDamage, MaxDamage = self:GetDamage(Level)
 
-	return "Summon a demon to fight for you\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
-
+	return "Summon a demon to fight for you that has [c green]" .. self:GetHealth(Level) .. " HP [c white]and does [c green]" .. MinDamage .. "-" .. MaxDamage .. " [c white]damage\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_DemonicConjuring.Use(self, Level, Source, Target, Result)
-	Result.Target.Summon = Monsters["Demon"]
+	Result.Summon = {}
+	Result.Summon.ID = self.Monster.ID
+	Result.Summon.Health = self:GetHealth(Level)
+	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Level)
 
 	return Result
 end

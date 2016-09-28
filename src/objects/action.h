@@ -29,6 +29,7 @@ class _Texture;
 class _Item;
 class _Buff;
 class _Buffer;
+struct _ActionResult;
 
 // Types of targets
 enum class TargetType : uint32_t {
@@ -50,6 +51,17 @@ enum class ScopeType : uint8_t {
 	ALL
 };
 
+struct _Summon {
+	_Summon() : ID(0), Health(0), Mana(0), Armor(0), MinDamage(0), MaxDamage(0) { }
+
+	uint32_t ID;
+	int Health;
+	int Mana;
+	int Armor;
+	int MinDamage;
+	int MaxDamage;
+};
+
 // Action
 class _Action {
 
@@ -65,6 +77,7 @@ class _Action {
 		void Unserialize(_Buffer &Data, _Stats *Stats);
 
 		bool Resolve(_Buffer &Data, _Object *Source, ScopeType Scope);
+		void HandleSummons(_ActionResult &ActionResult);
 
 		bool IsSet() const { return !(Item == nullptr); }
 		void Unset() { Item = nullptr; Count = 0; Level = 0; InventorySlot = -1; }
@@ -83,6 +96,7 @@ struct _ActionResult {
 
 	_StatChange Source;
 	_StatChange Target;
+	_Summon Summon;
 	glm::vec2 LastPosition;
 	glm::vec2 Position;
 	_Action ActionUsed;

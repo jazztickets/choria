@@ -76,9 +76,9 @@ _Scripting::~_Scripting() {
 // Set up scripting environment
 void _Scripting::Setup(_Stats *Stats, const std::string &BaseScript) {
 	InjectStats(Stats);
+	InjectMonsters(Stats);
 	LoadScript(BaseScript);
 	InjectItems(Stats);
-	InjectMonsters(Stats);
 }
 
 // Load a script file
@@ -187,17 +187,44 @@ void _Scripting::InjectMonsters(_Stats *Stats) {
 
 	// Add monster stats to lua table
 	lua_newtable(LuaState);
-	Stats->Database->PrepareQuery("SELECT id, name FROM monster");
+	Stats->Database->PrepareQuery("SELECT * FROM monster");
 	while(Stats->Database->FetchRow()) {
 		uint32_t ID = Stats->Database->GetInt<uint32_t>("id");
 		std::string Name = Stats->Database->GetString("name");
 
-		// Add stats to table
-		lua_pushstring(LuaState, Name.c_str());
+		// Make ID the key to the monster table
 		lua_pushinteger(LuaState, ID);
+
+		// Make new table for attributes
+		lua_newtable(LuaState);
+
+		// Set attributes
+		lua_pushinteger(LuaState, ID);
+		lua_setfield(LuaState, -2, "ID");
+
+		lua_pushstring(LuaState, Name.c_str());
+		lua_setfield(LuaState, -2, "Name");
+
+		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("health"));
+		lua_setfield(LuaState, -2, "Health");
+
+		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("mana"));
+		lua_setfield(LuaState, -2, "Mana");
+
+		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("armor"));
+		lua_setfield(LuaState, -2, "Armor");
+
+		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("mindamage"));
+		lua_setfield(LuaState, -2, "MinDamage");
+
+		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("maxdamage"));
+		lua_setfield(LuaState, -2, "MaxDamage");
+
+		// Add attributes to monster table
 		lua_settable(LuaState, -3);
 	}
 
+	// Give name to global table
 	lua_setglobal(LuaState, "Monsters");
 
 	// Free memory
@@ -421,6 +448,10 @@ void _Scripting::GetActionResult(int Index, _ActionResult &ActionResult) {
 	GetStatChange(-1, ActionResult.Target);
 	lua_pop(LuaState, 1);
 
+	lua_pushstring(LuaState, "Summon");
+	lua_gettable(LuaState, -2);
+	GetSummon(-1, ActionResult.Summon);
+	lua_pop(LuaState, 1);
 }
 
 // Get return value as stat change
@@ -466,6 +497,46 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 
 		lua_pop(LuaState, 1);
 	}
+}
+
+// Get summon stats
+void _Scripting::GetSummon(int Index, _Summon &Summon) {
+	if(Index != -1)
+		Index += CurrentTableIndex;
+
+	// Check return value
+	if(!lua_istable(LuaState, Index))
+		return;
+
+	// Get ID
+	lua_getfield(LuaState, -1, "ID");
+	Summon.ID = (uint32_t)lua_tointeger(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get Health
+	lua_getfield(LuaState, -1, "Health");
+	Summon.Health = (int)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get Mana
+	lua_getfield(LuaState, -1, "Mana");
+	Summon.Mana = (int)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get Armor
+	lua_getfield(LuaState, -1, "Armor");
+	Summon.Mana = (int)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	// Get Damage
+	lua_getfield(LuaState, -1, "MinDamage");
+	Summon.MinDamage = (int)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
+	lua_getfield(LuaState, -1, "MaxDamage");
+	Summon.MaxDamage = (int)lua_tonumber(LuaState, -1);
+	lua_pop(LuaState, 1);
+
 }
 
 // Start a call to a lua class method, return table index

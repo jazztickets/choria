@@ -72,7 +72,6 @@ enum class StatType : uint64_t {
 	FLEE,
 	BATTLE,
 	TELEPORT,
-	SUMMON,
 	COUNT,
 };
 
@@ -120,7 +119,6 @@ const std::map<std::string, StatType> StatStringToType = {
 	{ "Flee",          StatType::FLEE          },
 	{ "Battle",        StatType::BATTLE        },
 	{ "Teleport",      StatType::TELEPORT      },
-	{ "Summon",        StatType::SUMMON        },
 };
 
 const _StatStorage StatValueTypes[] = {
@@ -155,7 +153,6 @@ const _StatStorage StatValueTypes[] = {
 	{ StatType::FLEE,          StatValueType::BOOLEAN },
 	{ StatType::BATTLE,        StatValueType::INTEGER },
 	{ StatType::TELEPORT,      StatValueType::FLOAT   },
-	{ StatType::SUMMON,        StatValueType::INTEGER },
 };
 
 union _Value {

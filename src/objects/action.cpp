@@ -21,7 +21,9 @@
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/item.h>
+#include <objects/battle.h>
 #include <constants.h>
+#include <server.h>
 #include <stats.h>
 #include <buffer.h>
 #include <iostream>
@@ -128,6 +130,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 		// Update objects
 		ActionResult.Source.Object->UpdateStats(ActionResult.Source);
 		ActionResult.Target.Object->UpdateStats(ActionResult.Target);
+		HandleSummons(ActionResult);
 
 		// Write stat changes
 		ActionResult.Source.Serialize(Data);
@@ -139,6 +142,73 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Source->Targets.clear();
 
 	return true;
+}
+
+// Handle summon actions
+void _Action::HandleSummons(_ActionResult &ActionResult) {
+	if(!ActionResult.Summon.ID)
+		return;
+
+	_Object *Object = ActionResult.Source.Object;
+	_Battle *Battle = Object->Battle;
+	if(Battle) {
+
+		// Get database id
+		uint32_t SummonDatabaseID = ActionResult.Summon.ID;
+
+		// Check for existing summon
+		_Object *ExistingSummon = nullptr;
+		int SideCount = 0;
+		for(auto &Fighter : Battle->Fighters) {
+			if(Fighter->BattleSide == Object->BattleSide) {
+				if(Fighter->Owner == Object && Fighter->DatabaseID == SummonDatabaseID) {
+					ExistingSummon = Fighter;
+				}
+
+				SideCount++;
+			}
+		}
+
+		// Heal summon
+		if(ExistingSummon) {
+			_StatChange Heal;
+			Heal.Object = ExistingSummon;
+			Heal.Values[StatType::HEALTH].Integer = ExistingSummon->MaxHealth / 4;
+			ExistingSummon->UpdateStats(Heal);
+
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+			Heal.Serialize(Packet);
+			Battle->BroadcastPacket(Packet);
+		}
+		else if(SideCount < BATTLE_MAXFIGHTERS_SIDE) {
+
+			// Create monster
+			_Object *Monster = Object->Server->ObjectManager->Create();
+			Monster->Server = Object->Server;
+			Monster->Scripting = Object->Scripting;
+			Monster->DatabaseID = SummonDatabaseID;
+			Monster->Stats = Object->Stats;
+			Monster->Owner = Object;
+			Object->Stats->GetMonsterStats(Monster->DatabaseID, Monster);
+
+			// Add stats from script
+			Monster->Health = Monster->BaseMaxHealth = ActionResult.Summon.Health;
+			Monster->Mana = Monster->BaseMaxMana = ActionResult.Summon.Mana;
+			Monster->BaseMinDamage = ActionResult.Summon.MinDamage;
+			Monster->BaseMaxDamage = ActionResult.Summon.MaxDamage;
+			Monster->CalculateStats();
+
+			// Create packet for new object
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
+			Monster->SerializeCreate(Packet);
+			Battle->BroadcastPacket(Packet);
+
+			// Add monster to battle
+			Battle->AddFighter(Monster, 0, true);
+		}
+	}
 }
 
 // Return target type of action used

@@ -28,6 +28,7 @@ class _Item;
 class _Stats;
 class _StatChange;
 class _StatusEffect;
+struct _Summon;
 struct _ActionResult;
 
 // Classes
@@ -61,6 +62,7 @@ class _Scripting {
 		std::string GetString(int Index);
 		void GetActionResult(int Index, _ActionResult &ActionResult);
 		void GetStatChange(int Index, _StatChange &StatChange);
+		void GetSummon(int Index, _Summon &Summon);
 
 		bool StartMethodCall(const std::string &TableName, const std::string &Function);
 		void MethodCall(int ParameterCount, int ReturnCount);

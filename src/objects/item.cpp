@@ -66,6 +66,8 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 	Size.x = std::max(Size.x, (float)TextBounds.Width) + SidePadding * 2;
 	if(ResistanceTypeID)
 		Size.x += 25;
+	else if(IsSkill())
+		Size.x += 30;
 
 	// Set window height
 	Size.y = INVENTORY_TOOLTIP_HEIGHT;
