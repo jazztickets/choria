@@ -65,6 +65,7 @@ _Object::_Object() :
 	BaseHealthRegen(0),
 	BaseManaRegen(0),
 	BaseHealPower(1.0f),
+	BaseAttackPower(1.0f),
 	BaseMinDamage(0),
 	BaseMaxDamage(0),
 	BaseArmor(0),
@@ -84,6 +85,7 @@ _Object::_Object() :
 	Mana(0),
 	MaxMana(0),
 	HealPower(0.0f),
+	AttackPower(0.0f),
 	MinDamage(0),
 	MaxDamage(0),
 	Armor(0),
@@ -1253,6 +1255,7 @@ void _Object::CalculateStats() {
 	HealthRegen = BaseHealthRegen;
 	ManaRegen = BaseManaRegen;
 	HealPower = BaseHealPower;
+	AttackPower = BaseAttackPower;
 	BattleSpeed = 0;
 	Evasion = BaseEvasion;
 	HitChance = BaseHitChance;
@@ -1386,6 +1389,8 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::HEALPOWER))
 		HealPower += StatChange.Values[StatType::HEALPOWER].Float;
+	if(StatChange.HasStat(StatType::ATTACKPOWER))
+		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
 		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;

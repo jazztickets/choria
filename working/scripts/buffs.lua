@@ -267,3 +267,18 @@ function Buff_BleedResist.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Weak  --
+
+Buff_Weak = Base_Buff:New()
+
+function Buff_Weak.GetInfo(self, Level)
+
+	return "Attack damage reduced by [c green]" .. Level .. "%"
+end
+
+function Buff_Weak.Stats(self, Level, Source, Change)
+	Change.AttackPower = -Level / 100.0
+
+	return Change
+end

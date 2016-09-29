@@ -181,6 +181,7 @@ class _Object : public _ManagerBase {
 		int BaseHealthRegen;
 		int BaseManaRegen;
 		float BaseHealPower;
+		float BaseAttackPower;
 		int BaseMinDamage;
 		int BaseMaxDamage;
 		int BaseArmor;
@@ -205,6 +206,7 @@ class _Object : public _ManagerBase {
 		int HealthRegen;
 		int ManaRegen;
 		float HealPower;
+		float AttackPower;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;

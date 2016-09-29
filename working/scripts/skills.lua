@@ -832,3 +832,37 @@ end
 function Skill_DemonicConjuring.PlaySound(self, Level)
 	Audio.Play("summon0.ogg")
 end
+
+-- Enfeeble --
+
+Skill_Enfeeble = Base_Spell:New()
+Skill_Enfeeble.PercentPerLevel = 2 
+Skill_Enfeeble.BasePercent = 25 - Skill_Enfeeble.PercentPerLevel
+Skill_Enfeeble.DurationPerLevel = 0.2
+Skill_Enfeeble.Duration = 5 - Skill_Enfeeble.DurationPerLevel
+Skill_Enfeeble.CostPerLevel = 5
+Skill_Enfeeble.ManaCostBase = 10 - Skill_Enfeeble.CostPerLevel
+
+function Skill_Enfeeble.GetPercent(self, Level)
+	return math.floor(self.BasePercent + self.PercentPerLevel * Level)
+end
+
+function Skill_Enfeeble.GetDuration(self, Level)
+	return math.floor(self.Duration + self.DurationPerLevel * Level)
+end
+
+function Skill_Enfeeble.GetInfo(self, Level)
+	return "Cripple your foe and reduce attack damage by [c green]" .. self:GetPercent(Level) .. "%[c white] for [c green]" .. self:GetDuration(Level) .. " [c white]seconds\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+end
+
+function Skill_Enfeeble.Use(self, Level, Source, Target, Result)
+	Result.Target.Buff = Buffs["Buff_Weak"]
+	Result.Target.BuffLevel = self:GetPercent(Level)
+	Result.Target.BuffDuration = self:GetDuration(Level)
+
+	return Result
+end
+
+function Skill_Enfeeble.PlaySound(self, Level)
+end
+

@@ -294,6 +294,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
+	lua_pushnumber(LuaState, Object->AttackPower);
+	lua_setfield(LuaState, -2, "AttackPower");
+
 	lua_pushinteger(LuaState, Object->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 

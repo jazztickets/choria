@@ -131,6 +131,9 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 			Result.Target.Crit = true
 		end
 
+		-- Reduce damage
+		Change.Damage = math.floor(Change.Damage * Source.AttackPower)
+
 		-- Call OnHit methods for buffs
 		StaminaChange = 0
 		for i = 1, #Target.StatusEffects do
