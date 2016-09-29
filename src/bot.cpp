@@ -409,8 +409,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			StatChange.Object = Player;
 
 			// Get ending stats
-			Data.ReadBit();
-			Data.ReadBit();
 			Player->PlayerKills = Data.Read<int>();
 			Player->MonsterKills = Data.Read<int>();
 			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();

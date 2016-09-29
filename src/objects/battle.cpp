@@ -537,9 +537,8 @@ void _Battle::ServerEndBattle() {
 		for(auto &Fighter : SideFighters[Side]) {
 
 			// Keep track of players
-			if(Fighter->DatabaseID == 0) {
+			if(Fighter->DatabaseID == 0)
 				SideStats[Side].PlayerCount++;
-			}
 			else
 				SideStats[Side].MonsterCount++;
 
@@ -548,13 +547,13 @@ void _Battle::ServerEndBattle() {
 
 			// Tally alive fighters
 			if(Fighter->IsAlive()) {
+				SideStats[Side].AliveCount++;
 				SideStats[Side].Dead = false;
 			}
 
 			// Sum experience and gold
 			SideStats[Side].TotalExperienceGiven += Fighter->ExperienceGiven;
 			SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
-			SideStats[Side].FighterCount++;
 		}
 	}
 
@@ -572,11 +571,10 @@ void _Battle::ServerEndBattle() {
 
 		// Divide up rewards
 		for(int Side = 0; Side < 2; Side++) {
-			if(!SideStats[Side].FighterCount)
-				break;
-
 			int OtherSide = !Side;
-			int DivideCount = SideStats[Side].FighterCount - SideStats[Side].JoinedCount;
+			int DivideCount = SideStats[Side].AliveCount - SideStats[Side].JoinedCount;
+			if(DivideCount <= 0)
+				break;
 
 			// Divide experience up
 			if(SideStats[OtherSide].TotalExperienceGiven > 0) {
@@ -637,7 +635,7 @@ void _Battle::ServerEndBattle() {
 		// Get rewards
 		int ExperienceEarned = 0;
 		int GoldEarned = 0;
-		if(Fighter->BattleSide != WinningSide) {
+		if(!Fighter->IsAlive()) {
 			Fighter->ApplyDeathPenalty();
 		}
 		else if(!Fighter->JoinedBattle) {
@@ -664,8 +662,6 @@ void _Battle::ServerEndBattle() {
 		// Write results
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
-		Packet.WriteBit(SideStats[0].Dead);
-		Packet.WriteBit(SideStats[1].Dead);
 		Packet.Write<int>(Fighter->PlayerKills);
 		Packet.Write<int>(Fighter->MonsterKills);
 		Packet.Write<int>(ExperienceEarned);

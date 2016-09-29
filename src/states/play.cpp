@@ -1052,9 +1052,6 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	StatChange.Object = Player;
 
 	// Get ending stats
-	bool SideDead[2];
-	SideDead[0] = Data.ReadBit();
-	SideDead[1] = Data.ReadBit();
 	Player->PlayerKills = Data.Read<int>();
 	Player->MonsterKills = Data.Read<int>();
 	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
@@ -1074,7 +1071,7 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	}
 
 	// Update client death count
-	if(SideDead[Player->BattleSide]) {
+	if(!Player->IsAlive()) {
 		Player->Deaths++;
 		PlayDeathSound();
 	}

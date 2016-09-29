@@ -34,7 +34,7 @@ class _HUD;
 
 struct _BattleResult {
 	_BattleResult() :
-		FighterCount(0),
+		AliveCount(0),
 		PlayerCount(0),
 		MonsterCount(0),
 		JoinedCount(0),
@@ -44,7 +44,7 @@ struct _BattleResult {
 		GoldPerFighter(0),
 		Dead(true) { }
 
-	int FighterCount;
+	int AliveCount;
 	int PlayerCount;
 	int MonsterCount;
 	int JoinedCount;
