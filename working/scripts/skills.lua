@@ -166,6 +166,14 @@ function Skill_SkeletonAttack.PlaySound(self, Level)
 	Audio.Play("bones" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Demon attack --
+
+Skill_DemonAttack = Base_Attack:New()
+
+function Skill_DemonAttack.PlaySound(self, Level)
+	Audio.Play("demon0.ogg")
+end
+
 -- Basic attack --
 
 Skill_Attack = Base_Attack:New()
@@ -822,4 +830,5 @@ function Skill_DemonicConjuring.Use(self, Level, Source, Target, Result)
 end
 
 function Skill_DemonicConjuring.PlaySound(self, Level)
+	Audio.Play("summon0.ogg")
 end
