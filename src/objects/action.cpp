@@ -173,7 +173,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		if(ExistingSummon) {
 			_StatChange Heal;
 			Heal.Object = ExistingSummon;
-			Heal.Values[StatType::HEALTH].Integer = ExistingSummon->MaxHealth / 4;
+			Heal.Values[StatType::HEALTH].Integer = ExistingSummon->MaxHealth;
 			ExistingSummon->UpdateStats(Heal);
 
 			_Buffer Packet;
