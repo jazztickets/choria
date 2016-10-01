@@ -41,6 +41,7 @@ struct StatTypeHash {
 
 // Types of stats
 enum class StatType : uint64_t {
+	ID,
 	BUFF,
 	BUFFLEVEL,
 	BUFFDURATION,
@@ -89,6 +90,7 @@ struct _StatStorage {
 };
 
 const std::map<std::string, StatType> StatStringToType = {
+	{ "ID",            StatType::ID            },
 	{ "Buff",          StatType::BUFF          },
 	{ "BuffLevel",     StatType::BUFFLEVEL     },
 	{ "BuffDuration",  StatType::BUFFDURATION  },
@@ -124,6 +126,7 @@ const std::map<std::string, StatType> StatStringToType = {
 };
 
 const _StatStorage StatValueTypes[] = {
+	{ StatType::ID,            StatValueType::INTEGER },
 	{ StatType::BUFF,          StatValueType::POINTER },
 	{ StatType::BUFFLEVEL,     StatValueType::INTEGER },
 	{ StatType::BUFFDURATION,  StatValueType::FLOAT   },
