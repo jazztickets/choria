@@ -790,6 +790,8 @@ void _PlayState::HandleTeleportStart(_Buffer &Data) {
 	Player->WaitForServer = true;
 	HUD->CloseWindows(false);
 	HUD->StartTeleport();
+
+	Audio.PlaySound(Assets.Sounds["teleport0.ogg"]);
 }
 
 // Handles the start of an event

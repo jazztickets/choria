@@ -171,7 +171,7 @@ end
 Skill_DemonAttack = Base_Attack:New()
 
 function Skill_DemonAttack.PlaySound(self, Level)
-	Audio.Play("demon0.ogg")
+	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
 -- Basic attack --
@@ -864,5 +864,6 @@ function Skill_Enfeeble.Use(self, Level, Source, Target, Result)
 end
 
 function Skill_Enfeeble.PlaySound(self, Level)
+	Audio.Play("enfeeble0.ogg")
 end
 
