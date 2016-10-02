@@ -1213,6 +1213,15 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 			if(StatusEffect)
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 
+			// Play buff sounds
+			if(StatChange.HasStat(StatType::ID)) {
+				const _Buff *Buff = Stats->Buffs[(uint32_t)StatChange.Values[StatType::ID].Integer];
+				if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
+					Scripting->MethodCall(0, 0);
+					Scripting->FinishMethodCall();
+				}
+			}
+
 			// Update action bar
 			if(StatChange.HasStat(StatType::ACTIONBARSIZE))
 				HUD->SetActionBarSize(Player->ActionBar.size());

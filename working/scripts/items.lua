@@ -26,7 +26,7 @@ end
 
 function Item_HealingSalve.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Healing"]
+	Result.Target.Buff = Buff_Healing.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -45,7 +45,7 @@ end
 
 function Item_ManaCider.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Mana"]
+	Result.Target.Buff = Buff_Mana.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -63,7 +63,7 @@ end
 
 function Item_InvisPotion.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Invis"]
+	Result.Target.Buff = Buff_Invis.Pointer
 	Result.Target.BuffLevel = 1
 	Result.Target.BuffDuration = Level
 
@@ -82,7 +82,7 @@ end
 
 function Item_HastePotion.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Hasted"]
+	Result.Target.Buff = Buff_Hasted.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -101,7 +101,7 @@ end
 
 function Item_DeathPotion.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Bleeding"]
+	Result.Target.Buff = Buff_Bleeding.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -135,7 +135,7 @@ end
 
 function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Poisoned"]
+	Result.Target.Buff = Buff_Poisoned.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -187,7 +187,7 @@ function Item_PoisonKnives.GetInfo(self, Level)
 end
 
 function Item_PoisonKnives.Proc(self, Roll, Level, Source, Target, Result)
-	Result.Target.Buff = Buffs["Buff_Poisoned"]
+	Result.Target.Buff = Buff_Poisoned.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 end
@@ -212,7 +212,7 @@ end
 
 function Item_SlimyGlob.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_BleedResist"]
+	Result.Target.Buff = Buff_BleedResist.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -234,7 +234,7 @@ end
 
 function Item_CrowFeather.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Fast"]
+	Result.Target.Buff = Buff_Fast.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -256,7 +256,7 @@ end
 
 function Item_SpiderLeg.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Hasted"]
+	Result.Target.Buff = Buff_Hasted.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -278,7 +278,7 @@ end
 
 function Item_Fang.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Mighty"]
+	Result.Target.Buff = Buff_Mighty.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -300,7 +300,7 @@ end
 
 function Item_SpectralDust.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Evasion"]
+	Result.Target.Buff = Buff_Evasion.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -322,7 +322,7 @@ end
 
 function Item_CrabLegs.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Hardened"]
+	Result.Target.Buff = Buff_Hardened.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 
@@ -359,7 +359,7 @@ end
 
 function Item_SwampGlob.Use(self, Level, Source, Target, Result)
 
-	Result.Target.Buff = Buffs["Buff_Slowed"]
+	Result.Target.Buff = Buff_Slowed.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = self.Duration
 

@@ -79,6 +79,7 @@ void _Scripting::Setup(_Stats *Stats, const std::string &BaseScript) {
 	InjectMonsters(Stats);
 	LoadScript(BaseScript);
 	InjectItems(Stats);
+	InjectBuffs(Stats);
 }
 
 // Load a script file
@@ -91,20 +92,6 @@ void _Scripting::LoadScript(const std::string &Path) {
 
 // Load global state with stat info
 void _Scripting::InjectStats(_Stats *Stats) {
-
-	// Add buffs
-	lua_newtable(LuaState);
-	for(const auto &Iterator : Stats->Buffs) {
-		const _Buff *Buff = Iterator.second;
-		if(Buff) {
-
-			// Add pointer to table
-			lua_pushstring(LuaState, Buff->Script.c_str());
-			lua_pushlightuserdata(LuaState, (void *)Buff);
-			lua_settable(LuaState, -3);
-		}
-	}
-	lua_setglobal(LuaState, "Buffs");
 
 	// Add damage types
 	lua_newtable(LuaState);
@@ -229,6 +216,30 @@ void _Scripting::InjectMonsters(_Stats *Stats) {
 
 	// Free memory
 	Stats->Database->CloseQuery();
+}
+
+// Inject buffs stat data
+void _Scripting::InjectBuffs(_Stats *Stats) {
+
+	// Add buffs
+	for(const auto &Iterator : Stats->Buffs) {
+		const _Buff *Buff = Iterator.second;
+		if(Buff) {
+
+			// Get table
+			lua_getglobal(LuaState, Buff->Script.c_str());
+			if(!lua_istable(LuaState, -1))
+				throw std::runtime_error("InjectBuffs: " + Buff->Script + " is not a table!");
+
+			// Add ID
+			lua_pushinteger(LuaState, Buff->ID);
+			lua_setfield(LuaState, -2, "ID");
+
+			// Add pointer
+			lua_pushlightuserdata(LuaState, (void *)Buff);
+			lua_setfield(LuaState, -2, "Pointer");
+		}
+	}
 }
 
 // Inject server clock

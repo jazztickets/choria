@@ -8,7 +8,7 @@ Skill_CrowAttack = Base_Attack:New()
 
 function Skill_CrowAttack.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= 15 then
-		Result.Target.Buff = Buffs["Buff_Blinded"]
+		Result.Target.Buff = Buff_Blinded.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
@@ -48,7 +48,7 @@ Skill_SpiderBite = Base_Attack:New()
 
 function Skill_SpiderBite.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= 15 then
-		Result.Target.Buff = Buffs["Buff_Slowed"]
+		Result.Target.Buff = Buff_Slowed.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
@@ -64,7 +64,7 @@ Skill_FangBite = Base_Attack:New()
 
 function Skill_FangBite.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= 15 then
-		Result.Target.Buff = Buffs["Buff_Bleeding"]
+		Result.Target.Buff = Buff_Bleeding.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
@@ -80,7 +80,7 @@ Skill_VenomBite = Base_Attack:New()
 
 function Skill_VenomBite.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= 15 then
-		Result.Target.Buff = Buffs["Buff_Poisoned"]
+		Result.Target.Buff = Buff_Poisoned.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 10
 	end
@@ -110,7 +110,7 @@ Skill_Swoop = Base_Attack:New()
 
 function Skill_Swoop.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= 75 then
-		Result.Target.Buff = Buffs["Buff_Stunned"]
+		Result.Target.Buff = Buff_Stunned.Pointer
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = 3
 	end
@@ -122,7 +122,7 @@ Skill_PincerAttack = Base_Attack:New()
 
 function Skill_PincerAttack.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= 50 then
-		Result.Target.Buff = Buffs["Buff_Bleeding"]
+		Result.Target.Buff = Buff_Bleeding.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
@@ -148,7 +148,7 @@ Skill_SwampAttack = Base_Attack:New()
 
 function Skill_SwampAttack.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= 30 then
-		Result.Target.Buff = Buffs["Buff_Slowed"]
+		Result.Target.Buff = Buff_Slowed.Pointer
 		Result.Target.BuffLevel = Level
 		Result.Target.BuffDuration = 5
 	end
@@ -258,7 +258,7 @@ end
 
 function Skill_Gash.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= self:GetChance(Level) then
-		Result.Target.Buff = Buffs["Buff_Bleeding"]
+		Result.Target.Buff = Buff_Bleeding.Pointer
 		Result.Target.BuffLevel = self:GetBleedLevel(Level)
 		Result.Target.BuffDuration = self.Duration
 	end
@@ -302,7 +302,7 @@ end
 
 function Skill_ShieldBash.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= self:GetChance(Level) then
-		Result.Target.Buff = Buffs["Buff_Stunned"]
+		Result.Target.Buff = Buff_Stunned.Pointer
 		Result.Target.BuffLevel = 1
 		Result.Target.BuffDuration = self.Duration
 	end
@@ -339,7 +339,7 @@ function Skill_Whirlwind.GenerateDamage(self, Level, Source)
 end
 
 function Skill_Whirlwind.ApplyCost(self, Level, Result)
-	Result.Source.Buff = Buffs["Buff_Slowed"]
+	Result.Source.Buff = Buff_Slowed.Pointer
 	Result.Source.BuffLevel = 30
 	Result.Source.BuffDuration = self:GetDuration(Level)
 
@@ -376,7 +376,7 @@ function Skill_Rejuvenation.GetInfo(self, Level)
 end
 
 function Skill_Rejuvenation.Use(self, Level, Source, Target, Result)
-	Result.Target.Buff = Buffs["Buff_Healing"]
+	Result.Target.Buff = Buff_Healing.Pointer
 	Result.Target.BuffLevel = self:GetLevel(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
@@ -465,7 +465,7 @@ function Skill_Icicle.GetInfo(self, Level)
 end
 
 function Skill_Icicle.Proc(self, Roll, Level, Source, Target, Result)
-	Result.Target.Buff = Buffs["Buff_Slowed"]
+	Result.Target.Buff = Buff_Slowed.Pointer
 	Result.Target.BuffLevel = 20
 	Result.Target.BuffDuration = 3
 
@@ -519,7 +519,7 @@ function Skill_Ignite.GetInfo(self, Level)
 end
 
 function Skill_Ignite.Use(self, Level, Source, Target, Result)
-	Result.Target.Buff = Buffs["Buff_Burning"]
+	Result.Target.Buff = Buff_Burning.Pointer
 	Result.Target.BuffLevel = self:GetBurnLevel(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
@@ -635,7 +635,7 @@ function Skill_Flee.GetInfo(self, Level)
 end
 
 function Skill_Flee.ApplyCost(self, Level, Result)
-	Result.Source.Buff = Buffs["Buff_Slowed"]
+	Result.Source.Buff = Buff_Slowed.Pointer
 	Result.Source.BuffLevel = 30
 	Result.Source.BuffDuration = 5
 
@@ -645,7 +645,7 @@ end
 function Skill_Flee.Proc(self, Roll, Level, Source, Target, Result)
 	if Roll <= self:GetChance(Level) then
 		Result.Target.Flee = true
-		Result.Target.Buff = Buffs["Buff_Slowed"]
+		Result.Target.Buff = Buff_Slowed.Pointer
 		Result.Target.BuffLevel = 70
 		Result.Target.BuffDuration = self.Duration
 	end
@@ -718,7 +718,7 @@ function Skill_Parry.GetInfo(self, Level)
 end
 
 function Skill_Parry.Use(self, Level, Source, Target, Result)
-	Result.Target.Buff = Buffs["Buff_Parry"]
+	Result.Target.Buff = Buff_Parry.Pointer
 	Result.Target.BuffLevel = 1
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
@@ -755,7 +755,7 @@ function Skill_Defend.CanUse(self, Level, Object)
 end
 
 function Skill_Defend.Use(self, Level, Source, Target, Result)
-	Result.Target.Buff = Buffs["Buff_Hardened"]
+	Result.Target.Buff = Buff_Hardened.Pointer
 	Result.Target.BuffLevel = self:GetArmor(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
@@ -856,7 +856,7 @@ function Skill_Enfeeble.GetInfo(self, Level)
 end
 
 function Skill_Enfeeble.Use(self, Level, Source, Target, Result)
-	Result.Target.Buff = Buffs["Buff_Weak"]
+	Result.Target.Buff = Buff_Weak.Pointer
 	Result.Target.BuffLevel = self:GetPercent(Level)
 	Result.Target.BuffDuration = self:GetDuration(Level)
 
