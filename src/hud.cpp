@@ -842,11 +842,21 @@ void _HUD::InitSkills() {
 	glm::vec2 LabelOffset(0, 3);
 	size_t i = 0;
 
-	// Iterate over skills
+	// Get all player skills
+	std::list<const _Item *> SortedSkills;
 	for(auto &SkillID : Player->Skills) {
 		const _Item *Skill = PlayState.Stats->Items[SkillID.first];
 		if(!Skill)
 			continue;
+
+		SortedSkills.push_back(Skill);
+	}
+
+	// Sort skills
+	SortedSkills.sort(CompareItems);
+
+	// Iterate over skills
+	for(auto &Skill : SortedSkills) {
 
 		// Create style
 		_Style *Style = new _Style();

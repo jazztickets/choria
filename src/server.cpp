@@ -1519,7 +1519,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Players.push_back(BattleEvent.Object);
 
 		// Sort by network id
-		Players.sort();
+		Players.sort(CompareObjects);
 
 		// Get difficulty
 		double Difficulty = 1.0;

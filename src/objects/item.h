@@ -116,3 +116,7 @@ class _Item {
 	private:
 
 };
+
+inline bool CompareItems(const _Item *First, const _Item *Second) {
+	return First->Name < Second->Name;
+}

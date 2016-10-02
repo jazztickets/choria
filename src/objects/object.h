@@ -82,8 +82,6 @@ class _Object : public _ManagerBase {
 		_Object();
 		~_Object();
 
-		bool operator<(const _Object &Object) { return this->NetworkID < Object.NetworkID; }
-
 		void Update(double FrameTime) override;
 		void Render(const _Object *ClientPlayer=nullptr);
 		void RenderBattle(_Object *ClientPlayer, double Time);
@@ -309,3 +307,7 @@ class _Object : public _ManagerBase {
 		void SendPacket(_Buffer &Packet);
 
 };
+
+inline bool CompareObjects(const _Object *First, const _Object *Second) {
+	return First->NetworkID < Second->NetworkID;
+}
