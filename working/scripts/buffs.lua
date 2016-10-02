@@ -205,6 +205,7 @@ function Buff_Parry.OnHit(self, Level, Change)
 end
 
 function Buff_Parry.PlaySound(self, Level)
+	Audio.Play("parry0.ogg")
 end
 
 -- Poisoned --
