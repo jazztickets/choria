@@ -256,7 +256,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			PlayState.Network->SendPacket(Packet);
-			CloseWindows(true);
 		}
 		// Cancel trader button
 		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {

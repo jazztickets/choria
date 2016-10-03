@@ -831,6 +831,25 @@ void _PlayState::HandleInventory(_Buffer &Data) {
 
 	Player->Inventory->Unserialize(Data, Stats);
 	Player->CalculateStats();
+
+	// Refresh trader screen
+	if(Player->Trader) {
+		PlayCoinSound();
+		HUD->InitTrader();
+
+		// Update recent items
+		if(HUD->RecentItems.size() && HUD->RecentItems.back().Item == Player->Trader->RewardItem) {
+			HUD->RecentItems.back().Count += Player->Trader->Count;
+			HUD->RecentItems.back().Time = 0.0;
+		}
+		else {
+			_RecentItem RecentItem;
+			RecentItem.Item = Player->Trader->RewardItem;
+			RecentItem.Count = Player->Trader->Count;
+
+			HUD->RecentItems.push_back(RecentItem);
+		}
+	}
 }
 
 // Handles a chat message
