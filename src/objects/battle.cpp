@@ -594,34 +594,38 @@ void _Battle::ServerEndBattle() {
 		// Get list of fighters that get rewards
 		std::list<_Object *> RewardFighters;
 		for(auto &Fighter : SideFighters[WinningSide]) {
-			if(!Fighter->JoinedBattle)
+			if(Fighter->IsAlive() && !Fighter->JoinedBattle)
 				RewardFighters.push_back(Fighter);
 		}
 
-		// Convert winning side list to array
-		std::vector<_Object *> FighterArray { std::begin(RewardFighters), std::end(RewardFighters) };
+		// Check for reward recipients
+		if(RewardFighters.size()) {
 
-		// Generate items drops
-		std::list<uint32_t> ItemDrops;
-		for(auto &Fighter : SideFighters[!WinningSide]) {
-			if(Fighter->DatabaseID)
-				Stats->GenerateItemDrops(Fighter->DatabaseID, 1, ItemDrops);
-		}
+			// Convert winning side list to array
+			std::vector<_Object *> FighterArray { std::begin(RewardFighters), std::end(RewardFighters) };
 
-		// Boss drops aren't divided up
-		if(Boss) {
-			for(auto &ItemID : ItemDrops) {
-				for(auto &Fighter : RewardFighters) {
-					Fighter->ItemDropsReceived.push_back(ItemID);
+			// Generate items drops
+			std::list<uint32_t> ItemDrops;
+			for(auto &Fighter : SideFighters[!WinningSide]) {
+				if(Fighter->DatabaseID)
+					Stats->GenerateItemDrops(Fighter->DatabaseID, 1, ItemDrops);
+			}
+
+			// Boss drops aren't divided up
+			if(Boss) {
+				for(auto &ItemID : ItemDrops) {
+					for(auto &Fighter : RewardFighters) {
+						Fighter->ItemDropsReceived.push_back(ItemID);
+					}
 				}
 			}
-		}
-		// Give out drops randomly
-		else {
-			for(auto &ItemID : ItemDrops) {
-				std::shuffle(FighterArray.begin(), FighterArray.end(), RandomGenerator);
-				_Object *Fighter = FighterArray[0];
-				Fighter->ItemDropsReceived.push_back(ItemID);
+			// Give out drops randomly
+			else {
+				for(auto &ItemID : ItemDrops) {
+					std::shuffle(FighterArray.begin(), FighterArray.end(), RandomGenerator);
+					_Object *Fighter = FighterArray[0];
+					Fighter->ItemDropsReceived.push_back(ItemID);
+				}
 			}
 		}
 	}
