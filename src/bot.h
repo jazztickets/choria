@@ -37,16 +37,6 @@ class _Scripting;
 struct _Event;
 struct _StatChange;
 
-namespace micropather {
-	class MicroPather;
-}
-
-enum class GoalStateType : int {
-	NONE,
-	FARMING,
-	HEALING
-};
-
 enum class BotStateType : int {
 	IDLE,
 	MOVE_PATH,
@@ -71,14 +61,6 @@ class _Bot {
 		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
 
-		// AI
-		void EvaluateGoal();
-		void DetermineNextGoal();
-		bool FindEvent(const _Event &Event, glm::ivec2 &Position);
-		void MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
-		int GetNextInputState();
-		void SetGoal(GoalStateType NewGoal);
-
 		std::unique_ptr<_ClientNetwork> Network;
 
 		_Manager<_Object> *ObjectManager;
@@ -89,10 +71,7 @@ class _Bot {
 		_Object *Player;
 		_Stats *Stats;
 
-		micropather::MicroPather *Pather;
-		std::list<void *> Path;
-
-		GoalStateType GoalState;
+		std::string Script;
 		BotStateType BotState;
 
 		std::string Username;

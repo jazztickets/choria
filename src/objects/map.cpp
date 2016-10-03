@@ -92,15 +92,18 @@ _Map::_Map() :
 	Server(nullptr),
 	MaxZoneColors(sizeof(ZoneColors) / sizeof(glm::vec4)),
 	CurrentZoneColors(MaxZoneColors),
+	Pather(nullptr),
 	TileVertexBufferID{0, 0},
 	TileElementBufferID(0),
 	TileVertices{nullptr, nullptr},
 	TileFaces(nullptr) {
-
 }
 
 // Destructor
 _Map::~_Map() {
+
+	// Delete path finding
+	delete Pather;
 
 	// Delete background layer
 	delete BackgroundMap;
@@ -733,6 +736,9 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	if(UseAtlas) {
 		InitAtlas(MapStat->Atlas, Static);
 	}
+
+	// Initialize path finding
+	Pather = new micropather::MicroPather(this, (unsigned)(Size.x * Size.y), 4);
 }
 
 // Saves the level to a file

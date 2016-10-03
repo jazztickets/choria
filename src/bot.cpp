@@ -38,8 +38,6 @@ _Bot::_Bot(_Stats *Stats, const std::string &Username, const std::string &Passwo
 	Battle(nullptr),
 	Player(nullptr),
 	Stats(Stats),
-	Pather(nullptr),
-	GoalState(GoalStateType::NONE),
 	BotState(BotStateType::IDLE),
 	Username(Username),
 	Password(Password) {
@@ -48,6 +46,7 @@ _Bot::_Bot(_Stats *Stats, const std::string &Username, const std::string &Passwo
 
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
+	Script = "Bot_Basic";
 
 	Network->Connect(HostAddress, Port);
 }
@@ -58,7 +57,6 @@ _Bot::~_Bot() {
 	delete ObjectManager;
 	delete Battle;
 	delete Map;
-	delete Pather;
 	delete Scripting;
 }
 
@@ -74,7 +72,7 @@ void _Bot::Update(double FrameTime) {
 
 		switch(NetworkEvent.Type) {
 			case _NetworkEvent::CONNECT: {
-				std::cout << Username << " connected" << std::endl;
+				//std::cout << Username << " connected" << std::endl;
 
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
@@ -85,7 +83,7 @@ void _Bot::Update(double FrameTime) {
 				Network->SendPacket(Packet);
 			} break;
 			case _NetworkEvent::DISCONNECT:
-				std::cout << Username << " disconnected" << std::endl;
+				//std::cout << Username << " disconnected" << std::endl;
 				ObjectManager->Clear();
 				AssignPlayer(nullptr);
 
@@ -104,12 +102,59 @@ void _Bot::Update(double FrameTime) {
 	if(!Player || !Map)
 		return;
 
-	// Update goals
-	EvaluateGoal();
+	// Respawn
+	if(!Player->WaitForServer && !Player->IsAlive()) {
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
+		Network->SendPacket(Packet);
+
+		Player->WaitForServer = true;
+		return;
+	}
+
+	// Call ai script
+	if(Scripting->StartMethodCall(Script, "Update")) {
+		Scripting->PushObject(Player);
+		Scripting->MethodCall(1, 0);
+		Scripting->FinishMethodCall();
+	}
 
 	// Set input
 	if(Player->AcceptingMoveInput()) {
-		int InputState = GetNextInputState();
+		int InputState = 0;
+
+		// Call ai input script
+		if(Scripting->StartMethodCall(Script, "GetInputState")) {
+			Scripting->PushObject(Player);
+			Scripting->MethodCall(1, 1);
+			InputState = Scripting->GetInt(1);
+			Scripting->FinishMethodCall();
+		}
+
+		/*
+		switch(BotState) {
+			case BotStateType::IDLE:
+			break;
+			case BotStateType::MOVE_HEAL:
+				//return _Object::MOVE_LEFT;
+			break;
+			case BotStateType::MOVE_PATH: {
+				if(Player->Path.size() == 0) {
+					BotState = BotStateType::IDLE;
+					//return InputState;
+				}
+
+				InputState = Player->GetInputStateFromPath();
+			} break;
+			case BotStateType::MOVE_RANDOM: {
+				InputState = 1 << GetRandomInt(0, 3);
+				glm::ivec2 Direction;
+				Player->GetDirectionFromInput(InputState, Direction);
+				if(Map->GetTile(Player->Position + Direction)->Event.Type != _Map::EVENT_NONE)
+					InputState = 0;
+			} break;
+		}
+		*/
 
 		Player->InputStates.clear();
 		if(InputState)
@@ -124,8 +169,8 @@ void _Bot::Update(double FrameTime) {
 
 	// Send input to server
 	if(Player->Moved) {
-		if(Path.size())
-			Path.erase(Path.begin());
+		if(Player->Path.size())
+			Player->Path.erase(Player->Path.begin());
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
@@ -175,7 +220,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			// Get count
 			uint8_t CharacterCount = Data.Read<uint8_t>();
-			std::cout << "character count: " << (int)CharacterCount << std::endl;
+			//std::cout << "character count: " << (int)CharacterCount << std::endl;
 
 			// Get characters
 			int FirstSlot = -1;
@@ -218,16 +263,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
 			double Clock = Data.Read<double>();
 
-			if(Player)
-				std::cout << Player->NetworkID << " ";
-			std::cout << "WORLD_CHANGEMAPS " << MapID << std::endl;
-
 			// Delete old map and create new
 			if(!Map || Map->NetworkID != MapID) {
 				if(Map) {
-					delete Pather;
 					delete Map;
-					Pather = nullptr;
 					Map = nullptr;
 				}
 
@@ -237,9 +276,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				Map->NetworkID = MapID;
 				Map->Load(Stats->GetMap(MapID));
 				AssignPlayer(nullptr);
-
-				Pather = new micropather::MicroPather(Map, (unsigned)(Map->Size.x * Map->Size.y), 4);
-				Path.clear();
 			}
 		} break;
 		case PacketType::WORLD_OBJECTLIST: {
@@ -251,7 +287,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
 
 			// Create objects
-			//std::cout << ClientNetworkID << " WORLD_OBJECTLIST count=" << ObjectCount << std::endl;
 			for(NetworkIDType i = 0; i < ObjectCount; i++) {
 				NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
@@ -277,7 +312,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			// Read packet
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
-			//std::cout << Player->NetworkID << " WORLD_CREATEOBJECT NetworkID=" << NetworkID << std::endl;
 
 			// Check id
 			if(NetworkID != Player->NetworkID) {
@@ -358,7 +392,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			//HandleTradeExchange(Data);
 		break;
 		case PacketType::BATTLE_START: {
-			std::cout << "BATTLE_START" << std::endl;
+			//std::cout << "BATTLE_START" << std::endl;
 
 			// Already in a battle
 			if(Battle)
@@ -401,8 +435,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			if(!Player || !Battle)
 				return;
 
-			std::cout << "BATTLE_END" << std::endl;
-
 			Player->WaitForServer = false;
 
 			_StatChange StatChange;
@@ -428,8 +460,6 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->Battle = nullptr;
 			delete Battle;
 			Battle = nullptr;
-
-			DetermineNextGoal();
 		} break;
 		case PacketType::ACTION_RESULTS: {
 
@@ -543,8 +573,10 @@ void _Bot::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 // Assigns the client player pointer
 void _Bot::AssignPlayer(_Object *Object) {
 	Player = Object;
-	if(Player)
+	if(Player) {
 		Player->CalcLevelStats = true;
+		Player->Path.clear();
+	}
 
 	if(Battle)
 		Battle->ClientPlayer = Player;
@@ -567,18 +599,9 @@ _Object *_Bot::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	return Object;
 }
 
+/*
 // Update bot based on goals
 void _Bot::EvaluateGoal() {
-
-	// Respawn
-	if(!Player->WaitForServer && !Player->IsAlive()) {
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
-		Network->SendPacket(Packet);
-
-		Player->WaitForServer = true;
-		return;
-	}
 
 	// Evaluate goal
 	switch(GoalState) {
@@ -586,27 +609,6 @@ void _Bot::EvaluateGoal() {
 			DetermineNextGoal();
 		break;
 		case GoalStateType::FARMING:
-			/*if(Map->NetworkID != 11) {
-				if(Map->NetworkID != 10) {
-					glm::ivec2 Position;
-					if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
-						MoveTo(Player->Position, Position);
-				}
-				else if(Map->NetworkID == 10) {
-					glm::ivec2 Position;
-					if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 11), Position))
-						MoveTo(Player->Position, Position);
-				}
-			}
-			else if(Map->NetworkID == 11) {
-				glm::ivec2 Position;
-				if(FindEvent(_Event(_Map::EVENT_SCRIPT, 3), Position)) {
-					if(Player->Position == Position)
-						BotState = BotStateType::MOVE_RANDOM;
-					else
-						MoveTo(Player->Position, Position);
-				}
-			}*/
 			if(Map->NetworkID != 10) {
 				glm::ivec2 Position;
 				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
@@ -621,14 +623,6 @@ void _Bot::EvaluateGoal() {
 				glm::ivec2 Position;
 				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 1), Position))
 					MoveTo(Player->Position, Position);
-				/*if(!Player->WaitForServer && Player->CanTeleport()) {
-				   _Buffer Packet;
-				   Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
-				   Packet.Write<uint8_t>(_Object::STATUS_TELEPORT);
-				   Network->SendPacket(Packet);
-
-				   Player->WaitForServer = true;
-				}*/
 			}
 			else if(Map->NetworkID == 1) {
 				if(Player->GetHealthPercent() < 1.0f) {
@@ -647,111 +641,4 @@ void _Bot::EvaluateGoal() {
 	}
 
 }
-
-// Set next goal
-void _Bot::DetermineNextGoal() {
-	if(!Player)
-		return;
-
-	if(Player->GetHealthPercent() <= 0.5f)
-		SetGoal(GoalStateType::HEALING);
-	else
-		SetGoal(GoalStateType::FARMING);
-}
-
-// Find an event in the map
-bool _Bot::FindEvent(const _Event &Event, glm::ivec2 &Position) {
-	auto Iterator = Map->IndexedEvents.find(Event);
-	if(Iterator == Map->IndexedEvents.end())
-		return false;
-
-	Position = Iterator->second;
-
-	return true;
-}
-
-// Create list of nodes to destination
-void _Bot::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition) {
-	if(!Pather || Path.size())
-		return;
-
-	float TotalCost;
-	std::vector<void *> PathFound;
-	int Result = Pather->Solve(Map->PositionToNode(StartPosition), Map->PositionToNode(EndPosition), &PathFound, &TotalCost);
-	std::cout << "SOLVE " << Player->NetworkID << " sx=" << StartPosition.x << " sy=" << StartPosition.y << " tc=" << TotalCost << std::endl;
-	if(Result == micropather::MicroPather::SOLVED) {
-
-		// Convert vector to list
-		Path.clear();
-		for(auto &Node : PathFound)
-			Path.push_back(Node);
-
-		BotState = BotStateType::MOVE_PATH;
-	}
-}
-
-// Set the player input state based on pathfound
-int _Bot::GetNextInputState() {
-	int InputState = 0;
-	if(!Map || !Player)
-		return InputState;
-
-	switch(BotState) {
-		case BotStateType::IDLE:
-		break;
-		case BotStateType::MOVE_HEAL: {
-			return _Object::MOVE_LEFT;
-		}
-		case BotStateType::MOVE_PATH: {
-			if(Path.size() == 0) {
-				BotState = BotStateType::IDLE;
-				return InputState;
-			}
-
-			// Find current position in list
-			for(auto Iterator = Path.begin(); Iterator != Path.end(); ++Iterator) {
-				glm::ivec2 NodePosition;
-				Map->NodeToPosition(*Iterator, NodePosition);
-
-				if(Player->Position == NodePosition) {
-					auto NextIterator = std::next(Iterator, 1);
-					if(NextIterator == Path.end()) {
-						Path.clear();
-						return 0;
-					}
-
-					// Get next node position
-					Map->NodeToPosition(*NextIterator, NodePosition);
-
-					// Get direction to next node
-					glm::ivec2 Direction = NodePosition - Player->Position;
-					if(Direction.x < 0)
-						InputState = _Object::MOVE_LEFT;
-					else if(Direction.x > 0)
-						InputState = _Object::MOVE_RIGHT;
-					else if(Direction.y < 0)
-						InputState = _Object::MOVE_UP;
-					else if(Direction.y > 0)
-						InputState = _Object::MOVE_DOWN;
-					break;
-				}
-			}
-
-		} break;
-		case BotStateType::MOVE_RANDOM: {
-			InputState = 1 << GetRandomInt(0, 3);
-			glm::ivec2 Direction;
-			Player->GetDirectionFromInput(InputState, Direction);
-			if(Map->GetTile(Player->Position + Direction)->Event.Type != _Map::EVENT_NONE)
-				InputState = 0;
-		} break;
-	}
-
-	return InputState;
-}
-
-// Set goal of bot
-void _Bot::SetGoal(GoalStateType NewGoal) {
-	std::cout << "SetGoal=" << (int)NewGoal << std::endl;
-	GoalState = NewGoal;
-}
+*/

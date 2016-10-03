@@ -1457,3 +1457,64 @@ void _Object::SendPacket(_Buffer &Packet) {
 	else if(Peer)
 		Server->Network->SendPacket(Packet, Peer);
 }
+
+// Create list of nodes to destination
+bool _Object::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition) {
+	if(!Map || !Map->Pather)
+		return false;
+
+	if(Path.size())
+		return true;
+
+	float TotalCost;
+	std::vector<void *> PathFound;
+	int Result = Map->Pather->Solve(Map->PositionToNode(StartPosition), Map->PositionToNode(EndPosition), &PathFound, &TotalCost);
+	if(Result == micropather::MicroPather::SOLVED) {
+
+		// Convert vector to list
+		Path.clear();
+		for(auto &Node : PathFound)
+			Path.push_back(Node);
+
+		return true;
+	}
+
+	return false;
+}
+
+// Return an input state from the next node in the path list
+int _Object::GetInputStateFromPath() {
+	int InputState = 0;
+
+	// Find current position in list
+	for(auto Iterator = Path.begin(); Iterator != Path.end(); ++Iterator) {
+		glm::ivec2 NodePosition;
+		Map->NodeToPosition(*Iterator, NodePosition);
+
+		if(Position == NodePosition) {
+			auto NextIterator = std::next(Iterator, 1);
+			if(NextIterator == Path.end()) {
+				Path.clear();
+				return 0;
+			}
+
+			// Get next node position
+			Map->NodeToPosition(*NextIterator, NodePosition);
+
+			// Get direction to next node
+			glm::ivec2 Direction = NodePosition - Position;
+			if(Direction.x < 0)
+				InputState = _Object::MOVE_LEFT;
+			else if(Direction.x > 0)
+				InputState = _Object::MOVE_RIGHT;
+			else if(Direction.y < 0)
+				InputState = _Object::MOVE_UP;
+			else if(Direction.y > 0)
+				InputState = _Object::MOVE_DOWN;
+
+			return InputState;
+		}
+	}
+
+	return 0;
+}

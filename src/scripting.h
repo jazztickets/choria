@@ -89,6 +89,8 @@ class _Scripting {
 		static int ObjectSetAction(lua_State *LuaState);
 		static int ObjectGenerateDamage(lua_State *LuaState);
 		static int ObjectGetDamageReduction(lua_State *LuaState);
+		static int ObjectFindPath(lua_State *LuaState);
+		static int ObjectFindEvent(lua_State *LuaState);
 
 		static int ItemGenerateDamage(lua_State *LuaState);
 

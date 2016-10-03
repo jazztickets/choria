@@ -150,6 +150,10 @@ class _Object : public _ManagerBase {
 		bool CanOpenInventory() { return IsAlive() && !Battle; }
 		bool CanTeleport() { return IsAlive() && !Battle; }
 
+		// Path finding
+		bool MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
+		int GetInputStateFromPath();
+
 		// UI
 		void ResetUIState();
 
@@ -296,6 +300,9 @@ class _Object : public _ManagerBase {
 		bool WaitingForTrade;
 		bool TradeAccepted;
 		_Object *TradePlayer;
+
+		// Bots
+		std::list<void *> Path;
 
 	private:
 

@@ -179,6 +179,9 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		int MaxZoneColors;
 		int CurrentZoneColors;
 
+		// Path finding
+		micropather::MicroPather *Pather;
+
 	private:
 
 		void FreeMap();

@@ -22,6 +22,7 @@
 #include <objects/statuseffect.h>
 #include <objects/battle.h>
 #include <objects/inventory.h>
+#include <objects/map.h>
 #include <stats.h>
 #include <audio.h>
 #include <database.h>
@@ -281,6 +282,14 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushcclosure(LuaState, &ObjectGetDamageReduction, 1);
 	lua_setfield(LuaState, -2, "GetDamageReduction");
 
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectFindPath, 1);
+	lua_setfield(LuaState, -2, "FindPath");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectFindEvent, 1);
+	lua_setfield(LuaState, -2, "FindEvent");
+
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
 
@@ -319,6 +328,18 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
+
+	lua_pushinteger(LuaState, Object->Position.x);
+	lua_setfield(LuaState, -2, "X");
+
+	lua_pushinteger(LuaState, Object->Position.y);
+	lua_setfield(LuaState, -2, "Y");
+
+	if(Object->Map)
+		lua_pushinteger(LuaState, Object->Map->NetworkID);
+	else
+		lua_pushinteger(LuaState, 0);
+	lua_setfield(LuaState, -2, "MapID");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_setfield(LuaState, -2, "Pointer");
@@ -727,6 +748,41 @@ int _Scripting::ObjectGetDamageReduction(lua_State *LuaState) {
 	lua_pushnumber(LuaState, 1.0 - (double)Object->Resistances[DamageTypeID] / 100.0);
 
 	return 1;
+}
+
+// Pathfind to a position in the map
+int _Scripting::ObjectFindPath(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	int X = (int)lua_tointeger(LuaState, 1);
+	int Y = (int)lua_tointeger(LuaState, 2);
+
+	bool Success = Object->MoveTo(Object->Position, glm::ivec2(X, Y));
+
+	lua_pushinteger(LuaState, Success);
+
+	return 1;
+}
+
+// Find an event in the map
+int _Scripting::ObjectFindEvent(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	uint32_t Type = (uint32_t)lua_tointeger(LuaState, 1);
+	uint32_t Data = (uint32_t)lua_tointeger(LuaState, 2);
+	if(!Object->Map)
+		return 0;
+
+	glm::ivec2 Position;
+	auto Iterator = Object->Map->IndexedEvents.find(_Event(Type, Data));
+	if(Iterator == Object->Map->IndexedEvents.end())
+		return 0;
+
+	Position = Iterator->second;
+	lua_pushinteger(LuaState, Position.x);
+	lua_pushinteger(LuaState, Position.y);
+
+	return 2;
 }
 
 // Generate a random damage value for an item

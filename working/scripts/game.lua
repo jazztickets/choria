@@ -3,6 +3,7 @@ require("scripts/items")
 require("scripts/buffs")
 require("scripts/skills")
 require("scripts/ai")
+require("scripts/bot")
 require("scripts/scripts")
 
 Game = {}
