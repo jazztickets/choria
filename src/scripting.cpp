@@ -283,12 +283,20 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GetDamageReduction");
 
 	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetInputStateFromPath, 1);
+	lua_setfield(LuaState, -2, "GetInputStateFromPath");
+
+	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectFindPath, 1);
 	lua_setfield(LuaState, -2, "FindPath");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectFindEvent, 1);
 	lua_setfield(LuaState, -2, "FindEvent");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetTileEvent, 1);
+	lua_setfield(LuaState, -2, "GetTileEvent");
 
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
@@ -783,6 +791,33 @@ int _Scripting::ObjectFindEvent(lua_State *LuaState) {
 	lua_pushinteger(LuaState, Position.y);
 
 	return 2;
+}
+
+// Return an event from a tile position
+int _Scripting::ObjectGetTileEvent(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	int X = (int)lua_tointeger(LuaState, 1);
+	int Y = (int)lua_tointeger(LuaState, 2);
+
+	if(!Object->Map)
+		return 0;
+
+	const _Event &Event = Object->Map->GetTile(glm::ivec2(X, Y))->Event;
+
+	lua_pushinteger(LuaState, Event.Type);
+	lua_pushinteger(LuaState, Event.Data);
+
+	return 2;
+}
+
+// Get the next input state from a path
+int _Scripting::ObjectGetInputStateFromPath(lua_State *LuaState) {
+
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	lua_pushinteger(LuaState, Object->GetInputStateFromPath());
+
+	return 1;
 }
 
 // Generate a random damage value for an item

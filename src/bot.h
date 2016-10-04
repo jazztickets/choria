@@ -37,13 +37,6 @@ class _Scripting;
 struct _Event;
 struct _StatChange;
 
-enum class BotStateType : int {
-	IDLE,
-	MOVE_PATH,
-	MOVE_RANDOM,
-	MOVE_HEAL,
-};
-
 // Bot class
 class _Bot {
 
@@ -72,7 +65,6 @@ class _Bot {
 		_Stats *Stats;
 
 		std::string Script;
-		BotStateType BotState;
 
 		std::string Username;
 		std::string Password;

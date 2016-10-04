@@ -38,7 +38,6 @@ _Bot::_Bot(_Stats *Stats, const std::string &Username, const std::string &Passwo
 	Battle(nullptr),
 	Player(nullptr),
 	Stats(Stats),
-	BotState(BotStateType::IDLE),
 	Username(Username),
 	Password(Password) {
 
@@ -130,31 +129,6 @@ void _Bot::Update(double FrameTime) {
 			InputState = Scripting->GetInt(1);
 			Scripting->FinishMethodCall();
 		}
-
-		/*
-		switch(BotState) {
-			case BotStateType::IDLE:
-			break;
-			case BotStateType::MOVE_HEAL:
-				//return _Object::MOVE_LEFT;
-			break;
-			case BotStateType::MOVE_PATH: {
-				if(Player->Path.size() == 0) {
-					BotState = BotStateType::IDLE;
-					//return InputState;
-				}
-
-				InputState = Player->GetInputStateFromPath();
-			} break;
-			case BotStateType::MOVE_RANDOM: {
-				InputState = 1 << GetRandomInt(0, 3);
-				glm::ivec2 Direction;
-				Player->GetDirectionFromInput(InputState, Direction);
-				if(Map->GetTile(Player->Position + Direction)->Event.Type != _Map::EVENT_NONE)
-					InputState = 0;
-			} break;
-		}
-		*/
 
 		Player->InputStates.clear();
 		if(InputState)
@@ -460,6 +434,13 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->Battle = nullptr;
 			delete Battle;
 			Battle = nullptr;
+
+			// Call ai script
+			if(Scripting->StartMethodCall(Script, "DetermineNextGoal")) {
+				Scripting->PushObject(Player);
+				Scripting->MethodCall(1, 0);
+				Scripting->FinishMethodCall();
+			}
 		} break;
 		case PacketType::ACTION_RESULTS: {
 
@@ -598,47 +579,3 @@ _Object *_Bot::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	return Object;
 }
-
-/*
-// Update bot based on goals
-void _Bot::EvaluateGoal() {
-
-	// Evaluate goal
-	switch(GoalState) {
-		case GoalStateType::NONE:
-			DetermineNextGoal();
-		break;
-		case GoalStateType::FARMING:
-			if(Map->NetworkID != 10) {
-				glm::ivec2 Position;
-				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 10), Position))
-					MoveTo(Player->Position, Position);
-			}
-			else {
-				BotState = BotStateType::MOVE_RANDOM;
-			}
-		break;
-		case GoalStateType::HEALING:
-			if(Map->NetworkID != 1) {
-				glm::ivec2 Position;
-				if(FindEvent(_Event(_Map::EVENT_MAPCHANGE, 1), Position))
-					MoveTo(Player->Position, Position);
-			}
-			else if(Map->NetworkID == 1) {
-				if(Player->GetHealthPercent() < 1.0f) {
-					glm::ivec2 Position;
-					if(FindEvent(_Event(_Map::EVENT_SCRIPT, 1), Position)) {
-						if(Player->Position == Position)
-							BotState = BotStateType::MOVE_HEAL;
-						else
-							MoveTo(Player->Position, Position);
-					}
-				}
-				else
-					DetermineNextGoal();
-			}
-		break;
-	}
-
-}
-*/
