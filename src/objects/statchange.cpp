@@ -44,7 +44,7 @@ uint64_t _StatChange::GetChangedFlag() {
 	uint64_t Flag = 0;
 
 	for(auto Iterator : Values) {
-		Flag |= (1 << (uint64_t)Iterator.first);
+		Flag |= ((uint64_t)1 << (uint64_t)Iterator.first);
 	}
 
 	return Flag;
@@ -93,7 +93,7 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 
 	// Update values
 	for(uint64_t i = 0; i < (uint64_t)StatType::COUNT; i++) {
-		if(ChangedFlag & (1 << i)) {
+		if(ChangedFlag & ((uint64_t)1 << i)) {
 			if(i == (uint64_t)StatType::BUFF) {
 				uint32_t BuffID = Data.Read<uint32_t>();
 				Values[(StatType)i].Pointer = (void *)Object->Stats->Buffs[BuffID];
