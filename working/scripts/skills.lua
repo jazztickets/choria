@@ -116,6 +116,10 @@ function Skill_Swoop.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+function Skill_Swoop.PlaySound(self, Level)
+	Audio.Play("multiswoop0.ogg")
+end
+
 -- Pincer attack --
 
 Skill_PincerAttack = Base_Attack:New()
