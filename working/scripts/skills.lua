@@ -128,6 +128,10 @@ function Skill_PincerAttack.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+function Skill_PincerAttack.PlaySound(self, Level)
+	Audio.Play("multislash0.ogg")
+end
+
 -- Chew attack --
 
 Skill_ChewAttack = Base_Attack:New()
