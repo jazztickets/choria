@@ -568,7 +568,7 @@ void _Scripting::GetSummon(int Index, _Summon &Summon) {
 
 	// Get Armor
 	lua_getfield(LuaState, -1, "Armor");
-	Summon.Mana = (int)lua_tonumber(LuaState, -1);
+	Summon.Armor = (int)lua_tonumber(LuaState, -1);
 	lua_pop(LuaState, 1);
 
 	// Get Damage

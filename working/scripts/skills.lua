@@ -801,17 +801,26 @@ end
 Skill_DemonicConjuring = Base_Spell:New()
 Skill_DemonicConjuring.CostPerLevel = 10
 Skill_DemonicConjuring.ManaCostBase = 25 - Skill_DemonicConjuring.CostPerLevel
+Skill_DemonicConjuring.BaseHealth = 100
+Skill_DemonicConjuring.BaseMinDamage = 10
+Skill_DemonicConjuring.BaseMaxDamage = 20
+Skill_DemonicConjuring.BaseArmor = 1
 Skill_DemonicConjuring.HealthPerLevel = 20
 Skill_DemonicConjuring.DamagePerLevel = 5
+Skill_DemonicConjuring.ArmorPerLevel = 0.5
 Skill_DemonicConjuring.Monster = Monsters[23]
 
 function Skill_DemonicConjuring.GetHealth(self, Level)
-	return self.Monster.Health + (Level - 1) * self.HealthPerLevel
+	return math.floor(self.BaseHealth + (Level - 1) * self.HealthPerLevel)
+end
+
+function Skill_DemonicConjuring.GetArmor(self, Level)
+	return math.floor(self.BaseArmor + (Level - 1) * self.ArmorPerLevel)
 end
 
 function Skill_DemonicConjuring.GetDamage(self, Level)
-	AddedDamage = (Level - 1) * self.DamagePerLevel
-	return self.Monster.MinDamage + AddedDamage, self.Monster.MaxDamage + AddedDamage
+	AddedDamage = math.floor((Level - 1) * self.DamagePerLevel)
+	return self.BaseMinDamage + AddedDamage, self.BaseMaxDamage + AddedDamage
 end
 
 function Skill_DemonicConjuring.GetInfo(self, Level)
@@ -825,6 +834,7 @@ function Skill_DemonicConjuring.Use(self, Level, Source, Target, Result)
 	Result.Summon.ID = self.Monster.ID
 	Result.Summon.Health = self:GetHealth(Level)
 	Result.Summon.MinDamage, Result.Summon.MaxDamage = self:GetDamage(Level)
+	Result.Summon.Armor = self:GetArmor(Level)
 
 	return Result
 end

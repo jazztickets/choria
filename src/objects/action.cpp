@@ -197,6 +197,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			Monster->Mana = Monster->BaseMaxMana = ActionResult.Summon.Mana;
 			Monster->BaseMinDamage = ActionResult.Summon.MinDamage;
 			Monster->BaseMaxDamage = ActionResult.Summon.MaxDamage;
+			Monster->BaseArmor = ActionResult.Summon.Armor;
 			Monster->CalculateStats();
 
 			// Create packet for new object
