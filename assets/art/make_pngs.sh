@@ -12,16 +12,22 @@ type pngcrush >/dev/null 2>&1 || {
 	exit 1;
 }
 
+# get parameters
 file=$1
 scale=$2
+
+# get file
 if [ -z "$file" ]; then
 	echo "No input .svg file"
 	exit
 fi
 
+# get scale
 if [ -z "$scale" ]; then
 	scale=1
 fi
+
+# calculate density
 density=$((90 * $scale))
 
 # get size of each image
@@ -29,9 +35,9 @@ size=`identify -format "%[fx:w/10]" "$file"`
 size=$(($size * $scale))
 
 # get list of objects
-names=`grep id=\"layer $file -C 3 | grep label | grep =.* -o | tr -d '="<>' | tac`
 names=`xmllint --xpath "//*[local-name()='svg']/*[local-name()='metadata']//*[local-name()='description']/text()" "$file"`
 
+# create export directory
 mkdir -p export
 
 # export pngs
@@ -49,5 +55,5 @@ for name in $names; do
 	((i++))
 done
 
+# clean up
 rm export/_*
-
