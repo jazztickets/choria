@@ -504,6 +504,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 			Fighter = Manager->GetObject(NetworkID);
 
 		// Get battle stats
+		Fighter->Stats = Stats;
 		Fighter->UnserializeBattle(Data);
 		Fighter->HUD = HUD;
 		Fighter->Scripting = Scripting;
