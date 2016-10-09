@@ -505,10 +505,9 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 
 		// Get battle stats
 		Fighter->Stats = Stats;
-		Fighter->UnserializeBattle(Data);
 		Fighter->HUD = HUD;
 		Fighter->Scripting = Scripting;
-		Fighter->Stats = Stats;
+		Fighter->UnserializeBattle(Data);
 		Fighter->CalculateStats();
 
 		// Add fighter
