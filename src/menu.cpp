@@ -76,7 +76,11 @@ void _Menu::InitTitle(bool Disconnect) {
 	if(Disconnect)
 		PlayState.Network->Disconnect(true);
 
-	Assets.Labels["label_menu_title_version"]->Text = GAME_VERSION;
+	std::string BuildNumber = "";
+	if(GAME_BUILD)
+		BuildNumber = "r" + std::to_string(GAME_BUILD);
+
+	Assets.Labels["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildNumber;
 	Assets.Labels["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");

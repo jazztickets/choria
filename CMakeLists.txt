@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 2.8)
 
+# get build number
+execute_process(COMMAND git rev-list --all --count OUTPUT_VARIABLE BUILD_NUMBER OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(BUILD_NUMBER STREQUAL "")
+	set(BUILD_NUMBER 0)
+endif()
+
 # define constants
 add_definitions(-DGAME_VERSION="0.9.0")
+add_definitions(-DGAME_BUILD=${BUILD_NUMBER})
 add_definitions("-DGLM_FORCE_RADIANS")
 add_definitions("-DHAS_SOCKLEN_T")
 
