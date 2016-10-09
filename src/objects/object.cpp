@@ -524,7 +524,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			if(ClientPlayer->PotentialAction.Item) {
 
 				// Skip dead targets
-				if(!ClientPlayer->PotentialAction.Item->CanTarget(BattleTarget))
+				if(!ClientPlayer->PotentialAction.Item->CanTarget(ClientPlayer, BattleTarget))
 					break;
 
 				// Get texture
@@ -585,7 +585,8 @@ void _Object::CreateBattleElement(_Element *Parent) {
 	BattleElement->Alignment = CENTER_MIDDLE;
 	BattleElement->UserCreated = true;
 	BattleElement->Visible = true;
-	BattleElement->UserData = (void *)_HUD::WINDOW_BATTLE;
+	BattleElement->UserData = (void *)_HUD::WINDOW_HUD_EFFECTS;
+	BattleElement->UserDataAlt = this;
 	BattleElement->Parent = Parent;
 	BattleElement->CalculateBounds();
 	Parent->Children.push_back(BattleElement);
@@ -1126,7 +1127,7 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 		for(int i = 0; i < TargetCount; i++) {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
-			if(Target && Action.Item->CanTarget(Target))
+			if(Target && Action.Item->CanTarget(this, Target))
 				Targets.push_back(Target);
 		}
 	}

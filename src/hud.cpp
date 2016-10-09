@@ -159,6 +159,11 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 
 	// Press
 	if(MouseEvent.Pressed) {
+
+		if(Tooltip.Window == WINDOW_BATTLE && Player->Battle && Player->PotentialAction.IsSet()) {
+			Player->Battle->ClientSetAction((uint8_t)Player->PotentialAction.ActionBarSlot);
+		}
+
 		if(Tooltip.InventorySlot.Item) {
 			switch(Tooltip.Window) {
 				case WINDOW_TRADEYOURS:
@@ -448,7 +453,13 @@ void _HUD::Update(double FrameTime) {
 				if(Tooltip.Slot < Player->ActionBar.size())
 					Tooltip.InventorySlot.Item = Player->ActionBar[Tooltip.Slot].Item;
 			} break;
-			case WINDOW_BATTLE:
+			case WINDOW_BATTLE: {
+				_Object *MouseObject = (_Object *)HitElement->UserDataAlt;
+				if(MouseObject && Player->Battle && Player->PotentialAction.IsSet() && Player->PotentialAction.Item->IsSingleTarget() && Player->PotentialAction.Item->CanTarget(Player, MouseObject)) {
+					Player->Targets.clear();
+					Player->Targets.push_back(MouseObject);
+				}
+			} break;
 			case WINDOW_HUD_EFFECTS: {
 				Tooltip.StatusEffect = (_StatusEffect *)HitElement->UserData;
 			} break;

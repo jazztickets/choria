@@ -31,6 +31,7 @@ _Element::_Element() :
 	GlobalID(0),
 	Parent(nullptr),
 	UserData((void *)-1),
+	UserDataAlt(nullptr),
 	Visible(false),
 	Enabled(true),
 	Clickable(true),

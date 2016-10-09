@@ -83,6 +83,7 @@ class _Battle : public _ManagerBase {
 		// Input
 		bool ClientHandleInput(int Action);
 		void ClientHandlePlayerAction(_Buffer &Data);
+		void ClientSetAction(uint8_t ActionBarSlot);
 
 		_Stats *Stats;
 		_Server *Server;
@@ -104,7 +105,6 @@ class _Battle : public _ManagerBase {
 		void AdjustBattleElements(int SideIndex, _Object *Fighter);
 		void CreateBattleElements(int SideIndex, _Object *Fighter);
 
-		void ClientSetAction(uint8_t ActionBarSlot);
 		void ChangeTarget(int Direction, bool SideDirection);
 
 		void GetFighterList(int Side, std::list<_Object *> &SideFighters);

@@ -232,7 +232,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		// Set up initial target
 		if(Item) {
 			if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
-				ClientPlayer->HUD->SetMessage("Hit up/down to change targets. Press " + Actions.GetInputNameForAction(_Actions::SKILL1 + ActionBarSlot) + " again to confirm.");
+				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(_Actions::SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->BattleSide;
@@ -272,7 +272,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				// Find last target
 				if(ClientPlayer->LastTarget && !Multiple) {
 					for(auto &Fighter : FighterList) {
-						if(Item->CanTarget(Fighter)) {
+						if(Item->CanTarget(ClientPlayer, Fighter)) {
 							if(ClientPlayer->LastTarget[StartingSide] == Fighter) {
 								ClientPlayer->Targets.push_back(Fighter);
 								break;
@@ -284,7 +284,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				// Find first alive target
 				if(ClientPlayer->Targets.size() == 0) {
 					for(auto &Fighter : FighterList) {
-						if(Item->TargetID == TargetType::ENEMY_ALL || Item->CanTarget(Fighter)) {
+						if(Item->TargetID == TargetType::ENEMY_ALL || Item->CanTarget(ClientPlayer, Fighter)) {
 							ClientPlayer->Targets.push_back(Fighter);
 							if(!Multiple)
 								break;
@@ -293,12 +293,14 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				}
 			}
 		}
-		else
-			ClientPlayer->PotentialAction.Unset();
 
 		// Set potential skill
-		if(ClientPlayer->Targets.size())
+		if(ClientPlayer->Targets.size()) {
 			ClientPlayer->PotentialAction.Item = Item;
+			ClientPlayer->PotentialAction.ActionBarSlot = ActionBarSlot;
+		}
+		else
+			ClientPlayer->PotentialAction.Unset();
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
@@ -391,7 +393,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 			NewTarget = *Iterator;
 
 		// Check break condition
-		if(Item->CanTarget(NewTarget))
+		if(Item->CanTarget(ClientPlayer, NewTarget))
 			break;
 	}
 

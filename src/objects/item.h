@@ -56,6 +56,9 @@ class _Item {
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::RING; }
 		bool IsStackable() const { return !IsEquippable(); }
+		bool IsSingleTarget() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ANY; }
+		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY; }
+		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
 
 		size_t GetEquipmentSlot() const;
 
@@ -63,7 +66,7 @@ class _Item {
 		int GetUpgradePrice(int Level) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		bool CanTarget(_Object *Object) const;
+		bool CanTarget(_Object *Source, _Object *Target) const;
 		bool CheckScope(ScopeType CheckScope) const;
 		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;

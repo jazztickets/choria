@@ -61,6 +61,7 @@ class _Element {
 		std::string ParentIdentifier;
 		_Element *Parent;
 		void *UserData;
+		void *UserDataAlt;
 
 		bool Visible : 1;
 		bool Enabled : 1;

@@ -24,7 +24,7 @@ element_skills		style_hud_bg	0	0	474	450	1	1	0	1	6
 element_actionbar			0	-10	384	48	1	2	0	1	7
 element_hud_statuseffects			0	-100	350	32	1	2	0	1	9
 element_died		style_hud_died_bg	0	0	0	0	0	0	0	0	-1
-element_battle		style_hud_bg	0	-35	1000	570	1	1	0	0	-1
+element_battle		style_hud_bg	0	-35	1000	570	1	1	0	0	8
 element_item_tooltip		style_hud_item_tooltip_bg	0	0	250	300	0	0	0	0	-1
 element_character		style_hud_bg	0	0	250	500	2	1	0	1	-1
 element_trade		style_hud_bg	212	0	304	288	1	1	0	1	-1

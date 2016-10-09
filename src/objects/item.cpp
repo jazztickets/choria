@@ -477,7 +477,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	// Check if target is alive
 	if(Object->Targets.size() == 1) {
 		_Object *Target = *Object->Targets.begin();
-		if(!CanTarget(Target))
+		if(!CanTarget(Object, Target))
 			return false;
 	}
 
@@ -495,12 +495,24 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	return true;
 }
 
-// Check if an item can target an object based on being alive or dead
-bool _Item::CanTarget(_Object *Object) const {
-	if((TargetAlive && Object->IsAlive()) || (!TargetAlive && !Object->IsAlive()))
-		return true;
+// Check if an item can target an object
+bool _Item::CanTarget(_Object *Source, _Object *Target) const {
+	if(TargetAlive && !Target->IsAlive())
+		return false;
 
-	return false;
+	if(!TargetAlive && Target->IsAlive())
+		return false;
+
+	if(Source->Battle) {
+
+		if(Source->BattleSide == Target->BattleSide && !CanTargetAlly())
+			return false;
+
+		if(Source->BattleSide != Target->BattleSide && !CanTargetEnemy())
+			return false;
+	}
+
+	return true;
 }
 
 // Check if the item can be used in the given scope
