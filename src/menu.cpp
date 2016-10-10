@@ -39,6 +39,7 @@
 #include <packet.h>
 #include <utils.h>
 #include <audio.h>
+#include <version.h>
 #include <sstream>
 #include <SDL_keyboard.h>
 

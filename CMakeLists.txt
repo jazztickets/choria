@@ -1,14 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-# get build number
-execute_process(COMMAND git rev-list --all --count OUTPUT_VARIABLE BUILD_NUMBER OUTPUT_STRIP_TRAILING_WHITESPACE)
-if(BUILD_NUMBER STREQUAL "")
-	set(BUILD_NUMBER 0)
-endif()
-
 # define constants
 add_definitions(-DGAME_VERSION="0.9.0")
-add_definitions(-DGAME_BUILD=${BUILD_NUMBER})
 add_definitions("-DGLM_FORCE_RADIANS")
 add_definitions("-DHAS_SOCKLEN_T")
 
@@ -17,6 +10,15 @@ project(choria)
 
 # add extra find modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+
+# add custom target to generate version.h
+add_custom_target(
+	version
+	${CMAKE_COMMAND}
+	-D SRC=${PROJECT_SOURCE_DIR}/cmake/version.h.in
+	-D DST=${PROJECT_SOURCE_DIR}/src/version.h
+	-P ${PROJECT_SOURCE_DIR}/cmake/version.cmake
+)
 
 # mingw and visual studio
 if(WIN32)
@@ -149,8 +151,9 @@ source_group(enet FILES ${SRC_ENET})
 source_group(pnglite FILES ${SRC_PNGLITE})
 source_group(path FILES ${SRC_PATH})
 
-# build exe
+# build binary
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
+add_dependencies(${CMAKE_PROJECT_NAME} version)
 
 # link libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
