@@ -204,6 +204,9 @@ void _Framework::Update() {
 					_KeyEvent KeyEvent(Event.text.text, 0, 1, 1);
 					State->KeyEvent(KeyEvent);
 				} break;
+				case SDL_MOUSEMOTION: {
+					State->MouseMotionEvent(glm::ivec2(Event.motion.xrel, Event.motion.yrel));
+				} break;
 				case SDL_MOUSEBUTTONDOWN:
 				case SDL_MOUSEBUTTONUP: {
 					_MouseEvent MouseEvent(glm::ivec2(Event.motion.x, Event.motion.y), Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);

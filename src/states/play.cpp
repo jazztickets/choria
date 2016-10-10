@@ -289,6 +289,14 @@ void _PlayState::KeyEvent(const _KeyEvent &KeyEvent) {
 		HUD->ShowStats = !HUD->ShowStats;
 }
 
+// Mouse movement handler
+void _PlayState::MouseMotionEvent(const glm::ivec2 &Position) {
+
+	// Enable mouse during combat
+	if(HUD && Player && Player->Battle)
+		HUD->EnableMouseCombat = true;
+}
+
 // Mouse handler
 void _PlayState::MouseEvent(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
@@ -1006,6 +1014,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 
 	// Reset hud
 	HUD->CloseWindows(true);
+	HUD->EnableMouseCombat = false;
 	if(Config.ShowTutorial && Player->Level == 1)
 		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(_Actions::SKILL1) + " key to attack");
 

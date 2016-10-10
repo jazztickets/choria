@@ -157,6 +157,9 @@ class _HUD {
 		void UpdateTradeStatus(bool Accepted);
 		void ValidateTradeGold();
 
+		// Input
+		bool EnableMouseCombat;
+
 		// Stats
 		bool ShowStats;
 
