@@ -43,11 +43,14 @@ to run a dedicated server
 change network listen port
 -port [port_number]
 
-open the mapeditor
--editor
-
 connect to default ip/port
 -connect
+
+load bot manager
+-bot
+
+open the mapeditor
+-editor
 
 set username on login screen
 -username [username]
