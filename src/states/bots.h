@@ -21,6 +21,7 @@
 #include <state.h>
 #include <list>
 #include <thread>
+#include <mutex>
 
 // Forward Declarations
 class _Stats;
@@ -44,6 +45,7 @@ class _BotsState : public _State {
 		void Update(double FrameTime) override;
 
 		// Commands
+		void ShowCommands();
 		void Add();
 		void DisconnectAll();
 		void QuitEvent();
@@ -55,6 +57,7 @@ class _BotsState : public _State {
 
 		bool Done;
 		std::thread *Thread;
+		std::mutex Mutex;
 
 		_Stats *Stats;
 		std::list<_Bot *> Bots;

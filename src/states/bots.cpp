@@ -35,7 +35,7 @@ _BotsState BotState;
 
 // Command loop
 void RunCommandThread() {
-	std::cout << "start" << std::endl;
+	std::cout << "Type help to list commands" << std::endl;
 
 	bool Done = false;
 	while(!Done) {
@@ -54,8 +54,8 @@ void RunCommandThread() {
 
 		// Handle command
 		if(Tokens.size()) {
-			if(Tokens[0] == "stop")
-				Done = true;
+			if(Input == "help")
+				BotState.ShowCommands();
 			else if(Tokens[0] == "a" || Tokens[0] == "add") {
 				int Count = 1;
 				if(Tokens.size() > 1) {
@@ -69,6 +69,8 @@ void RunCommandThread() {
 			}
 			else if(Tokens[0] == "d" || Tokens[0] == "disconnect")
 				BotState.DisconnectAll();
+			else if(Tokens[0] == "q" || Tokens[0] == "quit")
+				Done = true;
 			else
 				std::cout << "Command not recognized" << std::endl;
 		}
@@ -121,6 +123,7 @@ void _BotsState::QuitEvent() {
 
 // Update
 void _BotsState::Update(double FrameTime) {
+	std::lock_guard<std::mutex> LockGuard(Mutex);
 
 	for(auto Iterator = Bots.begin(); Iterator != Bots.end(); ) {
 		_Bot *Bot = *Iterator;
@@ -144,7 +147,9 @@ void _BotsState::Update(double FrameTime) {
 
 // Add a bot and connect
 void _BotsState::Add() {
+	std::lock_guard<std::mutex> LockGuard(Mutex);
 
+	std::cout << "adding bot " << NextBotNumber << std::endl;
 	try {
 		std::string Credentials = "bot" + std::to_string(NextBotNumber);
 		_Bot *Bot = new _Bot(Stats, Credentials, Credentials, HostAddress, Port);
@@ -158,8 +163,20 @@ void _BotsState::Add() {
 
 // Disconnect all bots
 void _BotsState::DisconnectAll() {
+	std::cout << "disconnecting all bots" << std::endl;
 
 	for(auto &Bot : Bots)
 		Bot->Network->Disconnect();
+}
 
+// List available commands
+void _BotsState::ShowCommands() {
+
+	std::cout << std::endl;
+	std::cout << "a [bot_count]" << std::endl;
+	std::cout << "  Add specified number of bots" << std::endl;
+	std::cout << "d" << std::endl;
+	std::cout << "  Disconnect all bots" << std::endl;
+	std::cout << "q" << std::endl;
+	std::cout << "  Quit" << std::endl;
 }
