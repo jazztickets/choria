@@ -448,7 +448,7 @@ void _Audio::SetSoundVolume(float Volume) {
 	if(!Enabled)
 		return;
 
-	SoundVolume = Volume;
+	SoundVolume = std::min(std::max(Volume, 0.0f), 1.0f);
 }
 
 // Set music volume
@@ -456,6 +456,6 @@ void _Audio::SetMusicVolume(float Volume) {
 	if(!Enabled)
 		return;
 
-	MusicVolume = Volume;
+	MusicVolume = std::min(std::max(Volume, 0.0f), 1.0f);
 	alSourcef(MusicSource, AL_GAIN, MusicVolume);
 }

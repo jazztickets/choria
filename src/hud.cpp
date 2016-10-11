@@ -40,6 +40,8 @@
 #include <constants.h>
 #include <buffer.h>
 #include <assets.h>
+#include <config.h>
+#include <audio.h>
 #include <actions.h>
 #include <menu.h>
 #include <packet.h>
@@ -650,28 +652,42 @@ void _HUD::ToggleChat() {
 		if(ChatTextBox->Text != "") {
 
 			// Handle test commands
-			if(PlayState.IsTesting && ChatTextBox->Text.find("-search") == 0) {
-				std::smatch Match;
-				std::regex Regex("-search (.+) (.+)");
-				if(std::regex_search(ChatTextBox->Text, Match, Regex) && Match.size() > 2) {
-					std::string Table = Match.str(1);
-					std::string Search = "%" + Match.str(2) + "%";
+			if(PlayState.IsTesting) {
+				if (ChatTextBox->Text.find("-search") == 0) {
+					std::smatch Match;
+					std::regex Regex("-search (.+) (.+)");
+					if(std::regex_search(ChatTextBox->Text, Match, Regex) && Match.size() > 2) {
+						std::string Table = Match.str(1);
+						std::string Search = "%" + Match.str(2) + "%";
 
-					// Search database for keyword
-					_Database *Database = PlayState.Stats->Database;
-					try {
-						Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
-						Database->BindString(1, Search);
-						while(Database->FetchRow()) {
-							int ID = Database->GetInt<int>("id");
-							std::string Name = Database->GetString("name");
+						// Search database for keyword
+						_Database *Database = PlayState.Stats->Database;
+						try {
+							Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
+							Database->BindString(1, Search);
+							while(Database->FetchRow()) {
+								int ID = Database->GetInt<int>("id");
+								std::string Name = Database->GetString("name");
 
-							std::cout << std::setw(3) << ID << " " << Name << std::endl;
+								std::cout << std::setw(3) << ID << " " << Name << std::endl;
+							}
+							Database->CloseQuery();
+						} catch(std::exception &Error) {
+							std::cout << Error.what() << std::endl;
 						}
-						Database->CloseQuery();
-					} catch(std::exception &Error) {
-						std::cout << Error.what() << std::endl;
 					}
+				}
+			}
+
+			// Handle console commands
+			if(ChatTextBox->Text.find("-volume") == 0) {
+				std::smatch Match;
+				std::regex Regex("-volume (.+)");
+				if(std::regex_search(ChatTextBox->Text, Match, Regex) && Match.size() > 1) {
+					Config.SoundVolume = Config.MusicVolume = ToNumber<float>(Match.str(1));
+					Audio.SetSoundVolume(Config.SoundVolume);
+					Audio.SetMusicVolume(Config.MusicVolume);
+					Config.Save();
 				}
 			}
 
