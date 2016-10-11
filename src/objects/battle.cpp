@@ -270,7 +270,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				GetFighterList(StartingSide, FighterList);
 
 				// Find last target
-				if(ClientPlayer->LastTarget && !Multiple) {
+				if(ClientPlayer->LastTarget[StartingSide] && !Multiple) {
 					for(auto &Fighter : FighterList) {
 						if(Item->CanTarget(ClientPlayer, Fighter)) {
 							if(ClientPlayer->LastTarget[StartingSide] == Fighter) {
