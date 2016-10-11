@@ -330,6 +330,9 @@ Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
 
 function Skill_Whirlwind.CanUse(self, Level, Object)
 	Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+	if Weapon == nil then
+		return false
+	end
 
 	return Weapon.Type == ITEM_TWOHANDED_WEAPON
 end
