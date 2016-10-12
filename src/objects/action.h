@@ -37,6 +37,8 @@ enum class TargetType : uint32_t {
 	SELF,
 	ENEMY,
 	ALLY,
+	ENEMY_MULTI,
+	ALLY_MULTI,
 	ENEMY_ALL,
 	ALLY_ALL,
 	ANY,

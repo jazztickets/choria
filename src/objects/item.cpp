@@ -385,6 +385,39 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 	}
 }
 
+// Get target count based on target type
+int _Item::GetTargetCount() const {
+
+	int TargetCount = 0;
+	switch(TargetID) {
+		case TargetType::SELF:
+			TargetCount = 1;
+		break;
+		case TargetType::ALLY:
+			TargetCount = 1;
+		break;
+		case TargetType::ENEMY_MULTI:
+			TargetCount = BATTLE_MULTI_TARGET_COUNT;
+		break;
+		case TargetType::ALLY_MULTI:
+			TargetCount = BATTLE_MULTI_TARGET_COUNT;
+		break;
+		case TargetType::ENEMY_ALL:
+			TargetCount = BATTLE_MAXFIGHTERS_SIDE;
+		break;
+		case TargetType::ALLY_ALL:
+			TargetCount = BATTLE_MAXFIGHTERS_SIDE;
+		break;
+		case TargetType::ANY:
+			TargetCount = 1;
+		break;
+		default:
+		break;
+	}
+
+	return TargetCount;
+}
+
 // Return a valid equipment slot for an item
 size_t _Item::GetEquipmentSlot() const {
 

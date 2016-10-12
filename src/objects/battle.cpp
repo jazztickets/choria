@@ -238,59 +238,17 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			int StartingSide = !ClientPlayer->BattleSide;
 
 			// Pick sides depending on action
-			bool Multiple = false;
-			bool Self = false;
-			switch(Item->TargetID) {
-				case TargetType::SELF:
-					Self = true;
-				break;
-				case TargetType::ALLY_ALL:
-					Multiple = true;
-				case TargetType::ALLY:
-					StartingSide = ClientPlayer->BattleSide;
-					if(!ClientPlayer->LastTarget[ClientPlayer->BattleSide])
-						ClientPlayer->LastTarget[ClientPlayer->BattleSide] = ClientPlayer;
-				break;
-				case TargetType::ENEMY_ALL:
-					Multiple = true;
-				break;
-				case TargetType::ANY:
-				break;
-				default:
-				break;
+			if(Item->TargetID != TargetType::ANY && Item->CanTargetAlly()) {
+				StartingSide = ClientPlayer->BattleSide;
+				if(!ClientPlayer->LastTarget[StartingSide])
+					ClientPlayer->LastTarget[StartingSide] = ClientPlayer;
 			}
 
-			if(Self) {
+			if(Item->TargetID == TargetType::SELF) {
 				ClientPlayer->Targets.push_back(ClientPlayer);
 			}
 			else {
-
-				// Get list of fighters on each side
-				std::list<_Object *> FighterList;
-				GetFighterList(StartingSide, FighterList);
-
-				// Find last target
-				if(ClientPlayer->LastTarget[StartingSide] && !Multiple) {
-					for(auto &Fighter : FighterList) {
-						if(Item->CanTarget(ClientPlayer, Fighter)) {
-							if(ClientPlayer->LastTarget[StartingSide] == Fighter) {
-								ClientPlayer->Targets.push_back(Fighter);
-								break;
-							}
-						}
-					}
-				}
-
-				// Find first alive target
-				if(ClientPlayer->Targets.size() == 0) {
-					for(auto &Fighter : FighterList) {
-						if(Item->TargetID == TargetType::ENEMY_ALL || Item->CanTarget(ClientPlayer, Fighter)) {
-							ClientPlayer->Targets.push_back(Fighter);
-							if(!Multiple)
-								break;
-						}
-					}
-				}
+				ClientSetTarget(Item, StartingSide, ClientPlayer->LastTarget[StartingSide]);
 			}
 		}
 
@@ -320,7 +278,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		}
 
 		// Remember target
-		if(ClientPlayer->Targets.size() == 1)
+		if(ClientPlayer->Targets.size())
 			ClientPlayer->LastTarget[ClientPlayer->Targets.front()->BattleSide] = ClientPlayer->Targets.front();
 
 		_Buffer Packet;
@@ -337,9 +295,46 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	}
 }
 
+// Set target for client
+void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget) {
+
+	// Get list of fighters on each side
+	std::list<_Object *> FighterList;
+	GetFighterList(Side, FighterList);
+	auto Iterator = FighterList.begin();
+
+	// Get iterator to last target
+	_Object *LastTarget = InitialTarget;
+	if(FighterList.size() && LastTarget && Item->CanTarget(ClientPlayer, LastTarget))
+	   Iterator = std::find(FighterList.begin(), FighterList.end(), LastTarget);
+
+	// Set up targets
+	int TargetCount = Item->GetTargetCount();
+	for(size_t i = 0; i < FighterList.size(); i++) {
+
+		// Check for valid target
+		_Object *Target = *Iterator;
+		if(Item->CanTarget(ClientPlayer, Target)) {
+
+			// Add fighter to list of targets
+			ClientPlayer->Targets.push_back(Target);
+
+			// Update count
+			TargetCount--;
+			if(TargetCount <= 0)
+				break;
+		}
+
+		// Update target
+		++Iterator;
+		if(Iterator == FighterList.end())
+			Iterator = FighterList.begin();
+	}
+}
+
 // Changes targets
 void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
-	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || ClientPlayer->Targets.size() != 1)
+	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || !ClientPlayer->Targets.size())
 		return;
 
 	const _Item *Item = ClientPlayer->PotentialAction.Item;
@@ -362,6 +357,10 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	if(FighterList.size())
 	   Iterator = std::find(FighterList.begin(), FighterList.end(), ClientPlayer->Targets.front());
 
+	// Get target count
+	size_t TargetCount = ClientPlayer->Targets.size();
+	ClientPlayer->Targets.clear();
+
 	// Search for valid target
 	_Object *NewTarget = nullptr;
 	for(size_t i = 0; i < FighterList.size(); i++) {
@@ -372,7 +371,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 
 		// Update target
 		if(Direction > 0) {
-			Iterator++;
+			++Iterator;
 			if(Iterator == FighterList.end())
 				Iterator = FighterList.begin();
 
@@ -381,10 +380,10 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 		else if(Direction < 0) {
 			if(Iterator == FighterList.begin()) {
 				Iterator = FighterList.end();
-				Iterator--;
+				--Iterator;
 			}
 			else {
-				Iterator--;
+				--Iterator;
 			}
 
 			NewTarget = *Iterator;
@@ -393,12 +392,18 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 			NewTarget = *Iterator;
 
 		// Check break condition
-		if(Item->CanTarget(ClientPlayer, NewTarget))
-			break;
-	}
+		if(Item->CanTarget(ClientPlayer, NewTarget)) {
+			ClientPlayer->Targets.push_back(NewTarget);
 
-	ClientPlayer->Targets.clear();
-	ClientPlayer->Targets.push_back(NewTarget);
+			// Update count
+			TargetCount--;
+			if(TargetCount <= 0)
+				break;
+
+			// Start moving down after first target found
+			Direction = 1;
+		}
+	}
 }
 
 // Add a fighter to the battle

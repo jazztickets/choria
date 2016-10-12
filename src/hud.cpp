@@ -459,9 +459,9 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserDataAlt;
-				if(EnableMouseCombat && MouseObject && Player->Battle && Player->PotentialAction.IsSet() && Player->PotentialAction.Item->IsSingleTarget() && Player->PotentialAction.Item->CanTarget(Player, MouseObject)) {
+				if(EnableMouseCombat && MouseObject && Player->Battle && Player->PotentialAction.IsSet() && Player->PotentialAction.Item->UseMouseTargetting() && Player->PotentialAction.Item->CanTarget(Player, MouseObject)) {
 					Player->Targets.clear();
-					Player->Targets.push_back(MouseObject);
+					Player->Battle->ClientSetTarget(Player->PotentialAction.Item, MouseObject->BattleSide, MouseObject);
 				}
 			} break;
 			case WINDOW_HUD_EFFECTS: {
