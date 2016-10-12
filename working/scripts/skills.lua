@@ -787,7 +787,16 @@ end
 
 function Skill_Backstab.GetInfo(self, Level)
 
-	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Level) * 100) .. "% [c white]damage to stunned enemies"
+	return "Attack for [c green]" .. math.floor(self.BaseDamage * 100) .. "% [c white]weapon damage\nDeal [c green]" .. math.floor(self:GetDamage(Level) * 100) .. "% [c white]damage to stunned enemies\nRequires a one-handed weapon"
+end
+
+function Skill_Backstab.CanUse(self, Level, Object)
+	Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+	if Weapon == nil then
+		return false
+	end
+
+	return Weapon.Type == ITEM_ONEHANDED_WEAPON
 end
 
 function Skill_Backstab.Proc(self, Roll, Level, Source, Target, Result)
