@@ -281,7 +281,7 @@ end
 Skill_ShieldBash = Base_Attack:New()
 Skill_ShieldBash.BaseChance = 23
 Skill_ShieldBash.ChancePerLevel = 2
-Skill_ShieldBash.Duration = 3
+Skill_ShieldBash.Duration = 2
 
 function Skill_ShieldBash.GetInfo(self, Level)
 
@@ -493,10 +493,10 @@ Skill_FireBlast = Base_Spell:New()
 Skill_FireBlast.DamageBase = 50
 Skill_FireBlast.Multiplier = 20
 Skill_FireBlast.CostPerLevel = 5
-Skill_FireBlast.ManaCostBase = 90 - Skill_FireBlast.CostPerLevel
+Skill_FireBlast.ManaCostBase = 60 - Skill_FireBlast.CostPerLevel
 
 function Skill_FireBlast.GetInfo(self, Level)
-	return "Blast all targets with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
+	return "Blast multiple foes with fire for [c green]" .. self:GetDamage(Level) .. "[c white] HP\nCosts [c light_blue]" .. self:GetCost(Level) .. " [c white]MP"
 end
 
 function Skill_FireBlast.PlaySound(self, Level)
@@ -549,7 +549,7 @@ Skill_Toughness.Armor = 2
 
 function Skill_Toughness.GetArmor(self, Level)
 
-	return self.Armor * math.floor(Level / 5)
+	return self.Armor * math.floor(Level / 4)
 end
 
 function Skill_Toughness.GetInfo(self, Level)
@@ -576,7 +576,7 @@ Skill_ArcaneMastery.ManaRegen = 1
 
 function Skill_ArcaneMastery.GetManaRegen(self, Level)
 
-	return self.ManaRegen * math.floor(Level / 5)
+	return self.ManaRegen * math.floor(Level / 2)
 end
 
 function Skill_ArcaneMastery.GetInfo(self, Level)
