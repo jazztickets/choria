@@ -217,8 +217,8 @@ end
 -- Fury --
 
 Skill_Fury = Base_Attack:New()
-Skill_Fury.StaminaPerLevel = 0.04
-Skill_Fury.BaseStamina = 0.10
+Skill_Fury.StaminaPerLevel = 0.02
+Skill_Fury.BaseStamina = 0.25
 
 function Skill_Fury.GetStaminaGain(self, Level)
 
@@ -323,7 +323,7 @@ end
 -- Whirlwind --
 
 Skill_Whirlwind = Base_Attack:New()
-Skill_Whirlwind.DamageBase = 30
+Skill_Whirlwind.DamageBase = 20
 Skill_Whirlwind.DamagePerLevel = 1
 Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 3.0
 Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
@@ -895,5 +895,27 @@ end
 
 function Skill_Enfeeble.PlaySound(self, Level)
 	Audio.Play("enfeeble0.ogg")
+end
+
+-- Cleave --
+
+Skill_Cleave = Base_Attack:New()
+Skill_Cleave.DamageBase = 31
+Skill_Cleave.DamagePerLevel = 1
+
+function Skill_Cleave.GetDamage(self, Level)
+	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))
+end
+
+function Skill_Cleave.GenerateDamage(self, Level, Source)
+	return math.floor(Source.GenerateDamage() * (self:GetDamage(Level) / 100))
+end
+
+function Skill_Cleave.GetInfo(self, Level)
+	return "Swing your weapon and hit multiple foes with [c green]" .. self:GetDamage(Level) .. "% [c white]weapon damage"
+end
+
+function Skill_Cleave.PlaySound(self, Level)
+	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
