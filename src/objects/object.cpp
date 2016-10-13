@@ -97,6 +97,7 @@ _Object::_Object() :
 
 	PlayTime(0.0),
 	BattleTime(0.0),
+	Hardcore(false),
 	Deaths(0),
 	MonsterKills(0),
 	PlayerKills(0),

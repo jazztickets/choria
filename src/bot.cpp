@@ -193,6 +193,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::CHARACTERS_LIST: {
 
 			// Get count
+			Data.Read<uint8_t>();
 			uint8_t CharacterCount = Data.Read<uint8_t>();
 			//std::cout << "character count: " << (int)CharacterCount << std::endl;
 
@@ -200,8 +201,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			int FirstSlot = -1;
 			for(size_t i = 0; i < CharacterCount; i++) {
 				size_t Slot = Data.Read<uint8_t>();
+				Data.Read<uint8_t>();
 				Data.ReadString();
 				Data.Read<uint32_t>();
+				Data.Read<int>();
 				Data.Read<int>();
 
 				if(FirstSlot == -1)
@@ -213,6 +216,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				std::string Name = Username + "_" + std::to_string(GetRandomInt(0, 1000));
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
+				Packet.WriteBit(0);
 				Packet.WriteString(Name.c_str());
 				Packet.Write<uint32_t>(1);
 				Packet.Write<uint32_t>(1);

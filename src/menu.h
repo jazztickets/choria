@@ -39,11 +39,13 @@ class _Menu {
 	public:
 
 		struct _CharacterSlot {
-			_CharacterSlot() : Button(nullptr), Name(nullptr), Level(nullptr), Used(false) {}
+			_CharacterSlot() : Button(nullptr), Name(nullptr), Level(nullptr), Hardcore(nullptr), CanPlay(false), Used(false) {}
 			_Button *Button;
 			_Label *Name;
 			_Label *Level;
+			_Label *Hardcore;
 			_Image *Image;
+			bool CanPlay;
 			bool Used;
 		};
 
@@ -111,7 +113,7 @@ class _Menu {
 		void LoadBuildButtons();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();
-		void CreateCharacter();
+		void CreateCharacter(bool Hardcore=false);
 		void ConnectToHost();
 		void PlayCharacter(size_t Slot);
 		void SendAccountInfo(bool CreateAccount=false);
@@ -137,6 +139,7 @@ class _Menu {
 
 		// Singleplayer
 		CharactersStateType CharactersState;
+		bool HardcoreServer;
 };
 
 extern _Menu Menu;

@@ -66,6 +66,7 @@ static void RunThread(void *Arguments) {
 // Constructor
 _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	IsTesting(false),
+	Hardcore(false),
 	Done(false),
 	StartDisconnect(false),
 	StartShutdown(false),
@@ -259,7 +260,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 		// Penalize player for leaving battle
 		if(Player->Battle) {
 			Player->ApplyDeathPenalty();
-			Player->Health = Player->MaxHealth / 2;
+			Player->Health = 0;
 			Player->Mana = Player->MaxMana / 2;
 			Player->LoadMapID = 0;
 		}
@@ -434,6 +435,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Get character information
+	bool Hardcore = Data.ReadBit();
 	std::string Name(Data.ReadString());
 	uint32_t PortraitID = Data.Read<uint32_t>();
 	uint32_t BuildID = Data.Read<uint32_t>();
@@ -454,7 +456,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Create the character
-	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, Name, PortraitID, BuildID);
+	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, Hardcore, Name, PortraitID, BuildID);
 
 	// Notify the client
 	_Buffer NewPacket;
@@ -535,6 +537,8 @@ void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
 
 	// Check death
 	if(!Player->IsAlive()) {
+		if(Player->Hardcore)
+			return;
 
 		// Wait for battle to finish
 		if(Player->Battle)
@@ -707,15 +711,18 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	// Create the packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_LIST);
+	Packet.Write<uint8_t>(Hardcore);
 	Packet.Write<uint8_t>(CharacterCount);
 
 	// Generate a list of characters
-	Save->Database->PrepareQuery("SELECT slot, name, portrait_id, experience FROM character WHERE account_id = @account_id");
+	Save->Database->PrepareQuery("SELECT slot, hardcore, name, portrait_id, health, experience FROM character WHERE account_id = @account_id");
 	Save->Database->BindInt(1, Peer->AccountID);
 	while(Save->Database->FetchRow()) {
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
+		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("hardcore"));
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Save->Database->GetInt<uint32_t>("portrait_id"));
+		Packet.Write<int>(Save->Database->GetInt<int>("health"));
 		Packet.Write<int>(Save->Database->GetInt<int>("experience"));
 	}
 	Save->Database->CloseQuery();

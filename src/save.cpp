@@ -185,7 +185,7 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
+void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
 	if(!BuildID)
 		BuildID = 1;
 
@@ -195,13 +195,15 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 		Build = Stats->Builds[1];
 
 	// Create new database row
-	Database->PrepareQuery("INSERT INTO character(account_id, slot, name, portrait_id, model_id, actionbar_size) VALUES(@account_id, @slot, @name, @portrait_id, @model_id, @actionbar_size)");
-	Database->BindInt(1, AccountID);
-	Database->BindInt(2, Slot);
-	Database->BindString(3, TrimString(Name));
-	Database->BindInt(4, PortraitID);
-	Database->BindInt(5, Build->ModelID);
-	Database->BindInt(6, (uint32_t)Build->ActionBar.size());
+	int Index = 1;
+	Database->PrepareQuery("INSERT INTO character(account_id, slot, hardcore, name, portrait_id, model_id, actionbar_size) VALUES(@account_id, @slot, @hardcore, @name, @portrait_id, @model_id, @actionbar_size)");
+	Database->BindInt(Index++, AccountID);
+	Database->BindInt(Index++, Slot);
+	Database->BindInt(Index++, Hardcore);
+	Database->BindString(Index++, TrimString(Name));
+	Database->BindInt(Index++, PortraitID);
+	Database->BindInt(Index++, Build->ModelID);
+	Database->BindInt(Index++, (uint32_t)Build->ActionBar.size());
 	Database->FetchRow();
 	Database->CloseQuery();
 
@@ -235,6 +237,7 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 		Player->Position.y = Database->GetInt<int>("map_y");
 		Player->SpawnMapID = (NetworkIDType)Database->GetInt<uint32_t>("spawnmap_id");
 		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
+		Player->Hardcore = Database->GetInt<int>("hardcore");
 		Player->Name = Database->GetString("name");
 		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
 		Player->ModelID = Database->GetInt<uint32_t>("model_id");
@@ -324,8 +327,8 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 	Player->CalculateStats();
 
 	// Max sure player has health
-	if(!Player->IsAlive())
-		Player->Health = 1;
+	if(!Player->IsAlive() && !Player->Hardcore)
+		Player->Health = Player->MaxHealth / 2;
 }
 
 // Saves the player
@@ -530,6 +533,7 @@ void _Save::CreateDefaultDatabase() {
 				"	id INTEGER PRIMARY KEY,\n"
 				"	account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,\n"
 				"	slot INTEGER DEFAULT(0),\n"
+				"	hardcore INTEGER DEFAULT(0),\n"
 				"	name TEXT,\n"
 				"	map_id INTEGER DEFAULT(0),\n"
 				"	map_x INTEGER DEFAULT(0),\n"
@@ -543,8 +547,9 @@ void _Save::CreateDefaultDatabase() {
 				"	mana INTEGER DEFAULT(1),\n"
 				"	experience INTEGER DEFAULT(0),\n"
 				"	gold INTEGER DEFAULT(0),\n"
-				"	battletime REAL DEFAULT(0),\n"
+				"	goldloss INTEGER DEFAULT(0),\n"
 				"	playtime REAL DEFAULT(0),\n"
+				"	battletime REAL DEFAULT(0),\n"
 				"	deaths INTEGER DEFAULT(0),\n"
 				"	monsterkills INTEGER DEFAULT(0),\n"
 				"	playerkills INTEGER DEFAULT(0),\n"

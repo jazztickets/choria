@@ -49,6 +49,7 @@ const std::string InputBoxPrefix = "button_options_input_";
 const std::string CharacterButtonPrefix = "button_characters_slot";
 const std::string CharacterNamePrefix = "label_menu_characters_slot_name";
 const std::string CharacterLevelPrefix = "label_menu_characters_slot_level";
+const std::string CharacterHardcorePrefix = "label_menu_characters_slot_hardcore";
 const std::string CharacterImagePrefix = "image_menu_characters_slot";
 const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
@@ -61,6 +62,7 @@ _Menu::_Menu() {
 	CharactersState = CHARACTERS_NONE;
 	PreviousClickTimer = 0.0;
 	CharacterSlots.resize(ACCOUNT_MAX_CHARACTER_SLOTS);
+	HardcoreServer = false;
 }
 
 // Change the current layout
@@ -96,6 +98,12 @@ void _Menu::InitCharacters() {
 	ChangeLayout("element_menu_characters");
 	Assets.Elements["element_menu_characters"]->SetClickable(true, 2);
 
+	// Set label
+	_Label *HardcoreLabel = Assets.Labels["label_menu_characters_hardcore"];
+	HardcoreLabel->SetVisible(false);
+	if(HardcoreServer)
+		HardcoreLabel->SetVisible(true);
+
 	CharactersState = CHARACTERS_NONE;
 	State = STATE_CHARACTERS;
 }
@@ -103,7 +111,9 @@ void _Menu::InitCharacters() {
 // Init new player popup
 void _Menu::InitNewCharacter() {
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
+	_Button *CreateHardcoreButton = Assets.Buttons["button_newcharacter_createhardcore"];
 	CreateButton->SetEnabled(false);
+	CreateHardcoreButton->SetEnabled(false);
 
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	Name->SetText("");
@@ -243,7 +253,7 @@ size_t _Menu::GetSelectedCharacter() {
 }
 
 // Create character
-void _Menu::CreateCharacter() {
+void _Menu::CreateCharacter(bool Hardcore) {
 
 	// Check length
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
@@ -271,6 +281,7 @@ void _Menu::CreateCharacter() {
 	// Send information
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
+	Packet.WriteBit(Hardcore);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<uint32_t>(PortraitID);
 	Packet.Write<uint32_t>(BuildID);
@@ -292,7 +303,7 @@ void _Menu::ConnectToHost() {
 	}
 
 	PlayState.HostAddress = Host->Text;
-	PlayState.ConnectPort = ToNumber<int>(Port->Text);
+	PlayState.ConnectPort = ToNumber<uint16_t>(Port->Text);
 	PlayState.Connect(false);
 
 	_Label *Label = Assets.Labels["label_menu_connect_message"];
@@ -307,6 +318,9 @@ void _Menu::ConnectToHost() {
 
 // Send character to play
 void _Menu::PlayCharacter(size_t Slot) {
+	if(!CharacterSlots[Slot].CanPlay)
+		return;
+
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
 	Packet.Write<uint8_t>((uint8_t)Slot);
@@ -528,6 +542,7 @@ void _Menu::ValidateCreateCharacter() {
 
 	// Check name length
 	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
+	_Button *CreateHardcoreButton = Assets.Buttons["button_newcharacter_createhardcore"];
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	if(Name->Text.length() > 0)
 		NameValid = true;
@@ -535,10 +550,14 @@ void _Menu::ValidateCreateCharacter() {
 		FocusedElement = Name;
 
 	// Enable button
-	if(PortraitID != 0 && BuildID != 0 && NameValid)
+	if(PortraitID != 0 && BuildID != 0 && NameValid) {
 		CreateButton->SetEnabled(true);
-	else
+		CreateHardcoreButton->SetEnabled(true);
+	}
+	else {
 		CreateButton->SetEnabled(false);
+		CreateHardcoreButton->SetEnabled(false);
+	}
 }
 
 // Validate characters ui elements
@@ -551,7 +570,8 @@ void _Menu::UpdateCharacterButtons() {
 	size_t SelectedSlot = GetSelectedCharacter();
 	if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 		DeleteButton->SetEnabled(true);
-		PlayButton->SetEnabled(true);
+		if(CharacterSlots[SelectedSlot].CanPlay)
+			PlayButton->SetEnabled(true);
 	}
 }
 
@@ -763,6 +783,10 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						CreateCharacter();
 						PlayClickSound();
 					}
+					else if(Clicked->Identifier == "button_newcharacter_createhardcore") {
+						CreateCharacter(true);
+						PlayClickSound();
+					}
 					else if(Clicked->Identifier == "button_newcharacter_cancel") {
 						RequestCharacterList();
 						PlayClickSound();
@@ -914,7 +938,8 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 		} break;
 		case PacketType::CHARACTERS_LIST: {
 
-			// Get count
+			// Get header
+			HardcoreServer = Buffer.Read<uint8_t>();
 			uint8_t CharacterCount = Buffer.Read<uint8_t>();
 
 			// Reset character slots
@@ -932,6 +957,13 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				Buffer << CharacterLevelPrefix << i;
 				CharacterSlots[i].Level = Assets.Labels[Buffer.str()];
 				if(!CharacterSlots[i].Level)
+					throw std::runtime_error("Can't find label: " + Buffer.str());
+				Buffer.str("");
+
+				// Set slot hardcore
+				Buffer << CharacterHardcorePrefix << i;
+				CharacterSlots[i].Hardcore = Assets.Labels[Buffer.str()];
+				if(!CharacterSlots[i].Hardcore)
 					throw std::runtime_error("Can't find label: " + Buffer.str());
 				Buffer.str("");
 
@@ -953,22 +985,40 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				// Set state
 				CharacterSlots[i].Name->Text = "Empty Slot";
 				CharacterSlots[i].Level->Text = "";
+				CharacterSlots[i].Hardcore->Text = "";
 				CharacterSlots[i].Image->Texture = nullptr;
 				CharacterSlots[i].Image->Clickable = false;
 				CharacterSlots[i].Used = false;
+				CharacterSlots[i].CanPlay = true;
 			}
 
 			// Get characters
 			for(size_t i = 0; i < CharacterCount; i++) {
 				size_t Slot = Buffer.Read<uint8_t>();
+				bool Hardcore = Buffer.Read<uint8_t>();
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
 				uint32_t PortraitID = Buffer.Read<uint32_t>();
+				int Health = Buffer.Read<int>();
 				int Experience = Buffer.Read<int>();
 
 				std::stringstream Buffer;
 				Buffer << "Level " << PlayState.Stats->FindLevel(Experience)->Level;
 				CharacterSlots[Slot].Level->Text = Buffer.str();
 				CharacterSlots[Slot].Used = true;
+				if(Hardcore) {
+					if(Health <= 0) {
+						CharacterSlots[Slot].Hardcore->Text = "Dead";
+						CharacterSlots[Slot].CanPlay = false;
+					}
+					else
+						CharacterSlots[Slot].Hardcore->Text = "Hardcore";
+
+				}
+
+				// Check server settings
+				if(HardcoreServer && !Hardcore)
+				   CharacterSlots[Slot].CanPlay = false;
+
 				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);
 			}
 
@@ -979,6 +1029,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 
 			// Set state
 			InitCharacters();
+
 		} break;
 		case PacketType::CREATECHARACTER_SUCCESS: {
 

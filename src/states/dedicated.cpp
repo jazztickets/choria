@@ -58,7 +58,9 @@ void RunCommandThread(_Server *Server) {
 _DedicatedState::_DedicatedState() :
 	Server(nullptr),
 	Stats(nullptr),
-	Thread(nullptr) {
+	Thread(nullptr),
+	NetworkPort(0),
+	Hardcore(false) {
 
 }
 
@@ -69,8 +71,11 @@ void _DedicatedState::Init() {
 	try {
 		Stats = new _Stats();
 		Server = new _Server(Stats, NetworkPort);
+		Server->Hardcore = Hardcore;
 
 		Server->Log << "Listening on port " << NetworkPort << std::endl;
+		if(Hardcore)
+			Server->Log << "Hardcore only is on" << std::endl;
 
 		Thread = new std::thread(RunCommandThread, Server);
 	}

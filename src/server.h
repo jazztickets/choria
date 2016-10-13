@@ -67,6 +67,7 @@ class _Server {
 
 		// Parameters
 		bool IsTesting;
+		bool Hardcore;
 
 		// State
 		bool Done;

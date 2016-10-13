@@ -54,6 +54,7 @@ _PlayState PlayState;
 // Constructor
 _PlayState::_PlayState() :
 	IsTesting(false),
+	IsHardcore(false),
 	FromEditor(false),
 	ConnectNow(false),
 	Stats(nullptr),
@@ -151,6 +152,7 @@ void _PlayState::StartLocalServer() {
 	try {
 		Server = new _Server(Stats, DEFAULT_NETWORKPORT_ALT);
 		Server->IsTesting = IsTesting;
+		Server->Hardcore = IsHardcore;
 		Server->StartThread();
 	}
 	catch(std::exception &Error) {
@@ -189,10 +191,16 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 
 	// Respawn
 	if(!Player->IsAlive()) {
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
-		Network->SendPacket(Packet);
-		return true;
+		if(Action == _Actions::MENU) {
+			HUD->ToggleInGameMenu();
+			return true;
+		}
+		else {
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
+			Network->SendPacket(Packet);
+			return true;
+		}
 	}
 
 	// Battle

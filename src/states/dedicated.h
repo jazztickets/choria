@@ -41,6 +41,7 @@ class _DedicatedState : public _State {
 
 		// State parameters
 		void SetNetworkPort(uint16_t NetworkPort) { this->NetworkPort = NetworkPort; }
+		void SetHardcore(bool Hardcore) { this->Hardcore = Hardcore; }
 
 		// Commands
 		void ShowCommands();
@@ -54,8 +55,9 @@ class _DedicatedState : public _State {
 
 		std::thread *Thread;
 
-		std::string HostAddress;
+		// Parameters
 		uint16_t NetworkPort;
+		bool Hardcore;
 
 };
 

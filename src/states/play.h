@@ -73,6 +73,7 @@ class _PlayState : public _State {
 
 		// Parameters
 		bool IsTesting;
+		bool IsHardcore;
 		bool FromEditor;
 		bool ConnectNow;
 

@@ -49,6 +49,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	std::string HostAddress = Config.LastHost;
 	uint16_t NetworkPort = Config.NetworkPort;
 	bool AudioEnabled = true;
+	bool Hardcore = false;
 	State = &PlayState;
 
 	// Process arguments
@@ -86,6 +87,10 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else if(Token == "-test") {
 			PlayState.IsTesting = true;
 		}
+		else if(Token == "-hardcore") {
+			PlayState.IsHardcore = true;
+			Hardcore = true;
+		}
 		else if(Token == "-noaudio") {
 			AudioEnabled = false;
 		}
@@ -103,6 +108,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
 
 		DedicatedState.SetNetworkPort(NetworkPort);
+		DedicatedState.SetHardcore(Hardcore);
 	}
 	else if(State == &BotState) {
 		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
