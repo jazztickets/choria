@@ -1502,10 +1502,15 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 	// Get monsters
 	std::list<uint32_t> MonsterIDs;
 	bool Boss = false;
-	Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss);
+	double Cooldown = 0.0;
+	Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss, Cooldown);
 
 	// Fight if there are monsters
 	if(MonsterIDs.size()) {
+
+		// Check for cooldown
+		if(BattleEvent.Object->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->BattleCooldown.end())
+			return;
 
 		// Create a new battle instance
 		_Battle *Battle = BattleManager->Create();
@@ -1513,6 +1518,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Stats = Stats;
 		Battle->Server = this;
 		Battle->Boss = Boss;
+		Battle->Cooldown = Cooldown;
+		Battle->Zone = BattleEvent.Zone;
 		Battle->Scripting = Scripting;
 
 		// Add player

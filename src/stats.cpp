@@ -517,12 +517,12 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss) {
+void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) {
 	if(ZoneID == 0)
 		return;
 
 	// Get zone info
-	Database->PrepareQuery("SELECT boss, minspawn, maxspawn FROM zone WHERE id = @zone_id");
+	Database->PrepareQuery("SELECT boss, cooldown, minspawn, maxspawn FROM zone WHERE id = @zone_id");
 	Database->BindInt(1, ZoneID);
 
 	// Get spawn range
@@ -530,6 +530,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 	int MaxSpawn = 0;
 	if(Database->FetchRow()) {
 		Boss = Database->GetInt<int>("boss");
+		Cooldown = Database->GetReal("cooldown");
 		MinSpawn = Database->GetInt<int>("minspawn");
 		MaxSpawn = Database->GetInt<int>("maxspawn");
 	}

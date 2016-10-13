@@ -56,6 +56,8 @@ _Battle::_Battle() :
 	Manager(nullptr),
 	SideCount{0, 0},
 	Boss(false),
+	Zone(0),
+	Cooldown(0.0),
 	Time(0),
 	WaitTimer(0),
 	BattleElement(nullptr) {
@@ -423,6 +425,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighter->TeleportTime = -1.0;
 	Fighter->JoinedBattle = Join;
 	if(Fighter->Server) {
+		Fighter->GenerateNextBattle();
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 		// Send player join packet to current fighters
@@ -655,6 +658,10 @@ void _Battle::ServerEndBattle() {
 			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
 			Fighter->MonsterKills += SideStats[!WinningSide].MonsterCount;
 		}
+
+		// Start cooldown timer
+		if(Fighter->IsAlive() && Cooldown > 0.0 && Zone)
+			Fighter->BattleCooldown[Zone] = Cooldown;
 
 		// Update stats
 		int CurrentLevel = Fighter->Level;

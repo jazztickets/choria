@@ -164,6 +164,7 @@ class _Object : public _ManagerBase {
 		_Scripting *Scripting;
 		_Server *Server;
 		_Peer *Peer;
+		std::unordered_map<uint32_t, double> BattleCooldown;
 		std::list<int> InputStates;
 		int Moved;
 		bool WaitForServer;

@@ -15,23 +15,10 @@ function Script_Lava.Activate(self, Level, Cooldown, Object, Change)
 	return Change
 end
 
-Script_Boss = { SpawnTime = {} }
+Script_Boss = {}
 
 function Script_Boss.Activate(self, Level, Cooldown, Object, Change)
-	LastFightTime = self.SpawnTime[Object.CharacterID]
-	SpawnFight = false
-
-	-- Check last fight time
-	if LastFightTime == nil then
-		SpawnFight = true
-	elseif ServerTime - LastFightTime > Cooldown then
-		SpawnFight = true
-	end
-
-	if SpawnFight == true then
-		Change.Battle = Level
-		self.SpawnTime[Object.CharacterID] = ServerTime
-	end
+	Change.Battle = Level
 
 	return Change
 end

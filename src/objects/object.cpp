@@ -286,6 +286,17 @@ void _Object::Update(double FrameTime) {
 			++Iterator;
 	}
 
+	// Update battle cooldowns
+	for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
+		Iterator->second -= FrameTime;
+
+		// Remove cooldown
+		if(Iterator->second <= 0.0)
+			Iterator = BattleCooldown.erase(Iterator);
+		else
+			++Iterator;
+	}
+
 	// Generic update timer
 	UpdateTimer += FrameTime;
 	if(UpdateTimer >= 1.0) {
@@ -986,7 +997,6 @@ void _Object::GenerateNextBattle() {
 void _Object::StopBattle() {
 	Battle = nullptr;
 	RemoveBattleElement();
-	GenerateNextBattle();
 }
 
 // Add status effect to object

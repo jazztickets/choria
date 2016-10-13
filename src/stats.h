@@ -138,7 +138,7 @@ class _Stats {
 		const _Texture *GetPortraitImage(uint32_t PortraitID);
 
 		// Monsters
-		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss);
+		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown);
 		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, std::list<uint32_t> &ItemDrops);
 
 		// Maps
