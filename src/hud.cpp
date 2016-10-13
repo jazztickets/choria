@@ -1526,7 +1526,21 @@ void _HUD::DrawCharacterStats() {
 	else
 		Buffer << PlayTime / 3600 << "h" << (PlayTime / 60 % 60) << "m";
 
-	Assets.Fonts["hud_small"]->DrawText("Play time", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Play Time", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
+
+	// Play time
+	int64_t BattleTime = (int64_t)Player->BattleTime;
+	if(BattleTime < 60)
+		Buffer << BattleTime << "s";
+	else if(BattleTime < 3600)
+		Buffer << BattleTime / 60 << "m";
+	else
+		Buffer << BattleTime / 3600 << "h" << (BattleTime / 60 % 60) << "m";
+
+	Assets.Fonts["hud_small"]->DrawText("Battle Time", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
@@ -1543,7 +1557,7 @@ void _HUD::DrawCharacterStats() {
 	// Monster kills
 	if(Player->MonsterKills > 0) {
 		Buffer << Player->MonsterKills;
-		Assets.Fonts["hud_small"]->DrawText("Monster kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
@@ -1552,7 +1566,7 @@ void _HUD::DrawCharacterStats() {
 	// Player kills
 	if(Player->PlayerKills > 0) {
 		Buffer << Player->PlayerKills;
-		Assets.Fonts["hud_small"]->DrawText("Player kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;

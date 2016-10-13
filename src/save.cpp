@@ -244,6 +244,7 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 		Player->Gold = Database->GetInt<int>("gold");
 		Player->ActionBar.resize(Database->GetInt<uint32_t>("actionbar_size"));
 		Player->PlayTime = Database->GetInt<int>("playtime");
+		Player->BattleTime = Database->GetInt<int>("battletime");
 		Player->Deaths = Database->GetInt<int>("deaths");
 		Player->MonsterKills = Database->GetInt<int>("monsterkills");
 		Player->PlayerKills = Database->GetInt<int>("playerkills");
@@ -352,6 +353,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 		" experience = @experience,"
 		" gold = @gold,"
 		" playtime = @playtime,"
+		" battletime = @battletime,"
 		" deaths = @deaths,"
 		" monsterkills = @monsterkills,"
 		" playerkills = @playerkills,"
@@ -371,6 +373,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	Database->BindInt(Index++, Player->Experience);
 	Database->BindInt(Index++, Player->Gold);
 	Database->BindReal(Index++, Player->PlayTime);
+	Database->BindReal(Index++, Player->BattleTime);
 	Database->BindInt(Index++, Player->Deaths);
 	Database->BindInt(Index++, Player->MonsterKills);
 	Database->BindInt(Index++, Player->PlayerKills);

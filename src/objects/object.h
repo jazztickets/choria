@@ -222,6 +222,7 @@ class _Object : public _ManagerBase {
 
 		// Player stats
 		double PlayTime;
+		double BattleTime;
 		int Deaths;
 		int MonsterKills;
 		int PlayerKills;

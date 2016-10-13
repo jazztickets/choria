@@ -96,6 +96,7 @@ _Object::_Object() :
 	HitChance(100),
 
 	PlayTime(0.0),
+	BattleTime(0.0),
 	Deaths(0),
 	MonsterKills(0),
 	PlayerKills(0),
@@ -344,6 +345,8 @@ void _Object::Update(double FrameTime) {
 
 	// Update playtime
 	PlayTime += FrameTime;
+	if(Battle)
+		BattleTime += FrameTime;
 
 	// Check events
 	if(Map && CheckEvent)
@@ -649,6 +652,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(Experience);
 	Data.Write<int>(Gold);
 	Data.Write<double>(PlayTime);
+	Data.Write<double>(BattleTime);
 	Data.Write<int>(Deaths);
 	Data.Write<int>(MonsterKills);
 	Data.Write<int>(PlayerKills);
@@ -727,6 +731,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Experience = Data.Read<int>();
 	Gold = Data.Read<int>();
 	PlayTime = Data.Read<double>();
+	BattleTime = Data.Read<double>();
 	Deaths = Data.Read<int>();
 	MonsterKills = Data.Read<int>();
 	PlayerKills = Data.Read<int>();
