@@ -124,6 +124,7 @@ class _HUD {
 		void RemoveStatChanges(_Object *Owner);
 		void AddStatChange(_StatChange &StatChange);
 		void ClearBattleStatChanges();
+		void UpdateLabels();
 
 		// Button bar
 		void ToggleTeleport();

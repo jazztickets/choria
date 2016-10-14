@@ -568,14 +568,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Assets.Elements["element_hud"]->Render();
 		DrawActionBar();
 
-		// Set hud values
-		Buffer << "Level " << Player->Level;
-		Assets.Labels["label_hud_level"]->Text = Buffer.str();
-		Buffer.str("");
-
-		Buffer << Player->Gold << " Gold";
-		GoldElement->Text = Buffer.str();
-		Buffer.str("");
+		// Update label text
+		UpdateLabels();
 
 		Map->GetClockAsString(Buffer);
 		Assets.Labels["label_hud_clock"]->Text = Buffer.str();
@@ -2057,9 +2051,6 @@ void _HUD::SetPlayer(_Object *Player) {
 
 	Tooltip.Reset();
 	Cursor.Reset();
-
-	if(Player)
-		Assets.Labels["label_hud_name"]->Text = Player->Name;
 }
 
 // Resize action bar
@@ -2167,4 +2158,28 @@ void _HUD::ClearBattleStatChanges() {
 		if(StatChange.Battle)
 			StatChange.Time = StatChange.Timeout;
 	}
+}
+
+// Update hud labels
+void _HUD::UpdateLabels() {
+	if(!Player)
+		return;
+
+	std::stringstream Buffer;
+
+	// Update name
+	Assets.Labels["label_hud_name"]->Text = Player->Name;
+
+	// Update level
+	Buffer << "Level " << Player->Level;
+	Assets.Labels["label_hud_level"]->Text = Buffer.str();
+	Buffer.str("");
+
+	// Update hardcore status
+	Assets.Labels["label_hud_hardcore"]->SetVisible(Player->Hardcore);
+
+	// Update gold
+	Buffer << Player->Gold << " Gold";
+	GoldElement->Text = Buffer.str();
+	Buffer.str("");
 }

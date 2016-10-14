@@ -622,7 +622,7 @@ void _PlayState::HandleObjectStats(_Buffer &Data) {
 
 	Player->UnserializeStats(Data);
 
-	Assets.Labels["label_hud_hardcore"]->SetVisible(Player->Hardcore);
+	HUD->UpdateLabels();
 	HUD->SetActionBarSize(Player->ActionBar.size());
 }
 
