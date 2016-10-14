@@ -421,6 +421,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			// Get ending stats
 			Player->PlayerKills = Data.Read<int>();
 			Player->MonsterKills = Data.Read<int>();
+			Player->GoldLost = Data.Read<int>();
 			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
 			StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
 			uint8_t ItemCount = Data.Read<uint8_t>();

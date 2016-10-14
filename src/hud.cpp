@@ -1531,7 +1531,7 @@ void _HUD::DrawCharacterStats() {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
-	// Play time
+	// Battle time
 	int64_t BattleTime = (int64_t)Player->BattleTime;
 	if(BattleTime < 60)
 		Buffer << BattleTime << "s";
@@ -1544,15 +1544,6 @@ void _HUD::DrawCharacterStats() {
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
-
-	// Deaths
-	if(Player->Deaths > 0) {
-		Buffer << Player->Deaths;
-		Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
 
 	// Monster kills
 	if(Player->MonsterKills > 0) {
@@ -1571,6 +1562,25 @@ void _HUD::DrawCharacterStats() {
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
+
+	// Deaths
+	if(Player->Deaths > 0) {
+		Buffer << Player->Deaths;
+		Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Gold lost
+	if(Player->GoldLost > 0) {
+		Buffer << Player->GoldLost;
+		Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 }
 
 // Draws the skill page

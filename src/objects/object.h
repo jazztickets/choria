@@ -229,6 +229,7 @@ class _Object : public _ManagerBase {
 		int PlayerKills;
 		int Bounty;
 		int Gold;
+		int GoldLost;
 		int Experience;
 		int ExperienceNeeded;
 		int ExperienceNextLevel;

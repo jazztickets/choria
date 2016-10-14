@@ -103,6 +103,7 @@ _Object::_Object() :
 	PlayerKills(0),
 	Bounty(0),
 	Gold(0),
+	GoldLost(0),
 	Experience(0),
 	ExperienceNeeded(0),
 	ExperienceNextLevel(0),
@@ -652,6 +653,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(MaxMana);
 	Data.Write<int>(Experience);
 	Data.Write<int>(Gold);
+	Data.Write<int>(GoldLost);
 	Data.Write<double>(PlayTime);
 	Data.Write<double>(BattleTime);
 	Data.Write<int>(Deaths);
@@ -731,6 +733,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	BaseMaxMana = MaxMana = Data.Read<int>();
 	Experience = Data.Read<int>();
 	Gold = Data.Read<int>();
+	GoldLost = Data.Read<int>();
 	PlayTime = Data.Read<double>();
 	BattleTime = Data.Read<double>();
 	Deaths = Data.Read<int>();
@@ -1080,12 +1083,14 @@ void _Object::UpdateExperience(int Value) {
 void _Object::ApplyDeathPenalty() {
 
 	// Notify player
-	int GoldLoss = (int)(Gold * PLAYER_DEATH_GOLD_PENALTY);
+	int GoldPenalty = (int)(Gold * PLAYER_DEATH_GOLD_PENALTY);
 	if(Server && Peer)
-		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldLoss) + " gold"), COLOR_RED);
+		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), COLOR_RED);
 
 	Deaths++;
-	UpdateGold(-GoldLoss);
+	UpdateGold(-GoldPenalty);
+
+	GoldLost += GoldPenalty;
 }
 
 // Update counts on action bar

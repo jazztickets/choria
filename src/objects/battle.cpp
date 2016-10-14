@@ -682,6 +682,7 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
 		Packet.Write<int>(Fighter->PlayerKills);
 		Packet.Write<int>(Fighter->MonsterKills);
+		Packet.Write<int>(Fighter->GoldLost);
 		Packet.Write<int>(ExperienceEarned);
 		Packet.Write<int>(GoldEarned);
 

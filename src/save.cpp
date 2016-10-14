@@ -245,6 +245,7 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 		Player->Mana = Database->GetInt<int>("mana");
 		Player->Experience = Database->GetInt<int>("experience");
 		Player->Gold = Database->GetInt<int>("gold");
+		Player->GoldLost = Database->GetInt<int>("goldlost");
 		Player->ActionBar.resize(Database->GetInt<uint32_t>("actionbar_size"));
 		Player->PlayTime = Database->GetInt<int>("playtime");
 		Player->BattleTime = Database->GetInt<int>("battletime");
@@ -355,6 +356,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 		" mana = @mana,"
 		" experience = @experience,"
 		" gold = @gold,"
+		" goldlost = @goldlost,"
 		" playtime = @playtime,"
 		" battletime = @battletime,"
 		" deaths = @deaths,"
@@ -375,6 +377,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	Database->BindInt(Index++, Player->Mana);
 	Database->BindInt(Index++, Player->Experience);
 	Database->BindInt(Index++, Player->Gold);
+	Database->BindInt(Index++, Player->GoldLost);
 	Database->BindReal(Index++, Player->PlayTime);
 	Database->BindReal(Index++, Player->BattleTime);
 	Database->BindInt(Index++, Player->Deaths);
@@ -547,7 +550,7 @@ void _Save::CreateDefaultDatabase() {
 				"	mana INTEGER DEFAULT(1),\n"
 				"	experience INTEGER DEFAULT(0),\n"
 				"	gold INTEGER DEFAULT(0),\n"
-				"	goldloss INTEGER DEFAULT(0),\n"
+				"	goldlost INTEGER DEFAULT(0),\n"
 				"	playtime REAL DEFAULT(0),\n"
 				"	battletime REAL DEFAULT(0),\n"
 				"	deaths INTEGER DEFAULT(0),\n"
