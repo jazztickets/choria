@@ -661,6 +661,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(PlayerKills);
 	Data.Write<int>(Bounty);
 	Data.Write<int>(Invisible);
+	Data.Write<int>(Hardcore);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -741,6 +742,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	PlayerKills = Data.Read<int>();
 	Bounty = Data.Read<int>();
 	Invisible = Data.Read<int>();
+	Hardcore = Data.Read<int>();
 
 	ModelTexture = Stats->Models[ModelID].Texture;
 
