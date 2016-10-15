@@ -102,6 +102,7 @@ const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
 //     Game
 const  int          GAME_MAX_RESISTANCE             =  75;
 const  double       GAME_DIFFICULTY_PER_PLAYER      =  0.1;
+const  float        GAME_UPGRADE_SCALE_COST         =  1.5f;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory
