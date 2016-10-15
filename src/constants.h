@@ -108,7 +108,7 @@ const  int          ACTIONBAR_MAX_SIZE              =  8;
 const  int          INVENTORY_TOOLTIP_OFFSET        =  20;
 const  int          INVENTORY_TOOLTIP_PADDING       =  10;
 const  float        INVENTORY_TOOLTIP_WIDTH         =  250;
-const  float        INVENTORY_TOOLTIP_HEIGHT        =  300;
+const  float        INVENTORY_TOOLTIP_HEIGHT        =  340;
 const  int          INVENTORY_MAX_STACK             =  255;
 //     Menu
 const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;

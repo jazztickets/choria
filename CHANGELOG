@@ -2,6 +2,7 @@ choria 0.9.0 -
 - Replaced irrlicht with a custom SDL2/OpenGL based engine
 - Resolution can now be changed in the config file
 - Reworked entire UI and all artwork
+- Added sounds/music
 - Added Lua for scripting
 - Added starting builds to create character screen
 - Added alt-enter to toggle fullscreen/windowed mode
@@ -11,6 +12,7 @@ choria 0.9.0 -
 - Reworked skill system and all skills
 - Reworked battle system to use individual timers instead of turns
 - Battles can now support up to 8 fighters on each side
+- Added hardcore mode
 - Removed battle results screen
 - Added animations to stat changes and action results
 - Added status effects

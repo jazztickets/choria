@@ -1,3 +1,5 @@
+-- MONSTER SKILLS --
+
 -- Monster attack --
 
 Skill_MonsterAttack = Base_Attack:New()
@@ -182,11 +184,13 @@ function Skill_DemonAttack.PlaySound(self, Level)
 	Audio.Play("demon" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
--- Basic attack --
+-- PLAYER SKILLS --
+
+-- Attack --
 
 Skill_Attack = Base_Attack:New()
 Skill_Attack.BaseChance = 4
-Skill_Attack.ChancePerLevel = 1
+Skill_Attack.ChancePerLevel = 2
 
 function Skill_Attack.GetChance(self, Level)
 
@@ -217,7 +221,7 @@ end
 -- Fury --
 
 Skill_Fury = Base_Attack:New()
-Skill_Fury.StaminaPerLevel = 0.02
+Skill_Fury.StaminaPerLevel = 0.04
 Skill_Fury.BaseStamina = 0.25
 
 function Skill_Fury.GetStaminaGain(self, Level)
@@ -246,7 +250,7 @@ Skill_Gash = Base_Attack:New()
 Skill_Gash.BaseChance = 35
 Skill_Gash.ChancePerLevel = 0
 Skill_Gash.Duration = 5
-Skill_Gash.IncreasePerLevel = 3
+Skill_Gash.IncreasePerLevel = 6
 Skill_Gash.BleedingLevel = 10 - Skill_Gash.IncreasePerLevel
 
 function Skill_Gash.GetChance(self, Level)
@@ -280,7 +284,7 @@ end
 
 Skill_ShieldBash = Base_Attack:New()
 Skill_ShieldBash.BaseChance = 23
-Skill_ShieldBash.ChancePerLevel = 2
+Skill_ShieldBash.ChancePerLevel = 4
 Skill_ShieldBash.Duration = 2
 
 function Skill_ShieldBash.GetInfo(self, Level)
@@ -324,8 +328,8 @@ end
 
 Skill_Whirlwind = Base_Attack:New()
 Skill_Whirlwind.DamageBase = 20
-Skill_Whirlwind.DamagePerLevel = 1
-Skill_Whirlwind.SlowDurationPerLevel = 1.0 / 3.0
+Skill_Whirlwind.DamagePerLevel = 2
+Skill_Whirlwind.SlowDurationPerLevel = 2.0 / 3.0
 Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
 
 function Skill_Whirlwind.CanUse(self, Level, Object)
@@ -369,8 +373,8 @@ end
 
 Skill_Rejuvenation = Base_Spell:New()
 Skill_Rejuvenation.Duration = 5
-Skill_Rejuvenation.CostPerLevel = 5
-Skill_Rejuvenation.ManaCostBase = 30 - Skill_Rejuvenation.CostPerLevel
+Skill_Rejuvenation.CostPerLevel = 10
+Skill_Rejuvenation.ManaCostBase = 20 - Skill_Rejuvenation.CostPerLevel
 
 function Skill_Rejuvenation.GetLevel(self, Level)
 	return 10 * (Level + 2)
@@ -402,8 +406,8 @@ end
 
 Skill_Heal = Base_Spell:New()
 Skill_Heal.HealBase = 100
-Skill_Heal.HealPerLevel = 30
-Skill_Heal.CostPerLevel = 10
+Skill_Heal.HealPerLevel = 60
+Skill_Heal.CostPerLevel = 20
 Skill_Heal.ManaCostBase = 40 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)
@@ -425,9 +429,9 @@ end
 -- Resurrect --
 
 Skill_Resurrect = Base_Spell:New()
-Skill_Resurrect.HealBase = -20
-Skill_Resurrect.HealPerLevel = 30
-Skill_Resurrect.CostPerLevel = 20
+Skill_Resurrect.HealBase = -50
+Skill_Resurrect.HealPerLevel = 60
+Skill_Resurrect.CostPerLevel = 40
 Skill_Resurrect.ManaCostBase = 200 - Skill_Resurrect.CostPerLevel
 
 function Skill_Resurrect.GetInfo(self, Level)
@@ -450,8 +454,8 @@ end
 
 Skill_Spark = Base_Spell:New()
 Skill_Spark.DamageBase = 10
-Skill_Spark.Multiplier = 20
-Skill_Spark.CostPerLevel = 2
+Skill_Spark.Multiplier = 40
+Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 
 function Skill_Spark.GetInfo(self, Level)
@@ -466,9 +470,9 @@ end
 
 Skill_Icicle = Base_Spell:New()
 Skill_Icicle.DamageBase = 20
-Skill_Icicle.Multiplier = 15
-Skill_Icicle.CostPerLevel = 2
-Skill_Icicle.Duration = 3
+Skill_Icicle.Multiplier = 30
+Skill_Icicle.CostPerLevel = 4
+Skill_Icicle.Duration = 5
 Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
 
 function Skill_Icicle.GetInfo(self, Level)
@@ -491,8 +495,8 @@ end
 
 Skill_FireBlast = Base_Spell:New()
 Skill_FireBlast.DamageBase = 50
-Skill_FireBlast.Multiplier = 20
-Skill_FireBlast.CostPerLevel = 5
+Skill_FireBlast.Multiplier = 40
+Skill_FireBlast.CostPerLevel = 10
 Skill_FireBlast.ManaCostBase = 60 - Skill_FireBlast.CostPerLevel
 
 function Skill_FireBlast.GetInfo(self, Level)
@@ -507,8 +511,8 @@ end
 
 Skill_Ignite = Base_Spell:New()
 Skill_Ignite.BurnLevel = 10
-Skill_Ignite.BurnLevelPerLevel = 2
-Skill_Ignite.CostPerLevel = 5
+Skill_Ignite.BurnLevelPerLevel = 4
+Skill_Ignite.CostPerLevel = 10
 Skill_Ignite.DurationPerLevel = 0
 Skill_Ignite.Duration = 6 - Skill_Ignite.DurationPerLevel
 Skill_Ignite.ManaCostBase = 30 - Skill_Ignite.CostPerLevel
@@ -544,12 +548,12 @@ end
 -- Toughness --
 
 Skill_Toughness = {}
-Skill_Toughness.HealthPerLevel = 40
-Skill_Toughness.Armor = 2
+Skill_Toughness.HealthPerLevel = 60
+Skill_Toughness.Armor = 1
 
 function Skill_Toughness.GetArmor(self, Level)
 
-	return self.Armor * math.floor(Level / 4)
+	return self.Armor * math.floor(Level / 1)
 end
 
 function Skill_Toughness.GetInfo(self, Level)
@@ -571,12 +575,12 @@ end
 -- Arcane Mastery --
 
 Skill_ArcaneMastery = {}
-Skill_ArcaneMastery.PerLevel = 30
+Skill_ArcaneMastery.PerLevel = 40
 Skill_ArcaneMastery.ManaRegen = 1
 
 function Skill_ArcaneMastery.GetManaRegen(self, Level)
 
-	return self.ManaRegen * math.floor(Level / 2)
+	return self.ManaRegen * math.floor(Level / 1)
 end
 
 function Skill_ArcaneMastery.GetInfo(self, Level)
@@ -600,7 +604,7 @@ end
 Skill_Evasion = {}
 Skill_Evasion.ChancePerLevel = 1
 Skill_Evasion.BaseChance = 10
-Skill_Evasion.BattleSpeed = 5
+Skill_Evasion.BattleSpeed = 1
 
 function Skill_Evasion.GetChance(self, Level)
 
@@ -609,7 +613,7 @@ end
 
 function Skill_Evasion.GetBattleSpeed(self, Level)
 
-	return math.floor(self.BattleSpeed * math.floor(Level / 5))
+	return math.floor(self.BattleSpeed * math.floor(Level / 1))
 end
 
 function Skill_Evasion.GetInfo(self, Level)
@@ -632,7 +636,7 @@ end
 
 Skill_Flee = {}
 Skill_Flee.BaseChance = 22
-Skill_Flee.ChancePerLevel = 3
+Skill_Flee.ChancePerLevel = 6
 Skill_Flee.Duration = 10
 
 function Skill_Flee.GetChance(self, Level)
@@ -676,7 +680,7 @@ end
 
 Skill_Pickpocket = {}
 Skill_Pickpocket.BaseChance = 23
-Skill_Pickpocket.ChancePerLevel = 2
+Skill_Pickpocket.ChancePerLevel = 4
 
 function Skill_Pickpocket.GetChance(self, Level)
 
@@ -715,7 +719,7 @@ Skill_Parry = {}
 Skill_Parry.StaminaGain = Buff_Parry.StaminaGain
 Skill_Parry.DamageReduction = Buff_Parry.DamageReduction
 Skill_Parry.Duration = 0.5
-Skill_Parry.DurationPerLevel = 0.1
+Skill_Parry.DurationPerLevel = 0.2
 
 function Skill_Parry.GetDuration(self, Level)
 
@@ -740,9 +744,9 @@ end
 
 Skill_Defend = {}
 Skill_Defend.Armor = 10
-Skill_Defend.ArmorPerLevel = 1
+Skill_Defend.ArmorPerLevel = 2
 Skill_Defend.Duration = 3.4
-Skill_Defend.DurationPerLevel = 0.1
+Skill_Defend.DurationPerLevel = 0.2
 
 function Skill_Defend.GetArmor(self, Level)
 
@@ -777,7 +781,7 @@ end
 
 Skill_Backstab = Base_Attack:New()
 Skill_Backstab.BaseDamage = 0.5
-Skill_Backstab.DamagePerLevel = 0.1
+Skill_Backstab.DamagePerLevel = 0.2
 Skill_Backstab.DamageMultiplier = 1.6 - Skill_Backstab.DamagePerLevel
 
 function Skill_Backstab.GetDamage(self, Level)
@@ -819,15 +823,15 @@ end
 -- Demonic Conjuring --
 
 Skill_DemonicConjuring = Base_Spell:New()
-Skill_DemonicConjuring.CostPerLevel = 10
-Skill_DemonicConjuring.ManaCostBase = 25 - Skill_DemonicConjuring.CostPerLevel
+Skill_DemonicConjuring.CostPerLevel = 20
+Skill_DemonicConjuring.ManaCostBase = 20 - Skill_DemonicConjuring.CostPerLevel
 Skill_DemonicConjuring.BaseHealth = 100
 Skill_DemonicConjuring.BaseMinDamage = 10
 Skill_DemonicConjuring.BaseMaxDamage = 20
 Skill_DemonicConjuring.BaseArmor = 1
-Skill_DemonicConjuring.HealthPerLevel = 20
-Skill_DemonicConjuring.DamagePerLevel = 5
-Skill_DemonicConjuring.ArmorPerLevel = 0.5
+Skill_DemonicConjuring.HealthPerLevel = 40
+Skill_DemonicConjuring.DamagePerLevel = 10
+Skill_DemonicConjuring.ArmorPerLevel = 1
 Skill_DemonicConjuring.Monster = Monsters[23]
 
 function Skill_DemonicConjuring.GetHealth(self, Level)
@@ -866,11 +870,11 @@ end
 -- Enfeeble --
 
 Skill_Enfeeble = Base_Spell:New()
-Skill_Enfeeble.PercentPerLevel = 2 
+Skill_Enfeeble.PercentPerLevel = 4 
 Skill_Enfeeble.BasePercent = 25 - Skill_Enfeeble.PercentPerLevel
-Skill_Enfeeble.DurationPerLevel = 0.2
+Skill_Enfeeble.DurationPerLevel = 0.4
 Skill_Enfeeble.Duration = 5 - Skill_Enfeeble.DurationPerLevel
-Skill_Enfeeble.CostPerLevel = 5
+Skill_Enfeeble.CostPerLevel = 10
 Skill_Enfeeble.ManaCostBase = 10 - Skill_Enfeeble.CostPerLevel
 
 function Skill_Enfeeble.GetPercent(self, Level)
@@ -900,8 +904,8 @@ end
 -- Cleave --
 
 Skill_Cleave = Base_Attack:New()
-Skill_Cleave.DamageBase = 31
-Skill_Cleave.DamagePerLevel = 1
+Skill_Cleave.DamageBase = 32
+Skill_Cleave.DamagePerLevel = 2
 
 function Skill_Cleave.GetDamage(self, Level)
 	return math.floor(Skill_Cleave.DamageBase + Skill_Cleave.DamagePerLevel * (Level - 1))
