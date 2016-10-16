@@ -47,10 +47,6 @@ _Menu Menu;
 
 const std::string InputBoxPrefix = "button_options_input_";
 const std::string CharacterButtonPrefix = "button_characters_slot";
-const std::string CharacterNamePrefix = "label_menu_characters_slot_name";
-const std::string CharacterLevelPrefix = "label_menu_characters_slot_level";
-const std::string CharacterHardcorePrefix = "label_menu_characters_slot_hardcore";
-const std::string CharacterImagePrefix = "image_menu_characters_slot";
 const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
 
@@ -96,7 +92,6 @@ void _Menu::InitTitle(bool Disconnect) {
 // Init single player
 void _Menu::InitCharacters() {
 	ChangeLayout("element_menu_characters");
-	Assets.Elements["element_menu_characters"]->SetClickable(true, 2);
 
 	// Set label
 	_Label *HardcoreLabel = Assets.Labels["label_menu_characters_hardcore"];
@@ -128,7 +123,7 @@ void _Menu::InitNewCharacter() {
 	FocusedElement = Name;
 	Name->ResetCursor();
 
-	Assets.Elements["element_menu_characters"]->SetClickable(false, 2);
+	Assets.Elements["element_menu_character_slots"]->SetClickable(false);
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
 	CurrentLayout->SetVisible(true);
@@ -238,9 +233,9 @@ size_t _Menu::GetSelectedCharacter() {
 	size_t Index = 0;
 
 	// Check for selected character
-	_Element *CharactersElement = Assets.Elements["element_menu_characters"];
+	_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 	for(auto &Element : CharactersElement->Children) {
-		if(Element->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
+		if(Element->Identifier == CharacterButtonPrefix) {
 			_Button *Button = (_Button *)Element;
 			if(Button->Checked)
 				return Index;
@@ -381,6 +376,114 @@ void _Menu::RequestCharacterList() {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_REQUEST);
 	PlayState.Network->SendPacket(Packet);
+}
+
+// Load character slots
+void _Menu::LoadCharacterSlots() {
+	glm::vec2 Offset(0, 0);
+	glm::vec2 Size(128, 128);
+	glm::vec2 Padding(42, 82);
+
+	// Clear old children
+	ClearCharacterSlots();
+
+	// Iterate over slots
+	_Element *CharacterSlotsElement = Assets.Elements["element_menu_character_slots"];
+	for(size_t i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
+
+		// Add button
+		_Button *Button = new _Button();
+		Button->Identifier = CharacterButtonPrefix;
+		Button->Parent = CharacterSlotsElement;
+		Button->Offset = Offset;
+		Button->Size = Size;
+		Button->Style = Assets.Styles["style_menu_button"];
+		Button->DisabledStyle = Assets.Styles["style_menu_button_disabled"];
+		Button->HoverStyle = Assets.Styles["style_menu_button_hover"];
+		Button->UserData = (void *)(intptr_t)i;
+		Button->UserCreated = true;
+		Button->Checked = i == PreSelectedSlot ? true : false;
+		CharacterSlotsElement->Children.push_back(Button);
+
+		// Add image for portrait
+		_Image *Image = new _Image();
+		Image->Parent = Button;
+		Image->Alignment = CENTER_MIDDLE;
+		Image->Offset = glm::vec2(0, 0);
+		Image->UserCreated = true;
+		Button->Children.push_back(Image);
+
+		// Add name label
+		_Label *NameLabel = new _Label();
+		NameLabel->Parent = Button;
+		NameLabel->Offset = glm::vec2(0, 150);
+		NameLabel->Alignment = CENTER_BASELINE;
+		NameLabel->Font = Assets.Fonts["hud_medium"];
+		NameLabel->UserCreated = true;
+		Button->Children.push_back(NameLabel);
+
+		// Add level label
+		_Label *LevelLabel = new _Label();
+		LevelLabel->Parent = Button;
+		LevelLabel->Offset = glm::vec2(0, 170);
+		LevelLabel->Alignment = CENTER_BASELINE;
+		LevelLabel->Font = Assets.Fonts["hud_small"];
+		LevelLabel->UserCreated = true;
+		Button->Children.push_back(LevelLabel);
+
+		// Add hardcore label
+		_Label *HardcoreLabel = new _Label();
+		HardcoreLabel->Parent = Button;
+		HardcoreLabel->Offset = glm::vec2(0, 187);
+		HardcoreLabel->Alignment = CENTER_BASELINE;
+		HardcoreLabel->Color = COLOR_RED;
+		HardcoreLabel->Font = Assets.Fonts["hud_small"];
+		HardcoreLabel->UserCreated = true;
+		Button->Children.push_back(HardcoreLabel);
+
+		// Reset state
+		CharacterSlots[i].Button = Button;
+		CharacterSlots[i].Name = NameLabel;
+		CharacterSlots[i].Level = LevelLabel;
+		CharacterSlots[i].Hardcore = HardcoreLabel;
+		CharacterSlots[i].Image = Image;
+		CharacterSlots[i].Name->Text = "Empty Slot";
+		CharacterSlots[i].Level->Text = "";
+		CharacterSlots[i].Hardcore->Text = "";
+		CharacterSlots[i].Image->Texture = nullptr;
+		CharacterSlots[i].Image->Clickable = false;
+		CharacterSlots[i].Used = false;
+		CharacterSlots[i].CanPlay = true;
+
+		// Update position
+		Offset.x += Size.x + Padding.x;
+		if(Offset.x > CharacterSlotsElement->Size.x - Size.x) {
+			Offset.y += Size.y + Padding.y;
+			Offset.x = 0;
+		}
+	}
+
+	CharacterSlotsElement->CalculateBounds();
+	CharacterSlotsElement->SetVisible(true);
+}
+
+// Clear character slots
+void _Menu::ClearCharacterSlots() {
+	std::list<_Element *> &Children = Assets.Elements["element_menu_character_slots"]->Children;
+	for(auto &Child : Children) {
+		if(Child->UserCreated) {
+
+			// Delete children
+			for(auto &SubChild : Child->Children) {
+				if(SubChild->UserCreated)
+					delete SubChild;
+			}
+
+			delete Child;
+		}
+	}
+
+	Children.clear();
 }
 
 // Load portraits
@@ -560,7 +663,7 @@ void _Menu::ValidateCreateCharacter() {
 	}
 }
 
-// Validate characters ui elements
+// Update ui button states
 void _Menu::UpdateCharacterButtons() {
 	_Button *DeleteButton = Assets.Buttons["button_characters_delete"];
 	_Button *PlayButton = Assets.Buttons["button_characters_play"];
@@ -577,6 +680,7 @@ void _Menu::UpdateCharacterButtons() {
 
 // Shutdown
 void _Menu::Close() {
+	ClearCharacterSlots();
 	ClearPortraits();
 	ClearBuilds();
 }
@@ -735,12 +839,12 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 						PlayState.Network->Disconnect();
 						PlayClickSound();
 					}
-					else if(Clicked->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
+					else if(Clicked->Identifier == CharacterButtonPrefix) {
 
 						// Deselect slots
-						_Element *CharactersElement = Assets.Elements["element_menu_characters"];
+						_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 						for(auto &Element : CharactersElement->Children) {
-							if(Element->Identifier.substr(0, CharacterButtonPrefix.size()) == CharacterButtonPrefix) {
+							if(Element->Identifier == CharacterButtonPrefix) {
 								_Button *Button = (_Button *)Element;
 								Button->Checked = false;
 							}
@@ -938,59 +1042,15 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 		} break;
 		case PacketType::CHARACTERS_LIST: {
 
+			// Reset ui state
+			InitCharacters();
+
 			// Get header
 			HardcoreServer = Buffer.Read<uint8_t>();
 			uint8_t CharacterCount = Buffer.Read<uint8_t>();
 
-			// Reset character slots
-			for(size_t i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
-				std::stringstream Buffer;
-
-				// Set slot name
-				Buffer << CharacterNamePrefix << i;
-				CharacterSlots[i].Name = Assets.Labels[Buffer.str()];
-				if(!CharacterSlots[i].Name)
-					throw std::runtime_error("Can't find label: " + Buffer.str());
-				Buffer.str("");
-
-				// Set slot level
-				Buffer << CharacterLevelPrefix << i;
-				CharacterSlots[i].Level = Assets.Labels[Buffer.str()];
-				if(!CharacterSlots[i].Level)
-					throw std::runtime_error("Can't find label: " + Buffer.str());
-				Buffer.str("");
-
-				// Set slot hardcore
-				Buffer << CharacterHardcorePrefix << i;
-				CharacterSlots[i].Hardcore = Assets.Labels[Buffer.str()];
-				if(!CharacterSlots[i].Hardcore)
-					throw std::runtime_error("Can't find label: " + Buffer.str());
-				Buffer.str("");
-
-				// Set image
-				Buffer << CharacterImagePrefix << i;
-				CharacterSlots[i].Image = Assets.Images[Buffer.str()];
-				if(!CharacterSlots[i].Image)
-					throw std::runtime_error("Can't find image: " + Buffer.str());
-				Buffer.str("");
-
-				// Assign button
-				Buffer << CharacterButtonPrefix << i;
-				CharacterSlots[i].Button = Assets.Buttons[Buffer.str()];
-				if(i == PreSelectedSlot)
-					CharacterSlots[i].Button->Checked = true;
-				else
-					CharacterSlots[i].Button->Checked = false;
-
-				// Set state
-				CharacterSlots[i].Name->Text = "Empty Slot";
-				CharacterSlots[i].Level->Text = "";
-				CharacterSlots[i].Hardcore->Text = "";
-				CharacterSlots[i].Image->Texture = nullptr;
-				CharacterSlots[i].Image->Clickable = false;
-				CharacterSlots[i].Used = false;
-				CharacterSlots[i].CanPlay = true;
-			}
+			// Load UI elements
+			LoadCharacterSlots();
 
 			// Get characters
 			for(size_t i = 0; i < CharacterCount; i++) {
@@ -1001,10 +1061,13 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				int Health = Buffer.Read<int>();
 				int Experience = Buffer.Read<int>();
 
+				// Set level
 				std::stringstream Buffer;
 				Buffer << "Level " << PlayState.Stats->FindLevel(Experience)->Level;
 				CharacterSlots[Slot].Level->Text = Buffer.str();
 				CharacterSlots[Slot].Used = true;
+
+				// Set hardcore status
 				if(Hardcore) {
 					if(Health <= 0) {
 						CharacterSlots[Slot].Hardcore->Text = "Dead";
@@ -1019,16 +1082,18 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				if(HardcoreServer && !Hardcore)
 				   CharacterSlots[Slot].CanPlay = false;
 
+				// Set portrait
 				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);
+				if(CharacterSlots[Slot].Image->Texture)
+					CharacterSlots[Slot].Image->Size = CharacterSlots[Slot].Image->Texture->Size;
+
+				CharacterSlots[Slot].Image->CalculateBounds();
 			}
 
 			PreSelectedSlot = (size_t)-1;
 
 			// Disable ui buttons
 			UpdateCharacterButtons();
-
-			// Set state
-			InitCharacters();
 
 		} break;
 		case PacketType::CREATECHARACTER_SUCCESS: {

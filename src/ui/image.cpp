@@ -21,7 +21,7 @@
 #include <assets.h>
 
 // Constructor
-_Image::_Image() {
+_Image::_Image() : Color(1.0f, 1.0f, 1.0f, 1.0f), Stretch(false) {
 	Clickable = false;
 }
 

@@ -21,7 +21,7 @@
 #include <font.h>
 
 // Constructor
-_Label::_Label() {
+_Label::_Label() : Color(1.0f, 1.0f, 1.0f, 1.0f) {
 }
 
 // Destructor

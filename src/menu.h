@@ -109,8 +109,6 @@ class _Menu {
 
 		uint32_t GetSelectedIconID(_Element *ParentElement);
 		size_t GetSelectedCharacter();
-		void LoadPortraitButtons();
-		void LoadBuildButtons();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();
 		void CreateCharacter(bool Hardcore=false);
@@ -122,6 +120,10 @@ class _Menu {
 		void SetAccountMessage(const std::string &Message);
 		void FocusNextElement();
 
+		void LoadCharacterSlots();
+		void LoadPortraitButtons();
+		void LoadBuildButtons();
+		void ClearCharacterSlots();
 		void ClearPortraits();
 		void ClearBuilds();
 
