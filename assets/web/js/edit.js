@@ -2,6 +2,7 @@ var hot = null;
 var last_search = "";
 var container = null;
 var data = null;
+var column_names = null;
 
 $(document).ready(function() {
 	$(document).ajaxError(function() {
@@ -32,6 +33,7 @@ $(document).ready(function() {
 		// Build dropdown data
 		var columns = [];
 		transform_data(data, columns);
+		calculate_all_sum(data);
 
 		// Create spreadsheet
 		hot = new Handsontable(container, {
@@ -87,9 +89,24 @@ $(document).ready(function() {
 			},
 			afterChange: function(changes, source) {
 				update_buttons(0);
+				if(source != "external" && source != "loadData" && changes) {
+
+					// Get unique columns to update
+					column_updates = [];
+					for(change in changes)
+						column_updates[changes[change][1]] = 1;
+
+					// Get data
+					sum_data = hot ? hot.getData() : data;
+
+					// Update columns
+					for(col in column_updates)
+						calculate_sum(sum_data, changes[change][1], true);
+				}
 			},
 			afterSelection: function(r, c, r2, c2) {
-				$('#delete_id').val(hot.getDataAtCell(r, 0));
+				if(r != data.length-1)
+					$('#delete_id').val(hot.getDataAtCell(r, 0));
 			},
 		});
 
@@ -117,18 +134,48 @@ $(document).ready(function() {
 	$('#search_field').keyup({ force: 0 }, search);
 });
 
-// Highlight renderer for search
-function found(instance, td, row, col, prop, value, cellProperties) {
-	Handsontable.TextCell.renderer.apply(this, arguments);
-	td.style.background = "#595B78";
-}
-
 // Function to render related table links
 function link_renderer(instance, td, row, col, prop, value, cellProperties) {
 	td.innerHTML = value;
 	td.className = 'empty';
 
 	return td;
+}
+
+// Calculate sum for each column
+function calculate_all_sum(data) {
+	for(col in column_names)
+		calculate_sum(data, col);
+}
+
+// Calculate sum for each column
+function calculate_sum(data, col, load=false) {
+	if(col == 0 || column_names[col] == "" || references.hasOwnProperty(column_names[col]))
+		return;
+
+	column_total = 0;
+	for(var row in data) {
+		if(row == data.length-1)
+			continue;
+
+		if(!isNumeric(data[row][col])) {
+			column_total = 0;
+			break;
+		}
+
+		column_total += Number(data[row][col]);
+	}
+
+	data[data.length-1][col] = column_total;
+	if(hot) {
+		if(load)
+			hot.loadData(data);
+	}
+}
+
+// Function to determine if value is a number
+function isNumeric(value) {
+	return !isNaN(parseFloat(value)) && isFinite(value);
 }
 
 // Change add row/delete button state
@@ -167,7 +214,10 @@ function transform_data(data, columns) {
 			// Change data
 			for(var data_row in data) {
 				var id = data[data_row][i];
-				data[data_row][i] = reference[id] + " (" + id + ")";
+
+				// Skip last row
+				if(data_row != data.length-1)
+					data[data_row][i] = reference[id] + " (" + id + ")";
 			}
 		}
 		else
@@ -194,9 +244,10 @@ function transform_data(data, columns) {
 // Reload data
 function reload() {
 	$.getJSON(data_url, function(response) {
-		var data = response['data'];
+		data = response['data'];
 		var columns = [];
 		transform_data(data, columns)
+		calculate_all_sum(data);
 
 		hot.loadData(data);
 		update_buttons(1);
@@ -231,8 +282,10 @@ function get_search_parameters(search) {
 function search(event) {
 	search_field = $('#search_field');
 	var search = ('' + search_field.val());
-	if(search == "")
+	if(search == "") {
+		calculate_all_sum(data);
 		return hot.loadData(data);
+	}
 
 	// Only search when query has changed
 	if(last_search == search && event.data.force == 0)
@@ -267,9 +320,11 @@ function search(event) {
 		if(row_found)
 			filtered.push(search_data[row])
 	}
+	filtered.push(search_data[data.length-1])
 
 	last_search = search;
 
+	calculate_all_sum(filtered);
 	hot.loadData(filtered);
 	hot.render();
 }
@@ -281,6 +336,7 @@ function save() {
 	var headers = hot.getColHeader();
 	var data = hot.getData();
 	for(var row in data) {
+
 		for(var col in headers) {
 
 			// Remove empty columns from data array
@@ -294,7 +350,7 @@ function save() {
 				data[row][col] = "";
 
 			// Parse id from dropdown data
-			if(references.hasOwnProperty(headers[col])) {
+			if(references.hasOwnProperty(headers[col]) && data[row][col]) {
 				match = data[row][col].match(/\((.*?)\)$/);
 				if(match)
 					data[row][col] = parseInt(match[1]);
@@ -302,11 +358,15 @@ function save() {
 		}
 	}
 
+	// Remove last row
+	save_data = data;
+	save_data.splice(data.length-1, 1);
+
 	// Send request
 	var request = $.ajax({
 		type: "POST",
 		url: "/save" + querystring,
-		data: jQuery.param({'data': data}),
+		data: jQuery.param({'data': save_data}),
 		dataType: "html",
 		success: function(response, text_status, jqxhr) {
 			ajax_success(response, text_status, jqxhr);

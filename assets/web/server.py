@@ -237,6 +237,11 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 
 			results['data'] = query.fetchall()
 
+			# add sum row
+			empty_row = ['sum']
+			empty_row.extend([0] * (len(results['column_names'])-1))
+			results['data'].append(empty_row)
+
 			# get references
 			for key, value in references.items():
 				ref_table = value[0]
