@@ -326,7 +326,7 @@ void _PlayState::WindowEvent(uint8_t Event) {
 
 // Handle quit events
 void _PlayState::QuitEvent() {
-	if(Network)
+	if(Network && Network->CanDisconnect())
 		Network->Disconnect();
 	else
 		Framework.Done = true;
