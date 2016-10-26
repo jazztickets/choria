@@ -454,7 +454,7 @@ end
 
 Skill_Spark = Base_Spell:New()
 Skill_Spark.DamageBase = 10
-Skill_Spark.Multiplier = 40
+Skill_Spark.Multiplier = 30
 Skill_Spark.CostPerLevel = 4
 Skill_Spark.ManaCostBase = 10 - Skill_Spark.CostPerLevel
 
@@ -469,8 +469,8 @@ end
 -- Icicle --
 
 Skill_Icicle = Base_Spell:New()
-Skill_Icicle.DamageBase = 20
-Skill_Icicle.Multiplier = 30
+Skill_Icicle.DamageBase = 25
+Skill_Icicle.Multiplier = 25
 Skill_Icicle.CostPerLevel = 4
 Skill_Icicle.Duration = 5
 Skill_Icicle.ManaCostBase = 15 - Skill_Icicle.CostPerLevel
@@ -495,7 +495,7 @@ end
 
 Skill_FireBlast = Base_Spell:New()
 Skill_FireBlast.DamageBase = 50
-Skill_FireBlast.Multiplier = 40
+Skill_FireBlast.Multiplier = 30
 Skill_FireBlast.CostPerLevel = 10
 Skill_FireBlast.ManaCostBase = 60 - Skill_FireBlast.CostPerLevel
 
@@ -511,7 +511,7 @@ end
 
 Skill_Ignite = Base_Spell:New()
 Skill_Ignite.BurnLevel = 10
-Skill_Ignite.BurnLevelPerLevel = 4
+Skill_Ignite.BurnLevelPerLevel = 3
 Skill_Ignite.CostPerLevel = 10
 Skill_Ignite.DurationPerLevel = 0
 Skill_Ignite.Duration = 6 - Skill_Ignite.DurationPerLevel

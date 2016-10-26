@@ -1289,11 +1289,6 @@ void _Object::CalculateStats() {
 	MoveSpeed = BaseMoveSpeed;
 	Resistances.clear();
 
-	// Give default elemental resistances
-	Resistances[3] = 25;
-	Resistances[4] = 25;
-	Resistances[5] = 25;
-
 	Invisible = 0;
 	Stunned = 0;
 
