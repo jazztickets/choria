@@ -1,0 +1,1155 @@
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE "damagetype" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT
+);
+INSERT INTO "damagetype" VALUES(0,'None');
+INSERT INTO "damagetype" VALUES(1,'All');
+INSERT INTO "damagetype" VALUES(2,'Physical');
+INSERT INTO "damagetype" VALUES(3,'Fire');
+INSERT INTO "damagetype" VALUES(4,'Cold');
+INSERT INTO "damagetype" VALUES(5,'Lightning');
+INSERT INTO "damagetype" VALUES(6,'Poison');
+INSERT INTO "damagetype" VALUES(7,'Bleed');
+INSERT INTO "damagetype" VALUES(8,'Stun');
+CREATE TABLE "stattype" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"upgrade_scale" REAL DEFAULT(1.0)
+);
+INSERT INTO "stattype" VALUES(0,'0',1.0);
+INSERT INTO "stattype" VALUES(1,'Buff',1.0);
+INSERT INTO "stattype" VALUES(2,'Buff Level',1.0);
+INSERT INTO "stattype" VALUES(3,'Buff Duration',1.0);
+INSERT INTO "stattype" VALUES(4,'Health',1.0);
+INSERT INTO "stattype" VALUES(5,'Max Health',0.5);
+INSERT INTO "stattype" VALUES(6,'Mana',1.0);
+INSERT INTO "stattype" VALUES(7,'Max Mana',0.5);
+INSERT INTO "stattype" VALUES(8,'Health Regen',1.0);
+INSERT INTO "stattype" VALUES(9,'Mana Regen',1.0);
+INSERT INTO "stattype" VALUES(10,'Heal Power',1.0);
+INSERT INTO "stattype" VALUES(11,'Attack Power',1.0);
+INSERT INTO "stattype" VALUES(12,'Min Damage',1.0);
+INSERT INTO "stattype" VALUES(13,'Max Damage',1.0);
+INSERT INTO "stattype" VALUES(14,'Armor',1.0);
+INSERT INTO "stattype" VALUES(15,'Damage Block',1.0);
+INSERT INTO "stattype" VALUES(16,'Move Speed',0.25);
+INSERT INTO "stattype" VALUES(17,'Stamina',1.0);
+INSERT INTO "stattype" VALUES(18,'Battle Speed',0.25);
+INSERT INTO "stattype" VALUES(19,'Hit Chance',1.0);
+INSERT INTO "stattype" VALUES(20,'Evasion',0.5);
+INSERT INTO "stattype" VALUES(21,'Stunned',1.0);
+INSERT INTO "stattype" VALUES(22,'Resist Type',1.0);
+INSERT INTO "stattype" VALUES(23,'Resist',0.25);
+INSERT INTO "stattype" VALUES(24,'Experience',1.0);
+INSERT INTO "stattype" VALUES(25,'Gold',1.0);
+INSERT INTO "stattype" VALUES(26,'Invisible',1.0);
+INSERT INTO "stattype" VALUES(27,'Actionbar Size',1.0);
+INSERT INTO "stattype" VALUES(28,'Miss',1.0);
+INSERT INTO "stattype" VALUES(29,'Crit',1.0);
+INSERT INTO "stattype" VALUES(30,'Flee',1.0);
+INSERT INTO "stattype" VALUES(31,'Battle',1.0);
+INSERT INTO "stattype" VALUES(32,'Teleport',1.0);
+CREATE TABLE "slottype" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT
+);
+INSERT INTO "slottype" VALUES(-1,'None');
+INSERT INTO "slottype" VALUES(0,'Head');
+INSERT INTO "slottype" VALUES(1,'Body');
+INSERT INTO "slottype" VALUES(2,'Legs');
+INSERT INTO "slottype" VALUES(3,'Hand 1');
+INSERT INTO "slottype" VALUES(4,'Hand 2');
+INSERT INTO "slottype" VALUES(5,'Ring 1');
+INSERT INTO "slottype" VALUES(6,'Ring 2');
+CREATE TABLE "itemtype" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT
+);
+INSERT INTO "itemtype" VALUES(0,'None');
+INSERT INTO "itemtype" VALUES(1,'Skill');
+INSERT INTO "itemtype" VALUES(2,'Helmet');
+INSERT INTO "itemtype" VALUES(3,'Armor');
+INSERT INTO "itemtype" VALUES(4,'Boots');
+INSERT INTO "itemtype" VALUES(5,'One-Handed Weapon');
+INSERT INTO "itemtype" VALUES(6,'Two-Handed Weapon');
+INSERT INTO "itemtype" VALUES(7,'Shield');
+INSERT INTO "itemtype" VALUES(8,'Ring');
+INSERT INTO "itemtype" VALUES(9,'Consumable');
+INSERT INTO "itemtype" VALUES(10,'Tradable');
+INSERT INTO "itemtype" VALUES(11,'Unlockable');
+CREATE TABLE "target" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT
+);
+INSERT INTO "target" VALUES(0,'None');
+INSERT INTO "target" VALUES(1,'Self');
+INSERT INTO "target" VALUES(2,'Enemy');
+INSERT INTO "target" VALUES(3,'Ally');
+INSERT INTO "target" VALUES(4,'Multiple Enemies');
+INSERT INTO "target" VALUES(5,'Multiple Allies');
+INSERT INTO "target" VALUES(6,'All Enemies');
+INSERT INTO "target" VALUES(7,'All Allies');
+INSERT INTO "target" VALUES(8,'Any');
+CREATE TABLE "scope" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT
+);
+INSERT INTO "scope" VALUES(0,'None');
+INSERT INTO "scope" VALUES(1,'World');
+INSERT INTO "scope" VALUES(2,'Battle');
+INSERT INTO "scope" VALUES(3,'All');
+CREATE TABLE "ai" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT
+);
+INSERT INTO "ai" VALUES(0,'None');
+INSERT INTO "ai" VALUES(1,'AI_Dumb');
+INSERT INTO "ai" VALUES(2,'AI_Smart');
+INSERT INTO "ai" VALUES(3,'AI_Boss');
+INSERT INTO "ai" VALUES(4,'AI_DeadQueen');
+INSERT INTO "ai" VALUES(5,'AI_SlimePrince');
+INSERT INTO "ai" VALUES(6,'AI_SkeletonPriest');
+CREATE TABLE "unlock" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT DEFAULT('None')
+);
+INSERT INTO "unlock" VALUES(0,'None');
+INSERT INTO "unlock" VALUES(1,'Action Slot 1');
+INSERT INTO "unlock" VALUES(2,'Action Slot 2');
+INSERT INTO "unlock" VALUES(3,'Action Slot 3');
+INSERT INTO "unlock" VALUES(4,'Action Slot 4');
+CREATE TABLE "script" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"level" INTEGER DEFAULT(0),
+	"cooldown" REAL DEFAULT(0)
+);
+INSERT INTO "script" VALUES(0,'None',0,0.0);
+INSERT INTO "script" VALUES(1,'Script_Rejuv',20,0.0);
+INSERT INTO "script" VALUES(2,'Script_Lava',20,0.0);
+INSERT INTO "script" VALUES(3,'Script_Boss',7,0.0);
+INSERT INTO "script" VALUES(4,'Script_Boss',12,0.0);
+INSERT INTO "script" VALUES(5,'Script_Boss',17,0.0);
+INSERT INTO "script" VALUES(6,'Script_Boss',20,0.0);
+INSERT INTO "script" VALUES(7,'Script_Boss',23,0.0);
+CREATE TABLE "event" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT DEFAULT('None'),
+	"shortname" TEXT
+);
+INSERT INTO "event" VALUES(0,'None',' ');
+INSERT INTO "event" VALUES(1,'Spawn','S');
+INSERT INTO "event" VALUES(2,'Map Entrance','ME');
+INSERT INTO "event" VALUES(3,'Map Change','M');
+INSERT INTO "event" VALUES(4,'Vendor','V');
+INSERT INTO "event" VALUES(5,'Trader','T');
+INSERT INTO "event" VALUES(6,'Key','K');
+INSERT INTO "event" VALUES(7,'Script','SC');
+INSERT INTO "event" VALUES(8,'Portal','P');
+INSERT INTO "event" VALUES(9,'Jump','J');
+INSERT INTO "event" VALUES(10,'Black Smith','B');
+CREATE TABLE "level" (
+	"level" INTEGER PRIMARY KEY,
+	"experience" INTEGER,
+	"skillpoints" INTEGER,
+	"health" INTEGER,
+	"mana" INTEGER,
+	"damage" INTEGER,
+	"armor" INTEGER
+);
+INSERT INTO "level" VALUES(1,0,3,150,0,1,0);
+INSERT INTO "level" VALUES(2,10,4,160,0,2,0);
+INSERT INTO "level" VALUES(3,32,5,170,0,3,0);
+INSERT INTO "level" VALUES(4,78,6,180,0,4,0);
+INSERT INTO "level" VALUES(5,166,7,190,0,5,0);
+INSERT INTO "level" VALUES(6,320,8,200,0,6,0);
+INSERT INTO "level" VALUES(7,570,9,210,0,7,0);
+INSERT INTO "level" VALUES(8,952,10,220,0,8,0);
+INSERT INTO "level" VALUES(9,1508,11,230,0,9,0);
+INSERT INTO "level" VALUES(10,2286,12,240,0,10,1);
+INSERT INTO "level" VALUES(11,3340,13,250,0,11,1);
+INSERT INTO "level" VALUES(12,4730,14,260,0,12,1);
+INSERT INTO "level" VALUES(13,6522,15,270,0,13,1);
+INSERT INTO "level" VALUES(14,8788,16,280,0,14,1);
+INSERT INTO "level" VALUES(15,11606,17,290,0,15,1);
+INSERT INTO "level" VALUES(16,15060,18,300,0,16,1);
+INSERT INTO "level" VALUES(17,19240,19,310,0,17,1);
+INSERT INTO "level" VALUES(18,24242,20,320,0,18,1);
+INSERT INTO "level" VALUES(19,30168,21,330,0,19,1);
+INSERT INTO "level" VALUES(20,37126,22,340,0,20,2);
+INSERT INTO "level" VALUES(21,45230,23,350,0,21,2);
+INSERT INTO "level" VALUES(22,54600,24,360,0,22,2);
+INSERT INTO "level" VALUES(23,65362,25,370,0,23,2);
+INSERT INTO "level" VALUES(24,77648,26,380,0,24,2);
+INSERT INTO "level" VALUES(25,91596,27,390,0,25,2);
+INSERT INTO "level" VALUES(26,107350,28,400,0,26,2);
+INSERT INTO "level" VALUES(27,125060,29,410,0,27,2);
+INSERT INTO "level" VALUES(28,144882,30,420,0,28,2);
+INSERT INTO "level" VALUES(29,166978,31,430,0,29,2);
+INSERT INTO "level" VALUES(30,191516,32,440,0,30,3);
+INSERT INTO "level" VALUES(31,218670,33,450,0,31,3);
+INSERT INTO "level" VALUES(32,248620,34,460,0,32,3);
+INSERT INTO "level" VALUES(33,281552,35,470,0,33,3);
+INSERT INTO "level" VALUES(34,317658,36,480,0,34,3);
+INSERT INTO "level" VALUES(35,357136,37,490,0,35,3);
+INSERT INTO "level" VALUES(36,400190,38,500,0,36,3);
+INSERT INTO "level" VALUES(37,447030,39,510,0,37,3);
+INSERT INTO "level" VALUES(38,497872,40,520,0,38,3);
+INSERT INTO "level" VALUES(39,552938,41,530,0,39,3);
+INSERT INTO "level" VALUES(40,612456,42,540,0,40,4);
+INSERT INTO "level" VALUES(41,676660,43,550,0,41,4);
+INSERT INTO "level" VALUES(42,745790,44,560,0,42,4);
+INSERT INTO "level" VALUES(43,820092,45,570,0,43,4);
+INSERT INTO "level" VALUES(44,899818,46,580,0,44,4);
+INSERT INTO "level" VALUES(45,985226,47,590,0,45,4);
+INSERT INTO "level" VALUES(46,1076580,48,600,0,46,4);
+INSERT INTO "level" VALUES(47,1174150,49,610,0,47,4);
+INSERT INTO "level" VALUES(48,1278212,50,620,0,48,4);
+INSERT INTO "level" VALUES(49,1389048,51,630,0,49,4);
+INSERT INTO "level" VALUES(50,1506946,52,640,0,50,5);
+INSERT INTO "level" VALUES(51,1632200,53,650,0,51,5);
+INSERT INTO "level" VALUES(52,1765110,54,660,0,52,5);
+INSERT INTO "level" VALUES(53,1905982,55,670,0,53,5);
+INSERT INTO "level" VALUES(54,2055128,56,680,0,54,5);
+INSERT INTO "level" VALUES(55,2212866,57,690,0,55,5);
+INSERT INTO "level" VALUES(56,2379520,58,700,0,56,5);
+INSERT INTO "level" VALUES(57,2555420,59,710,0,57,5);
+INSERT INTO "level" VALUES(58,2740902,60,720,0,58,5);
+INSERT INTO "level" VALUES(59,2936308,61,730,0,59,5);
+INSERT INTO "level" VALUES(60,3141986,62,740,0,60,6);
+INSERT INTO "level" VALUES(61,3358290,63,750,0,61,6);
+INSERT INTO "level" VALUES(62,3585580,64,760,0,62,6);
+INSERT INTO "level" VALUES(63,3824222,65,770,0,63,6);
+INSERT INTO "level" VALUES(64,4074588,66,780,0,64,6);
+INSERT INTO "level" VALUES(65,4337056,67,790,0,65,6);
+INSERT INTO "level" VALUES(66,4612010,68,800,0,66,6);
+INSERT INTO "level" VALUES(67,4899840,69,810,0,67,6);
+INSERT INTO "level" VALUES(68,5200942,70,820,0,68,6);
+INSERT INTO "level" VALUES(69,5515718,71,830,0,69,6);
+INSERT INTO "level" VALUES(70,5844576,72,840,0,70,7);
+INSERT INTO "level" VALUES(71,6187930,73,850,0,71,7);
+INSERT INTO "level" VALUES(72,6546200,74,860,0,72,7);
+INSERT INTO "level" VALUES(73,6919812,75,870,0,73,7);
+INSERT INTO "level" VALUES(74,7309198,76,880,0,74,7);
+INSERT INTO "level" VALUES(75,7714796,77,890,0,75,7);
+INSERT INTO "level" VALUES(76,8137050,78,900,0,76,7);
+INSERT INTO "level" VALUES(77,8576410,79,910,0,77,7);
+INSERT INTO "level" VALUES(78,9033332,80,920,0,78,7);
+INSERT INTO "level" VALUES(79,9508278,81,930,0,79,7);
+INSERT INTO "level" VALUES(80,10001716,82,940,0,80,8);
+INSERT INTO "level" VALUES(81,10514120,83,950,0,81,8);
+INSERT INTO "level" VALUES(82,11045970,84,960,0,82,8);
+INSERT INTO "level" VALUES(83,11597752,85,970,0,83,8);
+INSERT INTO "level" VALUES(84,12169958,86,980,0,84,8);
+INSERT INTO "level" VALUES(85,12763086,87,990,0,85,8);
+INSERT INTO "level" VALUES(86,13377640,88,1000,0,86,8);
+INSERT INTO "level" VALUES(87,14014130,89,1010,0,87,8);
+INSERT INTO "level" VALUES(88,14673072,90,1020,0,88,8);
+INSERT INTO "level" VALUES(89,15354988,91,1030,0,89,8);
+INSERT INTO "level" VALUES(90,16060406,92,1040,0,90,9);
+INSERT INTO "level" VALUES(91,16789860,93,1050,0,91,9);
+INSERT INTO "level" VALUES(92,17543890,94,1060,0,92,9);
+INSERT INTO "level" VALUES(93,18323042,95,1070,0,93,9);
+INSERT INTO "level" VALUES(94,19127868,96,1080,0,94,9);
+INSERT INTO "level" VALUES(95,19958926,97,1090,0,95,9);
+INSERT INTO "level" VALUES(96,20816780,98,1100,0,96,9);
+INSERT INTO "level" VALUES(97,21702000,99,1110,0,97,9);
+INSERT INTO "level" VALUES(98,22615162,100,1120,0,98,9);
+INSERT INTO "level" VALUES(99,23556848,101,1130,0,99,9);
+CREATE TABLE "portrait" (
+	"id" INTEGER PRIMARY KEY,
+	"texture" TEXT
+);
+INSERT INTO "portrait" VALUES(1,'portraits/joe.png');
+INSERT INTO "portrait" VALUES(2,'portraits/jeb.png');
+INSERT INTO "portrait" VALUES(3,'portraits/bim.png');
+INSERT INTO "portrait" VALUES(4,'portraits/sib.png');
+INSERT INTO "portrait" VALUES(5,'portraits/biff.png');
+INSERT INTO "portrait" VALUES(6,'portraits/jone.png');
+INSERT INTO "portrait" VALUES(7,'portraits/leb.png');
+CREATE TABLE "model" (
+	"id" INTEGER PRIMARY KEY,
+	"texture" TEXT
+);
+INSERT INTO "model" VALUES(0,'');
+INSERT INTO "model" VALUES(1,'models/warrior.png');
+INSERT INTO "model" VALUES(2,'models/mage.png');
+INSERT INTO "model" VALUES(3,'models/cleric.png');
+INSERT INTO "model" VALUES(4,'models/thief.png');
+INSERT INTO "model" VALUES(5,'models/paladin.png');
+INSERT INTO "model" VALUES(6,'models/warlock.png');
+INSERT INTO "model" VALUES(7,'models/beggar.png');
+CREATE TABLE "vendor" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"buy_percent" REAL DEFAULT(1.0),
+	"sell_percent" REAL DEFAULT(0.5)
+);
+INSERT INTO "vendor" VALUES(1,'ham_skills',1.0,0.5);
+INSERT INTO "vendor" VALUES(2,'ham_supplies',1.0,0.5);
+INSERT INTO "vendor" VALUES(3,'ham_weapon',1.0,0.5);
+INSERT INTO "vendor" VALUES(4,'ham_armor',1.0,0.5);
+INSERT INTO "vendor" VALUES(5,'ham_special',1.0,0.55);
+INSERT INTO "vendor" VALUES(6,'fem_magic',1.0,0.5);
+INSERT INTO "vendor" VALUES(7,'san_shop',1.0,0.5);
+INSERT INTO "vendor" VALUES(8,'san_skills',1.0,0.5);
+INSERT INTO "vendor" VALUES(9,'san_weapon',1.0,0.5);
+INSERT INTO "vendor" VALUES(10,'san_armor',1.0,0.5);
+INSERT INTO "vendor" VALUES(11,'ruins_vendor',1.0,0.6);
+CREATE TABLE "vendoritem" (
+	"id" INTEGER PRIMARY KEY,
+	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,
+	"item_id" INTEGER DEFAULT(0) REFERENCES item(id) ON DELETE CASCADE
+);
+INSERT INTO "vendoritem" VALUES(1,1,3);
+INSERT INTO "vendoritem" VALUES(2,1,18);
+INSERT INTO "vendoritem" VALUES(3,1,5);
+INSERT INTO "vendoritem" VALUES(4,1,6);
+INSERT INTO "vendoritem" VALUES(5,2,108);
+INSERT INTO "vendoritem" VALUES(6,2,109);
+INSERT INTO "vendoritem" VALUES(7,2,110);
+INSERT INTO "vendoritem" VALUES(8,3,100);
+INSERT INTO "vendoritem" VALUES(9,4,106);
+INSERT INTO "vendoritem" VALUES(10,3,101);
+INSERT INTO "vendoritem" VALUES(11,3,102);
+INSERT INTO "vendoritem" VALUES(12,3,103);
+INSERT INTO "vendoritem" VALUES(13,3,111);
+INSERT INTO "vendoritem" VALUES(14,4,107);
+INSERT INTO "vendoritem" VALUES(15,4,104);
+INSERT INTO "vendoritem" VALUES(16,4,105);
+INSERT INTO "vendoritem" VALUES(17,1,7);
+INSERT INTO "vendoritem" VALUES(18,4,113);
+INSERT INTO "vendoritem" VALUES(19,5,96);
+INSERT INTO "vendoritem" VALUES(20,5,116);
+INSERT INTO "vendoritem" VALUES(23,3,117);
+INSERT INTO "vendoritem" VALUES(24,3,118);
+INSERT INTO "vendoritem" VALUES(25,3,119);
+INSERT INTO "vendoritem" VALUES(26,4,120);
+INSERT INTO "vendoritem" VALUES(27,4,121);
+INSERT INTO "vendoritem" VALUES(28,1,10);
+INSERT INTO "vendoritem" VALUES(29,1,11);
+INSERT INTO "vendoritem" VALUES(30,3,131);
+INSERT INTO "vendoritem" VALUES(31,4,122);
+INSERT INTO "vendoritem" VALUES(32,4,123);
+INSERT INTO "vendoritem" VALUES(33,6,109);
+INSERT INTO "vendoritem" VALUES(34,4,136);
+INSERT INTO "vendoritem" VALUES(36,6,142);
+INSERT INTO "vendoritem" VALUES(37,4,143);
+INSERT INTO "vendoritem" VALUES(38,6,144);
+INSERT INTO "vendoritem" VALUES(39,4,207);
+INSERT INTO "vendoritem" VALUES(40,3,147);
+INSERT INTO "vendoritem" VALUES(41,4,148);
+INSERT INTO "vendoritem" VALUES(46,1,1);
+INSERT INTO "vendoritem" VALUES(47,6,153);
+INSERT INTO "vendoritem" VALUES(51,10,157);
+INSERT INTO "vendoritem" VALUES(53,4,160);
+INSERT INTO "vendoritem" VALUES(54,6,15);
+INSERT INTO "vendoritem" VALUES(57,10,163);
+INSERT INTO "vendoritem" VALUES(58,10,164);
+INSERT INTO "vendoritem" VALUES(59,10,165);
+INSERT INTO "vendoritem" VALUES(61,2,191);
+INSERT INTO "vendoritem" VALUES(62,7,108);
+INSERT INTO "vendoritem" VALUES(63,7,109);
+INSERT INTO "vendoritem" VALUES(64,7,110);
+INSERT INTO "vendoritem" VALUES(65,7,191);
+INSERT INTO "vendoritem" VALUES(68,8,2);
+INSERT INTO "vendoritem" VALUES(69,8,12);
+INSERT INTO "vendoritem" VALUES(70,8,13);
+INSERT INTO "vendoritem" VALUES(71,8,14);
+INSERT INTO "vendoritem" VALUES(72,8,16);
+INSERT INTO "vendoritem" VALUES(73,7,156);
+INSERT INTO "vendoritem" VALUES(74,9,149);
+INSERT INTO "vendoritem" VALUES(75,9,150);
+INSERT INTO "vendoritem" VALUES(76,9,190);
+INSERT INTO "vendoritem" VALUES(77,9,154);
+INSERT INTO "vendoritem" VALUES(78,9,141);
+INSERT INTO "vendoritem" VALUES(79,8,17);
+INSERT INTO "vendoritem" VALUES(80,8,4);
+INSERT INTO "vendoritem" VALUES(81,4,204);
+INSERT INTO "vendoritem" VALUES(82,4,195);
+INSERT INTO "vendoritem" VALUES(83,4,199);
+INSERT INTO "vendoritem" VALUES(84,4,209);
+INSERT INTO "vendoritem" VALUES(85,10,202);
+INSERT INTO "vendoritem" VALUES(86,10,198);
+INSERT INTO "vendoritem" VALUES(87,10,196);
+INSERT INTO "vendoritem" VALUES(88,10,203);
+INSERT INTO "vendoritem" VALUES(89,10,200);
+INSERT INTO "vendoritem" VALUES(90,4,201);
+INSERT INTO "vendoritem" VALUES(91,4,152);
+INSERT INTO "vendoritem" VALUES(92,10,194);
+INSERT INTO "vendoritem" VALUES(93,10,205);
+INSERT INTO "vendoritem" VALUES(94,10,197);
+INSERT INTO "vendoritem" VALUES(95,6,210);
+INSERT INTO "vendoritem" VALUES(96,6,135);
+INSERT INTO "vendoritem" VALUES(97,10,129);
+INSERT INTO "vendoritem" VALUES(98,10,208);
+INSERT INTO "vendoritem" VALUES(99,10,206);
+INSERT INTO "vendoritem" VALUES(100,2,211);
+INSERT INTO "vendoritem" VALUES(101,3,130);
+INSERT INTO "vendoritem" VALUES(102,6,19);
+INSERT INTO "vendoritem" VALUES(103,8,20);
+INSERT INTO "vendoritem" VALUES(104,5,191);
+INSERT INTO "vendoritem" VALUES(105,3,212);
+INSERT INTO "vendoritem" VALUES(106,9,213);
+INSERT INTO "vendoritem" VALUES(107,8,21);
+INSERT INTO "vendoritem" VALUES(108,8,22);
+INSERT INTO "vendoritem" VALUES(109,11,127);
+INSERT INTO "vendoritem" VALUES(110,11,128);
+INSERT INTO "vendoritem" VALUES(111,11,155);
+INSERT INTO "vendoritem" VALUES(112,11,156);
+INSERT INTO "vendoritem" VALUES(113,8,23);
+CREATE TABLE "monsterdrop" (
+	"id" INTEGER PRIMARY KEY,
+	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
+	"item_id" INTEGER DEFAULT(0) REFERENCES item(id) ON DELETE CASCADE,
+	"odds" INTEGER DEFAULT(0)
+);
+INSERT INTO "monsterdrop" VALUES(1,1,0,80);
+INSERT INTO "monsterdrop" VALUES(2,1,114,19);
+INSERT INTO "monsterdrop" VALUES(3,1,191,1);
+INSERT INTO "monsterdrop" VALUES(4,2,0,80);
+INSERT INTO "monsterdrop" VALUES(5,2,125,19);
+INSERT INTO "monsterdrop" VALUES(6,2,100,1);
+INSERT INTO "monsterdrop" VALUES(7,3,0,80);
+INSERT INTO "monsterdrop" VALUES(8,3,215,19);
+INSERT INTO "monsterdrop" VALUES(9,3,151,1);
+INSERT INTO "monsterdrop" VALUES(10,4,0,80);
+INSERT INTO "monsterdrop" VALUES(11,4,115,19);
+INSERT INTO "monsterdrop" VALUES(12,4,110,1);
+INSERT INTO "monsterdrop" VALUES(13,5,0,80);
+INSERT INTO "monsterdrop" VALUES(14,5,124,19);
+INSERT INTO "monsterdrop" VALUES(15,5,116,1);
+INSERT INTO "monsterdrop" VALUES(16,7,126,1);
+INSERT INTO "monsterdrop" VALUES(17,6,0,80);
+INSERT INTO "monsterdrop" VALUES(18,6,125,29);
+INSERT INTO "monsterdrop" VALUES(19,6,127,1);
+INSERT INTO "monsterdrop" VALUES(20,8,0,80);
+INSERT INTO "monsterdrop" VALUES(21,8,134,29);
+INSERT INTO "monsterdrop" VALUES(22,8,120,1);
+INSERT INTO "monsterdrop" VALUES(23,9,0,80);
+INSERT INTO "monsterdrop" VALUES(24,9,134,29);
+INSERT INTO "monsterdrop" VALUES(25,9,129,1);
+INSERT INTO "monsterdrop" VALUES(26,11,0,80);
+INSERT INTO "monsterdrop" VALUES(27,11,146,19);
+INSERT INTO "monsterdrop" VALUES(28,11,110,1);
+INSERT INTO "monsterdrop" VALUES(29,10,139,1);
+INSERT INTO "monsterdrop" VALUES(30,12,0,80);
+INSERT INTO "monsterdrop" VALUES(31,12,127,19);
+INSERT INTO "monsterdrop" VALUES(32,12,123,1);
+INSERT INTO "monsterdrop" VALUES(33,13,0,80);
+INSERT INTO "monsterdrop" VALUES(34,13,114,19);
+INSERT INTO "monsterdrop" VALUES(35,13,132,1);
+INSERT INTO "monsterdrop" VALUES(36,14,0,80);
+INSERT INTO "monsterdrop" VALUES(37,14,146,39);
+INSERT INTO "monsterdrop" VALUES(38,14,155,2);
+INSERT INTO "monsterdrop" VALUES(39,15,0,80);
+INSERT INTO "monsterdrop" VALUES(40,15,124,15);
+INSERT INTO "monsterdrop" VALUES(41,15,156,5);
+INSERT INTO "monsterdrop" VALUES(42,16,0,60);
+INSERT INTO "monsterdrop" VALUES(43,16,125,38);
+INSERT INTO "monsterdrop" VALUES(44,16,128,2);
+INSERT INTO "monsterdrop" VALUES(45,17,161,1);
+INSERT INTO "monsterdrop" VALUES(46,18,193,1);
+INSERT INTO "monsterdrop" VALUES(47,19,140,1);
+INSERT INTO "monsterdrop" VALUES(48,22,0,80);
+INSERT INTO "monsterdrop" VALUES(49,22,215,19);
+INSERT INTO "monsterdrop" VALUES(50,22,127,1);
+INSERT INTO "monsterdrop" VALUES(51,21,0,80);
+INSERT INTO "monsterdrop" VALUES(52,21,128,20);
+INSERT INTO "monsterdrop" VALUES(53,20,0,90);
+INSERT INTO "monsterdrop" VALUES(54,20,127,10);
+CREATE TABLE "buff" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"script" TEXT,
+	"texture" TEXT
+);
+INSERT INTO "buff" VALUES(1,'Bleeding','Buff_Bleeding','buffs/bleeding.png');
+INSERT INTO "buff" VALUES(2,'Healing','Buff_Healing','buffs/healing.png');
+INSERT INTO "buff" VALUES(3,'Mana','Buff_Mana','buffs/mana.png');
+INSERT INTO "buff" VALUES(4,'Invisible','Buff_Invis','buffs/invis.png');
+INSERT INTO "buff" VALUES(5,'Slowed','Buff_Slowed','buffs/slowed.png');
+INSERT INTO "buff" VALUES(6,'Stunned','Buff_Stunned','buffs/stunned.png');
+INSERT INTO "buff" VALUES(7,'Hasted','Buff_Hasted','buffs/hasted.png');
+INSERT INTO "buff" VALUES(8,'Blinded','Buff_Blinded','buffs/blinded.png');
+INSERT INTO "buff" VALUES(9,'Hardened','Buff_Hardened','buffs/hardened.png');
+INSERT INTO "buff" VALUES(10,'Parry','Buff_Parry','buffs/parry.png');
+INSERT INTO "buff" VALUES(11,'Poisoned','Buff_Poisoned','buffs/poisoned.png');
+INSERT INTO "buff" VALUES(12,'Burning','Buff_Burning','buffs/burning.png');
+INSERT INTO "buff" VALUES(13,'Bleed Resist','Buff_BleedResist','buffs/bleed_resist.png');
+INSERT INTO "buff" VALUES(14,'Fast','Buff_Fast','buffs/fast.png');
+INSERT INTO "buff" VALUES(15,'Mighty','Buff_Mighty','buffs/mighty.png');
+INSERT INTO "buff" VALUES(16,'Evasion','Buff_Evasion','buffs/evasion.png');
+INSERT INTO "buff" VALUES(17,'Weak','Buff_Weak','buffs/weak.png');
+CREATE TABLE "zone" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"boss" INTEGER DEFAULT(0),
+	"cooldown" REAL DEFAULT(0),
+	"minspawn" INTEGER DEFAULT(1),
+	"maxspawn" INTEGER DEFAULT(1)
+);
+INSERT INTO "zone" VALUES(1,'crow',0,0.0,1,3);
+INSERT INTO "zone" VALUES(2,'crow_slime',0,0.0,1,2);
+INSERT INTO "zone" VALUES(3,'crow_slime_ant',0,0.0,1,3);
+INSERT INTO "zone" VALUES(4,'ant_spider',0,0.0,1,2);
+INSERT INTO "zone" VALUES(5,'bat_spider',0,0.0,2,5);
+INSERT INTO "zone" VALUES(6,'bat_slime',0,0.0,1,4);
+INSERT INTO "zone" VALUES(7,'bat_lord',1,300.0,1,1);
+INSERT INTO "zone" VALUES(8,'crab_slime_crow',0,0.0,1,3);
+INSERT INTO "zone" VALUES(9,'crab_blueslime',0,0.0,1,2);
+INSERT INTO "zone" VALUES(10,'watercrab_crab_slime',0,0.0,1,3);
+INSERT INTO "zone" VALUES(11,'watercrab_ghost',0,0.0,2,3);
+INSERT INTO "zone" VALUES(12,'king_krab',1,300.0,1,1);
+INSERT INTO "zone" VALUES(13,'zombie_ghost',0,0.0,2,4);
+INSERT INTO "zone" VALUES(14,'demoncrow_zombie_ghost',0,0.0,2,4);
+INSERT INTO "zone" VALUES(15,'crimsonslime_apparition',0,0.0,2,3);
+INSERT INTO "zone" VALUES(16,'crimsonslime_apparition_demoncrow_zombie',0,0.0,2,6);
+INSERT INTO "zone" VALUES(17,'dead_queen',1,300.0,1,1);
+INSERT INTO "zone" VALUES(18,'slime',0,0.0,4,8);
+INSERT INTO "zone" VALUES(19,'slime_blueslime',0,0.0,4,8);
+INSERT INTO "zone" VALUES(20,'watercrab_bridge',1,120.0,1,1);
+INSERT INTO "zone" VALUES(21,'slime_crow_mud',0,0.0,1,3);
+INSERT INTO "zone" VALUES(22,'slime_venombat',0,0.0,3,5);
+INSERT INTO "zone" VALUES(23,'slime_prince',1,300.0,1,1);
+INSERT INTO "zone" VALUES(24,'slime_mud',0,0.0,3,6);
+INSERT INTO "zone" VALUES(25,'crimsonslime_venombat',0,0.0,3,5);
+INSERT INTO "zone" VALUES(26,'skeleton_zombie_crab',0,0.0,1,3);
+INSERT INTO "zone" VALUES(27,'skeleton_priest',0,0.0,2,4);
+INSERT INTO "zone" VALUES(28,'skeleton_priest_dustyant_zombie',0,0.0,2,3);
+CREATE TABLE "zonedata" (
+	"id" INTEGER PRIMARY KEY,
+	"zone_id" INTEGER REFERENCES zone(id) ON DELETE CASCADE,
+	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
+	"odds" INTEGER
+);
+INSERT INTO "zonedata" VALUES(1,1,1,1);
+INSERT INTO "zonedata" VALUES(2,2,1,1);
+INSERT INTO "zonedata" VALUES(3,2,2,1);
+INSERT INTO "zonedata" VALUES(4,3,1,1);
+INSERT INTO "zonedata" VALUES(5,3,2,1);
+INSERT INTO "zonedata" VALUES(6,3,3,1);
+INSERT INTO "zonedata" VALUES(7,4,3,1);
+INSERT INTO "zonedata" VALUES(8,4,4,1);
+INSERT INTO "zonedata" VALUES(9,5,4,2);
+INSERT INTO "zonedata" VALUES(10,5,5,1);
+INSERT INTO "zonedata" VALUES(11,6,5,1);
+INSERT INTO "zonedata" VALUES(12,6,6,1);
+INSERT INTO "zonedata" VALUES(13,7,5,5);
+INSERT INTO "zonedata" VALUES(14,7,7,1);
+INSERT INTO "zonedata" VALUES(15,8,8,3);
+INSERT INTO "zonedata" VALUES(16,8,2,1);
+INSERT INTO "zonedata" VALUES(17,8,1,1);
+INSERT INTO "zonedata" VALUES(18,9,8,1);
+INSERT INTO "zonedata" VALUES(19,9,6,1);
+INSERT INTO "zonedata" VALUES(20,10,9,1);
+INSERT INTO "zonedata" VALUES(21,10,8,1);
+INSERT INTO "zonedata" VALUES(22,10,6,1);
+INSERT INTO "zonedata" VALUES(23,11,11,1);
+INSERT INTO "zonedata" VALUES(24,11,9,2);
+INSERT INTO "zonedata" VALUES(25,12,10,1);
+INSERT INTO "zonedata" VALUES(26,12,11,5);
+INSERT INTO "zonedata" VALUES(27,13,12,1);
+INSERT INTO "zonedata" VALUES(28,13,11,2);
+INSERT INTO "zonedata" VALUES(29,14,13,1);
+INSERT INTO "zonedata" VALUES(30,14,12,2);
+INSERT INTO "zonedata" VALUES(31,14,11,1);
+INSERT INTO "zonedata" VALUES(32,15,14,1);
+INSERT INTO "zonedata" VALUES(33,15,12,2);
+INSERT INTO "zonedata" VALUES(34,16,16,1);
+INSERT INTO "zonedata" VALUES(35,16,14,1);
+INSERT INTO "zonedata" VALUES(36,16,13,1);
+INSERT INTO "zonedata" VALUES(37,16,12,1);
+INSERT INTO "zonedata" VALUES(38,17,17,1);
+INSERT INTO "zonedata" VALUES(39,17,14,2);
+INSERT INTO "zonedata" VALUES(40,17,12,3);
+INSERT INTO "zonedata" VALUES(41,18,2,1);
+INSERT INTO "zonedata" VALUES(42,19,2,1);
+INSERT INTO "zonedata" VALUES(43,19,6,1);
+INSERT INTO "zonedata" VALUES(44,20,9,2);
+INSERT INTO "zonedata" VALUES(45,21,18,1);
+INSERT INTO "zonedata" VALUES(46,21,2,10);
+INSERT INTO "zonedata" VALUES(47,21,1,5);
+INSERT INTO "zonedata" VALUES(48,22,15,1);
+INSERT INTO "zonedata" VALUES(49,22,6,3);
+INSERT INTO "zonedata" VALUES(50,22,2,5);
+INSERT INTO "zonedata" VALUES(51,23,19,1);
+INSERT INTO "zonedata" VALUES(52,23,16,2);
+INSERT INTO "zonedata" VALUES(53,23,6,3);
+INSERT INTO "zonedata" VALUES(54,23,2,2);
+INSERT INTO "zonedata" VALUES(55,24,6,10);
+INSERT INTO "zonedata" VALUES(56,24,18,1);
+INSERT INTO "zonedata" VALUES(57,24,2,6);
+INSERT INTO "zonedata" VALUES(58,25,16,1);
+INSERT INTO "zonedata" VALUES(59,25,2,3);
+INSERT INTO "zonedata" VALUES(60,25,6,2);
+INSERT INTO "zonedata" VALUES(61,25,15,1);
+INSERT INTO "zonedata" VALUES(62,26,20,4);
+INSERT INTO "zonedata" VALUES(63,26,12,2);
+INSERT INTO "zonedata" VALUES(64,26,8,1);
+INSERT INTO "zonedata" VALUES(65,27,20,3);
+INSERT INTO "zonedata" VALUES(66,27,21,1);
+INSERT INTO "zonedata" VALUES(67,28,20,3);
+INSERT INTO "zonedata" VALUES(68,28,21,1);
+INSERT INTO "zonedata" VALUES(69,28,12,3);
+INSERT INTO "zonedata" VALUES(70,28,22,2);
+INSERT INTO "zonedata" VALUES(71,17,21,2);
+CREATE TABLE "monster" (
+	"id" INTEGER PRIMARY KEY,
+	"level" INTEGER DEFAULT(1),
+	"name" TEXT,
+	"portrait" TEXT DEFAULT('monsters/'),
+	"experience" INTEGER DEFAULT(1),
+	"gold" INTEGER DEFAULT(1),
+	"health" INTEGER DEFAULT(1),
+	"mana" INTEGER DEFAULT(0),
+	"mindamage" INTEGER DEFAULT(0),
+	"maxdamage" INTEGER DEFAULT(0),
+	"armor" INTEGER DEFAULT(0),
+	"block" INTEGER DEFAULT(0),
+	"battlespeed" INTEGER DEFAULT(100),
+	"ai_id" INTEGER DEFAULT(0) REFERENCES ai(id) ON DELETE CASCADE,
+	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE
+);
+INSERT INTO "monster" VALUES(1,1,'Crow','monsters/crow.png',1,1,40,0,5,10,0,0,60,1,14);
+INSERT INTO "monster" VALUES(2,1,'Green Slime','monsters/slime.png',2,2,100,0,10,20,2,0,70,1,25);
+INSERT INTO "monster" VALUES(3,1,'Fire Ant','monsters/fireant.png',4,4,150,0,10,30,10,0,100,2,19);
+INSERT INTO "monster" VALUES(4,1,'Black Spider','monsters/spider.png',3,3,125,0,20,40,1,0,100,1,11);
+INSERT INTO "monster" VALUES(5,1,'Bat','monsters/bat.png',5,6,90,0,30,60,3,0,130,1,12);
+INSERT INTO "monster" VALUES(6,1,'Blue Slime','monsters/blue_slime.png',5,7,200,0,10,50,5,0,70,1,25);
+INSERT INTO "monster" VALUES(7,1,'Bat Lord','monsters/red_bat.png',25,50,1250,0,50,150,4,10,100,3,13);
+INSERT INTO "monster" VALUES(8,1,'Crab','monsters/crab.png',7,10,250,0,20,50,20,5,50,1,20);
+INSERT INTO "monster" VALUES(9,1,'Water Crab','monsters/water_crab.png',10,15,400,0,50,100,25,10,90,1,20);
+INSERT INTO "monster" VALUES(10,1,'King Krab','monsters/king_krab.png',50,100,1500,0,100,200,35,20,100,3,16);
+INSERT INTO "monster" VALUES(11,1,'Ghost','monsters/ghost.png',12,3,150,0,100,120,0,0,30,1,15);
+INSERT INTO "monster" VALUES(12,1,'Zombie','monsters/zombie.png',15,20,500,0,70,180,10,10,70,1,18);
+INSERT INTO "monster" VALUES(13,1,'Demon Crow','monsters/demon_crow.png',20,15,225,0,140,220,2,5,110,1,14);
+INSERT INTO "monster" VALUES(14,1,'Apparition','monsters/apparition.png',25,7,350,0,200,210,5,5,30,1,15);
+INSERT INTO "monster" VALUES(15,1,'Venomous Bat','monsters/venomous_bat.png',20,20,250,0,100,200,4,5,130,2,22);
+INSERT INTO "monster" VALUES(16,1,'Crimson Slime','monsters/crimson_slime.png',30,30,800,0,120,250,6,5,70,1,25);
+INSERT INTO "monster" VALUES(17,1,'Dead Queen','monsters/dead_queen.png',100,200,4000,1500,200,300,15,20,50,4,17);
+INSERT INTO "monster" VALUES(18,1,'Mud Man','monsters/mud_man.png',20,30,600,0,40,120,8,5,70,2,21);
+INSERT INTO "monster" VALUES(19,1,'Slime Prince','monsters/slime_prince.png',100,150,3000,4000,100,350,25,30,80,5,23);
+INSERT INTO "monster" VALUES(20,1,'Skeleton','monsters/skeleton.png',30,25,650,0,100,150,5,10,100,1,26);
+INSERT INTO "monster" VALUES(21,1,'Skeleton Priest','monsters/skeleton_priest.png',35,30,750,600,50,100,3,0,75,6,24);
+INSERT INTO "monster" VALUES(22,1,'Dusty Ant','monsters/dusty_ant.png',40,40,1000,0,125,175,25,15,100,2,19);
+INSERT INTO "monster" VALUES(23,1,'Demon','monsters/demon.png',100,75,1200,0,100,225,10,0,100,2,27);
+CREATE TABLE "map" (
+	"id" INTEGER PRIMARY KEY,
+	"file" TEXT,
+	"atlas" TEXT,
+	"music" TEXT,
+	"ambient_red" REAL DEFAULT(0.3),
+	"ambient_green" REAL DEFAULT(0.3),
+	"ambient_blue" REAL DEFAULT(0.3),
+	"outside" INTEGER DEFAULT(1),
+	"background_id" INTEGER DEFAULT(0),
+	"background_x" REAL DEFAULT(0),
+	"background_y" REAL DEFAULT(0),
+	"background_z" REAL DEFAULT(0)
+);
+INSERT INTO "map" VALUES(1,'ham.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(2,'ham_cellarhut.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(3,'ham_cellar.map.gz','atlas0.png','cellar.ogg',0.02,0.01,0.01,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(4,'ham_weapon.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(5,'ham_armor.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(6,'ham_supplies.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(7,'ham_blacksmith.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(8,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(9,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(10,'choria.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(11,'choria_batcave.map.gz','atlas0.png','bat.ogg',0.0,0.0,0.0,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(12,'choria_sandcave.map.gz','atlas0.png','sand.ogg',0.1,0.1,0.0,0,13,-25.0,-25.0,-10.0);
+INSERT INTO "map" VALUES(13,'choria_sandcave_bg.map.gz','atlas0.png','',0.1,0.1,0.1,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(14,'choria_slimecave1.map.gz','atlas0.png','',0.0,0.2,0.0,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(15,'choria_slimecave2.map.gz','atlas0.png','',0.0,0.05,0.0,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(16,'choria_ruins1.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(17,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(18,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(19,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(20,'fem.map.gz','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(21,'fem_house_top.map.gz','atlas0.png','',0.3,0.3,0.3,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(22,'fem_tower1.map.gz','atlas0.png','tower.ogg',0.05,0.1,0.05,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(23,'fem_tower2.map.gz','atlas0.png','tower.ogg',0.03,0.06,0.03,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(24,'fem_tower3.map.gz','atlas0.png','tower.ogg',0.01,0.02,0.01,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(25,'fem_tower4.map.gz','atlas0.png','howl.ogg',0.0,0.0,0.0,1,27,-35.0,-30.0,-20.0);
+INSERT INTO "map" VALUES(26,'fem_tower5.map.gz','atlas0.png','queen.ogg',0.02,0.01,0.01,0,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(27,'fem_tower4_bg.map.gz','atlas0.png','tower.ogg',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(28,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(29,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(30,'san.map.gz','atlas0.png','town.ogg',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(31,'san_shop.map.gz','atlas0.png','town.ogg',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(32,'san_weapon.map.gz','atlas0.png','town.ogg',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(33,'san_armor.map.gz','atlas0.png','town.ogg',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(34,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(35,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(36,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(37,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(38,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(39,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+INSERT INTO "map" VALUES(40,'','atlas0.png','',0.3,0.3,0.3,1,'',0.0,0.0,0.0);
+CREATE TABLE "trader" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"item_id" INTEGER REFERENCES item(id) ON DELETE CASCADE,
+	"count" INTEGER DEFAULT(1)
+);
+INSERT INTO "trader" VALUES(1,'cellar_key',112,1);
+INSERT INTO "trader" VALUES(2,'soothing_salve',127,1);
+INSERT INTO "trader" VALUES(3,'health_ring',145,1);
+INSERT INTO "trader" VALUES(4,'magic_ring',158,1);
+INSERT INTO "trader" VALUES(5,'throwing_knives',133,5);
+INSERT INTO "trader" VALUES(6,'bleed_ring',184,1);
+INSERT INTO "trader" VALUES(7,'trolls_ring',138,1);
+INSERT INTO "trader" VALUES(8,'tower_key',137,1);
+INSERT INTO "trader" VALUES(9,'arcane_cider',128,1);
+INSERT INTO "trader" VALUES(10,'warm_ring',214,1);
+INSERT INTO "trader" VALUES(11,'glowing_ring',159,1);
+INSERT INTO "trader" VALUES(12,'ring_of_jem',162,1);
+INSERT INTO "trader" VALUES(13,'poison_knives',192,5);
+INSERT INTO "trader" VALUES(14,'poison_ring',181,1);
+INSERT INTO "trader" VALUES(15,'actionslot_ii',97,1);
+INSERT INTO "trader" VALUES(16,'fireblast',9,1);
+CREATE TABLE "traderitem" (
+	"id" INTEGER PRIMARY KEY,
+	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
+	"item_id" INTEGER DEFAULT(0) REFERENCES item(id) ON DELETE CASCADE,
+	"count" INTEGER DEFAULT(1)
+);
+INSERT INTO "traderitem" VALUES(1,1,126,1);
+INSERT INTO "traderitem" VALUES(2,2,125,2);
+INSERT INTO "traderitem" VALUES(3,2,108,1);
+INSERT INTO "traderitem" VALUES(4,3,127,2);
+INSERT INTO "traderitem" VALUES(5,3,211,1);
+INSERT INTO "traderitem" VALUES(7,4,109,5);
+INSERT INTO "traderitem" VALUES(8,4,211,1);
+INSERT INTO "traderitem" VALUES(11,5,118,1);
+INSERT INTO "traderitem" VALUES(12,5,114,1);
+INSERT INTO "traderitem" VALUES(16,7,127,3);
+INSERT INTO "traderitem" VALUES(17,7,145,1);
+INSERT INTO "traderitem" VALUES(18,7,125,2);
+INSERT INTO "traderitem" VALUES(19,8,139,1);
+INSERT INTO "traderitem" VALUES(20,9,109,1);
+INSERT INTO "traderitem" VALUES(21,9,146,2);
+INSERT INTO "traderitem" VALUES(25,11,158,1);
+INSERT INTO "traderitem" VALUES(26,11,6,1);
+INSERT INTO "traderitem" VALUES(27,11,128,2);
+INSERT INTO "traderitem" VALUES(28,12,161,1);
+INSERT INTO "traderitem" VALUES(29,13,133,5);
+INSERT INTO "traderitem" VALUES(30,13,156,1);
+INSERT INTO "traderitem" VALUES(31,14,145,1);
+INSERT INTO "traderitem" VALUES(32,14,156,10);
+INSERT INTO "traderitem" VALUES(33,6,125,10);
+INSERT INTO "traderitem" VALUES(34,6,211,1);
+INSERT INTO "traderitem" VALUES(35,15,126,1);
+INSERT INTO "traderitem" VALUES(36,15,139,1);
+INSERT INTO "traderitem" VALUES(37,15,140,1);
+INSERT INTO "traderitem" VALUES(38,15,161,1);
+INSERT INTO "traderitem" VALUES(39,10,145,1);
+INSERT INTO "traderitem" VALUES(40,10,5,1);
+INSERT INTO "traderitem" VALUES(41,10,127,2);
+INSERT INTO "traderitem" VALUES(42,16,15,1);
+INSERT INTO "traderitem" VALUES(43,16,20,1);
+CREATE TABLE "build" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"texture" TEXT,
+	"model_id" INTEGER DEFAULT(0),
+	"actionbarsize" INTEGER DEFAULT(4),
+	"starting" INTEGER DEFAULT(0)
+);
+INSERT INTO "build" VALUES(1,'Warrior','builds/warrior.png',1,4,1);
+INSERT INTO "build" VALUES(2,'Mage','builds/mage.png',2,4,1);
+INSERT INTO "build" VALUES(3,'Cleric','builds/cleric.png',3,4,1);
+INSERT INTO "build" VALUES(4,'Thief','builds/thief.png',4,4,1);
+INSERT INTO "build" VALUES(5,'Paladin','builds/paladin.png',5,4,1);
+INSERT INTO "build" VALUES(6,'Warlock','builds/warlock.png',6,4,1);
+INSERT INTO "build" VALUES(7,'Beggar','builds/beggar.png',7,4,1);
+INSERT INTO "build" VALUES(8,'','',0,4,0);
+INSERT INTO "build" VALUES(9,'','',0,4,0);
+INSERT INTO "build" VALUES(10,'Basic Monster','',0,1,0);
+INSERT INTO "build" VALUES(11,'Spider','',0,1,0);
+INSERT INTO "build" VALUES(12,'Bat','',0,1,0);
+INSERT INTO "build" VALUES(13,'Bat Lord','',0,2,0);
+INSERT INTO "build" VALUES(14,'Crow','',0,1,0);
+INSERT INTO "build" VALUES(15,'Ghost','',0,1,0);
+INSERT INTO "build" VALUES(16,'King Krab','',0,2,0);
+INSERT INTO "build" VALUES(17,'Dead Queen','',0,3,0);
+INSERT INTO "build" VALUES(18,'Zombie','',0,1,0);
+INSERT INTO "build" VALUES(19,'Fireant','',0,1,0);
+INSERT INTO "build" VALUES(20,'Crab','',0,1,0);
+INSERT INTO "build" VALUES(21,'Mud Man','',0,1,0);
+INSERT INTO "build" VALUES(22,'Venomous Bat','',0,1,0);
+INSERT INTO "build" VALUES(23,'Slime Prince','',0,3,0);
+INSERT INTO "build" VALUES(24,'Skeleton Priest','',0,2,0);
+INSERT INTO "build" VALUES(25,'Slime','',0,1,0);
+INSERT INTO "build" VALUES(26,'Skeleton','',0,1,0);
+INSERT INTO "build" VALUES(27,'Demon','',0,1,0);
+CREATE TABLE "buildskill" (
+	"id" INTEGER PRIMARY KEY,
+	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
+	"item_id" INTEGER DEFAULT(0) REFERENCES item(id) ON DELETE CASCADE,
+	"level" INTEGER DEFAULT(1)
+);
+INSERT INTO "buildskill" VALUES(1,1,1,1);
+INSERT INTO "buildskill" VALUES(3,3,1,1);
+INSERT INTO "buildskill" VALUES(5,10,51,1);
+INSERT INTO "buildskill" VALUES(6,2,3,2);
+INSERT INTO "buildskill" VALUES(7,3,18,2);
+INSERT INTO "buildskill" VALUES(8,1,5,2);
+INSERT INTO "buildskill" VALUES(9,2,6,1);
+INSERT INTO "buildskill" VALUES(10,5,1,1);
+INSERT INTO "buildskill" VALUES(11,5,7,2);
+INSERT INTO "buildskill" VALUES(12,11,52,30);
+INSERT INTO "buildskill" VALUES(13,12,53,10);
+INSERT INTO "buildskill" VALUES(14,4,10,1);
+INSERT INTO "buildskill" VALUES(15,13,53,30);
+INSERT INTO "buildskill" VALUES(16,13,54,1);
+INSERT INTO "buildskill" VALUES(17,4,12,1);
+INSERT INTO "buildskill" VALUES(18,14,55,25);
+INSERT INTO "buildskill" VALUES(19,15,56,1);
+INSERT INTO "buildskill" VALUES(20,16,61,1);
+INSERT INTO "buildskill" VALUES(21,16,57,40);
+INSERT INTO "buildskill" VALUES(22,4,2,1);
+INSERT INTO "buildskill" VALUES(23,17,51,1);
+INSERT INTO "buildskill" VALUES(24,17,56,1);
+INSERT INTO "buildskill" VALUES(25,17,9,12);
+INSERT INTO "buildskill" VALUES(26,18,58,1);
+INSERT INTO "buildskill" VALUES(27,19,63,1);
+INSERT INTO "buildskill" VALUES(28,20,61,1);
+INSERT INTO "buildskill" VALUES(29,21,59,30);
+INSERT INTO "buildskill" VALUES(30,22,60,20);
+INSERT INTO "buildskill" VALUES(31,23,62,1);
+INSERT INTO "buildskill" VALUES(32,23,17,10);
+INSERT INTO "buildskill" VALUES(33,24,64,1);
+INSERT INTO "buildskill" VALUES(34,24,4,5);
+INSERT INTO "buildskill" VALUES(35,25,62,1);
+INSERT INTO "buildskill" VALUES(36,26,64,1);
+INSERT INTO "buildskill" VALUES(37,27,65,1);
+INSERT INTO "buildskill" VALUES(38,6,1,1);
+INSERT INTO "buildskill" VALUES(39,6,21,1);
+INSERT INTO "buildskill" VALUES(40,6,22,1);
+INSERT INTO "buildskill" VALUES(41,7,1,3);
+CREATE TABLE "builditem" (
+	"id" INTEGER PRIMARY KEY,
+	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
+	"item_id" INTEGER DEFAULT(0) REFERENCES item(id) ON DELETE CASCADE,
+	"count" INTEGER DEFAULT(1)
+);
+INSERT INTO "builditem" VALUES(1,1,100,1);
+INSERT INTO "builditem" VALUES(2,2,101,1);
+INSERT INTO "builditem" VALUES(3,3,111,1);
+INSERT INTO "builditem" VALUES(4,4,103,1);
+INSERT INTO "builditem" VALUES(5,3,104,1);
+INSERT INTO "builditem" VALUES(6,2,104,1);
+INSERT INTO "builditem" VALUES(7,1,105,1);
+INSERT INTO "builditem" VALUES(8,1,106,1);
+INSERT INTO "builditem" VALUES(9,5,102,1);
+INSERT INTO "builditem" VALUES(10,5,107,1);
+INSERT INTO "builditem" VALUES(11,5,113,1);
+INSERT INTO "builditem" VALUES(12,1,108,3);
+INSERT INTO "builditem" VALUES(13,2,109,2);
+INSERT INTO "builditem" VALUES(14,3,108,2);
+INSERT INTO "builditem" VALUES(15,3,109,2);
+INSERT INTO "builditem" VALUES(16,5,108,2);
+INSERT INTO "builditem" VALUES(17,4,133,5);
+INSERT INTO "builditem" VALUES(18,2,136,1);
+INSERT INTO "builditem" VALUES(19,4,143,1);
+INSERT INTO "builditem" VALUES(20,3,148,1);
+INSERT INTO "builditem" VALUES(21,4,160,1);
+INSERT INTO "builditem" VALUES(22,19,173,1);
+INSERT INTO "builditem" VALUES(23,15,176,1);
+INSERT INTO "builditem" VALUES(24,16,188,1);
+INSERT INTO "builditem" VALUES(25,20,178,1);
+INSERT INTO "builditem" VALUES(26,18,185,1);
+INSERT INTO "builditem" VALUES(27,22,183,1);
+INSERT INTO "builditem" VALUES(28,23,128,5);
+INSERT INTO "builditem" VALUES(29,26,186,1);
+INSERT INTO "builditem" VALUES(30,25,184,1);
+INSERT INTO "builditem" VALUES(31,15,186,1);
+INSERT INTO "builditem" VALUES(32,17,176,1);
+INSERT INTO "builditem" VALUES(33,17,186,1);
+INSERT INTO "builditem" VALUES(34,24,185,1);
+INSERT INTO "builditem" VALUES(35,6,212,1);
+INSERT INTO "builditem" VALUES(36,6,104,1);
+INSERT INTO "builditem" VALUES(37,6,109,3);
+CREATE TABLE "buildactionbar" (
+	"id" INTEGER PRIMARY KEY,
+	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,
+	"item_id" INTEGER DEFAULT(0) REFERENCES item(id) ON DELETE CASCADE,
+	"slot" INTEGER
+);
+INSERT INTO "buildactionbar" VALUES(1,1,1,0);
+INSERT INTO "buildactionbar" VALUES(3,3,1,0);
+INSERT INTO "buildactionbar" VALUES(4,4,10,0);
+INSERT INTO "buildactionbar" VALUES(5,10,51,0);
+INSERT INTO "buildactionbar" VALUES(6,2,3,0);
+INSERT INTO "buildactionbar" VALUES(7,3,18,1);
+INSERT INTO "buildactionbar" VALUES(8,1,5,3);
+INSERT INTO "buildactionbar" VALUES(9,2,6,3);
+INSERT INTO "buildactionbar" VALUES(10,5,1,0);
+INSERT INTO "buildactionbar" VALUES(11,5,7,1);
+INSERT INTO "buildactionbar" VALUES(12,1,108,1);
+INSERT INTO "buildactionbar" VALUES(13,2,109,1);
+INSERT INTO "buildactionbar" VALUES(14,3,108,2);
+INSERT INTO "buildactionbar" VALUES(15,3,109,3);
+INSERT INTO "buildactionbar" VALUES(16,5,108,2);
+INSERT INTO "buildactionbar" VALUES(17,11,52,0);
+INSERT INTO "buildactionbar" VALUES(18,12,53,0);
+INSERT INTO "buildactionbar" VALUES(19,13,53,0);
+INSERT INTO "buildactionbar" VALUES(20,13,54,1);
+INSERT INTO "buildactionbar" VALUES(21,4,133,1);
+INSERT INTO "buildactionbar" VALUES(22,4,12,2);
+INSERT INTO "buildactionbar" VALUES(23,14,55,0);
+INSERT INTO "buildactionbar" VALUES(24,15,56,0);
+INSERT INTO "buildactionbar" VALUES(25,16,61,0);
+INSERT INTO "buildactionbar" VALUES(26,16,57,1);
+INSERT INTO "buildactionbar" VALUES(27,4,2,3);
+INSERT INTO "buildactionbar" VALUES(28,17,51,0);
+INSERT INTO "buildactionbar" VALUES(29,17,9,1);
+INSERT INTO "buildactionbar" VALUES(30,17,56,2);
+INSERT INTO "buildactionbar" VALUES(31,18,58,0);
+INSERT INTO "buildactionbar" VALUES(32,19,63,0);
+INSERT INTO "buildactionbar" VALUES(33,20,61,0);
+INSERT INTO "buildactionbar" VALUES(34,21,59,0);
+INSERT INTO "buildactionbar" VALUES(35,22,60,0);
+INSERT INTO "buildactionbar" VALUES(36,23,62,0);
+INSERT INTO "buildactionbar" VALUES(37,23,17,1);
+INSERT INTO "buildactionbar" VALUES(38,23,128,2);
+INSERT INTO "buildactionbar" VALUES(39,24,64,0);
+INSERT INTO "buildactionbar" VALUES(40,24,4,1);
+INSERT INTO "buildactionbar" VALUES(41,25,62,0);
+INSERT INTO "buildactionbar" VALUES(42,26,64,0);
+INSERT INTO "buildactionbar" VALUES(43,27,65,0);
+INSERT INTO "buildactionbar" VALUES(44,6,1,0);
+INSERT INTO "buildactionbar" VALUES(45,6,22,1);
+INSERT INTO "buildactionbar" VALUES(46,6,21,2);
+INSERT INTO "buildactionbar" VALUES(47,6,109,3);
+INSERT INTO "buildactionbar" VALUES(48,7,1,0);
+CREATE TABLE "item" (
+"id" INTEGER PRIMARY KEY,
+"name" TEXT,
+"texture" TEXT DEFAULT('items/'),
+"script" TEXT,
+"itemtype_id" INTEGER DEFAULT(0) REFERENCES itemtype(id) ON DELETE CASCADE,
+"level" INTEGER DEFAULT(0),
+"maxlevel" INTEGER DEFAULT(20),
+"levelrequired" INTEGER DEFAULT(0),
+"cost" INTEGER DEFAULT(0),
+"damagetype_id" INTEGER DEFAULT(0) REFERENCES damagetype(id) ON DELETE CASCADE,
+"mindamage" INTEGER DEFAULT(0),
+"maxdamage" INTEGER DEFAULT(0),
+"armor" INTEGER DEFAULT(0),
+"block" INTEGER DEFAULT(0),
+"maxhealth" INTEGER DEFAULT(0),
+"maxmana" INTEGER DEFAULT(0),
+"healthregen" INTEGER DEFAULT(0),
+"manaregen" INTEGER DEFAULT(0),
+"battlespeed" INTEGER DEFAULT(0),
+"movespeed" INTEGER DEFAULT(0),
+"restype_id" INTEGER DEFAULT(0) REFERENCES damagetype(id) ON DELETE CASCADE,
+"res" INTEGER DEFAULT (0),
+"tradable" INTEGER DEFAULT(1),
+"target_alive" INTEGER DEFAULT(1),
+"target_id" INTEGER DEFAULT(0) REFERENCES target(id) ON DELETE CASCADE,
+"scope_id" INTEGER DEFAULT(0) REFERENCES scope(id) ON DELETE CASCADE,
+"unlock_id" INTEGER DEFAULT(0) REFERENCES unlock(id) ON DELETE CASCADE
+);
+INSERT INTO "item" VALUES(0,'None','','',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(1,'Attack','skills/attack.png','Skill_Attack',1,0,10,0,50,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(2,'Flee','skills/flee.png','Skill_Flee',1,0,10,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,0);
+INSERT INTO "item" VALUES(3,'Spark','skills/spark.png','Skill_Spark',1,0,10,0,150,5,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(4,'Heal','skills/heal.png','Skill_Heal',1,0,10,0,350,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,3,0);
+INSERT INTO "item" VALUES(5,'Toughness','skills/toughness.png','Skill_Toughness',1,0,10,0,500,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(6,'Arcane Mastery','skills/arcanemastery.png','Skill_ArcaneMastery',1,0,10,0,600,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(7,'Shield Bash','skills/shield_bash.png','Skill_ShieldBash',1,0,10,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(8,'Whirlwind','skills/whirlwind.png','Skill_Whirlwind',1,0,10,0,2000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,6,2,0);
+INSERT INTO "item" VALUES(9,'Fire Blast','skills/fireblast.png','Skill_FireBlast',1,0,10,0,750,3,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,2,0);
+INSERT INTO "item" VALUES(10,'Gash','skills/gash.png','Skill_Gash',1,0,10,0,250,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(11,'Evasion','skills/evasion.png','Skill_Evasion',1,0,10,0,750,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(12,'Pickpocket','skills/pickpocket.png','Skill_Pickpocket',1,0,10,0,400,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(13,'Parry','skills/parry.png','Skill_Parry',1,0,10,0,325,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,0);
+INSERT INTO "item" VALUES(14,'Defend','skills/defend.png','Skill_Defend',1,0,10,0,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,0);
+INSERT INTO "item" VALUES(15,'Ignite','skills/ignite.png','Skill_Ignite',1,0,10,0,500,3,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(16,'Backstab','skills/backstab.png','Skill_Backstab',1,0,10,0,500,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(17,'Resurrect','skills/resurrect.png','Skill_Resurrect',1,0,10,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,0);
+INSERT INTO "item" VALUES(18,'Rejuvenation','skills/rejuvenation.png','Skill_Rejuvenation',1,0,10,0,250,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,3,0);
+INSERT INTO "item" VALUES(19,'Icicle','skills/icicle.png','Skill_Icicle',1,0,10,0,175,4,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(20,'Fury','skills/fury.png','Skill_Fury',1,0,10,0,1200,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(21,'Demonic Conjuring','skills/demonic_conjuring.png','Skill_DemonicConjuring',1,0,10,0,300,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,0);
+INSERT INTO "item" VALUES(22,'Enfeeble','skills/enfeeble.png','Skill_Enfeeble',1,0,10,0,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(23,'Cleave','skills/cleave.png','Skill_Cleave',1,0,10,0,750,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,4,2,0);
+INSERT INTO "item" VALUES(24,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(25,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(26,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(27,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(28,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(29,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(30,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(31,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(32,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(33,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(34,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(35,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(36,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(37,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(38,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(39,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(40,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(41,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(42,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(43,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(44,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(45,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(46,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(47,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(48,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(49,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(50,'','','',1,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(51,'Monster Attack','skills/monsterattack.png','Skill_MonsterAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(52,'Spider Bite','skills/spider_bite.png','Skill_SpiderBite',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(53,'Fang Bite','skills/fang_bite.png','Skill_FangBite',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(54,'Swoop','skills/swoop.png','Skill_Swoop',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,6,2,0);
+INSERT INTO "item" VALUES(55,'Crow Attack','skills/crowattack.png','Skill_CrowAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(56,'Ghost Attack','skills/ghostattack.png','Skill_GhostAttack',1,0,10,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(57,'Pincer Attack','skills/pincerattack.png','Skill_PincerAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,6,2,0);
+INSERT INTO "item" VALUES(58,'Chew Attack','skills/chewattack.png','Skill_ChewAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(59,'Swamp Attack','skills/swampattack.png','Skill_SwampAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(60,'Venom Bite','skills/fang_bite.png','Skill_VenomBite',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(61,'Crab Attack','skills/monsterattack.png','Skill_CrabAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(62,'Slime Attack','skills/monsterattack.png','Skill_SlimeAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(63,'Ant Attack','skills/monsterattack.png','Skill_AntAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(64,'Skeleton Attack','skills/monsterattack.png','Skill_SkeletonAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(65,'Demon Attack','skills/monsterattack.png','Skill_DemonAttack',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(66,'','','',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(67,'','','',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(68,'','','',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(69,'','','',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(70,'','','',1,0,10,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,0);
+INSERT INTO "item" VALUES(96,'Action Slot I','items/actionslot1.png','Item_ActionSlot',11,0,0,0,500,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1);
+INSERT INTO "item" VALUES(97,'Action Slot II','items/actionslot2.png','Item_ActionSlot',11,0,0,0,500,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,2);
+INSERT INTO "item" VALUES(98,'Action Slot III','items/actionslot3.png','Item_ActionSlot',11,0,0,0,500,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,3);
+INSERT INTO "item" VALUES(99,'Action Slot IV','items/actionslot4.png','Item_ActionSlot',11,0,0,0,500,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,4);
+INSERT INTO "item" VALUES(100,'Short Sword','items/short_sword.png','',5,0,10,0,25,2,20,40,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(101,'Stick','items/stick.png','',5,0,10,0,5,2,10,20,0,0,0,20,0,1,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(102,'Mace','items/mace.png','',5,0,10,0,20,2,10,50,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(103,'Dagger','items/dagger.png','',5,0,10,0,25,2,20,20,0,0,0,0,0,0,20,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(104,'Mage Robes','items/mage_robes.png','',3,0,10,1,100,0,0,0,2,0,0,25,0,1,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(105,'Leather Jerkin','items/leather_jerkin.png','',3,0,10,1,75,0,0,0,5,1,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(106,'Buckler','items/buckler.png','',7,0,10,1,25,2,10,30,0,5,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(107,'Bronze Shield','items/bronze_shield.png','',7,0,10,1,70,2,20,50,0,10,0,0,0,0,-10,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(108,'Healing Salve','items/healing_salve.png','Item_HealingSalve',9,30,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(109,'Mana Cider','items/mana_cider.png','Item_ManaCider',9,10,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(110,'Invisible Potion','items/invis_potion.png','Item_InvisPotion',9,15,0,0,40,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0);
+INSERT INTO "item" VALUES(111,'Quarter Staff','items/quarter_staff.png','',6,0,10,0,35,2,20,50,0,5,0,0,0,0,10,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(112,'Cellar Key','items/key.png','',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(113,'Bronze Armor','items/bronze_armor.png','',3,0,10,1,175,0,0,0,10,2,0,0,0,0,-5,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(114,'Crow Feather','items/crow_feather.png','Item_CrowFeather',9,20,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(115,'Spider Leg','items/spider_leg.png','Item_SpiderLeg',9,10,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(116,'Potion of Haste','items/haste_potion.png','Item_HastePotion',9,50,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,0);
+INSERT INTO "item" VALUES(117,'Axe','items/axe.png','',6,0,10,0,100,2,20,130,-1,0,0,0,0,0,-5,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(118,'Small Knife','items/small_knife.png','',5,0,10,0,15,2,10,10,0,0,0,0,0,0,10,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(119,'Sword','items/sword.png','',5,0,10,0,150,2,30,90,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(120,'Leather Boots','items/leather_boots.png','',4,0,10,1,20,0,0,0,2,0,0,0,0,0,0,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(121,'Leather Helm','items/leather_helm.png','',2,0,10,1,30,0,0,0,3,0,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(122,'Bronze Boots','items/bronze_boots.png','',4,0,10,1,50,0,0,0,5,0,0,0,0,0,-3,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(123,'Iron Helm','items/iron_helm.png','',2,0,10,1,80,0,0,0,8,0,0,0,0,0,-5,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(124,'Fang','items/fang.png','Item_Fang',9,30,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(125,'Slimy Glob','items/glob.png','Item_SlimyGlob',9,25,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(126,'Bat Trophy','items/bat_trophy.png','',10,0,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(127,'Soothing Salve','items/healing_salve.png','Item_HealingSalve',9,150,0,0,50,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(128,'Arcane Cider','items/mana_cider.png','Item_ManaCider',9,50,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(129,'Reinforced Buckler','items/reinforced_buckler.png','',7,0,10,2,200,2,20,60,0,8,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(130,'Battle Axe','items/battleaxe.png','',6,0,10,0,600,2,30,220,-2,0,0,0,0,0,-10,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(131,'Stiletto','items/stiletto.png','',5,0,10,0,250,2,50,50,0,0,0,0,0,0,20,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(132,'Death Potion','items/death_potion.png','Item_DeathPotion',9,100,0,0,300,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(133,'Throwing Knives','items/throwing_knives.png','Item_ThrowingKnives',9,1,0,0,8,2,50,140,0,0,0,0,0,0,0,0,0,0,1,1,2,2,0);
+INSERT INTO "item" VALUES(134,'Crab Legs','items/crab_legs.png','Item_CrabLegs',9,10,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(135,'Wizard Book','items/wizard_book.png','',7,0,10,2,320,0,0,0,0,3,0,50,0,2,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(136,'Mage Book','items/mage_book.png','',7,0,10,1,40,0,0,0,0,2,0,25,0,1,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(137,'Tower Key','items/key.png','',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(138,'Troll''s Ring','items/ring.png','',8,0,10,0,250,0,0,0,0,0,0,0,7,0,-25,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(139,'Crab Trophy','items/crab_trophy.png','',10,0,0,0,250,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(140,'Slime Trophy','items/slime_trophy.png','',10,0,0,0,400,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(141,'Scimitar','items/scimitar.png','',5,0,10,0,750,2,90,170,0,0,0,0,0,0,5,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(142,'Magic Stick','items/magic_stick.png','',5,0,10,0,350,2,40,70,0,0,0,100,0,2,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(143,'Cloth Vest','items/cloth_vest.png','',3,0,10,1,50,0,0,0,1,0,0,0,0,0,10,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(144,'Wizard Robes','items/wizard_robes.png','',3,0,10,2,400,0,0,0,4,1,0,50,0,2,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(145,'Ring of Health','items/ring.png','',8,0,10,0,125,0,0,0,0,0,20,0,1,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(146,'Spectral Dust','items/spectral_dust.png','Item_SpectralDust',9,10,0,0,25,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
+INSERT INTO "item" VALUES(147,'Morning Star','items/mace.png','',5,0,10,0,400,2,50,110,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(148,'Cap','items/cap.png','',2,0,10,1,15,0,0,0,1,0,0,10,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(149,'Fighting Stick','items/quarter_staff.png','',6,0,10,0,550,2,60,140,0,10,0,0,0,0,10,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(150,'Swift Knife','items/small_knife.png','',5,0,10,0,1100,2,120,120,0,0,0,0,0,0,30,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(151,'Battle Potion','items/death_potion.png','Item_BattlePotion',9,1,0,0,25,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0);
+INSERT INTO "item" VALUES(152,'Mage Hat','items/mage_hat.png','',2,0,10,1,25,0,0,0,1,0,0,30,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(153,'Wizard Hat','items/wizard_hat.png','',2,0,10,2,100,0,0,0,2,0,0,60,0,1,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(154,'Claymore','items/claymore.png','',6,0,10,0,2000,2,150,430,-5,0,0,0,0,0,-15,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(155,'Ghostly Potion','items/invis_potion.png','Item_InvisPotion',9,30,0,0,150,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0);
+INSERT INTO "item" VALUES(156,'Poison','items/poison.png','Item_PoisonPotion',9,10,0,0,25,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,8,3,0);
+INSERT INTO "item" VALUES(157,'Reinforced Jerkin','items/reinforced_jerkin.png','',3,0,10,2,300,0,0,0,8,2,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(158,'Magic Ring','items/ring.png','',8,0,10,0,150,0,0,0,0,0,0,20,0,1,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(159,'Glowing Ring','items/glowing_ring.png','',8,0,10,0,800,0,0,0,0,0,0,35,0,3,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(160,'Cloth Slippers','items/cloth_slippers.png','',4,0,10,1,30,0,0,0,0,0,0,0,0,0,5,10,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(161,'Ghost Trophy','items/ghost_trophy.png','',10,0,0,0,500,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO "item" VALUES(162,'Ring of Jem','items/ring.png','',8,0,10,0,1500,0,0,0,0,0,0,0,0,0,12,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(163,'Reinforced Boots','items/reinforced_boots.png','',4,0,10,2,80,0,0,0,3,0,0,0,0,0,0,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(164,'Reinforced Helm','items/reinforced_helm.png','',2,0,10,2,120,0,0,0,4,0,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(165,'Metal Armor','items/metal_armor.png','',3,0,10,2,700,0,0,0,13,4,0,0,0,0,-5,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(166,'Prismatic Ring I','items/ring.png','',8,0,10,0,500,0,0,0,0,0,0,0,0,0,0,0,1,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(167,'Prismatic Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,1,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(168,'Prismatic Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,1,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(169,'Physical Ring I','items/ring.png','',8,0,10,0,100,0,0,0,0,0,0,0,0,0,0,0,2,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(170,'Physical Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,2,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(171,'Physical Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,2,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(172,'Fire Ring I','items/ring.png','',8,0,10,0,100,0,0,0,0,0,0,0,0,0,0,0,3,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(173,'Fire Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,3,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(174,'Fire Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,3,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(175,'Cold Ring I','items/ring.png','',8,0,10,0,100,0,0,0,0,0,0,0,0,0,0,0,4,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(176,'Cold Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,4,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(177,'Cold Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,4,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(178,'Lightning Ring I','items/ring.png','',8,0,10,0,100,0,0,0,0,0,0,0,0,0,0,0,5,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(179,'Lightning Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,5,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(180,'Lightning Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,5,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(181,'Poison Ring I','items/ring.png','',8,0,10,0,250,0,0,0,0,0,0,0,0,0,0,0,6,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(182,'Poison Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,6,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(183,'Poison Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,6,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(184,'Bleed Ring I','items/ring.png','',8,0,10,0,200,0,0,0,0,0,0,0,0,0,0,0,7,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(185,'Bleed Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,7,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(186,'Bleed Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,7,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(187,'Stun Ring I','items/ring.png','',8,0,10,0,100,0,0,0,0,0,0,0,0,0,0,0,8,25,1,1,0,0,0);
+INSERT INTO "item" VALUES(188,'Stun Ring II','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,8,50,1,1,0,0,0);
+INSERT INTO "item" VALUES(189,'Stun Ring III','items/ring.png','',8,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0,8,75,1,1,0,0,0);
+INSERT INTO "item" VALUES(190,'Silver Edge','items/short_sword.png','',5,0,10,0,2400,2,180,250,0,0,0,0,0,0,10,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(191,'Teleport Scroll','items/scroll.png','Item_TeleportScroll',9,0,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0);
+INSERT INTO "item" VALUES(192,'Poison Knives','items/poison_knives.png','Item_PoisonKnives',9,10,0,0,20,2,70,230,0,0,0,0,0,0,0,0,0,0,1,1,2,2,0);
+INSERT INTO "item" VALUES(193,'Swamp Glob','items/swamp_glob.png','Item_SwampGlob',9,30,0,0,35,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,0);
+INSERT INTO "item" VALUES(194,'Black Vest','items/black_vest.png','',3,0,10,2,200,0,0,0,2,1,0,0,0,0,10,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(195,'Iron Armor','items/iron_armor.png','',3,0,10,1,250,0,0,0,15,4,0,0,0,0,-10,-10,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(196,'Steel Armor','items/steel_armor.png','',3,0,10,2,1000,0,0,0,18,8,0,0,0,0,-10,-10,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(197,'Black Slippers','items/black_slippers.png','',4,0,10,2,120,0,0,0,1,0,0,0,0,0,5,10,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(198,'Metal Boots','items/metal_boots.png','',4,0,10,2,200,0,0,0,6,0,0,0,0,0,-3,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(199,'Iron Boots','items/iron_boots.png','',4,0,10,1,70,0,0,0,7,0,0,0,0,0,-5,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(200,'Steel Boots','items/steel_boots.png','',4,0,10,2,280,0,0,0,8,0,0,0,0,0,-5,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(201,'Bronze Helm','items/bronze_helm.png','',2,0,10,1,55,0,0,0,5,0,0,0,0,0,-2,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(202,'Metal Helm','items/metal_helm.png','',2,0,10,2,220,0,0,0,6,0,0,0,0,0,-2,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(203,'Steel Helm','items/steel_helm.png','',2,0,10,2,320,0,0,0,9,0,0,0,0,0,-5,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(204,'Cloth Hood','items/cloth_hood.png','',2,0,10,1,20,0,0,0,0,0,0,0,0,0,5,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(205,'Black Hood','items/black_hood.png','',2,0,10,2,80,0,0,0,1,0,0,0,0,0,5,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(206,'Metal Shield','items/metal_shield.png','',7,0,10,2,560,2,60,120,0,15,0,0,0,0,-10,-5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(207,'Iron Shield','items/iron_shield.png','',7,0,10,1,100,2,30,70,0,20,0,0,0,0,-20,-10,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(208,'Steel Shield','items/steel_shield.png','',7,0,10,2,800,2,80,160,0,30,0,0,0,0,-20,-10,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(209,'Mage Slippers','items/mage_slippers.png','',4,0,10,1,35,0,0,0,1,0,0,20,0,0,0,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(210,'Wizard Slippers','items/wizard_slippers.png','',4,0,10,2,140,0,0,0,2,0,0,40,0,1,0,5,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(211,'Ring','items/ring.png','',8,0,10,0,50,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(212,'Dark Staff','items/dark_staff.png','',6,0,20,0,65,2,10,50,0,0,0,50,0,2,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(213,'Demon Stick','items/demon_stick.png','',6,0,20,0,800,2,50,120,0,5,0,250,0,6,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(214,'Warm Ring','items/glowing_ring.png','',8,0,10,0,800,0,0,0,0,0,35,0,3,0,0,0,0,0,1,1,0,0,0);
+INSERT INTO "item" VALUES(215,'Fire Dust','items/fire_dust.png','Item_FireDust',9,20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,0);
+CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
+CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
+CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
+CREATE INDEX "zonedata_index" on "zonedata" (zone_id ASC);
+COMMIT;

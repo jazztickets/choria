@@ -14,8 +14,10 @@ import socketserver
 import sys
 import urllib
 import sqlite3
+import subprocess
 
-db = sqlite3.connect('../../working/stats/stats.db')
+db_file = '../../working/stats/stats.db'
+db = sqlite3.connect(db_file)
 cursor = db.cursor()
 
 def get_table_names():
@@ -113,6 +115,8 @@ class HttpHandler(http.server.BaseHTTPRequestHandler):
 			# commit transaction
 			try:
 				db.commit()
+				dump_file = open("../data/stats.txt", "w")
+				subprocess.call(["sqlite3", db_file, ".dump"], stdout=dump_file)
 			except sqlite3.Error as e:
 				self.write_json_response({'message':sql + ": " + str(e)})
 				return
