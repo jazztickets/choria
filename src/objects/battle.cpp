@@ -363,9 +363,19 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	size_t TargetCount = ClientPlayer->Targets.size();
 	ClientPlayer->Targets.clear();
 
+	// Get max available targets
+	size_t MaxTargets = 0;
+	for(auto &Target : FighterList) {
+		if(Item->CanTarget(ClientPlayer, Target))
+			MaxTargets++;
+	}
+
+	// Cap target count
+	TargetCount = std::min(TargetCount, MaxTargets);
+
 	// Search for valid target
 	_Object *NewTarget = nullptr;
-	for(size_t i = 0; i < FighterList.size(); i++) {
+	while(TargetCount) {
 
 		// Wrap around
 		if(Iterator == FighterList.end())
@@ -399,8 +409,6 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 
 			// Update count
 			TargetCount--;
-			if(TargetCount <= 0)
-				break;
 
 			// Start moving down after first target found
 			Direction = 1;
