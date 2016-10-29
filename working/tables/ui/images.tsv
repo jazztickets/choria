@@ -16,4 +16,5 @@ image_buttonbar_help	button_buttonbar_help	hud/help.png		0	0	32	32	1	1	0
 image_buttonbar_inventory	button_buttonbar_inventory	hud/bag.png		0	0	32	32	1	1	0
 image_buttonbar_trade	button_buttonbar_trade	hud/trade.png		0	0	32	32	1	1	0
 image_buttonbar_skills	button_buttonbar_skills	hud/skills.png		0	0	32	32	1	1	0
+image_buttonbar_fullscreen	button_buttonbar_fullscreen	hud/fullscreen.png		0	0	32	32	1	1	0
 image_buttonbar_menu	button_buttonbar_menu	hud/menu.png		0	0	32	32	1	1	0
