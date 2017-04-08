@@ -13,6 +13,7 @@ choria 0.9.0 -
 - Reworked battle system to use individual timers instead of turns
 - Battles can now support up to 8 fighters on each side
 - Added hardcore mode
+- Added experimental bots
 - Removed battle results screen
 - Added animations to stat changes and action results
 - Added status effects

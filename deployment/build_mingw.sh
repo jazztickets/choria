@@ -1,17 +1,21 @@
 #!/bin/bash
-git pull
+
+mkdir -p release
+cd ../
+
+version=`grep 'GAME_VERSION=".*"' -o CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
 
 build() {
 
-	ver=$1
+	bits=$1
 
-	if [ $ver -eq "32" ]; then
+	if [ $bits -eq "32" ]; then
 		arch=i686-w64-mingw32
 	else
 		arch=x86_64-w64-mingw32
 	fi
 
-	builddir=build-mingw$ver
+	builddir=build-mingw$bits
 	cd $builddir
 
 	make -j4
@@ -28,17 +32,18 @@ build() {
 	gitver=`git rev-list --all --count`
 	mv bin/Release/choria.exe working/
 
-	archive=choria${ver}-${gitver}.zip
+	archive=choria${bits}-${version}r${gitver}.zip
 	zip -r $archive working
 
 	rm working/choria.exe
 	rm working/*.dll
 
 	scp $archive workcomp:web/files/
+	mv $archive deployment/release
 }
 
 ssh workcomp rm web/files/choria*.zip
-rm -f choria*.zip
+rm -f deployment/release/choria*.zip
 
 build 32
 build 64
