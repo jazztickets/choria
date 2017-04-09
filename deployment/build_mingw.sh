@@ -32,7 +32,7 @@ build() {
 	gitver=`git rev-list --all --count`
 	mv bin/Release/choria.exe working/
 
-	archive=choria${bits}-${version}r${gitver}.zip
+	archive=choria-${version}r${gitver}-win${bits}.zip
 	zip -r $archive working
 
 	rm working/choria.exe
