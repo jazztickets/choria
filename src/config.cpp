@@ -57,9 +57,6 @@ void _Config::Close() {
 // Set defaults
 void _Config::SetDefaults() {
 
-	// Gets set after SDL
-	FullscreenSize = glm::ivec2(0, 0);
-
 	// Set defaults
 	Version = DEFAULT_CONFIG_VERSION;
 	WindowSize = DEFAULT_WINDOW_SIZE;
@@ -141,20 +138,6 @@ void _Config::LoadDefaultInputBindings() {
 
 }
 
-// Use SDL to determine desktop size
-void _Config::SetDefaultFullscreenSize() {
-	if(Config.FullscreenSize != glm::ivec2(0))
-		return;
-
-	SDL_DisplayMode DisplayMode;
-	if(SDL_GetDesktopDisplayMode(0, &DisplayMode) != 0)
-		Config.FullscreenSize = DEFAULT_WINDOW_SIZE;
-	else
-		Config.FullscreenSize = glm::ivec2(DisplayMode.w, DisplayMode.h);
-
-	Config.Save();
-}
-
 // Load the config file
 void _Config::Load() {
 
@@ -197,8 +180,6 @@ void _Config::Load() {
 	// Read config
 	GetValue("window_width", WindowSize.x);
 	GetValue("window_height", WindowSize.y);
-	GetValue("fullscreen_width", FullscreenSize.x);
-	GetValue("fullscreen_height", FullscreenSize.y);
 	GetValue("fullscreen", Fullscreen);
 	GetValue("vsync", Vsync);
 	GetValue("max_fps", MaxFPS);
@@ -255,8 +236,6 @@ void _Config::Save() {
 	File << "version=" << Version << std::endl;
 	File << "window_width=" << WindowSize.x << std::endl;
 	File << "window_height=" << WindowSize.y << std::endl;
-	File << "fullscreen_width=" << FullscreenSize.x << std::endl;
-	File << "fullscreen_height=" << FullscreenSize.y << std::endl;
 	File << "fullscreen=" << Fullscreen << std::endl;
 	File << "vsync=" << Vsync << std::endl;
 	File << "max_fps=" << MaxFPS << std::endl;

@@ -251,7 +251,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				ToggleInGameMenu();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_fullscreen") {
-				Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
+				Graphics.ToggleFullScreen(Config.WindowSize);
 			}
 		}
 		// Check skill level up/down

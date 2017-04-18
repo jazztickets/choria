@@ -58,7 +58,7 @@ class _Graphics {
 		void Init(const _WindowSettings &WindowSettings);
 		void Close();
 
-		void ToggleFullScreen(const glm::ivec2 &WindowSize, const glm::ivec2 &FullscreenSize);
+		void ToggleFullScreen(const glm::ivec2 &WindowSize);
 		void ShowCursor(int Type);
 		void BuildVertexBuffers();
 
@@ -103,6 +103,7 @@ class _Graphics {
 		// State
 		_Element *Element;
 		glm::ivec2 WindowSize;
+		glm::ivec2 FullscreenSize;
 		glm::ivec2 ViewportSize;
 		glm::mat4 Ortho;
 		float AspectRatio;

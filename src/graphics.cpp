@@ -32,7 +32,19 @@ _Graphics Graphics;
 
 // Initializes the graphics system
 void _Graphics::Init(const _WindowSettings &WindowSettings) {
-	this->WindowSize = WindowSettings.Size;
+
+	// Get size of desktop
+	SDL_DisplayMode DisplayMode;
+	FullscreenSize = glm::ivec2(0);
+	if(SDL_GetDesktopDisplayMode(0, &DisplayMode) == 0)
+		FullscreenSize = glm::ivec2(DisplayMode.w, DisplayMode.h);
+
+	// Set window size
+	if(WindowSettings.Fullscreen)
+		this->WindowSize = FullscreenSize;
+	else
+		this->WindowSize = WindowSettings.Size;
+
 	this->Anisotropy = 0;
 	FramesPerSecond = 0;
 	FrameCount = 0;
@@ -138,14 +150,14 @@ void _Graphics::ChangeWindowSize(const glm::ivec2 &Size) {
 }
 
 // Toggle fullscreen
-void _Graphics::ToggleFullScreen(const glm::ivec2 &WindowSize, const glm::ivec2 &FullscreenSize) {
+void _Graphics::ToggleFullScreen(const glm::ivec2 &WindowSize) {
+	if(FullscreenSize == glm::ivec2(0))
+		return;
 
-	if(SDL_GetWindowFlags(Window) & SDL_WINDOW_FULLSCREEN) {
+	if(SDL_GetWindowFlags(Window) & SDL_WINDOW_FULLSCREEN)
 		Graphics.ChangeWindowSize(WindowSize);
-	}
-	else {
+	else
 		Graphics.ChangeWindowSize(FullscreenSize);
-	}
 
 	if(SDL_SetWindowFullscreen(Window, SDL_GetWindowFlags(Window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP) != 0) {
 		// failed

@@ -129,18 +129,12 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Audio.SetSoundVolume(Config.SoundVolume);
 		Audio.SetMusicVolume(Config.MusicVolume);
 
-		// Get fullscreen size
-		Config.SetDefaultFullscreenSize();
-
 		// Get window settings
 		_WindowSettings WindowSettings;
 		WindowSettings.WindowTitle = "choria";
 		WindowSettings.Fullscreen = Config.Fullscreen;
 		WindowSettings.Vsync = Config.Vsync;
-		if(Config.Fullscreen)
-			WindowSettings.Size = Config.FullscreenSize;
-		else
-			WindowSettings.Size = Config.WindowSize;
+		WindowSettings.Size = Config.WindowSize;
 		WindowSettings.Position = glm::ivec2(SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
 		// Set up subsystems
@@ -274,7 +268,7 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 	if(Event.type == SDL_KEYDOWN) {
 		if((Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
 			if(!Event.key.repeat)
-				Graphics.ToggleFullScreen(Config.WindowSize, Config.FullscreenSize);
+				Graphics.ToggleFullScreen(Config.WindowSize);
 
 			return 1;
 		}
