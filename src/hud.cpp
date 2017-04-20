@@ -1357,18 +1357,22 @@ void _HUD::DrawBlacksmith() {
 			// Update cost label
 			std::stringstream Buffer;
 			Buffer << Cost << " gold";
+			BlacksmithCost->Color = COLOR_GOLD;
 			BlacksmithCost->Text = Buffer.str();
 
 			// Disable button
-			if(Cost > Player->Gold)
+			if(Cost > Player->Gold) {
+				BlacksmithCost->Color = COLOR_RED;
 				UpgradeButton->SetEnabled(false);
+			}
 			else
 				UpgradeButton->SetEnabled(true);
 
 			// Max level
 			if(InventorySlot.Upgrades >= Item->MaxLevel) {
 				UpgradeButton->SetEnabled(false);
-				BlacksmithCost->Text = "";
+				BlacksmithCost->Color = COLOR_RED;
+				BlacksmithCost->Text = "Max Level";
 			}
 		}
 		else
