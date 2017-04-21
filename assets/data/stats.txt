@@ -1058,7 +1058,7 @@ INSERT INTO item VALUES(112,'Cellar Key','items/key.png','',0,0,0,0,0,0,0,0,0,0,
 INSERT INTO item VALUES(113,'Bronze Armor','items/bronze_armor.png','',3,0,10,1,175,0,0,0,10,2,0,0,0,0,-5,-5,0,0,1,1,0,0,0);
 INSERT INTO item VALUES(114,'Crow Feather','items/crow_feather.png','Item_CrowFeather',9,20,0,0,8,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
 INSERT INTO item VALUES(115,'Spider Leg','items/spider_leg.png','Item_SpiderLeg',9,10,0,0,15,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
-INSERT INTO item VALUES(116,'Potion of Haste','items/haste_potion.png','Item_HastePotion',9,50,0,0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,0);
+INSERT INTO item VALUES(116,'Potion of Haste','items/haste_potion.png','Item_HastePotion',9,30,0,0,75,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,3,0);
 INSERT INTO item VALUES(117,'Axe','items/axe.png','',6,0,10,0,100,2,20,130,-1,0,0,0,0,0,-5,0,0,0,1,1,0,0,0);
 INSERT INTO item VALUES(118,'Small Knife','items/small_knife.png','',5,0,10,0,15,2,10,10,0,0,0,0,0,0,10,0,0,0,1,1,0,0,0);
 INSERT INTO item VALUES(119,'Sword','items/sword.png','',5,0,10,0,150,2,30,90,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0);
