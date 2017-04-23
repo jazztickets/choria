@@ -625,21 +625,32 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			Item->DrawTooltip(Input.GetMouse(), PlayState.Scripting, Player, Tooltip);
 
 			// Compare items
-			if(Item->IsEquippable() && (Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
+			if(Item->IsEquippable() && (Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
 
 				// Get equipment slot to compare
-				size_t EquipmentSlot;
-				if(Tooltip.Window == WINDOW_BLACKSMITH)
-					EquipmentSlot = UpgradeSlot;
-				else
-					EquipmentSlot = Item->GetEquipmentSlot();
+				size_t EquipmentSlot = Item->GetEquipmentSlot();
+				switch(Tooltip.Window) {
+					case WINDOW_BLACKSMITH:
+						EquipmentSlot = UpgradeSlot;
+					break;
+					case WINDOW_INVENTORY:
+						if(Tooltip.Slot < InventoryType::BAG)
+							EquipmentSlot = (size_t)(-1);
+					break;
+					default:
+					break;
+				}
 
 				// Check for valid slot
 				if(EquipmentSlot != (size_t)(-1)) {
+					float OffsetX = -35;
+					if(Tooltip.Window == WINDOW_INVENTORY)
+						OffsetX += -100;
+
 					_Cursor EquippedTooltip;
 					EquippedTooltip.InventorySlot = Player->Inventory->Slots[EquipmentSlot];
 					if(EquippedTooltip.InventorySlot.Item)
-						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(InventoryElement->Bounds.Start.x - 35, -1), PlayState.Scripting, Player, EquippedTooltip);
+						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(InventoryElement->Bounds.Start.x + OffsetX, -1), PlayState.Scripting, Player, EquippedTooltip);
 				}
 			}
 		}

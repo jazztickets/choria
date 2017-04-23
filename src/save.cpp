@@ -446,7 +446,6 @@ int _Save::GetSaveVersion() {
 
 // Create default save database
 void _Save::CreateDefaultDatabase() {
-
 	StartTransaction();
 
 	// Settings
@@ -543,6 +542,7 @@ void _Save::CreateDefaultDatabase() {
 				")"
 	);
 
+	// Indexes
 	Database->RunQuery("CREATE INDEX inventory_character_id ON inventory(character_id)");
 	Database->RunQuery("CREATE INDEX skill_character_id ON skill(character_id)");
 	Database->RunQuery("CREATE INDEX actionbar_character_id ON actionbar(character_id)");
