@@ -339,10 +339,9 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	Data += std::string("\nmap_id=") + std::to_string(MapID);
 
 	// Save character stats
-	int Index = 1;
 	Database->PrepareQuery("UPDATE character SET data = @data WHERE id = @character_id");
-	Database->BindString(Index++, Data);
-	Database->BindInt(Index++, Player->CharacterID);
+	Database->BindString(1, Data);
+	Database->BindInt(2, Player->CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
 
