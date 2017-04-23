@@ -37,7 +37,7 @@
 #include <iostream>
 
 // Draw tooltip
-void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const {
+void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const {
 	if(!Player)
 		return;
 
@@ -75,9 +75,16 @@ void _Item::DrawTooltip(_Scripting *Scripting, const _Object *Player, const _Cur
 		Size.y += 40;
 
 	// Position window
-	glm::vec2 WindowOffset = Input.GetMouse();
-	WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
-	WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+	glm::vec2 WindowOffset = Offset;
+
+	// Center vertically
+	if(Offset.y < 0) {
+		WindowOffset.y = (Graphics.WindowSize.y - Size.y) / 2;
+	}
+	else {
+		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
+		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+	}
 
 	// Reposition window if out of bounds
 	if(WindowOffset.x + Size.x > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)

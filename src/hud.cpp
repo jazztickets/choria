@@ -620,8 +620,29 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Draw item information
 		DrawCursorItem();
-		if(Tooltip.InventorySlot.Item)
-			Tooltip.InventorySlot.Item->DrawTooltip(PlayState.Scripting, Player, Tooltip);
+		const _Item *Item = Tooltip.InventorySlot.Item;
+		if(Item) {
+			Item->DrawTooltip(Input.GetMouse(), PlayState.Scripting, Player, Tooltip);
+
+			// Compare items
+			if(Item->IsEquippable() && (Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
+
+				// Get equipment slot to compare
+				size_t EquipmentSlot;
+				if(Tooltip.Window == WINDOW_BLACKSMITH)
+					EquipmentSlot = UpgradeSlot;
+				else
+					EquipmentSlot = Item->GetEquipmentSlot();
+
+				// Check for valid slot
+				if(EquipmentSlot != (size_t)(-1)) {
+					_Cursor EquippedTooltip;
+					EquippedTooltip.InventorySlot = Player->Inventory->Slots[EquipmentSlot];
+					if(EquippedTooltip.InventorySlot.Item)
+						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(InventoryElement->Bounds.Start.x - 35, -1), PlayState.Scripting, Player, EquippedTooltip);
+				}
+			}
+		}
 
 		// Draw status effects
 		if(Tooltip.StatusEffect)
