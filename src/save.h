@@ -38,6 +38,8 @@ class _Save {
 		_Database *Database;
 
 		// Misc
+		void StartTransaction();
+		void EndTransaction();
 		double GetClock();
 		void SaveClock(double Time);
 		uint64_t GetSecret();
@@ -52,6 +54,7 @@ class _Save {
 		void DeleteCharacter(uint32_t CharacterID);
 		void CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
 
+		// Objects
 		void LoadPlayer(_Stats *Stats, _Object *Player);
 		void SavePlayer(const _Object *Player, NetworkIDType MapID);
 

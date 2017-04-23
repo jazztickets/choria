@@ -23,6 +23,7 @@
 #include <glm/vec2.hpp>
 #include <packet.h>
 #include <unordered_map>
+#include <sstream>
 #include <list>
 #include <vector>
 #include <cstdint>
@@ -85,6 +86,10 @@ class _Object : public _ManagerBase {
 		void Update(double FrameTime) override;
 		void Render(const _Object *ClientPlayer=nullptr);
 		void RenderBattle(_Object *ClientPlayer, double Time);
+
+		// Save
+		void SerializeSaveData(std::string &Data) const;
+		void UnserializeSaveData(const std::string &Data);
 
 		// Network
 		void SerializeCreate(_Buffer &Data);
@@ -316,6 +321,15 @@ class _Object : public _ManagerBase {
 		void CalculateLevelStats();
 
 		void SendPacket(_Buffer &Packet);
+
+		template <typename Type>
+		void GetValue(const std::unordered_map<std::string, std::string> &Map, const std::string &Field, Type &Value) {
+			const auto &MapIterator = Map.find(Field);
+			if(MapIterator != Map.end()) {
+				std::stringstream Stream(MapIterator->second);
+				Stream >> Value;
+			}
+		}
 
 };
 

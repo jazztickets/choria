@@ -104,8 +104,10 @@ _Server::~_Server() {
 	Save->SaveClock(Clock);
 
 	// Save players
+	Save->StartTransaction();
 	for(auto &Object : ObjectManager->Objects)
 		Save->SavePlayer(Object, Object->GetMapID());
+	Save->EndTransaction();
 
 	delete MapManager;
 	delete BattleManager;
@@ -214,9 +216,10 @@ void _Server::Update(double FrameTime) {
 		SaveTime = 0;
 
 		// Save players
-		for(auto &Object : ObjectManager->Objects) {
+		Save->StartTransaction();
+		for(auto &Object : ObjectManager->Objects)
 			Save->SavePlayer(Object, Object->GetMapID());
-		}
+		Save->EndTransaction();
 	}
 }
 
@@ -276,7 +279,9 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 		}
 
 		// Save player
+		Save->StartTransaction();
 		Save->SavePlayer(Player, Player->LoadMapID);
+		Save->EndTransaction();
 
 		Player->Deleted = true;
 	}
@@ -715,15 +720,17 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Packet.Write<uint8_t>(CharacterCount);
 
 	// Generate a list of characters
-	Save->Database->PrepareQuery("SELECT slot, hardcore, name, portrait_id, health, experience FROM character WHERE account_id = @account_id");
+	Save->Database->PrepareQuery("SELECT * FROM character WHERE account_id = @account_id");
 	Save->Database->BindInt(1, Peer->AccountID);
 	while(Save->Database->FetchRow()) {
+		_Object Player;
+		Player.UnserializeSaveData(Save->Database->GetString("data"));
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
-		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("hardcore"));
+		Packet.Write<uint8_t>(Player.Hardcore);
 		Packet.WriteString(Save->Database->GetString("name"));
-		Packet.Write<uint32_t>(Save->Database->GetInt<uint32_t>("portrait_id"));
-		Packet.Write<int>(Save->Database->GetInt<int>("health"));
-		Packet.Write<int>(Save->Database->GetInt<int>("experience"));
+		Packet.Write<uint32_t>(Player.PortraitID);
+		Packet.Write<int>(Player.Health);
+		Packet.Write<int>(Player.Experience);
 	}
 	Save->Database->CloseQuery();
 

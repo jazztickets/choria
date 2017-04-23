@@ -68,6 +68,16 @@ _Save::~_Save() {
 	delete Database;
 }
 
+// Start database transaction
+void _Save::StartTransaction() {
+	Database->RunQuery("BEGIN TRANSACTION");
+}
+
+// End database transaction
+void _Save::EndTransaction() {
+	Database->RunQuery("END TRANSACTION");
+}
+
 // Get clock
 double _Save::GetClock() {
 	double Time = 0.0;
@@ -196,14 +206,10 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 
 	// Create new database row
 	int Index = 1;
-	Database->PrepareQuery("INSERT INTO character(account_id, slot, hardcore, name, portrait_id, model_id, actionbar_size) VALUES(@account_id, @slot, @hardcore, @name, @portrait_id, @model_id, @actionbar_size)");
+	Database->PrepareQuery("INSERT INTO character(account_id, slot, name) VALUES(@account_id, @slot, @name)");
 	Database->BindInt(Index++, AccountID);
 	Database->BindInt(Index++, Slot);
-	Database->BindInt(Index++, Hardcore);
 	Database->BindString(Index++, TrimString(Name));
-	Database->BindInt(Index++, PortraitID);
-	Database->BindInt(Index++, Build->ModelID);
-	Database->BindInt(Index++, (uint32_t)Build->ActionBar.size());
 	Database->FetchRow();
 	Database->CloseQuery();
 
@@ -211,6 +217,9 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	_Object Object;
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
+	Object.Hardcore = Hardcore;
+	Object.PortraitID = PortraitID;
+	Object.ModelID = Build->ModelID;
 	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
 	Object.ActionBar = Build->ActionBar;
 	Object.Inventory->Slots = Build->Inventory->Slots;
@@ -222,7 +231,9 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	Object.Mana = Object.MaxMana;
 
 	// Save new character
+	StartTransaction();
 	SavePlayer(&Object, 0);
+	EndTransaction();
 }
 
 // Load player from database
@@ -232,27 +243,8 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
 	if(Database->FetchRow()) {
-		Player->LoadMapID = (NetworkIDType)Database->GetInt<uint32_t>("map_id");
-		Player->Position.x = Database->GetInt<int>("map_x");
-		Player->Position.y = Database->GetInt<int>("map_y");
-		Player->SpawnMapID = (NetworkIDType)Database->GetInt<uint32_t>("spawnmap_id");
-		Player->SpawnPoint = Database->GetInt<uint32_t>("spawnpoint");
-		Player->Hardcore = Database->GetInt<int>("hardcore");
 		Player->Name = Database->GetString("name");
-		Player->PortraitID = Database->GetInt<uint32_t>("portrait_id");
-		Player->ModelID = Database->GetInt<uint32_t>("model_id");
-		Player->Health = Database->GetInt<int>("health");
-		Player->Mana = Database->GetInt<int>("mana");
-		Player->Experience = Database->GetInt<int>("experience");
-		Player->Gold = Database->GetInt<int>("gold");
-		Player->GoldLost = Database->GetInt<int>("goldlost");
-		Player->ActionBar.resize(Database->GetInt<uint32_t>("actionbar_size"));
-		Player->PlayTime = Database->GetInt<int>("playtime");
-		Player->BattleTime = Database->GetInt<int>("battletime");
-		Player->Deaths = Database->GetInt<int>("deaths");
-		Player->MonsterKills = Database->GetInt<int>("monsterkills");
-		Player->PlayerKills = Database->GetInt<int>("playerkills");
-		Player->Bounty = Database->GetInt<int>("bounty");
+		Player->UnserializeSaveData(Database->GetString("data"));
 	}
 	Database->CloseQuery();
 
@@ -341,49 +333,15 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	if(!Player->IsAlive())
 		MapID = 0;
 
-	Database->RunQuery("BEGIN TRANSACTION");
+	// Get player stats
+	std::string Data;
+	Player->SerializeSaveData(Data);
+	Data += std::string("\nmap_id=") + std::to_string(MapID);
 
 	// Save character stats
-	Database->PrepareQuery(
-		"UPDATE character SET"
-		" map_id = @map_id,"
-		" map_x = @map_x,"
-		" map_y = @map_y,"
-		" spawnmap_id = @spawnmap_id,"
-		" spawnpoint = @spawnpoint,"
-		" actionbar_size = @actionbar_size,"
-		" health = @health,"
-		" mana = @mana,"
-		" experience = @experience,"
-		" gold = @gold,"
-		" goldlost = @goldlost,"
-		" playtime = @playtime,"
-		" battletime = @battletime,"
-		" deaths = @deaths,"
-		" monsterkills = @monsterkills,"
-		" playerkills = @playerkills,"
-		" bounty = @bounty"
-		" WHERE id = @character_id"
-	);
-
 	int Index = 1;
-	Database->BindInt(Index++, MapID);
-	Database->BindInt(Index++, Player->Position.x);
-	Database->BindInt(Index++, Player->Position.y);
-	Database->BindInt(Index++, Player->SpawnMapID);
-	Database->BindInt(Index++, Player->SpawnPoint);
-	Database->BindInt(Index++, (int)Player->ActionBar.size());
-	Database->BindInt(Index++, Player->Health);
-	Database->BindInt(Index++, Player->Mana);
-	Database->BindInt(Index++, Player->Experience);
-	Database->BindInt(Index++, Player->Gold);
-	Database->BindInt(Index++, Player->GoldLost);
-	Database->BindReal(Index++, Player->PlayTime);
-	Database->BindReal(Index++, Player->BattleTime);
-	Database->BindInt(Index++, Player->Deaths);
-	Database->BindInt(Index++, Player->MonsterKills);
-	Database->BindInt(Index++, Player->PlayerKills);
-	Database->BindInt(Index++, Player->Bounty);
+	Database->PrepareQuery("UPDATE character SET data = @data WHERE id = @character_id");
+	Database->BindString(Index++, Data);
 	Database->BindInt(Index++, Player->CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
@@ -475,8 +433,6 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 		Database->FetchRow();
 		Database->CloseQuery();
 	}
-
-	Database->RunQuery("END TRANSACTION");
 }
 
 // Get save version from database
@@ -492,9 +448,7 @@ int _Save::GetSaveVersion() {
 // Create default save database
 void _Save::CreateDefaultDatabase() {
 
-	Database->RunQuery(
-				"BEGIN TRANSACTION"
-	);
+	StartTransaction();
 
 	// Settings
 	Database->RunQuery(
@@ -536,27 +490,8 @@ void _Save::CreateDefaultDatabase() {
 				"	id INTEGER PRIMARY KEY,\n"
 				"	account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,\n"
 				"	slot INTEGER DEFAULT(0),\n"
-				"	hardcore INTEGER DEFAULT(0),\n"
 				"	name TEXT,\n"
-				"	map_id INTEGER DEFAULT(0),\n"
-				"	map_x INTEGER DEFAULT(0),\n"
-				"	map_y INTEGER DEFAULT(0),\n"
-				"	spawnmap_id INTEGER DEFAULT(1),\n"
-				"	spawnpoint INTEGER DEFAULT(0),\n"
-				"	portrait_id INTEGER DEFAULT(1),\n"
-				"	model_id INTEGER DEFAULT(1),\n"
-				"	actionbar_size INTEGER DEFAULT(0),\n"
-				"	health INTEGER DEFAULT(1),\n"
-				"	mana INTEGER DEFAULT(1),\n"
-				"	experience INTEGER DEFAULT(0),\n"
-				"	gold INTEGER DEFAULT(0),\n"
-				"	goldlost INTEGER DEFAULT(0),\n"
-				"	playtime REAL DEFAULT(0),\n"
-				"	battletime REAL DEFAULT(0),\n"
-				"	deaths INTEGER DEFAULT(0),\n"
-				"	monsterkills INTEGER DEFAULT(0),\n"
-				"	playerkills INTEGER DEFAULT(0),\n"
-				"	bounty INTEGER DEFAULT(0)\n"
+				"	data TEXT\n"
 				")"
 	);
 
@@ -614,8 +549,7 @@ void _Save::CreateDefaultDatabase() {
 	Database->RunQuery("CREATE INDEX actionbar_character_id ON actionbar(character_id)");
 	Database->RunQuery("CREATE INDEX unlock_character_id ON unlock(character_id)");
 	Database->RunQuery("CREATE INDEX character_account_id ON character(account_id)");
+	Database->RunQuery("CREATE INDEX character_name ON character(name)");
 
-	Database->RunQuery(
-				"END TRANSACTION"
-	);
+	EndTransaction();
 }

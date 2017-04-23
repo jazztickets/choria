@@ -579,6 +579,77 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 }
 
+// Serialize attributes for saving
+void _Object::SerializeSaveData(std::string &Data) const {
+
+	// Build stats
+	std::stringstream Buffer;
+	Buffer
+		<< "hardcore=" << Hardcore << "\n"
+		<< "map_x=" << Position.x << "\n"
+		<< "map_y=" << Position.y << "\n"
+		<< "spawnmap_id=" << SpawnMapID << "\n"
+		<< "spawnpoint=" << SpawnPoint << "\n"
+		<< "portrait_id=" << PortraitID << "\n"
+		<< "model_id=" << ModelID << "\n"
+		<< "actionbar_size=" << ActionBar.size() << "\n"
+		<< "health=" << Health << "\n"
+		<< "mana=" << Mana << "\n"
+		<< "experience=" << Experience << "\n"
+		<< "gold=" << Gold << "\n"
+		<< "goldlost=" << GoldLost << "\n"
+		<< "playtime=" << PlayTime << "\n"
+		<< "battletime=" << BattleTime << "\n"
+		<< "deaths=" << Deaths << "\n"
+		<< "monsterkills=" << MonsterKills << "\n"
+		<< "playerkills=" << PlayerKills << "\n"
+		<< "bounty=" << Bounty;
+
+	Data = Buffer.str();
+}
+
+// Unserialize attributes from string
+void _Object::UnserializeSaveData(const std::string &Data) {
+
+	// Parse data into map
+	std::unordered_map<std::string, std::string> Map;
+	std::istringstream Buffer(Data);
+	for(std::string Token; std::getline(Buffer, Token, '\n'); ) {
+
+		// Parse attribute
+		std::size_t Pos = Token.find_first_of('=');
+		if(Pos != std::string::npos) {
+			std::string Field = Token.substr(0, Pos);
+			std::string Value = Token.substr(Pos+1, Token.size());
+			Map[Field] = Value;
+		}
+	}
+
+	GetValue(Map, "map_id", LoadMapID);
+	GetValue(Map, "map_x", Position.x);
+	GetValue(Map, "map_y", Position.y);
+	GetValue(Map, "spawnmap_id", SpawnMapID);
+	GetValue(Map, "spawnpoint", SpawnPoint);
+	GetValue(Map, "hardcore", Hardcore);
+	GetValue(Map, "portrait_id", PortraitID);
+	GetValue(Map, "model_id", ModelID);
+	GetValue(Map, "health", Health);
+	GetValue(Map, "mana", Mana);
+	GetValue(Map, "experience", Experience);
+	GetValue(Map, "gold", Gold);
+	GetValue(Map, "goldlost", GoldLost);
+	GetValue(Map, "playtime", PlayTime);
+	GetValue(Map, "battletime", BattleTime);
+	GetValue(Map, "deaths", Deaths);
+	GetValue(Map, "monsterkills", MonsterKills);
+	GetValue(Map, "playerkills", PlayerKills);
+	GetValue(Map, "bounty", Bounty);
+
+	size_t ActionBarSize = 0;
+	GetValue(Map, "actionbar_size", ActionBarSize);
+	ActionBar.resize(ActionBarSize);
+}
+
 // Generate damage
 int _Object::GenerateDamage() {
 	return GetRandomInt(MinDamage, MaxDamage);
