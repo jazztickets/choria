@@ -140,7 +140,7 @@ void _StatChangeUI::Render(double BlendFactor) {
 // Set text and color
 void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor) {
 
-	// Get text color
+	// Get text color and sign
 	std::stringstream Buffer;
 	if(Change > 0.0f) {
 		Color = PositiveColor;
@@ -156,6 +156,6 @@ void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &Pos
 	}
 
 	// Set text
-	Buffer << Round(std::abs(Change));
+	Buffer << (int64_t)(std::abs(Change));
 	Text = Buffer.str();
 }
