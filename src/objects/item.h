@@ -49,7 +49,7 @@ class _Item {
 
 	public:
 
-		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const;
+		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, size_t CompareSlot) const;
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsSkill() const { return Type == ItemType::SKILL; }
@@ -74,6 +74,7 @@ class _Item {
 		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void PlaySound(_Scripting *Scripting) const;
 
+		float GetAverageDamage(int Upgrades) const;
 		int GetMinDamage(int Upgrades) const;
 		int GetMaxDamage(int Upgrades) const;
 		int GetArmor(int Upgrades) const;
@@ -118,6 +119,8 @@ class _Item {
 		uint32_t UnlockID;
 
 	private:
+
+		glm::vec4 GetCompareColor(float ItemValue, float EquippedValue) const;
 
 };
 

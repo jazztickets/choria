@@ -37,11 +37,9 @@
 #include <iostream>
 
 // Draw tooltip
-void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip) const {
+void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, size_t CompareSlot) const {
 	if(!Player)
 		return;
-
-	int Upgrades = Tooltip.InventorySlot.Upgrades;
 
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
@@ -154,9 +152,12 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	}
 
 	glm::vec2 Spacing(10, 0);
+	_InventorySlot CompareInventory;
+	if(CompareSlot != (size_t)(-1))
+		CompareInventory = Player->Inventory->Slots[CompareSlot];
 
 	bool StatDrawn = false;
-
+	int Upgrades = Tooltip.InventorySlot.Upgrades;
 	int DrawMinDamage = GetMinDamage(Upgrades);
 	int DrawMaxDamage = GetMaxDamage(Upgrades);
 	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
@@ -166,8 +167,12 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		else
 			Buffer << DrawMinDamage;
 
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetAverageDamage(Upgrades), CompareInventory.Item->GetAverageDamage(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Damage", DrawPosition + -Spacing, glm::vec4(1.0f), RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, glm::vec4(1.0f), LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -185,8 +190,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawArmor != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawArmor < 0 ? "" : "+") << DrawArmor;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetArmor(Upgrades), CompareInventory.Item->GetArmor(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Armor", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -195,8 +205,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawDamageBlock != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawDamageBlock < 0 ? "" : "+") << DrawDamageBlock;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetDamageBlock(Upgrades), CompareInventory.Item->GetDamageBlock(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Damage Block", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -205,8 +220,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawMaxHealth > 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxHealth < 0 ? "" : "+") << DrawMaxHealth;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetMaxHealth(Upgrades), CompareInventory.Item->GetMaxHealth(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Health", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -215,8 +235,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawMaxMana > 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxMana < 0 ? "" : "+") << DrawMaxMana;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetMaxMana(Upgrades), CompareInventory.Item->GetMaxMana(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Mana", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -225,8 +250,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		int DrawResistance = GetResistance(Upgrades);
 		std::stringstream Buffer;
 		Buffer << (DrawResistance < 0 ? "" : "+") << DrawResistance << "%";
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetResistance(Upgrades), CompareInventory.Item->GetResistance(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes[ResistanceTypeID] + " Resist", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -235,8 +265,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawMoveSpeed != 0) {
 		std::stringstream Buffer;
 		Buffer << (MoveSpeed < 0 ? "" : "+") << DrawMoveSpeed << "%";
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetMoveSpeed(Upgrades), CompareInventory.Item->GetMoveSpeed(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Move Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -245,8 +280,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawBattleSpeed != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawBattleSpeed < 0 ? "" : "+") << DrawBattleSpeed << "%";
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetBattleSpeed(Upgrades), CompareInventory.Item->GetBattleSpeed(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Battle Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -255,8 +295,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawHealthRegen != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawHealthRegen < 0 ? "" : "+") << DrawHealthRegen;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetHealthRegen(Upgrades), CompareInventory.Item->GetHealthRegen(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Health Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -265,8 +310,13 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(DrawManaRegen != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawManaRegen < 0 ? "" : "+") << DrawManaRegen;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetManaRegen(Upgrades), CompareInventory.Item->GetManaRegen(CompareInventory.Upgrades));
+
 		Assets.Fonts["hud_medium"]->DrawText("Mana Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
 	}
@@ -607,6 +657,10 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 	}
 }
 
+float _Item::GetAverageDamage(int Upgrades) const {
+	return (GetUpgradedValue<int>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<int>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
+}
+
 // Get min damage
 int _Item::GetMinDamage(int Upgrades) const {
 	return GetUpgradedValue<int>(StatType::MINDAMAGE, Upgrades, MinDamage);
@@ -660,6 +714,16 @@ int _Item::GetMoveSpeed(int Upgrades) const {
 // Get resistance
 int _Item::GetResistance(int Upgrades) const {
 	return GetUpgradedValue<int>(StatType::RESIST, Upgrades, Resistance);
+}
+
+// Get appropriate text color when comparing items
+glm::vec4 _Item::GetCompareColor(float ItemValue, float EquippedValue) const {
+	if(ItemValue > EquippedValue)
+		return COLOR_GREEN;
+	else if(ItemValue < EquippedValue)
+		return COLOR_RED;
+
+	return COLOR_WHITE;
 }
 
 // Return value of a stat after upgrades
