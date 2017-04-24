@@ -104,6 +104,11 @@ if(NOT Threads_FOUND)
 	message(SEND_ERROR "Could not find Threads!")
 endif()
 
+find_package(JSONCpp REQUIRED)
+if(NOT JSONCPP_FOUND)
+	message(SEND_ERROR "Could not find JsonCpp!")
+endif()
+
 # set include directories
 include_directories("src")
 include_directories(${SDL2_INCLUDE_DIR})
@@ -115,6 +120,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIRS})
+include_directories(${JSONCPP_INCLUDE_DIRS})
 
 # add source files
 file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
@@ -166,6 +172,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 	${FREETYPE_LIBRARIES}
 	${SQLITE_LIBRARIES}
 	${ZLIB_LIBRARIES}
+	${JSONCPP_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 	${EXTRA_LIBS}
 )

@@ -19,6 +19,7 @@ FreeType2
 Lua 5.3+
 GLM 0.9.5+
 SQLite 3+
+jsoncpp
 zlib
 pthreads
 
