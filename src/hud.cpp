@@ -1205,7 +1205,7 @@ void _HUD::DrawInventory() {
 
 		// Get inventory slot
 		_InventorySlot *Slot = &Player->Inventory->Slots[i];
-		if(Slot->Item && !Cursor.IsEqual(i, WINDOW_INVENTORY)) {
+		if(Slot->Item) {
 
 			// Get bag button
 			std::stringstream Buffer;
@@ -1742,7 +1742,7 @@ void _HUD::DrawCursorItem() {
 	if(Cursor.InventorySlot.Item) {
 		glm::vec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture);
+		Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture, COLOR_ITEMFADE);
 		if(Cursor.Window != WINDOW_ACTIONBAR)
 			DrawItemPrice(Cursor.InventorySlot.Item, Cursor.InventorySlot.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
 		if(Cursor.InventorySlot.Count > 1)

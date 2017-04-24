@@ -152,7 +152,6 @@ const  std::string  ASSETS_UI_STYLES                =  "tables/ui/styles.tsv";
 const  std::string  ASSETS_UI_TEXTBOXES             =  "tables/ui/textboxes.tsv";
 //     Colors
 const  glm::vec4    COLOR_WHITE                     =  {1.0f,1.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_TWHITE                    =  {1.0f,1.0f,1.0f,0.5f};
 const  glm::vec4    COLOR_DARK                      =  {0.3f,0.3f,0.3f,1.0f};
 const  glm::vec4    COLOR_TGRAY                     =  {1.0f,1.0f,1.0f,0.2f};
 const  glm::vec4    COLOR_RED                       =  {1.0f,0.0f,0.0f,1.0f};
