@@ -1457,9 +1457,9 @@ void _HUD::DrawCharacterStats() {
 
 	// Set up UI
 	int SpacingY = 20;
-	glm::vec2 Spacing(15, 0);
+	glm::vec2 Spacing(10, 0);
 	glm::vec2 DrawPosition = CharacterElement->Bounds.Start;
-	DrawPosition.x += CharacterElement->Size.x/2 + 25;
+	DrawPosition.x += CharacterElement->Size.x/2 + 15;
 	DrawPosition.y += 20 + SpacingY;
 	std::stringstream Buffer;
 

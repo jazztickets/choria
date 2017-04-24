@@ -546,7 +546,7 @@ int _Item::GetUpgradePrice(int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
-	return (int)(std::ceil(GAME_UPGRADE_COST_SCALE * Cost / MaxLevel + Level));
+	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost));
 }
 
 // Return true if the item can be used
@@ -743,5 +743,5 @@ template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Va
 	if(MaxLevel <= 0)
 		return Value;
 
-	return Value + (T)(Stats->UpgradeScale[Type] * std::abs(Value) * Upgrades / MaxLevel);
+	return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale[Type] * Upgrades * std::abs(Value));
 }
