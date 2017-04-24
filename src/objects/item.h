@@ -75,17 +75,17 @@ class _Item {
 		void PlaySound(_Scripting *Scripting) const;
 
 		float GetAverageDamage(int Upgrades) const;
-		int GetMinDamage(int Upgrades) const;
-		int GetMaxDamage(int Upgrades) const;
-		int GetArmor(int Upgrades) const;
-		int GetDamageBlock(int Upgrades) const;
-		int GetMaxHealth(int Upgrades) const;
-		int GetMaxMana(int Upgrades) const;
-		int GetHealthRegen(int Upgrades) const;
-		int GetManaRegen(int Upgrades) const;
-		int GetBattleSpeed(int Upgrades) const;
-		int GetMoveSpeed(int Upgrades) const;
-		int GetResistance(int Upgrades) const;
+		float GetMinDamage(int Upgrades) const;
+		float GetMaxDamage(int Upgrades) const;
+		float GetArmor(int Upgrades) const;
+		float GetDamageBlock(int Upgrades) const;
+		float GetMaxHealth(int Upgrades) const;
+		float GetMaxMana(int Upgrades) const;
+		float GetHealthRegen(int Upgrades) const;
+		float GetManaRegen(int Upgrades) const;
+		float GetBattleSpeed(int Upgrades) const;
+		float GetMoveSpeed(int Upgrades) const;
+		float GetResistance(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 
 		_Stats *Stats;

@@ -372,7 +372,7 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	lua_pushinteger(LuaState, Item->DamageTypeID);
 	lua_setfield(LuaState, -2, "DamageType");
 
-	lua_pushinteger(LuaState, Item->GetDamageBlock(Upgrades));
+	lua_pushinteger(LuaState, (int)Item->GetDamageBlock(Upgrades));
 	lua_setfield(LuaState, -2, "DamageBlock");
 
 	lua_pushinteger(LuaState, Upgrades);
@@ -827,7 +827,7 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	int Upgrades = (int)lua_tointeger(LuaState, 1);
 
-	lua_pushinteger(LuaState, GetRandomInt(Item->GetMinDamage(Upgrades), Item->GetMaxDamage(Upgrades)));
+	lua_pushinteger(LuaState, GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)));
 
 	return 1;
 }

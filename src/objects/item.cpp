@@ -147,19 +147,21 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	DrawDescription(Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
-	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel) {
+	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel)
 		DrawDescription(Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
-	}
 
-	glm::vec2 Spacing(10, 0);
+	// Get item to compare
 	_InventorySlot CompareInventory;
 	if(CompareSlot != (size_t)(-1))
 		CompareInventory = Player->Inventory->Slots[CompareSlot];
 
+	glm::vec2 Spacing(10, 0);
 	bool StatDrawn = false;
 	int Upgrades = Tooltip.InventorySlot.Upgrades;
-	int DrawMinDamage = GetMinDamage(Upgrades);
-	int DrawMaxDamage = GetMaxDamage(Upgrades);
+
+	// Damage
+	int DrawMinDamage = (int)GetMinDamage(Upgrades);
+	int DrawMaxDamage = (int)GetMaxDamage(Upgrades);
 	if(DrawMinDamage != 0 || DrawMaxDamage != 0) {
 		std::stringstream Buffer;
 		if(DrawMinDamage != DrawMaxDamage)
@@ -177,6 +179,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
+	// Damage type
 	if(!IsSkill() && DamageTypeID > 1) {
 		std::stringstream Buffer;
 		Buffer << Stats->DamageTypes[DamageTypeID];
@@ -186,7 +189,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawArmor = GetArmor(Upgrades);
+	// Armor
+	int DrawArmor = (int)GetArmor(Upgrades);
 	if(DrawArmor != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawArmor < 0 ? "" : "+") << DrawArmor;
@@ -201,7 +205,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawDamageBlock = GetDamageBlock(Upgrades);
+	// Damage block
+	int DrawDamageBlock = (int)GetDamageBlock(Upgrades);
 	if(DrawDamageBlock != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawDamageBlock < 0 ? "" : "+") << DrawDamageBlock;
@@ -216,7 +221,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawMaxHealth = GetMaxHealth(Upgrades);
+	// Max health
+	int DrawMaxHealth = (int)GetMaxHealth(Upgrades);
 	if(DrawMaxHealth > 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxHealth < 0 ? "" : "+") << DrawMaxHealth;
@@ -231,7 +237,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawMaxMana = GetMaxMana(Upgrades);
+	// Max mana
+	int DrawMaxMana = (int)GetMaxMana(Upgrades);
 	if(DrawMaxMana > 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawMaxMana < 0 ? "" : "+") << DrawMaxMana;
@@ -246,8 +253,9 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
+	// Resistance
 	if(ResistanceTypeID) {
-		int DrawResistance = GetResistance(Upgrades);
+		int DrawResistance = (int)GetResistance(Upgrades);
 		std::stringstream Buffer;
 		Buffer << (DrawResistance < 0 ? "" : "+") << DrawResistance << "%";
 
@@ -261,7 +269,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawMoveSpeed = GetMoveSpeed(Upgrades);
+	// Move speed
+	int DrawMoveSpeed = (int)GetMoveSpeed(Upgrades);
 	if(DrawMoveSpeed != 0) {
 		std::stringstream Buffer;
 		Buffer << (MoveSpeed < 0 ? "" : "+") << DrawMoveSpeed << "%";
@@ -276,7 +285,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawBattleSpeed = GetBattleSpeed(Upgrades);
+	// Battle speed
+	int DrawBattleSpeed = (int)GetBattleSpeed(Upgrades);
 	if(DrawBattleSpeed != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawBattleSpeed < 0 ? "" : "+") << DrawBattleSpeed << "%";
@@ -291,7 +301,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawHealthRegen = GetHealthRegen(Upgrades);
+	// Health regen
+	int DrawHealthRegen = (int)GetHealthRegen(Upgrades);
 	if(DrawHealthRegen != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawHealthRegen < 0 ? "" : "+") << DrawHealthRegen;
@@ -306,7 +317,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
-	int DrawManaRegen = GetManaRegen(Upgrades);
+	// Mana regen
+	int DrawManaRegen = (int)GetManaRegen(Upgrades);
 	if(DrawManaRegen != 0) {
 		std::stringstream Buffer;
 		Buffer << (DrawManaRegen < 0 ? "" : "+") << DrawManaRegen;
@@ -658,62 +670,62 @@ void _Item::PlaySound(_Scripting *Scripting) const {
 }
 
 float _Item::GetAverageDamage(int Upgrades) const {
-	return (GetUpgradedValue<int>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<int>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
+	return (GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
 }
 
 // Get min damage
-int _Item::GetMinDamage(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::MINDAMAGE, Upgrades, MinDamage);
+float _Item::GetMinDamage(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage);
 }
 
 // Get max damage
-int _Item::GetMaxDamage(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::MAXDAMAGE, Upgrades, MaxDamage);
+float _Item::GetMaxDamage(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage);
 }
 
 // Get armor
-int _Item::GetArmor(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::ARMOR, Upgrades, Armor);
+float _Item::GetArmor(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::ARMOR, Upgrades, Armor);
 }
 
 // Get damage block
-int _Item::GetDamageBlock(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::DAMAGEBLOCK, Upgrades, DamageBlock);
+float _Item::GetDamageBlock(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::DAMAGEBLOCK, Upgrades, DamageBlock);
 }
 
 // Get max health
-int _Item::GetMaxHealth(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::MAXHEALTH, Upgrades, MaxHealth);
+float _Item::GetMaxHealth(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MAXHEALTH, Upgrades, MaxHealth);
 }
 
 // Get max mana
-int _Item::GetMaxMana(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::MAXMANA, Upgrades, MaxMana);
+float _Item::GetMaxMana(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MAXMANA, Upgrades, MaxMana);
 }
 
 // Get health regen
-int _Item::GetHealthRegen(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::HEALTHREGEN, Upgrades, HealthRegen);
+float _Item::GetHealthRegen(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::HEALTHREGEN, Upgrades, HealthRegen);
 }
 
 // Get mana regen
-int _Item::GetManaRegen(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::MANAREGEN, Upgrades, ManaRegen);
+float _Item::GetManaRegen(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MANAREGEN, Upgrades, ManaRegen);
 }
 
 // Get battle speed
-int _Item::GetBattleSpeed(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::BATTLESPEED, Upgrades, BattleSpeed);
+float _Item::GetBattleSpeed(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::BATTLESPEED, Upgrades, BattleSpeed);
 }
 
 // Get move speed
-int _Item::GetMoveSpeed(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::MOVESPEED, Upgrades, MoveSpeed);
+float _Item::GetMoveSpeed(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::MOVESPEED, Upgrades, MoveSpeed);
 }
 
 // Get resistance
-int _Item::GetResistance(int Upgrades) const {
-	return GetUpgradedValue<int>(StatType::RESIST, Upgrades, Resistance);
+float _Item::GetResistance(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::RESIST, Upgrades, Resistance);
 }
 
 // Get appropriate text color when comparing items
@@ -731,5 +743,5 @@ template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Va
 	if(MaxLevel <= 0)
 		return Value;
 
-	return Value + (int)(Stats->UpgradeScale[Type] * std::abs(Value) * Upgrades / MaxLevel);
+	return Value + (T)(Stats->UpgradeScale[Type] * std::abs(Value) * Upgrades / MaxLevel);
 }
