@@ -496,15 +496,8 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	// Read packet
 	uint32_t Slot = Data.Read<uint8_t>();
 
-	// Get character info
-	Save->Database->PrepareQuery("SELECT id FROM character WHERE account_id = @account_id and slot = @slot");
-	Save->Database->BindInt(1, Peer->AccountID);
-	Save->Database->BindInt(2, Slot);
-	if(Save->Database->FetchRow())
-		Peer->CharacterID = Save->Database->GetInt<uint32_t>("id");
-	Save->Database->CloseQuery();
-
 	// Check for valid character id
+	Peer->CharacterID = Save->GetCharacterID(Peer->AccountID, Slot);
 	if(!Peer->CharacterID) {
 		Log << "Character slot " << Slot << " empty!" << std::endl;
 		return;
@@ -706,18 +699,11 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 // Send character list
 void _Server::SendCharacterList(_Peer *Peer) {
 
-	// Get a count of the account's characters
-	Save->Database->PrepareQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
-	Save->Database->BindInt(1, Peer->AccountID);
-	Save->Database->FetchRow();
-	uint8_t CharacterCount = Save->Database->GetInt<uint8_t>(0);
-	Save->Database->CloseQuery();
-
-	// Create the packet
+	// Create packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_LIST);
 	Packet.Write<uint8_t>(Hardcore);
-	Packet.Write<uint8_t>(CharacterCount);
+	Packet.Write<uint8_t>((uint8_t)Save->GetCharacterCount(Peer->AccountID));
 
 	// Generate a list of characters
 	Save->Database->PrepareQuery("SELECT * FROM character WHERE account_id = @account_id");

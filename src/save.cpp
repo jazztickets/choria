@@ -150,6 +150,22 @@ uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Pas
 	return AccountID;
 }
 
+// Get character id from account_id and slot
+uint32_t _Save::GetCharacterID(uint32_t AccountID, uint32_t Slot) {
+	uint32_t CharacterID = 0;
+
+	// Run query
+	Database->PrepareQuery("SELECT id FROM character WHERE account_id = @account_id and slot = @slot");
+	Database->BindInt(1, AccountID);
+	Database->BindInt(2, Slot);
+	if(Database->FetchRow())
+		CharacterID = Database->GetInt<uint32_t>("id");
+
+	Database->CloseQuery();
+
+	return CharacterID;
+}
+
 // Get character count for an account
 uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
 	Database->PrepareQuery("SELECT count(id) FROM character WHERE account_id = @account_id");
