@@ -33,7 +33,10 @@
 #include <json/reader.h>
 
 // Constructor
-_Save::_Save() {
+_Save::_Save() :
+	Secret(0),
+	Clock(0) {
+
 	std::string SavePath = Config.ConfigPath + "save.db";
 
 	// Open file
@@ -62,6 +65,9 @@ _Save::_Save() {
 	}
 
 	Database->RunQuery("PRAGMA foreign_keys = ON");
+
+	// Load settings
+	GetSettings();
 }
 
 // Destructor
@@ -80,36 +86,44 @@ void _Save::EndTransaction() {
 	Database->RunQuery("END TRANSACTION");
 }
 
-// Get clock
-double _Save::GetClock() {
-	double Time = 0.0;
+// Save settings
+void _Save::SaveSettings() {
 
-	Database->PrepareQuery("SELECT time FROM clock");
-	if(Database->FetchRow())
-		Time = Database->GetReal(0);
-	Database->CloseQuery();
+	// Write settings
+	Json::Value SettingsNode;
+	SettingsNode["secret"] = Secret;
+	SettingsNode["clock"] = Clock;
 
-	return Time;
-}
+	// Convert to JSON string
+	Json::FastWriter Writer;
+	std::string JsonString = Writer.write(SettingsNode);
+	if(JsonString.back() == '\n')
+		JsonString.pop_back();
 
-// Save clock
-void _Save::SaveClock(double Time) {
-	Database->PrepareQuery("UPDATE clock SET time = @time");
-	Database->BindReal(1, Time);
+	// Update database
+	Database->PrepareQuery("UPDATE settings SET data = @data");
+	Database->BindString(1, JsonString);
 	Database->FetchRow();
 	Database->CloseQuery();
 }
 
-// Get secret number
-uint64_t _Save::GetSecret() {
-	uint64_t Secret = 0;
+// Load settings from database
+void _Save::GetSettings() {
+	Database->PrepareQuery("SELECT data FROM settings");
+	if(Database->FetchRow()) {
 
-	Database->PrepareQuery("SELECT secret FROM settings");
-	if(Database->FetchRow())
-		Secret = Database->GetInt<uint64_t>(0);
+		// Parse JSON
+		Json::Value Data;
+		Json::Reader Reader;
+		if(!Reader.parse(Database->GetString(0), Data))
+			throw std::runtime_error("_Save::GetSettings: Error parsing JSON string!");
+
+		// Get settings
+		Secret = Data["secret"].asUInt64();
+		Clock = Data["clock"].asDouble();
+	}
+
 	Database->CloseQuery();
-
-	return Secret;
 }
 
 // Check for a username
@@ -254,94 +268,6 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	EndTransaction();
 }
 
-// Load player from database
-void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
-
-	// Get character info
-	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	if(Database->FetchRow()) {
-		Player->Name = Database->GetString("name");
-		Player->UnserializeSaveData(Database->GetString("data"));
-	}
-	Database->CloseQuery();
-
-	// Set inventory
-	Database->PrepareQuery("SELECT slot, item_id, upgrades, count FROM inventory WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	while(Database->FetchRow()) {
-		size_t Slot = Database->GetInt<uint32_t>(0);
-		_InventorySlot InventorySlot;
-		InventorySlot.Item = Player->Stats->Items[Database->GetInt<uint32_t>(1)];
-		InventorySlot.Upgrades = Database->GetInt<int>(2);
-		InventorySlot.Count = Database->GetInt<int>(3);
-		Player->Inventory->Slots[Slot] = InventorySlot;
-	}
-	Database->CloseQuery();
-
-	Player->Skills.clear();
-
-	// Set skills
-	Database->PrepareQuery("SELECT item_id, level FROM skill WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	while(Database->FetchRow()) {
-		uint32_t ItemID = Database->GetInt<uint32_t>(0);
-		int SkillLevel = Database->GetInt<int>(1);
-		Player->Skills[ItemID] = std::min(SkillLevel, Stats->Items[ItemID]->MaxLevel);
-	}
-	Database->CloseQuery();
-
-	// Set actionbar
-	Database->PrepareQuery("SELECT slot, item_id FROM actionbar WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	while(Database->FetchRow()) {
-		uint32_t Slot = Database->GetInt<uint32_t>("slot");
-		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
-		const _Item *Item = Player->Stats->Items[ItemID];
-		if(Item->IsSkill() && !Player->HasLearned(Item))
-			Item = nullptr;
-		if(Slot < Player->ActionBar.size())
-			Player->ActionBar[Slot].Item = Item;
-	}
-	Database->CloseQuery();
-
-	// Set unlocks
-	Database->PrepareQuery("SELECT unlock_id, level FROM unlock WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	while(Database->FetchRow()) {
-		uint32_t UnlockID = Database->GetInt<uint32_t>(0);
-		int Level = Database->GetInt<int>(1);
-		Player->Unlocks[UnlockID].Level = Level;
-	}
-	Database->CloseQuery();
-
-	// Set status effects
-	Database->PrepareQuery("SELECT buff_id, level, duration FROM statuseffect WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	while(Database->FetchRow()) {
-		uint32_t BuffID = Database->GetInt<uint32_t>(0);
-		int Level = Database->GetInt<int>(1);
-		double Duration = Database->GetReal(2);
-
-		// Create status effect
-		_StatusEffect *StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = Stats->Buffs[BuffID];
-		StatusEffect->Level = Level;
-		StatusEffect->Duration = Duration;
-		StatusEffect->Time = 1.0 - (Duration - (int)Duration);
-		Player->StatusEffects.push_back(StatusEffect);
-	}
-	Database->CloseQuery();
-
-	// Get stats
-	Player->GenerateNextBattle();
-	Player->CalculateStats();
-
-	// Max sure player has health
-	if(!Player->IsAlive() && !Player->Hardcore)
-		Player->Health = Player->MaxHealth / 2;
-}
-
 // Saves the player
 void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	if(Player->CharacterID == 0)
@@ -368,94 +294,27 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	Database->BindInt(2, Player->CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
+}
 
-	// Save items
-	Database->PrepareQuery("DELETE FROM inventory WHERE character_id = @character_id");
+// Load player from database
+void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
+
+	// Get character info
+	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
 	Database->BindInt(1, Player->CharacterID);
-	Database->FetchRow();
+	if(Database->FetchRow()) {
+		Player->Name = Database->GetString("name");
+		Player->UnserializeSaveData(Database->GetString("data"));
+	}
 	Database->CloseQuery();
 
-	const _InventorySlot *InventorySlot;
-	for(size_t i = 0; i < InventoryType::COUNT; i++) {
-		InventorySlot = &Player->Inventory->Slots[i];
-		if(InventorySlot->Item) {
-			Database->PrepareQuery("INSERT INTO inventory VALUES(@character_id, @slot, @item_id, @upgrades, @count)");
-			Database->BindInt(1, Player->CharacterID);
-			Database->BindInt(2, (uint32_t)i);
-			Database->BindInt(3, InventorySlot->Item->ID);
-			Database->BindInt(4, InventorySlot->Upgrades);
-			Database->BindInt(5, InventorySlot->Count);
-			Database->FetchRow();
-			Database->CloseQuery();
-		}
-	}
+	// Get stats
+	Player->GenerateNextBattle();
+	Player->CalculateStats();
 
-	// Save skills
-	Database->PrepareQuery("DELETE FROM skill WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	Database->FetchRow();
-	Database->CloseQuery();
-
-	for(auto &Skill : Player->Skills) {
-		Database->PrepareQuery("INSERT INTO skill VALUES(@character_id, 0, @item_id, @level)");
-		Database->BindInt(1, Player->CharacterID);
-		Database->BindInt(2, Skill.first);
-		Database->BindInt(3, Skill.second);
-		Database->FetchRow();
-		Database->CloseQuery();
-	}
-
-	// Save actionbar
-	Database->PrepareQuery("DELETE FROM actionbar WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	Database->FetchRow();
-	Database->CloseQuery();
-
-	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-		if(Player->ActionBar[i].IsSet()) {
-			uint32_t ItemID = 0;
-			if(Player->ActionBar[i].Item)
-				ItemID = Player->ActionBar[i].Item->ID;
-
-			Database->PrepareQuery("INSERT INTO actionbar VALUES(@character_id, @slot, @item_id)");
-			Database->BindInt(1, Player->CharacterID);
-			Database->BindInt(2, (uint32_t)i);
-			Database->BindInt(3, ItemID);
-			Database->FetchRow();
-			Database->CloseQuery();
-		}
-	}
-
-	// Save unlocks
-	Database->PrepareQuery("DELETE FROM unlock WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	Database->FetchRow();
-	Database->CloseQuery();
-
-	for(auto &Unlock : Player->Unlocks) {
-		Database->PrepareQuery("INSERT INTO unlock VALUES(@character_id, @unlock_id, @level)");
-		Database->BindInt(1, Player->CharacterID);
-		Database->BindInt(2, Unlock.first);
-		Database->BindInt(3, Unlock.second.Level);
-		Database->FetchRow();
-		Database->CloseQuery();
-	}
-
-	// Save status effects
-	Database->PrepareQuery("DELETE FROM statuseffect WHERE character_id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
-	Database->FetchRow();
-	Database->CloseQuery();
-
-	for(auto &StatusEffect : Player->StatusEffects) {
-		Database->PrepareQuery("INSERT INTO statuseffect VALUES(@character_id, @buff_id, @level, @duration)");
-		Database->BindInt(1, Player->CharacterID);
-		Database->BindInt(2, StatusEffect->Buff->ID);
-		Database->BindInt(3, StatusEffect->Level);
-		Database->BindReal(4, StatusEffect->Duration);
-		Database->FetchRow();
-		Database->CloseQuery();
-	}
+	// Max sure player has health
+	if(!Player->IsAlive() && !Player->Hardcore)
+		Player->Health = Player->MaxHealth / 2;
 }
 
 // Get save version from database
@@ -474,103 +333,46 @@ void _Save::CreateDefaultDatabase() {
 
 	// Settings
 	Database->RunQuery(
-				"CREATE TABLE settings(\n"
-				"	version INTEGER,\n"
-				"	secret INTEGER\n"
-				")"
+		"CREATE TABLE settings(\n"
+		"	version INTEGER,\n"
+		"	data TEXT\n"
+		")"
 	);
 
-	Database->RunQuery(
-				"INSERT INTO settings VALUES(" + std::to_string(DEFAULT_SAVE_VERSION) + ", " + std::to_string(GetRandomInt((uint64_t)1, std::numeric_limits<uint64_t>::max())) + ")"
-	);
+	// Create settings row
+	Database->PrepareQuery("INSERT INTO settings(version) VALUES (@version)");
+	Database->BindInt(1, DEFAULT_SAVE_VERSION);
+	Database->FetchRow();
+	Database->CloseQuery();
 
-	// Clock
-	Database->RunQuery(
-				"CREATE TABLE clock(time REAL DEFAULT(0))"
-	);
-
-	Database->RunQuery(
-				"INSERT INTO clock(time) VALUES(" + std::to_string(MAP_CLOCK_START) + ")"
-	);
+	// Write settings
+	Secret = GetRandomInt((uint64_t)1, std::numeric_limits<uint64_t>::max());
+	Clock = MAP_CLOCK_START;
+	SaveSettings();
 
 	// Accounts
 	Database->RunQuery(
-				"CREATE TABLE account(\n"
-				"	id INTEGER PRIMARY KEY,\n"
-				"	username TEXT,\n"
-				"	password TEXT\n"
-				")"
+		"CREATE TABLE account(\n"
+		"	id INTEGER PRIMARY KEY,\n"
+		"	username TEXT,\n"
+		"	password TEXT\n"
+		")"
 	);
 
-	Database->RunQuery(
-				"INSERT INTO account(id, username, password) VALUES(1, '', '')"
-	);
+	Database->RunQuery("INSERT INTO account(id, username, password) VALUES(1, '', '')");
 
 	// Characters
 	Database->RunQuery(
-				"CREATE TABLE character(\n"
-				"	id INTEGER PRIMARY KEY,\n"
-				"	account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,\n"
-				"	slot INTEGER DEFAULT(0),\n"
-				"	name TEXT,\n"
-				"	data TEXT\n"
-				")"
-	);
-
-	// Status Effects
-	Database->RunQuery(
-				"CREATE TABLE statuseffect(\n"
-				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
-				"	buff_id INTEGER DEFAULT(0),\n"
-				"	level INTEGER DEFAULT(0),\n"
-				"	duration REAL DEFAULT(0)\n"
-				")"
-	);
-
-	// Actionbar
-	Database->RunQuery(
-				"CREATE TABLE actionbar(\n"
-				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
-				"	slot INTEGER DEFAULT(0),\n"
-				"	item_id INTEGER DEFAULT(0)\n"
-				")"
-	);
-
-	// Inventory
-	Database->RunQuery(
-				"CREATE TABLE inventory(\n"
-				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
-				"	slot INTEGER,\n"
-				"	item_id INTEGER,\n"
-				"	upgrades INTEGER,\n"
-				"	count INTEGER\n"
-				")"
-	);
-
-	// Skills
-	Database->RunQuery(
-				"CREATE TABLE skill(\n"
-				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
-				"	rank INTEGER,\n"
-				"	item_id INTEGER,\n"
-				"	level INTEGER\n"
-				")"
-	);
-
-	// Unlocks
-	Database->RunQuery(
-				"CREATE TABLE unlock(\n"
-				"	character_id INTEGER REFERENCES character(id) ON DELETE CASCADE,\n"
-				"	unlock_id INTEGER,\n"
-				"	level INTEGER DEFAULT(0)\n"
-				")"
+		"CREATE TABLE character(\n"
+		"	id INTEGER PRIMARY KEY,\n"
+		"	account_id INTEGER REFERENCES account(id) ON DELETE CASCADE,\n"
+		"	slot INTEGER DEFAULT(0),\n"
+		"	name TEXT,\n"
+		"	data TEXT\n"
+		")"
 	);
 
 	// Indexes
-	Database->RunQuery("CREATE INDEX inventory_character_id ON inventory(character_id)");
-	Database->RunQuery("CREATE INDEX skill_character_id ON skill(character_id)");
-	Database->RunQuery("CREATE INDEX actionbar_character_id ON actionbar(character_id)");
-	Database->RunQuery("CREATE INDEX unlock_character_id ON unlock(character_id)");
 	Database->RunQuery("CREATE INDEX character_account_id ON character(account_id)");
 	Database->RunQuery("CREATE INDEX character_name ON character(name)");
 

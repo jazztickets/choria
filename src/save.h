@@ -40,9 +40,8 @@ class _Save {
 		// Misc
 		void StartTransaction();
 		void EndTransaction();
-		double GetClock();
-		void SaveClock(double Time);
-		uint64_t GetSecret();
+		void SaveSettings();
+		void GetSettings();
 
 		// Accounts
 		bool CheckUsername(const std::string &Username);
@@ -56,8 +55,12 @@ class _Save {
 		void CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
 
 		// Objects
-		void LoadPlayer(_Stats *Stats, _Object *Player);
 		void SavePlayer(const _Object *Player, NetworkIDType MapID);
+		void LoadPlayer(_Stats *Stats, _Object *Player);
+
+		// State
+		uint64_t Secret;
+		double Clock;
 
 	private:
 

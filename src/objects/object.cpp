@@ -583,27 +583,86 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 // Serialize attributes for saving
 void _Object::SerializeSaveData(Json::Value &Data) const {
 
-	// Build stats
-	Json::Value Attributes;
-	Attributes["hardcore"] = Hardcore;
-	Attributes["map_x"] = Position.x;
-	Attributes["map_y"] = Position.y;
-	Attributes["spawnmap_id"] = SpawnMapID;
-	Attributes["spawnpoint"] = SpawnPoint;
-	Attributes["portrait_id"] = PortraitID;
-	Attributes["model_id"] = ModelID;
-	Attributes["actionbar_size"] = ActionBar.size();
-	Attributes["health"] = Health;
-	Attributes["mana"] = Mana;
-	Attributes["experience"] = Experience;
-	Attributes["gold"] = Gold;
-	Attributes["goldlost"] = GoldLost;
-	Attributes["playtime"] = PlayTime;
-	Attributes["battletime"] = BattleTime;
-	Attributes["deaths"] = Deaths;
-	Attributes["monsterkills"] = MonsterKills;
-	Attributes["playerkills"] = PlayerKills;
-	Data["stats"] = Attributes;
+	// Write stats
+	Json::Value StatsNode;
+	StatsNode["hardcore"] = Hardcore;
+	StatsNode["map_x"] = Position.x;
+	StatsNode["map_y"] = Position.y;
+	StatsNode["spawnmap_id"] = SpawnMapID;
+	StatsNode["spawnpoint"] = SpawnPoint;
+	StatsNode["portrait_id"] = PortraitID;
+	StatsNode["model_id"] = ModelID;
+	StatsNode["actionbar_size"] = ActionBar.size();
+	StatsNode["health"] = Health;
+	StatsNode["mana"] = Mana;
+	StatsNode["experience"] = Experience;
+	StatsNode["gold"] = Gold;
+	StatsNode["goldlost"] = GoldLost;
+	StatsNode["playtime"] = PlayTime;
+	StatsNode["battletime"] = BattleTime;
+	StatsNode["deaths"] = Deaths;
+	StatsNode["monsterkills"] = MonsterKills;
+	StatsNode["playerkills"] = PlayerKills;
+	Data["stats"] = StatsNode;
+
+	// Write items
+	Json::Value ItemsNode;
+	const _InventorySlot *InventorySlot;
+	for(size_t i = 0; i < InventoryType::COUNT; i++) {
+		InventorySlot = &Inventory->Slots[i];
+		if(InventorySlot->Item) {
+			Json::Value ItemNode;
+			ItemNode["slot"] = i;
+			ItemNode["id"] = InventorySlot->Item->ID;
+			ItemNode["upgrades"] = InventorySlot->Upgrades;
+			ItemNode["count"] = InventorySlot->Count;
+			ItemsNode.append(ItemNode);
+		}
+	}
+	Data["items"] = ItemsNode;
+
+	// Write skills
+	Json::Value SkillsNode;
+	for(auto &Skill : Skills) {
+		Json::Value SkillNode;
+		SkillNode["id"] = Skill.first;
+		SkillNode["level"] = Skill.second;
+		SkillsNode.append(SkillNode);
+	}
+	Data["skills"] = SkillsNode;
+
+	// Write action bar
+	Json::Value ActionBarNode;
+	for(size_t i = 0; i < ActionBar.size(); i++) {
+		if(ActionBar[i].IsSet()) {
+			Json::Value ActionNode;
+			ActionNode["slot"] = i;
+			ActionNode["id"] = ActionBar[i].Item ? ActionBar[i].Item->ID : 0;
+			ActionBarNode.append(ActionNode);
+		}
+	}
+	Data["actionbar"] = ActionBarNode;
+
+	// Write status effects
+	Json::Value StatusEffectsNode;
+	for(auto &StatusEffect : StatusEffects) {
+		Json::Value StatusEffectNode;
+		StatusEffectNode["id"] = StatusEffect->Buff->ID;
+		StatusEffectNode["level"] = StatusEffect->Level;
+		StatusEffectNode["duration"] = StatusEffect->Duration;
+		StatusEffectsNode.append(StatusEffectNode);
+	}
+	Data["statuseffects"] = StatusEffectsNode;
+
+	// Write unlocks
+	Json::Value UnlocksNode;
+	for(auto &Unlock : Unlocks) {
+		Json::Value UnlockNode;
+		UnlockNode["id"] = Unlock.first;
+		UnlockNode["level"] = Unlock.second.Level;
+		UnlocksNode.append(UnlockNode);
+	}
+	Data["unlocks"] = UnlocksNode;
 }
 
 // Unserialize attributes from string
@@ -612,34 +671,69 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Parse JSON
 	Json::Value Data;
 	Json::Reader Reader;
-	bool Success = Reader.parse(JsonString, Data);
-	if(!Success)
+	if(!Reader.parse(JsonString, Data))
 		throw std::runtime_error("_Object::UnserializeSaveData: Error parsing JSON string!");
 
 	// Get stats
-	Json::Value Attributes = Data["stats"];
-	LoadMapID = (NetworkIDType)Attributes.get("map_id", 0).asUInt();
-	Position.x = Attributes.get("map_x", 0).asInt();
-	Position.y = Attributes.get("map_y", 0).asInt();
-	SpawnMapID = (NetworkIDType)Attributes.get("spawnmap_id", 0).asUInt();
-	SpawnPoint = Attributes.get("spawnpoint", 0).asUInt();
-	Hardcore = Attributes.get("hardcore", false).asBool();
-	PortraitID = Attributes.get("portrait_id", 0).asUInt();
-	ModelID = Attributes.get("model_id", 0).asUInt();
-	Health = Attributes.get("health", 1).asInt();
-	Mana = Attributes.get("mana", 0).asInt();
-	Experience = Attributes.get("experience", 0).asInt();
-	Gold = Attributes.get("gold", 0).asInt();
-	GoldLost = Attributes.get("goldlost", 0).asInt();
-	PlayTime = Attributes.get("playtime", 0).asDouble();
-	BattleTime = Attributes.get("battletime", 0).asDouble();
-	Deaths = Attributes.get("deaths", 0).asInt();
-	MonsterKills = Attributes.get("monsterkills", 0).asInt();
-	PlayerKills = Attributes.get("playerkills", 0).asInt();
+	Json::Value StatsNode = Data["stats"];
+	LoadMapID = (NetworkIDType)StatsNode["map_id"].asUInt();
+	Position.x = StatsNode["map_x"].asInt();
+	Position.y = StatsNode["map_y"].asInt();
+	SpawnMapID = (NetworkIDType)StatsNode["spawnmap_id"].asUInt();
+	SpawnPoint = StatsNode["spawnpoint"].asUInt();
+	Hardcore = StatsNode["hardcore"].asBool();
+	PortraitID = StatsNode["portrait_id"].asUInt();
+	ModelID = StatsNode["model_id"].asUInt();
+	Health = StatsNode["health"].asInt();
+	Mana = StatsNode["mana"].asInt();
+	Experience = StatsNode["experience"].asInt();
+	Gold = StatsNode["gold"].asInt();
+	GoldLost = StatsNode["goldlost"].asInt();
+	PlayTime = StatsNode["playtime"].asDouble();
+	BattleTime = StatsNode["battletime"].asDouble();
+	Deaths = StatsNode["deaths"].asInt();
+	MonsterKills = StatsNode["monsterkills"].asInt();
+	PlayerKills = StatsNode["playerkills"].asInt();
 
 	size_t ActionBarSize = 0;
-	ActionBarSize = Attributes.get("actionbar_size", 0).asUInt64();
+	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
 	ActionBar.resize(ActionBarSize);
+
+	// Set items
+	for(const Json::Value &ItemNode : Data["items"]) {
+		_InventorySlot InventorySlot;
+		InventorySlot.Item = Stats->Items[ItemNode["id"].asUInt()];
+		InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
+		InventorySlot.Count = ItemNode["count"].asInt();
+		Inventory->Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
+	}
+
+	// Set skills
+	for(const Json::Value &SkillNode : Data["skills"]) {
+		uint32_t ItemID = SkillNode["id"].asUInt();
+		Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->Items[ItemID]->MaxLevel);
+	}
+
+	// Set actionbar
+	for(const Json::Value &ActionNode : Data["actionbar"]) {
+		uint32_t Slot = ActionNode["slot"].asUInt();
+		if(Slot < ActionBar.size())
+			ActionBar[Slot].Item = Stats->Items[ActionNode["id"].asUInt()];
+	}
+
+	// Set status effects
+	for(const Json::Value &StatusEffectNode : Data["statuseffects"]) {
+		_StatusEffect *StatusEffect = new _StatusEffect();
+		StatusEffect->Buff = Stats->Buffs[StatusEffectNode["id"].asUInt()];
+		StatusEffect->Level = StatusEffectNode["level"].asInt();
+		StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
+		StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
+		StatusEffects.push_back(StatusEffect);
+	}
+
+	// Set unlocks
+	for(const Json::Value &UnlockNode : Data["unlocks"])
+		Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
 }
 
 // Generate damage

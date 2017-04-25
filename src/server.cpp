@@ -73,7 +73,6 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	TimeSteps(0),
 	Time(0.0),
 	SaveTime(0.0),
-	Clock(0.0),
 	Stats(Stats),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
@@ -90,7 +89,6 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	MapManager = new _Manager<_Map>();
 	BattleManager = new _Manager<_Battle>();
 	Save = new _Save();
-	Clock = Save->GetClock();
 
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
@@ -101,7 +99,8 @@ _Server::~_Server() {
 	Done = true;
 	JoinThread();
 
-	Save->SaveClock(Clock);
+	// Save clock
+	Save->SaveSettings();
 
 	// Save players
 	Save->StartTransaction();
@@ -206,9 +205,9 @@ void _Server::Update(double FrameTime) {
 	Scripting->InjectTime(Time);
 
 	// Update clock
-	Clock += FrameTime * MAP_CLOCK_SPEED;
-	if(Clock >= MAP_DAY_LENGTH)
-		Clock -= MAP_DAY_LENGTH;
+	Save->Clock += FrameTime * MAP_CLOCK_SPEED;
+	if(Save->Clock >= MAP_DAY_LENGTH)
+		Save->Clock -= MAP_DAY_LENGTH;
 
 	// Update autosave
 	SaveTime += FrameTime;
@@ -382,7 +381,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	Password.resize(std::min(ACCOUNT_MAX_PASSWORD_SIZE, Password.length()));
 
 	// Validate singleplayer
-	if(!Username.length() && !Password.length() && Secret != Save->GetSecret())
+	if(!Username.length() && !Password.length() && Secret != Save->Secret)
 		return;
 
 	// Create account or login
@@ -605,11 +604,11 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		else if(Message.find("-clock") == 0) {
 			std::regex Regex("-clock ([0-9.]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Clock = (double)ToNumber<double>(Match.str(1));
-				if(Clock < 0)
-					Clock = 0;
-				else if(Clock >= MAP_DAY_LENGTH)
-					Clock = MAP_DAY_LENGTH;
+				Save->Clock = (double)ToNumber<double>(Match.str(1));
+				if(Save->Clock < 0)
+					Save->Clock = 0;
+				else if(Save->Clock >= MAP_DAY_LENGTH)
+					Save->Clock = MAP_DAY_LENGTH;
 
 				SendHUD(Player->Peer);
 			}
@@ -710,6 +709,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 	Save->Database->BindInt(1, Peer->AccountID);
 	while(Save->Database->FetchRow()) {
 		_Object Player;
+		Player.Stats = Stats;
 		Player.UnserializeSaveData(Save->Database->GetString("data"));
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
 		Packet.Write<uint8_t>(Player.Hardcore);
@@ -746,7 +746,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 	// Load map
 	if(!Map) {
 		Map = MapManager->CreateWithID(MapID);
-		Map->Clock = Clock;
+		Map->Clock = Save->Clock;
 		Map->Server = this;
 		Map->Load(Stats->GetMap(MapID));
 	}
@@ -781,7 +781,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
 		Packet.Write<uint32_t>(MapID);
-		Packet.Write<double>(Clock);
+		Packet.Write<double>(Save->Clock);
 		Network->SendPacket(Packet, Player->Peer);
 
 		// Set player object list
@@ -1419,7 +1419,7 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<int>(Player->MaxMana);
 	Packet.Write<int>(Player->Experience);
 	Packet.Write<int>(Player->Gold);
-	Packet.Write<double>(Clock);
+	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);
 }
@@ -1531,7 +1531,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		// Get difficulty
 		double Difficulty = 1.0;
 		if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
-			Scripting->PushReal(Clock);
+			Scripting->PushReal(Save->Clock);
 			Scripting->MethodCall(1, 1);
 			Difficulty = Scripting->GetReal(1);
 			Scripting->FinishMethodCall();

@@ -493,7 +493,7 @@ void _PlayState::HandleConnect() {
 		Packet.WriteBit(0);
 		Packet.WriteString("");
 		Packet.WriteString("");
-		Packet.Write<uint64_t>(Server->Save->GetSecret());
+		Packet.Write<uint64_t>(Server->Save->Secret);
 		Network->SendPacket(Packet);
 	}
 

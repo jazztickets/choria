@@ -76,7 +76,6 @@ class _Server {
 		uint16_t TimeSteps;
 		double Time;
 		double SaveTime;
-		double Clock;
 		_LogFile Log;
 
 		// Stats
