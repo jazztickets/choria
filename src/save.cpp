@@ -142,7 +142,7 @@ bool _Save::CheckUsername(const std::string &Username) {
 void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
 	std::string TrimmedUsername = TrimString(Username);
 
-	Database->PrepareQuery("INSERT INTO account(username, password) VALUES(@username, @password)");
+	Database->PrepareQuery("INSERT INTO account(username, password, data) VALUES(@username, @password, '')");
 	Database->BindString(1, TrimmedUsername);
 	Database->BindString(2, Password);
 	Database->FetchRow();
@@ -355,11 +355,12 @@ void _Save::CreateDefaultDatabase() {
 		"CREATE TABLE account(\n"
 		"	id INTEGER PRIMARY KEY,\n"
 		"	username TEXT,\n"
-		"	password TEXT\n"
+		"	password TEXT,\n"
+		"	data TEXT\n"
 		")"
 	);
 
-	Database->RunQuery("INSERT INTO account(id, username, password) VALUES(1, '', '')");
+	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(1, '', '', '')");
 
 	// Characters
 	Database->RunQuery(
