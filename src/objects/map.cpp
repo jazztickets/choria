@@ -569,7 +569,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 
 				// Draw zone number
 				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0)
-					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone).c_str(), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 64.0f);
+					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 64.0f);
 
 				// Draw PVP
 				if((RenderFlags & FILTER_PVP) && Tile->PVP)

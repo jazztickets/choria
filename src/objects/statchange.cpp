@@ -134,7 +134,7 @@ void _StatChangeUI::Render(double BlendFactor) {
 	glm::vec2 DrawPosition = glm::mix(LastPosition, Position, BlendFactor);
 
 	// Draw text
-	Font->DrawText(Text.c_str(), DrawPosition + glm::vec2(0, 7), Color, CENTER_BASELINE);
+	Font->DrawText(Text, DrawPosition + glm::vec2(0, 7), Color, CENTER_BASELINE);
 }
 
 // Set text and color

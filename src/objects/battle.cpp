@@ -186,7 +186,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 		Buffer << "miss";
 	else if(ActionResult.Target.HasStat(StatType::HEALTH))
 		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Integer);
-	Assets.Fonts["hud_medium"]->DrawText(Buffer.str().c_str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), TextColor, CENTER_BASELINE);
 }
 
 // Sends an action selection to the server
