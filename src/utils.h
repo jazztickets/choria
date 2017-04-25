@@ -18,11 +18,9 @@
 #pragma once
 
 // Libraries
-#include <fstream>
 #include <string>
 #include <sstream>
 
-std::string GetTSVText(std::ifstream &Stream, bool *EndOfLine=nullptr);
 const char *LoadFileIntoMemory(const char *Path);
 std::string RemoveExtension(const std::string &Path);
 std::string TrimString(const std::string &String);

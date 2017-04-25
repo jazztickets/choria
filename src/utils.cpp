@@ -16,30 +16,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <utils.h>
+#include <fstream>
 #include <regex>
-
-// Reads in a string that is TSV formatted
-std::string GetTSVText(std::ifstream &Stream, bool *EndOfLine) {
-	std::string Text;
-	char Char;
-
-	while(1) {
-		Stream.get(Char);
-		if(Char == '\n') {
-			if(EndOfLine)
-				*EndOfLine = true;
-			return Text;
-		}
-		if(Char == '\t') {
-			return Text;
-		}
-		else {
-			Text += Char;
-		}
-	}
-
-	return Text;
-}
 
 // Loads a file into a string
 const char *LoadFileIntoMemory(const char *Path) {

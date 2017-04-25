@@ -33,6 +33,7 @@
 #include <map>
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
 #include <limits>
 
 _Assets Assets;
@@ -122,14 +123,19 @@ void _Assets::LoadFonts(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Ignore the first line
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 	// Read the file
 	while(!File.eof() && File.peek() != EOF) {
-		std::string Identifier = GetTSVText(File);
-		std::string FontFile = GetTSVText(File);
-		std::string ProgramIdentifier = GetTSVText(File);
+
+		// Read strings
+		std::string Identifier;
+		std::string FontFile;
+		std::string ProgramIdentifier;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, FontFile, '\t');
+		std::getline(File, ProgramIdentifier, '\t');
 
 		// Check for duplicates
 		if(Fonts[Identifier])
@@ -160,12 +166,13 @@ void _Assets::LoadLayers(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Ignore the first line
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 	// Read the file
 	while(!File.eof() && File.peek() != EOF) {
-		std::string Identifier = GetTSVText(File);
+		std::string Identifier;
+		std::getline(File, Identifier, '\t');
 
 		// Get layer
 		_Layer Layer;
@@ -188,14 +195,17 @@ void _Assets::LoadPrograms(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Ignore the first line
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 	// Read the file
 	while(!File.eof() && File.peek() != EOF) {
-		std::string Identifier = GetTSVText(File);
-		std::string VertexPath = GetTSVText(File);
-		std::string FragmentPath = GetTSVText(File);
+		std::string Identifier;
+		std::string VertexPath;
+		std::string FragmentPath;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, VertexPath, '\t');
+		std::getline(File, FragmentPath, '\t');
 
 		// Get attrib count
 		int Attribs;
@@ -230,7 +240,7 @@ void _Assets::LoadColors(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Read the file
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 	// Add default color
@@ -240,7 +250,9 @@ void _Assets::LoadColors(const std::string &Path) {
 	// Read table
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier = GetTSVText(File);
+		std::string Identifier;
+		std::getline(File, Identifier, '\t');
+
 		File >> Color.r >> Color.g >> Color.b >> Color.a;
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -302,16 +314,24 @@ void _Assets::LoadStyles(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Read the file
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read file
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier = GetTSVText(File);
-		std::string BackgroundColorIdentifier = GetTSVText(File);
-		std::string BorderColorIdentifier = GetTSVText(File);
-		std::string ProgramIdentifier = GetTSVText(File);
-		std::string TextureIdentifier = GetTSVText(File);
-		std::string TextureColorIdentifier = GetTSVText(File);
+		std::string Identifier;
+		std::string BackgroundColorIdentifier;
+		std::string BorderColorIdentifier;
+		std::string ProgramIdentifier;
+		std::string TextureIdentifier;
+		std::string TextureColorIdentifier;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, BackgroundColorIdentifier, '\t');
+		std::getline(File, BorderColorIdentifier, '\t');
+		std::getline(File, ProgramIdentifier, '\t');
+		std::getline(File, TextureIdentifier, '\t');
+		std::getline(File, TextureColorIdentifier, '\t');
 
 		// Check for color
 		if(BackgroundColorIdentifier != "" && Colors.find(BackgroundColorIdentifier) == Colors.end())
@@ -368,13 +388,19 @@ void _Assets::LoadElements(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Read the file
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read file
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier = GetTSVText(File);
-		std::string ParentIdentifier = GetTSVText(File);
-		std::string StyleIdentifier = GetTSVText(File);
+		// Read strings
+		std::string Identifier;
+		std::string ParentIdentifier;
+		std::string StyleIdentifier;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, ParentIdentifier, '\t');
+		std::getline(File, StyleIdentifier, '\t');
 
 		// Check for duplicates
 		if(Elements.find(Identifier) != Elements.end())
@@ -425,15 +451,22 @@ void _Assets::LoadLabels(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Read the file
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read file
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier = GetTSVText(File);
-		std::string ParentIdentifier = GetTSVText(File);
-		std::string FontIdentifier = GetTSVText(File);
-		std::string ColorIdentifier = GetTSVText(File);
-		std::string Text = GetTSVText(File);
+		std::string Identifier;
+		std::string ParentIdentifier;
+		std::string FontIdentifier;
+		std::string ColorIdentifier;
+		std::string Text;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, ParentIdentifier, '\t');
+		std::getline(File, FontIdentifier, '\t');
+		std::getline(File, ColorIdentifier, '\t');
+		std::getline(File, Text, '\t');
 
 		// Check for duplicates
 		if(Labels.find(Identifier) != Labels.end())
@@ -481,14 +514,20 @@ void _Assets::LoadImages(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Read the file
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read file
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier = GetTSVText(File);
-		std::string ParentIdentifier = GetTSVText(File);
-		std::string TextureIdentifier = GetTSVText(File);
-		std::string ColorIdentifier = GetTSVText(File);
+		std::string Identifier;
+		std::string ParentIdentifier;
+		std::string TextureIdentifier;
+		std::string ColorIdentifier;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, ParentIdentifier, '\t');
+		std::getline(File, TextureIdentifier, '\t');
+		std::getline(File, ColorIdentifier, '\t');
 
 		// Check for duplicates
 		if(Images.find(Identifier) != Images.end())
@@ -539,15 +578,22 @@ void _Assets::LoadButtons(const std::string &Path) {
 	if(!File)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Read the file
+	// Skip header
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read file
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier = GetTSVText(File);
-		std::string ParentIdentifier = GetTSVText(File);
-		std::string StyleIdentifier = GetTSVText(File);
-		std::string DisabledStyleIdentifier = GetTSVText(File);
-		std::string HoverStyleIdentifier = GetTSVText(File);
+		std::string Identifier;
+		std::string ParentIdentifier;
+		std::string StyleIdentifier;
+		std::string DisabledStyleIdentifier;
+		std::string HoverStyleIdentifier;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, ParentIdentifier, '\t');
+		std::getline(File, StyleIdentifier, '\t');
+		std::getline(File, DisabledStyleIdentifier, '\t');
+		std::getline(File, HoverStyleIdentifier, '\t');
 
 		// Check for duplicates
 		if(Buttons.find(Identifier) != Buttons.end())
@@ -608,10 +654,14 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier = GetTSVText(File);
-		std::string ParentIdentifier = GetTSVText(File);
-		std::string StyleIdentifier = GetTSVText(File);
-		std::string FontIdentifier = GetTSVText(File);
+		std::string Identifier;
+		std::string ParentIdentifier;
+		std::string StyleIdentifier;
+		std::string FontIdentifier;
+		std::getline(File, Identifier, '\t');
+		std::getline(File, ParentIdentifier, '\t');
+		std::getline(File, StyleIdentifier, '\t');
+		std::getline(File, FontIdentifier, '\t');
 
 		// Check for duplicates
 		if(TextBoxes.find(Identifier) != TextBoxes.end())
