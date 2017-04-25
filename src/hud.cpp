@@ -1230,9 +1230,20 @@ void _HUD::DrawInventory() {
 			// Draw price if using vendor
 			DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false);
 
+			// Draw upgrade count if using blacksmith
+			if(Player->Blacksmith && Slot->Item->MaxLevel) {
+				glm::vec4 Color;
+				if(Slot->Upgrades == Slot->Item->MaxLevel)
+					Color = COLOR_RED;
+				else
+					Color = COLOR_GREEN;
+
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), Color, RIGHT_BASELINE);
+			}
+
 			// Draw count
 			if(Slot->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count).c_str(), DrawPosition + glm::vec2(20, 20), COLOR_WHITE, RIGHT_BASELINE);
 		}
 	}
 }
