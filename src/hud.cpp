@@ -296,7 +296,6 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						// Send inventory move packet
 						case WINDOW_TRADEYOURS:
 						case WINDOW_INVENTORY:
-
 							if(Tooltip.Slot < Player->Inventory->Slots.size() && Cursor.Slot != Tooltip.Slot) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
@@ -314,9 +313,10 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 						break;
 						// Upgrade an item
 						case WINDOW_BLACKSMITH:
-							if(Cursor.InventorySlot.Item->IsEquippable()) {
+
+							// Replace item if dragging onto upgrade slot only
+							if(Cursor.InventorySlot.Item->IsEquippable() && Tooltip.Slot != 1)
 								UpgradeSlot = Cursor.Slot;
-							}
 						break;
 						case WINDOW_ACTIONBAR:
 							if(Cursor.Window == WINDOW_INVENTORY && !Cursor.InventorySlot.Item->IsSkill())
@@ -335,19 +335,19 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				// Drag item from actionbar
 				case WINDOW_ACTIONBAR:
 					switch(Tooltip.Window) {
-						// Onto inventory
 						case WINDOW_INVENTORY:
+
 							// Swap actionbar with inventory
 							if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->IsSkill())
 								SetActionBar(Cursor.Slot, Player->ActionBar.size(), Tooltip.InventorySlot.Item);
 							else
 								SetActionBar(Cursor.Slot, Player->ActionBar.size(), nullptr);
 						break;
-						// Swap action
 						case WINDOW_ACTIONBAR:
 							SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.InventorySlot.Item);
 						break;
 						default:
+
 							// Remove action
 							if(Tooltip.Slot >= Player->ActionBar.size() || Tooltip.Window == -1) {
 								_Action Action;
