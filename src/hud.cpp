@@ -1743,10 +1743,6 @@ void _HUD::DrawCursorItem() {
 		glm::vec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture, COLOR_ITEMFADE);
-		if(Cursor.Window != WINDOW_ACTIONBAR)
-			DrawItemPrice(Cursor.InventorySlot.Item, Cursor.InventorySlot.Count, DrawPosition, Cursor.Window == WINDOW_VENDOR);
-		if(Cursor.InventorySlot.Count > 1)
-			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Cursor.InventorySlot.Count).c_str(), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
 	}
 }
 
