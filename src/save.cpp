@@ -29,6 +29,8 @@
 #include <stdexcept>
 #include <limits>
 #include <algorithm>
+#include <json/writer.h>
+#include <json/reader.h>
 
 // Constructor
 _Save::_Save() {
@@ -350,13 +352,19 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 		MapID = 0;
 
 	// Get player stats
-	std::string Data;
+	Json::Value Data;
 	Player->SerializeSaveData(Data);
-	Data += std::string("\nmap_id=") + std::to_string(MapID);
+	Data["stats"]["map_id"] = MapID;
+
+	// Get JSON string
+	Json::FastWriter Writer;
+	std::string JsonString = Writer.write(Data);
+	if(JsonString.back() == '\n')
+		JsonString.pop_back();
 
 	// Save character stats
 	Database->PrepareQuery("UPDATE character SET data = @data WHERE id = @character_id");
-	Database->BindString(1, Data);
+	Database->BindString(1, JsonString);
 	Database->BindInt(2, Player->CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();

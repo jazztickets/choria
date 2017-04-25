@@ -23,7 +23,6 @@
 #include <glm/vec2.hpp>
 #include <packet.h>
 #include <unordered_map>
-#include <sstream>
 #include <list>
 #include <vector>
 #include <cstdint>
@@ -47,6 +46,10 @@ struct _Tile;
 struct _Vendor;
 struct _Trader;
 struct _ActionResult;
+
+namespace Json {
+	class Value;
+}
 
 struct _Unlock {
 	_Unlock() : Level(0) { }
@@ -88,8 +91,8 @@ class _Object : public _ManagerBase {
 		void RenderBattle(_Object *ClientPlayer, double Time);
 
 		// Save
-		void SerializeSaveData(std::string &Data) const;
-		void UnserializeSaveData(const std::string &Data);
+		void SerializeSaveData(Json::Value &Data) const;
+		void UnserializeSaveData(const std::string &JsonString);
 
 		// Network
 		void SerializeCreate(_Buffer &Data);
