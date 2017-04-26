@@ -1233,7 +1233,7 @@ void _HUD::DrawInventory() {
 			// Draw upgrade count if using blacksmith
 			if(Player->Blacksmith && Slot->Item->MaxLevel) {
 				glm::vec4 Color;
-				if(Slot->Upgrades == Slot->Item->MaxLevel)
+				if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= Player->Blacksmith->Level)
 					Color = COLOR_RED;
 				else
 					Color = COLOR_GREEN;
