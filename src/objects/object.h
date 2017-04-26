@@ -45,6 +45,7 @@ class _HUD;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
+struct _Blacksmith;
 struct _ActionResult;
 
 namespace Json {
@@ -298,7 +299,7 @@ class _Object : public _ManagerBase {
 		_Inventory *Inventory;
 		const _Vendor *Vendor;
 		const _Trader *Trader;
-		bool Blacksmith;
+		const _Blacksmith *Blacksmith;
 
 		// Skills
 		bool SkillsOpen;

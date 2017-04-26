@@ -17,6 +17,7 @@ choria 0.9.0 -
 - Removed battle results screen
 - Added animations to stat changes and action results
 - Added status effects
+- Added blacksmith to upgrade items
 - Action bar can now hold items
 - Reworked all maps/monsters/items
 - Added various map events: doors, portals, custom scripts

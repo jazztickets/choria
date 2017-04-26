@@ -753,6 +753,15 @@ INSERT INTO traderitem VALUES(40,10,5,1);
 INSERT INTO traderitem VALUES(41,10,127,2);
 INSERT INTO traderitem VALUES(42,16,215,10);
 INSERT INTO traderitem VALUES(43,16,23,1);
+CREATE TABLE IF NOT EXISTS "blacksmith" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"level" INTEGER DEFAULT(0)
+);
+INSERT INTO blacksmith VALUES(1,'Apprentice Blacksmith',5);
+INSERT INTO blacksmith VALUES(2,'Journeyman Blacksmith',10);
+INSERT INTO blacksmith VALUES(3,'Skilled Blacksmith',15);
+INSERT INTO blacksmith VALUES(4,'Master Blacksmith',20);
 CREATE TABLE IF NOT EXISTS "build" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,

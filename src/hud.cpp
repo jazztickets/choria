@@ -1106,7 +1106,7 @@ bool _HUD::CloseBlacksmith() {
 	Cursor.Reset();
 
 	if(Player)
-		Player->Blacksmith = false;
+		Player->Blacksmith = nullptr;
 
 	UpgradeSlot = (size_t)-1;
 
@@ -1378,6 +1378,13 @@ void _HUD::DrawBlacksmith() {
 		return;
 	}
 
+	// Set title
+	_Label *BlacksmithTitle = Assets.Labels["label_blacksmith_title"];
+	_Label *BlacksmithLevel = Assets.Labels["label_blacksmith_level"];
+	BlacksmithTitle->Text = Player->Blacksmith->Name;
+	BlacksmithLevel->Text = "Level " + std::to_string(Player->Blacksmith->Level);
+
+	// Draw element
 	BlacksmithElement->Render();
 
 	// Draw item
@@ -1395,6 +1402,7 @@ void _HUD::DrawBlacksmith() {
 			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			BlacksmithCost->SetVisible(true);
+			UpgradeButton->SetEnabled(true);
 
 			// Get cost
 			int Cost = Item->GetUpgradePrice(InventorySlot.Upgrades+1);
@@ -1405,19 +1413,27 @@ void _HUD::DrawBlacksmith() {
 			BlacksmithCost->Color = COLOR_GOLD;
 			BlacksmithCost->Text = Buffer.str();
 
-			// Disable button
-			if(Cost > Player->Gold) {
-				BlacksmithCost->Color = COLOR_RED;
-				UpgradeButton->SetEnabled(false);
-			}
-			else
-				UpgradeButton->SetEnabled(true);
+			// Check upgrade conditions
+			bool Disabled = false;
+			if(Player->Gold < Cost)
+				Disabled = true;
 
-			// Max level
+			// Check blacksmith level
+			if(InventorySlot.Upgrades >= Player->Blacksmith->Level) {
+				Disabled = true;
+				BlacksmithCost->Text = "I can't upgrade this";
+			}
+
+			// Check item level
 			if(InventorySlot.Upgrades >= Item->MaxLevel) {
-				UpgradeButton->SetEnabled(false);
-				BlacksmithCost->Color = COLOR_RED;
+				Disabled = true;
 				BlacksmithCost->Text = "Max Level";
+			}
+
+			// Disable button
+			if(Disabled) {
+				BlacksmithCost->Color = COLOR_RED;
+				UpgradeButton->SetEnabled(false);
 			}
 		}
 		else

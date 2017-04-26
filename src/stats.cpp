@@ -45,6 +45,7 @@ _Stats::_Stats(bool Headless) :
 	LoadItems();
 	LoadVendors();
 	LoadTraders();
+	LoadBlacksmiths();
 	LoadModels();
 	LoadBuilds();
 	LoadScripts();
@@ -324,6 +325,24 @@ void _Stats::LoadTraders() {
 		Database->CloseQuery(1);
 
 		Traders[Trader.ID] = Trader;
+	}
+	Database->CloseQuery();
+}
+
+// Loads blacksmith data
+void _Stats::LoadBlacksmiths() {
+	Blacksmiths.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM blacksmith");
+
+	// Get data
+	_Blacksmith Blacksmith;
+	while(Database->FetchRow()) {
+		Blacksmith.ID = Database->GetInt<uint32_t>("id");
+		Blacksmith.Name = Database->GetString("name");
+		Blacksmith.Level = Database->GetInt<int>("level");
+		Blacksmiths[Blacksmith.ID] = Blacksmith;
 	}
 	Database->CloseQuery();
 }

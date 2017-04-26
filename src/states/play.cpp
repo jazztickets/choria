@@ -835,7 +835,7 @@ void _PlayState::HandleEventStart(_Buffer &Data) {
 			HUD->InitTrader();
 		break;
 		case _Map::EVENT_BLACKSMITH:
-			Player->Blacksmith = true;
+			Player->Blacksmith = Stats->GetBlacksmith(EventData);
 			Player->WaitForServer = false;
 			HUD->InitBlacksmith();
 		break;

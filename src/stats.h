@@ -112,6 +112,12 @@ struct _Trader {
 	std::vector<_TraderItem> TraderItems;
 };
 
+struct _Blacksmith {
+	uint32_t ID;
+	std::string Name;
+	int Level;
+};
+
 struct _ItemDrop {
 	_ItemDrop(uint32_t ItemID, uint32_t Odds) : ItemID(ItemID), Odds(Odds) { }
 	uint32_t ItemID;
@@ -131,6 +137,7 @@ class _Stats {
 		const _MapStat *GetMap(uint32_t MapID) { return &Maps[MapID]; }
 		const _Vendor *GetVendor(uint32_t VendorID) { return &Vendors[VendorID]; }
 		const _Trader *GetTrader(uint32_t TraderID) { return &Traders[TraderID]; }
+		const _Blacksmith *GetBlacksmith(uint32_t BlacksmithID) { return &Blacksmiths[BlacksmithID]; }
 
 		// Menu
 		void GetPortraits(std::list<_Portrait> &Portraits);
@@ -155,6 +162,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _MapStat> Maps;
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
+		std::unordered_map<uint32_t, _Blacksmith> Blacksmiths;
 		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, _Model> Models;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
@@ -182,6 +190,7 @@ class _Stats {
 		void LoadItems();
 		void LoadVendors();
 		void LoadTraders();
+		void LoadBlacksmiths();
 		void LoadModels();
 		void LoadBuilds();
 		void LoadScripts();

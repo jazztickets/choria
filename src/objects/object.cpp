@@ -144,7 +144,7 @@ _Object::_Object() :
 	Inventory(nullptr),
 	Vendor(nullptr),
 	Trader(nullptr),
-	Blacksmith(false),
+	Blacksmith(nullptr),
 	SkillsOpen(false),
 	SkillPoints(0),
 	SkillPointsUsed(0),
@@ -1152,7 +1152,7 @@ void _Object::ResetUIState() {
 	Paused = false;
 	Vendor = nullptr;
 	Trader = nullptr;
-	Blacksmith = false;
+	Blacksmith = nullptr;
 	TeleportTime = -1.0;
 }
 

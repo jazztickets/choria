@@ -360,19 +360,21 @@ void _Map::CheckEvents(_Object *Object) {
 				Object->WaitForServer = true;
 		} break;
 		case _Map::EVENT_BLACKSMITH: {
-			if(Server) {
-				Object->Blacksmith = true;
+			if(Tile->Event.Data) {
+				if(Server) {
+					Object->Blacksmith = Server->Stats->GetBlacksmith(Tile->Event.Data);
 
-				// Notify client
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<uint32_t>(Tile->Event.Type);
-				Packet.Write<uint32_t>(Tile->Event.Data);
-				Packet.Write<glm::ivec2>(Object->Position);
-				Server->Network->SendPacket(Packet, Object->Peer);
+					// Notify client
+					_Buffer Packet;
+					Packet.Write<PacketType>(PacketType::EVENT_START);
+					Packet.Write<uint32_t>(Tile->Event.Type);
+					Packet.Write<uint32_t>(Tile->Event.Data);
+					Packet.Write<glm::ivec2>(Object->Position);
+					Server->Network->SendPacket(Packet, Object->Peer);
+				}
+				else
+					Object->WaitForServer = true;
 			}
-			else
-				Object->WaitForServer = true;
 		} break;
 		default:
 			if(Server) {
