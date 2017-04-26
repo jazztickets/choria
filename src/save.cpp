@@ -261,6 +261,7 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	// Set health/mana
 	Object.Health = Object.MaxHealth;
 	Object.Mana = Object.MaxMana;
+	Object.GenerateNextBattle();
 
 	// Save new character
 	StartTransaction();
@@ -309,7 +310,6 @@ void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
 	Database->CloseQuery();
 
 	// Get stats
-	Player->GenerateNextBattle();
 	Player->CalculateStats();
 
 	// Max sure player has health

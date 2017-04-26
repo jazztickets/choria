@@ -603,6 +603,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["deaths"] = Deaths;
 	StatsNode["monsterkills"] = MonsterKills;
 	StatsNode["playerkills"] = PlayerKills;
+	StatsNode["nextbattle"] = NextBattle;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -694,6 +695,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Deaths = StatsNode["deaths"].asInt();
 	MonsterKills = StatsNode["monsterkills"].asInt();
 	PlayerKills = StatsNode["playerkills"].asInt();
+	NextBattle = StatsNode["nextbattle"].asInt();
 
 	size_t ActionBarSize = 0;
 	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
