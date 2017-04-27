@@ -306,32 +306,14 @@ void _Map::CheckEvents(_Object *Object) {
 				Object->WaitForServer = true;
 		break;
 		case _Map::EVENT_VENDOR: {
-			if(Server) {
-				Object->Vendor = Server->Stats->GetVendor(Tile->Event.Data);
-
-				// Notify client
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<uint32_t>(Tile->Event.Type);
-				Packet.Write<uint32_t>(Tile->Event.Data);
-				Packet.Write<glm::ivec2>(Object->Position);
-				Server->Network->SendPacket(Packet, Object->Peer);
-			}
+			if(Server)
+				StartEvent(Object, Tile->Event);
 			else
 				Object->WaitForServer = true;
 		} break;
 		case _Map::EVENT_TRADER: {
-			if(Server) {
-				Object->Trader = Server->Stats->GetTrader(Tile->Event.Data);
-
-				// Notify client
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::EVENT_START);
-				Packet.Write<uint32_t>(Tile->Event.Type);
-				Packet.Write<uint32_t>(Tile->Event.Data);
-				Packet.Write<glm::ivec2>(Object->Position);
-				Server->Network->SendPacket(Packet, Object->Peer);
-			}
+			if(Server)
+				StartEvent(Object, Tile->Event);
 			else
 				Object->WaitForServer = true;
 		} break;
@@ -361,17 +343,8 @@ void _Map::CheckEvents(_Object *Object) {
 		} break;
 		case _Map::EVENT_BLACKSMITH: {
 			if(Tile->Event.Data) {
-				if(Server) {
-					Object->Blacksmith = Server->Stats->GetBlacksmith(Tile->Event.Data);
-
-					// Notify client
-					_Buffer Packet;
-					Packet.Write<PacketType>(PacketType::EVENT_START);
-					Packet.Write<uint32_t>(Tile->Event.Type);
-					Packet.Write<uint32_t>(Tile->Event.Data);
-					Packet.Write<glm::ivec2>(Object->Position);
-					Server->Network->SendPacket(Packet, Object->Peer);
-				}
+				if(Server)
+					StartEvent(Object, Tile->Event);
 				else
 					Object->WaitForServer = true;
 			}
@@ -457,6 +430,33 @@ void _Map::SetAmbientLightByClock() {
 
 	// Set color
 	AmbientLight = glm::mix(DayCycles[CurrentCycle], DayCycles[NextCycle], Percent);
+}
+
+// Start event for an object and send packet
+void _Map::StartEvent(_Object *Object, _Event Event) {
+	if(!Server)
+		return;
+
+	// Handle event types
+	switch(Event.Type) {
+		case _Map::EVENT_TRADER:
+			Object->Trader = Server->Stats->GetTrader(Event.Data);
+		break;
+		case _Map::EVENT_VENDOR:
+			Object->Vendor = Server->Stats->GetVendor(Event.Data);
+		break;
+		case _Map::EVENT_BLACKSMITH:
+			Object->Blacksmith = Server->Stats->GetBlacksmith(Event.Data);
+		break;
+	}
+
+	// Notify client
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::EVENT_START);
+	Packet.Write<uint32_t>(Event.Type);
+	Packet.Write<uint32_t>(Event.Data);
+	Packet.Write<glm::ivec2>(Object->Position);
+	Server->Network->SendPacket(Packet, Object->Peer);
 }
 
 // Renders the map
