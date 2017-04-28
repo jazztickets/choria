@@ -637,6 +637,15 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				SendPlayerPosition(Player->Peer);
 			}
 		}
+		else if(Message.find("-event") == 0) {
+			std::regex Regex("-event ([0-9]+) ([0-9]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
+				if(!Player->Map)
+					return;
+
+				Player->Map->StartEvent(Player, _Event(ToNumber<uint32_t>(Match.str(1)), ToNumber<uint32_t>(Match.str(2))));
+			}
+		}
 
 		// Build packet
 		if(StatChange.GetChangedFlag()) {

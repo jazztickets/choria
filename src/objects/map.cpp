@@ -441,12 +441,21 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 	switch(Event.Type) {
 		case _Map::EVENT_TRADER:
 			Object->Trader = Server->Stats->GetTrader(Event.Data);
+			if(!Object->Trader->ID)
+				return;
 		break;
 		case _Map::EVENT_VENDOR:
 			Object->Vendor = Server->Stats->GetVendor(Event.Data);
+			if(!Object->Vendor->ID)
+				return;
 		break;
 		case _Map::EVENT_BLACKSMITH:
 			Object->Blacksmith = Server->Stats->GetBlacksmith(Event.Data);
+			if(!Object->Blacksmith->ID)
+				return;
+		break;
+		default:
+			return;
 		break;
 	}
 
