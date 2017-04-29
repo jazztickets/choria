@@ -32,6 +32,7 @@
 #include <graphics.h>
 #include <assets.h>
 #include <config.h>
+#include <hud.h>
 #include <framework.h>
 #include <buffer.h>
 #include <audio.h>
@@ -149,15 +150,14 @@ void _Menu::InitPlay() {
 	State = STATE_NONE;
 }
 
-// Start map editor
-void _Menu::InitEditor() {
-	if(CurrentLayout)
-		CurrentLayout->SetVisible(false);
-	CurrentLayout = nullptr;
+// Open options
+void _Menu::InitOptions() {
+	ChangeLayout("element_menu_options");
 
-	State = STATE_NONE;
+	// Assign values from config
+	UpdateOptions();
 
-	Framework.ChangeState(&EditorState);
+	State = STATE_OPTIONS;
 }
 
 // Init connect screen
@@ -637,6 +637,12 @@ void _Menu::ClearBuilds() {
 	Children.clear();
 }
 
+// Update option values
+void _Menu::UpdateOptions() {
+	_Label *FullscreenCheck = Assets.Labels["label_menu_options_fullscreen_check"];
+	FullscreenCheck->Text = Config.Fullscreen ? "X" : "";
+}
+
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
@@ -765,6 +771,12 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 					FocusNextElement();
 			}
 		} break;
+		case STATE_OPTIONS: {
+			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
+				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
+					InitTitle(true);
+			}
+		} break;
 		case STATE_INGAME: {
 		} break;
 		default:
@@ -805,8 +817,8 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					InitConnect(true);
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_title_mapeditor") {
-					InitEditor();
+				else if(Clicked->Identifier == "button_title_options") {
+					InitOptions();
 					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_title_exit") {
@@ -927,6 +939,16 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 					PlayClickSound();
 				}
 			} break;
+			case STATE_OPTIONS: {
+				if(Clicked->Identifier == "button_options_fullscreen") {
+					SetFullscreen(!Config.Fullscreen);
+					UpdateOptions();
+				}
+				else if(Clicked->Identifier == "button_options_back") {
+					InitTitle(true);
+					PlayClickSound();
+				}
+			} break;
 			case STATE_INGAME: {
 				if(Clicked->Identifier == "button_ingame_resume") {
 					InitPlay();
@@ -940,6 +962,14 @@ void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
 			default:
 			break;
 		}
+	}
+}
+
+// Set fullscreen of game
+void _Menu::SetFullscreen(bool Fullscreen) {
+	if(Graphics.SetFullscreen(Fullscreen)) {
+		Config.Fullscreen = Fullscreen;
+		Config.Save();
 	}
 }
 
@@ -980,6 +1010,9 @@ void _Menu::Render() {
 		} break;
 		case STATE_ACCOUNT: {
 			Assets.Elements["element_menu_account"]->Render();
+		} break;
+		case STATE_OPTIONS: {
+			Assets.Elements["element_menu_options"]->Render();
 		} break;
 		case STATE_INGAME: {
 			Graphics.FadeScreen(MENU_PAUSE_FADE);

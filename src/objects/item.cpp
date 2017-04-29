@@ -77,7 +77,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 
 	// Center vertically
 	if(Offset.y < 0) {
-		WindowOffset.y = (Graphics.WindowSize.y - Size.y) / 2;
+		WindowOffset.y = (Graphics.CurrentSize.y - Size.y) / 2;
 	}
 	else {
 		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;

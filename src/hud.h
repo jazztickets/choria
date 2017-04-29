@@ -257,5 +257,3 @@ class _HUD {
 		// Blacksmith
 		size_t UpgradeSlot;
 };
-
-extern _HUD HUD;

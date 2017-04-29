@@ -56,6 +56,7 @@ class _Menu {
 			STATE_CHARACTERS,
 			STATE_CONNECT,
 			STATE_ACCOUNT,
+			STATE_OPTIONS,
 			STATE_INGAME,
 		};
 
@@ -76,16 +77,16 @@ class _Menu {
 		void InitNewCharacter();
 		void InitConnect(bool UseConfig, bool ConnectNow=false);
 		void InitAccount();
-		void InitOptions();
 		void InitInGame();
 		void InitPlay();
-		void InitEditor();
+		void InitOptions();
 		void Close();
 
 		void HandleAction(int InputType, int Action, int Value);
 		void KeyEvent(const _KeyEvent &KeyEvent);
 		void MouseEvent(const _MouseEvent &MouseEvent);
 
+		void SetFullscreen(bool Fullscreen);
 		void Update(double FrameTime);
 		void Render();
 
@@ -126,6 +127,7 @@ class _Menu {
 		void ClearCharacterSlots();
 		void ClearPortraits();
 		void ClearBuilds();
+		void UpdateOptions();
 
 		// States
 		std::string DefaultUsername;

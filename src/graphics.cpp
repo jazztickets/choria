@@ -33,19 +33,8 @@ _Graphics Graphics;
 // Initializes the graphics system
 void _Graphics::Init(const _WindowSettings &WindowSettings) {
 
-	// Get size of desktop
-	SDL_DisplayMode DisplayMode;
-	FullscreenSize = glm::ivec2(0);
-	if(SDL_GetDesktopDisplayMode(0, &DisplayMode) == 0)
-		FullscreenSize = glm::ivec2(DisplayMode.w, DisplayMode.h);
-
-	// Set window size
-	if(WindowSettings.Fullscreen)
-		this->WindowSize = FullscreenSize;
-	else
-		this->WindowSize = WindowSettings.Size;
-
-	this->Anisotropy = 0;
+	// Init
+	Anisotropy = 0;
 	FramesPerSecond = 0;
 	FrameCount = 0;
 	FrameRateTimer = 0;
@@ -54,16 +43,27 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	Enabled = true;
 	DirtyState();
 
-	// Set root element
-	Element = new _Element();
-	Element->Visible = true;
-	Element->Size = WindowSize;
-	Element->CalculateBounds();
+	// Set sizes
+	SDL_DisplayMode DisplayMode;
+	WindowSize = WindowSettings.Size;
+	FullscreenSize = glm::ivec2(0);
+	if(SDL_GetDesktopDisplayMode(0, &DisplayMode) == 0)
+		FullscreenSize = glm::ivec2(DisplayMode.w, DisplayMode.h);
 
 	// Set video flags
 	Uint32 VideoFlags = SDL_WINDOW_OPENGL;
-	if(WindowSettings.Fullscreen)
+	if(WindowSettings.Fullscreen) {
 		VideoFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		CurrentSize = FullscreenSize;
+	}
+	else
+		CurrentSize = WindowSize;
+
+	// Set root element
+	Element = new _Element();
+	Element->Visible = true;
+	Element->Size = CurrentSize;
+	Element->CalculateBounds();
 
 	// Set opengl attributes
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
@@ -72,8 +72,8 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
-	// Set video mode
-	Window = SDL_CreateWindow(WindowSettings.WindowTitle.c_str(), WindowSettings.Position.x, WindowSettings.Position.y, WindowSettings.Size.x, WindowSettings.Size.y, VideoFlags);
+	// Create window
+	Window = SDL_CreateWindow(WindowSettings.WindowTitle.c_str(), WindowSettings.Position.x, WindowSettings.Position.y, CurrentSize.x, CurrentSize.y, VideoFlags);
 	if(Window == nullptr)
 		throw std::runtime_error("SDL_CreateWindow failed");
 
@@ -95,13 +95,12 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	SetupOpenGL();
 
 	// Setup viewport
-	ChangeViewport(WindowSize);
+	ChangeViewport(CurrentSize);
 	png_init(0, 0);
 }
 
 // Closes the graphics system
 void _Graphics::Close() {
-
 	delete Element;
 
 	// Close opengl context
@@ -132,13 +131,13 @@ void _Graphics::ChangeViewport(const glm::ivec2 &Size) {
 void _Graphics::ChangeWindowSize(const glm::ivec2 &Size) {
 
 	// Keep viewport difference the same
-	glm::ivec2 ViewportDifference = WindowSize - ViewportSize;
+	glm::ivec2 ViewportDifference = CurrentSize - ViewportSize;
 
-	WindowSize = Size;
+	CurrentSize = Size;
 	ChangeViewport(Size - ViewportDifference);
 
 	// Update shaders
-	Ortho = glm::ortho(0.0f, (float)WindowSize.x, (float)WindowSize.y, 0.0f, -1.0f, 1.0f);
+	Ortho = glm::ortho(0.0f, (float)CurrentSize.x, (float)CurrentSize.y, 0.0f, -1.0f, 1.0f);
 	SetStaticUniforms();
 
 	// Update UI elements
@@ -150,18 +149,19 @@ void _Graphics::ChangeWindowSize(const glm::ivec2 &Size) {
 }
 
 // Toggle fullscreen
-void _Graphics::ToggleFullScreen(const glm::ivec2 &WindowSize) {
+bool _Graphics::SetFullscreen(bool Fullscreen) {
 	if(FullscreenSize == glm::ivec2(0))
-		return;
+		return false;
 
-	if(SDL_GetWindowFlags(Window) & SDL_WINDOW_FULLSCREEN)
-		Graphics.ChangeWindowSize(WindowSize);
-	else
+	if(Fullscreen)
 		Graphics.ChangeWindowSize(FullscreenSize);
+	else
+		Graphics.ChangeWindowSize(WindowSize);
 
-	if(SDL_SetWindowFullscreen(Window, SDL_GetWindowFlags(Window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP) != 0) {
-		// failed
-	}
+	if(SDL_SetWindowFullscreen(Window, SDL_GetWindowFlags(Window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP) != 0)
+		return false;
+
+	return true;
 }
 
 // Sets up OpenGL
@@ -187,7 +187,7 @@ void _Graphics::SetupOpenGL() {
 	glEnableVertexAttribArray(0);
 
 	// Set ortho matrix
-	Ortho = glm::ortho(0.0f, (float)WindowSize.x, (float)WindowSize.y, 0.0f, -1.0f, 1.0f);
+	Ortho = glm::ortho(0.0f, (float)CurrentSize.x, (float)CurrentSize.y, 0.0f, -1.0f, 1.0f);
 
 	// Build vertex buffers
 	BuildVertexBuffers();
@@ -319,14 +319,14 @@ void _Graphics::ClearScreen() {
 
 // Set up modelview matrix
 void _Graphics::Setup3D() {
-	glViewport(0, WindowSize.y - ViewportSize.y, ViewportSize.x, ViewportSize.y);
+	glViewport(0, CurrentSize.y - ViewportSize.y, ViewportSize.x, ViewportSize.y);
 }
 
 // Sets up the projection matrix for drawing 2D objects
 void _Graphics::Setup2D() {
 
 	// Set viewport
-	glViewport(0, 0, WindowSize.x, WindowSize.y);
+	glViewport(0, 0, CurrentSize.x, CurrentSize.y);
 }
 
 // Fade the screen
@@ -335,7 +335,7 @@ void _Graphics::FadeScreen(float Amount) {
 	Graphics.SetVBO(VBO_NONE);
 
 	Graphics.SetColor(glm::vec4(0.0f, 0.0f, 0.0f, Amount));
-	DrawRectangle(glm::vec2(0, 0), WindowSize, true);
+	DrawRectangle(glm::vec2(0, 0), CurrentSize, true);
 }
 
 // Draw image centered

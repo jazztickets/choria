@@ -9,6 +9,7 @@ choria 0.9.0 -
 - Added per-pixel lighting and smooth camera scrolling
 - Added server clock and day/night cycle
 - Added background maps
+- Added options menu
 - Reworked skill system and all skills
 - Reworked battle system to use individual timers instead of turns
 - Battles can now support up to 8 fighters on each side

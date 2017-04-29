@@ -251,7 +251,7 @@ void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
 				ToggleInGameMenu();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_fullscreen") {
-				Graphics.ToggleFullScreen(Config.WindowSize);
+				Menu.SetFullscreen(!Config.Fullscreen);
 			}
 		}
 		// Check skill level up/down
@@ -666,7 +666,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		if(!DiedElement->Visible)
 			CloseWindows(false);
 
-		DiedElement->Size = Graphics.WindowSize;
+		DiedElement->Size = Graphics.CurrentSize;
 		DiedElement->CalculateBounds();
 		DiedElement->SetVisible(true);
 		DiedElement->Render();
