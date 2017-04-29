@@ -57,11 +57,11 @@ class _PlayState : public _State {
 
 		// Input
 		bool HandleAction(int InputType, int Action, int Value) override;
-		void KeyEvent(const _KeyEvent &KeyEvent) override;
-		void MouseMotionEvent(const glm::ivec2 &Position) override;
-		void MouseEvent(const _MouseEvent &MouseEvent) override;
-		void WindowEvent(uint8_t Event) override;
-		void QuitEvent() override;
+		void HandleKey(const _KeyEvent &KeyEvent) override;
+		void HandleMouseButton(const _MouseEvent &MouseEvent) override;
+		void HandleMouseMove(const glm::ivec2 &Position) override;
+		void HandleWindow(uint8_t Event) override;
+		void HandleQuit() override;
 
 		// Update
 		void Update(double FrameTime) override;

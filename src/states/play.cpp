@@ -272,8 +272,8 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 }
 
 // Key handler
-void _PlayState::KeyEvent(const _KeyEvent &KeyEvent) {
-	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
+void _PlayState::HandleKey(const _KeyEvent &KeyEvent) {
+	bool Handled = Graphics.Element->HandleKey(KeyEvent);
 
 	// Message history handling
 	if(HUD->IsChatting() && KeyEvent.Pressed) {
@@ -285,7 +285,7 @@ void _PlayState::KeyEvent(const _KeyEvent &KeyEvent) {
 
 	// Pass to menu
 	if(!Handled)
-		Menu.KeyEvent(KeyEvent);
+		Menu.HandleKey(KeyEvent);
 
 	if(Menu.State != _Menu::STATE_NONE)
 		return;
@@ -298,34 +298,34 @@ void _PlayState::KeyEvent(const _KeyEvent &KeyEvent) {
 		HUD->ShowStats = !HUD->ShowStats;
 }
 
+// Mouse handler
+void _PlayState::HandleMouseButton(const _MouseEvent &MouseEvent) {
+	FocusedElement = nullptr;
+	Graphics.Element->HandleInput(MouseEvent.Pressed);
+
+	// Pass to menu
+	Menu.HandleMouseButton(MouseEvent);
+	if(Menu.State != _Menu::STATE_NONE)
+		return;
+
+	HUD->HandleMouseButton(MouseEvent);
+}
+
 // Mouse movement handler
-void _PlayState::MouseMotionEvent(const glm::ivec2 &Position) {
+void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 
 	// Enable mouse during combat
 	if(HUD && Player && Player->Battle)
 		HUD->EnableMouseCombat = true;
 }
 
-// Mouse handler
-void _PlayState::MouseEvent(const _MouseEvent &MouseEvent) {
-	FocusedElement = nullptr;
-	Graphics.Element->HandleInput(MouseEvent.Pressed);
-
-	// Pass to menu
-	Menu.MouseEvent(MouseEvent);
-	if(Menu.State != _Menu::STATE_NONE)
-		return;
-
-	HUD->MouseEvent(MouseEvent);
-}
-
-void _PlayState::WindowEvent(uint8_t Event) {
+void _PlayState::HandleWindow(uint8_t Event) {
 	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
 // Handle quit events
-void _PlayState::QuitEvent() {
+void _PlayState::HandleQuit() {
 	if(Network && Network->CanDisconnect())
 		Network->Disconnect();
 	else

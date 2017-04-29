@@ -130,13 +130,13 @@ void _EditorState::Close() {
 }
 
 // Key events
-void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
+void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 	if(IgnoreFirstChar) {
 		IgnoreFirstChar = false;
 		return;
 	}
 
-	bool Handled = Graphics.Element->HandleKeyEvent(KeyEvent);
+	bool Handled = Graphics.Element->HandleKey(KeyEvent);
 	if(Handled)
 		return;
 
@@ -280,7 +280,7 @@ void _EditorState::KeyEvent(const _KeyEvent &KeyEvent) {
 }
 
 // Mouse events
-void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
+void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
 	Graphics.Element->HandleInput(MouseEvent.Pressed);
 
@@ -353,7 +353,7 @@ void _EditorState::MouseEvent(const _MouseEvent &MouseEvent) {
 }
 
 // Mouse scroll wheel
-void _EditorState::MouseWheelEvent(int Direction) {
+void _EditorState::HandleMouseWheel(int Direction) {
 	if(Input.ModKeyDown(KMOD_CTRL)) {
 		if(Input.ModKeyDown(KMOD_SHIFT))
 			Direction *= 10;
@@ -377,13 +377,13 @@ void _EditorState::MouseWheelEvent(int Direction) {
 }
 
 // Window events
-void _EditorState::WindowEvent(uint8_t Event) {
+void _EditorState::HandleWindow(uint8_t Event) {
 	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		Camera->CalculateFrustum(Graphics.AspectRatio);
 }
 
 // Quit
-void _EditorState::QuitEvent() {
+void _EditorState::HandleQuit() {
 	Framework.Done = true;
 }
 

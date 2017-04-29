@@ -52,11 +52,11 @@ _Element::~_Element() {
 }
 
 // Handle key event
-bool _Element::HandleKeyEvent(const _KeyEvent &KeyEvent) {
+bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
 
 	// Pass event to children
 	for(auto &Child : Children) {
-		if(Child->HandleKeyEvent(KeyEvent))
+		if(Child->HandleKey(KeyEvent))
 			return true;
 	}
 

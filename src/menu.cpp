@@ -710,7 +710,7 @@ void _Menu::HandleAction(int InputType, int Action, int Value) {
 }
 
 // Handle key event
-void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
+void _Menu::HandleKey(const _KeyEvent &KeyEvent) {
 	if(State == STATE_NONE)
 		return;
 
@@ -785,7 +785,7 @@ void _Menu::KeyEvent(const _KeyEvent &KeyEvent) {
 }
 
 // Handle mouse event
-void _Menu::MouseEvent(const _MouseEvent &MouseEvent) {
+void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	if(State == STATE_NONE)
 		return;
 

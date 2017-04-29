@@ -106,7 +106,7 @@ class _HUD {
 
 		// Updates
 		void HandleEnter();
-		void MouseEvent(const _MouseEvent &MouseEvent);
+		void HandleMouseButton(const _MouseEvent &MouseEvent);
 		void Update(double FrameTime);
 
 		// Render

@@ -156,7 +156,7 @@ void _HUD::HandleEnter() {
 }
 
 // Mouse events
-void _HUD::MouseEvent(const _MouseEvent &MouseEvent) {
+void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	if(!Player)
 		return;
 

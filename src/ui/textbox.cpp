@@ -60,7 +60,7 @@ void _TextBox::HandleInput(bool Pressed) {
 }
 
 // Handle key event
-bool _TextBox::HandleKeyEvent(const _KeyEvent &KeyEvent) {
+bool _TextBox::HandleKey(const _KeyEvent &KeyEvent) {
 
 	if(FocusedElement == this && Visible && KeyEvent.Pressed) {
 		if(Text.length() < MaxLength && KeyEvent.Text[0] >= 32 && KeyEvent.Text[0] <= 126) {

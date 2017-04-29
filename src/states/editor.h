@@ -51,11 +51,11 @@ class _EditorState : public _State {
 		void Close() override;
 
 		// Events
-		void KeyEvent(const _KeyEvent &KeyEvent) override;
-		void MouseEvent(const _MouseEvent &MouseEvent) override;
-		void MouseWheelEvent(int Direction) override;
-		void WindowEvent(uint8_t Event) override;
-		void QuitEvent() override;
+		void HandleKey(const _KeyEvent &KeyEvent) override;
+		void HandleMouseButton(const _MouseEvent &MouseEvent) override;
+		void HandleMouseWheel(int Direction) override;
+		void HandleWindow(uint8_t Event) override;
+		void HandleQuit() override;
 
 		// Update
 		void Update(double FrameTime) override;

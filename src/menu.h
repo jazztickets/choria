@@ -83,8 +83,8 @@ class _Menu {
 		void Close();
 
 		void HandleAction(int InputType, int Action, int Value);
-		void KeyEvent(const _KeyEvent &KeyEvent);
-		void MouseEvent(const _MouseEvent &MouseEvent);
+		void HandleKey(const _KeyEvent &KeyEvent);
+		void HandleMouseButton(const _MouseEvent &MouseEvent);
 
 		void SetFullscreen(bool Fullscreen);
 		void Update(double FrameTime);
