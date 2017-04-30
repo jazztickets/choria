@@ -792,9 +792,6 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	if(!CurrentLayout)
 		return;
 
-	if(MouseEvent.Button == SDL_BUTTON_LEFT)
-		CurrentLayout->HandleInput(MouseEvent.Pressed);
-
 	// Get clicked element
 	_Element *Clicked = CurrentLayout->GetClickedElement();
 	if(Clicked) {
