@@ -546,7 +546,7 @@ int _Item::GetUpgradePrice(int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
-	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost));
+	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_BASE_UPGRADE_COST));
 }
 
 // Return true if the item can be used
