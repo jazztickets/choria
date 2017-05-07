@@ -1,5 +1,7 @@
 #!/bin/bash
 
+upload_server=$1
+
 mkdir -p release
 cd ../
 
@@ -38,11 +40,17 @@ build() {
 	rm working/choria.exe
 	rm working/*.dll
 
-	scp $archive workcomp:web/files/
+	if [ -n "$upload_server" ]; then
+		scp $archive $upload_server:web/files/
+	fi
+
 	mv $archive deployment/release
 }
 
-ssh workcomp rm web/files/choria*.zip
+if [ -n "$upload_server" ]; then
+	ssh $upload_server rm web/files/choria*.zip
+fi
+
 rm -f deployment/release/choria*.zip
 
 build 32
