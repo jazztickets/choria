@@ -120,7 +120,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIRS})
-include_directories(${JSONCPP_INCLUDE_DIRS})
+include_directories(${JSONCPP_INCLUDE_DIR})
 
 # add source files
 file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
