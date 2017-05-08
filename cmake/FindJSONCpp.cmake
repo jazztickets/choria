@@ -25,6 +25,7 @@ find_path(
 	PATH_SUFFIXES
 		include
 		include/json
+		include/jsoncpp
 		json
 )
 
