@@ -592,7 +592,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["spawnpoint"] = SpawnPoint;
 	StatsNode["portrait_id"] = PortraitID;
 	StatsNode["model_id"] = ModelID;
-	StatsNode["actionbar_size"] = ActionBar.size();
+	StatsNode["actionbar_size"] = (Json::Value::UInt64)ActionBar.size();
 	StatsNode["health"] = Health;
 	StatsNode["mana"] = Mana;
 	StatsNode["experience"] = Experience;
@@ -613,7 +613,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		InventorySlot = &Inventory->Slots[i];
 		if(InventorySlot->Item) {
 			Json::Value ItemNode;
-			ItemNode["slot"] = i;
+			ItemNode["slot"] = (Json::Value::UInt64)i;
 			ItemNode["id"] = InventorySlot->Item->ID;
 			ItemNode["upgrades"] = InventorySlot->Upgrades;
 			ItemNode["count"] = InventorySlot->Count;
@@ -637,7 +637,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		if(ActionBar[i].IsSet()) {
 			Json::Value ActionNode;
-			ActionNode["slot"] = i;
+			ActionNode["slot"] = (Json::Value::UInt64)i;
 			ActionNode["id"] = ActionBar[i].Item ? ActionBar[i].Item->ID : 0;
 			ActionBarNode.append(ActionNode);
 		}

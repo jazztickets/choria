@@ -91,7 +91,7 @@ void _Save::SaveSettings() {
 
 	// Write settings
 	Json::Value SettingsNode;
-	SettingsNode["secret"] = Secret;
+	SettingsNode["secret"] = (Json::Value::UInt64)Secret;
 	SettingsNode["clock"] = Clock;
 
 	// Convert to JSON string
