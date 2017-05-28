@@ -74,9 +74,9 @@ if(NOT OGG_FOUND)
 	message(SEND_ERROR "Could not find libogg!")
 endif()
 
-find_package(Lua 5.3 REQUIRED)
+find_package(Lua 5.2 REQUIRED)
 if(NOT LUA_FOUND)
-	message(SEND_ERROR "Could not find Lua 5.3!")
+	message(SEND_ERROR "Could not find Lua 5.2!")
 endif()
 
 find_package(Freetype REQUIRED)

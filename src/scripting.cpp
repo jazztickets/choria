@@ -688,8 +688,6 @@ int _Scripting::ObjectClearTargets(lua_State *LuaState) {
 
 // Return an item from the object's inventory
 int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
-	if(!lua_isinteger(LuaState, 1))
-		throw std::runtime_error("ObjectGetInventoryItem: Slot is not an integer!");
 
 	// Get self pointer
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
