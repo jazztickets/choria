@@ -11,16 +11,24 @@ build() {
 
 	bits=$1
 
+	# get mingw prefix
 	if [ $bits -eq "32" ]; then
 		arch=i686-w64-mingw32
 	else
 		arch=x86_64-w64-mingw32
 	fi
 
+	# run cmake
 	builddir=build-mingw$bits
-	cd $builddir
+	if [ ! -d "$builddir" ]; then
+		mkdir "$builddir"
+		cd $builddir
+		cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw${bits}.cmake ../
+	else
+		cd $builddir
+	fi
 
-	make -j4
+	make -j`nproc`
 
 	if [ $? -ne 0 ]; then
 		echo "failed $builddir"
