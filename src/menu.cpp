@@ -42,6 +42,7 @@
 #include <audio.h>
 #include <version.h>
 #include <sstream>
+#include <iomanip>
 #include <SDL_keyboard.h>
 
 _Menu Menu;
@@ -64,8 +65,12 @@ _Menu::_Menu() {
 
 // Change the current layout
 void _Menu::ChangeLayout(const std::string &ElementIdentifier) {
-	if(CurrentLayout)
+	if(CurrentLayout) {
 		CurrentLayout->SetVisible(false);
+
+		if(CurrentLayout == Assets.Elements["element_menu_options"])
+			Config.Save();
+	}
 
 	CurrentLayout = Assets.Elements[ElementIdentifier];
 	CurrentLayout->SetVisible(true);
@@ -637,10 +642,36 @@ void _Menu::ClearBuilds() {
 	Children.clear();
 }
 
-// Update option values
+// Update option ui values
 void _Menu::UpdateOptions() {
+	std::stringstream Buffer;
+	Buffer << std::fixed << std::setprecision(2);
+
+	// Set fullscreen
 	_Label *FullscreenCheck = Assets.Labels["label_menu_options_fullscreen_check"];
 	FullscreenCheck->Text = Config.Fullscreen ? "X" : "";
+
+	// Set sound volume
+	_TextBox *SoundVolume = Assets.TextBoxes["textbox_options_soundvolume"];
+	Buffer << Config.SoundVolume;
+	SoundVolume->Text = Buffer.str();
+	Buffer.str("");
+
+	// Set music volume
+	_TextBox *MusicVolume = Assets.TextBoxes["textbox_options_musicvolume"];
+	Buffer << Config.MusicVolume;
+	MusicVolume->Text = Buffer.str();
+	Buffer.str("");
+}
+
+// Update config and audio volumes from option textboxes
+void _Menu::UpdateVolume() {
+	_TextBox *SoundVolume = Assets.TextBoxes["textbox_options_soundvolume"];
+	_TextBox *MusicVolume = Assets.TextBoxes["textbox_options_musicvolume"];
+	Config.SoundVolume = ToNumber<float>(SoundVolume->Text);
+	Config.MusicVolume = ToNumber<float>(MusicVolume->Text);
+	Audio.SetSoundVolume(Config.SoundVolume);
+	Audio.SetMusicVolume(Config.MusicVolume);
 }
 
 // Check new character screen for portrait and name
@@ -772,9 +803,12 @@ void _Menu::HandleKey(const _KeyEvent &KeyEvent) {
 			}
 		} break;
 		case STATE_OPTIONS: {
+			UpdateVolume();
+
 			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
-				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
+				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE) {
 					InitTitle(true);
+				}
 			}
 		} break;
 		case STATE_INGAME: {

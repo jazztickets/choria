@@ -128,6 +128,7 @@ class _Menu {
 		void ClearPortraits();
 		void ClearBuilds();
 		void UpdateOptions();
+		void UpdateVolume();
 
 		// States
 		std::string DefaultUsername;

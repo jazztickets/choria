@@ -31,8 +31,10 @@ label_menu_account_create	button_account_create	menu_buttons		Create	0	32	0	0	1	
 label_menu_account_back	button_account_back	menu_buttons		Back	0	32	0	0	1	3
 label_menu_options_title	element_menu_options	hud_large		Options	0	-250	0	0	1	1
 label_menu_options_back	button_options_back	menu_buttons		Back	0	32	0	0	1	3
-label_menu_options_fullscreen	button_options_fullscreen	menu_buttons		Fullscreen	-75	0	0	0	2	1
+label_menu_options_fullscreen	element_menu_options_middle	menu_buttons		Fullscreen	-15	50	0	0	2	1
 label_menu_options_fullscreen_check	button_options_fullscreen	hud_medium		X	0	0	0	0	1	1
+label_menu_options_soundvolume	element_menu_options_middle	menu_buttons		Sound Volume	-15	100	0	0	2	1
+label_menu_options_musicvolume	element_menu_options_middle	menu_buttons		Music Volume	-15	150	0	0	2	1
 label_hud_name	element_hud	menu_buttons			20	30	0	0	0	3
 label_hud_level	label_hud_name	hud_small			0	20	0	0	0	3
 label_hud_hardcore	label_hud_level	hud_small	red	Hardcore	0	20	0	0	0	3
