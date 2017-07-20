@@ -401,6 +401,7 @@ INSERT INTO vendoritem VALUES(111,11,155);
 INSERT INTO vendoritem VALUES(112,11,156);
 INSERT INTO vendoritem VALUES(113,8,23);
 INSERT INTO vendoritem VALUES(114,6,191);
+INSERT INTO vendoritem VALUES(115,11,216);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1168,7 +1169,7 @@ INSERT INTO item VALUES(212,'Dark Staff','items/dark_staff.png','',6,0,20,0,65,2
 INSERT INTO item VALUES(213,'Demon Stick','items/demon_stick.png','',6,0,20,0,800,2,50,120,0,5,0,250,0,6,0,0,0,0,1,1,0,0,0);
 INSERT INTO item VALUES(214,'Warm Ring','items/glowing_ring.png','',8,0,20,0,800,0,0,0,0,0,35,0,3,0,0,0,0,0,1,1,0,0,0);
 INSERT INTO item VALUES(215,'Fire Dust','items/fire_dust.png','Item_FireDust',9,20,0,0,20,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,2,2,0);
-INSERT INTO item VALUES(216,'Prisoner Key','items/key.png','',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
+INSERT INTO item VALUES(216,'Prisoner Key','items/key.png','',0,0,0,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
