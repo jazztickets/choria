@@ -382,7 +382,7 @@ void _Stats::LoadBuilds() {
 		Object->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
 
 		// Get items
-		Database->PrepareQuery("SELECT * FROM builditem where build_id = @build_id", 1);
+		Database->PrepareQuery("SELECT * FROM builditem WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
 			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
@@ -392,7 +392,7 @@ void _Stats::LoadBuilds() {
 		Database->CloseQuery(1);
 
 		// Get skills
-		Database->PrepareQuery("SELECT * FROM buildskill where build_id = @build_id", 1);
+		Database->PrepareQuery("SELECT * FROM buildskill WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
 			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
@@ -402,7 +402,7 @@ void _Stats::LoadBuilds() {
 		Database->CloseQuery(1);
 
 		// Get actionbar
-		Database->PrepareQuery("SELECT * FROM buildactionbar where build_id = @build_id", 1);
+		Database->PrepareQuery("SELECT * FROM buildactionbar WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
 			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
