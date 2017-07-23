@@ -278,13 +278,12 @@ bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, _Slot Targe
 		_Slot Slot = TargetSlot;
 
 		// Place somewhere in bag
-		if(Slot.Index == NOSLOT) {
+		if(!IsValidSlot(Slot)) {
 
 			// Search for a suitable slot
 			Slot = FindSlotForItem(Item, Upgrades, 1);
-			if(Slot.Index == NOSLOT)
+			if(!IsValidSlot(Slot))
 				return false;
-
 		}
 		// Trying to equip an item
 		else if(Slot.BagType == _Bag::EQUIPMENT) {
@@ -292,7 +291,6 @@ bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, _Slot Targe
 			// Make sure it can be equipped
 			if(!CanEquipItem(Slot.Index, Item))
 				return false;
-
 		}
 
 		// Add item
