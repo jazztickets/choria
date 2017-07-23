@@ -37,7 +37,7 @@
 #include <iostream>
 
 // Draw tooltip
-void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, size_t CompareSlot) const {
+void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
@@ -127,7 +127,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		DrawLevel = std::max(DrawLevel, 1);
 
 		// Show vendor skills at level 1
-		if(Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR)
+		if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR)
 			DrawLevel = 1;
 
 		// Determine whether to show level
@@ -152,8 +152,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
-	if(CompareSlot != (size_t)(-1))
-		CompareInventory = Player->Inventory->Slots[CompareSlot];
+	if(Player->Inventory->IsValidSlot(CompareSlot))
+		CompareInventory = Player->Inventory->GetSlot(CompareSlot);
 
 	glm::vec2 Spacing(10, 0);
 	bool StatDrawn = false;
@@ -346,7 +346,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 			Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, COLOR_GRAY, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
-		else if(Tooltip.Window == _HUD::WINDOW_INVENTORY) {
+		else if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY) {
 			Buffer << "Sell for " << Tooltip.Cost << " gold";
 			Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, COLOR_GOLD, CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
@@ -364,7 +364,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		case ItemType::ARMOR:
 		case ItemType::BOOTS:
 		case ItemType::SHIELD:
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot >= InventoryType::BAG)
+			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.BagType == _Bag::BagType::INVENTORY)
 				InfoText = "Right-click to equip";
 		break;
 		case ItemType::CONSUMABLE:
@@ -488,34 +488,33 @@ int _Item::GetTargetCount() const {
 }
 
 // Return a valid equipment slot for an item
-size_t _Item::GetEquipmentSlot() const {
+void _Item::GetEquipmentSlot(_Slot &Slot) const {
 
-	size_t Slot = (size_t)-1;
+	Slot.BagType = _Bag::BagType::EQUIPMENT;
 	switch(Type) {
 		case ItemType::HELMET:
-			Slot = InventoryType::HEAD;
+			Slot.Index = EquipmentType::HEAD;
 		break;
 		case ItemType::ARMOR:
-			Slot = InventoryType::BODY;
+			Slot.Index = EquipmentType::BODY;
 		break;
 		case ItemType::BOOTS:
-			Slot = InventoryType::LEGS;
+			Slot.Index = EquipmentType::LEGS;
 		break;
 		case ItemType::ONEHANDED_WEAPON:
 		case ItemType::TWOHANDED_WEAPON:
-			Slot = InventoryType::HAND1;
+			Slot.Index = EquipmentType::HAND1;
 		break;
 		case ItemType::SHIELD:
-			Slot = InventoryType::HAND2;
+			Slot.Index = EquipmentType::HAND2;
 		break;
 		case ItemType::RING:
-			Slot = InventoryType::RING1;
+			Slot.Index = EquipmentType::RING1;
 		break;
 		default:
+			Slot.BagType = _Bag::BagType::NONE;
 		break;
 	}
-
-	return Slot;
 }
 
 // Returns the item's price to/from a vendor

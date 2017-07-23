@@ -293,7 +293,7 @@ function Skill_ShieldBash.GetInfo(self, Level)
 end
 
 function Skill_ShieldBash.GenerateDamage(self, Level, Source)
-	Shield = Source.GetInventoryItem(INVENTORY_HAND2)
+	Shield = Source.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
 	if Shield == nil then
 		return 0
 	end
@@ -307,7 +307,7 @@ function Skill_ShieldBash.GetChance(self, Level)
 end
 
 function Skill_ShieldBash.CanUse(self, Level, Object)
-	Shield = Object.GetInventoryItem(INVENTORY_HAND2)
+	Shield = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
 
 	return Shield ~= nil
 end
@@ -333,7 +333,7 @@ Skill_Whirlwind.SlowDurationPerLevel = 2.0 / 3.0
 Skill_Whirlwind.SlowDuration = 3 - Skill_Whirlwind.SlowDurationPerLevel
 
 function Skill_Whirlwind.CanUse(self, Level, Object)
-	Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 	if Weapon == nil then
 		return false
 	end
@@ -764,7 +764,7 @@ function Skill_Defend.GetInfo(self, Level)
 end
 
 function Skill_Defend.CanUse(self, Level, Object)
-	Shield = Object.GetInventoryItem(INVENTORY_HAND2)
+	Shield = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND2)
 
 	return Shield ~= nil
 end
@@ -795,7 +795,7 @@ function Skill_Backstab.GetInfo(self, Level)
 end
 
 function Skill_Backstab.CanUse(self, Level, Object)
-	Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+	Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 	if Weapon == nil then
 		return false
 	end

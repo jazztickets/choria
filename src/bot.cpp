@@ -478,7 +478,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 						if(DecrementItem) {
 							size_t Index;
 							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
-								Player->Inventory->DecrementItemCount(Index, -1);
+								Player->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
 								Player->RefreshActionBarCount();
 							}
 						}

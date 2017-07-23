@@ -28,6 +28,7 @@ class _Scripting;
 class _Stats;
 struct _Vendor;
 struct _Cursor;
+struct _Slot;
 
 enum class ItemType : uint32_t {
 	NONE,
@@ -49,7 +50,7 @@ class _Item {
 
 	public:
 
-		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, size_t CompareSlot) const;
+		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsSkill() const { return Type == ItemType::SKILL; }
@@ -61,7 +62,7 @@ class _Item {
 		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
 		int GetTargetCount() const;
 
-		size_t GetEquipmentSlot() const;
+		void GetEquipmentSlot(_Slot &Slot) const;
 
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
 		int GetUpgradePrice(int Level) const;

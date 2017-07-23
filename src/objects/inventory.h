@@ -18,9 +18,13 @@
 #pragma once
 
 // Libraries
+#include <constants.h>
 #include <vector>
 #include <string>
 #include <cstdint>
+
+const int PLAYER_TRADEITEMS = 8;
+const size_t NOSLOT = (size_t)-1;
 
 // Forward Declarations
 struct _Trader;
@@ -28,23 +32,9 @@ class _Object;
 class _Item;
 class _Buffer;
 class _Stats;
+class _Inventory;
 
-// Structures
-struct _InventorySlot {
-	_InventorySlot() : Item(nullptr), Upgrades(0), Count(0) { }
-	_InventorySlot(const _Item *Item, int Count) : Item(Item), Upgrades(0), Count(Count) { }
-
-	void Serialize(_Buffer &Data);
-	void Unserialize(_Buffer &Data, _Stats *Stats);
-
-	const _Item *Item;
-	int Upgrades;
-	int Count;
-};
-
-const int PLAYER_TRADEITEMS = 8;
-
-enum InventoryType : size_t {
+enum EquipmentType : size_t {
 	HEAD,
 	BODY,
 	LEGS,
@@ -52,9 +42,57 @@ enum InventoryType : size_t {
 	HAND2,
 	RING1,
 	RING2,
-	BAG,
-	TRADE = BAG + 24,
-	COUNT = TRADE + PLAYER_TRADEITEMS,
+	COUNT,
+};
+
+// Single inventory slot
+struct _InventorySlot {
+	_InventorySlot() : Item(nullptr), Upgrades(0), Count(0), MaxCount(INVENTORY_MAX_STACK) { }
+	_InventorySlot(const _Item *Item, int Count) : Item(Item), Upgrades(0), Count(Count), MaxCount(INVENTORY_MAX_STACK) { }
+
+	void Serialize(_Buffer &Data);
+	void Unserialize(_Buffer &Data, _Stats *Stats);
+
+	const _Item *Item;
+	int Upgrades;
+	int Count;
+	int MaxCount;
+};
+
+// Bags contain multiple slots
+struct _Bag {
+
+	enum BagType : uint8_t {
+		NONE,
+		EQUIPMENT,
+		INVENTORY,
+		TRADE,
+		COUNT,
+	};
+
+	_Bag() : ID(_Bag::NONE) { }
+
+	void Serialize(_Buffer &Data);
+	void Unserialize(_Buffer &Data, _Stats *Stats);
+
+	std::vector<_InventorySlot> Slots;
+	std::string Name;
+	BagType ID;
+};
+
+// Slots point to a bag and index in the bag
+struct _Slot {
+	_Slot() : BagType(_Bag::BagType::NONE), Index(NOSLOT) { }
+	_Slot(_Bag::BagType BagType, size_t Index) : BagType(BagType), Index(Index) { }
+
+	bool operator==(const _Slot &Slot) const { return this->Index == Slot.Index && this->BagType == Slot.BagType; }
+	bool operator!=(const _Slot &Slot) const { return !(*this == Slot); }
+
+	void Serialize(_Buffer &Data) const;
+	void Unserialize(_Buffer &Data);
+
+	_Bag::BagType BagType;
+	size_t Index;
 };
 
 // Classes
@@ -66,36 +104,34 @@ class _Inventory {
 
 		// Network
 		void Serialize(_Buffer &Data);
-		void SerializeSlot(_Buffer &Data, size_t Slot);
+		void SerializeSlot(_Buffer &Data, const _Slot &Slot);
 		void Unserialize(_Buffer &Data, _Stats *Stats);
 		void UnserializeSlot(_Buffer &Data, _Stats *Stats);
 
 		bool FindItem(const _Item *Item, size_t &Slot, size_t StartSlot);
 		bool HasItemID(uint32_t ItemID);
 		int CountItem(const _Item *Item);
+		bool IsValidSlot(const _Slot &Slot) { return (int)Slot.BagType < _Bag::BagType::COUNT && Slot.Index < Bags[Slot.BagType].Slots.size(); }
+		_InventorySlot &GetSlot(const _Slot &Slot) { return Bags[Slot.BagType].Slots[Slot.Index]; }
 
-		const _Item *GetBagItem(size_t Slot);
-		bool MoveInventory(_Buffer &Data, size_t OldSlot, size_t NewSlot);
-		bool DecrementItemCount(size_t Slot, int Amount);
-		size_t FindSlotForItem(const _Item *Item, int Upgrades, int Count);
-		bool AddItem(const _Item *Item, int Upgrades, int Count, size_t TargetSlot=(size_t)-1);
+		bool MoveInventory(_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot);
+		bool DecrementItemCount(const _Slot &Slot, int Amount);
+		_Slot FindSlotForItem(const _Item *Item, int Upgrades, int Count);
+		_Slot FindSlotForItemInBag(_Bag::BagType BagType, const _Item *Item, int Upgrades, int Count);
+		bool AddItem(const _Item *Item, int Upgrades, int Count, _Slot TargetSlot=_Slot());
 		void MoveTradeToInventory();
-		bool SplitStack(_Buffer &Data, size_t Slot, int Count);
+		bool SplitStack(_Buffer &Data, const _Slot &Slot, int Count);
 
 		// Traders
-		size_t GetRequiredItemSlots(const _Trader *Trader, std::vector<size_t> &BagIndex);
+		_Slot GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots);
 
-		// Static functions
-		static bool IsSlotBag(size_t Slot) { return Slot >= InventoryType::BAG && Slot < InventoryType::TRADE; }
-		static bool IsSlotTrade(size_t Slot) { return Slot >= InventoryType::TRADE && Slot < InventoryType::COUNT; }
-		static int GetMaxStackForSlot(size_t Slot);
-
-		std::vector<_InventorySlot> Slots;
+		// Items
+		std::vector<_Bag> Bags;
 
 	private:
 
 		bool CanEquipItem(size_t Slot, const _Item *Item);
-		void SwapItem(size_t Slot, size_t OldSlot);
-		bool CanSwap(size_t OldSlot, size_t NewSlot);
+		void SwapItem(const _Slot &Slot, const _Slot &OldSlot);
+		bool CanSwap(const _Slot &OldSlot, const _Slot &NewSlot);
 
 };

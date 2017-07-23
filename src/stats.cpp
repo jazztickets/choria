@@ -474,7 +474,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 
 		// Copy build
 		Monster->ActionBar = Build->ActionBar;
-		Monster->Inventory->Slots = Build->Inventory->Slots;
+		Monster->Inventory->Bags = Build->Inventory->Bags;
 		Monster->Skills = Build->Skills;
 
 		Monster->Health = Monster->MaxHealth = Monster->BaseMaxHealth;

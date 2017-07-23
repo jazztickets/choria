@@ -16,18 +16,19 @@ element_hud_mana			300	-19	150	32	1	2	0	0	-1
 element_hud_experience			0	-70	350	8	1	2	0	0	-1
 element_hud_recentitems			-64	128	0	0	2	0	0	0	-1
 element_hud_message		style_hud_bg	0	35	0	0	1	0	0	0	-1
-element_buttonbar			0	0	224	32	2	0	0	1	0
-element_inventory			-215	0	362	288	1	1	0	1	1
-element_vendor			215	0	362	288	1	1	0	1	2
-element_trader		style_hud_bg	0	0	240	400	1	1	0	1	3
-element_blacksmith		style_hud_bg	150	0	240	250	1	1	0	1	10
-element_trade_theirs	element_trade	style_hud_bg	112	0	192	92	0	0	0	1	4
-element_trade_yours	element_trade	style_hud_bg	112	144	192	92	0	0	0	1	5
-element_skills		style_hud_bg	0	0	474	450	1	1	0	1	6
-element_actionbar			0	-10	384	48	1	2	0	1	7
-element_hud_statuseffects			0	-100	350	32	1	2	0	1	9
+element_battle		style_hud_bg	0	-35	1000	570	1	1	0	0	0
+element_buttonbar			0	0	224	32	2	0	0	1	1
+element_hud_statuseffects			0	-100	350	32	1	2	0	1	2
+element_actionbar			0	-10	384	48	1	2	0	1	3
+element_equipment			-311	0	170	288	1	1	0	1	4
+element_inventory			-130	0	192	288	1	1	0	1	5
+element_vendor			154	0	240	288	1	1	0	1	6
+element_trader		style_hud_bg	0	0	240	400	1	1	0	1	7
+element_blacksmith		style_hud_bg	150	0	240	250	1	1	0	1	8
+element_trade_theirs	element_trade	style_hud_bg	112	0	192	92	0	0	0	1	9
+element_trade_yours	element_trade	style_hud_bg	112	144	192	92	0	0	0	1	10
+element_skills		style_hud_bg	0	0	474	450	1	1	0	1	11
 element_died		style_hud_died_bg	0	0	0	0	0	0	0	0	-1
-element_battle		style_hud_bg	0	-35	1000	570	1	1	0	0	8
 element_item_tooltip		style_hud_item_tooltip_bg	0	0	250	300	0	0	0	0	-1
 element_character		style_hud_bg	0	0	250	500	2	1	0	1	-1
 element_trade		style_hud_bg	212	0	304	288	1	1	0	1	-1

@@ -13,7 +13,7 @@ Base_Attack = {
 	end,
 
 	GetDamageType = function(self, Object)
-		Weapon = Object.GetInventoryItem(INVENTORY_HAND1)
+		Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
 		if Weapon ~= nil then
 			return Weapon.DamageType
 		end

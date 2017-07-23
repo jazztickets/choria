@@ -47,6 +47,7 @@ struct _Vendor;
 struct _Trader;
 struct _Blacksmith;
 struct _ActionResult;
+struct _Slot;
 
 namespace Json {
 	class Value;
@@ -147,7 +148,7 @@ class _Object : public _ManagerBase {
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
 		// Trader
-		void AcceptTrader(std::vector<size_t> &Slots);
+		void AcceptTrader(std::vector<_Slot> &Slots);
 
 		// Map
 		const _Tile *GetTile();

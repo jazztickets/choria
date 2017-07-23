@@ -254,7 +254,7 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	Object.ModelID = Build->ModelID;
 	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
 	Object.ActionBar = Build->ActionBar;
-	Object.Inventory->Slots = Build->Inventory->Slots;
+	Object.Inventory->Bags = Build->Inventory->Bags;
 	Object.Skills = Build->Skills;
 	Object.CalculateStats();
 

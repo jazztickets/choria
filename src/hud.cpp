@@ -59,11 +59,9 @@ _HUD::_HUD() {
 	EnableMouseCombat = false;
 	ShowStats = false;
 	Player = nullptr;
-	UpgradeSlot = (size_t)-1;
 	LowestRecentItemTime = 0.0;
 	Tooltip.Reset();
 	Cursor.Reset();
-	RewardItemSlot = (size_t)-1;
 
 	ChatTextBox = Assets.TextBoxes["textbox_chat"];
 	ChatTextBox->ParentOffset = glm::vec2(5, 15);
@@ -79,6 +77,7 @@ _HUD::_HUD() {
 	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = Assets.Elements["element_actionbar"];
 	ButtonBarElement = Assets.Elements["element_buttonbar"];
+	EquipmentElement = Assets.Elements["element_equipment"];
 	InventoryElement = Assets.Elements["element_inventory"];
 	CharacterElement = Assets.Elements["element_character"];
 	VendorElement = Assets.Elements["element_vendor"];
@@ -105,6 +104,7 @@ _HUD::_HUD() {
 	StatusEffectsElement->SetVisible(true);
 	ActionBarElement->SetVisible(true);
 	ButtonBarElement->SetVisible(true);
+	EquipmentElement->SetVisible(false);
 	InventoryElement->SetVisible(false);
 	CharacterElement->SetVisible(false);
 	VendorElement->SetVisible(false);
@@ -171,24 +171,25 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		if(Tooltip.InventorySlot.Item) {
 			switch(Tooltip.Window) {
 				case WINDOW_TRADEYOURS:
+				case WINDOW_EQUIPMENT:
 				case WINDOW_INVENTORY:
 
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 						if(Input.ModKeyDown(KMOD_CTRL))
-							SplitStack((uint8_t)Tooltip.Slot, 1 + 4 * Input.ModKeyDown(KMOD_SHIFT));
+							SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * Input.ModKeyDown(KMOD_SHIFT));
 						else
 							Cursor = Tooltip;
 					}
 					// Use an item
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(Input.ModKeyDown(KMOD_SHIFT)) {
-							SellItem(&Tooltip, 1 + 4 * Input.ModKeyDown(KMOD_CTRL));
+							SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * Input.ModKeyDown(KMOD_CTRL));
 						}
 						else {
 							_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
-							Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
+							Tooltip.Slot.Serialize(Packet);
 							PlayState.Network->SendPacket(Packet);
 						}
 					}
@@ -200,11 +201,11 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(Tooltip.Window == WINDOW_VENDOR) {
 							if(Input.ModKeyDown(KMOD_SHIFT))
-								BuyItem(&Tooltip, Player->Inventory->Slots.size());
+								BuyItem(&Tooltip);
 							else
-								BuyItem(&Tooltip, Player->Inventory->Slots.size());
+								BuyItem(&Tooltip);
 						}
-						else if(Tooltip.Window == WINDOW_INVENTORY && Input.ModKeyDown(KMOD_SHIFT))
+						else if((Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) && Input.ModKeyDown(KMOD_SHIFT))
 							SellItem(&Tooltip, 1);
 					}
 				break;
@@ -275,10 +276,10 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		}
 		// Upgrade item
 		else if(BlacksmithElement->GetClickedElement() == Assets.Buttons["button_blacksmith_upgrade"]) {
-			if(UpgradeSlot != (size_t)-1) {
+			if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
-				Packet.Write<uint8_t>((uint8_t)UpgradeSlot);
+				UpgradeSlot.Serialize(Packet);
 				PlayState.Network->SendPacket(Packet);
 			}
 		}
@@ -288,23 +289,26 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			// Check source window
 			switch(Cursor.Window) {
 				case WINDOW_TRADEYOURS:
+				case WINDOW_EQUIPMENT:
 				case WINDOW_INVENTORY:
 
 					// Check destination window
 					switch(Tooltip.Window) {
 
 						// Send inventory move packet
-						case WINDOW_TRADEYOURS:
+						case WINDOW_EQUIPMENT:
 						case WINDOW_INVENTORY:
-							if(Tooltip.Slot < Player->Inventory->Slots.size() && Cursor.Slot != Tooltip.Slot) {
+						case WINDOW_TRADEYOURS:
+							if(Player->Inventory->IsValidSlot(Tooltip.Slot) && Player->Inventory->IsValidSlot(Cursor.Slot) && Cursor.Slot != Tooltip.Slot) {
 								_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
-								Packet.Write<uint8_t>((uint8_t)Cursor.Slot);
-								Packet.Write<uint8_t>((uint8_t)Tooltip.Slot);
+								Cursor.Slot.Serialize(Packet);
+								Tooltip.Slot.Serialize(Packet);
 								PlayState.Network->SendPacket(Packet);
 
+								// Remove upgrade item from upgrade window
 								if(Cursor.Slot == UpgradeSlot || Tooltip.Slot == UpgradeSlot)
-									UpgradeSlot = (size_t)-1;
+									UpgradeSlot.BagType = _Bag::BagType::NONE;
 							}
 						break;
 						// Sell an item
@@ -315,50 +319,52 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						case WINDOW_BLACKSMITH:
 
 							// Replace item if dragging onto upgrade slot only
-							if(Cursor.InventorySlot.Item->IsEquippable() && Tooltip.Slot != 1)
+							if(Cursor.InventorySlot.Item->IsEquippable() && Tooltip.Slot.Index != 1)
 								UpgradeSlot = Cursor.Slot;
 						break;
 						case WINDOW_ACTIONBAR:
-							if(Cursor.Window == WINDOW_INVENTORY && !Cursor.InventorySlot.Item->IsSkill())
-								SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.InventorySlot.Item);
+							if((Cursor.Window == WINDOW_EQUIPMENT || Cursor.Window == WINDOW_INVENTORY) && !Cursor.InventorySlot.Item->IsSkill())
+								SetActionBar(Tooltip.Slot.Index, Player->ActionBar.size(), Cursor.InventorySlot.Item);
 							else if(Cursor.Window == WINDOW_ACTIONBAR)
-								SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.InventorySlot.Item);
+								SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
 						break;
 					}
 				break;
 				// Buy an item
 				case WINDOW_VENDOR:
-					if(Tooltip.Window == WINDOW_INVENTORY) {
-						BuyItem(&Cursor, Tooltip.Slot);
+					if(Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) {
+						_Bag::BagType BagType = GetBagFromWindow(Tooltip.Window);
+						BuyItem(&Cursor, _Slot(BagType, Tooltip.Slot.Index));
 					}
 				break;
 				// Drag item from actionbar
 				case WINDOW_ACTIONBAR:
 					switch(Tooltip.Window) {
+						case WINDOW_EQUIPMENT:
 						case WINDOW_INVENTORY:
 
 							// Swap actionbar with inventory
 							if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->IsSkill())
-								SetActionBar(Cursor.Slot, Player->ActionBar.size(), Tooltip.InventorySlot.Item);
+								SetActionBar(Cursor.Slot.Index, Player->ActionBar.size(), Tooltip.InventorySlot.Item);
 							else
-								SetActionBar(Cursor.Slot, Player->ActionBar.size(), nullptr);
+								SetActionBar(Cursor.Slot.Index, Player->ActionBar.size(), nullptr);
 						break;
 						case WINDOW_ACTIONBAR:
-							SetActionBar(Tooltip.Slot, Cursor.Slot, Cursor.InventorySlot.Item);
+							SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
 						break;
 						default:
 
 							// Remove action
-							if(Tooltip.Slot >= Player->ActionBar.size() || Tooltip.Window == -1) {
+							if(Tooltip.Slot.Index >= Player->ActionBar.size() || Tooltip.Window == -1) {
 								_Action Action;
-								SetActionBar(Cursor.Slot, Player->ActionBar.size(), Action);
+								SetActionBar(Cursor.Slot.Index, Player->ActionBar.size(), Action);
 							}
 						break;
 					}
 				break;
 				case WINDOW_SKILLS:
 					if(Tooltip.Window == WINDOW_ACTIONBAR) {
-						SetActionBar(Tooltip.Slot, Player->ActionBar.size(), Cursor.InventorySlot.Item);
+						SetActionBar(Tooltip.Slot.Index, Player->ActionBar.size(), Cursor.InventorySlot.Item);
 					}
 				break;
 			}
@@ -405,32 +411,34 @@ void _HUD::Update(double FrameTime) {
 
 	_Element *HitElement = Graphics.Element->HitElement;
 	if(HitElement) {
-		Tooltip.Slot = (size_t)(intptr_t)HitElement->UserData;
+		Tooltip.Slot.Index = (size_t)(intptr_t)HitElement->UserData;
 
 		// Get window id, stored in parent's userdata field
-		if(HitElement->Parent && Tooltip.Slot != (size_t)-1) {
+		if(HitElement->Parent && Tooltip.Slot.Index != NOSLOT) {
 			Tooltip.Window = (int)(intptr_t)HitElement->Parent->UserData;
+			Tooltip.Slot.BagType = GetBagFromWindow(Tooltip.Window);
 		}
 
 		switch(Tooltip.Window) {
+			case WINDOW_EQUIPMENT:
 			case WINDOW_INVENTORY:
 			case WINDOW_TRADEYOURS: {
-				if(Tooltip.Slot < Player->Inventory->Slots.size()) {
-					Tooltip.InventorySlot = Player->Inventory->Slots[Tooltip.Slot];
+				if(Player->Inventory->IsValidSlot(Tooltip.Slot)) {
+					Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
 					if(Tooltip.InventorySlot.Item && Player->Vendor)
 						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Vendor, Tooltip.InventorySlot.Count, false);
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
-				if(Player->TradePlayer && Tooltip.Slot < Player->Inventory->Slots.size()) {
-					Tooltip.InventorySlot = Player->TradePlayer->Inventory->Slots[Tooltip.Slot];
+				if(Player->TradePlayer && Player->TradePlayer->Inventory->IsValidSlot(Tooltip.Slot)) {
+					Tooltip.InventorySlot = Player->TradePlayer->Inventory->GetSlot(Tooltip.Slot);
 				}
 			} break;
 			case WINDOW_VENDOR: {
-				if(Player->Vendor && Tooltip.Slot < Player->Vendor->Items.size()) {
-					Tooltip.InventorySlot.Item = Player->Vendor->Items[Tooltip.Slot];
+				if(Player->Vendor && Tooltip.Slot.Index < Player->Vendor->Items.size()) {
+					Tooltip.InventorySlot.Item = Player->Vendor->Items[Tooltip.Slot.Index];
 					if(Input.ModKeyDown(KMOD_SHIFT))
-						Tooltip.InventorySlot.Count = 5;
+						Tooltip.InventorySlot.Count = INVENTORY_INCREMENT_MODIFIER;
 					else
 						Tooltip.InventorySlot.Count = 1;
 
@@ -440,25 +448,25 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_TRADER: {
 				if(Player->Trader) {
-					if(Tooltip.Slot < Player->Trader->TraderItems.size())
-						Tooltip.InventorySlot.Item = Player->Trader->TraderItems[Tooltip.Slot].Item;
-					else if(Tooltip.Slot == 8)
+					if(Tooltip.Slot.Index < Player->Trader->TraderItems.size())
+						Tooltip.InventorySlot.Item = Player->Trader->TraderItems[Tooltip.Slot.Index].Item;
+					else if(Tooltip.Slot.Index == PLAYER_TRADEITEMS)
 						Tooltip.InventorySlot.Item = Player->Trader->RewardItem;
 				}
 			} break;
 			case WINDOW_BLACKSMITH: {
-				if(Player->Blacksmith && UpgradeSlot != (size_t)-1) {
-					Tooltip.InventorySlot = Player->Inventory->Slots[UpgradeSlot];
+				if(Player->Blacksmith && Player->Inventory->IsValidSlot(UpgradeSlot)) {
+					Tooltip.InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
 					if(Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
 						Tooltip.InventorySlot.Upgrades++;
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.InventorySlot.Item = PlayState.Stats->Items[(uint32_t)Tooltip.Slot];
+				Tooltip.InventorySlot.Item = PlayState.Stats->Items[(uint32_t)Tooltip.Slot.Index];
 			} break;
 			case WINDOW_ACTIONBAR: {
-				if(Tooltip.Slot < Player->ActionBar.size())
-					Tooltip.InventorySlot.Item = Player->ActionBar[Tooltip.Slot].Item;
+				if(Tooltip.Slot.Index < Player->ActionBar.size())
+					Tooltip.InventorySlot.Item = Player->ActionBar[Tooltip.Slot.Index].Item;
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserDataAlt;
@@ -624,32 +632,32 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		if(Item) {
 
 			// Compare items
-			size_t CompareSlot = Item->GetEquipmentSlot();
-			if(Item->IsEquippable() && (Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
+			_Slot CompareSlot;
+			Item->GetEquipmentSlot(CompareSlot);
+			if(Item->IsEquippable() && (Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
 
 				// Get equipment slot to compare
 				switch(Tooltip.Window) {
 					case WINDOW_BLACKSMITH:
 						CompareSlot = UpgradeSlot;
 					break;
-					case WINDOW_INVENTORY:
-						if(Tooltip.Slot < InventoryType::BAG)
-							CompareSlot = (size_t)(-1);
+					case WINDOW_EQUIPMENT:
+						CompareSlot.BagType = _Bag::BagType::NONE;
 					break;
 					default:
 					break;
 				}
 
 				// Check for valid slot
-				if(CompareSlot != (size_t)(-1)) {
+				if(Player->Inventory->IsValidSlot(CompareSlot)) {
 					float OffsetX = -35;
-					if(Tooltip.Window == WINDOW_INVENTORY)
+					if(Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY)
 						OffsetX += -80;
 
 					_Cursor EquippedTooltip;
-					EquippedTooltip.InventorySlot = Player->Inventory->Slots[CompareSlot];
+					EquippedTooltip.InventorySlot = Player->Inventory->GetSlot(CompareSlot);
 					if(EquippedTooltip.InventorySlot.Item)
-						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(InventoryElement->Bounds.Start.x + OffsetX, -1), PlayState.Scripting, Player, EquippedTooltip, (size_t)(-1));
+						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(EquipmentElement->Bounds.Start.x + OffsetX, -1), PlayState.Scripting, Player, EquippedTooltip, _Slot());
 				}
 			}
 
@@ -770,6 +778,7 @@ void _HUD::ToggleInventory() {
 	if(!InventoryElement->Visible) {
 		CloseWindows(true);
 
+		EquipmentElement->SetVisible(true);
 		InventoryElement->SetVisible(true);
 		CharacterElement->SetVisible(true);
 		PlayState.SendStatus(_Object::STATUS_INVENTORY);
@@ -836,6 +845,7 @@ void _HUD::InitVendor() {
 	Cursor.Reset();
 
 	// Open inventory
+	EquipmentElement->SetVisible(true);
 	InventoryElement->SetVisible(true);
 	VendorElement->SetVisible(true);
 }
@@ -846,6 +856,7 @@ void _HUD::InitTrade() {
 		return;
 
 	Player->WaitingForTrade = true;
+	EquipmentElement->SetVisible(true);
 	InventoryElement->SetVisible(true);
 	TradeElement->SetVisible(true);
 
@@ -863,11 +874,11 @@ void _HUD::InitTrade() {
 void _HUD::InitTrader() {
 
 	// Check for required items
-	RequiredItemSlots.resize(Player->Trader->TraderItems.size(), Player->Inventory->Slots.size());
+	RequiredItemSlots.resize(Player->Trader->TraderItems.size());
 	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
 
 	// Disable accept button if requirements not met
-	if(RewardItemSlot >= Player->Inventory->Slots.size())
+	if(!Player->Inventory->IsValidSlot(RewardItemSlot))
 		Assets.Buttons["button_trader_accept"]->SetEnabled(false);
 	else
 		Assets.Buttons["button_trader_accept"]->SetEnabled(true);
@@ -879,11 +890,12 @@ void _HUD::InitTrader() {
 void _HUD::InitBlacksmith() {
 	Cursor.Reset();
 
+	EquipmentElement->SetVisible(true);
 	InventoryElement->SetVisible(true);
 	BlacksmithElement->SetVisible(true);
 	BlacksmithCost->SetVisible(false);
 	Assets.Buttons["button_blacksmith_upgrade"]->SetEnabled(false);
-	UpgradeSlot = (size_t)-1;
+	UpgradeSlot.BagType = _Bag::BagType::NONE;
 }
 
 // Initialize the skills screen
@@ -1026,6 +1038,7 @@ void _HUD::CloseChat() {
 bool _HUD::CloseInventory() {
 	bool WasOpen = InventoryElement->Visible;
 	Cursor.Reset();
+	EquipmentElement->SetVisible(false);
 	InventoryElement->SetVisible(false);
 	CharacterElement->SetVisible(false);
 
@@ -1108,7 +1121,7 @@ bool _HUD::CloseBlacksmith() {
 	if(Player)
 		Player->Blacksmith = nullptr;
 
-	UpgradeSlot = (size_t)-1;
+	UpgradeSlot.BagType = _Bag::BagType::NONE;
 
 	return WasOpen;
 }
@@ -1198,18 +1211,25 @@ void _HUD::DrawInventory() {
 	if(!InventoryElement->Visible)
 		return;
 
+	EquipmentElement->Render();
 	InventoryElement->Render();
 
-	// Draw player's items
-	for(size_t i = 0; i < InventoryType::TRADE; i++) {
+	DrawBag(_Bag::EQUIPMENT);
+	DrawBag(_Bag::INVENTORY);
+}
+
+// Draw an inventory bag
+void _HUD::DrawBag(_Bag::BagType Type) {
+	_Bag &Bag = Player->Inventory->Bags[Type];
+	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
-		_InventorySlot *Slot = &Player->Inventory->Slots[i];
+		_InventorySlot *Slot = &Bag.Slots[i];
 		if(Slot->Item) {
 
 			// Get bag button
 			std::stringstream Buffer;
-			Buffer << "button_inventory_bag_" << i;
+			Buffer << "button_" << Bag.Name << "_bag_" << i;
 			_Button *Button = Assets.Buttons[Buffer.str()];
 			Buffer.str("");
 
@@ -1221,8 +1241,8 @@ void _HUD::DrawInventory() {
 			Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
 
 			// Draw two handed weapon twice
-			if(i == InventoryType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
-				Buffer << "button_inventory_bag_" << InventoryType::HAND2;
+			if(i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
+				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
 				_Button *Button = Assets.Buttons[Buffer.str()];
 				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, COLOR_ITEMFADE);
 			}
@@ -1300,10 +1320,11 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 	// Draw offered items
 	int BagIndex = 0;
-	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++) {
+	_Bag &Bag = Player->Inventory->Bags[_Bag::TRADE];
+	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
-		_InventorySlot *Item = &Player->Inventory->Slots[i];
+		_InventorySlot *Item = &Bag.Slots[i];
 		if(Item->Item && !Cursor.IsEqual(i, Window)) {
 
 			// Get bag button
@@ -1351,7 +1372,7 @@ void _HUD::DrawTrader() {
 		Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 		glm::vec4 Color;
-		if(RequiredItemSlots[i] >= Player->Inventory->Slots.size())
+		if(!Player->Inventory->IsValidSlot(RequiredItemSlots[i]))
 			Color = COLOR_RED;
 		else
 			Color = COLOR_WHITE;
@@ -1378,9 +1399,12 @@ void _HUD::DrawBlacksmith() {
 		return;
 	}
 
-	// Set title
+	// Get UI elements
 	_Label *BlacksmithTitle = Assets.Labels["label_blacksmith_title"];
 	_Label *BlacksmithLevel = Assets.Labels["label_blacksmith_level"];
+	_Button *UpgradeButton = Assets.Buttons["button_blacksmith_upgrade"];
+
+	// Set title
 	BlacksmithTitle->Text = Player->Blacksmith->Name;
 	BlacksmithLevel->Text = "Level " + std::to_string(Player->Blacksmith->Level);
 
@@ -1388,14 +1412,13 @@ void _HUD::DrawBlacksmith() {
 	BlacksmithElement->Render();
 
 	// Draw item
-	if(UpgradeSlot != (size_t)-1) {
+	if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
 
 		// Get upgrade bag button
 		_Button *BagButton = Assets.Buttons["button_blacksmith_bag"];
-		_Button *UpgradeButton = Assets.Buttons["button_blacksmith_upgrade"];
 		glm::vec2 DrawPosition = (BagButton->Bounds.Start + BagButton->Bounds.End) / 2.0f;
 
-		const _InventorySlot &InventorySlot = Player->Inventory->Slots[UpgradeSlot];
+		const _InventorySlot &InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
 		const _Item *Item = InventorySlot.Item;
 		if(Item) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
@@ -1439,8 +1462,10 @@ void _HUD::DrawBlacksmith() {
 		else
 			UpgradeButton->SetEnabled(false);
 	}
-	else
+	else {
 		BlacksmithCost->SetVisible(false);
+		UpgradeButton->SetEnabled(false);
+	}
 
 }
 
@@ -1792,15 +1817,17 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 }
 
 // Buys an item from the vendor
-void _HUD::BuyItem(_Cursor *Item, size_t TargetSlot) {
+void _HUD::BuyItem(_Cursor *Item, _Slot TargetSlot) {
+	_Slot VendorSlot;
+	VendorSlot.Index = Item->Slot.Index;
 
 	// Notify server
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(1);
 	Packet.Write<uint8_t>((uint8_t)Item->InventorySlot.Count);
-	Packet.Write<uint8_t>((uint8_t)Item->Slot);
-	Packet.Write<uint8_t>((uint8_t)TargetSlot);
+	VendorSlot.Serialize(Packet);
+	TargetSlot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
 }
 
@@ -1814,7 +1841,7 @@ void _HUD::SellItem(_Cursor *CursorItem, int Amount) {
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
 	Packet.Write<uint8_t>((uint8_t)Amount);
-	Packet.Write<uint8_t>((uint8_t)CursorItem->Slot);
+	CursorItem->Slot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
 }
 
@@ -2059,19 +2086,38 @@ void _HUD::UpdateTradeStatus(bool Accepted) {
 }
 
 // Split a stack of items
-void _HUD::SplitStack(uint8_t Slot, uint8_t Count) {
+void _HUD::SplitStack(const _Slot &Slot, uint8_t Count) {
 
 	// Don't split trade items
-	if(_Inventory::IsSlotTrade(Slot))
+	if(Slot.BagType == _Bag::BagType::TRADE)
 		return;
 
 	// Build packet
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_SPLIT);
-	Packet.Write<uint8_t>(Slot);
+	Slot.Serialize(Packet);
 	Packet.Write<uint8_t>(Count);
 
 	PlayState.Network->SendPacket(Packet);
+}
+
+// Convert window into a player bag
+_Bag::BagType _HUD::GetBagFromWindow(int Window) {
+
+	switch(Window) {
+		case WINDOW_EQUIPMENT:
+			return _Bag::BagType::EQUIPMENT;
+		break;
+		case WINDOW_INVENTORY:
+			return _Bag::BagType::INVENTORY;
+		break;
+		case WINDOW_TRADEYOURS:
+		case WINDOW_TRADETHEIRS:
+			return _Bag::BagType::TRADE;
+		break;
+	}
+
+	return _Bag::BagType::NONE;
 }
 
 // Return true if player is typing gold

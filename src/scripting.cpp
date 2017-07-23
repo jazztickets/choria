@@ -105,20 +105,30 @@ void _Scripting::InjectStats(_Stats *Stats) {
 	}
 	lua_setglobal(LuaState, "DamageType");
 
+	// Push bag types
+	lua_pushinteger(LuaState, _Bag::BagType::NONE);
+	lua_setglobal(LuaState, "BAG_NONE");
+	lua_pushinteger(LuaState, _Bag::BagType::EQUIPMENT);
+	lua_setglobal(LuaState, "BAG_EQUIPMENT");
+	lua_pushinteger(LuaState, _Bag::BagType::INVENTORY);
+	lua_setglobal(LuaState, "BAG_INVENTORY");
+	lua_pushinteger(LuaState, _Bag::BagType::TRADE);
+	lua_setglobal(LuaState, "BAG_TRADE");
+
 	// Push inventory slot types
-	lua_pushinteger(LuaState, InventoryType::HEAD);
+	lua_pushinteger(LuaState, EquipmentType::HEAD);
 	lua_setglobal(LuaState, "INVENTORY_HEAD");
-	lua_pushinteger(LuaState, InventoryType::BODY);
+	lua_pushinteger(LuaState, EquipmentType::BODY);
 	lua_setglobal(LuaState, "INVENTORY_BODY");
-	lua_pushinteger(LuaState, InventoryType::LEGS);
+	lua_pushinteger(LuaState, EquipmentType::LEGS);
 	lua_setglobal(LuaState, "INVENTORY_LEGS");
-	lua_pushinteger(LuaState, InventoryType::HAND1);
+	lua_pushinteger(LuaState, EquipmentType::HAND1);
 	lua_setglobal(LuaState, "INVENTORY_HAND1");
-	lua_pushinteger(LuaState, InventoryType::HAND2);
+	lua_pushinteger(LuaState, EquipmentType::HAND2);
 	lua_setglobal(LuaState, "INVENTORY_HAND2");
-	lua_pushinteger(LuaState, InventoryType::RING1);
+	lua_pushinteger(LuaState, EquipmentType::RING1);
 	lua_setglobal(LuaState, "INVENTORY_RING1");
-	lua_pushinteger(LuaState, InventoryType::RING2);
+	lua_pushinteger(LuaState, EquipmentType::RING2);
 	lua_setglobal(LuaState, "INVENTORY_RING2");
 
 	// Push item types
@@ -696,10 +706,12 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 	int Upgrades = 0;
 
 	// Get item
-	size_t Slot = (size_t)lua_tointeger(LuaState, 1);
-	if(Slot < Object->Inventory->Slots.size()) {
-		Item = Object->Inventory->Slots[Slot].Item;
-		Upgrades = Object->Inventory->Slots[Slot].Upgrades;
+	_Slot Slot;
+	Slot.BagType = (_Bag::BagType)lua_tointeger(LuaState, 1);
+	Slot.Index = (size_t)lua_tointeger(LuaState, 2);
+	if(Object->Inventory->IsValidSlot(Slot)) {
+		Item = Object->Inventory->GetSlot(Slot).Item;
+		Upgrades = Object->Inventory->GetSlot(Slot).Upgrades;
 	}
 
 	// Push item

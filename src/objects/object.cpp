@@ -608,17 +608,24 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write items
 	Json::Value ItemsNode;
-	const _InventorySlot *InventorySlot;
-	for(size_t i = 0; i < InventoryType::COUNT; i++) {
-		InventorySlot = &Inventory->Slots[i];
-		if(InventorySlot->Item) {
-			Json::Value ItemNode;
-			ItemNode["slot"] = (Json::Value::UInt64)i;
-			ItemNode["id"] = InventorySlot->Item->ID;
-			ItemNode["upgrades"] = InventorySlot->Upgrades;
-			ItemNode["count"] = InventorySlot->Count;
-			ItemsNode.append(ItemNode);
+	for(auto &Bag : Inventory->Bags) {
+		if(Bag.ID == _Bag::NONE)
+			continue;
+
+		// Write bag contents
+		Json::Value BagNode;
+		for(size_t i = 0; i < Bag.Slots.size(); i++) {
+			const _InventorySlot &InventorySlot = Bag.Slots[i];
+			if(InventorySlot.Item) {
+				Json::Value ItemNode;
+				ItemNode["slot"] = (Json::Value::UInt64)i;
+				ItemNode["id"] = InventorySlot.Item->ID;
+				ItemNode["upgrades"] = InventorySlot.Upgrades;
+				ItemNode["count"] = InventorySlot.Count;
+				BagNode.append(ItemNode);
+			}
 		}
+		ItemsNode[std::to_string(Bag.ID)] = BagNode;
 	}
 	Data["items"] = ItemsNode;
 
@@ -702,12 +709,14 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	ActionBar.resize(ActionBarSize);
 
 	// Set items
-	for(const Json::Value &ItemNode : Data["items"]) {
-		_InventorySlot InventorySlot;
-		InventorySlot.Item = Stats->Items[ItemNode["id"].asUInt()];
-		InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
-		InventorySlot.Count = ItemNode["count"].asInt();
-		Inventory->Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
+	for(Json::ValueIterator BagNode = Data["items"].begin(); BagNode != Data["items"].end(); BagNode++) {
+		for(const Json::Value &ItemNode : *BagNode) {
+			_InventorySlot InventorySlot;
+			InventorySlot.Item = Stats->Items[ItemNode["id"].asUInt()];
+			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
+			InventorySlot.Count = ItemNode["count"].asInt();
+			Inventory->Bags[std::stoul(BagNode.name())].Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
+		}
 	}
 
 	// Set skills
@@ -1326,14 +1335,13 @@ float _Object::GetNextLevelPercent() const {
 }
 
 // Accept a trade from a trader
-void _Object::AcceptTrader(std::vector<size_t> &Slots) {
+void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
 	if(!Trader)
 		return;
 
 	// Trade in required items
-	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++) {
+	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++)
 		Inventory->DecrementItemCount(Slots[i], -Trader->TraderItems[i].Count);
-	}
 
 	// Give player reward
 	Inventory->AddItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
@@ -1457,11 +1465,12 @@ void _Object::CalculateStats() {
 	int ItemArmor = 0;
 	int ItemDamageBlock = 0;
 	float WeaponDamageModifier = 1.0f;
-	for(size_t i = 0; i < InventoryType::BAG; i++) {
+	_Bag &EquipmentBag = Inventory->Bags[_Bag::EQUIPMENT];
+	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
 
 		// Check each item
-		const _Item *Item = Inventory->Slots[i].Item;
-		int Upgrades = Inventory->Slots[i].Upgrades;
+		const _Item *Item = EquipmentBag.Slots[i].Item;
+		int Upgrades = EquipmentBag.Slots[i].Upgrades;
 		if(Item) {
 
 			// Add damage

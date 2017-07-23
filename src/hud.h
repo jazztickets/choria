@@ -45,21 +45,25 @@ struct _MouseEvent;
 
 // Structures
 struct _Cursor {
+
+	_Cursor() { Reset(); }
+
 	void Reset() {
 		InventorySlot.Item = nullptr;
 		InventorySlot.Count = 0;
 		InventorySlot.Upgrades = 0;
 		Cost = 0;
 		StatusEffect = nullptr;
-		Slot = (size_t)-1;
+		Slot.BagType = _Bag::BagType::NONE;
+		Slot.Index = NOSLOT;
 		Window = -1;
 	}
 
-	bool IsEqual(size_t Slot, int Window) { return this->Slot == Slot && this->Window == Window; }
+	bool IsEqual(size_t Slot, int Window) { return this->Slot.Index == Slot && this->Window == Window; }
 
 	_InventorySlot InventorySlot;
 	const _StatusEffect *StatusEffect;
-	size_t Slot;
+	_Slot Slot;
 	int Cost;
 	int Window;
 };
@@ -86,17 +90,18 @@ class _HUD {
 	public:
 
 		enum WindowType {
+			WINDOW_BATTLE,
 			WINDOW_BUTTONBAR,
+			WINDOW_HUD_EFFECTS,
+			WINDOW_ACTIONBAR,
+			WINDOW_EQUIPMENT,
 			WINDOW_INVENTORY,
 			WINDOW_VENDOR,
 			WINDOW_TRADER,
+			WINDOW_BLACKSMITH,
 			WINDOW_TRADETHEIRS,
 			WINDOW_TRADEYOURS,
 			WINDOW_SKILLS,
-			WINDOW_ACTIONBAR,
-			WINDOW_BATTLE,
-			WINDOW_HUD_EFFECTS,
-			WINDOW_BLACKSMITH,
 		};
 
 		_HUD();
@@ -183,6 +188,7 @@ class _HUD {
 		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawHudEffects();
 		void DrawInventory();
+		void DrawBag(_Bag::BagType Type);
 		void DrawTeleport();
 		void DrawCharacterStats();
 		void DrawVendor();
@@ -196,7 +202,7 @@ class _HUD {
 		void DrawCursorItem();
 		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
 
-		void BuyItem(_Cursor *Item, size_t TargetSlot);
+		void BuyItem(_Cursor *Item, _Slot TargetSlot=_Slot());
 		void SellItem(_Cursor *CursorItem, int Amount);
 
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
@@ -209,13 +215,15 @@ class _HUD {
 		void SendTradeCancel();
 		void UpdateAcceptButton();
 
-		void SplitStack(uint8_t Slot, uint8_t Count);
+		void SplitStack(const _Slot &Slot, uint8_t Count);
+		_Bag::BagType GetBagFromWindow(int Window);
 
 		// UI
 		_Element *DiedElement;
 		_Element *StatusEffectsElement;
 		_Element *ActionBarElement;
 		_Element *ButtonBarElement;
+		_Element *EquipmentElement;
 		_Element *InventoryElement;
 		_Element *CharacterElement;
 		_Element *VendorElement;
@@ -251,9 +259,9 @@ class _HUD {
 		_TextBox *ChatTextBox;
 
 		// Traders
-		std::vector<size_t> RequiredItemSlots;
-		size_t RewardItemSlot;
+		std::vector<_Slot> RequiredItemSlots;
+		_Slot RewardItemSlot;
 
 		// Blacksmith
-		size_t UpgradeSlot;
+		_Slot UpgradeSlot;
 };

@@ -55,7 +55,7 @@ const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
 // Constructor
 _Menu::_Menu() {
 	State = STATE_NONE;
-	PreSelectedSlot = (size_t)-1;
+	PreSelectedSlot = NOSLOT;
 	CurrentLayout = nullptr;
 	CharactersState = CHARACTERS_NONE;
 	PreviousClickTimer = 0.0;
@@ -1154,7 +1154,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 				CharacterSlots[Slot].Image->CalculateBounds();
 			}
 
-			PreSelectedSlot = (size_t)-1;
+			PreSelectedSlot = NOSLOT;
 
 			// Disable ui buttons
 			UpdateCharacterButtons();

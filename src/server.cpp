@@ -865,8 +865,11 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
-	size_t OldSlot = Data.Read<uint8_t>();
-	size_t NewSlot = Data.Read<uint8_t>();
+	// Get slots
+	_Slot OldSlot;
+	_Slot NewSlot;
+	OldSlot.Unserialize(Data);
+	NewSlot.Unserialize(Data);
 
 	// Move items
 	{
@@ -880,7 +883,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 
 	// Check for trading players
 	_Object *TradePlayer = Player->TradePlayer;
-	if(Player->WaitingForTrade && TradePlayer && (_Inventory::IsSlotTrade(OldSlot) || _Inventory::IsSlotTrade(NewSlot))) {
+	if(Player->WaitingForTrade && TradePlayer && (OldSlot.BagType == _Bag::BagType::TRADE || NewSlot.BagType == _Bag::BagType::TRADE)) {
 
 		// Reset agreement
 		Player->TradeAccepted = false;
@@ -907,22 +910,24 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get item slot index
-	size_t Slot = Data.Read<uint8_t>();
-	if(Slot >= Player->Inventory->Slots.size())
+	_Slot Slot;
+	Slot.Unserialize(Data);
+	if(!Player->Inventory->IsValidSlot(Slot))
 		return;
 
 	// Get item
-	const _Item *Item = Player->Inventory->Slots[Slot].Item;
+	const _Item *Item = Player->Inventory->GetSlot(Slot).Item;
 	if(!Item)
 		return;
 
 	// Check for equipment
 	if(Item->IsEquippable()) {
-		size_t TargetSlot = Item->GetEquipmentSlot();
+		_Slot TargetSlot;
+		Item->GetEquipmentSlot(TargetSlot);
 
 		// Check for empty second ring slot
-		if(TargetSlot == InventoryType::RING1 && Player->Inventory->Slots[TargetSlot].Item && !Player->Inventory->Slots[InventoryType::RING2].Item)
-			TargetSlot = InventoryType::RING2;
+		if(TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->Bags[_Bag::BagType::EQUIPMENT].Slots[EquipmentType::RING2].Item)
+			TargetSlot.Index = EquipmentType::RING2;
 
 		// Attempt to move
 		_Buffer Packet;
@@ -941,7 +946,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 			Player->Targets.push_back(Player);
 			Player->Action.Item = Item;
 			Player->Action.Level = Item->Level;
-			Player->Action.InventorySlot = (int)Slot;
+			Player->Action.InventorySlot = (int)Slot.Index;
 		}
 	}
 }
@@ -953,11 +958,12 @@ void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
 
 	_Object *Player = Peer->Object;
 
-	uint8_t Slot = Data.Read<uint8_t>();
+	_Slot Slot;
+	Slot.Unserialize(Data);
 	uint8_t Count = Data.Read<uint8_t>();
 
 	// Inventory only
-	if(_Inventory::IsSlotTrade(Slot))
+	if(Slot.BagType == _Bag::BagType::TRADE)
 		return;
 
 	// Split items
@@ -982,18 +988,20 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 	// Get info
 	bool Buy = Data.ReadBit();
 	uint8_t Amount = Data.Read<uint8_t>();
-	size_t Slot = Data.Read<uint8_t>();
+	_Slot Slot;
+	Slot.Unserialize(Data);
 
 	// Buy item
 	if(Buy) {
-		if(Slot >= Vendor->Items.size())
+		if(Slot.Index >= Vendor->Items.size())
 			return;
 
 		// Get optional inventory slot
-		size_t TargetSlot = Data.Read<uint8_t>();
+		_Slot TargetSlot;
+		TargetSlot.Unserialize(Data);
 
 		// Get item info
-		const _Item *Item = Vendor->Items[Slot];
+		const _Item *Item = Vendor->Items[Slot.Index];
 		int Price = Item->GetPrice(Vendor, Amount, Buy);
 
 		// Not enough gold
@@ -1001,11 +1009,11 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Find open slot for new item
-		if(TargetSlot >= Player->Inventory->Slots.size())
+		if(!Player->Inventory->IsValidSlot(TargetSlot))
 			TargetSlot = Player->Inventory->FindSlotForItem(Item, 0, Amount);
 
 		// No room
-		if(TargetSlot >= Player->Inventory->Slots.size())
+		if(!Player->Inventory->IsValidSlot(TargetSlot))
 			return;
 
 		// Attempt to add item
@@ -1034,11 +1042,11 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 	}
 	// Sell item
 	else {
-		if(Slot >= Player->Inventory->Slots.size())
+		if(!Player->Inventory->IsValidSlot(Slot))
 			return;
 
 		// Get item info
-		const _Item *Item = Player->Inventory->Slots[Slot].Item;
+		const _Item *Item = Player->Inventory->GetSlot(Slot).Item;
 		if(Item) {
 			int Price = Item->GetPrice(Vendor, Amount, Buy);
 
@@ -1072,9 +1080,9 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get trader information
-	std::vector<size_t> RequiredItemSlots(Player->Trader->TraderItems.size(), Player->Inventory->Slots.size());
-	size_t RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
-	if(RewardSlot >= Player->Inventory->Slots.size())
+	std::vector<_Slot> RequiredItemSlots(Player->Trader->TraderItems.size());
+	_Slot RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
+	if(!Player->Inventory->IsValidSlot(RewardSlot))
 		return;
 
 	// Update items
@@ -1211,12 +1219,13 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 
 			// Exchange items
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
+			_Slot Slot;
+			Slot.BagType = _Bag::BagType::TRADE;
 			for(size_t i = 0; i < PLAYER_TRADEITEMS; i++) {
-				size_t InventorySlot = i + InventoryType::TRADE;
-				TempItems[i] = Player->Inventory->Slots[InventorySlot];
-
-				Player->Inventory->Slots[InventorySlot] = TradePlayer->Inventory->Slots[InventorySlot];
-				TradePlayer->Inventory->Slots[InventorySlot] = TempItems[i];
+				Slot.Index = i;
+				TempItems[i] = Player->Inventory->GetSlot(Slot);
+				Player->Inventory->GetSlot(Slot) = TradePlayer->Inventory->GetSlot(Slot);
+				TradePlayer->Inventory->GetSlot(Slot) = TempItems[i];
 			}
 
 			// Exchange gold
@@ -1302,12 +1311,13 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get slot
-	uint8_t Slot = Data.Read<uint8_t>();
-	if(Slot >= Player->Inventory->Slots.size())
+	_Slot Slot;
+	Slot.Unserialize(Data);
+	if(!Player->Inventory->IsValidSlot(Slot))
 		return;
 
 	// Get item
-	_InventorySlot &InventorySlot = Player->Inventory->Slots[Slot];
+	_InventorySlot &InventorySlot = Player->Inventory->GetSlot(Slot);
 	if(InventorySlot.Upgrades >= InventorySlot.Item->MaxLevel)
 		return;
 
@@ -1484,14 +1494,15 @@ void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::ve
 
 // Sends information to another player about items they're trading
 void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
+	_Bag &Bag = Sender->Inventory->Bags[_Bag::BagType::TRADE];
 
 	// Send items to trader player
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
 	Packet.Write<NetworkIDType>(Sender->NetworkID);
 	Packet.Write<int>(Sender->TradeGold);
-	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
-		Sender->Inventory->SerializeSlot(Packet, i);
+	for(size_t i = 0; i < Bag.Slots.size(); i++)
+		Sender->Inventory->SerializeSlot(Packet, _Slot(_Bag::BagType::TRADE, i));
 
 	Network->SendPacket(Packet, Receiver->Peer);
 }

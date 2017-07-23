@@ -887,9 +887,10 @@ void _PlayState::HandleChatMessage(_Buffer &Data) {
 void _PlayState::HandleInventoryUse(_Buffer &Data) {
 	if(!Player)
 		return;
-
-	size_t Slot = Data.Read<uint8_t>();
-	Player->Inventory->DecrementItemCount(Slot, -1);
+/*
+	size_t Index = Data.Read<uint8_t>();
+	Player->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
+*/
 }
 
 // Handles a inventory swap
@@ -942,7 +943,7 @@ void _PlayState::HandleTradeRequest(_Buffer &Data) {
 
 	// Get gold offer
 	Player->TradePlayer->TradeGold = Data.Read<int>();
-	for(size_t i = InventoryType::TRADE; i < InventoryType::COUNT; i++)
+	for(size_t i = 0; i < PLAYER_TRADEITEMS; i++)
 		Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 }
 
@@ -1173,7 +1174,7 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 				if(DecrementItem) {
 					size_t Index;
 					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
-						Player->Inventory->DecrementItemCount(Index, -1);
+						Player->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
 						Player->RefreshActionBarCount();
 					}
 				}
