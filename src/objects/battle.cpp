@@ -590,7 +590,7 @@ void _Battle::ServerEndBattle() {
 		// Divide up rewards
 		for(int Side = 0; Side < 2; Side++) {
 			int OtherSide = !Side;
-			int DivideCount = SideStats[Side].AliveCount - SideStats[Side].JoinedCount;
+			int DivideCount = SideStats[Side].AliveCount;
 			if(DivideCount <= 0)
 				break;
 
@@ -612,7 +612,7 @@ void _Battle::ServerEndBattle() {
 		// Get list of fighters that get rewards
 		std::list<_Object *> RewardFighters;
 		for(auto &Fighter : SideFighters[WinningSide]) {
-			if(Fighter->IsAlive() && !Fighter->JoinedBattle)
+			if(Fighter->IsAlive())
 				RewardFighters.push_back(Fighter);
 		}
 
@@ -660,7 +660,7 @@ void _Battle::ServerEndBattle() {
 		if(!Fighter->IsAlive()) {
 			Fighter->ApplyDeathPenalty();
 		}
-		else if(!Fighter->JoinedBattle) {
+		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
 			GoldEarned = SideStats[WinningSide].GoldPerFighter;
 			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;

@@ -53,7 +53,7 @@ class _PlayState : public _State {
 		void StopLocalServer();
 		void SendStatus(uint8_t Status);
 		void SendActionUse(uint8_t Slot);
-		void SendHelpRequest();
+		void SendJoinRequest();
 
 		// Input
 		bool HandleAction(int InputType, size_t Action, int Value) override;
@@ -93,6 +93,7 @@ class _PlayState : public _State {
 
 		// HUD
 		_HUD *HUD;
+		bool IgnoreFirstChar;
 
 		// Camera
 		_Camera *Camera;
@@ -125,6 +126,7 @@ class _PlayState : public _State {
 		void HandleInventorySwap(_Buffer &Data);
 		void HandleInventoryUpdate(_Buffer &Data);
 		void HandleInventoryGold(_Buffer &Data);
+		void HandlePartyInfo(_Buffer &Data);
 		void HandleChatMessage(_Buffer &Data);
 		void HandleTradeRequest(_Buffer &Data);
 		void HandleTradeCancel(_Buffer &Data);

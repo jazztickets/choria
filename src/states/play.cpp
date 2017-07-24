@@ -71,6 +71,7 @@ void _PlayState::Init() {
 	Battle = nullptr;
 	HUD = nullptr;
 	Time = 0.0;
+	IgnoreFirstChar = false;
 
 	Graphics.Element->SetVisible(false);
 	Graphics.Element->Visible = true;
@@ -182,10 +183,18 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 		return true;
 	}
 
-	// Grab all actions except escape
+	// Grab all actions except escape when chatting
 	if(HUD->IsChatting()) {
 		if(Action == _Actions::BACK)
 			HUD->CloseChat();
+
+		return true;
+	}
+
+	// Grab all actions except escape when typing party
+	if(HUD->IsTypingParty()) {
+		if(Action == _Actions::BACK)
+			HUD->CloseWindows(true, false);
 
 		return true;
 	}
@@ -254,7 +263,11 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 					HUD->ToggleSkills();
 				break;
 				case _Actions::JOIN:
-					SendHelpRequest();
+					SendJoinRequest();
+				break;
+				case _Actions::PARTY:
+					HUD->ToggleParty();
+					IgnoreFirstChar = true;
 				break;
 				case _Actions::UP:
 				case _Actions::DOWN:
@@ -272,6 +285,13 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 // Key handler
 void _PlayState::HandleKey(const _KeyEvent &KeyEvent) {
+
+	// Ignore keys if opening and focusing a textbox with a hotkey
+	if(IgnoreFirstChar) {
+		IgnoreFirstChar = false;
+		return;
+	}
+
 	bool Handled = Graphics.Element->HandleKey(KeyEvent);
 
 	// Message history handling
@@ -544,6 +564,9 @@ void _PlayState::HandlePacket(_Buffer &Data) {
 		break;
 		case PacketType::EVENT_START:
 			HandleEventStart(Data);
+		break;
+		case PacketType::PARTY_INFO:
+			HandlePartyInfo(Data);
 		break;
 		case PacketType::CHAT_MESSAGE:
 			HandleChatMessage(Data);
@@ -925,6 +948,15 @@ void _PlayState::HandleInventoryGold(_Buffer &Data) {
 	Player->CalculateStats();
 
 	PlayCoinSound();
+}
+
+// Handle party info
+void _PlayState::HandlePartyInfo(_Buffer &Data) {
+	if(!Player)
+		return;
+
+	Player->PartyName = Data.ReadString();
+	HUD->UpdateLabels();
 }
 
 // Handles a trade request
@@ -1353,13 +1385,13 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	Network->SendPacket(Packet);
 }
 
-// Send help request to server
-void _PlayState::SendHelpRequest() {
+// Send join request to server
+void _PlayState::SendJoinRequest() {
 	if(!Player->AcceptingMoveInput())
 		return;
 
 	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::WORLD_HELP);
+	Packet.Write<PacketType>(PacketType::WORLD_JOIN);
 	Network->SendPacket(Packet);
 }
 

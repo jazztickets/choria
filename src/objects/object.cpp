@@ -813,6 +813,7 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 // Serialize object stats
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
+	Data.WriteString(PartyName.c_str());
 	Data.Write<uint32_t>(PortraitID);
 	Data.Write<uint32_t>(ModelID);
 	Data.Write<int>(Health);
@@ -894,6 +895,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 // Unserialize object stats
 void _Object::UnserializeStats(_Buffer &Data) {
 	Name = Data.ReadString();
+	PartyName = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
 	ModelID = Data.Read<uint32_t>();
 	Health = Data.Read<int>();

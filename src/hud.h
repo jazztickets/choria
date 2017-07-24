@@ -136,6 +136,7 @@ class _HUD {
 		void ToggleInventory();
 		void ToggleTrade();
 		void ToggleSkills();
+		void ToggleParty();
 		void ToggleInGameMenu(bool Force);
 		void ToggleCharacterStats();
 
@@ -145,6 +146,7 @@ class _HUD {
 		void InitTrader();
 		void InitBlacksmith();
 		void InitSkills();
+		void InitParty();
 		void InitTrade();
 		bool CloseWindows(bool SendStatus, bool SendNotify=true);
 
@@ -162,6 +164,10 @@ class _HUD {
 		void ResetTradeTheirsWindow();
 		void UpdateTradeStatus(bool Accepted);
 		void ValidateTradeGold();
+
+		// Party
+		void SendPartyInfo();
+		bool IsTypingParty();
 
 		// Input
 		bool EnableMouseCombat;
@@ -183,6 +189,7 @@ class _HUD {
 		bool CloseTrader();
 		bool CloseBlacksmith();
 		bool CloseSkills();
+		bool CloseParty();
 		bool CloseTeleport();
 
 		void DrawChat(double Time, bool IgnoreTimeout);
@@ -197,6 +204,7 @@ class _HUD {
 		void DrawBlacksmith();
 		void DrawActionBar();
 		void DrawSkills();
+		void DrawParty();
 		void DrawMessage();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
@@ -232,6 +240,7 @@ class _HUD {
 		_Element *TraderElement;
 		_Element *BlacksmithElement;
 		_Element *SkillsElement;
+		_Element *PartyElement;
 		_Element *TeleportElement;
 		_Element *ChatElement;
 		_Element *HealthElement;
@@ -239,6 +248,7 @@ class _HUD {
 		_Element *ExperienceElement;
 		_Element *RecentItemsElement;
 		_Element *MessageElement;
+		_TextBox *PartyTextBox;
 		_Label *GoldElement;
 		_Label *MessageLabel;
 		_Label *BlacksmithCost;

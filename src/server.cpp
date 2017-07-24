@@ -315,8 +315,8 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_RESPAWN:
 			HandleRespawn(Data, Peer);
 		break;
-		case PacketType::WORLD_HELP:
-			HandleHelp(Data, Peer);
+		case PacketType::WORLD_JOIN:
+			HandleJoin(Data, Peer);
 		break;
 		case PacketType::ACTION_USE:
 			HandleActionUse(Data, Peer);
@@ -359,6 +359,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case PacketType::TRADE_ACCEPT:
 			HandleTradeAccept(Data, Peer);
+		break;
+		case PacketType::PARTY_INFO:
+			HandlePartyInfo(Data, Peer);
 		break;
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
@@ -1270,6 +1273,26 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 	}
 }
 
+// Handle party info from client
+void _Server::HandlePartyInfo(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	// Validate player
+	_Object *Player = Peer->Object;
+	if(!Player->CanOpenParty())
+		return;
+
+	// Get party name
+	Player->PartyName = Data.ReadString();
+
+	// Send info
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::PARTY_INFO);
+	Packet.WriteString(Player->PartyName.c_str());
+	Network->SendPacket(Packet, Player->Peer);
+}
+
 // Handles player status change
 void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
@@ -1357,8 +1380,8 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	Player->CalculateStats();
 }
 
-// Handle help request by player
-void _Server::HandleHelp(_Buffer &Data, _Peer *Peer) {
+// Handle join battle request by player
+void _Server::HandleJoin(_Buffer &Data, _Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1367,9 +1390,14 @@ void _Server::HandleHelp(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Find a nearby battle instance
-	_Battle *Battle = Player->Map->GetCloseBattle(Player);
-	if(!Battle)
+	bool HitPrivateParty = false;
+	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty);
+	if(!Battle) {
+		if(HitPrivateParty)
+			SendMessage(Peer, "Can't join private party", COLOR_RED);
+
 		return;
+	}
 
 	// Add player to battle
 	Battle->AddFighter(Player, 0, true);

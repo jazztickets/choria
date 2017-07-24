@@ -121,7 +121,7 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		void RemoveObject(const _Object *RemoveObject);
 		void SendObjectList(_Peer *Peer);
 		void GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players);
-		_Battle *GetCloseBattle(const _Object *Player);
+		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
 		bool FindEvent(const _Event &Event, glm::ivec2 &Position);
 

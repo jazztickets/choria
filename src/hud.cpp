@@ -86,12 +86,14 @@ _HUD::_HUD() {
 	TraderElement = Assets.Elements["element_trader"];
 	BlacksmithElement = Assets.Elements["element_blacksmith"];
 	SkillsElement = Assets.Elements["element_skills"];
+	PartyElement = Assets.Elements["element_party"];
 	TeleportElement = Assets.Elements["element_teleport"];
 	ChatElement = Assets.Elements["element_chat"];
 	HealthElement = Assets.Elements["element_hud_health"];
 	ManaElement = Assets.Elements["element_hud_mana"];
 	ExperienceElement = Assets.Elements["element_hud_experience"];
 	RecentItemsElement = Assets.Elements["element_hud_recentitems"];
+	PartyTextBox = Assets.TextBoxes["textbox_party"];
 	GoldElement = Assets.Labels["label_hud_gold"];
 	MessageElement = Assets.Elements["element_hud_message"];
 	MessageLabel = Assets.Labels["label_hud_message"];
@@ -113,6 +115,7 @@ _HUD::_HUD() {
 	TraderElement->SetVisible(false);
 	BlacksmithElement->SetVisible(false);
 	SkillsElement->SetVisible(false);
+	PartyElement->SetVisible(false);
 	TeleportElement->SetVisible(false);
 	ChatElement->SetVisible(false);
 	HealthElement->SetVisible(true);
@@ -148,6 +151,10 @@ void _HUD::HandleEnter() {
 	if(IsTypingGold()) {
 		FocusedElement = nullptr;
 		ValidateTradeGold();
+	}
+	else if(IsTypingParty()) {
+		FocusedElement = nullptr;
+		SendPartyInfo();
 	}
 	else {
 		ToggleChat();
@@ -232,17 +239,17 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Check button bar
 		if(ButtonBarElement->GetClickedElement()) {
-			if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_teleport") {
-				//ToggleTeleport();
-			}
-			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_help") {
-				PlayState.SendHelpRequest();
+			if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_join") {
+				PlayState.SendJoinRequest();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_inventory") {
 				ToggleInventory();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_trade") {
 				ToggleTrade();
+			}
+			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_party") {
+				ToggleParty();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_skills") {
 				ToggleSkills();
@@ -493,6 +500,7 @@ void _HUD::Update(double FrameTime) {
 		}
 	}
 
+	// Close chat if it loses focus
 	if(IsChatting()) {
 		if(ChatTextBox != FocusedElement)
 			CloseChat();
@@ -618,6 +626,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawTrader();
 		DrawBlacksmith();
 		DrawSkills();
+		DrawParty();
 		DrawTeleport();
 
 		// Draw stat changes
@@ -809,6 +818,20 @@ void _HUD::ToggleSkills() {
 	if(!SkillsElement->Visible) {
 		CloseWindows(true);
 		InitSkills();
+	}
+	else {
+		CloseWindows(true);
+	}
+}
+
+// Open/close party screen
+void _HUD::ToggleParty() {
+	if(Player->WaitForServer || !Player->CanOpenParty())
+		return;
+
+	if(!PartyElement->Visible) {
+		CloseWindows(true);
+		InitParty();
 	}
 	else {
 		CloseWindows(true);
@@ -1026,6 +1049,17 @@ void _HUD::InitSkills() {
 	PlayState.SendStatus(_Object::STATUS_SKILLS);
 }
 
+// Initialize the party screen
+void _HUD::InitParty() {
+	Cursor.Reset();
+
+	PartyElement->SetVisible(true);
+	PartyTextBox->Text = Player->PartyName;
+	PartyTextBox->CursorPosition = PartyTextBox->Text.size();
+	PartyTextBox->ResetCursor();
+	FocusedElement = PartyTextBox;
+}
+
 // Closes the chat window
 void _HUD::CloseChat() {
 	ChatElement->SetVisible(false);
@@ -1062,6 +1096,16 @@ bool _HUD::CloseSkills() {
 	bool WasOpen = SkillsElement->Visible;
 
 	SkillsElement->SetVisible(false);
+	Cursor.Reset();
+
+	return WasOpen;
+}
+
+// Close party screen
+bool _HUD::CloseParty() {
+	bool WasOpen = PartyElement->Visible;
+
+	PartyElement->SetVisible(false);
 	Cursor.Reset();
 
 	return WasOpen;
@@ -1133,6 +1177,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= CloseInventory();
 	WasOpen |= CloseVendor();
 	WasOpen |= CloseSkills();
+	WasOpen |= CloseParty();
 	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseTrader();
 	WasOpen |= CloseBlacksmith();
@@ -1699,6 +1744,14 @@ void _HUD::DrawSkills() {
 	}
 }
 
+// Draw the party screen
+void _HUD::DrawParty() {
+	if(!PartyElement->Visible)
+		return;
+
+	PartyElement->Render();
+}
+
 // Draw hud message
 void _HUD::DrawMessage() {
 	if(!MessageElement->Visible)
@@ -2037,6 +2090,21 @@ void _HUD::ValidateTradeGold() {
 	ResetAcceptButton();
 }
 
+// Send party password to server and close screen
+void _HUD::SendPartyInfo() {
+	if(!Player || !PartyElement->Visible)
+		return;
+
+	// Send info
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::PARTY_INFO);
+	Packet.WriteString(PartyTextBox->Text.c_str());
+	PlayState.Network->SendPacket(Packet);
+
+	// Close screen
+	CloseParty();
+}
+
 // Update accept button label text
 void _HUD::UpdateAcceptButton() {
 	_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
@@ -2122,6 +2190,11 @@ _Bag::BagType _HUD::GetBagFromWindow(int Window) {
 // Return true if player is typing gold
 bool _HUD::IsTypingGold() {
 	return FocusedElement == Assets.TextBoxes["textbox_trade_gold_yours"];
+}
+
+// Return true if player is typing in the party screen
+bool _HUD::IsTypingParty() {
+	return PartyElement->Visible;
 }
 
 // Return true if the chatbox is open
@@ -2271,9 +2344,6 @@ void _HUD::ClearBattleStatChanges() {
 
 // Update hud labels
 void _HUD::UpdateLabels() {
-	if(!Player)
-		return;
-
 	std::stringstream Buffer;
 
 	// Update name
@@ -2283,6 +2353,12 @@ void _HUD::UpdateLabels() {
 	Buffer << "Level " << Player->Level;
 	Assets.Labels["label_hud_level"]->Text = Buffer.str();
 	Buffer.str("");
+
+	// Update party
+	if(Player->PartyName.size())
+		Assets.Labels["label_hud_party"]->Text = "Party: " + Player->PartyName;
+	else
+		Assets.Labels["label_hud_party"]->Text = "No Party";
 
 	// Update hardcore status
 	Assets.Labels["label_hud_hardcore"]->SetVisible(Player->Hardcore);

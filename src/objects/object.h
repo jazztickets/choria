@@ -158,6 +158,7 @@ class _Object : public _ManagerBase {
 		bool CanOpenTrade() { return IsAlive() && !Battle; }
 		bool CanOpenSkills() { return IsAlive() && !Battle; }
 		bool CanOpenInventory() { return IsAlive() && !Battle; }
+		bool CanOpenParty() { return IsAlive() && !Battle; }
 		bool CanTeleport() { return IsAlive() && !Battle; }
 
 		// Path finding
@@ -314,6 +315,9 @@ class _Object : public _ManagerBase {
 		bool WaitingForTrade;
 		bool TradeAccepted;
 		_Object *TradePlayer;
+
+		// Party
+		std::string PartyName;
 
 		// Bots
 		std::list<void *> Path;

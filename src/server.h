@@ -122,12 +122,13 @@ class _Server {
 		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
 		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
 		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
+		void HandlePartyInfo(_Buffer &Data, _Peer *Peer);
 		void HandleActionUse(_Buffer &Data, _Peer *Peer);
 		void HandleActionBarChanged(_Buffer &Data, _Peer *Peer);
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 		void HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer);
-		void HandleHelp(_Buffer &Data, _Peer *Peer);
+		void HandleJoin(_Buffer &Data, _Peer *Peer);
 
 		void SendPlayerInfo(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
