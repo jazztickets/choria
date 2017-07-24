@@ -75,6 +75,7 @@ _Object::_Object() :
 	BaseBattleSpeed(100),
 	BaseEvasion(0),
 	BaseHitChance(100),
+	BaseDropRate(0),
 
 	UpdateTimer(0.0),
 	CalcLevelStats(true),
@@ -95,6 +96,7 @@ _Object::_Object() :
 	BattleSpeed(100),
 	Evasion(0),
 	HitChance(100),
+	DropRate(0),
 
 	PlayTime(0.0),
 	BattleTime(0.0),
@@ -1456,6 +1458,7 @@ void _Object::CalculateStats() {
 	Armor = BaseArmor;
 	DamageBlock = BaseDamageBlock;
 	MoveSpeed = BaseMoveSpeed;
+	DropRate = BaseDropRate;
 	Resistances.clear();
 
 	Invisible = 0;
@@ -1492,6 +1495,7 @@ void _Object::CalculateStats() {
 			ManaRegen += Item->GetManaRegen(Upgrades);
 			BattleSpeed += Item->GetBattleSpeed(Upgrades);
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
+			DropRate += Item->GetDropRate(Upgrades);
 
 			// Add resistances
 			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
@@ -1603,6 +1607,9 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::MOVESPEED))
 		MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
+
+	if(StatChange.HasStat(StatType::DROPRATE))
+		DropRate += StatChange.Values[StatType::DROPRATE].Integer;
 
 	if(StatChange.HasStat(StatType::INVISIBLE))
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;

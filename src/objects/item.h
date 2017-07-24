@@ -88,6 +88,7 @@ class _Item {
 		float GetBattleSpeed(int Upgrades) const;
 		float GetMoveSpeed(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
+		float GetDropRate(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 
 		_Stats *Stats;
@@ -99,7 +100,6 @@ class _Item {
 		ItemType Type;
 		int Level;
 		int MaxLevel;
-		int LevelRequired;
 		int Cost;
 		uint32_t DamageTypeID;
 		int MinDamage;
@@ -112,6 +112,7 @@ class _Item {
 		int ManaRegen;
 		int BattleSpeed;
 		int MoveSpeed;
+		int DropRate;
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;

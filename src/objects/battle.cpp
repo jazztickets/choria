@@ -611,9 +611,12 @@ void _Battle::ServerEndBattle() {
 
 		// Get list of fighters that get rewards
 		std::list<_Object *> RewardFighters;
+		int DropRate = 0;
 		for(auto &Fighter : SideFighters[WinningSide]) {
-			if(Fighter->IsAlive())
+			if(Fighter->IsAlive()) {
+				DropRate += Fighter->DropRate;
 				RewardFighters.push_back(Fighter);
+			}
 		}
 
 		// Check for reward recipients
@@ -626,7 +629,7 @@ void _Battle::ServerEndBattle() {
 			std::list<uint32_t> ItemDrops;
 			for(auto &Fighter : SideFighters[!WinningSide]) {
 				if(Fighter->DatabaseID)
-					Stats->GenerateItemDrops(Fighter->DatabaseID, 1, ItemDrops);
+					Stats->GenerateItemDrops(Fighter->DatabaseID, 1, DropRate, ItemDrops);
 			}
 
 			// Boss drops aren't divided up

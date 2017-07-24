@@ -204,6 +204,7 @@ class _Object : public _ManagerBase {
 		int BaseBattleSpeed;
 		int BaseEvasion;
 		int BaseHitChance;
+		int BaseDropRate;
 
 		// Stats
 		double UpdateTimer;
@@ -229,6 +230,7 @@ class _Object : public _ManagerBase {
 		int BattleSpeed;
 		int Evasion;
 		int HitChance;
+		int DropRate;
 		std::unordered_map<uint32_t, int> Resistances;
 
 		// Player stats

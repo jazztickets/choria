@@ -89,6 +89,7 @@ const  double       BATTLE_MAX_START_TURNTIMER      =  0.35;
 const  float        BATTLE_HEALTHBAR_WIDTH          =  90;
 const  float        BATTLE_HEALTHBAR_HEIGHT         =  22;
 const  int          BATTLE_MIN_SPEED                =  5;
+const  float        BATTLE_NOTHINGDROP_SCALE        =  0.1f;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;

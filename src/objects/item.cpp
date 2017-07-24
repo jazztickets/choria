@@ -333,6 +333,22 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
+	// Drop rate
+	int DrawDropRate = (int)GetDropRate(Upgrades);
+	if(DrawDropRate != 0) {
+		std::stringstream Buffer;
+		Buffer << (DrawDropRate < 0 ? "" : "+") << DrawDropRate;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetDropRate(Upgrades), CompareInventory.Item->GetDropRate(CompareInventory.Upgrades));
+
+		Assets.Fonts["hud_medium"]->DrawText("Drop Rate", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, Color, LEFT_BASELINE);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
 	if(StatDrawn)
 		DrawPosition.y += SpacingY;
 
@@ -728,6 +744,11 @@ float _Item::GetMoveSpeed(int Upgrades) const {
 // Get resistance
 float _Item::GetResistance(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::RESIST, Upgrades, Resistance);
+}
+
+// Get drop rate
+float _Item::GetDropRate(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::DROPRATE, Upgrades, DropRate);
 }
 
 // Get appropriate text color when comparing items

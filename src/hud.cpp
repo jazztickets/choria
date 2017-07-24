@@ -1635,6 +1635,13 @@ void _HUD::DrawCharacterStats() {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
+	// Drop rate
+	Buffer << Player->DropRate;
+	Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Buffer.str("");
+	DrawPosition.y += SpacingY;
+
 	// Separator
 	DrawPosition.y += SpacingY;
 
