@@ -45,8 +45,6 @@ class _Config {
 		glm::ivec2 WindowSize;
 		double MaxFPS;
 		int Vsync;
-		int MSAA;
-		int Anisotropy;
 		int Fullscreen;
 
 		// Audio

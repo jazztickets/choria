@@ -60,8 +60,6 @@ void _Config::SetDefaults() {
 	// Set defaults
 	Version = DEFAULT_CONFIG_VERSION;
 	WindowSize = DEFAULT_WINDOW_SIZE;
-	MSAA = 0;
-	Anisotropy = DEFAULT_ANISOTROPY;
 	Fullscreen = DEFAULT_FULLSCREEN;
 	Vsync = DEFAULT_VSYNC;
 	MaxFPS = DEFAULT_MAXFPS;
@@ -183,8 +181,6 @@ void _Config::Load() {
 	GetValue("fullscreen", Fullscreen);
 	GetValue("vsync", Vsync);
 	GetValue("max_fps", MaxFPS);
-	GetValue("anisotropy", Anisotropy);
-	GetValue("msaa", MSAA);
 	GetValue("audio_enabled", AudioEnabled);
 	GetValue("sound_volume", SoundVolume);
 	GetValue("music_volume", MusicVolume);
@@ -239,8 +235,6 @@ void _Config::Save() {
 	File << "fullscreen=" << Fullscreen << std::endl;
 	File << "vsync=" << Vsync << std::endl;
 	File << "max_fps=" << MaxFPS << std::endl;
-	File << "msaa=" << MSAA << std::endl;
-	File << "anisotropy=" << Anisotropy << std::endl;
 	File << "audio_enabled=" << AudioEnabled << std::endl;
 	File << "sound_volume=" << SoundVolume << std::endl;
 	File << "music_volume=" << MusicVolume << std::endl;
