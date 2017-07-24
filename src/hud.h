@@ -252,6 +252,7 @@ class _HUD {
 		_Label *GoldElement;
 		_Label *MessageLabel;
 		_Label *BlacksmithCost;
+		_Label *RespawnInstructions;
 		_Cursor Cursor;
 		_Cursor Tooltip;
 

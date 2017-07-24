@@ -77,7 +77,7 @@ class _Menu {
 		void InitNewCharacter();
 		void InitConnect(bool UseConfig, bool ConnectNow=false);
 		void InitAccount();
-		void InitInGame();
+		void InitInGame(bool ShowRespawn=false);
 		void InitPlay();
 		void InitOptions();
 		void Close();

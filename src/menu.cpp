@@ -138,8 +138,10 @@ void _Menu::InitNewCharacter() {
 }
 
 // In-game menu
-void _Menu::InitInGame() {
+void _Menu::InitInGame(bool ShowRespawn) {
 	ChangeLayout("element_menu_ingame");
+	if(!ShowRespawn)
+		Assets.Buttons["button_ingame_respawn"]->SetVisible(false);
 
 	PlayState.SendStatus(_Object::STATUS_PAUSE);
 	State = STATE_INGAME;
@@ -981,7 +983,14 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				}
 			} break;
 			case STATE_INGAME: {
-				if(Clicked->Identifier == "button_ingame_resume") {
+				if(Clicked->Identifier == "button_ingame_respawn") {
+					_Buffer Packet;
+					Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
+					PlayState.Network->SendPacket(Packet);
+					InitPlay();
+					PlayClickSound();
+				}
+				else if(Clicked->Identifier == "button_ingame_resume") {
 					InitPlay();
 					PlayClickSound();
 				}

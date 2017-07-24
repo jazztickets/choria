@@ -202,13 +202,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	// Respawn
 	if(!Player->IsAlive()) {
 		if(Action == _Actions::BACK || Action == _Actions::MENU) {
-			HUD->ToggleInGameMenu(Action == _Actions::MENU);
-			return true;
-		}
-		else {
-			_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
-			Network->SendPacket(Packet);
+			HUD->ToggleInGameMenu(true);
 			return true;
 		}
 	}

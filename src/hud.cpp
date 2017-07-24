@@ -98,6 +98,7 @@ _HUD::_HUD() {
 	MessageElement = Assets.Elements["element_hud_message"];
 	MessageLabel = Assets.Labels["label_hud_message"];
 	BlacksmithCost = Assets.Labels["label_blacksmith_cost"];
+	RespawnInstructions = Assets.Labels["label_died_respawn"];
 
 	GoldElement->Size.x = ButtonBarElement->Size.x;
 	GoldElement->CalculateBounds();
@@ -552,13 +553,13 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	if(!Player)
 		return;
 
+	std::stringstream Buffer;
+
 	// Draw chat messages
 	DrawChat(Time, IsChatting());
 
 	// Show network stats
 	if(ShowStats) {
-		std::stringstream Buffer;
-
 		Buffer << Graphics.FramesPerSecond << " FPS";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
 		Buffer.str("");
@@ -581,8 +582,6 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 	// Draw hud elements while alive or in battle
 	if(Player->IsAlive() || Player->Battle) {
-		std::stringstream Buffer;
-
 		DiedElement->SetVisible(false);
 		Assets.Elements["element_hud"]->Render();
 		DrawActionBar();
@@ -682,6 +681,11 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	else {
 		if(!DiedElement->Visible)
 			CloseWindows(false);
+
+		// Show respawn instructions
+		Buffer << "Hit " << Actions.GetInputNameForAction(_Actions::BACK) << " to respawn";
+		RespawnInstructions->Text = Buffer.str();
+		Buffer.str("");
 
 		DiedElement->Size = Graphics.CurrentSize;
 		DiedElement->CalculateBounds();
@@ -850,7 +854,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 	if(PlayState.IsTesting && !Force)
 		PlayState.Network->Disconnect();
 	else {
-		Menu.InitInGame();
+		Menu.InitInGame(!Player->IsAlive());
 	}
 }
 
