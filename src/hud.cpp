@@ -683,7 +683,12 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			CloseWindows(false);
 
 		// Show respawn instructions
-		Buffer << "Hit " << Actions.GetInputNameForAction(_Actions::BACK) << " to respawn";
+		Buffer << "Hit " << Actions.GetInputNameForAction(_Actions::BACK);
+		if(Player->Hardcore)
+			Buffer << " to exit";
+		else
+			Buffer << " to respawn";
+
 		RespawnInstructions->Text = Buffer.str();
 		Buffer.str("");
 
@@ -854,7 +859,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 	if(PlayState.IsTesting && !Force)
 		PlayState.Network->Disconnect();
 	else {
-		Menu.InitInGame(!Player->IsAlive());
+		Menu.InitInGame(!Player->IsAlive() && !Player->Hardcore);
 	}
 }
 
