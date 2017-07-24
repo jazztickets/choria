@@ -28,7 +28,7 @@ if [ -z "$scale" ]; then
 fi
 
 # calculate density
-density=$((90 * $scale))
+density=$((96 * $scale))
 
 # get size of each image
 size=`identify -format "%[fx:w/10]" "$file"`

@@ -70,6 +70,7 @@ _HUD::_HUD() {
 	Assets.Labels["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(_Actions::INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(_Actions::TRADE).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(_Actions::SKILLS).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_party"]->Text = Actions.GetInputNameForAction(_Actions::PARTY).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(_Actions::BACK).substr(0, HUD_KEYNAME_LENGTH);
 
 	DiedElement = Assets.Elements["element_died"];

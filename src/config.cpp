@@ -110,10 +110,11 @@ void _Config::LoadDefaultInputBindings() {
 	// Misc
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, _Actions::BACK, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F1, _Actions::MENU, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_C, _Actions::INVENTORY, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_R, _Actions::SKILLS, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_T, _Actions::TRADE, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_G, _Actions::JOIN, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_C, _Actions::INVENTORY, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_T, _Actions::TRADE, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_R, _Actions::SKILLS, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_P, _Actions::PARTY, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, _Actions::CHAT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_ENTER, _Actions::CHAT, 1.0f, -1.0f, false);
 
