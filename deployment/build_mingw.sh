@@ -41,12 +41,17 @@ build() {
 
 	gitver=`git rev-list --all --count`
 	mv bin/Release/choria.exe working/
+	cp README working/
+	echo "choria.exe -server" > working/server.bat
+	chmod +x working/server.bat
 
 	archive=choria-${version}r${gitver}-win${bits}.zip
 	zip -r $archive working
 
 	rm working/choria.exe
 	rm working/*.dll
+	rm working/README
+	rm working/server.bat
 
 	if [ -n "$upload_server" ]; then
 		scp $archive $upload_server:web/files/
