@@ -158,6 +158,10 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 			if(Item->Type == ItemType::RING)
 				return true;
 		break;
+		case EquipmentType::AMULET:
+			if(Item->Type == ItemType::AMULET)
+				return true;
+		break;
 		default:
 		break;
 	}

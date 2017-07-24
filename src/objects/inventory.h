@@ -42,6 +42,7 @@ enum EquipmentType : size_t {
 	HAND2,
 	RING1,
 	RING2,
+	AMULET,
 	COUNT,
 };
 

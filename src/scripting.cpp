@@ -130,6 +130,8 @@ void _Scripting::InjectStats(_Stats *Stats) {
 	lua_setglobal(LuaState, "INVENTORY_RING1");
 	lua_pushinteger(LuaState, EquipmentType::RING2);
 	lua_setglobal(LuaState, "INVENTORY_RING2");
+	lua_pushinteger(LuaState, EquipmentType::AMULET);
+	lua_setglobal(LuaState, "INVENTORY_AMULET");
 
 	// Push item types
 	lua_pushinteger(LuaState, (int)ItemType::SKILL);

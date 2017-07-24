@@ -511,6 +511,9 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 		case ItemType::RING:
 			Slot.Index = EquipmentType::RING1;
 		break;
+		case ItemType::AMULET:
+			Slot.Index = EquipmentType::AMULET;
+		break;
 		default:
 			Slot.BagType = _Bag::BagType::NONE;
 		break;
