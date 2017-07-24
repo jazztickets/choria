@@ -36,8 +36,8 @@ button_equipment_bag_1	element_equipment	style_hud_slot_alpha			61	67	48	48	0	0	
 button_equipment_bag_2	element_equipment	style_hud_slot_alpha			64	234	48	48	0	0	2
 button_equipment_bag_3	element_equipment	style_hud_slot_alpha			12	125	48	48	0	0	3
 button_equipment_bag_4	element_equipment	style_hud_slot_alpha			111	125	48	48	0	0	4
-button_equipment_bag_5	element_equipment	style_hud_slot_alpha			12	176	48	48	0	0	5
-button_equipment_bag_6	element_equipment	style_hud_slot_alpha			111	176	48	48	0	0	6
+button_equipment_bag_5	element_equipment	style_hud_slot_alpha_ring			12	176	48	48	0	0	5
+button_equipment_bag_6	element_equipment	style_hud_slot_alpha_ring			111	176	48	48	0	0	6
 button_inventory_bag_0	element_inventory	style_hud_slot			0	0	48	48	0	0	0
 button_inventory_bag_1	element_inventory	style_hud_slot			48	0	48	48	0	0	1
 button_inventory_bag_2	element_inventory	style_hud_slot			96	0	48	48	0	0	2
