@@ -82,7 +82,7 @@ class _Menu {
 		void InitOptions();
 		void Close();
 
-		void HandleAction(int InputType, int Action, int Value);
+		void HandleAction(int InputType, size_t Action, int Value);
 		void HandleKey(const _KeyEvent &KeyEvent);
 		void HandleMouseButton(const _MouseEvent &MouseEvent);
 

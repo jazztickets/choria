@@ -833,7 +833,7 @@ int _Battle::GetPeerCount() {
 }
 
 // Handle player input
-bool _Battle::ClientHandleInput(int Action) {
+bool _Battle::ClientHandleInput(size_t Action) {
 
 	switch(Action) {
 		case _Actions::SKILL1:

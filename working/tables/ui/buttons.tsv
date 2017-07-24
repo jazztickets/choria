@@ -16,13 +16,12 @@ button_account_create	element_menu_account	style_menu_button	style_menu_button_d
 button_account_back	element_menu_account	style_menu_button	style_menu_button_disabled	style_menu_button_hover	150	230	128	48	1	1	0
 button_options_fullscreen	element_menu_options_middle	style_menu_button	style_menu_button_disabled	style_menu_button_hover	15	50	32	32	0	1	0
 button_options_back	element_menu_options	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	230	128	48	1	1	0
-button_buttonbar_teleport	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	0	0	32	32	0	0	0
-button_buttonbar_help	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	32	0	32	32	0	0	0
-button_buttonbar_inventory	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	64	0	32	32	0	0	0
-button_buttonbar_trade	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	96	0	32	32	0	0	0
-button_buttonbar_skills	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	128	0	32	32	0	0	0
-button_buttonbar_menu	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	160	0	32	32	0	0	0
-button_buttonbar_fullscreen	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	192	0	32	32	0	0	0
+button_buttonbar_join	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	0	0	32	32	0	0	0
+button_buttonbar_inventory	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	32	0	32	32	0	0	0
+button_buttonbar_trade	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	64	0	32	32	0	0	0
+button_buttonbar_skills	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	96	0	32	32	0	0	0
+button_buttonbar_menu	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	128	0	32	32	0	0	0
+button_buttonbar_fullscreen	element_buttonbar	style_buttonbar_slot		style_menu_portrait_hover	160	0	32	32	0	0	0
 button_actionbar_0	element_actionbar	style_hud_slot		style_menu_portrait_hover	0	0	48	48	0	0	0
 button_actionbar_1	element_actionbar	style_hud_slot		style_menu_portrait_hover	48	0	48	48	0	0	1
 button_actionbar_2	element_actionbar	style_hud_slot		style_menu_portrait_hover	96	0	48	48	0	0	2

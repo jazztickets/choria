@@ -32,7 +32,7 @@ class _State {
 		virtual ~_State() { }
 
 		// Input
-		virtual bool HandleAction(int InputType, int Action, int Value) { return false; }
+		virtual bool HandleAction(int InputType, size_t Action, int Value) { return false; }
 		virtual void HandleKey(const _KeyEvent &KeyEvent) { }
 		virtual void HandleMouseButton(const _MouseEvent &MouseEvent) { }
 		virtual void HandleMouseMove(const glm::ivec2 &Position) { }

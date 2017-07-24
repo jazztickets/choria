@@ -66,12 +66,11 @@ _HUD::_HUD() {
 	ChatTextBox = Assets.TextBoxes["textbox_chat"];
 	ChatTextBox->ParentOffset = glm::vec2(5, 15);
 
-	Assets.Labels["label_buttonbar_help"]->Text = Actions.GetInputNameForAction(_Actions::HELP).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_teleport"]->Text = Actions.GetInputNameForAction(_Actions::TELEPORT).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_join"]->Text = Actions.GetInputNameForAction(_Actions::JOIN).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(_Actions::INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(_Actions::TRADE).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Labels["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(_Actions::SKILLS).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(_Actions::MENU).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(_Actions::BACK).substr(0, HUD_KEYNAME_LENGTH);
 
 	DiedElement = Assets.Elements["element_died"];
 	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
@@ -123,7 +122,6 @@ _HUD::_HUD() {
 	BlacksmithCost->SetVisible(false);
 	RecentItemsElement->SetVisible(false);
 
-	Assets.Buttons["button_buttonbar_teleport"]->SetVisible(false);
 	Assets.Elements["element_hud"]->SetVisible(true);
 }
 
@@ -249,7 +247,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				ToggleSkills();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_menu") {
-				ToggleInGameMenu();
+				ToggleInGameMenu(true);
 			}
 			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_buttonbar_fullscreen") {
 				Menu.SetFullscreen(!Config.Fullscreen);
@@ -817,7 +815,7 @@ void _HUD::ToggleSkills() {
 }
 
 // Open/close menu
-void _HUD::ToggleInGameMenu() {
+void _HUD::ToggleInGameMenu(bool Force) {
 	if(Player->WaitForServer)
 		return;
 
@@ -825,7 +823,7 @@ void _HUD::ToggleInGameMenu() {
 	if(CloseWindows(true))
 		return;
 
-	if(PlayState.IsTesting)
+	if(PlayState.IsTesting && !Force)
 		PlayState.Network->Disconnect();
 	else {
 		Menu.InitInGame();

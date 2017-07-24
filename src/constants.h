@@ -22,7 +22,7 @@
 #include <glm/vec4.hpp>
 
 //     Config
-const  int          DEFAULT_CONFIG_VERSION          =  3;
+const  int          DEFAULT_CONFIG_VERSION          =  4;
 const  int          DEFAULT_SAVE_VERSION            =  2;
 const  glm::ivec2   DEFAULT_WINDOW_SIZE             =  glm::ivec2(1024,768);
 const  int          DEFAULT_FULLSCREEN              =  0;
@@ -30,7 +30,7 @@ const  int          DEFAULT_AUDIOENABLED            =  1;
 const  int          DEFAULT_VSYNC                   =  1;
 const  int          DEFAULT_ANISOTROPY              =  0;
 const  double       DEFAULT_MAXFPS                  =  180.0;
-const  size_t       DEFAULT_MAXCLIENTS              =  100;
+const  size_t       DEFAULT_MAXCLIENTS              =  500;
 const  double       DEFAULT_NETWORKRATE             =  1.0/20.0;
 const  uint16_t     DEFAULT_NETWORKPORT             =  31234;
 const  uint16_t     DEFAULT_NETWORKPORT_ALT         =  31235;
@@ -95,7 +95,7 @@ const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
 const  int          PLAYER_MIN_MOVESPEED            =  10;
 const  double       PLAYER_ATTACKTIME               =  1.0;
-const  int          PLAYER_NAME_SIZE                =  10;
+const  int          PLAYER_NAME_SIZE                =  12;
 const  float        PLAYER_INVIS_ALPHA              =  0.27f;
 const  int          PLAYER_MAX_GOLD                 =  1000000000;
 const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;

@@ -108,12 +108,12 @@ void _Config::LoadDefaultInputBindings() {
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F, _Actions::RIGHT, 1.0f, -1.0f, false);
 
 	// Misc
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, _Actions::MENU, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, _Actions::BACK, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F1, _Actions::MENU, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_C, _Actions::INVENTORY, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_R, _Actions::SKILLS, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_Q, _Actions::TELEPORT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_T, _Actions::TRADE, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_G, _Actions::HELP, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_G, _Actions::JOIN, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, _Actions::CHAT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_ENTER, _Actions::CHAT, 1.0f, -1.0f, false);
 
@@ -135,7 +135,6 @@ void _Config::LoadDefaultInputBindings() {
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_6, _Actions::SKILL6, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_7, _Actions::SKILL7, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_8, _Actions::SKILL8, 1.0f, -1.0f, false);
-
 }
 
 // Load the config file
@@ -206,9 +205,9 @@ void _Config::Load() {
 		Actions.ClearMappings(i);
 
 	// Load bindings
-	for(int i = 0; i < _Actions::COUNT; i++) {
+	for(size_t i = 0; i < _Actions::COUNT; i++) {
 		std::ostringstream Buffer;
-		Buffer << "action_" << i;
+		Buffer << "action_" << Actions.GetName(i);
 
 		// Get list of inputs for each action
 		const auto &Values = Map[Buffer.str()];

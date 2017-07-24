@@ -25,19 +25,41 @@ _Actions Actions;
 
 // Constructor
 _Actions::_Actions() {
+
+	// Reset state
+	State.resize(COUNT);
+	Names.resize(COUNT);
 	ResetState();
+
+	// Set names for actions
+	Names[UP] = "up";
+	Names[DOWN] = "down";
+	Names[LEFT] = "left";
+	Names[RIGHT] = "right";
+	Names[BACK] = "back";
+	Names[MENU] = "menu";
+	Names[JOIN] = "join";
+	Names[INVENTORY] = "inventory";
+	Names[SKILLS] = "skills";
+	Names[TRADE] = "trade";
+	Names[PARTY] = "party";
+	Names[CHAT] = "chat";
+	Names[SKILL1] = "skill1";
+	Names[SKILL2] = "skill2";
+	Names[SKILL3] = "skill3";
+	Names[SKILL4] = "skill4";
+	Names[SKILL5] = "skill5";
+	Names[SKILL6] = "skill6";
+	Names[SKILL7] = "skill7";
+	Names[SKILL8] = "skill8";
 }
 
-// Reset the state
+// Reset the action state
 void _Actions::ResetState() {
-	for(int i = 0; i < COUNT; i++) {
+	for(size_t i = 0; i < COUNT; i++) {
 		State[i].Value = 0.0f;
 		State[i].Source = -1;
 	}
-}
-
-// Load action names from database;
-void _Actions::LoadActionNames() {
 }
 
 // Clear all mappings
@@ -47,7 +69,7 @@ void _Actions::ClearMappings(int InputType) {
 }
 
 // Remove a mapping for an action
-void _Actions::ClearMappingsForAction(int InputType, int Action) {
+void _Actions::ClearMappingsForAction(int InputType, size_t Action) {
 	for(int i = 0; i < ACTIONS_MAXINPUTS; i++) {
 		for(auto MapIterator = InputMap[InputType][i].begin(); MapIterator != InputMap[InputType][i].end(); ) {
 			if(MapIterator->Action == Action) {
@@ -60,7 +82,7 @@ void _Actions::ClearMappingsForAction(int InputType, int Action) {
 }
 
 // Remove all input mappings for an action
-void _Actions::ClearAllMappingsForAction(int Action) {
+void _Actions::ClearAllMappingsForAction(size_t Action) {
 	for(int i = 0; i < _Input::INPUT_COUNT; i++) {
 		ClearMappingsForAction(i, Action);
 	}
@@ -70,31 +92,30 @@ void _Actions::ClearAllMappingsForAction(int Action) {
 void _Actions::Serialize(std::ofstream &File, int InputType) {
 	for(int i = 0; i < ACTIONS_MAXINPUTS; i++) {
 		for(auto &Iterator : InputMap[InputType][i]) {
-			File << "action_" << Iterator.Action << "=" << InputType << "_" << i << std::endl;
+			File << "action_" << Names[Iterator.Action] << "=" << InputType << "_" << i << std::endl;
 		}
 	}
 }
 
 // Get action
-float _Actions::GetState(int Action) {
-	if(Action < 0 || Action >= COUNT)
+float _Actions::GetState(size_t Action) {
+	if(Action >= COUNT)
 		return 0.0f;
 
 	return State[Action].Value;
 }
 
 // Add an input mapping
-void _Actions::AddInputMap(int InputType, int Input, int Action, float Scale, float DeadZone, bool IfNone) {
-	if(Action < 0 || Action >= COUNT || Input < 0 || Input >= ACTIONS_MAXINPUTS)
+void _Actions::AddInputMap(int InputType, int Input, size_t Action, float Scale, float DeadZone, bool IfNone) {
+	if(Action >= COUNT || Input < 0 || Input >= ACTIONS_MAXINPUTS)
 		return;
 
-	if(!IfNone || (IfNone && GetInputForAction(InputType, Action) == -1)) {
+	if(!IfNone || (IfNone && GetInputForAction(InputType, Action) == -1))
 		InputMap[InputType][Input].push_back(_ActionMap(Action, Scale, DeadZone));
-	}
 }
 
 // Returns the first input for an action
-int _Actions::GetInputForAction(int InputType, int Action) {
+int _Actions::GetInputForAction(int InputType, size_t Action) {
 	for(int i = 0; i < ACTIONS_MAXINPUTS; i++) {
 		for(auto &MapIterator : InputMap[InputType][i]) {
 			if(MapIterator.Action == Action) {
@@ -107,7 +128,7 @@ int _Actions::GetInputForAction(int InputType, int Action) {
 }
 
 // Get name of input key/button for a given action
-std::string _Actions::GetInputNameForAction(int Action) {
+std::string _Actions::GetInputNameForAction(size_t Action) {
 
 	for(int i = 0; i < _Input::INPUT_COUNT; i++) {
 		int Input = GetInputForAction(i, Action);
@@ -116,10 +137,8 @@ std::string _Actions::GetInputNameForAction(int Action) {
 			switch(i) {
 				case _Input::KEYBOARD:
 					return _Input::GetKeyName(Input);
-				//break;
 				case _Input::MOUSE_BUTTON:
 					return _Input::GetMouseButtonName((uint32_t)Input);
-				//break;
 			}
 		}
 	}

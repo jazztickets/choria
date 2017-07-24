@@ -81,7 +81,7 @@ class _Battle : public _ManagerBase {
 		void ServerEndBattle();
 
 		// Input
-		bool ClientHandleInput(int Action);
+		bool ClientHandleInput(size_t Action);
 		void ClientHandlePlayerAction(_Buffer &Data);
 		void ClientSetAction(uint8_t ActionBarSlot);
 		void ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget);

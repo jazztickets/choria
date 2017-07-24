@@ -56,7 +56,7 @@ class _PlayState : public _State {
 		void SendHelpRequest();
 
 		// Input
-		bool HandleAction(int InputType, int Action, int Value) override;
+		bool HandleAction(int InputType, size_t Action, int Value) override;
 		void HandleKey(const _KeyEvent &KeyEvent) override;
 		void HandleMouseButton(const _MouseEvent &MouseEvent) override;
 		void HandleMouseMove(const glm::ivec2 &Position) override;

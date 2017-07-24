@@ -723,14 +723,14 @@ void _Menu::Close() {
 }
 
 // Handle actions
-void _Menu::HandleAction(int InputType, int Action, int Value) {
+void _Menu::HandleAction(int InputType, size_t Action, int Value) {
 	if(State == STATE_NONE)
 		return;
 
 	switch(State) {
 		case STATE_INGAME:
 			switch(Action) {
-				case _Actions::MENU:
+				case _Actions::BACK:
 					Menu.InitPlay();
 				break;
 			}

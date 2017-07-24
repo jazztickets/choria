@@ -162,7 +162,7 @@ void _PlayState::StartLocalServer() {
 }
 
 // Action handler
-bool _PlayState::HandleAction(int InputType, int Action, int Value) {
+bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	if(Value == 0)
 		return true;
 
@@ -184,7 +184,7 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 
 	// Grab all actions except escape
 	if(HUD->IsChatting()) {
-		if(Action == _Actions::MENU)
+		if(Action == _Actions::BACK)
 			HUD->CloseChat();
 
 		return true;
@@ -192,8 +192,8 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 
 	// Respawn
 	if(!Player->IsAlive()) {
-		if(Action == _Actions::MENU) {
-			HUD->ToggleInGameMenu();
+		if(Action == _Actions::BACK || Action == _Actions::MENU) {
+			HUD->ToggleInGameMenu(Action == _Actions::MENU);
 			return true;
 		}
 		else {
@@ -207,8 +207,9 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 	// Battle
 	if(Battle) {
 		switch(Action) {
+			case _Actions::BACK:
 			case _Actions::MENU:
-				HUD->ToggleInGameMenu();
+				HUD->ToggleInGameMenu(Action == _Actions::MENU);
 			break;
 			case _Actions::INVENTORY:
 				HUD->ToggleCharacterStats();
@@ -222,7 +223,7 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 
 		// Currently typing
 		if(FocusedElement != nullptr) {
-			if(Action == _Actions::MENU)
+			if(Action == _Actions::BACK)
 				FocusedElement = nullptr;
 		}
 		else {
@@ -239,14 +240,12 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::SKILL8:
 					SendActionUse((uint8_t)(Action - _Actions::SKILL1));
 				break;
+				case _Actions::BACK:
 				case _Actions::MENU:
-					HUD->ToggleInGameMenu();
+					HUD->ToggleInGameMenu(Action == _Actions::MENU);
 				break;
 				case _Actions::INVENTORY:
 					HUD->ToggleInventory();
-				break;
-				case _Actions::TELEPORT:
-					//HUD->ToggleTeleport();
 				break;
 				case _Actions::TRADE:
 					HUD->ToggleTrade();
@@ -254,7 +253,7 @@ bool _PlayState::HandleAction(int InputType, int Action, int Value) {
 				case _Actions::SKILLS:
 					HUD->ToggleSkills();
 				break;
-				case _Actions::HELP:
+				case _Actions::JOIN:
 					SendHelpRequest();
 				break;
 				case _Actions::UP:

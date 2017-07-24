@@ -136,7 +136,7 @@ class _HUD {
 		void ToggleInventory();
 		void ToggleTrade();
 		void ToggleSkills();
-		void ToggleInGameMenu();
+		void ToggleInGameMenu(bool Force);
 		void ToggleCharacterStats();
 
 		// Windows

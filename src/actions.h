@@ -21,15 +21,16 @@
 #include <input.h>
 #include <list>
 #include <string>
+#include <vector>
 #include <SDL_scancode.h>
 
 // Constants
 const int ACTIONS_MAXINPUTS = SDL_NUM_SCANCODES;
 
 struct _ActionMap {
-	_ActionMap(int Action, float Scale, float DeadZone) : Action(Action), DeadZone(DeadZone), Scale(Scale) { }
+	_ActionMap(size_t Action, float Scale, float DeadZone) : Action(Action), DeadZone(DeadZone), Scale(Scale) { }
 
-	int Action;
+	size_t Action;
 	float DeadZone;
 	float Scale;
 };
@@ -44,18 +45,18 @@ class _Actions {
 
 	public:
 
-		enum Types {
+		enum Types : size_t {
 			UP,
 			DOWN,
 			LEFT,
 			RIGHT,
+			BACK,
+			MENU,
+			JOIN,
 			INVENTORY,
 			SKILLS,
-			TELEPORT,
-			HELP,
-			MENU,
-			UNUSED,
 			TRADE,
+			PARTY,
 			CHAT,
 			SKILL1,
 			SKILL2,
@@ -71,20 +72,19 @@ class _Actions {
 		_Actions();
 
 		void ResetState();
-		void LoadActionNames();
 		void ClearMappings(int InputType);
-		void ClearMappingsForAction(int InputType, int Action);
-		void ClearAllMappingsForAction(int Action);
+		void ClearMappingsForAction(int InputType, size_t Action);
+		void ClearAllMappingsForAction(size_t Action);
 		void Serialize(std::ofstream &File, int InputType);
 
 		// Actions
-		float GetState(int Action);
-		const std::string &GetName(int Action) { return Names[Action]; }
+		float GetState(size_t Action);
+		const std::string &GetName(size_t Action) { return Names[Action]; }
 
 		// Maps
-		void AddInputMap(int InputType, int Input, int Action, float Scale=1.0f, float DeadZone=-1.0f, bool IfNone=true);
-		int GetInputForAction(int InputType, int Action);
-		std::string GetInputNameForAction(int Action);
+		void AddInputMap(int InputType, int Input, size_t Action, float Scale=1.0f, float DeadZone=-1.0f, bool IfNone=true);
+		int GetInputForAction(int InputType, size_t Action);
+		std::string GetInputNameForAction(size_t Action);
 
 		// Handlers
 		void InputEvent(int InputType, int Input, float Value);
@@ -95,10 +95,10 @@ class _Actions {
 		std::list<_ActionMap> InputMap[_Input::INPUT_COUNT][ACTIONS_MAXINPUTS];
 
 		// State of each action
-		_ActionState State[COUNT];
+		std::vector<_ActionState> State;
 
-		// Nice names for each action
-		std::string Names[COUNT];
+		// Names for each action
+		std::vector<std::string> Names;
 };
 
 extern _Actions Actions;
