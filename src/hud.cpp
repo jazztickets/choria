@@ -583,6 +583,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	if(Player->IsAlive() || Player->Battle) {
 		std::stringstream Buffer;
 
+		DiedElement->SetVisible(false);
 		Assets.Elements["element_hud"]->Render();
 		DrawActionBar();
 
@@ -687,7 +688,6 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DiedElement->SetVisible(true);
 		DiedElement->Render();
 	}
-
 }
 
 // Starts the chat box
