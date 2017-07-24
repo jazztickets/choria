@@ -118,7 +118,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	else {
 
 		// Open log
-		PlayState.Log.Open((Config.ConfigPath + "client.log").c_str());
+		//PlayState.Log.Open((Config.ConfigPath + "client.log").c_str());
 
 		// Initialize SDL
 		if(SDL_Init(SDL_INIT_VIDEO) < 0)

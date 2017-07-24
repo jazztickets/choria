@@ -77,7 +77,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
 
-	Log.Open((Config.ConfigPath + "server.log").c_str());
+	//Log.Open((Config.ConfigPath + "server.log").c_str());
 
 	if(!Network->HasConnection())
 		throw std::runtime_error("Unable to bind address!");
@@ -227,7 +227,7 @@ void _Server::HandleConnect(_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
-	Log << "Connect: " << Buffer << ":" << Address->port << std::endl;
+	//Log << "Connect: " << Buffer << ":" << Address->port << std::endl;
 
 	// Send game version
 	_Buffer Packet;
@@ -241,7 +241,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
-	Log << "Disconnect: " << Buffer << ":" << Address->port << std::endl;
+	//Log << "Disconnect: " << Buffer << ":" << Address->port << std::endl;
 
 	// Get object
 	_Object *Player = Event.Peer->Object;
@@ -501,7 +501,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	// Check for valid character id
 	Peer->CharacterID = Save->GetCharacterID(Peer->AccountID, Slot);
 	if(!Peer->CharacterID) {
-		Log << "Character slot " << Slot << " empty!" << std::endl;
+		//Log << "Character slot " << Slot << " empty!" << std::endl;
 		return;
 	}
 
