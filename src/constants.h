@@ -47,7 +47,7 @@ const  float        CAMERA_FAR                      =  100.0f;
 //     Account
 const  size_t       ACCOUNT_MAX_USERNAME_SIZE       =  20;
 const  size_t       ACCOUNT_MAX_PASSWORD_SIZE       =  20;
-const  int          ACCOUNT_MAX_CHARACTER_SLOTS     =  8;
+const  int          ACCOUNT_MAX_CHARACTER_SLOTS     =  10;
 //     Map
 const  int          MAP_VERSION                     =  1;
 const  int          MAP_TILE_WIDTH                  =  64;
