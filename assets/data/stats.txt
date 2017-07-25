@@ -717,6 +717,7 @@ INSERT INTO trader VALUES(13,'poison_knives',192,5);
 INSERT INTO trader VALUES(14,'poison_ring',181,1);
 INSERT INTO trader VALUES(15,'actionslot_ii',97,1);
 INSERT INTO trader VALUES(16,'fireblast',9,1);
+INSERT INTO trader VALUES(17,'lucky_amulet',217,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -757,6 +758,14 @@ INSERT INTO traderitem VALUES(40,10,5,1);
 INSERT INTO traderitem VALUES(41,10,127,2);
 INSERT INTO traderitem VALUES(42,16,215,10);
 INSERT INTO traderitem VALUES(43,16,23,1);
+INSERT INTO traderitem VALUES(44,17,114,2);
+INSERT INTO traderitem VALUES(45,17,125,2);
+INSERT INTO traderitem VALUES(46,17,215,2);
+INSERT INTO traderitem VALUES(47,17,134,2);
+INSERT INTO traderitem VALUES(48,17,115,2);
+INSERT INTO traderitem VALUES(49,17,124,2);
+INSERT INTO traderitem VALUES(50,17,146,2);
+INSERT INTO traderitem VALUES(51,17,193,2);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,

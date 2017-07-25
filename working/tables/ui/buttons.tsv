@@ -31,9 +31,9 @@ button_actionbar_4	element_actionbar	style_hud_slot		style_menu_portrait_hover	1
 button_actionbar_5	element_actionbar	style_hud_slot		style_menu_portrait_hover	240	0	48	48	0	0	5
 button_actionbar_6	element_actionbar	style_hud_slot		style_menu_portrait_hover	288	0	48	48	0	0	6
 button_actionbar_7	element_actionbar	style_hud_slot		style_menu_portrait_hover	336	0	48	48	0	0	7
-button_equipment_bag_0	element_equipment	style_hud_slot_alpha			57	4	48	48	0	0	0
-button_equipment_bag_1	element_equipment	style_hud_slot_alpha			57	67	48	48	0	0	1
-button_equipment_bag_2	element_equipment	style_hud_slot_alpha			64	234	48	48	0	0	2
+button_equipment_bag_0	element_equipment	style_hud_slot_alpha			61	4	48	48	0	0	0
+button_equipment_bag_1	element_equipment	style_hud_slot_alpha			61	67	48	48	0	0	1
+button_equipment_bag_2	element_equipment	style_hud_slot_alpha			61	234	48	48	0	0	2
 button_equipment_bag_3	element_equipment	style_hud_slot_alpha			12	125	48	48	0	0	3
 button_equipment_bag_4	element_equipment	style_hud_slot_alpha			115	125	48	48	0	0	4
 button_equipment_bag_5	element_equipment	style_hud_slot_alpha_ring			12	176	48	48	0	0	5
