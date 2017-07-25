@@ -47,6 +47,7 @@ class _PlayState : public _State {
 		_PlayState();
 		void Init() override;
 		void Close() override;
+		void StopGame();
 
 		// Network
 		void Connect(bool IsLocal);

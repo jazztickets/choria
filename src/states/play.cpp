@@ -116,6 +116,14 @@ void _PlayState::Close() {
 	delete Network;
 }
 
+// Delete objects and return to menu
+void _PlayState::StopGame() {
+	ObjectManager->Clear();
+	AssignPlayer(nullptr);
+	DeleteBattle();
+	DeleteMap();
+}
+
 // Connect to a server
 void _PlayState::Connect(bool IsLocal) {
 	if(Network->GetConnectionState() != _ClientNetwork::State::DISCONNECTED)

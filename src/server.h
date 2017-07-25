@@ -129,6 +129,7 @@ class _Server {
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 		void HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer);
 		void HandleJoin(_Buffer &Data, _Peer *Peer);
+		void HandleExit(_Buffer &Data, _Peer *Peer);
 
 		void SendPlayerInfo(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);

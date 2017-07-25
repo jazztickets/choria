@@ -167,6 +167,21 @@ void _Menu::InitOptions() {
 	State = STATE_OPTIONS;
 }
 
+// Exit game and return to character select
+void _Menu::ExitGame() {
+
+	// Notify server
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_EXIT);
+	PlayState.Network->SendPacket(Packet);
+
+	// Shutdown game
+	PlayState.StopGame();
+
+	// Show character select
+	InitCharacters();
+}
+
 // Init connect screen
 void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 	PlayState.Network->Disconnect();
@@ -331,6 +346,7 @@ void _Menu::PlayCharacter(size_t Slot) {
 	CharactersState = CHARACTERS_PLAYSENT;
 
 	Audio.StopMusic();
+	PlayState.HUD->Reset();
 }
 
 // Send login info
@@ -994,8 +1010,8 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					InitPlay();
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_ingame_disconnect") {
-					PlayState.Network->Disconnect();
+				else if(Clicked->Identifier == "button_ingame_exit") {
+					ExitGame();
 					PlayClickSound();
 				}
 			} break;

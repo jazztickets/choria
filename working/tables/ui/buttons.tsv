@@ -126,7 +126,7 @@ button_blacksmith_bag	element_blacksmith	style_hud_slot			100	16	48	48	0	1	0
 button_blacksmith_upgrade	element_blacksmith	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	-25	90	32	1	2	1
 button_ingame_respawn	element_menu_ingame	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	-140	200	48	1	1	0
 button_ingame_resume	element_menu_ingame	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	-60	200	48	1	1	0
-button_ingame_disconnect	element_menu_ingame	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	20	200	48	1	1	0
+button_ingame_exit	element_menu_ingame	style_menu_button	style_menu_button_disabled	style_menu_button_hover	0	20	200	48	1	1	0
 button_editor_newmap_create	element_editor_newmap	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-75	-25	128	32	1	2	0
 button_editor_newmap_cancel	element_editor_newmap	style_menu_button	style_menu_button_disabled	style_menu_button_hover	75	-25	128	32	1	2	0
 button_editor_resizemap_resize	element_editor_resizemap	style_menu_button	style_menu_button_disabled	style_menu_button_hover	-75	-25	128	32	1	2	0

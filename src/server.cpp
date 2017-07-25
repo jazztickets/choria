@@ -238,52 +238,12 @@ void _Server::HandleConnect(_NetworkEvent &Event) {
 
 // Handle client disconnect
 void _Server::HandleDisconnect(_NetworkEvent &Event) {
-	char Buffer[16];
-	ENetAddress *Address = &Event.Peer->ENetPeer->address;
-	enet_address_get_host_ip(Address, Buffer, 16);
+	//char Buffer[16];
+	//ENetAddress *Address = &Event.Peer->ENetPeer->address;
+	//enet_address_get_host_ip(Address, Buffer, 16);
 	//Log << "Disconnect: " << Buffer << ":" << Address->port << std::endl;
-
-	// Get object
-	_Object *Player = Event.Peer->Object;
-	if(Player) {
-		Player->Peer = nullptr;
-
-		if(Player->Map) {
-
-			// Broadcast message
-			for(auto &ReceivePeer : Network->GetPeers()) {
-				if(ReceivePeer != Event.Peer)
-					SendMessage(ReceivePeer, Player->Name + " has left the server", COLOR_GRAY);
-			}
-
-			Player->LoadMapID = Player->GetMapID();
-		}
-
-		// Penalize player for leaving battle
-		if(Player->Battle) {
-			Player->ApplyDeathPenalty();
-			Player->Health = 0;
-			Player->Mana = Player->MaxMana / 2;
-			Player->LoadMapID = 0;
-		}
-
-		// Leave trading screen
-		_Object *TradePlayer = Player->TradePlayer;
-		if(TradePlayer) {
-			TradePlayer->TradePlayer = nullptr;
-
-			_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
-			Network->SendPacket(Packet, TradePlayer->Peer);
-		}
-
-		// Save player
-		Save->StartTransaction();
-		Save->SavePlayer(Player, Player->LoadMapID);
-		Save->EndTransaction();
-
-		Player->Deleted = true;
-	}
+	_Buffer Data;
+	HandleExit(Data, Event.Peer);
 
 	// Delete peer from network
 	Network->DeletePeer(Event.Peer);
@@ -317,6 +277,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case PacketType::WORLD_JOIN:
 			HandleJoin(Data, Peer);
+		break;
+		case PacketType::WORLD_EXIT:
+			HandleExit(Data, Peer);
 		break;
 		case PacketType::ACTION_USE:
 			HandleActionUse(Data, Peer);
@@ -1407,6 +1370,55 @@ void _Server::HandleJoin(_Buffer &Data, _Peer *Peer) {
 	Packet.Write<PacketType>(PacketType::BATTLE_START);
 	Battle->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
+}
+
+// Handle client exit command
+void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	// Get object
+	_Object *Player = Peer->Object;
+	if(Player) {
+		Player->Peer = nullptr;
+
+		if(Player->Map) {
+
+			// Broadcast message
+			for(auto &ReceivePeer : Network->GetPeers()) {
+				if(ReceivePeer != Peer)
+					SendMessage(ReceivePeer, Player->Name + " has left the server", COLOR_GRAY);
+			}
+
+			Player->LoadMapID = Player->GetMapID();
+		}
+
+		// Penalize player for leaving battle
+		if(Player->Battle) {
+			Player->ApplyDeathPenalty();
+			Player->Health = 0;
+			Player->Mana = Player->MaxMana / 2;
+			Player->LoadMapID = 0;
+		}
+
+		// Leave trading screen
+		_Object *TradePlayer = Player->TradePlayer;
+		if(TradePlayer) {
+			TradePlayer->TradePlayer = nullptr;
+
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
+			Network->SendPacket(Packet, TradePlayer->Peer);
+		}
+
+		// Save player
+		Save->StartTransaction();
+		Save->SavePlayer(Player, Player->LoadMapID);
+		Save->EndTransaction();
+
+		Player->Deleted = true;
+		Peer->Object = nullptr;
+	}
 }
 
 // Handle action use by player

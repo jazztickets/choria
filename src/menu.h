@@ -80,6 +80,7 @@ class _Menu {
 		void InitInGame(bool ShowRespawn=false);
 		void InitPlay();
 		void InitOptions();
+		void ExitGame();
 		void Close();
 
 		void HandleAction(int InputType, size_t Action, int Value);
