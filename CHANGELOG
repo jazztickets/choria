@@ -1,30 +1,29 @@
 choria 0.9.0 -
 - Replaced irrlicht with a custom SDL2/OpenGL based engine
-- Resolution can now be changed in the config file
 - Reworked entire UI and all artwork
+- Reworked all game content
+- Reworked skill system
+- Reworked battle system to use individual timers instead of turns
+- Action bar can now hold items
+- Battles can now support up to 8 fighters on each side
+- Bosses are event based now and have fighting cooldowns
 - Added sounds/music
-- Added Lua for scripting
-- Added starting builds to create character screen
-- Added alt-enter to toggle fullscreen/windowed mode
+- Added blacksmith to upgrade items
+- Added party system
+- Added starting builds for new characters
+- Added various map events: doors, portals, custom scripts
 - Added per-pixel lighting and smooth camera scrolling
 - Added server clock and day/night cycle
 - Added background maps
 - Added options menu
-- Reworked skill system and all skills
-- Reworked battle system to use individual timers instead of turns
-- Battles can now support up to 8 fighters on each side
 - Added hardcore mode
 - Added experimental bots
-- Removed battle results screen
 - Added animations to stat changes and action results
 - Added status effects
-- Added blacksmith to upgrade items
-- Added party system
-- Action bar can now hold items
-- Reworked all maps/monsters/items
-- Added various map events: doors, portals, custom scripts
-- Bosses are event based now and have fighting cooldowns
+- Added Lua for scripting
 - Added various commands to dedicated server
+- Added alt-enter to toggle fullscreen/windowed mode
+- Window size can now be changed in the config file
 - Switched to mingw for Windows builds
 - Reworked design tool to use python/ajax instead of apache/php
 
