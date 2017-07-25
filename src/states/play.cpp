@@ -118,6 +118,7 @@ void _PlayState::Close() {
 
 // Delete objects and return to menu
 void _PlayState::StopGame() {
+	Audio.Stop();
 	ObjectManager->Clear();
 	AssignPlayer(nullptr);
 	DeleteBattle();

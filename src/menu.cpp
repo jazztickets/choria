@@ -105,6 +105,8 @@ void _Menu::InitCharacters() {
 	if(HardcoreServer)
 		HardcoreLabel->SetVisible(true);
 
+	Audio.PlayMusic(Assets.Music["intro.ogg"]);
+
 	CharactersState = CHARACTERS_NONE;
 	State = STATE_CHARACTERS;
 }
