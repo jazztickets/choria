@@ -138,10 +138,13 @@ void _Menu::InitNewCharacter() {
 }
 
 // In-game menu
-void _Menu::InitInGame(bool ShowRespawn) {
+void _Menu::InitInGame(bool ShowExitWarning, bool ShowRespawn) {
 	ChangeLayout("element_menu_ingame");
 	if(!ShowRespawn)
 		Assets.Buttons["button_ingame_respawn"]->SetVisible(false);
+
+	if(!ShowExitWarning)
+		Assets.Labels["label_menu_ingame_exitwarning"]->SetVisible(false);
 
 	PlayState.SendStatus(_Object::STATUS_PAUSE);
 	State = STATE_INGAME;
@@ -749,6 +752,7 @@ void _Menu::HandleAction(int InputType, size_t Action, int Value) {
 		case STATE_INGAME:
 			switch(Action) {
 				case _Actions::BACK:
+				case _Actions::MENU:
 					Menu.InitPlay();
 				break;
 			}

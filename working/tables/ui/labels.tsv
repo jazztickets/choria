@@ -75,6 +75,7 @@ label_trade_name_yours	image_trade_portrait_yours	hud_small			0	-12	0	0	1	3
 label_trade_status_theirs	button_trade_accept_theirs	hud_small			0	17	0	0	1	3
 label_trade_status_yours	button_trade_accept_yours	hud_small		Accept	0	17	0	0	1	3
 label_party_title	element_party	menu_buttons		Enter Party Name	0	40	0	0	1	3
+label_menu_ingame_exitwarning	element_menu_ingame	menu_buttons	red	Exiting battle will result in death	0	80	0	0	1	3
 label_menu_ingame_respawn	button_ingame_respawn	menu_buttons		Respawn	0	32	0	0	1	3
 label_menu_ingame_resume	button_ingame_resume	menu_buttons		Resume	0	32	0	0	1	3
 label_menu_ingame_exit	button_ingame_exit	menu_buttons		Exit	0	32	0	0	1	3
