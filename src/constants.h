@@ -77,7 +77,7 @@ const  double       HUD_STATCHANGE_TIMEOUT_LONG     =  3.0;
 const  double       HUD_STATCHANGE_FADETIME         =  0.5;
 const  float        HUD_STATCHANGE_DISTANCE         =  20.0f;
 //     Battle
-const  int          BATTLE_MINSTEPS                 =  9;
+const  int          BATTLE_MINSTEPS                 =  12;
 const  int          BATTLE_MAXSTEPS                 =  30;
 const  int          BATTLE_MAXFIGHTERS_SIDE         =  8;
 const  int          BATTLE_MULTI_TARGET_COUNT       =  3;
