@@ -1606,6 +1606,10 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Difficulty += GAME_DIFFICULTY_PER_PLAYER;
 		}
 
+		// Set difficulty of battle
+		Battle->Difficulty[0] = 1.0;
+		Battle->Difficulty[1] = Difficulty;
+
 		// Add monsters
 		for(auto &MonsterID : MonsterIDs) {
 			_Object *Monster = ObjectManager->Create();

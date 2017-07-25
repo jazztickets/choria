@@ -58,6 +58,7 @@ _Battle::_Battle() :
 	Boss(false),
 	Zone(0),
 	Cooldown(0.0),
+	Difficulty{0.0, 1.0},
 	Time(0),
 	WaitTimer(0),
 	BattleElement(nullptr) {
@@ -573,6 +574,9 @@ void _Battle::ServerEndBattle() {
 			SideStats[Side].TotalExperienceGiven += Fighter->ExperienceGiven;
 			SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
 		}
+
+		SideStats[Side].TotalExperienceGiven *= Difficulty[Side];
+		SideStats[Side].TotalGoldGiven *= Difficulty[Side];
 	}
 
 	// Get winning side

@@ -95,12 +95,12 @@ class _Battle : public _ManagerBase {
 
 		std::list<_Object *> Fighters;
 		std::list<_ActionResult> ActionResults;
-
 		int SideCount[2];
 
 		bool Boss;
 		uint32_t Zone;
 		double Cooldown;
+		double Difficulty[2];
 
 	private:
 
