@@ -19,6 +19,7 @@
 #include <framework.h>
 #include <state.h>
 #include <assets.h>
+#include <actiontype.h>
 #include <ui/label.h>
 
 _Actions Actions;
@@ -27,36 +28,35 @@ _Actions Actions;
 _Actions::_Actions() {
 
 	// Reset state
-	State.resize(COUNT);
-	Names.resize(COUNT);
+	State.resize(Action::COUNT);
 	ResetState();
 
 	// Set names for actions
-	Names[UP] = "up";
-	Names[DOWN] = "down";
-	Names[LEFT] = "left";
-	Names[RIGHT] = "right";
-	Names[BACK] = "back";
-	Names[MENU] = "menu";
-	Names[JOIN] = "join";
-	Names[INVENTORY] = "inventory";
-	Names[SKILLS] = "skills";
-	Names[TRADE] = "trade";
-	Names[PARTY] = "party";
-	Names[CHAT] = "chat";
-	Names[SKILL1] = "skill1";
-	Names[SKILL2] = "skill2";
-	Names[SKILL3] = "skill3";
-	Names[SKILL4] = "skill4";
-	Names[SKILL5] = "skill5";
-	Names[SKILL6] = "skill6";
-	Names[SKILL7] = "skill7";
-	Names[SKILL8] = "skill8";
+	State[Action::UP].Name = "up";
+	State[Action::DOWN].Name = "down";
+	State[Action::LEFT].Name = "left";
+	State[Action::RIGHT].Name = "right";
+	State[Action::BACK].Name = "back";
+	State[Action::MENU].Name = "menu";
+	State[Action::JOIN].Name = "join";
+	State[Action::INVENTORY].Name = "inventory";
+	State[Action::SKILLS].Name = "skills";
+	State[Action::TRADE].Name = "trade";
+	State[Action::PARTY].Name = "party";
+	State[Action::CHAT].Name = "chat";
+	State[Action::SKILL1].Name = "skill1";
+	State[Action::SKILL2].Name = "skill2";
+	State[Action::SKILL3].Name = "skill3";
+	State[Action::SKILL4].Name = "skill4";
+	State[Action::SKILL5].Name = "skill5";
+	State[Action::SKILL6].Name = "skill6";
+	State[Action::SKILL7].Name = "skill7";
+	State[Action::SKILL8].Name = "skill8";
 }
 
 // Reset the action state
 void _Actions::ResetState() {
-	for(size_t i = 0; i < COUNT; i++) {
+	for(size_t i = 0; i < State.size(); i++) {
 		State[i].Value = 0.0f;
 		State[i].Source = -1;
 	}
@@ -92,14 +92,14 @@ void _Actions::ClearAllMappingsForAction(size_t Action) {
 void _Actions::Serialize(std::ofstream &File, int InputType) {
 	for(int i = 0; i < ACTIONS_MAXINPUTS; i++) {
 		for(auto &Iterator : InputMap[InputType][i]) {
-			File << "action_" << Names[Iterator.Action] << "=" << InputType << "_" << i << std::endl;
+			File << "action_" << State[Iterator.Action].Name << "=" << InputType << "_" << i << std::endl;
 		}
 	}
 }
 
 // Get action
 float _Actions::GetState(size_t Action) {
-	if(Action >= COUNT)
+	if(Action >= State.size())
 		return 0.0f;
 
 	return State[Action].Value;
@@ -107,7 +107,7 @@ float _Actions::GetState(size_t Action) {
 
 // Add an input mapping
 void _Actions::AddInputMap(int InputType, int Input, size_t Action, float Scale, float DeadZone, bool IfNone) {
-	if(Action >= COUNT || Input < 0 || Input >= ACTIONS_MAXINPUTS)
+	if(Action >= State.size() || Input < 0 || Input >= ACTIONS_MAXINPUTS)
 		return;
 
 	if(!IfNone || (IfNone && GetInputForAction(InputType, Action) == -1))

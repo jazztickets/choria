@@ -25,6 +25,7 @@
 #include <stats.h>
 #include <constants.h>
 #include <actions.h>
+#include <actiontype.h>
 #include <random.h>
 #include <scripting.h>
 #include <buffer.h>
@@ -155,8 +156,8 @@ void _Bot::Update(double FrameTime) {
 	// Update battle system
 	if(Battle) {
 		if(!Player->PotentialAction.IsSet()) {
-			Battle->ClientHandleInput(_Actions::SKILL1);
-			Battle->ClientHandleInput(_Actions::SKILL1);
+			Battle->ClientHandleInput(Action::SKILL1);
+			Battle->ClientHandleInput(Action::SKILL1);
 		}
 
 		if(!Player->Battle) {

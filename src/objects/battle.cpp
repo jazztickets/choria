@@ -29,6 +29,7 @@
 #include <constants.h>
 #include <server.h>
 #include <actions.h>
+#include <actiontype.h>
 #include <buffer.h>
 #include <hud.h>
 #include <graphics.h>
@@ -235,7 +236,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		// Set up initial target
 		if(Item) {
 			if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
-				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(_Actions::SKILL1 + ActionBarSlot) + " again to confirm.");
+				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->BattleSide;
@@ -843,24 +844,24 @@ int _Battle::GetPeerCount() {
 bool _Battle::ClientHandleInput(size_t Action) {
 
 	switch(Action) {
-		case _Actions::SKILL1:
-		case _Actions::SKILL2:
-		case _Actions::SKILL3:
-		case _Actions::SKILL4:
-		case _Actions::SKILL5:
-		case _Actions::SKILL6:
-		case _Actions::SKILL7:
-		case _Actions::SKILL8:
-			ClientSetAction((uint8_t)(Action - _Actions::SKILL1));
+		case Action::SKILL1:
+		case Action::SKILL2:
+		case Action::SKILL3:
+		case Action::SKILL4:
+		case Action::SKILL5:
+		case Action::SKILL6:
+		case Action::SKILL7:
+		case Action::SKILL8:
+			ClientSetAction((uint8_t)(Action - Action::SKILL1));
 		break;
-		case _Actions::UP:
+		case Action::UP:
 			ChangeTarget(-1, 0);
 		break;
-		case _Actions::DOWN:
+		case Action::DOWN:
 			ChangeTarget(1, 0);
 		break;
-		case _Actions::LEFT:
-		case _Actions::RIGHT:
+		case Action::LEFT:
+		case Action::RIGHT:
 			ChangeTarget(0, true);
 		break;
 	}

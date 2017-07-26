@@ -36,6 +36,7 @@ struct _ActionMap {
 };
 
 struct _ActionState {
+	std::string Name;
 	float Value;
 	int Source;
 };
@@ -44,30 +45,6 @@ struct _ActionState {
 class _Actions {
 
 	public:
-
-		enum Types : size_t {
-			UP,
-			DOWN,
-			LEFT,
-			RIGHT,
-			BACK,
-			MENU,
-			JOIN,
-			INVENTORY,
-			SKILLS,
-			TRADE,
-			PARTY,
-			CHAT,
-			SKILL1,
-			SKILL2,
-			SKILL3,
-			SKILL4,
-			SKILL5,
-			SKILL6,
-			SKILL7,
-			SKILL8,
-			COUNT,
-		};
 
 		_Actions();
 
@@ -79,7 +56,7 @@ class _Actions {
 
 		// Actions
 		float GetState(size_t Action);
-		const std::string &GetName(size_t Action) { return Names[Action]; }
+		const std::string &GetName(size_t Action) { return State[Action].Name; }
 
 		// Maps
 		void AddInputMap(int InputType, int Input, size_t Action, float Scale=1.0f, float DeadZone=-1.0f, bool IfNone=true);
@@ -96,9 +73,6 @@ class _Actions {
 
 		// State of each action
 		std::vector<_ActionState> State;
-
-		// Names for each action
-		std::vector<std::string> Names;
 };
 
 extern _Actions Actions;

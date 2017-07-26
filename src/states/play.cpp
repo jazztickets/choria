@@ -39,6 +39,7 @@
 #include <program.h>
 #include <config.h>
 #include <actions.h>
+#include <actiontype.h>
 #include <buffer.h>
 #include <server.h>
 #include <packet.h>
@@ -187,14 +188,14 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 		return true;
 
 	// Handle enter key
-	if(Action == _Actions::CHAT) {
+	if(Action == Action::CHAT) {
 		HUD->HandleEnter();
 		return true;
 	}
 
 	// Grab all actions except escape when chatting
 	if(HUD->IsChatting()) {
-		if(Action == _Actions::BACK)
+		if(Action == Action::BACK)
 			HUD->CloseChat();
 
 		return true;
@@ -202,7 +203,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 	// Grab all actions except escape when typing party
 	if(HUD->IsTypingParty()) {
-		if(Action == _Actions::BACK)
+		if(Action == Action::BACK)
 			HUD->CloseWindows(true, false);
 
 		return true;
@@ -210,7 +211,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 	// Respawn
 	if(!Player->IsAlive()) {
-		if(Action == _Actions::BACK || Action == _Actions::MENU) {
+		if(Action == Action::BACK || Action == Action::MENU) {
 			HUD->ToggleInGameMenu(true);
 			return true;
 		}
@@ -219,11 +220,11 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	// Battle
 	if(Battle) {
 		switch(Action) {
-			case _Actions::BACK:
-			case _Actions::MENU:
-				HUD->ToggleInGameMenu(Action == _Actions::MENU);
+			case Action::BACK:
+			case Action::MENU:
+				HUD->ToggleInGameMenu(Action == Action::MENU);
 			break;
-			case _Actions::INVENTORY:
+			case Action::INVENTORY:
 				HUD->ToggleCharacterStats();
 			break;
 			default: {
@@ -235,47 +236,47 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 		// Currently typing
 		if(FocusedElement != nullptr) {
-			if(Action == _Actions::BACK)
+			if(Action == Action::BACK)
 				FocusedElement = nullptr;
 		}
 		else {
 
 			// Handle HUD keys
 			switch(Action) {
-				case _Actions::SKILL1:
-				case _Actions::SKILL2:
-				case _Actions::SKILL3:
-				case _Actions::SKILL4:
-				case _Actions::SKILL5:
-				case _Actions::SKILL6:
-				case _Actions::SKILL7:
-				case _Actions::SKILL8:
-					SendActionUse((uint8_t)(Action - _Actions::SKILL1));
+				case Action::SKILL1:
+				case Action::SKILL2:
+				case Action::SKILL3:
+				case Action::SKILL4:
+				case Action::SKILL5:
+				case Action::SKILL6:
+				case Action::SKILL7:
+				case Action::SKILL8:
+					SendActionUse((uint8_t)(Action - Action::SKILL1));
 				break;
-				case _Actions::BACK:
-				case _Actions::MENU:
-					HUD->ToggleInGameMenu(Action == _Actions::MENU);
+				case Action::BACK:
+				case Action::MENU:
+					HUD->ToggleInGameMenu(Action == Action::MENU);
 				break;
-				case _Actions::INVENTORY:
+				case Action::INVENTORY:
 					HUD->ToggleInventory();
 				break;
-				case _Actions::TRADE:
+				case Action::TRADE:
 					HUD->ToggleTrade();
 				break;
-				case _Actions::SKILLS:
+				case Action::SKILLS:
 					HUD->ToggleSkills();
 				break;
-				case _Actions::JOIN:
+				case Action::JOIN:
 					SendJoinRequest();
 				break;
-				case _Actions::PARTY:
+				case Action::PARTY:
 					HUD->ToggleParty();
 					IgnoreFirstChar = true;
 				break;
-				case _Actions::UP:
-				case _Actions::DOWN:
-				case _Actions::LEFT:
-				case _Actions::RIGHT:
+				case Action::UP:
+				case Action::DOWN:
+				case Action::LEFT:
+				case Action::RIGHT:
 					if(!Player->WaitForServer)
 						HUD->CloseWindows(true);
 				break;
@@ -395,13 +396,13 @@ void _PlayState::Update(double FrameTime) {
 	// Set input
 	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
 		int InputState = 0;
-		if(Actions.GetState(_Actions::UP) > 0.0f)
+		if(Actions.GetState(Action::UP) > 0.0f)
 			InputState |= _Object::MOVE_UP;
-		if(Actions.GetState(_Actions::DOWN) > 0.0f)
+		if(Actions.GetState(Action::DOWN) > 0.0f)
 			InputState |= _Object::MOVE_DOWN;
-		if(Actions.GetState(_Actions::LEFT) > 0.0f)
+		if(Actions.GetState(Action::LEFT) > 0.0f)
 			InputState |= _Object::MOVE_LEFT;
-		if(Actions.GetState(_Actions::RIGHT) > 0.0f)
+		if(Actions.GetState(Action::RIGHT) > 0.0f)
 			InputState |= _Object::MOVE_RIGHT;
 
 		// Get player direction
@@ -1062,7 +1063,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 	HUD->CloseWindows(true);
 	HUD->EnableMouseCombat = false;
 	if(Config.ShowTutorial && Player->Level == 1)
-		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(_Actions::SKILL1) + " key to attack");
+		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(Action::SKILL1) + " key to attack");
 
 	// Create a new battle instance
 	Battle = new _Battle();
@@ -1337,7 +1338,7 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 		Map->Clock = Clock;
 
 	if(Player->Level > OldLevel) {
-		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill point(s). Press " + Actions.GetInputNameForAction(_Actions::SKILLS) + " to use them.");
+		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsRemaining()) + " skill point(s). Press " + Actions.GetInputNameForAction(Action::SKILLS) + " to use them.");
 		Audio.PlaySound(Assets.Sounds["success0.ogg"]);
 
 		if(Player->Level == 2) {

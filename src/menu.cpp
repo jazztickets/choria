@@ -29,6 +29,7 @@
 #include <constants.h>
 #include <input.h>
 #include <actions.h>
+#include <actiontype.h>
 #include <graphics.h>
 #include <assets.h>
 #include <config.h>
@@ -753,8 +754,8 @@ void _Menu::HandleAction(int InputType, size_t Action, int Value) {
 	switch(State) {
 		case STATE_INGAME:
 			switch(Action) {
-				case _Actions::BACK:
-				case _Actions::MENU:
+				case Action::BACK:
+				case Action::MENU:
 					Menu.InitPlay();
 				break;
 			}
