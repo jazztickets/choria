@@ -473,10 +473,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	SpawnPlayer(Peer->Object, Peer->Object->LoadMapID, _Map::EVENT_NONE);
 
 	// Broadcast message
-	for(auto &ReceivePeer : Network->GetPeers()) {
-		if(ReceivePeer != Peer)
-			SendMessage(ReceivePeer, Peer->Object->Name + " has joined the server", COLOR_GRAY);
-	}
+	BroadcastMessage(Peer, Peer->Object->Name + " has joined the server", COLOR_GRAY);
 }
 
 // Handles move commands from a client
@@ -626,19 +623,8 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		return;
 	}
 
-	// Append name
-	Message = Player->Name + ": " + Message;
-
 	// Send message to other players
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
-	Packet.Write<glm::vec4>(COLOR_WHITE);
-	Packet.WriteString(Message.c_str());
-
-	// Broadcast message
-	for(auto &ReceivePeer : Network->GetPeers()) {
-		Network->SendPacket(Packet, ReceivePeer);
-	}
+	BroadcastMessage(nullptr, Player->Name + ": " + Message, COLOR_WHITE);
 }
 
 // Send position to player
@@ -1384,13 +1370,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 		Player->Peer = nullptr;
 
 		if(Player->Map) {
-
-			// Broadcast message
-			for(auto &ReceivePeer : Network->GetPeers()) {
-				if(ReceivePeer != Peer)
-					SendMessage(ReceivePeer, Player->Name + " has left the server", COLOR_GRAY);
-			}
-
+			BroadcastMessage(Peer, Player->Name + " has left the server", COLOR_GRAY);
 			Player->LoadMapID = Player->GetMapID();
 		}
 
@@ -1531,6 +1511,14 @@ void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::ve
 
 	// Send
 	Network->SendPacket(Packet, Peer);
+}
+
+// Broadcast message to all peers
+void _Server::BroadcastMessage(_Peer *IgnorePeer, const std::string &Message, const glm::vec4 &Color) {
+	for(auto &Peer : Network->GetPeers()) {
+		if(Peer != IgnorePeer)
+			SendMessage(Peer, Message, Color);
+	}
 }
 
 // Sends information to another player about items they're trading
