@@ -32,6 +32,7 @@
 #include <framelimit.h>
 #include <SDL.h>
 #include <audio.h>
+#include <utils.h>
 #include <string>
 
 _Framework Framework;
@@ -60,7 +61,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			State = &DedicatedState;
 		}
 		else if(Token == "-port" && TokensRemaining > 0) {
-			DedicatedState.SetNetworkPort((uint16_t)std::stoul(Arguments[++i]));
+			DedicatedState.SetNetworkPort(ToNumber<uint16_t>(Arguments[++i]));
 		}
 		else if(Token == "-username" && TokensRemaining > 0) {
 			Menu.SetUsername(Arguments[++i]);
@@ -85,7 +86,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else if(Token == "-bot" && TokensRemaining > 1) {
 			State = &BotState;
 			BotState.HostAddress = Arguments[++i];
-			BotState.Port = (uint16_t)std::stoul(Arguments[++i]);
+			BotState.Port = ToNumber<uint16_t>(Arguments[++i]);
 		}
 		else if(Token == "-test") {
 			PlayState.IsTesting = true;
