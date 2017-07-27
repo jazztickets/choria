@@ -41,6 +41,7 @@ label_hud_party	label_hud_level	hud_small	gray		0	20	0	0	0	3
 label_hud_hardcore	label_hud_party	hud_small	red	Hardcore	0	20	0	0	0	3
 label_hud_gold	button_buttonbar_menu	hud_small	gold		12	25	0	0	2	3
 label_hud_clock	button_buttonbar_menu	hud_tiny			0	55	0	0	0	3
+label_hud_pvp	label_hud_clock	hud_tiny	red	PVP Zone	0	18	0	0	0	3
 label_hud_health	element_hud_health	hud_small			0	20	0	0	1	3
 label_hud_mana	element_hud_mana	hud_small			0	20	0	0	1	3
 label_hud_experience	element_hud_experience	hud_small			0	-5	0	0	1	3

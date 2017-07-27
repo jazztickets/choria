@@ -468,6 +468,14 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 	Server->Network->SendPacket(Packet, Object->Peer);
 }
 
+// Determine if a position is in a pvp zone
+bool _Map::IsPVPZone(const glm::ivec2 &Position) {
+	if(!IsValidPosition(Position))
+		return false;
+
+	return GetTile(Position)->PVP;
+}
+
 // Renders the map
 void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
@@ -887,10 +895,7 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 
 // Returns target players appropriate for pvp
 void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players) {
-	if(!IsValidPosition(Player->Position))
-		return;
-
-	if(!GetTile(Player->Position)->PVP)
+	if(!IsPVPZone(Player->Position))
 		return;
 
 	for(const auto &Object : Objects) {

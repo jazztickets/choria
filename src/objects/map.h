@@ -104,6 +104,7 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		void GetClockAsString(std::stringstream &Buffer);
 		void SetAmbientLightByClock();
 		void StartEvent(_Object *Object, _Event Event);
+		bool IsPVPZone(const glm::ivec2 &Position);
 
 		// Graphics
 		void Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);

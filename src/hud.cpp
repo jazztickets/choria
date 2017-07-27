@@ -590,9 +590,16 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		// Update label text
 		UpdateLabels();
 
+		// Update clock
 		Map->GetClockAsString(Buffer);
 		Assets.Labels["label_hud_clock"]->Text = Buffer.str();
 		Buffer.str("");
+
+		// Update pvp zone
+		if(Map->IsPVPZone(Player->Position))
+			Assets.Labels["label_hud_pvp"]->Text = "PVP Zone";
+		else
+			Assets.Labels["label_hud_pvp"]->Text = "";
 
 		// Draw experience bar
 		Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
