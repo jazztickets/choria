@@ -1138,12 +1138,12 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 		} break;
 		case PacketType::CHARACTERS_LIST: {
 
-			// Reset ui state
-			InitCharacters();
-
 			// Get header
 			HardcoreServer = Buffer.Read<uint8_t>();
 			uint8_t CharacterCount = Buffer.Read<uint8_t>();
+
+			// Reset ui state
+			InitCharacters();
 
 			// Load UI elements
 			LoadCharacterSlots();
