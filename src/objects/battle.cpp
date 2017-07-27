@@ -57,6 +57,7 @@ _Battle::_Battle() :
 	Manager(nullptr),
 	SideCount{0, 0},
 	Boss(false),
+	PVP(0),
 	Zone(0),
 	Cooldown(0.0),
 	Difficulty{0.0, 1.0},
@@ -573,7 +574,12 @@ void _Battle::ServerEndBattle() {
 
 			// Sum experience and gold
 			SideStats[Side].TotalExperienceGiven += Fighter->ExperienceGiven;
-			SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
+
+			// Calculate gold based on monster or player
+			if(Fighter->DatabaseID)
+				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
+			else
+				SideStats[Side].TotalGoldGiven += Fighter->Gold * PVP * 0.01f;
 		}
 
 		SideStats[Side].TotalExperienceGiven *= Difficulty[Side];
@@ -597,7 +603,7 @@ void _Battle::ServerEndBattle() {
 			int OtherSide = !Side;
 			int DivideCount = SideStats[Side].AliveCount;
 			if(DivideCount <= 0)
-				break;
+				continue;
 
 			// Divide experience up
 			if(SideStats[OtherSide].TotalExperienceGiven > 0) {
@@ -625,7 +631,7 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// Check for reward recipients
-		if(RewardFighters.size()) {
+		if(RewardFighters.size() && !PVP) {
 
 			// Convert winning side list to array
 			std::vector<_Object *> FighterArray { std::begin(RewardFighters), std::end(RewardFighters) };
@@ -666,11 +672,16 @@ void _Battle::ServerEndBattle() {
 		int ExperienceEarned = 0;
 		int GoldEarned = 0;
 		if(!Fighter->IsAlive()) {
-			Fighter->ApplyDeathPenalty();
+			if(PVP)
+				Fighter->ApplyDeathPenalty(PVP * 0.01f);
+			else
+				Fighter->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY);
 		}
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
 			GoldEarned = SideStats[WinningSide].GoldPerFighter;
+			if(PVP)
+				Fighter->Bounty += GoldEarned;
 			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
 			Fighter->MonsterKills += SideStats[!WinningSide].MonsterCount;
 		}
@@ -699,6 +710,7 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<int>(Fighter->PlayerKills);
 		Packet.Write<int>(Fighter->MonsterKills);
 		Packet.Write<int>(Fighter->GoldLost);
+		Packet.Write<int>(Fighter->Bounty);
 		Packet.Write<int>(ExperienceEarned);
 		Packet.Write<int>(GoldEarned);
 

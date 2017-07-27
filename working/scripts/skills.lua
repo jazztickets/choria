@@ -938,7 +938,7 @@ function Skill_Hunt.GetInfo(self, Level)
 end
 
 function Skill_Hunt.Use(self, Level, Source, Target, Result)
-	Result.Target.PVP = 1
+	Result.Target.PVP = self:GetGold(Level)
 
 	return Result
 end

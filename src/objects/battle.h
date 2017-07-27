@@ -98,6 +98,7 @@ class _Battle : public _ManagerBase {
 		int SideCount[2];
 
 		bool Boss;
+		int PVP;
 		uint32_t Zone;
 		double Cooldown;
 		double Difficulty[2];

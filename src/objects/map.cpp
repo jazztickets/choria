@@ -885,26 +885,22 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 	return nullptr;
 }
 
-
-// Returns a player appropriate for pvp
-_Object *_Map::GetPVPPlayers(const _Object *Player) {
+// Returns target players appropriate for pvp
+void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players) {
 	if(!IsValidPosition(Player->Position))
-		return nullptr;
+		return;
 
 	if(!GetTile(Player->Position)->PVP)
-		return nullptr;
+		return;
 
 	for(const auto &Object : Objects) {
 		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->IsAlive() && !Object->Battle) {
-				return Object;
+			if(Object->Position == Player->Position && Object->IsAlive() && !Object->Battle && (Object->PartyName == "" || Object->PartyName != Player->PartyName)) {
+				Players.push_back(Object);
 			}
 		}
 	}
-
-	return nullptr;
 }
-
 
 // Returns the closest player
 _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) {

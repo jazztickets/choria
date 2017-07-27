@@ -605,6 +605,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["deaths"] = Deaths;
 	StatsNode["monsterkills"] = MonsterKills;
 	StatsNode["playerkills"] = PlayerKills;
+	StatsNode["bounty"] = Bounty;
 	StatsNode["nextbattle"] = NextBattle;
 	Data["stats"] = StatsNode;
 
@@ -704,6 +705,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Deaths = StatsNode["deaths"].asInt();
 	MonsterKills = StatsNode["monsterkills"].asInt();
 	PlayerKills = StatsNode["playerkills"].asInt();
+	Bounty = StatsNode["bounty"].asInt();
 	NextBattle = StatsNode["nextbattle"].asInt();
 
 	size_t ActionBarSize = 0;
@@ -1028,7 +1030,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		if(!Battle) {
 
 			// Apply penalty
-			ApplyDeathPenalty();
+			ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY);
 		}
 	}
 
@@ -1070,7 +1072,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 		// Start PVP
 		if(!Battle && StatChange.HasStat(StatType::PVP)) {
-			Server->QueueBattle(this, 0, false, true);
+			Server->QueueBattle(this, 0, false, StatChange.Values[StatType::PVP].Integer);
 		}
 	}
 
@@ -1259,10 +1261,10 @@ void _Object::UpdateExperience(int Value) {
 }
 
 // Update death count and gold loss
-void _Object::ApplyDeathPenalty() {
+void _Object::ApplyDeathPenalty(float Penalty) {
 
 	// Notify player
-	int GoldPenalty = (int)(Gold * PLAYER_DEATH_GOLD_PENALTY);
+	int GoldPenalty = (int)(Gold * Penalty + 0.5f);
 	if(Server && Peer)
 		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), COLOR_RED);
 

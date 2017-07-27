@@ -773,7 +773,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 }
 
 // Queue a battle for an object
-void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP) {
+void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, int PVP) {
 	_BattleEvent BattleEvent;
 	BattleEvent.Object = Object;
 	BattleEvent.Zone = Zone;
@@ -1396,7 +1396,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 
 		// Penalize player for leaving battle
 		if(Player->Battle) {
-			Player->ApplyDeathPenalty();
+			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY);
 			Player->Health = 0;
 			Player->Mana = Player->MaxMana / 2;
 			Player->LoadMapID = 0;
@@ -1557,8 +1557,11 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 	// Handle PVP
 	if(BattleEvent.PVP) {
-		_Object *TargetPlayer = BattleEvent.Object->Map->GetPVPPlayers(BattleEvent.Object);
-		if(!TargetPlayer)
+
+		// Get list of players on current tile
+		std::list<_Object *> Players;
+		BattleEvent.Object->Map->GetPVPPlayers(BattleEvent.Object, Players);
+		if(!Players.size())
 			return;
 
 		// Create a new battle instance
@@ -1567,12 +1570,15 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Stats = Stats;
 		Battle->Server = this;
 		Battle->Scripting = Scripting;
+		Battle->PVP = BattleEvent.PVP;
 		Battle->Difficulty[0] = 1.0;
 		Battle->Difficulty[1] = 1.0;
 
 		// Add players to battle
-		Battle->AddFighter(BattleEvent.Object, 0);
-		Battle->AddFighter(TargetPlayer, 1);
+		Battle->AddFighter(BattleEvent.Object, 1);
+		for(auto &TargetPlayer : Players) {
+			Battle->AddFighter(TargetPlayer, 0);
+		}
 
 		// Send battle to players
 		_Buffer Packet;

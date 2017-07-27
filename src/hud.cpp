@@ -1722,6 +1722,15 @@ void _HUD::DrawCharacterStats() {
 		DrawPosition.y += SpacingY;
 	}
 
+	// Bounty
+	if(Player->Bounty > 0) {
+		Buffer << Player->Bounty;
+		Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Gold lost
 	if(Player->GoldLost > 0) {
 		Buffer << Player->GoldLost;
