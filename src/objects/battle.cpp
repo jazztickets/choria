@@ -680,13 +680,13 @@ void _Battle::ServerEndBattle() {
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
 			GoldEarned = SideStats[WinningSide].GoldPerFighter;
+			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
+			Fighter->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP) {
 				Fighter->Bounty += GoldEarned;
 				if(Fighter->Bounty)
 					Server->BroadcastMessage(nullptr, "Player \"" + Fighter->Name + "\" now has a bounty of " + std::to_string(Fighter->Bounty) + " gold!", COLOR_CYAN);
 			}
-			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
-			Fighter->MonsterKills += SideStats[!WinningSide].MonsterCount;
 		}
 
 		// Start cooldown timer
