@@ -227,7 +227,7 @@ void _Server::HandleConnect(_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
-	//Log << "Connect: " << Buffer << ":" << Address->port << std::endl;
+	Log << "Connect " << Buffer << ":" << Address->port << std::endl;
 
 	// Send game version
 	_Buffer Packet;
@@ -238,10 +238,11 @@ void _Server::HandleConnect(_NetworkEvent &Event) {
 
 // Handle client disconnect
 void _Server::HandleDisconnect(_NetworkEvent &Event) {
-	//char Buffer[16];
-	//ENetAddress *Address = &Event.Peer->ENetPeer->address;
-	//enet_address_get_host_ip(Address, Buffer, 16);
-	//Log << "Disconnect: " << Buffer << ":" << Address->port << std::endl;
+	char Buffer[16];
+	ENetAddress *Address = &Event.Peer->ENetPeer->address;
+	enet_address_get_host_ip(Address, Buffer, 16);
+	Log << "Disconnect " << Buffer << ":" << Address->port << std::endl;
+
 	_Buffer Data;
 	HandleExit(Data, Event.Peer);
 
@@ -463,10 +464,8 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Check for valid character id
 	Peer->CharacterID = Save->GetCharacterID(Peer->AccountID, Slot);
-	if(!Peer->CharacterID) {
-		//Log << "Character slot " << Slot << " empty!" << std::endl;
+	if(!Peer->CharacterID)
 		return;
-	}
 
 	// Send map and players to new player
 	Peer->Object = CreatePlayer(Peer);
