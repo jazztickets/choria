@@ -2110,7 +2110,7 @@ void _HUD::ValidateTradeGold() {
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Gold)
-		Gold = Player->Gold;
+		Gold = std::max(0, Player->Gold);
 
 	// Set text
 	GoldTextBox->SetText(std::to_string(Gold));
@@ -2402,4 +2402,8 @@ void _HUD::UpdateLabels() {
 	Buffer << Player->Gold << " Gold";
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
+	if(Player->Gold < 0)
+		GoldElement->Color = COLOR_RED;
+	else
+		GoldElement->Color = COLOR_GOLD;
 }

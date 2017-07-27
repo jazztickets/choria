@@ -116,7 +116,7 @@ class _Object : public _ManagerBase {
 		float GetNextLevelPercent() const;
 		void UpdateGold(int Value);
 		void UpdateExperience(int Value);
-		void ApplyDeathPenalty(float Penalty);
+		void ApplyDeathPenalty(float Penalty, int BountyLoss);
 
 		// Battles
 		void UpdateAI(const std::list<_Object *> &Fighters, double FrameTime);

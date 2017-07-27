@@ -532,6 +532,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->MaxMana = Data.Read<int>();
 			Player->Experience = Data.Read<int>();
 			Player->Gold = Data.Read<int>();
+			Player->Bounty = Data.Read<int>();
 			double Clock = Data.Read<double>();
 
 			Player->CalculateStats();

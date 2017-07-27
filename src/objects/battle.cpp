@@ -579,7 +579,7 @@ void _Battle::ServerEndBattle() {
 			if(Fighter->DatabaseID)
 				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
 			else
-				SideStats[Side].TotalGoldGiven += Fighter->Gold * PVP * 0.01f;
+				SideStats[Side].TotalGoldGiven += Fighter->Bounty + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven *= Difficulty[Side];
@@ -673,9 +673,9 @@ void _Battle::ServerEndBattle() {
 		int GoldEarned = 0;
 		if(!Fighter->IsAlive()) {
 			if(PVP)
-				Fighter->ApplyDeathPenalty(PVP * 0.01f);
+				Fighter->ApplyDeathPenalty(PVP * 0.01f, Fighter->Bounty);
 			else
-				Fighter->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY);
+				Fighter->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
@@ -683,9 +683,11 @@ void _Battle::ServerEndBattle() {
 			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
 			Fighter->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP) {
-				Fighter->Bounty += GoldEarned;
-				if(Fighter->Bounty)
-					Server->BroadcastMessage(nullptr, "Player \"" + Fighter->Name + "\" now has a bounty of " + std::to_string(Fighter->Bounty) + " gold!", COLOR_CYAN);
+				if(Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
+					Fighter->Bounty += GoldEarned;
+					if(Fighter->Bounty)
+						Server->BroadcastMessage(nullptr, "Player \"" + Fighter->Name + "\" now has a bounty of " + std::to_string(Fighter->Bounty) + " gold!", COLOR_CYAN);
+				}
 			}
 		}
 

@@ -550,11 +550,25 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				Network->SendPacket(Packet, Peer);
 			}
 		}
+		else if(Message.find("-setgold") == 0) {
+			std::regex Regex("-setgold ([0-9-]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
+				Player->Gold = ToNumber<int>(Match.str(1));
+				SendHUD(Peer);
+			}
+		}
 		else if(Message.find("-gold") == 0) {
 			std::regex Regex("-gold ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
 				StatChange.Values[StatType::GOLD].Integer = ToNumber<int>(Match.str(1));
 				Player->UpdateStats(StatChange);
+			}
+		}
+		else if(Message.find("-bounty") == 0) {
+			std::regex Regex("-bounty ([0-9-]+)");
+			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
+				Player->Bounty = std::max(0, ToNumber<int>(Match.str(1)));
+				SendHUD(Peer);
 			}
 		}
 		else if(Message.find("-exp") == 0) {
@@ -1136,7 +1150,7 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Gold)
-		Gold = Player->Gold;
+		Gold = std::max(0, Player->Gold);
 	Player->TradeGold = Gold;
 	Player->TradeAccepted = false;
 
@@ -1376,7 +1390,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 
 		// Penalize player for leaving battle
 		if(Player->Battle) {
-			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY);
+			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 			Player->Health = 0;
 			Player->Mana = Player->MaxMana / 2;
 			Player->LoadMapID = 0;
@@ -1459,6 +1473,7 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<int>(Player->MaxMana);
 	Packet.Write<int>(Player->Experience);
 	Packet.Write<int>(Player->Gold);
+	Packet.Write<int>(Player->Bounty);
 	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);
@@ -1563,9 +1578,9 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Difficulty[1] = 1.0;
 
 		// Add players to battle
-		Battle->AddFighter(BattleEvent.Object, 1);
+		Battle->AddFighter(BattleEvent.Object, BATTLE_PVP_ATTACKER_SIDE);
 		for(auto &TargetPlayer : Players) {
-			Battle->AddFighter(TargetPlayer, 0);
+			Battle->AddFighter(TargetPlayer, !BATTLE_PVP_ATTACKER_SIDE);
 		}
 
 		// Send battle to players

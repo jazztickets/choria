@@ -1030,7 +1030,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		if(!Battle) {
 
 			// Apply penalty
-			ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY);
+			ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 	}
 
@@ -1246,9 +1246,7 @@ void _Object::DeleteStatusEffects() {
 void _Object::UpdateGold(int Value) {
 
 	Gold += Value;
-	if(Gold < 0)
-		Gold = 0;
-	else if(Gold > PLAYER_MAX_GOLD)
+	if(Gold > PLAYER_MAX_GOLD)
 		Gold = PLAYER_MAX_GOLD;
 }
 
@@ -1261,17 +1259,20 @@ void _Object::UpdateExperience(int Value) {
 }
 
 // Update death count and gold loss
-void _Object::ApplyDeathPenalty(float Penalty) {
+void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
+	int GoldPenalty = BountyLoss + (int)(std::abs(Gold) * Penalty + 0.5f);
 
-	// Notify player
-	int GoldPenalty = (int)(Gold * Penalty + 0.5f);
-	if(Server && Peer)
-		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), COLOR_RED);
-
+	// Update stats
 	Deaths++;
 	UpdateGold(-GoldPenalty);
-
 	GoldLost += GoldPenalty;
+	Bounty -= BountyLoss;
+	if(Bounty < 0)
+		Bounty = 0;
+
+	// Send message
+	if(Server && Peer)
+		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), COLOR_RED);
 }
 
 // Update counts on action bar

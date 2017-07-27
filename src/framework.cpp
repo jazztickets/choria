@@ -29,10 +29,10 @@
 #include <constants.h>
 #include <actions.h>
 #include <menu.h>
-#include <framelimit.h>
-#include <SDL.h>
 #include <audio.h>
 #include <utils.h>
+#include <framelimit.h>
+#include <SDL.h>
 #include <string>
 
 _Framework Framework;
