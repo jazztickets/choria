@@ -82,6 +82,7 @@ void _DedicatedState::Init() {
 	catch(std::exception &Error) {
 		std::cerr << Error.what() << std::endl;
 		delete Stats;
+		Stats = nullptr;
 		Framework.Done = true;
 	}
 }

@@ -38,29 +38,29 @@ cat install_manifest.txt | xargs sudo rm
 
 ----- COMMAND-LINE ARGUMENTS -----
 
-to run a dedicated server
+run a dedicated server
 -server
+
+change listen port for dedicated server
+-port port
+
+set username on login screen
+-username username
+
+set password on login screen
+-password password
+
+connect to a server
+-connect host port
 
 enable hardcore only
 -hardcore
 
-change network listen port
--port [port_number]
-
-connect to default ip/port
--connect
-
-load bot manager
--bot
-
 open the mapeditor
--editor
+-editor [map]
 
-set username on login screen
--username [username]
-
-set password on login screen
--password [password]
+start bot manager
+-bot host port
 
 disable audio
 -noaudio

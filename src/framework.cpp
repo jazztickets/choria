@@ -43,14 +43,12 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	TimeStep = DEFAULT_TIMESTEP;
 	RequestedState = nullptr;
 	FrameworkState = INIT;
+	State = &PlayState;
 	Done = false;
 
 	// Settings
-	std::string HostAddress = Config.LastHost;
-	uint16_t NetworkPort = Config.NetworkPort;
 	bool AudioEnabled = true;
-	bool Hardcore = false;
-	State = &PlayState;
+	DedicatedState.SetNetworkPort(Config.NetworkPort);
 
 	// Process arguments
 	std::string Token;
@@ -61,16 +59,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		if(Token == "-server") {
 			State = &DedicatedState;
 		}
-		else if(Token == "-editor") {
-			State = &EditorState;
-			if(TokensRemaining && Arguments[i+1][0] != '-')
-				EditorState.SetFilePath(Arguments[++i]);
-		}
-		else if(Token == "-connect") {
-			PlayState.ConnectNow = true;
-		}
-		else if(Token == "-bot") {
-			State = &BotState;
+		else if(Token == "-port" && TokensRemaining > 0) {
+			DedicatedState.SetNetworkPort((uint16_t)std::stoul(Arguments[++i]));
 		}
 		else if(Token == "-username" && TokensRemaining > 0) {
 			Menu.SetUsername(Arguments[++i]);
@@ -78,18 +68,27 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else if(Token == "-password" && TokensRemaining > 0) {
 			Menu.SetPassword(Arguments[++i]);
 		}
-		else if(Token == "-host" && TokensRemaining > 0) {
-			HostAddress = Arguments[++i];
-		}
-		else if(Token == "-port" && TokensRemaining > 0) {
-			NetworkPort = (uint16_t)atoi(Arguments[++i]);
-		}
-		else if(Token == "-test") {
-			PlayState.IsTesting = true;
+		else if(Token == "-connect" && TokensRemaining > 1) {
+			PlayState.ConnectNow = true;
+			Config.LastHost = Arguments[++i];
+			Config.LastPort = Arguments[++i];
 		}
 		else if(Token == "-hardcore") {
 			PlayState.IsHardcore = true;
-			Hardcore = true;
+			DedicatedState.SetHardcore(true);
+		}
+		else if(Token == "-editor") {
+			State = &EditorState;
+			if(TokensRemaining && Arguments[i+1][0] != '-')
+				EditorState.SetFilePath(Arguments[++i]);
+		}
+		else if(Token == "-bot" && TokensRemaining > 1) {
+			State = &BotState;
+			BotState.HostAddress = Arguments[++i];
+			BotState.Port = (uint16_t)std::stoul(Arguments[++i]);
+		}
+		else if(Token == "-test") {
+			PlayState.IsTesting = true;
 		}
 		else if(Token == "-noaudio") {
 			AudioEnabled = false;
@@ -102,20 +101,14 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	// Set random seed
 	RandomGenerator.seed(SDL_GetPerformanceCounter());
 
+	// Create frame limiter
+	FrameLimit = new _FrameLimit(Config.MaxFPS, false);
+
 	// Check state
 	if(State == &DedicatedState) {
 		Assets.Init(true);
-		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
-
-		DedicatedState.SetNetworkPort(NetworkPort);
-		DedicatedState.SetHardcore(Hardcore);
 	}
-	else if(State == &BotState) {
-		FrameLimit = new _FrameLimit(DEFAULT_MAXFPS, false);
-		BotState.HostAddress = HostAddress;
-		BotState.Port = NetworkPort;
-	}
-	else {
+	else if(State != &BotState) {
 
 		// Open log
 		//PlayState.Log.Open((Config.ConfigPath + "client.log").c_str());
@@ -143,8 +136,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Graphics.SetDepthMask(false);
 		Assets.Init(false);
 		Graphics.SetStaticUniforms();
-
-		FrameLimit = new _FrameLimit(Config.MaxFPS, false);
 	}
 
 	Timer = SDL_GetPerformanceCounter();
