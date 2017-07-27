@@ -74,6 +74,7 @@ enum class StatType : uint64_t {
 	CRIT,
 	FLEE,
 	BATTLE,
+	PVP,
 	TELEPORT,
 	COUNT,
 };
@@ -110,7 +111,7 @@ const std::map<std::string, StatType> StatStringToType = {
 	{ "MoveSpeed",     StatType::MOVESPEED     },
 	{ "Stamina",       StatType::STAMINA       },
 	{ "BattleSpeed",   StatType::BATTLESPEED   },
-	{ "DropRate",      StatType::DROPRATE   },
+	{ "DropRate",      StatType::DROPRATE      },
 	{ "HitChance",     StatType::HITCHANCE     },
 	{ "Evasion",       StatType::EVASION       },
 	{ "Stunned",       StatType::STUNNED       },
@@ -124,6 +125,7 @@ const std::map<std::string, StatType> StatStringToType = {
 	{ "Crit",          StatType::CRIT          },
 	{ "Flee",          StatType::FLEE          },
 	{ "Battle",        StatType::BATTLE        },
+	{ "PVP",           StatType::PVP           },
 	{ "Teleport",      StatType::TELEPORT      },
 };
 
@@ -147,7 +149,7 @@ const _StatStorage StatValueTypes[] = {
 	{ StatType::MOVESPEED,     StatValueType::INTEGER },
 	{ StatType::STAMINA,       StatValueType::FLOAT   },
 	{ StatType::BATTLESPEED,   StatValueType::INTEGER },
-	{ StatType::DROPRATE,   StatValueType::INTEGER },
+	{ StatType::DROPRATE,      StatValueType::INTEGER },
 	{ StatType::HITCHANCE,     StatValueType::INTEGER },
 	{ StatType::EVASION,       StatValueType::INTEGER },
 	{ StatType::STUNNED,       StatValueType::BOOLEAN },
@@ -161,6 +163,7 @@ const _StatStorage StatValueTypes[] = {
 	{ StatType::CRIT,          StatValueType::BOOLEAN },
 	{ StatType::FLEE,          StatValueType::BOOLEAN },
 	{ StatType::BATTLE,        StatValueType::INTEGER },
+	{ StatType::PVP,           StatValueType::INTEGER },
 	{ StatType::TELEPORT,      StatValueType::FLOAT   },
 };
 

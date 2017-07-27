@@ -1015,7 +1015,7 @@ INSERT INTO item VALUES(20,1,2,2,2,0,0,'Fury','skills/fury.png','Skill_Fury',120
 INSERT INTO item VALUES(21,1,0,1,2,0,0,'Demonic Conjuring','skills/demonic_conjuring.png','Skill_DemonicConjuring',300,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(22,1,0,2,2,0,0,'Enfeeble','skills/enfeeble.png','Skill_Enfeeble',200,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(23,1,2,4,2,0,0,'Cleave','skills/cleave.png','Skill_Cleave',750,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(24,1,0,0,0,0,0,'','','',0,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(24,1,0,0,1,0,0,'Hunt','skills/hunt.png','Skill_Hunt',500,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(25,1,0,0,0,0,0,'','','',0,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(26,1,0,0,0,0,0,'','','',0,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(27,1,0,0,0,0,0,'','','',0,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);

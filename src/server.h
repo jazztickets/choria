@@ -42,6 +42,7 @@ struct _BattleEvent {
 	_Object *Object;
 	uint32_t Zone;
 	bool Scripted;
+	bool PVP;
 };
 
 // Server class
@@ -58,7 +59,7 @@ class _Server {
 		void StopServer();
 
 		void SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType);
-		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted);
+		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP);
 		void StartTeleport(_Object *Object, double Time);
 		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
 		void SendHUD(_Peer *Peer);

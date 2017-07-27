@@ -583,7 +583,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 			std::regex Regex("-battle ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
 				uint32_t ZoneID = ToNumber<uint32_t>(Match.str(1));
-				QueueBattle(Player, ZoneID, false);
+				QueueBattle(Player, ZoneID, false, false);
 			}
 		}
 		else if(Message.find("-map") == 0) {
@@ -773,11 +773,12 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 }
 
 // Queue a battle for an object
-void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted) {
+void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP) {
 	_BattleEvent BattleEvent;
 	BattleEvent.Object = Object;
 	BattleEvent.Zone = Zone;
 	BattleEvent.Scripted = Scripted;
+	BattleEvent.PVP = PVP;
 
 	BattleEvents.push_back(BattleEvent);
 }
@@ -1549,27 +1550,15 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 
 // Start a battle event
 void _Server::StartBattle(_BattleEvent &BattleEvent) {
-	if(!BattleEvent.Zone || BattleEvent.Object->Battle)
+
+	// Return if object is already in battle or in zone 0
+	if(BattleEvent.Object->Battle || (!BattleEvent.PVP && !BattleEvent.Zone))
 		return;
 
-	// Get a list of players
-	std::list<_Object *> Players;
-	BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
-	int AdditionalCount = 0;
-	if(!BattleEvent.Scripted)
-		AdditionalCount = (int)Players.size();
-
-	// Get monsters
-	std::list<uint32_t> MonsterIDs;
-	bool Boss = false;
-	double Cooldown = 0.0;
-	Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss, Cooldown);
-
-	// Fight if there are monsters
-	if(MonsterIDs.size()) {
-
-		// Check for cooldown
-		if(BattleEvent.Object->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->BattleCooldown.end())
+	// Handle PVP
+	if(BattleEvent.PVP) {
+		_Object *TargetPlayer = BattleEvent.Object->Map->GetPVPPlayers(BattleEvent.Object);
+		if(!TargetPlayer)
 			return;
 
 		// Create a new battle instance
@@ -1577,55 +1566,97 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Manager = ObjectManager;
 		Battle->Stats = Stats;
 		Battle->Server = this;
-		Battle->Boss = Boss;
-		Battle->Cooldown = Cooldown;
-		Battle->Zone = BattleEvent.Zone;
 		Battle->Scripting = Scripting;
-
-		// Add player
-		Players.push_back(BattleEvent.Object);
-
-		// Sort by network id
-		Players.sort(CompareObjects);
-
-		// Get difficulty
-		double Difficulty = 1.0;
-		if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
-			Scripting->PushReal(Save->Clock);
-			Scripting->MethodCall(1, 1);
-			Difficulty = Scripting->GetReal(1);
-			Scripting->FinishMethodCall();
-		}
+		Battle->Difficulty[0] = 1.0;
+		Battle->Difficulty[1] = 1.0;
 
 		// Add players to battle
-		Difficulty -= GAME_DIFFICULTY_PER_PLAYER;
-		for(auto &PartyPlayer : Players) {
-			Battle->AddFighter(PartyPlayer, 0);
-
-			// Increase difficulty for each player
-			Difficulty += GAME_DIFFICULTY_PER_PLAYER;
-		}
-
-		// Set difficulty of battle
-		Battle->Difficulty[0] = 1.0;
-		Battle->Difficulty[1] = Difficulty;
-
-		// Add monsters
-		for(auto &MonsterID : MonsterIDs) {
-			_Object *Monster = ObjectManager->Create();
-			Monster->Server = this;
-			Monster->Scripting = Scripting;
-			Monster->DatabaseID = MonsterID;
-			Monster->Stats = Stats;
-			Stats->GetMonsterStats(MonsterID, Monster, Difficulty);
-			Monster->CalculateStats();
-			Battle->AddFighter(Monster, 1);
-		}
+		Battle->AddFighter(BattleEvent.Object, 0);
+		Battle->AddFighter(TargetPlayer, 1);
 
 		// Send battle to players
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_START);
 		Battle->Serialize(Packet);
 		Battle->BroadcastPacket(Packet);
+	}
+	else {
+
+		// Get a list of players
+		std::list<_Object *> Players;
+		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
+		int AdditionalCount = 0;
+		if(!BattleEvent.Scripted)
+			AdditionalCount = (int)Players.size();
+
+		// Get monsters
+		std::list<uint32_t> MonsterIDs;
+		bool Boss = false;
+		double Cooldown = 0.0;
+		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss, Cooldown);
+
+		// Fight if there are monsters
+		if(MonsterIDs.size()) {
+
+			// Check for cooldown
+			if(BattleEvent.Object->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->BattleCooldown.end())
+				return;
+
+			// Create a new battle instance
+			_Battle *Battle = BattleManager->Create();
+			Battle->Manager = ObjectManager;
+			Battle->Stats = Stats;
+			Battle->Server = this;
+			Battle->Boss = Boss;
+			Battle->Cooldown = Cooldown;
+			Battle->Zone = BattleEvent.Zone;
+			Battle->Scripting = Scripting;
+
+			// Add player
+			Players.push_back(BattleEvent.Object);
+
+			// Sort by network id
+			Players.sort(CompareObjects);
+
+			// Get difficulty
+			double Difficulty = 1.0;
+			if(Scripting->StartMethodCall("Game", "GetDifficulty")) {
+				Scripting->PushReal(Save->Clock);
+				Scripting->MethodCall(1, 1);
+				Difficulty = Scripting->GetReal(1);
+				Scripting->FinishMethodCall();
+			}
+
+			// Add players to battle
+			Difficulty -= GAME_DIFFICULTY_PER_PLAYER;
+			for(auto &PartyPlayer : Players) {
+				Battle->AddFighter(PartyPlayer, 0);
+
+				// Increase difficulty for each player
+				Difficulty += GAME_DIFFICULTY_PER_PLAYER;
+			}
+
+			// Set difficulty of battle
+			Battle->Difficulty[0] = 1.0;
+			Battle->Difficulty[1] = Difficulty;
+
+			// Add monsters
+			for(auto &MonsterID : MonsterIDs) {
+				_Object *Monster = ObjectManager->Create();
+				Monster->Server = this;
+				Monster->Scripting = Scripting;
+				Monster->DatabaseID = MonsterID;
+				Monster->Stats = Stats;
+				Stats->GetMonsterStats(MonsterID, Monster, Difficulty);
+				Monster->CalculateStats();
+				Battle->AddFighter(Monster, 1);
+			}
+
+			// Send battle to players
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::BATTLE_START);
+			Battle->Serialize(Packet);
+			Battle->BroadcastPacket(Packet);
+		}
 	}
 }

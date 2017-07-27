@@ -355,7 +355,7 @@ void _Map::CheckEvents(_Object *Object) {
 				Object->Trader = nullptr;
 
 				if(Object->NextBattle <= 0) {
-					Server->QueueBattle(Object, Tile->Zone, false);
+					Server->QueueBattle(Object, Tile->Zone, false, false);
 				}
 			}
 		break;
@@ -884,6 +884,27 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 
 	return nullptr;
 }
+
+
+// Returns a player appropriate for pvp
+_Object *_Map::GetPVPPlayers(const _Object *Player) {
+	if(!IsValidPosition(Player->Position))
+		return nullptr;
+
+	if(!GetTile(Player->Position)->PVP)
+		return nullptr;
+
+	for(const auto &Object : Objects) {
+		if(Object != Player) {
+			if(Object->Position == Player->Position && Object->IsAlive() && !Object->Battle) {
+				return Object;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 
 // Returns the closest player
 _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) {

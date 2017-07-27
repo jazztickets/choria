@@ -1065,7 +1065,12 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 		// Start battle
 		if(!Battle && StatChange.HasStat(StatType::BATTLE)) {
-			Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true);
+			Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true, false);
+		}
+
+		// Start PVP
+		if(!Battle && StatChange.HasStat(StatType::PVP)) {
+			Server->QueueBattle(this, 0, false, true);
 		}
 	}
 

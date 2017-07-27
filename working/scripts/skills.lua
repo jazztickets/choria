@@ -923,3 +923,22 @@ function Skill_Cleave.PlaySound(self, Level)
 	Audio.Play("slash" .. Random.GetInt(0, 1) .. ".ogg")
 end
 
+-- Hunt --
+
+Skill_Hunt = Base_Attack:New()
+Skill_Hunt.GoldBase = 10
+Skill_Hunt.GoldPerLevel = 2
+
+function Skill_Hunt.GetGold(self, Level)
+	return math.floor(Skill_Hunt.GoldBase + Skill_Hunt.GoldPerLevel * (Level - 1))
+end
+
+function Skill_Hunt.GetInfo(self, Level)
+	return "Attack another player and get [c green]" .. self:GetGold(Level) .. "% [c white]of their gold for a kill"
+end
+
+function Skill_Hunt.Use(self, Level, Source, Target, Result)
+	Result.Target.PVP = 1
+
+	return Result
+end
