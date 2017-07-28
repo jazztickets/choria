@@ -180,7 +180,7 @@ void _Framework::Update() {
 	SDL_Event Event;
 	while(SDL_PollEvent(&Event)) {
 		if(State && FrameworkState == UPDATE) {
-			switch(Event.type){
+			switch(Event.type) {
 				case SDL_KEYDOWN:
 				case SDL_KEYUP: {
 					if(!GlobalKeyHandler(Event)) {

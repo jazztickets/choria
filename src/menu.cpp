@@ -62,6 +62,8 @@ _Menu::_Menu() {
 	PreviousClickTimer = 0.0;
 	CharacterSlots.resize(ACCOUNT_MAX_CHARACTER_SLOTS);
 	HardcoreServer = false;
+
+	ResetInGameState();
 }
 
 // Change the current layout
@@ -93,10 +95,11 @@ void _Menu::InitTitle(bool Disconnect) {
 
 	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
+	ResetInGameState();
 	State = STATE_TITLE;
 }
 
-// Init single player
+// Init character select screen
 void _Menu::InitCharacters() {
 	ChangeLayout("element_menu_characters");
 
@@ -108,6 +111,7 @@ void _Menu::InitCharacters() {
 
 	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
+	ResetInGameState();
 	CharactersState = CHARACTERS_NONE;
 	State = STATE_CHARACTERS;
 }
@@ -141,7 +145,7 @@ void _Menu::InitNewCharacter() {
 }
 
 // In-game menu
-void _Menu::InitInGame(bool ShowExitWarning, bool ShowRespawn) {
+void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 	if(!ShowRespawn)
 		Assets.Buttons["button_ingame_respawn"]->SetVisible(false);
@@ -151,6 +155,7 @@ void _Menu::InitInGame(bool ShowExitWarning, bool ShowRespawn) {
 
 	PlayState.SendStatus(_Object::STATUS_PAUSE);
 	State = STATE_INGAME;
+	FromInGame = true;
 }
 
 // Return to play
@@ -698,6 +703,13 @@ void _Menu::UpdateVolume() {
 	Audio.SetMusicVolume(Config.MusicVolume);
 }
 
+// Reset variables used for in-game menu
+void _Menu::ResetInGameState() {
+	FromInGame = false;
+	ShowExitWarning = false;
+	ShowRespawn = false;
+}
+
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
@@ -796,7 +808,7 @@ void _Menu::HandleKey(const _KeyEvent &KeyEvent) {
 					}
 				}
 			}
-			else if(CharactersState == CHARACTERS_CREATE){
+			else if(CharactersState == CHARACTERS_CREATE) {
 				ValidateCreateCharacter();
 
 				if(KeyEvent.Pressed) {
@@ -832,7 +844,10 @@ void _Menu::HandleKey(const _KeyEvent &KeyEvent) {
 
 			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
 				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE) {
-					InitTitle(true);
+					if(FromInGame)
+						InitInGame();
+					else
+						InitTitle(true);
 				}
 			}
 		} break;
@@ -1001,7 +1016,11 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					UpdateOptions();
 				}
 				else if(Clicked->Identifier == "button_options_back") {
-					InitTitle(true);
+					if(FromInGame)
+						InitInGame();
+					else
+						InitTitle(true);
+
 					PlayClickSound();
 				}
 			} break;
@@ -1015,6 +1034,10 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				}
 				else if(Clicked->Identifier == "button_ingame_resume") {
 					InitPlay();
+					PlayClickSound();
+				}
+				else if(Clicked->Identifier == "button_ingame_options") {
+					InitOptions();
 					PlayClickSound();
 				}
 				else if(Clicked->Identifier == "button_ingame_exit") {
@@ -1075,6 +1098,9 @@ void _Menu::Render() {
 			Assets.Elements["element_menu_account"]->Render();
 		} break;
 		case STATE_OPTIONS: {
+			if(FromInGame)
+			   Graphics.FadeScreen(MENU_PAUSE_FADE);
+
 			Assets.Elements["element_menu_options"]->Render();
 		} break;
 		case STATE_INGAME: {

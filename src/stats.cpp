@@ -423,7 +423,7 @@ void _Stats::LoadBuilds() {
 }
 
 // Load scripts
-void _Stats::LoadScripts(){
+void _Stats::LoadScripts() {
 	Scripts.clear();
 
 	// Run query

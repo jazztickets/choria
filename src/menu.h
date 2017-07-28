@@ -77,7 +77,7 @@ class _Menu {
 		void InitNewCharacter();
 		void InitConnect(bool UseConfig, bool ConnectNow=false);
 		void InitAccount();
-		void InitInGame(bool ShowExitWarning, bool ShowRespawn);
+		void InitInGame();
 		void InitPlay();
 		void InitOptions();
 		void ExitGame();
@@ -102,6 +102,8 @@ class _Menu {
 
 		StateType State;
 		size_t PreSelectedSlot;
+		bool ShowExitWarning;
+		bool ShowRespawn;
 
 	private:
 
@@ -130,10 +132,12 @@ class _Menu {
 		void ClearBuilds();
 		void UpdateOptions();
 		void UpdateVolume();
+		void ResetInGameState();
 
 		// States
 		std::string DefaultUsername;
 		std::string DefaultPassword;
+		bool FromInGame;
 
 		// UI
 		_Element *CurrentLayout;
