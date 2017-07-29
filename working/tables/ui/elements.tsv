@@ -10,6 +10,7 @@ element_menu_account			0	0	512	400	1	1	0	1	-1
 element_menu_ingame			0	0	250	400	1	1	0	1	-1
 element_menu_options			0	0	512	400	1	1	0	1	-1
 element_menu_options_middle	element_menu_options		0	0	0	0	1	0	0	1	-1
+element_menu_confirm		style_menu_window	0	0	300	130	1	1	0	1	-1
 element_hud			0	0	150	80	0	0	0	0	-1
 element_hud_health			-300	-19	150	32	1	2	0	0	-1
 element_hud_mana			300	-19	150	32	1	2	0	0	-1

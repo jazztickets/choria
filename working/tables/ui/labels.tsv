@@ -16,6 +16,9 @@ label_menu_newcharacter_name	textbox_newcharacter_name	hud_medium		Name	0	-25	0	
 label_menu_newcharacter_create	button_newcharacter_create	hud_medium		Create	0	23	0	0	1	3
 label_menu_newcharacter_createhardcore	button_newcharacter_createhardcore	hud_medium		Create Hardcore	0	23	0	0	1	3
 label_menu_newcharacter_cancel	button_newcharacter_cancel	hud_medium		Cancel	0	23	0	0	1	3
+label_menu_confirm_warning	element_menu_confirm	hud_medium		Are you sure?	0	40	0	0	1	3
+label_menu_confirm_ok	button_confirm_ok	hud_medium		Ok	0	23	0	0	1	3
+label_menu_confirm_cancel	button_confirm_cancel	hud_medium		Cancel	0	23	0	0	1	3
 label_menu_connect_title	element_menu_connect	hud_large		Connect	0	-250	0	0	1	1
 label_menu_connect_host	textbox_connect_host	menu_buttons		Host	0	-35	0	0	1	1
 label_menu_connect_port	textbox_connect_port	menu_buttons		Port	0	-35	0	0	1	1

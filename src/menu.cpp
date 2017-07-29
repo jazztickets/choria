@@ -178,6 +178,12 @@ void _Menu::InitOptions() {
 	State = STATE_OPTIONS;
 }
 
+// Show the confirm screen
+void _Menu::ConfirmAction() {
+	CurrentLayout = Assets.Elements["element_menu_confirm"];
+	CurrentLayout->SetVisible(true);
+}
+
 // Exit game and return to character select
 void _Menu::ExitGame() {
 
@@ -795,9 +801,16 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 				ValidateCreateCharacter();
 
 				switch(Action) {
-					case Action::MENU_GO: {
+					case Action::MENU_GO:
 						CreateCharacter();
-					} break;
+					break;
+					case Action::MENU_BACK:
+						RequestCharacterList();
+					break;
+				}
+			}
+			else if(CharactersState == CHARACTERS_DELETE) {
+				switch(Action) {
 					case Action::MENU_BACK:
 						RequestCharacterList();
 					break;
@@ -806,9 +819,9 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 		} break;
 		case STATE_CONNECT: {
 			switch(Action) {
-				case Action::MENU_GO: {
+				case Action::MENU_GO:
 					ConnectToHost();
-				} break;
+				break;
 				case Action::MENU_BACK:
 					InitTitle(true);
 				break;
@@ -819,9 +832,9 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 		} break;
 		case STATE_ACCOUNT: {
 			switch(Action) {
-				case Action::MENU_GO: {
+				case Action::MENU_GO:
 					SendAccountInfo();
-				} break;
+				break;
 				case Action::MENU_BACK:
 					InitConnect(true);
 				break;
@@ -915,14 +928,9 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				if(CharactersState == CHARACTERS_NONE) {
 
 					if(Clicked->Identifier == "button_characters_delete") {
-						size_t SelectedSlot = GetSelectedCharacter();
-						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
-							_Buffer Packet;
-							Packet.Write<PacketType>(PacketType::CHARACTERS_DELETE);
-							Packet.Write<uint8_t>((uint8_t)SelectedSlot);
-							PlayState.Network->SendPacket(Packet);
-						}
-
+						CharactersState = CHARACTERS_DELETE;
+						Assets.Elements["element_menu_character_slots"]->SetClickable(false);
+						ConfirmAction();
 						PlayClickSound();
 					}
 					else if(Clicked->Identifier == "button_characters_play") {
@@ -990,6 +998,23 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						PlayClickSound();
 					}
 					else if(Clicked->Identifier == "button_newcharacter_cancel") {
+						RequestCharacterList();
+						PlayClickSound();
+					}
+				}
+				else if(CharactersState == CHARACTERS_DELETE) {
+					if(Clicked->Identifier == "button_confirm_ok") {
+						PlayClickSound();
+
+						size_t SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
+							_Buffer Packet;
+							Packet.Write<PacketType>(PacketType::CHARACTERS_DELETE);
+							Packet.Write<uint8_t>((uint8_t)SelectedSlot);
+							PlayState.Network->SendPacket(Packet);
+						}
+					}
+					else if(Clicked->Identifier == "button_confirm_cancel") {
 						RequestCharacterList();
 						PlayClickSound();
 					}
@@ -1104,7 +1129,11 @@ void _Menu::Render() {
 				if(CurrentLayout)
 					CurrentLayout->Render();
 			}
-
+			else if(CharactersState == CHARACTERS_DELETE) {
+				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				if(CurrentLayout)
+					CurrentLayout->Render();
+			}
 		} break;
 		case STATE_CONNECT: {
 			Assets.Elements["element_menu_connect"]->Render();

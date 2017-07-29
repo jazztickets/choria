@@ -64,6 +64,7 @@ class _Menu {
 			CHARACTERS_NONE,
 			CHARACTERS_CREATE,
 			CHARACTERS_PLAYSENT,
+			CHARACTERS_DELETE,
 		};
 
 		enum KeyLabelType {
@@ -80,6 +81,7 @@ class _Menu {
 		void InitInGame();
 		void InitPlay();
 		void InitOptions();
+		void ConfirmAction();
 		void ExitGame();
 		void Close();
 
