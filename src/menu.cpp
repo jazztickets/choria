@@ -766,8 +766,8 @@ void _Menu::HandleAction(int InputType, size_t Action, int Value) {
 	switch(State) {
 		case STATE_INGAME:
 			switch(Action) {
-				case Action::BACK:
-				case Action::MENU:
+				case Action::MENU_BACK:
+				case Action::MENU_PAUSE:
 					Menu.InitPlay();
 				break;
 			}

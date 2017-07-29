@@ -32,26 +32,31 @@ _Actions::_Actions() {
 	ResetState();
 
 	// Set names for actions
-	State[Action::UP].Name = "up";
-	State[Action::DOWN].Name = "down";
-	State[Action::LEFT].Name = "left";
-	State[Action::RIGHT].Name = "right";
-	State[Action::BACK].Name = "back";
-	State[Action::MENU].Name = "menu";
-	State[Action::JOIN].Name = "join";
-	State[Action::INVENTORY].Name = "inventory";
-	State[Action::SKILLS].Name = "skills";
-	State[Action::TRADE].Name = "trade";
-	State[Action::PARTY].Name = "party";
-	State[Action::CHAT].Name = "chat";
-	State[Action::SKILL1].Name = "skill1";
-	State[Action::SKILL2].Name = "skill2";
-	State[Action::SKILL3].Name = "skill3";
-	State[Action::SKILL4].Name = "skill4";
-	State[Action::SKILL5].Name = "skill5";
-	State[Action::SKILL6].Name = "skill6";
-	State[Action::SKILL7].Name = "skill7";
-	State[Action::SKILL8].Name = "skill8";
+	State[Action::GAME_LEFT].Name = "game_left";
+	State[Action::GAME_RIGHT].Name = "game_right";
+	State[Action::GAME_UP].Name = "game_up";
+	State[Action::GAME_DOWN].Name = "game_down";
+	State[Action::GAME_JOIN].Name = "game_join";
+	State[Action::GAME_INVENTORY].Name = "game_inventory";
+	State[Action::GAME_SKILLS].Name = "game_skills";
+	State[Action::GAME_TRADE].Name = "game_trade";
+	State[Action::GAME_PARTY].Name = "game_party";
+	State[Action::GAME_CHAT].Name = "game_chat";
+	State[Action::GAME_SKILL1].Name = "game_skill1";
+	State[Action::GAME_SKILL2].Name = "game_skill2";
+	State[Action::GAME_SKILL3].Name = "game_skill3";
+	State[Action::GAME_SKILL4].Name = "game_skill4";
+	State[Action::GAME_SKILL5].Name = "game_skill5";
+	State[Action::GAME_SKILL6].Name = "game_skill6";
+	State[Action::GAME_SKILL7].Name = "game_skill7";
+	State[Action::GAME_SKILL8].Name = "game_skill8";
+	State[Action::MENU_LEFT].Name = "menu_left";
+	State[Action::MENU_RIGHT].Name = "menu_right";
+	State[Action::MENU_UP].Name = "menu_up";
+	State[Action::MENU_DOWN].Name = "menu_down";
+	State[Action::MENU_GO].Name = "menu_go";
+	State[Action::MENU_BACK].Name = "menu_back";
+	State[Action::MENU_PAUSE].Name = "menu_pause";
 }
 
 // Reset the action state

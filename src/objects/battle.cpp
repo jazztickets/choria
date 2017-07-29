@@ -237,7 +237,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		// Set up initial target
 		if(Item) {
 			if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
-				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::SKILL1 + ActionBarSlot) + " again to confirm.");
+				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->BattleSide;
@@ -861,24 +861,24 @@ int _Battle::GetPeerCount() {
 bool _Battle::ClientHandleInput(size_t Action) {
 
 	switch(Action) {
-		case Action::SKILL1:
-		case Action::SKILL2:
-		case Action::SKILL3:
-		case Action::SKILL4:
-		case Action::SKILL5:
-		case Action::SKILL6:
-		case Action::SKILL7:
-		case Action::SKILL8:
-			ClientSetAction((uint8_t)(Action - Action::SKILL1));
+		case Action::GAME_SKILL1:
+		case Action::GAME_SKILL2:
+		case Action::GAME_SKILL3:
+		case Action::GAME_SKILL4:
+		case Action::GAME_SKILL5:
+		case Action::GAME_SKILL6:
+		case Action::GAME_SKILL7:
+		case Action::GAME_SKILL8:
+			ClientSetAction((uint8_t)(Action - Action::GAME_SKILL1));
 		break;
-		case Action::UP:
+		case Action::GAME_UP:
 			ChangeTarget(-1, 0);
 		break;
-		case Action::DOWN:
+		case Action::GAME_DOWN:
 			ChangeTarget(1, 0);
 		break;
-		case Action::LEFT:
-		case Action::RIGHT:
+		case Action::GAME_LEFT:
+		case Action::GAME_RIGHT:
 			ChangeTarget(0, true);
 		break;
 	}

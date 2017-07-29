@@ -67,12 +67,12 @@ _HUD::_HUD() {
 	ChatTextBox = Assets.TextBoxes["textbox_chat"];
 	ChatTextBox->ParentOffset = glm::vec2(5, 15);
 
-	Assets.Labels["label_buttonbar_join"]->Text = Actions.GetInputNameForAction(Action::JOIN).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(Action::INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(Action::TRADE).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(Action::SKILLS).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_party"]->Text = Actions.GetInputNameForAction(Action::PARTY).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(Action::BACK).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_join"]->Text = Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(Action::GAME_TRADE).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_party"]->Text = Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
 
 	DiedElement = Assets.Elements["element_died"];
 	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
@@ -381,7 +381,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		else if(ActionBarElement->GetClickedElement()) {
 			uint8_t Slot = (uint8_t)(intptr_t)ActionBarElement->GetClickedElement()->UserData;
 			if(Player->Battle)
-				Player->Battle->ClientHandleInput(Action::SKILL1 + Slot);
+				Player->Battle->ClientHandleInput(Action::GAME_SKILL1 + Slot);
 			else
 				PlayState.SendActionUse(Slot);
 		}
@@ -691,7 +691,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			CloseWindows(false);
 
 		// Show respawn instructions
-		Buffer << "Hit " << Actions.GetInputNameForAction(Action::BACK);
+		Buffer << "Hit " << Actions.GetInputNameForAction(Action::MENU_BACK);
 		if(Player->Hardcore)
 			Buffer << " to exit";
 		else
@@ -1559,7 +1559,7 @@ void _HUD::DrawActionBar() {
 		}
 
 		// Draw hotkey
-		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction((int)(Action::SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
 	}
 }
 

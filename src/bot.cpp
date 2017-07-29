@@ -156,8 +156,8 @@ void _Bot::Update(double FrameTime) {
 	// Update battle system
 	if(Battle) {
 		if(!Player->PotentialAction.IsSet()) {
-			Battle->ClientHandleInput(Action::SKILL1);
-			Battle->ClientHandleInput(Action::SKILL1);
+			Battle->ClientHandleInput(Action::GAME_SKILL1);
+			Battle->ClientHandleInput(Action::GAME_SKILL1);
 		}
 
 		if(!Player->Battle) {
