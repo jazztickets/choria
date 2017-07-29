@@ -758,12 +758,90 @@ void _Menu::Close() {
 	ClearBuilds();
 }
 
-// Handle actions
-void _Menu::HandleAction(int InputType, size_t Action, int Value) {
+// Handle action, return true to stop handling same input
+bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 	if(State == STATE_NONE)
-		return;
+		return true;
 
 	switch(State) {
+		case STATE_TITLE: {
+			switch(Action) {
+				case Action::MENU_GO:
+					PlayState.Connect(true);
+				break;
+				case Action::MENU_BACK:
+					Framework.Done = true;
+				break;
+			}
+		} break;
+		case STATE_CHARACTERS: {
+			if(CharactersState == CHARACTERS_NONE) {
+				switch(Action) {
+					case Action::MENU_GO: {
+						size_t SelectedSlot = GetSelectedCharacter();
+						if(SelectedSlot >= CharacterSlots.size())
+							SelectedSlot = 0;
+
+						if(CharacterSlots[SelectedSlot].Used) {
+							PlayCharacter(SelectedSlot);
+						}
+					} break;
+					case Action::MENU_BACK:
+						PlayState.Network->Disconnect();
+					break;
+				}
+			}
+			else if(CharactersState == CHARACTERS_CREATE) {
+				ValidateCreateCharacter();
+
+				switch(Action) {
+					case Action::MENU_GO: {
+						CreateCharacter();
+					} break;
+					case Action::MENU_BACK:
+						RequestCharacterList();
+					break;
+				}
+			}
+		} break;
+		case STATE_CONNECT: {
+			switch(Action) {
+				case Action::MENU_GO: {
+					ConnectToHost();
+				} break;
+				case Action::MENU_BACK:
+					InitTitle(true);
+				break;
+				case Action::MENU_DOWN:
+					FocusNextElement();
+				break;
+			}
+		} break;
+		case STATE_ACCOUNT: {
+			switch(Action) {
+				case Action::MENU_GO: {
+					SendAccountInfo();
+				} break;
+				case Action::MENU_BACK:
+					InitConnect(true);
+				break;
+				case Action::MENU_DOWN:
+					FocusNextElement();
+				break;
+			}
+		} break;
+		case STATE_OPTIONS: {
+			UpdateVolume();
+
+			switch(Action) {
+				case Action::MENU_BACK: {
+					if(FromInGame)
+						InitInGame();
+					else
+						InitTitle(true);
+				} break;
+			}
+		} break;
 		case STATE_INGAME:
 			switch(Action) {
 				case Action::MENU_BACK:
@@ -775,6 +853,8 @@ void _Menu::HandleAction(int InputType, size_t Action, int Value) {
 		default:
 		break;
 	}
+
+	return false;
 }
 
 // Handle key event
@@ -783,75 +863,10 @@ void _Menu::HandleKey(const _KeyEvent &KeyEvent) {
 		return;
 
 	switch(State) {
-		case STATE_TITLE: {
-			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
-				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-					Framework.Done = true;
-				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-					PlayState.Connect(true);
-				}
-			}
-		} break;
 		case STATE_CHARACTERS: {
-			if(CharactersState == CHARACTERS_NONE) {
-				if(KeyEvent.Pressed && !KeyEvent.Repeat) {
-					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-						PlayState.Network->Disconnect();
-					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-						size_t SelectedSlot = GetSelectedCharacter();
-						if(SelectedSlot >= CharacterSlots.size())
-							SelectedSlot = 0;
-
-						if(CharacterSlots[SelectedSlot].Used) {
-							PlayCharacter(SelectedSlot);
-						}
-					}
-				}
-			}
-			else if(CharactersState == CHARACTERS_CREATE) {
+			if(CharactersState == CHARACTERS_CREATE) {
 				ValidateCreateCharacter();
-
-				if(KeyEvent.Pressed) {
-					if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-						RequestCharacterList();
-					else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
-						CreateCharacter();
-				}
 			}
-		} break;
-		case STATE_CONNECT: {
-			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
-				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-					InitTitle(true);
-				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
-					ConnectToHost();
-				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
-					FocusNextElement();
-			}
-		} break;
-		case STATE_ACCOUNT: {
-			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
-				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
-					InitConnect(true);
-				else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN)
-					SendAccountInfo();
-				else if(KeyEvent.Scancode == SDL_SCANCODE_TAB)
-					FocusNextElement();
-			}
-		} break;
-		case STATE_OPTIONS: {
-			UpdateVolume();
-
-			if(KeyEvent.Pressed && !KeyEvent.Repeat) {
-				if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE) {
-					if(FromInGame)
-						InitInGame();
-					else
-						InitTitle(true);
-				}
-			}
-		} break;
-		case STATE_INGAME: {
 		} break;
 		default:
 		break;

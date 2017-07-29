@@ -57,6 +57,8 @@ _Actions::_Actions() {
 	State[Action::MENU_GO].Name = "menu_go";
 	State[Action::MENU_BACK].Name = "menu_back";
 	State[Action::MENU_PAUSE].Name = "menu_pause";
+	State[Action::MISC_CONSOLE].Name = "misc_console";
+	State[Action::MISC_DEBUG].Name = "misc_debug";
 }
 
 // Reset the action state

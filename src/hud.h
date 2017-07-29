@@ -173,7 +173,7 @@ class _HUD {
 		bool EnableMouseCombat;
 
 		// Stats
-		bool ShowStats;
+		bool ShowDebug;
 
 		// Scripting
 		_Scripting *Scripting;

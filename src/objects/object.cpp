@@ -405,7 +405,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		Graphics.SetVBO(VBO_QUAD);
 
 		glm::vec3 DrawPosition;
-		if(HUD && HUD->ShowStats) {
+		if(HUD && HUD->ShowDebug) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 			Graphics.DrawSprite(DrawPosition, ModelTexture);

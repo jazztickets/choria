@@ -65,26 +65,22 @@ void _Config::SetDefaults() {
 	Vsync = DEFAULT_VSYNC;
 	MaxFPS = DEFAULT_MAXFPS;
 	AudioEnabled = DEFAULT_AUDIOENABLED;
-
 	SoundVolume = 1.0f;
 	MusicVolume = 1.0f;
-
 	MaxClients = DEFAULT_MAXCLIENTS;
 	FakeLag = 0.0f;
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
+	ShowTutorial = 1;
+	DesignToolURL = "http://localhost:8000";
+	LastHost = "127.0.0.1";
+	LastPort = std::to_string(DEFAULT_NETWORKPORT);
 
 #ifdef _WIN32
 	BrowserCommand = "explorer";
 #else
 	BrowserCommand = "xdg-open";
 #endif
-
-	ShowTutorial = 1;
-
-	DesignToolURL = "http://localhost:8000";
-	LastHost = "127.0.0.1";
-	LastPort = std::to_string(DEFAULT_NETWORKPORT);
 
 	LoadDefaultInputBindings();
 }
@@ -136,11 +132,16 @@ void _Config::LoadDefaultInputBindings() {
 	// Menu
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_UP, Action::MENU_UP, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_DOWN, Action::MENU_DOWN, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_TAB, Action::MENU_DOWN, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_LEFT, Action::MENU_LEFT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, Action::MENU_RIGHT, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, Action::MENU_GO, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, Action::MENU_BACK, 1.0f, -1.0f, false);
 	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F1, Action::MENU_PAUSE, 1.0f, -1.0f, false);
+
+	// Misc
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_GRAVE, Action::MISC_CONSOLE, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F2, Action::MISC_DEBUG, 1.0f, -1.0f, false);
 }
 
 // Load the config file

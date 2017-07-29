@@ -172,16 +172,14 @@ void _PlayState::StartLocalServer() {
 	}
 }
 
-// Action handler
+// Action handler, return true to stop handling same input
 bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	if(Value == 0)
 		return true;
 
 	// Pass to menu
-	if(Menu.State != _Menu::STATE_NONE) {
-		Menu.HandleAction(InputType, Action, Value);
-		return true;
-	}
+	if(Menu.State != _Menu::STATE_NONE)
+		return Menu.HandleAction(InputType, Action, Value);
 
 	// Check for player
 	if(!Player)
@@ -208,6 +206,10 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 		return true;
 	}
+
+	// Toggle debug stats
+	if(Action == Action::MISC_DEBUG)
+		HUD->ShowDebug = !HUD->ShowDebug;
 
 	// Respawn
 	if(!Player->IsAlive()) {
@@ -315,10 +317,6 @@ void _PlayState::HandleKey(const _KeyEvent &KeyEvent) {
 
 	if(!HUD->IsChatting())
 		HUD->ValidateTradeGold();
-
-	// Toggle network stats
-	if(KeyEvent.Pressed && KeyEvent.Scancode == SDL_SCANCODE_F2)
-		HUD->ShowStats = !HUD->ShowStats;
 }
 
 // Mouse handler

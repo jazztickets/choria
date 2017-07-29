@@ -83,7 +83,7 @@ class _Menu {
 		void ExitGame();
 		void Close();
 
-		void HandleAction(int InputType, size_t Action, int Value);
+		bool HandleAction(int InputType, size_t Action, int Value);
 		void HandleKey(const _KeyEvent &KeyEvent);
 		void HandleMouseButton(const _MouseEvent &MouseEvent);
 

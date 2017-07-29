@@ -58,7 +58,7 @@
 // Initialize
 _HUD::_HUD() {
 	EnableMouseCombat = false;
-	ShowStats = false;
+	ShowDebug = false;
 	Player = nullptr;
 	LowestRecentItemTime = 0.0;
 	Tooltip.Reset();
@@ -560,7 +560,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	DrawChat(Time, IsChatting());
 
 	// Show network stats
-	if(ShowStats) {
+	if(ShowDebug) {
 		Buffer << Graphics.FramesPerSecond << " FPS";
 		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
 		Buffer.str("");

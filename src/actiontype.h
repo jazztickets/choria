@@ -46,6 +46,8 @@ namespace Action {
 		MENU_GO,
 		MENU_BACK,
 		MENU_PAUSE,
+		MISC_CONSOLE,
+		MISC_DEBUG,
 		COUNT,
 	};
 }
