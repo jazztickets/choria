@@ -35,6 +35,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>
+#include <tinyxml2.h>
 
 _Assets Assets;
 
@@ -61,6 +62,7 @@ void _Assets::Init(bool IsServer) {
 		LoadFonts(ASSETS_FONTS);
 		LoadColors(ASSETS_COLORS);
 		LoadStyles(ASSETS_UI_STYLES);
+		//LoadUI(ASSETS_UI);
 		LoadElements(ASSETS_UI_ELEMENTS);
 		LoadImages(ASSETS_UI_IMAGES);
 		LoadButtons(ASSETS_UI_BUTTONS);
@@ -230,6 +232,15 @@ void _Assets::LoadPrograms(const std::string &Path) {
 	}
 
 	File.close();
+}
+
+// Load the UI xml file
+void _Assets::LoadUI(const std::string &Path) {
+
+	// Load file
+	tinyxml2::XMLDocument Document;
+	if(Document.LoadFile(Path.c_str()) != tinyxml2::XML_SUCCESS)
+		throw std::runtime_error("Error loading: " + Path);
 }
 
 // Loads the color table

@@ -109,6 +109,11 @@ if(NOT JSONCPP_FOUND)
 	message(SEND_ERROR "Could not find JsonCpp!")
 endif()
 
+find_package(TinyXML2 REQUIRED)
+if(NOT TINYXML2_FOUND)
+	message(SEND_ERROR "Could not find TinyXML2!")
+endif()
+
 # set include directories
 include_directories("src")
 include_directories(${SDL2_INCLUDE_DIR})
@@ -121,6 +126,7 @@ include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${SQLITE_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIRS})
 include_directories(${JSONCPP_INCLUDE_DIR})
+include_directories(${TINYXML2_INCLUDE_DIR})
 
 # add source files
 file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
@@ -173,6 +179,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 	${SQLITE_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${JSONCPP_LIBRARIES}
+	${TINYXML2_LIBRARIES}
 	${CMAKE_THREAD_LIBS_INIT}
 	${EXTRA_LIBS}
 )

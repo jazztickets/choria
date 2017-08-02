@@ -20,6 +20,7 @@ Lua 5.2+
 GLM 0.9.5+
 SQLite 3+
 jsoncpp
+tinyxml2
 zlib
 pthreads
 
@@ -68,9 +69,9 @@ disable audio
 ----- HOW TO PLAY -----
 
 Use arrow keys or ESDF to walk around.
-During battle, hit 1-8 to use a skill. Use up/down arrow keys to switch targets.
+During battle, hit 1-8 to use a skill. Use up/down arrow keys or mouse to switch targets. Hit 1-8 again or left mouse button to confirm the action.
 Hit C to open your inventory and see character stats.
-Hit R to open your skill page. Every level you get 3 skill points to spend. All skills must be equipped to your action bar before they're activated.
+Hit R to open your skill page. Every level you get one skill point to spend. All skills must be equipped to your action bar before they're activated.
 Hit T to trade with other players.
 Hit G to join an existing battle.
 Hit P to set a private party name.
@@ -92,7 +93,7 @@ Hit F1-F5 to change brush size
 Hit Spacebar to list textures
 Hit Tab to change from background/foreground layer
 Hit W to change from Wall/Walkable
-Hit P to change from PVP/Safe
+Hit P to change from PVP/Safe zone
 Hit E/Shift-E to change event types
 Hit G on an event to open it in the design tool or to switch maps
 Hit V to paste a copied area of tiles

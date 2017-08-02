@@ -149,6 +149,7 @@ const  std::string  ASSETS_PROGRAMS                 =  "tables/programs.tsv";
 const  std::string  ASSETS_COLORS                   =  "tables/colors.tsv";
 const  std::string  ASSETS_FONTS                    =  "tables/fonts.tsv";
 const  std::string  ASSETS_LAYERS                   =  "tables/layers.tsv";
+const  std::string  ASSETS_UI                       =  "tables/ui.xml";
 const  std::string  ASSETS_UI_BUTTONS               =  "tables/ui/buttons.tsv";
 const  std::string  ASSETS_UI_ELEMENTS              =  "tables/ui/elements.tsv";
 const  std::string  ASSETS_UI_IMAGES                =  "tables/ui/images.tsv";

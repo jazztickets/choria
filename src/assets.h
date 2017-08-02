@@ -78,6 +78,7 @@ class _Assets {
 		void LoadFonts(const std::string &Path);
 		void LoadLayers(const std::string &Path);
 		void LoadPrograms(const std::string &Path);
+		void LoadUI(const std::string &Path);
 		void LoadStyles(const std::string &Path);
 		void LoadElements(const std::string &Path);
 		void LoadLabels(const std::string &Path);
