@@ -33,6 +33,7 @@ class _Label : public _Element {
 		_Label();
 		~_Label() override;
 
+		virtual const char *GetTypeName() const override { return "label"; }
 		void Render(bool IgnoreVisible=false) const override;
 
 		void SetWrap(float Width);
@@ -43,6 +44,8 @@ class _Label : public _Element {
 		glm::vec4 Color;
 
 	private:
+
+		void SerializeAttributes(tinyxml2::XMLElement *Node) override;
 
 		std::list<std::string> Texts;
 

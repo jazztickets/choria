@@ -21,6 +21,7 @@
 #include <graphics.h>
 #include <assets.h>
 #include <SDL_keycode.h>
+#include <tinyxml2.h>
 #include <iostream>
 
 // Constructor
@@ -148,4 +149,14 @@ void _TextBox::Render(bool IgnoreVisible) const {
 
 	// Disable mask
 	Graphics.DisableStencilTest();
+}
+
+// Serialize attributes
+void _TextBox::SerializeAttributes(tinyxml2::XMLElement *Node) {
+	if(FontName.size())
+		Node->SetAttribute("font", FontName.c_str());
+	if(MaxLength)
+		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
+
+	_Element::SerializeAttributes(Node);
 }

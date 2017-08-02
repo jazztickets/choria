@@ -25,6 +25,10 @@
 // Forward Declarations
 struct _Style;
 struct _KeyEvent;
+namespace tinyxml2 {
+class XMLDocument;
+	class XMLElement;
+}
 
 // Classes
 class _Element {
@@ -34,17 +38,18 @@ class _Element {
 		_Element();
 		virtual ~_Element();
 
+		virtual const char *GetTypeName() const { return "element"; }
 		virtual void Update(double FrameTime, const glm::vec2 &Mouse);
-
-		virtual void CalculateBounds();
 		virtual void Render(bool IgnoreVisible=false) const;
 		virtual bool HandleKey(const _KeyEvent &KeyEvent);
 		virtual void HandleInput(bool Pressed);
+		virtual void CalculateBounds();
 		_Element *GetClickedElement();
 
 		void RemoveChild(_Element *Element);
 		void UpdateChildrenOffset(const glm::vec2 &Update) { ChildrenOffset += Update; CalculateChildrenBounds(); }
 		void CalculateChildrenBounds();
+		void SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode);
 
 		void SetDebug(int Debug);
 		void SetClickable(bool Clickable, int Depth=-1);
@@ -71,6 +76,8 @@ class _Element {
 		int Debug;
 
 		// Graphics
+		std::string ColorName;
+		std::string FontName;
 		const _Style *Style;
 		const _Style *DisabledStyle;
 		float Fade;
@@ -91,5 +98,7 @@ class _Element {
 		glm::vec2 ChildrenOffset;
 
 	protected:
+
+		virtual void SerializeAttributes(tinyxml2::XMLElement *Node);
 
 };

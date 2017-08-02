@@ -22,6 +22,7 @@
 #include <texture.h>
 #include <atlas.h>
 #include <graphics.h>
+#include <tinyxml2.h>
 
 // Constructor
 _Button::_Button() :
@@ -119,4 +120,12 @@ void _Button::Render(bool IgnoreVisible) const {
 	for(auto &Child : Children) {
 		Child->Render();
 	}
+}
+
+// Serialize attributes
+void _Button::SerializeAttributes(tinyxml2::XMLElement *Node) {
+	if(HoverStyle)
+		Node->SetAttribute("hover_style", HoverStyle->Identifier.c_str());
+
+	_Element::SerializeAttributes(Node);
 }

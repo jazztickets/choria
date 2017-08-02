@@ -22,6 +22,7 @@
 #include <assets.h>
 #include <constants.h>
 #include <algorithm>
+#include <tinyxml2.h>
 
 const glm::vec4 DebugColors[] = { COLOR_CYAN, COLOR_YELLOW, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
@@ -174,6 +175,51 @@ void _Element::CalculateChildrenBounds() {
 	// Update children
 	for(auto &Child : Children)
 		Child->CalculateBounds();
+}
+
+// Serialize element and children to xml node
+void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode) {
+
+	// Create xml node
+	tinyxml2::XMLElement *Node = Document.NewElement(GetTypeName());
+
+	// Set base attributes
+	Node->SetAttribute("identifier", Identifier.c_str());
+	if(Style)
+		Node->SetAttribute("style", Style->Identifier.c_str());
+	if(DisabledStyle)
+		Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
+
+	// Set attributes
+	SerializeAttributes(Node);
+
+	// Append
+	ParentNode->InsertEndChild(Node);
+
+	// Add children
+	for(const auto &Child : Children)
+		Child->SerializeElement(Document, Node);
+}
+
+// Serialize attributes
+void _Element::SerializeAttributes(tinyxml2::XMLElement *Node) {
+
+	if(Offset.x != 0.0f)
+		Node->SetAttribute("offset_x", Offset.x);
+	if(Offset.y != 0.0f)
+		Node->SetAttribute("offset_y", Offset.y);
+	if(Size.x != 0.0f)
+		Node->SetAttribute("size_x", Size.x);
+	if(Size.y != 0.0f)
+		Node->SetAttribute("size_y", Size.y);
+	if(Alignment.Horizontal != _Alignment::CENTER)
+		Node->SetAttribute("alignment_x", Alignment.Horizontal);
+	if(Alignment.Vertical != _Alignment::MIDDLE)
+		Node->SetAttribute("alignment_y", Alignment.Vertical);
+	if(Clickable != 1)
+		Node->SetAttribute("clickable", Clickable);
+	if((intptr_t)UserData != -1)
+		Node->SetAttribute("userdata", (intptr_t)UserData);
 }
 
 // Render the element

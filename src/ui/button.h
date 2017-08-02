@@ -31,6 +31,7 @@ class _Button : public _Element {
 		_Button();
 		~_Button() override;
 
+		virtual const char *GetTypeName() const override { return "button"; }
 		void Render(bool IgnoreVisible=false) const override;
 
 		// Attributes
@@ -39,5 +40,7 @@ class _Button : public _Element {
 		uint32_t TextureIndex;
 
 	private:
+
+		virtual void SerializeAttributes(tinyxml2::XMLElement *Node) override;
 
 };

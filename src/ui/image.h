@@ -32,6 +32,7 @@ class _Image : public _Element {
 		_Image();
 		~_Image() override;
 
+		virtual const char *GetTypeName() const override { return "image"; }
 		void Render(bool IgnoreVisible=false) const override;
 
 		// Attributes
@@ -41,4 +42,5 @@ class _Image : public _Element {
 
 	private:
 
+		void SerializeAttributes(tinyxml2::XMLElement *Node) override;
 };

@@ -19,9 +19,13 @@
 #include <texture.h>
 #include <graphics.h>
 #include <assets.h>
+#include <tinyxml2.h>
 
 // Constructor
-_Image::_Image() : Color(1.0f, 1.0f, 1.0f, 1.0f), Stretch(false) {
+_Image::_Image() :
+	Color(1.0f, 1.0f, 1.0f, 1.0f),
+	Stretch(false) {
+
 	Clickable = false;
 }
 
@@ -43,4 +47,16 @@ void _Image::Render(bool IgnoreVisible) const {
 
 	// Draw children
 	_Element::Render();
+}
+
+// Serialize attributes
+void _Image::SerializeAttributes(tinyxml2::XMLElement *Node) {
+	if(Texture)
+		Node->SetAttribute("texture", Texture->Identifier.c_str());
+	if(ColorName.size())
+		Node->SetAttribute("color", ColorName.c_str());
+	if(Stretch)
+		Node->SetAttribute("stretch", Stretch);
+
+	_Element::SerializeAttributes(Node);
 }

@@ -73,6 +73,8 @@ void _Assets::Init(bool IsServer) {
 
 		ResolveElementParents();
 	}
+
+	//SaveUI(ASSETS_UI);
 }
 
 // Shutdown
@@ -505,8 +507,10 @@ void _Assets::LoadLabels(const std::string &Path) {
 		Label->Size = Size;
 		Label->Alignment = Alignment;
 		Label->Font = Font;
+		Label->FontName = FontIdentifier;
 		Label->Text = Text;
 		Label->Color = Colors[ColorIdentifier];
+		Label->ColorName = ColorIdentifier;
 
 		// Add to map
 		Label->GlobalID = AllElements.size();
@@ -570,6 +574,7 @@ void _Assets::LoadImages(const std::string &Path) {
 		Image->Alignment = Alignment;
 		Image->Texture = Texture;
 		Image->Color = Colors[ColorIdentifier];
+		Image->ColorName = ColorIdentifier;
 		Image->Stretch = Stretch;
 
 		// Add to map
@@ -748,4 +753,24 @@ void _Assets::ResolveElementParents() {
 		Element->Parent->Children.push_back(Element);
 		Element->CalculateBounds();
 	}
+}
+
+// Save UI to xml
+void _Assets::SaveUI(const std::string &Path) {
+
+	// Create doc
+	tinyxml2::XMLDocument Document;
+	Document.InsertEndChild(Document.NewDeclaration());
+
+	// Create root node
+	tinyxml2::XMLElement *ElementsElement = Document.NewElement("elements");
+	ElementsElement->SetAttribute("version", "1.0");
+	Document.InsertEndChild(ElementsElement);
+
+	// Serialize children
+	for(const auto &Child : Graphics.Element->Children)
+		Child->SerializeElement(Document, ElementsElement);
+
+	// Write file
+	Document.SaveFile(Path.c_str());
 }

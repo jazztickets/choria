@@ -19,6 +19,7 @@
 #include <graphics.h>
 #include <assets.h>
 #include <font.h>
+#include <tinyxml2.h>
 
 // Constructor
 _Label::_Label() : Color(1.0f, 1.0f, 1.0f, 1.0f) {
@@ -63,4 +64,16 @@ void _Label::SetWrap(float Width) {
 
 	Texts.clear();
 	Font->BreakupString(Text, Width, Texts);
+}
+
+// Serialize attributes
+void _Label::SerializeAttributes(tinyxml2::XMLElement *Node) {
+	if(Text.size())
+		Node->SetAttribute("text", Text.c_str());
+	if(FontName.size())
+		Node->SetAttribute("font", FontName.c_str());
+	if(ColorName.size())
+		Node->SetAttribute("color", ColorName.c_str());
+
+	_Element::SerializeAttributes(Node);
 }

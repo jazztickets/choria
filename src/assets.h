@@ -87,6 +87,7 @@ class _Assets {
 		void LoadTextBoxes(const std::string &Path);
 
 		void ResolveElementParents();
+		void SaveUI(const std::string &Path);
 
 		std::unordered_map<std::string, const _Shader *> Shaders;
 		std::unordered_map<std::string, _Element *> AllElements;
