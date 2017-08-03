@@ -62,7 +62,7 @@ void _Assets::Init(bool IsServer) {
 		LoadFonts(ASSETS_FONTS);
 		LoadColors(ASSETS_COLORS);
 		LoadStyles(ASSETS_UI_STYLES);
-		//LoadUI(ASSETS_UI);
+		LoadUI(ASSETS_UI);
 		LoadElements(ASSETS_UI_ELEMENTS);
 		LoadImages(ASSETS_UI_IMAGES);
 		LoadButtons(ASSETS_UI_BUTTONS);
@@ -230,7 +230,7 @@ void _Assets::LoadPrograms(const std::string &Path) {
 			Shaders[FragmentPath] = new _Shader(FragmentPath, GL_FRAGMENT_SHADER);
 
 		// Create program
-		Programs[Identifier]= new _Program(Shaders[VertexPath], Shaders[FragmentPath], Attribs);
+		Programs[Identifier] = new _Program(Shaders[VertexPath], Shaders[FragmentPath], Attribs);
 	}
 
 	File.close();
@@ -243,6 +243,15 @@ void _Assets::LoadUI(const std::string &Path) {
 	tinyxml2::XMLDocument Document;
 	if(Document.LoadFile(Path.c_str()) != tinyxml2::XML_SUCCESS)
 		throw std::runtime_error("Error loading: " + Path);
+
+	// Check for elements node
+	tinyxml2::XMLElement *ElementsElement = Document.FirstChildElement("elements");
+	if(!ElementsElement)
+		throw std::runtime_error("No elements xml node: " + Path);
+
+	// Load elements
+	for(tinyxml2::XMLElement *Element = ElementsElement->FirstChildElement(); Element != nullptr; Element = Element->NextSiblingElement()) {
+	}
 }
 
 // Loads the color table
