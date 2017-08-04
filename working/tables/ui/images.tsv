@@ -1,5 +1,5 @@
 identifier	parent	texture	color	offset x	offset y	width	height	alignment x	alignment y	stretch/fill
-image_title_logo		menu/logo.png		0	-250	344	128	1	1	0
+image_title_logo	element_menu_title	menu/logo.png		0	-250	344	128	1	1	0
 image_hud_health_bar_empty	element_hud_health	hud_repeat/health_empty.png		0	0	0	32	0	0	0
 image_hud_health_bar_full	element_hud_health	hud_repeat/health_full.png		0	0	0	32	0	0	0
 image_hud_mana_bar_empty	element_hud_mana	hud_repeat/mana_empty.png		0	0	0	32	0	0	0

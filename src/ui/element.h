@@ -19,6 +19,7 @@
 
 // Libraries
 #include <ui/ui.h>
+#include <glm/vec4.hpp>
 #include <string>
 #include <list>
 
@@ -40,7 +41,7 @@ class _Element {
 
 		virtual const char *GetTypeName() const { return "element"; }
 		virtual void Update(double FrameTime, const glm::vec2 &Mouse);
-		virtual void Render(bool IgnoreVisible=false) const;
+		virtual void Render() const;
 		virtual bool HandleKey(const _KeyEvent &KeyEvent);
 		virtual void HandleInput(bool Pressed);
 		virtual void CalculateBounds();
@@ -70,16 +71,21 @@ class _Element {
 
 		bool Visible : 1;
 		bool Enabled : 1;
+		bool Checked : 1;
 		bool Clickable : 1;
 		bool MaskOutside : 1;
+		bool Stretch : 1;
 		bool UserCreated : 1;
 		int Debug;
 
 		// Graphics
+		glm::vec4 Color;
 		std::string ColorName;
 		std::string FontName;
 		const _Style *Style;
+		const _Style *HoverStyle;
 		const _Style *DisabledStyle;
+		uint32_t TextureIndex;
 		float Fade;
 
 		// Layout
@@ -92,6 +98,9 @@ class _Element {
 		_Element *HitElement;
 		_Element *PressedElement;
 		_Element *ReleasedElement;
+
+		// Textbox
+		size_t MaxLength;
 
 		// Children
 		std::list<_Element *> Children;

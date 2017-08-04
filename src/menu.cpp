@@ -68,6 +68,8 @@ _Menu::_Menu() {
 
 // Change the current layout
 void _Menu::ChangeLayout(const std::string &ElementIdentifier) {
+	Assets.Labels["label_menu_title_version"]->SetVisible(false);
+
 	if(CurrentLayout) {
 		CurrentLayout->SetVisible(false);
 
@@ -92,6 +94,7 @@ void _Menu::InitTitle(bool Disconnect) {
 	Assets.Labels["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
+	Assets.Labels["label_menu_title_version"]->SetVisible(true);
 
 	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
@@ -1118,8 +1121,7 @@ void _Menu::Render() {
 		case STATE_TITLE: {
 			if(CurrentLayout)
 				CurrentLayout->Render();
-			Assets.Labels["label_menu_title_version"]->Render(true);
-			Assets.Images["image_title_logo"]->Render(true);
+			Assets.Labels["label_menu_title_version"]->Render();
 		} break;
 		case STATE_CHARACTERS: {
 			Assets.Elements["element_menu_characters"]->Render();

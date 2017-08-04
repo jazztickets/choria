@@ -27,7 +27,6 @@
 // Constructor
 _TextBox::_TextBox() :
 	Font(nullptr),
-	MaxLength(0),
 	CursorPosition(0),
 	CursorTimer(0),
 	Password(false) {
@@ -114,8 +113,8 @@ bool _TextBox::HandleKey(const _KeyEvent &KeyEvent) {
 }
 
 // Render the element
-void _TextBox::Render(bool IgnoreVisible) const {
-	if(!Visible && !IgnoreVisible)
+void _TextBox::Render() const {
+	if(!Visible)
 		return;
 
 	// Get text to render
@@ -149,14 +148,4 @@ void _TextBox::Render(bool IgnoreVisible) const {
 
 	// Disable mask
 	Graphics.DisableStencilTest();
-}
-
-// Serialize attributes
-void _TextBox::SerializeAttributes(tinyxml2::XMLElement *Node) {
-	if(FontName.size())
-		Node->SetAttribute("font", FontName.c_str());
-	if(MaxLength)
-		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
-
-	_Element::SerializeAttributes(Node);
 }

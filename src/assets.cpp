@@ -585,6 +585,7 @@ void _Assets::LoadImages(const std::string &Path) {
 		Image->Color = Colors[ColorIdentifier];
 		Image->ColorName = ColorIdentifier;
 		Image->Stretch = Stretch;
+		Image->Clickable = false;
 
 		// Add to map
 		Image->GlobalID = AllElements.size();

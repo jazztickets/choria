@@ -29,16 +29,11 @@ class _Image : public _Element {
 
 	public:
 
-		_Image();
-		~_Image() override;
-
 		virtual const char *GetTypeName() const override { return "image"; }
-		void Render(bool IgnoreVisible=false) const override;
+		void Render() const override;
 
 		// Attributes
 		const _Texture *Texture;
-		glm::vec4 Color;
-		bool Stretch;
 
 	private:
 

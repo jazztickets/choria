@@ -35,16 +35,22 @@ _Element::_Element() :
 	UserDataAlt(nullptr),
 	Visible(false),
 	Enabled(true),
+	Checked(false),
 	Clickable(true),
 	MaskOutside(false),
+	Stretch(false),
 	UserCreated(false),
 	Debug(0),
+	Color(1.0f, 1.0f, 1.0f, 1.0f),
 	Style(nullptr),
+	HoverStyle(nullptr),
 	DisabledStyle(nullptr),
+	TextureIndex(0),
 	Fade(1.0f),
 	HitElement(nullptr),
 	PressedElement(nullptr),
-	ReleasedElement(nullptr) {
+	ReleasedElement(nullptr),
+	MaxLength(0) {
 
 }
 
@@ -187,8 +193,14 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 	Node->SetAttribute("identifier", Identifier.c_str());
 	if(Style)
 		Node->SetAttribute("style", Style->Identifier.c_str());
+	if(HoverStyle)
+		Node->SetAttribute("hover_style", HoverStyle->Identifier.c_str());
 	if(DisabledStyle)
 		Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
+	if(ColorName.size())
+		Node->SetAttribute("color", ColorName.c_str());
+	if(FontName.size())
+		Node->SetAttribute("font", FontName.c_str());
 
 	// Set attributes
 	SerializeAttributes(Node);
@@ -218,13 +230,17 @@ void _Element::SerializeAttributes(tinyxml2::XMLElement *Node) {
 		Node->SetAttribute("alignment_y", Alignment.Vertical);
 	if(Clickable != 1)
 		Node->SetAttribute("clickable", Clickable);
+	if(Stretch)
+		Node->SetAttribute("stretch", Stretch);
+	if(MaxLength)
+		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
 	if((intptr_t)UserData != -1)
 		Node->SetAttribute("userdata", (intptr_t)UserData);
 }
 
 // Render the element
-void _Element::Render(bool IgnoreVisible) const {
-	if(!Visible && !IgnoreVisible)
+void _Element::Render() const {
+	if(!Visible)
 		return;
 
 	if(MaskOutside) {

@@ -38,7 +38,7 @@ class _TextBox : public _Element {
 		void Update(double FrameTime, const glm::vec2 &Mouse) override;
 		bool HandleKey(const _KeyEvent &KeyEvent) override;
 		void HandleInput(bool Pressed) override;
-		void Render(bool IgnoreVisible=false) const override;
+		void Render() const override;
 
 		void SetText(const std::string &Text) { this->Text = Text; CursorPosition = Text.length(); }
 		void Clear() { CursorTimer = 0; Text = ""; CursorPosition = 0; }
@@ -47,7 +47,6 @@ class _TextBox : public _Element {
 		const _Font *Font;
 
 		std::string Text;
-		size_t MaxLength;
 
 		// Graphics
 		glm::vec2 ParentOffset;
@@ -55,9 +54,5 @@ class _TextBox : public _Element {
 		size_t CursorPosition;
 		double CursorTimer;
 		bool Password;
-
-	private:
-
-		void SerializeAttributes(tinyxml2::XMLElement *Node) override;
 
 };

@@ -20,27 +20,12 @@
 // Libraries
 #include <ui/element.h>
 
-// Forward Declarations
-struct _Style;
-
 // Classes
 class _Button : public _Element {
 
 	public:
 
-		_Button();
-		~_Button() override;
-
 		virtual const char *GetTypeName() const override { return "button"; }
-		void Render(bool IgnoreVisible=false) const override;
-
-		// Attributes
-		const _Style *HoverStyle;
-		bool Checked;
-		uint32_t TextureIndex;
-
-	private:
-
-		virtual void SerializeAttributes(tinyxml2::XMLElement *Node) override;
+		void Render() const override;
 
 };

@@ -21,21 +21,9 @@
 #include <assets.h>
 #include <tinyxml2.h>
 
-// Constructor
-_Image::_Image() :
-	Color(1.0f, 1.0f, 1.0f, 1.0f),
-	Stretch(false) {
-
-	Clickable = false;
-}
-
-// Destructor
-_Image::~_Image() {
-}
-
 // Render the element
-void _Image::Render(bool IgnoreVisible) const {
-	if(!Visible && !IgnoreVisible)
+void _Image::Render() const {
+	if(!Visible)
 		return;
 
 	Graphics.SetColor(Color);
@@ -53,10 +41,6 @@ void _Image::Render(bool IgnoreVisible) const {
 void _Image::SerializeAttributes(tinyxml2::XMLElement *Node) {
 	if(Texture)
 		Node->SetAttribute("texture", Texture->Identifier.c_str());
-	if(ColorName.size())
-		Node->SetAttribute("color", ColorName.c_str());
-	if(Stretch)
-		Node->SetAttribute("stretch", Stretch);
 
 	_Element::SerializeAttributes(Node);
 }

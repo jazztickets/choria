@@ -21,17 +21,9 @@
 #include <font.h>
 #include <tinyxml2.h>
 
-// Constructor
-_Label::_Label() : Color(1.0f, 1.0f, 1.0f, 1.0f) {
-}
-
-// Destructor
-_Label::~_Label() {
-}
-
 // Render the element
-void _Label::Render(bool IgnoreVisible) const {
-	if(!Visible && !IgnoreVisible)
+void _Label::Render() const {
+	if(!Visible)
 		return;
 
 	// Set color
@@ -70,10 +62,6 @@ void _Label::SetWrap(float Width) {
 void _Label::SerializeAttributes(tinyxml2::XMLElement *Node) {
 	if(Text.size())
 		Node->SetAttribute("text", Text.c_str());
-	if(FontName.size())
-		Node->SetAttribute("font", FontName.c_str());
-	if(ColorName.size())
-		Node->SetAttribute("color", ColorName.c_str());
 
 	_Element::SerializeAttributes(Node);
 }

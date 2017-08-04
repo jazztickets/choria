@@ -19,7 +19,6 @@
 
 // Libraries
 #include <ui/element.h>
-#include <glm/vec4.hpp>
 #include <list>
 
 // Forward Declarations
@@ -30,18 +29,14 @@ class _Label : public _Element {
 
 	public:
 
-		_Label();
-		~_Label() override;
-
 		virtual const char *GetTypeName() const override { return "label"; }
-		void Render(bool IgnoreVisible=false) const override;
+		void Render() const override;
 
 		void SetWrap(float Width);
 
 		// Attributes
 		const _Font *Font;
 		std::string Text;
-		glm::vec4 Color;
 
 	private:
 
