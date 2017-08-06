@@ -21,7 +21,6 @@
 #include <network/clientnetwork.h>
 #include <ui/element.h>
 #include <ui/style.h>
-#include <ui/textbox.h>
 #include <objects/object.h>
 #include <constants.h>
 #include <input.h>
@@ -123,7 +122,7 @@ void _Menu::InitNewCharacter() {
 	CreateButton->SetEnabled(false);
 	CreateHardcoreButton->SetEnabled(false);
 
-	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+	_Element *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	Name->SetText("");
 
 	_Element *Label = Assets.Labels["label_menu_newcharacter_name"];
@@ -205,11 +204,11 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 
 	ChangeLayout("element_menu_connect");
 
-	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
+	_Element *Host = Assets.TextBoxes["textbox_connect_host"];
 	if(UseConfig)
 		Host->SetText(Config.LastHost);
 
-	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+	_Element *Port = Assets.TextBoxes["textbox_connect_port"];
 	if(UseConfig)
 		Port->SetText(Config.LastPort);
 
@@ -233,10 +232,10 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 void _Menu::InitAccount() {
 	ChangeLayout("element_menu_account");
 
-	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
+	_Element *Username = Assets.TextBoxes["textbox_account_username"];
 	Username->SetText(DefaultUsername);
 
-	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
+	_Element *Password = Assets.TextBoxes["textbox_account_password"];
 	Password->SetText(DefaultPassword);
 	Password->Password = true;
 
@@ -259,7 +258,7 @@ uint32_t _Menu::GetSelectedIconID(_Element *ParentElement) {
 
 	// Check for selected portrait
 	for(auto &Element : ParentElement->Children) {
-		_Element *Button = (_Element *)Element;
+		_Element *Button = Element;
 		if(Button->Checked)
 			return (uint32_t)(intptr_t)Button->UserData;
 	}
@@ -275,7 +274,7 @@ size_t _Menu::GetSelectedCharacter() {
 	_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 	for(auto &Element : CharactersElement->Children) {
 		if(Element->Identifier == CharacterButtonPrefix) {
-			_Element *Button = (_Element *)Element;
+			_Element *Button = Element;
 			if(Button->Checked)
 				return Index;
 
@@ -290,7 +289,7 @@ size_t _Menu::GetSelectedCharacter() {
 void _Menu::CreateCharacter(bool Hardcore) {
 
 	// Check length
-	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+	_Element *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	if(Name->Text.length() == 0)
 		return;
 
@@ -324,8 +323,8 @@ void _Menu::CreateCharacter(bool Hardcore) {
 }
 
 void _Menu::ConnectToHost() {
-	_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
-	_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+	_Element *Host = Assets.TextBoxes["textbox_connect_host"];
+	_Element *Port = Assets.TextBoxes["textbox_connect_port"];
 	if(Host->Text.length() == 0) {
 		FocusedElement = Host;
 		return;
@@ -368,8 +367,8 @@ void _Menu::PlayCharacter(size_t Slot) {
 
 // Send login info
 void _Menu::SendAccountInfo(bool CreateAccount) {
-	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
-	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
+	_Element *Username = Assets.TextBoxes["textbox_account_username"];
+	_Element *Password = Assets.TextBoxes["textbox_account_password"];
 	_Element *Label = Assets.Labels["label_menu_account_message"];
 
 	// Check username
@@ -695,13 +694,13 @@ void _Menu::UpdateOptions() {
 	FullscreenCheck->Text = Config.Fullscreen ? "X" : "";
 
 	// Set sound volume
-	_TextBox *SoundVolume = Assets.TextBoxes["textbox_options_soundvolume"];
+	_Element *SoundVolume = Assets.TextBoxes["textbox_options_soundvolume"];
 	Buffer << Config.SoundVolume;
 	SoundVolume->Text = Buffer.str();
 	Buffer.str("");
 
 	// Set music volume
-	_TextBox *MusicVolume = Assets.TextBoxes["textbox_options_musicvolume"];
+	_Element *MusicVolume = Assets.TextBoxes["textbox_options_musicvolume"];
 	Buffer << Config.MusicVolume;
 	MusicVolume->Text = Buffer.str();
 	Buffer.str("");
@@ -709,8 +708,8 @@ void _Menu::UpdateOptions() {
 
 // Update config and audio volumes from option textboxes
 void _Menu::UpdateVolume() {
-	_TextBox *SoundVolume = Assets.TextBoxes["textbox_options_soundvolume"];
-	_TextBox *MusicVolume = Assets.TextBoxes["textbox_options_musicvolume"];
+	_Element *SoundVolume = Assets.TextBoxes["textbox_options_soundvolume"];
+	_Element *MusicVolume = Assets.TextBoxes["textbox_options_musicvolume"];
 	Config.SoundVolume = ToNumber<float>(SoundVolume->Text);
 	Config.MusicVolume = ToNumber<float>(MusicVolume->Text);
 	Audio.SetSoundVolume(Config.SoundVolume);
@@ -733,7 +732,7 @@ void _Menu::ValidateCreateCharacter() {
 	// Check name length
 	_Element *CreateButton = Assets.Buttons["button_newcharacter_create"];
 	_Element *CreateHardcoreButton = Assets.Buttons["button_newcharacter_createhardcore"];
-	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+	_Element *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	if(Name->Text.length() > 0)
 		NameValid = true;
 	else
@@ -959,7 +958,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 						for(auto &Element : CharactersElement->Children) {
 							if(Element->Identifier == CharacterButtonPrefix) {
-								_Element *Button = (_Element *)Element;
+								_Element *Button = Element;
 								Button->Checked = false;
 							}
 						}
@@ -985,10 +984,10 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 						// Unselect all portraits and select the clicked element
 						for(auto &Element : Clicked->Parent->Children) {
-							_Element *Button = (_Element *)Element;
+							_Element *Button = Element;
 							Button->Checked = false;
 							if((size_t)(intptr_t)Button->UserData == SelectedID) {
-								_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
+								_Element *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 								FocusedElement = Name;
 								Name->ResetCursor();
 								Button->Checked = true;
@@ -1169,8 +1168,8 @@ void _Menu::Render() {
 void _Menu::HandleConnect() {
 	switch(State) {
 		case STATE_CONNECT: {
-			_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
-			_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+			_Element *Host = Assets.TextBoxes["textbox_connect_host"];
+			_Element *Port = Assets.TextBoxes["textbox_connect_port"];
 
 			// Save connection information
 			Config.LastHost = Host->Text;
@@ -1319,26 +1318,26 @@ void _Menu::PlayClickSound() {
 void _Menu::FocusNextElement() {
 	switch(State) {
 		case STATE_CONNECT: {
-			_TextBox *Host = Assets.TextBoxes["textbox_connect_host"];
-			_TextBox *Port = Assets.TextBoxes["textbox_connect_port"];
+			_Element *Host = Assets.TextBoxes["textbox_connect_host"];
+			_Element *Port = Assets.TextBoxes["textbox_connect_port"];
 
 			if(FocusedElement == Host)
 				FocusedElement = Port;
 			else if(FocusedElement == Port || FocusedElement == nullptr)
 				FocusedElement = Host;
 
-			((_TextBox *)FocusedElement)->ResetCursor();
+			FocusedElement->ResetCursor();
 		} break;
 		case STATE_ACCOUNT: {
-			_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
-			_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
+			_Element *Username = Assets.TextBoxes["textbox_account_username"];
+			_Element *Password = Assets.TextBoxes["textbox_account_password"];
 
 			if(FocusedElement == Username)
 				FocusedElement = Password;
 			else if(FocusedElement == Password || FocusedElement == nullptr)
 				FocusedElement = Username;
 
-			((_TextBox *)FocusedElement)->ResetCursor();
+			FocusedElement->ResetCursor();
 		} break;
 		default:
 		break;

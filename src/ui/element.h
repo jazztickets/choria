@@ -63,6 +63,9 @@ class _Element {
 		void CalculateChildrenBounds();
 		void SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode);
 
+		void Clear() { CursorTimer = 0; Text = ""; CursorPosition = 0; }
+		void ResetCursor() { CursorTimer = 0; }
+
 		void SetDebug(int Debug);
 		void SetClickable(bool Clickable, int Depth=-1);
 		void SetVisible(bool Visible);
@@ -71,6 +74,7 @@ class _Element {
 		void SetOffset(const glm::vec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
 		void SetWidth(float Width) { Size.x = Width; CalculateBounds(); }
 		void SetHeight(float Height) { Size.y = Height; CalculateBounds(); }
+		void SetText(const std::string &Text) { this->Text = Text; CursorPosition = Text.length(); }
 		void SetWrap(float Width);
 
 		// Attributes
@@ -114,9 +118,13 @@ class _Element {
 		_Element *ReleasedElement;
 
 		// Text
-		size_t MaxLength;
 		const _Font *Font;
 		std::string Text;
+		glm::vec2 ParentOffset;
+		size_t MaxLength;
+		size_t CursorPosition;
+		double CursorTimer;
+		bool Password;
 
 		// Children
 		std::list<_Element *> Children;

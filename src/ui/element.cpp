@@ -25,6 +25,7 @@
 #include <texture.h>
 #include <atlas.h>
 #include <algorithm>
+#include <SDL_keycode.h>
 #include <tinyxml2.h>
 
 const glm::vec4 DebugColors[] = { COLOR_CYAN, COLOR_YELLOW, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
@@ -55,8 +56,12 @@ _Element::_Element() :
 	HitElement(nullptr),
 	PressedElement(nullptr),
 	ReleasedElement(nullptr),
-	MaxLength(0) {
+	MaxLength(0),
+	CursorPosition(0),
+	CursorTimer(0),
+	Password(false) {
 
+	ParentOffset = glm::vec2(5.0f, 22.0f);
 }
 
 // Destructor
@@ -87,6 +92,57 @@ const char *_Element::GetTypeName() const {
 // Handle key event
 bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
 
+	if(Type == TEXTBOX) {
+		if(FocusedElement == this && Visible && KeyEvent.Pressed) {
+			if(Text.length() < MaxLength && KeyEvent.Text[0] >= 32 && KeyEvent.Text[0] <= 126) {
+				if(CursorPosition > Text.length())
+					CursorPosition = Text.length();
+
+				Text.insert(CursorPosition, 1, KeyEvent.Text[0]);
+				CursorPosition++;
+			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_BACKSPACE && Text.length() > 0 && CursorPosition > 0) {
+				Text.erase(CursorPosition - 1, 1);
+				if(CursorPosition > 0)
+					CursorPosition--;
+			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
+				return false;
+			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_DELETE) {
+				Text.erase(CursorPosition, 1);
+				if(CursorPosition >= Text.length())
+					CursorPosition = Text.length();
+			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_LEFT) {
+				if(Input.ModKeyDown(KMOD_ALT))
+					CursorPosition = 0;
+				else if(CursorPosition > 0)
+					CursorPosition--;
+			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_RIGHT) {
+				if(Input.ModKeyDown(KMOD_ALT))
+					CursorPosition = Text.length();
+				else if(CursorPosition < Text.length())
+					CursorPosition++;
+			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_HOME) {
+				CursorPosition = 0;
+			}
+			else if(KeyEvent.Scancode == SDL_SCANCODE_END) {
+				CursorPosition = Text.length();
+			}
+			else {
+				return false;
+			}
+
+			ResetCursor();
+			return true;
+		}
+
+		return false;
+	}
+
 	// Pass event to children
 	for(auto &Child : Children) {
 		if(Child->HandleKey(KeyEvent))
@@ -98,6 +154,14 @@ bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
 
 // Handle a press event
 void _Element::HandleInput(bool Pressed) {
+	if(Type == TEXTBOX) {
+	   if(HitElement) {
+		   ResetCursor();
+		   FocusedElement = this;
+	   }
+	   return;
+	}
+
 	if(!Visible)
 		return;
 
@@ -154,6 +218,15 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 			Child->Update(FrameTime, Mouse);
 			if(Child->HitElement)
 				HitElement = Child->HitElement;
+		}
+	}
+
+	if(Type == TEXTBOX) {
+		if(FocusedElement == this) {
+			CursorTimer += FrameTime;
+			if(CursorTimer >= 1) {
+				CursorTimer = 0;
+			}
 		}
 	}
 }
@@ -391,7 +464,6 @@ void _Element::Render() const {
 			else {
 				Font->DrawText(Text, Bounds.Start, RenderColor, Alignment);
 			}
-
 		} break;
 		default:
 		break;
@@ -436,6 +508,37 @@ void _Element::Render() const {
 		Graphics.DrawRectangle(Bounds.Start, Bounds.End);
 	}
 
+	if(Type == TEXTBOX) {
+
+		// Get text to render
+		std::string RenderText;
+		if(Password)
+			RenderText = std::string(Text.length(), '*');
+		else
+			RenderText = Text;
+
+		// Mask outside of bounds
+		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+		Graphics.EnableStencilTest();
+		Graphics.DrawMask(Bounds);
+
+		// Get width at cursor position
+		_TextBounds TextBounds;
+		Font->GetStringDimensions(RenderText.substr(0, CursorPosition), TextBounds);
+
+		// Draw text
+		glm::vec2 StartPosition = glm::vec2(Bounds.Start) + ParentOffset;
+		Font->DrawText(RenderText, StartPosition, glm::vec4(1.0f));
+
+		// Draw cursor
+		if(CursorTimer < 0.5 && FocusedElement == this) {
+			Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+			Graphics.DrawRectangle(glm::vec2(StartPosition.x + TextBounds.Width+1, StartPosition.y - Font->MaxAbove), glm::vec2(StartPosition.x + TextBounds.Width+2, StartPosition.y + Font->MaxBelow));
+		}
+
+		// Disable mask
+		Graphics.DisableStencilTest();
+	}
 }
 
 // Set the debug, and increment for children

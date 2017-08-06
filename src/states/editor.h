@@ -129,15 +129,15 @@ class _EditorState : public _State {
 		_Element *ResizeMapElement;
 		_Element *SaveMapElement;
 		_Element *LoadMapElement;
-		_TextBox *NewMapFilenameTextBox;
-		_TextBox *NewMapWidthTextBox;
-		_TextBox *NewMapHeightTextBox;
-		_TextBox *ResizeMinXTextBox;
-		_TextBox *ResizeMinYTextBox;
-		_TextBox *ResizeMaxXTextBox;
-		_TextBox *ResizeMaxYTextBox;
-		_TextBox *SaveMapTextBox;
-		_TextBox *LoadMapTextBox;
+		_Element *NewMapFilenameTextBox;
+		_Element *NewMapWidthTextBox;
+		_Element *NewMapHeightTextBox;
+		_Element *ResizeMinXTextBox;
+		_Element *ResizeMinYTextBox;
+		_Element *ResizeMaxXTextBox;
+		_Element *ResizeMaxYTextBox;
+		_Element *SaveMapTextBox;
+		_Element *LoadMapTextBox;
 };
 
 extern _EditorState EditorState;

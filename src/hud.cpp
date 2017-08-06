@@ -17,7 +17,6 @@
 *******************************************************************************/
 #include <hud.h>
 #include <ui/element.h>
-#include <ui/textbox.h>
 #include <ui/style.h>
 #include <states/play.h>
 #include <network/clientnetwork.h>
@@ -2058,28 +2057,25 @@ void _HUD::RefreshSkillButtons() {
 	for(auto &Element : SkillsElement->Children) {
 		if(Element->Identifier == "label_skills_level") {
 			uint32_t SkillID = (uint32_t)(intptr_t)Element->UserData;
-			_Element *Label = Element;
-			Label->Text = std::to_string(Player->Skills[SkillID]);
+			Element->Text = std::to_string(Player->Skills[SkillID]);
 		}
 		else if(Element->Identifier == "button_skills_plus") {
-			_Element *Button = (_Element *)Element;
 
 			// Get skill
-			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
+			uint32_t SkillID = (uint32_t)(intptr_t)Element->Parent->UserData;
 			if(SkillPointsRemaining <= 0 || Player->Skills[SkillID] >= Player->Stats->Items[SkillID]->MaxLevel)
-				Button->SetVisible(false);
+				Element->SetVisible(false);
 			else
-				Button->SetVisible(true);
+				Element->SetVisible(true);
 		}
 		else if(Element->Identifier == "button_skills_minus") {
-			_Element *Button = (_Element *)Element;
 
 			// Get skill
-			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
+			uint32_t SkillID = (uint32_t)(intptr_t)Element->Parent->UserData;
 			if(Player->Skills[SkillID] == 0)
-				Button->SetVisible(false);
+				Element->SetVisible(false);
 			else
-				Button->SetVisible(true);
+				Element->SetVisible(true);
 		}
 	}
 }
@@ -2108,7 +2104,7 @@ void _HUD::ValidateTradeGold() {
 	if(!Player || !TradeElement->Visible)
 		return;
 
-	_TextBox *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
+	_Element *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
 
 	// Get gold amount
 	int Gold = ToNumber<int>(GoldTextBox->Text);

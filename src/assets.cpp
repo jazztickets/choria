@@ -18,7 +18,6 @@
 #include <assets.h>
 #include <ui/style.h>
 #include <ui/element.h>
-#include <ui/textbox.h>
 #include <program.h>
 #include <font.h>
 #include <texture.h>
@@ -717,7 +716,7 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Create
-		_TextBox *TextBox = new _TextBox();
+		_Element *TextBox = new _Element();
 		TextBox->Type = _Element::TEXTBOX;
 		TextBox->Identifier = Identifier;
 		TextBox->ParentIdentifier = ParentIdentifier;

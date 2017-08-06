@@ -248,7 +248,7 @@ class _HUD {
 		_Element *ExperienceElement;
 		_Element *RecentItemsElement;
 		_Element *MessageElement;
-		_TextBox *PartyTextBox;
+		_Element *PartyTextBox;
 		_Element *GoldElement;
 		_Element *MessageLabel;
 		_Element *BlacksmithCost;
@@ -267,7 +267,7 @@ class _HUD {
 		std::list<_Message> ChatHistory;
 		std::list<std::string> SentHistory;
 		std::list<std::string>::iterator SentHistoryIterator;
-		_TextBox *ChatTextBox;
+		_Element *ChatTextBox;
 
 		// Traders
 		std::vector<_Slot> RequiredItemSlots;

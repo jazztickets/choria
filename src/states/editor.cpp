@@ -18,7 +18,6 @@
 #include <states/editor.h>
 #include <objects/map.h>
 #include <ui/element.h>
-#include <ui/textbox.h>
 #include <ui/style.h>
 #include <framework.h>
 #include <input.h>
@@ -319,7 +318,7 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		// Texture select
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
-				_Element *Button = (_Element *)TexturesElement->GetClickedElement();
+				_Element *Button = TexturesElement->GetClickedElement();
 				Brush->TextureIndex[Layer] = Button->TextureIndex;
 				CloseWindows();
 			}
@@ -739,7 +738,7 @@ void _EditorState::InitTextures() {
 void _EditorState::InitNewMap() {
 	NewMapElement->SetVisible(true);
 
-	_TextBox *FilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
+	_Element *FilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
 	FilenameTextBox->SetText("");
 	FocusedElement = FilenameTextBox;
 

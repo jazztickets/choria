@@ -65,7 +65,7 @@ class _Assets {
 		std::unordered_map<std::string, _Element *> Labels;
 		std::unordered_map<std::string, _Element *> Images;
 		std::unordered_map<std::string, _Element *> Buttons;
-		std::unordered_map<std::string, _TextBox *> TextBoxes;
+		std::unordered_map<std::string, _Element *> TextBoxes;
 
 	private:
 
