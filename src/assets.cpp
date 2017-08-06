@@ -97,7 +97,7 @@ void _Assets::Close() {
 	for(const auto &Style : Styles)
 		delete Style.second;
 
-	for(const auto &Element : AllElements)
+	for(const auto &Element : Elements)
 		delete Element.second;
 
 	Fonts.clear();
@@ -106,9 +106,7 @@ void _Assets::Close() {
 	Styles.clear();
 	Sounds.clear();
 	Music.clear();
-
 	Elements.clear();
-	AllElements.clear();
 }
 
 // Loads the fonts
@@ -420,9 +418,6 @@ void _Assets::LoadElements(const std::string &Path) {
 		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate element identifier: " + Identifier);
 
-		if(AllElements.find(Identifier) != AllElements.end())
-			throw std::runtime_error("Duplicate element identifier: " + Identifier);
-
 		// Read attributes
 		glm::vec2 Offset, Size;
 		_Alignment Alignment;
@@ -450,9 +445,8 @@ void _Assets::LoadElements(const std::string &Path) {
 		Element->UserData = (void *)UserData;
 
 		// Add to map
-		Element->GlobalID = AllElements.size();
+		Element->GlobalID = Elements.size();
 		Elements[Identifier] = Element;
-		AllElements[Identifier] = Element;
 	}
 
 	File.close();
@@ -487,9 +481,6 @@ void _Assets::LoadLabels(const std::string &Path) {
 		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate label: " + Identifier);
 
-		if(AllElements.find(Identifier) != AllElements.end())
-			throw std::runtime_error("Duplicate element identifier: " + Identifier);
-
 		// Get font
 		const _Font *Font = Fonts[FontIdentifier];
 		if(!Font)
@@ -516,9 +507,8 @@ void _Assets::LoadLabels(const std::string &Path) {
 		Label->ColorName = ColorIdentifier;
 
 		// Add to map
-		Label->GlobalID = AllElements.size();
+		Label->GlobalID = Elements.size();
 		Elements[Identifier] = Label;
-		AllElements[Identifier] = Label;
 	}
 
 	File.close();
@@ -551,9 +541,6 @@ void _Assets::LoadImages(const std::string &Path) {
 		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate image: " + Identifier);
 
-		if(AllElements.find(Identifier) != AllElements.end())
-			throw std::runtime_error("Duplicate element identifier: " + Identifier);
-
 		// Read attributes
 		glm::vec2 Offset, Size;
 		_Alignment Alignment;
@@ -583,9 +570,8 @@ void _Assets::LoadImages(const std::string &Path) {
 		Image->Clickable = false;
 
 		// Add to map
-		Image->GlobalID = AllElements.size();
+		Image->GlobalID = Elements.size();
 		Elements[Identifier] = Image;
-		AllElements[Identifier] = Image;
 	}
 
 	File.close();
@@ -620,9 +606,6 @@ void _Assets::LoadButtons(const std::string &Path) {
 		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate button: " + Identifier);
 
-		if(AllElements.find(Identifier) != AllElements.end())
-			throw std::runtime_error("Duplicate element identifier: " + Identifier);
-
 		// Check for style
 		if(StyleIdentifier != "" && Styles.find(StyleIdentifier) == Styles.end())
 			throw std::runtime_error("Unable to find style: " + StyleIdentifier + " for button: " + Identifier);
@@ -656,9 +639,8 @@ void _Assets::LoadButtons(const std::string &Path) {
 		Button->UserData = (void *)UserData;
 
 		// Add to map
-		Button->GlobalID = AllElements.size();
+		Button->GlobalID = Elements.size();
 		Elements[Identifier] = Button;
-		AllElements[Identifier] = Button;
 	}
 
 	File.close();
@@ -688,9 +670,6 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 		// Check for duplicates
 		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate textbox: " + Identifier);
-
-		if(AllElements.find(Identifier) != AllElements.end())
-			throw std::runtime_error("Duplicate element identifier: " + Identifier);
 
 		// Check for style
 		if(StyleIdentifier != "" && Styles.find(StyleIdentifier) == Styles.end())
@@ -724,9 +703,8 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 		TextBox->MaxLength = MaxLength;
 
 		// Add to map
-		TextBox->GlobalID = AllElements.size();
+		TextBox->GlobalID = Elements.size();
 		Elements[Identifier] = TextBox;
-		AllElements[Identifier] = TextBox;
 	}
 
 	File.close();
@@ -737,7 +715,7 @@ void _Assets::ResolveElementParents() {
 
 	// Sort elements by global id
 	std::map<size_t, _Element *> SortedElements;
-	for(const auto &Iterator : AllElements) {
+	for(const auto &Iterator : Elements) {
 		_Element *Element = Iterator.second;
 
 		SortedElements[Element->GlobalID] = Element;
@@ -749,10 +727,10 @@ void _Assets::ResolveElementParents() {
 
 		// Set parent pointer
 		if(Element->ParentIdentifier != "") {
-			if(AllElements.find(Element->ParentIdentifier) == AllElements.end())
+			if(Elements.find(Element->ParentIdentifier) == Elements.end())
 				throw std::runtime_error("Cannot find parent element: " + Element->ParentIdentifier);
 
-			Element->Parent = AllElements[Element->ParentIdentifier];
+			Element->Parent = Elements[Element->ParentIdentifier];
 		}
 		else
 			Element->Parent = Graphics.Element;

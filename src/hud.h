@@ -32,8 +32,6 @@ class _Object;
 class _Item;
 class _StatusEffect;
 class _Element;
-class _Label;
-class _TextBox;
 class _Action;
 class _Scripting;
 class _Map;

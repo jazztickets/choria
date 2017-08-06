@@ -26,8 +26,6 @@
 struct _Style;
 class _Font;
 class _Element;
-class _Image;
-class _TextBox;
 class _Texture;
 class _Program;
 class _Shader;
@@ -83,7 +81,6 @@ class _Assets {
 		void SaveUI(const std::string &Path);
 
 		std::unordered_map<std::string, const _Shader *> Shaders;
-		std::unordered_map<std::string, _Element *> AllElements;
 };
 
 extern _Assets Assets;

@@ -28,7 +28,6 @@ class _Map;
 class _Texture;
 class _Stats;
 class _Element;
-class _TextBox;
 
 enum FilterType {
 	FILTER_BOUNDARY  = (1 << 1),

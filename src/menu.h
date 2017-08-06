@@ -24,9 +24,6 @@
 
 // Forward Declarations
 class _Element;
-class _Button;
-class _Label;
-class _Image;
 class _Buffer;
 class _ClientNetwork;
 class _Stats;
