@@ -21,7 +21,6 @@
 #include <program.h>
 #include <font.h>
 #include <texture.h>
-#include <utils.h>
 #include <files.h>
 #include <graphics.h>
 #include <audio.h>
@@ -88,9 +87,6 @@ void _Assets::Close() {
 
 	for(const auto &Style : Styles)
 		delete Style.second;
-
-	for(const auto &Element : Elements)
-		delete Element.second;
 
 	Fonts.clear();
 	Layers.clear();

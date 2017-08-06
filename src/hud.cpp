@@ -976,7 +976,6 @@ void _HUD::InitSkills() {
 		Button->Alignment = LEFT_TOP;
 		Button->Texture = Skill->Texture;
 		Button->UserData = (void *)(intptr_t)Skill->ID;
-		Button->UserCreated = true;
 		SkillsElement->Children.push_back(Button);
 
 		// Add level label
@@ -989,7 +988,6 @@ void _HUD::InitSkills() {
 		LevelLabel->Color = COLOR_WHITE;
 		LevelLabel->Font = Assets.Fonts["hud_small"];
 		LevelLabel->UserData = (void *)(intptr_t)Skill->ID;
-		LevelLabel->UserCreated = true;
 		SkillsElement->Children.push_back(LevelLabel);
 
 		// Add plus button
@@ -1002,7 +1000,6 @@ void _HUD::InitSkills() {
 		PlusButton->Alignment = CENTER_MIDDLE;
 		PlusButton->Style = Assets.Styles["style_menu_button"];
 		PlusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
-		PlusButton->UserCreated = true;
 		SkillsElement->Children.push_back(PlusButton);
 
 		// Add minus button
@@ -1015,7 +1012,6 @@ void _HUD::InitSkills() {
 		MinusButton->Alignment = CENTER_MIDDLE;
 		MinusButton->Style = Assets.Styles["style_menu_button"];
 		MinusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
-		MinusButton->UserCreated = true;
 		SkillsElement->Children.push_back(MinusButton);
 
 		// Add plus label
@@ -1027,7 +1023,6 @@ void _HUD::InitSkills() {
 		PlusLabel->Alignment = CENTER_MIDDLE;
 		PlusLabel->Color = COLOR_WHITE;
 		PlusLabel->Font = Assets.Fonts["hud_medium"];
-		PlusLabel->UserCreated = true;
 		PlusButton->Children.push_back(PlusLabel);
 
 		// Add minus label
@@ -1039,7 +1034,6 @@ void _HUD::InitSkills() {
 		MinusLabel->Alignment = CENTER_MIDDLE;
 		MinusLabel->Color = COLOR_WHITE;
 		MinusLabel->Font = Assets.Fonts["hud_medium"];
-		MinusLabel->UserCreated = true;
 		MinusButton->Children.push_back(MinusLabel);
 
 		// Update position
@@ -2025,17 +2019,9 @@ void _HUD::EquipSkill(uint32_t SkillID) {
 // Delete memory used by skill page
 void _HUD::ClearSkills() {
 
-	for(auto &Child : SkillsElement->Children) {
-
-		// Delete labels
-		for(auto &LabelChild : Child->Children) {
-			if(LabelChild->UserCreated)
-				delete LabelChild;
-		}
-
-		if(Child->UserCreated)
-			delete Child;
-	}
+	// Delete children
+	for(auto &Child : SkillsElement->Children)
+		delete Child;
 
 	SkillsElement->Children.clear();
 }

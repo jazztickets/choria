@@ -442,7 +442,6 @@ void _Menu::LoadCharacterSlots() {
 		Button->HoverStyle = Assets.Styles["style_menu_button_hover"];
 		Button->Alignment = LEFT_TOP;
 		Button->UserData = (void *)(intptr_t)i;
-		Button->UserCreated = true;
 		Button->Checked = i == PreSelectedSlot ? true : false;
 		CharacterSlotsElement->Children.push_back(Button);
 
@@ -452,7 +451,6 @@ void _Menu::LoadCharacterSlots() {
 		Image->Parent = Button;
 		Image->Alignment = CENTER_MIDDLE;
 		Image->Offset = glm::vec2(0, 0);
-		Image->UserCreated = true;
 		Button->Children.push_back(Image);
 
 		// Add name label
@@ -462,7 +460,6 @@ void _Menu::LoadCharacterSlots() {
 		NameLabel->Offset = glm::vec2(0, 150);
 		NameLabel->Alignment = CENTER_BASELINE;
 		NameLabel->Font = Assets.Fonts["hud_medium"];
-		NameLabel->UserCreated = true;
 		Button->Children.push_back(NameLabel);
 
 		// Add level label
@@ -472,7 +469,6 @@ void _Menu::LoadCharacterSlots() {
 		LevelLabel->Offset = glm::vec2(0, 170);
 		LevelLabel->Alignment = CENTER_BASELINE;
 		LevelLabel->Font = Assets.Fonts["hud_small"];
-		LevelLabel->UserCreated = true;
 		Button->Children.push_back(LevelLabel);
 
 		// Add hardcore label
@@ -483,7 +479,6 @@ void _Menu::LoadCharacterSlots() {
 		HardcoreLabel->Alignment = CENTER_BASELINE;
 		HardcoreLabel->Color = COLOR_RED;
 		HardcoreLabel->Font = Assets.Fonts["hud_small"];
-		HardcoreLabel->UserCreated = true;
 		Button->Children.push_back(HardcoreLabel);
 
 		// Reset state
@@ -515,18 +510,8 @@ void _Menu::LoadCharacterSlots() {
 // Clear character slots
 void _Menu::ClearCharacterSlots() {
 	std::list<_Element *> &Children = Assets.Elements["element_menu_character_slots"]->Children;
-	for(auto &Child : Children) {
-		if(Child->UserCreated) {
-
-			// Delete children
-			for(auto &SubChild : Child->Children) {
-				if(SubChild->UserCreated)
-					delete SubChild;
-			}
-
-			delete Child;
-		}
-	}
+	for(auto &Child : Children)
+		delete Child;
 
 	Children.clear();
 }
@@ -561,7 +546,6 @@ void _Menu::LoadPortraitButtons() {
 		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
 		Button->UserData = (void *)(intptr_t)Portrait.ID;
-		Button->UserCreated = true;
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
@@ -581,11 +565,8 @@ void _Menu::LoadPortraitButtons() {
 void _Menu::ClearPortraits() {
 
 	std::list<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
-	for(auto &Child : Children) {
-		if(Child->UserCreated) {
-			delete Child;
-		}
-	}
+	for(auto &Child : Children)
+		delete Child;
 
 	Children.clear();
 }
@@ -620,7 +601,6 @@ void _Menu::LoadBuildButtons() {
 		Button->Texture = Build.Texture;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
 		Button->UserData = (void *)(intptr_t)Build.ID;
-		Button->UserCreated = true;
 		BuildsElement->Children.push_back(Button);
 
 		// Add label
@@ -632,7 +612,6 @@ void _Menu::LoadBuildButtons() {
 		Label->Parent = Button;
 		Label->Offset = glm::vec2(0, 80);
 		Label->Alignment = CENTER_BASELINE;
-		Label->UserCreated = true;
 		Label->Clickable = false;
 		Button->Children.push_back(Label);
 
@@ -653,18 +632,8 @@ void _Menu::LoadBuildButtons() {
 void _Menu::ClearBuilds() {
 
 	std::list<_Element *> &Children = Assets.Elements["element_menu_new_builds"]->Children;
-	for(auto &Child : Children) {
-		if(Child->UserCreated) {
-
-			// Delete labels
-			for(auto &LabelChild : Child->Children) {
-				if(LabelChild->UserCreated)
-					delete LabelChild;
-			}
-
-			delete Child;
-		}
-	}
+	for(auto &Child : Children)
+		delete Child;
 
 	Children.clear();
 }

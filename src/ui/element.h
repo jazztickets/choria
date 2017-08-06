@@ -94,7 +94,6 @@ class _Element {
 		bool Clickable;
 		bool MaskOutside;
 		bool Stretch;
-		bool UserCreated;
 		int Debug;
 
 		// Graphics

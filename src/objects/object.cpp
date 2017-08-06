@@ -766,7 +766,6 @@ void _Object::CreateBattleElement(_Element *Parent) {
 	BattleElement->Size = glm::vec2(64, 64);
 	BattleElement->Offset = BattleOffset;
 	BattleElement->Alignment = CENTER_MIDDLE;
-	BattleElement->UserCreated = true;
 	BattleElement->Visible = true;
 	BattleElement->UserData = (void *)_HUD::WINDOW_HUD_EFFECTS;
 	BattleElement->UserDataAlt = this;

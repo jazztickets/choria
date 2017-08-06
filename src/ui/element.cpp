@@ -45,7 +45,6 @@ _Element::_Element() :
 	Clickable(true),
 	MaskOutside(false),
 	Stretch(false),
-	UserCreated(true),
 	Debug(0),
 	Color(1.0f, 1.0f, 1.0f, 1.0f),
 	Style(nullptr),
@@ -73,7 +72,6 @@ _Element::_Element() :
 _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 	_Element() {
 
-	UserCreated = false;
 	Parent = ParentNode;
 	std::string TypeName = Node->Value();
 	if(TypeName == "element")
@@ -150,6 +148,8 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 
 // Destructor
 _Element::~_Element() {
+	for(auto &Child : Children)
+		delete Child;
 }
 
 // Serialize element and children to xml node
