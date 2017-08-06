@@ -440,6 +440,7 @@ void _Menu::LoadCharacterSlots() {
 		Button->Style = Assets.Styles["style_menu_button"];
 		Button->DisabledStyle = Assets.Styles["style_menu_button_disabled"];
 		Button->HoverStyle = Assets.Styles["style_menu_button_hover"];
+		Button->Alignment = LEFT_TOP;
 		Button->UserData = (void *)(intptr_t)i;
 		Button->UserCreated = true;
 		Button->Checked = i == PreSelectedSlot ? true : false;

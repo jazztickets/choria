@@ -18,6 +18,7 @@
 #include <ui/element.h>
 #include <ui/style.h>
 #include <graphics.h>
+#include <assets.h>
 #include <input.h>
 #include <assets.h>
 #include <constants.h>
@@ -25,6 +26,7 @@
 #include <texture.h>
 #include <atlas.h>
 #include <algorithm>
+#include <iostream>
 #include <SDL_keycode.h>
 #include <tinyxml2.h>
 
@@ -44,7 +46,7 @@ _Element::_Element() :
 	Clickable(true),
 	MaskOutside(false),
 	Stretch(false),
-	UserCreated(false),
+	UserCreated(true),
 	Debug(0),
 	Color(1.0f, 1.0f, 1.0f, 1.0f),
 	Style(nullptr),
@@ -56,12 +58,92 @@ _Element::_Element() :
 	HitElement(nullptr),
 	PressedElement(nullptr),
 	ReleasedElement(nullptr),
+	Font(nullptr),
 	MaxLength(0),
 	CursorPosition(0),
 	CursorTimer(0),
-	Password(false) {
+	Password(false),
+	ChildrenOffset(0, 0) {
 
+	//TODO cleanup
 	ParentOffset = glm::vec2(5.0f, 22.0f);
+}
+
+// Constructor for loading from xml
+_Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
+	_Element() {
+
+	UserCreated = false;
+	Parent = ParentNode;
+	std::string TypeName = Node->Value();
+	if(TypeName == "element")
+		Type = ELEMENT;
+	else if(TypeName == "image")
+		Type = IMAGE;
+	else if(TypeName == "button")
+		Type = BUTTON;
+	else if(TypeName == "label")
+		Type = LABEL;
+	else if(TypeName == "textbox")
+		Type = TEXTBOX;
+
+	std::string TextureName;
+	std::string StyleName;
+	std::string HoverStyleName;
+	std::string DisabledStyleName;
+	AssignAttributeString(Node, "identifier", Identifier);
+	AssignAttributeString(Node, "texture", TextureName);
+	AssignAttributeString(Node, "style", StyleName);
+	AssignAttributeString(Node, "hover_style", HoverStyleName);
+	AssignAttributeString(Node, "disabled_style", DisabledStyleName);
+	AssignAttributeString(Node, "color", ColorName);
+	AssignAttributeString(Node, "font", FontName);
+	AssignAttributeString(Node, "text", Text);
+	Node->QueryUnsignedAttribute("maxlength", (uint32_t *)&MaxLength);
+	Node->QueryFloatAttribute("offset_x", &Offset.x);
+	Node->QueryFloatAttribute("offset_y", &Offset.y);
+	Node->QueryFloatAttribute("size_x", &Size.x);
+	Node->QueryFloatAttribute("size_y", &Size.y);
+	Node->QueryIntAttribute("alignment_x", &Alignment.Horizontal);
+	Node->QueryIntAttribute("alignment_y", &Alignment.Vertical);
+	Node->QueryBoolAttribute("clickable", &Clickable);
+	Node->QueryBoolAttribute("stretch", &Stretch);
+
+	int UserDataValue = -1;
+	Node->QueryIntAttribute("userdata", &UserDataValue);
+	UserData = (void *)(intptr_t)UserDataValue;
+
+	// Check identifiers
+	if(Assets.Elements.find(Identifier) != Assets.Elements.end())
+		throw std::runtime_error("Duplicate element identifier: " + Identifier);
+	if(TextureName != "" && Assets.Textures.find(TextureName) == Assets.Textures.end())
+		throw std::runtime_error("Unable to find texture: " + TextureName + " for image: " + Identifier);
+	if(StyleName != "" && Assets.Styles.find(StyleName) == Assets.Styles.end())
+		throw std::runtime_error("Unable to find style: " + StyleName + " for element: " + Identifier);
+	if(HoverStyleName != "" && Assets.Styles.find(HoverStyleName) == Assets.Styles.end())
+		throw std::runtime_error("Unable to find hover_style: " + HoverStyleName + " for element: " + Identifier);
+	if(DisabledStyleName != "" && Assets.Styles.find(DisabledStyleName) == Assets.Styles.end())
+		throw std::runtime_error("Unable to find disabled_style: " + DisabledStyleName + " for element: " + Identifier);
+	if(ColorName != "" && Assets.Colors.find(ColorName) == Assets.Colors.end())
+		throw std::runtime_error("Unable to find color: " + ColorName + " for element: " + Identifier);
+	if(FontName != "" && Assets.Fonts.find(FontName) == Assets.Fonts.end())
+		throw std::runtime_error("Unable to find font: " + FontName + " for element: " + Identifier);
+
+	// Assign pointers
+	Texture = Assets.Textures[TextureName];
+	Style = Assets.Styles[StyleName];
+	HoverStyle = Assets.Styles[HoverStyleName];
+	DisabledStyle = Assets.Styles[DisabledStyleName];
+	Color = Assets.Colors[ColorName];
+	Font = Assets.Fonts[FontName];
+
+	Assets.Elements[Identifier] = this;
+
+	// Load children
+	for(tinyxml2::XMLElement *ChildNode = Node->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_Element *ChildElement = new _Element(ChildNode, this);
+		Children.push_back(ChildElement);
+	}
 }
 
 // Destructor
@@ -304,8 +386,6 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 		Node->SetAttribute("font", FontName.c_str());
 	if(Text.size())
 		Node->SetAttribute("text", Text.c_str());
-	if(MaxLength)
-		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
 	if(Offset.x != 0.0f)
 		Node->SetAttribute("offset_x", Offset.x);
 	if(Offset.y != 0.0f)
@@ -318,6 +398,8 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 		Node->SetAttribute("alignment_x", Alignment.Horizontal);
 	if(Alignment.Vertical != _Alignment::MIDDLE)
 		Node->SetAttribute("alignment_y", Alignment.Vertical);
+	if(MaxLength)
+		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
 	if(Clickable != 1)
 		Node->SetAttribute("clickable", Clickable);
 	if(Stretch)
@@ -584,4 +666,11 @@ void _Element::SetWrap(float Width) {
 
 	Texts.clear();
 	Font->BreakupString(Text, Width, Texts);
+}
+
+// Assign a string from xml attribute
+void _Element::AssignAttributeString(tinyxml2::XMLElement *Node, const char *Attribute, std::string &String) {
+	const char *Value = Node->Attribute(Attribute);
+	if(Value)
+		String = Value;
 }

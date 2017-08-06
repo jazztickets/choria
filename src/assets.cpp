@@ -58,19 +58,20 @@ void _Assets::Init(bool IsServer) {
 		LoadFonts(ASSETS_FONTS);
 		LoadColors(ASSETS_COLORS);
 		LoadStyles(ASSETS_UI_STYLES);
+
 		LoadUI(ASSETS_UI);
+		/*
 		LoadElements(ASSETS_UI_ELEMENTS);
 		LoadImages(ASSETS_UI_IMAGES);
 		LoadButtons(ASSETS_UI_BUTTONS);
 		LoadTextBoxes(ASSETS_UI_TEXTBOXES);
 		LoadLabels(ASSETS_UI_LABELS);
+		ResolveElementParents();
+		*/
+		//SaveUI(ASSETS_UI);
 		LoadSounds(ASSETS_SOUND_PATH);
 		LoadMusic(ASSETS_MUSIC_PATH);
-
-		ResolveElementParents();
 	}
-
-	//SaveUI(ASSETS_UI);
 }
 
 // Shutdown
@@ -240,8 +241,12 @@ void _Assets::LoadUI(const std::string &Path) {
 		throw std::runtime_error("No elements xml node: " + Path);
 
 	// Load elements
-	for(tinyxml2::XMLElement *Element = ElementsElement->FirstChildElement(); Element != nullptr; Element = Element->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *ChildNode = ElementsElement->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_Element *Element = new _Element(ChildNode, Graphics.Element);
+		Graphics.Element->Children.push_back(Element);
 	}
+
+	Graphics.Element->CalculateBounds();
 }
 
 // Loads the color table
@@ -700,6 +705,7 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 		TextBox->Alignment = Alignment;
 		TextBox->Style = Style;
 		TextBox->Font = Font;
+		TextBox->FontName = FontIdentifier;
 		TextBox->MaxLength = MaxLength;
 
 		// Add to map

@@ -2031,6 +2031,7 @@ void _HUD::EquipSkill(uint32_t SkillID) {
 
 // Delete memory used by skill page
 void _HUD::ClearSkills() {
+
 	for(auto &Child : SkillsElement->Children) {
 		if(Child->Style && Child->Style->UserCreated)
 			delete Child->Style;
@@ -2044,6 +2045,7 @@ void _HUD::ClearSkills() {
 		if(Child->UserCreated)
 			delete Child;
 	}
+
 	SkillsElement->Children.clear();
 }
 

@@ -45,7 +45,7 @@ struct _Alignment {
 		BASELINE,
 	};
 
-	_Alignment() { Horizontal = LEFT; Vertical = TOP; }
+	_Alignment() { Horizontal = CENTER; Vertical = MIDDLE; }
 	_Alignment(int Horizontal, int Vertical) : Horizontal(Horizontal), Vertical(Vertical) { }
 
 	int Horizontal, Vertical;

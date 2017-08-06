@@ -48,6 +48,7 @@ class _Element {
 		};
 
 		_Element();
+		_Element(tinyxml2::XMLElement *Node, _Element *ParentNode);
 		virtual ~_Element();
 
 		virtual const char *GetTypeName() const;
@@ -86,13 +87,13 @@ class _Element {
 		void *UserData;
 		void *UserDataAlt;
 
-		bool Visible : 1;
-		bool Enabled : 1;
-		bool Checked : 1;
-		bool Clickable : 1;
-		bool MaskOutside : 1;
-		bool Stretch : 1;
-		bool UserCreated : 1;
+		bool Visible;
+		bool Enabled;
+		bool Checked;
+		bool Clickable;
+		bool MaskOutside;
+		bool Stretch;
+		bool UserCreated;
 		int Debug;
 
 		// Graphics
@@ -130,7 +131,9 @@ class _Element {
 		std::list<_Element *> Children;
 		glm::vec2 ChildrenOffset;
 
-	protected:
+	private:
+
+		void AssignAttributeString(tinyxml2::XMLElement *Node, const char *Attribute, std::string &String);
 
 		std::list<std::string> Texts;
 
