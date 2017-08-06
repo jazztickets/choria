@@ -33,8 +33,7 @@ struct _Style {
 		HasBorderColor(false),
 		Program(nullptr),
 		Texture(nullptr),
-		Stretch(false),
-		UserCreated(false) { }
+		Stretch(false) { }
 
 	// Attributes
 	std::string Identifier;
@@ -51,6 +50,5 @@ struct _Style {
 	const _Texture *Texture;
 
 	// Properties
-	bool Stretch : 1;
-	bool UserCreated : 1;
+	bool Stretch;
 };

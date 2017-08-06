@@ -676,10 +676,8 @@ void _EditorState::ToggleLoadMap(const std::string &TempPath) {
 
 // Delete memory used by textures screen
 void _EditorState::ClearTextures() {
-	for(auto &Child : TexturesElement->Children) {
-		if(Child->UserCreated)
-			delete Child;
-	}
+	for(auto &Child : TexturesElement->Children)
+		delete Child;
 
 	TexturesElement->Children.clear();
 }
@@ -708,7 +706,6 @@ void _EditorState::InitTextures() {
 		Button->Size = Map->TileAtlas->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Atlas = Map->TileAtlas;
-		Button->UserCreated = true;
 		Button->TextureIndex = i;
 		TexturesElement->Children.push_back(Button);
 
