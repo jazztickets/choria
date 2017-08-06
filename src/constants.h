@@ -150,12 +150,7 @@ const  std::string  ASSETS_COLORS                   =  "tables/colors.tsv";
 const  std::string  ASSETS_FONTS                    =  "tables/fonts.tsv";
 const  std::string  ASSETS_LAYERS                   =  "tables/layers.tsv";
 const  std::string  ASSETS_UI                       =  "tables/ui.xml";
-const  std::string  ASSETS_UI_BUTTONS               =  "tables/ui/buttons.tsv";
-const  std::string  ASSETS_UI_ELEMENTS              =  "tables/ui/elements.tsv";
-const  std::string  ASSETS_UI_IMAGES                =  "tables/ui/images.tsv";
-const  std::string  ASSETS_UI_LABELS                =  "tables/ui/labels.tsv";
-const  std::string  ASSETS_UI_STYLES                =  "tables/ui/styles.tsv";
-const  std::string  ASSETS_UI_TEXTBOXES             =  "tables/ui/textboxes.tsv";
+const  std::string  ASSETS_UI_STYLES                =  "tables/styles.tsv";
 //     Colors
 const  glm::vec4    COLOR_WHITE                     =  {1.0f,1.0f,1.0f,1.0f};
 const  glm::vec4    COLOR_DARK                      =  {0.3f,0.3f,0.3f,1.0f};

@@ -69,15 +69,9 @@ class _Assets {
 		void LoadFonts(const std::string &Path);
 		void LoadLayers(const std::string &Path);
 		void LoadPrograms(const std::string &Path);
-		void LoadUI(const std::string &Path);
 		void LoadStyles(const std::string &Path);
-		void LoadElements(const std::string &Path);
-		void LoadLabels(const std::string &Path);
-		void LoadImages(const std::string &Path);
-		void LoadButtons(const std::string &Path);
-		void LoadTextBoxes(const std::string &Path);
+		void LoadUI(const std::string &Path);
 
-		void ResolveElementParents();
 		void SaveUI(const std::string &Path);
 
 		std::unordered_map<std::string, const _Shader *> Shaders;

@@ -80,7 +80,6 @@ class _Element {
 
 		// Attributes
 		ElementType Type;
-		size_t GlobalID;
 		std::string Identifier;
 		std::string ParentIdentifier;
 		_Element *Parent;
