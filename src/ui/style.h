@@ -33,7 +33,6 @@ struct _Style {
 		HasBorderColor(false),
 		Program(nullptr),
 		Texture(nullptr),
-		Atlas(nullptr),
 		Stretch(false),
 		UserCreated(false) { }
 
@@ -50,7 +49,6 @@ struct _Style {
 	// Graphics
 	const _Program *Program;
 	const _Texture *Texture;
-	const _Atlas *Atlas;
 
 	// Properties
 	bool Stretch : 1;

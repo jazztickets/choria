@@ -352,7 +352,6 @@ void _Assets::LoadStyles(const std::string &Path) {
 		Style->BorderColor = BorderColor;
 		Style->Program = Programs[ProgramIdentifier];
 		Style->Texture = Texture;
-		Style->Atlas = nullptr;
 		Style->TextureColor = TextureColor;
 		Style->Stretch = Stretch;
 

@@ -677,9 +677,6 @@ void _EditorState::ToggleLoadMap(const std::string &TempPath) {
 // Delete memory used by textures screen
 void _EditorState::ClearTextures() {
 	for(auto &Child : TexturesElement->Children) {
-		if(Child->Style && Child->Style->UserCreated)
-			delete Child->Style;
-
 		if(Child->UserCreated)
 			delete Child;
 	}
@@ -702,13 +699,6 @@ void _EditorState::InitTextures() {
 	// Iterate over textures
 	for(uint32_t i = 0; i < TextureCount; i++) {
 
-		// Create style
-		_Style *Style = new _Style();
-		Style->TextureColor = COLOR_WHITE;
-		Style->Atlas = Map->TileAtlas;
-		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->UserCreated = true;
-
 		// Add button
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
@@ -717,7 +707,7 @@ void _EditorState::InitTextures() {
 		Button->Offset = Offset;
 		Button->Size = Map->TileAtlas->Size;
 		Button->Alignment = LEFT_TOP;
-		Button->Style = Style;
+		Button->Atlas = Map->TileAtlas;
 		Button->UserCreated = true;
 		Button->TextureIndex = i;
 		TexturesElement->Children.push_back(Button);

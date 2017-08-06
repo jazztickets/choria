@@ -52,6 +52,7 @@ _Element::_Element() :
 	HoverStyle(nullptr),
 	DisabledStyle(nullptr),
 	Texture(nullptr),
+	Atlas(nullptr),
 	TextureIndex(0),
 	Fade(1.0f),
 	HitElement(nullptr),
@@ -151,6 +152,60 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 _Element::~_Element() {
 }
 
+// Serialize element and children to xml node
+void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode) {
+
+	// Create xml node
+	tinyxml2::XMLElement *Node = Document.NewElement(GetTypeName());
+
+	// Set attributes
+	if(ParentNode) {
+		Node->SetAttribute("identifier", Identifier.c_str());
+		if(Texture)
+			Node->SetAttribute("texture", Texture->Identifier.c_str());
+		if(Style)
+			Node->SetAttribute("style", Style->Identifier.c_str());
+		if(HoverStyle)
+			Node->SetAttribute("hover_style", HoverStyle->Identifier.c_str());
+		if(DisabledStyle)
+			Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
+		if(ColorName.size())
+			Node->SetAttribute("color", ColorName.c_str());
+		if(FontName.size())
+			Node->SetAttribute("font", FontName.c_str());
+		if(Text.size())
+			Node->SetAttribute("text", Text.c_str());
+		if(Offset.x != 0.0f)
+			Node->SetAttribute("offset_x", Offset.x);
+		if(Offset.y != 0.0f)
+			Node->SetAttribute("offset_y", Offset.y);
+		if(Size.x != 0.0f)
+			Node->SetAttribute("size_x", Size.x);
+		if(Size.y != 0.0f)
+			Node->SetAttribute("size_y", Size.y);
+		if(Alignment.Horizontal != _Alignment::CENTER)
+			Node->SetAttribute("alignment_x", Alignment.Horizontal);
+		if(Alignment.Vertical != _Alignment::MIDDLE)
+			Node->SetAttribute("alignment_y", Alignment.Vertical);
+		if(MaxLength)
+			Node->SetAttribute("maxlength", (uint32_t)MaxLength);
+		if(Clickable != 1)
+			Node->SetAttribute("clickable", Clickable);
+		if(Stretch)
+			Node->SetAttribute("stretch", Stretch);
+		if((intptr_t)UserData != -1)
+			Node->SetAttribute("userdata", (intptr_t)UserData);
+
+		ParentNode->InsertEndChild(Node);
+	}
+	else
+		Document.InsertEndChild(Node);
+
+	// Add children
+	for(const auto &Child : Children)
+		Child->SerializeElement(Document, Node);
+}
+
 // Get type name
 const char *_Element::GetTypeName() const {
 
@@ -237,6 +292,9 @@ bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
 
 // Handle a press event
 void _Element::HandleInput(bool Pressed) {
+	if(!Visible)
+		return;
+
 	if(Type == TEXTBOX) {
 	   if(HitElement) {
 		   ResetCursor();
@@ -244,9 +302,6 @@ void _Element::HandleInput(bool Pressed) {
 	   }
 	   return;
 	}
-
-	if(!Visible)
-		return;
 
 	// Pass event to children
 	for(auto &Child : Children)
@@ -314,111 +369,6 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 	}
 }
 
-// Calculate the screen space bounds for the element
-void _Element::CalculateBounds() {
-	Bounds.Start = Offset;
-
-	// Handle horizontal alignment
-	switch(Alignment.Horizontal) {
-		case _Alignment::CENTER:
-			if(Parent)
-				Bounds.Start.x += Parent->Size.x / 2;
-			Bounds.Start.x -= Size.x / 2;
-		break;
-		case _Alignment::RIGHT:
-			if(Parent)
-				Bounds.Start.x += Parent->Size.x;
-			Bounds.Start.x -= Size.x;
-		break;
-	}
-
-	// Handle vertical alignment
-	switch(Alignment.Vertical) {
-		case _Alignment::MIDDLE:
-			if(Parent)
-				Bounds.Start.y += Parent->Size.y / 2;
-			Bounds.Start.y -= Size.y / 2;
-		break;
-		case _Alignment::BOTTOM:
-			if(Parent)
-				Bounds.Start.y += Parent->Size.y;
-			Bounds.Start.y -= Size.y;
-		break;
-	}
-
-	// Offset from parent
-	if(Parent)
-		Bounds.Start += Parent->Bounds.Start + Parent->ChildrenOffset;
-
-	// Set end
-	Bounds.End = Bounds.Start + Size;
-
-	// Update children
-	CalculateChildrenBounds();
-}
-
-// Update children bounds
-void _Element::CalculateChildrenBounds() {
-
-	// Update children
-	for(auto &Child : Children)
-		Child->CalculateBounds();
-}
-
-// Serialize element and children to xml node
-void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode) {
-
-	// Create xml node
-	tinyxml2::XMLElement *Node = Document.NewElement(GetTypeName());
-
-	// Set attributes
-	if(ParentNode) {
-		Node->SetAttribute("identifier", Identifier.c_str());
-		if(Texture)
-			Node->SetAttribute("texture", Texture->Identifier.c_str());
-		if(Style)
-			Node->SetAttribute("style", Style->Identifier.c_str());
-		if(HoverStyle)
-			Node->SetAttribute("hover_style", HoverStyle->Identifier.c_str());
-		if(DisabledStyle)
-			Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
-		if(ColorName.size())
-			Node->SetAttribute("color", ColorName.c_str());
-		if(FontName.size())
-			Node->SetAttribute("font", FontName.c_str());
-		if(Text.size())
-			Node->SetAttribute("text", Text.c_str());
-		if(Offset.x != 0.0f)
-			Node->SetAttribute("offset_x", Offset.x);
-		if(Offset.y != 0.0f)
-			Node->SetAttribute("offset_y", Offset.y);
-		if(Size.x != 0.0f)
-			Node->SetAttribute("size_x", Size.x);
-		if(Size.y != 0.0f)
-			Node->SetAttribute("size_y", Size.y);
-		if(Alignment.Horizontal != _Alignment::CENTER)
-			Node->SetAttribute("alignment_x", Alignment.Horizontal);
-		if(Alignment.Vertical != _Alignment::MIDDLE)
-			Node->SetAttribute("alignment_y", Alignment.Vertical);
-		if(MaxLength)
-			Node->SetAttribute("maxlength", (uint32_t)MaxLength);
-		if(Clickable != 1)
-			Node->SetAttribute("clickable", Clickable);
-		if(Stretch)
-			Node->SetAttribute("stretch", Stretch);
-		if((intptr_t)UserData != -1)
-			Node->SetAttribute("userdata", (intptr_t)UserData);
-
-		ParentNode->InsertEndChild(Node);
-	}
-	else
-		Document.InsertEndChild(Node);
-
-	// Add children
-	for(const auto &Child : Children)
-		Child->SerializeElement(Document, Node);
-}
-
 // Render the element
 void _Element::Render() const {
 	if(Type == NONE)
@@ -431,18 +381,17 @@ void _Element::Render() const {
 		case BUTTON:
 			if(Enabled) {
 				if(Style) {
-
 					if(Style->Texture) {
 						Graphics.SetProgram(Style->Program);
 						Graphics.SetVBO(VBO_NONE);
 						Graphics.SetColor(Style->TextureColor);
 						Graphics.DrawImage(Bounds, Style->Texture, Style->Stretch);
 					}
-					else if(Style->Atlas) {
+					else if(Atlas) {
 						Graphics.SetProgram(Style->Program);
 						Graphics.SetVBO(VBO_NONE);
 						Graphics.SetColor(Style->TextureColor);
-						Graphics.DrawAtlas(Bounds, Style->Atlas->Texture, Style->Atlas->GetTextureCoords(TextureIndex));
+						Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
 					}
 					else {
 						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
@@ -452,6 +401,18 @@ void _Element::Render() const {
 						Graphics.SetColor(Style->BorderColor);
 						Graphics.DrawRectangle(Bounds, false);
 					}
+				}
+				else if(Atlas) {
+					Graphics.SetColor(Color);
+					Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+					Graphics.SetVBO(VBO_NONE);
+					Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
+				}
+				else if(Texture) {
+					Graphics.SetColor(Color);
+					Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+					Graphics.SetVBO(VBO_NONE);
+					Graphics.DrawImage(Bounds, Texture, Stretch);
 				}
 
 				// Draw hover texture
@@ -487,11 +448,11 @@ void _Element::Render() const {
 						Graphics.SetColor(DisabledStyle->TextureColor);
 						Graphics.DrawImage(Bounds, DisabledStyle->Texture, DisabledStyle->Stretch);
 					}
-					else if(DisabledStyle->Atlas) {
+					else if(Atlas) {
 						Graphics.SetProgram(DisabledStyle->Program);
 						Graphics.SetVBO(VBO_NONE);
 						Graphics.SetColor(DisabledStyle->TextureColor);
-						Graphics.DrawAtlas(Bounds, DisabledStyle->Atlas->Texture, DisabledStyle->Atlas->GetTextureCoords(TextureIndex));
+						Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
 					}
 					else {
 						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
@@ -617,6 +578,57 @@ void _Element::Render() const {
 		// Disable mask
 		Graphics.DisableStencilTest();
 	}
+}
+
+// Calculate the screen space bounds for the element
+void _Element::CalculateBounds() {
+	Bounds.Start = Offset;
+
+	// Handle horizontal alignment
+	switch(Alignment.Horizontal) {
+		case _Alignment::CENTER:
+			if(Parent)
+				Bounds.Start.x += Parent->Size.x / 2;
+			Bounds.Start.x -= Size.x / 2;
+		break;
+		case _Alignment::RIGHT:
+			if(Parent)
+				Bounds.Start.x += Parent->Size.x;
+			Bounds.Start.x -= Size.x;
+		break;
+	}
+
+	// Handle vertical alignment
+	switch(Alignment.Vertical) {
+		case _Alignment::MIDDLE:
+			if(Parent)
+				Bounds.Start.y += Parent->Size.y / 2;
+			Bounds.Start.y -= Size.y / 2;
+		break;
+		case _Alignment::BOTTOM:
+			if(Parent)
+				Bounds.Start.y += Parent->Size.y;
+			Bounds.Start.y -= Size.y;
+		break;
+	}
+
+	// Offset from parent
+	if(Parent)
+		Bounds.Start += Parent->Bounds.Start + Parent->ChildrenOffset;
+
+	// Set end
+	Bounds.End = Bounds.Start + Size;
+
+	// Update children
+	CalculateChildrenBounds();
+}
+
+// Update children bounds
+void _Element::CalculateChildrenBounds() {
+
+	// Update children
+	for(auto &Child : Children)
+		Child->CalculateBounds();
 }
 
 // Set the debug, and increment for children

@@ -26,6 +26,7 @@
 // Forward Declarations
 class _Font;
 class _Texture;
+class _Atlas;
 struct _Style;
 struct _KeyEvent;
 namespace tinyxml2 {
@@ -51,6 +52,8 @@ class _Element {
 		_Element(tinyxml2::XMLElement *Node, _Element *ParentNode);
 		virtual ~_Element();
 
+		void SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode);
+
 		virtual const char *GetTypeName() const;
 		virtual void Update(double FrameTime, const glm::vec2 &Mouse);
 		virtual void Render() const;
@@ -62,7 +65,6 @@ class _Element {
 		void RemoveChild(_Element *Element);
 		void UpdateChildrenOffset(const glm::vec2 &Update) { ChildrenOffset += Update; CalculateChildrenBounds(); }
 		void CalculateChildrenBounds();
-		void SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode);
 
 		void Clear() { CursorTimer = 0; Text = ""; CursorPosition = 0; }
 		void ResetCursor() { CursorTimer = 0; }
@@ -103,6 +105,7 @@ class _Element {
 		const _Style *HoverStyle;
 		const _Style *DisabledStyle;
 		const _Texture *Texture;
+		const _Atlas *Atlas;
 		uint32_t TextureIndex;
 		float Fade;
 

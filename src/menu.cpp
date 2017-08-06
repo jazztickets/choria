@@ -550,13 +550,6 @@ void _Menu::LoadPortraitButtons() {
 		if(!Portrait.Texture)
 			throw std::runtime_error("Cannot find texture for portrait id " + std::to_string(Portrait.ID));
 
-		// Create style
-		_Style *Style = new _Style();
-		Style->TextureColor = COLOR_WHITE;
-		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->Texture = Portrait.Texture;
-		Style->UserCreated = true;
-
 		// Add button
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
@@ -565,7 +558,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Offset = Offset;
 		Button->Size = Portrait.Texture->Size;
 		Button->Alignment = LEFT_TOP;
-		Button->Style = Style;
+		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
 		Button->UserData = (void *)(intptr_t)Portrait.ID;
 		Button->UserCreated = true;
@@ -590,7 +583,6 @@ void _Menu::ClearPortraits() {
 	std::list<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
 	for(auto &Child : Children) {
 		if(Child->UserCreated) {
-			delete Child->Style;
 			delete Child;
 		}
 	}
@@ -617,13 +609,6 @@ void _Menu::LoadBuildButtons() {
 		if(!Build.Texture)
 			throw std::runtime_error("Cannot find texture for build id " + std::to_string(Build.ID));
 
-		// Create style
-		_Style *Style = new _Style();
-		Style->TextureColor = COLOR_WHITE;
-		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->Texture = Build.Texture;
-		Style->UserCreated = true;
-
 		// Add button
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
@@ -632,7 +617,7 @@ void _Menu::LoadBuildButtons() {
 		Button->Offset = Offset;
 		Button->Size = Build.Texture->Size;
 		Button->Alignment = LEFT_TOP;
-		Button->Style = Style;
+		Button->Texture = Build.Texture;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
 		Button->UserData = (void *)(intptr_t)Build.ID;
 		Button->UserCreated = true;
@@ -670,7 +655,6 @@ void _Menu::ClearBuilds() {
 	std::list<_Element *> &Children = Assets.Elements["element_menu_new_builds"]->Children;
 	for(auto &Child : Children) {
 		if(Child->UserCreated) {
-			delete Child->Style;
 
 			// Delete labels
 			for(auto &LabelChild : Child->Children) {

@@ -966,13 +966,6 @@ void _HUD::InitSkills() {
 	// Iterate over skills
 	for(auto &Skill : SortedSkills) {
 
-		// Create style
-		_Style *Style = new _Style();
-		Style->TextureColor = COLOR_WHITE;
-		Style->Program = Assets.Programs["ortho_pos_uv"];
-		Style->Texture = Skill->Texture;
-		Style->UserCreated = true;
-
 		// Add skill icon
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
@@ -981,7 +974,7 @@ void _HUD::InitSkills() {
 		Button->Offset = Offset;
 		Button->Size = Skill->Texture->Size;
 		Button->Alignment = LEFT_TOP;
-		Button->Style = Style;
+		Button->Texture = Skill->Texture;
 		Button->UserData = (void *)(intptr_t)Skill->ID;
 		Button->UserCreated = true;
 		SkillsElement->Children.push_back(Button);
@@ -2033,8 +2026,6 @@ void _HUD::EquipSkill(uint32_t SkillID) {
 void _HUD::ClearSkills() {
 
 	for(auto &Child : SkillsElement->Children) {
-		if(Child->Style && Child->Style->UserCreated)
-			delete Child->Style;
 
 		// Delete labels
 		for(auto &LabelChild : Child->Children) {
