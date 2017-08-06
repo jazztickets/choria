@@ -42,7 +42,7 @@
         <button identifier="button_newcharacter_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="170" offset_y="-16" size_x="150" size_y="32" alignment_y="2">
             <label identifier="label_menu_newcharacter_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </button>
-        <textbox identifier="textbox_newcharacter_name" style="style_menu_textbox" offset_y="-65" size_x="250" size_y="30" alignment_y="2" maxlength="12">
+        <textbox identifier="textbox_newcharacter_name" style="style_menu_textbox" font="hud_medium" offset_y="-65" size_x="250" size_y="30" alignment_y="2" maxlength="12">
             <label identifier="label_menu_newcharacter_name" font="hud_medium" text="Name" offset_y="-25" alignment_y="0"/>
         </textbox>
         <label identifier="label_menu_newcharacter_portraits" font="hud_medium" text="Select a portrait" offset_y="26" alignment_y="3"/>
@@ -55,10 +55,10 @@
         <button identifier="button_connect_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="75" offset_y="230" size_x="128" size_y="48">
             <label identifier="label_menu_connect_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </button>
-        <textbox identifier="textbox_connect_host" style="style_menu_textbox" offset_y="-250" size_x="250" size_y="30" alignment_y="2" maxlength="32">
+        <textbox identifier="textbox_connect_host" style="style_menu_textbox" font="hud_medium" offset_y="-250" size_x="250" size_y="30" alignment_y="2" maxlength="32">
             <label identifier="label_menu_connect_host" font="menu_buttons" text="Host" offset_y="-35"/>
         </textbox>
-        <textbox identifier="textbox_connect_port" style="style_menu_textbox" offset_y="-150" size_x="250" size_y="30" alignment_y="2" maxlength="5">
+        <textbox identifier="textbox_connect_port" style="style_menu_textbox" font="hud_medium" offset_y="-150" size_x="250" size_y="30" alignment_y="2" maxlength="5">
             <label identifier="label_menu_connect_port" font="menu_buttons" text="Port" offset_y="-35"/>
             <label identifier="label_menu_connect_message" font="menu_buttons" offset_y="110" alignment_y="3"/>
         </textbox>
@@ -74,10 +74,10 @@
         <button identifier="button_account_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="150" offset_y="230" size_x="128" size_y="48">
             <label identifier="label_menu_account_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </button>
-        <textbox identifier="textbox_account_username" style="style_menu_textbox" offset_y="-250" size_x="250" size_y="30" alignment_y="2" maxlength="20">
+        <textbox identifier="textbox_account_username" style="style_menu_textbox" font="hud_medium" offset_y="-250" size_x="250" size_y="30" alignment_y="2" maxlength="20">
             <label identifier="label_menu_account_username" font="menu_buttons" text="Username" offset_y="-35"/>
         </textbox>
-        <textbox identifier="textbox_account_password" style="style_menu_textbox" offset_y="-150" size_x="250" size_y="30" alignment_y="2" maxlength="20">
+        <textbox identifier="textbox_account_password" style="style_menu_textbox" font="hud_medium" offset_y="-150" size_x="250" size_y="30" alignment_y="2" maxlength="20">
             <label identifier="label_menu_account_password" font="menu_buttons" text="Password" offset_y="-35"/>
             <label identifier="label_menu_account_message" color="red" font="menu_buttons" offset_y="110" alignment_y="3"/>
         </textbox>
@@ -103,8 +103,8 @@
             <button identifier="button_options_fullscreen" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="15" offset_y="50" size_x="32" size_y="32" alignment_x="0">
                 <label identifier="label_menu_options_fullscreen_check" font="hud_medium" text="X"/>
             </button>
-            <textbox identifier="textbox_options_soundvolume" style="style_menu_textbox" offset_x="15" offset_y="100" size_x="75" size_y="30" alignment_x="0" maxlength="5"/>
-            <textbox identifier="textbox_options_musicvolume" style="style_menu_textbox" offset_x="15" offset_y="150" size_x="75" size_y="30" alignment_x="0" maxlength="5"/>
+            <textbox identifier="textbox_options_soundvolume" style="style_menu_textbox" font="hud_medium" offset_x="15" offset_y="100" size_x="75" size_y="30" alignment_x="0" maxlength="5"/>
+            <textbox identifier="textbox_options_musicvolume" style="style_menu_textbox" font="hud_medium" offset_x="15" offset_y="150" size_x="75" size_y="30" alignment_x="0" maxlength="5"/>
             <label identifier="label_menu_options_fullscreen" font="menu_buttons" text="Fullscreen" offset_x="-15" offset_y="50" alignment_x="2"/>
             <label identifier="label_menu_options_soundvolume" font="menu_buttons" text="Sound Volume" offset_x="-15" offset_y="100" alignment_x="2"/>
             <label identifier="label_menu_options_musicvolume" font="menu_buttons" text="Music Volume" offset_x="-15" offset_y="150" alignment_x="2"/>
@@ -325,7 +325,7 @@
             <button identifier="button_trade_theirbag_5" style="style_hud_slot" offset_x="48" offset_y="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" userdata="5"/>
             <button identifier="button_trade_theirbag_6" style="style_hud_slot" offset_x="96" offset_y="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" userdata="6"/>
             <button identifier="button_trade_theirbag_7" style="style_hud_slot" offset_x="144" offset_y="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" userdata="7"/>
-            <textbox identifier="textbox_trade_gold_theirs" style="style_menu_textbox" offset_x="50" offset_y="44" size_x="130" size_y="30" alignment_x="0" alignment_y="2" maxlength="10"/>
+            <textbox identifier="textbox_trade_gold_theirs" style="style_menu_textbox" font="hud_medium" offset_x="50" offset_y="44" size_x="130" size_y="30" alignment_x="0" alignment_y="2" maxlength="10"/>
         </element>
         <element identifier="element_trade_yours" style="style_hud_bg" offset_x="112" offset_y="144" size_x="192" size_y="92" alignment_x="0" alignment_y="0" userdata="10">
             <image identifier="image_trade_gold_yours" texture="hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
@@ -343,7 +343,7 @@
             <button identifier="button_trade_yourbag_5" style="style_hud_slot" offset_x="48" offset_y="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" userdata="5"/>
             <button identifier="button_trade_yourbag_6" style="style_hud_slot" offset_x="96" offset_y="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" userdata="6"/>
             <button identifier="button_trade_yourbag_7" style="style_hud_slot" offset_x="144" offset_y="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" userdata="7"/>
-            <textbox identifier="textbox_trade_gold_yours" style="style_menu_textbox" offset_x="50" offset_y="44" size_x="130" size_y="30" alignment_x="0" alignment_y="2" maxlength="10"/>
+            <textbox identifier="textbox_trade_gold_yours" style="style_menu_textbox" font="hud_medium" offset_x="50" offset_y="44" size_x="130" size_y="30" alignment_x="0" alignment_y="2" maxlength="10"/>
         </element>
         <label identifier="label_trade_status" font="hud_medium" text="Waiting for other player..." offset_y="64" alignment_y="0"/>
     </element>
@@ -357,11 +357,11 @@
         <label identifier="label_buffs_tooltip_name" font="menu_buttons" offset_y="30" alignment_y="3"/>
     </element>
     <element identifier="element_party" style="style_hud_item_tooltip_bg" size_x="300" size_y="120">
-        <textbox identifier="textbox_party" style="style_menu_textbox" offset_y="20" size_x="250" size_y="30" maxlength="20"/>
+        <textbox identifier="textbox_party" style="style_menu_textbox" font="hud_medium" offset_y="20" size_x="250" size_y="30" maxlength="20"/>
         <label identifier="label_party_title" font="menu_buttons" text="Enter Party Name" offset_y="40" alignment_y="3"/>
     </element>
     <element identifier="element_chat" offset_x="25" offset_y="-100" alignment_x="0" alignment_y="2">
-        <textbox identifier="textbox_chat" style="style_menu_textbox" offset_x="3" offset_y="-2" size_x="346" size_y="20" alignment_x="0" alignment_y="2" maxlength="100"/>
+        <textbox identifier="textbox_chat" style="style_menu_textbox" font="hud_small" offset_x="3" offset_y="-2" size_x="346" size_y="20" alignment_x="0" alignment_y="2" maxlength="100"/>
     </element>
     <element identifier="element_editor_buttonbar" size_x="128" size_y="32" alignment_x="2" alignment_y="0">
         <button identifier="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
@@ -384,13 +384,13 @@
         <button identifier="button_editor_newmap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
             <label identifier="label_editor_newmap_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </button>
-        <textbox identifier="textbox_editor_newmap_filename" style="style_menu_textbox" offset_x="150" offset_y="60" size_x="200" size_y="30" alignment_x="0" alignment_y="0" maxlength="32">
+        <textbox identifier="textbox_editor_newmap_filename" style="style_menu_textbox" font="hud_medium" offset_x="150" offset_y="60" size_x="200" size_y="30" alignment_x="0" alignment_y="0" maxlength="32">
             <label identifier="label_editor_newmap_filename" font="hud_medium" text="Filename" offset_y="22" size_x="215" alignment_x="2" alignment_y="3"/>
         </textbox>
-        <textbox identifier="textbox_editor_newmap_width" style="style_menu_textbox" offset_x="150" offset_y="110" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
+        <textbox identifier="textbox_editor_newmap_width" style="style_menu_textbox" font="hud_medium" offset_x="150" offset_y="110" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
             <label identifier="label_editor_newmap_width" font="hud_medium" text="Width" offset_y="22" size_x="90" alignment_x="2" alignment_y="3"/>
         </textbox>
-        <textbox identifier="textbox_editor_newmap_height" style="style_menu_textbox" offset_x="150" offset_y="160" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
+        <textbox identifier="textbox_editor_newmap_height" style="style_menu_textbox" font="hud_medium" offset_x="150" offset_y="160" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
             <label identifier="label_editor_newmap_height" font="hud_medium" text="Height" offset_y="22" size_x="90" alignment_x="2" alignment_y="3"/>
         </textbox>
         <label identifier="label_editor_newmap_title" font="menu_buttons" text="New Map" offset_y="35" alignment_y="3"/>
@@ -402,27 +402,27 @@
         <button identifier="button_editor_resizemap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
             <label identifier="label_editor_resizemap_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </button>
-        <textbox identifier="textbox_editor_resizemap_minx" style="style_menu_textbox" offset_x="150" offset_y="60" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
+        <textbox identifier="textbox_editor_resizemap_minx" style="style_menu_textbox" font="hud_medium" offset_x="150" offset_y="60" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
             <label identifier="label_editor_resizemap_minx" font="hud_medium" text="Min X" offset_y="22" size_x="90" alignment_x="2" alignment_y="3"/>
         </textbox>
-        <textbox identifier="textbox_editor_resizemap_miny" style="style_menu_textbox" offset_x="150" offset_y="110" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
+        <textbox identifier="textbox_editor_resizemap_miny" style="style_menu_textbox" font="hud_medium" offset_x="150" offset_y="110" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
             <label identifier="label_editor_resizemap_miny" font="hud_medium" text="Min Y" offset_y="22" size_x="90" alignment_x="2" alignment_y="3"/>
         </textbox>
-        <textbox identifier="textbox_editor_resizemap_maxx" style="style_menu_textbox" offset_x="150" offset_y="160" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
+        <textbox identifier="textbox_editor_resizemap_maxx" style="style_menu_textbox" font="hud_medium" offset_x="150" offset_y="160" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
             <label identifier="label_editor_resizemap_maxx" font="hud_medium" text="Max X" offset_y="22" size_x="90" alignment_x="2" alignment_y="3"/>
         </textbox>
-        <textbox identifier="textbox_editor_resizemap_maxy" style="style_menu_textbox" offset_x="150" offset_y="210" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
+        <textbox identifier="textbox_editor_resizemap_maxy" style="style_menu_textbox" font="hud_medium" offset_x="150" offset_y="210" size_x="75" size_y="30" alignment_x="0" alignment_y="0" maxlength="3">
             <label identifier="label_editor_resizemap_maxy" font="hud_medium" text="Max Y" offset_y="22" size_x="90" alignment_x="2" alignment_y="3"/>
         </textbox>
         <label identifier="label_editor_resizemap_title" font="menu_buttons" text="Resize Map" offset_y="35" alignment_y="3"/>
     </element>
     <element identifier="element_editor_savemap" offset_x="100" offset_y="-10" size_x="250" size_y="30" alignment_x="0" alignment_y="2">
-        <textbox identifier="textbox_editor_savemap" style="style_menu_textbox" offset_x="75" size_x="350" size_y="30" alignment_x="0" alignment_y="0" maxlength="32">
+        <textbox identifier="textbox_editor_savemap" style="style_menu_textbox" font="hud_medium" offset_x="75" size_x="350" size_y="30" alignment_x="0" alignment_y="0" maxlength="32">
             <label identifier="label_editor_savemap" font="hud_medium" text="Save" offset_y="23" size_x="360" alignment_x="2" alignment_y="3"/>
         </textbox>
     </element>
     <element identifier="element_editor_loadmap" offset_x="100" offset_y="-10" size_x="250" size_y="30" alignment_x="0" alignment_y="2">
-        <textbox identifier="textbox_editor_loadmap" style="style_menu_textbox" offset_x="75" size_x="350" size_y="30" alignment_x="0" alignment_y="0" maxlength="32">
+        <textbox identifier="textbox_editor_loadmap" style="style_menu_textbox" font="hud_medium" offset_x="75" size_x="350" size_y="30" alignment_x="0" alignment_y="0" maxlength="32">
             <label identifier="label_editor_loadmap" font="hud_medium" text="Load" offset_y="23" size_x="360" alignment_x="2" alignment_y="3"/>
         </textbox>
     </element>
