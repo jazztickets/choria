@@ -26,9 +26,7 @@
 struct _Style;
 class _Font;
 class _Element;
-class _Label;
 class _Image;
-class _Button;
 class _TextBox;
 class _Texture;
 class _Program;
@@ -64,9 +62,9 @@ class _Assets {
 		std::unordered_map<std::string, _Music *> Music;
 
 		std::unordered_map<std::string, _Element *> Elements;
-		std::unordered_map<std::string, _Label *> Labels;
-		std::unordered_map<std::string, _Image *> Images;
-		std::unordered_map<std::string, _Button *> Buttons;
+		std::unordered_map<std::string, _Element *> Labels;
+		std::unordered_map<std::string, _Element *> Images;
+		std::unordered_map<std::string, _Element *> Buttons;
 		std::unordered_map<std::string, _TextBox *> TextBoxes;
 
 	private:

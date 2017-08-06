@@ -18,7 +18,6 @@
 #include <objects/item.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
-#include <ui/label.h>
 #include <ui/element.h>
 #include <scripting.h>
 #include <stats.h>
@@ -42,8 +41,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		return;
 
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
-	_Label *TooltipName = Assets.Labels["label_item_tooltip_name"];
-	_Label *TooltipType = Assets.Labels["label_item_tooltip_type"];
+	_Element *TooltipName = Assets.Labels["label_item_tooltip_name"];
+	_Element *TooltipType = Assets.Labels["label_item_tooltip_type"];
 	TooltipElement->SetVisible(true);
 
 	// Get window dimensions

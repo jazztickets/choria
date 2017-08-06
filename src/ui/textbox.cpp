@@ -33,6 +33,7 @@ _TextBox::_TextBox() :
 
 	//TODO fix
 	ParentOffset = glm::vec2(5.0f, 22.0f);
+	Type = TEXTBOX;
 }
 
 // Destructor

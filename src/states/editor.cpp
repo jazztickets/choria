@@ -18,9 +18,7 @@
 #include <states/editor.h>
 #include <objects/map.h>
 #include <ui/element.h>
-#include <ui/label.h>
 #include <ui/textbox.h>
-#include <ui/button.h>
 #include <ui/style.h>
 #include <framework.h>
 #include <input.h>
@@ -321,7 +319,7 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		// Texture select
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
-				_Button *Button = (_Button *)TexturesElement->GetClickedElement();
+				_Element *Button = (_Element *)TexturesElement->GetClickedElement();
 				Brush->TextureIndex[Layer] = Button->TextureIndex;
 				CloseWindows();
 			}
@@ -713,7 +711,8 @@ void _EditorState::InitTextures() {
 		Style->UserCreated = true;
 
 		// Add button
-		_Button *Button = new _Button();
+		_Element *Button = new _Element();
+		Button->Type = _Element::BUTTON;
 		Button->Identifier = "button_skills_skill";
 		Button->Parent = TexturesElement;
 		Button->Offset = Offset;

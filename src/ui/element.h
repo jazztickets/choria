@@ -24,6 +24,8 @@
 #include <list>
 
 // Forward Declarations
+class _Font;
+class _Texture;
 struct _Style;
 struct _KeyEvent;
 namespace tinyxml2 {
@@ -36,10 +38,19 @@ class _Element {
 
 	public:
 
+		enum ElementType {
+			NONE,
+			ELEMENT,
+			BUTTON,
+			IMAGE,
+			LABEL,
+			TEXTBOX,
+		};
+
 		_Element();
 		virtual ~_Element();
 
-		virtual const char *GetTypeName() const { return "element"; }
+		virtual const char *GetTypeName() const;
 		virtual void Update(double FrameTime, const glm::vec2 &Mouse);
 		virtual void Render() const;
 		virtual bool HandleKey(const _KeyEvent &KeyEvent);
@@ -60,8 +71,10 @@ class _Element {
 		void SetOffset(const glm::vec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
 		void SetWidth(float Width) { Size.x = Width; CalculateBounds(); }
 		void SetHeight(float Height) { Size.y = Height; CalculateBounds(); }
+		void SetWrap(float Width);
 
 		// Attributes
+		ElementType Type;
 		size_t GlobalID;
 		std::string Identifier;
 		std::string ParentIdentifier;
@@ -85,6 +98,7 @@ class _Element {
 		const _Style *Style;
 		const _Style *HoverStyle;
 		const _Style *DisabledStyle;
+		const _Texture *Texture;
 		uint32_t TextureIndex;
 		float Fade;
 
@@ -99,14 +113,18 @@ class _Element {
 		_Element *PressedElement;
 		_Element *ReleasedElement;
 
-		// Textbox
+		// Text
 		size_t MaxLength;
+		const _Font *Font;
+		std::string Text;
 
 		// Children
 		std::list<_Element *> Children;
 		glm::vec2 ChildrenOffset;
 
 	protected:
+
+		std::list<std::string> Texts;
 
 		virtual void SerializeAttributes(tinyxml2::XMLElement *Node);
 

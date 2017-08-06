@@ -40,11 +40,11 @@ class _Menu {
 
 		struct _CharacterSlot {
 			_CharacterSlot() : Button(nullptr), Name(nullptr), Level(nullptr), Hardcore(nullptr), CanPlay(false), Used(false) {}
-			_Button *Button;
-			_Label *Name;
-			_Label *Level;
-			_Label *Hardcore;
-			_Image *Image;
+			_Element *Button;
+			_Element *Name;
+			_Element *Level;
+			_Element *Hardcore;
+			_Element *Image;
 			bool CanPlay;
 			bool Used;
 		};

@@ -18,9 +18,6 @@
 #include <assets.h>
 #include <ui/style.h>
 #include <ui/element.h>
-#include <ui/label.h>
-#include <ui/button.h>
-#include <ui/image.h>
 #include <ui/textbox.h>
 #include <program.h>
 #include <font.h>
@@ -446,6 +443,7 @@ void _Assets::LoadElements(const std::string &Path) {
 
 		// Create
 		_Element *Element = new _Element();
+		Element->Type = _Element::ELEMENT;
 		Element->Identifier = Identifier;
 		Element->ParentIdentifier = ParentIdentifier;
 		Element->Offset = Offset;
@@ -509,7 +507,8 @@ void _Assets::LoadLabels(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Create
-		_Label *Label = new _Label();
+		_Element *Label = new _Element();
+		Label->Type = _Element::LABEL;
 		Label->Identifier = Identifier;
 		Label->ParentIdentifier = ParentIdentifier;
 		Label->Offset = Offset;
@@ -575,7 +574,8 @@ void _Assets::LoadImages(const std::string &Path) {
 		const _Texture *Texture = Textures[TextureIdentifier];
 
 		// Create
-		_Image *Image = new _Image();
+		_Element *Image = new _Element();
+		Image->Type = _Element::IMAGE;
 		Image->Identifier = Identifier;
 		Image->ParentIdentifier = ParentIdentifier;
 		Image->Offset = Offset;
@@ -648,7 +648,8 @@ void _Assets::LoadButtons(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Create
-		_Button *Button = new _Button();
+		_Element *Button = new _Element();
+		Button->Type = _Element::BUTTON;
 		Button->Identifier = Identifier;
 		Button->ParentIdentifier = ParentIdentifier;
 		Button->Offset = Offset;
@@ -717,6 +718,7 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 
 		// Create
 		_TextBox *TextBox = new _TextBox();
+		TextBox->Type = _Element::TEXTBOX;
 		TextBox->Identifier = Identifier;
 		TextBox->ParentIdentifier = ParentIdentifier;
 		TextBox->Offset = Offset;

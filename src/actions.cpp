@@ -20,7 +20,6 @@
 #include <state.h>
 #include <assets.h>
 #include <actiontype.h>
-#include <ui/label.h>
 
 _Actions Actions;
 

@@ -20,9 +20,6 @@
 #include <states/editor.h>
 #include <network/clientnetwork.h>
 #include <ui/element.h>
-#include <ui/label.h>
-#include <ui/button.h>
-#include <ui/image.h>
 #include <ui/style.h>
 #include <ui/textbox.h>
 #include <objects/object.h>
@@ -107,7 +104,7 @@ void _Menu::InitCharacters() {
 	ChangeLayout("element_menu_characters");
 
 	// Set label
-	_Label *HardcoreLabel = Assets.Labels["label_menu_characters_hardcore"];
+	_Element *HardcoreLabel = Assets.Labels["label_menu_characters_hardcore"];
 	HardcoreLabel->SetVisible(false);
 	if(HardcoreServer)
 		HardcoreLabel->SetVisible(true);
@@ -121,15 +118,15 @@ void _Menu::InitCharacters() {
 
 // Init new player popup
 void _Menu::InitNewCharacter() {
-	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
-	_Button *CreateHardcoreButton = Assets.Buttons["button_newcharacter_createhardcore"];
+	_Element *CreateButton = Assets.Buttons["button_newcharacter_create"];
+	_Element *CreateHardcoreButton = Assets.Buttons["button_newcharacter_createhardcore"];
 	CreateButton->SetEnabled(false);
 	CreateHardcoreButton->SetEnabled(false);
 
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	Name->SetText("");
 
-	_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
+	_Element *Label = Assets.Labels["label_menu_newcharacter_name"];
 	Label->Text = "Name";
 	Label->Color = COLOR_WHITE;
 
@@ -216,12 +213,12 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 	if(UseConfig)
 		Port->SetText(Config.LastPort);
 
-	_Label *Label = Assets.Labels["label_menu_connect_message"];
+	_Element *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Color = COLOR_WHITE;
 	Label->Text = "";
 
-	_Button *Button = Assets.Buttons["button_connect_connect"];
-	((_Label *)Button->Children.front())->Text = "Connect";
+	_Element *Button = Assets.Buttons["button_connect_connect"];
+	Button->Children.front()->Text = "Connect";
 
 	// Set focus
 	FocusedElement = Host;
@@ -243,11 +240,11 @@ void _Menu::InitAccount() {
 	Password->SetText(DefaultPassword);
 	Password->Password = true;
 
-	_Label *Label = Assets.Labels["label_menu_account_message"];
+	_Element *Label = Assets.Labels["label_menu_account_message"];
 	Label->Color = COLOR_WHITE;
 	Label->Text = "";
 
-	_Button *Button = Assets.Buttons["button_account_login"];
+	_Element *Button = Assets.Buttons["button_account_login"];
 	Button->SetEnabled(true);
 
 	// Set focus
@@ -262,7 +259,7 @@ uint32_t _Menu::GetSelectedIconID(_Element *ParentElement) {
 
 	// Check for selected portrait
 	for(auto &Element : ParentElement->Children) {
-		_Button *Button = (_Button *)Element;
+		_Element *Button = (_Element *)Element;
 		if(Button->Checked)
 			return (uint32_t)(intptr_t)Button->UserData;
 	}
@@ -278,7 +275,7 @@ size_t _Menu::GetSelectedCharacter() {
 	_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 	for(auto &Element : CharactersElement->Children) {
 		if(Element->Identifier == CharacterButtonPrefix) {
-			_Button *Button = (_Button *)Element;
+			_Element *Button = (_Element *)Element;
 			if(Button->Checked)
 				return Index;
 
@@ -343,12 +340,12 @@ void _Menu::ConnectToHost() {
 	PlayState.ConnectPort = ToNumber<uint16_t>(Port->Text);
 	PlayState.Connect(false);
 
-	_Label *Label = Assets.Labels["label_menu_connect_message"];
+	_Element *Label = Assets.Labels["label_menu_connect_message"];
 	Label->Color = COLOR_WHITE;
 	Label->Text = "Connecting...";
 
-	_Button *Button = Assets.Buttons["button_connect_connect"];
-	((_Label *)Button->Children.front())->Text = "Cancel";
+	_Element *Button = Assets.Buttons["button_connect_connect"];
+	Button->Children.front()->Text = "Cancel";
 
 	FocusedElement = nullptr;
 }
@@ -373,7 +370,7 @@ void _Menu::PlayCharacter(size_t Slot) {
 void _Menu::SendAccountInfo(bool CreateAccount) {
 	_TextBox *Username = Assets.TextBoxes["textbox_account_username"];
 	_TextBox *Password = Assets.TextBoxes["textbox_account_password"];
-	_Label *Label = Assets.Labels["label_menu_account_message"];
+	_Element *Label = Assets.Labels["label_menu_account_message"];
 
 	// Check username
 	if(Username->Text.length() == 0) {
@@ -397,7 +394,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Label->Color = COLOR_WHITE;
 	Label->Text = "Logging in...";
 
-	_Button *Button = Assets.Buttons["button_account_login"];
+	_Element *Button = Assets.Buttons["button_account_login"];
 	Button->SetEnabled(false);
 
 	// Send information
@@ -435,7 +432,8 @@ void _Menu::LoadCharacterSlots() {
 	for(size_t i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
 
 		// Add button
-		_Button *Button = new _Button();
+		_Element *Button = new _Element();
+		Button->Type = _Element::BUTTON;
 		Button->Identifier = CharacterButtonPrefix;
 		Button->Parent = CharacterSlotsElement;
 		Button->Offset = Offset;
@@ -449,7 +447,8 @@ void _Menu::LoadCharacterSlots() {
 		CharacterSlotsElement->Children.push_back(Button);
 
 		// Add image for portrait
-		_Image *Image = new _Image();
+		_Element *Image = new _Element();
+		Image->Type = _Element::IMAGE;
 		Image->Parent = Button;
 		Image->Alignment = CENTER_MIDDLE;
 		Image->Offset = glm::vec2(0, 0);
@@ -457,7 +456,8 @@ void _Menu::LoadCharacterSlots() {
 		Button->Children.push_back(Image);
 
 		// Add name label
-		_Label *NameLabel = new _Label();
+		_Element *NameLabel = new _Element();
+		NameLabel->Type = _Element::LABEL;
 		NameLabel->Parent = Button;
 		NameLabel->Offset = glm::vec2(0, 150);
 		NameLabel->Alignment = CENTER_BASELINE;
@@ -466,7 +466,8 @@ void _Menu::LoadCharacterSlots() {
 		Button->Children.push_back(NameLabel);
 
 		// Add level label
-		_Label *LevelLabel = new _Label();
+		_Element *LevelLabel = new _Element();
+		LevelLabel->Type = _Element::LABEL;
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = glm::vec2(0, 170);
 		LevelLabel->Alignment = CENTER_BASELINE;
@@ -475,7 +476,8 @@ void _Menu::LoadCharacterSlots() {
 		Button->Children.push_back(LevelLabel);
 
 		// Add hardcore label
-		_Label *HardcoreLabel = new _Label();
+		_Element *HardcoreLabel = new _Element();
+		HardcoreLabel->Type = _Element::LABEL;
 		HardcoreLabel->Parent = Button;
 		HardcoreLabel->Offset = glm::vec2(0, 187);
 		HardcoreLabel->Alignment = CENTER_BASELINE;
@@ -556,7 +558,8 @@ void _Menu::LoadPortraitButtons() {
 		Style->UserCreated = true;
 
 		// Add button
-		_Button *Button = new _Button();
+		_Element *Button = new _Element();
+		Button->Type = _Element::BUTTON;
 		Button->Identifier = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->Offset = Offset;
@@ -622,7 +625,8 @@ void _Menu::LoadBuildButtons() {
 		Style->UserCreated = true;
 
 		// Add button
-		_Button *Button = new _Button();
+		_Element *Button = new _Element();
+		Button->Type = _Element::BUTTON;
 		Button->Identifier = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
 		Button->Offset = Offset;
@@ -635,7 +639,8 @@ void _Menu::LoadBuildButtons() {
 		BuildsElement->Children.push_back(Button);
 
 		// Add label
-		_Label *Label = new _Label();
+		_Element *Label = new _Element();
+		Label->Type = _Element::LABEL;
 		Label->Font = Assets.Fonts["hud_small"];
 		Label->Text = Build.Name;
 		Label->Color = COLOR_WHITE;
@@ -686,7 +691,7 @@ void _Menu::UpdateOptions() {
 	Buffer << std::fixed << std::setprecision(2);
 
 	// Set fullscreen
-	_Label *FullscreenCheck = Assets.Labels["label_menu_options_fullscreen_check"];
+	_Element *FullscreenCheck = Assets.Labels["label_menu_options_fullscreen_check"];
 	FullscreenCheck->Text = Config.Fullscreen ? "X" : "";
 
 	// Set sound volume
@@ -726,8 +731,8 @@ void _Menu::ValidateCreateCharacter() {
 	uint32_t BuildID = GetSelectedIconID(Assets.Elements["element_menu_new_builds"]);
 
 	// Check name length
-	_Button *CreateButton = Assets.Buttons["button_newcharacter_create"];
-	_Button *CreateHardcoreButton = Assets.Buttons["button_newcharacter_createhardcore"];
+	_Element *CreateButton = Assets.Buttons["button_newcharacter_create"];
+	_Element *CreateHardcoreButton = Assets.Buttons["button_newcharacter_createhardcore"];
 	_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
 	if(Name->Text.length() > 0)
 		NameValid = true;
@@ -747,8 +752,8 @@ void _Menu::ValidateCreateCharacter() {
 
 // Update ui button states
 void _Menu::UpdateCharacterButtons() {
-	_Button *DeleteButton = Assets.Buttons["button_characters_delete"];
-	_Button *PlayButton = Assets.Buttons["button_characters_play"];
+	_Element *DeleteButton = Assets.Buttons["button_characters_delete"];
+	_Element *PlayButton = Assets.Buttons["button_characters_play"];
 	DeleteButton->SetEnabled(false);
 	PlayButton->SetEnabled(false);
 
@@ -954,7 +959,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 						for(auto &Element : CharactersElement->Children) {
 							if(Element->Identifier == CharacterButtonPrefix) {
-								_Button *Button = (_Button *)Element;
+								_Element *Button = (_Element *)Element;
 								Button->Checked = false;
 							}
 						}
@@ -980,7 +985,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 						// Unselect all portraits and select the clicked element
 						for(auto &Element : Clicked->Parent->Children) {
-							_Button *Button = (_Button *)Element;
+							_Element *Button = (_Element *)Element;
 							Button->Checked = false;
 							if((size_t)(intptr_t)Button->UserData == SelectedID) {
 								_TextBox *Name = Assets.TextBoxes["textbox_newcharacter_name"];
@@ -1190,7 +1195,7 @@ void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 	else {
 		InitConnect(true);
 
-		_Label *Label = Assets.Labels["label_menu_connect_message"];
+		_Element *Label = Assets.Labels["label_menu_connect_message"];
 		Label->Color = COLOR_RED;
 		Label->Text = "Disconnected from server";
 	}
@@ -1270,7 +1275,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 			RequestCharacterList();
 		} break;
 		case PacketType::CREATECHARACTER_INUSE: {
-			_Label *Label = Assets.Labels["label_menu_newcharacter_name"];
+			_Element *Label = Assets.Labels["label_menu_newcharacter_name"];
 			Label->Text = "Name in use";
 			Label->Color = COLOR_RED;
 		} break;
@@ -1290,17 +1295,17 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 
 // Set message for account screen
 void _Menu::SetAccountMessage(const std::string &Message) {
-	_Label *Label = Assets.Labels["label_menu_account_message"];
+	_Element *Label = Assets.Labels["label_menu_account_message"];
 	Label->Text = Message;
 	Label->Color = COLOR_RED;
 
-	_Button *Button = Assets.Buttons["button_account_login"];
+	_Element *Button = Assets.Buttons["button_account_login"];
 	Button->SetEnabled(true);
 }
 
 // Set message for title screen
 void _Menu::SetTitleMessage(const std::string &Message) {
-	_Label *Label = Assets.Labels["label_menu_title_message"];
+	_Element *Label = Assets.Labels["label_menu_title_message"];
 	Label->Text = Message;
 	Label->Color = COLOR_RED;
 }

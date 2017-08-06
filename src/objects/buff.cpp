@@ -17,7 +17,6 @@
 *******************************************************************************/
 #include <objects/buff.h>
 #include <ui/element.h>
-#include <ui/label.h>
 #include <objects/object.h>
 #include <objects/statchange.h>
 #include <constants.h>
@@ -32,7 +31,7 @@
 // Draw tooltip
 void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 	_Element *TooltipElement = Assets.Elements["element_buffs_tooltip"];
-	_Label *TooltipName = Assets.Labels["label_buffs_tooltip_name"];
+	_Element *TooltipName = Assets.Labels["label_buffs_tooltip_name"];
 	TooltipElement->SetVisible(true);
 
 	// Set label values

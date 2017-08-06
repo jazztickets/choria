@@ -21,6 +21,9 @@
 #include <input.h>
 #include <assets.h>
 #include <constants.h>
+#include <font.h>
+#include <texture.h>
+#include <atlas.h>
 #include <algorithm>
 #include <tinyxml2.h>
 
@@ -29,6 +32,7 @@ const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
 
 // Constructor
 _Element::_Element() :
+	Type(NONE),
 	GlobalID(0),
 	Parent(nullptr),
 	UserData((void *)-1),
@@ -45,6 +49,7 @@ _Element::_Element() :
 	Style(nullptr),
 	HoverStyle(nullptr),
 	DisabledStyle(nullptr),
+	Texture(nullptr),
 	TextureIndex(0),
 	Fade(1.0f),
 	HitElement(nullptr),
@@ -56,6 +61,27 @@ _Element::_Element() :
 
 // Destructor
 _Element::~_Element() {
+}
+
+// Get type name
+const char *_Element::GetTypeName() const {
+
+	switch(Type) {
+		case NONE:
+			return "";
+		case ELEMENT:
+			return "element";
+		case BUTTON:
+			return "button";
+		case IMAGE:
+			return "image";
+		case LABEL:
+			return "label";
+		case TEXTBOX:
+			return "textbox";
+	}
+
+	return "";
 }
 
 // Handle key event
@@ -191,6 +217,8 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 
 	// Set base attributes
 	Node->SetAttribute("identifier", Identifier.c_str());
+	if(Texture)
+		Node->SetAttribute("texture", Texture->Identifier.c_str());
 	if(Style)
 		Node->SetAttribute("style", Style->Identifier.c_str());
 	if(HoverStyle)
@@ -201,6 +229,8 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 		Node->SetAttribute("color", ColorName.c_str());
 	if(FontName.size())
 		Node->SetAttribute("font", FontName.c_str());
+	if(Text.size())
+		Node->SetAttribute("text", Text.c_str());
 
 	// Set attributes
 	SerializeAttributes(Node);
@@ -240,8 +270,132 @@ void _Element::SerializeAttributes(tinyxml2::XMLElement *Node) {
 
 // Render the element
 void _Element::Render() const {
+	if(Type == NONE)
+		throw std::runtime_error("Bad _Element type!");
+
 	if(!Visible)
 		return;
+
+	switch(Type) {
+		case BUTTON:
+			if(Enabled) {
+				if(Style) {
+
+					if(Style->Texture) {
+						Graphics.SetProgram(Style->Program);
+						Graphics.SetVBO(VBO_NONE);
+						Graphics.SetColor(Style->TextureColor);
+						Graphics.DrawImage(Bounds, Style->Texture, Style->Stretch);
+					}
+					else if(Style->Atlas) {
+						Graphics.SetProgram(Style->Program);
+						Graphics.SetVBO(VBO_NONE);
+						Graphics.SetColor(Style->TextureColor);
+						Graphics.DrawAtlas(Bounds, Style->Atlas->Texture, Style->Atlas->GetTextureCoords(TextureIndex));
+					}
+					else {
+						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+						Graphics.SetVBO(VBO_NONE);
+						Graphics.SetColor(Style->BackgroundColor);
+						Graphics.DrawRectangle(Bounds, true);
+						Graphics.SetColor(Style->BorderColor);
+						Graphics.DrawRectangle(Bounds, false);
+					}
+				}
+
+				// Draw hover texture
+				if(HoverStyle && (Checked || HitElement)) {
+
+					if(HoverStyle->Texture) {
+						Graphics.SetProgram(HoverStyle->Program);
+						Graphics.SetVBO(VBO_NONE);
+						Graphics.SetColor(HoverStyle->TextureColor);
+						Graphics.DrawImage(Bounds, HoverStyle->Texture, Style->Stretch);
+					}
+					else {
+						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+						Graphics.SetVBO(VBO_NONE);
+						if(HoverStyle->HasBackgroundColor) {
+							Graphics.SetColor(HoverStyle->BackgroundColor);
+							Graphics.DrawRectangle(Bounds, true);
+						}
+
+						if(HoverStyle->HasBorderColor) {
+							Graphics.SetColor(HoverStyle->BorderColor);
+							Graphics.DrawRectangle(Bounds, false);
+						}
+					}
+				}
+			}
+			else {
+				if(DisabledStyle) {
+
+					if(DisabledStyle->Texture) {
+						Graphics.SetProgram(DisabledStyle->Program);
+						Graphics.SetVBO(VBO_NONE);
+						Graphics.SetColor(DisabledStyle->TextureColor);
+						Graphics.DrawImage(Bounds, DisabledStyle->Texture, DisabledStyle->Stretch);
+					}
+					else if(DisabledStyle->Atlas) {
+						Graphics.SetProgram(DisabledStyle->Program);
+						Graphics.SetVBO(VBO_NONE);
+						Graphics.SetColor(DisabledStyle->TextureColor);
+						Graphics.DrawAtlas(Bounds, DisabledStyle->Atlas->Texture, DisabledStyle->Atlas->GetTextureCoords(TextureIndex));
+					}
+					else {
+						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+						Graphics.SetVBO(VBO_NONE);
+						Graphics.SetColor(DisabledStyle->BackgroundColor);
+						Graphics.DrawRectangle(Bounds, true);
+						Graphics.SetColor(DisabledStyle->BorderColor);
+						Graphics.DrawRectangle(Bounds, false);
+					}
+				}
+			}
+
+			// Render all children
+			for(auto &Child : Children) {
+				Child->Render();
+			}
+
+			return;
+		break;
+		case IMAGE: {
+			Graphics.SetColor(Color);
+			if(Texture) {
+				Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+				Graphics.SetVBO(VBO_NONE);
+				Graphics.DrawImage(Bounds, Texture, Stretch);
+			}
+		} break;
+		case LABEL: {
+
+			// Set color
+			glm::vec4 RenderColor(Color.r, Color.g, Color.b, Color.a*Fade);
+			if(!Enabled)
+				RenderColor.a *= 0.5f;
+
+			Graphics.SetProgram(Assets.Programs["pos_uv"]);
+			Graphics.SetVBO(VBO_NONE);
+			if(Texts.size()) {
+
+				// Center box
+				float LineHeight = Font->MaxHeight + 2;
+				float Y = Bounds.Start.y - (int)((LineHeight * Texts.size() - LineHeight) / 2);
+				for(const auto &Token : Texts) {
+					Font->DrawText(Token, glm::vec2(Bounds.Start.x, Y), RenderColor, Alignment);
+
+					Y += LineHeight;
+				}
+			}
+			else {
+				Font->DrawText(Text, Bounds.Start, RenderColor, Alignment);
+			}
+
+		} break;
+		default:
+		break;
+	}
 
 	if(MaskOutside) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
@@ -328,4 +482,11 @@ void _Element::SetEnabled(bool Enabled) {
 
 	for(auto &Child : Children)
 		Child->SetEnabled(Enabled);
+}
+
+// Break up text into multiple strings
+void _Element::SetWrap(float Width) {
+
+	Texts.clear();
+	Font->BreakupString(Text, Width, Texts);
 }

@@ -17,10 +17,7 @@
 *******************************************************************************/
 #include <hud.h>
 #include <ui/element.h>
-#include <ui/button.h>
-#include <ui/label.h>
 #include <ui/textbox.h>
-#include <ui/image.h>
 #include <ui/style.h>
 #include <states/play.h>
 #include <network/clientnetwork.h>
@@ -391,7 +388,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				if(!Cursor.InventorySlot.Item) {
 
 					// Check for accept button
-					_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+					_Element *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
 					if(TradeElement->GetClickedElement() == AcceptButton) {
 						AcceptButton->Checked = !AcceptButton->Checked;
 						UpdateAcceptButton();
@@ -978,7 +975,8 @@ void _HUD::InitSkills() {
 		Style->UserCreated = true;
 
 		// Add skill icon
-		_Button *Button = new _Button();
+		_Element *Button = new _Element();
+		Button->Type = _Element::BUTTON;
 		Button->Identifier = "button_skills_skill";
 		Button->Parent = SkillsElement;
 		Button->Offset = Offset;
@@ -990,7 +988,8 @@ void _HUD::InitSkills() {
 		SkillsElement->Children.push_back(Button);
 
 		// Add level label
-		_Label *LevelLabel = new _Label();
+		_Element *LevelLabel = new _Element();
+		LevelLabel->Type = _Element::LABEL;
 		LevelLabel->Identifier = "label_skills_level";
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = LevelOffset;
@@ -1002,7 +1001,8 @@ void _HUD::InitSkills() {
 		SkillsElement->Children.push_back(LevelLabel);
 
 		// Add plus button
-		_Button *PlusButton = new _Button();
+		_Element *PlusButton = new _Element();
+		PlusButton->Type = _Element::BUTTON;
 		PlusButton->Identifier = "button_skills_plus";
 		PlusButton->Parent = Button;
 		PlusButton->Size = glm::vec2(16, 16);
@@ -1014,7 +1014,8 @@ void _HUD::InitSkills() {
 		SkillsElement->Children.push_back(PlusButton);
 
 		// Add minus button
-		_Button *MinusButton = new _Button();
+		_Element *MinusButton = new _Element();
+		MinusButton->Type = _Element::BUTTON;
 		MinusButton->Identifier = "button_skills_minus";
 		MinusButton->Parent = Button;
 		MinusButton->Size = glm::vec2(16, 16);
@@ -1026,7 +1027,8 @@ void _HUD::InitSkills() {
 		SkillsElement->Children.push_back(MinusButton);
 
 		// Add plus label
-		_Label *PlusLabel = new _Label();
+		_Element *PlusLabel = new _Element();
+		PlusLabel->Type = _Element::LABEL;
 		PlusLabel->Parent = PlusButton;
 		PlusLabel->Text = "+";
 		PlusLabel->Offset = LabelOffset;
@@ -1037,7 +1039,8 @@ void _HUD::InitSkills() {
 		PlusButton->Children.push_back(PlusLabel);
 
 		// Add minus label
-		_Label *MinusLabel = new _Label();
+		_Element *MinusLabel = new _Element();
+		MinusLabel->Type = _Element::LABEL;
 		MinusLabel->Parent = MinusButton;
 		MinusLabel->Text = "-";
 		MinusLabel->Offset = LabelOffset;
@@ -1293,7 +1296,7 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << "button_" << Bag.Name << "_bag_" << i;
-			_Button *Button = Assets.Buttons[Buffer.str()];
+			_Element *Button = Assets.Buttons[Buffer.str()];
 			Buffer.str("");
 
 			// Get position of slot
@@ -1306,7 +1309,7 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			// Draw two handed weapon twice
 			if(i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
-				_Button *Button = Assets.Buttons[Buffer.str()];
+				_Element *Button = Assets.Buttons[Buffer.str()];
 				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, COLOR_ITEMFADE);
 			}
 
@@ -1348,7 +1351,7 @@ void _HUD::DrawVendor() {
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << "button_vendor_bag_" << i;
-			_Button *Button = Assets.Buttons[Buffer.str()];
+			_Element *Button = Assets.Buttons[Buffer.str()];
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
@@ -1393,7 +1396,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << ElementPrefix << BagIndex;
-			_Button *Button = Assets.Buttons[Buffer.str()];
+			_Element *Button = Assets.Buttons[Buffer.str()];
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
@@ -1426,7 +1429,7 @@ void _HUD::DrawTrader() {
 		// Get button position
 		std::stringstream Buffer;
 		Buffer << "button_trader_bag_" << i;
-		_Button *Button = Assets.Buttons[Buffer.str()];
+		_Element *Button = Assets.Buttons[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item
@@ -1444,7 +1447,7 @@ void _HUD::DrawTrader() {
 	}
 
 	// Get reward button
-	_Button *RewardButton = Assets.Buttons["button_trader_bag_reward"];
+	_Element *RewardButton = Assets.Buttons["button_trader_bag_reward"];
 	glm::vec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2.0f;
 
 	// Draw item
@@ -1463,9 +1466,9 @@ void _HUD::DrawBlacksmith() {
 	}
 
 	// Get UI elements
-	_Label *BlacksmithTitle = Assets.Labels["label_blacksmith_title"];
-	_Label *BlacksmithLevel = Assets.Labels["label_blacksmith_level"];
-	_Button *UpgradeButton = Assets.Buttons["button_blacksmith_upgrade"];
+	_Element *BlacksmithTitle = Assets.Labels["label_blacksmith_title"];
+	_Element *BlacksmithLevel = Assets.Labels["label_blacksmith_level"];
+	_Element *UpgradeButton = Assets.Buttons["button_blacksmith_upgrade"];
 
 	// Set title
 	BlacksmithTitle->Text = Player->Blacksmith->Name;
@@ -1478,7 +1481,7 @@ void _HUD::DrawBlacksmith() {
 	if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
 
 		// Get upgrade bag button
-		_Button *BagButton = Assets.Buttons["button_blacksmith_bag"];
+		_Element *BagButton = Assets.Buttons["button_blacksmith_bag"];
 		glm::vec2 DrawPosition = (BagButton->Bounds.Start + BagButton->Bounds.End) / 2.0f;
 
 		const _InventorySlot &InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
@@ -1545,7 +1548,7 @@ void _HUD::DrawActionBar() {
 		// Get button position
 		std::stringstream Buffer;
 		Buffer << "button_actionbar_" << i;
-		_Button *Button = Assets.Buttons[Buffer.str()];
+		_Element *Button = Assets.Buttons[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item icon
@@ -2055,11 +2058,11 @@ void _HUD::RefreshSkillButtons() {
 	for(auto &Element : SkillsElement->Children) {
 		if(Element->Identifier == "label_skills_level") {
 			uint32_t SkillID = (uint32_t)(intptr_t)Element->UserData;
-			_Label *Label = (_Label *)Element;
+			_Element *Label = Element;
 			Label->Text = std::to_string(Player->Skills[SkillID]);
 		}
 		else if(Element->Identifier == "button_skills_plus") {
-			_Button *Button = (_Button *)Element;
+			_Element *Button = (_Element *)Element;
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
@@ -2069,7 +2072,7 @@ void _HUD::RefreshSkillButtons() {
 				Button->SetVisible(true);
 		}
 		else if(Element->Identifier == "button_skills_minus") {
-			_Button *Button = (_Button *)Element;
+			_Element *Button = (_Element *)Element;
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)(intptr_t)Button->Parent->UserData;
@@ -2144,8 +2147,8 @@ void _HUD::SendPartyInfo() {
 
 // Update accept button label text
 void _HUD::UpdateAcceptButton() {
-	_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
-	_Label *LabelTradeStatusYours = Assets.Labels["label_trade_status_yours"];
+	_Element *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+	_Element *LabelTradeStatusYours = Assets.Labels["label_trade_status_yours"];
 	if(AcceptButton->Checked) {
 		LabelTradeStatusYours->Text = "Accepted";
 		LabelTradeStatusYours->Color = COLOR_GREEN;
@@ -2158,7 +2161,7 @@ void _HUD::UpdateAcceptButton() {
 
 // Resets the trade agreement
 void _HUD::ResetAcceptButton() {
-	_Button *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+	_Element *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
 	AcceptButton->Checked = false;
 	UpdateAcceptButton();
 
@@ -2178,7 +2181,7 @@ void _HUD::ResetTradeTheirsWindow() {
 
 // Update their status label
 void _HUD::UpdateTradeStatus(bool Accepted) {
-	_Label *LabelTradeStatusTheirs = Assets.Labels["label_trade_status_theirs"];
+	_Element *LabelTradeStatusTheirs = Assets.Labels["label_trade_status_theirs"];
 	if(Accepted) {
 		LabelTradeStatusTheirs->Text = "Accepted";
 		LabelTradeStatusTheirs->Color = COLOR_GREEN;
@@ -2284,7 +2287,7 @@ void _HUD::SetActionBarSize(size_t Size) {
 		Assets.Buttons["button_actionbar_" + std::to_string(i)]->SetVisible(true);
 
 	// Center actionbar
-	_Button *Button = Assets.Buttons["button_actionbar_0"];
+	_Element *Button = Assets.Buttons["button_actionbar_0"];
 	ActionBarElement->Size.x = Button->Size.x * Size;
 	ActionBarElement->CalculateBounds();
 }

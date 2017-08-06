@@ -23,7 +23,6 @@
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <ui/element.h>
-#include <ui/image.h>
 #include <network/servernetwork.h>
 #include <buffer.h>
 #include <assets.h>
@@ -762,11 +761,7 @@ void _Object::CreateBattleElement(_Element *Parent) {
 		throw std::runtime_error("_Object::CreateBattleElement: BattleElement already exists!");
 
 	BattleElement = new _Element();
-	if(BattleSide == 0)
-		BattleElement->Style = Assets.Styles["style_battle_slot_green"];
-	else
-		BattleElement->Style = Assets.Styles["style_battle_slot_red"];
-
+	BattleElement->Type = _Element::ELEMENT;
 	BattleElement->Identifier = "battle_element";
 	BattleElement->Size = glm::vec2(64, 64);
 	BattleElement->Offset = BattleOffset;
@@ -776,6 +771,7 @@ void _Object::CreateBattleElement(_Element *Parent) {
 	BattleElement->UserData = (void *)_HUD::WINDOW_HUD_EFFECTS;
 	BattleElement->UserDataAlt = this;
 	BattleElement->Parent = Parent;
+	BattleElement->Style = (BattleSide == 0) ? Assets.Styles["style_battle_slot_green"] : Assets.Styles["style_battle_slot_red"];
 	BattleElement->CalculateBounds();
 	Parent->Children.push_back(BattleElement);
 }

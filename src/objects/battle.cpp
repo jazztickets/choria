@@ -24,8 +24,6 @@
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <ui/element.h>
-#include <ui/label.h>
-#include <ui/image.h>
 #include <constants.h>
 #include <server.h>
 #include <actions.h>

@@ -24,7 +24,6 @@
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <ui/element.h>
-#include <ui/label.h>
 #include <constants.h>
 #include <framework.h>
 #include <save.h>
