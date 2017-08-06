@@ -288,7 +288,7 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 	// Create xml node
 	tinyxml2::XMLElement *Node = Document.NewElement(GetTypeName());
 
-	// Set base attributes
+	// Set attributes
 	Node->SetAttribute("identifier", Identifier.c_str());
 	if(Texture)
 		Node->SetAttribute("texture", Texture->Identifier.c_str());
@@ -304,21 +304,8 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 		Node->SetAttribute("font", FontName.c_str());
 	if(Text.size())
 		Node->SetAttribute("text", Text.c_str());
-
-	// Set attributes
-	SerializeAttributes(Node);
-
-	// Append
-	ParentNode->InsertEndChild(Node);
-
-	// Add children
-	for(const auto &Child : Children)
-		Child->SerializeElement(Document, Node);
-}
-
-// Serialize attributes
-void _Element::SerializeAttributes(tinyxml2::XMLElement *Node) {
-
+	if(MaxLength)
+		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
 	if(Offset.x != 0.0f)
 		Node->SetAttribute("offset_x", Offset.x);
 	if(Offset.y != 0.0f)
@@ -335,10 +322,15 @@ void _Element::SerializeAttributes(tinyxml2::XMLElement *Node) {
 		Node->SetAttribute("clickable", Clickable);
 	if(Stretch)
 		Node->SetAttribute("stretch", Stretch);
-	if(MaxLength)
-		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
 	if((intptr_t)UserData != -1)
 		Node->SetAttribute("userdata", (intptr_t)UserData);
+
+	// Append
+	ParentNode->InsertEndChild(Node);
+
+	// Add children
+	for(const auto &Child : Children)
+		Child->SerializeElement(Document, Node);
 }
 
 // Render the element

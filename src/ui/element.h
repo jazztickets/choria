@@ -134,6 +134,4 @@ class _Element {
 
 		std::list<std::string> Texts;
 
-		virtual void SerializeAttributes(tinyxml2::XMLElement *Node);
-
 };
