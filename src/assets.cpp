@@ -235,17 +235,13 @@ void _Assets::LoadUI(const std::string &Path) {
 	if(Document.LoadFile(Path.c_str()) != tinyxml2::XML_SUCCESS)
 		throw std::runtime_error("Error loading: " + Path);
 
-	// Check for elements node
-	tinyxml2::XMLElement *ElementsElement = Document.FirstChildElement("elements");
-	if(!ElementsElement)
-		throw std::runtime_error("No elements xml node: " + Path);
-
 	// Load elements
-	for(tinyxml2::XMLElement *ChildNode = ElementsElement->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
-		_Element *Element = new _Element(ChildNode, Graphics.Element);
-		Graphics.Element->Children.push_back(Element);
-	}
-
+	tinyxml2::XMLElement *ChildNode = Document.FirstChildElement();
+	Graphics.Element = new _Element(ChildNode, nullptr);
+	Graphics.Element->Alignment = LEFT_TOP;
+	Graphics.Element->Type = _Element::ELEMENT;
+	Graphics.Element->Visible = true;
+	Graphics.Element->Size = Graphics.CurrentSize;
 	Graphics.Element->CalculateBounds();
 }
 
@@ -753,14 +749,8 @@ void _Assets::SaveUI(const std::string &Path) {
 	tinyxml2::XMLDocument Document;
 	Document.InsertEndChild(Document.NewDeclaration());
 
-	// Create root node
-	tinyxml2::XMLElement *ElementsElement = Document.NewElement("elements");
-	ElementsElement->SetAttribute("version", "1.0");
-	Document.InsertEndChild(ElementsElement);
-
-	// Serialize children
-	for(const auto &Child : Graphics.Element->Children)
-		Child->SerializeElement(Document, ElementsElement);
+	// Serialize root ui element
+	Graphics.Element->SerializeElement(Document, nullptr);
 
 	// Write file
 	Document.SaveFile(Path.c_str());

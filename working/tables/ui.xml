@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<elements version="1.0">
+<element>
     <element identifier="element_menu_title" size_x="512" size_y="400">
         <image identifier="image_title_logo" texture="menu/logo.png" offset_y="-250" size_x="344" size_y="128" clickable="false"/>
         <button identifier="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-60" size_x="200" size_y="48">
@@ -428,4 +428,4 @@
     </element>
     <element identifier="element_editor_textures" style="style_hud_item_tooltip_bg" size_x="700" size_y="500"/>
     <label identifier="label_menu_title_version" font="hud_small" offset_x="20" offset_y="-20" alignment_x="0" alignment_y="2"/>
-</elements>
+</element>

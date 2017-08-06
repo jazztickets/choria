@@ -41,6 +41,7 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	Context = 0;
 	Window = 0;
 	Enabled = true;
+	Element = nullptr;
 	DirtyState();
 
 	// Set sizes
@@ -60,12 +61,14 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 		CurrentSize = WindowSize;
 
 	// Set root element
+	/*
 	Element = new _Element();
 	Element->Alignment = LEFT_TOP;
 	Element->Type = _Element::ELEMENT;
 	Element->Visible = true;
 	Element->Size = CurrentSize;
 	Element->CalculateBounds();
+	*/
 
 	// Set opengl attributes
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);

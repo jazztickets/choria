@@ -137,7 +137,9 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 	Color = Assets.Colors[ColorName];
 	Font = Assets.Fonts[FontName];
 
-	Assets.Elements[Identifier] = this;
+	// Assign to list
+	if(ParentNode)
+		Assets.Elements[Identifier] = this;
 
 	// Load children
 	for(tinyxml2::XMLElement *ChildNode = Node->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
@@ -371,44 +373,47 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 	tinyxml2::XMLElement *Node = Document.NewElement(GetTypeName());
 
 	// Set attributes
-	Node->SetAttribute("identifier", Identifier.c_str());
-	if(Texture)
-		Node->SetAttribute("texture", Texture->Identifier.c_str());
-	if(Style)
-		Node->SetAttribute("style", Style->Identifier.c_str());
-	if(HoverStyle)
-		Node->SetAttribute("hover_style", HoverStyle->Identifier.c_str());
-	if(DisabledStyle)
-		Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
-	if(ColorName.size())
-		Node->SetAttribute("color", ColorName.c_str());
-	if(FontName.size())
-		Node->SetAttribute("font", FontName.c_str());
-	if(Text.size())
-		Node->SetAttribute("text", Text.c_str());
-	if(Offset.x != 0.0f)
-		Node->SetAttribute("offset_x", Offset.x);
-	if(Offset.y != 0.0f)
-		Node->SetAttribute("offset_y", Offset.y);
-	if(Size.x != 0.0f)
-		Node->SetAttribute("size_x", Size.x);
-	if(Size.y != 0.0f)
-		Node->SetAttribute("size_y", Size.y);
-	if(Alignment.Horizontal != _Alignment::CENTER)
-		Node->SetAttribute("alignment_x", Alignment.Horizontal);
-	if(Alignment.Vertical != _Alignment::MIDDLE)
-		Node->SetAttribute("alignment_y", Alignment.Vertical);
-	if(MaxLength)
-		Node->SetAttribute("maxlength", (uint32_t)MaxLength);
-	if(Clickable != 1)
-		Node->SetAttribute("clickable", Clickable);
-	if(Stretch)
-		Node->SetAttribute("stretch", Stretch);
-	if((intptr_t)UserData != -1)
-		Node->SetAttribute("userdata", (intptr_t)UserData);
+	if(ParentNode) {
+		Node->SetAttribute("identifier", Identifier.c_str());
+		if(Texture)
+			Node->SetAttribute("texture", Texture->Identifier.c_str());
+		if(Style)
+			Node->SetAttribute("style", Style->Identifier.c_str());
+		if(HoverStyle)
+			Node->SetAttribute("hover_style", HoverStyle->Identifier.c_str());
+		if(DisabledStyle)
+			Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
+		if(ColorName.size())
+			Node->SetAttribute("color", ColorName.c_str());
+		if(FontName.size())
+			Node->SetAttribute("font", FontName.c_str());
+		if(Text.size())
+			Node->SetAttribute("text", Text.c_str());
+		if(Offset.x != 0.0f)
+			Node->SetAttribute("offset_x", Offset.x);
+		if(Offset.y != 0.0f)
+			Node->SetAttribute("offset_y", Offset.y);
+		if(Size.x != 0.0f)
+			Node->SetAttribute("size_x", Size.x);
+		if(Size.y != 0.0f)
+			Node->SetAttribute("size_y", Size.y);
+		if(Alignment.Horizontal != _Alignment::CENTER)
+			Node->SetAttribute("alignment_x", Alignment.Horizontal);
+		if(Alignment.Vertical != _Alignment::MIDDLE)
+			Node->SetAttribute("alignment_y", Alignment.Vertical);
+		if(MaxLength)
+			Node->SetAttribute("maxlength", (uint32_t)MaxLength);
+		if(Clickable != 1)
+			Node->SetAttribute("clickable", Clickable);
+		if(Stretch)
+			Node->SetAttribute("stretch", Stretch);
+		if((intptr_t)UserData != -1)
+			Node->SetAttribute("userdata", (intptr_t)UserData);
 
-	// Append
-	ParentNode->InsertEndChild(Node);
+		ParentNode->InsertEndChild(Node);
+	}
+	else
+		Document.InsertEndChild(Node);
 
 	// Add children
 	for(const auto &Child : Children)
