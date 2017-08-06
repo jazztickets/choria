@@ -67,15 +67,15 @@ void _EditorState::Init() {
 	ResizeMapElement = Assets.Elements["element_editor_resizemap"];
 	SaveMapElement = Assets.Elements["element_editor_savemap"];
 	LoadMapElement = Assets.Elements["element_editor_loadmap"];
-	NewMapFilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
-	NewMapWidthTextBox = Assets.TextBoxes["textbox_editor_newmap_width"];
-	NewMapHeightTextBox = Assets.TextBoxes["textbox_editor_newmap_height"];
-	ResizeMinXTextBox = Assets.TextBoxes["textbox_editor_resizemap_minx"];
-	ResizeMinYTextBox = Assets.TextBoxes["textbox_editor_resizemap_miny"];
-	ResizeMaxXTextBox = Assets.TextBoxes["textbox_editor_resizemap_maxx"];
-	ResizeMaxYTextBox = Assets.TextBoxes["textbox_editor_resizemap_maxy"];
-	SaveMapTextBox = Assets.TextBoxes["textbox_editor_savemap"];
-	LoadMapTextBox = Assets.TextBoxes["textbox_editor_loadmap"];
+	NewMapFilenameTextBox = Assets.Elements["textbox_editor_newmap_filename"];
+	NewMapWidthTextBox = Assets.Elements["textbox_editor_newmap_width"];
+	NewMapHeightTextBox = Assets.Elements["textbox_editor_newmap_height"];
+	ResizeMinXTextBox = Assets.Elements["textbox_editor_resizemap_minx"];
+	ResizeMinYTextBox = Assets.Elements["textbox_editor_resizemap_miny"];
+	ResizeMaxXTextBox = Assets.Elements["textbox_editor_resizemap_maxx"];
+	ResizeMaxYTextBox = Assets.Elements["textbox_editor_resizemap_maxy"];
+	SaveMapTextBox = Assets.Elements["textbox_editor_savemap"];
+	LoadMapTextBox = Assets.Elements["textbox_editor_loadmap"];
 	ButtonBarElement->SetVisible(true);
 	TexturesElement->SetVisible(false);
 	NewMapElement->SetVisible(false);
@@ -738,7 +738,7 @@ void _EditorState::InitTextures() {
 void _EditorState::InitNewMap() {
 	NewMapElement->SetVisible(true);
 
-	_Element *FilenameTextBox = Assets.TextBoxes["textbox_editor_newmap_filename"];
+	_Element *FilenameTextBox = Assets.Elements["textbox_editor_newmap_filename"];
 	FilenameTextBox->SetText("");
 	FocusedElement = FilenameTextBox;
 

@@ -41,8 +41,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		return;
 
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
-	_Element *TooltipName = Assets.Labels["label_item_tooltip_name"];
-	_Element *TooltipType = Assets.Labels["label_item_tooltip_type"];
+	_Element *TooltipName = Assets.Elements["label_item_tooltip_name"];
+	_Element *TooltipType = Assets.Elements["label_item_tooltip_type"];
 	TooltipElement->SetVisible(true);
 
 	// Get window dimensions

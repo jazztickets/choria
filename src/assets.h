@@ -60,12 +60,7 @@ class _Assets {
 		std::unordered_map<std::string, _Style *> Styles;
 		std::unordered_map<std::string, _Sound *> Sounds;
 		std::unordered_map<std::string, _Music *> Music;
-
 		std::unordered_map<std::string, _Element *> Elements;
-		std::unordered_map<std::string, _Element *> Labels;
-		std::unordered_map<std::string, _Element *> Images;
-		std::unordered_map<std::string, _Element *> Buttons;
-		std::unordered_map<std::string, _Element *> TextBoxes;
 
 	private:
 

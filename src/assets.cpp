@@ -108,10 +108,6 @@ void _Assets::Close() {
 	Music.clear();
 
 	Elements.clear();
-	Labels.clear();
-	Images.clear();
-	Buttons.clear();
-	TextBoxes.clear();
 	AllElements.clear();
 }
 
@@ -488,7 +484,7 @@ void _Assets::LoadLabels(const std::string &Path) {
 		std::getline(File, Text, '\t');
 
 		// Check for duplicates
-		if(Labels.find(Identifier) != Labels.end())
+		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate label: " + Identifier);
 
 		if(AllElements.find(Identifier) != AllElements.end())
@@ -521,7 +517,7 @@ void _Assets::LoadLabels(const std::string &Path) {
 
 		// Add to map
 		Label->GlobalID = AllElements.size();
-		Labels[Identifier] = Label;
+		Elements[Identifier] = Label;
 		AllElements[Identifier] = Label;
 	}
 
@@ -552,7 +548,7 @@ void _Assets::LoadImages(const std::string &Path) {
 		std::getline(File, ColorIdentifier, '\t');
 
 		// Check for duplicates
-		if(Images.find(Identifier) != Images.end())
+		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate image: " + Identifier);
 
 		if(AllElements.find(Identifier) != AllElements.end())
@@ -588,7 +584,7 @@ void _Assets::LoadImages(const std::string &Path) {
 
 		// Add to map
 		Image->GlobalID = AllElements.size();
-		Images[Identifier] = Image;
+		Elements[Identifier] = Image;
 		AllElements[Identifier] = Image;
 	}
 
@@ -621,7 +617,7 @@ void _Assets::LoadButtons(const std::string &Path) {
 		std::getline(File, HoverStyleIdentifier, '\t');
 
 		// Check for duplicates
-		if(Buttons.find(Identifier) != Buttons.end())
+		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate button: " + Identifier);
 
 		if(AllElements.find(Identifier) != AllElements.end())
@@ -661,7 +657,7 @@ void _Assets::LoadButtons(const std::string &Path) {
 
 		// Add to map
 		Button->GlobalID = AllElements.size();
-		Buttons[Identifier] = Button;
+		Elements[Identifier] = Button;
 		AllElements[Identifier] = Button;
 	}
 
@@ -690,7 +686,7 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 		std::getline(File, FontIdentifier, '\t');
 
 		// Check for duplicates
-		if(TextBoxes.find(Identifier) != TextBoxes.end())
+		if(Elements.find(Identifier) != Elements.end())
 			throw std::runtime_error("Duplicate textbox: " + Identifier);
 
 		if(AllElements.find(Identifier) != AllElements.end())
@@ -729,7 +725,7 @@ void _Assets::LoadTextBoxes(const std::string &Path) {
 
 		// Add to map
 		TextBox->GlobalID = AllElements.size();
-		TextBoxes[Identifier] = TextBox;
+		Elements[Identifier] = TextBox;
 		AllElements[Identifier] = TextBox;
 	}
 

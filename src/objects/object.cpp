@@ -466,11 +466,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw empty bar
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);
-	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_empty"]->Texture, true);
+	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * GetHealthPercent(), BarSize.y) + BarOffset;
-	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_health_bar_full"]->Texture, true);
+	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_health_bar_full"]->Texture, true);
 
 	// Draw health text
 	std::stringstream Buffer;
@@ -491,11 +491,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		// Draw empty bar
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.SetVBO(VBO_NONE);
-		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_empty"]->Texture, true);
+		Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_mana_bar_empty"]->Texture, true);
 
 		// Draw full bar
 		BarBounds.End = SlotPosition + glm::vec2(BarSize.x * ManaPercent, BarSize.y) + BarOffset;
-		Graphics.DrawImage(BarBounds, Assets.Images["image_hud_mana_bar_full"]->Texture, true);
+		Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
 		Buffer << Round(Mana) << " / " << Round(MaxMana);
@@ -512,11 +512,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw empty bar
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	Graphics.SetVBO(VBO_NONE);
-	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_empty"]->Texture, true);
+	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_experience_bar_empty"]->Texture, true);
 
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
-	Graphics.DrawImage(BarBounds, Assets.Images["image_hud_experience_bar_full"]->Texture, true);
+	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_experience_bar_full"]->Texture, true);
 
 	// Get background for items used
 	const _Texture *ItemBackTexture = Assets.Textures["hud/item_back.png"];

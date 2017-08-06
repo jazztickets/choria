@@ -60,15 +60,15 @@ _HUD::_HUD() {
 	Tooltip.Reset();
 	Cursor.Reset();
 
-	ChatTextBox = Assets.TextBoxes["textbox_chat"];
+	ChatTextBox = Assets.Elements["textbox_chat"];
 	ChatTextBox->ParentOffset = glm::vec2(5, 15);
 
-	Assets.Labels["label_buttonbar_join"]->Text = Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(Action::GAME_TRADE).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_party"]->Text = Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Labels["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Elements["label_buttonbar_join"]->Text = Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Elements["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Elements["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(Action::GAME_TRADE).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Elements["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Elements["label_buttonbar_party"]->Text = Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Elements["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
 
 	DiedElement = Assets.Elements["element_died"];
 	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
@@ -90,12 +90,12 @@ _HUD::_HUD() {
 	ManaElement = Assets.Elements["element_hud_mana"];
 	ExperienceElement = Assets.Elements["element_hud_experience"];
 	RecentItemsElement = Assets.Elements["element_hud_recentitems"];
-	PartyTextBox = Assets.TextBoxes["textbox_party"];
-	GoldElement = Assets.Labels["label_hud_gold"];
+	PartyTextBox = Assets.Elements["textbox_party"];
+	GoldElement = Assets.Elements["label_hud_gold"];
 	MessageElement = Assets.Elements["element_hud_message"];
-	MessageLabel = Assets.Labels["label_hud_message"];
-	BlacksmithCost = Assets.Labels["label_blacksmith_cost"];
-	RespawnInstructions = Assets.Labels["label_died_respawn"];
+	MessageLabel = Assets.Elements["label_hud_message"];
+	BlacksmithCost = Assets.Elements["label_blacksmith_cost"];
+	RespawnInstructions = Assets.Elements["label_died_respawn"];
 
 	GoldElement->Size.x = ButtonBarElement->Size.x;
 	GoldElement->CalculateBounds();
@@ -269,17 +269,17 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			}
 		}
 		// Accept trader button
-		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_accept"]) {
+		else if(TraderElement->GetClickedElement() == Assets.Elements["button_trader_accept"]) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			PlayState.Network->SendPacket(Packet);
 		}
 		// Cancel trader button
-		else if(TraderElement->GetClickedElement() == Assets.Buttons["button_trader_cancel"]) {
+		else if(TraderElement->GetClickedElement() == Assets.Elements["button_trader_cancel"]) {
 			CloseWindows(true);
 		}
 		// Upgrade item
-		else if(BlacksmithElement->GetClickedElement() == Assets.Buttons["button_blacksmith_upgrade"]) {
+		else if(BlacksmithElement->GetClickedElement() == Assets.Elements["button_blacksmith_upgrade"]) {
 			if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
@@ -387,7 +387,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				if(!Cursor.InventorySlot.Item) {
 
 					// Check for accept button
-					_Element *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+					_Element *AcceptButton = Assets.Elements["button_trade_accept_yours"];
 					if(TradeElement->GetClickedElement() == AcceptButton) {
 						AcceptButton->Checked = !AcceptButton->Checked;
 						UpdateAcceptButton();
@@ -490,11 +490,11 @@ void _HUD::Update(double FrameTime) {
 		TradeTheirsElement->SetVisible(false);
 		if(Player->TradePlayer) {
 			TradeTheirsElement->SetVisible(true);
-			Assets.Labels["label_trade_status"]->SetVisible(false);
+			Assets.Elements["label_trade_status"]->SetVisible(false);
 
-			Assets.TextBoxes["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
-			Assets.Labels["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
-			Assets.Images["image_trade_portrait_theirs"]->Texture = Player->TradePlayer->Portrait;
+			Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
+			Assets.Elements["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
+			Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->TradePlayer->Portrait;
 		}
 	}
 
@@ -588,37 +588,37 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Update clock
 		Map->GetClockAsString(Buffer);
-		Assets.Labels["label_hud_clock"]->Text = Buffer.str();
+		Assets.Elements["label_hud_clock"]->Text = Buffer.str();
 		Buffer.str("");
 
 		// Update pvp zone
 		if(Map->IsPVPZone(Player->Position))
-			Assets.Labels["label_hud_pvp"]->Text = "PVP Zone";
+			Assets.Elements["label_hud_pvp"]->Text = "PVP Zone";
 		else
-			Assets.Labels["label_hud_pvp"]->Text = "";
+			Assets.Elements["label_hud_pvp"]->Text = "";
 
 		// Draw experience bar
 		Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
-		Assets.Labels["label_hud_experience"]->Text = Buffer.str();
+		Assets.Elements["label_hud_experience"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Images["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->GetNextLevelPercent());
-		Assets.Images["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
+		Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->GetNextLevelPercent());
+		Assets.Elements["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
 		ExperienceElement->Render();
 
 		// Draw health bar
 		Buffer << Player->Health << " / " << Player->MaxHealth;
-		Assets.Labels["label_hud_health"]->Text = Buffer.str();
+		Assets.Elements["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Images["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
-		Assets.Images["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
+		Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
+		Assets.Elements["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
 		HealthElement->Render();
 
 		// Draw mana bar
 		Buffer << Player->Mana << " / " << Player->MaxMana;
-		Assets.Labels["label_hud_mana"]->Text = Buffer.str();
+		Assets.Elements["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Images["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());
-		Assets.Images["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
+		Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());
+		Assets.Elements["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
 		ManaElement->Render();
 
 		DrawMessage();
@@ -916,9 +916,9 @@ void _HUD::InitTrader() {
 
 	// Disable accept button if requirements not met
 	if(!Player->Inventory->IsValidSlot(RewardItemSlot))
-		Assets.Buttons["button_trader_accept"]->SetEnabled(false);
+		Assets.Elements["button_trader_accept"]->SetEnabled(false);
 	else
-		Assets.Buttons["button_trader_accept"]->SetEnabled(true);
+		Assets.Elements["button_trader_accept"]->SetEnabled(true);
 
 	TraderElement->SetVisible(true);
 }
@@ -931,7 +931,7 @@ void _HUD::InitBlacksmith() {
 	InventoryElement->SetVisible(true);
 	BlacksmithElement->SetVisible(true);
 	BlacksmithCost->SetVisible(false);
-	Assets.Buttons["button_blacksmith_upgrade"]->SetEnabled(false);
+	Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
 	UpgradeSlot.BagType = _Bag::BagType::NONE;
 }
 
@@ -1268,7 +1268,7 @@ void _HUD::DrawTeleport() {
 
 	std::stringstream Buffer;
 	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->TeleportTime;
-	Assets.Labels["label_teleport_timeleft"]->Text = Buffer.str();
+	Assets.Elements["label_teleport_timeleft"]->Text = Buffer.str();
 }
 
 // Draws the player's inventory
@@ -1295,7 +1295,7 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << "button_" << Bag.Name << "_bag_" << i;
-			_Element *Button = Assets.Buttons[Buffer.str()];
+			_Element *Button = Assets.Elements[Buffer.str()];
 			Buffer.str("");
 
 			// Get position of slot
@@ -1308,7 +1308,7 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			// Draw two handed weapon twice
 			if(i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
-				_Element *Button = Assets.Buttons[Buffer.str()];
+				_Element *Button = Assets.Elements[Buffer.str()];
 				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, COLOR_ITEMFADE);
 			}
 
@@ -1350,7 +1350,7 @@ void _HUD::DrawVendor() {
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << "button_vendor_bag_" << i;
-			_Element *Button = Assets.Buttons[Buffer.str()];
+			_Element *Button = Assets.Elements[Buffer.str()];
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
@@ -1395,7 +1395,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << ElementPrefix << BagIndex;
-			_Element *Button = Assets.Buttons[Buffer.str()];
+			_Element *Button = Assets.Elements[Buffer.str()];
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
@@ -1428,7 +1428,7 @@ void _HUD::DrawTrader() {
 		// Get button position
 		std::stringstream Buffer;
 		Buffer << "button_trader_bag_" << i;
-		_Element *Button = Assets.Buttons[Buffer.str()];
+		_Element *Button = Assets.Elements[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item
@@ -1446,7 +1446,7 @@ void _HUD::DrawTrader() {
 	}
 
 	// Get reward button
-	_Element *RewardButton = Assets.Buttons["button_trader_bag_reward"];
+	_Element *RewardButton = Assets.Elements["button_trader_bag_reward"];
 	glm::vec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2.0f;
 
 	// Draw item
@@ -1465,9 +1465,9 @@ void _HUD::DrawBlacksmith() {
 	}
 
 	// Get UI elements
-	_Element *BlacksmithTitle = Assets.Labels["label_blacksmith_title"];
-	_Element *BlacksmithLevel = Assets.Labels["label_blacksmith_level"];
-	_Element *UpgradeButton = Assets.Buttons["button_blacksmith_upgrade"];
+	_Element *BlacksmithTitle = Assets.Elements["label_blacksmith_title"];
+	_Element *BlacksmithLevel = Assets.Elements["label_blacksmith_level"];
+	_Element *UpgradeButton = Assets.Elements["button_blacksmith_upgrade"];
 
 	// Set title
 	BlacksmithTitle->Text = Player->Blacksmith->Name;
@@ -1480,7 +1480,7 @@ void _HUD::DrawBlacksmith() {
 	if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
 
 		// Get upgrade bag button
-		_Element *BagButton = Assets.Buttons["button_blacksmith_bag"];
+		_Element *BagButton = Assets.Elements["button_blacksmith_bag"];
 		glm::vec2 DrawPosition = (BagButton->Bounds.Start + BagButton->Bounds.End) / 2.0f;
 
 		const _InventorySlot &InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
@@ -1547,7 +1547,7 @@ void _HUD::DrawActionBar() {
 		// Get button position
 		std::stringstream Buffer;
 		Buffer << "button_actionbar_" << i;
-		_Element *Button = Assets.Buttons[Buffer.str()];
+		_Element *Button = Assets.Elements[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item icon
@@ -2104,7 +2104,7 @@ void _HUD::ValidateTradeGold() {
 	if(!Player || !TradeElement->Visible)
 		return;
 
-	_Element *GoldTextBox = Assets.TextBoxes["textbox_trade_gold_yours"];
+	_Element *GoldTextBox = Assets.Elements["textbox_trade_gold_yours"];
 
 	// Get gold amount
 	int Gold = ToNumber<int>(GoldTextBox->Text);
@@ -2143,8 +2143,8 @@ void _HUD::SendPartyInfo() {
 
 // Update accept button label text
 void _HUD::UpdateAcceptButton() {
-	_Element *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
-	_Element *LabelTradeStatusYours = Assets.Labels["label_trade_status_yours"];
+	_Element *AcceptButton = Assets.Elements["button_trade_accept_yours"];
+	_Element *LabelTradeStatusYours = Assets.Elements["label_trade_status_yours"];
 	if(AcceptButton->Checked) {
 		LabelTradeStatusYours->Text = "Accepted";
 		LabelTradeStatusYours->Color = COLOR_GREEN;
@@ -2157,7 +2157,7 @@ void _HUD::UpdateAcceptButton() {
 
 // Resets the trade agreement
 void _HUD::ResetAcceptButton() {
-	_Element *AcceptButton = Assets.Buttons["button_trade_accept_yours"];
+	_Element *AcceptButton = Assets.Elements["button_trade_accept_yours"];
 	AcceptButton->Checked = false;
 	UpdateAcceptButton();
 
@@ -2167,17 +2167,17 @@ void _HUD::ResetAcceptButton() {
 // Resets upper trade window status
 void _HUD::ResetTradeTheirsWindow() {
 	TradeTheirsElement->SetVisible(false);
-	Assets.Labels["label_trade_status"]->SetVisible(true);
-	Assets.TextBoxes["textbox_trade_gold_theirs"]->Enabled = false;
-	Assets.TextBoxes["textbox_trade_gold_theirs"]->SetText("0");
-	Assets.TextBoxes["textbox_trade_gold_yours"]->SetText("0");
-	Assets.Labels["label_trade_name_yours"]->Text = Player->Name;
-	Assets.Images["image_trade_portrait_yours"]->Texture = Player->Portrait;
+	Assets.Elements["label_trade_status"]->SetVisible(true);
+	Assets.Elements["textbox_trade_gold_theirs"]->Enabled = false;
+	Assets.Elements["textbox_trade_gold_theirs"]->SetText("0");
+	Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
+	Assets.Elements["label_trade_name_yours"]->Text = Player->Name;
+	Assets.Elements["image_trade_portrait_yours"]->Texture = Player->Portrait;
 }
 
 // Update their status label
 void _HUD::UpdateTradeStatus(bool Accepted) {
-	_Element *LabelTradeStatusTheirs = Assets.Labels["label_trade_status_theirs"];
+	_Element *LabelTradeStatusTheirs = Assets.Elements["label_trade_status_theirs"];
 	if(Accepted) {
 		LabelTradeStatusTheirs->Text = "Accepted";
 		LabelTradeStatusTheirs->Color = COLOR_GREEN;
@@ -2225,7 +2225,7 @@ _Bag::BagType _HUD::GetBagFromWindow(int Window) {
 
 // Return true if player is typing gold
 bool _HUD::IsTypingGold() {
-	return FocusedElement == Assets.TextBoxes["textbox_trade_gold_yours"];
+	return FocusedElement == Assets.Elements["textbox_trade_gold_yours"];
 }
 
 // Return true if player is typing in the party screen
@@ -2276,14 +2276,14 @@ void _HUD::SetActionBarSize(size_t Size) {
 
 	// Set all off
 	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
-		Assets.Buttons["button_actionbar_" + std::to_string(i)]->SetVisible(false);
+		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetVisible(false);
 
 	// Turn on
 	for(size_t i = 0; i < Size; i++)
-		Assets.Buttons["button_actionbar_" + std::to_string(i)]->SetVisible(true);
+		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetVisible(true);
 
 	// Center actionbar
-	_Element *Button = Assets.Buttons["button_actionbar_0"];
+	_Element *Button = Assets.Elements["button_actionbar_0"];
 	ActionBarElement->Size.x = Button->Size.x * Size;
 	ActionBarElement->CalculateBounds();
 }
@@ -2383,21 +2383,21 @@ void _HUD::UpdateLabels() {
 	std::stringstream Buffer;
 
 	// Update name
-	Assets.Labels["label_hud_name"]->Text = Player->Name;
+	Assets.Elements["label_hud_name"]->Text = Player->Name;
 
 	// Update level
 	Buffer << "Level " << Player->Level;
-	Assets.Labels["label_hud_level"]->Text = Buffer.str();
+	Assets.Elements["label_hud_level"]->Text = Buffer.str();
 	Buffer.str("");
 
 	// Update party
 	if(Player->PartyName.size())
-		Assets.Labels["label_hud_party"]->Text = "Party: " + Player->PartyName;
+		Assets.Elements["label_hud_party"]->Text = "Party: " + Player->PartyName;
 	else
-		Assets.Labels["label_hud_party"]->Text = "No Party";
+		Assets.Elements["label_hud_party"]->Text = "No Party";
 
 	// Update hardcore status
-	Assets.Labels["label_hud_hardcore"]->SetVisible(Player->Hardcore);
+	Assets.Elements["label_hud_hardcore"]->SetVisible(Player->Hardcore);
 
 	// Update gold
 	Buffer << Player->Gold << " Gold";
