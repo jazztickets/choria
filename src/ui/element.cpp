@@ -107,6 +107,7 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 	Node->QueryBoolAttribute("clickable", &Clickable);
 	Node->QueryBoolAttribute("stretch", &Stretch);
 	Node->QueryIntAttribute("index", &Index);
+	Node->QueryIntAttribute("debug", &Debug);
 
 	// Check identifiers
 	if(Assets.Elements.find(ID) != Assets.Elements.end())
@@ -141,6 +142,9 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 		_Element *ChildElement = new _Element(ChildNode, this);
 		Children.push_back(ChildElement);
 	}
+
+	// Set debug for children
+	SetDebug(Debug);
 }
 
 // Destructor
@@ -540,7 +544,7 @@ void _Element::Render() const {
 	if(Debug && Debug-1 < DebugColorCount) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 		Graphics.SetVBO(VBO_NONE);
-		Graphics.SetColor(DebugColors[1]);
+		Graphics.SetColor(DebugColors[Debug-1]);
 		Graphics.DrawRectangle(Bounds.Start, Bounds.End);
 	}
 
@@ -632,8 +636,10 @@ void _Element::CalculateChildrenBounds() {
 void _Element::SetDebug(int Debug) {
 	this->Debug = Debug;
 
-	for(auto &Child : Children)
-		Child->SetDebug(Debug + 1);
+	for(auto &Child : Children) {
+		if(Debug)
+			Child->SetDebug(Debug + 1);
+	}
 }
 
 // Set clickable flag of element and children. Depth=-1 is full recursion
