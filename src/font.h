@@ -31,7 +31,7 @@ class _Texture;
 class _Program;
 
 // Contains glyph info
-struct GlyphStruct {
+struct _Glyph {
 	float Left, Top, Right, Bottom;
 	float Width, Height;
 	float Advance, OffsetX, OffsetY;
@@ -70,7 +70,7 @@ class _Font {
 		void AdjustPosition(const std::string &Text, glm::vec2 &Position, bool UseFormatting, const _Alignment &Alignment, float Scale) const;
 
 		// Glyphs
-		GlyphStruct Glyphs[256];
+		_Glyph Glyphs[256];
 
 		// Graphics
 		const _Program *Program;

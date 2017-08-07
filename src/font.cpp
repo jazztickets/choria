@@ -39,13 +39,13 @@ inline uint32_t GetNextPowerOf2(uint32_t Value) {
 }
 
 // Struct used when sorting glyphs by height
-struct CharacterSortStruct {
+struct _SortCharacter {
 	FT_UInt Character;
 	FT_UInt Height;
 };
 
 // Comparison operator for priority queue
-bool operator>(const CharacterSortStruct &A, const CharacterSortStruct &B) {
+bool operator>(const _SortCharacter &A, const _SortCharacter &B) {
 	return A.Height < B.Height;
 }
 
@@ -120,8 +120,8 @@ _Font::~_Font() {
 void _Font::SortCharacters(FT_Face &Face, const std::string &Characters, std::string &SortedCharacters) {
 
 	// Build queue
-	std::priority_queue<int, std::vector<CharacterSortStruct>, std::greater<CharacterSortStruct> > CharacterList;
-	CharacterSortStruct Character;
+	std::priority_queue<int, std::vector<_SortCharacter>, std::greater<_SortCharacter> > CharacterList;
+	_SortCharacter Character;
 	for(size_t i = 0; i < Characters.size(); i++) {
 
 		// Load a character
@@ -145,7 +145,7 @@ void _Font::SortCharacters(FT_Face &Face, const std::string &Characters, std::st
 
 	// Build sorted string
 	while(!CharacterList.empty()) {
-		const CharacterSortStruct &Character = CharacterList.top();
+		const _SortCharacter &Character = CharacterList.top();
 		SortedCharacters.push_back((char)Character.Character);
 		CharacterList.pop();
 	}
@@ -185,7 +185,7 @@ void _Font::CreateFontTexture(std::string SortedCharacters, uint32_t TextureWidt
 			MaxRows = Rows;
 
 		// Add character to list
-		GlyphStruct Glyph;
+		_Glyph Glyph;
 		Glyph.Left = X;
 		Glyph.Top = Y;
 		Glyph.Right = X + Bitmap->width;
@@ -214,7 +214,7 @@ void _Font::CreateFontTexture(std::string SortedCharacters, uint32_t TextureWidt
 
 	// Render each glyph to the texture
 	for(size_t i = 0; i < SortedCharacters.size(); i++) {
-		GlyphStruct &Glyph = Glyphs[(FT_Byte)SortedCharacters[i]];
+		_Glyph &Glyph = Glyphs[(FT_Byte)SortedCharacters[i]];
 
 		// Load a character
 		FT_Load_Char(Face, (FT_ULong)SortedCharacters[i], LoadFlags);
@@ -254,7 +254,7 @@ void _Font::CreateFontTexture(std::string SortedCharacters, uint32_t TextureWidt
 void _Font::DrawGlyph(glm::vec2 &Position, char Char, float Scale) const {
 
 	// Get glyph data
-	const GlyphStruct &Glyph = Glyphs[(FT_Byte)Char];
+	const _Glyph &Glyph = Glyphs[(FT_Byte)Char];
 
 	// Get vertices
 	glm::vec2 DrawPosition(Position.x + Scale * Glyph.OffsetX, Position.y - Scale * Glyph.OffsetY);
@@ -408,7 +408,7 @@ void _Font::GetStringDimensions(const std::string &Text, _TextBounds &TestBounds
 	bool InTag = false;
 
 	TestBounds.Width = TestBounds.AboveBase = TestBounds.BelowBase = 0;
-	const GlyphStruct *Glyph = nullptr;
+	const _Glyph *Glyph = nullptr;
 	FT_UInt PreviousGlyphIndex = 0;
 	for(size_t i = 0; i < Text.size(); i++) {
 
@@ -476,7 +476,7 @@ void _Font::BreakupString(const std::string &Text, float Width, std::list<std::s
 			PreviousGlyphIndex = GlyphIndex;
 
 			// Get glyph info
-			const GlyphStruct &Glyph = Glyphs[(FT_Byte)Text[i]];
+			const _Glyph &Glyph = Glyphs[(FT_Byte)Text[i]];
 			X += Glyph.Advance;
 
 			// Check for max width
