@@ -153,7 +153,6 @@ class _Element {
 		// Graphics
 		glm::vec4 Color;
 		std::string ColorName;
-		std::string FontName;
 		const _Style *Style;
 		const _Style *HoverStyle;
 		const _Style *DisabledStyle;

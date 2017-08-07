@@ -49,19 +49,15 @@ bool operator>(const CharacterSortStruct &A, const CharacterSortStruct &B) {
 	return A.Height < B.Height;
 }
 
-// Constructor
-_Font::_Font(const _Program *Program) :
-	Program(Program),
-	Texture(nullptr) {
-}
-
 // Load a font file
-_Font::_Font(const std::string &FontFile, const _Program *Program, uint32_t FontSize, uint32_t TextureWidth) :
-	_Font(Program) {
-	HasKerning = false;
-	MaxHeight = 0.0f;
-	MaxAbove = 0.0f;
-	MaxBelow = 0.0f;
+_Font::_Font(const std::string &ID, const std::string &FontFile, const _Program *Program, uint32_t FontSize, uint32_t TextureWidth) :
+	ID(ID),
+	MaxHeight(0.0f),
+	MaxAbove(0.0f),
+	MaxBelow(0.0f),
+	Program(Program),
+	Texture(nullptr),
+	HasKerning(false) {
 
 	// Zero out glyphs
 	for(int i = 0; i < 256; i++) {

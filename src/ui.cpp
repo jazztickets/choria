@@ -89,6 +89,7 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *Parent) :
 	std::string StyleName;
 	std::string HoverStyleName;
 	std::string DisabledStyleName;
+	std::string FontName;
 	AssignAttributeString(Node, "id", ID);
 	AssignAttributeString(Node, "texture", TextureName);
 	AssignAttributeString(Node, "style", StyleName);
@@ -172,8 +173,8 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 			Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
 		if(ColorName.size())
 			Node->SetAttribute("color", ColorName.c_str());
-		if(FontName.size())
-			Node->SetAttribute("font", FontName.c_str());
+		if(Font)
+			Node->SetAttribute("font", Font->ID.c_str());
 		if(Text.size())
 			Node->SetAttribute("text", Text.c_str());
 		if(Offset.x != 0.0f)

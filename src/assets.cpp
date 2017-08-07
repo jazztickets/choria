@@ -133,7 +133,7 @@ void _Assets::LoadFonts(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Load font
-		Fonts[Identifier] = new _Font(ASSETS_FONTS_PATH + FontFile, Programs[ProgramIdentifier], Size);
+		Fonts[Identifier] = new _Font(Identifier, ASSETS_FONTS_PATH + FontFile, Programs[ProgramIdentifier], Size);
 	}
 
 	File.close();

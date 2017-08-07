@@ -48,8 +48,7 @@ class _Font {
 
 	public:
 
-		_Font(const _Program *Program);
-		_Font(const std::string &FontFile, const _Program *Program, uint32_t FontSize=12, uint32_t TextureWidth=256);
+		_Font(const std::string &ID, const std::string &FontFile, const _Program *Program, uint32_t FontSize=12, uint32_t TextureWidth=256);
 		~_Font();
 
 		float DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color=glm::vec4(1.0f), const _Alignment &Alignment=LEFT_BASELINE, float Scale=1.0f) const;
@@ -57,6 +56,8 @@ class _Font {
 		void GetStringDimensions(const std::string &Text, _TextBounds &TestBounds, bool UseFormatting=false) const;
 		void BreakupString(const std::string &Text, float Width, std::list<std::string> &Strings, bool UseFormatting=false) const;
 
+		// Attributes
+		std::string ID;
 		float MaxHeight;
 		float MaxAbove;
 		float MaxBelow;
