@@ -880,7 +880,7 @@ CREATE TABLE IF NOT EXISTS "builditem" (
 INSERT INTO builditem VALUES(1,1,100,1);
 INSERT INTO builditem VALUES(2,2,101,1);
 INSERT INTO builditem VALUES(3,3,111,1);
-INSERT INTO builditem VALUES(4,4,103,1);
+INSERT INTO builditem VALUES(4,4,118,1);
 INSERT INTO builditem VALUES(5,3,104,1);
 INSERT INTO builditem VALUES(6,2,104,1);
 INSERT INTO builditem VALUES(7,1,105,1);
@@ -914,7 +914,7 @@ INSERT INTO builditem VALUES(34,34,185,1);
 INSERT INTO builditem VALUES(35,6,212,1);
 INSERT INTO builditem VALUES(36,6,104,1);
 INSERT INTO builditem VALUES(37,6,109,3);
-INSERT INTO builditem VALUES(38,8,118,1);
+INSERT INTO builditem VALUES(38,8,103,1);
 INSERT INTO builditem VALUES(39,8,156,3);
 INSERT INTO builditem VALUES(40,8,204,1);
 INSERT INTO builditem VALUES(41,8,143,1);
@@ -1099,7 +1099,7 @@ INSERT INTO item VALUES(114,10,0,1,3,0,0,'Crow Feather','items/crow_feather.png'
 INSERT INTO item VALUES(115,10,0,1,3,0,0,'Spider Leg','items/spider_leg.png','Item_SpiderLeg',15,1,10,0,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(116,10,0,1,3,0,0,'Potion of Haste','items/haste_potion.png','Item_HastePotion',75,1,30,0,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(117,6,2,0,0,0,0,'Axe','items/axe.png','',100,1,0,20,1,20,130,-1,0,0,0,0,0,0,-5,0,0);
-INSERT INTO item VALUES(118,5,2,0,0,0,0,'Small Knife','items/small_knife.png','',15,1,0,20,1,10,10,0,0,0,0,0,0,0,10,0,0);
+INSERT INTO item VALUES(118,5,2,0,0,0,0,'Small Knife','items/small_knife.png','',15,1,0,20,1,10,10,0,0,0,0,0,0,0,25,0,0);
 INSERT INTO item VALUES(119,5,2,0,0,0,0,'Sword','items/sword.png','',150,1,0,20,1,30,90,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(120,4,0,0,0,0,0,'Leather Boots','items/leather_boots.png','',20,1,0,20,1,0,0,2,0,0,0,0,0,0,0,5,0);
 INSERT INTO item VALUES(121,2,0,0,0,0,0,'Leather Helm','items/leather_helm.png','',30,1,0,20,1,0,0,3,0,0,0,0,0,0,0,0,0);
