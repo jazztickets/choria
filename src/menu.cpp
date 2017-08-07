@@ -259,7 +259,7 @@ uint32_t _Menu::GetSelectedIconID(_Element *ParentElement) {
 	for(auto &Element : ParentElement->Children) {
 		_Element *Button = Element;
 		if(Button->Checked)
-			return (uint32_t)(intptr_t)Button->UserData;
+			return (uint32_t)Button->Index;
 	}
 
 	return 0;
@@ -440,7 +440,7 @@ void _Menu::LoadCharacterSlots() {
 		Button->DisabledStyle = Assets.Styles["style_menu_button_disabled"];
 		Button->HoverStyle = Assets.Styles["style_menu_button_hover"];
 		Button->Alignment = LEFT_TOP;
-		Button->UserData = (void *)(intptr_t)i;
+		Button->Index = (int)i;
 		Button->Checked = i == PreSelectedSlot ? true : false;
 		CharacterSlotsElement->Children.push_back(Button);
 
@@ -544,7 +544,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Alignment = LEFT_TOP;
 		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
-		Button->UserData = (void *)(intptr_t)Portrait.ID;
+		Button->Index = (int)Portrait.ID;
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
@@ -599,7 +599,7 @@ void _Menu::LoadBuildButtons() {
 		Button->Alignment = LEFT_TOP;
 		Button->Texture = Build.Texture;
 		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
-		Button->UserData = (void *)(intptr_t)Build.ID;
+		Button->Index = (int)Build.ID;
 		BuildsElement->Children.push_back(Button);
 
 		// Add label
@@ -917,7 +917,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						}
 
 						// Set selection
-						size_t SelectedSlot = (size_t)(intptr_t)Clicked->UserData;
+						size_t SelectedSlot = (size_t)Clicked->Index;
 						CharacterSlots[SelectedSlot].Button->Checked = true;
 
 						// Open new character screen
@@ -933,13 +933,13 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
 					if(Clicked->ID == NewCharacterPortraitPrefix || Clicked->ID == NewCharacterBuildPrefix) {
-						size_t SelectedID = (size_t)(intptr_t)Clicked->UserData;
+						size_t SelectedID = (size_t)Clicked->Index;
 
 						// Unselect all portraits and select the clicked element
 						for(auto &Element : Clicked->Parent->Children) {
 							_Element *Button = Element;
 							Button->Checked = false;
-							if((size_t)(intptr_t)Button->UserData == SelectedID) {
+							if((size_t)Button->Index == SelectedID) {
 								_Element *Name = Assets.Elements["textbox_newcharacter_name"];
 								FocusedElement = Name;
 								Name->ResetCursor();

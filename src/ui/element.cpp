@@ -37,8 +37,8 @@ const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
 _Element::_Element() :
 	Type(NONE),
 	Parent(nullptr),
-	UserData((void *)-1),
-	UserDataAlt(nullptr),
+	Index(-1),
+	UserData(nullptr),
 	Visible(false),
 	Enabled(true),
 	Checked(false),
@@ -106,10 +106,7 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 	Node->QueryIntAttribute("alignment_y", &Alignment.Vertical);
 	Node->QueryBoolAttribute("clickable", &Clickable);
 	Node->QueryBoolAttribute("stretch", &Stretch);
-
-	int UserDataValue = -1;
-	Node->QueryIntAttribute("userdata", &UserDataValue);
-	UserData = (void *)(intptr_t)UserDataValue;
+	Node->QueryIntAttribute("index", &Index);
 
 	// Check identifiers
 	if(Assets.Elements.find(ID) != Assets.Elements.end())
@@ -193,8 +190,8 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 			Node->SetAttribute("clickable", Clickable);
 		if(Stretch)
 			Node->SetAttribute("stretch", Stretch);
-		if((intptr_t)UserData != -1)
-			Node->SetAttribute("userdata", (intptr_t)UserData);
+		if(Index != -1)
+			Node->SetAttribute("index", Index);
 
 		ParentNode->InsertEndChild(Node);
 	}

@@ -767,8 +767,8 @@ void _Object::CreateBattleElement(_Element *Parent) {
 	BattleElement->Offset = BattleOffset;
 	BattleElement->Alignment = CENTER_MIDDLE;
 	BattleElement->Visible = true;
-	BattleElement->UserData = (void *)_HUD::WINDOW_HUD_EFFECTS;
-	BattleElement->UserDataAlt = this;
+	BattleElement->Index = _HUD::WINDOW_HUD_EFFECTS;
+	BattleElement->UserData = this;
 	BattleElement->Parent = Parent;
 	BattleElement->Style = (BattleSide == 0) ? Assets.Styles["style_battle_slot_green"] : Assets.Styles["style_battle_slot_red"];
 	BattleElement->CalculateBounds();

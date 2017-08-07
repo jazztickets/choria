@@ -262,10 +262,10 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		// Check skill level up/down
 		else if(SkillsElement->GetClickedElement()) {
 			if(SkillsElement->GetClickedElement()->ID == "button_skills_plus") {
-				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, 1 + 4 * Input.ModKeyDown(KMOD_SHIFT));
+				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, 1 + 4 * Input.ModKeyDown(KMOD_SHIFT));
 			}
 			else if(SkillsElement->GetClickedElement()->ID == "button_skills_minus") {
-				AdjustSkillLevel((uint32_t)(intptr_t)SkillsElement->GetClickedElement()->Parent->UserData, -(1 + 4 * Input.ModKeyDown(KMOD_SHIFT)));
+				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, -(1 + 4 * Input.ModKeyDown(KMOD_SHIFT)));
 			}
 		}
 		// Accept trader button
@@ -375,7 +375,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		}
 		// Use action
 		else if(ActionBarElement->GetClickedElement()) {
-			uint8_t Slot = (uint8_t)(intptr_t)ActionBarElement->GetClickedElement()->UserData;
+			uint8_t Slot = (uint8_t)ActionBarElement->GetClickedElement()->Index;
 			if(Player->Battle)
 				Player->Battle->ClientHandleInput(Action::GAME_SKILL1 + Slot);
 			else
@@ -415,11 +415,11 @@ void _HUD::Update(double FrameTime) {
 
 	_Element *HitElement = Graphics.Element->HitElement;
 	if(HitElement) {
-		Tooltip.Slot.Index = (size_t)(intptr_t)HitElement->UserData;
+		Tooltip.Slot.Index = (size_t)HitElement->Index;
 
 		// Get window id, stored in parent's userdata field
 		if(HitElement->Parent && Tooltip.Slot.Index != NOSLOT) {
-			Tooltip.Window = (int)(intptr_t)HitElement->Parent->UserData;
+			Tooltip.Window = HitElement->Parent->Index;
 			Tooltip.Slot.BagType = GetBagFromWindow(Tooltip.Window);
 		}
 
@@ -473,7 +473,7 @@ void _HUD::Update(double FrameTime) {
 					Tooltip.InventorySlot.Item = Player->ActionBar[Tooltip.Slot.Index].Item;
 			} break;
 			case WINDOW_BATTLE: {
-				_Object *MouseObject = (_Object *)HitElement->UserDataAlt;
+				_Object *MouseObject = (_Object *)HitElement->UserData;
 				if(EnableMouseCombat && MouseObject && Player->Battle && Player->PotentialAction.IsSet() && Player->PotentialAction.Item->UseMouseTargetting() && Player->PotentialAction.Item->CanTarget(Player, MouseObject)) {
 					Player->Targets.clear();
 					Player->Battle->ClientSetTarget(Player->PotentialAction.Item, MouseObject->BattleSide, MouseObject);
@@ -975,7 +975,7 @@ void _HUD::InitSkills() {
 		Button->Size = Skill->Texture->Size;
 		Button->Alignment = LEFT_TOP;
 		Button->Texture = Skill->Texture;
-		Button->UserData = (void *)(intptr_t)Skill->ID;
+		Button->Index = (int)Skill->ID;
 		SkillsElement->Children.push_back(Button);
 
 		// Add level label
@@ -987,7 +987,7 @@ void _HUD::InitSkills() {
 		LevelLabel->Alignment = CENTER_BASELINE;
 		LevelLabel->Color = COLOR_WHITE;
 		LevelLabel->Font = Assets.Fonts["hud_small"];
-		LevelLabel->UserData = (void *)(intptr_t)Skill->ID;
+		LevelLabel->Index = (int)Skill->ID;
 		SkillsElement->Children.push_back(LevelLabel);
 
 		// Add plus button
@@ -2035,13 +2035,13 @@ void _HUD::RefreshSkillButtons() {
 	// Loop through buttons
 	for(auto &Element : SkillsElement->Children) {
 		if(Element->ID == "label_skills_level") {
-			uint32_t SkillID = (uint32_t)(intptr_t)Element->UserData;
+			uint32_t SkillID = (uint32_t)Element->Index;
 			Element->Text = std::to_string(Player->Skills[SkillID]);
 		}
 		else if(Element->ID == "button_skills_plus") {
 
 			// Get skill
-			uint32_t SkillID = (uint32_t)(intptr_t)Element->Parent->UserData;
+			uint32_t SkillID = (uint32_t)Element->Parent->Index;
 			if(SkillPointsRemaining <= 0 || Player->Skills[SkillID] >= Player->Stats->Items[SkillID]->MaxLevel)
 				Element->SetVisible(false);
 			else
@@ -2050,7 +2050,7 @@ void _HUD::RefreshSkillButtons() {
 		else if(Element->ID == "button_skills_minus") {
 
 			// Get skill
-			uint32_t SkillID = (uint32_t)(intptr_t)Element->Parent->UserData;
+			uint32_t SkillID = (uint32_t)Element->Parent->Index;
 			if(Player->Skills[SkillID] == 0)
 				Element->SetVisible(false);
 			else

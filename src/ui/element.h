@@ -30,7 +30,7 @@ class _Atlas;
 struct _Style;
 struct _KeyEvent;
 namespace tinyxml2 {
-class XMLDocument;
+	class XMLDocument;
 	class XMLElement;
 }
 
@@ -84,8 +84,8 @@ class _Element {
 		ElementType Type;
 		std::string ID;
 		_Element *Parent;
+		int Index;
 		void *UserData;
-		void *UserDataAlt;
 
 		bool Visible;
 		bool Enabled;

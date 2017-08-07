@@ -60,16 +60,6 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	else
 		CurrentSize = WindowSize;
 
-	// Set root element
-	/*
-	Element = new _Element();
-	Element->Alignment = LEFT_TOP;
-	Element->Type = _Element::ELEMENT;
-	Element->Visible = true;
-	Element->Size = CurrentSize;
-	Element->CalculateBounds();
-	*/
-
 	// Set opengl attributes
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -107,6 +97,7 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 // Closes the graphics system
 void _Graphics::Close() {
 	delete Element;
+	Element = nullptr;
 
 	// Close opengl context
 	if(Context) {
