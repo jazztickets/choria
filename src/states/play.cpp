@@ -322,7 +322,7 @@ void _PlayState::HandleKey(const _KeyEvent &KeyEvent) {
 void _PlayState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
 	if(MouseEvent.Button == SDL_BUTTON_LEFT)
-		Graphics.Element->HandleInput(MouseEvent.Pressed);
+		Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
 
 	// Pass to menu
 	Menu.HandleMouseButton(MouseEvent);

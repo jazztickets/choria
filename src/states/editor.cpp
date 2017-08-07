@@ -278,7 +278,7 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 // Mouse events
 void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	FocusedElement = nullptr;
-	Graphics.Element->HandleInput(MouseEvent.Pressed);
+	Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
 
 	// Mouse press
 	if(MouseEvent.Pressed) {

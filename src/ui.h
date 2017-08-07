@@ -113,7 +113,7 @@ class _Element {
 		void Update(double FrameTime, const glm::vec2 &Mouse);
 		void Render() const;
 		bool HandleKey(const _KeyEvent &KeyEvent);
-		void HandleInput(bool Pressed);
+		void HandleMouseButton(bool Pressed);
 		void CalculateBounds();
 		_Element *GetClickedElement();
 

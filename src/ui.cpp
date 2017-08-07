@@ -293,7 +293,7 @@ bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
 }
 
 // Handle a press event
-void _Element::HandleInput(bool Pressed) {
+void _Element::HandleMouseButton(bool Pressed) {
 	if(!Visible)
 		return;
 
@@ -307,7 +307,7 @@ void _Element::HandleInput(bool Pressed) {
 
 	// Pass event to children
 	for(auto &Child : Children)
-		Child->HandleInput(Pressed);
+		Child->HandleMouseButton(Pressed);
 
 	// Set pressed element
 	if(Pressed)
