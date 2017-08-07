@@ -42,13 +42,6 @@ _StatusEffect::_StatusEffect() :
 
 // Destructor
 _StatusEffect::~_StatusEffect() {
-	if(BattleElement) {
-		if(BattleElement->Parent)
-			BattleElement->Parent->RemoveChild(BattleElement);
-
-		delete BattleElement;
-	}
-
 	if(HUDElement) {
 		if(HUDElement->Parent)
 			HUDElement->Parent->RemoveChild(HUDElement);
@@ -80,6 +73,7 @@ _Element *_StatusEffect::CreateUIElement(_Element *Parent) {
 	Element->Size = glm::vec2(Buff->Texture->Size);
 	Element->Alignment = LEFT_TOP;
 	Element->Visible = true;
+	Element->Index = 0;
 	Element->UserData = (void *)this;
 	Element->Parent = Parent;
 	Parent->Children.push_back(Element);
