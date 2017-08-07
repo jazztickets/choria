@@ -16,8 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <hud.h>
-#include <ui/element.h>
-#include <ui/style.h>
+#include <ui.h>
 #include <states/play.h>
 #include <network/clientnetwork.h>
 #include <objects/object.h>

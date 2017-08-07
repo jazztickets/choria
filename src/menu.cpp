@@ -19,8 +19,7 @@
 #include <states/play.h>
 #include <states/editor.h>
 #include <network/clientnetwork.h>
-#include <ui/element.h>
-#include <ui/style.h>
+#include <ui.h>
 #include <objects/object.h>
 #include <constants.h>
 #include <input.h>

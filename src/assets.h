@@ -23,7 +23,6 @@
 #include <string>
 
 // Forward Declarations
-struct _Style;
 class _Font;
 class _Element;
 class _Texture;
@@ -31,6 +30,7 @@ class _Program;
 class _Shader;
 class _Sound;
 class _Music;
+struct _Style;
 struct _AnimationTemplate;
 
 struct _Layer {
@@ -71,7 +71,6 @@ class _Assets {
 		void LoadPrograms(const std::string &Path);
 		void LoadStyles(const std::string &Path);
 		void LoadUI(const std::string &Path);
-
 		void SaveUI(const std::string &Path);
 
 		std::unordered_map<std::string, const _Shader *> Shaders;

@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <ui/ui.h>
+#include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <string>
 #include <list>
@@ -27,12 +27,67 @@
 class _Font;
 class _Texture;
 class _Atlas;
-struct _Style;
+class _Program;
 struct _KeyEvent;
 namespace tinyxml2 {
 	class XMLDocument;
 	class XMLElement;
 }
+
+// Bounds struct
+struct _Bounds {
+	glm::vec2 Start;
+	glm::vec2 End;
+};
+
+// Alignment struct
+struct _Alignment {
+
+	enum HorizontalAlignment {
+		LEFT,
+		CENTER,
+		RIGHT,
+	};
+
+	enum VerticalAlignment {
+		TOP,
+		MIDDLE,
+		BOTTOM,
+		BASELINE,
+	};
+
+	_Alignment() { Horizontal = CENTER; Vertical = MIDDLE; }
+	_Alignment(int Horizontal, int Vertical) : Horizontal(Horizontal), Vertical(Vertical) { }
+
+	int Horizontal, Vertical;
+};
+
+// Style struct
+struct _Style {
+	_Style() :
+		HasBackgroundColor(false),
+		HasBorderColor(false),
+		Program(nullptr),
+		Texture(nullptr),
+		Stretch(false) { }
+
+	// Attributes
+	std::string Identifier;
+
+	// Colors
+	glm::vec4 TextureColor;
+	glm::vec4 BackgroundColor;
+	glm::vec4 BorderColor;
+	bool HasBackgroundColor;
+	bool HasBorderColor;
+
+	// Graphics
+	const _Program *Program;
+	const _Texture *Texture;
+
+	// Properties
+	bool Stretch;
+};
 
 // Classes
 class _Element {
@@ -49,7 +104,7 @@ class _Element {
 		};
 
 		_Element();
-		_Element(tinyxml2::XMLElement *Node, _Element *ParentNode);
+		_Element(tinyxml2::XMLElement *Node, _Element *Parent);
 		~_Element();
 
 		void SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode);
@@ -138,3 +193,13 @@ class _Element {
 		std::list<std::string> Texts;
 
 };
+
+extern _Element *FocusedElement;
+
+const _Alignment LEFT_TOP         = _Alignment(_Alignment::LEFT,   _Alignment::TOP);
+const _Alignment LEFT_BOTTOM      = _Alignment(_Alignment::LEFT,   _Alignment::BOTTOM);
+const _Alignment RIGHT_BOTTOM     = _Alignment(_Alignment::RIGHT,  _Alignment::BOTTOM);
+const _Alignment CENTER_MIDDLE    = _Alignment(_Alignment::CENTER, _Alignment::MIDDLE);
+const _Alignment LEFT_BASELINE    = _Alignment(_Alignment::LEFT,   _Alignment::BASELINE);
+const _Alignment RIGHT_BASELINE   = _Alignment(_Alignment::RIGHT,  _Alignment::BASELINE);
+const _Alignment CENTER_BASELINE  = _Alignment(_Alignment::CENTER, _Alignment::BASELINE);

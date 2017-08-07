@@ -17,8 +17,7 @@
 *******************************************************************************/
 #include <states/editor.h>
 #include <objects/map.h>
-#include <ui/element.h>
-#include <ui/style.h>
+#include <ui.h>
 #include <framework.h>
 #include <input.h>
 #include <graphics.h>

@@ -23,7 +23,7 @@
 #include <objects/buff.h>
 #include <objects/map.h>
 #include <objects/battle.h>
-#include <ui/element.h>
+#include <ui.h>
 #include <constants.h>
 #include <framework.h>
 #include <save.h>

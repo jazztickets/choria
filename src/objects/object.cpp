@@ -22,7 +22,7 @@
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
-#include <ui/element.h>
+#include <ui.h>
 #include <network/servernetwork.h>
 #include <buffer.h>
 #include <assets.h>

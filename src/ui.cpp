@@ -15,8 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <ui/element.h>
-#include <ui/style.h>
+#include <ui.h>
 #include <graphics.h>
 #include <assets.h>
 #include <input.h>
@@ -30,6 +29,7 @@
 #include <SDL_keycode.h>
 #include <tinyxml2.h>
 
+_Element *FocusedElement = nullptr;
 const glm::vec4 DebugColors[] = { COLOR_CYAN, COLOR_YELLOW, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
 
@@ -69,10 +69,10 @@ _Element::_Element() :
 }
 
 // Constructor for loading from xml
-_Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
+_Element::_Element(tinyxml2::XMLElement *Node, _Element *Parent) :
 	_Element() {
 
-	Parent = ParentNode;
+	this->Parent = Parent;
 	std::string TypeName = Node->Value();
 	if(TypeName == "element")
 		Type = ELEMENT;

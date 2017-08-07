@@ -18,7 +18,7 @@
 #include <camera.h>
 #include <graphics.h>
 #include <constants.h>
-#include <ui/ui.h>
+#include <ui.h>
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/norm.hpp>

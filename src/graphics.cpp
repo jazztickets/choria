@@ -20,7 +20,7 @@
 #include <program.h>
 #include <constants.h>
 #include <texture.h>
-#include <ui/element.h>
+#include <ui.h>
 #include <SDL.h>
 #include <pnglite/pnglite.h>
 #include <glm/gtc/type_ptr.hpp>

@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
-#include <ui/element.h>
+#include <ui.h>
 #include <constants.h>
 #include <buffer.h>
 #include <assets.h>

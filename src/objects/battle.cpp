@@ -23,7 +23,7 @@
 #include <objects/inventory.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
-#include <ui/element.h>
+#include <ui.h>
 #include <constants.h>
 #include <server.h>
 #include <actions.h>

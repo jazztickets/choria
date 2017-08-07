@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/buff.h>
-#include <ui/element.h>
+#include <ui.h>
 #include <objects/object.h>
 #include <objects/statchange.h>
 #include <constants.h>

@@ -20,99 +20,36 @@ add_custom_target(
 	-P ${PROJECT_SOURCE_DIR}/cmake/version.cmake
 )
 
-# mingw and visual studio
+# mingw
 if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
 endif()
 
-# visual studio only options
-if(MSVC)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-	add_definitions("-D_CRT_SECURE_NO_WARNINGS")
-	add_definitions("-DNOMINMAX")
-	set(ZLIB_ROOT $ENV{ZLIB_ROOT})
-
-	# set output path
-	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/)
-else()
-
-	# set default build type
-	if(NOT CMAKE_BUILD_TYPE)
-		set(CMAKE_BUILD_TYPE Release)
-	endif()
-
-	# compiler flags
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -pedantic -std=c++11")
-
-	# set output path
-	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+# set default build type
+if(NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE Release)
 endif()
+
+# compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-parameter -pedantic -std=c++11")
+
+# set output path
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
 # find libraries
 find_package(OpenGL REQUIRED)
-if(NOT OPENGL_FOUND)
-	message(SEND_ERROR "Could not find OpenGL!")
-endif()
-
 find_package(SDL2 REQUIRED)
-if(NOT SDL2_FOUND)
-	message(SEND_ERROR "Could not find SDL2!")
-endif()
-
 find_package(OpenAL REQUIRED)
-if(NOT OPENAL_FOUND)
-	message(SEND_ERROR "Could not find OpenAL!")
-endif()
-
 find_package(Vorbis REQUIRED)
-if(NOT VORBIS_FOUND)
-	message(SEND_ERROR "Could not find libvorbis or libvorbisfile!")
-endif()
-
 find_package(Ogg REQUIRED)
-if(NOT OGG_FOUND)
-	message(SEND_ERROR "Could not find libogg!")
-endif()
-
 find_package(Lua 5.2 REQUIRED)
-if(NOT LUA_FOUND)
-	message(SEND_ERROR "Could not find Lua 5.2!")
-endif()
-
 find_package(Freetype REQUIRED)
-if(NOT FREETYPE_FOUND)
-	message(SEND_ERROR "Could not find Freetype 2!")
-endif()
-
 find_package(ZLIB REQUIRED)
-if(NOT ZLIB_FOUND)
-	message(SEND_ERROR "Could not find zlib!")
-endif()
-
 find_package(GLM REQUIRED)
-if(NOT GLM_FOUND)
-	message(SEND_ERROR "Could not find GLM!")
-endif()
-
 find_package(SQLite REQUIRED)
-if(NOT SQLITE_FOUND)
-	message(SEND_ERROR "Could not find SQLite3!")
-endif()
-
 find_package(Threads REQUIRED)
-if(NOT Threads_FOUND)
-	message(SEND_ERROR "Could not find Threads!")
-endif()
-
 find_package(JSONCpp REQUIRED)
-if(NOT JSONCPP_FOUND)
-	message(SEND_ERROR "Could not find JsonCpp!")
-endif()
-
 find_package(TinyXML2 REQUIRED)
-if(NOT TINYXML2_FOUND)
-	message(SEND_ERROR "Could not find TinyXML2!")
-endif()
 
 # set include directories
 include_directories("src")
@@ -135,11 +72,11 @@ file(GLOB SRC_INSTANCES "src/instances/*.cpp" "src/instances/*.h")
 file(GLOB SRC_NETWORK "src/network/*.cpp" "src/network/*.h")
 file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
 file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
-file(GLOB SRC_UI "src/ui/*.cpp" "src/ui/*.h")
 file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
 file(GLOB SRC_ZLIB "src/zlib/*.cc" "src/zlib/*.h")
 file(GLOB SRC_PATH "src/path/*.cpp" "src/path/*.h")
 
+# combine source files
 file(GLOB SRC_ALL
 	${SRC_MAIN}
 	${SRC_STATES}
@@ -147,21 +84,10 @@ file(GLOB SRC_ALL
 	${SRC_INSTANCES}
 	${SRC_NETWORK}
 	${SRC_OBJECTS}
-	${SRC_UI}
 	${SRC_PNGLITE}
 	${SRC_ZLIB}
 	${SRC_PATH}
 )
-
-# add virtual folders
-source_group(main FILES ${SRC_MAIN})
-source_group(states FILES ${SRC_STATES})
-source_group(instances FILES ${SRC_INSTANCES})
-source_group(network FILES ${SRC_NETWORK})
-source_group(objects FILES ${SRC_OBJECTS})
-source_group(enet FILES ${SRC_ENET})
-source_group(pnglite FILES ${SRC_PNGLITE})
-source_group(path FILES ${SRC_PATH})
 
 # build binary
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)

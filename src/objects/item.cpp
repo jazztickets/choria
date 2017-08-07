@@ -18,7 +18,7 @@
 #include <objects/item.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
-#include <ui/element.h>
+#include <ui.h>
 #include <scripting.h>
 #include <stats.h>
 #include <constants.h>
