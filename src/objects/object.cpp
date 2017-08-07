@@ -762,7 +762,7 @@ void _Object::CreateBattleElement(_Element *Parent) {
 
 	BattleElement = new _Element();
 	BattleElement->Type = _Element::ELEMENT;
-	BattleElement->Identifier = "battle_element";
+	BattleElement->ID = "battle_element";
 	BattleElement->Size = glm::vec2(64, 64);
 	BattleElement->Offset = BattleOffset;
 	BattleElement->Alignment = CENTER_MIDDLE;

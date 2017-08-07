@@ -89,7 +89,7 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 	std::string StyleName;
 	std::string HoverStyleName;
 	std::string DisabledStyleName;
-	AssignAttributeString(Node, "identifier", Identifier);
+	AssignAttributeString(Node, "id", ID);
 	AssignAttributeString(Node, "texture", TextureName);
 	AssignAttributeString(Node, "style", StyleName);
 	AssignAttributeString(Node, "hover_style", HoverStyleName);
@@ -112,20 +112,20 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 	UserData = (void *)(intptr_t)UserDataValue;
 
 	// Check identifiers
-	if(Assets.Elements.find(Identifier) != Assets.Elements.end())
-		throw std::runtime_error("Duplicate element identifier: " + Identifier);
+	if(Assets.Elements.find(ID) != Assets.Elements.end())
+		throw std::runtime_error("Duplicate element identifier: " + ID);
 	if(TextureName != "" && Assets.Textures.find(TextureName) == Assets.Textures.end())
-		throw std::runtime_error("Unable to find texture: " + TextureName + " for image: " + Identifier);
+		throw std::runtime_error("Unable to find texture: " + TextureName + " for image: " + ID);
 	if(StyleName != "" && Assets.Styles.find(StyleName) == Assets.Styles.end())
-		throw std::runtime_error("Unable to find style: " + StyleName + " for element: " + Identifier);
+		throw std::runtime_error("Unable to find style: " + StyleName + " for element: " + ID);
 	if(HoverStyleName != "" && Assets.Styles.find(HoverStyleName) == Assets.Styles.end())
-		throw std::runtime_error("Unable to find hover_style: " + HoverStyleName + " for element: " + Identifier);
+		throw std::runtime_error("Unable to find hover_style: " + HoverStyleName + " for element: " + ID);
 	if(DisabledStyleName != "" && Assets.Styles.find(DisabledStyleName) == Assets.Styles.end())
-		throw std::runtime_error("Unable to find disabled_style: " + DisabledStyleName + " for element: " + Identifier);
+		throw std::runtime_error("Unable to find disabled_style: " + DisabledStyleName + " for element: " + ID);
 	if(ColorName != "" && Assets.Colors.find(ColorName) == Assets.Colors.end())
-		throw std::runtime_error("Unable to find color: " + ColorName + " for element: " + Identifier);
+		throw std::runtime_error("Unable to find color: " + ColorName + " for element: " + ID);
 	if(FontName != "" && Assets.Fonts.find(FontName) == Assets.Fonts.end())
-		throw std::runtime_error("Unable to find font: " + FontName + " for element: " + Identifier);
+		throw std::runtime_error("Unable to find font: " + FontName + " for element: " + ID);
 
 	// Assign pointers
 	Texture = Assets.Textures[TextureName];
@@ -136,8 +136,8 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *ParentNode) :
 	Font = Assets.Fonts[FontName];
 
 	// Assign to list
-	if(ParentNode)
-		Assets.Elements[Identifier] = this;
+	if(ID != "")
+		Assets.Elements[ID] = this;
 
 	// Load children
 	for(tinyxml2::XMLElement *ChildNode = Node->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
@@ -160,7 +160,7 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 
 	// Set attributes
 	if(ParentNode) {
-		Node->SetAttribute("identifier", Identifier.c_str());
+		Node->SetAttribute("id", ID.c_str());
 		if(Texture)
 			Node->SetAttribute("texture", Texture->Identifier.c_str());
 		if(Style)

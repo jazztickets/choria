@@ -44,7 +44,6 @@
 
 _Menu Menu;
 
-const std::string InputBoxPrefix = "button_options_input_";
 const std::string CharacterButtonPrefix = "button_characters_slot";
 const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
@@ -273,7 +272,7 @@ size_t _Menu::GetSelectedCharacter() {
 	// Check for selected character
 	_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 	for(auto &Element : CharactersElement->Children) {
-		if(Element->Identifier == CharacterButtonPrefix) {
+		if(Element->ID == CharacterButtonPrefix) {
 			_Element *Button = Element;
 			if(Button->Checked)
 				return Index;
@@ -433,7 +432,7 @@ void _Menu::LoadCharacterSlots() {
 		// Add button
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
-		Button->Identifier = CharacterButtonPrefix;
+		Button->ID = CharacterButtonPrefix;
 		Button->Parent = CharacterSlotsElement;
 		Button->Offset = Offset;
 		Button->Size = Size;
@@ -538,7 +537,7 @@ void _Menu::LoadPortraitButtons() {
 		// Add button
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
-		Button->Identifier = NewCharacterPortraitPrefix;
+		Button->ID = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->Offset = Offset;
 		Button->Size = Portrait.Texture->Size;
@@ -593,7 +592,7 @@ void _Menu::LoadBuildButtons() {
 		// Add button
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
-		Button->Identifier = NewCharacterBuildPrefix;
+		Button->ID = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
 		Button->Offset = Offset;
 		Button->Size = Build.Texture->Size;
@@ -869,32 +868,32 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		switch(State) {
 			case STATE_TITLE: {
-				if(Clicked->Identifier == "button_title_play") {
+				if(Clicked->ID == "button_title_play") {
 					PlayState.Connect(true);
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_title_joinserver") {
+				else if(Clicked->ID == "button_title_joinserver") {
 					InitConnect(true);
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_title_options") {
+				else if(Clicked->ID == "button_title_options") {
 					InitOptions();
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_title_exit") {
+				else if(Clicked->ID == "button_title_exit") {
 					Framework.Done = true;
 				}
 			} break;
 			case STATE_CHARACTERS: {
 				if(CharactersState == CHARACTERS_NONE) {
 
-					if(Clicked->Identifier == "button_characters_delete") {
+					if(Clicked->ID == "button_characters_delete") {
 						CharactersState = CHARACTERS_DELETE;
 						Assets.Elements["element_menu_character_slots"]->SetClickable(false);
 						ConfirmAction();
 						PlayClickSound();
 					}
-					else if(Clicked->Identifier == "button_characters_play") {
+					else if(Clicked->ID == "button_characters_play") {
 						size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 							PlayCharacter(SelectedSlot);
@@ -902,16 +901,16 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 						PlayClickSound();
 					}
-					else if(Clicked->Identifier == "button_characters_back") {
+					else if(Clicked->ID == "button_characters_back") {
 						PlayState.Network->Disconnect();
 						PlayClickSound();
 					}
-					else if(Clicked->Identifier == CharacterButtonPrefix) {
+					else if(Clicked->ID == CharacterButtonPrefix) {
 
 						// Deselect slots
 						_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
 						for(auto &Element : CharactersElement->Children) {
-							if(Element->Identifier == CharacterButtonPrefix) {
+							if(Element->ID == CharacterButtonPrefix) {
 								_Element *Button = Element;
 								Button->Checked = false;
 							}
@@ -933,7 +932,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					}
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
-					if(Clicked->Identifier == NewCharacterPortraitPrefix || Clicked->Identifier == NewCharacterBuildPrefix) {
+					if(Clicked->ID == NewCharacterPortraitPrefix || Clicked->ID == NewCharacterBuildPrefix) {
 						size_t SelectedID = (size_t)(intptr_t)Clicked->UserData;
 
 						// Unselect all portraits and select the clicked element
@@ -950,21 +949,21 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 						ValidateCreateCharacter();
 					}
-					else if(Clicked->Identifier == "button_newcharacter_create") {
+					else if(Clicked->ID == "button_newcharacter_create") {
 						CreateCharacter();
 						PlayClickSound();
 					}
-					else if(Clicked->Identifier == "button_newcharacter_createhardcore") {
+					else if(Clicked->ID == "button_newcharacter_createhardcore") {
 						CreateCharacter(true);
 						PlayClickSound();
 					}
-					else if(Clicked->Identifier == "button_newcharacter_cancel") {
+					else if(Clicked->ID == "button_newcharacter_cancel") {
 						RequestCharacterList();
 						PlayClickSound();
 					}
 				}
 				else if(CharactersState == CHARACTERS_DELETE) {
-					if(Clicked->Identifier == "button_confirm_ok") {
+					if(Clicked->ID == "button_confirm_ok") {
 						PlayClickSound();
 
 						size_t SelectedSlot = GetSelectedCharacter();
@@ -975,14 +974,14 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 							PlayState.Network->SendPacket(Packet);
 						}
 					}
-					else if(Clicked->Identifier == "button_confirm_cancel") {
+					else if(Clicked->ID == "button_confirm_cancel") {
 						RequestCharacterList();
 						PlayClickSound();
 					}
 				}
 			} break;
 			case STATE_CONNECT: {
-				if(Clicked->Identifier == "button_connect_connect") {
+				if(Clicked->ID == "button_connect_connect") {
 					if(!PlayState.Network->IsDisconnected()) {
 						PlayState.Network->Disconnect(true);
 						InitConnect(false);
@@ -992,31 +991,31 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_connect_back") {
+				else if(Clicked->ID == "button_connect_back") {
 					InitTitle(true);
 					PlayClickSound();
 				}
 			} break;
 			case STATE_ACCOUNT: {
-				if(Clicked->Identifier == "button_account_login") {
+				if(Clicked->ID == "button_account_login") {
 					SendAccountInfo();
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_account_create") {
+				else if(Clicked->ID == "button_account_create") {
 					SendAccountInfo(true);
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_account_back") {
+				else if(Clicked->ID == "button_account_back") {
 					InitConnect(true);
 					PlayClickSound();
 				}
 			} break;
 			case STATE_OPTIONS: {
-				if(Clicked->Identifier == "button_options_fullscreen") {
+				if(Clicked->ID == "button_options_fullscreen") {
 					SetFullscreen(!Config.Fullscreen);
 					UpdateOptions();
 				}
-				else if(Clicked->Identifier == "button_options_back") {
+				else if(Clicked->ID == "button_options_back") {
 					if(FromInGame)
 						InitInGame();
 					else
@@ -1026,22 +1025,22 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				}
 			} break;
 			case STATE_INGAME: {
-				if(Clicked->Identifier == "button_ingame_respawn") {
+				if(Clicked->ID == "button_ingame_respawn") {
 					_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
 					PlayState.Network->SendPacket(Packet);
 					InitPlay();
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_ingame_resume") {
+				else if(Clicked->ID == "button_ingame_resume") {
 					InitPlay();
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_ingame_options") {
+				else if(Clicked->ID == "button_ingame_options") {
 					InitOptions();
 					PlayClickSound();
 				}
-				else if(Clicked->Identifier == "button_ingame_exit") {
+				else if(Clicked->ID == "button_ingame_exit") {
 					ExitGame();
 					PlayClickSound();
 				}

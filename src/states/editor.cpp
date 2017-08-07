@@ -306,13 +306,13 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Button bar
 		if(ButtonBarElement->GetClickedElement()) {
-			if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_new")
+			if(ButtonBarElement->GetClickedElement()->ID == "button_editor_buttonbar_new")
 				ToggleNewMap();
-			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_resize")
+			else if(ButtonBarElement->GetClickedElement()->ID == "button_editor_buttonbar_resize")
 				ToggleResize();
-			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_save")
+			else if(ButtonBarElement->GetClickedElement()->ID == "button_editor_buttonbar_save")
 				ToggleSaveMap();
-			else if(ButtonBarElement->GetClickedElement()->Identifier == "button_editor_buttonbar_load")
+			else if(ButtonBarElement->GetClickedElement()->ID == "button_editor_buttonbar_load")
 				ToggleLoadMap();
 		}
 		// Texture select
@@ -325,19 +325,19 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		}
 		// New map screen
 		else if(NewMapElement->GetClickedElement()) {
-			if(NewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_create") {
+			if(NewMapElement->GetClickedElement()->ID == "button_editor_newmap_create") {
 				CreateMap();
 			}
-			else if(NewMapElement->GetClickedElement()->Identifier == "button_editor_newmap_cancel") {
+			else if(NewMapElement->GetClickedElement()->ID == "button_editor_newmap_cancel") {
 				CloseWindows();
 			}
 		}
 		// Resize map screen
 		else if(ResizeMapElement->GetClickedElement()) {
-			if(ResizeMapElement->GetClickedElement()->Identifier == "button_editor_resizemap_resize") {
+			if(ResizeMapElement->GetClickedElement()->ID == "button_editor_resizemap_resize") {
 				ResizeMap();
 			}
-			else if(ResizeMapElement->GetClickedElement()->Identifier == "button_editor_resizemap_cancel") {
+			else if(ResizeMapElement->GetClickedElement()->ID == "button_editor_resizemap_cancel") {
 				CloseWindows();
 			}
 		}
@@ -700,7 +700,7 @@ void _EditorState::InitTextures() {
 		// Add button
 		_Element *Button = new _Element();
 		Button->Type = _Element::BUTTON;
-		Button->Identifier = "button_skills_skill";
+		Button->ID = "button_skills_skill";
 		Button->Parent = TexturesElement;
 		Button->Offset = Offset;
 		Button->Size = Map->TileAtlas->Size;

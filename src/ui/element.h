@@ -50,16 +50,16 @@ class _Element {
 
 		_Element();
 		_Element(tinyxml2::XMLElement *Node, _Element *ParentNode);
-		virtual ~_Element();
+		~_Element();
 
 		void SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode);
 
-		virtual const char *GetTypeName() const;
-		virtual void Update(double FrameTime, const glm::vec2 &Mouse);
-		virtual void Render() const;
-		virtual bool HandleKey(const _KeyEvent &KeyEvent);
-		virtual void HandleInput(bool Pressed);
-		virtual void CalculateBounds();
+		const char *GetTypeName() const;
+		void Update(double FrameTime, const glm::vec2 &Mouse);
+		void Render() const;
+		bool HandleKey(const _KeyEvent &KeyEvent);
+		void HandleInput(bool Pressed);
+		void CalculateBounds();
 		_Element *GetClickedElement();
 
 		void RemoveChild(_Element *Element);
@@ -82,8 +82,7 @@ class _Element {
 
 		// Attributes
 		ElementType Type;
-		std::string Identifier;
-		std::string ParentIdentifier;
+		std::string ID;
 		_Element *Parent;
 		void *UserData;
 		void *UserDataAlt;
