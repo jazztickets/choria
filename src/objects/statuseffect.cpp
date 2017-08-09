@@ -69,7 +69,6 @@ void _StatusEffect::Unserialize(_Buffer &Data, _Stats *Stats) {
 _Element *_StatusEffect::CreateUIElement(_Element *Parent) {
 
 	_Element *Element = new _Element();
-	Element->Type = _Element::ELEMENT;
 	Element->Size = glm::vec2(Buff->Texture->Size);
 	Element->Alignment = LEFT_TOP;
 	Element->Active = true;

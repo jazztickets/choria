@@ -35,7 +35,6 @@ const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
 
 // Constructor
 _Element::_Element() :
-	Type(NONE),
 	Parent(nullptr),
 	Index(-1),
 	UserData(nullptr),
@@ -63,9 +62,6 @@ _Element::_Element() :
 	CursorTimer(0),
 	Password(false),
 	ChildrenOffset(0, 0) {
-
-	//TODO cleanup
-	ParentOffset = glm::vec2(5.0f, 22.0f);
 }
 
 // Constructor for loading from xml
@@ -73,18 +69,6 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *Parent) :
 	_Element() {
 
 	this->Parent = Parent;
-	std::string TypeName = Node->Value();
-	if(TypeName == "element")
-		Type = ELEMENT;
-	else if(TypeName == "image")
-		Type = IMAGE;
-	else if(TypeName == "button")
-		Type = BUTTON;
-	else if(TypeName == "label")
-		Type = LABEL;
-	else if(TypeName == "textbox")
-		Type = TEXTBOX;
-
 	std::string TextureName;
 	std::string StyleName;
 	std::string HoverStyleName;
@@ -158,7 +142,7 @@ _Element::~_Element() {
 void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode) {
 
 	// Create xml node
-	tinyxml2::XMLElement *Node = Document.NewElement(GetTypeName());
+	tinyxml2::XMLElement *Node = Document.NewElement("element");
 
 	// Set attributes
 	if(ParentNode) {
@@ -208,33 +192,13 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 		Child->SerializeElement(Document, Node);
 }
 
-// Get type name
-const char *_Element::GetTypeName() const {
-
-	switch(Type) {
-		case NONE:
-			return "";
-		case ELEMENT:
-			return "element";
-		case BUTTON:
-			return "button";
-		case IMAGE:
-			return "image";
-		case LABEL:
-			return "label";
-		case TEXTBOX:
-			return "textbox";
-	}
-
-	return "";
-}
-
 // Handle key event, return true if handled
 bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
 	if(!Active)
 		return false;
 
-	if(Type == TEXTBOX) {
+	// Handle editable text fields
+	if(MaxLength) {
 		if(FocusedElement == this && Active && KeyEvent.Pressed) {
 			if(Text.length() < MaxLength && KeyEvent.Text[0] >= 32 && KeyEvent.Text[0] <= 126) {
 				if(CursorPosition > Text.length())
@@ -299,11 +263,12 @@ void _Element::HandleMouseButton(bool Pressed) {
 	if(!Active)
 		return;
 
-	if(Type == TEXTBOX) {
-	   if(HitElement) {
+	if(MaxLength) {
+	   if(HitElement || (Parent && Parent->HitElement)) {
 		   ResetCursor();
 		   FocusedElement = this;
 	   }
+
 	   return;
 	}
 
@@ -363,8 +328,9 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 		}
 	}
 
-	if(Type == TEXTBOX) {
-		if(FocusedElement == this) {
+	// Handle edit boxes
+	if(MaxLength) {
+		if(FocusedElement == this || FocusedElement == Parent) {
 			CursorTimer += FrameTime;
 			if(CursorTimer >= 1) {
 				CursorTimer = 0;
@@ -375,164 +341,151 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 
 // Render the element
 void _Element::Render() const {
-	if(Type == NONE)
-		throw std::runtime_error("Bad _Element type!");
-
 	if(!Active)
 		return;
 
-	switch(Type) {
-		case BUTTON:
-			if(Enabled) {
-				if(Style) {
-					if(Style->Texture) {
-						Graphics.SetProgram(Style->Program);
-						Graphics.SetVBO(VBO_NONE);
-						Graphics.SetColor(Style->TextureColor);
-						Graphics.DrawImage(Bounds, Style->Texture, Style->Stretch);
-					}
-					else if(Atlas) {
-						Graphics.SetProgram(Style->Program);
-						Graphics.SetVBO(VBO_NONE);
-						Graphics.SetColor(Style->TextureColor);
-						Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
-					}
-					else {
-						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-						Graphics.SetVBO(VBO_NONE);
-						Graphics.SetColor(Style->BackgroundColor);
-						Graphics.DrawRectangle(Bounds, true);
-						Graphics.SetColor(Style->BorderColor);
-						Graphics.DrawRectangle(Bounds, false);
-					}
-				}
-				else if(Atlas) {
-					Graphics.SetColor(Color);
-					Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-					Graphics.SetVBO(VBO_NONE);
-					Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
-				}
-				else if(Texture) {
-					Graphics.SetColor(Color);
-					Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-					Graphics.SetVBO(VBO_NONE);
-					Graphics.DrawImage(Bounds, Texture, Stretch);
-				}
-
-				// Draw hover texture
-				if(HoverStyle && (Checked || HitElement)) {
-
-					if(HoverStyle->Texture) {
-						Graphics.SetProgram(HoverStyle->Program);
-						Graphics.SetVBO(VBO_NONE);
-						Graphics.SetColor(HoverStyle->TextureColor);
-						Graphics.DrawImage(Bounds, HoverStyle->Texture, Style->Stretch);
-					}
-					else {
-						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-						Graphics.SetVBO(VBO_NONE);
-						if(HoverStyle->HasBackgroundColor) {
-							Graphics.SetColor(HoverStyle->BackgroundColor);
-							Graphics.DrawRectangle(Bounds, true);
-						}
-
-						if(HoverStyle->HasBorderColor) {
-							Graphics.SetColor(HoverStyle->BorderColor);
-							Graphics.DrawRectangle(Bounds, false);
-						}
-					}
-				}
-			}
-			else {
-				if(DisabledStyle) {
-
-					if(DisabledStyle->Texture) {
-						Graphics.SetProgram(DisabledStyle->Program);
-						Graphics.SetVBO(VBO_NONE);
-						Graphics.SetColor(DisabledStyle->TextureColor);
-						Graphics.DrawImage(Bounds, DisabledStyle->Texture, DisabledStyle->Stretch);
-					}
-					else if(Atlas) {
-						Graphics.SetProgram(DisabledStyle->Program);
-						Graphics.SetVBO(VBO_NONE);
-						Graphics.SetColor(DisabledStyle->TextureColor);
-						Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
-					}
-					else {
-						Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-						Graphics.SetVBO(VBO_NONE);
-						Graphics.SetColor(DisabledStyle->BackgroundColor);
-						Graphics.DrawRectangle(Bounds, true);
-						Graphics.SetColor(DisabledStyle->BorderColor);
-						Graphics.DrawRectangle(Bounds, false);
-					}
-				}
-			}
-
-			// Render all children
-			for(auto &Child : Children) {
-				Child->Render();
-			}
-
-			return;
-		break;
-		case IMAGE: {
-			Graphics.SetColor(Color);
-			if(Texture) {
-				Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-				Graphics.SetVBO(VBO_NONE);
-				Graphics.DrawImage(Bounds, Texture, Stretch);
-			}
-		} break;
-		case LABEL: {
-
-			// Set color
-			glm::vec4 RenderColor(Color.r, Color.g, Color.b, Color.a*Fade);
-			if(!Enabled)
-				RenderColor.a *= 0.5f;
-
-			Graphics.SetProgram(Assets.Programs["pos_uv"]);
-			Graphics.SetVBO(VBO_NONE);
-			if(Texts.size()) {
-
-				// Center box
-				float LineHeight = Font->MaxHeight + 2;
-				float Y = Bounds.Start.y - (int)((LineHeight * Texts.size() - LineHeight) / 2);
-				for(const auto &Token : Texts) {
-					Font->DrawText(Token, glm::vec2(Bounds.Start.x, Y), RenderColor, Alignment);
-
-					Y += LineHeight;
-				}
-			}
-			else {
-				Font->DrawText(Text, Bounds.Start, RenderColor, Alignment);
-			}
-		} break;
-		default:
-		break;
-	}
-
+	// Mask outside bounds of element
 	if(MaskOutside) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 		Graphics.EnableStencilTest();
 		Graphics.DrawMask(Bounds);
 	}
 
-	if(Style) {
-		Graphics.SetProgram(Style->Program);
-		Graphics.SetVBO(VBO_NONE);
-		if(Style->HasBackgroundColor) {
-			glm::vec4 RenderColor(Style->BackgroundColor);
-			RenderColor.a *= Fade;
-			Graphics.SetColor(RenderColor);
-			Graphics.DrawRectangle(Bounds, true);
+	if(Enabled) {
+		if(Style) {
+			if(Style->Texture) {
+				Graphics.SetProgram(Style->Program);
+				Graphics.SetVBO(VBO_NONE);
+				Graphics.SetColor(Style->TextureColor);
+				Graphics.DrawImage(Bounds, Style->Texture, Style->Stretch);
+			}
+			else if(Atlas) {
+				Graphics.SetProgram(Style->Program);
+				Graphics.SetVBO(VBO_NONE);
+				Graphics.SetColor(Style->TextureColor);
+				Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
+			}
+			else {
+				Graphics.SetProgram(Style->Program);
+				Graphics.SetVBO(VBO_NONE);
+				if(Style->HasBackgroundColor) {
+					glm::vec4 RenderColor(Style->BackgroundColor);
+					RenderColor.a *= Fade;
+					Graphics.SetColor(RenderColor);
+					Graphics.DrawRectangle(Bounds, true);
+				}
+
+				if(Style->HasBorderColor) {
+					glm::vec4 RenderColor(Style->BorderColor);
+					RenderColor.a *= Fade;
+					Graphics.SetColor(RenderColor);
+					Graphics.DrawRectangle(Bounds, false);
+				}
+			}
+		}
+		else if(Atlas) {
+			Graphics.SetColor(Color);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.SetVBO(VBO_NONE);
+			Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
+		}
+		else if(Texture) {
+			Graphics.SetColor(Color);
+			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			Graphics.SetVBO(VBO_NONE);
+			Graphics.DrawImage(Bounds, Texture, Stretch);
 		}
 
-		if(Style->HasBorderColor) {
-			glm::vec4 RenderColor(Style->BorderColor);
-			RenderColor.a *= Fade;
-			Graphics.SetColor(RenderColor);
-			Graphics.DrawRectangle(Bounds, false);
+		// Draw hover texture
+		if(HoverStyle && (Checked || HitElement)) {
+
+			if(HoverStyle->Texture) {
+				Graphics.SetProgram(HoverStyle->Program);
+				Graphics.SetVBO(VBO_NONE);
+				Graphics.SetColor(HoverStyle->TextureColor);
+				Graphics.DrawImage(Bounds, HoverStyle->Texture, Style->Stretch);
+			}
+			else {
+				Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+				Graphics.SetVBO(VBO_NONE);
+				if(HoverStyle->HasBackgroundColor) {
+					Graphics.SetColor(HoverStyle->BackgroundColor);
+					Graphics.DrawRectangle(Bounds, true);
+				}
+
+				if(HoverStyle->HasBorderColor) {
+					Graphics.SetColor(HoverStyle->BorderColor);
+					Graphics.DrawRectangle(Bounds, false);
+				}
+			}
+		}
+	}
+	else {
+		if(DisabledStyle) {
+
+			if(DisabledStyle->Texture) {
+				Graphics.SetProgram(DisabledStyle->Program);
+				Graphics.SetVBO(VBO_NONE);
+				Graphics.SetColor(DisabledStyle->TextureColor);
+				Graphics.DrawImage(Bounds, DisabledStyle->Texture, DisabledStyle->Stretch);
+			}
+			else if(Atlas) {
+				Graphics.SetProgram(DisabledStyle->Program);
+				Graphics.SetVBO(VBO_NONE);
+				Graphics.SetColor(DisabledStyle->TextureColor);
+				Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
+			}
+			else {
+				Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+				Graphics.SetVBO(VBO_NONE);
+				Graphics.SetColor(DisabledStyle->BackgroundColor);
+				Graphics.DrawRectangle(Bounds, true);
+				Graphics.SetColor(DisabledStyle->BorderColor);
+				Graphics.DrawRectangle(Bounds, false);
+			}
+		}
+	}
+
+	// Set color
+	if(Texts.size() || Text != "" || MaxLength) {
+		glm::vec4 RenderColor(Color.r, Color.g, Color.b, Color.a*Fade);
+		if(!Enabled)
+			RenderColor.a *= 0.5f;
+
+		Graphics.SetProgram(Assets.Programs["pos_uv"]);
+		Graphics.SetVBO(VBO_NONE);
+		if(Texts.size()) {
+
+			// Center box
+			float LineHeight = Font->MaxHeight + 2;
+			float Y = Bounds.Start.y - (int)((LineHeight * Texts.size() - LineHeight) / 2);
+			for(const auto &Token : Texts) {
+				Font->DrawText(Token, glm::vec2(Bounds.Start.x, Y), RenderColor, Alignment);
+
+				Y += LineHeight;
+			}
+		}
+		else {
+			std::string RenderText = Password ? std::string(Text.length(), '*') : Text;
+
+			if(MaxLength) {
+
+				// Get width at cursor position
+				_TextBounds TextBounds;
+				Font->GetStringDimensions(RenderText.substr(0, CursorPosition), TextBounds);
+
+				// Draw text
+				glm::vec2 StartPosition = glm::vec2(Bounds.Start);
+				Font->DrawText(RenderText, StartPosition, RenderColor, Alignment);
+
+				// Draw cursor
+				if(CursorTimer < 0.5 && (FocusedElement == this || FocusedElement == Parent)) {
+					Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+					Graphics.DrawRectangle(glm::vec2(StartPosition.x + TextBounds.Width+1, StartPosition.y - Font->MaxAbove), glm::vec2(StartPosition.x + TextBounds.Width+2, StartPosition.y + Font->MaxBelow));
+				}
+			}
+			else
+				Font->DrawText(RenderText, Bounds.Start, RenderColor, Alignment);
 		}
 	}
 
@@ -541,46 +494,16 @@ void _Element::Render() const {
 		Child->Render();
 	}
 
+	// Disable mask
 	if(MaskOutside)
 		Graphics.DisableStencilTest();
 
+	// Draw debug info
 	if(Debug && Debug-1 < DebugColorCount) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 		Graphics.SetVBO(VBO_NONE);
 		Graphics.SetColor(DebugColors[Debug-1]);
 		Graphics.DrawRectangle(Bounds.Start, Bounds.End);
-	}
-
-	if(Type == TEXTBOX) {
-
-		// Get text to render
-		std::string RenderText;
-		if(Password)
-			RenderText = std::string(Text.length(), '*');
-		else
-			RenderText = Text;
-
-		// Mask outside of bounds
-		Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-		Graphics.EnableStencilTest();
-		Graphics.DrawMask(Bounds);
-
-		// Get width at cursor position
-		_TextBounds TextBounds;
-		Font->GetStringDimensions(RenderText.substr(0, CursorPosition), TextBounds);
-
-		// Draw text
-		glm::vec2 StartPosition = glm::vec2(Bounds.Start) + ParentOffset;
-		Font->DrawText(RenderText, StartPosition, glm::vec4(1.0f));
-
-		// Draw cursor
-		if(CursorTimer < 0.5 && FocusedElement == this) {
-			Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-			Graphics.DrawRectangle(glm::vec2(StartPosition.x + TextBounds.Width+1, StartPosition.y - Font->MaxAbove), glm::vec2(StartPosition.x + TextBounds.Width+2, StartPosition.y + Font->MaxBelow));
-		}
-
-		// Disable mask
-		Graphics.DisableStencilTest();
 	}
 }
 

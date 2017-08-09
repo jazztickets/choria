@@ -60,7 +60,6 @@ _HUD::_HUD() {
 	Cursor.Reset();
 
 	ChatTextBox = Assets.Elements["textbox_chat"];
-	ChatTextBox->ParentOffset = glm::vec2(5, 15);
 
 	Assets.Elements["label_buttonbar_join"]->Text = Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Elements["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
@@ -967,7 +966,6 @@ void _HUD::InitSkills() {
 
 		// Add skill icon
 		_Element *Button = new _Element();
-		Button->Type = _Element::BUTTON;
 		Button->ID = "button_skills_skill";
 		Button->Parent = SkillsElement;
 		Button->Offset = Offset;
@@ -979,7 +977,6 @@ void _HUD::InitSkills() {
 
 		// Add level label
 		_Element *LevelLabel = new _Element();
-		LevelLabel->Type = _Element::LABEL;
 		LevelLabel->ID = "label_skills_level";
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = LevelOffset;
@@ -991,7 +988,6 @@ void _HUD::InitSkills() {
 
 		// Add plus button
 		_Element *PlusButton = new _Element();
-		PlusButton->Type = _Element::BUTTON;
 		PlusButton->ID = "button_skills_plus";
 		PlusButton->Parent = Button;
 		PlusButton->Size = glm::vec2(16, 16);
@@ -1003,7 +999,6 @@ void _HUD::InitSkills() {
 
 		// Add minus button
 		_Element *MinusButton = new _Element();
-		MinusButton->Type = _Element::BUTTON;
 		MinusButton->ID = "button_skills_minus";
 		MinusButton->Parent = Button;
 		MinusButton->Size = glm::vec2(16, 16);
@@ -1015,7 +1010,6 @@ void _HUD::InitSkills() {
 
 		// Add plus label
 		_Element *PlusLabel = new _Element();
-		PlusLabel->Type = _Element::LABEL;
 		PlusLabel->Parent = PlusButton;
 		PlusLabel->Text = "+";
 		PlusLabel->Offset = LabelOffset;
@@ -1026,7 +1020,6 @@ void _HUD::InitSkills() {
 
 		// Add minus label
 		_Element *MinusLabel = new _Element();
-		MinusLabel->Type = _Element::LABEL;
 		MinusLabel->Parent = MinusButton;
 		MinusLabel->Text = "-";
 		MinusLabel->Offset = LabelOffset;

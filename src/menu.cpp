@@ -430,7 +430,6 @@ void _Menu::LoadCharacterSlots() {
 
 		// Add button
 		_Element *Button = new _Element();
-		Button->Type = _Element::BUTTON;
 		Button->ID = CharacterButtonPrefix;
 		Button->Parent = CharacterSlotsElement;
 		Button->Offset = Offset;
@@ -445,7 +444,6 @@ void _Menu::LoadCharacterSlots() {
 
 		// Add image for portrait
 		_Element *Image = new _Element();
-		Image->Type = _Element::IMAGE;
 		Image->Parent = Button;
 		Image->Alignment = CENTER_MIDDLE;
 		Image->Offset = glm::vec2(0, 0);
@@ -453,7 +451,6 @@ void _Menu::LoadCharacterSlots() {
 
 		// Add name label
 		_Element *NameLabel = new _Element();
-		NameLabel->Type = _Element::LABEL;
 		NameLabel->Parent = Button;
 		NameLabel->Offset = glm::vec2(0, 150);
 		NameLabel->Alignment = CENTER_BASELINE;
@@ -462,7 +459,6 @@ void _Menu::LoadCharacterSlots() {
 
 		// Add level label
 		_Element *LevelLabel = new _Element();
-		LevelLabel->Type = _Element::LABEL;
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = glm::vec2(0, 170);
 		LevelLabel->Alignment = CENTER_BASELINE;
@@ -471,7 +467,6 @@ void _Menu::LoadCharacterSlots() {
 
 		// Add hardcore label
 		_Element *HardcoreLabel = new _Element();
-		HardcoreLabel->Type = _Element::LABEL;
 		HardcoreLabel->Parent = Button;
 		HardcoreLabel->Offset = glm::vec2(0, 187);
 		HardcoreLabel->Alignment = CENTER_BASELINE;
@@ -535,7 +530,6 @@ void _Menu::LoadPortraitButtons() {
 
 		// Add button
 		_Element *Button = new _Element();
-		Button->Type = _Element::BUTTON;
 		Button->ID = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->Offset = Offset;
@@ -590,7 +584,6 @@ void _Menu::LoadBuildButtons() {
 
 		// Add button
 		_Element *Button = new _Element();
-		Button->Type = _Element::BUTTON;
 		Button->ID = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
 		Button->Offset = Offset;
@@ -603,7 +596,6 @@ void _Menu::LoadBuildButtons() {
 
 		// Add label
 		_Element *Label = new _Element();
-		Label->Type = _Element::LABEL;
 		Label->Font = Assets.Fonts["hud_small"];
 		Label->Text = Build.Name;
 		Label->Color = COLOR_WHITE;

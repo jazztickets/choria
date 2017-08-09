@@ -94,22 +94,12 @@ class _Element {
 
 	public:
 
-		enum ElementType {
-			NONE,
-			ELEMENT,
-			BUTTON,
-			IMAGE,
-			LABEL,
-			TEXTBOX,
-		};
-
 		_Element();
 		_Element(tinyxml2::XMLElement *Node, _Element *Parent);
 		~_Element();
 
 		void SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLElement *ParentNode);
 
-		const char *GetTypeName() const;
 		void Update(double FrameTime, const glm::vec2 &Mouse);
 		void Render() const;
 		bool HandleKey(const _KeyEvent &KeyEvent);
@@ -136,7 +126,6 @@ class _Element {
 		void SetWrap(float Width);
 
 		// Attributes
-		ElementType Type;
 		std::string ID;
 		_Element *Parent;
 		int Index;
@@ -175,7 +164,6 @@ class _Element {
 		// Text
 		const _Font *Font;
 		std::string Text;
-		glm::vec2 ParentOffset;
 		size_t MaxLength;
 		size_t CursorPosition;
 		double CursorTimer;

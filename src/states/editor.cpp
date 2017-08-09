@@ -172,6 +172,9 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 					FocusedElement = ResizeMaxYTextBox;
 				else if(FocusedElement == ResizeMaxYTextBox)
 					FocusedElement = ResizeMinXTextBox;
+
+				if(FocusedElement)
+					FocusedElement->ResetCursor();
 			}
 
 			return;
@@ -698,7 +701,6 @@ void _EditorState::InitTextures() {
 
 		// Add button
 		_Element *Button = new _Element();
-		Button->Type = _Element::BUTTON;
 		Button->ID = "button_skills_skill";
 		Button->Parent = TexturesElement;
 		Button->Offset = Offset;

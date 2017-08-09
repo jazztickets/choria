@@ -372,7 +372,6 @@ void _Assets::LoadUI(const std::string &Path) {
 	tinyxml2::XMLElement *ChildNode = Document.FirstChildElement();
 	Graphics.Element = new _Element(ChildNode, nullptr);
 	Graphics.Element->Alignment = LEFT_TOP;
-	Graphics.Element->Type = _Element::ELEMENT;
 	Graphics.Element->Active = true;
 	Graphics.Element->Size = Graphics.CurrentSize;
 	Graphics.Element->CalculateBounds();
