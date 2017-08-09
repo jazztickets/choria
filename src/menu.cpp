@@ -62,17 +62,17 @@ _Menu::_Menu() {
 
 // Change the current layout
 void _Menu::ChangeLayout(const std::string &ElementIdentifier) {
-	Assets.Elements["label_menu_title_version"]->SetVisible(false);
+	Assets.Elements["label_menu_title_version"]->SetActive(false);
 
 	if(CurrentLayout) {
-		CurrentLayout->SetVisible(false);
+		CurrentLayout->SetActive(false);
 
 		if(CurrentLayout == Assets.Elements["element_menu_options"])
 			Config.Save();
 	}
 
 	CurrentLayout = Assets.Elements[ElementIdentifier];
-	CurrentLayout->SetVisible(true);
+	CurrentLayout->SetActive(true);
 }
 
 // Initialize
@@ -88,7 +88,7 @@ void _Menu::InitTitle(bool Disconnect) {
 	Assets.Elements["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
-	Assets.Elements["label_menu_title_version"]->SetVisible(true);
+	Assets.Elements["label_menu_title_version"]->SetActive(true);
 
 	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
@@ -102,9 +102,9 @@ void _Menu::InitCharacters() {
 
 	// Set label
 	_Element *HardcoreLabel = Assets.Elements["label_menu_characters_hardcore"];
-	HardcoreLabel->SetVisible(false);
+	HardcoreLabel->SetActive(false);
 	if(HardcoreServer)
-		HardcoreLabel->SetVisible(true);
+		HardcoreLabel->SetActive(true);
 
 	Audio.PlayMusic(Assets.Music["intro.ogg"]);
 
@@ -136,7 +136,7 @@ void _Menu::InitNewCharacter() {
 	Assets.Elements["element_menu_character_slots"]->SetClickable(false);
 
 	CurrentLayout = Assets.Elements["element_menu_new"];
-	CurrentLayout->SetVisible(true);
+	CurrentLayout->SetActive(true);
 
 	CharactersState = CHARACTERS_CREATE;
 }
@@ -145,10 +145,10 @@ void _Menu::InitNewCharacter() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 	if(!ShowRespawn)
-		Assets.Elements["button_ingame_respawn"]->SetVisible(false);
+		Assets.Elements["button_ingame_respawn"]->SetActive(false);
 
 	if(!ShowExitWarning)
-		Assets.Elements["label_menu_ingame_exitwarning"]->SetVisible(false);
+		Assets.Elements["label_menu_ingame_exitwarning"]->SetActive(false);
 
 	PlayState.SendStatus(_Object::STATUS_PAUSE);
 	State = STATE_INGAME;
@@ -158,7 +158,7 @@ void _Menu::InitInGame() {
 // Return to play
 void _Menu::InitPlay() {
 	if(CurrentLayout)
-		CurrentLayout->SetVisible(false);
+		CurrentLayout->SetActive(false);
 	CurrentLayout = nullptr;
 
 	PlayState.SendStatus(_Object::STATUS_NONE);
@@ -178,7 +178,7 @@ void _Menu::InitOptions() {
 // Show the confirm screen
 void _Menu::ConfirmAction() {
 	CurrentLayout = Assets.Elements["element_menu_confirm"];
-	CurrentLayout->SetVisible(true);
+	CurrentLayout->SetActive(true);
 }
 
 // Exit game and return to character select
@@ -502,7 +502,7 @@ void _Menu::LoadCharacterSlots() {
 	}
 
 	CharacterSlotsElement->CalculateBounds();
-	CharacterSlotsElement->SetVisible(true);
+	CharacterSlotsElement->SetActive(true);
 }
 
 // Clear character slots

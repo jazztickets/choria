@@ -68,7 +68,7 @@ _Battle::_Battle() :
 // Destructor
 _Battle::~_Battle() {
 	if(BattleElement)
-		BattleElement->SetVisible(false);
+		BattleElement->SetActive(false);
 
 	// Remove fighters
 	for(auto &Fighter : Fighters) {
@@ -792,7 +792,7 @@ void _Battle::CreateBattleElements(int SideIndex, _Object *Fighter) {
 	// Set up ui
 	BattleElement = Assets.Elements["element_battle"];
 	if(BattleElement)
-		BattleElement->SetVisible(true);
+		BattleElement->SetActive(true);
 
 	// Get position on screen
 	GetBattleOffset(SideIndex, Fighter);

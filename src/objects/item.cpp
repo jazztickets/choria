@@ -43,7 +43,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	_Element *TooltipElement = Assets.Elements["element_item_tooltip"];
 	_Element *TooltipName = Assets.Elements["label_item_tooltip_name"];
 	_Element *TooltipType = Assets.Elements["label_item_tooltip_type"];
-	TooltipElement->SetVisible(true);
+	TooltipElement->SetActive(true);
 
 	// Get window dimensions
 	glm::vec2 Size = TooltipElement->Size;
@@ -95,7 +95,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 
 	// Render tooltip
 	TooltipElement->Render();
-	TooltipElement->SetVisible(false);
+	TooltipElement->SetActive(false);
 
 	// Set draw position to center of window
 	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);

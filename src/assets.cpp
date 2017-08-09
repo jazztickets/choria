@@ -373,7 +373,7 @@ void _Assets::LoadUI(const std::string &Path) {
 	Graphics.Element = new _Element(ChildNode, nullptr);
 	Graphics.Element->Alignment = LEFT_TOP;
 	Graphics.Element->Type = _Element::ELEMENT;
-	Graphics.Element->Visible = true;
+	Graphics.Element->Active = true;
 	Graphics.Element->Size = Graphics.CurrentSize;
 	Graphics.Element->CalculateBounds();
 }

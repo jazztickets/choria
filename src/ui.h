@@ -126,7 +126,7 @@ class _Element {
 
 		void SetDebug(int Debug);
 		void SetClickable(bool Clickable, int Depth=-1);
-		void SetVisible(bool Visible);
+		void SetActive(bool Active);
 		void SetFade(float Fade);
 		void SetEnabled(bool Enabled);
 		void SetOffset(const glm::vec2 &Offset) { this->Offset = Offset; CalculateBounds(); }
@@ -142,7 +142,7 @@ class _Element {
 		int Index;
 		void *UserData;
 
-		bool Visible;
+		bool Active;
 		bool Enabled;
 		bool Checked;
 		bool Clickable;

@@ -39,7 +39,7 @@ _Element::_Element() :
 	Parent(nullptr),
 	Index(-1),
 	UserData(nullptr),
-	Visible(false),
+	Active(false),
 	Enabled(true),
 	Checked(false),
 	Clickable(true),
@@ -229,11 +229,13 @@ const char *_Element::GetTypeName() const {
 	return "";
 }
 
-// Handle key event
+// Handle key event, return true if handled
 bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
+	if(!Active)
+		return false;
 
 	if(Type == TEXTBOX) {
-		if(FocusedElement == this && Visible && KeyEvent.Pressed) {
+		if(FocusedElement == this && Active && KeyEvent.Pressed) {
 			if(Text.length() < MaxLength && KeyEvent.Text[0] >= 32 && KeyEvent.Text[0] <= 126) {
 				if(CursorPosition > Text.length())
 					CursorPosition = Text.length();
@@ -294,7 +296,7 @@ bool _Element::HandleKey(const _KeyEvent &KeyEvent) {
 
 // Handle a press event
 void _Element::HandleMouseButton(bool Pressed) {
-	if(!Visible)
+	if(!Active)
 		return;
 
 	if(Type == TEXTBOX) {
@@ -344,7 +346,7 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 	ReleasedElement = nullptr;
 
 	// Test element first
-	if(Mouse.x >= Bounds.Start.x && Mouse.y >= Bounds.Start.y && Mouse.x < Bounds.End.x && Mouse.y < Bounds.End.y && Visible && Clickable && Enabled) {
+	if(Mouse.x >= Bounds.Start.x && Mouse.y >= Bounds.Start.y && Mouse.x < Bounds.End.x && Mouse.y < Bounds.End.y && Active && Clickable && Enabled) {
 		HitElement = this;
 	}
 	else if(MaskOutside) {
@@ -353,7 +355,7 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 	}
 
 	// Test children
-	if(Visible) {
+	if(Active) {
 		for(auto &Child : Children) {
 			Child->Update(FrameTime, Mouse);
 			if(Child->HitElement)
@@ -376,7 +378,7 @@ void _Element::Render() const {
 	if(Type == NONE)
 		throw std::runtime_error("Bad _Element type!");
 
-	if(!Visible)
+	if(!Active)
 		return;
 
 	switch(Type) {
@@ -633,7 +635,7 @@ void _Element::CalculateChildrenBounds() {
 		Child->CalculateBounds();
 }
 
-// Set the debug, and increment for children
+// Set the debug flag, and increment for children
 void _Element::SetDebug(int Debug) {
 	this->Debug = Debug;
 
@@ -657,12 +659,12 @@ void _Element::SetClickable(bool Clickable, int Depth) {
 		Child->SetClickable(Clickable, Depth);
 }
 
-// Set visibility of element and children
-void _Element::SetVisible(bool Visible) {
-	this->Visible = Visible;
+// Set active state of element and children
+void _Element::SetActive(bool Visible) {
+	this->Active = Visible;
 
 	for(auto &Child : Children)
-		Child->SetVisible(Visible);
+		Child->SetActive(Visible);
 }
 
 // Set fade of element and children

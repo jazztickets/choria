@@ -99,31 +99,31 @@ _HUD::_HUD() {
 	GoldElement->Size.x = ButtonBarElement->Size.x;
 	GoldElement->CalculateBounds();
 
-	DiedElement->SetVisible(false);
-	StatusEffectsElement->SetVisible(true);
-	ActionBarElement->SetVisible(true);
-	ButtonBarElement->SetVisible(true);
-	EquipmentElement->SetVisible(false);
-	InventoryElement->SetVisible(false);
-	CharacterElement->SetVisible(false);
-	VendorElement->SetVisible(false);
-	TradeElement->SetVisible(false);
-	TradeTheirsElement->SetVisible(false);
-	TraderElement->SetVisible(false);
-	BlacksmithElement->SetVisible(false);
-	SkillsElement->SetVisible(false);
-	PartyElement->SetVisible(false);
-	TeleportElement->SetVisible(false);
-	ChatElement->SetVisible(false);
-	HealthElement->SetVisible(true);
-	ManaElement->SetVisible(true);
-	ExperienceElement->SetVisible(true);
-	GoldElement->SetVisible(true);
-	MessageElement->SetVisible(false);
-	BlacksmithCost->SetVisible(false);
-	RecentItemsElement->SetVisible(false);
+	DiedElement->SetActive(false);
+	StatusEffectsElement->SetActive(true);
+	ActionBarElement->SetActive(true);
+	ButtonBarElement->SetActive(true);
+	EquipmentElement->SetActive(false);
+	InventoryElement->SetActive(false);
+	CharacterElement->SetActive(false);
+	VendorElement->SetActive(false);
+	TradeElement->SetActive(false);
+	TradeTheirsElement->SetActive(false);
+	TraderElement->SetActive(false);
+	BlacksmithElement->SetActive(false);
+	SkillsElement->SetActive(false);
+	PartyElement->SetActive(false);
+	TeleportElement->SetActive(false);
+	ChatElement->SetActive(false);
+	HealthElement->SetActive(true);
+	ManaElement->SetActive(true);
+	ExperienceElement->SetActive(true);
+	GoldElement->SetActive(true);
+	MessageElement->SetActive(false);
+	BlacksmithCost->SetActive(false);
+	RecentItemsElement->SetActive(false);
 
-	Assets.Elements["element_hud"]->SetVisible(true);
+	Assets.Elements["element_hud"]->SetActive(true);
 }
 
 // Shutdown
@@ -213,7 +213,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					}
 				break;
 				case WINDOW_ACTIONBAR:
-					if(SkillsElement->Visible || InventoryElement->Visible) {
+					if(SkillsElement->Active || InventoryElement->Active) {
 						if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 							Cursor = Tooltip;
 						}
@@ -486,10 +486,10 @@ void _HUD::Update(double FrameTime) {
 
 	// Get trade items
 	if(Player->WaitingForTrade) {
-		TradeTheirsElement->SetVisible(false);
+		TradeTheirsElement->SetActive(false);
 		if(Player->TradePlayer) {
-			TradeTheirsElement->SetVisible(true);
-			Assets.Elements["label_trade_status"]->SetVisible(false);
+			TradeTheirsElement->SetActive(true);
+			Assets.Elements["label_trade_status"]->SetActive(false);
 
 			Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
 			Assets.Elements["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
@@ -578,7 +578,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 	// Draw hud elements while alive or in battle
 	if(Player->IsAlive() || Player->Battle) {
-		DiedElement->SetVisible(false);
+		DiedElement->SetActive(false);
 		Assets.Elements["element_hud"]->Render();
 		DrawActionBar();
 
@@ -682,7 +682,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	}
 	// Dead outside of combat
 	else {
-		if(!DiedElement->Visible)
+		if(!DiedElement->Active)
 			CloseWindows(false);
 
 		// Show respawn instructions
@@ -697,7 +697,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		DiedElement->Size = Graphics.CurrentSize;
 		DiedElement->CalculateBounds();
-		DiedElement->SetVisible(true);
+		DiedElement->SetActive(true);
 		DiedElement->Render();
 	}
 }
@@ -766,7 +766,7 @@ void _HUD::ToggleChat() {
 		CloseChat();
 	}
 	else {
-		ChatElement->SetVisible(true);
+		ChatElement->SetActive(true);
 		ChatTextBox->ResetCursor();
 		FocusedElement = ChatTextBox;
 	}
@@ -779,7 +779,7 @@ void _HUD::ToggleTeleport() {
 	if(!Player->CanTeleport())
 		return;
 
-	if(!Player->WaitForServer && !TeleportElement->Visible) {
+	if(!Player->WaitForServer && !TeleportElement->Active) {
 		CloseWindows(true);
 		PlayState.SendStatus(_Object::STATUS_TELEPORT);
 		Player->WaitForServer = true;
@@ -795,12 +795,12 @@ void _HUD::ToggleInventory() {
 	if(Player->WaitForServer || !Player->CanOpenInventory())
 		return;
 
-	if(!InventoryElement->Visible) {
+	if(!InventoryElement->Active) {
 		CloseWindows(true);
 
-		EquipmentElement->SetVisible(true);
-		InventoryElement->SetVisible(true);
-		CharacterElement->SetVisible(true);
+		EquipmentElement->SetActive(true);
+		InventoryElement->SetActive(true);
+		CharacterElement->SetActive(true);
 		PlayState.SendStatus(_Object::STATUS_INVENTORY);
 	}
 	else {
@@ -813,7 +813,7 @@ void _HUD::ToggleTrade() {
 	if(Player->WaitForServer || !Player->CanOpenTrade())
 		return;
 
-	if(!TradeElement->Visible) {
+	if(!TradeElement->Active) {
 		CloseWindows(true);
 		InitTrade();
 	}
@@ -827,7 +827,7 @@ void _HUD::ToggleSkills() {
 	if(Player->WaitForServer || !Player->CanOpenInventory())
 		return;
 
-	if(!SkillsElement->Visible) {
+	if(!SkillsElement->Active) {
 		CloseWindows(true);
 		InitSkills();
 	}
@@ -841,7 +841,7 @@ void _HUD::ToggleParty() {
 	if(Player->WaitForServer || !Player->CanOpenParty())
 		return;
 
-	if(!PartyElement->Visible) {
+	if(!PartyElement->Active) {
 		CloseWindows(true);
 		InitParty();
 	}
@@ -873,7 +873,7 @@ void _HUD::ToggleCharacterStats() {
 	if(!Player->Battle)
 		return;
 
-	CharacterElement->SetVisible(!CharacterElement->Visible);
+	CharacterElement->SetActive(!CharacterElement->Active);
 }
 
 // Initialize the vendor
@@ -881,9 +881,9 @@ void _HUD::InitVendor() {
 	Cursor.Reset();
 
 	// Open inventory
-	EquipmentElement->SetVisible(true);
-	InventoryElement->SetVisible(true);
-	VendorElement->SetVisible(true);
+	EquipmentElement->SetActive(true);
+	InventoryElement->SetActive(true);
+	VendorElement->SetActive(true);
 }
 
 // Initialize the trade system
@@ -892,9 +892,9 @@ void _HUD::InitTrade() {
 		return;
 
 	Player->WaitingForTrade = true;
-	EquipmentElement->SetVisible(true);
-	InventoryElement->SetVisible(true);
-	TradeElement->SetVisible(true);
+	EquipmentElement->SetActive(true);
+	InventoryElement->SetActive(true);
+	TradeElement->SetActive(true);
 
 	// Send request to server
 	SendTradeRequest();
@@ -919,17 +919,17 @@ void _HUD::InitTrader() {
 	else
 		Assets.Elements["button_trader_accept"]->SetEnabled(true);
 
-	TraderElement->SetVisible(true);
+	TraderElement->SetActive(true);
 }
 
 // Initialize the blacksmith
 void _HUD::InitBlacksmith() {
 	Cursor.Reset();
 
-	EquipmentElement->SetVisible(true);
-	InventoryElement->SetVisible(true);
-	BlacksmithElement->SetVisible(true);
-	BlacksmithCost->SetVisible(false);
+	EquipmentElement->SetActive(true);
+	InventoryElement->SetActive(true);
+	BlacksmithElement->SetActive(true);
+	BlacksmithCost->SetActive(false);
 	Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
 	UpgradeSlot.BagType = _Bag::BagType::NONE;
 }
@@ -1047,8 +1047,8 @@ void _HUD::InitSkills() {
 	PlayState.Stats->Database->CloseQuery();
 
 	SkillsElement->CalculateBounds();
-	SkillsElement->SetVisible(true);
-	CharacterElement->SetVisible(true);
+	SkillsElement->SetActive(true);
+	CharacterElement->SetActive(true);
 
 	RefreshSkillButtons();
 	Cursor.Reset();
@@ -1060,7 +1060,7 @@ void _HUD::InitSkills() {
 void _HUD::InitParty() {
 	Cursor.Reset();
 
-	PartyElement->SetVisible(true);
+	PartyElement->SetActive(true);
 	PartyTextBox->Text = Player->PartyName;
 	PartyTextBox->CursorPosition = PartyTextBox->Text.size();
 	PartyTextBox->ResetCursor();
@@ -1069,30 +1069,30 @@ void _HUD::InitParty() {
 
 // Closes the chat window
 void _HUD::CloseChat() {
-	ChatElement->SetVisible(false);
+	ChatElement->SetActive(false);
 	ChatTextBox->Clear();
 	FocusedElement = nullptr;
 }
 
 // Close inventory screen
 bool _HUD::CloseInventory() {
-	bool WasOpen = InventoryElement->Visible;
+	bool WasOpen = InventoryElement->Active;
 	Cursor.Reset();
-	EquipmentElement->SetVisible(false);
-	InventoryElement->SetVisible(false);
-	CharacterElement->SetVisible(false);
+	EquipmentElement->SetActive(false);
+	InventoryElement->SetActive(false);
+	CharacterElement->SetActive(false);
 
 	return WasOpen;
 }
 
 // Close the vendor
 bool _HUD::CloseVendor() {
-	bool WasOpen = VendorElement->Visible;
+	bool WasOpen = VendorElement->Active;
 	CloseInventory();
 	if(Player)
 		Player->Vendor = nullptr;
 
-	VendorElement->SetVisible(false);
+	VendorElement->SetActive(false);
 	Cursor.Reset();
 
 	return WasOpen;
@@ -1100,9 +1100,9 @@ bool _HUD::CloseVendor() {
 
 // Close the skills screen
 bool _HUD::CloseSkills() {
-	bool WasOpen = SkillsElement->Visible;
+	bool WasOpen = SkillsElement->Active;
 
-	SkillsElement->SetVisible(false);
+	SkillsElement->SetActive(false);
 	Cursor.Reset();
 
 	return WasOpen;
@@ -1110,9 +1110,9 @@ bool _HUD::CloseSkills() {
 
 // Close party screen
 bool _HUD::CloseParty() {
-	bool WasOpen = PartyElement->Visible;
+	bool WasOpen = PartyElement->Active;
 
-	PartyElement->SetVisible(false);
+	PartyElement->SetActive(false);
 	Cursor.Reset();
 
 	return WasOpen;
@@ -1120,8 +1120,8 @@ bool _HUD::CloseParty() {
 
 // Cancel teleport
 bool _HUD::CloseTeleport() {
-	bool WasOpen = TeleportElement->Visible;
-	TeleportElement->SetVisible(false);
+	bool WasOpen = TeleportElement->Active;
+	TeleportElement->SetActive(false);
 
 	return WasOpen;
 }
@@ -1129,11 +1129,11 @@ bool _HUD::CloseTeleport() {
 // Closes the trade system
 bool _HUD::CloseTrade(bool SendNotify) {
 
-	bool WasOpen = TradeElement->Visible;
+	bool WasOpen = TradeElement->Active;
 
 	// Close inventory
 	CloseInventory();
-	TradeElement->SetVisible(false);
+	TradeElement->SetActive(false);
 	FocusedElement = nullptr;
 
 	// Notify server
@@ -1150,8 +1150,8 @@ bool _HUD::CloseTrade(bool SendNotify) {
 
 // Close the trader
 bool _HUD::CloseTrader() {
-	bool WasOpen = TraderElement->Visible;
-	TraderElement->SetVisible(false);
+	bool WasOpen = TraderElement->Active;
+	TraderElement->SetActive(false);
 	Cursor.Reset();
 
 	if(Player)
@@ -1162,10 +1162,10 @@ bool _HUD::CloseTrader() {
 
 // Close the blacksmith
 bool _HUD::CloseBlacksmith() {
-	bool WasOpen = BlacksmithElement->Visible;
+	bool WasOpen = BlacksmithElement->Active;
 	CloseInventory();
 
-	BlacksmithElement->SetVisible(false);
+	BlacksmithElement->SetActive(false);
 	Cursor.Reset();
 
 	if(Player)
@@ -1247,7 +1247,7 @@ void _HUD::DrawHudEffects() {
 
 // Draw the teleport sequence
 void _HUD::DrawTeleport() {
-	if(!TeleportElement->Visible)
+	if(!TeleportElement->Active)
 		return;
 
 	TeleportElement->Render();
@@ -1259,7 +1259,7 @@ void _HUD::DrawTeleport() {
 
 // Draws the player's inventory
 void _HUD::DrawInventory() {
-	if(!InventoryElement->Visible)
+	if(!InventoryElement->Active)
 		return;
 
 	EquipmentElement->Render();
@@ -1322,7 +1322,7 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 // Draw the vendor
 void _HUD::DrawVendor() {
 	if(!Player->Vendor) {
-		VendorElement->Visible = false;
+		VendorElement->Active = false;
 		return;
 	}
 
@@ -1354,7 +1354,7 @@ void _HUD::DrawVendor() {
 
 // Draw the trade screen
 void _HUD::DrawTrade() {
-	if(!TradeElement->Visible)
+	if(!TradeElement->Active)
 		return;
 
 	TradeElement->Render();
@@ -1402,7 +1402,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 // Draw the trader screen
 void _HUD::DrawTrader() {
 	if(!Player->Trader) {
-		TraderElement->Visible = false;
+		TraderElement->Active = false;
 		return;
 	}
 
@@ -1446,7 +1446,7 @@ void _HUD::DrawTrader() {
 // Draw the blacksmith
 void _HUD::DrawBlacksmith() {
 	if(!Player->Blacksmith) {
-		BlacksmithElement->Visible = false;
+		BlacksmithElement->Active = false;
 		return;
 	}
 
@@ -1475,7 +1475,7 @@ void _HUD::DrawBlacksmith() {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
-			BlacksmithCost->SetVisible(true);
+			BlacksmithCost->SetActive(true);
 			UpgradeButton->SetEnabled(true);
 
 			// Get cost
@@ -1514,7 +1514,7 @@ void _HUD::DrawBlacksmith() {
 			UpgradeButton->SetEnabled(false);
 	}
 	else {
-		BlacksmithCost->SetVisible(false);
+		BlacksmithCost->SetActive(false);
 		UpgradeButton->SetEnabled(false);
 	}
 
@@ -1522,7 +1522,7 @@ void _HUD::DrawBlacksmith() {
 
 // Draw the action bar
 void _HUD::DrawActionBar() {
-	if(!Player || !ActionBarElement->Visible)
+	if(!Player || !ActionBarElement->Active)
 		return;
 
 	ActionBarElement->Render();
@@ -1553,7 +1553,7 @@ void _HUD::DrawActionBar() {
 
 // Draw the character stats page
 void _HUD::DrawCharacterStats() {
-	if(!CharacterElement->Visible)
+	if(!CharacterElement->Active)
 		return;
 
 	CharacterElement->Render();
@@ -1741,7 +1741,7 @@ void _HUD::DrawCharacterStats() {
 
 // Draws the skill page
 void _HUD::DrawSkills() {
-	if(!SkillsElement->Visible)
+	if(!SkillsElement->Active)
 		return;
 
 	SkillsElement->Render();
@@ -1771,7 +1771,7 @@ void _HUD::DrawSkills() {
 
 // Draw the party screen
 void _HUD::DrawParty() {
-	if(!PartyElement->Visible)
+	if(!PartyElement->Active)
 		return;
 
 	PartyElement->Render();
@@ -1779,7 +1779,7 @@ void _HUD::DrawParty() {
 
 // Draw hud message
 void _HUD::DrawMessage() {
-	if(!MessageElement->Visible)
+	if(!MessageElement->Active)
 		return;
 
 	// Get time left
@@ -1795,7 +1795,7 @@ void _HUD::DrawMessage() {
 		MessageElement->Render();
 	}
 	else {
-		MessageElement->SetVisible(false);
+		MessageElement->SetActive(false);
 	}
 }
 
@@ -1810,7 +1810,7 @@ void _HUD::DrawRecentItems() {
 	if(TimeLeft < HUD_RECENTITEM_FADETIME)
 		RecentItemsElement->SetFade((float)(TimeLeft / HUD_RECENTITEM_FADETIME));
 
-	RecentItemsElement->SetVisible(true);
+	RecentItemsElement->SetActive(true);
 	RecentItemsElement->Render();
 
 	// Draw items
@@ -1836,13 +1836,13 @@ void _HUD::DrawRecentItems() {
 		DrawPosition.y += RecentItem.Item->Texture->Size.y + 5;
 	}
 
-	RecentItemsElement->SetVisible(false);
+	RecentItemsElement->SetActive(false);
 }
 
 // Set hud message
 void _HUD::SetMessage(const std::string &Text) {
 	if(!Text.length()) {
-		MessageElement->SetVisible(false);
+		MessageElement->SetActive(false);
 		return;
 	}
 
@@ -1852,18 +1852,18 @@ void _HUD::SetMessage(const std::string &Text) {
 	_TextBounds Bounds;
 	MessageLabel->Font->GetStringDimensions(Text, Bounds, true);
 	MessageElement->Size = glm::vec2(Bounds.Width + 100, Bounds.AboveBase + Bounds.BelowBase + 26);
-	MessageElement->SetVisible(true);
+	MessageElement->SetActive(true);
 	MessageElement->CalculateBounds();
 }
 
 // Show the teleport window
 void _HUD::StartTeleport() {
-	TeleportElement->SetVisible(true);
+	TeleportElement->SetActive(true);
 }
 
 // Stop teleporting
 void _HUD::StopTeleport() {
-	TeleportElement->SetVisible(false);
+	TeleportElement->SetActive(false);
 }
 
 // Draws the item under the cursor
@@ -2042,18 +2042,18 @@ void _HUD::RefreshSkillButtons() {
 			// Get skill
 			uint32_t SkillID = (uint32_t)Element->Parent->Index;
 			if(SkillPointsRemaining <= 0 || Player->Skills[SkillID] >= Player->Stats->Items[SkillID]->MaxLevel)
-				Element->SetVisible(false);
+				Element->SetActive(false);
 			else
-				Element->SetVisible(true);
+				Element->SetActive(true);
 		}
 		else if(Element->ID == "button_skills_minus") {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)Element->Parent->Index;
 			if(Player->Skills[SkillID] == 0)
-				Element->SetVisible(false);
+				Element->SetActive(false);
 			else
-				Element->SetVisible(true);
+				Element->SetActive(true);
 		}
 	}
 }
@@ -2079,7 +2079,7 @@ void _HUD::SendTradeCancel() {
 
 // Make sure the trade gold box is valid and send gold to player
 void _HUD::ValidateTradeGold() {
-	if(!Player || !TradeElement->Visible)
+	if(!Player || !TradeElement->Active)
 		return;
 
 	_Element *GoldTextBox = Assets.Elements["textbox_trade_gold_yours"];
@@ -2106,7 +2106,7 @@ void _HUD::ValidateTradeGold() {
 
 // Send party password to server and close screen
 void _HUD::SendPartyInfo() {
-	if(!Player || !PartyElement->Visible)
+	if(!Player || !PartyElement->Active)
 		return;
 
 	// Send info
@@ -2144,8 +2144,8 @@ void _HUD::ResetAcceptButton() {
 
 // Resets upper trade window status
 void _HUD::ResetTradeTheirsWindow() {
-	TradeTheirsElement->SetVisible(false);
-	Assets.Elements["label_trade_status"]->SetVisible(true);
+	TradeTheirsElement->SetActive(false);
+	Assets.Elements["label_trade_status"]->SetActive(true);
 	Assets.Elements["textbox_trade_gold_theirs"]->Enabled = false;
 	Assets.Elements["textbox_trade_gold_theirs"]->SetText("0");
 	Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
@@ -2208,12 +2208,12 @@ bool _HUD::IsTypingGold() {
 
 // Return true if player is typing in the party screen
 bool _HUD::IsTypingParty() {
-	return PartyElement->Visible;
+	return PartyElement->Active;
 }
 
 // Return true if the chatbox is open
 bool _HUD::IsChatting() {
-	return ChatTextBox->Visible;
+	return ChatTextBox->Active;
 }
 
 // Set chat textbox string based on history
@@ -2254,11 +2254,11 @@ void _HUD::SetActionBarSize(size_t Size) {
 
 	// Set all off
 	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
-		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetVisible(false);
+		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(false);
 
 	// Turn on
 	for(size_t i = 0; i < Size; i++)
-		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetVisible(true);
+		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(true);
 
 	// Center actionbar
 	_Element *Button = Assets.Elements["button_actionbar_0"];
@@ -2375,7 +2375,7 @@ void _HUD::UpdateLabels() {
 		Assets.Elements["label_hud_party"]->Text = "No Party";
 
 	// Update hardcore status
-	Assets.Elements["label_hud_hardcore"]->SetVisible(Player->Hardcore);
+	Assets.Elements["label_hud_hardcore"]->SetActive(Player->Hardcore);
 
 	// Update gold
 	Buffer << Player->Gold << " Gold";

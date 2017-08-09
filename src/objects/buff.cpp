@@ -32,7 +32,7 @@
 void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 	_Element *TooltipElement = Assets.Elements["element_buffs_tooltip"];
 	_Element *TooltipName = Assets.Elements["label_buffs_tooltip_name"];
-	TooltipElement->SetVisible(true);
+	TooltipElement->SetActive(true);
 
 	// Set label values
 	TooltipName->Text = Name;
@@ -57,7 +57,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 
 	// Render tooltip
 	TooltipElement->Render();
-	TooltipElement->SetVisible(false);
+	TooltipElement->SetActive(false);
 
 	// Set draw position to center of window
 	glm::vec2 DrawPosition(TooltipElement->Size.x / 2 + WindowOffset.x, (int)(TooltipName->Bounds.End.y + 40));

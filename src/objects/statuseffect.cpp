@@ -72,7 +72,7 @@ _Element *_StatusEffect::CreateUIElement(_Element *Parent) {
 	Element->Type = _Element::ELEMENT;
 	Element->Size = glm::vec2(Buff->Texture->Size);
 	Element->Alignment = LEFT_TOP;
-	Element->Visible = true;
+	Element->Active = true;
 	Element->Index = 0;
 	Element->UserData = (void *)this;
 	Element->Parent = Parent;

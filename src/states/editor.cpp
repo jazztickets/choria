@@ -55,8 +55,8 @@ _EditorState::_EditorState() :
 
 // Initializes the state
 void _EditorState::Init() {
-	Graphics.Element->SetVisible(false);
-	Graphics.Element->Visible = true;
+	Graphics.Element->SetActive(false);
+	Graphics.Element->Active = true;
 
 	Audio.StopMusic();
 
@@ -75,12 +75,12 @@ void _EditorState::Init() {
 	ResizeMaxYTextBox = Assets.Elements["textbox_editor_resizemap_maxy"];
 	SaveMapTextBox = Assets.Elements["textbox_editor_savemap"];
 	LoadMapTextBox = Assets.Elements["textbox_editor_loadmap"];
-	ButtonBarElement->SetVisible(true);
-	TexturesElement->SetVisible(false);
-	NewMapElement->SetVisible(false);
-	ResizeMapElement->SetVisible(false);
-	SaveMapElement->SetVisible(false);
-	LoadMapElement->SetVisible(false);
+	ButtonBarElement->SetActive(true);
+	TexturesElement->SetActive(false);
+	NewMapElement->SetActive(false);
+	ResizeMapElement->SetActive(false);
+	SaveMapElement->SetActive(false);
+	LoadMapElement->SetActive(false);
 	IgnoreFirstChar = false;
 
 	// Load stats database
@@ -144,16 +144,16 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 			if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 				CloseWindows();
 			else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
-				if(NewMapElement->Visible) {
+				if(NewMapElement->Active) {
 					CreateMap();
 				}
-				else if(ResizeMapElement->Visible) {
+				else if(ResizeMapElement->Active) {
 					ResizeMap();
 				}
-				else if(SaveMapElement->Visible) {
+				else if(SaveMapElement->Active) {
 					SaveMap();
 				}
-				else if(LoadMapElement->Visible) {
+				else if(LoadMapElement->Active) {
 					LoadMap();
 				}
 			}
@@ -617,7 +617,7 @@ void _EditorState::GetDrawBounds(glm::ivec2 &Start, glm::ivec2 &End) {
 
 // Toggle new map screen
 void _EditorState::ToggleNewMap() {
-	if(!NewMapElement->Visible) {
+	if(!NewMapElement->Active) {
 		CloseWindows();
 		InitNewMap();
 	}
@@ -628,7 +628,7 @@ void _EditorState::ToggleNewMap() {
 
 // Toggle resize map screen
 void _EditorState::ToggleResize() {
-	if(!ResizeMapElement->Visible) {
+	if(!ResizeMapElement->Active) {
 		CloseWindows();
 		InitResize();
 	}
@@ -639,7 +639,7 @@ void _EditorState::ToggleResize() {
 
 // Show the texture select screen
 void _EditorState::ToggleTextures() {
-	if(!TexturesElement->Visible) {
+	if(!TexturesElement->Active) {
 		CloseWindows();
 		InitTextures();
 	}
@@ -653,7 +653,7 @@ void _EditorState::ToggleSaveMap() {
 	if(!Map)
 		return;
 
-	if(!SaveMapElement->Visible) {
+	if(!SaveMapElement->Active) {
 		CloseWindows();
 		InitSaveMap();
 	}
@@ -664,7 +664,7 @@ void _EditorState::ToggleSaveMap() {
 
 // Show load map screen
 void _EditorState::ToggleLoadMap(const std::string &TempPath) {
-	if(!LoadMapElement->Visible) {
+	if(!LoadMapElement->Active) {
 		CloseWindows();
 		InitLoadMap(TempPath);
 	}
@@ -717,12 +717,12 @@ void _EditorState::InitTextures() {
 	}
 
 	TexturesElement->CalculateBounds();
-	TexturesElement->SetVisible(true);
+	TexturesElement->SetActive(true);
 }
 
 // Init new map
 void _EditorState::InitNewMap() {
-	NewMapElement->SetVisible(true);
+	NewMapElement->SetActive(true);
 
 	_Element *FilenameTextBox = Assets.Elements["textbox_editor_newmap_filename"];
 	FilenameTextBox->SetText("");
@@ -737,7 +737,7 @@ void _EditorState::InitResize() {
 	if(!Map)
 		return;
 
-	ResizeMapElement->SetVisible(true);
+	ResizeMapElement->SetActive(true);
 
 	ResizeMinXTextBox->SetText("0");
 	ResizeMinYTextBox->SetText("0");
@@ -750,7 +750,7 @@ void _EditorState::InitSaveMap() {
 	if(!Map)
 		return;
 
-	SaveMapElement->SetVisible(true);
+	SaveMapElement->SetActive(true);
 	FocusedElement = SaveMapTextBox;
 
 	SaveMapTextBox->SetText(FilePath);
@@ -758,7 +758,7 @@ void _EditorState::InitSaveMap() {
 
 // Init load map
 void _EditorState::InitLoadMap(const std::string &TempPath) {
-	LoadMapElement->SetVisible(true);
+	LoadMapElement->SetActive(true);
 	FocusedElement = LoadMapTextBox;
 
 	if(TempPath != "")
@@ -769,13 +769,13 @@ void _EditorState::InitLoadMap(const std::string &TempPath) {
 
 // Close all open windows
 bool _EditorState::CloseWindows() {
-	bool WasOpen = TexturesElement->Visible | NewMapElement->Visible | ResizeMapElement->Visible | SaveMapElement->Visible | LoadMapElement->Visible;
+	bool WasOpen = TexturesElement->Active | NewMapElement->Active | ResizeMapElement->Active | SaveMapElement->Active | LoadMapElement->Active;
 
-	TexturesElement->SetVisible(false);
-	NewMapElement->SetVisible(false);
-	ResizeMapElement->SetVisible(false);
-	SaveMapElement->SetVisible(false);
-	LoadMapElement->SetVisible(false);
+	TexturesElement->SetActive(false);
+	NewMapElement->SetActive(false);
+	ResizeMapElement->SetActive(false);
+	SaveMapElement->SetActive(false);
+	LoadMapElement->SetActive(false);
 	FocusedElement = nullptr;
 
 	return WasOpen;

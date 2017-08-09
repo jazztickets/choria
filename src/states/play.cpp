@@ -73,8 +73,8 @@ void _PlayState::Init() {
 	Time = 0.0;
 	IgnoreFirstChar = false;
 
-	Graphics.Element->SetVisible(false);
-	Graphics.Element->Visible = true;
+	Graphics.Element->SetActive(false);
+	Graphics.Element->Active = true;
 
 	Stats = new _Stats();
 
