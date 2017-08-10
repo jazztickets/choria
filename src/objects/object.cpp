@@ -761,7 +761,7 @@ void _Object::CreateBattleElement(_Element *Parent) {
 		throw std::runtime_error("_Object::CreateBattleElement: BattleElement already exists!");
 
 	BattleElement = new _Element();
-	BattleElement->ID = "battle_element";
+	BattleElement->Name = "battle_element";
 	BattleElement->Size = glm::vec2(64, 64);
 	BattleElement->Offset = BattleOffset;
 	BattleElement->Alignment = CENTER_MIDDLE;

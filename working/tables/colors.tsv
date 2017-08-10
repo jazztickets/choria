@@ -1,4 +1,4 @@
-identifier	red	green	blue	alpha
+name	red	green	blue	alpha
 white	1	1	1	1
 black	0	0	0	1
 red	1	0	0	1

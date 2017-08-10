@@ -235,34 +235,34 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Check button bar
 		if(ButtonBarElement->GetClickedElement()) {
-			if(ButtonBarElement->GetClickedElement()->ID == "button_buttonbar_join") {
+			if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_join") {
 				PlayState.SendJoinRequest();
 			}
-			else if(ButtonBarElement->GetClickedElement()->ID == "button_buttonbar_inventory") {
+			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_inventory") {
 				ToggleInventory();
 			}
-			else if(ButtonBarElement->GetClickedElement()->ID == "button_buttonbar_trade") {
+			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_trade") {
 				ToggleTrade();
 			}
-			else if(ButtonBarElement->GetClickedElement()->ID == "button_buttonbar_party") {
+			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_party") {
 				ToggleParty();
 			}
-			else if(ButtonBarElement->GetClickedElement()->ID == "button_buttonbar_skills") {
+			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_skills") {
 				ToggleSkills();
 			}
-			else if(ButtonBarElement->GetClickedElement()->ID == "button_buttonbar_menu") {
+			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_menu") {
 				ToggleInGameMenu(true);
 			}
-			else if(ButtonBarElement->GetClickedElement()->ID == "button_buttonbar_fullscreen") {
+			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_fullscreen") {
 				Menu.SetFullscreen(!Config.Fullscreen);
 			}
 		}
 		// Check skill level up/down
 		else if(SkillsElement->GetClickedElement()) {
-			if(SkillsElement->GetClickedElement()->ID == "button_skills_plus") {
+			if(SkillsElement->GetClickedElement()->Name == "button_skills_plus") {
 				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, 1 + 4 * Input.ModKeyDown(KMOD_SHIFT));
 			}
-			else if(SkillsElement->GetClickedElement()->ID == "button_skills_minus") {
+			else if(SkillsElement->GetClickedElement()->Name == "button_skills_minus") {
 				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, -(1 + 4 * Input.ModKeyDown(KMOD_SHIFT)));
 			}
 		}
@@ -966,7 +966,7 @@ void _HUD::InitSkills() {
 
 		// Add skill icon
 		_Element *Button = new _Element();
-		Button->ID = "button_skills_skill";
+		Button->Name = "button_skills_skill";
 		Button->Parent = SkillsElement;
 		Button->Offset = Offset;
 		Button->Size = Skill->Texture->Size;
@@ -977,7 +977,7 @@ void _HUD::InitSkills() {
 
 		// Add level label
 		_Element *LevelLabel = new _Element();
-		LevelLabel->ID = "label_skills_level";
+		LevelLabel->Name = "label_skills_level";
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = LevelOffset;
 		LevelLabel->Alignment = CENTER_BASELINE;
@@ -988,7 +988,7 @@ void _HUD::InitSkills() {
 
 		// Add plus button
 		_Element *PlusButton = new _Element();
-		PlusButton->ID = "button_skills_plus";
+		PlusButton->Name = "button_skills_plus";
 		PlusButton->Parent = Button;
 		PlusButton->Size = glm::vec2(16, 16);
 		PlusButton->Offset = PlusOffset;
@@ -999,7 +999,7 @@ void _HUD::InitSkills() {
 
 		// Add minus button
 		_Element *MinusButton = new _Element();
-		MinusButton->ID = "button_skills_minus";
+		MinusButton->Name = "button_skills_minus";
 		MinusButton->Parent = Button;
 		MinusButton->Size = glm::vec2(16, 16);
 		MinusButton->Offset = MinusOffset;
@@ -2026,11 +2026,11 @@ void _HUD::RefreshSkillButtons() {
 
 	// Loop through buttons
 	for(auto &Element : SkillsElement->Children) {
-		if(Element->ID == "label_skills_level") {
+		if(Element->Name == "label_skills_level") {
 			uint32_t SkillID = (uint32_t)Element->Index;
 			Element->Text = std::to_string(Player->Skills[SkillID]);
 		}
-		else if(Element->ID == "button_skills_plus") {
+		else if(Element->Name == "button_skills_plus") {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)Element->Parent->Index;
@@ -2039,7 +2039,7 @@ void _HUD::RefreshSkillButtons() {
 			else
 				Element->SetActive(true);
 		}
-		else if(Element->ID == "button_skills_minus") {
+		else if(Element->Name == "button_skills_minus") {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)Element->Parent->Index;

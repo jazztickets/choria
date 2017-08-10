@@ -74,7 +74,7 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *Parent) :
 	std::string HoverStyleName;
 	std::string DisabledStyleName;
 	std::string FontName;
-	AssignAttributeString(Node, "id", ID);
+	AssignAttributeString(Node, "id", Name);
 	AssignAttributeString(Node, "texture", TextureName);
 	AssignAttributeString(Node, "style", StyleName);
 	AssignAttributeString(Node, "hover_style", HoverStyleName);
@@ -94,21 +94,21 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *Parent) :
 	Node->QueryIntAttribute("index", &Index);
 	Node->QueryIntAttribute("debug", &Debug);
 
-	// Check identifiers
-	if(Assets.Elements.find(ID) != Assets.Elements.end())
-		throw std::runtime_error("Duplicate element identifier: " + ID);
+	// Check ids
+	if(Assets.Elements.find(Name) != Assets.Elements.end())
+		throw std::runtime_error("Duplicate element id: " + Name);
 	if(TextureName != "" && Assets.Textures.find(TextureName) == Assets.Textures.end())
-		throw std::runtime_error("Unable to find texture: " + TextureName + " for image: " + ID);
+		throw std::runtime_error("Unable to find texture: " + TextureName + " for image: " + Name);
 	if(StyleName != "" && Assets.Styles.find(StyleName) == Assets.Styles.end())
-		throw std::runtime_error("Unable to find style: " + StyleName + " for element: " + ID);
+		throw std::runtime_error("Unable to find style: " + StyleName + " for element: " + Name);
 	if(HoverStyleName != "" && Assets.Styles.find(HoverStyleName) == Assets.Styles.end())
-		throw std::runtime_error("Unable to find hover_style: " + HoverStyleName + " for element: " + ID);
+		throw std::runtime_error("Unable to find hover_style: " + HoverStyleName + " for element: " + Name);
 	if(DisabledStyleName != "" && Assets.Styles.find(DisabledStyleName) == Assets.Styles.end())
-		throw std::runtime_error("Unable to find disabled_style: " + DisabledStyleName + " for element: " + ID);
+		throw std::runtime_error("Unable to find disabled_style: " + DisabledStyleName + " for element: " + Name);
 	if(ColorName != "" && Assets.Colors.find(ColorName) == Assets.Colors.end())
-		throw std::runtime_error("Unable to find color: " + ColorName + " for element: " + ID);
+		throw std::runtime_error("Unable to find color: " + ColorName + " for element: " + Name);
 	if(FontName != "" && Assets.Fonts.find(FontName) == Assets.Fonts.end())
-		throw std::runtime_error("Unable to find font: " + FontName + " for element: " + ID);
+		throw std::runtime_error("Unable to find font: " + FontName + " for element: " + Name);
 
 	// Assign pointers
 	Texture = Assets.Textures[TextureName];
@@ -119,8 +119,8 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *Parent) :
 	Font = Assets.Fonts[FontName];
 
 	// Assign to list
-	if(ID != "")
-		Assets.Elements[ID] = this;
+	if(Name != "")
+		Assets.Elements[Name] = this;
 
 	// Load children
 	for(tinyxml2::XMLElement *ChildNode = Node->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
@@ -146,15 +146,15 @@ void _Element::SerializeElement(tinyxml2::XMLDocument &Document, tinyxml2::XMLEl
 
 	// Set attributes
 	if(ParentNode) {
-		Node->SetAttribute("id", ID.c_str());
+		Node->SetAttribute("id", Name.c_str());
 		if(Texture)
-			Node->SetAttribute("texture", Texture->Identifier.c_str());
+			Node->SetAttribute("texture", Texture->Name.c_str());
 		if(Style)
-			Node->SetAttribute("style", Style->Identifier.c_str());
+			Node->SetAttribute("style", Style->Name.c_str());
 		if(HoverStyle)
-			Node->SetAttribute("hover_style", HoverStyle->Identifier.c_str());
+			Node->SetAttribute("hover_style", HoverStyle->Name.c_str());
 		if(DisabledStyle)
-			Node->SetAttribute("disabled_style", DisabledStyle->Identifier.c_str());
+			Node->SetAttribute("disabled_style", DisabledStyle->Name.c_str());
 		if(ColorName.size())
 			Node->SetAttribute("color", ColorName.c_str());
 		if(Font)
@@ -353,35 +353,7 @@ void _Element::Render() const {
 
 	if(Enabled) {
 		if(Style) {
-			if(Style->Texture) {
-				Graphics.SetProgram(Style->Program);
-				Graphics.SetVBO(VBO_NONE);
-				Graphics.SetColor(Style->TextureColor);
-				Graphics.DrawImage(Bounds, Style->Texture, Style->Stretch);
-			}
-			else if(Atlas) {
-				Graphics.SetProgram(Style->Program);
-				Graphics.SetVBO(VBO_NONE);
-				Graphics.SetColor(Style->TextureColor);
-				Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
-			}
-			else {
-				Graphics.SetProgram(Style->Program);
-				Graphics.SetVBO(VBO_NONE);
-				if(Style->HasBackgroundColor) {
-					glm::vec4 RenderColor(Style->BackgroundColor);
-					RenderColor.a *= Fade;
-					Graphics.SetColor(RenderColor);
-					Graphics.DrawRectangle(Bounds, true);
-				}
-
-				if(Style->HasBorderColor) {
-					glm::vec4 RenderColor(Style->BorderColor);
-					RenderColor.a *= Fade;
-					Graphics.SetColor(RenderColor);
-					Graphics.DrawRectangle(Bounds, false);
-				}
-			}
+			DrawStyle(Style);
 		}
 		else if(Atlas) {
 			Graphics.SetColor(Color);
@@ -398,52 +370,11 @@ void _Element::Render() const {
 
 		// Draw hover texture
 		if(HoverStyle && (Checked || HitElement)) {
-
-			if(HoverStyle->Texture) {
-				Graphics.SetProgram(HoverStyle->Program);
-				Graphics.SetVBO(VBO_NONE);
-				Graphics.SetColor(HoverStyle->TextureColor);
-				Graphics.DrawImage(Bounds, HoverStyle->Texture, Style->Stretch);
-			}
-			else {
-				Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-				Graphics.SetVBO(VBO_NONE);
-				if(HoverStyle->HasBackgroundColor) {
-					Graphics.SetColor(HoverStyle->BackgroundColor);
-					Graphics.DrawRectangle(Bounds, true);
-				}
-
-				if(HoverStyle->HasBorderColor) {
-					Graphics.SetColor(HoverStyle->BorderColor);
-					Graphics.DrawRectangle(Bounds, false);
-				}
-			}
+			DrawStyle(HoverStyle);
 		}
 	}
-	else {
-		if(DisabledStyle) {
-
-			if(DisabledStyle->Texture) {
-				Graphics.SetProgram(DisabledStyle->Program);
-				Graphics.SetVBO(VBO_NONE);
-				Graphics.SetColor(DisabledStyle->TextureColor);
-				Graphics.DrawImage(Bounds, DisabledStyle->Texture, DisabledStyle->Stretch);
-			}
-			else if(Atlas) {
-				Graphics.SetProgram(DisabledStyle->Program);
-				Graphics.SetVBO(VBO_NONE);
-				Graphics.SetColor(DisabledStyle->TextureColor);
-				Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
-			}
-			else {
-				Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-				Graphics.SetVBO(VBO_NONE);
-				Graphics.SetColor(DisabledStyle->BackgroundColor);
-				Graphics.DrawRectangle(Bounds, true);
-				Graphics.SetColor(DisabledStyle->BorderColor);
-				Graphics.DrawRectangle(Bounds, false);
-			}
-		}
+	else if(DisabledStyle) {
+		DrawStyle(DisabledStyle);
 	}
 
 	// Set color
@@ -611,6 +542,35 @@ void _Element::SetWrap(float Width) {
 
 	Texts.clear();
 	Font->BreakupString(Text, Width, Texts);
+}
+
+// Draw an element using a style
+void _Element::DrawStyle(const _Style *DrawStyle) const {
+	Graphics.SetProgram(DrawStyle->Program);
+	Graphics.SetVBO(VBO_NONE);
+	if(DrawStyle->Texture) {
+		Graphics.SetColor(DrawStyle->TextureColor);
+		Graphics.DrawImage(Bounds, DrawStyle->Texture, DrawStyle->Stretch);
+	}
+	else if(Atlas) {
+		Graphics.SetColor(DrawStyle->TextureColor);
+		Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
+	}
+	else {
+		if(DrawStyle->HasBackgroundColor) {
+			glm::vec4 RenderColor(DrawStyle->BackgroundColor);
+			RenderColor.a *= Fade;
+			Graphics.SetColor(RenderColor);
+			Graphics.DrawRectangle(Bounds, true);
+		}
+
+		if(DrawStyle->HasBorderColor) {
+			glm::vec4 RenderColor(DrawStyle->BorderColor);
+			RenderColor.a *= Fade;
+			Graphics.SetColor(RenderColor);
+			Graphics.DrawRectangle(Bounds, false);
+		}
+	}
 }
 
 // Assign a string from xml attribute

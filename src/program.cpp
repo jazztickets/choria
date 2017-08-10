@@ -23,7 +23,8 @@
 #include <graphics.h>
 
 // Load a program from two shaders
-_Program::_Program(const _Shader *VertexShader, const _Shader *FragmentShader, int Attribs) :
+_Program::_Program(const std::string &Name, const _Shader *VertexShader, const _Shader *FragmentShader, int Attribs) :
+	Name(Name),
 	ViewProjectionTransformID(-1),
 	ModelTransformID(-1),
 	LightPositionID(-1),

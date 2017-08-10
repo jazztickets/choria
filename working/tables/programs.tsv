@@ -1,4 +1,4 @@
-identifier	vertex	fragment	attribs
+name	vertex	fragment	attribs
 text	shaders/text.vert	shaders/text.frag	2
 pos	shaders/pos.vert	shaders/pos.frag	1
 pos_uv	shaders/pos_uv.vert	shaders/pos_uv_norm.frag	2

@@ -159,7 +159,7 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 	// Save old texture atlas name
 	std::string OldTextureAtlas = "";
 	if(TileAtlas)
-		OldTextureAtlas = TileAtlas->Texture->Identifier;
+		OldTextureAtlas = TileAtlas->Texture->Name;
 
 	// Delete data
 	CloseAtlas();

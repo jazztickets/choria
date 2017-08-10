@@ -24,7 +24,7 @@
 // Load from file
 _Texture::_Texture(const std::string &Path, bool IsServer, bool Repeat, bool Mipmaps) {
 	if(IsServer) {
-		Identifier = Path;
+		Name = Path;
 		ID = 0;
 		return;
 	}
@@ -37,7 +37,7 @@ _Texture::_Texture(const std::string &Path, bool IsServer, bool Repeat, bool Mip
 	if(Result != PNG_NO_ERROR)
 		throw std::runtime_error("Error loading png: " + FullPath + " reason: " + png_error_string(Result));
 
-	Identifier = Path;
+	Name = Path;
 	Size.x = Png.width;
 	Size.y = Png.height;
 

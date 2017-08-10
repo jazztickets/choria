@@ -72,7 +72,7 @@ struct _Style {
 		Stretch(false) { }
 
 	// Attributes
-	std::string Identifier;
+	std::string Name;
 
 	// Colors
 	glm::vec4 TextureColor;
@@ -126,7 +126,7 @@ class _Element {
 		void SetWrap(float Width);
 
 		// Attributes
-		std::string ID;
+		std::string Name;
 		_Element *Parent;
 		int Index;
 		void *UserData;
@@ -175,6 +175,7 @@ class _Element {
 
 	private:
 
+		void DrawStyle(const _Style *DrawStyle) const;
 		void AssignAttributeString(tinyxml2::XMLElement *Node, const char *Attribute, std::string &String);
 
 		std::list<std::string> Texts;

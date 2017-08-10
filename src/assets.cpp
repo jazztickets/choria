@@ -111,20 +111,20 @@ void _Assets::LoadFonts(const std::string &Path) {
 	while(!File.eof() && File.peek() != EOF) {
 
 		// Read strings
-		std::string Identifier;
+		std::string Name;
 		std::string FontFile;
-		std::string ProgramIdentifier;
-		std::getline(File, Identifier, '\t');
+		std::string ProgramName;
+		std::getline(File, Name, '\t');
 		std::getline(File, FontFile, '\t');
-		std::getline(File, ProgramIdentifier, '\t');
+		std::getline(File, ProgramName, '\t');
 
 		// Check for duplicates
-		if(Fonts[Identifier])
-			throw std::runtime_error(std::string(__FUNCTION__) + " - Duplicate entry: " + Identifier);
+		if(Fonts[Name])
+			throw std::runtime_error(std::string(__FUNCTION__) + " - Duplicate entry: " + Name);
 
 		// Find program
-		if(Programs.find(ProgramIdentifier) == Programs.end())
-		   throw std::runtime_error(std::string(__FUNCTION__) + " - Cannot find program: " + ProgramIdentifier);
+		if(Programs.find(ProgramName) == Programs.end())
+		   throw std::runtime_error(std::string(__FUNCTION__) + " - Cannot find program: " + ProgramName);
 
 		// Get size
 		uint32_t Size;
@@ -133,7 +133,7 @@ void _Assets::LoadFonts(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Load font
-		Fonts[Identifier] = new _Font(Identifier, ASSETS_FONTS_PATH + FontFile, Programs[ProgramIdentifier], Size);
+		Fonts[Name] = new _Font(Name, ASSETS_FONTS_PATH + FontFile, Programs[ProgramName], Size);
 	}
 
 	File.close();
@@ -152,8 +152,8 @@ void _Assets::LoadLayers(const std::string &Path) {
 
 	// Read the file
 	while(!File.eof() && File.peek() != EOF) {
-		std::string Identifier;
-		std::getline(File, Identifier, '\t');
+		std::string Name;
+		std::getline(File, Name, '\t');
 
 		// Get layer
 		_Layer Layer;
@@ -162,7 +162,7 @@ void _Assets::LoadLayers(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Set layer
-		Layers[Identifier] = Layer;
+		Layers[Name] = Layer;
 	}
 
 	File.close();
@@ -181,10 +181,10 @@ void _Assets::LoadPrograms(const std::string &Path) {
 
 	// Read the file
 	while(!File.eof() && File.peek() != EOF) {
-		std::string Identifier;
+		std::string Name;
 		std::string VertexPath;
 		std::string FragmentPath;
-		std::getline(File, Identifier, '\t');
+		std::getline(File, Name, '\t');
 		std::getline(File, VertexPath, '\t');
 		std::getline(File, FragmentPath, '\t');
 
@@ -195,8 +195,8 @@ void _Assets::LoadPrograms(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Check for duplicates
-		if(Programs[Identifier])
-			throw std::runtime_error(std::string(__FUNCTION__) + " - Duplicate entry: " + Identifier);
+		if(Programs[Name])
+			throw std::runtime_error(std::string(__FUNCTION__) + " - Duplicate entry: " + Name);
 
 		// Load vertex shader
 		if(Shaders.find(VertexPath) == Shaders.end())
@@ -207,7 +207,7 @@ void _Assets::LoadPrograms(const std::string &Path) {
 			Shaders[FragmentPath] = new _Shader(FragmentPath, GL_FRAGMENT_SHADER);
 
 		// Create program
-		Programs[Identifier] = new _Program(Shaders[VertexPath], Shaders[FragmentPath], Attribs);
+		Programs[Name] = new _Program(Name, Shaders[VertexPath], Shaders[FragmentPath], Attribs);
 	}
 
 	File.close();
@@ -231,17 +231,17 @@ void _Assets::LoadColors(const std::string &Path) {
 	// Read table
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier;
-		std::getline(File, Identifier, '\t');
+		std::string Name;
+		std::getline(File, Name, '\t');
 
 		File >> Color.r >> Color.g >> Color.b >> Color.a;
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Check for duplicates
-		if(Colors.find(Identifier) != Colors.end())
-			throw std::runtime_error(std::string(__FUNCTION__) + " - Duplicate entry: " + Identifier);
+		if(Colors.find(Name) != Colors.end())
+			throw std::runtime_error(std::string(__FUNCTION__) + " - Duplicate entry: " + Name);
 
-		Colors[Identifier] = Color;
+		Colors[Name] = Color;
 	}
 
 	File.close();
@@ -255,9 +255,9 @@ void _Assets::LoadTextureDirectory(const std::string &Path, bool IsServer, bool 
 
 	// Load textures
 	for(const auto &File : Files.Nodes) {
-		std::string Identifier = Path + File;
-		if(!Assets.Textures[Identifier])
-			Assets.Textures[Identifier] = new _Texture(Identifier, IsServer, Repeat, MipMaps);
+		std::string Name = Path + File;
+		if(!Assets.Textures[Name])
+			Assets.Textures[Name] = new _Texture(Name, IsServer, Repeat, MipMaps);
 	}
 }
 
@@ -301,60 +301,60 @@ void _Assets::LoadStyles(const std::string &Path) {
 	// Read file
 	while(!File.eof() && File.peek() != EOF) {
 
-		std::string Identifier;
-		std::string BackgroundColorIdentifier;
-		std::string BorderColorIdentifier;
-		std::string ProgramIdentifier;
-		std::string TextureIdentifier;
-		std::string TextureColorIdentifier;
-		std::getline(File, Identifier, '\t');
-		std::getline(File, BackgroundColorIdentifier, '\t');
-		std::getline(File, BorderColorIdentifier, '\t');
-		std::getline(File, ProgramIdentifier, '\t');
-		std::getline(File, TextureIdentifier, '\t');
-		std::getline(File, TextureColorIdentifier, '\t');
+		std::string Name;
+		std::string BackgroundColorName;
+		std::string BorderColorName;
+		std::string ProgramName;
+		std::string TextureName;
+		std::string TextureColorName;
+		std::getline(File, Name, '\t');
+		std::getline(File, BackgroundColorName, '\t');
+		std::getline(File, BorderColorName, '\t');
+		std::getline(File, ProgramName, '\t');
+		std::getline(File, TextureName, '\t');
+		std::getline(File, TextureColorName, '\t');
 
 		// Check for color
-		if(BackgroundColorIdentifier != "" && Colors.find(BackgroundColorIdentifier) == Colors.end())
-			throw std::runtime_error("Unable to find color: " + BackgroundColorIdentifier + " for style: " + Identifier);
+		if(BackgroundColorName != "" && Colors.find(BackgroundColorName) == Colors.end())
+			throw std::runtime_error("Unable to find color: " + BackgroundColorName + " for style: " + Name);
 
 		// Check for color
-		if(BorderColorIdentifier != "" && Colors.find(BorderColorIdentifier) == Colors.end())
-			throw std::runtime_error("Unable to find color: " + BorderColorIdentifier + " for style: " + Identifier);
+		if(BorderColorName != "" && Colors.find(BorderColorName) == Colors.end())
+			throw std::runtime_error("Unable to find color: " + BorderColorName + " for style: " + Name);
 
 		// Find program
-		if(Programs.find(ProgramIdentifier) == Programs.end())
-		   throw std::runtime_error("Cannot find program: " + ProgramIdentifier);
+		if(Programs.find(ProgramName) == Programs.end())
+		   throw std::runtime_error("Cannot find program: " + ProgramName);
 
 		bool Stretch;
 		File >> Stretch;
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Get colors
-		glm::vec4 BackgroundColor = Colors[BackgroundColorIdentifier];
-		glm::vec4 BorderColor = Colors[BorderColorIdentifier];
-		glm::vec4 TextureColor = Colors[TextureColorIdentifier];
+		glm::vec4 BackgroundColor = Colors[BackgroundColorName];
+		glm::vec4 BorderColor = Colors[BorderColorName];
+		glm::vec4 TextureColor = Colors[TextureColorName];
 
 		// Get textures
-		const _Texture *Texture = Textures[TextureIdentifier];
+		const _Texture *Texture = Textures[TextureName];
 
 		// Create style
 		_Style *Style = new _Style();
-		Style->Identifier = Identifier;
-		Style->HasBackgroundColor = BackgroundColorIdentifier != "";
-		Style->HasBorderColor = BorderColorIdentifier != "";
+		Style->Name = Name;
+		Style->HasBackgroundColor = BackgroundColorName != "";
+		Style->HasBorderColor = BorderColorName != "";
 		Style->BackgroundColor = BackgroundColor;
 		Style->BorderColor = BorderColor;
-		Style->Program = Programs[ProgramIdentifier];
+		Style->Program = Programs[ProgramName];
 		Style->Texture = Texture;
 		Style->TextureColor = TextureColor;
 		Style->Stretch = Stretch;
 
 		// Check for duplicates
-		if(Styles.find(Identifier) != Styles.end())
-			throw std::runtime_error("Duplicate style identifier: " + Identifier);
+		if(Styles.find(Name) != Styles.end())
+			throw std::runtime_error("Duplicate style Name: " + Name);
 
-		Styles[Identifier] = Style;
+		Styles[Name] = Style;
 	}
 
 	File.close();
