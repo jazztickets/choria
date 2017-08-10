@@ -99,6 +99,7 @@ void _Menu::InitTitle(bool Disconnect) {
 // Init character select screen
 void _Menu::InitCharacters() {
 	ChangeLayout("element_menu_characters");
+	Assets.Elements["element_menu_characters"]->SetClickable(true);
 
 	// Set label
 	_Element *HardcoreLabel = Assets.Elements["label_menu_characters_hardcore"];
@@ -880,7 +881,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 					if(Clicked->Name == "button_characters_delete") {
 						CharactersState = CHARACTERS_DELETE;
-						Assets.Elements["element_menu_character_slots"]->SetClickable(false);
+						Assets.Elements["element_menu_characters"]->SetClickable(false);
 						ConfirmAction();
 						PlayClickSound();
 					}

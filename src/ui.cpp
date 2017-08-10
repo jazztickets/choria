@@ -438,6 +438,35 @@ void _Element::Render() const {
 	}
 }
 
+// Draw an element using a style
+void _Element::DrawStyle(const _Style *DrawStyle) const {
+	Graphics.SetProgram(DrawStyle->Program);
+	Graphics.SetVBO(VBO_NONE);
+	if(DrawStyle->Texture) {
+		Graphics.SetColor(DrawStyle->TextureColor);
+		Graphics.DrawImage(Bounds, DrawStyle->Texture, DrawStyle->Stretch);
+	}
+	else if(Atlas) {
+		Graphics.SetColor(DrawStyle->TextureColor);
+		Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
+	}
+	else {
+		if(DrawStyle->HasBackgroundColor) {
+			glm::vec4 RenderColor(DrawStyle->BackgroundColor);
+			RenderColor.a *= Fade;
+			Graphics.SetColor(RenderColor);
+			Graphics.DrawRectangle(Bounds, true);
+		}
+
+		if(DrawStyle->HasBorderColor) {
+			glm::vec4 RenderColor(DrawStyle->BorderColor);
+			RenderColor.a *= Fade;
+			Graphics.SetColor(RenderColor);
+			Graphics.DrawRectangle(Bounds, false);
+		}
+	}
+}
+
 // Calculate the screen space bounds for the element
 void _Element::CalculateBounds() {
 	Bounds.Start = Offset;
@@ -499,7 +528,7 @@ void _Element::SetDebug(int Debug) {
 	}
 }
 
-// Set clickable flag of element and children. Depth=-1 is full recursion
+// Set clickable/hoverable flag of element and children. Depth=-1 is full recursion
 void _Element::SetClickable(bool Clickable, int Depth) {
 	if(Depth == 0)
 		return;
@@ -542,35 +571,6 @@ void _Element::SetWrap(float Width) {
 
 	Texts.clear();
 	Font->BreakupString(Text, Width, Texts);
-}
-
-// Draw an element using a style
-void _Element::DrawStyle(const _Style *DrawStyle) const {
-	Graphics.SetProgram(DrawStyle->Program);
-	Graphics.SetVBO(VBO_NONE);
-	if(DrawStyle->Texture) {
-		Graphics.SetColor(DrawStyle->TextureColor);
-		Graphics.DrawImage(Bounds, DrawStyle->Texture, DrawStyle->Stretch);
-	}
-	else if(Atlas) {
-		Graphics.SetColor(DrawStyle->TextureColor);
-		Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
-	}
-	else {
-		if(DrawStyle->HasBackgroundColor) {
-			glm::vec4 RenderColor(DrawStyle->BackgroundColor);
-			RenderColor.a *= Fade;
-			Graphics.SetColor(RenderColor);
-			Graphics.DrawRectangle(Bounds, true);
-		}
-
-		if(DrawStyle->HasBorderColor) {
-			glm::vec4 RenderColor(DrawStyle->BorderColor);
-			RenderColor.a *= Fade;
-			Graphics.SetColor(RenderColor);
-			Graphics.DrawRectangle(Bounds, false);
-		}
-	}
 }
 
 // Assign a string from xml attribute
