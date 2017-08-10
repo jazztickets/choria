@@ -373,11 +373,11 @@ end
 
 Skill_Rejuvenation = Base_Spell:New()
 Skill_Rejuvenation.Duration = 5
-Skill_Rejuvenation.CostPerLevel = 10
-Skill_Rejuvenation.ManaCostBase = 20 - Skill_Rejuvenation.CostPerLevel
+Skill_Rejuvenation.CostPerLevel = 5
+Skill_Rejuvenation.ManaCostBase = 5 - Skill_Rejuvenation.CostPerLevel
 
 function Skill_Rejuvenation.GetLevel(self, Level)
-	return 10 * (Level + 2)
+	return 10 * (Level)
 end
 
 function Skill_Rejuvenation.GetDuration(self, Level)
@@ -405,10 +405,10 @@ end
 -- Heal --
 
 Skill_Heal = Base_Spell:New()
-Skill_Heal.HealBase = 100
-Skill_Heal.HealPerLevel = 60
-Skill_Heal.CostPerLevel = 20
-Skill_Heal.ManaCostBase = 40 - Skill_Heal.CostPerLevel
+Skill_Heal.HealBase = 0
+Skill_Heal.HealPerLevel = 100
+Skill_Heal.CostPerLevel = 15
+Skill_Heal.ManaCostBase = 15 - Skill_Heal.CostPerLevel
 
 function Skill_Heal.GetInfo(self, Level)
 
@@ -870,7 +870,7 @@ end
 -- Enfeeble --
 
 Skill_Enfeeble = Base_Spell:New()
-Skill_Enfeeble.PercentPerLevel = 4 
+Skill_Enfeeble.PercentPerLevel = 4
 Skill_Enfeeble.BasePercent = 25 - Skill_Enfeeble.PercentPerLevel
 Skill_Enfeeble.DurationPerLevel = 0.4
 Skill_Enfeeble.Duration = 5 - Skill_Enfeeble.DurationPerLevel

@@ -1024,7 +1024,7 @@ INSERT INTO item VALUES(14,1,0,1,2,0,0,'Defend','skills/defend.png','Skill_Defen
 INSERT INTO item VALUES(15,1,3,2,2,0,0,'Ignite','skills/ignite.png','Skill_Ignite',500,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(16,1,2,2,2,0,0,'Backstab','skills/backstab.png','Skill_Backstab',500,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(17,1,0,3,2,0,0,'Resurrect','skills/resurrect.png','Skill_Resurrect',1000,0,0,10,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(18,1,0,3,3,0,0,'Rejuvenation','skills/rejuvenation.png','Skill_Rejuvenation',250,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(18,1,0,3,3,0,0,'Rejuvenation','skills/rejuvenation.png','Skill_Rejuvenation',200,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(19,1,4,2,2,0,0,'Icicle','skills/icicle.png','Skill_Icicle',175,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(20,1,2,2,2,0,0,'Fury','skills/fury.png','Skill_Fury',1200,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(21,1,0,1,2,0,0,'Demonic Conjuring','skills/demonic_conjuring.png','Skill_DemonicConjuring',300,0,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0);
