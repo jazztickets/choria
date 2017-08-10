@@ -134,8 +134,11 @@ _Element::_Element(tinyxml2::XMLElement *Node, _Element *Parent) :
 
 // Destructor
 _Element::~_Element() {
-	for(auto &Child : Children)
+	for(auto &Child : Children) {
+		if(Graphics.Element->HitElement == Child)
+			Graphics.Element->HitElement = nullptr;
 		delete Child;
+	}
 }
 
 // Serialize element and children to xml node

@@ -355,10 +355,6 @@ void _PlayState::HandleQuit() {
 
 // Update
 void _PlayState::Update(double FrameTime) {
-	Graphics.Element->Update(FrameTime, Input.GetMouse());
-	//if(Graphics.Element->HitElement)
-	//	std::cout << Graphics.Element->HitElement->ID << std::endl;
-
 	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
 	//	std::cout << "Client: O=" << ObjectManager->Objects.size() << " B=" << (int)(Battle != nullptr) << std::endl;
 
@@ -382,6 +378,11 @@ void _PlayState::Update(double FrameTime) {
 			break;
 		}
 	}
+
+	// Update UI
+	Graphics.Element->Update(FrameTime, Input.GetMouse());
+	//if(Graphics.Element->HitElement)
+	//	std::cout << Graphics.Element->HitElement->Name << std::endl;
 
 	// Update menu
 	Menu.Update(FrameTime);
