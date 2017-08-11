@@ -35,7 +35,7 @@ class _LogFile {
 
 		// Open log file
 		void Open(const char *Filename) {
-			File.open(Filename);
+			File.open(Filename, std::ios::app);
 		}
 
 		void SetToStdOut(bool ToStdOut) { this->ToStdOut = ToStdOut; }

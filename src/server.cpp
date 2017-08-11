@@ -77,8 +77,6 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
 
-	Log.Open((Config.LogPath + "server.log").c_str());
-
 	if(!Network->HasConnection())
 		throw std::runtime_error("Unable to bind address!");
 
@@ -92,6 +90,9 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
+
+	Log.Open((Config.LogPath + "server.log").c_str());
+	Log << "Starting server on port " << NetworkPort << std::endl;
 }
 
 // Destructor
@@ -114,6 +115,8 @@ _Server::~_Server() {
 	delete Scripting;
 	delete Save;
 	delete Thread;
+
+	Log << "Stopping server" << std::endl;
 }
 
 // Start the server thread
@@ -472,7 +475,11 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	SpawnPlayer(Peer->Object, Peer->Object->LoadMapID, _Map::EVENT_NONE);
 
 	// Broadcast message
-	BroadcastMessage(Peer, Peer->Object->Name + " has joined the server", COLOR_GRAY);
+	std::string Message = Peer->Object->Name + " has joined the server";
+	BroadcastMessage(Peer, Message, COLOR_GRAY);
+
+	// Log
+	Log << "Player " << Message << std::endl;
 }
 
 // Handles move commands from a client
