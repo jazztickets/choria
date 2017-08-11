@@ -479,7 +479,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	BroadcastMessage(Peer, Message, COLOR_GRAY);
 
 	// Log
-	Log << "Player " << Message << std::endl;
+	Log << "Player " << Message << " (character_id=" << Peer->CharacterID << ")" << std::endl;
 }
 
 // Handles move commands from a client
@@ -1012,6 +1012,9 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		}
 
 		Player->CalculateStats();
+
+		// Log
+		Log << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " (character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << ")" << std::endl;
 	}
 	// Sell item
 	else {
