@@ -20,13 +20,14 @@
 // Libraries
 #include <fstream>
 #include <iostream>
+#include <ctime>
 
 // Log file class
 class _LogFile {
 
 	public:
 
-		_LogFile() : ToStdOut(true) { }
+		_LogFile() : TokenCount(0), ToStdOut(true) { }
 		~_LogFile() {
 			File.close();
 			File.clear();
@@ -42,11 +43,30 @@ class _LogFile {
 		// Handles most types
 		template <typename Type>
 		_LogFile &operator<<(const Type &Value) {
-			if(ToStdOut)
-				std::clog << Value;
 
-			if(File.is_open())
+			// Get date
+			char Buffer[64];
+			if(!TokenCount)
+				GetDateString(Buffer);
+
+			// Output to stdout
+			if(ToStdOut) {
+				if(!TokenCount)
+					std::clog << Buffer << " - ";
+
+				std::clog << Value;
+			}
+
+			// Output to file
+			if(File.is_open()) {
+				if(!TokenCount)
+					File << Buffer << " - ";
+
 				File << Value;
+			}
+
+			// Update token count
+			TokenCount++;
 
 			return *this;
 		}
@@ -59,11 +79,24 @@ class _LogFile {
 			if(File.is_open())
 				File << Value;
 
+			// Reset token count
+			TokenCount = 0;
+
 			return *this;
 		}
 
 	private:
 
+		void GetDateString(char *Buffer);
+
 		std::ofstream File;
+		int TokenCount;
 		bool ToStdOut;
 };
+
+// Get ISO 8601 timestamp
+inline void _LogFile::GetDateString(char *Buffer) {
+	time_t Now = time(0);
+	tm *LocalTime = localtime(&Now);
+	strftime(Buffer, 64, "%Y-%m-%dT%H:%M:%S%z", LocalTime);
+}

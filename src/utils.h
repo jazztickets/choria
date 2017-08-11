@@ -24,6 +24,7 @@
 const char *LoadFileIntoMemory(const char *Path);
 std::string RemoveExtension(const std::string &Path);
 std::string TrimString(const std::string &String);
+int MakeDirectory(const std::string &Path);
 
 template <class T>
 inline T ToNumber(const std::string &String) {

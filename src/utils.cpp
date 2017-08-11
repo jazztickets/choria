@@ -18,6 +18,7 @@
 #include <utils.h>
 #include <fstream>
 #include <regex>
+#include <sys/stat.h>
 
 // Loads a file into a string
 const char *LoadFileIntoMemory(const char *Path) {
@@ -57,4 +58,13 @@ std::string RemoveExtension(const std::string &Path) {
 std::string TrimString(const std::string &String) {
 	std::regex Regex("^[ \t]+|[ \t]+$");
 	return std::regex_replace(String, Regex, "");
+}
+
+// Create directory
+int MakeDirectory(const std::string &Path) {
+#ifdef _WIN32
+	return mkdir(Path.c_str());
+#else
+	return mkdir(Path.c_str(), 0755);
+#endif
 }

@@ -39,6 +39,7 @@ class _Config {
 
 		// State
 		std::string ConfigPath;
+		std::string LogPath;
 		int Version;
 
 		// Graphics
@@ -79,7 +80,7 @@ class _Config {
 		}
 
 		// State
-		std::string ConfigFile;
+		std::string ConfigFilePath;
 		std::unordered_map<std::string, std::list<std::string>> Map;
 };
 

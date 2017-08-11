@@ -21,6 +21,7 @@
 #include <actions.h>
 #include <input.h>
 #include <actiontype.h>
+#include <utils.h>
 #include <sstream>
 #include <fstream>
 #include <SDL_filesystem.h>
@@ -42,7 +43,9 @@ void _Config::Init(const std::string &ConfigFile) {
 		throw std::runtime_error("Cannot create config path!");
 	}
 
-	this->ConfigFile = ConfigPath + ConfigFile;
+	ConfigFilePath = ConfigPath + ConfigFile;
+	LogPath = ConfigPath + "log/";
+	MakeDirectory(LogPath);
 
 	// Load defaults
 	SetDefaults();
@@ -148,7 +151,7 @@ void _Config::LoadDefaultInputBindings() {
 void _Config::Load() {
 
 	// Open file
-	std::ifstream File(ConfigFile.c_str());
+	std::ifstream File(ConfigFilePath.c_str());
 	if(!File) {
 		Save();
 		return;
@@ -178,7 +181,7 @@ void _Config::Load() {
 	int ReadVersion = 0;
 	GetValue("version", ReadVersion);
 	if(ReadVersion != Version) {
-		std::rename(ConfigFile.c_str(), (ConfigFile + "." + std::to_string(ReadVersion)).c_str());
+		std::rename(ConfigFilePath.c_str(), (ConfigFilePath + "." + std::to_string(ReadVersion)).c_str());
 		Save();
 		return;
 	}
@@ -232,7 +235,7 @@ void _Config::Load() {
 void _Config::Save() {
 
 	// Open file
-	std::ofstream File(ConfigFile.c_str());
+	std::ofstream File(ConfigFilePath.c_str());
 	if(!File.is_open())
 		return;
 

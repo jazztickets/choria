@@ -77,7 +77,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
 
-	//Log.Open((Config.ConfigPath + "server.log").c_str());
+	Log.Open((Config.LogPath + "server.log").c_str());
 
 	if(!Network->HasConnection())
 		throw std::runtime_error("Unable to bind address!");
