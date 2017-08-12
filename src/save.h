@@ -26,6 +26,7 @@ class _Database;
 class _Object;
 class _Stats;
 class _Scripting;
+class _LogFile;
 
 // Classes
 class _Save {
@@ -55,7 +56,7 @@ class _Save {
 		void CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
 
 		// Objects
-		void SavePlayer(const _Object *Player, NetworkIDType MapID);
+		void SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log);
 		void LoadPlayer(_Stats *Stats, _Object *Player);
 
 		// State

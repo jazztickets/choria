@@ -106,7 +106,7 @@ _Server::~_Server() {
 	// Save players
 	Save->StartTransaction();
 	for(auto &Object : ObjectManager->Objects)
-		Save->SavePlayer(Object, Object->GetMapID());
+		Save->SavePlayer(Object, Object->GetMapID(), &Log);
 	Save->EndTransaction();
 
 	delete MapManager;
@@ -221,7 +221,7 @@ void _Server::Update(double FrameTime) {
 		// Save players
 		Save->StartTransaction();
 		for(auto &Object : ObjectManager->Objects)
-			Save->SavePlayer(Object, Object->GetMapID());
+			Save->SavePlayer(Object, Object->GetMapID(), &Log);
 		Save->EndTransaction();
 	}
 }
@@ -480,7 +480,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	BroadcastMessage(Peer, Message, COLOR_GRAY);
 
 	// Log
-	Log << "Player " << Message << " (character_id=" << Peer->CharacterID << ")" << std::endl;
+	Log << "Player " << Message << " ( action=join character_id=" << Peer->CharacterID << " )" << std::endl;
 }
 
 // Handles move commands from a client
@@ -1015,7 +1015,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		Player->CalculateStats();
 
 		// Log
-		Log << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " (action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << ")" << std::endl;
+		Log << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1047,7 +1047,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			}
 
 			// Log
-			Log << Player->Name << " sells " << (int)Amount << "x " << Item->Name << " (action=sell character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << ")" << std::endl;
+			Log << Player->Name << " sells " << (int)Amount << "x " << Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
 		}
 	}
 }
@@ -1355,7 +1355,7 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Log
-	Log << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " (action=upgrade character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Gold << ")" << std::endl;
+	Log << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( action=upgrade character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Gold << " )" << std::endl;
 
 	Player->CalculateStats();
 }
@@ -1424,7 +1424,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 
 		// Save player
 		Save->StartTransaction();
-		Save->SavePlayer(Player, Player->LoadMapID);
+		Save->SavePlayer(Player, Player->LoadMapID, &Log);
 		Save->EndTransaction();
 
 		Player->Deleted = true;

@@ -1265,8 +1265,10 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 		Bounty = 0;
 
 	// Send message
-	if(Server && Peer)
+	if(Server && Peer) {
 		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), COLOR_RED);
+		Server->Log << "Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( action=death character_id=" << CharacterID << " gold=" << Gold << " deaths=" << Deaths << " )" << std::endl;
+	}
 }
 
 // Update counts on action bar

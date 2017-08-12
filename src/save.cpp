@@ -22,6 +22,7 @@
 #include <objects/inventory.h>
 #include <database.h>
 #include <random.h>
+#include <log.h>
 #include <config.h>
 #include <stats.h>
 #include <constants.h>
@@ -265,12 +266,12 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 
 	// Save new character
 	StartTransaction();
-	SavePlayer(&Object, 0);
+	SavePlayer(&Object, 0, nullptr);
 	EndTransaction();
 }
 
 // Saves the player
-void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
+void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log) {
 	if(Player->CharacterID == 0)
 		return;
 
@@ -295,6 +296,15 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID) {
 	Database->BindInt(2, Player->CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
+
+	*Log << "Saving player " << Player->Name
+		 << " ( action=save character_id=" << Player->CharacterID
+		 << " exp=" << Player->Experience
+		 << " gold=" << Player->Gold
+		 << " playtime=" << Player->PlayTime
+		 << " monsterkills=" << Player->MonsterKills
+		 << " deaths=" << Player->Deaths
+		 << " )" << std::endl;
 }
 
 // Load player from database
