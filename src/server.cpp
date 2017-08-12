@@ -52,7 +52,7 @@ static void RunThread(void *Arguments) {
 		Timer = SDL_GetPerformanceCounter();
 
 		// Run server
-		TimeStepAccumulator += FrameTime * Server->TimeScale;
+		TimeStepAccumulator += FrameTime * Config.TimeScale;
 		while(TimeStepAccumulator >= TimeStep) {
 			Server->Update(TimeStep);
 			TimeStepAccumulator -= TimeStep;
@@ -72,7 +72,6 @@ _Server::_Server(uint16_t NetworkPort) :
 	StartShutdown(false),
 	TimeSteps(0),
 	Time(0.0),
-	TimeScale(1.0),
 	SaveTime(0.0),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
@@ -216,7 +215,7 @@ void _Server::Update(double FrameTime) {
 
 	// Update autosave
 	SaveTime += FrameTime;
-	if(SaveTime >= DEFAULT_AUTOSAVE_PERIOD) {
+	if(Config.AutoSavePeriod > 0 && SaveTime >= Config.AutoSavePeriod) {
 		SaveTime = 0;
 
 		// Save players

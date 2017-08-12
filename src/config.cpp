@@ -63,6 +63,8 @@ void _Config::SetDefaults() {
 
 	// Set defaults
 	Version = DEFAULT_CONFIG_VERSION;
+	TimeScale = 1.0;
+	AutoSavePeriod = DEFAULT_AUTOSAVE_PERIOD;
 	WindowSize = DEFAULT_WINDOW_SIZE;
 	Fullscreen = DEFAULT_FULLSCREEN;
 	Vsync = DEFAULT_VSYNC;
@@ -204,6 +206,7 @@ void _Config::Load() {
 	GetValue("showtutorial", ShowTutorial);
 	GetValue("last_host", LastHost);
 	GetValue("last_port", LastPort);
+	GetValue("autosave_period", AutoSavePeriod);
 
 	if(NetworkRate < 0.01)
 		NetworkRate = 0.01;
@@ -258,6 +261,7 @@ void _Config::Save() {
 	File << "showtutorial=" << ShowTutorial << std::endl;
 	File << "last_host=" << LastHost << std::endl;
 	File << "last_port=" << LastPort << std::endl;
+	File << "autosave_period=" << AutoSavePeriod << std::endl;
 
 	// Write out input map
 	Actions.Serialize(File, _Input::KEYBOARD);

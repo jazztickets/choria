@@ -42,7 +42,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	FrameLimit = nullptr;
 	TimeStep = DEFAULT_TIMESTEP;
 	TimeStepAccumulator = 0.0;
-	TimeScale = 1.0;
 	RequestedState = nullptr;
 	FrameworkState = INIT;
 	State = &PlayState;
@@ -88,6 +87,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			State = &BotState;
 			BotState.HostAddress = Arguments[++i];
 			BotState.Port = ToNumber<uint16_t>(Arguments[++i]);
+		}
+		else if(Token == "-timescale" && TokensRemaining > 0) {
+			Config.TimeScale = ToNumber<double>(Arguments[++i]);
 		}
 		else if(Token == "-test") {
 			PlayState.IsTesting = true;
@@ -175,7 +177,7 @@ void _Framework::Update() {
 	Timer = SDL_GetPerformanceCounter();
 
 	SDL_PumpEvents();
-	Input.Update(FrameTime * TimeScale);
+	Input.Update(FrameTime * Config.TimeScale);
 
 	// Loop through events
 	SDL_Event Event;
@@ -230,13 +232,13 @@ void _Framework::Update() {
 				Done = true;
 		} break;
 		case UPDATE: {
-			TimeStepAccumulator += FrameTime * TimeScale;
+			TimeStepAccumulator += FrameTime * Config.TimeScale;
 			while(TimeStepAccumulator >= TimeStep) {
 				State->Update(TimeStep);
 				TimeStepAccumulator -= TimeStep;
 			}
 
-			State->Render(TimeStepAccumulator / TimeStep * TimeScale);
+			State->Render(TimeStepAccumulator / TimeStep * Config.TimeScale);
 		} break;
 		case CLOSE: {
 			if(State)
@@ -247,7 +249,7 @@ void _Framework::Update() {
 		} break;
 	}
 
-	Audio.Update(FrameTime * TimeScale);
+	Audio.Update(FrameTime * Config.TimeScale);
 	Graphics.Flip(FrameTime);
 
 	if(FrameLimit)

@@ -42,6 +42,10 @@ class _Config {
 		std::string LogPath;
 		int Version;
 
+		// Gameplay
+		double TimeScale;
+		double AutoSavePeriod;
+
 		// Graphics
 		glm::ivec2 WindowSize;
 		double MaxFPS;
