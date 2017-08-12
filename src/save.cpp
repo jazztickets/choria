@@ -297,14 +297,16 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 	Database->FetchRow();
 	Database->CloseQuery();
 
-	*Log << "Saving player " << Player->Name
-		 << " ( action=save character_id=" << Player->CharacterID
-		 << " exp=" << Player->Experience
-		 << " gold=" << Player->Gold
-		 << " playtime=" << Player->PlayTime
-		 << " monsterkills=" << Player->MonsterKills
-		 << " deaths=" << Player->Deaths
-		 << " )" << std::endl;
+	if(Log) {
+		*Log << "Saving player " << Player->Name
+			 << " ( action=save character_id=" << Player->CharacterID
+			 << " exp=" << Player->Experience
+			 << " gold=" << Player->Gold
+			 << " playtime=" << Player->PlayTime
+			 << " monsterkills=" << Player->MonsterKills
+			 << " deaths=" << Player->Deaths
+			 << " )" << std::endl;
+	}
 }
 
 // Load player from database

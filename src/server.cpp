@@ -823,6 +823,9 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 
 // Validate a peer's attributes
 bool _Server::ValidatePeer(_Peer *Peer) {
+	if(!Peer)
+		return false;
+
 	if(!Peer->AccountID)
 		return false;
 
