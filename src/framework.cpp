@@ -40,8 +40,9 @@ _Framework Framework;
 // Processes parameters and initializes the game
 void _Framework::Init(int ArgumentCount, char **Arguments) {
 	FrameLimit = nullptr;
-	TimeStepAccumulator = 0.0;
 	TimeStep = DEFAULT_TIMESTEP;
+	TimeStepAccumulator = 0.0;
+	TimeScale = 1.0;
 	RequestedState = nullptr;
 	FrameworkState = INIT;
 	State = &PlayState;
@@ -174,7 +175,7 @@ void _Framework::Update() {
 	Timer = SDL_GetPerformanceCounter();
 
 	SDL_PumpEvents();
-	Input.Update(FrameTime);
+	Input.Update(FrameTime * TimeScale);
 
 	// Loop through events
 	SDL_Event Event;
@@ -229,13 +230,13 @@ void _Framework::Update() {
 				Done = true;
 		} break;
 		case UPDATE: {
-			TimeStepAccumulator += FrameTime;
+			TimeStepAccumulator += FrameTime * TimeScale;
 			while(TimeStepAccumulator >= TimeStep) {
 				State->Update(TimeStep);
 				TimeStepAccumulator -= TimeStep;
 			}
 
-			State->Render(TimeStepAccumulator / TimeStep);
+			State->Render(TimeStepAccumulator / TimeStep * TimeScale);
 		} break;
 		case CLOSE: {
 			if(State)
@@ -246,7 +247,7 @@ void _Framework::Update() {
 		} break;
 	}
 
-	Audio.Update(FrameTime);
+	Audio.Update(FrameTime * TimeScale);
 	Graphics.Flip(FrameTime);
 
 	if(FrameLimit)

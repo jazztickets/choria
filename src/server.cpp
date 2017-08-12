@@ -52,7 +52,7 @@ static void RunThread(void *Arguments) {
 		Timer = SDL_GetPerformanceCounter();
 
 		// Run server
-		TimeStepAccumulator += FrameTime;
+		TimeStepAccumulator += FrameTime * Server->TimeScale;
 		while(TimeStepAccumulator >= TimeStep) {
 			Server->Update(TimeStep);
 			TimeStepAccumulator -= TimeStep;
@@ -64,7 +64,7 @@ static void RunThread(void *Arguments) {
 }
 
 // Constructor
-_Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
+_Server::_Server(uint16_t NetworkPort) :
 	IsTesting(false),
 	Hardcore(false),
 	Done(false),
@@ -72,8 +72,8 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	StartShutdown(false),
 	TimeSteps(0),
 	Time(0.0),
+	TimeScale(1.0),
 	SaveTime(0.0),
-	Stats(Stats),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
 
@@ -86,6 +86,7 @@ _Server::_Server(_Stats *Stats, uint16_t NetworkPort) :
 	ObjectManager = new _Manager<_Object>();
 	MapManager = new _Manager<_Map>();
 	BattleManager = new _Manager<_Battle>();
+	Stats = new _Stats(true);
 	Save = new _Save();
 
 	Scripting = new _Scripting();
@@ -114,6 +115,7 @@ _Server::~_Server() {
 	delete ObjectManager;
 	delete Scripting;
 	delete Save;
+	delete Stats;
 	delete Thread;
 
 	Log << "Stopping server" << std::endl;
@@ -1014,7 +1016,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		Player->CalculateStats();
 
 		// Log
-		Log << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " (character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << ")" << std::endl;
+		Log << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " (action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << ")" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1044,6 +1046,9 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 				Player->Inventory->SerializeSlot(Packet, Slot);
 				Network->SendPacket(Packet, Peer);
 			}
+
+			// Log
+			Log << Player->Name << " sells " << (int)Amount << "x " << Item->Name << " (action=sell character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << ")" << std::endl;
 		}
 	}
 }
@@ -1349,6 +1354,9 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 		Player->Inventory->SerializeSlot(Packet, Slot);
 		Network->SendPacket(Packet, Peer);
 	}
+
+	// Log
+	Log << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " (action=upgrade character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Gold << ")" << std::endl;
 
 	Player->CalculateStats();
 }

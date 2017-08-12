@@ -69,6 +69,7 @@ class _Framework {
 		uint64_t Timer;
 		double TimeStep;
 		double TimeStepAccumulator;
+		double TimeScale;
 
 };
 

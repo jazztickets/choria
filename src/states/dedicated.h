@@ -51,7 +51,6 @@ class _DedicatedState : public _State {
 	protected:
 
 		_Server *Server;
-		_Stats *Stats;
 
 		std::thread *Thread;
 

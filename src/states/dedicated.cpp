@@ -57,7 +57,6 @@ void RunCommandThread(_Server *Server) {
 // Constructor
 _DedicatedState::_DedicatedState() :
 	Server(nullptr),
-	Stats(nullptr),
 	Thread(nullptr),
 	NetworkPort(0),
 	Hardcore(false) {
@@ -69,8 +68,7 @@ void _DedicatedState::Init() {
 
 	// Setup server
 	try {
-		Stats = new _Stats();
-		Server = new _Server(Stats, NetworkPort);
+		Server = new _Server(NetworkPort);
 		Server->Hardcore = Hardcore;
 
 		Server->Log << "Listening on port " << NetworkPort << std::endl;
@@ -81,8 +79,6 @@ void _DedicatedState::Init() {
 	}
 	catch(std::exception &Error) {
 		std::cerr << Error.what() << std::endl;
-		delete Stats;
-		Stats = nullptr;
 		Framework.Done = true;
 	}
 }
@@ -94,7 +90,6 @@ void _DedicatedState::Close() {
 		delete Thread;
 	}
 
-	delete Stats;
 	delete Server;
 }
 

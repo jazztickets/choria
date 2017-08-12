@@ -50,7 +50,7 @@ class _Server {
 
 	public:
 
-		_Server(_Stats *Stats, uint16_t NetworkPort);
+		_Server(uint16_t NetworkPort);
 		~_Server();
 
 		void Update(double FrameTime);
@@ -77,6 +77,7 @@ class _Server {
 		bool StartShutdown;
 		uint16_t TimeSteps;
 		double Time;
+		double TimeScale;
 		double SaveTime;
 		_LogFile Log;
 
