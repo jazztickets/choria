@@ -73,6 +73,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	TimeSteps(0),
 	Time(0.0),
 	SaveTime(0.0),
+	BotTime(0.0),
 	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
 
@@ -223,6 +224,16 @@ void _Server::Update(double FrameTime) {
 		for(auto &Object : ObjectManager->Objects)
 			Save->SavePlayer(Object, Object->GetMapID(), &Log);
 		Save->EndTransaction();
+	}
+
+	// Update bot timer
+	if(BotTime >= 0)
+		BotTime += FrameTime;
+
+	// Spawn bot
+	if(0 && BotTime > 2) {
+		BotTime = -1;
+		CreateBot();
 	}
 }
 
@@ -410,7 +421,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Get character information
-	bool Hardcore = Data.ReadBit();
+	bool IsHardcore = Data.ReadBit();
 	std::string Name(Data.ReadString());
 	uint32_t PortraitID = Data.Read<uint32_t>();
 	uint32_t BuildID = Data.Read<uint32_t>();
@@ -431,7 +442,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Create the character
-	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, Hardcore, Name, PortraitID, BuildID);
+	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, IsHardcore, Name, PortraitID, BuildID);
 
 	// Notify the client
 	_Buffer NewPacket;
@@ -708,7 +719,10 @@ void _Server::SendCharacterList(_Peer *Peer) {
 
 // Spawns a player at a particular spawn point
 void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType) {
-	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID || !Stats)
+	if(!Stats)
+		return;
+
+	if(Player->Peer && (!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID))
 	   return;
 
 	// Use spawn point for new characters
@@ -759,18 +773,22 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		// Add player to map
 		Map->AddObject(Player);
 
-		// Send new map id
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
-		Packet.Write<uint32_t>(MapID);
-		Packet.Write<double>(Save->Clock);
-		Network->SendPacket(Packet, Player->Peer);
+		// Send data to peer
+		if(Player->Peer) {
 
-		// Set player object list
-		Map->SendObjectList(Player->Peer);
+			// Send new map id
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
+			Packet.Write<uint32_t>(MapID);
+			Packet.Write<double>(Save->Clock);
+			Network->SendPacket(Packet, Player->Peer);
 
-		// Set full player data to peer
-		SendPlayerInfo(Player->Peer);
+			// Send player object list
+			Map->SendObjectList(Player->Peer);
+
+			// Send full player data to peer
+			SendPlayerInfo(Player->Peer);
+		}
 	}
 	else {
 		Map->FindEvent(_Event(EventType, Player->SpawnPoint), Player->Position);
@@ -819,6 +837,35 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	Save->LoadPlayer(Stats, Player);
 
 	return Player;
+}
+
+// Create server side bot
+_Object *_Server::CreateBot() {
+
+	// Choose slot
+	uint32_t Slot = 0;
+
+	// Check for valid character id
+	uint32_t CharacterID = Save->GetCharacterID(ACCOUNT_BOTS_ID, Slot);
+	if(!CharacterID) {
+		std::string Name = "bot_test";
+		Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, 1, 1);
+	}
+
+	// Create object
+	_Object *Bot = ObjectManager->Create();
+	Bot->Scripting = Scripting;
+	Bot->Server = this;
+	Bot->CharacterID = CharacterID;
+	Bot->Stats = Stats;
+	Save->LoadPlayer(Stats, Bot);
+	SpawnPlayer(Bot, Bot->LoadMapID, _Map::EVENT_NONE);
+
+	// Broadcast message
+	std::string Message = Bot->Name + " has joined the server";
+	BroadcastMessage(nullptr, Message, COLOR_GRAY);
+
+	return nullptr;
 }
 
 // Validate a peer's attributes

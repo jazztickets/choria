@@ -88,7 +88,9 @@ class _Object : public _ManagerBase {
 		_Object();
 		~_Object();
 
+		// Updates
 		void Update(double FrameTime) override;
+		void UpdateBot(double FrameTime);
 		void Render(const _Object *ClientPlayer=nullptr);
 		void RenderBattle(_Object *ClientPlayer, double Time);
 
@@ -107,6 +109,8 @@ class _Object : public _ManagerBase {
 
 		// Stats
 		bool IsAlive() const { return Health > 0; }
+		bool IsMonster() const { return DatabaseID != 0; }
+		bool IsBot() const { return !IsMonster() && !Peer; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
@@ -119,7 +123,7 @@ class _Object : public _ManagerBase {
 		void ApplyDeathPenalty(float Penalty, int BountyLoss);
 
 		// Battles
-		void UpdateAI(const std::list<_Object *> &Fighters, double FrameTime);
+		void UpdateMonsterAI(const std::list<_Object *> &Fighters, double FrameTime);
 		int GenerateDamage();
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();

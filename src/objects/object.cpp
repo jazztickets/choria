@@ -223,8 +223,16 @@ void _Object::Update(double FrameTime) {
 	if(IsAlive()) {
 
 		// Update AI
-		if(Server && Battle)
-			UpdateAI(Battle->Fighters, FrameTime);
+		if(Server) {
+
+			// Update monster AI
+			if(Battle && IsMonster())
+				UpdateMonsterAI(Battle->Fighters, FrameTime);
+
+			// Update bots
+			if(IsBot())
+				UpdateBot(FrameTime);
+		}
 
 		// Check turn timer
 		if(Battle) {
@@ -357,8 +365,13 @@ void _Object::Update(double FrameTime) {
 		Map->CheckEvents(this);
 }
 
-// Update AI during battle
-void _Object::UpdateAI(const std::list<_Object *> &Fighters, double FrameTime) {
+// Update bot AI
+void _Object::UpdateBot(double FrameTime) {
+
+}
+
+// Update monster AI during battle
+void _Object::UpdateMonsterAI(const std::list<_Object *> &Fighters, double FrameTime) {
 	if(!AI.length())
 		return;
 

@@ -78,6 +78,7 @@ class _Server {
 		uint16_t TimeSteps;
 		double Time;
 		double SaveTime;
+		double BotTime;
 		_LogFile Log;
 
 		// Stats
@@ -99,6 +100,7 @@ class _Server {
 	private:
 
 		_Object *CreatePlayer(_Peer *Peer);
+		_Object *CreateBot();
 		bool ValidatePeer(_Peer *Peer);
 		void StartBattle(_BattleEvent &BattleEvent);
 

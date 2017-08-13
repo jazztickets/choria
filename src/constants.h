@@ -45,6 +45,8 @@ const  float        CAMERA_FOVY                     =  90.0f;
 const  float        CAMERA_NEAR                     =  0.1f;
 const  float        CAMERA_FAR                      =  100.0f;
 //     Account
+const  uint32_t     ACCOUNT_SINGLEPLAYER_ID         =  1;
+const  uint32_t     ACCOUNT_BOTS_ID                 =  2;
 const  size_t       ACCOUNT_MAX_USERNAME_SIZE       =  20;
 const  size_t       ACCOUNT_MAX_PASSWORD_SIZE       =  20;
 const  int          ACCOUNT_MAX_CHARACTER_SLOTS     =  10;

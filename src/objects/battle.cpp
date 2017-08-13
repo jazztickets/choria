@@ -72,7 +72,7 @@ _Battle::~_Battle() {
 
 	// Remove fighters
 	for(auto &Fighter : Fighters) {
-		if(Fighter->DatabaseID)
+		if(Fighter->IsMonster())
 			Fighter->Deleted = true;
 		Fighter->StopBattle();
 	}
@@ -556,7 +556,7 @@ void _Battle::ServerEndBattle() {
 		for(auto &Fighter : SideFighters[Side]) {
 
 			// Keep track of players
-			if(Fighter->DatabaseID == 0)
+			if(!Fighter->IsMonster())
 				SideStats[Side].PlayerCount++;
 			else
 				SideStats[Side].MonsterCount++;
@@ -574,7 +574,7 @@ void _Battle::ServerEndBattle() {
 			SideStats[Side].TotalExperienceGiven += Fighter->ExperienceGiven;
 
 			// Calculate gold based on monster or player
-			if(Fighter->DatabaseID)
+			if(Fighter->IsMonster())
 				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
 			else
 				SideStats[Side].TotalGoldGiven += Fighter->Bounty + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
@@ -637,7 +637,7 @@ void _Battle::ServerEndBattle() {
 			// Generate items drops
 			std::list<uint32_t> ItemDrops;
 			for(auto &Fighter : SideFighters[!WinningSide]) {
-				if(Fighter->DatabaseID)
+				if(Fighter->IsMonster())
 					Stats->GenerateItemDrops(Fighter->DatabaseID, 1, DropRate, ItemDrops);
 			}
 

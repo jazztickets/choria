@@ -372,8 +372,8 @@ void _Save::CreateDefaultDatabase() {
 		")"
 	);
 
-	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(1, 'singleplayer', '', '')");
-	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(2, 'bots', '', '')");
+	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(" + std::to_string(ACCOUNT_SINGLEPLAYER_ID) + ", 'singleplayer', '', '')");
+	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(" + std::to_string(ACCOUNT_BOTS_ID) + ", 'bots', '', '')");
 
 	// Characters
 	Database->RunQuery(
