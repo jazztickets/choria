@@ -66,6 +66,7 @@ class _Battle : public _ManagerBase {
 		// Objects
 		void AddFighter(_Object *Fighter, uint8_t Side, bool Join=false);
 		void RemoveFighter(_Object *RemoveFighter);
+		void GetSeparateFighterList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies);
 		int GetPeerCount();
 
 		// Updates

@@ -844,6 +844,19 @@ void _Battle::RemoveFighter(_Object *RemoveFighter) {
 	}
 }
 
+// Get list of allies and enemies from fighter list
+void _Battle::GetSeparateFighterList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies) {
+	for(const auto &Fighter : Fighters) {
+		if(Fighter->Deleted)
+			continue;
+
+		if(Fighter->BattleSide == Side)
+			Allies.push_back(Fighter);
+		else if(Fighter->IsAlive())
+			Enemies.push_back(Fighter);
+	}
+}
+
 // Get number of peers in battle
 int _Battle::GetPeerCount() {
 	int PeerCount = 0;

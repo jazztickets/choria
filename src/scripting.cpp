@@ -777,7 +777,7 @@ int _Scripting::ObjectFindPath(lua_State *LuaState) {
 	int X = (int)lua_tointeger(LuaState, 1);
 	int Y = (int)lua_tointeger(LuaState, 2);
 
-	bool Success = Object->MoveTo(Object->Position, glm::ivec2(X, Y));
+	bool Success = Object->Pathfind(Object->Position, glm::ivec2(X, Y));
 
 	lua_pushinteger(LuaState, Success);
 

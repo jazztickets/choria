@@ -166,7 +166,7 @@ class _Object : public _ManagerBase {
 		bool CanTeleport() { return IsAlive() && !Battle; }
 
 		// Path finding
-		bool MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
+		bool Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
 		int GetInputStateFromPath();
 
 		// UI

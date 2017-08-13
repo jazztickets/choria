@@ -192,6 +192,10 @@ void _Object::Update(double FrameTime) {
 
 	CheckEvent = false;
 
+	// Update bots
+	if(Server && IsBot())
+		UpdateBot(FrameTime);
+
 	// Update player position
 	Moved = Move();
 	if(Moved) {
@@ -222,17 +226,9 @@ void _Object::Update(double FrameTime) {
 	// Update actions and battle
 	if(IsAlive()) {
 
-		// Update AI
-		if(Server) {
-
-			// Update monster AI
-			if(Battle && IsMonster())
-				UpdateMonsterAI(Battle->Fighters, FrameTime);
-
-			// Update bots
-			if(IsBot())
-				UpdateBot(FrameTime);
-		}
+		// Update monster AI
+		if(Server && Battle && IsMonster())
+			UpdateMonsterAI(Battle->Fighters, FrameTime);
 
 		// Check turn timer
 		if(Battle) {
@@ -368,6 +364,72 @@ void _Object::Update(double FrameTime) {
 // Update bot AI
 void _Object::UpdateBot(double FrameTime) {
 
+	// Call ai script
+	if(Scripting->StartMethodCall("Bot_Basic", "Update")) {
+		Scripting->PushObject(this);
+		Scripting->MethodCall(1, 0);
+		Scripting->FinishMethodCall();
+	}
+
+	// Set input
+	if(AcceptingMoveInput()) {
+		int InputState = 0;
+
+		// Call ai input script
+		if(Scripting->StartMethodCall("Bot_Basic", "GetInputState")) {
+			Scripting->PushObject(this);
+			Scripting->MethodCall(1, 1);
+			InputState = Scripting->GetInt(1);
+			Scripting->FinishMethodCall();
+		}
+
+		InputStates.clear();
+		if(InputState)
+			InputStates.push_back(InputState);
+	}
+
+	// Call goal script
+	if(Scripting->StartMethodCall("Bot_Basic", "DetermineNextGoal")) {
+		Scripting->PushObject(this);
+		Scripting->MethodCall(1, 0);
+		Scripting->FinishMethodCall();
+	}
+
+	// Update battle
+	if(Battle) {
+		if(TurnTimer >= 1.0 && !Action.IsSet()) {
+
+			// Set skill used
+			size_t ActionBarIndex = 0;
+			if(!GetActionFromSkillbar(Action, ActionBarIndex)) {
+				return;
+			}
+
+			// Check that the action can be used
+			_ActionResult ActionResult;
+			ActionResult.Source.Object = this;
+			ActionResult.Scope = ScopeType::BATTLE;
+			ActionResult.ActionUsed = Action;
+			if(!Action.Item->CanUse(Scripting, ActionResult))
+				Action.Item = nullptr;
+
+			// Separate fighter list
+			std::list<_Object *> Allies, Enemies;
+			Battle->GetSeparateFighterList(BattleSide, Allies, Enemies);
+
+			// Call lua script
+			if(Enemies.size()) {
+				if(Scripting->StartMethodCall("AI_Smart", "Update")) {
+					Targets.clear();
+					Scripting->PushObject(this);
+					Scripting->PushObjectList(Enemies);
+					Scripting->PushObjectList(Allies);
+					Scripting->MethodCall(3, 0);
+					Scripting->FinishMethodCall();
+				}
+			}
+		}
+	}
 }
 
 // Update monster AI during battle
@@ -379,20 +441,13 @@ void _Object::UpdateMonsterAI(const std::list<_Object *> &Fighters, double Frame
 	if(TurnTimer >= 1.0 && !Action.IsSet()) {
 
 		// Separate fighter list
-		std::list<_Object *> Enemies, Allies;
-		for(const auto &Fighter : Fighters) {
-			if(Fighter->Deleted)
-				continue;
-
-			if(Fighter->BattleSide == BattleSide)
-				Allies.push_back(Fighter);
-			else if(Fighter->IsAlive())
-				Enemies.push_back(Fighter);
-		}
+		std::list<_Object *> Allies, Enemies;
+		Battle->GetSeparateFighterList(BattleSide, Allies, Enemies);
 
 		// Call lua script
 		if(Enemies.size()) {
 			if(Scripting->StartMethodCall(AI, "Update")) {
+				Targets.clear();
 				Scripting->PushObject(this);
 				Scripting->PushObjectList(Enemies);
 				Scripting->PushObjectList(Allies);
@@ -1672,7 +1727,7 @@ void _Object::SendPacket(_Buffer &Packet) {
 }
 
 // Create list of nodes to destination
-bool _Object::MoveTo(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition) {
+bool _Object::Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition) {
 	if(!Map || !Map->Pather)
 		return false;
 
