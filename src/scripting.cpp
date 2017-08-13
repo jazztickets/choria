@@ -150,6 +150,8 @@ void _Scripting::InjectStats(_Stats *Stats) {
 	lua_setglobal(LuaState, "ITEM_SHIELD");
 	lua_pushinteger(LuaState, (int)ItemType::RING);
 	lua_setglobal(LuaState, "ITEM_RING");
+	lua_pushinteger(LuaState, (int)ItemType::AMULET);
+	lua_setglobal(LuaState, "ITEM_AMULET");
 	lua_pushinteger(LuaState, (int)ItemType::CONSUMABLE);
 	lua_setglobal(LuaState, "ITEM_CONSUMABLE");
 	lua_pushinteger(LuaState, (int)ItemType::TRADABLE);
@@ -283,6 +285,14 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GetInventoryItem");
 
 	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectGetSkillPointsAvailable, 1);
+	lua_setfield(LuaState, -2, "GetSkillPointsAvailable");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectSpendSkillPoints, 1);
+	lua_setfield(LuaState, -2, "SpendSkillPoints");
+
+	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectSetAction, 1);
 	lua_setfield(LuaState, -2, "SetAction");
 
@@ -373,6 +383,9 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	}
 
 	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, (int)Item->ID);
+	lua_setfield(LuaState, -2, "ID");
 
 	lua_pushinteger(LuaState, (int)Item->Type);
 	lua_setfield(LuaState, -2, "Type");
@@ -718,6 +731,36 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 
 	// Push item
 	PushItem(LuaState, Item, Upgrades);
+
+	return 1;
+}
+
+// Return the number of skills available
+int _Scripting::ObjectGetSkillPointsAvailable(lua_State *LuaState) {
+
+	// Get self pointer
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+
+	// Push value
+	lua_pushinteger(LuaState, Object->GetSkillPointsAvailable());
+
+	return 1;
+}
+
+// Spend skill points
+int _Scripting::ObjectSpendSkillPoints(lua_State *LuaState) {
+
+	// Get parameters
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	uint32_t SkillID = (uint32_t)lua_tointeger(LuaState, 1);
+	int Amount = (int)lua_tointeger(LuaState, 2);
+
+	// Spend points
+	Object->AdjustSkillLevel(SkillID, Amount);
+	Object->CalculateStats();
+
+	// Push points available
+	lua_pushinteger(LuaState, Object->GetSkillPointsAvailable());
 
 	return 1;
 }

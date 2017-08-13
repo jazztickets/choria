@@ -110,7 +110,6 @@ class _Object : public _ManagerBase {
 		// Stats
 		bool IsAlive() const { return Health > 0; }
 		bool IsMonster() const { return DatabaseID != 0; }
-		bool IsBot() const { return !IsMonster() && !Peer; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
@@ -148,7 +147,7 @@ class _Object : public _ManagerBase {
 		// Skills
 		bool HasLearned(const _Item *Skill) const;
 		bool HasUnlocked(const _Item *Item) const;
-		int GetSkillPointsRemaining() const { return SkillPoints - SkillPointsUsed; }
+		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
 		// Trader
@@ -326,6 +325,7 @@ class _Object : public _ManagerBase {
 		std::string PartyName;
 
 		// Bots
+		bool Bot;
 		std::list<void *> Path;
 
 	private:

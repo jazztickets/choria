@@ -114,8 +114,9 @@ void _Bot::Update(double FrameTime) {
 
 	// Call ai script
 	if(Scripting->StartMethodCall(Script, "Update")) {
+		Scripting->PushReal(FrameTime);
 		Scripting->PushObject(Player);
-		Scripting->MethodCall(1, 0);
+		Scripting->MethodCall(2, 0);
 		Scripting->FinishMethodCall();
 	}
 

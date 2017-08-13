@@ -741,6 +741,15 @@ void _Battle::ServerEndBattle() {
 			Server->Network->SendPacket(Packet, Fighter->Peer);
 			Server->SendHUD(Fighter->Peer);
 		}
+		else if(Fighter->Bot) {
+
+			// Update bot goal
+			if(Scripting->StartMethodCall("Bot_Basic", "DetermineNextGoal")) {
+				Scripting->PushObject(Fighter);
+				Scripting->MethodCall(1, 0);
+				Scripting->FinishMethodCall();
+			}
+		}
 	}
 
 	Deleted = true;

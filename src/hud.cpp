@@ -1740,8 +1740,8 @@ void _HUD::DrawSkills() {
 	SkillsElement->Render();
 
 	// Show remaining skill points
-	std::string Text = std::to_string(Player->GetSkillPointsRemaining()) + " skill point";
-	if(Player->GetSkillPointsRemaining() != 1)
+	std::string Text = std::to_string(Player->GetSkillPointsAvailable()) + " skill point";
+	if(Player->GetSkillPointsAvailable() != 1)
 		Text += "s";
 
 	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
@@ -2022,7 +2022,7 @@ void _HUD::ClearSkills() {
 void _HUD::RefreshSkillButtons() {
 
 	// Get remaining points
-	int SkillPointsRemaining = Player->GetSkillPointsRemaining();
+	int SkillPointsRemaining = Player->GetSkillPointsAvailable();
 
 	// Loop through buttons
 	for(auto &Element : SkillsElement->Children) {

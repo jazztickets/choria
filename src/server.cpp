@@ -231,7 +231,7 @@ void _Server::Update(double FrameTime) {
 		BotTime += FrameTime;
 
 	// Spawn bot
-	if(0 && BotTime > 2) {
+	if(0 && BotTime > 1) {
 		BotTime = -1;
 		CreateBot();
 	}
@@ -789,6 +789,8 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 			// Send full player data to peer
 			SendPlayerInfo(Player->Peer);
 		}
+		else
+			Player->Path.clear();
 	}
 	else {
 		Map->FindEvent(_Event(EventType, Player->SpawnPoint), Player->Position);
@@ -854,6 +856,7 @@ _Object *_Server::CreateBot() {
 
 	// Create object
 	_Object *Bot = ObjectManager->Create();
+	Bot->Bot = true;
 	Bot->Scripting = Scripting;
 	Bot->Server = this;
 	Bot->CharacterID = CharacterID;
@@ -1547,7 +1550,7 @@ void _Server::SendHUD(_Peer *Peer) {
 
 // Run event script from map
 void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
-	if(!Object || !Object->Peer)
+	if(!Object)
 		return;
 
 	// Find script
@@ -1568,13 +1571,17 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 
 			StatChange.Object->UpdateStats(StatChange);
 
-			// Build packet
-			_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-			StatChange.Serialize(Packet);
+			// Notify peer
+			if(Object->Peer) {
 
-			// Send packet to player
-			Network->SendPacket(Packet, Object->Peer);
+				// Build packet
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+				StatChange.Serialize(Packet);
+
+				// Send packet to player
+				Network->SendPacket(Packet, Object->Peer);
+			}
 		}
 	}
 }

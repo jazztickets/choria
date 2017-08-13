@@ -1,10 +1,18 @@
-GOAL_NONE    = 0
-GOAL_FARMING = 1
-GOAL_HEALING = 2
-MOVE_IDLE    = 0
-MOVE_PATH    = 1
-MOVE_HEAL    = 2
-MOVE_RANDOM  = 3
+DIRECTION_NONE  = 0
+DIRECTION_UP    = 1
+DIRECTION_DOWN  = 2
+DIRECTION_LEFT  = 4
+DIRECTION_RIGHT = 8
+MOVE_IDLE       = 0
+MOVE_PATH       = 1
+MOVE_HEAL       = 2
+MOVE_RANDOM     = 3
+GOAL_NONE       = 0
+GOAL_FARMING    = 1
+GOAL_HEALING    = 2
+GOAL_BUY        = 3
+GOAL_SELL       = 4
+GOAL_UPGRADE    = 5
 
 MoveTypes = { 1, 2, 4, 8 }
 
@@ -28,9 +36,10 @@ end
 Bot_Basic = {}
 Bot_Basic.GoalState = GOAL_NONE
 Bot_Basic.MoveState = MOVE_IDLE
+Bot_Basic.Timer = 0
 
-function Bot_Basic.Update(self, Object)
-	--print("goal=" .. self.GoalState .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y)
+function Bot_Basic.Update(self, FrameTime, Object)
+	--print("goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " timer=" .. self.Timer)
 
 	if self.GoalState == GOAL_NONE then
 		self:DetermineNextGoal(Object)
@@ -68,10 +77,12 @@ function Bot_Basic.Update(self, Object)
 			end
 		end
 	end
+
+	self.Timer = self.Timer + FrameTime
 end
 
 function Bot_Basic.GetInputState(self, Object)
-	InputState = 0
+	InputState = DIRECTION_NONE
 
 	if self.MoveState == MOVE_IDLE then
 	elseif self.MoveState == MOVE_PATH then
@@ -80,13 +91,13 @@ function Bot_Basic.GetInputState(self, Object)
 			self.MoveState = MOVE_IDLE
 		end
 	elseif self.MoveState == MOVE_HEAL then
-		InputState = 4
+		InputState = DIRECTION_LEFT
 	elseif self.MoveState == MOVE_RANDOM then
 		InputState = MoveTypes[Random.GetInt(1, 4)]
 		Direction = GetDirection(InputState)
 		EventType, EventData = Object.GetTileEvent(Object.X + Direction[1], Object.Y + Direction[2])
 		if EventType ~= 0 then
-			InputState = 0
+			InputState = DIRECTION_NONE
 		end
 	end
 
@@ -94,12 +105,34 @@ function Bot_Basic.GetInputState(self, Object)
 end
 
 function Bot_Basic.DetermineNextGoal(self, Object)
+	--print(self.Timer .. ": determine goal")
 
+	-- Check skill points
+	SkillPointsAvailable = Object.GetSkillPointsAvailable()
+	if SkillPointsAvailable > 0 then
+
+		-- Toughness
+		SkillPointsAvailable = Object.SpendSkillPoints(5, SkillPointsAvailable)
+
+		-- Attack
+		if SkillPointsAvailable > 0 then
+			SkillPointsAvailable = Object.SpendSkillPoints(1, SkillPointsAvailable)
+		end
+	end
+
+	-- Check health
 	HealthPercent = Object.Health / Object.MaxHealth
 	if HealthPercent <= 0.5 then
 		self.GoalState = GOAL_HEALING
 	else
+
+		-- Check item progression
+		Item = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+		if Item ~= nil then
+			--print(Item.ID)
+		end
+
 		self.GoalState = GOAL_FARMING
 	end
-end
 
+end

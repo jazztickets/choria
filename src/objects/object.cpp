@@ -153,7 +153,8 @@ _Object::_Object() :
 	TradeGold(0),
 	WaitingForTrade(false),
 	TradeAccepted(false),
-	TradePlayer(nullptr) {
+	TradePlayer(nullptr),
+	Bot(false) {
 
 	LastTarget[0] = nullptr;
 	LastTarget[1] = nullptr;
@@ -193,13 +194,17 @@ void _Object::Update(double FrameTime) {
 	CheckEvent = false;
 
 	// Update bots
-	if(Server && IsBot())
+	if(Server && Bot)
 		UpdateBot(FrameTime);
 
 	// Update player position
 	Moved = Move();
 	if(Moved) {
 		CheckEvent = true;
+
+		// Remove node from pathfinding
+		if(Bot && Path.size())
+			Path.erase(Path.begin());
 	}
 
 	// Update status
@@ -366,8 +371,9 @@ void _Object::UpdateBot(double FrameTime) {
 
 	// Call ai script
 	if(Scripting->StartMethodCall("Bot_Basic", "Update")) {
+		Scripting->PushReal(FrameTime);
 		Scripting->PushObject(this);
-		Scripting->MethodCall(1, 0);
+		Scripting->MethodCall(2, 0);
 		Scripting->FinishMethodCall();
 	}
 
@@ -386,13 +392,6 @@ void _Object::UpdateBot(double FrameTime) {
 		InputStates.clear();
 		if(InputState)
 			InputStates.push_back(InputState);
-	}
-
-	// Call goal script
-	if(Scripting->StartMethodCall("Bot_Basic", "DetermineNextGoal")) {
-		Scripting->PushObject(this);
-		Scripting->MethodCall(1, 0);
-		Scripting->FinishMethodCall();
 	}
 
 	// Update battle
@@ -1480,7 +1479,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(Amount > 0) {
 
 		// Cap points
-		int PointsToSpend = std::min(GetSkillPointsRemaining(), Amount);
+		int PointsToSpend = std::min(GetSkillPointsAvailable(), Amount);
 		PointsToSpend = std::min(PointsToSpend, Skill->MaxLevel - Skills[SkillID]);
 
 		// Update level
