@@ -372,7 +372,8 @@ void _Save::CreateDefaultDatabase() {
 		")"
 	);
 
-	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(1, '', '', '')");
+	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(1, 'singleplayer', '', '')");
+	Database->RunQuery("INSERT INTO account(id, username, password, data) VALUES(2, 'bots', '', '')");
 
 	// Characters
 	Database->RunQuery(

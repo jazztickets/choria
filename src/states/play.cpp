@@ -513,7 +513,7 @@ void _PlayState::HandleConnect() {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 		Packet.WriteBit(0);
-		Packet.WriteString("");
+		Packet.WriteString("singleplayer");
 		Packet.WriteString("");
 		Packet.Write<uint64_t>(Server->Save->Secret);
 		Network->SendPacket(Packet);

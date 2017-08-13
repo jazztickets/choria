@@ -352,7 +352,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	Password.resize(std::min(ACCOUNT_MAX_PASSWORD_SIZE, Password.length()));
 
 	// Validate singleplayer
-	if(!Username.length() && !Password.length() && Secret != Save->Secret)
+	if(!Password.length() && Secret != Save->Secret)
 		return;
 
 	// Create account or login
