@@ -460,7 +460,7 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 	}
 
 	// Notify client
-	if(Object->Peer) {
+	if(Object->Peer->ENetPeer) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::EVENT_START);
 		Packet.Write<uint32_t>(Event.Type);
@@ -991,7 +991,7 @@ void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
 
 	// Send packet to peers
 	for(auto &Object : Objects) {
-		if(!Object->Deleted && Object->Peer)
+		if(!Object->Deleted && Object->Peer && Object->Peer->ENetPeer)
 			Server->Network->SendPacket(Buffer, Object->Peer, Type, Type == _Network::UNSEQUENCED);
 	}
 }

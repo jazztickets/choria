@@ -231,7 +231,7 @@ void _Server::Update(double FrameTime) {
 		BotTime += FrameTime;
 
 	// Spawn bot
-	if(0 && BotTime > 0.1) {
+	if(IsTesting && BotTime > 0.1) {
 		BotTime = -1;
 		CreateBot();
 	}
@@ -478,12 +478,16 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	uint32_t Slot = Data.Read<uint8_t>();
 
 	// Check for valid character id
-	Peer->CharacterID = Save->GetCharacterID(Peer->AccountID, Slot);
-	if(!Peer->CharacterID)
-		return;
+	if(!Peer->Object) {
+		Peer->CharacterID = Save->GetCharacterID(Peer->AccountID, Slot);
+		if(!Peer->CharacterID)
+			return;
+
+		// Create player
+		Peer->Object = CreatePlayer(Peer);
+	}
 
 	// Send map and players to new player
-	Peer->Object = CreatePlayer(Peer);
 	SpawnPlayer(Peer->Object, Peer->Object->LoadMapID, _Map::EVENT_NONE);
 
 	// Broadcast message
@@ -722,7 +726,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 	if(!Stats)
 		return;
 
-	if(Player->Peer && (!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID))
+	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
 	   return;
 
 	// Use spawn point for new characters
@@ -774,7 +778,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		Map->AddObject(Player);
 
 		// Send data to peer
-		if(Player->Peer) {
+		if(Player->Peer->ENetPeer) {
 
 			// Send new map id
 			_Buffer Packet;
@@ -862,13 +866,19 @@ _Object *_Server::CreateBot() {
 	Bot->CharacterID = CharacterID;
 	Bot->Stats = Stats;
 	Save->LoadPlayer(Stats, Bot);
-	SpawnPlayer(Bot, Bot->LoadMapID, _Map::EVENT_NONE);
 
-	// Broadcast message
-	std::string Message = Bot->Name + " has joined the server";
-	BroadcastMessage(nullptr, Message, COLOR_GRAY);
+	// Create fake peer
+	Bot->Peer = new _Peer(nullptr);
+	Bot->Peer->Object = Bot;
+	Bot->Peer->CharacterID = CharacterID;
+	Bot->Peer->AccountID = ACCOUNT_BOTS_ID;
 
-	return nullptr;
+	// Simulate packet
+	_Buffer Packet;
+	Packet.Write<uint8_t>(0);
+	HandleCharacterPlay(Packet, Bot->Peer);
+
+	return Bot;
 }
 
 // Validate a peer's attributes

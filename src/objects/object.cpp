@@ -22,8 +22,9 @@
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
-#include <ui.h>
 #include <network/servernetwork.h>
+#include <network/peer.h>
+#include <ui.h>
 #include <buffer.h>
 #include <assets.h>
 #include <graphics.h>
@@ -180,6 +181,11 @@ _Object::~_Object() {
 	if(HUD) {
 		HUD->RemoveStatChanges(this);
 		HUD = nullptr;
+	}
+
+	if(Bot) {
+		delete Peer;
+		Peer = nullptr;
 	}
 
 	DeleteStatusEffects();
