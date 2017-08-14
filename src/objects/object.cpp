@@ -376,7 +376,7 @@ void _Object::Update(double FrameTime) {
 void _Object::UpdateBot(double FrameTime) {
 
 	// Call ai script
-	if(Scripting->StartMethodCall("Bot_Server", "Update")) {
+	if(!Battle && Scripting->StartMethodCall("Bot_Server", "Update")) {
 		Scripting->PushReal(FrameTime);
 		Scripting->PushObject(this);
 		Scripting->MethodCall(2, 0);

@@ -88,10 +88,10 @@ Builds = {
 		Items = {
 			-- ItemID, VendorID
 			[INVENTORY_HAND1] = {
-				{ 101, 3},
-				{ 100, 3},
-				{ 119, 3},
-				{ 147, 3}
+				{ 101, 3 },
+				{ 100, 3 },
+				{ 119, 3 },
+				{ 147, 3 }
 			}
 		}
 	}
@@ -130,6 +130,7 @@ Bot_Server.TargetMapID = 0
 Bot_Server.MapPath = nil
 Bot_Server.Build = Builds[1]
 
+-- Update bot behavior when outside of battle
 function Bot_Server.Update(self, FrameTime, Object)
 	--print("goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " timer=" .. self.Timer)
 
@@ -256,6 +257,7 @@ function Bot_Server.DetermineNextGoal(self, Object)
 	HealthPercent = Object.Health / Object.MaxHealth
 	if HealthPercent <= 0.5 then
 		self.GoalState = GOAL_HEALING
+		self:GoToMap(Object, 1)
 	else
 
 		self.BuyID = 0

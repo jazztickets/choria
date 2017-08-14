@@ -194,7 +194,7 @@ void _Menu::ExitGame() {
 	PlayState.StopGame();
 
 	// Show character select
-	InitCharacters();
+	RequestCharacterList();
 }
 
 // Init connect screen
