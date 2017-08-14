@@ -296,7 +296,6 @@ void _Object::Update(double FrameTime) {
 		// Reduce count
 		StatusEffect->Duration -= FrameTime;
 		if(StatusEffect->Duration <= 0 || !IsAlive()) {
-
 			delete StatusEffect;
 			Iterator = StatusEffects.erase(Iterator);
 
