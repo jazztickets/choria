@@ -139,7 +139,10 @@ end
 
 -- Bot that simulates a connected client --
 
-Bot_Client = Bot_Server
+Bot_Client = {}
+for Key, Value in pairs(Bot_Server) do
+	Bot_Client[Key] = Value
+end
 
 function Bot_Client.DetermineNextGoal(self, Object)
 	HealthPercent = Object.Health / Object.MaxHealth
