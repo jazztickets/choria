@@ -134,7 +134,9 @@ Bot_Server.Build = Builds[1]
 function Bot_Server.Update(self, FrameTime, Object)
 	--print("goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " timer=" .. self.Timer)
 
-	if self.GoalState == GOAL_NONE then
+	if Object.Health <= 0 then
+		Object.Respawn()
+	elseif self.GoalState == GOAL_NONE then
 		self:DetermineNextGoal(Object)
 	elseif self.GoalState == GOAL_FARMING then
 		Arrived = self:TraverseMap(Object)

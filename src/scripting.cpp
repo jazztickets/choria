@@ -361,6 +361,10 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushcclosure(LuaState, &ObjectGetTileEvent, 1);
 	lua_setfield(LuaState, -2, "GetTileEvent");
 
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectRespawn, 1);
+	lua_setfield(LuaState, -2, "Respawn");
+
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
 
@@ -917,6 +921,14 @@ int _Scripting::ObjectGetInputStateFromPath(lua_State *LuaState) {
 	lua_pushinteger(LuaState, Object->GetInputStateFromPath());
 
 	return 1;
+}
+
+// Send the respawn command
+int _Scripting::ObjectRespawn(lua_State *LuaState) {
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	Object->Respawn();
+
+	return 0;
 }
 
 // Generate a random damage value for an item

@@ -138,6 +138,7 @@ class _Object : public _ManagerBase {
 		void RefreshActionBarCount();
 		bool GetActionFromSkillbar(_Action &ReturnAction, size_t Slot);
 		void SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager);
+		void Respawn();
 
 		// Movement
 		bool AcceptingMoveInput();

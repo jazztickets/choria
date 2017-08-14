@@ -1405,6 +1405,15 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 	}
 }
 
+// Respawn function called by server bots
+void _Object::Respawn() {
+	if(!Server)
+		return;
+
+	_Buffer Packet;
+	Server->HandleRespawn(Packet, Peer);
+}
+
 // Get the percentage to the next level
 float _Object::GetNextLevelPercent() const {
 	float Percent = 0;

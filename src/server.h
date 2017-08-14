@@ -66,6 +66,7 @@ class _Server {
 		void SendHUD(_Peer *Peer);
 		void SendPlayerPosition(_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
+		void HandleRespawn(_Buffer &Data, _Peer *Peer);
 
 		// Parameters
 		bool IsTesting;
@@ -114,7 +115,6 @@ class _Server {
 		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
 		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
 		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
-		void HandleRespawn(_Buffer &Data, _Peer *Peer);
 		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
 		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
 		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
