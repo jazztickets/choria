@@ -370,7 +370,7 @@ void _Object::Update(double FrameTime) {
 void _Object::UpdateBot(double FrameTime) {
 
 	// Call ai script
-	if(Scripting->StartMethodCall("Bot_Basic", "Update")) {
+	if(Scripting->StartMethodCall("Bot_Server", "Update")) {
 		Scripting->PushReal(FrameTime);
 		Scripting->PushObject(this);
 		Scripting->MethodCall(2, 0);
@@ -382,7 +382,7 @@ void _Object::UpdateBot(double FrameTime) {
 		int InputState = 0;
 
 		// Call ai input script
-		if(Scripting->StartMethodCall("Bot_Basic", "GetInputState")) {
+		if(Scripting->StartMethodCall("Bot_Server", "GetInputState")) {
 			Scripting->PushObject(this);
 			Scripting->MethodCall(1, 1);
 			InputState = Scripting->GetInt(1);

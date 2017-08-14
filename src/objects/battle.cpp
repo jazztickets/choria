@@ -744,7 +744,7 @@ void _Battle::ServerEndBattle() {
 		else if(Fighter->Bot) {
 
 			// Update bot goal
-			if(Scripting->StartMethodCall("Bot_Basic", "DetermineNextGoal")) {
+			if(Scripting->StartMethodCall("Bot_Server", "DetermineNextGoal")) {
 				Scripting->PushObject(Fighter);
 				Scripting->MethodCall(1, 0);
 				Scripting->FinishMethodCall();

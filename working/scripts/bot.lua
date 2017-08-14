@@ -31,14 +31,14 @@ function GetDirection(InputState)
 	return { 0, 0 }
 end
 
--- Basic bot AI --
+-- Bot that runs only on the server --
 
-Bot_Basic = {}
-Bot_Basic.GoalState = GOAL_NONE
-Bot_Basic.MoveState = MOVE_IDLE
-Bot_Basic.Timer = 0
+Bot_Server = {}
+Bot_Server.GoalState = GOAL_NONE
+Bot_Server.MoveState = MOVE_IDLE
+Bot_Server.Timer = 0
 
-function Bot_Basic.Update(self, FrameTime, Object)
+function Bot_Server.Update(self, FrameTime, Object)
 	--print("goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " timer=" .. self.Timer)
 
 	if self.GoalState == GOAL_NONE then
@@ -81,7 +81,7 @@ function Bot_Basic.Update(self, FrameTime, Object)
 	self.Timer = self.Timer + FrameTime
 end
 
-function Bot_Basic.GetInputState(self, Object)
+function Bot_Server.GetInputState(self, Object)
 	InputState = DIRECTION_NONE
 
 	if self.MoveState == MOVE_IDLE then
@@ -104,7 +104,7 @@ function Bot_Basic.GetInputState(self, Object)
 	return InputState
 end
 
-function Bot_Basic.DetermineNextGoal(self, Object)
+function Bot_Server.DetermineNextGoal(self, Object)
 	--print(self.Timer .. ": determine goal")
 
 	-- Check skill points
@@ -135,4 +135,17 @@ function Bot_Basic.DetermineNextGoal(self, Object)
 		self.GoalState = GOAL_FARMING
 	end
 
+end
+
+-- Bot that simulates a connected client --
+
+Bot_Client = Bot_Server
+
+function Bot_Client.DetermineNextGoal(self, Object)
+	HealthPercent = Object.Health / Object.MaxHealth
+	if HealthPercent <= 0.5 then
+		self.GoalState = GOAL_HEALING
+	else
+		self.GoalState = GOAL_FARMING
+	end
 end
