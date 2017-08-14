@@ -854,7 +854,8 @@ void _Object::RemoveBattleElement() {
 			BattleElement->Parent->RemoveChild(BattleElement);
 
 		for(auto &Child : BattleElement->Children) {
-			Child->Parent = nullptr;
+			if(Child->UserData)
+				((_StatusEffect *)Child->UserData)->BattleElement = nullptr;
 		}
 
 		delete BattleElement;
