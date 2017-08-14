@@ -231,7 +231,7 @@ void _Server::Update(double FrameTime) {
 		BotTime += FrameTime;
 
 	// Spawn bot
-	if(0 && BotTime > 1) {
+	if(0 && BotTime > 0.1) {
 		BotTime = -1;
 		CreateBot();
 	}
@@ -1049,7 +1049,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 		// Update gold
 		Player->UpdateGold(-Price);
-		{
+		if(Peer) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
 			Packet.Write<int>(Player->Gold);
@@ -1057,7 +1057,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		}
 
 		// Update items
-		{
+		if(Peer) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 			Packet.Write<uint8_t>(1);
@@ -1082,7 +1082,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 			// Update gold
 			Player->UpdateGold(Price);
-			{
+			if(Peer) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
 				Packet.Write<int>(Player->Gold);
@@ -1091,7 +1091,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 			// Update items
 			Player->Inventory->DecrementItemCount(Slot, -Amount);
-			{
+			if(Peer) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 				Packet.Write<uint8_t>(1);

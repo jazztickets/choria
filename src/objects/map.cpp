@@ -460,12 +460,14 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 	}
 
 	// Notify client
-	_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::EVENT_START);
-	Packet.Write<uint32_t>(Event.Type);
-	Packet.Write<uint32_t>(Event.Data);
-	Packet.Write<glm::ivec2>(Object->Position);
-	Server->Network->SendPacket(Packet, Object->Peer);
+	if(Object->Peer) {
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::EVENT_START);
+		Packet.Write<uint32_t>(Event.Type);
+		Packet.Write<uint32_t>(Event.Data);
+		Packet.Write<glm::ivec2>(Object->Position);
+		Server->Network->SendPacket(Packet, Object->Peer);
+	}
 }
 
 // Determine if a position is in a pvp zone

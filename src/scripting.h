@@ -43,6 +43,7 @@ class _Scripting {
 
 		void LoadScript(const std::string &Path);
 		void InjectStats(_Stats *Stats);
+		void InjectItemPointers(_Stats *Stats);
 		void InjectItems(_Stats *Stats);
 		void InjectMonsters(_Stats *Stats);
 		void InjectBuffs(_Stats *Stats);

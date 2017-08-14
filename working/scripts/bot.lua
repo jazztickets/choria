@@ -31,12 +31,32 @@ function GetDirection(InputState)
 	return { 0, 0 }
 end
 
+-- Builds --
+
+Builds = {
+	[1] = {
+		Items = {
+			-- ItemID, VendorID
+			[INVENTORY_HAND1] = {
+				{ 101, 3},
+				{ 100, 3},
+				{ 119, 3},
+				{ 147, 3}
+			}
+		}
+	}
+}
+
 -- Bot that runs only on the server --
 
 Bot_Server = {}
 Bot_Server.GoalState = GOAL_NONE
 Bot_Server.MoveState = MOVE_IDLE
+Bot_Server.BuyID = 0
+Bot_Server.VendorID = 0
 Bot_Server.Timer = 0
+Bot_Server.MoveCount = 0
+Bot_Server.Build = Builds[1]
 
 function Bot_Server.Update(self, FrameTime, Object)
 	--print("goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " timer=" .. self.Timer)
@@ -76,6 +96,26 @@ function Bot_Server.Update(self, FrameTime, Object)
 				self:DetermineNextGoal(Object)
 			end
 		end
+	elseif self.GoalState == GOAL_BUY then
+		if Object.MapID ~= 1 and Object.MapID ~= 4 then
+			X, Y = Object.FindEvent(3, 1)
+			if X ~= nil then
+				Object.FindPath(X, Y)
+				self.MoveState = MOVE_PATH
+			end
+		elseif Object.MapID == 1 then
+			X, Y = Object.FindEvent(3, 4)
+			if X ~= nil then
+				Object.FindPath(X, Y)
+				self.MoveState = MOVE_PATH
+			end
+		elseif Object.MapID == 4 then
+			X, Y = Object.FindEvent(4, self.VendorID)
+			if X ~= nil then
+				Object.FindPath(X, Y)
+				self.MoveState = MOVE_PATH
+			end
+		end
 	end
 
 	self.Timer = self.Timer + FrameTime
@@ -105,7 +145,6 @@ function Bot_Server.GetInputState(self, Object)
 end
 
 function Bot_Server.DetermineNextGoal(self, Object)
-	--print(self.Timer .. ": determine goal")
 
 	-- Check skill points
 	SkillPointsAvailable = Object.GetSkillPointsAvailable()
@@ -126,15 +165,37 @@ function Bot_Server.DetermineNextGoal(self, Object)
 		self.GoalState = GOAL_HEALING
 	else
 
+		self.BuyID = 0
+		self.VendorID = 0
+
 		-- Check item progression
-		Item = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+		CheckType = INVENTORY_HAND1
+		Item = Object.GetInventoryItem(BAG_EQUIPMENT, CheckType)
+		SellPrice = 0
 		if Item ~= nil then
-			--print(Item.ID)
+			SellPrice = math.floor(Item.Cost * 0.5)
 		end
 
-		self.GoalState = GOAL_FARMING
+		-- Get list of item/vendor ids from build
+		IDs = self.Build.Items[CheckType]
+
+		-- Find next item to buy
+		for i = #IDs, 1, -1 do
+			if Object.Gold >= Items[IDs[i][1]].Cost then
+				self.BuyID = IDs[i][1]
+				self.VendorID = IDs[i][2]
+				break
+			end
+		end
+
+		if self.BuyID ~= 0 then
+			self.GoalState = GOAL_BUY
+		else
+			self.GoalState = GOAL_FARMING
+		end
 	end
 
+	--print("DetermineNextGoal ( goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " )")
 end
 
 -- Bot that simulates a connected client --
