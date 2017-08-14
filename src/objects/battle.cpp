@@ -116,7 +116,6 @@ void _Battle::Update(double FrameTime) {
 				ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0));
 				if(ActionResult.Time == 0.0)
 					ActionResult.LastPosition = ActionResult.Position;
-
 			}
 
 			// Update timer
@@ -127,7 +126,6 @@ void _Battle::Update(double FrameTime) {
 			else
 				++Iterator;
 		}
-
 	}
 
 	Time += FrameTime;
@@ -248,12 +246,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 					ClientPlayer->LastTarget[StartingSide] = ClientPlayer;
 			}
 
-			if(Item->TargetID == TargetType::SELF) {
-				ClientPlayer->Targets.push_back(ClientPlayer);
-			}
-			else {
-				ClientSetTarget(Item, StartingSide, ClientPlayer->LastTarget[StartingSide]);
-			}
+			// Set target
+			ClientSetTarget(Item, StartingSide, ClientPlayer->LastTarget[StartingSide]);
 		}
 
 		// Set potential skill
@@ -301,6 +295,13 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 // Set target for client
 void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget) {
+	ClientPlayer->Targets.clear();
+
+	// Can't change self targets
+	if(Item->TargetID == TargetType::SELF) {
+		ClientPlayer->Targets.push_back(ClientPlayer);
+		return;
+	}
 
 	// Get list of fighters on each side
 	std::list<_Object *> FighterList;
@@ -341,6 +342,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || !ClientPlayer->Targets.size())
 		return;
 
+	// Can't change self targetting actions
 	const _Item *Item = ClientPlayer->PotentialAction.Item;
 	if(Item->TargetID == TargetType::SELF)
 		return;
@@ -415,6 +417,8 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 			// Start moving down after first target found
 			Direction = 1;
 		}
+		else if(ChangeSides)
+			Direction = 1;
 	}
 }
 

@@ -473,7 +473,6 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserData;
 				if(EnableMouseCombat && MouseObject && Player->Battle && Player->PotentialAction.IsSet() && Player->PotentialAction.Item->UseMouseTargetting() && Player->PotentialAction.Item->CanTarget(Player, MouseObject)) {
-					Player->Targets.clear();
 					Player->Battle->ClientSetTarget(Player->PotentialAction.Item, MouseObject->BattleSide, MouseObject);
 				}
 			} break;
