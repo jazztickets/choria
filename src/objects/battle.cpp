@@ -18,6 +18,7 @@
 #include <objects/battle.h>
 #include <network/servernetwork.h>
 #include <network/clientnetwork.h>
+#include <network/peer.h>
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/inventory.h>

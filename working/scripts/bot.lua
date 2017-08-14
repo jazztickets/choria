@@ -16,6 +16,7 @@ GOAL_UPGRADE    = 5
 
 MoveTypes = { 1, 2, 4, 8 }
 
+-- Convert input state to vec2
 function GetDirection(InputState)
 
 	if InputState == 1 then
@@ -29,6 +30,55 @@ function GetDirection(InputState)
 	end
 
 	return { 0, 0 }
+end
+
+-- Return a list of map ids that get from Current to Target. Return nil otherwise
+function FindMap(Current, Target, Path)
+
+	-- Early exit
+	if Current == Target then
+		return Current
+	end
+
+	-- Get list of connected nodes
+	local Connected = Paths[Current]
+	if Connected == nil then
+		return nil
+	end
+
+	-- Check connected nodes
+	for i = 1, #Connected do
+
+		if Connected[i] == Target then
+			return Target
+		end
+
+		-- Avoid loops
+		local Skip = 0
+		for j = 1, #Path do
+			if Connected[i] == Path[j] then
+				Skip = 1
+			end
+		end
+
+		-- Recurse
+		if Skip == 0 then
+
+			-- Append node to current path
+			table.insert(Path, Connected[i])
+
+			local Last = FindMap(Connected[i], Target, Path)
+			if Last ~= nil then
+				return Last
+			end
+
+			-- Dead end
+			table.remove(Path)
+		end
+	end
+
+	-- No path was found
+	return nil
 end
 
 -- Builds --
@@ -47,7 +97,27 @@ Builds = {
 	}
 }
 
--- Bot that runs only on the server --
+-- Paths is a structure that stores map connections --
+
+Paths = {
+	[1] = { 10, 2, 4, 5, 6, 7 },
+	[2] = { 1 },
+	[4] = { 1 },
+	[5] = { 1 },
+	[6] = { 1 },
+	[7] = { 1 },
+	[10] = { 1, 11, 12, 13, 14, 16, 20, 30 },
+	[11] = { 1 },
+	[20] = { 10, 21, 22 },
+	[21] = { 20 },
+	[22] = { 20, 23 },
+	[23] = { 22, 24 },
+	[24] = { 23, 25 },
+	[25] = { 24, 26 },
+	[26] = { 21, 25 },
+}
+
+-- Bot that runs on the server --
 
 Bot_Server = {}
 Bot_Server.GoalState = GOAL_NONE
@@ -56,6 +126,8 @@ Bot_Server.BuyID = 0
 Bot_Server.VendorID = 0
 Bot_Server.Timer = 0
 Bot_Server.MoveCount = 0
+Bot_Server.TargetMapID = 0
+Bot_Server.MapPath = nil
 Bot_Server.Build = Builds[1]
 
 function Bot_Server.Update(self, FrameTime, Object)
@@ -64,23 +136,13 @@ function Bot_Server.Update(self, FrameTime, Object)
 	if self.GoalState == GOAL_NONE then
 		self:DetermineNextGoal(Object)
 	elseif self.GoalState == GOAL_FARMING then
-		if Object.MapID ~= 10 then
-			X, Y = Object.FindEvent(3, 10)
-			if X ~= nil then
-				Object.FindPath(X, Y)
-				self.MoveState = MOVE_PATH
-			end
-		else
+		Arrived = self:TraverseMap(Object)
+		if Arrived then
 			self.MoveState = MOVE_RANDOM
 		end
 	elseif self.GoalState == GOAL_HEALING then
-		if Object.MapID ~= 1 then
-			X, Y = Object.FindEvent(3, 1)
-			if X ~= nil then
-				Object.FindPath(X, Y)
-				self.MoveState = MOVE_PATH
-			end
-		elseif Object.MapID == 1 then
+		Arrived = self:TraverseMap(Object)
+		if Arrived then
 			HealthPercent = Object.Health / Object.MaxHealth
 			if HealthPercent < 1.0 then
 				X, Y = Object.FindEvent(7, 1)
@@ -121,6 +183,36 @@ function Bot_Server.Update(self, FrameTime, Object)
 	self.Timer = self.Timer + FrameTime
 end
 
+-- Pathfind to next map in MapPath
+function Bot_Server.TraverseMap(self, Object)
+	if Object.MapID == self.TargetMapID or self.MapPath == nil or next(self.MapPath) == nil then
+		return true
+	end
+
+	i, NextMapID = next(self.MapPath)
+	if Object.MapID == NextMapID then
+		table.remove(self.MapPath, 1)
+		i, NextMapID = next(self.MapPath)
+	end
+
+	X, Y = Object.FindEvent(3, NextMapID)
+	if X ~= nil then
+		Object.FindPath(X, Y)
+		self.MoveState = MOVE_PATH
+	end
+end
+
+-- Build MapPath list of MapIDs
+function Bot_Server.GoToMap(self, Object, MapID)
+	self.MapPath = {}
+	self.TargetMapID = MapID
+	local Last = FindMap(Object.MapID, self.TargetMapID, self.MapPath)
+	if Last ~= nil then
+		table.insert(self.MapPath, Last)
+	end
+end
+
+-- Return the next direction the bot will move
 function Bot_Server.GetInputState(self, Object)
 	InputState = DIRECTION_NONE
 
@@ -144,6 +236,7 @@ function Bot_Server.GetInputState(self, Object)
 	return InputState
 end
 
+-- Get next goal
 function Bot_Server.DetermineNextGoal(self, Object)
 
 	-- Check skill points
@@ -188,14 +281,16 @@ function Bot_Server.DetermineNextGoal(self, Object)
 			end
 		end
 
+		self.BuyID = 0
 		if self.BuyID ~= 0 then
 			self.GoalState = GOAL_BUY
 		else
 			self.GoalState = GOAL_FARMING
+			self:GoToMap(Object, 10)
 		end
 	end
 
-	--print("DetermineNextGoal ( goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " )")
+	print("DetermineNextGoal ( goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " )")
 end
 
 -- Bot that simulates a connected client --

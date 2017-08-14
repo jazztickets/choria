@@ -100,6 +100,8 @@ void _ServerNetwork::HandleEvent(_NetworkEvent &Event, ENetEvent &EEvent) {
 
 // Send a packet
 void _ServerNetwork::SendPacket(const _Buffer &Buffer, const _Peer *Peer, SendType Type, uint8_t Channel) {
+	if(!Peer->ENetPeer)
+		return;
 
 	// Create enet packet
 	ENetPacket *EPacket = enet_packet_create(Buffer.GetData(), Buffer.GetCurrentSize(), Type);
