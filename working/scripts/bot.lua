@@ -31,70 +31,52 @@ function GetDirection(InputState)
 	return { 0, 0 }
 end
 
--- Return a list of map ids that get from Current to Target. Return nil otherwise
+-- Return a list of map ids in Path that get from Current to Target. Return true on found
 function FindMap(Current, Target, Path)
 
-	-- Early exit
-	if Current == Target then
-		return Current
-	end
+	local Set = {}
+	local Parents = {}
+	local Queue = {}
 
-	-- Get list of connected nodes
-	local Connected = Paths[Current]
-	if Connected == nil then
-		return nil
-	end
+	-- Add root node
+	Set[Current] = 1
+	table.insert(Queue, 1, Current)
 
-	-- Check connected nodes
-	for i = 1, #Connected do
+	-- Iterate over queue
+	while next(Queue) ~= nil do
+		Next = table.remove(Queue, 1)
 
-		if Connected[i] == Target then
-			return Target
+		-- Found target
+		if Next == Target then
+
+			-- Build path
+			Parent = Parents[Next]
+			while Parent ~= nil do
+				table.insert(Path, 1, Parent)
+				Parent = Parents[Parent]
+			end
+			table.insert(Path, Target)
+
+			return true
 		end
 
-		-- Avoid loops
-		local Skip = 0
-		for j = 1, #Path do
-			if Connected[i] == Path[j] then
-				Skip = 1
+		-- Add adjacent nodes
+		local Connected = Paths[Next]
+		if Connected ~= nil then
+			for i = 1, #Connected do
+				Adjacent = Connected[i]
+				if Set[Adjacent] == nil then
+					Set[Adjacent] = 1
+					Parents[Adjacent] = Next
+					table.insert(Queue, 1, Adjacent)
+				end
 			end
 		end
 
-		-- Recurse
-		if Skip == 0 then
-
-			-- Append node to current path
-			table.insert(Path, Connected[i])
-
-			local Last = FindMap(Connected[i], Target, Path)
-			if Last ~= nil then
-				return Last
-			end
-
-			-- Dead end
-			table.remove(Path)
-		end
 	end
 
-	-- No path was found
-	return nil
+	return false
 end
-
--- Builds --
-
-Builds = {
-	[1] = {
-		Items = {
-			-- ItemID, VendorID
-			[INVENTORY_HAND1] = {
-				{ 101, 3 },
-				{ 100, 3 },
-				{ 119, 3 },
-				{ 147, 3 }
-			}
-		}
-	}
-}
 
 -- Paths is a structure that stores map connections --
 
@@ -114,6 +96,22 @@ Paths = {
 	[24] = { 23, 25 },
 	[25] = { 24, 26 },
 	[26] = { 21, 25 },
+}
+
+-- Builds --
+
+Builds = {
+	[1] = {
+		Items = {
+			-- ItemID, VendorID
+			[INVENTORY_HAND1] = {
+				{ 101, 3 },
+				{ 100, 3 },
+				{ 119, 3 },
+				{ 147, 3 }
+			}
+		}
+	}
 }
 
 -- Bot that runs on the server --
