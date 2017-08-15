@@ -231,7 +231,7 @@ void _Server::Update(double FrameTime) {
 		BotTime += FrameTime;
 
 	// Spawn bot
-	if(0 && IsTesting && BotTime > 0.1) {
+	if(IsTesting && BotTime > 0.1) {
 		BotTime = -1;
 		CreateBot();
 	}

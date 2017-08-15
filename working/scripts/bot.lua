@@ -100,14 +100,14 @@ Builds = {
 -- Paths is a structure that stores map connections --
 
 Paths = {
-	[1] = { 10, 2, 4, 5, 6, 7 },
+	[1] = { 2, 4, 5, 6, 7, 10 },
 	[2] = { 1 },
 	[4] = { 1 },
 	[5] = { 1 },
 	[6] = { 1 },
 	[7] = { 1 },
 	[10] = { 1, 11, 12, 13, 14, 16, 20, 30 },
-	[11] = { 1 },
+	[11] = { 10 },
 	[20] = { 10, 21, 22 },
 	[21] = { 20 },
 	[22] = { 20, 23 },
@@ -162,19 +162,8 @@ function Bot_Server.Update(self, FrameTime, Object)
 			end
 		end
 	elseif self.GoalState == GOAL_BUY then
-		if Object.MapID ~= 1 and Object.MapID ~= 4 then
-			X, Y = Object.FindEvent(3, 1)
-			if X ~= nil then
-				Object.FindPath(X, Y)
-				self.MoveState = MOVE_PATH
-			end
-		elseif Object.MapID == 1 then
-			X, Y = Object.FindEvent(3, 4)
-			if X ~= nil then
-				Object.FindPath(X, Y)
-				self.MoveState = MOVE_PATH
-			end
-		elseif Object.MapID == 4 then
+		Arrived = self:TraverseMap(Object)
+		if Arrived then
 			X, Y = Object.FindEvent(4, self.VendorID)
 			if X ~= nil then
 				Object.FindPath(X, Y)
@@ -212,6 +201,7 @@ function Bot_Server.GoToMap(self, Object, MapID)
 	local Last = FindMap(Object.MapID, self.TargetMapID, self.MapPath)
 	if Last ~= nil then
 		table.insert(self.MapPath, Last)
+		--for i = 1, #self.MapPath do print(self.MapPath[i]) end
 	end
 end
 
@@ -285,9 +275,9 @@ function Bot_Server.DetermineNextGoal(self, Object)
 			end
 		end
 
-		self.BuyID = 0
 		if self.BuyID ~= 0 then
 			self.GoalState = GOAL_BUY
+			self:GoToMap(Object, 4)
 		else
 			self.GoalState = GOAL_FARMING
 			self:GoToMap(Object, 10)
