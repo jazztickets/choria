@@ -54,6 +54,7 @@ _Object::_Object() :
 	Server(nullptr),
 	Peer(nullptr),
 	Moved(0),
+	UseCommand(false),
 	WaitForServer(false),
 	CheckEvent(false),
 	Paused(false),
@@ -211,6 +212,12 @@ void _Object::Update(double FrameTime) {
 		// Remove node from pathfinding
 		if(Bot && Path.size())
 			Path.erase(Path.begin());
+	}
+
+	// Player hit the use button
+	if(UseCommand) {
+		CheckEvent = true;
+		UseCommand = false;
 	}
 
 	// Update status

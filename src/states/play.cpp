@@ -281,6 +281,9 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 					if(!Player->WaitForServer)
 						HUD->CloseWindows(true);
 				break;
+				case Action::GAME_USE:
+					SendUseCommand();
+				break;
 			}
 		}
 	}
@@ -1396,6 +1399,16 @@ void _PlayState::SendJoinRequest() {
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_JOIN);
+	Network->SendPacket(Packet);
+}
+
+// Send use action
+void _PlayState::SendUseCommand() {
+	if(!Player->AcceptingMoveInput())
+		return;
+
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_USECOMMAND);
 	Network->SendPacket(Packet);
 }
 

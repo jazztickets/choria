@@ -55,6 +55,7 @@ class _PlayState : public _State {
 		void SendStatus(uint8_t Status);
 		void SendActionUse(uint8_t Slot);
 		void SendJoinRequest();
+		void SendUseCommand();
 
 		// Input
 		bool HandleAction(int InputType, size_t Action, int Value) override;

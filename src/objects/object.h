@@ -182,6 +182,7 @@ class _Object : public _ManagerBase {
 		std::unordered_map<uint32_t, double> BattleCooldown;
 		std::list<int> InputStates;
 		int Moved;
+		bool UseCommand;
 		bool WaitForServer;
 		bool CheckEvent;
 		bool Paused;

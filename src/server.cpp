@@ -288,6 +288,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::WORLD_MOVECOMMAND:
 			HandleMoveCommand(Data, Peer);
 		break;
+		case PacketType::WORLD_USECOMMAND:
+			HandleUseCommand(Data, Peer);
+		break;
 		case PacketType::WORLD_RESPAWN:
 			HandleRespawn(Data, Peer);
 		break;
@@ -508,6 +511,18 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	Player->InputStates.push_back(Data.Read<char>());
+}
+
+// Handles use command from a client
+void _Server::HandleUseCommand(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+	if(!Player->IsAlive())
+		return;
+
+	Player->UseCommand = true;
 }
 
 // Handle respawn command from client
