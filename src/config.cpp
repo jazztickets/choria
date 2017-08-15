@@ -87,66 +87,69 @@ void _Config::SetDefaults() {
 	BrowserCommand = "xdg-open";
 #endif
 
-	LoadDefaultInputBindings();
+	LoadDefaultInputBindings(false);
 }
 
 // Load default key bindings
-void _Config::LoadDefaultInputBindings() {
+void _Config::LoadDefaultInputBindings(bool IfNone) {
 
 	// Clear mappings
-	for(int i = 0; i < _Input::INPUT_COUNT; i++)
-		Actions.ClearMappings(i);
+	if(!IfNone) {
+		for(int i = 0; i < _Input::INPUT_COUNT; i++)
+			Actions.ClearMappings(i);
+	}
 
 	// Movement
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_UP, Action::GAME_UP, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_E, Action::GAME_UP, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_DOWN, Action::GAME_DOWN, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_D, Action::GAME_DOWN, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_LEFT, Action::GAME_LEFT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_S, Action::GAME_LEFT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, Action::GAME_RIGHT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F, Action::GAME_RIGHT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_UP, Action::GAME_UP, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_E, Action::GAME_UP, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_DOWN, Action::GAME_DOWN, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_D, Action::GAME_DOWN, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_LEFT, Action::GAME_LEFT, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_S, Action::GAME_LEFT, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, Action::GAME_RIGHT, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F, Action::GAME_RIGHT, 1.0f, -1.0f, IfNone);
 
 	// Game
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_G, Action::GAME_JOIN, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_C, Action::GAME_INVENTORY, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_R, Action::GAME_SKILLS, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_T, Action::GAME_TRADE, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_P, Action::GAME_PARTY, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, Action::GAME_CHAT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_ENTER, Action::GAME_CHAT, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_G, Action::GAME_JOIN, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_C, Action::GAME_INVENTORY, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_R, Action::GAME_SKILLS, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_T, Action::GAME_TRADE, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_P, Action::GAME_PARTY, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, Action::GAME_CHAT, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_ENTER, Action::GAME_CHAT, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_SPACE, Action::GAME_USE, 1.0f, -1.0f, IfNone);
 
 	// Skills
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_1, Action::GAME_SKILL1, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_2, Action::GAME_SKILL2, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_3, Action::GAME_SKILL3, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_4, Action::GAME_SKILL4, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_5, Action::GAME_SKILL5, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_6, Action::GAME_SKILL6, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_7, Action::GAME_SKILL7, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_8, Action::GAME_SKILL8, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_1, Action::GAME_SKILL1, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_2, Action::GAME_SKILL2, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_3, Action::GAME_SKILL3, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_4, Action::GAME_SKILL4, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_5, Action::GAME_SKILL5, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_6, Action::GAME_SKILL6, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_7, Action::GAME_SKILL7, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_8, Action::GAME_SKILL8, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_1, Action::GAME_SKILL1, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_2, Action::GAME_SKILL2, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_3, Action::GAME_SKILL3, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_4, Action::GAME_SKILL4, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_5, Action::GAME_SKILL5, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_6, Action::GAME_SKILL6, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_7, Action::GAME_SKILL7, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_8, Action::GAME_SKILL8, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_1, Action::GAME_SKILL1, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_2, Action::GAME_SKILL2, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_3, Action::GAME_SKILL3, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_4, Action::GAME_SKILL4, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_5, Action::GAME_SKILL5, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_6, Action::GAME_SKILL6, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_7, Action::GAME_SKILL7, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_KP_8, Action::GAME_SKILL8, 1.0f, -1.0f, IfNone);
 
 	// Menu
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_UP, Action::MENU_UP, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_DOWN, Action::MENU_DOWN, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_TAB, Action::MENU_DOWN, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_LEFT, Action::MENU_LEFT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, Action::MENU_RIGHT, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, Action::MENU_GO, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, Action::MENU_BACK, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F1, Action::MENU_PAUSE, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_UP, Action::MENU_UP, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_DOWN, Action::MENU_DOWN, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_TAB, Action::MENU_DOWN, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_LEFT, Action::MENU_LEFT, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RIGHT, Action::MENU_RIGHT, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_RETURN, Action::MENU_GO, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_ESCAPE, Action::MENU_BACK, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F1, Action::MENU_PAUSE, 1.0f, -1.0f, IfNone);
 
 	// Misc
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_GRAVE, Action::MISC_CONSOLE, 1.0f, -1.0f, false);
-	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F2, Action::MISC_DEBUG, 1.0f, -1.0f, false);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_GRAVE, Action::MISC_CONSOLE, 1.0f, -1.0f, IfNone);
+	Actions.AddInputMap(_Input::KEYBOARD, SDL_SCANCODE_F2, Action::MISC_DEBUG, 1.0f, -1.0f, IfNone);
 }
 
 // Load the config file
@@ -232,6 +235,9 @@ void _Config::Load() {
 			Actions.AddInputMap(InputType, Input, i, 1.0f, -1.0f, false);
 		}
 	}
+
+	// Add missing bindings
+	LoadDefaultInputBindings(true);
 }
 
 // Save variables to the config file

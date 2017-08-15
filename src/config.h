@@ -35,7 +35,7 @@ class _Config {
 		void Load();
 		void Save();
 		void SetDefaults();
-		void LoadDefaultInputBindings();
+		void LoadDefaultInputBindings(bool IfNone);
 
 		// State
 		std::string ConfigPath;

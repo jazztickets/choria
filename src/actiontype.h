@@ -31,6 +31,7 @@ namespace Action {
 		GAME_TRADE,
 		GAME_PARTY,
 		GAME_CHAT,
+		GAME_USE,
 		GAME_SKILL1,
 		GAME_SKILL2,
 		GAME_SKILL3,

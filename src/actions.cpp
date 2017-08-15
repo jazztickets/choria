@@ -41,6 +41,7 @@ _Actions::_Actions() {
 	State[Action::GAME_TRADE].Name = "game_trade";
 	State[Action::GAME_PARTY].Name = "game_party";
 	State[Action::GAME_CHAT].Name = "game_chat";
+	State[Action::GAME_USE].Name = "game_use";
 	State[Action::GAME_SKILL1].Name = "game_skill1";
 	State[Action::GAME_SKILL2].Name = "game_skill2";
 	State[Action::GAME_SKILL3].Name = "game_skill3";
