@@ -23,6 +23,8 @@
 #include <objects/battle.h>
 #include <objects/inventory.h>
 #include <objects/map.h>
+#include <server.h>
+#include <buffer.h>
 #include <stats.h>
 #include <audio.h>
 #include <database.h>
@@ -364,6 +366,21 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectRespawn, 1);
 	lua_setfield(LuaState, -2, "Respawn");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectUseCommand, 1);
+	lua_setfield(LuaState, -2, "UseCommand");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectCloseWindows, 1);
+	lua_setfield(LuaState, -2, "CloseWindows");
+
+	lua_pushlightuserdata(LuaState, Object);
+	lua_pushcclosure(LuaState, &ObjectVendorExchange, 1);
+	lua_setfield(LuaState, -2, "VendorExchange");
+
+	lua_pushinteger(LuaState, Object->Status);
+	lua_setfield(LuaState, -2, "Status");
 
 	lua_pushnumber(LuaState, Object->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
@@ -884,12 +901,10 @@ int _Scripting::ObjectFindEvent(lua_State *LuaState) {
 	if(!Object->Map)
 		return 0;
 
-	glm::ivec2 Position;
-	auto Iterator = Object->Map->IndexedEvents.find(_Event(Type, Data));
-	if(Iterator == Object->Map->IndexedEvents.end())
+	glm::ivec2 Position = Object->Position;
+	if(!Object->Map->FindEvent(_Event(Type, Data), Position))
 		return 0;
 
-	Position = Iterator->second;
 	lua_pushinteger(LuaState, Position.x);
 	lua_pushinteger(LuaState, Position.y);
 
@@ -926,7 +941,80 @@ int _Scripting::ObjectGetInputStateFromPath(lua_State *LuaState) {
 // Send the respawn command
 int _Scripting::ObjectRespawn(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	Object->Respawn();
+
+	if(!Object->Server)
+		return 0;
+
+	_Buffer Packet;
+	Object->Server->HandleRespawn(Packet, Object->Peer);
+
+	return 0;
+}
+
+// Send use command
+int _Scripting::ObjectUseCommand(lua_State *LuaState) {
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	Object->UseCommand = true;
+
+	return 0;
+}
+
+// Close all open windows for object
+int _Scripting::ObjectCloseWindows(lua_State *LuaState) {
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	if(!Object->Server)
+		return 0;
+
+	_Buffer Packet;
+	Packet.Write<uint8_t>(_Object::STATUS_NONE);
+
+	Packet.StartRead();
+	Object->Server->HandlePlayerStatus(Packet, Object->Peer);
+
+	return 0;
+}
+
+// Interact with vendor
+int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
+	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	if(!Object->Server || !Object->Vendor)
+		return 0;
+
+	_Buffer Packet;
+	bool Buy = (bool)lua_toboolean(LuaState, 1);
+	Packet.WriteBit(Buy);
+	if(Buy) {
+
+		// Get parameters
+		uint32_t ItemID = (_Bag::BagType)lua_tointeger(LuaState, 2);
+		int Amount = (int)lua_tointeger(LuaState, 3);
+
+		// Build packet
+		_Slot VendorSlot;
+		_Slot TargetSlot;
+		VendorSlot.Index = Object->Vendor->GetSlotFromID(ItemID);
+		Packet.Write<uint8_t>((uint8_t)Amount);
+		VendorSlot.Serialize(Packet);
+		TargetSlot.Serialize(Packet);
+
+		Packet.StartRead();
+		Object->Server->HandleVendorExchange(Packet, Object->Peer);
+	}
+	else {
+
+		// Get parameters
+		_Slot Slot;
+		Slot.BagType = (_Bag::BagType)lua_tointeger(LuaState, 2);
+		Slot.Index = (size_t)lua_tointeger(LuaState, 3);
+		uint8_t Amount = (uint8_t)lua_tointeger(LuaState, 4);
+
+		// Build packet
+		Packet.Write<uint8_t>((uint8_t)Amount);
+		Slot.Serialize(Packet);
+
+		Packet.StartRead();
+		Object->Server->HandleVendorExchange(Packet, Object->Peer);
+	}
 
 	return 0;
 }

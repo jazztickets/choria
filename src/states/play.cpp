@@ -282,7 +282,8 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 						HUD->CloseWindows(true);
 				break;
 				case Action::GAME_USE:
-					SendUseCommand();
+					if(!Player->WaitForServer)
+						SendUseCommand();
 				break;
 			}
 		}

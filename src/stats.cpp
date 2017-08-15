@@ -695,3 +695,17 @@ const _Level *_Stats::FindLevel(int Experience) const {
 
 	return &Levels[Levels.size()-1];
 }
+
+// Convert vendor slot from item id
+size_t _Vendor::GetSlotFromID(uint32_t ID) const {
+
+	size_t Index = 0;
+	for(const auto &Item : Items) {
+		if(Item->ID == ID)
+			return Index;
+
+		Index++;
+	}
+
+	return NOSLOT;
+}

@@ -371,7 +371,7 @@ void _Map::IndexEvents() {
 		for(int i = 0; i < Size.x; i++) {
 			const _Tile &Tile = Tiles[i][j];
 			if(Tile.Event.Type != EVENT_NONE) {
-				IndexedEvents[Tile.Event] = glm::ivec2(i, j);
+				IndexedEvents[Tile.Event].push_back(glm::ivec2(i, j));
 			}
 		}
 	}
@@ -928,7 +928,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 	return ClosestPlayer;
 }
 
-// Find an event on the map, returns true on found
+// Find closest event on the map, returns true on found
 bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) {
 
 	// Find event
@@ -936,8 +936,17 @@ bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) {
 	if(Iterator == IndexedEvents.end())
 		return false;
 
-	// Return position
-	Position = Iterator->second;
+	// Return closest position
+	glm::ivec2 StartPosition = Position;
+	float ClosestDistanceSquared = HUGE_VAL;
+	for(const auto &CheckPosition : Iterator->second) {
+		glm::vec2 Delta = StartPosition - CheckPosition;
+		float DistanceSquared = glm::dot(Delta, Delta);
+		if(DistanceSquared < ClosestDistanceSquared) {
+			ClosestDistanceSquared = DistanceSquared;
+			Position = CheckPosition;
+		}
+	}
 
 	return true;
 }

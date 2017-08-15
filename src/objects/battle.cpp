@@ -741,19 +741,18 @@ void _Battle::ServerEndBattle() {
 			Fighter->Inventory->AddItem(Stats->Items[Iterator.first], 0, Iterator.second);
 		}
 
-		// Send info
-		if(Fighter->Peer) {
-			Server->Network->SendPacket(Packet, Fighter->Peer);
-			Server->SendHUD(Fighter->Peer);
-		}
-		else if(Fighter->Bot) {
-
-			// Update bot goal
+		// Update bot goal
+		if(Fighter->Bot) {
 			if(Scripting->StartMethodCall("Bot_Server", "DetermineNextGoal")) {
 				Scripting->PushObject(Fighter);
 				Scripting->MethodCall(1, 0);
 				Scripting->FinishMethodCall();
 			}
+		}
+		// Send info
+		else if(Fighter->Peer) {
+			Server->Network->SendPacket(Packet, Fighter->Peer);
+			Server->SendHUD(Fighter->Peer);
 		}
 	}
 

@@ -5,8 +5,7 @@ DIRECTION_LEFT  = 4
 DIRECTION_RIGHT = 8
 MOVE_IDLE       = 0
 MOVE_PATH       = 1
-MOVE_HEAL       = 2
-MOVE_RANDOM     = 3
+MOVE_RANDOM     = 2
 GOAL_NONE       = 0
 GOAL_FARMING    = 1
 GOAL_HEALING    = 2
@@ -122,6 +121,7 @@ Paths = {
 Bot_Server = {}
 Bot_Server.GoalState = GOAL_NONE
 Bot_Server.MoveState = MOVE_IDLE
+Bot_Server.SellSlot = -1
 Bot_Server.BuyID = 0
 Bot_Server.VendorID = 0
 Bot_Server.Timer = 0
@@ -151,7 +151,7 @@ function Bot_Server.Update(self, FrameTime, Object)
 				X, Y = Object.FindEvent(7, 1)
 				if X ~= nil then
 					if Object.X == X and Object.Y == Y then
-						self.MoveState = MOVE_HEAL
+						Object.UseCommand()
 					else
 						Object.FindPath(X, Y)
 						self.MoveState = MOVE_PATH
@@ -166,8 +166,19 @@ function Bot_Server.Update(self, FrameTime, Object)
 		if Arrived then
 			X, Y = Object.FindEvent(4, self.VendorID)
 			if X ~= nil then
-				Object.FindPath(X, Y)
-				self.MoveState = MOVE_PATH
+				if Object.X == X and Object.Y == Y then
+					if Object.Status ~= 3 then
+						Object.UseCommand()
+					else
+						Object.VendorExchange(false, 1, self.SellSlot, 1)
+						Object.VendorExchange(true, self.BuyID, 1)
+						Object.CloseWindows()
+						self:DetermineNextGoal(Object)
+					end
+				else
+					Object.FindPath(X, Y)
+					self.MoveState = MOVE_PATH
+				end
 			end
 		end
 	end
@@ -189,8 +200,12 @@ function Bot_Server.TraverseMap(self, Object)
 
 	X, Y = Object.FindEvent(3, NextMapID)
 	if X ~= nil then
-		Object.FindPath(X, Y)
-		self.MoveState = MOVE_PATH
+		if Object.X == X and Object.Y == Y then
+			Object.UseCommand()
+		else
+			Object.FindPath(X, Y)
+			self.MoveState = MOVE_PATH
+		end
 	end
 end
 
@@ -215,8 +230,6 @@ function Bot_Server.GetInputState(self, Object)
 		if InputState == 0 then
 			self.MoveState = MOVE_IDLE
 		end
-	elseif self.MoveState == MOVE_HEAL then
-		InputState = DIRECTION_LEFT
 	elseif self.MoveState == MOVE_RANDOM then
 		InputState = MoveTypes[Random.GetInt(1, 4)]
 		Direction = GetDirection(InputState)
@@ -254,6 +267,7 @@ function Bot_Server.DetermineNextGoal(self, Object)
 
 		self.BuyID = 0
 		self.VendorID = 0
+		self.SellSlot = -1
 
 		-- Check item progression
 		CheckType = INVENTORY_HAND1
@@ -268,9 +282,17 @@ function Bot_Server.DetermineNextGoal(self, Object)
 
 		-- Find next item to buy
 		for i = #IDs, 1, -1 do
+
+			-- Exit if we already have the item
+			if Item.ID == IDs[i][1] then
+				break
+			end
+
+			-- Check price
 			if Object.Gold >= Items[IDs[i][1]].Cost then
 				self.BuyID = IDs[i][1]
 				self.VendorID = IDs[i][2]
+				self.SellSlot = INVENTORY_HAND1
 				break
 			end
 		end
@@ -284,7 +306,7 @@ function Bot_Server.DetermineNextGoal(self, Object)
 		end
 	end
 
-	print("DetermineNextGoal ( goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " )")
+	print("DetermineNextGoal ( goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " buyid=" .. self.BuyID .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " )")
 end
 
 -- Bot that simulates a connected client --
@@ -295,10 +317,6 @@ for Key, Value in pairs(Bot_Server) do
 end
 
 function Bot_Client.DetermineNextGoal(self, Object)
-	HealthPercent = Object.Health / Object.MaxHealth
-	if HealthPercent <= 0.5 then
-		self.GoalState = GOAL_HEALING
-	else
-		self.GoalState = GOAL_FARMING
-	end
+	self.GoalState = GOAL_FARMING
+	self:GoToMap(Object, 10)
 end

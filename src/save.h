@@ -53,7 +53,7 @@ class _Save {
 		uint32_t GetCharacterIDByName(const std::string &Name);
 		uint32_t GetCharacterIDBySlot(uint32_t AccountID, uint32_t Slot);
 		void DeleteCharacter(uint32_t CharacterID);
-		void CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
+		uint32_t CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
 
 		// Objects
 		void SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log);

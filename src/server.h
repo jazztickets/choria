@@ -66,7 +66,35 @@ class _Server {
 		void SendHUD(_Peer *Peer);
 		void SendPlayerPosition(_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
+
+		// Packet handling
+		void HandleLoginInfo(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterListRequest(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterPlay(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
+		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
+		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
+		void HandleUseCommand(_Buffer &Data, _Peer *Peer);
 		void HandleRespawn(_Buffer &Data, _Peer *Peer);
+		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
+		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
+		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
+		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
+		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
+		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
+		void HandleChatMessage(_Buffer &Data, _Peer *Peer);
+		void HandleTradeRequest(_Buffer &Data, _Peer *Peer);
+		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
+		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
+		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
+		void HandlePartyInfo(_Buffer &Data, _Peer *Peer);
+		void HandleActionUse(_Buffer &Data, _Peer *Peer);
+		void HandleActionBarChanged(_Buffer &Data, _Peer *Peer);
+		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
+		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
+		void HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer);
+		void HandleJoin(_Buffer &Data, _Peer *Peer);
+		void HandleExit(_Buffer &Data, _Peer *Peer);
 
 		// Parameters
 		bool IsTesting;
@@ -108,33 +136,6 @@ class _Server {
 		void HandleConnect(_NetworkEvent &Event);
 		void HandleDisconnect(_NetworkEvent &Event);
 		void HandlePacket(_Buffer &Data, _Peer *Peer);
-
-		void HandleLoginInfo(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterListRequest(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterPlay(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
-		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
-		void HandleUseCommand(_Buffer &Data, _Peer *Peer);
-		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
-		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
-		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
-		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
-		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
-		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
-		void HandleChatMessage(_Buffer &Data, _Peer *Peer);
-		void HandleTradeRequest(_Buffer &Data, _Peer *Peer);
-		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
-		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
-		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
-		void HandlePartyInfo(_Buffer &Data, _Peer *Peer);
-		void HandleActionUse(_Buffer &Data, _Peer *Peer);
-		void HandleActionBarChanged(_Buffer &Data, _Peer *Peer);
-		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
-		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
-		void HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer);
-		void HandleJoin(_Buffer &Data, _Peer *Peer);
-		void HandleExit(_Buffer &Data, _Peer *Peer);
 
 		void SendPlayerInfo(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);

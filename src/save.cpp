@@ -228,7 +228,7 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
+uint32_t _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
 	if(!BuildID)
 		BuildID = 1;
 
@@ -268,6 +268,8 @@ void _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t Accou
 	StartTransaction();
 	SavePlayer(&Object, 0, nullptr);
 	EndTransaction();
+
+	return Object.CharacterID;
 }
 
 // Saves the player

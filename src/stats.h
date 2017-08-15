@@ -91,6 +91,8 @@ struct _EventName {
 };
 
 struct _Vendor {
+	size_t GetSlotFromID(uint32_t ID) const;
+
 	uint32_t ID;
 	std::string Name;
 	float BuyPercent;

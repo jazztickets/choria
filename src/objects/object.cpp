@@ -220,27 +220,6 @@ void _Object::Update(double FrameTime) {
 		UseCommand = false;
 	}
 
-	// Update status
-	Status = STATUS_NONE;
-	if(!IsAlive())
-		Status = STATUS_DEAD;
-	else if(Battle)
-		Status = STATUS_BATTLE;
-	else if(WaitingForTrade)
-		Status = STATUS_TRADE;
-	else if(Vendor)
-		Status = STATUS_VENDOR;
-	else if(Trader)
-		Status = STATUS_TRADER;
-	else if(Blacksmith)
-		Status = STATUS_BLACKSMITH;
-	else if(InventoryOpen)
-		Status = STATUS_INVENTORY;
-	else if(SkillsOpen)
-		Status = STATUS_SKILLS;
-	else if(Paused)
-		Status = STATUS_PAUSE;
-
 	// Update actions and battle
 	if(IsAlive()) {
 
@@ -376,6 +355,28 @@ void _Object::Update(double FrameTime) {
 	// Check events
 	if(Map && CheckEvent)
 		Map->CheckEvents(this);
+
+	// Update status
+	Status = STATUS_NONE;
+	if(!IsAlive())
+		Status = STATUS_DEAD;
+	else if(Battle)
+		Status = STATUS_BATTLE;
+	else if(WaitingForTrade)
+		Status = STATUS_TRADE;
+	else if(Vendor)
+		Status = STATUS_VENDOR;
+	else if(Trader)
+		Status = STATUS_TRADER;
+	else if(Blacksmith)
+		Status = STATUS_BLACKSMITH;
+	else if(InventoryOpen)
+		Status = STATUS_INVENTORY;
+	else if(SkillsOpen)
+		Status = STATUS_SKILLS;
+	else if(Paused)
+		Status = STATUS_PAUSE;
+
 }
 
 // Update bot AI
@@ -1410,15 +1411,6 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 				Targets.push_back(Target);
 		}
 	}
-}
-
-// Respawn function called by server bots
-void _Object::Respawn() {
-	if(!Server)
-		return;
-
-	_Buffer Packet;
-	Server->HandleRespawn(Packet, Peer);
 }
 
 // Get the percentage to the next level

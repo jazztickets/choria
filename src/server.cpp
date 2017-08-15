@@ -231,7 +231,7 @@ void _Server::Update(double FrameTime) {
 		BotTime += FrameTime;
 
 	// Spawn bot
-	if(IsTesting && BotTime > 0.1) {
+	if(1 && IsTesting && BotTime > 2.1) {
 		BotTime = -1;
 		CreateBot();
 	}
@@ -870,7 +870,7 @@ _Object *_Server::CreateBot() {
 	uint32_t CharacterID = Save->GetCharacterID(ACCOUNT_BOTS_ID, Slot);
 	if(!CharacterID) {
 		std::string Name = "bot_test";
-		Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, 1, 1);
+		CharacterID = Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, 1, 1);
 	}
 
 	// Create object

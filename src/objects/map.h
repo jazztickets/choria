@@ -151,7 +151,7 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		// Map data
 		_Tile **Tiles;
 		glm::ivec2 Size;
-		std::map<_Event, glm::ivec2> IndexedEvents;
+		std::map<_Event, std::vector<glm::ivec2>> IndexedEvents;
 
 		// Graphics
 		bool UseAtlas;

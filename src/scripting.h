@@ -97,6 +97,9 @@ class _Scripting {
 		static int ObjectGetTileEvent(lua_State *LuaState);
 		static int ObjectGetInputStateFromPath(lua_State *LuaState);
 		static int ObjectRespawn(lua_State *LuaState);
+		static int ObjectUseCommand(lua_State *LuaState);
+		static int ObjectCloseWindows(lua_State *LuaState);
+		static int ObjectVendorExchange(lua_State *LuaState);
 
 		static int ItemGenerateDamage(lua_State *LuaState);
 
