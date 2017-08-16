@@ -27,8 +27,8 @@ class _Camera {
 
 	public:
 
-		_Camera(const glm::vec3 &Position, float UpdateDivisor);
-		~_Camera();
+		_Camera(const glm::vec3 &Position, float UpdateDivisor, float Fovy, float Near, float Far);
+		~_Camera() { }
 
 		// Updates
 		void CalculateFrustum(float AspectRatio);
@@ -54,11 +54,12 @@ class _Camera {
 		glm::mat4 Projection;
 
 		glm::vec3 LastPosition, Position, TargetPosition;
-		float Fovy;
 		float UpdateDivisor;
 
 		glm::vec2 Frustum;
-		float Near, Far;
+		float Fovy;
+		float Near;
+		float Far;
 
 		glm::vec4 AABB;
 };

@@ -18,26 +18,19 @@
 #include <ae/camera.h>
 #include <ae/graphics.h>
 #include <ae/ui.h>
-#include <constants.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/norm.hpp>
 #include <cmath>
 
 // Initialize
-_Camera::_Camera(const glm::vec3 &Position, float UpdateDivisor)
+_Camera::_Camera(const glm::vec3 &Position, float UpdateDivisor, float Fovy, float Near, float Far)
 :	LastPosition(Position),
 	Position(Position),
 	TargetPosition(Position),
-	Fovy(CAMERA_FOVY),
-	UpdateDivisor(UpdateDivisor) {
-
-	// Set up frustum
-	Near = CAMERA_NEAR;
-	Far = CAMERA_FAR;
-}
-
-// Shutdown
-_Camera::~_Camera() {
+	UpdateDivisor(UpdateDivisor),
+	Fovy(Fovy),
+	Near(Near),
+	Far(Far) {
 }
 
 // Calculate the frustum
@@ -104,7 +97,6 @@ void _Camera::Update(double FrameTime) {
 		Position.z += DeltaZ / UpdateDivisor;
 	else
 		Position.z = TargetPosition.z;
-
 }
 
 // Interpolate between position and last position
