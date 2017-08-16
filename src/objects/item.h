@@ -18,8 +18,8 @@
 #pragma once
 
 // Libraries
+#include <ae/texture.h>
 #include <objects/action.h>
-#include <texture.h>
 
 // Forward Declarations
 class _Object;

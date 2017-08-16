@@ -20,12 +20,12 @@
 // Libraries
 #include <objects/statchange.h>
 #include <objects/inventory.h>
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 #include <vector>
 #include <list>
 #include <string>
 #include <cstdint>
-#include <glm/vec2.hpp>
-#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _Object;

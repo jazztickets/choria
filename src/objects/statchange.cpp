@@ -18,11 +18,11 @@
 #include <objects/statchange.h>
 #include <objects/object.h>
 #include <objects/buff.h>
+#include <ae/buffer.h>
+#include <ae/utils.h>
+#include <ae/font.h>
 #include <stats.h>
-#include <buffer.h>
 #include <constants.h>
-#include <utils.h>
-#include <font.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 #include <sstream>

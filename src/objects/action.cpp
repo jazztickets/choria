@@ -22,10 +22,10 @@
 #include <objects/buff.h>
 #include <objects/item.h>
 #include <objects/battle.h>
+#include <ae/buffer.h>
 #include <constants.h>
 #include <server.h>
 #include <stats.h>
-#include <buffer.h>
 #include <iostream>
 
 // Serialize action

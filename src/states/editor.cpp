@@ -16,20 +16,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/editor.h>
+#include <ae/camera.h>
+#include <ae/assets.h>
+#include <ae/atlas.h>
+#include <ae/program.h>
+#include <ae/audio.h>
+#include <ae/font.h>
+#include <ae/ui.h>
+#include <ae/input.h>
+#include <ae/graphics.h>
 #include <objects/map.h>
-#include <ui.h>
 #include <framework.h>
-#include <input.h>
-#include <graphics.h>
 #include <stats.h>
 #include <config.h>
 #include <constants.h>
-#include <camera.h>
-#include <assets.h>
-#include <atlas.h>
-#include <program.h>
-#include <audio.h>
-#include <font.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <sstream>

@@ -16,35 +16,35 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/battle.h>
-#include <network/servernetwork.h>
-#include <network/clientnetwork.h>
-#include <network/peer.h>
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/inventory.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
-#include <ui.h>
+#include <ae/servernetwork.h>
+#include <ae/clientnetwork.h>
+#include <ae/peer.h>
+#include <ae/ui.h>
+#include <ae/actions.h>
+#include <ae/buffer.h>
+#include <ae/graphics.h>
+#include <ae/program.h>
+#include <ae/assets.h>
+#include <ae/font.h>
+#include <ae/random.h>
 #include <constants.h>
 #include <server.h>
-#include <actions.h>
 #include <actiontype.h>
-#include <buffer.h>
 #include <hud.h>
-#include <graphics.h>
 #include <scripting.h>
 #include <stats.h>
 #include <config.h>
-#include <program.h>
-#include <assets.h>
-#include <font.h>
 #include <packet.h>
-#include <random.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <vector>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
-#include <glm/gtc/type_ptr.hpp>
 
 // Constructor
 _Battle::_Battle() :

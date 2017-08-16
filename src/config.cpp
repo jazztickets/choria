@@ -16,12 +16,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <config.h>
-#include <files.h>
+#include <ae/files.h>
+#include <ae/actions.h>
+#include <ae/input.h>
+#include <ae/utils.h>
 #include <constants.h>
-#include <actions.h>
-#include <input.h>
 #include <actiontype.h>
-#include <utils.h>
 #include <sstream>
 #include <fstream>
 #include <SDL_filesystem.h>

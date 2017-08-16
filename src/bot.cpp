@@ -16,19 +16,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <bot.h>
-#include <network/peer.h>
-#include <network/clientnetwork.h>
+#include <ae/peer.h>
+#include <ae/clientnetwork.h>
+#include <ae/actions.h>
+#include <ae/random.h>
+#include <ae/buffer.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>
 #include <objects/inventory.h>
 #include <stats.h>
 #include <constants.h>
-#include <actions.h>
 #include <actiontype.h>
-#include <random.h>
 #include <scripting.h>
-#include <buffer.h>
 #include <iostream>
 #include <iomanip>
 

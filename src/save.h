@@ -18,8 +18,8 @@
 #pragma once
 
 // Libraries
-#include <string>
 #include <packet.h>
+#include <string>
 
 // Forward Declarations
 class _Database;

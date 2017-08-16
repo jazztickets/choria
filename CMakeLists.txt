@@ -67,26 +67,24 @@ include_directories(${TINYXML2_INCLUDE_DIR})
 
 # add source files
 file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
+file(GLOB SRC_AE "src/ae/*.cpp" "src/ae/*.h")
 file(GLOB SRC_ENET "src/enet/*.c" "src/enet/*.h")
-file(GLOB SRC_INSTANCES "src/instances/*.cpp" "src/instances/*.h")
-file(GLOB SRC_NETWORK "src/network/*.cpp" "src/network/*.h")
 file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
-file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
-file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
-file(GLOB SRC_ZLIB "src/zlib/*.cc" "src/zlib/*.h")
 file(GLOB SRC_PATH "src/path/*.cpp" "src/path/*.h")
+file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
+file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
+file(GLOB SRC_ZLIB "src/zlib/*.cc" "src/zlib/*.h")
 
 # combine source files
 file(GLOB SRC_ALL
 	${SRC_MAIN}
-	${SRC_STATES}
+	${SRC_AE}
 	${SRC_ENET}
-	${SRC_INSTANCES}
-	${SRC_NETWORK}
 	${SRC_OBJECTS}
-	${SRC_PNGLITE}
-	${SRC_ZLIB}
 	${SRC_PATH}
+	${SRC_PNGLITE}
+	${SRC_STATES}
+	${SRC_ZLIB}
 )
 
 # build binary

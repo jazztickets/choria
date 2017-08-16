@@ -16,30 +16,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <menu.h>
+#include <ae/clientnetwork.h>
+#include <ae/ui.h>
+#include <ae/input.h>
+#include <ae/actions.h>
+#include <ae/buffer.h>
+#include <ae/audio.h>
+#include <ae/graphics.h>
+#include <ae/assets.h>
+#include <ae/utils.h>
+#include <ae/audio.h>
 #include <states/play.h>
 #include <states/editor.h>
-#include <network/clientnetwork.h>
-#include <ui.h>
 #include <objects/object.h>
-#include <constants.h>
-#include <input.h>
-#include <actions.h>
-#include <actiontype.h>
-#include <graphics.h>
-#include <assets.h>
 #include <config.h>
 #include <hud.h>
+#include <actiontype.h>
+#include <constants.h>
 #include <framework.h>
-#include <buffer.h>
-#include <audio.h>
 #include <stats.h>
 #include <packet.h>
-#include <utils.h>
-#include <audio.h>
 #include <version.h>
+#include <SDL_keyboard.h>
 #include <sstream>
 #include <iomanip>
-#include <SDL_keyboard.h>
 
 _Menu Menu;
 

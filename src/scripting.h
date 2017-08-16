@@ -18,9 +18,9 @@
 #pragma once
 
 // Libraries
+#include <lua.hpp>
 #include <list>
 #include <string>
-#include <lua.hpp>
 
 // Forward Declarations
 class _Object;

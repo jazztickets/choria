@@ -17,10 +17,10 @@
 *******************************************************************************/
 #pragma once
 
-#include <state.h>
-#include <log.h>
+#include <ae/state.h>
+#include <ae/log.h>
+#include <ae/manager.h>
 #include <packet.h>
-#include <manager.h>
 #include <unordered_map>
 
 // Forward Declarations

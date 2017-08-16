@@ -16,13 +16,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <stats.h>
+#include <ae/database.h>
+#include <ae/random.h>
+#include <ae/assets.h>
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/inventory.h>
 #include <constants.h>
-#include <database.h>
-#include <random.h>
-#include <assets.h>
 #include <algorithm>
 #include <iostream>
 

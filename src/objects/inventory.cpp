@@ -17,8 +17,8 @@
 *******************************************************************************/
 #include <objects/inventory.h>
 #include <objects/item.h>
+#include <ae/buffer.h>
 #include <constants.h>
-#include <buffer.h>
 #include <stats.h>
 
 // Constructor

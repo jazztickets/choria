@@ -16,14 +16,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/dedicated.h>
-#include <network/servernetwork.h>
-#include <network/peer.h>
+#include <ae/servernetwork.h>
+#include <ae/peer.h>
+#include <ae/utils.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>
 #include <framework.h>
 #include <server.h>
-#include <utils.h>
 #include <stats.h>
 #include <iomanip>
 

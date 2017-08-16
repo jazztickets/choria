@@ -19,10 +19,10 @@
 
 // Libraries
 #include <glm/vec2.hpp>
-#include <string>
-#include <sstream>
-#include <list>
 #include <unordered_map>
+#include <sstream>
+#include <string>
+#include <list>
 
 // Load/save config file
 class _Config {

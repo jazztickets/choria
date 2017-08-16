@@ -16,20 +16,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/bots.h>
-#include <network/peer.h>
-#include <network/clientnetwork.h>
+#include <ae/peer.h>
+#include <ae/clientnetwork.h>
+#include <ae/buffer.h>
+#include <ae/utils.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <stats.h>
 #include <framework.h>
-#include <buffer.h>
 #include <bot.h>
 #include <constants.h>
-#include <utils.h>
 #include <stats.h>
+#include <SDL_timer.h>
 #include <iomanip>
 #include <sstream>
-#include <SDL_timer.h>
 
 _BotsState BotState;
 

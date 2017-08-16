@@ -16,6 +16,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <scripting.h>
+#include <ae/buffer.h>
+#include <ae/audio.h>
+#include <ae/database.h>
+#include <ae/assets.h>
+#include <ae/random.h>
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/statchange.h>
@@ -24,12 +29,7 @@
 #include <objects/inventory.h>
 #include <objects/map.h>
 #include <server.h>
-#include <buffer.h>
 #include <stats.h>
-#include <audio.h>
-#include <database.h>
-#include <assets.h>
-#include <random.h>
 #include <stdexcept>
 #include <iostream>
 

@@ -16,9 +16,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <hud.h>
-#include <ui.h>
-#include <states/play.h>
-#include <network/clientnetwork.h>
+#include <ae/graphics.h>
+#include <ae/input.h>
+#include <ae/font.h>
+#include <ae/buffer.h>
+#include <ae/assets.h>
+#include <ae/audio.h>
+#include <ae/actions.h>
+#include <ae/ui.h>
+#include <ae/clientnetwork.h>
+#include <ae/utils.h>
+#include <ae/database.h>
 #include <objects/object.h>
 #include <objects/item.h>
 #include <objects/inventory.h>
@@ -26,29 +34,21 @@
 #include <objects/buff.h>
 #include <objects/battle.h>
 #include <objects/map.h>
+#include <states/play.h>
 #include <framework.h>
-#include <graphics.h>
-#include <input.h>
-#include <stats.h>
-#include <font.h>
 #include <scripting.h>
+#include <stats.h>
 #include <constants.h>
-#include <buffer.h>
-#include <assets.h>
 #include <config.h>
-#include <audio.h>
-#include <actions.h>
 #include <actiontype.h>
 #include <menu.h>
 #include <packet.h>
-#include <utils.h>
-#include <database.h>
+#include <SDL_keyboard.h>
 #include <vector>
 #include <algorithm>
 #include <sstream>
 #include <regex>
 #include <iomanip>
-#include <SDL_keyboard.h>
 
 // Initialize
 _HUD::_HUD() {

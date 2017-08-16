@@ -16,22 +16,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <server.h>
-#include <network/servernetwork.h>
-#include <network/peer.h>
+#include <ae/servernetwork.h>
+#include <ae/peer.h>
+#include <ae/manager.h>
+#include <ae/database.h>
+#include <ae/buffer.h>
+#include <ae/utils.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <scripting.h>
 #include <save.h>
-#include <manager.h>
-#include <database.h>
-#include <buffer.h>
 #include <packet.h>
 #include <stats.h>
 #include <constants.h>
 #include <config.h>
-#include <utils.h>
 #include <SDL_timer.h>
 #include <enet/enet.h>
 #include <algorithm>

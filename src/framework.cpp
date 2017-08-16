@@ -20,18 +20,18 @@
 #include <states/play.h>
 #include <states/dedicated.h>
 #include <states/bots.h>
-#include <network/network.h>
-#include <graphics.h>
-#include <input.h>
-#include <random.h>
+#include <ae/network.h>
+#include <ae/graphics.h>
+#include <ae/input.h>
+#include <ae/random.h>
+#include <ae/assets.h>
+#include <ae/actions.h>
+#include <ae/audio.h>
+#include <ae/utils.h>
+#include <ae/framelimit.h>
 #include <config.h>
-#include <assets.h>
 #include <constants.h>
-#include <actions.h>
 #include <menu.h>
-#include <audio.h>
-#include <utils.h>
-#include <framelimit.h>
 #include <SDL.h>
 #include <string>
 

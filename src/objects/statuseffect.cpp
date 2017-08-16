@@ -17,13 +17,13 @@
 *******************************************************************************/
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
-#include <ui.h>
+#include <ae/ui.h>
+#include <ae/buffer.h>
+#include <ae/assets.h>
+#include <ae/utils.h>
+#include <ae/font.h>
+#include <ae/graphics.h>
 #include <constants.h>
-#include <buffer.h>
-#include <assets.h>
-#include <utils.h>
-#include <font.h>
-#include <graphics.h>
 #include <stats.h>
 #include <stdexcept>
 #include <sstream>

@@ -18,13 +18,13 @@
 #pragma once
 
 // Libraries
-#include <log.h>
+#include <ae/log.h>
+#include <ae/manager.h>
+#include <glm/vec4.hpp>
+#include <unordered_map>
 #include <memory>
 #include <thread>
 #include <list>
-#include <manager.h>
-#include <unordered_map>
-#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _ServerNetwork;

@@ -19,7 +19,7 @@
 
 // Libraries
 #include <objects/statuseffect.h>
-#include <manager.h>
+#include <ae/manager.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <string>

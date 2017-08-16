@@ -18,8 +18,8 @@
 #pragma once
 
 // Libraries
+#include <ae/manager.h>
 #include <packet.h>
-#include <manager.h>
 #include <string>
 #include <memory>
 #include <list>

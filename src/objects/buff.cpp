@@ -16,15 +16,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/buff.h>
-#include <ui.h>
 #include <objects/object.h>
 #include <objects/statchange.h>
+#include <ae/ui.h>
+#include <ae/font.h>
+#include <ae/graphics.h>
+#include <ae/input.h>
+#include <ae/assets.h>
 #include <constants.h>
 #include <scripting.h>
-#include <font.h>
-#include <graphics.h>
-#include <input.h>
-#include <assets.h>
 #include <sstream>
 #include <iostream>
 
