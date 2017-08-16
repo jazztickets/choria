@@ -30,8 +30,9 @@
 #include <ae/graphics.h>
 #include <ae/random.h>
 #include <ae/font.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <ae/program.h>
+#include <packet.h>
 #include <hud.h>
 #include <server.h>
 #include <stats.h>

@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <packet.h>
+#include <ae/type.h>
 #include <string>
 
 // Forward Declarations

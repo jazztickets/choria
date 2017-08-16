@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <ae/program.h>
 #include <ae/graphics.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>

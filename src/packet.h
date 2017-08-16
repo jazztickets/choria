@@ -20,9 +20,6 @@
 // Libraries
 #include <cstdint>
 
-// Types
-typedef uint16_t NetworkIDType;
-
 // Enumerations
 enum class PacketType : uint8_t {
 	VERSION,

@@ -23,6 +23,7 @@
 #include <objects/item.h>
 #include <objects/battle.h>
 #include <ae/buffer.h>
+#include <packet.h>
 #include <constants.h>
 #include <server.h>
 #include <stats.h>

@@ -20,7 +20,6 @@
 // Libraries
 #include <ae/managerbase.h>
 #include <objects/action.h>
-#include <packet.h>
 #include <list>
 #include <cstdint>
 

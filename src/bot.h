@@ -19,7 +19,7 @@
 
 // Libraries
 #include <ae/manager.h>
-#include <packet.h>
+#include <ae/type.h>
 #include <string>
 #include <memory>
 #include <list>

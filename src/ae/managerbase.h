@@ -18,22 +18,19 @@
 #pragma once
 
 // Libraries
-#include <packet.h>
-
-// Forward Declarations
+#include <ae/type.h>
 
 // Classes
 class _ManagerBase {
 
 	public:
 
-		_ManagerBase();
-		virtual ~_ManagerBase();
+		_ManagerBase() : NetworkID(0), Deleted(false) { }
+		virtual ~_ManagerBase() { }
 
 		virtual void Update(double FrameTime) = 0;
 
 		NetworkIDType NetworkID;
-
 		bool Deleted;
 
 	protected:

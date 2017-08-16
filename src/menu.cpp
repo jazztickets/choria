@@ -24,7 +24,7 @@
 #include <ae/audio.h>
 #include <ae/graphics.h>
 #include <ae/assets.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <ae/audio.h>
 #include <states/play.h>
 #include <states/editor.h>

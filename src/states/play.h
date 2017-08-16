@@ -20,7 +20,6 @@
 #include <ae/state.h>
 #include <ae/log.h>
 #include <ae/manager.h>
-#include <packet.h>
 #include <unordered_map>
 
 // Forward Declarations

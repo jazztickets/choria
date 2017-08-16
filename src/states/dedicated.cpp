@@ -18,7 +18,7 @@
 #include <states/dedicated.h>
 #include <ae/servernetwork.h>
 #include <ae/peer.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>

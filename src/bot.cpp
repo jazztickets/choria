@@ -25,6 +25,7 @@
 #include <objects/battle.h>
 #include <objects/map.h>
 #include <objects/inventory.h>
+#include <packet.h>
 #include <stats.h>
 #include <constants.h>
 #include <actiontype.h>

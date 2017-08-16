@@ -19,7 +19,7 @@
 #include <ae/files.h>
 #include <ae/actions.h>
 #include <ae/input.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <constants.h>
 #include <actiontype.h>
 #include <sstream>
@@ -73,7 +73,7 @@ void _Config::SetDefaults() {
 	SoundVolume = 1.0f;
 	MusicVolume = 1.0f;
 	MaxClients = DEFAULT_MAXCLIENTS;
-	FakeLag = 0.0f;
+	FakeLag = 0.0;
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
 	ShowTutorial = 1;

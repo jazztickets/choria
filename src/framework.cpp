@@ -27,7 +27,7 @@
 #include <ae/assets.h>
 #include <ae/actions.h>
 #include <ae/audio.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <ae/framelimit.h>
 #include <config.h>
 #include <constants.h>

@@ -15,16 +15,10 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <ae/managerbase.h>
+#pragma once
 
-// Constructor
-_ManagerBase::_ManagerBase() :
-	NetworkID(0),
-	Deleted(false) {
+// Libraries
+#include <cstdint>
 
-}
-
-// Destructor
-_ManagerBase::~_ManagerBase() {
-
-}
+// Types
+typedef uint16_t NetworkIDType;

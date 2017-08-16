@@ -19,7 +19,7 @@
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <ae/buffer.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <ae/font.h>
 #include <stats.h>
 #include <constants.h>

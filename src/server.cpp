@@ -21,7 +21,7 @@
 #include <ae/manager.h>
 #include <ae/database.h>
 #include <ae/buffer.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <objects/object.h>
 #include <objects/inventory.h>
 #include <objects/map.h>

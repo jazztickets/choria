@@ -25,7 +25,7 @@
 #include <ae/actions.h>
 #include <ae/ui.h>
 #include <ae/clientnetwork.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <ae/database.h>
 #include <objects/object.h>
 #include <objects/item.h>

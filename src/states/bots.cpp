@@ -19,7 +19,7 @@
 #include <ae/peer.h>
 #include <ae/clientnetwork.h>
 #include <ae/buffer.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <stats.h>

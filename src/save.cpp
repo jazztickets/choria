@@ -19,7 +19,7 @@
 #include <ae/database.h>
 #include <ae/random.h>
 #include <ae/log.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <objects/object.h>
 #include <objects/item.h>
 #include <objects/buff.h>

@@ -20,7 +20,7 @@
 #include <ae/ui.h>
 #include <ae/buffer.h>
 #include <ae/assets.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <ae/font.h>
 #include <ae/graphics.h>
 #include <constants.h>

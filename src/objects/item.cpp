@@ -20,7 +20,7 @@
 #include <objects/inventory.h>
 #include <ae/ui.h>
 #include <ae/font.h>
-#include <ae/utils.h>
+#include <ae/util.h>
 #include <ae/graphics.h>
 #include <ae/input.h>
 #include <ae/assets.h>

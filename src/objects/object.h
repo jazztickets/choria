@@ -21,7 +21,6 @@
 #include <ae/managerbase.h>
 #include <objects/action.h>
 #include <glm/vec2.hpp>
-#include <packet.h>
 #include <unordered_map>
 #include <list>
 #include <vector>
