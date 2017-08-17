@@ -1211,7 +1211,7 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 			Color.a = (float)TimeLeft;
 
 		// Draw text
-		Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message, DrawPosition, Color);
+		Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message, DrawPosition, LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 
 		Index++;
@@ -1298,12 +1298,12 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 				else
 					Color = COLOR_GREEN;
 
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), Color, RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), RIGHT_BASELINE, Color);
 			}
 
 			// Draw count
 			if(Slot->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(20, 20), COLOR_WHITE, RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(20, 20), RIGHT_BASELINE);
 		}
 	}
 }
@@ -1381,7 +1381,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 			// Draw count
 			if(Item->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(20, 20), glm::vec4(1.0f), RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(20, 20), RIGHT_BASELINE);
 		}
 
 		BagIndex++;
@@ -1417,7 +1417,7 @@ void _HUD::DrawTrader() {
 		else
 			Color = COLOR_WHITE;
 
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->TraderItems[i].Count), DrawPosition + glm::vec2(0, -32), Color, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->TraderItems[i].Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE, Color);
 	}
 
 	// Get reward button
@@ -1428,7 +1428,7 @@ void _HUD::DrawTrader() {
 	if(Player->Trader->RewardItem) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->Texture);
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count), DrawPosition + glm::vec2(0, -32), COLOR_WHITE, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE);
 	}
 }
 
@@ -1532,11 +1532,11 @@ void _HUD::DrawActionBar() {
 			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			if(!Item->IsSkill())
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), COLOR_WHITE, RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
-		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), COLOR_WHITE, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), CENTER_BASELINE);
 	}
 }
 
@@ -1557,30 +1557,30 @@ void _HUD::DrawCharacterStats() {
 
 	// Damage
 	Buffer << Player->MinDamage << " - " << Player->MaxDamage;
-	Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Armor
 	Buffer << Player->Armor;
-	Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Damage Block
 	Buffer << Player->DamageBlock;
-	Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Health Regen
 	if(Player->HealthRegen != 0) {
 		Buffer << Player->HealthRegen;
-		Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1588,45 +1588,45 @@ void _HUD::DrawCharacterStats() {
 	// Mana Regen
 	if(Player->ManaRegen != 0) {
 		Buffer << Player->ManaRegen;
-		Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
 
 	// Move speed
 	Buffer << Player->MoveSpeed << "%";
-	Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Battle speed
 	Buffer << Player->BattleSpeed << "%";
-	Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Hit chance
 	Buffer << Player->HitChance << "%";
-	Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Evasion
 	Buffer << Player->Evasion << "%";
-	Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Drop rate
 	if(Player->DropRate != 0) {
 		Buffer << Player->DropRate;
-		Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1641,8 +1641,8 @@ void _HUD::DrawCharacterStats() {
 			continue;
 
 		Buffer << Resistance.second << "%";
-		Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes[Resistance.first] + " Resist", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes[Resistance.first] + " Resist", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 
@@ -1662,8 +1662,8 @@ void _HUD::DrawCharacterStats() {
 	else
 		Buffer << PlayTime / 3600 << "h" << (PlayTime / 60 % 60) << "m";
 
-	Assets.Fonts["hud_small"]->DrawText("Play Time", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Play Time", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
@@ -1676,16 +1676,16 @@ void _HUD::DrawCharacterStats() {
 	else
 		Buffer << BattleTime / 3600 << "h" << (BattleTime / 60 % 60) << "m";
 
-	Assets.Fonts["hud_small"]->DrawText("Battle Time", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText("Battle Time", DrawPosition + -Spacing, RIGHT_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Monster kills
 	if(Player->MonsterKills > 0) {
 		Buffer << Player->MonsterKills;
-		Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1693,8 +1693,8 @@ void _HUD::DrawCharacterStats() {
 	// Player kills
 	if(Player->PlayerKills > 0) {
 		Buffer << Player->PlayerKills;
-		Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1702,8 +1702,8 @@ void _HUD::DrawCharacterStats() {
 	// Deaths
 	if(Player->Deaths > 0) {
 		Buffer << Player->Deaths;
-		Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1711,8 +1711,8 @@ void _HUD::DrawCharacterStats() {
 	// Bounty
 	if(Player->Bounty > 0) {
 		Buffer << Player->Bounty;
-		Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1720,8 +1720,8 @@ void _HUD::DrawCharacterStats() {
 	// Gold lost
 	if(Player->GoldLost > 0) {
 		Buffer << Player->GoldLost;
-		Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, COLOR_WHITE, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing, COLOR_WHITE, LEFT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1741,7 +1741,7 @@ void _HUD::DrawSkills() {
 		Text += "s";
 
 	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
-	Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, COLOR_WHITE, CENTER_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, CENTER_BASELINE);
 
 	// Show skill points unused
 	int SkillPointsUnused = Player->SkillPointsUsed - Player->SkillPointsOnActionBar;
@@ -1754,7 +1754,7 @@ void _HUD::DrawSkills() {
 
 		Text += " unused";
 
-		Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, COLOR_RED, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, CENTER_BASELINE, COLOR_RED);
 	}
 }
 
@@ -1820,7 +1820,7 @@ void _HUD::DrawRecentItems() {
 
 		// Draw count
 		if(RecentItem.Count > 1)
-			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(RecentItem.Count), DrawPosition + glm::vec2(20, 20), Color, RIGHT_BASELINE);
+			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(RecentItem.Count), DrawPosition + glm::vec2(20, 20), RIGHT_BASELINE, Color);
 
 		DrawPosition.y += RecentItem.Item->Texture->Size.y + 5;
 	}
@@ -1879,7 +1879,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 	else
 		Color = COLOR_LIGHTGOLD;
 
-	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(20, -11), Color, RIGHT_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(20, -11), RIGHT_BASELINE, Color);
 }
 
 // Buys an item from the vendor

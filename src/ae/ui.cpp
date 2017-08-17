@@ -394,7 +394,7 @@ void _Element::Render() const {
 			float LineHeight = Font->MaxHeight + 2;
 			float Y = Bounds.Start.y - (int)((LineHeight * Texts.size() - LineHeight) / 2);
 			for(const auto &Token : Texts) {
-				Font->DrawText(Token, glm::vec2(Bounds.Start.x, Y), RenderColor, Alignment);
+				Font->DrawText(Token, glm::vec2(Bounds.Start.x, Y), Alignment, RenderColor);
 
 				Y += LineHeight;
 			}
@@ -410,7 +410,7 @@ void _Element::Render() const {
 
 				// Draw text
 				glm::vec2 StartPosition = glm::vec2(Bounds.Start);
-				Font->DrawText(RenderText, StartPosition, RenderColor, Alignment);
+				Font->DrawText(RenderText, StartPosition, Alignment, RenderColor);
 
 				// Draw cursor
 				if(CursorTimer < 0.5 && (FocusedElement == this || FocusedElement == Parent)) {
@@ -419,7 +419,7 @@ void _Element::Render() const {
 				}
 			}
 			else
-				Font->DrawText(RenderText, Bounds.Start, RenderColor, Alignment);
+				Font->DrawText(RenderText, Bounds.Start, Alignment, RenderColor);
 		}
 	}
 

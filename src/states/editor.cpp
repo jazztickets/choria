@@ -453,11 +453,11 @@ void _EditorState::Render(double BlendFactor) {
 	// Draw world cursor
 	std::stringstream Buffer;
 	Buffer << FilePath;
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, 25), COLOR_WHITE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, 25));
 	Buffer.str("");
 
 	Buffer << (int)WorldCursor.x << ", " << (int)WorldCursor.y;
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, Graphics.ViewportSize.y - 15), COLOR_WHITE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, Graphics.ViewportSize.y - 15));
 	Buffer.str("");
 
 	Buffer << Graphics.FramesPerSecond << " FPS";
@@ -523,7 +523,7 @@ void _EditorState::RenderBrush() {
 		Buffer << "Fore";
 	else
 		Buffer << "Back";
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, Color, CENTER_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
 	DrawPosition.y += 15;
@@ -535,7 +535,7 @@ void _EditorState::RenderBrush() {
 		Buffer << "Floor";
 
 	Filter & FILTER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, Color, CENTER_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
 	DrawPosition.y += 15;
@@ -544,7 +544,7 @@ void _EditorState::RenderBrush() {
 	Buffer << "Zone " << Brush->Zone;
 
 	Filter & FILTER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, Color, CENTER_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
 	DrawPosition.y += 15;
@@ -556,7 +556,7 @@ void _EditorState::RenderBrush() {
 		Buffer << "Safe";
 
 	Filter & FILTER_PVP ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, Color, CENTER_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
 	DrawPosition.y += 15;
@@ -565,7 +565,7 @@ void _EditorState::RenderBrush() {
 	Buffer << Stats->EventNames[Brush->Event.Type].Name;
 
 	Filter & FILTER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, Color, CENTER_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
 	DrawPosition.y += 15;
@@ -574,7 +574,7 @@ void _EditorState::RenderBrush() {
 	Buffer << "Data " << Brush->Event.Data;
 
 	Filter & FILTER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, Color, CENTER_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 }
 

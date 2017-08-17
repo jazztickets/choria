@@ -114,5 +114,5 @@ void _StatusEffect::Render(_Element *Element, const glm::vec4 &Color) {
 	Graphics.DrawRectangle(glm::vec2(StartPosition.x - TextBounds.Width, StartPosition.y - TextBounds.AboveBase), glm::vec2(StartPosition.x, StartPosition.y + TextBounds.BelowBase), true);
 
 	// Draw text
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), StartPosition, TextColor, RIGHT_BASELINE);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), StartPosition, RIGHT_BASELINE, TextColor);
 }

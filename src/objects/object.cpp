@@ -500,7 +500,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		}
 
 		if(ClientPlayer != this) {
-			Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), Color, CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
+			Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), CENTER_BASELINE, Color, 1.0f / ModelTexture->Size.x);
 		}
 	}
 }
@@ -523,7 +523,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	StatPosition = ResultPosition + glm::vec2(Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Portrait->Size.y/2);
 
 	// Name
-	Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), GlobalColor, LEFT_BASELINE);
+	Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), LEFT_BASELINE, GlobalColor);
 	Graphics.SetColor(GlobalColor);
 
 	// Portrait
@@ -556,7 +556,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw health text
 	std::stringstream Buffer;
 	Buffer << Round(Health) << " / " << Round(MaxHealth);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
+	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
 	// Draw mana
@@ -580,7 +580,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 		// Draw mana text
 		Buffer << Round(Mana) << " / " << Round(MaxMana);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), GlobalColor, CENTER_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
 

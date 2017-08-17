@@ -304,7 +304,7 @@ void _Font::AdjustPosition(const std::string &Text, glm::vec2 &Position, bool Us
 }
 
 // Draws a string
-float _Font::DrawText(const std::string &Text, glm::vec2 Position, const glm::vec4 &Color, const _Alignment &Alignment, float Scale) const {
+float _Font::DrawText(const std::string &Text, glm::vec2 Position, const _Alignment &Alignment, const glm::vec4 &Color, float Scale) const {
 	Graphics.SetProgram(Program);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(Color);

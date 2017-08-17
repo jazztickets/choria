@@ -584,23 +584,23 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 			// Draw wall
 			if(Tile->Wall) {
 				if(RenderFlags & FILTER_WALL)
-					Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 64.0f);
+					Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_WHITE, 1.0f / 64.0f);
 			}
 			else {
 
 				// Draw zone number
 				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0)
-					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), COLOR_WHITE, CENTER_MIDDLE, 1.0f / 64.0f);
+					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_WHITE, 1.0f / 64.0f);
 
 				// Draw PVP
 				if((RenderFlags & FILTER_PVP) && Tile->PVP)
-					Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), COLOR_RED, CENTER_MIDDLE, 1.0f / 64.0f);
+					Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_RED, 1.0f / 64.0f);
 			}
 
 			// Draw event info
 			if(Tile->Event.Type > 0) {
 				std::string EventText = Stats->EventNames[Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
-				Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), COLOR_CYAN, CENTER_MIDDLE, 1.0f / 64.0f);
+				Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_CYAN, 1.0f / 64.0f);
 			}
 		}
 	}
