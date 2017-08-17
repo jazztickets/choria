@@ -27,6 +27,10 @@
 // Constants
 const int ACTIONS_MAXINPUTS = SDL_NUM_SCANCODES;
 
+// Forward Declarations
+class _State;
+
+// Structure for an input binding
 struct _ActionMap {
 	_ActionMap(size_t Action, float Scale, float DeadZone) : Action(Action), DeadZone(DeadZone), Scale(Scale) { }
 
@@ -35,6 +39,7 @@ struct _ActionMap {
 	float Scale;
 };
 
+// State of an action
 struct _ActionState {
 	std::string Name;
 	float Value;
@@ -46,33 +51,28 @@ class _Actions {
 
 	public:
 
-		_Actions();
-
+		// State
 		void ResetState();
+		void Serialize(std::ofstream &File, int InputType);
+
+		// Mappping
 		void ClearMappings(int InputType);
 		void ClearMappingsForAction(int InputType, size_t Action);
 		void ClearAllMappingsForAction(size_t Action);
-		void Serialize(std::ofstream &File, int InputType);
-
-		// Actions
-		float GetState(size_t Action);
-		const std::string &GetName(size_t Action) { return State[Action].Name; }
-
-		// Maps
 		void AddInputMap(int InputType, int Input, size_t Action, float Scale=1.0f, float DeadZone=-1.0f, bool IfNone=true);
 		int GetInputForAction(int InputType, size_t Action);
 		std::string GetInputNameForAction(size_t Action);
 
 		// Handlers
-		void InputEvent(int InputType, int Input, float Value);
+		void InputEvent(_State *GameState, int InputType, int Input, float Value);
+
+		// State of each action
+		std::vector<_ActionState> State;
 
 	private:
 
 		// Input bindings
 		std::list<_ActionMap> InputMap[_Input::INPUT_COUNT][ACTIONS_MAXINPUTS];
-
-		// State of each action
-		std::vector<_ActionState> State;
 };
 
 extern _Actions Actions;

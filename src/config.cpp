@@ -33,6 +33,38 @@ _Config Config;
 // Initializes the config system
 void _Config::Init(const std::string &ConfigFile) {
 
+	// Set names for actions
+	Actions.State.resize(Action::COUNT);
+	Actions.ResetState();
+	Actions.State[Action::GAME_LEFT].Name = "game_left";
+	Actions.State[Action::GAME_RIGHT].Name = "game_right";
+	Actions.State[Action::GAME_UP].Name = "game_up";
+	Actions.State[Action::GAME_DOWN].Name = "game_down";
+	Actions.State[Action::GAME_JOIN].Name = "game_join";
+	Actions.State[Action::GAME_INVENTORY].Name = "game_inventory";
+	Actions.State[Action::GAME_SKILLS].Name = "game_skills";
+	Actions.State[Action::GAME_TRADE].Name = "game_trade";
+	Actions.State[Action::GAME_PARTY].Name = "game_party";
+	Actions.State[Action::GAME_CHAT].Name = "game_chat";
+	Actions.State[Action::GAME_USE].Name = "game_use";
+	Actions.State[Action::GAME_SKILL1].Name = "game_skill1";
+	Actions.State[Action::GAME_SKILL2].Name = "game_skill2";
+	Actions.State[Action::GAME_SKILL3].Name = "game_skill3";
+	Actions.State[Action::GAME_SKILL4].Name = "game_skill4";
+	Actions.State[Action::GAME_SKILL5].Name = "game_skill5";
+	Actions.State[Action::GAME_SKILL6].Name = "game_skill6";
+	Actions.State[Action::GAME_SKILL7].Name = "game_skill7";
+	Actions.State[Action::GAME_SKILL8].Name = "game_skill8";
+	Actions.State[Action::MENU_LEFT].Name = "menu_left";
+	Actions.State[Action::MENU_RIGHT].Name = "menu_right";
+	Actions.State[Action::MENU_UP].Name = "menu_up";
+	Actions.State[Action::MENU_DOWN].Name = "menu_down";
+	Actions.State[Action::MENU_GO].Name = "menu_go";
+	Actions.State[Action::MENU_BACK].Name = "menu_back";
+	Actions.State[Action::MENU_PAUSE].Name = "menu_pause";
+	Actions.State[Action::MISC_CONSOLE].Name = "misc_console";
+	Actions.State[Action::MISC_DEBUG].Name = "misc_debug";
+
 	// Create config path
 	char *PrefPath = SDL_GetPrefPath("", "choria");
 	if(PrefPath) {
@@ -219,9 +251,9 @@ void _Config::Load() {
 		Actions.ClearMappings(i);
 
 	// Load bindings
-	for(size_t i = 0; i < Action::COUNT; i++) {
+	for(size_t i = 0; i < Actions.State.size(); i++) {
 		std::ostringstream Buffer;
-		Buffer << "action_" << Actions.GetName(i);
+		Buffer << "action_" << Actions.State[i].Name;
 
 		// Get list of inputs for each action
 		const auto &Values = Map[Buffer.str()];

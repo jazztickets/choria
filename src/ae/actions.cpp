@@ -18,48 +18,9 @@
 #include <ae/actions.h>
 #include <ae/state.h>
 #include <ae/assets.h>
-#include <actiontype.h>
-#include <framework.h>
+#include <fstream>
 
 _Actions Actions;
-
-// Constructor
-_Actions::_Actions() {
-
-	// Reset state
-	State.resize(Action::COUNT);
-	ResetState();
-
-	// Set names for actions
-	State[Action::GAME_LEFT].Name = "game_left";
-	State[Action::GAME_RIGHT].Name = "game_right";
-	State[Action::GAME_UP].Name = "game_up";
-	State[Action::GAME_DOWN].Name = "game_down";
-	State[Action::GAME_JOIN].Name = "game_join";
-	State[Action::GAME_INVENTORY].Name = "game_inventory";
-	State[Action::GAME_SKILLS].Name = "game_skills";
-	State[Action::GAME_TRADE].Name = "game_trade";
-	State[Action::GAME_PARTY].Name = "game_party";
-	State[Action::GAME_CHAT].Name = "game_chat";
-	State[Action::GAME_USE].Name = "game_use";
-	State[Action::GAME_SKILL1].Name = "game_skill1";
-	State[Action::GAME_SKILL2].Name = "game_skill2";
-	State[Action::GAME_SKILL3].Name = "game_skill3";
-	State[Action::GAME_SKILL4].Name = "game_skill4";
-	State[Action::GAME_SKILL5].Name = "game_skill5";
-	State[Action::GAME_SKILL6].Name = "game_skill6";
-	State[Action::GAME_SKILL7].Name = "game_skill7";
-	State[Action::GAME_SKILL8].Name = "game_skill8";
-	State[Action::MENU_LEFT].Name = "menu_left";
-	State[Action::MENU_RIGHT].Name = "menu_right";
-	State[Action::MENU_UP].Name = "menu_up";
-	State[Action::MENU_DOWN].Name = "menu_down";
-	State[Action::MENU_GO].Name = "menu_go";
-	State[Action::MENU_BACK].Name = "menu_back";
-	State[Action::MENU_PAUSE].Name = "menu_pause";
-	State[Action::MISC_CONSOLE].Name = "misc_console";
-	State[Action::MISC_DEBUG].Name = "misc_debug";
-}
 
 // Reset the action state
 void _Actions::ResetState() {
@@ -104,14 +65,6 @@ void _Actions::Serialize(std::ofstream &File, int InputType) {
 	}
 }
 
-// Get action
-float _Actions::GetState(size_t Action) {
-	if(Action >= State.size())
-		return 0.0f;
-
-	return State[Action].Value;
-}
-
 // Add an input mapping
 void _Actions::AddInputMap(int InputType, int Input, size_t Action, float Scale, float DeadZone, bool IfNone) {
 	if(Action >= State.size() || Input < 0 || Input >= ACTIONS_MAXINPUTS)
@@ -154,8 +107,8 @@ std::string _Actions::GetInputNameForAction(size_t Action) {
 }
 
 // Inject an input into the action handler
-void _Actions::InputEvent(int InputType, int Input, float Value) {
-	if(Input < 0 || Input >= ACTIONS_MAXINPUTS)
+void _Actions::InputEvent(_State *GameState, int InputType, int Input, float Value) {
+	if(Input < 0 || Input >= ACTIONS_MAXINPUTS || !GameState)
 		return;
 
 	for(auto &MapIterator : InputMap[InputType][Input]) {
@@ -184,7 +137,7 @@ void _Actions::InputEvent(int InputType, int Input, float Value) {
 		float InputValue = Value * MapIterator.Scale;
 
 		// If true is returned, stop handling the same key
-		if(Framework.GetState()->HandleAction(InputType, MapIterator.Action, (int)InputValue))
+		if(GameState->HandleAction(InputType, MapIterator.Action, (int)InputValue))
 			break;
 	}
 }

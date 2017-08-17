@@ -191,7 +191,7 @@ void _Framework::Update() {
 						_KeyEvent KeyEvent("", Event.key.keysym.scancode, Event.type == SDL_KEYDOWN, Event.key.repeat);
 						State->HandleKey(KeyEvent);
 						if(!Event.key.repeat) {
-							Actions.InputEvent(_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
+							Actions.InputEvent(State, _Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
 						}
 					}
 				} break;
@@ -206,7 +206,7 @@ void _Framework::Update() {
 				case SDL_MOUSEBUTTONUP: {
 					_MouseEvent MouseEvent(glm::ivec2(Event.motion.x, Event.motion.y), Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
 					State->HandleMouseButton(MouseEvent);
-					Actions.InputEvent(_Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
+					Actions.InputEvent(State, _Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
 				} break;
 				case SDL_MOUSEWHEEL: {
 					State->HandleMouseWheel(Event.wheel.y);

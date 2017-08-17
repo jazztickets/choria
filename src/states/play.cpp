@@ -398,13 +398,13 @@ void _PlayState::Update(double FrameTime) {
 	// Set input
 	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
 		int InputState = 0;
-		if(Actions.GetState(Action::GAME_UP) > 0.0f)
+		if(Actions.State[Action::GAME_UP].Value > 0.0f)
 			InputState |= _Object::MOVE_UP;
-		if(Actions.GetState(Action::GAME_DOWN) > 0.0f)
+		if(Actions.State[Action::GAME_DOWN].Value > 0.0f)
 			InputState |= _Object::MOVE_DOWN;
-		if(Actions.GetState(Action::GAME_LEFT) > 0.0f)
+		if(Actions.State[Action::GAME_LEFT].Value > 0.0f)
 			InputState |= _Object::MOVE_LEFT;
-		if(Actions.GetState(Action::GAME_RIGHT) > 0.0f)
+		if(Actions.State[Action::GAME_RIGHT].Value > 0.0f)
 			InputState |= _Object::MOVE_RIGHT;
 
 		// Get player direction
