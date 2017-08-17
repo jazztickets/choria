@@ -47,10 +47,6 @@ const std::string MouseButtonNames[] = {
 	"Mouse 20",
 };
 
-// Initialize
-_Input::_Input() {
-}
-
 // Update input state
 void _Input::Update(double FrameTime) {
 

@@ -50,16 +50,16 @@ class _Input {
 			INPUT_COUNT,
 		};
 
-		_Input();
+		_Input() : KeyState(nullptr), MouseState(0), Mouse(0) { }
 
+		// Update
 		void Update(double FrameTime);
 
+		// State
 		int KeyDown(int Key) { return KeyState[Key]; }
 		bool ModKeyDown(int Key);
 		bool MouseDown(uint32_t Button);
-
 		const glm::ivec2 &GetMouse() { return Mouse; }
-
 		static const char *GetKeyName(int Key);
 		static const std::string &GetMouseButtonName(uint32_t Button);
 
