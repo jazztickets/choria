@@ -1207,6 +1207,14 @@ int _Object::Move() {
 	return 0;
 }
 
+// Return true if the object can respec
+bool _Object::CanRespec() const {
+	if(Map && Map->IsValidPosition(Position) && GetTile()->Event.Type == _Map::EVENT_SPAWN)
+		return true;
+
+	return false;
+}
+
 // Return true if the object has the skill unlocked
 bool _Object::HasLearned(const _Item *Skill) const {
 	if(!Skill)
@@ -1230,7 +1238,7 @@ bool _Object::HasUnlocked(const _Item *Item) const {
 }
 
 // Gets the tile that the player is currently standing on
-const _Tile *_Object::GetTile() {
+const _Tile *_Object::GetTile() const {
 
 	return Map->GetTile(Position);
 }

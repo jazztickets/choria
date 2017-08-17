@@ -980,7 +980,6 @@ void _HUD::InitSkills() {
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = LevelOffset;
 		LevelLabel->Alignment = CENTER_BASELINE;
-		LevelLabel->Color = COLOR_WHITE;
 		LevelLabel->Font = Assets.Fonts["hud_small"];
 		LevelLabel->Index = (int)Skill->ID;
 		SkillsElement->Children.push_back(LevelLabel);
@@ -1013,7 +1012,6 @@ void _HUD::InitSkills() {
 		PlusLabel->Text = "+";
 		PlusLabel->Offset = LabelOffset;
 		PlusLabel->Alignment = CENTER_MIDDLE;
-		PlusLabel->Color = COLOR_WHITE;
 		PlusLabel->Font = Assets.Fonts["hud_medium"];
 		PlusButton->Children.push_back(PlusLabel);
 
@@ -1023,7 +1021,6 @@ void _HUD::InitSkills() {
 		MinusLabel->Text = "-";
 		MinusLabel->Offset = LabelOffset;
 		MinusLabel->Alignment = CENTER_MIDDLE;
-		MinusLabel->Color = COLOR_WHITE;
 		MinusLabel->Font = Assets.Fonts["hud_medium"];
 		MinusButton->Children.push_back(MinusLabel);
 
@@ -1919,7 +1916,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(SkillID == 0)
 		return;
 
-	if(Amount < 0 && Player->GetTile()->Event.Type != _Map::EVENT_SPAWN) {
+	if(Amount < 0 && !Player->CanRespec()) {
 		SetMessage("You can only respec on spawn points");
 		return;
 	}

@@ -144,6 +144,7 @@ class _Object : public _ManagerBase {
 		int Move();
 
 		// Skills
+		bool CanRespec() const;
 		bool HasLearned(const _Item *Skill) const;
 		bool HasUnlocked(const _Item *Item) const;
 		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
@@ -153,7 +154,7 @@ class _Object : public _ManagerBase {
 		void AcceptTrader(std::vector<_Slot> &Slots);
 
 		// Map
-		const _Tile *GetTile();
+		const _Tile *GetTile() const;
 		NetworkIDType GetMapID() const;
 
 		// Input

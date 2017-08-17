@@ -1163,8 +1163,13 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 	// Process packet
 	uint32_t SkillID = Data.Read<uint32_t>();
 	int Amount = Data.Read<int>();
-	Player->AdjustSkillLevel(SkillID, Amount);
 
+	// Check respec condition
+	if(Amount < 0 && !Player->CanRespec())
+		return;
+
+	// Update values
+	Player->AdjustSkillLevel(SkillID, Amount);
 	Player->CalculateStats();
 }
 
