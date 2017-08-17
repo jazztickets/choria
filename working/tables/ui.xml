@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <element>
     <element id="element_menu_title" size_x="512" size_y="400">
-        <element id="image_title_logo" texture="menu/logo.png" offset_y="-250" size_x="344" size_y="128" clickable="false"/>
+        <element id="image_title_logo" texture="textures/menu/logo.png" offset_y="-250" size_x="344" size_y="128" clickable="false"/>
         <element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-60" size_x="200" size_y="48">
             <element id="label_menu_title_play" font="menu_buttons" text="Play" offset_y="32" alignment_y="3"/>
         </element>
@@ -142,18 +142,18 @@
         </element>
     </element>
     <element id="element_hud_health" offset_x="-300" offset_y="-19" size_x="150" size_y="32" alignment_y="2" clickable="false">
-        <element id="image_hud_health_bar_empty" texture="hud_repeat/health_empty.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="image_hud_health_bar_full" texture="hud_repeat/health_full.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
+        <element id="image_hud_health_bar_empty" texture="textures/hud_repeat/health_empty.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
+        <element id="image_hud_health_bar_full" texture="textures/hud_repeat/health_full.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
         <element id="label_hud_health" font="hud_small" offset_y="20" alignment_y="3"/>
     </element>
     <element id="element_hud_mana" offset_x="300" offset_y="-19" size_x="150" size_y="32" alignment_y="2" clickable="false">
-        <element id="image_hud_mana_bar_empty" texture="hud_repeat/mana_empty.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="image_hud_mana_bar_full" texture="hud_repeat/mana_full.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
+        <element id="image_hud_mana_bar_empty" texture="textures/hud_repeat/mana_empty.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
+        <element id="image_hud_mana_bar_full" texture="textures/hud_repeat/mana_full.png" size_y="32" alignment_x="0" alignment_y="0" clickable="false"/>
         <element id="label_hud_mana" font="hud_small" offset_y="20" alignment_y="3"/>
     </element>
     <element id="element_hud_experience" offset_y="-70" size_x="350" size_y="8" alignment_y="2" clickable="false">
-        <element id="image_hud_experience_bar_empty" texture="hud_repeat/experience_empty.png" size_y="8" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="image_hud_experience_bar_full" texture="hud_repeat/experience_full.png" size_y="8" alignment_x="0" alignment_y="0" clickable="false"/>
+        <element id="image_hud_experience_bar_empty" texture="textures/hud_repeat/experience_empty.png" size_y="8" alignment_x="0" alignment_y="0" clickable="false"/>
+        <element id="image_hud_experience_bar_full" texture="textures/hud_repeat/experience_full.png" size_y="8" alignment_x="0" alignment_y="0" clickable="false"/>
         <element id="label_hud_experience" font="hud_small" offset_y="-5" alignment_y="3"/>
     </element>
     <element id="element_hud_recentitems" offset_x="-64" offset_y="128" alignment_x="2" alignment_y="0" clickable="false">
@@ -167,27 +167,27 @@
     </element>
     <element id="element_buttonbar" size_x="224" size_y="32" alignment_x="2" alignment_y="0" index="1">
         <element id="button_buttonbar_join" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_join" texture="hud/join.png" size_x="32" size_y="32" clickable="false"/>
+            <element id="image_buttonbar_join" texture="textures/hud/join.png" size_x="32" size_y="32" clickable="false"/>
             <element id="label_buttonbar_join" font="hud_tiny" offset_x="3" offset_y="28" alignment_x="0" alignment_y="3"/>
         </element>
         <element id="button_buttonbar_inventory" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="32" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_inventory" texture="hud/bag.png" size_x="32" size_y="32" clickable="false"/>
+            <element id="image_buttonbar_inventory" texture="textures/hud/bag.png" size_x="32" size_y="32" clickable="false"/>
             <element id="label_buttonbar_inventory" font="hud_tiny" offset_x="3" offset_y="28" alignment_x="0" alignment_y="3"/>
         </element>
         <element id="button_buttonbar_trade" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="64" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_trade" texture="hud/trade.png" size_x="32" size_y="32" clickable="false"/>
+            <element id="image_buttonbar_trade" texture="textures/hud/trade.png" size_x="32" size_y="32" clickable="false"/>
             <element id="label_buttonbar_trade" font="hud_tiny" offset_x="3" offset_y="28" alignment_x="0" alignment_y="3"/>
         </element>
         <element id="button_buttonbar_skills" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="96" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_skills" texture="hud/skills.png" size_x="32" size_y="32" clickable="false"/>
+            <element id="image_buttonbar_skills" texture="textures/hud/skills.png" size_x="32" size_y="32" clickable="false"/>
             <element id="label_buttonbar_skills" font="hud_tiny" offset_x="3" offset_y="28" alignment_x="0" alignment_y="3"/>
         </element>
         <element id="button_buttonbar_party" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="128" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_party" texture="hud/party.png" size_x="32" size_y="32" clickable="false"/>
+            <element id="image_buttonbar_party" texture="textures/hud/party.png" size_x="32" size_y="32" clickable="false"/>
             <element id="label_buttonbar_party" font="hud_tiny" offset_x="3" offset_y="28" alignment_x="0" alignment_y="3"/>
         </element>
         <element id="button_buttonbar_menu" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="160" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_menu" texture="hud/menu.png" size_x="32" size_y="32" clickable="false"/>
+            <element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="32" size_y="32" clickable="false"/>
             <element id="label_hud_gold" color="gold" font="hud_small" offset_x="12" offset_y="25" alignment_x="2" alignment_y="3"/>
             <element id="label_hud_clock" font="hud_tiny" offset_y="55" alignment_x="0" alignment_y="3">
                 <element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_y="18" alignment_x="0" alignment_y="3"/>
@@ -195,7 +195,7 @@
             <element id="label_buttonbar_menu" font="hud_tiny" offset_x="3" offset_y="28" alignment_x="0" alignment_y="3"/>
         </element>
         <element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="192" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_fullscreen" texture="hud/fullscreen.png" size_x="32" size_y="32" clickable="false"/>
+            <element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="32" size_y="32" clickable="false"/>
         </element>
     </element>
     <element id="element_hud_statuseffects" offset_y="-100" size_x="350" size_y="32" alignment_y="2" index="2"/>
@@ -210,7 +210,7 @@
         <element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="336" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="7"/>
     </element>
     <element id="element_equipment" offset_x="-311" size_x="170" size_y="288" index="4">
-        <element id="image_equipment" texture="hud/equipment.png" size_x="170" size_y="288" alignment_x="0" alignment_y="0" clickable="false"/>
+        <element id="image_equipment" texture="textures/hud/equipment.png" size_x="170" size_y="288" alignment_x="0" alignment_y="0" clickable="false"/>
         <element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="61" offset_y="4" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="0"/>
         <element id="button_equipment_bag_1" style="style_hud_slot_alpha" offset_x="61" offset_y="67" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="1"/>
         <element id="button_equipment_bag_2" style="style_hud_slot_alpha" offset_x="61" offset_y="234" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="2"/>
@@ -319,7 +319,7 @@
     <element id="element_character" style="style_hud_bg" size_x="250" size_y="500" alignment_x="2"/>
     <element id="element_trade" style="style_hud_bg" offset_x="212" size_x="304" size_y="288">
         <element id="element_trade_theirs" style="style_hud_bg" offset_x="112" size_x="192" size_y="92" alignment_x="0" alignment_y="0" index="9">
-            <element id="image_trade_gold_theirs" texture="hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
+            <element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_theirs" offset_x="-88" offset_y="32" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="false">
                 <element id="button_trade_accept_theirs" offset_y="58" size_x="88" size_y="24">
                     <element id="label_trade_status_theirs" font="hud_small" offset_y="17" alignment_y="3"/>
@@ -339,7 +339,7 @@
             </element>
         </element>
         <element id="element_trade_yours" style="style_hud_bg" offset_x="112" offset_y="144" size_x="192" size_y="92" alignment_x="0" alignment_y="0" index="10">
-            <element id="image_trade_gold_yours" texture="hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
+            <element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_yours" offset_x="-88" offset_y="32" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="false">
                 <element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="58" size_x="88" size_y="24">
                     <element id="label_trade_status_yours" font="hud_small" text="Accept" offset_y="17" alignment_y="3"/>

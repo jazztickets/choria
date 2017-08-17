@@ -600,7 +600,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_experience_bar_full"]->Texture, true);
 
 	// Get background for items used
-	const _Texture *ItemBackTexture = Assets.Textures["hud/item_back.png"];
+	const _Texture *ItemBackTexture = Assets.Textures["textures/hud/item_back.png"];
 
 	// Draw the action used
 	if(ClientPlayer->BattleSide == BattleSide) {

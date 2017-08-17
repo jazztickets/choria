@@ -29,13 +29,11 @@ _Texture::_Texture(const std::string &Path, bool IsServer, bool Repeat, bool Mip
 		return;
 	}
 
-	std::string FullPath = TEXTURES_PATH + Path;
-
 	// Open png file
 	png_t Png;
-	int Result = png_open_file(&Png, FullPath.c_str());
+	int Result = png_open_file(&Png, Path.c_str());
 	if(Result != PNG_NO_ERROR)
-		throw std::runtime_error("Error loading png: " + FullPath + " reason: " + png_error_string(Result));
+		throw std::runtime_error("Error loading png: " + Path + " reason: " + png_error_string(Result));
 
 	Name = Path;
 	Size.x = Png.width;
@@ -47,7 +45,7 @@ _Texture::_Texture(const std::string &Path, bool IsServer, bool Repeat, bool Mip
 	// Load png file
 	Result = png_get_data(&Png, TextureData);
 	if(Result != PNG_NO_ERROR)
-		throw std::runtime_error("Error loading png: " + FullPath + " reason: " + png_error_string(Result));
+		throw std::runtime_error("Error loading png: " + Path + " reason: " + png_error_string(Result));
 
 	// Determine OpenGL format
 	GLint ColorFormat;

@@ -781,34 +781,34 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 					Object->StatusTexture = nullptr;
 				break;
 				case _Object::STATUS_PAUSE:
-					Object->StatusTexture = Assets.Textures["status/pause.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/pause.png"];
 				break;
 				case _Object::STATUS_INVENTORY:
-					Object->StatusTexture = Assets.Textures["status/bag.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/bag.png"];
 				break;
 				case _Object::STATUS_VENDOR:
-					Object->StatusTexture = Assets.Textures["status/vendor.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Object::STATUS_SKILLS:
-					Object->StatusTexture = Assets.Textures["status/skills.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/skills.png"];
 				break;
 				case _Object::STATUS_TRADE:
-					Object->StatusTexture = Assets.Textures["status/trade.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/trade.png"];
 				break;
 				case _Object::STATUS_TRADER:
-					Object->StatusTexture = Assets.Textures["status/vendor.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Object::STATUS_BLACKSMITH:
-					Object->StatusTexture = Assets.Textures["status/vendor.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Object::STATUS_TELEPORT:
-					Object->StatusTexture = Assets.Textures["status/teleport.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/teleport.png"];
 				break;
 				case _Object::STATUS_BATTLE:
-					Object->StatusTexture = Assets.Textures["status/battle.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/battle.png"];
 				break;
 				case _Object::STATUS_DEAD:
-					Object->StatusTexture = Assets.Textures["status/dead.png"];
+					Object->StatusTexture = Assets.Textures["textures/status/dead.png"];
 				break;
 				default:
 				break;

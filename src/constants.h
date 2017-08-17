@@ -125,25 +125,7 @@ const  double       MENU_DOUBLECLICK_TIME           =  0.250;
 //     Scripting
 const  std::string  SCRIPTS_PATH                    =  "scripts/";
 const  std::string  SCRIPTS_GAME                    =  "game.lua";
-//     Textures
-const  std::string  TEXTURES_PATH                   =  "textures/";
-const  std::string  TEXTURES_BATTLE                 =  "battle/";
-const  std::string  TEXTURES_BUFFS                  =  "buffs/";
-const  std::string  TEXTURES_BUILDS                 =  "builds/";
-const  std::string  TEXTURES_EDITOR                 =  "editor/";
-const  std::string  TEXTURES_HUD                    =  "hud/";
-const  std::string  TEXTURES_HUD_REPEAT             =  "hud_repeat/";
-const  std::string  TEXTURES_INTERFACE              =  "interface/";
-const  std::string  TEXTURES_ITEMS                  =  "items/";
-const  std::string  TEXTURES_MAP                    =  "map/";
-const  std::string  TEXTURES_MENU                   =  "menu/";
-const  std::string  TEXTURES_MONSTERS               =  "monsters/";
-const  std::string  TEXTURES_PORTRAITS              =  "portraits/";
-const  std::string  TEXTURES_MODELS                 =  "models/";
-const  std::string  TEXTURES_SKILLS                 =  "skills/";
-const  std::string  TEXTURES_STATUS                 =  "status/";
 //     Assets
-const  std::string  ASSETS_FONTS_PATH               =  "fonts/";
 const  std::string  ASSETS_MAPS_PATH                =  "maps/";
 const  std::string  ASSETS_SOUND_PATH               =  "sounds/";
 const  std::string  ASSETS_MUSIC_PATH               =  "music/";

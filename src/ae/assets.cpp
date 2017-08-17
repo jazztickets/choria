@@ -35,21 +35,21 @@ _Assets Assets;
 
 // Initialize
 void _Assets::Init(bool IsServer) {
-	LoadTextureDirectory(TEXTURES_BATTLE, IsServer);
-	LoadTextureDirectory(TEXTURES_BUFFS, IsServer);
-	LoadTextureDirectory(TEXTURES_BUILDS, IsServer);
-	LoadTextureDirectory(TEXTURES_EDITOR, IsServer);
-	LoadTextureDirectory(TEXTURES_HUD, IsServer);
-	LoadTextureDirectory(TEXTURES_HUD_REPEAT, IsServer, true);
-	LoadTextureDirectory(TEXTURES_INTERFACE, IsServer);
-	LoadTextureDirectory(TEXTURES_ITEMS, IsServer);
-	LoadTextureDirectory(TEXTURES_MAP, IsServer);
-	LoadTextureDirectory(TEXTURES_MENU, IsServer);
-	LoadTextureDirectory(TEXTURES_MONSTERS, IsServer);
-	LoadTextureDirectory(TEXTURES_PORTRAITS, IsServer);
-	LoadTextureDirectory(TEXTURES_MODELS, IsServer);
-	LoadTextureDirectory(TEXTURES_SKILLS, IsServer);
-	LoadTextureDirectory(TEXTURES_STATUS, IsServer);
+	LoadTextureDirectory("textures/battle/", IsServer);
+	LoadTextureDirectory("textures/buffs/", IsServer);
+	LoadTextureDirectory("textures/builds/", IsServer);
+	LoadTextureDirectory("textures/editor/", IsServer);
+	LoadTextureDirectory("textures/hud/", IsServer);
+	LoadTextureDirectory("textures/hud_repeat/", IsServer, true);
+	LoadTextureDirectory("textures/interface/", IsServer);
+	LoadTextureDirectory("textures/items/", IsServer);
+	LoadTextureDirectory("textures/map/", IsServer);
+	LoadTextureDirectory("textures/menu/", IsServer);
+	LoadTextureDirectory("textures/monsters/", IsServer);
+	LoadTextureDirectory("textures/portraits/", IsServer);
+	LoadTextureDirectory("textures/models/", IsServer);
+	LoadTextureDirectory("textures/skills/", IsServer);
+	LoadTextureDirectory("textures/status/", IsServer);
 	LoadLayers(ASSETS_LAYERS);
 	if(!IsServer) {
 		LoadPrograms(ASSETS_PROGRAMS);
@@ -133,7 +133,7 @@ void _Assets::LoadFonts(const std::string &Path) {
 		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		// Load font
-		Fonts[Name] = new _Font(Name, ASSETS_FONTS_PATH + FontFile, Programs[ProgramName], Size);
+		Fonts[Name] = new _Font(Name, FontFile, Programs[ProgramName], Size);
 	}
 
 	File.close();
@@ -251,7 +251,7 @@ void _Assets::LoadColors(const std::string &Path) {
 void _Assets::LoadTextureDirectory(const std::string &Path, bool IsServer, bool Repeat, bool MipMaps) {
 
 	// Get files
-	_Files Files(TEXTURES_PATH + Path);
+	_Files Files(Path);
 
 	// Load textures
 	for(const auto &File : Files.Nodes) {
@@ -324,7 +324,11 @@ void _Assets::LoadStyles(const std::string &Path) {
 
 		// Find program
 		if(Programs.find(ProgramName) == Programs.end())
-		   throw std::runtime_error("Cannot find program: " + ProgramName);
+		   throw std::runtime_error("Cannot find program: " + ProgramName + " for style: " + Name);
+
+		// Check for texture
+		if(TextureName != "" && Textures.find(TextureName) == Textures.end())
+			throw std::runtime_error("Unable to find texture: " + TextureName + " for style: " + Name);
 
 		bool Stretch;
 		File >> Stretch;
