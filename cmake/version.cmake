@@ -1,4 +1,4 @@
-execute_process(COMMAND git rev-list --all --count OUTPUT_VARIABLE BUILD_NUMBER OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND bash "-c" "git log --oneline | wc -l" OUTPUT_VARIABLE BUILD_NUMBER)
 if(BUILD_NUMBER STREQUAL "")
 	set(BUILD_NUMBER 0)
 endif()
