@@ -585,8 +585,8 @@ void _Battle::ServerEndBattle() {
 				SideStats[Side].TotalGoldGiven += Fighter->Bounty + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
 		}
 
-		SideStats[Side].TotalExperienceGiven *= Difficulty[Side];
-		SideStats[Side].TotalGoldGiven *= Difficulty[Side];
+		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
+		SideStats[Side].TotalGoldGiven = (int)std::ceil(SideStats[Side].TotalGoldGiven * Difficulty[Side]);
 	}
 
 	// Get winning side
