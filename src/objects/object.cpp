@@ -507,7 +507,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 
 // Renders the fighter during a battle
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
-	glm::vec4 GlobalColor(COLOR_WHITE);
+	glm::vec4 GlobalColor(glm::vec4(1.0f));
 	GlobalColor.a = 1.0f;
 	if(!IsAlive())
 		GlobalColor.a = 0.2f;
@@ -631,7 +631,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			}
 
 			// Make icon flash
-			glm::vec4 Color(COLOR_WHITE);
+			glm::vec4 Color(glm::vec4(1.0f));
 			if(Time - (int)Time < 0.5)
 				Color.a = 0.5f;
 
@@ -1356,7 +1356,7 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 
 	// Send message
 	if(Server && Peer) {
-		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), COLOR_RED);
+		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), "red");
 		Server->Log << "Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( action=death character_id=" << CharacterID << " gold=" << Gold << " deaths=" << Deaths << " )" << std::endl;
 	}
 }

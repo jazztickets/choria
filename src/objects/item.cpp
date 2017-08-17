@@ -105,7 +105,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(TargetID != TargetType::NONE) {
 		DrawPosition.y -= 20;
 		std::string InfoText = "Target " + Player->Stats->TargetTypes[(uint32_t)TargetID];
-		Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, CENTER_BASELINE, COLOR_WHITE);
+		Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += 40;
 	}
 
@@ -137,7 +137,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 
 		// Draw upgrade level for items
 		if(Tooltip.InventorySlot.Upgrades) {
-			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.InventorySlot.Upgrades), DrawPosition, CENTER_BASELINE, COLOR_GRAY);
+			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.InventorySlot.Upgrades), DrawPosition, CENTER_BASELINE, Assets.Colors["gray"]);
 			DrawPosition.y += SpacingY;
 		}
 	}
@@ -356,16 +356,16 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		std::stringstream Buffer;
 		if(Tooltip.Window == _HUD::WINDOW_VENDOR) {
 			Buffer << "Buy " << Tooltip.InventorySlot.Count << "x for " << Tooltip.Cost << " gold";
-			Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, COLOR_GOLD);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
-			Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, CENTER_BASELINE, COLOR_GRAY);
+			Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, CENTER_BASELINE, Assets.Colors["gray"]);
 			DrawPosition.y += SpacingY;
 		}
 		else if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY) {
 			Buffer << "Sell for " << Tooltip.Cost << " gold";
-			Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, COLOR_GOLD);
+			Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
-			Assets.Fonts["hud_small"]->DrawText("Shift+Right-click to sell", DrawPosition, CENTER_BASELINE, COLOR_GRAY);
+			Assets.Fonts["hud_small"]->DrawText("Shift+Right-click to sell", DrawPosition, CENTER_BASELINE, Assets.Colors["gray"]);
 			DrawPosition.y += SpacingY;
 		}
 	}
@@ -417,17 +417,17 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	}
 
 	if(InfoText.length()) {
-		Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, CENTER_BASELINE, COLOR_GRAY);
+		Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, CENTER_BASELINE, Assets.Colors["gray"]);
 		DrawPosition.y += 20;
 	}
 
 	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1) {
-		Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, CENTER_BASELINE, COLOR_GRAY);
+		Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, CENTER_BASELINE, Assets.Colors["gray"]);
 		DrawPosition.y += SpacingY;
 	}
 
 	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
-		Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, CENTER_BASELINE, COLOR_RED);
+		Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, CENTER_BASELINE, Assets.Colors["red"]);
 		DrawPosition.y += 20;
 	}
 }
@@ -447,7 +447,7 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 
 		// Draw level text
 		if(ShowLevel) {
-			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, CENTER_BASELINE, COLOR_GRAY);
+			Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, CENTER_BASELINE, Assets.Colors["gray"]);
 			DrawPosition.y += SpacingY;
 		}
 
@@ -753,11 +753,11 @@ float _Item::GetDropRate(int Upgrades) const {
 // Get appropriate text color when comparing items
 glm::vec4 _Item::GetCompareColor(float ItemValue, float EquippedValue) const {
 	if(ItemValue > EquippedValue)
-		return COLOR_GREEN;
+		return Assets.Colors["green"];
 	else if(ItemValue < EquippedValue)
-		return COLOR_RED;
+		return Assets.Colors["red"];
 
-	return COLOR_WHITE;
+	return glm::vec4(1.0f);
 }
 
 // Return value of a stat after upgrades

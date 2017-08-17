@@ -126,7 +126,7 @@ void _Menu::InitNewCharacter() {
 
 	_Element *Label = Assets.Elements["label_menu_newcharacter_name"];
 	Label->Text = "Name";
-	Label->Color = COLOR_WHITE;
+	Label->Color = glm::vec4(1.0f);
 
 	LoadPortraitButtons();
 	LoadBuildButtons();
@@ -212,7 +212,7 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 		Port->SetText(Config.LastPort);
 
 	_Element *Label = Assets.Elements["label_menu_connect_message"];
-	Label->Color = COLOR_WHITE;
+	Label->Color = glm::vec4(1.0f);
 	Label->Text = "";
 
 	_Element *Button = Assets.Elements["button_connect_connect"];
@@ -239,7 +239,7 @@ void _Menu::InitAccount() {
 	Password->Password = true;
 
 	_Element *Label = Assets.Elements["label_menu_account_message"];
-	Label->Color = COLOR_WHITE;
+	Label->Color = glm::vec4(1.0f);
 	Label->Text = "";
 
 	_Element *Button = Assets.Elements["button_account_login"];
@@ -339,7 +339,7 @@ void _Menu::ConnectToHost() {
 	PlayState.Connect(false);
 
 	_Element *Label = Assets.Elements["label_menu_connect_message"];
-	Label->Color = COLOR_WHITE;
+	Label->Color = glm::vec4(1.0f);
 	Label->Text = "Connecting...";
 
 	_Element *Button = Assets.Elements["button_connect_connect"];
@@ -373,7 +373,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	// Check username
 	if(Username->Text.length() == 0) {
 		FocusedElement = Username;
-		Label->Color = COLOR_RED;
+		Label->Color = Assets.Colors["red"];
 		Label->Text = "Enter a username";
 
 		return;
@@ -382,14 +382,14 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	// Check password
 	if(Password->Text.length() == 0) {
 		FocusedElement = Password;
-		Label->Color = COLOR_RED;
+		Label->Color = Assets.Colors["red"];
 		Label->Text = "Enter a password";
 
 		return;
 	}
 
 	// Update UI
-	Label->Color = COLOR_WHITE;
+	Label->Color = glm::vec4(1.0f);
 	Label->Text = "Logging in...";
 
 	_Element *Button = Assets.Elements["button_account_login"];
@@ -471,7 +471,7 @@ void _Menu::LoadCharacterSlots() {
 		HardcoreLabel->Parent = Button;
 		HardcoreLabel->Offset = glm::vec2(0, 187);
 		HardcoreLabel->Alignment = CENTER_BASELINE;
-		HardcoreLabel->Color = COLOR_RED;
+		HardcoreLabel->Color = Assets.Colors["red"];
 		HardcoreLabel->Font = Assets.Fonts["hud_small"];
 		Button->Children.push_back(HardcoreLabel);
 
@@ -599,7 +599,7 @@ void _Menu::LoadBuildButtons() {
 		_Element *Label = new _Element();
 		Label->Font = Assets.Fonts["hud_small"];
 		Label->Text = Build.Name;
-		Label->Color = COLOR_WHITE;
+		Label->Color = glm::vec4(1.0f);
 		Label->Parent = Button;
 		Label->Offset = glm::vec2(0, 80);
 		Label->Alignment = CENTER_BASELINE;
@@ -1140,7 +1140,7 @@ void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 		InitConnect(true);
 
 		_Element *Label = Assets.Elements["label_menu_connect_message"];
-		Label->Color = COLOR_RED;
+		Label->Color = Assets.Colors["red"];
 		Label->Text = "Disconnected from server";
 	}
 }
@@ -1221,7 +1221,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 		case PacketType::CREATECHARACTER_INUSE: {
 			_Element *Label = Assets.Elements["label_menu_newcharacter_name"];
 			Label->Text = "Name in use";
-			Label->Color = COLOR_RED;
+			Label->Color = Assets.Colors["red"];
 		} break;
 		case PacketType::ACCOUNT_EXISTS: {
 			SetAccountMessage("Account already exists");
@@ -1241,7 +1241,7 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 void _Menu::SetAccountMessage(const std::string &Message) {
 	_Element *Label = Assets.Elements["label_menu_account_message"];
 	Label->Text = Message;
-	Label->Color = COLOR_RED;
+	Label->Color = Assets.Colors["red"];
 
 	_Element *Button = Assets.Elements["button_account_login"];
 	Button->SetEnabled(true);
@@ -1251,7 +1251,7 @@ void _Menu::SetAccountMessage(const std::string &Message) {
 void _Menu::SetTitleMessage(const std::string &Message) {
 	_Element *Label = Assets.Elements["label_menu_title_message"];
 	Label->Text = Message;
-	Label->Color = COLOR_RED;
+	Label->Color = Assets.Colors["red"];
 }
 
 // Play menu click sound

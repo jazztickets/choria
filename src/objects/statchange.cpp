@@ -151,7 +151,7 @@ void _StatChangeUI::SetText(const glm::vec4 &NegativeColor, const glm::vec4 &Pos
 		Buffer << "-";
 	}
 	else {
-		Color = COLOR_WHITE;
+		Color = glm::vec4(1.0f);
 		Buffer << " ";
 	}
 

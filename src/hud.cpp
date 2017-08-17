@@ -1228,7 +1228,7 @@ void _HUD::DrawHudEffects() {
 		if(StatusEffect->HUDElement) {
 			StatusEffect->HUDElement->Offset = Offset;
 			StatusEffect->HUDElement->CalculateBounds();
-			StatusEffect->Render(StatusEffect->HUDElement, COLOR_WHITE);
+			StatusEffect->Render(StatusEffect->HUDElement, glm::vec4(1.0f));
 			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
 		}
 	}
@@ -1284,7 +1284,7 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			if(i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
 				_Element *Button = Assets.Elements[Buffer.str()];
-				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, COLOR_ITEMFADE);
+				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, Assets.Colors["itemfade"]);
 			}
 
 			// Draw price if using vendor
@@ -1294,9 +1294,9 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			if(Player->Blacksmith && Slot->Item->MaxLevel) {
 				glm::vec4 Color;
 				if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= Player->Blacksmith->Level)
-					Color = COLOR_RED;
+					Color = Assets.Colors["red"];
 				else
-					Color = COLOR_GREEN;
+					Color = Assets.Colors["green"];
 
 				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), RIGHT_BASELINE, Color);
 			}
@@ -1413,9 +1413,9 @@ void _HUD::DrawTrader() {
 
 		glm::vec4 Color;
 		if(!Player->Inventory->IsValidSlot(RequiredItemSlots[i]))
-			Color = COLOR_RED;
+			Color = Assets.Colors["red"];
 		else
-			Color = COLOR_WHITE;
+			Color = glm::vec4(1.0f);
 
 		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->TraderItems[i].Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE, Color);
 	}
@@ -1473,7 +1473,7 @@ void _HUD::DrawBlacksmith() {
 			// Update cost label
 			std::stringstream Buffer;
 			Buffer << Cost << " gold";
-			BlacksmithCost->Color = COLOR_GOLD;
+			BlacksmithCost->Color = Assets.Colors["gold"];
 			BlacksmithCost->Text = Buffer.str();
 
 			// Check upgrade conditions
@@ -1495,7 +1495,7 @@ void _HUD::DrawBlacksmith() {
 
 			// Disable button
 			if(Disabled) {
-				BlacksmithCost->Color = COLOR_RED;
+				BlacksmithCost->Color = Assets.Colors["red"];
 				UpgradeButton->SetEnabled(false);
 			}
 		}
@@ -1754,7 +1754,7 @@ void _HUD::DrawSkills() {
 
 		Text += " unused";
 
-		Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, CENTER_BASELINE, COLOR_RED);
+		Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, CENTER_BASELINE, Assets.Colors["red"]);
 	}
 }
 
@@ -1809,7 +1809,7 @@ void _HUD::DrawRecentItems() {
 
 		// Get alpha
 		double TimeLeft = HUD_RECENTITEM_TIMEOUT - RecentItem.Time;
-		glm::vec4 Color(COLOR_WHITE);
+		glm::vec4 Color(glm::vec4(1.0f));
 		Color.a = 1.0f;
 		if(TimeLeft < HUD_RECENTITEM_FADETIME)
 			Color.a = (float)(TimeLeft / HUD_RECENTITEM_FADETIME);
@@ -1860,7 +1860,7 @@ void _HUD::DrawCursorItem() {
 	if(Cursor.InventorySlot.Item) {
 		glm::vec2 DrawPosition = Input.GetMouse();
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture, COLOR_ITEMFADE);
+		Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture, Assets.Colors["itemfade"]);
 	}
 }
 
@@ -1875,9 +1875,9 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 	// Color
 	glm::vec4 Color;
 	if(Buy && Player->Gold < Price)
-		Color = COLOR_RED;
+		Color = Assets.Colors["red"];
 	else
-		Color = COLOR_LIGHTGOLD;
+		Color = Assets.Colors["light_gold"];
 
 	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(20, -11), RIGHT_BASELINE, Color);
 }
@@ -2114,11 +2114,11 @@ void _HUD::UpdateAcceptButton() {
 	_Element *LabelTradeStatusYours = Assets.Elements["label_trade_status_yours"];
 	if(AcceptButton->Checked) {
 		LabelTradeStatusYours->Text = "Accepted";
-		LabelTradeStatusYours->Color = COLOR_GREEN;
+		LabelTradeStatusYours->Color = Assets.Colors["green"];
 	}
 	else {
 		LabelTradeStatusYours->Text = "Accept";
-		LabelTradeStatusYours->Color = COLOR_WHITE;
+		LabelTradeStatusYours->Color = glm::vec4(1.0f);
 	}
 }
 
@@ -2147,11 +2147,11 @@ void _HUD::UpdateTradeStatus(bool Accepted) {
 	_Element *LabelTradeStatusTheirs = Assets.Elements["label_trade_status_theirs"];
 	if(Accepted) {
 		LabelTradeStatusTheirs->Text = "Accepted";
-		LabelTradeStatusTheirs->Color = COLOR_GREEN;
+		LabelTradeStatusTheirs->Color = Assets.Colors["green"];
 	}
 	else {
 		LabelTradeStatusTheirs->Text = "Unaccepted";
-		LabelTradeStatusTheirs->Color = COLOR_RED;
+		LabelTradeStatusTheirs->Color = Assets.Colors["red"];
 	}
 }
 
@@ -2284,7 +2284,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
 		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Integer;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
-		StatChangeUI.SetText(COLOR_RED, COLOR_GREEN);
+		StatChangeUI.SetText(Assets.Colors["red"], Assets.Colors["green"]);
 		StatChanges.push_back(StatChangeUI);
 	}
 
@@ -2299,7 +2299,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
 		StatChangeUI.Change = StatChange.Values[StatType::MANA].Integer;
 		StatChangeUI.Font = Assets.Fonts["hud_medium"];
-		StatChangeUI.SetText(COLOR_BLUE, COLOR_LIGHTBLUE);
+		StatChangeUI.SetText(Assets.Colors["blue"], Assets.Colors["light_blue"]);
 		StatChanges.push_back(StatChangeUI);
 	}
 
@@ -2311,7 +2311,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Direction = -2.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["battle_large"];
-		StatChangeUI.SetText(COLOR_WHITE, COLOR_WHITE);
+		StatChangeUI.SetText(glm::vec4(1.0f), glm::vec4(1.0f));
 		StatChanges.push_back(StatChangeUI);
 	}
 
@@ -2330,7 +2330,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Direction = 1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
 		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
-		StatChangeUI.SetText(COLOR_GOLD, COLOR_GOLD);
+		StatChangeUI.SetText(Assets.Colors["gold"], Assets.Colors["gold"]);
 		StatChanges.push_back(StatChangeUI);
 	}
 }
@@ -2371,7 +2371,7 @@ void _HUD::UpdateLabels() {
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
 	if(Player->Gold < 0)
-		GoldElement->Color = COLOR_RED;
+		GoldElement->Color = Assets.Colors["red"];
 	else
-		GoldElement->Color = COLOR_GOLD;
+		GoldElement->Color = Assets.Colors["gold"];
 }

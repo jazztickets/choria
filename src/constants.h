@@ -133,17 +133,3 @@ const  std::string  ASSETS_FONTS                    =  "tables/fonts.tsv";
 const  std::string  ASSETS_LAYERS                   =  "tables/layers.tsv";
 const  std::string  ASSETS_UI                       =  "tables/ui.xml";
 const  std::string  ASSETS_UI_STYLES                =  "tables/styles.tsv";
-//     Colors
-const  glm::vec4    COLOR_WHITE                     =  {1.0f,1.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_TGRAY                     =  {1.0f,1.0f,1.0f,0.2f};
-const  glm::vec4    COLOR_RED                       =  {1.0f,0.0f,0.0f,1.0f};
-const  glm::vec4    COLOR_GREEN                     =  {0.0f,1.0f,0.0f,1.0f};
-const  glm::vec4    COLOR_BLUE                      =  {0.0f,0.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_YELLOW                    =  {1.0f,1.0f,0.0f,1.0f};
-const  glm::vec4    COLOR_MAGENTA                   =  {1.0f,0.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_CYAN                      =  {0.0f,1.0f,1.0f,1.0f};
-const  glm::vec4    COLOR_GOLD                      =  {0.76f,0.73f,0.173f,1.0f};
-const  glm::vec4    COLOR_LIGHTBLUE                 =  {0.0f,0.45f,1.0f,1.0f};
-const  glm::vec4    COLOR_LIGHTGOLD                 =  {0.88f,0.85f,0.33f,1.0f};
-const  glm::vec4    COLOR_GRAY                      =  {0.6f,0.6f,0.6f,1.0f};
-const  glm::vec4    COLOR_ITEMFADE                  =  {1.0f,1.0f,1.0f,0.5f};

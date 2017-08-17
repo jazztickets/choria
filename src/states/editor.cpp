@@ -427,14 +427,14 @@ void _EditorState::Render(double BlendFactor) {
 	if(Map)
 		Map->Render(Camera, nullptr, BlendFactor, Filter | FILTER_BOUNDARY);
 
-	Graphics.SetColor(COLOR_WHITE);
+	Graphics.SetColor(glm::vec4(1.0f));
 	Graphics.SetProgram(Assets.Programs["pos"]);
 	Graphics.SetVBO(VBO_CIRCLE);
 	Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
 	if(DrawBounds) {
 		Graphics.SetVBO(VBO_NONE);
-		Graphics.SetColor(COLOR_TGRAY);
+		Graphics.SetColor(Assets.Colors["editor_select"]);
 
 		glm::ivec2 Start, End;
 		GetDrawBounds(Start, End);
@@ -510,11 +510,11 @@ void _EditorState::RenderBrush() {
 	TextureBounds.Start = DrawPosition - glm::vec2(Map->TileAtlas->Size) / 2.0f;
 	TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetColor(COLOR_WHITE);
+	Graphics.SetColor(glm::vec4(1.0f));
 	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
 
 	std::stringstream Buffer;
-	glm::vec4 Color(COLOR_WHITE);
+	glm::vec4 Color(glm::vec4(1.0f));
 
 	DrawPosition.y += 52;
 

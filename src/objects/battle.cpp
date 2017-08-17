@@ -173,11 +173,11 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	Graphics.DrawCenteredImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
 
 	// Draw damage dealt
-	glm::vec4 TextColor = COLOR_WHITE;
+	glm::vec4 TextColor = glm::vec4(1.0f);
 	if(ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer > 0)
-		TextColor = COLOR_GREEN;
+		TextColor = Assets.Colors["green"];
 	else if(ActionResult.Target.HasStat(StatType::CRIT) && ActionResult.Target.Values[StatType::CRIT].Integer)
-		TextColor = COLOR_YELLOW;
+		TextColor = Assets.Colors["yellow"];
 
 	TextColor.a = AlphaPercent;
 
@@ -689,7 +689,7 @@ void _Battle::ServerEndBattle() {
 				if(Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
 					Fighter->Bounty += GoldEarned;
 					if(Fighter->Bounty)
-						Server->BroadcastMessage(nullptr, "Player \"" + Fighter->Name + "\" now has a bounty of " + std::to_string(Fighter->Bounty) + " gold!", COLOR_CYAN);
+						Server->BroadcastMessage(nullptr, "Player \"" + Fighter->Name + "\" now has a bounty of " + std::to_string(Fighter->Bounty) + " gold!", "cyan");
 				}
 			}
 		}
@@ -706,7 +706,7 @@ void _Battle::ServerEndBattle() {
 		int NewLevel = Fighter->Level;
 		if(NewLevel > CurrentLevel) {
 			if(Fighter->Peer)
-				Server->SendMessage(Fighter->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), COLOR_GOLD);
+				Server->SendMessage(Fighter->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
 
 			Fighter->Health = Fighter->MaxHealth;
 			Fighter->Mana = Fighter->MaxMana;

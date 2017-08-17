@@ -904,7 +904,7 @@ void _PlayState::HandleChatMessage(_Buffer &Data) {
 
 	// Read packet
 	_Message Chat;
-	Chat.Color = Data.Read<glm::vec4>();
+	Chat.Color = Assets.Colors[Data.ReadString()];
 	Chat.Message = Data.ReadString();
 	Chat.Time = Time;
 

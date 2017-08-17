@@ -30,7 +30,13 @@
 #include <iostream>
 
 _Element *FocusedElement = nullptr;
-const glm::vec4 DebugColors[] = { COLOR_CYAN, COLOR_YELLOW, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
+const glm::vec4 DebugColors[] = {
+	{ 0.0f, 1.0f, 1.0f, 1.0f },
+	{ 1.0f, 1.0f, 0.0f, 1.0f },
+	{ 1.0f, 0.0f, 0.0f, 1.0f },
+	{ 0.0f, 1.0f, 0.0f, 1.0f },
+	{ 0.0f, 0.0f, 1.0f, 1.0f }
+};
 const int DebugColorCount = sizeof(DebugColors) / sizeof(glm::vec4);
 
 // Constructor

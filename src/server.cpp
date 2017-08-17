@@ -495,7 +495,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 
 	// Broadcast message
 	std::string Message = Peer->Object->Name + " has joined the server";
-	BroadcastMessage(Peer, Message, COLOR_GRAY);
+	BroadcastMessage(Peer, Message, "gray");
 
 	// Log
 	Log << "Player " << Message << " ( action=join character_id=" << Peer->CharacterID << " )" << std::endl;
@@ -675,7 +675,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Send message to other players
-	BroadcastMessage(nullptr, Player->Name + ": " + Message, COLOR_WHITE);
+	BroadcastMessage(nullptr, Player->Name + ": " + Message, "white");
 }
 
 // Send position to player
@@ -1457,7 +1457,7 @@ void _Server::HandleJoin(_Buffer &Data, _Peer *Peer) {
 	_Battle *Battle = Player->Map->GetCloseBattle(Player, HitPrivateParty);
 	if(!Battle) {
 		if(HitPrivateParty)
-			SendMessage(Peer, "Can't join private party", COLOR_RED);
+			SendMessage(Peer, "Can't join private party", "red");
 
 		return;
 	}
@@ -1483,7 +1483,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 		Player->Peer = nullptr;
 
 		if(Player->Map) {
-			BroadcastMessage(Peer, Player->Name + " has left the server", COLOR_GRAY);
+			BroadcastMessage(Peer, Player->Name + " has left the server", "gray");
 			Player->LoadMapID = Player->GetMapID();
 		}
 
@@ -1617,14 +1617,14 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 }
 
 // Send a message to the player
-void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color) {
+void _Server::SendMessage(_Peer *Peer, const std::string &Message, const std::string &ColorName) {
 	if(!ValidatePeer(Peer))
 		return;
 
 	// Build message
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
-	Packet.Write<glm::vec4>(Color);
+	Packet.WriteString(ColorName.c_str());
 	Packet.WriteString(Message.c_str());
 
 	// Send
@@ -1632,10 +1632,10 @@ void _Server::SendMessage(_Peer *Peer, const std::string &Message, const glm::ve
 }
 
 // Broadcast message to all peers
-void _Server::BroadcastMessage(_Peer *IgnorePeer, const std::string &Message, const glm::vec4 &Color) {
+void _Server::BroadcastMessage(_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName) {
 	for(auto &Peer : Network->GetPeers()) {
 		if(Peer != IgnorePeer)
-			SendMessage(Peer, Message, Color);
+			SendMessage(Peer, Message, ColorName);
 	}
 }
 

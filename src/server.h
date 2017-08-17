@@ -61,8 +61,8 @@ class _Server {
 		void SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, int PVP);
 		void StartTeleport(_Object *Object, double Time);
-		void SendMessage(_Peer *Peer, const std::string &Message, const glm::vec4 &Color);
-		void BroadcastMessage(_Peer *IgnorePeer, const std::string &Message, const glm::vec4 &Color);
+		void SendMessage(_Peer *Peer, const std::string &Message, const std::string &ColorName);
+		void BroadcastMessage(_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName);
 		void SendHUD(_Peer *Peer);
 		void SendPlayerPosition(_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);

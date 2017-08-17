@@ -293,7 +293,7 @@ void _Map::CheckEvents(_Object *Object) {
 	switch(Tile->Event.Type) {
 		case _Map::EVENT_SPAWN:
 			if(Server && !(Object->SpawnMapID == NetworkID && Object->SpawnPoint == Tile->Event.Data))
-				Server->SendMessage(Object->Peer, "Spawn point set", COLOR_YELLOW);
+				Server->SendMessage(Object->Peer, "Spawn point set", "yellow");
 
 			Object->SpawnMapID = NetworkID;
 			Object->SpawnPoint = Tile->Event.Data;
@@ -554,7 +554,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 	if(RenderFlags & FILTER_BOUNDARY) {
 		Graphics.SetProgram(Assets.Programs["pos"]);
 		Graphics.SetVBO(VBO_NONE);
-		Graphics.SetColor(COLOR_RED);
+		Graphics.SetColor(Assets.Colors["red"]);
 		Graphics.DrawRectangle(glm::vec2(-0.51f, -0.51f), glm::vec2(Size.x - 0.49f, Size.y - 0.49f));
 	}
 
@@ -584,23 +584,23 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 			// Draw wall
 			if(Tile->Wall) {
 				if(RenderFlags & FILTER_WALL)
-					Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_WHITE, 1.0f / 64.0f);
+					Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 			}
 			else {
 
 				// Draw zone number
 				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0)
-					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_WHITE, 1.0f / 64.0f);
+					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 
 				// Draw PVP
 				if((RenderFlags & FILTER_PVP) && Tile->PVP)
-					Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_RED, 1.0f / 64.0f);
+					Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), CENTER_MIDDLE, Assets.Colors["red"], 1.0f / 64.0f);
 			}
 
 			// Draw event info
 			if(Tile->Event.Type > 0) {
 				std::string EventText = Stats->EventNames[Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
-				Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), CENTER_MIDDLE, COLOR_CYAN, 1.0f / 64.0f);
+				Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), CENTER_MIDDLE, Assets.Colors["cyan"], 1.0f / 64.0f);
 			}
 		}
 	}
@@ -610,7 +610,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static) {
 	Graphics.SetProgram(Assets.Programs[Program]);
 	glUniformMatrix4fv(Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
-	Graphics.SetColor(COLOR_WHITE);
+	Graphics.SetColor(glm::vec4(1.0f));
 
 	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;

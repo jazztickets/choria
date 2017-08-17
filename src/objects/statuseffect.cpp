@@ -94,7 +94,7 @@ void _StatusEffect::Render(_Element *Element, const glm::vec4 &Color) {
 	Graphics.SetColor(Color);
 	Graphics.DrawImage(Element->Bounds, Buff->Texture);
 
-	glm::vec4 TextColor = COLOR_WHITE;
+	glm::vec4 TextColor = glm::vec4(1.0f);
 	TextColor.a = Color.a;
 
 	// Build string
