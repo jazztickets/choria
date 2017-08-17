@@ -20,7 +20,6 @@
 #include <ae/program.h>
 #include <ae/texture.h>
 #include <ae/ui.h>
-#include <constants.h>
 #include <SDL.h>
 #include <pnglite/pnglite.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -34,6 +33,7 @@ _Graphics Graphics;
 void _Graphics::Init(const _WindowSettings &WindowSettings) {
 
 	// Init
+	CircleVertices = 32;
 	Anisotropy = 0;
 	FramesPerSecond = 0;
 	FrameCount = 0;
@@ -209,16 +209,17 @@ void _Graphics::BuildVertexBuffers() {
 
 	// Circle
 	{
-		float Triangles[GRAPHICS_CIRCLE_VERTICES * 2];
+		float *Triangles = new float[CircleVertices * 2];
 
 		// Get vertices
-		for(int i = 0; i < GRAPHICS_CIRCLE_VERTICES; i++) {
-			float Radians = ((float)i / GRAPHICS_CIRCLE_VERTICES) * (glm::pi<float>() * 2.0f);
+		for(GLuint i = 0; i < CircleVertices; i++) {
+			float Radians = ((float)i / CircleVertices) * (glm::pi<float>() * 2.0f);
 			Triangles[i * 2] = std::cos(Radians);
 			Triangles[i * 2 + 1] = std::sin(Radians);
 		}
 
-		VertexBuffer[VBO_CIRCLE] = CreateVBO(Triangles, sizeof(Triangles), GL_STATIC_DRAW);
+		VertexBuffer[VBO_CIRCLE] = CreateVBO(Triangles, sizeof(float) * CircleVertices * 2, GL_STATIC_DRAW);
+		delete[] Triangles;
 	}
 
 	// Textured 2D Quad
@@ -308,6 +309,15 @@ GLuint _Graphics::CreateVBO(float *Triangles, GLuint Size, GLenum Type) {
 	return BufferID;
 }
 
+// Fade the screen
+void _Graphics::FadeScreen(float Amount) {
+	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
+	Graphics.SetVBO(VBO_NONE);
+
+	Graphics.SetColor(glm::vec4(0.0f, 0.0f, 0.0f, Amount));
+	DrawRectangle(glm::vec2(0, 0), CurrentSize, true);
+}
+
 // Clears the screen
 void _Graphics::ClearScreen() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -323,15 +333,6 @@ void _Graphics::Setup2D() {
 
 	// Set viewport
 	glViewport(0, 0, CurrentSize.x, CurrentSize.y);
-}
-
-// Fade the screen
-void _Graphics::FadeScreen(float Amount) {
-	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-	Graphics.SetVBO(VBO_NONE);
-
-	Graphics.SetColor(glm::vec4(0.0f, 0.0f, 0.0f, Amount));
-	DrawRectangle(glm::vec2(0, 0), CurrentSize, true);
 }
 
 // Draw image centered
@@ -491,35 +492,6 @@ void _Graphics::DrawCube(const glm::vec3 &Start, const glm::vec3 &Scale, const _
 	glMatrixMode(GL_MODELVIEW);
 }
 
-// Draw quad with repeated textures
-void _Graphics::DrawTile(const glm::vec2 &Start, const glm::vec2 &End, float Z, const _Texture *Texture) {
-	if(LastAttribLevel != 2)
-		throw std::runtime_error(std::string(__FUNCTION__) + " - LastAttribLevel mismatch");
-
-	SetTextureID(Texture->ID);
-	SetColor(COLOR_WHITE);
-
-	// Get textureID and properties
-	float Width = End.x - Start.x;
-	float Height = End.y - Start.y;
-
-	glm::mat4 ModelTransform;
-	ModelTransform = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, Z));
-	glUniformMatrix4fv(LastProgram->ModelTransformID, 1, GL_FALSE, glm::value_ptr(ModelTransform));
-
-	// Vertex data for quad
-	float Vertices[] = {
-		Start.x, End.y,   0.0f,  Height,
-		End.x,   End.y,   Width, Height,
-		Start.x, Start.y, 0.0f,  0.0f,
-		End.x,   Start.y, Width, 0.0f,
-	};
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &Vertices[0]);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, &Vertices[2]);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-}
-
 // Draw rectangle
 void _Graphics::DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool Filled) {
 	if(LastAttribLevel != 1)
@@ -561,7 +533,7 @@ void _Graphics::DrawCircle(const glm::vec3 &Position, float Radius) {
 	ModelTransform = glm::scale(ModelTransform, glm::vec3(Radius, Radius, 0.0f));
 	glUniformMatrix4fv(LastProgram->ModelTransformID, 1, GL_FALSE, glm::value_ptr(ModelTransform));
 
-	glDrawArrays(GL_LINE_LOOP, 0, GRAPHICS_CIRCLE_VERTICES);
+	glDrawArrays(GL_LINE_LOOP, 0, CircleVertices);
 }
 
 // Draws the frame

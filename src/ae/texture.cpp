@@ -17,7 +17,6 @@
 *******************************************************************************/
 #include <ae/texture.h>
 #include <ae/graphics.h>
-#include <constants.h>
 #include <pnglite/pnglite.h>
 #include <stdexcept>
 
