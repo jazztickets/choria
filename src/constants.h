@@ -121,15 +121,4 @@ const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;
 const  float        MENU_PAUSE_FADE                 =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME           =  0.250;
 //     Scripting
-const  std::string  SCRIPTS_PATH                    =  "scripts/";
-const  std::string  SCRIPTS_GAME                    =  "game.lua";
-//     Assets
-const  std::string  ASSETS_MAPS_PATH                =  "maps/";
-const  std::string  ASSETS_SOUND_PATH               =  "sounds/";
-const  std::string  ASSETS_MUSIC_PATH               =  "music/";
-const  std::string  ASSETS_PROGRAMS                 =  "tables/programs.tsv";
-const  std::string  ASSETS_COLORS                   =  "tables/colors.tsv";
-const  std::string  ASSETS_FONTS                    =  "tables/fonts.tsv";
-const  std::string  ASSETS_LAYERS                   =  "tables/layers.tsv";
-const  std::string  ASSETS_UI                       =  "tables/ui.xml";
-const  std::string  ASSETS_UI_STYLES                =  "tables/styles.tsv";
+const  std::string  SCRIPTS_GAME                    =  "scripts/game.lua";

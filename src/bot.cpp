@@ -46,7 +46,7 @@ _Bot::_Bot(_Stats *Stats, const std::string &Username, const std::string &Passwo
 	ObjectManager = new _Manager<_Object>();
 
 	Scripting = new _Scripting();
-	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
+	Scripting->Setup(Stats, SCRIPTS_GAME);
 	Script = "Bot_Client";
 
 	Network->Connect(HostAddress, Port);

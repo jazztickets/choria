@@ -82,7 +82,7 @@ void _PlayState::Init() {
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	Scripting = new _Scripting();
-	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
+	Scripting->Setup(Stats, SCRIPTS_GAME);
 
 	HUD = new _HUD();
 	HUD->Scripting = Scripting;

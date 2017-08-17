@@ -38,6 +38,9 @@
 
 _EditorState EditorState;
 
+// Constants
+const std::string MAPS_PATH = "maps/";
+
 // Constructor
 _EditorState::_EditorState() :
 	Map(nullptr),
@@ -845,8 +848,8 @@ void _EditorState::SaveMap() {
 		return;
 
 	// Check for path prefix
-	if(Path.find(ASSETS_MAPS_PATH, 0) == std::string::npos)
-		Path = ASSETS_MAPS_PATH + Path;
+	if(Path.find(MAPS_PATH, 0) == std::string::npos)
+		Path = MAPS_PATH + Path;
 
 	// Check for extension
 	if(Path.find(".map.gz", 0) == std::string::npos)
@@ -869,8 +872,8 @@ void _EditorState::LoadMap() {
 		return;
 
 	// Check for path prefix
-	if(Path.find(ASSETS_MAPS_PATH, 0) == std::string::npos)
-		Path = ASSETS_MAPS_PATH + Path;
+	if(Path.find(MAPS_PATH, 0) == std::string::npos)
+		Path = MAPS_PATH + Path;
 
 	// Check for extension
 	if(Path.find(".map.gz", 0) == std::string::npos)

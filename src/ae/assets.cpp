@@ -50,16 +50,16 @@ void _Assets::Init(bool IsServer) {
 	LoadTextureDirectory("textures/models/", IsServer);
 	LoadTextureDirectory("textures/skills/", IsServer);
 	LoadTextureDirectory("textures/status/", IsServer);
-	LoadLayers(ASSETS_LAYERS);
+	LoadLayers("tables/layers.tsv");
 	if(!IsServer) {
-		LoadPrograms(ASSETS_PROGRAMS);
-		LoadFonts(ASSETS_FONTS);
-		LoadColors(ASSETS_COLORS);
-		LoadStyles(ASSETS_UI_STYLES);
-		LoadSounds(ASSETS_SOUND_PATH);
-		LoadMusic(ASSETS_MUSIC_PATH);
-		LoadUI(ASSETS_UI);
-		//SaveUI(ASSETS_UI);
+		LoadPrograms("tables/programs.tsv");
+		LoadFonts("tables/fonts.tsv");
+		LoadColors("tables/colors.tsv");
+		LoadStyles("tables/styles.tsv");
+		LoadSounds("sounds/");
+		LoadMusic("music/");
+		LoadUI("tables/ui.xml");
+		//SaveUI("tables/ui.xml");
 	}
 }
 

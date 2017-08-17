@@ -90,7 +90,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	Save = new _Save();
 
 	Scripting = new _Scripting();
-	Scripting->Setup(Stats, SCRIPTS_PATH + SCRIPTS_GAME);
+	Scripting->Setup(Stats, SCRIPTS_GAME);
 
 	Log.Open((Config.LogPath + "server.log").c_str());
 	Log << "Starting server on port " << NetworkPort << std::endl;
