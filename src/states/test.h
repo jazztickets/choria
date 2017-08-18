@@ -21,6 +21,7 @@
 #include <ae/log.h>
 #include <ae/manager.h>
 #include <unordered_map>
+#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _Stats;
@@ -31,6 +32,11 @@ class _Sprite;
 class _TestState : public _State {
 
 	public:
+
+		enum class GameState : int {
+			PLACEMENT,
+			DROP,
+		};
 
 		// Setup
 		_TestState();
@@ -53,7 +59,10 @@ class _TestState : public _State {
 		// Attributes
 		_Camera *Camera;
 		_Stats *Stats;
+		_Sprite *Ball;
 		double Time;
+		glm::vec4 Boundary;
+		GameState State;
 
 	protected:
 

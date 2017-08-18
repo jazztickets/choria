@@ -17,29 +17,115 @@
 *******************************************************************************/
 #include <objects/sprite.h>
 #include <ae/graphics.h>
+#include <glm/gtx/norm.hpp>
+#include <iostream>
 
 // Constructor
 _Sprite::_Sprite() :
-	Texture(nullptr) {
+	Texture(nullptr),
+	Scale(1.0f) {
 
 }
 
 // Update
 void _Sprite::Update(double FrameTime) {
-
+	RigidBody.Update((float)FrameTime);
 }
 
 // Render
 void _Sprite::Render(double BlendFactor) {
 
 	glm::vec3 RenderPosition(
-		RigidBody.Position.x * BlendFactor + RigidBody.LastPosition.x * (1.0f - BlendFactor) + 0.5f,
-		RigidBody.Position.y * BlendFactor + RigidBody.LastPosition.y * (1.0f - BlendFactor) + 0.5f,
+		RigidBody.Position.x * BlendFactor + RigidBody.LastPosition.x * (1.0f - BlendFactor),
+		RigidBody.Position.y * BlendFactor + RigidBody.LastPosition.y * (1.0f - BlendFactor),
 		0.0f
 	);
 
 	if(Texture) {
 		Graphics.SetVBO(VBO_QUAD);
-		Graphics.DrawSprite(RenderPosition, Texture);
+		Graphics.DrawSprite(RenderPosition, Texture, 0.0f, glm::vec2(Scale));
 	}
+}
+
+// Check collision with a circle
+bool _Sprite::CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &Normal, float &Penetration, bool &AxisAlignedPush) {
+
+	// Get vector to circle center
+	glm::vec2 Point = Position - glm::vec2(RigidBody.Position);
+
+	// Shape is AABB
+	if(Shape.IsAABB()) {
+
+		glm::vec2 ClosestPoint = Point;
+		int ClampCount = 0;
+		if(ClosestPoint.x < -Shape.HalfWidth[0]) {
+			ClosestPoint.x = -Shape.HalfWidth[0];
+			ClampCount++;
+		}
+		if(ClosestPoint.y < -Shape.HalfWidth[1]) {
+			ClosestPoint.y = -Shape.HalfWidth[1];
+			ClampCount++;
+		}
+		if(ClosestPoint.x > Shape.HalfWidth[0]) {
+			ClosestPoint.x = Shape.HalfWidth[0];
+			ClampCount++;
+		}
+		if(ClosestPoint.y > Shape.HalfWidth[1]) {
+			ClosestPoint.y = Shape.HalfWidth[1];
+			ClampCount++;
+		}
+
+		bool Hit = glm::distance2(Point, ClosestPoint) < Radius * Radius;
+		if(Hit) {
+
+			// Get push direction
+			Normal = Point - ClosestPoint;
+
+			// Check for zero vector
+			if(Normal.x == 0.0f && Normal.y == 0.0f) {
+				Normal.x = 1.0f;
+				return true;
+			}
+
+			// Get penetration amount
+			float NormalLength = glm::length(Normal);
+			Penetration = Radius - NormalLength;
+
+			// Normalize
+			Normal /= NormalLength;
+
+			if(ClampCount == 1)
+				AxisAlignedPush = true;
+
+			return true;
+		}
+	}
+	else {
+
+		float SquareDistance = Point.x * Point.x + Point.y * Point.y;
+		float RadiiSum = Radius + Shape.HalfWidth[0];
+
+		bool Hit = SquareDistance < RadiiSum * RadiiSum;
+		if(Hit) {
+
+			// Check for zero vector
+			if(Point.x == 0.0f && Point.y == 0.0f) {
+				Normal.x = 1.0f;
+				Penetration = 1.0f;
+				return true;
+			}
+
+			// Get penetration amount
+			Normal = Point;
+			float NormalLength = glm::length(Normal);
+			Penetration = RadiiSum - NormalLength;
+
+			// Normalize
+			Normal /= NormalLength;
+
+			return true;
+		}
+	}
+
+	return false;
 }

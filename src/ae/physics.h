@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <ae/type.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
@@ -34,6 +35,17 @@ class _Shape {
 		glm::vec2 HalfWidth;
 };
 
+// Physics response
+struct _Manifold {
+	_Manifold() : ObjectA(nullptr), ObjectB(nullptr), Penetration(0.0f) { }
+	bool IsDiagonal() const { return Normal.x != 0 && Normal.y != 0; }
+
+	void *ObjectA;
+	void *ObjectB;
+	glm::vec2 Normal;
+	float Penetration;
+};
+
 // Rigid body
 class _RigidBody {
 
@@ -44,12 +56,19 @@ class _RigidBody {
 
 		// Update
 		void Update(float DeltaTime);
+		void ForcePosition(const glm::vec2 &Position) { this->Position = this->LastPosition = Position; }
+		void SetMass(float Mass) { InverseMass = Mass > 0.0f ? 1.0f / Mass : 0.0f; }
 
 		// State
 		glm::vec2 LastPosition;
 		glm::vec2 Position;
 		glm::vec2 Velocity;
 		glm::vec2 Acceleration;
+		float InverseMass;
+		float Restitution;
+		int CollisionMask;
+		int CollisionGroup;
+		bool CollisionResponse;
 
 	private:
 

@@ -20,6 +20,7 @@
 // Libraries
 #include <ae/physics.h>
 #include <ae/managerbase.h>
+#include <string>
 
 // Forward Declarations
 class _Texture;
@@ -35,10 +36,15 @@ class _Sprite : public _ManagerBase {
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
 
+		// Collision
+		bool CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &Normal, float &Penetration, bool &AxisAlignedPush);
+
 		// Attributes
+		std::string Name;
 		const _Texture *Texture;
 		_RigidBody RigidBody;
 		_Shape Shape;
+		float Scale;
 
 	private:
 

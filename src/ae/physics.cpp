@@ -18,7 +18,12 @@
 #include <ae/physics.h>
 
 // Constructor
-_RigidBody::_RigidBody() {
+_RigidBody::_RigidBody() :
+	InverseMass(0.0f),
+	Restitution(1.0f),
+	CollisionMask(0),
+	CollisionGroup(0),
+	CollisionResponse(true) {
 
 }
 
@@ -32,6 +37,8 @@ _RigidBody::_RigidBody(const glm::vec2 &Position, const glm::vec2 &Velocity, con
 
 // Integrate
 void _RigidBody::Update(float DeltaTime) {
+	if(InverseMass <= 0.0f)
+		return;
 
 	// RK4 increments
 	_RigidBody A, B, C, D;
