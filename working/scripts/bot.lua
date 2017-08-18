@@ -108,10 +108,35 @@ Builds = {
 				{ 101, 3 },
 				{ 100, 3 },
 				{ 119, 3 },
-				{ 147, 3 }
-			}
+				{ 147, 3 },
+			},
+			[INVENTORY_HAND2] = {
+				{ 106, 4 },
+				{ 107, 4 },
+			},
+			[INVENTORY_BODY] = {
+				{ 107, 4 },
+				{ 113, 4 },
+			},
+			[INVENTORY_LEGS] = {
+				{ 120, 4 },
+				{ 122, 4 },
+			},
+			[INVENTORY_HEAD] = {
+				{ 121, 4 },
+				{ 201, 4 },
+			},
 		}
 	}
+}
+
+-- Vendor to MapID --
+
+Vendors = {
+	[2] = 6,
+	[3] = 4,
+	[4] = 5,
+	[5] = 3,
 }
 
 -- Bot that runs on the server --
@@ -268,36 +293,36 @@ function Bot_Server.DetermineNextGoal(self, Object)
 		self.SellSlot = -1
 
 		-- Check item progression
-		CheckType = INVENTORY_HAND1
-		Item = Object.GetInventoryItem(BAG_EQUIPMENT, CheckType)
-		SellPrice = 0
-		if Item ~= nil then
-			SellPrice = math.floor(Item.Cost * 0.5)
-		end
+		for CheckType, IDs in pairs(self.Build.Items) do
 
-		-- Get list of item/vendor ids from build
-		IDs = self.Build.Items[CheckType]
-
-		-- Find next item to buy
-		for i = #IDs, 1, -1 do
-
-			-- Exit if we already have the item
-			if Item.ID == IDs[i][1] then
-				break
+			-- Get equipped item
+			Item = Object.GetInventoryItem(BAG_EQUIPMENT, CheckType)
+			SellPrice = 0
+			if Item ~= nil then
+				SellPrice = math.floor(Item.Cost * 0.5)
 			end
 
-			-- Check price
-			if Object.Gold >= Items[IDs[i][1]].Cost then
-				self.BuyID = IDs[i][1]
-				self.VendorID = IDs[i][2]
-				self.SellSlot = INVENTORY_HAND1
-				break
+			-- Find next item to buy
+			for i = #IDs, 1, -1 do
+
+				-- Exit if we already have the item
+				if Item ~= nil and Item.ID == IDs[i][1] then
+					break
+				end
+
+				-- Check price
+				if Object.Gold >= Items[IDs[i][1]].Cost then
+					self.BuyID = IDs[i][1]
+					self.VendorID = IDs[i][2]
+					self.SellSlot = CheckType
+					break
+				end
 			end
 		end
 
 		if self.BuyID ~= 0 then
 			self.GoalState = GOAL_BUY
-			self:GoToMap(Object, 4)
+			self:GoToMap(Object, Vendors[self.VendorID])
 		else
 			self.GoalState = GOAL_FARMING
 			self:GoToMap(Object, 10)
