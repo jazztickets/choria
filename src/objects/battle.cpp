@@ -260,8 +260,15 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
-		if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
-			ClientPlayer->HUD->SetMessage("");
+
+		// Update HUD
+		if(ClientPlayer->HUD) {
+			if(Config.ShowTutorial && ClientPlayer->Level == 1)
+				ClientPlayer->HUD->SetMessage("");
+
+			// Disable mouse again
+			ClientPlayer->HUD->EnableMouseCombat = false;
+		}
 
 		// Check if action can be used
 		_ActionResult ActionResult;
@@ -279,6 +286,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		if(ClientPlayer->Targets.size())
 			ClientPlayer->LastTarget[ClientPlayer->Targets.front()->BattleSide] = ClientPlayer->Targets.front();
 
+		// Notify server
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACTION_USE);
 		Packet.Write<uint8_t>(ActionBarSlot);
