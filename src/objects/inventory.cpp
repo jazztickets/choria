@@ -186,7 +186,7 @@ bool _Inventory::MoveInventory(_Buffer &Data, const _Slot &OldSlot, const _Slot 
 			NewInventorySlot.Count = NewInventorySlot.MaxCount;
 		}
 		else
-			OldInventorySlot.Item = nullptr;
+			OldInventorySlot.Reset();
 	}
 	else {
 
@@ -235,8 +235,7 @@ bool _Inventory::DecrementItemCount(const _Slot &Slot, int Amount) {
 	_InventorySlot &InventorySlot = GetSlot(Slot);
 	InventorySlot.Count += Amount;
 	if(InventorySlot.Count <= 0) {
-		InventorySlot.Item = nullptr;
-		InventorySlot.Count = 0;
+		InventorySlot.Reset();
 		return true;
 	}
 
@@ -320,7 +319,7 @@ void _Inventory::MoveTradeToInventory() {
 	_Bag &Bag = Bags[_Bag::TRADE];
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 		if(Bag.Slots[i].Item && AddItem(Bag.Slots[i].Item, Bag.Slots[i].Upgrades, Bag.Slots[i].Count))
-			Bag.Slots[i].Item = nullptr;
+			Bag.Slots[i].Reset();
 	}
 }
 

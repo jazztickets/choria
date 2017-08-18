@@ -47,9 +47,7 @@ struct _Cursor {
 	_Cursor() { Reset(); }
 
 	void Reset() {
-		InventorySlot.Item = nullptr;
-		InventorySlot.Count = 0;
-		InventorySlot.Upgrades = 0;
+		InventorySlot.Reset();
 		Cost = 0;
 		StatusEffect = nullptr;
 		Slot.BagType = _Bag::BagType::NONE;
@@ -139,7 +137,6 @@ class _HUD {
 		void ToggleCharacterStats();
 
 		// Windows
-		void InitInventory(bool SendStatus);
 		void InitVendor();
 		void InitTrader();
 		void InitBlacksmith();

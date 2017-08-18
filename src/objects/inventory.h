@@ -48,11 +48,12 @@ enum EquipmentType : size_t {
 
 // Single inventory slot
 struct _InventorySlot {
-	_InventorySlot() : Item(nullptr), Upgrades(0), Count(0), MaxCount(INVENTORY_MAX_STACK) { }
+	_InventorySlot() { Reset(); }
 	_InventorySlot(const _Item *Item, int Count) : Item(Item), Upgrades(0), Count(Count), MaxCount(INVENTORY_MAX_STACK) { }
 
 	void Serialize(_Buffer &Data);
 	void Unserialize(_Buffer &Data, _Stats *Stats);
+	void Reset() { Item = nullptr; Upgrades = 0; Count = 0; MaxCount = INVENTORY_MAX_STACK; }
 
 	const _Item *Item;
 	int Upgrades;

@@ -667,9 +667,11 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 			StatChange.Serialize(Packet);
 			Network->SendPacket(Packet, Player->Peer);
-
-			SendHUD(Player->Peer);
 		}
+
+		// Update client
+		Player->CalculateStats();
+		SendHUD(Player->Peer);
 
 		return;
 	}
