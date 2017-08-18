@@ -55,7 +55,7 @@ _PlayState PlayState;
 
 // Constructor
 _PlayState::_PlayState() :
-	IsTesting(false),
+	DevMode(false),
 	IsHardcore(false),
 	FromEditor(false),
 	ConnectNow(false),
@@ -163,7 +163,7 @@ void _PlayState::StartLocalServer() {
 	// Start server in thread
 	try {
 		Server = new _Server(DEFAULT_NETWORKPORT_ALT);
-		Server->IsTesting = IsTesting;
+		Server->IsTesting = DevMode;
 		Server->Hardcore = IsHardcore;
 		Server->StartThread();
 	}
@@ -518,7 +518,7 @@ void _PlayState::HandleConnect() {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 		Packet.WriteBit(0);
-		if(IsTesting && Input.ModKeyDown(KMOD_CTRL))
+		if(DevMode && Input.ModKeyDown(KMOD_CTRL))
 			Packet.WriteString("bots");
 		else
 			Packet.WriteString("singleplayer");

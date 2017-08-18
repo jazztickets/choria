@@ -73,7 +73,7 @@ class _PlayState : public _State {
 		void PlayDeathSound();
 
 		// Parameters
-		bool IsTesting;
+		bool DevMode;
 		bool IsHardcore;
 		bool FromEditor;
 		bool ConnectNow;

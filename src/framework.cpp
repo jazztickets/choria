@@ -92,8 +92,11 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		else if(Token == "-timescale" && TokensRemaining > 0) {
 			Config.TimeScale = ToNumber<double>(Arguments[++i]);
 		}
+		else if(Token == "-dev") {
+			PlayState.DevMode = true;
+		}
 		else if(Token == "-test") {
-			PlayState.IsTesting = true;
+			State = &TestState;
 		}
 		else if(Token == "-noaudio") {
 			AudioEnabled = false;

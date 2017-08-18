@@ -709,7 +709,7 @@ void _HUD::ToggleChat() {
 		if(ChatTextBox->Text != "") {
 
 			// Handle test commands
-			if(PlayState.IsTesting) {
+			if(PlayState.DevMode) {
 				if (ChatTextBox->Text.find("-search") == 0) {
 					std::smatch Match;
 					std::regex Regex("-search (.+) (.+)");
@@ -857,7 +857,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 	if(CloseWindows(true))
 		return;
 
-	if(PlayState.IsTesting && !Force)
+	if(PlayState.DevMode && !Force)
 		PlayState.Network->Disconnect();
 	else {
 		Menu.ShowExitWarning = Player->Battle;
