@@ -392,17 +392,13 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 		Packet.Write<PacketType>(PacketType::ACCOUNT_NOTFOUND);
 	}
 	else {
-		bool AccountInUse = false;
-		for(auto &CheckPeer : Network->GetPeers()) {
-			if(CheckPeer != Peer && CheckPeer->AccountID == Peer->AccountID) {
-				AccountInUse = true;
-				Peer->AccountID = 0;
-				break;
-			}
-		}
 
-		if(AccountInUse)
+		// Check for account already being used
+		bool AccountInUse = CheckAccountUse(Peer);
+		if(AccountInUse) {
+			Peer->AccountID = 0;
 			Packet.Write<PacketType>(PacketType::ACCOUNT_INUSE);
+		}
 		else
 			Packet.Write<PacketType>(PacketType::ACCOUNT_SUCCESS);
 	}
@@ -865,6 +861,12 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 // Create server side bot
 _Object *_Server::CreateBot() {
 
+	// Check for account being used
+	_Peer TestPeer(nullptr);
+	TestPeer.AccountID = ACCOUNT_BOTS_ID;
+	if(CheckAccountUse(&TestPeer))
+		return nullptr;
+
 	// Choose slot
 	uint32_t Slot = 0;
 
@@ -910,6 +912,16 @@ bool _Server::ValidatePeer(_Peer *Peer) {
 		return false;
 
 	return true;
+}
+
+// Check to see if an account is in use
+bool _Server::CheckAccountUse(_Peer *Peer) {
+	for(auto &CheckPeer : Network->GetPeers()) {
+		if(CheckPeer != Peer && CheckPeer->AccountID == Peer->AccountID)
+			return true;
+	}
+
+	return false;
 }
 
 // Handles a player's inventory move

@@ -131,6 +131,7 @@ class _Server {
 		_Object *CreatePlayer(_Peer *Peer);
 		_Object *CreateBot();
 		bool ValidatePeer(_Peer *Peer);
+		bool CheckAccountUse(_Peer *Peer);
 		void StartBattle(_BattleEvent &BattleEvent);
 
 		void HandleConnect(_NetworkEvent &Event);

@@ -47,6 +47,7 @@
 #include <packet.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <SDL_keyboard.h>
 #include <iostream>
 #include <sstream>
 
@@ -517,7 +518,10 @@ void _PlayState::HandleConnect() {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 		Packet.WriteBit(0);
-		Packet.WriteString("singleplayer");
+		if(IsTesting && Input.ModKeyDown(KMOD_CTRL))
+			Packet.WriteString("bots");
+		else
+			Packet.WriteString("singleplayer");
 		Packet.WriteString("");
 		Packet.Write<uint64_t>(Server->Save->Secret);
 		Network->SendPacket(Packet);
