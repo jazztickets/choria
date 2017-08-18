@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/map.h>
 #include <objects/battle.h>
+#include <objects/sprite.h>
 #include <limits>
 #include <stdexcept>
 
@@ -124,6 +125,7 @@ void _Manager<T>::Clear() {
 	NextID = 0;
 }
 
+template class _Manager<_Sprite>;
 template class _Manager<_Object>;
 template class _Manager<_Map>;
 template class _Manager<_Battle>;

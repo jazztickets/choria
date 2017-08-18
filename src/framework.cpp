@@ -20,6 +20,7 @@
 #include <states/play.h>
 #include <states/dedicated.h>
 #include <states/bots.h>
+#include <states/test.h>
 #include <ae/network.h>
 #include <ae/graphics.h>
 #include <ae/input.h>

@@ -193,7 +193,7 @@ void _Graphics::SetupOpenGL() {
 	Flip(0);
 }
 
-// Initialize
+// Assign uniform values in program
 void _Graphics::SetStaticUniforms() {
 	SetProgram(Assets.Programs["ortho_pos"]);
 	glUniformMatrix4fv(Assets.Programs["ortho_pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Ortho));
