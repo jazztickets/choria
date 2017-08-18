@@ -423,10 +423,8 @@ void _InventorySlot::Unserialize(_Buffer &Data, _Stats *Stats) {
 		Upgrades = Data.Read<uint8_t>();
 		Count = Data.Read<uint8_t>();
 	}
-	else {
-		Item = nullptr;
-		Count = 0;
-	}
+	else
+		Reset();
 }
 
 // Serialize a slot
