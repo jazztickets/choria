@@ -44,7 +44,7 @@ class _Sprite : public _ManagerBase {
 		const _Texture *Texture;
 		_RigidBody RigidBody;
 		_Shape Shape;
-		float Scale;
+		glm::vec2 Scale;
 
 	private:
 

@@ -43,7 +43,7 @@ void _Sprite::Render(double BlendFactor) {
 
 	if(Texture) {
 		Graphics.SetVBO(VBO_QUAD);
-		Graphics.DrawSprite(RenderPosition, Texture, 0.0f, glm::vec2(Scale));
+		Graphics.DrawSprite(RenderPosition, Texture, 0.0f, Scale);
 	}
 }
 

@@ -45,6 +45,7 @@ void _Assets::Init(bool IsServer) {
 	LoadTextureDirectory("textures/items/", IsServer);
 	LoadTextureDirectory("textures/map/", IsServer);
 	LoadTextureDirectory("textures/menu/", IsServer);
+	LoadTextureDirectory("textures/minigames/", IsServer);
 	LoadTextureDirectory("textures/monsters/", IsServer);
 	LoadTextureDirectory("textures/portraits/", IsServer);
 	LoadTextureDirectory("textures/models/", IsServer);

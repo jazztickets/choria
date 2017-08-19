@@ -51,18 +51,19 @@ void _TestState::Init() {
 		Ball->RigidBody.CollisionGroup = 0;
 		Ball->RigidBody.CollisionMask = 0;
 		Ball->RigidBody.CollisionResponse = false;
-		Ball->Scale = 0.7f;
-		Ball->Shape.HalfWidth[0] = 0.5f * Ball->Scale;
-		Ball->Texture = Assets.Textures["textures/hud/ball.png"];
+		Ball->Scale = glm::vec2(0.7f);
+		Ball->Shape.HalfWidth[0] = 0.5f * Ball->Scale.x;
+		Ball->Texture = Assets.Textures["textures/minigames/ball.png"];
 	}
 
 	float SpacingX = 2.0f;
 	float SpacingY = 2.0f;
-	int Odd = 0;
-	for(float i = Boundary[1]; i < Boundary[3]; i += SpacingY) {
+	float OffsetY = SpacingY * 2;
+	int Odd = 1;
+	for(float i = Boundary[1]; i < Boundary[3]-OffsetY; i += SpacingY) {
 		for(float j = Boundary[0]; j <= Boundary[2]; j += SpacingX) {
 			float X = j + Odd * SpacingX / 2.0f;
-			float Y = i + SpacingY * 2;
+			float Y = i + OffsetY;
 			if(X > Boundary[2])
 				continue;
 
@@ -72,10 +73,30 @@ void _TestState::Init() {
 			Sprite->RigidBody.Restitution = 1;
 			Sprite->RigidBody.CollisionMask = 1;
 			Sprite->RigidBody.CollisionGroup = 2;
-			Sprite->Scale = 0.5f;
-			Sprite->Shape.HalfWidth[0] = 0.5f * Sprite->Scale;
 			Sprite->RigidBody.ForcePosition(glm::vec2(X, Y));
-			Sprite->Texture = Assets.Textures["textures/hud/ball.png"];
+
+			if(Y > Boundary[3]-OffsetY) {
+				Sprite->Texture = Assets.Textures["textures/minigames/bar.png"];
+				Sprite->Scale = glm::vec2(0.5f, 2.5f);
+				Sprite->Shape.HalfWidth = glm::vec2(0.5f, 0.5f) * glm::vec2(0.5f, 2.5f);
+				Sprite->RigidBody.ForcePosition(glm::vec2(X, Y + 0.75f));
+
+				_Sprite *Tip = Sprites->Create();
+				Tip->RigidBody.Acceleration.y = 0;
+				Tip->RigidBody.SetMass(0);
+				Tip->RigidBody.Restitution = 1;
+				Tip->RigidBody.CollisionMask = 1;
+				Tip->RigidBody.CollisionGroup = 2;
+				Tip->RigidBody.ForcePosition(glm::vec2(X, Y-0.5f));
+				Tip->Texture = Assets.Textures["textures/minigames/bounce.png"];
+				Tip->Scale = glm::vec2(0.5f, 0.5f);
+				Tip->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
+			}
+			else {
+				Sprite->Texture = Assets.Textures["textures/minigames/bounce.png"];
+				Sprite->Scale = glm::vec2(0.5f, 0.5f);
+				Sprite->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
+			}
 		}
 
 		Odd = !Odd;
@@ -109,7 +130,7 @@ void _TestState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			//State = GameState::DROP;
 			//Ball->RigidBody.SetMass(1.0f);
 
-			{
+			if(0){
 				_Sprite *Sprite = Sprites->Create();
 				Sprite->Name = "drop";
 				Sprite->RigidBody = Ball->RigidBody;
@@ -119,7 +140,7 @@ void _TestState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				Sprite->RigidBody.CollisionGroup = 1;
 				Sprite->RigidBody.CollisionResponse = true;
 				Sprite->Scale = Ball->Scale;
-				Sprite->Texture = Assets.Textures["textures/hud/ball.png"];
+				Sprite->Texture = Assets.Textures["textures/minigames/ball.png"];
 			}
 		}
 	}
@@ -152,11 +173,26 @@ void _TestState::Update(double FrameTime) {
 
 	switch(State) {
 		case GameState::PLACEMENT: {
+
+			if(Input.MouseDown(SDL_BUTTON_LEFT)) {
+				_Sprite *Sprite = Sprites->Create();
+				Sprite->Name = "drop";
+				Sprite->RigidBody = Ball->RigidBody;
+				Sprite->Shape = Ball->Shape;
+				Sprite->RigidBody.SetMass(1);
+				Sprite->RigidBody.CollisionMask = 2;
+				Sprite->RigidBody.CollisionGroup = 1;
+				Sprite->RigidBody.CollisionResponse = true;
+				Sprite->Scale = Ball->Scale;
+				Sprite->Texture = Assets.Textures["textures/minigames/ball.png"];
+			}
 			glm::vec2 WorldPosition;
 			Camera->ConvertScreenToWorld(Input.GetMouse(), WorldPosition);
 
 			WorldPosition.x = glm::clamp(WorldPosition.x, Boundary[0] + Ball->Shape.HalfWidth[0], Boundary[2] - Ball->Shape.HalfWidth[0]);
 			WorldPosition.y = Boundary[1] + Ball->Shape.HalfWidth[0] * 2;
+			//WorldPosition.x = 0;
+			//WorldPosition.y = Boundary[3] - 2;
 			Ball->RigidBody.ForcePosition(WorldPosition);
 		} break;
 		case GameState::DROP:
@@ -170,8 +206,11 @@ void _TestState::Update(double FrameTime) {
 	bool AxisAlignedPush = false;
 	std::list<_Manifold> Manifolds;
 	for(auto &Sprite : Sprites->Objects) {
-		if(Sprite->RigidBody.InverseMass > 0 && Sprite->RigidBody.Velocity.x == 0)
-			Sprite->RigidBody.Velocity.x = (float)GetRandomReal(-0.05, 0.05);
+		if(Sprite->RigidBody.InverseMass > 0 && Sprite->RigidBody.Velocity.x == 0) {
+			Sprite->RigidBody.Velocity.x = (float)GetRandomReal(0.05, 0.1);
+			if(GetRandomInt(0, 1))
+				Sprite->RigidBody.Velocity.x = -Sprite->RigidBody.Velocity.x;
+		}
 
 		for(auto &TestSprite : Sprites->Objects) {
 			if(!(Sprite->RigidBody.CollisionGroup & TestSprite->RigidBody.CollisionMask))
@@ -217,6 +256,10 @@ void _TestState::Update(double FrameTime) {
 				Manifold.Penetration = std::abs(AABB[3] - Boundary[3]);
 				Manifold.Normal = glm::vec2(0.0, -1.0f);
 				Manifolds.push_back(Manifold);
+
+				float Width = Boundary[2] - Boundary[0];
+				std::cout << (int)((Sprite->RigidBody.Position.x - Boundary[0]) / Width * 8.0f) << std::endl;
+				Sprite->Deleted = true;
 			}
 		}
 	}
