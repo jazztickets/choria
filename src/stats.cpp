@@ -46,6 +46,7 @@ _Stats::_Stats(bool Headless) :
 	LoadVendors();
 	LoadTraders();
 	LoadBlacksmiths();
+	LoadMinigames();
 	LoadModels();
 	LoadBuilds();
 	LoadScripts();
@@ -343,6 +344,25 @@ void _Stats::LoadBlacksmiths() {
 		Blacksmith.Name = Database->GetString("name");
 		Blacksmith.Level = Database->GetInt<int>("level");
 		Blacksmiths[Blacksmith.ID] = Blacksmith;
+	}
+	Database->CloseQuery();
+}
+
+// Load minigames
+void _Stats::LoadMinigames() {
+	Minigames.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM minigame");
+
+	// Get data
+	_MinigameType Minigame;
+	while(Database->FetchRow()) {
+		Minigame.ID = Database->GetInt<uint32_t>("id");
+		Minigame.Name = Database->GetString("name");
+		Minigame.Script = Database->GetString("script");
+		Minigame.Cost = Database->GetInt<int>("cost");
+		Minigames[Minigame.ID] = Minigame;
 	}
 	Database->CloseQuery();
 }

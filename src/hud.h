@@ -98,6 +98,7 @@ class _HUD {
 			WINDOW_TRADETHEIRS,
 			WINDOW_TRADEYOURS,
 			WINDOW_SKILLS,
+			WINDOW_MINIGAME,
 		};
 
 		_HUD();
@@ -140,6 +141,7 @@ class _HUD {
 		void InitVendor();
 		void InitTrader();
 		void InitBlacksmith();
+		void InitMinigame();
 		void InitSkills();
 		void InitParty();
 		void InitTrade();
@@ -183,6 +185,7 @@ class _HUD {
 		bool CloseVendor();
 		bool CloseTrader();
 		bool CloseBlacksmith();
+		bool CloseMinigame();
 		bool CloseSkills();
 		bool CloseParty();
 		bool CloseTeleport();
@@ -197,6 +200,7 @@ class _HUD {
 		void DrawTrade();
 		void DrawTrader();
 		void DrawBlacksmith();
+		void DrawMinigame();
 		void DrawActionBar();
 		void DrawSkills();
 		void DrawParty();
@@ -234,6 +238,7 @@ class _HUD {
 		_Element *TradeTheirsElement;
 		_Element *TraderElement;
 		_Element *BlacksmithElement;
+		_Element *MinigameElement;
 		_Element *SkillsElement;
 		_Element *PartyElement;
 		_Element *TeleportElement;

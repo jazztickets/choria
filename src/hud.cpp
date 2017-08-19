@@ -80,6 +80,7 @@ _HUD::_HUD() {
 	TradeTheirsElement = Assets.Elements["element_trade_theirs"];
 	TraderElement = Assets.Elements["element_trader"];
 	BlacksmithElement = Assets.Elements["element_blacksmith"];
+	MinigameElement = Assets.Elements["element_minigame"];
 	SkillsElement = Assets.Elements["element_skills"];
 	PartyElement = Assets.Elements["element_party"];
 	TeleportElement = Assets.Elements["element_teleport"];
@@ -110,6 +111,7 @@ _HUD::_HUD() {
 	TradeTheirsElement->SetActive(false);
 	TraderElement->SetActive(false);
 	BlacksmithElement->SetActive(false);
+	MinigameElement->SetActive(false);
 	SkillsElement->SetActive(false);
 	PartyElement->SetActive(false);
 	TeleportElement->SetActive(false);
@@ -626,6 +628,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawTrade();
 		DrawTrader();
 		DrawBlacksmith();
+		DrawMinigame();
 		DrawSkills();
 		DrawParty();
 		DrawTeleport();
@@ -932,6 +935,13 @@ void _HUD::InitBlacksmith() {
 	UpgradeSlot.BagType = _Bag::BagType::NONE;
 }
 
+// Initialize minigame
+void _HUD::InitMinigame() {
+	Cursor.Reset();
+
+	MinigameElement->SetActive(true);
+}
+
 // Initialize the skills screen
 void _HUD::InitSkills() {
 
@@ -1165,6 +1175,19 @@ bool _HUD::CloseBlacksmith() {
 	return WasOpen;
 }
 
+// Close minigame
+bool _HUD::CloseMinigame() {
+	bool WasOpen = MinigameElement->Active;
+
+	MinigameElement->SetActive(false);
+	Cursor.Reset();
+
+	if(Player)
+		Player->Minigame = nullptr;
+
+	return WasOpen;
+}
+
 // Closes all windows
 bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	Cursor.Reset();
@@ -1177,6 +1200,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseTrader();
 	WasOpen |= CloseBlacksmith();
+	WasOpen |= CloseMinigame();
 	WasOpen |= CloseTeleport();
 
 	if(WasOpen && SendStatus)
@@ -1507,6 +1531,17 @@ void _HUD::DrawBlacksmith() {
 		UpgradeButton->SetEnabled(false);
 	}
 
+}
+
+// Draw minigame
+void _HUD::DrawMinigame() {
+	if(!Player->Minigame) {
+		MinigameElement->Active = false;
+		return;
+	}
+
+	// Draw element
+	MinigameElement->Render();
 }
 
 // Draw the action bar

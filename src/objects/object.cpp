@@ -149,6 +149,7 @@ _Object::_Object() :
 	Vendor(nullptr),
 	Trader(nullptr),
 	Blacksmith(nullptr),
+	Minigame(nullptr),
 	SkillsOpen(false),
 	SkillPoints(0),
 	SkillPointsUsed(0),
@@ -371,6 +372,8 @@ void _Object::Update(double FrameTime) {
 		Status = STATUS_TRADER;
 	else if(Blacksmith)
 		Status = STATUS_BLACKSMITH;
+	else if(Minigame)
+		Status = STATUS_MINIGAME;
 	else if(InventoryOpen)
 		Status = STATUS_INVENTORY;
 	else if(SkillsOpen)
@@ -1259,6 +1262,7 @@ void _Object::ResetUIState() {
 	Vendor = nullptr;
 	Trader = nullptr;
 	Blacksmith = nullptr;
+	Minigame = nullptr;
 	TeleportTime = -1.0;
 }
 
@@ -1463,6 +1467,9 @@ bool _Object::AcceptingMoveInput() {
 		return false;
 
 	if(Blacksmith)
+		return false;
+
+	if(Minigame)
 		return false;
 
 	if(!IsAlive())

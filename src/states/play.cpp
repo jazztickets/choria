@@ -805,6 +805,9 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 				case _Object::STATUS_BLACKSMITH:
 					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
+				case _Object::STATUS_MINIGAME:
+					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+				break;
 				case _Object::STATUS_TELEPORT:
 					Object->StatusTexture = Assets.Textures["textures/status/teleport.png"];
 				break;
@@ -871,6 +874,11 @@ void _PlayState::HandleEventStart(_Buffer &Data) {
 			Player->Blacksmith = Stats->GetBlacksmith(EventData);
 			Player->WaitForServer = false;
 			HUD->InitBlacksmith();
+		break;
+		case _Map::EVENT_MINIGAME:
+			Player->Minigame = Stats->GetMinigame(EventData);
+			Player->WaitForServer = false;
+			HUD->InitMinigame();
 		break;
 	}
 }

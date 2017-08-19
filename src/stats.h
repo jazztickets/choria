@@ -120,6 +120,13 @@ struct _Blacksmith {
 	int Level;
 };
 
+struct _MinigameType {
+	uint32_t ID;
+	std::string Name;
+	std::string Script;
+	int Cost;
+};
+
 struct _ItemDrop {
 	_ItemDrop(uint32_t ItemID, uint32_t Odds) : ItemID(ItemID), Odds(Odds) { }
 	uint32_t ItemID;
@@ -136,10 +143,11 @@ class _Stats {
 
 		// General Stats
 		void GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty=1.0);
-		const _MapStat *GetMap(uint32_t MapID) { return &Maps[MapID]; }
-		const _Vendor *GetVendor(uint32_t VendorID) { return &Vendors[VendorID]; }
-		const _Trader *GetTrader(uint32_t TraderID) { return &Traders[TraderID]; }
-		const _Blacksmith *GetBlacksmith(uint32_t BlacksmithID) { return &Blacksmiths[BlacksmithID]; }
+		const _MapStat *GetMap(uint32_t ID) { return &Maps[ID]; }
+		const _Vendor *GetVendor(uint32_t ID) { return &Vendors[ID]; }
+		const _Trader *GetTrader(uint32_t ID) { return &Traders[ID]; }
+		const _Blacksmith *GetBlacksmith(uint32_t ID) { return &Blacksmiths[ID]; }
+		const _MinigameType *GetMinigame(uint32_t ID) { return &Minigames[ID]; }
 
 		// Menu
 		void GetPortraits(std::list<_Portrait> &Portraits);
@@ -154,9 +162,9 @@ class _Stats {
 		uint32_t GetMapIDByPath(const std::string &Path);
 
 		// Levels
-		const _Level *GetLevel(int Level) const { return &Levels[Level-1]; }
+		const _Level *GetLevel(int Level) const { return &Levels[(size_t)Level-1]; }
 		const _Level *FindLevel(int Experience) const;
-		int GetMaxLevel() const { return Levels.size(); }
+		int GetMaxLevel() const { return (int)Levels.size(); }
 
 		std::vector<_EventName> EventNames;
 		std::vector<_Level> Levels;
@@ -165,6 +173,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _Vendor> Vendors;
 		std::unordered_map<uint32_t, _Trader> Traders;
 		std::unordered_map<uint32_t, _Blacksmith> Blacksmiths;
+		std::unordered_map<uint32_t, _MinigameType> Minigames;
 		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, _Model> Models;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
@@ -193,6 +202,7 @@ class _Stats {
 		void LoadVendors();
 		void LoadTraders();
 		void LoadBlacksmiths();
+		void LoadMinigames();
 		void LoadModels();
 		void LoadBuilds();
 		void LoadScripts();

@@ -305,13 +305,10 @@ void _Map::CheckEvents(_Object *Object) {
 			else
 				Object->WaitForServer = true;
 		break;
-		case _Map::EVENT_VENDOR: {
-			if(Server)
-				StartEvent(Object, Tile->Event);
-			else
-				Object->WaitForServer = true;
-		} break;
-		case _Map::EVENT_TRADER: {
+		case _Map::EVENT_VENDOR:
+		case _Map::EVENT_TRADER:
+		case _Map::EVENT_BLACKSMITH:
+		case _Map::EVENT_MINIGAME: {
 			if(Server)
 				StartEvent(Object, Tile->Event);
 			else
@@ -340,14 +337,6 @@ void _Map::CheckEvents(_Object *Object) {
 			}
 			else
 				Object->WaitForServer = true;
-		} break;
-		case _Map::EVENT_BLACKSMITH: {
-			if(Tile->Event.Data) {
-				if(Server)
-					StartEvent(Object, Tile->Event);
-				else
-					Object->WaitForServer = true;
-			}
 		} break;
 		default:
 			if(Server) {
@@ -452,6 +441,11 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 		case _Map::EVENT_BLACKSMITH:
 			Object->Blacksmith = Server->Stats->GetBlacksmith(Event.Data);
 			if(!Object->Blacksmith->ID)
+				return;
+		break;
+		case _Map::EVENT_MINIGAME:
+			Object->Minigame = Server->Stats->GetMinigame(Event.Data);
+			if(!Object->Minigame->ID)
 				return;
 		break;
 		default:

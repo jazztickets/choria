@@ -44,6 +44,7 @@ class _HUD;
 struct _Tile;
 struct _Vendor;
 struct _Trader;
+struct _MinigameType;
 struct _Blacksmith;
 struct _ActionResult;
 struct _Slot;
@@ -72,6 +73,7 @@ class _Object : public _ManagerBase {
 			STATUS_TRADE,
 			STATUS_TRADER,
 			STATUS_BLACKSMITH,
+			STATUS_MINIGAME,
 			STATUS_BATTLE,
 			STATUS_TELEPORT,
 			STATUS_DEAD,
@@ -305,9 +307,12 @@ class _Object : public _ManagerBase {
 		// Items
 		bool InventoryOpen;
 		_Inventory *Inventory;
+
+		// Events
 		const _Vendor *Vendor;
 		const _Trader *Trader;
 		const _Blacksmith *Blacksmith;
+		const _MinigameType *Minigame;
 
 		// Skills
 		bool SkillsOpen;
