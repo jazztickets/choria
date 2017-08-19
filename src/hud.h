@@ -35,6 +35,7 @@ class _Element;
 class _Action;
 class _Scripting;
 class _Map;
+class _Minigame;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
@@ -275,4 +276,7 @@ class _HUD {
 
 		// Blacksmith
 		_Slot UpgradeSlot;
+
+		// Minigames
+		_Minigame *Minigame;
 };

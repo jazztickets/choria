@@ -34,6 +34,7 @@
 #include <objects/buff.h>
 #include <objects/battle.h>
 #include <objects/map.h>
+#include <objects/minigame.h>
 #include <states/play.h>
 #include <framework.h>
 #include <scripting.h>
@@ -55,6 +56,7 @@ _HUD::_HUD() {
 	EnableMouseCombat = false;
 	ShowDebug = false;
 	Player = nullptr;
+	Minigame = nullptr;
 	LowestRecentItemTime = 0.0;
 	Tooltip.Reset();
 	Cursor.Reset();
@@ -134,6 +136,9 @@ _HUD::~_HUD() {
 
 // Reset state
 void _HUD::Reset() {
+	delete Minigame;
+	Minigame = nullptr;
+
 	CloseWindows(false);
 	ClearSkills();
 

@@ -1417,6 +1417,9 @@ void _PlayState::SendJoinRequest() {
 
 // Send use action
 void _PlayState::SendUseCommand() {
+	if(HUD->CloseWindows(true))
+		return;
+
 	if(!Player->AcceptingMoveInput())
 		return;
 
