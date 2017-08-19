@@ -23,7 +23,8 @@
 // Constructor
 _Sprite::_Sprite() :
 	Texture(nullptr),
-	Scale(1.0f) {
+	Scale(1.0f),
+	Visible(true) {
 
 }
 
@@ -34,6 +35,8 @@ void _Sprite::Update(double FrameTime) {
 
 // Render
 void _Sprite::Render(double BlendFactor) {
+	if(!Visible)
+		return;
 
 	glm::vec3 RenderPosition(
 		RigidBody.Position.x * BlendFactor + RigidBody.LastPosition.x * (1.0f - BlendFactor),

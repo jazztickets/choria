@@ -18,34 +18,38 @@
 #pragma once
 
 // Libraries
-#include <ae/physics.h>
-#include <ae/managerbase.h>
-#include <string>
+#include <ae/manager.h>
+#include <glm/vec4.hpp>
+#include <random>
 
 // Forward Declarations
-class _Texture;
+class _Sprite;
+class _Camera;
+struct _MouseEvent;
 
-// Sprite
-class _Sprite : public _ManagerBase {
+// Base minigame class
+class _Minigame {
 
 	public:
 
-		_Sprite();
+		_Minigame(uint64_t Seed);
+		~_Minigame();
 
 		// Update
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
-
-		// Collision
-		bool CheckCircle(const glm::vec2 &Position, float Radius, glm::vec2 &Normal, float &Penetration, bool &AxisAlignedPush);
+		void HandleMouseButton(const _MouseEvent &MouseEvent);
 
 		// Attributes
-		std::string Name;
-		const _Texture *Texture;
-		_RigidBody RigidBody;
-		_Shape Shape;
-		glm::vec2 Scale;
-		bool Visible;
+		glm::vec4 Boundary;
+		_Manager<_Sprite> *Sprites;
+		_Sprite *Ball;
+		_Camera *Camera;
+
+		// State
+		bool Done;
+		bool Dropped;
+		std::mt19937 Random;
 
 	private:
 

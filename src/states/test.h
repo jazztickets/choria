@@ -24,19 +24,13 @@
 #include <glm/vec4.hpp>
 
 // Forward Declarations
-class _Stats;
 class _Camera;
-class _Sprite;
+class _Minigame;
 
 // Test state
 class _TestState : public _State {
 
 	public:
-
-		enum class GameState : int {
-			PLACEMENT,
-			DROP,
-		};
 
 		// Setup
 		_TestState();
@@ -54,15 +48,10 @@ class _TestState : public _State {
 		void Update(double FrameTime) override;
 		void Render(double BlendFactor) override;
 
-		_Manager<_Sprite> *Sprites;
-
 		// Attributes
 		_Camera *Camera;
-		_Stats *Stats;
-		_Sprite *Ball;
+		_Minigame *Minigame;
 		double Time;
-		glm::vec4 Boundary;
-		GameState State;
 
 	protected:
 
