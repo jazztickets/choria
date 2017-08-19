@@ -176,6 +176,9 @@ class _HUD {
 		// Scripting
 		_Scripting *Scripting;
 
+		// Minigames
+		_Minigame *Minigame;
+
 		// UI
 		std::list<_StatChangeUI> StatChanges;
 		std::list<_RecentItem> RecentItems;
@@ -201,7 +204,7 @@ class _HUD {
 		void DrawTrade();
 		void DrawTrader();
 		void DrawBlacksmith();
-		void DrawMinigame();
+		void DrawMinigame(double BlendFactor);
 		void DrawActionBar();
 		void DrawSkills();
 		void DrawParty();
@@ -277,6 +280,4 @@ class _HUD {
 		// Blacksmith
 		_Slot UpgradeSlot;
 
-		// Minigames
-		_Minigame *Minigame;
 };

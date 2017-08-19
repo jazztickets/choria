@@ -64,7 +64,7 @@ void _Camera::ConvertScreenToWorld(const glm::ivec2 &Point, glm::vec2 &WorldPosi
 }
 
 // Converts world space to screen space
-void _Camera::ConvertWorldToScreen(const glm::vec2 &WorldPosition, glm::ivec2 &Point) {
+void _Camera::ConvertWorldToScreen(const glm::vec2 &WorldPosition, glm::vec2 &Point) {
 	Point.x = (int)(Graphics.ViewportSize.x * (0.5f + ((WorldPosition.x - Position.x) / (Position.z * Graphics.AspectRatio * 2))));
 	Point.y = (int)(Graphics.ViewportSize.y * (0.5f + ((WorldPosition.y - Position.y) / (Position.z * 2))));
 }

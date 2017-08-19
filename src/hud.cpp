@@ -172,6 +172,10 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	// Press
 	if(MouseEvent.Pressed) {
 
+		// Update minigame
+		if(Minigame)
+			Minigame->HandleMouseButton(MouseEvent);
+
 		// Handle mouse click during combat
 		if(Tooltip.Window == WINDOW_BATTLE && EnableMouseCombat && Player->Battle && Player->PotentialAction.IsSet()) {
 			Player->Battle->ClientSetAction((uint8_t)Player->PotentialAction.ActionBarSlot);
@@ -546,6 +550,10 @@ void _HUD::Update(double FrameTime) {
 			++Iterator;
 	}
 
+	// Update minigame
+	if(Minigame)
+		Minigame->Update(FrameTime);
+
 	Message.Time += FrameTime;
 }
 
@@ -633,7 +641,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawTrade();
 		DrawTrader();
 		DrawBlacksmith();
-		DrawMinigame();
+		DrawMinigame(BlendFactor);
 		DrawSkills();
 		DrawParty();
 		DrawTeleport();
@@ -945,6 +953,7 @@ void _HUD::InitMinigame() {
 	Cursor.Reset();
 
 	MinigameElement->SetActive(true);
+	Minigame = new _Minigame(0);
 }
 
 // Initialize the skills screen
@@ -1185,6 +1194,9 @@ bool _HUD::CloseMinigame() {
 	bool WasOpen = MinigameElement->Active;
 
 	MinigameElement->SetActive(false);
+	delete Minigame;
+	Minigame = nullptr;
+
 	Cursor.Reset();
 
 	if(Player)
@@ -1539,14 +1551,19 @@ void _HUD::DrawBlacksmith() {
 }
 
 // Draw minigame
-void _HUD::DrawMinigame() {
-	if(!Player->Minigame) {
+void _HUD::DrawMinigame(double BlendFactor) {
+	if(!Player->Minigame || !Minigame) {
 		MinigameElement->Active = false;
 		return;
 	}
 
 	// Draw element
+	Minigame->GetUIBoundary(MinigameElement->Bounds);
+	MinigameElement->CalculateChildrenBounds();
 	MinigameElement->Render();
+
+	// Draw game
+	Minigame->Render(BlendFactor);
 }
 
 // Draw the action bar

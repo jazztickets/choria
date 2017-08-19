@@ -40,7 +40,6 @@ void _TestState::Init() {
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	Minigame = new _Minigame(0);
-	Minigame->Camera = Camera;
 }
 
 // Close
@@ -74,8 +73,12 @@ void _TestState::HandleMouseMove(const glm::ivec2 &Position) {
 
 // Handle window updates
 void _TestState::HandleWindow(uint8_t Event) {
-	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
-		Camera->CalculateFrustum(Graphics.AspectRatio);
+	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+		if(Camera)
+			Camera->CalculateFrustum(Graphics.AspectRatio);
+		if(Minigame->Camera)
+			Minigame->Camera->CalculateFrustum(Graphics.AspectRatio);
+	}
 }
 
 // Handle quit events

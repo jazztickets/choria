@@ -34,7 +34,7 @@ class _Camera {
 		void CalculateFrustum(float AspectRatio);
 		void Set3DProjection(double BlendFactor);
 		void ConvertScreenToWorld(const glm::ivec2 &Point, glm::vec2 &WorldPosition);
-		void ConvertWorldToScreen(const glm::vec2 &WorldPosition, glm::ivec2 &Point);
+		void ConvertWorldToScreen(const glm::vec2 &WorldPosition, glm::vec2 &Point);
 
 		void Update(double FrameTime);
 		void UpdatePosition(const glm::vec2 &UpdatePosition) { this->TargetPosition += glm::vec3(UpdatePosition, 0.0f); }

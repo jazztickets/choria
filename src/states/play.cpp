@@ -22,6 +22,7 @@
 #include <objects/buff.h>
 #include <objects/map.h>
 #include <objects/battle.h>
+#include <objects/minigame.h>
 #include <ae/clientnetwork.h>
 #include <ae/program.h>
 #include <ae/actions.h>
@@ -346,8 +347,13 @@ void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 }
 
 void _PlayState::HandleWindow(uint8_t Event) {
-	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
-		Camera->CalculateFrustum(Graphics.AspectRatio);
+	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+		if(Camera)
+			Camera->CalculateFrustum(Graphics.AspectRatio);
+
+		if(HUD && HUD->Minigame && HUD->Minigame->Camera)
+			HUD->Minigame->Camera->CalculateFrustum(Graphics.AspectRatio);
+	}
 }
 
 // Handle quit events

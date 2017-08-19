@@ -21,38 +21,50 @@
 #include <ae/assets.h>
 #include <ae/camera.h>
 #include <ae/input.h>
+#include <ae/ui.h>
 #include <ae/random.h>
 #include <ae/graphics.h>
+#include <ae/program.h>
+#include <constants.h>
 #include <SDL_mouse.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // Constructor
-_Minigame::_Minigame(uint64_t Seed) {
+_Minigame::_Minigame(uint64_t Seed) :
+	Seed(Seed),
+	Bucket(-1) {
+
+	Camera = new _Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
+	Camera->CalculateFrustum(Graphics.AspectRatio);
 	Random.seed(Seed);
 	Done = false;
 	Dropped = false;
-	Boundary = glm::vec4(-8, -8, 8, 8);
+	Boundary = glm::vec4(-8, -7, 8, 6);
 	Sprites = new _Manager<_Sprite>();
 	{
 		Ball = Sprites->Create();
+		Ball->Scale = glm::vec2(0.7f);
+		Ball->Shape.HalfWidth[0] = 0.5f * Ball->Scale.x;
 		Ball->RigidBody.Acceleration.y = 10;
 		Ball->RigidBody.SetMass(0);
 		Ball->RigidBody.Restitution = 0.75f;
 		Ball->RigidBody.CollisionGroup = 0;
 		Ball->RigidBody.CollisionMask = 0;
 		Ball->RigidBody.CollisionResponse = false;
-		Ball->Scale = glm::vec2(0.7f);
-		Ball->Shape.HalfWidth[0] = 0.5f * Ball->Scale.x;
+		Ball->RigidBody.Position.y = Boundary[1] + Ball->Shape.HalfWidth[0] * 2;
 		Ball->Texture = Assets.Textures["textures/minigames/ball.png"];
 	}
 
 	float SpacingX = 2.0f;
 	float SpacingY = 2.0f;
-	float OffsetY = SpacingY * 2;
-	int Odd = 1;
-	for(float i = Boundary[1]; i < Boundary[3]-OffsetY; i += SpacingY) {
-		for(float j = Boundary[0]; j <= Boundary[2]; j += SpacingX) {
-			float X = j + Odd * SpacingX / 2.0f;
-			float Y = i + OffsetY;
+	float OffsetY = 3;
+	int Odd = 0;
+	int Columns = 9;
+	int Rows = 5;
+	for(float i = 0; i < Rows; i++) {
+		for(float j = 0; j < Columns; j++) {
+			float X = j * SpacingX + Odd * SpacingX / 2.0f + Boundary[0];
+			float Y = i * SpacingY + OffsetY + Boundary[1];
 			if(X > Boundary[2])
 				continue;
 
@@ -64,7 +76,7 @@ _Minigame::_Minigame(uint64_t Seed) {
 			Sprite->RigidBody.CollisionGroup = 2;
 			Sprite->RigidBody.ForcePosition(glm::vec2(X, Y));
 
-			if(Y > Boundary[3]-OffsetY) {
+			if(i == Rows-1) {
 				Sprite->Texture = Assets.Textures["textures/minigames/bar.png"];
 				Sprite->Scale = glm::vec2(0.5f, 2.5f);
 				Sprite->Shape.HalfWidth = glm::vec2(0.5f, 0.5f) * glm::vec2(0.5f, 2.5f);
@@ -90,24 +102,32 @@ _Minigame::_Minigame(uint64_t Seed) {
 
 		Odd = !Odd;
 	}
+
+	Update(0);
 }
 
 // Destructor
 _Minigame::~_Minigame() {
-
+	delete Camera;
 	delete Sprites;
 }
 
 // Update
 void _Minigame::Update(double FrameTime) {
+	if(Camera) {
+		Camera->Set2DPosition(glm::vec2(0.0f, 0.0f));
+		Camera->Update(FrameTime);
+	}
 
-	if(!Dropped) {
+	if(Camera) {
 		glm::vec2 WorldPosition;
 		Camera->ConvertScreenToWorld(Input.GetMouse(), WorldPosition);
 		WorldPosition.x = glm::clamp(WorldPosition.x, Boundary[0] + Ball->Shape.HalfWidth[0], Boundary[2] - Ball->Shape.HalfWidth[0]);
-		WorldPosition.y = Boundary[1] + Ball->Shape.HalfWidth[0] * 2;
+		WorldPosition.y = Ball->RigidBody.Position.y;
 		Ball->RigidBody.ForcePosition(WorldPosition);
 		Ball->Visible = true;
+		if(Input.MouseDown(SDL_BUTTON_RIGHT))
+			Drop(WorldPosition.x);
 	}
 	else
 		Ball->Visible = false;
@@ -178,8 +198,8 @@ void _Minigame::Update(double FrameTime) {
 				Manifold.Normal = glm::vec2(0.0, -1.0f);
 				Manifolds.push_back(Manifold);
 
-				//float Width = Boundary[2] - Boundary[0];
-				//int Bucket = (int)((Sprite->RigidBody.Position.x - Boundary[0]) / Width * 8.0f);
+				float Width = Boundary[2] - Boundary[0];
+				Bucket = (int)((Sprite->RigidBody.Position.x - Boundary[0]) / Width * 8.0f);
 				Sprite->Deleted = true;
 				Done = true;
 				Dropped = false;
@@ -235,20 +255,23 @@ void _Minigame::Update(double FrameTime) {
 
 // Render
 void _Minigame::Render(double BlendFactor) {
+	if(!Camera)
+		return;
+
+	Graphics.Setup3D();
+	Camera->Set3DProjection(BlendFactor);
+	Graphics.SetProgram(Assets.Programs["pos"]);
+	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
+	glUniformMatrix4fv(Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	Graphics.SetColor(Assets.Colors["white"]);
-	Graphics.SetProgram(Assets.Programs["pos_uv"]);
+	Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
 	for(auto &Sprite : Sprites->Objects) {
 		Sprite->Render(BlendFactor);
 	}
 
-	Graphics.SetProgram(Assets.Programs["pos"]);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.SetColor(Assets.Colors["cyan"]);
-	Graphics.DrawRectangle(glm::vec2(Boundary[0] - 0.5f, Boundary[1] - 0.5f), glm::vec2(Boundary[2] - 0.5f, Boundary[3] - 0.5f));
-
 	Graphics.Setup2D();
-	Graphics.SetStaticUniforms();
 }
 
 // Mouse input
@@ -258,17 +281,34 @@ void _Minigame::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			if(Dropped)
 				return;
 
-			_Sprite *Sprite = Sprites->Create();
-			Sprite->Name = "drop";
-			Sprite->RigidBody = Ball->RigidBody;
-			Sprite->Shape = Ball->Shape;
-			Sprite->RigidBody.SetMass(1);
-			Sprite->RigidBody.CollisionMask = 2;
-			Sprite->RigidBody.CollisionGroup = 1;
-			Sprite->RigidBody.CollisionResponse = true;
-			Sprite->Scale = Ball->Scale;
-			Sprite->Texture = Assets.Textures["textures/minigames/ball.png"];
-			Dropped = true;
+			Drop(Ball->RigidBody.Position.x);
 		}
 	}
+}
+
+// Drop the ball
+void _Minigame::Drop(float X) {
+
+	_Sprite *Sprite = Sprites->Create();
+	Sprite->Name = "drop";
+	Sprite->RigidBody = Ball->RigidBody;
+	Sprite->Shape = Ball->Shape;
+	Sprite->RigidBody.SetMass(1);
+	Sprite->RigidBody.CollisionMask = 2;
+	Sprite->RigidBody.CollisionGroup = 1;
+	Sprite->RigidBody.CollisionResponse = true;
+	Sprite->Scale = Ball->Scale;
+	Sprite->RigidBody.Position.x = X;
+	Sprite->RigidBody.Position.y = Ball->RigidBody.Position.y;
+	Sprite->Texture = Assets.Textures["textures/minigames/ball.png"];
+	Dropped = true;
+}
+
+// Get UI boundary
+void _Minigame::GetUIBoundary(_Bounds &Bounds) {
+	if(!Camera)
+		return;
+
+	Camera->ConvertWorldToScreen(glm::vec2(Boundary[0], Boundary[1]), Bounds.Start);
+	Camera->ConvertWorldToScreen(glm::vec2(Boundary[2], Boundary[3]), Bounds.End);
 }

@@ -26,6 +26,7 @@
 class _Sprite;
 class _Camera;
 struct _MouseEvent;
+struct _Bounds;
 
 // Base minigame class
 class _Minigame {
@@ -39,6 +40,8 @@ class _Minigame {
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
 		void HandleMouseButton(const _MouseEvent &MouseEvent);
+		void Drop(float X);
+		void GetUIBoundary(_Bounds &Bounds);
 
 		// Attributes
 		glm::vec4 Boundary;
@@ -47,8 +50,10 @@ class _Minigame {
 		_Camera *Camera;
 
 		// State
+		uint64_t Seed;
 		bool Done;
 		bool Dropped;
+		int Bucket;
 		std::mt19937 Random;
 
 	private:
