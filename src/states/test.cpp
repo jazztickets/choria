@@ -32,7 +32,8 @@ _TestState TestState;
 
 // Constructor
 _TestState::_TestState() :
-	Camera(nullptr) {
+	Camera(nullptr),
+	Stats(nullptr) {
 }
 
 // Initialize
@@ -40,13 +41,28 @@ void _TestState::Init() {
 	Camera = new _Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
-	_Stats *Stats = new _Stats();
+	Stats = new _Stats();
 	Minigame = new _Minigame(&Stats->Minigames[1]);
-	delete Stats;
+	Minigame->StartGame(1);
+	Minigame->Drop(0.0f);
+
+	Time = 0;
+	while(Time < 30) {
+		Minigame->Update(DEFAULT_TIMESTEP);
+		if(Minigame->State == _Minigame::StateType::DONE) {
+			break;
+		}
+		Time += DEFAULT_TIMESTEP;
+	}
+
+	std::cout << Minigame->Bucket << std::endl;
+
+	Framework.Done = true;
 }
 
 // Close
 void _TestState::Close() {
+	delete Stats;
 	delete Minigame;
 	delete Camera;
 }

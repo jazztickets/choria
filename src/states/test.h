@@ -25,6 +25,7 @@
 
 // Forward Declarations
 class _Camera;
+class _Stats;
 class _Minigame;
 
 // Test state
@@ -50,6 +51,7 @@ class _TestState : public _State {
 
 		// Attributes
 		_Camera *Camera;
+		_Stats *Stats;
 		_Minigame *Minigame;
 		double Time;
 
