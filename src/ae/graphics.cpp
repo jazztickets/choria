@@ -393,40 +393,6 @@ void _Graphics::DrawAtlas(const _Bounds &Bounds, const _Texture *Texture, const 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-// Draw rectangle in screen space
-void _Graphics::DrawRectangle(const _Bounds &Bounds, bool Filled) {
-	DrawRectangle(glm::vec2(Bounds.Start.x, Bounds.Start.y), glm::vec2(Bounds.End.x, Bounds.End.y), Filled);
-}
-
-// Draw stencil mask
-void _Graphics::DrawMask(const _Bounds &Bounds) {
-	if(LastAttribLevel != 1)
-		throw std::runtime_error(std::string(__FUNCTION__) + " - LastAttribLevel mismatch");
-
-	// Enable stencil
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glStencilMask(0x01);
-
-	// Write 1 to stencil buffer
-	glStencilFunc(GL_ALWAYS, 0x01, 0x01);
-	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-
-	float Vertices[] = {
-		Bounds.Start.x + 0.0f, Bounds.End.y   + 1.0f,
-		Bounds.End.x   + 1.0f, Bounds.End.y   + 1.0f,
-		Bounds.Start.x + 0.0f, Bounds.Start.y + 0.0f,
-		Bounds.End.x   + 1.0f, Bounds.Start.y + 0.0f,
-	};
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	// Then draw element only where stencil is 1
-	glStencilFunc(GL_EQUAL, 0x01, 0x01);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glStencilMask(0x00);
-}
-
 // Draw 3d sprite
 void _Graphics::DrawSprite(const glm::vec3 &Position, const _Texture *Texture, float Rotation, const glm::vec2 Scale) {
 	if(LastAttribLevel != 2)
@@ -492,6 +458,11 @@ void _Graphics::DrawCube(const glm::vec3 &Start, const glm::vec3 &Scale, const _
 	glMatrixMode(GL_MODELVIEW);
 }
 
+// Draw rectangle in screen space
+void _Graphics::DrawRectangle(const _Bounds &Bounds, bool Filled) {
+	DrawRectangle(glm::vec2(Bounds.Start.x, Bounds.Start.y), glm::vec2(Bounds.End.x, Bounds.End.y), Filled);
+}
+
 // Draw rectangle
 void _Graphics::DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool Filled) {
 	if(LastAttribLevel != 1)
@@ -521,6 +492,37 @@ void _Graphics::DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
 		glDrawArrays(GL_LINE_LOOP, 0, 4);
 	}
+}
+
+// Draw stencil mask
+void _Graphics::DrawMask(const _Bounds &Bounds) {
+	if(LastAttribLevel != 1)
+		throw std::runtime_error(std::string(__FUNCTION__) + " - LastAttribLevel mismatch");
+
+	glUniformMatrix4fv(LastProgram->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+
+	// Enable stencil
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glStencilMask(0x01);
+
+	// Write 1 to stencil buffer
+	glStencilFunc(GL_ALWAYS, 0x01, 0x01);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+
+	float Vertices[] = {
+		Bounds.Start.x + 0.0f, Bounds.End.y   + 1.0f,
+		Bounds.End.x   + 1.0f, Bounds.End.y   + 1.0f,
+		Bounds.Start.x + 0.0f, Bounds.Start.y + 0.0f,
+		Bounds.End.x   + 1.0f, Bounds.Start.y + 0.0f,
+	};
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	// Then draw element only where stencil is 1
+	glStencilFunc(GL_EQUAL, 0x01, 0x01);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilMask(0x00);
 }
 
 // Draw circle

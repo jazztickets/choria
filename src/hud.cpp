@@ -956,9 +956,13 @@ void _HUD::InitBlacksmith() {
 
 // Initialize minigame
 void _HUD::InitMinigame() {
+	if(!Player->Minigame)
+		return;
+
 	Cursor.Reset();
 
 	MinigameElement->SetActive(true);
+	Assets.Elements["label_minigame_name"]->Text = Player->Minigame->Name;
 	Minigame = new _Minigame(0);
 }
 
@@ -1565,6 +1569,7 @@ void _HUD::DrawMinigame(double BlendFactor) {
 
 	// Draw element
 	Minigame->GetUIBoundary(MinigameElement->Bounds);
+	MinigameElement->Size = MinigameElement->Bounds.End - MinigameElement->Bounds.Start;
 	MinigameElement->CalculateChildrenBounds();
 	MinigameElement->Render();
 

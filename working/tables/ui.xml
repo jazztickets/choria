@@ -307,6 +307,7 @@
         <element id="label_blacksmith_cost" font="hud_medium" offset_y="90" alignment_y="3"/>
     </element>
     <element id="element_minigame" style="style_menu_button" index="12">
+		<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-25" alignment_y="3"/>
     </element>
     <element id="element_skills" style="style_hud_bg" size_x="474" size_y="450" index="11"/>
     <element id="element_died" style="style_hud_died_bg" alignment_x="0" alignment_y="0" clickable="false">

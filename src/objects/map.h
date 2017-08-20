@@ -179,8 +179,8 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		_Server *Server;
 
 		// Editor
-		int MaxZoneColors;
-		int CurrentZoneColors;
+		uint32_t MaxZoneColors;
+		uint32_t CurrentZoneColors;
 
 		// Path finding
 		micropather::MicroPather *Pather;

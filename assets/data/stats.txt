@@ -785,7 +785,7 @@ CREATE TABLE IF NOT EXISTS "minigame" (
 	"script" TEXT,
 	"cost" INTEGER DEFAULT(0)
 );
-INSERT INTO minigame VALUES(1,'Drop','',10);
+INSERT INTO minigame VALUES(1,'Ball Drop','',10);
 CREATE TABLE IF NOT EXISTS "minigameitem" (
 	"id" INTEGER PRIMARY KEY,
 	"minigame_id" INTEGER DEFAULT(0) REFERENCES minigame(id) ON DELETE CASCADE,

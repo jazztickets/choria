@@ -19,6 +19,7 @@
 
 // Libraries
 #include <ae/manager.h>
+#include <ae/ui.h>
 #include <glm/vec4.hpp>
 #include <random>
 
@@ -26,7 +27,6 @@
 class _Sprite;
 class _Camera;
 struct _MouseEvent;
-struct _Bounds;
 
 // Base minigame class
 class _Minigame {
@@ -44,7 +44,7 @@ class _Minigame {
 		void GetUIBoundary(_Bounds &Bounds);
 
 		// Attributes
-		glm::vec4 Boundary;
+		_Bounds Boundary;
 		_Manager<_Sprite> *Sprites;
 		_Sprite *Ball;
 		_Camera *Camera;
