@@ -1351,8 +1351,8 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
 
-			// Draw two handed weapon twice
-			if(i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
+			// Draw two handed weapon twice in equipment bag
+			if(Type == _Bag::BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
 				_Element *Button = Assets.Elements[Buffer.str()];
 				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, Assets.Colors["itemfade"]);
