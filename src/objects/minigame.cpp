@@ -32,29 +32,30 @@
 // Constructor
 _Minigame::_Minigame(uint64_t Seed) :
 	Seed(Seed),
+	Done(false),
+	Dropped(false),
 	Bucket(-1) {
 
 	Camera = new _Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
+
 	Random.seed(Seed);
-	Done = false;
-	Dropped = false;
+
 	Boundary.Start = glm::vec2(-8, -6.5);
 	Boundary.End = glm::vec2(8, 6);
+
 	Sprites = new _Manager<_Sprite>();
-	{
-		Ball = Sprites->Create();
-		Ball->Scale = glm::vec2(0.7f);
-		Ball->Shape.HalfWidth[0] = 0.5f * Ball->Scale.x;
-		Ball->RigidBody.Acceleration.y = 10;
-		Ball->RigidBody.SetMass(0);
-		Ball->RigidBody.Restitution = 0.75f;
-		Ball->RigidBody.CollisionGroup = 0;
-		Ball->RigidBody.CollisionMask = 0;
-		Ball->RigidBody.CollisionResponse = false;
-		Ball->RigidBody.Position.y = Boundary.Start.y + Ball->Shape.HalfWidth[0] * 2;
-		Ball->Texture = Assets.Textures["textures/minigames/ball.png"];
-	}
+	Ball = Sprites->Create();
+	Ball->Scale = glm::vec2(0.7f);
+	Ball->Shape.HalfWidth[0] = 0.5f * Ball->Scale.x;
+	Ball->RigidBody.Acceleration.y = 10;
+	Ball->RigidBody.SetMass(0);
+	Ball->RigidBody.Restitution = 0.75f;
+	Ball->RigidBody.CollisionGroup = 0;
+	Ball->RigidBody.CollisionMask = 0;
+	Ball->RigidBody.CollisionResponse = false;
+	Ball->RigidBody.Position.y = Boundary.Start.y + Ball->Shape.HalfWidth[0] * 2;
+	Ball->Texture = Assets.Textures["textures/minigames/ball.png"];
 
 	float SpacingX = 2.0f;
 	float SpacingY = 2.0f;

@@ -125,12 +125,10 @@ void _Graphics::ChangeViewport(const glm::ivec2 &Size) {
 
 // Change window and viewport size
 void _Graphics::ChangeWindowSize(const glm::ivec2 &Size) {
-
-	// Keep viewport difference the same
-	glm::ivec2 ViewportDifference = CurrentSize - ViewportSize;
-
 	CurrentSize = Size;
-	ChangeViewport(Size - ViewportDifference);
+
+	// Update viewport
+	ChangeViewport(CurrentSize);
 
 	// Update shaders
 	Ortho = glm::ortho(0.0f, (float)CurrentSize.x, (float)CurrentSize.y, 0.0f, -1.0f, 1.0f);
