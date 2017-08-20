@@ -346,6 +346,7 @@ void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 		HUD->EnableMouseCombat = true;
 }
 
+// Window size updates
 void _PlayState::HandleWindow(uint8_t Event) {
 	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 		if(Camera)

@@ -174,11 +174,16 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Update minigame
 		if(Player->Minigame && Minigame) {
-			if(!Minigame->Dropped && Player->Gold >= Player->Minigame->Cost && MinigameElement->Bounds.Inside(Input.GetMouse())) {
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
-				PlayState.Network->SendPacket(Packet);
-				Minigame->HandleMouseButton(MouseEvent);
+			if(!Minigame->Dropped && Player->Gold >= Player->Minigame->Cost) {
+				if(Input.GetMouse().y > MinigameElement->Bounds.Start.y && Input.GetMouse().y < MinigameElement->Bounds.End.y)
+					Minigame->HandleMouseButton(MouseEvent);
+
+				// Pay
+				if(Minigame->Dropped) {
+					_Buffer Packet;
+					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
+					PlayState.Network->SendPacket(Packet);
+				}
 			}
 		}
 
@@ -1561,7 +1566,6 @@ void _HUD::DrawBlacksmith() {
 		BlacksmithCost->SetActive(false);
 		UpgradeButton->SetEnabled(false);
 	}
-
 }
 
 // Draw minigame

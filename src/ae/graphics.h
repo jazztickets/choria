@@ -79,8 +79,11 @@ class _Graphics {
 		void DrawCircle(const glm::vec3 &Position, float Radius);
 
 		void SetDepthMask(bool Value);
+		void SetScissor(const _Bounds &Bounds);
 		void EnableStencilTest();
 		void DisableStencilTest();
+		void EnableScissorTest();
+		void DisableScissorTest();
 
 		void FadeScreen(float Amount);
 		void ClearScreen();

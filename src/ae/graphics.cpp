@@ -125,10 +125,13 @@ void _Graphics::ChangeViewport(const glm::ivec2 &Size) {
 
 // Change window and viewport size
 void _Graphics::ChangeWindowSize(const glm::ivec2 &Size) {
-	CurrentSize = Size;
 
-	// Update viewport
-	ChangeViewport(CurrentSize);
+	// Keep viewport difference the same
+	glm::ivec2 ViewportDifference = CurrentSize - ViewportSize;
+
+	// Change viewport size
+	CurrentSize = Size;
+	ChangeViewport(Size - ViewportDifference);
 
 	// Update shaders
 	Ortho = glm::ortho(0.0f, (float)CurrentSize.x, (float)CurrentSize.y, 0.0f, -1.0f, 1.0f);
@@ -676,6 +679,11 @@ void _Graphics::SetDepthTest(bool DepthTest) {
 	LastDepthTest = DepthTest;
 }
 
+// Set scissor region
+void _Graphics::SetScissor(const _Bounds &Bounds) {
+	glScissor((GLint)Bounds.Start.x, (GLint)(CurrentSize.y - Bounds.End.y - 1), (GLsizei)(Bounds.End.x - Bounds.Start.x + 1), (GLsizei)(Bounds.End.y - Bounds.Start.y + 1));
+}
+
 // Resets all the last used variables
 void _Graphics::DirtyState() {
 	LastVertexBufferID = (GLuint)-1;
@@ -689,3 +697,5 @@ void _Graphics::DirtyState() {
 void _Graphics::SetDepthMask(bool Value) { glDepthMask(Value); }
 void _Graphics::EnableStencilTest() { glEnable(GL_STENCIL_TEST); }
 void _Graphics::DisableStencilTest() { glDisable(GL_STENCIL_TEST); }
+void _Graphics::EnableScissorTest() { glEnable(GL_SCISSOR_TEST); }
+void _Graphics::DisableScissorTest() { glDisable(GL_SCISSOR_TEST); }

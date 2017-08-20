@@ -121,7 +121,7 @@ void _Minigame::Update(double FrameTime) {
 		Camera->Update(FrameTime);
 	}
 
-	if(Camera) {
+	if(Camera && !Dropped) {
 		glm::vec2 WorldPosition;
 		Camera->ConvertScreenToWorld(Input.GetMouse(), WorldPosition);
 		WorldPosition.x = glm::clamp(WorldPosition.x, Boundary.Start.x + Ball->Shape.HalfWidth[0], Boundary.End.x - Ball->Shape.HalfWidth[0]);
@@ -267,12 +267,10 @@ void _Minigame::Render(double BlendFactor) {
 	Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
-	Graphics.SetProgram(Assets.Programs["pos"]);
-	Graphics.EnableStencilTest();
-	Graphics.SetVBO(VBO_NONE);
-	_Bounds MaskBounds(Boundary);
-	MaskBounds.End -= glm::vec2(1);
-	Graphics.DrawMask(MaskBounds);
+	Graphics.EnableScissorTest();
+	_Bounds ScissorRegion;
+	GetUIBoundary(ScissorRegion);
+	Graphics.SetScissor(ScissorRegion);
 
 	Graphics.SetColor(Assets.Colors["white"]);
 	Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
@@ -280,7 +278,7 @@ void _Minigame::Render(double BlendFactor) {
 		Sprite->Render(BlendFactor);
 	}
 
-	Graphics.DisableStencilTest();
+	Graphics.DisableScissorTest();
 
 	Graphics.Setup2D();
 }
