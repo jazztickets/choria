@@ -962,7 +962,11 @@ void _HUD::InitMinigame() {
 	Cursor.Reset();
 
 	MinigameElement->SetActive(true);
-	Assets.Elements["label_minigame_name"]->Text = Player->Minigame->Name;
+	_Element *NameElement = Assets.Elements["label_minigame_name"];
+	_Element *CostElement = Assets.Elements["label_minigame_cost"];
+	NameElement->Text = Player->Minigame->Name;
+	CostElement->Text = std::to_string(Player->Minigame->Cost) + " gold to play";
+
 	Minigame = new _Minigame(0);
 }
 
@@ -1566,6 +1570,13 @@ void _HUD::DrawMinigame(double BlendFactor) {
 		MinigameElement->Active = false;
 		return;
 	}
+
+	// Update text color
+	_Element *CostElement = Assets.Elements["label_minigame_cost"];
+	if(Player->Gold < Player->Minigame->Cost)
+		CostElement->Color = Assets.Colors["red"];
+	else
+		CostElement->Color = Assets.Colors["gold"];
 
 	// Draw element
 	Minigame->GetUIBoundary(MinigameElement->Bounds);
