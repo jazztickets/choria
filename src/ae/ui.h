@@ -36,6 +36,8 @@ namespace tinyxml2 {
 
 // Bounds struct
 struct _Bounds {
+	bool Inside(const glm::vec2 &Point) { return Point.x >= Start.x && Point.y >= Start.y && Point.x < End.x && Point.y < End.y; }
+
 	glm::vec2 Start;
 	glm::vec2 End;
 };

@@ -93,6 +93,7 @@ class _Server {
 		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
 		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
 		void HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer);
+		void HandleMinigamePay(_Buffer &Data, _Peer *Peer);
 		void HandleJoin(_Buffer &Data, _Peer *Peer);
 		void HandleExit(_Buffer &Data, _Peer *Peer);
 

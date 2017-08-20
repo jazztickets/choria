@@ -173,8 +173,14 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	if(MouseEvent.Pressed) {
 
 		// Update minigame
-		if(Minigame)
-			Minigame->HandleMouseButton(MouseEvent);
+		if(Player->Minigame && Minigame) {
+			if(!Minigame->Dropped && Player->Gold >= Player->Minigame->Cost && MinigameElement->Bounds.Inside(Input.GetMouse())) {
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
+				PlayState.Network->SendPacket(Packet);
+				Minigame->HandleMouseButton(MouseEvent);
+			}
+		}
 
 		// Handle mouse click during combat
 		if(Tooltip.Window == WINDOW_BATTLE && EnableMouseCombat && Player->Battle && Player->PotentialAction.IsSet()) {

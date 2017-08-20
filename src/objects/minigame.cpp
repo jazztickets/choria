@@ -126,7 +126,7 @@ void _Minigame::Update(double FrameTime) {
 		WorldPosition.y = Ball->RigidBody.Position.y;
 		Ball->RigidBody.ForcePosition(WorldPosition);
 		Ball->Visible = true;
-		if(Input.MouseDown(SDL_BUTTON_RIGHT))
+		if(0 && Input.MouseDown(SDL_BUTTON_RIGHT))
 			Drop(WorldPosition.x);
 	}
 	else

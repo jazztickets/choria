@@ -320,7 +320,7 @@ void _Element::Update(double FrameTime, const glm::vec2 &Mouse) {
 	ReleasedElement = nullptr;
 
 	// Test element first
-	if(Mouse.x >= Bounds.Start.x && Mouse.y >= Bounds.Start.y && Mouse.x < Bounds.End.x && Mouse.y < Bounds.End.y && Active && Clickable && Enabled) {
+	if(Bounds.Inside(Mouse) && Active && Clickable && Enabled) {
 		HitElement = this;
 	}
 	else if(MaskOutside) {

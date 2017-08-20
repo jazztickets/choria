@@ -20,14 +20,11 @@ build() {
 
 	# run cmake
 	builddir=build-mingw$bits
-	if [ ! -d "$builddir" ]; then
-		mkdir "$builddir"
-		cd $builddir
-		cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw${bits}.cmake ../
-	else
-		cd $builddir
-	fi
+	mkdir -p "$builddir"
+	cd $builddir
+	cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw${bits}.cmake ../
 
+	# build
 	make -j`nproc`
 
 	if [ $? -ne 0 ]; then

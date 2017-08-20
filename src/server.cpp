@@ -309,6 +309,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		case PacketType::BLACKSMITH_UPGRADE:
 			HandleBlacksmithUpgrade(Data, Peer);
 		break;
+		case PacketType::MINIGAME_PAY:
+			HandleMinigamePay(Data, Peer);
+		break;
 		case PacketType::INVENTORY_MOVE:
 			HandleInventoryMove(Data, Peer);
 		break;
@@ -1455,6 +1458,31 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	Log << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( action=upgrade character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Gold << " )" << std::endl;
 
 	Player->CalculateStats();
+}
+
+// Handle paying to play a minigame
+void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	// Validate
+	_Object *Player = Peer->Object;
+	if(!Player->Minigame || Player->Gold < Player->Minigame->Cost)
+		return;
+
+	// Update gold
+	{
+		_StatChange StatChange;
+		StatChange.Object = Player;
+		StatChange.Values[StatType::GOLD].Integer = -Player->Minigame->Cost;
+		Player->UpdateStats(StatChange);
+
+		// Build packet
+		_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+		StatChange.Serialize(Packet);
+		Network->SendPacket(Packet, Player->Peer);
+	}
 }
 
 // Handle join battle request by player
