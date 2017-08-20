@@ -30,6 +30,7 @@
 #include <SDL_mouse.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <algorithm>
+#include <iostream>
 
 // Constructor
 _Minigame::_Minigame(const _MinigameType *Minigame) :
@@ -37,7 +38,8 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 	State(StateType::NEEDSEED),
 	Time(0),
 	DropX(0),
-	Bucket((size_t)-1) {
+	Bucket((size_t)-1),
+	Debug(0) {
 
 	Camera = new _Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
@@ -165,6 +167,11 @@ void _Minigame::Update(double FrameTime) {
 		}
 
 		if(Sprite->RigidBody.InverseMass > 0.0f) {
+			if(Debug) {
+				std::cout.precision(17);
+				std::cout << "x=" << Sprite->RigidBody.Position.x << std::endl;
+			}
+
 			glm::vec4 AABB = Sprite->Shape.GetAABB(Sprite->RigidBody.Position);
 			if(AABB[0] < Boundary.Start.x) {
 				_Manifold Manifold;
@@ -191,6 +198,9 @@ void _Minigame::Update(double FrameTime) {
 				Bucket = (size_t)((Sprite->RigidBody.Position.x - Boundary.Start.x) / Width * 8.0f);
 				Sprite->Deleted = true;
 				State = StateType::DONE;
+				if(Debug) {
+					std::cout << "bucket=" << Bucket << std::endl;
+				}
 			}
 		}
 	}

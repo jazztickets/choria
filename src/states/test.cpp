@@ -43,6 +43,7 @@ void _TestState::Init() {
 
 	Stats = new _Stats();
 	Minigame = new _Minigame(&Stats->Minigames[1]);
+	Minigame->Debug = 1;
 	Minigame->StartGame(1);
 	Minigame->Drop(0.0f);
 
@@ -54,8 +55,6 @@ void _TestState::Init() {
 		}
 		Time += DEFAULT_TIMESTEP;
 	}
-
-	std::cout << Minigame->Bucket << std::endl;
 
 	Framework.Done = true;
 }

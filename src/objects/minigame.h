@@ -67,6 +67,7 @@ class _Minigame {
 		double Time;
 		float DropX;
 		size_t Bucket;
+		int Debug;
 
 	private:
 
