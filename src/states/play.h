@@ -123,7 +123,7 @@ class _PlayState : public _State {
 		void HandleTeleportStart(_Buffer &Data);
 		void HandleEventStart(_Buffer &Data);
 		void HandleInventory(_Buffer &Data);
-		void HandleInventoryUse(_Buffer &Data);
+		void HandleInventoryAdd(_Buffer &Data);
 		void HandleInventorySwap(_Buffer &Data);
 		void HandleInventoryUpdate(_Buffer &Data);
 		void HandleInventoryGold(_Buffer &Data);

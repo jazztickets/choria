@@ -360,6 +360,31 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 	}
 }
 
+// Send an item to the player
+void _Server::SendItem(_Peer *Peer, const _Item *Item, int Count) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	_Object *Player = Peer->Object;
+	if(!Player || !Item)
+		return;
+
+	// Add item
+	Player->Inventory->AddItem(Item, 0, Count);
+
+	// Send item
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY_ADD);
+	Packet.Write<uint8_t>((uint8_t)Count);
+	Packet.Write<uint32_t>(Item->ID);
+	Player->Inventory->Serialize(Packet);
+	Network->SendPacket(Packet, Peer);
+
+	// Update states
+	Player->CalculateStats();
+	SendHUD(Player->Peer);
+}
+
 // Login information
 void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 
@@ -581,13 +606,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				if(Stats->Items.find(ItemID) == Stats->Items.end())
 					return;
 
-				Player->Inventory->AddItem(Stats->Items[ItemID], 0, Count);
-
-				// Send new inventory
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::INVENTORY);
-				Player->Inventory->Serialize(Packet);
-				Network->SendPacket(Packet, Peer);
+				SendItem(Peer, Stats->Items[ItemID], Count);
 			}
 		}
 		else if(Message.find("-setgold") == 0) {
@@ -1520,13 +1539,7 @@ void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
 	if(Minigame.Bucket < Minigame.Prizes.size()) {
 		const _MinigameItem *MinigameItem = Minigame.Prizes[Minigame.Bucket];
 		if(MinigameItem && MinigameItem->Item) {
-			Player->Inventory->AddItem(Stats->Items[MinigameItem->Item->ID], 0, MinigameItem->Count);
-
-			// Send new inventory
-			_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::INVENTORY);
-			Player->Inventory->Serialize(Packet);
-			Network->SendPacket(Packet, Peer);
+			SendItem(Peer, Stats->Items[MinigameItem->Item->ID], MinigameItem->Count);
 		}
 	}
 }

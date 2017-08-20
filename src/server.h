@@ -36,6 +36,7 @@ class _Stats;
 class _Save;
 class _Object;
 class _Scripting;
+class _Item;
 struct _NetworkEvent;
 
 struct _BattleEvent {
@@ -140,6 +141,7 @@ class _Server {
 		void HandleDisconnect(_NetworkEvent &Event);
 		void HandlePacket(_Buffer &Data, _Peer *Peer);
 
+		void SendItem(_Peer *Peer, const _Item *Item, int Count);
 		void SendPlayerInfo(_Peer *Peer);
 		void SendCharacterList(_Peer *Peer);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);

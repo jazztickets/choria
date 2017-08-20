@@ -591,8 +591,8 @@ void _PlayState::HandlePacket(_Buffer &Data) {
 		case PacketType::INVENTORY:
 			HandleInventory(Data);
 		break;
-		case PacketType::INVENTORY_USE:
-			HandleInventoryUse(Data);
+		case PacketType::INVENTORY_ADD:
+			HandleInventoryAdd(Data);
 		break;
 		case PacketType::INVENTORY_SWAP:
 			HandleInventorySwap(Data);
@@ -921,6 +921,19 @@ void _PlayState::HandleInventory(_Buffer &Data) {
 	}
 }
 
+// Handle an item being added to the inventory
+void _PlayState::HandleInventoryAdd(_Buffer &Data){
+	if(!Player)
+		return;
+
+	_RecentItem RecentItem;
+	RecentItem.Count = (int)Data.Read<uint8_t>();
+	RecentItem.Item = Stats->Items[Data.Read<uint32_t>()];
+	HUD->RecentItems.push_back(RecentItem);
+
+	Player->Inventory->AddItem(RecentItem.Item, 0, RecentItem.Count);
+}
+
 // Handles a chat message
 void _PlayState::HandleChatMessage(_Buffer &Data) {
 
@@ -931,16 +944,6 @@ void _PlayState::HandleChatMessage(_Buffer &Data) {
 	Chat.Time = Time;
 
 	HUD->AddChatMessage(Chat);
-}
-
-// Handles the use of an inventory item
-void _PlayState::HandleInventoryUse(_Buffer &Data) {
-	if(!Player)
-		return;
-/*
-	size_t Index = Data.Read<uint8_t>();
-	Player->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
-*/
 }
 
 // Handles a inventory swap
