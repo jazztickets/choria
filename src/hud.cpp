@@ -174,7 +174,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Update minigame
 		if(Player->Minigame && Minigame) {
-			if(Player->Gold >= Player->Minigame->Cost) {
+			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Gold >= Player->Minigame->Cost) {
 				if(Input.GetMouse().y > MinigameElement->Bounds.Start.y && Input.GetMouse().y < MinigameElement->Bounds.End.y)
 					Minigame->HandleMouseButton(MouseEvent);
 
