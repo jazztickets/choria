@@ -25,21 +25,22 @@
 #include <ae/random.h>
 #include <ae/graphics.h>
 #include <ae/program.h>
+#include <stats.h>
 #include <constants.h>
 #include <SDL_mouse.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <algorithm>
 
 // Constructor
-_Minigame::_Minigame(uint64_t Seed) :
-	Seed(Seed),
-	Done(false),
-	Dropped(false),
-	Bucket(-1) {
+_Minigame::_Minigame(const _MinigameType *Minigame) :
+	Minigame(Minigame),
+	State(StateType::NEEDSEED),
+	Time(0),
+	DropX(0),
+	Bucket((size_t)-1) {
 
 	Camera = new _Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
-
-	Random.seed(Seed);
 
 	Boundary.Start = glm::vec2(-8, -6.5);
 	Boundary.End = glm::vec2(8, 6);
@@ -121,7 +122,7 @@ void _Minigame::Update(double FrameTime) {
 		Camera->Update(FrameTime);
 	}
 
-	if(Camera && !Dropped) {
+	if(Camera && State == StateType::CANDROP) {
 		glm::vec2 WorldPosition;
 		Camera->ConvertScreenToWorld(Input.GetMouse(), WorldPosition);
 		WorldPosition.x = glm::clamp(WorldPosition.x, Boundary.Start.x + Ball->Shape.HalfWidth[0], Boundary.End.x - Ball->Shape.HalfWidth[0]);
@@ -140,20 +141,6 @@ void _Minigame::Update(double FrameTime) {
 	// Check collision
 	std::list<_Manifold> Manifolds;
 	for(auto &Sprite : Sprites->Objects) {
-
-		// Vary x velocity when x = 0
-		if(Sprite->RigidBody.InverseMass > 0 && Sprite->RigidBody.Velocity.x == 0) {
-			{
-				std::uniform_real_distribution<float> Distribution(0.05f, 0.1f);
-				Sprite->RigidBody.Velocity.x = Distribution(Random);
-			}
-			{
-				std::uniform_int_distribution<int> Distribution(0, 1);
-				if(Distribution(Random))
-					Sprite->RigidBody.Velocity.x = -Sprite->RigidBody.Velocity.x;
-			}
-		}
-
 		for(auto &TestSprite : Sprites->Objects) {
 			if(!(Sprite->RigidBody.CollisionGroup & TestSprite->RigidBody.CollisionMask))
 				continue;
@@ -201,10 +188,9 @@ void _Minigame::Update(double FrameTime) {
 				Manifolds.push_back(Manifold);
 
 				float Width = Boundary.End.x - Boundary.Start.x;
-				Bucket = (int)((Sprite->RigidBody.Position.x - Boundary.Start.x) / Width * 8.0f);
+				Bucket = (size_t)((Sprite->RigidBody.Position.x - Boundary.Start.x) / Width * 8.0f);
 				Sprite->Deleted = true;
-				Done = true;
-				Dropped = false;
+				State = StateType::DONE;
 			}
 		}
 	}
@@ -253,6 +239,7 @@ void _Minigame::Update(double FrameTime) {
 			SpriteB->RigidBody.Velocity += SpriteB->RigidBody.InverseMass * ImpulseVector;
 	}
 
+	Time += FrameTime;
 }
 
 // Render
@@ -278,6 +265,15 @@ void _Minigame::Render(double BlendFactor) {
 		Sprite->Render(BlendFactor);
 	}
 
+	glm::vec3 Position(Boundary.Start.x+1, Boundary.End.y - 0.7f, 0);
+	Graphics.SetVBO(VBO_QUAD);
+	for(auto &Item : Prizes) {
+		if(Item)
+			Graphics.DrawSprite(Position, Item->Item->Texture, (float)Time * 50);
+
+		Position.x += 2;
+	}
+
 	Graphics.DisableScissorTest();
 
 	Graphics.Setup2D();
@@ -287,7 +283,7 @@ void _Minigame::Render(double BlendFactor) {
 void _Minigame::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	if(MouseEvent.Pressed) {
 		if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-			if(Dropped)
+			if(State != StateType::CANDROP)
 				return;
 
 			Drop(Ball->RigidBody.Position.x);
@@ -295,9 +291,27 @@ void _Minigame::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	}
 }
 
+// Start game and set seed
+void _Minigame::StartGame(uint64_t Seed) {
+	Random.seed(Seed);
+	RefreshPrizes();
+
+	// Vary initial x velocity
+	{
+		std::uniform_real_distribution<float> Distribution(0.05f, 0.1f);
+		Ball->RigidBody.Velocity.x = Distribution(Random);
+	}
+	{
+		std::uniform_int_distribution<int> Distribution(0, 1);
+		if(Distribution(Random))
+			Ball->RigidBody.Velocity.x = -Ball->RigidBody.Velocity.x;
+	}
+
+	State = StateType::CANDROP;
+}
+
 // Drop the ball
 void _Minigame::Drop(float X) {
-
 	_Sprite *Sprite = Sprites->Create();
 	Sprite->Name = "drop";
 	Sprite->RigidBody = Ball->RigidBody;
@@ -310,7 +324,22 @@ void _Minigame::Drop(float X) {
 	Sprite->RigidBody.Position.x = X;
 	Sprite->RigidBody.Position.y = Ball->RigidBody.Position.y;
 	Sprite->Texture = Assets.Textures["textures/minigames/ball.png"];
-	Dropped = true;
+
+	DropX = X;
+	State = StateType::DROPPED;
+}
+
+// Refresh prizes
+void _Minigame::RefreshPrizes() {
+	size_t BucketCount = 8;
+	size_t Index = 0;
+	Prizes.clear();
+	Prizes.resize(std::max(BucketCount, Minigame->Items.size()));
+	for(const auto &Item : Minigame->Items)
+		Prizes[Index++] = &Item;
+
+	std::shuffle(Prizes.begin(), Prizes.end(), Random);
+	Prizes.resize(BucketCount);
 }
 
 // Get UI boundary

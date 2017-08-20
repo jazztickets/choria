@@ -111,7 +111,7 @@ struct _Trader {
 	const _Item *RewardItem;
 	int Upgrades;
 	int Count;
-	std::vector<_TraderItem> TraderItems;
+	std::vector<_TraderItem> Items;
 };
 
 struct _Blacksmith {
@@ -120,11 +120,17 @@ struct _Blacksmith {
 	int Level;
 };
 
+struct _MinigameItem {
+	const _Item *Item;
+	int Count;
+};
+
 struct _MinigameType {
 	uint32_t ID;
 	std::string Name;
 	std::string Script;
 	int Cost;
+	std::vector<_MinigameItem> Items;
 };
 
 struct _ItemDrop {

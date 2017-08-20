@@ -146,6 +146,7 @@ _Object::_Object() :
 	Stunned(0),
 	InventoryOpen(false),
 	Inventory(nullptr),
+	Seed(0),
 	Vendor(nullptr),
 	Trader(nullptr),
 	Blacksmith(nullptr),
@@ -1442,14 +1443,27 @@ void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
 		return;
 
 	// Trade in required items
-	for(uint32_t i = 0; i < Trader->TraderItems.size(); i++)
-		Inventory->DecrementItemCount(Slots[i], -Trader->TraderItems[i].Count);
+	for(uint32_t i = 0; i < Trader->Items.size(); i++)
+		Inventory->DecrementItemCount(Slots[i], -Trader->Items[i].Count);
 
 	// Give player reward
 	Inventory->AddItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
 
 	// Update player
 	CalculateStats();
+}
+
+// Generate and send seed to client
+void _Object::SendSeed() {
+	if(!Server)
+		return;
+
+	Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::MINIGAME_SEED);
+	Packet.Write<uint32_t>(Seed);
+	Server->Network->SendPacket(Packet, Peer);
 }
 
 // Determines if the player can accept movement keys held down

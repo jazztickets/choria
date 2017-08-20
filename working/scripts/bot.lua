@@ -115,7 +115,7 @@ Builds = {
 				{ 107, 4 },
 			},
 			[INVENTORY_BODY] = {
-				{ 107, 4 },
+				{ 105, 4 },
 				{ 113, 4 },
 			},
 			[INVENTORY_LEGS] = {

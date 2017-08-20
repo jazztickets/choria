@@ -26,6 +26,7 @@
 #include <objects/inventory.h>
 #include <objects/map.h>
 #include <objects/battle.h>
+#include <objects/minigame.h>
 #include <scripting.h>
 #include <save.h>
 #include <packet.h>
@@ -311,6 +312,9 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 		break;
 		case PacketType::MINIGAME_PAY:
 			HandleMinigamePay(Data, Peer);
+		break;
+		case PacketType::MINIGAME_GETPRIZE:
+			HandleMinigameGetPrize(Data, Peer);
 		break;
 		case PacketType::INVENTORY_MOVE:
 			HandleInventoryMove(Data, Peer);
@@ -1155,7 +1159,7 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get trader information
-	std::vector<_Slot> RequiredItemSlots(Player->Trader->TraderItems.size());
+	std::vector<_Slot> RequiredItemSlots(Player->Trader->Items.size());
 	_Slot RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
 	if(!Player->Inventory->IsValidSlot(RewardSlot))
 		return;
@@ -1482,6 +1486,48 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 		StatChange.Serialize(Packet);
 		Network->SendPacket(Packet, Player->Peer);
+	}
+}
+
+// Give player minigame reward
+void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	// Validate
+	_Object *Player = Peer->Object;
+	if(!Player->Minigame)
+		return;
+
+	float DropX = Data.Read<float>();
+
+	// Simulate game
+	_Minigame Minigame(Player->Minigame);
+	Minigame.StartGame(Player->Seed);
+	Minigame.Drop(DropX);
+
+	double Time = 0;
+	while(Time < 30) {
+		Minigame.Update(DEFAULT_TIMESTEP);
+		if(Minigame.State == _Minigame::StateType::DONE) {
+			break;
+		}
+		Time += DEFAULT_TIMESTEP;
+	}
+
+	// Give reward
+	Player->SendSeed();
+	if(Minigame.Bucket < Minigame.Prizes.size()) {
+		const _MinigameItem *MinigameItem = Minigame.Prizes[Minigame.Bucket];
+		if(MinigameItem && MinigameItem->Item) {
+			Player->Inventory->AddItem(Stats->Items[MinigameItem->Item->ID], 0, MinigameItem->Count);
+
+			// Send new inventory
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::INVENTORY);
+			Player->Inventory->Serialize(Packet);
+			Network->SendPacket(Packet, Peer);
+		}
 	}
 }
 

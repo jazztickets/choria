@@ -375,9 +375,9 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 	_Slot RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
 
 	// Go through required items
-	for(size_t i = 0; i < Trader->TraderItems.size(); i++) {
-		const _Item *RequiredItem = Trader->TraderItems[i].Item;
-		int RequiredCount = Trader->TraderItems[i].Count;
+	for(size_t i = 0; i < Trader->Items.size(); i++) {
+		const _Item *RequiredItem = Trader->Items[i].Item;
+		int RequiredCount = Trader->Items[i].Count;
 		RequiredItemSlots[i].BagType = _Bag::BagType::NONE;
 
 		// Search for the required item

@@ -22,6 +22,7 @@
 #include <ae/camera.h>
 #include <ae/program.h>
 #include <objects/minigame.h>
+#include <stats.h>
 #include <framework.h>
 #include <constants.h>
 #include <SDL_scancode.h>
@@ -39,7 +40,9 @@ void _TestState::Init() {
 	Camera = new _Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
-	Minigame = new _Minigame(0);
+	_Stats *Stats = new _Stats();
+	Minigame = new _Minigame(&Stats->Minigames[1]);
+	delete Stats;
 }
 
 // Close

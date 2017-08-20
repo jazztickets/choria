@@ -174,12 +174,12 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Update minigame
 		if(Player->Minigame && Minigame) {
-			if(!Minigame->Dropped && Player->Gold >= Player->Minigame->Cost) {
+			if(Player->Gold >= Player->Minigame->Cost) {
 				if(Input.GetMouse().y > MinigameElement->Bounds.Start.y && Input.GetMouse().y < MinigameElement->Bounds.End.y)
 					Minigame->HandleMouseButton(MouseEvent);
 
 				// Pay
-				if(Minigame->Dropped) {
+				if(Minigame->State == _Minigame::StateType::DROPPED) {
 					_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
 					PlayState.Network->SendPacket(Packet);
@@ -472,8 +472,8 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_TRADER: {
 				if(Player->Trader) {
-					if(Tooltip.Slot.Index < Player->Trader->TraderItems.size())
-						Tooltip.InventorySlot.Item = Player->Trader->TraderItems[Tooltip.Slot.Index].Item;
+					if(Tooltip.Slot.Index < Player->Trader->Items.size())
+						Tooltip.InventorySlot.Item = Player->Trader->Items[Tooltip.Slot.Index].Item;
 					else if(Tooltip.Slot.Index == PLAYER_TRADEITEMS)
 						Tooltip.InventorySlot.Item = Player->Trader->RewardItem;
 				}
@@ -562,8 +562,17 @@ void _HUD::Update(double FrameTime) {
 	}
 
 	// Update minigame
-	if(Minigame)
+	if(Minigame) {
 		Minigame->Update(FrameTime);
+		if(Minigame->State == _Minigame::StateType::DONE) {
+			_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::MINIGAME_GETPRIZE);
+			Packet.Write<float>(Minigame->DropX);
+			PlayState.Network->SendPacket(Packet);
+
+			Minigame->State =_Minigame::StateType::NEEDSEED;
+		}
+	}
 
 	Message.Time += FrameTime;
 }
@@ -935,7 +944,7 @@ void _HUD::InitTrade() {
 void _HUD::InitTrader() {
 
 	// Check for required items
-	RequiredItemSlots.resize(Player->Trader->TraderItems.size());
+	RequiredItemSlots.resize(Player->Trader->Items.size());
 	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
 
 	// Disable accept button if requirements not met
@@ -966,13 +975,15 @@ void _HUD::InitMinigame() {
 
 	Cursor.Reset();
 
+	// Show UI
 	MinigameElement->SetActive(true);
 	_Element *NameElement = Assets.Elements["label_minigame_name"];
 	_Element *CostElement = Assets.Elements["label_minigame_cost"];
 	NameElement->Text = Player->Minigame->Name;
 	CostElement->Text = std::to_string(Player->Minigame->Cost) + " gold to play";
 
-	Minigame = new _Minigame(0);
+	// Create minigame
+	Minigame = new _Minigame(Player->Minigame);
 }
 
 // Initialize the skills screen
@@ -1458,7 +1469,7 @@ void _HUD::DrawTrader() {
 	TraderElement->Render();
 
 	// Draw trader items
-	for(size_t i = 0; i < Player->Trader->TraderItems.size(); i++) {
+	for(size_t i = 0; i < Player->Trader->Items.size(); i++) {
 
 		// Get button position
 		std::stringstream Buffer;
@@ -1467,7 +1478,7 @@ void _HUD::DrawTrader() {
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item
-		const _Item *Item = Player->Trader->TraderItems[i].Item;
+		const _Item *Item = Player->Trader->Items[i].Item;
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
@@ -1477,7 +1488,7 @@ void _HUD::DrawTrader() {
 		else
 			Color = glm::vec4(1.0f);
 
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->TraderItems[i].Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE, Color);
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE, Color);
 	}
 
 	// Get reward button

@@ -155,6 +155,9 @@ class _Object : public _ManagerBase {
 		// Trader
 		void AcceptTrader(std::vector<_Slot> &Slots);
 
+		// Minigames
+		void SendSeed();
+
 		// Map
 		const _Tile *GetTile() const;
 		NetworkIDType GetMapID() const;
@@ -309,6 +312,7 @@ class _Object : public _ManagerBase {
 		_Inventory *Inventory;
 
 		// Events
+		uint32_t Seed;
 		const _Vendor *Vendor;
 		const _Trader *Trader;
 		const _Blacksmith *Blacksmith;

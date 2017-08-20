@@ -649,6 +649,9 @@ void _PlayState::HandlePacket(_Buffer &Data) {
 		case PacketType::WORLD_HUD:
 			HandleHUD(Data);
 		break;
+		case PacketType::MINIGAME_SEED:
+			HandleMinigameSeed(Data);
+		break;
 		default:
 			Menu.HandlePacket(Data, Type);
 		break;
@@ -1369,6 +1372,14 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 			Config.Save();
 		}
 	}
+}
+
+// Handle seed from server
+void _PlayState::HandleMinigameSeed(_Buffer &Data) {
+	if(!Player || !Player->Minigame || !HUD->Minigame)
+		return;
+
+	HUD->Minigame->StartGame(Data.Read<uint32_t>());
 }
 
 // Creates an object from a buffer

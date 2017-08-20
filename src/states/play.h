@@ -144,6 +144,7 @@ class _PlayState : public _State {
 		void HandleActionResults(_Buffer &Data);
 		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);
 		void HandleHUD(_Buffer &Data);
+		void HandleMinigameSeed(_Buffer &Data);
 
 		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
 

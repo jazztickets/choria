@@ -20,12 +20,13 @@
 // Libraries
 #include <ae/manager.h>
 #include <ae/ui.h>
-#include <glm/vec4.hpp>
 #include <random>
 
 // Forward Declarations
 class _Sprite;
 class _Camera;
+struct _MinigameItem;
+struct _MinigameType;
 struct _MouseEvent;
 
 // Base minigame class
@@ -33,28 +34,39 @@ class _Minigame {
 
 	public:
 
-		_Minigame(uint64_t Seed);
+		enum class StateType : int {
+			NEEDSEED,
+			CANDROP,
+			DROPPED,
+			DONE,
+		};
+
+		_Minigame(const _MinigameType *Minigame);
 		~_Minigame();
 
 		// Update
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
 		void HandleMouseButton(const _MouseEvent &MouseEvent);
+		void StartGame(uint64_t Seed);
 		void Drop(float X);
+		void RefreshPrizes();
 		void GetUIBoundary(_Bounds &Bounds);
 
 		// Attributes
+		std::mt19937 Random;
 		_Bounds Boundary;
 		_Manager<_Sprite> *Sprites;
 		_Sprite *Ball;
 		_Camera *Camera;
+		const _MinigameType *Minigame;
+		std::vector<const _MinigameItem *> Prizes;
 
 		// State
-		uint64_t Seed;
-		bool Done;
-		bool Dropped;
-		int Bucket;
-		std::mt19937 Random;
+		StateType State;
+		double Time;
+		float DropX;
+		size_t Bucket;
 
 	private:
 

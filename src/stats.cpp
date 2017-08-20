@@ -312,7 +312,7 @@ void _Stats::LoadTraders() {
 		Trader.RewardItem = Items[Database->GetInt<uint32_t>("item_id")];
 		Trader.Upgrades = 0;
 		Trader.Count = Database->GetInt<int>("count");
-		Trader.TraderItems.clear();
+		Trader.Items.clear();
 
 		// Get items
 		Database->PrepareQuery("SELECT item_id, count FROM traderitem where trader_id = @trader_id", 1);
@@ -321,7 +321,7 @@ void _Stats::LoadTraders() {
 			_TraderItem TraderItem;
 			TraderItem.Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
 			TraderItem.Count = Database->GetInt<int>("count", 1);
-			Trader.TraderItems.push_back(TraderItem);
+			Trader.Items.push_back(TraderItem);
 		}
 		Database->CloseQuery(1);
 
@@ -362,6 +362,18 @@ void _Stats::LoadMinigames() {
 		Minigame.Name = Database->GetString("name");
 		Minigame.Script = Database->GetString("script");
 		Minigame.Cost = Database->GetInt<int>("cost");
+
+		// Get items
+		Database->PrepareQuery("SELECT item_id, count FROM minigameitem where minigame_id = @minigame_id", 1);
+		Database->BindInt(1, Minigame.ID, 1);
+		while(Database->FetchRow(1)) {
+			_MinigameItem MinigameItem;
+			MinigameItem.Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			MinigameItem.Count = Database->GetInt<int>("count", 1);
+			Minigame.Items.push_back(MinigameItem);
+		}
+		Database->CloseQuery(1);
+
 		Minigames[Minigame.ID] = Minigame;
 	}
 	Database->CloseQuery();

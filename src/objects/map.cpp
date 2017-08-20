@@ -31,6 +31,7 @@
 #include <ae/servernetwork.h>
 #include <ae/peer.h>
 #include <ae/graphics.h>
+#include <ae/random.h>
 #include <states/editor.h>
 #include <server.h>
 #include <constants.h>
@@ -443,11 +444,11 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 			if(!Object->Blacksmith->ID)
 				return;
 		break;
-		case _Map::EVENT_MINIGAME:
+		case _Map::EVENT_MINIGAME: {
 			Object->Minigame = Server->Stats->GetMinigame(Event.Data);
 			if(!Object->Minigame->ID)
 				return;
-		break;
+		} break;
 		default:
 			return;
 		break;
@@ -461,6 +462,11 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 		Packet.Write<uint32_t>(Event.Data);
 		Packet.Write<glm::ivec2>(Object->Position);
 		Server->Network->SendPacket(Packet, Object->Peer);
+	}
+
+	// Generate seed
+	if(Event.Type == _Map::EVENT_MINIGAME) {
+		Object->SendSeed();
 	}
 }
 
