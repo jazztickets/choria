@@ -304,7 +304,6 @@ void _Minigame::HandleMouseButton(const _MouseEvent &MouseEvent) {
 // Start game and set seed
 void _Minigame::StartGame(uint64_t Seed) {
 	Random.seed(Seed);
-	RefreshPrizes();
 
 	// Vary initial x velocity
 	{
@@ -316,6 +315,9 @@ void _Minigame::StartGame(uint64_t Seed) {
 		if(Distribution(Random))
 			Ball->RigidBody.Velocity.x = -Ball->RigidBody.Velocity.x;
 	}
+
+	// Setup prizes
+	RefreshPrizes();
 
 	State = StateType::CANDROP;
 }
@@ -348,8 +350,23 @@ void _Minigame::RefreshPrizes() {
 	for(const auto &Item : Minigame->Items)
 		Prizes[Index++] = &Item;
 
-	std::shuffle(Prizes.begin(), Prizes.end(), Random);
+	// Portable shuffle
+	for(auto i = (Prizes.begin() - Prizes.end()) - 1; i > 0; --i) {
+		std::uniform_int_distribution<decltype(i)> Distribution(0, i);
+		std::swap(Prizes[(size_t)i], Prizes[(size_t)Distribution(Random)]);
+	}
+
+	// Truncate
 	Prizes.resize(BucketCount);
+
+	if(Debug) {
+		for(auto &Prize : Prizes) {
+			if(Prize && Prize->Item)
+				std::cout << Prize->Item->ID << std::endl;
+			else
+				std::cout << 0 << std::endl;
+		}
+	}
 }
 
 // Get UI boundary
