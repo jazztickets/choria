@@ -249,6 +249,7 @@ class _Object : public _ManagerBase {
 		int Deaths;
 		int MonsterKills;
 		int PlayerKills;
+		int GamesPlayed;
 		int Bounty;
 		int Gold;
 		int GoldLost;

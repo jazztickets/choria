@@ -1493,7 +1493,7 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 	if(!Player->Minigame || Player->Gold < Player->Minigame->Cost)
 		return;
 
-	// Update gold
+	// Update gold and stats
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
@@ -1505,6 +1505,8 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 		StatChange.Serialize(Packet);
 		Network->SendPacket(Packet, Player->Peer);
+
+		Player->GamesPlayed++;
 	}
 }
 

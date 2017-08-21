@@ -183,6 +183,8 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
 					PlayState.Network->SendPacket(Packet);
+
+					Player->GamesPlayed++;
 				}
 			}
 		}
@@ -1814,6 +1816,15 @@ void _HUD::DrawCharacterStats() {
 	if(Player->GoldLost > 0) {
 		Buffer << Player->GoldLost;
 		Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
+	// Games played
+	if(Player->GamesPlayed > 0) {
+		Buffer << Player->GamesPlayed;
+		Assets.Fonts["hud_small"]->DrawText("Games Played", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;

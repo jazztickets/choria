@@ -106,6 +106,7 @@ _Object::_Object() :
 	Deaths(0),
 	MonsterKills(0),
 	PlayerKills(0),
+	GamesPlayed(0),
 	Bounty(0),
 	Gold(0),
 	GoldLost(0),
@@ -689,6 +690,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["deaths"] = Deaths;
 	StatsNode["monsterkills"] = MonsterKills;
 	StatsNode["playerkills"] = PlayerKills;
+	StatsNode["gamesplayed"] = GamesPlayed;
 	StatsNode["bounty"] = Bounty;
 	StatsNode["nextbattle"] = NextBattle;
 	Data["stats"] = StatsNode;
@@ -789,6 +791,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Deaths = StatsNode["deaths"].asInt();
 	MonsterKills = StatsNode["monsterkills"].asInt();
 	PlayerKills = StatsNode["playerkills"].asInt();
+	GamesPlayed = StatsNode["gamesplayed"].asInt();
 	Bounty = StatsNode["bounty"].asInt();
 	NextBattle = StatsNode["nextbattle"].asInt();
 
@@ -912,6 +915,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(Deaths);
 	Data.Write<int>(MonsterKills);
 	Data.Write<int>(PlayerKills);
+	Data.Write<int>(GamesPlayed);
 	Data.Write<int>(Bounty);
 	Data.Write<int>(Invisible);
 	Data.Write<int>(Hardcore);
@@ -994,6 +998,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Deaths = Data.Read<int>();
 	MonsterKills = Data.Read<int>();
 	PlayerKills = Data.Read<int>();
+	GamesPlayed = Data.Read<int>();
 	Bounty = Data.Read<int>();
 	Invisible = Data.Read<int>();
 	Hardcore = Data.Read<int>();
