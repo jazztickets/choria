@@ -797,6 +797,9 @@ INSERT INTO minigameitem VALUES(2,1,114,1);
 INSERT INTO minigameitem VALUES(3,1,117,1);
 INSERT INTO minigameitem VALUES(4,1,109,1);
 INSERT INTO minigameitem VALUES(5,1,191,1);
+INSERT INTO minigameitem VALUES(6,1,125,1);
+INSERT INTO minigameitem VALUES(7,1,110,1);
+INSERT INTO minigameitem VALUES(8,1,134,1);
 CREATE TABLE IF NOT EXISTS "build" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,

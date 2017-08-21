@@ -23,6 +23,7 @@
 #include <ae/input.h>
 #include <ae/ui.h>
 #include <ae/random.h>
+#include <ae/font.h>
 #include <ae/graphics.h>
 #include <ae/program.h>
 #include <stats.h>
@@ -263,6 +264,8 @@ void _Minigame::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
 	glUniformMatrix4fv(Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	Graphics.SetProgram(Assets.Programs["text"]);
+	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	Graphics.EnableScissorTest();
 	_Bounds ScissorRegion;
@@ -276,10 +279,14 @@ void _Minigame::Render(double BlendFactor) {
 	}
 
 	glm::vec3 Position(Boundary.Start.x+1, Boundary.End.y - 0.7f, 0);
-	Graphics.SetVBO(VBO_QUAD);
 	for(auto &Item : Prizes) {
-		if(Item)
+		if(Item) {
+			Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
+			Graphics.SetVBO(VBO_QUAD);
 			Graphics.DrawSprite(Position, Item->Item->Texture, (float)Time * 50);
+			if(Item->Count > 1)
+				Assets.Fonts["hud_medium"]->DrawText(std::to_string(Item->Count) + "x", Position + glm::vec3(0.30f, 0.5f, 0), LEFT_BASELINE, glm::vec4(1), 1/64.0f);
+		}
 
 		Position.x += 2;
 	}
@@ -350,14 +357,11 @@ void _Minigame::RefreshPrizes() {
 	for(const auto &Item : Minigame->Items)
 		Prizes[Index++] = &Item;
 
-	// Shuffle
-	for(size_t i = Prizes.size()-1; i > 0; --i) {
-		std::uniform_int_distribution<size_t> Distribution(0, i);
-		std::swap(Prizes[i], Prizes[Distribution(Random)]);
-	}
-
-	// Truncate
+	ShufflePrizes();
+	Prizes[0] = nullptr;
+	Prizes[1] = nullptr;
 	Prizes.resize(BucketCount);
+	ShufflePrizes();
 
 	if(Debug) {
 		for(auto &Prize : Prizes) {
@@ -366,6 +370,14 @@ void _Minigame::RefreshPrizes() {
 			else
 				std::cout << 0 << std::endl;
 		}
+	}
+}
+
+// Shuffle prizes
+void _Minigame::ShufflePrizes() {
+	for(size_t i = Prizes.size()-1; i > 0; --i) {
+		std::uniform_int_distribution<size_t> Distribution(0, i);
+		std::swap(Prizes[i], Prizes[Distribution(Random)]);
 	}
 }
 

@@ -51,6 +51,7 @@ class _Minigame {
 		void StartGame(uint64_t Seed);
 		void Drop(float X);
 		void RefreshPrizes();
+		void ShufflePrizes();
 		void GetUIBoundary(_Bounds &Bounds);
 
 		// Attributes
