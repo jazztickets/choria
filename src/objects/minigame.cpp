@@ -350,10 +350,10 @@ void _Minigame::RefreshPrizes() {
 	for(const auto &Item : Minigame->Items)
 		Prizes[Index++] = &Item;
 
-	// Portable shuffle
-	for(auto i = (Prizes.begin() - Prizes.end()) - 1; i > 0; --i) {
-		std::uniform_int_distribution<decltype(i)> Distribution(0, i);
-		std::swap(Prizes[(size_t)i], Prizes[(size_t)Distribution(Random)]);
+	// Shuffle
+	for(size_t i = Prizes.size()-1; i > 0; --i) {
+		std::uniform_int_distribution<size_t> Distribution(0, i);
+		std::swap(Prizes[i], Prizes[Distribution(Random)]);
 	}
 
 	// Truncate
