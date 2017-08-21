@@ -94,12 +94,12 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 				Tip->RigidBody.CollisionMask = 1;
 				Tip->RigidBody.CollisionGroup = 2;
 				Tip->RigidBody.ForcePosition(glm::vec2(X, Y-0.5f));
-				Tip->Texture = Assets.Textures["textures/minigames/bounce.png"];
+				Tip->Texture = Assets.Textures["textures/minigames/peg.png"];
 				Tip->Scale = glm::vec2(0.5f, 0.5f);
 				Tip->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
 			}
 			else {
-				Sprite->Texture = Assets.Textures["textures/minigames/bounce.png"];
+				Sprite->Texture = Assets.Textures["textures/minigames/peg.png"];
 				Sprite->Scale = glm::vec2(0.5f, 0.5f);
 				Sprite->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
 			}
