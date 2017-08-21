@@ -43,6 +43,7 @@ void _TestState::Init() {
 
 	Stats = new _Stats();
 	Minigame = new _Minigame(&Stats->Minigames[1]);
+	Minigame->IsServer = true;
 	Minigame->Debug = 1;
 	Minigame->StartGame(1);
 	Minigame->Drop(0.0f);
@@ -56,7 +57,11 @@ void _TestState::Init() {
 		Time += DEFAULT_TIMESTEP;
 	}
 
-	Framework.Done = true;
+	//Framework.Done = true;
+	delete Minigame;
+	Minigame = new _Minigame(&Stats->Minigames[1]);
+	Minigame->Debug = -1;
+	Minigame->StartGame(0);
 }
 
 // Close

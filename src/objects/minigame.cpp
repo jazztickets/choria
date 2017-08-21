@@ -128,15 +128,17 @@ void _Minigame::Update(double FrameTime) {
 		Camera->Update(FrameTime);
 	}
 
-	if(Camera && State == StateType::CANDROP) {
+	if(Debug == -1 || (Camera && State == StateType::CANDROP)) {
 		glm::vec2 WorldPosition;
 		Camera->ConvertScreenToWorld(Input.GetMouse(), WorldPosition);
 		WorldPosition.x = glm::clamp(WorldPosition.x, Boundary.Start.x + Ball->Shape.HalfWidth[0], Boundary.End.x - Ball->Shape.HalfWidth[0]);
 		WorldPosition.y = Ball->RigidBody.Position.y;
 		Ball->RigidBody.ForcePosition(WorldPosition);
 		Ball->Visible = true;
-		if(0 && Input.MouseDown(SDL_BUTTON_RIGHT))
+		if(Debug == -1 && Input.MouseDown(SDL_BUTTON_RIGHT)) {
+			StartGame(0);
 			Drop(WorldPosition.x);
+		}
 	}
 	else
 		Ball->Visible = false;
@@ -175,7 +177,7 @@ void _Minigame::Update(double FrameTime) {
 		}
 
 		if(Sprite->RigidBody.InverseMass > 0.0f) {
-			if(Debug) {
+			if(Debug > 0) {
 				std::cout.precision(17);
 				std::cout << "x=" << Sprite->RigidBody.Position.x << std::endl;
 			}
@@ -215,7 +217,7 @@ void _Minigame::Update(double FrameTime) {
 		}
 
 		// Play sound
-		if(Sprite->Touching && Sprite->Touching != Sprite->LastTouching && !IsServer && !PlayedSound) {
+		if(!Debug && Sprite->Touching && Sprite->Touching != Sprite->LastTouching && !IsServer && !PlayedSound) {
 			Audio.PlaySound(Assets.Sounds["bounce0.ogg"], 0.45f);
 			PlayedSound = true;
 		}
@@ -328,7 +330,8 @@ void _Minigame::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 // Start game and set seed
 void _Minigame::StartGame(uint64_t Seed) {
-	Random.seed(Seed);
+	if(Seed)
+		Random.seed(Seed);
 
 	// Vary initial x velocity
 	{
@@ -381,7 +384,7 @@ void _Minigame::RefreshPrizes() {
 	Prizes.resize(BucketCount);
 	ShufflePrizes();
 
-	if(Debug) {
+	if(Debug > 0) {
 		for(auto &Prize : Prizes) {
 			if(Prize && Prize->Item)
 				std::cout << Prize->Item->ID << std::endl;
