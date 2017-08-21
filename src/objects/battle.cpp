@@ -265,9 +265,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		if(ClientPlayer->HUD) {
 			if(Config.ShowTutorial && ClientPlayer->Level == 1)
 				ClientPlayer->HUD->SetMessage("");
-
-			// Disable mouse again
-			ClientPlayer->HUD->EnableMouseCombat = false;
 		}
 
 		// Check if action can be used
