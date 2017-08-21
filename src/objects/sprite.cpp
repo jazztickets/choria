@@ -24,7 +24,9 @@
 _Sprite::_Sprite() :
 	Texture(nullptr),
 	Scale(1.0f),
-	Visible(true) {
+	Visible(true),
+	Touching(false),
+	LastTouching(false) {
 
 }
 

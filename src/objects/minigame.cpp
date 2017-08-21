@@ -146,7 +146,9 @@ void _Minigame::Update(double FrameTime) {
 
 	// Check collision
 	std::list<_Manifold> Manifolds;
+	bool PlayedSound = false;
 	for(auto &Sprite : Sprites->Objects) {
+		Sprite->Touching = false;
 		for(auto &TestSprite : Sprites->Objects) {
 			if(!(Sprite->RigidBody.CollisionGroup & TestSprite->RigidBody.CollisionMask))
 				continue;
@@ -164,6 +166,8 @@ void _Minigame::Update(double FrameTime) {
 					if(Sprite->RigidBody.InverseMass > 0.0f && TestSprite->RigidBody.CollisionResponse) {
 						Manifold.ObjectA = Sprite;
 						Manifold.ObjectB = TestSprite;
+						Sprite->Touching = true;
+
 						Manifolds.push_back(Manifold);
 					}
 				}
@@ -183,6 +187,7 @@ void _Minigame::Update(double FrameTime) {
 				Manifold.Penetration = std::abs(AABB[0] - Boundary.Start.x);
 				Manifold.Normal = glm::vec2(1.0, 0);
 				Manifolds.push_back(Manifold);
+				Sprite->Touching = true;
 			}
 			else if(AABB[2] > Boundary.End.x) {
 				_Manifold Manifold;
@@ -190,6 +195,7 @@ void _Minigame::Update(double FrameTime) {
 				Manifold.Penetration = std::abs(AABB[2] - Boundary.End.x);
 				Manifold.Normal = glm::vec2(-1.0, 0);
 				Manifolds.push_back(Manifold);
+				Sprite->Touching = true;
 			}
 			else if(AABB[3] > Boundary.End.y) {
 				_Manifold Manifold;
@@ -207,10 +213,17 @@ void _Minigame::Update(double FrameTime) {
 				}
 			}
 		}
+
+		// Play sound
+		if(Sprite->Touching && Sprite->Touching != Sprite->LastTouching && !IsServer && !PlayedSound) {
+			Audio.PlaySound(Assets.Sounds["bounce0.ogg"], 0.45f);
+			PlayedSound = true;
+		}
+
+		Sprite->LastTouching = Sprite->Touching;
 	}
 
 	// Resolve penetration
-	bool PlayedSound = false;
 	for(auto &Manifold : Manifolds) {
 		_Sprite *SpriteA = (_Sprite *)Manifold.ObjectA;
 		_Sprite *SpriteB = (_Sprite *)Manifold.ObjectB;
@@ -233,12 +246,6 @@ void _Minigame::Update(double FrameTime) {
 		float VelocityDotNormal = glm::dot(RelativeVelocity, Normal);
 		if(VelocityDotNormal > 0)
 			continue;
-
-		// Play sound
-		if(!IsServer && !PlayedSound && glm::length2(RelativeVelocity) > 4.0f) {
-			Audio.PlaySound(Assets.Sounds["bounce0.ogg"], 0.75f);
-			PlayedSound = true;
-		}
 
 		// Get restitution
 		float MinimumRestitution = SpriteA->RigidBody.Restitution;

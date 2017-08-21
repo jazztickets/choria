@@ -46,6 +46,8 @@ class _Sprite : public _ManagerBase {
 		_Shape Shape;
 		glm::vec2 Scale;
 		bool Visible;
+		bool Touching;
+		bool LastTouching;
 
 	private:
 
