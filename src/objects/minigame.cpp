@@ -294,6 +294,7 @@ void _Minigame::Render(double BlendFactor) {
 	Graphics.DisableScissorTest();
 
 	Graphics.Setup2D();
+	Graphics.SetStaticUniforms();
 }
 
 // Mouse input
