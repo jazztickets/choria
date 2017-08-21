@@ -62,6 +62,7 @@ class _Minigame {
 		_Camera *Camera;
 		const _MinigameType *Minigame;
 		std::vector<const _MinigameItem *> Prizes;
+		bool IsServer;
 
 		// State
 		StateType State;

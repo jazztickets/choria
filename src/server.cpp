@@ -1522,6 +1522,7 @@ void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
 
 	// Simulate game
 	_Minigame Minigame(Player->Minigame);
+	Minigame.IsServer = true;
 	Minigame.StartGame(Player->Seed);
 	Minigame.Drop(DropX);
 

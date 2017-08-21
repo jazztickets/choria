@@ -26,16 +26,19 @@
 #include <ae/font.h>
 #include <ae/graphics.h>
 #include <ae/program.h>
+#include <ae/audio.h>
 #include <stats.h>
 #include <constants.h>
 #include <SDL_mouse.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/norm.hpp>
 #include <algorithm>
 #include <iostream>
 
 // Constructor
 _Minigame::_Minigame(const _MinigameType *Minigame) :
 	Minigame(Minigame),
+	IsServer(false),
 	State(StateType::NEEDSEED),
 	Time(0),
 	DropX(0),
@@ -193,7 +196,7 @@ void _Minigame::Update(double FrameTime) {
 				Manifold.ObjectA = Sprite;
 				Manifold.Penetration = std::abs(AABB[3] - Boundary.End.y);
 				Manifold.Normal = glm::vec2(0.0, -1.0f);
-				Manifolds.push_back(Manifold);
+				//Manifolds.push_back(Manifold);
 
 				float Width = Boundary.End.x - Boundary.Start.x;
 				Bucket = (size_t)((Sprite->RigidBody.Position.x - Boundary.Start.x) / Width * 8.0f);
@@ -207,6 +210,7 @@ void _Minigame::Update(double FrameTime) {
 	}
 
 	// Resolve penetration
+	bool PlayedSound = false;
 	for(auto &Manifold : Manifolds) {
 		_Sprite *SpriteA = (_Sprite *)Manifold.ObjectA;
 		_Sprite *SpriteB = (_Sprite *)Manifold.ObjectB;
@@ -229,6 +233,12 @@ void _Minigame::Update(double FrameTime) {
 		float VelocityDotNormal = glm::dot(RelativeVelocity, Normal);
 		if(VelocityDotNormal > 0)
 			continue;
+
+		// Play sound
+		if(!IsServer && !PlayedSound && glm::length2(RelativeVelocity) > 4.0f) {
+			Audio.PlaySound(Assets.Sounds["bounce0.ogg"], 0.75f);
+			PlayedSound = true;
+		}
 
 		// Get restitution
 		float MinimumRestitution = SpriteA->RigidBody.Restitution;

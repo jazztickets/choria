@@ -666,7 +666,7 @@ INSERT INTO map VALUES(4,'maps/ham_weapon.map.gz','textures/map/atlas0.png','',0
 INSERT INTO map VALUES(5,'maps/ham_armor.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(6,'maps/ham_supplies.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(7,'maps/ham_blacksmith.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
-INSERT INTO map VALUES(8,'maps/ham_gamble.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
+INSERT INTO map VALUES(8,'maps/ham_gamble.map.gz','textures/map/atlas0.png','jazztown.ogg',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(9,'','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(10,'maps/choria.map.gz','textures/map/atlas0.png','',0.29999999999999998889,0.29999999999999998889,0.29999999999999998889,1,'',0.0,0.0,0.0);
 INSERT INTO map VALUES(11,'maps/choria_batcave.map.gz','textures/map/atlas0.png','bat.ogg',0.0,0.0,0.0,0,'',0.0,0.0,0.0);
