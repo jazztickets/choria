@@ -231,7 +231,8 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 				HUD->ToggleCharacterStats();
 			break;
 			default: {
-				Battle->ClientHandleInput(Action);
+				if(Battle->ClientHandleInput(Action))
+					HUD->EnableMouseCombat = false;
 			} break;
 		}
 	}
@@ -334,6 +335,10 @@ void _PlayState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	Menu.HandleMouseButton(MouseEvent);
 	if(Menu.State != _Menu::STATE_NONE)
 		return;
+
+	// Enable mouse during combat
+	if(HUD && Player && Player->Battle)
+		HUD->EnableMouseCombat = true;
 
 	HUD->HandleMouseButton(MouseEvent);
 }

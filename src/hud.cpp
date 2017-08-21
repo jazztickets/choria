@@ -187,11 +187,6 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			}
 		}
 
-		// Handle mouse click during combat
-		if(Tooltip.Window == WINDOW_BATTLE && EnableMouseCombat && Player->Battle && Player->PotentialAction.IsSet()) {
-			Player->Battle->ClientSetAction((uint8_t)Player->PotentialAction.ActionBarSlot);
-		}
-
 		if(Tooltip.InventorySlot.Item) {
 			switch(Tooltip.Window) {
 				case WINDOW_TRADEYOURS:
@@ -400,6 +395,10 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				Player->Battle->ClientHandleInput(Action::GAME_SKILL1 + Slot);
 			else
 				PlayState.SendActionUse(Slot);
+		}
+		// Handle mouse click during combat
+		else if(EnableMouseCombat && Player->Battle && Player->PotentialAction.IsSet()) {
+			Player->Battle->ClientSetAction((uint8_t)Player->PotentialAction.ActionBarSlot);
 		}
 
 		if(Player->WaitingForTrade) {

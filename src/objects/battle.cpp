@@ -910,9 +910,12 @@ bool _Battle::ClientHandleInput(size_t Action) {
 		case Action::GAME_RIGHT:
 			ChangeTarget(0, true);
 		break;
+		default:
+			return false;
+		break;
 	}
 
-	return false;
+	return true;
 }
 
 // Handle action from another player
