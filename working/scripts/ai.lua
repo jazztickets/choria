@@ -162,3 +162,18 @@ function AI_SkeletonPriest.Update(self, Object, Enemies, Allies)
 	-- Set skill
 	Object.SetAction(0)
 end
+
+AI_GoblinThief = {}
+
+function AI_GoblinThief.Update(self, Object, Enemies, Allies)
+
+	-- Flee
+	if Random.GetInt(1, 5) == 1 then
+		Object.AddTarget(Object)
+		Object.SetAction(2)
+	else
+		Target = Random.GetInt(1, #Enemies)
+		Object.AddTarget(Enemies[Target])
+		Object.SetAction(1)
+	end
+end
