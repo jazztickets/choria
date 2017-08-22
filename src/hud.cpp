@@ -572,6 +572,11 @@ void _HUD::Update(double FrameTime) {
 			PlayState.Network->SendPacket(Packet);
 
 			Minigame->State =_Minigame::StateType::NEEDSEED;
+
+			if(Minigame->Prizes[Minigame->Bucket])
+				Audio.PlaySound(Assets.Sounds["success1.ogg"]);
+			else
+				Audio.PlaySound(Assets.Sounds["fail0.ogg"]);
 		}
 	}
 
