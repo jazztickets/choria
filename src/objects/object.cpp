@@ -693,6 +693,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["gamesplayed"] = GamesPlayed;
 	StatsNode["bounty"] = Bounty;
 	StatsNode["nextbattle"] = NextBattle;
+	StatsNode["seed"] = Seed;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -794,6 +795,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	GamesPlayed = StatsNode["gamesplayed"].asInt();
 	Bounty = StatsNode["bounty"].asInt();
 	NextBattle = StatsNode["nextbattle"].asInt();
+	Seed = StatsNode["seed"].asUInt();
+
+	if(!Seed)
+		Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
 	size_t ActionBarSize = 0;
 	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
@@ -1459,11 +1464,12 @@ void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
 }
 
 // Generate and send seed to client
-void _Object::SendSeed() {
+void _Object::SendSeed(bool Generate) {
 	if(!Server)
 		return;
 
-	Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+	if(Generate)
+		Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::MINIGAME_SEED);

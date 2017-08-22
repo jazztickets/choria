@@ -466,7 +466,7 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 
 	// Generate seed
 	if(Event.Type == _Map::EVENT_MINIGAME) {
-		Object->SendSeed();
+		Object->SendSeed(false);
 	}
 }
 

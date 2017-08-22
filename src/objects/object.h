@@ -156,7 +156,7 @@ class _Object : public _ManagerBase {
 		void AcceptTrader(std::vector<_Slot> &Slots);
 
 		// Minigames
-		void SendSeed();
+		void SendSeed(bool Generate);
 
 		// Map
 		const _Tile *GetTile() const;

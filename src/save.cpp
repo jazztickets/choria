@@ -257,6 +257,7 @@ uint32_t _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t A
 	Object.ActionBar = Build->ActionBar;
 	Object.Inventory->Bags = Build->Inventory->Bags;
 	Object.Skills = Build->Skills;
+	Object.Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 	Object.CalculateStats();
 
 	// Set health/mana

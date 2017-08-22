@@ -1133,7 +1133,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		Player->CalculateStats();
 
 		// Log
-		Log << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
+		Log << "Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1165,7 +1165,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			}
 
 			// Log
-			Log << Player->Name << " sells " << (int)Amount << "x " << Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
+			Log << "Player " << Player->Name << " sells " << (int)Amount << "x " << Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
 		}
 	}
 }
@@ -1538,7 +1538,7 @@ void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Give reward
-	Player->SendSeed();
+	Player->SendSeed(true);
 	if(Minigame.Bucket < Minigame.Prizes.size()) {
 		const _MinigameItem *MinigameItem = Minigame.Prizes[Minigame.Bucket];
 		if(MinigameItem && MinigameItem->Item) {
