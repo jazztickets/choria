@@ -296,6 +296,9 @@ void _Scripting::InjectBuffs(_Stats *Stats) {
 			// Add pointer
 			lua_pushlightuserdata(LuaState, (void *)Buff);
 			lua_setfield(LuaState, -2, "Pointer");
+
+			// Pop global
+			lua_pop(LuaState, 1);
 		}
 	}
 }
@@ -306,6 +309,36 @@ void _Scripting::InjectTime(double Time) {
 	// Push time
 	lua_pushnumber(LuaState, Time);
 	lua_setglobal(LuaState, "ServerTime");
+}
+
+// Create battle table
+void _Scripting::CreateBattle(_Battle *Battle) {
+
+	// Get table
+	lua_getglobal(LuaState, "Battles");
+	if(!lua_istable(LuaState, -1))
+		throw std::runtime_error("CreateBattle: Battles is not a table!");
+
+	// Battles[NetworkID] = {}
+	lua_pushinteger(LuaState, Battle->NetworkID);
+	lua_newtable(LuaState);
+	lua_settable(LuaState, -3);
+	lua_pop(LuaState, 1);
+}
+
+// Remove battle instance from battle table
+void _Scripting::DeleteBattle(_Battle *Battle) {
+
+	// Get table
+	lua_getglobal(LuaState, "Battles");
+	if(!lua_istable(LuaState, -1))
+		throw std::runtime_error("CreateBattle: Battles is not a table!");
+
+	// Battles[NetworkID] = nil
+	lua_pushinteger(LuaState, Battle->NetworkID);
+	lua_pushnil(LuaState);
+	lua_settable(LuaState, -3);
+	lua_pop(LuaState, 1);
 }
 
 // Push object onto stack
@@ -432,6 +465,15 @@ void _Scripting::PushObject(_Object *Object) {
 	else
 		lua_pushinteger(LuaState, 0);
 	lua_setfield(LuaState, -2, "MapID");
+
+	if(Object->Battle)
+		lua_pushinteger(LuaState, Object->Battle->NetworkID);
+	else
+		lua_pushnil(LuaState);
+	lua_setfield(LuaState, -2, "BattleID");
+
+	lua_pushinteger(LuaState, Object->NetworkID);
+	lua_setfield(LuaState, -2, "ID");
 
 	lua_pushlightuserdata(LuaState, Object);
 	lua_setfield(LuaState, -2, "Pointer");
@@ -1034,24 +1076,36 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 // Print lua stack
 void _Scripting::PrintStack(lua_State *LuaState) {
 	for(int i = lua_gettop(LuaState); i >= 0; i--) {
-		if(lua_isnumber(LuaState, i))
-			std::cout << i << ": number : " << lua_tonumber(LuaState, i) << std::endl;
-		else if(lua_isstring(LuaState, i))
-			std::cout << i << ": string : " << lua_tostring(LuaState, i) << std::endl;
-		else if(lua_istable(LuaState, i))
-			std::cout << i << ": table" << std::endl;
-		else if(lua_iscfunction(LuaState, i))
-			std::cout << i << ": cfunction" << std::endl;
-		else if(lua_isfunction(LuaState, i))
-			std::cout << i << ": function" << std::endl;
-		else if(lua_isuserdata(LuaState, i))
-			std::cout << i << ": userdata" << std::endl;
-		else if(lua_isnil(LuaState, i))
-			std::cout << i << ": nil" << std::endl;
-		else if(lua_islightuserdata(LuaState, i))
-			std::cout << i << ": light userdata" << std::endl;
-		else if(lua_isboolean(LuaState, i))
-			std::cout << i << ": boolean : " << lua_toboolean(LuaState, i) << std::endl;
+		int Type = lua_type(LuaState, i);
+
+		switch(Type) {
+			case LUA_TNIL:
+				std::cout << i << ": nil" << std::endl;
+			break;
+			case LUA_TBOOLEAN:
+				std::cout << i << ": boolean : " << lua_toboolean(LuaState, i) << std::endl;
+			break;
+			case LUA_TLIGHTUSERDATA:
+				std::cout << i << ": light userdata" << std::endl;
+			break;
+			case LUA_TNUMBER:
+				std::cout << i << ": number : " << lua_tonumber(LuaState, i) << std::endl;
+			break;
+			case LUA_TSTRING:
+				std::cout << i << ": string : " << lua_tostring(LuaState, i) << std::endl;
+			break;
+			case LUA_TTABLE:
+				std::cout << i << ": table" << std::endl;
+			break;
+			case LUA_TFUNCTION:
+				std::cout << i << ": function" << std::endl;
+			break;
+			case LUA_TUSERDATA:
+				std::cout << i << ": userdata" << std::endl;
+			break;
+			case LUA_TTHREAD:
+			break;
+		}
 	}
 
 	std::cout << "-----------------" << std::endl;

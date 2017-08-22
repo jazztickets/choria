@@ -169,3 +169,6 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 
 	return Hit
 end
+
+-- Storage for battle instance data
+Battles = {}

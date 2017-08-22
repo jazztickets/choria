@@ -1827,6 +1827,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Battle->Cooldown = Cooldown;
 			Battle->Zone = BattleEvent.Zone;
 			Battle->Scripting = Scripting;
+			Scripting->CreateBattle(Battle);
 
 			// Add player
 			Players.push_back(BattleEvent.Object);

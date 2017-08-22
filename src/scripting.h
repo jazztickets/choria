@@ -24,6 +24,7 @@
 
 // Forward Declarations
 class _Object;
+class _Battle;
 class _Item;
 class _Stats;
 class _StatChange;
@@ -48,6 +49,9 @@ class _Scripting {
 		void InjectMonsters(_Stats *Stats);
 		void InjectBuffs(_Stats *Stats);
 		void InjectTime(double Time);
+
+		void CreateBattle(_Battle *Battle);
+		void DeleteBattle(_Battle *Battle);
 
 		void PushObject(_Object *Object);
 		void PushActionResult(_ActionResult *ActionResult);

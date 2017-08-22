@@ -77,6 +77,10 @@ _Battle::~_Battle() {
 			Fighter->Deleted = true;
 		Fighter->StopBattle();
 	}
+
+	// Remove entry from battle table
+	if(Server)
+		Scripting->DeleteBattle(this);
 }
 
 // Update battle
