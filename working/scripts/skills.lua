@@ -700,6 +700,8 @@ function Skill_Pickpocket.Proc(self, Roll, Level, Source, Target, Result)
 			Result.Target.Gold = -HalfGold
 			Result.Source.GoldStolen = HalfGold
 		end
+	else
+		Result.Target.Miss = true
 	end
 end
 
