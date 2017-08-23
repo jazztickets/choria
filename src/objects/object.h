@@ -284,6 +284,7 @@ class _Object : public _ManagerBase {
 		uint32_t DatabaseID;
 		int ExperienceGiven;
 		int GoldGiven;
+		int GoldStolen;
 		std::string AI;
 
 		// Account

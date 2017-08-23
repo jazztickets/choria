@@ -2424,9 +2424,15 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChanges.push_back(StatChangeUI);
 	}
 
-	if(StatChange.HasStat(StatType::GOLD)) {
+	if(StatChange.HasStat(StatType::GOLD) || StatChange.HasStat(StatType::GOLDSTOLEN)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
+		StatChangeUI.Direction = 1.5f;
+		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
+		StatChangeUI.SetText(Assets.Colors["gold"], Assets.Colors["gold"]);
+
+		// Check for battle
 		if(StatChangeUI.Object->Battle) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->ResultPosition + glm::vec2(0, 32);
 			StatChangeUI.Battle = true;
@@ -2435,12 +2441,18 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 			StatChangeUI.StartPosition = GoldElement->Bounds.Start;
 			StatChangeUI.StartPosition.x += -45;
 		}
-		StatChangeUI.Change = StatChange.Values[StatType::GOLD].Integer;
-		StatChangeUI.Direction = 1.5f;
-		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
-		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
-		StatChangeUI.SetText(Assets.Colors["gold"], Assets.Colors["gold"]);
+
+		// Get amount
+		if(StatChange.HasStat(StatType::GOLD))
+			StatChangeUI.Change = StatChange.Values[StatType::GOLD].Integer;
+		else
+			StatChangeUI.Change = StatChange.Values[StatType::GOLDSTOLEN].Integer;
+
 		StatChanges.push_back(StatChangeUI);
+
+		// Play sound
+		if(StatChangeUI.Change != 0)
+			PlayState.PlayCoinSound();
 	}
 }
 

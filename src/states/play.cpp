@@ -74,6 +74,7 @@ void _PlayState::Init() {
 	HUD = nullptr;
 	Time = 0.0;
 	IgnoreFirstChar = false;
+	CoinSoundPlayed = false;
 
 	Graphics.Element->SetActive(false);
 	Graphics.Element->Active = true;
@@ -372,6 +373,7 @@ void _PlayState::HandleQuit() {
 
 // Update
 void _PlayState::Update(double FrameTime) {
+	CoinSoundPlayed = false;
 	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
 	//	std::cout << "Client: O=" << ObjectManager->Objects.size() << " B=" << (int)(Battle != nullptr) << std::endl;
 
@@ -511,9 +513,13 @@ void _PlayState::Render(double BlendFactor) {
 
 // Play coin sound
 void _PlayState::PlayCoinSound() {
+	if(CoinSoundPlayed)
+		return;
+
 	std::stringstream Buffer;
 	Buffer << "coin" << GetRandomInt(0, 2) << ".ogg";
 	Audio.PlaySound(Assets.Sounds[Buffer.str()]);
+	CoinSoundPlayed = true;
 }
 
 // Play death sound
@@ -1186,9 +1192,6 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 		Player->Deaths++;
 		PlayDeathSound();
 	}
-	else {
-		PlayCoinSound();
-	}
 
 	Player->Battle = nullptr;
 	HUD->ClearBattleStatChanges();
@@ -1265,8 +1268,6 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 		HandleStatChange(Data, ActionResult.Target);
 
 		if(Battle) {
-			HUD->AddStatChange(ActionResult.Source);
-			HUD->AddStatChange(ActionResult.Target);
 
 			// No damage dealt
 			if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY_ALL)
@@ -1289,10 +1290,6 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 			}
 
 			Battle->ActionResults.push_back(ActionResult);
-		}
-		else if(ActionResult.Target.Object == Player) {
-			HUD->AddStatChange(ActionResult.Source);
-			HUD->AddStatChange(ActionResult.Target);
 		}
 	}
 
@@ -1342,11 +1339,6 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 
 		// Add stat change
 		HUD->AddStatChange(StatChange);
-
-		// Play sounds
-		if(StatChange.HasStat(StatType::GOLD)) {
-			PlayCoinSound();
-		}
 	}
 }
 

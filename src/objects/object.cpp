@@ -127,6 +127,7 @@ _Object::_Object() :
 	DatabaseID(0),
 	ExperienceGiven(0),
 	GoldGiven(0),
+	GoldStolen(0),
 	AI(""),
 
 	CharacterID(0),
@@ -1098,6 +1099,16 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	// Update gold
 	if(StatChange.HasStat(StatType::GOLD)) {
 		UpdateGold(StatChange.Values[StatType::GOLD].Integer);
+	}
+
+	// Update gold stolen
+	if(StatChange.HasStat(StatType::GOLDSTOLEN)) {
+		int Amount = StatChange.Values[StatType::GOLDSTOLEN].Integer;
+		GoldStolen += Amount;
+		if(GoldStolen > PLAYER_MAX_GOLD)
+			GoldStolen = PLAYER_MAX_GOLD;
+
+		UpdateGold(Amount);
 	}
 
 	// Update experience

@@ -698,7 +698,7 @@ function Skill_Pickpocket.Proc(self, Roll, Level, Source, Target, Result)
 		HalfGold = math.ceil(Target.Gold / 2)
 		if HalfGold <= Target.Gold then
 			Result.Target.Gold = -HalfGold
-			Result.Source.Gold = HalfGold
+			Result.Source.GoldStolen = HalfGold
 		end
 	end
 end
@@ -710,7 +710,7 @@ function Skill_Pickpocket.Use(self, Level, Source, Target, Result)
 end
 
 function Skill_Pickpocket.PlaySound(self, Level)
-	Audio.Play("coin" .. Random.GetInt(0, 2) .. ".ogg")
+	--Audio.Play("coin" .. Random.GetInt(0, 2) .. ".ogg")
 end
 
 -- Parry --

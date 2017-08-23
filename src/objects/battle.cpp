@@ -447,6 +447,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighter->Trader = nullptr;
 	Fighter->TeleportTime = -1.0;
 	Fighter->JoinedBattle = Join;
+	Fighter->GoldStolen = 0;
 	if(Fighter->Server) {
 		Fighter->GenerateNextBattle();
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
@@ -589,9 +590,9 @@ void _Battle::ServerEndBattle() {
 
 			// Calculate gold based on monster or player
 			if(Fighter->IsMonster())
-				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven;
+				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven + Fighter->GoldStolen;
 			else
-				SideStats[Side].TotalGoldGiven += Fighter->Bounty + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
+				SideStats[Side].TotalGoldGiven += Fighter->Bounty + Fighter->GoldStolen + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);

@@ -179,7 +179,12 @@ function AI_GoblinThief.Update(self, Object, Enemies, Allies)
 	else
 		Target = Random.GetInt(1, #Enemies)
 		Object.AddTarget(Enemies[Target])
-		Object.SetAction(1)
-		Storage[Object.ID].Steals = Storage[Object.ID].Steals + 1
+
+		Action = Random.GetInt(0, 1)
+		if Action == 1 then
+			Storage[Object.ID].Steals = Storage[Object.ID].Steals + 1
+		end
+
+		Object.SetAction(Action)
 	end
 end

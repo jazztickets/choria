@@ -99,6 +99,9 @@ class _PlayState : public _State {
 		// Camera
 		_Camera *Camera;
 
+		// Audio
+		bool CoinSoundPlayed;
+
 		// Network
 		_ClientNetwork *Network;
 		_Server *Server;
