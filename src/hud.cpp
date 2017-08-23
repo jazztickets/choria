@@ -2427,10 +2427,6 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::GOLD) || StatChange.HasStat(StatType::GOLDSTOLEN)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		StatChangeUI.Direction = 1.5f;
-		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
-		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
-		StatChangeUI.SetText(Assets.Colors["gold"], Assets.Colors["gold"]);
 
 		// Check for battle
 		if(StatChangeUI.Object->Battle) {
@@ -2448,6 +2444,10 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		else
 			StatChangeUI.Change = StatChange.Values[StatType::GOLDSTOLEN].Integer;
 
+		StatChangeUI.Direction = 1.5f;
+		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
+		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
+		StatChangeUI.SetText(Assets.Colors["gold"], Assets.Colors["gold"]);
 		StatChanges.push_back(StatChangeUI);
 
 		// Play sound
