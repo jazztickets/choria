@@ -649,23 +649,21 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 		auto Iterator = StatStringToType.find(Key);
 
 		// Get value type
-		StatValueType Type;
 		if(Iterator != StatStringToType.end()) {
 
 			// Get value from lua
-			Type = StatValueTypes[(int)Iterator->second].ValueType;
-			switch(Type) {
+			switch(Iterator->second.ValueType) {
 				case StatValueType::INTEGER:
-					StatChange.Values[Iterator->second].Integer = (int)lua_tonumber(LuaState, -1);
+					StatChange.Values[Iterator->second.Type].Integer = (int)lua_tonumber(LuaState, -1);
 				break;
 				case StatValueType::FLOAT:
-					StatChange.Values[Iterator->second].Float = (float)lua_tonumber(LuaState, -1);
+					StatChange.Values[Iterator->second.Type].Float = (float)lua_tonumber(LuaState, -1);
 				break;
 				case StatValueType::BOOLEAN:
-					StatChange.Values[Iterator->second].Integer = lua_toboolean(LuaState, -1);
+					StatChange.Values[Iterator->second.Type].Integer = lua_toboolean(LuaState, -1);
 				break;
 				case StatValueType::POINTER:
-					StatChange.Values[Iterator->second].Pointer = lua_touserdata(LuaState, -1);
+					StatChange.Values[Iterator->second.Type].Pointer = lua_touserdata(LuaState, -1);
 				break;
 			}
 		}
