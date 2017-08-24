@@ -45,14 +45,18 @@ void _TestState::Init() {
 
 	Stats = new _Stats();
 
-	for(int i = 0; i < 1000; i++) {
+	double MaxTime = 0;
+	double MinTime = 30;
+	for(int i = 0; i < 0; i++) {
 		double StartTime = SDL_GetPerformanceCounter();
+		uint32_t Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+		float X = (float)GetRandomReal(-7.65, 7.65);
 
 		Minigame = new _Minigame(&Stats->Minigames[1]);
 		Minigame->IsServer = true;
 		Minigame->Debug = 0;
-		Minigame->StartGame(GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max()));
-		Minigame->Drop((float)GetRandomReal(-7.65, 7.65));
+		Minigame->StartGame(Seed);
+		Minigame->Drop(X);
 
 		Time = 0;
 		while(Time < 30) {
@@ -61,6 +65,16 @@ void _TestState::Init() {
 				break;
 			}
 			Time += DEFAULT_TIMESTEP;
+		}
+
+		std::cout.precision(17);
+		if(Time < MinTime) {
+			std::cout << "mintime=" << Time << " seed=" << Seed << " x=" << X << std::endl;
+			MinTime = Time;
+		}
+		if(Time > MaxTime) {
+			std::cout << "maxtime=" << Time << " seed=" << Seed << " x=" << X << std::endl;
+			MaxTime = Time;
 		}
 
 		if(Minigame->Bucket < Minigame->Prizes.size()) {
@@ -81,7 +95,8 @@ void _TestState::Init() {
 
 	Minigame = new _Minigame(&Stats->Minigames[1]);
 	Minigame->Debug = -1;
-	Minigame->StartGame(0);
+	Minigame->StartGame(1049117602);
+	Minigame->Drop(4.3513402938842773);
 }
 
 // Close

@@ -211,7 +211,7 @@ void _Minigame::Update(double FrameTime) {
 				Sprite->Deleted = true;
 				State = StateType::DONE;
 				if(Debug) {
-					std::cout << "bucket=" << Bucket << std::endl;
+					std::cout << "bucket=" << Bucket << " time=" << Time << std::endl;
 				}
 			}
 		}
