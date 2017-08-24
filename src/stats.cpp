@@ -618,36 +618,60 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 		MonsterCount = std::min(MonsterCount, BATTLE_MAXFIGHTERS_SIDE);
 
 		// Run query
-		Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
+		Database->PrepareQuery("SELECT * FROM zonedata WHERE zone_id = @zone_id");
 		Database->BindInt(1, ZoneID);
 
 		// Get monsters in zone
 		std::vector<_Zone> Zone;
 		uint32_t OddsSum = 0;
+		int MaxTotal = 0;
+		bool HasZeroMax = true;
 		while(Database->FetchRow()) {
-			uint32_t MonsterID = Database->GetInt<uint32_t>("monster_id");
-			uint32_t Odds = Database->GetInt<uint32_t>("odds");
-			OddsSum += Odds;
 
-			Zone.push_back(_Zone(MonsterID, OddsSum));
+			// Get zone data
+			_Zone ZoneData;
+			ZoneData.MonsterID = Database->GetInt<uint32_t>("monster_id");
+			ZoneData.Odds = Database->GetInt<uint32_t>("odds");
+			ZoneData.Max = Database->GetInt<int>("max");
+
+			// Increase max for each player if set
+			if(ZoneData.Max > 0) {
+				MaxTotal += ZoneData.Max + AdditionalCount;
+				ZoneData.Max += AdditionalCount;
+			}
+			else
+				HasZeroMax = false;
+
+			OddsSum += ZoneData.Odds;
+			ZoneData.Odds = OddsSum;
+			Zone.push_back(ZoneData);
 		}
 		Database->CloseQuery();
 
 		// Check for monsters in zone
 		if(OddsSum > 0) {
 
-			// Generate monsters
-			uint32_t RandomNumber;
-			size_t MonsterIndex;
-			for(int i = 0; i < MonsterCount; i++) {
-				RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
-				for(MonsterIndex = 0; MonsterIndex < Zone.size(); MonsterIndex++) {
-					if(RandomNumber <= Zone[MonsterIndex].Odds)
-						break;
-				}
+			// Cap monster count if all monsters have a max set
+			if(HasZeroMax)
+				MonsterCount = std::min(MaxTotal, MonsterCount);
 
-				// Populate monster list
-				Monsters.push_back(Zone[MonsterIndex].MonsterID);
+			// Generate monsters
+			std::unordered_map<uint32_t, int> MonsterTotals;
+			while((int)Monsters.size() < MonsterCount) {
+
+				// Find monster in CDT
+				uint32_t RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
+				for(const auto &ZoneData : Zone) {
+					if(RandomNumber <= ZoneData.Odds) {
+
+						// Check monster max
+						if(ZoneData.Max == 0 || (ZoneData.Max > 0 && MonsterTotals[ZoneData.MonsterID] < ZoneData.Max)) {
+							MonsterTotals[ZoneData.MonsterID]++;
+							Monsters.push_back(ZoneData.MonsterID);
+						}
+						break;
+					}
+				}
 			}
 		}
 	}

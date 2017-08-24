@@ -80,9 +80,9 @@ struct _DamageType {
 };
 
 struct _Zone {
-	_Zone(uint32_t MonsterID, uint32_t Odds) : MonsterID(MonsterID), Odds(Odds) { }
 	uint32_t MonsterID;
 	uint32_t Odds;
+	int Max;
 };
 
 struct _EventName {
