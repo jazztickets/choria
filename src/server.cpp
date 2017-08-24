@@ -1079,7 +1079,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 	// Get info
 	bool Buy = Data.ReadBit();
-	uint8_t Amount = Data.Read<uint8_t>();
+	int Amount = (int)Data.Read<uint8_t>();
 	_Slot Slot;
 	Slot.Unserialize(Data);
 
@@ -1141,9 +1141,12 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Get item info
-		const _Item *Item = Player->Inventory->GetSlot(Slot).Item;
-		if(Item) {
-			int Price = Item->GetPrice(Vendor, Amount, Buy);
+		const _InventorySlot &InventorySlot = Player->Inventory->GetSlot(Slot);
+		if(InventorySlot.Item) {
+
+			// Get price of stack
+			Amount = std::min((int)Amount, InventorySlot.Count);
+			int Price = InventorySlot.Item->GetPrice(Vendor, Amount, Buy);
 
 			// Update gold
 			Player->UpdateGold(Price);
@@ -1154,6 +1157,9 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 				Network->SendPacket(Packet, Peer);
 			}
 
+			// Log
+			Log << "Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Gold << " )" << std::endl;
+
 			// Update items
 			Player->Inventory->DecrementItemCount(Slot, -Amount);
 			if(Peer) {
@@ -1163,9 +1169,6 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 				Player->Inventory->SerializeSlot(Packet, Slot);
 				Network->SendPacket(Packet, Peer);
 			}
-
-			// Log
-			Log << "Player " << Player->Name << " sells " << (int)Amount << "x " << Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
 		}
 	}
 }
