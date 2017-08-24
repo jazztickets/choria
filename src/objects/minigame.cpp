@@ -286,6 +286,8 @@ void _Minigame::Render(double BlendFactor) {
 	Graphics.SetProgram(Assets.Programs["text"]);
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
+	Assets.Programs["pos_uv_static"]->AmbientLight = glm::vec4(1.0f);
+
 	Graphics.EnableScissorTest();
 	_Bounds ScissorRegion;
 	GetUIBoundary(ScissorRegion);
