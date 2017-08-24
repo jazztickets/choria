@@ -20,12 +20,14 @@
 #include <ae/ui.h>
 #include <ae/assets.h>
 #include <ae/camera.h>
+#include <ae/random.h>
 #include <ae/program.h>
 #include <objects/minigame.h>
 #include <stats.h>
 #include <framework.h>
 #include <constants.h>
 #include <SDL_scancode.h>
+#include <SDL_timer.h>
 #include <glm/gtc/type_ptr.hpp>
 
 _TestState TestState;
@@ -42,23 +44,41 @@ void _TestState::Init() {
 	Camera->CalculateFrustum(Graphics.AspectRatio);
 
 	Stats = new _Stats();
-	Minigame = new _Minigame(&Stats->Minigames[1]);
-	Minigame->IsServer = true;
-	Minigame->Debug = 1;
-	Minigame->StartGame(1);
-	Minigame->Drop(0.0f);
 
-	Time = 0;
-	while(Time < 30) {
-		Minigame->Update(DEFAULT_TIMESTEP);
-		if(Minigame->State == _Minigame::StateType::DONE) {
-			break;
+	for(int i = 0; i < 1000; i++) {
+		double StartTime = SDL_GetPerformanceCounter();
+
+		Minigame = new _Minigame(&Stats->Minigames[1]);
+		Minigame->IsServer = true;
+		Minigame->Debug = 0;
+		Minigame->StartGame(GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max()));
+		Minigame->Drop((float)GetRandomReal(-7.65, 7.65));
+
+		Time = 0;
+		while(Time < 30) {
+			Minigame->Update(DEFAULT_TIMESTEP);
+			if(Minigame->State == _Minigame::StateType::DONE) {
+				break;
+			}
+			Time += DEFAULT_TIMESTEP;
 		}
-		Time += DEFAULT_TIMESTEP;
+
+		if(Minigame->Bucket < Minigame->Prizes.size()) {
+			const _MinigameItem *MinigameItem = Minigame->Prizes[Minigame->Bucket];
+			if(MinigameItem && MinigameItem->Item) {
+				std::cout << MinigameItem->Item->Cost * MinigameItem->Count << std::endl;
+			}
+			else
+				std::cout << "0" << std::endl;
+		}
+
+		delete Minigame;
+
+		//std::cout << (SDL_GetPerformanceCounter() - StartTime) / (double)SDL_GetPerformanceFrequency() << std::endl;
 	}
 
 	//Framework.Done = true;
-	delete Minigame;
+
 	Minigame = new _Minigame(&Stats->Minigames[1]);
 	Minigame->Debug = -1;
 	Minigame->StartGame(0);
