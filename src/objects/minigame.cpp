@@ -383,6 +383,7 @@ void _Minigame::RefreshPrizes() {
 	ShufflePrizes();
 	Prizes[0] = nullptr;
 	Prizes[1] = nullptr;
+	Prizes[2] = nullptr;
 	Prizes.resize(BucketCount);
 	ShufflePrizes();
 
