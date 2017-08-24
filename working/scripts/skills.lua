@@ -88,6 +88,10 @@ function Skill_VenomBite.Proc(self, Roll, Level, Source, Target, Result)
 	end
 end
 
+function Skill_VenomBite.PlaySound(self, Level)
+	Audio.Play("bat0.ogg")
+end
+
 -- Ghost attack --
 
 Skill_GhostAttack = Base_Attack:New()
