@@ -332,6 +332,9 @@ void _Minigame::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 // Start game and set seed
 void _Minigame::StartGame(uint64_t Seed) {
+	if(Debug > 0)
+		std::cout << "seed=" << Seed << std::endl;
+
 	if(Seed)
 		Random.seed(Seed);
 
@@ -373,19 +376,39 @@ void _Minigame::Drop(float X) {
 
 // Refresh prizes
 void _Minigame::RefreshPrizes() {
-	size_t BucketCount = 8;
-	size_t Index = 0;
+	const int BagCount = 3;
 	Prizes.clear();
-	Prizes.resize(std::max(BucketCount, Minigame->Items.size()));
-	for(const auto &Item : Minigame->Items)
-		Prizes[Index++] = &Item;
 
-	ShufflePrizes();
+	// Separate prizes by value
+	std::vector<const _MinigameItem *> PrizeBuckets[BagCount];
+	for(const auto &Item : Minigame->Items) {
+		if(Item.Item) {
+			int SellValue = Item.Item->Cost * Item.Count / 2;
+			if(SellValue > Minigame->Cost)
+				PrizeBuckets[0].push_back(&Item);
+			else if(SellValue < Minigame->Cost)
+				PrizeBuckets[2].push_back(&Item);
+			else
+				PrizeBuckets[1].push_back(&Item);
+		}
+	}
+
+	// Add prizes from each bag
+	size_t AddAmounts[BagCount] = { 2, 2, 4 };
+	for(int i = 0; i < BagCount; i++) {
+		ShufflePrizes(PrizeBuckets[i]);
+		size_t AddAmount = std::min(AddAmounts[i], PrizeBuckets[i].size());
+		for(size_t j = 0; j < AddAmount; j++) {
+			Prizes.push_back(PrizeBuckets[i][j]);
+		}
+	}
+
+	// Remove two items and shuffle
+	ShufflePrizes(Prizes);
 	Prizes[0] = nullptr;
 	Prizes[1] = nullptr;
-	Prizes[2] = nullptr;
-	Prizes.resize(BucketCount);
-	ShufflePrizes();
+	Prizes.resize(8);
+	ShufflePrizes(Prizes);
 
 	if(Debug > 0) {
 		for(auto &Prize : Prizes) {
@@ -398,10 +421,10 @@ void _Minigame::RefreshPrizes() {
 }
 
 // Shuffle prizes
-void _Minigame::ShufflePrizes() {
-	for(size_t i = Prizes.size()-1; i > 0; --i) {
+void _Minigame::ShufflePrizes(std::vector<const _MinigameItem *> &Bag) {
+	for(size_t i = Bag.size()-1; i > 0; --i) {
 		std::uniform_int_distribution<size_t> Distribution(0, i);
-		std::swap(Prizes[i], Prizes[Distribution(Random)]);
+		std::swap(Bag[i], Bag[Distribution(Random)]);
 	}
 }
 

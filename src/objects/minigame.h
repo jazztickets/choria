@@ -51,7 +51,7 @@ class _Minigame {
 		void StartGame(uint64_t Seed);
 		void Drop(float X);
 		void RefreshPrizes();
-		void ShufflePrizes();
+		void ShufflePrizes(std::vector<const _MinigameItem *> &Bag);
 		void GetUIBoundary(_Bounds &Bounds);
 
 		// Attributes
