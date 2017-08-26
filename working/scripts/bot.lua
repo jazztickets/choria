@@ -147,6 +147,7 @@ Bot_Server.MoveState = MOVE_IDLE
 Bot_Server.SellSlot = -1
 Bot_Server.BuyID = 0
 Bot_Server.VendorID = 0
+Bot_Server.UpgradeID = 0
 Bot_Server.Timer = 0
 Bot_Server.MoveCount = 0
 Bot_Server.TargetMapID = 0
