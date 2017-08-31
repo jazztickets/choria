@@ -94,7 +94,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	Scripting->Setup(Stats, SCRIPTS_GAME);
 
 	Log.Open((Config.LogPath + "server.log").c_str());
-	Log << "Starting server on port " << NetworkPort << std::endl;
+	Log << "Listening on port " << NetworkPort << std::endl;
 }
 
 // Destructor

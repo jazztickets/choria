@@ -71,7 +71,6 @@ void _DedicatedState::Init() {
 		Server = new _Server(NetworkPort);
 		Server->Hardcore = Hardcore;
 
-		Server->Log << "Listening on port " << NetworkPort << std::endl;
 		if(Hardcore)
 			Server->Log << "Hardcore only is on" << std::endl;
 
