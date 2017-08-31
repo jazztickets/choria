@@ -51,7 +51,7 @@ class _TestState : public _State {
 
 		// Attributes
 		_Camera *Camera;
-		_Stats *Stats;
+		const _Stats *Stats;
 		_Minigame *Minigame;
 		double Time;
 

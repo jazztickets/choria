@@ -40,11 +40,11 @@ void _Action::Serialize(_Buffer &Data) {
 }
 
 // Unserialize action
-void _Action::Unserialize(_Buffer &Data, _Stats *Stats) {
+void _Action::Unserialize(_Buffer &Data, const _Stats *Stats) {
 
 	uint32_t ItemID = Data.Read<uint32_t>();
 
-	Item = Stats->Items[ItemID];
+	Item = Stats->Items.at(ItemID);
 }
 
 // Resolve action

@@ -487,7 +487,7 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.InventorySlot.Item = PlayState.Stats->Items[(uint32_t)Tooltip.Slot.Index];
+				Tooltip.InventorySlot.Item = PlayState.Stats->Items.at((uint32_t)Tooltip.Slot.Index);
 			} break;
 			case WINDOW_ACTIONBAR: {
 				if(Tooltip.Slot.Index < Player->ActionBar.size())
@@ -1010,7 +1010,7 @@ void _HUD::InitSkills() {
 	// Get all player skills
 	std::list<const _Item *> SortedSkills;
 	for(auto &SkillID : Player->Skills) {
-		const _Item *Skill = PlayState.Stats->Items[SkillID.first];
+		const _Item *Skill = PlayState.Stats->Items.at(SkillID.first);
 		if(!Skill)
 			continue;
 
@@ -1741,7 +1741,7 @@ void _HUD::DrawCharacterStats() {
 			continue;
 
 		Buffer << Resistance.second << "%";
-		Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes[Resistance.first] + " Resist", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes.at(Resistance.first) + " Resist", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
@@ -2087,7 +2087,7 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 
 // Equip a skill
 void _HUD::EquipSkill(uint32_t SkillID) {
-	const _Item *Skill = PlayState.Stats->Items[SkillID];
+	const _Item *Skill = PlayState.Stats->Items.at(SkillID);
 	if(Skill) {
 
 		// Check skill
@@ -2139,7 +2139,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)Element->Parent->Index;
-			if(SkillPointsRemaining <= 0 || Player->Skills[SkillID] >= Player->Stats->Items[SkillID]->MaxLevel)
+			if(SkillPointsRemaining <= 0 || Player->Skills[SkillID] >= Player->Stats->Items.at(SkillID)->MaxLevel)
 				Element->SetActive(false);
 			else
 				Element->SetActive(true);

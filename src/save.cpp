@@ -228,14 +228,16 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-uint32_t _Save::CreateCharacter(_Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
+uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
 	if(!BuildID)
 		BuildID = 1;
 
-	// Get build
-	const _Object *Build = Stats->Builds[BuildID];
-	if(!Build)
-		Build = Stats->Builds[1];
+	// Load build
+	const auto &BuildIterator = Stats->Builds.find(BuildID);
+	if(BuildIterator == Stats->Builds.end())
+		throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
+
+	const _Object *Build = BuildIterator->second;
 
 	// Create new database row
 	int Index = 1;
@@ -313,7 +315,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 }
 
 // Load player from database
-void _Save::LoadPlayer(_Stats *Stats, _Object *Player) {
+void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 
 	// Get character info
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");

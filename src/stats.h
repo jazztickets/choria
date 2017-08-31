@@ -148,24 +148,19 @@ class _Stats {
 		~_Stats();
 
 		// General Stats
-		void GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty=1.0);
-		const _MapStat *GetMap(uint32_t ID) { return &Maps[ID]; }
-		const _Vendor *GetVendor(uint32_t ID) { return &Vendors[ID]; }
-		const _Trader *GetTrader(uint32_t ID) { return &Traders[ID]; }
-		const _Blacksmith *GetBlacksmith(uint32_t ID) { return &Blacksmiths[ID]; }
-		const _MinigameType *GetMinigame(uint32_t ID) { return &Minigames[ID]; }
+		void GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty=1.0) const;
 
 		// Menu
-		void GetPortraits(std::list<_Portrait> &Portraits);
-		void GetStartingBuilds(std::list<_Build> &Builds);
-		const _Texture *GetPortraitImage(uint32_t PortraitID);
+		void GetPortraits(std::list<_Portrait> &Portraits) const;
+		void GetStartingBuilds(std::list<_Build> &Builds) const;
+		const _Texture *GetPortraitImage(uint32_t PortraitID) const;
 
 		// Monsters
-		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown);
-		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops);
+		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const;
+		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const;
 
 		// Maps
-		uint32_t GetMapIDByPath(const std::string &Path);
+		uint32_t GetMapIDByPath(const std::string &Path) const;
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[(size_t)Level-1]; }

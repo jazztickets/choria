@@ -96,7 +96,7 @@ void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
 		if(ChangedFlag & ((uint64_t)1 << i)) {
 			if(i == (uint64_t)StatType::BUFF) {
 				uint32_t BuffID = Data.Read<uint32_t>();
-				Values[(StatType)i].Pointer = (void *)Object->Stats->Buffs[BuffID];
+				Values[(StatType)i].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
 			}
 			else
 				Values[(StatType)i].Integer = Data.Read<int>();

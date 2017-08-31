@@ -52,7 +52,7 @@ struct _InventorySlot {
 	_InventorySlot(const _Item *Item, int Count) : Item(Item), Upgrades(0), Count(Count), MaxCount(INVENTORY_MAX_STACK) { }
 
 	void Serialize(_Buffer &Data);
-	void Unserialize(_Buffer &Data, _Stats *Stats);
+	void Unserialize(_Buffer &Data, const _Stats *Stats);
 	void Reset() { Item = nullptr; Upgrades = 0; Count = 0; MaxCount = INVENTORY_MAX_STACK; }
 
 	const _Item *Item;
@@ -75,7 +75,7 @@ struct _Bag {
 	_Bag() : ID(_Bag::NONE) { }
 
 	void Serialize(_Buffer &Data);
-	void Unserialize(_Buffer &Data, _Stats *Stats);
+	void Unserialize(_Buffer &Data, const _Stats *Stats);
 
 	std::vector<_InventorySlot> Slots;
 	std::string Name;
@@ -107,8 +107,8 @@ class _Inventory {
 		// Network
 		void Serialize(_Buffer &Data);
 		void SerializeSlot(_Buffer &Data, const _Slot &Slot);
-		void Unserialize(_Buffer &Data, _Stats *Stats);
-		void UnserializeSlot(_Buffer &Data, _Stats *Stats);
+		void Unserialize(_Buffer &Data, const _Stats *Stats);
+		void UnserializeSlot(_Buffer &Data, const _Stats *Stats);
 
 		bool FindItem(const _Item *Item, size_t &Slot, size_t StartSlot);
 		bool HasItemID(uint32_t ItemID);

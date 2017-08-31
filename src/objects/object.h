@@ -177,7 +177,7 @@ class _Object : public _ManagerBase {
 		void ResetUIState();
 
 		// Client
-		_Stats *Stats;
+		const _Stats *Stats;
 		_Map *Map;
 		_HUD *HUD;
 		_Scripting *Scripting;

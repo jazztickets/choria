@@ -606,7 +606,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				if(Stats->Items.find(ItemID) == Stats->Items.end())
 					return;
 
-				SendItem(Peer, Stats->Items[ItemID], Count);
+				SendItem(Peer, Stats->Items.at(ItemID), Count);
 			}
 		}
 		else if(Message.find("-setgold") == 0) {
@@ -776,7 +776,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		EventType = _Map::EVENT_SPAWN;
 	}
 	// Verify map id
-	else if(Stats->Maps.find(MapID) == Stats->Maps.end() || Stats->Maps[MapID].File == "maps/")
+	else if(Stats->Maps.find(MapID) == Stats->Maps.end() || Stats->Maps.at(MapID).File == "maps/")
 		return;
 
 	// Get map
@@ -787,7 +787,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		Map = MapManager->CreateWithID(MapID);
 		Map->Clock = Save->Clock;
 		Map->Server = this;
-		Map->Load(Stats->GetMap(MapID));
+		Map->Load(&Stats->Maps.at(MapID));
 	}
 
 	// Get old map
@@ -1545,7 +1545,7 @@ void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
 	if(Minigame.Bucket < Minigame.Prizes.size()) {
 		const _MinigameItem *MinigameItem = Minigame.Prizes[Minigame.Bucket];
 		if(MinigameItem && MinigameItem->Item) {
-			SendItem(Peer, Stats->Items[MinigameItem->Item->ID], MinigameItem->Count);
+			SendItem(Peer, Stats->Items.at(MinigameItem->Item->ID), MinigameItem->Count);
 		}
 	}
 }
@@ -1693,7 +1693,7 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 	// Find script
 	auto Iterator = Stats->Scripts.find(ScriptID);
 	if(Iterator != Stats->Scripts.end()) {
-		_Script &Script = Iterator->second;
+		const _Script &Script = Iterator->second;
 
 		_StatChange StatChange;
 		StatChange.Object = Object;

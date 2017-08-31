@@ -65,9 +65,9 @@ void _StatusEffect::Serialize(_Buffer &Data) {
 }
 
 // Unserialize from network
-void _StatusEffect::Unserialize(_Buffer &Data, _Stats *Stats) {
+void _StatusEffect::Unserialize(_Buffer &Data, const _Stats *Stats) {
 	uint32_t BuffID = Data.Read<uint32_t>();
-	Buff = Stats->Buffs[BuffID];
+	Buff = Stats->Buffs.at(BuffID);
 	Level = Data.Read<int>();
 	Duration = Data.Read<float>();
 }

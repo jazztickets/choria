@@ -52,7 +52,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	TooltipName->Text = Name;
 	TooltipType->Text = "";
 	if(Type != ItemType::NONE)
-		TooltipType->Text = Player->Stats->ItemTypes[(uint32_t)Type];
+		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);
 
 	// Set window width
 	_TextBounds TextBounds;
@@ -104,7 +104,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	// Draw target text
 	if(TargetID != TargetType::NONE) {
 		DrawPosition.y -= 20;
-		std::string InfoText = "Target " + Player->Stats->TargetTypes[(uint32_t)TargetID];
+		std::string InfoText = "Target " + Player->Stats->TargetTypes.at((uint32_t)TargetID);
 		Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += 40;
 	}
@@ -181,7 +181,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	// Damage type
 	if(!IsSkill() && DamageTypeID > 1) {
 		std::stringstream Buffer;
-		Buffer << Stats->DamageTypes[DamageTypeID];
+		Buffer << Stats->DamageTypes.at(DamageTypeID);
 		Assets.Fonts["hud_medium"]->DrawText("Damage Type", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -262,7 +262,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetResistance(Upgrades), CompareInventory.Item->GetResistance(CompareInventory.Upgrades));
 
-		Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes[ResistanceTypeID] + " Resist", DrawPosition + -Spacing, RIGHT_BASELINE);
+		Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes.at(ResistanceTypeID) + " Resist", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -765,5 +765,5 @@ template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Va
 	if(MaxLevel <= 0)
 		return Value;
 
-	return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale[Type] * Upgrades * std::abs(Value));
+	return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
 }

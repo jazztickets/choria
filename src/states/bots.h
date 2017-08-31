@@ -59,7 +59,7 @@ class _BotsState : public _State {
 		std::thread *Thread;
 		std::mutex Mutex;
 
-		_Stats *Stats;
+		const _Stats *Stats;
 		std::list<_Bot *> Bots;
 
 		int NextBotNumber;

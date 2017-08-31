@@ -35,7 +35,7 @@ class _StatusEffect {
 		~_StatusEffect();
 
 		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data, _Stats *Stats);
+		void Unserialize(_Buffer &Data, const _Stats *Stats);
 
 		_Element *CreateUIElement(_Element *Parent);
 

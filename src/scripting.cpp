@@ -77,7 +77,7 @@ _Scripting::~_Scripting() {
 }
 
 // Set up scripting environment
-void _Scripting::Setup(_Stats *Stats, const std::string &BaseScript) {
+void _Scripting::Setup(const _Stats *Stats, const std::string &BaseScript) {
 	InjectStats(Stats);
 	InjectMonsters(Stats);
 	InjectItems(Stats);
@@ -95,7 +95,7 @@ void _Scripting::LoadScript(const std::string &Path) {
 }
 
 // Load global state with enumerations and constants
-void _Scripting::InjectStats(_Stats *Stats) {
+void _Scripting::InjectStats(const _Stats *Stats) {
 
 	// Add damage types
 	lua_newtable(LuaState);
@@ -164,7 +164,7 @@ void _Scripting::InjectStats(_Stats *Stats) {
 }
 
 // Inject items pointers into existing lua tables
-void _Scripting::InjectItemPointers(_Stats *Stats) {
+void _Scripting::InjectItemPointers(const _Stats *Stats) {
 
 	// Add item pointers to lua tables
 	for(const auto &Iterator : Stats->Items) {
@@ -188,7 +188,7 @@ void _Scripting::InjectItemPointers(_Stats *Stats) {
 }
 
 // Inject item stats
-void _Scripting::InjectItems(_Stats *Stats) {
+void _Scripting::InjectItems(const _Stats *Stats) {
 
 	// Add stats to lua table
 	lua_newtable(LuaState);
@@ -228,7 +228,7 @@ void _Scripting::InjectItems(_Stats *Stats) {
 }
 
 // Inject monster stats
-void _Scripting::InjectMonsters(_Stats *Stats) {
+void _Scripting::InjectMonsters(const _Stats *Stats) {
 
 	// Add stats to lua table
 	lua_newtable(LuaState);
@@ -277,7 +277,7 @@ void _Scripting::InjectMonsters(_Stats *Stats) {
 }
 
 // Inject buffs stat data
-void _Scripting::InjectBuffs(_Stats *Stats) {
+void _Scripting::InjectBuffs(const _Stats *Stats) {
 
 	// Add buffs
 	for(const auto &Iterator : Stats->Buffs) {

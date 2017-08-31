@@ -114,7 +114,7 @@ class _Server {
 		_LogFile Log;
 
 		// Stats
-		_Stats *Stats;
+		const _Stats *Stats;
 		_Save *Save;
 
 		// Network

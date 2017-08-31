@@ -86,7 +86,7 @@ class _Battle : public _ManagerBase {
 		void ClientSetAction(uint8_t ActionBarSlot);
 		void ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget);
 
-		_Stats *Stats;
+		const _Stats *Stats;
 		_Server *Server;
 		_Scripting *Scripting;
 		_ClientNetwork *ClientNetwork;

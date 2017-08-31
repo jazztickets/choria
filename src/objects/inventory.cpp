@@ -62,7 +62,7 @@ void _Inventory::SerializeSlot(_Buffer &Data, const _Slot &Slot) {
 }
 
 // Unserialize
-void _Inventory::Unserialize(_Buffer &Data, _Stats *Stats) {
+void _Inventory::Unserialize(_Buffer &Data, const _Stats *Stats) {
 
 	// Unserialize bags
 	for(auto &Bag : Bags)
@@ -70,7 +70,7 @@ void _Inventory::Unserialize(_Buffer &Data, _Stats *Stats) {
 }
 
 // Unserialize one slot
-void _Inventory::UnserializeSlot(_Buffer &Data, _Stats *Stats) {
+void _Inventory::UnserializeSlot(_Buffer &Data, const _Stats *Stats) {
 
 	// Get slot
 	_Slot Slot;
@@ -415,11 +415,11 @@ void _InventorySlot::Serialize(_Buffer &Data) {
 }
 
 // Unserialize a slot
-void _InventorySlot::Unserialize(_Buffer &Data, _Stats *Stats) {
+void _InventorySlot::Unserialize(_Buffer &Data, const _Stats *Stats) {
 
 	uint32_t ItemID = Data.Read<uint32_t>();
 	if(ItemID) {
-		Item = Stats->Items[ItemID];
+		Item = Stats->Items.at(ItemID);
 		Upgrades = Data.Read<uint8_t>();
 		Count = Data.Read<uint8_t>();
 	}
@@ -462,7 +462,7 @@ void _Bag::Serialize(_Buffer &Data) {
 }
 
 // Unserialize bag
-void _Bag::Unserialize(_Buffer &Data, _Stats *Stats) {
+void _Bag::Unserialize(_Buffer &Data, const _Stats *Stats) {
 
 	// Reset inventory
 	std::fill(Slots.begin(), Slots.end(), _InventorySlot());

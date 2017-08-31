@@ -170,7 +170,7 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		double ObjectUpdateTime;
 
 		// Stats
-		_Stats *Stats;
+		const _Stats *Stats;
 
 		// Audio
 		std::string Music;

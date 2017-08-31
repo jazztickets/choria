@@ -96,7 +96,7 @@ class _EditorState : public _State {
 		void GetDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
 
 		// General
-		_Stats *Stats;
+		const _Stats *Stats;
 
 		// Graphics
 		_Camera *Camera;

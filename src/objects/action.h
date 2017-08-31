@@ -76,7 +76,7 @@ class _Action {
 		bool operator!=(const _Action &Action) const { return !(Action.Item == Item); }
 
 		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data, _Stats *Stats);
+		void Unserialize(_Buffer &Data, const _Stats *Stats);
 
 		bool Resolve(_Buffer &Data, _Object *Source, ScopeType Scope);
 		void HandleSummons(_ActionResult &ActionResult);

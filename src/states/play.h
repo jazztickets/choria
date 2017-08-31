@@ -79,7 +79,7 @@ class _PlayState : public _State {
 		bool ConnectNow;
 
 		// Game
-		_Stats *Stats;
+		const _Stats *Stats;
 		_LogFile Log;
 		double Time;
 

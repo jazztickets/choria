@@ -34,7 +34,7 @@
 #include <iomanip>
 
 // Constructor
-_Bot::_Bot(_Stats *Stats, const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port) :
+_Bot::_Bot(const _Stats *Stats, const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port) :
 	Network(new _ClientNetwork()),
 	Map(nullptr),
 	Battle(nullptr),
@@ -255,7 +255,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				Map->Stats = Stats;
 				Map->Clock = Clock;
 				Map->NetworkID = MapID;
-				Map->Load(Stats->GetMap(MapID));
+				Map->Load(&Stats->Maps.at(MapID));
 				AssignPlayer(nullptr);
 			}
 		} break;
@@ -432,7 +432,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			for(uint8_t i = 0; i < ItemCount; i++) {
 
 				uint32_t ItemID = Data.Read<uint32_t>();
-				const _Item *Item = Stats->Items[ItemID];
+				const _Item *Item = Stats->Items.at(ItemID);
 				int Upgrades = (int)Data.Read<uint8_t>();
 				int Count = (int)Data.Read<uint8_t>();
 
@@ -460,7 +460,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			bool ItemUnlocked = Data.ReadBit();
 			uint32_t ItemID = Data.Read<uint32_t>();
 			int InventorySlot = (int)Data.Read<char>();
-			ActionResult.ActionUsed.Item = Stats->Items[ItemID];
+			ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
 
 			// Set texture
 			if(ActionResult.ActionUsed.Item)

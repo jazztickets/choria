@@ -91,7 +91,7 @@ class _Item {
 		float GetDropRate(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 
-		_Stats *Stats;
+		const _Stats *Stats;
 
 		uint32_t ID;
 		std::string Name;

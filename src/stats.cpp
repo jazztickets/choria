@@ -475,7 +475,7 @@ void _Stats::LoadScripts() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty) {
+void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty) const {
 	Monster->DatabaseID = MonsterID;
 
 	// Run query
@@ -500,9 +500,11 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 
 		// Load build
-		const _Object *Build = Builds[BuildID];
-		if(!Build)
+		const auto &BuildIterator = Builds.find(BuildID);
+		if(BuildIterator == Builds.end())
 			throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
+
+		const _Object *Build = BuildIterator->second;
 
 		// Copy build
 		Monster->ActionBar = Build->ActionBar;
@@ -520,7 +522,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 }
 
 // Get list of portraits
-void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
+void _Stats::GetPortraits(std::list<_Portrait> &Portraits) const {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM portrait");
@@ -536,7 +538,7 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) {
 }
 
 // Get list of builds
-void _Stats::GetStartingBuilds(std::list<_Build> &Builds) {
+void _Stats::GetStartingBuilds(std::list<_Build> &Builds) const {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM build WHERE starting = 1");
@@ -553,7 +555,7 @@ void _Stats::GetStartingBuilds(std::list<_Build> &Builds) {
 }
 
 // Get portrait texture by id
-const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
+const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) const {
 	const _Texture *Image = nullptr;
 
 	// Run query
@@ -568,7 +570,7 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) {
+void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const {
 	if(ZoneID == 0)
 		return;
 
@@ -678,7 +680,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) {
+void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const {
 	if(MonsterID == 0)
 		return;
 
@@ -729,7 +731,7 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate,
 }
 
 // Get map id by path
-uint32_t _Stats::GetMapIDByPath(const std::string &Path) {
+uint32_t _Stats::GetMapIDByPath(const std::string &Path) const {
 
 	for(const auto &MapStat : Maps) {
 		if(MapStat.second.File == Path) {

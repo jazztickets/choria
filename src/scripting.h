@@ -40,14 +40,14 @@ class _Scripting {
 		_Scripting();
 		~_Scripting();
 
-		void Setup(_Stats *Stats, const std::string &BaseScript);
+		void Setup(const _Stats *Stats, const std::string &BaseScript);
 
 		void LoadScript(const std::string &Path);
-		void InjectStats(_Stats *Stats);
-		void InjectItemPointers(_Stats *Stats);
-		void InjectItems(_Stats *Stats);
-		void InjectMonsters(_Stats *Stats);
-		void InjectBuffs(_Stats *Stats);
+		void InjectStats(const _Stats *Stats);
+		void InjectItemPointers(const _Stats *Stats);
+		void InjectItems(const _Stats *Stats);
+		void InjectMonsters(const _Stats *Stats);
+		void InjectBuffs(const _Stats *Stats);
 		void InjectTime(double Time);
 
 		void CreateBattle(_Battle *Battle);

@@ -809,7 +809,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	for(Json::ValueIterator BagNode = Data["items"].begin(); BagNode != Data["items"].end(); BagNode++) {
 		for(const Json::Value &ItemNode : *BagNode) {
 			_InventorySlot InventorySlot;
-			InventorySlot.Item = Stats->Items[ItemNode["id"].asUInt()];
+			InventorySlot.Item = Stats->Items.at(ItemNode["id"].asUInt());
 			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
 			InventorySlot.Count = ItemNode["count"].asInt();
 			Inventory->Bags[std::stoul(BagNode.name())].Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
@@ -819,20 +819,20 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set skills
 	for(const Json::Value &SkillNode : Data["skills"]) {
 		uint32_t ItemID = SkillNode["id"].asUInt();
-		Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->Items[ItemID]->MaxLevel);
+		Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->Items.at(ItemID)->MaxLevel);
 	}
 
 	// Set actionbar
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
 		if(Slot < ActionBar.size())
-			ActionBar[Slot].Item = Stats->Items[ActionNode["id"].asUInt()];
+			ActionBar[Slot].Item = Stats->Items.at(ActionNode["id"].asUInt());
 	}
 
 	// Set status effects
 	for(const Json::Value &StatusEffectNode : Data["statuseffects"]) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = Stats->Buffs[StatusEffectNode["id"].asUInt()];
+		StatusEffect->Buff = Stats->Buffs.at(StatusEffectNode["id"].asUInt());
 		StatusEffect->Level = StatusEffectNode["level"].asInt();
 		StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
 		StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
@@ -983,7 +983,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 	Invisible = Data.ReadBit();
 
 	Portrait = Stats->GetPortraitImage(PortraitID);
-	ModelTexture = Stats->Models[ModelID].Texture;
+	ModelTexture = Stats->Models.at(ModelID).Texture;
 }
 
 // Unserialize object stats
@@ -1009,7 +1009,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Invisible = Data.Read<int>();
 	Hardcore = Data.Read<int>();
 
-	ModelTexture = Stats->Models[ModelID].Texture;
+	ModelTexture = Stats->Models.at(ModelID).Texture;
 
 	// Read inventory
 	Inventory->Unserialize(Data, Stats);
@@ -1537,7 +1537,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(SkillID == 0)
 		return;
 
-	const _Item *Skill = Stats->Items[SkillID];
+	const _Item *Skill = Stats->Items.at(SkillID);
 	if(Skill == nullptr)
 		return;
 
@@ -1641,7 +1641,7 @@ void _Object::CalculateStats() {
 
 	SkillPointsUsed = 0;
 	for(const auto &SkillLevel : Skills) {
-		const _Item *Skill = Stats->Items[SkillLevel.first];
+		const _Item *Skill = Stats->Items.at(SkillLevel.first);
 		if(Skill)
 			SkillPointsUsed += SkillLevel.second;
 	}

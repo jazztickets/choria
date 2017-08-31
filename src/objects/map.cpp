@@ -430,22 +430,22 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 	// Handle event types
 	switch(Event.Type) {
 		case _Map::EVENT_TRADER:
-			Object->Trader = Server->Stats->GetTrader(Event.Data);
+			Object->Trader = &Server->Stats->Traders.at(Event.Data);
 			if(!Object->Trader->ID)
 				return;
 		break;
 		case _Map::EVENT_VENDOR:
-			Object->Vendor = Server->Stats->GetVendor(Event.Data);
+			Object->Vendor = &Server->Stats->Vendors.at(Event.Data);
 			if(!Object->Vendor->ID)
 				return;
 		break;
 		case _Map::EVENT_BLACKSMITH:
-			Object->Blacksmith = Server->Stats->GetBlacksmith(Event.Data);
+			Object->Blacksmith = &Server->Stats->Blacksmiths.at(Event.Data);
 			if(!Object->Blacksmith->ID)
 				return;
 		break;
 		case _Map::EVENT_MINIGAME: {
-			Object->Minigame = Server->Stats->GetMinigame(Event.Data);
+			Object->Minigame = &Server->Stats->Minigames.at(Event.Data);
 			if(!Object->Minigame->ID)
 				return;
 		} break;
@@ -673,7 +673,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 		BackgroundMap = new _Map();
 		BackgroundMap->UseAtlas = true;
 		try {
-			BackgroundMap->Load(Stats->GetMap(MapStat->BackgroundMapID), true);
+			BackgroundMap->Load(&Stats->Maps.at(MapStat->BackgroundMapID), true);
 		}
 		catch(std::exception &Error) {
 			delete BackgroundMap;
@@ -815,7 +815,7 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 
 		// Set message for client
 		if(!Server) {
-			const _Item *Item = Object->Stats->Items[Tile->Event.Data];
+			const _Item *Item = Object->Stats->Items.at(Tile->Event.Data);
 			if(Item)
 				Object->ClientMessage = "You need a " + Item->Name;
 		}
