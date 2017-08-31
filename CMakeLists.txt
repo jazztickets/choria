@@ -53,6 +53,7 @@ find_package(TinyXML2 REQUIRED)
 
 # set include directories
 include_directories("src")
+include_directories("src/ext")
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${VORBIS_INCLUDE_DIR})
@@ -68,12 +69,12 @@ include_directories(${TINYXML2_INCLUDE_DIR})
 # add source files
 file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
 file(GLOB SRC_AE "src/ae/*.cpp" "src/ae/*.h")
-file(GLOB SRC_ENET "src/enet/*.c" "src/enet/*.h")
 file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
-file(GLOB SRC_PATH "src/path/*.cpp" "src/path/*.h")
-file(GLOB SRC_PNGLITE "src/pnglite/*.c" "src/pnglite/*.h")
 file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
-file(GLOB SRC_ZLIB "src/zlib/*.cc" "src/zlib/*.h")
+file(GLOB SRC_ENET "src/ext/enet/*.c" "src/ext/enet/*.h")
+file(GLOB SRC_PATH "src/ext/path/*.cpp" "src/ext/path/*.h")
+file(GLOB SRC_PNGLITE "src/ext/pnglite/*.c" "src/ext/pnglite/*.h")
+file(GLOB SRC_ZLIB "src/ext/zlib/*.cc" "src/ext/zlib/*.h")
 
 # combine source files
 file(GLOB SRC_ALL
