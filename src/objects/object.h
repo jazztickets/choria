@@ -198,6 +198,11 @@ class _Object : public _ManagerBase {
 		// Action bar
 		std::vector<_Action>ActionBar;
 
+		// Stats
+		double StatTimer;
+		bool CalcLevelStats;
+		std::unordered_map<uint32_t, _Unlock> Unlocks;
+
 		// Base stats
 		int BaseMaxHealth;
 		int BaseMaxMana;
@@ -214,11 +219,6 @@ class _Object : public _ManagerBase {
 		int BaseEvasion;
 		int BaseHitChance;
 		int BaseDropRate;
-
-		// Stats
-		double UpdateTimer;
-		bool CalcLevelStats;
-		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
 		// Final stats
 		std::string Name;
@@ -260,12 +260,17 @@ class _Object : public _ManagerBase {
 		// Battle
 		_Battle *Battle;
 		_Element *BattleElement;
-		bool JoinedBattle;
-		double TurnTimer;
-		uint8_t BattleSide;
 		_Action PotentialAction;
 		std::list<uint32_t> ItemDropsReceived;
 		std::list<_StatusEffect *> StatusEffects;
+		double TurnTimer;
+		double AttackPlayerTime;
+		int NextBattle;
+		int Invisible;
+		int Stunned;
+		int GoldStolen;
+		bool JoinedBattle;
+		uint8_t BattleSide;
 
 		// Actions
 		std::list<_Object *> Targets;
@@ -273,29 +278,25 @@ class _Object : public _ManagerBase {
 		_Action Action;
 
 		// Render
+		const _Texture *ModelTexture;
+		const _Texture *StatusTexture;
 		const _Texture *Portrait;
-		const _Texture *Model;
 		glm::vec2 BattleOffset;
 		glm::vec2 ResultPosition;
 		glm::vec2 StatPosition;
+		uint32_t PortraitID;
+		uint32_t ModelID;
+		uint8_t Status;
 
 		// Monster
 		_Object *Owner;
 		uint32_t DatabaseID;
 		int ExperienceGiven;
 		int GoldGiven;
-		int GoldStolen;
 		std::string AI;
 
 		// Account
 		uint32_t CharacterID;
-
-		// Texture
-		uint8_t Status;
-		uint32_t PortraitID;
-		uint32_t ModelID;
-		const _Texture *ModelTexture;
-		const _Texture *StatusTexture;
 
 		// Map
 		NetworkIDType LoadMapID;
@@ -303,35 +304,29 @@ class _Object : public _ManagerBase {
 		uint32_t SpawnPoint;
 		double TeleportTime;
 
-		// Battle
-		int NextBattle;
-		double AttackPlayerTime;
-		int Invisible;
-		int Stunned;
-
 		// Items
-		bool InventoryOpen;
 		_Inventory *Inventory;
+		bool InventoryOpen;
 
 		// Events
-		uint32_t Seed;
 		const _Vendor *Vendor;
 		const _Trader *Trader;
 		const _Blacksmith *Blacksmith;
 		const _MinigameType *Minigame;
+		uint32_t Seed;
 
 		// Skills
-		bool SkillsOpen;
 		std::unordered_map<uint32_t, int> Skills;
 		int SkillPoints;
 		int SkillPointsUsed;
 		int SkillPointsOnActionBar;
+		bool SkillsOpen;
 
 		// Trading
+		_Object *TradePlayer;
 		int TradeGold;
 		bool WaitingForTrade;
 		bool TradeAccepted;
-		_Object *TradePlayer;
 
 		// Party
 		std::string PartyName;

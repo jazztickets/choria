@@ -63,6 +63,9 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 
+	StatTimer(0.0),
+	CalcLevelStats(true),
+
 	BaseMaxHealth(0),
 	BaseMaxMana(0),
 	BaseHealthRegen(0),
@@ -78,9 +81,6 @@ _Object::_Object() :
 	BaseEvasion(0),
 	BaseHitChance(100),
 	BaseDropRate(0),
-
-	UpdateTimer(0.0),
-	CalcLevelStats(true),
 
 	Name(""),
 	Level(0),
@@ -116,55 +116,59 @@ _Object::_Object() :
 
 	Battle(nullptr),
 	BattleElement(nullptr),
-	JoinedBattle(false),
 	TurnTimer(0.0),
+	AttackPlayerTime(0),
+	NextBattle(0),
+	Invisible(0),
+	Stunned(0),
+	GoldStolen(0),
+	JoinedBattle(false),
 	BattleSide(0),
+
+	LastTarget{nullptr, nullptr},
+	ModelTexture(nullptr),
+	StatusTexture(nullptr),
 	Portrait(nullptr),
-	Model(nullptr),
 	BattleOffset(0, 0),
+	ResultPosition(0, 0),
+	StatPosition(0, 0),
+	PortraitID(0),
+	ModelID(0),
+	Status(0),
 
 	Owner(nullptr),
 	DatabaseID(0),
 	ExperienceGiven(0),
 	GoldGiven(0),
-	GoldStolen(0),
 	AI(""),
 
 	CharacterID(0),
 
-	Status(0),
-	PortraitID(0),
-	ModelID(0),
-	ModelTexture(nullptr),
-	StatusTexture(nullptr),
 	LoadMapID(0),
 	SpawnMapID(1),
 	SpawnPoint(0),
 	TeleportTime(-1),
 
-	NextBattle(0),
-	AttackPlayerTime(0),
-	Invisible(0),
-	Stunned(0),
-	InventoryOpen(false),
 	Inventory(nullptr),
-	Seed(0),
+	InventoryOpen(false),
+
 	Vendor(nullptr),
 	Trader(nullptr),
 	Blacksmith(nullptr),
 	Minigame(nullptr),
-	SkillsOpen(false),
+	Seed(0),
+
 	SkillPoints(0),
 	SkillPointsUsed(0),
 	SkillPointsOnActionBar(0),
+	SkillsOpen(false),
+
+	TradePlayer(nullptr),
 	TradeGold(0),
 	WaitingForTrade(false),
 	TradeAccepted(false),
-	TradePlayer(nullptr),
-	Bot(false) {
 
-	LastTarget[0] = nullptr;
-	LastTarget[1] = nullptr;
+	Bot(false) {
 
 	Inventory = new _Inventory();
 }
@@ -307,10 +311,10 @@ void _Object::Update(double FrameTime) {
 			++Iterator;
 	}
 
-	// Generic update timer
-	UpdateTimer += FrameTime;
-	if(UpdateTimer >= 1.0) {
-		UpdateTimer -= 1.0;
+	// Update status effects
+	StatTimer += FrameTime;
+	if(StatTimer >= 1.0) {
+		StatTimer -= 1.0;
 
 		// Update stats
 		if(Server && IsAlive()) {
