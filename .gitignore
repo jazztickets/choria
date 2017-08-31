@@ -5,7 +5,6 @@
 CMakeLists.txt.user
 bin/
 build/
-build-mingw*
 export/
 src/tags
 src/version.h
@@ -13,5 +12,5 @@ working/stats/*.txt
 deployment/*.exe
 deployment/*-src
 deployment/*.tar.gz
-deployment/release
+deployment/out
 TODO

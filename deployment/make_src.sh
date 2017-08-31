@@ -1,8 +1,8 @@
 #!/bin/bash
-mkdir -p release
+mkdir -p out
 
 version=`grep 'GAME_VERSION=".*"' -o ../CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
-gitver=`git rev-list --all --count`
+gitver=`git log --oneline | wc -l`
 base=choria-${version}r${gitver}
 pkg=${base}-src.tar.gz
 
@@ -10,4 +10,4 @@ tar --transform "s,^,${base}/," -czvf ${pkg} -C ../ src/ working/ deployment/{ch
 
 echo -e "\nMade ${pkg}"
 
-mv "${pkg}" release/
+mv "${pkg}" out/

@@ -2,8 +2,15 @@
 
 upload_server=$1
 
-mkdir -p release
-cd ../
+projectdir=`git rev-parse --show-toplevel`
+if [ -z "$projectdir" ]; then
+	echo "No .git directory found"
+	exit 1
+fi
+
+outputdir="$projectdir/deployment/out"
+cd "$projectdir"
+mkdir -p "$outputdir"
 
 version=`grep 'GAME_VERSION=".*"' -o CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
 
@@ -19,10 +26,10 @@ build() {
 	fi
 
 	# run cmake
-	builddir=build-mingw$bits
+	builddir="$projectdir/build/mingw$bits"
 	mkdir -p "$builddir"
-	cd $builddir
-	cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw${bits}.cmake ../
+	cd "$builddir"
+	cmake -DCMAKE_TOOLCHAIN_FILE=../../cmake/mingw${bits}.cmake ../../
 
 	# build
 	make -j`nproc`
@@ -32,14 +39,17 @@ build() {
 		exit
 	fi
 
-	cd ..
+	cd "$projectdir"
 
 	cp /usr/$arch/bin/{libbz2-1.dll,libfreetype-6.dll,libgcc_*.dll,libsqlite3-0.dll,libstdc++-6.dll,libwinpthread-1.dll,lua53.dll,libvorbisfile-3.dll,libvorbis-0.dll,libogg-0.dll,SDL2.dll,zlib1.dll,libjsoncpp.dll,libtinyxml2.dll} working/
 
 	gitver=`git log --oneline | wc -l`
 	mv bin/Release/choria.exe working/
 	cp README working/
-	echo "choria.exe -server" > working/server.bat
+	echo "choria.exe -server" > working/run_server.bat
+	echo "choria.exe -server -hardcore" > working/run_hardcore_server.bat
+	echo "choria.exe -hardcore" > working/run_hardcore.bat
+	echo "choria.exe -test" > working/run_test.bat
 	chmod +x working/server.bat
 
 	archive=choria-${version}r${gitver}-win${bits}.zip
@@ -48,20 +58,20 @@ build() {
 	rm working/choria.exe
 	rm working/*.dll
 	rm working/README
-	rm working/server.bat
+	rm working/*.bat
 
 	if [ -n "$upload_server" ]; then
 		scp $archive $upload_server:web/files/
 	fi
 
-	mv $archive deployment/release
+	mv $archive "$outputdir"
 }
 
 if [ -n "$upload_server" ]; then
-	ssh $upload_server rm web/files/choria*.zip
+	ssh $upload_server rm -f web/files/choria*.zip
 fi
 
-rm -f deployment/release/choria*.zip
+rm -f "$outputdir"/choria*.zip
 
 build 32
 build 64
