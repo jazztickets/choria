@@ -29,7 +29,7 @@
 #include <ae/database.h>
 #include <objects/object.h>
 #include <objects/item.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/battle.h>
@@ -475,7 +475,7 @@ void _HUD::Update(double FrameTime) {
 				if(Player->Trader) {
 					if(Tooltip.Slot.Index < Player->Trader->Items.size())
 						Tooltip.InventorySlot.Item = Player->Trader->Items[Tooltip.Slot.Index].Item;
-					else if(Tooltip.Slot.Index == PLAYER_TRADEITEMS)
+					else if(Tooltip.Slot.Index == TRADER_MAXITEMS)
 						Tooltip.InventorySlot.Item = Player->Trader->RewardItem;
 				}
 			} break;
@@ -644,7 +644,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		ExperienceElement->Render();
 
 		// Draw health bar
-		Buffer << Player->Health << " / " << Player->MaxHealth;
+		Buffer << Player->Fighter->Health << " / " << Player->Fighter->MaxHealth;
 		Assets.Elements["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
@@ -652,7 +652,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		HealthElement->Render();
 
 		// Draw mana bar
-		Buffer << Player->Mana << " / " << Player->MaxMana;
+		Buffer << Player->Fighter->Mana << " / " << Player->Fighter->MaxMana;
 		Assets.Elements["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());
@@ -1656,29 +1656,29 @@ void _HUD::DrawCharacterStats() {
 	std::stringstream Buffer;
 
 	// Damage
-	Buffer << Player->MinDamage << " - " << Player->MaxDamage;
+	Buffer << Player->Fighter->MinDamage << " - " << Player->Fighter->MaxDamage;
 	Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Armor
-	Buffer << Player->Armor;
+	Buffer << Player->Fighter->Armor;
 	Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Damage Block
-	Buffer << Player->DamageBlock;
+	Buffer << Player->Fighter->DamageBlock;
 	Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Health Regen
-	if(Player->HealthRegen != 0) {
-		Buffer << Player->HealthRegen;
+	if(Player->Fighter->HealthRegen != 0) {
+		Buffer << Player->Fighter->HealthRegen;
 		Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1686,8 +1686,8 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Mana Regen
-	if(Player->ManaRegen != 0) {
-		Buffer << Player->ManaRegen;
+	if(Player->Fighter->ManaRegen != 0) {
+		Buffer << Player->Fighter->ManaRegen;
 		Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1695,36 +1695,36 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Move speed
-	Buffer << Player->MoveSpeed << "%";
+	Buffer << Player->Fighter->MoveSpeed << "%";
 	Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Battle speed
-	Buffer << Player->BattleSpeed << "%";
+	Buffer << Player->Fighter->BattleSpeed << "%";
 	Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Hit chance
-	Buffer << Player->HitChance << "%";
+	Buffer << Player->Fighter->HitChance << "%";
 	Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Evasion
-	Buffer << Player->Evasion << "%";
+	Buffer << Player->Fighter->Evasion << "%";
 	Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, RIGHT_BASELINE);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Drop rate
-	if(Player->DropRate != 0) {
-		Buffer << Player->DropRate;
+	if(Player->Fighter->DropRate != 0) {
+		Buffer << Player->Fighter->DropRate;
 		Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1736,7 +1736,7 @@ void _HUD::DrawCharacterStats() {
 
 	// Resistances
 	bool HasResist = false;
-	for(auto &Resistance : Player->Resistances) {
+	for(auto &Resistance : Player->Fighter->Resistances) {
 		if(Resistance.first == 0)
 			continue;
 
@@ -2474,7 +2474,7 @@ void _HUD::UpdateLabels() {
 	Assets.Elements["label_hud_name"]->Text = Player->Name;
 
 	// Update level
-	Buffer << "Level " << Player->Level;
+	Buffer << "Level " << Player->Fighter->Level;
 	Assets.Elements["label_hud_level"]->Text = Buffer.str();
 	Buffer.str("");
 

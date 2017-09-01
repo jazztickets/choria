@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <states/play.h>
 #include <objects/object.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/map.h>
@@ -1100,7 +1100,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 	// Reset hud
 	HUD->CloseWindows(true);
 	HUD->EnableMouseCombat = false;
-	if(Config.ShowTutorial && Player->Level == 1)
+	if(Config.ShowTutorial && Player->Fighter->Level == 1)
 		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(Action::GAME_SKILL1) + " key to attack");
 
 	// Create a new battle instance
@@ -1333,7 +1333,7 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 				HUD->SetActionBarSize(Player->ActionBar.size());
 
 			// Play death sound
-			if(!Player->Battle && Player->Health <= 0 && WasAlive)
+			if(!Player->Battle && Player->Fighter->Health <= 0 && WasAlive)
 				PlayDeathSound();
 		}
 
@@ -1347,12 +1347,12 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	int OldLevel = Player->Level;
+	int OldLevel = Player->Fighter->Level;
 
-	Player->Health = Data.Read<int>();
-	Player->Mana = Data.Read<int>();
-	Player->MaxHealth = Data.Read<int>();
-	Player->MaxMana = Data.Read<int>();
+	Player->Fighter->Health = Data.Read<int>();
+	Player->Fighter->Mana = Data.Read<int>();
+	Player->Fighter->MaxHealth = Data.Read<int>();
+	Player->Fighter->MaxMana = Data.Read<int>();
 	Player->Experience = Data.Read<int>();
 	Player->Gold = Data.Read<int>();
 	Player->Bounty = Data.Read<int>();
@@ -1363,11 +1363,11 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	if(Map)
 		Map->Clock = Clock;
 
-	if(Player->Level > OldLevel) {
+	if(Player->Fighter->Level > OldLevel) {
 		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsAvailable()) + " skill point(s). Press " + Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to use them.");
 		Audio.PlaySound(Assets.Sounds["success0.ogg"]);
 
-		if(Player->Level == 2) {
+		if(Player->Fighter->Level == 2) {
 			Config.ShowTutorial = 0;
 			Config.Save();
 		}

@@ -116,6 +116,8 @@ const  float        INVENTORY_TOOLTIP_HEIGHT        =  340;
 const  int          INVENTORY_MAX_STACK             =  255;
 const  int          INVENTORY_INCREMENT_MODIFIER    =  5;
 const  int          INVENTORY_SPLIT_MODIFIER        =  5;
+//     Trader
+const  int          TRADER_MAXITEMS                 =  8;
 //     Menu
 const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;
 const  float        MENU_PAUSE_FADE                 =  0.7f;

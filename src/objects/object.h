@@ -20,6 +20,7 @@
 // Libraries
 #include <ae/managerbase.h>
 #include <objects/action.h>
+#include <objects/components/fighter.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
 #include <list>
@@ -33,6 +34,7 @@ class _Texture;
 class _Battle;
 class _Buff;
 class _Inventory;
+class _Fighter;
 class _Stats;
 class _Server;
 class _Buffer;
@@ -109,10 +111,10 @@ class _Object : public _ManagerBase {
 		void UnserializeBattle(_Buffer &Data);
 
 		// Stats
-		bool IsAlive() const { return Health > 0; }
+		bool IsAlive() const { return Fighter->Health > 0; }
 		bool IsMonster() const { return DatabaseID != 0; }
-		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
-		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
+		float GetHealthPercent() const { return Fighter->MaxHealth > 0 ? Fighter->Health / (float)Fighter->MaxHealth : 0; }
+		float GetManaPercent() const { return Fighter->MaxMana > 0 ? Fighter->Mana / (float)Fighter->MaxMana : 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int &Value);
 		void UpdateMana(int Value);
@@ -176,6 +178,9 @@ class _Object : public _ManagerBase {
 		// UI
 		void ResetUIState();
 
+		// Base
+		std::string Name;
+
 		// Client
 		const _Stats *Stats;
 		_Map *Map;
@@ -199,48 +204,12 @@ class _Object : public _ManagerBase {
 		std::vector<_Action>ActionBar;
 
 		// Stats
+		std::unordered_map<uint32_t, _Unlock> Unlocks;
 		double StatTimer;
 		bool CalcLevelStats;
-		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
-		// Base stats
-		int BaseMaxHealth;
-		int BaseMaxMana;
-		int BaseHealthRegen;
-		int BaseManaRegen;
-		float BaseHealPower;
-		float BaseAttackPower;
-		int BaseMinDamage;
-		int BaseMaxDamage;
-		int BaseArmor;
-		int BaseDamageBlock;
-		int BaseMoveSpeed;
-		int BaseBattleSpeed;
-		int BaseEvasion;
-		int BaseHitChance;
-		int BaseDropRate;
-
-		// Final stats
-		std::string Name;
-		int Level;
-		int Health;
-		int MaxHealth;
-		int Mana;
-		int MaxMana;
-		int HealthRegen;
-		int ManaRegen;
-		float HealPower;
-		float AttackPower;
-		int MinDamage;
-		int MaxDamage;
-		int Armor;
-		int DamageBlock;
-		int MoveSpeed;
-		int BattleSpeed;
-		int Evasion;
-		int HitChance;
-		int DropRate;
-		std::unordered_map<uint32_t, int> Resistances;
+		// Fighter stats
+		_Fighter *Fighter;
 
 		// Player stats
 		double PlayTime;

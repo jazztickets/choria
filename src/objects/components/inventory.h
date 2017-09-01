@@ -24,6 +24,7 @@
 #include <cstdint>
 
 const int PLAYER_TRADEITEMS = 8;
+const int PLAYER_INVENTORYSIZE = 24;
 const size_t NOSLOT = (size_t)-1;
 
 // Forward Declarations

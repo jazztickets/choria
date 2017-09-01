@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <objects/item.h>
 #include <objects/object.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <ae/ui.h>
 #include <ae/font.h>
 #include <ae/util.h>

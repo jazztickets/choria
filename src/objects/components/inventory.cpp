@@ -15,7 +15,7 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <objects/item.h>
 #include <ae/buffer.h>
 #include <constants.h>
@@ -26,7 +26,7 @@ _Inventory::_Inventory() {
 
 	Bags.resize(_Bag::COUNT);
 	Bags[_Bag::EQUIPMENT].Slots.resize(EquipmentType::COUNT);
-	Bags[_Bag::INVENTORY].Slots.resize(24);
+	Bags[_Bag::INVENTORY].Slots.resize(PLAYER_INVENTORYSIZE);
 	Bags[_Bag::TRADE].Slots.resize(PLAYER_TRADEITEMS);
 	for(auto &Slot : Bags[_Bag::EQUIPMENT].Slots)
 		Slot.MaxCount = 1;

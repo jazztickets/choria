@@ -24,7 +24,7 @@
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <packet.h>
 #include <stats.h>
 #include <constants.h>
@@ -528,10 +528,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			HandleStatChange(Data, StatChange);
 		} break;
 		case PacketType::WORLD_HUD: {
-			Player->Health = Data.Read<int>();
-			Player->Mana = Data.Read<int>();
-			Player->MaxHealth = Data.Read<int>();
-			Player->MaxMana = Data.Read<int>();
+			Player->Fighter->Health = Data.Read<int>();
+			Player->Fighter->Mana = Data.Read<int>();
+			Player->Fighter->MaxHealth = Data.Read<int>();
+			Player->Fighter->MaxMana = Data.Read<int>();
 			Player->Experience = Data.Read<int>();
 			Player->Gold = Data.Read<int>();
 			Player->Bounty = Data.Read<int>();

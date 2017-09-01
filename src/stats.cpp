@@ -21,7 +21,7 @@
 #include <ae/assets.h>
 #include <objects/object.h>
 #include <objects/buff.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <constants.h>
 #include <algorithm>
 #include <iostream>
@@ -484,18 +484,18 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 
 	// Get data
 	if(Database->FetchRow()) {
-		Monster->Level = Database->GetInt<int>("level");
+		Monster->Fighter->Level = Database->GetInt<int>("level");
 		Monster->Name = Database->GetString("name");
 		Monster->Portrait = Assets.Textures[Database->GetString("portrait")];
 		Monster->ExperienceGiven = Database->GetInt<int>("experience");
 		Monster->GoldGiven = Database->GetInt<int>("gold");
-		Monster->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
-		Monster->BaseMaxMana = Database->GetInt<int>("mana");
-		Monster->BaseMinDamage = Database->GetInt<int>("mindamage");
-		Monster->BaseMaxDamage = Database->GetInt<int>("maxdamage");
-		Monster->BaseArmor = Database->GetInt<int>("armor");
-		Monster->BaseDamageBlock = Database->GetInt<int>("block");
-		Monster->BaseBattleSpeed = Database->GetInt<int>("battlespeed");
+		Monster->Fighter->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
+		Monster->Fighter->BaseMaxMana = Database->GetInt<int>("mana");
+		Monster->Fighter->BaseMinDamage = Database->GetInt<int>("mindamage");
+		Monster->Fighter->BaseMaxDamage = Database->GetInt<int>("maxdamage");
+		Monster->Fighter->BaseArmor = Database->GetInt<int>("armor");
+		Monster->Fighter->BaseDamageBlock = Database->GetInt<int>("block");
+		Monster->Fighter->BaseBattleSpeed = Database->GetInt<int>("battlespeed");
 		Monster->AI = Database->GetString("ai_name");
 		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 
@@ -511,8 +511,8 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		Monster->Inventory->Bags = Build->Inventory->Bags;
 		Monster->Skills = Build->Skills;
 
-		Monster->Health = Monster->MaxHealth = Monster->BaseMaxHealth;
-		Monster->Mana = Monster->MaxMana = Monster->BaseMaxMana;
+		Monster->Fighter->Health = Monster->Fighter->MaxHealth = Monster->Fighter->BaseMaxHealth;
+		Monster->Fighter->Mana = Monster->Fighter->MaxMana = Monster->Fighter->BaseMaxMana;
 		Monster->Gold = Monster->GoldGiven;
 		Monster->CalcLevelStats = false;
 	}

@@ -23,7 +23,7 @@
 #include <objects/object.h>
 #include <objects/item.h>
 #include <objects/buff.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <config.h>
 #include <stats.h>
 #include <constants.h>
@@ -263,8 +263,8 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.CalculateStats();
 
 	// Set health/mana
-	Object.Health = Object.MaxHealth;
-	Object.Mana = Object.MaxMana;
+	Object.Fighter->Health = Object.Fighter->MaxHealth;
+	Object.Fighter->Mana = Object.Fighter->MaxMana;
 	Object.GenerateNextBattle();
 
 	// Save new character
@@ -331,7 +331,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 
 	// Max sure player has health
 	if(!Player->IsAlive() && !Player->Hardcore)
-		Player->Health = Player->MaxHealth / 2;
+		Player->Fighter->Health = Player->Fighter->MaxHealth / 2;
 }
 
 // Get save version from database

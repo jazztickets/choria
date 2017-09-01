@@ -18,7 +18,7 @@
 #include <objects/battle.h>
 #include <objects/object.h>
 #include <objects/buff.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <ae/servernetwork.h>
@@ -237,7 +237,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Set up initial target
 		if(Item) {
-			if(Config.ShowTutorial && ClientPlayer->Level == 1 && ClientPlayer->HUD)
+			if(Config.ShowTutorial && ClientPlayer->Fighter->Level == 1 && ClientPlayer->HUD)
 				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
@@ -267,7 +267,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Update HUD
 		if(ClientPlayer->HUD) {
-			if(Config.ShowTutorial && ClientPlayer->Level == 1)
+			if(Config.ShowTutorial && ClientPlayer->Fighter->Level == 1)
 				ClientPlayer->HUD->SetMessage("");
 		}
 
@@ -636,10 +636,10 @@ void _Battle::ServerEndBattle() {
 		// Get list of fighters that get rewards
 		std::list<_Object *> RewardFighters;
 		int DropRate = 0;
-		for(auto &Fighter : SideFighters[WinningSide]) {
-			if(Fighter->IsAlive()) {
-				DropRate += Fighter->DropRate;
-				RewardFighters.push_back(Fighter);
+		for(auto &Object : SideFighters[WinningSide]) {
+			if(Object->IsAlive()) {
+				DropRate += Object->Fighter->DropRate;
+				RewardFighters.push_back(Object);
 			}
 		}
 
@@ -676,68 +676,68 @@ void _Battle::ServerEndBattle() {
 	}
 
 	// Send data
-	for(auto &Fighter : Fighters) {
-		Fighter->InputStates.clear();
-		Fighter->PotentialAction.Unset();
-		Fighter->Action.Unset();
+	for(auto &Object : Fighters) {
+		Object->InputStates.clear();
+		Object->PotentialAction.Unset();
+		Object->Action.Unset();
 
 		// Get rewards
 		int ExperienceEarned = 0;
 		int GoldEarned = 0;
-		if(!Fighter->IsAlive()) {
+		if(!Object->IsAlive()) {
 			if(PVP)
-				Fighter->ApplyDeathPenalty(PVP * 0.01f, Fighter->Bounty);
+				Object->ApplyDeathPenalty(PVP * 0.01f, Object->Bounty);
 			else
-				Fighter->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
+				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
 			GoldEarned = SideStats[WinningSide].GoldPerFighter;
-			Fighter->PlayerKills += SideStats[!WinningSide].PlayerCount;
-			Fighter->MonsterKills += SideStats[!WinningSide].MonsterCount;
+			Object->PlayerKills += SideStats[!WinningSide].PlayerCount;
+			Object->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP) {
-				if(Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
-					Fighter->Bounty += GoldEarned;
-					if(Fighter->Bounty)
-						Server->BroadcastMessage(nullptr, "Player \"" + Fighter->Name + "\" now has a bounty of " + std::to_string(Fighter->Bounty) + " gold!", "cyan");
+				if(Object->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
+					Object->Bounty += GoldEarned;
+					if(Object->Bounty)
+						Server->BroadcastMessage(nullptr, "Player \"" + Object->Name + "\" now has a bounty of " + std::to_string(Object->Bounty) + " gold!", "cyan");
 				}
 			}
 		}
 
 		// Start cooldown timer
-		if(Fighter->IsAlive() && Cooldown > 0.0 && Zone)
-			Fighter->BattleCooldown[Zone] = Cooldown;
+		if(Object->IsAlive() && Cooldown > 0.0 && Zone)
+			Object->BattleCooldown[Zone] = Cooldown;
 
 		// Update stats
-		int CurrentLevel = Fighter->Level;
-		Fighter->UpdateExperience(ExperienceEarned);
-		Fighter->UpdateGold(GoldEarned);
-		Fighter->CalculateStats();
-		int NewLevel = Fighter->Level;
+		int CurrentLevel = Object->Fighter->Level;
+		Object->UpdateExperience(ExperienceEarned);
+		Object->UpdateGold(GoldEarned);
+		Object->CalculateStats();
+		int NewLevel = Object->Fighter->Level;
 		if(NewLevel > CurrentLevel) {
-			if(Fighter->Peer)
-				Server->SendMessage(Fighter->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
+			if(Object->Peer)
+				Server->SendMessage(Object->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
 
-			Fighter->Health = Fighter->MaxHealth;
-			Fighter->Mana = Fighter->MaxMana;
+			Object->Fighter->Health = Object->Fighter->MaxHealth;
+			Object->Fighter->Mana = Object->Fighter->MaxMana;
 		}
 
 		// Write results
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
-		Packet.Write<int>(Fighter->PlayerKills);
-		Packet.Write<int>(Fighter->MonsterKills);
-		Packet.Write<int>(Fighter->GoldLost);
-		Packet.Write<int>(Fighter->Bounty);
+		Packet.Write<int>(Object->PlayerKills);
+		Packet.Write<int>(Object->MonsterKills);
+		Packet.Write<int>(Object->GoldLost);
+		Packet.Write<int>(Object->Bounty);
 		Packet.Write<int>(ExperienceEarned);
 		Packet.Write<int>(GoldEarned);
 
 		// Sort item drops
 		std::unordered_map<uint32_t, int> SortedItems;
-		for(auto &ItemID : Fighter->ItemDropsReceived) {
+		for(auto &ItemID : Object->ItemDropsReceived) {
 			SortedItems[ItemID]++;
 		}
-		Fighter->ItemDropsReceived.clear();
+		Object->ItemDropsReceived.clear();
 
 		// Write item count
 		size_t ItemCount = SortedItems.size();
@@ -748,21 +748,21 @@ void _Battle::ServerEndBattle() {
 			Packet.Write<uint32_t>(Iterator.first);
 			Packet.Write<uint8_t>(0);
 			Packet.Write<uint8_t>((uint8_t)Iterator.second);
-			Fighter->Inventory->AddItem(Stats->Items.at(Iterator.first), 0, Iterator.second);
+			Object->Inventory->AddItem(Stats->Items.at(Iterator.first), 0, Iterator.second);
 		}
 
 		// Update bot goal
-		if(Fighter->Bot) {
+		if(Object->Bot) {
 			if(Scripting->StartMethodCall("Bot_Server", "DetermineNextGoal")) {
-				Scripting->PushObject(Fighter);
+				Scripting->PushObject(Object);
 				Scripting->MethodCall(1, 0);
 				Scripting->FinishMethodCall();
 			}
 		}
 		// Send info
-		else if(Fighter->Peer) {
-			Server->Network->SendPacket(Packet, Fighter->Peer);
-			Server->SendHUD(Fighter->Peer);
+		else if(Object->Peer) {
+			Server->Network->SendPacket(Packet, Object->Peer);
+			Server->SendHUD(Object->Peer);
 		}
 	}
 

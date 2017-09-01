@@ -23,7 +23,7 @@
 #include <ae/buffer.h>
 #include <ae/util.h>
 #include <objects/object.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
@@ -569,8 +569,8 @@ void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
 		if(Player->Battle)
 			return;
 
-		Player->Health = Player->MaxHealth / 2;
-		Player->Mana = Player->MaxMana / 2;
+		Player->Fighter->Health = Player->Fighter->MaxHealth / 2;
+		Player->Fighter->Mana = Player->Fighter->MaxMana / 2;
 		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
 	}
 }
@@ -751,7 +751,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 		Packet.Write<uint8_t>(Player.Hardcore);
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Player.PortraitID);
-		Packet.Write<int>(Player.Health);
+		Packet.Write<int>(Player.Fighter->Health);
 		Packet.Write<int>(Player.Experience);
 	}
 	Save->Database->CloseQuery();
@@ -1597,8 +1597,8 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 		// Penalize player for leaving battle
 		if(Player->Battle) {
 			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
-			Player->Health = 0;
-			Player->Mana = Player->MaxMana / 2;
+			Player->Fighter->Health = 0;
+			Player->Fighter->Mana = Player->Fighter->MaxMana / 2;
 			Player->LoadMapID = 0;
 		}
 
@@ -1673,10 +1673,10 @@ void _Server::SendHUD(_Peer *Peer) {
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
-	Packet.Write<int>(Player->Health);
-	Packet.Write<int>(Player->Mana);
-	Packet.Write<int>(Player->MaxHealth);
-	Packet.Write<int>(Player->MaxMana);
+	Packet.Write<int>(Player->Fighter->Health);
+	Packet.Write<int>(Player->Fighter->Mana);
+	Packet.Write<int>(Player->Fighter->MaxHealth);
+	Packet.Write<int>(Player->Fighter->MaxMana);
 	Packet.Write<int>(Player->Experience);
 	Packet.Write<int>(Player->Gold);
 	Packet.Write<int>(Player->Bounty);

@@ -17,7 +17,7 @@
 *******************************************************************************/
 #include <objects/map.h>
 #include <objects/object.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <ae/buffer.h>

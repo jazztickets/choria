@@ -70,6 +70,7 @@ include_directories(${TINYXML2_INCLUDE_DIR})
 file(GLOB SRC_MAIN "src/*.cpp" "src/*.h")
 file(GLOB SRC_AE "src/ae/*.cpp" "src/ae/*.h")
 file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
+file(GLOB SRC_COMPONENTS "src/objects/components/*.cpp" "src/objects/components/*.h")
 file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
 file(GLOB SRC_ENET "src/ext/enet/*.c" "src/ext/enet/*.h")
 file(GLOB SRC_PATH "src/ext/path/*.cpp" "src/ext/path/*.h")
@@ -82,6 +83,7 @@ file(GLOB SRC_ALL
 	${SRC_AE}
 	${SRC_ENET}
 	${SRC_OBJECTS}
+	${SRC_COMPONENTS}
 	${SRC_PATH}
 	${SRC_PNGLITE}
 	${SRC_STATES}

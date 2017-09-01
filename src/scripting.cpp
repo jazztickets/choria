@@ -26,7 +26,7 @@
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <objects/battle.h>
-#include <objects/inventory.h>
+#include <objects/components/inventory.h>
 #include <objects/map.h>
 #include <server.h>
 #include <stats.h>
@@ -427,28 +427,28 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
-	lua_pushinteger(LuaState, Object->Health);
+	lua_pushinteger(LuaState, Object->Fighter->Health);
 	lua_setfield(LuaState, -2, "Health");
 
-	lua_pushinteger(LuaState, Object->MaxHealth);
+	lua_pushinteger(LuaState, Object->Fighter->MaxHealth);
 	lua_setfield(LuaState, -2, "MaxHealth");
 
-	lua_pushinteger(LuaState, Object->Mana);
+	lua_pushinteger(LuaState, Object->Fighter->Mana);
 	lua_setfield(LuaState, -2, "Mana");
 
-	lua_pushinteger(LuaState, Object->MaxMana);
+	lua_pushinteger(LuaState, Object->Fighter->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
-	lua_pushnumber(LuaState, Object->AttackPower);
+	lua_pushnumber(LuaState, Object->Fighter->AttackPower);
 	lua_setfield(LuaState, -2, "AttackPower");
 
-	lua_pushinteger(LuaState, Object->HitChance);
+	lua_pushinteger(LuaState, Object->Fighter->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 
-	lua_pushinteger(LuaState, Object->DamageBlock);
+	lua_pushinteger(LuaState, Object->Fighter->DamageBlock);
 	lua_setfield(LuaState, -2, "DamageBlock");
 
-	lua_pushinteger(LuaState, Object->Evasion);
+	lua_pushinteger(LuaState, Object->Fighter->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
 
 	lua_pushinteger(LuaState, Object->CharacterID);
@@ -913,7 +913,7 @@ int _Scripting::ObjectGetDamageReduction(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
 
-	lua_pushnumber(LuaState, 1.0 - (double)Object->Resistances[DamageTypeID] / 100.0);
+	lua_pushnumber(LuaState, 1.0 - (double)Object->Fighter->Resistances[DamageTypeID] / 100.0);
 
 	return 1;
 }
