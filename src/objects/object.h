@@ -151,7 +151,7 @@ class _Object : public _ManagerBase {
 		bool CanRespec() const;
 		bool HasLearned(const _Item *Skill) const;
 		bool HasUnlocked(const _Item *Item) const;
-		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
+		int GetSkillPointsAvailable() const { return Fighter->SkillPoints - Fighter->SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
 		// Trader
@@ -201,12 +201,11 @@ class _Object : public _ManagerBase {
 		glm::ivec2 ServerPosition;
 
 		// Action bar
-		std::vector<_Action>ActionBar;
+		std::vector<_Action> ActionBar;
 
 		// Stats
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
 		double StatTimer;
-		bool CalcLevelStats;
 
 		// Fighter stats
 		_Fighter *Fighter;
@@ -222,9 +221,6 @@ class _Object : public _ManagerBase {
 		int Bounty;
 		int Gold;
 		int GoldLost;
-		int Experience;
-		int ExperienceNeeded;
-		int ExperienceNextLevel;
 
 		// Battle
 		_Battle *Battle;
@@ -286,9 +282,6 @@ class _Object : public _ManagerBase {
 
 		// Skills
 		std::unordered_map<uint32_t, int> Skills;
-		int SkillPoints;
-		int SkillPointsUsed;
-		int SkillPointsOnActionBar;
 		bool SkillsOpen;
 
 		// Trading

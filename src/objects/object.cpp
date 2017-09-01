@@ -66,7 +66,6 @@ _Object::_Object() :
 	ServerPosition(0, 0),
 
 	StatTimer(0.0),
-	CalcLevelStats(true),
 
 	Fighter(nullptr),
 
@@ -80,9 +79,6 @@ _Object::_Object() :
 	Bounty(0),
 	Gold(0),
 	GoldLost(0),
-	Experience(0),
-	ExperienceNeeded(0),
-	ExperienceNextLevel(0),
 
 	Battle(nullptr),
 	BattleElement(nullptr),
@@ -128,9 +124,6 @@ _Object::_Object() :
 	Minigame(nullptr),
 	Seed(0),
 
-	SkillPoints(0),
-	SkillPointsUsed(0),
-	SkillPointsOnActionBar(0),
 	SkillsOpen(false),
 
 	TradePlayer(nullptr),
@@ -141,7 +134,7 @@ _Object::_Object() :
 	Bot(false) {
 
 	Inventory = new _Inventory();
-	Fighter = new _Fighter();
+	Fighter = new _Fighter(this);
 }
 
 // Destructor
@@ -662,7 +655,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)ActionBar.size();
 	StatsNode["health"] = Fighter->Health;
 	StatsNode["mana"] = Fighter->Mana;
-	StatsNode["experience"] = Experience;
+	StatsNode["experience"] = Fighter->Experience;
 	StatsNode["gold"] = Gold;
 	StatsNode["goldlost"] = GoldLost;
 	StatsNode["playtime"] = PlayTime;
@@ -764,7 +757,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	ModelID = StatsNode["model_id"].asUInt();
 	Fighter->Health = StatsNode["health"].asInt();
 	Fighter->Mana = StatsNode["mana"].asInt();
-	Experience = StatsNode["experience"].asInt();
+	Fighter->Experience = StatsNode["experience"].asInt();
 	Gold = StatsNode["gold"].asInt();
 	GoldLost = StatsNode["goldlost"].asInt();
 	PlayTime = StatsNode["playtime"].asDouble();
@@ -892,7 +885,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(Fighter->MaxHealth);
 	Data.Write<int>(Fighter->Mana);
 	Data.Write<int>(Fighter->MaxMana);
-	Data.Write<int>(Experience);
+	Data.Write<int>(Fighter->Experience);
 	Data.Write<int>(Gold);
 	Data.Write<int>(GoldLost);
 	Data.Write<double>(PlayTime);
@@ -975,7 +968,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Fighter->BaseMaxHealth = Fighter->MaxHealth = Data.Read<int>();
 	Fighter->Mana = Data.Read<int>();
 	Fighter->BaseMaxMana = Fighter->MaxMana = Data.Read<int>();
-	Experience = Data.Read<int>();
+	Fighter->Experience = Data.Read<int>();
 	Gold = Data.Read<int>();
 	GoldLost = Data.Read<int>();
 	PlayTime = Data.Read<double>();
@@ -1342,9 +1335,9 @@ void _Object::UpdateGold(int Value) {
 // Update experience
 void _Object::UpdateExperience(int Value) {
 
-	Experience += Value;
-	if(Experience < 0)
-		Experience = 0;
+	Fighter->Experience += Value;
+	if(Fighter->Experience < 0)
+		Fighter->Experience = 0;
 }
 
 // Update death count and gold loss
@@ -1368,12 +1361,12 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 
 // Update counts on action bar
 void _Object::RefreshActionBarCount() {
-	SkillPointsOnActionBar = 0;
+	Fighter->SkillPointsOnActionBar = 0;
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		const _Item *Item = ActionBar[i].Item;
 		if(Item) {
 			if(Item->IsSkill() && HasLearned(Item))
-				SkillPointsOnActionBar += Skills[Item->ID];
+				Fighter->SkillPointsOnActionBar += Skills[Item->ID];
 			else
 				ActionBar[i].Count = Inventory->CountItem(Item);
 		}
@@ -1431,8 +1424,8 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 float _Object::GetNextLevelPercent() const {
 	float Percent = 0;
 
-	if(ExperienceNextLevel > 0)
-		Percent = 1.0f - (float)ExperienceNeeded / ExperienceNextLevel;
+	if(Fighter->ExperienceNextLevel > 0)
+		Percent = 1.0f - (float)Fighter->ExperienceNeeded / Fighter->ExperienceNextLevel;
 
 	return Percent;
 }
@@ -1558,7 +1551,7 @@ bool _Object::CanBattle() const {
 void _Object::CalculateStats() {
 
 	// Get base stats
-	CalculateLevelStats();
+	Fighter->CalculateLevelStats(Stats);
 
 	Fighter->MaxHealth = Fighter->BaseMaxHealth;
 	Fighter->MaxMana = Fighter->BaseMaxMana;
@@ -1618,11 +1611,11 @@ void _Object::CalculateStats() {
 		}
 	}
 
-	SkillPointsUsed = 0;
+	Fighter->SkillPointsUsed = 0;
 	for(const auto &SkillLevel : Skills) {
 		const _Item *Skill = Stats->Items.at(SkillLevel.first);
 		if(Skill)
-			SkillPointsUsed += SkillLevel.second;
+			Fighter->SkillPointsUsed += SkillLevel.second;
 	}
 
 	// Get skill bonus
@@ -1729,37 +1722,6 @@ void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 
 	if(StatChange.HasStat(StatType::INVISIBLE))
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
-}
-
-// Calculates the base level stats
-void _Object::CalculateLevelStats() {
-	if(!Stats || !CalcLevelStats)
-		return;
-
-	// Cap min experience
-	if(Experience < 0)
-		Experience = 0;
-
-	// Cap max experience
-	const _Level *MaxLevelStat = Stats->GetLevel(Stats->GetMaxLevel());
-	if(Experience > MaxLevelStat->Experience)
-		Experience = MaxLevelStat->Experience;
-
-	// Find current level
-	const _Level *LevelStat = Stats->FindLevel(Experience);
-	Fighter->Level = LevelStat->Level;
-	Fighter->BaseMaxHealth = LevelStat->Health;
-	Fighter->BaseMaxMana = LevelStat->Mana;
-	Fighter->BaseMinDamage = LevelStat->Damage;
-	Fighter->BaseMaxDamage = LevelStat->Damage+1;
-	Fighter->BaseArmor = LevelStat->Armor;
-	Fighter->BaseDamageBlock = 0;
-	SkillPoints = LevelStat->SkillPoints;
-	ExperienceNextLevel = LevelStat->NextLevel;
-	if(Fighter->Level == Stats->GetMaxLevel())
-		ExperienceNeeded = 0;
-	else
-		ExperienceNeeded = LevelStat->NextLevel - (Experience - LevelStat->Experience);
 }
 
 // Send packet to player or broadcast during battle

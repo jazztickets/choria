@@ -636,7 +636,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			Assets.Elements["label_hud_pvp"]->Text = "";
 
 		// Draw experience bar
-		Buffer << Player->ExperienceNextLevel - Player->ExperienceNeeded << " / " << Player->ExperienceNextLevel << " XP";
+		Buffer << Player->Fighter->ExperienceNextLevel - Player->Fighter->ExperienceNeeded << " / " << Player->Fighter->ExperienceNextLevel << " XP";
 		Assets.Elements["label_hud_experience"]->Text = Buffer.str();
 		Buffer.str("");
 		Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->GetNextLevelPercent());
@@ -1853,7 +1853,7 @@ void _HUD::DrawSkills() {
 	Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, CENTER_BASELINE);
 
 	// Show skill points unused
-	int SkillPointsUnused = Player->SkillPointsUsed - Player->SkillPointsOnActionBar;
+	int SkillPointsUnused = Player->Fighter->SkillPointsUsed - Player->Fighter->SkillPointsOnActionBar;
 	if(SkillPointsUnused > 0) {
 		DrawPosition.y += 21;
 

@@ -23,15 +23,27 @@
 
 // Forward Declarations
 class _Object;
+class _Stats;
 
 // Classes
 class _Fighter {
 
 	public:
 
-		_Fighter();
+		_Fighter(_Object *Object);
+		void CalculateLevelStats(const _Stats *Stats);
 
-		// Base stats
+		// Base
+		_Object *Object;
+
+		// Levels
+		bool CalcLevelStats;
+		int Level;
+		int Experience;
+		int ExperienceNeeded;
+		int ExperienceNextLevel;
+
+		// Base attributes
 		int BaseMaxHealth;
 		int BaseMaxMana;
 		int BaseHealthRegen;
@@ -48,8 +60,7 @@ class _Fighter {
 		int BaseHitChance;
 		int BaseDropRate;
 
-		// Final stats
-		int Level;
+		// Final attributes
 		int Health;
 		int MaxHealth;
 		int Mana;
@@ -68,6 +79,11 @@ class _Fighter {
 		int HitChance;
 		int DropRate;
 		std::unordered_map<uint32_t, int> Resistances;
+
+		// Skills
+		int SkillPoints;
+		int SkillPointsUsed;
+		int SkillPointsOnActionBar;
 
 	private:
 

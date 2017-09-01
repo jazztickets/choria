@@ -725,7 +725,7 @@ void _PlayState::HandleObjectList(_Buffer &Data) {
 		if(Object->NetworkID == ClientNetworkID)
 			AssignPlayer(Object);
 		else
-			Object->CalcLevelStats = false;
+			Object->Fighter->CalcLevelStats = false;
 	}
 
 	if(Player) {
@@ -1353,7 +1353,7 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	Player->Fighter->Mana = Data.Read<int>();
 	Player->Fighter->MaxHealth = Data.Read<int>();
 	Player->Fighter->MaxMana = Data.Read<int>();
-	Player->Experience = Data.Read<int>();
+	Player->Fighter->Experience = Data.Read<int>();
 	Player->Gold = Data.Read<int>();
 	Player->Bounty = Data.Read<int>();
 	double Clock = Data.Read<double>();
@@ -1391,7 +1391,7 @@ _Object *_PlayState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
-	Object->CalcLevelStats = false;
+	Object->Fighter->CalcLevelStats = false;
 	Object->UnserializeCreate(Data);
 
 	// Add to map
@@ -1458,7 +1458,7 @@ void _PlayState::SendStatus(uint8_t Status) {
 void _PlayState::AssignPlayer(_Object *Object) {
 	Player = Object;
 	if(Player)
-		Player->CalcLevelStats = true;
+		Player->Fighter->CalcLevelStats = true;
 
 	if(HUD) {
 		HUD->SetPlayer(Player);

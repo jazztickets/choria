@@ -278,7 +278,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				if(Object->NetworkID == ClientNetworkID)
 					AssignPlayer(Object);
 				else
-					Object->CalcLevelStats = false;
+					Object->Fighter->CalcLevelStats = false;
 			}
 
 			if(Player) {
@@ -532,7 +532,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->Fighter->Mana = Data.Read<int>();
 			Player->Fighter->MaxHealth = Data.Read<int>();
 			Player->Fighter->MaxMana = Data.Read<int>();
-			Player->Experience = Data.Read<int>();
+			Player->Fighter->Experience = Data.Read<int>();
 			Player->Gold = Data.Read<int>();
 			Player->Bounty = Data.Read<int>();
 			double Clock = Data.Read<double>();
@@ -565,7 +565,7 @@ void _Bot::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 void _Bot::AssignPlayer(_Object *Object) {
 	Player = Object;
 	if(Player) {
-		Player->CalcLevelStats = true;
+		Player->Fighter->CalcLevelStats = true;
 		Player->Path.clear();
 	}
 
@@ -581,7 +581,7 @@ _Object *_Bot::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
-	Object->CalcLevelStats = false;
+	Object->Fighter->CalcLevelStats = false;
 	Object->UnserializeCreate(Data);
 
 	// Add to map

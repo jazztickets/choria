@@ -752,7 +752,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Player.PortraitID);
 		Packet.Write<int>(Player.Fighter->Health);
-		Packet.Write<int>(Player.Experience);
+		Packet.Write<int>(Player.Fighter->Experience);
 	}
 	Save->Database->CloseQuery();
 
@@ -1677,7 +1677,7 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<int>(Player->Fighter->Mana);
 	Packet.Write<int>(Player->Fighter->MaxHealth);
 	Packet.Write<int>(Player->Fighter->MaxMana);
-	Packet.Write<int>(Player->Experience);
+	Packet.Write<int>(Player->Fighter->Experience);
 	Packet.Write<int>(Player->Gold);
 	Packet.Write<int>(Player->Bounty);
 	Packet.Write<double>(Save->Clock);

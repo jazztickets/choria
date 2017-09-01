@@ -16,9 +16,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/components/fighter.h>
+#include <stats.h>
 
 // Constructor
-_Fighter::_Fighter() :
+_Fighter::_Fighter(_Object *Object) :
+	Object(Object),
+	CalcLevelStats(true),
+	Level(0),
+	Experience(0),
+	ExperienceNeeded(0),
+	ExperienceNextLevel(0),
+
 	BaseMaxHealth(0),
 	BaseMaxMana(0),
 	BaseHealthRegen(0),
@@ -35,7 +43,6 @@ _Fighter::_Fighter() :
 	BaseHitChance(100),
 	BaseDropRate(0),
 
-	Level(0),
 	Health(1),
 	MaxHealth(1),
 	Mana(0),
@@ -50,6 +57,40 @@ _Fighter::_Fighter() :
 	BattleSpeed(100),
 	Evasion(0),
 	HitChance(100),
-	DropRate(0) {
+	DropRate(0),
 
+	SkillPoints(0),
+	SkillPointsUsed(0),
+	SkillPointsOnActionBar(0) {
+
+}
+
+// Calculates the base level stats
+void _Fighter::CalculateLevelStats(const _Stats *Stats) {
+	if(!Stats || !CalcLevelStats)
+		return;
+
+	// Cap min experience
+	if(Experience < 0)
+		Experience = 0;
+
+	// Cap max experience
+	const _Level *MaxLevelStat = Stats->GetLevel(Stats->GetMaxLevel());
+	if(Experience > MaxLevelStat->Experience)
+		Experience = MaxLevelStat->Experience;
+
+	// Find current level
+	const _Level *LevelStat = Stats->FindLevel(Experience);
+	Level = LevelStat->Level;
+	ExperienceNextLevel = LevelStat->NextLevel;
+	ExperienceNeeded = (Level == Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
+
+	// Set base attributes
+	BaseMaxHealth = LevelStat->Health;
+	BaseMaxMana = LevelStat->Mana;
+	BaseMinDamage = LevelStat->Damage;
+	BaseMaxDamage = LevelStat->Damage + 1;
+	BaseArmor = LevelStat->Armor;
+	BaseDamageBlock = 0;
+	SkillPoints = LevelStat->SkillPoints;
 }

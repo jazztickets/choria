@@ -305,7 +305,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 	if(Log) {
 		*Log << "Saving player " << Player->Name
 			 << " ( action=save character_id=" << Player->CharacterID
-			 << " exp=" << Player->Experience
+			 << " exp=" << Player->Fighter->Experience
 			 << " gold=" << Player->Gold
 			 << " playtime=" << Player->PlayTime
 			 << " monsterkills=" << Player->MonsterKills

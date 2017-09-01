@@ -514,7 +514,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		Monster->Fighter->Health = Monster->Fighter->MaxHealth = Monster->Fighter->BaseMaxHealth;
 		Monster->Fighter->Mana = Monster->Fighter->MaxMana = Monster->Fighter->BaseMaxMana;
 		Monster->Gold = Monster->GoldGiven;
-		Monster->CalcLevelStats = false;
+		Monster->Fighter->CalcLevelStats = false;
 	}
 
 	// Free memory
