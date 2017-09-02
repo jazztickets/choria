@@ -151,7 +151,7 @@ void _Menu::InitInGame() {
 	if(!ShowExitWarning)
 		Assets.Elements["label_menu_ingame_exitwarning"]->SetActive(false);
 
-	PlayState.SendStatus(_Object::STATUS_PAUSE);
+	PlayState.SendStatus(_Object::STATUS_MENU);
 	State = STATE_INGAME;
 	FromInGame = true;
 }

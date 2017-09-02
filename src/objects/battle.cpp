@@ -443,7 +443,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighter->PotentialAction.Unset();
 	Fighter->InventoryOpen = false;
 	Fighter->SkillsOpen = false;
-	Fighter->Paused = false;
+	Fighter->MenuOpen = false;
 	Fighter->Vendor = nullptr;
 	Fighter->Trader = nullptr;
 	Fighter->TeleportTime = -1.0;

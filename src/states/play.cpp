@@ -806,7 +806,7 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 				case _Object::STATUS_NONE:
 					Object->StatusTexture = nullptr;
 				break;
-				case _Object::STATUS_PAUSE:
+				case _Object::STATUS_MENU:
 					Object->StatusTexture = Assets.Textures["textures/status/pause.png"];
 				break;
 				case _Object::STATUS_INVENTORY:

@@ -68,7 +68,7 @@ class _Object : public _ManagerBase {
 
 		enum StatusImageType {
 			STATUS_NONE,
-			STATUS_PAUSE,
+			STATUS_MENU,
 			STATUS_INVENTORY,
 			STATUS_VENDOR,
 			STATUS_SKILLS,
@@ -182,36 +182,36 @@ class _Object : public _ManagerBase {
 		_Inventory *Inventory;
 		_Record *Record;
 
-		// Client
+		// Pointers
 		const _Stats *Stats;
 		_Map *Map;
 		_HUD *HUD;
 		_Scripting *Scripting;
 		_Server *Server;
 		_Peer *Peer;
-		std::unordered_map<uint32_t, double> BattleCooldown;
+
+		// Movement
 		std::list<int> InputStates;
+		glm::ivec2 Position;
+		glm::ivec2 ServerPosition;
+		double MoveTime;
 		int Moved;
 		bool UseCommand;
 		bool WaitForServer;
 		bool CheckEvent;
-		bool Paused;
-		double MoveTime;
-		std::string ClientMessage;
-		glm::ivec2 Position;
-		glm::ivec2 ServerPosition;
 
-		// Stats
+		// Unlocks
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
 		// Battle
+		std::unordered_map<uint32_t, double> BattleCooldown;
 		_Battle *Battle;
 		_Element *BattleElement;
 		_Action PotentialAction;
+		_Object *LastTarget[2];
 		std::list<uint32_t> ItemDropsReceived;
 		std::list<_StatusEffect *> StatusEffects;
 		double TurnTimer;
-		double AttackPlayerTime;
 		int NextBattle;
 		int GoldStolen;
 		bool JoinedBattle;
@@ -219,7 +219,6 @@ class _Object : public _ManagerBase {
 
 		// Actions
 		std::list<_Object *> Targets;
-		_Object *LastTarget[2];
 		_Action Action;
 
 		// Render
@@ -247,7 +246,10 @@ class _Object : public _ManagerBase {
 		double TeleportTime;
 
 		// HUD
+		std::string ClientMessage;
+		bool MenuOpen;
 		bool InventoryOpen;
+		bool SkillsOpen;
 
 		// Events
 		const _Vendor *Vendor;
@@ -258,7 +260,6 @@ class _Object : public _ManagerBase {
 
 		// Skills
 		std::unordered_map<uint32_t, int> Skills;
-		bool SkillsOpen;
 
 		// Trading
 		_Object *TradePlayer;

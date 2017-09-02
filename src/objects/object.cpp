@@ -60,25 +60,24 @@ _Object::_Object() :
 	Scripting(nullptr),
 	Server(nullptr),
 	Peer(nullptr),
+
+	Position(0, 0),
+	ServerPosition(0, 0),
+	MoveTime(0),
 	Moved(0),
 	UseCommand(false),
 	WaitForServer(false),
 	CheckEvent(false),
-	Paused(false),
-	MoveTime(0),
-	Position(0, 0),
-	ServerPosition(0, 0),
 
 	Battle(nullptr),
 	BattleElement(nullptr),
+	LastTarget{nullptr, nullptr},
 	TurnTimer(0.0),
-	AttackPlayerTime(0),
 	NextBattle(0),
 	GoldStolen(0),
 	JoinedBattle(false),
 	BattleSide(0),
 
-	LastTarget{nullptr, nullptr},
 	ModelTexture(nullptr),
 	StatusTexture(nullptr),
 	Portrait(nullptr),
@@ -100,15 +99,15 @@ _Object::_Object() :
 	SpawnPoint(0),
 	TeleportTime(-1),
 
+	MenuOpen(false),
 	InventoryOpen(false),
+	SkillsOpen(false),
 
 	Vendor(nullptr),
 	Trader(nullptr),
 	Blacksmith(nullptr),
 	Minigame(nullptr),
 	Seed(0),
-
-	SkillsOpen(false),
 
 	TradePlayer(nullptr),
 	TradeGold(0),
@@ -273,7 +272,6 @@ void _Object::Update(double FrameTime) {
 
 	// Update timers
 	MoveTime += FrameTime;
-	AttackPlayerTime += FrameTime;
 
 	// Update teleport time
 	if(TeleportTime > 0.0) {
@@ -316,8 +314,8 @@ void _Object::Update(double FrameTime) {
 		Status = STATUS_INVENTORY;
 	else if(SkillsOpen)
 		Status = STATUS_SKILLS;
-	else if(Paused)
-		Status = STATUS_PAUSE;
+	else if(MenuOpen)
+		Status = STATUS_MENU;
 
 }
 
@@ -1215,7 +1213,7 @@ NetworkIDType _Object::GetMapID() const {
 void _Object::ResetUIState() {
 	InventoryOpen = false;
 	SkillsOpen = false;
-	Paused = false;
+	MenuOpen = false;
 	Vendor = nullptr;
 	Trader = nullptr;
 	Blacksmith = nullptr;

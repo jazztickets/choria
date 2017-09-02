@@ -1412,8 +1412,8 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 		case _Object::STATUS_NONE:
 			Player->ResetUIState();
 		break;
-		case _Object::STATUS_PAUSE:
-			Player->Paused = true;
+		case _Object::STATUS_MENU:
+			Player->MenuOpen = true;
 		break;
 		case _Object::STATUS_INVENTORY:
 			Player->InventoryOpen = true;
