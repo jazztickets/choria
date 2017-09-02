@@ -31,10 +31,13 @@ class _Fighter {
 	public:
 
 		_Fighter(_Object *Object);
+
+		void Update(double FrameTime);
 		void CalculateLevelStats(const _Stats *Stats);
 
 		// Base
 		_Object *Object;
+		double UpdateTimer;
 
 		// Levels
 		bool CalcLevelStats;

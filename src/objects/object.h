@@ -109,6 +109,7 @@ class _Object : public _ManagerBase {
 		void UnserializeCreate(_Buffer &Data);
 		void UnserializeStats(_Buffer &Data);
 		void UnserializeBattle(_Buffer &Data);
+		void SendPacket(_Buffer &Packet);
 
 		// Stats
 		bool IsAlive() const { return Fighter->Health > 0; }
@@ -205,7 +206,6 @@ class _Object : public _ManagerBase {
 
 		// Stats
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
-		double StatTimer;
 
 		// Fighter stats
 		_Fighter *Fighter;
@@ -302,9 +302,6 @@ class _Object : public _ManagerBase {
 		void DeleteStatusEffects();
 
 		void CalculateStatBonuses(_StatChange &StatChange);
-		void CalculateLevelStats();
-
-		void SendPacket(_Buffer &Packet);
 
 		template <typename Type>
 		void GetValue(const std::unordered_map<std::string, std::string> &Map, const std::string &Field, Type &Value) {

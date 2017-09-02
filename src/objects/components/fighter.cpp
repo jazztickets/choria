@@ -16,11 +16,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/components/fighter.h>
+#include <objects/object.h>
+#include <ae/buffer.h>
+#include <packet.h>
 #include <stats.h>
 
 // Constructor
 _Fighter::_Fighter(_Object *Object) :
 	Object(Object),
+	UpdateTimer(0.0),
+
 	CalcLevelStats(true),
 	Level(0),
 	Experience(0),
@@ -65,7 +70,40 @@ _Fighter::_Fighter(_Object *Object) :
 
 }
 
-// Calculates the base level stats
+// Update
+void _Fighter::Update(double FrameTime) {
+	UpdateTimer += FrameTime;
+	if(UpdateTimer >= 1.0) {
+		UpdateTimer -= 1.0;
+
+		// Update stats
+		if(Object->Server && Object->IsAlive()) {
+			_StatChange StatChange;
+			StatChange.Object = Object;
+
+			// Update regen
+			if(Health < MaxHealth && HealthRegen != 0)
+				StatChange.Values[StatType::HEALTH].Integer = HealthRegen;
+			if(Mana < MaxMana && ManaRegen != 0)
+				StatChange.Values[StatType::MANA].Integer = ManaRegen;
+
+			// Update object
+			if(StatChange.GetChangedFlag() != 0) {
+				Object->UpdateStats(StatChange);
+
+				// Build packet
+				_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+				StatChange.Serialize(Packet);
+
+				// Send packet to player
+				Object->SendPacket(Packet);
+			}
+		}
+	}
+}
+
+// Calculate base level stats
 void _Fighter::CalculateLevelStats(const _Stats *Stats) {
 	if(!Stats || !CalcLevelStats)
 		return;

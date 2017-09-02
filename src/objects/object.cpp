@@ -65,8 +65,6 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 
-	StatTimer(0.0),
-
 	Fighter(nullptr),
 
 	PlayTime(0.0),
@@ -280,35 +278,8 @@ void _Object::Update(double FrameTime) {
 	}
 
 	// Update status effects
-	StatTimer += FrameTime;
-	if(Fighter && StatTimer >= 1.0) {
-		StatTimer -= 1.0;
-
-		// Update stats
-		if(Server && IsAlive()) {
-			_StatChange StatChange;
-			StatChange.Object = this;
-
-			// Update regen
-			if(Fighter->Health < Fighter->MaxHealth && Fighter->HealthRegen != 0)
-				StatChange.Values[StatType::HEALTH].Integer = Fighter->HealthRegen;
-			if(Fighter->Mana < Fighter->MaxMana && Fighter->ManaRegen != 0)
-				StatChange.Values[StatType::MANA].Integer = Fighter->ManaRegen;
-
-			// Update object
-			if(StatChange.GetChangedFlag() != 0) {
-				UpdateStats(StatChange);
-
-				// Build packet
-				_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-				StatChange.Serialize(Packet);
-
-				// Send packet to player
-				SendPacket(Packet);
-			}
-		}
-	}
+	if(Fighter)
+		Fighter->Update(FrameTime);
 
 	// Update timers
 	MoveTime += FrameTime;
