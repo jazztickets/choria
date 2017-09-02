@@ -246,7 +246,6 @@ class _Object : public _ManagerBase {
 		double TeleportTime;
 
 		// HUD
-		std::string ClientMessage;
 		bool MenuOpen;
 		bool InventoryOpen;
 		bool SkillsOpen;

@@ -159,9 +159,6 @@ _Object::~_Object() {
 
 // Updates the player
 void _Object::Update(double FrameTime) {
-	if(!Server)
-		ClientMessage.resize(0);
-
 	CheckEvent = false;
 
 	// Update bots

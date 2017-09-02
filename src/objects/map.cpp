@@ -37,6 +37,7 @@
 #include <constants.h>
 #include <stats.h>
 #include <packet.h>
+#include <hud.h>
 #include <glm/vec3.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -816,8 +817,8 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 		// Set message for client
 		if(!Server) {
 			const _Item *Item = Object->Stats->Items.at(Tile->Event.Data);
-			if(Item)
-				Object->ClientMessage = "You need a " + Item->Name;
+			if(Item && Object->HUD)
+				Object->HUD->SetMessage("You need a " + Item->Name);
 		}
 
 		return false;

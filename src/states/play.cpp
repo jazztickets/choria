@@ -462,10 +462,6 @@ void _PlayState::Update(double FrameTime) {
 	Camera->Set2DPosition(glm::vec2(Player->Position) + glm::vec2(0.5f, 0.5f));
 	Camera->Update(FrameTime);
 
-	// Set HUD message
-	if(Player->ClientMessage.length())
-		HUD->SetMessage(Player->ClientMessage);
-
 	// Update the HUD
 	HUD->Update(FrameTime);
 
