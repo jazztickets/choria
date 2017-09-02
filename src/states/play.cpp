@@ -440,10 +440,10 @@ void _PlayState::Update(double FrameTime) {
 	Map->Update(FrameTime);
 
 	// Send input to server
-	if(Player->Moved) {
+	if(Player->DirectionMoved) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
-		Packet.Write<char>((char)Player->Moved);
+		Packet.Write<char>((char)Player->DirectionMoved);
 		Network->SendPacket(Packet);
 
 		if(!Player->WaitForServer)
@@ -1248,7 +1248,7 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 				}
 
 				if(SkillUnlocked) {
-					Player->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+					Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
 				}
 
 				if(ItemUnlocked) {

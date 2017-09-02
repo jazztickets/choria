@@ -113,6 +113,56 @@ void _Character::Update(double FrameTime) {
 	}
 }
 
+// Update health
+void _Character::UpdateHealth(int &Value) {
+	if(Object->Server && Value > 0)
+		Value *= HealPower;
+
+	Health += Value;
+
+	if(Health < 0)
+		Health = 0;
+	else if(Health > MaxHealth)
+		Health = MaxHealth;
+}
+
+// Update mana
+void _Character::UpdateMana(int Value) {
+	Mana += Value;
+
+	if(Mana < 0)
+		Mana = 0;
+	else if(Mana > MaxMana)
+		Mana = MaxMana;
+}
+
+// Update gold amount
+void _Character::UpdateGold(int Value) {
+
+	Gold += Value;
+	if(Gold > PLAYER_MAX_GOLD)
+		Gold = PLAYER_MAX_GOLD;
+}
+
+// Update experience
+void _Character::UpdateExperience(int Value) {
+
+	Experience += Value;
+	if(Experience < 0)
+		Experience = 0;
+}
+
+// Return true if the object has the skill unlocked
+bool _Character::HasLearned(const _Item *Skill) const {
+	if(!Skill)
+		return false;
+
+	if(Skills.find(Skill->ID) != Skills.end())
+		return true;
+
+	return false;
+}
+
 // Calculates all of the player stats
 void _Character::CalculateStats() {
 
@@ -179,7 +229,7 @@ void _Character::CalculateStats() {
 
 	// Calculate skills points used
 	SkillPointsUsed = 0;
-	for(const auto &SkillLevel : Object->Skills) {
+	for(const auto &SkillLevel : Skills) {
 		const _Item *Skill = Object->Stats->Items.at(SkillLevel.first);
 		if(Skill)
 			SkillPointsUsed += SkillLevel.second;
@@ -327,8 +377,8 @@ void _Character::RefreshActionBarCount() {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		const _Item *Item = ActionBar[i].Item;
 		if(Item) {
-			if(Item->IsSkill() && Object->HasLearned(Item))
-				SkillPointsOnActionBar += Object->Skills[Item->ID];
+			if(Item->IsSkill() && HasLearned(Item))
+				SkillPointsOnActionBar += Skills[Item->ID];
 			else
 				ActionBar[i].Count = Object->Inventory->CountItem(Item);
 		}

@@ -64,10 +64,9 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 	MoveTime(0),
-	Moved(0),
+	DirectionMoved(0),
 	UseCommand(false),
 	WaitForServer(false),
-	CheckEvent(false),
 
 	Battle(nullptr),
 	BattleElement(nullptr),
@@ -159,15 +158,15 @@ _Object::~_Object() {
 
 // Updates the player
 void _Object::Update(double FrameTime) {
-	CheckEvent = false;
+	bool CheckEvent = false;
 
 	// Update bots
 	if(Server && Bot)
 		UpdateBot(FrameTime);
 
 	// Update player position
-	Moved = Move();
-	if(Moved) {
+	DirectionMoved = Move();
+	if(DirectionMoved) {
 		CheckEvent = true;
 
 		// Remove node from pathfinding
@@ -652,7 +651,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write skills
 	Json::Value SkillsNode;
-	for(auto &Skill : Skills) {
+	for(auto &Skill : Character->Skills) {
 		Json::Value SkillNode;
 		SkillNode["id"] = Skill.first;
 		SkillNode["level"] = Skill.second;
@@ -749,7 +748,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set skills
 	for(const Json::Value &SkillNode : Data["skills"]) {
 		uint32_t ItemID = SkillNode["id"].asUInt();
-		Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->Items.at(ItemID)->MaxLevel);
+		Character->Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->Items.at(ItemID)->MaxLevel);
 	}
 
 	// Set actionbar
@@ -860,8 +859,8 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Inventory->Serialize(Data);
 
 	// Write skills
-	Data.Write<uint32_t>((uint32_t)Skills.size());
-	for(const auto &Skill : Skills) {
+	Data.Write<uint32_t>((uint32_t)Character->Skills.size());
+	for(const auto &Skill : Character->Skills) {
 		Data.Write<uint32_t>(Skill.first);
 		Data.Write<int>(Skill.second);
 	}
@@ -949,7 +948,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	for(uint32_t i = 0; i < SkillCount; i++) {
 		uint32_t SkillID = Data.Read<uint32_t>();
 		int Points = Data.Read<int>();
-		Skills[SkillID] = Points;
+		Character->Skills[SkillID] = Points;
 	}
 
 	// Read action bar
@@ -1028,7 +1027,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Update gold
 	if(StatChange.HasStat(StatType::GOLD)) {
-		UpdateGold(StatChange.Values[StatType::GOLD].Integer);
+		Character->UpdateGold(StatChange.Values[StatType::GOLD].Integer);
 	}
 
 	// Update gold stolen
@@ -1038,18 +1037,18 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		if(GoldStolen > PLAYER_MAX_GOLD)
 			GoldStolen = PLAYER_MAX_GOLD;
 
-		UpdateGold(Amount);
+		Character->UpdateGold(Amount);
 	}
 
 	// Update experience
 	if(StatChange.HasStat(StatType::EXPERIENCE)) {
-		UpdateExperience(StatChange.Values[StatType::EXPERIENCE].Integer);
+		Character->UpdateExperience(StatChange.Values[StatType::EXPERIENCE].Integer);
 	}
 
 	// Update health
 	bool WasAlive = Character->IsAlive();
 	if(StatChange.HasStat(StatType::HEALTH))
-		UpdateHealth(StatChange.Values[StatType::HEALTH].Integer);
+		Character->UpdateHealth(StatChange.Values[StatType::HEALTH].Integer);
 
 	// Just died
 	if(WasAlive && !Character->IsAlive()) {
@@ -1067,7 +1066,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Mana change
 	if(StatChange.HasStat(StatType::MANA))
-		UpdateMana(StatChange.Values[StatType::MANA].Integer);
+		Character->UpdateMana(StatChange.Values[StatType::MANA].Integer);
 
 	// Stamina change
 	if(StatChange.HasStat(StatType::STAMINA)) {
@@ -1110,30 +1109,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	return StatusEffect;
 }
 
-// Update health
-void _Object::UpdateHealth(int &Value) {
-	if(Server && Value > 0)
-		Value *= Character->HealPower;
-
-	Character->Health += Value;
-
-	if(Character->Health < 0)
-		Character->Health = 0;
-	else if(Character->Health > Character->MaxHealth)
-		Character->Health = Character->MaxHealth;
-}
-
-// Update mana
-void _Object::UpdateMana(int Value) {
-	Character->Mana += Value;
-
-	if(Character->Mana < 0)
-		Character->Mana = 0;
-	else if(Character->Mana > Character->MaxMana)
-		Character->Mana = Character->MaxMana;
-}
-
-// Moves the player
+// Moves the player and returns direction moved
 int _Object::Move() {
 	if(WaitForServer || Battle || InputStates.size() == 0 || !Character->IsAlive())
 		return 0;
@@ -1165,17 +1141,6 @@ int _Object::Move() {
 // Return true if the object can respec
 bool _Object::CanRespec() const {
 	if(Map && Map->IsValidPosition(Position) && GetTile()->Event.Type == _Map::EVENT_SPAWN)
-		return true;
-
-	return false;
-}
-
-// Return true if the object has the skill unlocked
-bool _Object::HasLearned(const _Item *Skill) const {
-	if(!Skill)
-		return false;
-
-	if(Skills.find(Skill->ID) != Skills.end())
 		return true;
 
 	return false;
@@ -1282,29 +1247,13 @@ void _Object::DeleteStatusEffects() {
 	StatusEffects.clear();
 }
 
-// Update gold amount
-void _Object::UpdateGold(int Value) {
-
-	Character->Gold += Value;
-	if(Character->Gold > PLAYER_MAX_GOLD)
-		Character->Gold = PLAYER_MAX_GOLD;
-}
-
-// Update experience
-void _Object::UpdateExperience(int Value) {
-
-	Character->Experience += Value;
-	if(Character->Experience < 0)
-		Character->Experience = 0;
-}
-
 // Update death count and gold loss
 void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
 
 	// Update stats
+	Character->UpdateGold(-GoldPenalty);
 	Record->Deaths++;
-	UpdateGold(-GoldPenalty);
 	Record->GoldLost += GoldPenalty;
 	Record->Bounty -= BountyLoss;
 	if(Record->Bounty < 0)
@@ -1325,8 +1274,8 @@ bool _Object::GetActionFromSkillbar(_Action &ReturnAction, size_t Slot) {
 			return false;
 
 		// Determine if item is a skill, then look at object's skill levels
-		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
-			ReturnAction.Level = Skills[ReturnAction.Item->ID];
+		if(ReturnAction.Item->IsSkill() && Character->HasLearned(ReturnAction.Item))
+			ReturnAction.Level = Character->Skills[ReturnAction.Item->ID];
 		else
 			ReturnAction.Level = ReturnAction.Item->Level;
 
@@ -1460,20 +1409,20 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 		// Cap points
 		int PointsToSpend = std::min(GetSkillPointsAvailable(), Amount);
-		PointsToSpend = std::min(PointsToSpend, Skill->MaxLevel - Skills[SkillID]);
+		PointsToSpend = std::min(PointsToSpend, Skill->MaxLevel - Character->Skills[SkillID]);
 
 		// Update level
-		Skills[SkillID] += PointsToSpend;
+		Character->Skills[SkillID] += PointsToSpend;
 	}
 	else if(Amount < 0) {
 
 		// Update level
-		Skills[SkillID] += Amount;
-		if(Skills[SkillID] < 0)
-			Skills[SkillID] = 0;
+		Character->Skills[SkillID] += Amount;
+		if(Character->Skills[SkillID] < 0)
+			Character->Skills[SkillID] = 0;
 
 		// Update action bar
-		if(Skills[SkillID] == 0) {
+		if(Character->Skills[SkillID] == 0) {
 			for(size_t i = 0; i < Character->ActionBar.size(); i++) {
 				if(Character->ActionBar[i].Item == Skill) {
 					Character->ActionBar[i].Unset();

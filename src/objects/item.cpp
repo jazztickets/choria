@@ -116,8 +116,8 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(IsSkill()) {
 
 		// Get skill level
-		auto SkillIterator = Player->Skills.find(ID);
-		if(SkillIterator != Player->Skills.end())
+		auto SkillIterator = Player->Character->Skills.find(ID);
+		if(SkillIterator != Player->Character->Skills.end())
 			DrawLevel = SkillIterator->second;
 		else
 			IsLocked = true;
@@ -574,7 +574,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 	// Unlocking skill for the first time
 	if(IsSkill() && ActionResult.ActionUsed.InventorySlot != -1) {
-		return !Object->HasLearned(this);
+		return !Object->Character->HasLearned(this);
 	}
 
 	// Unlocking item

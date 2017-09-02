@@ -1114,7 +1114,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Update gold
-		Player->UpdateGold(-Price);
+		Player->Character->UpdateGold(-Price);
 		if(Peer) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
@@ -1150,7 +1150,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			int Price = InventorySlot.Item->GetPrice(Vendor, Amount, Buy);
 
 			// Update gold
-			Player->UpdateGold(Price);
+			Player->Character->UpdateGold(Price);
 			if(Peer) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
@@ -1336,8 +1336,8 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			}
 
 			// Exchange gold
-			Player->UpdateGold(TradePlayer->TradeGold - Player->TradeGold);
-			TradePlayer->UpdateGold(Player->TradeGold - TradePlayer->TradeGold);
+			Player->Character->UpdateGold(TradePlayer->TradeGold - Player->TradeGold);
+			TradePlayer->Character->UpdateGold(Player->TradeGold - TradePlayer->TradeGold);
 
 			// Move items to inventory and reset
 			Player->WaitingForTrade = false;

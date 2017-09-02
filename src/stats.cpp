@@ -429,7 +429,7 @@ void _Stats::LoadBuilds() {
 		while(Database->FetchRow(1)) {
 			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item)
-				Object->Skills[Item->ID] = Database->GetInt<int>("level", 1);
+				Object->Character->Skills[Item->ID] = Database->GetInt<int>("level", 1);
 		}
 		Database->CloseQuery(1);
 
@@ -507,10 +507,9 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		const _Object *Build = BuildIterator->second;
 
 		// Copy build
-		Monster->Character->ActionBar = Build->Character->ActionBar;
 		Monster->Inventory->Bags = Build->Inventory->Bags;
-		Monster->Skills = Build->Skills;
-
+		Monster->Character->ActionBar = Build->Character->ActionBar;
+		Monster->Character->Skills = Build->Character->Skills;
 		Monster->Character->Health = Monster->Character->MaxHealth = Monster->Character->BaseMaxHealth;
 		Monster->Character->Mana = Monster->Character->MaxMana = Monster->Character->BaseMaxMana;
 		Monster->Character->Gold = Monster->GoldGiven;

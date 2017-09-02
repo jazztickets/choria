@@ -146,13 +146,13 @@ void _Bot::Update(double FrameTime) {
 	Map->Update(FrameTime);
 
 	// Send input to server
-	if(Player->Moved) {
+	if(Player->DirectionMoved) {
 		if(Player->Path.size())
 			Player->Path.erase(Player->Path.begin());
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
-		Packet.Write<char>((char)Player->Moved);
+		Packet.Write<char>((char)Player->DirectionMoved);
 		Network->SendPacket(Packet);
 	}
 
@@ -489,7 +489,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 						}
 
 						if(SkillUnlocked) {
-							Player->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+							Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
 						}
 
 						if(ItemUnlocked) {

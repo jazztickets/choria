@@ -74,7 +74,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 			return false;
 
 		// Apply skill cost
-		if(ItemUsed->IsSkill() && Source->HasLearned(ItemUsed) && InventorySlot == -1) {
+		if(ItemUsed->IsSkill() && Source->Character->HasLearned(ItemUsed) && InventorySlot == -1) {
 
 			ItemUsed->ApplyCost(Source->Scripting, ActionResult);
 		}
@@ -87,7 +87,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 			Source->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
 			DecrementItem = true;
 			if(ItemUsed->IsSkill()) {
-				Source->Skills[ItemUsed->ID] = 0;
+				Source->Character->Skills[ItemUsed->ID] = 0;
 				SkillUnlocked = true;
 			}
 			else if(ItemUsed->IsUnlockable()) {

@@ -711,8 +711,8 @@ void _Battle::ServerEndBattle() {
 
 		// Update stats
 		int CurrentLevel = Object->Character->Level;
-		Object->UpdateExperience(ExperienceEarned);
-		Object->UpdateGold(GoldEarned);
+		Object->Character->UpdateExperience(ExperienceEarned);
+		Object->Character->UpdateGold(GoldEarned);
 		Object->Character->CalculateStats();
 		int NewLevel = Object->Character->Level;
 		if(NewLevel > CurrentLevel) {

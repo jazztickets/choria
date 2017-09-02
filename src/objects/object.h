@@ -114,11 +114,7 @@ class _Object : public _ManagerBase {
 		// Stats
 		bool IsMonster() const { return DatabaseID != 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
-		void UpdateHealth(int &Value);
-		void UpdateMana(int Value);
 		float GetNextLevelPercent() const;
-		void UpdateGold(int Value);
-		void UpdateExperience(int Value);
 		void ApplyDeathPenalty(float Penalty, int BountyLoss);
 
 		// Battles
@@ -145,7 +141,6 @@ class _Object : public _ManagerBase {
 
 		// Skills
 		bool CanRespec() const;
-		bool HasLearned(const _Item *Skill) const;
 		bool HasUnlocked(const _Item *Item) const;
 		int GetSkillPointsAvailable() const { return Character->SkillPoints - Character->SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
@@ -195,10 +190,9 @@ class _Object : public _ManagerBase {
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 		double MoveTime;
-		int Moved;
+		int DirectionMoved;
 		bool UseCommand;
 		bool WaitForServer;
-		bool CheckEvent;
 
 		// Unlocks
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
@@ -256,9 +250,6 @@ class _Object : public _ManagerBase {
 		const _Blacksmith *Blacksmith;
 		const _MinigameType *Minigame;
 		uint32_t Seed;
-
-		// Skills
-		std::unordered_map<uint32_t, int> Skills;
 
 		// Trading
 		_Object *TradePlayer;

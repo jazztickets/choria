@@ -240,7 +240,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				break;
 				case WINDOW_SKILLS:
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(Player->Skills[Tooltip.InventorySlot.Item->ID] > 0)
+						if(Player->Character->Skills[Tooltip.InventorySlot.Item->ID] > 0)
 							Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
@@ -1010,7 +1010,7 @@ void _HUD::InitSkills() {
 
 	// Get all player skills
 	std::list<const _Item *> SortedSkills;
-	for(auto &SkillID : Player->Skills) {
+	for(auto &SkillID : Player->Character->Skills) {
 		const _Item *Skill = PlayState.Stats->Items.at(SkillID.first);
 		if(!Skill)
 			continue;
@@ -2038,7 +2038,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	Packet.Write<uint32_t>(SkillID);
 	Packet.Write<int>(Amount);
 
-	int OldSkillLevel = Player->Skills[SkillID];
+	int OldSkillLevel = Player->Character->Skills[SkillID];
 	Player->AdjustSkillLevel(SkillID, Amount);
 
 	// Equip new skills
@@ -2092,10 +2092,10 @@ void _HUD::EquipSkill(uint32_t SkillID) {
 	if(Skill) {
 
 		// Check skill
-		if(!Player->HasLearned(Skill))
+		if(!Player->Character->HasLearned(Skill))
 			return;
 
-		if(!Player->Skills[SkillID])
+		if(!Player->Character->Skills[SkillID])
 			return;
 
 		// Find existing action
@@ -2134,13 +2134,13 @@ void _HUD::RefreshSkillButtons() {
 	for(auto &Element : SkillsElement->Children) {
 		if(Element->Name == "label_skills_level") {
 			uint32_t SkillID = (uint32_t)Element->Index;
-			Element->Text = std::to_string(Player->Skills[SkillID]);
+			Element->Text = std::to_string(Player->Character->Skills[SkillID]);
 		}
 		else if(Element->Name == "button_skills_plus") {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)Element->Parent->Index;
-			if(SkillPointsRemaining <= 0 || Player->Skills[SkillID] >= Player->Stats->Items.at(SkillID)->MaxLevel)
+			if(SkillPointsRemaining <= 0 || Player->Character->Skills[SkillID] >= Player->Stats->Items.at(SkillID)->MaxLevel)
 				Element->SetActive(false);
 			else
 				Element->SetActive(true);
@@ -2149,7 +2149,7 @@ void _HUD::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)Element->Parent->Index;
-			if(Player->Skills[SkillID] == 0)
+			if(Player->Character->Skills[SkillID] == 0)
 				Element->SetActive(false);
 			else
 				Element->SetActive(true);

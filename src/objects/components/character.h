@@ -34,12 +34,20 @@ class _Character {
 
 		_Character(_Object *Object);
 
+		// Updates
 		void Update(double FrameTime);
+		void UpdateHealth(int &Value);
+		void UpdateMana(int Value);
+		void UpdateGold(int Value);
+		void UpdateExperience(int Value);
 
+		// Skills
+		bool HasLearned(const _Item *Skill) const;
+
+		// Stats
 		void CalculateStats();
 		void CalculateLevelStats(const _Stats *Stats);
 		void RefreshActionBarCount();
-
 		bool IsAlive() const { return Health > 0; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
@@ -102,6 +110,7 @@ class _Character {
 		std::unordered_map<uint32_t, int> Resistances;
 
 		// Skills
+		std::unordered_map<uint32_t, int> Skills;
 		int SkillPoints;
 		int SkillPointsUsed;
 		int SkillPointsOnActionBar;
