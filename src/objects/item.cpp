@@ -616,10 +616,10 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 // Check if an item can target an object
 bool _Item::CanTarget(_Object *Source, _Object *Target) const {
-	if(TargetAlive && !Target->IsAlive())
+	if(TargetAlive && !Target->Character->IsAlive())
 		return false;
 
-	if(!TargetAlive && Target->IsAlive())
+	if(!TargetAlive && Target->Character->IsAlive())
 		return false;
 
 	if(Source->Battle) {

@@ -24,7 +24,9 @@
 // Constructor
 _Character::_Character(_Object *Object) :
 	Object(Object),
+	CharacterID(0),
 	UpdateTimer(0.0),
+	Hardcore(false),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -77,7 +79,7 @@ void _Character::Update(double FrameTime) {
 		UpdateTimer -= 1.0;
 
 		// Update stats
-		if(Object->Server && Object->IsAlive()) {
+		if(Object->Server && Object->Character->IsAlive()) {
 			_StatChange StatChange;
 			StatChange.Object = Object;
 

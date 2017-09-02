@@ -883,7 +883,7 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 	for(const auto &Object : Objects) {
 		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->IsAlive() && Object->Battle && !Object->Battle->PVP && Object->Battle->SideCount[0] < BATTLE_MAXFIGHTERS_SIDE) {
+			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Battle && !Object->Battle->PVP && Object->Battle->SideCount[0] < BATTLE_MAXFIGHTERS_SIDE) {
 				if(Object->PartyName == "" || Object->PartyName == Player->PartyName)
 					return Object->Battle;
 				else
@@ -902,7 +902,7 @@ void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players) {
 
 	for(const auto &Object : Objects) {
 		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->IsAlive() && !Object->Battle && (Object->PartyName == "" || Object->PartyName != Player->PartyName)) {
+			if(Object->Position == Player->Position && Object->Character->IsAlive() && !Object->Battle && (Object->PartyName == "" || Object->PartyName != Player->PartyName)) {
 				Players.push_back(Object);
 			}
 		}

@@ -28,13 +28,14 @@
 #include <cstdint>
 
 // Forward Declarations
+class _Character;
+class _Inventory;
+class _Record;
 class _Map;
 class _Peer;
 class _Texture;
 class _Battle;
 class _Buff;
-class _Inventory;
-class _Character;
 class _Stats;
 class _Server;
 class _Buffer;
@@ -112,10 +113,7 @@ class _Object : public _ManagerBase {
 		void SendPacket(_Buffer &Packet);
 
 		// Stats
-		bool IsAlive() const { return Character->Health > 0; }
 		bool IsMonster() const { return DatabaseID != 0; }
-		float GetHealthPercent() const { return Character->MaxHealth > 0 ? Character->Health / (float)Character->MaxHealth : 0; }
-		float GetManaPercent() const { return Character->MaxMana > 0 ? Character->Mana / (float)Character->MaxMana : 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int &Value);
 		void UpdateMana(int Value);
@@ -166,11 +164,11 @@ class _Object : public _ManagerBase {
 		NetworkIDType GetMapID() const;
 
 		// Input
-		bool CanOpenTrade() { return IsAlive() && !Battle; }
-		bool CanOpenSkills() { return IsAlive() && !Battle; }
-		bool CanOpenInventory() { return IsAlive() && !Battle; }
-		bool CanOpenParty() { return IsAlive() && !Battle; }
-		bool CanTeleport() { return IsAlive() && !Battle; }
+		bool CanOpenTrade() { return Character->IsAlive() && !Battle; }
+		bool CanOpenSkills() { return Character->IsAlive() && !Battle; }
+		bool CanOpenInventory() { return Character->IsAlive() && !Battle; }
+		bool CanOpenParty() { return Character->IsAlive() && !Battle; }
+		bool CanTeleport() { return Character->IsAlive() && !Battle; }
 
 		// Path finding
 		bool Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
@@ -181,6 +179,11 @@ class _Object : public _ManagerBase {
 
 		// Base
 		std::string Name;
+
+		// Components
+		_Character *Character;
+		_Inventory *Inventory;
+		_Record *Record;
 
 		// Client
 		const _Stats *Stats;
@@ -207,20 +210,8 @@ class _Object : public _ManagerBase {
 		// Stats
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
-		// Fighter stats
-		_Character *Character;
-
 		// Player stats
-		double PlayTime;
-		double BattleTime;
-		bool Hardcore;
-		int Deaths;
-		int MonsterKills;
-		int PlayerKills;
-		int GamesPlayed;
-		int Bounty;
 		int Gold;
-		int GoldLost;
 
 		// Battle
 		_Battle *Battle;
@@ -260,17 +251,13 @@ class _Object : public _ManagerBase {
 		int GoldGiven;
 		std::string AI;
 
-		// Account
-		uint32_t CharacterID;
-
 		// Map
 		NetworkIDType LoadMapID;
 		NetworkIDType SpawnMapID;
 		uint32_t SpawnPoint;
 		double TeleportTime;
 
-		// Items
-		_Inventory *Inventory;
+		// HUD
 		bool InventoryOpen;
 
 		// Events

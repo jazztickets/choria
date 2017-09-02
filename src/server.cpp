@@ -24,6 +24,7 @@
 #include <ae/util.h>
 #include <objects/object.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
@@ -232,7 +233,7 @@ void _Server::Update(double FrameTime) {
 		BotTime += FrameTime;
 
 	// Spawn bot
-	if(1 && IsTesting && BotTime > 2.1) {
+	if(0 && IsTesting && BotTime > 2.1) {
 		BotTime = -1;
 		CreateBot();
 	}
@@ -535,7 +536,7 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 	   return;
 
 	_Object *Player = Peer->Object;
-	if(!Player->IsAlive())
+	if(!Player->Character->IsAlive())
 		return;
 
 	Player->InputStates.push_back(Data.Read<char>());
@@ -547,7 +548,7 @@ void _Server::HandleUseCommand(_Buffer &Data, _Peer *Peer) {
 	   return;
 
 	_Object *Player = Peer->Object;
-	if(!Player->IsAlive())
+	if(!Player->Character->IsAlive())
 		return;
 
 	Player->UseCommand = true;
@@ -561,8 +562,8 @@ void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Check death
-	if(!Player->IsAlive()) {
-		if(Player->Hardcore)
+	if(!Player->Character->IsAlive()) {
+		if(Player->Character->Hardcore)
 			return;
 
 		// Wait for battle to finish
@@ -626,7 +627,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		else if(Message.find("-bounty") == 0) {
 			std::regex Regex("-bounty ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Player->Bounty = std::max(0, ToNumber<int>(Match.str(1)));
+				Player->Record->Bounty = std::max(0, ToNumber<int>(Match.str(1)));
 				SendHUD(Peer);
 			}
 		}
@@ -748,7 +749,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 		Player.Stats = Stats;
 		Player.UnserializeSaveData(Save->Database->GetString("data"));
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
-		Packet.Write<uint8_t>(Player.Hardcore);
+		Packet.Write<uint8_t>(Player.Character->Hardcore);
 		Packet.WriteString(Save->Database->GetString("name"));
 		Packet.Write<uint32_t>(Player.PortraitID);
 		Packet.Write<int>(Player.Character->Health);
@@ -855,7 +856,7 @@ void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, int PVP
 
 // Start teleporting a player
 void _Server::StartTeleport(_Object *Object, double Time) {
-	if(Object->Battle || !Object->IsAlive())
+	if(Object->Battle || !Object->Character->IsAlive())
 		return;
 
 	Object->ResetUIState();
@@ -874,7 +875,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 	_Object *Player = ObjectManager->Create();
 	Player->Scripting = Scripting;
 	Player->Server = this;
-	Player->CharacterID = Peer->CharacterID;
+	Player->Character->CharacterID = Peer->CharacterID;
 	Player->Peer = Peer;
 	Player->Stats = Stats;
 	Peer->Object = Player;
@@ -908,7 +909,7 @@ _Object *_Server::CreateBot() {
 	Bot->Bot = true;
 	Bot->Scripting = Scripting;
 	Bot->Server = this;
-	Bot->CharacterID = CharacterID;
+	Bot->Character->CharacterID = CharacterID;
 	Bot->Stats = Stats;
 	Save->LoadPlayer(Stats, Bot);
 
@@ -1509,7 +1510,7 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 		StatChange.Serialize(Packet);
 		Network->SendPacket(Packet, Player->Peer);
 
-		Player->GamesPlayed++;
+		Player->Record->GamesPlayed++;
 	}
 }
 
@@ -1628,7 +1629,7 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	   return;
 
 	_Object *Player = Peer->Object;
-	if(!Player->IsAlive())
+	if(!Player->Character->IsAlive())
 		return;
 
 	// Set action used
@@ -1679,7 +1680,7 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<int>(Player->Character->MaxMana);
 	Packet.Write<int>(Player->Character->Experience);
 	Packet.Write<int>(Player->Gold);
-	Packet.Write<int>(Player->Bounty);
+	Packet.Write<int>(Player->Record->Bounty);
 	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);

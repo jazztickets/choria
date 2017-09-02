@@ -25,6 +25,7 @@
 #include <objects/battle.h>
 #include <objects/map.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <packet.h>
 #include <stats.h>
 #include <constants.h>
@@ -104,7 +105,7 @@ void _Bot::Update(double FrameTime) {
 		return;
 
 	// Respawn
-	if(!Player->WaitForServer && !Player->IsAlive()) {
+	if(!Player->WaitForServer && !Player->Character->IsAlive()) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
 		Network->SendPacket(Packet);
@@ -422,10 +423,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			StatChange.Object = Player;
 
 			// Get ending stats
-			Player->PlayerKills = Data.Read<int>();
-			Player->MonsterKills = Data.Read<int>();
-			Player->GoldLost = Data.Read<int>();
-			Player->Bounty = Data.Read<int>();
+			Player->Record->PlayerKills = Data.Read<int>();
+			Player->Record->MonsterKills = Data.Read<int>();
+			Player->Record->GoldLost = Data.Read<int>();
+			Player->Record->Bounty = Data.Read<int>();
 			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
 			StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
 			uint8_t ItemCount = Data.Read<uint8_t>();
@@ -534,7 +535,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->Character->MaxMana = Data.Read<int>();
 			Player->Character->Experience = Data.Read<int>();
 			Player->Gold = Data.Read<int>();
-			Player->Bounty = Data.Read<int>();
+			Player->Record->Bounty = Data.Read<int>();
 			double Clock = Data.Read<double>();
 
 			Player->CalculateStats();

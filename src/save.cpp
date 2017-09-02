@@ -24,6 +24,7 @@
 #include <objects/item.h>
 #include <objects/buff.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <config.h>
 #include <stats.h>
 #include <constants.h>
@@ -252,10 +253,10 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	_Object Object;
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
-	Object.Hardcore = Hardcore;
+	Object.Character->Hardcore = Hardcore;
 	Object.PortraitID = PortraitID;
 	Object.ModelID = Build->ModelID;
-	Object.CharacterID = (uint32_t)Database->GetLastInsertID();
+	Object.Character->CharacterID = (uint32_t)Database->GetLastInsertID();
 	Object.ActionBar = Build->ActionBar;
 	Object.Inventory->Bags = Build->Inventory->Bags;
 	Object.Skills = Build->Skills;
@@ -272,16 +273,16 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	SavePlayer(&Object, 0, nullptr);
 	EndTransaction();
 
-	return Object.CharacterID;
+	return Object.Character->CharacterID;
 }
 
 // Saves the player
 void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log) {
-	if(Player->CharacterID == 0)
+	if(Player->Character->CharacterID == 0)
 		return;
 
 	// Reset spawn point if player is dead
-	if(!Player->IsAlive())
+	if(!Player->Character->IsAlive())
 		MapID = 0;
 
 	// Get player stats
@@ -298,18 +299,18 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 	// Save character stats
 	Database->PrepareQuery("UPDATE character SET data = @data WHERE id = @character_id");
 	Database->BindString(1, JsonString);
-	Database->BindInt(2, Player->CharacterID);
+	Database->BindInt(2, Player->Character->CharacterID);
 	Database->FetchRow();
 	Database->CloseQuery();
 
 	if(Log) {
 		*Log << "Saving player " << Player->Name
-			 << " ( action=save character_id=" << Player->CharacterID
+			 << " ( action=save character_id=" << Player->Character->CharacterID
 			 << " exp=" << Player->Character->Experience
 			 << " gold=" << Player->Gold
-			 << " playtime=" << Player->PlayTime
-			 << " monsterkills=" << Player->MonsterKills
-			 << " deaths=" << Player->Deaths
+			 << " playtime=" << Player->Record->PlayTime
+			 << " monsterkills=" << Player->Record->MonsterKills
+			 << " deaths=" << Player->Record->Deaths
 			 << " )" << std::endl;
 	}
 }
@@ -319,7 +320,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 
 	// Get character info
 	Database->PrepareQuery("SELECT * FROM character WHERE id = @character_id");
-	Database->BindInt(1, Player->CharacterID);
+	Database->BindInt(1, Player->Character->CharacterID);
 	if(Database->FetchRow()) {
 		Player->Name = Database->GetString("name");
 		Player->UnserializeSaveData(Database->GetString("data"));
@@ -330,7 +331,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 	Player->CalculateStats();
 
 	// Max sure player has health
-	if(!Player->IsAlive() && !Player->Hardcore)
+	if(!Player->Character->IsAlive() && !Player->Character->Hardcore)
 		Player->Character->Health = Player->Character->MaxHealth / 2;
 }
 

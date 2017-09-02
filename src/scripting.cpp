@@ -27,6 +27,7 @@
 #include <objects/statuseffect.h>
 #include <objects/battle.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <objects/map.h>
 #include <server.h>
 #include <stats.h>
@@ -451,7 +452,7 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
 
-	lua_pushinteger(LuaState, Object->CharacterID);
+	lua_pushinteger(LuaState, Object->Character->CharacterID);
 	lua_setfield(LuaState, -2, "CharacterID");
 
 	lua_pushinteger(LuaState, Object->Position.x);

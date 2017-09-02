@@ -18,6 +18,7 @@
 #include <states/play.h>
 #include <objects/object.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/map.h>
@@ -214,7 +215,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 		HUD->ShowDebug = !HUD->ShowDebug;
 
 	// Respawn
-	if(!Player->IsAlive()) {
+	if(!Player->Character->IsAlive()) {
 		if(Action == Action::MENU_BACK || Action == Action::MENU_PAUSE) {
 			HUD->ToggleInGameMenu(true);
 			return true;
@@ -1167,10 +1168,10 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	StatChange.Object = Player;
 
 	// Get ending stats
-	Player->PlayerKills = Data.Read<int>();
-	Player->MonsterKills = Data.Read<int>();
-	Player->GoldLost = Data.Read<int>();
-	Player->Bounty = Data.Read<int>();
+	Player->Record->PlayerKills = Data.Read<int>();
+	Player->Record->MonsterKills = Data.Read<int>();
+	Player->Record->GoldLost = Data.Read<int>();
+	Player->Record->Bounty = Data.Read<int>();
 	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
 	StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
@@ -1188,8 +1189,8 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	}
 
 	// Update client death count
-	if(!Player->IsAlive()) {
-		Player->Deaths++;
+	if(!Player->Character->IsAlive()) {
+		Player->Record->Deaths++;
 		PlayDeathSound();
 	}
 
@@ -1304,7 +1305,7 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 		return;
 
 	// Check if player is alive
-	bool WasAlive = Player->IsAlive();
+	bool WasAlive = Player->Character->IsAlive();
 
 	// Get stats
 	StatChange.Unserialize(Data, ObjectManager);
@@ -1355,7 +1356,7 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	Player->Character->MaxMana = Data.Read<int>();
 	Player->Character->Experience = Data.Read<int>();
 	Player->Gold = Data.Read<int>();
-	Player->Bounty = Data.Read<int>();
+	Player->Record->Bounty = Data.Read<int>();
 	double Clock = Data.Read<double>();
 
 	Player->CalculateStats();

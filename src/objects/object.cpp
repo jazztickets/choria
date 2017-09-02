@@ -20,6 +20,7 @@
 #include <objects/statchange.h>
 #include <objects/components/inventory.h>
 #include <objects/components/character.h>
+#include <objects/components/record.h>
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
@@ -50,6 +51,9 @@
 // Constructor
 _Object::_Object() :
 	Name(""),
+	Character(nullptr),
+	Inventory(nullptr),
+	Record(nullptr),
 	Stats(nullptr),
 	Map(nullptr),
 	HUD(nullptr),
@@ -64,19 +68,6 @@ _Object::_Object() :
 	MoveTime(0),
 	Position(0, 0),
 	ServerPosition(0, 0),
-
-	Character(nullptr),
-
-	PlayTime(0.0),
-	BattleTime(0.0),
-	Hardcore(false),
-	Deaths(0),
-	MonsterKills(0),
-	PlayerKills(0),
-	GamesPlayed(0),
-	Bounty(0),
-	Gold(0),
-	GoldLost(0),
 
 	Battle(nullptr),
 	BattleElement(nullptr),
@@ -106,14 +97,11 @@ _Object::_Object() :
 	GoldGiven(0),
 	AI(""),
 
-	CharacterID(0),
-
 	LoadMapID(0),
 	SpawnMapID(1),
 	SpawnPoint(0),
 	TeleportTime(-1),
 
-	Inventory(nullptr),
 	InventoryOpen(false),
 
 	Vendor(nullptr),
@@ -133,10 +121,14 @@ _Object::_Object() :
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);
+	Record = new _Record(this);
 }
 
 // Destructor
 _Object::~_Object() {
+
+	delete Record;
+	Record = nullptr;
 
 	delete Character;
 	Character = nullptr;
@@ -196,7 +188,7 @@ void _Object::Update(double FrameTime) {
 	}
 
 	// Update actions and battle
-	if(IsAlive()) {
+	if(Character->IsAlive()) {
 
 		// Update monster AI
 		if(Server && Battle && IsMonster())
@@ -249,14 +241,14 @@ void _Object::Update(double FrameTime) {
 			StatusEffect->Time -= 1.0;
 
 			// Resolve effects
-			if(Server && IsAlive()) {
+			if(Server && Character->IsAlive()) {
 				ResolveBuff(StatusEffect, "Update");
 			}
 		}
 
 		// Reduce count
 		StatusEffect->Duration -= FrameTime;
-		if(StatusEffect->Duration <= 0 || !IsAlive()) {
+		if(StatusEffect->Duration <= 0 || !Character->IsAlive()) {
 			delete StatusEffect;
 			Iterator = StatusEffects.erase(Iterator);
 
@@ -296,9 +288,11 @@ void _Object::Update(double FrameTime) {
 	}
 
 	// Update playtime
-	PlayTime += FrameTime;
-	if(Battle)
-		BattleTime += FrameTime;
+	if(Record) {
+		Record->PlayTime += FrameTime;
+		if(Battle)
+			Record->BattleTime += FrameTime;
+	}
 
 	// Check events
 	if(Map && CheckEvent)
@@ -306,7 +300,7 @@ void _Object::Update(double FrameTime) {
 
 	// Update status
 	Status = STATUS_NONE;
-	if(!IsAlive())
+	if(!Character->IsAlive())
 		Status = STATUS_DEAD;
 	else if(Battle)
 		Status = STATUS_BATTLE;
@@ -458,7 +452,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	glm::vec4 GlobalColor(glm::vec4(1.0f));
 	GlobalColor.a = 1.0f;
-	if(!IsAlive())
+	if(!Character->IsAlive())
 		GlobalColor.a = 0.2f;
 
 	// Draw slot
@@ -499,7 +493,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
-	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * GetHealthPercent(), BarSize.y) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Character->GetHealthPercent(), BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_health_bar_full"]->Texture, true);
 
 	// Draw health text
@@ -616,7 +610,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write stats
 	Json::Value StatsNode;
-	StatsNode["hardcore"] = Hardcore;
+	StatsNode["hardcore"] = Character->Hardcore;
 	StatsNode["map_x"] = Position.x;
 	StatsNode["map_y"] = Position.y;
 	StatsNode["spawnmap_id"] = SpawnMapID;
@@ -628,14 +622,14 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["mana"] = Character->Mana;
 	StatsNode["experience"] = Character->Experience;
 	StatsNode["gold"] = Gold;
-	StatsNode["goldlost"] = GoldLost;
-	StatsNode["playtime"] = PlayTime;
-	StatsNode["battletime"] = BattleTime;
-	StatsNode["deaths"] = Deaths;
-	StatsNode["monsterkills"] = MonsterKills;
-	StatsNode["playerkills"] = PlayerKills;
-	StatsNode["gamesplayed"] = GamesPlayed;
-	StatsNode["bounty"] = Bounty;
+	StatsNode["goldlost"] = Record->GoldLost;
+	StatsNode["playtime"] = Record->PlayTime;
+	StatsNode["battletime"] = Record->BattleTime;
+	StatsNode["deaths"] = Record->Deaths;
+	StatsNode["monsterkills"] = Record->MonsterKills;
+	StatsNode["playerkills"] = Record->PlayerKills;
+	StatsNode["gamesplayed"] = Record->GamesPlayed;
+	StatsNode["bounty"] = Record->Bounty;
 	StatsNode["nextbattle"] = NextBattle;
 	StatsNode["seed"] = Seed;
 	Data["stats"] = StatsNode;
@@ -723,21 +717,21 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Position.y = StatsNode["map_y"].asInt();
 	SpawnMapID = (NetworkIDType)StatsNode["spawnmap_id"].asUInt();
 	SpawnPoint = StatsNode["spawnpoint"].asUInt();
-	Hardcore = StatsNode["hardcore"].asBool();
+	Character->Hardcore = StatsNode["hardcore"].asBool();
 	PortraitID = StatsNode["portrait_id"].asUInt();
 	ModelID = StatsNode["model_id"].asUInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
 	Character->Experience = StatsNode["experience"].asInt();
 	Gold = StatsNode["gold"].asInt();
-	GoldLost = StatsNode["goldlost"].asInt();
-	PlayTime = StatsNode["playtime"].asDouble();
-	BattleTime = StatsNode["battletime"].asDouble();
-	Deaths = StatsNode["deaths"].asInt();
-	MonsterKills = StatsNode["monsterkills"].asInt();
-	PlayerKills = StatsNode["playerkills"].asInt();
-	GamesPlayed = StatsNode["gamesplayed"].asInt();
-	Bounty = StatsNode["bounty"].asInt();
+	Record->GoldLost = StatsNode["goldlost"].asInt();
+	Record->PlayTime = StatsNode["playtime"].asDouble();
+	Record->BattleTime = StatsNode["battletime"].asDouble();
+	Record->Deaths = StatsNode["deaths"].asInt();
+	Record->MonsterKills = StatsNode["monsterkills"].asInt();
+	Record->PlayerKills = StatsNode["playerkills"].asInt();
+	Record->GamesPlayed = StatsNode["gamesplayed"].asInt();
+	Record->Bounty = StatsNode["bounty"].asInt();
 	NextBattle = StatsNode["nextbattle"].asInt();
 	Seed = StatsNode["seed"].asUInt();
 
@@ -858,16 +852,16 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(Character->MaxMana);
 	Data.Write<int>(Character->Experience);
 	Data.Write<int>(Gold);
-	Data.Write<int>(GoldLost);
-	Data.Write<double>(PlayTime);
-	Data.Write<double>(BattleTime);
-	Data.Write<int>(Deaths);
-	Data.Write<int>(MonsterKills);
-	Data.Write<int>(PlayerKills);
-	Data.Write<int>(GamesPlayed);
-	Data.Write<int>(Bounty);
+	Data.Write<int>(Record->GoldLost);
+	Data.Write<double>(Record->PlayTime);
+	Data.Write<double>(Record->BattleTime);
+	Data.Write<int>(Record->Deaths);
+	Data.Write<int>(Record->MonsterKills);
+	Data.Write<int>(Record->PlayerKills);
+	Data.Write<int>(Record->GamesPlayed);
+	Data.Write<int>(Record->Bounty);
 	Data.Write<int>(Invisible);
-	Data.Write<int>(Hardcore);
+	Data.Write<int>(Character->Hardcore);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -941,16 +935,16 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
 	Character->Experience = Data.Read<int>();
 	Gold = Data.Read<int>();
-	GoldLost = Data.Read<int>();
-	PlayTime = Data.Read<double>();
-	BattleTime = Data.Read<double>();
-	Deaths = Data.Read<int>();
-	MonsterKills = Data.Read<int>();
-	PlayerKills = Data.Read<int>();
-	GamesPlayed = Data.Read<int>();
-	Bounty = Data.Read<int>();
+	Record->GoldLost = Data.Read<int>();
+	Record->PlayTime = Data.Read<double>();
+	Record->BattleTime = Data.Read<double>();
+	Record->Deaths = Data.Read<int>();
+	Record->MonsterKills = Data.Read<int>();
+	Record->PlayerKills = Data.Read<int>();
+	Record->GamesPlayed = Data.Read<int>();
+	Record->Bounty = Data.Read<int>();
 	Invisible = Data.Read<int>();
-	Hardcore = Data.Read<int>();
+	Character->Hardcore = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1060,12 +1054,12 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	}
 
 	// Update health
-	bool WasAlive = IsAlive();
+	bool WasAlive = Character->IsAlive();
 	if(StatChange.HasStat(StatType::HEALTH))
 		UpdateHealth(StatChange.Values[StatType::HEALTH].Integer);
 
 	// Just died
-	if(WasAlive && !IsAlive()) {
+	if(WasAlive && !Character->IsAlive()) {
 		PotentialAction.Unset();
 		Action.Unset();
 		ResetUIState();
@@ -1105,7 +1099,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Run server only commands
 	if(Server) {
-		if(!Battle && IsAlive() && StatChange.HasStat(StatType::TELEPORT)) {
+		if(!Battle && Character->IsAlive() && StatChange.HasStat(StatType::TELEPORT)) {
 			Server->StartTeleport(this, StatChange.Values[StatType::TELEPORT].Float);
 		}
 
@@ -1148,7 +1142,7 @@ void _Object::UpdateMana(int Value) {
 
 // Moves the player
 int _Object::Move() {
-	if(WaitForServer || Battle || InputStates.size() == 0 || !IsAlive())
+	if(WaitForServer || Battle || InputStates.size() == 0 || !Character->IsAlive())
 		return 0;
 
 	// Check timer
@@ -1316,17 +1310,17 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 	int GoldPenalty = BountyLoss + (int)(std::abs(Gold) * Penalty + 0.5f);
 
 	// Update stats
-	Deaths++;
+	Record->Deaths++;
 	UpdateGold(-GoldPenalty);
-	GoldLost += GoldPenalty;
-	Bounty -= BountyLoss;
-	if(Bounty < 0)
-		Bounty = 0;
+	Record->GoldLost += GoldPenalty;
+	Record->Bounty -= BountyLoss;
+	if(Record->Bounty < 0)
+		Record->Bounty = 0;
 
 	// Send message
 	if(Server && Peer) {
 		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), "red");
-		Server->Log << "Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( action=death character_id=" << CharacterID << " gold=" << Gold << " deaths=" << Deaths << " )" << std::endl;
+		Server->Log << "Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( action=death character_id=" << Character->CharacterID << " gold=" << Gold << " deaths=" << Record->Deaths << " )" << std::endl;
 	}
 }
 
@@ -1451,7 +1445,7 @@ bool _Object::AcceptingMoveInput() {
 	if(Minigame)
 		return false;
 
-	if(!IsAlive())
+	if(!Character->IsAlive())
 		return false;
 
 	return true;

@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <ae/servernetwork.h>
@@ -92,7 +93,7 @@ void _Battle::Update(double FrameTime) {
 		// Count alive fighters for each side
 		int AliveCount[2] = { 0, 0 };
 		for(auto &Fighter : Fighters) {
-			if(Fighter->IsAlive())
+			if(Fighter->Character->IsAlive())
 				AliveCount[Fighter->BattleSide]++;
 		}
 
@@ -199,7 +200,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		return;
 
 	// Check for dead
-	if(!ClientPlayer->IsAlive())
+	if(!ClientPlayer->Character->IsAlive())
 		return;
 
 	// Player already locked in
@@ -348,7 +349,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
-	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->IsAlive() || !ClientPlayer->Targets.size())
+	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->Character->IsAlive() || !ClientPlayer->Targets.size())
 		return;
 
 	// Can't change self targetting actions
@@ -448,7 +449,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighter->TeleportTime = -1.0;
 	Fighter->JoinedBattle = Join;
 	Fighter->GoldStolen = 0;
-	if(Fighter->Server) {
+	if(Server) {
 		Fighter->GenerateNextBattle();
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
@@ -466,7 +467,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighters.push_back(Fighter);
 
 	// Fighter joining on the client
-	if(!Fighter->Server && Join) {
+	if(!Server && Join) {
 
 		// Adjust existing battle elements and create new one
 		int SideIndex = 0;
@@ -497,7 +498,7 @@ void _Battle::GetFighterList(int Side, std::list<_Object *> &SideFighters) {
 void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters) {
 
 	for(auto &Fighter : Fighters) {
-		if(Fighter->BattleSide == Side && Fighter->IsAlive()) {
+		if(Fighter->BattleSide == Side && Fighter->Character->IsAlive()) {
 			AliveFighters.push_back(Fighter);
 		}
 	}
@@ -580,7 +581,7 @@ void _Battle::ServerEndBattle() {
 				SideStats[Side].JoinedCount++;
 
 			// Tally alive fighters
-			if(Fighter->IsAlive()) {
+			if(Fighter->Character->IsAlive()) {
 				SideStats[Side].AliveCount++;
 				SideStats[Side].Dead = false;
 			}
@@ -592,7 +593,7 @@ void _Battle::ServerEndBattle() {
 			if(Fighter->IsMonster())
 				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven + Fighter->GoldStolen;
 			else
-				SideStats[Side].TotalGoldGiven += Fighter->Bounty + Fighter->GoldStolen + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
+				SideStats[Side].TotalGoldGiven += Fighter->Record->Bounty + Fighter->GoldStolen + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
@@ -637,7 +638,7 @@ void _Battle::ServerEndBattle() {
 		std::list<_Object *> RewardFighters;
 		int DropRate = 0;
 		for(auto &Object : SideFighters[WinningSide]) {
-			if(Object->IsAlive()) {
+			if(Object->Character->IsAlive()) {
 				DropRate += Object->Character->DropRate;
 				RewardFighters.push_back(Object);
 			}
@@ -684,28 +685,28 @@ void _Battle::ServerEndBattle() {
 		// Get rewards
 		int ExperienceEarned = 0;
 		int GoldEarned = 0;
-		if(!Object->IsAlive()) {
+		if(!Object->Character->IsAlive()) {
 			if(PVP)
-				Object->ApplyDeathPenalty(PVP * 0.01f, Object->Bounty);
+				Object->ApplyDeathPenalty(PVP * 0.01f, Object->Record->Bounty);
 			else
 				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
 			GoldEarned = SideStats[WinningSide].GoldPerFighter;
-			Object->PlayerKills += SideStats[!WinningSide].PlayerCount;
-			Object->MonsterKills += SideStats[!WinningSide].MonsterCount;
+			Object->Record->PlayerKills += SideStats[!WinningSide].PlayerCount;
+			Object->Record->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP) {
 				if(Object->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
-					Object->Bounty += GoldEarned;
-					if(Object->Bounty)
-						Server->BroadcastMessage(nullptr, "Player \"" + Object->Name + "\" now has a bounty of " + std::to_string(Object->Bounty) + " gold!", "cyan");
+					Object->Record->Bounty += GoldEarned;
+					if(Object->Record->Bounty)
+						Server->BroadcastMessage(nullptr, "Player \"" + Object->Name + "\" now has a bounty of " + std::to_string(Object->Record->Bounty) + " gold!", "cyan");
 				}
 			}
 		}
 
 		// Start cooldown timer
-		if(Object->IsAlive() && Cooldown > 0.0 && Zone)
+		if(Object->Character->IsAlive() && Cooldown > 0.0 && Zone)
 			Object->BattleCooldown[Zone] = Cooldown;
 
 		// Update stats
@@ -725,10 +726,10 @@ void _Battle::ServerEndBattle() {
 		// Write results
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
-		Packet.Write<int>(Object->PlayerKills);
-		Packet.Write<int>(Object->MonsterKills);
-		Packet.Write<int>(Object->GoldLost);
-		Packet.Write<int>(Object->Bounty);
+		Packet.Write<int>(Object->Record->PlayerKills);
+		Packet.Write<int>(Object->Record->MonsterKills);
+		Packet.Write<int>(Object->Record->GoldLost);
+		Packet.Write<int>(Object->Record->Bounty);
 		Packet.Write<int>(ExperienceEarned);
 		Packet.Write<int>(GoldEarned);
 
@@ -875,7 +876,7 @@ void _Battle::GetSeparateFighterList(uint8_t Side, std::list<_Object *> &Allies,
 
 		if(Fighter->BattleSide == Side)
 			Allies.push_back(Fighter);
-		else if(Fighter->IsAlive())
+		else if(Fighter->Character->IsAlive())
 			Enemies.push_back(Fighter);
 	}
 }

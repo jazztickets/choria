@@ -30,6 +30,7 @@
 #include <objects/object.h>
 #include <objects/item.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/battle.h>
@@ -184,7 +185,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
 					PlayState.Network->SendPacket(Packet);
 
-					Player->GamesPlayed++;
+					Player->Record->GamesPlayed++;
 				}
 			}
 		}
@@ -616,7 +617,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	ButtonBarElement->Render();
 
 	// Draw hud elements while alive or in battle
-	if(Player->IsAlive() || Player->Battle) {
+	if(Player->Character->IsAlive() || Player->Battle) {
 		DiedElement->SetActive(false);
 		Assets.Elements["element_hud"]->Render();
 		DrawActionBar();
@@ -647,7 +648,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer << Player->Character->Health << " / " << Player->Character->MaxHealth;
 		Assets.Elements["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->GetHealthPercent());
+		Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->Character->GetHealthPercent());
 		Assets.Elements["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
 		HealthElement->Render();
 
@@ -655,7 +656,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer << Player->Character->Mana << " / " << Player->Character->MaxMana;
 		Assets.Elements["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->GetManaPercent());
+		Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->Character->GetManaPercent());
 		Assets.Elements["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
 		ManaElement->Render();
 
@@ -727,7 +728,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Show respawn instructions
 		Buffer << "Hit " << Actions.GetInputNameForAction(Action::MENU_BACK);
-		if(Player->Hardcore)
+		if(Player->Character->Hardcore)
 			Buffer << " to exit";
 		else
 			Buffer << " to respawn";
@@ -903,7 +904,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 		PlayState.Network->Disconnect();
 	else {
 		Menu.ShowExitWarning = Player->Battle;
-		Menu.ShowRespawn = !Player->IsAlive() && !Player->Hardcore;
+		Menu.ShowRespawn = !Player->Character->IsAlive() && !Player->Character->Hardcore;
 		Menu.InitInGame();
 	}
 }
@@ -1754,7 +1755,7 @@ void _HUD::DrawCharacterStats() {
 		DrawPosition.y += SpacingY;
 
 	// Play time
-	int64_t PlayTime = (int64_t)Player->PlayTime;
+	int64_t PlayTime = (int64_t)Player->Record->PlayTime;
 	if(PlayTime < 60)
 		Buffer << PlayTime << "s";
 	else if(PlayTime < 3600)
@@ -1768,7 +1769,7 @@ void _HUD::DrawCharacterStats() {
 	DrawPosition.y += SpacingY;
 
 	// Battle time
-	int64_t BattleTime = (int64_t)Player->BattleTime;
+	int64_t BattleTime = (int64_t)Player->Record->BattleTime;
 	if(BattleTime < 60)
 		Buffer << BattleTime << "s";
 	else if(BattleTime < 3600)
@@ -1782,8 +1783,8 @@ void _HUD::DrawCharacterStats() {
 	DrawPosition.y += SpacingY;
 
 	// Monster kills
-	if(Player->MonsterKills > 0) {
-		Buffer << Player->MonsterKills;
+	if(Player->Record->MonsterKills > 0) {
+		Buffer << Player->Record->MonsterKills;
 		Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1791,8 +1792,8 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Player kills
-	if(Player->PlayerKills > 0) {
-		Buffer << Player->PlayerKills;
+	if(Player->Record->PlayerKills > 0) {
+		Buffer << Player->Record->PlayerKills;
 		Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1800,8 +1801,8 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Deaths
-	if(Player->Deaths > 0) {
-		Buffer << Player->Deaths;
+	if(Player->Record->Deaths > 0) {
+		Buffer << Player->Record->Deaths;
 		Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1809,8 +1810,8 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Bounty
-	if(Player->Bounty > 0) {
-		Buffer << Player->Bounty;
+	if(Player->Record->Bounty > 0) {
+		Buffer << Player->Record->Bounty;
 		Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1818,8 +1819,8 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Gold lost
-	if(Player->GoldLost > 0) {
-		Buffer << Player->GoldLost;
+	if(Player->Record->GoldLost > 0) {
+		Buffer << Player->Record->GoldLost;
 		Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1827,8 +1828,8 @@ void _HUD::DrawCharacterStats() {
 	}
 
 	// Games played
-	if(Player->GamesPlayed > 0) {
-		Buffer << Player->GamesPlayed;
+	if(Player->Record->GamesPlayed > 0) {
+		Buffer << Player->Record->GamesPlayed;
 		Assets.Fonts["hud_small"]->DrawText("Games Played", DrawPosition + -Spacing, RIGHT_BASELINE);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -1899,7 +1900,7 @@ void _HUD::DrawMessage() {
 
 // Draw recently acquired items
 void _HUD::DrawRecentItems() {
-	if(!RecentItems.size() || !Player->IsAlive())
+	if(!RecentItems.size() || !Player->Character->IsAlive())
 		return;
 
 	// Draw label
@@ -2485,7 +2486,7 @@ void _HUD::UpdateLabels() {
 		Assets.Elements["label_hud_party"]->Text = "No Party";
 
 	// Update hardcore status
-	Assets.Elements["label_hud_hardcore"]->SetActive(Player->Hardcore);
+	Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
 	Buffer << Player->Gold << " Gold";
