@@ -19,7 +19,7 @@
 #include <objects/buff.h>
 #include <objects/statchange.h>
 #include <objects/components/inventory.h>
-#include <objects/components/fighter.h>
+#include <objects/components/character.h>
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
@@ -65,7 +65,7 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 
-	Fighter(nullptr),
+	Character(nullptr),
 
 	PlayTime(0.0),
 	BattleTime(0.0),
@@ -132,14 +132,14 @@ _Object::_Object() :
 	Bot(false) {
 
 	Inventory = new _Inventory();
-	Fighter = new _Fighter(this);
+	Character = new _Character(this);
 }
 
 // Destructor
 _Object::~_Object() {
 
-	delete Fighter;
-	Fighter = nullptr;
+	delete Character;
+	Character = nullptr;
 
 	delete Inventory;
 	Inventory = nullptr;
@@ -205,7 +205,7 @@ void _Object::Update(double FrameTime) {
 		// Check turn timer
 		if(Battle) {
 			if(!Stunned)
-				TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * Fighter->BattleSpeed / 100.0;
+				TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * Character->BattleSpeed / 100.0;
 		}
 		else
 			TurnTimer = 1.0;
@@ -278,8 +278,8 @@ void _Object::Update(double FrameTime) {
 	}
 
 	// Update status effects
-	if(Fighter)
-		Fighter->Update(FrameTime);
+	if(Character)
+		Character->Update(FrameTime);
 
 	// Update timers
 	MoveTime += FrameTime;
@@ -504,13 +504,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw health text
 	std::stringstream Buffer;
-	Buffer << Round(Fighter->Health) << " / " << Round(Fighter->MaxHealth);
+	Buffer << Round(Character->Health) << " / " << Round(Character->MaxHealth);
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
 	// Draw mana
-	if(Fighter->MaxMana > 0) {
-		float ManaPercent = Fighter->MaxMana > 0 ? Fighter->Mana / (float)Fighter->MaxMana : 0;
+	if(Character->MaxMana > 0) {
+		float ManaPercent = Character->MaxMana > 0 ? Character->Mana / (float)Character->MaxMana : 0;
 
 		// Get ui size
 		BarOffset.y += BarSize.y + BarPaddingY;
@@ -528,7 +528,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
-		Buffer << Round(Fighter->Mana) << " / " << Round(Fighter->MaxMana);
+		Buffer << Round(Character->Mana) << " / " << Round(Character->MaxMana);
 		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
@@ -624,9 +624,9 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["portrait_id"] = PortraitID;
 	StatsNode["model_id"] = ModelID;
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)ActionBar.size();
-	StatsNode["health"] = Fighter->Health;
-	StatsNode["mana"] = Fighter->Mana;
-	StatsNode["experience"] = Fighter->Experience;
+	StatsNode["health"] = Character->Health;
+	StatsNode["mana"] = Character->Mana;
+	StatsNode["experience"] = Character->Experience;
 	StatsNode["gold"] = Gold;
 	StatsNode["goldlost"] = GoldLost;
 	StatsNode["playtime"] = PlayTime;
@@ -726,9 +726,9 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Hardcore = StatsNode["hardcore"].asBool();
 	PortraitID = StatsNode["portrait_id"].asUInt();
 	ModelID = StatsNode["model_id"].asUInt();
-	Fighter->Health = StatsNode["health"].asInt();
-	Fighter->Mana = StatsNode["mana"].asInt();
-	Fighter->Experience = StatsNode["experience"].asInt();
+	Character->Health = StatsNode["health"].asInt();
+	Character->Mana = StatsNode["mana"].asInt();
+	Character->Experience = StatsNode["experience"].asInt();
 	Gold = StatsNode["gold"].asInt();
 	GoldLost = StatsNode["goldlost"].asInt();
 	PlayTime = StatsNode["playtime"].asDouble();
@@ -789,7 +789,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 // Generate damage
 int _Object::GenerateDamage() {
-	return GetRandomInt(Fighter->MinDamage, Fighter->MaxDamage);
+	return GetRandomInt(Character->MinDamage, Character->MaxDamage);
 }
 
 // Create a UI element for battle
@@ -852,11 +852,11 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(PartyName.c_str());
 	Data.Write<uint32_t>(PortraitID);
 	Data.Write<uint32_t>(ModelID);
-	Data.Write<int>(Fighter->Health);
-	Data.Write<int>(Fighter->MaxHealth);
-	Data.Write<int>(Fighter->Mana);
-	Data.Write<int>(Fighter->MaxMana);
-	Data.Write<int>(Fighter->Experience);
+	Data.Write<int>(Character->Health);
+	Data.Write<int>(Character->MaxHealth);
+	Data.Write<int>(Character->Mana);
+	Data.Write<int>(Character->MaxMana);
+	Data.Write<int>(Character->Experience);
 	Data.Write<int>(Gold);
 	Data.Write<int>(GoldLost);
 	Data.Write<double>(PlayTime);
@@ -905,10 +905,10 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<uint32_t>(DatabaseID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<double>(TurnTimer);
-	Data.Write<int>(Fighter->Health);
-	Data.Write<int>(Fighter->MaxHealth);
-	Data.Write<int>(Fighter->Mana);
-	Data.Write<int>(Fighter->MaxMana);
+	Data.Write<int>(Character->Health);
+	Data.Write<int>(Character->MaxHealth);
+	Data.Write<int>(Character->Mana);
+	Data.Write<int>(Character->MaxMana);
 	Data.Write<uint8_t>(BattleSide);
 
 	Data.Write<uint8_t>((uint8_t)StatusEffects.size());
@@ -935,11 +935,11 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	PartyName = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
 	ModelID = Data.Read<uint32_t>();
-	Fighter->Health = Data.Read<int>();
-	Fighter->BaseMaxHealth = Fighter->MaxHealth = Data.Read<int>();
-	Fighter->Mana = Data.Read<int>();
-	Fighter->BaseMaxMana = Fighter->MaxMana = Data.Read<int>();
-	Fighter->Experience = Data.Read<int>();
+	Character->Health = Data.Read<int>();
+	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
+	Character->Mana = Data.Read<int>();
+	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
+	Character->Experience = Data.Read<int>();
 	Gold = Data.Read<int>();
 	GoldLost = Data.Read<int>();
 	PlayTime = Data.Read<double>();
@@ -1001,10 +1001,10 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	// Get fighter type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
 	TurnTimer = Data.Read<double>();
-	Fighter->Health = Data.Read<int>();
-	Fighter->BaseMaxHealth = Fighter->MaxHealth = Data.Read<int>();
-	Fighter->Mana = Data.Read<int>();
-	Fighter->BaseMaxMana = Fighter->MaxMana = Data.Read<int>();
+	Character->Health = Data.Read<int>();
+	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
+	Character->Mana = Data.Read<int>();
+	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
 	BattleSide = Data.Read<uint8_t>();
 
 	DeleteStatusEffects();
@@ -1126,24 +1126,24 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 // Update health
 void _Object::UpdateHealth(int &Value) {
 	if(Server && Value > 0)
-		Value *= Fighter->HealPower;
+		Value *= Character->HealPower;
 
-	Fighter->Health += Value;
+	Character->Health += Value;
 
-	if(Fighter->Health < 0)
-		Fighter->Health = 0;
-	else if(Fighter->Health > Fighter->MaxHealth)
-		Fighter->Health = Fighter->MaxHealth;
+	if(Character->Health < 0)
+		Character->Health = 0;
+	else if(Character->Health > Character->MaxHealth)
+		Character->Health = Character->MaxHealth;
 }
 
 // Update mana
 void _Object::UpdateMana(int Value) {
-	Fighter->Mana += Value;
+	Character->Mana += Value;
 
-	if(Fighter->Mana < 0)
-		Fighter->Mana = 0;
-	else if(Fighter->Mana > Fighter->MaxMana)
-		Fighter->Mana = Fighter->MaxMana;
+	if(Character->Mana < 0)
+		Character->Mana = 0;
+	else if(Character->Mana > Character->MaxMana)
+		Character->Mana = Character->MaxMana;
 }
 
 // Moves the player
@@ -1152,7 +1152,7 @@ int _Object::Move() {
 		return 0;
 
 	// Check timer
-	if(MoveTime < PLAYER_MOVETIME / (Fighter->MoveSpeed / 100.0))
+	if(MoveTime < PLAYER_MOVETIME / (Character->MoveSpeed / 100.0))
 		return 0;
 
 	MoveTime = 0;
@@ -1306,9 +1306,9 @@ void _Object::UpdateGold(int Value) {
 // Update experience
 void _Object::UpdateExperience(int Value) {
 
-	Fighter->Experience += Value;
-	if(Fighter->Experience < 0)
-		Fighter->Experience = 0;
+	Character->Experience += Value;
+	if(Character->Experience < 0)
+		Character->Experience = 0;
 }
 
 // Update death count and gold loss
@@ -1332,12 +1332,12 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 
 // Update counts on action bar
 void _Object::RefreshActionBarCount() {
-	Fighter->SkillPointsOnActionBar = 0;
+	Character->SkillPointsOnActionBar = 0;
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		const _Item *Item = ActionBar[i].Item;
 		if(Item) {
 			if(Item->IsSkill() && HasLearned(Item))
-				Fighter->SkillPointsOnActionBar += Skills[Item->ID];
+				Character->SkillPointsOnActionBar += Skills[Item->ID];
 			else
 				ActionBar[i].Count = Inventory->CountItem(Item);
 		}
@@ -1395,8 +1395,8 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 float _Object::GetNextLevelPercent() const {
 	float Percent = 0;
 
-	if(Fighter->ExperienceNextLevel > 0)
-		Percent = 1.0f - (float)Fighter->ExperienceNeeded / Fighter->ExperienceNextLevel;
+	if(Character->ExperienceNextLevel > 0)
+		Percent = 1.0f - (float)Character->ExperienceNeeded / Character->ExperienceNextLevel;
 
 	return Percent;
 }
@@ -1522,24 +1522,24 @@ bool _Object::CanBattle() const {
 void _Object::CalculateStats() {
 
 	// Get base stats
-	Fighter->CalculateLevelStats(Stats);
+	Character->CalculateLevelStats(Stats);
 
-	Fighter->MaxHealth = Fighter->BaseMaxHealth;
-	Fighter->MaxMana = Fighter->BaseMaxMana;
-	Fighter->HealthRegen = Fighter->BaseHealthRegen;
-	Fighter->ManaRegen = Fighter->BaseManaRegen;
-	Fighter->HealPower = Fighter->BaseHealPower;
-	Fighter->AttackPower = Fighter->BaseAttackPower;
-	Fighter->BattleSpeed = 0;
-	Fighter->Evasion = Fighter->BaseEvasion;
-	Fighter->HitChance = Fighter->BaseHitChance;
-	Fighter->MinDamage = Fighter->BaseMinDamage;
-	Fighter->MaxDamage = Fighter->BaseMaxDamage;
-	Fighter->Armor = Fighter->BaseArmor;
-	Fighter->DamageBlock = Fighter->BaseDamageBlock;
-	Fighter->MoveSpeed = Fighter->BaseMoveSpeed;
-	Fighter->DropRate = Fighter->BaseDropRate;
-	Fighter->Resistances.clear();
+	Character->MaxHealth = Character->BaseMaxHealth;
+	Character->MaxMana = Character->BaseMaxMana;
+	Character->HealthRegen = Character->BaseHealthRegen;
+	Character->ManaRegen = Character->BaseManaRegen;
+	Character->HealPower = Character->BaseHealPower;
+	Character->AttackPower = Character->BaseAttackPower;
+	Character->BattleSpeed = 0;
+	Character->Evasion = Character->BaseEvasion;
+	Character->HitChance = Character->BaseHitChance;
+	Character->MinDamage = Character->BaseMinDamage;
+	Character->MaxDamage = Character->BaseMaxDamage;
+	Character->Armor = Character->BaseArmor;
+	Character->DamageBlock = Character->BaseDamageBlock;
+	Character->MoveSpeed = Character->BaseMoveSpeed;
+	Character->DropRate = Character->BaseDropRate;
+	Character->Resistances.clear();
 
 	Invisible = 0;
 	Stunned = 0;
@@ -1569,24 +1569,24 @@ void _Object::CalculateStats() {
 			ItemDamageBlock += Item->GetDamageBlock(Upgrades);
 
 			// Stat changes
-			Fighter->MaxHealth += Item->GetMaxHealth(Upgrades);
-			Fighter->MaxMana += Item->GetMaxMana(Upgrades);
-			Fighter->HealthRegen += Item->GetHealthRegen(Upgrades);
-			Fighter->ManaRegen += Item->GetManaRegen(Upgrades);
-			Fighter->BattleSpeed += Item->GetBattleSpeed(Upgrades);
-			Fighter->MoveSpeed += Item->GetMoveSpeed(Upgrades);
-			Fighter->DropRate += Item->GetDropRate(Upgrades);
+			Character->MaxHealth += Item->GetMaxHealth(Upgrades);
+			Character->MaxMana += Item->GetMaxMana(Upgrades);
+			Character->HealthRegen += Item->GetHealthRegen(Upgrades);
+			Character->ManaRegen += Item->GetManaRegen(Upgrades);
+			Character->BattleSpeed += Item->GetBattleSpeed(Upgrades);
+			Character->MoveSpeed += Item->GetMoveSpeed(Upgrades);
+			Character->DropRate += Item->GetDropRate(Upgrades);
 
 			// Add resistances
-			Fighter->Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
+			Character->Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
 		}
 	}
 
-	Fighter->SkillPointsUsed = 0;
+	Character->SkillPointsUsed = 0;
 	for(const auto &SkillLevel : Skills) {
 		const _Item *Skill = Stats->Items.at(SkillLevel.first);
 		if(Skill)
-			Fighter->SkillPointsUsed += SkillLevel.second;
+			Character->SkillPointsUsed += SkillLevel.second;
 	}
 
 	// Get skill bonus
@@ -1613,37 +1613,37 @@ void _Object::CalculateStats() {
 	}
 
 	// Get damage
-	Fighter->MinDamage += (int)std::roundf(ItemMinDamage * WeaponDamageModifier);
-	Fighter->MaxDamage += (int)std::roundf(ItemMaxDamage * WeaponDamageModifier);
-	Fighter->MinDamage = std::max(Fighter->MinDamage, 0);
-	Fighter->MaxDamage = std::max(Fighter->MaxDamage, 0);
+	Character->MinDamage += (int)std::roundf(ItemMinDamage * WeaponDamageModifier);
+	Character->MaxDamage += (int)std::roundf(ItemMaxDamage * WeaponDamageModifier);
+	Character->MinDamage = std::max(Character->MinDamage, 0);
+	Character->MaxDamage = std::max(Character->MaxDamage, 0);
 
 	// Get defense
-	Fighter->Armor += ItemArmor;
-	Fighter->DamageBlock += ItemDamageBlock;
-	Fighter->DamageBlock = std::max(Fighter->DamageBlock, 0);
+	Character->Armor += ItemArmor;
+	Character->DamageBlock += ItemDamageBlock;
+	Character->DamageBlock = std::max(Character->DamageBlock, 0);
 
 	// Cap resistances
-	for(auto &Resist : Fighter->Resistances) {
+	for(auto &Resist : Character->Resistances) {
 		Resist.second = std::min(Resist.second, GAME_MAX_RESISTANCE);
 		Resist.second = std::max(Resist.second, -GAME_MAX_RESISTANCE);
 	}
 
 	// Get physical resistance from armor
-	float ArmorResist = Fighter->Armor / (30.0f + std::abs(Fighter->Armor));
+	float ArmorResist = Character->Armor / (30.0f + std::abs(Character->Armor));
 
 	// Physical resist comes solely from armor
-	Fighter->Resistances[2] = (int)(ArmorResist * 100);
+	Character->Resistances[2] = (int)(ArmorResist * 100);
 
-	Fighter->BattleSpeed = (int)(Fighter->BaseBattleSpeed * Fighter->BattleSpeed / 100.0 + Fighter->BaseBattleSpeed);
-	if(Fighter->BattleSpeed < BATTLE_MIN_SPEED)
-		Fighter->BattleSpeed = BATTLE_MIN_SPEED;
+	Character->BattleSpeed = (int)(Character->BaseBattleSpeed * Character->BattleSpeed / 100.0 + Character->BaseBattleSpeed);
+	if(Character->BattleSpeed < BATTLE_MIN_SPEED)
+		Character->BattleSpeed = BATTLE_MIN_SPEED;
 
-	if(Fighter->MoveSpeed < PLAYER_MIN_MOVESPEED)
-		Fighter->MoveSpeed = PLAYER_MIN_MOVESPEED;
+	if(Character->MoveSpeed < PLAYER_MIN_MOVESPEED)
+		Character->MoveSpeed = PLAYER_MIN_MOVESPEED;
 
-	Fighter->Health = std::min(Fighter->Health, Fighter->MaxHealth);
-	Fighter->Mana = std::min(Fighter->Mana, Fighter->MaxMana);
+	Character->Health = std::min(Character->Health, Character->MaxHealth);
+	Character->Mana = std::min(Character->Mana, Character->MaxMana);
 
 	RefreshActionBarCount();
 }
@@ -1651,45 +1651,45 @@ void _Object::CalculateStats() {
 // Update an object's stats from a statchange
 void _Object::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::MAXHEALTH))
-		Fighter->MaxHealth += StatChange.Values[StatType::MAXHEALTH].Integer;
+		Character->MaxHealth += StatChange.Values[StatType::MAXHEALTH].Integer;
 	if(StatChange.HasStat(StatType::MAXMANA))
-		Fighter->MaxMana += StatChange.Values[StatType::MAXMANA].Integer;
+		Character->MaxMana += StatChange.Values[StatType::MAXMANA].Integer;
 	if(StatChange.HasStat(StatType::HEALTHREGEN))
-		Fighter->HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Integer;
+		Character->HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Integer;
 	if(StatChange.HasStat(StatType::MANAREGEN))
-		Fighter->ManaRegen += StatChange.Values[StatType::MANAREGEN].Integer;
+		Character->ManaRegen += StatChange.Values[StatType::MANAREGEN].Integer;
 
 	if(StatChange.HasStat(StatType::HEALPOWER))
-		Fighter->HealPower += StatChange.Values[StatType::HEALPOWER].Float;
+		Character->HealPower += StatChange.Values[StatType::HEALPOWER].Float;
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
-		Fighter->AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
+		Character->AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
 
 	if(StatChange.HasStat(StatType::BATTLESPEED))
-		Fighter->BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
+		Character->BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
 	if(StatChange.HasStat(StatType::HITCHANCE))
-		Fighter->HitChance += StatChange.Values[StatType::HITCHANCE].Integer;
+		Character->HitChance += StatChange.Values[StatType::HITCHANCE].Integer;
 	if(StatChange.HasStat(StatType::EVASION))
-		Fighter->Evasion += StatChange.Values[StatType::EVASION].Integer;
+		Character->Evasion += StatChange.Values[StatType::EVASION].Integer;
 	if(StatChange.HasStat(StatType::STUNNED))
 		Stunned = StatChange.Values[StatType::STUNNED].Integer;
 
 	if(StatChange.HasStat(StatType::RESISTTYPE))
-		Fighter->Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Integer;
+		Character->Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Integer;
 
 	if(StatChange.HasStat(StatType::MINDAMAGE))
-		Fighter->MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
+		Character->MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
 	if(StatChange.HasStat(StatType::MAXDAMAGE))
-		Fighter->MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
+		Character->MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
 	if(StatChange.HasStat(StatType::ARMOR))
-		Fighter->Armor += StatChange.Values[StatType::ARMOR].Integer;
+		Character->Armor += StatChange.Values[StatType::ARMOR].Integer;
 	if(StatChange.HasStat(StatType::DAMAGEBLOCK))
-		Fighter->DamageBlock += StatChange.Values[StatType::DAMAGEBLOCK].Integer;
+		Character->DamageBlock += StatChange.Values[StatType::DAMAGEBLOCK].Integer;
 
 	if(StatChange.HasStat(StatType::MOVESPEED))
-		Fighter->MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
+		Character->MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
 
 	if(StatChange.HasStat(StatType::DROPRATE))
-		Fighter->DropRate += StatChange.Values[StatType::DROPRATE].Integer;
+		Character->DropRate += StatChange.Values[StatType::DROPRATE].Integer;
 
 	if(StatChange.HasStat(StatType::INVISIBLE))
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;

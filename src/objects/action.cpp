@@ -174,7 +174,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		if(ExistingSummon) {
 			_StatChange Heal;
 			Heal.Object = ExistingSummon;
-			Heal.Values[StatType::HEALTH].Integer = ExistingSummon->Fighter->MaxHealth;
+			Heal.Values[StatType::HEALTH].Integer = ExistingSummon->Character->MaxHealth;
 			ExistingSummon->UpdateStats(Heal);
 
 			_Buffer Packet;
@@ -194,11 +194,11 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			Object->Stats->GetMonsterStats(Monster->DatabaseID, Monster);
 
 			// Add stats from script
-			Monster->Fighter->Health = Monster->Fighter->BaseMaxHealth = ActionResult.Summon.Health;
-			Monster->Fighter->Mana = Monster->Fighter->BaseMaxMana = ActionResult.Summon.Mana;
-			Monster->Fighter->BaseMinDamage = ActionResult.Summon.MinDamage;
-			Monster->Fighter->BaseMaxDamage = ActionResult.Summon.MaxDamage;
-			Monster->Fighter->BaseArmor = ActionResult.Summon.Armor;
+			Monster->Character->Health = Monster->Character->BaseMaxHealth = ActionResult.Summon.Health;
+			Monster->Character->Mana = Monster->Character->BaseMaxMana = ActionResult.Summon.Mana;
+			Monster->Character->BaseMinDamage = ActionResult.Summon.MinDamage;
+			Monster->Character->BaseMaxDamage = ActionResult.Summon.MaxDamage;
+			Monster->Character->BaseArmor = ActionResult.Summon.Armor;
 			Monster->CalculateStats();
 
 			// Create packet for new object

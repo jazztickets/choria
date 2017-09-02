@@ -263,8 +263,8 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.CalculateStats();
 
 	// Set health/mana
-	Object.Fighter->Health = Object.Fighter->MaxHealth;
-	Object.Fighter->Mana = Object.Fighter->MaxMana;
+	Object.Character->Health = Object.Character->MaxHealth;
+	Object.Character->Mana = Object.Character->MaxMana;
 	Object.GenerateNextBattle();
 
 	// Save new character
@@ -305,7 +305,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 	if(Log) {
 		*Log << "Saving player " << Player->Name
 			 << " ( action=save character_id=" << Player->CharacterID
-			 << " exp=" << Player->Fighter->Experience
+			 << " exp=" << Player->Character->Experience
 			 << " gold=" << Player->Gold
 			 << " playtime=" << Player->PlayTime
 			 << " monsterkills=" << Player->MonsterKills
@@ -331,7 +331,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 
 	// Max sure player has health
 	if(!Player->IsAlive() && !Player->Hardcore)
-		Player->Fighter->Health = Player->Fighter->MaxHealth / 2;
+		Player->Character->Health = Player->Character->MaxHealth / 2;
 }
 
 // Get save version from database

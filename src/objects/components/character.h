@@ -26,11 +26,11 @@ class _Object;
 class _Stats;
 
 // Classes
-class _Fighter {
+class _Character {
 
 	public:
 
-		_Fighter(_Object *Object);
+		_Character(_Object *Object);
 
 		void Update(double FrameTime);
 		void CalculateLevelStats(const _Stats *Stats);

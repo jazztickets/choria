@@ -20,7 +20,7 @@
 // Libraries
 #include <ae/managerbase.h>
 #include <objects/action.h>
-#include <objects/components/fighter.h>
+#include <objects/components/character.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
 #include <list>
@@ -34,7 +34,7 @@ class _Texture;
 class _Battle;
 class _Buff;
 class _Inventory;
-class _Fighter;
+class _Character;
 class _Stats;
 class _Server;
 class _Buffer;
@@ -112,10 +112,10 @@ class _Object : public _ManagerBase {
 		void SendPacket(_Buffer &Packet);
 
 		// Stats
-		bool IsAlive() const { return Fighter->Health > 0; }
+		bool IsAlive() const { return Character->Health > 0; }
 		bool IsMonster() const { return DatabaseID != 0; }
-		float GetHealthPercent() const { return Fighter->MaxHealth > 0 ? Fighter->Health / (float)Fighter->MaxHealth : 0; }
-		float GetManaPercent() const { return Fighter->MaxMana > 0 ? Fighter->Mana / (float)Fighter->MaxMana : 0; }
+		float GetHealthPercent() const { return Character->MaxHealth > 0 ? Character->Health / (float)Character->MaxHealth : 0; }
+		float GetManaPercent() const { return Character->MaxMana > 0 ? Character->Mana / (float)Character->MaxMana : 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int &Value);
 		void UpdateMana(int Value);
@@ -152,7 +152,7 @@ class _Object : public _ManagerBase {
 		bool CanRespec() const;
 		bool HasLearned(const _Item *Skill) const;
 		bool HasUnlocked(const _Item *Item) const;
-		int GetSkillPointsAvailable() const { return Fighter->SkillPoints - Fighter->SkillPointsUsed; }
+		int GetSkillPointsAvailable() const { return Character->SkillPoints - Character->SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
 		// Trader
@@ -208,7 +208,7 @@ class _Object : public _ManagerBase {
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
 		// Fighter stats
-		_Fighter *Fighter;
+		_Character *Character;
 
 		// Player stats
 		double PlayTime;

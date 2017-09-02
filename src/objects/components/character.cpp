@@ -15,14 +15,14 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <objects/components/fighter.h>
+#include <objects/components/character.h>
 #include <objects/object.h>
 #include <ae/buffer.h>
 #include <packet.h>
 #include <stats.h>
 
 // Constructor
-_Fighter::_Fighter(_Object *Object) :
+_Character::_Character(_Object *Object) :
 	Object(Object),
 	UpdateTimer(0.0),
 
@@ -71,7 +71,7 @@ _Fighter::_Fighter(_Object *Object) :
 }
 
 // Update
-void _Fighter::Update(double FrameTime) {
+void _Character::Update(double FrameTime) {
 	UpdateTimer += FrameTime;
 	if(UpdateTimer >= 1.0) {
 		UpdateTimer -= 1.0;
@@ -104,7 +104,7 @@ void _Fighter::Update(double FrameTime) {
 }
 
 // Calculate base level stats
-void _Fighter::CalculateLevelStats(const _Stats *Stats) {
+void _Character::CalculateLevelStats(const _Stats *Stats) {
 	if(!Stats || !CalcLevelStats)
 		return;
 

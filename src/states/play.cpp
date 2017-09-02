@@ -725,7 +725,7 @@ void _PlayState::HandleObjectList(_Buffer &Data) {
 		if(Object->NetworkID == ClientNetworkID)
 			AssignPlayer(Object);
 		else
-			Object->Fighter->CalcLevelStats = false;
+			Object->Character->CalcLevelStats = false;
 	}
 
 	if(Player) {
@@ -1100,7 +1100,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 	// Reset hud
 	HUD->CloseWindows(true);
 	HUD->EnableMouseCombat = false;
-	if(Config.ShowTutorial && Player->Fighter->Level == 1)
+	if(Config.ShowTutorial && Player->Character->Level == 1)
 		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(Action::GAME_SKILL1) + " key to attack");
 
 	// Create a new battle instance
@@ -1333,7 +1333,7 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 				HUD->SetActionBarSize(Player->ActionBar.size());
 
 			// Play death sound
-			if(!Player->Battle && Player->Fighter->Health <= 0 && WasAlive)
+			if(!Player->Battle && Player->Character->Health <= 0 && WasAlive)
 				PlayDeathSound();
 		}
 
@@ -1347,13 +1347,13 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	int OldLevel = Player->Fighter->Level;
+	int OldLevel = Player->Character->Level;
 
-	Player->Fighter->Health = Data.Read<int>();
-	Player->Fighter->Mana = Data.Read<int>();
-	Player->Fighter->MaxHealth = Data.Read<int>();
-	Player->Fighter->MaxMana = Data.Read<int>();
-	Player->Fighter->Experience = Data.Read<int>();
+	Player->Character->Health = Data.Read<int>();
+	Player->Character->Mana = Data.Read<int>();
+	Player->Character->MaxHealth = Data.Read<int>();
+	Player->Character->MaxMana = Data.Read<int>();
+	Player->Character->Experience = Data.Read<int>();
 	Player->Gold = Data.Read<int>();
 	Player->Bounty = Data.Read<int>();
 	double Clock = Data.Read<double>();
@@ -1363,11 +1363,11 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	if(Map)
 		Map->Clock = Clock;
 
-	if(Player->Fighter->Level > OldLevel) {
+	if(Player->Character->Level > OldLevel) {
 		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsAvailable()) + " skill point(s). Press " + Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to use them.");
 		Audio.PlaySound(Assets.Sounds["success0.ogg"]);
 
-		if(Player->Fighter->Level == 2) {
+		if(Player->Character->Level == 2) {
 			Config.ShowTutorial = 0;
 			Config.Save();
 		}
@@ -1391,7 +1391,7 @@ _Object *_PlayState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
-	Object->Fighter->CalcLevelStats = false;
+	Object->Character->CalcLevelStats = false;
 	Object->UnserializeCreate(Data);
 
 	// Add to map
@@ -1458,7 +1458,7 @@ void _PlayState::SendStatus(uint8_t Status) {
 void _PlayState::AssignPlayer(_Object *Object) {
 	Player = Object;
 	if(Player)
-		Player->Fighter->CalcLevelStats = true;
+		Player->Character->CalcLevelStats = true;
 
 	if(HUD) {
 		HUD->SetPlayer(Player);

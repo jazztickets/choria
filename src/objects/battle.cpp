@@ -237,7 +237,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Set up initial target
 		if(Item) {
-			if(Config.ShowTutorial && ClientPlayer->Fighter->Level == 1 && ClientPlayer->HUD)
+			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1 && ClientPlayer->HUD)
 				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
@@ -267,7 +267,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Update HUD
 		if(ClientPlayer->HUD) {
-			if(Config.ShowTutorial && ClientPlayer->Fighter->Level == 1)
+			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1)
 				ClientPlayer->HUD->SetMessage("");
 		}
 
@@ -638,7 +638,7 @@ void _Battle::ServerEndBattle() {
 		int DropRate = 0;
 		for(auto &Object : SideFighters[WinningSide]) {
 			if(Object->IsAlive()) {
-				DropRate += Object->Fighter->DropRate;
+				DropRate += Object->Character->DropRate;
 				RewardFighters.push_back(Object);
 			}
 		}
@@ -709,17 +709,17 @@ void _Battle::ServerEndBattle() {
 			Object->BattleCooldown[Zone] = Cooldown;
 
 		// Update stats
-		int CurrentLevel = Object->Fighter->Level;
+		int CurrentLevel = Object->Character->Level;
 		Object->UpdateExperience(ExperienceEarned);
 		Object->UpdateGold(GoldEarned);
 		Object->CalculateStats();
-		int NewLevel = Object->Fighter->Level;
+		int NewLevel = Object->Character->Level;
 		if(NewLevel > CurrentLevel) {
 			if(Object->Peer)
 				Server->SendMessage(Object->Peer, std::string("You are now level " + std::to_string(NewLevel) + "!"), "gold");
 
-			Object->Fighter->Health = Object->Fighter->MaxHealth;
-			Object->Fighter->Mana = Object->Fighter->MaxMana;
+			Object->Character->Health = Object->Character->MaxHealth;
+			Object->Character->Mana = Object->Character->MaxMana;
 		}
 
 		// Write results

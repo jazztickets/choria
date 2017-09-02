@@ -427,28 +427,28 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
-	lua_pushinteger(LuaState, Object->Fighter->Health);
+	lua_pushinteger(LuaState, Object->Character->Health);
 	lua_setfield(LuaState, -2, "Health");
 
-	lua_pushinteger(LuaState, Object->Fighter->MaxHealth);
+	lua_pushinteger(LuaState, Object->Character->MaxHealth);
 	lua_setfield(LuaState, -2, "MaxHealth");
 
-	lua_pushinteger(LuaState, Object->Fighter->Mana);
+	lua_pushinteger(LuaState, Object->Character->Mana);
 	lua_setfield(LuaState, -2, "Mana");
 
-	lua_pushinteger(LuaState, Object->Fighter->MaxMana);
+	lua_pushinteger(LuaState, Object->Character->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
 
-	lua_pushnumber(LuaState, Object->Fighter->AttackPower);
+	lua_pushnumber(LuaState, Object->Character->AttackPower);
 	lua_setfield(LuaState, -2, "AttackPower");
 
-	lua_pushinteger(LuaState, Object->Fighter->HitChance);
+	lua_pushinteger(LuaState, Object->Character->HitChance);
 	lua_setfield(LuaState, -2, "HitChance");
 
-	lua_pushinteger(LuaState, Object->Fighter->DamageBlock);
+	lua_pushinteger(LuaState, Object->Character->DamageBlock);
 	lua_setfield(LuaState, -2, "DamageBlock");
 
-	lua_pushinteger(LuaState, Object->Fighter->Evasion);
+	lua_pushinteger(LuaState, Object->Character->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
 
 	lua_pushinteger(LuaState, Object->CharacterID);
@@ -913,7 +913,7 @@ int _Scripting::ObjectGetDamageReduction(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	uint32_t DamageTypeID = (uint32_t)lua_tointeger(LuaState, 1);
 
-	lua_pushnumber(LuaState, 1.0 - (double)Object->Fighter->Resistances[DamageTypeID] / 100.0);
+	lua_pushnumber(LuaState, 1.0 - (double)Object->Character->Resistances[DamageTypeID] / 100.0);
 
 	return 1;
 }
