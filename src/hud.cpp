@@ -175,7 +175,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Update minigame
 		if(Player->Minigame && Minigame) {
-			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Gold >= Player->Minigame->Cost) {
+			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Character->Gold >= Player->Minigame->Cost) {
 				if(Input.GetMouse().y > MinigameElement->Bounds.Start.y && Input.GetMouse().y < MinigameElement->Bounds.End.y)
 					Minigame->HandleMouseButton(MouseEvent);
 
@@ -346,7 +346,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						break;
 						case WINDOW_ACTIONBAR:
 							if((Cursor.Window == WINDOW_EQUIPMENT || Cursor.Window == WINDOW_INVENTORY) && !Cursor.InventorySlot.Item->IsSkill())
-								SetActionBar(Tooltip.Slot.Index, Player->ActionBar.size(), Cursor.InventorySlot.Item);
+								SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.InventorySlot.Item);
 							else if(Cursor.Window == WINDOW_ACTIONBAR)
 								SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
 						break;
@@ -367,9 +367,9 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 							// Swap actionbar with inventory
 							if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->IsSkill())
-								SetActionBar(Cursor.Slot.Index, Player->ActionBar.size(), Tooltip.InventorySlot.Item);
+								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), Tooltip.InventorySlot.Item);
 							else
-								SetActionBar(Cursor.Slot.Index, Player->ActionBar.size(), nullptr);
+								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), nullptr);
 						break;
 						case WINDOW_ACTIONBAR:
 							SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
@@ -377,16 +377,16 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						default:
 
 							// Remove action
-							if(Tooltip.Slot.Index >= Player->ActionBar.size() || Tooltip.Window == -1) {
+							if(Tooltip.Slot.Index >= Player->Character->ActionBar.size() || Tooltip.Window == -1) {
 								_Action Action;
-								SetActionBar(Cursor.Slot.Index, Player->ActionBar.size(), Action);
+								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), Action);
 							}
 						break;
 					}
 				break;
 				case WINDOW_SKILLS:
 					if(Tooltip.Window == WINDOW_ACTIONBAR) {
-						SetActionBar(Tooltip.Slot.Index, Player->ActionBar.size(), Cursor.InventorySlot.Item);
+						SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.InventorySlot.Item);
 					}
 				break;
 			}
@@ -491,8 +491,8 @@ void _HUD::Update(double FrameTime) {
 				Tooltip.InventorySlot.Item = PlayState.Stats->Items.at((uint32_t)Tooltip.Slot.Index);
 			} break;
 			case WINDOW_ACTIONBAR: {
-				if(Tooltip.Slot.Index < Player->ActionBar.size())
-					Tooltip.InventorySlot.Item = Player->ActionBar[Tooltip.Slot.Index].Item;
+				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())
+					Tooltip.InventorySlot.Item = Player->Character->ActionBar[Tooltip.Slot.Index].Item;
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserData;
@@ -1556,7 +1556,7 @@ void _HUD::DrawBlacksmith() {
 
 			// Check upgrade conditions
 			bool Disabled = false;
-			if(Player->Gold < Cost)
+			if(Player->Character->Gold < Cost)
 				Disabled = true;
 
 			// Check blacksmith level
@@ -1595,7 +1595,7 @@ void _HUD::DrawMinigame(double BlendFactor) {
 
 	// Update text color
 	_Element *CostElement = Assets.Elements["label_minigame_cost"];
-	if(Player->Gold < Player->Minigame->Cost)
+	if(Player->Character->Gold < Player->Minigame->Cost)
 		CostElement->Color = Assets.Colors["red"];
 	else
 		CostElement->Color = Assets.Colors["gold"];
@@ -1618,7 +1618,7 @@ void _HUD::DrawActionBar() {
 	ActionBarElement->Render();
 
 	// Draw action bar
-	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
+	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
 
 		// Get button position
 		std::stringstream Buffer;
@@ -1627,13 +1627,13 @@ void _HUD::DrawActionBar() {
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item icon
-		const _Item *Item = Player->ActionBar[i].Item;
+		const _Item *Item = Player->Character->ActionBar[i].Item;
 		if(Item) {
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			if(!Item->IsSkill())
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), RIGHT_BASELINE);
+				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
@@ -1984,7 +1984,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 
 	// Color
 	glm::vec4 Color;
-	if(Buy && Player->Gold < Price)
+	if(Buy && Player->Character->Gold < Price)
 		Color = Assets.Colors["red"];
 	else
 		Color = Assets.Colors["light_gold"];
@@ -2049,38 +2049,38 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	PlayState.Network->SendPacket(Packet);
 
 	// Update player
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 	RefreshSkillButtons();
 }
 
 // Sets the player's action bar
 void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
-	if(Player->ActionBar[Slot] == Action)
+	if(Player->Character->ActionBar[Slot] == Action)
 		return;
 
 	// Check for bringing new skill/item onto bar
-	if(OldSlot >= Player->ActionBar.size()) {
+	if(OldSlot >= Player->Character->ActionBar.size()) {
 
 		// Remove duplicate skills
-		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-			if(Player->ActionBar[i] == Action)
-				Player->ActionBar[i].Unset();
+		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
+			if(Player->Character->ActionBar[i] == Action)
+				Player->Character->ActionBar[i].Unset();
 		}
 	}
 	// Rearrange action bar
 	else {
-		Player->ActionBar[OldSlot] = Player->ActionBar[Slot];
+		Player->Character->ActionBar[OldSlot] = Player->Character->ActionBar[Slot];
 	}
 
 	// Update player
-	Player->ActionBar[Slot] = Action;
-	Player->CalculateStats();
+	Player->Character->ActionBar[Slot] = Action;
+	Player->Character->CalculateStats();
 
 	// Notify server
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
-	for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-		Player->ActionBar[i].Serialize(Packet);
+	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
+		Player->Character->ActionBar[i].Serialize(Packet);
 	}
 
 	PlayState.Network->SendPacket(Packet);
@@ -2099,15 +2099,15 @@ void _HUD::EquipSkill(uint32_t SkillID) {
 			return;
 
 		// Find existing action
-		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-			if(Player->ActionBar[i].Item == Skill)
+		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
+			if(Player->Character->ActionBar[i].Item == Skill)
 				return;
 		}
 
 		// Find an empty slot
-		for(size_t i = 0; i < Player->ActionBar.size(); i++) {
-			if(!Player->ActionBar[i].IsSet()) {
-				SetActionBar(i, Player->ActionBar.size(), Skill);
+		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
+			if(!Player->Character->ActionBar[i].IsSet()) {
+				SetActionBar(i, Player->Character->ActionBar.size(), Skill);
 				return;
 			}
 		}
@@ -2187,8 +2187,8 @@ void _HUD::ValidateTradeGold() {
 	int Gold = ToNumber<int>(GoldTextBox->Text);
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > Player->Gold)
-		Gold = std::max(0, Player->Gold);
+	else if(Gold > Player->Character->Gold)
+		Gold = std::max(0, Player->Character->Gold);
 
 	// Set text
 	GoldTextBox->SetText(std::to_string(Gold));
@@ -2489,10 +2489,10 @@ void _HUD::UpdateLabels() {
 	Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
-	Buffer << Player->Gold << " Gold";
+	Buffer << Player->Character->Gold << " Gold";
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
-	if(Player->Gold < 0)
+	if(Player->Character->Gold < 0)
 		GoldElement->Color = Assets.Colors["red"];
 	else
 		GoldElement->Color = Assets.Colors["gold"];

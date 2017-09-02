@@ -18,7 +18,9 @@
 #pragma once
 
 // Libraries
+#include <objects/action.h>
 #include <cstdint>
+#include <vector>
 #include <unordered_map>
 
 // Forward Declarations
@@ -33,7 +35,11 @@ class _Character {
 		_Character(_Object *Object);
 
 		void Update(double FrameTime);
+
+		void CalculateStats();
 		void CalculateLevelStats(const _Stats *Stats);
+		void RefreshActionBarCount();
+
 		bool IsAlive() const { return Health > 0; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
@@ -42,6 +48,13 @@ class _Character {
 		_Object *Object;
 		uint32_t CharacterID;
 		double UpdateTimer;
+
+		// Gold
+		int Gold;
+
+		// State
+		int Invisible;
+		int Stunned;
 		bool Hardcore;
 
 		// Levels
@@ -93,6 +106,11 @@ class _Character {
 		int SkillPointsUsed;
 		int SkillPointsOnActionBar;
 
+		// Action bar
+		std::vector<_Action> ActionBar;
+
 	private:
+
+		void CalculateStatBonuses(_StatChange &StatChange);
 
 };

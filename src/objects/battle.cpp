@@ -196,7 +196,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 // Sends an action selection to the server
 void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
-	if(ActionBarSlot >= ClientPlayer->ActionBar.size())
+	if(ActionBarSlot >= ClientPlayer->Character->ActionBar.size())
 		return;
 
 	// Check for dead
@@ -208,7 +208,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		return;
 
 	// Get skillbar action
-	_Action Action = ClientPlayer->ActionBar[ActionBarSlot];
+	_Action Action = ClientPlayer->Character->ActionBar[ActionBarSlot];
 	ClientPlayer->GetActionFromSkillbar(Action, ActionBarSlot);
 
 	// Check for changing an action
@@ -227,12 +227,12 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ClientPlayer->Targets.clear();
 
 		// Check if item can be used
-		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
+		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
 		if(Item) {
 			if(!Item->CanUse(Scripting, ActionResult))
 				Item = nullptr;
 
-			if(Item && !Item->IsSkill() && ClientPlayer->ActionBar[ActionBarSlot].Count == 0)
+			if(Item && !Item->IsSkill() && ClientPlayer->Character->ActionBar[ActionBarSlot].Count == 0)
 				Item = nullptr;
 		}
 
@@ -277,7 +277,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
 		ActionResult.ActionUsed = Action;
-		const _Item *Item = ClientPlayer->ActionBar[ActionBarSlot].Item;
+		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
 		if(!Item->CanUse(Scripting, ActionResult)) {
 			ClientPlayer->PotentialAction.Unset();
 			ClientPlayer->Targets.clear();
@@ -543,7 +543,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 		Fighter->HUD = HUD;
 		Fighter->Scripting = Scripting;
 		Fighter->UnserializeBattle(Data);
-		Fighter->CalculateStats();
+		Fighter->Character->CalculateStats();
 
 		// Add fighter
 		AddFighter(Fighter, Fighter->BattleSide);
@@ -593,7 +593,7 @@ void _Battle::ServerEndBattle() {
 			if(Fighter->IsMonster())
 				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven + Fighter->GoldStolen;
 			else
-				SideStats[Side].TotalGoldGiven += Fighter->Record->Bounty + Fighter->GoldStolen + (int)(Fighter->Gold * PVP * 0.01f + 0.5f);
+				SideStats[Side].TotalGoldGiven += Fighter->Record->Bounty + Fighter->GoldStolen + (int)(Fighter->Character->Gold * PVP * 0.01f + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
@@ -713,7 +713,7 @@ void _Battle::ServerEndBattle() {
 		int CurrentLevel = Object->Character->Level;
 		Object->UpdateExperience(ExperienceEarned);
 		Object->UpdateGold(GoldEarned);
-		Object->CalculateStats();
+		Object->Character->CalculateStats();
 		int NewLevel = Object->Character->Level;
 		if(NewLevel > CurrentLevel) {
 			if(Object->Peer)

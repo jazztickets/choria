@@ -257,11 +257,11 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.PortraitID = PortraitID;
 	Object.ModelID = Build->ModelID;
 	Object.Character->CharacterID = (uint32_t)Database->GetLastInsertID();
-	Object.ActionBar = Build->ActionBar;
+	Object.Character->ActionBar = Build->Character->ActionBar;
 	Object.Inventory->Bags = Build->Inventory->Bags;
 	Object.Skills = Build->Skills;
 	Object.Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-	Object.CalculateStats();
+	Object.Character->CalculateStats();
 
 	// Set health/mana
 	Object.Character->Health = Object.Character->MaxHealth;
@@ -307,7 +307,7 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 		*Log << "Saving player " << Player->Name
 			 << " ( action=save character_id=" << Player->Character->CharacterID
 			 << " exp=" << Player->Character->Experience
-			 << " gold=" << Player->Gold
+			 << " gold=" << Player->Character->Gold
 			 << " playtime=" << Player->Record->PlayTime
 			 << " monsterkills=" << Player->Record->MonsterKills
 			 << " deaths=" << Player->Record->Deaths
@@ -328,7 +328,7 @@ void _Save::LoadPlayer(const _Stats *Stats, _Object *Player) {
 	Database->CloseQuery();
 
 	// Get stats
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 
 	// Max sure player has health
 	if(!Player->Character->IsAlive() && !Player->Character->Hardcore)

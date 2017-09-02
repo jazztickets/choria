@@ -425,7 +425,7 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
 
-	lua_pushinteger(LuaState, Object->Gold);
+	lua_pushinteger(LuaState, Object->Character->Gold);
 	lua_setfield(LuaState, -2, "Gold");
 
 	lua_pushinteger(LuaState, Object->Character->Health);
@@ -863,7 +863,7 @@ int _Scripting::ObjectSpendSkillPoints(lua_State *LuaState) {
 
 	// Spend points
 	Object->AdjustSkillLevel(SkillID, Amount);
-	Object->CalculateStats();
+	Object->Character->CalculateStats();
 
 	// Push points available
 	lua_pushinteger(LuaState, Object->GetSkillPointsAvailable());

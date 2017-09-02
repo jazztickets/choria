@@ -411,7 +411,7 @@ void _Stats::LoadBuilds() {
 		_Object *Object = new _Object();
 		Object->Name = std::string("build_") + Database->GetString("name");
 		Object->ModelID = Database->GetInt<uint32_t>("model_id");
-		Object->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
+		Object->Character->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
 
 		// Get items
 		Database->PrepareQuery("SELECT * FROM builditem WHERE build_id = @build_id", 1);
@@ -440,8 +440,8 @@ void _Stats::LoadBuilds() {
 			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item) {
 				size_t Slot = (size_t)Database->GetInt<uint32_t>("slot", 1);
-				if(Slot < Object->ActionBar.size())
-					Object->ActionBar[Slot].Item = Item;
+				if(Slot < Object->Character->ActionBar.size())
+					Object->Character->ActionBar[Slot].Item = Item;
 			}
 		}
 		Database->CloseQuery(1);
@@ -507,13 +507,13 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		const _Object *Build = BuildIterator->second;
 
 		// Copy build
-		Monster->ActionBar = Build->ActionBar;
+		Monster->Character->ActionBar = Build->Character->ActionBar;
 		Monster->Inventory->Bags = Build->Inventory->Bags;
 		Monster->Skills = Build->Skills;
 
 		Monster->Character->Health = Monster->Character->MaxHealth = Monster->Character->BaseMaxHealth;
 		Monster->Character->Mana = Monster->Character->MaxMana = Monster->Character->BaseMaxMana;
-		Monster->Gold = Monster->GoldGiven;
+		Monster->Character->Gold = Monster->GoldGiven;
 		Monster->Character->CalcLevelStats = false;
 	}
 

@@ -382,7 +382,7 @@ void _Server::SendItem(_Peer *Peer, const _Item *Item, int Count) {
 	Network->SendPacket(Packet, Peer);
 
 	// Update states
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 	SendHUD(Player->Peer);
 }
 
@@ -613,7 +613,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		else if(Message.find("-setgold") == 0) {
 			std::regex Regex("-setgold ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Player->Gold = ToNumber<int>(Match.str(1));
+				Player->Character->Gold = ToNumber<int>(Match.str(1));
 				SendHUD(Peer);
 			}
 		}
@@ -693,7 +693,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		}
 
 		// Update client
-		Player->CalculateStats();
+		Player->Character->CalculateStats();
 		SendHUD(Player->Peer);
 
 		return;
@@ -970,7 +970,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
 		if(Player->Inventory->MoveInventory(Packet, OldSlot, NewSlot)) {
 			Network->SendPacket(Packet, Peer);
-			Player->CalculateStats();
+			Player->Character->CalculateStats();
 		}
 	}
 
@@ -1027,7 +1027,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
 		if(Player->Inventory->MoveInventory(Packet, Slot, TargetSlot)) {
 			Network->SendPacket(Packet, Peer);
-			Player->CalculateStats();
+			Player->Character->CalculateStats();
 		}
 	}
 	// Handle consumables
@@ -1098,7 +1098,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		int Price = Item->GetPrice(Vendor, Amount, Buy);
 
 		// Not enough gold
-		if(Price > Player->Gold)
+		if(Price > Player->Character->Gold)
 			return;
 
 		// Find open slot for new item
@@ -1118,7 +1118,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		if(Peer) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-			Packet.Write<int>(Player->Gold);
+			Packet.Write<int>(Player->Character->Gold);
 			Network->SendPacket(Packet, Peer);
 		}
 
@@ -1131,10 +1131,10 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			Network->SendPacket(Packet, Peer);
 		}
 
-		Player->CalculateStats();
+		Player->Character->CalculateStats();
 
 		// Log
-		Log << "Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Gold << " )" << std::endl;
+		Log << "Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1154,12 +1154,12 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			if(Peer) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
-				Packet.Write<int>(Player->Gold);
+				Packet.Write<int>(Player->Character->Gold);
 				Network->SendPacket(Packet, Peer);
 			}
 
 			// Log
-			Log << "Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Gold << " )" << std::endl;
+			Log << "Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
 
 			// Update items
 			Player->Inventory->DecrementItemCount(Slot, -Amount);
@@ -1214,7 +1214,7 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 
 	// Update values
 	Player->AdjustSkillLevel(SkillID, Amount);
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 }
 
 // Handle a trade request
@@ -1289,8 +1289,8 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 	int Gold = Data.Read<int>();
 	if(Gold < 0)
 		Gold = 0;
-	else if(Gold > Player->Gold)
-		Gold = std::max(0, Player->Gold);
+	else if(Gold > Player->Character->Gold)
+		Gold = std::max(0, Player->Character->Gold);
 	Player->TradeGold = Gold;
 	Player->TradeAccepted = false;
 
@@ -1353,14 +1353,14 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			{
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int>(Player->Gold);
+				Packet.Write<int>(Player->Character->Gold);
 				Player->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, Player->Peer);
 			}
 			{
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
-				Packet.Write<int>(TradePlayer->Gold);
+				Packet.Write<int>(TradePlayer->Character->Gold);
 				TradePlayer->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, TradePlayer->Peer);
 			}
@@ -1452,7 +1452,7 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	int Price = InventorySlot.Item->GetUpgradePrice(InventorySlot.Upgrades+1);
 
 	// Check gold
-	if(Price > Player->Gold)
+	if(Price > Player->Character->Gold)
 		return;
 
 	// Upgrade item
@@ -1482,9 +1482,9 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Log
-	Log << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( action=upgrade character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Gold << " )" << std::endl;
+	Log << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( action=upgrade character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
 
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 }
 
 // Handle paying to play a minigame
@@ -1494,7 +1494,7 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 
 	// Validate
 	_Object *Player = Peer->Object;
-	if(!Player->Minigame || Player->Gold < Player->Minigame->Cost)
+	if(!Player->Minigame || Player->Character->Gold < Player->Minigame->Cost)
 		return;
 
 	// Update gold and stats
@@ -1659,10 +1659,10 @@ void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Read skills
-	for(size_t i = 0; i < Player->ActionBar.size(); i++)
-		Player->ActionBar[i].Unserialize(Data, Stats);
+	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++)
+		Player->Character->ActionBar[i].Unserialize(Data, Stats);
 
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 }
 
 // Updates the player's HUD
@@ -1679,7 +1679,7 @@ void _Server::SendHUD(_Peer *Peer) {
 	Packet.Write<int>(Player->Character->MaxHealth);
 	Packet.Write<int>(Player->Character->MaxMana);
 	Packet.Write<int>(Player->Character->Experience);
-	Packet.Write<int>(Player->Gold);
+	Packet.Write<int>(Player->Character->Gold);
 	Packet.Write<int>(Player->Record->Bounty);
 	Packet.Write<double>(Save->Clock);
 
@@ -1869,7 +1869,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 				Monster->DatabaseID = MonsterID;
 				Monster->Stats = Stats;
 				Stats->GetMonsterStats(MonsterID, Monster, Difficulty);
-				Monster->CalculateStats();
+				Monster->Character->CalculateStats();
 				Battle->AddFighter(Monster, 1);
 			}
 

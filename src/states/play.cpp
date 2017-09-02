@@ -678,7 +678,7 @@ void _PlayState::HandleObjectStats(_Buffer &Data) {
 	Player->UnserializeStats(Data);
 
 	HUD->UpdateLabels();
-	HUD->SetActionBarSize(Player->ActionBar.size());
+	HUD->SetActionBarSize(Player->Character->ActionBar.size());
 }
 
 // Called when the player changes maps
@@ -798,7 +798,7 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 			}
 			else {
 				Object->Position = Position;
-				Object->Invisible = Invisible;
+				Object->Character->Invisible = Invisible;
 			}
 			Object->ServerPosition = Position;
 
@@ -911,7 +911,7 @@ void _PlayState::HandleInventory(_Buffer &Data) {
 		return;
 
 	Player->Inventory->Unserialize(Data, Stats);
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 
 	// Refresh trader screen
 	if(Player->Trader) {
@@ -967,7 +967,7 @@ void _PlayState::HandleInventorySwap(_Buffer &Data) {
 	Player->Inventory->UnserializeSlot(Data, Stats);
 
 	HUD->ResetAcceptButton();
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 }
 
 // Handle an inventory update
@@ -979,7 +979,7 @@ void _PlayState::HandleInventoryUpdate(_Buffer &Data) {
 	for(uint8_t i = 0; i < Count; i++)
 		Player->Inventory->UnserializeSlot(Data, Stats);
 
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 }
 
 // Handle gold update
@@ -987,8 +987,8 @@ void _PlayState::HandleInventoryGold(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->Gold = Data.Read<int>();
-	Player->CalculateStats();
+	Player->Character->Gold = Data.Read<int>();
+	Player->Character->CalculateStats();
 
 	PlayCoinSound();
 }
@@ -1080,9 +1080,9 @@ void _PlayState::HandleTradeExchange(_Buffer &Data) {
 		return;
 
 	// Get gold offer
-	Player->Gold = Data.Read<int>();
+	Player->Character->Gold = Data.Read<int>();
 	Player->Inventory->Unserialize(Data, Stats);
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 
 	// Close window
 	HUD->CloseTrade(false);
@@ -1247,7 +1247,7 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 					size_t Index;
 					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
 						Player->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
-						Player->RefreshActionBarCount();
+						Player->Character->RefreshActionBarCount();
 					}
 				}
 
@@ -1331,7 +1331,7 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 
 			// Update action bar
 			if(StatChange.HasStat(StatType::ACTIONBARSIZE))
-				HUD->SetActionBarSize(Player->ActionBar.size());
+				HUD->SetActionBarSize(Player->Character->ActionBar.size());
 
 			// Play death sound
 			if(!Player->Battle && Player->Character->Health <= 0 && WasAlive)
@@ -1355,11 +1355,11 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 	Player->Character->MaxHealth = Data.Read<int>();
 	Player->Character->MaxMana = Data.Read<int>();
 	Player->Character->Experience = Data.Read<int>();
-	Player->Gold = Data.Read<int>();
+	Player->Character->Gold = Data.Read<int>();
 	Player->Record->Bounty = Data.Read<int>();
 	double Clock = Data.Read<double>();
 
-	Player->CalculateStats();
+	Player->Character->CalculateStats();
 
 	if(Map)
 		Map->Clock = Clock;
@@ -1406,10 +1406,10 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	if(!Player)
 		return;
 
-	if(Slot >= Player->ActionBar.size())
+	if(Slot >= Player->Character->ActionBar.size())
 		return;
 
-	if(!Player->ActionBar[Slot].IsSet())
+	if(!Player->Character->ActionBar[Slot].IsSet())
 		return;
 
 	if(Player->WaitForServer)

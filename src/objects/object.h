@@ -19,7 +19,6 @@
 
 // Libraries
 #include <ae/managerbase.h>
-#include <objects/action.h>
 #include <objects/components/character.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
@@ -117,7 +116,6 @@ class _Object : public _ManagerBase {
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
 		void UpdateHealth(int &Value);
 		void UpdateMana(int Value);
-		void CalculateStats();
 		float GetNextLevelPercent() const;
 		void UpdateGold(int Value);
 		void UpdateExperience(int Value);
@@ -137,7 +135,6 @@ class _Object : public _ManagerBase {
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
 
 		// Actions
-		void RefreshActionBarCount();
 		bool GetActionFromSkillbar(_Action &ReturnAction, size_t Slot);
 		void SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager);
 
@@ -204,14 +201,8 @@ class _Object : public _ManagerBase {
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 
-		// Action bar
-		std::vector<_Action> ActionBar;
-
 		// Stats
 		std::unordered_map<uint32_t, _Unlock> Unlocks;
-
-		// Player stats
-		int Gold;
 
 		// Battle
 		_Battle *Battle;
@@ -222,8 +213,6 @@ class _Object : public _ManagerBase {
 		double TurnTimer;
 		double AttackPlayerTime;
 		int NextBattle;
-		int Invisible;
-		int Stunned;
 		int GoldStolen;
 		bool JoinedBattle;
 		uint8_t BattleSide;
@@ -287,8 +276,6 @@ class _Object : public _ManagerBase {
 	private:
 
 		void DeleteStatusEffects();
-
-		void CalculateStatBonuses(_StatChange &StatChange);
 
 		template <typename Type>
 		void GetValue(const std::unordered_map<std::string, std::string> &Map, const std::string &Field, Type &Value) {

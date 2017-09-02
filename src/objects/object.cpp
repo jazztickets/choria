@@ -74,8 +74,6 @@ _Object::_Object() :
 	TurnTimer(0.0),
 	AttackPlayerTime(0),
 	NextBattle(0),
-	Invisible(0),
-	Stunned(0),
 	GoldStolen(0),
 	JoinedBattle(false),
 	BattleSide(0),
@@ -196,7 +194,7 @@ void _Object::Update(double FrameTime) {
 
 		// Check turn timer
 		if(Battle) {
-			if(!Stunned)
+			if(!Character->Stunned)
 				TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * Character->BattleSpeed / 100.0;
 		}
 		else
@@ -252,7 +250,7 @@ void _Object::Update(double FrameTime) {
 			delete StatusEffect;
 			Iterator = StatusEffects.erase(Iterator);
 
-			CalculateStats();
+			Character->CalculateStats();
 		}
 		else
 			++Iterator;
@@ -419,7 +417,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 	if(Map && ModelTexture) {
 
 		float Alpha = 1.0f;
-		if(Invisible > 0)
+		if(Character->Invisible > 0)
 			Alpha = PLAYER_INVIS_ALPHA;
 
 		Graphics.SetProgram(Assets.Programs["pos_uv"]);
@@ -617,11 +615,11 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["spawnpoint"] = SpawnPoint;
 	StatsNode["portrait_id"] = PortraitID;
 	StatsNode["model_id"] = ModelID;
-	StatsNode["actionbar_size"] = (Json::Value::UInt64)ActionBar.size();
+	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
 	StatsNode["health"] = Character->Health;
 	StatsNode["mana"] = Character->Mana;
 	StatsNode["experience"] = Character->Experience;
-	StatsNode["gold"] = Gold;
+	StatsNode["gold"] = Character->Gold;
 	StatsNode["goldlost"] = Record->GoldLost;
 	StatsNode["playtime"] = Record->PlayTime;
 	StatsNode["battletime"] = Record->BattleTime;
@@ -669,11 +667,11 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write action bar
 	Json::Value ActionBarNode;
-	for(size_t i = 0; i < ActionBar.size(); i++) {
-		if(ActionBar[i].IsSet()) {
+	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+		if(Character->ActionBar[i].IsSet()) {
 			Json::Value ActionNode;
 			ActionNode["slot"] = (Json::Value::UInt64)i;
-			ActionNode["id"] = ActionBar[i].Item ? ActionBar[i].Item->ID : 0;
+			ActionNode["id"] = Character->ActionBar[i].Item ? Character->ActionBar[i].Item->ID : 0;
 			ActionBarNode.append(ActionNode);
 		}
 	}
@@ -723,7 +721,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
 	Character->Experience = StatsNode["experience"].asInt();
-	Gold = StatsNode["gold"].asInt();
+	Character->Gold = StatsNode["gold"].asInt();
 	Record->GoldLost = StatsNode["goldlost"].asInt();
 	Record->PlayTime = StatsNode["playtime"].asDouble();
 	Record->BattleTime = StatsNode["battletime"].asDouble();
@@ -740,7 +738,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	size_t ActionBarSize = 0;
 	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
-	ActionBar.resize(ActionBarSize);
+	Character->ActionBar.resize(ActionBarSize);
 
 	// Set items
 	for(Json::ValueIterator BagNode = Data["items"].begin(); BagNode != Data["items"].end(); BagNode++) {
@@ -762,8 +760,8 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set actionbar
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
-		if(Slot < ActionBar.size())
-			ActionBar[Slot].Item = Stats->Items.at(ActionNode["id"].asUInt());
+		if(Slot < Character->ActionBar.size())
+			Character->ActionBar[Slot].Item = Stats->Items.at(ActionNode["id"].asUInt());
 	}
 
 	// Set status effects
@@ -829,7 +827,7 @@ void _Object::SerializeCreate(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(PortraitID);
 	Data.Write<uint32_t>(ModelID);
-	Data.WriteBit(Invisible);
+	Data.WriteBit(Character->Invisible);
 }
 
 // Serialize for ObjectUpdate
@@ -837,7 +835,7 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<uint8_t>(Status);
-	Data.WriteBit(Invisible);
+	Data.WriteBit(Character->Invisible);
 }
 
 // Serialize object stats
@@ -851,7 +849,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
 	Data.Write<int>(Character->Experience);
-	Data.Write<int>(Gold);
+	Data.Write<int>(Character->Gold);
 	Data.Write<int>(Record->GoldLost);
 	Data.Write<double>(Record->PlayTime);
 	Data.Write<double>(Record->BattleTime);
@@ -860,7 +858,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(Record->PlayerKills);
 	Data.Write<int>(Record->GamesPlayed);
 	Data.Write<int>(Record->Bounty);
-	Data.Write<int>(Invisible);
+	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
 
 	// Write inventory
@@ -874,9 +872,9 @@ void _Object::SerializeStats(_Buffer &Data) {
 	}
 
 	// Write action bar
-	Data.Write<uint8_t>((uint8_t)ActionBar.size());
-	for(size_t i = 0; i < ActionBar.size(); i++) {
-		ActionBar[i].Serialize(Data);
+	Data.Write<uint8_t>((uint8_t)Character->ActionBar.size());
+	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+		Character->ActionBar[i].Serialize(Data);
 	}
 
 	// Write unlocks
@@ -917,7 +915,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 	Name = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
 	ModelID = Data.Read<uint32_t>();
-	Invisible = Data.ReadBit();
+	Character->Invisible = Data.ReadBit();
 
 	Portrait = Stats->GetPortraitImage(PortraitID);
 	ModelTexture = Stats->Models.at(ModelID).Texture;
@@ -934,7 +932,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
 	Character->Experience = Data.Read<int>();
-	Gold = Data.Read<int>();
+	Character->Gold = Data.Read<int>();
 	Record->GoldLost = Data.Read<int>();
 	Record->PlayTime = Data.Read<double>();
 	Record->BattleTime = Data.Read<double>();
@@ -943,7 +941,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Record->PlayerKills = Data.Read<int>();
 	Record->GamesPlayed = Data.Read<int>();
 	Record->Bounty = Data.Read<int>();
-	Invisible = Data.Read<int>();
+	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
@@ -961,9 +959,9 @@ void _Object::UnserializeStats(_Buffer &Data) {
 
 	// Read action bar
 	size_t ActionBarSize = Data.Read<uint8_t>();
-	ActionBar.resize(ActionBarSize);
+	Character->ActionBar.resize(ActionBarSize);
 	for(size_t i = 0; i < ActionBarSize; i++)
-		ActionBar[i].Unserialize(Data, Stats);
+		Character->ActionBar[i].Unserialize(Data, Stats);
 
 	// Read unlocks
 	uint32_t UnlockCount = Data.Read<uint32_t>();
@@ -984,8 +982,8 @@ void _Object::UnserializeStats(_Buffer &Data) {
 		StatusEffects.push_back(StatusEffect);
 	}
 
-	RefreshActionBarCount();
-	CalculateStats();
+	Character->RefreshActionBarCount();
+	Character->CalculateStats();
 }
 
 // Unserialize battle stats
@@ -1030,7 +1028,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 			StatusEffect = nullptr;
 		}
 
-		CalculateStats();
+		Character->CalculateStats();
 	}
 
 	// Update gold
@@ -1084,11 +1082,11 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Action bar upgrade
 	if(StatChange.HasStat(StatType::ACTIONBARSIZE)) {
-		size_t NewSize = ActionBar.size() + (size_t)StatChange.Values[StatType::ACTIONBARSIZE].Integer;
+		size_t NewSize = Character->ActionBar.size() + (size_t)StatChange.Values[StatType::ACTIONBARSIZE].Integer;
 		if(NewSize >= ACTIONBAR_MAX_SIZE)
 			NewSize = ACTIONBAR_MAX_SIZE;
 
-		ActionBar.resize(NewSize);
+		Character->ActionBar.resize(NewSize);
 	}
 
 	// Flee from battle
@@ -1160,7 +1158,7 @@ int _Object::Move() {
 	// Move player
 	if(Map->CanMoveTo(Position + Direction, this)) {
 		Position += Direction;
-		if(GetTile()->Zone > 0 && Invisible != 1)
+		if(GetTile()->Zone > 0 && Character->Invisible != 1)
 			NextBattle--;
 
 		return InputState;
@@ -1292,9 +1290,9 @@ void _Object::DeleteStatusEffects() {
 // Update gold amount
 void _Object::UpdateGold(int Value) {
 
-	Gold += Value;
-	if(Gold > PLAYER_MAX_GOLD)
-		Gold = PLAYER_MAX_GOLD;
+	Character->Gold += Value;
+	if(Character->Gold > PLAYER_MAX_GOLD)
+		Character->Gold = PLAYER_MAX_GOLD;
 }
 
 // Update experience
@@ -1307,7 +1305,7 @@ void _Object::UpdateExperience(int Value) {
 
 // Update death count and gold loss
 void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
-	int GoldPenalty = BountyLoss + (int)(std::abs(Gold) * Penalty + 0.5f);
+	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
 
 	// Update stats
 	Record->Deaths++;
@@ -1320,30 +1318,14 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 	// Send message
 	if(Server && Peer) {
 		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), "red");
-		Server->Log << "Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( action=death character_id=" << Character->CharacterID << " gold=" << Gold << " deaths=" << Record->Deaths << " )" << std::endl;
-	}
-}
-
-// Update counts on action bar
-void _Object::RefreshActionBarCount() {
-	Character->SkillPointsOnActionBar = 0;
-	for(size_t i = 0; i < ActionBar.size(); i++) {
-		const _Item *Item = ActionBar[i].Item;
-		if(Item) {
-			if(Item->IsSkill() && HasLearned(Item))
-				Character->SkillPointsOnActionBar += Skills[Item->ID];
-			else
-				ActionBar[i].Count = Inventory->CountItem(Item);
-		}
-		else
-			ActionBar[i].Count = 0;
+		Server->Log << "Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( action=death character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Record->Deaths << " )" << std::endl;
 	}
 }
 
 // Return an action struct from an action bar slot
 bool _Object::GetActionFromSkillbar(_Action &ReturnAction, size_t Slot) {
-	if(Slot < ActionBar.size()) {
-		ReturnAction.Item = ActionBar[Slot].Item;
+	if(Slot < Character->ActionBar.size()) {
+		ReturnAction.Item = Character->ActionBar[Slot].Item;
 		if(!ReturnAction.Item)
 			return false;
 
@@ -1408,7 +1390,7 @@ void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
 	Inventory->AddItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
 
 	// Update player
-	CalculateStats();
+	Character->CalculateStats();
 }
 
 // Generate and send seed to client
@@ -1497,9 +1479,9 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 		// Update action bar
 		if(Skills[SkillID] == 0) {
-			for(size_t i = 0; i < ActionBar.size(); i++) {
-				if(ActionBar[i].Item == Skill) {
-					ActionBar[i].Unset();
+			for(size_t i = 0; i < Character->ActionBar.size(); i++) {
+				if(Character->ActionBar[i].Item == Skill) {
+					Character->ActionBar[i].Unset();
 					break;
 				}
 			}
@@ -1509,184 +1491,7 @@ void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 // Can enter battle
 bool _Object::CanBattle() const {
-	return !Battle && Status == STATUS_NONE && Invisible <= 0;
-}
-
-// Calculates all of the player stats
-void _Object::CalculateStats() {
-
-	// Get base stats
-	Character->CalculateLevelStats(Stats);
-
-	Character->MaxHealth = Character->BaseMaxHealth;
-	Character->MaxMana = Character->BaseMaxMana;
-	Character->HealthRegen = Character->BaseHealthRegen;
-	Character->ManaRegen = Character->BaseManaRegen;
-	Character->HealPower = Character->BaseHealPower;
-	Character->AttackPower = Character->BaseAttackPower;
-	Character->BattleSpeed = 0;
-	Character->Evasion = Character->BaseEvasion;
-	Character->HitChance = Character->BaseHitChance;
-	Character->MinDamage = Character->BaseMinDamage;
-	Character->MaxDamage = Character->BaseMaxDamage;
-	Character->Armor = Character->BaseArmor;
-	Character->DamageBlock = Character->BaseDamageBlock;
-	Character->MoveSpeed = Character->BaseMoveSpeed;
-	Character->DropRate = Character->BaseDropRate;
-	Character->Resistances.clear();
-
-	Invisible = 0;
-	Stunned = 0;
-
-	// Get item stats
-	int ItemMinDamage = 0;
-	int ItemMaxDamage = 0;
-	int ItemArmor = 0;
-	int ItemDamageBlock = 0;
-	float WeaponDamageModifier = 1.0f;
-	_Bag &EquipmentBag = Inventory->Bags[_Bag::EQUIPMENT];
-	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
-
-		// Check each item
-		const _Item *Item = EquipmentBag.Slots[i].Item;
-		int Upgrades = EquipmentBag.Slots[i].Upgrades;
-		if(Item) {
-
-			// Add damage
-			if(Item->Type != ItemType::SHIELD) {
-				ItemMinDamage += Item->GetMinDamage(Upgrades);
-				ItemMaxDamage += Item->GetMaxDamage(Upgrades);
-			}
-
-			// Add defense
-			ItemArmor += Item->GetArmor(Upgrades);
-			ItemDamageBlock += Item->GetDamageBlock(Upgrades);
-
-			// Stat changes
-			Character->MaxHealth += Item->GetMaxHealth(Upgrades);
-			Character->MaxMana += Item->GetMaxMana(Upgrades);
-			Character->HealthRegen += Item->GetHealthRegen(Upgrades);
-			Character->ManaRegen += Item->GetManaRegen(Upgrades);
-			Character->BattleSpeed += Item->GetBattleSpeed(Upgrades);
-			Character->MoveSpeed += Item->GetMoveSpeed(Upgrades);
-			Character->DropRate += Item->GetDropRate(Upgrades);
-
-			// Add resistances
-			Character->Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
-		}
-	}
-
-	Character->SkillPointsUsed = 0;
-	for(const auto &SkillLevel : Skills) {
-		const _Item *Skill = Stats->Items.at(SkillLevel.first);
-		if(Skill)
-			Character->SkillPointsUsed += SkillLevel.second;
-	}
-
-	// Get skill bonus
-	for(size_t i = 0; i < ActionBar.size(); i++) {
-		_ActionResult ActionResult;
-		ActionResult.Source.Object = this;
-		if(GetActionFromSkillbar(ActionResult.ActionUsed, i)) {
-			const _Item *Skill = ActionResult.ActionUsed.Item;
-			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
-
-				// Get passive stat changes
-				Skill->GetStats(Scripting, ActionResult);
-				CalculateStatBonuses(ActionResult.Source);
-			}
-		}
-	}
-
-	// Get buff stats
-	for(const auto &StatusEffect : StatusEffects) {
-		_StatChange StatChange;
-		StatChange.Object = this;
-		StatusEffect->Buff->ExecuteScript(Scripting, "Stats", StatusEffect->Level, StatChange);
-		CalculateStatBonuses(StatChange);
-	}
-
-	// Get damage
-	Character->MinDamage += (int)std::roundf(ItemMinDamage * WeaponDamageModifier);
-	Character->MaxDamage += (int)std::roundf(ItemMaxDamage * WeaponDamageModifier);
-	Character->MinDamage = std::max(Character->MinDamage, 0);
-	Character->MaxDamage = std::max(Character->MaxDamage, 0);
-
-	// Get defense
-	Character->Armor += ItemArmor;
-	Character->DamageBlock += ItemDamageBlock;
-	Character->DamageBlock = std::max(Character->DamageBlock, 0);
-
-	// Cap resistances
-	for(auto &Resist : Character->Resistances) {
-		Resist.second = std::min(Resist.second, GAME_MAX_RESISTANCE);
-		Resist.second = std::max(Resist.second, -GAME_MAX_RESISTANCE);
-	}
-
-	// Get physical resistance from armor
-	float ArmorResist = Character->Armor / (30.0f + std::abs(Character->Armor));
-
-	// Physical resist comes solely from armor
-	Character->Resistances[2] = (int)(ArmorResist * 100);
-
-	Character->BattleSpeed = (int)(Character->BaseBattleSpeed * Character->BattleSpeed / 100.0 + Character->BaseBattleSpeed);
-	if(Character->BattleSpeed < BATTLE_MIN_SPEED)
-		Character->BattleSpeed = BATTLE_MIN_SPEED;
-
-	if(Character->MoveSpeed < PLAYER_MIN_MOVESPEED)
-		Character->MoveSpeed = PLAYER_MIN_MOVESPEED;
-
-	Character->Health = std::min(Character->Health, Character->MaxHealth);
-	Character->Mana = std::min(Character->Mana, Character->MaxMana);
-
-	RefreshActionBarCount();
-}
-
-// Update an object's stats from a statchange
-void _Object::CalculateStatBonuses(_StatChange &StatChange) {
-	if(StatChange.HasStat(StatType::MAXHEALTH))
-		Character->MaxHealth += StatChange.Values[StatType::MAXHEALTH].Integer;
-	if(StatChange.HasStat(StatType::MAXMANA))
-		Character->MaxMana += StatChange.Values[StatType::MAXMANA].Integer;
-	if(StatChange.HasStat(StatType::HEALTHREGEN))
-		Character->HealthRegen += StatChange.Values[StatType::HEALTHREGEN].Integer;
-	if(StatChange.HasStat(StatType::MANAREGEN))
-		Character->ManaRegen += StatChange.Values[StatType::MANAREGEN].Integer;
-
-	if(StatChange.HasStat(StatType::HEALPOWER))
-		Character->HealPower += StatChange.Values[StatType::HEALPOWER].Float;
-	if(StatChange.HasStat(StatType::ATTACKPOWER))
-		Character->AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
-
-	if(StatChange.HasStat(StatType::BATTLESPEED))
-		Character->BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
-	if(StatChange.HasStat(StatType::HITCHANCE))
-		Character->HitChance += StatChange.Values[StatType::HITCHANCE].Integer;
-	if(StatChange.HasStat(StatType::EVASION))
-		Character->Evasion += StatChange.Values[StatType::EVASION].Integer;
-	if(StatChange.HasStat(StatType::STUNNED))
-		Stunned = StatChange.Values[StatType::STUNNED].Integer;
-
-	if(StatChange.HasStat(StatType::RESISTTYPE))
-		Character->Resistances[(uint32_t)StatChange.Values[StatType::RESISTTYPE].Integer] += StatChange.Values[StatType::RESIST].Integer;
-
-	if(StatChange.HasStat(StatType::MINDAMAGE))
-		Character->MinDamage += StatChange.Values[StatType::MINDAMAGE].Integer;
-	if(StatChange.HasStat(StatType::MAXDAMAGE))
-		Character->MaxDamage += StatChange.Values[StatType::MAXDAMAGE].Integer;
-	if(StatChange.HasStat(StatType::ARMOR))
-		Character->Armor += StatChange.Values[StatType::ARMOR].Integer;
-	if(StatChange.HasStat(StatType::DAMAGEBLOCK))
-		Character->DamageBlock += StatChange.Values[StatType::DAMAGEBLOCK].Integer;
-
-	if(StatChange.HasStat(StatType::MOVESPEED))
-		Character->MoveSpeed += StatChange.Values[StatType::MOVESPEED].Integer;
-
-	if(StatChange.HasStat(StatType::DROPRATE))
-		Character->DropRate += StatChange.Values[StatType::DROPRATE].Integer;
-
-	if(StatChange.HasStat(StatType::INVISIBLE))
-		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
+	return !Battle && Status == STATUS_NONE && Character->Invisible <= 0;
 }
 
 // Send packet to player or broadcast during battle

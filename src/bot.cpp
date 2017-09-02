@@ -484,7 +484,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 							size_t Index;
 							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
 								Player->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
-								Player->RefreshActionBarCount();
+								Player->Character->RefreshActionBarCount();
 							}
 						}
 
@@ -534,11 +534,11 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->Character->MaxHealth = Data.Read<int>();
 			Player->Character->MaxMana = Data.Read<int>();
 			Player->Character->Experience = Data.Read<int>();
-			Player->Gold = Data.Read<int>();
+			Player->Character->Gold = Data.Read<int>();
 			Player->Record->Bounty = Data.Read<int>();
 			double Clock = Data.Read<double>();
 
-			Player->CalculateStats();
+			Player->Character->CalculateStats();
 
 			if(Map)
 				Map->Clock = Clock;
