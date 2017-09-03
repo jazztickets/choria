@@ -404,14 +404,14 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			_Object *Object = ObjectManager->GetObject(NetworkID);
 			if(Object) {
 				Object->UnserializeBattle(Data);
-				Battle->AddFighter(Object, Object->BattleSide, true);
+				Battle->AddObject(Object, Object->BattleSide, true);
 			}
 		} break;
 		case PacketType::BATTLE_LEAVE: {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 			_Object *Object = ObjectManager->GetObject(NetworkID);
 			if(Object)
-				Battle->RemoveFighter(Object);
+				Battle->RemoveObject(Object);
 		} break;
 		case PacketType::BATTLE_END: {
 			if(!Player || !Battle)
@@ -470,7 +470,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			// Get source change
 			HandleStatChange(Data, ActionResult.Source);
 
-			// Update source fighter
+			// Update source object
 			if(ActionResult.Source.Object) {
 				ActionResult.Source.Object->TurnTimer = 0.0;
 				ActionResult.Source.Object->Action.Unset();

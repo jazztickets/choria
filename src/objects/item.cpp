@@ -487,10 +487,10 @@ int _Item::GetTargetCount() const {
 			TargetCount = BATTLE_MULTI_TARGET_COUNT;
 		break;
 		case TargetType::ENEMY_ALL:
-			TargetCount = BATTLE_MAXFIGHTERS_SIDE;
+			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
 		break;
 		case TargetType::ALLY_ALL:
-			TargetCount = BATTLE_MAXFIGHTERS_SIDE;
+			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
 		break;
 		case TargetType::ANY:
 			TargetCount = 1;

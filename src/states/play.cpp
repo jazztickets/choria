@@ -1119,7 +1119,7 @@ void _PlayState::HandleBattleAction(_Buffer &Data) {
 	Battle->ClientHandlePlayerAction(Data);
 }
 
-// Handle a fighter joining the battle
+// Handle an object joining the battle
 void _PlayState::HandleBattleJoin(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
@@ -1134,11 +1134,11 @@ void _PlayState::HandleBattleJoin(_Buffer &Data) {
 		if(DatabaseID)
 			Stats->GetMonsterStats(DatabaseID, Object);
 		Object->UnserializeBattle(Data);
-		Battle->AddFighter(Object, Object->BattleSide, true);
+		Battle->AddObject(Object, Object->BattleSide, true);
 	}
 }
 
-// Handle a fighter leaving battle
+// Handle an object leaving battle
 void _PlayState::HandleBattleLeave(_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
@@ -1146,7 +1146,7 @@ void _PlayState::HandleBattleLeave(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	_Object *Object = ObjectManager->GetObject(NetworkID);
 	if(Object) {
-		Battle->RemoveFighter(Object);
+		Battle->RemoveObject(Object);
 	}
 }
 
@@ -1229,7 +1229,7 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 	// Get source change
 	HandleStatChange(Data, ActionResult.Source);
 
-	// Update source fighter
+	// Update source object
 	if(ActionResult.Source.Object) {
 		ActionResult.Source.Object->TurnTimer = 0.0;
 		ActionResult.Source.Object->Action.Unset();

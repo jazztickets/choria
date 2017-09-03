@@ -141,7 +141,7 @@ void _DedicatedState::ShowBattles() {
 	size_t i = 0;
 	for(auto &Battle : Battles) {
 		Server->Log << i << ": id=" << Battle->NetworkID << std::endl;
-		for(auto &Object : Battle->Fighters) {
+		for(auto &Object : Battle->Objects) {
 			Server->Log << "\tnetwork_id=" << Object->NetworkID << "\thealth=" << Round(Object->Character->GetHealthPercent()) << "\tname=" << Object->Name << std::endl;
 		}
 

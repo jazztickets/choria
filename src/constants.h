@@ -79,7 +79,7 @@ const  float        HUD_STATCHANGE_DISTANCE         =  20.0f;
 //     Battle
 const  int          BATTLE_MINSTEPS                 =  12;
 const  int          BATTLE_MAXSTEPS                 =  30;
-const  int          BATTLE_MAXFIGHTERS_SIDE         =  8;
+const  int          BATTLE_MAX_OBJECTS_PER_SIDE     =  8;
 const  int          BATTLE_MULTI_TARGET_COUNT       =  3;
 const  int          BATTLE_ROWS_PER_SIDE            =  4;
 const  int          BATTLE_COLUMN_SPACING           =  230;

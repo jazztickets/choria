@@ -39,8 +39,8 @@ struct _BattleResult {
 		JoinedCount(0),
 		TotalExperienceGiven(0),
 		TotalGoldGiven(0),
-		ExperiencePerFighter(0),
-		GoldPerFighter(0),
+		ExperiencePerCharacter(0),
+		GoldPerCharacter(0),
 		Dead(true) { }
 
 	int AliveCount;
@@ -49,8 +49,8 @@ struct _BattleResult {
 	int JoinedCount;
 	int TotalExperienceGiven;
 	int TotalGoldGiven;
-	int ExperiencePerFighter;
-	int GoldPerFighter;
+	int ExperiencePerCharacter;
+	int GoldPerCharacter;
 	bool Dead;
 };
 
@@ -63,9 +63,9 @@ class _Battle : public _ManagerBase {
 		~_Battle();
 
 		// Objects
-		void AddFighter(_Object *Fighter, uint8_t Side, bool Join=false);
-		void RemoveFighter(_Object *RemoveFighter);
-		void GetSeparateFighterList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies);
+		void AddObject(_Object *Object, uint8_t Side, bool Join=false);
+		void RemoveObject(_Object *RemoveObject);
+		void GetSeparateObjectList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies);
 		int GetPeerCount();
 
 		// Updates
@@ -93,7 +93,7 @@ class _Battle : public _ManagerBase {
 		_Object *ClientPlayer;
 		_Manager<_Object> *Manager;
 
-		std::list<_Object *> Fighters;
+		std::list<_Object *> Objects;
 		std::list<_ActionResult> ActionResults;
 		int SideCount[2];
 
@@ -105,16 +105,15 @@ class _Battle : public _ManagerBase {
 
 	private:
 
-		void GetBattleOffset(int SideIndex, _Object *Fighter);
-		void AdjustBattleElements(int SideIndex, _Object *Fighter);
-		void CreateBattleElements(int SideIndex, _Object *Fighter);
+		void GetBattleOffset(int SideIndex, _Object *Object);
+		void AdjustBattleElements(int SideIndex, _Object *Object);
+		void CreateBattleElements(int SideIndex, _Object *Object);
 
 		void ChangeTarget(int Direction, bool SideDirection);
 
-		void GetFighterList(int Side, std::list<_Object *> &SideFighters);
-		void GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters);
+		void GetObjectList(int Side, std::list<_Object *> &SideObjects);
+		void GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects);
 
-		void RenderBattle(double BlendFactor);
 		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
 
 		// State

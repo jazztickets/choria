@@ -1571,7 +1571,7 @@ void _Server::HandleJoin(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Add player to battle
-	Battle->AddFighter(Player, 0, true);
+	Battle->AddObject(Player, 0, true);
 
 	// Send battle to new player
 	_Buffer Packet;
@@ -1789,9 +1789,9 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Difficulty[1] = 1.0;
 
 		// Add players to battle
-		Battle->AddFighter(BattleEvent.Object, BATTLE_PVP_ATTACKER_SIDE);
+		Battle->AddObject(BattleEvent.Object, BATTLE_PVP_ATTACKER_SIDE);
 		for(auto &TargetPlayer : Players) {
-			Battle->AddFighter(TargetPlayer, !BATTLE_PVP_ATTACKER_SIDE);
+			Battle->AddObject(TargetPlayer, !BATTLE_PVP_ATTACKER_SIDE);
 		}
 
 		// Send battle to players
@@ -1804,7 +1804,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 		// Get a list of players
 		std::list<_Object *> Players;
-		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, 7*7, BATTLE_MAXFIGHTERS_SIDE-1, Players);
+		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, 7*7, BATTLE_MAX_OBJECTS_PER_SIDE-1, Players);
 		int AdditionalCount = 0;
 		if(!BattleEvent.Scripted)
 			AdditionalCount = (int)Players.size();
@@ -1851,7 +1851,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			// Add players to battle
 			Difficulty -= GAME_DIFFICULTY_PER_PLAYER;
 			for(auto &PartyPlayer : Players) {
-				Battle->AddFighter(PartyPlayer, 0);
+				Battle->AddObject(PartyPlayer, 0);
 
 				// Increase difficulty for each player
 				Difficulty += GAME_DIFFICULTY_PER_PLAYER;
@@ -1870,7 +1870,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 				Monster->Stats = Stats;
 				Stats->GetMonsterStats(MonsterID, Monster, Difficulty);
 				Monster->Character->CalculateStats();
-				Battle->AddFighter(Monster, 1);
+				Battle->AddObject(Monster, 1);
 			}
 
 			// Send battle to players

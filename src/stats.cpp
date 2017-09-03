@@ -616,7 +616,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 		MonsterCount += AdditionalCount;
 
 		// Cap monster count
-		MonsterCount = std::min(MonsterCount, BATTLE_MAXFIGHTERS_SIDE);
+		MonsterCount = std::min(MonsterCount, BATTLE_MAX_OBJECTS_PER_SIDE);
 
 		// Run query
 		Database->PrepareQuery("SELECT * FROM zonedata WHERE zone_id = @zone_id");

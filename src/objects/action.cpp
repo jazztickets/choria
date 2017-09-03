@@ -150,8 +150,8 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 	if(!ActionResult.Summon.ID)
 		return;
 
-	_Object *Object = ActionResult.Source.Object;
-	_Battle *Battle = Object->Battle;
+	_Object *SourceObject = ActionResult.Source.Object;
+	_Battle *Battle = SourceObject->Battle;
 	if(Battle) {
 
 		// Get database id
@@ -160,10 +160,10 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		// Check for existing summon
 		_Object *ExistingSummon = nullptr;
 		int SideCount = 0;
-		for(auto &Fighter : Battle->Fighters) {
-			if(Fighter->BattleSide == Object->BattleSide) {
-				if(Fighter->Owner == Object && Fighter->DatabaseID == SummonDatabaseID) {
-					ExistingSummon = Fighter;
+		for(auto &Object : Battle->Objects) {
+			if(Object->BattleSide == SourceObject->BattleSide) {
+				if(Object->Owner == SourceObject && Object->DatabaseID == SummonDatabaseID) {
+					ExistingSummon = Object;
 				}
 
 				SideCount++;
@@ -182,16 +182,16 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			Heal.Serialize(Packet);
 			Battle->BroadcastPacket(Packet);
 		}
-		else if(SideCount < BATTLE_MAXFIGHTERS_SIDE) {
+		else if(SideCount < BATTLE_MAX_OBJECTS_PER_SIDE) {
 
 			// Create monster
-			_Object *Monster = Object->Server->ObjectManager->Create();
-			Monster->Server = Object->Server;
-			Monster->Scripting = Object->Scripting;
+			_Object *Monster = SourceObject->Server->ObjectManager->Create();
+			Monster->Server = SourceObject->Server;
+			Monster->Scripting = SourceObject->Scripting;
 			Monster->DatabaseID = SummonDatabaseID;
-			Monster->Stats = Object->Stats;
-			Monster->Owner = Object;
-			Object->Stats->GetMonsterStats(Monster->DatabaseID, Monster);
+			Monster->Stats = SourceObject->Stats;
+			Monster->Owner = SourceObject;
+			SourceObject->Stats->GetMonsterStats(Monster->DatabaseID, Monster);
 
 			// Add stats from script
 			Monster->Character->Health = Monster->Character->BaseMaxHealth = ActionResult.Summon.Health;
@@ -208,7 +208,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			Battle->BroadcastPacket(Packet);
 
 			// Add monster to battle
-			Battle->AddFighter(Monster, 0, true);
+			Battle->AddObject(Monster, 0, true);
 		}
 	}
 }

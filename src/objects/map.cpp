@@ -890,7 +890,7 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 			continue;
 
 		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Battle && !Object->Battle->PVP && Object->Battle->SideCount[0] < BATTLE_MAXFIGHTERS_SIDE) {
+			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Battle && !Object->Battle->PVP && Object->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
 				if(Object->PartyName == "" || Object->PartyName == Player->PartyName)
 					return Object->Battle;
 				else

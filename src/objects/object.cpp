@@ -129,7 +129,7 @@ _Object::~_Object() {
 	}
 
 	if(Battle) {
-		Battle->RemoveFighter(this);
+		Battle->RemoveObject(this);
 		Battle = nullptr;
 	}
 
@@ -182,7 +182,7 @@ void _Object::Update(double FrameTime) {
 
 		// Update monster AI
 		if(Server && Battle && IsMonster())
-			UpdateMonsterAI(Battle->Fighters, FrameTime);
+			UpdateMonsterAI(FrameTime);
 
 		// Check turn timer
 		if(Battle) {
@@ -358,9 +358,9 @@ void _Object::UpdateBot(double FrameTime) {
 			if(!Action.Item->CanUse(Scripting, ActionResult))
 				Action.Item = nullptr;
 
-			// Separate fighter list
+			// Separate object list
 			std::list<_Object *> Allies, Enemies;
-			Battle->GetSeparateFighterList(BattleSide, Allies, Enemies);
+			Battle->GetSeparateObjectList(BattleSide, Allies, Enemies);
 
 			// Call lua script
 			if(Enemies.size()) {
@@ -378,16 +378,16 @@ void _Object::UpdateBot(double FrameTime) {
 }
 
 // Update monster AI during battle
-void _Object::UpdateMonsterAI(const std::list<_Object *> &Fighters, double FrameTime) {
+void _Object::UpdateMonsterAI(double FrameTime) {
 	if(!AI.length())
 		return;
 
 	// Call AI script to get action
 	if(TurnTimer >= 1.0 && !Action.IsSet()) {
 
-		// Separate fighter list
+		// Separate object list
 		std::list<_Object *> Allies, Enemies;
-		Battle->GetSeparateFighterList(BattleSide, Allies, Enemies);
+		Battle->GetSeparateObjectList(BattleSide, Allies, Enemies);
 
 		// Call lua script
 		if(Enemies.size()) {
@@ -437,7 +437,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 	}
 }
 
-// Renders the fighter during a battle
+// Renders the object during a battle
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	glm::vec4 GlobalColor(glm::vec4(1.0f));
 	GlobalColor.a = 1.0f;
@@ -976,7 +976,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 void _Object::UnserializeBattle(_Buffer &Data) {
 	InputStates.clear();
 
-	// Get fighter type
+	// Get object type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
 	TurnTimer = Data.Read<double>();
 	Character->Health = Data.Read<int>();
@@ -1078,7 +1078,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	// Flee from battle
 	if(StatChange.HasStat(StatType::FLEE)) {
 		if(Battle)
-			Battle->RemoveFighter(this);
+			Battle->RemoveObject(this);
 	}
 
 	// Run server only commands

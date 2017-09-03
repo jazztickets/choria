@@ -72,11 +72,11 @@ _Battle::~_Battle() {
 	if(BattleElement)
 		BattleElement->SetActive(false);
 
-	// Remove fighters
-	for(auto &Fighter : Fighters) {
-		if(Fighter->IsMonster())
-			Fighter->Deleted = true;
-		Fighter->StopBattle();
+	// Remove objects
+	for(auto &Object : Objects) {
+		if(Object->IsMonster())
+			Object->Deleted = true;
+		Object->StopBattle();
 	}
 
 	// Remove entry from battle table
@@ -90,11 +90,11 @@ void _Battle::Update(double FrameTime) {
 	// Check for end
 	if(Server) {
 
-		// Count alive fighters for each side
+		// Count alive objects for each side
 		int AliveCount[2] = { 0, 0 };
-		for(auto &Fighter : Fighters) {
-			if(Fighter->Character->IsAlive())
-				AliveCount[Fighter->BattleSide]++;
+		for(auto &Object : Objects) {
+			if(Object->Character->IsAlive())
+				AliveCount[Object->BattleSide]++;
 		}
 
 		// Check for end conditions
@@ -136,24 +136,17 @@ void _Battle::Update(double FrameTime) {
 	Time += FrameTime;
 }
 
-// Render the battle system
+// Render the battle screen
 void _Battle::Render(double BlendFactor) {
-	RenderBattle(BlendFactor);
-}
-
-// Renders the battle part
-void _Battle::RenderBattle(double BlendFactor) {
 	BattleElement->Render();
 
-	// Draw fighters
-	for(auto &Fighter : Fighters) {
-		Fighter->RenderBattle(ClientPlayer, Time);
-	}
+	// Draw battle elements
+	for(auto &Object : Objects)
+		Object->RenderBattle(ClientPlayer, Time);
 
 	// Draw action results
-	for(auto &ActionResult : ActionResults) {
+	for(auto &ActionResult : ActionResults)
 		RenderActionResults(ActionResult, BlendFactor);
-	}
 }
 
 // Render results of an action
@@ -313,25 +306,25 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 		return;
 	}
 
-	// Get list of fighters on each side
-	std::list<_Object *> FighterList;
-	GetFighterList(Side, FighterList);
-	auto Iterator = FighterList.begin();
+	// Get list of objects on each side
+	std::list<_Object *> ObjectList;
+	GetObjectList(Side, ObjectList);
+	auto Iterator = ObjectList.begin();
 
 	// Get iterator to last target
 	_Object *LastTarget = InitialTarget;
-	if(FighterList.size() && LastTarget && Item->CanTarget(ClientPlayer, LastTarget))
-	   Iterator = std::find(FighterList.begin(), FighterList.end(), LastTarget);
+	if(ObjectList.size() && LastTarget && Item->CanTarget(ClientPlayer, LastTarget))
+	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 	// Set up targets
 	int TargetCount = Item->GetTargetCount();
-	for(size_t i = 0; i < FighterList.size(); i++) {
+	for(size_t i = 0; i < ObjectList.size(); i++) {
 
 		// Check for valid target
 		_Object *Target = *Iterator;
 		if(Item->CanTarget(ClientPlayer, Target)) {
 
-			// Add fighter to list of targets
+			// Add object to list of targets
 			ClientPlayer->Targets.push_back(Target);
 
 			// Update count
@@ -342,8 +335,8 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 		// Update target
 		++Iterator;
-		if(Iterator == FighterList.end())
-			Iterator = FighterList.begin();
+		if(Iterator == ObjectList.end())
+			Iterator = ObjectList.begin();
 	}
 }
 
@@ -364,14 +357,14 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	if(Item->TargetID == TargetType::ANY && ChangeSides)
 		BattleTargetSide = !BattleTargetSide;
 
-	// Get list of fighters on target side
-	std::list<_Object *> FighterList;
-	GetFighterList(BattleTargetSide, FighterList);
+	// Get list of objects on target side
+	std::list<_Object *> ObjectList;
+	GetObjectList(BattleTargetSide, ObjectList);
 
 	// Get iterator to current target
-	auto Iterator = FighterList.begin();
-	if(FighterList.size())
-	   Iterator = std::find(FighterList.begin(), FighterList.end(), ClientPlayer->Targets.front());
+	auto Iterator = ObjectList.begin();
+	if(ObjectList.size())
+	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), ClientPlayer->Targets.front());
 
 	// Get target count
 	size_t TargetCount = ClientPlayer->Targets.size();
@@ -379,7 +372,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 
 	// Get max available targets
 	size_t MaxTargets = 0;
-	for(auto &Target : FighterList) {
+	for(auto &Target : ObjectList) {
 		if(Item->CanTarget(ClientPlayer, Target))
 			MaxTargets++;
 	}
@@ -392,20 +385,20 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	while(TargetCount) {
 
 		// Wrap around
-		if(Iterator == FighterList.end())
-			Iterator = FighterList.begin();
+		if(Iterator == ObjectList.end())
+			Iterator = ObjectList.begin();
 
 		// Update target
 		if(Direction > 0) {
 			++Iterator;
-			if(Iterator == FighterList.end())
-				Iterator = FighterList.begin();
+			if(Iterator == ObjectList.end())
+				Iterator = ObjectList.begin();
 
 			NewTarget = *Iterator;
 		}
 		else if(Direction < 0) {
-			if(Iterator == FighterList.begin()) {
-				Iterator = FighterList.end();
+			if(Iterator == ObjectList.begin()) {
+				Iterator = ObjectList.end();
 				--Iterator;
 			}
 			else {
@@ -432,51 +425,51 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	}
 }
 
-// Add a fighter to the battle
-void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
-	Fighter->Battle = this;
-	Fighter->BattleSide = Side;
-	Fighter->LastTarget[0] = nullptr;
-	Fighter->LastTarget[1] = nullptr;
-	Fighter->Targets.clear();
-	Fighter->Action.Unset();
-	Fighter->PotentialAction.Unset();
-	Fighter->InventoryOpen = false;
-	Fighter->SkillsOpen = false;
-	Fighter->MenuOpen = false;
-	Fighter->Vendor = nullptr;
-	Fighter->Trader = nullptr;
-	Fighter->TeleportTime = -1.0;
-	Fighter->JoinedBattle = Join;
-	Fighter->GoldStolen = 0;
+// Add an object to the battle
+void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
+	Object->Battle = this;
+	Object->BattleSide = Side;
+	Object->LastTarget[0] = nullptr;
+	Object->LastTarget[1] = nullptr;
+	Object->Targets.clear();
+	Object->Action.Unset();
+	Object->PotentialAction.Unset();
+	Object->InventoryOpen = false;
+	Object->SkillsOpen = false;
+	Object->MenuOpen = false;
+	Object->Vendor = nullptr;
+	Object->Trader = nullptr;
+	Object->TeleportTime = -1.0;
+	Object->JoinedBattle = Join;
+	Object->GoldStolen = 0;
 	if(Server) {
-		Fighter->Character->GenerateNextBattle();
-		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
+		Object->Character->GenerateNextBattle();
+		Object->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
-		// Send player join packet to current fighters
+		// Send player join packet to current objects
 		if(Join) {
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::BATTLE_JOIN);
-			Fighter->SerializeBattle(Packet);
+			Object->SerializeBattle(Packet);
 			BroadcastPacket(Packet);
 		}
 	}
 
-	// Count fighters and set slots
+	// Count objects and set slots
 	SideCount[Side]++;
-	Fighters.push_back(Fighter);
+	Objects.push_back(Object);
 
-	// Fighter joining on the client
+	// Object joining on the client
 	if(!Server && Join) {
 
 		// Adjust existing battle elements and create new one
 		int SideIndex = 0;
-		for(auto &AdjustFighter : Fighters) {
-			if(AdjustFighter->BattleSide == Side) {
-				if(AdjustFighter == Fighter)
-					CreateBattleElements(SideIndex, AdjustFighter);
+		for(auto &AdjustObject : Objects) {
+			if(AdjustObject->BattleSide == Side) {
+				if(AdjustObject == Object)
+					CreateBattleElements(SideIndex, AdjustObject);
 				else
-					AdjustBattleElements(SideIndex, AdjustFighter);
+					AdjustBattleElements(SideIndex, AdjustObject);
 
 				SideIndex++;
 			}
@@ -484,22 +477,22 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	}
 }
 
-// Get a list of fighters from a side
-void _Battle::GetFighterList(int Side, std::list<_Object *> &SideFighters) {
+// Get a list of objects from a side
+void _Battle::GetObjectList(int Side, std::list<_Object *> &SideObjects) {
 
-	for(auto &Fighter : Fighters) {
-		if(Fighter->BattleSide == Side) {
-			SideFighters.push_back(Fighter);
+	for(auto &Object : Objects) {
+		if(Object->BattleSide == Side) {
+			SideObjects.push_back(Object);
 		}
 	}
 }
 
-// Get a list of alive fighters from a side
-void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters) {
+// Get a list of alive objects from a side
+void _Battle::GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects) {
 
-	for(auto &Fighter : Fighters) {
-		if(Fighter->BattleSide == Side && Fighter->Character->IsAlive()) {
-			AliveFighters.push_back(Fighter);
+	for(auto &Object : Objects) {
+		if(Object->BattleSide == Side && Object->Character->IsAlive()) {
+			AliveObjects.push_back(Object);
 		}
 	}
 }
@@ -507,53 +500,52 @@ void _Battle::GetAliveFighterList(int Side, std::list<_Object *> &AliveFighters)
 // Starts the battle and notifies the players
 void _Battle::Serialize(_Buffer &Data) {
 
-	// Write fighter count
-	size_t FighterCount = Fighters.size();
-	Data.Write<uint8_t>((uint8_t)FighterCount);
+	// Write object count
+	Data.Write<uint8_t>((uint8_t)Objects.size());
 
-	// Write fighter information
-	for(auto &Fighter : Fighters)
-		Fighter->SerializeBattle(Data);
+	// Write object information
+	for(auto &Object : Objects)
+		Object->SerializeBattle(Data);
 }
 
 // Unserialize for network
 void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 
-	// Get fighter count
-	int FighterCount = Data.Read<uint8_t>();
+	// Get object count
+	int ObjectCount = Data.Read<uint8_t>();
 
-	// Get fighter information
-	for(int i = 0; i < FighterCount; i++) {
+	// Get object information
+	for(int i = 0; i < ObjectCount; i++) {
 
 		// Get object data
 		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 		uint32_t DatabaseID = Data.Read<uint32_t>();
 
 		// Get object pointers
-		_Object *Fighter = nullptr;
+		_Object *Object = nullptr;
 		if(DatabaseID) {
-			Fighter = Manager->CreateWithID(NetworkID);
-			Stats->GetMonsterStats(DatabaseID, Fighter);
+			Object = Manager->CreateWithID(NetworkID);
+			Stats->GetMonsterStats(DatabaseID, Object);
 		}
 		else
-			Fighter = Manager->GetObject(NetworkID);
+			Object = Manager->GetObject(NetworkID);
 
 		// Get battle stats
-		Fighter->Stats = Stats;
-		Fighter->HUD = HUD;
-		Fighter->Scripting = Scripting;
-		Fighter->UnserializeBattle(Data);
-		Fighter->Character->CalculateStats();
+		Object->Stats = Stats;
+		Object->HUD = HUD;
+		Object->Scripting = Scripting;
+		Object->UnserializeBattle(Data);
+		Object->Character->CalculateStats();
 
-		// Add fighter
-		AddFighter(Fighter, Fighter->BattleSide);
+		// Add object
+		AddObject(Object, Object->BattleSide);
 	}
 
-	// Set fighter position offsets and create ui elements
+	// Set object position offsets and create ui elements
 	int SideIndex[2] = { 0, 0 };
-	for(auto &Fighter : Fighters) {
-		CreateBattleElements(SideIndex[Fighter->BattleSide], Fighter);
-		SideIndex[Fighter->BattleSide]++;
+	for(auto &Object : Objects) {
+		CreateBattleElements(SideIndex[Object->BattleSide], Object);
+		SideIndex[Object->BattleSide]++;
 	}
 }
 
@@ -562,38 +554,38 @@ void _Battle::ServerEndBattle() {
 
 	// Get statistics for each side
 	_BattleResult SideStats[2];
-	std::list<_Object *> SideFighters[2];
+	std::list<_Object *> SideObjects[2];
 	for(int Side = 0; Side < 2; Side++) {
 
-		// Get a list of fighters that are still in the battle
-		GetFighterList(Side, SideFighters[Side]);
+		// Get a list of objects that are still in the battle
+		GetObjectList(Side, SideObjects[Side]);
 
-		// Loop through fighters
-		for(auto &Fighter : SideFighters[Side]) {
+		// Loop through objects
+		for(auto &Object : SideObjects[Side]) {
 
 			// Keep track of players
-			if(!Fighter->IsMonster())
+			if(!Object->IsMonster())
 				SideStats[Side].PlayerCount++;
 			else
 				SideStats[Side].MonsterCount++;
 
-			if(Fighter->JoinedBattle)
+			if(Object->JoinedBattle)
 				SideStats[Side].JoinedCount++;
 
-			// Tally alive fighters
-			if(Fighter->Character->IsAlive()) {
+			// Tally alive objects
+			if(Object->Character->IsAlive()) {
 				SideStats[Side].AliveCount++;
 				SideStats[Side].Dead = false;
 			}
 
 			// Sum experience and gold
-			SideStats[Side].TotalExperienceGiven += Fighter->ExperienceGiven;
+			SideStats[Side].TotalExperienceGiven += Object->ExperienceGiven;
 
 			// Calculate gold based on monster or player
-			if(Fighter->IsMonster())
-				SideStats[Side].TotalGoldGiven += Fighter->GoldGiven + Fighter->GoldStolen;
+			if(Object->IsMonster())
+				SideStats[Side].TotalGoldGiven += Object->GoldGiven + Object->GoldStolen;
 			else
-				SideStats[Side].TotalGoldGiven += Fighter->Record->Bounty + Fighter->GoldStolen + (int)(Fighter->Character->Gold * PVP * 0.01f + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Record->Bounty + Object->GoldStolen + (int)(Object->Character->Gold * PVP * 0.01f + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
@@ -610,7 +602,7 @@ void _Battle::ServerEndBattle() {
 		WinningSide = 0;
 
 	// Check for a winning side
-	if(WinningSide != -1 && SideFighters[WinningSide].size()) {
+	if(WinningSide != -1 && SideObjects[WinningSide].size()) {
 
 		// Divide up rewards
 		for(int Side = 0; Side < 2; Side++) {
@@ -621,63 +613,63 @@ void _Battle::ServerEndBattle() {
 
 			// Divide experience up
 			if(SideStats[OtherSide].TotalExperienceGiven > 0) {
-				SideStats[Side].ExperiencePerFighter = SideStats[OtherSide].TotalExperienceGiven / DivideCount;
-				if(SideStats[Side].ExperiencePerFighter <= 0)
-					SideStats[Side].ExperiencePerFighter = 1;
+				SideStats[Side].ExperiencePerCharacter = SideStats[OtherSide].TotalExperienceGiven / DivideCount;
+				if(SideStats[Side].ExperiencePerCharacter <= 0)
+					SideStats[Side].ExperiencePerCharacter = 1;
 			}
 
 			// Divide gold up
 			if(SideStats[OtherSide].TotalGoldGiven > 0) {
-				SideStats[Side].GoldPerFighter = SideStats[OtherSide].TotalGoldGiven / DivideCount;
-				if(SideStats[Side].GoldPerFighter <= 0)
-					SideStats[Side].GoldPerFighter = 1;
+				SideStats[Side].GoldPerCharacter = SideStats[OtherSide].TotalGoldGiven / DivideCount;
+				if(SideStats[Side].GoldPerCharacter <= 0)
+					SideStats[Side].GoldPerCharacter = 1;
 			}
 		}
 
-		// Get list of fighters that get rewards
-		std::list<_Object *> RewardFighters;
+		// Get list of objects that get rewards
+		std::list<_Object *> RewardObjects;
 		int DropRate = 0;
-		for(auto &Object : SideFighters[WinningSide]) {
+		for(auto &Object : SideObjects[WinningSide]) {
 			if(Object->Character->IsAlive()) {
 				DropRate += Object->Character->DropRate;
-				RewardFighters.push_back(Object);
+				RewardObjects.push_back(Object);
 			}
 		}
 
 		// Check for reward recipients
-		if(RewardFighters.size() && !PVP) {
+		if(RewardObjects.size() && !PVP) {
 
 			// Convert winning side list to array
-			std::vector<_Object *> FighterArray { std::begin(RewardFighters), std::end(RewardFighters) };
+			std::vector<_Object *> ObjectArray { std::begin(RewardObjects), std::end(RewardObjects) };
 
 			// Generate items drops
 			std::list<uint32_t> ItemDrops;
-			for(auto &Fighter : SideFighters[!WinningSide]) {
-				if(Fighter->IsMonster())
-					Stats->GenerateItemDrops(Fighter->DatabaseID, 1, DropRate, ItemDrops);
+			for(auto &Object : SideObjects[!WinningSide]) {
+				if(Object->IsMonster())
+					Stats->GenerateItemDrops(Object->DatabaseID, 1, DropRate, ItemDrops);
 			}
 
 			// Boss drops aren't divided up
 			if(Boss) {
 				for(auto &ItemID : ItemDrops) {
-					for(auto &Fighter : RewardFighters) {
-						Fighter->ItemDropsReceived.push_back(ItemID);
+					for(auto &Object : RewardObjects) {
+						Object->ItemDropsReceived.push_back(ItemID);
 					}
 				}
 			}
 			// Give out drops randomly
 			else {
 				for(auto &ItemID : ItemDrops) {
-					std::shuffle(FighterArray.begin(), FighterArray.end(), RandomGenerator);
-					_Object *Fighter = FighterArray[0];
-					Fighter->ItemDropsReceived.push_back(ItemID);
+					std::shuffle(ObjectArray.begin(), ObjectArray.end(), RandomGenerator);
+					_Object *Object = ObjectArray[0];
+					Object->ItemDropsReceived.push_back(ItemID);
 				}
 			}
 		}
 	}
 
 	// Send data
-	for(auto &Object : Fighters) {
+	for(auto &Object : Objects) {
 		Object->InputStates.clear();
 		Object->PotentialAction.Unset();
 		Object->Action.Unset();
@@ -692,8 +684,8 @@ void _Battle::ServerEndBattle() {
 				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 		else {
-			ExperienceEarned = SideStats[WinningSide].ExperiencePerFighter;
-			GoldEarned = SideStats[WinningSide].GoldPerFighter;
+			ExperienceEarned = SideStats[WinningSide].ExperiencePerCharacter;
+			GoldEarned = SideStats[WinningSide].GoldPerCharacter;
 			Object->Record->PlayerKills += SideStats[!WinningSide].PlayerCount;
 			Object->Record->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP) {
@@ -771,20 +763,20 @@ void _Battle::ServerEndBattle() {
 }
 
 // Calculates a screen position for a slot
-void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
+void _Battle::GetBattleOffset(int SideIndex, _Object *Object) {
 	if(!BattleElement)
 		return;
 
 	int Column = SideIndex / BATTLE_ROWS_PER_SIDE;
 
 	// Check sides
-	if(Fighter->BattleSide == 0)
-		Fighter->BattleOffset.x = -170 - Column * BATTLE_COLUMN_SPACING;
+	if(Object->BattleSide == 0)
+		Object->BattleOffset.x = -170 - Column * BATTLE_COLUMN_SPACING;
 	else
-		Fighter->BattleOffset.x = 70 + Column * BATTLE_COLUMN_SPACING;
+		Object->BattleOffset.x = 70 + Column * BATTLE_COLUMN_SPACING;
 
 	// Get row count for a given column
-	float RowCount = (float)SideCount[Fighter->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
+	float RowCount = (float)SideCount[Object->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
 	if(RowCount >= 1)
 		RowCount = BATTLE_ROWS_PER_SIDE;
 	else
@@ -794,24 +786,24 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Fighter) {
 	int SpacingY = (int)((BattleElement->Size.y / RowCount) / 2);
 
 	// Place slots in between main divisions
-	Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
+	Object->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
 }
 
 // Adjust existing battle elements
-void _Battle::AdjustBattleElements(int SideIndex, _Object *Fighter) {
+void _Battle::AdjustBattleElements(int SideIndex, _Object *Object) {
 
 	// Get position on screen
-	GetBattleOffset(SideIndex, Fighter);
+	GetBattleOffset(SideIndex, Object);
 
 	// Update position
-	if(Fighter->BattleElement) {
-		Fighter->BattleElement->Offset = Fighter->BattleOffset;
-		Fighter->BattleElement->CalculateBounds();
+	if(Object->BattleElement) {
+		Object->BattleElement->Offset = Object->BattleOffset;
+		Object->BattleElement->CalculateBounds();
 	}
 }
 
-// Create battle element for a fighter
-void _Battle::CreateBattleElements(int SideIndex, _Object *Fighter) {
+// Create battle element for an object
+void _Battle::CreateBattleElements(int SideIndex, _Object *Object) {
 
 	// Set up ui
 	BattleElement = Assets.Elements["element_battle"];
@@ -819,73 +811,73 @@ void _Battle::CreateBattleElements(int SideIndex, _Object *Fighter) {
 		BattleElement->SetActive(true);
 
 	// Get position on screen
-	GetBattleOffset(SideIndex, Fighter);
+	GetBattleOffset(SideIndex, Object);
 
 	// Create ui element
 	if(BattleElement) {
-		Fighter->CreateBattleElement(BattleElement);
+		Object->CreateBattleElement(BattleElement);
 
 		// Create ui elements for status effects
-		for(auto &StatusEffect : Fighter->Character->StatusEffects) {
-			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
-			if(ClientPlayer == Fighter)
+		for(auto &StatusEffect : Object->Character->StatusEffects) {
+			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Object->BattleElement);
+			if(ClientPlayer == Object)
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 		}
 	}
 }
 
 // Removes a player from the battle
-void _Battle::RemoveFighter(_Object *RemoveFighter) {
+void _Battle::RemoveObject(_Object *RemoveObject) {
 
 	// Remove action results
 	for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
 		_ActionResult &ActionResult = *Iterator;
-		if(ActionResult.Source.Object == RemoveFighter || ActionResult.Target.Object == RemoveFighter) {
+		if(ActionResult.Source.Object == RemoveObject || ActionResult.Target.Object == RemoveObject) {
 			Iterator = ActionResults.erase(Iterator);
 		}
 		else
 			++Iterator;
 	}
 
-	// Remove fighters
-	for(auto Iterator = Fighters.begin(); Iterator != Fighters.end(); ++Iterator) {
-		_Object *Fighter = *Iterator;
-		if(Fighter == RemoveFighter) {
+	// Remove objects
+	for(auto Iterator = Objects.begin(); Iterator != Objects.end(); ++Iterator) {
+		_Object *Object = *Iterator;
+		if(Object == RemoveObject) {
 
-			// Broadcast fighter leaving
+			// Broadcast object leaving
 			if(Server) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BATTLE_LEAVE);
-				Packet.Write<NetworkIDType>(Fighter->NetworkID);
+				Packet.Write<NetworkIDType>(Object->NetworkID);
 				BroadcastPacket(Packet);
 			}
 
-			SideCount[Fighter->BattleSide]--;
-			Fighter->StopBattle();
-			Fighters.erase(Iterator);
+			SideCount[Object->BattleSide]--;
+			Object->StopBattle();
+			Objects.erase(Iterator);
 			return;
 		}
 	}
 }
 
-// Get list of allies and enemies from fighter list
-void _Battle::GetSeparateFighterList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies) {
-	for(const auto &Fighter : Fighters) {
-		if(Fighter->Deleted)
+// Get list of allies and enemies from object list
+void _Battle::GetSeparateObjectList(uint8_t Side, std::list<_Object *> &Allies, std::list<_Object *> &Enemies) {
+	for(const auto &Object : Objects) {
+		if(Object->Deleted)
 			continue;
 
-		if(Fighter->BattleSide == Side)
-			Allies.push_back(Fighter);
-		else if(Fighter->Character->IsAlive())
-			Enemies.push_back(Fighter);
+		if(Object->BattleSide == Side)
+			Allies.push_back(Object);
+		else if(Object->Character->IsAlive())
+			Enemies.push_back(Object);
 	}
 }
 
 // Get number of peers in battle
 int _Battle::GetPeerCount() {
 	int PeerCount = 0;
-	for(auto &Fighter : Fighters) {
-		if(Fighter->Peer)
+	for(auto &Object : Objects) {
+		if(Object->Peer)
 			PeerCount++;
 	}
 
@@ -930,19 +922,18 @@ void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 
-	_Object *Fighter = Manager->GetObject(NetworkID);
-	if(Fighter) {
-		Fighter->Action.Item = Stats->Items.at(ItemID);
-	}
+	_Object *Object = Manager->GetObject(NetworkID);
+	if(Object)
+		Object->Action.Item = Stats->Items.at(ItemID);
 }
 
 // Send a packet to all players
 void _Battle::BroadcastPacket(_Buffer &Data) {
 
 	// Send packet to all players
-	for(auto &Fighter : Fighters) {
-		if(!Fighter->Deleted && Fighter->Peer) {
-			Server->Network->SendPacket(Data, Fighter->Peer);
+	for(auto &Object : Objects) {
+		if(!Object->Deleted && Object->Peer) {
+			Server->Network->SendPacket(Data, Object->Peer);
 		}
 	}
 }

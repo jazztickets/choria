@@ -111,7 +111,7 @@ class _Object : public _ManagerBase {
 		void ApplyDeathPenalty(float Penalty, int BountyLoss);
 
 		// Battles
-		void UpdateMonsterAI(const std::list<_Object *> &Fighters, double FrameTime);
+		void UpdateMonsterAI(double FrameTime);
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();
 		bool CanBattle() const;
