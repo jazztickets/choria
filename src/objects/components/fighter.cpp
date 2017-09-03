@@ -15,34 +15,19 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#pragma once
+#include <objects/components/fighter.h>
 
-// Libraries
-#include <cstdint>
+// Constructor
+_Fighter::_Fighter(_Object *Object) :
+	Object(Object),
+	BattleElement(nullptr),
+	BattleOffset(0, 0),
+	ResultPosition(0, 0),
+	StatPosition(0, 0),
+	LastTarget{nullptr, nullptr},
+	TurnTimer(0.0),
+	GoldStolen(0),
+	JoinedBattle(false),
+	BattleSide(0) {
 
-// Forward Declarations
-class _Object;
-
-// Classes
-class _Record {
-
-	public:
-
-		_Record(_Object *Object);
-
-		// Base
-		_Object *Object;
-
-		// Attributes
-		double PlayTime;
-		double BattleTime;
-		int Deaths;
-		int MonsterKills;
-		int PlayerKills;
-		int GamesPlayed;
-		int Bounty;
-		int GoldLost;
-
-	private:
-
-};
+}

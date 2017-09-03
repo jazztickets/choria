@@ -18,6 +18,7 @@
 #include <objects/action.h>
 #include <objects/object.h>
 #include <objects/components/inventory.h>
+#include <objects/components/fighter.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/item.h>
@@ -99,7 +100,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Update stats
 	Source->UpdateStats(ActionResult.Source);
-	Source->TurnTimer = 0.0;
+	Source->Fighter->TurnTimer = 0.0;
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
@@ -161,7 +162,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		_Object *ExistingSummon = nullptr;
 		int SideCount = 0;
 		for(auto &Object : Battle->Objects) {
-			if(Object->BattleSide == SourceObject->BattleSide) {
+			if(Object->Fighter->BattleSide == SourceObject->Fighter->BattleSide) {
 				if(Object->Owner == SourceObject && Object->DatabaseID == SummonDatabaseID) {
 					ExistingSummon = Object;
 				}

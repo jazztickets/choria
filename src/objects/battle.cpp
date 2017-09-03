@@ -20,6 +20,7 @@
 #include <objects/buff.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
+#include <objects/components/fighter.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <ae/servernetwork.h>
@@ -96,7 +97,7 @@ void _Battle::Update(double FrameTime) {
 		int AliveCount[2] = { 0, 0 };
 		for(auto &Object : Objects) {
 			if(Object->Character->IsAlive())
-				AliveCount[Object->BattleSide]++;
+				AliveCount[Object->Fighter->BattleSide]++;
 		}
 
 		// Check for end conditions
@@ -116,11 +117,11 @@ void _Battle::Update(double FrameTime) {
 			if(BattleElement && ActionResult.Source.Object && ActionResult.Target.Object) {
 
 				// Find start position
-				glm::vec2 StartPosition = ActionResult.Source.Object->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
+				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
 				ActionResult.LastPosition = ActionResult.Position;
 
 				// Interpolate between start and end position of action used
-				ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->ResultPosition, std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0));
+				ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->Fighter->ResultPosition, std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0));
 				if(ActionResult.Time == 0.0)
 					ActionResult.LastPosition = ActionResult.Position;
 			}
@@ -208,11 +209,11 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 	// Check for changing an action
 	bool ChangingAction = false;
-	if(ClientPlayer->PotentialAction.IsSet() && Action != ClientPlayer->PotentialAction)
+	if(ClientPlayer->Fighter->PotentialAction.IsSet() && Action != ClientPlayer->Fighter->PotentialAction)
 		ChangingAction = true;
 
 	// Choose an action to use
-	if(!ClientPlayer->PotentialAction.IsSet() || ChangingAction) {
+	if(!ClientPlayer->Fighter->PotentialAction.IsSet() || ChangingAction) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
@@ -237,26 +238,26 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
-			int StartingSide = !ClientPlayer->BattleSide;
+			int StartingSide = !ClientPlayer->Fighter->BattleSide;
 
 			// Pick sides depending on action
 			if(Item->TargetID != TargetType::ANY && Item->CanTargetAlly()) {
-				StartingSide = ClientPlayer->BattleSide;
-				if(!ClientPlayer->LastTarget[StartingSide])
-					ClientPlayer->LastTarget[StartingSide] = ClientPlayer;
+				StartingSide = ClientPlayer->Fighter->BattleSide;
+				if(!ClientPlayer->Fighter->LastTarget[StartingSide])
+					ClientPlayer->Fighter->LastTarget[StartingSide] = ClientPlayer;
 			}
 
 			// Set target
-			ClientSetTarget(Item, StartingSide, ClientPlayer->LastTarget[StartingSide]);
+			ClientSetTarget(Item, StartingSide, ClientPlayer->Fighter->LastTarget[StartingSide]);
 		}
 
 		// Set potential skill
 		if(ClientPlayer->Targets.size()) {
-			ClientPlayer->PotentialAction.Item = Item;
-			ClientPlayer->PotentialAction.ActionBarSlot = ActionBarSlot;
+			ClientPlayer->Fighter->PotentialAction.Item = Item;
+			ClientPlayer->Fighter->PotentialAction.ActionBarSlot = ActionBarSlot;
 		}
 		else
-			ClientPlayer->PotentialAction.Unset();
+			ClientPlayer->Fighter->PotentialAction.Unset();
 	}
 	// Apply action
 	else if(ClientPlayer->Targets.size()) {
@@ -274,14 +275,14 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.ActionUsed = Action;
 		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
 		if(!Item->CanUse(Scripting, ActionResult)) {
-			ClientPlayer->PotentialAction.Unset();
+			ClientPlayer->Fighter->PotentialAction.Unset();
 			ClientPlayer->Targets.clear();
 			return;
 		}
 
 		// Remember target
 		if(ClientPlayer->Targets.size())
-			ClientPlayer->LastTarget[ClientPlayer->Targets.front()->BattleSide] = ClientPlayer->Targets.front();
+			ClientPlayer->Fighter->LastTarget[ClientPlayer->Targets.front()->Fighter->BattleSide] = ClientPlayer->Targets.front();
 
 		// Notify server
 		_Buffer Packet;
@@ -294,7 +295,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ClientNetwork->SendPacket(Packet);
 
 		ClientPlayer->Action.Item = Item;
-		ClientPlayer->PotentialAction.Unset();
+		ClientPlayer->Fighter->PotentialAction.Unset();
 	}
 }
 
@@ -344,16 +345,16 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
-	if(!ClientNetwork || !ClientPlayer->PotentialAction.IsSet() || !ClientPlayer->Character->IsAlive() || !ClientPlayer->Targets.size())
+	if(!ClientNetwork || !ClientPlayer->Fighter->PotentialAction.IsSet() || !ClientPlayer->Character->IsAlive() || !ClientPlayer->Targets.size())
 		return;
 
 	// Can't change self targetting actions
-	const _Item *Item = ClientPlayer->PotentialAction.Item;
+	const _Item *Item = ClientPlayer->Fighter->PotentialAction.Item;
 	if(Item->TargetID == TargetType::SELF)
 		return;
 
 	// Get current target side
-	int BattleTargetSide = ClientPlayer->Targets.front()->BattleSide;
+	int BattleTargetSide = ClientPlayer->Targets.front()->Fighter->BattleSide;
 
 	// Change sides
 	if(Item->TargetID == TargetType::ANY && ChangeSides)
@@ -430,23 +431,23 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 // Add an object to the battle
 void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Battle = this;
-	Object->BattleSide = Side;
-	Object->LastTarget[0] = nullptr;
-	Object->LastTarget[1] = nullptr;
+	Object->Fighter->BattleSide = Side;
+	Object->Fighter->LastTarget[0] = nullptr;
+	Object->Fighter->LastTarget[1] = nullptr;
 	Object->Targets.clear();
 	Object->Action.Unset();
-	Object->PotentialAction.Unset();
+	Object->Fighter->PotentialAction.Unset();
 	Object->InventoryOpen = false;
 	Object->SkillsOpen = false;
 	Object->MenuOpen = false;
 	Object->Vendor = nullptr;
 	Object->Trader = nullptr;
 	Object->TeleportTime = -1.0;
-	Object->JoinedBattle = Join;
-	Object->GoldStolen = 0;
+	Object->Fighter->JoinedBattle = Join;
+	Object->Fighter->GoldStolen = 0;
 	if(Server) {
 		Object->Character->GenerateNextBattle();
-		Object->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
+		Object->Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 		// Send player join packet to current objects
 		if(Join) {
@@ -467,7 +468,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 		// Adjust existing battle elements and create new one
 		int SideIndex = 0;
 		for(auto &AdjustObject : Objects) {
-			if(AdjustObject->BattleSide == Side) {
+			if(AdjustObject->Fighter->BattleSide == Side) {
 				if(AdjustObject == Object)
 					CreateBattleElements(SideIndex, AdjustObject);
 				else
@@ -483,7 +484,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 void _Battle::GetObjectList(int Side, std::list<_Object *> &SideObjects) {
 
 	for(auto &Object : Objects) {
-		if(Object->BattleSide == Side) {
+		if(Object->Fighter->BattleSide == Side) {
 			SideObjects.push_back(Object);
 		}
 	}
@@ -493,7 +494,7 @@ void _Battle::GetObjectList(int Side, std::list<_Object *> &SideObjects) {
 void _Battle::GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects) {
 
 	for(auto &Object : Objects) {
-		if(Object->BattleSide == Side && Object->Character->IsAlive()) {
+		if(Object->Fighter->BattleSide == Side && Object->Character->IsAlive()) {
 			AliveObjects.push_back(Object);
 		}
 	}
@@ -540,14 +541,14 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 		Object->Character->CalculateStats();
 
 		// Add object
-		AddObject(Object, Object->BattleSide);
+		AddObject(Object, Object->Fighter->BattleSide);
 	}
 
 	// Set object position offsets and create ui elements
 	int SideIndex[2] = { 0, 0 };
 	for(auto &Object : Objects) {
-		CreateBattleElements(SideIndex[Object->BattleSide], Object);
-		SideIndex[Object->BattleSide]++;
+		CreateBattleElements(SideIndex[Object->Fighter->BattleSide], Object);
+		SideIndex[Object->Fighter->BattleSide]++;
 	}
 }
 
@@ -571,7 +572,7 @@ void _Battle::ServerEndBattle() {
 			else
 				SideStats[Side].MonsterCount++;
 
-			if(Object->JoinedBattle)
+			if(Object->Fighter->JoinedBattle)
 				SideStats[Side].JoinedCount++;
 
 			// Tally alive objects
@@ -585,9 +586,9 @@ void _Battle::ServerEndBattle() {
 
 			// Calculate gold based on monster or player
 			if(Object->IsMonster())
-				SideStats[Side].TotalGoldGiven += Object->GoldGiven + Object->GoldStolen;
+				SideStats[Side].TotalGoldGiven += Object->GoldGiven + Object->Fighter->GoldStolen;
 			else
-				SideStats[Side].TotalGoldGiven += Object->Record->Bounty + Object->GoldStolen + (int)(Object->Character->Gold * PVP * 0.01f + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Record->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * PVP * 0.01f + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
@@ -655,7 +656,7 @@ void _Battle::ServerEndBattle() {
 			if(Boss) {
 				for(auto &ItemID : ItemDrops) {
 					for(auto &Object : RewardObjects) {
-						Object->ItemDropsReceived.push_back(ItemID);
+						Object->Fighter->ItemDropsReceived.push_back(ItemID);
 					}
 				}
 			}
@@ -664,7 +665,7 @@ void _Battle::ServerEndBattle() {
 				for(auto &ItemID : ItemDrops) {
 					std::shuffle(ObjectArray.begin(), ObjectArray.end(), RandomGenerator);
 					_Object *Object = ObjectArray[0];
-					Object->ItemDropsReceived.push_back(ItemID);
+					Object->Fighter->ItemDropsReceived.push_back(ItemID);
 				}
 			}
 		}
@@ -673,7 +674,7 @@ void _Battle::ServerEndBattle() {
 	// Send data
 	for(auto &Object : Objects) {
 		Object->InputStates.clear();
-		Object->PotentialAction.Unset();
+		Object->Fighter->PotentialAction.Unset();
 		Object->Action.Unset();
 
 		// Get rewards
@@ -691,7 +692,7 @@ void _Battle::ServerEndBattle() {
 			Object->Record->PlayerKills += SideStats[!WinningSide].PlayerCount;
 			Object->Record->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP) {
-				if(Object->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
+				if(Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
 					Object->Record->Bounty += GoldEarned;
 					if(Object->Record->Bounty)
 						Server->BroadcastMessage(nullptr, "Player \"" + Object->Name + "\" now has a bounty of " + std::to_string(Object->Record->Bounty) + " gold!", "cyan");
@@ -729,10 +730,10 @@ void _Battle::ServerEndBattle() {
 
 		// Sort item drops
 		std::unordered_map<uint32_t, int> SortedItems;
-		for(auto &ItemID : Object->ItemDropsReceived) {
+		for(auto &ItemID : Object->Fighter->ItemDropsReceived) {
 			SortedItems[ItemID]++;
 		}
-		Object->ItemDropsReceived.clear();
+		Object->Fighter->ItemDropsReceived.clear();
 
 		// Write item count
 		size_t ItemCount = SortedItems.size();
@@ -772,13 +773,13 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Object) {
 	int Column = SideIndex / BATTLE_ROWS_PER_SIDE;
 
 	// Check sides
-	if(Object->BattleSide == 0)
-		Object->BattleOffset.x = -170 - Column * BATTLE_COLUMN_SPACING;
+	if(Object->Fighter->BattleSide == 0)
+		Object->Fighter->BattleOffset.x = -170 - Column * BATTLE_COLUMN_SPACING;
 	else
-		Object->BattleOffset.x = 70 + Column * BATTLE_COLUMN_SPACING;
+		Object->Fighter->BattleOffset.x = 70 + Column * BATTLE_COLUMN_SPACING;
 
 	// Get row count for a given column
-	float RowCount = (float)SideCount[Object->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
+	float RowCount = (float)SideCount[Object->Fighter->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
 	if(RowCount >= 1)
 		RowCount = BATTLE_ROWS_PER_SIDE;
 	else
@@ -788,7 +789,7 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Object) {
 	int SpacingY = (int)((BattleElement->Size.y / RowCount) / 2);
 
 	// Place slots in between main divisions
-	Object->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
+	Object->Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
 }
 
 // Adjust existing battle elements
@@ -798,9 +799,9 @@ void _Battle::AdjustBattleElements(int SideIndex, _Object *Object) {
 	GetBattleOffset(SideIndex, Object);
 
 	// Update position
-	if(Object->BattleElement) {
-		Object->BattleElement->Offset = Object->BattleOffset;
-		Object->BattleElement->CalculateBounds();
+	if(Object->Fighter->BattleElement) {
+		Object->Fighter->BattleElement->Offset = Object->Fighter->BattleOffset;
+		Object->Fighter->BattleElement->CalculateBounds();
 	}
 }
 
@@ -821,7 +822,7 @@ void _Battle::CreateBattleElements(int SideIndex, _Object *Object) {
 
 		// Create ui elements for status effects
 		for(auto &StatusEffect : Object->Character->StatusEffects) {
-			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Object->BattleElement);
+			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Object->Fighter->BattleElement);
 			if(ClientPlayer == Object)
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 		}
@@ -854,7 +855,7 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 				BroadcastPacket(Packet);
 			}
 
-			SideCount[Object->BattleSide]--;
+			SideCount[Object->Fighter->BattleSide]--;
 			Object->StopBattle();
 			Objects.erase(Iterator);
 			return;
@@ -868,7 +869,7 @@ void _Battle::GetSeparateObjectList(uint8_t Side, std::list<_Object *> &Allies, 
 		if(Object->Deleted)
 			continue;
 
-		if(Object->BattleSide == Side)
+		if(Object->Fighter->BattleSide == Side)
 			Allies.push_back(Object);
 		else if(Object->Character->IsAlive())
 			Enemies.push_back(Object);

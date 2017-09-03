@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
+#include <objects/components/fighter.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/map.h>
@@ -1134,7 +1135,7 @@ void _PlayState::HandleBattleJoin(_Buffer &Data) {
 		if(DatabaseID)
 			Stats->GetMonsterStats(DatabaseID, Object);
 		Object->UnserializeBattle(Data);
-		Battle->AddObject(Object, Object->BattleSide, true);
+		Battle->AddObject(Object, Object->Fighter->BattleSide, true);
 	}
 }
 
@@ -1231,7 +1232,7 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 
 	// Update source object
 	if(ActionResult.Source.Object) {
-		ActionResult.Source.Object->TurnTimer = 0.0;
+		ActionResult.Source.Object->Fighter->TurnTimer = 0.0;
 		ActionResult.Source.Object->Action.Unset();
 		ActionResult.Source.Object->Targets.clear();
 

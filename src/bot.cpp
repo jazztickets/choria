@@ -26,6 +26,7 @@
 #include <objects/map.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
+#include <objects/components/fighter.h>
 #include <packet.h>
 #include <stats.h>
 #include <constants.h>
@@ -158,7 +159,7 @@ void _Bot::Update(double FrameTime) {
 
 	// Update battle system
 	if(Battle) {
-		if(!Player->PotentialAction.IsSet()) {
+		if(!Player->Fighter->PotentialAction.IsSet()) {
 			Battle->ClientHandleInput(Action::GAME_SKILL1);
 			Battle->ClientHandleInput(Action::GAME_SKILL1);
 		}
@@ -404,7 +405,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			_Object *Object = ObjectManager->GetObject(NetworkID);
 			if(Object) {
 				Object->UnserializeBattle(Data);
-				Battle->AddObject(Object, Object->BattleSide, true);
+				Battle->AddObject(Object, Object->Fighter->BattleSide, true);
 			}
 		} break;
 		case PacketType::BATTLE_LEAVE: {
@@ -472,7 +473,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			// Update source object
 			if(ActionResult.Source.Object) {
-				ActionResult.Source.Object->TurnTimer = 0.0;
+				ActionResult.Source.Object->Fighter->TurnTimer = 0.0;
 				ActionResult.Source.Object->Action.Unset();
 				ActionResult.Source.Object->Targets.clear();
 

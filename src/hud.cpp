@@ -31,6 +31,7 @@
 #include <objects/item.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
+#include <objects/components/fighter.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/battle.h>
@@ -400,8 +401,8 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				PlayState.SendActionUse(Slot);
 		}
 		// Handle mouse click during combat
-		else if(EnableMouseCombat && Player->Battle && Player->PotentialAction.IsSet()) {
-			Player->Battle->ClientSetAction((uint8_t)Player->PotentialAction.ActionBarSlot);
+		else if(EnableMouseCombat && Player->Battle && Player->Fighter->PotentialAction.IsSet()) {
+			Player->Battle->ClientSetAction((uint8_t)Player->Fighter->PotentialAction.ActionBarSlot);
 		}
 
 		if(Player->WaitingForTrade) {
@@ -496,8 +497,8 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserData;
-				if(EnableMouseCombat && MouseObject && Player->Battle && Player->PotentialAction.IsSet() && Player->PotentialAction.Item->UseMouseTargetting() && Player->PotentialAction.Item->CanTarget(Player, MouseObject)) {
-					Player->Battle->ClientSetTarget(Player->PotentialAction.Item, MouseObject->BattleSide, MouseObject);
+				if(EnableMouseCombat && MouseObject && Player->Battle && Player->Fighter->PotentialAction.IsSet() && Player->Fighter->PotentialAction.Item->UseMouseTargetting() && Player->Fighter->PotentialAction.Item->CanTarget(Player, MouseObject)) {
+					Player->Battle->ClientSetTarget(Player->Fighter->PotentialAction.Item, MouseObject->Fighter->BattleSide, MouseObject);
 				}
 			} break;
 			case WINDOW_HUD_EFFECTS: {
@@ -2387,7 +2388,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		if(StatChangeUI.Object->Battle) {
-			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition;
+			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition;
 			StatChangeUI.Battle = true;
 		}
 		else
@@ -2402,7 +2403,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
 		if(StatChangeUI.Object->Battle) {
-			StatChangeUI.StartPosition = StatChangeUI.Object->StatPosition + glm::vec2(0, 32);
+			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition + glm::vec2(0, 32);
 			StatChangeUI.Battle = true;
 		}
 		else
@@ -2431,7 +2432,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 		// Check for battle
 		if(StatChangeUI.Object->Battle) {
-			StatChangeUI.StartPosition = StatChangeUI.Object->ResultPosition + glm::vec2(0, 32);
+			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->ResultPosition + glm::vec2(0, 32);
 			StatChangeUI.Battle = true;
 		}
 		else  {

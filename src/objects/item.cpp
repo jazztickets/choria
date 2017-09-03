@@ -18,6 +18,7 @@
 #include <objects/item.h>
 #include <objects/object.h>
 #include <objects/components/inventory.h>
+#include <objects/components/fighter.h>
 #include <ae/ui.h>
 #include <ae/font.h>
 #include <ae/util.h>
@@ -624,10 +625,10 @@ bool _Item::CanTarget(_Object *Source, _Object *Target) const {
 
 	if(Source->Battle) {
 
-		if(Source->BattleSide == Target->BattleSide && !CanTargetAlly())
+		if(Source->Fighter->BattleSide == Target->Fighter->BattleSide && !CanTargetAlly())
 			return false;
 
-		if(Source->BattleSide != Target->BattleSide && !CanTargetEnemy())
+		if(Source->Fighter->BattleSide != Target->Fighter->BattleSide && !CanTargetEnemy())
 			return false;
 	}
 

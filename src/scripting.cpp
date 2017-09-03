@@ -28,6 +28,7 @@
 #include <objects/battle.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
+#include <objects/components/fighter.h>
 #include <objects/map.h>
 #include <server.h>
 #include <stats.h>
@@ -416,13 +417,13 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Status);
 	lua_setfield(LuaState, -2, "Status");
 
-	lua_pushnumber(LuaState, Object->TurnTimer);
+	lua_pushnumber(LuaState, Object->Fighter->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
 
 	lua_pushboolean(LuaState, Object->Action.IsSet());
 	lua_setfield(LuaState, -2, "BattleActionIsSet");
 
-	lua_pushinteger(LuaState, Object->BattleSide);
+	lua_pushinteger(LuaState, Object->Fighter->BattleSide);
 	lua_setfield(LuaState, -2, "BattleSide");
 
 	lua_pushinteger(LuaState, Object->Character->Gold);

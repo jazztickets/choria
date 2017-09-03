@@ -30,6 +30,7 @@
 class _Character;
 class _Inventory;
 class _Record;
+class _Fighter;
 class _Map;
 class _Peer;
 class _Texture;
@@ -160,6 +161,7 @@ class _Object : public _ManagerBase {
 		_Character *Character;
 		_Inventory *Inventory;
 		_Record *Record;
+		_Fighter *Fighter;
 
 		// Pointers
 		const _Stats *Stats;
@@ -181,17 +183,6 @@ class _Object : public _ManagerBase {
 
 		// Battle
 		std::unordered_map<uint32_t, double> BattleCooldown;
-		_Element *BattleElement;
-		_Action PotentialAction;
-		_Object *LastTarget[2];
-		std::list<uint32_t> ItemDropsReceived;
-		glm::vec2 BattleOffset;
-		glm::vec2 ResultPosition;
-		glm::vec2 StatPosition;
-		double TurnTimer;
-		int GoldStolen;
-		bool JoinedBattle;
-		uint8_t BattleSide;
 
 		// Actions
 		std::list<_Object *> Targets;

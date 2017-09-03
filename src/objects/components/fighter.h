@@ -18,30 +18,41 @@
 #pragma once
 
 // Libraries
+#include <objects/action.h>
 #include <cstdint>
+#include <list>
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Object;
+class _Element;
 
 // Classes
-class _Record {
+class _Fighter {
 
 	public:
 
-		_Record(_Object *Object);
+		_Fighter(_Object *Object);
 
 		// Base
 		_Object *Object;
 
-		// Attributes
-		double PlayTime;
-		double BattleTime;
-		int Deaths;
-		int MonsterKills;
-		int PlayerKills;
-		int GamesPlayed;
-		int Bounty;
-		int GoldLost;
+		// Render
+		_Element *BattleElement;
+		glm::vec2 BattleOffset;
+		glm::vec2 ResultPosition;
+		glm::vec2 StatPosition;
+
+		// Targets
+		_Action PotentialAction;
+		_Object *LastTarget[2];
+
+		// State
+		std::list<uint32_t> ItemDropsReceived;
+		double TurnTimer;
+		int GoldStolen;
+		bool JoinedBattle;
+		uint8_t BattleSide;
 
 	private:
 

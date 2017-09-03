@@ -21,6 +21,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/character.h>
 #include <objects/components/record.h>
+#include <objects/components/fighter.h>
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
@@ -54,6 +55,7 @@ _Object::_Object() :
 	Character(nullptr),
 	Inventory(nullptr),
 	Record(nullptr),
+	Fighter(nullptr),
 	Stats(nullptr),
 	Map(nullptr),
 	Battle(nullptr),
@@ -68,16 +70,6 @@ _Object::_Object() :
 	DirectionMoved(0),
 	UseCommand(false),
 	WaitForServer(false),
-
-	BattleElement(nullptr),
-	LastTarget{nullptr, nullptr},
-	BattleOffset(0, 0),
-	ResultPosition(0, 0),
-	StatPosition(0, 0),
-	TurnTimer(0.0),
-	GoldStolen(0),
-	JoinedBattle(false),
-	BattleSide(0),
 
 	ModelTexture(nullptr),
 	StatusTexture(nullptr),
@@ -117,6 +109,7 @@ _Object::_Object() :
 	Inventory = new _Inventory();
 	Character = new _Character(this);
 	Record = new _Record(this);
+	Fighter = new _Fighter(this);
 }
 
 // Destructor
@@ -142,6 +135,9 @@ _Object::~_Object() {
 		delete Peer;
 		Peer = nullptr;
 	}
+
+	delete Fighter;
+	Fighter = nullptr;
 
 	delete Record;
 	Record = nullptr;
@@ -187,14 +183,14 @@ void _Object::Update(double FrameTime) {
 		// Check turn timer
 		if(Battle) {
 			if(!Character->Stunned)
-				TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * Character->BattleSpeed / 100.0;
+				Fighter->TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * Character->BattleSpeed / 100.0;
 		}
 		else
-			TurnTimer = 1.0;
+			Fighter->TurnTimer = 1.0;
 
 		// Resolve action
-		if(TurnTimer >= 1.0) {
-			TurnTimer = 1.0;
+		if(Fighter->TurnTimer >= 1.0) {
+			Fighter->TurnTimer = 1.0;
 
 			if(Server && Action.IsSet()) {
 				ScopeType Scope = ScopeType::WORLD;
@@ -219,7 +215,7 @@ void _Object::Update(double FrameTime) {
 		}
 	}
 	else
-		TurnTimer = 0.0;
+		Fighter->TurnTimer = 0.0;
 
 	// Update battle cooldowns
 	for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
@@ -314,7 +310,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 	// Update battle
 	if(Battle) {
-		if(TurnTimer >= 1.0 && !Action.IsSet()) {
+		if(Fighter->TurnTimer >= 1.0 && !Action.IsSet()) {
 
 			// Set skill used
 			size_t ActionBarIndex = 0;
@@ -332,7 +328,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 			// Separate object list
 			std::list<_Object *> Allies, Enemies;
-			Battle->GetSeparateObjectList(BattleSide, Allies, Enemies);
+			Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
 
 			// Call lua script
 			if(Enemies.size()) {
@@ -355,11 +351,11 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 		return;
 
 	// Call AI script to get action
-	if(TurnTimer >= 1.0 && !Action.IsSet()) {
+	if(Fighter->TurnTimer >= 1.0 && !Action.IsSet()) {
 
 		// Separate object list
 		std::list<_Object *> Allies, Enemies;
-		Battle->GetSeparateObjectList(BattleSide, Allies, Enemies);
+		Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
 
 		// Call lua script
 		if(Enemies.size()) {
@@ -417,14 +413,14 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		GlobalColor.a = 0.2f;
 
 	// Draw slot
-	BattleElement->Fade = GlobalColor.a;
+	Fighter->BattleElement->Fade = GlobalColor.a;
 
 	// Get slot center
-	glm::vec2 SlotPosition = BattleElement->Bounds.Start;
+	glm::vec2 SlotPosition = Fighter->BattleElement->Bounds.Start;
 
 	// Save positions
-	ResultPosition = BattleElement->Bounds.Start + BattleElement->Size / 2.0f;
-	StatPosition = ResultPosition + glm::vec2(Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Portrait->Size.y/2);
+	Fighter->ResultPosition = Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f;
+	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Portrait->Size.y/2);
 
 	// Name
 	Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), LEFT_BASELINE, GlobalColor);
@@ -438,7 +434,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Health/mana bars
 	glm::vec2 BarSize(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT);
-	glm::vec2 BarOffset(BattleElement->Size.x + 10, 0);
+	glm::vec2 BarOffset(Fighter->BattleElement->Size.x + 10, 0);
 	float BarPaddingY = 6;
 
 	// Get ui size
@@ -500,17 +496,17 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_experience_bar_empty"]->Texture, true);
 
 	// Draw full bar
-	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * TurnTimer, BarSize.y) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Fighter->TurnTimer, BarSize.y) + BarOffset;
 	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_experience_bar_full"]->Texture, true);
 
 	// Get background for items used
 	const _Texture *ItemBackTexture = Assets.Textures["textures/hud/item_back.png"];
 
 	// Draw the action used
-	if(ClientPlayer->BattleSide == BattleSide) {
+	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide) {
 
 		if(Action.Item) {
-			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, BattleElement->Size.y/2);
+			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, Fighter->BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 			if(!Action.Item->IsSkill())
 				Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
@@ -520,18 +516,18 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw potential action to use
 	for(auto &BattleTarget : ClientPlayer->Targets) {
-		if(BattleTarget == this && ClientPlayer->PotentialAction.IsSet()) {
+		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.IsSet()) {
 
 			// Get texture
 			const _Texture *Texture = nullptr;
-			if(ClientPlayer->PotentialAction.Item) {
+			if(ClientPlayer->Fighter->PotentialAction.Item) {
 
 				// Skip dead targets
-				if(!ClientPlayer->PotentialAction.Item->CanTarget(ClientPlayer, BattleTarget))
+				if(!ClientPlayer->Fighter->PotentialAction.Item->CanTarget(ClientPlayer, BattleTarget))
 					break;
 
 				// Get texture
-				Texture = ClientPlayer->PotentialAction.Item->Texture;
+				Texture = ClientPlayer->Fighter->PotentialAction.Item->Texture;
 			}
 
 			// Make icon flash
@@ -541,8 +537,8 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 			// Draw background icon
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + BattleElement->Size.y/2);
-			if(ClientPlayer->PotentialAction.Item) {
+			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + Fighter->BattleElement->Size.y/2);
+			if(ClientPlayer->Fighter->PotentialAction.Item) {
 				DrawPosition.x += ItemBackTexture->Size.x/2;
 				Graphics.DrawCenteredImage(DrawPosition, ItemBackTexture, Color);
 			}
@@ -555,7 +551,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 
 	// Draw status effects
-	glm::vec2 Offset(0, BattleElement->Size.y + 4);
+	glm::vec2 Offset(0, Fighter->BattleElement->Size.y + 4);
 	for(auto &StatusEffect : Character->StatusEffects) {
 		if(StatusEffect->BattleElement) {
 			StatusEffect->BattleElement->Offset = Offset;
@@ -744,37 +740,37 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 // Create a UI element for battle
 void _Object::CreateBattleElement(_Element *Parent) {
-	if(BattleElement)
+	if(Fighter->BattleElement)
 		throw std::runtime_error("_Object::CreateBattleElement: BattleElement already exists!");
 
-	BattleElement = new _Element();
-	BattleElement->Name = "battle_element";
-	BattleElement->Size = glm::vec2(64, 64);
-	BattleElement->Offset = BattleOffset;
-	BattleElement->Alignment = CENTER_MIDDLE;
-	BattleElement->Active = true;
-	BattleElement->Index = _HUD::WINDOW_HUD_EFFECTS;
-	BattleElement->UserData = this;
-	BattleElement->Parent = Parent;
-	BattleElement->Style = (BattleSide == 0) ? Assets.Styles["style_battle_slot_green"] : Assets.Styles["style_battle_slot_red"];
-	BattleElement->CalculateBounds();
-	Parent->Children.push_back(BattleElement);
+	Fighter->BattleElement = new _Element();
+	Fighter->BattleElement->Name = "battle_element";
+	Fighter->BattleElement->Size = glm::vec2(64, 64);
+	Fighter->BattleElement->Offset = Fighter->BattleOffset;
+	Fighter->BattleElement->Alignment = CENTER_MIDDLE;
+	Fighter->BattleElement->Active = true;
+	Fighter->BattleElement->Index = _HUD::WINDOW_HUD_EFFECTS;
+	Fighter->BattleElement->UserData = this;
+	Fighter->BattleElement->Parent = Parent;
+	Fighter->BattleElement->Style = (Fighter->BattleSide == 0) ? Assets.Styles["style_battle_slot_green"] : Assets.Styles["style_battle_slot_red"];
+	Fighter->BattleElement->CalculateBounds();
+	Parent->Children.push_back(Fighter->BattleElement);
 }
 
 // Remove battle element
 void _Object::RemoveBattleElement() {
 
-	if(BattleElement) {
-		if(BattleElement->Parent)
-			BattleElement->Parent->RemoveChild(BattleElement);
+	if(Fighter->BattleElement) {
+		if(Fighter->BattleElement->Parent)
+			Fighter->BattleElement->Parent->RemoveChild(Fighter->BattleElement);
 
-		for(auto &Child : BattleElement->Children) {
+		for(auto &Child : Fighter->BattleElement->Children) {
 			if(Child->UserData)
 				((_StatusEffect *)Child->UserData)->BattleElement = nullptr;
 		}
 
-		delete BattleElement;
-		BattleElement = nullptr;
+		delete Fighter->BattleElement;
+		Fighter->BattleElement = nullptr;
 	}
 }
 
@@ -854,12 +850,12 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<uint32_t>(DatabaseID);
 	Data.Write<glm::ivec2>(Position);
-	Data.Write<double>(TurnTimer);
+	Data.Write<double>(Fighter->TurnTimer);
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
-	Data.Write<uint8_t>(BattleSide);
+	Data.Write<uint8_t>(Fighter->BattleSide);
 
 	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
 	for(auto &StatusEffect : Character->StatusEffects) {
@@ -950,12 +946,12 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 
 	// Get object type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
-	TurnTimer = Data.Read<double>();
+	Fighter->TurnTimer = Data.Read<double>();
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
-	BattleSide = Data.Read<uint8_t>();
+	Fighter->BattleSide = Data.Read<uint8_t>();
 
 	Character->DeleteStatusEffects();
 	int StatusEffectCount = Data.Read<uint8_t>();
@@ -978,8 +974,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
 
 		if(Character->AddStatusEffect(StatusEffect)) {
-			if(BattleElement)
-				StatusEffect->BattleElement = StatusEffect->CreateUIElement(BattleElement);
+			if(Fighter->BattleElement)
+				StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
 		}
 		else {
 			delete StatusEffect;
@@ -997,9 +993,9 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	// Update gold stolen
 	if(StatChange.HasStat(StatType::GOLDSTOLEN)) {
 		int Amount = StatChange.Values[StatType::GOLDSTOLEN].Integer;
-		GoldStolen += Amount;
-		if(GoldStolen > PLAYER_MAX_GOLD)
-			GoldStolen = PLAYER_MAX_GOLD;
+		Fighter->GoldStolen += Amount;
+		if(Fighter->GoldStolen > PLAYER_MAX_GOLD)
+			Fighter->GoldStolen = PLAYER_MAX_GOLD;
 
 		Character->UpdateGold(Amount);
 	}
@@ -1016,7 +1012,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Just died
 	if(WasAlive && !Character->IsAlive()) {
-		PotentialAction.Unset();
+		Fighter->PotentialAction.Unset();
 		Action.Unset();
 		ResetUIState();
 
@@ -1034,8 +1030,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Stamina change
 	if(StatChange.HasStat(StatType::STAMINA)) {
-		TurnTimer += StatChange.Values[StatType::STAMINA].Float;
-		TurnTimer = glm::clamp(TurnTimer, 0.0, 1.0);
+		Fighter->TurnTimer += StatChange.Values[StatType::STAMINA].Float;
+		Fighter->TurnTimer = glm::clamp(Fighter->TurnTimer, 0.0, 1.0);
 	}
 
 	// Action bar upgrade
