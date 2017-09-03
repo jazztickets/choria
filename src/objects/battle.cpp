@@ -209,7 +209,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 	// Get skillbar action
 	_Action Action = ClientPlayer->Character->ActionBar[ActionBarSlot];
-	ClientPlayer->GetActionFromSkillbar(Action, ActionBarSlot);
+	ClientPlayer->Character->GetActionFromActionBar(Action, ActionBarSlot);
 
 	// Check for changing an action
 	bool ChangingAction = false;
@@ -826,7 +826,7 @@ void _Battle::CreateBattleElements(int SideIndex, _Object *Fighter) {
 		Fighter->CreateBattleElement(BattleElement);
 
 		// Create ui elements for status effects
-		for(auto &StatusEffect : Fighter->StatusEffects) {
+		for(auto &StatusEffect : Fighter->Character->StatusEffects) {
 			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Fighter->BattleElement);
 			if(ClientPlayer == Fighter)
 				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);

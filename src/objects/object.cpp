@@ -122,15 +122,8 @@ _Object::_Object() :
 
 // Destructor
 _Object::~_Object() {
-
-	delete Record;
-	Record = nullptr;
-
-	delete Character;
-	Character = nullptr;
-
-	delete Inventory;
-	Inventory = nullptr;
+	DeleteStatusEffects();
+	RemoveBattleElement();
 
 	if(Map) {
 		Map->RemoveObject(this);
@@ -152,8 +145,14 @@ _Object::~_Object() {
 		Peer = nullptr;
 	}
 
-	DeleteStatusEffects();
-	RemoveBattleElement();
+	delete Record;
+	Record = nullptr;
+
+	delete Character;
+	Character = nullptr;
+
+	delete Inventory;
+	Inventory = nullptr;
 }
 
 // Updates the player
@@ -225,7 +224,7 @@ void _Object::Update(double FrameTime) {
 		TurnTimer = 0.0;
 
 	// Update status effects
-	for(auto Iterator = StatusEffects.begin(); Iterator != StatusEffects.end(); ) {
+	for(auto Iterator = Character->StatusEffects.begin(); Iterator != Character->StatusEffects.end(); ) {
 		_StatusEffect *StatusEffect = *Iterator;
 		StatusEffect->Time += FrameTime;
 
@@ -243,7 +242,7 @@ void _Object::Update(double FrameTime) {
 		StatusEffect->Duration -= FrameTime;
 		if(StatusEffect->Duration <= 0 || !Character->IsAlive()) {
 			delete StatusEffect;
-			Iterator = StatusEffects.erase(Iterator);
+			Iterator = Character->StatusEffects.erase(Iterator);
 
 			Character->CalculateStats();
 		}
@@ -349,7 +348,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 			// Set skill used
 			size_t ActionBarIndex = 0;
-			if(!GetActionFromSkillbar(Action, ActionBarIndex)) {
+			if(!Character->GetActionFromActionBar(Action, ActionBarIndex)) {
 				return;
 			}
 
@@ -587,7 +586,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw status effects
 	glm::vec2 Offset(0, BattleElement->Size.y + 4);
-	for(auto &StatusEffect : StatusEffects) {
+	for(auto &StatusEffect : Character->StatusEffects) {
 		if(StatusEffect->BattleElement) {
 			StatusEffect->BattleElement->Offset = Offset;
 			StatusEffect->BattleElement->CalculateBounds();
@@ -673,7 +672,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write status effects
 	Json::Value StatusEffectsNode;
-	for(auto &StatusEffect : StatusEffects) {
+	for(auto &StatusEffect : Character->StatusEffects) {
 		Json::Value StatusEffectNode;
 		StatusEffectNode["id"] = StatusEffect->Buff->ID;
 		StatusEffectNode["level"] = StatusEffect->Level;
@@ -684,7 +683,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write unlocks
 	Json::Value UnlocksNode;
-	for(auto &Unlock : Unlocks) {
+	for(auto &Unlock : Character->Unlocks) {
 		Json::Value UnlockNode;
 		UnlockNode["id"] = Unlock.first;
 		UnlockNode["level"] = Unlock.second.Level;
@@ -765,12 +764,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		StatusEffect->Level = StatusEffectNode["level"].asInt();
 		StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
 		StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
-		StatusEffects.push_back(StatusEffect);
+		Character->StatusEffects.push_back(StatusEffect);
 	}
 
 	// Set unlocks
 	for(const Json::Value &UnlockNode : Data["unlocks"])
-		Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
+		Character->Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
 }
 
 // Generate damage
@@ -872,15 +871,15 @@ void _Object::SerializeStats(_Buffer &Data) {
 	}
 
 	// Write unlocks
-	Data.Write<uint32_t>((uint32_t)Unlocks.size());
-	for(const auto &Unlock : Unlocks) {
+	Data.Write<uint32_t>((uint32_t)Character->Unlocks.size());
+	for(const auto &Unlock : Character->Unlocks) {
 		Data.Write<uint32_t>(Unlock.first);
 		Data.Write<int>(Unlock.second.Level);
 	}
 
 	// Write status effects
-	Data.Write<uint8_t>((uint8_t)StatusEffects.size());
-	for(const auto &StatusEffect : StatusEffects) {
+	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
+	for(const auto &StatusEffect : Character->StatusEffects) {
 		StatusEffect->Serialize(Data);
 	}
 }
@@ -897,8 +896,8 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<int>(Character->MaxMana);
 	Data.Write<uint8_t>(BattleSide);
 
-	Data.Write<uint8_t>((uint8_t)StatusEffects.size());
-	for(auto &StatusEffect : StatusEffects) {
+	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
+	for(auto &StatusEffect : Character->StatusEffects) {
 		StatusEffect->Serialize(Data);
 	}
 }
@@ -962,7 +961,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	for(uint32_t i = 0; i < UnlockCount; i++) {
 		uint32_t UnlockID = Data.Read<uint32_t>();
 		int Level = Data.Read<int>();
-		Unlocks[UnlockID].Level = Level;
+		Character->Unlocks[UnlockID].Level = Level;
 	}
 
 	// Read status effects
@@ -973,7 +972,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 		StatusEffect->Unserialize(Data, Stats);
 		if(HUD)
 			StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
-		StatusEffects.push_back(StatusEffect);
+		Character->StatusEffects.push_back(StatusEffect);
 	}
 
 	Character->RefreshActionBarCount();
@@ -998,7 +997,7 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	for(int i = 0; i < StatusEffectCount; i++) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
 		StatusEffect->Unserialize(Data, Stats);
-		StatusEffects.push_back(StatusEffect);
+		Character->StatusEffects.push_back(StatusEffect);
 	}
 }
 
@@ -1146,17 +1145,6 @@ bool _Object::CanRespec() const {
 	return false;
 }
 
-// Return true if the object has the item unlocked
-bool _Object::HasUnlocked(const _Item *Item) const {
-	if(!Item)
-		return false;
-
-	if(Unlocks.find(Item->UnlockID) != Unlocks.end())
-		return true;
-
-	return false;
-}
-
 // Gets the tile that the player is currently standing on
 const _Tile *_Object::GetTile() const {
 
@@ -1200,7 +1188,7 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 		return false;
 
 	// Find existing buff
-	for(auto &ExistingEffect : StatusEffects) {
+	for(auto &ExistingEffect : Character->StatusEffects) {
 
 		// If buff exists, refresh duration
 		if(StatusEffect->Buff == ExistingEffect->Buff) {
@@ -1214,7 +1202,7 @@ bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
 		}
 	}
 
-	StatusEffects.push_back(StatusEffect);
+	Character->StatusEffects.push_back(StatusEffect);
 
 	return true;
 }
@@ -1241,10 +1229,10 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 
 // Delete memory used by status effects
 void _Object::DeleteStatusEffects() {
-	for(auto &StatusEffect : StatusEffects)
+	for(auto &StatusEffect : Character->StatusEffects)
 		delete StatusEffect;
 
-	StatusEffects.clear();
+	Character->StatusEffects.clear();
 }
 
 // Update death count and gold loss
@@ -1266,25 +1254,6 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 	}
 }
 
-// Return an action struct from an action bar slot
-bool _Object::GetActionFromSkillbar(_Action &ReturnAction, size_t Slot) {
-	if(Slot < Character->ActionBar.size()) {
-		ReturnAction.Item = Character->ActionBar[Slot].Item;
-		if(!ReturnAction.Item)
-			return false;
-
-		// Determine if item is a skill, then look at object's skill levels
-		if(ReturnAction.Item->IsSkill() && Character->HasLearned(ReturnAction.Item))
-			ReturnAction.Level = Character->Skills[ReturnAction.Item->ID];
-		else
-			ReturnAction.Level = ReturnAction.Item->Level;
-
-		return true;
-	}
-
-	return false;
-}
-
 // Set action and targets
 void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 
@@ -1297,7 +1266,7 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 			return;
 
 		// Get skillbar action
-		if(!GetActionFromSkillbar(Action, ActionBarSlot))
+		if(!Character->GetActionFromActionBar(Action, ActionBarSlot))
 			return;
 
 		// Get targets

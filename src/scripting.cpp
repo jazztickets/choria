@@ -563,7 +563,7 @@ void _Scripting::PushObjectStatusEffects(_Object *Object) {
 	lua_newtable(LuaState);
 
 	int Index = 1;
-	for(auto &StatusEffect : Object->StatusEffects) {
+	for(auto &StatusEffect : Object->Character->StatusEffects) {
 		PushStatusEffect(StatusEffect);
 		lua_rawseti(LuaState, -2, Index);
 
@@ -879,7 +879,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 
 	// Set skill used
 	size_t ActionBarIndex = (size_t)lua_tointeger(LuaState, 1);
-	if(!Object->GetActionFromSkillbar(Object->Action, ActionBarIndex)) {
+	if(!Object->Character->GetActionFromActionBar(Object->Action, ActionBarIndex)) {
 		lua_pushboolean(LuaState, false);
 		return 1;
 	}

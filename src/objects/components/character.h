@@ -27,6 +27,13 @@
 class _Object;
 class _Stats;
 
+// Structures
+struct _Unlock {
+	_Unlock() : Level(0) { }
+
+	int Level;
+};
+
 // Classes
 class _Character {
 
@@ -44,16 +51,22 @@ class _Character {
 		// Stats
 		void CalculateStats();
 		void CalculateLevelStats();
-		void RefreshActionBarCount();
 		float GetNextLevelPercent() const;
 		bool IsAlive() const { return Health > 0; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 
+		// Actions
+		void RefreshActionBarCount();
+		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
+
 		// Skills
 		bool HasLearned(const _Item *Skill) const;
 		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
+
+		// Unlocks
+		bool HasUnlocked(const _Item *Item) const;
 
 		// Base
 		_Object *Object;
@@ -111,6 +124,12 @@ class _Character {
 		int HitChance;
 		int DropRate;
 		std::unordered_map<uint32_t, int> Resistances;
+
+		// Status effects
+		std::list<_StatusEffect *> StatusEffects;
+
+		// Unlocks
+		std::unordered_map<uint32_t, _Unlock> Unlocks;
 
 		// Skills
 		std::unordered_map<uint32_t, int> Skills;

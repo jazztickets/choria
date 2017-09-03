@@ -493,7 +493,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 						}
 
 						if(ItemUnlocked) {
-							Player->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
+							Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
 						}
 					}
 				}

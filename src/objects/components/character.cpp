@@ -228,7 +228,7 @@ void _Character::CalculateStats() {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = Object;
-		if(Object->GetActionFromSkillbar(ActionResult.ActionUsed, i)) {
+		if(Object->Character->GetActionFromActionBar(ActionResult.ActionUsed, i)) {
 			const _Item *Skill = ActionResult.ActionUsed.Item;
 			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
 
@@ -240,7 +240,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get buff stats
-	for(const auto &StatusEffect : Object->StatusEffects) {
+	for(const auto &StatusEffect : Object->Character->StatusEffects) {
 		_StatChange StatChange;
 		StatChange.Object = Object;
 		StatusEffect->Buff->ExecuteScript(Object->Scripting, "Stats", StatusEffect->Level, StatChange);
@@ -360,22 +360,6 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 		Invisible = StatChange.Values[StatType::INVISIBLE].Integer;
 }
 
-// Update counts on action bar
-void _Character::RefreshActionBarCount() {
-	SkillPointsOnActionBar = 0;
-	for(size_t i = 0; i < ActionBar.size(); i++) {
-		const _Item *Item = ActionBar[i].Item;
-		if(Item) {
-			if(Item->IsSkill() && HasLearned(Item))
-				SkillPointsOnActionBar += Skills[Item->ID];
-			else
-				ActionBar[i].Count = Object->Inventory->CountItem(Item);
-		}
-		else
-			ActionBar[i].Count = 0;
-	}
-}
-
 // Get percentage to next level
 float _Character::GetNextLevelPercent() const {
 	float Percent = 0;
@@ -433,4 +417,50 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 			}
 		}
 	}
+}
+
+// Update counts on action bar
+void _Character::RefreshActionBarCount() {
+	SkillPointsOnActionBar = 0;
+	for(size_t i = 0; i < ActionBar.size(); i++) {
+		const _Item *Item = ActionBar[i].Item;
+		if(Item) {
+			if(Item->IsSkill() && HasLearned(Item))
+				SkillPointsOnActionBar += Skills[Item->ID];
+			else
+				ActionBar[i].Count = Object->Inventory->CountItem(Item);
+		}
+		else
+			ActionBar[i].Count = 0;
+	}
+}
+
+// Return an action struct from an action bar slot
+bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
+	if(Slot < ActionBar.size()) {
+		ReturnAction.Item = ActionBar[Slot].Item;
+		if(!ReturnAction.Item)
+			return false;
+
+		// Determine if item is a skill, then look at object's skill levels
+		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
+			ReturnAction.Level = Skills[ReturnAction.Item->ID];
+		else
+			ReturnAction.Level = ReturnAction.Item->Level;
+
+		return true;
+	}
+
+	return false;
+}
+
+// Return true if the object has the item unlocked
+bool _Character::HasUnlocked(const _Item *Item) const {
+	if(!Item)
+		return false;
+
+	if(Unlocks.find(Item->UnlockID) != Unlocks.end())
+		return true;
+
+	return false;
 }

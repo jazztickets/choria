@@ -1302,7 +1302,7 @@ void _HUD::DrawHudEffects() {
 
 	// Draw status effects
 	glm::vec2 Offset(0, 0);
-	for(auto &StatusEffect : Player->StatusEffects) {
+	for(auto &StatusEffect : Player->Character->StatusEffects) {
 		if(StatusEffect->HUDElement) {
 			StatusEffect->HUDElement->Offset = Offset;
 			StatusEffect->HUDElement->CalculateBounds();

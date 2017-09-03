@@ -91,7 +91,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 				SkillUnlocked = true;
 			}
 			else if(ItemUsed->IsUnlockable()) {
-				Source->Unlocks[ItemUsed->UnlockID].Level = 1;
+				Source->Character->Unlocks[ItemUsed->UnlockID].Level = 1;
 				ItemUnlocked = true;
 			}
 		}

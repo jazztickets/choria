@@ -407,7 +407,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 			}
 		break;
 		case ItemType::UNLOCKABLE: {
-			if(!Player->HasUnlocked(this))
+			if(!Player->Character->HasUnlocked(this))
 				InfoText = "Right-click to unlock";
 			else
 				InfoText = "Already unlocked";
@@ -579,7 +579,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 	// Unlocking item
 	if(IsUnlockable()) {
-		return !Object->HasUnlocked(this);
+		return !Object->Character->HasUnlocked(this);
 	}
 
 	// Check for item count

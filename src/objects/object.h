@@ -55,12 +55,6 @@ namespace Json {
 	class Value;
 }
 
-struct _Unlock {
-	_Unlock() : Level(0) { }
-
-	int Level;
-};
-
 // Classes
 class _Object : public _ManagerBase {
 
@@ -130,17 +124,12 @@ class _Object : public _ManagerBase {
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
 
 		// Actions
-		bool GetActionFromSkillbar(_Action &ReturnAction, size_t Slot);
 		void SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager);
 
 		// Movement
 		bool AcceptingMoveInput();
 		void GetDirectionFromInput(int InputState, glm::ivec2 &Direction);
 		int Move();
-
-		// Skills
-		bool CanRespec() const;
-		bool HasUnlocked(const _Item *Item) const;
 
 		// Trader
 		void AcceptTrader(std::vector<_Slot> &Slots);
@@ -149,6 +138,7 @@ class _Object : public _ManagerBase {
 		void SendSeed(bool Generate);
 
 		// Map
+		bool CanRespec() const;
 		const _Tile *GetTile() const;
 		NetworkIDType GetMapID() const;
 
@@ -191,9 +181,6 @@ class _Object : public _ManagerBase {
 		bool UseCommand;
 		bool WaitForServer;
 
-		// Unlocks
-		std::unordered_map<uint32_t, _Unlock> Unlocks;
-
 		// Battle
 		std::unordered_map<uint32_t, double> BattleCooldown;
 		_Battle *Battle;
@@ -201,7 +188,6 @@ class _Object : public _ManagerBase {
 		_Action PotentialAction;
 		_Object *LastTarget[2];
 		std::list<uint32_t> ItemDropsReceived;
-		std::list<_StatusEffect *> StatusEffects;
 		double TurnTimer;
 		int NextBattle;
 		int GoldStolen;
