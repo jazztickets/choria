@@ -450,7 +450,7 @@ void _Battle::AddFighter(_Object *Fighter, uint8_t Side, bool Join) {
 	Fighter->JoinedBattle = Join;
 	Fighter->GoldStolen = 0;
 	if(Server) {
-		Fighter->GenerateNextBattle();
+		Fighter->Character->GenerateNextBattle();
 		Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 		// Send player join packet to current fighters

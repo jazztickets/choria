@@ -58,6 +58,7 @@ class _Character {
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 
 		// Battle
+		void GenerateNextBattle();
 		int GenerateDamage();
 
 		// Actions
@@ -85,6 +86,7 @@ class _Character {
 		int Gold;
 
 		// State
+		int NextBattle;
 		int Invisible;
 		int Stunned;
 		bool Hardcore;

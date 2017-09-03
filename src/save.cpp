@@ -266,7 +266,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	// Set health/mana
 	Object.Character->Health = Object.Character->MaxHealth;
 	Object.Character->Mana = Object.Character->MaxMana;
-	Object.GenerateNextBattle();
+	Object.Character->GenerateNextBattle();
 
 	// Save new character
 	StartTransaction();

@@ -345,7 +345,7 @@ void _Map::CheckEvents(_Object *Object) const {
 				Object->Vendor = nullptr;
 				Object->Trader = nullptr;
 
-				if(Object->NextBattle <= 0) {
+				if(Object->Character->NextBattle <= 0) {
 					Server->QueueBattle(Object, Tile->Zone, false, false);
 				}
 			}

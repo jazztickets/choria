@@ -115,7 +115,6 @@ class _Object : public _ManagerBase {
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();
 		bool CanBattle() const;
-		void GenerateNextBattle();
 		void StopBattle();
 
 		// Status effects
@@ -187,7 +186,6 @@ class _Object : public _ManagerBase {
 		_Object *LastTarget[2];
 		std::list<uint32_t> ItemDropsReceived;
 		double TurnTimer;
-		int NextBattle;
 		int GoldStolen;
 		bool JoinedBattle;
 		uint8_t BattleSide;

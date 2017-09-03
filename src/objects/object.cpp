@@ -72,7 +72,6 @@ _Object::_Object() :
 	BattleElement(nullptr),
 	LastTarget{nullptr, nullptr},
 	TurnTimer(0.0),
-	NextBattle(0),
 	GoldStolen(0),
 	JoinedBattle(false),
 	BattleSide(0),
@@ -620,7 +619,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["playerkills"] = Record->PlayerKills;
 	StatsNode["gamesplayed"] = Record->GamesPlayed;
 	StatsNode["bounty"] = Record->Bounty;
-	StatsNode["nextbattle"] = NextBattle;
+	StatsNode["nextbattle"] = Character->NextBattle;
 	StatsNode["seed"] = Seed;
 	Data["stats"] = StatsNode;
 
@@ -722,7 +721,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Record->PlayerKills = StatsNode["playerkills"].asInt();
 	Record->GamesPlayed = StatsNode["gamesplayed"].asInt();
 	Record->Bounty = StatsNode["bounty"].asInt();
-	NextBattle = StatsNode["nextbattle"].asInt();
+	Character->NextBattle = StatsNode["nextbattle"].asInt();
 	Seed = StatsNode["seed"].asUInt();
 
 	if(!Seed)
@@ -1123,7 +1122,7 @@ int _Object::Move() {
 	if(Map->CanMoveTo(Position + Direction, this)) {
 		Position += Direction;
 		if(GetTile()->Zone > 0 && Character->Invisible != 1)
-			NextBattle--;
+			Character->NextBattle--;
 
 		return InputState;
 	}
@@ -1163,11 +1162,6 @@ void _Object::ResetUIState() {
 	Blacksmith = nullptr;
 	Minigame = nullptr;
 	TeleportTime = -1.0;
-}
-
-// Generates the number of moves until the next battle
-void _Object::GenerateNextBattle() {
-	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
 }
 
 // Stop a battle

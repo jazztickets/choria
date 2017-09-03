@@ -33,6 +33,7 @@ _Character::_Character(_Object *Object) :
 	UpdateTimer(0.0),
 	Gold(0),
 
+	NextBattle(0),
 	Invisible(0),
 	Stunned(0),
 	Hardcore(false),
@@ -63,6 +64,8 @@ _Character::_Character(_Object *Object) :
 	MaxHealth(1),
 	Mana(0),
 	MaxMana(0),
+	HealthRegen(0),
+	ManaRegen(0),
 	HealPower(0.0f),
 	AttackPower(0.0f),
 	MinDamage(0),
@@ -376,6 +379,11 @@ float _Character::GetNextLevelPercent() const {
 	return Percent;
 }
 
+// Generates the number of moves until the next battle
+void _Character::GenerateNextBattle() {
+	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
+}
+
 // Generate damage
 int _Character::GenerateDamage() {
 	return GetRandomInt(MinDamage, MaxDamage);
@@ -465,7 +473,7 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	}
 }
 
-// Add status effect
+// Add status effect, return true if added
 bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 	if(!StatusEffect)
 		return false;
