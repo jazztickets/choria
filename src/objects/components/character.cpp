@@ -120,6 +120,33 @@ void _Character::Update(double FrameTime) {
 			}
 		}
 	}
+
+	// Update status effects
+	for(auto Iterator = StatusEffects.begin(); Iterator != StatusEffects.end(); ) {
+		_StatusEffect *StatusEffect = *Iterator;
+		StatusEffect->Time += FrameTime;
+
+		// Call status effect's update every second
+		if(StatusEffect->Time >= 1.0) {
+			StatusEffect->Time -= 1.0;
+
+			// Resolve effects
+			if(Object->Server && IsAlive()) {
+				Object->ResolveBuff(StatusEffect, "Update");
+			}
+		}
+
+		// Reduce count
+		StatusEffect->Duration -= FrameTime;
+		if(StatusEffect->Duration <= 0 || !IsAlive()) {
+			delete StatusEffect;
+			Iterator = StatusEffects.erase(Iterator);
+
+			CalculateStats();
+		}
+		else
+			++Iterator;
+	}
 }
 
 // Update health
@@ -237,7 +264,7 @@ void _Character::CalculateStats() {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = Object;
-		if(Object->Character->GetActionFromActionBar(ActionResult.ActionUsed, i)) {
+		if(GetActionFromActionBar(ActionResult.ActionUsed, i)) {
 			const _Item *Skill = ActionResult.ActionUsed.Item;
 			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
 
@@ -249,7 +276,7 @@ void _Character::CalculateStats() {
 	}
 
 	// Get buff stats
-	for(const auto &StatusEffect : Object->Character->StatusEffects) {
+	for(const auto &StatusEffect : StatusEffects) {
 		_StatChange StatChange;
 		StatChange.Object = Object;
 		StatusEffect->Buff->ExecuteScript(Object->Scripting, "Stats", StatusEffect->Level, StatChange);

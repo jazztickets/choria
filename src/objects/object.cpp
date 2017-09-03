@@ -56,6 +56,7 @@ _Object::_Object() :
 	Record(nullptr),
 	Stats(nullptr),
 	Map(nullptr),
+	Battle(nullptr),
 	HUD(nullptr),
 	Scripting(nullptr),
 	Server(nullptr),
@@ -68,9 +69,11 @@ _Object::_Object() :
 	UseCommand(false),
 	WaitForServer(false),
 
-	Battle(nullptr),
 	BattleElement(nullptr),
 	LastTarget{nullptr, nullptr},
+	BattleOffset(0, 0),
+	ResultPosition(0, 0),
+	StatPosition(0, 0),
 	TurnTimer(0.0),
 	GoldStolen(0),
 	JoinedBattle(false),
@@ -79,9 +82,6 @@ _Object::_Object() :
 	ModelTexture(nullptr),
 	StatusTexture(nullptr),
 	Portrait(nullptr),
-	BattleOffset(0, 0),
-	ResultPosition(0, 0),
-	StatPosition(0, 0),
 	PortraitID(0),
 	ModelID(0),
 	Status(0),
@@ -221,33 +221,6 @@ void _Object::Update(double FrameTime) {
 	else
 		TurnTimer = 0.0;
 
-	// Update status effects
-	for(auto Iterator = Character->StatusEffects.begin(); Iterator != Character->StatusEffects.end(); ) {
-		_StatusEffect *StatusEffect = *Iterator;
-		StatusEffect->Time += FrameTime;
-
-		// Call status effect's update every second
-		if(StatusEffect->Time >= 1.0) {
-			StatusEffect->Time -= 1.0;
-
-			// Resolve effects
-			if(Server && Character->IsAlive()) {
-				ResolveBuff(StatusEffect, "Update");
-			}
-		}
-
-		// Reduce count
-		StatusEffect->Duration -= FrameTime;
-		if(StatusEffect->Duration <= 0 || !Character->IsAlive()) {
-			delete StatusEffect;
-			Iterator = Character->StatusEffects.erase(Iterator);
-
-			Character->CalculateStats();
-		}
-		else
-			++Iterator;
-	}
-
 	// Update battle cooldowns
 	for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
 		Iterator->second -= FrameTime;
@@ -309,7 +282,6 @@ void _Object::Update(double FrameTime) {
 		Status = STATUS_SKILLS;
 	else if(MenuOpen)
 		Status = STATUS_MENU;
-
 }
 
 // Update bot AI

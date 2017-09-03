@@ -86,6 +86,7 @@ class _Battle : public _ManagerBase {
 		void ClientSetAction(uint8_t ActionBarSlot);
 		void ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget);
 
+		// Pointers
 		const _Stats *Stats;
 		_Server *Server;
 		_Scripting *Scripting;
@@ -93,15 +94,17 @@ class _Battle : public _ManagerBase {
 		_Object *ClientPlayer;
 		_Manager<_Object> *Manager;
 
+		// Objects
 		std::list<_Object *> Objects;
 		std::list<_ActionResult> ActionResults;
-		int SideCount[2];
 
-		bool Boss;
-		int PVP;
-		uint32_t Zone;
-		double Cooldown;
+		// Attributes
 		double Difficulty[2];
+		double Cooldown;
+		uint32_t Zone;
+		int SideCount[2];
+		int PVP;
+		bool Boss;
 
 	private:
 

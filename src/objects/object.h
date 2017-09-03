@@ -164,6 +164,7 @@ class _Object : public _ManagerBase {
 		// Pointers
 		const _Stats *Stats;
 		_Map *Map;
+		_Battle *Battle;
 		_HUD *HUD;
 		_Scripting *Scripting;
 		_Server *Server;
@@ -180,11 +181,13 @@ class _Object : public _ManagerBase {
 
 		// Battle
 		std::unordered_map<uint32_t, double> BattleCooldown;
-		_Battle *Battle;
 		_Element *BattleElement;
 		_Action PotentialAction;
 		_Object *LastTarget[2];
 		std::list<uint32_t> ItemDropsReceived;
+		glm::vec2 BattleOffset;
+		glm::vec2 ResultPosition;
+		glm::vec2 StatPosition;
 		double TurnTimer;
 		int GoldStolen;
 		bool JoinedBattle;
@@ -198,9 +201,6 @@ class _Object : public _ManagerBase {
 		const _Texture *ModelTexture;
 		const _Texture *StatusTexture;
 		const _Texture *Portrait;
-		glm::vec2 BattleOffset;
-		glm::vec2 ResultPosition;
-		glm::vec2 StatPosition;
 		uint32_t PortraitID;
 		uint32_t ModelID;
 		uint8_t Status;

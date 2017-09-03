@@ -55,12 +55,14 @@ _Battle::_Battle() :
 	ClientNetwork(nullptr),
 	ClientPlayer(nullptr),
 	Manager(nullptr),
-	SideCount{0, 0},
-	Boss(false),
-	PVP(0),
-	Zone(0),
-	Cooldown(0.0),
+
 	Difficulty{0.0, 1.0},
+	Cooldown(0.0),
+	Zone(0),
+	SideCount{0, 0},
+	PVP(0),
+	Boss(false),
+
 	Time(0),
 	WaitTimer(0),
 	BattleElement(nullptr) {
