@@ -306,7 +306,7 @@ void _Minigame::Render(double BlendFactor) {
 			Graphics.SetVBO(VBO_QUAD);
 			Graphics.DrawSprite(Position, Item->Item->Texture, (float)Time * 50);
 			if(Item->Count > 1)
-				Assets.Fonts["hud_medium"]->DrawText(std::to_string(Item->Count) + "x", Position + glm::vec3(0.30f, 0.5f, 0), LEFT_BASELINE, glm::vec4(1), 1/64.0f);
+				Assets.Fonts["hud_medium"]->DrawText(std::to_string(Item->Count) + "x", glm::vec2(Position) + glm::vec2(0.30f, 0.5f), LEFT_BASELINE, glm::vec4(1), 1/64.0f);
 		}
 
 		Position.x += 2;
