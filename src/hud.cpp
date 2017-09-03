@@ -640,7 +640,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer << Player->Character->ExperienceNextLevel - Player->Character->ExperienceNeeded << " / " << Player->Character->ExperienceNextLevel << " XP";
 		Assets.Elements["label_hud_experience"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->GetNextLevelPercent());
+		Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->Character->GetNextLevelPercent());
 		Assets.Elements["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
 		ExperienceElement->Render();
 
@@ -1846,8 +1846,8 @@ void _HUD::DrawSkills() {
 	SkillsElement->Render();
 
 	// Show remaining skill points
-	std::string Text = std::to_string(Player->GetSkillPointsAvailable()) + " skill point";
-	if(Player->GetSkillPointsAvailable() != 1)
+	std::string Text = std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point";
+	if(Player->Character->GetSkillPointsAvailable() != 1)
 		Text += "s";
 
 	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
@@ -2039,7 +2039,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	Packet.Write<int>(Amount);
 
 	int OldSkillLevel = Player->Character->Skills[SkillID];
-	Player->AdjustSkillLevel(SkillID, Amount);
+	Player->Character->AdjustSkillLevel(SkillID, Amount);
 
 	// Equip new skills
 	if(Amount > 0 && OldSkillLevel == 0) {
@@ -2128,7 +2128,7 @@ void _HUD::ClearSkills() {
 void _HUD::RefreshSkillButtons() {
 
 	// Get remaining points
-	int SkillPointsRemaining = Player->GetSkillPointsAvailable();
+	int SkillPointsRemaining = Player->Character->GetSkillPointsAvailable();
 
 	// Loop through buttons
 	for(auto &Element : SkillsElement->Children) {

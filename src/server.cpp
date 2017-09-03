@@ -1213,7 +1213,7 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Update values
-	Player->AdjustSkillLevel(SkillID, Amount);
+	Player->Character->AdjustSkillLevel(SkillID, Amount);
 	Player->Character->CalculateStats();
 }
 

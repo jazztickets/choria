@@ -280,7 +280,7 @@ void _Map::Update(double FrameTime) {
 }
 
 // Check for events
-void _Map::CheckEvents(_Object *Object) {
+void _Map::CheckEvents(_Object *Object) const {
 
 	// Check for teleporting
 	if(Server && Object->TeleportTime == 0.0) {
@@ -369,7 +369,7 @@ void _Map::IndexEvents() {
 }
 
 // Convert clock time to text
-void _Map::GetClockAsString(std::stringstream &Buffer) {
+void _Map::GetClockAsString(std::stringstream &Buffer) const {
 
 	int Hours = (int)(Clock / 60.0);
 	if(Hours == 0)
@@ -424,7 +424,7 @@ void _Map::SetAmbientLightByClock() {
 }
 
 // Start event for an object and send packet
-void _Map::StartEvent(_Object *Object, _Event Event) {
+void _Map::StartEvent(_Object *Object, _Event Event) const {
 	if(!Server)
 		return;
 
@@ -472,7 +472,7 @@ void _Map::StartEvent(_Object *Object, _Event Event) {
 }
 
 // Determine if a position is in a pvp zone
-bool _Map::IsPVPZone(const glm::ivec2 &Position) {
+bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 	if(!IsValidPosition(Position))
 		return false;
 
@@ -930,7 +930,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 }
 
 // Find closest event on the map, returns true on found
-bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) {
+bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) const {
 
 	// Find event
 	auto Iterator = IndexedEvents.find(Event);
@@ -1007,12 +1007,12 @@ void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
 }
 
 // Get a valid position within the grid
-glm::vec2 _Map::GetValidPosition(const glm::vec2 &Position) {
+glm::vec2 _Map::GetValidPosition(const glm::vec2 &Position) const {
 	return glm::clamp(Position, glm::vec2(0.0f), glm::vec2(Size));
 }
 
 // Get a valid position within the grid
-glm::ivec2 _Map::GetValidCoord(const glm::ivec2 &Position) {
+glm::ivec2 _Map::GetValidCoord(const glm::ivec2 &Position) const {
 	return glm::clamp(Position, glm::ivec2(0), Size - 1);
 }
 

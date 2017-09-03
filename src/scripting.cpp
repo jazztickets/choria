@@ -848,7 +848,7 @@ int _Scripting::ObjectGetSkillPointsAvailable(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 
 	// Push value
-	lua_pushinteger(LuaState, Object->GetSkillPointsAvailable());
+	lua_pushinteger(LuaState, Object->Character->GetSkillPointsAvailable());
 
 	return 1;
 }
@@ -862,11 +862,11 @@ int _Scripting::ObjectSpendSkillPoints(lua_State *LuaState) {
 	int Amount = (int)lua_tointeger(LuaState, 2);
 
 	// Spend points
-	Object->AdjustSkillLevel(SkillID, Amount);
+	Object->Character->AdjustSkillLevel(SkillID, Amount);
 	Object->Character->CalculateStats();
 
 	// Push points available
-	lua_pushinteger(LuaState, Object->GetSkillPointsAvailable());
+	lua_pushinteger(LuaState, Object->Character->GetSkillPointsAvailable());
 
 	return 1;
 }

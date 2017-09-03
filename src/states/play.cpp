@@ -1361,7 +1361,7 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 		Map->Clock = Clock;
 
 	if(Player->Character->Level > OldLevel) {
-		HUD->SetMessage("You have " + std::to_string(Player->GetSkillPointsAvailable()) + " skill point(s). Press " + Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to use them.");
+		HUD->SetMessage("You have " + std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point(s). Press " + Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to use them.");
 		Audio.PlaySound(Assets.Sounds["success0.ogg"]);
 
 		if(Player->Character->Level == 2) {

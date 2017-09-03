@@ -152,22 +152,11 @@ void _Character::UpdateExperience(int Value) {
 		Experience = 0;
 }
 
-// Return true if the object has the skill unlocked
-bool _Character::HasLearned(const _Item *Skill) const {
-	if(!Skill)
-		return false;
-
-	if(Skills.find(Skill->ID) != Skills.end())
-		return true;
-
-	return false;
-}
-
 // Calculates all of the player stats
 void _Character::CalculateStats() {
 
 	// Get base stats
-	CalculateLevelStats(Object->Stats);
+	CalculateLevelStats();
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
@@ -295,8 +284,8 @@ void _Character::CalculateStats() {
 }
 
 // Calculate base level stats
-void _Character::CalculateLevelStats(const _Stats *Stats) {
-	if(!Stats || !CalcLevelStats)
+void _Character::CalculateLevelStats() {
+	if(!Object->Stats || !CalcLevelStats)
 		return;
 
 	// Cap min experience
@@ -304,15 +293,15 @@ void _Character::CalculateLevelStats(const _Stats *Stats) {
 		Experience = 0;
 
 	// Cap max experience
-	const _Level *MaxLevelStat = Stats->GetLevel(Stats->GetMaxLevel());
+	const _Level *MaxLevelStat = Object->Stats->GetLevel(Object->Stats->GetMaxLevel());
 	if(Experience > MaxLevelStat->Experience)
 		Experience = MaxLevelStat->Experience;
 
 	// Find current level
-	const _Level *LevelStat = Stats->FindLevel(Experience);
+	const _Level *LevelStat = Object->Stats->FindLevel(Experience);
 	Level = LevelStat->Level;
 	ExperienceNextLevel = LevelStat->NextLevel;
-	ExperienceNeeded = (Level == Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
+	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
 
 	// Set base attributes
 	BaseMaxHealth = LevelStat->Health;
@@ -384,5 +373,64 @@ void _Character::RefreshActionBarCount() {
 		}
 		else
 			ActionBar[i].Count = 0;
+	}
+}
+
+// Get percentage to next level
+float _Character::GetNextLevelPercent() const {
+	float Percent = 0;
+
+	if(ExperienceNextLevel > 0)
+		Percent = 1.0f - (float)ExperienceNeeded / ExperienceNextLevel;
+
+	return Percent;
+}
+
+// Return true if the object has the skill unlocked
+bool _Character::HasLearned(const _Item *Skill) const {
+	if(!Skill)
+		return false;
+
+	if(Skills.find(Skill->ID) != Skills.end())
+		return true;
+
+	return false;
+}
+
+// Updates a skill level
+void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
+	if(SkillID == 0)
+		return;
+
+	const _Item *Skill = Object->Stats->Items.at(SkillID);
+	if(Skill == nullptr)
+		return;
+
+	// Buying
+	if(Amount > 0) {
+
+		// Cap points
+		int PointsToSpend = std::min(GetSkillPointsAvailable(), Amount);
+		PointsToSpend = std::min(PointsToSpend, Skill->MaxLevel - Skills[SkillID]);
+
+		// Update level
+		Skills[SkillID] += PointsToSpend;
+	}
+	else if(Amount < 0) {
+
+		// Update level
+		Skills[SkillID] += Amount;
+		if(Skills[SkillID] < 0)
+			Skills[SkillID] = 0;
+
+		// Update action bar
+		if(Skills[SkillID] == 0) {
+			for(size_t i = 0; i < ActionBar.size(); i++) {
+				if(ActionBar[i].Item == Skill) {
+					ActionBar[i].Unset();
+					break;
+				}
+			}
+		}
 	}
 }

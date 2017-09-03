@@ -41,16 +41,19 @@ class _Character {
 		void UpdateGold(int Value);
 		void UpdateExperience(int Value);
 
-		// Skills
-		bool HasLearned(const _Item *Skill) const;
-
 		// Stats
 		void CalculateStats();
-		void CalculateLevelStats(const _Stats *Stats);
+		void CalculateLevelStats();
 		void RefreshActionBarCount();
+		float GetNextLevelPercent() const;
 		bool IsAlive() const { return Health > 0; }
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
+
+		// Skills
+		bool HasLearned(const _Item *Skill) const;
+		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
+		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
 		// Base
 		_Object *Object;

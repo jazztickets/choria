@@ -1311,16 +1311,6 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 	}
 }
 
-// Get the percentage to the next level
-float _Object::GetNextLevelPercent() const {
-	float Percent = 0;
-
-	if(Character->ExperienceNextLevel > 0)
-		Percent = 1.0f - (float)Character->ExperienceNeeded / Character->ExperienceNextLevel;
-
-	return Percent;
-}
-
 // Accept a trade from a trader
 void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
 	if(!Trader)
@@ -1393,44 +1383,6 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 	// Remove diagonols
 	if(Direction.x != 0 && Direction.y != 0)
 		Direction.x = 0;
-}
-
-// Updates a skill level
-void _Object::AdjustSkillLevel(uint32_t SkillID, int Amount) {
-	if(SkillID == 0)
-		return;
-
-	const _Item *Skill = Stats->Items.at(SkillID);
-	if(Skill == nullptr)
-		return;
-
-	// Buying
-	if(Amount > 0) {
-
-		// Cap points
-		int PointsToSpend = std::min(GetSkillPointsAvailable(), Amount);
-		PointsToSpend = std::min(PointsToSpend, Skill->MaxLevel - Character->Skills[SkillID]);
-
-		// Update level
-		Character->Skills[SkillID] += PointsToSpend;
-	}
-	else if(Amount < 0) {
-
-		// Update level
-		Character->Skills[SkillID] += Amount;
-		if(Character->Skills[SkillID] < 0)
-			Character->Skills[SkillID] = 0;
-
-		// Update action bar
-		if(Character->Skills[SkillID] == 0) {
-			for(size_t i = 0; i < Character->ActionBar.size(); i++) {
-				if(Character->ActionBar[i].Item == Skill) {
-					Character->ActionBar[i].Unset();
-					break;
-				}
-			}
-		}
-	}
 }
 
 // Can enter battle

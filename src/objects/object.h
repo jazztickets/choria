@@ -114,7 +114,6 @@ class _Object : public _ManagerBase {
 		// Stats
 		bool IsMonster() const { return DatabaseID != 0; }
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
-		float GetNextLevelPercent() const;
 		void ApplyDeathPenalty(float Penalty, int BountyLoss);
 
 		// Battles
@@ -142,8 +141,6 @@ class _Object : public _ManagerBase {
 		// Skills
 		bool CanRespec() const;
 		bool HasUnlocked(const _Item *Item) const;
-		int GetSkillPointsAvailable() const { return Character->SkillPoints - Character->SkillPointsUsed; }
-		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
 		// Trader
 		void AcceptTrader(std::vector<_Slot> &Slots);

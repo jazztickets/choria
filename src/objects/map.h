@@ -99,12 +99,12 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		void Update(double FrameTime) override;
 
 		// Events
-		void CheckEvents(_Object *Object);
+		void CheckEvents(_Object *Object) const;
 		void IndexEvents();
-		void GetClockAsString(std::stringstream &Buffer);
+		void GetClockAsString(std::stringstream &Buffer) const;
 		void SetAmbientLightByClock();
-		void StartEvent(_Object *Object, _Event Event);
-		bool IsPVPZone(const glm::ivec2 &Position);
+		void StartEvent(_Object *Object, _Event Event) const;
+		bool IsPVPZone(const glm::ivec2 &Position) const;
 
 		// Graphics
 		void Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
@@ -125,12 +125,12 @@ class _Map : public _ManagerBase, public micropather::Graph {
 		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty);
 		void GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players);
 		_Object *FindTradePlayer(const _Object *Player, float MaxDistanceSquared);
-		bool FindEvent(const _Event &Event, glm::ivec2 &Position);
+		bool FindEvent(const _Event &Event, glm::ivec2 &Position) const;
 
 		// Map editing
 		bool IsValidPosition(const glm::ivec2 &Position) const { return Position.x >= 0 && Position.y >= 0 && Position.x < Size.x && Position.y < Size.y; }
-		glm::vec2 GetValidPosition(const glm::vec2 &Position);
-		glm::ivec2 GetValidCoord(const glm::ivec2 &Position);
+		glm::vec2 GetValidPosition(const glm::vec2 &Position) const;
+		glm::ivec2 GetValidCoord(const glm::ivec2 &Position) const;
 
 		void GetTile(const glm::ivec2 &Position, _Tile &Tile) const { Tile = Tiles[Position.x][Position.y]; }
 		const _Tile *GetTile(const glm::ivec2 &Position) const { return &Tiles[Position.x][Position.y]; }
