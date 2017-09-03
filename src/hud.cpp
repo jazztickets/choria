@@ -32,6 +32,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
+#include <objects/components/controller.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/battle.h>
@@ -821,20 +822,20 @@ void _HUD::ToggleTeleport() {
 	if(!Player->CanTeleport())
 		return;
 
-	if(!Player->WaitForServer && !TeleportElement->Active) {
+	if(!Player->Controller->WaitForServer && !TeleportElement->Active) {
 		CloseWindows(true);
 		PlayState.SendStatus(_Object::STATUS_TELEPORT);
-		Player->WaitForServer = true;
+		Player->Controller->WaitForServer = true;
 	}
 	else {
-		Player->WaitForServer = false;
+		Player->Controller->WaitForServer = false;
 		CloseWindows(true);
 	}
 }
 
 // Open/close inventory
 void _HUD::ToggleInventory() {
-	if(Player->WaitForServer || !Player->CanOpenInventory())
+	if(Player->Controller->WaitForServer || !Player->CanOpenInventory())
 		return;
 
 	if(!InventoryElement->Active) {
@@ -852,7 +853,7 @@ void _HUD::ToggleInventory() {
 
 // Open/close trade
 void _HUD::ToggleTrade() {
-	if(Player->WaitForServer || !Player->CanOpenTrade())
+	if(Player->Controller->WaitForServer || !Player->CanOpenTrade())
 		return;
 
 	if(!TradeElement->Active) {
@@ -866,7 +867,7 @@ void _HUD::ToggleTrade() {
 
 // Open/close skills
 void _HUD::ToggleSkills() {
-	if(Player->WaitForServer || !Player->CanOpenInventory())
+	if(Player->Controller->WaitForServer || !Player->CanOpenInventory())
 		return;
 
 	if(!SkillsElement->Active) {
@@ -880,7 +881,7 @@ void _HUD::ToggleSkills() {
 
 // Open/close party screen
 void _HUD::ToggleParty() {
-	if(Player->WaitForServer || !Player->CanOpenParty())
+	if(Player->Controller->WaitForServer || !Player->CanOpenParty())
 		return;
 
 	if(!PartyElement->Active) {
@@ -894,7 +895,7 @@ void _HUD::ToggleParty() {
 
 // Open/close menu
 void _HUD::ToggleInGameMenu(bool Force) {
-	if(Player->WaitForServer)
+	if(Player->Controller->WaitForServer)
 		return;
 
 	// Close windows if open

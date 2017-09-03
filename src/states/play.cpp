@@ -20,6 +20,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
+#include <objects/components/controller.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/map.h>
@@ -284,11 +285,11 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 				case Action::GAME_DOWN:
 				case Action::GAME_LEFT:
 				case Action::GAME_RIGHT:
-					if(!Player->WaitForServer)
+					if(!Player->Controller->WaitForServer)
 						HUD->CloseWindows(true);
 				break;
 				case Action::GAME_USE:
-					if(!Player->WaitForServer)
+					if(!Player->Controller->WaitForServer)
 						SendUseCommand();
 				break;
 			}
@@ -429,9 +430,9 @@ void _PlayState::Update(double FrameTime) {
 		Player->GetDirectionFromInput(InputState, Direction);
 
 		// Append input state if moving
-		Player->InputStates.clear();
+		Player->Controller->InputStates.clear();
 		if(Direction.x != 0 || Direction.y != 0)
-			Player->InputStates.push_back(InputState);
+			Player->Controller->InputStates.push_back(InputState);
 	}
 
 	// Update objects
@@ -441,13 +442,13 @@ void _PlayState::Update(double FrameTime) {
 	Map->Update(FrameTime);
 
 	// Send input to server
-	if(Player->DirectionMoved) {
+	if(Player->Controller->DirectionMoved) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
-		Packet.Write<char>((char)Player->DirectionMoved);
+		Packet.Write<char>((char)Player->Controller->DirectionMoved);
 		Network->SendPacket(Packet);
 
-		if(!Player->WaitForServer)
+		if(!Player->Controller->WaitForServer)
 			HUD->CloseWindows(true);
 	}
 
@@ -849,7 +850,7 @@ void _PlayState::HandlePlayerPosition(_Buffer &Data) {
 		return;
 
 	Player->Position = Data.Read<glm::ivec2>();
-	Player->WaitForServer = false;
+	Player->Controller->WaitForServer = false;
 	Player->TeleportTime = -1;
 	HUD->StopTeleport();
 }
@@ -860,7 +861,7 @@ void _PlayState::HandleTeleportStart(_Buffer &Data) {
 		return;
 
 	Player->TeleportTime = Data.Read<double>();
-	Player->WaitForServer = true;
+	Player->Controller->WaitForServer = true;
 	HUD->CloseWindows(false);
 	HUD->StartTeleport();
 
@@ -881,22 +882,22 @@ void _PlayState::HandleEventStart(_Buffer &Data) {
 	switch(EventType) {
 		case _Map::EVENT_VENDOR:
 			Player->Vendor = &Stats->Vendors.at(EventData);
-			Player->WaitForServer = false;
+			Player->Controller->WaitForServer = false;
 			HUD->InitVendor();
 		break;
 		case _Map::EVENT_TRADER:
 			Player->Trader = &Stats->Traders.at(EventData);
-			Player->WaitForServer = false;
+			Player->Controller->WaitForServer = false;
 			HUD->InitTrader();
 		break;
 		case _Map::EVENT_BLACKSMITH:
 			Player->Blacksmith = &Stats->Blacksmiths.at(EventData);
-			Player->WaitForServer = false;
+			Player->Controller->WaitForServer = false;
 			HUD->InitBlacksmith();
 		break;
 		case _Map::EVENT_MINIGAME:
 			Player->Minigame = &Stats->Minigames.at(EventData);
-			Player->WaitForServer = false;
+			Player->Controller->WaitForServer = false;
 			HUD->InitMinigame();
 		break;
 	}
@@ -1093,7 +1094,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 		return;
 
 	// Allow player to hit menu buttons
-	Player->WaitForServer = false;
+	Player->Controller->WaitForServer = false;
 
 	// Reset hud
 	HUD->CloseWindows(true);
@@ -1159,7 +1160,7 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 	HUD->SetMessage("");
 	HUD->CloseWindows(false);
 
-	Player->WaitForServer = false;
+	Player->Controller->WaitForServer = false;
 
 	_StatChange StatChange;
 	StatChange.Object = Player;
@@ -1409,7 +1410,7 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	if(!Player->Character->ActionBar[Slot].IsSet())
 		return;
 
-	if(Player->WaitForServer)
+	if(Player->Controller->WaitForServer)
 		return;
 
 	// Send use to server

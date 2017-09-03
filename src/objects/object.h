@@ -31,6 +31,7 @@ class _Character;
 class _Inventory;
 class _Record;
 class _Fighter;
+class _Controller;
 class _Map;
 class _Peer;
 class _Texture;
@@ -162,6 +163,7 @@ class _Object : public _ManagerBase {
 		_Inventory *Inventory;
 		_Record *Record;
 		_Fighter *Fighter;
+		_Controller *Controller;
 
 		// Pointers
 		const _Stats *Stats;
@@ -173,13 +175,8 @@ class _Object : public _ManagerBase {
 		_Peer *Peer;
 
 		// Movement
-		std::list<int> InputStates;
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
-		double MoveTime;
-		int DirectionMoved;
-		bool UseCommand;
-		bool WaitForServer;
 
 		// Battle
 		std::unordered_map<uint32_t, double> BattleCooldown;

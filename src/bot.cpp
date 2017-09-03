@@ -27,6 +27,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
+#include <objects/components/controller.h>
 #include <packet.h>
 #include <stats.h>
 #include <constants.h>
@@ -106,12 +107,12 @@ void _Bot::Update(double FrameTime) {
 		return;
 
 	// Respawn
-	if(!Player->WaitForServer && !Player->Character->IsAlive()) {
+	if(!Player->Controller->WaitForServer && !Player->Character->IsAlive()) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
 		Network->SendPacket(Packet);
 
-		Player->WaitForServer = true;
+		Player->Controller->WaitForServer = true;
 		return;
 	}
 
@@ -135,9 +136,9 @@ void _Bot::Update(double FrameTime) {
 			Scripting->FinishMethodCall();
 		}
 
-		Player->InputStates.clear();
+		Player->Controller->InputStates.clear();
 		if(InputState)
-			Player->InputStates.push_back(InputState);
+			Player->Controller->InputStates.push_back(InputState);
 	}
 
 	// Update objects
@@ -147,13 +148,13 @@ void _Bot::Update(double FrameTime) {
 	Map->Update(FrameTime);
 
 	// Send input to server
-	if(Player->DirectionMoved) {
+	if(Player->Controller->DirectionMoved) {
 		if(Player->Path.size())
 			Player->Path.erase(Player->Path.begin());
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
-		Packet.Write<char>((char)Player->DirectionMoved);
+		Packet.Write<char>((char)Player->Controller->DirectionMoved);
 		Network->SendPacket(Packet);
 	}
 
@@ -320,7 +321,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				break;
 
 			Player->Position = Data.Read<glm::ivec2>();
-			Player->WaitForServer = false;
+			Player->Controller->WaitForServer = false;
 			Player->TeleportTime = -1;
 		} break;
 		case PacketType::WORLD_TELEPORTSTART:
@@ -382,7 +383,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				break;
 
 			// Allow player to hit menu buttons
-			Player->WaitForServer = false;
+			Player->Controller->WaitForServer = false;
 
 			// Create a new battle instance
 			Battle = new _Battle();
@@ -418,7 +419,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			if(!Player || !Battle)
 				return;
 
-			Player->WaitForServer = false;
+			Player->Controller->WaitForServer = false;
 
 			_StatChange StatChange;
 			StatChange.Object = Player;

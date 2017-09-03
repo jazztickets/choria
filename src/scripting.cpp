@@ -29,6 +29,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
+#include <objects/components/controller.h>
 #include <objects/map.h>
 #include <server.h>
 #include <stats.h>
@@ -996,7 +997,7 @@ int _Scripting::ObjectRespawn(lua_State *LuaState) {
 // Send use command
 int _Scripting::ObjectUseCommand(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	Object->UseCommand = true;
+	Object->Controller->UseCommand = true;
 
 	return 0;
 }

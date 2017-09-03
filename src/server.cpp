@@ -25,6 +25,7 @@
 #include <objects/object.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
+#include <objects/components/controller.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
@@ -539,7 +540,7 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 	if(!Player->Character->IsAlive())
 		return;
 
-	Player->InputStates.push_back(Data.Read<char>());
+	Player->Controller->InputStates.push_back(Data.Read<char>());
 }
 
 // Handles use command from a client
@@ -551,7 +552,7 @@ void _Server::HandleUseCommand(_Buffer &Data, _Peer *Peer) {
 	if(!Player->Character->IsAlive())
 		return;
 
-	Player->UseCommand = true;
+	Player->Controller->UseCommand = true;
 }
 
 // Handle respawn command from client

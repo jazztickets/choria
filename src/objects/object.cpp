@@ -22,6 +22,7 @@
 #include <objects/components/character.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
+#include <objects/components/controller.h>
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
@@ -56,6 +57,8 @@ _Object::_Object() :
 	Inventory(nullptr),
 	Record(nullptr),
 	Fighter(nullptr),
+	Controller(nullptr),
+
 	Stats(nullptr),
 	Map(nullptr),
 	Battle(nullptr),
@@ -66,10 +69,6 @@ _Object::_Object() :
 
 	Position(0, 0),
 	ServerPosition(0, 0),
-	MoveTime(0),
-	DirectionMoved(0),
-	UseCommand(false),
-	WaitForServer(false),
 
 	ModelTexture(nullptr),
 	StatusTexture(nullptr),
@@ -110,6 +109,7 @@ _Object::_Object() :
 	Character = new _Character(this);
 	Record = new _Record(this);
 	Fighter = new _Fighter(this);
+	Controller = new _Controller(this);
 }
 
 // Destructor
@@ -136,17 +136,11 @@ _Object::~_Object() {
 		Peer = nullptr;
 	}
 
+	delete Controller;
 	delete Fighter;
-	Fighter = nullptr;
-
 	delete Record;
-	Record = nullptr;
-
 	delete Character;
-	Character = nullptr;
-
 	delete Inventory;
-	Inventory = nullptr;
 }
 
 // Updates the player
@@ -158,8 +152,8 @@ void _Object::Update(double FrameTime) {
 		UpdateBot(FrameTime);
 
 	// Update player position
-	DirectionMoved = Move();
-	if(DirectionMoved) {
+	Controller->DirectionMoved = Move();
+	if(Controller->DirectionMoved) {
 		CheckEvent = true;
 
 		// Remove node from pathfinding
@@ -168,9 +162,9 @@ void _Object::Update(double FrameTime) {
 	}
 
 	// Player hit the use button
-	if(UseCommand) {
+	if(Controller->UseCommand) {
 		CheckEvent = true;
-		UseCommand = false;
+		Controller->UseCommand = false;
 	}
 
 	// Update actions and battle
@@ -233,7 +227,7 @@ void _Object::Update(double FrameTime) {
 		Character->Update(FrameTime);
 
 	// Update timers
-	MoveTime += FrameTime;
+	Controller->MoveTime += FrameTime;
 
 	// Update teleport time
 	if(TeleportTime > 0.0) {
@@ -303,9 +297,9 @@ void _Object::UpdateBot(double FrameTime) {
 			Scripting->FinishMethodCall();
 		}
 
-		InputStates.clear();
+		Controller->InputStates.clear();
 		if(InputState)
-			InputStates.push_back(InputState);
+			Controller->InputStates.push_back(InputState);
 	}
 
 	// Update battle
@@ -942,7 +936,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 
 // Unserialize battle stats
 void _Object::UnserializeBattle(_Buffer &Data) {
-	InputStates.clear();
+	Controller->InputStates.clear();
 
 	// Get object type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
@@ -1071,16 +1065,16 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 // Moves the player and returns direction moved
 int _Object::Move() {
-	if(WaitForServer || Battle || InputStates.size() == 0 || !Character->IsAlive())
+	if(Controller->WaitForServer || Battle || Controller->InputStates.size() == 0 || !Character->IsAlive())
 		return 0;
 
 	// Check timer
-	if(MoveTime < PLAYER_MOVETIME / (Character->MoveSpeed / 100.0))
+	if(Controller->MoveTime < PLAYER_MOVETIME / (Character->MoveSpeed / 100.0))
 		return 0;
 
-	MoveTime = 0;
-	int InputState = InputStates.front();
-	InputStates.pop_front();
+	Controller->MoveTime = 0;
+	int InputState = Controller->InputStates.front();
+	Controller->InputStates.pop_front();
 
 	// Get new position
 	glm::ivec2 Direction(0, 0);
@@ -1238,7 +1232,7 @@ bool _Object::AcceptingMoveInput() {
 	if(Battle)
 		return false;
 
-	if(WaitForServer)
+	if(Controller->WaitForServer)
 		return false;
 
 	if(Vendor)

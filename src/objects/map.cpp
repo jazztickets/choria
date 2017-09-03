@@ -18,6 +18,7 @@
 #include <objects/map.h>
 #include <objects/object.h>
 #include <objects/components/inventory.h>
+#include <objects/components/controller.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <ae/buffer.h>
@@ -305,7 +306,7 @@ void _Map::CheckEvents(_Object *Object) const {
 			if(Server)
 				Server->SpawnPlayer(Object, (NetworkIDType)Tile->Event.Data, _Map::EVENT_MAPENTRANCE);
 			else
-				Object->WaitForServer = true;
+				Object->Controller->WaitForServer = true;
 		break;
 		case _Map::EVENT_VENDOR:
 		case _Map::EVENT_TRADER:
@@ -314,7 +315,7 @@ void _Map::CheckEvents(_Object *Object) const {
 			if(Server)
 				StartEvent(Object, Tile->Event);
 			else
-				Object->WaitForServer = true;
+				Object->Controller->WaitForServer = true;
 		} break;
 		case _Map::EVENT_SCRIPT: {
 			if(Server)
@@ -328,7 +329,7 @@ void _Map::CheckEvents(_Object *Object) const {
 				Server->SendPlayerPosition(Object->Peer);
 			}
 			else
-				Object->WaitForServer = true;
+				Object->Controller->WaitForServer = true;
 		} break;
 		case _Map::EVENT_JUMP: {
 			if(Server) {
@@ -338,7 +339,7 @@ void _Map::CheckEvents(_Object *Object) const {
 				Server->SendPlayerPosition(Object->Peer);
 			}
 			else
-				Object->WaitForServer = true;
+				Object->Controller->WaitForServer = true;
 		} break;
 		default:
 			if(Server) {

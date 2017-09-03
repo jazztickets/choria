@@ -21,6 +21,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
+#include <objects/components/controller.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <ae/servernetwork.h>
@@ -673,7 +674,7 @@ void _Battle::ServerEndBattle() {
 
 	// Send data
 	for(auto &Object : Objects) {
-		Object->InputStates.clear();
+		Object->Controller->InputStates.clear();
 		Object->Fighter->PotentialAction.Unset();
 		Object->Action.Unset();
 
