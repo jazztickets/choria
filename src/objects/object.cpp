@@ -122,7 +122,6 @@ _Object::_Object() :
 
 // Destructor
 _Object::~_Object() {
-	DeleteStatusEffects();
 	RemoveBattleElement();
 
 	if(Map) {
@@ -772,11 +771,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		Character->Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
 }
 
-// Generate damage
-int _Object::GenerateDamage() {
-	return GetRandomInt(Character->MinDamage, Character->MaxDamage);
-}
-
 // Create a UI element for battle
 void _Object::CreateBattleElement(_Element *Parent) {
 	if(BattleElement)
@@ -965,7 +959,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	}
 
 	// Read status effects
-	DeleteStatusEffects();
+	Character->DeleteStatusEffects();
 	size_t StatusEffectsSize = Data.Read<uint8_t>();
 	for(size_t i = 0; i < StatusEffectsSize; i++) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
@@ -992,7 +986,7 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
 	BattleSide = Data.Read<uint8_t>();
 
-	DeleteStatusEffects();
+	Character->DeleteStatusEffects();
 	int StatusEffectCount = Data.Read<uint8_t>();
 	for(int i = 0; i < StatusEffectCount; i++) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
@@ -1012,7 +1006,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
 		StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
 
-		if(AddStatusEffect(StatusEffect)) {
+		if(Character->AddStatusEffect(StatusEffect)) {
 			if(BattleElement)
 				StatusEffect->BattleElement = StatusEffect->CreateUIElement(BattleElement);
 		}
@@ -1182,31 +1176,6 @@ void _Object::StopBattle() {
 	RemoveBattleElement();
 }
 
-// Add status effect to object
-bool _Object::AddStatusEffect(_StatusEffect *StatusEffect) {
-	if(!StatusEffect)
-		return false;
-
-	// Find existing buff
-	for(auto &ExistingEffect : Character->StatusEffects) {
-
-		// If buff exists, refresh duration
-		if(StatusEffect->Buff == ExistingEffect->Buff) {
-			if(StatusEffect->Level >= ExistingEffect->Level) {
-				ExistingEffect->Duration = StatusEffect->Duration;
-				ExistingEffect->Level = StatusEffect->Level;
-				ExistingEffect->Time = 0.0;
-			}
-
-			return false;
-		}
-	}
-
-	Character->StatusEffects.push_back(StatusEffect);
-
-	return true;
-}
-
 // Call update function for buff
 void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function) {
 	if(!Server)
@@ -1225,14 +1194,6 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 
 	// Send packet to player
 	SendPacket(Packet);
-}
-
-// Delete memory used by status effects
-void _Object::DeleteStatusEffects() {
-	for(auto &StatusEffect : Character->StatusEffects)
-		delete StatusEffect;
-
-	Character->StatusEffects.clear();
 }
 
 // Update death count and gold loss

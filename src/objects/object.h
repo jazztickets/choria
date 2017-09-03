@@ -112,7 +112,6 @@ class _Object : public _ManagerBase {
 
 		// Battles
 		void UpdateMonsterAI(const std::list<_Object *> &Fighters, double FrameTime);
-		int GenerateDamage();
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();
 		bool CanBattle() const;
@@ -120,7 +119,6 @@ class _Object : public _ManagerBase {
 		void StopBattle();
 
 		// Status effects
-		bool AddStatusEffect(_StatusEffect *StatusEffect);
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
 
 		// Actions
@@ -248,8 +246,6 @@ class _Object : public _ManagerBase {
 		std::list<void *> Path;
 
 	private:
-
-		void DeleteStatusEffects();
 
 		template <typename Type>
 		void GetValue(const std::unordered_map<std::string, std::string> &Map, const std::string &Field, Type &Value) {

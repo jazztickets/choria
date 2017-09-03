@@ -903,7 +903,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 int _Scripting::ObjectGenerateDamage(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	lua_pushinteger(LuaState, Object->GenerateDamage());
+	lua_pushinteger(LuaState, Object->Character->GenerateDamage());
 
 	return 1;
 }

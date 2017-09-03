@@ -20,6 +20,7 @@
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <ae/buffer.h>
+#include <ae/random.h>
 #include <scripting.h>
 #include <packet.h>
 #include <stats.h>
@@ -78,6 +79,11 @@ _Character::_Character(_Object *Object) :
 	SkillPointsUsed(0),
 	SkillPointsOnActionBar(0) {
 
+}
+
+// Destructor
+_Character::~_Character() {
+	DeleteStatusEffects();
 }
 
 // Update
@@ -370,6 +376,46 @@ float _Character::GetNextLevelPercent() const {
 	return Percent;
 }
 
+// Generate damage
+int _Character::GenerateDamage() {
+	return GetRandomInt(MinDamage, MaxDamage);
+}
+
+// Update counts on action bar
+void _Character::RefreshActionBarCount() {
+	SkillPointsOnActionBar = 0;
+	for(size_t i = 0; i < ActionBar.size(); i++) {
+		const _Item *Item = ActionBar[i].Item;
+		if(Item) {
+			if(Item->IsSkill() && HasLearned(Item))
+				SkillPointsOnActionBar += Skills[Item->ID];
+			else
+				ActionBar[i].Count = Object->Inventory->CountItem(Item);
+		}
+		else
+			ActionBar[i].Count = 0;
+	}
+}
+
+// Return an action struct from an action bar slot
+bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
+	if(Slot < ActionBar.size()) {
+		ReturnAction.Item = ActionBar[Slot].Item;
+		if(!ReturnAction.Item)
+			return false;
+
+		// Determine if item is a skill, then look at object's skill levels
+		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
+			ReturnAction.Level = Skills[ReturnAction.Item->ID];
+		else
+			ReturnAction.Level = ReturnAction.Item->Level;
+
+		return true;
+	}
+
+	return false;
+}
+
 // Return true if the object has the skill unlocked
 bool _Character::HasLearned(const _Item *Skill) const {
 	if(!Skill)
@@ -419,39 +465,37 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	}
 }
 
-// Update counts on action bar
-void _Character::RefreshActionBarCount() {
-	SkillPointsOnActionBar = 0;
-	for(size_t i = 0; i < ActionBar.size(); i++) {
-		const _Item *Item = ActionBar[i].Item;
-		if(Item) {
-			if(Item->IsSkill() && HasLearned(Item))
-				SkillPointsOnActionBar += Skills[Item->ID];
-			else
-				ActionBar[i].Count = Object->Inventory->CountItem(Item);
+// Add status effect
+bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
+	if(!StatusEffect)
+		return false;
+
+	// Find existing buff
+	for(auto &ExistingEffect : StatusEffects) {
+
+		// If buff exists, refresh duration
+		if(StatusEffect->Buff == ExistingEffect->Buff) {
+			if(StatusEffect->Level >= ExistingEffect->Level) {
+				ExistingEffect->Duration = StatusEffect->Duration;
+				ExistingEffect->Level = StatusEffect->Level;
+				ExistingEffect->Time = 0.0;
+			}
+
+			return false;
 		}
-		else
-			ActionBar[i].Count = 0;
 	}
+
+	StatusEffects.push_back(StatusEffect);
+
+	return true;
 }
 
-// Return an action struct from an action bar slot
-bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
-	if(Slot < ActionBar.size()) {
-		ReturnAction.Item = ActionBar[Slot].Item;
-		if(!ReturnAction.Item)
-			return false;
+// Delete memory used by status effects
+void _Character::DeleteStatusEffects() {
+	for(auto &StatusEffect : StatusEffects)
+		delete StatusEffect;
 
-		// Determine if item is a skill, then look at object's skill levels
-		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
-			ReturnAction.Level = Skills[ReturnAction.Item->ID];
-		else
-			ReturnAction.Level = ReturnAction.Item->Level;
-
-		return true;
-	}
-
-	return false;
+	StatusEffects.clear();
 }
 
 // Return true if the object has the item unlocked

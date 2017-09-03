@@ -40,6 +40,7 @@ class _Character {
 	public:
 
 		_Character(_Object *Object);
+		~_Character();
 
 		// Updates
 		void Update(double FrameTime);
@@ -56,6 +57,9 @@ class _Character {
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 
+		// Battle
+		int GenerateDamage();
+
 		// Actions
 		void RefreshActionBarCount();
 		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
@@ -64,6 +68,10 @@ class _Character {
 		bool HasLearned(const _Item *Skill) const;
 		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
+
+		// Status effects
+		bool AddStatusEffect(_StatusEffect *StatusEffect);
+		void DeleteStatusEffects();
 
 		// Unlocks
 		bool HasUnlocked(const _Item *Item) const;

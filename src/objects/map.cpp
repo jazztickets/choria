@@ -869,6 +869,9 @@ void _Map::AddObject(_Object *Object) {
 void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players) {
 
 	for(const auto &Object : Objects) {
+		if(!Object->Character)
+			continue;
+
 		if(Object != Player) {
 			glm::vec2 Delta = Object->Position - Player->Position;
 			if(glm::dot(Delta, Delta) <= DistanceSquared && Object->CanBattle() && Player->PartyName == Object->PartyName) {
@@ -883,6 +886,9 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 // Returns a battle instance close to a player
 _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 	for(const auto &Object : Objects) {
+		if(!Object->Character)
+			continue;
+
 		if(Object != Player) {
 			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Battle && !Object->Battle->PVP && Object->Battle->SideCount[0] < BATTLE_MAXFIGHTERS_SIDE) {
 				if(Object->PartyName == "" || Object->PartyName == Player->PartyName)
@@ -902,6 +908,9 @@ void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players) {
 		return;
 
 	for(const auto &Object : Objects) {
+		if(!Object->Character)
+			continue;
+
 		if(Object != Player) {
 			if(Object->Position == Player->Position && Object->Character->IsAlive() && !Object->Battle && (Object->PartyName == "" || Object->PartyName != Player->PartyName)) {
 				Players.push_back(Object);
@@ -916,6 +925,9 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 	_Object *ClosestPlayer = nullptr;
 	float ClosestDistanceSquared = HUGE_VAL;
 	for(const auto &Object : Objects) {
+		if(!Object->Character)
+			continue;
+
 		if(Object != Player && Object->WaitingForTrade && Object->TradePlayer == nullptr) {
 			glm::vec2 Delta = Object->Position - Player->Position;
 			float DistanceSquared = glm::dot(Delta, Delta);
