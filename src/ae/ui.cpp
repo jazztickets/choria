@@ -274,7 +274,7 @@ void _Element::HandleMouseButton(bool Pressed) {
 	if(!Active)
 		return;
 
-	if(MaxLength) {
+	if(MaxLength && Enabled) {
 	   if(HitElement || (Parent && Parent->HitElement)) {
 		   ResetCursor();
 		   FocusedElement = this;
