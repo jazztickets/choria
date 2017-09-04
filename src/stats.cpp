@@ -22,6 +22,7 @@
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <objects/components/inventory.h>
+#include <objects/components/monster.h>
 #include <constants.h>
 #include <algorithm>
 #include <iostream>
@@ -475,8 +476,8 @@ void _Stats::LoadScripts() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty) const {
-	Monster->DatabaseID = MonsterID;
+void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty) const {
+	Object->Monster->DatabaseID = MonsterID;
 
 	// Run query
 	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.ai_id = ai.id AND m.id = @monster_id");
@@ -484,19 +485,19 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 
 	// Get data
 	if(Database->FetchRow()) {
-		Monster->Character->Level = Database->GetInt<int>("level");
-		Monster->Name = Database->GetString("name");
-		Monster->Portrait = Assets.Textures[Database->GetString("portrait")];
-		Monster->ExperienceGiven = Database->GetInt<int>("experience");
-		Monster->GoldGiven = Database->GetInt<int>("gold");
-		Monster->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
-		Monster->Character->BaseMaxMana = Database->GetInt<int>("mana");
-		Monster->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
-		Monster->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage");
-		Monster->Character->BaseArmor = Database->GetInt<int>("armor");
-		Monster->Character->BaseDamageBlock = Database->GetInt<int>("block");
-		Monster->Character->BaseBattleSpeed = Database->GetInt<int>("battlespeed");
-		Monster->AI = Database->GetString("ai_name");
+		Object->Character->Level = Database->GetInt<int>("level");
+		Object->Name = Database->GetString("name");
+		Object->Portrait = Assets.Textures[Database->GetString("portrait")];
+		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
+		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
+		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
+		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage");
+		Object->Character->BaseArmor = Database->GetInt<int>("armor");
+		Object->Character->BaseDamageBlock = Database->GetInt<int>("block");
+		Object->Character->BaseBattleSpeed = Database->GetInt<int>("battlespeed");
+		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience");
+		Object->Monster->GoldGiven = Database->GetInt<int>("gold");
+		Object->Monster->AI = Database->GetString("ai_name");
 		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 
 		// Load build
@@ -507,13 +508,13 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Diffic
 		const _Object *Build = BuildIterator->second;
 
 		// Copy build
-		Monster->Inventory->Bags = Build->Inventory->Bags;
-		Monster->Character->ActionBar = Build->Character->ActionBar;
-		Monster->Character->Skills = Build->Character->Skills;
-		Monster->Character->Health = Monster->Character->MaxHealth = Monster->Character->BaseMaxHealth;
-		Monster->Character->Mana = Monster->Character->MaxMana = Monster->Character->BaseMaxMana;
-		Monster->Character->Gold = Monster->GoldGiven;
-		Monster->Character->CalcLevelStats = false;
+		Object->Inventory->Bags = Build->Inventory->Bags;
+		Object->Character->ActionBar = Build->Character->ActionBar;
+		Object->Character->Skills = Build->Character->Skills;
+		Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
+		Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
+		Object->Character->Gold = Object->Monster->GoldGiven;
+		Object->Character->CalcLevelStats = false;
 	}
 
 	// Free memory

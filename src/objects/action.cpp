@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/components/inventory.h>
 #include <objects/components/fighter.h>
+#include <objects/components/monster.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <objects/item.h>
@@ -163,7 +164,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		int SideCount = 0;
 		for(auto &Object : Battle->Objects) {
 			if(Object->Fighter->BattleSide == SourceObject->Fighter->BattleSide) {
-				if(Object->Owner == SourceObject && Object->DatabaseID == SummonDatabaseID) {
+				if(Object->Monster->Owner == SourceObject && Object->Monster->DatabaseID == SummonDatabaseID) {
 					ExistingSummon = Object;
 				}
 
@@ -186,30 +187,30 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		else if(SideCount < BATTLE_MAX_OBJECTS_PER_SIDE) {
 
 			// Create monster
-			_Object *Monster = SourceObject->Server->ObjectManager->Create();
-			Monster->Server = SourceObject->Server;
-			Monster->Scripting = SourceObject->Scripting;
-			Monster->DatabaseID = SummonDatabaseID;
-			Monster->Stats = SourceObject->Stats;
-			Monster->Owner = SourceObject;
-			SourceObject->Stats->GetMonsterStats(Monster->DatabaseID, Monster);
+			_Object *Object = SourceObject->Server->ObjectManager->Create();
+			Object->Server = SourceObject->Server;
+			Object->Scripting = SourceObject->Scripting;
+			Object->Monster->DatabaseID = SummonDatabaseID;
+			Object->Stats = SourceObject->Stats;
+			Object->Monster->Owner = SourceObject;
+			SourceObject->Stats->GetMonsterStats(Object->Monster->DatabaseID, Object);
 
 			// Add stats from script
-			Monster->Character->Health = Monster->Character->BaseMaxHealth = ActionResult.Summon.Health;
-			Monster->Character->Mana = Monster->Character->BaseMaxMana = ActionResult.Summon.Mana;
-			Monster->Character->BaseMinDamage = ActionResult.Summon.MinDamage;
-			Monster->Character->BaseMaxDamage = ActionResult.Summon.MaxDamage;
-			Monster->Character->BaseArmor = ActionResult.Summon.Armor;
-			Monster->Character->CalculateStats();
+			Object->Character->Health = Object->Character->BaseMaxHealth = ActionResult.Summon.Health;
+			Object->Character->Mana = Object->Character->BaseMaxMana = ActionResult.Summon.Mana;
+			Object->Character->BaseMinDamage = ActionResult.Summon.MinDamage;
+			Object->Character->BaseMaxDamage = ActionResult.Summon.MaxDamage;
+			Object->Character->BaseArmor = ActionResult.Summon.Armor;
+			Object->Character->CalculateStats();
 
 			// Create packet for new object
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
-			Monster->SerializeCreate(Packet);
+			Object->SerializeCreate(Packet);
 			Battle->BroadcastPacket(Packet);
 
 			// Add monster to battle
-			Battle->AddObject(Monster, 0, true);
+			Battle->AddObject(Object, 0, true);
 		}
 	}
 }

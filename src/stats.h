@@ -148,7 +148,7 @@ class _Stats {
 		~_Stats();
 
 		// General Stats
-		void GetMonsterStats(uint32_t MonsterID, _Object *Monster, double Difficulty=1.0) const;
+		void GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty=1.0) const;
 
 		// Menu
 		void GetPortraits(std::list<_Portrait> &Portraits) const;

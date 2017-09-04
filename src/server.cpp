@@ -26,6 +26,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/controller.h>
+#include <objects/components/monster.h>
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
@@ -1864,14 +1865,14 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 			// Add monsters
 			for(auto &MonsterID : MonsterIDs) {
-				_Object *Monster = ObjectManager->Create();
-				Monster->Server = this;
-				Monster->Scripting = Scripting;
-				Monster->DatabaseID = MonsterID;
-				Monster->Stats = Stats;
-				Stats->GetMonsterStats(MonsterID, Monster, Difficulty);
-				Monster->Character->CalculateStats();
-				Battle->AddObject(Monster, 1);
+				_Object *Object = ObjectManager->Create();
+				Object->Server = this;
+				Object->Scripting = Scripting;
+				Object->Monster->DatabaseID = MonsterID;
+				Object->Stats = Stats;
+				Stats->GetMonsterStats(MonsterID, Object, Difficulty);
+				Object->Character->CalculateStats();
+				Battle->AddObject(Object, 1);
 			}
 
 			// Send battle to players

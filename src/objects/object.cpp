@@ -23,6 +23,7 @@
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
+#include <objects/components/monster.h>
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
@@ -58,6 +59,7 @@ _Object::_Object() :
 	Record(nullptr),
 	Fighter(nullptr),
 	Controller(nullptr),
+	Monster(nullptr),
 
 	Stats(nullptr),
 	Map(nullptr),
@@ -76,12 +78,6 @@ _Object::_Object() :
 	PortraitID(0),
 	ModelID(0),
 	Status(0),
-
-	Owner(nullptr),
-	DatabaseID(0),
-	ExperienceGiven(0),
-	GoldGiven(0),
-	AI(""),
 
 	LoadMapID(0),
 	SpawnMapID(1),
@@ -105,6 +101,7 @@ _Object::_Object() :
 	Record = new _Record(this);
 	Fighter = new _Fighter(this);
 	Controller = new _Controller(this);
+	Monster = new _Monster(this);
 }
 
 // Destructor
@@ -131,6 +128,7 @@ _Object::~_Object() {
 		Peer = nullptr;
 	}
 
+	delete Monster;
 	delete Controller;
 	delete Fighter;
 	delete Record;
@@ -336,7 +334,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 // Update monster AI during battle
 void _Object::UpdateMonsterAI(double FrameTime) {
-	if(!AI.length())
+	if(!Monster->AI.length())
 		return;
 
 	// Call AI script to get action
@@ -348,7 +346,7 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 
 		// Call lua script
 		if(Enemies.size()) {
-			if(Scripting->StartMethodCall(AI, "Update")) {
+			if(Scripting->StartMethodCall(Monster->AI, "Update")) {
 				Targets.clear();
 				Scripting->PushObject(this);
 				Scripting->PushObjectList(Enemies);
@@ -837,7 +835,7 @@ void _Object::SerializeStats(_Buffer &Data) {
 // Serialize object for battle
 void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
-	Data.Write<uint32_t>(DatabaseID);
+	Data.Write<uint32_t>(Monster->DatabaseID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<double>(Fighter->TurnTimer);
 	Data.Write<int>(Character->Health);
@@ -1277,6 +1275,11 @@ void _Object::SendPacket(_Buffer &Packet) {
 		Battle->BroadcastPacket(Packet);
 	else if(Peer)
 		Server->Network->SendPacket(Packet, Peer);
+}
+
+// Check if object is a monster
+bool _Object::IsMonster() const {
+	 return Monster->DatabaseID != 0;
 }
 
 // Create list of nodes to destination

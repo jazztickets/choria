@@ -22,6 +22,7 @@
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
+#include <objects/components/monster.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <ae/servernetwork.h>
@@ -583,11 +584,11 @@ void _Battle::ServerEndBattle() {
 			}
 
 			// Sum experience and gold
-			SideStats[Side].TotalExperienceGiven += Object->ExperienceGiven;
+			SideStats[Side].TotalExperienceGiven += Object->Monster->ExperienceGiven;
 
 			// Calculate gold based on monster or player
 			if(Object->IsMonster())
-				SideStats[Side].TotalGoldGiven += Object->GoldGiven + Object->Fighter->GoldStolen;
+				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven + Object->Fighter->GoldStolen;
 			else
 				SideStats[Side].TotalGoldGiven += Object->Record->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * PVP * 0.01f + 0.5f);
 		}
@@ -650,7 +651,7 @@ void _Battle::ServerEndBattle() {
 			std::list<uint32_t> ItemDrops;
 			for(auto &Object : SideObjects[!WinningSide]) {
 				if(Object->IsMonster())
-					Stats->GenerateItemDrops(Object->DatabaseID, 1, DropRate, ItemDrops);
+					Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, DropRate, ItemDrops);
 			}
 
 			// Boss drops aren't divided up

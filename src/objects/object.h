@@ -32,6 +32,7 @@ class _Inventory;
 class _Record;
 class _Fighter;
 class _Controller;
+class _Monster;
 class _Map;
 class _Peer;
 class _Texture;
@@ -108,7 +109,7 @@ class _Object : public _ManagerBase {
 		void SendPacket(_Buffer &Packet);
 
 		// Stats
-		bool IsMonster() const { return DatabaseID != 0; }
+		bool IsMonster() const;
 		_StatusEffect *UpdateStats(_StatChange &StatChange);
 		void ApplyDeathPenalty(float Penalty, int BountyLoss);
 
@@ -164,6 +165,7 @@ class _Object : public _ManagerBase {
 		_Record *Record;
 		_Fighter *Fighter;
 		_Controller *Controller;
+		_Monster *Monster;
 
 		// Pointers
 		const _Stats *Stats;
@@ -192,13 +194,6 @@ class _Object : public _ManagerBase {
 		uint32_t PortraitID;
 		uint32_t ModelID;
 		uint8_t Status;
-
-		// Monster
-		_Object *Owner;
-		uint32_t DatabaseID;
-		int ExperienceGiven;
-		int GoldGiven;
-		std::string AI;
 
 		// Map
 		NetworkIDType LoadMapID;
