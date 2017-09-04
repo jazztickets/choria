@@ -517,7 +517,7 @@ void _HUD::Update(double FrameTime) {
 
 			Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->Character->TradePlayer->Character->TradeGold);
 			Assets.Elements["label_trade_name_theirs"]->Text = Player->Character->TradePlayer->Name;
-			Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->Character->TradePlayer->Portrait;
+			Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->Character->TradePlayer->Character->Portrait;
 		}
 	}
 
@@ -2251,7 +2251,7 @@ void _HUD::ResetTradeTheirsWindow() {
 	Assets.Elements["textbox_trade_gold_theirs"]->SetText("0");
 	Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
 	Assets.Elements["label_trade_name_yours"]->Text = Player->Name;
-	Assets.Elements["image_trade_portrait_yours"]->Texture = Player->Portrait;
+	Assets.Elements["image_trade_portrait_yours"]->Texture = Player->Character->Portrait;
 }
 
 // Update their status label

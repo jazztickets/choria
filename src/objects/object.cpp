@@ -73,11 +73,7 @@ _Object::_Object() :
 	ServerPosition(0, 0),
 
 	ModelTexture(nullptr),
-	StatusTexture(nullptr),
-	Portrait(nullptr),
-	PortraitID(0),
 	ModelID(0),
-	Status(0),
 
 	LoadMapID(0),
 	SpawnMapID(1),
@@ -198,17 +194,6 @@ void _Object::Update(double FrameTime) {
 	else
 		Fighter->TurnTimer = 0.0;
 
-	// Update battle cooldowns
-	for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
-		Iterator->second -= FrameTime;
-
-		// Remove cooldown
-		if(Iterator->second <= 0.0)
-			Iterator = BattleCooldown.erase(Iterator);
-		else
-			++Iterator;
-	}
-
 	// Update status effects
 	if(Character)
 		Character->Update(FrameTime);
@@ -218,7 +203,7 @@ void _Object::Update(double FrameTime) {
 
 	// Update teleport time
 	if(TeleportTime > 0.0) {
-		Status = STATUS_TELEPORT;
+		Character->Status = STATUS_TELEPORT;
 		TeleportTime -= FrameTime;
 		if(TeleportTime <= 0.0) {
 			CheckEvent = true;
@@ -238,27 +223,27 @@ void _Object::Update(double FrameTime) {
 		Map->CheckEvents(this);
 
 	// Update status
-	Status = STATUS_NONE;
+	Character->Status = STATUS_NONE;
 	if(!Character->IsAlive())
-		Status = STATUS_DEAD;
+		Character->Status = STATUS_DEAD;
 	else if(Battle)
-		Status = STATUS_BATTLE;
+		Character->Status = STATUS_BATTLE;
 	else if(Character->WaitingForTrade)
-		Status = STATUS_TRADE;
+		Character->Status = STATUS_TRADE;
 	else if(Character->Vendor)
-		Status = STATUS_VENDOR;
+		Character->Status = STATUS_VENDOR;
 	else if(Character->Trader)
-		Status = STATUS_TRADER;
+		Character->Status = STATUS_TRADER;
 	else if(Character->Blacksmith)
-		Status = STATUS_BLACKSMITH;
+		Character->Status = STATUS_BLACKSMITH;
 	else if(Character->Minigame)
-		Status = STATUS_MINIGAME;
+		Character->Status = STATUS_MINIGAME;
 	else if(InventoryOpen)
-		Status = STATUS_INVENTORY;
+		Character->Status = STATUS_INVENTORY;
 	else if(SkillsOpen)
-		Status = STATUS_SKILLS;
+		Character->Status = STATUS_SKILLS;
 	else if(MenuOpen)
-		Status = STATUS_MENU;
+		Character->Status = STATUS_MENU;
 }
 
 // Update bot AI
@@ -376,8 +361,8 @@ void _Object::Render(const _Object *ClientPlayer) {
 		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 		Graphics.SetColor(Color);
 		Graphics.DrawSprite(DrawPosition, ModelTexture);
-		if(StatusTexture) {
-			Graphics.DrawSprite(DrawPosition, StatusTexture);
+		if(Character->StatusTexture) {
+			Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
 		}
 
 		if(ClientPlayer != this) {
@@ -401,16 +386,16 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Save positions
 	Fighter->ResultPosition = Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f;
-	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Portrait->Size.y/2);
+	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Character->Portrait->Size.y/2);
 
 	// Name
 	Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), LEFT_BASELINE, GlobalColor);
 	Graphics.SetColor(GlobalColor);
 
 	// Portrait
-	if(Portrait) {
+	if(Character->Portrait) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SlotPosition + glm::vec2(Portrait->Size/2), Portrait, GlobalColor);
+		Graphics.DrawCenteredImage(SlotPosition + glm::vec2(Character->Portrait->Size/2), Character->Portrait, GlobalColor);
 	}
 
 	// Health/mana bars
@@ -553,7 +538,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["map_y"] = Position.y;
 	StatsNode["spawnmap_id"] = SpawnMapID;
 	StatsNode["spawnpoint"] = SpawnPoint;
-	StatsNode["portrait_id"] = PortraitID;
+	StatsNode["portrait_id"] = Character->PortraitID;
 	StatsNode["model_id"] = ModelID;
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
 	StatsNode["health"] = Character->Health;
@@ -656,7 +641,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	SpawnMapID = (NetworkIDType)StatsNode["spawnmap_id"].asUInt();
 	SpawnPoint = StatsNode["spawnpoint"].asUInt();
 	Character->Hardcore = StatsNode["hardcore"].asBool();
-	PortraitID = StatsNode["portrait_id"].asUInt();
+	Character->PortraitID = StatsNode["portrait_id"].asUInt();
 	ModelID = StatsNode["model_id"].asUInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
@@ -760,7 +745,7 @@ void _Object::SerializeCreate(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.WriteString(Name.c_str());
-	Data.Write<uint32_t>(PortraitID);
+	Data.Write<uint32_t>(Character->PortraitID);
 	Data.Write<uint32_t>(ModelID);
 	Data.WriteBit(Character->Invisible);
 }
@@ -769,15 +754,15 @@ void _Object::SerializeCreate(_Buffer &Data) {
 void _Object::SerializeUpdate(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
-	Data.Write<uint8_t>(Status);
+	Data.Write<uint8_t>(Character->Status);
 	Data.WriteBit(Character->Invisible);
 }
 
 // Serialize object stats
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
-	Data.Write<uint32_t>(PortraitID);
 	Data.Write<uint32_t>(ModelID);
+	Data.Write<uint32_t>(Character->PortraitID);
 	Data.WriteString(Character->PartyName.c_str());
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
@@ -831,11 +816,11 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<uint32_t>(Monster->DatabaseID);
 	Data.Write<glm::ivec2>(Position);
-	Data.Write<double>(Fighter->TurnTimer);
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
+	Data.Write<double>(Fighter->TurnTimer);
 	Data.Write<uint8_t>(Fighter->BattleSide);
 
 	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
@@ -848,19 +833,19 @@ void _Object::SerializeBattle(_Buffer &Data) {
 void _Object::UnserializeCreate(_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
-	PortraitID = Data.Read<uint32_t>();
+	Character->PortraitID = Data.Read<uint32_t>();
 	ModelID = Data.Read<uint32_t>();
 	Character->Invisible = Data.ReadBit();
 
-	Portrait = Stats->GetPortraitImage(PortraitID);
+	Character->Portrait = Stats->GetPortraitImage(Character->PortraitID);
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 }
 
 // Unserialize object stats
 void _Object::UnserializeStats(_Buffer &Data) {
 	Name = Data.ReadString();
-	PortraitID = Data.Read<uint32_t>();
 	ModelID = Data.Read<uint32_t>();
+	Character->PortraitID = Data.Read<uint32_t>();
 	Character->PartyName = Data.ReadString();
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
@@ -927,11 +912,11 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 
 	// Get object type
 	Position = ServerPosition = Data.Read<glm::ivec2>();
-	Fighter->TurnTimer = Data.Read<double>();
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
+	Fighter->TurnTimer = Data.Read<double>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
 
 	Character->DeleteStatusEffects();
@@ -1260,7 +1245,7 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 
 // Can enter battle
 bool _Object::CanBattle() const {
-	return !Battle && Status == STATUS_NONE && Character->Invisible <= 0;
+	return !Battle && Character->Status == STATUS_NONE && Character->Invisible <= 0;
 }
 
 // Send packet to player or broadcast during battle

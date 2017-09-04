@@ -487,7 +487,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 	if(Database->FetchRow()) {
 		Object->Character->Level = Database->GetInt<int>("level");
 		Object->Name = Database->GetString("name");
-		Object->Portrait = Assets.Textures[Database->GetString("portrait")];
+		Object->Character->Portrait = Assets.Textures[Database->GetString("portrait")];
 		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
 		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
 		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");

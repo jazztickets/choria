@@ -415,7 +415,7 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushcclosure(LuaState, &ObjectVendorExchange, 1);
 	lua_setfield(LuaState, -2, "VendorExchange");
 
-	lua_pushinteger(LuaState, Object->Status);
+	lua_pushinteger(LuaState, Object->Character->Status);
 	lua_setfield(LuaState, -2, "Status");
 
 	lua_pushnumber(LuaState, Object->Fighter->TurnTimer);

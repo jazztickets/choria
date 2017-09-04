@@ -176,20 +176,13 @@ class _Object : public _ManagerBase {
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 
-		// Battle
-		std::unordered_map<uint32_t, double> BattleCooldown;
-
 		// Actions
 		std::list<_Object *> Targets;
 		_Action Action;
 
 		// Render
 		const _Texture *ModelTexture;
-		const _Texture *StatusTexture;
-		const _Texture *Portrait;
-		uint32_t PortraitID;
 		uint32_t ModelID;
-		uint8_t Status;
 
 		// Map
 		NetworkIDType LoadMapID;

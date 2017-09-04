@@ -119,7 +119,7 @@ void _Battle::Update(double FrameTime) {
 			if(BattleElement && ActionResult.Source.Object && ActionResult.Target.Object) {
 
 				// Find start position
-				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(ActionResult.Source.Object->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
+				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(ActionResult.Source.Object->Character->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
 				ActionResult.LastPosition = ActionResult.Position;
 
 				// Interpolate between start and end position of action used
@@ -704,7 +704,7 @@ void _Battle::ServerEndBattle() {
 
 		// Start cooldown timer
 		if(Object->Character->IsAlive() && Cooldown > 0.0 && Zone)
-			Object->BattleCooldown[Zone] = Cooldown;
+			Object->Character->BattleCooldown[Zone] = Cooldown;
 
 		// Update stats
 		int CurrentLevel = Object->Character->Level;

@@ -286,7 +286,7 @@ void _Map::CheckEvents(_Object *Object) const {
 	// Check for teleporting
 	if(Server && Object->TeleportTime == 0.0) {
 		Object->TeleportTime = -1.0;
-		Object->Status = _Object::STATUS_NONE;
+		Object->Character->Status = _Object::STATUS_NONE;
 		Server->SpawnPlayer(Object, Object->SpawnMapID, _Map::EVENT_SPAWN);
 		return;
 	}

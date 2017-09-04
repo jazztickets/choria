@@ -32,11 +32,16 @@ _Character::_Character(_Object *Object) :
 	CharacterID(0),
 	UpdateTimer(0.0),
 
+	StatusTexture(nullptr),
+	Portrait(nullptr),
+	PortraitID(0),
+
 	Gold(0),
 	NextBattle(0),
 	Invisible(0),
 	Stunned(0),
 	Hardcore(false),
+	Status(0),
 
 	CalcLevelStats(true),
 	Level(0),
@@ -102,11 +107,13 @@ _Character::~_Character() {
 
 // Update
 void _Character::Update(double FrameTime) {
+
+	// Update stats
 	UpdateTimer += FrameTime;
 	if(UpdateTimer >= 1.0) {
 		UpdateTimer -= 1.0;
 
-		// Update stats
+		// Update stats on server
 		if(Object->Server && IsAlive()) {
 			_StatChange StatChange;
 			StatChange.Object = Object;
@@ -155,6 +162,17 @@ void _Character::Update(double FrameTime) {
 
 			CalculateStats();
 		}
+		else
+			++Iterator;
+	}
+
+	// Update battle cooldowns
+	for(auto Iterator = BattleCooldown.begin(); Iterator != BattleCooldown.end(); ) {
+		Iterator->second -= FrameTime;
+
+		// Remove cooldown
+		if(Iterator->second <= 0.0)
+			Iterator = BattleCooldown.erase(Iterator);
 		else
 			++Iterator;
 	}

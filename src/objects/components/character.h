@@ -86,13 +86,20 @@ class _Character {
 		uint32_t CharacterID;
 		double UpdateTimer;
 
+		// Render
+		const _Texture *StatusTexture;
+		const _Texture *Portrait;
+		uint32_t PortraitID;
+
 		// State
+		std::unordered_map<uint32_t, double> BattleCooldown;
 		std::string PartyName;
 		int Gold;
 		int NextBattle;
 		int Invisible;
 		int Stunned;
 		bool Hardcore;
+		uint8_t Status;
 
 		// Levels
 		bool CalcLevelStats;

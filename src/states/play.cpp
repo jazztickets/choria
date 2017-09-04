@@ -790,7 +790,7 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 		// Find object
 		_Object *Object = ObjectManager->GetObject(NetworkID);
 		if(Object) {
-			Object->Status = Status;
+			Object->Character->Status = Status;
 
 			if(Object == Player) {
 			}
@@ -802,40 +802,40 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 
 			switch(Status) {
 				case _Object::STATUS_NONE:
-					Object->StatusTexture = nullptr;
+					Object->Character->StatusTexture = nullptr;
 				break;
 				case _Object::STATUS_MENU:
-					Object->StatusTexture = Assets.Textures["textures/status/pause.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/pause.png"];
 				break;
 				case _Object::STATUS_INVENTORY:
-					Object->StatusTexture = Assets.Textures["textures/status/bag.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/bag.png"];
 				break;
 				case _Object::STATUS_VENDOR:
-					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Object::STATUS_SKILLS:
-					Object->StatusTexture = Assets.Textures["textures/status/skills.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/skills.png"];
 				break;
 				case _Object::STATUS_TRADE:
-					Object->StatusTexture = Assets.Textures["textures/status/trade.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/trade.png"];
 				break;
 				case _Object::STATUS_TRADER:
-					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Object::STATUS_BLACKSMITH:
-					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Object::STATUS_MINIGAME:
-					Object->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Object::STATUS_TELEPORT:
-					Object->StatusTexture = Assets.Textures["textures/status/teleport.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/teleport.png"];
 				break;
 				case _Object::STATUS_BATTLE:
-					Object->StatusTexture = Assets.Textures["textures/status/battle.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/battle.png"];
 				break;
 				case _Object::STATUS_DEAD:
-					Object->StatusTexture = Assets.Textures["textures/status/dead.png"];
+					Object->Character->StatusTexture = Assets.Textures["textures/status/dead.png"];
 				break;
 				default:
 				break;

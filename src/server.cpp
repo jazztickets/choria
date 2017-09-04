@@ -753,7 +753,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
 		Packet.Write<uint8_t>(Player.Character->Hardcore);
 		Packet.WriteString(Save->Database->GetString("name"));
-		Packet.Write<uint32_t>(Player.PortraitID);
+		Packet.Write<uint32_t>(Player.Character->PortraitID);
 		Packet.Write<int>(Player.Character->Health);
 		Packet.Write<int>(Player.Character->Experience);
 	}
@@ -1821,7 +1821,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		if(MonsterIDs.size()) {
 
 			// Check for cooldown
-			if(BattleEvent.Object->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->BattleCooldown.end())
+			if(BattleEvent.Object->Character->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->Character->BattleCooldown.end())
 				return;
 
 			// Create a new battle instance
