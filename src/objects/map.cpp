@@ -875,7 +875,7 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 
 		if(Object != Player) {
 			glm::vec2 Delta = Object->Position - Player->Position;
-			if(glm::dot(Delta, Delta) <= DistanceSquared && Object->CanBattle() && Player->PartyName == Object->PartyName) {
+			if(glm::dot(Delta, Delta) <= DistanceSquared && Object->CanBattle() && Player->Character->PartyName == Object->Character->PartyName) {
 				Players.push_back(Object);
 				if(Players.size() >= Max)
 					return;
@@ -892,7 +892,7 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 
 		if(Object != Player) {
 			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Battle && !Object->Battle->PVP && Object->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
-				if(Object->PartyName == "" || Object->PartyName == Player->PartyName)
+				if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
 					return Object->Battle;
 				else
 					HitPrivateParty = true;
@@ -913,7 +913,7 @@ void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players) {
 			continue;
 
 		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->Character->IsAlive() && !Object->Battle && (Object->PartyName == "" || Object->PartyName != Player->PartyName)) {
+			if(Object->Position == Player->Position && Object->Character->IsAlive() && !Object->Battle && (Object->Character->PartyName == "" || Object->Character->PartyName != Player->Character->PartyName)) {
 				Players.push_back(Object);
 			}
 		}
@@ -929,7 +929,7 @@ _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) 
 		if(!Object->Character)
 			continue;
 
-		if(Object != Player && Object->WaitingForTrade && Object->TradePlayer == nullptr) {
+		if(Object != Player && Object->Character->WaitingForTrade && Object->Character->TradePlayer == nullptr) {
 			glm::vec2 Delta = Object->Position - Player->Position;
 			float DistanceSquared = glm::dot(Delta, Delta);
 			if(DistanceSquared <= MaxDistanceSquared && DistanceSquared < ClosestDistanceSquared) {

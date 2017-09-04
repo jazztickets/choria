@@ -406,7 +406,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			Player->Battle->ClientSetAction((uint8_t)Player->Fighter->PotentialAction.ActionBarSlot);
 		}
 
-		if(Player->WaitingForTrade) {
+		if(Player->Character->WaitingForTrade) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 				if(!Cursor.InventorySlot.Item) {
 
@@ -458,8 +458,8 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
-				if(Player->TradePlayer && Player->TradePlayer->Inventory->IsValidSlot(Tooltip.Slot)) {
-					Tooltip.InventorySlot = Player->TradePlayer->Inventory->GetSlot(Tooltip.Slot);
+				if(Player->Character->TradePlayer && Player->Character->TradePlayer->Inventory->IsValidSlot(Tooltip.Slot)) {
+					Tooltip.InventorySlot = Player->Character->TradePlayer->Inventory->GetSlot(Tooltip.Slot);
 				}
 			} break;
 			case WINDOW_VENDOR: {
@@ -509,15 +509,15 @@ void _HUD::Update(double FrameTime) {
 	}
 
 	// Get trade items
-	if(Player->WaitingForTrade) {
+	if(Player->Character->WaitingForTrade) {
 		TradeTheirsElement->SetActive(false);
-		if(Player->TradePlayer) {
+		if(Player->Character->TradePlayer) {
 			TradeTheirsElement->SetActive(true);
 			Assets.Elements["label_trade_status"]->SetActive(false);
 
-			Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->TradePlayer->TradeGold);
-			Assets.Elements["label_trade_name_theirs"]->Text = Player->TradePlayer->Name;
-			Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->TradePlayer->Portrait;
+			Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->Character->TradePlayer->Character->TradeGold);
+			Assets.Elements["label_trade_name_theirs"]->Text = Player->Character->TradePlayer->Name;
+			Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->Character->TradePlayer->Portrait;
 		}
 	}
 
@@ -931,10 +931,10 @@ void _HUD::InitVendor() {
 
 // Initialize the trade system
 void _HUD::InitTrade() {
-	if(Player->WaitingForTrade)
+	if(Player->Character->WaitingForTrade)
 		return;
 
-	Player->WaitingForTrade = true;
+	Player->Character->WaitingForTrade = true;
 	EquipmentElement->SetActive(true);
 	InventoryElement->SetActive(true);
 	TradeElement->SetActive(true);
@@ -1113,7 +1113,7 @@ void _HUD::InitParty() {
 	Cursor.Reset();
 
 	PartyElement->SetActive(true);
-	PartyTextBox->Text = Player->PartyName;
+	PartyTextBox->Text = Player->Character->PartyName;
 	PartyTextBox->CursorPosition = PartyTextBox->Text.size();
 	PartyTextBox->ResetCursor();
 	FocusedElement = PartyTextBox;
@@ -1193,8 +1193,8 @@ bool _HUD::CloseTrade(bool SendNotify) {
 		SendTradeCancel();
 
 	if(Player) {
-		Player->WaitingForTrade = false;
-		Player->TradePlayer = nullptr;
+		Player->Character->WaitingForTrade = false;
+		Player->Character->TradePlayer = nullptr;
 	}
 
 	return WasOpen;
@@ -1430,7 +1430,7 @@ void _HUD::DrawTrade() {
 
 	// Draw items
 	DrawTradeItems(Player, "button_trade_yourbag_", WINDOW_TRADEYOURS);
-	DrawTradeItems(Player->TradePlayer, "button_trade_theirbag_", WINDOW_TRADETHEIRS);
+	DrawTradeItems(Player->Character->TradePlayer, "button_trade_theirbag_", WINDOW_TRADETHEIRS);
 }
 
 // Draws trading items
@@ -2175,7 +2175,7 @@ void _HUD::SendTradeCancel() {
 	Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 	PlayState.Network->SendPacket(Packet);
 
-	Player->TradePlayer = nullptr;
+	Player->Character->TradePlayer = nullptr;
 }
 
 // Make sure the trade gold box is valid and send gold to player
@@ -2482,8 +2482,8 @@ void _HUD::UpdateLabels() {
 	Buffer.str("");
 
 	// Update party
-	if(Player->PartyName.size())
-		Assets.Elements["label_hud_party"]->Text = "Party: " + Player->PartyName;
+	if(Player->Character->PartyName.size())
+		Assets.Elements["label_hud_party"]->Text = "Party: " + Player->Character->PartyName;
 	else
 		Assets.Elements["label_hud_party"]->Text = "No Party";
 

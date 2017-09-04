@@ -996,7 +996,7 @@ void _PlayState::HandlePartyInfo(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->PartyName = Data.ReadString();
+	Player->Character->PartyName = Data.ReadString();
 	HUD->UpdateLabels();
 }
 
@@ -1009,19 +1009,19 @@ void _PlayState::HandleTradeRequest(_Buffer &Data) {
 	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 
 	// Get trading player
-	Player->TradePlayer = ObjectManager->GetObject(NetworkID);
-	if(!Player->TradePlayer)
+	Player->Character->TradePlayer = ObjectManager->GetObject(NetworkID);
+	if(!Player->Character->TradePlayer)
 		return;
 
 	// Get gold offer
-	Player->TradePlayer->TradeGold = Data.Read<int>();
+	Player->Character->TradePlayer->Character->TradeGold = Data.Read<int>();
 	for(size_t i = 0; i < PLAYER_TRADEITEMS; i++)
-		Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
+		Player->Character->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 }
 
 // Handles a trade cancel
 void _PlayState::HandleTradeCancel(_Buffer &Data) {
-	Player->TradePlayer = nullptr;
+	Player->Character->TradePlayer = nullptr;
 
 	// Reset agreement
 	HUD->ResetAcceptButton();
@@ -1032,15 +1032,15 @@ void _PlayState::HandleTradeCancel(_Buffer &Data) {
 void _PlayState::HandleTradeItem(_Buffer &Data) {
 
 	// Get trading player
-	if(!Player->TradePlayer)
+	if(!Player->Character->TradePlayer)
 		return;
 
 	// Get slot updates
-	Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
-	Player->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
+	Player->Character->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
+	Player->Character->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 
 	// Reset agreement
-	Player->TradePlayer->TradeAccepted = false;
+	Player->Character->TradePlayer->Character->TradeAccepted = false;
 	HUD->ResetAcceptButton();
 }
 
@@ -1048,15 +1048,15 @@ void _PlayState::HandleTradeItem(_Buffer &Data) {
 void _PlayState::HandleTradeGold(_Buffer &Data) {
 
 	// Get trading player
-	if(!Player->TradePlayer)
+	if(!Player->Character->TradePlayer)
 		return;
 
 	// Set gold
 	int Gold = Data.Read<int>();
-	Player->TradePlayer->TradeGold = Gold;
+	Player->Character->TradePlayer->Character->TradeGold = Gold;
 
 	// Reset agreement
-	Player->TradePlayer->TradeAccepted = false;
+	Player->Character->TradePlayer->Character->TradeAccepted = false;
 	HUD->ResetAcceptButton();
 }
 
@@ -1064,7 +1064,7 @@ void _PlayState::HandleTradeGold(_Buffer &Data) {
 void _PlayState::HandleTradeAccept(_Buffer &Data) {
 
 	// Get trading player
-	if(!Player->TradePlayer)
+	if(!Player->Character->TradePlayer)
 		return;
 
 	// Set state

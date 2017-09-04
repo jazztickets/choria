@@ -234,7 +234,7 @@ void _Server::Update(double FrameTime) {
 		BotTime += FrameTime;
 
 	// Spawn bot
-	if(0 && IsTesting && BotTime > 2.1) {
+	if(1 && IsTesting && BotTime > 2.1) {
 		BotTime = -1;
 		CreateBot();
 	}
@@ -976,12 +976,12 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Check for trading players
-	_Object *TradePlayer = Player->TradePlayer;
-	if(Player->WaitingForTrade && TradePlayer && (OldSlot.BagType == _Bag::BagType::TRADE || NewSlot.BagType == _Bag::BagType::TRADE)) {
+	_Object *TradePlayer = Player->Character->TradePlayer;
+	if(Player->Character->WaitingForTrade && TradePlayer && (OldSlot.BagType == _Bag::BagType::TRADE || NewSlot.BagType == _Bag::BagType::TRADE)) {
 
 		// Reset agreement
-		Player->TradeAccepted = false;
-		TradePlayer->TradeAccepted = false;
+		Player->Character->TradeAccepted = false;
+		TradePlayer->Character->TradeAccepted = false;
 
 		// Build packet
 		_Buffer Packet;
@@ -1231,16 +1231,16 @@ void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Set status
-	Player->WaitingForTrade = true;
+	Player->Character->WaitingForTrade = true;
 
 	// Find the nearest player to trade with
 	_Object *TradePlayer = Map->FindTradePlayer(Player, 2.0f * 2.0f);
 	if(TradePlayer == nullptr) {
 
 		// Set up trade post
-		Player->TradeGold = 0;
-		Player->TradeAccepted = false;
-		Player->TradePlayer = nullptr;
+		Player->Character->TradeGold = 0;
+		Player->Character->TradeAccepted = false;
+		Player->Character->TradePlayer = nullptr;
 	}
 	else {
 
@@ -1248,11 +1248,11 @@ void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 		SendTradeInformation(Player, TradePlayer);
 		SendTradeInformation(TradePlayer, Player);
 
-		Player->TradePlayer = TradePlayer;
-		Player->TradeAccepted = false;
-		TradePlayer->TradePlayer = Player;
-		TradePlayer->TradeAccepted = false;
-		TradePlayer->WaitingForTrade = true;
+		Player->Character->TradePlayer = TradePlayer;
+		Player->Character->TradeAccepted = false;
+		TradePlayer->Character->TradePlayer = Player;
+		TradePlayer->Character->TradeAccepted = false;
+		TradePlayer->Character->WaitingForTrade = true;
 	}
 }
 
@@ -1264,10 +1264,10 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Notify trading player
-	_Object *TradePlayer = Player->TradePlayer;
+	_Object *TradePlayer = Player->Character->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->TradePlayer = nullptr;
-		TradePlayer->TradeAccepted = false;
+		TradePlayer->Character->TradePlayer = nullptr;
+		TradePlayer->Character->TradeAccepted = false;
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
@@ -1275,8 +1275,8 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Set state back to normal
-	Player->TradePlayer = nullptr;
-	Player->WaitingForTrade = false;
+	Player->Character->TradePlayer = nullptr;
+	Player->Character->WaitingForTrade = false;
 }
 
 // Handle a trade gold update
@@ -1292,13 +1292,13 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 		Gold = 0;
 	else if(Gold > Player->Character->Gold)
 		Gold = std::max(0, Player->Character->Gold);
-	Player->TradeGold = Gold;
-	Player->TradeAccepted = false;
+	Player->Character->TradeGold = Gold;
+	Player->Character->TradeAccepted = false;
 
 	// Notify player
-	_Object *TradePlayer = Player->TradePlayer;
+	_Object *TradePlayer = Player->Character->TradePlayer;
 	if(TradePlayer) {
-		TradePlayer->TradeAccepted = false;
+		TradePlayer->Character->TradeAccepted = false;
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_GOLD);
@@ -1315,15 +1315,15 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get trading player
-	_Object *TradePlayer = Player->TradePlayer;
+	_Object *TradePlayer = Player->Character->TradePlayer;
 	if(TradePlayer) {
 
 		// Set the player's state
 		bool Accepted = !!Data.Read<char>();
-		Player->TradeAccepted = Accepted;
+		Player->Character->TradeAccepted = Accepted;
 
 		// Check if both player's agree
-		if(Accepted && TradePlayer->TradeAccepted) {
+		if(Accepted && TradePlayer->Character->TradeAccepted) {
 
 			// Exchange items
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
@@ -1337,17 +1337,17 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 			}
 
 			// Exchange gold
-			Player->Character->UpdateGold(TradePlayer->TradeGold - Player->TradeGold);
-			TradePlayer->Character->UpdateGold(Player->TradeGold - TradePlayer->TradeGold);
+			Player->Character->UpdateGold(TradePlayer->Character->TradeGold - Player->Character->TradeGold);
+			TradePlayer->Character->UpdateGold(Player->Character->TradeGold - TradePlayer->Character->TradeGold);
 
 			// Move items to inventory and reset
-			Player->WaitingForTrade = false;
-			Player->TradePlayer = nullptr;
-			Player->TradeGold = 0;
+			Player->Character->WaitingForTrade = false;
+			Player->Character->TradePlayer = nullptr;
+			Player->Character->TradeGold = 0;
 			Player->Inventory->MoveTradeToInventory();
-			TradePlayer->WaitingForTrade = false;
-			TradePlayer->TradePlayer = nullptr;
-			TradePlayer->TradeGold = 0;
+			TradePlayer->Character->WaitingForTrade = false;
+			TradePlayer->Character->TradePlayer = nullptr;
+			TradePlayer->Character->TradeGold = 0;
 			TradePlayer->Inventory->MoveTradeToInventory();
 
 			// Send packet to players
@@ -1389,12 +1389,12 @@ void _Server::HandlePartyInfo(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Get party name
-	Player->PartyName = Data.ReadString();
+	Player->Character->PartyName = Data.ReadString();
 
 	// Send info
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PARTY_INFO);
-	Packet.WriteString(Player->PartyName.c_str());
+	Packet.WriteString(Player->Character->PartyName.c_str());
 	Network->SendPacket(Packet, Player->Peer);
 }
 
@@ -1605,9 +1605,9 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 		}
 
 		// Leave trading screen
-		_Object *TradePlayer = Player->TradePlayer;
+		_Object *TradePlayer = Player->Character->TradePlayer;
 		if(TradePlayer) {
-			TradePlayer->TradePlayer = nullptr;
+			TradePlayer->Character->TradePlayer = nullptr;
 
 			_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
@@ -1756,7 +1756,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
 	Packet.Write<NetworkIDType>(Sender->NetworkID);
-	Packet.Write<int>(Sender->TradeGold);
+	Packet.Write<int>(Sender->Character->TradeGold);
 	for(size_t i = 0; i < Bag.Slots.size(); i++)
 		Sender->Inventory->SerializeSlot(Packet, _Slot(_Bag::BagType::TRADE, i));
 

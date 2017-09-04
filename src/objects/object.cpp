@@ -98,11 +98,6 @@ _Object::_Object() :
 	Minigame(nullptr),
 	Seed(0),
 
-	TradePlayer(nullptr),
-	TradeGold(0),
-	WaitingForTrade(false),
-	TradeAccepted(false),
-
 	Bot(false) {
 
 	Inventory = new _Inventory();
@@ -256,7 +251,7 @@ void _Object::Update(double FrameTime) {
 		Status = STATUS_DEAD;
 	else if(Battle)
 		Status = STATUS_BATTLE;
-	else if(WaitingForTrade)
+	else if(Character->WaitingForTrade)
 		Status = STATUS_TRADE;
 	else if(Vendor)
 		Status = STATUS_VENDOR;
@@ -789,15 +784,17 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 // Serialize object stats
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
-	Data.WriteString(PartyName.c_str());
 	Data.Write<uint32_t>(PortraitID);
 	Data.Write<uint32_t>(ModelID);
+	Data.WriteString(Character->PartyName.c_str());
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
 	Data.Write<int>(Character->Experience);
 	Data.Write<int>(Character->Gold);
+	Data.Write<int>(Character->Invisible);
+	Data.Write<int>(Character->Hardcore);
 	Data.Write<int>(Record->GoldLost);
 	Data.Write<double>(Record->PlayTime);
 	Data.Write<double>(Record->BattleTime);
@@ -806,8 +803,6 @@ void _Object::SerializeStats(_Buffer &Data) {
 	Data.Write<int>(Record->PlayerKills);
 	Data.Write<int>(Record->GamesPlayed);
 	Data.Write<int>(Record->Bounty);
-	Data.Write<int>(Character->Invisible);
-	Data.Write<int>(Character->Hardcore);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -872,15 +867,17 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 // Unserialize object stats
 void _Object::UnserializeStats(_Buffer &Data) {
 	Name = Data.ReadString();
-	PartyName = Data.ReadString();
 	PortraitID = Data.Read<uint32_t>();
 	ModelID = Data.Read<uint32_t>();
+	Character->PartyName = Data.ReadString();
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
 	Character->Experience = Data.Read<int>();
 	Character->Gold = Data.Read<int>();
+	Character->Invisible = Data.Read<int>();
+	Character->Hardcore = Data.Read<int>();
 	Record->GoldLost = Data.Read<int>();
 	Record->PlayTime = Data.Read<double>();
 	Record->BattleTime = Data.Read<double>();
@@ -889,8 +886,6 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	Record->PlayerKills = Data.Read<int>();
 	Record->GamesPlayed = Data.Read<int>();
 	Record->Bounty = Data.Read<int>();
-	Character->Invisible = Data.Read<int>();
-	Character->Hardcore = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 

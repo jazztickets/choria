@@ -31,8 +31,8 @@ _Character::_Character(_Object *Object) :
 	Object(Object),
 	CharacterID(0),
 	UpdateTimer(0.0),
-	Gold(0),
 
+	Gold(0),
 	NextBattle(0),
 	Invisible(0),
 	Stunned(0),
@@ -80,7 +80,12 @@ _Character::_Character(_Object *Object) :
 
 	SkillPoints(0),
 	SkillPointsUsed(0),
-	SkillPointsOnActionBar(0) {
+	SkillPointsOnActionBar(0),
+
+	TradePlayer(nullptr),
+	TradeGold(0),
+	WaitingForTrade(false),
+	TradeAccepted(false) {
 
 }
 

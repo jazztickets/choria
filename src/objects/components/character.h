@@ -82,10 +82,9 @@ class _Character {
 		uint32_t CharacterID;
 		double UpdateTimer;
 
-		// Gold
-		int Gold;
-
 		// State
+		std::string PartyName;
+		int Gold;
 		int NextBattle;
 		int Invisible;
 		int Stunned;
@@ -149,6 +148,12 @@ class _Character {
 
 		// Action bar
 		std::vector<_Action> ActionBar;
+
+		// Trading
+		_Object *TradePlayer;
+		int TradeGold;
+		bool WaitingForTrade;
+		bool TradeAccepted;
 
 	private:
 

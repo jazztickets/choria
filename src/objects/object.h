@@ -218,15 +218,6 @@ class _Object : public _ManagerBase {
 		const _MinigameType *Minigame;
 		uint32_t Seed;
 
-		// Trading
-		_Object *TradePlayer;
-		int TradeGold;
-		bool WaitingForTrade;
-		bool TradeAccepted;
-
-		// Party
-		std::string PartyName;
-
 		// Bots
 		bool Bot;
 		std::list<void *> Path;
