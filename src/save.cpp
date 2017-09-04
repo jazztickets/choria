@@ -25,6 +25,7 @@
 #include <objects/buff.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
+#include <objects/components/character.h>
 #include <config.h>
 #include <stats.h>
 #include <constants.h>

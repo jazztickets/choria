@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/action.h>
 #include <objects/object.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/fighter.h>
 #include <objects/components/monster.h>
@@ -153,7 +154,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		return;
 
 	_Object *SourceObject = ActionResult.Source.Object;
-	_Battle *Battle = SourceObject->Battle;
+	_Battle *Battle = SourceObject->Character->Battle;
 	if(Battle) {
 
 		// Get database id

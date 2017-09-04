@@ -18,6 +18,7 @@
 #include <objects/battle.h>
 #include <objects/object.h>
 #include <objects/buff.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
@@ -236,8 +237,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Set up initial target
 		if(Item) {
-			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1 && ClientPlayer->HUD)
-				ClientPlayer->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
+			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1 && ClientPlayer->Character->HUD)
+				ClientPlayer->Character->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->Fighter->BattleSide;
@@ -265,9 +266,9 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 	else if(ClientPlayer->Character->Targets.size()) {
 
 		// Update HUD
-		if(ClientPlayer->HUD) {
+		if(ClientPlayer->Character->HUD) {
 			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1)
-				ClientPlayer->HUD->SetMessage("");
+				ClientPlayer->Character->HUD->SetMessage("");
 		}
 
 		// Check if action can be used
@@ -432,7 +433,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 
 // Add an object to the battle
 void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
-	Object->Battle = this;
+	Object->Character->Battle = this;
 	Object->Fighter->BattleSide = Side;
 	Object->Fighter->LastTarget[0] = nullptr;
 	Object->Fighter->LastTarget[1] = nullptr;
@@ -537,7 +538,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 
 		// Get battle stats
 		Object->Stats = Stats;
-		Object->HUD = HUD;
+		Object->Character->HUD = HUD;
 		Object->Scripting = Scripting;
 		Object->UnserializeBattle(Data);
 		Object->Character->CalculateStats();

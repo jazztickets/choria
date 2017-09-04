@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <states/play.h>
 #include <objects/object.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
@@ -341,7 +342,7 @@ void _PlayState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		return;
 
 	// Enable mouse during combat
-	if(HUD && Player && Player->Battle)
+	if(HUD && Player && Player->Character->Battle)
 		HUD->EnableMouseCombat = true;
 
 	HUD->HandleMouseButton(MouseEvent);
@@ -351,7 +352,7 @@ void _PlayState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 
 	// Enable mouse during combat
-	if(HUD && Player && Player->Battle)
+	if(HUD && Player && Player->Character->Battle)
 		HUD->EnableMouseCombat = true;
 }
 
@@ -454,7 +455,7 @@ void _PlayState::Update(double FrameTime) {
 
 	// Update battle system
 	if(Battle) {
-		if(!Player->Battle)
+		if(!Player->Character->Battle)
 			DeleteBattle();
 		else
 			Battle->Update(FrameTime);
@@ -1192,7 +1193,7 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 		PlayDeathSound();
 	}
 
-	Player->Battle = nullptr;
+	Player->Character->Battle = nullptr;
 	HUD->ClearBattleStatChanges();
 	HUD->AddStatChange(StatChange);
 
@@ -1332,7 +1333,7 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 				HUD->SetActionBarSize(Player->Character->ActionBar.size());
 
 			// Play death sound
-			if(!Player->Battle && Player->Character->Health <= 0 && WasAlive)
+			if(!Player->Character->Battle && Player->Character->Health <= 0 && WasAlive)
 				PlayDeathSound();
 		}
 
@@ -1386,7 +1387,7 @@ _Object *_PlayState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);
-	Object->HUD = HUD;
+	Object->Character->HUD = HUD;
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;

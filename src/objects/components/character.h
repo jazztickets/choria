@@ -26,6 +26,8 @@
 // Forward Declarations
 class _Object;
 class _Stats;
+class _Battle;
+class _HUD;
 struct _Vendor;
 struct _Trader;
 struct _MinigameType;
@@ -61,6 +63,13 @@ class _Character {
 		float GetHealthPercent() const { return MaxHealth > 0 ? Health / (float)MaxHealth : 0; }
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 
+		// Input
+		bool CanOpenTrade() const { return IsAlive() && !Battle; }
+		bool CanOpenSkills() const { return IsAlive() && !Battle; }
+		bool CanOpenInventory() const { return IsAlive() && !Battle; }
+		bool CanOpenParty() const { return IsAlive() && !Battle; }
+		bool CanTeleport() const { return IsAlive() && !Battle; }
+
 		// Battle
 		void GenerateNextBattle();
 		int GenerateDamage();
@@ -85,6 +94,10 @@ class _Character {
 		_Object *Object;
 		uint32_t CharacterID;
 		double UpdateTimer;
+
+		// Pointers
+		_Battle *Battle;
+		_HUD *HUD;
 
 		// Render
 		const _Texture *StatusTexture;

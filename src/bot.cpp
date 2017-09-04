@@ -24,6 +24,7 @@
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
@@ -165,7 +166,7 @@ void _Bot::Update(double FrameTime) {
 			Battle->ClientHandleInput(Action::GAME_SKILL1);
 		}
 
-		if(!Player->Battle) {
+		if(!Player->Character->Battle) {
 			delete Battle;
 			Battle = nullptr;
 		} else
@@ -443,7 +444,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				Player->Inventory->AddItem(Item, Upgrades, Count);
 			}
 
-			Player->Battle = nullptr;
+			Player->Character->Battle = nullptr;
 			delete Battle;
 			Battle = nullptr;
 

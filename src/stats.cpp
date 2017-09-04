@@ -21,6 +21,7 @@
 #include <ae/assets.h>
 #include <objects/object.h>
 #include <objects/buff.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/monster.h>
 #include <constants.h>

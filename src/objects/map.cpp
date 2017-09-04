@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/map.h>
 #include <objects/object.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
 #include <objects/object.h>
@@ -818,8 +819,8 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 		// Set message for client
 		if(!Server) {
 			const _Item *Item = Object->Stats->Items.at(Tile->Event.Data);
-			if(Item && Object->HUD)
-				Object->HUD->SetMessage("You need a " + Item->Name);
+			if(Item && Object->Character->HUD)
+				Object->Character->HUD->SetMessage("You need a " + Item->Name);
 		}
 
 		return false;
@@ -891,9 +892,9 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 			continue;
 
 		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Battle && !Object->Battle->PVP && Object->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
+			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Character->Battle && !Object->Character->Battle->PVP && Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
 				if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
-					return Object->Battle;
+					return Object->Character->Battle;
 				else
 					HitPrivateParty = true;
 			}
@@ -913,7 +914,7 @@ void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players) {
 			continue;
 
 		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->Character->IsAlive() && !Object->Battle && (Object->Character->PartyName == "" || Object->Character->PartyName != Player->Character->PartyName)) {
+			if(Object->Position == Player->Position && Object->Character->IsAlive() && !Object->Character->Battle && (Object->Character->PartyName == "" || Object->Character->PartyName != Player->Character->PartyName)) {
 				Players.push_back(Object);
 			}
 		}

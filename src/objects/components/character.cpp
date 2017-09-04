@@ -32,6 +32,9 @@ _Character::_Character(_Object *Object) :
 	CharacterID(0),
 	UpdateTimer(0.0),
 
+	Battle(nullptr),
+	HUD(nullptr),
+
 	StatusTexture(nullptr),
 	Portrait(nullptr),
 	PortraitID(0),

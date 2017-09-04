@@ -29,6 +29,7 @@
 #include <ae/database.h>
 #include <objects/object.h>
 #include <objects/item.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
@@ -396,14 +397,14 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		// Use action
 		else if(ActionBarElement->GetClickedElement()) {
 			uint8_t Slot = (uint8_t)ActionBarElement->GetClickedElement()->Index;
-			if(Player->Battle)
-				Player->Battle->ClientHandleInput(Action::GAME_SKILL1 + Slot);
+			if(Player->Character->Battle)
+				Player->Character->Battle->ClientHandleInput(Action::GAME_SKILL1 + Slot);
 			else
 				PlayState.SendActionUse(Slot);
 		}
 		// Handle mouse click during combat
-		else if(EnableMouseCombat && Player->Battle && Player->Fighter->PotentialAction.IsSet()) {
-			Player->Battle->ClientSetAction((uint8_t)Player->Fighter->PotentialAction.ActionBarSlot);
+		else if(EnableMouseCombat && Player->Character->Battle && Player->Fighter->PotentialAction.IsSet()) {
+			Player->Character->Battle->ClientSetAction((uint8_t)Player->Fighter->PotentialAction.ActionBarSlot);
 		}
 
 		if(Player->Character->WaitingForTrade) {
@@ -498,8 +499,8 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserData;
-				if(EnableMouseCombat && MouseObject && Player->Battle && Player->Fighter->PotentialAction.IsSet() && Player->Fighter->PotentialAction.Item->UseMouseTargetting() && Player->Fighter->PotentialAction.Item->CanTarget(Player, MouseObject)) {
-					Player->Battle->ClientSetTarget(Player->Fighter->PotentialAction.Item, MouseObject->Fighter->BattleSide, MouseObject);
+				if(EnableMouseCombat && MouseObject && Player->Character->Battle && Player->Fighter->PotentialAction.IsSet() && Player->Fighter->PotentialAction.Item->UseMouseTargetting() && Player->Fighter->PotentialAction.Item->CanTarget(Player, MouseObject)) {
+					Player->Character->Battle->ClientSetTarget(Player->Fighter->PotentialAction.Item, MouseObject->Fighter->BattleSide, MouseObject);
 				}
 			} break;
 			case WINDOW_HUD_EFFECTS: {
@@ -619,7 +620,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	ButtonBarElement->Render();
 
 	// Draw hud elements while alive or in battle
-	if(Player->Character->IsAlive() || Player->Battle) {
+	if(Player->Character->IsAlive() || Player->Character->Battle) {
 		DiedElement->SetActive(false);
 		Assets.Elements["element_hud"]->Render();
 		DrawActionBar();
@@ -819,7 +820,7 @@ void _HUD::ToggleChat() {
 void _HUD::ToggleTeleport() {
 	return;
 
-	if(!Player->CanTeleport())
+	if(!Player->Character->CanTeleport())
 		return;
 
 	if(!Player->Controller->WaitForServer && !TeleportElement->Active) {
@@ -835,7 +836,7 @@ void _HUD::ToggleTeleport() {
 
 // Open/close inventory
 void _HUD::ToggleInventory() {
-	if(Player->Controller->WaitForServer || !Player->CanOpenInventory())
+	if(Player->Controller->WaitForServer || !Player->Character->CanOpenInventory())
 		return;
 
 	if(!InventoryElement->Active) {
@@ -853,7 +854,7 @@ void _HUD::ToggleInventory() {
 
 // Open/close trade
 void _HUD::ToggleTrade() {
-	if(Player->Controller->WaitForServer || !Player->CanOpenTrade())
+	if(Player->Controller->WaitForServer || !Player->Character->CanOpenTrade())
 		return;
 
 	if(!TradeElement->Active) {
@@ -867,7 +868,7 @@ void _HUD::ToggleTrade() {
 
 // Open/close skills
 void _HUD::ToggleSkills() {
-	if(Player->Controller->WaitForServer || !Player->CanOpenInventory())
+	if(Player->Controller->WaitForServer || !Player->Character->CanOpenInventory())
 		return;
 
 	if(!SkillsElement->Active) {
@@ -881,7 +882,7 @@ void _HUD::ToggleSkills() {
 
 // Open/close party screen
 void _HUD::ToggleParty() {
-	if(Player->Controller->WaitForServer || !Player->CanOpenParty())
+	if(Player->Controller->WaitForServer || !Player->Character->CanOpenParty())
 		return;
 
 	if(!PartyElement->Active) {
@@ -905,7 +906,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 	if(PlayState.DevMode && !Force)
 		PlayState.Network->Disconnect();
 	else {
-		Menu.ShowExitWarning = Player->Battle;
+		Menu.ShowExitWarning = Player->Character->Battle;
 		Menu.ShowRespawn = !Player->Character->IsAlive() && !Player->Character->Hardcore;
 		Menu.InitInGame();
 	}
@@ -913,7 +914,7 @@ void _HUD::ToggleInGameMenu(bool Force) {
 
 // Show character stats during battle
 void _HUD::ToggleCharacterStats() {
-	if(!Player->Battle)
+	if(!Player->Character->Battle)
 		return;
 
 	CharacterElement->SetActive(!CharacterElement->Active);
@@ -2388,7 +2389,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::HEALTH)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		if(StatChangeUI.Object->Battle) {
+		if(StatChangeUI.Object->Character->Battle) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition;
 			StatChangeUI.Battle = true;
 		}
@@ -2403,7 +2404,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::MANA)) {
 		_StatChangeUI StatChangeUI;
 		StatChangeUI.Object = StatChange.Object;
-		if(StatChangeUI.Object->Battle) {
+		if(StatChangeUI.Object->Character->Battle) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->StatPosition + glm::vec2(0, 32);
 			StatChangeUI.Battle = true;
 		}
@@ -2432,7 +2433,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Object = StatChange.Object;
 
 		// Check for battle
-		if(StatChangeUI.Object->Battle) {
+		if(StatChangeUI.Object->Character->Battle) {
 			StatChangeUI.StartPosition = StatChangeUI.Object->Fighter->ResultPosition + glm::vec2(0, 32);
 			StatChangeUI.Battle = true;
 		}

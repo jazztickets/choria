@@ -22,6 +22,7 @@
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>
+#include <objects/components/character.h>
 #include <framework.h>
 #include <server.h>
 #include <stats.h>

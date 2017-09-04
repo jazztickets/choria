@@ -23,6 +23,7 @@
 #include <ae/buffer.h>
 #include <ae/util.h>
 #include <objects/object.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/controller.h>
@@ -569,7 +570,7 @@ void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
 			return;
 
 		// Wait for battle to finish
-		if(Player->Battle)
+		if(Player->Character->Battle)
 			return;
 
 		Player->Character->Health = Player->Character->MaxHealth / 2;
@@ -595,7 +596,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		Message.resize(HUD_CHAT_SIZE);
 
 	// Check for test commands
-	if(IsTesting && Message[0] == '-' && !Player->Battle) {
+	if(IsTesting && Message[0] == '-' && !Player->Character->Battle) {
 		_StatChange StatChange;
 		StatChange.Object = Player;
 
@@ -858,7 +859,7 @@ void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, int PVP
 
 // Start teleporting a player
 void _Server::StartTeleport(_Object *Object, double Time) {
-	if(Object->Battle || !Object->Character->IsAlive())
+	if(Object->Character->Battle || !Object->Character->IsAlive())
 		return;
 
 	Object->ResetUIState();
@@ -1386,7 +1387,7 @@ void _Server::HandlePartyInfo(_Buffer &Data, _Peer *Peer) {
 
 	// Validate player
 	_Object *Player = Peer->Object;
-	if(!Player->CanOpenParty())
+	if(!Player->Character->CanOpenParty())
 		return;
 
 	// Get party name
@@ -1405,7 +1406,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	_Object *Player = Peer->Object;
-	if(Player->Battle)
+	if(Player->Character->Battle)
 		return;
 
 	// Read packet
@@ -1598,7 +1599,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 		}
 
 		// Penalize player for leaving battle
-		if(Player->Battle) {
+		if(Player->Character->Battle) {
 			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 			Player->Character->Health = 0;
 			Player->Character->Mana = Player->Character->MaxMana / 2;
@@ -1638,7 +1639,7 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	Player->SetActionUsing(Data, ObjectManager);
 
 	// Check for battle
-	if(Player->Battle) {
+	if(Player->Character->Battle) {
 
 		// Notify other players of action
 		_Buffer Packet;
@@ -1649,7 +1650,7 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 		else
 			Packet.Write<uint32_t>(0);
 
-		Player->Battle->BroadcastPacket(Packet);
+		Player->Character->Battle->BroadcastPacket(Packet);
 	}
 }
 
@@ -1768,7 +1769,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 	// Return if object is already in battle or in zone 0
-	if(BattleEvent.Object->Battle || (!BattleEvent.PVP && !BattleEvent.Zone))
+	if(BattleEvent.Object->Character->Battle || (!BattleEvent.PVP && !BattleEvent.Zone))
 		return;
 
 	// Handle PVP

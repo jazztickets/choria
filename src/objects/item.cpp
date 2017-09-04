@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/item.h>
 #include <objects/object.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/fighter.h>
 #include <ae/ui.h>
@@ -623,7 +624,7 @@ bool _Item::CanTarget(_Object *Source, _Object *Target) const {
 	if(!TargetAlive && Target->Character->IsAlive())
 		return false;
 
-	if(Source->Battle) {
+	if(Source->Character->Battle) {
 
 		if(Source->Fighter->BattleSide == Target->Fighter->BattleSide && !CanTargetAlly())
 			return false;

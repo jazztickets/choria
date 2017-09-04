@@ -19,7 +19,7 @@
 
 // Libraries
 #include <ae/managerbase.h>
-#include <objects/components/character.h>
+#include <ae/manager.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
 #include <list>
@@ -138,13 +138,6 @@ class _Object : public _ManagerBase {
 		const _Tile *GetTile() const;
 		NetworkIDType GetMapID() const;
 
-		// Input
-		bool CanOpenTrade() const { return Character->IsAlive() && !Battle; }
-		bool CanOpenSkills() const { return Character->IsAlive() && !Battle; }
-		bool CanOpenInventory() const { return Character->IsAlive() && !Battle; }
-		bool CanOpenParty() const { return Character->IsAlive() && !Battle; }
-		bool CanTeleport() const { return Character->IsAlive() && !Battle; }
-
 		// Path finding
 		bool Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
 		int GetInputStateFromPath();
@@ -166,8 +159,6 @@ class _Object : public _ManagerBase {
 		// Pointers
 		const _Stats *Stats;
 		_Map *Map;
-		_Battle *Battle;
-		_HUD *HUD;
 		_Scripting *Scripting;
 		_Server *Server;
 		_Peer *Peer;

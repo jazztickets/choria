@@ -63,8 +63,6 @@ _Object::_Object() :
 
 	Stats(nullptr),
 	Map(nullptr),
-	Battle(nullptr),
-	HUD(nullptr),
 	Scripting(nullptr),
 	Server(nullptr),
 	Peer(nullptr),
@@ -92,14 +90,14 @@ _Object::~_Object() {
 		Map = nullptr;
 	}
 
-	if(Battle) {
-		Battle->RemoveObject(this);
-		Battle = nullptr;
+	if(Character->Battle) {
+		Character->Battle->RemoveObject(this);
+		Character->Battle = nullptr;
 	}
 
-	if(HUD) {
-		HUD->RemoveStatChanges(this);
-		HUD = nullptr;
+	if(Character->HUD) {
+		Character->HUD->RemoveStatChanges(this);
+		Character->HUD = nullptr;
 	}
 
 	if(Character->Bot) {
@@ -143,11 +141,11 @@ void _Object::Update(double FrameTime) {
 	if(Character->IsAlive()) {
 
 		// Update monster AI
-		if(Server && Battle && IsMonster())
+		if(Server && Character->Battle && IsMonster())
 			UpdateMonsterAI(FrameTime);
 
 		// Check turn timer
-		if(Battle) {
+		if(Character->Battle) {
 			if(!Character->Stunned)
 				Fighter->TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * Character->BattleSpeed / 100.0;
 		}
@@ -160,7 +158,7 @@ void _Object::Update(double FrameTime) {
 
 			if(Server && Character->Action.IsSet()) {
 				ScopeType Scope = ScopeType::WORLD;
-				if(Battle)
+				if(Character->Battle)
 					Scope = ScopeType::BATTLE;
 
 				_Buffer Packet;
@@ -203,7 +201,7 @@ void _Object::Update(double FrameTime) {
 	// Update playtime
 	if(Record) {
 		Record->PlayTime += FrameTime;
-		if(Battle)
+		if(Character->Battle)
 			Record->BattleTime += FrameTime;
 	}
 
@@ -215,7 +213,7 @@ void _Object::Update(double FrameTime) {
 	Character->Status = STATUS_NONE;
 	if(!Character->IsAlive())
 		Character->Status = STATUS_DEAD;
-	else if(Battle)
+	else if(Character->Battle)
 		Character->Status = STATUS_BATTLE;
 	else if(Character->WaitingForTrade)
 		Character->Status = STATUS_TRADE;
@@ -239,7 +237,7 @@ void _Object::Update(double FrameTime) {
 void _Object::UpdateBot(double FrameTime) {
 
 	// Call ai script
-	if(!Battle && Scripting->StartMethodCall("Bot_Server", "Update")) {
+	if(!Character->Battle && Scripting->StartMethodCall("Bot_Server", "Update")) {
 		Scripting->PushReal(FrameTime);
 		Scripting->PushObject(this);
 		Scripting->MethodCall(2, 0);
@@ -264,7 +262,7 @@ void _Object::UpdateBot(double FrameTime) {
 	}
 
 	// Update battle
-	if(Battle) {
+	if(Character->Battle) {
 		if(Fighter->TurnTimer >= 1.0 && !Character->Action.IsSet()) {
 
 			// Set skill used
@@ -283,7 +281,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 			// Separate object list
 			std::list<_Object *> Allies, Enemies;
-			Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
+			Character->Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
 
 			// Call lua script
 			if(Enemies.size()) {
@@ -310,7 +308,7 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 
 		// Separate object list
 		std::list<_Object *> Allies, Enemies;
-		Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
+		Character->Battle->GetSeparateObjectList(Fighter->BattleSide, Allies, Enemies);
 
 		// Call lua script
 		if(Enemies.size()) {
@@ -340,7 +338,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		Graphics.SetVBO(VBO_QUAD);
 
 		glm::vec3 DrawPosition;
-		if(HUD && HUD->ShowDebug) {
+		if(Character->HUD && Character->HUD->ShowDebug) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
 			Graphics.DrawSprite(DrawPosition, ModelTexture);
@@ -886,7 +884,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 	for(size_t i = 0; i < StatusEffectsSize; i++) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
 		StatusEffect->Unserialize(Data, Stats);
-		if(HUD)
+		if(Character->HUD)
 			StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
 		Character->StatusEffects.push_back(StatusEffect);
 	}
@@ -972,7 +970,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		ResetUIState();
 
 		// If not in battle apply penalty immediately
-		if(!Battle) {
+		if(!Character->Battle) {
 
 			// Apply penalty
 			ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
@@ -1000,23 +998,23 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Flee from battle
 	if(StatChange.HasStat(StatType::FLEE)) {
-		if(Battle)
-			Battle->RemoveObject(this);
+		if(Character->Battle)
+			Character->Battle->RemoveObject(this);
 	}
 
 	// Run server only commands
 	if(Server) {
-		if(!Battle && Character->IsAlive() && StatChange.HasStat(StatType::TELEPORT)) {
+		if(!Character->Battle && Character->IsAlive() && StatChange.HasStat(StatType::TELEPORT)) {
 			Server->StartTeleport(this, StatChange.Values[StatType::TELEPORT].Float);
 		}
 
 		// Start battle
-		if(!Battle && StatChange.HasStat(StatType::BATTLE)) {
+		if(!Character->Battle && StatChange.HasStat(StatType::BATTLE)) {
 			Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true, false);
 		}
 
 		// Start PVP
-		if(!Battle && StatChange.HasStat(StatType::PVP)) {
+		if(!Character->Battle && StatChange.HasStat(StatType::PVP)) {
 			Server->QueueBattle(this, 0, false, StatChange.Values[StatType::PVP].Integer);
 		}
 	}
@@ -1026,7 +1024,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 // Moves the player and returns direction moved
 int _Object::Move() {
-	if(Controller->WaitForServer || Battle || Controller->InputStates.size() == 0 || !Character->IsAlive())
+	if(Controller->WaitForServer || Character->Battle || Controller->InputStates.size() == 0 || !Character->IsAlive())
 		return 0;
 
 	// Check timer
@@ -1089,7 +1087,7 @@ void _Object::ResetUIState() {
 
 // Stop a battle
 void _Object::StopBattle() {
-	Battle = nullptr;
+	Character->Battle = nullptr;
 	RemoveBattleElement();
 }
 
@@ -1190,7 +1188,7 @@ void _Object::SendSeed(bool Generate) {
 
 // Determines if the player can accept movement keys held down
 bool _Object::AcceptingMoveInput() {
-	if(Battle)
+	if(Character->Battle)
 		return false;
 
 	if(Controller->WaitForServer)
@@ -1234,13 +1232,13 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 
 // Can enter battle
 bool _Object::CanBattle() const {
-	return !Battle && Character->Status == STATUS_NONE && Character->Invisible <= 0;
+	return !Character->Battle && Character->Status == STATUS_NONE && Character->Invisible <= 0;
 }
 
 // Send packet to player or broadcast during battle
 void _Object::SendPacket(_Buffer &Packet) {
-	if(Battle)
-		Battle->BroadcastPacket(Packet);
+	if(Character->Battle)
+		Character->Battle->BroadcastPacket(Packet);
 	else if(Peer)
 		Server->Network->SendPacket(Packet, Peer);
 }

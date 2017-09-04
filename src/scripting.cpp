@@ -26,6 +26,7 @@
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
 #include <objects/battle.h>
+#include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/record.h>
 #include <objects/components/fighter.h>
@@ -469,8 +470,8 @@ void _Scripting::PushObject(_Object *Object) {
 		lua_pushinteger(LuaState, 0);
 	lua_setfield(LuaState, -2, "MapID");
 
-	if(Object->Battle)
-		lua_pushinteger(LuaState, Object->Battle->NetworkID);
+	if(Object->Character->Battle)
+		lua_pushinteger(LuaState, Object->Character->Battle->NetworkID);
 	else
 		lua_pushnil(LuaState);
 	lua_setfield(LuaState, -2, "BattleID");
