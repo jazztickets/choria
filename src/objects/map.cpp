@@ -343,8 +343,8 @@ void _Map::CheckEvents(_Object *Object) const {
 		} break;
 		default:
 			if(Server) {
-				Object->Vendor = nullptr;
-				Object->Trader = nullptr;
+				Object->Character->Vendor = nullptr;
+				Object->Character->Trader = nullptr;
 
 				if(Object->Character->NextBattle <= 0) {
 					Server->QueueBattle(Object, Tile->Zone, false, false);
@@ -432,23 +432,23 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 	// Handle event types
 	switch(Event.Type) {
 		case _Map::EVENT_TRADER:
-			Object->Trader = &Server->Stats->Traders.at(Event.Data);
-			if(!Object->Trader->ID)
+			Object->Character->Trader = &Server->Stats->Traders.at(Event.Data);
+			if(!Object->Character->Trader->ID)
 				return;
 		break;
 		case _Map::EVENT_VENDOR:
-			Object->Vendor = &Server->Stats->Vendors.at(Event.Data);
-			if(!Object->Vendor->ID)
+			Object->Character->Vendor = &Server->Stats->Vendors.at(Event.Data);
+			if(!Object->Character->Vendor->ID)
 				return;
 		break;
 		case _Map::EVENT_BLACKSMITH:
-			Object->Blacksmith = &Server->Stats->Blacksmiths.at(Event.Data);
-			if(!Object->Blacksmith->ID)
+			Object->Character->Blacksmith = &Server->Stats->Blacksmiths.at(Event.Data);
+			if(!Object->Character->Blacksmith->ID)
 				return;
 		break;
 		case _Map::EVENT_MINIGAME: {
-			Object->Minigame = &Server->Stats->Minigames.at(Event.Data);
-			if(!Object->Minigame->ID)
+			Object->Character->Minigame = &Server->Stats->Minigames.at(Event.Data);
+			if(!Object->Character->Minigame->ID)
 				return;
 		} break;
 		default:

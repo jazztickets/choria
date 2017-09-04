@@ -260,7 +260,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Character->ActionBar = Build->Character->ActionBar;
 	Object.Inventory->Bags = Build->Inventory->Bags;
 	Object.Character->Skills = Build->Character->Skills;
-	Object.Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+	Object.Character->Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 	Object.Character->CalculateStats();
 
 	// Set health/mana

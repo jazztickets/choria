@@ -1076,7 +1076,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get vendor
-	const _Vendor *Vendor = Player->Vendor;
+	const _Vendor *Vendor = Player->Character->Vendor;
 	if(!Vendor)
 		return;
 
@@ -1184,8 +1184,8 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get trader information
-	std::vector<_Slot> RequiredItemSlots(Player->Trader->Items.size());
-	_Slot RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
+	std::vector<_Slot> RequiredItemSlots(Player->Character->Trader->Items.size());
+	_Slot RewardSlot = Player->Inventory->GetRequiredItemSlots(Player->Character->Trader, RequiredItemSlots);
 	if(!Player->Inventory->IsValidSlot(RewardSlot))
 		return;
 
@@ -1496,14 +1496,14 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 
 	// Validate
 	_Object *Player = Peer->Object;
-	if(!Player->Minigame || Player->Character->Gold < Player->Minigame->Cost)
+	if(!Player->Character->Minigame || Player->Character->Gold < Player->Character->Minigame->Cost)
 		return;
 
 	// Update gold and stats
 	{
 		_StatChange StatChange;
 		StatChange.Object = Player;
-		StatChange.Values[StatType::GOLD].Integer = -Player->Minigame->Cost;
+		StatChange.Values[StatType::GOLD].Integer = -Player->Character->Minigame->Cost;
 		Player->UpdateStats(StatChange);
 
 		// Build packet
@@ -1523,15 +1523,15 @@ void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
 
 	// Validate
 	_Object *Player = Peer->Object;
-	if(!Player->Minigame)
+	if(!Player->Character->Minigame)
 		return;
 
 	float DropX = Data.Read<float>();
 
 	// Simulate game
-	_Minigame Minigame(Player->Minigame);
+	_Minigame Minigame(Player->Character->Minigame);
 	Minigame.IsServer = true;
-	Minigame.StartGame(Player->Seed);
+	Minigame.StartGame(Player->Character->Seed);
 	Minigame.Drop(DropX);
 
 	double Time = 0;

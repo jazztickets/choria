@@ -88,12 +88,6 @@ _Object::_Object() :
 	InventoryOpen(false),
 	SkillsOpen(false),
 
-	Vendor(nullptr),
-	Trader(nullptr),
-	Blacksmith(nullptr),
-	Minigame(nullptr),
-	Seed(0),
-
 	Bot(false) {
 
 	Inventory = new _Inventory();
@@ -251,13 +245,13 @@ void _Object::Update(double FrameTime) {
 		Status = STATUS_BATTLE;
 	else if(Character->WaitingForTrade)
 		Status = STATUS_TRADE;
-	else if(Vendor)
+	else if(Character->Vendor)
 		Status = STATUS_VENDOR;
-	else if(Trader)
+	else if(Character->Trader)
 		Status = STATUS_TRADER;
-	else if(Blacksmith)
+	else if(Character->Blacksmith)
 		Status = STATUS_BLACKSMITH;
-	else if(Minigame)
+	else if(Character->Minigame)
 		Status = STATUS_MINIGAME;
 	else if(InventoryOpen)
 		Status = STATUS_INVENTORY;
@@ -575,7 +569,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["gamesplayed"] = Record->GamesPlayed;
 	StatsNode["bounty"] = Record->Bounty;
 	StatsNode["nextbattle"] = Character->NextBattle;
-	StatsNode["seed"] = Seed;
+	StatsNode["seed"] = Character->Seed;
 	Data["stats"] = StatsNode;
 
 	// Write items
@@ -677,10 +671,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Record->GamesPlayed = StatsNode["gamesplayed"].asInt();
 	Record->Bounty = StatsNode["bounty"].asInt();
 	Character->NextBattle = StatsNode["nextbattle"].asInt();
-	Seed = StatsNode["seed"].asUInt();
+	Character->Seed = StatsNode["seed"].asUInt();
 
-	if(!Seed)
-		Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+	if(!Character->Seed)
+		Character->Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
 	size_t ActionBarSize = 0;
 	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
@@ -1112,10 +1106,10 @@ void _Object::ResetUIState() {
 	InventoryOpen = false;
 	SkillsOpen = false;
 	MenuOpen = false;
-	Vendor = nullptr;
-	Trader = nullptr;
-	Blacksmith = nullptr;
-	Minigame = nullptr;
+	Character->Vendor = nullptr;
+	Character->Trader = nullptr;
+	Character->Blacksmith = nullptr;
+	Character->Minigame = nullptr;
 	TeleportTime = -1.0;
 }
 
@@ -1192,15 +1186,15 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 
 // Accept a trade from a trader
 void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
-	if(!Trader)
+	if(!Character->Trader)
 		return;
 
 	// Trade in required items
-	for(uint32_t i = 0; i < Trader->Items.size(); i++)
-		Inventory->DecrementItemCount(Slots[i], -Trader->Items[i].Count);
+	for(uint32_t i = 0; i < Character->Trader->Items.size(); i++)
+		Inventory->DecrementItemCount(Slots[i], -Character->Trader->Items[i].Count);
 
 	// Give player reward
-	Inventory->AddItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
+	Inventory->AddItem(Character->Trader->RewardItem, Character->Trader->Upgrades, Character->Trader->Count);
 
 	// Update player
 	Character->CalculateStats();
@@ -1212,11 +1206,11 @@ void _Object::SendSeed(bool Generate) {
 		return;
 
 	if(Generate)
-		Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+		Character->Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::MINIGAME_SEED);
-	Packet.Write<uint32_t>(Seed);
+	Packet.Write<uint32_t>(Character->Seed);
 	Server->Network->SendPacket(Packet, Peer);
 }
 
@@ -1228,16 +1222,16 @@ bool _Object::AcceptingMoveInput() {
 	if(Controller->WaitForServer)
 		return false;
 
-	if(Vendor)
+	if(Character->Vendor)
 		return false;
 
-	if(Trader)
+	if(Character->Trader)
 		return false;
 
-	if(Blacksmith)
+	if(Character->Blacksmith)
 		return false;
 
-	if(Minigame)
+	if(Character->Minigame)
 		return false;
 
 	if(!Character->IsAlive())

@@ -82,6 +82,12 @@ _Character::_Character(_Object *Object) :
 	SkillPointsUsed(0),
 	SkillPointsOnActionBar(0),
 
+	Vendor(nullptr),
+	Trader(nullptr),
+	Blacksmith(nullptr),
+	Minigame(nullptr),
+	Seed(0),
+
 	TradePlayer(nullptr),
 	TradeGold(0),
 	WaitingForTrade(false),

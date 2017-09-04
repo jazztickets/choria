@@ -47,10 +47,6 @@ class _StatusEffect;
 class _Element;
 class _HUD;
 struct _Tile;
-struct _Vendor;
-struct _Trader;
-struct _MinigameType;
-struct _Blacksmith;
 struct _ActionResult;
 struct _Slot;
 
@@ -143,11 +139,11 @@ class _Object : public _ManagerBase {
 		NetworkIDType GetMapID() const;
 
 		// Input
-		bool CanOpenTrade() { return Character->IsAlive() && !Battle; }
-		bool CanOpenSkills() { return Character->IsAlive() && !Battle; }
-		bool CanOpenInventory() { return Character->IsAlive() && !Battle; }
-		bool CanOpenParty() { return Character->IsAlive() && !Battle; }
-		bool CanTeleport() { return Character->IsAlive() && !Battle; }
+		bool CanOpenTrade() const { return Character->IsAlive() && !Battle; }
+		bool CanOpenSkills() const { return Character->IsAlive() && !Battle; }
+		bool CanOpenInventory() const { return Character->IsAlive() && !Battle; }
+		bool CanOpenParty() const { return Character->IsAlive() && !Battle; }
+		bool CanTeleport() const { return Character->IsAlive() && !Battle; }
 
 		// Path finding
 		bool Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
@@ -205,13 +201,6 @@ class _Object : public _ManagerBase {
 		bool MenuOpen;
 		bool InventoryOpen;
 		bool SkillsOpen;
-
-		// Events
-		const _Vendor *Vendor;
-		const _Trader *Trader;
-		const _Blacksmith *Blacksmith;
-		const _MinigameType *Minigame;
-		uint32_t Seed;
 
 		// Bots
 		bool Bot;

@@ -69,7 +69,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 
 	// Set window height
 	Size.y = INVENTORY_TOOLTIP_HEIGHT;
-	if(Player->Vendor)
+	if(Player->Character->Vendor)
 		Size.y += 40;
 
 	// Position window
@@ -353,7 +353,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		DrawPosition.y += SpacingY;
 
 	// Vendors
-	if(Player->Vendor) {
+	if(Player->Character->Vendor) {
 		std::stringstream Buffer;
 		if(Tooltip.Window == _HUD::WINDOW_VENDOR) {
 			Buffer << "Buy " << Tooltip.InventorySlot.Count << "x for " << Tooltip.Cost << " gold";

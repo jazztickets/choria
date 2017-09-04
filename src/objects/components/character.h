@@ -26,6 +26,10 @@
 // Forward Declarations
 class _Object;
 class _Stats;
+struct _Vendor;
+struct _Trader;
+struct _MinigameType;
+struct _Blacksmith;
 
 // Structures
 struct _Unlock {
@@ -148,6 +152,13 @@ class _Character {
 
 		// Action bar
 		std::vector<_Action> ActionBar;
+
+		// Events
+		const _Vendor *Vendor;
+		const _Trader *Trader;
+		const _Blacksmith *Blacksmith;
+		const _MinigameType *Minigame;
+		uint32_t Seed;
 
 		// Trading
 		_Object *TradePlayer;

@@ -442,8 +442,8 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->InventoryOpen = false;
 	Object->SkillsOpen = false;
 	Object->MenuOpen = false;
-	Object->Vendor = nullptr;
-	Object->Trader = nullptr;
+	Object->Character->Vendor = nullptr;
+	Object->Character->Trader = nullptr;
 	Object->TeleportTime = -1.0;
 	Object->Fighter->JoinedBattle = Join;
 	Object->Fighter->GoldStolen = 0;

@@ -881,22 +881,22 @@ void _PlayState::HandleEventStart(_Buffer &Data) {
 	// Handle event
 	switch(EventType) {
 		case _Map::EVENT_VENDOR:
-			Player->Vendor = &Stats->Vendors.at(EventData);
+			Player->Character->Vendor = &Stats->Vendors.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->InitVendor();
 		break;
 		case _Map::EVENT_TRADER:
-			Player->Trader = &Stats->Traders.at(EventData);
+			Player->Character->Trader = &Stats->Traders.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->InitTrader();
 		break;
 		case _Map::EVENT_BLACKSMITH:
-			Player->Blacksmith = &Stats->Blacksmiths.at(EventData);
+			Player->Character->Blacksmith = &Stats->Blacksmiths.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->InitBlacksmith();
 		break;
 		case _Map::EVENT_MINIGAME:
-			Player->Minigame = &Stats->Minigames.at(EventData);
+			Player->Character->Minigame = &Stats->Minigames.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->InitMinigame();
 		break;
@@ -912,19 +912,19 @@ void _PlayState::HandleInventory(_Buffer &Data) {
 	Player->Character->CalculateStats();
 
 	// Refresh trader screen
-	if(Player->Trader) {
+	if(Player->Character->Trader) {
 		PlayCoinSound();
 		HUD->InitTrader();
 
 		// Update recent items
-		if(HUD->RecentItems.size() && HUD->RecentItems.back().Item == Player->Trader->RewardItem) {
-			HUD->RecentItems.back().Count += Player->Trader->Count;
+		if(HUD->RecentItems.size() && HUD->RecentItems.back().Item == Player->Character->Trader->RewardItem) {
+			HUD->RecentItems.back().Count += Player->Character->Trader->Count;
 			HUD->RecentItems.back().Time = 0.0;
 		}
 		else {
 			_RecentItem RecentItem;
-			RecentItem.Item = Player->Trader->RewardItem;
-			RecentItem.Count = Player->Trader->Count;
+			RecentItem.Item = Player->Character->Trader->RewardItem;
+			RecentItem.Count = Player->Character->Trader->Count;
 
 			HUD->RecentItems.push_back(RecentItem);
 		}
@@ -1375,7 +1375,7 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 
 // Handle seed from server
 void _PlayState::HandleMinigameSeed(_Buffer &Data) {
-	if(!Player || !Player->Minigame || !HUD->Minigame)
+	if(!Player || !Player->Character->Minigame || !HUD->Minigame)
 		return;
 
 	HUD->Minigame->StartGame(Data.Read<uint32_t>());

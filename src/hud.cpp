@@ -176,8 +176,8 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 	if(MouseEvent.Pressed) {
 
 		// Update minigame
-		if(Player->Minigame && Minigame) {
-			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Character->Gold >= Player->Minigame->Cost) {
+		if(Player->Character->Minigame && Minigame) {
+			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Character->Gold >= Player->Character->Minigame->Cost) {
 				if(Input.GetMouse().y > MinigameElement->Bounds.Start.y && Input.GetMouse().y < MinigameElement->Bounds.End.y)
 					Minigame->HandleMouseButton(MouseEvent);
 
@@ -453,8 +453,8 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_TRADEYOURS: {
 				if(Player->Inventory->IsValidSlot(Tooltip.Slot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
-					if(Tooltip.InventorySlot.Item && Player->Vendor)
-						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Vendor, Tooltip.InventorySlot.Count, false);
+					if(Tooltip.InventorySlot.Item && Player->Character->Vendor)
+						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Character->Vendor, Tooltip.InventorySlot.Count, false);
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
@@ -463,27 +463,27 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_VENDOR: {
-				if(Player->Vendor && Tooltip.Slot.Index < Player->Vendor->Items.size()) {
-					Tooltip.InventorySlot.Item = Player->Vendor->Items[Tooltip.Slot.Index];
+				if(Player->Character->Vendor && Tooltip.Slot.Index < Player->Character->Vendor->Items.size()) {
+					Tooltip.InventorySlot.Item = Player->Character->Vendor->Items[Tooltip.Slot.Index];
 					if(Input.ModKeyDown(KMOD_SHIFT))
 						Tooltip.InventorySlot.Count = INVENTORY_INCREMENT_MODIFIER;
 					else
 						Tooltip.InventorySlot.Count = 1;
 
 					if(Tooltip.InventorySlot.Item)
-						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Vendor, Tooltip.InventorySlot.Count, true);
+						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Character->Vendor, Tooltip.InventorySlot.Count, true);
 				}
 			} break;
 			case WINDOW_TRADER: {
-				if(Player->Trader) {
-					if(Tooltip.Slot.Index < Player->Trader->Items.size())
-						Tooltip.InventorySlot.Item = Player->Trader->Items[Tooltip.Slot.Index].Item;
+				if(Player->Character->Trader) {
+					if(Tooltip.Slot.Index < Player->Character->Trader->Items.size())
+						Tooltip.InventorySlot.Item = Player->Character->Trader->Items[Tooltip.Slot.Index].Item;
 					else if(Tooltip.Slot.Index == TRADER_MAXITEMS)
-						Tooltip.InventorySlot.Item = Player->Trader->RewardItem;
+						Tooltip.InventorySlot.Item = Player->Character->Trader->RewardItem;
 				}
 			} break;
 			case WINDOW_BLACKSMITH: {
-				if(Player->Blacksmith && Player->Inventory->IsValidSlot(UpgradeSlot)) {
+				if(Player->Character->Blacksmith && Player->Inventory->IsValidSlot(UpgradeSlot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
 					if(Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
 						Tooltip.InventorySlot.Upgrades++;
@@ -953,8 +953,8 @@ void _HUD::InitTrade() {
 void _HUD::InitTrader() {
 
 	// Check for required items
-	RequiredItemSlots.resize(Player->Trader->Items.size());
-	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Trader, RequiredItemSlots);
+	RequiredItemSlots.resize(Player->Character->Trader->Items.size());
+	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Character->Trader, RequiredItemSlots);
 
 	// Disable accept button if requirements not met
 	if(!Player->Inventory->IsValidSlot(RewardItemSlot))
@@ -979,7 +979,7 @@ void _HUD::InitBlacksmith() {
 
 // Initialize minigame
 void _HUD::InitMinigame() {
-	if(!Player->Minigame)
+	if(!Player->Character->Minigame)
 		return;
 
 	Cursor.Reset();
@@ -988,11 +988,11 @@ void _HUD::InitMinigame() {
 	MinigameElement->SetActive(true);
 	_Element *NameElement = Assets.Elements["label_minigame_name"];
 	_Element *CostElement = Assets.Elements["label_minigame_cost"];
-	NameElement->Text = Player->Minigame->Name;
-	CostElement->Text = std::to_string(Player->Minigame->Cost) + " gold to play";
+	NameElement->Text = Player->Character->Minigame->Name;
+	CostElement->Text = std::to_string(Player->Character->Minigame->Cost) + " gold to play";
 
 	// Create minigame
-	Minigame = new _Minigame(Player->Minigame);
+	Minigame = new _Minigame(Player->Character->Minigame);
 }
 
 // Initialize the skills screen
@@ -1142,7 +1142,7 @@ bool _HUD::CloseVendor() {
 	bool WasOpen = VendorElement->Active;
 	CloseInventory();
 	if(Player)
-		Player->Vendor = nullptr;
+		Player->Character->Vendor = nullptr;
 
 	VendorElement->SetActive(false);
 	Cursor.Reset();
@@ -1207,7 +1207,7 @@ bool _HUD::CloseTrader() {
 	Cursor.Reset();
 
 	if(Player)
-		Player->Trader = nullptr;
+		Player->Character->Trader = nullptr;
 
 	return WasOpen;
 }
@@ -1221,7 +1221,7 @@ bool _HUD::CloseBlacksmith() {
 	Cursor.Reset();
 
 	if(Player)
-		Player->Blacksmith = nullptr;
+		Player->Character->Blacksmith = nullptr;
 
 	UpgradeSlot.BagType = _Bag::BagType::NONE;
 
@@ -1239,7 +1239,7 @@ bool _HUD::CloseMinigame() {
 	Cursor.Reset();
 
 	if(Player)
-		Player->Minigame = nullptr;
+		Player->Character->Minigame = nullptr;
 
 	return WasOpen;
 }
@@ -1371,9 +1371,9 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false);
 
 			// Draw upgrade count if using blacksmith
-			if(Player->Blacksmith && Slot->Item->MaxLevel) {
+			if(Player->Character->Blacksmith && Slot->Item->MaxLevel) {
 				glm::vec4 Color;
-				if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= Player->Blacksmith->Level)
+				if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= Player->Character->Blacksmith->Level)
 					Color = Assets.Colors["red"];
 				else
 					Color = Assets.Colors["green"];
@@ -1390,7 +1390,7 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 
 // Draw the vendor
 void _HUD::DrawVendor() {
-	if(!Player->Vendor) {
+	if(!Player->Character->Vendor) {
 		VendorElement->Active = false;
 		return;
 	}
@@ -1398,8 +1398,8 @@ void _HUD::DrawVendor() {
 	VendorElement->Render();
 
 	// Draw vendor items
-	for(size_t i = 0; i < Player->Vendor->Items.size(); i++) {
-		const _Item *Item = Player->Vendor->Items[i];
+	for(size_t i = 0; i < Player->Character->Vendor->Items.size(); i++) {
+		const _Item *Item = Player->Character->Vendor->Items[i];
 		if(Item && !Cursor.IsEqual(i, WINDOW_VENDOR)) {
 
 			// Get bag button
@@ -1470,7 +1470,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 // Draw the trader screen
 void _HUD::DrawTrader() {
-	if(!Player->Trader) {
+	if(!Player->Character->Trader) {
 		TraderElement->Active = false;
 		return;
 	}
@@ -1478,7 +1478,7 @@ void _HUD::DrawTrader() {
 	TraderElement->Render();
 
 	// Draw trader items
-	for(size_t i = 0; i < Player->Trader->Items.size(); i++) {
+	for(size_t i = 0; i < Player->Character->Trader->Items.size(); i++) {
 
 		// Get button position
 		std::stringstream Buffer;
@@ -1487,7 +1487,7 @@ void _HUD::DrawTrader() {
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item
-		const _Item *Item = Player->Trader->Items[i].Item;
+		const _Item *Item = Player->Character->Trader->Items[i].Item;
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 		Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
@@ -1497,7 +1497,7 @@ void _HUD::DrawTrader() {
 		else
 			Color = glm::vec4(1.0f);
 
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE, Color);
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE, Color);
 	}
 
 	// Get reward button
@@ -1505,16 +1505,16 @@ void _HUD::DrawTrader() {
 	glm::vec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2.0f;
 
 	// Draw item
-	if(Player->Trader->RewardItem) {
+	if(Player->Character->Trader->RewardItem) {
 		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Player->Trader->RewardItem->Texture);
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Trader->Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE);
+		Graphics.DrawCenteredImage(DrawPosition, Player->Character->Trader->RewardItem->Texture);
+		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE);
 	}
 }
 
 // Draw the blacksmith
 void _HUD::DrawBlacksmith() {
-	if(!Player->Blacksmith) {
+	if(!Player->Character->Blacksmith) {
 		BlacksmithElement->Active = false;
 		return;
 	}
@@ -1525,8 +1525,8 @@ void _HUD::DrawBlacksmith() {
 	_Element *UpgradeButton = Assets.Elements["button_blacksmith_upgrade"];
 
 	// Set title
-	BlacksmithTitle->Text = Player->Blacksmith->Name;
-	BlacksmithLevel->Text = "Level " + std::to_string(Player->Blacksmith->Level);
+	BlacksmithTitle->Text = Player->Character->Blacksmith->Name;
+	BlacksmithLevel->Text = "Level " + std::to_string(Player->Character->Blacksmith->Level);
 
 	// Draw element
 	BlacksmithElement->Render();
@@ -1562,7 +1562,7 @@ void _HUD::DrawBlacksmith() {
 				Disabled = true;
 
 			// Check blacksmith level
-			if(InventorySlot.Upgrades >= Player->Blacksmith->Level) {
+			if(InventorySlot.Upgrades >= Player->Character->Blacksmith->Level) {
 				Disabled = true;
 				BlacksmithCost->Text = "I can't upgrade this";
 			}
@@ -1590,14 +1590,14 @@ void _HUD::DrawBlacksmith() {
 
 // Draw minigame
 void _HUD::DrawMinigame(double BlendFactor) {
-	if(!Player->Minigame || !Minigame) {
+	if(!Player->Character->Minigame || !Minigame) {
 		MinigameElement->Active = false;
 		return;
 	}
 
 	// Update text color
 	_Element *CostElement = Assets.Elements["label_minigame_cost"];
-	if(Player->Character->Gold < Player->Minigame->Cost)
+	if(Player->Character->Gold < Player->Character->Minigame->Cost)
 		CostElement->Color = Assets.Colors["red"];
 	else
 		CostElement->Color = Assets.Colors["gold"];
@@ -1978,11 +1978,11 @@ void _HUD::DrawCursorItem() {
 
 // Draws an item's price
 void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy) {
-	if(!Player->Vendor)
+	if(!Player->Character->Vendor)
 		return;
 
 	// Real price
-	int Price = Item->GetPrice(Player->Vendor, Count, Buy);
+	int Price = Item->GetPrice(Player->Character->Vendor, Count, Buy);
 
 	// Color
 	glm::vec4 Color;
@@ -2011,7 +2011,7 @@ void _HUD::BuyItem(_Cursor *Item, _Slot TargetSlot) {
 
 // Sells an item
 void _HUD::SellItem(_Cursor *CursorItem, int Amount) {
-	if(!CursorItem->InventorySlot.Item || !Player->Vendor)
+	if(!CursorItem->InventorySlot.Item || !Player->Character->Vendor)
 		return;
 
 	// Notify server

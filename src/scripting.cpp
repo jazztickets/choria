@@ -1020,7 +1020,7 @@ int _Scripting::ObjectCloseWindows(lua_State *LuaState) {
 // Interact with vendor
 int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	if(!Object->Server || !Object->Vendor)
+	if(!Object->Server || !Object->Character->Vendor)
 		return 0;
 
 	_Buffer Packet;
@@ -1035,7 +1035,7 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 		// Build packet
 		_Slot VendorSlot;
 		_Slot TargetSlot;
-		VendorSlot.Index = Object->Vendor->GetSlotFromID(ItemID);
+		VendorSlot.Index = Object->Character->Vendor->GetSlotFromID(ItemID);
 		Packet.Write<uint8_t>((uint8_t)Amount);
 		VendorSlot.Serialize(Packet);
 		TargetSlot.Serialize(Packet);
