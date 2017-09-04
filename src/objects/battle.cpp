@@ -202,7 +202,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		return;
 
 	// Player already locked in
-	if(ClientPlayer->Action.IsSet())
+	if(ClientPlayer->Character->Action.IsSet())
 		return;
 
 	// Get skillbar action
@@ -222,7 +222,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.ActionUsed = Action;
 
 		// Clear existing targets
-		ClientPlayer->Targets.clear();
+		ClientPlayer->Character->Targets.clear();
 
 		// Check if item can be used
 		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
@@ -254,7 +254,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		}
 
 		// Set potential skill
-		if(ClientPlayer->Targets.size()) {
+		if(ClientPlayer->Character->Targets.size()) {
 			ClientPlayer->Fighter->PotentialAction.Item = Item;
 			ClientPlayer->Fighter->PotentialAction.ActionBarSlot = ActionBarSlot;
 		}
@@ -262,7 +262,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			ClientPlayer->Fighter->PotentialAction.Unset();
 	}
 	// Apply action
-	else if(ClientPlayer->Targets.size()) {
+	else if(ClientPlayer->Character->Targets.size()) {
 
 		// Update HUD
 		if(ClientPlayer->HUD) {
@@ -278,36 +278,36 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
 		if(!Item->CanUse(Scripting, ActionResult)) {
 			ClientPlayer->Fighter->PotentialAction.Unset();
-			ClientPlayer->Targets.clear();
+			ClientPlayer->Character->Targets.clear();
 			return;
 		}
 
 		// Remember target
-		if(ClientPlayer->Targets.size())
-			ClientPlayer->Fighter->LastTarget[ClientPlayer->Targets.front()->Fighter->BattleSide] = ClientPlayer->Targets.front();
+		if(ClientPlayer->Character->Targets.size())
+			ClientPlayer->Fighter->LastTarget[ClientPlayer->Character->Targets.front()->Fighter->BattleSide] = ClientPlayer->Character->Targets.front();
 
 		// Notify server
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACTION_USE);
 		Packet.Write<uint8_t>(ActionBarSlot);
-		Packet.Write<uint8_t>((uint8_t)ClientPlayer->Targets.size());
-		for(const auto &BattleTarget : ClientPlayer->Targets)
+		Packet.Write<uint8_t>((uint8_t)ClientPlayer->Character->Targets.size());
+		for(const auto &BattleTarget : ClientPlayer->Character->Targets)
 			Packet.Write<NetworkIDType>(BattleTarget->NetworkID);
 
 		ClientNetwork->SendPacket(Packet);
 
-		ClientPlayer->Action.Item = Item;
+		ClientPlayer->Character->Action.Item = Item;
 		ClientPlayer->Fighter->PotentialAction.Unset();
 	}
 }
 
 // Set target for client
 void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget) {
-	ClientPlayer->Targets.clear();
+	ClientPlayer->Character->Targets.clear();
 
 	// Can't change self targets
 	if(Item->TargetID == TargetType::SELF) {
-		ClientPlayer->Targets.push_back(ClientPlayer);
+		ClientPlayer->Character->Targets.push_back(ClientPlayer);
 		return;
 	}
 
@@ -330,7 +330,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 		if(Item->CanTarget(ClientPlayer, Target)) {
 
 			// Add object to list of targets
-			ClientPlayer->Targets.push_back(Target);
+			ClientPlayer->Character->Targets.push_back(Target);
 
 			// Update count
 			TargetCount--;
@@ -347,7 +347,7 @@ void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarge
 
 // Changes targets
 void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
-	if(!ClientNetwork || !ClientPlayer->Fighter->PotentialAction.IsSet() || !ClientPlayer->Character->IsAlive() || !ClientPlayer->Targets.size())
+	if(!ClientNetwork || !ClientPlayer->Fighter->PotentialAction.IsSet() || !ClientPlayer->Character->IsAlive() || !ClientPlayer->Character->Targets.size())
 		return;
 
 	// Can't change self targetting actions
@@ -356,7 +356,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 		return;
 
 	// Get current target side
-	int BattleTargetSide = ClientPlayer->Targets.front()->Fighter->BattleSide;
+	int BattleTargetSide = ClientPlayer->Character->Targets.front()->Fighter->BattleSide;
 
 	// Change sides
 	if(Item->TargetID == TargetType::ANY && ChangeSides)
@@ -369,11 +369,11 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	// Get iterator to current target
 	auto Iterator = ObjectList.begin();
 	if(ObjectList.size())
-	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), ClientPlayer->Targets.front());
+	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), ClientPlayer->Character->Targets.front());
 
 	// Get target count
-	size_t TargetCount = ClientPlayer->Targets.size();
-	ClientPlayer->Targets.clear();
+	size_t TargetCount = ClientPlayer->Character->Targets.size();
+	ClientPlayer->Character->Targets.clear();
 
 	// Get max available targets
 	size_t MaxTargets = 0;
@@ -417,7 +417,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 
 		// Check break condition
 		if(Item->CanTarget(ClientPlayer, NewTarget)) {
-			ClientPlayer->Targets.push_back(NewTarget);
+			ClientPlayer->Character->Targets.push_back(NewTarget);
 
 			// Update count
 			TargetCount--;
@@ -436,15 +436,15 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Fighter->BattleSide = Side;
 	Object->Fighter->LastTarget[0] = nullptr;
 	Object->Fighter->LastTarget[1] = nullptr;
-	Object->Targets.clear();
-	Object->Action.Unset();
+	Object->Character->Targets.clear();
+	Object->Character->Action.Unset();
 	Object->Fighter->PotentialAction.Unset();
-	Object->InventoryOpen = false;
-	Object->SkillsOpen = false;
-	Object->MenuOpen = false;
+	Object->Character->InventoryOpen = false;
+	Object->Character->SkillsOpen = false;
+	Object->Character->MenuOpen = false;
 	Object->Character->Vendor = nullptr;
 	Object->Character->Trader = nullptr;
-	Object->TeleportTime = -1.0;
+	Object->Character->TeleportTime = -1.0;
 	Object->Fighter->JoinedBattle = Join;
 	Object->Fighter->GoldStolen = 0;
 	if(Server) {
@@ -677,7 +677,7 @@ void _Battle::ServerEndBattle() {
 	for(auto &Object : Objects) {
 		Object->Controller->InputStates.clear();
 		Object->Fighter->PotentialAction.Unset();
-		Object->Action.Unset();
+		Object->Character->Action.Unset();
 
 		// Get rewards
 		int ExperienceEarned = 0;
@@ -750,7 +750,7 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// Update bot goal
-		if(Object->Bot) {
+		if(Object->Character->Bot) {
 			if(Scripting->StartMethodCall("Bot_Server", "DetermineNextGoal")) {
 				Scripting->PushObject(Object);
 				Scripting->MethodCall(1, 0);
@@ -929,7 +929,7 @@ void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 
 	_Object *Object = Manager->GetObject(NetworkID);
 	if(Object)
-		Object->Action.Item = Stats->Items.at(ItemID);
+		Object->Character->Action.Item = Stats->Items.at(ItemID);
 }
 
 // Send a packet to all players

@@ -73,18 +73,7 @@ _Object::_Object() :
 	ServerPosition(0, 0),
 
 	ModelTexture(nullptr),
-	ModelID(0),
-
-	LoadMapID(0),
-	SpawnMapID(1),
-	SpawnPoint(0),
-	TeleportTime(-1),
-
-	MenuOpen(false),
-	InventoryOpen(false),
-	SkillsOpen(false),
-
-	Bot(false) {
+	ModelID(0) {
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);
@@ -113,7 +102,7 @@ _Object::~_Object() {
 		HUD = nullptr;
 	}
 
-	if(Bot) {
+	if(Character->Bot) {
 		delete Peer;
 		Peer = nullptr;
 	}
@@ -131,7 +120,7 @@ void _Object::Update(double FrameTime) {
 	bool CheckEvent = false;
 
 	// Update bots
-	if(Server && Bot)
+	if(Server && Character->Bot)
 		UpdateBot(FrameTime);
 
 	// Update player position
@@ -140,8 +129,8 @@ void _Object::Update(double FrameTime) {
 		CheckEvent = true;
 
 		// Remove node from pathfinding
-		if(Bot && Path.size())
-			Path.erase(Path.begin());
+		if(Character->Bot && Character->Path.size())
+			Character->Path.erase(Character->Path.begin());
 	}
 
 	// Player hit the use button
@@ -169,13 +158,13 @@ void _Object::Update(double FrameTime) {
 		if(Fighter->TurnTimer >= 1.0) {
 			Fighter->TurnTimer = 1.0;
 
-			if(Server && Action.IsSet()) {
+			if(Server && Character->Action.IsSet()) {
 				ScopeType Scope = ScopeType::WORLD;
 				if(Battle)
 					Scope = ScopeType::BATTLE;
 
 				_Buffer Packet;
-				if(Action.Resolve(Packet, this, Scope)) {
+				if(Character->Action.Resolve(Packet, this, Scope)) {
 					SendPacket(Packet);
 				}
 				else {
@@ -187,7 +176,7 @@ void _Object::Update(double FrameTime) {
 					SendPacket(FailPacket);
 				}
 
-				Action.Unset();
+				Character->Action.Unset();
 			}
 		}
 	}
@@ -202,12 +191,12 @@ void _Object::Update(double FrameTime) {
 	Controller->MoveTime += FrameTime;
 
 	// Update teleport time
-	if(TeleportTime > 0.0) {
+	if(Character->TeleportTime > 0.0) {
 		Character->Status = STATUS_TELEPORT;
-		TeleportTime -= FrameTime;
-		if(TeleportTime <= 0.0) {
+		Character->TeleportTime -= FrameTime;
+		if(Character->TeleportTime <= 0.0) {
 			CheckEvent = true;
-			TeleportTime = 0.0;
+			Character->TeleportTime = 0.0;
 		}
 	}
 
@@ -238,11 +227,11 @@ void _Object::Update(double FrameTime) {
 		Character->Status = STATUS_BLACKSMITH;
 	else if(Character->Minigame)
 		Character->Status = STATUS_MINIGAME;
-	else if(InventoryOpen)
+	else if(Character->InventoryOpen)
 		Character->Status = STATUS_INVENTORY;
-	else if(SkillsOpen)
+	else if(Character->SkillsOpen)
 		Character->Status = STATUS_SKILLS;
-	else if(MenuOpen)
+	else if(Character->MenuOpen)
 		Character->Status = STATUS_MENU;
 }
 
@@ -276,11 +265,11 @@ void _Object::UpdateBot(double FrameTime) {
 
 	// Update battle
 	if(Battle) {
-		if(Fighter->TurnTimer >= 1.0 && !Action.IsSet()) {
+		if(Fighter->TurnTimer >= 1.0 && !Character->Action.IsSet()) {
 
 			// Set skill used
 			size_t ActionBarIndex = 0;
-			if(!Character->GetActionFromActionBar(Action, ActionBarIndex)) {
+			if(!Character->GetActionFromActionBar(Character->Action, ActionBarIndex)) {
 				return;
 			}
 
@@ -288,9 +277,9 @@ void _Object::UpdateBot(double FrameTime) {
 			_ActionResult ActionResult;
 			ActionResult.Source.Object = this;
 			ActionResult.Scope = ScopeType::BATTLE;
-			ActionResult.ActionUsed = Action;
-			if(!Action.Item->CanUse(Scripting, ActionResult))
-				Action.Item = nullptr;
+			ActionResult.ActionUsed = Character->Action;
+			if(!Character->Action.Item->CanUse(Scripting, ActionResult))
+				Character->Action.Item = nullptr;
 
 			// Separate object list
 			std::list<_Object *> Allies, Enemies;
@@ -299,7 +288,7 @@ void _Object::UpdateBot(double FrameTime) {
 			// Call lua script
 			if(Enemies.size()) {
 				if(Scripting->StartMethodCall("AI_Smart", "Update")) {
-					Targets.clear();
+					Character->Targets.clear();
 					Scripting->PushObject(this);
 					Scripting->PushObjectList(Enemies);
 					Scripting->PushObjectList(Allies);
@@ -317,7 +306,7 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 		return;
 
 	// Call AI script to get action
-	if(Fighter->TurnTimer >= 1.0 && !Action.IsSet()) {
+	if(Fighter->TurnTimer >= 1.0 && !Character->Action.IsSet()) {
 
 		// Separate object list
 		std::list<_Object *> Allies, Enemies;
@@ -326,7 +315,7 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 		// Call lua script
 		if(Enemies.size()) {
 			if(Scripting->StartMethodCall(Monster->AI, "Update")) {
-				Targets.clear();
+				Character->Targets.clear();
 				Scripting->PushObject(this);
 				Scripting->PushObjectList(Enemies);
 				Scripting->PushObjectList(Allies);
@@ -471,17 +460,17 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw the action used
 	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide) {
 
-		if(Action.Item) {
+		if(Character->Action.Item) {
 			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, Fighter->BattleElement->Size.y/2);
 			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			if(!Action.Item->IsSkill())
+			if(!Character->Action.Item->IsSkill())
 				Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
-			Graphics.DrawCenteredImage(ItemUsingPosition, Action.Item->Texture, GlobalColor);
+			Graphics.DrawCenteredImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
 		}
 	}
 
 	// Draw potential action to use
-	for(auto &BattleTarget : ClientPlayer->Targets) {
+	for(auto &BattleTarget : ClientPlayer->Character->Targets) {
 		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.IsSet()) {
 
 			// Get texture
@@ -536,8 +525,8 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["hardcore"] = Character->Hardcore;
 	StatsNode["map_x"] = Position.x;
 	StatsNode["map_y"] = Position.y;
-	StatsNode["spawnmap_id"] = SpawnMapID;
-	StatsNode["spawnpoint"] = SpawnPoint;
+	StatsNode["spawnmap_id"] = Character->SpawnMapID;
+	StatsNode["spawnpoint"] = Character->SpawnPoint;
 	StatsNode["portrait_id"] = Character->PortraitID;
 	StatsNode["model_id"] = ModelID;
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
@@ -635,11 +624,11 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Get stats
 	Json::Value StatsNode = Data["stats"];
-	LoadMapID = (NetworkIDType)StatsNode["map_id"].asUInt();
+	Character->LoadMapID = (NetworkIDType)StatsNode["map_id"].asUInt();
 	Position.x = StatsNode["map_x"].asInt();
 	Position.y = StatsNode["map_y"].asInt();
-	SpawnMapID = (NetworkIDType)StatsNode["spawnmap_id"].asUInt();
-	SpawnPoint = StatsNode["spawnpoint"].asUInt();
+	Character->SpawnMapID = (NetworkIDType)StatsNode["spawnmap_id"].asUInt();
+	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
 	Character->Hardcore = StatsNode["hardcore"].asBool();
 	Character->PortraitID = StatsNode["portrait_id"].asUInt();
 	ModelID = StatsNode["model_id"].asUInt();
@@ -979,7 +968,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	// Just died
 	if(WasAlive && !Character->IsAlive()) {
 		Fighter->PotentialAction.Unset();
-		Action.Unset();
+		Character->Action.Unset();
 		ResetUIState();
 
 		// If not in battle apply penalty immediately
@@ -1088,14 +1077,14 @@ NetworkIDType _Object::GetMapID() const {
 
 // Reset ui state variables
 void _Object::ResetUIState() {
-	InventoryOpen = false;
-	SkillsOpen = false;
-	MenuOpen = false;
+	Character->InventoryOpen = false;
+	Character->SkillsOpen = false;
+	Character->MenuOpen = false;
 	Character->Vendor = nullptr;
 	Character->Trader = nullptr;
 	Character->Blacksmith = nullptr;
 	Character->Minigame = nullptr;
-	TeleportTime = -1.0;
+	Character->TeleportTime = -1.0;
 }
 
 // Stop a battle
@@ -1147,7 +1136,7 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 
 	// Check for needed commands
-	if(!Action.IsSet()) {
+	if(!Character->Action.IsSet()) {
 
 		uint8_t ActionBarSlot = Data.Read<uint8_t>();
 		int TargetCount = Data.Read<uint8_t>();
@@ -1155,16 +1144,16 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 			return;
 
 		// Get skillbar action
-		if(!Character->GetActionFromActionBar(Action, ActionBarSlot))
+		if(!Character->GetActionFromActionBar(Character->Action, ActionBarSlot))
 			return;
 
 		// Get targets
-		Targets.clear();
+		Character->Targets.clear();
 		for(int i = 0; i < TargetCount; i++) {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
-			if(Target && Action.Item->CanTarget(this, Target))
-				Targets.push_back(Target);
+			if(Target && Character->Action.Item->CanTarget(this, Target))
+				Character->Targets.push_back(Target);
 		}
 	}
 }
@@ -1266,7 +1255,7 @@ bool _Object::Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPos
 	if(!Map || !Map->Pather)
 		return false;
 
-	if(Path.size())
+	if(Character->Path.size())
 		return true;
 
 	float TotalCost;
@@ -1275,9 +1264,9 @@ bool _Object::Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPos
 	if(Result == micropather::MicroPather::SOLVED) {
 
 		// Convert vector to list
-		Path.clear();
+		Character->Path.clear();
 		for(auto &Node : PathFound)
-			Path.push_back(Node);
+			Character->Path.push_back(Node);
 
 		return true;
 	}
@@ -1290,14 +1279,14 @@ int _Object::GetInputStateFromPath() {
 	int InputState = 0;
 
 	// Find current position in list
-	for(auto Iterator = Path.begin(); Iterator != Path.end(); ++Iterator) {
+	for(auto Iterator = Character->Path.begin(); Iterator != Character->Path.end(); ++Iterator) {
 		glm::ivec2 NodePosition;
 		Map->NodeToPosition(*Iterator, NodePosition);
 
 		if(Position == NodePosition) {
 			auto NextIterator = std::next(Iterator, 1);
-			if(NextIterator == Path.end()) {
-				Path.clear();
+			if(NextIterator == Character->Path.end()) {
+				Character->Path.clear();
 				return 0;
 			}
 

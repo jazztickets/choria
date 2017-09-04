@@ -176,28 +176,9 @@ class _Object : public _ManagerBase {
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 
-		// Actions
-		std::list<_Object *> Targets;
-		_Action Action;
-
 		// Render
 		const _Texture *ModelTexture;
 		uint32_t ModelID;
-
-		// Map
-		NetworkIDType LoadMapID;
-		NetworkIDType SpawnMapID;
-		uint32_t SpawnPoint;
-		double TeleportTime;
-
-		// HUD
-		bool MenuOpen;
-		bool InventoryOpen;
-		bool SkillsOpen;
-
-		// Bots
-		bool Bot;
-		std::list<void *> Path;
 
 	private:
 

@@ -173,6 +173,25 @@ class _Character {
 		bool WaitingForTrade;
 		bool TradeAccepted;
 
+		// Actions
+		std::list<_Object *> Targets;
+		_Action Action;
+
+		// Map
+		NetworkIDType LoadMapID;
+		NetworkIDType SpawnMapID;
+		uint32_t SpawnPoint;
+		double TeleportTime;
+
+		// HUD
+		bool MenuOpen;
+		bool InventoryOpen;
+		bool SkillsOpen;
+
+		// Bots
+		bool Bot;
+		std::list<void *> Path;
+
 	private:
 
 		void CalculateStatBonuses(_StatChange &StatChange);

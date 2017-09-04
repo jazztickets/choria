@@ -96,7 +96,18 @@ _Character::_Character(_Object *Object) :
 	TradePlayer(nullptr),
 	TradeGold(0),
 	WaitingForTrade(false),
-	TradeAccepted(false) {
+	TradeAccepted(false),
+
+	LoadMapID(0),
+	SpawnMapID(1),
+	SpawnPoint(0),
+	TeleportTime(-1),
+
+	MenuOpen(false),
+	InventoryOpen(false),
+	SkillsOpen(false),
+
+	Bot(false) {
 
 }
 

@@ -149,8 +149,8 @@ void _Bot::Update(double FrameTime) {
 
 	// Send input to server
 	if(Player->Controller->DirectionMoved) {
-		if(Player->Path.size())
-			Player->Path.erase(Player->Path.begin());
+		if(Player->Character->Path.size())
+			Player->Character->Path.erase(Player->Character->Path.begin());
 
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
@@ -322,10 +322,10 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			Player->Position = Data.Read<glm::ivec2>();
 			Player->Controller->WaitForServer = false;
-			Player->TeleportTime = -1;
+			Player->Character->TeleportTime = -1;
 		} break;
 		case PacketType::WORLD_TELEPORTSTART:
-			Player->TeleportTime = Data.Read<double>();
+			Player->Character->TeleportTime = Data.Read<double>();
 		break;
 		case PacketType::ACTION_CLEAR: {
 			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
@@ -333,8 +333,8 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			if(!Object)
 				return;
 
-			Object->Action.Unset();
-			Object->Targets.clear();
+			Object->Character->Action.Unset();
+			Object->Character->Targets.clear();
 		} break;
 		case PacketType::EVENT_START:
 			//HandleEventStart(Data);
@@ -475,8 +475,8 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			// Update source object
 			if(ActionResult.Source.Object) {
 				ActionResult.Source.Object->Fighter->TurnTimer = 0.0;
-				ActionResult.Source.Object->Action.Unset();
-				ActionResult.Source.Object->Targets.clear();
+				ActionResult.Source.Object->Character->Action.Unset();
+				ActionResult.Source.Object->Character->Targets.clear();
 
 				// Use item on client
 				if(Player == ActionResult.Source.Object) {
@@ -569,7 +569,7 @@ void _Bot::AssignPlayer(_Object *Object) {
 	Player = Object;
 	if(Player) {
 		Player->Character->CalcLevelStats = true;
-		Player->Path.clear();
+		Player->Character->Path.clear();
 	}
 
 	if(Battle)

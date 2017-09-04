@@ -53,9 +53,9 @@ void _Action::Unserialize(_Buffer &Data, const _Stats *Stats) {
 bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Check for deleted targets
-	for(auto Iterator = Source->Targets.begin(); Iterator != Source->Targets.end(); ) {
+	for(auto Iterator = Source->Character->Targets.begin(); Iterator != Source->Character->Targets.end(); ) {
 		if((*Iterator)->Deleted)
-			Iterator = Source->Targets.erase(Iterator);
+			Iterator = Source->Character->Targets.erase(Iterator);
 		else
 			++Iterator;
 	}
@@ -64,8 +64,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;
 	ActionResult.Scope = Scope;
-	ActionResult.ActionUsed = Source->Action;
-	const _Item *ItemUsed = Source->Action.Item;
+	ActionResult.ActionUsed = Source->Character->Action;
+	const _Item *ItemUsed = Source->Character->Action.Item;
 	bool SkillUnlocked = false;
 	bool ItemUnlocked = false;
 	bool DecrementItem = false;
@@ -118,8 +118,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	ActionResult.Source.Serialize(Data);
 
 	// Update each target
-	Data.Write<uint8_t>((uint8_t)Source->Targets.size());
-	for(auto &Target : Source->Targets) {
+	Data.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
+	for(auto &Target : Source->Character->Targets) {
 
 		// Set objects
 		ActionResult.Source.Reset();
@@ -141,8 +141,8 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 	}
 
 	// Reset object
-	Source->Action.Unset();
-	Source->Targets.clear();
+	Source->Character->Action.Unset();
+	Source->Character->Targets.clear();
 
 	return true;
 }

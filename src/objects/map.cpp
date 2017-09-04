@@ -284,10 +284,10 @@ void _Map::Update(double FrameTime) {
 void _Map::CheckEvents(_Object *Object) const {
 
 	// Check for teleporting
-	if(Server && Object->TeleportTime == 0.0) {
-		Object->TeleportTime = -1.0;
+	if(Server && Object->Character->TeleportTime == 0.0) {
+		Object->Character->TeleportTime = -1.0;
 		Object->Character->Status = _Object::STATUS_NONE;
-		Server->SpawnPlayer(Object, Object->SpawnMapID, _Map::EVENT_SPAWN);
+		Server->SpawnPlayer(Object, Object->Character->SpawnMapID, _Map::EVENT_SPAWN);
 		return;
 	}
 
@@ -295,11 +295,11 @@ void _Map::CheckEvents(_Object *Object) const {
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
 	switch(Tile->Event.Type) {
 		case _Map::EVENT_SPAWN:
-			if(Server && !(Object->SpawnMapID == NetworkID && Object->SpawnPoint == Tile->Event.Data))
+			if(Server && !(Object->Character->SpawnMapID == NetworkID && Object->Character->SpawnPoint == Tile->Event.Data))
 				Server->SendMessage(Object->Peer, "Spawn point set", "yellow");
 
-			Object->SpawnMapID = NetworkID;
-			Object->SpawnPoint = Tile->Event.Data;
+			Object->Character->SpawnMapID = NetworkID;
+			Object->Character->SpawnPoint = Tile->Event.Data;
 		break;
 		case _Map::EVENT_MAPENTRANCE:
 		case _Map::EVENT_MAPCHANGE:

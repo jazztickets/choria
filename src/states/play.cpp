@@ -851,7 +851,7 @@ void _PlayState::HandlePlayerPosition(_Buffer &Data) {
 
 	Player->Position = Data.Read<glm::ivec2>();
 	Player->Controller->WaitForServer = false;
-	Player->TeleportTime = -1;
+	Player->Character->TeleportTime = -1;
 	HUD->StopTeleport();
 }
 
@@ -860,7 +860,7 @@ void _PlayState::HandleTeleportStart(_Buffer &Data) {
 	if(!Player)
 		return;
 
-	Player->TeleportTime = Data.Read<double>();
+	Player->Character->TeleportTime = Data.Read<double>();
 	Player->Controller->WaitForServer = true;
 	HUD->CloseWindows(false);
 	HUD->StartTeleport();
@@ -1206,8 +1206,8 @@ void _PlayState::HandleActionClear(_Buffer &Data) {
 	if(!Object)
 		return;
 
-	Object->Action.Unset();
-	Object->Targets.clear();
+	Object->Character->Action.Unset();
+	Object->Character->Targets.clear();
 }
 
 // Handles the result of a turn in battle
@@ -1234,8 +1234,8 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 	// Update source object
 	if(ActionResult.Source.Object) {
 		ActionResult.Source.Object->Fighter->TurnTimer = 0.0;
-		ActionResult.Source.Object->Action.Unset();
-		ActionResult.Source.Object->Targets.clear();
+		ActionResult.Source.Object->Character->Action.Unset();
+		ActionResult.Source.Object->Character->Targets.clear();
 
 		// Use item on client
 		if(Player == ActionResult.Source.Object) {

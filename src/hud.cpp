@@ -1322,7 +1322,7 @@ void _HUD::DrawTeleport() {
 	TeleportElement->Render();
 
 	std::stringstream Buffer;
-	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->TeleportTime;
+	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->Character->TeleportTime;
 	Assets.Elements["label_teleport_timeleft"]->Text = Buffer.str();
 }
 

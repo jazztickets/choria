@@ -421,7 +421,7 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushnumber(LuaState, Object->Fighter->TurnTimer);
 	lua_setfield(LuaState, -2, "TurnTimer");
 
-	lua_pushboolean(LuaState, Object->Action.IsSet());
+	lua_pushboolean(LuaState, Object->Character->Action.IsSet());
 	lua_setfield(LuaState, -2, "BattleActionIsSet");
 
 	lua_pushinteger(LuaState, Object->Fighter->BattleSide);
@@ -806,7 +806,7 @@ int _Scripting::ObjectAddTarget(lua_State *LuaState) {
 	_Object *Target = (_Object *)lua_touserdata(LuaState, -1);
 	lua_pop(LuaState, 1);
 
-	Object->Targets.push_back(Target);
+	Object->Character->Targets.push_back(Target);
 
 	return 0;
 }
@@ -814,7 +814,7 @@ int _Scripting::ObjectAddTarget(lua_State *LuaState) {
 // Clear battle targets
 int _Scripting::ObjectClearTargets(lua_State *LuaState) {
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	Object->Targets.clear();
+	Object->Character->Targets.clear();
 
 	return 0;
 }
@@ -881,7 +881,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 
 	// Set skill used
 	size_t ActionBarIndex = (size_t)lua_tointeger(LuaState, 1);
-	if(!Object->Character->GetActionFromActionBar(Object->Action, ActionBarIndex)) {
+	if(!Object->Character->GetActionFromActionBar(Object->Character->Action, ActionBarIndex)) {
 		lua_pushboolean(LuaState, false);
 		return 1;
 	}
@@ -890,9 +890,9 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Object;
 	ActionResult.Scope = ScopeType::BATTLE;
-	ActionResult.ActionUsed = Object->Action;
-	if(!Object->Action.Item->CanUse(Object->Scripting, ActionResult)) {
-		Object->Action.Item = nullptr;
+	ActionResult.ActionUsed = Object->Character->Action;
+	if(!Object->Character->Action.Item->CanUse(Object->Scripting, ActionResult)) {
+		Object->Character->Action.Item = nullptr;
 		lua_pushboolean(LuaState, false);
 	}
 	else

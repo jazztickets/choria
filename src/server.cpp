@@ -522,7 +522,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Send map and players to new player
-	SpawnPlayer(Peer->Object, Peer->Object->LoadMapID, _Map::EVENT_NONE);
+	SpawnPlayer(Peer->Object, Peer->Object->Character->LoadMapID, _Map::EVENT_NONE);
 
 	// Broadcast message
 	std::string Message = Peer->Object->Name + " has joined the server";
@@ -574,7 +574,7 @@ void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
 
 		Player->Character->Health = Player->Character->MaxHealth / 2;
 		Player->Character->Mana = Player->Character->MaxMana / 2;
-		SpawnPlayer(Player, Player->SpawnMapID, _Map::EVENT_SPAWN);
+		SpawnPlayer(Player, Player->Character->SpawnMapID, _Map::EVENT_SPAWN);
 	}
 }
 
@@ -773,7 +773,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 
 	// Use spawn point for new characters
 	if(MapID == 0) {
-		MapID = Player->SpawnMapID;
+		MapID = Player->Character->SpawnMapID;
 		if(MapID == 0)
 			MapID = 1;
 		EventType = _Map::EVENT_SPAWN;
@@ -807,7 +807,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		if(EventType != _Map::EVENT_NONE) {
 
 			// Find spawn point in map
-			uint32_t SpawnPoint = Player->SpawnPoint;
+			uint32_t SpawnPoint = Player->Character->SpawnPoint;
 			if(EventType == _Map::EVENT_MAPENTRANCE)
 				SpawnPoint = OldMap->NetworkID;
 
@@ -836,10 +836,10 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 			SendPlayerInfo(Player->Peer);
 		}
 		else
-			Player->Path.clear();
+			Player->Character->Path.clear();
 	}
 	else {
-		Map->FindEvent(_Event(EventType, Player->SpawnPoint), Player->Position);
+		Map->FindEvent(_Event(EventType, Player->Character->SpawnPoint), Player->Position);
 		SendPlayerPosition(Player->Peer);
 		SendHUD(Player->Peer);
 	}
@@ -862,7 +862,7 @@ void _Server::StartTeleport(_Object *Object, double Time) {
 		return;
 
 	Object->ResetUIState();
-	Object->TeleportTime = Time;
+	Object->Character->TeleportTime = Time;
 
 	_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_TELEPORTSTART);
@@ -908,7 +908,7 @@ _Object *_Server::CreateBot() {
 
 	// Create object
 	_Object *Bot = ObjectManager->Create();
-	Bot->Bot = true;
+	Bot->Character->Bot = true;
 	Bot->Scripting = Scripting;
 	Bot->Server = this;
 	Bot->Character->CharacterID = CharacterID;
@@ -1036,12 +1036,12 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 	else {
 
 		// Check for existing action
-		if(!Player->Action.IsSet()) {
-			Player->Targets.clear();
-			Player->Targets.push_back(Player);
-			Player->Action.Item = Item;
-			Player->Action.Level = Item->Level;
-			Player->Action.InventorySlot = (int)Slot.Index;
+		if(!Player->Character->Action.IsSet()) {
+			Player->Character->Targets.clear();
+			Player->Character->Targets.push_back(Player);
+			Player->Character->Action.Item = Item;
+			Player->Character->Action.Level = Item->Level;
+			Player->Character->Action.InventorySlot = (int)Slot.Index;
 		}
 	}
 }
@@ -1415,13 +1415,13 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 			Player->ResetUIState();
 		break;
 		case _Object::STATUS_MENU:
-			Player->MenuOpen = true;
+			Player->Character->MenuOpen = true;
 		break;
 		case _Object::STATUS_INVENTORY:
-			Player->InventoryOpen = true;
+			Player->Character->InventoryOpen = true;
 		break;
 		case _Object::STATUS_SKILLS:
-			Player->SkillsOpen = true;
+			Player->Character->SkillsOpen = true;
 		break;
 		case _Object::STATUS_TELEPORT: {
 			StartTeleport(Player, PLAYER_TELEPORT_TIME);
@@ -1594,7 +1594,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 
 		if(Player->Map) {
 			BroadcastMessage(Peer, Player->Name + " has left the server", "gray");
-			Player->LoadMapID = Player->GetMapID();
+			Player->Character->LoadMapID = Player->GetMapID();
 		}
 
 		// Penalize player for leaving battle
@@ -1602,7 +1602,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 			Player->Character->Health = 0;
 			Player->Character->Mana = Player->Character->MaxMana / 2;
-			Player->LoadMapID = 0;
+			Player->Character->LoadMapID = 0;
 		}
 
 		// Leave trading screen
@@ -1617,7 +1617,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 
 		// Save player
 		Save->StartTransaction();
-		Save->SavePlayer(Player, Player->LoadMapID, &Log);
+		Save->SavePlayer(Player, Player->Character->LoadMapID, &Log);
 		Save->EndTransaction();
 
 		Player->Deleted = true;
@@ -1644,8 +1644,8 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 		_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
 		Packet.Write<NetworkIDType>(Player->NetworkID);
-		if(Player->Action.Item)
-			Packet.Write<uint32_t>(Player->Action.Item->ID);
+		if(Player->Character->Action.Item)
+			Packet.Write<uint32_t>(Player->Character->Action.Item->ID);
 		else
 			Packet.Write<uint32_t>(0);
 
