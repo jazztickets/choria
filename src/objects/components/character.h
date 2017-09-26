@@ -80,6 +80,7 @@ class _Character {
 		float GetManaPercent() const { return MaxMana > 0 ? Mana / (float)MaxMana : 0; }
 
 		// Input
+		bool AcceptingMoveInput();
 		bool CanOpenTrade() const { return IsAlive() && !Battle; }
 		bool CanOpenSkills() const { return IsAlive() && !Battle; }
 		bool CanOpenInventory() const { return IsAlive() && !Battle; }

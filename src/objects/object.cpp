@@ -185,9 +185,6 @@ void _Object::Update(double FrameTime) {
 	if(Character)
 		Character->Update(FrameTime);
 
-	// Update timers
-	Controller->MoveTime += FrameTime;
-
 	// Update teleport time
 	if(Character->TeleportTime > 0.0) {
 		Character->Status = _Character::STATUS_TELEPORT;
@@ -197,6 +194,9 @@ void _Object::Update(double FrameTime) {
 			Character->TeleportTime = 0.0;
 		}
 	}
+
+	// Update timers
+	Controller->MoveTime += FrameTime;
 
 	// Update playtime
 	if(Record) {
@@ -226,7 +226,7 @@ void _Object::UpdateBot(double FrameTime) {
 	}
 
 	// Set input
-	if(AcceptingMoveInput()) {
+	if(Character->AcceptingMoveInput()) {
 		int InputState = 0;
 
 		// Call ai input script
@@ -1117,32 +1117,6 @@ void _Object::SendSeed(bool Generate) {
 	Packet.Write<PacketType>(PacketType::MINIGAME_SEED);
 	Packet.Write<uint32_t>(Character->Seed);
 	Server->Network->SendPacket(Packet, Peer);
-}
-
-// Determines if the player can accept movement keys held down
-bool _Object::AcceptingMoveInput() {
-	if(Character->Battle)
-		return false;
-
-	if(Controller->WaitForServer)
-		return false;
-
-	if(Character->Vendor)
-		return false;
-
-	if(Character->Trader)
-		return false;
-
-	if(Character->Blacksmith)
-		return false;
-
-	if(Character->Minigame)
-		return false;
-
-	if(!Character->IsAlive())
-		return false;
-
-	return true;
 }
 
 // Convert input state bitfield to direction

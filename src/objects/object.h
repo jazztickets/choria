@@ -107,7 +107,6 @@ class _Object : public _ManagerBase {
 		void SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager);
 
 		// Movement
-		bool AcceptingMoveInput();
 		void GetDirectionFromInput(int InputState, glm::ivec2 &Direction);
 		int Move();
 

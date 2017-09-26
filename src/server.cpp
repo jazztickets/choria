@@ -1560,7 +1560,7 @@ void _Server::HandleJoin(_Buffer &Data, _Peer *Peer) {
 	   return;
 
 	_Object *Player = Peer->Object;
-	if(!Player->AcceptingMoveInput())
+	if(!Player->Character->AcceptingMoveInput())
 		return;
 
 	// Find a nearby battle instance

@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
+#include <objects/components/controller.h>
 #include <objects/object.h>
 #include <objects/buff.h>
 #include <ae/buffer.h>
@@ -473,6 +474,32 @@ float _Character::GetNextLevelPercent() const {
 		Percent = 1.0f - (float)ExperienceNeeded / ExperienceNextLevel;
 
 	return Percent;
+}
+
+// Determines if the player can accept movement keys held down
+bool _Character::AcceptingMoveInput() {
+	if(Battle)
+		return false;
+
+	if(Object->Controller->WaitForServer)
+		return false;
+
+	if(Vendor)
+		return false;
+
+	if(Trader)
+		return false;
+
+	if(Blacksmith)
+		return false;
+
+	if(Minigame)
+		return false;
+
+	if(!IsAlive())
+		return false;
+
+	return true;
 }
 
 // Generates the number of moves until the next battle

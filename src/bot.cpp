@@ -126,7 +126,7 @@ void _Bot::Update(double FrameTime) {
 	}
 
 	// Set input
-	if(Player->AcceptingMoveInput()) {
+	if(Player->Character->AcceptingMoveInput()) {
 		int InputState = 0;
 
 		// Call ai input script

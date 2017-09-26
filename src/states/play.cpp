@@ -415,7 +415,7 @@ void _PlayState::Update(double FrameTime) {
 		return;
 
 	// Set input
-	if(Player->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
+	if(Player->Character->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
 		int InputState = 0;
 		if(Actions.State[Action::GAME_UP].Value > 0.0f)
 			InputState |= _Object::MOVE_UP;
@@ -1425,7 +1425,7 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 
 // Send join request to server
 void _PlayState::SendJoinRequest() {
-	if(!Player->AcceptingMoveInput())
+	if(!Player->Character->AcceptingMoveInput())
 		return;
 
 	_Buffer Packet;
@@ -1438,7 +1438,7 @@ void _PlayState::SendUseCommand() {
 	if(HUD->CloseWindows(true))
 		return;
 
-	if(!Player->AcceptingMoveInput())
+	if(!Player->Character->AcceptingMoveInput())
 		return;
 
 	_Buffer Packet;
