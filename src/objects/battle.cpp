@@ -821,7 +821,7 @@ void _Battle::CreateBattleElements(int SideIndex, _Object *Object) {
 
 	// Create ui element
 	if(BattleElement) {
-		Object->CreateBattleElement(BattleElement);
+		Object->Fighter->CreateBattleElement(BattleElement);
 
 		// Create ui elements for status effects
 		for(auto &StatusEffect : Object->Character->StatusEffects) {

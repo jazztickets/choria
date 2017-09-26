@@ -83,7 +83,7 @@ _Object::_Object() :
 
 // Destructor
 _Object::~_Object() {
-	RemoveBattleElement();
+	Fighter->RemoveBattleElement();
 
 	if(Map) {
 		Map->RemoveObject(this);
@@ -190,7 +190,7 @@ void _Object::Update(double FrameTime) {
 
 	// Update teleport time
 	if(Character->TeleportTime > 0.0) {
-		Character->Status = STATUS_TELEPORT;
+		Character->Status = _Character::STATUS_TELEPORT;
 		Character->TeleportTime -= FrameTime;
 		if(Character->TeleportTime <= 0.0) {
 			CheckEvent = true;
@@ -210,27 +210,8 @@ void _Object::Update(double FrameTime) {
 		Map->CheckEvents(this);
 
 	// Update status
-	Character->Status = STATUS_NONE;
-	if(!Character->IsAlive())
-		Character->Status = STATUS_DEAD;
-	else if(Character->Battle)
-		Character->Status = STATUS_BATTLE;
-	else if(Character->WaitingForTrade)
-		Character->Status = STATUS_TRADE;
-	else if(Character->Vendor)
-		Character->Status = STATUS_VENDOR;
-	else if(Character->Trader)
-		Character->Status = STATUS_TRADER;
-	else if(Character->Blacksmith)
-		Character->Status = STATUS_BLACKSMITH;
-	else if(Character->Minigame)
-		Character->Status = STATUS_MINIGAME;
-	else if(Character->InventoryOpen)
-		Character->Status = STATUS_INVENTORY;
-	else if(Character->SkillsOpen)
-		Character->Status = STATUS_SKILLS;
-	else if(Character->MenuOpen)
-		Character->Status = STATUS_MENU;
+	if(Character)
+		Character->UpdateStatus();
 }
 
 // Update bot AI
@@ -691,42 +672,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		Character->Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
 }
 
-// Create a UI element for battle
-void _Object::CreateBattleElement(_Element *Parent) {
-	if(Fighter->BattleElement)
-		throw std::runtime_error("_Object::CreateBattleElement: BattleElement already exists!");
-
-	Fighter->BattleElement = new _Element();
-	Fighter->BattleElement->Name = "battle_element";
-	Fighter->BattleElement->Size = glm::vec2(64, 64);
-	Fighter->BattleElement->Offset = Fighter->BattleOffset;
-	Fighter->BattleElement->Alignment = CENTER_MIDDLE;
-	Fighter->BattleElement->Active = true;
-	Fighter->BattleElement->Index = _HUD::WINDOW_HUD_EFFECTS;
-	Fighter->BattleElement->UserData = this;
-	Fighter->BattleElement->Parent = Parent;
-	Fighter->BattleElement->Style = (Fighter->BattleSide == 0) ? Assets.Styles["style_battle_slot_green"] : Assets.Styles["style_battle_slot_red"];
-	Fighter->BattleElement->CalculateBounds();
-	Parent->Children.push_back(Fighter->BattleElement);
-}
-
-// Remove battle element
-void _Object::RemoveBattleElement() {
-
-	if(Fighter->BattleElement) {
-		if(Fighter->BattleElement->Parent)
-			Fighter->BattleElement->Parent->RemoveChild(Fighter->BattleElement);
-
-		for(auto &Child : Fighter->BattleElement->Children) {
-			if(Child->UserData)
-				((_StatusEffect *)Child->UserData)->BattleElement = nullptr;
-		}
-
-		delete Fighter->BattleElement;
-		Fighter->BattleElement = nullptr;
-	}
-}
-
 // Serialize for ObjectCreate
 void _Object::SerializeCreate(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
@@ -967,7 +912,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 	if(WasAlive && !Character->IsAlive()) {
 		Fighter->PotentialAction.Unset();
 		Character->Action.Unset();
-		ResetUIState();
+		Character->ResetUIState();
 
 		// If not in battle apply penalty immediately
 		if(!Character->Battle) {
@@ -1073,22 +1018,10 @@ NetworkIDType _Object::GetMapID() const {
 	return Map->NetworkID;
 }
 
-// Reset ui state variables
-void _Object::ResetUIState() {
-	Character->InventoryOpen = false;
-	Character->SkillsOpen = false;
-	Character->MenuOpen = false;
-	Character->Vendor = nullptr;
-	Character->Trader = nullptr;
-	Character->Blacksmith = nullptr;
-	Character->Minigame = nullptr;
-	Character->TeleportTime = -1.0;
-}
-
 // Stop a battle
 void _Object::StopBattle() {
 	Character->Battle = nullptr;
-	RemoveBattleElement();
+	Fighter->RemoveBattleElement();
 }
 
 // Call update function for buff
@@ -1228,11 +1161,6 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 	// Remove diagonols
 	if(Direction.x != 0 && Direction.y != 0)
 		Direction.x = 0;
-}
-
-// Can enter battle
-bool _Object::CanBattle() const {
-	return !Character->Battle && Character->Status == STATUS_NONE && Character->Invisible <= 0;
 }
 
 // Send packet to player or broadcast during battle

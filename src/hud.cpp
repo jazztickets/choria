@@ -825,7 +825,7 @@ void _HUD::ToggleTeleport() {
 
 	if(!Player->Controller->WaitForServer && !TeleportElement->Active) {
 		CloseWindows(true);
-		PlayState.SendStatus(_Object::STATUS_TELEPORT);
+		PlayState.SendStatus(_Character::STATUS_TELEPORT);
 		Player->Controller->WaitForServer = true;
 	}
 	else {
@@ -845,7 +845,7 @@ void _HUD::ToggleInventory() {
 		EquipmentElement->SetActive(true);
 		InventoryElement->SetActive(true);
 		CharacterElement->SetActive(true);
-		PlayState.SendStatus(_Object::STATUS_INVENTORY);
+		PlayState.SendStatus(_Character::STATUS_INVENTORY);
 	}
 	else {
 		CloseWindows(true);
@@ -1106,7 +1106,7 @@ void _HUD::InitSkills() {
 	RefreshSkillButtons();
 	Cursor.Reset();
 
-	PlayState.SendStatus(_Object::STATUS_SKILLS);
+	PlayState.SendStatus(_Character::STATUS_SKILLS);
 }
 
 // Initialize the party screen
@@ -1261,7 +1261,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= CloseTeleport();
 
 	if(WasOpen && SendStatus)
-		PlayState.SendStatus(_Object::STATUS_NONE);
+		PlayState.SendStatus(_Character::STATUS_NONE);
 
 	return WasOpen;
 }

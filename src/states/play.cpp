@@ -802,40 +802,40 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 			Object->ServerPosition = Position;
 
 			switch(Status) {
-				case _Object::STATUS_NONE:
+				case _Character::STATUS_NONE:
 					Object->Character->StatusTexture = nullptr;
 				break;
-				case _Object::STATUS_MENU:
+				case _Character::STATUS_MENU:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/pause.png"];
 				break;
-				case _Object::STATUS_INVENTORY:
+				case _Character::STATUS_INVENTORY:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/bag.png"];
 				break;
-				case _Object::STATUS_VENDOR:
+				case _Character::STATUS_VENDOR:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
-				case _Object::STATUS_SKILLS:
+				case _Character::STATUS_SKILLS:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/skills.png"];
 				break;
-				case _Object::STATUS_TRADE:
+				case _Character::STATUS_TRADE:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/trade.png"];
 				break;
-				case _Object::STATUS_TRADER:
+				case _Character::STATUS_TRADER:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
-				case _Object::STATUS_BLACKSMITH:
+				case _Character::STATUS_BLACKSMITH:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
-				case _Object::STATUS_MINIGAME:
+				case _Character::STATUS_MINIGAME:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
 				break;
-				case _Object::STATUS_TELEPORT:
+				case _Character::STATUS_TELEPORT:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/teleport.png"];
 				break;
-				case _Object::STATUS_BATTLE:
+				case _Character::STATUS_BATTLE:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/battle.png"];
 				break;
-				case _Object::STATUS_DEAD:
+				case _Character::STATUS_DEAD:
 					Object->Character->StatusTexture = Assets.Textures["textures/status/dead.png"];
 				break;
 				default:

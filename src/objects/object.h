@@ -59,21 +59,6 @@ class _Object : public _ManagerBase {
 
 	public:
 
-		enum StatusImageType {
-			STATUS_NONE,
-			STATUS_MENU,
-			STATUS_INVENTORY,
-			STATUS_VENDOR,
-			STATUS_SKILLS,
-			STATUS_TRADE,
-			STATUS_TRADER,
-			STATUS_BLACKSMITH,
-			STATUS_MINIGAME,
-			STATUS_BATTLE,
-			STATUS_TELEPORT,
-			STATUS_DEAD,
-		};
-
 		enum MoveDirectionType {
 			MOVE_UP    = (1 << 0),
 			MOVE_DOWN  = (1 << 1),
@@ -82,7 +67,7 @@ class _Object : public _ManagerBase {
 		};
 
 		_Object();
-		~_Object();
+		~_Object() override;
 
 		// Updates
 		void Update(double FrameTime) override;
@@ -113,7 +98,6 @@ class _Object : public _ManagerBase {
 		void UpdateMonsterAI(double FrameTime);
 		void CreateBattleElement(_Element *Parent);
 		void RemoveBattleElement();
-		bool CanBattle() const;
 		void StopBattle();
 
 		// Status effects
@@ -141,9 +125,6 @@ class _Object : public _ManagerBase {
 		// Path finding
 		bool Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
 		int GetInputStateFromPath();
-
-		// UI
-		void ResetUIState();
 
 		// Base
 		std::string Name;

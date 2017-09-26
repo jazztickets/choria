@@ -29,6 +29,7 @@
 #include <states/play.h>
 #include <states/editor.h>
 #include <objects/object.h>
+#include <objects/components/character.h>
 #include <config.h>
 #include <hud.h>
 #include <actiontype.h>
@@ -151,7 +152,7 @@ void _Menu::InitInGame() {
 	if(!ShowExitWarning)
 		Assets.Elements["label_menu_ingame_exitwarning"]->SetActive(false);
 
-	PlayState.SendStatus(_Object::STATUS_MENU);
+	PlayState.SendStatus(_Character::STATUS_MENU);
 	State = STATE_INGAME;
 	FromInGame = true;
 }
@@ -162,7 +163,7 @@ void _Menu::InitPlay() {
 		CurrentLayout->SetActive(false);
 	CurrentLayout = nullptr;
 
-	PlayState.SendStatus(_Object::STATUS_NONE);
+	PlayState.SendStatus(_Character::STATUS_NONE);
 	State = STATE_NONE;
 }
 

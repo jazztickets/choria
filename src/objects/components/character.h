@@ -45,6 +45,21 @@ class _Character {
 
 	public:
 
+		enum StatusImageType {
+			STATUS_NONE,
+			STATUS_MENU,
+			STATUS_INVENTORY,
+			STATUS_VENDOR,
+			STATUS_SKILLS,
+			STATUS_TRADE,
+			STATUS_TRADER,
+			STATUS_BLACKSMITH,
+			STATUS_MINIGAME,
+			STATUS_BATTLE,
+			STATUS_TELEPORT,
+			STATUS_DEAD,
+		};
+
 		_Character(_Object *Object);
 		~_Character();
 
@@ -54,6 +69,7 @@ class _Character {
 		void UpdateMana(int Value);
 		void UpdateGold(int Value);
 		void UpdateExperience(int Value);
+		void UpdateStatus();
 
 		// Stats
 		void CalculateStats();
@@ -69,6 +85,7 @@ class _Character {
 		bool CanOpenInventory() const { return IsAlive() && !Battle; }
 		bool CanOpenParty() const { return IsAlive() && !Battle; }
 		bool CanTeleport() const { return IsAlive() && !Battle; }
+		bool CanBattle() const { return !Battle && Status == STATUS_NONE && Invisible <= 0;	}
 
 		// Battle
 		void GenerateNextBattle();
@@ -83,7 +100,8 @@ class _Character {
 		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
-		// Status effects
+		// UI
+		void ResetUIState();
 		bool AddStatusEffect(_StatusEffect *StatusEffect);
 		void DeleteStatusEffects();
 

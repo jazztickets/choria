@@ -16,6 +16,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/components/fighter.h>
+#include <ae/ui.h>
+#include <ae/assets.h>
+#include <hud.h>
 
 // Constructor
 _Fighter::_Fighter(_Object *Object) :
@@ -30,4 +33,40 @@ _Fighter::_Fighter(_Object *Object) :
 	JoinedBattle(false),
 	BattleSide(0) {
 
+}
+
+// Create a UI element for battle
+void _Fighter::CreateBattleElement(_Element *Parent) {
+	if(BattleElement)
+		throw std::runtime_error("_Fighter::CreateBattleElement: BattleElement already exists!");
+
+	BattleElement = new _Element();
+	BattleElement->Name = "battle_element";
+	BattleElement->Size = glm::vec2(64, 64);
+	BattleElement->Offset = BattleOffset;
+	BattleElement->Alignment = CENTER_MIDDLE;
+	BattleElement->Active = true;
+	BattleElement->Index = _HUD::WINDOW_HUD_EFFECTS;
+	BattleElement->UserData = Object;
+	BattleElement->Parent = Parent;
+	BattleElement->Style = (BattleSide == 0) ? Assets.Styles["style_battle_slot_green"] : Assets.Styles["style_battle_slot_red"];
+	BattleElement->CalculateBounds();
+	Parent->Children.push_back(BattleElement);
+}
+
+// Remove battle element
+void _Fighter::RemoveBattleElement() {
+	if(!BattleElement)
+		return;
+
+	if(BattleElement->Parent)
+		BattleElement->Parent->RemoveChild(BattleElement);
+
+	for(auto &Child : BattleElement->Children) {
+		if(Child->UserData)
+			((_StatusEffect *)Child->UserData)->BattleElement = nullptr;
+	}
+
+	delete BattleElement;
+	BattleElement = nullptr;
 }

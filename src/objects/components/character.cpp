@@ -231,6 +231,32 @@ void _Character::UpdateExperience(int Value) {
 		Experience = 0;
 }
 
+// Update status of character
+void _Character::UpdateStatus() {
+
+	Status = STATUS_NONE;
+	if(!IsAlive())
+		Status = STATUS_DEAD;
+	else if(Battle)
+		Status = STATUS_BATTLE;
+	else if(WaitingForTrade)
+		Status = STATUS_TRADE;
+	else if(Vendor)
+		Status = STATUS_VENDOR;
+	else if(Trader)
+		Status = STATUS_TRADER;
+	else if(Blacksmith)
+		Status = STATUS_BLACKSMITH;
+	else if(Minigame)
+		Status = STATUS_MINIGAME;
+	else if(InventoryOpen)
+		Status = STATUS_INVENTORY;
+	else if(SkillsOpen)
+		Status = STATUS_SKILLS;
+	else if(MenuOpen)
+		Status = STATUS_MENU;
+}
+
 // Calculates all of the player stats
 void _Character::CalculateStats() {
 
@@ -541,6 +567,18 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 			}
 		}
 	}
+}
+
+// Reset ui state variables
+void _Character::ResetUIState() {
+	InventoryOpen = false;
+	SkillsOpen = false;
+	MenuOpen = false;
+	Vendor = nullptr;
+	Trader = nullptr;
+	Blacksmith = nullptr;
+	Minigame = nullptr;
+	TeleportTime = -1.0;
 }
 
 // Add status effect, return true if added

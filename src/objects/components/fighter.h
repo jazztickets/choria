@@ -34,6 +34,10 @@ class _Fighter {
 
 		_Fighter(_Object *Object);
 
+		// UI
+		void CreateBattleElement(_Element *Parent);
+		void RemoveBattleElement();
+
 		// Base
 		_Object *Object;
 

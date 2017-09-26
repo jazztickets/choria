@@ -862,7 +862,7 @@ void _Server::StartTeleport(_Object *Object, double Time) {
 	if(Object->Character->Battle || !Object->Character->IsAlive())
 		return;
 
-	Object->ResetUIState();
+	Object->Character->ResetUIState();
 	Object->Character->TeleportTime = Time;
 
 	_Buffer Packet;
@@ -1412,19 +1412,19 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 	// Read packet
 	uint8_t Status = Data.Read<uint8_t>();
 	switch(Status) {
-		case _Object::STATUS_NONE:
-			Player->ResetUIState();
+		case _Character::STATUS_NONE:
+			Player->Character->ResetUIState();
 		break;
-		case _Object::STATUS_MENU:
+		case _Character::STATUS_MENU:
 			Player->Character->MenuOpen = true;
 		break;
-		case _Object::STATUS_INVENTORY:
+		case _Character::STATUS_INVENTORY:
 			Player->Character->InventoryOpen = true;
 		break;
-		case _Object::STATUS_SKILLS:
+		case _Character::STATUS_SKILLS:
 			Player->Character->SkillsOpen = true;
 		break;
-		case _Object::STATUS_TELEPORT: {
+		case _Character::STATUS_TELEPORT: {
 			StartTeleport(Player, PLAYER_TELEPORT_TIME);
 		} break;
 		default:

@@ -287,7 +287,7 @@ void _Map::CheckEvents(_Object *Object) const {
 	// Check for teleporting
 	if(Server && Object->Character->TeleportTime == 0.0) {
 		Object->Character->TeleportTime = -1.0;
-		Object->Character->Status = _Object::STATUS_NONE;
+		Object->Character->Status = _Character::STATUS_NONE;
 		Server->SpawnPlayer(Object, Object->Character->SpawnMapID, _Map::EVENT_SPAWN);
 		return;
 	}
@@ -876,7 +876,7 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 
 		if(Object != Player) {
 			glm::vec2 Delta = Object->Position - Player->Position;
-			if(glm::dot(Delta, Delta) <= DistanceSquared && Object->CanBattle() && Player->Character->PartyName == Object->Character->PartyName) {
+			if(glm::dot(Delta, Delta) <= DistanceSquared && Object->Character->CanBattle() && Player->Character->PartyName == Object->Character->PartyName) {
 				Players.push_back(Object);
 				if(Players.size() >= Max)
 					return;

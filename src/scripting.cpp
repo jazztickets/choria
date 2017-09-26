@@ -1010,7 +1010,7 @@ int _Scripting::ObjectCloseWindows(lua_State *LuaState) {
 		return 0;
 
 	_Buffer Packet;
-	Packet.Write<uint8_t>(_Object::STATUS_NONE);
+	Packet.Write<uint8_t>(_Character::STATUS_NONE);
 
 	Packet.StartRead();
 	Object->Server->HandlePlayerStatus(Packet, Object->Peer);
