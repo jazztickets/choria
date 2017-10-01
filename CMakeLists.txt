@@ -39,6 +39,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 # find libraries
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(Ogg REQUIRED)
@@ -55,6 +56,7 @@ find_package(TinyXML2 REQUIRED)
 include_directories("src")
 include_directories("src/ext")
 include_directories(${SDL2_INCLUDE_DIR})
+include_directories(${SDL2_IMAGE_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(${VORBIS_INCLUDE_DIR})
 include_directories(${OGG_INCLUDE_DIR})
@@ -74,7 +76,6 @@ file(GLOB SRC_COMPONENTS "src/objects/components/*.cpp" "src/objects/components/
 file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
 file(GLOB SRC_ENET "src/ext/enet/*.c" "src/ext/enet/*.h")
 file(GLOB SRC_PATH "src/ext/path/*.cpp" "src/ext/path/*.h")
-file(GLOB SRC_PNGLITE "src/ext/pnglite/*.c" "src/ext/pnglite/*.h")
 file(GLOB SRC_ZLIB "src/ext/zlib/*.cc" "src/ext/zlib/*.h")
 
 # combine source files
@@ -85,7 +86,6 @@ file(GLOB SRC_ALL
 	${SRC_OBJECTS}
 	${SRC_COMPONENTS}
 	${SRC_PATH}
-	${SRC_PNGLITE}
 	${SRC_STATES}
 	${SRC_ZLIB}
 )
@@ -98,6 +98,7 @@ add_dependencies(${CMAKE_PROJECT_NAME} version)
 target_link_libraries(${CMAKE_PROJECT_NAME}
 	${OPENGL_gl_LIBRARY}
 	${SDL2_LIBRARY}
+	${SDL2_IMAGE_LIBRARIES}
 	${OPENAL_LIBRARY}
 	${VORBIS_LIBRARIES}
 	${OGG_LIBRARIES}

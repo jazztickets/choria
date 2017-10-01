@@ -23,7 +23,6 @@
 #include <ae/texture.h>
 #include <ae/ui.h>
 #include <SDL.h>
-#include <pnglite/pnglite.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
@@ -93,7 +92,6 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 
 	// Setup viewport
 	ChangeViewport(CurrentSize);
-	png_init(0, 0);
 }
 
 // Closes the graphics system
