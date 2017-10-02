@@ -58,6 +58,7 @@ class _Framework {
 
 		void ResetTimer();
 		int GlobalKeyHandler(const SDL_Event &Event);
+		void LoadAssets(bool Server);
 
 		// States
 		StateType FrameworkState;

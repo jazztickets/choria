@@ -48,8 +48,19 @@ class _Assets {
 
 	public:
 
-		void Init(bool IsServer);
+		void Init();
 		void Close();
+
+		void LoadColors(const std::string &Path);
+		void LoadTextureDirectory(const std::string &Path, bool IsServer, bool Repeat=false, bool MipMaps=false);
+		void LoadSounds(const std::string &Path);
+		void LoadMusic(const std::string &Path);
+		void LoadFonts(const std::string &Path);
+		void LoadLayers(const std::string &Path);
+		void LoadPrograms(const std::string &Path);
+		void LoadStyles(const std::string &Path);
+		void LoadUI(const std::string &Path);
+		void SaveUI(const std::string &Path);
 
 		std::unordered_map<std::string, const _Font *> Fonts;
 		std::unordered_map<std::string, _Layer> Layers;
@@ -63,17 +74,6 @@ class _Assets {
 		std::unordered_map<std::string, _Element *> Elements;
 
 	private:
-
-		void LoadColors(const std::string &Path);
-		void LoadTextureDirectory(const std::string &Path, bool IsServer, bool Repeat=false, bool MipMaps=false);
-		void LoadSounds(const std::string &Path);
-		void LoadMusic(const std::string &Path);
-		void LoadFonts(const std::string &Path);
-		void LoadLayers(const std::string &Path);
-		void LoadPrograms(const std::string &Path);
-		void LoadStyles(const std::string &Path);
-		void LoadUI(const std::string &Path);
-		void SaveUI(const std::string &Path);
 
 		std::unordered_map<std::string, const _Shader *> Shaders;
 };

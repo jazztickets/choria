@@ -36,34 +36,7 @@
 _Assets Assets;
 
 // Initialize
-void _Assets::Init(bool IsServer) {
-	LoadTextureDirectory("textures/battle/", IsServer);
-	LoadTextureDirectory("textures/buffs/", IsServer);
-	LoadTextureDirectory("textures/builds/", IsServer);
-	LoadTextureDirectory("textures/editor/", IsServer);
-	LoadTextureDirectory("textures/hud/", IsServer);
-	LoadTextureDirectory("textures/hud_repeat/", IsServer, true);
-	LoadTextureDirectory("textures/interface/", IsServer);
-	LoadTextureDirectory("textures/items/", IsServer);
-	LoadTextureDirectory("textures/map/", IsServer);
-	LoadTextureDirectory("textures/menu/", IsServer);
-	LoadTextureDirectory("textures/minigames/", IsServer);
-	LoadTextureDirectory("textures/monsters/", IsServer);
-	LoadTextureDirectory("textures/portraits/", IsServer);
-	LoadTextureDirectory("textures/models/", IsServer);
-	LoadTextureDirectory("textures/skills/", IsServer);
-	LoadTextureDirectory("textures/status/", IsServer);
-	LoadLayers("tables/layers.tsv");
-	if(!IsServer) {
-		LoadPrograms("tables/programs.tsv");
-		LoadFonts("tables/fonts.tsv");
-		LoadColors("tables/colors.tsv");
-		LoadStyles("tables/styles.tsv");
-		LoadSounds("sounds/");
-		LoadMusic("music/");
-		LoadUI("tables/ui.xml");
-		//SaveUI("tables/ui.xml");
-	}
+void _Assets::Init() {
 }
 
 // Shutdown
