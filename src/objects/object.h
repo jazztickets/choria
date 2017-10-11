@@ -19,7 +19,6 @@
 
 // Libraries
 #include <ae/managerbase.h>
-#include <ae/manager.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
 #include <list>
@@ -46,6 +45,7 @@ class _StatChange;
 class _StatusEffect;
 class _Element;
 class _HUD;
+template<class T> class _Manager;
 struct _Tile;
 struct _ActionResult;
 struct _Slot;

@@ -18,8 +18,8 @@
 #pragma once
 
 // Libraries
+#include <ae/type.h>
 #include <ae/log.h>
-#include <ae/manager.h>
 #include <glm/vec4.hpp>
 #include <unordered_map>
 #include <memory>
@@ -37,6 +37,7 @@ class _Save;
 class _Object;
 class _Scripting;
 class _Item;
+template<class T> class _Manager;
 struct _NetworkEvent;
 
 struct _BattleEvent {

@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/minigame.h>
 #include <objects/sprite.h>
+#include <ae/manager.h>
 #include <ae/physics.h>
 #include <ae/assets.h>
 #include <ae/camera.h>

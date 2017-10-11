@@ -26,6 +26,7 @@
 #include <objects/components/monster.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
+#include <ae/manager.h>
 #include <ae/servernetwork.h>
 #include <ae/clientnetwork.h>
 #include <ae/peer.h>

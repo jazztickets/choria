@@ -18,9 +18,11 @@
 #pragma once
 
 // Libraries
+#include <ae/type.h>
 #include <objects/action.h>
 #include <cstdint>
 #include <vector>
+#include <list>
 #include <unordered_map>
 
 // Forward Declarations

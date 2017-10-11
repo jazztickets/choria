@@ -21,7 +21,6 @@
 #include <ae/managerbase.h>
 #include <ae/network.h>
 #include <ae/texture.h>
-#include <ae/manager.h>
 #include <path/micropather.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>

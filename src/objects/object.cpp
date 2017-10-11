@@ -27,6 +27,7 @@
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
+#include <ae/manager.h>
 #include <ae/servernetwork.h>
 #include <ae/peer.h>
 #include <ae/ui.h>

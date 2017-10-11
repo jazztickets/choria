@@ -27,6 +27,7 @@
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
+#include <ae/manager.h>
 #include <ae/clientnetwork.h>
 #include <ae/program.h>
 #include <ae/actions.h>

@@ -21,6 +21,7 @@
 #include <ae/actions.h>
 #include <ae/random.h>
 #include <ae/buffer.h>
+#include <ae/manager.h>
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <objects/map.h>

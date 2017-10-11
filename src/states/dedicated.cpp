@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <states/dedicated.h>
+#include <ae/manager.h>
 #include <ae/servernetwork.h>
 #include <ae/peer.h>
 #include <ae/util.h>

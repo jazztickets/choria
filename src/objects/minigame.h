@@ -18,13 +18,13 @@
 #pragma once
 
 // Libraries
-#include <ae/manager.h>
 #include <ae/ui.h>
 #include <random>
 
 // Forward Declarations
 class _Sprite;
 class _Camera;
+template<class T> class _Manager;
 struct _MinigameItem;
 struct _MinigameType;
 struct _MouseEvent;

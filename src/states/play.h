@@ -17,9 +17,9 @@
 *******************************************************************************/
 #pragma once
 
+#include <ae/type.h>
 #include <ae/state.h>
 #include <ae/log.h>
-#include <ae/manager.h>
 #include <unordered_map>
 
 // Forward Declarations
@@ -36,6 +36,7 @@ class _Buffer;
 class _Stats;
 class _StatChange;
 class _Scripting;
+template<class T> class _Manager;
 
 // Play state
 class _PlayState : public _State {

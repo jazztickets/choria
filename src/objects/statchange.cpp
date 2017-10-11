@@ -18,6 +18,7 @@
 #include <objects/statchange.h>
 #include <objects/object.h>
 #include <objects/buff.h>
+#include <ae/manager.h>
 #include <ae/buffer.h>
 #include <ae/util.h>
 #include <ae/font.h>
