@@ -25,11 +25,11 @@
 #include <map>
 
 // Forward Declarations
+template<class T> class _Manager;
 class _Object;
 class _Battle;
 class _Buffer;
 class _Font;
-template<class T> class _Manager;
 
 // Hash function for StatType
 struct StatTypeHash {

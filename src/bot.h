@@ -25,6 +25,7 @@
 #include <glm/vec2.hpp>
 
 // Forward Declarations
+template<class T> class _Manager;
 class _Stats;
 class _ClientNetwork;
 class _Buffer;
@@ -33,7 +34,6 @@ class _Battle;
 class _Map;
 class _Stats;
 class _Scripting;
-template<class T> class _Manager;
 struct _Event;
 struct _StatChange;
 

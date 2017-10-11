@@ -23,12 +23,12 @@
 #include <ae/type.h>
 
 // Classes
-class _ManagerBase {
+class _BaseObject {
 
 	public:
 
-		_ManagerBase() : NetworkID(0), Deleted(false) { }
-		virtual ~_ManagerBase() { }
+		_BaseObject() : NetworkID(0), Deleted(false) { }
+		virtual ~_BaseObject() { }
 
 		virtual void Update(double FrameTime) = 0;
 

@@ -27,6 +27,7 @@
 #include <list>
 
 // Forward Declarations
+template<class T> class _Manager;
 class _ServerNetwork;
 class _Buffer;
 class _Peer;
@@ -37,7 +38,6 @@ class _Save;
 class _Object;
 class _Scripting;
 class _Item;
-template<class T> class _Manager;
 struct _NetworkEvent;
 
 struct _BattleEvent {

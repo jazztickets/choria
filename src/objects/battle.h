@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <ae/managerbase.h>
+#include <ae/baseobject.h>
 #include <objects/action.h>
 #include <list>
 #include <cstdint>
@@ -55,7 +55,7 @@ struct _BattleResult {
 };
 
 // Classes
-class _Battle : public _ManagerBase {
+class _Battle : public _BaseObject {
 
 	public:
 

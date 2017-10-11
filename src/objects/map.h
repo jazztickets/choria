@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <ae/managerbase.h>
+#include <ae/baseobject.h>
 #include <ae/network.h>
 #include <ae/texture.h>
 #include <path/micropather.h>
@@ -67,7 +67,7 @@ struct _Tile {
 };
 
 // Classes
-class _Map : public _ManagerBase, public micropather::Graph {
+class _Map : public _BaseObject, public micropather::Graph {
 
 	public:
 

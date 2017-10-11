@@ -22,9 +22,9 @@
 #include <random>
 
 // Forward Declarations
+template<class T> class _Manager;
 class _Sprite;
 class _Camera;
-template<class T> class _Manager;
 struct _MinigameItem;
 struct _MinigameType;
 struct _MouseEvent;

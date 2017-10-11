@@ -23,6 +23,7 @@
 #include <unordered_map>
 
 // Forward Declarations
+template<class T> class _Manager;
 class _Font;
 class _HUD;
 class _Map;
@@ -36,7 +37,6 @@ class _Buffer;
 class _Stats;
 class _StatChange;
 class _Scripting;
-template<class T> class _Manager;
 
 // Play state
 class _PlayState : public _State {

@@ -19,14 +19,14 @@
 
 // Libraries
 #include <ae/physics.h>
-#include <ae/managerbase.h>
+#include <ae/baseobject.h>
 #include <string>
 
 // Forward Declarations
 class _Texture;
 
 // Sprite
-class _Sprite : public _ManagerBase {
+class _Sprite : public _BaseObject {
 
 	public:
 

@@ -18,7 +18,7 @@
 #pragma once
 
 // Libraries
-#include <ae/managerbase.h>
+#include <ae/baseobject.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
 #include <list>
@@ -26,6 +26,7 @@
 #include <cstdint>
 
 // Forward Declarations
+template<class T> class _Manager;
 class _Character;
 class _Inventory;
 class _Record;
@@ -45,7 +46,6 @@ class _StatChange;
 class _StatusEffect;
 class _Element;
 class _HUD;
-template<class T> class _Manager;
 struct _Tile;
 struct _ActionResult;
 struct _Slot;
@@ -55,7 +55,7 @@ namespace Json {
 }
 
 // Classes
-class _Object : public _ManagerBase {
+class _Object : public _BaseObject {
 
 	public:
 
