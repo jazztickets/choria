@@ -91,7 +91,6 @@ struct _Style {
 	// Graphics
 	const _Program *Program;
 	const _Texture *Texture;
-	const _Atlas *Atlas;
 
 	// Properties
 	bool Stretch;
