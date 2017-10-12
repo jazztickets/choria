@@ -457,10 +457,6 @@ void _Element::DrawStyle(const _Style *DrawStyle) const {
 		Graphics.SetColor(DrawStyle->TextureColor);
 		Graphics.DrawImage(Bounds, DrawStyle->Texture, DrawStyle->Stretch);
 	}
-	else if(Atlas) {
-		Graphics.SetColor(DrawStyle->TextureColor);
-		Graphics.DrawAtlas(Bounds, Atlas->Texture, Atlas->GetTextureCoords(TextureIndex));
-	}
 	else {
 		if(DrawStyle->HasBackgroundColor) {
 			glm::vec4 RenderColor(DrawStyle->BackgroundColor);
@@ -468,7 +464,6 @@ void _Element::DrawStyle(const _Style *DrawStyle) const {
 			Graphics.SetColor(RenderColor);
 			Graphics.DrawRectangle(Bounds, true);
 		}
-
 		if(DrawStyle->HasBorderColor) {
 			glm::vec4 RenderColor(DrawStyle->BorderColor);
 			RenderColor.a *= Fade;
