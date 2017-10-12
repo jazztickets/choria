@@ -21,7 +21,6 @@
 
 // Libraries
 #include <ae/opengl.h>
-#include <ae/texture.h>
 #include <glm/vec2.hpp>
 #include <glm/mat4x4.hpp>
 #include <SDL_video.h>
