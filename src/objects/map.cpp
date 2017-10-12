@@ -558,7 +558,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 		Graphics.SetProgram(Assets.Programs["pos"]);
 		Graphics.SetVBO(VBO_NONE);
 		Graphics.SetColor(Assets.Colors["red"]);
-		Graphics.DrawRectangle(glm::vec2(-0.51f, -0.51f), glm::vec2(Size.x - 0.49f, Size.y - 0.49f));
+		Graphics.DrawRectangle3D(glm::vec2(0), glm::vec2(Size), false);
 	}
 
 	// Draw zone overlays

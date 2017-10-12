@@ -82,6 +82,7 @@ class _Graphics {
 		void DrawCube(const glm::vec3 &Start, const glm::vec3 &Scale, const _Texture *Texture);
 		void DrawRectangle(const _Bounds &Bounds, bool Filled=false);
 		void DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool Filled=false);
+		void DrawRectangle3D(const glm::vec2 &Start, const glm::vec2 &End, bool Filled);
 		void DrawMask(const _Bounds &Bounds);
 		void DrawCircle(const glm::vec3 &Position, float Radius);
 

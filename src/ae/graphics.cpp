@@ -473,6 +473,27 @@ void _Graphics::DrawRectangle(const _Bounds &Bounds, bool Filled) {
 	DrawRectangle(glm::vec2(Bounds.Start.x, Bounds.Start.y), glm::vec2(Bounds.End.x, Bounds.End.y), Filled);
 }
 
+// Draw rectangle in 3D space
+void _Graphics::DrawRectangle3D(const glm::vec2 &Start, const glm::vec2 &End, bool Filled) {
+	if(LastAttribLevel != 1)
+		throw std::runtime_error(std::string(__FUNCTION__) + " - LastAttribLevel mismatch");
+
+	glUniformMatrix4fv(LastProgram->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+
+	float Vertices[] = {
+		Start.x, Start.y,
+		End.x  , Start.y,
+		End.x  , End.y  ,
+		Start.x, End.y  ,
+	};
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
+	if(Filled)
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	else
+		glDrawArrays(GL_LINE_LOOP, 0, 4);
+}
+
 // Draw rectangle
 void _Graphics::DrawRectangle(const glm::vec2 &Start, const glm::vec2 &End, bool Filled) {
 	if(LastAttribLevel != 1)
