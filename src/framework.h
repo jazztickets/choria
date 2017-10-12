@@ -56,7 +56,6 @@ class _Framework {
 
 	private:
 
-		void ResetTimer();
 		int GlobalKeyHandler(const SDL_Event &Event);
 		void LoadAssets(bool Server);
 
