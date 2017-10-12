@@ -22,6 +22,7 @@
 #include <ae/program.h>
 #include <ae/font.h>
 #include <ae/texture.h>
+#include <ae/mesh.h>
 #include <ae/files.h>
 #include <ae/graphics.h>
 #include <ae/audio.h>
@@ -51,6 +52,9 @@ void _Assets::Close() {
 	for(const auto &Texture : Textures)
 		delete Texture.second;
 
+	for(const auto &Mesh : Meshes)
+		delete Mesh.second;
+
 	for(const auto &Font : Fonts)
 		delete Font.second;
 
@@ -63,10 +67,15 @@ void _Assets::Close() {
 	for(const auto &Style : Styles)
 		delete Style.second;
 
+	for(const auto &AnimationTemplate : AnimationTemplates)
+		delete AnimationTemplate.second;
+
 	Fonts.clear();
 	Layers.clear();
 	Textures.clear();
+	Meshes.clear();
 	Styles.clear();
+	AnimationTemplates.clear();
 	Sounds.clear();
 	Music.clear();
 	Elements.clear();
@@ -261,6 +270,68 @@ void _Assets::LoadMusic(const std::string &Path) {
 		if(!Assets.Music[File])
 			Assets.Music[File] = Audio.LoadMusic(Path + File);
 	}
+}
+
+// Load meshes
+void _Assets::LoadMeshDirectory(const std::string &Path) {
+
+	// Get files
+	_Files Files(Path);
+
+	// Load meshes
+	for(const auto &File : Files.Nodes) {
+		if(File.find(".mesh") != std::string::npos) {
+			std::string Name = Path + File;
+			Assets.Meshes[Name] = new _Mesh(Name);
+		}
+	}
+}
+
+// Load animations
+void _Assets::LoadAnimations(const std::string &Path, bool IsServer) {
+
+	// Load file
+	std::ifstream File(Path.c_str(), std::ios::in);
+	if(!File)
+		throw std::runtime_error("Error loading: " + Path);
+
+	// Skip header
+	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read file
+	while(!File.eof() && File.peek() != EOF) {
+		std::string Name;
+		std::getline(File, Name, '\t');
+
+		// Check for duplicates
+		if(AnimationTemplates[Name])
+			throw std::runtime_error(std::string(__FUNCTION__) + " - Duplicate entry: " + Name);
+
+		// Create template
+		_AnimationTemplate *Template = new _AnimationTemplate();
+		Template->Identifier = Name;
+
+		// Load texture
+		std::string TextureFile;
+		std::getline(File, TextureFile, '\t');
+		if(!Assets.Textures[TextureFile])
+			Assets.Textures[TextureFile] = new _Texture(TextureFile, IsServer, false, false);
+
+		Template->Texture = Assets.Textures[TextureFile];
+
+		// Read data
+		File >> Template->FrameSize.x >> Template->FrameSize.y >> Template->StartFrame >> Template->EndFrame >> Template->DefaultFrame >> Template->RepeatType;
+		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		// Add to list
+		if(!IsServer) {
+			Template->FramesPerLine = Template->Texture->Size.x / Template->FrameSize.x;
+			Template->TextureScale = glm::vec2(Template->FrameSize) / glm::vec2(Template->Texture->Size);
+		}
+		AnimationTemplates[Name] = Template;
+	}
+
+	File.close();
 }
 
 // Loads the styles

@@ -68,6 +68,11 @@ void _Graphics::Init(const _WindowSettings &WindowSettings) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 
+	// Load cursors
+	Cursors[CURSOR_MAIN] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+	Cursors[CURSOR_CROSS] = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_CROSSHAIR);
+	SDL_SetCursor(Cursors[CURSOR_MAIN]);
+
 	// Create window
 	Window = SDL_CreateWindow(WindowSettings.WindowTitle.c_str(), WindowSettings.Position.x, WindowSettings.Position.y, CurrentSize.x, CurrentSize.y, VideoFlags);
 	if(Window == nullptr)
@@ -107,6 +112,10 @@ void _Graphics::Close() {
 		SDL_GL_DeleteContext(Context);
 		Context = nullptr;
 	}
+
+	// Close cursors
+	for(int i = 0; i < CURSOR_COUNT; i++)
+		SDL_FreeCursor(Cursors[i]);
 
 	// Close window
 	if(Window) {
@@ -699,3 +708,4 @@ void _Graphics::EnableStencilTest() { glEnable(GL_STENCIL_TEST); }
 void _Graphics::DisableStencilTest() { glDisable(GL_STENCIL_TEST); }
 void _Graphics::EnableScissorTest() { glEnable(GL_SCISSOR_TEST); }
 void _Graphics::DisableScissorTest() { glDisable(GL_SCISSOR_TEST); }
+void _Graphics::ShowCursor(int Type) { SDL_SetCursor(Cursors[Type]); }

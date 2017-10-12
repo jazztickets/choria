@@ -177,9 +177,12 @@ void _Framework::ChangeState(_State *RequestedState) {
 
 // Updates the current state and manages the state stack
 void _Framework::Update() {
+
+	// Get frame time
 	double FrameTime = (SDL_GetPerformanceCounter() - Timer) / (double)SDL_GetPerformanceFrequency();
 	Timer = SDL_GetPerformanceCounter();
 
+	// Get events from SDL
 	SDL_PumpEvents();
 	Input.Update(FrameTime * Config.TimeScale);
 

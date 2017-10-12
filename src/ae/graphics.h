@@ -51,6 +51,12 @@ struct _WindowSettings {
 	bool Vsync;
 };
 
+enum CursorType {
+	CURSOR_MAIN,
+	CURSOR_CROSS,
+	CURSOR_COUNT,
+};
+
 // Classes
 class _Graphics {
 
@@ -126,6 +132,7 @@ class _Graphics {
 		bool Enabled;
 		SDL_Window *Window;
 		SDL_GLContext Context;
+		SDL_Cursor *Cursors[CURSOR_COUNT];
 
 		// State
 		glm::ivec2 WindowSize;
