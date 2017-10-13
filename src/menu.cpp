@@ -82,8 +82,8 @@ void _Menu::InitTitle(bool Disconnect) {
 		PlayState.Network->Disconnect(true);
 
 	std::string BuildNumber = "";
-	if(GAME_BUILD)
-		BuildNumber = "r" + std::to_string(GAME_BUILD);
+	if(BUILD_NUMBER)
+		BuildNumber = "r" + std::to_string(BUILD_NUMBER);
 
 	Assets.Elements["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildNumber;
 	Assets.Elements["label_menu_title_message"]->Text = "";

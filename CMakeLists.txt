@@ -11,15 +11,6 @@ project(choria)
 # add extra find modules
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
-# add custom target to generate version.h
-add_custom_target(
-	version
-	${CMAKE_COMMAND}
-	-D SRC=${PROJECT_SOURCE_DIR}/cmake/version.h.in
-	-D DST=${PROJECT_SOURCE_DIR}/src/version.h
-	-P ${PROJECT_SOURCE_DIR}/cmake/version.cmake
-)
-
 # mingw
 if(WIN32)
 	set(EXTRA_LIBS ${EXTRA_LIBS} winmm ws2_32)
@@ -88,10 +79,20 @@ file(GLOB SRC_ALL
 	${SRC_PATH}
 	${SRC_STATES}
 	${SRC_ZLIB}
+	deployment/resource.rc
 )
 
 # build binary
-add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL} src/resource.rc)
+add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
+
+# add custom target to generate version.h
+add_custom_target(
+	version
+	${CMAKE_COMMAND}
+	-D SRC=${PROJECT_SOURCE_DIR}/cmake/version.h.in
+	-D DST=${PROJECT_SOURCE_DIR}/src/version.h
+	-P ${PROJECT_SOURCE_DIR}/cmake/version.cmake
+)
 add_dependencies(${CMAKE_PROJECT_NAME} version)
 
 # link libraries
