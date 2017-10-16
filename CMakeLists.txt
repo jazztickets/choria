@@ -45,7 +45,7 @@ find_package(TinyXML2 REQUIRED)
 
 # set include directories
 include_directories("src")
-include_directories("src/ext")
+include_directories("ext")
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${SDL2_IMAGE_INCLUDE_DIR})
 include_directories(${OPENAL_INCLUDE_DIR})
@@ -65,9 +65,9 @@ file(GLOB SRC_AE "src/ae/*.cpp" "src/ae/*.h")
 file(GLOB SRC_OBJECTS "src/objects/*.cpp" "src/objects/*.h")
 file(GLOB SRC_COMPONENTS "src/objects/components/*.cpp" "src/objects/components/*.h")
 file(GLOB SRC_STATES "src/states/*.cpp" "src/states/*.h")
-file(GLOB SRC_ENET "src/ext/enet/*.c" "src/ext/enet/*.h")
-file(GLOB SRC_PATH "src/ext/path/*.cpp" "src/ext/path/*.h")
-file(GLOB SRC_ZLIB "src/ext/zlib/*.cc" "src/ext/zlib/*.h")
+file(GLOB SRC_ENET "ext/enet/*.c" "ext/enet/*.h")
+file(GLOB SRC_PATH "ext/path/*.cpp" "ext/path/*.h")
+file(GLOB SRC_ZLIB "ext/zlib/*.cc" "ext/zlib/*.h")
 
 # combine source files
 file(GLOB SRC_ALL
