@@ -25,6 +25,12 @@ tinyxml2
 zlib
 pthreads
 
+-- Cloning --
+git clone https://github.com/jazztickets/choria.git
+cd choria
+git submodule init
+git submodule update
+
 -- Building and running --
 mkdir build
 cd build
