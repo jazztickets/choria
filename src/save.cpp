@@ -98,10 +98,9 @@ void _Save::SaveSettings() {
 	SettingsNode["clock"] = Clock;
 
 	// Convert to JSON string
-	Json::FastWriter Writer;
-	std::string JsonString = Writer.write(SettingsNode);
-	if(JsonString.back() == '\n')
-		JsonString.pop_back();
+	Json::StreamWriterBuilder Writer;
+	Writer.settings_["indentation"] = "";
+	std::string JsonString = Json::writeString(Writer, (SettingsNode));
 
 	// Update database
 	Database->PrepareQuery("UPDATE settings SET data = @data");
@@ -116,10 +115,12 @@ void _Save::GetSettings() {
 	if(Database->FetchRow()) {
 
 		// Parse JSON
+		Json::CharReaderBuilder Reader;
 		Json::Value Data;
-		Json::Reader Reader;
-		if(!Reader.parse(Database->GetString(0), Data))
-			throw std::runtime_error("_Save::GetSettings: Error parsing JSON string!");
+		std::istringstream Stream(Database->GetString(0));
+		std::string Errors;
+		if(!Json::parseFromStream(Reader, Stream, &Data, &Errors))
+			throw std::runtime_error("_Save::GetSettings: " + Errors);
 
 		// Get settings
 		Secret = Data["secret"].asUInt64();
@@ -292,10 +293,9 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 	Data["stats"]["map_id"] = MapID;
 
 	// Get JSON string
-	Json::FastWriter Writer;
-	std::string JsonString = Writer.write(Data);
-	if(JsonString.back() == '\n')
-		JsonString.pop_back();
+	Json::StreamWriterBuilder Writer;
+	Writer.settings_["indentation"] = "";
+	std::string JsonString = Json::writeString(Writer, Data);
 
 	// Save character stats
 	Database->PrepareQuery("UPDATE character SET data = @data WHERE id = @character_id");

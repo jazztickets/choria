@@ -597,10 +597,12 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Parse JSON
+	Json::CharReaderBuilder Reader;
 	Json::Value Data;
-	Json::Reader Reader;
-	if(!Reader.parse(JsonString, Data))
-		throw std::runtime_error("_Object::UnserializeSaveData: Error parsing JSON string!");
+	std::istringstream Stream(JsonString);
+	std::string Errors;
+	if(!Json::parseFromStream(Reader, Stream, &Data, &Errors))
+		throw std::runtime_error("_Object::UnserializeSaveData: " + Errors);
 
 	// Get stats
 	Json::Value StatsNode = Data["stats"];
