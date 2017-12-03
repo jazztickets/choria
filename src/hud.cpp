@@ -73,6 +73,7 @@ _HUD::_HUD() {
 	Assets.Elements["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Elements["label_buttonbar_party"]->Text = Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
 	Assets.Elements["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
+	Assets.Elements["label_hud_pvp"]->Text = "";
 
 	DiedElement = Assets.Elements["element_died"];
 	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
