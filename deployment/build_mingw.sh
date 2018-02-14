@@ -1,6 +1,7 @@
 #!/bin/bash
 
 upload_server=$1
+upload_path="/srv/http/files/"
 
 projectdir=`git rev-parse --show-toplevel`
 if [ -z "$projectdir" ]; then
@@ -61,14 +62,14 @@ build() {
 	rm working/*.bat
 
 	if [ -n "$upload_server" ]; then
-		scp $archive $upload_server:web/files/
+		scp $archive $upload_server:"$upload_path"
 	fi
 
 	mv $archive "$outputdir"
 }
 
 if [ -n "$upload_server" ]; then
-	ssh $upload_server rm -f web/files/choria*.zip
+	ssh $upload_server rm -f "$upload_path"/choria*.zip
 fi
 
 rm -f "$outputdir"/choria*.zip
