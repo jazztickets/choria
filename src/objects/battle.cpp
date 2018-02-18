@@ -441,12 +441,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Character->Targets.clear();
 	Object->Character->Action.Unset();
 	Object->Fighter->PotentialAction.Unset();
-	Object->Character->InventoryOpen = false;
-	Object->Character->SkillsOpen = false;
-	Object->Character->MenuOpen = false;
-	Object->Character->Vendor = nullptr;
-	Object->Character->Trader = nullptr;
-	Object->Character->TeleportTime = -1.0;
+	Object->Character->ResetUIState();
 	Object->Fighter->JoinedBattle = Join;
 	Object->Fighter->GoldStolen = 0;
 	if(Server) {
