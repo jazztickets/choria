@@ -488,7 +488,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 	if(!ClientPlayer) {
 		glm::vec4 AmbientLightEditor(1.0f, 1.0f, 1.0f, 1.0f);
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
-		Assets.Programs["pos_uv"]->LightPosition = glm::vec3(0, 0, 0);
+		Assets.Programs["pos_uv"]->LightCount = 0;
 		Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
 	}
 	else {
@@ -498,11 +498,11 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 
 		// Setup lights
 		glm::vec3 LightPosition(glm::vec3(ClientPlayer->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
-		glm::vec3 LightAttenuation(0.0f, 1.0f, 0.0f);
 
-		Assets.Programs["pos_uv"]->LightAttenuation = LightAttenuation;
-		Assets.Programs["pos_uv"]->LightPosition = LightPosition;
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+		Assets.Programs["pos_uv"]->LightCount = 1;
+		Assets.Programs["pos_uv"]->Lights[0].Position = LightPosition;
+		Assets.Programs["pos_uv"]->Lights[0].Color = glm::vec4(1, 1, 1, 1);
 	}
 
 	// Draw background map
@@ -518,7 +518,6 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 		Camera->GetDrawPosition(BlendFactor, DrawPosition);
 		DrawPosition -= BackgroundOffset;
 
-		//BackgroundOffset.z = -10.0f;
 		float Width = DrawPosition.z * Graphics.AspectRatio;
 		float Height = DrawPosition.z;
 
