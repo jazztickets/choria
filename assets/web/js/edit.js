@@ -44,7 +44,7 @@ $(document).ready(function() {
 			columns: columns,
 			trimDropdown: false,
 			manualColumnResize: true,
-			wordWrap: false,
+			wordWrap: true,
 			contextMenu: {
 				items: {
 					"select_column": { name: 'Select Column' },
