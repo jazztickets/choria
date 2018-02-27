@@ -755,6 +755,7 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
+	Data.Write<int>(Character->BattleSpeed);
 	Data.Write<double>(Fighter->TurnTimer);
 	Data.Write<uint8_t>(Fighter->BattleSide);
 
@@ -851,6 +852,7 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
+	Character->BattleSpeed = Character->BaseBattleSpeed = Data.Read<int>();
 	Fighter->TurnTimer = Data.Read<double>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
 
