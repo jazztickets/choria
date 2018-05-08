@@ -27,6 +27,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-result -Wno-un
 # set output path
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
+# use legacy gl lib
+set(OpenGL_GL_PREFERENCE LEGACY)
+
 # find libraries
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
