@@ -18,7 +18,7 @@ libvorbis
 libogg
 FreeType2
 Lua 5.2+
-GLM 0.9.5+
+GLM 0.9.9+
 SQLite 3+
 jsoncpp
 tinyxml2
