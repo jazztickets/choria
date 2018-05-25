@@ -24,9 +24,9 @@
 _Fighter::_Fighter(_Object *Object) :
 	Object(Object),
 	BattleElement(nullptr),
-	BattleOffset(0, 0),
-	ResultPosition(0, 0),
-	StatPosition(0, 0),
+	BattleOffset(0.0f, 0.0f),
+	ResultPosition(0.0f, 0.0f),
+	StatPosition(0.0f, 0.0f),
 	LastTarget{nullptr, nullptr},
 	TurnTimer(0.0),
 	GoldStolen(0),

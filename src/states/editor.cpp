@@ -116,6 +116,7 @@ void _EditorState::Init() {
 	DrawBounds = false;
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
+	WorldCursor = glm::vec2(0.0f, 0.0f);
 }
 
 // Shuts the state down

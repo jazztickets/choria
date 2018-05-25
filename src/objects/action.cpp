@@ -228,8 +228,8 @@ TargetType _Action::GetTargetType() {
 
 // Constructor
 _ActionResult::_ActionResult() :
-	LastPosition(0, 0),
-	Position(0, 0),
+	LastPosition(0.0f, 0.0f),
+	Position(0.0f, 0.0f),
 	Texture(nullptr),
 	Time(0.0),
 	Timeout(HUD_ACTIONRESULT_TIMEOUT),
