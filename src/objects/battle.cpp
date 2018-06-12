@@ -536,7 +536,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 		Object->Stats = Stats;
 		Object->Character->HUD = HUD;
 		Object->Scripting = Scripting;
-		Object->UnserializeBattle(Data);
+		Object->UnserializeBattle(Data, ClientPlayer == Object);
 		Object->Character->CalculateStats();
 
 		// Add object

@@ -36,12 +36,12 @@ const  uint16_t     DEFAULT_NETWORKPORT_ALT         =  31235;
 const  double       DEFAULT_TIMESTEP                =  1/100.0;
 const  double       DEFAULT_AUTOSAVE_PERIOD         =  60.0;
 //     Camera
-const  float        CAMERA_DISTANCE                 =  8.4375f;
-const  float        CAMERA_DIVISOR                  =  30.0f;
-const  float        CAMERA_EDITOR_DIVISOR           =  5.0f;
-const  float        CAMERA_FOVY                     =  90.0f;
-const  float        CAMERA_NEAR                     =  0.1f;
-const  float        CAMERA_FAR                      =  100.0f;
+const  float         CAMERA_DISTANCE                 =  8.4375f;
+const  float         CAMERA_DIVISOR                  =  30.0f;
+const  float         CAMERA_EDITOR_DIVISOR           =  5.0f;
+const  float         CAMERA_FOVY                     =  90.0f;
+const  float         CAMERA_NEAR                     =  0.1f;
+const  float         CAMERA_FAR                      =  100.0f;
 //     Account
 const  uint32_t     ACCOUNT_SINGLEPLAYER_ID         =  1;
 const  uint32_t     ACCOUNT_BOTS_ID                 =  2;
@@ -75,7 +75,7 @@ const  double       HUD_ACTIONRESULT_FADETIME       =  1.0;
 const  double       HUD_STATCHANGE_TIMEOUT          =  1.0;
 const  double       HUD_STATCHANGE_TIMEOUT_LONG     =  3.0;
 const  double       HUD_STATCHANGE_FADETIME         =  0.5;
-const  float        HUD_STATCHANGE_DISTANCE         =  20.0f;
+const  float         HUD_STATCHANGE_DISTANCE         =  20.0f;
 //     Battle
 const  int          BATTLE_MINSTEPS                 =  12;
 const  int          BATTLE_MAXSTEPS                 =  30;
@@ -83,44 +83,44 @@ const  int          BATTLE_MAX_OBJECTS_PER_SIDE     =  8;
 const  int          BATTLE_MULTI_TARGET_COUNT       =  3;
 const  int          BATTLE_ROWS_PER_SIDE            =  4;
 const  int          BATTLE_COLUMN_SPACING           =  230;
-const  double       BATTLE_DEFAULTSPEED             =  (1.0/2.0);
+const  double       BATTLE_DEFAULTATTACKPERIOD      =  2.0;
 const  double       BATTLE_WAITDEADTIME             =  0.75;
 const  double       BATTLE_MAX_START_TURNTIMER      =  0.35;
-const  float        BATTLE_HEALTHBAR_WIDTH          =  90;
-const  float        BATTLE_HEALTHBAR_HEIGHT         =  22;
+const  float         BATTLE_HEALTHBAR_WIDTH          =  90;
+const  float         BATTLE_HEALTHBAR_HEIGHT         =  22;
 const  int          BATTLE_MIN_SPEED                =  5;
 const  int          BATTLE_PVP_ATTACKER_SIDE        =  1;
-const  float        BATTLE_NOTHINGDROP_SCALE        =  0.1f;
+const  float         BATTLE_NOTHINGDROP_SCALE        =  0.1f;
 //     Player
 const  double       PLAYER_TELEPORT_TIME            =  3.0;
 const  double       PLAYER_MOVETIME                 =  0.15;
 const  int          PLAYER_MIN_MOVESPEED            =  10;
 const  double       PLAYER_ATTACKTIME               =  1.0;
 const  int          PLAYER_NAME_SIZE                =  12;
-const  float        PLAYER_INVIS_ALPHA              =  0.27f;
+const  float         PLAYER_INVIS_ALPHA              =  0.27f;
 const  int          PLAYER_MAX_GOLD                 =  1000000000;
-const  float        PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
+const  float         PLAYER_DEATH_GOLD_PENALTY       =  0.2f;
 //     Game
 const  int          GAME_MAX_RESISTANCE             =  75;
 const  double       GAME_DIFFICULTY_PER_PLAYER      =  0.1;
-const  float        GAME_UPGRADE_COST_MULTIPLIER    =  0.25f;
+const  float         GAME_UPGRADE_COST_MULTIPLIER    =  0.25f;
 const  int          GAME_BASE_UPGRADE_COST          =  5;
-const  float        GAME_UPGRADE_AMOUNT             =  0.25f;
+const  float         GAME_UPGRADE_AMOUNT             =  0.25f;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory
 const  int          INVENTORY_TOOLTIP_OFFSET        =  20;
 const  int          INVENTORY_TOOLTIP_PADDING       =  10;
-const  float        INVENTORY_TOOLTIP_WIDTH         =  250;
-const  float        INVENTORY_TOOLTIP_HEIGHT        =  340;
+const  float         INVENTORY_TOOLTIP_WIDTH         =  250;
+const  float         INVENTORY_TOOLTIP_HEIGHT        =  340;
 const  int          INVENTORY_MAX_STACK             =  255;
 const  int          INVENTORY_INCREMENT_MODIFIER    =  5;
 const  int          INVENTORY_SPLIT_MODIFIER        =  5;
 //     Trader
 const  int          TRADER_MAXITEMS                 =  8;
 //     Menu
-const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;
-const  float        MENU_PAUSE_FADE                 =  0.7f;
+const  float         MENU_ACCEPTINPUT_FADE           =  0.7f;
+const  float         MENU_PAUSE_FADE                 =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME           =  0.250;
 //     Scripting
 const  std::string  SCRIPTS_GAME                    =  "scripts/game.lua";

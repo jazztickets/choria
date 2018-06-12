@@ -495,7 +495,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage");
 		Object->Character->BaseArmor = Database->GetInt<int>("armor");
 		Object->Character->BaseDamageBlock = Database->GetInt<int>("block");
-		Object->Character->BaseBattleSpeed = Database->GetInt<int>("battlespeed");
+		Object->Character->BaseAttackPeriod = Database->GetReal("attackperiod");
 		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience");
 		Object->Monster->GoldGiven = Database->GetInt<int>("gold");
 		Object->Monster->AI = Database->GetString("ai_name");

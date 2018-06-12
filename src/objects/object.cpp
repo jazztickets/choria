@@ -148,7 +148,7 @@ void _Object::Update(double FrameTime) {
 		// Check turn timer
 		if(Character->Battle) {
 			if(!Character->Stunned)
-				Fighter->TurnTimer += FrameTime * BATTLE_DEFAULTSPEED * Character->BattleSpeed / 100.0;
+				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->BattleSpeed / 100.0;
 		}
 		else
 			Fighter->TurnTimer = 1.0;
@@ -755,7 +755,7 @@ void _Object::SerializeBattle(_Buffer &Data) {
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
-	Data.Write<int>(Character->BattleSpeed);
+	Data.Write<int>(Character->EquipmentBattleSpeed);
 	Data.Write<double>(Fighter->TurnTimer);
 	Data.Write<uint8_t>(Fighter->BattleSide);
 
@@ -843,7 +843,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 }
 
 // Unserialize battle stats
-void _Object::UnserializeBattle(_Buffer &Data) {
+void _Object::UnserializeBattle(_Buffer &Data, bool IsClient) {
 	Controller->InputStates.clear();
 
 	// Get object type
@@ -852,7 +852,9 @@ void _Object::UnserializeBattle(_Buffer &Data) {
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
-	Character->BattleSpeed = Character->BaseBattleSpeed = Data.Read<int>();
+	Character->EquipmentBattleSpeed = Data.Read<int>();
+	if(!IsClient)
+		Character->BaseBattleSpeed = Character->EquipmentBattleSpeed;
 	Fighter->TurnTimer = Data.Read<double>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
 

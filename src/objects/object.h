@@ -86,7 +86,7 @@ class _Object : public _BaseObject {
 		void SerializeBattle(_Buffer &Data);
 		void UnserializeCreate(_Buffer &Data);
 		void UnserializeStats(_Buffer &Data);
-		void UnserializeBattle(_Buffer &Data);
+		void UnserializeBattle(_Buffer &Data, bool IsClient);
 		void SendPacket(_Buffer &Packet);
 
 		// Stats

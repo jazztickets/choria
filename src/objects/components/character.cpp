@@ -65,6 +65,7 @@ _Character::_Character(_Object *Object) :
 	BaseDamageBlock(0),
 	BaseMoveSpeed(100),
 	BaseBattleSpeed(100),
+	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
 	BaseEvasion(0),
 	BaseHitChance(100),
 	BaseDropRate(0),
@@ -82,7 +83,8 @@ _Character::_Character(_Object *Object) :
 	Armor(0),
 	DamageBlock(0),
 	MoveSpeed(100),
-	BattleSpeed(100),
+	BattleSpeed(0),
+	EquipmentBattleSpeed(0),
 	Evasion(0),
 	HitChance(100),
 	DropRate(0),
@@ -270,7 +272,7 @@ void _Character::CalculateStats() {
 	ManaRegen = BaseManaRegen;
 	HealPower = BaseHealPower;
 	AttackPower = BaseAttackPower;
-	BattleSpeed = 0;
+	BattleSpeed = BaseBattleSpeed;
 	Evasion = BaseEvasion;
 	HitChance = BaseHitChance;
 	MinDamage = BaseMinDamage;
@@ -345,6 +347,9 @@ void _Character::CalculateStats() {
 		}
 	}
 
+	// Get speed before buffs
+	EquipmentBattleSpeed = BattleSpeed;
+
 	// Get buff stats
 	for(const auto &StatusEffect : StatusEffects) {
 		_StatChange StatChange;
@@ -376,10 +381,9 @@ void _Character::CalculateStats() {
 	// Physical resist comes solely from armor
 	Resistances[2] = (int)(ArmorResist * 100);
 
-	BattleSpeed = (int)(BaseBattleSpeed * BattleSpeed / 100.0 + BaseBattleSpeed);
+	// Cap speed
 	if(BattleSpeed < BATTLE_MIN_SPEED)
 		BattleSpeed = BATTLE_MIN_SPEED;
-
 	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
 		MoveSpeed = PLAYER_MIN_MOVESPEED;
 

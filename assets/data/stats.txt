@@ -625,35 +625,35 @@ CREATE TABLE IF NOT EXISTS "monster" (
 	"maxdamage" INTEGER DEFAULT(0),
 	"armor" INTEGER DEFAULT(0),
 	"block" INTEGER DEFAULT(0),
-	"battlespeed" INTEGER DEFAULT(100),
+	"attackperiod" REAL DEFAULT(2.0),
 	"ai_id" INTEGER DEFAULT(0) REFERENCES ai(id) ON DELETE CASCADE,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE
 );
-INSERT INTO monster VALUES(1,1,'Crow','textures/monsters/crow.png',1,1,40,0,5,10,0,0,60,1,24);
-INSERT INTO monster VALUES(2,1,'Green Slime','textures/monsters/slime.png',2,2,100,0,10,20,2,0,70,1,35);
-INSERT INTO monster VALUES(3,1,'Fire Ant','textures/monsters/fireant.png',4,4,150,0,10,30,10,0,100,2,29);
-INSERT INTO monster VALUES(4,1,'Black Spider','textures/monsters/spider.png',3,3,125,0,20,40,1,0,100,1,21);
-INSERT INTO monster VALUES(5,1,'Bat','textures/monsters/bat.png',5,6,90,0,30,60,3,0,130,1,22);
-INSERT INTO monster VALUES(6,1,'Blue Slime','textures/monsters/blue_slime.png',5,7,200,0,10,50,5,0,70,1,35);
-INSERT INTO monster VALUES(7,1,'Bat Lord','textures/monsters/red_bat.png',25,50,1250,0,50,150,4,10,100,3,23);
-INSERT INTO monster VALUES(8,1,'Crab','textures/monsters/crab.png',7,10,250,0,20,50,20,5,50,1,30);
-INSERT INTO monster VALUES(9,1,'Water Crab','textures/monsters/water_crab.png',10,15,400,0,50,100,25,10,90,1,30);
-INSERT INTO monster VALUES(10,1,'King Krab','textures/monsters/king_krab.png',50,100,1500,0,100,200,35,20,100,3,26);
-INSERT INTO monster VALUES(11,1,'Ghost','textures/monsters/ghost.png',12,3,150,0,100,120,0,0,30,1,25);
-INSERT INTO monster VALUES(12,1,'Zombie','textures/monsters/zombie.png',15,20,500,0,70,180,10,10,70,1,28);
-INSERT INTO monster VALUES(13,1,'Demon Crow','textures/monsters/demon_crow.png',20,15,225,0,140,220,2,5,110,1,24);
-INSERT INTO monster VALUES(14,1,'Apparition','textures/monsters/apparition.png',25,7,350,0,200,210,5,5,30,1,25);
-INSERT INTO monster VALUES(15,1,'Venomous Bat','textures/monsters/venomous_bat.png',20,20,250,0,100,200,4,5,130,2,32);
-INSERT INTO monster VALUES(16,1,'Crimson Slime','textures/monsters/crimson_slime.png',30,30,800,0,120,250,6,5,70,1,35);
-INSERT INTO monster VALUES(17,1,'Dead Queen','textures/monsters/dead_queen.png',100,200,4000,1500,200,300,15,20,50,4,27);
-INSERT INTO monster VALUES(18,1,'Mud Man','textures/monsters/mud_man.png',20,30,600,0,40,120,8,5,70,2,31);
-INSERT INTO monster VALUES(19,1,'Slime Prince','textures/monsters/slime_prince.png',100,150,3000,4000,100,350,25,30,80,5,33);
-INSERT INTO monster VALUES(20,1,'Skeleton','textures/monsters/skeleton.png',30,25,650,0,100,150,5,10,100,1,36);
-INSERT INTO monster VALUES(21,1,'Skeleton Priest','textures/monsters/skeleton_priest.png',35,30,750,600,50,100,3,0,75,6,34);
-INSERT INTO monster VALUES(22,1,'Dusty Ant','textures/monsters/dusty_ant.png',40,40,1000,0,125,175,25,15,100,2,29);
-INSERT INTO monster VALUES(23,1,'Demon','textures/monsters/demon.png',100,75,1200,0,100,225,10,0,100,2,37);
-INSERT INTO monster VALUES(24,1,'Goblin','textures/monsters/goblin.png',6,5,175,0,20,40,2,0,100,1,38);
-INSERT INTO monster VALUES(25,1,'Goblin Thief','textures/monsters/goblin_thief.png',15,50,300,0,50,100,5,5,125,7,39);
+INSERT INTO monster VALUES(1,1,'Crow','textures/monsters/crow.png',1,1,40,0,5,10,0,0,3.330000000000000071,1,24);
+INSERT INTO monster VALUES(2,1,'Green Slime','textures/monsters/slime.png',2,2,100,0,10,20,2,0,2.8500000000000000888,1,35);
+INSERT INTO monster VALUES(3,1,'Fire Ant','textures/monsters/fireant.png',4,4,150,0,10,30,10,0,2.0,2,29);
+INSERT INTO monster VALUES(4,1,'Black Spider','textures/monsters/spider.png',3,3,125,0,20,40,1,0,2.0,1,21);
+INSERT INTO monster VALUES(5,1,'Bat','textures/monsters/bat.png',5,6,90,0,30,60,3,0,1.5500000000000000444,1,22);
+INSERT INTO monster VALUES(6,1,'Blue Slime','textures/monsters/blue_slime.png',5,7,200,0,10,50,5,0,2.8500000000000000888,1,35);
+INSERT INTO monster VALUES(7,1,'Bat Lord','textures/monsters/red_bat.png',25,50,1250,0,50,150,4,10,2.0,3,23);
+INSERT INTO monster VALUES(8,1,'Crab','textures/monsters/crab.png',7,10,250,0,20,50,20,5,4.0,1,30);
+INSERT INTO monster VALUES(9,1,'Water Crab','textures/monsters/water_crab.png',10,15,400,0,50,100,25,10,2.2200000000000001953,1,30);
+INSERT INTO monster VALUES(10,1,'King Krab','textures/monsters/king_krab.png',50,100,1500,0,100,200,35,20,2.0,3,26);
+INSERT INTO monster VALUES(11,1,'Ghost','textures/monsters/ghost.png',12,3,150,0,100,120,0,0,6.6600000000000001421,1,25);
+INSERT INTO monster VALUES(12,1,'Zombie','textures/monsters/zombie.png',15,20,500,0,70,180,10,10,2.8500000000000000888,1,28);
+INSERT INTO monster VALUES(13,1,'Demon Crow','textures/monsters/demon_crow.png',20,15,225,0,140,220,2,5,1.8100000000000000532,1,24);
+INSERT INTO monster VALUES(14,1,'Apparition','textures/monsters/apparition.png',25,7,350,0,200,210,5,5,6.6600000000000001421,1,25);
+INSERT INTO monster VALUES(15,1,'Venomous Bat','textures/monsters/venomous_bat.png',20,20,250,0,100,200,4,5,1.5300000000000000266,2,32);
+INSERT INTO monster VALUES(16,1,'Crimson Slime','textures/monsters/crimson_slime.png',30,30,800,0,120,250,6,5,2.8500000000000000888,1,35);
+INSERT INTO monster VALUES(17,1,'Dead Queen','textures/monsters/dead_queen.png',100,200,4000,1500,200,300,15,20,4.0,4,27);
+INSERT INTO monster VALUES(18,1,'Mud Man','textures/monsters/mud_man.png',20,30,600,0,40,120,8,5,2.8500000000000000888,2,31);
+INSERT INTO monster VALUES(19,1,'Slime Prince','textures/monsters/slime_prince.png',100,150,3000,4000,100,350,25,30,2.5,5,33);
+INSERT INTO monster VALUES(20,1,'Skeleton','textures/monsters/skeleton.png',30,25,650,0,100,150,5,10,2.0,1,36);
+INSERT INTO monster VALUES(21,1,'Skeleton Priest','textures/monsters/skeleton_priest.png',35,30,750,600,50,100,3,0,2.6600000000000001421,6,34);
+INSERT INTO monster VALUES(22,1,'Dusty Ant','textures/monsters/dusty_ant.png',40,40,1000,0,125,175,25,15,2.0,2,29);
+INSERT INTO monster VALUES(23,1,'Demon','textures/monsters/demon.png',100,75,1200,0,100,225,10,0,2.0,2,37);
+INSERT INTO monster VALUES(24,1,'Goblin','textures/monsters/goblin.png',6,5,175,0,20,40,2,0,2.0,1,38);
+INSERT INTO monster VALUES(25,1,'Goblin Thief','textures/monsters/goblin_thief.png',15,50,300,0,50,100,5,5,1.6000000000000000888,7,39);
 CREATE TABLE IF NOT EXISTS "map" (
 	"id" INTEGER PRIMARY KEY,
 	"file" TEXT,

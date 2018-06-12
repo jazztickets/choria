@@ -155,6 +155,7 @@ class _Character {
 		int BaseDamageBlock;
 		int BaseMoveSpeed;
 		int BaseBattleSpeed;
+		double BaseAttackPeriod;
 		int BaseEvasion;
 		int BaseHitChance;
 		int BaseDropRate;
@@ -174,6 +175,7 @@ class _Character {
 		int DamageBlock;
 		int MoveSpeed;
 		int BattleSpeed;
+		int EquipmentBattleSpeed;
 		int Evasion;
 		int HitChance;
 		int DropRate;

@@ -407,7 +407,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			// Get object
 			_Object *Object = ObjectManager->GetObject(NetworkID);
 			if(Object) {
-				Object->UnserializeBattle(Data);
+				Object->UnserializeBattle(Data, Object == Player);
 				Battle->AddObject(Object, Object->Fighter->BattleSide, true);
 			}
 		} break;
