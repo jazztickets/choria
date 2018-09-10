@@ -1042,6 +1042,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 			Player->Character->Targets.push_back(Player);
 			Player->Character->Action.Item = Item;
 			Player->Character->Action.Level = Item->Level;
+			Player->Character->Action.Duration = Item->Duration;
 			Player->Character->Action.InventorySlot = (int)Slot.Index;
 		}
 	}

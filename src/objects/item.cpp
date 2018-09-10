@@ -442,7 +442,7 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 	if(Scripting->StartMethodCall(Script, "GetInfo")) {
 
 		// Get description from script
-		Scripting->PushInt(DrawLevel);
+		Scripting->PushItemParameters(DrawLevel, Duration);
 		Scripting->MethodCall(1, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
@@ -659,10 +659,11 @@ void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const 
 void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Use")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
+		Scripting->PushInt(ActionResult.ActionUsed.Duration);
 		Scripting->PushObject(ActionResult.Source.Object);
 		Scripting->PushObject(ActionResult.Target.Object);
 		Scripting->PushActionResult(&ActionResult);
-		Scripting->MethodCall(4, 1);
+		Scripting->MethodCall(5, 1);
 		Scripting->GetActionResult(1, ActionResult);
 		Scripting->FinishMethodCall();
 	}

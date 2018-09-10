@@ -574,6 +574,17 @@ void _Scripting::PushObjectStatusEffects(_Object *Object) {
 	}
 }
 
+// Push varying parameters for an item
+void _Scripting::PushItemParameters(int Level, double Duration) {
+	lua_newtable(LuaState);
+
+	lua_pushinteger(LuaState, Level);
+	lua_setfield(LuaState, -2, "Level");
+
+	lua_pushnumber(LuaState, Duration);
+	lua_setfield(LuaState, -2, "Duration");
+}
+
 // Push int value
 void _Scripting::PushInt(int Value) {
 	lua_pushinteger(LuaState, Value);

@@ -17,17 +17,16 @@ Base_Potion = {
 -- Healing Salve  --
 
 Item_HealingSalve = Base_Potion:New()
-Item_HealingSalve.Duration = 5
 
-function Item_HealingSalve.GetInfo(self, Level)
+function Item_HealingSalve.GetInfo(self, Item)
 
-	return "Restore [c green]" .. Level * Buff_Healing.Heal * self.Duration .. "[c white] HP over [c green]" .. self.Duration .. " [c white]seconds"
+	return "Restore [c green]" .. math.floor(Item.Level * Buff_Healing.Heal * Item.Duration) .. "[c white] HP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_HealingSalve.Use(self, Level, Source, Target, Result)
+function Item_HealingSalve.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Healing.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -35,17 +34,16 @@ end
 -- Mana Cider --
 
 Item_ManaCider = Base_Potion:New()
-Item_ManaCider.Duration = 10
 
-function Item_ManaCider.GetInfo(self, Level)
+function Item_ManaCider.GetInfo(self, Item)
 
-	return "Restore [c light_blue]" .. Level * Buff_Mana.Mana * self.Duration .. " [c white]MP over [c green]" .. self.Duration .. " [c white]seconds"
+	return "Restore [c light_blue]" .. math.floor(Item.Level * Buff_Mana.Mana * Item.Duration) .. " [c white]MP over [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_ManaCider.Use(self, Level, Source, Target, Result)
+function Item_ManaCider.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Mana.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -54,15 +52,15 @@ end
 
 Item_InvisPotion = Base_Potion:New()
 
-function Item_InvisPotion.GetInfo(self, Level)
+function Item_InvisPotion.GetInfo(self, Item)
 
-	return "Turn invisible and avoid combat for [c_green]" .. Level .. " [c_white]seconds"
+	return "Turn invisible and avoid combat for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_InvisPotion.Use(self, Level, Source, Target, Result)
+function Item_InvisPotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Invis.Pointer
-	Result.Target.BuffLevel = 1
-	Result.Target.BuffDuration = Level
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -70,17 +68,16 @@ end
 -- Haste Potion --
 
 Item_HastePotion = Base_Potion:New()
-Item_HastePotion.Duration = 10
 
-function Item_HastePotion.GetInfo(self, Level)
+function Item_HastePotion.GetInfo(self, Item)
 
-	return "Increase battle speed by [c_green]" .. Level .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase battle speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_HastePotion.Use(self, Level, Source, Target, Result)
+function Item_HastePotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Hasted.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -88,17 +85,16 @@ end
 -- Death Potion --
 
 Item_DeathPotion = Base_Potion:New()
-Item_DeathPotion.Duration = 10
 
-function Item_DeathPotion.GetInfo(self, Level)
+function Item_DeathPotion.GetInfo(self, Item)
 
 	return "Do not drink"
 end
 
-function Item_DeathPotion.Use(self, Level, Source, Target, Result)
+function Item_DeathPotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Bleeding.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -107,12 +103,12 @@ end
 
 Item_BattlePotion = Base_Potion:New()
 
-function Item_BattlePotion.GetInfo(self, Level)
+function Item_BattlePotion.GetInfo(self, Item)
 
 	return "Get into a fight"
 end
 
-function Item_BattlePotion.Use(self, Level, Source, Target, Result)
+function Item_BattlePotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Battle = Level
 
 	return Result
@@ -121,17 +117,16 @@ end
 -- Poison Potion --
 
 Item_PoisonPotion = Base_Potion:New()
-Item_PoisonPotion.Duration = 10
 
-function Item_PoisonPotion.GetInfo(self, Level)
+function Item_PoisonPotion.GetInfo(self, Item)
 
-	return "Poison target for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Poison target for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_PoisonPotion.Use(self, Level, Source, Target, Result)
+function Item_PoisonPotion.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Poisoned.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -140,12 +135,12 @@ end
 
 Item_ActionSlot = { }
 
-function Item_ActionSlot.GetInfo(self, Level)
+function Item_ActionSlot.GetInfo(self, Item)
 
 	return "Increase your action bar size"
 end
 
-function Item_ActionSlot.Use(self, Level, Source, Target, Result)
+function Item_ActionSlot.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.ActionBarSize = 1
 
 	return Result
@@ -160,7 +155,7 @@ function Item_ThrowingKnives.GenerateDamage(self, Level, Source)
 	return self.Item.GenerateDamage()
 end
 
-function Item_ThrowingKnives.GetInfo(self, Level)
+function Item_ThrowingKnives.GetInfo(self, Item)
 
 	return "Throw a knife at your enemy"
 end
@@ -172,17 +167,16 @@ end
 -- Poison Knives --
 
 Item_PoisonKnives = Base_Attack:New()
-Item_PoisonKnives.Duration = 10
 
-function Item_PoisonKnives.GetInfo(self, Level)
+function Item_PoisonKnives.GetInfo(self, Item)
 
 	return "Throw a poison-tipped knife at your enemy"
 end
 
-function Item_PoisonKnives.Proc(self, Roll, Level, Source, Target, Result)
+function Item_PoisonKnives.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Poisoned.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 end
 
 function Item_PoisonKnives.GenerateDamage(self, Level, Source)
@@ -196,17 +190,17 @@ end
 
 -- Slimy Glob --
 
-Item_SlimyGlob = { Duration = 30 }
+Item_SlimyGlob = { }
 
-function Item_SlimyGlob.GetInfo(self, Level)
+function Item_SlimyGlob.GetInfo(self, Item)
 
-	return "Gain [c green]" .. Level .. "% [c yellow]bleed [c white]resist for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Gain [c green]" .. Item.Level .. "% [c yellow]bleed [c white]resist for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_SlimyGlob.Use(self, Level, Source, Target, Result)
+function Item_SlimyGlob.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_BleedResist.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -217,17 +211,17 @@ end
 
 -- Crow Feather --
 
-Item_CrowFeather = { Duration = 30 }
+Item_CrowFeather = { }
 
-function Item_CrowFeather.GetInfo(self, Level)
+function Item_CrowFeather.GetInfo(self, Item)
 
-	return "Increase move speed by [c_green]" .. Level .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase move speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_CrowFeather.Use(self, Level, Source, Target, Result)
+function Item_CrowFeather.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Fast.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -238,17 +232,17 @@ end
 
 -- Fire Dust --
 
-Item_FireDust = { Duration = 10 }
+Item_FireDust = { }
 
-function Item_FireDust.GetInfo(self, Level)
+function Item_FireDust.GetInfo(self, Item)
 
-	return "Reduce target's hit chance by [c_green]" .. Level .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Reduce target's hit chance by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_FireDust.Use(self, Level, Source, Target, Result)
+function Item_FireDust.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Blinded.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = 10
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -258,17 +252,17 @@ end
 
 -- Spider Leg --
 
-Item_SpiderLeg = { Duration = 30 }
+Item_SpiderLeg = { }
 
-function Item_SpiderLeg.GetInfo(self, Level)
+function Item_SpiderLeg.GetInfo(self, Item)
 
-	return "Increase battle speed by [c_green]" .. Level .. "% [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase battle speed by [c_green]" .. Item.Level .. "% [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_SpiderLeg.Use(self, Level, Source, Target, Result)
+function Item_SpiderLeg.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Hasted.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -279,17 +273,17 @@ end
 
 -- Fang --
 
-Item_Fang = { Duration = 30 }
+Item_Fang = { }
 
-function Item_Fang.GetInfo(self, Level)
+function Item_Fang.GetInfo(self, Item)
 
-	return "Increase damage by [c_green]" .. Level .. " [c_white]for [c_green]" .. self.Duration .. " [c_white]seconds"
+	return "Increase damage by [c_green]" .. Item.Level .. " [c_white]for [c_green]" .. Item.Duration .. " [c_white]seconds"
 end
 
-function Item_Fang.Use(self, Level, Source, Target, Result)
+function Item_Fang.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Mighty.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -300,17 +294,17 @@ end
 
 -- Spectral Dust --
 
-Item_SpectralDust = { Duration = 30 }
+Item_SpectralDust = { }
 
-function Item_SpectralDust.GetInfo(self, Level)
+function Item_SpectralDust.GetInfo(self, Item)
 
-	return "Increase evasion by [c green]" .. Level .. "% [c white] for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Increase evasion by [c green]" .. Item.Level .. "% [c white] for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_SpectralDust.Use(self, Level, Source, Target, Result)
+function Item_SpectralDust.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Evasion.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -321,17 +315,17 @@ end
 
 -- Crab Legs --
 
-Item_CrabLegs = { Duration = 30 }
+Item_CrabLegs = { }
 
-function Item_CrabLegs.GetInfo(self, Level)
+function Item_CrabLegs.GetInfo(self, Item)
 
-	return "Gain [c green]" .. Level .. " [c white]armor for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Gain [c green]" .. Item.Level .. " [c white]armor for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_CrabLegs.Use(self, Level, Source, Target, Result)
+function Item_CrabLegs.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Hardened.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -342,32 +336,32 @@ end
 
 -- Teleport Scroll --
 
-Item_TeleportScroll = { Duration = 3 }
+Item_TeleportScroll = { }
 
-function Item_TeleportScroll.GetInfo(self, Level)
+function Item_TeleportScroll.GetInfo(self, Item)
 
-	return "Teleport home after [c green]" .. self.Duration .. " [c white]seconds"
+	return "Teleport home after [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_TeleportScroll.Use(self, Level, Source, Target, Result)
-	Result.Target.Teleport = self.Duration
+function Item_TeleportScroll.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Teleport = Duration
 
 	return Result
 end
 
 -- Swamp Glob --
 
-Item_SwampGlob = { Duration = 10 }
+Item_SwampGlob = { }
 
-function Item_SwampGlob.GetInfo(self, Level)
+function Item_SwampGlob.GetInfo(self, Item)
 
-	return "Slow target by [c green]" .. Level .. "% [c white]for [c green]" .. self.Duration .. " [c white]seconds"
+	return "Slow target by [c green]" .. Item.Level .. "% [c white]for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_SwampGlob.Use(self, Level, Source, Target, Result)
+function Item_SwampGlob.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Slowed.Pointer
 	Result.Target.BuffLevel = Level
-	Result.Target.BuffDuration = self.Duration
+	Result.Target.BuffDuration = Duration
 
 	return Result
 end
@@ -380,15 +374,16 @@ end
 
 Item_Torch = { }
 
-function Item_Torch.GetInfo(self, Level)
+function Item_Torch.GetInfo(self, Item)
 
-	return "Give light for [c green]" .. Level .. " [c white]seconds"
+	return "Give light for [c green]" .. Item.Duration .. " [c white]seconds"
 end
 
-function Item_Torch.Use(self, Level, Source, Target, Result)
+function Item_Torch.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Light.Pointer
-	Result.Target.BuffLevel = 1
-	Result.Target.BuffDuration = Level
+	Result.Target.BuffLevel = Level
+	Result.Target.BuffDuration = Duration
+	print(Duration)
 
 	return Result
 end

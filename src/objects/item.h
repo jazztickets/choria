@@ -100,6 +100,7 @@ class _Item {
 		ItemType Type;
 		int Level;
 		int MaxLevel;
+		double Duration;
 		int Cost;
 		uint32_t DamageTypeID;
 		int MinDamage;

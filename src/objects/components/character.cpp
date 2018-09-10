@@ -549,6 +549,9 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 		else
 			ReturnAction.Level = ReturnAction.Item->Level;
 
+		// Set duration for certain items
+		ReturnAction.Duration = ReturnAction.Item->Duration;
+
 		return true;
 	}
 

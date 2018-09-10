@@ -8,7 +8,7 @@ Base_Attack = {
 		return Object
 	end,
 
-	GetInfo = function(self, Level)
+	GetInfo = function(self, Item)
 		return ""
 	end,
 
@@ -27,16 +27,16 @@ Base_Attack = {
 		return Damage
 	end,
 
-	Proc = function(self, Roll, Level, Source, Target, Result)
+	Proc = function(self, Roll, Level, Duration, Source, Target, Result)
 
 		return Result
 	end,
 
-	Use = function(self, Level, Source, Target, Result)
+	Use = function(self, Level, Duration, Source, Target, Result)
 		Hit = Battle_ResolveDamage(self, Level, Source, Target, Result)
 
 		if Hit then
-			self:Proc(Random.GetInt(1, 100), Level, Source, Target, Result)
+			self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 		end
 
 		return Result
@@ -80,19 +80,19 @@ Base_Spell = {
 		return false
 	end,
 
-	Proc = function(self, Roll, Level, Source, Target, Result)
+	Proc = function(self, Roll, Level, Duration, Source, Target, Result)
 
 		return Result
 	end,
 
-	Use = function(self, Level, Source, Target, Result)
+	Use = function(self, Level, Duration, Source, Target, Result)
 		Damage = self:GetDamage(Level)
 		Damage = math.floor(Damage * Target.GetDamageReduction(self.Item.DamageType))
 		Damage = math.max(Damage, 0)
 
 		Result.Target.Health = -Damage
 
-		self:Proc(Random.GetInt(1, 100), Level, Source, Target, Result)
+		self:Proc(Random.GetInt(1, 100), Level, Duration, Source, Target, Result)
 
 		return Result
 	end
