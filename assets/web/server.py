@@ -18,6 +18,7 @@ import subprocess
 
 db_file = '../../working/stats/stats.db'
 db = sqlite3.connect(db_file)
+db.execute("PRAGMA foreign_keys=ON")
 cursor = db.cursor()
 
 def get_table_names():
