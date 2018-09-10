@@ -375,3 +375,24 @@ end
 function Item_SwampGlob.PlaySound(self, Level)
 	Audio.Play("sludge0.ogg")
 end
+
+-- Torch --
+
+Item_Torch = { }
+
+function Item_Torch.GetInfo(self, Level)
+
+	return "Give light for [c green]" .. Level .. " [c white]seconds"
+end
+
+function Item_Torch.Use(self, Level, Source, Target, Result)
+	--Result.Target.Buff = Buff_Light.Pointer
+	--Result.Target.BuffLevel = 1
+	--Result.Target.BuffDuration = Level
+
+	return Result
+end
+
+function Item_Torch.PlaySound(self, Level)
+	Audio.Play("flame0.ogg")
+end
