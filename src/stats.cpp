@@ -52,6 +52,7 @@ _Stats::_Stats(bool Headless) :
 	LoadModels();
 	LoadBuilds();
 	LoadScripts();
+	LoadLights();
 }
 
 // Destructor
@@ -473,6 +474,28 @@ void _Stats::LoadScripts() {
 		Script.Cooldown = Database->GetReal("cooldown");
 
 		Scripts[Script.ID] = Script;
+	}
+	Database->CloseQuery();
+}
+
+// Load lights
+void _Stats::LoadLights() {
+	Lights.clear();
+
+	// Run query
+	Database->PrepareQuery("SELECT * FROM light");
+
+	// Get data
+	_LightType Light;
+	while(Database->FetchRow()) {
+		Light.ID = Database->GetInt<uint32_t>("id");
+		Light.Name = Database->GetString("name");
+		Light.Color[0] = Database->GetReal("r");
+		Light.Color[1] = Database->GetReal("g");
+		Light.Color[2] = Database->GetReal("b");
+		Light.Radius = Database->GetReal("radius");
+
+		Lights[Light.ID] = Light;
 	}
 	Database->CloseQuery();
 }

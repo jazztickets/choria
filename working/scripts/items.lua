@@ -383,7 +383,6 @@ function Item_Torch.Use(self, Level, Duration, Source, Target, Result)
 	Result.Target.Buff = Buff_Light.Pointer
 	Result.Target.BuffLevel = Level
 	Result.Target.BuffDuration = Duration
-	print(Duration)
 
 	return Result
 end

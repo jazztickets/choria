@@ -139,6 +139,13 @@ struct _ItemDrop {
 	uint32_t Odds;
 };
 
+struct _LightType {
+	uint32_t ID;
+	std::string Name;
+	glm::vec3 Color;
+	float Radius;
+};
+
 // Classes
 class _Stats {
 
@@ -177,6 +184,7 @@ class _Stats {
 		std::unordered_map<uint32_t, _MinigameType> Minigames;
 		std::unordered_map<uint32_t, _Script> Scripts;
 		std::unordered_map<uint32_t, _Model> Models;
+		std::unordered_map<uint32_t, _LightType> Lights;
 		std::unordered_map<uint32_t, std::string> ItemTypes;
 		std::unordered_map<uint32_t, std::string> TargetTypes;
 		std::unordered_map<uint32_t, std::string> DamageTypes;
@@ -207,5 +215,6 @@ class _Stats {
 		void LoadModels();
 		void LoadBuilds();
 		void LoadScripts();
+		void LoadLights();
 
 };

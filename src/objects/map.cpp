@@ -505,8 +505,11 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 			if(!Object->Light)
 				continue;
 
-			Assets.Programs["pos_uv"]->Lights[LightCount].Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
-			Assets.Programs["pos_uv"]->Lights[LightCount].Color = glm::vec4(1, 1, 1, 1);
+			const _LightType &LightType = Stats->Lights.at(Object->Light);
+			_Light *Light = &Assets.Programs["pos_uv"]->Lights[LightCount];
+			Light->Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
+			Light->Color = glm::vec4(LightType.Color, 1);
+			Light->Radius = LightType.Radius;
 			LightCount++;
 		}
 

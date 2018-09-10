@@ -1,5 +1,23 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "light" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT,
+	"r" REAL DEFAULT(1.0),
+	"g" REAL DEFAULT(1.0),
+	"b" REAL DEFAULT(1.0),
+	"radius" REAL DEFAULT(1.0)
+);
+INSERT INTO light VALUES(1,'tiny white',1.0,1.0,1.0,1.0);
+INSERT INTO light VALUES(2,'small white',1.0,1.0,1.0,2.0);
+INSERT INTO light VALUES(3,'small white',1.0,1.0,1.0,3.0);
+INSERT INTO light VALUES(4,'small white',1.0,1.0,1.0,4.0);
+INSERT INTO light VALUES(5,'medium white',1.0,1.0,1.0,5.0);
+INSERT INTO light VALUES(6,'medium white',1.0,1.0,1.0,6.0);
+INSERT INTO light VALUES(7,'medium white',1.0,1.0,1.0,7.0);
+INSERT INTO light VALUES(8,'large white',1.0,1.0,1.0,8.0);
+INSERT INTO light VALUES(9,'large white',1.0,1.0,1.0,9.0);
+INSERT INTO light VALUES(10,'large white',1.0,1.0,1.0,10.0);
 CREATE TABLE IF NOT EXISTS "damagetype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT

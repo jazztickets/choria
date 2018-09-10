@@ -12,6 +12,7 @@ uniform int light_count;
 uniform struct light {
 	vec3 position;
 	vec4 color;
+	float radius;
 } lights[MAX_LIGHTS];
 
 void main() {
@@ -35,7 +36,7 @@ void main() {
 		float attenuation = 1.0 / (light_distance + 0.1);
 		attenuation = clamp(attenuation, 0.0, 1.0);
 		//attenuation = 1;
-		float max = 5.75;
+		float max = lights[i].radius - 0.25;
 		float falloff = 1;
 		if(light_distance > max)
 			attenuation *= clamp((max + falloff - light_distance) / falloff, 0, 1);

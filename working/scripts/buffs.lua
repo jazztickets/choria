@@ -298,7 +298,7 @@ function Buff_Light.GetInfo(self, Level)
 end
 
 function Buff_Light.Stats(self, Level, Source, Change)
-	Change.Light = 1
+	Change.Light = Level
 
 	return Change
 end
