@@ -31,7 +31,7 @@ fi
 density=$((96 * $scale))
 
 # get size of each image
-size=`identify -format "%[fx:w/10]" "$file"`
+size=`identify -density 96 -format "%[fx:w/10]" "$file"`
 size=$(($size * $scale))
 
 # get list of objects
