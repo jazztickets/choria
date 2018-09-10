@@ -287,3 +287,18 @@ function Buff_Weak.Stats(self, Level, Source, Change)
 
 	return Change
 end
+
+-- Light  --
+
+Buff_Light = Base_Buff:New()
+
+function Buff_Light.GetInfo(self, Level)
+
+	return "Giving off light"
+end
+
+function Buff_Light.Stats(self, Level, Source, Change)
+	Change.Light = 1
+
+	return Change
+end

@@ -72,7 +72,8 @@ _Object::_Object() :
 	ServerPosition(0, 0),
 
 	ModelTexture(nullptr),
-	ModelID(0) {
+	ModelID(0),
+	Light(0) {
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);
@@ -682,6 +683,7 @@ void _Object::SerializeCreate(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint32_t>(Character->PortraitID);
 	Data.Write<uint32_t>(ModelID);
+	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 }
 
@@ -690,12 +692,14 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<uint8_t>(Character->Status);
+	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 }
 
 // Serialize object stats
 void _Object::SerializeStats(_Buffer &Data) {
 	Data.WriteString(Name.c_str());
+	Data.Write<uint8_t>(Light);
 	Data.Write<uint32_t>(ModelID);
 	Data.Write<uint32_t>(Character->PortraitID);
 	Data.WriteString(Character->PartyName.c_str());
@@ -771,6 +775,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 	Name = Data.ReadString();
 	Character->PortraitID = Data.Read<uint32_t>();
 	ModelID = Data.Read<uint32_t>();
+	Light = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();
 
 	Character->Portrait = Stats->GetPortraitImage(Character->PortraitID);
@@ -780,6 +785,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 // Unserialize object stats
 void _Object::UnserializeStats(_Buffer &Data) {
 	Name = Data.ReadString();
+	Light = Data.Read<uint8_t>();
 	ModelID = Data.Read<uint32_t>();
 	Character->PortraitID = Data.Read<uint32_t>();
 	Character->PartyName = Data.ReadString();

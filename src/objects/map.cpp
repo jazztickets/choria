@@ -498,12 +498,19 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 		SetAmbientLightByClock();
 
 		// Setup lights
-		glm::vec3 LightPosition(glm::vec3(ClientPlayer->Position, 1) + glm::vec3(0.5f, 0.5f, 0));
-
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
-		Assets.Programs["pos_uv"]->LightCount = 1;
-		Assets.Programs["pos_uv"]->Lights[0].Position = LightPosition;
-		Assets.Programs["pos_uv"]->Lights[0].Color = glm::vec4(1, 1, 1, 1);
+
+		int LightCount = 0;
+		for(const auto &Object : Objects) {
+			if(!Object->Light)
+				continue;
+
+			Assets.Programs["pos_uv"]->Lights[LightCount].Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
+			Assets.Programs["pos_uv"]->Lights[LightCount].Color = glm::vec4(1, 1, 1, 1);
+			LightCount++;
+		}
+
+		Assets.Programs["pos_uv"]->LightCount = LightCount;
 	}
 
 	// Draw background map

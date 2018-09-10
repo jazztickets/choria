@@ -386,9 +386,9 @@ function Item_Torch.GetInfo(self, Level)
 end
 
 function Item_Torch.Use(self, Level, Source, Target, Result)
-	--Result.Target.Buff = Buff_Light.Pointer
-	--Result.Target.BuffLevel = 1
-	--Result.Target.BuffDuration = Level
+	Result.Target.Buff = Buff_Light.Pointer
+	Result.Target.BuffLevel = 1
+	Result.Target.BuffDuration = Level
 
 	return Result
 end

@@ -150,6 +150,7 @@ class _Object : public _BaseObject {
 		// Render
 		const _Texture *ModelTexture;
 		uint32_t ModelID;
+		int Light;
 
 	private:
 

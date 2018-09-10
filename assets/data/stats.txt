@@ -494,6 +494,7 @@ INSERT INTO buff VALUES(14,'Fast','Buff_Fast','textures/buffs/fast.png');
 INSERT INTO buff VALUES(15,'Mighty','Buff_Mighty','textures/buffs/mighty.png');
 INSERT INTO buff VALUES(16,'Evasion','Buff_Evasion','textures/buffs/evasion.png');
 INSERT INTO buff VALUES(17,'Weak','Buff_Weak','textures/buffs/weak.png');
+INSERT INTO buff VALUES(18,'Light','Buff_Light','textures/buffs/light.png');
 CREATE TABLE IF NOT EXISTS "zone" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,

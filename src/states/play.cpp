@@ -787,6 +787,7 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
 		glm::ivec2 Position = Data.Read<glm::ivec2>();
 		uint8_t Status = Data.Read<uint8_t>();
+		int Light = Data.Read<uint8_t>();
 		int Invisible = Data.ReadBit();
 
 		// Find object
@@ -800,6 +801,7 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 				Object->Position = Position;
 				Object->Character->Invisible = Invisible;
 			}
+			Object->Light = Light;
 			Object->ServerPosition = Position;
 
 			switch(Status) {
