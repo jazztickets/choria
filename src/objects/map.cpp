@@ -505,8 +505,8 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 
 		// Add lights
 		int LightCount = 0;
-		LightCount = AddLights(&Objects, LightCount);
-		LightCount = AddLights(&StaticObjects, LightCount);
+		LightCount = AddLights(&Objects, Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
+		LightCount = AddLights(&StaticObjects, Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
 
 		// Update light count in shader
 		Assets.Programs["pos_uv"]->LightCount = LightCount;
@@ -663,10 +663,10 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 }
 
 // Add lights from objects
-int _Map::AddLights(const std::list<_Object *> *ObjectList, int LightCount) {
+int _Map::AddLights(const std::list<_Object *> *ObjectList, const _Program *Program, glm::vec4 AABB, int LightCount) {
 
 	// Check max lights
-	if(LightCount >= Assets.Programs["pos_uv"]->MaxLights)
+	if(LightCount >= Program->MaxLights)
 		return LightCount;
 
 	// Iterate over objects
@@ -679,16 +679,33 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, int LightCount) {
 		if(Iterator == Stats->Lights.end())
 		   continue;
 
-		// Set light in shader
 		const _LightType &LightType = Iterator->second;
-		_Light *Light = &Assets.Programs["pos_uv"]->Lights[LightCount];
+
+		// Check to see if light is in frustum
+		glm::vec2 Point(Object->Position.x + 0.5f, Object->Position.y + 0.5f);
+		if(Point.x < AABB[0])
+			Point.x = AABB[0];
+		if(Point.y < AABB[1])
+			Point.y = AABB[1];
+		if(Point.x > AABB[2])
+			Point.x = AABB[2];
+		if(Point.y > AABB[3])
+			Point.y = AABB[3];
+
+		// Compare distances
+		float DistanceSquared = glm::distance2(Point, glm::vec2(Object->Position) + glm::vec2(0.5f));
+		if(DistanceSquared >= (LightType.Radius + 0.5f) * (LightType.Radius + 0.5f))
+			continue;
+
+		// Set light in shader
+		_Light *Light = &Program->Lights[LightCount];
 		Light->Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
 		Light->Color = glm::vec4(LightType.Color, 1);
 		Light->Radius = LightType.Radius;
 		LightCount++;
 
 		// Check max lights
-		if(LightCount >= Assets.Programs["pos_uv"]->MaxLights)
+		if(LightCount >= Program->MaxLights)
 			break;
 	}
 
