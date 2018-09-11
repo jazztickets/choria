@@ -32,7 +32,7 @@ class _Buff {
 
 	public:
 
-		void DrawTooltip(_Scripting *Scripting, int Level) const;
+		void DrawTooltip(_Scripting *Scripting, int Level, double Duration) const;
 
 		void ExecuteScript(_Scripting *Scripting, const std::string &Function, int Level, _StatChange &StatChange) const;
 

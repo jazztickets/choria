@@ -372,6 +372,7 @@
     </element>
     <element id="element_buffs_tooltip" style="style_hud_item_tooltip_bg" size_x="300" size_y="120" alignment_x="0" alignment_y="0" clickable="false">
         <element id="label_buffs_tooltip_name" font="menu_buttons" offset_y="30" alignment_y="3"/>
+        <element id="label_buffs_tooltip_duration" font="hud_small" offset_y="105" alignment_y="3" color="gray"/>
     </element>
     <element id="element_party" style="style_hud_item_tooltip_bg" size_x="300" size_y="120">
         <element id="element_textbox_party" style="style_menu_textbox" offset_y="20" size_x="250" size_y="30">

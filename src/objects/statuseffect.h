@@ -47,4 +47,5 @@ class _StatusEffect {
 		double Time;
 		int Level;
 		double Duration;
+		double MaxDuration;
 };

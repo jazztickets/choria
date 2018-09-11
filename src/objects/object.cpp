@@ -579,6 +579,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		StatusEffectNode["id"] = StatusEffect->Buff->ID;
 		StatusEffectNode["level"] = StatusEffect->Level;
 		StatusEffectNode["duration"] = StatusEffect->Duration;
+		StatusEffectNode["maxduration"] = StatusEffect->MaxDuration;
 		StatusEffectsNode.append(StatusEffectNode);
 	}
 	Data["statuseffects"] = StatusEffectsNode;
@@ -667,6 +668,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		StatusEffect->Buff = Stats->Buffs.at(StatusEffectNode["id"].asUInt());
 		StatusEffect->Level = StatusEffectNode["level"].asInt();
 		StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
+		StatusEffect->MaxDuration = StatusEffectNode["maxduration"].asDouble();
 		StatusEffect->Time = 1.0 - (StatusEffect->Duration - (int)StatusEffect->Duration);
 		Character->StatusEffects.push_back(StatusEffect);
 	}
@@ -887,7 +889,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 		StatusEffect = new _StatusEffect();
 		StatusEffect->Buff = (_Buff *)StatChange.Values[StatType::BUFF].Pointer;
 		StatusEffect->Level = StatChange.Values[StatType::BUFFLEVEL].Integer;
-		StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
+		StatusEffect->MaxDuration = StatusEffect->Duration = StatChange.Values[StatType::BUFFDURATION].Float;
 
 		if(Character->AddStatusEffect(StatusEffect)) {
 			if(Fighter->BattleElement)

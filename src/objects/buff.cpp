@@ -23,19 +23,27 @@
 #include <ae/graphics.h>
 #include <ae/input.h>
 #include <ae/assets.h>
+#include <ae/util.h>
 #include <constants.h>
 #include <scripting.h>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 
 // Draw tooltip
-void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
+void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const {
+	std::stringstream Buffer;
+
 	_Element *TooltipElement = Assets.Elements["element_buffs_tooltip"];
 	_Element *TooltipName = Assets.Elements["label_buffs_tooltip_name"];
+	_Element *TooltipDuration = Assets.Elements["label_buffs_tooltip_duration"];
 	TooltipElement->SetActive(true);
 
 	// Set label values
 	TooltipName->Text = Name;
+	Buffer << std::fixed << std::setprecision(1) << Round((float)Duration) << "s";
+	TooltipDuration->Text = Buffer.str();
+	Buffer.str("");
 
 	// Get window width
 	glm::vec2 Size = TooltipElement->Size;
@@ -76,7 +84,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 
 	float SpacingY = 18;
 
-	std::stringstream Buffer(Info);
+	Buffer << Info;
 	std::string Token;
 
 	// Draw description
@@ -88,6 +96,7 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level) const {
 			DrawPosition.y += SpacingY;
 		}
 	}
+	Buffer.str("");
 }
 
 // Call scripting function by name

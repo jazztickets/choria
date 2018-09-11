@@ -724,7 +724,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Draw status effects
 		if(Tooltip.StatusEffect)
-			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level);
+			Tooltip.StatusEffect->Buff->DrawTooltip(Scripting, Tooltip.StatusEffect->Level, Tooltip.StatusEffect->Duration);
 	}
 	// Dead outside of combat
 	else {
