@@ -490,7 +490,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 
 	// Set lights for editor
 	if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT) {
-		glm::vec4 AmbientLightEditor(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 AmbientLightEditor(1.0f);
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
 		Assets.Programs["pos_uv"]->LightCount = 0;
 		Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
@@ -1024,6 +1024,22 @@ bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) const {
 	}
 
 	return true;
+}
+
+// Delete static objects at the position
+void _Map::DeleteStaticObject(const glm::ivec2 &Position) {
+
+	// Update objects
+	for(auto Iterator = StaticObjects.begin(); Iterator != StaticObjects.end(); ) {
+		_Object *Object = *Iterator;
+		if(Position == Object->Position) {
+			Iterator = StaticObjects.erase(Iterator);
+			delete Object;
+		}
+		else {
+			++Iterator;
+		}
+	}
 }
 
 // Send complete object list to player

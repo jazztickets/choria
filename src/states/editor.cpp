@@ -267,6 +267,9 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 			case SDL_SCANCODE_V:
 				Paste();
 			break;
+			case SDL_SCANCODE_D:
+				Map->DeleteStaticObject(WorldCursor);
+			break;
 			case SDL_SCANCODE_TAB:
 				Layer = !Layer;
 			break;
