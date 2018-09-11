@@ -47,7 +47,10 @@ void _TestState::Init() {
 
 	double MaxTime = 0;
 	double MinTime = 30;
-	for(int i = 0; i < 0; i++) {
+
+	// gawk '{ total+=int($1/2) } END{ print NR, total, (total - NR*10) }'
+	int Simulations = 0;
+	for(int i = 0; i < Simulations; i++) {
 		//double StartTime = SDL_GetPerformanceCounter();
 		uint32_t Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 		float X = (float)GetRandomReal(-7.65, 7.65);
@@ -69,11 +72,11 @@ void _TestState::Init() {
 
 		std::cout.precision(17);
 		if(Time < MinTime) {
-			std::cout << "mintime=" << Time << " seed=" << Seed << " x=" << X << std::endl;
+			//std::cout << "mintime=" << Time << " seed=" << Seed << " x=" << X << std::endl;
 			MinTime = Time;
 		}
 		if(Time > MaxTime) {
-			std::cout << "maxtime=" << Time << " seed=" << Seed << " x=" << X << std::endl;
+			//std::cout << "maxtime=" << Time << " seed=" << Seed << " x=" << X << std::endl;
 			MaxTime = Time;
 		}
 
