@@ -27,6 +27,7 @@
 #include <framework.h>
 #include <constants.h>
 #include <SDL_scancode.h>
+#include <SDL_mouse.h>
 #include <SDL_timer.h>
 #include <glm/gtc/type_ptr.hpp>
 

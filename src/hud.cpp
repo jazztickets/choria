@@ -48,7 +48,8 @@
 #include <actiontype.h>
 #include <menu.h>
 #include <packet.h>
-#include <SDL_keyboard.h>
+#include <SDL_keycode.h>
+#include <SDL_mouse.h>
 #include <vector>
 #include <algorithm>
 #include <sstream>

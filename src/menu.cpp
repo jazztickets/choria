@@ -38,7 +38,7 @@
 #include <stats.h>
 #include <packet.h>
 #include <version.h>
-#include <SDL_keyboard.h>
+#include <SDL_keycode.h>
 #include <sstream>
 #include <iomanip>
 

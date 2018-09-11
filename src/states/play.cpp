@@ -53,7 +53,8 @@
 #include <packet.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <SDL_keyboard.h>
+#include <SDL_keycode.h>
+#include <SDL_mouse.h>
 #include <iostream>
 #include <sstream>
 

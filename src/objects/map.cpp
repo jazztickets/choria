@@ -64,17 +64,17 @@ const glm::vec4 ZoneColors[] = {
 
 // Colors of each time cycle
 const std::vector<glm::vec4> DayCycles = {
-	{0.05f, 0.05f, 0.3f, 1},
-	{0.10f, 0.10f, 0.1f, 1},
-	{0.6f, 0.6f, 0.45f, 1},
-	{0.55f, 0.45f, 0.30f, 1},
-	{0.5, 0.4f, 0.3f, 1},
+	{ 0.05f, 0.05f, 0.3f,  1 },
+	{ 0.10f, 0.10f, 0.1f,  1 },
+	{ 0.6f,  0.6f,  0.45f, 1 },
+	{ 0.55f, 0.45f, 0.30f, 1 },
+	{ 0.5,   0.4f,  0.3f,  1 },
 };
 
 // Time of each cycle change
 const std::vector<double> DayCyclesTime = {
-	0.0 * 60.0,
-	6.0 * 60.0,
+	0.0  * 60.0,
+	6.0  * 60.0,
 	12.5 * 60.0,
 	16.5 * 60.0,
 	18.0 * 60.0,
