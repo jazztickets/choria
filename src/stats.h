@@ -130,6 +130,7 @@ struct _MinigameType {
 	std::string Name;
 	std::string Script;
 	int Cost;
+	const _Item *RequiredItem;
 	std::vector<_MinigameItem> Items;
 };
 

@@ -180,7 +180,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 		// Update minigame
 		if(Player->Character->Minigame && Minigame) {
-			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Character->Gold >= Player->Character->Minigame->Cost) {
+			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Inventory->CountItem(Player->Character->Minigame->RequiredItem) >= Player->Character->Minigame->Cost) {
 				if(Input.GetMouse().y > MinigameElement->Bounds.Start.y && Input.GetMouse().y < MinigameElement->Bounds.End.y)
 					Minigame->HandleMouseButton(MouseEvent);
 
@@ -191,6 +191,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					PlayState.Network->SendPacket(Packet);
 
 					Player->Record->GamesPlayed++;
+					PlayState.PlayCoinSound();
 				}
 			}
 		}
@@ -992,7 +993,10 @@ void _HUD::InitMinigame() {
 	_Element *NameElement = Assets.Elements["label_minigame_name"];
 	_Element *CostElement = Assets.Elements["label_minigame_cost"];
 	NameElement->Text = Player->Character->Minigame->Name;
-	CostElement->Text = std::to_string(Player->Character->Minigame->Cost) + " gold to play";
+	CostElement->Text = std::to_string(Player->Character->Minigame->Cost) + " token";
+	if(Player->Character->Minigame->Cost != 1)
+		CostElement->Text += "s";
+	CostElement->Text += " to play";
 
 	// Create minigame
 	Minigame = new _Minigame(Player->Character->Minigame);
@@ -1598,9 +1602,13 @@ void _HUD::DrawMinigame(double BlendFactor) {
 		return;
 	}
 
+	// Get token count
+	int Tokens = Player->Inventory->CountItem(Player->Character->Minigame->RequiredItem);
+	Assets.Elements["label_minigame_tokens"]->Text = std::to_string(Tokens);
+
 	// Update text color
 	_Element *CostElement = Assets.Elements["label_minigame_cost"];
-	if(Player->Character->Gold < Player->Character->Minigame->Cost)
+	if(Tokens < Player->Character->Minigame->Cost)
 		CostElement->Color = Assets.Colors["red"];
 	else
 		CostElement->Color = Assets.Colors["gold"];

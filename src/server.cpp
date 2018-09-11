@@ -1166,7 +1166,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			Log << "Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
 
 			// Update items
-			Player->Inventory->DecrementItemCount(Slot, -Amount);
+			Player->Inventory->UpdateItemCount(Slot, -Amount);
 			if(Peer) {
 				_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
@@ -1498,24 +1498,21 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 
 	// Validate
 	_Object *Player = Peer->Object;
-	if(!Player->Character->Minigame || Player->Character->Gold < Player->Character->Minigame->Cost)
+	const _MinigameType *Minigame = Player->Character->Minigame;
+	if(!Minigame || Player->Inventory->CountItem(Minigame->RequiredItem) < Minigame->Cost)
 		return;
 
-	// Update gold and stats
-	{
-		_StatChange StatChange;
-		StatChange.Object = Player;
-		StatChange.Values[StatType::GOLD].Integer = -Player->Character->Minigame->Cost;
-		Player->UpdateStats(StatChange);
+	// Trade in required items
+	Player->Inventory->SpendItems(Minigame->RequiredItem, Minigame->Cost);
 
-		// Build packet
-		_Buffer Packet;
-		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-		StatChange.Serialize(Packet);
-		Network->SendPacket(Packet, Player->Peer);
+	// Send new inventory
+	_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY);
+	Player->Inventory->Serialize(Packet);
+	Network->SendPacket(Packet, Peer);
 
-		Player->Record->GamesPlayed++;
-	}
+	// Update stats
+	Player->Record->GamesPlayed++;
 }
 
 // Give player minigame reward

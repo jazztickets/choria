@@ -309,6 +309,9 @@
     <element id="element_minigame" style="style_minigame_bg" index="12">
 		<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-40" alignment_y="3"/>
 		<element id="label_minigame_cost" font="hud_medium" text="Cost" color="gold" offset_x="0.5" offset_y="-12" alignment_y="3"/>
+		<element id="label_minigame_token_image" texture="textures/items/token.png" size_x="32" size_y="32" offset_y="-32" alignment_x="2" alignment_y="0" clickable="false">
+			<element id="label_minigame_tokens" font="hud_small" offset_x="-33" offset_y="22" alignment_x="2" alignment_y="3"/>
+		</element>
     </element>
     <element id="element_skills" style="style_hud_bg" size_x="474" size_y="450" index="11"/>
     <element id="element_died" style="style_hud_died_bg" alignment_x="0" alignment_y="0" clickable="false">

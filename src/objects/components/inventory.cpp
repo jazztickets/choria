@@ -229,17 +229,35 @@ bool _Inventory::CanSwap(const _Slot &OldSlot, const _Slot &NewSlot) {
 	return true;
 }
 
-// Updates an item's count, deleting if necessary
-bool _Inventory::DecrementItemCount(const _Slot &Slot, int Amount) {
+// Updates an item's count, deleting if necessary and return remainder amount if stack wasn't large enough
+int _Inventory::UpdateItemCount(const _Slot &Slot, int Amount) {
 
 	_InventorySlot &InventorySlot = GetSlot(Slot);
 	InventorySlot.Count += Amount;
 	if(InventorySlot.Count <= 0) {
+		int Remainder = -InventorySlot.Count;
 		InventorySlot.Reset();
-		return true;
+
+		return Remainder;
 	}
 
-	return false;
+	return 0;
+}
+
+// Reduce item count for a particular item
+void _Inventory::SpendItems(const _Item *Item, int Count) {
+
+	_Bag &Bag = Bags[_Bag::INVENTORY];
+	for(size_t i = 0; i < Bag.Slots.size(); i++) {
+
+		// Find item
+		if(Bag.Slots[i].Item == Item)
+			Count = UpdateItemCount(_Slot(_Bag::BagType::INVENTORY, i), -Count);
+
+		// Iterate until all amounts have been spent
+		if(Count <= 0)
+			break;
+	}
 }
 
 // Find a suitable slot for an item

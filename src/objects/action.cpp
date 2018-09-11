@@ -88,7 +88,7 @@ bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
 			if(!Source->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
 				return false;
 
-			Source->Inventory->DecrementItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
+			Source->Inventory->UpdateItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
 			DecrementItem = true;
 			if(ItemUsed->IsSkill()) {
 				Source->Character->Skills[ItemUsed->ID] = 0;

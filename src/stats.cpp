@@ -366,6 +366,7 @@ void _Stats::LoadMinigames() {
 		Minigame.Name = Database->GetString("name");
 		Minigame.Script = Database->GetString("script");
 		Minigame.Cost = Database->GetInt<int>("cost");
+		Minigame.RequiredItem = Items[Database->GetInt<uint32_t>("item_id")];
 
 		// Get items
 		Database->PrepareQuery("SELECT item_id, count FROM minigameitem where minigame_id = @minigame_id", 1);

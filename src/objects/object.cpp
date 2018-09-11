@@ -1116,7 +1116,7 @@ void _Object::AcceptTrader(std::vector<_Slot> &Slots) {
 
 	// Trade in required items
 	for(uint32_t i = 0; i < Character->Trader->Items.size(); i++)
-		Inventory->DecrementItemCount(Slots[i], -Character->Trader->Items[i].Count);
+		Inventory->UpdateItemCount(Slots[i], -Character->Trader->Items[i].Count);
 
 	// Give player reward
 	Inventory->AddItem(Character->Trader->RewardItem, Character->Trader->Upgrades, Character->Trader->Count);

@@ -118,7 +118,8 @@ class _Inventory {
 		_InventorySlot &GetSlot(const _Slot &Slot) { return Bags[Slot.BagType].Slots[Slot.Index]; }
 
 		bool MoveInventory(_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot);
-		bool DecrementItemCount(const _Slot &Slot, int Amount);
+		int UpdateItemCount(const _Slot &Slot, int Amount);
+		void SpendItems(const _Item *Item, int Count);
 		_Slot FindSlotForItem(const _Item *Item, int Upgrades, int Count);
 		_Slot FindSlotForItemInBag(_Bag::BagType BagType, const _Item *Item, int Upgrades, int Count);
 		bool AddItem(const _Item *Item, int Upgrades, int Count, _Slot TargetSlot=_Slot());

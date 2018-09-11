@@ -385,9 +385,9 @@ void _Minigame::RefreshPrizes() {
 	for(const auto &Item : Minigame->Items) {
 		if(Item.Item) {
 			int SellValue = Item.Item->Cost * Item.Count / 2;
-			if(SellValue > Minigame->Cost)
+			if(SellValue > Minigame->Cost * Minigame->RequiredItem->Cost)
 				PrizeBuckets[0].push_back(&Item);
-			else if(SellValue < Minigame->Cost)
+			else if(SellValue < Minigame->Cost * Minigame->RequiredItem->Cost)
 				PrizeBuckets[2].push_back(&Item);
 			else
 				PrizeBuckets[1].push_back(&Item);
@@ -397,6 +397,9 @@ void _Minigame::RefreshPrizes() {
 	// Add prizes from each bag
 	size_t AddAmounts[BagCount] = { 2, 2, 4 };
 	for(int i = 0; i < BagCount; i++) {
+		if(!PrizeBuckets[i].size())
+			continue;
+
 		ShufflePrizes(PrizeBuckets[i]);
 		size_t AddAmount = std::min(AddAmounts[i], PrizeBuckets[i].size());
 		for(size_t j = 0; j < AddAmount; j++) {
@@ -423,6 +426,9 @@ void _Minigame::RefreshPrizes() {
 
 // Shuffle prizes
 void _Minigame::ShufflePrizes(std::vector<const _MinigameItem *> &Bag) {
+	if(!Bag.size())
+		return;
+
 	for(size_t i = Bag.size()-1; i > 0; --i) {
 		std::uniform_int_distribution<size_t> Distribution(0, i);
 		std::swap(Bag[i], Bag[Distribution(Random)]);
