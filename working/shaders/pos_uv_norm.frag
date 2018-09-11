@@ -1,6 +1,6 @@
 #version 120
 
-#define MAX_LIGHTS 10
+#define MAX_LIGHTS 50
 
 uniform sampler2D sampler0;
 uniform vec4 ambient_light;
