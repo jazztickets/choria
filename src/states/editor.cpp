@@ -25,6 +25,7 @@
 #include <ae/ui.h>
 #include <ae/input.h>
 #include <ae/graphics.h>
+#include <objects/object.h>
 #include <objects/map.h>
 #include <framework.h>
 #include <stats.h>
@@ -116,10 +117,13 @@ void _EditorState::Init() {
 	else
 		ToggleNewMap();
 
-	DrawBounds = false;
+	DrawCopyBounds = false;
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
 	WorldCursor = glm::vec2(0.0f, 0.0f);
+	BrushMode = EDITOR_BRUSH_MODE_TILE;
+	ObjectType = 0;
+	ObjectData = 1;
 }
 
 // Shuts the state down
@@ -193,22 +197,30 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 					Framework.Done = true;
 			break;
 			case SDL_SCANCODE_1:
+				BrushMode = EDITOR_BRUSH_MODE_TILE;
 				Filter = 0;
 				Filter |= MAP_RENDER_TEXTURE;
 				Filter |= MAP_RENDER_WALL;
 			break;
 			case SDL_SCANCODE_2:
+				BrushMode = EDITOR_BRUSH_MODE_TILE;
 				Filter = 0;
 				Filter |= MAP_RENDER_ZONE;
 			break;
 			case SDL_SCANCODE_3:
+				BrushMode = EDITOR_BRUSH_MODE_TILE;
 				Filter = 0;
 				Filter |= MAP_RENDER_PVP;
 			break;
 			case SDL_SCANCODE_4:
+				BrushMode = EDITOR_BRUSH_MODE_TILE;
 				Filter = 0;
 				Filter |= MAP_RENDER_EVENTTYPE;
 				Filter |= MAP_RENDER_EVENTDATA;
+			break;
+			case SDL_SCANCODE_5:
+				BrushMode = EDITOR_BRUSH_MODE_OBJECT;
+				Filter = 0;
 			break;
 			case SDL_SCANCODE_T:
 				if(Input.ModKeyDown(KMOD_CTRL))
@@ -308,8 +320,10 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					Camera->Set2DPosition(WorldCursor);
 				break;
 				case SDL_BUTTON_MIDDLE: {
-					DrawBounds = true;
-					CopyStart = Map->GetValidCoord(WorldCursor);
+					if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+						DrawCopyBounds = true;
+						CopyStart = Map->GetValidCoord(WorldCursor);
+					}
 				} break;
 			}
 		}
@@ -354,10 +368,18 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				CloseWindows();
 			}
 		}
+
+		// Place object
+		if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+			_Object *Object = new _Object;
+			Object->Position = WorldCursor;
+			Object->Light = ObjectData;
+			Map->StaticObjects.push_back(Object);
+		}
 	}
 	// Release middle mouse
 	else if(MouseEvent.Button == SDL_BUTTON_MIDDLE) {
-		DrawBounds = false;
+		DrawCopyBounds = false;
 		GetDrawBounds(CopyStart, CopyEnd);
 	}
 }
@@ -368,11 +390,16 @@ void _EditorState::HandleMouseWheel(int Direction) {
 		if(Input.ModKeyDown(KMOD_SHIFT))
 			Direction *= 10;
 
-		if(Filter & MAP_RENDER_ZONE) {
-			AdjustValue(Brush->Zone, Direction);
+		if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+			if(Filter & MAP_RENDER_ZONE) {
+				AdjustValue(Brush->Zone, Direction);
+			}
+			else if(Filter & MAP_RENDER_EVENTDATA) {
+				AdjustValue(Brush->Event.Data, Direction);
+			}
 		}
-		else if(Filter & MAP_RENDER_EVENTDATA) {
-			AdjustValue(Brush->Event.Data, Direction);
+		else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+			AdjustValue(ObjectData, Direction);
 		}
 	}
 	else {
@@ -417,8 +444,10 @@ void _EditorState::Update(double FrameTime) {
 	}
 
 	// Handle mouse input
-	if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL)) && Graphics.Element->HitElement == Graphics.Element) {
-		ApplyBrush(WorldCursor);
+	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+		if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL)) && Graphics.Element->HitElement == Graphics.Element) {
+			ApplyBrush(WorldCursor);
+		}
 	}
 
 	// Handle key input
@@ -460,28 +489,33 @@ void _EditorState::Render(double BlendFactor) {
 		Map->Render(Camera, nullptr, BlendFactor, RenderFilter);
 	}
 
-	Graphics.SetColor(glm::vec4(1.0f));
-	Graphics.SetProgram(Assets.Programs["pos"]);
-	Graphics.SetVBO(VBO_CIRCLE);
-	Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
+	// Draw tile brush size
+	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+		Graphics.SetColor(glm::vec4(1.0f));
+		Graphics.SetProgram(Assets.Programs["pos"]);
+		Graphics.SetVBO(VBO_CIRCLE);
+		Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
-	if(DrawBounds) {
-		Graphics.SetVBO(VBO_NONE);
-		Graphics.SetColor(Assets.Colors["editor_select"]);
+		// Draw copy tool boundaries
+		if(DrawCopyBounds) {
+			Graphics.SetVBO(VBO_NONE);
+			Graphics.SetColor(Assets.Colors["editor_select"]);
 
-		glm::ivec2 Start, End;
-		GetDrawBounds(Start, End);
-		Graphics.DrawRectangle(Start, End, true);
+			glm::ivec2 Start, End;
+			GetDrawBounds(Start, End);
+			Graphics.DrawRectangle(Start, End, true);
+		}
 	}
 
+	// Setup UI
 	Graphics.Setup2D();
 	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
 	glUniformMatrix4fv(Assets.Programs["ortho_pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 	Graphics.SetProgram(Assets.Programs["text"]);
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
 
-	// Render brush
-	RenderBrush();
+	// Draw brush info
+	DrawBrushInfo();
 
 	// Draw world cursor
 	std::stringstream Buffer;
@@ -511,7 +545,6 @@ void _EditorState::Render(double BlendFactor) {
 	ResizeMapElement->Render();
 	SaveMapElement->Render();
 	LoadMapElement->Render();
-
 }
 
 // Get clean map name
@@ -534,88 +567,105 @@ std::string _EditorState::GetCleanMapName(const std::string &Path) {
 }
 
 // Draw information about the brush
-void _EditorState::RenderBrush() {
+void _EditorState::DrawBrushInfo() {
 	if(!Map)
 		return;
 
+	std::stringstream Buffer;
 	glm::vec2 DrawPosition = Graphics.Element->Bounds.End - glm::vec2(60, 150);
+	glm::vec4 Color(glm::vec4(1.0f));
 
+	// Draw backdrop
 	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
 	Graphics.SetVBO(VBO_NONE);
 	Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
 	Graphics.DrawRectangle(DrawPosition - glm::vec2(45, 45), DrawPosition + glm::vec2(45, 138), true);
 
-	// Draw texture
-	_Bounds TextureBounds;
-	TextureBounds.Start = DrawPosition - glm::vec2(Map->TileAtlas->Size) / 2.0f;
-	TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetColor(glm::vec4(1.0f));
-	Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
+	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
 
-	std::stringstream Buffer;
-	glm::vec4 Color(glm::vec4(1.0f));
+		// Draw texture
+		_Bounds TextureBounds;
+		TextureBounds.Start = DrawPosition - glm::vec2(Map->TileAtlas->Size) / 2.0f;
+		TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
+		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+		Graphics.SetColor(glm::vec4(1.0f));
+		Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
 
-	DrawPosition.y += 52;
+		DrawPosition.y += 52;
 
-	// Draw layer
-	if(Layer)
-		Buffer << "Fore";
-	else
-		Buffer << "Back";
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
-	Buffer.str("");
+		// Draw layer
+		if(Layer)
+			Buffer << "Fore";
+		else
+			Buffer << "Back";
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
 
-	DrawPosition.y += 15;
+		DrawPosition.y += 15;
 
-	// Draw wall
-	if(Brush->Wall)
-		Buffer << "Wall";
-	else
-		Buffer << "Floor";
+		// Draw wall
+		if(Brush->Wall)
+			Buffer << "Wall";
+		else
+			Buffer << "Floor";
 
-	Filter & MAP_RENDER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
-	Buffer.str("");
+		Filter & MAP_RENDER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
 
-	DrawPosition.y += 15;
+		DrawPosition.y += 15;
 
-	// Draw zone
-	Buffer << "Zone " << Brush->Zone;
+		// Draw zone
+		Buffer << "Zone " << Brush->Zone;
 
-	Filter & MAP_RENDER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
-	Buffer.str("");
+		Filter & MAP_RENDER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
 
-	DrawPosition.y += 15;
+		DrawPosition.y += 15;
 
-	// Draw PVP
-	if(Brush->PVP)
-		Buffer << "PVP";
-	else
-		Buffer << "Safe";
+		// Draw PVP
+		if(Brush->PVP)
+			Buffer << "PVP";
+		else
+			Buffer << "Safe";
 
-	Filter & MAP_RENDER_PVP ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
-	Buffer.str("");
+		Filter & MAP_RENDER_PVP ? Color.a = 1.0f : Color.a = 0.5f;
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
 
-	DrawPosition.y += 15;
+		DrawPosition.y += 15;
 
-	// Draw event type
-	Buffer << Stats->EventNames[Brush->Event.Type].Name;
+		// Draw event type
+		Buffer << Stats->EventNames[Brush->Event.Type].Name;
 
-	Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
-	Buffer.str("");
+		Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
 
-	DrawPosition.y += 15;
+		DrawPosition.y += 15;
 
-	// Draw event data
-	Buffer << "Data " << Brush->Event.Data;
+		// Draw event data
+		Buffer << "Data " << Brush->Event.Data;
 
-	Filter & MAP_RENDER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
-	Buffer.str("");
+		Filter & MAP_RENDER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
+	}
+	else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+
+		// Draw object type
+		Buffer << "Lights";
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
+
+		DrawPosition.y += 15;
+
+		// Draw object data
+		Buffer << "Data " << ObjectData;
+		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		Buffer.str("");
+	}
 }
 
 // Update generic value
@@ -630,6 +680,8 @@ void _EditorState::AdjustValue(uint32_t &Value, int Direction) {
 
 // Paste tiles
 void _EditorState::Paste() {
+	if(BrushMode != EDITOR_BRUSH_MODE_TILE)
+		return;
 
 	// Get offsets
 	glm::ivec2 CopyPosition = CopyStart;

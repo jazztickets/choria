@@ -108,6 +108,7 @@ class _Map : public _BaseObject, public micropather::Graph {
 		// Graphics
 		void Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
 		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static=false);
+		int AddLights(const std::list<_Object *> *ObjectList, int LightCount);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position, _Object *Object);
@@ -166,6 +167,7 @@ class _Map : public _BaseObject, public micropather::Graph {
 
 		// Objects
 		std::list<_Object *> Objects;
+		std::list<_Object *> StaticObjects;
 		double ObjectUpdateTime;
 
 		// Stats

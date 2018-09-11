@@ -40,6 +40,11 @@ enum MapRenderType {
 	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
 };
 
+enum BrushModeType {
+	EDITOR_BRUSH_MODE_TILE,
+	EDITOR_BRUSH_MODE_OBJECT,
+};
+
 // Classes
 class _EditorState : public _State {
 
@@ -89,7 +94,7 @@ class _EditorState : public _State {
 
 		// Brushes
 		void ApplyBrush(const glm::vec2 &Position);
-		void RenderBrush();
+		void DrawBrushInfo();
 		void AdjustValue(uint32_t &Value, int Direction);
 
 		// Copy/Paste
@@ -111,14 +116,19 @@ class _EditorState : public _State {
 		bool UseClockAmbientLight;
 
 		// Copy paste
-		bool DrawBounds;
+		bool DrawCopyBounds;
 		glm::ivec2 CopyStart;
 		glm::ivec2 CopyEnd;
 
 		// Brush
+		int BrushMode;
 		int Layer;
 		float BrushRadius;
 		_Tile *Brush;
+
+		// Objects
+		int ObjectType;
+		uint32_t ObjectData;
 
 		// Filter
 		int Filter;

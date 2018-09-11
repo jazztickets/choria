@@ -55,7 +55,6 @@
 // Constructor
 _Object::_Object() :
 	Name(""),
-	Static(false),
 	Character(nullptr),
 	Inventory(nullptr),
 	Record(nullptr),

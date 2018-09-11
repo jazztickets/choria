@@ -23,7 +23,6 @@
 #include <objects/object.h>
 #include <objects/battle.h>
 #include <ae/buffer.h>
-#include <ae/manager.h>
 #include <ae/texture.h>
 #include <ae/assets.h>
 #include <ae/atlas.h>
@@ -123,6 +122,10 @@ _Map::~_Map() {
 	// Update objects
 	for(auto &Object : Objects)
 		Object->Map = nullptr;
+
+	// Delete objects managed by map
+	for(auto &Object : StaticObjects)
+		delete Object;
 }
 
 // Allocates memory for the map
@@ -500,22 +503,12 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 		// Setup lights
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
 
+		// Add lights
 		int LightCount = 0;
-		for(const auto &Object : Objects) {
-			if(!Object->Light)
-				continue;
+		LightCount = AddLights(&Objects, LightCount);
+		LightCount = AddLights(&StaticObjects, LightCount);
 
-			const _LightType &LightType = Stats->Lights.at(Object->Light);
-			_Light *Light = &Assets.Programs["pos_uv"]->Lights[LightCount];
-			Light->Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
-			Light->Color = glm::vec4(LightType.Color, 1);
-			Light->Radius = LightType.Radius;
-			LightCount++;
-
-			if(LightCount >= Assets.Programs["pos_uv"]->MaxLights)
-				break;
-		}
-
+		// Update light count in shader
 		Assets.Programs["pos_uv"]->LightCount = LightCount;
 	}
 
@@ -669,6 +662,39 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 	Graphics.DirtyState();
 }
 
+// Add lights from objects
+int _Map::AddLights(const std::list<_Object *> *ObjectList, int LightCount) {
+
+	// Check max lights
+	if(LightCount >= Assets.Programs["pos_uv"]->MaxLights)
+		return LightCount;
+
+	// Iterate over objects
+	for(const auto &Object : *ObjectList) {
+		if(!Object->Light)
+			continue;
+
+		// Check for valid light
+		const auto &Iterator = Stats->Lights.find(Object->Light);
+		if(Iterator == Stats->Lights.end())
+		   continue;
+
+		// Set light in shader
+		const _LightType &LightType = Iterator->second;
+		_Light *Light = &Assets.Programs["pos_uv"]->Lights[LightCount];
+		Light->Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
+		Light->Color = glm::vec4(LightType.Color, 1);
+		Light->Radius = LightType.Radius;
+		LightCount++;
+
+		// Check max lights
+		if(LightCount >= Assets.Programs["pos_uv"]->MaxLights)
+			break;
+	}
+
+	return LightCount;
+}
+
 // Load map
 void _Map::Load(const _MapStat *MapStat, bool Static) {
 
@@ -699,6 +725,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 
 	// Load tiles
 	_Tile *Tile = nullptr;
+	_Object *Object = nullptr;
 	while(!File.eof() && File.peek() != EOF) {
 
 		// Read chunk type
@@ -758,6 +785,20 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 				if(Tile)
 					File >> Tile->PVP;
 			} break;
+			// Object
+			case 'O': {
+				glm::ivec2 Coordinate;
+				File >> Coordinate.x >> Coordinate.y;
+				Object = new _Object();
+				Object->Position = Coordinate;
+				StaticObjects.push_back(Object);
+			} break;
+			// Object light
+			case 'l': {
+				if(Object) {
+					File >> Object->Light;
+				}
+			} break;
 			default:
 				File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			break;
@@ -810,6 +851,12 @@ bool _Map::Save(const std::string &Path) {
 			if(Tile.PVP)
 				Output << "p " << Tile.PVP << '\n';
 		}
+	}
+
+	// Write static objects
+	for(auto &Object : StaticObjects) {
+		Output << "O " << Object->Position.x << ' ' << Object->Position.y << '\n';
+		Output << "l " << Object->Light << '\n';
 	}
 
 	Output.close();
@@ -1010,12 +1057,7 @@ void _Map::SendObjectUpdates() {
 	Packet.Write<uint8_t>((uint8_t)NetworkID);
 
 	// Write object count
-	NetworkIDType UpdateCount = 0;
-	for(const auto &Object : Objects) {
-		if(!Object->Static)
-			UpdateCount++;
-	}
-	Packet.Write<NetworkIDType>((NetworkIDType)UpdateCount);
+	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());
 
 	// Iterate over objects
 	for(const auto &Object : Objects) {

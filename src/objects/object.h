@@ -127,7 +127,6 @@ class _Object : public _BaseObject {
 
 		// Base
 		std::string Name;
-		bool Static;
 
 		// Components
 		_Character *Character;
