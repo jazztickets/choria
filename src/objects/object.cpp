@@ -55,6 +55,7 @@
 // Constructor
 _Object::_Object() :
 	Name(""),
+	Static(false),
 	Character(nullptr),
 	Inventory(nullptr),
 	Record(nullptr),
@@ -335,7 +336,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 			Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
 		}
 
-		if(ClientPlayer != this) {
+		if(ClientPlayer != this && Character->Invisible != 1) {
 			Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), CENTER_BASELINE, Color, 1.0f / ModelTexture->Size.x);
 		}
 	}
@@ -681,7 +682,10 @@ void _Object::SerializeCreate(_Buffer &Data) {
 	Data.Write<NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.WriteString(Name.c_str());
-	Data.Write<uint32_t>(Character->PortraitID);
+	if(Character)
+		Data.Write<uint32_t>(Character->PortraitID);
+	else
+		Data.Write<uint32_t>(0);
 	Data.Write<uint32_t>(ModelID);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
@@ -773,7 +777,9 @@ void _Object::SerializeBattle(_Buffer &Data) {
 void _Object::UnserializeCreate(_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
-	Character->PortraitID = Data.Read<uint32_t>();
+	uint32_t PortraitID = Data.Read<uint32_t>();
+	if(PortraitID && Character)
+		Character->PortraitID = PortraitID;
 	ModelID = Data.Read<uint32_t>();
 	Light = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();

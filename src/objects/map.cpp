@@ -1010,7 +1010,12 @@ void _Map::SendObjectUpdates() {
 	Packet.Write<uint8_t>((uint8_t)NetworkID);
 
 	// Write object count
-	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());
+	NetworkIDType UpdateCount = 0;
+	for(const auto &Object : Objects) {
+		if(!Object->Static)
+			UpdateCount++;
+	}
+	Packet.Write<NetworkIDType>((NetworkIDType)UpdateCount);
 
 	// Iterate over objects
 	for(const auto &Object : Objects) {
