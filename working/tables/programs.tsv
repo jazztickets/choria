@@ -1,7 +1,7 @@
 name	vertex	fragment	attribs	max_lights
 text	shaders/text.vert	shaders/text.frag	2	0
 pos	shaders/pos.vert	shaders/pos.frag	1	0
-pos_uv	shaders/pos_uv.vert	shaders/pos_uv_norm.frag	2	10
+pos_uv	shaders/pos_uv.vert	shaders/pos_uv_norm.frag	2	50
 pos_uv_static	shaders/pos_uv.vert	shaders/pos_uv_static.frag	2	0
 ortho_pos	shaders/ortho_pos.vert	shaders/pos.frag	1	0
 ortho_pos_uv	shaders/ortho_pos_uv.vert	shaders/ortho_pos_uv.frag	2	0

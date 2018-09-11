@@ -511,6 +511,9 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 			Light->Color = glm::vec4(LightType.Color, 1);
 			Light->Radius = LightType.Radius;
 			LightCount++;
+
+			if(LightCount >= Assets.Programs["pos_uv"]->MaxLights)
+				break;
 		}
 
 		Assets.Programs["pos_uv"]->LightCount = LightCount;

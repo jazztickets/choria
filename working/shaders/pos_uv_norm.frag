@@ -27,22 +27,16 @@ void main() {
 		vec3 light_direction = lights[i].position - world_vertex;
 		float light_distance = length(light_direction);
 
-		// Normalize
-		//light_direction /= light_distance;
-		//vec4 diffuse_light = lights[i].color * max(dot(world_normal, light_direction), 0.0);
-		vec4 diffuse_light = lights[i].color;
-
-		//float attenuation = 1.0 / (light_attenuation.x + light_distance * light_attenuation.y + light_distance * light_distance * light_attenuation.z);
+		// Calculate attenuation
 		float attenuation = 1.0 / (light_distance + 0.1);
 		attenuation = clamp(attenuation, 0.0, 1.0);
-		//attenuation = 1;
 		float max = lights[i].radius - 0.25;
 		float falloff = 1;
 		if(light_distance > max)
 			attenuation *= clamp((max + falloff - light_distance) / falloff, 0, 1);
 
 		// Add lights up
-		light_color += diffuse_light * attenuation;
+		light_color += lights[i].color * attenuation;
 	}
 
 	// Get texture color
