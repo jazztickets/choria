@@ -486,7 +486,7 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
 	// Set lights for editor
-	if(!ClientPlayer) {
+	if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT) {
 		glm::vec4 AmbientLightEditor(1.0f, 1.0f, 1.0f, 1.0f);
 		Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
 		Assets.Programs["pos_uv"]->LightCount = 0;
@@ -523,7 +523,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 	if(BackgroundMap) {
 		BackgroundMap->Clock = Clock;
 		BackgroundMap->SetAmbientLightByClock();
-		if(!ClientPlayer)
+		if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT)
 			BackgroundMap->AmbientLight = glm::vec4(1.0f);
 		Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight;
 
@@ -567,7 +567,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 		return;
 
 	// Draw map boundaries
-	if(RenderFlags & FILTER_BOUNDARY) {
+	if(RenderFlags & MAP_RENDER_BOUNDARY) {
 		Graphics.SetProgram(Assets.Programs["pos"]);
 		Graphics.SetVBO(VBO_NONE);
 		Graphics.SetColor(Assets.Colors["red"]);
@@ -575,7 +575,7 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 	}
 
 	// Draw zone overlays
-	if((RenderFlags & FILTER_ZONE)) {
+	if(RenderFlags & MAP_RENDER_ZONE) {
 		Graphics.SetProgram(Assets.Programs["pos"]);
 		Graphics.SetVBO(VBO_NONE);
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
@@ -599,17 +599,17 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 
 			// Draw wall
 			if(Tile->Wall) {
-				if(RenderFlags & FILTER_WALL)
+				if(RenderFlags & MAP_RENDER_WALL)
 					Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 			}
 			else {
 
 				// Draw zone number
-				if((RenderFlags & FILTER_ZONE) && Tile->Zone > 0)
+				if((RenderFlags & MAP_RENDER_ZONE) && Tile->Zone > 0)
 					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 
 				// Draw PVP
-				if((RenderFlags & FILTER_PVP) && Tile->PVP)
+				if((RenderFlags & MAP_RENDER_PVP) && Tile->PVP)
 					Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), CENTER_MIDDLE, Assets.Colors["red"], 1.0f / 64.0f);
 			}
 

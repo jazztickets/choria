@@ -29,14 +29,15 @@ class _Texture;
 class _Stats;
 class _Element;
 
-enum FilterType {
-	FILTER_BOUNDARY  = (1 << 1),
-	FILTER_TEXTURE   = (1 << 2),
-	FILTER_WALL      = (1 << 3),
-	FILTER_PVP       = (1 << 4),
-	FILTER_ZONE      = (1 << 5),
-	FILTER_EVENTTYPE = (1 << 6),
-	FILTER_EVENTDATA = (1 << 7),
+enum MapRenderType {
+	MAP_RENDER_BOUNDARY          = (1 << 1),
+	MAP_RENDER_TEXTURE           = (1 << 2),
+	MAP_RENDER_WALL              = (1 << 3),
+	MAP_RENDER_PVP               = (1 << 4),
+	MAP_RENDER_ZONE              = (1 << 5),
+	MAP_RENDER_EVENTTYPE         = (1 << 6),
+	MAP_RENDER_EVENTDATA         = (1 << 7),
+	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
 };
 
 // Classes
@@ -106,6 +107,8 @@ class _EditorState : public _State {
 		_Map *Map;
 		uint32_t MapID;
 		std::string FilePath;
+		double Clock;
+		bool UseClockAmbientLight;
 
 		// Copy paste
 		bool DrawBounds;

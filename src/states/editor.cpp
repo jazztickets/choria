@@ -63,6 +63,7 @@ void _EditorState::Init() {
 
 	Audio.StopMusic();
 
+	// Setup UI
 	ButtonBarElement = Assets.Elements["element_editor_buttonbar"];
 	TexturesElement = Assets.Elements["element_editor_textures"];
 	NewMapElement = Assets.Elements["element_editor_newmap"];
@@ -100,10 +101,12 @@ void _EditorState::Init() {
 	// Set filters
 	Layer = 0;
 	Filter = 0;
-	Filter |= FILTER_TEXTURE;
-	Filter |= FILTER_WALL;
+	Filter |= MAP_RENDER_TEXTURE;
+	Filter |= MAP_RENDER_WALL;
 
 	// Default map
+	Clock = 60.0 * 12.0;
+	UseClockAmbientLight = false;
 	Map = nullptr;
 	MapID = 0;
 	if(FilePath != "") {
@@ -191,21 +194,25 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 			break;
 			case SDL_SCANCODE_1:
 				Filter = 0;
-				Filter |= FILTER_TEXTURE;
-				Filter |= FILTER_WALL;
+				Filter |= MAP_RENDER_TEXTURE;
+				Filter |= MAP_RENDER_WALL;
 			break;
 			case SDL_SCANCODE_2:
 				Filter = 0;
-				Filter |= FILTER_ZONE;
+				Filter |= MAP_RENDER_ZONE;
 			break;
 			case SDL_SCANCODE_3:
 				Filter = 0;
-				Filter |= FILTER_PVP;
+				Filter |= MAP_RENDER_PVP;
 			break;
 			case SDL_SCANCODE_4:
 				Filter = 0;
-				Filter |= FILTER_EVENTTYPE;
-				Filter |= FILTER_EVENTDATA;
+				Filter |= MAP_RENDER_EVENTTYPE;
+				Filter |= MAP_RENDER_EVENTDATA;
+			break;
+			case SDL_SCANCODE_T:
+				if(Input.ModKeyDown(KMOD_CTRL))
+					UseClockAmbientLight = !UseClockAmbientLight;
 			break;
 			case SDL_SCANCODE_E:
 				if(Input.ModKeyDown(KMOD_SHIFT)) {
@@ -361,10 +368,10 @@ void _EditorState::HandleMouseWheel(int Direction) {
 		if(Input.ModKeyDown(KMOD_SHIFT))
 			Direction *= 10;
 
-		if(Filter & FILTER_ZONE) {
+		if(Filter & MAP_RENDER_ZONE) {
 			AdjustValue(Brush->Zone, Direction);
 		}
-		else if(Filter & FILTER_EVENTDATA) {
+		else if(Filter & MAP_RENDER_EVENTDATA) {
 			AdjustValue(Brush->Event.Data, Direction);
 		}
 	}
@@ -397,6 +404,9 @@ void _EditorState::Update(double FrameTime) {
 	if(!Map)
 		return;
 
+	// Set clock
+	Map->Clock = Clock;
+
 	// Update camera
 	if(Camera) {
 		Camera->Update(FrameTime);
@@ -406,8 +416,23 @@ void _EditorState::Update(double FrameTime) {
 		WorldCursor = Map->GetValidPosition(WorldCursor);
 	}
 
+	// Handle mouse input
 	if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL)) && Graphics.Element->HitElement == Graphics.Element) {
 		ApplyBrush(WorldCursor);
+	}
+
+	// Handle key input
+	if(Input.KeyDown(SDL_SCANCODE_T) && !Input.ModKeyDown(KMOD_CTRL)) {
+		if(Input.ModKeyDown(KMOD_SHIFT)) {
+			Clock -= FrameTime * MAP_EDITOR_CLOCK_SPEED;
+			if(Clock < 0)
+				Clock += MAP_DAY_LENGTH;
+		}
+		else {
+			Clock += FrameTime * MAP_EDITOR_CLOCK_SPEED;
+			if(Clock >= MAP_DAY_LENGTH)
+				Clock -= MAP_DAY_LENGTH;
+		}
 	}
 }
 
@@ -428,8 +453,12 @@ void _EditorState::Render(double BlendFactor) {
 	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Render map
-	if(Map)
-		Map->Render(Camera, nullptr, BlendFactor, Filter | FILTER_BOUNDARY);
+	if(Map) {
+		int RenderFilter = Filter | MAP_RENDER_BOUNDARY;
+		if(!UseClockAmbientLight)
+			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
+		Map->Render(Camera, nullptr, BlendFactor, RenderFilter);
+	}
 
 	Graphics.SetColor(glm::vec4(1.0f));
 	Graphics.SetProgram(Assets.Programs["pos"]);
@@ -460,12 +489,19 @@ void _EditorState::Render(double BlendFactor) {
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, 25));
 	Buffer.str("");
 
+	// Cursor position
 	Buffer << (int)WorldCursor.x << ", " << (int)WorldCursor.y;
 	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, Graphics.ViewportSize.y - 15));
 	Buffer.str("");
 
+	// FPS
 	Buffer << Graphics.FramesPerSecond << " FPS";
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(15, 50));
+	Buffer.str("");
+
+	// Clock
+	Map->GetClockAsString(Buffer);
+	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(Graphics.ViewportSize.x - 60, 55));
 	Buffer.str("");
 
 	// Draw UI
@@ -538,7 +574,7 @@ void _EditorState::RenderBrush() {
 	else
 		Buffer << "Floor";
 
-	Filter & FILTER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
+	Filter & MAP_RENDER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
@@ -547,7 +583,7 @@ void _EditorState::RenderBrush() {
 	// Draw zone
 	Buffer << "Zone " << Brush->Zone;
 
-	Filter & FILTER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
+	Filter & MAP_RENDER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
@@ -559,7 +595,7 @@ void _EditorState::RenderBrush() {
 	else
 		Buffer << "Safe";
 
-	Filter & FILTER_PVP ? Color.a = 1.0f : Color.a = 0.5f;
+	Filter & MAP_RENDER_PVP ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
@@ -568,7 +604,7 @@ void _EditorState::RenderBrush() {
 	// Draw event type
 	Buffer << Stats->EventNames[Brush->Event.Type].Name;
 
-	Filter & FILTER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
+	Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 
@@ -577,7 +613,7 @@ void _EditorState::RenderBrush() {
 	// Draw event data
 	Buffer << "Data " << Brush->Event.Data;
 
-	Filter & FILTER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
+	Filter & MAP_RENDER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
 	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
 	Buffer.str("");
 }
@@ -912,6 +948,9 @@ void _EditorState::LoadMap() {
 
 		// Save map id
 		MapID = Stats->GetMapIDByPath(Path);
+		UseClockAmbientLight = false;
+		if(Map->IsOutside)
+			UseClockAmbientLight = true;
 	}
 
 	CloseWindows();
@@ -966,17 +1005,17 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 			Map->GetTile(TilePosition, Tile);
 
 			// Apply filters
-			if(Filter & FILTER_TEXTURE)
+			if(Filter & MAP_RENDER_TEXTURE)
 				Tile.TextureIndex[Layer] = Brush->TextureIndex[Layer];
-			if(Filter & FILTER_WALL)
+			if(Filter & MAP_RENDER_WALL)
 				Tile.Wall = Brush->Wall;
-			if(Filter & FILTER_ZONE)
+			if(Filter & MAP_RENDER_ZONE)
 				Tile.Zone = Brush->Zone;
-			if(Filter & FILTER_PVP)
+			if(Filter & MAP_RENDER_PVP)
 				Tile.PVP = Brush->PVP;
-			if(Filter & FILTER_EVENTTYPE)
+			if(Filter & MAP_RENDER_EVENTTYPE)
 				Tile.Event.Type = Brush->Event.Type;
-			if(Filter & FILTER_EVENTDATA)
+			if(Filter & MAP_RENDER_EVENTDATA)
 				Tile.Event.Data = Brush->Event.Data;
 
 			// Set new tile
