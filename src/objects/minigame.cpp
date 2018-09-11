@@ -205,7 +205,6 @@ void _Minigame::Update(double FrameTime) {
 				Manifold.ObjectA = Sprite;
 				Manifold.Penetration = std::abs(AABB[3] - Boundary.End.y);
 				Manifold.Normal = glm::vec2(0.0, -1.0f);
-				//Manifolds.push_back(Manifold);
 
 				float Width = Boundary.End.x - Boundary.Start.x;
 				Bucket = (size_t)((Sprite->RigidBody.Position.x - Boundary.Start.x) / Width * 8.0f);
@@ -377,35 +376,11 @@ void _Minigame::Drop(float X) {
 
 // Refresh prizes
 void _Minigame::RefreshPrizes() {
-	const int BagCount = 3;
+
+	// Add prizes
 	Prizes.clear();
-
-	// Separate prizes by value
-	std::vector<const _MinigameItem *> PrizeBuckets[BagCount];
-	for(const auto &Item : Minigame->Items) {
-		if(Item.Item) {
-			int SellValue = Item.Item->Cost * Item.Count / 2;
-			if(SellValue > Minigame->Cost * Minigame->RequiredItem->Cost)
-				PrizeBuckets[0].push_back(&Item);
-			else if(SellValue < Minigame->Cost * Minigame->RequiredItem->Cost)
-				PrizeBuckets[2].push_back(&Item);
-			else
-				PrizeBuckets[1].push_back(&Item);
-		}
-	}
-
-	// Add prizes from each bag
-	size_t AddAmounts[BagCount] = { 2, 2, 4 };
-	for(int i = 0; i < BagCount; i++) {
-		if(!PrizeBuckets[i].size())
-			continue;
-
-		ShufflePrizes(PrizeBuckets[i]);
-		size_t AddAmount = std::min(AddAmounts[i], PrizeBuckets[i].size());
-		for(size_t j = 0; j < AddAmount; j++) {
-			Prizes.push_back(PrizeBuckets[i][j]);
-		}
-	}
+	for(const auto &Item : Minigame->Items)
+		Prizes.push_back(&Item);
 
 	// Remove two items and shuffle
 	ShufflePrizes(Prizes);
