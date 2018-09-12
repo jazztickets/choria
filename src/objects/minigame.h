@@ -25,6 +25,7 @@
 template<class T> class _Manager;
 class _Sprite;
 class _Camera;
+class _Grid;
 struct _MinigameItem;
 struct _MinigameType;
 struct _MouseEvent;
@@ -55,14 +56,19 @@ class _Minigame {
 		void GetUIBoundary(_Bounds &Bounds);
 
 		// Attributes
+		bool IsServer;
+
+		// Objects
 		std::mt19937 Random;
 		_Bounds Boundary;
 		_Manager<_Sprite> *Sprites;
 		_Sprite *Ball;
 		_Camera *Camera;
+		_Grid *Grid;
+
+		// Stats
 		const _MinigameType *Minigame;
 		std::vector<const _MinigameItem *> Prizes;
-		bool IsServer;
 
 		// State
 		StateType State;

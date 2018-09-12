@@ -84,10 +84,11 @@ void _TestState::Init() {
 		if(Minigame->Bucket < Minigame->Prizes.size()) {
 			const _MinigameItem *MinigameItem = Minigame->Prizes[Minigame->Bucket];
 			if(MinigameItem && MinigameItem->Item) {
-				std::cout << MinigameItem->Item->Cost * MinigameItem->Count << std::endl;
+				//std::cout << MinigameItem->Item->Cost * MinigameItem->Count << std::endl;
 			}
-			else
-				std::cout << "0" << std::endl;
+			else {
+				//std::cout << "0" << std::endl;
+			}
 		}
 
 		delete Minigame;

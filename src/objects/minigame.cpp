@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <objects/minigame.h>
 #include <objects/sprite.h>
+#include <objects/grid.h>
 #include <ae/manager.h>
 #include <ae/physics.h>
 #include <ae/assets.h>
@@ -38,8 +39,8 @@
 
 // Constructor
 _Minigame::_Minigame(const _MinigameType *Minigame) :
-	Minigame(Minigame),
 	IsServer(false),
+	Minigame(Minigame),
 	State(StateType::NEEDSEED),
 	Time(0),
 	DropX(0),
@@ -51,6 +52,9 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 
 	Boundary.Start = glm::vec2(-8, -6.5);
 	Boundary.End = glm::vec2(8, 6);
+
+	glm::ivec2 GridSize(std::ceil(Boundary.End.x - Boundary.Start.x), std::ceil(Boundary.End.y - Boundary.Start.y));
+	Grid = new _Grid(GridSize, -Boundary.Start);
 
 	Sprites = new _Manager<_Sprite>();
 	Ball = Sprites->Create();
@@ -102,12 +106,15 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 				Tip->Texture = Assets.Textures["textures/minigames/peg.png"];
 				Tip->Scale = glm::vec2(0.5f, 0.5f);
 				Tip->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
+				Grid->AddObject(Sprite, Tip->RigidBody.Position, Tip->Shape.HalfWidth);
 			}
 			else {
 				Sprite->Texture = Assets.Textures["textures/minigames/peg.png"];
 				Sprite->Scale = glm::vec2(0.5f, 0.5f);
 				Sprite->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
 			}
+
+			Grid->AddObject(Sprite, Sprite->RigidBody.Position, Sprite->Shape.HalfWidth);
 		}
 
 		Odd = !Odd;
@@ -120,6 +127,7 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 _Minigame::~_Minigame() {
 	delete Camera;
 	delete Sprites;
+	delete Grid;
 }
 
 // Update
@@ -152,7 +160,14 @@ void _Minigame::Update(double FrameTime) {
 	bool PlayedSound = false;
 	for(auto &Sprite : Sprites->Objects) {
 		Sprite->Touching = false;
-		for(auto &TestSprite : Sprites->Objects) {
+		if(Sprite->RigidBody.InverseMass <= 0.0f)
+			continue;
+
+		// Get list of objects from grid
+		std::list<const void *> PotentialObjects;
+		Grid->GetObjectList(Sprite->RigidBody.Position, Sprite->Shape.HalfWidth, PotentialObjects);
+		for(auto &TestObject : PotentialObjects) {
+			_Sprite *TestSprite = (_Sprite *)TestObject;
 			if(!(Sprite->RigidBody.CollisionGroup & TestSprite->RigidBody.CollisionMask))
 				continue;
 
@@ -313,6 +328,7 @@ void _Minigame::Render(double BlendFactor) {
 	}
 
 	Graphics.DisableScissorTest();
+	//Grid->Render();
 
 	Graphics.Setup2D();
 	Graphics.SetStaticUniforms();
