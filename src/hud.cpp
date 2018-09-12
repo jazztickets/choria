@@ -669,12 +669,12 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawMessage();
 		DrawHudEffects();
 		DrawInventory();
-		DrawCharacterStats();
 		DrawVendor();
 		DrawTrade();
 		DrawTrader();
 		DrawBlacksmith();
 		DrawMinigame(BlendFactor);
+		DrawCharacterStats();
 		DrawSkills();
 		DrawParty();
 		DrawTeleport();
@@ -842,6 +842,11 @@ void _HUD::ToggleInventory() {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenInventory())
 		return;
 
+	if(Minigame) {
+		ToggleCharacterStats();
+		return;
+	}
+
 	if(!InventoryElement->Active) {
 		CloseWindows(true);
 
@@ -915,11 +920,8 @@ void _HUD::ToggleInGameMenu(bool Force) {
 	}
 }
 
-// Show character stats during battle
+// Show character stats
 void _HUD::ToggleCharacterStats() {
-	if(!Player->Character->Battle)
-		return;
-
 	CharacterElement->SetActive(!CharacterElement->Active);
 }
 
