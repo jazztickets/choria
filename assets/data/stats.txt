@@ -293,16 +293,17 @@ INSERT INTO level VALUES(98,22615162,100,1120,0,98,9);
 INSERT INTO level VALUES(99,23556848,101,1130,0,99,9);
 CREATE TABLE IF NOT EXISTS "portrait" (
 	"id" INTEGER PRIMARY KEY,
-	"texture" TEXT
+	"texture" TEXT,
+	"rank" INTEGER DEFAULT(0)
 );
-INSERT INTO portrait VALUES(1,'textures/portraits/joe.png');
-INSERT INTO portrait VALUES(2,'textures/portraits/jeb.png');
-INSERT INTO portrait VALUES(3,'textures/portraits/bim.png');
-INSERT INTO portrait VALUES(4,'textures/portraits/sib.png');
-INSERT INTO portrait VALUES(5,'textures/portraits/biff.png');
-INSERT INTO portrait VALUES(6,'textures/portraits/jone.png');
-INSERT INTO portrait VALUES(7,'textures/portraits/leb.png');
-INSERT INTO portrait VALUES(8,'textures/portraits/jas.png');
+INSERT INTO portrait VALUES(1,'textures/portraits/joe.png',1);
+INSERT INTO portrait VALUES(2,'textures/portraits/jeb.png',3);
+INSERT INTO portrait VALUES(3,'textures/portraits/bim.png',2);
+INSERT INTO portrait VALUES(4,'textures/portraits/sib.png',5);
+INSERT INTO portrait VALUES(5,'textures/portraits/biff.png',4);
+INSERT INTO portrait VALUES(6,'textures/portraits/jone.png',6);
+INSERT INTO portrait VALUES(7,'textures/portraits/leb.png',8);
+INSERT INTO portrait VALUES(8,'textures/portraits/jas.png',7);
 CREATE TABLE IF NOT EXISTS "model" (
 	"id" INTEGER PRIMARY KEY,
 	"texture" TEXT
@@ -856,47 +857,48 @@ CREATE TABLE IF NOT EXISTS "build" (
 	"texture" TEXT,
 	"model_id" INTEGER DEFAULT(0),
 	"actionbarsize" INTEGER DEFAULT(4),
-	"starting" INTEGER DEFAULT(0)
+	"starting" INTEGER DEFAULT(0),
+	"rank" INTEGER DEFAULT(0)
 );
-INSERT INTO build VALUES(1,'Warrior','textures/builds/warrior.png',1,4,1);
-INSERT INTO build VALUES(2,'Mage','textures/builds/mage.png',2,4,1);
-INSERT INTO build VALUES(3,'Cleric','textures/builds/cleric.png',3,4,1);
-INSERT INTO build VALUES(4,'Thief','textures/builds/thief.png',4,4,1);
-INSERT INTO build VALUES(5,'Paladin','textures/builds/paladin.png',5,4,1);
-INSERT INTO build VALUES(6,'Warlock','textures/builds/warlock.png',6,4,1);
-INSERT INTO build VALUES(7,'Beggar','textures/builds/beggar.png',7,4,1);
-INSERT INTO build VALUES(8,'Hunter','textures/builds/hunter.png',8,4,1);
-INSERT INTO build VALUES(9,'','',0,4,0);
-INSERT INTO build VALUES(10,'','',0,4,0);
-INSERT INTO build VALUES(11,'','',0,4,0);
-INSERT INTO build VALUES(12,'','',0,4,0);
-INSERT INTO build VALUES(13,'','',0,4,0);
-INSERT INTO build VALUES(14,'','',0,4,0);
-INSERT INTO build VALUES(15,'','',0,4,0);
-INSERT INTO build VALUES(16,'','',0,4,0);
-INSERT INTO build VALUES(17,'','',0,4,0);
-INSERT INTO build VALUES(18,'','',0,4,0);
-INSERT INTO build VALUES(19,'','',0,4,0);
-INSERT INTO build VALUES(20,'Basic Monster','',0,1,0);
-INSERT INTO build VALUES(21,'Spider','',0,1,0);
-INSERT INTO build VALUES(22,'Bat','',0,1,0);
-INSERT INTO build VALUES(23,'Bat Lord','',0,2,0);
-INSERT INTO build VALUES(24,'Crow','',0,1,0);
-INSERT INTO build VALUES(25,'Ghost','',0,1,0);
-INSERT INTO build VALUES(26,'King Krab','',0,2,0);
-INSERT INTO build VALUES(27,'Dead Queen','',0,3,0);
-INSERT INTO build VALUES(28,'Zombie','',0,1,0);
-INSERT INTO build VALUES(29,'Fireant','',0,1,0);
-INSERT INTO build VALUES(30,'Crab','',0,1,0);
-INSERT INTO build VALUES(31,'Mud Man','',0,1,0);
-INSERT INTO build VALUES(32,'Venomous Bat','',0,1,0);
-INSERT INTO build VALUES(33,'Slime Prince','',0,3,0);
-INSERT INTO build VALUES(34,'Skeleton Priest','',0,2,0);
-INSERT INTO build VALUES(35,'Slime','',0,1,0);
-INSERT INTO build VALUES(36,'Skeleton','',0,1,0);
-INSERT INTO build VALUES(37,'Demon','',0,1,0);
-INSERT INTO build VALUES(38,'Goblin','',0,1,0);
-INSERT INTO build VALUES(39,'Goblin Thief','',0,3,0);
+INSERT INTO build VALUES(1,'Warrior','textures/builds/warrior.png',1,4,1,1);
+INSERT INTO build VALUES(2,'Mage','textures/builds/mage.png',2,4,1,3);
+INSERT INTO build VALUES(3,'Cleric','textures/builds/cleric.png',3,4,1,2);
+INSERT INTO build VALUES(4,'Thief','textures/builds/thief.png',4,4,1,5);
+INSERT INTO build VALUES(5,'Paladin','textures/builds/paladin.png',5,4,1,4);
+INSERT INTO build VALUES(6,'Warlock','textures/builds/warlock.png',6,4,1,6);
+INSERT INTO build VALUES(7,'Beggar','textures/builds/beggar.png',7,4,1,8);
+INSERT INTO build VALUES(8,'Hunter','textures/builds/hunter.png',8,4,1,7);
+INSERT INTO build VALUES(9,'','',0,4,0,0);
+INSERT INTO build VALUES(10,'','',0,4,0,0);
+INSERT INTO build VALUES(11,'','',0,4,0,0);
+INSERT INTO build VALUES(12,'','',0,4,0,0);
+INSERT INTO build VALUES(13,'','',0,4,0,0);
+INSERT INTO build VALUES(14,'','',0,4,0,0);
+INSERT INTO build VALUES(15,'','',0,4,0,0);
+INSERT INTO build VALUES(16,'','',0,4,0,0);
+INSERT INTO build VALUES(17,'','',0,4,0,0);
+INSERT INTO build VALUES(18,'','',0,4,0,0);
+INSERT INTO build VALUES(19,'','',0,4,0,0);
+INSERT INTO build VALUES(20,'Basic Monster','',0,1,0,0);
+INSERT INTO build VALUES(21,'Spider','',0,1,0,0);
+INSERT INTO build VALUES(22,'Bat','',0,1,0,0);
+INSERT INTO build VALUES(23,'Bat Lord','',0,2,0,0);
+INSERT INTO build VALUES(24,'Crow','',0,1,0,0);
+INSERT INTO build VALUES(25,'Ghost','',0,1,0,0);
+INSERT INTO build VALUES(26,'King Krab','',0,2,0,0);
+INSERT INTO build VALUES(27,'Dead Queen','',0,3,0,0);
+INSERT INTO build VALUES(28,'Zombie','',0,1,0,0);
+INSERT INTO build VALUES(29,'Fireant','',0,1,0,0);
+INSERT INTO build VALUES(30,'Crab','',0,1,0,0);
+INSERT INTO build VALUES(31,'Mud Man','',0,1,0,0);
+INSERT INTO build VALUES(32,'Venomous Bat','',0,1,0,0);
+INSERT INTO build VALUES(33,'Slime Prince','',0,3,0,0);
+INSERT INTO build VALUES(34,'Skeleton Priest','',0,2,0,0);
+INSERT INTO build VALUES(35,'Slime','',0,1,0,0);
+INSERT INTO build VALUES(36,'Skeleton','',0,1,0,0);
+INSERT INTO build VALUES(37,'Demon','',0,1,0,0);
+INSERT INTO build VALUES(38,'Goblin','',0,1,0,0);
+INSERT INTO build VALUES(39,'Goblin Thief','',0,3,0,0);
 CREATE TABLE IF NOT EXISTS "buildskill" (
 	"id" INTEGER PRIMARY KEY,
 	"build_id" INTEGER DEFAULT(0) REFERENCES build(id) ON DELETE CASCADE,

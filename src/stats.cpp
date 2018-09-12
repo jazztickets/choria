@@ -551,7 +551,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 void _Stats::GetPortraits(std::list<_Portrait> &Portraits) const {
 
 	// Run query
-	Database->PrepareQuery("SELECT * FROM portrait");
+	Database->PrepareQuery("SELECT * FROM portrait ORDER BY rank");
 	while(Database->FetchRow()) {
 		_Portrait Portrait;
 		Portrait.ID = Database->GetInt<uint32_t>("id");
@@ -567,7 +567,7 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) const {
 void _Stats::GetStartingBuilds(std::list<_Build> &Builds) const {
 
 	// Run query
-	Database->PrepareQuery("SELECT * FROM build WHERE starting = 1");
+	Database->PrepareQuery("SELECT * FROM build WHERE starting = 1 ORDER BY rank");
 	while(Database->FetchRow()) {
 		_Build Build;
 		Build.ID = Database->GetInt<uint32_t>("id");
@@ -585,7 +585,7 @@ const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) const {
 	const _Texture *Image = nullptr;
 
 	// Run query
-	Database->PrepareQuery("SELECT texture FROM portrait where id = @portrait_id");
+	Database->PrepareQuery("SELECT texture FROM portrait WHERE id = @portrait_id");
 	Database->BindInt(1, PortraitID);
 	if(Database->FetchRow()) {
 		Image = Assets.Textures[Database->GetString("texture")];
