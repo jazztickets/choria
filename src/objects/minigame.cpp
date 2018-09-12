@@ -106,7 +106,7 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 				Tip->Texture = Assets.Textures["textures/minigames/peg.png"];
 				Tip->Scale = glm::vec2(0.5f, 0.5f);
 				Tip->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
-				Grid->AddObject(Sprite, Tip->RigidBody.Position, Tip->Shape.HalfWidth);
+				Grid->AddObject(Tip, Tip->RigidBody.Position, Tip->Shape.HalfWidth);
 			}
 			else {
 				Sprite->Texture = Assets.Textures["textures/minigames/peg.png"];
