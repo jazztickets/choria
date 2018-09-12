@@ -610,7 +610,7 @@ void _Menu::LoadBuildButtons() {
 		// Update position
 		Offset.x += Build.Texture->Size.x + 10;
 		if(Offset.x > BuildsElement->Size.x - Build.Texture->Size.x - 10) {
-			Offset.y += Build.Texture->Size.y + 10;
+			Offset.y += Build.Texture->Size.y + 22;
 			Offset.x = 10;
 		}
 
