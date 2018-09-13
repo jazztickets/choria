@@ -1082,6 +1082,7 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 // Update death count and gold loss
 void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
+	int OldBounty = Record->Bounty;
 
 	// Update stats
 	Character->UpdateGold(-GoldPenalty);
@@ -1092,9 +1093,17 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 		Record->Bounty = 0;
 
 	// Send message
-	if(Server && Peer) {
-		Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), "red");
-		Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Record->Deaths << " )" << std::endl;
+	if(Server) {
+		if(BountyLoss > 0 && Record->Bounty == 0) {
+			std::string BountyMessage = "Player " + Name + "'s bounty of " + std::to_string(OldBounty) + " gold has been claimed!";
+			Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
+			Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
+		}
+
+		if(Peer) {
+			Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), "red");
+			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Record->Deaths << " )" << std::endl;
+		}
 	}
 }
 

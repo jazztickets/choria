@@ -695,8 +695,11 @@ void _Battle::ServerEndBattle() {
 			if(PVP && Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
 				if(BountyEarned) {
 					Object->Record->Bounty += GoldEarned;
-					if(Object->Record->Bounty)
-						Server->BroadcastMessage(nullptr, "Player \"" + Object->Name + "\" now has a bounty of " + std::to_string(Object->Record->Bounty) + " gold!", "cyan");
+					if(Object->Record->Bounty) {
+						std::string BountyMessage = "Player " + Object->Name + " now has a bounty of " + std::to_string(Object->Record->Bounty) + " gold!";
+						Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
+						Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
+					}
 				}
 			}
 		}

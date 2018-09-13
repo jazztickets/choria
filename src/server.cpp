@@ -1830,7 +1830,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 		// Get a list of players
 		std::list<_Object *> Players;
-		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, 7*7, BATTLE_MAX_OBJECTS_PER_SIDE-1, Players);
+		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, BATTLE_COOP_DISTANCE, BATTLE_MAX_OBJECTS_PER_SIDE-1, Players);
 		int AdditionalCount = 0;
 		if(!BattleEvent.Scripted)
 			AdditionalCount = (int)Players.size();
