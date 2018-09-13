@@ -396,7 +396,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 					InfoText = "Left-click to use";
 			}
 			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
-				if(TargetID == TargetType::NONE)
+				if(Scope == ScopeType::NONE)
 					InfoText = "Passive skills must be equipped";
 			}
 			else {
