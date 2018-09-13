@@ -26,7 +26,6 @@
 #include <cstdint>
 
 // Forward Declarations
-template<class T> class _Manager;
 class _Character;
 class _Inventory;
 class _Record;
@@ -34,28 +33,32 @@ class _Fighter;
 class _Controller;
 class _Monster;
 class _Map;
-class _Peer;
-class _Texture;
 class _Battle;
 class _Buff;
 class _Stats;
 class _Server;
-class _Buffer;
 class _Scripting;
 class _StatChange;
 class _StatusEffect;
-class _Element;
 class _HUD;
 struct _Tile;
 struct _ActionResult;
 struct _Slot;
+
+namespace ae {
+	template<class T> class _Manager;
+	class _Buffer;
+	class _Texture;
+	class _Element;
+	class _Peer;
+}
 
 namespace Json {
 	class Value;
 }
 
 // Classes
-class _Object : public _BaseObject {
+class _Object : public ae::_BaseObject {
 
 	public:
 
@@ -80,14 +83,14 @@ class _Object : public _BaseObject {
 		void UnserializeSaveData(const std::string &JsonString);
 
 		// Network
-		void SerializeCreate(_Buffer &Data);
-		void SerializeUpdate(_Buffer &Data);
-		void SerializeStats(_Buffer &Data);
-		void SerializeBattle(_Buffer &Data);
-		void UnserializeCreate(_Buffer &Data);
-		void UnserializeStats(_Buffer &Data);
-		void UnserializeBattle(_Buffer &Data, bool IsClient);
-		void SendPacket(_Buffer &Packet);
+		void SerializeCreate(ae::_Buffer &Data);
+		void SerializeUpdate(ae::_Buffer &Data);
+		void SerializeStats(ae::_Buffer &Data);
+		void SerializeBattle(ae::_Buffer &Data);
+		void UnserializeCreate(ae::_Buffer &Data);
+		void UnserializeStats(ae::_Buffer &Data);
+		void UnserializeBattle(ae::_Buffer &Data, bool IsClient);
+		void SendPacket(ae::_Buffer &Packet);
 
 		// Stats
 		bool IsMonster() const;
@@ -96,7 +99,7 @@ class _Object : public _BaseObject {
 
 		// Battles
 		void UpdateMonsterAI(double FrameTime);
-		void CreateBattleElement(_Element *Parent);
+		void CreateBattleElement(ae::_Element *Parent);
 		void RemoveBattleElement();
 		void StopBattle();
 
@@ -104,7 +107,7 @@ class _Object : public _BaseObject {
 		void ResolveBuff(_StatusEffect *StatusEffect, const std::string &Function);
 
 		// Actions
-		void SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager);
+		void SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager);
 
 		// Movement
 		void GetDirectionFromInput(int InputState, glm::ivec2 &Direction);
@@ -119,7 +122,7 @@ class _Object : public _BaseObject {
 		// Map
 		bool CanRespec() const;
 		const _Tile *GetTile() const;
-		NetworkIDType GetMapID() const;
+		ae::NetworkIDType GetMapID() const;
 
 		// Path finding
 		bool Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);
@@ -141,14 +144,14 @@ class _Object : public _BaseObject {
 		_Map *Map;
 		_Scripting *Scripting;
 		_Server *Server;
-		_Peer *Peer;
+		ae::_Peer *Peer;
 
 		// Movement
 		glm::ivec2 Position;
 		glm::ivec2 ServerPosition;
 
 		// Render
-		const _Texture *ModelTexture;
+		const ae::_Texture *ModelTexture;
 		uint32_t ModelID;
 		int Light;
 

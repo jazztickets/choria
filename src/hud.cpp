@@ -66,43 +66,43 @@ _HUD::_HUD() {
 	Tooltip.Reset();
 	Cursor.Reset();
 
-	ChatTextBox = Assets.Elements["textbox_chat"];
+	ChatTextBox = ae::Assets.Elements["textbox_chat"];
 
-	Assets.Elements["label_buttonbar_join"]->Text = Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Elements["label_buttonbar_inventory"]->Text = Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Elements["label_buttonbar_trade"]->Text = Actions.GetInputNameForAction(Action::GAME_TRADE).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Elements["label_buttonbar_skills"]->Text = Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Elements["label_buttonbar_party"]->Text = Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Elements["label_buttonbar_menu"]->Text = Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
-	Assets.Elements["label_hud_pvp"]->Text = "";
+	ae::Assets.Elements["label_buttonbar_join"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_inventory"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_trade"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_TRADE).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_skills"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_party"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_menu"]->Text = ae::Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_hud_pvp"]->Text = "";
 
-	DiedElement = Assets.Elements["element_died"];
-	StatusEffectsElement = Assets.Elements["element_hud_statuseffects"];
-	ActionBarElement = Assets.Elements["element_actionbar"];
-	ButtonBarElement = Assets.Elements["element_buttonbar"];
-	EquipmentElement = Assets.Elements["element_equipment"];
-	InventoryElement = Assets.Elements["element_inventory"];
-	CharacterElement = Assets.Elements["element_character"];
-	VendorElement = Assets.Elements["element_vendor"];
-	TradeElement = Assets.Elements["element_trade"];
-	TradeTheirsElement = Assets.Elements["element_trade_theirs"];
-	TraderElement = Assets.Elements["element_trader"];
-	BlacksmithElement = Assets.Elements["element_blacksmith"];
-	MinigameElement = Assets.Elements["element_minigame"];
-	SkillsElement = Assets.Elements["element_skills"];
-	PartyElement = Assets.Elements["element_party"];
-	TeleportElement = Assets.Elements["element_teleport"];
-	ChatElement = Assets.Elements["element_chat"];
-	HealthElement = Assets.Elements["element_hud_health"];
-	ManaElement = Assets.Elements["element_hud_mana"];
-	ExperienceElement = Assets.Elements["element_hud_experience"];
-	RecentItemsElement = Assets.Elements["element_hud_recentitems"];
-	PartyTextBox = Assets.Elements["textbox_party"];
-	GoldElement = Assets.Elements["label_hud_gold"];
-	MessageElement = Assets.Elements["element_hud_message"];
-	MessageLabel = Assets.Elements["label_hud_message"];
-	BlacksmithCost = Assets.Elements["label_blacksmith_cost"];
-	RespawnInstructions = Assets.Elements["label_died_respawn"];
+	DiedElement = ae::Assets.Elements["element_died"];
+	StatusEffectsElement = ae::Assets.Elements["element_hud_statuseffects"];
+	ActionBarElement = ae::Assets.Elements["element_actionbar"];
+	ButtonBarElement = ae::Assets.Elements["element_buttonbar"];
+	EquipmentElement = ae::Assets.Elements["element_equipment"];
+	InventoryElement = ae::Assets.Elements["element_inventory"];
+	CharacterElement = ae::Assets.Elements["element_character"];
+	VendorElement = ae::Assets.Elements["element_vendor"];
+	TradeElement = ae::Assets.Elements["element_trade"];
+	TradeTheirsElement = ae::Assets.Elements["element_trade_theirs"];
+	TraderElement = ae::Assets.Elements["element_trader"];
+	BlacksmithElement = ae::Assets.Elements["element_blacksmith"];
+	MinigameElement = ae::Assets.Elements["element_minigame"];
+	SkillsElement = ae::Assets.Elements["element_skills"];
+	PartyElement = ae::Assets.Elements["element_party"];
+	TeleportElement = ae::Assets.Elements["element_teleport"];
+	ChatElement = ae::Assets.Elements["element_chat"];
+	HealthElement = ae::Assets.Elements["element_hud_health"];
+	ManaElement = ae::Assets.Elements["element_hud_mana"];
+	ExperienceElement = ae::Assets.Elements["element_hud_experience"];
+	RecentItemsElement = ae::Assets.Elements["element_hud_recentitems"];
+	PartyTextBox = ae::Assets.Elements["textbox_party"];
+	GoldElement = ae::Assets.Elements["label_hud_gold"];
+	MessageElement = ae::Assets.Elements["element_hud_message"];
+	MessageLabel = ae::Assets.Elements["label_hud_message"];
+	BlacksmithCost = ae::Assets.Elements["label_blacksmith_cost"];
+	RespawnInstructions = ae::Assets.Elements["label_died_respawn"];
 
 	GoldElement->Size.x = ButtonBarElement->Size.x;
 	GoldElement->CalculateBounds();
@@ -132,7 +132,7 @@ _HUD::_HUD() {
 	BlacksmithCost->SetActive(false);
 	RecentItemsElement->SetActive(false);
 
-	Assets.Elements["element_hud"]->SetActive(true);
+	ae::Assets.Elements["element_hud"]->SetActive(true);
 }
 
 // Shutdown
@@ -158,11 +158,11 @@ void _HUD::Reset() {
 void _HUD::HandleEnter() {
 
 	if(IsTypingGold()) {
-		FocusedElement = nullptr;
+		ae::FocusedElement = nullptr;
 		ValidateTradeGold();
 	}
 	else if(IsTypingParty()) {
-		FocusedElement = nullptr;
+		ae::FocusedElement = nullptr;
 		SendPartyInfo();
 	}
 	else {
@@ -171,7 +171,7 @@ void _HUD::HandleEnter() {
 }
 
 // Mouse events
-void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
+void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	if(!Player)
 		return;
 
@@ -181,12 +181,12 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		// Update minigame
 		if(Player->Character->Minigame && Minigame) {
 			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Inventory->CountItem(Player->Character->Minigame->RequiredItem) >= Player->Character->Minigame->Cost) {
-				if(Input.GetMouse().y > MinigameElement->Bounds.Start.y && Input.GetMouse().y < MinigameElement->Bounds.End.y)
+				if(ae::Input.GetMouse().y > MinigameElement->Bounds.Start.y && ae::Input.GetMouse().y < MinigameElement->Bounds.End.y)
 					Minigame->HandleMouseButton(MouseEvent);
 
 				// Pay
 				if(Minigame->State == _Minigame::StateType::DROPPED) {
-					_Buffer Packet;
+					ae::_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
 					PlayState.Network->SendPacket(Packet);
 
@@ -204,18 +204,18 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 					// Pickup item
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(Input.ModKeyDown(KMOD_CTRL))
-							SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * Input.ModKeyDown(KMOD_SHIFT));
+						if(ae::Input.ModKeyDown(KMOD_CTRL))
+							SplitStack(Tooltip.Slot, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_SHIFT));
 						else
 							Cursor = Tooltip;
 					}
 					// Use an item
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						if(Input.ModKeyDown(KMOD_SHIFT)) {
-							SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * Input.ModKeyDown(KMOD_CTRL));
+						if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
+							SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_CTRL));
 						}
 						else {
-							_Buffer Packet;
+							ae::_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::INVENTORY_USE);
 							Tooltip.Slot.Serialize(Packet);
 							PlayState.Network->SendPacket(Packet);
@@ -228,12 +228,12 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(Tooltip.Window == WINDOW_VENDOR) {
-							if(Input.ModKeyDown(KMOD_SHIFT))
+							if(ae::Input.ModKeyDown(KMOD_SHIFT))
 								BuyItem(&Tooltip);
 							else
 								BuyItem(&Tooltip);
 						}
-						else if((Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) && Input.ModKeyDown(KMOD_SHIFT))
+						else if((Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) && ae::Input.ModKeyDown(KMOD_SHIFT))
 							SellItem(&Tooltip, 1);
 					}
 				break;
@@ -286,26 +286,26 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		// Check skill level up/down
 		else if(SkillsElement->GetClickedElement()) {
 			if(SkillsElement->GetClickedElement()->Name == "button_skills_plus") {
-				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, 1 + 4 * Input.ModKeyDown(KMOD_SHIFT));
+				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, 1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT));
 			}
 			else if(SkillsElement->GetClickedElement()->Name == "button_skills_minus") {
-				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, -(1 + 4 * Input.ModKeyDown(KMOD_SHIFT)));
+				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, -(1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT)));
 			}
 		}
 		// Accept trader button
-		else if(TraderElement->GetClickedElement() == Assets.Elements["button_trader_accept"]) {
-			_Buffer Packet;
+		else if(TraderElement->GetClickedElement() == ae::Assets.Elements["button_trader_accept"]) {
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			PlayState.Network->SendPacket(Packet);
 		}
 		// Cancel trader button
-		else if(TraderElement->GetClickedElement() == Assets.Elements["button_trader_cancel"]) {
+		else if(TraderElement->GetClickedElement() == ae::Assets.Elements["button_trader_cancel"]) {
 			CloseWindows(true);
 		}
 		// Upgrade item
-		else if(BlacksmithElement->GetClickedElement() == Assets.Elements["button_blacksmith_upgrade"]) {
+		else if(BlacksmithElement->GetClickedElement() == ae::Assets.Elements["button_blacksmith_upgrade"]) {
 			if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
 				UpgradeSlot.Serialize(Packet);
 				PlayState.Network->SendPacket(Packet);
@@ -328,7 +328,7 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 						case WINDOW_INVENTORY:
 						case WINDOW_TRADEYOURS:
 							if(Player->Inventory->IsValidSlot(Tooltip.Slot) && Player->Inventory->IsValidSlot(Cursor.Slot) && Cursor.Slot != Tooltip.Slot) {
-								_Buffer Packet;
+								ae::_Buffer Packet;
 								Packet.Write<PacketType>(PacketType::INVENTORY_MOVE);
 								Cursor.Slot.Serialize(Packet);
 								Tooltip.Slot.Serialize(Packet);
@@ -415,13 +415,13 @@ void _HUD::HandleMouseButton(const _MouseEvent &MouseEvent) {
 				if(!Cursor.InventorySlot.Item) {
 
 					// Check for accept button
-					_Element *AcceptButton = Assets.Elements["button_trade_accept_yours"];
+					ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
 					if(TradeElement->GetClickedElement() == AcceptButton) {
 						AcceptButton->Checked = !AcceptButton->Checked;
 						UpdateAcceptButton();
 
-						//_Buffer Packet;
-						_Buffer Packet;
+						//ae::_Buffer Packet;
+						ae::_Buffer Packet;
 						Packet.Write<PacketType>(PacketType::TRADE_ACCEPT);
 						Packet.Write<char>(AcceptButton->Checked);
 						PlayState.Network->SendPacket(Packet);
@@ -441,7 +441,7 @@ void _HUD::Update(double FrameTime) {
 
 	Tooltip.Reset();
 
-	_Element *HitElement = Graphics.Element->HitElement;
+	ae::_Element *HitElement = ae::Graphics.Element->HitElement;
 	if(HitElement) {
 		Tooltip.Slot.Index = (size_t)HitElement->Index;
 
@@ -469,7 +469,7 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_VENDOR: {
 				if(Player->Character->Vendor && Tooltip.Slot.Index < Player->Character->Vendor->Items.size()) {
 					Tooltip.InventorySlot.Item = Player->Character->Vendor->Items[Tooltip.Slot.Index];
-					if(Input.ModKeyDown(KMOD_SHIFT))
+					if(ae::Input.ModKeyDown(KMOD_SHIFT))
 						Tooltip.InventorySlot.Count = INVENTORY_INCREMENT_MODIFIER;
 					else
 						Tooltip.InventorySlot.Count = 1;
@@ -517,17 +517,17 @@ void _HUD::Update(double FrameTime) {
 		TradeTheirsElement->SetActive(false);
 		if(Player->Character->TradePlayer) {
 			TradeTheirsElement->SetActive(true);
-			Assets.Elements["label_trade_status"]->SetActive(false);
+			ae::Assets.Elements["label_trade_status"]->SetActive(false);
 
-			Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->Character->TradePlayer->Character->TradeGold);
-			Assets.Elements["label_trade_name_theirs"]->Text = Player->Character->TradePlayer->Name;
-			Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->Character->TradePlayer->Character->Portrait;
+			ae::Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->Character->TradePlayer->Character->TradeGold);
+			ae::Assets.Elements["label_trade_name_theirs"]->Text = Player->Character->TradePlayer->Name;
+			ae::Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->Character->TradePlayer->Character->Portrait;
 		}
 	}
 
 	// Close chat if it loses focus
 	if(IsChatting()) {
-		if(ChatTextBox != FocusedElement)
+		if(ChatTextBox != ae::FocusedElement)
 			CloseChat();
 	}
 
@@ -573,7 +573,7 @@ void _HUD::Update(double FrameTime) {
 	if(Minigame) {
 		Minigame->Update(FrameTime);
 		if(Minigame->State == _Minigame::StateType::DONE) {
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::MINIGAME_GETPRIZE);
 			Packet.Write<float>(Minigame->DropX);
 			PlayState.Network->SendPacket(Packet);
@@ -581,9 +581,9 @@ void _HUD::Update(double FrameTime) {
 			Minigame->State =_Minigame::StateType::NEEDSEED;
 
 			if(Minigame->Prizes[Minigame->Bucket])
-				Audio.PlaySound(Assets.Sounds["success1.ogg"]);
+				ae::Audio.PlaySound(ae::Assets.Sounds["success1.ogg"]);
 			else
-				Audio.PlaySound(Assets.Sounds["fail0.ogg"]);
+				ae::Audio.PlaySound(ae::Assets.Sounds["fail0.ogg"]);
 		}
 	}
 
@@ -602,20 +602,20 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 	// Show network stats
 	if(ShowDebug) {
-		Buffer << Graphics.FramesPerSecond << " FPS";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
+		Buffer << ae::Graphics.FramesPerSecond << " FPS";
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetSentSpeed() / 1024.0f << " KB/s";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 1));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 1));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetReceiveSpeed() / 1024.0f << " KB/s";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 2));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 2));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetRTT() << "ms";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 3));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 3));
 		Buffer.str("");
 	}
 
@@ -625,7 +625,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	// Draw hud elements while alive or in battle
 	if(Player->Character->IsAlive() || Player->Character->Battle) {
 		DiedElement->SetActive(false);
-		Assets.Elements["element_hud"]->Render();
+		ae::Assets.Elements["element_hud"]->Render();
 		DrawActionBar();
 
 		// Update label text
@@ -633,37 +633,37 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Update clock
 		Map->GetClockAsString(Buffer);
-		Assets.Elements["label_hud_clock"]->Text = Buffer.str();
+		ae::Assets.Elements["label_hud_clock"]->Text = Buffer.str();
 		Buffer.str("");
 
 		// Update pvp zone
 		if(Map->IsPVPZone(Player->Position))
-			Assets.Elements["label_hud_pvp"]->Text = "PVP Zone";
+			ae::Assets.Elements["label_hud_pvp"]->Text = "PVP Zone";
 		else
-			Assets.Elements["label_hud_pvp"]->Text = "";
+			ae::Assets.Elements["label_hud_pvp"]->Text = "";
 
 		// Draw experience bar
 		Buffer << Player->Character->ExperienceNextLevel - Player->Character->ExperienceNeeded << " / " << Player->Character->ExperienceNextLevel << " XP";
-		Assets.Elements["label_hud_experience"]->Text = Buffer.str();
+		ae::Assets.Elements["label_hud_experience"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->Character->GetNextLevelPercent());
-		Assets.Elements["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
+		ae::Assets.Elements["image_hud_experience_bar_full"]->SetWidth(ExperienceElement->Size.x * Player->Character->GetNextLevelPercent());
+		ae::Assets.Elements["image_hud_experience_bar_empty"]->SetWidth(ExperienceElement->Size.x);
 		ExperienceElement->Render();
 
 		// Draw health bar
 		Buffer << Player->Character->Health << " / " << Player->Character->MaxHealth;
-		Assets.Elements["label_hud_health"]->Text = Buffer.str();
+		ae::Assets.Elements["label_hud_health"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->Character->GetHealthPercent());
-		Assets.Elements["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
+		ae::Assets.Elements["image_hud_health_bar_full"]->SetWidth(HealthElement->Size.x * Player->Character->GetHealthPercent());
+		ae::Assets.Elements["image_hud_health_bar_empty"]->SetWidth(HealthElement->Size.x);
 		HealthElement->Render();
 
 		// Draw mana bar
 		Buffer << Player->Character->Mana << " / " << Player->Character->MaxMana;
-		Assets.Elements["label_hud_mana"]->Text = Buffer.str();
+		ae::Assets.Elements["label_hud_mana"]->Text = Buffer.str();
 		Buffer.str("");
-		Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->Character->GetManaPercent());
-		Assets.Elements["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
+		ae::Assets.Elements["image_hud_mana_bar_full"]->SetWidth(ManaElement->Size.x * Player->Character->GetManaPercent());
+		ae::Assets.Elements["image_hud_mana_bar_empty"]->SetWidth(ManaElement->Size.x);
 		ManaElement->Render();
 
 		DrawMessage();
@@ -720,7 +720,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			}
 
 			// Draw item tooltip
-			Item->DrawTooltip(Input.GetMouse(), PlayState.Scripting, Player, Tooltip, CompareSlot);
+			Item->DrawTooltip(ae::Input.GetMouse(), PlayState.Scripting, Player, Tooltip, CompareSlot);
 		}
 
 		// Draw status effects
@@ -733,7 +733,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 			CloseWindows(false);
 
 		// Show respawn instructions
-		Buffer << "Hit " << Actions.GetInputNameForAction(Action::MENU_BACK);
+		Buffer << "Hit " << ae::Actions.GetInputNameForAction(Action::MENU_BACK);
 		if(Player->Character->Hardcore)
 			Buffer << " to exit";
 		else
@@ -742,7 +742,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		RespawnInstructions->Text = Buffer.str();
 		Buffer.str("");
 
-		DiedElement->Size = Graphics.CurrentSize;
+		DiedElement->Size = ae::Graphics.CurrentSize;
 		DiedElement->CalculateBounds();
 		DiedElement->SetActive(true);
 		DiedElement->Render();
@@ -767,7 +767,7 @@ void _HUD::ToggleChat() {
 						std::string Search = "%" + Match.str(2) + "%";
 
 						// Search database for keyword
-						_Database *Database = PlayState.Stats->Database;
+						ae::_Database *Database = PlayState.Stats->Database;
 						try {
 							Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
 							Database->BindString(1, Search);
@@ -790,15 +790,15 @@ void _HUD::ToggleChat() {
 				std::smatch Match;
 				std::regex Regex("-volume (.+)");
 				if(std::regex_search(ChatTextBox->Text, Match, Regex) && Match.size() > 1) {
-					Config.SoundVolume = Config.MusicVolume = ToNumber<float>(Match.str(1));
-					Audio.SetSoundVolume(Config.SoundVolume);
-					Audio.SetMusicVolume(Config.MusicVolume);
+					Config.SoundVolume = Config.MusicVolume = ae::ToNumber<float>(Match.str(1));
+					ae::Audio.SetSoundVolume(Config.SoundVolume);
+					ae::Audio.SetMusicVolume(Config.MusicVolume);
 					Config.Save();
 				}
 			}
 
 			// Send message to server
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
 			Packet.WriteString(ChatTextBox->Text.c_str());
 			PlayState.Network->SendPacket(Packet);
@@ -815,7 +815,7 @@ void _HUD::ToggleChat() {
 	else {
 		ChatElement->SetActive(true);
 		ChatTextBox->ResetCursor();
-		FocusedElement = ChatTextBox;
+		ae::FocusedElement = ChatTextBox;
 	}
 }
 
@@ -964,9 +964,9 @@ void _HUD::InitTrader() {
 
 	// Disable accept button if requirements not met
 	if(!Player->Inventory->IsValidSlot(RewardItemSlot))
-		Assets.Elements["button_trader_accept"]->SetEnabled(false);
+		ae::Assets.Elements["button_trader_accept"]->SetEnabled(false);
 	else
-		Assets.Elements["button_trader_accept"]->SetEnabled(true);
+		ae::Assets.Elements["button_trader_accept"]->SetEnabled(true);
 
 	TraderElement->SetActive(true);
 }
@@ -979,7 +979,7 @@ void _HUD::InitBlacksmith() {
 	InventoryElement->SetActive(true);
 	BlacksmithElement->SetActive(true);
 	BlacksmithCost->SetActive(false);
-	Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
+	ae::Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
 	UpgradeSlot.BagType = _Bag::BagType::NONE;
 }
 
@@ -992,8 +992,8 @@ void _HUD::InitMinigame() {
 
 	// Show UI
 	MinigameElement->SetActive(true);
-	_Element *NameElement = Assets.Elements["label_minigame_name"];
-	_Element *CostElement = Assets.Elements["label_minigame_cost"];
+	ae::_Element *NameElement = ae::Assets.Elements["label_minigame_name"];
+	ae::_Element *CostElement = ae::Assets.Elements["label_minigame_cost"];
 	NameElement->Text = Player->Character->Minigame->Name;
 	CostElement->Text = std::to_string(Player->Character->Minigame->Cost) + " token";
 	if(Player->Character->Minigame->Cost != 1)
@@ -1036,64 +1036,64 @@ void _HUD::InitSkills() {
 	for(auto &Skill : SortedSkills) {
 
 		// Add skill icon
-		_Element *Button = new _Element();
+		ae::_Element *Button = new ae::_Element();
 		Button->Name = "button_skills_skill";
 		Button->Parent = SkillsElement;
 		Button->Offset = Offset;
 		Button->Size = Skill->Texture->Size;
-		Button->Alignment = LEFT_TOP;
+		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
 		Button->Index = (int)Skill->ID;
 		SkillsElement->Children.push_back(Button);
 
 		// Add level label
-		_Element *LevelLabel = new _Element();
+		ae::_Element *LevelLabel = new ae::_Element();
 		LevelLabel->Name = "label_skills_level";
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = LevelOffset;
-		LevelLabel->Alignment = CENTER_BASELINE;
-		LevelLabel->Font = Assets.Fonts["hud_small"];
+		LevelLabel->Alignment = ae::CENTER_BASELINE;
+		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
 		LevelLabel->Index = (int)Skill->ID;
 		SkillsElement->Children.push_back(LevelLabel);
 
 		// Add plus button
-		_Element *PlusButton = new _Element();
+		ae::_Element *PlusButton = new ae::_Element();
 		PlusButton->Name = "button_skills_plus";
 		PlusButton->Parent = Button;
 		PlusButton->Size = glm::vec2(16, 16);
 		PlusButton->Offset = PlusOffset;
-		PlusButton->Alignment = CENTER_MIDDLE;
-		PlusButton->Style = Assets.Styles["style_menu_button"];
-		PlusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
+		PlusButton->Alignment = ae::CENTER_MIDDLE;
+		PlusButton->Style = ae::Assets.Styles["style_menu_button"];
+		PlusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
 		SkillsElement->Children.push_back(PlusButton);
 
 		// Add minus button
-		_Element *MinusButton = new _Element();
+		ae::_Element *MinusButton = new ae::_Element();
 		MinusButton->Name = "button_skills_minus";
 		MinusButton->Parent = Button;
 		MinusButton->Size = glm::vec2(16, 16);
 		MinusButton->Offset = MinusOffset;
-		MinusButton->Alignment = CENTER_MIDDLE;
-		MinusButton->Style = Assets.Styles["style_menu_button"];
-		MinusButton->HoverStyle = Assets.Styles["style_menu_button_hover"];
+		MinusButton->Alignment = ae::CENTER_MIDDLE;
+		MinusButton->Style = ae::Assets.Styles["style_menu_button"];
+		MinusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
 		SkillsElement->Children.push_back(MinusButton);
 
 		// Add plus label
-		_Element *PlusLabel = new _Element();
+		ae::_Element *PlusLabel = new ae::_Element();
 		PlusLabel->Parent = PlusButton;
 		PlusLabel->Text = "+";
 		PlusLabel->Offset = LabelOffset;
-		PlusLabel->Alignment = CENTER_MIDDLE;
-		PlusLabel->Font = Assets.Fonts["hud_medium"];
+		PlusLabel->Alignment = ae::CENTER_MIDDLE;
+		PlusLabel->Font = ae::Assets.Fonts["hud_medium"];
 		PlusButton->Children.push_back(PlusLabel);
 
 		// Add minus label
-		_Element *MinusLabel = new _Element();
+		ae::_Element *MinusLabel = new ae::_Element();
 		MinusLabel->Parent = MinusButton;
 		MinusLabel->Text = "-";
 		MinusLabel->Offset = LabelOffset;
-		MinusLabel->Alignment = CENTER_MIDDLE;
-		MinusLabel->Font = Assets.Fonts["hud_medium"];
+		MinusLabel->Alignment = ae::CENTER_MIDDLE;
+		MinusLabel->Font = ae::Assets.Fonts["hud_medium"];
 		MinusButton->Children.push_back(MinusLabel);
 
 		// Update position
@@ -1125,14 +1125,14 @@ void _HUD::InitParty() {
 	PartyTextBox->Text = Player->Character->PartyName;
 	PartyTextBox->CursorPosition = PartyTextBox->Text.size();
 	PartyTextBox->ResetCursor();
-	FocusedElement = PartyTextBox;
+	ae::FocusedElement = PartyTextBox;
 }
 
 // Closes the chat window
 void _HUD::CloseChat() {
 	ChatElement->SetActive(false);
 	ChatTextBox->Clear();
-	FocusedElement = nullptr;
+	ae::FocusedElement = nullptr;
 }
 
 // Close inventory screen
@@ -1195,7 +1195,7 @@ bool _HUD::CloseTrade(bool SendNotify) {
 	// Close inventory
 	CloseInventory();
 	TradeElement->SetActive(false);
-	FocusedElement = nullptr;
+	ae::FocusedElement = nullptr;
 
 	// Notify server
 	if(SendNotify)
@@ -1300,7 +1300,7 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 			Color.a = (float)TimeLeft;
 
 		// Draw text
-		Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message, DrawPosition, LEFT_BASELINE, Color);
+		ae::Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message, DrawPosition, ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 
 		Index++;
@@ -1332,7 +1332,7 @@ void _HUD::DrawTeleport() {
 
 	std::stringstream Buffer;
 	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->Character->TeleportTime;
-	Assets.Elements["label_teleport_timeleft"]->Text = Buffer.str();
+	ae::Assets.Elements["label_teleport_timeleft"]->Text = Buffer.str();
 }
 
 // Draws the player's inventory
@@ -1359,21 +1359,21 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << "button_" << Bag.Name << "_bag_" << i;
-			_Element *Button = Assets.Elements[Buffer.str()];
+			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 			Buffer.str("");
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 			// Draw item
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+			ae::Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
 
 			// Draw two handed weapon twice in equipment bag
 			if(Type == _Bag::BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
-				_Element *Button = Assets.Elements[Buffer.str()];
-				Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, Assets.Colors["itemfade"]);
+				ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
+				ae::Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, ae::Assets.Colors["itemfade"]);
 			}
 
 			// Draw price if using vendor
@@ -1383,16 +1383,16 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 			if(Player->Character->Blacksmith && Slot->Item->MaxLevel) {
 				glm::vec4 Color;
 				if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= Player->Character->Blacksmith->Level)
-					Color = Assets.Colors["red"];
+					Color = ae::Assets.Colors["red"];
 				else
-					Color = Assets.Colors["green"];
+					Color = ae::Assets.Colors["green"];
 
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), RIGHT_BASELINE, Color);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), ae::RIGHT_BASELINE, Color);
 			}
 
 			// Draw count
 			if(Slot->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(20, 20), RIGHT_BASELINE);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE);
 		}
 	}
 }
@@ -1414,15 +1414,15 @@ void _HUD::DrawVendor() {
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << "button_vendor_bag_" << i;
-			_Element *Button = Assets.Elements[Buffer.str()];
+			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 			// Draw item
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			if(Item->Texture)
-				Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+				ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			// Draw price
 			DrawItemPrice(Item, 1, DrawPosition, true);
@@ -1459,18 +1459,18 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 			// Get bag button
 			std::stringstream Buffer;
 			Buffer << ElementPrefix << BagIndex;
-			_Element *Button = Assets.Elements[Buffer.str()];
+			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 
 			// Get position of slot
 			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 			// Draw item
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Item->Texture);
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+			ae::Graphics.DrawCenteredImage(DrawPosition, Item->Item->Texture);
 
 			// Draw count
 			if(Item->Count > 1)
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(20, 20), RIGHT_BASELINE);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE);
 		}
 
 		BagIndex++;
@@ -1492,32 +1492,32 @@ void _HUD::DrawTrader() {
 		// Get button position
 		std::stringstream Buffer;
 		Buffer << "button_trader_bag_" << i;
-		_Element *Button = Assets.Elements[Buffer.str()];
+		ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item
 		const _Item *Item = Player->Character->Trader->Items[i].Item;
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 		glm::vec4 Color;
 		if(!Player->Inventory->IsValidSlot(RequiredItemSlots[i]))
-			Color = Assets.Colors["red"];
+			Color = ae::Assets.Colors["red"];
 		else
 			Color = glm::vec4(1.0f);
 
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -32), ae::CENTER_BASELINE, Color);
 	}
 
 	// Get reward button
-	_Element *RewardButton = Assets.Elements["button_trader_bag_reward"];
+	ae::_Element *RewardButton = ae::Assets.Elements["button_trader_bag_reward"];
 	glm::vec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2.0f;
 
 	// Draw item
 	if(Player->Character->Trader->RewardItem) {
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Player->Character->Trader->RewardItem->Texture);
-		Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Count), DrawPosition + glm::vec2(0, -32), CENTER_BASELINE);
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.DrawCenteredImage(DrawPosition, Player->Character->Trader->RewardItem->Texture);
+		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Count), DrawPosition + glm::vec2(0, -32), ae::CENTER_BASELINE);
 	}
 }
 
@@ -1529,9 +1529,9 @@ void _HUD::DrawBlacksmith() {
 	}
 
 	// Get UI elements
-	_Element *BlacksmithTitle = Assets.Elements["label_blacksmith_title"];
-	_Element *BlacksmithLevel = Assets.Elements["label_blacksmith_level"];
-	_Element *UpgradeButton = Assets.Elements["button_blacksmith_upgrade"];
+	ae::_Element *BlacksmithTitle = ae::Assets.Elements["label_blacksmith_title"];
+	ae::_Element *BlacksmithLevel = ae::Assets.Elements["label_blacksmith_level"];
+	ae::_Element *UpgradeButton = ae::Assets.Elements["button_blacksmith_upgrade"];
 
 	// Set title
 	BlacksmithTitle->Text = Player->Character->Blacksmith->Name;
@@ -1544,14 +1544,14 @@ void _HUD::DrawBlacksmith() {
 	if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
 
 		// Get upgrade bag button
-		_Element *BagButton = Assets.Elements["button_blacksmith_bag"];
+		ae::_Element *BagButton = ae::Assets.Elements["button_blacksmith_bag"];
 		glm::vec2 DrawPosition = (BagButton->Bounds.Start + BagButton->Bounds.End) / 2.0f;
 
 		const _InventorySlot &InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
 		const _Item *Item = InventorySlot.Item;
 		if(Item) {
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+			ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			BlacksmithCost->SetActive(true);
 			UpgradeButton->SetEnabled(true);
@@ -1562,7 +1562,7 @@ void _HUD::DrawBlacksmith() {
 			// Update cost label
 			std::stringstream Buffer;
 			Buffer << Cost << " gold";
-			BlacksmithCost->Color = Assets.Colors["gold"];
+			BlacksmithCost->Color = ae::Assets.Colors["gold"];
 			BlacksmithCost->Text = Buffer.str();
 
 			// Check upgrade conditions
@@ -1584,7 +1584,7 @@ void _HUD::DrawBlacksmith() {
 
 			// Disable button
 			if(Disabled) {
-				BlacksmithCost->Color = Assets.Colors["red"];
+				BlacksmithCost->Color = ae::Assets.Colors["red"];
 				UpgradeButton->SetEnabled(false);
 			}
 		}
@@ -1606,14 +1606,14 @@ void _HUD::DrawMinigame(double BlendFactor) {
 
 	// Get token count
 	int Tokens = Player->Inventory->CountItem(Player->Character->Minigame->RequiredItem);
-	Assets.Elements["label_minigame_tokens"]->Text = std::to_string(Tokens);
+	ae::Assets.Elements["label_minigame_tokens"]->Text = std::to_string(Tokens);
 
 	// Update text color
-	_Element *CostElement = Assets.Elements["label_minigame_cost"];
+	ae::_Element *CostElement = ae::Assets.Elements["label_minigame_cost"];
 	if(Tokens < Player->Character->Minigame->Cost)
-		CostElement->Color = Assets.Colors["red"];
+		CostElement->Color = ae::Assets.Colors["red"];
 	else
-		CostElement->Color = Assets.Colors["gold"];
+		CostElement->Color = ae::Assets.Colors["gold"];
 
 	// Draw element
 	Minigame->GetUIBoundary(MinigameElement->Bounds);
@@ -1638,21 +1638,21 @@ void _HUD::DrawActionBar() {
 		// Get button position
 		std::stringstream Buffer;
 		Buffer << "button_actionbar_" << i;
-		_Element *Button = Assets.Elements[Buffer.str()];
+		ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item icon
 		const _Item *Item = Player->Character->ActionBar[i].Item;
 		if(Item) {
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-			Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+			ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
 
 			if(!Item->IsSkill())
-				Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), RIGHT_BASELINE);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), ae::RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
-		Assets.Fonts["hud_small"]->DrawText(Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), CENTER_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), ae::CENTER_BASELINE);
 	}
 }
 
@@ -1673,30 +1673,30 @@ void _HUD::DrawCharacterStats() {
 
 	// Damage
 	Buffer << Player->Character->MinDamage << " - " << Player->Character->MaxDamage;
-	Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Armor
 	Buffer << Player->Character->Armor;
-	Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Damage Block
 	Buffer << Player->Character->DamageBlock;
-	Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Health Regen
 	if(Player->Character->HealthRegen != 0) {
 		Buffer << Player->Character->HealthRegen;
-		Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1704,45 +1704,45 @@ void _HUD::DrawCharacterStats() {
 	// Mana Regen
 	if(Player->Character->ManaRegen != 0) {
 		Buffer << Player->Character->ManaRegen;
-		Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
 
 	// Move speed
 	Buffer << Player->Character->MoveSpeed << "%";
-	Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Battle speed
 	Buffer << Player->Character->BattleSpeed << "%";
-	Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Hit chance
 	Buffer << Player->Character->HitChance << "%";
-	Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Evasion
 	Buffer << Player->Character->Evasion << "%";
-	Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Drop rate
 	if(Player->Character->DropRate != 0) {
 		Buffer << Player->Character->DropRate;
-		Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1757,8 +1757,8 @@ void _HUD::DrawCharacterStats() {
 			continue;
 
 		Buffer << Resistance.second << "%";
-		Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes.at(Resistance.first) + " Resist", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes.at(Resistance.first) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 
@@ -1778,8 +1778,8 @@ void _HUD::DrawCharacterStats() {
 	else
 		Buffer << PlayTime / 3600 << "h" << (PlayTime / 60 % 60) << "m";
 
-	Assets.Fonts["hud_small"]->DrawText("Play Time", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Play Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
@@ -1792,16 +1792,16 @@ void _HUD::DrawCharacterStats() {
 	else
 		Buffer << BattleTime / 3600 << "h" << (BattleTime / 60 % 60) << "m";
 
-	Assets.Fonts["hud_small"]->DrawText("Battle Time", DrawPosition + -Spacing, RIGHT_BASELINE);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	ae::Assets.Fonts["hud_small"]->DrawText("Battle Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Monster kills
 	if(Player->Record->MonsterKills > 0) {
 		Buffer << Player->Record->MonsterKills;
-		Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1809,8 +1809,8 @@ void _HUD::DrawCharacterStats() {
 	// Player kills
 	if(Player->Record->PlayerKills > 0) {
 		Buffer << Player->Record->PlayerKills;
-		Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1818,8 +1818,8 @@ void _HUD::DrawCharacterStats() {
 	// Deaths
 	if(Player->Record->Deaths > 0) {
 		Buffer << Player->Record->Deaths;
-		Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1827,8 +1827,8 @@ void _HUD::DrawCharacterStats() {
 	// Bounty
 	if(Player->Record->Bounty > 0) {
 		Buffer << Player->Record->Bounty;
-		Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1836,8 +1836,8 @@ void _HUD::DrawCharacterStats() {
 	// Gold lost
 	if(Player->Record->GoldLost > 0) {
 		Buffer << Player->Record->GoldLost;
-		Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1845,8 +1845,8 @@ void _HUD::DrawCharacterStats() {
 	// Games played
 	if(Player->Record->GamesPlayed > 0) {
 		Buffer << Player->Record->GamesPlayed;
-		Assets.Fonts["hud_small"]->DrawText("Games Played", DrawPosition + -Spacing, RIGHT_BASELINE);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		ae::Assets.Fonts["hud_small"]->DrawText("Games Played", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -1866,7 +1866,7 @@ void _HUD::DrawSkills() {
 		Text += "s";
 
 	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
-	Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, CENTER_BASELINE);
+	ae::Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE);
 
 	// Show skill points unused
 	int SkillPointsUnused = Player->Character->SkillPointsUsed - Player->Character->SkillPointsOnActionBar;
@@ -1879,7 +1879,7 @@ void _HUD::DrawSkills() {
 
 		Text += " unused";
 
-		Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, CENTER_BASELINE, Assets.Colors["red"]);
+		ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
 	}
 }
 
@@ -1928,7 +1928,7 @@ void _HUD::DrawRecentItems() {
 	RecentItemsElement->Render();
 
 	// Draw items
-	glm::vec2 DrawPosition = Assets.Elements["element_hud_recentitems"]->Bounds.Start;
+	glm::vec2 DrawPosition = ae::Assets.Elements["element_hud_recentitems"]->Bounds.Start;
 	DrawPosition.y += 25;
 	for(auto &RecentItem : RecentItems) {
 
@@ -1940,12 +1940,12 @@ void _HUD::DrawRecentItems() {
 			Color.a = (float)(TimeLeft / HUD_RECENTITEM_FADETIME);
 
 		// Draw item
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, RecentItem.Item->Texture, Color);
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.DrawCenteredImage(DrawPosition, RecentItem.Item->Texture, Color);
 
 		// Draw count
 		if(RecentItem.Count > 1)
-			Assets.Fonts["hud_tiny"]->DrawText(std::to_string(RecentItem.Count), DrawPosition + glm::vec2(20, 20), RIGHT_BASELINE, Color);
+			ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(RecentItem.Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE, Color);
 
 		DrawPosition.y += RecentItem.Item->Texture->Size.y + 5;
 	}
@@ -1963,7 +1963,7 @@ void _HUD::SetMessage(const std::string &Text) {
 	Message.Time = 0;
 	MessageLabel->Text = Text;
 
-	_TextBounds Bounds;
+	ae::_TextBounds Bounds;
 	MessageLabel->Font->GetStringDimensions(Text, Bounds, true);
 	MessageElement->Size = glm::vec2(Bounds.Width + 100, Bounds.AboveBase + Bounds.BelowBase + 26);
 	MessageElement->SetActive(true);
@@ -1983,9 +1983,9 @@ void _HUD::StopTeleport() {
 // Draws the item under the cursor
 void _HUD::DrawCursorItem() {
 	if(Cursor.InventorySlot.Item) {
-		glm::vec2 DrawPosition = Input.GetMouse();
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture, Assets.Colors["itemfade"]);
+		glm::vec2 DrawPosition = ae::Input.GetMouse();
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture, ae::Assets.Colors["itemfade"]);
 	}
 }
 
@@ -2000,11 +2000,11 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 	// Color
 	glm::vec4 Color;
 	if(Buy && Player->Character->Gold < Price)
-		Color = Assets.Colors["red"];
+		Color = ae::Assets.Colors["red"];
 	else
-		Color = Assets.Colors["light_gold"];
+		Color = ae::Assets.Colors["light_gold"];
 
-	Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(20, -11), RIGHT_BASELINE, Color);
+	ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(20, -11), ae::RIGHT_BASELINE, Color);
 }
 
 // Buys an item from the vendor
@@ -2013,7 +2013,7 @@ void _HUD::BuyItem(_Cursor *Item, _Slot TargetSlot) {
 	VendorSlot.Index = Item->Slot.Index;
 
 	// Notify server
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(1);
 	Packet.Write<uint8_t>((uint8_t)Item->InventorySlot.Count);
@@ -2028,7 +2028,7 @@ void _HUD::SellItem(_Cursor *CursorItem, int Amount) {
 		return;
 
 	// Notify server
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
 	Packet.Write<uint8_t>((uint8_t)Amount);
@@ -2046,7 +2046,7 @@ void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 		return;
 	}
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::SKILLS_SKILLADJUST);
 
 	// Sell skill
@@ -2092,7 +2092,7 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	Player->Character->CalculateStats();
 
 	// Notify server
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTIONBAR_CHANGED);
 	for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
 		Player->Character->ActionBar[i].Serialize(Packet);
@@ -2174,7 +2174,7 @@ void _HUD::RefreshSkillButtons() {
 
 // Trade with another player
 void _HUD::SendTradeRequest() {
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
 	PlayState.Network->SendPacket(Packet);
 }
@@ -2184,7 +2184,7 @@ void _HUD::SendTradeCancel() {
 	if(!Player)
 		return;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 	PlayState.Network->SendPacket(Packet);
 
@@ -2196,10 +2196,10 @@ void _HUD::ValidateTradeGold() {
 	if(!Player || !TradeElement->Active)
 		return;
 
-	_Element *GoldTextBox = Assets.Elements["textbox_trade_gold_yours"];
+	ae::_Element *GoldTextBox = ae::Assets.Elements["textbox_trade_gold_yours"];
 
 	// Get gold amount
-	int Gold = ToNumber<int>(GoldTextBox->Text);
+	int Gold = ae::ToNumber<int>(GoldTextBox->Text);
 	if(Gold < 0)
 		Gold = 0;
 	else if(Gold > Player->Character->Gold)
@@ -2209,7 +2209,7 @@ void _HUD::ValidateTradeGold() {
 	GoldTextBox->SetText(std::to_string(Gold));
 
 	// Send amount
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_GOLD);
 	Packet.Write<int>(Gold);
 	PlayState.Network->SendPacket(Packet);
@@ -2224,7 +2224,7 @@ void _HUD::SendPartyInfo() {
 		return;
 
 	// Send info
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PARTY_INFO);
 	Packet.WriteString(PartyTextBox->Text.c_str());
 	PlayState.Network->SendPacket(Packet);
@@ -2235,11 +2235,11 @@ void _HUD::SendPartyInfo() {
 
 // Update accept button label text
 void _HUD::UpdateAcceptButton() {
-	_Element *AcceptButton = Assets.Elements["button_trade_accept_yours"];
-	_Element *LabelTradeStatusYours = Assets.Elements["label_trade_status_yours"];
+	ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
+	ae::_Element *LabelTradeStatusYours = ae::Assets.Elements["label_trade_status_yours"];
 	if(AcceptButton->Checked) {
 		LabelTradeStatusYours->Text = "Accepted";
-		LabelTradeStatusYours->Color = Assets.Colors["green"];
+		LabelTradeStatusYours->Color = ae::Assets.Colors["green"];
 	}
 	else {
 		LabelTradeStatusYours->Text = "Accept";
@@ -2249,7 +2249,7 @@ void _HUD::UpdateAcceptButton() {
 
 // Resets the trade agreement
 void _HUD::ResetAcceptButton() {
-	_Element *AcceptButton = Assets.Elements["button_trade_accept_yours"];
+	ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
 	AcceptButton->Checked = false;
 	UpdateAcceptButton();
 
@@ -2259,24 +2259,24 @@ void _HUD::ResetAcceptButton() {
 // Resets upper trade window status
 void _HUD::ResetTradeTheirsWindow() {
 	TradeTheirsElement->SetActive(false);
-	Assets.Elements["label_trade_status"]->SetActive(true);
-	Assets.Elements["textbox_trade_gold_theirs"]->Enabled = false;
-	Assets.Elements["textbox_trade_gold_theirs"]->SetText("0");
-	Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
-	Assets.Elements["label_trade_name_yours"]->Text = Player->Name;
-	Assets.Elements["image_trade_portrait_yours"]->Texture = Player->Character->Portrait;
+	ae::Assets.Elements["label_trade_status"]->SetActive(true);
+	ae::Assets.Elements["textbox_trade_gold_theirs"]->Enabled = false;
+	ae::Assets.Elements["textbox_trade_gold_theirs"]->SetText("0");
+	ae::Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
+	ae::Assets.Elements["label_trade_name_yours"]->Text = Player->Name;
+	ae::Assets.Elements["image_trade_portrait_yours"]->Texture = Player->Character->Portrait;
 }
 
 // Update their status label
 void _HUD::UpdateTradeStatus(bool Accepted) {
-	_Element *LabelTradeStatusTheirs = Assets.Elements["label_trade_status_theirs"];
+	ae::_Element *LabelTradeStatusTheirs = ae::Assets.Elements["label_trade_status_theirs"];
 	if(Accepted) {
 		LabelTradeStatusTheirs->Text = "Accepted";
-		LabelTradeStatusTheirs->Color = Assets.Colors["green"];
+		LabelTradeStatusTheirs->Color = ae::Assets.Colors["green"];
 	}
 	else {
 		LabelTradeStatusTheirs->Text = "Unaccepted";
-		LabelTradeStatusTheirs->Color = Assets.Colors["red"];
+		LabelTradeStatusTheirs->Color = ae::Assets.Colors["red"];
 	}
 }
 
@@ -2288,7 +2288,7 @@ void _HUD::SplitStack(const _Slot &Slot, uint8_t Count) {
 		return;
 
 	// Build packet
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_SPLIT);
 	Slot.Serialize(Packet);
 	Packet.Write<uint8_t>(Count);
@@ -2317,7 +2317,7 @@ _Bag::BagType _HUD::GetBagFromWindow(int Window) {
 
 // Return true if player is typing gold
 bool _HUD::IsTypingGold() {
-	return FocusedElement == Assets.Elements["textbox_trade_gold_yours"];
+	return ae::FocusedElement == ae::Assets.Elements["textbox_trade_gold_yours"];
 }
 
 // Return true if player is typing in the party screen
@@ -2368,14 +2368,14 @@ void _HUD::SetActionBarSize(size_t Size) {
 
 	// Set all off
 	for(size_t i = 0; i < ACTIONBAR_MAX_SIZE; i++)
-		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(false);
+		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(false);
 
 	// Turn on
 	for(size_t i = 0; i < Size; i++)
-		Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(true);
+		ae::Assets.Elements["button_actionbar_" + std::to_string(i)]->SetActive(true);
 
 	// Center actionbar
-	_Element *Button = Assets.Elements["button_actionbar_0"];
+	ae::_Element *Button = ae::Assets.Elements["button_actionbar_0"];
 	ActionBarElement->Size.x = Button->Size.x * Size;
 	ActionBarElement->CalculateBounds();
 }
@@ -2408,8 +2408,8 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		else
 			StatChangeUI.StartPosition = HealthElement->Bounds.Start + glm::vec2(HealthElement->Size.x / 2.0f, 0);
 		StatChangeUI.Change = StatChange.Values[StatType::HEALTH].Integer;
-		StatChangeUI.Font = Assets.Fonts["hud_medium"];
-		StatChangeUI.SetText(Assets.Colors["red"], Assets.Colors["green"]);
+		StatChangeUI.Font = ae::Assets.Fonts["hud_medium"];
+		StatChangeUI.SetText(ae::Assets.Colors["red"], ae::Assets.Colors["green"]);
 		StatChanges.push_back(StatChangeUI);
 	}
 
@@ -2423,8 +2423,8 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		else
 			StatChangeUI.StartPosition = ManaElement->Bounds.Start + glm::vec2(ManaElement->Size.x / 2.0f, 0);
 		StatChangeUI.Change = StatChange.Values[StatType::MANA].Integer;
-		StatChangeUI.Font = Assets.Fonts["hud_medium"];
-		StatChangeUI.SetText(Assets.Colors["blue"], Assets.Colors["light_blue"]);
+		StatChangeUI.Font = ae::Assets.Fonts["hud_medium"];
+		StatChangeUI.SetText(ae::Assets.Colors["blue"], ae::Assets.Colors["light_blue"]);
 		StatChanges.push_back(StatChangeUI);
 	}
 
@@ -2435,7 +2435,7 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 		StatChangeUI.Change = StatChange.Values[StatType::EXPERIENCE].Integer;
 		StatChangeUI.Direction = -2.0f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
-		StatChangeUI.Font = Assets.Fonts["battle_large"];
+		StatChangeUI.Font = ae::Assets.Fonts["battle_large"];
 		StatChangeUI.SetText(glm::vec4(1.0f), glm::vec4(1.0f));
 		StatChanges.push_back(StatChangeUI);
 	}
@@ -2462,8 +2462,8 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 		StatChangeUI.Direction = 1.5f;
 		StatChangeUI.Timeout = HUD_STATCHANGE_TIMEOUT_LONG;
-		StatChangeUI.Font = Assets.Fonts["menu_buttons"];
-		StatChangeUI.SetText(Assets.Colors["gold"], Assets.Colors["gold"]);
+		StatChangeUI.Font = ae::Assets.Fonts["menu_buttons"];
+		StatChangeUI.SetText(ae::Assets.Colors["gold"], ae::Assets.Colors["gold"]);
 		StatChanges.push_back(StatChangeUI);
 
 		// Play sound
@@ -2487,28 +2487,28 @@ void _HUD::UpdateLabels() {
 	std::stringstream Buffer;
 
 	// Update name
-	Assets.Elements["label_hud_name"]->Text = Player->Name;
+	ae::Assets.Elements["label_hud_name"]->Text = Player->Name;
 
 	// Update level
 	Buffer << "Level " << Player->Character->Level;
-	Assets.Elements["label_hud_level"]->Text = Buffer.str();
+	ae::Assets.Elements["label_hud_level"]->Text = Buffer.str();
 	Buffer.str("");
 
 	// Update party
 	if(Player->Character->PartyName.size())
-		Assets.Elements["label_hud_party"]->Text = "Party: " + Player->Character->PartyName;
+		ae::Assets.Elements["label_hud_party"]->Text = "Party: " + Player->Character->PartyName;
 	else
-		Assets.Elements["label_hud_party"]->Text = "No Party";
+		ae::Assets.Elements["label_hud_party"]->Text = "No Party";
 
 	// Update hardcore status
-	Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
+	ae::Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
 	Buffer << Player->Character->Gold << " Gold";
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
 	if(Player->Character->Gold < 0)
-		GoldElement->Color = Assets.Colors["red"];
+		GoldElement->Color = ae::Assets.Colors["red"];
 	else
-		GoldElement->Color = Assets.Colors["gold"];
+		GoldElement->Color = ae::Assets.Colors["gold"];
 }

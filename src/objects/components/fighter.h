@@ -25,7 +25,10 @@
 
 // Forward Declarations
 class _Object;
-class _Element;
+
+namespace ae {
+	class _Element;
+}
 
 // Classes
 class _Fighter {
@@ -35,14 +38,14 @@ class _Fighter {
 		_Fighter(_Object *Object);
 
 		// UI
-		void CreateBattleElement(_Element *Parent);
+		void CreateBattleElement(ae::_Element *Parent);
 		void RemoveBattleElement();
 
 		// Base
 		_Object *Object;
 
 		// Render
-		_Element *BattleElement;
+		ae::_Element *BattleElement;
 		glm::vec2 BattleOffset;
 		glm::vec2 ResultPosition;
 		glm::vec2 StatPosition;

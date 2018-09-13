@@ -146,7 +146,7 @@ void _Character::Update(double FrameTime) {
 				Object->UpdateStats(StatChange);
 
 				// Build packet
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 				StatChange.Serialize(Packet);
 
@@ -512,12 +512,12 @@ bool _Character::AcceptingMoveInput() {
 
 // Generates the number of moves until the next battle
 void _Character::GenerateNextBattle() {
-	NextBattle = GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
+	NextBattle = ae::GetRandomInt(BATTLE_MINSTEPS, BATTLE_MAXSTEPS);
 }
 
 // Generate damage
 int _Character::GenerateDamage() {
-	return GetRandomInt(MinDamage, MaxDamage);
+	return ae::GetRandomInt(MinDamage, MaxDamage);
 }
 
 // Update counts on action bar

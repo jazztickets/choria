@@ -23,12 +23,15 @@
 
 // Forward Declarations
 class _Object;
-class _Texture;
 class _Scripting;
 class _Stats;
 struct _Vendor;
 struct _Cursor;
 struct _Slot;
+
+namespace ae {
+	class _Texture;
+}
 
 enum class ItemType : uint32_t {
 	NONE,
@@ -96,7 +99,7 @@ class _Item {
 		uint32_t ID;
 		std::string Name;
 		std::string Script;
-		const _Texture *Texture;
+		const ae::_Texture *Texture;
 		ItemType Type;
 		int Level;
 		int MaxLevel;

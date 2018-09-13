@@ -42,7 +42,7 @@ _Inventory::_Inventory() {
 }
 
 // Serialize
-void _Inventory::Serialize(_Buffer &Data) {
+void _Inventory::Serialize(ae::_Buffer &Data) {
 
 	// Serialize bags
 	for(auto &Bag : Bags)
@@ -50,7 +50,7 @@ void _Inventory::Serialize(_Buffer &Data) {
 }
 
 // Serialize a inventory slot
-void _Inventory::SerializeSlot(_Buffer &Data, const _Slot &Slot) {
+void _Inventory::SerializeSlot(ae::_Buffer &Data, const _Slot &Slot) {
 	if(!Slot.BagType)
 		throw std::runtime_error("_Slot::Serialize - Bag is NULL");
 
@@ -62,7 +62,7 @@ void _Inventory::SerializeSlot(_Buffer &Data, const _Slot &Slot) {
 }
 
 // Unserialize
-void _Inventory::Unserialize(_Buffer &Data, const _Stats *Stats) {
+void _Inventory::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 	// Unserialize bags
 	for(auto &Bag : Bags)
@@ -70,7 +70,7 @@ void _Inventory::Unserialize(_Buffer &Data, const _Stats *Stats) {
 }
 
 // Unserialize one slot
-void _Inventory::UnserializeSlot(_Buffer &Data, const _Stats *Stats) {
+void _Inventory::UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats) {
 
 	// Get slot
 	_Slot Slot;
@@ -170,7 +170,7 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 }
 
 // Moves an item from one slot to another
-bool _Inventory::MoveInventory(_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot) {
+bool _Inventory::MoveInventory(ae::_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot) {
 	if(!IsValidSlot(OldSlot) || !IsValidSlot(NewSlot) || !CanSwap(OldSlot, NewSlot))
 		return false;
 
@@ -342,7 +342,7 @@ void _Inventory::MoveTradeToInventory() {
 }
 
 // Splits an item stack
-bool _Inventory::SplitStack(_Buffer &Data, const _Slot &Slot, int Count) {
+bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 	if(Slot.Index == NOSLOT || Slot.BagType != _Bag::BagType::INVENTORY)
 		return false;
 
@@ -422,7 +422,7 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 }
 
 // Serialize a slot
-void _InventorySlot::Serialize(_Buffer &Data) {
+void _InventorySlot::Serialize(ae::_Buffer &Data) {
 	if(Item) {
 		Data.Write<uint32_t>(Item->ID);
 		Data.Write<uint8_t>((uint8_t)Upgrades);
@@ -433,7 +433,7 @@ void _InventorySlot::Serialize(_Buffer &Data) {
 }
 
 // Unserialize a slot
-void _InventorySlot::Unserialize(_Buffer &Data, const _Stats *Stats) {
+void _InventorySlot::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 	uint32_t ItemID = Data.Read<uint32_t>();
 	if(ItemID) {
@@ -446,13 +446,13 @@ void _InventorySlot::Unserialize(_Buffer &Data, const _Stats *Stats) {
 }
 
 // Serialize a slot
-void _Slot::Serialize(_Buffer &Data) const {
+void _Slot::Serialize(ae::_Buffer &Data) const {
 	Data.Write<uint8_t>(BagType);
 	Data.Write<uint8_t>((uint8_t)Index);
 }
 
 // Unserialize a slot
-void _Slot::Unserialize(_Buffer &Data) {
+void _Slot::Unserialize(ae::_Buffer &Data) {
 	BagType = (_Bag::BagType)Data.Read<uint8_t>();
 	Index = Data.Read<uint8_t>();
 	if(Index == (uint8_t)-1)
@@ -460,7 +460,7 @@ void _Slot::Unserialize(_Buffer &Data) {
 }
 
 // Serialize bag
-void _Bag::Serialize(_Buffer &Data) {
+void _Bag::Serialize(ae::_Buffer &Data) {
 
 	// Get item count
 	uint8_t ItemCount = 0;
@@ -480,7 +480,7 @@ void _Bag::Serialize(_Buffer &Data) {
 }
 
 // Unserialize bag
-void _Bag::Unserialize(_Buffer &Data, const _Stats *Stats) {
+void _Bag::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 	// Reset inventory
 	std::fill(Slots.begin(), Slots.end(), _InventorySlot());

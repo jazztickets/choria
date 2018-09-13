@@ -22,7 +22,9 @@
 #include <list>
 
 // Forward Declarations
-struct _Bounds;
+namespace ae {
+	struct _Bounds;
+}
 
 // Holds data for a single tile
 struct _GridTile {
@@ -44,7 +46,7 @@ class _Grid {
 		void RemoveObject(const void *Object);
 
 		// Collision
-		void GetTileBounds(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, _Bounds &Bounds) const;
+		void GetTileBounds(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, ae::_Bounds &Bounds) const;
 		void GetObjectList(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, std::list<const void *> &PotentialObjects);
 
 		// Debug

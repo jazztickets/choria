@@ -163,16 +163,16 @@ void _Object::Update(double FrameTime) {
 				if(Character->Battle)
 					Scope = ScopeType::BATTLE;
 
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				if(Character->Action.Resolve(Packet, this, Scope)) {
 					SendPacket(Packet);
 				}
 				else {
 
 					// Can't use action so send an action clear packet
-					_Buffer FailPacket;
+					ae::_Buffer FailPacket;
 					FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
-					FailPacket.Write<NetworkIDType>(NetworkID);
+					FailPacket.Write<ae::NetworkIDType>(NetworkID);
 					SendPacket(FailPacket);
 				}
 
@@ -315,28 +315,28 @@ void _Object::Render(const _Object *ClientPlayer) {
 		if(Character->Invisible > 0)
 			Alpha = PLAYER_INVIS_ALPHA;
 
-		Graphics.SetProgram(Assets.Programs["pos_uv"]);
-		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
-		Graphics.SetVBO(VBO_QUAD);
+		ae::Graphics.SetVBO(ae::VBO_QUAD);
 
 		glm::vec3 DrawPosition;
 		if(Character->HUD && Character->HUD->ShowDebug) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-			Graphics.SetColor(glm::vec4(1, 0, 0, 1));
-			Graphics.DrawSprite(DrawPosition, ModelTexture);
+			ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
+			ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
 		}
 
 		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
 		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-		Graphics.SetColor(Color);
-		Graphics.DrawSprite(DrawPosition, ModelTexture);
+		ae::Graphics.SetColor(Color);
+		ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
 		if(Character->StatusTexture) {
-			Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
+			ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
 		}
 
 		if(ClientPlayer != this && Character->Invisible != 1) {
-			Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), CENTER_BASELINE, Color, 1.0f / ModelTexture->Size.x);
+			ae::Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, Color, 1.0f / ModelTexture->Size.x);
 		}
 	}
 }
@@ -359,13 +359,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Character->Portrait->Size.y/2);
 
 	// Name
-	Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), LEFT_BASELINE, GlobalColor);
-	Graphics.SetColor(GlobalColor);
+	ae::Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
+	ae::Graphics.SetColor(GlobalColor);
 
 	// Portrait
 	if(Character->Portrait) {
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.DrawCenteredImage(SlotPosition + glm::vec2(Character->Portrait->Size/2), Character->Portrait, GlobalColor);
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.DrawCenteredImage(SlotPosition + glm::vec2(Character->Portrait->Size/2), Character->Portrait, GlobalColor);
 	}
 
 	// Health/mana bars
@@ -374,25 +374,25 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	float BarPaddingY = 6;
 
 	// Get ui size
-	_Bounds BarBounds;
+	ae::_Bounds BarBounds;
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::vec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
 	float BarEndX = BarBounds.End.x;
 
 	// Draw empty bar
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_health_bar_empty"]->Texture, true);
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+	ae::Graphics.SetVBO(ae::VBO_NONE);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Character->GetHealthPercent(), BarSize.y) + BarOffset;
-	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_health_bar_full"]->Texture, true);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_full"]->Texture, true);
 
 	// Draw health text
 	std::stringstream Buffer;
-	Buffer << Round(Character->Health) << " / " << Round(Character->MaxHealth);
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), CENTER_BASELINE, GlobalColor);
+	Buffer << ae::Round(Character->Health) << " / " << ae::Round(Character->MaxHealth);
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
 	// Draw mana
@@ -406,17 +406,17 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
 
 		// Draw empty bar
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.SetVBO(VBO_NONE);
-		Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_mana_bar_empty"]->Texture, true);
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.SetVBO(ae::VBO_NONE);
+		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_empty"]->Texture, true);
 
 		// Draw full bar
 		BarBounds.End = SlotPosition + glm::vec2(BarSize.x * ManaPercent, BarSize.y) + BarOffset;
-		Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_mana_bar_full"]->Texture, true);
+		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_full"]->Texture, true);
 
 		// Draw mana text
-		Buffer << Round(Character->Mana) << " / " << Round(Character->MaxMana);
-		Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), CENTER_BASELINE, GlobalColor);
+		Buffer << ae::Round(Character->Mana) << " / " << ae::Round(Character->MaxMana);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), ae::CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
 
@@ -427,26 +427,26 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
 
 	// Draw empty bar
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_experience_bar_empty"]->Texture, true);
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+	ae::Graphics.SetVBO(ae::VBO_NONE);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_empty"]->Texture, true);
 
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Fighter->TurnTimer, BarSize.y) + BarOffset;
-	Graphics.DrawImage(BarBounds, Assets.Elements["image_hud_experience_bar_full"]->Texture, true);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_full"]->Texture, true);
 
 	// Get background for items used
-	const _Texture *ItemBackTexture = Assets.Textures["textures/hud/item_back.png"];
+	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
 
 	// Draw the action used
 	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide) {
 
 		if(Character->Action.Item) {
 			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, Fighter->BattleElement->Size.y/2);
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			if(!Character->Action.Item->IsSkill())
-				Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
-			Graphics.DrawCenteredImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
+				ae::Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
+			ae::Graphics.DrawCenteredImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
 		}
 	}
 
@@ -455,7 +455,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.IsSet()) {
 
 			// Get texture
-			const _Texture *Texture = nullptr;
+			const ae::_Texture *Texture = nullptr;
 			if(ClientPlayer->Fighter->PotentialAction.Item) {
 
 				// Skip dead targets
@@ -472,17 +472,17 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 				Color.a = 0.5f;
 
 			// Draw background icon
-			Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + Fighter->BattleElement->Size.y/2);
 			if(ClientPlayer->Fighter->PotentialAction.Item) {
 				DrawPosition.x += ItemBackTexture->Size.x/2;
-				Graphics.DrawCenteredImage(DrawPosition, ItemBackTexture, Color);
+				ae::Graphics.DrawCenteredImage(DrawPosition, ItemBackTexture, Color);
 			}
 			else
 				DrawPosition.x += Texture->Size.x/2;
 
 			// Draw item
-			Graphics.DrawCenteredImage(DrawPosition, Texture, Color);
+			ae::Graphics.DrawCenteredImage(DrawPosition, Texture, Color);
 		}
 	}
 
@@ -608,10 +608,10 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Get stats
 	Json::Value StatsNode = Data["stats"];
-	Character->LoadMapID = (NetworkIDType)StatsNode["map_id"].asUInt();
+	Character->LoadMapID = (ae::NetworkIDType)StatsNode["map_id"].asUInt();
 	Position.x = StatsNode["map_x"].asInt();
 	Position.y = StatsNode["map_y"].asInt();
-	Character->SpawnMapID = (NetworkIDType)StatsNode["spawnmap_id"].asUInt();
+	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["spawnmap_id"].asUInt();
 	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
 	Character->Hardcore = StatsNode["hardcore"].asBool();
 	Character->PortraitID = StatsNode["portrait_id"].asUInt();
@@ -632,7 +632,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->Seed = StatsNode["seed"].asUInt();
 
 	if(!Character->Seed)
-		Character->Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
 	size_t ActionBarSize = 0;
 	ActionBarSize = StatsNode["actionbar_size"].asUInt64();
@@ -679,8 +679,8 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 }
 
 // Serialize for ObjectCreate
-void _Object::SerializeCreate(_Buffer &Data) {
-	Data.Write<NetworkIDType>(NetworkID);
+void _Object::SerializeCreate(ae::_Buffer &Data) {
+	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.WriteString(Name.c_str());
 	if(Character)
@@ -693,8 +693,8 @@ void _Object::SerializeCreate(_Buffer &Data) {
 }
 
 // Serialize for ObjectUpdate
-void _Object::SerializeUpdate(_Buffer &Data) {
-	Data.Write<NetworkIDType>(NetworkID);
+void _Object::SerializeUpdate(ae::_Buffer &Data) {
+	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<uint8_t>(Character->Status);
 	Data.Write<uint8_t>(Light);
@@ -702,7 +702,7 @@ void _Object::SerializeUpdate(_Buffer &Data) {
 }
 
 // Serialize object stats
-void _Object::SerializeStats(_Buffer &Data) {
+void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint8_t>(Light);
 	Data.Write<uint32_t>(ModelID);
@@ -756,8 +756,8 @@ void _Object::SerializeStats(_Buffer &Data) {
 }
 
 // Serialize object for battle
-void _Object::SerializeBattle(_Buffer &Data) {
-	Data.Write<NetworkIDType>(NetworkID);
+void _Object::SerializeBattle(ae::_Buffer &Data) {
+	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<uint32_t>(Monster->DatabaseID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<int>(Character->Health);
@@ -775,7 +775,7 @@ void _Object::SerializeBattle(_Buffer &Data) {
 }
 
 // Unserialize for ObjectCreate
-void _Object::UnserializeCreate(_Buffer &Data) {
+void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
 	uint32_t PortraitID = Data.Read<uint32_t>();
@@ -790,7 +790,7 @@ void _Object::UnserializeCreate(_Buffer &Data) {
 }
 
 // Unserialize object stats
-void _Object::UnserializeStats(_Buffer &Data) {
+void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Name = Data.ReadString();
 	Light = Data.Read<uint8_t>();
 	ModelID = Data.Read<uint32_t>();
@@ -847,7 +847,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
 		StatusEffect->Unserialize(Data, Stats);
 		if(Character->HUD)
-			StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+			StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 		Character->StatusEffects.push_back(StatusEffect);
 	}
 
@@ -856,7 +856,7 @@ void _Object::UnserializeStats(_Buffer &Data) {
 }
 
 // Unserialize battle stats
-void _Object::UnserializeBattle(_Buffer &Data, bool IsClient) {
+void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Controller->InputStates.clear();
 
 	// Get object type
@@ -1031,7 +1031,7 @@ const _Tile *_Object::GetTile() const {
 }
 
 // Get map id, return 0 if none
-NetworkIDType _Object::GetMapID() const {
+ae::NetworkIDType _Object::GetMapID() const {
 	if(!Map)
 		return 0;
 
@@ -1056,7 +1056,7 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 	StatChange.Object->UpdateStats(StatChange);
 
 	// Build packet
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 	StatChange.Serialize(Packet);
 
@@ -1084,7 +1084,7 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 }
 
 // Set action and targets
-void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
+void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager) {
 
 	// Check for needed commands
 	if(!Character->Action.IsSet()) {
@@ -1101,7 +1101,7 @@ void _Object::SetActionUsing(_Buffer &Data, _Manager<_Object> *ObjectManager) {
 		// Get targets
 		Character->Targets.clear();
 		for(int i = 0; i < TargetCount; i++) {
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			_Object *Target = ObjectManager->GetObject(NetworkID);
 			if(Target && Character->Action.Item->CanTarget(this, Target))
 				Character->Targets.push_back(Target);
@@ -1131,9 +1131,9 @@ void _Object::SendSeed(bool Generate) {
 		return;
 
 	if(Generate)
-		Character->Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+		Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::MINIGAME_SEED);
 	Packet.Write<uint32_t>(Character->Seed);
 	Server->Network->SendPacket(Packet, Peer);
@@ -1158,7 +1158,7 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 }
 
 // Send packet to player or broadcast during battle
-void _Object::SendPacket(_Buffer &Packet) {
+void _Object::SendPacket(ae::_Buffer &Packet) {
 	if(Character->Battle)
 		Character->Battle->BroadcastPacket(Packet);
 	else if(Peer)

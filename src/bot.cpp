@@ -40,7 +40,7 @@
 
 // Constructor
 _Bot::_Bot(const _Stats *Stats, const std::string &Username, const std::string &Password, const std::string &HostAddress, uint16_t Port) :
-	Network(new _ClientNetwork()),
+	Network(new ae::_ClientNetwork()),
 	Map(nullptr),
 	Battle(nullptr),
 	Player(nullptr),
@@ -48,7 +48,7 @@ _Bot::_Bot(const _Stats *Stats, const std::string &Username, const std::string &
 	Username(Username),
 	Password(Password) {
 
-	ObjectManager = new _Manager<_Object>();
+	ObjectManager = new ae::_Manager<_Object>();
 
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_GAME);
@@ -73,14 +73,14 @@ void _Bot::Update(double FrameTime) {
 	Network->Update(FrameTime);
 
 	// Get events
-	_NetworkEvent NetworkEvent;
+	ae::_NetworkEvent NetworkEvent;
 	while(Network->GetNetworkEvent(NetworkEvent)) {
 
 		switch(NetworkEvent.Type) {
-			case _NetworkEvent::CONNECT: {
+			case ae::_NetworkEvent::CONNECT: {
 				//std::cout << Username << " connected" << std::endl;
 
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 				Packet.WriteBit(0);
 				Packet.WriteString(Username.c_str());
@@ -88,7 +88,7 @@ void _Bot::Update(double FrameTime) {
 				Packet.Write<uint64_t>(0);
 				Network->SendPacket(Packet);
 			} break;
-			case _NetworkEvent::DISCONNECT:
+			case ae::_NetworkEvent::DISCONNECT:
 				//std::cout << Username << " disconnected" << std::endl;
 				ObjectManager->Clear();
 				AssignPlayer(nullptr);
@@ -98,7 +98,7 @@ void _Bot::Update(double FrameTime) {
 				Battle = nullptr;
 				Map = nullptr;
 			break;
-			case _NetworkEvent::PACKET:
+			case ae::_NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
 				delete NetworkEvent.Data;
 			break;
@@ -110,7 +110,7 @@ void _Bot::Update(double FrameTime) {
 
 	// Respawn
 	if(!Player->Controller->WaitForServer && !Player->Character->IsAlive()) {
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
 		Network->SendPacket(Packet);
 
@@ -154,7 +154,7 @@ void _Bot::Update(double FrameTime) {
 		if(Player->Character->Path.size())
 			Player->Character->Path.erase(Player->Character->Path.begin());
 
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
 		Packet.Write<char>((char)Player->Controller->DirectionMoved);
 		Network->SendPacket(Packet);
@@ -176,7 +176,7 @@ void _Bot::Update(double FrameTime) {
 }
 
 // Handle packet
-void _Bot::HandlePacket(_Buffer &Data) {
+void _Bot::HandlePacket(ae::_Buffer &Data) {
 	PacketType Type = Data.Read<PacketType>();
 
 	//std::cout << (int)Type << std::endl;
@@ -185,12 +185,12 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::ACCOUNT_SUCCESS: {
 
 			// Request character list
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::CHARACTERS_REQUEST);
 			Network->SendPacket(Packet);
 		} break;
 		case PacketType::ACCOUNT_NOTFOUND: {
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 			Packet.WriteBit(1);
 			Packet.WriteString(Username.c_str());
@@ -221,8 +221,8 @@ void _Bot::HandlePacket(_Buffer &Data) {
 
 			// Create character
 			if(FirstSlot == -1) {
-				std::string Name = Username + "_" + std::to_string(GetRandomInt(0, 1000));
-				_Buffer Packet;
+				std::string Name = Username + "_" + std::to_string(ae::GetRandomInt(0, 1000));
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 				Packet.WriteBit(0);
 				Packet.WriteString(Name.c_str());
@@ -234,7 +234,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				FirstSlot = 0;
 			}
 
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
 			Packet.Write<uint8_t>((uint8_t)FirstSlot);
 			Network->SendPacket(Packet);
@@ -246,7 +246,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 		case PacketType::WORLD_CHANGEMAPS: {
 
 			// Load map
-			NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
+			ae::NetworkIDType MapID = (ae::NetworkIDType)Data.Read<uint32_t>();
 			double Clock = Data.Read<double>();
 
 			// Delete old map and create new
@@ -269,12 +269,12 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			AssignPlayer(nullptr);
 
 			// Read header
-			NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
-			NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
+			ae::NetworkIDType ClientNetworkID = Data.Read<ae::NetworkIDType>();
+			ae::NetworkIDType ObjectCount = Data.Read<ae::NetworkIDType>();
 
 			// Create objects
-			for(NetworkIDType i = 0; i < ObjectCount; i++) {
-				NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			for(ae::NetworkIDType i = 0; i < ObjectCount; i++) {
+				ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 
 				// Create object
 				_Object *Object = CreateObject(Data, NetworkID);
@@ -297,7 +297,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 				break;
 
 			// Read packet
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 
 			// Check id
 			if(NetworkID != Player->NetworkID) {
@@ -307,7 +307,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			}
 		} break;
 		case PacketType::WORLD_DELETEOBJECT: {
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 
 			// Get object
 			_Object *Object = ObjectManager->GetObject(NetworkID);
@@ -330,7 +330,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			Player->Character->TeleportTime = Data.Read<double>();
 		break;
 		case PacketType::ACTION_CLEAR: {
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			_Object *Object = ObjectManager->GetObject(NetworkID);
 			if(!Object)
 				return;
@@ -401,7 +401,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			//HandleBattleAction(Data);
 		break;
 		case PacketType::BATTLE_JOIN: {
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			Data.Read<uint32_t>();
 
 			// Get object
@@ -412,7 +412,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 			}
 		} break;
 		case PacketType::BATTLE_LEAVE: {
-			NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 			_Object *Object = ObjectManager->GetObject(NetworkID);
 			if(Object)
 				Battle->RemoveObject(Object);
@@ -553,7 +553,7 @@ void _Bot::HandlePacket(_Buffer &Data) {
 }
 
 // Handles a stat change
-void _Bot::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
+void _Bot::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 	if(!Player)
 		return;
 
@@ -579,7 +579,7 @@ void _Bot::AssignPlayer(_Object *Object) {
 }
 
 // Creates an object from a buffer
-_Object *_Bot::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
+_Object *_Bot::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID) {
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);

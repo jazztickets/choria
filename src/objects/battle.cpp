@@ -172,17 +172,17 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 
 	// Draw icon
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 	if(ActionResult.ActionUsed.Item)
-		Graphics.DrawCenteredImage(DrawPosition, Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
-	Graphics.DrawCenteredImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
+		ae::Graphics.DrawCenteredImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
+	ae::Graphics.DrawCenteredImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
 
 	// Draw damage dealt
 	glm::vec4 TextColor = glm::vec4(1.0f);
 	if(ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer > 0)
-		TextColor = Assets.Colors["green"];
+		TextColor = ae::Assets.Colors["green"];
 	else if(ActionResult.Target.HasStat(StatType::CRIT) && ActionResult.Target.Values[StatType::CRIT].Integer)
-		TextColor = Assets.Colors["yellow"];
+		TextColor = ae::Assets.Colors["yellow"];
 
 	TextColor.a = AlphaPercent;
 
@@ -191,7 +191,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 		Buffer << "miss";
 	else if(ActionResult.Target.HasStat(StatType::HEALTH))
 		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Integer);
-	Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), CENTER_BASELINE, TextColor);
+	ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
 }
 
 // Sends an action selection to the server
@@ -239,7 +239,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		// Set up initial target
 		if(Item) {
 			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1 && ClientPlayer->Character->HUD)
-				ClientPlayer->Character->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
+				ClientPlayer->Character->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
 			// Get opposite side
 			int StartingSide = !ClientPlayer->Fighter->BattleSide;
@@ -289,12 +289,12 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			ClientPlayer->Fighter->LastTarget[ClientPlayer->Character->Targets.front()->Fighter->BattleSide] = ClientPlayer->Character->Targets.front();
 
 		// Notify server
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACTION_USE);
 		Packet.Write<uint8_t>(ActionBarSlot);
 		Packet.Write<uint8_t>((uint8_t)ClientPlayer->Character->Targets.size());
 		for(const auto &BattleTarget : ClientPlayer->Character->Targets)
-			Packet.Write<NetworkIDType>(BattleTarget->NetworkID);
+			Packet.Write<ae::NetworkIDType>(BattleTarget->NetworkID);
 
 		ClientNetwork->SendPacket(Packet);
 
@@ -446,11 +446,11 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Fighter->GoldStolen = 0;
 	if(Server) {
 		Object->Character->GenerateNextBattle();
-		Object->Fighter->TurnTimer = GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
+		Object->Fighter->TurnTimer = ae::GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 		// Send player join packet to current objects
 		if(Join) {
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::BATTLE_JOIN);
 			Object->SerializeBattle(Packet);
 			BroadcastPacket(Packet);
@@ -500,7 +500,7 @@ void _Battle::GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects) {
 }
 
 // Starts the battle and notifies the players
-void _Battle::Serialize(_Buffer &Data) {
+void _Battle::Serialize(ae::_Buffer &Data) {
 
 	// Write object count
 	Data.Write<uint8_t>((uint8_t)Objects.size());
@@ -511,7 +511,7 @@ void _Battle::Serialize(_Buffer &Data) {
 }
 
 // Unserialize for network
-void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
+void _Battle::Unserialize(ae::_Buffer &Data, _HUD *HUD) {
 
 	// Get object count
 	int ObjectCount = Data.Read<uint8_t>();
@@ -520,7 +520,7 @@ void _Battle::Unserialize(_Buffer &Data, _HUD *HUD) {
 	for(int i = 0; i < ObjectCount; i++) {
 
 		// Get object data
-		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 		uint32_t DatabaseID = Data.Read<uint32_t>();
 
 		// Get object pointers
@@ -662,7 +662,7 @@ void _Battle::ServerEndBattle() {
 			// Give out drops randomly
 			else {
 				for(auto &ItemID : ItemDrops) {
-					std::shuffle(ObjectArray.begin(), ObjectArray.end(), RandomGenerator);
+					std::shuffle(ObjectArray.begin(), ObjectArray.end(), ae::RandomGenerator);
 					_Object *Object = ObjectArray[0];
 					Object->Fighter->ItemDropsReceived.push_back(ItemID);
 				}
@@ -718,7 +718,7 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// Write results
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
 		Packet.Write<int>(Object->Record->PlayerKills);
 		Packet.Write<int>(Object->Record->MonsterKills);
@@ -808,7 +808,7 @@ void _Battle::AdjustBattleElements(int SideIndex, _Object *Object) {
 void _Battle::CreateBattleElements(int SideIndex, _Object *Object) {
 
 	// Set up ui
-	BattleElement = Assets.Elements["element_battle"];
+	BattleElement = ae::Assets.Elements["element_battle"];
 	if(BattleElement)
 		BattleElement->SetActive(true);
 
@@ -823,7 +823,7 @@ void _Battle::CreateBattleElements(int SideIndex, _Object *Object) {
 		for(auto &StatusEffect : Object->Character->StatusEffects) {
 			StatusEffect->BattleElement = StatusEffect->CreateUIElement(Object->Fighter->BattleElement);
 			if(ClientPlayer == Object)
-				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+				StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 		}
 	}
 }
@@ -848,9 +848,9 @@ void _Battle::RemoveObject(_Object *RemoveObject) {
 
 			// Broadcast object leaving
 			if(Server) {
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BATTLE_LEAVE);
-				Packet.Write<NetworkIDType>(Object->NetworkID);
+				Packet.Write<ae::NetworkIDType>(Object->NetworkID);
 				BroadcastPacket(Packet);
 			}
 
@@ -919,9 +919,9 @@ bool _Battle::ClientHandleInput(size_t Action) {
 }
 
 // Handle action from another player
-void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
+void _Battle::ClientHandlePlayerAction(ae::_Buffer &Data) {
 
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	uint32_t ItemID = Data.Read<uint32_t>();
 
 	_Object *Object = Manager->GetObject(NetworkID);
@@ -930,7 +930,7 @@ void _Battle::ClientHandlePlayerAction(_Buffer &Data) {
 }
 
 // Send a packet to all players
-void _Battle::BroadcastPacket(_Buffer &Data) {
+void _Battle::BroadcastPacket(ae::_Buffer &Data) {
 
 	// Send packet to all players
 	for(auto &Object : Objects) {

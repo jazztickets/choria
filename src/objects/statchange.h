@@ -25,11 +25,14 @@
 #include <map>
 
 // Forward Declarations
-template<class T> class _Manager;
 class _Object;
 class _Battle;
-class _Buffer;
-class _Font;
+
+namespace ae {
+	template<class T> class _Manager;
+	class _Font;
+	class _Buffer;
+}
 
 // Hash function for StatType
 struct StatTypeHash {
@@ -147,8 +150,8 @@ class _StatChange {
 		_StatChange();
 
 		void Reset();
-		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data, _Manager<_Object> *Manager);
+		void Serialize(ae::_Buffer &Data);
+		void Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager);
 
 		uint64_t GetChangedFlag();
 		bool HasStat(StatType Type);
@@ -171,7 +174,7 @@ class _StatChangeUI {
 		void SetText(const glm::vec4 &NegativeColor, const glm::vec4 &PositiveColor);
 
 		_Object *Object;
-		const _Font *Font;
+		const ae::_Font *Font;
 		std::string Text;
 		glm::vec4 Color;
 		glm::vec2 StartPosition;

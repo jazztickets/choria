@@ -27,10 +27,6 @@
 #include <list>
 
 // Forward Declarations
-template<class T> class _Manager;
-class _ServerNetwork;
-class _Buffer;
-class _Peer;
 class _Map;
 class _Battle;
 class _Stats;
@@ -38,7 +34,14 @@ class _Save;
 class _Object;
 class _Scripting;
 class _Item;
-struct _NetworkEvent;
+
+namespace ae {
+	template<class T> class _Manager;
+	class _ServerNetwork;
+	class _Buffer;
+	struct _NetworkEvent;
+	class _Peer;
+}
 
 struct _BattleEvent {
 	_Object *Object;
@@ -60,45 +63,45 @@ class _Server {
 		void JoinThread();
 		void StopServer(int Seconds=0);
 
-		void SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType);
+		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, int PVP);
 		void StartTeleport(_Object *Object, double Time);
-		void SendMessage(_Peer *Peer, const std::string &Message, const std::string &ColorName);
-		void BroadcastMessage(_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName);
-		void SendHUD(_Peer *Peer);
-		void SendPlayerPosition(_Peer *Peer);
+		void SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName);
+		void BroadcastMessage(ae::_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName);
+		void SendHUD(ae::_Peer *Peer);
+		void SendPlayerPosition(ae::_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
 
 		// Packet handling
-		void HandleLoginInfo(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterListRequest(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterPlay(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterCreate(_Buffer &Data, _Peer *Peer);
-		void HandleCharacterDelete(_Buffer &Data, _Peer *Peer);
-		void HandleMoveCommand(_Buffer &Data, _Peer *Peer);
-		void HandleUseCommand(_Buffer &Data, _Peer *Peer);
-		void HandleRespawn(_Buffer &Data, _Peer *Peer);
-		void HandleInventoryMove(_Buffer &Data, _Peer *Peer);
-		void HandleInventoryUse(_Buffer &Data, _Peer *Peer);
-		void HandleInventorySplit(_Buffer &Data, _Peer *Peer);
-		void HandleVendorExchange(_Buffer &Data, _Peer *Peer);
-		void HandleTraderAccept(_Buffer &Data, _Peer *Peer);
-		void HandleSkillAdjust(_Buffer &Data, _Peer *Peer);
-		void HandleChatMessage(_Buffer &Data, _Peer *Peer);
-		void HandleTradeRequest(_Buffer &Data, _Peer *Peer);
-		void HandleTradeCancel(_Buffer &Data, _Peer *Peer);
-		void HandleTradeGold(_Buffer &Data, _Peer *Peer);
-		void HandleTradeAccept(_Buffer &Data, _Peer *Peer);
-		void HandlePartyInfo(_Buffer &Data, _Peer *Peer);
-		void HandleActionUse(_Buffer &Data, _Peer *Peer);
-		void HandleActionBarChanged(_Buffer &Data, _Peer *Peer);
-		void HandleBattleFinished(_Buffer &Data, _Peer *Peer);
-		void HandlePlayerStatus(_Buffer &Data, _Peer *Peer);
-		void HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer);
-		void HandleMinigamePay(_Buffer &Data, _Peer *Peer);
-		void HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer);
-		void HandleJoin(_Buffer &Data, _Peer *Peer);
-		void HandleExit(_Buffer &Data, _Peer *Peer);
+		void HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleCharacterListRequest(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleCharacterCreate(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleCharacterDelete(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleUseCommand(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleInventoryMove(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleInventorySplit(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleSkillAdjust(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleTradeRequest(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleTradeCancel(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleTradeGold(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandlePartyInfo(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleActionUse(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleActionBarChanged(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleBattleFinished(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandlePlayerStatus(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleExit(ae::_Buffer &Data, ae::_Peer *Peer);
 
 		// Parameters
 		bool IsTesting;
@@ -114,39 +117,39 @@ class _Server {
 		double Time;
 		double SaveTime;
 		double BotTime;
-		_LogFile Log;
+		ae::_LogFile Log;
 
 		// Stats
 		const _Stats *Stats;
 		_Save *Save;
 
 		// Network
-		std::unique_ptr<_ServerNetwork> Network;
+		std::unique_ptr<ae::_ServerNetwork> Network;
 
 		// Scripting
 		_Scripting *Scripting;
 
 		// Objects
-		_Manager<_Object> *ObjectManager;
-		_Manager<_Map> *MapManager;
-		_Manager<_Battle> *BattleManager;
+		ae::_Manager<_Object> *ObjectManager;
+		ae::_Manager<_Map> *MapManager;
+		ae::_Manager<_Battle> *BattleManager;
 		std::list<_BattleEvent> BattleEvents;
 
 	private:
 
-		_Object *CreatePlayer(_Peer *Peer);
+		_Object *CreatePlayer(ae::_Peer *Peer);
 		_Object *CreateBot();
-		bool ValidatePeer(_Peer *Peer);
-		bool CheckAccountUse(_Peer *Peer);
+		bool ValidatePeer(ae::_Peer *Peer);
+		bool CheckAccountUse(ae::_Peer *Peer);
 		void StartBattle(_BattleEvent &BattleEvent);
 
-		void HandleConnect(_NetworkEvent &Event);
-		void HandleDisconnect(_NetworkEvent &Event);
-		void HandlePacket(_Buffer &Data, _Peer *Peer);
+		void HandleConnect(ae::_NetworkEvent &Event);
+		void HandleDisconnect(ae::_NetworkEvent &Event);
+		void HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer);
 
-		void SendItem(_Peer *Peer, const _Item *Item, int Count);
-		void SendPlayerInfo(_Peer *Peer);
-		void SendCharacterList(_Peer *Peer);
+		void SendItem(ae::_Peer *Peer, const _Item *Item, int Count);
+		void SendPlayerInfo(ae::_Peer *Peer);
+		void SendCharacterList(ae::_Peer *Peer);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);
 
 		// Threading

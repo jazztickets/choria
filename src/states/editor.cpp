@@ -60,27 +60,27 @@ _EditorState::_EditorState() :
 
 // Initializes the state
 void _EditorState::Init() {
-	Graphics.Element->SetActive(false);
-	Graphics.Element->Active = true;
+	ae::Graphics.Element->SetActive(false);
+	ae::Graphics.Element->Active = true;
 
-	Audio.StopMusic();
+	ae::Audio.StopMusic();
 
 	// Setup UI
-	ButtonBarElement = Assets.Elements["element_editor_buttonbar"];
-	TexturesElement = Assets.Elements["element_editor_textures"];
-	NewMapElement = Assets.Elements["element_editor_newmap"];
-	ResizeMapElement = Assets.Elements["element_editor_resizemap"];
-	SaveMapElement = Assets.Elements["element_editor_savemap"];
-	LoadMapElement = Assets.Elements["element_editor_loadmap"];
-	NewMapFilenameTextBox = Assets.Elements["textbox_editor_newmap_filename"];
-	NewMapWidthTextBox = Assets.Elements["textbox_editor_newmap_width"];
-	NewMapHeightTextBox = Assets.Elements["textbox_editor_newmap_height"];
-	ResizeMinXTextBox = Assets.Elements["textbox_editor_resizemap_minx"];
-	ResizeMinYTextBox = Assets.Elements["textbox_editor_resizemap_miny"];
-	ResizeMaxXTextBox = Assets.Elements["textbox_editor_resizemap_maxx"];
-	ResizeMaxYTextBox = Assets.Elements["textbox_editor_resizemap_maxy"];
-	SaveMapTextBox = Assets.Elements["textbox_editor_savemap"];
-	LoadMapTextBox = Assets.Elements["textbox_editor_loadmap"];
+	ButtonBarElement = ae::Assets.Elements["element_editor_buttonbar"];
+	TexturesElement = ae::Assets.Elements["element_editor_textures"];
+	NewMapElement = ae::Assets.Elements["element_editor_newmap"];
+	ResizeMapElement = ae::Assets.Elements["element_editor_resizemap"];
+	SaveMapElement = ae::Assets.Elements["element_editor_savemap"];
+	LoadMapElement = ae::Assets.Elements["element_editor_loadmap"];
+	NewMapFilenameTextBox = ae::Assets.Elements["textbox_editor_newmap_filename"];
+	NewMapWidthTextBox = ae::Assets.Elements["textbox_editor_newmap_width"];
+	NewMapHeightTextBox = ae::Assets.Elements["textbox_editor_newmap_height"];
+	ResizeMinXTextBox = ae::Assets.Elements["textbox_editor_resizemap_minx"];
+	ResizeMinYTextBox = ae::Assets.Elements["textbox_editor_resizemap_miny"];
+	ResizeMaxXTextBox = ae::Assets.Elements["textbox_editor_resizemap_maxx"];
+	ResizeMaxYTextBox = ae::Assets.Elements["textbox_editor_resizemap_maxy"];
+	SaveMapTextBox = ae::Assets.Elements["textbox_editor_savemap"];
+	LoadMapTextBox = ae::Assets.Elements["textbox_editor_loadmap"];
 	ButtonBarElement->SetActive(true);
 	TexturesElement->SetActive(false);
 	NewMapElement->SetActive(false);
@@ -97,8 +97,8 @@ void _EditorState::Init() {
 	BrushRadius = 0.5f;
 
 	// Create camera
-	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
-	Camera->CalculateFrustum(Graphics.AspectRatio);
+	Camera = new ae::_Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
+	Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 
 	// Set filters
 	Layer = 0;
@@ -138,13 +138,13 @@ void _EditorState::Close() {
 }
 
 // Key events
-void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
+void _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	if(IgnoreFirstChar) {
 		IgnoreFirstChar = false;
 		return;
 	}
 
-	bool Handled = Graphics.Element->HandleKey(KeyEvent);
+	bool Handled = ae::Graphics.Element->HandleKey(KeyEvent);
 	if(Handled)
 		return;
 
@@ -152,7 +152,7 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 		return;
 
 	if(KeyEvent.Pressed) {
-		if(FocusedElement) {
+		if(ae::FocusedElement) {
 			if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 				CloseWindows();
 			else if(KeyEvent.Scancode == SDL_SCANCODE_RETURN) {
@@ -170,23 +170,23 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 				}
 			}
 			else if(KeyEvent.Scancode == SDL_SCANCODE_TAB) {
-				if(FocusedElement == NewMapFilenameTextBox)
-					FocusedElement = NewMapWidthTextBox;
-				else if(FocusedElement == NewMapWidthTextBox)
-					FocusedElement = NewMapHeightTextBox;
-				else if(FocusedElement == NewMapHeightTextBox)
-					FocusedElement = NewMapFilenameTextBox;
-				else if(FocusedElement == ResizeMinXTextBox)
-					FocusedElement = ResizeMinYTextBox;
-				else if(FocusedElement == ResizeMinYTextBox)
-					FocusedElement = ResizeMaxXTextBox;
-				else if(FocusedElement == ResizeMaxXTextBox)
-					FocusedElement = ResizeMaxYTextBox;
-				else if(FocusedElement == ResizeMaxYTextBox)
-					FocusedElement = ResizeMinXTextBox;
+				if(ae::FocusedElement == NewMapFilenameTextBox)
+					ae::FocusedElement = NewMapWidthTextBox;
+				else if(ae::FocusedElement == NewMapWidthTextBox)
+					ae::FocusedElement = NewMapHeightTextBox;
+				else if(ae::FocusedElement == NewMapHeightTextBox)
+					ae::FocusedElement = NewMapFilenameTextBox;
+				else if(ae::FocusedElement == ResizeMinXTextBox)
+					ae::FocusedElement = ResizeMinYTextBox;
+				else if(ae::FocusedElement == ResizeMinYTextBox)
+					ae::FocusedElement = ResizeMaxXTextBox;
+				else if(ae::FocusedElement == ResizeMaxXTextBox)
+					ae::FocusedElement = ResizeMaxYTextBox;
+				else if(ae::FocusedElement == ResizeMaxYTextBox)
+					ae::FocusedElement = ResizeMinXTextBox;
 
-				if(FocusedElement)
-					FocusedElement->ResetCursor();
+				if(ae::FocusedElement)
+					ae::FocusedElement->ResetCursor();
 			}
 
 			return;
@@ -224,11 +224,11 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 				Filter = 0;
 			break;
 			case SDL_SCANCODE_T:
-				if(Input.ModKeyDown(KMOD_CTRL))
+				if(ae::Input.ModKeyDown(KMOD_CTRL))
 					UseClockAmbientLight = !UseClockAmbientLight;
 			break;
 			case SDL_SCANCODE_E:
-				if(Input.ModKeyDown(KMOD_SHIFT)) {
+				if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
 					Brush->Event.Type--;
 					if(Brush->Event.Type >= _Map::EVENT_COUNT)
 						Brush->Event.Type = _Map::EVENT_COUNT-1;
@@ -306,9 +306,9 @@ void _EditorState::HandleKey(const _KeyEvent &KeyEvent) {
 }
 
 // Mouse events
-void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
-	FocusedElement = nullptr;
-	Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
+void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
+	ae::FocusedElement = nullptr;
+	ae::Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
 
 	// Mouse press
 	if(MouseEvent.Pressed) {
@@ -316,7 +316,7 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			switch(MouseEvent.Button) {
 				// Eyedropper tool
 				case SDL_BUTTON_LEFT:
-					if(Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor))
+					if(ae::Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor))
 						*Brush = *Map->GetTile(WorldCursor);
 				break;
 				// Scroll map
@@ -349,7 +349,7 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		// Texture select
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
-				_Element *Button = TexturesElement->GetClickedElement();
+				ae::_Element *Button = TexturesElement->GetClickedElement();
 				Brush->TextureIndex[Layer] = Button->TextureIndex;
 				CloseWindows();
 			}
@@ -390,8 +390,8 @@ void _EditorState::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 // Mouse scroll wheel
 void _EditorState::HandleMouseWheel(int Direction) {
-	if(Input.ModKeyDown(KMOD_CTRL)) {
-		if(Input.ModKeyDown(KMOD_SHIFT))
+	if(ae::Input.ModKeyDown(KMOD_CTRL)) {
+		if(ae::Input.ModKeyDown(KMOD_SHIFT))
 			Direction *= 10;
 
 		if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
@@ -410,7 +410,7 @@ void _EditorState::HandleMouseWheel(int Direction) {
 
 		// Zoom
 		float Multiplier = 1.0f * Direction;
-		if(Input.ModKeyDown(KMOD_SHIFT))
+		if(ae::Input.ModKeyDown(KMOD_SHIFT))
 			Multiplier = 10.0f * Direction;
 
 		Camera->UpdateDistance(-Multiplier);
@@ -420,7 +420,7 @@ void _EditorState::HandleMouseWheel(int Direction) {
 // Window events
 void _EditorState::HandleWindow(uint8_t Event) {
 	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
-		Camera->CalculateFrustum(Graphics.AspectRatio);
+		Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 }
 
 // Quit
@@ -430,7 +430,7 @@ void _EditorState::HandleQuit() {
 
 // Updates the current state
 void _EditorState::Update(double FrameTime) {
-	Graphics.Element->Update(FrameTime, Input.GetMouse());
+	ae::Graphics.Element->Update(FrameTime, ae::Input.GetMouse());
 
 	if(!Map)
 		return;
@@ -443,20 +443,20 @@ void _EditorState::Update(double FrameTime) {
 		Camera->Update(FrameTime);
 
 		// Get world cursor
-		Camera->ConvertScreenToWorld(Input.GetMouse(), WorldCursor);
+		Camera->ConvertScreenToWorld(ae::Input.GetMouse(), WorldCursor);
 		WorldCursor = Map->GetValidPosition(WorldCursor);
 	}
 
 	// Handle mouse input
 	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
-		if(Input.MouseDown(SDL_BUTTON_LEFT) && !(Input.ModKeyDown(KMOD_CTRL)) && Graphics.Element->HitElement == Graphics.Element) {
+		if(ae::Input.MouseDown(SDL_BUTTON_LEFT) && !(ae::Input.ModKeyDown(KMOD_CTRL)) && ae::Graphics.Element->HitElement == ae::Graphics.Element) {
 			ApplyBrush(WorldCursor);
 		}
 	}
 
 	// Handle key input
-	if(Input.KeyDown(SDL_SCANCODE_T) && !Input.ModKeyDown(KMOD_CTRL)) {
-		if(Input.ModKeyDown(KMOD_SHIFT)) {
+	if(ae::Input.KeyDown(SDL_SCANCODE_T) && !ae::Input.ModKeyDown(KMOD_CTRL)) {
+		if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
 			Clock -= FrameTime * MAP_EDITOR_CLOCK_SPEED;
 			if(Clock < 0)
 				Clock += MAP_DAY_LENGTH;
@@ -472,18 +472,18 @@ void _EditorState::Update(double FrameTime) {
 // Draws the current state
 void _EditorState::Render(double BlendFactor) {
 
-	Graphics.Setup3D();
+	ae::Graphics.Setup3D();
 	Camera->Set3DProjection(BlendFactor);
 
 	// Setup the viewing matrix
-	Graphics.SetProgram(Assets.Programs["pos"]);
-	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["text"]);
-	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Render map
 	if(Map) {
@@ -495,28 +495,28 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Draw tile brush size
 	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
-		Graphics.SetColor(glm::vec4(1.0f));
-		Graphics.SetProgram(Assets.Programs["pos"]);
-		Graphics.SetVBO(VBO_CIRCLE);
-		Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
+		ae::Graphics.SetColor(glm::vec4(1.0f));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetVBO(ae::VBO_CIRCLE);
+		ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
 		// Draw copy tool boundaries
 		if(DrawCopyBounds) {
-			Graphics.SetVBO(VBO_NONE);
-			Graphics.SetColor(Assets.Colors["editor_select"]);
+			ae::Graphics.SetVBO(ae::VBO_NONE);
+			ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
 
 			glm::ivec2 Start, End;
 			GetDrawBounds(Start, End);
-			Graphics.DrawRectangle(Start, End, true);
+			ae::Graphics.DrawRectangle(Start, End, true);
 		}
 	}
 
 	// Setup UI
-	Graphics.Setup2D();
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	glUniformMatrix4fv(Assets.Programs["ortho_pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
-	Graphics.SetProgram(Assets.Programs["text"]);
-	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
+	ae::Graphics.Setup2D();
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+	glUniformMatrix4fv(ae::Assets.Programs["ortho_pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
+	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 
 	// Draw brush info
 	DrawBrushInfo();
@@ -524,22 +524,22 @@ void _EditorState::Render(double BlendFactor) {
 	// Draw world cursor
 	std::stringstream Buffer;
 	Buffer << FilePath;
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, 25));
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, 25));
 	Buffer.str("");
 
 	// Cursor position
 	Buffer << (int)WorldCursor.x << ", " << (int)WorldCursor.y;
-	Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, Graphics.ViewportSize.y - 15));
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, ae::Graphics.ViewportSize.y - 15));
 	Buffer.str("");
 
 	// FPS
-	Buffer << Graphics.FramesPerSecond << " FPS";
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(15, 50));
+	Buffer << ae::Graphics.FramesPerSecond << " FPS";
+	ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(15, 50));
 	Buffer.str("");
 
 	// Clock
 	Map->GetClockAsString(Buffer);
-	Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(Graphics.ViewportSize.x - 60, 55));
+	ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(ae::Graphics.ViewportSize.x - 60, 55));
 	Buffer.str("");
 
 	// Draw UI
@@ -576,24 +576,24 @@ void _EditorState::DrawBrushInfo() {
 		return;
 
 	std::stringstream Buffer;
-	glm::vec2 DrawPosition = Graphics.Element->Bounds.End - glm::vec2(60, 150);
+	glm::vec2 DrawPosition = ae::Graphics.Element->Bounds.End - glm::vec2(60, 150);
 	glm::vec4 Color(glm::vec4(1.0f));
 
 	// Draw backdrop
-	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
-	Graphics.DrawRectangle(DrawPosition - glm::vec2(45, 45), DrawPosition + glm::vec2(45, 138), true);
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+	ae::Graphics.SetVBO(ae::VBO_NONE);
+	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
+	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(45, 45), DrawPosition + glm::vec2(45, 138), true);
 
 	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
 
 		// Draw texture
-		_Bounds TextureBounds;
+		ae::_Bounds TextureBounds;
 		TextureBounds.Start = DrawPosition - glm::vec2(Map->TileAtlas->Size) / 2.0f;
 		TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
-		Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-		Graphics.SetColor(glm::vec4(1.0f));
-		Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		ae::Graphics.SetColor(glm::vec4(1.0f));
+		ae::Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
 
 		DrawPosition.y += 52;
 
@@ -602,7 +602,7 @@ void _EditorState::DrawBrushInfo() {
 			Buffer << "Fore";
 		else
 			Buffer << "Back";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
 		DrawPosition.y += 15;
@@ -614,7 +614,7 @@ void _EditorState::DrawBrushInfo() {
 			Buffer << "Floor";
 
 		Filter & MAP_RENDER_WALL ? Color.a = 1.0f : Color.a = 0.5f;
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
 		DrawPosition.y += 15;
@@ -623,7 +623,7 @@ void _EditorState::DrawBrushInfo() {
 		Buffer << "Zone " << Brush->Zone;
 
 		Filter & MAP_RENDER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
 		DrawPosition.y += 15;
@@ -635,7 +635,7 @@ void _EditorState::DrawBrushInfo() {
 			Buffer << "Safe";
 
 		Filter & MAP_RENDER_PVP ? Color.a = 1.0f : Color.a = 0.5f;
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
 		DrawPosition.y += 15;
@@ -644,7 +644,7 @@ void _EditorState::DrawBrushInfo() {
 		Buffer << Stats->EventNames[Brush->Event.Type].Name;
 
 		Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
 		DrawPosition.y += 15;
@@ -653,21 +653,21 @@ void _EditorState::DrawBrushInfo() {
 		Buffer << "Data " << Brush->Event.Data;
 
 		Filter & MAP_RENDER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 	}
 	else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
 
 		// Draw object type
 		Buffer << "Lights";
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
 		DrawPosition.y += 15;
 
 		// Draw object data
 		Buffer << "Data " << ObjectData;
-		Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 	}
 }
@@ -796,12 +796,12 @@ void _EditorState::InitTextures() {
 	for(uint32_t i = 0; i < TextureCount; i++) {
 
 		// Add button
-		_Element *Button = new _Element();
+		ae::_Element *Button = new ae::_Element();
 		Button->Name = "button_skills_skill";
 		Button->Parent = TexturesElement;
 		Button->Offset = Offset;
 		Button->Size = Map->TileAtlas->Size;
-		Button->Alignment = LEFT_TOP;
+		Button->Alignment = ae::LEFT_TOP;
 		Button->Atlas = Map->TileAtlas;
 		Button->TextureIndex = i;
 		TexturesElement->Children.push_back(Button);
@@ -822,9 +822,9 @@ void _EditorState::InitTextures() {
 void _EditorState::InitNewMap() {
 	NewMapElement->SetActive(true);
 
-	_Element *FilenameTextBox = Assets.Elements["textbox_editor_newmap_filename"];
+	ae::_Element *FilenameTextBox = ae::Assets.Elements["textbox_editor_newmap_filename"];
 	FilenameTextBox->SetText("");
-	FocusedElement = FilenameTextBox;
+	ae::FocusedElement = FilenameTextBox;
 
 	NewMapWidthTextBox->SetText("100");
 	NewMapHeightTextBox->SetText("100");
@@ -849,7 +849,7 @@ void _EditorState::InitSaveMap() {
 		return;
 
 	SaveMapElement->SetActive(true);
-	FocusedElement = SaveMapTextBox;
+	ae::FocusedElement = SaveMapTextBox;
 
 	SaveMapTextBox->SetText(FilePath);
 }
@@ -857,7 +857,7 @@ void _EditorState::InitSaveMap() {
 // Init load map
 void _EditorState::InitLoadMap(const std::string &TempPath) {
 	LoadMapElement->SetActive(true);
-	FocusedElement = LoadMapTextBox;
+	ae::FocusedElement = LoadMapTextBox;
 
 	if(TempPath != "")
 		LoadMapTextBox->SetText(TempPath);
@@ -874,7 +874,7 @@ bool _EditorState::CloseWindows() {
 	ResizeMapElement->SetActive(false);
 	SaveMapElement->SetActive(false);
 	LoadMapElement->SetActive(false);
-	FocusedElement = nullptr;
+	ae::FocusedElement = nullptr;
 
 	return WasOpen;
 }

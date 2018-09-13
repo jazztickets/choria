@@ -57,7 +57,7 @@ _StatusEffect::~_StatusEffect() {
 }
 
 // Serialize for network
-void _StatusEffect::Serialize(_Buffer &Data) {
+void _StatusEffect::Serialize(ae::_Buffer &Data) {
 	Data.Write<uint32_t>(Buff->ID);
 	Data.Write<int>(Level);
 	Data.Write<float>((float)Duration);
@@ -65,7 +65,7 @@ void _StatusEffect::Serialize(_Buffer &Data) {
 }
 
 // Unserialize from network
-void _StatusEffect::Unserialize(_Buffer &Data, const _Stats *Stats) {
+void _StatusEffect::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	uint32_t BuffID = Data.Read<uint32_t>();
 	Buff = Stats->Buffs.at(BuffID);
 	Level = Data.Read<int>();
@@ -74,11 +74,11 @@ void _StatusEffect::Unserialize(_Buffer &Data, const _Stats *Stats) {
 }
 
 // Create element for hud
-_Element *_StatusEffect::CreateUIElement(_Element *Parent) {
+ae::_Element *_StatusEffect::CreateUIElement(ae::_Element *Parent) {
 
-	_Element *Element = new _Element();
+	ae::_Element *Element = new ae::_Element();
 	Element->Size = glm::vec2(Buff->Texture->Size);
-	Element->Alignment = LEFT_TOP;
+	Element->Alignment = ae::LEFT_TOP;
 	Element->Active = true;
 	Element->Index = 0;
 	Element->UserData = (void *)this;
@@ -89,20 +89,20 @@ _Element *_StatusEffect::CreateUIElement(_Element *Parent) {
 }
 
 // Render the status effect
-void _StatusEffect::Render(_Element *Element, const glm::vec4 &Color) {
+void _StatusEffect::Render(ae::_Element *Element, const glm::vec4 &Color) {
 
 	// Draw buff icon
-	Graphics.SetProgram(Assets.Programs["ortho_pos_uv"]);
-	Graphics.SetVBO(VBO_NONE);
-	Graphics.SetColor(Color);
-	Graphics.DrawImage(Element->Bounds, Buff->Texture);
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+	ae::Graphics.SetVBO(ae::VBO_NONE);
+	ae::Graphics.SetColor(Color);
+	ae::Graphics.DrawImage(Element->Bounds, Buff->Texture);
 
 	// Set up graphics
-	Graphics.SetProgram(Assets.Programs["ortho_pos"]);
-	Graphics.SetVBO(VBO_NONE);
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+	ae::Graphics.SetVBO(ae::VBO_NONE);
 
 	// Draw dark percentage bg
 	float OverlayHeight = (Duration / MaxDuration) * (Element->Bounds.End.y - Element->Bounds.Start.y);
-	Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
-	Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, 1 + OverlayHeight), Element->Bounds.End - glm::vec2(1, 1), true);
+	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
+	ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, 1 + OverlayHeight), Element->Bounds.End - glm::vec2(1, 1), true);
 }

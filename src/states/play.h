@@ -23,23 +23,26 @@
 #include <unordered_map>
 
 // Forward Declarations
-template<class T> class _Manager;
-class _Font;
 class _HUD;
 class _Map;
 class _Battle;
 class _Object;
 class _Item;
-class _Camera;
-class _ClientNetwork;
 class _Server;
-class _Buffer;
 class _Stats;
 class _StatChange;
 class _Scripting;
 
+namespace ae {
+	template<class T> class _Manager;
+	class _Font;
+	class _Camera;
+	class _ClientNetwork;
+	class _Buffer;
+}
+
 // Play state
-class _PlayState : public _State {
+class _PlayState : public ae::_State {
 
 	public:
 
@@ -59,8 +62,8 @@ class _PlayState : public _State {
 
 		// Input
 		bool HandleAction(int InputType, size_t Action, int Value) override;
-		void HandleKey(const _KeyEvent &KeyEvent) override;
-		void HandleMouseButton(const _MouseEvent &MouseEvent) override;
+		void HandleKey(const ae::_KeyEvent &KeyEvent) override;
+		void HandleMouseButton(const ae::_MouseEvent &MouseEvent) override;
 		void HandleMouseMove(const glm::ivec2 &Position) override;
 		void HandleWindow(uint8_t Event) override;
 		void HandleQuit() override;
@@ -81,14 +84,14 @@ class _PlayState : public _State {
 
 		// Game
 		const _Stats *Stats;
-		_LogFile Log;
+		ae::_LogFile Log;
 		double Time;
 
 		// Scripting
 		_Scripting *Scripting;
 
 		// Objects
-		_Manager<_Object> *ObjectManager;
+		ae::_Manager<_Object> *ObjectManager;
 		_Object *Player;
 		_Map *Map;
 		_Battle *Battle;
@@ -98,13 +101,13 @@ class _PlayState : public _State {
 		bool IgnoreFirstChar;
 
 		// Camera
-		_Camera *Camera;
+		ae::_Camera *Camera;
 
 		// Audio
 		bool CoinSoundPlayed;
 
 		// Network
-		_ClientNetwork *Network;
+		ae::_ClientNetwork *Network;
 		_Server *Server;
 		std::string HostAddress;
 		uint16_t ConnectPort;
@@ -115,42 +118,42 @@ class _PlayState : public _State {
 
 		void HandleConnect();
 		void HandleDisconnect();
-		void HandlePacket(_Buffer &Data);
+		void HandlePacket(ae::_Buffer &Data);
 
-		void HandleObjectStats(_Buffer &Data);
-		void HandleChangeMaps(_Buffer &Data);
-		void HandleObjectList(_Buffer &Data);
-		void HandleObjectCreate(_Buffer &Data);
-		void HandleObjectDelete(_Buffer &Data);
-		void HandleObjectUpdates(_Buffer &Data);
-		void HandlePlayerPosition(_Buffer &Data);
-		void HandleTeleportStart(_Buffer &Data);
-		void HandleEventStart(_Buffer &Data);
-		void HandleInventory(_Buffer &Data);
-		void HandleInventoryAdd(_Buffer &Data);
-		void HandleInventorySwap(_Buffer &Data);
-		void HandleInventoryUpdate(_Buffer &Data);
-		void HandleInventoryGold(_Buffer &Data);
-		void HandlePartyInfo(_Buffer &Data);
-		void HandleChatMessage(_Buffer &Data);
-		void HandleTradeRequest(_Buffer &Data);
-		void HandleTradeCancel(_Buffer &Data);
-		void HandleTradeItem(_Buffer &Data);
-		void HandleTradeGold(_Buffer &Data);
-		void HandleTradeAccept(_Buffer &Data);
-		void HandleTradeExchange(_Buffer &Data);
-		void HandleBattleStart(_Buffer &Data);
-		void HandleBattleAction(_Buffer &Data);
-		void HandleBattleJoin(_Buffer &Data);
-		void HandleBattleLeave(_Buffer &Data);
-		void HandleBattleEnd(_Buffer &Data);
-		void HandleActionClear(_Buffer &Data);
-		void HandleActionResults(_Buffer &Data);
-		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);
-		void HandleHUD(_Buffer &Data);
-		void HandleMinigameSeed(_Buffer &Data);
+		void HandleObjectStats(ae::_Buffer &Data);
+		void HandleChangeMaps(ae::_Buffer &Data);
+		void HandleObjectList(ae::_Buffer &Data);
+		void HandleObjectCreate(ae::_Buffer &Data);
+		void HandleObjectDelete(ae::_Buffer &Data);
+		void HandleObjectUpdates(ae::_Buffer &Data);
+		void HandlePlayerPosition(ae::_Buffer &Data);
+		void HandleTeleportStart(ae::_Buffer &Data);
+		void HandleEventStart(ae::_Buffer &Data);
+		void HandleInventory(ae::_Buffer &Data);
+		void HandleInventoryAdd(ae::_Buffer &Data);
+		void HandleInventorySwap(ae::_Buffer &Data);
+		void HandleInventoryUpdate(ae::_Buffer &Data);
+		void HandleInventoryGold(ae::_Buffer &Data);
+		void HandlePartyInfo(ae::_Buffer &Data);
+		void HandleChatMessage(ae::_Buffer &Data);
+		void HandleTradeRequest(ae::_Buffer &Data);
+		void HandleTradeCancel(ae::_Buffer &Data);
+		void HandleTradeItem(ae::_Buffer &Data);
+		void HandleTradeGold(ae::_Buffer &Data);
+		void HandleTradeAccept(ae::_Buffer &Data);
+		void HandleTradeExchange(ae::_Buffer &Data);
+		void HandleBattleStart(ae::_Buffer &Data);
+		void HandleBattleAction(ae::_Buffer &Data);
+		void HandleBattleJoin(ae::_Buffer &Data);
+		void HandleBattleLeave(ae::_Buffer &Data);
+		void HandleBattleEnd(ae::_Buffer &Data);
+		void HandleActionClear(ae::_Buffer &Data);
+		void HandleActionResults(ae::_Buffer &Data);
+		void HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange);
+		void HandleHUD(ae::_Buffer &Data);
+		void HandleMinigameSeed(ae::_Buffer &Data);
 
-		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
+		_Object *CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID);
 
 		void AssignPlayer(_Object *Object);
 		void DeleteBattle();

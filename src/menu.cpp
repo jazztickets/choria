@@ -63,16 +63,16 @@ _Menu::_Menu() {
 
 // Change the current layout
 void _Menu::ChangeLayout(const std::string &ElementName) {
-	Assets.Elements["label_menu_title_version"]->SetActive(false);
+	ae::Assets.Elements["label_menu_title_version"]->SetActive(false);
 
 	if(CurrentLayout) {
 		CurrentLayout->SetActive(false);
 
-		if(CurrentLayout == Assets.Elements["element_menu_options"])
+		if(CurrentLayout == ae::Assets.Elements["element_menu_options"])
 			Config.Save();
 	}
 
-	CurrentLayout = Assets.Elements[ElementName];
+	CurrentLayout = ae::Assets.Elements[ElementName];
 	CurrentLayout->SetActive(true);
 }
 
@@ -85,13 +85,13 @@ void _Menu::InitTitle(bool Disconnect) {
 	if(BUILD_NUMBER)
 		BuildNumber = "r" + std::to_string(BUILD_NUMBER);
 
-	Assets.Elements["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildNumber;
-	Assets.Elements["label_menu_title_message"]->Text = "";
+	ae::Assets.Elements["label_menu_title_version"]->Text = std::string(GAME_VERSION) + BuildNumber;
+	ae::Assets.Elements["label_menu_title_message"]->Text = "";
 
 	ChangeLayout("element_menu_title");
-	Assets.Elements["label_menu_title_version"]->SetActive(true);
+	ae::Assets.Elements["label_menu_title_version"]->SetActive(true);
 
-	Audio.PlayMusic(Assets.Music["intro.ogg"]);
+	ae::Audio.PlayMusic(ae::Assets.Music["intro.ogg"]);
 
 	ResetInGameState();
 	State = STATE_TITLE;
@@ -100,15 +100,15 @@ void _Menu::InitTitle(bool Disconnect) {
 // Init character select screen
 void _Menu::InitCharacters() {
 	ChangeLayout("element_menu_characters");
-	Assets.Elements["element_menu_characters"]->SetClickable(true);
+	ae::Assets.Elements["element_menu_characters"]->SetClickable(true);
 
 	// Set label
-	_Element *HardcoreLabel = Assets.Elements["label_menu_characters_hardcore"];
+	ae::_Element *HardcoreLabel = ae::Assets.Elements["label_menu_characters_hardcore"];
 	HardcoreLabel->SetActive(false);
 	if(HardcoreServer)
 		HardcoreLabel->SetActive(true);
 
-	Audio.PlayMusic(Assets.Music["intro.ogg"]);
+	ae::Audio.PlayMusic(ae::Assets.Music["intro.ogg"]);
 
 	ResetInGameState();
 	CharactersState = CHARACTERS_NONE;
@@ -117,27 +117,27 @@ void _Menu::InitCharacters() {
 
 // Init new player popup
 void _Menu::InitNewCharacter() {
-	_Element *CreateButton = Assets.Elements["button_newcharacter_create"];
-	_Element *CreateHardcoreButton = Assets.Elements["button_newcharacter_createhardcore"];
+	ae::_Element *CreateButton = ae::Assets.Elements["button_newcharacter_create"];
+	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_newcharacter_createhardcore"];
 	CreateButton->SetEnabled(false);
 	CreateHardcoreButton->SetEnabled(false);
 
-	_Element *Name = Assets.Elements["textbox_newcharacter_name"];
+	ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
 	Name->SetText("");
 
-	_Element *Label = Assets.Elements["label_menu_newcharacter_name"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_newcharacter_name"];
 	Label->Text = "Name";
 	Label->Color = glm::vec4(1.0f);
 
 	LoadPortraitButtons();
 	LoadBuildButtons();
 
-	FocusedElement = Name;
+	ae::FocusedElement = Name;
 	Name->ResetCursor();
 
-	Assets.Elements["element_menu_character_slots"]->SetClickable(false);
+	ae::Assets.Elements["element_menu_character_slots"]->SetClickable(false);
 
-	CurrentLayout = Assets.Elements["element_menu_new"];
+	CurrentLayout = ae::Assets.Elements["element_menu_new"];
 	CurrentLayout->SetActive(true);
 
 	CharactersState = CHARACTERS_CREATE;
@@ -147,10 +147,10 @@ void _Menu::InitNewCharacter() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 	if(!ShowRespawn)
-		Assets.Elements["button_ingame_respawn"]->SetActive(false);
+		ae::Assets.Elements["button_ingame_respawn"]->SetActive(false);
 
 	if(!ShowExitWarning)
-		Assets.Elements["label_menu_ingame_exitwarning"]->SetActive(false);
+		ae::Assets.Elements["label_menu_ingame_exitwarning"]->SetActive(false);
 
 	PlayState.SendStatus(_Character::STATUS_MENU);
 	State = STATE_INGAME;
@@ -179,7 +179,7 @@ void _Menu::InitOptions() {
 
 // Show the confirm screen
 void _Menu::ConfirmAction() {
-	CurrentLayout = Assets.Elements["element_menu_confirm"];
+	CurrentLayout = ae::Assets.Elements["element_menu_confirm"];
 	CurrentLayout->SetActive(true);
 }
 
@@ -187,7 +187,7 @@ void _Menu::ConfirmAction() {
 void _Menu::ExitGame() {
 
 	// Notify server
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_EXIT);
 	PlayState.Network->SendPacket(Packet);
 
@@ -204,23 +204,23 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 
 	ChangeLayout("element_menu_connect");
 
-	_Element *Host = Assets.Elements["textbox_connect_host"];
+	ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
 	if(UseConfig)
 		Host->SetText(Config.LastHost);
 
-	_Element *Port = Assets.Elements["textbox_connect_port"];
+	ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
 	if(UseConfig)
 		Port->SetText(Config.LastPort);
 
-	_Element *Label = Assets.Elements["label_menu_connect_message"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_connect_message"];
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "";
 
-	_Element *Button = Assets.Elements["button_connect_connect"];
+	ae::_Element *Button = ae::Assets.Elements["button_connect_connect"];
 	Button->Children.front()->Text = "Connect";
 
 	// Set focus
-	FocusedElement = Host;
+	ae::FocusedElement = Host;
 	Host->ResetCursor();
 
 	State = STATE_CONNECT;
@@ -232,33 +232,33 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 void _Menu::InitAccount() {
 	ChangeLayout("element_menu_account");
 
-	_Element *Username = Assets.Elements["textbox_account_username"];
+	ae::_Element *Username = ae::Assets.Elements["textbox_account_username"];
 	Username->SetText(DefaultUsername);
 
-	_Element *Password = Assets.Elements["textbox_account_password"];
+	ae::_Element *Password = ae::Assets.Elements["textbox_account_password"];
 	Password->SetText(DefaultPassword);
 	Password->Password = true;
 
-	_Element *Label = Assets.Elements["label_menu_account_message"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_account_message"];
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "";
 
-	_Element *Button = Assets.Elements["button_account_login"];
+	ae::_Element *Button = ae::Assets.Elements["button_account_login"];
 	Button->SetEnabled(true);
 
 	// Set focus
-	FocusedElement = Username;
+	ae::FocusedElement = Username;
 	Username->ResetCursor();
 
 	State = STATE_ACCOUNT;
 }
 
 // Get the selected portrait id
-uint32_t _Menu::GetSelectedIconID(_Element *ParentElement) {
+uint32_t _Menu::GetSelectedIconID(ae::_Element *ParentElement) {
 
 	// Check for selected portrait
 	for(auto &Element : ParentElement->Children) {
-		_Element *Button = Element;
+		ae::_Element *Button = Element;
 		if(Button->Checked)
 			return (uint32_t)Button->Index;
 	}
@@ -271,10 +271,10 @@ size_t _Menu::GetSelectedCharacter() {
 	size_t Index = 0;
 
 	// Check for selected character
-	_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
+	ae::_Element *CharactersElement = ae::Assets.Elements["element_menu_character_slots"];
 	for(auto &Element : CharactersElement->Children) {
 		if(Element->Name == CharacterButtonPrefix) {
-			_Element *Button = Element;
+			ae::_Element *Button = Element;
 			if(Button->Checked)
 				return Index;
 
@@ -289,17 +289,17 @@ size_t _Menu::GetSelectedCharacter() {
 void _Menu::CreateCharacter(bool Hardcore) {
 
 	// Check length
-	_Element *Name = Assets.Elements["textbox_newcharacter_name"];
+	ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
 	if(Name->Text.length() == 0)
 		return;
 
 	// Get portrait id
-	uint32_t PortraitID = GetSelectedIconID(Assets.Elements["element_menu_new_portraits"]);
+	uint32_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
 	if(PortraitID == 0)
 		return;
 
 	// Get build id
-	uint32_t BuildID = GetSelectedIconID(Assets.Elements["element_menu_new_builds"]);
+	uint32_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
 	if(BuildID == 0)
 		return;
 
@@ -312,7 +312,7 @@ void _Menu::CreateCharacter(bool Hardcore) {
 	PreSelectedSlot = SelectedSlot;
 
 	// Send information
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 	Packet.WriteBit(Hardcore);
 	Packet.WriteString(Name->Text.c_str());
@@ -323,30 +323,30 @@ void _Menu::CreateCharacter(bool Hardcore) {
 }
 
 void _Menu::ConnectToHost() {
-	_Element *Host = Assets.Elements["textbox_connect_host"];
-	_Element *Port = Assets.Elements["textbox_connect_port"];
+	ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
+	ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
 	if(Host->Text.length() == 0) {
-		FocusedElement = Host;
+		ae::FocusedElement = Host;
 		return;
 	}
 
 	if(Port->Text.length() == 0) {
-		FocusedElement = Port;
+		ae::FocusedElement = Port;
 		return;
 	}
 
 	PlayState.HostAddress = Host->Text;
-	PlayState.ConnectPort = ToNumber<uint16_t>(Port->Text);
+	PlayState.ConnectPort = ae::ToNumber<uint16_t>(Port->Text);
 	PlayState.Connect(false);
 
-	_Element *Label = Assets.Elements["label_menu_connect_message"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_connect_message"];
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "Connecting...";
 
-	_Element *Button = Assets.Elements["button_connect_connect"];
+	ae::_Element *Button = ae::Assets.Elements["button_connect_connect"];
 	Button->Children.front()->Text = "Cancel";
 
-	FocusedElement = nullptr;
+	ae::FocusedElement = nullptr;
 }
 
 // Send character to play
@@ -354,27 +354,27 @@ void _Menu::PlayCharacter(size_t Slot) {
 	if(!CharacterSlots[Slot].CanPlay)
 		return;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_PLAY);
 	Packet.Write<uint8_t>((uint8_t)Slot);
 	PlayState.Network->SendPacket(Packet);
 
 	CharactersState = CHARACTERS_PLAYSENT;
 
-	Audio.StopMusic();
+	ae::Audio.StopMusic();
 	PlayState.HUD->Reset();
 }
 
 // Send login info
 void _Menu::SendAccountInfo(bool CreateAccount) {
-	_Element *Username = Assets.Elements["textbox_account_username"];
-	_Element *Password = Assets.Elements["textbox_account_password"];
-	_Element *Label = Assets.Elements["label_menu_account_message"];
+	ae::_Element *Username = ae::Assets.Elements["textbox_account_username"];
+	ae::_Element *Password = ae::Assets.Elements["textbox_account_password"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_account_message"];
 
 	// Check username
 	if(Username->Text.length() == 0) {
-		FocusedElement = Username;
-		Label->Color = Assets.Colors["red"];
+		ae::FocusedElement = Username;
+		Label->Color = ae::Assets.Colors["red"];
 		Label->Text = "Enter a username";
 
 		return;
@@ -382,8 +382,8 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 
 	// Check password
 	if(Password->Text.length() == 0) {
-		FocusedElement = Password;
-		Label->Color = Assets.Colors["red"];
+		ae::FocusedElement = Password;
+		Label->Color = ae::Assets.Colors["red"];
 		Label->Text = "Enter a password";
 
 		return;
@@ -393,11 +393,11 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "Logging in...";
 
-	_Element *Button = Assets.Elements["button_account_login"];
+	ae::_Element *Button = ae::Assets.Elements["button_account_login"];
 	Button->SetEnabled(false);
 
 	// Send information
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 	Packet.WriteBit(CreateAccount);
 	Packet.WriteString(Username->Text.c_str());
@@ -405,14 +405,14 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Packet.Write<uint64_t>(0);
 	PlayState.Network->SendPacket(Packet);
 
-	FocusedElement = nullptr;
+	ae::FocusedElement = nullptr;
 }
 
 // Request character list from server
 void _Menu::RequestCharacterList() {
 
 	// Request character list
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_REQUEST);
 	PlayState.Network->SendPacket(Packet);
 }
@@ -427,53 +427,53 @@ void _Menu::LoadCharacterSlots() {
 	ClearCharacterSlots();
 
 	// Iterate over slots
-	_Element *CharacterSlotsElement = Assets.Elements["element_menu_character_slots"];
+	ae::_Element *CharacterSlotsElement = ae::Assets.Elements["element_menu_character_slots"];
 	for(size_t i = 0; i < ACCOUNT_MAX_CHARACTER_SLOTS; i++) {
 
 		// Add button
-		_Element *Button = new _Element();
+		ae::_Element *Button = new ae::_Element();
 		Button->Name = CharacterButtonPrefix;
 		Button->Parent = CharacterSlotsElement;
 		Button->Offset = Offset;
 		Button->Size = Size;
-		Button->Style = Assets.Styles["style_menu_button"];
-		Button->DisabledStyle = Assets.Styles["style_menu_button_disabled"];
-		Button->HoverStyle = Assets.Styles["style_menu_button_hover"];
-		Button->Alignment = LEFT_TOP;
+		Button->Style = ae::Assets.Styles["style_menu_button"];
+		Button->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
+		Button->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		Button->Alignment = ae::LEFT_TOP;
 		Button->Index = (int)i;
 		Button->Checked = i == PreSelectedSlot ? true : false;
 		CharacterSlotsElement->Children.push_back(Button);
 
 		// Add image for portrait
-		_Element *Image = new _Element();
+		ae::_Element *Image = new ae::_Element();
 		Image->Parent = Button;
-		Image->Alignment = CENTER_MIDDLE;
+		Image->Alignment = ae::CENTER_MIDDLE;
 		Image->Offset = glm::vec2(0, 0);
 		Button->Children.push_back(Image);
 
 		// Add name label
-		_Element *NameLabel = new _Element();
+		ae::_Element *NameLabel = new ae::_Element();
 		NameLabel->Parent = Button;
 		NameLabel->Offset = glm::vec2(0, 150);
-		NameLabel->Alignment = CENTER_BASELINE;
-		NameLabel->Font = Assets.Fonts["hud_medium"];
+		NameLabel->Alignment = ae::CENTER_BASELINE;
+		NameLabel->Font = ae::Assets.Fonts["hud_medium"];
 		Button->Children.push_back(NameLabel);
 
 		// Add level label
-		_Element *LevelLabel = new _Element();
+		ae::_Element *LevelLabel = new ae::_Element();
 		LevelLabel->Parent = Button;
 		LevelLabel->Offset = glm::vec2(0, 170);
-		LevelLabel->Alignment = CENTER_BASELINE;
-		LevelLabel->Font = Assets.Fonts["hud_small"];
+		LevelLabel->Alignment = ae::CENTER_BASELINE;
+		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
 		Button->Children.push_back(LevelLabel);
 
 		// Add hardcore label
-		_Element *HardcoreLabel = new _Element();
+		ae::_Element *HardcoreLabel = new ae::_Element();
 		HardcoreLabel->Parent = Button;
 		HardcoreLabel->Offset = glm::vec2(0, 187);
-		HardcoreLabel->Alignment = CENTER_BASELINE;
-		HardcoreLabel->Color = Assets.Colors["red"];
-		HardcoreLabel->Font = Assets.Fonts["hud_small"];
+		HardcoreLabel->Alignment = ae::CENTER_BASELINE;
+		HardcoreLabel->Color = ae::Assets.Colors["red"];
+		HardcoreLabel->Font = ae::Assets.Fonts["hud_small"];
 		Button->Children.push_back(HardcoreLabel);
 
 		// Reset state
@@ -504,7 +504,7 @@ void _Menu::LoadCharacterSlots() {
 
 // Clear character slots
 void _Menu::ClearCharacterSlots() {
-	std::list<_Element *> &Children = Assets.Elements["element_menu_character_slots"]->Children;
+	std::list<ae::_Element *> &Children = ae::Assets.Elements["element_menu_character_slots"]->Children;
 	for(auto &Child : Children)
 		delete Child;
 
@@ -515,7 +515,7 @@ void _Menu::ClearCharacterSlots() {
 void _Menu::LoadPortraitButtons() {
 
 	// Clear old children
-	_Element *PortraitsElement = Assets.Elements["element_menu_new_portraits"];
+	ae::_Element *PortraitsElement = ae::Assets.Elements["element_menu_new_portraits"];
 	ClearPortraits();
 
 	glm::vec2 Offset(10, 50);
@@ -531,14 +531,14 @@ void _Menu::LoadPortraitButtons() {
 			throw std::runtime_error("Cannot find texture for portrait id " + std::to_string(Portrait.ID));
 
 		// Add button
-		_Element *Button = new _Element();
+		ae::_Element *Button = new ae::_Element();
 		Button->Name = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->Offset = Offset;
 		Button->Size = Portrait.Texture->Size;
-		Button->Alignment = LEFT_TOP;
+		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Portrait.Texture;
-		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
+		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
 		Button->Index = (int)Portrait.ID;
 		PortraitsElement->Children.push_back(Button);
 
@@ -558,7 +558,7 @@ void _Menu::LoadPortraitButtons() {
 // Clear memory used by portraits
 void _Menu::ClearPortraits() {
 
-	std::list<_Element *> &Children = Assets.Elements["element_menu_new_portraits"]->Children;
+	std::list<ae::_Element *> &Children = ae::Assets.Elements["element_menu_new_portraits"]->Children;
 	for(auto &Child : Children)
 		delete Child;
 
@@ -569,7 +569,7 @@ void _Menu::ClearPortraits() {
 void _Menu::LoadBuildButtons() {
 
 	// Clear old children
-	_Element *BuildsElement = Assets.Elements["element_menu_new_builds"];
+	ae::_Element *BuildsElement = ae::Assets.Elements["element_menu_new_builds"];
 	ClearBuilds();
 
 	glm::vec2 Offset(10, 50);
@@ -585,25 +585,25 @@ void _Menu::LoadBuildButtons() {
 			throw std::runtime_error("Cannot find texture for build id " + std::to_string(Build.ID));
 
 		// Add button
-		_Element *Button = new _Element();
+		ae::_Element *Button = new ae::_Element();
 		Button->Name = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
 		Button->Offset = Offset;
 		Button->Size = Build.Texture->Size;
-		Button->Alignment = LEFT_TOP;
+		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Build.Texture;
-		Button->HoverStyle = Assets.Styles["style_menu_portrait_hover"];
+		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
 		Button->Index = (int)Build.ID;
 		BuildsElement->Children.push_back(Button);
 
 		// Add label
-		_Element *Label = new _Element();
-		Label->Font = Assets.Fonts["hud_small"];
+		ae::_Element *Label = new ae::_Element();
+		Label->Font = ae::Assets.Fonts["hud_small"];
 		Label->Text = Build.Name;
 		Label->Color = glm::vec4(1.0f);
 		Label->Parent = Button;
 		Label->Offset = glm::vec2(0, 80);
-		Label->Alignment = CENTER_BASELINE;
+		Label->Alignment = ae::CENTER_BASELINE;
 		Label->Clickable = false;
 		Button->Children.push_back(Label);
 
@@ -623,7 +623,7 @@ void _Menu::LoadBuildButtons() {
 // Clear memory used by portraits
 void _Menu::ClearBuilds() {
 
-	std::list<_Element *> &Children = Assets.Elements["element_menu_new_builds"]->Children;
+	std::list<ae::_Element *> &Children = ae::Assets.Elements["element_menu_new_builds"]->Children;
 	for(auto &Child : Children)
 		delete Child;
 
@@ -636,17 +636,17 @@ void _Menu::UpdateOptions() {
 	Buffer << std::fixed << std::setprecision(2);
 
 	// Set fullscreen
-	_Element *FullscreenCheck = Assets.Elements["label_menu_options_fullscreen_check"];
+	ae::_Element *FullscreenCheck = ae::Assets.Elements["label_menu_options_fullscreen_check"];
 	FullscreenCheck->Text = Config.Fullscreen ? "X" : "";
 
 	// Set sound volume
-	_Element *SoundVolume = Assets.Elements["textbox_options_soundvolume"];
+	ae::_Element *SoundVolume = ae::Assets.Elements["textbox_options_soundvolume"];
 	Buffer << Config.SoundVolume;
 	SoundVolume->Text = Buffer.str();
 	Buffer.str("");
 
 	// Set music volume
-	_Element *MusicVolume = Assets.Elements["textbox_options_musicvolume"];
+	ae::_Element *MusicVolume = ae::Assets.Elements["textbox_options_musicvolume"];
 	Buffer << Config.MusicVolume;
 	MusicVolume->Text = Buffer.str();
 	Buffer.str("");
@@ -654,12 +654,12 @@ void _Menu::UpdateOptions() {
 
 // Update config and audio volumes from option textboxes
 void _Menu::UpdateVolume() {
-	_Element *SoundVolume = Assets.Elements["textbox_options_soundvolume"];
-	_Element *MusicVolume = Assets.Elements["textbox_options_musicvolume"];
-	Config.SoundVolume = ToNumber<float>(SoundVolume->Text);
-	Config.MusicVolume = ToNumber<float>(MusicVolume->Text);
-	Audio.SetSoundVolume(Config.SoundVolume);
-	Audio.SetMusicVolume(Config.MusicVolume);
+	ae::_Element *SoundVolume = ae::Assets.Elements["textbox_options_soundvolume"];
+	ae::_Element *MusicVolume = ae::Assets.Elements["textbox_options_musicvolume"];
+	Config.SoundVolume = ae::ToNumber<float>(SoundVolume->Text);
+	Config.MusicVolume = ae::ToNumber<float>(MusicVolume->Text);
+	ae::Audio.SetSoundVolume(Config.SoundVolume);
+	ae::Audio.SetMusicVolume(Config.MusicVolume);
 }
 
 // Reset variables used for in-game menu
@@ -672,17 +672,17 @@ void _Menu::ResetInGameState() {
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
-	uint32_t PortraitID = GetSelectedIconID(Assets.Elements["element_menu_new_portraits"]);
-	uint32_t BuildID = GetSelectedIconID(Assets.Elements["element_menu_new_builds"]);
+	uint32_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
+	uint32_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
 
 	// Check name length
-	_Element *CreateButton = Assets.Elements["button_newcharacter_create"];
-	_Element *CreateHardcoreButton = Assets.Elements["button_newcharacter_createhardcore"];
-	_Element *Name = Assets.Elements["textbox_newcharacter_name"];
+	ae::_Element *CreateButton = ae::Assets.Elements["button_newcharacter_create"];
+	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_newcharacter_createhardcore"];
+	ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
 	if(Name->Text.length() > 0)
 		NameValid = true;
 	else
-		FocusedElement = Name;
+		ae::FocusedElement = Name;
 
 	// Enable button
 	if(PortraitID != 0 && BuildID != 0 && NameValid) {
@@ -697,8 +697,8 @@ void _Menu::ValidateCreateCharacter() {
 
 // Update ui button states
 void _Menu::UpdateCharacterButtons() {
-	_Element *DeleteButton = Assets.Elements["button_characters_delete"];
-	_Element *PlayButton = Assets.Elements["button_characters_play"];
+	ae::_Element *DeleteButton = ae::Assets.Elements["button_characters_delete"];
+	ae::_Element *PlayButton = ae::Assets.Elements["button_characters_play"];
 	DeleteButton->SetEnabled(false);
 	PlayButton->SetEnabled(false);
 
@@ -824,7 +824,7 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 }
 
 // Handle key event
-void _Menu::HandleKey(const _KeyEvent &KeyEvent) {
+void _Menu::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	if(State == STATE_NONE)
 		return;
 
@@ -840,7 +840,7 @@ void _Menu::HandleKey(const _KeyEvent &KeyEvent) {
 }
 
 // Handle mouse event
-void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
+void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	if(State == STATE_NONE)
 		return;
 
@@ -848,7 +848,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 		return;
 
 	// Get clicked element
-	_Element *Clicked = CurrentLayout->GetClickedElement();
+	ae::_Element *Clicked = CurrentLayout->GetClickedElement();
 	if(Clicked) {
 		bool DoubleClick = false;
 		if(PreviousClick == Clicked && PreviousClickTimer < MENU_DOUBLECLICK_TIME) {
@@ -882,7 +882,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 					if(Clicked->Name == "button_characters_delete") {
 						CharactersState = CHARACTERS_DELETE;
-						Assets.Elements["element_menu_characters"]->SetClickable(false);
+						ae::Assets.Elements["element_menu_characters"]->SetClickable(false);
 						ConfirmAction();
 						PlayClickSound();
 					}
@@ -901,10 +901,10 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 					else if(Clicked->Name == CharacterButtonPrefix) {
 
 						// Deselect slots
-						_Element *CharactersElement = Assets.Elements["element_menu_character_slots"];
+						ae::_Element *CharactersElement = ae::Assets.Elements["element_menu_character_slots"];
 						for(auto &Element : CharactersElement->Children) {
 							if(Element->Name == CharacterButtonPrefix) {
-								_Element *Button = Element;
+								ae::_Element *Button = Element;
 								Button->Checked = false;
 							}
 						}
@@ -930,11 +930,11 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 						// Unselect all portraits and select the clicked element
 						for(auto &Element : Clicked->Parent->Children) {
-							_Element *Button = Element;
+							ae::_Element *Button = Element;
 							Button->Checked = false;
 							if((size_t)Button->Index == SelectedID) {
-								_Element *Name = Assets.Elements["textbox_newcharacter_name"];
-								FocusedElement = Name;
+								ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
+								ae::FocusedElement = Name;
 								Name->ResetCursor();
 								Button->Checked = true;
 							}
@@ -961,7 +961,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 						size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
-							_Buffer Packet;
+							ae::_Buffer Packet;
 							Packet.Write<PacketType>(PacketType::CHARACTERS_DELETE);
 							Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 							PlayState.Network->SendPacket(Packet);
@@ -1019,7 +1019,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 			} break;
 			case STATE_INGAME: {
 				if(Clicked->Name == "button_ingame_respawn") {
-					_Buffer Packet;
+					ae::_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
 					PlayState.Network->SendPacket(Packet);
 					InitPlay();
@@ -1046,7 +1046,7 @@ void _Menu::HandleMouseButton(const _MouseEvent &MouseEvent) {
 
 // Set fullscreen of game
 void _Menu::SetFullscreen(bool Fullscreen) {
-	if(Graphics.SetFullscreen(Fullscreen)) {
+	if(ae::Graphics.SetFullscreen(Fullscreen)) {
 		Config.Fullscreen = Fullscreen;
 		Config.Save();
 	}
@@ -1065,42 +1065,42 @@ void _Menu::Render() {
 	if(State == STATE_NONE)
 		return;
 
-	Graphics.Setup2D();
+	ae::Graphics.Setup2D();
 
 	switch(State) {
 		case STATE_TITLE: {
 			if(CurrentLayout)
 				CurrentLayout->Render();
-			Assets.Elements["label_menu_title_version"]->Render();
+			ae::Assets.Elements["label_menu_title_version"]->Render();
 		} break;
 		case STATE_CHARACTERS: {
-			Assets.Elements["element_menu_characters"]->Render();
+			ae::Assets.Elements["element_menu_characters"]->Render();
 
 			if(CharactersState == CHARACTERS_CREATE) {
-				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				ae::Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
 				if(CurrentLayout)
 					CurrentLayout->Render();
 			}
 			else if(CharactersState == CHARACTERS_DELETE) {
-				Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				ae::Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
 				if(CurrentLayout)
 					CurrentLayout->Render();
 			}
 		} break;
 		case STATE_CONNECT: {
-			Assets.Elements["element_menu_connect"]->Render();
+			ae::Assets.Elements["element_menu_connect"]->Render();
 		} break;
 		case STATE_ACCOUNT: {
-			Assets.Elements["element_menu_account"]->Render();
+			ae::Assets.Elements["element_menu_account"]->Render();
 		} break;
 		case STATE_OPTIONS: {
 			if(FromInGame)
-			   Graphics.FadeScreen(MENU_PAUSE_FADE);
+			   ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
 
-			Assets.Elements["element_menu_options"]->Render();
+			ae::Assets.Elements["element_menu_options"]->Render();
 		} break;
 		case STATE_INGAME: {
-			Graphics.FadeScreen(MENU_PAUSE_FADE);
+			ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
 
 			if(CurrentLayout)
 				CurrentLayout->Render();
@@ -1114,8 +1114,8 @@ void _Menu::Render() {
 void _Menu::HandleConnect() {
 	switch(State) {
 		case STATE_CONNECT: {
-			_Element *Host = Assets.Elements["textbox_connect_host"];
-			_Element *Port = Assets.Elements["textbox_connect_port"];
+			ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
+			ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
 
 			// Save connection information
 			Config.LastHost = Host->Text;
@@ -1131,8 +1131,8 @@ void _Menu::HandleConnect() {
 
 // Disconnect
 void _Menu::HandleDisconnect(bool WasSinglePlayer) {
-	if(CurrentLayout != Assets.Elements["element_menu_characters"])
-		Audio.StopSounds();
+	if(CurrentLayout != ae::Assets.Elements["element_menu_characters"])
+		ae::Audio.StopSounds();
 
 	if(WasSinglePlayer) {
 		InitTitle();
@@ -1140,14 +1140,14 @@ void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 	else {
 		InitConnect(true);
 
-		_Element *Label = Assets.Elements["label_menu_connect_message"];
-		Label->Color = Assets.Colors["red"];
+		ae::_Element *Label = ae::Assets.Elements["label_menu_connect_message"];
+		Label->Color = ae::Assets.Colors["red"];
 		Label->Text = "Disconnected from server";
 	}
 }
 
 // Handle packet
-void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
+void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 	switch(Type) {
 		case PacketType::VERSION: {
 			std::string Version(Buffer.ReadString());
@@ -1220,9 +1220,9 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 			RequestCharacterList();
 		} break;
 		case PacketType::CREATECHARACTER_INUSE: {
-			_Element *Label = Assets.Elements["label_menu_newcharacter_name"];
+			ae::_Element *Label = ae::Assets.Elements["label_menu_newcharacter_name"];
 			Label->Text = "Name in use";
-			Label->Color = Assets.Colors["red"];
+			Label->Color = ae::Assets.Colors["red"];
 		} break;
 		case PacketType::ACCOUNT_EXISTS: {
 			SetAccountMessage("Account already exists");
@@ -1240,50 +1240,50 @@ void _Menu::HandlePacket(_Buffer &Buffer, PacketType Type) {
 
 // Set message for account screen
 void _Menu::SetAccountMessage(const std::string &Message) {
-	_Element *Label = Assets.Elements["label_menu_account_message"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_account_message"];
 	Label->Text = Message;
-	Label->Color = Assets.Colors["red"];
+	Label->Color = ae::Assets.Colors["red"];
 
-	_Element *Button = Assets.Elements["button_account_login"];
+	ae::_Element *Button = ae::Assets.Elements["button_account_login"];
 	Button->SetEnabled(true);
 }
 
 // Set message for title screen
 void _Menu::SetTitleMessage(const std::string &Message) {
-	_Element *Label = Assets.Elements["label_menu_title_message"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_title_message"];
 	Label->Text = Message;
-	Label->Color = Assets.Colors["red"];
+	Label->Color = ae::Assets.Colors["red"];
 }
 
 // Play menu click sound
 void _Menu::PlayClickSound() {
-	Audio.PlaySound(Assets.Sounds["click0.ogg"]);
+	ae::Audio.PlaySound(ae::Assets.Sounds["click0.ogg"]);
 }
 
 // Cycle focused elements
 void _Menu::FocusNextElement() {
 	switch(State) {
 		case STATE_CONNECT: {
-			_Element *Host = Assets.Elements["textbox_connect_host"];
-			_Element *Port = Assets.Elements["textbox_connect_port"];
+			ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
+			ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
 
-			if(FocusedElement == Host)
-				FocusedElement = Port;
-			else if(FocusedElement == Port || FocusedElement == nullptr)
-				FocusedElement = Host;
+			if(ae::FocusedElement == Host)
+				ae::FocusedElement = Port;
+			else if(ae::FocusedElement == Port || ae::FocusedElement == nullptr)
+				ae::FocusedElement = Host;
 
-			FocusedElement->ResetCursor();
+			ae::FocusedElement->ResetCursor();
 		} break;
 		case STATE_ACCOUNT: {
-			_Element *Username = Assets.Elements["textbox_account_username"];
-			_Element *Password = Assets.Elements["textbox_account_password"];
+			ae::_Element *Username = ae::Assets.Elements["textbox_account_username"];
+			ae::_Element *Password = ae::Assets.Elements["textbox_account_password"];
 
-			if(FocusedElement == Username)
-				FocusedElement = Password;
-			else if(FocusedElement == Password || FocusedElement == nullptr)
-				FocusedElement = Username;
+			if(ae::FocusedElement == Username)
+				ae::FocusedElement = Password;
+			else if(ae::FocusedElement == Password || ae::FocusedElement == nullptr)
+				ae::FocusedElement = Username;
 
-			FocusedElement->ResetCursor();
+			ae::FocusedElement->ResetCursor();
 		} break;
 		default:
 		break;

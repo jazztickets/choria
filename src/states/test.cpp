@@ -41,8 +41,8 @@ _TestState::_TestState() :
 
 // Initialize
 void _TestState::Init() {
-	Camera = new _Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
-	Camera->CalculateFrustum(Graphics.AspectRatio);
+	Camera = new ae::_Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
+	Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 
 	Stats = new _Stats();
 
@@ -53,8 +53,8 @@ void _TestState::Init() {
 	int Simulations = 0;
 	for(int i = 0; i < Simulations; i++) {
 		//double StartTime = SDL_GetPerformanceCounter();
-		uint32_t Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
-		float X = (float)GetRandomReal(-7.65, 7.65);
+		uint32_t Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+		float X = (float)ae::GetRandomReal(-7.65, 7.65);
 
 		Minigame = new _Minigame(&Stats->Minigames.at(1));
 		Minigame->IsServer = true;
@@ -112,8 +112,8 @@ void _TestState::Close() {
 }
 
 // Key handler
-void _TestState::HandleKey(const _KeyEvent &KeyEvent) {
-	Graphics.Element->HandleKey(KeyEvent);
+void _TestState::HandleKey(const ae::_KeyEvent &KeyEvent) {
+	ae::Graphics.Element->HandleKey(KeyEvent);
 
 	if(KeyEvent.Pressed) {
 		if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
@@ -122,10 +122,10 @@ void _TestState::HandleKey(const _KeyEvent &KeyEvent) {
 }
 
 // Mouse handler
-void _TestState::HandleMouseButton(const _MouseEvent &MouseEvent) {
-	FocusedElement = nullptr;
+void _TestState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
+	ae::FocusedElement = nullptr;
 	if(MouseEvent.Button == SDL_BUTTON_LEFT)
-		Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
+		ae::Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
 
 	Minigame->HandleMouseButton(MouseEvent);
 }
@@ -138,9 +138,9 @@ void _TestState::HandleMouseMove(const glm::ivec2 &Position) {
 void _TestState::HandleWindow(uint8_t Event) {
 	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 		if(Camera)
-			Camera->CalculateFrustum(Graphics.AspectRatio);
+			Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 		if(Minigame->Camera)
-			Minigame->Camera->CalculateFrustum(Graphics.AspectRatio);
+			Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 	}
 }
 
@@ -153,7 +153,7 @@ void _TestState::HandleQuit() {
 void _TestState::Update(double FrameTime) {
 
 	// Update UI
-	Graphics.Element->Update(FrameTime, Input.GetMouse());
+	ae::Graphics.Element->Update(FrameTime, ae::Input.GetMouse());
 
 	// Update camera
 	Camera->Set2DPosition(glm::vec2(0.0f, 0.0f));
@@ -166,16 +166,16 @@ void _TestState::Update(double FrameTime) {
 
 // Render the state
 void _TestState::Render(double BlendFactor) {
-	Graphics.Setup3D();
+	ae::Graphics.Setup3D();
 	Camera->Set3DProjection(BlendFactor);
-	Graphics.SetProgram(Assets.Programs["pos"]);
-	glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
-	glUniformMatrix4fv(Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	Graphics.SetProgram(Assets.Programs["text"]);
-	glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	Minigame->Render(BlendFactor);
 }

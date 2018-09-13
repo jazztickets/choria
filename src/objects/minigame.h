@@ -22,13 +22,16 @@
 #include <random>
 
 // Forward Declarations
-template<class T> class _Manager;
 class _Sprite;
-class _Camera;
 class _Grid;
 struct _MinigameItem;
 struct _MinigameType;
-struct _MouseEvent;
+
+namespace ae {
+	template<class T> class _Manager;
+	class _Camera;
+	struct _MouseEvent;
+}
 
 // Base minigame class
 class _Minigame {
@@ -48,22 +51,22 @@ class _Minigame {
 		// Update
 		void Update(double FrameTime);
 		void Render(double BlendFactor);
-		void HandleMouseButton(const _MouseEvent &MouseEvent);
+		void HandleMouseButton(const ae::_MouseEvent &MouseEvent);
 		void StartGame(uint64_t Seed);
 		void Drop(float X);
 		void RefreshPrizes();
 		void ShufflePrizes(std::vector<const _MinigameItem *> &Bag);
-		void GetUIBoundary(_Bounds &Bounds);
+		void GetUIBoundary(ae::_Bounds &Bounds);
 
 		// Attributes
 		bool IsServer;
 
 		// Objects
 		std::mt19937 Random;
-		_Bounds Boundary;
-		_Manager<_Sprite> *Sprites;
+		ae::_Bounds Boundary;
+		ae::_Manager<_Sprite> *Sprites;
 		_Sprite *Ball;
-		_Camera *Camera;
+		ae::_Camera *Camera;
 		_Grid *Grid;
 
 		// Stats

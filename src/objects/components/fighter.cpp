@@ -36,20 +36,20 @@ _Fighter::_Fighter(_Object *Object) :
 }
 
 // Create a UI element for battle
-void _Fighter::CreateBattleElement(_Element *Parent) {
+void _Fighter::CreateBattleElement(ae::_Element *Parent) {
 	if(BattleElement)
 		throw std::runtime_error("_Fighter::CreateBattleElement: BattleElement already exists!");
 
-	BattleElement = new _Element();
+	BattleElement = new ae::_Element();
 	BattleElement->Name = "battle_element";
 	BattleElement->Size = glm::vec2(64, 64);
 	BattleElement->Offset = BattleOffset;
-	BattleElement->Alignment = CENTER_MIDDLE;
+	BattleElement->Alignment = ae::CENTER_MIDDLE;
 	BattleElement->Active = true;
 	BattleElement->Index = _HUD::WINDOW_HUD_EFFECTS;
 	BattleElement->UserData = Object;
 	BattleElement->Parent = Parent;
-	BattleElement->Style = (BattleSide == 0) ? Assets.Styles["style_battle_slot_green"] : Assets.Styles["style_battle_slot_red"];
+	BattleElement->Style = (BattleSide == 0) ? ae::Assets.Styles["style_battle_slot_green"] : ae::Assets.Styles["style_battle_slot_red"];
 	BattleElement->CalculateBounds();
 	Parent->Children.push_back(BattleElement);
 }

@@ -36,15 +36,18 @@
 
 // Forward Declarations
 class _Object;
-class _Buffer;
-class _Atlas;
-class _Camera;
 class _Server;
 class _Stats;
 class _Battle;
-class _Peer;
-class _Program;
 struct _MapStat;
+
+namespace ae {
+	class _Buffer;
+	class _Camera;
+	class _Atlas;
+	class _Program;
+	class _Peer;
+}
 
 // Structures
 struct _Event {
@@ -68,7 +71,7 @@ struct _Tile {
 };
 
 // Classes
-class _Map : public _BaseObject, public micropather::Graph {
+class _Map : public ae::_BaseObject, public micropather::Graph {
 
 	public:
 
@@ -107,21 +110,21 @@ class _Map : public _BaseObject, public micropather::Graph {
 		bool IsPVPZone(const glm::ivec2 &Position) const;
 
 		// Graphics
-		void Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
+		void Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
 		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static=false);
-		int AddLights(const std::list<_Object *> *ObjectList, const _Program *Program, glm::vec4 AABB, int LightCount);
+		int AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB, int LightCount);
 
 		// Collision
 		bool CanMoveTo(const glm::ivec2 &Position, _Object *Object);
 
 		// Peer management
-		void BroadcastPacket(_Buffer &Buffer, _Network::SendType Type=_Network::RELIABLE);
+		void BroadcastPacket(ae::_Buffer &Buffer, ae::_Network::SendType Type=ae::_Network::RELIABLE);
 
 		// Object management
 		void SendObjectUpdates();
 		void AddObject(_Object *Object);
 		void RemoveObject(const _Object *RemoveObject);
-		void SendObjectList(_Peer *Peer);
+		void SendObjectList(ae::_Peer *Peer);
 		void GetPotentialBattlePlayers(const _Object *Player, float DistanceSquared, size_t Max, std::list<_Object *> &Players);
 		_Battle *GetCloseBattle(const _Object *Player, bool &HitPrivateParty);
 		void GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players);
@@ -157,7 +160,7 @@ class _Map : public _BaseObject, public micropather::Graph {
 
 		// Graphics
 		bool UseAtlas;
-		const _Atlas *TileAtlas;
+		const ae::_Atlas *TileAtlas;
 		glm::vec4 AmbientLight;
 		int IsOutside;
 		double Clock;
@@ -204,6 +207,6 @@ class _Map : public _BaseObject, public micropather::Graph {
 		glm::u32vec3 *TileFaces;
 
 		// Network
-		std::list<const _Peer *> Peers;
+		std::list<const ae::_Peer *> Peers;
 
 };

@@ -26,7 +26,7 @@ class _Server;
 class _Stats;
 
 // Dedicated server state
-class _DedicatedState : public _State {
+class _DedicatedState : public ae::_State {
 
 	public:
 

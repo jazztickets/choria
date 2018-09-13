@@ -34,7 +34,7 @@
 #include <iostream>
 
 // Serialize action
-void _Action::Serialize(_Buffer &Data) {
+void _Action::Serialize(ae::_Buffer &Data) {
 
 	uint32_t ItemID = 0;
 	if(Item)
@@ -44,7 +44,7 @@ void _Action::Serialize(_Buffer &Data) {
 }
 
 // Unserialize action
-void _Action::Unserialize(_Buffer &Data, const _Stats *Stats) {
+void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 	uint32_t ItemID = Data.Read<uint32_t>();
 
@@ -52,7 +52,7 @@ void _Action::Unserialize(_Buffer &Data, const _Stats *Stats) {
 }
 
 // Resolve action
-bool _Action::Resolve(_Buffer &Data, _Object *Source, ScopeType Scope) {
+bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Check for deleted targets
 	for(auto Iterator = Source->Character->Targets.begin(); Iterator != Source->Character->Targets.end(); ) {
@@ -181,7 +181,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			Heal.Values[StatType::HEALTH].Integer = ExistingSummon->Character->MaxHealth;
 			ExistingSummon->UpdateStats(Heal);
 
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 			Heal.Serialize(Packet);
 			Battle->BroadcastPacket(Packet);
@@ -206,7 +206,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			Object->Character->CalculateStats();
 
 			// Create packet for new object
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
 			Object->SerializeCreate(Packet);
 			Battle->BroadcastPacket(Packet);

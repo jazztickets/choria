@@ -34,14 +34,14 @@
 void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const {
 	std::stringstream Buffer;
 
-	_Element *TooltipElement = Assets.Elements["element_buffs_tooltip"];
-	_Element *TooltipName = Assets.Elements["label_buffs_tooltip_name"];
-	_Element *TooltipDuration = Assets.Elements["label_buffs_tooltip_duration"];
+	ae::_Element *TooltipElement = ae::Assets.Elements["element_buffs_tooltip"];
+	ae::_Element *TooltipName = ae::Assets.Elements["label_buffs_tooltip_name"];
+	ae::_Element *TooltipDuration = ae::Assets.Elements["label_buffs_tooltip_duration"];
 	TooltipElement->SetActive(true);
 
 	// Set label values
 	TooltipName->Text = Name;
-	Buffer << std::fixed << std::setprecision(1) << Round((float)Duration) << "s";
+	Buffer << std::fixed << std::setprecision(1) << ae::Round((float)Duration) << "s";
 	TooltipDuration->Text = Buffer.str();
 	Buffer.str("");
 
@@ -49,16 +49,16 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const
 	glm::vec2 Size = TooltipElement->Size;
 
 	// Position window
-	glm::vec2 WindowOffset = Input.GetMouse();
+	glm::vec2 WindowOffset = ae::Input.GetMouse();
 	WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
 	WindowOffset.y += -Size.y / 2;
 
 	// Reposition window if out of bounds
-	if(WindowOffset.y < Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING)
-		WindowOffset.y = Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING;
-	if(WindowOffset.x + Size.x > Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
+	if(WindowOffset.y < ae::Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING)
+		WindowOffset.y = ae::Graphics.Element->Bounds.Start.x + INVENTORY_TOOLTIP_PADDING;
+	if(WindowOffset.x + Size.x > ae::Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
 		WindowOffset.x -= Size.x + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
-	if(WindowOffset.y + Size.y > Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
+	if(WindowOffset.y + Size.y > ae::Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
 		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
 	TooltipElement->SetOffset(WindowOffset);
@@ -90,9 +90,9 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const
 	// Draw description
 	while(std::getline(Buffer, Token, '\n')) {
 		std::list<std::string> Strings;
-		Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings, true);
+		ae::Assets.Fonts["hud_small"]->BreakupString(Token, Size.x, Strings, true);
 		for(const auto &LineToken : Strings) {
-			Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, CENTER_BASELINE);
+			ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
 			DrawPosition.y += SpacingY;
 		}
 	}

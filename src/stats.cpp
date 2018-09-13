@@ -33,7 +33,7 @@ _Stats::_Stats(bool Headless) :
 	Headless(Headless) {
 
 	// Load database that stores game data
-	Database = new _Database("stats/stats.db", true);
+	Database = new ae::_Database("stats/stats.db", true);
 
 	// Load spreadsheet data
 	LoadMaps();
@@ -153,7 +153,7 @@ void _Stats::LoadBuffs() {
 		Buff->ID = Database->GetInt<uint32_t>("id");
 		Buff->Name = Database->GetString("name");
 		Buff->Script = Database->GetString("script");
-		Buff->Texture = Assets.Textures[Database->GetString("texture")];
+		Buff->Texture = ae::Assets.Textures[Database->GetString("texture")];
 		Buffs[Buff->ID] = Buff;
 	}
 	Database->CloseQuery();
@@ -235,7 +235,7 @@ void _Stats::LoadItems() {
 		Item->Stats = this;
 		Item->ID = ItemID;
 		Item->Name = Database->GetString("name");
-		Item->Texture = Assets.Textures[TexturePath];
+		Item->Texture = ae::Assets.Textures[TexturePath];
 		Item->Script = Database->GetString("script");
 		Item->Type = (ItemType)Database->GetInt<int>("itemtype_id");
 		Item->Level = Database->GetInt<int>("level");
@@ -395,7 +395,7 @@ void _Stats::LoadModels() {
 	_Model Model;
 	while(Database->FetchRow()) {
 		Model.ID = Database->GetInt<uint32_t>("id");
-		Model.Texture = Assets.Textures[Database->GetString("texture")];
+		Model.Texture = ae::Assets.Textures[Database->GetString("texture")];
 
 		Models[Model.ID] = Model;
 	}
@@ -513,7 +513,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 	if(Database->FetchRow()) {
 		Object->Character->Level = Database->GetInt<int>("level");
 		Object->Name = Database->GetString("name");
-		Object->Character->Portrait = Assets.Textures[Database->GetString("portrait")];
+		Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
 		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
 		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
 		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
@@ -555,7 +555,7 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) const {
 	while(Database->FetchRow()) {
 		_Portrait Portrait;
 		Portrait.ID = Database->GetInt<uint32_t>("id");
-		Portrait.Texture = Assets.Textures[Database->GetString("texture")];
+		Portrait.Texture = ae::Assets.Textures[Database->GetString("texture")];
 
 		Portraits.push_back(Portrait);
 	}
@@ -572,7 +572,7 @@ void _Stats::GetStartingBuilds(std::list<_Build> &Builds) const {
 		_Build Build;
 		Build.ID = Database->GetInt<uint32_t>("id");
 		Build.Name = Database->GetString("name");
-		Build.Texture = Assets.Textures[Database->GetString("texture")];
+		Build.Texture = ae::Assets.Textures[Database->GetString("texture")];
 
 		Builds.push_back(Build);
 	}
@@ -581,14 +581,14 @@ void _Stats::GetStartingBuilds(std::list<_Build> &Builds) const {
 }
 
 // Get portrait texture by id
-const _Texture *_Stats::GetPortraitImage(uint32_t PortraitID) const {
-	const _Texture *Image = nullptr;
+const ae::_Texture *_Stats::GetPortraitImage(uint32_t PortraitID) const {
+	const ae::_Texture *Image = nullptr;
 
 	// Run query
 	Database->PrepareQuery("SELECT texture FROM portrait WHERE id = @portrait_id");
 	Database->BindInt(1, PortraitID);
 	if(Database->FetchRow()) {
-		Image = Assets.Textures[Database->GetString("texture")];
+		Image = ae::Assets.Textures[Database->GetString("texture")];
 	}
 	Database->CloseQuery();
 
@@ -634,7 +634,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 	else {
 
 		// Get monster count
-		int MonsterCount = GetRandomInt(MinSpawn, MaxSpawn);
+		int MonsterCount = ae::GetRandomInt(MinSpawn, MaxSpawn);
 
 		// No monsters
 		if(MonsterCount == 0)
@@ -688,7 +688,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 			while((int)Monsters.size() < MonsterCount) {
 
 				// Find monster in CDT
-				uint32_t RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
+				uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
 				for(const auto &ZoneData : Zone) {
 					if(RandomNumber <= ZoneData.Odds) {
 
@@ -738,7 +738,7 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate,
 
 		// Generate items
 		for(uint32_t i = 0; i < Count; i++) {
-			uint32_t RandomNumber = GetRandomInt((uint32_t)1, OddsSum);
+			uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
 
 			// Find item id in CDT
 			uint32_t ItemID = 0;

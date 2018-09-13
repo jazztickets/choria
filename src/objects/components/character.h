@@ -121,8 +121,8 @@ class _Character {
 		_HUD *HUD;
 
 		// Render
-		const _Texture *StatusTexture;
-		const _Texture *Portrait;
+		const ae::_Texture *StatusTexture;
+		const ae::_Texture *Portrait;
 		uint32_t PortraitID;
 
 		// State
@@ -214,8 +214,8 @@ class _Character {
 		_Action Action;
 
 		// Map
-		NetworkIDType LoadMapID;
-		NetworkIDType SpawnMapID;
+		ae::NetworkIDType LoadMapID;
+		ae::NetworkIDType SpawnMapID;
 		uint32_t SpawnPoint;
 		double TeleportTime;
 

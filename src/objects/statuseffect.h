@@ -22,9 +22,12 @@
 
 // Forward Declarations
 class _Buff;
-class _Element;
-class _Buffer;
 class _Stats;
+
+namespace ae {
+	class _Element;
+	class _Buffer;
+}
 
 // Classes
 class _StatusEffect {
@@ -34,16 +37,16 @@ class _StatusEffect {
 		_StatusEffect();
 		~_StatusEffect();
 
-		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data, const _Stats *Stats);
+		void Serialize(ae::_Buffer &Data);
+		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 
-		_Element *CreateUIElement(_Element *Parent);
+		ae::_Element *CreateUIElement(ae::_Element *Parent);
 
-		void Render(_Element *Element, const glm::vec4 &Color);
+		void Render(ae::_Element *Element, const glm::vec4 &Color);
 
 		const _Buff *Buff;
-		_Element *BattleElement;
-		_Element *HUDElement;
+		ae::_Element *BattleElement;
+		ae::_Element *HUDElement;
 		double Time;
 		int Level;
 		double Duration;

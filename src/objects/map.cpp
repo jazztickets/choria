@@ -185,11 +185,11 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 
 // Initialize the texture atlas
 void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
-	const _Texture *AtlasTexture = Assets.Textures[AtlasPath];
+	const ae::_Texture *AtlasTexture = ae::Assets.Textures[AtlasPath];
 	if(!AtlasTexture)
 		throw std::runtime_error("Can't find atlas: " + AtlasPath);
 
-	TileAtlas = new _Atlas(AtlasTexture, glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
+	TileAtlas = new ae::_Atlas(AtlasTexture, glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
 
 	GLuint TileVertexCount = (GLuint)(4 * Size.x * Size.y);
 	GLuint TileFaceCount = (GLuint)(2 * Size.x * Size.y);
@@ -309,7 +309,7 @@ void _Map::CheckEvents(_Object *Object) const {
 		case _Map::EVENT_MAPENTRANCE:
 		case _Map::EVENT_MAPCHANGE:
 			if(Server)
-				Server->SpawnPlayer(Object, (NetworkIDType)Tile->Event.Data, _Map::EVENT_MAPENTRANCE);
+				Server->SpawnPlayer(Object, (ae::NetworkIDType)Tile->Event.Data, _Map::EVENT_MAPENTRANCE);
 			else
 				Object->Controller->WaitForServer = true;
 		break;
@@ -463,7 +463,7 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 
 	// Notify client
 	if(Object->Peer->ENetPeer) {
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::EVENT_START);
 		Packet.Write<uint32_t>(Event.Type);
 		Packet.Write<uint32_t>(Event.Data);
@@ -486,14 +486,14 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 }
 
 // Renders the map
-void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
+void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
 	// Set lights for editor
 	if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT) {
 		glm::vec4 AmbientLightEditor(1.0f);
-		Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
-		Assets.Programs["pos_uv"]->LightCount = 0;
-		Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
+		ae::Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
+		ae::Assets.Programs["pos_uv"]->LightCount = 0;
+		ae::Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
 	}
 	else {
 
@@ -501,15 +501,15 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 		SetAmbientLightByClock();
 
 		// Setup lights
-		Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+		ae::Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
 
 		// Add lights
 		int LightCount = 0;
-		LightCount = AddLights(&Objects, Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
-		LightCount = AddLights(&StaticObjects, Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
+		LightCount = AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
+		LightCount = AddLights(&StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
 
 		// Update light count in shader
-		Assets.Programs["pos_uv"]->LightCount = LightCount;
+		ae::Assets.Programs["pos_uv"]->LightCount = LightCount;
 	}
 
 	// Draw background map
@@ -518,14 +518,14 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 		BackgroundMap->SetAmbientLightByClock();
 		if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT)
 			BackgroundMap->AmbientLight = glm::vec4(1.0f);
-		Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight;
+		ae::Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight;
 
 		// Get camera position
 		glm::vec3 DrawPosition;
 		Camera->GetDrawPosition(BlendFactor, DrawPosition);
 		DrawPosition -= BackgroundOffset;
 
-		float Width = DrawPosition.z * Graphics.AspectRatio;
+		float Width = DrawPosition.z * ae::Graphics.AspectRatio;
 		float Height = DrawPosition.z;
 
 		// Get render bounds of background tiles
@@ -561,24 +561,24 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 
 	// Draw map boundaries
 	if(RenderFlags & MAP_RENDER_BOUNDARY) {
-		Graphics.SetProgram(Assets.Programs["pos"]);
-		Graphics.SetVBO(VBO_NONE);
-		Graphics.SetColor(Assets.Colors["red"]);
-		Graphics.DrawRectangle3D(glm::vec2(0), glm::vec2(Size), false);
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetVBO(ae::VBO_NONE);
+		ae::Graphics.SetColor(ae::Assets.Colors["red"]);
+		ae::Graphics.DrawRectangle3D(glm::vec2(0), glm::vec2(Size), false);
 	}
 
 	// Draw zone overlays
 	if(RenderFlags & MAP_RENDER_ZONE) {
-		Graphics.SetProgram(Assets.Programs["pos"]);
-		Graphics.SetVBO(VBO_NONE);
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetVBO(ae::VBO_NONE);
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
 				_Tile *Tile = &Tiles[i][j];
 
 				// Draw zone color
 				if(!Tile->Wall && Tile->Zone > 0) {
-					Graphics.SetColor(ZoneColors[Tile->Zone % CurrentZoneColors]);
-					Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i, j), true);
+					ae::Graphics.SetColor(ZoneColors[Tile->Zone % CurrentZoneColors]);
+					ae::Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i, j), true);
 				}
 			}
 		}
@@ -593,23 +593,23 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 			// Draw wall
 			if(Tile->Wall) {
 				if(RenderFlags & MAP_RENDER_WALL)
-					Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
+					ae::Assets.Fonts["hud_medium"]->DrawText("W", glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 			}
 			else {
 
 				// Draw zone number
 				if((RenderFlags & MAP_RENDER_ZONE) && Tile->Zone > 0)
-					Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
+					ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 
 				// Draw PVP
 				if((RenderFlags & MAP_RENDER_PVP) && Tile->PVP)
-					Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), CENTER_MIDDLE, Assets.Colors["red"], 1.0f / 64.0f);
+					ae::Assets.Fonts["hud_medium"]->DrawText("PVP", glm::vec2(DrawPosition), ae::CENTER_MIDDLE, ae::Assets.Colors["red"], 1.0f / 64.0f);
 			}
 
 			// Draw event info
 			if(Tile->Event.Type > 0) {
 				std::string EventText = Stats->EventNames[Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
-				Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), CENTER_MIDDLE, Assets.Colors["cyan"], 1.0f / 64.0f);
+				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 64.0f);
 			}
 		}
 	}
@@ -617,9 +617,9 @@ void _Map::Render(_Camera *Camera, _Object *ClientPlayer, double BlendFactor, in
 
 // Render either floor or foreground texture tiles
 void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static) {
-	Graphics.SetProgram(Assets.Programs[Program]);
-	glUniformMatrix4fv(Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
-	Graphics.SetColor(glm::vec4(1.0f));
+	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
+	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
+	ae::Graphics.SetColor(glm::vec4(1.0f));
 
 	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;
@@ -646,8 +646,8 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
 	GLsizeiptr ElementBufferSize = FaceIndex * (int)sizeof(glm::u32vec3);
 
-	Graphics.SetTextureID(TileAtlas->Texture->ID);
-	Graphics.EnableAttribs(2);
+	ae::Graphics.SetTextureID(TileAtlas->Texture->ID);
+	ae::Graphics.EnableAttribs(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[Layer]);
 	if(!Static)
@@ -659,11 +659,11 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
 	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, 0);
 
-	Graphics.DirtyState();
+	ae::Graphics.DirtyState();
 }
 
 // Add lights from objects
-int _Map::AddLights(const std::list<_Object *> *ObjectList, const _Program *Program, glm::vec4 AABB, int LightCount) {
+int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB, int LightCount) {
 
 	// Check max lights
 	if(LightCount >= Program->MaxLights)
@@ -698,7 +698,7 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const _Program *Prog
 			continue;
 
 		// Set light in shader
-		_Light *Light = &Program->Lights[LightCount];
+		ae::_Light *Light = &Program->Lights[LightCount];
 		Light->Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
 		Light->Color = glm::vec4(LightType.Color, 1);
 		Light->Radius = LightType.Radius;
@@ -913,9 +913,9 @@ void _Map::RemoveObject(const _Object *RemoveObject) {
 	if(Server) {
 
 		// Create packet
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_DELETEOBJECT);
-		Packet.Write<NetworkIDType>(RemoveObject->NetworkID);
+		Packet.Write<ae::NetworkIDType>(RemoveObject->NetworkID);
 
 		// Send to everyone
 		BroadcastPacket(Packet);
@@ -932,7 +932,7 @@ void _Map::AddObject(_Object *Object) {
 	if(Server) {
 
 		// Create packet for the new object
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_CREATEOBJECT);
 		Object->SerializeCreate(Packet);
 
@@ -1060,7 +1060,7 @@ void _Map::DeleteStaticObject(const glm::ivec2 &Position) {
 }
 
 // Send complete object list to player
-void _Map::SendObjectList(_Peer *Peer) {
+void _Map::SendObjectList(ae::_Peer *Peer) {
 	if(!Server)
 		return;
 
@@ -1068,12 +1068,12 @@ void _Map::SendObjectList(_Peer *Peer) {
 		return;
 
 	// Create packet
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_OBJECTLIST);
-	Packet.Write<NetworkIDType>(Peer->Object->NetworkID);
+	Packet.Write<ae::NetworkIDType>(Peer->Object->NetworkID);
 
 	// Write object data
-	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());
+	Packet.Write<ae::NetworkIDType>((ae::NetworkIDType)Objects.size());
 	for(auto &Object : Objects) {
 		Object->SerializeCreate(Packet);
 	}
@@ -1085,12 +1085,12 @@ void _Map::SendObjectList(_Peer *Peer) {
 void _Map::SendObjectUpdates() {
 
 	// Create packet
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_OBJECTUPDATES);
 	Packet.Write<uint8_t>((uint8_t)NetworkID);
 
 	// Write object count
-	Packet.Write<NetworkIDType>((NetworkIDType)Objects.size());
+	Packet.Write<ae::NetworkIDType>((ae::NetworkIDType)Objects.size());
 
 	// Iterate over objects
 	for(const auto &Object : Objects) {
@@ -1098,18 +1098,18 @@ void _Map::SendObjectUpdates() {
 	}
 
 	// Send packet to players in map
-	BroadcastPacket(Packet, _Network::UNSEQUENCED);
+	BroadcastPacket(Packet, ae::_Network::UNSEQUENCED);
 }
 
 // Broadcast a packet to all peers in the map
-void _Map::BroadcastPacket(_Buffer &Buffer, _Network::SendType Type) {
+void _Map::BroadcastPacket(ae::_Buffer &Buffer, ae::_Network::SendType Type) {
 	if(!Server)
 		return;
 
 	// Send packet to peers
 	for(auto &Object : Objects) {
 		if(!Object->Deleted && Object->Peer && Object->Peer->ENetPeer)
-			Server->Network->SendPacket(Buffer, Object->Peer, Type, Type == _Network::UNSEQUENCED);
+			Server->Network->SendPacket(Buffer, Object->Peer, Type, Type == ae::_Network::UNSEQUENCED);
 	}
 }
 

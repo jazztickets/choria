@@ -82,13 +82,13 @@ void _PlayState::Init() {
 	IgnoreFirstChar = false;
 	CoinSoundPlayed = false;
 
-	Graphics.Element->SetActive(false);
-	Graphics.Element->Active = true;
+	ae::Graphics.Element->SetActive(false);
+	ae::Graphics.Element->Active = true;
 
 	Stats = new _Stats();
 
-	Camera = new _Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
-	Camera->CalculateFrustum(Graphics.AspectRatio);
+	Camera = new ae::_Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
+	Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_GAME);
@@ -96,11 +96,11 @@ void _PlayState::Init() {
 	HUD = new _HUD();
 	HUD->Scripting = Scripting;
 
-	Network = new _ClientNetwork();
+	Network = new ae::_ClientNetwork();
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
-	ObjectManager = new _Manager<_Object>();
+	ObjectManager = new ae::_Manager<_Object>();
 	AssignPlayer(nullptr);
 
 	if(ConnectNow)
@@ -127,7 +127,7 @@ void _PlayState::Close() {
 
 // Delete objects and return to menu
 void _PlayState::StopGame() {
-	Audio.Stop();
+	ae::Audio.Stop();
 	ObjectManager->Clear();
 	AssignPlayer(nullptr);
 	DeleteBattle();
@@ -136,7 +136,7 @@ void _PlayState::StopGame() {
 
 // Connect to a server
 void _PlayState::Connect(bool IsLocal) {
-	if(Network->GetConnectionState() != _ClientNetwork::State::DISCONNECTED)
+	if(Network->GetConnectionState() != ae::_ClientNetwork::State::DISCONNECTED)
 		return;
 
 	// Start a local server
@@ -246,9 +246,9 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	else {
 
 		// Currently typing
-		if(FocusedElement != nullptr) {
+		if(ae::FocusedElement != nullptr) {
 			if(Action == Action::MENU_BACK)
-				FocusedElement = nullptr;
+				ae::FocusedElement = nullptr;
 		}
 		else {
 
@@ -303,7 +303,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 }
 
 // Key handler
-void _PlayState::HandleKey(const _KeyEvent &KeyEvent) {
+void _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 
 	// Ignore keys if opening and focusing a textbox with a hotkey
 	if(IgnoreFirstChar) {
@@ -311,7 +311,7 @@ void _PlayState::HandleKey(const _KeyEvent &KeyEvent) {
 		return;
 	}
 
-	bool Handled = Graphics.Element->HandleKey(KeyEvent);
+	bool Handled = ae::Graphics.Element->HandleKey(KeyEvent);
 
 	// Message history handling
 	if(HUD->IsChatting() && KeyEvent.Pressed) {
@@ -333,10 +333,10 @@ void _PlayState::HandleKey(const _KeyEvent &KeyEvent) {
 }
 
 // Mouse handler
-void _PlayState::HandleMouseButton(const _MouseEvent &MouseEvent) {
-	FocusedElement = nullptr;
+void _PlayState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
+	ae::FocusedElement = nullptr;
 	if(MouseEvent.Button == SDL_BUTTON_LEFT)
-		Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
+		ae::Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
 
 	// Pass to menu
 	Menu.HandleMouseButton(MouseEvent);
@@ -362,10 +362,10 @@ void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 void _PlayState::HandleWindow(uint8_t Event) {
 	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 		if(Camera)
-			Camera->CalculateFrustum(Graphics.AspectRatio);
+			Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 
 		if(HUD && HUD->Minigame && HUD->Minigame->Camera)
-			HUD->Minigame->Camera->CalculateFrustum(Graphics.AspectRatio);
+			HUD->Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 	}
 }
 
@@ -387,17 +387,17 @@ void _PlayState::Update(double FrameTime) {
 	Network->Update(FrameTime);
 
 	// Get events
-	_NetworkEvent NetworkEvent;
+	ae::_NetworkEvent NetworkEvent;
 	while(Network->GetNetworkEvent(NetworkEvent)) {
 
 		switch(NetworkEvent.Type) {
-			case _NetworkEvent::CONNECT: {
+			case ae::_NetworkEvent::CONNECT: {
 				HandleConnect();
 			} break;
-			case _NetworkEvent::DISCONNECT:
+			case ae::_NetworkEvent::DISCONNECT:
 				HandleDisconnect();
 			break;
-			case _NetworkEvent::PACKET:
+			case ae::_NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data);
 				delete NetworkEvent.Data;
 			break;
@@ -405,9 +405,9 @@ void _PlayState::Update(double FrameTime) {
 	}
 
 	// Update UI
-	Graphics.Element->Update(FrameTime, Input.GetMouse());
-	//if(Graphics.Element->HitElement)
-	//	std::cout << Graphics.Element->HitElement->Name << std::endl;
+	ae::Graphics.Element->Update(FrameTime, ae::Input.GetMouse());
+	//if(ae::Graphics.Element->HitElement)
+	//	std::cout << ae::Graphics.Element->HitElement->Name << std::endl;
 
 	// Update menu
 	Menu.Update(FrameTime);
@@ -417,15 +417,15 @@ void _PlayState::Update(double FrameTime) {
 		return;
 
 	// Set input
-	if(Player->Character->AcceptingMoveInput() && !HUD->IsChatting() && FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
+	if(Player->Character->AcceptingMoveInput() && !HUD->IsChatting() && ae::FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
 		int InputState = 0;
-		if(Actions.State[Action::GAME_UP].Value > 0.0f)
+		if(ae::Actions.State[Action::GAME_UP].Value > 0.0f)
 			InputState |= _Object::MOVE_UP;
-		if(Actions.State[Action::GAME_DOWN].Value > 0.0f)
+		if(ae::Actions.State[Action::GAME_DOWN].Value > 0.0f)
 			InputState |= _Object::MOVE_DOWN;
-		if(Actions.State[Action::GAME_LEFT].Value > 0.0f)
+		if(ae::Actions.State[Action::GAME_LEFT].Value > 0.0f)
 			InputState |= _Object::MOVE_LEFT;
-		if(Actions.State[Action::GAME_RIGHT].Value > 0.0f)
+		if(ae::Actions.State[Action::GAME_RIGHT].Value > 0.0f)
 			InputState |= _Object::MOVE_RIGHT;
 
 		// Get player direction
@@ -446,7 +446,7 @@ void _PlayState::Update(double FrameTime) {
 
 	// Send input to server
 	if(Player->Controller->DirectionMoved) {
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::WORLD_MOVECOMMAND);
 		Packet.Write<char>((char)Player->Controller->DirectionMoved);
 		Network->SendPacket(Packet);
@@ -478,26 +478,26 @@ void _PlayState::Render(double BlendFactor) {
 
 	// Render in game
 	if(Player && Map) {
-		Graphics.Setup3D();
+		ae::Graphics.Setup3D();
 		Camera->Set3DProjection(BlendFactor);
 
 		// Setup the viewing matrix
-		Graphics.SetProgram(Assets.Programs["pos"]);
-		glUniformMatrix4fv(Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		Graphics.SetProgram(Assets.Programs["pos_uv"]);
-		glUniformMatrix4fv(Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		Graphics.SetProgram(Assets.Programs["pos_uv_static"]);
-		glUniformMatrix4fv(Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		Graphics.SetProgram(Assets.Programs["text"]);
-		glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 		// Draw map and objects
 		Map->Render(Camera, Player, BlendFactor);
 
-		Graphics.Setup2D();
-		Graphics.SetStaticUniforms();
-		Graphics.SetProgram(Assets.Programs["text"]);
-		glUniformMatrix4fv(Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Graphics.Ortho));
+		ae::Graphics.Setup2D();
+		ae::Graphics.SetStaticUniforms();
+		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 
 		HUD->DrawRecentItems();
 
@@ -519,26 +519,26 @@ void _PlayState::PlayCoinSound() {
 		return;
 
 	std::stringstream Buffer;
-	Buffer << "coin" << GetRandomInt(0, 2) << ".ogg";
-	Audio.PlaySound(Assets.Sounds[Buffer.str()]);
+	Buffer << "coin" << ae::GetRandomInt(0, 2) << ".ogg";
+	ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
 	CoinSoundPlayed = true;
 }
 
 // Play death sound
 void _PlayState::PlayDeathSound() {
 	std::stringstream Buffer;
-	Buffer << "death" << GetRandomInt(0, 2) << ".ogg";
-	Audio.PlaySound(Assets.Sounds[Buffer.str()]);
+	Buffer << "death" << ae::GetRandomInt(0, 2) << ".ogg";
+	ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
 }
 
 // Handle connection to server
 void _PlayState::HandleConnect() {
 
 	if(Server) {
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::ACCOUNT_LOGININFO);
 		Packet.WriteBit(0);
-		if(DevMode && Input.ModKeyDown(KMOD_CTRL))
+		if(DevMode && ae::Input.ModKeyDown(KMOD_CTRL))
 			Packet.WriteString("bots");
 		else
 			Packet.WriteString("singleplayer");
@@ -564,7 +564,7 @@ void _PlayState::HandleDisconnect() {
 }
 
 // Handle packet from server
-void _PlayState::HandlePacket(_Buffer &Data) {
+void _PlayState::HandlePacket(ae::_Buffer &Data) {
 	PacketType Type = Data.Read<PacketType>();
 
 	switch(Type) {
@@ -672,7 +672,7 @@ void _PlayState::HandlePacket(_Buffer &Data) {
 }
 
 // Called once to synchronize your stats with the servers
-void _PlayState::HandleObjectStats(_Buffer &Data) {
+void _PlayState::HandleObjectStats(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -683,11 +683,11 @@ void _PlayState::HandleObjectStats(_Buffer &Data) {
 }
 
 // Called when the player changes maps
-void _PlayState::HandleChangeMaps(_Buffer &Data) {
+void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 	Menu.InitPlay();
 
 	// Load map
-	NetworkIDType MapID = (NetworkIDType)Data.Read<uint32_t>();
+	ae::NetworkIDType MapID = (ae::NetworkIDType)Data.Read<uint32_t>();
 	double Clock = Data.Read<double>();
 
 	// Delete old map and create new
@@ -703,22 +703,22 @@ void _PlayState::HandleChangeMaps(_Buffer &Data) {
 		Map->Load(&Stats->Maps.at(MapID));
 		AssignPlayer(nullptr);
 
-		Audio.PlayMusic(Assets.Music[Map->Music]);
+		ae::Audio.PlayMusic(ae::Assets.Music[Map->Music]);
 	}
 }
 
 // Handle object list
-void _PlayState::HandleObjectList(_Buffer &Data) {
+void _PlayState::HandleObjectList(ae::_Buffer &Data) {
 	ObjectManager->Clear();
 	AssignPlayer(nullptr);
 
 	// Read header
-	NetworkIDType ClientNetworkID = Data.Read<NetworkIDType>();
-	NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
+	ae::NetworkIDType ClientNetworkID = Data.Read<ae::NetworkIDType>();
+	ae::NetworkIDType ObjectCount = Data.Read<ae::NetworkIDType>();
 
 	// Create objects
-	for(NetworkIDType i = 0; i < ObjectCount; i++) {
-		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	for(ae::NetworkIDType i = 0; i < ObjectCount; i++) {
+		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 
 		// Create object
 		_Object *Object = CreateObject(Data, NetworkID);
@@ -739,12 +739,12 @@ void _PlayState::HandleObjectList(_Buffer &Data) {
 }
 
 // Creates an object
-void _PlayState::HandleObjectCreate(_Buffer &Data) {
+void _PlayState::HandleObjectCreate(ae::_Buffer &Data) {
 	if(!Map || !Player)
 		return;
 
 	// Read packet
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 
 	// Check id
 	if(NetworkID != Player->NetworkID) {
@@ -755,11 +755,11 @@ void _PlayState::HandleObjectCreate(_Buffer &Data) {
 }
 
 // Deletes an object
-void _PlayState::HandleObjectDelete(_Buffer &Data) {
+void _PlayState::HandleObjectDelete(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 
 	// Get object
 	_Object *Object = ObjectManager->GetObject(NetworkID);
@@ -769,23 +769,23 @@ void _PlayState::HandleObjectDelete(_Buffer &Data) {
 }
 
 // Handles position updates from the server
-void _PlayState::HandleObjectUpdates(_Buffer &Data) {
+void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 	if(!Player || !Map)
 		return;
 
 	// Check map id
-	NetworkIDType MapID = Data.Read<uint8_t>();
+	ae::NetworkIDType MapID = Data.Read<uint8_t>();
 	if(MapID != Map->NetworkID)
 		return;
 
 	// Get object count
-	NetworkIDType ObjectCount = Data.Read<NetworkIDType>();
+	ae::NetworkIDType ObjectCount = Data.Read<ae::NetworkIDType>();
 
 	// Iterate over objects
-	for(NetworkIDType i = 0; i < ObjectCount; i++) {
+	for(ae::NetworkIDType i = 0; i < ObjectCount; i++) {
 
 		// Read packet
-		NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 		glm::ivec2 Position = Data.Read<glm::ivec2>();
 		uint8_t Status = Data.Read<uint8_t>();
 		int Light = Data.Read<uint8_t>();
@@ -810,37 +810,37 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 					Object->Character->StatusTexture = nullptr;
 				break;
 				case _Character::STATUS_MENU:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/pause.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/pause.png"];
 				break;
 				case _Character::STATUS_INVENTORY:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/bag.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/bag.png"];
 				break;
 				case _Character::STATUS_VENDOR:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Character::STATUS_SKILLS:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/skills.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/skills.png"];
 				break;
 				case _Character::STATUS_TRADE:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/trade.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/trade.png"];
 				break;
 				case _Character::STATUS_TRADER:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Character::STATUS_BLACKSMITH:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Character::STATUS_MINIGAME:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/vendor.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/vendor.png"];
 				break;
 				case _Character::STATUS_TELEPORT:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/teleport.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/teleport.png"];
 				break;
 				case _Character::STATUS_BATTLE:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/battle.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/battle.png"];
 				break;
 				case _Character::STATUS_DEAD:
-					Object->Character->StatusTexture = Assets.Textures["textures/status/dead.png"];
+					Object->Character->StatusTexture = ae::Assets.Textures["textures/status/dead.png"];
 				break;
 				default:
 				break;
@@ -850,7 +850,7 @@ void _PlayState::HandleObjectUpdates(_Buffer &Data) {
 }
 
 // Handles player position
-void _PlayState::HandlePlayerPosition(_Buffer &Data) {
+void _PlayState::HandlePlayerPosition(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -861,7 +861,7 @@ void _PlayState::HandlePlayerPosition(_Buffer &Data) {
 }
 
 // Start teleport event
-void _PlayState::HandleTeleportStart(_Buffer &Data) {
+void _PlayState::HandleTeleportStart(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -870,11 +870,11 @@ void _PlayState::HandleTeleportStart(_Buffer &Data) {
 	HUD->CloseWindows(false);
 	HUD->StartTeleport();
 
-	Audio.PlaySound(Assets.Sounds["teleport0.ogg"]);
+	ae::Audio.PlaySound(ae::Assets.Sounds["teleport0.ogg"]);
 }
 
 // Handles the start of an event
-void _PlayState::HandleEventStart(_Buffer &Data) {
+void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -909,7 +909,7 @@ void _PlayState::HandleEventStart(_Buffer &Data) {
 }
 
 // Handle inventory sync
-void _PlayState::HandleInventory(_Buffer &Data) {
+void _PlayState::HandleInventory(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -937,7 +937,7 @@ void _PlayState::HandleInventory(_Buffer &Data) {
 }
 
 // Handle an item being added to the inventory
-void _PlayState::HandleInventoryAdd(_Buffer &Data){
+void _PlayState::HandleInventoryAdd(ae::_Buffer &Data){
 	if(!Player)
 		return;
 
@@ -950,11 +950,11 @@ void _PlayState::HandleInventoryAdd(_Buffer &Data){
 }
 
 // Handles a chat message
-void _PlayState::HandleChatMessage(_Buffer &Data) {
+void _PlayState::HandleChatMessage(ae::_Buffer &Data) {
 
 	// Read packet
 	_Message Chat;
-	Chat.Color = Assets.Colors[Data.ReadString()];
+	Chat.Color = ae::Assets.Colors[Data.ReadString()];
 	Chat.Message = Data.ReadString();
 	Chat.Time = Time;
 
@@ -962,7 +962,7 @@ void _PlayState::HandleChatMessage(_Buffer &Data) {
 }
 
 // Handles a inventory swap
-void _PlayState::HandleInventorySwap(_Buffer &Data) {
+void _PlayState::HandleInventorySwap(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -974,7 +974,7 @@ void _PlayState::HandleInventorySwap(_Buffer &Data) {
 }
 
 // Handle an inventory update
-void _PlayState::HandleInventoryUpdate(_Buffer &Data) {
+void _PlayState::HandleInventoryUpdate(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -986,7 +986,7 @@ void _PlayState::HandleInventoryUpdate(_Buffer &Data) {
 }
 
 // Handle gold update
-void _PlayState::HandleInventoryGold(_Buffer &Data) {
+void _PlayState::HandleInventoryGold(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -997,7 +997,7 @@ void _PlayState::HandleInventoryGold(_Buffer &Data) {
 }
 
 // Handle party info
-void _PlayState::HandlePartyInfo(_Buffer &Data) {
+void _PlayState::HandlePartyInfo(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -1006,12 +1006,12 @@ void _PlayState::HandlePartyInfo(_Buffer &Data) {
 }
 
 // Handles a trade request
-void _PlayState::HandleTradeRequest(_Buffer &Data) {
+void _PlayState::HandleTradeRequest(ae::_Buffer &Data) {
 	if(!Player || !Map)
 		return;
 
 	// Read packet
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 
 	// Get trading player
 	Player->Character->TradePlayer = ObjectManager->GetObject(NetworkID);
@@ -1025,7 +1025,7 @@ void _PlayState::HandleTradeRequest(_Buffer &Data) {
 }
 
 // Handles a trade cancel
-void _PlayState::HandleTradeCancel(_Buffer &Data) {
+void _PlayState::HandleTradeCancel(ae::_Buffer &Data) {
 	Player->Character->TradePlayer = nullptr;
 
 	// Reset agreement
@@ -1034,7 +1034,7 @@ void _PlayState::HandleTradeCancel(_Buffer &Data) {
 }
 
 // Handles a trade item update
-void _PlayState::HandleTradeItem(_Buffer &Data) {
+void _PlayState::HandleTradeItem(ae::_Buffer &Data) {
 
 	// Get trading player
 	if(!Player->Character->TradePlayer)
@@ -1050,7 +1050,7 @@ void _PlayState::HandleTradeItem(_Buffer &Data) {
 }
 
 // Handles a gold update from the trading player
-void _PlayState::HandleTradeGold(_Buffer &Data) {
+void _PlayState::HandleTradeGold(ae::_Buffer &Data) {
 
 	// Get trading player
 	if(!Player->Character->TradePlayer)
@@ -1066,7 +1066,7 @@ void _PlayState::HandleTradeGold(_Buffer &Data) {
 }
 
 // Handles a trade accept
-void _PlayState::HandleTradeAccept(_Buffer &Data) {
+void _PlayState::HandleTradeAccept(ae::_Buffer &Data) {
 
 	// Get trading player
 	if(!Player->Character->TradePlayer)
@@ -1078,7 +1078,7 @@ void _PlayState::HandleTradeAccept(_Buffer &Data) {
 }
 
 // Handles a trade exchange
-void _PlayState::HandleTradeExchange(_Buffer &Data) {
+void _PlayState::HandleTradeExchange(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -1092,7 +1092,7 @@ void _PlayState::HandleTradeExchange(_Buffer &Data) {
 }
 
 // Handles the start of a battle
-void _PlayState::HandleBattleStart(_Buffer &Data) {
+void _PlayState::HandleBattleStart(ae::_Buffer &Data) {
 
 	// Already in a battle
 	if(Battle)
@@ -1105,7 +1105,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 	HUD->CloseWindows(true);
 	HUD->EnableMouseCombat = false;
 	if(Config.ShowTutorial && Player->Character->Level == 1)
-		HUD->SetMessage("Hit the " + Actions.GetInputNameForAction(Action::GAME_SKILL1) + " key to attack");
+		HUD->SetMessage("Hit the " + ae::Actions.GetInputNameForAction(Action::GAME_SKILL1) + " key to attack");
 
 	// Create a new battle instance
 	Battle = new _Battle();
@@ -1119,7 +1119,7 @@ void _PlayState::HandleBattleStart(_Buffer &Data) {
 }
 
 // Handles a battle action set from another player
-void _PlayState::HandleBattleAction(_Buffer &Data) {
+void _PlayState::HandleBattleAction(ae::_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
@@ -1127,12 +1127,12 @@ void _PlayState::HandleBattleAction(_Buffer &Data) {
 }
 
 // Handle an object joining the battle
-void _PlayState::HandleBattleJoin(_Buffer &Data) {
+void _PlayState::HandleBattleJoin(ae::_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
 	// Read header
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	uint32_t DatabaseID = Data.Read<uint32_t>();
 
 	// Get object
@@ -1146,11 +1146,11 @@ void _PlayState::HandleBattleJoin(_Buffer &Data) {
 }
 
 // Handle an object leaving battle
-void _PlayState::HandleBattleLeave(_Buffer &Data) {
+void _PlayState::HandleBattleLeave(ae::_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	_Object *Object = ObjectManager->GetObject(NetworkID);
 	if(Object) {
 		Battle->RemoveObject(Object);
@@ -1158,7 +1158,7 @@ void _PlayState::HandleBattleLeave(_Buffer &Data) {
 }
 
 // Handles the end of a battle
-void _PlayState::HandleBattleEnd(_Buffer &Data) {
+void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	if(!Player || !Battle)
 		return;
 
@@ -1205,8 +1205,8 @@ void _PlayState::HandleBattleEnd(_Buffer &Data) {
 }
 
 // Clear action used and targets
-void _PlayState::HandleActionClear(_Buffer &Data) {
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+void _PlayState::HandleActionClear(ae::_Buffer &Data) {
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	_Object *Object = ObjectManager->GetObject(NetworkID);
 	if(!Object)
 		return;
@@ -1216,7 +1216,7 @@ void _PlayState::HandleActionClear(_Buffer &Data) {
 }
 
 // Handles the result of a turn in battle
-void _PlayState::HandleActionResults(_Buffer &Data) {
+void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -1281,11 +1281,11 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 
 				if(ActionResult.Target.HasStat(StatType::MISS)) {
 					std::stringstream Buffer;
-					Buffer << "miss" << GetRandomInt(0, 2) << ".ogg";
-					Audio.PlaySound(Assets.Sounds[Buffer.str()]);
+					Buffer << "miss" << ae::GetRandomInt(0, 2) << ".ogg";
+					ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
 				}
 				else {
-					Audio.PlaySound(Assets.Sounds["thud0.ogg"]);
+					ae::Audio.PlaySound(ae::Assets.Sounds["thud0.ogg"]);
 				}
 			}
 			else {
@@ -1303,7 +1303,7 @@ void _PlayState::HandleActionResults(_Buffer &Data) {
 }
 
 // Handles a stat change
-void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
+void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 	if(!Player)
 		return;
 
@@ -1321,7 +1321,7 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 
 			// Create hud element for status effects
 			if(StatusEffect)
-				StatusEffect->HUDElement = StatusEffect->CreateUIElement(Assets.Elements["element_hud_statuseffects"]);
+				StatusEffect->HUDElement = StatusEffect->CreateUIElement(ae::Assets.Elements["element_hud_statuseffects"]);
 
 			// Play buff sounds
 			if(StatChange.HasStat(StatType::ID)) {
@@ -1347,7 +1347,7 @@ void _PlayState::HandleStatChange(_Buffer &Data, _StatChange &StatChange) {
 }
 
 // Handles HUD updates
-void _PlayState::HandleHUD(_Buffer &Data) {
+void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -1368,8 +1368,8 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 		Map->Clock = Clock;
 
 	if(Player->Character->Level > OldLevel) {
-		HUD->SetMessage("You have " + std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point(s). Press " + Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to use them.");
-		Audio.PlaySound(Assets.Sounds["success0.ogg"]);
+		HUD->SetMessage("You have " + std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point(s). Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILLS) + " to use them.");
+		ae::Audio.PlaySound(ae::Assets.Sounds["success0.ogg"]);
 
 		if(Player->Character->Level == 2) {
 			Config.ShowTutorial = 0;
@@ -1379,7 +1379,7 @@ void _PlayState::HandleHUD(_Buffer &Data) {
 }
 
 // Handle seed from server
-void _PlayState::HandleMinigameSeed(_Buffer &Data) {
+void _PlayState::HandleMinigameSeed(ae::_Buffer &Data) {
 	if(!Player || !Player->Character->Minigame || !HUD->Minigame)
 		return;
 
@@ -1387,7 +1387,7 @@ void _PlayState::HandleMinigameSeed(_Buffer &Data) {
 }
 
 // Creates an object from a buffer
-_Object *_PlayState::CreateObject(_Buffer &Data, NetworkIDType NetworkID) {
+_Object *_PlayState::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID) {
 
 	// Create object
 	_Object *Object = ObjectManager->CreateWithID(NetworkID);
@@ -1419,7 +1419,7 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 		return;
 
 	// Send use to server
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_USE);
 	Packet.Write<uint8_t>(Slot);
 	Packet.Write<uint8_t>(1);
@@ -1432,7 +1432,7 @@ void _PlayState::SendJoinRequest() {
 	if(!Player->Character->AcceptingMoveInput())
 		return;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_JOIN);
 	Network->SendPacket(Packet);
 }
@@ -1445,14 +1445,14 @@ void _PlayState::SendUseCommand() {
 	if(!Player->Character->AcceptingMoveInput())
 		return;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_USECOMMAND);
 	Network->SendPacket(Packet);
 }
 
 // Send status to server
 void _PlayState::SendStatus(uint8_t Status) {
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PLAYER_STATUS);
 	Packet.Write<uint8_t>(Status);
 	Network->SendPacket(Packet);

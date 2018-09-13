@@ -777,12 +777,12 @@ int _Scripting::RandomGetInt(lua_State *LuaState) {
 	int Min = (int)lua_tointeger(LuaState, 1);
 	int Max = (int)lua_tointeger(LuaState, 2);
 
-	lua_pushinteger(LuaState, GetRandomInt(Min, Max));
+	lua_pushinteger(LuaState, ae::GetRandomInt(Min, Max));
 
 	return 1;
 }
 
-// Audio.Play(sound)
+// ae::Audio.Play(sound)
 int _Scripting::AudioPlay(lua_State *LuaState) {
 
 	// Get filename
@@ -794,12 +794,12 @@ int _Scripting::AudioPlay(lua_State *LuaState) {
 		Volume = (float)lua_tonumber(LuaState, 2);
 
 	// Find sound
-	auto Sound = Assets.Sounds.find(Filename);
-	if(Sound == Assets.Sounds.end())
+	auto Sound = ae::Assets.Sounds.find(Filename);
+	if(Sound == ae::Assets.Sounds.end())
 		return 1;
 
 	// Play sound
-	Audio.PlaySound(Sound->second, Volume);
+	ae::Audio.PlaySound(Sound->second, Volume);
 
 	return 1;
 }
@@ -1000,7 +1000,7 @@ int _Scripting::ObjectRespawn(lua_State *LuaState) {
 	if(!Object->Server)
 		return 0;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Object->Server->HandleRespawn(Packet, Object->Peer);
 
 	return 0;
@@ -1020,7 +1020,7 @@ int _Scripting::ObjectCloseWindows(lua_State *LuaState) {
 	if(!Object->Server)
 		return 0;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<uint8_t>(_Character::STATUS_NONE);
 
 	Packet.StartRead();
@@ -1035,7 +1035,7 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 	if(!Object->Server || !Object->Character->Vendor)
 		return 0;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	bool Buy = (bool)lua_toboolean(LuaState, 1);
 	Packet.WriteBit(Buy);
 	if(Buy) {
@@ -1081,7 +1081,7 @@ int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	int Upgrades = (int)lua_tointeger(LuaState, 1);
 
-	lua_pushinteger(LuaState, GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)));
+	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)));
 
 	return 1;
 }

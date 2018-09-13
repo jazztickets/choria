@@ -43,7 +43,7 @@ _Save::_Save() :
 	std::string SavePath = Config.ConfigPath + "save.db";
 
 	// Open file
-	Database = new _Database(SavePath);
+	Database = new ae::_Database(SavePath);
 
 	// Get save version
 	int SaveVersion = 0;
@@ -60,7 +60,7 @@ _Save::_Save() :
 		if(SaveVersion > 0) {
 			delete Database;
 			std::rename(SavePath.c_str(), (SavePath + "." + std::to_string(SaveVersion)).c_str());
-			Database = new _Database(SavePath);
+			Database = new ae::_Database(SavePath);
 		}
 
 		// Load defaults
@@ -132,7 +132,7 @@ void _Save::GetSettings() {
 
 // Check for a username
 bool _Save::CheckUsername(const std::string &Username) {
-	std::string TrimmedUsername = TrimString(Username);
+	std::string TrimmedUsername = ae::TrimString(Username);
 
 	Database->PrepareQuery("SELECT id FROM account WHERE username = @username");
 	Database->BindString(1, TrimmedUsername);
@@ -144,7 +144,7 @@ bool _Save::CheckUsername(const std::string &Username) {
 
 // Create account
 void _Save::CreateAccount(const std::string &Username, const std::string &Password) {
-	std::string TrimmedUsername = TrimString(Username);
+	std::string TrimmedUsername = ae::TrimString(Username);
 
 	Database->PrepareQuery("INSERT INTO account(username, password, data) VALUES(@username, @password, '')");
 	Database->BindString(1, TrimmedUsername);
@@ -157,7 +157,7 @@ void _Save::CreateAccount(const std::string &Username, const std::string &Passwo
 uint32_t _Save::GetAccountID(const std::string &Username, const std::string &Password) {
 	uint32_t AccountID = 0;
 
-	std::string TrimmedUsername = TrimString(Username);
+	std::string TrimmedUsername = ae::TrimString(Username);
 
 	// Get account information
 	Database->PrepareQuery("SELECT id FROM account WHERE username = @username AND password = @password");
@@ -199,7 +199,7 @@ uint32_t _Save::GetCharacterCount(uint32_t AccountID) {
 
 // Find character id by character name
 uint32_t _Save::GetCharacterIDByName(const std::string &Name) {
-	std::string TrimmedName = TrimString(Name);
+	std::string TrimmedName = ae::TrimString(Name);
 
 	Database->PrepareQuery("SELECT id FROM character WHERE name = @name");
 	Database->BindString(1, TrimmedName);
@@ -247,7 +247,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Database->PrepareQuery("INSERT INTO character(account_id, slot, name) VALUES(@account_id, @slot, @name)");
 	Database->BindInt(Index++, AccountID);
 	Database->BindInt(Index++, Slot);
-	Database->BindString(Index++, TrimString(Name));
+	Database->BindString(Index++, ae::TrimString(Name));
 	Database->FetchRow();
 	Database->CloseQuery();
 
@@ -262,7 +262,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Character->ActionBar = Build->Character->ActionBar;
 	Object.Inventory->Bags = Build->Inventory->Bags;
 	Object.Character->Skills = Build->Character->Skills;
-	Object.Character->Seed = GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
+	Object.Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 	Object.Character->CalculateStats();
 
 	// Set health/mana
@@ -279,7 +279,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 }
 
 // Saves the player
-void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log) {
+void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogFile *Log) {
 	if(Player->Character->CharacterID == 0)
 		return;
 
@@ -365,7 +365,7 @@ void _Save::CreateDefaultDatabase() {
 	Database->CloseQuery();
 
 	// Write settings
-	Secret = GetRandomInt((uint64_t)1, std::numeric_limits<uint64_t>::max());
+	Secret = ae::GetRandomInt((uint64_t)1, std::numeric_limits<uint64_t>::max());
 	Clock = MAP_CLOCK_START;
 	SaveSettings();
 

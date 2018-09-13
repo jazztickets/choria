@@ -23,12 +23,15 @@
 #include <vector>
 
 // Forward Declarations
-class _Element;
-class _Buffer;
-class _ClientNetwork;
 class _Stats;
-struct _MouseEvent;
-struct _KeyEvent;
+
+namespace ae {
+	class _Element;
+	class _Buffer;
+	class _ClientNetwork;
+	struct _MouseEvent;
+	struct _KeyEvent;
+}
 
 // Classes
 class _Menu {
@@ -37,11 +40,11 @@ class _Menu {
 
 		struct _CharacterSlot {
 			_CharacterSlot() : Button(nullptr), Name(nullptr), Level(nullptr), Hardcore(nullptr), CanPlay(false), Used(false) {}
-			_Element *Button;
-			_Element *Name;
-			_Element *Level;
-			_Element *Hardcore;
-			_Element *Image;
+			ae::_Element *Button;
+			ae::_Element *Name;
+			ae::_Element *Level;
+			ae::_Element *Hardcore;
+			ae::_Element *Image;
 			bool CanPlay;
 			bool Used;
 		};
@@ -83,8 +86,8 @@ class _Menu {
 		void Close();
 
 		bool HandleAction(int InputType, size_t Action, int Value);
-		void HandleKey(const _KeyEvent &KeyEvent);
-		void HandleMouseButton(const _MouseEvent &MouseEvent);
+		void HandleKey(const ae::_KeyEvent &KeyEvent);
+		void HandleMouseButton(const ae::_MouseEvent &MouseEvent);
 
 		void SetFullscreen(bool Fullscreen);
 		void Update(double FrameTime);
@@ -93,7 +96,7 @@ class _Menu {
 		// Network
 		void HandleConnect();
 		void HandleDisconnect(bool WasSinglePlayer);
-		void HandlePacket(_Buffer &Buffer, PacketType Type);
+		void HandlePacket(ae::_Buffer &Buffer, PacketType Type);
 
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
@@ -110,7 +113,7 @@ class _Menu {
 
 		void ChangeLayout(const std::string &ElementName);
 
-		uint32_t GetSelectedIconID(_Element *ParentElement);
+		uint32_t GetSelectedIconID(ae::_Element *ParentElement);
 		size_t GetSelectedCharacter();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();
@@ -139,11 +142,11 @@ class _Menu {
 		bool FromInGame;
 
 		// UI
-		_Element *CurrentLayout;
+		ae::_Element *CurrentLayout;
 		std::vector<_CharacterSlot> CharacterSlots;
 
 		// Double click
-		_Element *PreviousClick;
+		ae::_Element *PreviousClick;
 		double PreviousClickTimer;
 
 		// Singleplayer

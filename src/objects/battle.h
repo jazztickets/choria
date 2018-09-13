@@ -24,12 +24,15 @@
 #include <cstdint>
 
 // Forward Declarations
-class _Element;
 class _Scripting;
 class _Server;
-class _ClientNetwork;
 class _StatusEffect;
 class _HUD;
+
+namespace ae {
+	class _Element;
+	class _ClientNetwork;
+}
 
 struct _BattleResult {
 	_BattleResult() :
@@ -55,7 +58,7 @@ struct _BattleResult {
 };
 
 // Classes
-class _Battle : public _BaseObject {
+class _Battle : public ae::_BaseObject {
 
 	public:
 
@@ -73,16 +76,16 @@ class _Battle : public _BaseObject {
 		void Render(double BlendFactor);
 
 		// Network
-		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data, _HUD *HUD);
-		void BroadcastPacket(_Buffer &Data);
+		void Serialize(ae::_Buffer &Data);
+		void Unserialize(ae::_Buffer &Data, _HUD *HUD);
+		void BroadcastPacket(ae::_Buffer &Data);
 
 		// Setup
 		void ServerEndBattle();
 
 		// Input
 		bool ClientHandleInput(size_t Action);
-		void ClientHandlePlayerAction(_Buffer &Data);
+		void ClientHandlePlayerAction(ae::_Buffer &Data);
 		void ClientSetAction(uint8_t ActionBarSlot);
 		void ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget);
 
@@ -90,9 +93,9 @@ class _Battle : public _BaseObject {
 		const _Stats *Stats;
 		_Server *Server;
 		_Scripting *Scripting;
-		_ClientNetwork *ClientNetwork;
+		ae::_ClientNetwork *ClientNetwork;
 		_Object *ClientPlayer;
-		_Manager<_Object> *Manager;
+		ae::_Manager<_Object> *Manager;
 
 		// Objects
 		std::list<_Object *> Objects;
@@ -124,6 +127,6 @@ class _Battle : public _BaseObject {
 		double WaitTimer;
 
 		// UI
-		_Element *BattleElement;
+		ae::_Element *BattleElement;
 
 };

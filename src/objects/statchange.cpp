@@ -58,12 +58,12 @@ bool _StatChange::HasStat(StatType Type) {
 }
 
 // Serialize network
-void _StatChange::Serialize(_Buffer &Data) {
+void _StatChange::Serialize(ae::_Buffer &Data) {
 	if(!Object)
 		throw std::runtime_error("_StatChange::Serialize: Object is null!");
 
 	uint64_t ChangedFlag = GetChangedFlag();
-	Data.Write<NetworkIDType>(Object->NetworkID);
+	Data.Write<ae::NetworkIDType>(Object->NetworkID);
 	Data.Write<uint64_t>(ChangedFlag);
 
 	for(auto Iterator : Values) {
@@ -77,10 +77,10 @@ void _StatChange::Serialize(_Buffer &Data) {
 }
 
 // Unserialize network
-void _StatChange::Unserialize(_Buffer &Data, _Manager<_Object> *Manager) {
+void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager) {
 	Reset();
 
-	NetworkIDType NetworkID = Data.Read<NetworkIDType>();
+	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	Object = Manager->GetObject(NetworkID);
 	if(!Object) {
 		std::cout << "_StatChange::Unserialize BadObject NetworkID=" << NetworkID << std::endl;
@@ -136,7 +136,7 @@ void _StatChangeUI::Render(double BlendFactor) {
 	glm::vec2 DrawPosition = glm::mix(LastPosition, Position, BlendFactor);
 
 	// Draw text
-	Font->DrawText(Text, DrawPosition + glm::vec2(0, 7), CENTER_BASELINE, Color);
+	Font->DrawText(Text, DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, Color);
 }
 
 // Set text and color

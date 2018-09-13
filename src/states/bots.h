@@ -25,13 +25,16 @@
 
 // Forward Declarations
 class _Stats;
-class _ClientNetwork;
-class _Buffer;
 class _Bot;
 class _Stats;
 
+namespace ae {
+	class _ClientNetwork;
+	class _Buffer;
+}
+
 // Bot manager class
-class _BotsState : public _State {
+class _BotsState : public ae::_State {
 
 	public:
 

@@ -22,9 +22,12 @@
 #include <cstdint>
 
 // Forward Declarations
-class _State;
-class _FrameLimit;
 union SDL_Event;
+
+namespace ae {
+	class _State;
+	class _FrameLimit;
+}
 
 // Classes
 class _Framework {
@@ -45,11 +48,11 @@ class _Framework {
 		void Update();
 		void Render();
 
-		_State *GetState() { return State; }
-		void ChangeState(_State *RequestedState);
+		ae::_State *GetState() { return State; }
+		void ChangeState(ae::_State *RequestedState);
 
 		// Logging
-		_LogFile Log;
+		ae::_LogFile Log;
 
 		// State
 		bool Done;
@@ -61,11 +64,11 @@ class _Framework {
 
 		// States
 		StateType FrameworkState;
-		_State *State;
-		_State *RequestedState;
+		ae::_State *State;
+		ae::_State *RequestedState;
 
 		// Time
-		_FrameLimit *FrameLimit;
+		ae::_FrameLimit *FrameLimit;
 		uint64_t Timer;
 		double TimeStep;
 		double TimeStepAccumulator;

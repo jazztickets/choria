@@ -22,11 +22,14 @@
 #include <string>
 
 // Forward Declarations
-class _Database;
 class _Object;
 class _Stats;
 class _Scripting;
-class _LogFile;
+
+namespace ae {
+	class _LogFile;
+	class _Database;
+}
 
 // Classes
 class _Save {
@@ -36,7 +39,7 @@ class _Save {
 		_Save();
 		~_Save();
 
-		_Database *Database;
+		ae::_Database *Database;
 
 		// Misc
 		void StartTransaction();
@@ -56,7 +59,7 @@ class _Save {
 		uint32_t CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID);
 
 		// Objects
-		void SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log);
+		void SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogFile *Log);
 		void LoadPlayer(const _Stats *Stats, _Object *Player);
 
 		// State

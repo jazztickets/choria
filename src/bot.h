@@ -25,10 +25,6 @@
 #include <glm/vec2.hpp>
 
 // Forward Declarations
-template<class T> class _Manager;
-class _Stats;
-class _ClientNetwork;
-class _Buffer;
 class _Object;
 class _Battle;
 class _Map;
@@ -36,6 +32,13 @@ class _Stats;
 class _Scripting;
 struct _Event;
 struct _StatChange;
+
+namespace ae {
+	template<class T> class _Manager;
+	class _Stats;
+	class _ClientNetwork;
+	class _Buffer;
+}
 
 // Bot class
 class _Bot {
@@ -49,14 +52,14 @@ class _Bot {
 		void Update(double FrameTime);
 
 		// Network
-		void HandlePacket(_Buffer &Data);
+		void HandlePacket(ae::_Buffer &Data);
 		void AssignPlayer(_Object *Object);
-		void HandleStatChange(_Buffer &Data, _StatChange &StatChange);
-		_Object *CreateObject(_Buffer &Data, NetworkIDType NetworkID);
+		void HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange);
+		_Object *CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID);
 
-		std::unique_ptr<_ClientNetwork> Network;
+		std::unique_ptr<ae::_ClientNetwork> Network;
 
-		_Manager<_Object> *ObjectManager;
+		ae::_Manager<_Object> *ObjectManager;
 
 		_Scripting *Scripting;
 		_Map *Map;

@@ -23,12 +23,15 @@
 #include <glm/vec4.hpp>
 
 // Forward Declarations
-class _Camera;
 class _Stats;
 class _Minigame;
 
+namespace ae {
+	class _Camera;
+}
+
 // Test state
-class _TestState : public _State {
+class _TestState : public ae::_State {
 
 	public:
 
@@ -38,8 +41,8 @@ class _TestState : public _State {
 		void Close() override;
 
 		// Input
-		void HandleKey(const _KeyEvent &KeyEvent) override;
-		void HandleMouseButton(const _MouseEvent &MouseEvent) override;
+		void HandleKey(const ae::_KeyEvent &KeyEvent) override;
+		void HandleMouseButton(const ae::_MouseEvent &MouseEvent) override;
 		void HandleMouseMove(const glm::ivec2 &Position) override;
 		void HandleWindow(uint8_t Event) override;
 		void HandleQuit() override;
@@ -49,7 +52,7 @@ class _TestState : public _State {
 		void Render(double BlendFactor) override;
 
 		// Attributes
-		_Camera *Camera;
+		ae::_Camera *Camera;
 		const _Stats *Stats;
 		_Minigame *Minigame;
 		double Time;

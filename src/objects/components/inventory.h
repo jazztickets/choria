@@ -31,9 +31,12 @@ const size_t NOSLOT = (size_t)-1;
 struct _Trader;
 class _Object;
 class _Item;
-class _Buffer;
 class _Stats;
 class _Inventory;
+
+namespace ae {
+	class _Buffer;
+}
 
 enum EquipmentType : size_t {
 	HEAD,
@@ -52,8 +55,8 @@ struct _InventorySlot {
 	_InventorySlot() { Reset(); }
 	_InventorySlot(const _Item *Item, int Count) : Item(Item), Upgrades(0), Count(Count), MaxCount(INVENTORY_MAX_STACK) { }
 
-	void Serialize(_Buffer &Data);
-	void Unserialize(_Buffer &Data, const _Stats *Stats);
+	void Serialize(ae::_Buffer &Data);
+	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 	void Reset() { Item = nullptr; Upgrades = 0; Count = 0; MaxCount = INVENTORY_MAX_STACK; }
 
 	const _Item *Item;
@@ -75,8 +78,8 @@ struct _Bag {
 
 	_Bag() : ID(_Bag::NONE) { }
 
-	void Serialize(_Buffer &Data);
-	void Unserialize(_Buffer &Data, const _Stats *Stats);
+	void Serialize(ae::_Buffer &Data);
+	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 
 	std::vector<_InventorySlot> Slots;
 	std::string Name;
@@ -91,8 +94,8 @@ struct _Slot {
 	bool operator==(const _Slot &Slot) const { return this->Index == Slot.Index && this->BagType == Slot.BagType; }
 	bool operator!=(const _Slot &Slot) const { return !(*this == Slot); }
 
-	void Serialize(_Buffer &Data) const;
-	void Unserialize(_Buffer &Data);
+	void Serialize(ae::_Buffer &Data) const;
+	void Unserialize(ae::_Buffer &Data);
 
 	_Bag::BagType BagType;
 	size_t Index;
@@ -106,10 +109,10 @@ class _Inventory {
 		_Inventory();
 
 		// Network
-		void Serialize(_Buffer &Data);
-		void SerializeSlot(_Buffer &Data, const _Slot &Slot);
-		void Unserialize(_Buffer &Data, const _Stats *Stats);
-		void UnserializeSlot(_Buffer &Data, const _Stats *Stats);
+		void Serialize(ae::_Buffer &Data);
+		void SerializeSlot(ae::_Buffer &Data, const _Slot &Slot);
+		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
+		void UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats);
 
 		bool FindItem(const _Item *Item, size_t &Slot, size_t StartSlot);
 		bool HasItemID(uint32_t ItemID);
@@ -117,14 +120,14 @@ class _Inventory {
 		bool IsValidSlot(const _Slot &Slot) { return (int)Slot.BagType < _Bag::BagType::COUNT && Slot.Index < Bags[Slot.BagType].Slots.size(); }
 		_InventorySlot &GetSlot(const _Slot &Slot) { return Bags[Slot.BagType].Slots[Slot.Index]; }
 
-		bool MoveInventory(_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot);
+		bool MoveInventory(ae::_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot);
 		int UpdateItemCount(const _Slot &Slot, int Amount);
 		void SpendItems(const _Item *Item, int Count);
 		_Slot FindSlotForItem(const _Item *Item, int Upgrades, int Count);
 		_Slot FindSlotForItemInBag(_Bag::BagType BagType, const _Item *Item, int Upgrades, int Count);
 		bool AddItem(const _Item *Item, int Upgrades, int Count, _Slot TargetSlot=_Slot());
 		void MoveTradeToInventory();
-		bool SplitStack(_Buffer &Data, const _Slot &Slot, int Count);
+		bool SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count);
 
 		// Traders
 		_Slot GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots);

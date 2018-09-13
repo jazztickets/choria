@@ -23,10 +23,12 @@
 #include <string>
 
 // Forward Declarations
-class _Texture;
+namespace ae {
+	class _Texture;
+}
 
 // Sprite
-class _Sprite : public _BaseObject {
+class _Sprite : public ae::_BaseObject {
 
 	public:
 
@@ -41,9 +43,9 @@ class _Sprite : public _BaseObject {
 
 		// Attributes
 		std::string Name;
-		const _Texture *Texture;
-		_RigidBody RigidBody;
-		_Shape Shape;
+		const ae::_Texture *Texture;
+		ae::_RigidBody RigidBody;
+		ae::_Shape Shape;
 		glm::vec2 Scale;
 		bool Visible;
 		bool Touching;

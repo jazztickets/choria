@@ -25,9 +25,12 @@
 #include <glm/vec3.hpp>
 
 // Forward Declarations
-class _Database;
 class _Object;
 class _Buff;
+
+namespace ae {
+	class _Database;
+}
 
 // Structures
 struct _MapStat {
@@ -42,19 +45,19 @@ struct _MapStat {
 
 struct _Portrait {
 	uint32_t ID;
-	const _Texture *Texture;
+	const ae::_Texture *Texture;
 };
 
 struct _Model {
 	uint32_t ID;
-	const _Texture *Texture;
+	const ae::_Texture *Texture;
 };
 
 struct _Build {
 	uint32_t ID;
 	uint32_t ModelID;
 	std::string Name;
-	const _Texture *Texture;
+	const ae::_Texture *Texture;
 };
 
 struct _Script {
@@ -161,7 +164,7 @@ class _Stats {
 		// Menu
 		void GetPortraits(std::list<_Portrait> &Portraits) const;
 		void GetStartingBuilds(std::list<_Build> &Builds) const;
-		const _Texture *GetPortraitImage(uint32_t PortraitID) const;
+		const ae::_Texture *GetPortraitImage(uint32_t PortraitID) const;
 
 		// Monsters
 		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const;
@@ -195,7 +198,7 @@ class _Stats {
 		std::unordered_map<uint32_t, const _Object *> Builds;
 
 		// Database
-		_Database *Database;
+		ae::_Database *Database;
 		bool Headless;
 
 	private:

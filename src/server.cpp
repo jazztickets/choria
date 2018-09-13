@@ -81,7 +81,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	Time(0.0),
 	SaveTime(0.0),
 	BotTime(0.0),
-	Network(new _ServerNetwork(Config.MaxClients, NetworkPort)),
+	Network(new ae::_ServerNetwork(Config.MaxClients, NetworkPort)),
 	Thread(nullptr) {
 
 	if(!Network->HasConnection())
@@ -90,9 +90,9 @@ _Server::_Server(uint16_t NetworkPort) :
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
-	ObjectManager = new _Manager<_Object>();
-	MapManager = new _Manager<_Map>();
-	BattleManager = new _Manager<_Battle>();
+	ObjectManager = new ae::_Manager<_Object>();
+	MapManager = new ae::_Manager<_Map>();
+	BattleManager = new ae::_Manager<_Battle>();
 	Stats = new _Stats(true);
 	Save = new _Save();
 
@@ -162,17 +162,17 @@ void _Server::Update(double FrameTime) {
 	Network->Update(FrameTime);
 
 	// Get events
-	_NetworkEvent NetworkEvent;
+	ae::_NetworkEvent NetworkEvent;
 	while(Network->GetNetworkEvent(NetworkEvent)) {
 
 		switch(NetworkEvent.Type) {
-			case _NetworkEvent::CONNECT:
+			case ae::_NetworkEvent::CONNECT:
 				HandleConnect(NetworkEvent);
 			break;
-			case _NetworkEvent::DISCONNECT:
+			case ae::_NetworkEvent::DISCONNECT:
 				HandleDisconnect(NetworkEvent);
 			break;
-			case _NetworkEvent::PACKET:
+			case ae::_NetworkEvent::PACKET:
 				HandlePacket(*NetworkEvent.Data, NetworkEvent.Peer);
 				delete NetworkEvent.Data;
 			break;
@@ -261,27 +261,27 @@ void _Server::Update(double FrameTime) {
 }
 
 // Handle client connect
-void _Server::HandleConnect(_NetworkEvent &Event) {
+void _Server::HandleConnect(ae::_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
 	Log << "[CONNECT] Connect from " << Buffer << ":" << Address->port << std::endl;
 
 	// Send game version
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VERSION);
 	Packet.WriteString(GAME_VERSION);
 	Network->SendPacket(Packet, Event.Peer);
 }
 
 // Handle client disconnect
-void _Server::HandleDisconnect(_NetworkEvent &Event) {
+void _Server::HandleDisconnect(ae::_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
 	Log << "[DISCONNECT] Disconnect from " << Buffer << ":" << Address->port << std::endl;
 
-	_Buffer Data;
+	ae::_Buffer Data;
 	HandleExit(Data, Event.Peer);
 
 	// Delete peer from network
@@ -289,7 +289,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 }
 
 // Handle packet data
-void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
+void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 	PacketType Type = Data.Read<PacketType>();
 
 	switch(Type) {
@@ -383,7 +383,7 @@ void _Server::HandlePacket(_Buffer &Data, _Peer *Peer) {
 }
 
 // Send an item to the player
-void _Server::SendItem(_Peer *Peer, const _Item *Item, int Count) {
+void _Server::SendItem(ae::_Peer *Peer, const _Item *Item, int Count) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -395,7 +395,7 @@ void _Server::SendItem(_Peer *Peer, const _Item *Item, int Count) {
 	Player->Inventory->AddItem(Item, 0, Count);
 
 	// Send item
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_ADD);
 	Packet.Write<uint8_t>((uint8_t)Count);
 	Packet.Write<uint32_t>(Item->ID);
@@ -408,7 +408,7 @@ void _Server::SendItem(_Peer *Peer, const _Item *Item, int Count) {
 }
 
 // Login information
-void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Read packet
 	bool CreateAccount = Data.ReadBit();
@@ -428,7 +428,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 
 		// Check for existing account
 		if(Save->CheckUsername(Username)) {
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::ACCOUNT_EXISTS);
 			Network->SendPacket(Packet, Peer);
 			return;
@@ -441,7 +441,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 	Peer->AccountID = Save->GetAccountID(Username, Password);
 
 	// Make sure account exists
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	if(Peer->AccountID == 0) {
 		Packet.Write<PacketType>(PacketType::ACCOUNT_NOTFOUND);
 	}
@@ -461,7 +461,7 @@ void _Server::HandleLoginInfo(_Buffer &Data, _Peer *Peer) {
 }
 
 // Sends a player his/her character list
-void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleCharacterListRequest(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!Peer->AccountID)
 		return;
 
@@ -469,7 +469,7 @@ void _Server::HandleCharacterListRequest(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handles the character create request
-void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleCharacterCreate(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!Peer->AccountID)
 		return;
 
@@ -488,7 +488,7 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 
 	// Found an existing name
 	if(Save->GetCharacterIDByName(Name) != 0) {
-		_Buffer NewPacket;
+		ae::_Buffer NewPacket;
 		NewPacket.Write<PacketType>(PacketType::CREATECHARACTER_INUSE);
 		Network->SendPacket(NewPacket, Peer);
 		return;
@@ -498,13 +498,13 @@ void _Server::HandleCharacterCreate(_Buffer &Data, _Peer *Peer) {
 	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, IsHardcore, Name, PortraitID, BuildID);
 
 	// Notify the client
-	_Buffer NewPacket;
+	ae::_Buffer NewPacket;
 	NewPacket.Write<PacketType>(PacketType::CREATECHARACTER_SUCCESS);
 	Network->SendPacket(NewPacket, Peer);
 }
 
 // Handle a character delete request
-void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleCharacterDelete(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!Peer->AccountID)
 		return;
 
@@ -525,7 +525,7 @@ void _Server::HandleCharacterDelete(_Buffer &Data, _Peer *Peer) {
 }
 
 // Loads the player, updates the world, notifies clients
-void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Read packet
 	uint32_t Slot = Data.Read<uint8_t>();
@@ -552,7 +552,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handles move commands from a client
-void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleMoveCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -564,7 +564,7 @@ void _Server::HandleMoveCommand(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handles use command from a client
-void _Server::HandleUseCommand(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleUseCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -576,7 +576,7 @@ void _Server::HandleUseCommand(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle respawn command from client
-void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -598,7 +598,7 @@ void _Server::HandleRespawn(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle a chat message
-void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -622,8 +622,8 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		if(Message.find("-give") == 0) {
 			std::regex Regex("-give ([0-9]+) ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
-				uint32_t ItemID = (uint32_t)ToNumber<int>(Match.str(1));
-				int Count = std::min(ToNumber<int>(Match.str(2)), 255);
+				uint32_t ItemID = (uint32_t)ae::ToNumber<int>(Match.str(1));
+				int Count = std::min(ae::ToNumber<int>(Match.str(2)), 255);
 
 				if(Stats->Items.find(ItemID) == Stats->Items.end())
 					return;
@@ -634,35 +634,35 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		else if(Message.find("-setgold") == 0) {
 			std::regex Regex("-setgold ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Player->Character->Gold = ToNumber<int>(Match.str(1));
+				Player->Character->Gold = ae::ToNumber<int>(Match.str(1));
 				SendHUD(Peer);
 			}
 		}
 		else if(Message.find("-gold") == 0) {
 			std::regex Regex("-gold ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				StatChange.Values[StatType::GOLD].Integer = ToNumber<int>(Match.str(1));
+				StatChange.Values[StatType::GOLD].Integer = ae::ToNumber<int>(Match.str(1));
 				Player->UpdateStats(StatChange);
 			}
 		}
 		else if(Message.find("-bounty") == 0) {
 			std::regex Regex("-bounty ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Player->Record->Bounty = std::max(0, ToNumber<int>(Match.str(1)));
+				Player->Record->Bounty = std::max(0, ae::ToNumber<int>(Match.str(1)));
 				SendHUD(Peer);
 			}
 		}
 		else if(Message.find("-exp") == 0) {
 			std::regex Regex("-exp ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				StatChange.Values[StatType::EXPERIENCE].Integer = ToNumber<int>(Match.str(1));
+				StatChange.Values[StatType::EXPERIENCE].Integer = ae::ToNumber<int>(Match.str(1));
 				Player->UpdateStats(StatChange);
 			}
 		}
 		else if(Message.find("-clock") == 0) {
 			std::regex Regex("-clock ([0-9.]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Save->Clock = (double)ToNumber<double>(Match.str(1));
+				Save->Clock = (double)ae::ToNumber<double>(Match.str(1));
 				if(Save->Clock < 0)
 					Save->Clock = 0;
 				else if(Save->Clock >= MAP_DAY_LENGTH)
@@ -674,14 +674,14 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 		else if(Message.find("-battle") == 0) {
 			std::regex Regex("-battle ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				uint32_t ZoneID = ToNumber<uint32_t>(Match.str(1));
+				uint32_t ZoneID = ae::ToNumber<uint32_t>(Match.str(1));
 				QueueBattle(Player, ZoneID, false, false);
 			}
 		}
 		else if(Message.find("-map") == 0) {
 			std::regex Regex("-map ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				NetworkIDType MapID = ToNumber<NetworkIDType>(Match.str(1));
+				ae::NetworkIDType MapID = ae::ToNumber<ae::NetworkIDType>(Match.str(1));
 				SpawnPlayer(Player, MapID, _Map::EVENT_MAPENTRANCE);
 			}
 		}
@@ -691,7 +691,7 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				if(!Player->Map)
 					return;
 
-				Player->Position = Player->Map->GetValidCoord(glm::ivec2(ToNumber<int>(Match.str(1)), ToNumber<int>(Match.str(2))));
+				Player->Position = Player->Map->GetValidCoord(glm::ivec2(ae::ToNumber<int>(Match.str(1)), ae::ToNumber<int>(Match.str(2))));
 				SendPlayerPosition(Player->Peer);
 			}
 		}
@@ -701,13 +701,13 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 				if(!Player->Map)
 					return;
 
-				Player->Map->StartEvent(Player, _Event(ToNumber<uint32_t>(Match.str(1)), ToNumber<uint32_t>(Match.str(2))));
+				Player->Map->StartEvent(Player, _Event(ae::ToNumber<uint32_t>(Match.str(1)), ae::ToNumber<uint32_t>(Match.str(2))));
 			}
 		}
 
 		// Build packet
 		if(StatChange.GetChangedFlag()) {
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 			StatChange.Serialize(Packet);
 			Network->SendPacket(Packet, Player->Peer);
@@ -728,13 +728,13 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 }
 
 // Send position to player
-void _Server::SendPlayerPosition(_Peer *Peer) {
+void _Server::SendPlayerPosition(ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
 	_Object *Player = Peer->Object;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_POSITION);
 	Packet.Write<glm::ivec2>(Player->Position);
 
@@ -742,14 +742,14 @@ void _Server::SendPlayerPosition(_Peer *Peer) {
 }
 
 // Send player stats to peer
-void _Server::SendPlayerInfo(_Peer *Peer) {
+void _Server::SendPlayerInfo(ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
 	_Object *Player = Peer->Object;
 
 	// Build packet
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::OBJECT_STATS);
 	Player->SerializeStats(Packet);
 
@@ -757,10 +757,10 @@ void _Server::SendPlayerInfo(_Peer *Peer) {
 }
 
 // Send character list
-void _Server::SendCharacterList(_Peer *Peer) {
+void _Server::SendCharacterList(ae::_Peer *Peer) {
 
 	// Create packet
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHARACTERS_LIST);
 	Packet.Write<uint8_t>(Hardcore);
 	Packet.Write<uint8_t>((uint8_t)Save->GetCharacterCount(Peer->AccountID));
@@ -786,7 +786,7 @@ void _Server::SendCharacterList(_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType) {
+void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType) {
 	if(!Stats)
 		return;
 
@@ -845,7 +845,7 @@ void _Server::SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventTy
 		if(Player->Peer->ENetPeer) {
 
 			// Send new map id
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
 			Packet.Write<uint32_t>(MapID);
 			Packet.Write<double>(Save->Clock);
@@ -886,14 +886,14 @@ void _Server::StartTeleport(_Object *Object, double Time) {
 	Object->Character->ResetUIState();
 	Object->Character->TeleportTime = Time;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_TELEPORTSTART);
 	Packet.Write<double>(Time);
 	Network->SendPacket(Packet, Object->Peer);
 }
 
 // Create player object and load stats from save
-_Object *_Server::CreatePlayer(_Peer *Peer) {
+_Object *_Server::CreatePlayer(ae::_Peer *Peer) {
 
 	// Create object
 	_Object *Player = ObjectManager->Create();
@@ -913,7 +913,7 @@ _Object *_Server::CreatePlayer(_Peer *Peer) {
 _Object *_Server::CreateBot() {
 
 	// Check for account being used
-	_Peer TestPeer(nullptr);
+	ae::_Peer TestPeer(nullptr);
 	TestPeer.AccountID = ACCOUNT_BOTS_ID;
 	if(CheckAccountUse(&TestPeer))
 		return nullptr;
@@ -938,13 +938,13 @@ _Object *_Server::CreateBot() {
 	Save->LoadPlayer(Stats, Bot);
 
 	// Create fake peer
-	Bot->Peer = new _Peer(nullptr);
+	Bot->Peer = new ae::_Peer(nullptr);
 	Bot->Peer->Object = Bot;
 	Bot->Peer->CharacterID = CharacterID;
 	Bot->Peer->AccountID = ACCOUNT_BOTS_ID;
 
 	// Simulate packet
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<uint8_t>(0);
 	HandleCharacterPlay(Packet, Bot->Peer);
 
@@ -952,7 +952,7 @@ _Object *_Server::CreateBot() {
 }
 
 // Validate a peer's attributes
-bool _Server::ValidatePeer(_Peer *Peer) {
+bool _Server::ValidatePeer(ae::_Peer *Peer) {
 	if(!Peer)
 		return false;
 
@@ -966,7 +966,7 @@ bool _Server::ValidatePeer(_Peer *Peer) {
 }
 
 // Check to see if an account is in use
-bool _Server::CheckAccountUse(_Peer *Peer) {
+bool _Server::CheckAccountUse(ae::_Peer *Peer) {
 	for(auto &CheckPeer : Network->GetPeers()) {
 		if(CheckPeer != Peer && CheckPeer->AccountID == Peer->AccountID)
 			return true;
@@ -976,7 +976,7 @@ bool _Server::CheckAccountUse(_Peer *Peer) {
 }
 
 // Handles a player's inventory move
-void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleInventoryMove(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -990,7 +990,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 
 	// Move items
 	{
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
 		if(Player->Inventory->MoveInventory(Packet, OldSlot, NewSlot)) {
 			Network->SendPacket(Packet, Peer);
@@ -1007,7 +1007,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 		TradePlayer->Character->TradeAccepted = false;
 
 		// Build packet
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
 
 		// Write slots
@@ -1020,7 +1020,7 @@ void _Server::HandleInventoryMove(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle a player's inventory use request
-void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1047,7 +1047,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 			TargetSlot.Index = EquipmentType::RING2;
 
 		// Attempt to move
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::INVENTORY_SWAP);
 		if(Player->Inventory->MoveInventory(Packet, Slot, TargetSlot)) {
 			Network->SendPacket(Packet, Peer);
@@ -1070,7 +1070,7 @@ void _Server::HandleInventoryUse(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle a player's inventory split stack request
-void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleInventorySplit(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1085,14 +1085,14 @@ void _Server::HandleInventorySplit(_Buffer &Data, _Peer *Peer) {
 		return;
 
 	// Split items
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 	if(Player->Inventory->SplitStack(Packet, Slot, Count))
 		Network->SendPacket(Packet, Peer);
 }
 
 // Handles a vendor exchange message
-void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1141,7 +1141,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		// Update gold
 		Player->Character->UpdateGold(-Price);
 		if(Peer) {
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
 			Packet.Write<int>(Player->Character->Gold);
 			Network->SendPacket(Packet, Peer);
@@ -1149,7 +1149,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 
 		// Update items
 		if(Peer) {
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 			Packet.Write<uint8_t>(1);
 			Player->Inventory->SerializeSlot(Packet, TargetSlot);
@@ -1177,7 +1177,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			// Update gold
 			Player->Character->UpdateGold(Price);
 			if(Peer) {
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_GOLD);
 				Packet.Write<int>(Player->Character->Gold);
 				Network->SendPacket(Packet, Peer);
@@ -1189,7 +1189,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			// Update items
 			Player->Inventory->UpdateItemCount(Slot, -Amount);
 			if(Peer) {
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 				Packet.Write<uint8_t>(1);
 				Player->Inventory->SerializeSlot(Packet, Slot);
@@ -1200,7 +1200,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handles a trader accept
-void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1216,14 +1216,14 @@ void _Server::HandleTraderAccept(_Buffer &Data, _Peer *Peer) {
 	Player->AcceptTrader(RequiredItemSlots);
 
 	// Send new inventory
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY);
 	Player->Inventory->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
 }
 
 // Handles a skill adjust
-void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleSkillAdjust(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1243,7 +1243,7 @@ void _Server::HandleSkillAdjust(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle a trade request
-void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleTradeRequest(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1281,7 +1281,7 @@ void _Server::HandleTradeRequest(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handles a trade cancel
-void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleTradeCancel(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1293,7 +1293,7 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 		TradePlayer->Character->TradePlayer = nullptr;
 		TradePlayer->Character->TradeAccepted = false;
 
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 		Network->SendPacket(Packet, TradePlayer->Peer);
 	}
@@ -1304,7 +1304,7 @@ void _Server::HandleTradeCancel(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle a trade gold update
-void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleTradeGold(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1324,7 +1324,7 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 	if(TradePlayer) {
 		TradePlayer->Character->TradeAccepted = false;
 
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::TRADE_GOLD);
 		Packet.Write<int>(Gold);
 		Network->SendPacket(Packet, TradePlayer->Peer);
@@ -1332,7 +1332,7 @@ void _Server::HandleTradeGold(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handles a trade accept from a player
-void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1376,14 +1376,14 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 
 			// Send packet to players
 			{
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
 				Packet.Write<int>(Player->Character->Gold);
 				Player->Inventory->Serialize(Packet);
 				Network->SendPacket(Packet, Player->Peer);
 			}
 			{
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::TRADE_EXCHANGE);
 				Packet.Write<int>(TradePlayer->Character->Gold);
 				TradePlayer->Inventory->Serialize(Packet);
@@ -1394,7 +1394,7 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 		else {
 
 			// Notify trading player
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADE_ACCEPT);
 			Packet.Write<char>(Accepted);
 			Network->SendPacket(Packet, TradePlayer->Peer);
@@ -1403,7 +1403,7 @@ void _Server::HandleTradeAccept(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle party info from client
-void _Server::HandlePartyInfo(_Buffer &Data, _Peer *Peer) {
+void _Server::HandlePartyInfo(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1416,14 +1416,14 @@ void _Server::HandlePartyInfo(_Buffer &Data, _Peer *Peer) {
 	Player->Character->PartyName = Data.ReadString();
 
 	// Send info
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::PARTY_INFO);
 	Packet.WriteString(Player->Character->PartyName.c_str());
 	Network->SendPacket(Packet, Player->Peer);
 }
 
 // Handles player status change
-void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
+void _Server::HandlePlayerStatus(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1456,7 +1456,7 @@ void _Server::HandlePlayerStatus(_Buffer &Data, _Peer *Peer) {
 }
 
 // Upgrade an item
-void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1491,7 +1491,7 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 		Player->UpdateStats(StatChange);
 
 		// Build packet
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 		StatChange.Serialize(Packet);
 		Network->SendPacket(Packet, Player->Peer);
@@ -1499,7 +1499,7 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 
 	// Update items
 	{
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 		Packet.Write<uint8_t>(1);
 		Player->Inventory->SerializeSlot(Packet, Slot);
@@ -1513,7 +1513,7 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle paying to play a minigame
-void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1527,7 +1527,7 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 	Player->Inventory->SpendItems(Minigame->RequiredItem, Minigame->Cost);
 
 	// Send new inventory
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY);
 	Player->Inventory->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
@@ -1537,7 +1537,7 @@ void _Server::HandleMinigamePay(_Buffer &Data, _Peer *Peer) {
 }
 
 // Give player minigame reward
-void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1574,7 +1574,7 @@ void _Server::HandleMinigameGetPrize(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle join battle request by player
-void _Server::HandleJoin(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleJoin(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1596,14 +1596,14 @@ void _Server::HandleJoin(_Buffer &Data, _Peer *Peer) {
 	Battle->AddObject(Player, 0, true);
 
 	// Send battle to new player
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::BATTLE_START);
 	Battle->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
 }
 
 // Handle client exit command
-void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1630,7 +1630,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 		if(TradePlayer) {
 			TradePlayer->Character->TradePlayer = nullptr;
 
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
 			Network->SendPacket(Packet, TradePlayer->Peer);
 		}
@@ -1646,7 +1646,7 @@ void _Server::HandleExit(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle action use by player
-void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleActionUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -1661,9 +1661,9 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 	if(Player->Character->Battle) {
 
 		// Notify other players of action
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
-		Packet.Write<NetworkIDType>(Player->NetworkID);
+		Packet.Write<ae::NetworkIDType>(Player->NetworkID);
 		if(Player->Character->Action.Item)
 			Packet.Write<uint32_t>(Player->Character->Action.Item->ID);
 		else
@@ -1674,7 +1674,7 @@ void _Server::HandleActionUse(_Buffer &Data, _Peer *Peer) {
 }
 
 // Handle an action bar change
-void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
+void _Server::HandleActionBarChanged(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
@@ -1688,13 +1688,13 @@ void _Server::HandleActionBarChanged(_Buffer &Data, _Peer *Peer) {
 }
 
 // Updates the player's HUD
-void _Server::SendHUD(_Peer *Peer) {
+void _Server::SendHUD(ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 		return;
 
 	_Object *Player = Peer->Object;
 
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::WORLD_HUD);
 	Packet.Write<int>(Player->Character->Health);
 	Packet.Write<int>(Player->Character->Mana);
@@ -1735,7 +1735,7 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 			if(Object->Peer) {
 
 				// Build packet
-				_Buffer Packet;
+				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 				StatChange.Serialize(Packet);
 
@@ -1747,12 +1747,12 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 }
 
 // Send a message to the player
-void _Server::SendMessage(_Peer *Peer, const std::string &Message, const std::string &ColorName) {
+void _Server::SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName) {
 	if(!ValidatePeer(Peer))
 		return;
 
 	// Build message
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);
 	Packet.WriteString(ColorName.c_str());
 	Packet.WriteString(Message.c_str());
@@ -1762,7 +1762,7 @@ void _Server::SendMessage(_Peer *Peer, const std::string &Message, const std::st
 }
 
 // Broadcast message to all peers
-void _Server::BroadcastMessage(_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName) {
+void _Server::BroadcastMessage(ae::_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName) {
 	for(auto &Peer : Network->GetPeers()) {
 		if(Peer != IgnorePeer)
 			SendMessage(Peer, Message, ColorName);
@@ -1774,9 +1774,9 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	_Bag &Bag = Sender->Inventory->Bags[_Bag::BagType::TRADE];
 
 	// Send items to trader player
-	_Buffer Packet;
+	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
-	Packet.Write<NetworkIDType>(Sender->NetworkID);
+	Packet.Write<ae::NetworkIDType>(Sender->NetworkID);
 	Packet.Write<int>(Sender->Character->TradeGold);
 	for(size_t i = 0; i < Bag.Slots.size(); i++)
 		Sender->Inventory->SerializeSlot(Packet, _Slot(_Bag::BagType::TRADE, i));
@@ -1817,7 +1817,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		}
 
 		// Send battle to players
-		_Buffer Packet;
+		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_START);
 		Battle->Serialize(Packet);
 		Battle->BroadcastPacket(Packet);
@@ -1896,7 +1896,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			}
 
 			// Send battle to players
-			_Buffer Packet;
+			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::BATTLE_START);
 			Battle->Serialize(Packet);
 			Battle->BroadcastPacket(Packet);

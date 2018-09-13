@@ -31,7 +31,6 @@
 class _Object;
 class _Item;
 class _StatusEffect;
-class _Element;
 class _Action;
 class _Scripting;
 class _Map;
@@ -39,8 +38,12 @@ class _Minigame;
 struct _InventorySlot;
 struct _Vendor;
 struct _Trader;
-struct _KeyEvent;
-struct _MouseEvent;
+
+namespace ae {
+	class _Element;
+	struct _KeyEvent;
+	struct _MouseEvent;
+}
 
 // Structures
 struct _Cursor {
@@ -109,7 +112,7 @@ class _HUD {
 
 		// Updates
 		void HandleEnter();
-		void HandleMouseButton(const _MouseEvent &MouseEvent);
+		void HandleMouseButton(const ae::_MouseEvent &MouseEvent);
 		void Update(double FrameTime);
 
 		// Render
@@ -230,33 +233,33 @@ class _HUD {
 		_Bag::BagType GetBagFromWindow(int Window);
 
 		// UI
-		_Element *DiedElement;
-		_Element *StatusEffectsElement;
-		_Element *ActionBarElement;
-		_Element *ButtonBarElement;
-		_Element *EquipmentElement;
-		_Element *InventoryElement;
-		_Element *CharacterElement;
-		_Element *VendorElement;
-		_Element *TradeElement;
-		_Element *TradeTheirsElement;
-		_Element *TraderElement;
-		_Element *BlacksmithElement;
-		_Element *MinigameElement;
-		_Element *SkillsElement;
-		_Element *PartyElement;
-		_Element *TeleportElement;
-		_Element *ChatElement;
-		_Element *HealthElement;
-		_Element *ManaElement;
-		_Element *ExperienceElement;
-		_Element *RecentItemsElement;
-		_Element *MessageElement;
-		_Element *PartyTextBox;
-		_Element *GoldElement;
-		_Element *MessageLabel;
-		_Element *BlacksmithCost;
-		_Element *RespawnInstructions;
+		ae::_Element *DiedElement;
+		ae::_Element *StatusEffectsElement;
+		ae::_Element *ActionBarElement;
+		ae::_Element *ButtonBarElement;
+		ae::_Element *EquipmentElement;
+		ae::_Element *InventoryElement;
+		ae::_Element *CharacterElement;
+		ae::_Element *VendorElement;
+		ae::_Element *TradeElement;
+		ae::_Element *TradeTheirsElement;
+		ae::_Element *TraderElement;
+		ae::_Element *BlacksmithElement;
+		ae::_Element *MinigameElement;
+		ae::_Element *SkillsElement;
+		ae::_Element *PartyElement;
+		ae::_Element *TeleportElement;
+		ae::_Element *ChatElement;
+		ae::_Element *HealthElement;
+		ae::_Element *ManaElement;
+		ae::_Element *ExperienceElement;
+		ae::_Element *RecentItemsElement;
+		ae::_Element *MessageElement;
+		ae::_Element *PartyTextBox;
+		ae::_Element *GoldElement;
+		ae::_Element *MessageLabel;
+		ae::_Element *BlacksmithCost;
+		ae::_Element *RespawnInstructions;
 		_Cursor Cursor;
 		_Cursor Tooltip;
 
@@ -271,7 +274,7 @@ class _HUD {
 		std::list<_Message> ChatHistory;
 		std::list<std::string> SentHistory;
 		std::list<std::string>::iterator SentHistoryIterator;
-		_Element *ChatTextBox;
+		ae::_Element *ChatTextBox;
 
 		// Traders
 		std::vector<_Slot> RequiredItemSlots;

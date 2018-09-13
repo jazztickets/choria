@@ -51,7 +51,7 @@ _Grid::~_Grid() {
 void _Grid::AddObject(const void *Object, const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths) {
 
 	// Get the object's bounding rectangle in world space
-	_Bounds Bounds;
+	ae::_Bounds Bounds;
 	GetTileBounds(ObjectPosition + Offset, ObjectHalfWidths, Bounds);
 
 	// Add object to tiles' lists
@@ -66,18 +66,18 @@ void _Grid::AddObject(const void *Object, const glm::vec2 &ObjectPosition, const
 void _Grid::Render() {
 	for(int i = 0; i < Size.x; i++) {
 		for(int j = 0; j < Size.y; j++) {
-			Graphics.SetProgram(Assets.Programs["pos"]);
-			Graphics.SetVBO(VBO_NONE);
-			Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
-			Graphics.DrawRectangle3D(glm::vec2(i - Offset.x, j - Offset.y), glm::vec2(i - Offset.x + 1, j - Offset.y + 1), false);
+			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+			ae::Graphics.SetVBO(ae::VBO_NONE);
+			ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
+			ae::Graphics.DrawRectangle3D(glm::vec2(i - Offset.x, j - Offset.y), glm::vec2(i - Offset.x + 1, j - Offset.y + 1), false);
 
-			Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tiles[i][j].Objects.size()), glm::vec2(i - Offset.x + 0.5, j - Offset.y + 0.5), CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
+			ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tiles[i][j].Objects.size()), glm::vec2(i - Offset.x + 0.5, j - Offset.y + 0.5), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 		}
 	}
 }
 
 // Returns the tile range that an object touches
-void _Grid::GetTileBounds(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, _Bounds &Bounds) const {
+void _Grid::GetTileBounds(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, ae::_Bounds &Bounds) const {
 
 	// Shape is AABB
 	if(ObjectHalfWidths.y != 0.0f) {
@@ -98,7 +98,7 @@ void _Grid::GetTileBounds(const glm::vec2 &ObjectPosition, const glm::vec2 &Obje
 void _Grid::GetObjectList(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, std::list<const void *> &PotentialObjects) {
 
 	// Get the object's bounding rectangle in world space
-	_Bounds Bounds;
+	ae::_Bounds Bounds;
 	GetTileBounds(ObjectPosition + Offset, ObjectHalfWidths, Bounds);
 
 	// Check tiles for objects

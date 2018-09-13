@@ -25,11 +25,14 @@
 // Forward Declarations
 class _Stats;
 class _Object;
-class _Texture;
 class _Item;
 class _Buff;
-class _Buffer;
 struct _ActionResult;
+
+namespace ae {
+	class _Texture;
+	class _Buffer;
+}
 
 // Types of targets
 enum class TargetType : uint32_t {
@@ -75,10 +78,10 @@ class _Action {
 		bool operator==(const _Action &Action) const { return Action.Item == Item; }
 		bool operator!=(const _Action &Action) const { return !(Action.Item == Item); }
 
-		void Serialize(_Buffer &Data);
-		void Unserialize(_Buffer &Data, const _Stats *Stats);
+		void Serialize(ae::_Buffer &Data);
+		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 
-		bool Resolve(_Buffer &Data, _Object *Source, ScopeType Scope);
+		bool Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope);
 		void HandleSummons(_ActionResult &ActionResult);
 
 		bool IsSet() const { return !(Item == nullptr); }
@@ -104,7 +107,7 @@ struct _ActionResult {
 	glm::vec2 LastPosition;
 	glm::vec2 Position;
 	_Action ActionUsed;
-	const _Texture *Texture;
+	const ae::_Texture *Texture;
 	double Time;
 	double Timeout;
 	double Speed;
