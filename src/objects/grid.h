@@ -25,8 +25,8 @@
 struct _Bounds;
 
 // Holds data for a single tile
-struct _Tile {
-	_Tile() { }
+struct _GridTile {
+	_GridTile() { }
 
 	std::list<const void *> Objects;
 };
@@ -55,5 +55,5 @@ class _Grid {
 		// Attributes
 		glm::ivec2 Size;
 		glm::vec2 Offset;
-		_Tile **Tiles;
+		_GridTile **Tiles;
 };

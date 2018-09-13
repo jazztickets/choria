@@ -30,10 +30,10 @@ _Grid::_Grid(const glm::ivec2 &Size, const glm::vec2 &Offset) :
 	Tiles(nullptr) {
 
 	// Allocate memory
-	Tiles = new _Tile*[Size.x];
+	Tiles = new _GridTile*[Size.x];
 
 	for(int i = 0; i < Size.x; i++)
-		Tiles[i] = new _Tile[Size.y];
+		Tiles[i] = new _GridTile[Size.y];
 }
 
 // Destructor
