@@ -100,7 +100,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	Scripting->Setup(Stats, SCRIPTS_GAME);
 
 	Log.Open((Config.LogPath + "server.log").c_str());
-	Log << "Listening on port " << NetworkPort << std::endl;
+	Log << "[SERVER_START] Listening on port " << NetworkPort << std::endl;
 }
 
 // Destructor
@@ -125,7 +125,7 @@ _Server::~_Server() {
 	delete Stats;
 	delete Thread;
 
-	Log << "Stopping server" << std::endl;
+	Log << "[SERVER_STOP] Stopping server" << std::endl;
 }
 
 // Start the server thread
@@ -265,7 +265,7 @@ void _Server::HandleConnect(_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
-	Log << "Connect " << Buffer << ":" << Address->port << std::endl;
+	Log << "[CONNECT] Connect from " << Buffer << ":" << Address->port << std::endl;
 
 	// Send game version
 	_Buffer Packet;
@@ -279,7 +279,7 @@ void _Server::HandleDisconnect(_NetworkEvent &Event) {
 	char Buffer[16];
 	ENetAddress *Address = &Event.Peer->ENetPeer->address;
 	enet_address_get_host_ip(Address, Buffer, 16);
-	Log << "Disconnect " << Buffer << ":" << Address->port << std::endl;
+	Log << "[DISCONNECT] Disconnect from " << Buffer << ":" << Address->port << std::endl;
 
 	_Buffer Data;
 	HandleExit(Data, Event.Peer);
@@ -548,7 +548,7 @@ void _Server::HandleCharacterPlay(_Buffer &Data, _Peer *Peer) {
 	BroadcastMessage(Peer, Message, "gray");
 
 	// Log
-	Log << "Player " << Message << " ( action=join character_id=" << Peer->CharacterID << " )" << std::endl;
+	Log << "[JOIN] Player " << Message << " ( character_id=" << Peer->CharacterID << " )" << std::endl;
 }
 
 // Handles move commands from a client
@@ -722,6 +722,9 @@ void _Server::HandleChatMessage(_Buffer &Data, _Peer *Peer) {
 
 	// Send message to other players
 	BroadcastMessage(nullptr, Player->Name + ": " + Message, "white");
+
+	// Log
+	Log << "[CHAT] " << Player->Name + ": " + Message << std::endl;
 }
 
 // Send position to player
@@ -1156,7 +1159,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 		Player->Character->CalculateStats();
 
 		// Log
-		Log << "Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( action=buy character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
+		Log << "[PURCHASE] Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1181,7 +1184,7 @@ void _Server::HandleVendorExchange(_Buffer &Data, _Peer *Peer) {
 			}
 
 			// Log
-			Log << "Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( action=sell character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
+			Log << "[SELL] Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
 
 			// Update items
 			Player->Inventory->UpdateItemCount(Slot, -Amount);
@@ -1504,7 +1507,7 @@ void _Server::HandleBlacksmithUpgrade(_Buffer &Data, _Peer *Peer) {
 	}
 
 	// Log
-	Log << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( action=upgrade character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
+	Log << "[UPGRADE] Player " << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
 
 	Player->Character->CalculateStats();
 }

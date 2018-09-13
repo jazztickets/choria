@@ -305,8 +305,8 @@ void _Save::SavePlayer(const _Object *Player, NetworkIDType MapID, _LogFile *Log
 	Database->CloseQuery();
 
 	if(Log) {
-		*Log << "Saving player " << Player->Name
-			 << " ( action=save character_id=" << Player->Character->CharacterID
+		*Log << "[SAVE] Saving player " << Player->Name
+			 << " ( character_id=" << Player->Character->CharacterID
 			 << " exp=" << Player->Character->Experience
 			 << " gold=" << Player->Character->Gold
 			 << " playtime=" << Player->Record->PlayTime

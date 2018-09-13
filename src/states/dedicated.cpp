@@ -33,17 +33,17 @@ _DedicatedState DedicatedState;
 
 // Command loop
 void RunCommandThread(_Server *Server) {
-	Server->Log << "Type help to list commands" << std::endl;
+	std::cout << "Type help to list commands" << std::endl;
 
 	bool Done = false;
 	while(!Done) {
 		std::string Input;
 		std::getline(std::cin, Input);
+		Server->Log << "[SERVER_COMMAND] " << Input << std::endl;
 		if(Input == "help") {
 			DedicatedState.ShowCommands();
 		}
 		else if(Input.substr(0, 4) == "stop" || std::cin.eof() == 1) {
-			Server->Log << "Stopping..." << std::endl;
 			int Seconds = 0;
 			if(Input.size() > 5)
 				Seconds = std::stoi(Input.substr(5, std::string::npos));
@@ -57,7 +57,7 @@ void RunCommandThread(_Server *Server) {
 			DedicatedState.ShowBattles();
 		}
 		else {
-			Server->Log << "Command not recognized" << std::endl;
+			std::cout << "Command not recognized" << std::endl;
 		}
 	}
 
@@ -83,7 +83,7 @@ void _DedicatedState::Init() {
 		Server->Hardcore = Hardcore;
 
 		if(Hardcore)
-			Server->Log << "Hardcore only is on" << std::endl;
+			std::cout << "Hardcore only is on" << std::endl;
 
 		Thread = new std::thread(RunCommandThread, Server);
 	}
@@ -114,50 +114,48 @@ void _DedicatedState::Update(double FrameTime) {
 
 // List available commands
 void _DedicatedState::ShowCommands() {
-
-	Server->Log << std::endl;
-	Server->Log << "stop [seconds]" << std::endl;
-	Server->Log << "players" << std::endl;
-	Server->Log << "battles" << std::endl;
+	std::cout << std::endl;
+	std::cout << "stop [seconds]" << std::endl;
+	std::cout << "players" << std::endl;
+	std::cout << "battles" << std::endl;
 }
 
 // Show all players
 void _DedicatedState::ShowPlayers() {
 	auto &Peers = Server->Network->GetPeers();
 
-	Server->Log << "peer count=" << Peers.size() << std::endl;
+	std::cout << "peer count=" << Peers.size() << std::endl;
 	size_t i = 0;
 	for(auto &Peer : Peers) {
-		Server->Log << std::setw(3) << i << ": account_id=" << Peer->AccountID;
+		std::cout << std::setw(3) << i << ": account_id=" << Peer->AccountID;
 		if(Peer->Object) {
 			uint32_t MapID = 0;
 			if(Peer->Object->Map)
 				MapID = Peer->Object->Map->NetworkID;
 
-			Server->Log << ", network_id=" << Peer->Object->NetworkID << ", map_id=" << MapID << ", name=" << Peer->Object->Name;
+			std::cout << ", network_id=" << Peer->Object->NetworkID << ", map_id=" << MapID << ", name=" << Peer->Object->Name;
 		}
 
-		Server->Log << std::endl;
+		std::cout << std::endl;
 		i++;
 	}
 
-	Server->Log << std::endl;
+	std::cout << std::endl;
 }
 
 // Show all battles
 void _DedicatedState::ShowBattles() {
 	auto &Battles = Server->BattleManager->Objects;
 
-	Server->Log << "battle count=" << Battles.size() << std::endl;
+	std::cout << "battle count=" << Battles.size() << std::endl;
 	size_t i = 0;
 	for(auto &Battle : Battles) {
-		Server->Log << i << ": id=" << Battle->NetworkID << std::endl;
+		std::cout << i << ": id=" << Battle->NetworkID << std::endl;
 		for(auto &Object : Battle->Objects) {
-			Server->Log << "\tnetwork_id=" << Object->NetworkID << "\thealth=" << Round(Object->Character->GetHealthPercent()) << "\tname=" << Object->Name << std::endl;
+			std::cout << "\tnetwork_id=" << Object->NetworkID << "\thealth=" << Round(Object->Character->GetHealthPercent()) << "\tname=" << Object->Name << std::endl;
 		}
 
 		i++;
-		Server->Log << std::endl;
+		std::cout << std::endl;
 	}
-
 }
