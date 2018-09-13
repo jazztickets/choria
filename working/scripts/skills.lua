@@ -940,11 +940,25 @@ function Skill_Hunt.GetGold(self, Level)
 end
 
 function Skill_Hunt.GetInfo(self, Item)
-	return "Attack another player and get [c green]" .. self:GetGold(Item.Level) .. "% [c white]of their gold for a kill"
+	return "Attack another player and get [c green]" .. self:GetGold(Item.Level) .. "% [c white]of their gold for a kill\n\n[c gray]"
 end
 
 function Skill_Hunt.Use(self, Level, Duration, Source, Target, Result)
-	Result.Target.PVP = self:GetGold(Level)
+	Result.Target.Hunt = self:GetGold(Level) * 0.01
+
+	return Result
+end
+
+-- Bounty Hunt --
+
+Skill_BountyHunt = Base_Attack:New()
+
+function Skill_BountyHunt.GetInfo(self, Item)
+	return "Attack a fugitive to claim their bounty with a kill"
+end
+
+function Skill_BountyHunt.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.BountyHunt = 1.0
 
 	return Result
 end

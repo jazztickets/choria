@@ -675,7 +675,7 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 			std::regex Regex("-battle ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
 				uint32_t ZoneID = ae::ToNumber<uint32_t>(Match.str(1));
-				QueueBattle(Player, ZoneID, false, false);
+				QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
 			}
 		}
 		else if(Message.find("-map") == 0) {
@@ -868,12 +868,14 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 }
 
 // Queue a battle for an object
-void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, int PVP) {
+void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed) {
 	_BattleEvent BattleEvent;
 	BattleEvent.Object = Object;
 	BattleEvent.Zone = Zone;
 	BattleEvent.Scripted = Scripted;
 	BattleEvent.PVP = PVP;
+	BattleEvent.BountyEarned = BountyEarned;
+	BattleEvent.BountyClaimed = BountyClaimed;
 
 	BattleEvents.push_back(BattleEvent);
 }
@@ -1796,7 +1798,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 		// Get list of players on current tile
 		std::list<_Object *> Players;
-		BattleEvent.Object->Map->GetPVPPlayers(BattleEvent.Object, Players);
+		BattleEvent.Object->Map->GetPVPPlayers(BattleEvent.Object, Players, BattleEvent.BountyEarned > 0);
 		if(!Players.size())
 			return;
 
@@ -1807,6 +1809,8 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 		Battle->Server = this;
 		Battle->Scripting = Scripting;
 		Battle->PVP = BattleEvent.PVP;
+		Battle->BountyEarned = BattleEvent.BountyEarned;
+		Battle->BountyClaimed = BattleEvent.BountyClaimed;
 		Battle->Difficulty[0] = 1.0;
 		Battle->Difficulty[1] = 1.0;
 

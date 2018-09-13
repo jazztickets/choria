@@ -65,7 +65,9 @@ _Battle::_Battle() :
 	Cooldown(0.0),
 	Zone(0),
 	SideCount{0, 0},
-	PVP(0),
+	PVP(false),
+	BountyEarned(0.0f),
+	BountyClaimed(0.0f),
 	Boss(false),
 
 	Time(0),
@@ -587,7 +589,7 @@ void _Battle::ServerEndBattle() {
 			if(Object->IsMonster())
 				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven + Object->Fighter->GoldStolen;
 			else
-				SideStats[Side].TotalGoldGiven += Object->Record->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * PVP * 0.01f + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Record->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * BountyEarned + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
@@ -681,7 +683,7 @@ void _Battle::ServerEndBattle() {
 		int GoldEarned = 0;
 		if(!Object->Character->IsAlive()) {
 			if(PVP)
-				Object->ApplyDeathPenalty(PVP * 0.01f, Object->Record->Bounty);
+				Object->ApplyDeathPenalty(BountyEarned, Object->Record->Bounty);
 			else
 				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
@@ -690,8 +692,8 @@ void _Battle::ServerEndBattle() {
 			GoldEarned = SideStats[WinningSide].GoldPerCharacter;
 			Object->Record->PlayerKills += SideStats[!WinningSide].PlayerCount;
 			Object->Record->MonsterKills += SideStats[!WinningSide].MonsterCount;
-			if(PVP) {
-				if(Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
+			if(PVP && Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
+				if(BountyEarned) {
 					Object->Record->Bounty += GoldEarned;
 					if(Object->Record->Bounty)
 						Server->BroadcastMessage(nullptr, "Player \"" + Object->Name + "\" now has a bounty of " + std::to_string(Object->Record->Bounty) + " gold!", "cyan");

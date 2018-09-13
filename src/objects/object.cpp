@@ -311,15 +311,12 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 void _Object::Render(const _Object *ClientPlayer) {
 	if(Map && ModelTexture) {
 
-		float Alpha = 1.0f;
-		if(Character->Invisible > 0)
-			Alpha = PLAYER_INVIS_ALPHA;
-
+		// Setup shader
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-
 		ae::Graphics.SetVBO(ae::VBO_QUAD);
 
+		// Draw debug server position
 		glm::vec3 DrawPosition;
 		if(Character->HUD && Character->HUD->ShowDebug) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
@@ -327,16 +324,26 @@ void _Object::Render(const _Object *ClientPlayer) {
 			ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
 		}
 
-		glm::vec4 Color(1.0f, 1.0f, 1.0f, Alpha);
+		// Set invisible alpha
+		float Alpha = 1.0f;
+		if(Character->Invisible > 0)
+			Alpha = PLAYER_INVIS_ALPHA;
+
+		// Draw model
 		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
-		ae::Graphics.SetColor(Color);
+		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
 		ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
 		if(Character->StatusTexture) {
 			ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
 		}
 
+		// Draw name
 		if(ClientPlayer != this && Character->Invisible != 1) {
-			ae::Assets.Fonts["hud_medium"]->DrawText(Name, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, Color, 1.0f / ModelTexture->Size.x);
+			std::string NameText = Name;
+			if(Record->Bounty > 0)
+				NameText += " ([c cyan]" + std::to_string(Record->Bounty) + "[c white])";
+
+			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 		}
 	}
 }
@@ -697,8 +704,13 @@ void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<uint8_t>(Character->Status);
-	Data.Write<uint8_t>(Light);
+	Data.WriteBit(Light);
 	Data.WriteBit(Character->Invisible);
+	Data.WriteBit(Record->Bounty);
+	if(Record->Bounty)
+		Data.Write<int>(Record->Bounty);
+	if(Light)
+		Data.Write<uint8_t>(Light);
 }
 
 // Serialize object stats
@@ -969,18 +981,21 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Run server only commands
 	if(Server) {
-		if(!Character->Battle && Character->IsAlive() && StatChange.HasStat(StatType::TELEPORT)) {
-			Server->StartTeleport(this, StatChange.Values[StatType::TELEPORT].Float);
-		}
+		if(!Character->Battle) {
 
-		// Start battle
-		if(!Character->Battle && StatChange.HasStat(StatType::BATTLE)) {
-			Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true, false);
-		}
+			// Start teleport
+			if(StatChange.HasStat(StatType::TELEPORT))
+				Server->StartTeleport(this, StatChange.Values[StatType::TELEPORT].Float);
 
-		// Start PVP
-		if(!Character->Battle && StatChange.HasStat(StatType::PVP)) {
-			Server->QueueBattle(this, 0, false, StatChange.Values[StatType::PVP].Integer);
+			// Start battle
+			if(StatChange.HasStat(StatType::BATTLE))
+				Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true, false, 0.0f, 0.0f);
+
+			// Start PVP
+			if(StatChange.HasStat(StatType::HUNT))
+				Server->QueueBattle(this, 0, false, true, StatChange.Values[StatType::HUNT].Float, 0.0f);
+			if(StatChange.HasStat(StatType::BOUNTYHUNT))
+				Server->QueueBattle(this, 0, false, true, 0.0f, StatChange.Values[StatType::BOUNTYHUNT].Float);
 		}
 	}
 

@@ -88,7 +88,8 @@ class _Character {
 		bool CanOpenInventory() const { return IsAlive() && !Battle; }
 		bool CanOpenParty() const { return IsAlive() && !Battle; }
 		bool CanTeleport() const { return IsAlive() && !Battle; }
-		bool CanBattle() const { return !Battle && Status == STATUS_NONE && Invisible <= 0;	}
+		bool CanBattle() const { return !Battle && IsAlive() && Status == STATUS_NONE && Invisible <= 0; }
+		bool CanPVP() const { return !Battle && IsAlive(); }
 
 		// Battle
 		void GenerateNextBattle();

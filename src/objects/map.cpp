@@ -19,6 +19,7 @@
 #include <objects/object.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
+#include <objects/components/record.h>
 #include <objects/components/controller.h>
 #include <objects/object.h>
 #include <objects/battle.h>
@@ -352,7 +353,7 @@ void _Map::CheckEvents(_Object *Object) const {
 				Object->Character->Trader = nullptr;
 
 				if(Object->Character->NextBattle <= 0) {
-					Server->QueueBattle(Object, Tile->Zone, false, false);
+					Server->QueueBattle(Object, Tile->Zone, false, false, 0.0f, 0.0f);
 				}
 			}
 		break;
@@ -951,13 +952,14 @@ void _Map::GetPotentialBattlePlayers(const _Object *Player, float DistanceSquare
 		if(!Object->Character)
 			continue;
 
-		if(Object != Player) {
-			glm::vec2 Delta = Object->Position - Player->Position;
-			if(glm::dot(Delta, Delta) <= DistanceSquared && Object->Character->CanBattle() && Player->Character->PartyName == Object->Character->PartyName) {
-				Players.push_back(Object);
-				if(Players.size() >= Max)
-					return;
-			}
+		if(Object == Player)
+			continue;
+
+		glm::vec2 Delta = Object->Position - Player->Position;
+		if(glm::dot(Delta, Delta) <= DistanceSquared && Object->Character->CanBattle() && Player->Character->PartyName == Object->Character->PartyName) {
+			Players.push_back(Object);
+			if(Players.size() >= Max)
+				return;
 		}
 	}
 }
@@ -968,13 +970,14 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 		if(!Object->Character)
 			continue;
 
-		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Character->Battle && !Object->Character->Battle->PVP && Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
-				if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
-					return Object->Character->Battle;
-				else
-					HitPrivateParty = true;
-			}
+		if(Object == Player)
+			continue;
+
+		if(Object->Position == Player->Position && Object->Character->IsAlive() && Object->Character->Battle && !Object->Character->Battle->PVP && Object->Character->Battle->SideCount[0] < BATTLE_MAX_OBJECTS_PER_SIDE) {
+			if(Object->Character->PartyName == "" || Object->Character->PartyName == Player->Character->PartyName)
+				return Object->Character->Battle;
+			else
+				HitPrivateParty = true;
 		}
 	}
 
@@ -982,19 +985,42 @@ _Battle *_Map::GetCloseBattle(const _Object *Player, bool &HitPrivateParty) {
 }
 
 // Returns target players appropriate for pvp
-void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players) {
-	if(!IsPVPZone(Player->Position))
+void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, bool UsePVPZone) {
+
+	// Attacker must be in PVP zone
+	if(UsePVPZone && !IsPVPZone(Player->Position))
 		return;
 
 	for(const auto &Object : Objects) {
+
+		// Skip self target
+		if(Object == Player)
+			continue;
+
+		// Check for character
 		if(!Object->Character)
 			continue;
 
-		if(Object != Player) {
-			if(Object->Position == Player->Position && Object->Character->IsAlive() && !Object->Character->Battle && (Object->Character->PartyName == "" || Object->Character->PartyName != Player->Character->PartyName)) {
-				Players.push_back(Object);
-			}
-		}
+		// Check if target can PVP
+		if(!Object->Character->CanPVP())
+			continue;
+
+		// Target must be in PVP zone
+		if(UsePVPZone && !IsPVPZone(Object->Position))
+			continue;
+
+		// Can only bounty hunt players with a bounty
+		if(!UsePVPZone && !Object->Record->Bounty)
+			continue;
+
+		// Can't attack same party member
+		if(Object->Character->PartyName != "" && Object->Character->PartyName == Player->Character->PartyName)
+			continue;
+
+		// Check distance
+		glm::vec2 Delta = Object->Position - Player->Position;
+		if(glm::dot(Delta, Delta) <= BATTLE_PVP_DISTANCE)
+			Players.push_back(Object);
 	}
 }
 

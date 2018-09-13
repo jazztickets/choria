@@ -788,8 +788,13 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 		glm::ivec2 Position = Data.Read<glm::ivec2>();
 		uint8_t Status = Data.Read<uint8_t>();
-		int Light = Data.Read<uint8_t>();
+		int Light = Data.ReadBit();
 		int Invisible = Data.ReadBit();
+		int Bounty = Data.ReadBit();
+		if(Bounty)
+			Bounty = Data.Read<int>();
+		if(Light)
+			Light = Data.Read<uint8_t>();
 
 		// Find object
 		_Object *Object = ObjectManager->GetObject(NetworkID);
@@ -801,6 +806,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			else {
 				Object->Position = Position;
 				Object->Character->Invisible = Invisible;
+				Object->Record->Bounty = Bounty;
 			}
 			Object->Light = Light;
 			Object->ServerPosition = Position;

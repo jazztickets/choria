@@ -106,7 +106,9 @@ class _Battle : public ae::_BaseObject {
 		double Cooldown;
 		uint32_t Zone;
 		int SideCount[2];
-		int PVP;
+		bool PVP;
+		float BountyEarned;
+		float BountyClaimed;
 		bool Boss;
 
 	private:

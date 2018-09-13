@@ -39,6 +39,7 @@ names=`xmllint --xpath "//*[local-name()='svg']/*[local-name()='metadata']//*[lo
 
 # create export directory
 mkdir -p export
+rm export/*.png
 
 # export pngs
 convert -density ${density} -background none ${file} -crop ${size}x${size} -depth 8 +repage PNG32:export/_out.png
