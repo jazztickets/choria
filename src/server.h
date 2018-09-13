@@ -58,7 +58,7 @@ class _Server {
 		void Update(double FrameTime);
 		void StartThread();
 		void JoinThread();
-		void StopServer();
+		void StopServer(int Seconds=0);
 
 		void SpawnPlayer(_Object *Player, NetworkIDType MapID, uint32_t EventType);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, int PVP);
@@ -106,8 +106,10 @@ class _Server {
 
 		// State
 		bool Done;
+		bool StartShutdownTimer;
 		bool StartDisconnect;
 		bool StartShutdown;
+		double ShutdownTime;
 		uint16_t TimeSteps;
 		double Time;
 		double SaveTime;

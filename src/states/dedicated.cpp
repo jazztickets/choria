@@ -39,19 +39,28 @@ void RunCommandThread(_Server *Server) {
 	while(!Done) {
 		std::string Input;
 		std::getline(std::cin, Input);
-		if(Input == "help")
+		if(Input == "help") {
 			DedicatedState.ShowCommands();
-		else if(Input == "stop" || std::cin.eof() == 1)
+		}
+		else if(Input.substr(0, 4) == "stop" || std::cin.eof() == 1) {
+			Server->Log << "Stopping..." << std::endl;
+			int Seconds = 0;
+			if(Input.size() > 5)
+				Seconds = std::stoi(Input.substr(5, std::string::npos));
+			Server->StopServer(Seconds);
 			Done = true;
-		else if(Input == "p" || Input == "players")
+		}
+		else if(Input == "p" || Input == "players") {
 			DedicatedState.ShowPlayers();
-		else if(Input == "b" || Input == "battles")
+		}
+		else if(Input == "b" || Input == "battles") {
 			DedicatedState.ShowBattles();
-		else
+		}
+		else {
 			Server->Log << "Command not recognized" << std::endl;
+		}
 	}
 
-	Server->Log << "Stopping..." << std::endl;
 
 	Server->StopServer();
 }
@@ -107,7 +116,7 @@ void _DedicatedState::Update(double FrameTime) {
 void _DedicatedState::ShowCommands() {
 
 	Server->Log << std::endl;
-	Server->Log << "stop" << std::endl;
+	Server->Log << "stop [seconds]" << std::endl;
 	Server->Log << "players" << std::endl;
 	Server->Log << "battles" << std::endl;
 }

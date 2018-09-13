@@ -73,8 +73,10 @@ _Server::_Server(uint16_t NetworkPort) :
 	IsTesting(false),
 	Hardcore(false),
 	Done(false),
+	StartShutdownTimer(false),
 	StartDisconnect(false),
 	StartShutdown(false),
+	ShutdownTime(0.0),
 	TimeSteps(0),
 	Time(0.0),
 	SaveTime(0.0),
@@ -141,8 +143,14 @@ void _Server::JoinThread() {
 }
 
 // Stop the server
-void _Server::StopServer() {
-	StartDisconnect = true;
+void _Server::StopServer(int Seconds) {
+	if(Seconds > 0) {
+		StartShutdownTimer = true;
+		ShutdownTime = Seconds;
+	}
+	else {
+		StartDisconnect = true;
+	}
 }
 
 // Update
@@ -199,7 +207,17 @@ void _Server::Update(double FrameTime) {
 	}
 
 	// Wait for peers to disconnect
-	if(StartDisconnect) {
+	if(StartShutdownTimer) {
+		ShutdownTime -= FrameTime;
+		if(std::abs(std::fmod(ShutdownTime, 5.0)) >= 4.99)
+			BroadcastMessage(nullptr, "The server will be shutting down in " + std::to_string((int)(ShutdownTime + 0.5)) + " seconds.", "red");
+
+		if(ShutdownTime <= 0) {
+			StartDisconnect = true;
+			StartShutdownTimer = false;
+		}
+	}
+	else if(StartDisconnect) {
 		Network->DisconnectAll();
 		StartDisconnect = false;
 		StartShutdown = true;
