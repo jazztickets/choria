@@ -268,7 +268,7 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 
 	// Handle alt-enter
 	if(Event.type == SDL_KEYDOWN) {
-		if((Event.key.keysym.mod & KMOD_ALT) && Event.key.keysym.scancode == SDL_SCANCODE_RETURN) {
+		if((Event.key.keysym.mod & KMOD_ALT) && (Event.key.keysym.scancode == SDL_SCANCODE_RETURN || Event.key.keysym.scancode == SDL_SCANCODE_KP_ENTER)) {
 			if(!Event.key.repeat)
 				Menu.SetFullscreen(!Config.Fullscreen);
 
