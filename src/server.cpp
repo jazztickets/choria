@@ -1256,6 +1256,10 @@ void _Server::HandleTradeRequest(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!Map)
 		return;
 
+	// Check for level requirement
+	if(Player->Character->Level < GAME_TRADING_LEVEL)
+		return;
+
 	// Set status
 	Player->Character->WaitingForTrade = true;
 

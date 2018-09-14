@@ -865,6 +865,12 @@ void _HUD::ToggleTrade() {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenTrade())
 		return;
 
+	// Restrict trading for new characters
+	if(Player->Character->Level < GAME_TRADING_LEVEL) {
+		SetMessage("Trading unlocks at level " + std::to_string(GAME_TRADING_LEVEL));
+		return;
+	}
+
 	if(!TradeElement->Active) {
 		CloseWindows(true);
 		InitTrade();
