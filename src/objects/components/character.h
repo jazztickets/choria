@@ -30,6 +30,7 @@ class _Object;
 class _Stats;
 class _Battle;
 class _HUD;
+class _StatusEffect;
 struct _Vendor;
 struct _Trader;
 struct _MinigameType;

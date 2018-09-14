@@ -2395,7 +2395,7 @@ void _HUD::RemoveStatChanges(_Object *Owner) {
 
 // Add multiple statchange ui elements
 void _HUD::AddStatChange(_StatChange &StatChange) {
-	if(StatChange.GetChangedFlag() == 0 || !StatChange.Object)
+	if(StatChange.Values.size() == 0 || !StatChange.Object)
 		return;
 
 	if(StatChange.HasStat(StatType::HEALTH)) {

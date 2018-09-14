@@ -706,7 +706,7 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 		}
 
 		// Build packet
-		if(StatChange.GetChangedFlag()) {
+		if(StatChange.Values.size()) {
 			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
 			StatChange.Serialize(Packet);

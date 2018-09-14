@@ -30,31 +30,8 @@
 #include <iostream>
 
 // Constructor
-_StatChange::_StatChange() {
-	Reset();
-}
-
-// Reset stats
-void _StatChange::Reset() {
-	Object = nullptr;
-	Values.clear();
-}
-
-// Get bit field of fields changed
-uint64_t _StatChange::GetChangedFlag() {
-	uint64_t Flag = 0;
-
-	for(auto Iterator : Values) {
-		Flag |= ((uint64_t)1 << (uint64_t)Iterator.first);
-	}
-
-	return Flag;
-}
-
-// Return true if a stat was changed
-bool _StatChange::HasStat(StatType Type) {
-
-	return Values.find(Type) != Values.end();
+_StatChange::_StatChange() :
+	Object(nullptr) {
 }
 
 // Serialize network
@@ -62,11 +39,17 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 	if(!Object)
 		throw std::runtime_error("_StatChange::Serialize: Object is null!");
 
-	uint64_t ChangedFlag = GetChangedFlag();
+	// Write header
 	Data.Write<ae::NetworkIDType>(Object->NetworkID);
-	Data.Write<uint64_t>(ChangedFlag);
+	Data.Write<uint8_t>(Values.size());
 
+	// Iterate over statchanges
 	for(auto Iterator : Values) {
+
+		// Write type
+		Data.Write<uint8_t>((uint8_t)Iterator.first);
+
+		// Write data
 		if(Iterator.first == StatType::BUFF) {
 			_Buff *Buff = (_Buff *)(Iterator.second.Pointer);
 			Data.Write<uint32_t>(Buff->ID);
@@ -80,6 +63,7 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager) {
 	Reset();
 
+	// Get object id
 	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 	Object = Manager->GetObject(NetworkID);
 	if(!Object) {
@@ -87,21 +71,24 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 		return;
 	}
 
-	// Get changes
-	uint64_t ChangedFlag = Data.Read<uint64_t>();
-	if(!ChangedFlag)
+	// Get change count
+	int Count = Data.Read<uint8_t>();
+	if(!Count)
 		return;
 
-	// Update values
-	for(uint64_t i = 0; i < (uint64_t)StatType::COUNT; i++) {
-		if(ChangedFlag & ((uint64_t)1 << i)) {
-			if(i == (uint64_t)StatType::BUFF) {
-				uint32_t BuffID = Data.Read<uint32_t>();
-				Values[(StatType)i].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
-			}
-			else
-				Values[(StatType)i].Integer = Data.Read<int>();
+	// Get values
+	for(int i = 0; i < Count; i++) {
+
+		// Get type
+		StatType Type = (StatType)Data.Read<uint8_t>();
+
+		// Get data
+		if(Type == StatType::BUFF) {
+			uint32_t BuffID = Data.Read<uint32_t>();
+			Values[Type].Pointer = (void *)Object->Stats->Buffs.at(BuffID);
 		}
+		else
+			Values[Type].Integer = Data.Read<int>();
 	}
 }
 

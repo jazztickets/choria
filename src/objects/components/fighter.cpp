@@ -16,6 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <objects/components/fighter.h>
+#include <objects/statuseffect.h>
 #include <ae/ui.h>
 #include <ae/assets.h>
 #include <hud.h>

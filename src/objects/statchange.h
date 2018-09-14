@@ -18,11 +18,10 @@
 #pragma once
 
 // Libraries
-#include <objects/statuseffect.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 // Forward Declarations
 class _Object;
@@ -43,7 +42,7 @@ struct StatTypeHash {
 };
 
 // Types of stats
-enum class StatType : uint64_t {
+enum class StatType : int {
 	ID,
 	BUFF,
 	BUFFLEVEL,
@@ -97,7 +96,7 @@ struct _StatStorage {
 	StatValueType ValueType;
 };
 
-const std::map<std::string, _StatStorage> StatStringToType = {
+const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "ID",            { StatType::ID            , StatValueType::INTEGER } },
 	{ "Buff",          { StatType::BUFF          , StatValueType::POINTER } },
 	{ "BuffLevel",     { StatType::BUFFLEVEL     , StatValueType::INTEGER } },
@@ -151,18 +150,17 @@ class _StatChange {
 
 		_StatChange();
 
-		void Reset();
+		void Reset() { Object = nullptr; Values.clear(); }
+		bool HasStat(StatType Type) const { return Values.find(Type) != Values.end();	}
+
 		void Serialize(ae::_Buffer &Data);
 		void Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager);
-
-		uint64_t GetChangedFlag();
-		bool HasStat(StatType Type);
 
 		// Owner
 		_Object *Object;
 
 		// Data
-		std::map<StatType, _Value> Values;
+		std::unordered_map<StatType, _Value> Values;
 };
 
 // Graphical stat change

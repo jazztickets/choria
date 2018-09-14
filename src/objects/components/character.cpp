@@ -19,6 +19,7 @@
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
 #include <objects/object.h>
+#include <objects/statuseffect.h>
 #include <objects/buff.h>
 #include <ae/buffer.h>
 #include <ae/random.h>
@@ -142,7 +143,7 @@ void _Character::Update(double FrameTime) {
 				StatChange.Values[StatType::MANA].Integer = ManaRegen;
 
 			// Update object
-			if(StatChange.GetChangedFlag() != 0) {
+			if(StatChange.Values.size() != 0) {
 				Object->UpdateStats(StatChange);
 
 				// Build packet
