@@ -767,6 +767,7 @@ INSERT INTO trader VALUES(14,'poison_ring',181,1);
 INSERT INTO trader VALUES(15,'actionslot_ii',97,1);
 INSERT INTO trader VALUES(16,'fireblast',9,1);
 INSERT INTO trader VALUES(17,'lucky_amulet',217,1);
+INSERT INTO trader VALUES(18,'medium_torch',222,1);
 CREATE TABLE IF NOT EXISTS "traderitem" (
 	"id" INTEGER PRIMARY KEY,
 	"trader_id" INTEGER REFERENCES trader(id) ON DELETE CASCADE,
@@ -815,6 +816,8 @@ INSERT INTO traderitem VALUES(48,17,115,2);
 INSERT INTO traderitem VALUES(49,17,124,2);
 INSERT INTO traderitem VALUES(50,17,146,2);
 INSERT INTO traderitem VALUES(51,17,193,2);
+INSERT INTO traderitem VALUES(52,18,125,2);
+INSERT INTO traderitem VALUES(53,18,101,1);
 CREATE TABLE IF NOT EXISTS "blacksmith" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT,
@@ -1295,6 +1298,8 @@ INSERT INTO item VALUES(218,7,0,0,0,0,0,'Gauntlet','textures/items/gauntlet.png'
 INSERT INTO item VALUES(219,0,0,0,0,0,0,'Bridge Key','textures/items/key.png','',0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(220,10,0,1,1,0,0,'Torch','textures/items/torch.png','Item_Torch',15,1,3,0,60.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(221,11,0,0,0,0,0,'Game Token','textures/items/token.png','',10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/torch.png','Item_Torch',35,1,5,0,120.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(223,10,0,1,1,0,0,'Large Torch','textures/items/torch.png','Item_Torch',75,1,8,0,179.99999999999999999,1,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
