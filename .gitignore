@@ -8,6 +8,7 @@ build/
 export/
 src/tags
 src/version.h
+assets/data/graphs/
 working/stats/*.txt
 deployment/*.exe
 deployment/*-src
