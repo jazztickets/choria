@@ -29,7 +29,7 @@ echo "$players" | while read player; do
 	#echo "$player" > "$player_file"
 
 	# get playtime and gold
-	grep "\[SAVE\] Saving player $player" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $4}' | tr -d '[A-Za-z=]' > "$player_file"
+	grep "\[SAVE\] Saving player $player (" "$log" | grep "( .* )" -o | gawk 'BEGIN{FS=" "}{print $5, $4}' | tr -d '[A-Za-z=]' > "$player_file"
 
 done
 
