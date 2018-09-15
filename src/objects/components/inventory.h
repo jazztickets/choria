@@ -96,6 +96,7 @@ struct _Slot {
 
 	void Serialize(ae::_Buffer &Data) const;
 	void Unserialize(ae::_Buffer &Data);
+	void Reset() { BagType = _Bag::BagType::NONE; Index = NOSLOT; }
 
 	_Bag::BagType BagType;
 	size_t Index;
@@ -117,7 +118,7 @@ class _Inventory {
 		bool FindItem(const _Item *Item, size_t &Slot, size_t StartSlot);
 		bool HasItemID(uint32_t ItemID);
 		int CountItem(const _Item *Item);
-		bool IsValidSlot(const _Slot &Slot) { return (int)Slot.BagType < _Bag::BagType::COUNT && Slot.Index < Bags[Slot.BagType].Slots.size(); }
+		bool IsValidSlot(const _Slot &Slot) { return (int)Slot.BagType > 0 && (int)Slot.BagType < _Bag::BagType::COUNT && Slot.Index < Bags[Slot.BagType].Slots.size(); }
 		_InventorySlot &GetSlot(const _Slot &Slot) { return Bags[Slot.BagType].Slots[Slot.Index]; }
 
 		bool MoveInventory(ae::_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot);

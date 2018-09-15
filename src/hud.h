@@ -142,6 +142,7 @@ class _HUD {
 		void ToggleCharacterStats();
 
 		// Windows
+		void InitConfirm(const std::string &WarningMessage);
 		void InitVendor();
 		void InitTrader();
 		void InitBlacksmith();
@@ -188,6 +189,7 @@ class _HUD {
 
 	private:
 
+		bool CloseConfirm();
 		bool CloseInventory();
 		bool CloseVendor();
 		bool CloseTrader();
@@ -197,6 +199,7 @@ class _HUD {
 		bool CloseParty();
 		bool CloseTeleport();
 
+		void DrawConfirm();
 		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawHudEffects();
 		void DrawInventory();
@@ -233,6 +236,8 @@ class _HUD {
 		_Bag::BagType GetBagFromWindow(int Window);
 
 		// UI
+		ae::_Element *DarkOverlayElement;
+		ae::_Element *ConfirmElement;
 		ae::_Element *DiedElement;
 		ae::_Element *StatusEffectsElement;
 		ae::_Element *ActionBarElement;
@@ -262,8 +267,6 @@ class _HUD {
 		ae::_Element *RespawnInstructions;
 		_Cursor Cursor;
 		_Cursor Tooltip;
-
-		// HUD
 		_Message Message;
 
 		// Objects
@@ -282,5 +285,8 @@ class _HUD {
 
 		// Blacksmith
 		_Slot UpgradeSlot;
+
+		// Inventory
+		_Slot DeleteSlot;
 
 };

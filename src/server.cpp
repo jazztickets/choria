@@ -347,6 +347,9 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case PacketType::INVENTORY_SPLIT:
 			HandleInventorySplit(Data, Peer);
 		break;
+		case PacketType::INVENTORY_DELETE:
+			HandleInventoryDelete(Data, Peer);
+		break;
 		case PacketType::VENDOR_EXCHANGE:
 			HandleVendorExchange(Data, Peer);
 		break;
@@ -1091,6 +1094,47 @@ void _Server::HandleInventorySplit(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
 	if(Player->Inventory->SplitStack(Packet, Slot, Count))
 		Network->SendPacket(Packet, Peer);
+}
+
+// Handle deleting an item
+void _Server::HandleInventoryDelete(ae::_Buffer &Data, ae::_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+		return;
+
+	// Get player object
+	_Object *Player = Peer->Object;
+
+	// Get item slot
+	_Slot Slot;
+	Slot.Unserialize(Data);
+	if(!Player->Inventory->IsValidSlot(Slot))
+		return;
+
+	// Delete item
+	Player->Inventory->Bags[Slot.BagType].Slots[Slot.Index].Reset();
+
+	// Update client
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::INVENTORY_UPDATE);
+	Packet.Write<uint8_t>(1);
+	Player->Inventory->SerializeSlot(Packet, Slot);
+	Network->SendPacket(Packet, Peer);
+
+	// Check for trading players
+	_Object *TradePlayer = Player->Character->TradePlayer;
+	if(Player->Character->WaitingForTrade && TradePlayer && Slot.BagType == _Bag::BagType::TRADE) {
+
+		// Reset agreement
+		Player->Character->TradeAccepted = false;
+		TradePlayer->Character->TradeAccepted = false;
+
+		// Notify trade player
+		ae::_Buffer Packet;
+		Packet.Write<PacketType>(PacketType::TRADE_ITEM);
+		Player->Inventory->SerializeSlot(Packet, Slot);
+		Player->Inventory->SerializeSlot(Packet, Slot);
+		Network->SendPacket(Packet, TradePlayer->Peer);
+	}
 }
 
 // Handles a vendor exchange message

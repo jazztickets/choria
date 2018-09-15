@@ -86,6 +86,7 @@ class _Server {
 		void HandleInventoryMove(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleInventorySplit(ae::_Buffer &Data, ae::_Peer *Peer);
+		void HandleInventoryDelete(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleSkillAdjust(ae::_Buffer &Data, ae::_Peer *Peer);

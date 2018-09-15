@@ -180,6 +180,8 @@ void _Menu::InitOptions() {
 // Show the confirm screen
 void _Menu::ConfirmAction() {
 	CurrentLayout = ae::Assets.Elements["element_menu_confirm"];
+	ae::Assets.Elements["label_menu_confirm_warning"]->Text = "Are you sure?";
+
 	CurrentLayout->SetActive(true);
 }
 

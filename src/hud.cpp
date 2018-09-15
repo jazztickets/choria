@@ -76,6 +76,8 @@ _HUD::_HUD() {
 	ae::Assets.Elements["label_buttonbar_menu"]->Text = ae::Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
 	ae::Assets.Elements["label_hud_pvp"]->Text = "";
 
+	DarkOverlayElement = ae::Assets.Elements["element_dark_overlay"];
+	ConfirmElement = ae::Assets.Elements["element_menu_confirm"];
 	DiedElement = ae::Assets.Elements["element_died"];
 	StatusEffectsElement = ae::Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = ae::Assets.Elements["element_actionbar"];
@@ -107,6 +109,8 @@ _HUD::_HUD() {
 	GoldElement->Size.x = ButtonBarElement->Size.x;
 	GoldElement->CalculateBounds();
 
+	DarkOverlayElement->SetActive(false);
+	ConfirmElement->SetActive(false);
 	DiedElement->SetActive(false);
 	StatusEffectsElement->SetActive(true);
 	ActionBarElement->SetActive(true);
@@ -259,8 +263,35 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	// Release left mouse button
 	else if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 
+		// Check confirm screen
+		if(ConfirmElement->GetClickedElement()) {
+			if(ConfirmElement->GetClickedElement()->Name == "button_confirm_ok") {
+
+				// Delete item
+				if(Player->Inventory->IsValidSlot(DeleteSlot)) {
+					ae::_Buffer Packet;
+					Packet.Write<PacketType>(PacketType::INVENTORY_DELETE);
+					DeleteSlot.Serialize(Packet);
+					PlayState.Network->SendPacket(Packet);
+
+					if(DeleteSlot == UpgradeSlot)
+						UpgradeSlot.Reset();
+
+					if(DeleteSlot.BagType == _Bag::BagType::TRADE)
+						ResetAcceptButton();
+				}
+
+				CloseConfirm();
+			}
+			else if(ConfirmElement->GetClickedElement()->Name == "button_confirm_cancel") {
+				CloseConfirm();
+			}
+		}
+		else if(DarkOverlayElement->GetClickedElement()) {
+			return;
+		}
 		// Check button bar
-		if(ButtonBarElement->GetClickedElement()) {
+		else if(ButtonBarElement->GetClickedElement()) {
 			if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_join") {
 				PlayState.SendJoinRequest();
 			}
@@ -350,12 +381,18 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							if(Cursor.InventorySlot.Item->IsEquippable() && Tooltip.Slot.Index != 1)
 								UpgradeSlot = Cursor.Slot;
 						break;
+						// Move item to actionbar
 						case WINDOW_ACTIONBAR:
 							if((Cursor.Window == WINDOW_EQUIPMENT || Cursor.Window == WINDOW_INVENTORY) && !Cursor.InventorySlot.Item->IsSkill())
 								SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.InventorySlot.Item);
 							else if(Cursor.Window == WINDOW_ACTIONBAR)
 								SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
 						break;
+						// Delete item
+						case -1: {
+							InitConfirm("Delete this item?");
+							DeleteSlot = Cursor.Slot;
+						} break;
 					}
 				break;
 				// Buy an item
@@ -420,7 +457,6 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						AcceptButton->Checked = !AcceptButton->Checked;
 						UpdateAcceptButton();
 
-						//ae::_Buffer Packet;
 						ae::_Buffer Packet;
 						Packet.Write<PacketType>(PacketType::TRADE_ACCEPT);
 						Packet.Write<char>(AcceptButton->Checked);
@@ -442,7 +478,7 @@ void _HUD::Update(double FrameTime) {
 	Tooltip.Reset();
 
 	ae::_Element *HitElement = ae::Graphics.Element->HitElement;
-	if(HitElement) {
+	if(!DarkOverlayElement->Active && HitElement) {
 		Tooltip.Slot.Index = (size_t)HitElement->Index;
 
 		// Get window id, stored in parent's userdata field
@@ -678,6 +714,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawSkills();
 		DrawParty();
 		DrawTeleport();
+		DrawConfirm();
 
 		// Draw stat changes
 		for(auto &StatChange : StatChanges) {
@@ -931,6 +968,13 @@ void _HUD::ToggleCharacterStats() {
 	CharacterElement->SetActive(!CharacterElement->Active);
 }
 
+// Initialize the confirm screen
+void _HUD::InitConfirm(const std::string &WarningMessage) {
+	ae::Assets.Elements["label_menu_confirm_warning"]->Text = WarningMessage;
+
+	ConfirmElement->SetActive(true);
+}
+
 // Initialize the vendor
 void _HUD::InitVendor() {
 	Cursor.Reset();
@@ -1141,6 +1185,17 @@ void _HUD::CloseChat() {
 	ae::FocusedElement = nullptr;
 }
 
+// Close confirmation screen
+bool _HUD::CloseConfirm() {
+	bool WasOpen = ConfirmElement->Active;
+	ConfirmElement->SetActive(false);
+	DarkOverlayElement->SetActive(false);
+
+	DeleteSlot.Reset();
+
+	return WasOpen;
+}
+
 // Close inventory screen
 bool _HUD::CloseInventory() {
 	bool WasOpen = InventoryElement->Active;
@@ -1191,6 +1246,19 @@ bool _HUD::CloseTeleport() {
 	TeleportElement->SetActive(false);
 
 	return WasOpen;
+}
+
+// Draw confirm action
+void _HUD::DrawConfirm() {
+	if(!ConfirmElement->Active)
+		return;
+
+	DarkOverlayElement->Size = ae::Graphics.CurrentSize;
+	DarkOverlayElement->CalculateBounds();
+	DarkOverlayElement->SetActive(true);
+	DarkOverlayElement->Render();
+
+	ConfirmElement->Render();
 }
 
 // Closes the trade system
@@ -1264,6 +1332,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	Cursor.Reset();
 
 	bool WasOpen = false;
+	WasOpen |= CloseConfirm();
 	WasOpen |= CloseInventory();
 	WasOpen |= CloseVendor();
 	WasOpen |= CloseSkills();
