@@ -84,6 +84,7 @@ class _Item {
 		float GetMaxDamage(int Upgrades) const;
 		float GetArmor(int Upgrades) const;
 		float GetDamageBlock(int Upgrades) const;
+		float GetPierce(int Upgrades) const;
 		float GetMaxHealth(int Upgrades) const;
 		float GetMaxMana(int Upgrades) const;
 		float GetHealthRegen(int Upgrades) const;

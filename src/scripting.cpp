@@ -452,6 +452,9 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->DamageBlock);
 	lua_setfield(LuaState, -2, "DamageBlock");
 
+	lua_pushinteger(LuaState, Object->Character->Pierce);
+	lua_setfield(LuaState, -2, "Pierce");
+
 	lua_pushinteger(LuaState, Object->Character->Evasion);
 	lua_setfield(LuaState, -2, "Evasion");
 

@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS "stattype" (
 	"name" TEXT,
 	"upgrade_scale" REAL DEFAULT(1.0)
 );
-INSERT INTO stattype VALUES(0,'0',1.0);
+INSERT INTO stattype VALUES(0,'0',0.0);
 INSERT INTO stattype VALUES(1,'Buff',1.0);
 INSERT INTO stattype VALUES(2,'Buff Level',1.0);
 INSERT INTO stattype VALUES(3,'Buff Duration',1.0);
@@ -62,24 +62,30 @@ INSERT INTO stattype VALUES(12,'Min Damage',1.0);
 INSERT INTO stattype VALUES(13,'Max Damage',1.0);
 INSERT INTO stattype VALUES(14,'Armor',1.0);
 INSERT INTO stattype VALUES(15,'Damage Block',1.0);
-INSERT INTO stattype VALUES(16,'Move Speed',0.25);
-INSERT INTO stattype VALUES(17,'Stamina',1.0);
-INSERT INTO stattype VALUES(18,'Battle Speed',0.25);
-INSERT INTO stattype VALUES(19,'Drop Rate',1.0);
-INSERT INTO stattype VALUES(20,'Hit Chance',1.0);
-INSERT INTO stattype VALUES(21,'Evasion',0.5);
-INSERT INTO stattype VALUES(22,'Stunned',1.0);
-INSERT INTO stattype VALUES(23,'Resist Type',1.0);
-INSERT INTO stattype VALUES(24,'Resist',0.25);
-INSERT INTO stattype VALUES(25,'Experience',1.0);
-INSERT INTO stattype VALUES(26,'Gold',1.0);
-INSERT INTO stattype VALUES(27,'Invisible',1.0);
-INSERT INTO stattype VALUES(28,'Actionbar Size',1.0);
-INSERT INTO stattype VALUES(29,'Miss',1.0);
-INSERT INTO stattype VALUES(30,'Crit',1.0);
-INSERT INTO stattype VALUES(31,'Flee',1.0);
-INSERT INTO stattype VALUES(32,'Battle',1.0);
-INSERT INTO stattype VALUES(33,'Teleport',1.0);
+INSERT INTO stattype VALUES(16,'Pierce',1.0);
+INSERT INTO stattype VALUES(17,'Move Speed',0.25);
+INSERT INTO stattype VALUES(18,'Stamina',1.0);
+INSERT INTO stattype VALUES(19,'Battle Speed',0.25);
+INSERT INTO stattype VALUES(20,'Drop Rate',1.0);
+INSERT INTO stattype VALUES(21,'Hit Chance',1.0);
+INSERT INTO stattype VALUES(22,'Evasion',0.5);
+INSERT INTO stattype VALUES(23,'Stunned',1.0);
+INSERT INTO stattype VALUES(24,'Resist Type',1.0);
+INSERT INTO stattype VALUES(25,'Resist',0.25);
+INSERT INTO stattype VALUES(26,'Experience',1.0);
+INSERT INTO stattype VALUES(27,'Gold',1.0);
+INSERT INTO stattype VALUES(28,'GoldStolen',1.0);
+INSERT INTO stattype VALUES(29,'Invisible',1.0);
+INSERT INTO stattype VALUES(30,'Actionbar Size',1.0);
+INSERT INTO stattype VALUES(31,'Miss',1.0);
+INSERT INTO stattype VALUES(32,'Crit',1.0);
+INSERT INTO stattype VALUES(33,'Flee',1.0);
+INSERT INTO stattype VALUES(34,'Battle',1.0);
+INSERT INTO stattype VALUES(35,'Hunt',1.0);
+INSERT INTO stattype VALUES(36,'Bounty Hunt',1.0);
+INSERT INTO stattype VALUES(37,'Teleport',1.0);
+INSERT INTO stattype VALUES(38,'Light',1.0);
+INSERT INTO stattype VALUES(39,'Clock',1.0);
 CREATE TABLE IF NOT EXISTS "slottype" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -1186,7 +1192,7 @@ INSERT INTO item VALUES(99,12,0,0,1,4,0,'Action Slot IV','textures/items/actions
 INSERT INTO item VALUES(100,5,2,0,0,0,0,'Short Sword','textures/items/short_sword.png','',25,1,0,20,0.0,1,20,40,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(101,5,2,0,0,0,0,'Stick','textures/items/stick.png','',5,1,0,20,0.0,1,10,20,0,0,0,0,0,20,0,1,0,0,0);
 INSERT INTO item VALUES(102,5,2,0,0,0,0,'Mace','textures/items/mace.png','',20,1,0,20,0.0,1,10,50,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(103,5,2,0,0,0,0,'Dagger','textures/items/dagger.png','',25,1,0,20,0.0,1,20,20,0,0,0,0,0,0,0,0,20,0,0);
+INSERT INTO item VALUES(103,5,2,0,0,0,0,'Dagger','textures/items/dagger.png','',25,1,0,20,0.0,1,20,20,0,0,10,0,0,0,0,0,20,0,0);
 INSERT INTO item VALUES(104,3,0,0,0,0,0,'Mage Robes','textures/items/mage_robes.png','',100,1,0,20,0.0,1,0,0,2,0,0,0,0,25,0,1,0,0,0);
 INSERT INTO item VALUES(105,3,0,0,0,0,0,'Leather Jerkin','textures/items/leather_jerkin.png','',75,1,0,20,0.0,1,0,0,5,1,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(106,7,2,0,0,0,0,'Buckler','textures/items/buckler.png','',25,1,0,20,0.0,1,10,30,0,5,0,0,0,0,0,0,0,0,0);
@@ -1201,7 +1207,7 @@ INSERT INTO item VALUES(114,10,0,1,3,0,0,'Crow Feather','textures/items/crow_fea
 INSERT INTO item VALUES(115,10,0,1,3,0,0,'Spider Leg','textures/items/spider_leg.png','Item_SpiderLeg',15,1,10,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(116,10,0,1,3,0,0,'Potion of Haste','textures/items/haste_potion.png','Item_HastePotion',75,1,30,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(117,6,2,0,0,0,0,'Axe','textures/items/axe.png','',100,1,0,20,0.0,1,20,130,-1,0,0,0,0,0,0,0,-5,0,0);
-INSERT INTO item VALUES(118,5,2,0,0,0,0,'Small Knife','textures/items/small_knife.png','',15,1,0,20,0.0,1,10,10,0,0,0,0,0,0,0,0,25,0,0);
+INSERT INTO item VALUES(118,5,2,0,0,0,0,'Small Knife','textures/items/small_knife.png','',15,1,0,20,0.0,1,10,10,0,0,5,0,0,0,0,0,25,0,0);
 INSERT INTO item VALUES(119,5,2,0,0,0,0,'Sword','textures/items/sword.png','',150,1,0,20,0.0,1,30,90,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(120,4,0,0,0,0,0,'Leather Boots','textures/items/leather_boots.png','',20,1,0,20,0.0,1,0,0,2,0,0,0,0,0,0,0,0,5,0);
 INSERT INTO item VALUES(121,2,0,0,0,0,0,'Leather Helm','textures/items/leather_helm.png','',30,1,0,20,0.0,1,0,0,3,0,0,0,0,0,0,0,0,0,0);
@@ -1214,7 +1220,7 @@ INSERT INTO item VALUES(127,10,0,1,3,0,0,'Soothing Salve','textures/items/soothi
 INSERT INTO item VALUES(128,10,0,1,3,0,0,'Arcane Cider','textures/items/arcane_cider.png','Item_ManaCider',75,1,50,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(129,7,2,0,0,0,0,'Reinforced Buckler','textures/items/reinforced_buckler.png','',200,1,0,20,0.0,1,20,60,0,8,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(130,6,2,0,0,0,0,'Battle Axe','textures/items/battleaxe.png','',600,1,0,20,0.0,1,30,220,-2,0,0,0,0,0,0,0,-10,0,0);
-INSERT INTO item VALUES(131,5,2,0,0,0,0,'Stiletto','textures/items/stiletto.png','',250,1,0,20,0.0,1,50,50,0,0,0,0,0,0,0,0,20,0,0);
+INSERT INTO item VALUES(131,5,2,0,0,0,0,'Stiletto','textures/items/stiletto.png','',250,1,0,20,0.0,1,50,50,0,0,20,0,0,0,0,0,20,0,0);
 INSERT INTO item VALUES(132,10,0,1,3,0,0,'Death Potion','textures/items/death_potion.png','Item_DeathPotion',300,1,100,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(133,10,2,2,2,0,0,'Throwing Knives','textures/items/throwing_knives.png','Item_ThrowingKnives',8,1,1,0,0.0,1,50,140,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(134,10,0,1,3,0,0,'Crab Legs','textures/items/crab_legs.png','Item_CrabLegs',10,1,10,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1233,7 +1239,7 @@ INSERT INTO item VALUES(146,10,0,1,3,0,0,'Spectral Dust','textures/items/spectra
 INSERT INTO item VALUES(147,5,2,0,0,0,0,'Morning Star','textures/items/mace.png','',400,1,0,20,0.0,1,50,110,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(148,2,0,0,0,0,0,'Cap','textures/items/cap.png','',15,1,0,20,0.0,1,0,0,1,0,0,0,0,10,0,0,0,0,0);
 INSERT INTO item VALUES(149,6,2,0,0,0,0,'Fighting Stick','textures/items/quarter_staff.png','',550,1,0,20,0.0,1,60,140,0,10,0,0,0,0,0,0,10,0,0);
-INSERT INTO item VALUES(150,5,2,0,0,0,0,'Swift Knife','textures/items/small_knife.png','',1100,1,0,20,0.0,1,120,120,0,0,0,0,0,0,0,0,30,0,0);
+INSERT INTO item VALUES(150,5,2,0,0,0,0,'Swift Knife','textures/items/small_knife.png','',1100,1,0,20,0.0,1,120,120,0,0,30,0,0,0,0,0,30,0,0);
 INSERT INTO item VALUES(151,10,0,1,1,0,0,'Battle Potion','textures/items/death_potion.png','Item_BattlePotion',25,1,1,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(152,2,0,0,0,0,0,'Mage Hat','textures/items/mage_hat.png','',25,1,0,20,0.0,1,0,0,1,0,0,0,0,30,0,0,0,0,0);
 INSERT INTO item VALUES(153,2,0,0,0,0,0,'Wizard Hat','textures/items/wizard_hat.png','',100,1,0,20,0.0,1,0,0,2,0,0,0,0,60,0,1,0,0,0);

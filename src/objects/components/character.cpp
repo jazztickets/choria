@@ -64,6 +64,7 @@ _Character::_Character(_Object *Object) :
 	BaseMaxDamage(0),
 	BaseArmor(0),
 	BaseDamageBlock(0),
+	BasePierce(0),
 	BaseMoveSpeed(100),
 	BaseBattleSpeed(100),
 	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
@@ -83,6 +84,7 @@ _Character::_Character(_Object *Object) :
 	MaxDamage(0),
 	Armor(0),
 	DamageBlock(0),
+	Pierce(0),
 	MoveSpeed(100),
 	BattleSpeed(0),
 	EquipmentBattleSpeed(0),
@@ -280,6 +282,7 @@ void _Character::CalculateStats() {
 	MaxDamage = BaseMaxDamage;
 	Armor = BaseArmor;
 	DamageBlock = BaseDamageBlock;
+	Pierce = BasePierce;
 	MoveSpeed = BaseMoveSpeed;
 	DropRate = BaseDropRate;
 	Resistances.clear();
@@ -307,6 +310,7 @@ void _Character::CalculateStats() {
 				ItemMinDamage += Item->GetMinDamage(Upgrades);
 				ItemMaxDamage += Item->GetMaxDamage(Upgrades);
 			}
+			Pierce += Item->GetPierce(Upgrades);
 
 			// Add defense
 			ItemArmor += Item->GetArmor(Upgrades);
@@ -365,6 +369,7 @@ void _Character::CalculateStats() {
 	MaxDamage += (int)std::roundf(ItemMaxDamage * WeaponDamageModifier);
 	MinDamage = std::max(MinDamage, 0);
 	MaxDamage = std::max(MaxDamage, 0);
+	Pierce = std::max(Pierce, 0);
 
 	// Get defense
 	Armor += ItemArmor;

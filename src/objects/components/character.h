@@ -155,6 +155,7 @@ class _Character {
 		int BaseMaxDamage;
 		int BaseArmor;
 		int BaseDamageBlock;
+		int BasePierce;
 		int BaseMoveSpeed;
 		int BaseBattleSpeed;
 		double BaseAttackPeriod;
@@ -175,6 +176,7 @@ class _Character {
 		int MaxDamage;
 		int Armor;
 		int DamageBlock;
+		int Pierce;
 		int MoveSpeed;
 		int BattleSpeed;
 		int EquipmentBattleSpeed;

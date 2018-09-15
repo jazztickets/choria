@@ -152,8 +152,11 @@ function Battle_ResolveDamage(Action, Level, Source, Target, Result)
 			Result.Target.ID = BuffID
 		end
 
+		-- Apply pierce
+		DamageBlock = math.max(Target.DamageBlock - Source.Pierce, 0);
+
 		-- Apply damage block
-		Change.Damage = math.max(Change.Damage - Target.DamageBlock, 0)
+		Change.Damage = math.max(Change.Damage - DamageBlock, 0)
 
 		-- Apply resistance
 		Change.Damage = Change.Damage * Target.GetDamageReduction(Action:GetDamageType(Source))

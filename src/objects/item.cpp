@@ -190,6 +190,22 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		StatDrawn = true;
 	}
 
+	// Pierce
+	int DrawPierce = (int)GetPierce(Upgrades);
+	if(DrawPierce != 0) {
+		std::stringstream Buffer;
+		Buffer << DrawPierce;
+
+		glm::vec4 Color(1.0f);
+		if(CompareInventory.Item)
+			Color = GetCompareColor(GetPierce(Upgrades), CompareInventory.Item->GetPierce(CompareInventory.Upgrades));
+
+		ae::Assets.Fonts["hud_medium"]->DrawText("Pierce", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
+		DrawPosition.y += SpacingY;
+		StatDrawn = true;
+	}
+
 	// Armor
 	int DrawArmor = (int)GetArmor(Upgrades);
 	if(DrawArmor != 0) {
@@ -711,6 +727,11 @@ float _Item::GetArmor(int Upgrades) const {
 // Get damage block
 float _Item::GetDamageBlock(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::DAMAGEBLOCK, Upgrades, DamageBlock);
+}
+
+// Get pierce
+float _Item::GetPierce(int Upgrades) const {
+	return GetUpgradedValue<float>(StatType::PIERCE, Upgrades, Pierce);
 }
 
 // Get max health
