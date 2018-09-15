@@ -110,6 +110,7 @@ class _Item {
 		int MaxDamage;
 		int Armor;
 		int DamageBlock;
+		int Pierce;
 		int MaxHealth;
 		int MaxMana;
 		int HealthRegen;

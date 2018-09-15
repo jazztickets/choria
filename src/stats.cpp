@@ -247,6 +247,7 @@ void _Stats::LoadItems() {
 		Item->MaxDamage = Database->GetInt<int>("maxdamage");
 		Item->Armor = Database->GetInt<int>("armor");
 		Item->DamageBlock = Database->GetInt<int>("block");
+		Item->Pierce = Database->GetInt<int>("pierce");
 		Item->MaxHealth = Database->GetInt<int>("maxhealth");
 		Item->MaxMana = Database->GetInt<int>("maxmana");
 		Item->HealthRegen = Database->GetInt<int>("healthregen");
