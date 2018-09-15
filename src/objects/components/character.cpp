@@ -636,7 +636,7 @@ bool _Character::AddStatusEffect(_StatusEffect *StatusEffect) {
 		// If buff exists, refresh duration
 		if(StatusEffect->Buff == ExistingEffect->Buff) {
 			if(StatusEffect->Level >= ExistingEffect->Level) {
-				ExistingEffect->Duration = StatusEffect->Duration;
+				ExistingEffect->MaxDuration = ExistingEffect->Duration = StatusEffect->Duration;
 				ExistingEffect->Level = StatusEffect->Level;
 				ExistingEffect->Time = 0.0;
 			}
