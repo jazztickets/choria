@@ -1767,6 +1767,15 @@ void _HUD::DrawCharacterStats() {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
+	// Pierce
+	if(Player->Character->Pierce != 0) {
+		Buffer << Player->Character->Pierce;
+		ae::Assets.Fonts["hud_small"]->DrawText("Pierce", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Buffer.str("");
+		DrawPosition.y += SpacingY;
+	}
+
 	// Health Regen
 	if(Player->Character->HealthRegen != 0) {
 		Buffer << Player->Character->HealthRegen;
