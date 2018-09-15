@@ -337,6 +337,7 @@ INSERT INTO vendor VALUES(9,'san_weapon',1.0,0.5);
 INSERT INTO vendor VALUES(10,'san_armor',1.0,0.5);
 INSERT INTO vendor VALUES(11,'ruins_vendor',1.0,0.59999999999999997779);
 INSERT INTO vendor VALUES(12,'ham_game',1.0,0.5);
+INSERT INTO vendor VALUES(13,'lighthouse_skills',1.0,0.5);
 CREATE TABLE IF NOT EXISTS "vendoritem" (
 	"id" INTEGER PRIMARY KEY,
 	"vendor_id" INTEGER REFERENCES vendor(id) ON DELETE CASCADE,
@@ -344,8 +345,8 @@ CREATE TABLE IF NOT EXISTS "vendoritem" (
 );
 INSERT INTO vendoritem VALUES(1,1,3);
 INSERT INTO vendoritem VALUES(2,1,18);
-INSERT INTO vendoritem VALUES(3,1,5);
-INSERT INTO vendoritem VALUES(4,1,6);
+INSERT INTO vendoritem VALUES(3,13,5);
+INSERT INTO vendoritem VALUES(4,13,6);
 INSERT INTO vendoritem VALUES(5,2,108);
 INSERT INTO vendoritem VALUES(6,2,109);
 INSERT INTO vendoritem VALUES(7,2,110);
@@ -368,7 +369,7 @@ INSERT INTO vendoritem VALUES(25,3,119);
 INSERT INTO vendoritem VALUES(26,4,120);
 INSERT INTO vendoritem VALUES(27,4,121);
 INSERT INTO vendoritem VALUES(28,1,10);
-INSERT INTO vendoritem VALUES(29,1,11);
+INSERT INTO vendoritem VALUES(29,13,11);
 INSERT INTO vendoritem VALUES(30,3,131);
 INSERT INTO vendoritem VALUES(31,4,122);
 INSERT INTO vendoritem VALUES(32,4,123);
@@ -445,6 +446,8 @@ INSERT INTO vendoritem VALUES(116,4,218);
 INSERT INTO vendoritem VALUES(117,2,220);
 INSERT INTO vendoritem VALUES(118,12,221);
 INSERT INTO vendoritem VALUES(119,1,25);
+INSERT INTO vendoritem VALUES(120,13,224);
+INSERT INTO vendoritem VALUES(121,5,225);
 CREATE TABLE IF NOT EXISTS "monsterdrop" (
 	"id" INTEGER PRIMARY KEY,
 	"monster_id" INTEGER REFERENCES monster(id) ON DELETE CASCADE,
@@ -1303,6 +1306,8 @@ INSERT INTO item VALUES(220,10,0,1,1,0,0,'Torch','textures/items/torch.png','Ite
 INSERT INTO item VALUES(221,11,0,0,0,0,0,'Game Token','textures/items/token.png','',10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/torch.png','Item_Torch',35,1,5,0,120.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(223,10,0,1,1,0,0,'Large Torch','textures/items/torch.png','Item_Torch',75,1,8,0,179.99999999999999999,1,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(224,10,0,1,1,0,0,'Bright Potion','textures/items/bright_potion.png','Item_BrightPotion',200,1,720,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(225,10,0,1,1,0,0,'Dark Potion','textures/items/dark_potion.png','Item_DarkPotion',400,1,1320,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);

@@ -121,6 +121,7 @@ class _PlayState : public ae::_State {
 		void HandlePacket(ae::_Buffer &Data);
 
 		void HandleObjectStats(ae::_Buffer &Data);
+		void HandleClock(ae::_Buffer &Data);
 		void HandleChangeMaps(ae::_Buffer &Data);
 		void HandleObjectList(ae::_Buffer &Data);
 		void HandleObjectCreate(ae::_Buffer &Data);

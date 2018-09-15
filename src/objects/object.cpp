@@ -997,6 +997,10 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 			if(StatChange.HasStat(StatType::BOUNTYHUNT))
 				Server->QueueBattle(this, 0, false, true, 0.0f, StatChange.Values[StatType::BOUNTYHUNT].Float);
 		}
+
+		// Set clock
+		if(StatChange.HasStat(StatType::CLOCK))
+			Server->SetClock(StatChange.Values[StatType::CLOCK].Float);
 	}
 
 	return StatusEffect;

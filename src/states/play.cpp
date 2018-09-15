@@ -571,6 +571,9 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 		case PacketType::OBJECT_STATS:
 			HandleObjectStats(Data);
 		break;
+		case PacketType::WORLD_CLOCK:
+			HandleClock(Data);
+		break;
 		case PacketType::WORLD_CHANGEMAPS:
 			HandleChangeMaps(Data);
 		break;
@@ -680,6 +683,14 @@ void _PlayState::HandleObjectStats(ae::_Buffer &Data) {
 
 	HUD->UpdateLabels();
 	HUD->SetActionBarSize(Player->Character->ActionBar.size());
+}
+
+// Handle world clock change
+void _PlayState::HandleClock(ae::_Buffer &Data) {
+	double Clock = Data.Read<float>();
+
+	if(Map)
+		Map->Clock = Clock;
 }
 
 // Called when the player changes maps

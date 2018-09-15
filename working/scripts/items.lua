@@ -390,3 +390,33 @@ end
 function Item_Torch.PlaySound(self, Level)
 	Audio.Play("flame0.ogg")
 end
+
+-- BrightPotion --
+
+Item_BrightPotion = { }
+
+function Item_BrightPotion.GetInfo(self, Item)
+
+	return "Turn the world to daylight"
+end
+
+function Item_BrightPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Clock = Level
+
+	return Result
+end
+
+-- DarkPotion --
+
+Item_DarkPotion = { }
+
+function Item_DarkPotion.GetInfo(self, Item)
+
+	return "Turn the world to darkness"
+end
+
+function Item_DarkPotion.Use(self, Level, Duration, Source, Target, Result)
+	Result.Target.Clock = Level
+
+	return Result
+end

@@ -73,6 +73,7 @@ class _Server {
 		void SendHUD(ae::_Peer *Peer);
 		void SendPlayerPosition(ae::_Peer *Peer);
 		void RunEventScript(uint32_t ScriptID, _Object *Object);
+		void SetClock(double Clock);
 
 		// Packet handling
 		void HandleLoginInfo(ae::_Buffer &Data, ae::_Peer *Peer);

@@ -81,6 +81,7 @@ enum class StatType : int {
 	BOUNTYHUNT,
 	TELEPORT,
 	LIGHT,
+	CLOCK,
 	COUNT,
 };
 
@@ -135,6 +136,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "BountyHunt",    { StatType::BOUNTYHUNT    , StatValueType::FLOAT   } },
 	{ "Teleport",      { StatType::TELEPORT      , StatValueType::FLOAT   } },
 	{ "Light",         { StatType::LIGHT         , StatValueType::INTEGER } },
+	{ "Clock",         { StatType::CLOCK         , StatValueType::FLOAT   } },
 };
 
 union _Value {

@@ -665,13 +665,14 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 		else if(Message.find("-clock") == 0) {
 			std::regex Regex("-clock ([0-9.]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Save->Clock = (double)ae::ToNumber<double>(Match.str(1));
-				if(Save->Clock < 0)
-					Save->Clock = 0;
-				else if(Save->Clock >= MAP_DAY_LENGTH)
-					Save->Clock = MAP_DAY_LENGTH;
 
-				SendHUD(Player->Peer);
+				double Clock = ae::ToNumber<double>(Match.str(1));
+				if(Clock < 0)
+					Clock = 0;
+				else if(Clock >= MAP_DAY_LENGTH)
+					Clock = MAP_DAY_LENGTH;
+
+				SetClock(Clock);
 			}
 		}
 		else if(Message.find("-battle") == 0) {
@@ -1794,6 +1795,23 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 			}
 		}
 	}
+}
+
+// Set server clock
+void _Server::SetClock(double Clock) {
+	if(!Save)
+		return;
+
+	Save->Clock = Clock;
+
+	// Build packet
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::WORLD_CLOCK);
+	Packet.Write<float>(Clock);
+
+	// Broadcast packet
+	for(auto &Peer : Network->GetPeers())
+		Network->SendPacket(Packet, Peer);
 }
 
 // Send a message to the player
