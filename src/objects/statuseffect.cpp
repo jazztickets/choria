@@ -104,5 +104,5 @@ void _StatusEffect::Render(ae::_Element *Element, const glm::vec4 &Color) {
 	// Draw dark percentage bg
 	float OverlayHeight = (Duration / MaxDuration) * (Element->Bounds.End.y - Element->Bounds.Start.y);
 	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
-	ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, 1 + OverlayHeight), Element->Bounds.End - glm::vec2(1, 1), true);
+	ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, OverlayHeight), Element->Bounds.End, true);
 }
