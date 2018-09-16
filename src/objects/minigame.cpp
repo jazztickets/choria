@@ -292,6 +292,7 @@ void _Minigame::Render(double BlendFactor) {
 	if(!Camera)
 		return;
 
+	// Setup 3D
 	ae::Graphics.Setup3D();
 	Camera->Set3DProjection(BlendFactor);
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
@@ -303,17 +304,20 @@ void _Minigame::Render(double BlendFactor) {
 
 	ae::Assets.Programs["pos_uv_static"]->AmbientLight = glm::vec4(1.0f);
 
+	// Set up gl scissor
 	ae::Graphics.EnableScissorTest();
 	ae::_Bounds ScissorRegion;
 	GetUIBoundary(ScissorRegion);
 	ae::Graphics.SetScissor(ScissorRegion);
 
+	// Draw sprites
 	ae::Graphics.SetColor(ae::Assets.Colors["white"]);
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
 	for(auto &Sprite : Sprites->Objects) {
 		Sprite->Render(BlendFactor);
 	}
 
+	// Draw prizes
 	glm::vec3 Position(Boundary.Start.x+1, Boundary.End.y - 0.7f, 0);
 	for(auto &Item : Prizes) {
 		if(Item) {
@@ -328,7 +332,11 @@ void _Minigame::Render(double BlendFactor) {
 	}
 
 	ae::Graphics.DisableScissorTest();
-	//Grid->Render();
+
+	// Setup 2D
+	ae::Graphics.Setup2D();
+	ae::Graphics.SetStaticUniforms();
+	ae::Graphics.SetVBO(ae::VBO_NONE);
 }
 
 // Mouse input
