@@ -652,7 +652,11 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 			InventorySlot.Item = Stats->Items.at(ItemNode["id"].asUInt());
 			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
 			InventorySlot.Count = ItemNode["count"].asInt();
-			Inventory->Bags[std::stoul(BagNode.name())].Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
+			int BagIndex = std::stoul(BagNode.name());
+			if(Inventory->Bags[BagIndex].StaticSize)
+				Inventory->Bags[BagIndex].Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
+			else
+				Inventory->Bags[BagIndex].Slots.push_back(InventorySlot);
 		}
 	}
 

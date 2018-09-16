@@ -430,6 +430,12 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 			else
 				InfoText = "Already unlocked";
 		} break;
+		case ItemType::KEY: {
+			if(!Player->Inventory->Bags[_Bag::BagType::KEYS].HasItemID(ID))
+				InfoText = "Right-click to add to keychain";
+			else
+				InfoText = "Already in keychain";
+		} break;
 		default:
 		break;
 	}
@@ -591,14 +597,16 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 		return false;
 
 	// Unlocking skill for the first time
-	if(IsSkill() && ActionResult.ActionUsed.InventorySlot != -1) {
+	if(IsSkill() && ActionResult.ActionUsed.InventorySlot != -1)
 		return !Object->Character->HasLearned(this);
-	}
+
+	// Check for item in key bag
+	if(IsKey())
+		return !Object->Inventory->Bags[_Bag::BagType::KEYS].HasItemID(ID);
 
 	// Unlocking item
-	if(IsUnlockable()) {
+	if(IsUnlockable())
 		return !Object->Character->HasUnlocked(this);
-	}
 
 	// Check for item count
 	if(!ActionResult.ActionUsed.Item->IsSkill()) {

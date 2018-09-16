@@ -1242,6 +1242,7 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	bool DecrementItem = Data.ReadBit();
 	bool SkillUnlocked = Data.ReadBit();
 	bool ItemUnlocked = Data.ReadBit();
+	bool KeyUnlocked = Data.ReadBit();
 	uint32_t ItemID = Data.Read<uint32_t>();
 	int InventorySlot = (int)Data.Read<char>();
 	ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
@@ -1271,13 +1272,14 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 					}
 				}
 
-				if(SkillUnlocked) {
+				if(SkillUnlocked)
 					Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
-				}
 
-				if(ItemUnlocked) {
+				if(ItemUnlocked)
 					Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
-				}
+
+				if(KeyUnlocked)
+					Player->Inventory->Bags[_Bag::BagType::KEYS].Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Item, 1));
 			}
 		}
 	}

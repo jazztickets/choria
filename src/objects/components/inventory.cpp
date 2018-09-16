@@ -28,6 +28,7 @@ _Inventory::_Inventory() {
 	Bags[_Bag::EQUIPMENT].Slots.resize(EquipmentType::COUNT);
 	Bags[_Bag::INVENTORY].Slots.resize(PLAYER_INVENTORYSIZE);
 	Bags[_Bag::TRADE].Slots.resize(PLAYER_TRADEITEMS);
+	Bags[_Bag::KEYS].StaticSize = false;
 	for(auto &Slot : Bags[_Bag::EQUIPMENT].Slots)
 		Slot.MaxCount = 1;
 
@@ -104,10 +105,8 @@ bool _Inventory::FindItem(const _Item *Item, size_t &Slot, size_t StartSlot) {
 // Return true if a certain item id is in the inventory
 bool _Inventory::HasItemID(uint32_t ItemID) {
 	for(auto &Bag : Bags) {
-		for(size_t i = 0; i < Bag.Slots.size(); i++) {
-			if(Bag.Slots[i].Item && Bag.Slots[i].Item->ID == ItemID)
-				return true;
-		}
+		if(Bag.HasItemID(ItemID))
+			return true;
 	}
 
 	return false;
@@ -483,14 +482,28 @@ void _Bag::Serialize(ae::_Buffer &Data) {
 
 // Unserialize bag
 void _Bag::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
+	uint8_t ItemCount = Data.Read<uint8_t>();
+
+	// Set size for dynamic bags
+	if(!StaticSize)
+		Slots.resize(ItemCount);
 
 	// Reset inventory
 	std::fill(Slots.begin(), Slots.end(), _InventorySlot());
 
 	// Read items
-	uint8_t ItemCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		uint8_t Index = Data.Read<uint8_t>();
 		Slots[Index].Unserialize(Data, Stats);
 	}
+}
+
+// Check for an item
+bool _Bag::HasItemID(uint32_t ItemID) {
+	for(size_t i = 0; i < Slots.size(); i++) {
+		if(Slots[i].Item && Slots[i].Item->ID == ItemID)
+			return true;
+	}
+
+	return false;
 }

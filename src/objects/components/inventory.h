@@ -77,14 +77,17 @@ struct _Bag {
 		COUNT,
 	};
 
-	_Bag() : ID(_Bag::NONE) { }
+	_Bag() : ID(_Bag::NONE), StaticSize(true) { }
 
 	void Serialize(ae::_Buffer &Data);
 	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 
+	bool HasItemID(uint32_t ItemID);
+
 	std::vector<_InventorySlot> Slots;
 	std::string Name;
 	BagType ID;
+	bool StaticSize;
 };
 
 // Slots point to a bag and index in the bag

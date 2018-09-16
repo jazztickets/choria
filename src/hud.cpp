@@ -1489,11 +1489,22 @@ void _HUD::DrawBag(_Bag::BagType Type) {
 // Draw keys
 void _HUD::DrawKeys(_Bag::BagType Type) {
 
-	_Bag &Bag = Player->Inventory->Bags[Type];
 	glm::vec2 StartOffset(10, 20);
 	glm::vec2 Spacing(120, 20);
 	int Column = 0;
 	int Row = 0;
+
+	_Bag &Bag = Player->Inventory->Bags[Type];
+
+	// No keys
+	if(!Bag.Slots.size()) {
+		glm::vec2 DrawPosition = KeysElement->Bounds.Start + StartOffset;
+		ae::Assets.Fonts["hud_tiny"]->DrawText("No keys", DrawPosition, ae::LEFT_BASELINE, ae::Assets.Colors["gray"]);
+
+		return;
+	}
+
+	// Draw key names
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot

@@ -116,6 +116,7 @@ INSERT INTO itemtype VALUES(9,'Amulet');
 INSERT INTO itemtype VALUES(10,'Consumable');
 INSERT INTO itemtype VALUES(11,'Tradable');
 INSERT INTO itemtype VALUES(12,'Unlockable');
+INSERT INTO itemtype VALUES(13,'Key');
 CREATE TABLE IF NOT EXISTS "target" (
 	"id" INTEGER PRIMARY KEY,
 	"name" TEXT
@@ -1209,7 +1210,7 @@ INSERT INTO item VALUES(108,10,0,1,3,0,0,'Healing Salve','textures/items/healing
 INSERT INTO item VALUES(109,10,0,1,3,0,0,'Mana Cider','textures/items/mana_cider.png','Item_ManaCider',10,1,10,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(110,10,0,1,1,0,0,'Invisibility Potion','textures/items/invis_potion.png','Item_InvisPotion',40,1,15,0,15.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(111,6,2,0,0,0,0,'Quarter Staff','textures/items/quarter_staff.png','',35,1,0,20,0.0,1,20,50,0,5,0,0,0,0,0,0,10,0,0);
-INSERT INTO item VALUES(112,0,0,0,0,0,0,'Cellar Key','textures/items/key.png','',0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(112,13,0,0,1,0,0,'Cellar Key','textures/items/key.png','',20,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(113,3,0,0,0,0,0,'Bronze Armor','textures/items/bronze_armor.png','',175,1,0,20,0.0,1,0,0,10,2,0,0,0,0,0,0,-5,-5,0);
 INSERT INTO item VALUES(114,10,0,1,3,0,0,'Crow Feather','textures/items/crow_feather.png','Item_CrowFeather',8,1,20,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(115,10,0,1,3,0,0,'Spider Leg','textures/items/spider_leg.png','Item_SpiderLeg',15,1,10,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1234,7 +1235,7 @@ INSERT INTO item VALUES(133,10,2,2,2,0,0,'Throwing Knives','textures/items/throw
 INSERT INTO item VALUES(134,10,0,1,3,0,0,'Crab Legs','textures/items/crab_legs.png','Item_CrabLegs',10,1,10,0,30.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(135,7,0,0,0,0,0,'Wizard Book','textures/items/wizard_book.png','',320,1,0,20,0.0,1,0,0,0,3,0,0,0,50,0,2,0,0,0);
 INSERT INTO item VALUES(136,7,0,0,0,0,0,'Mage Book','textures/items/mage_book.png','',40,1,0,20,0.0,1,0,0,0,2,0,0,0,25,0,1,0,0,0);
-INSERT INTO item VALUES(137,0,0,0,0,0,0,'Tower Key','textures/items/key.png','',0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(137,13,0,0,1,0,0,'Tower Key','textures/items/key.png','',50,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(138,8,0,0,0,0,0,'Troll''s Ring','textures/items/ring.png','',250,1,0,20,0.0,1,0,0,0,0,0,0,0,0,7,0,-25,0,0);
 INSERT INTO item VALUES(139,11,0,0,0,0,0,'Crab Trophy','textures/items/crab_trophy.png','',250,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(140,11,0,0,0,0,0,'Slime Trophy','textures/items/slime_trophy.png','',400,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
@@ -1313,10 +1314,10 @@ INSERT INTO item VALUES(212,6,2,0,0,0,0,'Dark Staff','textures/items/dark_staff.
 INSERT INTO item VALUES(213,6,2,0,0,0,0,'Demon Stick','textures/items/demon_stick.png','',800,1,0,20,0.0,1,50,120,0,5,0,0,0,250,0,6,0,0,0);
 INSERT INTO item VALUES(214,8,0,0,0,0,0,'Warm Ring','textures/items/warm_ring.png','',800,1,0,20,0.0,1,0,0,0,0,0,0,35,0,3,0,0,0,0);
 INSERT INTO item VALUES(215,10,0,2,2,0,0,'Fire Dust','textures/items/fire_dust.png','Item_FireDust',20,1,20,0,10.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(216,0,0,0,0,0,0,'Prisoner Key','textures/items/key.png','',1000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(216,13,0,0,1,0,0,'Prisoner Key','textures/items/key.png','',1000,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(217,9,0,0,0,0,0,'Lucky Amulet','textures/items/amulet.png','',150,1,0,20,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,25);
 INSERT INTO item VALUES(218,7,0,0,0,0,0,'Gauntlet','textures/items/gauntlet.png','',35,1,0,20,0.0,1,0,0,0,3,2,0,0,0,0,0,10,0,0);
-INSERT INTO item VALUES(219,0,0,0,0,0,0,'Lighthouse Key','textures/items/key.png','',0,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(219,13,0,0,1,0,0,'Lighthouse Key','textures/items/key.png','',5,0,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(220,10,0,1,1,0,0,'Torch','textures/items/torch.png','Item_Torch',15,1,3,0,60.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(221,11,0,0,0,0,0,'Game Token','textures/items/token.png','',10,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/torch.png','Item_Torch',35,1,5,0,120.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);

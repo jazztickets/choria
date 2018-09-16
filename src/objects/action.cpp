@@ -70,6 +70,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	const _Item *ItemUsed = Source->Character->Action.Item;
 	bool SkillUnlocked = false;
 	bool ItemUnlocked = false;
+	bool KeyUnlocked = false;
 	bool DecrementItem = false;
 
 	// Use item
@@ -98,6 +99,10 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 				Source->Character->Unlocks[ItemUsed->UnlockID].Level = 1;
 				ItemUnlocked = true;
 			}
+			else if(ItemUsed->IsKey()) {
+				Source->Inventory->Bags[_Bag::BagType::KEYS].Slots.push_back(_InventorySlot(ItemUsed, 1));
+				KeyUnlocked = true;
+			}
 		}
 	}
 
@@ -110,6 +115,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Data.WriteBit(DecrementItem);
 	Data.WriteBit(SkillUnlocked);
 	Data.WriteBit(ItemUnlocked);
+	Data.WriteBit(KeyUnlocked);
 
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;

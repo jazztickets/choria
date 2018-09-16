@@ -47,6 +47,7 @@ enum class ItemType : uint32_t {
 	CONSUMABLE,
 	TRADABLE,
 	UNLOCKABLE,
+	KEY,
 };
 
 // Classes
@@ -58,6 +59,7 @@ class _Item {
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsSkill() const { return Type == ItemType::SKILL; }
+		bool IsKey() const { return Type == ItemType::KEY; }
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
 		bool IsStackable() const { return !IsEquippable(); }
