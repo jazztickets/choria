@@ -206,6 +206,7 @@ class _HUD {
 		void DrawHudEffects();
 		void DrawInventory();
 		void DrawBag(_Bag::BagType Type);
+		void DrawKeys(_Bag::BagType Type);
 		void DrawTeleport();
 		void DrawCharacterStats();
 		void DrawVendor();
@@ -233,6 +234,7 @@ class _HUD {
 		void SendTradeRequest();
 		void SendTradeCancel();
 		void UpdateAcceptButton();
+		void InitInventoryTab(int Index);
 
 		void SplitStack(const _Slot &Slot, uint8_t Count);
 		_Bag::BagType GetBagFromWindow(int Window);

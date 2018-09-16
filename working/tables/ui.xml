@@ -321,7 +321,7 @@
             <element id="label_minigame_tokens" font="hud_small" offset_x="-33" offset_y="22" alignment_x="2" alignment_y="3"/>
         </element>
     </element>
-    <element id="element_keys" style="style_hud_bg" offset_x="0" offset_y="0" size_x="3" size_y="3" index="14">
+    <element id="element_keys" style="style_equipment_bg" offset_x="-215" offset_y="0" size_x="362" size_y="288" index="14">
     </element>
     <element id="element_dark_overlay" style="style_hud_bg"/>
     <element id="element_skills" style="style_hud_bg" size_x="474" size_y="450" index="11"/>
