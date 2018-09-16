@@ -192,4 +192,19 @@ void _TestState::Render(double BlendFactor) {
 	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	Minigame->Render(BlendFactor);
+
+	ae::Graphics.Setup2D();
+	ae::Graphics.SetStaticUniforms();
+	ae::Graphics.SetVBO(ae::VBO_NONE);
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+	ae::Graphics.DrawRectangle(glm::vec2(1, 1), glm::vec2(4, 4), true);
+	ae::Graphics.SetColor(glm::vec4(1,0,0,1));
+	ae::Graphics.DrawRectangle(glm::vec2(5, 1), glm::vec2(8, 4), false);
+
+	ae::Graphics.EnableScissorTest();
+	ae::_Bounds ScissorRegion(glm::vec2(9, 1), glm::vec2(12, 4));
+	ae::Graphics.SetScissor(ScissorRegion);
+	ae::Graphics.SetColor(glm::vec4(0,1,0,1));
+	ae::Graphics.DrawRectangle(glm::vec2(8, 0), glm::vec2(13, 5), true);
+	ae::Graphics.DisableScissorTest();
 }
