@@ -209,6 +209,10 @@
         <element id="button_actionbar_6" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="6"/>
         <element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="336" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="7"/>
     </element>
+        <element id="element_inventory_tabs" style="style_hud_bg" offset_x="-311" offset_y="-161" size_x="169" size_y="32" index="13">
+        <element id="button_inventory_tabs_bag" texture="textures/hud/bag.png" offset_x="0" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="0"/>
+        <element id="button_inventory_tabs_key" texture="textures/hud/key.png" offset_x="32" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="1"/>
+    </element>
     <element id="element_equipment" offset_x="-311" size_x="170" size_y="288" index="4">
         <element id="image_equipment" texture="textures/hud/equipment.png" size_x="170" size_y="288" alignment_x="0" alignment_y="0" clickable="false"/>
         <element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="61" offset_y="4" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="0"/>
@@ -307,11 +311,13 @@
         <element id="label_blacksmith_cost" font="hud_medium" offset_y="90" alignment_y="3"/>
     </element>
     <element id="element_minigame" style="style_minigame_bg" index="12">
-		<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-40" alignment_y="3"/>
-		<element id="label_minigame_cost" font="hud_medium" text="Cost" color="gold" offset_x="0.5" offset_y="-12" alignment_y="3"/>
-		<element id="label_minigame_token_image" texture="textures/items/token.png" size_x="32" size_y="32" offset_y="-32" alignment_x="2" alignment_y="0" clickable="false">
-			<element id="label_minigame_tokens" font="hud_small" offset_x="-33" offset_y="22" alignment_x="2" alignment_y="3"/>
-		</element>
+        <element id="label_minigame_name" font="hud_large" text="Game" offset_y="-40" alignment_y="3"/>
+        <element id="label_minigame_cost" font="hud_medium" text="Cost" color="gold" offset_x="0.5" offset_y="-12" alignment_y="3"/>
+        <element id="label_minigame_token_image" texture="textures/items/token.png" size_x="32" size_y="32" offset_y="-32" alignment_x="2" alignment_y="0" clickable="false">
+            <element id="label_minigame_tokens" font="hud_small" offset_x="-33" offset_y="22" alignment_x="2" alignment_y="3"/>
+        </element>
+    </element>
+    <element id="element_keys" style="style_hud_bg" offset_x="0" offset_y="0" size_x="3" size_y="3" index="14">
     </element>
     <element id="element_dark_overlay" style="style_hud_bg"/>
     <element id="element_skills" style="style_hud_bg" size_x="474" size_y="450" index="11"/>

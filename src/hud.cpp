@@ -84,6 +84,8 @@ _HUD::_HUD() {
 	ButtonBarElement = ae::Assets.Elements["element_buttonbar"];
 	EquipmentElement = ae::Assets.Elements["element_equipment"];
 	InventoryElement = ae::Assets.Elements["element_inventory"];
+	InventoryTabsElement = ae::Assets.Elements["element_inventory_tabs"];
+	KeysElement = ae::Assets.Elements["element_keys"];
 	CharacterElement = ae::Assets.Elements["element_character"];
 	VendorElement = ae::Assets.Elements["element_vendor"];
 	TradeElement = ae::Assets.Elements["element_trade"];
@@ -117,6 +119,8 @@ _HUD::_HUD() {
 	ButtonBarElement->SetActive(true);
 	EquipmentElement->SetActive(false);
 	InventoryElement->SetActive(false);
+	InventoryTabsElement->SetActive(false);
+	KeysElement->SetActive(false);
 	CharacterElement->SetActive(false);
 	VendorElement->SetActive(false);
 	TradeElement->SetActive(false);
@@ -889,6 +893,7 @@ void _HUD::ToggleInventory() {
 
 		EquipmentElement->SetActive(true);
 		InventoryElement->SetActive(true);
+		InventoryTabsElement->SetActive(true);
 		CharacterElement->SetActive(true);
 		PlayState.SendStatus(_Character::STATUS_INVENTORY);
 	}
@@ -1417,6 +1422,10 @@ void _HUD::DrawInventory() {
 
 	EquipmentElement->Render();
 	InventoryElement->Render();
+	InventoryTabsElement->Render();
+	//KeysElement->CalculateBounds();
+	//KeysElement->SetActive(true);
+	//KeysElement->Render();
 
 	DrawBag(_Bag::EQUIPMENT);
 	DrawBag(_Bag::INVENTORY);

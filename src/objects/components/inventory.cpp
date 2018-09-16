@@ -35,10 +35,12 @@ _Inventory::_Inventory() {
 	Bags[_Bag::EQUIPMENT].ID = _Bag::EQUIPMENT;
 	Bags[_Bag::INVENTORY].ID = _Bag::INVENTORY;
 	Bags[_Bag::TRADE].ID = _Bag::TRADE;
+	Bags[_Bag::KEYS].ID = _Bag::KEYS;
 
 	Bags[_Bag::EQUIPMENT].Name = "equipment";
 	Bags[_Bag::INVENTORY].Name = "inventory";
 	Bags[_Bag::TRADE].Name = "trade";
+	Bags[_Bag::KEYS].Name = "keys";
 }
 
 // Serialize

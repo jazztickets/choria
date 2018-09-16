@@ -73,6 +73,7 @@ struct _Bag {
 		EQUIPMENT,
 		INVENTORY,
 		TRADE,
+		KEYS,
 		COUNT,
 	};
 

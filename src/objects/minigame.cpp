@@ -332,6 +332,14 @@ void _Minigame::Render(double BlendFactor) {
 
 	ae::Graphics.Setup2D();
 	ae::Graphics.SetStaticUniforms();
+
+	ae::Graphics.SetVBO(ae::VBO_NONE);
+
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+	ae::Graphics.DrawRectangle(glm::vec2(1, 1), glm::vec2(3, 3), true);
+
+	ae::Graphics.SetColor(glm::vec4(1,0,0,1));
+	ae::Graphics.DrawRectangle(glm::vec2(5, 1), glm::vec2(7, 3), false);
 }
 
 // Mouse input

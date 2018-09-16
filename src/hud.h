@@ -103,6 +103,8 @@ class _HUD {
 			WINDOW_TRADEYOURS,
 			WINDOW_SKILLS,
 			WINDOW_MINIGAME,
+			WINDOW_INVENTORY_TABS,
+			WINDOW_KEYS,
 		};
 
 		_HUD();
@@ -244,6 +246,8 @@ class _HUD {
 		ae::_Element *ButtonBarElement;
 		ae::_Element *EquipmentElement;
 		ae::_Element *InventoryElement;
+		ae::_Element *InventoryTabsElement;
+		ae::_Element *KeysElement;
 		ae::_Element *CharacterElement;
 		ae::_Element *VendorElement;
 		ae::_Element *TradeElement;
