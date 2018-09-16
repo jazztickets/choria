@@ -209,11 +209,15 @@
         <element id="button_actionbar_6" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="6"/>
         <element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="336" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="7"/>
     </element>
-    <element id="element_inventory_tabs" style="style_hud_bg" offset_x="-311" offset_y="-160" size_x="170" size_y="32" index="13">
-        <element id="button_inventory_tabs_bag" texture="textures/hud/bag.png" offset_x="0" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="0"/>
-        <element id="button_inventory_tabs_key" texture="textures/hud/key.png" offset_x="32" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="1"/>
+    <element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-364" offset_y="-160" size_x="64" size_y="32" index="13">
+        <element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" offset_x="0" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="0">
+            <element id="image_inventory_tabs_bag" texture="textures/hud/bag.png" size_x="32" size_y="32" clickable="false"/>
+        </element>
+        <element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="32" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="1">
+            <element id="image_inventory_tabs_key" texture="textures/hud/key.png" size_x="32" size_y="32" clickable="false"/>
+        </element>
     </element>
-    <element id="element_equipment" offset_x="-311" size_x="170" size_y="288" index="4">
+    <element id="element_equipment" style="style_equipment_bg" offset_x="-311" size_x="170" size_y="288" index="4">
         <element id="image_equipment" texture="textures/hud/equipment.png" size_x="170" size_y="288" alignment_x="0" alignment_y="0" clickable="false"/>
         <element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="61" offset_y="4" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="0"/>
         <element id="button_equipment_bag_1" style="style_hud_slot_alpha" offset_x="61" offset_y="67" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="1"/>

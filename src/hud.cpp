@@ -894,6 +894,7 @@ void _HUD::ToggleInventory() {
 		EquipmentElement->SetActive(true);
 		InventoryElement->SetActive(true);
 		InventoryTabsElement->SetActive(true);
+		InventoryTabsElement->Children.front()->Checked = true;
 		CharacterElement->SetActive(true);
 		PlayState.SendStatus(_Character::STATUS_INVENTORY);
 	}
