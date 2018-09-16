@@ -209,7 +209,7 @@
         <element id="button_actionbar_6" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="6"/>
         <element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="336" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="7"/>
     </element>
-        <element id="element_inventory_tabs" style="style_hud_bg" offset_x="-311" offset_y="-161" size_x="169" size_y="32" index="13">
+    <element id="element_inventory_tabs" style="style_hud_bg" offset_x="-311" offset_y="-160" size_x="170" size_y="32" index="13">
         <element id="button_inventory_tabs_bag" texture="textures/hud/bag.png" offset_x="0" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="0"/>
         <element id="button_inventory_tabs_key" texture="textures/hud/key.png" offset_x="32" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="1"/>
     </element>
@@ -391,7 +391,7 @@
         <element id="label_party_title" font="menu_buttons" text="Enter Party Name" offset_y="40" alignment_y="3"/>
     </element>
     <element id="element_chat" style="style_menu_textbox" offset_x="25" offset_y="-100" size_x="350" size_y="20" alignment_x="0" alignment_y="2">
-        <element id="textbox_chat" style="style_menu_textbox" font="hud_small" offset_x="5" offset_y="15" alignment_x="0" alignment_y="3" maxlength="100"/>
+        <element id="textbox_chat" font="hud_small" offset_x="5" offset_y="15" alignment_x="0" alignment_y="3" maxlength="100"/>
     </element>
     <element id="element_editor_buttonbar" size_x="128" size_y="32" alignment_x="2" alignment_y="0">
         <element id="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="32" size_y="32" alignment_x="0" alignment_y="0">
