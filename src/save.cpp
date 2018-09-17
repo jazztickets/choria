@@ -260,7 +260,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.ModelID = Build->ModelID;
 	Object.Character->CharacterID = (uint32_t)Database->GetLastInsertID();
 	Object.Character->ActionBar = Build->Character->ActionBar;
-	Object.Inventory->Bags = Build->Inventory->Bags;
+	Object.Inventory->Bags = Build->Inventory->GetBags();
 	Object.Character->Skills = Build->Character->Skills;
 	Object.Character->Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 	Object.Character->CalculateStats();

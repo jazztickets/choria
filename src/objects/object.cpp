@@ -536,8 +536,8 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 	// Write items
 	Json::Value ItemsNode;
-	for(auto &Bag : Inventory->Bags) {
-		if(Bag.ID == _Bag::NONE)
+	for(auto &Bag : Inventory->GetBags()) {
+		if(Bag.ID == BagType::NONE)
 			continue;
 
 		// Write bag contents
@@ -553,7 +553,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 				BagNode.append(ItemNode);
 			}
 		}
-		ItemsNode[std::to_string(Bag.ID)] = BagNode;
+		ItemsNode[std::to_string((int)Bag.ID)] = BagNode;
 	}
 	Data["items"] = ItemsNode;
 
@@ -652,11 +652,11 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 			InventorySlot.Item = Stats->Items.at(ItemNode["id"].asUInt());
 			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
 			InventorySlot.Count = ItemNode["count"].asInt();
-			int BagIndex = std::stoul(BagNode.name());
-			if(Inventory->Bags[BagIndex].StaticSize)
-				Inventory->Bags[BagIndex].Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
+			BagType Bag = (BagType)std::stoul(BagNode.name());
+			if(Inventory->GetBag(Bag).StaticSize)
+				Inventory->GetBag(Bag).Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
 			else
-				Inventory->Bags[BagIndex].Slots.push_back(InventorySlot);
+				Inventory->GetBag(Bag).Slots.push_back(InventorySlot);
 		}
 	}
 

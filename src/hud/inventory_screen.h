@@ -34,7 +34,7 @@ class _InventoryScreen : public _Screen {
 
 		void InitInventoryTab(int Index);
 
-		void DrawBag(_Bag::BagType Type);
+		void DrawBag(BagType Type);
 		void DrawKeys();
 
 		ae::_Element *EquipmentElement;

@@ -535,7 +535,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 		const _Object *Build = BuildIterator->second;
 
 		// Copy build
-		Object->Inventory->Bags = Build->Inventory->Bags;
+		Object->Inventory->Bags = Build->Inventory->GetBags();
 		Object->Character->ActionBar = Build->Character->ActionBar;
 		Object->Character->Skills = Build->Character->Skills;
 		Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;

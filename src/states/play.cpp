@@ -1270,7 +1270,7 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 				if(DecrementItem) {
 					size_t Index;
 					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
-						Player->Inventory->UpdateItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
+						Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 						Player->Character->RefreshActionBarCount();
 					}
 				}
@@ -1282,7 +1282,7 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 					Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
 
 				if(KeyUnlocked)
-					Player->Inventory->Bags[_Bag::BagType::KEYS].Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Item, 1));
+					Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Item, 1));
 			}
 		}
 	}

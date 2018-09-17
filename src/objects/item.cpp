@@ -397,7 +397,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		case ItemType::ARMOR:
 		case ItemType::BOOTS:
 		case ItemType::SHIELD:
-			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.BagType == _Bag::BagType::INVENTORY)
+			if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.Slot.Type == BagType::INVENTORY)
 				InfoText = "Right-click to equip";
 		break;
 		case ItemType::CONSUMABLE:
@@ -431,7 +431,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 				InfoText = "Already unlocked";
 		} break;
 		case ItemType::KEY: {
-			if(!Player->Inventory->Bags[_Bag::BagType::KEYS].HasItemID(ID))
+			if(!Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID))
 				InfoText = "Right-click to add to keychain";
 			else
 				InfoText = "Already in keychain";
@@ -529,7 +529,7 @@ int _Item::GetTargetCount() const {
 // Return a valid equipment slot for an item
 void _Item::GetEquipmentSlot(_Slot &Slot) const {
 
-	Slot.BagType = _Bag::BagType::EQUIPMENT;
+	Slot.Type = BagType::EQUIPMENT;
 	switch(Type) {
 		case ItemType::HELMET:
 			Slot.Index = EquipmentType::HEAD;
@@ -554,7 +554,7 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 			Slot.Index = EquipmentType::AMULET;
 		break;
 		default:
-			Slot.BagType = _Bag::BagType::NONE;
+			Slot.Type = BagType::NONE;
 		break;
 	}
 }
@@ -602,7 +602,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 	// Check for item in key bag
 	if(IsKey())
-		return !Object->Inventory->Bags[_Bag::BagType::KEYS].HasItemID(ID);
+		return !Object->Inventory->GetBag(BagType::KEYS).HasItemID(ID);
 
 	// Unlocking item
 	if(IsUnlockable())

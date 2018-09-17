@@ -280,7 +280,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					if(DeleteSlot == UpgradeSlot)
 						UpgradeSlot.Reset();
 
-					if(DeleteSlot.BagType == _Bag::BagType::TRADE)
+					if(DeleteSlot.Type == BagType::TRADE)
 						ResetAcceptButton();
 				}
 
@@ -374,7 +374,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 								// Remove upgrade item from upgrade window
 								if(Cursor.Slot == UpgradeSlot || Tooltip.Slot == UpgradeSlot)
-									UpgradeSlot.BagType = _Bag::BagType::NONE;
+									UpgradeSlot.Type = BagType::NONE;
 							}
 						break;
 						// Sell an item
@@ -405,7 +405,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				// Buy an item
 				case WINDOW_VENDOR:
 					if(Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) {
-						_Bag::BagType BagType = GetBagFromWindow(Tooltip.Window);
+						BagType BagType = GetBagFromWindow(Tooltip.Window);
 						BuyItem(&Cursor, _Slot(BagType, Tooltip.Slot.Index));
 					}
 				break;
@@ -491,7 +491,7 @@ void _HUD::Update(double FrameTime) {
 		// Get window id, stored in parent's userdata field
 		if(HitElement->Parent && Tooltip.Slot.Index != NOSLOT) {
 			Tooltip.Window = HitElement->Parent->Index;
-			Tooltip.Slot.BagType = GetBagFromWindow(Tooltip.Window);
+			Tooltip.Slot.Type = GetBagFromWindow(Tooltip.Window);
 		}
 
 		switch(Tooltip.Window) {
@@ -744,7 +744,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 						CompareSlot = UpgradeSlot;
 					break;
 					case WINDOW_EQUIPMENT:
-						CompareSlot.BagType = _Bag::BagType::NONE;
+						CompareSlot.Type = BagType::NONE;
 					break;
 					default:
 					break;
@@ -992,7 +992,7 @@ void _HUD::InitBlacksmith() {
 	BlacksmithElement->SetActive(true);
 	BlacksmithCost->SetActive(false);
 	ae::Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
-	UpgradeSlot.BagType = _Bag::BagType::NONE;
+	UpgradeSlot.Type = BagType::NONE;
 }
 
 // Initialize minigame
@@ -1134,7 +1134,7 @@ bool _HUD::CloseBlacksmith() {
 	if(Player)
 		Player->Character->Blacksmith = nullptr;
 
-	UpgradeSlot.BagType = _Bag::BagType::NONE;
+	UpgradeSlot.Type = BagType::NONE;
 
 	return WasOpen;
 }
@@ -1290,7 +1290,7 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 
 	// Draw offered items
 	int BagIndex = 0;
-	_Bag &Bag = Player->Inventory->Bags[_Bag::TRADE];
+	_Bag &Bag = Player->Inventory->GetBag(BagType::TRADE);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
@@ -1796,7 +1796,7 @@ void _HUD::UpdateTradeStatus(bool Accepted) {
 void _HUD::SplitStack(const _Slot &Slot, uint8_t Count) {
 
 	// Don't split trade items
-	if(Slot.BagType == _Bag::BagType::TRADE)
+	if(Slot.Type == BagType::TRADE)
 		return;
 
 	// Build packet
@@ -1809,22 +1809,22 @@ void _HUD::SplitStack(const _Slot &Slot, uint8_t Count) {
 }
 
 // Convert window into a player bag
-_Bag::BagType _HUD::GetBagFromWindow(int Window) {
+BagType _HUD::GetBagFromWindow(int Window) {
 
 	switch(Window) {
 		case WINDOW_EQUIPMENT:
-			return _Bag::BagType::EQUIPMENT;
+			return BagType::EQUIPMENT;
 		break;
 		case WINDOW_INVENTORY:
-			return _Bag::BagType::INVENTORY;
+			return BagType::INVENTORY;
 		break;
 		case WINDOW_TRADEYOURS:
 		case WINDOW_TRADETHEIRS:
-			return _Bag::BagType::TRADE;
+			return BagType::TRADE;
 		break;
 	}
 
-	return _Bag::BagType::NONE;
+	return BagType::NONE;
 }
 
 // Return true if player is typing gold

@@ -299,7 +299,7 @@ void _Character::CalculateStats() {
 	int ItemArmor = 0;
 	int ItemDamageBlock = 0;
 	float WeaponDamageModifier = 1.0f;
-	_Bag &EquipmentBag = Object->Inventory->Bags[_Bag::EQUIPMENT];
+	_Bag &EquipmentBag = Object->Inventory->GetBag(BagType::EQUIPMENT);
 	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
 
 		// Check each item

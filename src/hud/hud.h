@@ -57,7 +57,7 @@ struct _Cursor {
 		InventorySlot.Reset();
 		Cost = 0;
 		StatusEffect = nullptr;
-		Slot.BagType = _Bag::BagType::NONE;
+		Slot.Type = BagType::NONE;
 		Slot.Index = NOSLOT;
 		Window = -1;
 	}
@@ -233,7 +233,7 @@ class _HUD {
 		void UpdateAcceptButton();
 
 		void SplitStack(const _Slot &Slot, uint8_t Count);
-		_Bag::BagType GetBagFromWindow(int Window);
+		BagType GetBagFromWindow(int Window);
 
 		// UI
 		ae::_Element *DarkOverlayElement;

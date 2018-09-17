@@ -113,31 +113,31 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "DamageType");
 
 	// Push bag types
-	lua_pushinteger(LuaState, _Bag::BagType::NONE);
+	lua_pushinteger(LuaState, (int)BagType::NONE);
 	lua_setglobal(LuaState, "BAG_NONE");
-	lua_pushinteger(LuaState, _Bag::BagType::EQUIPMENT);
+	lua_pushinteger(LuaState, (int)BagType::EQUIPMENT);
 	lua_setglobal(LuaState, "BAG_EQUIPMENT");
-	lua_pushinteger(LuaState, _Bag::BagType::INVENTORY);
+	lua_pushinteger(LuaState, (int)BagType::INVENTORY);
 	lua_setglobal(LuaState, "BAG_INVENTORY");
-	lua_pushinteger(LuaState, _Bag::BagType::TRADE);
+	lua_pushinteger(LuaState, (int)BagType::TRADE);
 	lua_setglobal(LuaState, "BAG_TRADE");
 
 	// Push inventory slot types
-	lua_pushinteger(LuaState, EquipmentType::HEAD);
+	lua_pushinteger(LuaState, (int)EquipmentType::HEAD);
 	lua_setglobal(LuaState, "INVENTORY_HEAD");
-	lua_pushinteger(LuaState, EquipmentType::BODY);
+	lua_pushinteger(LuaState, (int)EquipmentType::BODY);
 	lua_setglobal(LuaState, "INVENTORY_BODY");
-	lua_pushinteger(LuaState, EquipmentType::LEGS);
+	lua_pushinteger(LuaState, (int)EquipmentType::LEGS);
 	lua_setglobal(LuaState, "INVENTORY_LEGS");
-	lua_pushinteger(LuaState, EquipmentType::HAND1);
+	lua_pushinteger(LuaState, (int)EquipmentType::HAND1);
 	lua_setglobal(LuaState, "INVENTORY_HAND1");
-	lua_pushinteger(LuaState, EquipmentType::HAND2);
+	lua_pushinteger(LuaState, (int)EquipmentType::HAND2);
 	lua_setglobal(LuaState, "INVENTORY_HAND2");
-	lua_pushinteger(LuaState, EquipmentType::RING1);
+	lua_pushinteger(LuaState, (int)EquipmentType::RING1);
 	lua_setglobal(LuaState, "INVENTORY_RING1");
-	lua_pushinteger(LuaState, EquipmentType::RING2);
+	lua_pushinteger(LuaState, (int)EquipmentType::RING2);
 	lua_setglobal(LuaState, "INVENTORY_RING2");
-	lua_pushinteger(LuaState, EquipmentType::AMULET);
+	lua_pushinteger(LuaState, (int)EquipmentType::AMULET);
 	lua_setglobal(LuaState, "INVENTORY_AMULET");
 
 	// Push item types
@@ -845,7 +845,7 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 
 	// Get item
 	_Slot Slot;
-	Slot.BagType = (_Bag::BagType)lua_tointeger(LuaState, 1);
+	Slot.Type = (BagType)lua_tointeger(LuaState, 1);
 	Slot.Index = (size_t)lua_tointeger(LuaState, 2);
 	if(Object->Inventory->IsValidSlot(Slot)) {
 		Item = Object->Inventory->GetSlot(Slot).Item;
@@ -1044,7 +1044,7 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 	if(Buy) {
 
 		// Get parameters
-		uint32_t ItemID = (_Bag::BagType)lua_tointeger(LuaState, 2);
+		uint32_t ItemID = (uint32_t)lua_tointeger(LuaState, 2);
 		int Amount = (int)lua_tointeger(LuaState, 3);
 
 		// Build packet
@@ -1062,7 +1062,7 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 
 		// Get parameters
 		_Slot Slot;
-		Slot.BagType = (_Bag::BagType)lua_tointeger(LuaState, 2);
+		Slot.Type = (BagType)lua_tointeger(LuaState, 2);
 		Slot.Index = (size_t)lua_tointeger(LuaState, 3);
 		uint8_t Amount = (uint8_t)lua_tointeger(LuaState, 4);
 

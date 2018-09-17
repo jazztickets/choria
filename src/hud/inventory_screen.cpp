@@ -89,8 +89,8 @@ void _InventoryScreen::Render(double BlendFactor) {
 	if(InventoryElement->Active) {
 		EquipmentElement->Render();
 		InventoryElement->Render();
-		DrawBag(_Bag::EQUIPMENT);
-		DrawBag(_Bag::INVENTORY);
+		DrawBag(BagType::EQUIPMENT);
+		DrawBag(BagType::INVENTORY);
 	}
 	else if(KeysElement->Active) {
 		KeysElement->Render();
@@ -117,8 +117,8 @@ void _InventoryScreen::InitInventoryTab(int Index) {
 }
 
 // Draw an inventory bag
-void _InventoryScreen::DrawBag(_Bag::BagType Type) {
-	_Bag &Bag = HUD->Player->Inventory->Bags[Type];
+void _InventoryScreen::DrawBag(BagType Type) {
+	_Bag &Bag = HUD->Player->Inventory->GetBag(Type);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Get inventory slot
@@ -139,7 +139,7 @@ void _InventoryScreen::DrawBag(_Bag::BagType Type) {
 			ae::Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
 
 			// Draw two handed weapon twice in equipment bag
-			if(Type == _Bag::BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
+			if(Type == BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
 				ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 				ae::Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, ae::Assets.Colors["itemfade"]);
@@ -174,7 +174,7 @@ void _InventoryScreen::DrawKeys() {
 	int Column = 0;
 	int Row = 0;
 
-	_Bag &Bag = HUD->Player->Inventory->Bags[_Bag::BagType::KEYS];
+	_Bag &Bag = HUD->Player->Inventory->GetBag(BagType::KEYS);
 
 	// No keys
 	if(!Bag.Slots.size()) {

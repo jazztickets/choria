@@ -1006,7 +1006,7 @@ void _Server::HandleInventoryMove(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Check for trading players
 	_Object *TradePlayer = Player->Character->TradePlayer;
-	if(Player->Character->WaitingForTrade && TradePlayer && (OldSlot.BagType == _Bag::BagType::TRADE || NewSlot.BagType == _Bag::BagType::TRADE)) {
+	if(Player->Character->WaitingForTrade && TradePlayer && (OldSlot.Type == BagType::TRADE || NewSlot.Type == BagType::TRADE)) {
 
 		// Reset agreement
 		Player->Character->TradeAccepted = false;
@@ -1049,7 +1049,7 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Item->GetEquipmentSlot(TargetSlot);
 
 		// Check for empty second ring slot
-		if(TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->Bags[_Bag::BagType::EQUIPMENT].Slots[EquipmentType::RING2].Item)
+		if(TargetSlot.Index == EquipmentType::RING1 && Player->Inventory->GetSlot(TargetSlot).Item && !Player->Inventory->GetBag(BagType::EQUIPMENT).Slots[EquipmentType::RING2].Item)
 			TargetSlot.Index = EquipmentType::RING2;
 
 		// Attempt to move
@@ -1087,7 +1087,7 @@ void _Server::HandleInventorySplit(ae::_Buffer &Data, ae::_Peer *Peer) {
 	uint8_t Count = Data.Read<uint8_t>();
 
 	// Inventory only
-	if(Slot.BagType == _Bag::BagType::TRADE)
+	if(Slot.Type == BagType::TRADE)
 		return;
 
 	// Split items
@@ -1112,7 +1112,7 @@ void _Server::HandleInventoryDelete(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	// Delete item
-	Player->Inventory->Bags[Slot.BagType].Slots[Slot.Index].Reset();
+	Player->Inventory->GetBag(Slot.Type).Slots[Slot.Index].Reset();
 
 	// Update client
 	ae::_Buffer Packet;
@@ -1123,7 +1123,7 @@ void _Server::HandleInventoryDelete(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Check for trading players
 	_Object *TradePlayer = Player->Character->TradePlayer;
-	if(Player->Character->WaitingForTrade && TradePlayer && Slot.BagType == _Bag::BagType::TRADE) {
+	if(Player->Character->WaitingForTrade && TradePlayer && Slot.Type == BagType::TRADE) {
 
 		// Reset agreement
 		Player->Character->TradeAccepted = false;
@@ -1403,7 +1403,7 @@ void _Server::HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 			// Exchange items
 			_InventorySlot TempItems[PLAYER_TRADEITEMS];
 			_Slot Slot;
-			Slot.BagType = _Bag::BagType::TRADE;
+			Slot.Type = BagType::TRADE;
 			for(size_t i = 0; i < PLAYER_TRADEITEMS; i++) {
 				Slot.Index = i;
 				TempItems[i] = Player->Inventory->GetSlot(Slot);
@@ -1839,7 +1839,7 @@ void _Server::BroadcastMessage(ae::_Peer *IgnorePeer, const std::string &Message
 
 // Sends information to another player about items they're trading
 void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
-	_Bag &Bag = Sender->Inventory->Bags[_Bag::BagType::TRADE];
+	_Bag &Bag = Sender->Inventory->GetBag(BagType::TRADE);
 
 	// Send items to trader player
 	ae::_Buffer Packet;
@@ -1847,7 +1847,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 	Packet.Write<ae::NetworkIDType>(Sender->NetworkID);
 	Packet.Write<int>(Sender->Character->TradeGold);
 	for(size_t i = 0; i < Bag.Slots.size(); i++)
-		Sender->Inventory->SerializeSlot(Packet, _Slot(_Bag::BagType::TRADE, i));
+		Sender->Inventory->SerializeSlot(Packet, _Slot(BagType::TRADE, i));
 
 	Network->SendPacket(Packet, Receiver->Peer);
 }

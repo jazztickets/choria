@@ -24,24 +24,24 @@
 // Constructor
 _Inventory::_Inventory() {
 
-	Bags.resize(_Bag::COUNT);
-	Bags[_Bag::EQUIPMENT].Slots.resize(EquipmentType::COUNT);
-	Bags[_Bag::INVENTORY].Slots.resize(PLAYER_INVENTORYSIZE);
-	Bags[_Bag::TRADE].Slots.resize(PLAYER_TRADEITEMS);
-	Bags[_Bag::KEYS].StaticSize = false;
-	for(auto &Slot : Bags[_Bag::EQUIPMENT].Slots)
+	Bags.resize((size_t)BagType::COUNT);
+	GetBag(BagType::EQUIPMENT).Slots.resize(EquipmentType::COUNT);
+	GetBag(BagType::INVENTORY).Slots.resize(PLAYER_INVENTORYSIZE);
+	GetBag(BagType::TRADE).Slots.resize(PLAYER_TRADEITEMS);
+	GetBag(BagType::KEYS).StaticSize = false;
+	for(auto &Slot : GetBag(BagType::EQUIPMENT).Slots)
 		Slot.MaxCount = 1;
 
-	Bags[_Bag::NONE].ID = _Bag::NONE;
-	Bags[_Bag::EQUIPMENT].ID = _Bag::EQUIPMENT;
-	Bags[_Bag::INVENTORY].ID = _Bag::INVENTORY;
-	Bags[_Bag::TRADE].ID = _Bag::TRADE;
-	Bags[_Bag::KEYS].ID = _Bag::KEYS;
+	GetBag(BagType::NONE).ID = BagType::NONE;
+	GetBag(BagType::EQUIPMENT).ID = BagType::EQUIPMENT;
+	GetBag(BagType::INVENTORY).ID = BagType::INVENTORY;
+	GetBag(BagType::TRADE).ID = BagType::TRADE;
+	GetBag(BagType::KEYS).ID = BagType::KEYS;
 
-	Bags[_Bag::EQUIPMENT].Name = "equipment";
-	Bags[_Bag::INVENTORY].Name = "inventory";
-	Bags[_Bag::TRADE].Name = "trade";
-	Bags[_Bag::KEYS].Name = "keys";
+	GetBag(BagType::EQUIPMENT).Name = "equipment";
+	GetBag(BagType::INVENTORY).Name = "inventory";
+	GetBag(BagType::TRADE).Name = "trade";
+	GetBag(BagType::KEYS).Name = "keys";
 }
 
 // Serialize
@@ -54,7 +54,7 @@ void _Inventory::Serialize(ae::_Buffer &Data) {
 
 // Serialize a inventory slot
 void _Inventory::SerializeSlot(ae::_Buffer &Data, const _Slot &Slot) {
-	if(!Slot.BagType)
+	if(Slot.Type == BagType::NONE)
 		throw std::runtime_error("_Slot::Serialize - Bag is NULL");
 
 	// Slot index
@@ -86,7 +86,7 @@ void _Inventory::UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats) {
 // Search for an item in the inventory
 bool _Inventory::FindItem(const _Item *Item, size_t &Slot, size_t StartSlot) {
 
-	_Bag &Bag = Bags[_Bag::INVENTORY];
+	_Bag &Bag = GetBag(BagType::INVENTORY);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 		if(StartSlot >= Bag.Slots.size())
 			StartSlot = 0;
@@ -115,7 +115,7 @@ bool _Inventory::HasItemID(uint32_t ItemID) {
 // Count the number of a certain item in inventory
 int _Inventory::CountItem(const _Item *Item) {
 	int Count = 0;
-	_Bag &Bag = Bags[_Bag::INVENTORY];
+	_Bag &Bag = GetBag(BagType::INVENTORY);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 		if(Bag.Slots[i].Item == Item)
 			Count += Bag.Slots[i].Count;
@@ -147,11 +147,11 @@ bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
 			if(Item->Type == ItemType::ONEHANDED_WEAPON)
 				return true;
 
-			if(Item->Type == ItemType::TWOHANDED_WEAPON && Bags[_Bag::EQUIPMENT].Slots[EquipmentType::HAND2].Item == nullptr)
+			if(Item->Type == ItemType::TWOHANDED_WEAPON && GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND2].Item == nullptr)
 				return true;
 		break;
 		case EquipmentType::HAND2:
-			if(Item->Type == ItemType::SHIELD && (Bags[_Bag::EQUIPMENT].Slots[EquipmentType::HAND1].Item == nullptr || Bags[_Bag::EQUIPMENT].Slots[EquipmentType::HAND1].Item->Type != ItemType::TWOHANDED_WEAPON))
+			if(Item->Type == ItemType::SHIELD && (GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item == nullptr || GetBag(BagType::EQUIPMENT).Slots[EquipmentType::HAND1].Item->Type != ItemType::TWOHANDED_WEAPON))
 				return true;
 		break;
 		case EquipmentType::RING1:
@@ -221,10 +221,10 @@ bool _Inventory::CanSwap(const _Slot &OldSlot, const _Slot &NewSlot) {
 		return false;
 
 	// Check if the item is even equippable
-	if(NewSlot.BagType == _Bag::BagType::EQUIPMENT && !CanEquipItem(NewSlot.Index, GetSlot(OldSlot).Item))
+	if(NewSlot.Type == BagType::EQUIPMENT && !CanEquipItem(NewSlot.Index, GetSlot(OldSlot).Item))
 		return false;
 
-	if(NewSlot.BagType == _Bag::BagType::TRADE && GetSlot(OldSlot).Item && !GetSlot(OldSlot).Item->Tradable)
+	if(NewSlot.Type == BagType::TRADE && GetSlot(OldSlot).Item && !GetSlot(OldSlot).Item->Tradable)
 		return false;
 
 	return true;
@@ -248,12 +248,12 @@ int _Inventory::UpdateItemCount(const _Slot &Slot, int Amount) {
 // Reduce item count for a particular item
 void _Inventory::SpendItems(const _Item *Item, int Count) {
 
-	_Bag &Bag = Bags[_Bag::INVENTORY];
+	_Bag &Bag = GetBag(BagType::INVENTORY);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Find item
 		if(Bag.Slots[i].Item == Item)
-			Count = UpdateItemCount(_Slot(_Bag::BagType::INVENTORY, i), -Count);
+			Count = UpdateItemCount(_Slot(BagType::INVENTORY, i), -Count);
 
 		// Iterate until all amounts have been spent
 		if(Count <= 0)
@@ -263,17 +263,17 @@ void _Inventory::SpendItems(const _Item *Item, int Count) {
 
 // Find a suitable slot for an item
 _Slot _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
-	_Slot Slot = FindSlotForItemInBag(_Bag::EQUIPMENT, Item, Upgrades, Count);
+	_Slot Slot = FindSlotForItemInBag(BagType::EQUIPMENT, Item, Upgrades, Count);
 	if(!IsValidSlot(Slot))
-		Slot = FindSlotForItemInBag(_Bag::INVENTORY, Item, Upgrades, Count);
+		Slot = FindSlotForItemInBag(BagType::INVENTORY, Item, Upgrades, Count);
 
 	return Slot;
 }
 
 // Find a slot for an item in a certain bag
-_Slot _Inventory::FindSlotForItemInBag(_Bag::BagType BagType, const _Item *Item, int Upgrades, int Count) {
+_Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int Upgrades, int Count) {
 	_Slot EmptySlot;
-	_Bag &Bag = Bags[BagType];
+	_Bag &Bag = Bags[(size_t)BagType];
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 
 		// Try to find an existing stack first
@@ -281,8 +281,8 @@ _Slot _Inventory::FindSlotForItemInBag(_Bag::BagType BagType, const _Item *Item,
 			return _Slot(BagType, i);
 
 		// Keep track of the first empty slot in case stack is not found
-		if(EmptySlot.BagType == _Bag::BagType::NONE && Bag.Slots[i].Item == nullptr && (CanEquipItem(i, Item) || BagType != _Bag::EQUIPMENT)) {
-			EmptySlot.BagType = BagType;
+		if(EmptySlot.Type == BagType::NONE && Bag.Slots[i].Item == nullptr && (CanEquipItem(i, Item) || BagType != BagType::EQUIPMENT)) {
+			EmptySlot.Type = BagType;
 			EmptySlot.Index = i;
 		}
 	}
@@ -308,7 +308,7 @@ bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, _Slot Targe
 				return false;
 		}
 		// Trying to equip an item
-		else if(Slot.BagType == _Bag::EQUIPMENT) {
+		else if(Slot.Type == BagType::EQUIPMENT) {
 
 			// Make sure it can be equipped
 			if(!CanEquipItem(Slot.Index, Item))
@@ -335,7 +335,7 @@ bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, _Slot Targe
 // Moves the player's trade items to their bag
 void _Inventory::MoveTradeToInventory() {
 
-	_Bag &Bag = Bags[_Bag::TRADE];
+	_Bag &Bag = GetBag(BagType::TRADE);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
 		if(Bag.Slots[i].Item && AddItem(Bag.Slots[i].Item, Bag.Slots[i].Upgrades, Bag.Slots[i].Count))
 			Bag.Slots[i].Reset();
@@ -344,10 +344,10 @@ void _Inventory::MoveTradeToInventory() {
 
 // Splits an item stack
 bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
-	if(Slot.Index == NOSLOT || Slot.BagType != _Bag::BagType::INVENTORY)
+	if(Slot.Index == NOSLOT || Slot.Type != BagType::INVENTORY)
 		return false;
 
-	_Bag &Bag = Bags[_Bag::BagType::INVENTORY];
+	_Bag &Bag = GetBag(BagType::INVENTORY);
 
 	// Make sure stack is large enough
 	_InventorySlot &SplitItem = GetSlot(Slot);
@@ -397,17 +397,17 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 	for(size_t i = 0; i < Trader->Items.size(); i++) {
 		const _Item *RequiredItem = Trader->Items[i].Item;
 		int RequiredCount = Trader->Items[i].Count;
-		RequiredItemSlots[i].BagType = _Bag::BagType::NONE;
+		RequiredItemSlots[i].Type = BagType::NONE;
 
 		// Search for the required item
 		for(auto &Bag : Bags) {
-			if(Bag.ID == _Bag::BagType::TRADE)
+			if(Bag.ID == BagType::TRADE)
 				continue;
 
 			for(size_t j = 0; j < Bag.Slots.size(); j++) {
 				_InventorySlot &InventoryItem = Bag.Slots[j];
 				if(InventoryItem.Item == RequiredItem && InventoryItem.Count >= RequiredCount) {
-					RequiredItemSlots[i].BagType = Bag.ID;
+					RequiredItemSlots[i].Type = Bag.ID;
 					RequiredItemSlots[i].Index = j;
 					break;
 				}
@@ -416,7 +416,7 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 
 		// Didn't find an item
 		if(!IsValidSlot(RequiredItemSlots[i]))
-			RewardItemSlot.BagType = _Bag::BagType::NONE;
+			RewardItemSlot.Type = BagType::NONE;
 	}
 
 	return RewardItemSlot;
@@ -448,13 +448,13 @@ void _InventorySlot::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 // Serialize a slot
 void _Slot::Serialize(ae::_Buffer &Data) const {
-	Data.Write<uint8_t>(BagType);
+	Data.Write<uint8_t>((uint8_t)Type);
 	Data.Write<uint8_t>((uint8_t)Index);
 }
 
 // Unserialize a slot
 void _Slot::Unserialize(ae::_Buffer &Data) {
-	BagType = (_Bag::BagType)Data.Read<uint8_t>();
+	Type = (BagType)Data.Read<uint8_t>();
 	Index = Data.Read<uint8_t>();
 	if(Index == (uint8_t)-1)
 		Index = NOSLOT;

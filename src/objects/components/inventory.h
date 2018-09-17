@@ -50,6 +50,15 @@ enum EquipmentType : size_t {
 	COUNT,
 };
 
+enum class BagType : size_t {
+	NONE,
+	EQUIPMENT,
+	INVENTORY,
+	TRADE,
+	KEYS,
+	COUNT,
+};
+
 // Single inventory slot
 struct _InventorySlot {
 	_InventorySlot() { Reset(); }
@@ -68,16 +77,7 @@ struct _InventorySlot {
 // Bags contain multiple slots
 struct _Bag {
 
-	enum BagType : uint8_t {
-		NONE,
-		EQUIPMENT,
-		INVENTORY,
-		TRADE,
-		KEYS,
-		COUNT,
-	};
-
-	_Bag() : ID(_Bag::NONE), StaticSize(true) { }
+	_Bag() : ID(BagType::NONE), StaticSize(true) { }
 
 	void Serialize(ae::_Buffer &Data);
 	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
@@ -92,22 +92,25 @@ struct _Bag {
 
 // Slots point to a bag and index in the bag
 struct _Slot {
-	_Slot() : BagType(_Bag::BagType::NONE), Index(NOSLOT) { }
-	_Slot(_Bag::BagType BagType, size_t Index) : BagType(BagType), Index(Index) { }
+	_Slot() : Type(BagType::NONE), Index(NOSLOT) { }
+	_Slot(BagType BagType, size_t Index) : Type(BagType), Index(Index) { }
 
-	bool operator==(const _Slot &Slot) const { return this->Index == Slot.Index && this->BagType == Slot.BagType; }
+	bool operator==(const _Slot &Slot) const { return this->Index == Slot.Index && this->Type == Slot.Type; }
 	bool operator!=(const _Slot &Slot) const { return !(*this == Slot); }
 
 	void Serialize(ae::_Buffer &Data) const;
 	void Unserialize(ae::_Buffer &Data);
-	void Reset() { BagType = _Bag::BagType::NONE; Index = NOSLOT; }
+	void Reset() { Type = BagType::NONE; Index = NOSLOT; }
 
-	_Bag::BagType BagType;
+	BagType Type;
 	size_t Index;
 };
 
 // Classes
 class _Inventory {
+
+	friend class _Save;
+	friend class _Stats;
 
 	public:
 
@@ -122,14 +125,14 @@ class _Inventory {
 		bool FindItem(const _Item *Item, size_t &Slot, size_t StartSlot);
 		bool HasItemID(uint32_t ItemID);
 		int CountItem(const _Item *Item);
-		bool IsValidSlot(const _Slot &Slot) { return (int)Slot.BagType > 0 && (int)Slot.BagType < _Bag::BagType::COUNT && Slot.Index < Bags[Slot.BagType].Slots.size(); }
-		_InventorySlot &GetSlot(const _Slot &Slot) { return Bags[Slot.BagType].Slots[Slot.Index]; }
+		bool IsValidSlot(const _Slot &Slot) { return Slot.Type > BagType::NONE && Slot.Type < BagType::COUNT && Slot.Index < GetBag(Slot.Type).Slots.size(); }
+		_InventorySlot &GetSlot(const _Slot &Slot) { return GetBag(Slot.Type).Slots[Slot.Index]; }
 
 		bool MoveInventory(ae::_Buffer &Data, const _Slot &OldSlot, const _Slot &NewSlot);
 		int UpdateItemCount(const _Slot &Slot, int Amount);
 		void SpendItems(const _Item *Item, int Count);
 		_Slot FindSlotForItem(const _Item *Item, int Upgrades, int Count);
-		_Slot FindSlotForItemInBag(_Bag::BagType BagType, const _Item *Item, int Upgrades, int Count);
+		_Slot FindSlotForItemInBag(BagType BagType, const _Item *Item, int Upgrades, int Count);
 		bool AddItem(const _Item *Item, int Upgrades, int Count, _Slot TargetSlot=_Slot());
 		void MoveTradeToInventory();
 		bool SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count);
@@ -137,13 +140,17 @@ class _Inventory {
 		// Traders
 		_Slot GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots);
 
-		// Items
-		std::vector<_Bag> Bags;
+		// Bags
+		_Bag &GetBag(BagType Bag) { return Bags[(size_t)Bag]; }
+		std::vector<_Bag> &GetBags() { return Bags; }
 
 	private:
 
 		bool CanEquipItem(size_t Slot, const _Item *Item);
 		void SwapItem(const _Slot &Slot, const _Slot &OldSlot);
 		bool CanSwap(const _Slot &OldSlot, const _Slot &NewSlot);
+
+		// Items
+		std::vector<_Bag> Bags;
 
 };

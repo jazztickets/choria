@@ -89,7 +89,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 			if(!Source->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
 				return false;
 
-			Source->Inventory->UpdateItemCount(_Slot(_Bag::BagType::INVENTORY, Index), -1);
+			Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 			DecrementItem = true;
 			if(ItemUsed->IsSkill()) {
 				Source->Character->Skills[ItemUsed->ID] = 0;
@@ -100,7 +100,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 				ItemUnlocked = true;
 			}
 			else if(ItemUsed->IsKey()) {
-				Source->Inventory->Bags[_Bag::BagType::KEYS].Slots.push_back(_InventorySlot(ItemUsed, 1));
+				Source->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ItemUsed, 1));
 				KeyUnlocked = true;
 			}
 		}
