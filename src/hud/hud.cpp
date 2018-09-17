@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <hud/hud.h>
 #include <hud/character_screen.h>
+#include <hud/inventory_screen.h>
 #include <hud/skill_screen.h>
 #include <ae/graphics.h>
 #include <ae/input.h>
@@ -84,10 +85,6 @@ _HUD::_HUD() {
 	StatusEffectsElement = ae::Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = ae::Assets.Elements["element_actionbar"];
 	ButtonBarElement = ae::Assets.Elements["element_buttonbar"];
-	EquipmentElement = ae::Assets.Elements["element_equipment"];
-	InventoryElement = ae::Assets.Elements["element_inventory"];
-	InventoryTabsElement = ae::Assets.Elements["element_inventory_tabs"];
-	KeysElement = ae::Assets.Elements["element_keys"];
 	VendorElement = ae::Assets.Elements["element_vendor"];
 	TradeElement = ae::Assets.Elements["element_trade"];
 	TradeTheirsElement = ae::Assets.Elements["element_trade_theirs"];
@@ -117,10 +114,6 @@ _HUD::_HUD() {
 	StatusEffectsElement->SetActive(true);
 	ActionBarElement->SetActive(true);
 	ButtonBarElement->SetActive(true);
-	EquipmentElement->SetActive(false);
-	InventoryElement->SetActive(false);
-	InventoryTabsElement->SetActive(false);
-	KeysElement->SetActive(false);
 	VendorElement->SetActive(false);
 	TradeElement->SetActive(false);
 	TradeTheirsElement->SetActive(false);
@@ -141,6 +134,7 @@ _HUD::_HUD() {
 	ae::Assets.Elements["element_hud"]->SetActive(true);
 
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
+	InventoryScreen = new _InventoryScreen(this, ae::Assets.Elements["element_inventory_tabs"]);
 	SkillScreen = new _SkillScreen(this, ae::Assets.Elements["element_skills"]);
 }
 
@@ -149,6 +143,7 @@ _HUD::~_HUD() {
 	Reset();
 
 	delete CharacterScreen;
+	delete InventoryScreen;
 	delete SkillScreen;
 }
 
@@ -250,7 +245,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 				break;
 				case WINDOW_ACTIONBAR:
-					if(SkillScreen->Element->Active || InventoryTabsElement->Active) {
+					if(SkillScreen->Element->Active || InventoryScreen->Element->Active) {
 						if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 							Cursor = Tooltip;
 						}
@@ -304,7 +299,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				PlayState.SendJoinRequest();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_inventory") {
-				ToggleInventory();
+				InventoryScreen->Toggle();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_trade") {
 				ToggleTrade();
@@ -323,8 +318,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			}
 		}
 		// Check inventory tabs
-		else if(InventoryTabsElement->GetClickedElement()) {
-			InitInventoryTab(InventoryTabsElement->GetClickedElement()->Index);
+		else if(InventoryScreen->Element->GetClickedElement()) {
+			InventoryScreen->InitInventoryTab(InventoryScreen->Element->GetClickedElement()->Index);
 		}
 		// Check skill level up/down
 		else if(SkillScreen->Element->GetClickedElement()) {
@@ -716,7 +711,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		DrawMessage();
 		DrawHudEffects();
-		DrawInventory();
+		InventoryScreen->Render(BlendFactor);
 		DrawVendor();
 		DrawTrade();
 		DrawTrader();
@@ -764,7 +759,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 					_Cursor EquippedTooltip;
 					EquippedTooltip.InventorySlot = Player->Inventory->GetSlot(CompareSlot);
 					if(EquippedTooltip.InventorySlot.Item)
-						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(EquipmentElement->Bounds.Start.x + OffsetX, -1), PlayState.Scripting, Player, EquippedTooltip, _Slot());
+						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(InventoryScreen->EquipmentElement->Bounds.Start.x + OffsetX, -1), PlayState.Scripting, Player, EquippedTooltip, _Slot());
 				}
 			}
 
@@ -886,29 +881,6 @@ void _HUD::ToggleTeleport() {
 	}
 }
 
-// Open/close inventory
-void _HUD::ToggleInventory() {
-	if(Player->Controller->WaitForServer || !Player->Character->CanOpenInventory())
-		return;
-
-	if(Minigame) {
-		CharacterScreen->Toggle();
-		return;
-	}
-
-	if(!InventoryTabsElement->Active) {
-		CloseWindows(true);
-
-		InventoryTabsElement->SetActive(true);
-		InitInventoryTab(0);
-		CharacterScreen->Element->SetActive(true);
-		PlayState.SendStatus(_Character::STATUS_INVENTORY);
-	}
-	else {
-		CloseWindows(true);
-	}
-}
-
 // Open/close trade
 void _HUD::ToggleTrade() {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenTrade())
@@ -973,7 +945,7 @@ void _HUD::InitVendor() {
 	Cursor.Reset();
 
 	// Open inventory
-	InitInventoryTab(0);
+	InventoryScreen->InitInventoryTab(0);
 	VendorElement->SetActive(true);
 }
 
@@ -983,7 +955,7 @@ void _HUD::InitTrade() {
 		return;
 
 	Player->Character->WaitingForTrade = true;
-	InitInventoryTab(0);
+	InventoryScreen->InitInventoryTab(0);
 	TradeElement->SetActive(true);
 
 	// Send request to server
@@ -1016,7 +988,7 @@ void _HUD::InitTrader() {
 void _HUD::InitBlacksmith() {
 	Cursor.Reset();
 
-	InitInventoryTab(0);
+	InventoryScreen->InitInventoryTab(0);
 	BlacksmithElement->SetActive(true);
 	BlacksmithCost->SetActive(false);
 	ae::Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
@@ -1073,24 +1045,10 @@ bool _HUD::CloseConfirm() {
 	return WasOpen;
 }
 
-// Close inventory screen
-bool _HUD::CloseInventory() {
-	bool WasOpen = InventoryTabsElement->Active;
-	Cursor.Reset();
-
-	InventoryTabsElement->SetActive(false);
-	EquipmentElement->SetActive(false);
-	InventoryElement->SetActive(false);
-	KeysElement->SetActive(false);
-	CharacterScreen->Element->SetActive(false);
-
-	return WasOpen;
-}
-
 // Close the vendor
 bool _HUD::CloseVendor() {
 	bool WasOpen = VendorElement->Active;
-	CloseInventory();
+	InventoryScreen->Close();
 	if(Player)
 		Player->Character->Vendor = nullptr;
 
@@ -1137,7 +1095,7 @@ bool _HUD::CloseTrade(bool SendNotify) {
 	bool WasOpen = TradeElement->Active;
 
 	// Close inventory
-	CloseInventory();
+	InventoryScreen->Close();
 	TradeElement->SetActive(false);
 	ae::FocusedElement = nullptr;
 
@@ -1168,7 +1126,7 @@ bool _HUD::CloseTrader() {
 // Close the blacksmith
 bool _HUD::CloseBlacksmith() {
 	bool WasOpen = BlacksmithElement->Active;
-	CloseInventory();
+	InventoryScreen->Close();
 
 	BlacksmithElement->SetActive(false);
 	Cursor.Reset();
@@ -1204,7 +1162,7 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	bool WasOpen = false;
 	WasOpen |= SkillScreen->Close();
 	WasOpen |= CloseConfirm();
-	WasOpen |= CloseInventory();
+	WasOpen |= InventoryScreen->Close();
 	WasOpen |= CloseVendor();
 	WasOpen |= CloseParty();
 	WasOpen |= CloseTrade(SendNotify);
@@ -1278,113 +1236,6 @@ void _HUD::DrawTeleport() {
 	std::stringstream Buffer;
 	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->Character->TeleportTime;
 	ae::Assets.Elements["label_teleport_timeleft"]->Text = Buffer.str();
-}
-
-// Draws the player's inventory
-void _HUD::DrawInventory() {
-	if(!InventoryTabsElement->Active)
-		return;
-
-	InventoryTabsElement->Render();
-	if(InventoryElement->Active) {
-		EquipmentElement->Render();
-		InventoryElement->Render();
-		DrawBag(_Bag::EQUIPMENT);
-		DrawBag(_Bag::INVENTORY);
-	}
-	else if(KeysElement->Active) {
-		KeysElement->Render();
-		DrawKeys(_Bag::KEYS);
-	}
-}
-
-// Draw an inventory bag
-void _HUD::DrawBag(_Bag::BagType Type) {
-	_Bag &Bag = Player->Inventory->Bags[Type];
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
-
-		// Get inventory slot
-		_InventorySlot *Slot = &Bag.Slots[i];
-		if(Slot->Item) {
-
-			// Get bag button
-			std::stringstream Buffer;
-			Buffer << "button_" << Bag.Name << "_bag_" << i;
-			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
-			Buffer.str("");
-
-			// Get position of slot
-			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
-
-			// Draw item
-			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
-
-			// Draw two handed weapon twice in equipment bag
-			if(Type == _Bag::BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
-				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
-				ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
-				ae::Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, ae::Assets.Colors["itemfade"]);
-			}
-
-			// Draw price if using vendor
-			DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false);
-
-			// Draw upgrade count if using blacksmith
-			if(Player->Character->Blacksmith && Slot->Item->MaxLevel) {
-				glm::vec4 Color;
-				if(Slot->Upgrades >= Slot->Item->MaxLevel || Slot->Upgrades >= Player->Character->Blacksmith->Level)
-					Color = ae::Assets.Colors["red"];
-				else
-					Color = ae::Assets.Colors["green"];
-
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), ae::RIGHT_BASELINE, Color);
-			}
-
-			// Draw count
-			if(Slot->Count > 1)
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE);
-		}
-	}
-}
-
-// Draw keys
-void _HUD::DrawKeys(_Bag::BagType Type) {
-
-	glm::vec2 StartOffset(10, 20);
-	glm::vec2 Spacing(120, 20);
-	int Column = 0;
-	int Row = 0;
-
-	_Bag &Bag = Player->Inventory->Bags[Type];
-
-	// No keys
-	if(!Bag.Slots.size()) {
-		glm::vec2 DrawPosition = KeysElement->Bounds.Start + StartOffset;
-		ae::Assets.Fonts["hud_tiny"]->DrawText("No keys", DrawPosition, ae::LEFT_BASELINE, ae::Assets.Colors["gray"]);
-
-		return;
-	}
-
-	// Draw key names
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
-
-		// Get inventory slot
-		_InventorySlot *Slot = &Bag.Slots[i];
-		if(Slot->Item) {
-
-			// Get position
-			glm::vec2 DrawPosition = KeysElement->Bounds.Start + StartOffset + glm::vec2(Spacing.x * Column, Spacing.y * Row);
-			ae::Assets.Fonts["hud_tiny"]->DrawText(Slot->Item->Name, DrawPosition);
-
-			// Update position
-			Row++;
-			if(Row >= 14) {
-				Column++;
-				Row = 0;
-			}
-		}
-	}
 }
 
 // Draw the vendor
@@ -1905,24 +1756,6 @@ void _HUD::UpdateAcceptButton() {
 	else {
 		LabelTradeStatusYours->Text = "Accept";
 		LabelTradeStatusYours->Color = glm::vec4(1.0f);
-	}
-}
-
-// Initialize an inventory tab
-void _HUD::InitInventoryTab(int Index) {
-	for(auto &Child : InventoryTabsElement->Children)
-		Child->Checked = Child->Index == Index ? true : false;
-
-	InventoryTabsElement->SetActive(true);
-	EquipmentElement->SetActive(false);
-	InventoryElement->SetActive(false);
-	KeysElement->SetActive(false);
-	if(Index == 0) {
-		EquipmentElement->SetActive(true);
-		InventoryElement->SetActive(true);
-	}
-	else if(Index == 1) {
-		KeysElement->SetActive(true);
 	}
 }
 

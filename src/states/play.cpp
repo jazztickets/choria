@@ -29,6 +29,7 @@
 #include <objects/minigame.h>
 #include <hud/hud.h>
 #include <hud/character_screen.h>
+#include <hud/inventory_screen.h>
 #include <hud/skill_screen.h>
 #include <ae/manager.h>
 #include <ae/clientnetwork.h>
@@ -271,7 +272,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 					HUD->ToggleInGameMenu(Action == Action::MENU_PAUSE);
 				break;
 				case Action::GAME_INVENTORY:
-					HUD->ToggleInventory();
+					HUD->InventoryScreen->Toggle();
 				break;
 				case Action::GAME_TRADE:
 					HUD->ToggleTrade();

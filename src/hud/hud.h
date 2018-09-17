@@ -29,6 +29,7 @@
 
 // Forward Declarations
 class _CharacterScreen;
+class _InventoryScreen;
 class _SkillScreen;
 class _Object;
 class _Item;
@@ -90,6 +91,7 @@ struct _RecentItem {
 class _HUD {
 
 	friend class _CharacterScreen;
+	friend class _InventoryScreen;
 	friend class _SkillScreen;
 
 	public:
@@ -141,7 +143,6 @@ class _HUD {
 
 		// Button bar
 		void ToggleTeleport();
-		void ToggleInventory();
 		void ToggleTrade();
 		void ToggleParty();
 		void ToggleInGameMenu(bool Force);
@@ -186,6 +187,7 @@ class _HUD {
 
 		// Screens
 		_CharacterScreen *CharacterScreen;
+		_InventoryScreen *InventoryScreen;
 		_SkillScreen *SkillScreen;
 
 		// Minigames
@@ -198,7 +200,6 @@ class _HUD {
 	private:
 
 		bool CloseConfirm();
-		bool CloseInventory();
 		bool CloseVendor();
 		bool CloseTrader();
 		bool CloseBlacksmith();
@@ -209,9 +210,6 @@ class _HUD {
 		void DrawConfirm();
 		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawHudEffects();
-		void DrawInventory();
-		void DrawBag(_Bag::BagType Type);
-		void DrawKeys(_Bag::BagType Type);
 		void DrawTeleport();
 		void DrawVendor();
 		void DrawTrade();
@@ -233,7 +231,6 @@ class _HUD {
 		void SendTradeRequest();
 		void SendTradeCancel();
 		void UpdateAcceptButton();
-		void InitInventoryTab(int Index);
 
 		void SplitStack(const _Slot &Slot, uint8_t Count);
 		_Bag::BagType GetBagFromWindow(int Window);
@@ -245,10 +242,6 @@ class _HUD {
 		ae::_Element *StatusEffectsElement;
 		ae::_Element *ActionBarElement;
 		ae::_Element *ButtonBarElement;
-		ae::_Element *EquipmentElement;
-		ae::_Element *InventoryElement;
-		ae::_Element *InventoryTabsElement;
-		ae::_Element *KeysElement;
 		ae::_Element *VendorElement;
 		ae::_Element *TradeElement;
 		ae::_Element *TradeTheirsElement;
