@@ -28,7 +28,6 @@
 #include <objects/battle.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <objects/map.h>

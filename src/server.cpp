@@ -25,7 +25,6 @@
 #include <objects/object.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
 #include <objects/map.h>
@@ -651,7 +650,7 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 		else if(Message.find("-bounty") == 0) {
 			std::regex Regex("-bounty ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Player->Record->Bounty = std::max(0, ae::ToNumber<int>(Match.str(1)));
+				Player->Character->Bounty = std::max(0, ae::ToNumber<int>(Match.str(1)));
 				SendHUD(Peer);
 			}
 		}
@@ -1584,7 +1583,7 @@ void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Network->SendPacket(Packet, Peer);
 
 	// Update stats
-	Player->Record->GamesPlayed++;
+	Player->Character->GamesPlayed++;
 }
 
 // Give player minigame reward
@@ -1753,7 +1752,7 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 	Packet.Write<int>(Player->Character->MaxMana);
 	Packet.Write<int>(Player->Character->Experience);
 	Packet.Write<int>(Player->Character->Gold);
-	Packet.Write<int>(Player->Record->Bounty);
+	Packet.Write<int>(Player->Character->Bounty);
 	Packet.Write<double>(Save->Clock);
 
 	Network->SendPacket(Packet, Peer);

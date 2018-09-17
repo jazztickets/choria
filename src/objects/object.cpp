@@ -20,7 +20,6 @@
 #include <objects/statchange.h>
 #include <objects/components/inventory.h>
 #include <objects/components/character.h>
-#include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
@@ -57,7 +56,6 @@ _Object::_Object() :
 	Name(""),
 	Character(nullptr),
 	Inventory(nullptr),
-	Record(nullptr),
 	Fighter(nullptr),
 	Controller(nullptr),
 	Monster(nullptr),
@@ -77,7 +75,6 @@ _Object::_Object() :
 
 	Inventory = new _Inventory();
 	Character = new _Character(this);
-	Record = new _Record(this);
 	Fighter = new _Fighter(this);
 	Controller = new _Controller(this);
 	Monster = new _Monster(this);
@@ -110,7 +107,6 @@ _Object::~_Object() {
 	delete Monster;
 	delete Controller;
 	delete Fighter;
-	delete Record;
 	delete Character;
 	delete Inventory;
 }
@@ -184,8 +180,14 @@ void _Object::Update(double FrameTime) {
 		Fighter->TurnTimer = 0.0;
 
 	// Update status effects
-	if(Character)
+	if(Character) {
 		Character->Update(FrameTime);
+
+		// Update playtime
+		Character->PlayTime += FrameTime;
+		if(Character->Battle)
+			Character->BattleTime += FrameTime;
+	}
 
 	// Update teleport time
 	if(Character->TeleportTime > 0.0) {
@@ -199,13 +201,6 @@ void _Object::Update(double FrameTime) {
 
 	// Update timers
 	Controller->MoveTime += FrameTime;
-
-	// Update playtime
-	if(Record) {
-		Record->PlayTime += FrameTime;
-		if(Character->Battle)
-			Record->BattleTime += FrameTime;
-	}
 
 	// Check events
 	if(Map && CheckEvent)
@@ -340,8 +335,8 @@ void _Object::Render(const _Object *ClientPlayer) {
 		// Draw name
 		if(ClientPlayer != this && Character->Invisible != 1) {
 			std::string NameText = Name;
-			if(Record->Bounty > 0)
-				NameText += " ([c cyan]" + std::to_string(Record->Bounty) + "[c white])";
+			if(Character->Bounty > 0)
+				NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
 
 			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
 		}
@@ -522,14 +517,14 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["mana"] = Character->Mana;
 	StatsNode["experience"] = Character->Experience;
 	StatsNode["gold"] = Character->Gold;
-	StatsNode["goldlost"] = Record->GoldLost;
-	StatsNode["playtime"] = Record->PlayTime;
-	StatsNode["battletime"] = Record->BattleTime;
-	StatsNode["deaths"] = Record->Deaths;
-	StatsNode["monsterkills"] = Record->MonsterKills;
-	StatsNode["playerkills"] = Record->PlayerKills;
-	StatsNode["gamesplayed"] = Record->GamesPlayed;
-	StatsNode["bounty"] = Record->Bounty;
+	StatsNode["goldlost"] = Character->GoldLost;
+	StatsNode["playtime"] = Character->PlayTime;
+	StatsNode["battletime"] = Character->BattleTime;
+	StatsNode["deaths"] = Character->Deaths;
+	StatsNode["monsterkills"] = Character->MonsterKills;
+	StatsNode["playerkills"] = Character->PlayerKills;
+	StatsNode["gamesplayed"] = Character->GamesPlayed;
+	StatsNode["bounty"] = Character->Bounty;
 	StatsNode["nextbattle"] = Character->NextBattle;
 	StatsNode["seed"] = Character->Seed;
 	Data["stats"] = StatsNode;
@@ -627,14 +622,14 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->Mana = StatsNode["mana"].asInt();
 	Character->Experience = StatsNode["experience"].asInt();
 	Character->Gold = StatsNode["gold"].asInt();
-	Record->GoldLost = StatsNode["goldlost"].asInt();
-	Record->PlayTime = StatsNode["playtime"].asDouble();
-	Record->BattleTime = StatsNode["battletime"].asDouble();
-	Record->Deaths = StatsNode["deaths"].asInt();
-	Record->MonsterKills = StatsNode["monsterkills"].asInt();
-	Record->PlayerKills = StatsNode["playerkills"].asInt();
-	Record->GamesPlayed = StatsNode["gamesplayed"].asInt();
-	Record->Bounty = StatsNode["bounty"].asInt();
+	Character->GoldLost = StatsNode["goldlost"].asInt();
+	Character->PlayTime = StatsNode["playtime"].asDouble();
+	Character->BattleTime = StatsNode["battletime"].asDouble();
+	Character->Deaths = StatsNode["deaths"].asInt();
+	Character->MonsterKills = StatsNode["monsterkills"].asInt();
+	Character->PlayerKills = StatsNode["playerkills"].asInt();
+	Character->GamesPlayed = StatsNode["gamesplayed"].asInt();
+	Character->Bounty = StatsNode["bounty"].asInt();
 	Character->NextBattle = StatsNode["nextbattle"].asInt();
 	Character->Seed = StatsNode["seed"].asUInt();
 
@@ -710,9 +705,9 @@ void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<uint8_t>(Character->Status);
 	Data.WriteBit(Light);
 	Data.WriteBit(Character->Invisible);
-	Data.WriteBit(Record->Bounty);
-	if(Record->Bounty)
-		Data.Write<int>(Record->Bounty);
+	Data.WriteBit(Character->Bounty);
+	if(Character->Bounty)
+		Data.Write<int>(Character->Bounty);
 	if(Light)
 		Data.Write<uint8_t>(Light);
 }
@@ -732,14 +727,14 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.Write<int>(Character->Gold);
 	Data.Write<int>(Character->Invisible);
 	Data.Write<int>(Character->Hardcore);
-	Data.Write<int>(Record->GoldLost);
-	Data.Write<double>(Record->PlayTime);
-	Data.Write<double>(Record->BattleTime);
-	Data.Write<int>(Record->Deaths);
-	Data.Write<int>(Record->MonsterKills);
-	Data.Write<int>(Record->PlayerKills);
-	Data.Write<int>(Record->GamesPlayed);
-	Data.Write<int>(Record->Bounty);
+	Data.Write<int>(Character->GoldLost);
+	Data.Write<double>(Character->PlayTime);
+	Data.Write<double>(Character->BattleTime);
+	Data.Write<int>(Character->Deaths);
+	Data.Write<int>(Character->MonsterKills);
+	Data.Write<int>(Character->PlayerKills);
+	Data.Write<int>(Character->GamesPlayed);
+	Data.Write<int>(Character->Bounty);
 
 	// Write inventory
 	Inventory->Serialize(Data);
@@ -820,14 +815,14 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->Gold = Data.Read<int>();
 	Character->Invisible = Data.Read<int>();
 	Character->Hardcore = Data.Read<int>();
-	Record->GoldLost = Data.Read<int>();
-	Record->PlayTime = Data.Read<double>();
-	Record->BattleTime = Data.Read<double>();
-	Record->Deaths = Data.Read<int>();
-	Record->MonsterKills = Data.Read<int>();
-	Record->PlayerKills = Data.Read<int>();
-	Record->GamesPlayed = Data.Read<int>();
-	Record->Bounty = Data.Read<int>();
+	Character->GoldLost = Data.Read<int>();
+	Character->PlayTime = Data.Read<double>();
+	Character->BattleTime = Data.Read<double>();
+	Character->Deaths = Data.Read<int>();
+	Character->MonsterKills = Data.Read<int>();
+	Character->PlayerKills = Data.Read<int>();
+	Character->GamesPlayed = Data.Read<int>();
+	Character->Bounty = Data.Read<int>();
 
 	ModelTexture = Stats->Models.at(ModelID).Texture;
 
@@ -1090,19 +1085,19 @@ void _Object::ResolveBuff(_StatusEffect *StatusEffect, const std::string &Functi
 // Update death count and gold loss
 void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 	int GoldPenalty = BountyLoss + (int)(std::abs(Character->Gold) * Penalty + 0.5f);
-	int OldBounty = Record->Bounty;
+	int OldBounty = Character->Bounty;
 
 	// Update stats
 	Character->UpdateGold(-GoldPenalty);
-	Record->Deaths++;
-	Record->GoldLost += GoldPenalty;
-	Record->Bounty -= BountyLoss;
-	if(Record->Bounty < 0)
-		Record->Bounty = 0;
+	Character->Deaths++;
+	Character->GoldLost += GoldPenalty;
+	Character->Bounty -= BountyLoss;
+	if(Character->Bounty < 0)
+		Character->Bounty = 0;
 
 	// Send message
 	if(Server) {
-		if(BountyLoss > 0 && Record->Bounty == 0) {
+		if(BountyLoss > 0 && Character->Bounty == 0) {
 			std::string BountyMessage = "Player " + Name + "'s bounty of " + std::to_string(OldBounty) + " gold has been claimed!";
 			Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
 			Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
@@ -1110,7 +1105,7 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 
 		if(Peer) {
 			Server->SendMessage(Peer, std::string("You lost " + std::to_string(GoldPenalty) + " gold"), "red");
-			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Record->Deaths << " )" << std::endl;
+			Server->Log << "[DEATH] Player " << Name << " died and lost " << std::to_string(GoldPenalty) << " gold ( character_id=" << Character->CharacterID << " gold=" << Character->Gold << " deaths=" << Character->Deaths << " )" << std::endl;
 		}
 	}
 }

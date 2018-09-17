@@ -19,7 +19,6 @@
 #include <objects/object.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <objects/statuseffect.h>
@@ -821,7 +820,7 @@ void _PlayState::HandleObjectUpdates(ae::_Buffer &Data) {
 			else {
 				Object->Position = Position;
 				Object->Character->Invisible = Invisible;
-				Object->Record->Bounty = Bounty;
+				Object->Character->Bounty = Bounty;
 			}
 			Object->Light = Light;
 			Object->ServerPosition = Position;
@@ -1192,10 +1191,10 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	StatChange.Object = Player;
 
 	// Get ending stats
-	Player->Record->PlayerKills = Data.Read<int>();
-	Player->Record->MonsterKills = Data.Read<int>();
-	Player->Record->GoldLost = Data.Read<int>();
-	Player->Record->Bounty = Data.Read<int>();
+	Player->Character->PlayerKills = Data.Read<int>();
+	Player->Character->MonsterKills = Data.Read<int>();
+	Player->Character->GoldLost = Data.Read<int>();
+	Player->Character->Bounty = Data.Read<int>();
 	StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
 	StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
 	uint8_t ItemCount = Data.Read<uint8_t>();
@@ -1214,7 +1213,7 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 
 	// Update client death count
 	if(!Player->Character->IsAlive()) {
-		Player->Record->Deaths++;
+		Player->Character->Deaths++;
 		PlayDeathSound();
 	}
 
@@ -1382,7 +1381,7 @@ void _PlayState::HandleHUD(ae::_Buffer &Data) {
 	Player->Character->MaxMana = Data.Read<int>();
 	Player->Character->Experience = Data.Read<int>();
 	Player->Character->Gold = Data.Read<int>();
-	Player->Record->Bounty = Data.Read<int>();
+	Player->Character->Bounty = Data.Read<int>();
 	double Clock = Data.Read<double>();
 
 	Player->Character->CalculateStats();

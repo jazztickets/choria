@@ -20,7 +20,6 @@
 #include <objects/buff.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <objects/components/monster.h>
@@ -589,7 +588,7 @@ void _Battle::ServerEndBattle() {
 			if(Object->IsMonster())
 				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven + Object->Fighter->GoldStolen;
 			else
-				SideStats[Side].TotalGoldGiven += Object->Record->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * BountyEarned + 0.5f);
+				SideStats[Side].TotalGoldGiven += Object->Character->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * BountyEarned + 0.5f);
 		}
 
 		SideStats[Side].TotalExperienceGiven = (int)std::ceil(SideStats[Side].TotalExperienceGiven * Difficulty[Side]);
@@ -683,20 +682,20 @@ void _Battle::ServerEndBattle() {
 		int GoldEarned = 0;
 		if(!Object->Character->IsAlive()) {
 			if(PVP)
-				Object->ApplyDeathPenalty(BountyEarned, Object->Record->Bounty);
+				Object->ApplyDeathPenalty(BountyEarned, Object->Character->Bounty);
 			else
 				Object->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 		}
 		else {
 			ExperienceEarned = SideStats[WinningSide].ExperiencePerCharacter;
 			GoldEarned = SideStats[WinningSide].GoldPerCharacter;
-			Object->Record->PlayerKills += SideStats[!WinningSide].PlayerCount;
-			Object->Record->MonsterKills += SideStats[!WinningSide].MonsterCount;
+			Object->Character->PlayerKills += SideStats[!WinningSide].PlayerCount;
+			Object->Character->MonsterKills += SideStats[!WinningSide].MonsterCount;
 			if(PVP && Object->Fighter->BattleSide == BATTLE_PVP_ATTACKER_SIDE) {
 				if(BountyEarned) {
-					Object->Record->Bounty += GoldEarned;
-					if(Object->Record->Bounty) {
-						std::string BountyMessage = "Player " + Object->Name + " now has a bounty of " + std::to_string(Object->Record->Bounty) + " gold!";
+					Object->Character->Bounty += GoldEarned;
+					if(Object->Character->Bounty) {
+						std::string BountyMessage = "Player " + Object->Name + " now has a bounty of " + std::to_string(Object->Character->Bounty) + " gold!";
 						Server->BroadcastMessage(nullptr, BountyMessage, "cyan");
 						Server->Log << "[BOUNTY] " << BountyMessage << std::endl;
 					}
@@ -725,10 +724,10 @@ void _Battle::ServerEndBattle() {
 		// Write results
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_END);
-		Packet.Write<int>(Object->Record->PlayerKills);
-		Packet.Write<int>(Object->Record->MonsterKills);
-		Packet.Write<int>(Object->Record->GoldLost);
-		Packet.Write<int>(Object->Record->Bounty);
+		Packet.Write<int>(Object->Character->PlayerKills);
+		Packet.Write<int>(Object->Character->MonsterKills);
+		Packet.Write<int>(Object->Character->GoldLost);
+		Packet.Write<int>(Object->Character->Bounty);
 		Packet.Write<int>(ExperienceEarned);
 		Packet.Write<int>(GoldEarned);
 

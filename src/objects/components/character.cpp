@@ -48,6 +48,15 @@ _Character::_Character(_Object *Object) :
 	Hardcore(false),
 	Status(0),
 
+	PlayTime(0.0),
+	BattleTime(0.0),
+	Deaths(0),
+	MonsterKills(0),
+	PlayerKills(0),
+	GamesPlayed(0),
+	Bounty(0),
+	GoldLost(0),
+
 	CalcLevelStats(true),
 	Level(0),
 	Experience(0),

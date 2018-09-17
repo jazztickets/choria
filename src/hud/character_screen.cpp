@@ -19,7 +19,6 @@
 #include <hud/hud.h>
 #include <objects/object.h>
 #include <objects/components/character.h>
-#include <objects/components/record.h>
 #include <ae/ui.h>
 #include <ae/assets.h>
 #include <ae/font.h>
@@ -155,7 +154,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 		DrawPosition.y += SpacingY;
 
 	// Play time
-	int64_t PlayTime = (int64_t)HUD->Player->Record->PlayTime;
+	int64_t PlayTime = (int64_t)HUD->Player->Character->PlayTime;
 	if(PlayTime < 60)
 		Buffer << PlayTime << "s";
 	else if(PlayTime < 3600)
@@ -169,7 +168,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 	DrawPosition.y += SpacingY;
 
 	// Battle time
-	int64_t BattleTime = (int64_t)HUD->Player->Record->BattleTime;
+	int64_t BattleTime = (int64_t)HUD->Player->Character->BattleTime;
 	if(BattleTime < 60)
 		Buffer << BattleTime << "s";
 	else if(BattleTime < 3600)
@@ -183,8 +182,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	DrawPosition.y += SpacingY;
 
 	// Monster kills
-	if(HUD->Player->Record->MonsterKills > 0) {
-		Buffer << HUD->Player->Record->MonsterKills;
+	if(HUD->Player->Character->MonsterKills > 0) {
+		Buffer << HUD->Player->Character->MonsterKills;
 		ae::Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -192,8 +191,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Player kills
-	if(HUD->Player->Record->PlayerKills > 0) {
-		Buffer << HUD->Player->Record->PlayerKills;
+	if(HUD->Player->Character->PlayerKills > 0) {
+		Buffer << HUD->Player->Character->PlayerKills;
 		ae::Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -201,8 +200,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Deaths
-	if(HUD->Player->Record->Deaths > 0) {
-		Buffer << HUD->Player->Record->Deaths;
+	if(HUD->Player->Character->Deaths > 0) {
+		Buffer << HUD->Player->Character->Deaths;
 		ae::Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -210,8 +209,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Bounty
-	if(HUD->Player->Record->Bounty > 0) {
-		Buffer << HUD->Player->Record->Bounty;
+	if(HUD->Player->Character->Bounty > 0) {
+		Buffer << HUD->Player->Character->Bounty;
 		ae::Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -219,8 +218,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Gold lost
-	if(HUD->Player->Record->GoldLost > 0) {
-		Buffer << HUD->Player->Record->GoldLost;
+	if(HUD->Player->Character->GoldLost > 0) {
+		Buffer << HUD->Player->Character->GoldLost;
 		ae::Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
@@ -228,8 +227,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	}
 
 	// Games played
-	if(HUD->Player->Record->GamesPlayed > 0) {
-		Buffer << HUD->Player->Record->GamesPlayed;
+	if(HUD->Player->Character->GamesPlayed > 0) {
+		Buffer << HUD->Player->Character->GamesPlayed;
 		ae::Assets.Fonts["hud_small"]->DrawText("Games Played", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");

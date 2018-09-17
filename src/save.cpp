@@ -24,7 +24,6 @@
 #include <objects/item.h>
 #include <objects/buff.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/character.h>
 #include <config.h>
 #include <stats.h>
@@ -309,9 +308,9 @@ void _Save::SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogF
 			 << " ( character_id=" << Player->Character->CharacterID
 			 << " exp=" << Player->Character->Experience
 			 << " gold=" << Player->Character->Gold
-			 << " playtime=" << Player->Record->PlayTime
-			 << " monsterkills=" << Player->Record->MonsterKills
-			 << " deaths=" << Player->Record->Deaths
+			 << " playtime=" << Player->Character->PlayTime
+			 << " monsterkills=" << Player->Character->MonsterKills
+			 << " deaths=" << Player->Character->Deaths
 			 << " )" << std::endl;
 	}
 }

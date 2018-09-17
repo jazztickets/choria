@@ -27,7 +27,6 @@
 #include <objects/map.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <packet.h>
@@ -427,10 +426,10 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			StatChange.Object = Player;
 
 			// Get ending stats
-			Player->Record->PlayerKills = Data.Read<int>();
-			Player->Record->MonsterKills = Data.Read<int>();
-			Player->Record->GoldLost = Data.Read<int>();
-			Player->Record->Bounty = Data.Read<int>();
+			Player->Character->PlayerKills = Data.Read<int>();
+			Player->Character->MonsterKills = Data.Read<int>();
+			Player->Character->GoldLost = Data.Read<int>();
+			Player->Character->Bounty = Data.Read<int>();
 			StatChange.Values[StatType::EXPERIENCE].Integer = Data.Read<int>();
 			StatChange.Values[StatType::GOLD].Integer = Data.Read<int>();
 			uint8_t ItemCount = Data.Read<uint8_t>();
@@ -539,7 +538,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			Player->Character->MaxMana = Data.Read<int>();
 			Player->Character->Experience = Data.Read<int>();
 			Player->Character->Gold = Data.Read<int>();
-			Player->Record->Bounty = Data.Read<int>();
+			Player->Character->Bounty = Data.Read<int>();
 			double Clock = Data.Read<double>();
 
 			Player->Character->CalculateStats();

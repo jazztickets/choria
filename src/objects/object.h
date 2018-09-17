@@ -28,7 +28,6 @@
 // Forward Declarations
 class _Character;
 class _Inventory;
-class _Record;
 class _Fighter;
 class _Controller;
 class _Monster;
@@ -134,7 +133,6 @@ class _Object : public ae::_BaseObject {
 		// Components
 		_Character *Character;
 		_Inventory *Inventory;
-		_Record *Record;
 		_Fighter *Fighter;
 		_Controller *Controller;
 		_Monster *Monster;

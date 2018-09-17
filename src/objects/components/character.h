@@ -137,6 +137,16 @@ class _Character {
 		bool Hardcore;
 		uint8_t Status;
 
+		// Records
+		double PlayTime;
+		double BattleTime;
+		int Deaths;
+		int MonsterKills;
+		int PlayerKills;
+		int GamesPlayed;
+		int Bounty;
+		int GoldLost;
+
 		// Levels
 		bool CalcLevelStats;
 		int Level;

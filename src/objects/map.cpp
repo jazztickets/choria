@@ -19,7 +19,6 @@
 #include <objects/object.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/controller.h>
 #include <objects/object.h>
 #include <objects/battle.h>
@@ -1010,7 +1009,7 @@ void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, b
 			continue;
 
 		// Can only bounty hunt players with a bounty
-		if(!UsePVPZone && !Object->Record->Bounty)
+		if(!UsePVPZone && !Object->Character->Bounty)
 			continue;
 
 		// Can't attack same party member

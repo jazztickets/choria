@@ -24,7 +24,6 @@
 #include <objects/item.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
-#include <objects/components/record.h>
 #include <objects/components/fighter.h>
 #include <objects/components/controller.h>
 #include <objects/statuseffect.h>
@@ -196,7 +195,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					Packet.Write<PacketType>(PacketType::MINIGAME_PAY);
 					PlayState.Network->SendPacket(Packet);
 
-					Player->Record->GamesPlayed++;
+					Player->Character->GamesPlayed++;
 					PlayState.PlayCoinSound();
 				}
 			}
