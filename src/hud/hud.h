@@ -30,6 +30,7 @@
 // Forward Declarations
 class _CharacterScreen;
 class _InventoryScreen;
+class _BlacksmithScreen;
 class _SkillScreen;
 class _Object;
 class _Item;
@@ -92,6 +93,7 @@ class _HUD {
 
 	friend class _CharacterScreen;
 	friend class _InventoryScreen;
+	friend class _BlacksmithScreen;
 	friend class _SkillScreen;
 
 	public:
@@ -151,7 +153,6 @@ class _HUD {
 		void InitConfirm(const std::string &WarningMessage);
 		void InitVendor();
 		void InitTrader();
-		void InitBlacksmith();
 		void InitMinigame();
 		void InitParty();
 		void InitTrade();
@@ -188,6 +189,7 @@ class _HUD {
 		// Screens
 		_CharacterScreen *CharacterScreen;
 		_InventoryScreen *InventoryScreen;
+		_BlacksmithScreen *BlacksmithScreen;
 		_SkillScreen *SkillScreen;
 
 		// Minigames
@@ -202,7 +204,6 @@ class _HUD {
 		bool CloseConfirm();
 		bool CloseVendor();
 		bool CloseTrader();
-		bool CloseBlacksmith();
 		bool CloseMinigame();
 		bool CloseParty();
 		bool CloseTeleport();
@@ -214,7 +215,6 @@ class _HUD {
 		void DrawVendor();
 		void DrawTrade();
 		void DrawTrader();
-		void DrawBlacksmith();
 		void DrawMinigame(double BlendFactor);
 		void DrawActionBar();
 		void DrawParty();
@@ -246,7 +246,6 @@ class _HUD {
 		ae::_Element *TradeElement;
 		ae::_Element *TradeTheirsElement;
 		ae::_Element *TraderElement;
-		ae::_Element *BlacksmithElement;
 		ae::_Element *MinigameElement;
 		ae::_Element *PartyElement;
 		ae::_Element *TeleportElement;
@@ -259,7 +258,6 @@ class _HUD {
 		ae::_Element *PartyTextBox;
 		ae::_Element *GoldElement;
 		ae::_Element *MessageLabel;
-		ae::_Element *BlacksmithCost;
 		ae::_Element *RespawnInstructions;
 		_Cursor Cursor;
 		_Cursor Tooltip;
@@ -278,9 +276,6 @@ class _HUD {
 		// Traders
 		std::vector<_Slot> RequiredItemSlots;
 		_Slot RewardItemSlot;
-
-		// Blacksmith
-		_Slot UpgradeSlot;
 
 		// Inventory
 		_Slot DeleteSlot;

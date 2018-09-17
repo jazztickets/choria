@@ -19,25 +19,21 @@
 
 // Libraries
 #include <hud/screen.h>
-#include <cstdint>
+#include <objects/components/inventory.h>
 
 // Classes
-class _SkillScreen : public _Screen {
+class _BlacksmithScreen : public _Screen {
 
 	public:
 
-		_SkillScreen(_HUD *HUD, ae::_Element *Element);
+		_BlacksmithScreen(_HUD *HUD, ae::_Element *Element);
 
 		void Init() override;
 		bool Close() override;
 
-		void Toggle() override;
 		void Render(double BlendFactor) override;
 
-		void ClearSkills();
-		void RefreshSkillButtons();
-		void AdjustSkillLevel(uint32_t SkillID, int Amount);
-		void EquipSkill(uint32_t SkillID);
+		_Slot UpgradeSlot;
 
 	private:
 

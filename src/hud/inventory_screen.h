@@ -30,9 +30,9 @@ class _InventoryScreen : public _Screen {
 
 		_InventoryScreen(_HUD *HUD, ae::_Element *Element);
 
-		bool Close();
-		void Toggle();
-		void Render(double BlendFactor);
+		bool Close() override;
+		void Toggle() override;
+		void Render(double BlendFactor) override;
 
 		void InitInventoryTab(int Index);
 

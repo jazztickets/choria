@@ -30,6 +30,7 @@
 #include <hud/hud.h>
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
+#include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
 #include <ae/manager.h>
 #include <ae/clientnetwork.h>
@@ -918,7 +919,7 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 		case _Map::EVENT_BLACKSMITH:
 			Player->Character->Blacksmith = &Stats->Blacksmiths.at(EventData);
 			Player->Controller->WaitForServer = false;
-			HUD->InitBlacksmith();
+			HUD->BlacksmithScreen->Init();
 		break;
 		case _Map::EVENT_MINIGAME:
 			Player->Character->Minigame = &Stats->Minigames.at(EventData);

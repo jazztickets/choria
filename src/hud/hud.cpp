@@ -18,6 +18,7 @@
 #include <hud/hud.h>
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
+#include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
 #include <ae/graphics.h>
 #include <ae/input.h>
@@ -89,7 +90,6 @@ _HUD::_HUD() {
 	TradeElement = ae::Assets.Elements["element_trade"];
 	TradeTheirsElement = ae::Assets.Elements["element_trade_theirs"];
 	TraderElement = ae::Assets.Elements["element_trader"];
-	BlacksmithElement = ae::Assets.Elements["element_blacksmith"];
 	MinigameElement = ae::Assets.Elements["element_minigame"];
 	PartyElement = ae::Assets.Elements["element_party"];
 	TeleportElement = ae::Assets.Elements["element_teleport"];
@@ -102,7 +102,6 @@ _HUD::_HUD() {
 	GoldElement = ae::Assets.Elements["label_hud_gold"];
 	MessageElement = ae::Assets.Elements["element_hud_message"];
 	MessageLabel = ae::Assets.Elements["label_hud_message"];
-	BlacksmithCost = ae::Assets.Elements["label_blacksmith_cost"];
 	RespawnInstructions = ae::Assets.Elements["label_died_respawn"];
 
 	GoldElement->Size.x = ButtonBarElement->Size.x;
@@ -118,7 +117,6 @@ _HUD::_HUD() {
 	TradeElement->SetActive(false);
 	TradeTheirsElement->SetActive(false);
 	TraderElement->SetActive(false);
-	BlacksmithElement->SetActive(false);
 	MinigameElement->SetActive(false);
 	PartyElement->SetActive(false);
 	TeleportElement->SetActive(false);
@@ -128,13 +126,13 @@ _HUD::_HUD() {
 	ExperienceElement->SetActive(true);
 	GoldElement->SetActive(true);
 	MessageElement->SetActive(false);
-	BlacksmithCost->SetActive(false);
 	RecentItemsElement->SetActive(false);
 
 	ae::Assets.Elements["element_hud"]->SetActive(true);
 
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
 	InventoryScreen = new _InventoryScreen(this, ae::Assets.Elements["element_inventory_tabs"]);
+	BlacksmithScreen = new _BlacksmithScreen(this, ae::Assets.Elements["element_blacksmith"]);
 	SkillScreen = new _SkillScreen(this, ae::Assets.Elements["element_skills"]);
 }
 
@@ -144,6 +142,7 @@ _HUD::~_HUD() {
 
 	delete CharacterScreen;
 	delete InventoryScreen;
+	delete BlacksmithScreen;
 	delete SkillScreen;
 }
 
@@ -277,8 +276,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					DeleteSlot.Serialize(Packet);
 					PlayState.Network->SendPacket(Packet);
 
-					if(DeleteSlot == UpgradeSlot)
-						UpgradeSlot.Reset();
+					if(DeleteSlot == BlacksmithScreen->UpgradeSlot)
+						BlacksmithScreen->UpgradeSlot.Reset();
 
 					if(DeleteSlot.Type == BagType::TRADE)
 						ResetAcceptButton();
@@ -341,11 +340,11 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			CloseWindows(true);
 		}
 		// Upgrade item
-		else if(BlacksmithElement->GetClickedElement() == ae::Assets.Elements["button_blacksmith_upgrade"]) {
-			if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
+		else if(BlacksmithScreen->Element->GetClickedElement() == ae::Assets.Elements["button_blacksmith_upgrade"]) {
+			if(Player->Inventory->IsValidSlot(BlacksmithScreen->UpgradeSlot)) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::BLACKSMITH_UPGRADE);
-				UpgradeSlot.Serialize(Packet);
+				BlacksmithScreen->UpgradeSlot.Serialize(Packet);
 				PlayState.Network->SendPacket(Packet);
 			}
 		}
@@ -373,8 +372,8 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 								PlayState.Network->SendPacket(Packet);
 
 								// Remove upgrade item from upgrade window
-								if(Cursor.Slot == UpgradeSlot || Tooltip.Slot == UpgradeSlot)
-									UpgradeSlot.Type = BagType::NONE;
+								if(Cursor.Slot == BlacksmithScreen->UpgradeSlot || Tooltip.Slot == BlacksmithScreen->UpgradeSlot)
+									BlacksmithScreen->UpgradeSlot.Type = BagType::NONE;
 							}
 						break;
 						// Sell an item
@@ -386,7 +385,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 							// Replace item if dragging onto upgrade slot only
 							if(Cursor.InventorySlot.Item->IsEquippable() && Tooltip.Slot.Index != 1)
-								UpgradeSlot = Cursor.Slot;
+								BlacksmithScreen->UpgradeSlot = Cursor.Slot;
 						break;
 						// Move item to actionbar
 						case WINDOW_ACTIONBAR:
@@ -530,8 +529,8 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_BLACKSMITH: {
-				if(Player->Character->Blacksmith && Player->Inventory->IsValidSlot(UpgradeSlot)) {
-					Tooltip.InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
+				if(Player->Character->Blacksmith && Player->Inventory->IsValidSlot(BlacksmithScreen->UpgradeSlot)) {
+					Tooltip.InventorySlot = Player->Inventory->GetSlot(BlacksmithScreen->UpgradeSlot);
 					if(Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
 						Tooltip.InventorySlot.Upgrades++;
 				}
@@ -715,8 +714,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawVendor();
 		DrawTrade();
 		DrawTrader();
-		DrawBlacksmith();
 		DrawMinigame(BlendFactor);
+		BlacksmithScreen->Render(BlendFactor);
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
 		DrawParty();
@@ -741,7 +740,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 				// Get equipment slot to compare
 				switch(Tooltip.Window) {
 					case WINDOW_BLACKSMITH:
-						CompareSlot = UpgradeSlot;
+						CompareSlot = BlacksmithScreen->UpgradeSlot;
 					break;
 					case WINDOW_EQUIPMENT:
 						CompareSlot.Type = BagType::NONE;
@@ -984,17 +983,6 @@ void _HUD::InitTrader() {
 	TraderElement->SetActive(true);
 }
 
-// Initialize the blacksmith
-void _HUD::InitBlacksmith() {
-	Cursor.Reset();
-
-	InventoryScreen->InitInventoryTab(0);
-	BlacksmithElement->SetActive(true);
-	BlacksmithCost->SetActive(false);
-	ae::Assets.Elements["button_blacksmith_upgrade"]->SetEnabled(false);
-	UpgradeSlot.Type = BagType::NONE;
-}
-
 // Initialize minigame
 void _HUD::InitMinigame() {
 	if(!Player->Character->Minigame)
@@ -1123,22 +1111,6 @@ bool _HUD::CloseTrader() {
 	return WasOpen;
 }
 
-// Close the blacksmith
-bool _HUD::CloseBlacksmith() {
-	bool WasOpen = BlacksmithElement->Active;
-	InventoryScreen->Close();
-
-	BlacksmithElement->SetActive(false);
-	Cursor.Reset();
-
-	if(Player)
-		Player->Character->Blacksmith = nullptr;
-
-	UpgradeSlot.Type = BagType::NONE;
-
-	return WasOpen;
-}
-
 // Close minigame
 bool _HUD::CloseMinigame() {
 	bool WasOpen = MinigameElement->Active;
@@ -1160,14 +1132,14 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	Cursor.Reset();
 
 	bool WasOpen = false;
+	WasOpen |= InventoryScreen->Close();
+	WasOpen |= BlacksmithScreen->Close();
 	WasOpen |= SkillScreen->Close();
 	WasOpen |= CloseConfirm();
-	WasOpen |= InventoryScreen->Close();
 	WasOpen |= CloseVendor();
 	WasOpen |= CloseParty();
 	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseTrader();
-	WasOpen |= CloseBlacksmith();
 	WasOpen |= CloseMinigame();
 	WasOpen |= CloseTeleport();
 
@@ -1359,82 +1331,6 @@ void _HUD::DrawTrader() {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.DrawCenteredImage(DrawPosition, Player->Character->Trader->RewardItem->Texture);
 		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Count), DrawPosition + glm::vec2(0, -32), ae::CENTER_BASELINE);
-	}
-}
-
-// Draw the blacksmith
-void _HUD::DrawBlacksmith() {
-	if(!Player->Character->Blacksmith) {
-		BlacksmithElement->Active = false;
-		return;
-	}
-
-	// Get UI elements
-	ae::_Element *BlacksmithTitle = ae::Assets.Elements["label_blacksmith_title"];
-	ae::_Element *BlacksmithLevel = ae::Assets.Elements["label_blacksmith_level"];
-	ae::_Element *UpgradeButton = ae::Assets.Elements["button_blacksmith_upgrade"];
-
-	// Set title
-	BlacksmithTitle->Text = Player->Character->Blacksmith->Name;
-	BlacksmithLevel->Text = "Level " + std::to_string(Player->Character->Blacksmith->Level);
-
-	// Draw element
-	BlacksmithElement->Render();
-
-	// Draw item
-	if(Player->Inventory->IsValidSlot(UpgradeSlot)) {
-
-		// Get upgrade bag button
-		ae::_Element *BagButton = ae::Assets.Elements["button_blacksmith_bag"];
-		glm::vec2 DrawPosition = (BagButton->Bounds.Start + BagButton->Bounds.End) / 2.0f;
-
-		const _InventorySlot &InventorySlot = Player->Inventory->GetSlot(UpgradeSlot);
-		const _Item *Item = InventorySlot.Item;
-		if(Item) {
-			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
-
-			BlacksmithCost->SetActive(true);
-			UpgradeButton->SetEnabled(true);
-
-			// Get cost
-			int Cost = Item->GetUpgradePrice(InventorySlot.Upgrades+1);
-
-			// Update cost label
-			std::stringstream Buffer;
-			Buffer << Cost << " gold";
-			BlacksmithCost->Color = ae::Assets.Colors["gold"];
-			BlacksmithCost->Text = Buffer.str();
-
-			// Check upgrade conditions
-			bool Disabled = false;
-			if(Player->Character->Gold < Cost)
-				Disabled = true;
-
-			// Check blacksmith level
-			if(InventorySlot.Upgrades >= Player->Character->Blacksmith->Level) {
-				Disabled = true;
-				BlacksmithCost->Text = "I can't upgrade this";
-			}
-
-			// Check item level
-			if(InventorySlot.Upgrades >= Item->MaxLevel) {
-				Disabled = true;
-				BlacksmithCost->Text = "Max Level";
-			}
-
-			// Disable button
-			if(Disabled) {
-				BlacksmithCost->Color = ae::Assets.Colors["red"];
-				UpgradeButton->SetEnabled(false);
-			}
-		}
-		else
-			UpgradeButton->SetEnabled(false);
-	}
-	else {
-		BlacksmithCost->SetActive(false);
-		UpgradeButton->SetEnabled(false);
 	}
 }
 
