@@ -330,7 +330,7 @@ function Bot_Server.DetermineNextGoal(self, Object)
 		end
 	end
 
-	print("DetermineNextGoal ( goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " buyid=" .. self.BuyID .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " )")
+	--print("DetermineNextGoal ( goal=" .. self.GoalState .. " gold=" .. Object.Gold .. " buyid=" .. self.BuyID .. " map=" .. Object.MapID .. " x=" .. Object.X .. " y=" .. Object.Y .. " )")
 end
 
 -- Bot that simulates a connected client --
