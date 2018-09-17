@@ -261,6 +261,8 @@ void _Character::UpdateStatus() {
 		Status = STATUS_SKILLS;
 	else if(MenuOpen)
 		Status = STATUS_MENU;
+	else if(TeleportTime > 0)
+		Status = STATUS_TELEPORT;
 }
 
 // Calculates all of the player stats
