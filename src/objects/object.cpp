@@ -537,7 +537,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	// Write items
 	Json::Value ItemsNode;
 	for(auto &Bag : Inventory->GetBags()) {
-		if(Bag.ID == BagType::NONE)
+		if(Bag.Type == BagType::NONE)
 			continue;
 
 		// Write bag contents
@@ -553,7 +553,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 				BagNode.append(ItemNode);
 			}
 		}
-		ItemsNode[std::to_string((int)Bag.ID)] = BagNode;
+		ItemsNode[std::to_string((int)Bag.Type)] = BagNode;
 	}
 	Data["items"] = ItemsNode;
 

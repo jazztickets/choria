@@ -32,11 +32,11 @@ _Inventory::_Inventory() {
 	for(auto &Slot : GetBag(BagType::EQUIPMENT).Slots)
 		Slot.MaxCount = 1;
 
-	GetBag(BagType::NONE).ID = BagType::NONE;
-	GetBag(BagType::EQUIPMENT).ID = BagType::EQUIPMENT;
-	GetBag(BagType::INVENTORY).ID = BagType::INVENTORY;
-	GetBag(BagType::TRADE).ID = BagType::TRADE;
-	GetBag(BagType::KEYS).ID = BagType::KEYS;
+	GetBag(BagType::NONE).Type = BagType::NONE;
+	GetBag(BagType::EQUIPMENT).Type = BagType::EQUIPMENT;
+	GetBag(BagType::INVENTORY).Type = BagType::INVENTORY;
+	GetBag(BagType::TRADE).Type = BagType::TRADE;
+	GetBag(BagType::KEYS).Type = BagType::KEYS;
 
 	GetBag(BagType::EQUIPMENT).Name = "equipment";
 	GetBag(BagType::INVENTORY).Name = "inventory";
@@ -401,13 +401,13 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 
 		// Search for the required item
 		for(auto &Bag : Bags) {
-			if(Bag.ID == BagType::TRADE)
+			if(Bag.Type == BagType::TRADE)
 				continue;
 
 			for(size_t j = 0; j < Bag.Slots.size(); j++) {
 				_InventorySlot &InventoryItem = Bag.Slots[j];
 				if(InventoryItem.Item == RequiredItem && InventoryItem.Count >= RequiredCount) {
-					RequiredItemSlots[i].Type = Bag.ID;
+					RequiredItemSlots[i].Type = Bag.Type;
 					RequiredItemSlots[i].Index = j;
 					break;
 				}

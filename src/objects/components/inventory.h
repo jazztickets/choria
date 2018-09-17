@@ -77,7 +77,7 @@ struct _InventorySlot {
 // Bags contain multiple slots
 struct _Bag {
 
-	_Bag() : ID(BagType::NONE), StaticSize(true) { }
+	_Bag() : Type(BagType::NONE), StaticSize(true) { }
 
 	void Serialize(ae::_Buffer &Data);
 	void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
@@ -86,7 +86,7 @@ struct _Bag {
 
 	std::vector<_InventorySlot> Slots;
 	std::string Name;
-	BagType ID;
+	BagType Type;
 	bool StaticSize;
 };
 
