@@ -19,7 +19,9 @@
 
 // Libraries
 #include <hud/screen.h>
-#include <objects/components/inventory.h>
+#include <cstddef>
+
+enum class BagType : size_t;
 
 // Classes
 class _InventoryScreen : public _Screen {

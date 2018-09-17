@@ -26,8 +26,8 @@ _Inventory::_Inventory() {
 
 	Bags.resize((size_t)BagType::COUNT);
 	GetBag(BagType::EQUIPMENT).Slots.resize(EquipmentType::COUNT);
-	GetBag(BagType::INVENTORY).Slots.resize(PLAYER_INVENTORYSIZE);
-	GetBag(BagType::TRADE).Slots.resize(PLAYER_TRADEITEMS);
+	GetBag(BagType::INVENTORY).Slots.resize(INVENTORY_SIZE);
+	GetBag(BagType::TRADE).Slots.resize(INVENTORY_MAX_TRADE_ITEMS);
 	GetBag(BagType::KEYS).StaticSize = false;
 	for(auto &Slot : GetBag(BagType::EQUIPMENT).Slots)
 		Slot.MaxCount = 1;

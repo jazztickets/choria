@@ -1401,10 +1401,10 @@ void _Server::HandleTradeAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(Accepted && TradePlayer->Character->TradeAccepted) {
 
 			// Exchange items
-			_InventorySlot TempItems[PLAYER_TRADEITEMS];
+			_InventorySlot TempItems[INVENTORY_MAX_TRADE_ITEMS];
 			_Slot Slot;
 			Slot.Type = BagType::TRADE;
-			for(size_t i = 0; i < PLAYER_TRADEITEMS; i++) {
+			for(size_t i = 0; i < INVENTORY_MAX_TRADE_ITEMS; i++) {
 				Slot.Index = i;
 				TempItems[i] = Player->Inventory->GetSlot(Slot);
 				Player->Inventory->GetSlot(Slot) = TradePlayer->Inventory->GetSlot(Slot);

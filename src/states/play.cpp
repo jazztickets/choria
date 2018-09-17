@@ -1040,7 +1040,7 @@ void _PlayState::HandleTradeRequest(ae::_Buffer &Data) {
 
 	// Get gold offer
 	Player->Character->TradePlayer->Character->TradeGold = Data.Read<int>();
-	for(size_t i = 0; i < PLAYER_TRADEITEMS; i++)
+	for(size_t i = 0; i < INVENTORY_MAX_TRADE_ITEMS; i++)
 		Player->Character->TradePlayer->Inventory->UnserializeSlot(Data, Stats);
 }
 
