@@ -19,6 +19,7 @@
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
 #include <hud/vendor_screen.h>
+#include <hud/trader_screen.h>
 #include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
 #include <objects/object.h>
@@ -88,7 +89,6 @@ _HUD::_HUD() {
 	ButtonBarElement = ae::Assets.Elements["element_buttonbar"];
 	TradeElement = ae::Assets.Elements["element_trade"];
 	TradeTheirsElement = ae::Assets.Elements["element_trade_theirs"];
-	TraderElement = ae::Assets.Elements["element_trader"];
 	MinigameElement = ae::Assets.Elements["element_minigame"];
 	PartyElement = ae::Assets.Elements["element_party"];
 	TeleportElement = ae::Assets.Elements["element_teleport"];
@@ -114,7 +114,6 @@ _HUD::_HUD() {
 	ButtonBarElement->SetActive(true);
 	TradeElement->SetActive(false);
 	TradeTheirsElement->SetActive(false);
-	TraderElement->SetActive(false);
 	MinigameElement->SetActive(false);
 	PartyElement->SetActive(false);
 	TeleportElement->SetActive(false);
@@ -131,6 +130,7 @@ _HUD::_HUD() {
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
 	InventoryScreen = new _InventoryScreen(this, ae::Assets.Elements["element_inventory_tabs"]);
 	VendorScreen = new _VendorScreen(this, ae::Assets.Elements["element_vendor"]);
+	TraderScreen = new _TraderScreen(this, ae::Assets.Elements["element_trader"]);
 	BlacksmithScreen = new _BlacksmithScreen(this, ae::Assets.Elements["element_blacksmith"]);
 	SkillScreen = new _SkillScreen(this, ae::Assets.Elements["element_skills"]);
 }
@@ -142,6 +142,7 @@ _HUD::~_HUD() {
 	delete CharacterScreen;
 	delete InventoryScreen;
 	delete VendorScreen;
+	delete TraderScreen;
 	delete BlacksmithScreen;
 	delete SkillScreen;
 }
@@ -330,13 +331,13 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			}
 		}
 		// Accept trader button
-		else if(TraderElement->GetClickedElement() == ae::Assets.Elements["button_trader_accept"]) {
+		else if(TraderScreen->Element->GetClickedElement() == ae::Assets.Elements["button_trader_accept"]) {
 			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::TRADER_ACCEPT);
 			PlayState.Network->SendPacket(Packet);
 		}
 		// Cancel trader button
-		else if(TraderElement->GetClickedElement() == ae::Assets.Elements["button_trader_cancel"]) {
+		else if(TraderScreen->Element->GetClickedElement() == ae::Assets.Elements["button_trader_cancel"]) {
 			CloseWindows(true);
 		}
 		// Upgrade item
@@ -710,11 +711,11 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		DrawMessage();
 		DrawHudEffects();
+		DrawMinigame(BlendFactor);
 		InventoryScreen->Render(BlendFactor);
 		VendorScreen->Render(BlendFactor);
+		TraderScreen->Render(BlendFactor);
 		DrawTrade();
-		DrawTrader();
-		DrawMinigame(BlendFactor);
 		BlacksmithScreen->Render(BlendFactor);
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
@@ -958,22 +959,6 @@ void _HUD::InitTrade() {
 	ResetTradeTheirsWindow();
 }
 
-// Initialize the trader
-void _HUD::InitTrader() {
-
-	// Check for required items
-	RequiredItemSlots.resize(Player->Character->Trader->Items.size());
-	RewardItemSlot = Player->Inventory->GetRequiredItemSlots(Player->Character->Trader, RequiredItemSlots);
-
-	// Disable accept button if requirements not met
-	if(!Player->Inventory->IsValidSlot(RewardItemSlot))
-		ae::Assets.Elements["button_trader_accept"]->SetEnabled(false);
-	else
-		ae::Assets.Elements["button_trader_accept"]->SetEnabled(true);
-
-	TraderElement->SetActive(true);
-}
-
 // Initialize minigame
 void _HUD::InitMinigame() {
 	if(!Player->Character->Minigame)
@@ -1077,18 +1062,6 @@ bool _HUD::CloseTrade(bool SendNotify) {
 	return WasOpen;
 }
 
-// Close the trader
-bool _HUD::CloseTrader() {
-	bool WasOpen = TraderElement->Active;
-	TraderElement->SetActive(false);
-	Cursor.Reset();
-
-	if(Player)
-		Player->Character->Trader = nullptr;
-
-	return WasOpen;
-}
-
 // Close minigame
 bool _HUD::CloseMinigame() {
 	bool WasOpen = MinigameElement->Active;
@@ -1114,10 +1087,10 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= BlacksmithScreen->Close();
 	WasOpen |= SkillScreen->Close();
 	WasOpen |= VendorScreen->Close();
+	WasOpen |= TraderScreen->Close();
 	WasOpen |= CloseConfirm();
 	WasOpen |= CloseParty();
 	WasOpen |= CloseTrade(SendNotify);
-	WasOpen |= CloseTrader();
 	WasOpen |= CloseMinigame();
 	WasOpen |= CloseTeleport();
 
@@ -1232,50 +1205,6 @@ void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int
 		}
 
 		BagIndex++;
-	}
-}
-
-// Draw the trader screen
-void _HUD::DrawTrader() {
-	if(!Player->Character->Trader) {
-		TraderElement->Active = false;
-		return;
-	}
-
-	TraderElement->Render();
-
-	// Draw trader items
-	for(size_t i = 0; i < Player->Character->Trader->Items.size(); i++) {
-
-		// Get button position
-		std::stringstream Buffer;
-		Buffer << "button_trader_bag_" << i;
-		ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
-		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
-
-		// Draw item
-		const _Item *Item = Player->Character->Trader->Items[i].Item;
-		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
-
-		glm::vec4 Color;
-		if(!Player->Inventory->IsValidSlot(RequiredItemSlots[i]))
-			Color = ae::Assets.Colors["red"];
-		else
-			Color = glm::vec4(1.0f);
-
-		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -32), ae::CENTER_BASELINE, Color);
-	}
-
-	// Get reward button
-	ae::_Element *RewardButton = ae::Assets.Elements["button_trader_bag_reward"];
-	glm::vec2 DrawPosition = (RewardButton->Bounds.Start + RewardButton->Bounds.End) / 2.0f;
-
-	// Draw item
-	if(Player->Character->Trader->RewardItem) {
-		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawCenteredImage(DrawPosition, Player->Character->Trader->RewardItem->Texture);
-		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(Player->Character->Trader->Count), DrawPosition + glm::vec2(0, -32), ae::CENTER_BASELINE);
 	}
 }
 

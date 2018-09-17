@@ -30,6 +30,7 @@
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
 #include <hud/vendor_screen.h>
+#include <hud/trader_screen.h>
 #include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
 #include <ae/manager.h>
@@ -914,7 +915,7 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 		case _Map::EVENT_TRADER:
 			Player->Character->Trader = &Stats->Traders.at(EventData);
 			Player->Controller->WaitForServer = false;
-			HUD->InitTrader();
+			HUD->TraderScreen->Init();
 		break;
 		case _Map::EVENT_BLACKSMITH:
 			Player->Character->Blacksmith = &Stats->Blacksmiths.at(EventData);
@@ -940,7 +941,7 @@ void _PlayState::HandleInventory(ae::_Buffer &Data) {
 	// Refresh trader screen
 	if(Player->Character->Trader) {
 		PlayCoinSound();
-		HUD->InitTrader();
+		HUD->TraderScreen->Init();
 
 		// Update recent items
 		if(HUD->RecentItems.size() && HUD->RecentItems.back().Item == Player->Character->Trader->RewardItem) {
