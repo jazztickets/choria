@@ -122,7 +122,7 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 
 		// Get inventory slot
 		_InventorySlot *Item = &Bag.Slots[i];
-		if(Item->Item && !HUD->Cursor.IsEqual(i, Window)) {
+		if(Item->Item) {
 
 			// Get bag button
 			std::stringstream Buffer;
