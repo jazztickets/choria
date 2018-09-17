@@ -16,6 +16,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
 #include <menu.h>
+#include <objects/object.h>
+#include <objects/components/character.h>
+#include <states/play.h>
+#include <states/editor.h>
+#include <hud/hud.h>
 #include <ae/clientnetwork.h>
 #include <ae/ui.h>
 #include <ae/input.h>
@@ -26,12 +31,7 @@
 #include <ae/assets.h>
 #include <ae/util.h>
 #include <ae/audio.h>
-#include <states/play.h>
-#include <states/editor.h>
-#include <objects/object.h>
-#include <objects/components/character.h>
 #include <config.h>
-#include <hud.h>
 #include <actiontype.h>
 #include <constants.h>
 #include <framework.h>

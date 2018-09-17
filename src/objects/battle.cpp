@@ -26,6 +26,7 @@
 #include <objects/components/monster.h>
 #include <objects/statchange.h>
 #include <objects/statuseffect.h>
+#include <hud/hud.h>
 #include <ae/manager.h>
 #include <ae/servernetwork.h>
 #include <ae/clientnetwork.h>
@@ -41,7 +42,6 @@
 #include <constants.h>
 #include <server.h>
 #include <actiontype.h>
-#include <hud.h>
 #include <scripting.h>
 #include <stats.h>
 #include <config.h>

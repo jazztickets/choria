@@ -27,6 +27,8 @@
 #include <objects/map.h>
 #include <objects/battle.h>
 #include <objects/minigame.h>
+#include <hud/hud.h>
+#include <hud/character_screen.h>
 #include <ae/manager.h>
 #include <ae/clientnetwork.h>
 #include <ae/program.h>
@@ -46,7 +48,6 @@
 #include <menu.h>
 #include <scripting.h>
 #include <stats.h>
-#include <hud.h>
 #include <config.h>
 #include <actiontype.h>
 #include <server.h>
@@ -235,7 +236,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 				HUD->ToggleInGameMenu(Action == Action::MENU_PAUSE);
 			break;
 			case Action::GAME_INVENTORY:
-				HUD->ToggleCharacterStats();
+				HUD->CharacterScreen->Toggle();
 			break;
 			default: {
 				if(Battle->ClientHandleInput(Action))

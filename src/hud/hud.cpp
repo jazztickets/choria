@@ -15,7 +15,8 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *******************************************************************************/
-#include <hud.h>
+#include <hud/hud.h>
+#include <hud/character_screen.h>
 #include <ae/graphics.h>
 #include <ae/input.h>
 #include <ae/font.h>
@@ -86,7 +87,6 @@ _HUD::_HUD() {
 	InventoryElement = ae::Assets.Elements["element_inventory"];
 	InventoryTabsElement = ae::Assets.Elements["element_inventory_tabs"];
 	KeysElement = ae::Assets.Elements["element_keys"];
-	CharacterElement = ae::Assets.Elements["element_character"];
 	VendorElement = ae::Assets.Elements["element_vendor"];
 	TradeElement = ae::Assets.Elements["element_trade"];
 	TradeTheirsElement = ae::Assets.Elements["element_trade_theirs"];
@@ -121,7 +121,6 @@ _HUD::_HUD() {
 	InventoryElement->SetActive(false);
 	InventoryTabsElement->SetActive(false);
 	KeysElement->SetActive(false);
-	CharacterElement->SetActive(false);
 	VendorElement->SetActive(false);
 	TradeElement->SetActive(false);
 	TradeTheirsElement->SetActive(false);
@@ -141,10 +140,14 @@ _HUD::_HUD() {
 	RecentItemsElement->SetActive(false);
 
 	ae::Assets.Elements["element_hud"]->SetActive(true);
+
+	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
 }
 
 // Shutdown
 _HUD::~_HUD() {
+	delete CharacterScreen;
+
 	Reset();
 }
 
@@ -718,7 +721,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawTrader();
 		DrawBlacksmith();
 		DrawMinigame(BlendFactor);
-		DrawCharacterStats();
+		CharacterScreen->Render();
 		DrawSkills();
 		DrawParty();
 		DrawTeleport();
@@ -888,7 +891,7 @@ void _HUD::ToggleInventory() {
 		return;
 
 	if(Minigame) {
-		ToggleCharacterStats();
+		CharacterScreen->Toggle();
 		return;
 	}
 
@@ -897,7 +900,7 @@ void _HUD::ToggleInventory() {
 
 		InventoryTabsElement->SetActive(true);
 		InitInventoryTab(0);
-		CharacterElement->SetActive(true);
+		CharacterScreen->Element->SetActive(true);
 		PlayState.SendStatus(_Character::STATUS_INVENTORY);
 	}
 	else {
@@ -969,11 +972,6 @@ void _HUD::ToggleInGameMenu(bool Force) {
 		Menu.ShowRespawn = !Player->Character->IsAlive() && !Player->Character->Hardcore;
 		Menu.InitInGame();
 	}
-}
-
-// Show character stats
-void _HUD::ToggleCharacterStats() {
-	CharacterElement->SetActive(!CharacterElement->Active);
 }
 
 // Initialize the confirm screen
@@ -1164,7 +1162,7 @@ void _HUD::InitSkills() {
 
 	SkillsElement->CalculateBounds();
 	SkillsElement->SetActive(true);
-	CharacterElement->SetActive(true);
+	CharacterScreen->Element->SetActive(true);
 
 	RefreshSkillButtons();
 	Cursor.Reset();
@@ -1210,7 +1208,7 @@ bool _HUD::CloseInventory() {
 	EquipmentElement->SetActive(false);
 	InventoryElement->SetActive(false);
 	KeysElement->SetActive(false);
-	CharacterElement->SetActive(false);
+	CharacterScreen->Element->SetActive(false);
 
 	return WasOpen;
 }
@@ -1782,212 +1780,6 @@ void _HUD::DrawActionBar() {
 		// Draw hotkey
 		ae::Assets.Fonts["hud_small"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), ae::CENTER_BASELINE);
 	}
-}
-
-// Draw the character stats page
-void _HUD::DrawCharacterStats() {
-	if(!CharacterElement->Active)
-		return;
-
-	CharacterElement->Render();
-
-	// Set up UI
-	int SpacingY = 20;
-	glm::vec2 Spacing(10, 0);
-	glm::vec2 DrawPosition = CharacterElement->Bounds.Start;
-	DrawPosition.x += CharacterElement->Size.x/2 + 15;
-	DrawPosition.y += 20 + SpacingY;
-	std::stringstream Buffer;
-
-	// Damage
-	Buffer << Player->Character->MinDamage << " - " << Player->Character->MaxDamage;
-	ae::Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Armor
-	Buffer << Player->Character->Armor;
-	ae::Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Damage Block
-	Buffer << Player->Character->DamageBlock;
-	ae::Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Pierce
-	if(Player->Character->Pierce != 0) {
-		Buffer << Player->Character->Pierce;
-		ae::Assets.Fonts["hud_small"]->DrawText("Pierce", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Health Regen
-	if(Player->Character->HealthRegen != 0) {
-		Buffer << Player->Character->HealthRegen;
-		ae::Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Mana Regen
-	if(Player->Character->ManaRegen != 0) {
-		Buffer << Player->Character->ManaRegen;
-		ae::Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Move speed
-	Buffer << Player->Character->MoveSpeed << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Battle speed
-	Buffer << Player->Character->BattleSpeed << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Hit chance
-	Buffer << Player->Character->HitChance << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Evasion
-	Buffer << Player->Character->Evasion << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Drop rate
-	if(Player->Character->DropRate != 0) {
-		Buffer << Player->Character->DropRate;
-		ae::Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Separator
-	DrawPosition.y += SpacingY;
-
-	// Resistances
-	bool HasResist = false;
-	for(auto &Resistance : Player->Character->Resistances) {
-		if(Resistance.first == 0)
-			continue;
-
-		Buffer << Resistance.second << "%";
-		ae::Assets.Fonts["hud_small"]->DrawText(Player->Stats->DamageTypes.at(Resistance.first) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-
-		HasResist = true;
-	}
-
-	// Separator
-	if(HasResist)
-		DrawPosition.y += SpacingY;
-
-	// Play time
-	int64_t PlayTime = (int64_t)Player->Record->PlayTime;
-	if(PlayTime < 60)
-		Buffer << PlayTime << "s";
-	else if(PlayTime < 3600)
-		Buffer << PlayTime / 60 << "m";
-	else
-		Buffer << PlayTime / 3600 << "h" << (PlayTime / 60 % 60) << "m";
-
-	ae::Assets.Fonts["hud_small"]->DrawText("Play Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Battle time
-	int64_t BattleTime = (int64_t)Player->Record->BattleTime;
-	if(BattleTime < 60)
-		Buffer << BattleTime << "s";
-	else if(BattleTime < 3600)
-		Buffer << BattleTime / 60 << "m";
-	else
-		Buffer << BattleTime / 3600 << "h" << (BattleTime / 60 % 60) << "m";
-
-	ae::Assets.Fonts["hud_small"]->DrawText("Battle Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
-	// Monster kills
-	if(Player->Record->MonsterKills > 0) {
-		Buffer << Player->Record->MonsterKills;
-		ae::Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Player kills
-	if(Player->Record->PlayerKills > 0) {
-		Buffer << Player->Record->PlayerKills;
-		ae::Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Deaths
-	if(Player->Record->Deaths > 0) {
-		Buffer << Player->Record->Deaths;
-		ae::Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Bounty
-	if(Player->Record->Bounty > 0) {
-		Buffer << Player->Record->Bounty;
-		ae::Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Gold lost
-	if(Player->Record->GoldLost > 0) {
-		Buffer << Player->Record->GoldLost;
-		ae::Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
-	// Games played
-	if(Player->Record->GamesPlayed > 0) {
-		Buffer << Player->Record->GamesPlayed;
-		ae::Assets.Fonts["hud_small"]->DrawText("Games Played", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
-		Buffer.str("");
-		DrawPosition.y += SpacingY;
-	}
-
 }
 
 // Draws the skill page

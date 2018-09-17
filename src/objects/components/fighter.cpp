@@ -17,9 +17,9 @@
 *******************************************************************************/
 #include <objects/components/fighter.h>
 #include <objects/statuseffect.h>
+#include <hud/hud.h>
 #include <ae/ui.h>
 #include <ae/assets.h>
-#include <hud.h>
 
 // Constructor
 _Fighter::_Fighter(_Object *Object) :

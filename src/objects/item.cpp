@@ -20,6 +20,7 @@
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/fighter.h>
+#include <hud/hud.h>
 #include <ae/ui.h>
 #include <ae/font.h>
 #include <ae/util.h>
@@ -30,7 +31,6 @@
 #include <stats.h>
 #include <constants.h>
 #include <stats.h>
-#include <hud.h>
 #include <scripting.h>
 #include <sstream>
 #include <iomanip>

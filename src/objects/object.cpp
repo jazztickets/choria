@@ -27,6 +27,7 @@
 #include <objects/statuseffect.h>
 #include <objects/map.h>
 #include <objects/battle.h>
+#include <hud/hud.h>
 #include <ae/manager.h>
 #include <ae/servernetwork.h>
 #include <ae/peer.h>
@@ -39,7 +40,6 @@
 #include <ae/util.h>
 #include <ae/program.h>
 #include <packet.h>
-#include <hud.h>
 #include <server.h>
 #include <stats.h>
 #include <scripting.h>

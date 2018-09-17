@@ -23,6 +23,7 @@
 #include <objects/components/controller.h>
 #include <objects/object.h>
 #include <objects/battle.h>
+#include <hud/hud.h>
 #include <ae/buffer.h>
 #include <ae/texture.h>
 #include <ae/assets.h>
@@ -40,7 +41,6 @@
 #include <constants.h>
 #include <stats.h>
 #include <packet.h>
-#include <hud.h>
 #include <glm/vec3.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

@@ -34,6 +34,7 @@ class _StatusEffect;
 class _Action;
 class _Scripting;
 class _Map;
+class _CharacterScreen;
 class _Minigame;
 struct _InventorySlot;
 struct _Vendor;
@@ -141,7 +142,6 @@ class _HUD {
 		void ToggleSkills();
 		void ToggleParty();
 		void ToggleInGameMenu(bool Force);
-		void ToggleCharacterStats();
 
 		// Windows
 		void InitConfirm(const std::string &WarningMessage);
@@ -182,6 +182,12 @@ class _HUD {
 		// Scripting
 		_Scripting *Scripting;
 
+		// Objects
+		_Object *Player;
+
+		// Screens
+		_CharacterScreen *CharacterScreen;
+
 		// Minigames
 		_Minigame *Minigame;
 
@@ -208,7 +214,6 @@ class _HUD {
 		void DrawBag(_Bag::BagType Type);
 		void DrawKeys(_Bag::BagType Type);
 		void DrawTeleport();
-		void DrawCharacterStats();
 		void DrawVendor();
 		void DrawTrade();
 		void DrawTrader();
@@ -250,7 +255,6 @@ class _HUD {
 		ae::_Element *InventoryElement;
 		ae::_Element *InventoryTabsElement;
 		ae::_Element *KeysElement;
-		ae::_Element *CharacterElement;
 		ae::_Element *VendorElement;
 		ae::_Element *TradeElement;
 		ae::_Element *TradeTheirsElement;
@@ -276,7 +280,6 @@ class _HUD {
 		_Message Message;
 
 		// Objects
-		_Object *Player;
 		double LowestRecentItemTime;
 
 		// Chat
