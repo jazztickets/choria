@@ -29,6 +29,7 @@
 #include <hud/hud.h>
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
+#include <hud/vendor_screen.h>
 #include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
 #include <ae/manager.h>
@@ -908,7 +909,7 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 		case _Map::EVENT_VENDOR:
 			Player->Character->Vendor = &Stats->Vendors.at(EventData);
 			Player->Controller->WaitForServer = false;
-			HUD->InitVendor();
+			HUD->VendorScreen->Init();
 		break;
 		case _Map::EVENT_TRADER:
 			Player->Character->Trader = &Stats->Traders.at(EventData);

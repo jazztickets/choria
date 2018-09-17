@@ -18,6 +18,7 @@
 #include <hud/hud.h>
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
+#include <hud/vendor_screen.h>
 #include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
 #include <objects/object.h>
@@ -85,7 +86,6 @@ _HUD::_HUD() {
 	StatusEffectsElement = ae::Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = ae::Assets.Elements["element_actionbar"];
 	ButtonBarElement = ae::Assets.Elements["element_buttonbar"];
-	VendorElement = ae::Assets.Elements["element_vendor"];
 	TradeElement = ae::Assets.Elements["element_trade"];
 	TradeTheirsElement = ae::Assets.Elements["element_trade_theirs"];
 	TraderElement = ae::Assets.Elements["element_trader"];
@@ -112,7 +112,6 @@ _HUD::_HUD() {
 	StatusEffectsElement->SetActive(true);
 	ActionBarElement->SetActive(true);
 	ButtonBarElement->SetActive(true);
-	VendorElement->SetActive(false);
 	TradeElement->SetActive(false);
 	TradeTheirsElement->SetActive(false);
 	TraderElement->SetActive(false);
@@ -131,6 +130,7 @@ _HUD::_HUD() {
 
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
 	InventoryScreen = new _InventoryScreen(this, ae::Assets.Elements["element_inventory_tabs"]);
+	VendorScreen = new _VendorScreen(this, ae::Assets.Elements["element_vendor"]);
 	BlacksmithScreen = new _BlacksmithScreen(this, ae::Assets.Elements["element_blacksmith"]);
 	SkillScreen = new _SkillScreen(this, ae::Assets.Elements["element_skills"]);
 }
@@ -141,6 +141,7 @@ _HUD::~_HUD() {
 
 	delete CharacterScreen;
 	delete InventoryScreen;
+	delete VendorScreen;
 	delete BlacksmithScreen;
 	delete SkillScreen;
 }
@@ -710,7 +711,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawMessage();
 		DrawHudEffects();
 		InventoryScreen->Render(BlendFactor);
-		DrawVendor();
+		VendorScreen->Render(BlendFactor);
 		DrawTrade();
 		DrawTrader();
 		DrawMinigame(BlendFactor);
@@ -938,15 +939,6 @@ void _HUD::InitConfirm(const std::string &WarningMessage) {
 	ConfirmElement->SetActive(true);
 }
 
-// Initialize the vendor
-void _HUD::InitVendor() {
-	Cursor.Reset();
-
-	// Open inventory
-	InventoryScreen->InitInventoryTab(0);
-	VendorElement->SetActive(true);
-}
-
 // Initialize the trade system
 void _HUD::InitTrade() {
 	if(Player->Character->WaitingForTrade)
@@ -1028,19 +1020,6 @@ bool _HUD::CloseConfirm() {
 	DarkOverlayElement->SetActive(false);
 
 	DeleteSlot.Reset();
-
-	return WasOpen;
-}
-
-// Close the vendor
-bool _HUD::CloseVendor() {
-	bool WasOpen = VendorElement->Active;
-	InventoryScreen->Close();
-	if(Player)
-		Player->Character->Vendor = nullptr;
-
-	VendorElement->SetActive(false);
-	Cursor.Reset();
 
 	return WasOpen;
 }
@@ -1134,8 +1113,8 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= InventoryScreen->Close();
 	WasOpen |= BlacksmithScreen->Close();
 	WasOpen |= SkillScreen->Close();
+	WasOpen |= VendorScreen->Close();
 	WasOpen |= CloseConfirm();
-	WasOpen |= CloseVendor();
 	WasOpen |= CloseParty();
 	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseTrader();
@@ -1207,39 +1186,6 @@ void _HUD::DrawTeleport() {
 	std::stringstream Buffer;
 	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->Character->TeleportTime;
 	ae::Assets.Elements["label_teleport_timeleft"]->Text = Buffer.str();
-}
-
-// Draw the vendor
-void _HUD::DrawVendor() {
-	if(!Player->Character->Vendor) {
-		VendorElement->Active = false;
-		return;
-	}
-
-	VendorElement->Render();
-
-	// Draw vendor items
-	for(size_t i = 0; i < Player->Character->Vendor->Items.size(); i++) {
-		const _Item *Item = Player->Character->Vendor->Items[i];
-		if(Item && !Cursor.IsEqual(i, WINDOW_VENDOR)) {
-
-			// Get bag button
-			std::stringstream Buffer;
-			Buffer << "button_vendor_bag_" << i;
-			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
-
-			// Get position of slot
-			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
-
-			// Draw item
-			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			if(Item->Texture)
-				ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
-
-			// Draw price
-			DrawItemPrice(Item, 1, DrawPosition, true);
-		}
-	}
 }
 
 // Draw the trade screen

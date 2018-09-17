@@ -30,6 +30,7 @@
 // Forward Declarations
 class _CharacterScreen;
 class _InventoryScreen;
+class _VendorScreen;
 class _BlacksmithScreen;
 class _SkillScreen;
 class _Object;
@@ -40,7 +41,6 @@ class _Scripting;
 class _Map;
 class _Minigame;
 struct _InventorySlot;
-struct _Vendor;
 struct _Trader;
 
 namespace ae {
@@ -93,6 +93,7 @@ class _HUD {
 
 	friend class _CharacterScreen;
 	friend class _InventoryScreen;
+	friend class _VendorScreen;
 	friend class _BlacksmithScreen;
 	friend class _SkillScreen;
 
@@ -151,7 +152,6 @@ class _HUD {
 
 		// Windows
 		void InitConfirm(const std::string &WarningMessage);
-		void InitVendor();
 		void InitTrader();
 		void InitMinigame();
 		void InitParty();
@@ -189,6 +189,7 @@ class _HUD {
 		// Screens
 		_CharacterScreen *CharacterScreen;
 		_InventoryScreen *InventoryScreen;
+		_VendorScreen *VendorScreen;
 		_BlacksmithScreen *BlacksmithScreen;
 		_SkillScreen *SkillScreen;
 
@@ -202,7 +203,6 @@ class _HUD {
 	private:
 
 		bool CloseConfirm();
-		bool CloseVendor();
 		bool CloseTrader();
 		bool CloseMinigame();
 		bool CloseParty();
@@ -212,7 +212,6 @@ class _HUD {
 		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawHudEffects();
 		void DrawTeleport();
-		void DrawVendor();
 		void DrawTrade();
 		void DrawTrader();
 		void DrawMinigame(double BlendFactor);
@@ -242,7 +241,6 @@ class _HUD {
 		ae::_Element *StatusEffectsElement;
 		ae::_Element *ActionBarElement;
 		ae::_Element *ButtonBarElement;
-		ae::_Element *VendorElement;
 		ae::_Element *TradeElement;
 		ae::_Element *TradeTheirsElement;
 		ae::_Element *TraderElement;
