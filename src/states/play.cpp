@@ -30,6 +30,7 @@
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
 #include <hud/vendor_screen.h>
+#include <hud/trade_screen.h>
 #include <hud/trader_screen.h>
 #include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
@@ -277,7 +278,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 					HUD->InventoryScreen->Toggle();
 				break;
 				case Action::GAME_TRADE:
-					HUD->ToggleTrade();
+					HUD->TradeScreen->Toggle();
 				break;
 				case Action::GAME_SKILLS:
 					HUD->SkillScreen->Toggle();
@@ -334,7 +335,7 @@ void _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 		return;
 
 	if(!HUD->IsChatting())
-		HUD->ValidateTradeGold();
+		HUD->TradeScreen->ValidateTradeGold();
 }
 
 // Mouse handler
@@ -991,7 +992,7 @@ void _PlayState::HandleInventorySwap(ae::_Buffer &Data) {
 	Player->Inventory->UnserializeSlot(Data, Stats);
 	Player->Inventory->UnserializeSlot(Data, Stats);
 
-	HUD->ResetAcceptButton();
+	HUD->TradeScreen->ResetAcceptButton();
 	Player->Character->CalculateStats();
 }
 
@@ -1051,8 +1052,8 @@ void _PlayState::HandleTradeCancel(ae::_Buffer &Data) {
 	Player->Character->TradePlayer = nullptr;
 
 	// Reset agreement
-	HUD->ResetAcceptButton();
-	HUD->ResetTradeTheirsWindow();
+	HUD->TradeScreen->ResetAcceptButton();
+	HUD->TradeScreen->ResetTradeTheirsWindow();
 }
 
 // Handles a trade item update
@@ -1068,7 +1069,7 @@ void _PlayState::HandleTradeItem(ae::_Buffer &Data) {
 
 	// Reset agreement
 	Player->Character->TradePlayer->Character->TradeAccepted = false;
-	HUD->ResetAcceptButton();
+	HUD->TradeScreen->ResetAcceptButton();
 }
 
 // Handles a gold update from the trading player
@@ -1084,7 +1085,7 @@ void _PlayState::HandleTradeGold(ae::_Buffer &Data) {
 
 	// Reset agreement
 	Player->Character->TradePlayer->Character->TradeAccepted = false;
-	HUD->ResetAcceptButton();
+	HUD->TradeScreen->ResetAcceptButton();
 }
 
 // Handles a trade accept
@@ -1096,7 +1097,7 @@ void _PlayState::HandleTradeAccept(ae::_Buffer &Data) {
 
 	// Set state
 	bool Accepted = !!Data.Read<char>();
-	HUD->UpdateTradeStatus(Accepted);
+	HUD->TradeScreen->UpdateTradeStatus(Accepted);
 }
 
 // Handles a trade exchange
@@ -1110,7 +1111,7 @@ void _PlayState::HandleTradeExchange(ae::_Buffer &Data) {
 	Player->Character->CalculateStats();
 
 	// Close window
-	HUD->CloseTrade(false);
+	HUD->TradeScreen->Close(false);
 }
 
 // Handles the start of a battle

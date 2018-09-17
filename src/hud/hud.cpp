@@ -19,6 +19,7 @@
 #include <hud/character_screen.h>
 #include <hud/inventory_screen.h>
 #include <hud/vendor_screen.h>
+#include <hud/trade_screen.h>
 #include <hud/trader_screen.h>
 #include <hud/blacksmith_screen.h>
 #include <hud/skill_screen.h>
@@ -87,8 +88,6 @@ _HUD::_HUD() {
 	StatusEffectsElement = ae::Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = ae::Assets.Elements["element_actionbar"];
 	ButtonBarElement = ae::Assets.Elements["element_buttonbar"];
-	TradeElement = ae::Assets.Elements["element_trade"];
-	TradeTheirsElement = ae::Assets.Elements["element_trade_theirs"];
 	MinigameElement = ae::Assets.Elements["element_minigame"];
 	PartyElement = ae::Assets.Elements["element_party"];
 	TeleportElement = ae::Assets.Elements["element_teleport"];
@@ -112,8 +111,6 @@ _HUD::_HUD() {
 	StatusEffectsElement->SetActive(true);
 	ActionBarElement->SetActive(true);
 	ButtonBarElement->SetActive(true);
-	TradeElement->SetActive(false);
-	TradeTheirsElement->SetActive(false);
 	MinigameElement->SetActive(false);
 	PartyElement->SetActive(false);
 	TeleportElement->SetActive(false);
@@ -130,6 +127,7 @@ _HUD::_HUD() {
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
 	InventoryScreen = new _InventoryScreen(this, ae::Assets.Elements["element_inventory_tabs"]);
 	VendorScreen = new _VendorScreen(this, ae::Assets.Elements["element_vendor"]);
+	TradeScreen = new _TradeScreen(this, ae::Assets.Elements["element_trade"]);
 	TraderScreen = new _TraderScreen(this, ae::Assets.Elements["element_trader"]);
 	BlacksmithScreen = new _BlacksmithScreen(this, ae::Assets.Elements["element_blacksmith"]);
 	SkillScreen = new _SkillScreen(this, ae::Assets.Elements["element_skills"]);
@@ -142,6 +140,7 @@ _HUD::~_HUD() {
 	delete CharacterScreen;
 	delete InventoryScreen;
 	delete VendorScreen;
+	delete TradeScreen;
 	delete TraderScreen;
 	delete BlacksmithScreen;
 	delete SkillScreen;
@@ -166,7 +165,7 @@ void _HUD::HandleEnter() {
 
 	if(IsTypingGold()) {
 		ae::FocusedElement = nullptr;
-		ValidateTradeGold();
+		TradeScreen->ValidateTradeGold();
 	}
 	else if(IsTypingParty()) {
 		ae::FocusedElement = nullptr;
@@ -281,7 +280,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						BlacksmithScreen->UpgradeSlot.Reset();
 
 					if(DeleteSlot.Type == BagType::TRADE)
-						ResetAcceptButton();
+						TradeScreen->ResetAcceptButton();
 				}
 
 				CloseConfirm();
@@ -302,7 +301,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				InventoryScreen->Toggle();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_trade") {
-				ToggleTrade();
+				TradeScreen->Toggle();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_party") {
 				ToggleParty();
@@ -460,9 +459,9 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					// Check for accept button
 					ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
-					if(TradeElement->GetClickedElement() == AcceptButton) {
+					if(TradeScreen->Element->GetClickedElement() == AcceptButton) {
 						AcceptButton->Checked = !AcceptButton->Checked;
-						UpdateAcceptButton();
+						TradeScreen->UpdateAcceptButton();
 
 						ae::_Buffer Packet;
 						Packet.Write<PacketType>(PacketType::TRADE_ACCEPT);
@@ -557,9 +556,9 @@ void _HUD::Update(double FrameTime) {
 
 	// Get trade items
 	if(Player->Character->WaitingForTrade) {
-		TradeTheirsElement->SetActive(false);
+		ae::Assets.Elements["element_trade_theirs"]->SetActive(false);
 		if(Player->Character->TradePlayer) {
-			TradeTheirsElement->SetActive(true);
+			ae::Assets.Elements["element_trade_theirs"]->SetActive(true);
 			ae::Assets.Elements["label_trade_status"]->SetActive(false);
 
 			ae::Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->Character->TradePlayer->Character->TradeGold);
@@ -714,8 +713,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawMinigame(BlendFactor);
 		InventoryScreen->Render(BlendFactor);
 		VendorScreen->Render(BlendFactor);
+		TradeScreen->Render(BlendFactor);
 		TraderScreen->Render(BlendFactor);
-		DrawTrade();
 		BlacksmithScreen->Render(BlendFactor);
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
@@ -881,26 +880,6 @@ void _HUD::ToggleTeleport() {
 	}
 }
 
-// Open/close trade
-void _HUD::ToggleTrade() {
-	if(Player->Controller->WaitForServer || !Player->Character->CanOpenTrade())
-		return;
-
-	// Restrict trading for new characters
-	if(Player->Character->Level < GAME_TRADING_LEVEL) {
-		SetMessage("Trading unlocks at level " + std::to_string(GAME_TRADING_LEVEL));
-		return;
-	}
-
-	if(!TradeElement->Active) {
-		CloseWindows(true);
-		InitTrade();
-	}
-	else {
-		CloseWindows(true);
-	}
-}
-
 // Open/close party screen
 void _HUD::ToggleParty() {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenParty())
@@ -938,25 +917,6 @@ void _HUD::InitConfirm(const std::string &WarningMessage) {
 	ae::Assets.Elements["label_menu_confirm_warning"]->Text = WarningMessage;
 
 	ConfirmElement->SetActive(true);
-}
-
-// Initialize the trade system
-void _HUD::InitTrade() {
-	if(Player->Character->WaitingForTrade)
-		return;
-
-	Player->Character->WaitingForTrade = true;
-	InventoryScreen->InitInventoryTab(0);
-	TradeElement->SetActive(true);
-
-	// Send request to server
-	SendTradeRequest();
-
-	// Reset UI
-	ResetAcceptButton();
-
-	// Reset their trade UI
-	ResetTradeTheirsWindow();
 }
 
 // Initialize minigame
@@ -1040,28 +1000,6 @@ void _HUD::DrawConfirm() {
 	ConfirmElement->Render();
 }
 
-// Closes the trade system
-bool _HUD::CloseTrade(bool SendNotify) {
-
-	bool WasOpen = TradeElement->Active;
-
-	// Close inventory
-	InventoryScreen->Close();
-	TradeElement->SetActive(false);
-	ae::FocusedElement = nullptr;
-
-	// Notify server
-	if(SendNotify)
-		SendTradeCancel();
-
-	if(Player) {
-		Player->Character->WaitingForTrade = false;
-		Player->Character->TradePlayer = nullptr;
-	}
-
-	return WasOpen;
-}
-
 // Close minigame
 bool _HUD::CloseMinigame() {
 	bool WasOpen = MinigameElement->Active;
@@ -1088,9 +1026,9 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	WasOpen |= SkillScreen->Close();
 	WasOpen |= VendorScreen->Close();
 	WasOpen |= TraderScreen->Close();
+	WasOpen |= TradeScreen->Close(SendNotify);
 	WasOpen |= CloseConfirm();
 	WasOpen |= CloseParty();
-	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseMinigame();
 	WasOpen |= CloseTeleport();
 
@@ -1159,53 +1097,6 @@ void _HUD::DrawTeleport() {
 	std::stringstream Buffer;
 	Buffer << "Teleport in " << std::fixed << std::setprecision(1) << Player->Character->TeleportTime;
 	ae::Assets.Elements["label_teleport_timeleft"]->Text = Buffer.str();
-}
-
-// Draw the trade screen
-void _HUD::DrawTrade() {
-	if(!TradeElement->Active)
-		return;
-
-	TradeElement->Render();
-
-	// Draw items
-	DrawTradeItems(Player, "button_trade_yourbag_", WINDOW_TRADEYOURS);
-	DrawTradeItems(Player->Character->TradePlayer, "button_trade_theirbag_", WINDOW_TRADETHEIRS);
-}
-
-// Draws trading items
-void _HUD::DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window) {
-	if(!Player)
-		return;
-
-	// Draw offered items
-	int BagIndex = 0;
-	_Bag &Bag = Player->Inventory->GetBag(BagType::TRADE);
-	for(size_t i = 0; i < Bag.Slots.size(); i++) {
-
-		// Get inventory slot
-		_InventorySlot *Item = &Bag.Slots[i];
-		if(Item->Item && !Cursor.IsEqual(i, Window)) {
-
-			// Get bag button
-			std::stringstream Buffer;
-			Buffer << ElementPrefix << BagIndex;
-			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
-
-			// Get position of slot
-			glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
-
-			// Draw item
-			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawCenteredImage(DrawPosition, Item->Item->Texture);
-
-			// Draw count
-			if(Item->Count > 1)
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE);
-		}
-
-		BagIndex++;
-	}
 }
 
 // Draw minigame
@@ -1454,52 +1345,6 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	PlayState.Network->SendPacket(Packet);
 }
 
-// Trade with another player
-void _HUD::SendTradeRequest() {
-	ae::_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::TRADE_REQUEST);
-	PlayState.Network->SendPacket(Packet);
-}
-
-// Cancel a trade
-void _HUD::SendTradeCancel() {
-	if(!Player)
-		return;
-
-	ae::_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::TRADE_CANCEL);
-	PlayState.Network->SendPacket(Packet);
-
-	Player->Character->TradePlayer = nullptr;
-}
-
-// Make sure the trade gold box is valid and send gold to player
-void _HUD::ValidateTradeGold() {
-	if(!Player || !TradeElement->Active)
-		return;
-
-	ae::_Element *GoldTextBox = ae::Assets.Elements["textbox_trade_gold_yours"];
-
-	// Get gold amount
-	int Gold = ae::ToNumber<int>(GoldTextBox->Text);
-	if(Gold < 0)
-		Gold = 0;
-	else if(Gold > Player->Character->Gold)
-		Gold = std::max(0, Player->Character->Gold);
-
-	// Set text
-	GoldTextBox->SetText(std::to_string(Gold));
-
-	// Send amount
-	ae::_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::TRADE_GOLD);
-	Packet.Write<int>(Gold);
-	PlayState.Network->SendPacket(Packet);
-
-	// Reset agreement
-	ResetAcceptButton();
-}
-
 // Send party password to server and close screen
 void _HUD::SendPartyInfo() {
 	if(!Player || !PartyElement->Active)
@@ -1513,53 +1358,6 @@ void _HUD::SendPartyInfo() {
 
 	// Close screen
 	CloseParty();
-}
-
-// Update accept button label text
-void _HUD::UpdateAcceptButton() {
-	ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
-	ae::_Element *LabelTradeStatusYours = ae::Assets.Elements["label_trade_status_yours"];
-	if(AcceptButton->Checked) {
-		LabelTradeStatusYours->Text = "Accepted";
-		LabelTradeStatusYours->Color = ae::Assets.Colors["green"];
-	}
-	else {
-		LabelTradeStatusYours->Text = "Accept";
-		LabelTradeStatusYours->Color = glm::vec4(1.0f);
-	}
-}
-
-// Resets the trade agreement
-void _HUD::ResetAcceptButton() {
-	ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
-	AcceptButton->Checked = false;
-	UpdateAcceptButton();
-
-	UpdateTradeStatus(false);
-}
-
-// Resets upper trade window status
-void _HUD::ResetTradeTheirsWindow() {
-	TradeTheirsElement->SetActive(false);
-	ae::Assets.Elements["label_trade_status"]->SetActive(true);
-	ae::Assets.Elements["textbox_trade_gold_theirs"]->Enabled = false;
-	ae::Assets.Elements["textbox_trade_gold_theirs"]->SetText("0");
-	ae::Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
-	ae::Assets.Elements["label_trade_name_yours"]->Text = Player->Name;
-	ae::Assets.Elements["image_trade_portrait_yours"]->Texture = Player->Character->Portrait;
-}
-
-// Update their status label
-void _HUD::UpdateTradeStatus(bool Accepted) {
-	ae::_Element *LabelTradeStatusTheirs = ae::Assets.Elements["label_trade_status_theirs"];
-	if(Accepted) {
-		LabelTradeStatusTheirs->Text = "Accepted";
-		LabelTradeStatusTheirs->Color = ae::Assets.Colors["green"];
-	}
-	else {
-		LabelTradeStatusTheirs->Text = "Unaccepted";
-		LabelTradeStatusTheirs->Color = ae::Assets.Colors["red"];
-	}
 }
 
 // Split a stack of items

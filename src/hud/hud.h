@@ -31,6 +31,7 @@
 class _CharacterScreen;
 class _InventoryScreen;
 class _VendorScreen;
+class _TradeScreen;
 class _TraderScreen;
 class _BlacksmithScreen;
 class _SkillScreen;
@@ -93,6 +94,7 @@ class _HUD {
 	friend class _CharacterScreen;
 	friend class _InventoryScreen;
 	friend class _VendorScreen;
+	friend class _TradeScreen;
 	friend class _TraderScreen;
 	friend class _BlacksmithScreen;
 	friend class _SkillScreen;
@@ -146,7 +148,6 @@ class _HUD {
 
 		// Button bar
 		void ToggleTeleport();
-		void ToggleTrade();
 		void ToggleParty();
 		void ToggleInGameMenu(bool Force);
 
@@ -154,7 +155,6 @@ class _HUD {
 		void InitConfirm(const std::string &WarningMessage);
 		void InitMinigame();
 		void InitParty();
-		void InitTrade();
 		bool CloseWindows(bool SendStatus, bool SendNotify=true);
 
 		// Chat
@@ -165,12 +165,7 @@ class _HUD {
 		void CloseChat();
 
 		// Trade
-		bool CloseTrade(bool SendNotify=true);
 		bool IsTypingGold();
-		void ResetAcceptButton();
-		void ResetTradeTheirsWindow();
-		void UpdateTradeStatus(bool Accepted);
-		void ValidateTradeGold();
 
 		// Party
 		void SendPartyInfo();
@@ -189,6 +184,7 @@ class _HUD {
 		_CharacterScreen *CharacterScreen;
 		_InventoryScreen *InventoryScreen;
 		_VendorScreen *VendorScreen;
+		_TradeScreen *TradeScreen;
 		_TraderScreen *TraderScreen;
 		_BlacksmithScreen *BlacksmithScreen;
 		_SkillScreen *SkillScreen;
@@ -211,23 +207,17 @@ class _HUD {
 		void DrawChat(double Time, bool IgnoreTimeout);
 		void DrawHudEffects();
 		void DrawTeleport();
-		void DrawTrade();
 		void DrawMinigame(double BlendFactor);
 		void DrawActionBar();
 		void DrawParty();
 		void DrawMessage();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy);
 		void DrawCursorItem();
-		void DrawTradeItems(_Object *Player, const std::string &ElementPrefix, int Window);
 
 		void BuyItem(_Cursor *Item, _Slot TargetSlot=_Slot());
 		void SellItem(_Cursor *CursorItem, int Amount);
 
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
-
-		void SendTradeRequest();
-		void SendTradeCancel();
-		void UpdateAcceptButton();
 
 		void SplitStack(const _Slot &Slot, uint8_t Count);
 		BagType GetBagFromWindow(int Window);
@@ -239,8 +229,6 @@ class _HUD {
 		ae::_Element *StatusEffectsElement;
 		ae::_Element *ActionBarElement;
 		ae::_Element *ButtonBarElement;
-		ae::_Element *TradeElement;
-		ae::_Element *TradeTheirsElement;
 		ae::_Element *MinigameElement;
 		ae::_Element *PartyElement;
 		ae::_Element *TeleportElement;
