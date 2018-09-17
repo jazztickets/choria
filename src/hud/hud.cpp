@@ -17,6 +17,7 @@
 *******************************************************************************/
 #include <hud/hud.h>
 #include <hud/character_screen.h>
+#include <hud/skill_screen.h>
 #include <ae/graphics.h>
 #include <ae/input.h>
 #include <ae/font.h>
@@ -93,7 +94,6 @@ _HUD::_HUD() {
 	TraderElement = ae::Assets.Elements["element_trader"];
 	BlacksmithElement = ae::Assets.Elements["element_blacksmith"];
 	MinigameElement = ae::Assets.Elements["element_minigame"];
-	SkillsElement = ae::Assets.Elements["element_skills"];
 	PartyElement = ae::Assets.Elements["element_party"];
 	TeleportElement = ae::Assets.Elements["element_teleport"];
 	ChatElement = ae::Assets.Elements["element_chat"];
@@ -127,7 +127,6 @@ _HUD::_HUD() {
 	TraderElement->SetActive(false);
 	BlacksmithElement->SetActive(false);
 	MinigameElement->SetActive(false);
-	SkillsElement->SetActive(false);
 	PartyElement->SetActive(false);
 	TeleportElement->SetActive(false);
 	ChatElement->SetActive(false);
@@ -142,6 +141,7 @@ _HUD::_HUD() {
 	ae::Assets.Elements["element_hud"]->SetActive(true);
 
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
+	SkillScreen = new _SkillScreen(this, ae::Assets.Elements["element_skills"]);
 }
 
 // Shutdown
@@ -149,6 +149,7 @@ _HUD::~_HUD() {
 	Reset();
 
 	delete CharacterScreen;
+	delete SkillScreen;
 }
 
 // Reset state
@@ -157,7 +158,7 @@ void _HUD::Reset() {
 	Minigame = nullptr;
 
 	CloseWindows(false);
-	ClearSkills();
+	SkillScreen->ClearSkills();
 
 	SetMessage("");
 	ChatHistory.clear();
@@ -249,7 +250,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 				break;
 				case WINDOW_ACTIONBAR:
-					if(SkillsElement->Active || InventoryTabsElement->Active) {
+					if(SkillScreen->Element->Active || InventoryTabsElement->Active) {
 						if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 							Cursor = Tooltip;
 						}
@@ -261,7 +262,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						EquipSkill(Tooltip.InventorySlot.Item->ID);
+						SkillScreen->EquipSkill(Tooltip.InventorySlot.Item->ID);
 					}
 				break;
 			}
@@ -312,7 +313,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				ToggleParty();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_skills") {
-				ToggleSkills();
+				SkillScreen->Toggle();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_menu") {
 				ToggleInGameMenu(true);
@@ -326,12 +327,12 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			InitInventoryTab(InventoryTabsElement->GetClickedElement()->Index);
 		}
 		// Check skill level up/down
-		else if(SkillsElement->GetClickedElement()) {
-			if(SkillsElement->GetClickedElement()->Name == "button_skills_plus") {
-				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, 1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT));
+		else if(SkillScreen->Element->GetClickedElement()) {
+			if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_plus") {
+				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Parent->Index, 1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT));
 			}
-			else if(SkillsElement->GetClickedElement()->Name == "button_skills_minus") {
-				AdjustSkillLevel((uint32_t)SkillsElement->GetClickedElement()->Parent->Index, -(1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT)));
+			else if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_minus") {
+				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Parent->Index, -(1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT)));
 			}
 		}
 		// Accept trader button
@@ -721,8 +722,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		DrawTrader();
 		DrawBlacksmith();
 		DrawMinigame(BlendFactor);
-		CharacterScreen->Render();
-		DrawSkills();
+		SkillScreen->Render(BlendFactor);
+		CharacterScreen->Render(BlendFactor);
 		DrawParty();
 		DrawTeleport();
 		DrawConfirm();
@@ -928,20 +929,6 @@ void _HUD::ToggleTrade() {
 	}
 }
 
-// Open/close skills
-void _HUD::ToggleSkills() {
-	if(Player->Controller->WaitForServer || !Player->Character->CanOpenInventory())
-		return;
-
-	if(!SkillsElement->Active) {
-		CloseWindows(true);
-		InitSkills();
-	}
-	else {
-		CloseWindows(true);
-	}
-}
-
 // Open/close party screen
 void _HUD::ToggleParty() {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenParty())
@@ -1057,119 +1044,6 @@ void _HUD::InitMinigame() {
 	Minigame = new _Minigame(Player->Character->Minigame);
 }
 
-// Initialize the skills screen
-void _HUD::InitSkills() {
-
-	// Clear old children
-	ClearSkills();
-
-	glm::vec2 Start(10, 25);
-	glm::vec2 Offset(Start);
-	glm::vec2 LevelOffset(0, -4);
-	glm::vec2 Spacing(10, 50);
-	glm::vec2 PlusOffset(-12, 37);
-	glm::vec2 MinusOffset(12, 37);
-	glm::vec2 LabelOffset(0, 2);
-	size_t i = 0;
-
-	// Get all player skills
-	std::list<const _Item *> SortedSkills;
-	for(auto &SkillID : Player->Character->Skills) {
-		const _Item *Skill = PlayState.Stats->Items.at(SkillID.first);
-		if(!Skill)
-			continue;
-
-		SortedSkills.push_back(Skill);
-	}
-
-	// Sort skills
-	SortedSkills.sort(CompareItems);
-
-	// Iterate over skills
-	for(auto &Skill : SortedSkills) {
-
-		// Add skill icon
-		ae::_Element *Button = new ae::_Element();
-		Button->Name = "button_skills_skill";
-		Button->Parent = SkillsElement;
-		Button->Offset = Offset;
-		Button->Size = Skill->Texture->Size;
-		Button->Alignment = ae::LEFT_TOP;
-		Button->Texture = Skill->Texture;
-		Button->Index = (int)Skill->ID;
-		SkillsElement->Children.push_back(Button);
-
-		// Add level label
-		ae::_Element *LevelLabel = new ae::_Element();
-		LevelLabel->Name = "label_skills_level";
-		LevelLabel->Parent = Button;
-		LevelLabel->Offset = LevelOffset;
-		LevelLabel->Alignment = ae::CENTER_BASELINE;
-		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
-		LevelLabel->Index = (int)Skill->ID;
-		SkillsElement->Children.push_back(LevelLabel);
-
-		// Add plus button
-		ae::_Element *PlusButton = new ae::_Element();
-		PlusButton->Name = "button_skills_plus";
-		PlusButton->Parent = Button;
-		PlusButton->Size = glm::vec2(16, 16);
-		PlusButton->Offset = PlusOffset;
-		PlusButton->Alignment = ae::CENTER_MIDDLE;
-		PlusButton->Style = ae::Assets.Styles["style_menu_button"];
-		PlusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		SkillsElement->Children.push_back(PlusButton);
-
-		// Add minus button
-		ae::_Element *MinusButton = new ae::_Element();
-		MinusButton->Name = "button_skills_minus";
-		MinusButton->Parent = Button;
-		MinusButton->Size = glm::vec2(16, 16);
-		MinusButton->Offset = MinusOffset;
-		MinusButton->Alignment = ae::CENTER_MIDDLE;
-		MinusButton->Style = ae::Assets.Styles["style_menu_button"];
-		MinusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		SkillsElement->Children.push_back(MinusButton);
-
-		// Add plus label
-		ae::_Element *PlusLabel = new ae::_Element();
-		PlusLabel->Parent = PlusButton;
-		PlusLabel->Text = "+";
-		PlusLabel->Offset = LabelOffset;
-		PlusLabel->Alignment = ae::CENTER_MIDDLE;
-		PlusLabel->Font = ae::Assets.Fonts["hud_medium"];
-		PlusButton->Children.push_back(PlusLabel);
-
-		// Add minus label
-		ae::_Element *MinusLabel = new ae::_Element();
-		MinusLabel->Parent = MinusButton;
-		MinusLabel->Text = "-";
-		MinusLabel->Offset = LabelOffset;
-		MinusLabel->Alignment = ae::CENTER_MIDDLE;
-		MinusLabel->Font = ae::Assets.Fonts["hud_medium"];
-		MinusButton->Children.push_back(MinusLabel);
-
-		// Update position
-		Offset.x += Skill->Texture->Size.x + Spacing.x;
-		if(Offset.x > SkillsElement->Size.x - Skill->Texture->Size.x) {
-			Offset.y += Skill->Texture->Size.y + Spacing.y;
-			Offset.x = Start.x;
-		}
-
-		i++;
-	}
-	PlayState.Stats->Database->CloseQuery();
-
-	SkillsElement->CalculateBounds();
-	SkillsElement->SetActive(true);
-	CharacterScreen->Element->SetActive(true);
-
-	RefreshSkillButtons();
-	Cursor.Reset();
-
-	PlayState.SendStatus(_Character::STATUS_SKILLS);
-}
-
 // Initialize the party screen
 void _HUD::InitParty() {
 	Cursor.Reset();
@@ -1221,16 +1095,6 @@ bool _HUD::CloseVendor() {
 		Player->Character->Vendor = nullptr;
 
 	VendorElement->SetActive(false);
-	Cursor.Reset();
-
-	return WasOpen;
-}
-
-// Close the skills screen
-bool _HUD::CloseSkills() {
-	bool WasOpen = SkillsElement->Active;
-
-	SkillsElement->SetActive(false);
 	Cursor.Reset();
 
 	return WasOpen;
@@ -1338,10 +1202,10 @@ bool _HUD::CloseWindows(bool SendStatus, bool SendNotify) {
 	Cursor.Reset();
 
 	bool WasOpen = false;
+	WasOpen |= SkillScreen->Close();
 	WasOpen |= CloseConfirm();
 	WasOpen |= CloseInventory();
 	WasOpen |= CloseVendor();
-	WasOpen |= CloseSkills();
 	WasOpen |= CloseParty();
 	WasOpen |= CloseTrade(SendNotify);
 	WasOpen |= CloseTrader();
@@ -1782,35 +1646,6 @@ void _HUD::DrawActionBar() {
 	}
 }
 
-// Draws the skill page
-void _HUD::DrawSkills() {
-	if(!SkillsElement->Active)
-		return;
-
-	SkillsElement->Render();
-
-	// Show remaining skill points
-	std::string Text = std::to_string(Player->Character->GetSkillPointsAvailable()) + " skill point";
-	if(Player->Character->GetSkillPointsAvailable() != 1)
-		Text += "s";
-
-	glm::vec2 DrawPosition = glm::vec2((SkillsElement->Bounds.End.x + SkillsElement->Bounds.Start.x) / 2, SkillsElement->Bounds.End.y - 30);
-	ae::Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE);
-
-	// Show skill points unused
-	int SkillPointsUnused = Player->Character->SkillPointsUsed - Player->Character->SkillPointsOnActionBar;
-	if(SkillPointsUnused > 0) {
-		DrawPosition.y += 21;
-
-		Text = std::to_string(SkillPointsUnused) + " skill point";
-		if(SkillPointsUnused != 1)
-			Text += "s";
-
-		Text += " unused";
-
-		ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
-	}
-}
 
 // Draw the party screen
 void _HUD::DrawParty() {
@@ -1965,38 +1800,6 @@ void _HUD::SellItem(_Cursor *CursorItem, int Amount) {
 	PlayState.Network->SendPacket(Packet);
 }
 
-// Adjust skill level
-void _HUD::AdjustSkillLevel(uint32_t SkillID, int Amount) {
-	if(SkillID == 0)
-		return;
-
-	if(Amount < 0 && !Player->CanRespec()) {
-		SetMessage("You can only respec on spawn points");
-		return;
-	}
-
-	ae::_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::SKILLS_SKILLADJUST);
-
-	// Sell skill
-	Packet.Write<uint32_t>(SkillID);
-	Packet.Write<int>(Amount);
-
-	int OldSkillLevel = Player->Character->Skills[SkillID];
-	Player->Character->AdjustSkillLevel(SkillID, Amount);
-
-	// Equip new skills
-	if(Amount > 0 && OldSkillLevel == 0) {
-		EquipSkill(SkillID);
-	}
-
-	PlayState.Network->SendPacket(Packet);
-
-	// Update player
-	Player->Character->CalculateStats();
-	RefreshSkillButtons();
-}
-
 // Sets the player's action bar
 void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	if(Player->Character->ActionBar[Slot] == Action)
@@ -2028,77 +1831,6 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	}
 
 	PlayState.Network->SendPacket(Packet);
-}
-
-// Equip a skill
-void _HUD::EquipSkill(uint32_t SkillID) {
-	const _Item *Skill = PlayState.Stats->Items.at(SkillID);
-	if(Skill) {
-
-		// Check skill
-		if(!Player->Character->HasLearned(Skill))
-			return;
-
-		if(!Player->Character->Skills[SkillID])
-			return;
-
-		// Find existing action
-		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
-			if(Player->Character->ActionBar[i].Item == Skill)
-				return;
-		}
-
-		// Find an empty slot
-		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
-			if(!Player->Character->ActionBar[i].IsSet()) {
-				SetActionBar(i, Player->Character->ActionBar.size(), Skill);
-				return;
-			}
-		}
-	}
-}
-
-// Delete memory used by skill page
-void _HUD::ClearSkills() {
-
-	// Delete children
-	for(auto &Child : SkillsElement->Children)
-		delete Child;
-
-	SkillsElement->Children.clear();
-}
-
-// Shows or hides the plus/minus buttons
-void _HUD::RefreshSkillButtons() {
-
-	// Get remaining points
-	int SkillPointsRemaining = Player->Character->GetSkillPointsAvailable();
-
-	// Loop through buttons
-	for(auto &Element : SkillsElement->Children) {
-		if(Element->Name == "label_skills_level") {
-			uint32_t SkillID = (uint32_t)Element->Index;
-			Element->Text = std::to_string(Player->Character->Skills[SkillID]);
-		}
-		else if(Element->Name == "button_skills_plus") {
-
-			// Get skill
-			uint32_t SkillID = (uint32_t)Element->Parent->Index;
-			if(SkillPointsRemaining <= 0 || Player->Character->Skills[SkillID] >= Player->Stats->Items.at(SkillID)->MaxLevel)
-				Element->SetActive(false);
-			else
-				Element->SetActive(true);
-		}
-		else if(Element->Name == "button_skills_minus") {
-
-			// Get skill
-			uint32_t SkillID = (uint32_t)Element->Parent->Index;
-			if(Player->Character->Skills[SkillID] == 0)
-				Element->SetActive(false);
-			else
-				Element->SetActive(true);
-		}
-	}
 }
 
 // Trade with another player

@@ -29,6 +29,7 @@
 #include <objects/minigame.h>
 #include <hud/hud.h>
 #include <hud/character_screen.h>
+#include <hud/skill_screen.h>
 #include <ae/manager.h>
 #include <ae/clientnetwork.h>
 #include <ae/program.h>
@@ -276,7 +277,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 					HUD->ToggleTrade();
 				break;
 				case Action::GAME_SKILLS:
-					HUD->ToggleSkills();
+					HUD->SkillScreen->Toggle();
 				break;
 				case Action::GAME_JOIN:
 					SendJoinRequest();

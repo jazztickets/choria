@@ -33,7 +33,7 @@ _CharacterScreen::_CharacterScreen(_HUD *HUD, ae::_Element *Element) :
 }
 
 // Render
-void _CharacterScreen::Render() {
+void _CharacterScreen::Render(double BlendFactor) {
 	if(!Element->Active)
 		return;
 

@@ -28,13 +28,14 @@
 #include <cstdint>
 
 // Forward Declarations
+class _CharacterScreen;
+class _SkillScreen;
 class _Object;
 class _Item;
 class _StatusEffect;
 class _Action;
 class _Scripting;
 class _Map;
-class _CharacterScreen;
 class _Minigame;
 struct _InventorySlot;
 struct _Vendor;
@@ -88,6 +89,9 @@ struct _RecentItem {
 // Classes
 class _HUD {
 
+	friend class _CharacterScreen;
+	friend class _SkillScreen;
+
 	public:
 
 		enum WindowType {
@@ -139,7 +143,6 @@ class _HUD {
 		void ToggleTeleport();
 		void ToggleInventory();
 		void ToggleTrade();
-		void ToggleSkills();
 		void ToggleParty();
 		void ToggleInGameMenu(bool Force);
 
@@ -149,7 +152,6 @@ class _HUD {
 		void InitTrader();
 		void InitBlacksmith();
 		void InitMinigame();
-		void InitSkills();
 		void InitParty();
 		void InitTrade();
 		bool CloseWindows(bool SendStatus, bool SendNotify=true);
@@ -182,11 +184,9 @@ class _HUD {
 		// Scripting
 		_Scripting *Scripting;
 
-		// Objects
-		_Object *Player;
-
 		// Screens
 		_CharacterScreen *CharacterScreen;
+		_SkillScreen *SkillScreen;
 
 		// Minigames
 		_Minigame *Minigame;
@@ -203,7 +203,6 @@ class _HUD {
 		bool CloseTrader();
 		bool CloseBlacksmith();
 		bool CloseMinigame();
-		bool CloseSkills();
 		bool CloseParty();
 		bool CloseTeleport();
 
@@ -220,7 +219,6 @@ class _HUD {
 		void DrawBlacksmith();
 		void DrawMinigame(double BlendFactor);
 		void DrawActionBar();
-		void DrawSkills();
 		void DrawParty();
 		void DrawMessage();
 		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy);
@@ -230,12 +228,8 @@ class _HUD {
 		void BuyItem(_Cursor *Item, _Slot TargetSlot=_Slot());
 		void SellItem(_Cursor *CursorItem, int Amount);
 
-		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
-		void EquipSkill(uint32_t SkillID);
-		void ClearSkills();
 
-		void RefreshSkillButtons();
 		void SendTradeRequest();
 		void SendTradeCancel();
 		void UpdateAcceptButton();
@@ -261,7 +255,6 @@ class _HUD {
 		ae::_Element *TraderElement;
 		ae::_Element *BlacksmithElement;
 		ae::_Element *MinigameElement;
-		ae::_Element *SkillsElement;
 		ae::_Element *PartyElement;
 		ae::_Element *TeleportElement;
 		ae::_Element *ChatElement;
@@ -280,6 +273,7 @@ class _HUD {
 		_Message Message;
 
 		// Objects
+		_Object *Player;
 		double LowestRecentItemTime;
 
 		// Chat

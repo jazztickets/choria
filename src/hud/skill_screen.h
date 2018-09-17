@@ -19,15 +19,25 @@
 
 // Libraries
 #include <hud/screen.h>
+#include <cstdint>
 
 // Classes
-class _CharacterScreen : public _Screen {
+class _SkillScreen : public _Screen {
 
 	public:
 
-		_CharacterScreen(_HUD *HUD, ae::_Element *Element);
+		_SkillScreen(_HUD *HUD, ae::_Element *Element);
 
+		void Init();
+		bool Close();
+
+		void Toggle();
 		void Render(double BlendFactor);
+
+		void ClearSkills();
+		void RefreshSkillButtons();
+		void AdjustSkillLevel(uint32_t SkillID, int Amount);
+		void EquipSkill(uint32_t SkillID);
 
 	private:
 
