@@ -146,9 +146,9 @@ _HUD::_HUD() {
 
 // Shutdown
 _HUD::~_HUD() {
-	delete CharacterScreen;
-
 	Reset();
+
+	delete CharacterScreen;
 }
 
 // Reset state

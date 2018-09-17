@@ -20,10 +20,10 @@
 #include <objects/object.h>
 #include <objects/components/character.h>
 #include <objects/components/record.h>
-#include <stats.h>
 #include <ae/ui.h>
 #include <ae/assets.h>
 #include <ae/font.h>
+#include <stats.h>
 #include <glm/vec2.hpp>
 #include <sstream>
 
