@@ -513,19 +513,12 @@ void _PlayState::Update(double FrameTime) {
 
 // Render the state
 void _PlayState::Render(double BlendFactor) {
+
+	// Setup transforms
 	ae::Graphics.Setup3D();
 	Camera->Set3DProjection(BlendFactor);
 	MenuCamera->Set3DProjection(BlendFactor);
-
-	// Setup the viewing matrix
-	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
-	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
-	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	SetViewProjection(Camera);
 
 	// Render in game
 	if(Player && Map) {
@@ -550,22 +543,10 @@ void _PlayState::Render(double BlendFactor) {
 	else {
 
 		// Setup the viewing matrix
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
-		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
+		SetViewProjection(MenuCamera);
 
+		// Render background map
 		MenuMap->Render(MenuCamera, nullptr, BlendFactor);
-		ae::Graphics.Setup2D();
-		ae::Graphics.SetStaticUniforms();
-		ae::Graphics.SetColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.5f));
-		ae::Graphics.SetVBO(ae::VBO_NONE);
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.DrawRectangle(glm::vec2(0), ae::Graphics.CurrentSize, true);
 	}
 
 	// Draw menu
@@ -1568,4 +1549,16 @@ void _PlayState::DeleteBattle() {
 void _PlayState::DeleteMap() {
 	delete Map;
 	Map = nullptr;
+}
+
+// Set view projection matrix in shaders
+void _PlayState::SetViewProjection(ae::_Camera *CameraUsed) {
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 }

@@ -168,6 +168,8 @@ class _PlayState : public ae::_State {
 		void AssignPlayer(_Object *Object);
 		void DeleteBattle();
 		void DeleteMap();
+
+		void SetViewProjection(ae::_Camera *CameraUsed);
 };
 
 extern _PlayState PlayState;
