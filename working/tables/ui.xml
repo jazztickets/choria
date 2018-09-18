@@ -43,7 +43,7 @@
             <element id="label_menu_newcharacter_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </element>
         <element id="element_newcharacter_name" style="style_menu_textbox" offset_y="-65" size_x="250" size_y="30" alignment_y="2">
-            <element id="textbox_newcharacter_name" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="12"/>
+            <element id="textbox_newcharacter_name" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="15"/>
             <element id="label_menu_newcharacter_name" font="hud_medium" text="Name" offset_y="-25" alignment_y="0"/>
         </element>
         <element id="label_menu_newcharacter_portraits" font="hud_medium" text="Select a portrait" offset_y="26" alignment_y="3"/>
