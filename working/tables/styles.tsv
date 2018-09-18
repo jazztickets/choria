@@ -1,9 +1,9 @@
 name	background color	border color	program	texture	texture color	stretch
-style_menu_button	menu_button	menu_button_border	ortho_pos			0
-style_menu_button_disabled	menu_button_disabled	menu_button_border	ortho_pos			0
-style_menu_button_hover	menu_button_hover	menu_button_border	ortho_pos			0
-style_menu_window	menu_button	menu_button_border	ortho_pos			0
-style_menu_textbox	menu_button	menu_button_border	ortho_pos			0
+style_menu_button	menu_button		ortho_pos			0
+style_menu_button_disabled	menu_button_disabled		ortho_pos			0
+style_menu_button_hover	menu_button_hover		ortho_pos			0
+style_menu_window	menu_window		ortho_pos			0
+style_menu_textbox	menu_button_dark	menu_button	ortho_pos			0
 style_menu_portrait_hover	highlight		ortho_pos			0
 style_hud_bg	dark		ortho_pos			0
 style_hud_died_bg	died		ortho_pos			0
