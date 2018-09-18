@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <element>
-    <element id="element_menu_title" size_x="512" size_y="400">
+    <element id="element_menu_title" size_x="512" size_y="700" style="style_hud_bg">
         <element id="image_title_logo" texture="textures/menu/logo.png" offset_y="-250" size_x="344" size_y="128" clickable="false"/>
         <element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-60" size_x="200" size_y="48">
             <element id="label_menu_title_play" font="menu_buttons" text="Play" offset_y="32" alignment_y="3"/>
@@ -16,8 +16,8 @@
             <element id="label_menu_title_message" font="menu_buttons" offset_y="100" alignment_y="3"/>
         </element>
     </element>
-    <element id="element_menu_characters" size_x="512" size_y="400">
-        <element id="element_menu_character_slots" size_x="808" size_y="420" alignment_y="0"/>
+    <element id="element_menu_characters" size_x="900" size_y="700" style="style_hud_bg">
+        <element id="element_menu_character_slots" size_x="808" size_y="420" offset_y="150" alignment_y="0"/>
         <element id="button_characters_delete" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-150" offset_y="260" size_x="128" size_y="48">
             <element id="label_menu_characters_delete" font="menu_buttons" text="Delete" offset_y="32" alignment_y="3"/>
         </element>
@@ -49,25 +49,34 @@
         <element id="label_menu_newcharacter_portraits" font="hud_medium" text="Select a portrait" offset_y="26" alignment_y="3"/>
         <element id="label_menu_newcharacter_builds" font="hud_medium" text="Select a starting build" offset_y="276" alignment_y="3"/>
     </element>
-    <element id="element_menu_connect" size_x="512" size_y="400">
+    <element id="element_menu_connect" size_x="512" size_y="700" style="style_hud_bg">
+        <element id="element_connect_host" style="style_menu_textbox" offset_y="-400" size_x="250" size_y="30" alignment_y="2">
+            <element id="textbox_connect_host" font="hud_medium" offset_x="5" offset_y="22" size_x="250" size_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
+            <element id="label_menu_connect_host" font="menu_buttons" text="Host" offset_y="-35"/>
+        </element>
+        <element id="element_connect_port" style="style_menu_textbox" offset_y="-300" size_x="250" size_y="30" alignment_y="2">
+            <element id="textbox_connect_port" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="5"/>
+            <element id="label_menu_connect_port" font="menu_buttons" text="Port" offset_y="-35"/>
+            <element id="label_menu_connect_message" font="menu_buttons" offset_y="110" alignment_y="3"/>
+        </element>
         <element id="button_connect_connect" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-75" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_connect_connect" font="menu_buttons" text="Connect" offset_y="32" alignment_y="3"/>
         </element>
         <element id="button_connect_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="75" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_connect_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="element_connect_host" style="style_menu_textbox" offset_y="-250" size_x="250" size_y="30" alignment_y="2">
-            <element id="textbox_connect_host" font="hud_medium" offset_x="5" offset_y="22" size_x="250" size_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
-            <element id="label_menu_connect_host" font="menu_buttons" text="Host" offset_y="-35"/>
-        </element>
-        <element id="element_connect_port" style="style_menu_textbox" offset_y="-150" size_x="250" size_y="30" alignment_y="2">
-            <element id="textbox_connect_port" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="5"/>
-            <element id="label_menu_connect_port" font="menu_buttons" text="Port" offset_y="-35"/>
-            <element id="label_menu_connect_message" font="menu_buttons" offset_y="110" alignment_y="3"/>
-        </element>
         <element id="label_menu_connect_title" font="hud_large" text="Connect" offset_y="-250"/>
     </element>
-    <element id="element_menu_account" size_x="512" size_y="400">
+    <element id="element_menu_account" size_x="512" size_y="700" style="style_hud_bg">
+        <element id="element_account_username" style="style_menu_textbox" offset_y="-400" size_x="250" size_y="30" alignment_y="2">
+            <element id="textbox_account_username" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="20"/>
+            <element id="label_menu_account_username" font="menu_buttons" text="Username" offset_y="-35"/>
+        </element>
+        <element id="element_account_password" style="style_menu_textbox" offset_y="-300" size_x="250" size_y="30" alignment_y="2">
+            <element id="textbox_account_password" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="20"/>
+            <element id="label_menu_account_password" font="menu_buttons" text="Password" offset_y="-35"/>
+            <element id="label_menu_account_message" color="red" font="menu_buttons" offset_y="110" alignment_y="3"/>
+        </element>
         <element id="button_account_login" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-150" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_account_login" font="menu_buttons" text="Login" offset_y="32" alignment_y="3"/>
         </element>
@@ -77,18 +86,9 @@
         <element id="button_account_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="150" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_account_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="element_account_username" style="style_menu_textbox" offset_y="-250" size_x="250" size_y="30" alignment_y="2">
-            <element id="textbox_account_username" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="20"/>
-            <element id="label_menu_account_username" font="menu_buttons" text="Username" offset_y="-35"/>
-        </element>
-        <element id="element_account_password" style="style_menu_textbox" offset_y="-150" size_x="250" size_y="30" alignment_y="2">
-            <element id="textbox_account_password" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="20"/>
-            <element id="label_menu_account_password" font="menu_buttons" text="Password" offset_y="-35"/>
-            <element id="label_menu_account_message" color="red" font="menu_buttons" offset_y="110" alignment_y="3"/>
-        </element>
         <element id="label_menu_account_title" font="hud_large" text="Account Info" offset_y="-250"/>
     </element>
-    <element id="element_menu_ingame" size_x="250" size_y="400">
+    <element id="element_menu_ingame" size_x="512" size_y="700" style="style_hud_bg">
         <element id="button_ingame_respawn" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-140" size_x="200" size_y="48">
             <element id="label_menu_ingame_respawn" font="menu_buttons" text="Respawn" offset_y="32" alignment_y="3"/>
         </element>
@@ -101,10 +101,10 @@
         <element id="button_ingame_exit" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="100" size_x="200" size_y="48">
             <element id="label_menu_ingame_exit" font="menu_buttons" text="Exit" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="label_menu_ingame_exitwarning" color="red" font="menu_buttons" text="Exiting battle will result in death" offset_y="80" alignment_y="3"/>
+        <element id="label_menu_ingame_exitwarning" color="red" font="menu_buttons" text="Exiting battle will result in death" offset_y="150" alignment_y="3"/>
     </element>
-    <element id="element_menu_options" size_x="512" size_y="400">
-        <element id="element_menu_options_middle" alignment_y="0">
+    <element id="element_menu_options" size_x="512" size_y="700" style="style_hud_bg">
+        <element id="element_menu_options_middle" alignment_y="0" offset_y="150">
             <element id="button_options_fullscreen" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="15" offset_y="50" size_x="32" size_y="32" alignment_x="0">
                 <element id="label_menu_options_fullscreen_check" font="hud_medium" text="X"/>
             </element>
