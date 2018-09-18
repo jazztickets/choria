@@ -128,5 +128,6 @@ const  int          TRADER_MAXITEMS                 =  8;
 const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;
 const  float        MENU_PAUSE_FADE                 =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME           =  0.250;
+const  float        MENU_MAP_SCROLL_SPEED           =  0.005f;
 //     Scripting
 const  std::string  SCRIPTS_GAME                    =  "scripts/game.lua";

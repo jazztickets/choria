@@ -17,6 +17,7 @@
 *******************************************************************************/
 #pragma once
 
+#include <glm/vec3.hpp>
 #include <ae/type.h>
 #include <ae/state.h>
 #include <ae/log.h>
@@ -76,6 +77,9 @@ class _PlayState : public ae::_State {
 		void PlayCoinSound();
 		void PlayDeathSound();
 
+		// Menu map
+		glm::vec3 GetRandomMapPosition();
+
 		// Parameters
 		bool DevMode;
 		bool IsHardcore;
@@ -102,6 +106,7 @@ class _PlayState : public ae::_State {
 
 		// Camera
 		ae::_Camera *Camera;
+		ae::_Camera *MenuCamera;
 
 		// Audio
 		bool CoinSoundPlayed;
@@ -111,6 +116,10 @@ class _PlayState : public ae::_State {
 		_Server *Server;
 		std::string HostAddress;
 		uint16_t ConnectPort;
+
+		// Menu
+		_Map *MenuMap;
+		glm::vec3 MenuCameraTargetPosition;
 
 	protected:
 

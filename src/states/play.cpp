@@ -109,13 +109,26 @@ void _PlayState::Init() {
 	ObjectManager = new ae::_Manager<_Object>();
 	AssignPlayer(nullptr);
 
+	// Load menu map
+	MenuMap = new _Map();
+	MenuMap->Stats = Stats;
+	MenuMap->UseAtlas = true;
+	MenuMap->Clock = ae::GetRandomInt(0, MAP_DAY_LENGTH);
+	MenuMap->Load(&Stats->Maps.at(10));
+	AssignPlayer(nullptr);
+
+	// Set position of menu map camera
+	MenuCamera = new ae::_Camera(GetRandomMapPosition(), 1.0f, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
+	MenuCamera->CalculateFrustum(ae::Graphics.AspectRatio);
+	MenuCameraTargetPosition = GetRandomMapPosition();
+
 	if(ConnectNow)
 		Menu.InitConnect(true, true);
 	else
 		Menu.InitTitle();
 }
 
-// Close map
+// Close
 void _PlayState::Close() {
 	Menu.Close();
 
@@ -123,9 +136,11 @@ void _PlayState::Close() {
 	delete ObjectManager;
 	DeleteBattle();
 	DeleteMap();
+	delete MenuMap;
 	delete HUD;
 	delete Scripting;
 	delete Camera;
+	delete MenuCamera;
 	delete Server;
 	delete Stats;
 	delete Network;
@@ -369,6 +384,8 @@ void _PlayState::HandleWindow(uint8_t Event) {
 	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 		if(Camera)
 			Camera->CalculateFrustum(ae::Graphics.AspectRatio);
+		if(MenuCamera)
+			MenuCamera->CalculateFrustum(ae::Graphics.AspectRatio);
 
 		if(HUD && HUD->Minigame && HUD->Minigame->Camera)
 			HUD->Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
@@ -418,9 +435,24 @@ void _PlayState::Update(double FrameTime) {
 	// Update menu
 	Menu.Update(FrameTime);
 
-	// Check for objects
-	if(!Player || !Map)
+	// Check for objects, otherwise display menu map
+	if(!Player || !Map) {
+
+		// Set direction of camera
+		glm::vec3 Direction = MenuCameraTargetPosition - MenuCamera->GetPosition();
+		if(glm::length(Direction) > 1.0f) {
+			Direction = glm::normalize(Direction);
+			MenuCamera->UpdatePosition(Direction * MENU_MAP_SCROLL_SPEED * 1.0f);
+		}
+		else
+			MenuCameraTargetPosition = GetRandomMapPosition();
+
+		// Update camera movement
+		MenuCamera->Update(FrameTime);
+		MenuMap->Update(FrameTime * 10.0f);
+
 		return;
+	}
 
 	// Set input
 	if(Player->Character->AcceptingMoveInput() && !HUD->IsChatting() && ae::FocusedElement == nullptr && Menu.State == _Menu::STATE_NONE) {
@@ -481,21 +513,22 @@ void _PlayState::Update(double FrameTime) {
 
 // Render the state
 void _PlayState::Render(double BlendFactor) {
+	ae::Graphics.Setup3D();
+	Camera->Set3DProjection(BlendFactor);
+	MenuCamera->Set3DProjection(BlendFactor);
+
+	// Setup the viewing matrix
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Render in game
 	if(Player && Map) {
-		ae::Graphics.Setup3D();
-		Camera->Set3DProjection(BlendFactor);
-
-		// Setup the viewing matrix
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
-		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 		// Draw map and objects
 		Map->Render(Camera, Player, BlendFactor);
@@ -513,6 +546,26 @@ void _PlayState::Render(double BlendFactor) {
 
 		// Draw HUD
 		HUD->Render(Map, BlendFactor, Time);
+	}
+	else {
+
+		// Setup the viewing matrix
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(MenuCamera->Transform));
+
+		MenuMap->Render(MenuCamera, nullptr, BlendFactor);
+		ae::Graphics.Setup2D();
+		ae::Graphics.SetStaticUniforms();
+		ae::Graphics.SetColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.5f));
+		ae::Graphics.SetVBO(ae::VBO_NONE);
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.DrawRectangle(glm::vec2(0), ae::Graphics.CurrentSize, true);
 	}
 
 	// Draw menu
@@ -535,6 +588,12 @@ void _PlayState::PlayDeathSound() {
 	std::stringstream Buffer;
 	Buffer << "death" << ae::GetRandomInt(0, 2) << ".ogg";
 	ae::Audio.PlaySound(ae::Assets.Sounds[Buffer.str()]);
+}
+
+// Get a random location in the background map
+glm::vec3 _PlayState::GetRandomMapPosition() {
+
+	return glm::vec3(ae::GetRandomInt(15, MenuMap->Size.x - 15), ae::GetRandomInt(10, MenuMap->Size.y - 10), CAMERA_DISTANCE);
 }
 
 // Handle connection to server

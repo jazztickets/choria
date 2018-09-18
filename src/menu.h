@@ -102,6 +102,7 @@ class _Menu {
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
 		void SetTitleMessage(const std::string &Message);
 
+		// State
 		StateType State;
 		size_t PreSelectedSlot;
 		bool ShowExitWarning;

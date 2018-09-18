@@ -1068,6 +1068,7 @@ void _Menu::Render() {
 		return;
 
 	ae::Graphics.Setup2D();
+	ae::Graphics.SetStaticUniforms();
 
 	switch(State) {
 		case STATE_TITLE: {
