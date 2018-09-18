@@ -19,6 +19,9 @@
 
 // Libraries
 #include <hud/screen.h>
+#include <objects/components/inventory.h>
+
+struct _Cursor;
 
 // Classes
 class _VendorScreen : public _Screen {
@@ -31,6 +34,9 @@ class _VendorScreen : public _Screen {
 		bool Close() override;
 
 		void Render(double BlendFactor) override;
+
+		void BuyItem(_Cursor *Item, _Slot TargetSlot=_Slot());
+		void SellItem(_Cursor *CursorItem, int Amount);
 
 	private:
 

@@ -20,9 +20,13 @@
 #include <hud/hud.h>
 #include <objects/object.h>
 #include <objects/components/character.h>
+#include <states/play.h>
+#include <ae/clientnetwork.h>
+#include <ae/buffer.h>
 #include <ae/graphics.h>
 #include <ae/assets.h>
 #include <ae/ui.h>
+#include <packet.h>
 #include <stats.h>
 #include <sstream>
 
@@ -34,8 +38,6 @@ _VendorScreen::_VendorScreen(_HUD *HUD, ae::_Element *Element) :
 // Initialize
 void _VendorScreen::Init() {
 	HUD->Cursor.Reset();
-
-	// Open inventory
 	HUD->InventoryScreen->InitInventoryTab(0);
 	Element->SetActive(true);
 }
@@ -48,7 +50,6 @@ bool _VendorScreen::Close() {
 		HUD->Player->Character->Vendor = nullptr;
 
 	Element->SetActive(false);
-	HUD->Cursor.Reset();
 
 	return WasOpen;
 }
@@ -84,4 +85,33 @@ void _VendorScreen::Render(double BlendFactor) {
 			HUD->DrawItemPrice(Item, 1, DrawPosition, true);
 		}
 	}
+}
+
+// Buys an item
+void _VendorScreen::BuyItem(_Cursor *Item, _Slot TargetSlot) {
+	_Slot VendorSlot;
+	VendorSlot.Index = Item->Slot.Index;
+
+	// Notify server
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
+	Packet.WriteBit(1);
+	Packet.Write<uint8_t>((uint8_t)Item->InventorySlot.Count);
+	VendorSlot.Serialize(Packet);
+	TargetSlot.Serialize(Packet);
+	PlayState.Network->SendPacket(Packet);
+}
+
+// Sell an item
+void _VendorScreen::SellItem(_Cursor *CursorItem, int Amount) {
+	if(!CursorItem->InventorySlot.Item || !HUD->Player->Character->Vendor)
+		return;
+
+	// Notify server
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
+	Packet.WriteBit(0);
+	Packet.Write<uint8_t>((uint8_t)Amount);
+	CursorItem->Slot.Serialize(Packet);
+	PlayState.Network->SendPacket(Packet);
 }

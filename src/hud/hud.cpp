@@ -218,7 +218,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					// Use an item
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
-							SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_CTRL));
+							VendorScreen->SellItem(&Tooltip, 1 + (INVENTORY_SPLIT_MODIFIER - 1) * ae::Input.ModKeyDown(KMOD_CTRL));
 						}
 						else {
 							ae::_Buffer Packet;
@@ -235,12 +235,12 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
 						if(Tooltip.Window == WINDOW_VENDOR) {
 							if(ae::Input.ModKeyDown(KMOD_SHIFT))
-								BuyItem(&Tooltip);
+								VendorScreen->BuyItem(&Tooltip);
 							else
-								BuyItem(&Tooltip);
+								VendorScreen->BuyItem(&Tooltip);
 						}
 						else if((Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) && ae::Input.ModKeyDown(KMOD_SHIFT))
-							SellItem(&Tooltip, 1);
+							VendorScreen->SellItem(&Tooltip, 1);
 					}
 				break;
 				case WINDOW_ACTIONBAR:
@@ -378,7 +378,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						break;
 						// Sell an item
 						case WINDOW_VENDOR:
-							SellItem(&Cursor, Cursor.InventorySlot.Count);
+							VendorScreen->SellItem(&Cursor, Cursor.InventorySlot.Count);
 						break;
 						// Upgrade an item
 						case WINDOW_BLACKSMITH:
@@ -405,7 +405,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				case WINDOW_VENDOR:
 					if(Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY) {
 						BagType BagType = GetBagFromWindow(Tooltip.Window);
-						BuyItem(&Cursor, _Slot(BagType, Tooltip.Slot.Index));
+						VendorScreen->BuyItem(&Cursor, _Slot(BagType, Tooltip.Slot.Index));
 					}
 				break;
 				// Drag item from actionbar
@@ -1283,35 +1283,6 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 	ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(20, -11), ae::RIGHT_BASELINE, Color);
 }
 
-// Buys an item from the vendor
-void _HUD::BuyItem(_Cursor *Item, _Slot TargetSlot) {
-	_Slot VendorSlot;
-	VendorSlot.Index = Item->Slot.Index;
-
-	// Notify server
-	ae::_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
-	Packet.WriteBit(1);
-	Packet.Write<uint8_t>((uint8_t)Item->InventorySlot.Count);
-	VendorSlot.Serialize(Packet);
-	TargetSlot.Serialize(Packet);
-	PlayState.Network->SendPacket(Packet);
-}
-
-// Sells an item
-void _HUD::SellItem(_Cursor *CursorItem, int Amount) {
-	if(!CursorItem->InventorySlot.Item || !Player->Character->Vendor)
-		return;
-
-	// Notify server
-	ae::_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
-	Packet.WriteBit(0);
-	Packet.Write<uint8_t>((uint8_t)Amount);
-	CursorItem->Slot.Serialize(Packet);
-	PlayState.Network->SendPacket(Packet);
-}
-
 // Sets the player's action bar
 void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	if(Player->Character->ActionBar[Slot] == Action)
@@ -1554,8 +1525,6 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 
 // Remove all battle stat changes
 void _HUD::ClearBattleStatChanges() {
-
-	// Draw stat changes
 	for(auto &StatChange : StatChanges) {
 		if(StatChange.Battle)
 			StatChange.Time = StatChange.Timeout;
