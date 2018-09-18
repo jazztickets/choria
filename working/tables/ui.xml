@@ -335,8 +335,8 @@
         <element id="label_item_tooltip_type" font="hud_small" offset_y="55" alignment_y="3"/>
     </element>
     <element id="element_character" style="style_hud_bg" size_x="250" size_y="500" alignment_x="2"/>
-    <element id="element_trade" style="style_hud_bg" offset_x="212" size_x="304" size_y="288">
-        <element id="element_trade_theirs" style="style_hud_bg" offset_x="112" size_x="192" size_y="92" alignment_x="0" alignment_y="0" index="9">
+    <element id="element_trade" style="style_hud_bg" offset_x="212" size_x="316" size_y="300">
+        <element id="element_trade_theirs" style="style_hud_bg" offset_x="112" offset_y="10" size_x="192" size_y="92" alignment_x="0" alignment_y="0" index="9">
             <element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_theirs" offset_x="-88" offset_y="32" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="false">
                 <element id="button_trade_accept_theirs" offset_y="58" size_x="88" size_y="24">
@@ -356,7 +356,7 @@
                 <element id="textbox_trade_gold_theirs" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="10"/>
             </element>
         </element>
-        <element id="element_trade_yours" style="style_hud_bg" offset_x="112" offset_y="144" size_x="192" size_y="92" alignment_x="0" alignment_y="0" index="10">
+        <element id="element_trade_yours" style="style_hud_bg" offset_x="112" offset_y="154" size_x="192" size_y="92" alignment_x="0" alignment_y="0" index="10">
             <element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_yours" offset_x="-88" offset_y="32" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="false">
                 <element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="58" size_x="88" size_y="24">

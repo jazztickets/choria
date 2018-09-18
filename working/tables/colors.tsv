@@ -22,8 +22,8 @@ dark	0	0	0	0.8
 inventory_slot_trans	1	1	1	0.7
 item_tooltip_bg	0	0	0	0.9
 editor_select	1	1	1	0.2
-equipment_bg	0.05	0.05	0.05	1
-equipment_bg_dark	0.02	0.02	0.02	1
+equipment_bg	0.048	0.04	0.029	1
+equipment_bg_dark	0.024	0.02	0.0145	1
 menu_button	0.1	0.1	0.15	1
 menu_button_dark	0.02	0.02	0.02	1
 menu_button_disabled	0.08	0.08	0.08	1
