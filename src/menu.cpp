@@ -638,30 +638,45 @@ void _Menu::UpdateOptions() {
 	Buffer << std::fixed << std::setprecision(2);
 
 	// Set fullscreen
-	ae::_Element *FullscreenCheck = ae::Assets.Elements["label_menu_options_fullscreen_check"];
-	FullscreenCheck->Text = Config.Fullscreen ? "X" : "";
+	ae::Assets.Elements["label_menu_options_fullscreen_check"]->Text = Config.Fullscreen ? "X" : "";
 
 	// Set sound volume
-	ae::_Element *SoundVolume = ae::Assets.Elements["textbox_options_soundvolume"];
 	Buffer << Config.SoundVolume;
-	SoundVolume->Text = Buffer.str();
+	ae::Assets.Elements["label_options_soundvolume"]->Text = Buffer.str();
 	Buffer.str("");
 
 	// Set music volume
-	ae::_Element *MusicVolume = ae::Assets.Elements["textbox_options_musicvolume"];
 	Buffer << Config.MusicVolume;
-	MusicVolume->Text = Buffer.str();
+	ae::Assets.Elements["label_options_musicvolume"]->Text = Buffer.str();
 	Buffer.str("");
+
+	ae::Assets.Elements["button_options_soundvolume"]->SetOffsetPercent(glm::vec2(Config.SoundVolume, 0));
+	ae::Assets.Elements["button_options_musicvolume"]->SetOffsetPercent(glm::vec2(Config.MusicVolume, 0));
 }
 
-// Update config and audio volumes from option textboxes
+// Update config and audio volumes from options
 void _Menu::UpdateVolume() {
-	ae::_Element *SoundVolume = ae::Assets.Elements["textbox_options_soundvolume"];
-	ae::_Element *MusicVolume = ae::Assets.Elements["textbox_options_musicvolume"];
-	Config.SoundVolume = ae::ToNumber<float>(SoundVolume->Text);
-	Config.MusicVolume = ae::ToNumber<float>(MusicVolume->Text);
-	ae::Audio.SetSoundVolume(Config.SoundVolume);
-	ae::Audio.SetMusicVolume(Config.MusicVolume);
+	ae::_Element *SoundVolume = ae::Assets.Elements["label_options_soundvolume"];
+	ae::_Element *MusicVolume = ae::Assets.Elements["label_options_musicvolume"];
+	ae::_Element *SoundButton = ae::Assets.Elements["button_options_soundvolume"];
+	ae::_Element *MusicButton = ae::Assets.Elements["button_options_musicvolume"];
+	if(SoundButton->PressedElement || MusicButton->PressedElement) {
+
+		// Convert slider percent to number
+		std::stringstream Buffer;
+		Buffer << std::fixed << std::setprecision(2) << SoundButton->GetOffsetPercent().x;
+		SoundVolume->Text = Buffer.str();
+		Buffer.str("");
+		Buffer << std::fixed << std::setprecision(2) << MusicButton->GetOffsetPercent().x;
+		MusicVolume->Text = Buffer.str();
+		Buffer.str("");
+
+		// Set volumes
+		Config.SoundVolume = ae::ToNumber<float>(SoundVolume->Text);
+		Config.MusicVolume = ae::ToNumber<float>(MusicVolume->Text);
+		ae::Audio.SetSoundVolume(Config.SoundVolume);
+		ae::Audio.SetMusicVolume(Config.MusicVolume);
+	}
 }
 
 // Reset variables used for in-game menu
@@ -799,8 +814,6 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 			}
 		} break;
 		case STATE_OPTIONS: {
-			UpdateVolume();
-
 			switch(Action) {
 				case Action::MENU_BACK: {
 					if(FromInGame)
@@ -1046,7 +1059,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	}
 }
 
-// Set fullscreen of game
+// Set fullscreen state of game
 void _Menu::SetFullscreen(bool Fullscreen) {
 	if(ae::Graphics.SetFullscreen(Fullscreen)) {
 		Config.Fullscreen = Fullscreen;
@@ -1054,15 +1067,17 @@ void _Menu::SetFullscreen(bool Fullscreen) {
 	}
 }
 
-// Update phase
+// Update
 void _Menu::Update(double FrameTime) {
 	if(State == STATE_NONE)
 		return;
 
+	UpdateVolume();
+
 	PreviousClickTimer += FrameTime;
 }
 
-// Draw phase
+// Render
 void _Menu::Render() {
 	if(State == STATE_NONE)
 		return;

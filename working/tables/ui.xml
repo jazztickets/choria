@@ -105,14 +105,16 @@
     </element>
     <element id="element_menu_options" size_x="512" size_y="700" style="style_hud_bg">
         <element id="element_menu_options_middle" alignment_y="0" offset_y="150">
-            <element id="button_options_fullscreen" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="15" offset_y="50" size_x="32" size_y="32" alignment_x="0">
+            <element id="button_options_fullscreen" style="style_menu_textbox" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="15" offset_y="50" size_x="32" size_y="32" alignment_x="0">
                 <element id="label_menu_options_fullscreen_check" font="hud_medium" text="X"/>
             </element>
-            <element id="element_options_soundvolume" style="style_menu_textbox" offset_x="15" offset_y="100" size_x="75" size_y="30" alignment_x="0">
-                <element id="textbox_options_soundvolume" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="5"/>
+            <element id="element_options_soundvolume" style="style_menu_textbox" offset_x="15" offset_y="100" size_x="150" size_y="30" alignment_x="0">
+                <element id="button_options_soundvolume" style="style_menu_button" offset_x="0" size_x="15" size_y="30" alignment_x="0" alignment_y="0" draggable="true"/>
+                <element id="label_options_soundvolume" font="hud_medium" offset_x="160" offset_y="22" alignment_x="0" alignment_y="3"/>
             </element>
-            <element id="element_options_musicvolume" style="style_menu_textbox" offset_x="15" offset_y="150" size_x="75" size_y="30" alignment_x="0">
-                <element id="textbox_options_musicvolume" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="5"/>
+            <element id="element_options_musicvolume" style="style_menu_textbox" offset_x="15" offset_y="150" size_x="150" size_y="30" alignment_x="0">
+                <element id="button_options_musicvolume" style="style_menu_button" offset_x="0" size_x="15" size_y="30" alignment_x="0" alignment_y="0" draggable="true"/>
+                <element id="label_options_musicvolume" font="hud_medium" offset_x="160" offset_y="22" alignment_x="0" alignment_y="3"/>
             </element>
             <element id="label_menu_options_fullscreen" font="menu_buttons" text="Fullscreen" offset_x="-15" offset_y="50" alignment_x="2"/>
             <element id="label_menu_options_soundvolume" font="menu_buttons" text="Sound Volume" offset_x="-15" offset_y="100" alignment_x="2"/>
