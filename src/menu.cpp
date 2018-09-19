@@ -656,10 +656,24 @@ void _Menu::UpdateOptions() {
 
 // Update config and audio volumes from options
 void _Menu::UpdateVolume() {
+	ae::_Element *SoundSlider = ae::Assets.Elements["element_options_soundvolume"];
+	ae::_Element *MusicSlider = ae::Assets.Elements["element_options_musicvolume"];
 	ae::_Element *SoundVolume = ae::Assets.Elements["label_options_soundvolume"];
 	ae::_Element *MusicVolume = ae::Assets.Elements["label_options_musicvolume"];
 	ae::_Element *SoundButton = ae::Assets.Elements["button_options_soundvolume"];
 	ae::_Element *MusicButton = ae::Assets.Elements["button_options_musicvolume"];
+
+	// Handle clicking inside slider elements
+	if(!SoundButton->PressedElement && SoundSlider->PressedElement) {
+		SoundButton->PressedOffset = SoundButton->Size / 2.0f;
+		SoundButton->PressedElement = SoundButton;
+	}
+	if(!MusicButton->PressedElement && MusicSlider->PressedElement) {
+		MusicButton->PressedOffset = MusicButton->Size / 2.0f;
+		MusicButton->PressedElement = MusicButton;
+	}
+
+	// Update volume
 	if(SoundButton->PressedElement || MusicButton->PressedElement) {
 
 		// Convert slider percent to number
