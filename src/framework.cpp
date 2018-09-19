@@ -29,6 +29,7 @@
 #include <ae/actions.h>
 #include <ae/audio.h>
 #include <ae/util.h>
+#include <ae/ui.h>
 #include <ae/console.h>
 #include <ae/framelimit.h>
 #include <config.h>
@@ -49,6 +50,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	FrameworkState = INIT;
 	State = &PlayState;
 	Done = false;
+	IgnoreNextInputEvent = false;
 
 	// Settings
 	bool AudioEnabled = true;
@@ -200,29 +202,46 @@ void _Framework::Update() {
 				case SDL_KEYDOWN:
 				case SDL_KEYUP: {
 					if(!GlobalKeyHandler(Event)) {
-
 						ae::_KeyEvent KeyEvent("", Event.key.keysym.scancode, Event.type == SDL_KEYDOWN, Event.key.repeat);
-						State->HandleKey(KeyEvent);
-						if(!Event.key.repeat) {
+
+						// Handle console input
+						if(Console->IsOpen())
+							ae::Graphics.Element->HandleKey(KeyEvent);
+						else
+							State->HandleKey(KeyEvent);
+
+						// Pass keys to action handler
+						if(!Event.key.repeat)
 							ae::Actions.InputEvent(State, ae::_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
-						}
 					}
 				} break;
 				case SDL_TEXTINPUT: {
-					ae::_KeyEvent KeyEvent(Event.text.text, 0, 1, 1);
-					State->HandleKey(KeyEvent);
+					if(!IgnoreNextInputEvent) {
+
+						ae::_KeyEvent KeyEvent(Event.text.text, 0, 1, 1);
+						if(Console->IsOpen())
+							ae::Graphics.Element->HandleKey(KeyEvent);
+						else
+							State->HandleKey(KeyEvent);
+					}
+
+					IgnoreNextInputEvent = false;
 				} break;
 				case SDL_MOUSEMOTION: {
-					State->HandleMouseMove(glm::ivec2(Event.motion.xrel, Event.motion.yrel));
+					if(!Console->IsOpen())
+						State->HandleMouseMove(glm::ivec2(Event.motion.xrel, Event.motion.yrel));
 				} break;
 				case SDL_MOUSEBUTTONDOWN:
 				case SDL_MOUSEBUTTONUP: {
-					ae::_MouseEvent MouseEvent(glm::ivec2(Event.motion.x, Event.motion.y), Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
-					State->HandleMouseButton(MouseEvent);
-					ae::Actions.InputEvent(State, ae::_Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
+					if(!Console->IsOpen()) {
+						ae::_MouseEvent MouseEvent(glm::ivec2(Event.motion.x, Event.motion.y), Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
+						State->HandleMouseButton(MouseEvent);
+						ae::Actions.InputEvent(State, ae::_Input::MOUSE_BUTTON, Event.button.button, Event.type == SDL_MOUSEBUTTONDOWN);
+					}
 				} break;
 				case SDL_MOUSEWHEEL: {
-					State->HandleMouseWheel(Event.wheel.y);
+					if(!Console->IsOpen())
+						State->HandleMouseWheel(Event.wheel.y);
 				} break;
 				case SDL_WINDOWEVENT:
 					if(Event.window.event)

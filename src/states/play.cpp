@@ -86,7 +86,6 @@ void _PlayState::Init() {
 	Battle = nullptr;
 	HUD = nullptr;
 	Time = 0.0;
-	IgnoreFirstChar = false;
 	CoinSoundPlayed = false;
 
 	ae::Graphics.Element->SetActive(false);
@@ -207,10 +206,15 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	if(Value == 0)
 		return true;
 
+	// Handle console toggling
 	if(Action == Action::MISC_CONSOLE) {
 		Framework.Console->Toggle();
-		IgnoreFirstChar = true;
+		Framework.IgnoreNextInputEvent = true;
 	}
+
+	// Ignore actions when console is open
+	if(Framework.Console->IsOpen())
+		return true;
 
 	// Pass to menu
 	if(Menu.State != _Menu::STATE_NONE)
@@ -309,7 +313,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 				break;
 				case Action::GAME_PARTY:
 					HUD->ToggleParty();
-					IgnoreFirstChar = true;
+					Framework.IgnoreNextInputEvent = true;
 				break;
 				case Action::GAME_UP:
 				case Action::GAME_DOWN:
@@ -331,13 +335,6 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 
 // Key handler
 void _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
-
-	// Ignore keys if opening and focusing a textbox with a hotkey
-	if(IgnoreFirstChar) {
-		IgnoreFirstChar = false;
-		return;
-	}
-
 	bool Handled = ae::Graphics.Element->HandleKey(KeyEvent);
 
 	// Message history handling

@@ -5,4 +5,4 @@ hud_small	fonts/pt_sans_bold.ttf	text	16
 hud_medium	fonts/pt_sans_bold.ttf	text	20
 hud_large	fonts/pt_sans_bold.ttf	text	48
 battle_large	fonts/pt_sans_bold.ttf	text	36
-console	fonts/vera_mono_bold.ttf	text	10
+console	fonts/vera_mono_bold.ttf	text	12

@@ -89,7 +89,6 @@ void _EditorState::Init() {
 	ResizeMapElement->SetActive(false);
 	SaveMapElement->SetActive(false);
 	LoadMapElement->SetActive(false);
-	IgnoreFirstChar = false;
 
 	// Load stats database
 	Stats = new _Stats();
@@ -152,11 +151,6 @@ bool _EditorState::HandleAction(int InputType, size_t Action, int Value) {
 
 // Key events
 void _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
-	if(IgnoreFirstChar) {
-		IgnoreFirstChar = false;
-		return;
-	}
-
 	bool Handled = ae::Graphics.Element->HandleKey(KeyEvent);
 	if(Handled)
 		return;
@@ -259,23 +253,23 @@ void _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				Brush->PVP = !Brush->PVP;
 			break;
 			case SDL_SCANCODE_N:
-				IgnoreFirstChar = true;
+				Framework.IgnoreNextInputEvent = true;
 				ToggleNewMap();
 			break;
 			case SDL_SCANCODE_R:
-				IgnoreFirstChar = true;
+				Framework.IgnoreNextInputEvent = true;
 				ToggleResize();
 			break;
 			case SDL_SCANCODE_S:
-				IgnoreFirstChar = true;
+				Framework.IgnoreNextInputEvent = true;
 				ToggleSaveMap();
 			break;
 			case SDL_SCANCODE_L:
-				IgnoreFirstChar = true;
+				Framework.IgnoreNextInputEvent = true;
 				ToggleLoadMap();
 			break;
 			case SDL_SCANCODE_G:
-				IgnoreFirstChar = true;
+				Framework.IgnoreNextInputEvent = true;
 				Go();
 			break;
 			case SDL_SCANCODE_V:

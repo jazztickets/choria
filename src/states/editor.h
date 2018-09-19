@@ -138,7 +138,6 @@ class _EditorState : public ae::_State {
 		int Filter;
 
 		// UI
-		bool IgnoreFirstChar;
 		ae::_Element *ButtonBarElement;
 		ae::_Element *TexturesElement;
 		ae::_Element *NewMapElement;

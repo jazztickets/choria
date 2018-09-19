@@ -102,7 +102,6 @@ class _PlayState : public ae::_State {
 
 		// HUD
 		_HUD *HUD;
-		bool IgnoreFirstChar;
 
 		// Camera
 		ae::_Camera *Camera;
