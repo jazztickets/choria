@@ -29,6 +29,7 @@
 #include <ae/actions.h>
 #include <ae/audio.h>
 #include <ae/util.h>
+#include <ae/console.h>
 #include <ae/framelimit.h>
 #include <config.h>
 #include <constants.h>
@@ -40,6 +41,7 @@ _Framework Framework;
 
 // Processes parameters and initializes the game
 void _Framework::Init(int ArgumentCount, char **Arguments) {
+	Console = nullptr;
 	FrameLimit = nullptr;
 	TimeStep = DEFAULT_TIMESTEP;
 	TimeStepAccumulator = 0.0;
@@ -144,6 +146,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		ae::Graphics.SetDepthMask(false);
 		LoadAssets(false);
 		ae::Graphics.SetStaticUniforms();
+
+		// Setup console
+		Console = new ae::_Console(ae::Assets.Programs["ortho_pos"], ae::Assets.Fonts["console"]);
 	}
 
 	Timer = SDL_GetPerformanceCounter();
@@ -161,6 +166,7 @@ void _Framework::Close() {
 	ae::Graphics.Close();
 	ae::Audio.Close();
 	Config.Close();
+	delete Console;
 	delete FrameLimit;
 
 	ae::_Network::CloseSystem();
@@ -242,10 +248,15 @@ void _Framework::Update() {
 			TimeStepAccumulator += FrameTime * Config.TimeScale;
 			while(TimeStepAccumulator >= TimeStep) {
 				State->Update(TimeStep);
+				if(Console)
+					Console->Update(TimeStep);
 				TimeStepAccumulator -= TimeStep;
 			}
 
-			State->Render(TimeStepAccumulator / TimeStep * Config.TimeScale);
+			double BlendFactor = TimeStepAccumulator / TimeStep * Config.TimeScale;
+			State->Render(BlendFactor);
+			if(Console)
+				Console->Render(BlendFactor);
 		} break;
 		case CLOSE: {
 			if(State)
@@ -266,14 +277,19 @@ void _Framework::Update() {
 // Handles global hotkeys
 int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 
-	// Handle alt-enter
 	if(Event.type == SDL_KEYDOWN) {
+
+		// Handle alt-enter
 		if((Event.key.keysym.mod & KMOD_ALT) && (Event.key.keysym.scancode == SDL_SCANCODE_RETURN || Event.key.keysym.scancode == SDL_SCANCODE_KP_ENTER)) {
-			if(!Event.key.repeat)
+			if(!Event.key.repeat) {
 				Menu.SetFullscreen(!Config.Fullscreen);
+				if(Console)
+					Console->UpdateSize();
+			}
 
 			return 1;
 		}
+		// Ctrl-s
 		else if((Event.key.keysym.mod & KMOD_CTRL) && Event.key.keysym.scancode == SDL_SCANCODE_S) {
 			if(!Event.key.repeat) {
 				if(Config.SoundVolume > 0.0f)
@@ -287,6 +303,7 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 
 			return 1;
 		}
+		// Ctrl-m
 		else if((Event.key.keysym.mod & KMOD_CTRL) && Event.key.keysym.scancode == SDL_SCANCODE_M) {
 			if(!Event.key.repeat) {
 				if(Config.MusicVolume > 0.0f)
@@ -296,6 +313,15 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 
 				Config.Save();
 				ae::Audio.SetMusicVolume(Config.MusicVolume);
+			}
+
+			return 1;
+		}
+		// Tilde
+		else if(Event.key.keysym.scancode == SDL_SCANCODE_GRAVE) {
+			if(!Event.key.repeat) {
+				if(Console)
+					Console->Toggle();
 			}
 
 			return 1;

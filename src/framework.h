@@ -27,6 +27,7 @@ union SDL_Event;
 namespace ae {
 	class _State;
 	class _FrameLimit;
+	class _Console;
 }
 
 // Classes
@@ -50,6 +51,9 @@ class _Framework {
 
 		ae::_State *GetState() { return State; }
 		void ChangeState(ae::_State *RequestedState);
+
+		// Console
+		ae::_Console *Console;
 
 		// Logging
 		ae::_LogFile Log;
