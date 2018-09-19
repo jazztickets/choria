@@ -46,6 +46,7 @@
 #include <ae/manager.h>
 #include <ae/camera.h>
 #include <ae/assets.h>
+#include <ae/console.h>
 #include <ae/log.h>
 #include <constants.h>
 #include <framework.h>
@@ -205,6 +206,9 @@ void _PlayState::StartLocalServer() {
 bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 	if(Value == 0)
 		return true;
+
+	if(Action == Action::MISC_CONSOLE)
+		Framework.Console->Toggle();
 
 	// Pass to menu
 	if(Menu.State != _Menu::STATE_NONE)

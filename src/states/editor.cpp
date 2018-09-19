@@ -24,12 +24,14 @@
 #include <ae/font.h>
 #include <ae/ui.h>
 #include <ae/input.h>
+#include <ae/console.h>
 #include <ae/graphics.h>
 #include <objects/object.h>
 #include <objects/map.h>
 #include <framework.h>
 #include <stats.h>
 #include <config.h>
+#include <actiontype.h>
 #include <constants.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -135,6 +137,17 @@ void _EditorState::Close() {
 
 	ClearTextures();
 	CloseMap();
+}
+
+// Handle actions
+bool _EditorState::HandleAction(int InputType, size_t Action, int Value) {
+	if(Value == 0)
+		return true;
+
+	if(Action == Action::MISC_CONSOLE)
+		Framework.Console->Toggle();
+
+	return true;
 }
 
 // Key events
@@ -538,9 +551,11 @@ void _EditorState::Render(double BlendFactor) {
 	Buffer.str("");
 
 	// Clock
-	Map->GetClockAsString(Buffer);
-	ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(ae::Graphics.ViewportSize.x - 60, 55));
-	Buffer.str("");
+	if(Map) {
+		Map->GetClockAsString(Buffer);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(ae::Graphics.ViewportSize.x - 60, 55));
+		Buffer.str("");
+	}
 
 	// Draw UI
 	ButtonBarElement->Render();

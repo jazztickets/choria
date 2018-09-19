@@ -317,15 +317,6 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 
 			return 1;
 		}
-		// Tilde
-		else if(Event.key.keysym.scancode == SDL_SCANCODE_GRAVE) {
-			if(!Event.key.repeat) {
-				if(Console)
-					Console->Toggle();
-			}
-
-			return 1;
-		}
 	}
 
 	return 0;
