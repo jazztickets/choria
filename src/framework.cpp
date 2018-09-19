@@ -332,6 +332,6 @@ void _Framework::LoadAssets(bool Server) {
 		ae::Assets.LoadSounds("sounds/");
 		ae::Assets.LoadMusic("music/");
 		ae::Assets.LoadUI("tables/ui.xml");
-		//SaveUI("tables/ui.xml");
+		//ae::Assets.SaveUI("tables/ui.xml");
 	}
 }

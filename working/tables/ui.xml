@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <element>
-    <element id="element_menu_title" size_x="512" size_y="700" style="style_hud_bg">
+    <element id="element_menu_title" style="style_hud_bg" size_x="512" size_y="700">
         <element id="image_title_logo" texture="textures/menu/logo.png" offset_y="-250" size_x="344" size_y="128" clickable="false"/>
         <element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-60" size_x="200" size_y="48">
             <element id="label_menu_title_play" font="menu_buttons" text="Play" offset_y="32" alignment_y="3"/>
@@ -16,8 +16,8 @@
             <element id="label_menu_title_message" font="menu_buttons" offset_y="100" alignment_y="3"/>
         </element>
     </element>
-    <element id="element_menu_characters" size_x="900" size_y="700" style="style_hud_bg">
-        <element id="element_menu_character_slots" size_x="808" size_y="420" offset_y="150" alignment_y="0"/>
+    <element id="element_menu_characters" style="style_hud_bg" size_x="900" size_y="700">
+        <element id="element_menu_character_slots" offset_y="150" size_x="808" size_y="420" alignment_y="0"/>
         <element id="button_characters_delete" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-150" offset_y="260" size_x="128" size_y="48">
             <element id="label_menu_characters_delete" font="menu_buttons" text="Delete" offset_y="32" alignment_y="3"/>
         </element>
@@ -49,7 +49,7 @@
         <element id="label_menu_newcharacter_portraits" font="hud_medium" text="Select a portrait" offset_y="26" alignment_y="3"/>
         <element id="label_menu_newcharacter_builds" font="hud_medium" text="Select a starting build" offset_y="276" alignment_y="3"/>
     </element>
-    <element id="element_menu_connect" size_x="512" size_y="700" style="style_hud_bg">
+    <element id="element_menu_connect" style="style_hud_bg" size_x="512" size_y="700">
         <element id="element_connect_host" style="style_menu_textbox" offset_y="-400" size_x="250" size_y="30" alignment_y="2">
             <element id="textbox_connect_host" font="hud_medium" offset_x="5" offset_y="22" size_x="250" size_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
             <element id="label_menu_connect_host" font="menu_buttons" text="Host" offset_y="-35"/>
@@ -67,7 +67,7 @@
         </element>
         <element id="label_menu_connect_title" font="hud_large" text="Connect" offset_y="-250"/>
     </element>
-    <element id="element_menu_account" size_x="512" size_y="700" style="style_hud_bg">
+    <element id="element_menu_account" style="style_hud_bg" size_x="512" size_y="700">
         <element id="element_account_username" style="style_menu_textbox" offset_y="-400" size_x="250" size_y="30" alignment_y="2">
             <element id="textbox_account_username" font="hud_medium" offset_x="5" offset_y="22" alignment_x="0" alignment_y="3" maxlength="20"/>
             <element id="label_menu_account_username" font="menu_buttons" text="Username" offset_y="-35"/>
@@ -88,7 +88,7 @@
         </element>
         <element id="label_menu_account_title" font="hud_large" text="Account Info" offset_y="-250"/>
     </element>
-    <element id="element_menu_ingame" size_x="512" size_y="700" style="style_hud_bg">
+    <element id="element_menu_ingame" style="style_hud_bg" size_x="512" size_y="700">
         <element id="button_ingame_respawn" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-140" size_x="200" size_y="48">
             <element id="label_menu_ingame_respawn" font="menu_buttons" text="Respawn" offset_y="32" alignment_y="3"/>
         </element>
@@ -103,17 +103,17 @@
         </element>
         <element id="label_menu_ingame_exitwarning" color="red" font="menu_buttons" text="Exiting battle will result in death" offset_y="150" alignment_y="3"/>
     </element>
-    <element id="element_menu_options" size_x="512" size_y="700" style="style_hud_bg">
-        <element id="element_menu_options_middle" alignment_y="0" offset_y="150">
+    <element id="element_menu_options" style="style_hud_bg" size_x="512" size_y="700">
+        <element id="element_menu_options_middle" offset_y="150" alignment_y="0">
             <element id="button_options_fullscreen" style="style_menu_textbox" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="15" offset_y="50" size_x="32" size_y="32" alignment_x="0">
                 <element id="label_menu_options_fullscreen_check" font="hud_medium" text="X"/>
             </element>
             <element id="element_options_soundvolume" style="style_menu_textbox" offset_x="15" offset_y="100" size_x="150" size_y="30" alignment_x="0">
-                <element id="button_options_soundvolume" style="style_menu_button" offset_x="0" size_x="15" size_y="30" alignment_x="0" alignment_y="0" draggable="true"/>
+                <element id="button_options_soundvolume" style="style_menu_button" size_x="15" size_y="30" alignment_x="0" alignment_y="0" draggable="true"/>
                 <element id="label_options_soundvolume" font="hud_medium" offset_x="160" offset_y="22" alignment_x="0" alignment_y="3"/>
             </element>
             <element id="element_options_musicvolume" style="style_menu_textbox" offset_x="15" offset_y="150" size_x="150" size_y="30" alignment_x="0">
-                <element id="button_options_musicvolume" style="style_menu_button" offset_x="0" size_x="15" size_y="30" alignment_x="0" alignment_y="0" draggable="true"/>
+                <element id="button_options_musicvolume" style="style_menu_button" size_x="15" size_y="30" alignment_x="0" alignment_y="0" draggable="true"/>
                 <element id="label_options_musicvolume" font="hud_medium" offset_x="160" offset_y="22" alignment_x="0" alignment_y="3"/>
             </element>
             <element id="label_menu_options_fullscreen" font="menu_buttons" text="Fullscreen" offset_x="-15" offset_y="50" alignment_x="2"/>
@@ -212,10 +212,10 @@
         <element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="336" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="7"/>
     </element>
     <element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-364" offset_y="-160" size_x="64" size_y="32" index="13">
-        <element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" offset_x="0" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="0">
+        <element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="0">
             <element id="image_inventory_tabs_bag" texture="textures/hud/bag.png" size_x="32" size_y="32" clickable="false"/>
         </element>
-        <element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="32" offset_y="0" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="1">
+        <element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="32" size_x="32" size_y="32" alignment_x="0" alignment_y="0" index="1">
             <element id="image_inventory_tabs_key" texture="textures/hud/key.png" size_x="32" size_y="32" clickable="false"/>
         </element>
     </element>
@@ -318,13 +318,12 @@
     </element>
     <element id="element_minigame" style="style_minigame_bg" index="12">
         <element id="label_minigame_name" font="hud_large" text="Game" offset_y="-40" alignment_y="3"/>
-        <element id="label_minigame_cost" font="hud_medium" text="Cost" color="gold" offset_x="0.5" offset_y="-12" alignment_y="3"/>
-        <element id="label_minigame_token_image" texture="textures/items/token.png" size_x="32" size_y="32" offset_y="-32" alignment_x="2" alignment_y="0" clickable="false">
+        <element id="label_minigame_cost" color="gold" font="hud_medium" text="Cost" offset_x="0.5" offset_y="-12" alignment_y="3"/>
+        <element id="label_minigame_token_image" texture="textures/items/token.png" offset_y="-32" size_x="32" size_y="32" alignment_x="2" alignment_y="0" clickable="false">
             <element id="label_minigame_tokens" font="hud_small" offset_x="-33" offset_y="22" alignment_x="2" alignment_y="3"/>
         </element>
     </element>
-    <element id="element_keys" style="style_equipment_bg" offset_x="-215" offset_y="0" size_x="362" size_y="288" index="14">
-    </element>
+    <element id="element_keys" style="style_equipment_bg" offset_x="-215" size_x="362" size_y="288" index="14"/>
     <element id="element_dark_overlay" style="style_hud_bg"/>
     <element id="element_skills" style="style_hud_bg" size_x="474" size_y="450" index="11"/>
     <element id="element_died" style="style_hud_died_bg" alignment_x="0" alignment_y="0" clickable="false">
@@ -388,7 +387,7 @@
     </element>
     <element id="element_buffs_tooltip" style="style_hud_item_tooltip_bg" size_x="300" size_y="120" alignment_x="0" alignment_y="0" clickable="false">
         <element id="label_buffs_tooltip_name" font="menu_buttons" offset_y="30" alignment_y="3"/>
-        <element id="label_buffs_tooltip_duration" font="hud_small" offset_y="105" alignment_y="3" color="gray"/>
+        <element id="label_buffs_tooltip_duration" color="gray" font="hud_small" offset_y="105" alignment_y="3"/>
     </element>
     <element id="element_party" style="style_hud_item_tooltip_bg" size_x="300" size_y="120">
         <element id="element_textbox_party" style="style_menu_textbox" offset_y="20" size_x="250" size_y="30">
