@@ -267,8 +267,10 @@ void _Framework::Update() {
 			TimeStepAccumulator += FrameTime * Config.TimeScale;
 			while(TimeStepAccumulator >= TimeStep) {
 				State->Update(TimeStep);
-				if(Console)
+				if(Console) {
 					Console->Update(TimeStep);
+					HandleConsoleCommands();
+				}
 				TimeStepAccumulator -= TimeStep;
 			}
 
@@ -339,6 +341,24 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 	}
 
 	return 0;
+}
+
+// Run commands from console
+void _Framework::HandleConsoleCommands() {
+	if(!State)
+		return;
+
+	// Check for a command
+	if(!Console->Command.empty()) {
+		if(Console->Command == "quit" || Console->Command == "exit") {
+			State->HandleQuit();
+		}
+		else {
+			Console->AddMessage("Command \"" + Console->Command + "\" not found");
+		}
+
+		Console->Command = "";
+	}
 }
 
 // Load assets
