@@ -395,7 +395,7 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	// Handle commands
 	if(Console->Command == "clock") {
 		if(Parameters.size() == 1) {
-			if(Network) {
+			if(Network && Network->IsConnected()) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::COMMAND);
 				Packet.WriteString("clock");
@@ -466,7 +466,7 @@ void _PlayState::HandleWindow(uint8_t Event) {
 
 // Handle quit events
 void _PlayState::HandleQuit() {
-	if(Network && Network->CanDisconnect())
+	if(Network && Network->IsConnected())
 		Network->Disconnect();
 	else
 		Framework.Done = true;
