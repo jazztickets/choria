@@ -393,7 +393,7 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	ae::TokenizeString(Console->Parameters, Parameters);
 
 	// Handle commands
-	if(Console->Command == "quit" || Console->Command == "exit") {
+	if(Console->Command == "quit") {
 		HandleQuit();
 	}
 	else if(Console->Command == "volume") {

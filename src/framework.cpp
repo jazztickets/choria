@@ -151,7 +151,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 		// Setup console
 		Console = new ae::_Console(ae::Assets.Programs["ortho_pos"], ae::Assets.Fonts["console"]);
-		Console->CommandList.push_back("exit");
 		Console->CommandList.push_back("quit");
 		Console->CommandList.push_back("search");
 		Console->CommandList.push_back("volume");
