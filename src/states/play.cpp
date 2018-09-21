@@ -36,6 +36,7 @@
 #include <hud/skill_screen.h>
 #include <ae/manager.h>
 #include <ae/clientnetwork.h>
+#include <ae/database.h>
 #include <ae/program.h>
 #include <ae/actions.h>
 #include <ae/buffer.h>
@@ -65,6 +66,7 @@
 #include <SDL_mouse.h>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 
 _PlayState PlayState;
 
@@ -385,19 +387,51 @@ void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 
 // Handle console command
 void _PlayState::HandleCommand(ae::_Console *Console) {
+
+	// Get parameters
+	std::vector<std::string> Parameters;
+	ae::TokenizeString(Console->Parameters, Parameters);
+
+	// Handle commands
 	if(Console->Command == "quit" || Console->Command == "exit") {
 		HandleQuit();
 	}
 	else if(Console->Command == "volume") {
-		if(Console->Parameters.empty()) {
-			Console->AddMessage("Missing volume parameter");
-		}
-		else {
+		if(!Console->Parameters.empty()) {
 			Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
 			ae::Audio.SetSoundVolume(Config.SoundVolume);
 			ae::Audio.SetMusicVolume(Config.MusicVolume);
 			Config.Save();
 		}
+		else
+			Console->AddMessage("usage: volume [value]");
+	}
+	else if(Console->Command == "search") {
+		if(Parameters.size() == 2) {
+			std::string Table = Parameters[0];
+			std::string Search = "%" + Parameters[1] + "%";
+
+			// Search database for keyword
+			ae::_Database *Database = PlayState.Stats->Database;
+			try {
+				Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
+				Database->BindString(1, Search);
+				while(Database->FetchRow()) {
+					int ID = Database->GetInt<int>("id");
+					std::string Name = Database->GetString("name");
+
+					// Add messages
+					std::stringstream Buffer;
+					Buffer << std::setw(3) << ID << " " << Name << std::endl;
+					Console->AddMessage(Buffer.str());
+				}
+				Database->CloseQuery();
+			} catch(std::exception &Error) {
+				Console->AddMessage(Error.what());
+			}
+		}
+		else
+			Console->AddMessage("usage: search [table] [query]");
 	}
 	else {
 		Console->AddMessage("Command \"" + Console->Command + "\" not found");
