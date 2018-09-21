@@ -1323,7 +1323,7 @@ INSERT INTO item VALUES(221,11,0,0,0,0,0,'Game Token','textures/items/token.png'
 INSERT INTO item VALUES(222,10,0,1,1,0,0,'Medium Torch','textures/items/torch.png','Item_Torch',35,1,5,0,120.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(223,10,0,1,1,0,0,'Large Torch','textures/items/torch.png','Item_Torch',75,1,8,0,179.99999999999999999,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 INSERT INTO item VALUES(224,10,0,1,1,0,0,'Bright Potion','textures/items/bright_potion.png','Item_BrightPotion',200,1,720,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
-INSERT INTO item VALUES(225,10,0,1,1,0,0,'Dark Potion','textures/items/dark_potion.png','Item_DarkPotion',400,1,1320,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+INSERT INTO item VALUES(225,10,0,1,1,0,0,'Dark Potion','textures/items/dark_potion.png','Item_DarkPotion',400,1,0,0,0.0,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 CREATE INDEX "vendoritem_index" on "vendoritem" (vendor_id);
 CREATE INDEX "traderitem_index" on "traderitem" (trader_id);
 CREATE INDEX "monsterdrop_index" on "monsterdrop" (monster_id);
