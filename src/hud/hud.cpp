@@ -828,18 +828,6 @@ void _HUD::ToggleChat() {
 				}
 			}
 
-			// Handle console commands
-			if(ChatTextBox->Text.find("-volume") == 0) {
-				std::smatch Match;
-				std::regex Regex("-volume (.+)");
-				if(std::regex_search(ChatTextBox->Text, Match, Regex) && Match.size() > 1) {
-					Config.SoundVolume = Config.MusicVolume = ae::ToNumber<float>(Match.str(1));
-					ae::Audio.SetSoundVolume(Config.SoundVolume);
-					ae::Audio.SetMusicVolume(Config.MusicVolume);
-					Config.Save();
-				}
-			}
-
 			// Send message to server
 			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::CHAT_MESSAGE);

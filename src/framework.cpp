@@ -151,6 +151,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 
 		// Setup console
 		Console = new ae::_Console(ae::Assets.Programs["ortho_pos"], ae::Assets.Fonts["console"]);
+		Console->CommandList.push_back("exit");
+		Console->CommandList.push_back("quit");
+		Console->CommandList.push_back("volume");
 	}
 
 	Timer = SDL_GetPerformanceCounter();
@@ -352,6 +355,17 @@ void _Framework::HandleConsoleCommands() {
 	if(!Console->Command.empty()) {
 		if(Console->Command == "quit" || Console->Command == "exit") {
 			State->HandleQuit();
+		}
+		else if(Console->Command == "volume") {
+			if(Console->Parameters.empty()) {
+				Console->AddMessage("Missing volume parameter");
+			}
+			else {
+				Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
+				ae::Audio.SetSoundVolume(Config.SoundVolume);
+				ae::Audio.SetMusicVolume(Config.MusicVolume);
+				Config.Save();
+			}
 		}
 		else {
 			Console->AddMessage("Command \"" + Console->Command + "\" not found");
