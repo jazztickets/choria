@@ -272,7 +272,10 @@ void _Framework::Update() {
 				State->Update(TimeStep);
 				if(Console) {
 					Console->Update(TimeStep);
-					HandleConsoleCommands();
+					if(!Console->Command.empty()) {
+						State->HandleCommand(Console);
+						Console->Command = "";
+					}
 				}
 				TimeStepAccumulator -= TimeStep;
 			}
@@ -344,35 +347,6 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 	}
 
 	return 0;
-}
-
-// Run commands from console
-void _Framework::HandleConsoleCommands() {
-	if(!State)
-		return;
-
-	// Check for a command
-	if(!Console->Command.empty()) {
-		if(Console->Command == "quit" || Console->Command == "exit") {
-			State->HandleQuit();
-		}
-		else if(Console->Command == "volume") {
-			if(Console->Parameters.empty()) {
-				Console->AddMessage("Missing volume parameter");
-			}
-			else {
-				Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
-				ae::Audio.SetSoundVolume(Config.SoundVolume);
-				ae::Audio.SetMusicVolume(Config.MusicVolume);
-				Config.Save();
-			}
-		}
-		else {
-			Console->AddMessage("Command \"" + Console->Command + "\" not found");
-		}
-
-		Console->Command = "";
-	}
 }
 
 // Load assets

@@ -40,6 +40,7 @@ namespace ae {
 	class _Camera;
 	class _ClientNetwork;
 	class _Buffer;
+	class _Console;
 }
 
 // Play state
@@ -66,6 +67,7 @@ class _PlayState : public ae::_State {
 		void HandleKey(const ae::_KeyEvent &KeyEvent) override;
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent) override;
 		void HandleMouseMove(const glm::ivec2 &Position) override;
+		void HandleCommand(ae::_Console *Console) override;
 		void HandleWindow(uint8_t Event) override;
 		void HandleQuit() override;
 

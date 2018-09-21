@@ -48,6 +48,7 @@
 #include <ae/assets.h>
 #include <ae/console.h>
 #include <ae/log.h>
+#include <ae/util.h>
 #include <constants.h>
 #include <framework.h>
 #include <save.h>
@@ -380,6 +381,27 @@ void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 	// Enable mouse during combat
 	if(HUD && Player && Player->Character->Battle)
 		HUD->EnableMouseCombat = true;
+}
+
+// Handle console command
+void _PlayState::HandleCommand(ae::_Console *Console) {
+	if(Console->Command == "quit" || Console->Command == "exit") {
+		HandleQuit();
+	}
+	else if(Console->Command == "volume") {
+		if(Console->Parameters.empty()) {
+			Console->AddMessage("Missing volume parameter");
+		}
+		else {
+			Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
+			ae::Audio.SetSoundVolume(Config.SoundVolume);
+			ae::Audio.SetMusicVolume(Config.MusicVolume);
+			Config.Save();
+		}
+	}
+	else {
+		Console->AddMessage("Command \"" + Console->Command + "\" not found");
+	}
 }
 
 // Window size updates

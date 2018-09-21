@@ -65,7 +65,6 @@ class _Framework {
 	private:
 
 		int GlobalKeyHandler(const SDL_Event &Event);
-		void HandleConsoleCommands();
 		void LoadAssets(bool Server);
 
 		// States
