@@ -393,18 +393,21 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	ae::TokenizeString(Console->Parameters, Parameters);
 
 	// Handle commands
-	if(Console->Command == "quit") {
-		HandleQuit();
-	}
-	else if(Console->Command == "volume") {
-		if(!Console->Parameters.empty()) {
-			Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
-			ae::Audio.SetSoundVolume(Config.SoundVolume);
-			ae::Audio.SetMusicVolume(Config.MusicVolume);
-			Config.Save();
+	if(Console->Command == "clock") {
+		if(Parameters.size() == 1) {
+			if(Network) {
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::COMMAND);
+				Packet.WriteString("clock");
+				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+				Network->SendPacket(Packet);
+			}
 		}
 		else
-			Console->AddMessage("usage: volume [value]");
+			Console->AddMessage("usage: clock [time]");
+	}
+	else if(Console->Command == "quit") {
+		HandleQuit();
 	}
 	else if(Console->Command == "search") {
 		if(Parameters.size() == 2) {
@@ -432,6 +435,16 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 		}
 		else
 			Console->AddMessage("usage: search [table] [query]");
+	}
+	else if(Console->Command == "volume") {
+		if(!Console->Parameters.empty()) {
+			Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
+			ae::Audio.SetSoundVolume(Config.SoundVolume);
+			ae::Audio.SetMusicVolume(Config.MusicVolume);
+			Config.Save();
+		}
+		else
+			Console->AddMessage("usage: volume [value]");
 	}
 	else {
 		Console->AddMessage("Command \"" + Console->Command + "\" not found");

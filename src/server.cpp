@@ -379,6 +379,9 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case PacketType::PLAYER_STATUS:
 			HandlePlayerStatus(Data, Peer);
 		break;
+		case PacketType::COMMAND:
+			HandleCommand(Data, Peer);
+		break;
 		default:
 		break;
 	}
@@ -659,19 +662,6 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
 				StatChange.Values[StatType::EXPERIENCE].Integer = ae::ToNumber<int>(Match.str(1));
 				Player->UpdateStats(StatChange);
-			}
-		}
-		else if(Message.find("-clock") == 0) {
-			std::regex Regex("-clock ([0-9.]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-
-				double Clock = ae::ToNumber<double>(Match.str(1));
-				if(Clock < 0)
-					Clock = 0;
-				else if(Clock >= MAP_DAY_LENGTH)
-					Clock = MAP_DAY_LENGTH;
-
-				SetClock(Clock);
 			}
 		}
 		else if(Message.find("-battle") == 0) {
@@ -1692,6 +1682,23 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		Player->Deleted = true;
 		Peer->Object = nullptr;
+	}
+}
+
+// Handle console commands
+void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
+	if(!ValidatePeer(Peer))
+	   return;
+
+	std::string Command = Data.ReadString();
+	if(Command == "clock") {
+		double Clock = Data.Read<int>();
+		if(Clock < 0)
+			Clock = 0;
+		else if(Clock >= MAP_DAY_LENGTH)
+			Clock = MAP_DAY_LENGTH;
+
+		SetClock(Clock);
 	}
 }
 
