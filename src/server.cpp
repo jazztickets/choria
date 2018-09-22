@@ -652,16 +652,6 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 				Player->UpdateStats(StatChange);
 			}
 		}
-		else if(Message.find("-pos") == 0) {
-			std::regex Regex("-pos ([0-9]+) ([0-9]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
-				if(!Player->Map)
-					return;
-
-				Player->Position = Player->Map->GetValidCoord(glm::ivec2(ae::ToNumber<int>(Match.str(1)), ae::ToNumber<int>(Match.str(2))));
-				SendPlayerPosition(Player->Peer);
-			}
-		}
 
 		// Build packet
 		if(StatChange.Values.size()) {
@@ -1694,6 +1684,13 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "map") {
 		ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
 		SpawnPlayer(Player, MapID, _Map::EVENT_MAPENTRANCE);
+	}
+	else if(Command == "move") {
+		uint8_t X = Data.Read<uint8_t>();
+		uint8_t Y = Data.Read<uint8_t>();
+
+		Player->Position = Player->Map->GetValidCoord(glm::ivec2(X, Y));
+		SendPlayerPosition(Player->Peer);
 	}
 }
 

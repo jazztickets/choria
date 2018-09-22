@@ -156,6 +156,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Console->CommandList.push_back("event");
 		Console->CommandList.push_back("give");
 		Console->CommandList.push_back("map");
+		Console->CommandList.push_back("move");
 		Console->CommandList.push_back("quit");
 		Console->CommandList.push_back("search");
 		Console->CommandList.push_back("volume");

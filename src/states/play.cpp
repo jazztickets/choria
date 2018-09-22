@@ -450,6 +450,17 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 		else
 			Console->AddMessage("usage: map [map_id]");
 	}
+	else if(Console->Command == "move") {
+		if(Parameters.size() == 2) {
+			if(Network && Network->IsConnected()) {
+				Packet.Write<uint8_t>(ae::ToNumber<int>(Parameters[0]));
+				Packet.Write<uint8_t>(ae::ToNumber<int>(Parameters[1]));
+				Network->SendPacket(Packet);
+			}
+		}
+		else
+			Console->AddMessage("usage: move [x] [y]");
+	}
 	else if(Console->Command == "quit") {
 		HandleQuit();
 	}
