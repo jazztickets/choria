@@ -638,13 +638,6 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 				Player->UpdateStats(StatChange);
 			}
 		}
-		else if(Message.find("-bounty") == 0) {
-			std::regex Regex("-bounty ([0-9-]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Player->Character->Bounty = std::max(0, ae::ToNumber<int>(Match.str(1)));
-				SendHUD(Peer);
-			}
-		}
 		else if(Message.find("-exp") == 0) {
 			std::regex Regex("-exp ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
@@ -1655,6 +1648,11 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Command == "battle") {
 		uint32_t ZoneID = Data.Read<uint32_t>();
 		QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
+	}
+	else if(Command == "bounty") {
+		int BountyChange = Data.Read<int>();
+		Player->Character->Bounty = std::max(0, BountyChange);
+		SendHUD(Peer);
 	}
 	else if(Command == "clock") {
 		double Clock = Data.Read<int>();

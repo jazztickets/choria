@@ -408,6 +408,16 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 		else
 			Console->AddMessage("usage: battle [zone]");
 	}
+	else if(Console->Command == "bounty") {
+		if(Parameters.size() == 1) {
+			if(Network && Network->IsConnected()) {
+				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+				Network->SendPacket(Packet);
+			}
+		}
+		else
+			Console->AddMessage("usage: bounty [amount]");
+	}
 	else if(Console->Command == "clock") {
 		if(Parameters.size() == 1) {
 			if(Network && Network->IsConnected()) {
