@@ -398,7 +398,17 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	Packet.WriteString(Console->Command.c_str());
 
 	// Handle commands
-	if(Console->Command == "clock") {
+	if(Console->Command == "battle") {
+		if(Parameters.size() == 1) {
+			if(Network && Network->IsConnected()) {
+				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
+				Network->SendPacket(Packet);
+			}
+		}
+		else
+			Console->AddMessage("usage: battle [zone]");
+	}
+	else if(Console->Command == "clock") {
 		if(Parameters.size() == 1) {
 			if(Network && Network->IsConnected()) {
 				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));

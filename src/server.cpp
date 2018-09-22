@@ -652,13 +652,6 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 				Player->UpdateStats(StatChange);
 			}
 		}
-		else if(Message.find("-battle") == 0) {
-			std::regex Regex("-battle ([0-9]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				uint32_t ZoneID = ae::ToNumber<uint32_t>(Match.str(1));
-				QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
-			}
-		}
 		else if(Message.find("-pos") == 0) {
 			std::regex Regex("-pos ([0-9]+) ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
@@ -1669,7 +1662,11 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Process command
 	std::string Command = Data.ReadString();
-	if(Command == "clock") {
+	if(Command == "battle") {
+		uint32_t ZoneID = Data.Read<uint32_t>();
+		QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
+	}
+	else if(Command == "clock") {
 		double Clock = Data.Read<int>();
 		if(Clock < 0)
 			Clock = 0;
