@@ -435,30 +435,35 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 		return;
 
 	// Handle event types
-	switch(Event.Type) {
-		case _Map::EVENT_TRADER:
-			Object->Character->Trader = &Server->Stats->Traders.at(Event.Data);
-			if(!Object->Character->Trader->ID)
+	try {
+		switch(Event.Type) {
+			case _Map::EVENT_TRADER:
+				Object->Character->Trader = &Server->Stats->Traders.at(Event.Data);
+				if(!Object->Character->Trader->ID)
+					return;
+			break;
+			case _Map::EVENT_VENDOR:
+				Object->Character->Vendor = &Server->Stats->Vendors.at(Event.Data);
+				if(!Object->Character->Vendor->ID)
+					return;
+			break;
+			case _Map::EVENT_BLACKSMITH:
+				Object->Character->Blacksmith = &Server->Stats->Blacksmiths.at(Event.Data);
+				if(!Object->Character->Blacksmith->ID)
+					return;
+			break;
+			case _Map::EVENT_MINIGAME: {
+				Object->Character->Minigame = &Server->Stats->Minigames.at(Event.Data);
+				if(!Object->Character->Minigame->ID)
+					return;
+			} break;
+			default:
 				return;
-		break;
-		case _Map::EVENT_VENDOR:
-			Object->Character->Vendor = &Server->Stats->Vendors.at(Event.Data);
-			if(!Object->Character->Vendor->ID)
-				return;
-		break;
-		case _Map::EVENT_BLACKSMITH:
-			Object->Character->Blacksmith = &Server->Stats->Blacksmiths.at(Event.Data);
-			if(!Object->Character->Blacksmith->ID)
-				return;
-		break;
-		case _Map::EVENT_MINIGAME: {
-			Object->Character->Minigame = &Server->Stats->Minigames.at(Event.Data);
-			if(!Object->Character->Minigame->ID)
-				return;
-		} break;
-		default:
-			return;
-		break;
+			break;
+		}
+	}
+	catch(std::exception &Error) {
+		return;
 	}
 
 	// Notify client

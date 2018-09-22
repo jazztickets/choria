@@ -669,15 +669,6 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 				SendPlayerPosition(Player->Peer);
 			}
 		}
-		else if(Message.find("-event") == 0) {
-			std::regex Regex("-event ([0-9]+) ([0-9]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
-				if(!Player->Map)
-					return;
-
-				Player->Map->StartEvent(Player, _Event(ae::ToNumber<uint32_t>(Match.str(1)), ae::ToNumber<uint32_t>(Match.str(2))));
-			}
-		}
 
 		// Build packet
 		if(StatChange.Values.size()) {
@@ -1671,6 +1662,12 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(!ValidatePeer(Peer))
 	   return;
 
+	// Get player
+	_Object *Player = Peer->Object;
+	if(!Player->Map)
+		return;
+
+	// Process command
 	std::string Command = Data.ReadString();
 	if(Command == "clock") {
 		double Clock = Data.Read<int>();
@@ -1680,6 +1677,13 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 			Clock = MAP_DAY_LENGTH;
 
 		SetClock(Clock);
+	}
+	else if(Command == "event") {
+		_Event Event;
+		Event.Type = Data.Read<uint32_t>();
+		Event.Data = Data.Read<uint32_t>();
+
+		Player->Map->StartEvent(Player, Event);
 	}
 	else if(Command == "give") {
 		uint32_t ItemID = Data.Read<uint32_t>();
@@ -1692,7 +1696,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "map") {
 		ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
-		SpawnPlayer(Peer->Object, MapID, _Map::EVENT_MAPENTRANCE);
+		SpawnPlayer(Player, MapID, _Map::EVENT_MAPENTRANCE);
 	}
 }
 
