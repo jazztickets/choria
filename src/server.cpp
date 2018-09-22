@@ -624,19 +624,7 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 		StatChange.Object = Player;
 
 		std::smatch Match;
-		if(Message.find("-give") == 0) {
-			std::regex Regex("-give ([0-9]+) ([0-9]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
-				uint32_t ItemID = (uint32_t)ae::ToNumber<int>(Match.str(1));
-				int Count = std::min(ae::ToNumber<int>(Match.str(2)), 255);
-
-				if(Stats->Items.find(ItemID) == Stats->Items.end())
-					return;
-
-				SendItem(Peer, Stats->Items.at(ItemID), Count);
-			}
-		}
-		else if(Message.find("-setgold") == 0) {
+		if(Message.find("-setgold") == 0) {
 			std::regex Regex("-setgold ([0-9-]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
 				Player->Character->Gold = ae::ToNumber<int>(Match.str(1));
@@ -1699,6 +1687,15 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 			Clock = MAP_DAY_LENGTH;
 
 		SetClock(Clock);
+	}
+	else if(Command == "give") {
+		uint32_t ItemID = Data.Read<uint32_t>();
+		int Count = Data.Read<int>();
+
+		if(Stats->Items.find(ItemID) == Stats->Items.end())
+			return;
+
+		SendItem(Peer, Stats->Items.at(ItemID), Count);
 	}
 }
 

@@ -406,6 +406,20 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 		else
 			Console->AddMessage("usage: clock [time]");
 	}
+	else if(Console->Command == "give") {
+		if(Parameters.size() == 2) {
+			if(Network && Network->IsConnected()) {
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::COMMAND);
+				Packet.WriteString("give");
+				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+				Packet.Write<int>(ae::ToNumber<int>(Parameters[1]));
+				Network->SendPacket(Packet);
+			}
+		}
+		else
+			Console->AddMessage("usage: give [item_id] [count]");
+	}
 	else if(Console->Command == "quit") {
 		HandleQuit();
 	}
