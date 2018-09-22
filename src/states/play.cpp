@@ -392,13 +392,15 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	std::vector<std::string> Parameters;
 	ae::TokenizeString(Console->Parameters, Parameters);
 
+	// Start packet
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::COMMAND);
+	Packet.WriteString(Console->Command.c_str());
+
 	// Handle commands
 	if(Console->Command == "clock") {
 		if(Parameters.size() == 1) {
 			if(Network && Network->IsConnected()) {
-				ae::_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::COMMAND);
-				Packet.WriteString(Console->Command.c_str());
 				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
 				Network->SendPacket(Packet);
 			}
@@ -409,9 +411,6 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	else if(Console->Command == "event") {
 		if(Parameters.size() == 2) {
 			if(Network && Network->IsConnected()) {
-				ae::_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::COMMAND);
-				Packet.WriteString(Console->Command.c_str());
 				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
 				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[1]));
 				Network->SendPacket(Packet);
@@ -423,9 +422,6 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	else if(Console->Command == "give") {
 		if(Parameters.size() == 2) {
 			if(Network && Network->IsConnected()) {
-				ae::_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::COMMAND);
-				Packet.WriteString(Console->Command.c_str());
 				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
 				Packet.Write<int>(ae::ToNumber<int>(Parameters[1]));
 				Network->SendPacket(Packet);
@@ -437,9 +433,6 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 	else if(Console->Command == "map") {
 		if(Parameters.size() == 1) {
 			if(Network && Network->IsConnected()) {
-				ae::_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::COMMAND);
-				Packet.WriteString(Console->Command.c_str());
 				Packet.Write<ae::NetworkIDType>(ae::ToNumber<ae::NetworkIDType>(Parameters[0]));
 				Network->SendPacket(Packet);
 			}
