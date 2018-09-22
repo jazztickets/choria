@@ -153,6 +153,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Console = new ae::_Console(ae::Assets.Programs["ortho_pos"], ae::Assets.Fonts["console"]);
 		Console->CommandList.push_back("clock");
 		Console->CommandList.push_back("give");
+		Console->CommandList.push_back("map");
 		Console->CommandList.push_back("quit");
 		Console->CommandList.push_back("search");
 		Console->CommandList.push_back("volume");

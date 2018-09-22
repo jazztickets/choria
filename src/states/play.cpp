@@ -398,7 +398,7 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 			if(Network && Network->IsConnected()) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::COMMAND);
-				Packet.WriteString("clock");
+				Packet.WriteString(Console->Command.c_str());
 				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
 				Network->SendPacket(Packet);
 			}
@@ -411,7 +411,7 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 			if(Network && Network->IsConnected()) {
 				ae::_Buffer Packet;
 				Packet.Write<PacketType>(PacketType::COMMAND);
-				Packet.WriteString("give");
+				Packet.WriteString(Console->Command.c_str());
 				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
 				Packet.Write<int>(ae::ToNumber<int>(Parameters[1]));
 				Network->SendPacket(Packet);
@@ -419,6 +419,19 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 		}
 		else
 			Console->AddMessage("usage: give [item_id] [count]");
+	}
+	else if(Console->Command == "map") {
+		if(Parameters.size() == 1) {
+			if(Network && Network->IsConnected()) {
+				ae::_Buffer Packet;
+				Packet.Write<PacketType>(PacketType::COMMAND);
+				Packet.WriteString(Console->Command.c_str());
+				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+				Network->SendPacket(Packet);
+			}
+		}
+		else
+			Console->AddMessage("usage: map [map_id]");
 	}
 	else if(Console->Command == "quit") {
 		HandleQuit();

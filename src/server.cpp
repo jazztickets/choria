@@ -659,13 +659,6 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 				QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
 			}
 		}
-		else if(Message.find("-map") == 0) {
-			std::regex Regex("-map ([0-9]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				ae::NetworkIDType MapID = ae::ToNumber<ae::NetworkIDType>(Match.str(1));
-				SpawnPlayer(Player, MapID, _Map::EVENT_MAPENTRANCE);
-			}
-		}
 		else if(Message.find("-pos") == 0) {
 			std::regex Regex("-pos ([0-9]+) ([0-9]+)");
 			if(std::regex_search(Message, Match, Regex) && Match.size() > 2) {
@@ -1696,6 +1689,10 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 			return;
 
 		SendItem(Peer, Stats->Items.at(ItemID), Count);
+	}
+	else if(Command == "map") {
+		ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
+		SpawnPlayer(Peer->Object, MapID, _Map::EVENT_MAPENTRANCE);
 	}
 }
 
