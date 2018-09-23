@@ -155,7 +155,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Console->CommandList.push_back("bounty");
 		Console->CommandList.push_back("clock");
 		Console->CommandList.push_back("event");
+		Console->CommandList.push_back("experience");
 		Console->CommandList.push_back("give");
+		Console->CommandList.push_back("gold");
 		Console->CommandList.push_back("map");
 		Console->CommandList.push_back("move");
 		Console->CommandList.push_back("quit");

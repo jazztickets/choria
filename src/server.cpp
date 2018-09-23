@@ -618,49 +618,6 @@ void _Server::HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Message.length() > HUD_CHAT_SIZE)
 		Message.resize(HUD_CHAT_SIZE);
 
-	// Check for test commands
-	if(IsTesting && Message[0] == '-' && !Player->Character->Battle) {
-		_StatChange StatChange;
-		StatChange.Object = Player;
-
-		std::smatch Match;
-		if(Message.find("-setgold") == 0) {
-			std::regex Regex("-setgold ([0-9-]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				Player->Character->Gold = ae::ToNumber<int>(Match.str(1));
-				SendHUD(Peer);
-			}
-		}
-		else if(Message.find("-gold") == 0) {
-			std::regex Regex("-gold ([0-9-]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				StatChange.Values[StatType::GOLD].Integer = ae::ToNumber<int>(Match.str(1));
-				Player->UpdateStats(StatChange);
-			}
-		}
-		else if(Message.find("-exp") == 0) {
-			std::regex Regex("-exp ([0-9-]+)");
-			if(std::regex_search(Message, Match, Regex) && Match.size() > 1) {
-				StatChange.Values[StatType::EXPERIENCE].Integer = ae::ToNumber<int>(Match.str(1));
-				Player->UpdateStats(StatChange);
-			}
-		}
-
-		// Build packet
-		if(StatChange.Values.size()) {
-			ae::_Buffer Packet;
-			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-			StatChange.Serialize(Packet);
-			Network->SendPacket(Packet, Player->Peer);
-		}
-
-		// Update client
-		Player->Character->CalculateStats();
-		SendHUD(Player->Peer);
-
-		return;
-	}
-
 	// Send message to other players
 	BroadcastMessage(nullptr, Player->Name + ": " + Message, "white");
 
@@ -1650,8 +1607,9 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
 	}
 	else if(Command == "bounty") {
-		int BountyChange = Data.Read<int>();
-		Player->Character->Bounty = std::max(0, BountyChange);
+		bool Adjust = Data.ReadBit();
+		int Change = Data.Read<int>();
+		Player->Character->Bounty = std::max(0, Adjust ? Player->Character->Bounty + Change : Change);
 		SendHUD(Peer);
 	}
 	else if(Command == "clock") {
@@ -1670,6 +1628,13 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		Player->Map->StartEvent(Player, Event);
 	}
+	else if(Command == "experience") {
+		bool Adjust = Data.ReadBit();
+		int Change = Data.Read<int>();
+		Player->Character->Experience = std::max(0, Adjust ? Player->Character->Experience + Change : Change);
+		Player->Character->CalculateStats();
+		SendHUD(Peer);
+	}
 	else if(Command == "give") {
 		uint32_t ItemID = Data.Read<uint32_t>();
 		int Count = Data.Read<int>();
@@ -1678,6 +1643,12 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 			return;
 
 		SendItem(Peer, Stats->Items.at(ItemID), Count);
+	}
+	else if(Command == "gold") {
+		bool Adjust = Data.ReadBit();
+		int Change = Data.Read<int>();
+		Player->Character->Gold = Adjust ? Player->Character->Gold + Change : Change;
+		SendHUD(Peer);
 	}
 	else if(Command == "map") {
 		ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
