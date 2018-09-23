@@ -2,16 +2,16 @@
 <element>
     <element id="element_menu_title" style="style_hud_bg" size_x="512" size_y="700">
         <element id="image_title_logo" texture="textures/menu/logo.png" offset_y="-250" size_x="344" size_y="128" clickable="false"/>
-        <element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-60" size_x="200" size_y="48">
+        <element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-60" size_x="200" size_y="48">
             <element id="label_menu_title_play" font="menu_buttons" text="Play" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_title_joinserver" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="20" size_x="200" size_y="48">
+        <element id="button_title_joinserver" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="20" size_x="200" size_y="48">
             <element id="label_menu_title_joinserver" font="menu_buttons" text="Join Server" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_title_options" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="100" size_x="200" size_y="48">
+        <element id="button_title_options" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="100" size_x="200" size_y="48">
             <element id="label_menu_title_options" font="menu_buttons" text="Options" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_title_exit" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="180" size_x="200" size_y="48">
+        <element id="button_title_exit" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="180" size_x="200" size_y="48">
             <element id="label_menu_title_exit" font="menu_buttons" text="Exit" offset_y="32" alignment_y="3"/>
             <element id="label_menu_title_message" font="menu_buttons" offset_y="100" alignment_y="3"/>
         </element>
@@ -24,7 +24,7 @@
         <element id="button_characters_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="260" size_x="128" size_y="48">
             <element id="label_menu_characters_play" font="menu_buttons" text="Play" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_characters_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="150" offset_y="260" size_x="128" size_y="48">
+        <element id="button_characters_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="150" offset_y="260" size_x="128" size_y="48">
             <element id="label_menu_characters_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
         <element id="label_menu_characters_title" font="hud_large" text="Characters" offset_y="-250"/>
@@ -39,7 +39,7 @@
         <element id="button_newcharacter_createhardcore" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-170" offset_y="-16" size_x="150" size_y="32" alignment_y="2">
             <element id="label_menu_newcharacter_createhardcore" font="hud_medium" text="Create Hardcore" offset_y="23" alignment_y="3"/>
         </element>
-        <element id="button_newcharacter_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="170" offset_y="-16" size_x="150" size_y="32" alignment_y="2">
+        <element id="button_newcharacter_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="170" offset_y="-16" size_x="150" size_y="32" alignment_y="2">
             <element id="label_menu_newcharacter_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </element>
         <element id="element_newcharacter_name" style="style_menu_textbox" offset_y="-65" size_x="250" size_y="30" alignment_y="2">
@@ -59,10 +59,10 @@
             <element id="label_menu_connect_port" font="menu_buttons" text="Port" offset_y="-35"/>
             <element id="label_menu_connect_message" font="menu_buttons" offset_y="110" alignment_y="3"/>
         </element>
-        <element id="button_connect_connect" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-75" offset_y="230" size_x="128" size_y="48">
+        <element id="button_connect_connect" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-75" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_connect_connect" font="menu_buttons" text="Connect" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_connect_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="75" offset_y="230" size_x="128" size_y="48">
+        <element id="button_connect_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="75" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_connect_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
         <element id="label_menu_connect_title" font="hud_large" text="Connect" offset_y="-250"/>
@@ -80,32 +80,32 @@
         <element id="button_account_login" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-150" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_account_login" font="menu_buttons" text="Login" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_account_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="230" size_x="128" size_y="48">
+        <element id="button_account_create" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_account_create" font="menu_buttons" text="Create" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_account_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="150" offset_y="230" size_x="128" size_y="48">
+        <element id="button_account_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="150" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_account_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
         <element id="label_menu_account_title" font="hud_large" text="Account Info" offset_y="-250"/>
     </element>
     <element id="element_menu_ingame" style="style_hud_bg" size_x="512" size_y="700">
-        <element id="button_ingame_respawn" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-140" size_x="200" size_y="48">
+        <element id="button_ingame_respawn" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-140" size_x="200" size_y="48">
             <element id="label_menu_ingame_respawn" font="menu_buttons" text="Respawn" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_ingame_resume" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-60" size_x="200" size_y="48">
+        <element id="button_ingame_resume" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-60" size_x="200" size_y="48">
             <element id="label_menu_ingame_resume" font="menu_buttons" text="Resume" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_ingame_options" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="20" size_x="200" size_y="48">
+        <element id="button_ingame_options" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="20" size_x="200" size_y="48">
             <element id="label_menu_ingame_options" font="menu_buttons" text="Options" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_ingame_exit" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="100" size_x="200" size_y="48">
+        <element id="button_ingame_exit" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="100" size_x="200" size_y="48">
             <element id="label_menu_ingame_exit" font="menu_buttons" text="Exit" offset_y="32" alignment_y="3"/>
         </element>
         <element id="label_menu_ingame_exitwarning" color="red" font="menu_buttons" text="Exiting battle will result in death" offset_y="150" alignment_y="3"/>
     </element>
     <element id="element_menu_options" style="style_hud_bg" size_x="512" size_y="700">
         <element id="element_menu_options_middle" offset_y="150" alignment_y="0">
-            <element id="button_options_fullscreen" style="style_menu_textbox" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="15" offset_y="50" size_x="32" size_y="32" alignment_x="0">
+            <element id="button_options_fullscreen" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_x="15" offset_y="50" size_x="32" size_y="32" alignment_x="0">
                 <element id="label_menu_options_fullscreen_check" font="hud_medium" text="X"/>
             </element>
             <element id="element_options_soundvolume" style="style_menu_textbox" offset_x="15" offset_y="100" size_x="150" size_y="30" alignment_x="0">
@@ -120,19 +120,19 @@
             <element id="label_menu_options_soundvolume" font="menu_buttons" text="Sound Volume" offset_x="-15" offset_y="100" alignment_x="2"/>
             <element id="label_menu_options_musicvolume" font="menu_buttons" text="Music Volume" offset_x="-15" offset_y="150" alignment_x="2"/>
         </element>
-        <element id="button_options_keybindings" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="20" size_x="160" size_y="48">
+        <element id="button_options_keybindings" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="20" size_x="160" size_y="48">
             <element id="label_menu_options_keybindings" font="menu_buttons" text="Key Bindings" offset_y="32" alignment_y="3"/>
         </element>
-        <element id="button_options_back" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="230" size_x="128" size_y="48">
+        <element id="button_options_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_options_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
         <element id="label_menu_options_title" font="hud_large" text="Options" offset_y="-250"/>
     </element>
     <element id="element_menu_confirm" style="style_menu_window" size_x="300" size_y="130">
-        <element id="button_confirm_ok" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-65" offset_y="25" size_x="100" size_y="32">
+        <element id="button_confirm_ok" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-65" offset_y="25" size_x="100" size_y="32">
             <element id="label_menu_confirm_ok" font="hud_medium" text="Ok" offset_y="23" alignment_y="3"/>
         </element>
-        <element id="button_confirm_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="65" offset_y="25" size_x="100" size_y="32">
+        <element id="button_confirm_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="65" offset_y="25" size_x="100" size_y="32">
             <element id="label_menu_confirm_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </element>
         <element id="label_menu_confirm_warning" font="hud_medium" text="Are you sure?" offset_y="40" alignment_y="3"/>
@@ -304,7 +304,7 @@
         <element id="button_trader_accept" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-55" offset_y="345" size_x="90" size_y="32" alignment_y="0" index="9">
             <element id="label_trader_accept" font="hud_medium" text="Accept" offset_y="22" alignment_y="3"/>
         </element>
-        <element id="button_trader_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="55" offset_y="345" size_x="90" size_y="32" alignment_y="0" index="10">
+        <element id="button_trader_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="55" offset_y="345" size_x="90" size_y="32" alignment_y="0" index="10">
             <element id="label_trader_cancel" font="hud_medium" text="Cancel" offset_y="22" alignment_y="3"/>
         </element>
         <element id="label_trader_lookingfor" font="hud_medium" text="You give me" offset_y="35" alignment_y="3"/>
@@ -363,7 +363,7 @@
         <element id="element_trade_yours" style="style_hud_bg" offset_x="112" offset_y="154" size_x="192" size_y="92" alignment_x="0" alignment_y="0" index="10">
             <element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="8" offset_y="44" size_x="32" size_y="32" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_yours" offset_x="-88" offset_y="32" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="false">
-                <element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="58" size_x="88" size_y="24">
+                <element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="58" size_x="88" size_y="24">
                     <element id="label_trade_status_yours" font="hud_small" text="Accept" offset_y="17" alignment_y="3"/>
                 </element>
                 <element id="label_trade_name_yours" font="hud_small" offset_y="-12" alignment_y="3"/>
@@ -416,10 +416,10 @@
         </element>
     </element>
     <element id="element_editor_newmap" style="style_menu_window" size_x="400" size_y="280">
-        <element id="button_editor_newmap_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
+        <element id="button_editor_newmap_create" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
             <element id="label_editor_newmap_create" font="hud_medium" text="Create" offset_y="23" alignment_y="3"/>
         </element>
-        <element id="button_editor_newmap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
+        <element id="button_editor_newmap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
             <element id="label_editor_newmap_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </element>
         <element id="element_editor_newmap_filename" style="style_menu_textbox" offset_x="150" offset_y="60" size_x="200" size_y="30" alignment_x="0" alignment_y="0">
@@ -437,10 +437,10 @@
         <element id="label_editor_newmap_title" font="menu_buttons" text="New Map" offset_y="35" alignment_y="3"/>
     </element>
     <element id="element_editor_resizemap" style="style_menu_window" size_x="400" size_y="320">
-        <element id="button_editor_resizemap_resize" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
+        <element id="button_editor_resizemap_resize" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
             <element id="label_editor_resizemap_create" font="hud_medium" text="Resize" offset_y="23" alignment_y="3"/>
         </element>
-        <element id="button_editor_resizemap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
+        <element id="button_editor_resizemap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="75" offset_y="-25" size_x="128" size_y="32" alignment_y="2">
             <element id="label_editor_resizemap_cancel" font="hud_medium" text="Cancel" offset_y="23" alignment_y="3"/>
         </element>
         <element id="element_editor_resizemap_minx" style="style_menu_textbox" offset_x="150" offset_y="60" size_x="75" size_y="30" alignment_x="0" alignment_y="0">
