@@ -691,7 +691,7 @@ void _Menu::LoadKeybindings() {
 	// Iterate over keys
 	size_t i = 0;
 	glm::vec2 Offset(StartingPosition);
-	for(const auto &KeyBinding : KeyBindings) {
+	for(const auto &Action : KeyBindings) {
 
 		// Add primary key button
 		ae::_Element *PrimaryButton = new ae::_Element();
@@ -701,8 +701,18 @@ void _Menu::LoadKeybindings() {
 		PrimaryButton->Alignment = ae::LEFT_TOP;
 		PrimaryButton->Style = ae::Assets.Styles["style_menu_button"];
 		PrimaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		PrimaryButton->Index = KeyBinding;
+		PrimaryButton->Index = Action;
 		KeyBindingsElement->Children.push_back(PrimaryButton);
+
+		// Add primary key
+		ae::_Element *PrimaryKey = new ae::_Element();
+		PrimaryKey->Font = ae::Assets.Fonts["hud_small"];
+		PrimaryKey->Text = ae::Actions.GetInputNameForAction(Action);
+		PrimaryKey->Parent = PrimaryButton;
+		PrimaryKey->Offset = glm::vec2(0, 23);
+		PrimaryKey->Alignment = ae::CENTER_BASELINE;
+		PrimaryKey->Clickable = false;
+		PrimaryButton->Children.push_back(PrimaryKey);
 
 		// Add secondary key button
 		ae::_Element *SecondaryButton = new ae::_Element();
@@ -712,19 +722,52 @@ void _Menu::LoadKeybindings() {
 		SecondaryButton->Alignment = ae::LEFT_TOP;
 		SecondaryButton->Style = ae::Assets.Styles["style_menu_button"];
 		SecondaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		SecondaryButton->Index = KeyBinding;
+		SecondaryButton->Index = Action;
 		KeyBindingsElement->Children.push_back(SecondaryButton);
+
+		// Add secondary key
+		ae::_Element *SecondaryKey = new ae::_Element();
+		SecondaryKey->Font = ae::Assets.Fonts["hud_small"];
+		SecondaryKey->Text = ae::Actions.GetInputNameForAction(Action, 1);
+		SecondaryKey->Parent = SecondaryButton;
+		SecondaryKey->Offset = glm::vec2(0, 23);
+		SecondaryKey->Alignment = ae::CENTER_BASELINE;
+		SecondaryKey->Clickable = false;
+		SecondaryButton->Children.push_back(SecondaryKey);
 
 		// Add label
 		ae::_Element *Label = new ae::_Element();
 		Label->Font = ae::Assets.Fonts["hud_small"];
 		Label->Text = KeyBindingNames[i];
-		Label->Color = glm::vec4(1.0f);
 		Label->Parent = PrimaryButton;
 		Label->Offset = glm::vec2(-120, 23);
 		Label->Alignment = ae::CENTER_BASELINE;
 		Label->Clickable = false;
 		PrimaryButton->Children.push_back(Label);
+
+		// Add headers
+		if(Offset.y == StartingPosition.y) {
+
+			// Add primary
+			ae::_Element *PrimaryLabel = new ae::_Element();
+			PrimaryLabel->Font = ae::Assets.Fonts["hud_small"];
+			PrimaryLabel->Text = "Primary";
+			PrimaryLabel->Parent = PrimaryButton;
+			PrimaryLabel->Offset = glm::vec2(0, -10);
+			PrimaryLabel->Alignment = ae::CENTER_BASELINE;
+			PrimaryLabel->Clickable = false;
+			PrimaryButton->Children.push_back(PrimaryLabel);
+
+			// Add secondary
+			ae::_Element *SecondaryLabel = new ae::_Element();
+			SecondaryLabel->Font = ae::Assets.Fonts["hud_small"];
+			SecondaryLabel->Text = "Secondary";
+			SecondaryLabel->Parent = SecondaryButton;
+			SecondaryLabel->Offset = glm::vec2(0, -10);
+			SecondaryLabel->Alignment = ae::CENTER_BASELINE;
+			SecondaryLabel->Clickable = false;
+			SecondaryButton->Children.push_back(SecondaryLabel);
+		}
 
 		// Update position
 		Offset.y += Spacing.y;
@@ -736,7 +779,6 @@ void _Menu::LoadKeybindings() {
 	}
 
 	KeyBindingsElement->CalculateBounds();
-	//KeyBindingsElement->SetDebug(1);
 }
 
 // Clear memory used by portraits
