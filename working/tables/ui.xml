@@ -120,13 +120,22 @@
             <element id="label_menu_options_soundvolume" font="menu_buttons" text="Sound Volume" offset_x="-15" offset_y="100" alignment_x="2"/>
             <element id="label_menu_options_musicvolume" font="menu_buttons" text="Music Volume" offset_x="-15" offset_y="150" alignment_x="2"/>
         </element>
+        <!--
         <element id="button_options_keybindings" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="20" size_x="160" size_y="48">
             <element id="label_menu_options_keybindings" font="menu_buttons" text="Key Bindings" offset_y="32" alignment_y="3"/>
         </element>
+		-->
         <element id="button_options_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="230" size_x="128" size_y="48">
             <element id="label_menu_options_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
         <element id="label_menu_options_title" font="hud_large" text="Options" offset_y="-250"/>
+    </element>
+    <element id="element_menu_keybindings" style="style_hud_bg" size_x="900" size_y="700">
+        <element id="element_menu_keybindings_keys" size_x="900" size_y="600" offset_y="-50">
+        </element>
+        <element id="button_menu_keybindings_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="300" size_x="128" size_y="48">
+            <element id="label_menu_keybindings_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
+        </element>
     </element>
     <element id="element_menu_confirm" style="style_menu_window" size_x="300" size_y="130">
         <element id="button_confirm_ok" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-65" offset_y="25" size_x="100" size_y="32">

@@ -57,6 +57,7 @@ class _Menu {
 			STATE_CONNECT,
 			STATE_ACCOUNT,
 			STATE_OPTIONS,
+			STATE_KEYBINDINGS,
 			STATE_INGAME,
 		};
 
@@ -81,6 +82,7 @@ class _Menu {
 		void InitInGame();
 		void InitPlay();
 		void InitOptions();
+		void InitKeybindings();
 		void ConfirmAction();
 		void ExitGame();
 		void Close();
@@ -130,9 +132,11 @@ class _Menu {
 		void LoadCharacterSlots();
 		void LoadPortraitButtons();
 		void LoadBuildButtons();
+		void LoadKeybindings();
 		void ClearCharacterSlots();
 		void ClearPortraits();
 		void ClearBuilds();
+		void ClearKeybindings();
 		void UpdateOptions();
 		void UpdateVolume();
 		void ResetInGameState();

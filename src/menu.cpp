@@ -48,6 +48,52 @@ const std::string CharacterButtonPrefix = "button_characters_slot";
 const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
 
+const int KeyBindings[] = {
+	Action::GAME_UP,
+	Action::GAME_DOWN,
+	Action::GAME_LEFT,
+	Action::GAME_RIGHT,
+	Action::GAME_JOIN,
+	Action::GAME_INVENTORY,
+	Action::GAME_SKILLS,
+	Action::GAME_TRADE,
+	Action::GAME_PARTY,
+	Action::GAME_CHAT,
+	Action::GAME_USE,
+	Action::GAME_SKILL1,
+	Action::GAME_SKILL2,
+	Action::GAME_SKILL3,
+	Action::GAME_SKILL4,
+	Action::GAME_SKILL5,
+	Action::GAME_SKILL6,
+	Action::GAME_SKILL7,
+	Action::GAME_SKILL8,
+	Action::MISC_CONSOLE,
+};
+
+const char *KeyBindingNames[] = {
+	"Move Up",
+	"Move Down",
+	"Move Left",
+	"Move Right",
+	"Join Battle",
+	"Inventory",
+	"Skills",
+	"Trade",
+	"Party",
+	"Chat",
+	"Use",
+	"Skill 1",
+	"Skill 2",
+	"Skill 3",
+	"Skill 4",
+	"Skill 5",
+	"Skill 6",
+	"Skill 7",
+	"Skill 8",
+	"Console",
+};
+
 // Constructor
 _Menu::_Menu() {
 	State = STATE_NONE;
@@ -175,6 +221,15 @@ void _Menu::InitOptions() {
 	UpdateOptions();
 
 	State = STATE_OPTIONS;
+}
+
+// Initialize key bindings menu
+void _Menu::InitKeybindings() {
+	ChangeLayout("element_menu_keybindings");
+	LoadKeybindings();
+	CurrentLayout->SetActive(true);
+
+	State = STATE_KEYBINDINGS;
 }
 
 // Show the confirm screen
@@ -622,10 +677,80 @@ void _Menu::LoadBuildButtons() {
 	BuildsElement->CalculateBounds();
 }
 
+// Create ui elements for key bindings
+void _Menu::LoadKeybindings() {
+
+	// Clear old children
+	ae::_Element *KeyBindingsElement = ae::Assets.Elements["element_menu_keybindings_keys"];
+	ClearKeybindings();
+
+	glm::vec2 StartingPosition(185, 50);
+	glm::vec2 Spacing(400, 50);
+	glm::vec2 Size(100, 35);
+
+	// Iterate over keys
+	size_t i = 0;
+	glm::vec2 Offset(StartingPosition);
+	for(const auto &KeyBinding : KeyBindings) {
+
+		// Add primary key button
+		ae::_Element *PrimaryButton = new ae::_Element();
+		PrimaryButton->Parent = KeyBindingsElement;
+		PrimaryButton->Offset = Offset;
+		PrimaryButton->Size = Size;
+		PrimaryButton->Alignment = ae::LEFT_TOP;
+		PrimaryButton->Style = ae::Assets.Styles["style_menu_button"];
+		PrimaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		PrimaryButton->Index = KeyBinding;
+		KeyBindingsElement->Children.push_back(PrimaryButton);
+
+		// Add secondary key button
+		ae::_Element *SecondaryButton = new ae::_Element();
+		SecondaryButton->Parent = KeyBindingsElement;
+		SecondaryButton->Offset = Offset + glm::vec2(Size.x + 10, 0);
+		SecondaryButton->Size = Size;
+		SecondaryButton->Alignment = ae::LEFT_TOP;
+		SecondaryButton->Style = ae::Assets.Styles["style_menu_button"];
+		SecondaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		SecondaryButton->Index = KeyBinding;
+		KeyBindingsElement->Children.push_back(SecondaryButton);
+
+		// Add label
+		ae::_Element *Label = new ae::_Element();
+		Label->Font = ae::Assets.Fonts["hud_small"];
+		Label->Text = KeyBindingNames[i];
+		Label->Color = glm::vec4(1.0f);
+		Label->Parent = PrimaryButton;
+		Label->Offset = glm::vec2(-120, 23);
+		Label->Alignment = ae::CENTER_BASELINE;
+		Label->Clickable = false;
+		PrimaryButton->Children.push_back(Label);
+
+		// Update position
+		Offset.y += Spacing.y;
+		if(Offset.y > KeyBindingsElement->Size.y - Size.y) {
+			Offset.x += Spacing.x;
+			Offset.y = StartingPosition.y;
+		}
+		i++;
+	}
+
+	KeyBindingsElement->CalculateBounds();
+	//KeyBindingsElement->SetDebug(1);
+}
+
 // Clear memory used by portraits
 void _Menu::ClearBuilds() {
-
 	std::list<ae::_Element *> &Children = ae::Assets.Elements["element_menu_new_builds"]->Children;
+	for(auto &Child : Children)
+		delete Child;
+
+	Children.clear();
+}
+
+// Clear memory used by key bindings
+void _Menu::ClearKeybindings() {
+	std::list<ae::_Element *> &Children = ae::Assets.Elements["element_menu_keybindings_keys"]->Children;
 	for(auto &Child : Children)
 		delete Child;
 
@@ -746,6 +871,7 @@ void _Menu::Close() {
 	ClearCharacterSlots();
 	ClearPortraits();
 	ClearBuilds();
+	ClearKeybindings();
 }
 
 // Handle action, return true to stop handling same input
@@ -834,6 +960,13 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 						InitInGame();
 					else
 						InitTitle(true);
+				} break;
+			}
+		} break;
+		case STATE_KEYBINDINGS: {
+			switch(Action) {
+				case Action::MENU_BACK: {
+					InitOptions();
 				} break;
 			}
 		} break;
@@ -1037,11 +1170,23 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					SetFullscreen(!Config.Fullscreen);
 					UpdateOptions();
 				}
+				else if(Clicked->Name == "button_options_keybindings") {
+					InitKeybindings();
+
+					PlayClickSound();
+				}
 				else if(Clicked->Name == "button_options_back") {
 					if(FromInGame)
 						InitInGame();
 					else
 						InitTitle(true);
+
+					PlayClickSound();
+				}
+			} break;
+			case STATE_KEYBINDINGS: {
+				if(Clicked->Name == "button_menu_keybindings_back") {
+					InitOptions();
 
 					PlayClickSound();
 				}
@@ -1130,6 +1275,12 @@ void _Menu::Render() {
 			   ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
 
 			ae::Assets.Elements["element_menu_options"]->Render();
+		} break;
+		case STATE_KEYBINDINGS: {
+			if(FromInGame)
+			   ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
+
+			ae::Assets.Elements["element_menu_keybindings"]->Render();
 		} break;
 		case STATE_INGAME: {
 			ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
