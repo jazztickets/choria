@@ -195,7 +195,7 @@ void _Framework::ChangeState(ae::_State *RequestedState) {
 	FrameworkState = CLOSE;
 }
 
-// Updates the current state and manages the state stack
+// Updates the current state
 void _Framework::Update() {
 
 	// Get frame time
@@ -217,13 +217,14 @@ void _Framework::Update() {
 						ae::_KeyEvent KeyEvent("", Event.key.keysym.scancode, Event.type == SDL_KEYDOWN, Event.key.repeat);
 
 						// Handle console input
+						bool SendAction = true;
 						if(Console->IsOpen())
 							ae::Graphics.Element->HandleKey(KeyEvent);
 						else
-							State->HandleKey(KeyEvent);
+							SendAction = State->HandleKey(KeyEvent);
 
 						// Pass keys to action handler
-						if(!Event.key.repeat)
+						if(!Event.key.repeat && SendAction)
 							ae::Actions.InputEvent(State, ae::_Input::KEYBOARD, Event.key.keysym.scancode, Event.type == SDL_KEYDOWN);
 					}
 				} break;

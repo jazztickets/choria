@@ -103,6 +103,7 @@ _Menu::_Menu() {
 	PreviousClickTimer = 0.0;
 	CharacterSlots.resize(ACCOUNT_MAX_CHARACTER_SLOTS);
 	HardcoreServer = false;
+	RebindType = -1;
 
 	ResetInGameState();
 }
@@ -228,6 +229,7 @@ void _Menu::InitKeybindings() {
 	ChangeLayout("element_menu_keybindings");
 	LoadKeybindings();
 	CurrentLayout->SetActive(true);
+	ae::Assets.Elements["element_menu_keybindings_newkey"]->SetActive(false);
 
 	State = STATE_KEYBINDINGS;
 }
@@ -695,13 +697,14 @@ void _Menu::LoadKeybindings() {
 
 		// Add primary key button
 		ae::_Element *PrimaryButton = new ae::_Element();
+		PrimaryButton->Name = "primary";
 		PrimaryButton->Parent = KeyBindingsElement;
 		PrimaryButton->Offset = Offset;
 		PrimaryButton->Size = Size;
 		PrimaryButton->Alignment = ae::LEFT_TOP;
 		PrimaryButton->Style = ae::Assets.Styles["style_menu_button"];
 		PrimaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		PrimaryButton->Index = Action;
+		PrimaryButton->Index = i;
 		KeyBindingsElement->Children.push_back(PrimaryButton);
 
 		// Add primary key
@@ -716,13 +719,14 @@ void _Menu::LoadKeybindings() {
 
 		// Add secondary key button
 		ae::_Element *SecondaryButton = new ae::_Element();
+		SecondaryButton->Name = "secondary";
 		SecondaryButton->Parent = KeyBindingsElement;
 		SecondaryButton->Offset = Offset + glm::vec2(Size.x + 10, 0);
 		SecondaryButton->Size = Size;
 		SecondaryButton->Alignment = ae::LEFT_TOP;
 		SecondaryButton->Style = ae::Assets.Styles["style_menu_button"];
 		SecondaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		SecondaryButton->Index = Action;
+		SecondaryButton->Index = i;
 		KeyBindingsElement->Children.push_back(SecondaryButton);
 
 		// Add secondary key
@@ -867,6 +871,42 @@ void _Menu::ResetInGameState() {
 	ShowRespawn = false;
 }
 
+// Show keybinding dialog
+void _Menu::ShowNewKey(ae::_Element *Button, int Type) {
+	ae::_Element *NewKeyElement = ae::Assets.Elements["element_menu_keybindings_newkey"];
+	ae::_Element *NewKeyActionElement = ae::Assets.Elements["label_menu_keybindings_newkey_action"];
+	NewKeyElement->SetActive(true);
+
+	// Set action text
+	NewKeyActionElement->Text = KeyBindingNames[Button->Index];
+	RebindType = Type;
+}
+
+// Remap a key/button
+void _Menu::RemapInput(int InputType, int Input) {
+	ae::Assets.Elements["element_menu_keybindings_newkey"]->SetActive(false);
+	if(InputType == ae::_Input::KEYBOARD && Input == SDL_SCANCODE_ESCAPE)
+		return;
+
+	// Remove duplicate keys/buttons
+	for(int i = 0; i < Action::COUNT; i++) {
+		if(ae::Actions.GetInputForAction(InputType, i) == Input) {
+			//ae::Actions.ClearMappingsForAction(InputType, i);
+		}
+	}
+
+	// Clear out existing action
+	//ae::Actions.ClearMappingsForAction(ae::_Input::KEYBOARD, CurrentAction);
+	//ae::Actions.ClearMappingsForAction(ae::_Input::MOUSE_BUTTON, CurrentAction);
+
+	// Add new binding
+	//ae::Actions.AddInputMap(InputType, Input, CurrentAction, false);
+
+	// Update menu labels
+	//RefreshInputLabels();
+}
+
+
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
@@ -1008,7 +1048,9 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 		case STATE_KEYBINDINGS: {
 			switch(Action) {
 				case Action::MENU_BACK: {
-					InitOptions();
+					ae::_Element *NewKeyElement = ae::Assets.Elements["element_menu_keybindings_newkey"];
+					if(!NewKeyElement->Active)
+						InitOptions();
 				} break;
 			}
 		} break;
@@ -1028,9 +1070,9 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 }
 
 // Handle key event
-void _Menu::HandleKey(const ae::_KeyEvent &KeyEvent) {
+bool _Menu::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	if(State == STATE_NONE)
-		return;
+		return true;
 
 	switch(State) {
 		case STATE_CHARACTERS: {
@@ -1038,9 +1080,20 @@ void _Menu::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				ValidateCreateCharacter();
 			}
 		} break;
+		case STATE_KEYBINDINGS: {
+
+			// Check for new key binding
+			ae::_Element *NewKeyElement = ae::Assets.Elements["element_menu_keybindings_newkey"];
+			if(NewKeyElement->Active && KeyEvent.Pressed) {
+				RemapInput(ae::_Input::KEYBOARD, KeyEvent.Scancode);
+				return false;
+			}
+		} break;
 		default:
 		break;
 	}
+
+	return true;
 }
 
 // Handle mouse event
@@ -1050,6 +1103,22 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 	if(!CurrentLayout)
 		return;
+
+
+	// Check for new button binding
+	switch(State) {
+		case STATE_KEYBINDINGS: {
+			ae::_Element *NewKeyElement = ae::Assets.Elements["element_menu_keybindings_newkey"];
+			if(NewKeyElement->Active) {
+				if(MouseEvent.Pressed)
+					RemapInput(ae::_Input::MOUSE_BUTTON, MouseEvent.Button);
+
+				return;
+			}
+		} break;
+		default:
+		break;
+	}
 
 	// Get clicked element
 	ae::_Element *Clicked = CurrentLayout->GetClickedElement();
@@ -1232,6 +1301,12 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					PlayClickSound();
 				}
+				else if(Clicked->Name == "primary") {
+					ShowNewKey(Clicked, 0);
+				}
+				else if(Clicked->Name == "secondary") {
+					ShowNewKey(Clicked, 1);
+				}
 			} break;
 			case STATE_INGAME: {
 				if(Clicked->Name == "button_ingame_respawn") {
@@ -1322,7 +1397,11 @@ void _Menu::Render() {
 			if(FromInGame)
 			   ae::Graphics.FadeScreen(MENU_PAUSE_FADE);
 
-			ae::Assets.Elements["element_menu_keybindings"]->Render();
+			CurrentLayout->Render();
+			if(ae::Assets.Elements["element_menu_keybindings_newkey"]->Active) {
+				ae::Graphics.FadeScreen(MENU_ACCEPTINPUT_FADE);
+				ae::Assets.Elements["element_menu_keybindings_newkey"]->Render();
+			}
 		} break;
 		case STATE_INGAME: {
 			ae::Graphics.FadeScreen(MENU_PAUSE_FADE);

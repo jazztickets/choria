@@ -337,7 +337,7 @@ bool _PlayState::HandleAction(int InputType, size_t Action, int Value) {
 }
 
 // Key handler
-void _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
+bool _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	bool Handled = ae::Graphics.Element->HandleKey(KeyEvent);
 
 	// Message history handling
@@ -349,14 +349,17 @@ void _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	}
 
 	// Pass to menu
+	bool SendAction = true;
 	if(!Handled)
-		Menu.HandleKey(KeyEvent);
+		SendAction = Menu.HandleKey(KeyEvent);
 
 	if(Menu.State != _Menu::STATE_NONE)
-		return;
+		return SendAction;
 
 	if(!HUD->IsChatting())
 		HUD->TradeScreen->ValidateTradeGold();
+
+	return SendAction;
 }
 
 // Mouse handler

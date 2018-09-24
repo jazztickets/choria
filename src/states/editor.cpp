@@ -150,13 +150,13 @@ bool _EditorState::HandleAction(int InputType, size_t Action, int Value) {
 }
 
 // Key events
-void _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
+bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	bool Handled = ae::Graphics.Element->HandleKey(KeyEvent);
 	if(Handled)
-		return;
+		return true;
 
 	if(KeyEvent.Repeat)
-		return;
+		return true;
 
 	if(KeyEvent.Pressed) {
 		if(ae::FocusedElement) {
@@ -196,7 +196,7 @@ void _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 					ae::FocusedElement->ResetCursor();
 			}
 
-			return;
+			return true;
 		}
 
 		switch(KeyEvent.Scancode) {
@@ -310,6 +310,8 @@ void _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			break;
 		}
 	}
+
+	return true;
 }
 
 // Mouse events

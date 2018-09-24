@@ -88,7 +88,7 @@ class _Menu {
 		void Close();
 
 		bool HandleAction(int InputType, size_t Action, int Value);
-		void HandleKey(const ae::_KeyEvent &KeyEvent);
+		bool HandleKey(const ae::_KeyEvent &KeyEvent);
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent);
 
 		void SetFullscreen(bool Fullscreen);
@@ -141,10 +141,14 @@ class _Menu {
 		void UpdateVolume();
 		void ResetInGameState();
 
+		void ShowNewKey(ae::_Element *Button, int Type);
+		void RemapInput(int InputType, int Input);
+
 		// States
 		std::string DefaultUsername;
 		std::string DefaultPassword;
 		bool FromInGame;
+		int RebindType;
 
 		// UI
 		ae::_Element *CurrentLayout;

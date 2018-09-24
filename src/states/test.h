@@ -41,7 +41,7 @@ class _TestState : public ae::_State {
 		void Close() override;
 
 		// Input
-		void HandleKey(const ae::_KeyEvent &KeyEvent) override;
+		bool HandleKey(const ae::_KeyEvent &KeyEvent) override;
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent) override;
 		void HandleMouseMove(const glm::ivec2 &Position) override;
 		void HandleWindow(uint8_t Event) override;

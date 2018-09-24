@@ -135,6 +135,10 @@
             <element id="label_menu_keybindings_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
     </element>
+    <element id="element_menu_keybindings_newkey" style="style_menu_window" size_x="300" size_y="100">
+        <element id="label_menu_keybindings_newkey" font="menu_buttons" text="Press a key or button for" offset_y="35" alignment_y="3"/>
+        <element id="label_menu_keybindings_newkey_action" font="menu_buttons" offset_y="75" alignment_y="3"/>
+    </element>
     <element id="element_menu_confirm" style="style_menu_window" size_x="300" size_y="130">
         <element id="button_confirm_ok" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-65" offset_y="25" size_x="100" size_y="32">
             <element id="label_menu_confirm_ok" font="hud_medium" text="Ok" offset_y="23" alignment_y="3"/>

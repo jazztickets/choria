@@ -126,13 +126,15 @@ void _TestState::Close() {
 }
 
 // Key handler
-void _TestState::HandleKey(const ae::_KeyEvent &KeyEvent) {
+bool _TestState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	ae::Graphics.Element->HandleKey(KeyEvent);
 
 	if(KeyEvent.Pressed) {
 		if(KeyEvent.Scancode == SDL_SCANCODE_ESCAPE)
 			Framework.Done = true;
 	}
+
+	return true;
 }
 
 // Mouse handler

@@ -64,7 +64,7 @@ class _PlayState : public ae::_State {
 
 		// Input
 		bool HandleAction(int InputType, size_t Action, int Value) override;
-		void HandleKey(const ae::_KeyEvent &KeyEvent) override;
+		bool HandleKey(const ae::_KeyEvent &KeyEvent) override;
 		void HandleMouseButton(const ae::_MouseEvent &MouseEvent) override;
 		void HandleMouseMove(const glm::ivec2 &Position) override;
 		void HandleCommand(ae::_Console *Console) override;
