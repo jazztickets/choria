@@ -817,6 +817,7 @@ void _HUD::ToggleChat() {
 		ChatElement->SetActive(true);
 		ChatTextBox->ResetCursor();
 		ae::FocusedElement = ChatTextBox;
+		Framework.IgnoreNextInputEvent = true;
 	}
 }
 
@@ -907,6 +908,7 @@ void _HUD::InitParty() {
 	PartyTextBox->CursorPosition = PartyTextBox->Text.size();
 	PartyTextBox->ResetCursor();
 	ae::FocusedElement = PartyTextBox;
+	Framework.IgnoreNextInputEvent = true;
 }
 
 // Closes the chat window
