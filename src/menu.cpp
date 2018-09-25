@@ -39,6 +39,7 @@
 #include <packet.h>
 #include <version.h>
 #include <SDL_keycode.h>
+#include <SDL_mouse.h>
 #include <sstream>
 #include <iomanip>
 
@@ -116,7 +117,7 @@ void _Menu::ChangeLayout(const std::string &ElementName) {
 	if(CurrentLayout) {
 		CurrentLayout->SetActive(false);
 
-		if(CurrentLayout == ae::Assets.Elements["element_menu_options"])
+		if(CurrentLayout == ae::Assets.Elements["element_menu_options"] || CurrentLayout == ae::Assets.Elements["element_menu_keybindings"])
 			Config.Save();
 	}
 
@@ -884,6 +885,14 @@ void _Menu::ShowNewKey(ae::_Element *Button, int Type) {
 	NewKeyActionElement->Text = KeyBindingNames[Button->Index];
 }
 
+// Clear action on keybinding page
+void _Menu::ClearAction(int Action, int Type) {
+	for(int i = 0; i < ae::_Input::INPUT_COUNT; i++) {
+		if(ae::Actions.GetInputForAction(i, Action, Type) != -1)
+			ae::Actions.ClearMappingsForAction(i, Action, Type);
+	}
+}
+
 // Remap a key/button
 void _Menu::RemapInput(int InputType, int Input) {
 	ae::Assets.Elements["element_menu_keybindings_newkey"]->SetActive(false);
@@ -894,10 +903,7 @@ void _Menu::RemapInput(int InputType, int Input) {
 	ae::Actions.ClearMappingForInput(InputType, Input);
 
 	// Clear out existing action
-	for(int i = 0; i < ae::_Input::INPUT_COUNT; i++) {
-		if(ae::Actions.GetInputForAction(i, RebindAction, RebindType) != -1)
-			ae::Actions.ClearMappingsForAction(i, RebindAction, RebindType);
-	}
+	ClearAction(RebindAction, RebindType);
 
 	// Add new binding
 	ae::Actions.AddInputMap(RebindType, InputType, Input, RebindAction, 1.0f, -1.0f, false);
@@ -1121,6 +1127,27 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	// Get clicked element
 	ae::_Element *Clicked = CurrentLayout->GetClickedElement();
 	if(Clicked) {
+
+		// Handle right click
+		if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
+			switch(State) {
+				case STATE_KEYBINDINGS: {
+					if(Clicked->Name == "primary") {
+						ClearAction(KeyBindings[Clicked->Index], 0);
+						InitKeybindings();
+					}
+					else if(Clicked->Name == "secondary") {
+						ClearAction(KeyBindings[Clicked->Index], 1);
+						InitKeybindings();
+					}
+				}
+				break;
+				default:
+				break;
+			}
+
+			return;
+		}
 
 		// Handle double clicking
 		bool DoubleClick = false;

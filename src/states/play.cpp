@@ -365,8 +365,7 @@ bool _PlayState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 // Mouse handler
 void _PlayState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	ae::FocusedElement = nullptr;
-	if(MouseEvent.Button == SDL_BUTTON_LEFT)
-		ae::Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
+	ae::Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
 
 	// Pass to menu
 	Menu.HandleMouseButton(MouseEvent);
