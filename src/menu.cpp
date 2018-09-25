@@ -104,6 +104,7 @@ _Menu::_Menu() {
 	CharacterSlots.resize(ACCOUNT_MAX_CHARACTER_SLOTS);
 	HardcoreServer = false;
 	RebindType = -1;
+	RebindAction = -1;
 
 	ResetInGameState();
 }
@@ -684,13 +685,13 @@ void _Menu::LoadKeybindings() {
 
 	// Clear old children
 	ae::_Element *KeyBindingsElement = ae::Assets.Elements["element_menu_keybindings_keys"];
-	ClearKeybindings();
+	ClearKeybindingElements();
 
 	glm::vec2 StartingPosition(185, 50);
 	glm::vec2 Spacing(400, 50);
 	glm::vec2 Size(100, 35);
 
-	// Iterate over keys
+	// Iterate over actions
 	size_t i = 0;
 	glm::vec2 Offset(StartingPosition);
 	for(const auto &Action : KeyBindings) {
@@ -710,7 +711,7 @@ void _Menu::LoadKeybindings() {
 		// Add primary key
 		ae::_Element *PrimaryKey = new ae::_Element();
 		PrimaryKey->Font = ae::Assets.Fonts["hud_small"];
-		PrimaryKey->Text = ae::Actions.GetInputNameForAction(Action);
+		PrimaryKey->Text = ae::Actions.GetInputNameForAction(Action, 0);
 		PrimaryKey->Parent = PrimaryButton;
 		PrimaryKey->Offset = glm::vec2(0, 23);
 		PrimaryKey->Alignment = ae::CENTER_BASELINE;
@@ -795,7 +796,7 @@ void _Menu::ClearBuilds() {
 }
 
 // Clear memory used by key bindings
-void _Menu::ClearKeybindings() {
+void _Menu::ClearKeybindingElements() {
 	std::list<ae::_Element *> &Children = ae::Assets.Elements["element_menu_keybindings_keys"]->Children;
 	for(auto &Child : Children)
 		delete Child;
@@ -878,8 +879,9 @@ void _Menu::ShowNewKey(ae::_Element *Button, int Type) {
 	NewKeyElement->SetActive(true);
 
 	// Set action text
-	NewKeyActionElement->Text = KeyBindingNames[Button->Index];
 	RebindType = Type;
+	RebindAction = KeyBindings[Button->Index];
+	NewKeyActionElement->Text = KeyBindingNames[Button->Index];
 }
 
 // Remap a key/button
@@ -889,23 +891,20 @@ void _Menu::RemapInput(int InputType, int Input) {
 		return;
 
 	// Remove duplicate keys/buttons
-	for(int i = 0; i < Action::COUNT; i++) {
-		if(ae::Actions.GetInputForAction(InputType, i) == Input) {
-			//ae::Actions.ClearMappingsForAction(InputType, i);
-		}
-	}
+	ae::Actions.ClearMappingForInput(InputType, Input);
 
 	// Clear out existing action
-	//ae::Actions.ClearMappingsForAction(ae::_Input::KEYBOARD, CurrentAction);
-	//ae::Actions.ClearMappingsForAction(ae::_Input::MOUSE_BUTTON, CurrentAction);
+	for(int i = 0; i < ae::_Input::INPUT_COUNT; i++) {
+		if(ae::Actions.GetInputForAction(i, RebindAction, RebindType) != -1)
+			ae::Actions.ClearMappingsForAction(i, RebindAction, RebindType);
+	}
 
 	// Add new binding
-	//ae::Actions.AddInputMap(InputType, Input, CurrentAction, false);
+	ae::Actions.AddInputMap(RebindType, InputType, Input, RebindAction, 1.0f, -1.0f, false);
 
 	// Update menu labels
-	//RefreshInputLabels();
+	InitKeybindings();
 }
-
 
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
@@ -953,7 +952,7 @@ void _Menu::Close() {
 	ClearCharacterSlots();
 	ClearPortraits();
 	ClearBuilds();
-	ClearKeybindings();
+	ClearKeybindingElements();
 }
 
 // Handle action, return true to stop handling same input
@@ -1104,7 +1103,6 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	if(!CurrentLayout)
 		return;
 
-
 	// Check for new button binding
 	switch(State) {
 		case STATE_KEYBINDINGS: {
@@ -1123,6 +1121,8 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	// Get clicked element
 	ae::_Element *Clicked = CurrentLayout->GetClickedElement();
 	if(Clicked) {
+
+		// Handle double clicking
 		bool DoubleClick = false;
 		if(PreviousClick == Clicked && PreviousClickTimer < MENU_DOUBLECLICK_TIME) {
 			PreviousClick = nullptr;
@@ -1130,8 +1130,11 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		}
 		else
 			PreviousClick = Clicked;
+
+		// Reset timer
 		PreviousClickTimer = 0.0;
 
+		// Handle click
 		switch(State) {
 			case STATE_TITLE: {
 				if(Clicked->Name == "button_title_play") {
@@ -1296,7 +1299,13 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 			} break;
 			case STATE_KEYBINDINGS: {
-				if(Clicked->Name == "button_menu_keybindings_back") {
+				if(Clicked->Name == "button_menu_keybindings_default") {
+					Config.LoadDefaultInputBindings(false);
+					InitKeybindings();
+
+					PlayClickSound();
+				}
+				else if(Clicked->Name == "button_menu_keybindings_back") {
 					InitOptions();
 
 					PlayClickSound();

@@ -136,7 +136,7 @@ class _Menu {
 		void ClearCharacterSlots();
 		void ClearPortraits();
 		void ClearBuilds();
-		void ClearKeybindings();
+		void ClearKeybindingElements();
 		void UpdateOptions();
 		void UpdateVolume();
 		void ResetInGameState();
@@ -149,6 +149,8 @@ class _Menu {
 		std::string DefaultPassword;
 		bool FromInGame;
 		int RebindType;
+		int RebindInput;
+		int RebindAction;
 
 		// UI
 		ae::_Element *CurrentLayout;

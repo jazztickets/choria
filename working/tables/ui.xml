@@ -131,6 +131,9 @@
     <element id="element_menu_keybindings" style="style_hud_bg" size_x="900" size_y="700">
         <element id="element_menu_keybindings_keys" size_x="900" size_y="600" offset_y="-50">
         </element>
+        <element id="button_menu_keybindings_default" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="20" offset_y="-20" size_x="100" size_y="32" alignment_x="0" alignment_y="2">
+            <element id="label_menu_keybindings_default" font="hud_small" text="Default" offset_y="22" alignment_y="3"/>
+        </element>
         <element id="button_menu_keybindings_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="300" size_x="128" size_y="48">
             <element id="label_menu_keybindings_back" font="menu_buttons" text="Back" offset_y="32" alignment_y="3"/>
         </element>
