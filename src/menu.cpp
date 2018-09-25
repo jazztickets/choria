@@ -1149,6 +1149,10 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			return;
 		}
 
+		// Ignore other buttons
+		if(MouseEvent.Button != SDL_BUTTON_LEFT)
+			return;
+
 		// Handle double clicking
 		bool DoubleClick = false;
 		if(PreviousClick == Clicked && PreviousClickTimer < MENU_DOUBLECLICK_TIME) {
