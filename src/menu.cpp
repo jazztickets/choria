@@ -1338,14 +1338,15 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 				else if(Clicked->Name == "button_menu_keybindings_back") {
 					InitOptions();
-
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "primary") {
 					ShowNewKey(Clicked, 0);
+					PlayClickSound();
 				}
 				else if(Clicked->Name == "secondary") {
 					ShowNewKey(Clicked, 1);
+					PlayClickSound();
 				}
 			} break;
 			case STATE_INGAME: {
