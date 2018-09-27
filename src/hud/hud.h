@@ -150,6 +150,7 @@ class _HUD {
 		void ToggleTeleport();
 		void ToggleParty();
 		void ToggleInGameMenu(bool Force);
+		void UpdateButtonBarLabels();
 
 		// Windows
 		void InitConfirm(const std::string &WarningMessage);

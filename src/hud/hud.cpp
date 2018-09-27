@@ -72,12 +72,7 @@ _HUD::_HUD() {
 
 	ChatTextBox = ae::Assets.Elements["textbox_chat"];
 
-	ae::Assets.Elements["label_buttonbar_join"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
-	ae::Assets.Elements["label_buttonbar_inventory"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
-	ae::Assets.Elements["label_buttonbar_trade"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_TRADE).substr(0, HUD_KEYNAME_LENGTH);
-	ae::Assets.Elements["label_buttonbar_skills"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
-	ae::Assets.Elements["label_buttonbar_party"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
-	ae::Assets.Elements["label_buttonbar_menu"]->Text = ae::Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
+	UpdateButtonBarLabels();
 	ae::Assets.Elements["label_hud_pvp"]->Text = "";
 
 	DarkOverlayElement = ae::Assets.Elements["element_dark_overlay"];
@@ -869,6 +864,16 @@ void _HUD::ToggleInGameMenu(bool Force) {
 		Menu.ShowRespawn = !Player->Character->IsAlive() && !Player->Character->Hardcore;
 		Menu.InitInGame();
 	}
+}
+
+// Update key/button names for button bar
+void _HUD::UpdateButtonBarLabels() {
+	ae::Assets.Elements["label_buttonbar_join"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_JOIN).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_inventory"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_INVENTORY).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_trade"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_TRADE).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_skills"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_SKILLS).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_party"]->Text = ae::Actions.GetInputNameForAction(Action::GAME_PARTY).substr(0, HUD_KEYNAME_LENGTH);
+	ae::Assets.Elements["label_buttonbar_menu"]->Text = ae::Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
 }
 
 // Initialize the confirm screen

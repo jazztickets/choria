@@ -117,8 +117,10 @@ void _Menu::ChangeLayout(const std::string &ElementName) {
 	if(CurrentLayout) {
 		CurrentLayout->SetActive(false);
 
-		if(CurrentLayout == ae::Assets.Elements["element_menu_options"] || CurrentLayout == ae::Assets.Elements["element_menu_keybindings"])
+		if(CurrentLayout == ae::Assets.Elements["element_menu_options"] || CurrentLayout == ae::Assets.Elements["element_menu_keybindings"]) {
 			Config.Save();
+			PlayState.HUD->UpdateButtonBarLabels();
+		}
 	}
 
 	CurrentLayout = ae::Assets.Elements[ElementName];
