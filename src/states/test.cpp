@@ -36,7 +36,8 @@ _TestState TestState;
 // Constructor
 _TestState::_TestState() :
 	Camera(nullptr),
-	Stats(nullptr) {
+	Stats(nullptr),
+	Minigame(nullptr) {
 }
 
 // Initialize
