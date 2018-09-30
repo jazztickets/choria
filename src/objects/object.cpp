@@ -309,7 +309,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		// Setup shader
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-		ae::Graphics.SetVBO(ae::VBO_QUAD);
+		ae::Graphics.SetVBO(ae::VBO_SPRITE);
 
 		// Draw debug server position
 		glm::vec3 DrawPosition;

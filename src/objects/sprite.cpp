@@ -47,7 +47,7 @@ void _Sprite::Render(double BlendFactor) {
 	);
 
 	if(Texture) {
-		ae::Graphics.SetVBO(ae::VBO_QUAD);
+		ae::Graphics.SetVBO(ae::VBO_SPRITE);
 		ae::Graphics.DrawSprite(RenderPosition, Texture, 0.0f, Scale);
 	}
 }

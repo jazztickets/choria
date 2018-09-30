@@ -327,7 +327,7 @@ void _Minigame::Render(double BlendFactor) {
 	for(auto &Item : Prizes) {
 		if(Item) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
-			ae::Graphics.SetVBO(ae::VBO_QUAD);
+			ae::Graphics.SetVBO(ae::VBO_SPRITE);
 			ae::Graphics.DrawSprite(Position, Item->Item->Texture, (float)Time * 50);
 			if(Item->Count > 1)
 				ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Item->Count) + "x", glm::vec2(Position) + glm::vec2(0.30f, 0.5f), ae::LEFT_BASELINE, glm::vec4(1), 1/64.0f);
