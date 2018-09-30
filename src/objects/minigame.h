@@ -79,6 +79,7 @@ class _Minigame {
 		float DropX;
 		size_t Bucket;
 		int Debug;
+		int Bounces;
 
 	private:
 

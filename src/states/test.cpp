@@ -49,9 +49,11 @@ void _TestState::Init() {
 
 	double MaxTime = 0;
 	double MinTime = 30;
+	int MaxBounces = 0;
+	int MinBounces = 99999;
 
 	// gawk 'BEGIN{IFS=OFS="\t";print "runs", "time", "sold", "profit", "gold/sec"} { time+=$1; total+=int($2/2) } END{ prof=(total-NR*10); print NR, time, total, prof, prof/time }'
-	int Simulations = 1;
+	int Simulations = 0;
 	for(int i = 0; i < Simulations; i++) {
 		//double StartTime = SDL_GetPerformanceCounter();
 		uint32_t Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
@@ -62,19 +64,22 @@ void _TestState::Init() {
 		Minigame->StartGame(Seed);
 
 		// Drop ball over highest value prize
-		int HighestPrizeIndex = 0;
-		int HighestPrizeValue = 0;
-		int Index = 0;
-		for(const auto &Prize : Minigame->Prizes) {
-			if(Prize && Prize->Item->Cost > HighestPrizeValue) {
-				HighestPrizeValue = Prize->Item->Cost;
-				HighestPrizeIndex = Index;
+		float X = 0;
+		if(0) {
+			int HighestPrizeIndex = 0;
+			int HighestPrizeValue = 0;
+			int Index = 0;
+			for(const auto &Prize : Minigame->Prizes) {
+				if(Prize && Prize->Item->Cost > HighestPrizeValue) {
+					HighestPrizeValue = Prize->Item->Cost;
+					HighestPrizeIndex = Index;
+				}
+				Index++;
 			}
-			Index++;
-		}
 
-		//float X = (float)ae::GetRandomReal(-7.65, 7.65);
-		float X = Minigame->Boundary.Start.x + 1 + HighestPrizeIndex * 2;
+			X = Minigame->Boundary.Start.x + 1 + HighestPrizeIndex * 2;
+		}
+		X = (float)ae::GetRandomReal(-7.65, 7.65);
 		Minigame->Drop(X);
 
 		Time = 0;
@@ -95,14 +100,24 @@ void _TestState::Init() {
 			//std::cout << "maxtime=" << Time << " seed=" << Seed << " x=" << X << std::endl;
 			MaxTime = Time;
 		}
+		if(Minigame->Bounces < MinBounces) {
+			//std::cout << "minbounces=" << Minigame->Bounces << " seed=" << Seed << " x=" << X << std::endl;
+			MinBounces = Minigame->Bounces;
+		}
+		if(Minigame->Bounces > MaxBounces) {
+			//std::cout << "maxbounces=" << Minigame->Bounces << " seed=" << Seed << " x=" << X << std::endl;
+			MaxBounces = Minigame->Bounces;
+		}
+
+		std::cout << Minigame->Bounces << std::endl;
 
 		if(Minigame->Bucket < Minigame->Prizes.size()) {
 			const _MinigameItem *MinigameItem = Minigame->Prizes[Minigame->Bucket];
 			if(MinigameItem && MinigameItem->Item) {
-				std::cout << Time << "\t" << MinigameItem->Item->Cost * MinigameItem->Count << std::endl;
+				//std::cout << Time << "\t" << MinigameItem->Item->Cost * MinigameItem->Count << std::endl;
 			}
 			else {
-				std::cout << Time << "\t" << "0" << std::endl;
+				//std::cout << Time << "\t" << "0" << std::endl;
 			}
 		}
 
@@ -111,12 +126,18 @@ void _TestState::Init() {
 		//std::cout << (SDL_GetPerformanceCounter() - StartTime) / (double)SDL_GetPerformanceFrequency() << std::endl;
 	}
 
+	Minigame = nullptr;
+
 	//Framework.Done = true;
 
-	Minigame = new _Minigame(&Stats->Minigames.at(1));
-	Minigame->Debug = -1;
-	Minigame->StartGame(1049117602);
-	Minigame->Drop(4.3513402938842773);
+	//Minigame = new _Minigame(&Stats->Minigames.at(1));
+	//Minigame->Debug = -1;
+	//Minigame->StartGame(1049117602);
+	//Minigame->Drop(4.3513402938842773);
+	//Minigame->StartGame(1290408577);
+	//Minigame->Drop(-7.1556816101074219);
+	//Minigame->StartGame(2109853616);
+	//Minigame->Drop(-4.879331111907959);
 }
 
 // Close
@@ -144,7 +165,8 @@ void _TestState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	if(MouseEvent.Button == SDL_BUTTON_LEFT)
 		ae::Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
 
-	Minigame->HandleMouseButton(MouseEvent);
+	if(Minigame)
+		Minigame->HandleMouseButton(MouseEvent);
 }
 
 // Mouse movement handler
@@ -156,7 +178,7 @@ void _TestState::HandleWindow(uint8_t Event) {
 	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 		if(Camera)
 			Camera->CalculateFrustum(ae::Graphics.AspectRatio);
-		if(Minigame->Camera)
+		if(Minigame && Minigame->Camera)
 			Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 	}
 }
@@ -173,10 +195,13 @@ void _TestState::Update(double FrameTime) {
 	ae::Graphics.Element->Update(FrameTime, ae::Input.GetMouse());
 
 	// Update camera
-	Camera->Set2DPosition(glm::vec2(0.0f, 0.0f));
-	Camera->Update(FrameTime);
+	if(Camera) {
+		Camera->Set2DPosition(glm::vec2(0.0f, 0.0f));
+		Camera->Update(FrameTime);
+	}
 
-	Minigame->Update(FrameTime);
+	if(Minigame)
+		Minigame->Update(FrameTime);
 
 	Time += FrameTime;
 }
@@ -184,17 +209,20 @@ void _TestState::Update(double FrameTime) {
 // Render the state
 void _TestState::Render(double BlendFactor) {
 	ae::Graphics.Setup3D();
-	Camera->Set3DProjection(BlendFactor);
-	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
-	glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
-	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
-	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	if(Camera) {
+		Camera->Set3DProjection(BlendFactor);
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+		glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
+		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	}
 
-	Minigame->Render(BlendFactor);
+	if(Minigame)
+		Minigame->Render(BlendFactor);
 
 	ae::Graphics.Setup2D();
 	ae::Graphics.SetStaticUniforms();

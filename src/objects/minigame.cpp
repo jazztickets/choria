@@ -45,7 +45,8 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 	Time(0),
 	DropX(0),
 	Bucket((size_t)-1),
-	Debug(0) {
+	Debug(0),
+	Bounces(0) {
 
 	Camera = new ae::_Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(ae::Graphics.AspectRatio);
@@ -232,9 +233,13 @@ void _Minigame::Update(double FrameTime) {
 		}
 
 		// Play sound
-		if(!Debug && Sprite->Touching && Sprite->Touching != Sprite->LastTouching && !IsServer && !PlayedSound) {
-			ae::Audio.PlaySound(ae::Assets.Sounds["bounce0.ogg"], 0.45f);
-			PlayedSound = true;
+		if(Sprite->Touching && Sprite->Touching != Sprite->LastTouching) {
+			if(!Debug && !IsServer && !PlayedSound) {
+				ae::Audio.PlaySound(ae::Assets.Sounds["bounce0.ogg"], 0.45f);
+				PlayedSound = true;
+			}
+
+			Bounces++;
 		}
 
 		Sprite->LastTouching = Sprite->Touching;
