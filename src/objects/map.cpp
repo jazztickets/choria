@@ -583,7 +583,7 @@ void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor
 				// Draw zone color
 				if(!Tile->Wall && Tile->Zone > 0) {
 					ae::Graphics.SetColor(ZoneColors[Tile->Zone % CurrentZoneColors]);
-					ae::Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i, j), true);
+					ae::Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i+1, j+1), true);
 				}
 			}
 		}
