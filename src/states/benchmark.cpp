@@ -30,6 +30,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+const int CALLS = 1000;
+
 _BenchmarkState BenchmarkState;
 
 // Constructor
@@ -46,6 +48,8 @@ void _BenchmarkState::Init() {
 
 	ae::RandomGenerator.seed(0);
 
+	float LargeVertices[CALLS * 8];
+
 	float Vertices[] = {
 		0.0f, 1.0f,
 		1.0f, 1.0f,
@@ -54,20 +58,23 @@ void _BenchmarkState::Init() {
 	};
 
 	// Create buffers
-	glGenBuffers(1, &VertexBuffer[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[0]);
+	glGenBuffers(1, &VertexBuffer[VBO_STATIC]);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_STATIC]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
-	glGenBuffers(1, &VertexBuffer[1]);
-	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[1]);
+	glGenBuffers(1, &VertexBuffer[VBO_DYNAMIC]);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &VertexBuffer[VBO_DYNAMIC_LARGE]);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC_LARGE]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(LargeVertices), LargeVertices, GL_DYNAMIC_DRAW);
 }
 
 // Close
 void _BenchmarkState::Close() {
 	delete Camera;
-	glDeleteBuffers(1, &VertexBuffer[0]);
-	glDeleteBuffers(1, &VertexBuffer[1]);
+	glDeleteBuffers(VBO_COUNT, &VertexBuffer[0]);
 }
 
 // Key handler
@@ -80,17 +87,6 @@ bool _BenchmarkState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 	}
 
 	return true;
-}
-
-// Mouse handler
-void _BenchmarkState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
-	ae::FocusedElement = nullptr;
-	if(MouseEvent.Button == SDL_BUTTON_LEFT)
-		ae::Graphics.Element->HandleMouseButton(MouseEvent.Pressed);
-}
-
-// Mouse movement handler
-void _BenchmarkState::HandleMouseMove(const glm::ivec2 &Position) {
 }
 
 // Handle window updates
@@ -123,7 +119,7 @@ void _BenchmarkState::Update(double FrameTime) {
 		Frames = 0;
 	}
 
-	if(Stage > 2) {
+	if(Stage > 3) {
 		Framework.Done = true;
 	}
 }
@@ -136,67 +132,102 @@ void _BenchmarkState::Render(double BlendFactor) {
 	ae::Graphics.SetStaticUniforms();
 	ae::Graphics.SetProgram(Program);
 
-	for(int i = 0; i < 1000; i++ ) {
+	switch(Stage) {
 
 		// Normal VBO with transform
-		if(Stage == 0) {
-			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[0]);
-			glEnableVertexAttribArray(0);
+		case 0: {
+			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_STATIC]);
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 
-			glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-			glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-			glm::mat4 Transform(1.0f);
-			Transform = glm::translate(Transform, glm::vec3(Start, 0.0f));
-			Transform = glm::scale(Transform, glm::vec3(End - Start, 0.0f));
+			for(int i = 0; i < CALLS; i++) {
+				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::mat4 Transform(1.0f);
+				Transform = glm::translate(Transform, glm::vec3(Start, 0.0f));
+				Transform = glm::scale(Transform, glm::vec3(End - Start, 0.0f));
 
-			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		}
+				glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			}
+		} break;
+
 		// Deprecated zero-buffer VBO
-		else if(Stage == 1) {
+		case 1: {
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glEnableVertexAttribArray(0);
 			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 
-			glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-			glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
 			glm::mat4 Transform(1.0f);
-
-			float Vertices[] = {
-				Start.x, End.y,
-				End.x,   End.y,
-				Start.x, Start.y,
-				End.x,   Start.y,
-			};
-
 			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		}
+
+			for(int i = 0; i < CALLS; i++) {
+				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+
+				float Vertices[] = {
+					Start.x, End.y,
+					End.x,   End.y,
+					Start.x, Start.y,
+					End.x,   Start.y,
+				};
+
+				glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			}
+		} break;
+
 		// glBufferSubData
-		else if(Stage == 2) {
-			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[1]);
-			glEnableVertexAttribArray(0);
+		case 2: {
+			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC]);
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 
-			glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-			glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
 			glm::mat4 Transform(1.0f);
+			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
 
-			float Vertices[] = {
-				Start.x, End.y,
-				End.x,   End.y,
-				Start.x, Start.y,
-				End.x,   Start.y,
-			};
+			for(int i = 0; i < CALLS; i++) {
+				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
 
+				float Vertices[] = {
+					Start.x, End.y,
+					End.x,   End.y,
+					Start.x, Start.y,
+					End.x,   Start.y,
+				};
+
+				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			}
+		} break;
+
+		// glBufferSubData - 1 draw call
+		case 3: {
+			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC_LARGE]);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
+
+			float Vertices[CALLS * 8];
+			int Index = 0;
+			for(int i = 0; i < CALLS; i++) {
+				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+
+				Vertices[Index++] = Start.x;
+				Vertices[Index++] = End.y;
+				Vertices[Index++] = End.x;
+				Vertices[Index++] = End.y;
+				Vertices[Index++] = Start.x;
+				Vertices[Index++] = Start.y;
+				Vertices[Index++] = End.x;
+				Vertices[Index++] = Start.y;
+			}
+
+			glm::mat4 Transform(1.0f);
 			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		}
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 * CALLS);
+		} break;
 	}
 
 	Frames++;

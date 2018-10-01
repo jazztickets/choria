@@ -30,6 +30,13 @@ class _BenchmarkState : public ae::_State {
 
 	public:
 
+		enum VertexBufferType {
+			VBO_STATIC,
+			VBO_DYNAMIC,
+			VBO_DYNAMIC_LARGE,
+			VBO_COUNT,
+		};
+
 		// Setup
 		_BenchmarkState();
 		void Init() override;
@@ -37,8 +44,6 @@ class _BenchmarkState : public ae::_State {
 
 		// Input
 		bool HandleKey(const ae::_KeyEvent &KeyEvent) override;
-		void HandleMouseButton(const ae::_MouseEvent &MouseEvent) override;
-		void HandleMouseMove(const glm::ivec2 &Position) override;
 		void HandleWindow(uint8_t Event) override;
 		void HandleQuit() override;
 
@@ -52,7 +57,7 @@ class _BenchmarkState : public ae::_State {
 
 	protected:
 
-		GLuint VertexBuffer[2];
+		GLuint VertexBuffer[VBO_COUNT];
 		int Stage;
 		int Frames;
 };
