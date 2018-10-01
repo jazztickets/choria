@@ -28,23 +28,46 @@
 #include <SDL_mouse.h>
 #include <SDL_timer.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 _BenchmarkState BenchmarkState;
 
 // Constructor
 _BenchmarkState::_BenchmarkState() :
-	Camera(nullptr) {
+	Camera(nullptr),
+	Stage(0),
+	Frames(0) {
 }
 
 // Initialize
 void _BenchmarkState::Init() {
 	Camera = new ae::_Camera(glm::vec3(0.0f, 0.0f, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(ae::Graphics.AspectRatio);
+
+	ae::RandomGenerator.seed(0);
+
+	float Vertices[] = {
+		0.0f, 1.0f,
+		1.0f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+	};
+
+	// Create buffers
+	glGenBuffers(1, &VertexBuffer[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+
+	glGenBuffers(1, &VertexBuffer[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
 }
 
 // Close
 void _BenchmarkState::Close() {
 	delete Camera;
+	glDeleteBuffers(1, &VertexBuffer[0]);
+	glDeleteBuffers(1, &VertexBuffer[1]);
 }
 
 // Key handler
@@ -93,34 +116,88 @@ void _BenchmarkState::Update(double FrameTime) {
 	}
 
 	Time += FrameTime;
+	if(Time >= 3) {
+		std::cout << "Stage " << Stage << " Frames " << Frames << std::endl;
+		Stage++;
+		Time = 0;
+		Frames = 0;
+	}
+
+	if(Stage > 2) {
+		Framework.Done = true;
+	}
 }
 
 // Render the state
 void _BenchmarkState::Render(double BlendFactor) {
-	ae::Graphics.Setup3D();
-	if(Camera) {
-		Camera->Set3DProjection(BlendFactor);
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
-		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	}
 
+	ae::_Program *Program = ae::Assets.Programs["ortho_pos"];
 	ae::Graphics.Setup2D();
 	ae::Graphics.SetStaticUniforms();
-	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
-	ae::Graphics.DrawRectangle(glm::vec2(1, 1), glm::vec2(4, 4), true);
-	ae::Graphics.SetColor(glm::vec4(1,0,0,1));
-	ae::Graphics.DrawRectangle(glm::vec2(5, 1), glm::vec2(8, 4), false);
+	ae::Graphics.SetProgram(Program);
 
-	ae::Graphics.EnableScissorTest();
-	ae::_Bounds ScissorRegion(glm::vec2(9, 1), glm::vec2(12, 4));
-	ae::Graphics.SetScissor(ScissorRegion);
-	ae::Graphics.SetColor(glm::vec4(0,1,0,1));
-	ae::Graphics.DrawRectangle(glm::vec2(8, 0), glm::vec2(13, 5), true);
-	ae::Graphics.DisableScissorTest();
+	for(int i = 0; i < 1000; i++ ) {
+
+		// Normal VBO with transform
+		if(Stage == 0) {
+			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[0]);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+
+			glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+			glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+			glm::mat4 Transform(1.0f);
+			Transform = glm::translate(Transform, glm::vec3(Start, 0.0f));
+			Transform = glm::scale(Transform, glm::vec3(End - Start, 0.0f));
+
+			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		}
+		// Deprecated zero-buffer VBO
+		else if(Stage == 1) {
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glEnableVertexAttribArray(0);
+			glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+
+			glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+			glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+			glm::mat4 Transform(1.0f);
+
+			float Vertices[] = {
+				Start.x, End.y,
+				End.x,   End.y,
+				Start.x, Start.y,
+				End.x,   Start.y,
+			};
+
+			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, Vertices);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		}
+		// glBufferSubData
+		else if(Stage == 2) {
+			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[1]);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+			glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+			glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+			glm::mat4 Transform(1.0f);
+
+			float Vertices[] = {
+				Start.x, End.y,
+				End.x,   End.y,
+				Start.x, Start.y,
+				End.x,   Start.y,
+			};
+
+			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		}
+	}
+
+	Frames++;
 }

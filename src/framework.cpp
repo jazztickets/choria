@@ -105,6 +105,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 		else if(Token == "-benchmark") {
 			State = &BenchmarkState;
+			Config.Vsync = false;
+			Config.MaxFPS = 0;
 		}
 		else if(Token == "-noaudio") {
 			AudioEnabled = false;

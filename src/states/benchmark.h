@@ -18,6 +18,7 @@
 #pragma once
 
 #include <ae/state.h>
+#include <ae/opengl.h>
 
 // Forward Declarations
 namespace ae {
@@ -51,6 +52,9 @@ class _BenchmarkState : public ae::_State {
 
 	protected:
 
+		GLuint VertexBuffer[2];
+		int Stage;
+		int Frames;
 };
 
 extern _BenchmarkState BenchmarkState;
