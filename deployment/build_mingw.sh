@@ -46,6 +46,7 @@ build() {
 
 	gitver=`git log --oneline | wc -l`
 	mv bin/Release/choria.exe working/
+	$arch-strip working/choria.exe
 	cp README working/
 	echo "choria.exe -server" > working/run_server.bat
 	echo "choria.exe -server -hardcore" > working/run_hardcore_server.bat
