@@ -21,6 +21,7 @@
 #include <states/dedicated.h>
 #include <states/bots.h>
 #include <states/test.h>
+#include <states/benchmark.h>
 #include <ae/network.h>
 #include <ae/graphics.h>
 #include <ae/input.h>
@@ -101,6 +102,9 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		}
 		else if(Token == "-test") {
 			State = &TestState;
+		}
+		else if(Token == "-benchmark") {
+			State = &BenchmarkState;
 		}
 		else if(Token == "-noaudio") {
 			AudioEnabled = false;
