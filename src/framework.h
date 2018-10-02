@@ -52,6 +52,9 @@ class _Framework {
 		ae::_State *GetState() { return State; }
 		void ChangeState(ae::_State *RequestedState);
 
+		// Graphics
+		ae::_FrameLimit *FrameLimit;
+
 		// Console
 		ae::_Console *Console;
 
@@ -65,6 +68,7 @@ class _Framework {
 	private:
 
 		int GlobalKeyHandler(const SDL_Event &Event);
+		void HandleCommand(ae::_Console *Console);
 		void LoadAssets(bool Server);
 
 		// States
@@ -73,7 +77,6 @@ class _Framework {
 		ae::_State *RequestedState;
 
 		// Time
-		ae::_FrameLimit *FrameLimit;
 		uint64_t Timer;
 		double TimeStep;
 		double TimeStepAccumulator;

@@ -39,6 +39,7 @@
 #include <ae/database.h>
 #include <ae/program.h>
 #include <ae/actions.h>
+#include <ae/framelimit.h>
 #include <ae/buffer.h>
 #include <ae/audio.h>
 #include <ae/random.h>
@@ -388,7 +389,7 @@ void _PlayState::HandleMouseMove(const glm::ivec2 &Position) {
 }
 
 // Handle console command
-void _PlayState::HandleCommand(ae::_Console *Console) {
+bool _PlayState::HandleCommand(ae::_Console *Console) {
 
 	// Get parameters
 	std::vector<std::string> Parameters;
@@ -507,19 +508,11 @@ void _PlayState::HandleCommand(ae::_Console *Console) {
 		else
 			Console->AddMessage("usage: search [table] [query]");
 	}
-	else if(Console->Command == "volume") {
-		if(!Console->Parameters.empty()) {
-			Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
-			ae::Audio.SetSoundVolume(Config.SoundVolume);
-			ae::Audio.SetMusicVolume(Config.MusicVolume);
-			Config.Save();
-		}
-		else
-			Console->AddMessage("usage: volume [value]");
-	}
 	else {
-		Console->AddMessage("Command \"" + Console->Command + "\" not found");
+		return false;
 	}
+
+	return true;
 }
 
 // Window size updates

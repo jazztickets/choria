@@ -165,10 +165,12 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		Console->CommandList.push_back("give");
 		Console->CommandList.push_back("gold");
 		Console->CommandList.push_back("map");
+		Console->CommandList.push_back("maxfps");
 		Console->CommandList.push_back("move");
 		Console->CommandList.push_back("quit");
 		Console->CommandList.push_back("search");
 		Console->CommandList.push_back("volume");
+		Console->CommandList.push_back("vsync");
 	}
 
 	Timer = SDL_GetPerformanceCounter();
@@ -289,7 +291,9 @@ void _Framework::Update() {
 				if(Console) {
 					Console->Update(TimeStep);
 					if(!Console->Command.empty()) {
-						State->HandleCommand(Console);
+						bool Handled = State->HandleCommand(Console);
+						if(!Handled)
+							HandleCommand(Console);
 						Console->Command = "";
 					}
 				}
@@ -363,6 +367,50 @@ int _Framework::GlobalKeyHandler(const SDL_Event &Event) {
 	}
 
 	return 0;
+}
+
+// Handle generic console command
+void _Framework::HandleCommand(ae::_Console *Console) {
+
+	// Get parameters
+	std::vector<std::string> Parameters;
+	ae::TokenizeString(Console->Parameters, Parameters);
+
+	if(Console->Command == "maxfps") {
+		if(Parameters.size() == 1) {
+			Config.MaxFPS = ae::ToNumber<int>(Parameters[0]);
+			Framework.FrameLimit->FrameRate = Config.MaxFPS;
+			Config.Save();
+		}
+		else {
+			Console->AddMessage("maxfps = " + std::to_string(Config.MaxFPS));
+			Console->AddMessage("usage: maxfps [value]");
+		}
+	}
+	else if(Console->Command == "volume") {
+		if(Console->Parameters.size() == 1) {
+			Config.SoundVolume = Config.MusicVolume = glm::clamp(ae::ToNumber<float>(Console->Parameters), 0.0f, 1.0f);
+			ae::Audio.SetSoundVolume(Config.SoundVolume);
+			ae::Audio.SetMusicVolume(Config.MusicVolume);
+			Config.Save();
+		}
+		else
+			Console->AddMessage("usage: volume [value]");
+	}
+	else if(Console->Command == "vsync") {
+		if(Console->Parameters.size() == 1) {
+			Config.Vsync = ae::ToNumber<bool>(Console->Parameters);
+			ae::Graphics.SetVsync(Config.Vsync);
+			Config.Save();
+		}
+		else {
+			Console->AddMessage("vsync = " + std::to_string(ae::Graphics.GetVsync()));
+			Console->AddMessage("usage: vsync [value]");
+		}
+	}
+	else {
+		Console->AddMessage("Command \"" + Console->Command + "\" not found");
+	}
 }
 
 // Load assets
