@@ -23,6 +23,7 @@
 // Forward Declarations
 namespace ae {
 	class _Camera;
+	class _Atlas;
 }
 
 // Benchmarking state
@@ -34,6 +35,8 @@ class _BenchmarkState : public ae::_State {
 			VBO_STATIC,
 			VBO_DYNAMIC,
 			VBO_DYNAMIC_LARGE,
+			VBO_ATLAS,
+			VBO_ATLAS_DYNAMIC,
 			VBO_COUNT,
 		};
 
@@ -58,6 +61,7 @@ class _BenchmarkState : public ae::_State {
 	protected:
 
 		GLuint VertexBuffer[VBO_COUNT];
+		const ae::_Atlas *Atlas;
 		int Stage;
 		int Frames;
 };
