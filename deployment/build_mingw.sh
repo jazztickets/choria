@@ -52,7 +52,7 @@ build() {
 	echo "choria.exe -server -hardcore" > working/run_hardcore_server.bat
 	echo "choria.exe -hardcore" > working/run_hardcore.bat
 	echo "choria.exe -test" > working/run_test.bat
-	echo "choria.exe -benchmark" > working/run_benchmark.bat
+	echo -e "choria.exe -benchmark\npause" > working/run_benchmark.bat
 	chmod +x working/*.bat
 
 	archive=choria-${version}r${gitver}-win${bits}.zip

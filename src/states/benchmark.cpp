@@ -187,9 +187,12 @@ void _BenchmarkState::Render(double BlendFactor) {
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
 				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 Size = End - Start;
 				glm::mat4 Transform(1.0f);
-				Transform = glm::translate(Transform, glm::vec3(Start, 0.0f));
-				Transform = glm::scale(Transform, glm::vec3(End - Start, 0.0f));
+				Transform[3][0] = Start.x;
+				Transform[3][1] = Start.y;
+				Transform[0][0] = Size.x;
+				Transform[1][1] = Size.y;
 
 				glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -298,16 +301,23 @@ void _BenchmarkState::Render(double BlendFactor) {
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
 				glm::vec2 End(Start + glm::vec2(64));
+				glm::vec2 Size = End - Start;
 
+				// Model transform
 				glm::mat4 Transform(1.0f);
-				Transform = glm::translate(Transform, glm::vec3(Start, 0.0f));
-				Transform = glm::scale(Transform, glm::vec3(End - Start, 0.0f));
+				Transform[3][0] = Start.x;
+				Transform[3][1] = Start.y;
+				Transform[0][0] = Size.x;
+				Transform[1][1] = Size.y;
 				glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
 
+				// Texture transform
 				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1, 30));
 				glm::mat4 TextureTransform(1.0f);
-				TextureTransform = glm::translate(TextureTransform, glm::vec3(TextureCoords[0], TextureCoords[1], 0));
-				TextureTransform = glm::scale(TextureTransform, glm::vec3(TextureCoords[2] - TextureCoords[0], TextureCoords[3] - TextureCoords[1], 0));
+				TextureTransform[3][0] = TextureCoords[0];
+				TextureTransform[3][1] = TextureCoords[1];
+				TextureTransform[0][0] = TextureCoords[2] - TextureCoords[0];
+				TextureTransform[1][1] = TextureCoords[3] - TextureCoords[1];
 				glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(TextureTransform));
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			}
