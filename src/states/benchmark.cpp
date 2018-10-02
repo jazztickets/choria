@@ -40,7 +40,8 @@ _BenchmarkState BenchmarkState;
 _BenchmarkState::_BenchmarkState() :
 	Camera(nullptr),
 	Atlas(nullptr),
-	Stage(0),
+	Stage(STAGE_COLOR_STATIC),
+	//Stage(STAGE_ATLAS_ZEROBUFFER),
 	Frames(0) {
 }
 
@@ -110,6 +111,13 @@ void _BenchmarkState::Init() {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
 	}
 
+	{
+		float Vertices[CALLS * 16];
+		glGenBuffers(1, &VertexBuffer[VBO_ATLAS_DYNAMIC_LARGE]);
+		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC_LARGE]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
+	}
+
 	Atlas = new ae::_Atlas(ae::Assets.Textures["textures/map/atlas0.png"], glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
 }
 
@@ -162,7 +170,7 @@ void _BenchmarkState::Update(double FrameTime) {
 		Frames = 0;
 	}
 
-	if(Stage > 5) {
+	if(Stage >= STAGE_COUNT) {
 		Framework.Done = true;
 	}
 }
@@ -176,7 +184,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 	switch(Stage) {
 
 		// Normal VBO with transform
-		case 0: {
+		case STAGE_COLOR_STATIC: {
 			ae::_Program *Program = ae::Assets.Programs["ortho_pos"];
 			ae::Graphics.SetProgram(Program);
 
@@ -186,7 +194,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(Start + glm::vec2(64));
 				glm::vec2 Size = End - Start;
 				glm::mat4 Transform(1.0f);
 				Transform[3][0] = Start.x;
@@ -200,7 +208,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 		} break;
 
 		// Deprecated zero-buffer VBO
-		case 1: {
+		case STAGE_COLOR_ZEROBUFFER: {
 			ae::_Program *Program = ae::Assets.Programs["ortho_pos"];
 			ae::Graphics.SetProgram(Program);
 
@@ -212,7 +220,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(Start + glm::vec2(64));
 
 				float Vertices[] = {
 					Start.x, End.y,
@@ -227,7 +235,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 		} break;
 
 		// glBufferSubData
-		case 2: {
+		case STAGE_COLOR_DYNAMIC: {
 			ae::_Program *Program = ae::Assets.Programs["ortho_pos"];
 			ae::Graphics.SetProgram(Program);
 
@@ -240,7 +248,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(Start + glm::vec2(64));
 
 				float Vertices[] = {
 					Start.x, End.y,
@@ -255,7 +263,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 		} break;
 
 		// glBufferSubData - 1 draw call
-		case 3: {
+		case STAGE_COLOR_DYNAMIC_BATCH: {
 			ae::_Program *Program = ae::Assets.Programs["ortho_pos"];
 			ae::Graphics.SetProgram(Program);
 
@@ -263,11 +271,14 @@ void _BenchmarkState::Render(double BlendFactor) {
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 			glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 
+			glm::mat4 Transform(1.0f);
+			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
+
 			float Vertices[CALLS * 8];
 			int Index = 0;
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-				glm::vec2 End(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(Start + glm::vec2(64));
 
 				Vertices[Index++] = Start.x;
 				Vertices[Index++] = End.y;
@@ -279,14 +290,12 @@ void _BenchmarkState::Render(double BlendFactor) {
 				Vertices[Index++] = Start.y;
 			}
 
-			glm::mat4 Transform(1.0f);
-			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 * CALLS);
 		} break;
 
 		// Atlas static VBO
-		case 4: {
+		case STAGE_ATLAS_STATIC: {
 			ae::_Program *Program = ae::Assets.Programs["test"];
 			ae::Graphics.SetProgram(Program);
 
@@ -325,12 +334,53 @@ void _BenchmarkState::Render(double BlendFactor) {
 			glDisableVertexAttribArray(1);
 		} break;
 
-		// Atlas dynamic VBO
-		case 5: {
+		// Atlas deprecated zero-buffer VBO
+		case STAGE_ATLAS_ZEROBUFFER: {
 			ae::_Program *Program = ae::Assets.Programs["test"];
 			ae::Graphics.SetProgram(Program);
+
 			glUniformMatrix4fv(Program->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
-			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS]);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glEnableVertexAttribArray(1);
+			glBindTexture(GL_TEXTURE_2D, Atlas->Texture->ID);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+			glm::mat4 Transform(1.0f);
+			glm::mat4 TextureTransform(1.0f);
+			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
+			glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(TextureTransform));
+
+			for(int i = 0; i < CALLS; i++) {
+				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(Start + glm::vec2(64));
+
+				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1, 30));
+				float Vertices[] = {
+					End.x,            Start.y,
+					Start.x,          Start.y,
+					End.x,            End.y,
+					Start.x,          End.y,
+					TextureCoords[2], TextureCoords[1],
+					TextureCoords[0], TextureCoords[1],
+					TextureCoords[2], TextureCoords[3],
+					TextureCoords[0], TextureCoords[3],
+				};
+
+				glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, &Vertices[0]);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, &Vertices[8]);
+				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			}
+
+			glDisableVertexAttribArray(1);
+		} break;
+
+		// Atlas dynamic VBO
+		case STAGE_ATLAS_DYNAMIC: {
+			ae::_Program *Program = ae::Assets.Programs["test"];
+			ae::Graphics.SetProgram(Program);
+
+			glUniformMatrix4fv(Program->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
+			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC]);
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
@@ -362,6 +412,54 @@ void _BenchmarkState::Render(double BlendFactor) {
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 			}
 
+			glDisableVertexAttribArray(1);
+		} break;
+
+		// Atlas dynamic VBO - 1 draw call
+		case STAGE_ATLAS_DYNAMIC_BATCH: {
+			ae::_Program *Program = ae::Assets.Programs["test"];
+			ae::Graphics.SetProgram(Program);
+			glUniformMatrix4fv(Program->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
+			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC_LARGE]);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
+			glBindTexture(GL_TEXTURE_2D, Atlas->Texture->ID);
+			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+			glm::mat4 Transform(1.0f);
+			glm::mat4 TextureTransform(1.0f);
+			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
+			glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(TextureTransform));
+
+			float Vertices[CALLS * 16];
+			int Index = 0;
+			for(int i = 0; i < CALLS; i++) {
+				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
+				glm::vec2 End(Start + glm::vec2(64));
+				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1, 30));
+
+				Vertices[Index++] = End.x;
+				Vertices[Index++] = Start.y;
+				Vertices[Index++] = Start.x;
+				Vertices[Index++] = Start.y;
+				Vertices[Index++] = End.x;
+				Vertices[Index++] = End.y;
+				Vertices[Index++] = Start.x;
+				Vertices[Index++] = End.y;
+
+				Vertices[Index++] = TextureCoords[2];
+				Vertices[Index++] = TextureCoords[1];
+				Vertices[Index++] = TextureCoords[0];
+				Vertices[Index++] = TextureCoords[1];
+				Vertices[Index++] = TextureCoords[2];
+				Vertices[Index++] = TextureCoords[3];
+				Vertices[Index++] = TextureCoords[0];
+				Vertices[Index++] = TextureCoords[3];
+			}
+
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4 * CALLS);
 			glDisableVertexAttribArray(1);
 		} break;
 	}
