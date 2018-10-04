@@ -34,10 +34,8 @@ class _BenchmarkState : public ae::_State {
 		enum VertexBufferType {
 			VBO_STATIC,
 			VBO_DYNAMIC,
-			VBO_DYNAMIC_LARGE,
 			VBO_ATLAS,
 			VBO_ATLAS_DYNAMIC,
-			VBO_ATLAS_DYNAMIC_LARGE,
 			VBO_COUNT,
 		};
 
@@ -45,11 +43,9 @@ class _BenchmarkState : public ae::_State {
 			STAGE_COLOR_STATIC,
 			STAGE_COLOR_ZEROBUFFER,
 			STAGE_COLOR_DYNAMIC,
-			STAGE_COLOR_DYNAMIC_BATCH,
 			STAGE_ATLAS_STATIC,
 			STAGE_ATLAS_ZEROBUFFER,
 			STAGE_ATLAS_DYNAMIC,
-			STAGE_ATLAS_DYNAMIC_BATCH,
 			STAGE_COUNT,
 		};
 

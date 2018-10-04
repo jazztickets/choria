@@ -64,16 +64,12 @@ void _BenchmarkState::Init() {
 		glGenBuffers(1, &VertexBuffer[VBO_STATIC]);
 		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_STATIC]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-
-		glGenBuffers(1, &VertexBuffer[VBO_DYNAMIC]);
-		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
 	}
 
 	{
 		float Vertices[CALLS * 8];
-		glGenBuffers(1, &VertexBuffer[VBO_DYNAMIC_LARGE]);
-		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC_LARGE]);
+		glGenBuffers(1, &VertexBuffer[VBO_DYNAMIC]);
+		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
 	}
 
@@ -95,26 +91,9 @@ void _BenchmarkState::Init() {
 	}
 
 	{
-		float Vertices[] = {
-			0.0f, 0.0f,
-			0.0f, 0.0f,
-			0.0f, 0.0f,
-			0.0f, 0.0f,
-			0.0f, 0.0f,
-			0.0f, 0.0f,
-			0.0f, 0.0f,
-			0.0f, 0.0f,
-		};
-
+		float Vertices[CALLS * 16];
 		glGenBuffers(1, &VertexBuffer[VBO_ATLAS_DYNAMIC]);
 		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
-	}
-
-	{
-		float Vertices[CALLS * 16];
-		glGenBuffers(1, &VertexBuffer[VBO_ATLAS_DYNAMIC_LARGE]);
-		glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC_LARGE]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
 	}
 
@@ -241,34 +220,6 @@ void _BenchmarkState::Render(double BlendFactor) {
 
 			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC]);
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-			glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-
-			glm::mat4 Transform(1.0f);
-			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
-
-			for(int i = 0; i < CALLS; i++) {
-				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-				glm::vec2 End(Start + glm::vec2(64));
-
-				float Vertices[] = {
-					Start.x, End.y,
-					End.x,   End.y,
-					Start.x, Start.y,
-					End.x,   Start.y,
-				};
-
-				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			}
-		} break;
-
-		// glBufferSubData - 1 draw call
-		case STAGE_COLOR_DYNAMIC_BATCH: {
-			ae::_Program *Program = ae::Assets.Programs["ortho_pos"];
-			ae::Graphics.SetProgram(Program);
-
-			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC_LARGE]);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 			glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 
 			glm::mat4 Transform(1.0f);
@@ -378,49 +329,8 @@ void _BenchmarkState::Render(double BlendFactor) {
 		case STAGE_ATLAS_DYNAMIC: {
 			ae::_Program *Program = ae::Assets.Programs["test"];
 			ae::Graphics.SetProgram(Program);
-
 			glUniformMatrix4fv(Program->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC]);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
-			glBindTexture(GL_TEXTURE_2D, Atlas->Texture->ID);
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-			glm::mat4 Transform(1.0f);
-			glm::mat4 TextureTransform(1.0f);
-			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
-			glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(TextureTransform));
-
-			for(int i = 0; i < CALLS; i++) {
-				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
-				glm::vec2 End(Start + glm::vec2(64));
-
-				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1, 30));
-				float Vertices[] = {
-					End.x,            Start.y,
-					Start.x,          Start.y,
-					End.x,            End.y,
-					Start.x,          End.y,
-					TextureCoords[2], TextureCoords[1],
-					TextureCoords[0], TextureCoords[1],
-					TextureCoords[2], TextureCoords[3],
-					TextureCoords[0], TextureCoords[3],
-				};
-
-				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-			}
-
-			glDisableVertexAttribArray(1);
-		} break;
-
-		// Atlas dynamic VBO - 1 draw call
-		case STAGE_ATLAS_DYNAMIC_BATCH: {
-			ae::_Program *Program = ae::Assets.Programs["test"];
-			ae::Graphics.SetProgram(Program);
-			glUniformMatrix4fv(Program->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
-			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC_LARGE]);
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
