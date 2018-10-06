@@ -241,7 +241,6 @@ void _TestState::Render(double BlendFactor) {
 
 	ae::_Bounds MaskRegion(glm::vec2(14, 1), glm::vec2(17, 4));
 	ae::Graphics.EnableStencilTest();
-	ae::Graphics.SetVBO(ae::VBO_NONE);
 	ae::Graphics.DrawMask(MaskRegion);
 	ae::Graphics.SetColor(glm::vec4(1,0,1,1));
 	ae::Graphics.DrawRectangle(glm::vec2(13, 0), glm::vec2(18, 5), true);

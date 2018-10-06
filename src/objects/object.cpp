@@ -309,7 +309,6 @@ void _Object::Render(const _Object *ClientPlayer) {
 		// Setup shader
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
 		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-		ae::Graphics.SetVBO(ae::VBO_SPRITE);
 
 		// Draw debug server position
 		glm::vec3 DrawPosition;
@@ -384,7 +383,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	ae::Graphics.SetVBO(ae::VBO_NONE);
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_empty"]->Texture, true);
 
 	// Draw full bar
@@ -409,7 +407,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 		// Draw empty bar
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.SetVBO(ae::VBO_NONE);
 		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_empty"]->Texture, true);
 
 		// Draw full bar
@@ -430,7 +427,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	ae::Graphics.SetVBO(ae::VBO_NONE);
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_empty"]->Texture, true);
 
 	// Draw full bar

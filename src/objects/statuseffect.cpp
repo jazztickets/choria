@@ -93,13 +93,11 @@ void _StatusEffect::Render(ae::_Element *Element, const glm::vec4 &Color) {
 
 	// Draw buff icon
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	ae::Graphics.SetVBO(ae::VBO_NONE);
 	ae::Graphics.SetColor(Color);
 	ae::Graphics.DrawImage(Element->Bounds, Buff->Texture);
 
 	// Set up graphics
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
-	ae::Graphics.SetVBO(ae::VBO_NONE);
 
 	// Draw dark percentage bg
 	float OverlayHeight = (Duration / MaxDuration) * (Element->Bounds.End.y - Element->Bounds.Start.y);

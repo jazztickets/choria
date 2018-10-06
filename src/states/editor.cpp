@@ -506,12 +506,10 @@ void _EditorState::Render(double BlendFactor) {
 	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
 		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.SetVBO(ae::VBO_CIRCLE);
 		ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
 		// Draw copy tool boundaries
 		if(DrawCopyBounds) {
-			ae::Graphics.SetVBO(ae::VBO_NONE);
 			ae::Graphics.SetColor(ae::Assets.Colors["editor_select"]);
 
 			glm::ivec2 Start, End;
@@ -592,7 +590,6 @@ void _EditorState::DrawBrushInfo() {
 
 	// Draw backdrop
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
-	ae::Graphics.SetVBO(ae::VBO_NONE);
 	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
 	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(45, 45), DrawPosition + glm::vec2(45, 138), true);
 

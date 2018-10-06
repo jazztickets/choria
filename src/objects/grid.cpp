@@ -67,7 +67,6 @@ void _Grid::Render() {
 	for(int i = 0; i < Size.x; i++) {
 		for(int j = 0; j < Size.y; j++) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-			ae::Graphics.SetVBO(ae::VBO_NONE);
 			ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 0.1f));
 			ae::Graphics.DrawRectangle3D(glm::vec2(i - Offset.x, j - Offset.y), glm::vec2(i - Offset.x + 1, j - Offset.y + 1), false);
 

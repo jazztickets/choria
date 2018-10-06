@@ -567,7 +567,6 @@ void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor
 	// Draw map boundaries
 	if(RenderFlags & MAP_RENDER_BOUNDARY) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.SetVBO(ae::VBO_NONE);
 		ae::Graphics.SetColor(ae::Assets.Colors["red"]);
 		ae::Graphics.DrawRectangle3D(glm::vec2(0), glm::vec2(Size), false);
 	}
@@ -575,7 +574,6 @@ void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor
 	// Draw zone overlays
 	if(RenderFlags & MAP_RENDER_ZONE) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
-		ae::Graphics.SetVBO(ae::VBO_NONE);
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
 				_Tile *Tile = &Tiles[i][j];
