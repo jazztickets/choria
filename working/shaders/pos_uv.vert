@@ -1,19 +1,23 @@
-#version 120
+#version 330 core
 
-attribute vec4 vertex_pos;
-attribute vec2 vertex_uv;
-
-varying vec3 world_vertex;
-varying vec3 world_normal;
+layout(location = 0) in vec3 vertex_position;
+layout(location = 1) in vec2 vertex_uv;
+layout(location = 2) in vec3 vertex_normal;
 
 uniform mat4 view_projection_transform;
 uniform mat4 model_transform;
+uniform mat4 texture_transform;
 
-void main(void) {
-	world_vertex = vec3(model_transform * vertex_pos);
+smooth out vec3 world_position;
+out vec3 world_normal;
+out vec2 texture_coord;
+
+void main() {
+	vec4 vec4_vertex_position = vec4(vertex_position, 1);
+	world_position = vec3(model_transform * vec4_vertex_position);
 	world_normal = vec3(0, 0, 1);
 
-	gl_Position = view_projection_transform * model_transform * vertex_pos;
-	gl_FrontColor = gl_Color;
-	gl_TexCoord[0] = gl_TextureMatrix[0] * vec4(vertex_uv, 0, 1);
+	texture_coord = vec2(texture_transform * vec4(vertex_uv, 0, 1));
+
+	gl_Position = view_projection_transform * model_transform * vec4_vertex_position;
 }

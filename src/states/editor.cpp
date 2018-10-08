@@ -504,8 +504,8 @@ void _EditorState::Render(double BlendFactor) {
 
 	// Draw tile brush size
 	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
-		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
+		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
 
 		// Draw copy tool boundaries

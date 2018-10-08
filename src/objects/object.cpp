@@ -344,10 +344,15 @@ void _Object::Render(const _Object *ClientPlayer) {
 
 // Renders the object during a battle
 void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
+
+	// Set color
 	glm::vec4 GlobalColor(glm::vec4(1.0f));
 	GlobalColor.a = 1.0f;
 	if(!Character->IsAlive())
 		GlobalColor.a = 0.2f;
+
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+	ae::Graphics.SetColor(GlobalColor);
 
 	// Draw slot
 	Fighter->BattleElement->Fade = GlobalColor.a;
@@ -361,7 +366,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Name
 	ae::Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
-	ae::Graphics.SetColor(GlobalColor);
 
 	// Portrait
 	if(Character->Portrait) {

@@ -1,12 +1,10 @@
-#version 120
+#version 330 core
 
 #define MAX_LIGHTS 50
 
 uniform sampler2D sampler0;
 uniform vec4 ambient_light;
-
-varying vec3 world_vertex;
-varying vec3 world_normal;
+uniform vec4 color;
 
 uniform int light_count;
 uniform struct light {
@@ -14,6 +12,11 @@ uniform struct light {
 	vec4 color;
 	float radius;
 } lights[MAX_LIGHTS];
+
+smooth in vec3 world_position;
+in vec3 world_normal;
+in vec2 texture_coord;
+out vec4 out_color;
 
 void main() {
 
@@ -24,7 +27,7 @@ void main() {
 	for(int i = 0; i < light_count; i++) {
 
 		// Get direction to light
-		vec3 light_direction = lights[i].position - world_vertex;
+		vec3 light_direction = lights[i].position - world_position;
 		float light_distance = length(light_direction);
 
 		// Calculate attenuation
@@ -40,8 +43,8 @@ void main() {
 	}
 
 	// Get texture color
-	vec4 texture_color = texture2D(sampler0, vec2(gl_TexCoord[0]));
+	vec4 texture_color = texture(sampler0, texture_coord);
 
 	// Final color
-	gl_FragColor = gl_Color * texture_color * light_color;
+	out_color = color * texture_color * light_color;
 }

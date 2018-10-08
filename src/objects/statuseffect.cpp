@@ -98,9 +98,9 @@ void _StatusEffect::Render(ae::_Element *Element, const glm::vec4 &Color) {
 
 	// Set up graphics
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
+	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
 
 	// Draw dark percentage bg
 	float OverlayHeight = (Duration / MaxDuration) * (Element->Bounds.End.y - Element->Bounds.Start.y);
-	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.7f));
 	ae::Graphics.DrawRectangle(Element->Bounds.Start + glm::vec2(0, OverlayHeight), Element->Bounds.End, true);
 }

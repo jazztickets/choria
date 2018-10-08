@@ -9,7 +9,7 @@ uniform mat4 texture_transform;
 
 out vec2 texture_coord;
 
-void main(void) {
+void main() {
 	gl_Position = view_projection_transform * model_transform * vec4(vertex_position, 0, 1);
 	texture_coord = vec2(texture_transform * vec4(vertex_uv, 0, 1));
 }

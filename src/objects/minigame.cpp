@@ -316,8 +316,9 @@ void _Minigame::Render(double BlendFactor) {
 	ae::Graphics.SetScissor(ScissorRegion);
 
 	// Draw sprites
-	ae::Graphics.SetColor(ae::Assets.Colors["white"]);
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+	ae::Graphics.SetColor(glm::vec4(1.0f));
 	for(auto &Sprite : Sprites->Objects) {
 		Sprite->Render(BlendFactor);
 	}

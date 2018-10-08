@@ -41,10 +41,8 @@ class _BenchmarkState : public ae::_State {
 
 		enum StageType {
 			STAGE_COLOR_STATIC,
-			STAGE_COLOR_ZEROBUFFER,
 			STAGE_COLOR_DYNAMIC,
 			STAGE_ATLAS_STATIC,
-			STAGE_ATLAS_ZEROBUFFER,
 			STAGE_ATLAS_DYNAMIC,
 			STAGE_COUNT,
 		};

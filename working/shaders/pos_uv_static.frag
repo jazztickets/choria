@@ -1,10 +1,13 @@
-#version 120
+#version 330 core
 
 uniform sampler2D sampler0;
 uniform vec4 ambient_light;
+uniform vec4 color;
 
-varying vec3 world_vertex;
-varying vec3 world_normal;
+smooth in vec3 world_vertex;
+in vec3 world_normal;
+in vec2 texture_coord;
+out vec4 out_color;
 
 void main() {
 
@@ -12,8 +15,8 @@ void main() {
 	vec4 light_color = ambient_light;
 
 	// Get texture color
-	vec4 texture_color = texture2D(sampler0, vec2(gl_TexCoord[0]));
+	vec4 texture_color = texture(sampler0, texture_coord);
 
 	// Final color
-	gl_FragColor = gl_Color * texture_color * light_color;
+	out_color = color * texture_color * light_color;
 }

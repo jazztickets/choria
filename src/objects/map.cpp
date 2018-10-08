@@ -521,9 +521,9 @@ void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor
 	if(BackgroundMap) {
 		BackgroundMap->Clock = Clock;
 		BackgroundMap->SetAmbientLightByClock();
-		if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT)
-			BackgroundMap->AmbientLight = glm::vec4(1.0f);
 		ae::Assets.Programs["pos_uv_static"]->AmbientLight = BackgroundMap->AmbientLight;
+		if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT)
+			ae::Assets.Programs["pos_uv_static"]->AmbientLight = glm::vec4(1.0f);
 
 		// Get camera position
 		glm::vec3 DrawPosition;
@@ -621,8 +621,9 @@ void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor
 // Render either floor or foreground texture tiles
 void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static) {
 	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
-	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
 	ae::Graphics.SetColor(glm::vec4(1.0f));
+	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
+	glUniformMatrix4fv(ae::Assets.Programs[Program]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;
