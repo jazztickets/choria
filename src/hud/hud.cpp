@@ -812,7 +812,6 @@ void _HUD::ToggleChat() {
 		ChatElement->SetActive(true);
 		ChatTextBox->ResetCursor();
 		ae::FocusedElement = ChatTextBox;
-		Framework.IgnoreNextInputEvent = true;
 	}
 }
 
