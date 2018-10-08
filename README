@@ -10,7 +10,7 @@ Save data is in ~/.local/share/choria for linux and %APPDATA%/choria for windows
 
 -- Dependencies --
 CMake 2.8+
-OpenGL 2.1+ and GLSL 1.20
+OpenGL 3.3+
 SDL2
 SDL2_image
 OpenAL

@@ -235,14 +235,18 @@ void _TestState::Render(double BlendFactor) {
 	ae::Graphics.EnableScissorTest();
 	ae::_Bounds ScissorRegion(glm::vec2(9, 1), glm::vec2(12, 4));
 	ae::Graphics.SetScissor(ScissorRegion);
-	ae::Graphics.SetColor(glm::vec4(0,0,1,1));
+	ae::Graphics.SetColor(glm::vec4(0,1,1,1));
 	ae::Graphics.DrawRectangle(glm::vec2(8, 0), glm::vec2(13, 5), true);
 	ae::Graphics.DisableScissorTest();
 
-	ae::_Bounds MaskRegion(glm::vec2(14, 1), glm::vec2(17, 4));
+	ae::_Bounds MaskRegion(glm::vec2(13, 1), glm::vec2(16, 4));
 	ae::Graphics.EnableStencilTest();
 	ae::Graphics.DrawMask(MaskRegion);
-	ae::Graphics.SetColor(glm::vec4(1,0,1,1));
-	ae::Graphics.DrawRectangle(glm::vec2(13, 0), glm::vec2(18, 5), true);
+	ae::Graphics.SetColor(glm::vec4(1,1,0,1));
+	ae::Graphics.DrawRectangle(glm::vec2(12, 0), glm::vec2(17, 5), true);
 	ae::Graphics.DisableStencilTest();
+
+	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+	ae::Graphics.SetColor(glm::vec4(1.0f));
+	ae::Graphics.DrawImage(ae::_Bounds(glm::vec2(100, 100), glm::vec2(444, 228)), ae::Assets.Textures["textures/menu/logo.png"], false);
 }
