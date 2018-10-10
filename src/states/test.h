@@ -18,6 +18,7 @@
 #pragma once
 
 #include <ae/state.h>
+#include <ae/opengl.h>
 #include <ae/log.h>
 #include <unordered_map>
 #include <glm/vec4.hpp>
@@ -56,6 +57,10 @@ class _TestState : public ae::_State {
 		const _Stats *Stats;
 		_Minigame *Minigame;
 		double Time;
+
+		GLuint FBO;
+		GLuint FBOTexture;
+		GLuint RenderBuffer;
 
 	protected:
 

@@ -220,7 +220,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 
 		// Atlas static VBO
 		case STAGE_ATLAS_STATIC: {
-			ae::_Program *Program = ae::Assets.Programs["test"];
+			ae::_Program *Program = ae::Assets.Programs["ortho_pos_uv"];
 			ae::Graphics.SetProgram(Program);
 			ae::Graphics.SetColor(glm::vec4(1.0f));
 
@@ -260,7 +260,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 
 		// Atlas dynamic VBO
 		case STAGE_ATLAS_DYNAMIC: {
-			ae::_Program *Program = ae::Assets.Programs["test"];
+			ae::_Program *Program = ae::Assets.Programs["ortho_pos_uv"];
 			ae::Graphics.SetProgram(Program);
 			ae::Graphics.SetColor(glm::vec4(1.0f));
 
