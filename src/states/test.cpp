@@ -151,8 +151,7 @@ void _TestState::Init() {
 
 	glGenRenderbuffers(1, &RenderBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, RenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ae::Graphics.CurrentSize.x, ae::Graphics.CurrentSize.y);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RenderBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, ae::Graphics.CurrentSize.x, ae::Graphics.CurrentSize.y);
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw std::runtime_error("glCheckFramebufferStatus not ready");
 
@@ -254,13 +253,17 @@ void _TestState::Render(double BlendFactor) {
 
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(1,0,0,0.5));
-	ae::Graphics.DrawRectangle(glm::vec2(0, 0), glm::vec2(100, 100), true);
+	ae::Graphics.DrawRectangle(glm::vec2(0, 0), glm::vec2(32, 32), true);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, FBOTexture);
+	glActiveTexture(GL_TEXTURE0);
 
-	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+	ae::Graphics.SetProgram(ae::Assets.Programs["test"]);
+	glUniformMatrix4fv(ae::Assets.Programs["test"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 	ae::Graphics.SetColor(glm::vec4(1.0f));
-	ae::Graphics.DrawImage(ae::_Bounds(glm::vec2(0, 0), glm::vec2(48, 48)), ae::Assets.Textures["textures/hud/slot.png"], false);
+	ae::Graphics.DrawImage(ae::_Bounds(glm::vec2(0, 0), glm::vec2(48, 48)), ae::Assets.Textures["textures/hud/slot_amulet.png"], false);
 
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(1,0,0,1));
@@ -281,5 +284,4 @@ void _TestState::Render(double BlendFactor) {
 	ae::Graphics.SetColor(glm::vec4(1,1,0,1));
 	ae::Graphics.DrawRectangle(glm::vec2(12, 0), glm::vec2(17, 5), true);
 	ae::Graphics.DisableStencilTest();
-
 }
