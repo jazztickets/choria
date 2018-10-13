@@ -26,6 +26,7 @@
 #include <ae/input.h>
 #include <ae/console.h>
 #include <ae/graphics.h>
+#include <ae/framebuffer.h>
 #include <objects/object.h>
 #include <objects/map.h>
 #include <framework.h>
@@ -47,6 +48,7 @@ const std::string MAPS_PATH = "maps/";
 
 // Constructor
 _EditorState::_EditorState() :
+	Framebuffer(nullptr),
 	Map(nullptr),
 	ButtonBarElement(nullptr),
 	TexturesElement(nullptr),
@@ -101,6 +103,9 @@ void _EditorState::Init() {
 	Camera = new ae::_Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_EDITOR_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 
+	// Create framebuffer for lights
+	Framebuffer = new ae::_Framebuffer(ae::Graphics.CurrentSize);
+
 	// Set filters
 	Layer = 0;
 	Filter = 0;
@@ -133,6 +138,7 @@ void _EditorState::Close() {
 	delete Stats;
 	delete Camera;
 	delete Brush;
+	delete Framebuffer;
 
 	ClearTextures();
 	CloseMap();
@@ -430,6 +436,11 @@ void _EditorState::HandleMouseWheel(int Direction) {
 void _EditorState::HandleWindow(uint8_t Event) {
 	if(Camera && Event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		Camera->CalculateFrustum(ae::Graphics.AspectRatio);
+
+	if(Framebuffer) {
+		Framebuffer->Resize(ae::Graphics.CurrentSize);
+		ae::Graphics.DirtyState();
+	}
 }
 
 // Quit
@@ -485,6 +496,10 @@ void _EditorState::Render(double BlendFactor) {
 	Camera->Set3DProjection(BlendFactor);
 
 	// Setup the viewing matrix
+	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["lights"]);
+	glUniformMatrix4fv(ae::Assets.Programs["lights"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
@@ -499,7 +514,7 @@ void _EditorState::Render(double BlendFactor) {
 		int RenderFilter = Filter | MAP_RENDER_BOUNDARY;
 		if(!UseClockAmbientLight)
 			RenderFilter |= MAP_RENDER_EDITOR_AMBIENT;
-		Map->Render(Camera, nullptr, BlendFactor, RenderFilter);
+		Map->Render(Camera, Framebuffer, nullptr, BlendFactor, RenderFilter);
 	}
 
 	// Draw tile brush size

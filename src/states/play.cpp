@@ -45,6 +45,7 @@
 #include <ae/random.h>
 #include <ae/ui.h>
 #include <ae/graphics.h>
+#include <ae/framebuffer.h>
 #include <ae/manager.h>
 #include <ae/camera.h>
 #include <ae/assets.h>
@@ -78,6 +79,7 @@ _PlayState::_PlayState() :
 	FromEditor(false),
 	ConnectNow(false),
 	Stats(nullptr),
+	Framebuffer(nullptr),
 	Server(nullptr),
 	HostAddress("127.0.0.1"),
 	ConnectPort(DEFAULT_NETWORKPORT) {
@@ -99,6 +101,8 @@ void _PlayState::Init() {
 
 	Camera = new ae::_Camera(glm::vec3(0, 0, CAMERA_DISTANCE), CAMERA_DIVISOR, CAMERA_FOVY, CAMERA_NEAR, CAMERA_FAR);
 	Camera->CalculateFrustum(ae::Graphics.AspectRatio);
+
+	Framebuffer = new ae::_Framebuffer(ae::Graphics.CurrentSize);
 
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_GAME);
@@ -148,6 +152,7 @@ void _PlayState::Close() {
 	delete Server;
 	delete Stats;
 	delete Network;
+	delete Framebuffer;
 }
 
 // Delete objects and return to menu
@@ -520,11 +525,17 @@ void _PlayState::HandleWindow(uint8_t Event) {
 	if(Event == SDL_WINDOWEVENT_SIZE_CHANGED) {
 		if(Camera)
 			Camera->CalculateFrustum(ae::Graphics.AspectRatio);
+
 		if(MenuCamera)
 			MenuCamera->CalculateFrustum(ae::Graphics.AspectRatio);
 
 		if(HUD && HUD->Minigame && HUD->Minigame->Camera)
 			HUD->Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
+
+		if(Framebuffer) {
+			Framebuffer->Resize(ae::Graphics.CurrentSize);
+			ae::Graphics.DirtyState();
+		}
 	}
 }
 
@@ -660,7 +671,7 @@ void _PlayState::Render(double BlendFactor) {
 	if(Player && Map) {
 
 		// Draw map and objects
-		Map->Render(Camera, Player, BlendFactor);
+		Map->Render(Camera, Framebuffer, Player, BlendFactor);
 
 		ae::Graphics.Setup2D();
 		ae::Graphics.SetStaticUniforms();
@@ -682,7 +693,7 @@ void _PlayState::Render(double BlendFactor) {
 		SetViewProjection(MenuCamera);
 
 		// Render background map
-		MenuMap->Render(MenuCamera, nullptr, BlendFactor);
+		MenuMap->Render(MenuCamera, Framebuffer, nullptr, BlendFactor);
 	}
 
 	// Draw menu
@@ -1689,6 +1700,10 @@ void _PlayState::DeleteMap() {
 
 // Set view projection matrix in shaders
 void _PlayState::SetViewProjection(ae::_Camera *CameraUsed) {
+	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["lights"]);
+	glUniformMatrix4fv(ae::Assets.Programs["lights"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);

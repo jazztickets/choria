@@ -41,6 +41,7 @@ namespace ae {
 	class _ClientNetwork;
 	class _Buffer;
 	class _Console;
+	class _Framebuffer;
 }
 
 // Play state
@@ -92,6 +93,9 @@ class _PlayState : public ae::_State {
 		const _Stats *Stats;
 		ae::_LogFile Log;
 		double Time;
+
+		// Graphics
+		ae::_Framebuffer *Framebuffer;
 
 		// Scripting
 		_Scripting *Scripting;

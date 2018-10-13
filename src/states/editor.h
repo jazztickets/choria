@@ -30,6 +30,7 @@ namespace ae {
 	class _Camera;
 	class _Texture;
 	class _Element;
+	class _Framebuffer;
 }
 
 enum MapRenderType {
@@ -110,6 +111,7 @@ class _EditorState : public ae::_State {
 
 		// Graphics
 		ae::_Camera *Camera;
+		ae::_Framebuffer *Framebuffer;
 		glm::vec2 WorldCursor;
 
 		// Map

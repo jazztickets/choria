@@ -423,6 +423,7 @@ void _Framework::LoadAssets(bool Server) {
 	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", Server, true);
 	ae::Assets.LoadTextureDirectory("textures/interface/", Server);
 	ae::Assets.LoadTextureDirectory("textures/items/", Server);
+	ae::Assets.LoadTextureDirectory("textures/lights/", Server);
 	ae::Assets.LoadTextureDirectory("textures/map/", Server);
 	ae::Assets.LoadTextureDirectory("textures/menu/", Server);
 	ae::Assets.LoadTextureDirectory("textures/minigames/", Server);

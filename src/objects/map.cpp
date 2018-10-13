@@ -28,6 +28,7 @@
 #include <ae/assets.h>
 #include <ae/atlas.h>
 #include <ae/font.h>
+#include <ae/framebuffer.h>
 #include <ae/program.h>
 #include <ae/camera.h>
 #include <ae/servernetwork.h>
@@ -491,13 +492,14 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 }
 
 // Renders the map
-void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
+void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
 	// Set lights for editor
 	if(RenderFlags & MAP_RENDER_EDITOR_AMBIENT) {
+		Framebuffer->Use();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glm::vec4 AmbientLightEditor(1.0f);
-		ae::Assets.Programs["pos_uv"]->AmbientLight = AmbientLightEditor;
-		ae::Assets.Programs["pos_uv"]->LightCount = 0;
+		ae::Assets.Programs["map"]->AmbientLight = AmbientLightEditor;
 		ae::Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
 	}
 	else {
@@ -506,15 +508,16 @@ void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor
 		SetAmbientLightByClock();
 
 		// Setup lights
-		ae::Assets.Programs["pos_uv"]->AmbientLight = AmbientLight;
+		ae::Assets.Programs["map"]->AmbientLight = AmbientLight;
 
 		// Add lights
 		int LightCount = 0;
-		LightCount = AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
-		LightCount = AddLights(&StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB(), LightCount);
-
-		// Update light count in shader
-		ae::Assets.Programs["pos_uv"]->LightCount = LightCount;
+		Framebuffer->Use();
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		LightCount += AddLights(&Objects, ae::Assets.Programs["lights"], Camera->GetAABB());
+		LightCount += AddLights(&StaticObjects, ae::Assets.Programs["lights"], Camera->GetAABB());
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	// Draw background map
@@ -551,9 +554,18 @@ void _Map::Render(ae::_Camera *Camera, _Object *ClientPlayer, double BlendFactor
 	Bounds[2] = glm::clamp(Bounds[2], 0.0f, (float)Size.x);
 	Bounds[3] = glm::clamp(Bounds[3], 0.0f, (float)Size.y);
 
+	// Set framebuffer texture
+	if(Framebuffer) {
+		ae::Assets.Programs["map"]->Use();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
+		glActiveTexture(GL_TEXTURE0);
+	}
+
 	// Draw layers
-	RenderLayer("pos_uv", Bounds, glm::vec3(0.0f), 0);
-	RenderLayer("pos_uv", Bounds, glm::vec3(0.0f), 1);
+	RenderLayer("map", Bounds, glm::vec3(0.0f), 0);
+	RenderLayer("map", Bounds, glm::vec3(0.0f), 1);
 
 	// Render objects
 	for(const auto &Object : Objects) {
@@ -667,13 +679,12 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 }
 
 // Add lights from objects
-int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB, int LightCount) {
-
-	// Check max lights
-	if(LightCount >= Program->MaxLights)
-		return LightCount;
+int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
+	Program->Use();
+	glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	// Iterate over objects
+	int LightCount = 0;
 	for(const auto &Object : *ObjectList) {
 		if(!Object->Light)
 			continue;
@@ -701,16 +712,14 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 		if(DistanceSquared >= (LightType.Radius + 0.5f) * (LightType.Radius + 0.5f))
 			continue;
 
-		// Set light in shader
-		ae::_Light *Light = &Program->Lights[LightCount];
-		Light->Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 1);
-		Light->Color = glm::vec4(LightType.Color, 1);
-		Light->Radius = LightType.Radius;
-		LightCount++;
+		// Draw light
+		glm::vec3 Position = glm::vec3(Object->Position, 0) + glm::vec3(0.5f, 0.5f, 0);
+		glm::vec4 Color = glm::vec4(LightType.Color, 1);
+		glm::vec2 Scale(LightType.Radius * 2.0f);
+		ae::Graphics.SetColor(Color);
+		ae::Graphics.DrawSprite(Position, ae::Assets.Textures["textures/lights/light0.png"], 0.0f, Scale);
 
-		// Check max lights
-		if(LightCount >= Program->MaxLights)
-			break;
+		LightCount++;
 	}
 
 	return LightCount;

@@ -18,7 +18,6 @@
 #include <states/test.h>
 #include <ae/graphics.h>
 #include <ae/ui.h>
-#include <ae/framebuffer.h>
 #include <ae/assets.h>
 #include <ae/camera.h>
 #include <ae/random.h>
@@ -38,8 +37,7 @@ _TestState TestState;
 _TestState::_TestState() :
 	Camera(nullptr),
 	Stats(nullptr),
-	Minigame(nullptr),
-	Framebuffer(nullptr) {
+	Minigame(nullptr) {
 }
 
 // Initialize
@@ -141,12 +139,10 @@ void _TestState::Init() {
 	//Minigame->StartGame(2109853616);
 	//Minigame->Drop(-4.879331111907959);
 
-	Framebuffer = new ae::_Framebuffer(ae::Graphics.CurrentSize);
 }
 
 // Close
 void _TestState::Close() {
-	delete Framebuffer;
 	delete Stats;
 	delete Minigame;
 	delete Camera;
@@ -186,11 +182,6 @@ void _TestState::HandleWindow(uint8_t Event) {
 		if(Minigame && Minigame->Camera)
 			Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 
-		if(Framebuffer) {
-			Framebuffer->Resize(ae::Graphics.CurrentSize);
-
-			ae::Graphics.DirtyState();
-		}
 	}
 }
 
@@ -237,22 +228,6 @@ void _TestState::Render(double BlendFactor) {
 
 	ae::Graphics.Setup2D();
 	ae::Graphics.SetStaticUniforms();
-
-	Framebuffer->Use();
-
-	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
-	ae::Graphics.SetColor(glm::vec4(1,0,0,0.5));
-	ae::Graphics.DrawRectangle(glm::vec2(0, 0), glm::vec2(32, 32), true);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
-	glActiveTexture(GL_TEXTURE0);
-
-	ae::Graphics.SetProgram(ae::Assets.Programs["test"]);
-	glUniformMatrix4fv(ae::Assets.Programs["test"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
-	ae::Graphics.SetColor(glm::vec4(1.0f));
-	ae::Graphics.DrawImage(ae::_Bounds(glm::vec2(0, 0), glm::vec2(48, 48)), ae::Assets.Textures["textures/hud/slot_amulet.png"], false);
 
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(1,0,0,1));

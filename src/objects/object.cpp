@@ -307,8 +307,9 @@ void _Object::Render(const _Object *ClientPlayer) {
 	if(Map && ModelTexture) {
 
 		// Setup shader
-		ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
-		glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+		ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
+		glUniformMatrix4fv(ae::Assets.Programs["map"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+		glUniformMatrix4fv(ae::Assets.Programs["map"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 
 		// Draw debug server position
 		glm::vec3 DrawPosition;

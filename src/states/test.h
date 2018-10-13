@@ -59,8 +59,6 @@ class _TestState : public ae::_State {
 		_Minigame *Minigame;
 		double Time;
 
-		ae::_Framebuffer *Framebuffer;
-
 	protected:
 
 };
