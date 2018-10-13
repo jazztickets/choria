@@ -37,7 +37,8 @@ _TestState TestState;
 _TestState::_TestState() :
 	Camera(nullptr),
 	Stats(nullptr),
-	Minigame(nullptr) {
+	Minigame(nullptr),
+	FBOTexture(0) {
 }
 
 // Initialize
@@ -200,6 +201,12 @@ void _TestState::HandleWindow(uint8_t Event) {
 			Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 		if(Minigame && Minigame->Camera)
 			Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
+
+		if(FBOTexture) {
+			glBindTexture(GL_TEXTURE_2D, FBOTexture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ae::Graphics.CurrentSize.x, ae::Graphics.CurrentSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+			ae::Graphics.DirtyState();
+		}
 	}
 }
 
