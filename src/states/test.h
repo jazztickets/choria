@@ -29,6 +29,7 @@ class _Minigame;
 
 namespace ae {
 	class _Camera;
+	class _Framebuffer;
 }
 
 // Test state
@@ -58,9 +59,7 @@ class _TestState : public ae::_State {
 		_Minigame *Minigame;
 		double Time;
 
-		GLuint FBO;
-		GLuint FBOTexture;
-		GLuint RenderBuffer;
+		ae::_Framebuffer *Framebuffer;
 
 	protected:
 

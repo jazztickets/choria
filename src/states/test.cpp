@@ -18,6 +18,7 @@
 #include <states/test.h>
 #include <ae/graphics.h>
 #include <ae/ui.h>
+#include <ae/framebuffer.h>
 #include <ae/assets.h>
 #include <ae/camera.h>
 #include <ae/random.h>
@@ -38,7 +39,7 @@ _TestState::_TestState() :
 	Camera(nullptr),
 	Stats(nullptr),
 	Minigame(nullptr),
-	FBOTexture(0) {
+	Framebuffer(nullptr) {
 }
 
 // Initialize
@@ -140,29 +141,12 @@ void _TestState::Init() {
 	//Minigame->StartGame(2109853616);
 	//Minigame->Drop(-4.879331111907959);
 
-	glGenFramebuffers(1, &FBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-
-	glGenTextures(1, &FBOTexture);
-	glBindTexture(GL_TEXTURE_2D, FBOTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ae::Graphics.CurrentSize.x, ae::Graphics.CurrentSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, FBOTexture, 0);
-
-	glGenRenderbuffers(1, &RenderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, RenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, ae::Graphics.CurrentSize.x, ae::Graphics.CurrentSize.y);
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		throw std::runtime_error("glCheckFramebufferStatus not ready");
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	Framebuffer = new ae::_Framebuffer(ae::Graphics.CurrentSize);
 }
 
 // Close
 void _TestState::Close() {
-
-	glDeleteBuffers(1, &FBO);
+	delete Framebuffer;
 	delete Stats;
 	delete Minigame;
 	delete Camera;
@@ -202,9 +186,9 @@ void _TestState::HandleWindow(uint8_t Event) {
 		if(Minigame && Minigame->Camera)
 			Minigame->Camera->CalculateFrustum(ae::Graphics.AspectRatio);
 
-		if(FBOTexture) {
-			glBindTexture(GL_TEXTURE_2D, FBOTexture);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, ae::Graphics.CurrentSize.x, ae::Graphics.CurrentSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		if(Framebuffer) {
+			Framebuffer->Resize(ae::Graphics.CurrentSize);
+
 			ae::Graphics.DirtyState();
 		}
 	}
@@ -254,9 +238,7 @@ void _TestState::Render(double BlendFactor) {
 	ae::Graphics.Setup2D();
 	ae::Graphics.SetStaticUniforms();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	Framebuffer->Use();
 
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(1,0,0,0.5));
@@ -264,7 +246,7 @@ void _TestState::Render(double BlendFactor) {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, FBOTexture);
+	glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
 	glActiveTexture(GL_TEXTURE0);
 
 	ae::Graphics.SetProgram(ae::Assets.Programs["test"]);
