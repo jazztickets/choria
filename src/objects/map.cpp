@@ -514,8 +514,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		int LightCount = 0;
 		Framebuffer->Use();
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		LightCount += AddLights(&Objects, ae::Assets.Programs["lights"], Camera->GetAABB());
-		LightCount += AddLights(&StaticObjects, ae::Assets.Programs["lights"], Camera->GetAABB());
+		LightCount += AddLights(&Objects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
+		LightCount += AddLights(&StaticObjects, ae::Assets.Programs["pos_uv"], Camera->GetAABB());
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -680,7 +680,7 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 
 // Add lights from objects
 int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB) {
-	Program->Use();
+	ae::Graphics.SetProgram(Program);
 	glUniformMatrix4fv(Program->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	// Iterate over objects

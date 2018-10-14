@@ -1700,10 +1700,6 @@ void _PlayState::DeleteMap() {
 
 // Set view projection matrix in shaders
 void _PlayState::SetViewProjection(ae::_Camera *CameraUsed) {
-	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
-	glUniformMatrix4fv(ae::Assets.Programs["map"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["lights"]);
-	glUniformMatrix4fv(ae::Assets.Programs["lights"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
@@ -1712,4 +1708,6 @@ void _PlayState::SetViewProjection(ae::_Camera *CameraUsed) {
 	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
 	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 }

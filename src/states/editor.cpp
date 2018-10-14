@@ -496,10 +496,6 @@ void _EditorState::Render(double BlendFactor) {
 	Camera->Set3DProjection(BlendFactor);
 
 	// Setup the viewing matrix
-	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
-	glUniformMatrix4fv(ae::Assets.Programs["map"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
-	ae::Graphics.SetProgram(ae::Assets.Programs["lights"]);
-	glUniformMatrix4fv(ae::Assets.Programs["lights"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 	glUniformMatrix4fv(ae::Assets.Programs["pos"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
@@ -508,6 +504,8 @@ void _EditorState::Render(double BlendFactor) {
 	glUniformMatrix4fv(ae::Assets.Programs["pos_uv_static"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
 	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 
 	// Render map
 	if(Map) {
