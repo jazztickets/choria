@@ -405,113 +405,121 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 	Packet.Write<PacketType>(PacketType::COMMAND);
 	Packet.WriteString(Console->Command.c_str());
 
-	// Handle commands
-	if(Console->Command == "battle") {
-		if(Parameters.size() == 1) {
-			if(Network && Network->IsConnected()) {
-				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
-				Network->SendPacket(Packet);
-			}
-		}
-		else
-			Console->AddMessage("usage: battle [zone]");
-	}
-	else if(Console->Command == "bounty" || Console->Command == "experience" || Console->Command == "gold") {
-		if(Parameters.size() == 1) {
-			if(Network && Network->IsConnected()) {
-				if(Parameters[0][0] == '+' || Parameters[0][0] == '-')
-					Packet.WriteBit(1);
-				else
-					Packet.WriteBit(0);
-				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
-				Network->SendPacket(Packet);
-			}
-		}
-		else
-			Console->AddMessage("usage: " + Console->Command + " [+-][amount]");
-	}
-	else if(Console->Command == "clock") {
-		if(Parameters.size() == 1) {
-			if(Network && Network->IsConnected()) {
-				Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
-				Network->SendPacket(Packet);
-			}
-		}
-		else
-			Console->AddMessage("usage: clock [time]");
-	}
-	else if(Console->Command == "event") {
-		if(Parameters.size() == 2) {
-			if(Network && Network->IsConnected()) {
-				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
-				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[1]));
-				Network->SendPacket(Packet);
-			}
-		}
-		else
-			Console->AddMessage("usage: event [type] [data]");
-	}
-	else if(Console->Command == "give") {
-		if(Parameters.size() == 2) {
-			if(Network && Network->IsConnected()) {
-				Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
-				Packet.Write<int>(ae::ToNumber<int>(Parameters[1]));
-				Network->SendPacket(Packet);
-			}
-		}
-		else
-			Console->AddMessage("usage: give [item_id] [count]");
-	}
-	else if(Console->Command == "map") {
-		if(Parameters.size() == 1) {
-			if(Network && Network->IsConnected()) {
-				Packet.Write<ae::NetworkIDType>(ae::ToNumber<ae::NetworkIDType>(Parameters[0]));
-				Network->SendPacket(Packet);
-			}
-		}
-		else
-			Console->AddMessage("usage: map [map_id]");
-	}
-	else if(Console->Command == "move") {
-		if(Parameters.size() == 2) {
-			if(Network && Network->IsConnected()) {
-				Packet.Write<uint8_t>(ae::ToNumber<int>(Parameters[0]));
-				Packet.Write<uint8_t>(ae::ToNumber<int>(Parameters[1]));
-				Network->SendPacket(Packet);
-			}
-		}
-		else
-			Console->AddMessage("usage: move [x] [y]");
-	}
-	else if(Console->Command == "quit") {
+	// Handle normal commands
+	if(Console->Command == "quit") {
 		HandleQuit();
+		return true;
 	}
-	else if(Console->Command == "search") {
-		if(Parameters.size() == 2) {
-			std::string Table = Parameters[0];
-			std::string Search = "%" + Parameters[1] + "%";
 
-			// Search database for keyword
-			ae::_Database *Database = PlayState.Stats->Database;
-			try {
-				Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
-				Database->BindString(1, Search);
-				while(Database->FetchRow()) {
-					int ID = Database->GetInt<int>("id");
-					std::string Name = Database->GetString("name");
-
-					// Add messages
-					std::stringstream Buffer;
-					Buffer << std::setw(3) << ID << " " << Name << std::endl;
-					Console->AddMessage(Buffer.str());
+	// Handle dev commands
+	if(DevMode) {
+		if(Console->Command == "battle") {
+			if(Parameters.size() == 1) {
+				if(Network && Network->IsConnected()) {
+					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
+					Network->SendPacket(Packet);
 				}
-				Database->CloseQuery();
-			} catch(std::exception &Error) {
-				Console->AddMessage(Error.what());
 			}
+			else
+				Console->AddMessage("usage: battle [zone]");
 		}
-		else
-			Console->AddMessage("usage: search [table] [query]");
+		else if(Console->Command == "bounty" || Console->Command == "experience" || Console->Command == "gold") {
+			if(Parameters.size() == 1) {
+				if(Network && Network->IsConnected()) {
+					if(Parameters[0][0] == '+' || Parameters[0][0] == '-')
+						Packet.WriteBit(1);
+					else
+						Packet.WriteBit(0);
+					Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+					Network->SendPacket(Packet);
+				}
+			}
+			else
+				Console->AddMessage("usage: " + Console->Command + " [+-][amount]");
+		}
+		else if(Console->Command == "clock") {
+			if(Parameters.size() == 1) {
+				if(Network && Network->IsConnected()) {
+					Packet.Write<int>(ae::ToNumber<int>(Parameters[0]));
+					Network->SendPacket(Packet);
+				}
+			}
+			else
+				Console->AddMessage("usage: clock [time]");
+		}
+		else if(Console->Command == "event") {
+			if(Parameters.size() == 2) {
+				if(Network && Network->IsConnected()) {
+					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
+					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[1]));
+					Network->SendPacket(Packet);
+				}
+			}
+			else
+				Console->AddMessage("usage: event [type] [data]");
+		}
+		else if(Console->Command == "give") {
+			if(Parameters.size() == 2) {
+				if(Network && Network->IsConnected()) {
+					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
+					Packet.Write<int>(ae::ToNumber<int>(Parameters[1]));
+					Network->SendPacket(Packet);
+				}
+			}
+			else
+				Console->AddMessage("usage: give [item_id] [count]");
+		}
+		else if(Console->Command == "map") {
+			if(Parameters.size() == 1) {
+				if(Network && Network->IsConnected()) {
+					Packet.Write<ae::NetworkIDType>(ae::ToNumber<ae::NetworkIDType>(Parameters[0]));
+					Network->SendPacket(Packet);
+				}
+			}
+			else
+				Console->AddMessage("usage: map [map_id]");
+		}
+		else if(Console->Command == "move") {
+			if(Parameters.size() == 2) {
+				if(Network && Network->IsConnected()) {
+					Packet.Write<uint8_t>(ae::ToNumber<int>(Parameters[0]));
+					Packet.Write<uint8_t>(ae::ToNumber<int>(Parameters[1]));
+					Network->SendPacket(Packet);
+				}
+			}
+			else
+				Console->AddMessage("usage: move [x] [y]");
+		}
+		else if(Console->Command == "search") {
+			if(Parameters.size() == 2) {
+				std::string Table = Parameters[0];
+				std::string Search = "%" + Parameters[1] + "%";
+
+				// Search database for keyword
+				ae::_Database *Database = PlayState.Stats->Database;
+				try {
+					Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
+					Database->BindString(1, Search);
+					while(Database->FetchRow()) {
+						int ID = Database->GetInt<int>("id");
+						std::string Name = Database->GetString("name");
+
+						// Add messages
+						std::stringstream Buffer;
+						Buffer << std::setw(3) << ID << " " << Name << std::endl;
+						Console->AddMessage(Buffer.str());
+					}
+					Database->CloseQuery();
+				} catch(std::exception &Error) {
+					Console->AddMessage(Error.what());
+				}
+			}
+			else
+				Console->AddMessage("usage: search [table] [query]");
+		}
+		else {
+			return false;
+		}
 	}
 	else {
 		return false;
