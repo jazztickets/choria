@@ -707,6 +707,7 @@ void _Menu::LoadKeybindings() {
 		PrimaryButton->Size = Size;
 		PrimaryButton->Alignment = ae::LEFT_TOP;
 		PrimaryButton->Style = ae::Assets.Styles["style_menu_button"];
+		PrimaryButton->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
 		PrimaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
 		PrimaryButton->Index = i;
 		KeyBindingsElement->Children.push_back(PrimaryButton);
@@ -729,6 +730,7 @@ void _Menu::LoadKeybindings() {
 		SecondaryButton->Size = Size;
 		SecondaryButton->Alignment = ae::LEFT_TOP;
 		SecondaryButton->Style = ae::Assets.Styles["style_menu_button"];
+		SecondaryButton->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
 		SecondaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
 		SecondaryButton->Index = i;
 		KeyBindingsElement->Children.push_back(SecondaryButton);
@@ -752,6 +754,13 @@ void _Menu::LoadKeybindings() {
 		Label->Alignment = ae::CENTER_BASELINE;
 		Label->Clickable = false;
 		PrimaryButton->Children.push_back(Label);
+
+		// Disable chat rebinding
+		if(std::string(KeyBindingNames[i]) == "Chat") {
+			PrimaryButton->SetEnabled(false);
+			SecondaryButton->SetEnabled(false);
+			Label->SetEnabled(true);
+		}
 
 		// Add headers
 		if(Offset.y == StartingPosition.y) {
@@ -898,8 +907,10 @@ void _Menu::ClearAction(int Action, int Type) {
 // Remap a key/button
 void _Menu::RemapInput(int InputType, int Input) {
 	ae::Assets.Elements["element_menu_keybindings_newkey"]->SetActive(false);
-	if(InputType == ae::_Input::KEYBOARD && Input == SDL_SCANCODE_ESCAPE)
-		return;
+	if(InputType == ae::_Input::KEYBOARD) {
+		if(Input == SDL_SCANCODE_ESCAPE || Input == SDL_SCANCODE_RETURN || Input == SDL_SCANCODE_KP_ENTER)
+			return;
+	}
 
 	// Remove duplicate keys/buttons
 	ae::Actions.ClearMappingForInput(InputType, Input);
