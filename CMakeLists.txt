@@ -29,7 +29,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-result -Wno-un
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
 # Set gl preference
-set(OpenGL_GL_PREFERENCE GLVND)
+if(NOT DEFINED OpenGL_GL_PREFERENCE)
+	set(OpenGL_GL_PREFERENCE GLVND)
+endif()
 
 # find libraries
 find_package(OpenGL REQUIRED)
@@ -104,7 +106,7 @@ add_dependencies(${CMAKE_PROJECT_NAME} version)
 
 # link libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
-	${OPENGL_opengl_LIBRARY}
+	${OPENGL_LIBRARIES}
 	${SDL2_LIBRARY}
 	${SDL2_IMAGE_LIBRARIES}
 	${OPENAL_LIBRARY}
