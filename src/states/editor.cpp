@@ -527,7 +527,7 @@ void _EditorState::Render(double BlendFactor) {
 
 			glm::ivec2 Start, End;
 			GetDrawBounds(Start, End);
-			ae::Graphics.DrawRectangle(Start, End, true);
+			ae::Graphics.DrawRectangle(Start, End + 1, true);
 		}
 	}
 
