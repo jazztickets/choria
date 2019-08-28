@@ -76,5 +76,5 @@ fi
 
 rm -f "$outputdir"/choria*.zip
 
-build 32
+#build 32
 build 64
