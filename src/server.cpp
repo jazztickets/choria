@@ -1568,6 +1568,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 			Player->Character->Health = 0;
 			Player->Character->Mana = Player->Character->MaxMana / 2;
 			Player->Character->LoadMapID = 0;
+			Player->Character->DeleteStatusEffects();
 		}
 
 		// Leave trading screen
