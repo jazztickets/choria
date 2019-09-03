@@ -336,6 +336,7 @@ void _Minigame::Render(double BlendFactor) {
 		Position.x += 2;
 	}
 
+	//Grid->Render();
 	ae::Graphics.DisableScissorTest();
 
 	// Setup 2D

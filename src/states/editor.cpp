@@ -820,8 +820,8 @@ void _EditorState::InitTextures() {
 		ae::_Element *Button = new ae::_Element();
 		Button->Name = "button_skills_skill";
 		Button->Parent = TexturesElement;
-		Button->Offset = Offset;
-		Button->Size = Map->TileAtlas->Size;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = Map->TileAtlas->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Atlas = Map->TileAtlas;
 		Button->TextureIndex = i;

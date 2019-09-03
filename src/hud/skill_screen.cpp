@@ -73,8 +73,8 @@ void _SkillScreen::Init() {
 		ae::_Element *Button = new ae::_Element();
 		Button->Name = "button_skills_skill";
 		Button->Parent = Element;
-		Button->Offset = Offset;
-		Button->Size = Skill->Texture->Size;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = Skill->Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
 		Button->Index = (int)Skill->ID;
@@ -84,7 +84,7 @@ void _SkillScreen::Init() {
 		ae::_Element *LevelLabel = new ae::_Element();
 		LevelLabel->Name = "label_skills_level";
 		LevelLabel->Parent = Button;
-		LevelLabel->Offset = LevelOffset;
+		LevelLabel->BaseOffset = LevelOffset;
 		LevelLabel->Alignment = ae::CENTER_BASELINE;
 		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
 		LevelLabel->Index = (int)Skill->ID;
@@ -94,8 +94,8 @@ void _SkillScreen::Init() {
 		ae::_Element *PlusButton = new ae::_Element();
 		PlusButton->Name = "button_skills_plus";
 		PlusButton->Parent = Button;
-		PlusButton->Size = glm::vec2(16, 16);
-		PlusButton->Offset = PlusOffset;
+		PlusButton->BaseSize = glm::vec2(16, 16);
+		PlusButton->BaseOffset = PlusOffset;
 		PlusButton->Alignment = ae::CENTER_MIDDLE;
 		PlusButton->Style = ae::Assets.Styles["style_menu_button"];
 		PlusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
@@ -105,8 +105,8 @@ void _SkillScreen::Init() {
 		ae::_Element *MinusButton = new ae::_Element();
 		MinusButton->Name = "button_skills_minus";
 		MinusButton->Parent = Button;
-		MinusButton->Size = glm::vec2(16, 16);
-		MinusButton->Offset = MinusOffset;
+		MinusButton->BaseSize = glm::vec2(16, 16);
+		MinusButton->BaseOffset = MinusOffset;
 		MinusButton->Alignment = ae::CENTER_MIDDLE;
 		MinusButton->Style = ae::Assets.Styles["style_menu_button"];
 		MinusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
@@ -116,7 +116,7 @@ void _SkillScreen::Init() {
 		ae::_Element *PlusLabel = new ae::_Element();
 		PlusLabel->Parent = PlusButton;
 		PlusLabel->Text = "+";
-		PlusLabel->Offset = LabelOffset;
+		PlusLabel->BaseOffset = LabelOffset;
 		PlusLabel->Alignment = ae::CENTER_MIDDLE;
 		PlusLabel->Font = ae::Assets.Fonts["hud_medium"];
 		PlusButton->Children.push_back(PlusLabel);
@@ -125,14 +125,14 @@ void _SkillScreen::Init() {
 		ae::_Element *MinusLabel = new ae::_Element();
 		MinusLabel->Parent = MinusButton;
 		MinusLabel->Text = "-";
-		MinusLabel->Offset = LabelOffset;
+		MinusLabel->BaseOffset = LabelOffset;
 		MinusLabel->Alignment = ae::CENTER_MIDDLE;
 		MinusLabel->Font = ae::Assets.Fonts["hud_medium"];
 		MinusButton->Children.push_back(MinusLabel);
 
 		// Update position
 		Offset.x += Skill->Texture->Size.x + Spacing.x;
-		if(Offset.x > Element->Size.x - Skill->Texture->Size.x) {
+		if(Offset.x > Element->BaseSize.x - Skill->Texture->Size.x) {
 			Offset.y += Skill->Texture->Size.y + Spacing.y;
 			Offset.x = Start.x;
 		}

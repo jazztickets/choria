@@ -79,7 +79,7 @@ void _VendorScreen::Render(double BlendFactor) {
 			// Draw item
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			if(Item->Texture)
-				ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+				ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
 
 			// Draw price
 			HUD->DrawItemPrice(Item, 1, DrawPosition, true);

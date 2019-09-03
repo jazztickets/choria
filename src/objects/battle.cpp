@@ -175,8 +175,8 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 	if(ActionResult.ActionUsed.Item)
-		ae::Graphics.DrawCenteredImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
-	ae::Graphics.DrawCenteredImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
+		ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
+	ae::Graphics.DrawScaledImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
 
 	// Draw damage dealt
 	glm::vec4 TextColor = glm::vec4(1.0f);
@@ -773,6 +773,7 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Object) {
 	if(!BattleElement)
 		return;
 
+	// Get column index
 	int Column = SideIndex / BATTLE_ROWS_PER_SIDE;
 
 	// Check sides
@@ -789,10 +790,10 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Object) {
 		RowCount *= BATTLE_ROWS_PER_SIDE;
 
 	// Divide space into RowCount parts, then divide that by 2
-	int SpacingY = (int)((BattleElement->Size.y / RowCount) / 2);
+	int SpacingY = (int)((BattleElement->BaseSize.y / RowCount) / 2);
 
 	// Place slots in between main divisions
-	Object->Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->Size.y/2;
+	Object->Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->BaseSize.y/2;
 }
 
 // Adjust existing battle elements
@@ -803,7 +804,7 @@ void _Battle::AdjustBattleElements(int SideIndex, _Object *Object) {
 
 	// Update position
 	if(Object->Fighter->BattleElement) {
-		Object->Fighter->BattleElement->Offset = Object->Fighter->BattleOffset;
+		Object->Fighter->BattleElement->BaseOffset = Object->Fighter->BattleOffset;
 		Object->Fighter->BattleElement->CalculateBounds();
 	}
 }

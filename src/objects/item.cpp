@@ -38,7 +38,7 @@
 #include <iostream>
 
 // Draw tooltip
-void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
+void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
@@ -48,7 +48,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	TooltipElement->SetActive(true);
 
 	// Get window dimensions
-	glm::vec2 Size = TooltipElement->Size;
+	glm::vec2 Size = TooltipElement->BaseSize;
 
 	// Set label values
 	TooltipName->Text = Name;
@@ -62,7 +62,7 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	Size.x = INVENTORY_TOOLTIP_WIDTH;
 	float SidePadding = 25;
 	float SpacingY = 25;
-	Size.x = std::max(Size.x, (float)TextBounds.Width) + SidePadding * 2;
+	Size.x = std::max(Size.x, (float)TextBounds.Width / ae::_Element::GetUIScale()) + SidePadding * 2;
 	if(ResistanceTypeID)
 		Size.x += 25;
 	else if(IsSkill())
@@ -74,10 +74,10 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 		Size.y += 40;
 
 	// Position window
-	glm::vec2 WindowOffset = Offset;
+	glm::vec2 WindowOffset = Position;
 
 	// Center vertically
-	if(Offset.y < 0) {
+	if(Position.y < 0) {
 		WindowOffset.y = (ae::Graphics.CurrentSize.y - Size.y) / 2;
 	}
 	else {
@@ -91,9 +91,9 @@ void _Item::DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _O
 	if(WindowOffset.y + Size.y > ae::Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
 		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
-	TooltipElement->SetOffset(WindowOffset);
-	TooltipElement->SetWidth(Size.x);
-	TooltipElement->SetHeight(Size.y);
+	TooltipElement->Offset = WindowOffset;
+	TooltipElement->Size = Size * ae::_Element::GetUIScale();
+	TooltipElement->CalculateBounds(false);
 
 	// Render tooltip
 	TooltipElement->Render();

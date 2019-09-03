@@ -1,20 +1,20 @@
 name	background color	border color	program	texture	texture color	stretch
-style_menu_button	menu_button		ortho_pos			0
-style_menu_button_disabled	menu_button_disabled		ortho_pos			0
-style_menu_button_hover	menu_button_hover		ortho_pos			0
-style_menu_window	menu_window		ortho_pos			0
-style_menu_textbox	menu_button_dark	menu_button	ortho_pos			0
-style_menu_portrait_hover	highlight		ortho_pos			0
-style_hud_bg	dark		ortho_pos			0
-style_hud_died_bg	died		ortho_pos			0
-style_buttonbar_slot			ortho_pos_uv	textures/hud/slot_small.png		0
-style_hud_slot			ortho_pos_uv	textures/hud/slot.png		0
-style_hud_slot_alpha			ortho_pos_uv	textures/hud/slot.png	inventory_slot_trans	0
-style_hud_slot_alpha_ring			ortho_pos_uv	textures/hud/slot_ring.png	inventory_slot_trans	0
-style_hud_slot_alpha_amulet			ortho_pos_uv	textures/hud/slot_amulet.png	inventory_slot_trans	0
-style_hud_item_tooltip_bg	item_tooltip_bg		ortho_pos			0
-style_battle_slot_red	red_alpha	red	ortho_pos			0
-style_battle_slot_green	green_alpha	green	ortho_pos			0
-style_minigame_bg	dark_brown		ortho_pos			0
-style_equipment_bg	equipment_bg		ortho_pos			0
-style_tabs_bg	equipment_bg_dark		ortho_pos			0
+style_menu_button	menu_button		ortho_pos			1
+style_menu_button_disabled	menu_button_disabled		ortho_pos			1
+style_menu_button_hover	menu_button_hover		ortho_pos			1
+style_menu_window	menu_window		ortho_pos			1
+style_menu_textbox	menu_button_dark	menu_button	ortho_pos			1
+style_menu_portrait_hover	highlight		ortho_pos			1
+style_hud_bg	dark		ortho_pos			1
+style_hud_died_bg	died		ortho_pos			1
+style_buttonbar_slot			ortho_pos_uv	textures/hud/slot_small.png		1
+style_hud_slot			ortho_pos_uv	textures/hud/slot.png		1
+style_hud_slot_alpha			ortho_pos_uv	textures/hud/slot.png	inventory_slot_trans	1
+style_hud_slot_alpha_ring			ortho_pos_uv	textures/hud/slot_ring.png	inventory_slot_trans	1
+style_hud_slot_alpha_amulet			ortho_pos_uv	textures/hud/slot_amulet.png	inventory_slot_trans	1
+style_hud_item_tooltip_bg	item_tooltip_bg		ortho_pos			1
+style_battle_slot_red	red_alpha	red	ortho_pos			1
+style_battle_slot_green	green_alpha	green	ortho_pos			1
+style_minigame_bg	dark_brown		ortho_pos			1
+style_equipment_bg	equipment_bg		ortho_pos			1
+style_tabs_bg	equipment_bg_dark		ortho_pos			1

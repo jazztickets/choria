@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<element>
+<element base_height="768">
     <element id="element_menu_title" style="style_hud_bg" size_x="512" size_y="700">
         <element id="image_title_logo" texture="textures/menu/logo.png" offset_y="-250" size_x="344" size_y="128" clickable="false"/>
         <element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-60" size_x="200" size_y="48">

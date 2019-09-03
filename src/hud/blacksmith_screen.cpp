@@ -89,7 +89,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 		const _Item *Item = InventorySlot.Item;
 		if(Item) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
 
 			BlacksmithCost->SetActive(true);
 			UpgradeButton->SetEnabled(true);

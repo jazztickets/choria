@@ -497,8 +497,8 @@ void _Menu::LoadCharacterSlots() {
 		ae::_Element *Button = new ae::_Element();
 		Button->Name = CharacterButtonPrefix;
 		Button->Parent = CharacterSlotsElement;
-		Button->Offset = Offset;
-		Button->Size = Size;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = Size;
 		Button->Style = ae::Assets.Styles["style_menu_button"];
 		Button->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
 		Button->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
@@ -511,13 +511,13 @@ void _Menu::LoadCharacterSlots() {
 		ae::_Element *Image = new ae::_Element();
 		Image->Parent = Button;
 		Image->Alignment = ae::CENTER_MIDDLE;
-		Image->Offset = glm::vec2(0, 0);
+		Image->BaseOffset = glm::vec2(0, 0);
 		Button->Children.push_back(Image);
 
 		// Add name label
 		ae::_Element *NameLabel = new ae::_Element();
 		NameLabel->Parent = Button;
-		NameLabel->Offset = glm::vec2(0, 150);
+		NameLabel->BaseOffset = glm::vec2(0, 150);
 		NameLabel->Alignment = ae::CENTER_BASELINE;
 		NameLabel->Font = ae::Assets.Fonts["hud_medium"];
 		Button->Children.push_back(NameLabel);
@@ -525,7 +525,7 @@ void _Menu::LoadCharacterSlots() {
 		// Add level label
 		ae::_Element *LevelLabel = new ae::_Element();
 		LevelLabel->Parent = Button;
-		LevelLabel->Offset = glm::vec2(0, 170);
+		LevelLabel->BaseOffset = glm::vec2(0, 170);
 		LevelLabel->Alignment = ae::CENTER_BASELINE;
 		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
 		Button->Children.push_back(LevelLabel);
@@ -533,7 +533,7 @@ void _Menu::LoadCharacterSlots() {
 		// Add hardcore label
 		ae::_Element *HardcoreLabel = new ae::_Element();
 		HardcoreLabel->Parent = Button;
-		HardcoreLabel->Offset = glm::vec2(0, 187);
+		HardcoreLabel->BaseOffset = glm::vec2(0, 187);
 		HardcoreLabel->Alignment = ae::CENTER_BASELINE;
 		HardcoreLabel->Color = ae::Assets.Colors["red"];
 		HardcoreLabel->Font = ae::Assets.Fonts["hud_small"];
@@ -555,7 +555,7 @@ void _Menu::LoadCharacterSlots() {
 
 		// Update position
 		Offset.x += Size.x + Padding.x;
-		if(Offset.x > CharacterSlotsElement->Size.x - Size.x) {
+		if(Offset.x > CharacterSlotsElement->BaseSize.x - Size.x) {
 			Offset.y += Size.y + Padding.y;
 			Offset.x = 0;
 		}
@@ -597,8 +597,8 @@ void _Menu::LoadPortraitButtons() {
 		ae::_Element *Button = new ae::_Element();
 		Button->Name = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
-		Button->Offset = Offset;
-		Button->Size = Portrait.Texture->Size;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = Portrait.Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
@@ -607,7 +607,7 @@ void _Menu::LoadPortraitButtons() {
 
 		// Update position
 		Offset.x += Portrait.Texture->Size.x + 10;
-		if(Offset.x > PortraitsElement->Size.x - Portrait.Texture->Size.x - 10) {
+		if(Offset.x > PortraitsElement->BaseSize.x - Portrait.Texture->Size.x - 10) {
 			Offset.y += Portrait.Texture->Size.y + 10;
 			Offset.x = 10;
 		}
@@ -651,8 +651,8 @@ void _Menu::LoadBuildButtons() {
 		ae::_Element *Button = new ae::_Element();
 		Button->Name = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
-		Button->Offset = Offset;
-		Button->Size = Build.Texture->Size;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = Build.Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Build.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
@@ -665,14 +665,14 @@ void _Menu::LoadBuildButtons() {
 		Label->Text = Build.Name;
 		Label->Color = glm::vec4(1.0f);
 		Label->Parent = Button;
-		Label->Offset = glm::vec2(0, 80);
+		Label->BaseOffset = glm::vec2(0, 80);
 		Label->Alignment = ae::CENTER_BASELINE;
 		Label->Clickable = false;
 		Button->Children.push_back(Label);
 
 		// Update position
 		Offset.x += Build.Texture->Size.x + 10;
-		if(Offset.x > BuildsElement->Size.x - Build.Texture->Size.x - 10) {
+		if(Offset.x > BuildsElement->BaseSize.x - Build.Texture->Size.x - 10) {
 			Offset.y += Build.Texture->Size.y + 22;
 			Offset.x = 10;
 		}
@@ -703,8 +703,8 @@ void _Menu::LoadKeybindings() {
 		ae::_Element *PrimaryButton = new ae::_Element();
 		PrimaryButton->Name = "primary";
 		PrimaryButton->Parent = KeyBindingsElement;
-		PrimaryButton->Offset = Offset;
-		PrimaryButton->Size = Size;
+		PrimaryButton->BaseOffset = Offset;
+		PrimaryButton->BaseSize = Size;
 		PrimaryButton->Alignment = ae::LEFT_TOP;
 		PrimaryButton->Style = ae::Assets.Styles["style_menu_button"];
 		PrimaryButton->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
@@ -717,7 +717,7 @@ void _Menu::LoadKeybindings() {
 		PrimaryKey->Font = ae::Assets.Fonts["hud_small"];
 		PrimaryKey->Text = ae::Actions.GetInputNameForAction(Action, 0);
 		PrimaryKey->Parent = PrimaryButton;
-		PrimaryKey->Offset = glm::vec2(0, 23);
+		PrimaryKey->BaseOffset = glm::vec2(0, 23);
 		PrimaryKey->Alignment = ae::CENTER_BASELINE;
 		PrimaryKey->Clickable = false;
 		PrimaryButton->Children.push_back(PrimaryKey);
@@ -726,8 +726,8 @@ void _Menu::LoadKeybindings() {
 		ae::_Element *SecondaryButton = new ae::_Element();
 		SecondaryButton->Name = "secondary";
 		SecondaryButton->Parent = KeyBindingsElement;
-		SecondaryButton->Offset = Offset + glm::vec2(Size.x + 10, 0);
-		SecondaryButton->Size = Size;
+		SecondaryButton->BaseOffset = Offset + glm::vec2(Size.x + 10, 0);
+		SecondaryButton->BaseSize = Size;
 		SecondaryButton->Alignment = ae::LEFT_TOP;
 		SecondaryButton->Style = ae::Assets.Styles["style_menu_button"];
 		SecondaryButton->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
@@ -740,7 +740,7 @@ void _Menu::LoadKeybindings() {
 		SecondaryKey->Font = ae::Assets.Fonts["hud_small"];
 		SecondaryKey->Text = ae::Actions.GetInputNameForAction(Action, 1);
 		SecondaryKey->Parent = SecondaryButton;
-		SecondaryKey->Offset = glm::vec2(0, 23);
+		SecondaryKey->BaseOffset = glm::vec2(0, 23);
 		SecondaryKey->Alignment = ae::CENTER_BASELINE;
 		SecondaryKey->Clickable = false;
 		SecondaryButton->Children.push_back(SecondaryKey);
@@ -750,7 +750,7 @@ void _Menu::LoadKeybindings() {
 		Label->Font = ae::Assets.Fonts["hud_small"];
 		Label->Text = KeyBindingNames[i];
 		Label->Parent = PrimaryButton;
-		Label->Offset = glm::vec2(-120, 23);
+		Label->BaseOffset = glm::vec2(-120, 23);
 		Label->Alignment = ae::CENTER_BASELINE;
 		Label->Clickable = false;
 		PrimaryButton->Children.push_back(Label);
@@ -770,7 +770,7 @@ void _Menu::LoadKeybindings() {
 			PrimaryLabel->Font = ae::Assets.Fonts["hud_small"];
 			PrimaryLabel->Text = "Primary";
 			PrimaryLabel->Parent = PrimaryButton;
-			PrimaryLabel->Offset = glm::vec2(0, -10);
+			PrimaryLabel->BaseOffset = glm::vec2(0, -10);
 			PrimaryLabel->Alignment = ae::CENTER_BASELINE;
 			PrimaryLabel->Clickable = false;
 			PrimaryButton->Children.push_back(PrimaryLabel);
@@ -780,7 +780,7 @@ void _Menu::LoadKeybindings() {
 			SecondaryLabel->Font = ae::Assets.Fonts["hud_small"];
 			SecondaryLabel->Text = "Secondary";
 			SecondaryLabel->Parent = SecondaryButton;
-			SecondaryLabel->Offset = glm::vec2(0, -10);
+			SecondaryLabel->BaseOffset = glm::vec2(0, -10);
 			SecondaryLabel->Alignment = ae::CENTER_BASELINE;
 			SecondaryLabel->Clickable = false;
 			SecondaryButton->Children.push_back(SecondaryLabel);
@@ -788,7 +788,7 @@ void _Menu::LoadKeybindings() {
 
 		// Update position
 		Offset.y += Spacing.y;
-		if(Offset.y > KeyBindingsElement->Size.y - Size.y) {
+		if(Offset.y > KeyBindingsElement->BaseSize.y - Size.y) {
 			Offset.x += Spacing.x;
 			Offset.y = StartingPosition.y;
 		}
@@ -1561,7 +1561,7 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 				// Set portrait
 				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);
 				if(CharacterSlots[Slot].Image->Texture)
-					CharacterSlots[Slot].Image->Size = CharacterSlots[Slot].Image->Texture->Size;
+					CharacterSlots[Slot].Image->BaseSize = CharacterSlots[Slot].Image->Texture->Size;
 
 				CharacterSlots[Slot].Image->CalculateBounds();
 			}

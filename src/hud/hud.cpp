@@ -95,7 +95,7 @@ _HUD::_HUD() {
 	MessageLabel = ae::Assets.Elements["label_hud_message"];
 	RespawnInstructions = ae::Assets.Elements["label_died_respawn"];
 
-	GoldElement->Size.x = ButtonBarElement->Size.x;
+	GoldElement->BaseSize.x = ButtonBarElement->BaseSize.x;
 	GoldElement->CalculateBounds();
 
 	DarkOverlayElement->SetActive(false);
@@ -779,7 +779,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		Buffer.str("");
 
 		DiedElement->Size = ae::Graphics.CurrentSize;
-		DiedElement->CalculateBounds();
+		DiedElement->CalculateBounds(false);
 		DiedElement->SetActive(true);
 		DiedElement->Render();
 	}
@@ -957,7 +957,7 @@ void _HUD::DrawConfirm() {
 		return;
 
 	DarkOverlayElement->Size = ae::Graphics.CurrentSize;
-	DarkOverlayElement->CalculateBounds();
+	DarkOverlayElement->CalculateBounds(false);
 	DarkOverlayElement->SetActive(true);
 	DarkOverlayElement->Render();
 
@@ -1043,7 +1043,7 @@ void _HUD::DrawHudEffects() {
 	glm::vec2 Offset(0, 0);
 	for(auto &StatusEffect : Player->Character->StatusEffects) {
 		if(StatusEffect->HUDElement) {
-			StatusEffect->HUDElement->Offset = Offset;
+			StatusEffect->HUDElement->BaseOffset = Offset;
 			StatusEffect->HUDElement->CalculateBounds();
 			StatusEffect->Render(StatusEffect->HUDElement, glm::vec4(1.0f));
 			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;
@@ -1111,7 +1111,7 @@ void _HUD::DrawActionBar() {
 		const _Item *Item = Player->Character->ActionBar[i].Item;
 		if(Item) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawCenteredImage(DrawPosition, Item->Texture);
+			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
 
 			if(!Item->IsSkill())
 				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), ae::RIGHT_BASELINE);
@@ -1181,7 +1181,7 @@ void _HUD::DrawRecentItems() {
 
 		// Draw item
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawCenteredImage(DrawPosition, RecentItem.Item->Texture, Color);
+		ae::Graphics.DrawScaledImage(DrawPosition, RecentItem.Item->Texture, Color);
 
 		// Draw count
 		if(RecentItem.Count > 1)
@@ -1205,7 +1205,7 @@ void _HUD::SetMessage(const std::string &Text) {
 
 	ae::_TextBounds Bounds;
 	MessageLabel->Font->GetStringDimensions(Text, Bounds, true);
-	MessageElement->Size = glm::vec2(Bounds.Width + 100, Bounds.AboveBase + Bounds.BelowBase + 26);
+	MessageElement->BaseSize = glm::vec2(Bounds.Width + 100, Bounds.AboveBase + Bounds.BelowBase + 26);
 	MessageElement->SetActive(true);
 	MessageElement->CalculateBounds();
 }
@@ -1225,7 +1225,7 @@ void _HUD::DrawCursorItem() {
 	if(Cursor.InventorySlot.Item) {
 		glm::vec2 DrawPosition = ae::Input.GetMouse();
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawCenteredImage(DrawPosition, Cursor.InventorySlot.Item->Texture, ae::Assets.Colors["itemfade"]);
+		ae::Graphics.DrawScaledImage(DrawPosition, Cursor.InventorySlot.Item->Texture, ae::Assets.Colors["itemfade"]);
 	}
 }
 

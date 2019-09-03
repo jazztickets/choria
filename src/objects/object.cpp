@@ -371,7 +371,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Portrait
 	if(Character->Portrait) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawCenteredImage(SlotPosition + glm::vec2(Character->Portrait->Size/2), Character->Portrait, GlobalColor);
+		ae::Graphics.DrawScaledImage(SlotPosition + glm::vec2(Character->Portrait->Size/2) * ae::_Element::GetUIScale(), Character->Portrait, GlobalColor);
 	}
 
 	// Health/mana bars
@@ -388,11 +388,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_empty"]->Texture, true);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_empty"]->Texture);
 
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Character->GetHealthPercent(), BarSize.y) + BarOffset;
-	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_full"]->Texture, true);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_health_bar_full"]->Texture);
 
 	// Draw health text
 	std::stringstream Buffer;
@@ -412,11 +412,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 		// Draw empty bar
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_empty"]->Texture, true);
+		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_empty"]->Texture);
 
 		// Draw full bar
 		BarBounds.End = SlotPosition + glm::vec2(BarSize.x * ManaPercent, BarSize.y) + BarOffset;
-		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_full"]->Texture, true);
+		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_full"]->Texture);
 
 		// Draw mana text
 		Buffer << ae::Round(Character->Mana) << " / " << ae::Round(Character->MaxMana);
@@ -432,11 +432,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_empty"]->Texture, true);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_empty"]->Texture);
 
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Fighter->TurnTimer, BarSize.y) + BarOffset;
-	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_full"]->Texture, true);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_full"]->Texture);
 
 	// Get background for items used
 	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
@@ -448,8 +448,8 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, Fighter->BattleElement->Size.y/2);
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			if(!Character->Action.Item->IsSkill())
-				ae::Graphics.DrawCenteredImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
-			ae::Graphics.DrawCenteredImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
+				ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
+			ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
 		}
 	}
 
@@ -479,21 +479,21 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + Fighter->BattleElement->Size.y/2);
 			if(ClientPlayer->Fighter->PotentialAction.Item) {
 				DrawPosition.x += ItemBackTexture->Size.x/2;
-				ae::Graphics.DrawCenteredImage(DrawPosition, ItemBackTexture, Color);
+				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, Color);
 			}
 			else
 				DrawPosition.x += Texture->Size.x/2;
 
 			// Draw item
-			ae::Graphics.DrawCenteredImage(DrawPosition, Texture, Color);
+			ae::Graphics.DrawScaledImage(DrawPosition, Texture, Color);
 		}
 	}
 
 	// Draw status effects
-	glm::vec2 Offset(0, Fighter->BattleElement->Size.y + 4);
+	glm::vec2 Offset(0, Fighter->BattleElement->BaseSize.y + 4);
 	for(auto &StatusEffect : Character->StatusEffects) {
 		if(StatusEffect->BattleElement) {
-			StatusEffect->BattleElement->Offset = Offset;
+			StatusEffect->BattleElement->BaseOffset = Offset;
 			StatusEffect->BattleElement->CalculateBounds();
 			StatusEffect->Render(StatusEffect->BattleElement, GlobalColor);
 			Offset.x += StatusEffect->Buff->Texture->Size.x + 2;

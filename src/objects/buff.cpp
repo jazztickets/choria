@@ -61,7 +61,8 @@ void _Buff::DrawTooltip(_Scripting *Scripting, int Level, double Duration) const
 	if(WindowOffset.y + Size.y > ae::Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
 		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
-	TooltipElement->SetOffset(WindowOffset);
+	TooltipElement->Offset = WindowOffset;
+	TooltipElement->CalculateBounds(false);
 
 	// Render tooltip
 	TooltipElement->Render();

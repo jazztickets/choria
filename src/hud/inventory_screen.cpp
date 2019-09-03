@@ -136,13 +136,13 @@ void _InventoryScreen::DrawBag(BagType Type) {
 
 			// Draw item
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			ae::Graphics.DrawCenteredImage(DrawPosition, Slot->Item->Texture);
+			ae::Graphics.DrawScaledImage(DrawPosition, Slot->Item->Texture);
 
 			// Draw two handed weapon twice in equipment bag
 			if(Type == BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
 				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
 				ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
-				ae::Graphics.DrawCenteredImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, ae::Assets.Colors["itemfade"]);
+				ae::Graphics.DrawScaledImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, ae::Assets.Colors["itemfade"]);
 			}
 
 			// Draw price if using vendor
