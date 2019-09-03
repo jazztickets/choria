@@ -443,12 +443,13 @@ void _Framework::LoadAssets(bool Server) {
 	ae::Assets.LoadLayers("tables/layers.tsv");
 	if(!Server) {
 		ae::Assets.LoadPrograms("tables/programs.tsv");
-		ae::Assets.LoadFonts("tables/fonts.tsv");
+		ae::Assets.LoadFonts("tables/fonts.tsv", false);
 		ae::Assets.LoadColors("tables/colors.tsv");
 		ae::Assets.LoadStyles("tables/styles.tsv");
 		ae::Assets.LoadSounds("sounds/");
 		ae::Assets.LoadMusic("music/");
 		ae::Assets.LoadUI("tables/ui.xml");
+		ae::Assets.LoadFonts("tables/fonts.tsv");
 		//ae::Assets.SaveUI("tables/ui_new.xml");
 	}
 }
