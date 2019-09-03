@@ -1,19 +1,24 @@
 #!/bin/bash
 
+# get parameters
+project=choria
 upload_server=$1
 upload_path="/srv/http/files/"
 
+# get base project dir
 projectdir=`git rev-parse --show-toplevel`
 if [ -z "$projectdir" ]; then
 	echo "No .git directory found"
 	exit 1
 fi
 
+# build out dir
 outputdir="$projectdir/deployment/out"
-cd "$projectdir"
 mkdir -p "$outputdir"
 
-version=`grep 'GAME_VERSION=".*"' -o CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
+# get versions
+version=`grep 'GAME_VERSION=".*"' -o "$projectdir"/CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
+gitver=`git log --oneline | wc -l`
 
 build() {
 
@@ -29,52 +34,67 @@ build() {
 	# run cmake
 	builddir="$projectdir/build/mingw$bits"
 	mkdir -p "$builddir"
-	cd "$builddir"
+	pushd "$builddir"
 	cmake -DCMAKE_TOOLCHAIN_FILE=../../cmake/mingw${bits}.cmake ../../
 
 	# build
 	make -j`nproc`
 
+	# check for build errors
 	if [ $? -ne 0 ]; then
 		echo "failed $builddir"
 		exit
 	fi
 
-	cd "$projectdir"
+	# go back to deployment dir
+	popd
 
-	cp /usr/$arch/bin/{OpenAL32.dll,libbz2-1.dll,libfreetype-6.dll,libgcc_*.dll,libsqlite3-0.dll,libstdc++-6.dll,libwinpthread-1.dll,lua53.dll,libvorbisfile-3.dll,libvorbis-0.dll,libogg-0.dll,SDL2.dll,SDL2_image.dll,libpng16-16.dll,zlib1.dll,libjsoncpp.dll,libtinyxml2.dll} working/
+	# create new working dir
+	archive_base=${project}-${version}r${gitver}-win${bits}
+	rm -rf "${archive_base}"
+	cp -rl "${projectdir}/working" "${archive_base}"
+	rm "${projectdir}/working/${project}.exe"
 
-	gitver=`git log --oneline | wc -l`
-	mv bin/Release/choria.exe working/
-	$arch-strip working/choria.exe
-	cp README working/
-	echo "choria.exe -server" > working/run_server.bat
-	echo "choria.exe -server -hardcore" > working/run_hardcore_server.bat
-	echo "choria.exe -hardcore" > working/run_hardcore.bat
-	echo "choria.exe -test" > working/run_test.bat
-	echo -e "choria.exe -benchmark\npause" > working/run_benchmark.bat
-	chmod +x working/*.bat
+	# remove linux only files
+	rm "${archive_base}"/"${project}"{,_debug}
 
-	archive=choria-${version}r${gitver}-win${bits}.zip
-	zip -r $archive working
+	# copy dlls
+	cp /usr/$arch/bin/{OpenAL32.dll,libbz2-1.dll,libfreetype-6.dll,libgcc_*.dll,libsqlite3-0.dll,libstdc++-6.dll,libwinpthread-1.dll,lua53.dll,libvorbisfile-3.dll,libvorbis-0.dll,libogg-0.dll,SDL2.dll,SDL2_image.dll,libpng16-16.dll,zlib1.dll,libjsoncpp.dll,libtinyxml2.dll} "${archive_base}"/
 
-	rm working/choria.exe
-	rm working/*.dll
-	rm working/README
-	rm working/*.bat
+	# strip exe
+	${arch}-strip "${archive_base}"/${project}.exe
 
+	# copy files
+	cp "${projectdir}"/{README,CHANGELOG} "${archive_base}"/
+	echo "${project}.exe -server" > "${archive_base}"/run_server.bat
+	echo "${project}.exe -server -hardcore" > "${archive_base}"/run_hardcore_server.bat
+	echo "${project}.exe -hardcore" > "${archive_base}"/run_hardcore.bat
+	echo "${project}.exe -test" > "${archive_base}"/run_test.bat
+	echo -e "${project}.exe -benchmark\npause" > "${archive_base}"/run_benchmark.bat
+	chmod +x "${archive_base}"/*.bat
+
+	# create zip
+	archive=${archive_base}.zip
+	zip -r "${archive}" "${archive_base}"
+
+	# upload zip to server
 	if [ -n "$upload_server" ]; then
 		scp $archive $upload_server:"$upload_path"
 	fi
 
+	# clean up
+	rm -rf "${archive_base}"
 	mv $archive "$outputdir"
 }
 
+# remove old versions from server
 if [ -n "$upload_server" ]; then
-	ssh $upload_server rm -f "$upload_path"/choria*.zip
+	ssh $upload_server rm -f "$upload_path"/"${project}"*.zip
 fi
 
-rm -f "$outputdir"/choria*.zip
+# remove old zips
+rm -f "$outputdir"/"${project}"*.zip
 
+# build project
 #build 32
 build 64
