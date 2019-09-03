@@ -55,6 +55,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	IgnoreNextInputEvent = false;
 
 	// Settings
+	bool LoadClientAssets = true;
 	bool AudioEnabled = true;
 	DedicatedState.SetNetworkPort(Config.NetworkPort);
 
@@ -66,6 +67,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		TokensRemaining = ArgumentCount - i - 1;
 		if(Token == "-server") {
 			State = &DedicatedState;
+			LoadClientAssets = false;
 		}
 		else if(Token == "-port" && TokensRemaining > 0) {
 			DedicatedState.SetNetworkPort(ae::ToNumber<uint16_t>(Arguments[++i]));
@@ -94,6 +96,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			State = &BotState;
 			BotState.HostAddress = Arguments[++i];
 			BotState.Port = ae::ToNumber<uint16_t>(Arguments[++i]);
+			LoadClientAssets = false;
 		}
 		else if(Token == "-timescale" && TokensRemaining > 0) {
 			Config.TimeScale = ae::ToNumber<double>(Arguments[++i]);
@@ -123,11 +126,8 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 	// Create frame limiter
 	FrameLimit = new ae::_FrameLimit(Config.MaxFPS, false);
 
-	// Check state
-	if(State == &DedicatedState) {
-		LoadAssets(true);
-	}
-	else if(State != &BotState) {
+	// Load client assets
+	if(LoadClientAssets) {
 
 		// Open log
 		//PlayState.Log.Open((Config.ConfigPath + "client.log").c_str());
@@ -153,7 +153,7 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 		ae::Graphics.Init(WindowSettings);
 		ae::Graphics.SetDepthTest(false);
 		ae::Graphics.SetDepthMask(false);
-		LoadAssets(false);
+		LoadAssets();
 		ae::Graphics.SetStaticUniforms();
 
 		// Setup console
@@ -422,34 +422,42 @@ void _Framework::HandleCommand(ae::_Console *Console) {
 }
 
 // Load assets
-void _Framework::LoadAssets(bool Server) {
-	ae::Assets.LoadTextureDirectory("textures/battle/", Server);
-	ae::Assets.LoadTextureDirectory("textures/buffs/", Server);
-	ae::Assets.LoadTextureDirectory("textures/builds/", Server);
-	ae::Assets.LoadTextureDirectory("textures/editor/", Server);
-	ae::Assets.LoadTextureDirectory("textures/hud/", Server);
-	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", Server, true);
-	ae::Assets.LoadTextureDirectory("textures/interface/", Server);
-	ae::Assets.LoadTextureDirectory("textures/items/", Server);
-	ae::Assets.LoadTextureDirectory("textures/lights/", Server);
-	ae::Assets.LoadTextureDirectory("textures/map/", Server);
-	ae::Assets.LoadTextureDirectory("textures/menu/", Server);
-	ae::Assets.LoadTextureDirectory("textures/minigames/", Server);
-	ae::Assets.LoadTextureDirectory("textures/monsters/", Server);
-	ae::Assets.LoadTextureDirectory("textures/portraits/", Server);
-	ae::Assets.LoadTextureDirectory("textures/models/", Server);
-	ae::Assets.LoadTextureDirectory("textures/skills/", Server);
-	ae::Assets.LoadTextureDirectory("textures/status/", Server);
+void _Framework::LoadAssets() {
+
+	// Load textures
+	ae::Assets.LoadTextureDirectory("textures/battle/");
+	ae::Assets.LoadTextureDirectory("textures/buffs/");
+	ae::Assets.LoadTextureDirectory("textures/builds/");
+	ae::Assets.LoadTextureDirectory("textures/editor/");
+	ae::Assets.LoadTextureDirectory("textures/hud/");
+	ae::Assets.LoadTextureDirectory("textures/hud_repeat/", false, true);
+	ae::Assets.LoadTextureDirectory("textures/interface/");
+	ae::Assets.LoadTextureDirectory("textures/items/");
+	ae::Assets.LoadTextureDirectory("textures/lights/");
+	ae::Assets.LoadTextureDirectory("textures/map/");
+	ae::Assets.LoadTextureDirectory("textures/menu/");
+	ae::Assets.LoadTextureDirectory("textures/minigames/");
+	ae::Assets.LoadTextureDirectory("textures/monsters/");
+	ae::Assets.LoadTextureDirectory("textures/portraits/");
+	ae::Assets.LoadTextureDirectory("textures/models/");
+	ae::Assets.LoadTextureDirectory("textures/skills/");
+	ae::Assets.LoadTextureDirectory("textures/status/");
+
+	// Load tables
 	ae::Assets.LoadLayers("tables/layers.tsv");
-	if(!Server) {
-		ae::Assets.LoadPrograms("tables/programs.tsv");
-		ae::Assets.LoadFonts("tables/fonts.tsv", false);
-		ae::Assets.LoadColors("tables/colors.tsv");
-		ae::Assets.LoadStyles("tables/styles.tsv");
-		ae::Assets.LoadSounds("sounds/");
-		ae::Assets.LoadMusic("music/");
-		ae::Assets.LoadUI("tables/ui.xml");
-		ae::Assets.LoadFonts("tables/fonts.tsv");
-		//ae::Assets.SaveUI("tables/ui_new.xml");
-	}
+	ae::Assets.LoadPrograms("tables/programs.tsv");
+	ae::Assets.LoadColors("tables/colors.tsv");
+	ae::Assets.LoadStyles("tables/styles.tsv");
+	ae::Assets.LoadSounds("sounds/");
+	ae::Assets.LoadMusic("music/");
+
+	// Load font names only
+	ae::Assets.LoadFonts("tables/fonts.tsv", false);
+
+	// Load UI
+	ae::Assets.LoadUI("tables/ui.xml");
+	//ae::Assets.SaveUI("tables/ui_new.xml");
+
+	// Load font files
+	ae::Assets.LoadFonts("tables/fonts.tsv");
 }

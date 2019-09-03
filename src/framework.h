@@ -69,7 +69,7 @@ class _Framework {
 
 		int GlobalKeyHandler(const SDL_Event &Event);
 		void HandleCommand(ae::_Console *Console);
-		void LoadAssets(bool Server);
+		void LoadAssets();
 
 		// States
 		StateType FrameworkState;
