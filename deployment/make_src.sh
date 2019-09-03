@@ -1,13 +1,28 @@
 #!/bin/bash
-mkdir -p out
 
+project=choria
 version=`grep 'GAME_VERSION=".*"' -o ../CMakeLists.txt | sed -r "s/GAME_VERSION=\"(.*)\"/\1/"`
 gitver=`git log --oneline | wc -l`
-base=choria-${version}r${gitver}
+base=${project}-${version}r${gitver}
 pkg=${base}-src.tar.gz
 
-tar --transform "s,^,${base}/," -czvf ${pkg} -C ../ src/ working/ deployment/{choria,choria.desktop,choria.png} cmake/ CMakeLists.txt README CHANGELOG LICENSE --exclude=*.dll --exclude=*.exe --exclude=*.swp --exclude=*.nsi
+mkdir -p out
+
+tar --transform "s,^,${base}/," -czvf out/${pkg} -C ../ \
+--exclude=${pkg} \
+--exclude=*.swp \
+--exclude=.git \
+--exclude=working/${project}* \
+--exclude=deployment/out \
+--exclude=deployment/*.sh \
+ext/ \
+src/ \
+working/ \
+deployment/{choria,choria.desktop,choria.png} \
+cmake/ \
+CMakeLists.txt \
+README \
+CHANGELOG \
+LICENSE
 
 echo -e "\nMade ${pkg}"
-
-mv "${pkg}" out/

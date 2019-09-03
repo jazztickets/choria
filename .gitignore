@@ -10,6 +10,7 @@ src/tags
 src/version.h
 assets/data/graphs/
 working/stats/*.txt
+working/choria*
 deployment/*.exe
 deployment/*-src
 deployment/*.tar.gz

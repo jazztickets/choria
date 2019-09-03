@@ -37,7 +37,7 @@ mkdir build
 cd build
 cmake ..
 make -j`nproc`
-cd ../working && ../bin/Release/choria
+cd ../working && ./choria
 
 -- Installing --
 run "sudo make install" from the build directory.

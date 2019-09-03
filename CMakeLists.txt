@@ -25,9 +25,6 @@ endif()
 # compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-result -Wno-unused-parameter -pedantic -std=c++11 -msse -mfpmath=sse")
 
-# set output path
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-
 # Set gl preference
 if(NOT DEFINED OpenGL_GL_PREFERENCE)
 	set(OpenGL_GL_PREFERENCE GLVND)
@@ -94,6 +91,12 @@ file(GLOB SRC_ALL
 # build binary
 add_executable(${CMAKE_PROJECT_NAME} ${SRC_ALL})
 
+# set output path
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/working/)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME ${CMAKE_PROJECT_NAME}_debug)
+endif()
+
 # add custom target to generate version.h
 add_custom_target(
 	version
@@ -128,7 +131,7 @@ else()
 
 	# linux installation
 	install(TARGETS ${CMAKE_PROJECT_NAME} RUNTIME DESTINATION share/games/${CMAKE_PROJECT_NAME})
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/working/ DESTINATION share/games/${CMAKE_PROJECT_NAME} PATTERN "${PROJECT_SOURCE_DIR}/working/*" )
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/working/ DESTINATION share/games/${CMAKE_PROJECT_NAME} PATTERN "working/choria" EXCLUDE PATTERN "working/*")
 	install(FILES ${PROJECT_SOURCE_DIR}/deployment/${CMAKE_PROJECT_NAME}.png DESTINATION share/pixmaps)
 	install(FILES ${PROJECT_SOURCE_DIR}/deployment/${CMAKE_PROJECT_NAME}.desktop DESTINATION share/applications)
 	install(FILES ${PROJECT_SOURCE_DIR}/CHANGELOG DESTINATION share/doc/${CMAKE_PROJECT_NAME})
