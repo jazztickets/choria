@@ -638,19 +638,19 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	// Show network stats
 	if(ShowDebug) {
 		Buffer << ae::Graphics.FramesPerSecond << " FPS";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 0));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(28, 168 + 22 * 0));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetSentSpeed() / 1024.0f << " KB/s";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 1));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(28, 168 + 22 * 1));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetReceiveSpeed() / 1024.0f << " KB/s";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 2));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(28, 168 + 22 * 2));
 		Buffer.str("");
 
 		Buffer << PlayState.Network->GetRTT() << "ms";
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 120 + 15 * 3));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(28, 168 + 22 * 3));
 		Buffer.str("");
 	}
 

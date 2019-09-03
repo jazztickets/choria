@@ -43,7 +43,7 @@ void _Fighter::CreateBattleElement(ae::_Element *Parent) {
 
 	BattleElement = new ae::_Element();
 	BattleElement->Name = "battle_element";
-	BattleElement->BaseSize = glm::vec2(64, 64);
+	BattleElement->BaseSize = glm::vec2(90, 90);
 	BattleElement->BaseOffset = BattleOffset;
 	BattleElement->Alignment = ae::CENTER_MIDDLE;
 	BattleElement->Active = true;

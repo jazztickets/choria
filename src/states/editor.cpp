@@ -807,9 +807,9 @@ void _EditorState::InitTextures() {
 	// Clear old children
 	ClearTextures();
 
-	glm::vec2 Start(10, 25);
+	glm::vec2 Start(14, 36);
 	glm::vec2 Offset(Start);
-	glm::vec2 Spacing(10, 10);
+	glm::vec2 Spacing(14, 14);
 
 	uint32_t TextureCount = (uint32_t)(Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y));
 

@@ -44,12 +44,12 @@ void _SkillScreen::Init() {
 	// Clear old children
 	ClearSkills();
 
-	glm::vec2 Start(10, 25);
+	glm::vec2 Start(14, 36);
 	glm::vec2 Offset(Start);
-	glm::vec2 LevelOffset(0, -4);
-	glm::vec2 Spacing(10, 50);
-	glm::vec2 PlusOffset(-12, 37);
-	glm::vec2 MinusOffset(12, 37);
+	glm::vec2 LevelOffset(0, -6);
+	glm::vec2 Spacing(14, 70);
+	glm::vec2 PlusOffset(-16, 52);
+	glm::vec2 MinusOffset(16, 52);
 	glm::vec2 LabelOffset(0, 2);
 	size_t i = 0;
 
@@ -187,13 +187,13 @@ void _SkillScreen::Render(double BlendFactor) {
 	if(HUD->Player->Character->GetSkillPointsAvailable() != 1)
 		Text += "s";
 
-	glm::vec2 DrawPosition = glm::vec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 30);
+	glm::vec2 DrawPosition = glm::vec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 42);
 	ae::Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE);
 
 	// Show skill points unused
 	int SkillPointsUnused = HUD->Player->Character->SkillPointsUsed - HUD->Player->Character->SkillPointsOnActionBar;
 	if(SkillPointsUnused > 0) {
-		DrawPosition.y += 21;
+		DrawPosition.y += 30;
 
 		Text = std::to_string(SkillPointsUnused) + " skill point";
 		if(SkillPointsUnused != 1)

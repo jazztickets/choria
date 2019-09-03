@@ -39,11 +39,11 @@ void _CharacterScreen::Render(double BlendFactor) {
 	Element->Render();
 
 	// Set up UI
-	int SpacingY = 20;
-	glm::vec2 Spacing(10, 0);
+	int SpacingY = 28;
+	glm::vec2 Spacing(14, 0);
 	glm::vec2 DrawPosition = Element->Bounds.Start;
-	DrawPosition.x += Element->Size.x/2 + 15;
-	DrawPosition.y += 20 + SpacingY;
+	DrawPosition.x += Element->Size.x/2 + 20;
+	DrawPosition.y += 28 + SpacingY;
 	std::stringstream Buffer;
 
 	// Damage
