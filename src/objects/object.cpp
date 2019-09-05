@@ -477,7 +477,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			// Draw background icon
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + Fighter->BattleElement->Size.y/2);
-			if(ClientPlayer->Fighter->PotentialAction.Item) {
+			if(ClientPlayer->Fighter->PotentialAction.Item && !ClientPlayer->Fighter->PotentialAction.Item->IsSkill()) {
 				DrawPosition.x += ItemBackTexture->Size.x/2;
 				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, Color);
 			}

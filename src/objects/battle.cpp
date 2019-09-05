@@ -174,7 +174,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	// Draw icon
 	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	if(ActionResult.ActionUsed.Item)
+	if(ActionResult.ActionUsed.Item && !ActionResult.ActionUsed.Item->IsSkill())
 		ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
 	ae::Graphics.DrawScaledImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
 

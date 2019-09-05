@@ -156,12 +156,12 @@ void _InventoryScreen::DrawBag(BagType Type) {
 				else
 					Color = ae::Assets.Colors["green"];
 
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(20, -11), ae::RIGHT_BASELINE, Color);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Upgrades), DrawPosition + glm::vec2(28, -15) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
 			}
 
 			// Draw count
 			if(Slot->Count > 1)
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Slot->Count), DrawPosition + glm::vec2(28, 28) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
 		}
 	}
 }

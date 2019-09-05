@@ -661,6 +661,8 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 	if(Player->Character->IsAlive() || Player->Character->Battle) {
 		DiedElement->SetActive(false);
 		ae::Assets.Elements["element_hud"]->Render();
+
+		// Draw action bar
 		DrawActionBar();
 
 		// Update label text
@@ -1114,11 +1116,11 @@ void _HUD::DrawActionBar() {
 			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
 
 			if(!Item->IsSkill())
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(20, 19), ae::RIGHT_BASELINE);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Player->Character->ActionBar[i].Count), DrawPosition + glm::vec2(28, 26) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
 		}
 
 		// Draw hotkey
-		ae::Assets.Fonts["hud_small"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-16, 19), ae::CENTER_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-22, 26) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE);
 	}
 }
 
@@ -1244,7 +1246,7 @@ void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosi
 	else
 		Color = ae::Assets.Colors["light_gold"];
 
-	ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(20, -11), ae::RIGHT_BASELINE, Color);
+	ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Price), DrawPosition + glm::vec2(28, -15) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
 }
 
 // Sets the player's action bar
