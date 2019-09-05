@@ -804,8 +804,6 @@ void _HUD::ToggleChat() {
 			// Add message to history if not a repeat
 			if(SentHistory.size() == 0 || (SentHistory.size() > 0 && SentHistory.back() != ChatTextBox->Text))
 				SentHistory.push_back(ChatTextBox->Text);
-
-			SentHistoryIterator = SentHistory.end();
 		}
 
 		CloseChat();
@@ -919,6 +917,7 @@ void _HUD::InitParty() {
 
 // Closes the chat window
 void _HUD::CloseChat() {
+	SentHistoryIterator = SentHistory.end();
 	ChatElement->SetActive(false);
 	ChatTextBox->Clear();
 	ae::FocusedElement = nullptr;
