@@ -665,13 +665,13 @@ void _Menu::LoadBuildButtons() {
 		Label->Text = Build.Name;
 		Label->Color = glm::vec4(1.0f);
 		Label->Parent = Button;
-		Label->BaseOffset = glm::vec2(0, 112);
+		Label->BaseOffset = glm::vec2(0, 122);
 		Label->Alignment = ae::CENTER_BASELINE;
 		Label->Clickable = false;
 		Button->Children.push_back(Label);
 
 		// Update position
-		Offset.x += Build.Texture->Size.x + 14;
+		Offset.x += 114;
 		if(Offset.x > BuildsElement->BaseSize.x - Build.Texture->Size.x - 14) {
 			Offset.y += Build.Texture->Size.y + 32;
 			Offset.x = 14;
