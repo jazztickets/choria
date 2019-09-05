@@ -1127,7 +1127,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		case STATE_KEYBINDINGS: {
 			ae::_Element *NewKeyElement = ae::Assets.Elements["element_menu_keybindings_newkey"];
 			if(NewKeyElement->Active) {
-				if(MouseEvent.Pressed)
+				if(MouseEvent.Pressed && MouseEvent.Button != SDL_BUTTON_LEFT && MouseEvent.Button != SDL_BUTTON_RIGHT)
 					RemapInput(ae::_Input::MOUSE_BUTTON, MouseEvent.Button);
 
 				return;
