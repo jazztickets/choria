@@ -46,7 +46,7 @@ class _Fighter {
 
 		// Render
 		ae::_Element *BattleElement;
-		glm::vec2 BattleOffset;
+		glm::vec2 BattleBaseOffset;
 		glm::vec2 ResultPosition;
 		glm::vec2 StatPosition;
 

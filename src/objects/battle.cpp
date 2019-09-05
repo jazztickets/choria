@@ -778,9 +778,9 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Object) {
 
 	// Check sides
 	if(Object->Fighter->BattleSide == 0)
-		Object->Fighter->BattleOffset.x = -170 - Column * BATTLE_COLUMN_SPACING;
+		Object->Fighter->BattleBaseOffset.x = -240 - Column * BATTLE_COLUMN_SPACING;
 	else
-		Object->Fighter->BattleOffset.x = 70 + Column * BATTLE_COLUMN_SPACING;
+		Object->Fighter->BattleBaseOffset.x = 100  + Column * BATTLE_COLUMN_SPACING;
 
 	// Get row count for a given column
 	float RowCount = (float)SideCount[Object->Fighter->BattleSide] / BATTLE_ROWS_PER_SIDE - Column;
@@ -793,7 +793,7 @@ void _Battle::GetBattleOffset(int SideIndex, _Object *Object) {
 	int SpacingY = (int)((BattleElement->BaseSize.y / RowCount) / 2);
 
 	// Place slots in between main divisions
-	Object->Fighter->BattleOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->BaseSize.y/2;
+	Object->Fighter->BattleBaseOffset.y = SpacingY * (2 * (SideIndex % BATTLE_ROWS_PER_SIDE) + 1) - BattleElement->BaseSize.y/2;
 }
 
 // Adjust existing battle elements
@@ -804,7 +804,7 @@ void _Battle::AdjustBattleElements(int SideIndex, _Object *Object) {
 
 	// Update position
 	if(Object->Fighter->BattleElement) {
-		Object->Fighter->BattleElement->BaseOffset = Object->Fighter->BattleOffset;
+		Object->Fighter->BattleElement->BaseOffset = Object->Fighter->BattleBaseOffset;
 		Object->Fighter->BattleElement->CalculateBounds();
 	}
 }

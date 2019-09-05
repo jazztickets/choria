@@ -25,7 +25,7 @@
 _Fighter::_Fighter(_Object *Object) :
 	Object(Object),
 	BattleElement(nullptr),
-	BattleOffset(0.0f, 0.0f),
+	BattleBaseOffset(0.0f, 0.0f),
 	ResultPosition(0.0f, 0.0f),
 	StatPosition(0.0f, 0.0f),
 	LastTarget{nullptr, nullptr},
@@ -44,7 +44,7 @@ void _Fighter::CreateBattleElement(ae::_Element *Parent) {
 	BattleElement = new ae::_Element();
 	BattleElement->Name = "battle_element";
 	BattleElement->BaseSize = glm::vec2(100, 100);
-	BattleElement->BaseOffset = BattleOffset;
+	BattleElement->BaseOffset = BattleBaseOffset;
 	BattleElement->Alignment = ae::CENTER_MIDDLE;
 	BattleElement->Active = true;
 	BattleElement->Index = _HUD::WINDOW_HUD_EFFECTS;

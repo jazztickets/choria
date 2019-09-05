@@ -374,17 +374,21 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		ae::Graphics.DrawScaledImage(SlotPosition + glm::vec2(Character->Portrait->Size/2) * ae::_Element::GetUIScale(), Character->Portrait, GlobalColor);
 	}
 
-	// Health/mana bars
-	glm::vec2 BarSize(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT);
-	glm::vec2 BarOffset(Fighter->BattleElement->Size.x + 10, 0);
-	float BarPaddingY = 6;
+	// Get health/mana bar positions
+	glm::vec2 BarSize = glm::vec2(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT) * ae::_Element::GetUIScale();
+	glm::vec2 BarOffset(Fighter->BattleElement->Size.x + 10 * ae::_Element::GetUIScale(), 0);
+	float BarPaddingY = 6 * ae::_Element::GetUIScale();
 
-	// Get ui size
+	// Get bar element bounds
 	ae::_Bounds BarBounds;
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::vec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
 	float BarEndX = BarBounds.End.x;
+
+	// Get text size
+	ae::_Font *SmallFont = ae::Assets.Fonts["hud_small"];
+	float TextOffsetY = (SmallFont->MaxAbove - SmallFont->MaxBelow) / 2 + 2;
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
@@ -397,7 +401,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw health text
 	std::stringstream Buffer;
 	Buffer << ae::Round(Character->Health) << " / " << ae::Round(Character->MaxHealth);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), ae::CENTER_BASELINE, GlobalColor);
+	SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
 	// Draw mana
@@ -420,13 +424,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 		// Draw mana text
 		Buffer << ae::Round(Character->Mana) << " / " << ae::Round(Character->MaxMana);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), BarCenter + glm::vec2(0, 5), ae::CENTER_BASELINE, GlobalColor);
+		SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
 
 	// Draw turn timer
 	BarOffset.y += BarSize.y + BarPaddingY;
-	BarSize.y = 8;
+	BarSize.y = 8 * ae::_Element::GetUIScale();
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
 
@@ -442,15 +446,12 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
 
 	// Draw the action used
-	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide) {
-
-		if(Character->Action.Item) {
-			glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2(-ItemBackTexture->Size.x/2 - 10, Fighter->BattleElement->Size.y/2);
-			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			if(!Character->Action.Item->IsSkill())
-				ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
-			ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
-		}
+	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide && Character->Action.Item) {
+		glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2((-ItemBackTexture->Size.x/2 - 16) * ae::_Element::GetUIScale(), Fighter->BattleElement->Size.y/2);
+		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
+		if(!Character->Action.Item->IsSkill())
+			ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
+		ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
 	}
 
 	// Draw potential action to use
@@ -476,13 +477,13 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 			// Draw background icon
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 10, SlotPosition.y + Fighter->BattleElement->Size.y/2);
+			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 12 * ae::_Element::GetUIScale(), SlotPosition.y + Fighter->BattleElement->Size.y/2);
 			if(ClientPlayer->Fighter->PotentialAction.Item && !ClientPlayer->Fighter->PotentialAction.Item->IsSkill()) {
-				DrawPosition.x += ItemBackTexture->Size.x/2;
+				DrawPosition.x += ItemBackTexture->Size.x/2 * ae::_Element::GetUIScale();
 				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, Color);
 			}
 			else
-				DrawPosition.x += Texture->Size.x/2;
+				DrawPosition.x += Texture->Size.x/2 * ae::_Element::GetUIScale();
 
 			// Draw item
 			ae::Graphics.DrawScaledImage(DrawPosition, Texture, Color);
