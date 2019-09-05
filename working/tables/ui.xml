@@ -183,37 +183,37 @@
     <element id="element_battle" style="style_hud_bg" offset_y="-48" size_x="1406" size_y="800" clickable="false" index="0">
         <element id="label_battle_title" font="battle_large" offset_y="62" alignment_y="3"/>
     </element>
-    <element id="element_buttonbar" size_x="314" size_y="44" alignment_x="2" alignment_y="0" index="1">
-        <element id="button_buttonbar_join" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_join" texture="textures/hud/join.png" size_x="44" size_y="44" clickable="false"/>
-            <element id="label_buttonbar_join" font="hud_tiny" offset_x="4" offset_y="38" alignment_x="0" alignment_y="3"/>
+    <element id="element_buttonbar" size_x="336" size_y="48" alignment_x="2" alignment_y="0" index="1">
+        <element id="button_buttonbar_join" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+            <element id="image_buttonbar_join" texture="textures/hud/join.png" size_x="48" size_y="48" clickable="false"/>
+            <element id="label_buttonbar_join" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
         </element>
-        <element id="button_buttonbar_inventory" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="44" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_inventory" texture="textures/hud/bag.png" size_x="44" size_y="44" clickable="false"/>
-            <element id="label_buttonbar_inventory" font="hud_tiny" offset_x="4" offset_y="38" alignment_x="0" alignment_y="3"/>
+        <element id="button_buttonbar_inventory" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+            <element id="image_buttonbar_inventory" texture="textures/hud/inventory.png" size_x="48" size_y="48" clickable="false"/>
+            <element id="label_buttonbar_inventory" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
         </element>
-        <element id="button_buttonbar_trade" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="90" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_trade" texture="textures/hud/trade.png" size_x="44" size_y="44" clickable="false"/>
-            <element id="label_buttonbar_trade" font="hud_tiny" offset_x="4" offset_y="38" alignment_x="0" alignment_y="3"/>
+        <element id="button_buttonbar_trade" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="96" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+            <element id="image_buttonbar_trade" texture="textures/hud/trade.png" size_x="48" size_y="48" clickable="false"/>
+            <element id="label_buttonbar_trade" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
         </element>
-        <element id="button_buttonbar_skills" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="134" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_skills" texture="textures/hud/skills.png" size_x="44" size_y="44" clickable="false"/>
-            <element id="label_buttonbar_skills" font="hud_tiny" offset_x="4" offset_y="38" alignment_x="0" alignment_y="3"/>
+        <element id="button_buttonbar_skills" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="144" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+            <element id="image_buttonbar_skills" texture="textures/hud/skills.png" size_x="48" size_y="48" clickable="false"/>
+            <element id="label_buttonbar_skills" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
         </element>
-        <element id="button_buttonbar_party" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="180" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_party" texture="textures/hud/party.png" size_x="44" size_y="44" clickable="false"/>
-            <element id="label_buttonbar_party" font="hud_tiny" offset_x="4" offset_y="38" alignment_x="0" alignment_y="3"/>
+        <element id="button_buttonbar_party" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="192" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+            <element id="image_buttonbar_party" texture="textures/hud/party.png" size_x="48" size_y="48" clickable="false"/>
+            <element id="label_buttonbar_party" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
         </element>
-        <element id="button_buttonbar_menu" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="224" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="44" size_y="44" clickable="false"/>
+        <element id="button_buttonbar_menu" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="240" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+            <element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48" clickable="false"/>
             <element id="label_hud_gold" color="gold" font="hud_small" offset_x="16" offset_y="34" alignment_x="2" alignment_y="3"/>
             <element id="label_hud_clock" font="hud_tiny" offset_y="76" alignment_x="0" alignment_y="3">
                 <element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_y="24" alignment_x="0" alignment_y="3"/>
             </element>
-            <element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="38" alignment_x="0" alignment_y="3"/>
+            <element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
         </element>
-        <element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="270" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="44" size_y="44" clickable="false"/>
+        <element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+            <element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="48" size_y="48" clickable="false"/>
         </element>
     </element>
     <element id="element_hud_statuseffects" offset_y="-140" size_x="492" size_y="44" alignment_y="2" index="2"/>
@@ -229,7 +229,7 @@
     </element>
     <element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-510" offset_y="-224" size_x="90" size_y="44" index="13">
         <element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="44" size_y="44" alignment_x="0" alignment_y="0" index="0">
-            <element id="image_inventory_tabs_bag" texture="textures/hud/bag.png" size_x="44" size_y="44" clickable="false"/>
+            <element id="image_inventory_tabs_bag" texture="textures/hud/inventory.png" size_x="44" size_y="44" clickable="false"/>
         </element>
         <element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="44" size_x="44" size_y="44" alignment_x="0" alignment_y="0" index="1">
             <element id="image_inventory_tabs_key" texture="textures/hud/key.png" size_x="44" size_y="44" clickable="false"/>
