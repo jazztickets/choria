@@ -1120,7 +1120,7 @@ void _HUD::DrawActionBar() {
 		}
 
 		// Draw hotkey
-		ae::Assets.Fonts["hud_small"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-22, 26) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-28, -15) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
 	}
 }
 
