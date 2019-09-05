@@ -297,7 +297,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				TradeScreen->Toggle();
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_party") {
-				ToggleParty();
+				ToggleParty(false);
 			}
 			else if(ButtonBarElement->GetClickedElement()->Name == "button_buttonbar_skills") {
 				SkillScreen->Toggle();
@@ -836,13 +836,14 @@ void _HUD::ToggleTeleport() {
 }
 
 // Open/close party screen
-void _HUD::ToggleParty() {
+void _HUD::ToggleParty(bool IgnoreNextChar) {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenParty())
 		return;
 
 	if(!PartyElement->Active) {
 		CloseWindows(true);
 		InitParty();
+		Framework.IgnoreNextInputEvent = IgnoreNextChar;
 	}
 	else {
 		CloseWindows(true);
@@ -914,7 +915,6 @@ void _HUD::InitParty() {
 	PartyTextBox->CursorPosition = PartyTextBox->Text.size();
 	PartyTextBox->ResetCursor();
 	ae::FocusedElement = PartyTextBox;
-	Framework.IgnoreNextInputEvent = true;
 }
 
 // Closes the chat window

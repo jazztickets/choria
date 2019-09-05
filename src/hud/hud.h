@@ -148,7 +148,7 @@ class _HUD {
 
 		// Button bar
 		void ToggleTeleport();
-		void ToggleParty();
+		void ToggleParty(bool IgnoreNextChar=true);
 		void ToggleInGameMenu(bool Force);
 		void UpdateButtonBarLabels();
 
