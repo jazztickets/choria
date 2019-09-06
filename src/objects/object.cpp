@@ -491,7 +491,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	}
 
 	// Draw status effects
-	glm::vec2 Offset(0, Fighter->BattleElement->BaseSize.y + 4);
+	glm::vec2 Offset(0, Fighter->BattleElement->BaseSize.y + 2);
 	for(auto &StatusEffect : Character->StatusEffects) {
 		if(StatusEffect->BattleElement) {
 			StatusEffect->BattleElement->BaseOffset = Offset;

@@ -47,31 +47,34 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	ae::_Element *TooltipType = ae::Assets.Elements["label_item_tooltip_type"];
 	TooltipElement->SetActive(true);
 
-	// Get window dimensions
-	glm::vec2 Size = TooltipElement->BaseSize;
-
 	// Set label values
 	TooltipName->Text = Name;
 	TooltipType->Text = "";
 	if(Type != ItemType::NONE)
 		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);
 
+	// Set up window size
+	glm::vec2 Size;
+	Size.x = INVENTORY_TOOLTIP_WIDTH * ae::_Element::GetUIScale();
+	float SidePadding = 36 * ae::_Element::GetUIScale();
+	float SpacingY = 36 * ae::_Element::GetUIScale();
+	float ControlSpacingY = 28 * ae::_Element::GetUIScale();
+	float LargeSpacingY = 56 * ae::_Element::GetUIScale();
+	glm::vec2 Spacing = glm::vec2(10, 0) * ae::_Element::GetUIScale();
+
 	// Set window width
 	ae::_TextBounds TextBounds;
 	ae::Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
-	Size.x = INVENTORY_TOOLTIP_WIDTH;
-	float SidePadding = 36;
-	float SpacingY = 36;
 	Size.x = std::max(Size.x, (float)TextBounds.Width / ae::_Element::GetUIScale()) + SidePadding * 2;
 	if(ResistanceTypeID)
-		Size.x += 36;
+		Size.x += 36 * ae::_Element::GetUIScale();
 	else if(IsSkill())
-		Size.x += 42;
+		Size.x += 42 * ae::_Element::GetUIScale();
 
 	// Set window height
-	Size.y = INVENTORY_TOOLTIP_HEIGHT;
+	Size.y = INVENTORY_TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
 	if(Player->Character->Vendor)
-		Size.y += 56;
+		Size.y += LargeSpacingY;
 
 	// Position window
 	glm::vec2 WindowOffset = Position;
@@ -81,7 +84,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 		WindowOffset.y = (ae::Graphics.CurrentSize.y - Size.y) / 2;
 	}
 	else {
-		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET;
+		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET * ae::_Element::GetUIScale();
 		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 	}
 
@@ -92,7 +95,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
 
 	TooltipElement->Offset = WindowOffset;
-	TooltipElement->Size = Size * ae::_Element::GetUIScale();
+	TooltipElement->Size = Size;
 	TooltipElement->CalculateBounds(false);
 
 	// Render tooltip
@@ -101,14 +104,14 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 
 	// Set draw position to center of window
 	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
-	DrawPosition.y += 56;
+	DrawPosition.y += LargeSpacingY;
 
 	// Draw target text
 	if(TargetID != TargetType::NONE) {
-		DrawPosition.y -= 28;
+		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
 		std::string InfoText = "Target " + Player->Stats->TargetTypes.at((uint32_t)TargetID);
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
-		DrawPosition.y += 56;
+		DrawPosition.y += LargeSpacingY;
 	}
 
 	// Get level of item or skill
@@ -156,7 +159,6 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	if(Player->Inventory->IsValidSlot(CompareSlot))
 		CompareInventory = Player->Inventory->GetSlot(CompareSlot);
 
-	glm::vec2 Spacing(10, 0);
 	bool StatDrawn = false;
 	int Upgrades = Tooltip.InventorySlot.Upgrades;
 
@@ -442,7 +444,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 
 	if(InfoText.length()) {
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-		DrawPosition.y += 28;
+		DrawPosition.y += ControlSpacingY;
 	}
 
 	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1) {
@@ -452,7 +454,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 
 	if(!Tradable && (Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR || Tooltip.Window == _HUD::WINDOW_TRADER)) {
 		ae::Assets.Fonts["hud_small"]->DrawText("Untradable", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
-		DrawPosition.y += 28;
+		DrawPosition.y += ControlSpacingY;
 	}
 }
 
@@ -479,7 +481,7 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 		std::string Token;
 
 		// Draw description
-		float TextSpacingY = 26;
+		float TextSpacingY = 26 * ae::_Element::GetUIScale();
 		while(std::getline(Buffer, Token, '\n')) {
 			std::list<std::string> Strings;
 			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
