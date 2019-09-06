@@ -1084,7 +1084,7 @@ void _HUD::DrawMinigame(double BlendFactor) {
 
 	// Make sure size is non-odd
 	Minigame->GetUIBoundary(MinigameElement->Bounds);
-	MinigameElement->Size = (glm::ivec2(MinigameElement->Bounds.End - MinigameElement->Bounds.Start) / 2) * 2;
+	MinigameElement->Size = MinigameElement->Bounds.End - MinigameElement->Bounds.Start;
 	MinigameElement->CalculateChildrenBounds(false);
 
 	// Draw element
@@ -1203,12 +1203,14 @@ void _HUD::SetMessage(const std::string &Text) {
 		return;
 	}
 
+	// Set message data
 	Message.Time = 0;
 	MessageLabel->Text = Text;
 
+	// Set background size
 	ae::_TextBounds Bounds;
 	MessageLabel->Font->GetStringDimensions(Text, Bounds, true);
-	MessageElement->BaseSize = glm::vec2(Bounds.Width + 140 * ae::_Element::GetUIScale(), Bounds.AboveBase + Bounds.BelowBase + 36 * ae::_Element::GetUIScale());
+	MessageElement->BaseSize = glm::vec2(Bounds.Width, Bounds.AboveBase + Bounds.BelowBase) / ae::_Element::GetUIScale() + glm::vec2(140, 36);
 	MessageElement->SetActive(true);
 	MessageElement->CalculateBounds();
 }
