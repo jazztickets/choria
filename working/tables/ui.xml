@@ -353,7 +353,7 @@
     </element>
     <element id="element_character" style="style_hud_bg" size_x="350" size_y="702" alignment_x="2"/>
     <element id="element_trade" style="style_hud_bg" offset_x="298" size_x="444" size_y="420">
-        <element id="element_trade_theirs" style="style_hud_bg" offset_x="156" offset_y="14" size_x="270" size_y="128" alignment_x="0" alignment_y="0" index="9">
+        <element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="9">
             <element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_theirs" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0" clickable="false">
                 <element id="button_trade_accept_theirs" offset_y="80" size_x="122" size_y="32">
@@ -373,7 +373,7 @@
                 <element id="textbox_trade_gold_theirs" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="10"/>
             </element>
         </element>
-        <element id="element_trade_yours" style="style_hud_bg" offset_x="156" offset_y="216" size_x="270" size_y="128" alignment_x="0" alignment_y="0" index="10">
+        <element id="element_trade_yours" offset_x="156" offset_y="216" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="10">
             <element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_yours" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0" clickable="false">
                 <element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="80" size_x="122" size_y="32">

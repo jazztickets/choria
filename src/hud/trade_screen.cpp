@@ -138,7 +138,7 @@ void _TradeScreen::DrawTradeItems(_Object *Player, const std::string &ElementPre
 
 			// Draw count
 			if(Item->Count > 1)
-				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE);
+				ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(Item->Count), DrawPosition + glm::vec2(28, 28) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE);
 		}
 
 		BagIndex++;
