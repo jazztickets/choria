@@ -173,7 +173,7 @@ void _PlayState::Connect(bool IsLocal) {
 	if(IsLocal) {
 		StartLocalServer();
 		if(Server)
-			Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT_ALT);
+			Network->Connect("127.0.0.1", DEFAULT_NETWORKPORT);
 	}
 	else {
 		Network->Connect(HostAddress.c_str(), ConnectPort);
@@ -200,7 +200,7 @@ void _PlayState::StartLocalServer() {
 
 	// Start server in thread
 	try {
-		Server = new _Server(DEFAULT_NETWORKPORT_ALT);
+		Server = new _Server(DEFAULT_NETWORKPORT);
 		Server->IsTesting = DevMode;
 		Server->Hardcore = IsHardcore;
 		Server->StartThread();

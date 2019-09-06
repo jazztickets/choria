@@ -88,7 +88,7 @@ Hit Enter to chat with other players.
 
 ----- MULTIPLAYER -----
 
-Singleplayer games will start a server in the background on port 31235 by default, so other computers can connect to that without having to start a dedicated server.
+Singleplayer games will start a server in the background on port 31234 by default, so other computers can connect to that without having to start a dedicated server.
 
 ----- MAP EDITOR -----
 
