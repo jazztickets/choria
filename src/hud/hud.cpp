@@ -1082,10 +1082,12 @@ void _HUD::DrawMinigame(double BlendFactor) {
 	else
 		CostElement->Color = ae::Assets.Colors["gold"];
 
-	// Draw element
+	// Make sure size is non-odd
 	Minigame->GetUIBoundary(MinigameElement->Bounds);
-	MinigameElement->Size = MinigameElement->Bounds.End - MinigameElement->Bounds.Start;
-	MinigameElement->CalculateChildrenBounds();
+	MinigameElement->Size = (glm::ivec2(MinigameElement->Bounds.End - MinigameElement->Bounds.Start) / 2) * 2;
+	MinigameElement->CalculateChildrenBounds(false);
+
+	// Draw element
 	MinigameElement->Render();
 
 	// Draw game
@@ -1206,7 +1208,7 @@ void _HUD::SetMessage(const std::string &Text) {
 
 	ae::_TextBounds Bounds;
 	MessageLabel->Font->GetStringDimensions(Text, Bounds, true);
-	MessageElement->BaseSize = glm::vec2(Bounds.Width + 100, Bounds.AboveBase + Bounds.BelowBase + 26);
+	MessageElement->BaseSize = glm::vec2(Bounds.Width + 140 * ae::_Element::GetUIScale(), Bounds.AboveBase + Bounds.BelowBase + 36 * ae::_Element::GetUIScale());
 	MessageElement->SetActive(true);
 	MessageElement->CalculateBounds();
 }
