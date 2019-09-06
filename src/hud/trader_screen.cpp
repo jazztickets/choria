@@ -88,7 +88,7 @@ void _TraderScreen::Render(double BlendFactor) {
 		else
 			Color = glm::vec4(1.0f);
 
-		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(HUD->Player->Character->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -32), ae::CENTER_BASELINE, Color);
+		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(HUD->Player->Character->Trader->Items[i].Count), DrawPosition + glm::vec2(0, -45) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE, Color);
 	}
 
 	// Get reward button
@@ -99,6 +99,6 @@ void _TraderScreen::Render(double BlendFactor) {
 	if(HUD->Player->Character->Trader->RewardItem) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.DrawScaledImage(DrawPosition, HUD->Player->Character->Trader->RewardItem->Texture);
-		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(HUD->Player->Character->Trader->Count), DrawPosition + glm::vec2(0, -32), ae::CENTER_BASELINE);
+		ae::Assets.Fonts["hud_small"]->DrawText(std::to_string(HUD->Player->Character->Trader->Count), DrawPosition + glm::vec2(0, -45) * ae::_Element::GetUIScale(), ae::CENTER_BASELINE);
 	}
 }
