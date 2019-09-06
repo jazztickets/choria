@@ -36,42 +36,46 @@ void _CharacterScreen::Render(double BlendFactor) {
 	if(!Element->Active)
 		return;
 
+	// Render background
 	Element->Render();
 
+	// Get font
+	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
+
 	// Set up UI
-	int SpacingY = 28;
-	glm::vec2 Spacing(14, 0);
+	int SpacingY = Font->MaxAbove + Font->MaxBelow + 1;
+	glm::vec2 Spacing((int)(SpacingY * 0.5f), 0);
 	glm::vec2 DrawPosition = Element->Bounds.Start;
-	DrawPosition.x += Element->Size.x/2 + 20;
-	DrawPosition.y += 28 + SpacingY;
+	DrawPosition.x += (int)(Element->Size.x/2 + SpacingY * 0.8f);
+	DrawPosition.y += SpacingY * 2;
 	std::stringstream Buffer;
 
 	// Damage
 	Buffer << HUD->Player->Character->MinDamage << " - " << HUD->Player->Character->MaxDamage;
-	ae::Assets.Fonts["hud_small"]->DrawText("Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Damage", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Armor
 	Buffer << HUD->Player->Character->Armor;
-	ae::Assets.Fonts["hud_small"]->DrawText("Armor", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Armor", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Damage Block
 	Buffer << HUD->Player->Character->DamageBlock;
-	ae::Assets.Fonts["hud_small"]->DrawText("Damage Block", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Damage Block", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Pierce
 	if(HUD->Player->Character->Pierce != 0) {
 		Buffer << HUD->Player->Character->Pierce;
-		ae::Assets.Fonts["hud_small"]->DrawText("Pierce", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Pierce", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -79,8 +83,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Health Regen
 	if(HUD->Player->Character->HealthRegen != 0) {
 		Buffer << HUD->Player->Character->HealthRegen;
-		ae::Assets.Fonts["hud_small"]->DrawText("Health Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Health Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -88,45 +92,45 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Mana Regen
 	if(HUD->Player->Character->ManaRegen != 0) {
 		Buffer << HUD->Player->Character->ManaRegen;
-		ae::Assets.Fonts["hud_small"]->DrawText("Mana Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Mana Regen", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
 
 	// Move speed
 	Buffer << HUD->Player->Character->MoveSpeed << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Move Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Move Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Battle speed
 	Buffer << HUD->Player->Character->BattleSpeed << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Hit chance
 	Buffer << HUD->Player->Character->HitChance << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Evasion
 	Buffer << HUD->Player->Character->Evasion << "%";
-	ae::Assets.Fonts["hud_small"]->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Evasion", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Drop rate
 	if(HUD->Player->Character->DropRate != 0) {
 		Buffer << HUD->Player->Character->DropRate;
-		ae::Assets.Fonts["hud_small"]->DrawText("Drop Rate", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Drop Rate", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -141,8 +145,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 			continue;
 
 		Buffer << Resistance.second << "%";
-		ae::Assets.Fonts["hud_small"]->DrawText(HUD->Player->Stats->DamageTypes.at(Resistance.first) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText(HUD->Player->Stats->DamageTypes.at(Resistance.first) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 
@@ -162,8 +166,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	else
 		Buffer << PlayTime / 3600 << "h" << (PlayTime / 60 % 60) << "m";
 
-	ae::Assets.Fonts["hud_small"]->DrawText("Play Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Play Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
@@ -176,16 +180,16 @@ void _CharacterScreen::Render(double BlendFactor) {
 	else
 		Buffer << BattleTime / 3600 << "h" << (BattleTime / 60 % 60) << "m";
 
-	ae::Assets.Fonts["hud_small"]->DrawText("Battle Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+	Font->DrawText("Battle Time", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
 	// Monster kills
 	if(HUD->Player->Character->MonsterKills > 0) {
 		Buffer << HUD->Player->Character->MonsterKills;
-		ae::Assets.Fonts["hud_small"]->DrawText("Monster Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Monster Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -193,8 +197,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Player kills
 	if(HUD->Player->Character->PlayerKills > 0) {
 		Buffer << HUD->Player->Character->PlayerKills;
-		ae::Assets.Fonts["hud_small"]->DrawText("Player Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Player Kills", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -202,8 +206,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Deaths
 	if(HUD->Player->Character->Deaths > 0) {
 		Buffer << HUD->Player->Character->Deaths;
-		ae::Assets.Fonts["hud_small"]->DrawText("Deaths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Deaths", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -211,8 +215,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Bounty
 	if(HUD->Player->Character->Bounty > 0) {
 		Buffer << HUD->Player->Character->Bounty;
-		ae::Assets.Fonts["hud_small"]->DrawText("Bounty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Bounty", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -220,8 +224,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Gold lost
 	if(HUD->Player->Character->GoldLost > 0) {
 		Buffer << HUD->Player->Character->GoldLost;
-		ae::Assets.Fonts["hud_small"]->DrawText("Gold Lost", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Gold Lost", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
@@ -229,8 +233,8 @@ void _CharacterScreen::Render(double BlendFactor) {
 	// Games played
 	if(HUD->Player->Character->GamesPlayed > 0) {
 		Buffer << HUD->Player->Character->GamesPlayed;
-		ae::Assets.Fonts["hud_small"]->DrawText("Games Played", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), DrawPosition + Spacing);
+		Font->DrawText("Games Played", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;
 	}
