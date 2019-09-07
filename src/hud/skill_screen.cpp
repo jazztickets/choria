@@ -51,6 +51,7 @@ void _SkillScreen::Init() {
 	glm::vec2 PlusOffset(-16, 52);
 	glm::vec2 MinusOffset(16, 52);
 	glm::vec2 LabelOffset(0, 2);
+	glm::vec2 ButtonSize(23, 23);
 	size_t i = 0;
 
 	// Get all player skills
@@ -94,7 +95,7 @@ void _SkillScreen::Init() {
 		ae::_Element *PlusButton = new ae::_Element();
 		PlusButton->Name = "button_skills_plus";
 		PlusButton->Parent = Button;
-		PlusButton->BaseSize = glm::vec2(16, 16);
+		PlusButton->BaseSize = ButtonSize;
 		PlusButton->BaseOffset = PlusOffset;
 		PlusButton->Alignment = ae::CENTER_MIDDLE;
 		PlusButton->Style = ae::Assets.Styles["style_menu_button"];
@@ -105,7 +106,7 @@ void _SkillScreen::Init() {
 		ae::_Element *MinusButton = new ae::_Element();
 		MinusButton->Name = "button_skills_minus";
 		MinusButton->Parent = Button;
-		MinusButton->BaseSize = glm::vec2(16, 16);
+		MinusButton->BaseSize = ButtonSize;
 		MinusButton->BaseOffset = MinusOffset;
 		MinusButton->Alignment = ae::CENTER_MIDDLE;
 		MinusButton->Style = ae::Assets.Styles["style_menu_button"];
@@ -125,7 +126,7 @@ void _SkillScreen::Init() {
 		ae::_Element *MinusLabel = new ae::_Element();
 		MinusLabel->Parent = MinusButton;
 		MinusLabel->Text = "-";
-		MinusLabel->BaseOffset = LabelOffset;
+		MinusLabel->BaseOffset = LabelOffset + glm::vec2(0, 2);
 		MinusLabel->Alignment = ae::CENTER_MIDDLE;
 		MinusLabel->Font = ae::Assets.Fonts["hud_medium"];
 		MinusButton->Children.push_back(MinusLabel);
