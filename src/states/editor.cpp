@@ -541,26 +541,26 @@ void _EditorState::Render(double BlendFactor) {
 	// Draw brush info
 	DrawBrushInfo();
 
-	// Draw world cursor
+	// Draw map name
 	std::stringstream Buffer;
 	Buffer << FilePath;
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, 25));
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(20, 36) * ae::_Element::GetUIScale());
 	Buffer.str("");
 
 	// Cursor position
 	Buffer << (int)WorldCursor.x << ", " << (int)WorldCursor.y;
-	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(15, ae::Graphics.ViewportSize.y - 15));
+	ae::Assets.Fonts["hud_small"]->DrawText(Buffer.str(), glm::vec2(20 * ae::_Element::GetUIScale(), ae::Graphics.ViewportSize.y - 20 * ae::_Element::GetUIScale()));
 	Buffer.str("");
 
 	// FPS
 	Buffer << ae::Graphics.FramesPerSecond << " FPS";
-	ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(15, 50));
+	ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(20, 60) * ae::_Element::GetUIScale());
 	Buffer.str("");
 
 	// Clock
 	if(Map) {
 		Map->GetClockAsString(Buffer);
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(ae::Graphics.ViewportSize.x - 60, 55));
+		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(ae::Graphics.ViewportSize.x - 84 * ae::_Element::GetUIScale(), 50 * ae::_Element::GetUIScale()));
 		Buffer.str("");
 	}
 
@@ -598,14 +598,14 @@ void _EditorState::DrawBrushInfo() {
 		return;
 
 	std::stringstream Buffer;
-	glm::vec2 DrawPosition = ae::Graphics.Element->Bounds.End - glm::vec2(60, 150);
+	glm::vec2 DrawPosition = ae::Graphics.Element->Bounds.End - glm::vec2(84, 210) * ae::_Element::GetUIScale();
 	glm::vec4 Color(glm::vec4(1.0f));
+	float TextSpacingY = 20 * ae::_Element::GetUIScale();
 
 	// Draw backdrop
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
-	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(45, 45), DrawPosition + glm::vec2(45, 138), true);
-
+	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(64, 64) * ae::_Element::GetUIScale(), DrawPosition + glm::vec2(64, 194) * ae::_Element::GetUIScale(), true);
 	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
 
 		// Draw texture
@@ -616,7 +616,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
 
-		DrawPosition.y += 52;
+		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
 		// Draw layer
 		if(Layer)
@@ -626,7 +626,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
-		DrawPosition.y += 15;
+		DrawPosition.y += TextSpacingY;
 
 		// Draw wall
 		if(Brush->Wall)
@@ -638,7 +638,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
-		DrawPosition.y += 15;
+		DrawPosition.y += TextSpacingY;
 
 		// Draw zone
 		Buffer << "Zone " << Brush->Zone;
@@ -647,7 +647,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
-		DrawPosition.y += 15;
+		DrawPosition.y += TextSpacingY;
 
 		// Draw PVP
 		if(Brush->PVP)
@@ -659,7 +659,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
-		DrawPosition.y += 15;
+		DrawPosition.y += TextSpacingY;
 
 		// Draw event type
 		Buffer << Stats->EventNames[Brush->Event.Type].Name;
@@ -668,7 +668,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
-		DrawPosition.y += 15;
+		DrawPosition.y += TextSpacingY;
 
 		// Draw event data
 		Buffer << "Data " << Brush->Event.Data;
@@ -684,7 +684,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
-		DrawPosition.y += 15;
+		DrawPosition.y += TextSpacingY;
 
 		// Draw object data
 		Buffer << "Data " << ObjectData;
@@ -807,9 +807,9 @@ void _EditorState::InitTextures() {
 	// Clear old children
 	ClearTextures();
 
-	glm::vec2 Start(14, 36);
+	glm::vec2 Start = glm::vec2(20, 20);
+	glm::vec2 Spacing = glm::vec2(20, 20);
 	glm::vec2 Offset(Start);
-	glm::vec2 Spacing(14, 14);
 
 	uint32_t TextureCount = (uint32_t)(Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y));
 
@@ -829,7 +829,7 @@ void _EditorState::InitTextures() {
 
 		// Update position
 		Offset.x += Map->TileAtlas->Size.x + Spacing.x;
-		if(Offset.x > TexturesElement->Size.x - Map->TileAtlas->Size.x) {
+		if(Offset.x > TexturesElement->BaseSize.x - Map->TileAtlas->Size.x) {
 			Offset.y += Map->TileAtlas->Size.y + Spacing.y;
 			Offset.x = Start.x;
 		}

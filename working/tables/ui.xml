@@ -414,18 +414,18 @@
     <element id="element_chat" style="style_menu_textbox" offset_x="34" offset_y="-140" size_x="492" size_y="28" alignment_x="0" alignment_y="2">
         <element id="textbox_chat" font="hud_small" offset_x="6" offset_y="20" alignment_x="0" alignment_y="3" maxlength="100"/>
     </element>
-    <element id="element_editor_buttonbar" size_x="180" size_y="44" alignment_x="2" alignment_y="0">
-        <element id="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_new" font="hud_tiny" text="New" offset_x="4" offset_y="28" alignment_x="0" alignment_y="3"/>
+    <element id="element_editor_buttonbar" size_x="240" size_y="24" alignment_x="2" alignment_y="0">
+        <element id="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+            <element id="label_editor_buttonbar_new" font="hud_tiny" text="New" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
         </element>
-        <element id="button_editor_buttonbar_resize" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="44" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_resize" font="hud_tiny" text="Resize" offset_x="4" offset_y="28" alignment_x="0" alignment_y="3"/>
+        <element id="button_editor_buttonbar_resize" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="60" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+            <element id="label_editor_buttonbar_resize" font="hud_tiny" text="Resize" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
         </element>
-        <element id="button_editor_buttonbar_save" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="90" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_save" font="hud_tiny" text="Save" offset_x="4" offset_y="28" alignment_x="0" alignment_y="3"/>
+        <element id="button_editor_buttonbar_save" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="120" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+            <element id="label_editor_buttonbar_save" font="hud_tiny" text="Save" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
         </element>
-        <element id="button_editor_buttonbar_load" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="134" size_x="44" size_y="44" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_load" font="hud_tiny" text="Load" offset_x="4" offset_y="28" alignment_x="0" alignment_y="3"/>
+        <element id="button_editor_buttonbar_load" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="180" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+            <element id="label_editor_buttonbar_load" font="hud_tiny" text="Load" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
         </element>
     </element>
     <element id="element_editor_newmap" style="style_menu_window" size_x="562" size_y="392">
@@ -486,6 +486,6 @@
             <element id="label_editor_loadmap" font="hud_medium" text="Load" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
         </element>
     </element>
-    <element id="element_editor_textures" style="style_hud_item_tooltip_bg" size_x="984" size_y="702"/>
+    <element id="element_editor_textures" style="style_hud_item_tooltip_bg" size_x="1028" size_y="692"/>
     <element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>
 </element>
