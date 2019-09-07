@@ -1011,9 +1011,10 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 	ChatElement->Render();
 
 	// Set up UI position
-	int SpacingY = -20;
-	glm::vec2 DrawPosition = glm::vec2(ChatElement->Bounds.Start.x + 10, ChatElement->Bounds.End.y);
-	DrawPosition.y += SpacingY + -20;
+	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
+	int SpacingY = -(Font->MaxAbove + Font->MaxBelow);
+	glm::vec2 DrawPosition = glm::vec2(ChatElement->Bounds.Start.x + 5 * ae::_Element::GetUIScale(), ChatElement->Bounds.End.y);
+	DrawPosition.y += 2 * SpacingY;
 
 	// Draw messages
 	int Index = 0;
@@ -1030,7 +1031,7 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 			Color.a = (float)TimeLeft;
 
 		// Draw text
-		ae::Assets.Fonts["hud_small"]->DrawText(ChatMessage.Message, DrawPosition, ae::LEFT_BASELINE, Color);
+		Font->DrawText(ChatMessage.Message, DrawPosition, ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 
 		Index++;
