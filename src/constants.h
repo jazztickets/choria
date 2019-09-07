@@ -112,7 +112,7 @@ const  int          GAME_TRADING_LEVEL              =  3;
 //     Actionbar
 const  int          ACTIONBAR_MAX_SIZE              =  8;
 //     Inventory
-const  int          INVENTORY_TOOLTIP_OFFSET        =  30;
+const  int          INVENTORY_TOOLTIP_OFFSET        =  50;
 const  int          INVENTORY_TOOLTIP_PADDING       =  14;
 const  float        INVENTORY_TOOLTIP_WIDTH         =  350;
 const  float        INVENTORY_TOOLTIP_HEIGHT        =  480;

@@ -169,8 +169,8 @@ void _InventoryScreen::DrawBag(BagType Type) {
 // Draw keychain
 void _InventoryScreen::DrawKeys() {
 
-	glm::vec2 StartOffset(10, 20);
-	glm::vec2 Spacing(120, 20);
+	glm::vec2 StartOffset = glm::vec2(14, 26) * ae::_Element::GetUIScale();
+	glm::vec2 Spacing = glm::vec2(168, 20) * ae::_Element::GetUIScale();
 	int Column = 0;
 	int Row = 0;
 

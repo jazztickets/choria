@@ -746,14 +746,12 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 				// Check for valid slot
 				if(Player->Inventory->IsValidSlot(CompareSlot)) {
-					float OffsetX = -35;
-					if(Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY)
-						OffsetX += -80;
 
+					// Draw equipped item tooltip
 					_Cursor EquippedTooltip;
 					EquippedTooltip.InventorySlot = Player->Inventory->GetSlot(CompareSlot);
 					if(EquippedTooltip.InventorySlot.Item)
-						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(InventoryScreen->EquipmentElement->Bounds.Start.x + OffsetX, -1), PlayState.Scripting, Player, EquippedTooltip, _Slot());
+						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(0, -1), PlayState.Scripting, Player, EquippedTooltip, _Slot());
 				}
 			}
 
