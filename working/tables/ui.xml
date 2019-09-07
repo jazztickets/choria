@@ -272,7 +272,7 @@
         <element id="button_inventory_bag_22" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="22"/>
         <element id="button_inventory_bag_23" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="23"/>
     </element>
-    <element id="element_vendor" offset_x="216" size_x="336" size_y="384" index="6">
+    <element id="element_vendor" offset_x="222" size_x="336" size_y="384" index="6">
         <element id="button_vendor_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
         <element id="button_vendor_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
         <element id="button_vendor_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
@@ -323,7 +323,7 @@
         <element id="label_trader_lookingfor" font="hud_medium" text="You give me" offset_y="48" alignment_y="3"/>
         <element id="label_trader_reward" font="hud_medium" text="I give you" offset_y="256" alignment_y="3"/>
     </element>
-    <element id="element_blacksmith" style="style_hud_bg" offset_x="210" size_x="336" size_y="350" index="8">
+    <element id="element_blacksmith" style="style_hud_bg" offset_x="222" size_x="336" size_y="350" index="8">
         <element id="button_blacksmith_bag" style="style_hud_slot" offset_x="140" offset_y="22" size_x="64" size_y="64" alignment_x="0" index="0"/>
         <element id="button_blacksmith_upgrade" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-34" size_x="126" size_y="44" alignment_y="2" index="1">
             <element id="label_blacksmith_upgrade" font="hud_medium" text="Upgrade" offset_y="30" alignment_y="3"/>
@@ -352,7 +352,7 @@
         <element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
     </element>
     <element id="element_character" style="style_hud_bg" size_x="350" size_y="702" alignment_x="2"/>
-    <element id="element_trade" style="style_hud_bg" offset_x="298" size_x="444" size_y="420">
+    <element id="element_trade" style="style_hud_bg" offset_x="276" size_x="444" size_y="420">
         <element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="9">
             <element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2" clickable="false"/>
             <element id="image_trade_portrait_theirs" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0" clickable="false">
