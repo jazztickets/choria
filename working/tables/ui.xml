@@ -227,26 +227,26 @@
         <element id="button_actionbar_6" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="384" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
         <element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="448" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
     </element>
-    <element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-510" offset_y="-224" size_x="90" size_y="44" index="13">
-        <element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="44" size_y="44" alignment_x="0" alignment_y="0" index="0">
-            <element id="image_inventory_tabs_bag" texture="textures/hud/inventory.png" size_x="44" size_y="44" clickable="false"/>
+    <element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-500" offset_y="-215" size_x="96" size_y="48" index="13">
+        <element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="0">
+            <element id="image_inventory_tabs_bag" texture="textures/hud/tab_inventory.png" size_x="48" size_y="48" clickable="false"/>
         </element>
-        <element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="44" size_x="44" size_y="44" alignment_x="0" alignment_y="0" index="1">
-            <element id="image_inventory_tabs_key" texture="textures/hud/key.png" size_x="44" size_y="44" clickable="false"/>
+        <element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="1">
+            <element id="image_inventory_tabs_key" texture="textures/hud/tab_key.png" size_x="48" size_y="48" clickable="false"/>
         </element>
     </element>
-    <element id="element_equipment" style="style_equipment_bg" offset_x="-436" size_x="238" size_y="404" index="4">
-        <element id="image_equipment" texture="textures/hud/body.png" size_x="164" size_y="370" alignment_x="1" alignment_y="1" clickable="false"/>
-        <element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="84" offset_y="4" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
-        <element id="button_equipment_bag_1" style="style_hud_slot_alpha" offset_x="84" offset_y="94" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
-        <element id="button_equipment_bag_2" style="style_hud_slot_alpha" offset_x="84" offset_y="328" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
+    <element id="element_equipment" style="style_equipment_bg" offset_x="-429" size_x="238" size_y="384" index="4">
+        <element id="image_equipment" texture="textures/hud/body.png" size_x="156" size_y="350" alignment_x="1" alignment_y="1" clickable="false"/>
+        <element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="88" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
+        <element id="button_equipment_bag_1" style="style_hud_slot_alpha" offset_x="88" offset_y="94" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
+        <element id="button_equipment_bag_2" style="style_hud_slot_alpha" offset_x="88" offset_y="308" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
         <element id="button_equipment_bag_3" style="style_hud_slot_alpha" offset_x="16" offset_y="174" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
         <element id="button_equipment_bag_4" style="style_hud_slot_alpha" offset_x="160" offset_y="174" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
         <element id="button_equipment_bag_5" style="style_hud_slot_alpha_ring" offset_x="16" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
         <element id="button_equipment_bag_6" style="style_hud_slot_alpha_ring" offset_x="160" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
-        <element id="button_equipment_bag_7" style="style_hud_slot_alpha_amulet" offset_x="160" offset_y="4" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
+        <element id="button_equipment_bag_7" style="style_hud_slot_alpha_amulet" offset_x="160" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
     </element>
-    <element id="element_inventory" offset_x="-182" size_x="270" size_y="404" index="5">
+    <element id="element_inventory" offset_x="-182" size_x="256" size_y="384" index="5">
         <element id="button_inventory_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
         <element id="button_inventory_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
         <element id="button_inventory_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
@@ -272,7 +272,7 @@
         <element id="button_inventory_bag_22" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="22"/>
         <element id="button_inventory_bag_23" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="23"/>
     </element>
-    <element id="element_vendor" offset_x="216" size_x="336" size_y="404" index="6">
+    <element id="element_vendor" offset_x="216" size_x="336" size_y="384" index="6">
         <element id="button_vendor_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
         <element id="button_vendor_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
         <element id="button_vendor_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
@@ -339,7 +339,7 @@
             <element id="label_minigame_tokens" font="hud_small" offset_x="-46" offset_y="30" alignment_x="2" alignment_y="3"/>
         </element>
     </element>
-    <element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="508" size_y="404" index="14"/>
+    <element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
     <element id="element_dark_overlay" style="style_hud_bg"/>
     <element id="element_skills" style="style_hud_bg" size_x="666" size_y="632" index="11"/>
     <element id="element_died" style="style_hud_died_bg" alignment_x="0" alignment_y="0" clickable="false">
