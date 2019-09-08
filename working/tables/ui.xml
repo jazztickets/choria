@@ -1,495 +1,493 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <element base_height="1080">
-    <element id="element_menu_title" style="style_hud_bg" size_x="720" size_y="984">
-        <element id="image_title_logo" texture="textures/menu/logo.png" offset_y="-325" size_x="512" size_y="173" clickable="false"/>
-        <element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-84" size_x="280" size_y="66">
-            <element id="label_menu_title_play" font="menu_buttons" text="Play" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_title_joinserver" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="28" size_x="280" size_y="66">
-            <element id="label_menu_title_joinserver" font="menu_buttons" text="Join Server" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_title_options" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="140" size_x="280" size_y="66">
-            <element id="label_menu_title_options" font="menu_buttons" text="Options" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_title_exit" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="252" size_x="280" size_y="66">
-            <element id="label_menu_title_exit" font="menu_buttons" text="Exit" offset_y="44" alignment_y="3"/>
-            <element id="label_menu_title_message" font="menu_buttons" offset_y="140" alignment_y="3"/>
-        </element>
-    </element>
-    <element id="element_menu_characters" style="style_hud_bg" size_x="1264" size_y="984">
-        <element id="element_menu_character_slots" offset_y="210" size_x="1136" size_y="590" alignment_y="0"/>
-        <element id="button_characters_delete" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-210" offset_y="364" size_x="180" size_y="66">
-            <element id="label_menu_characters_delete" font="menu_buttons" text="Delete" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_characters_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="364" size_x="180" size_y="66">
-            <element id="label_menu_characters_play" font="menu_buttons" text="Play" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_characters_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="364" size_x="180" size_y="66">
-            <element id="label_menu_characters_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="label_menu_characters_title" font="hud_large" text="Characters" offset_y="-350"/>
-        <element id="label_menu_characters_hardcore" color="red" font="hud_medium" text="Hardcore Server" offset_y="450"/>
-    </element>
-    <element id="element_menu_new" style="style_menu_window" size_x="846" size_y="880">
-        <element id="element_menu_new_portraits" size_x="846" size_y="350" alignment_y="0"/>
-        <element id="element_menu_new_builds" offset_y="350" size_x="846" size_y="350" alignment_y="0"/>
-        <element id="button_newcharacter_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-22" size_x="210" size_y="44" alignment_y="2">
-            <element id="label_menu_newcharacter_create" font="hud_medium" text="Create" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="button_newcharacter_createhardcore" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-238" offset_y="-22" size_x="210" size_y="44" alignment_y="2">
-            <element id="label_menu_newcharacter_createhardcore" font="hud_medium" text="Create Hardcore" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="button_newcharacter_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="238" offset_y="-22" size_x="210" size_y="44" alignment_y="2">
-            <element id="label_menu_newcharacter_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="element_newcharacter_name" style="style_menu_textbox" offset_y="-90" size_x="350" size_y="42" alignment_y="2">
-            <element id="textbox_newcharacter_name" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="15"/>
-            <element id="label_menu_newcharacter_name" font="hud_medium" text="Name" offset_y="-34" alignment_y="0"/>
-        </element>
-        <element id="label_menu_newcharacter_portraits" font="hud_medium" text="Select a portrait" offset_y="36" alignment_y="3"/>
-        <element id="label_menu_newcharacter_builds" font="hud_medium" text="Select a starting build" offset_y="388" alignment_y="3"/>
-    </element>
-    <element id="element_menu_connect" style="style_hud_bg" size_x="720" size_y="984">
-        <element id="element_connect_host" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2">
-            <element id="textbox_connect_host" font="hud_medium" offset_x="6" offset_y="30" size_x="350" size_y="42" alignment_x="0" alignment_y="3" maxlength="32"/>
-            <element id="label_menu_connect_host" font="menu_buttons" text="Host" offset_y="-48"/>
-        </element>
-        <element id="element_connect_port" style="style_menu_textbox" offset_y="-420" size_x="350" size_y="42" alignment_y="2">
-            <element id="textbox_connect_port" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="5"/>
-            <element id="label_menu_connect_port" font="menu_buttons" text="Port" offset_y="-48"/>
-            <element id="label_menu_connect_message" font="menu_buttons" offset_y="154" alignment_y="3"/>
-        </element>
-        <element id="button_connect_connect" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-104" offset_y="322" size_x="180" size_y="66">
-            <element id="label_menu_connect_connect" font="menu_buttons" text="Connect" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_connect_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="104" offset_y="322" size_x="180" size_y="66">
-            <element id="label_menu_connect_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="label_menu_connect_title" font="hud_large" text="Connect" offset_y="-350"/>
-    </element>
-    <element id="element_menu_account" style="style_hud_bg" size_x="720" size_y="984">
-        <element id="element_account_username" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2">
-            <element id="textbox_account_username" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
-            <element id="label_menu_account_username" font="menu_buttons" text="Username" offset_y="-48"/>
-        </element>
-        <element id="element_account_password" style="style_menu_textbox" offset_y="-420" size_x="350" size_y="42" alignment_y="2">
-            <element id="textbox_account_password" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
-            <element id="label_menu_account_password" font="menu_buttons" text="Password" offset_y="-48"/>
-            <element id="label_menu_account_message" color="red" font="menu_buttons" offset_y="154" alignment_y="3"/>
-        </element>
-        <element id="button_account_login" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-210" offset_y="322" size_x="180" size_y="66">
-            <element id="label_menu_account_login" font="menu_buttons" text="Login" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_account_create" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="322" size_x="180" size_y="66">
-            <element id="label_menu_account_create" font="menu_buttons" text="Create" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_account_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="322" size_x="180" size_y="66">
-            <element id="label_menu_account_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="label_menu_account_title" font="hud_large" text="Account Info" offset_y="-350"/>
-    </element>
-    <element id="element_menu_ingame" style="style_hud_bg" size_x="720" size_y="984">
-        <element id="button_ingame_respawn" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-196" size_x="280" size_y="66">
-            <element id="label_menu_ingame_respawn" font="menu_buttons" text="Respawn" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_ingame_resume" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-84" size_x="280" size_y="66">
-            <element id="label_menu_ingame_resume" font="menu_buttons" text="Resume" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_ingame_options" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="28" size_x="280" size_y="66">
-            <element id="label_menu_ingame_options" font="menu_buttons" text="Options" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_ingame_exit" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="140" size_x="280" size_y="66">
-            <element id="label_menu_ingame_exit" font="menu_buttons" text="Exit" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="label_menu_ingame_exitwarning" color="red" font="menu_buttons" text="Exiting battle will result in death" offset_y="210" alignment_y="3"/>
-    </element>
-    <element id="element_menu_options" style="style_hud_bg" size_x="720" size_y="984">
-        <element id="element_menu_options_middle" offset_y="210" alignment_y="0">
-            <element id="button_options_fullscreen" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_x="20" offset_y="70" size_x="44" size_y="44" alignment_x="0">
-                <element id="label_menu_options_fullscreen_check" font="hud_medium" text="X"/>
-            </element>
-            <element id="element_options_soundvolume" style="style_menu_textbox" offset_x="20" offset_y="140" size_x="210" size_y="42" alignment_x="0">
-                <element id="button_options_soundvolume" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
-                <element id="label_options_soundvolume" font="hud_medium" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
-            </element>
-            <element id="element_options_musicvolume" style="style_menu_textbox" offset_x="20" offset_y="210" size_x="210" size_y="42" alignment_x="0">
-                <element id="button_options_musicvolume" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
-                <element id="label_options_musicvolume" font="hud_medium" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
-            </element>
-            <element id="label_menu_options_fullscreen" font="menu_buttons" text="Fullscreen" offset_x="-20" offset_y="70" alignment_x="2"/>
-            <element id="label_menu_options_soundvolume" font="menu_buttons" text="Sound Volume" offset_x="-20" offset_y="140" alignment_x="2"/>
-            <element id="label_menu_options_musicvolume" font="menu_buttons" text="Music Volume" offset_x="-20" offset_y="210" alignment_x="2"/>
-        </element>
-        <element id="button_options_keybindings" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="28" size_x="224" size_y="66">
-            <element id="label_menu_options_keybindings" font="menu_buttons" text="Key Bindings" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="button_options_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="322" size_x="180" size_y="66">
-            <element id="label_menu_options_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
-        </element>
-        <element id="label_menu_options_title" font="hud_large" text="Options" offset_y="-350"/>
-    </element>
-    <element id="element_menu_keybindings" style="style_hud_bg" size_x="1264" size_y="984">
-        <element id="element_menu_keybindings_keys" size_x="1264" size_y="842" alignment_y="0"/>
-        <element id="button_menu_keybindings_default" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="28" offset_y="-28" size_x="140" size_y="44" alignment_x="0" alignment_y="2">
-            <element id="label_menu_keybindings_default" font="hud_small" text="Default" offset_y="30" alignment_y="3"/>
-        </element>
-        <element id="button_menu_keybindings_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="420" size_x="180" size_y="66">
-            <element id="label_menu_keybindings_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
-        </element>
-    </element>
-    <element id="element_menu_keybindings_newkey" style="style_menu_window" size_x="420" size_y="140">
-        <element id="label_menu_keybindings_newkey" font="menu_buttons" text="Press a key or button for" offset_y="48" alignment_y="3"/>
-        <element id="label_menu_keybindings_newkey_action" font="menu_buttons" offset_y="104" alignment_y="3"/>
-    </element>
-    <element id="element_menu_confirm" style="style_menu_window" size_x="420" size_y="182">
-        <element id="button_confirm_ok" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-90" offset_y="34" size_x="140" size_y="44">
-            <element id="label_menu_confirm_ok" font="hud_medium" text="Ok" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="button_confirm_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="90" offset_y="34" size_x="140" size_y="44">
-            <element id="label_menu_confirm_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="label_menu_confirm_warning" font="hud_medium" text="Are you sure?" offset_y="56" alignment_y="3"/>
-    </element>
-    <element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0" clickable="false"/>
-    <element id="element_hud" alignment_x="0" alignment_y="0" clickable="false">
-        <element id="image_hud_portrait" texture="textures/portraits/joe.png" size_x="100" size_y="100" offset_x="10" offset_y="10" alignment_x="0" alignment_y="0" clickable="false">
-            <element id="label_hud_name" font="menu_buttons" offset_x="100" offset_y="30" alignment_x="0" alignment_y="3">
-                <element id="label_hud_level" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
-                    <element id="label_hud_party" color="gray" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
-                        <element id="label_hud_hardcore" color="red" font="hud_small" text="Hardcore" offset_y="28" alignment_x="0" alignment_y="3"/>
-                    </element>
-                </element>
-            </element>
-        </element>
-    </element>
-    <element id="element_hud_health" offset_x="-420" offset_y="-26" size_x="210" size_y="44" alignment_y="2" clickable="false">
-        <element id="image_hud_health_bar_empty" texture="textures/hud_repeat/health_empty.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="image_hud_health_bar_full" texture="textures/hud_repeat/health_full.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="label_hud_health" font="hud_small" offset_y="29" alignment_y="3"/>
-    </element>
-    <element id="element_hud_mana" offset_x="420" offset_y="-26" size_x="210" size_y="44" alignment_y="2" clickable="false">
-        <element id="image_hud_mana_bar_empty" texture="textures/hud_repeat/mana_empty.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="image_hud_mana_bar_full" texture="textures/hud_repeat/mana_full.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="label_hud_mana" font="hud_small" offset_y="29" alignment_y="3"/>
-    </element>
-    <element id="element_hud_experience" offset_y="-98" size_x="492" size_y="10" alignment_y="2" clickable="false">
-        <element id="image_hud_experience_bar_empty" texture="textures/hud_repeat/experience_empty.png" size_y="10" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="image_hud_experience_bar_full" texture="textures/hud_repeat/experience_full.png" size_y="10" alignment_x="0" alignment_y="0" clickable="false"/>
-        <element id="label_hud_experience" font="hud_small" offset_y="-6" alignment_y="3"/>
-    </element>
-    <element id="element_hud_recentitems" offset_x="-90" offset_y="180" alignment_x="2" alignment_y="0" clickable="false">
-        <element id="label_hud_recentitems" font="hud_small" text="Recent Items" offset_y="-6" alignment_y="3"/>
-    </element>
-    <element id="element_hud_message" style="style_hud_bg" offset_y="48" alignment_y="0" clickable="false">
-        <element id="label_hud_message" font="menu_buttons" offset_y="42" alignment_y="3"/>
-    </element>
-    <element id="element_battle" style="style_hud_bg" offset_y="-48" size_x="1406" size_y="800" clickable="false" index="0">
-        <element id="label_battle_title" font="battle_large" offset_y="62" alignment_y="3"/>
-    </element>
-    <element id="element_buttonbar" size_x="288" size_y="48" alignment_x="1" alignment_y="0" index="1">
-        <element id="button_buttonbar_join" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_join" texture="textures/hud/join.png" size_x="48" size_y="48" clickable="false"/>
-            <element id="label_buttonbar_join" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
-        </element>
-        <element id="button_buttonbar_inventory" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_inventory" texture="textures/hud/inventory.png" size_x="48" size_y="48" clickable="false"/>
-            <element id="label_buttonbar_inventory" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
-        </element>
-        <element id="button_buttonbar_trade" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="96" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_trade" texture="textures/hud/trade.png" size_x="48" size_y="48" clickable="false"/>
-            <element id="label_buttonbar_trade" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
-        </element>
-        <element id="button_buttonbar_skills" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="144" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_skills" texture="textures/hud/skills.png" size_x="48" size_y="48" clickable="false"/>
-            <element id="label_buttonbar_skills" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
-        </element>
-        <element id="button_buttonbar_party" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="192" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_party" texture="textures/hud/party.png" size_x="48" size_y="48" clickable="false"/>
-            <element id="label_buttonbar_party" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
-        </element>
-        <element id="button_buttonbar_menu" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="240" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48" clickable="false"/>
-            <element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
-        </element>
-        <element id="label_hud_clock" font="hud_tiny" offset_x="0" offset_y="69" alignment_x="1" alignment_y="3">
-            <element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_y="19" alignment_x="1" alignment_y="3"/>
-        </element>
-        <!--
-        <element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
-            <element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="48" size_y="48" clickable="false"/>
-        </element>
-        -->
-    </element>
-    <element id="element_hud_statuseffects" offset_y="-140" size_x="492" size_y="44" alignment_y="2" index="2"/>
-    <element id="element_actionbar" offset_y="-14" size_x="512" size_y="64" alignment_y="2" index="3">
-        <element id="button_actionbar_0" style="style_hud_slot" hover_style="style_menu_portrait_hover" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
-        <element id="button_actionbar_1" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
-        <element id="button_actionbar_2" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
-        <element id="button_actionbar_3" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
-        <element id="button_actionbar_4" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
-        <element id="button_actionbar_5" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
-        <element id="button_actionbar_6" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="384" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
-        <element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="448" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
-    </element>
-    <element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-500" offset_y="-215" size_x="96" size_y="48" index="13">
-        <element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="0">
-            <element id="image_inventory_tabs_bag" texture="textures/hud/tab_inventory.png" size_x="48" size_y="48" clickable="false"/>
-        </element>
-        <element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="1">
-            <element id="image_inventory_tabs_key" texture="textures/hud/tab_key.png" size_x="48" size_y="48" clickable="false"/>
-        </element>
-    </element>
-    <element id="element_equipment" style="style_equipment_bg" offset_x="-429" size_x="238" size_y="384" index="4">
-        <element id="image_equipment" texture="textures/hud/body.png" size_x="156" size_y="350" alignment_x="1" alignment_y="1" clickable="false"/>
-        <element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="88" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
-        <element id="button_equipment_bag_1" style="style_hud_slot_alpha" offset_x="88" offset_y="94" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
-        <element id="button_equipment_bag_2" style="style_hud_slot_alpha" offset_x="88" offset_y="308" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
-        <element id="button_equipment_bag_3" style="style_hud_slot_alpha" offset_x="16" offset_y="174" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
-        <element id="button_equipment_bag_4" style="style_hud_slot_alpha" offset_x="160" offset_y="174" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
-        <element id="button_equipment_bag_5" style="style_hud_slot_alpha_ring" offset_x="16" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
-        <element id="button_equipment_bag_6" style="style_hud_slot_alpha_ring" offset_x="160" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
-        <element id="button_equipment_bag_7" style="style_hud_slot_alpha_amulet" offset_x="160" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
-    </element>
-    <element id="element_inventory" offset_x="-182" size_x="256" size_y="384" index="5">
-        <element id="button_inventory_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
-        <element id="button_inventory_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
-        <element id="button_inventory_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
-        <element id="button_inventory_bag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
-        <element id="button_inventory_bag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
-        <element id="button_inventory_bag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
-        <element id="button_inventory_bag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
-        <element id="button_inventory_bag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
-        <element id="button_inventory_bag_8" style="style_hud_slot" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="8"/>
-        <element id="button_inventory_bag_9" style="style_hud_slot" offset_x="64" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="9"/>
-        <element id="button_inventory_bag_10" style="style_hud_slot" offset_x="128" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="10"/>
-        <element id="button_inventory_bag_11" style="style_hud_slot" offset_x="192" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="11"/>
-        <element id="button_inventory_bag_12" style="style_hud_slot" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="12"/>
-        <element id="button_inventory_bag_13" style="style_hud_slot" offset_x="64" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="13"/>
-        <element id="button_inventory_bag_14" style="style_hud_slot" offset_x="128" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="14"/>
-        <element id="button_inventory_bag_15" style="style_hud_slot" offset_x="192" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="15"/>
-        <element id="button_inventory_bag_16" style="style_hud_slot" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="16"/>
-        <element id="button_inventory_bag_17" style="style_hud_slot" offset_x="64" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="17"/>
-        <element id="button_inventory_bag_18" style="style_hud_slot" offset_x="128" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="18"/>
-        <element id="button_inventory_bag_19" style="style_hud_slot" offset_x="192" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="19"/>
-        <element id="button_inventory_bag_20" style="style_hud_slot" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="20"/>
-        <element id="button_inventory_bag_21" style="style_hud_slot" offset_x="64" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="21"/>
-        <element id="button_inventory_bag_22" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="22"/>
-        <element id="button_inventory_bag_23" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="23"/>
-    </element>
-    <element id="element_vendor" offset_x="222" size_x="336" size_y="384" index="6">
-        <element id="button_vendor_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
-        <element id="button_vendor_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
-        <element id="button_vendor_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
-        <element id="button_vendor_bag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
-        <element id="button_vendor_bag_4" style="style_hud_slot" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
-        <element id="button_vendor_bag_5" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
-        <element id="button_vendor_bag_6" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
-        <element id="button_vendor_bag_7" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
-        <element id="button_vendor_bag_8" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="8"/>
-        <element id="button_vendor_bag_9" style="style_hud_slot" offset_x="256" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="9"/>
-        <element id="button_vendor_bag_10" style="style_hud_slot" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="10"/>
-        <element id="button_vendor_bag_11" style="style_hud_slot" offset_x="64" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="11"/>
-        <element id="button_vendor_bag_12" style="style_hud_slot" offset_x="128" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="12"/>
-        <element id="button_vendor_bag_13" style="style_hud_slot" offset_x="192" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="13"/>
-        <element id="button_vendor_bag_14" style="style_hud_slot" offset_x="256" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="14"/>
-        <element id="button_vendor_bag_15" style="style_hud_slot" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="15"/>
-        <element id="button_vendor_bag_16" style="style_hud_slot" offset_x="64" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="16"/>
-        <element id="button_vendor_bag_17" style="style_hud_slot" offset_x="128" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="17"/>
-        <element id="button_vendor_bag_18" style="style_hud_slot" offset_x="192" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="18"/>
-        <element id="button_vendor_bag_19" style="style_hud_slot" offset_x="256" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="19"/>
-        <element id="button_vendor_bag_20" style="style_hud_slot" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="20"/>
-        <element id="button_vendor_bag_21" style="style_hud_slot" offset_x="64" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="21"/>
-        <element id="button_vendor_bag_22" style="style_hud_slot" offset_x="128" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="22"/>
-        <element id="button_vendor_bag_23" style="style_hud_slot" offset_x="192" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="23"/>
-        <element id="button_vendor_bag_24" style="style_hud_slot" offset_x="256" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="24"/>
-        <element id="button_vendor_bag_25" style="style_hud_slot" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="25"/>
-        <element id="button_vendor_bag_26" style="style_hud_slot" offset_x="64" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="26"/>
-        <element id="button_vendor_bag_27" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="27"/>
-        <element id="button_vendor_bag_28" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="28"/>
-        <element id="button_vendor_bag_29" style="style_hud_slot" offset_x="256" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="29"/>
-    </element>
-    <element id="element_trader" style="style_hud_bg" size_x="336" size_y="450" index="7">
-        <element id="button_trader_bag_0" style="style_hud_slot" offset_x="-96" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="0"/>
-        <element id="button_trader_bag_1" style="style_hud_slot" offset_x="-32" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="1"/>
-        <element id="button_trader_bag_2" style="style_hud_slot" offset_x="32" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="2"/>
-        <element id="button_trader_bag_3" style="style_hud_slot" offset_x="96" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="3"/>
-        <element id="button_trader_bag_4" style="style_hud_slot" offset_x="-96" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="4"/>
-        <element id="button_trader_bag_5" style="style_hud_slot" offset_x="-32" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="5"/>
-        <element id="button_trader_bag_6" style="style_hud_slot" offset_x="32" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="6"/>
-        <element id="button_trader_bag_7" style="style_hud_slot" offset_x="96" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="7"/>
-        <element id="button_trader_bag_reward" style="style_hud_slot" offset_y="284" size_x="64" size_y="64" alignment_y="0" index="8"/>
-        <element id="button_trader_accept" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-76" offset_y="374" size_x="126" size_y="44" alignment_y="0" index="9">
-            <element id="label_trader_accept" font="hud_medium" text="Accept" offset_y="30" alignment_y="3"/>
-        </element>
-        <element id="button_trader_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="76" offset_y="374" size_x="126" size_y="44" alignment_y="0" index="10">
-            <element id="label_trader_cancel" font="hud_medium" text="Cancel" offset_y="30" alignment_y="3"/>
-        </element>
-        <element id="label_trader_lookingfor" font="hud_medium" text="You give me" offset_y="48" alignment_y="3"/>
-        <element id="label_trader_reward" font="hud_medium" text="I give you" offset_y="256" alignment_y="3"/>
-    </element>
-    <element id="element_blacksmith" style="style_hud_bg" offset_x="222" size_x="336" size_y="350" index="8">
-        <element id="button_blacksmith_bag" style="style_hud_slot" offset_x="140" offset_y="22" size_x="64" size_y="64" alignment_x="0" index="0"/>
-        <element id="button_blacksmith_upgrade" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-34" size_x="126" size_y="44" alignment_y="2" index="1">
-            <element id="label_blacksmith_upgrade" font="hud_medium" text="Upgrade" offset_y="30" alignment_y="3"/>
-        </element>
-        <element id="label_blacksmith_title" font="hud_medium" offset_y="48" alignment_y="3"/>
-        <element id="label_blacksmith_level" font="hud_small" offset_y="80" alignment_y="3"/>
-        <element id="label_blacksmith_cost" font="hud_medium" offset_y="126" alignment_y="3"/>
-    </element>
-    <element id="element_minigame" style="style_minigame_bg" index="12">
-        <element id="label_minigame_name" font="hud_large" text="Game" offset_y="-56" alignment_y="3"/>
-        <element id="label_minigame_cost" color="gold" font="hud_medium" text="Cost" offset_y="-16" alignment_y="3"/>
-        <element id="label_minigame_token_image" texture="textures/items/token.png" offset_y="-44" size_x="44" size_y="44" alignment_x="2" alignment_y="0" clickable="false">
-            <element id="label_minigame_tokens" font="hud_small" offset_x="-46" offset_y="30" alignment_x="2" alignment_y="3"/>
-        </element>
-    </element>
-    <element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
-    <element id="element_dark_overlay" style="style_hud_bg"/>
-    <element id="element_skills" style="style_hud_bg" size_x="666" size_y="632" index="11"/>
-    <element id="element_died" style="style_hud_died_bg" alignment_x="0" alignment_y="0" clickable="false">
-        <element id="label_died" font="hud_large" text="You died" offset_y="140" alignment_y="3"/>
-        <element id="label_died_respawn" font="menu_buttons" offset_y="210" alignment_y="3"/>
-        <element id="label_died_gold" font="hud_medium" offset_y="-140" alignment_y="2"/>
-    </element>
-    <element id="element_item_tooltip" style="style_hud_item_tooltip_bg" size_x="350" size_y="420" alignment_x="0" alignment_y="0" clickable="false">
-        <element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
-        <element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
-    </element>
-    <element id="element_character" style="style_hud_bg" size_x="350" size_y="702" alignment_x="2"/>
-    <element id="element_trade" style="style_hud_bg" offset_x="276" size_x="444" size_y="420">
-        <element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="9">
-            <element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2" clickable="false"/>
-            <element id="image_trade_portrait_theirs" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0" clickable="false">
-                <element id="button_trade_accept_theirs" offset_y="80" size_x="122" size_y="32">
-                    <element id="label_trade_status_theirs" font="hud_small" offset_y="22" alignment_y="3"/>
-                </element>
-                <element id="label_trade_name_theirs" font="hud_small" offset_y="-16" alignment_y="3"/>
-            </element>
-            <element id="button_trade_theirbag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
-            <element id="button_trade_theirbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
-            <element id="button_trade_theirbag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
-            <element id="button_trade_theirbag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
-            <element id="button_trade_theirbag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
-            <element id="button_trade_theirbag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
-            <element id="button_trade_theirbag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
-            <element id="button_trade_theirbag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
-            <element id="element_trade_gold_theirs" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="182" size_y="42" alignment_x="0" alignment_y="2">
-                <element id="textbox_trade_gold_theirs" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="10"/>
-            </element>
-        </element>
-        <element id="element_trade_yours" offset_x="156" offset_y="216" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="10">
-            <element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2" clickable="false"/>
-            <element id="image_trade_portrait_yours" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0" clickable="false">
-                <element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="80" size_x="122" size_y="32">
-                    <element id="label_trade_status_yours" font="hud_small" text="Accept" offset_y="22" alignment_y="3"/>
-                </element>
-                <element id="label_trade_name_yours" font="hud_small" offset_y="-16" alignment_y="3"/>
-            </element>
-            <element id="button_trade_yourbag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
-            <element id="button_trade_yourbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
-            <element id="button_trade_yourbag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
-            <element id="button_trade_yourbag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
-            <element id="button_trade_yourbag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
-            <element id="button_trade_yourbag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
-            <element id="button_trade_yourbag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
-            <element id="button_trade_yourbag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
-            <element id="element_trade_gold_yours" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="182" size_y="42" alignment_x="0" alignment_y="2">
-                <element id="textbox_trade_gold_yours" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="10"/>
-            </element>
-        </element>
-        <element id="label_trade_status" font="hud_medium" text="Waiting for other player..." offset_y="90" alignment_y="0"/>
-    </element>
-    <element id="element_teleport" style="style_hud_bg" offset_y="-140" size_x="210" size_y="66" clickable="false">
-        <element id="label_teleport_timeleft" font="hud_medium" offset_y="44" alignment_y="3"/>
-    </element>
-    <element id="element_skills_tooltip" style="style_hud_item_tooltip_bg" size_x="520" size_y="350" alignment_x="0" alignment_y="0" clickable="false">
-        <element id="label_skills_tooltip_name" font="menu_buttons" offset_y="42" alignment_y="3"/>
-    </element>
-    <element id="element_buffs_tooltip" style="style_hud_item_tooltip_bg" size_x="420" size_y="168" alignment_x="0" alignment_y="0" clickable="false">
-        <element id="label_buffs_tooltip_name" font="menu_buttons" offset_y="42" alignment_y="3"/>
-        <element id="label_buffs_tooltip_duration" color="gray" font="hud_small" offset_y="146" alignment_y="3"/>
-    </element>
-    <element id="element_party" style="style_hud_item_tooltip_bg" size_x="420" size_y="168">
-        <element id="element_textbox_party" style="style_menu_textbox" offset_y="28" size_x="350" size_y="42">
-            <element id="textbox_party" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
-        </element>
-        <element id="label_party_title" font="menu_buttons" text="Enter Party Name" offset_y="56" alignment_y="3"/>
-    </element>
-    <element id="element_chat" style="style_menu_textbox" offset_x="28" offset_y="-140" size_x="492" size_y="28" alignment_x="0" alignment_y="2">
-        <element id="textbox_chat" font="hud_small" offset_x="6" offset_y="20" alignment_x="0" alignment_y="3" maxlength="100"/>
-    </element>
-    <element id="element_editor_buttonbar" size_x="240" size_y="24" alignment_x="2" alignment_y="0">
-        <element id="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_new" font="hud_tiny" text="New" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
-        </element>
-        <element id="button_editor_buttonbar_resize" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="60" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_resize" font="hud_tiny" text="Resize" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
-        </element>
-        <element id="button_editor_buttonbar_save" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="120" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_save" font="hud_tiny" text="Save" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
-        </element>
-        <element id="button_editor_buttonbar_load" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="180" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
-            <element id="label_editor_buttonbar_load" font="hud_tiny" text="Load" offset_x="0" offset_y="16" alignment_x="1" alignment_y="3"/>
-        </element>
-    </element>
-    <element id="element_editor_newmap" style="style_menu_window" size_x="562" size_y="392">
-        <element id="button_editor_newmap_create" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
-            <element id="label_editor_newmap_create" font="hud_medium" text="Create" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="button_editor_newmap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
-            <element id="label_editor_newmap_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="element_editor_newmap_filename" style="style_menu_textbox" offset_x="210" offset_y="84" size_x="280" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_newmap_filename" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
-            <element id="label_editor_newmap_filename" font="hud_medium" text="Filename" offset_y="30" size_x="302" alignment_x="2" alignment_y="3"/>
-        </element>
-        <element id="element_editor_newmap_width" style="style_menu_textbox" offset_x="210" offset_y="154" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_newmap_width" font="hud_medium" offset_x="6" offset_y="30" size_x="104" size_y="42" alignment_x="0" alignment_y="3" maxlength="3"/>
-            <element id="label_editor_newmap_width" font="hud_medium" text="Width" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
-        </element>
-        <element id="element_editor_newmap_height" style="style_menu_textbox" offset_x="210" offset_y="224" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_newmap_height" font="hud_medium" offset_x="6" offset_y="30" size_x="104" size_y="42" alignment_x="0" alignment_y="3" maxlength="3"/>
-            <element id="label_editor_newmap_height" font="hud_medium" text="Height" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
-        </element>
-        <element id="label_editor_newmap_title" font="menu_buttons" text="New Map" offset_y="48" alignment_y="3"/>
-    </element>
-    <element id="element_editor_resizemap" style="style_menu_window" size_x="562" size_y="450">
-        <element id="button_editor_resizemap_resize" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
-            <element id="label_editor_resizemap_create" font="hud_medium" text="Resize" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="button_editor_resizemap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
-            <element id="label_editor_resizemap_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
-        </element>
-        <element id="element_editor_resizemap_minx" style="style_menu_textbox" offset_x="210" offset_y="84" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_resizemap_minx" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
-            <element id="label_editor_resizemap_minx" font="hud_medium" text="Min X" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
-        </element>
-        <element id="element_editor_resizemap_miny" style="style_menu_textbox" offset_x="210" offset_y="154" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_resizemap_miny" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
-            <element id="label_editor_resizemap_miny" font="hud_medium" text="Min Y" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
-        </element>
-        <element id="element_editor_resizemap_maxx" style="style_menu_textbox" offset_x="210" offset_y="224" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_resizemap_maxx" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
-            <element id="label_editor_resizemap_maxx" font="hud_medium" text="Max X" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
-        </element>
-        <element id="element_editor_resizemap_maxy" style="style_menu_textbox" offset_x="210" offset_y="294" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_resizemap_maxy" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
-            <element id="label_editor_resizemap_maxy" font="hud_medium" text="Max Y" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
-        </element>
-        <element id="label_editor_resizemap_title" font="menu_buttons" text="Resize Map" offset_y="48" alignment_y="3"/>
-    </element>
-    <element id="element_editor_savemap" offset_x="140" offset_y="-14" size_x="350" size_y="42" alignment_x="0" alignment_y="2">
-        <element id="element_editor_savemap_box" style="style_menu_textbox" offset_x="104" size_x="492" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_savemap" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
-            <element id="label_editor_savemap" font="hud_medium" text="Save" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
-        </element>
-    </element>
-    <element id="element_editor_loadmap" offset_x="140" offset_y="-14" size_x="350" size_y="42" alignment_x="0" alignment_y="2">
-        <element id="element_editor_loadmap_box" style="style_menu_textbox" offset_x="104" size_x="492" size_y="42" alignment_x="0" alignment_y="0">
-            <element id="textbox_editor_loadmap" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
-            <element id="label_editor_loadmap" font="hud_medium" text="Load" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
-        </element>
-    </element>
-    <element id="element_editor_textures" style="style_hud_item_tooltip_bg" size_x="1028" size_y="692"/>
-    <element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>
+	<element id="element_menu_title" style="style_hud_bg" size_x="720" size_y="984">
+		<element id="image_title_logo" texture="textures/menu/logo.png" offset_y="-325" size_x="512" size_y="173" clickable="false"/>
+		<element id="button_title_play" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-84" size_x="280" size_y="66">
+			<element id="label_menu_title_play" font="menu_buttons" text="Play" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_title_joinserver" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="28" size_x="280" size_y="66">
+			<element id="label_menu_title_joinserver" font="menu_buttons" text="Join Server" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_title_options" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="140" size_x="280" size_y="66">
+			<element id="label_menu_title_options" font="menu_buttons" text="Options" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_title_exit" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="252" size_x="280" size_y="66">
+			<element id="label_menu_title_exit" font="menu_buttons" text="Exit" offset_y="44" alignment_y="3"/>
+			<element id="label_menu_title_message" font="menu_buttons" offset_y="140" alignment_y="3"/>
+		</element>
+	</element>
+	<element id="element_menu_characters" style="style_hud_bg" size_x="1264" size_y="984">
+		<element id="element_menu_character_slots" offset_y="210" size_x="1136" size_y="590" alignment_y="0"/>
+		<element id="button_characters_delete" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-210" offset_y="364" size_x="180" size_y="66">
+			<element id="label_menu_characters_delete" font="menu_buttons" text="Delete" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_characters_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="364" size_x="180" size_y="66">
+			<element id="label_menu_characters_play" font="menu_buttons" text="Play" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_characters_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="364" size_x="180" size_y="66">
+			<element id="label_menu_characters_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="label_menu_characters_title" font="hud_large" text="Characters" offset_y="-350"/>
+		<element id="label_menu_characters_hardcore" color="red" font="hud_medium" text="Hardcore Server" offset_y="450"/>
+	</element>
+	<element id="element_menu_new" style="style_menu_window" size_x="846" size_y="880">
+		<element id="element_menu_new_portraits" size_x="846" size_y="350" alignment_y="0"/>
+		<element id="element_menu_new_builds" offset_y="350" size_x="846" size_y="350" alignment_y="0"/>
+		<element id="button_newcharacter_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-22" size_x="210" size_y="44" alignment_y="2">
+			<element id="label_menu_newcharacter_create" font="hud_medium" text="Create" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="button_newcharacter_createhardcore" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-238" offset_y="-22" size_x="210" size_y="44" alignment_y="2">
+			<element id="label_menu_newcharacter_createhardcore" font="hud_medium" text="Create Hardcore" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="button_newcharacter_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="238" offset_y="-22" size_x="210" size_y="44" alignment_y="2">
+			<element id="label_menu_newcharacter_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="element_newcharacter_name" style="style_menu_textbox" offset_y="-90" size_x="350" size_y="42" alignment_y="2">
+			<element id="textbox_newcharacter_name" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="15"/>
+			<element id="label_menu_newcharacter_name" font="hud_medium" text="Name" offset_y="-34" alignment_y="0"/>
+		</element>
+		<element id="label_menu_newcharacter_portraits" font="hud_medium" text="Select a portrait" offset_y="36" alignment_y="3"/>
+		<element id="label_menu_newcharacter_builds" font="hud_medium" text="Select a starting build" offset_y="388" alignment_y="3"/>
+	</element>
+	<element id="element_menu_connect" style="style_hud_bg" size_x="720" size_y="984">
+		<element id="element_connect_host" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2">
+			<element id="textbox_connect_host" font="hud_medium" offset_x="6" offset_y="30" size_x="350" size_y="42" alignment_x="0" alignment_y="3" maxlength="32"/>
+			<element id="label_menu_connect_host" font="menu_buttons" text="Host" offset_y="-48"/>
+		</element>
+		<element id="element_connect_port" style="style_menu_textbox" offset_y="-420" size_x="350" size_y="42" alignment_y="2">
+			<element id="textbox_connect_port" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="5"/>
+			<element id="label_menu_connect_port" font="menu_buttons" text="Port" offset_y="-48"/>
+			<element id="label_menu_connect_message" font="menu_buttons" offset_y="154" alignment_y="3"/>
+		</element>
+		<element id="button_connect_connect" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-104" offset_y="322" size_x="180" size_y="66">
+			<element id="label_menu_connect_connect" font="menu_buttons" text="Connect" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_connect_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="104" offset_y="322" size_x="180" size_y="66">
+			<element id="label_menu_connect_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="label_menu_connect_title" font="hud_large" text="Connect" offset_y="-350"/>
+	</element>
+	<element id="element_menu_account" style="style_hud_bg" size_x="720" size_y="984">
+		<element id="element_account_username" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2">
+			<element id="textbox_account_username" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
+			<element id="label_menu_account_username" font="menu_buttons" text="Username" offset_y="-48"/>
+		</element>
+		<element id="element_account_password" style="style_menu_textbox" offset_y="-420" size_x="350" size_y="42" alignment_y="2">
+			<element id="textbox_account_password" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
+			<element id="label_menu_account_password" font="menu_buttons" text="Password" offset_y="-48"/>
+			<element id="label_menu_account_message" color="red" font="menu_buttons" offset_y="154" alignment_y="3"/>
+		</element>
+		<element id="button_account_login" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-210" offset_y="322" size_x="180" size_y="66">
+			<element id="label_menu_account_login" font="menu_buttons" text="Login" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_account_create" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="322" size_x="180" size_y="66">
+			<element id="label_menu_account_create" font="menu_buttons" text="Create" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_account_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="322" size_x="180" size_y="66">
+			<element id="label_menu_account_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="label_menu_account_title" font="hud_large" text="Account Info" offset_y="-350"/>
+	</element>
+	<element id="element_menu_ingame" style="style_hud_bg" size_x="720" size_y="984">
+		<element id="button_ingame_respawn" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-196" size_x="280" size_y="66">
+			<element id="label_menu_ingame_respawn" font="menu_buttons" text="Respawn" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_ingame_resume" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="-84" size_x="280" size_y="66">
+			<element id="label_menu_ingame_resume" font="menu_buttons" text="Resume" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_ingame_options" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="28" size_x="280" size_y="66">
+			<element id="label_menu_ingame_options" font="menu_buttons" text="Options" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_ingame_exit" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="140" size_x="280" size_y="66">
+			<element id="label_menu_ingame_exit" font="menu_buttons" text="Exit" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="label_menu_ingame_exitwarning" color="red" font="menu_buttons" text="Exiting battle will result in death" offset_y="210" alignment_y="3"/>
+	</element>
+	<element id="element_menu_options" style="style_hud_bg" size_x="720" size_y="984">
+		<element id="element_menu_options_middle" offset_y="210" alignment_y="0">
+			<element id="button_options_fullscreen" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_x="20" offset_y="70" size_x="44" size_y="44" alignment_x="0">
+				<element id="label_menu_options_fullscreen_check" font="hud_medium" text="X"/>
+			</element>
+			<element id="element_options_soundvolume" style="style_menu_textbox" offset_x="20" offset_y="140" size_x="210" size_y="42" alignment_x="0">
+				<element id="button_options_soundvolume" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
+				<element id="label_options_soundvolume" font="hud_medium" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
+			</element>
+			<element id="element_options_musicvolume" style="style_menu_textbox" offset_x="20" offset_y="210" size_x="210" size_y="42" alignment_x="0">
+				<element id="button_options_musicvolume" style="style_menu_button" size_x="20" size_y="42" alignment_x="0" alignment_y="0" draggable="true"/>
+				<element id="label_options_musicvolume" font="hud_medium" offset_x="224" offset_y="30" alignment_x="0" alignment_y="3"/>
+			</element>
+			<element id="label_menu_options_fullscreen" font="menu_buttons" text="Fullscreen" offset_x="-20" offset_y="70" alignment_x="2"/>
+			<element id="label_menu_options_soundvolume" font="menu_buttons" text="Sound Volume" offset_x="-20" offset_y="140" alignment_x="2"/>
+			<element id="label_menu_options_musicvolume" font="menu_buttons" text="Music Volume" offset_x="-20" offset_y="210" alignment_x="2"/>
+		</element>
+		<element id="button_options_keybindings" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="28" size_x="224" size_y="66">
+			<element id="label_menu_options_keybindings" font="menu_buttons" text="Key Bindings" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_options_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="322" size_x="180" size_y="66">
+			<element id="label_menu_options_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="label_menu_options_title" font="hud_large" text="Options" offset_y="-350"/>
+	</element>
+	<element id="element_menu_keybindings" style="style_hud_bg" size_x="1264" size_y="984">
+		<element id="element_menu_keybindings_keys" size_x="1264" size_y="842" alignment_y="0"/>
+		<element id="button_menu_keybindings_default" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="28" offset_y="-28" size_x="140" size_y="44" alignment_x="0" alignment_y="2">
+			<element id="label_menu_keybindings_default" font="hud_small" text="Default" offset_y="30" alignment_y="3"/>
+		</element>
+		<element id="button_menu_keybindings_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="420" size_x="180" size_y="66">
+			<element id="label_menu_keybindings_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
+		</element>
+	</element>
+	<element id="element_menu_keybindings_newkey" style="style_menu_window" size_x="420" size_y="140">
+		<element id="label_menu_keybindings_newkey" font="menu_buttons" text="Press a key or button for" offset_y="48" alignment_y="3"/>
+		<element id="label_menu_keybindings_newkey_action" font="menu_buttons" offset_y="104" alignment_y="3"/>
+	</element>
+	<element id="element_menu_confirm" style="style_menu_window" size_x="420" size_y="182">
+		<element id="button_confirm_ok" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-90" offset_y="34" size_x="140" size_y="44">
+			<element id="label_menu_confirm_ok" font="hud_medium" text="Ok" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="button_confirm_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="90" offset_y="34" size_x="140" size_y="44">
+			<element id="label_menu_confirm_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="label_menu_confirm_warning" font="hud_medium" text="Are you sure?" offset_y="56" alignment_y="3"/>
+	</element>
+	<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0" clickable="false"/>
+	<element id="element_hud" alignment_x="0" alignment_y="0" clickable="false">
+		<element id="image_hud_portrait" texture="textures/portraits/joe.png" offset_x="10" offset_y="10" size_x="100" size_y="100" alignment_x="0" alignment_y="0" clickable="false">
+			<element id="label_hud_name" font="menu_buttons" offset_x="100" offset_y="30" alignment_x="0" alignment_y="3">
+				<element id="label_hud_level" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
+					<element id="label_hud_party" color="gray" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
+						<element id="label_hud_hardcore" color="red" font="hud_small" text="Hardcore" offset_y="28" alignment_x="0" alignment_y="3"/>
+					</element>
+				</element>
+			</element>
+		</element>
+	</element>
+	<element id="element_hud_health" offset_x="-420" offset_y="-26" size_x="210" size_y="44" alignment_y="2" clickable="false">
+		<element id="image_hud_health_bar_empty" texture="textures/hud_repeat/health_empty.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
+		<element id="image_hud_health_bar_full" texture="textures/hud_repeat/health_full.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
+		<element id="label_hud_health" font="hud_small" offset_y="29" alignment_y="3"/>
+	</element>
+	<element id="element_hud_mana" offset_x="420" offset_y="-26" size_x="210" size_y="44" alignment_y="2" clickable="false">
+		<element id="image_hud_mana_bar_empty" texture="textures/hud_repeat/mana_empty.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
+		<element id="image_hud_mana_bar_full" texture="textures/hud_repeat/mana_full.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
+		<element id="label_hud_mana" font="hud_small" offset_y="29" alignment_y="3"/>
+	</element>
+	<element id="element_hud_experience" offset_y="-98" size_x="492" size_y="10" alignment_y="2" clickable="false">
+		<element id="image_hud_experience_bar_empty" texture="textures/hud_repeat/experience_empty.png" size_y="10" alignment_x="0" alignment_y="0" clickable="false"/>
+		<element id="image_hud_experience_bar_full" texture="textures/hud_repeat/experience_full.png" size_y="10" alignment_x="0" alignment_y="0" clickable="false"/>
+		<element id="label_hud_experience" font="hud_small" offset_y="-6" alignment_y="3"/>
+	</element>
+	<element id="element_hud_recentitems" offset_x="-90" offset_y="180" alignment_x="2" alignment_y="0" clickable="false">
+		<element id="label_hud_recentitems" font="hud_small" text="Recent Items" offset_y="-6" alignment_y="3"/>
+	</element>
+	<element id="element_hud_message" style="style_hud_bg" offset_y="48" alignment_y="0" clickable="false">
+		<element id="label_hud_message" font="menu_buttons" offset_y="42" alignment_y="3"/>
+	</element>
+	<element id="element_battle" style="style_hud_bg" offset_y="-48" size_x="1406" size_y="800" clickable="false" index="0">
+		<element id="label_battle_title" font="battle_large" offset_y="62" alignment_y="3"/>
+	</element>
+	<element id="element_buttonbar" size_x="288" size_y="48" alignment_y="0" index="1">
+		<element id="button_buttonbar_join" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+			<element id="image_buttonbar_join" texture="textures/hud/join.png" size_x="48" size_y="48" clickable="false"/>
+			<element id="label_buttonbar_join" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
+		</element>
+		<element id="button_buttonbar_inventory" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+			<element id="image_buttonbar_inventory" texture="textures/hud/inventory.png" size_x="48" size_y="48" clickable="false"/>
+			<element id="label_buttonbar_inventory" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
+		</element>
+		<element id="button_buttonbar_trade" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="96" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+			<element id="image_buttonbar_trade" texture="textures/hud/trade.png" size_x="48" size_y="48" clickable="false"/>
+			<element id="label_buttonbar_trade" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
+		</element>
+		<element id="button_buttonbar_skills" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="144" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+			<element id="image_buttonbar_skills" texture="textures/hud/skills.png" size_x="48" size_y="48" clickable="false"/>
+			<element id="label_buttonbar_skills" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
+		</element>
+		<element id="button_buttonbar_party" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="192" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+			<element id="image_buttonbar_party" texture="textures/hud/party.png" size_x="48" size_y="48" clickable="false"/>
+			<element id="label_buttonbar_party" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
+		</element>
+		<element id="button_buttonbar_menu" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="240" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
+			<element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48" clickable="false"/>
+			<element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
+		</element>
+		<element id="label_hud_clock" font="hud_tiny" offset_y="69" alignment_y="3">
+			<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_y="19" alignment_y="3"/>
+		</element>
+		<element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0" enabled="false">
+			<element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="48" size_y="48" clickable="false" enabled="false"/>
+		</element>
+	</element>
+	<element id="element_hud_statuseffects" offset_y="-140" size_x="492" size_y="44" alignment_y="2" index="2"/>
+	<element id="element_actionbar" offset_y="-14" size_x="512" size_y="64" alignment_y="2" index="3">
+		<element id="button_actionbar_0" style="style_hud_slot" hover_style="style_menu_portrait_hover" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
+		<element id="button_actionbar_1" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
+		<element id="button_actionbar_2" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
+		<element id="button_actionbar_3" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
+		<element id="button_actionbar_4" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
+		<element id="button_actionbar_5" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
+		<element id="button_actionbar_6" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="384" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
+		<element id="button_actionbar_7" style="style_hud_slot" hover_style="style_menu_portrait_hover" offset_x="448" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
+	</element>
+	<element id="element_inventory_tabs" style="style_tabs_bg" offset_x="-500" offset_y="-215" size_x="96" size_y="48" index="13">
+		<element id="button_inventory_tabs_bag" hover_style="style_equipment_bg" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="0">
+			<element id="image_inventory_tabs_bag" texture="textures/hud/tab_inventory.png" size_x="48" size_y="48" clickable="false"/>
+		</element>
+		<element id="button_inventory_tabs_key" hover_style="style_equipment_bg" offset_x="48" size_x="48" size_y="48" alignment_x="0" alignment_y="0" index="1">
+			<element id="image_inventory_tabs_key" texture="textures/hud/tab_key.png" size_x="48" size_y="48" clickable="false"/>
+		</element>
+	</element>
+	<element id="element_equipment" style="style_equipment_bg" offset_x="-429" size_x="238" size_y="384" index="4">
+		<element id="image_equipment" texture="textures/hud/body.png" size_x="156" size_y="350" clickable="false"/>
+		<element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="88" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
+		<element id="button_equipment_bag_1" style="style_hud_slot_alpha" offset_x="88" offset_y="94" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
+		<element id="button_equipment_bag_2" style="style_hud_slot_alpha" offset_x="88" offset_y="308" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
+		<element id="button_equipment_bag_3" style="style_hud_slot_alpha" offset_x="16" offset_y="174" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
+		<element id="button_equipment_bag_4" style="style_hud_slot_alpha" offset_x="160" offset_y="174" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
+		<element id="button_equipment_bag_5" style="style_hud_slot_alpha_ring" offset_x="16" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
+		<element id="button_equipment_bag_6" style="style_hud_slot_alpha_ring" offset_x="160" offset_y="246" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
+		<element id="button_equipment_bag_7" style="style_hud_slot_alpha_amulet" offset_x="160" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
+	</element>
+	<element id="element_inventory" offset_x="-182" size_x="256" size_y="384" index="5">
+		<element id="button_inventory_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
+		<element id="button_inventory_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
+		<element id="button_inventory_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
+		<element id="button_inventory_bag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
+		<element id="button_inventory_bag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
+		<element id="button_inventory_bag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
+		<element id="button_inventory_bag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
+		<element id="button_inventory_bag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
+		<element id="button_inventory_bag_8" style="style_hud_slot" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="8"/>
+		<element id="button_inventory_bag_9" style="style_hud_slot" offset_x="64" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="9"/>
+		<element id="button_inventory_bag_10" style="style_hud_slot" offset_x="128" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="10"/>
+		<element id="button_inventory_bag_11" style="style_hud_slot" offset_x="192" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="11"/>
+		<element id="button_inventory_bag_12" style="style_hud_slot" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="12"/>
+		<element id="button_inventory_bag_13" style="style_hud_slot" offset_x="64" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="13"/>
+		<element id="button_inventory_bag_14" style="style_hud_slot" offset_x="128" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="14"/>
+		<element id="button_inventory_bag_15" style="style_hud_slot" offset_x="192" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="15"/>
+		<element id="button_inventory_bag_16" style="style_hud_slot" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="16"/>
+		<element id="button_inventory_bag_17" style="style_hud_slot" offset_x="64" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="17"/>
+		<element id="button_inventory_bag_18" style="style_hud_slot" offset_x="128" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="18"/>
+		<element id="button_inventory_bag_19" style="style_hud_slot" offset_x="192" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="19"/>
+		<element id="button_inventory_bag_20" style="style_hud_slot" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="20"/>
+		<element id="button_inventory_bag_21" style="style_hud_slot" offset_x="64" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="21"/>
+		<element id="button_inventory_bag_22" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="22"/>
+		<element id="button_inventory_bag_23" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="23"/>
+	</element>
+	<element id="element_vendor" offset_x="222" size_x="336" size_y="384" index="6">
+		<element id="button_vendor_bag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
+		<element id="button_vendor_bag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
+		<element id="button_vendor_bag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
+		<element id="button_vendor_bag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
+		<element id="button_vendor_bag_4" style="style_hud_slot" offset_x="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
+		<element id="button_vendor_bag_5" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
+		<element id="button_vendor_bag_6" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
+		<element id="button_vendor_bag_7" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
+		<element id="button_vendor_bag_8" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="8"/>
+		<element id="button_vendor_bag_9" style="style_hud_slot" offset_x="256" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="9"/>
+		<element id="button_vendor_bag_10" style="style_hud_slot" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="10"/>
+		<element id="button_vendor_bag_11" style="style_hud_slot" offset_x="64" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="11"/>
+		<element id="button_vendor_bag_12" style="style_hud_slot" offset_x="128" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="12"/>
+		<element id="button_vendor_bag_13" style="style_hud_slot" offset_x="192" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="13"/>
+		<element id="button_vendor_bag_14" style="style_hud_slot" offset_x="256" offset_y="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="14"/>
+		<element id="button_vendor_bag_15" style="style_hud_slot" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="15"/>
+		<element id="button_vendor_bag_16" style="style_hud_slot" offset_x="64" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="16"/>
+		<element id="button_vendor_bag_17" style="style_hud_slot" offset_x="128" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="17"/>
+		<element id="button_vendor_bag_18" style="style_hud_slot" offset_x="192" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="18"/>
+		<element id="button_vendor_bag_19" style="style_hud_slot" offset_x="256" offset_y="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="19"/>
+		<element id="button_vendor_bag_20" style="style_hud_slot" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="20"/>
+		<element id="button_vendor_bag_21" style="style_hud_slot" offset_x="64" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="21"/>
+		<element id="button_vendor_bag_22" style="style_hud_slot" offset_x="128" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="22"/>
+		<element id="button_vendor_bag_23" style="style_hud_slot" offset_x="192" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="23"/>
+		<element id="button_vendor_bag_24" style="style_hud_slot" offset_x="256" offset_y="256" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="24"/>
+		<element id="button_vendor_bag_25" style="style_hud_slot" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="25"/>
+		<element id="button_vendor_bag_26" style="style_hud_slot" offset_x="64" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="26"/>
+		<element id="button_vendor_bag_27" style="style_hud_slot" offset_x="128" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="27"/>
+		<element id="button_vendor_bag_28" style="style_hud_slot" offset_x="192" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="28"/>
+		<element id="button_vendor_bag_29" style="style_hud_slot" offset_x="256" offset_y="320" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="29"/>
+	</element>
+	<element id="element_trader" style="style_hud_bg" size_x="336" size_y="450" index="7">
+		<element id="button_trader_bag_0" style="style_hud_slot" offset_x="-96" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="0"/>
+		<element id="button_trader_bag_1" style="style_hud_slot" offset_x="-32" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="1"/>
+		<element id="button_trader_bag_2" style="style_hud_slot" offset_x="32" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="2"/>
+		<element id="button_trader_bag_3" style="style_hud_slot" offset_x="96" offset_y="80" size_x="64" size_y="64" alignment_y="0" index="3"/>
+		<element id="button_trader_bag_4" style="style_hud_slot" offset_x="-96" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="4"/>
+		<element id="button_trader_bag_5" style="style_hud_slot" offset_x="-32" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="5"/>
+		<element id="button_trader_bag_6" style="style_hud_slot" offset_x="32" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="6"/>
+		<element id="button_trader_bag_7" style="style_hud_slot" offset_x="96" offset_y="144" size_x="64" size_y="64" alignment_y="0" index="7"/>
+		<element id="button_trader_bag_reward" style="style_hud_slot" offset_y="284" size_x="64" size_y="64" alignment_y="0" index="8"/>
+		<element id="button_trader_accept" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-76" offset_y="374" size_x="126" size_y="44" alignment_y="0" index="9">
+			<element id="label_trader_accept" font="hud_medium" text="Accept" offset_y="30" alignment_y="3"/>
+		</element>
+		<element id="button_trader_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="76" offset_y="374" size_x="126" size_y="44" alignment_y="0" index="10">
+			<element id="label_trader_cancel" font="hud_medium" text="Cancel" offset_y="30" alignment_y="3"/>
+		</element>
+		<element id="label_trader_lookingfor" font="hud_medium" text="You give me" offset_y="48" alignment_y="3"/>
+		<element id="label_trader_reward" font="hud_medium" text="I give you" offset_y="256" alignment_y="3"/>
+	</element>
+	<element id="element_blacksmith" style="style_hud_bg" offset_x="222" size_x="336" size_y="350" index="8">
+		<element id="button_blacksmith_bag" style="style_hud_slot" offset_x="140" offset_y="22" size_x="64" size_y="64" alignment_x="0" index="0"/>
+		<element id="button_blacksmith_upgrade" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-34" size_x="126" size_y="44" alignment_y="2" index="1">
+			<element id="label_blacksmith_upgrade" font="hud_medium" text="Upgrade" offset_y="30" alignment_y="3"/>
+		</element>
+		<element id="label_blacksmith_title" font="hud_medium" offset_y="48" alignment_y="3"/>
+		<element id="label_blacksmith_level" font="hud_small" offset_y="80" alignment_y="3"/>
+		<element id="label_blacksmith_cost" font="hud_medium" offset_y="126" alignment_y="3"/>
+	</element>
+	<element id="element_minigame" style="style_minigame_bg" index="12">
+		<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-56" alignment_y="3"/>
+		<element id="label_minigame_cost" color="gold" font="hud_medium" text="Cost" offset_y="-16" alignment_y="3"/>
+		<element id="label_minigame_token_image" texture="textures/items/token.png" offset_y="-44" size_x="44" size_y="44" alignment_x="2" alignment_y="0" clickable="false">
+			<element id="label_minigame_tokens" font="hud_small" offset_x="-46" offset_y="30" alignment_x="2" alignment_y="3"/>
+		</element>
+	</element>
+	<element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
+	<element id="element_dark_overlay" style="style_hud_bg"/>
+	<element id="element_skills" style="style_hud_bg" size_x="666" size_y="632" index="11"/>
+	<element id="element_died" style="style_hud_died_bg" alignment_x="0" alignment_y="0" clickable="false">
+		<element id="label_died" font="hud_large" text="You died" offset_y="140" alignment_y="3"/>
+		<element id="label_died_respawn" font="menu_buttons" offset_y="210" alignment_y="3"/>
+		<element id="label_died_gold" font="hud_medium" offset_y="-140" alignment_y="2"/>
+	</element>
+	<element id="element_item_tooltip" style="style_hud_item_tooltip_bg" size_x="350" size_y="420" alignment_x="0" alignment_y="0" clickable="false">
+		<element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
+		<element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
+	</element>
+	<element id="element_character" style="style_hud_bg" size_x="350" size_y="702" alignment_x="2"/>
+	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="444" size_y="420">
+		<element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="9">
+			<element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2" clickable="false"/>
+			<element id="image_trade_portrait_theirs" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0" clickable="false">
+				<element id="button_trade_accept_theirs" offset_y="80" size_x="122" size_y="32">
+					<element id="label_trade_status_theirs" font="hud_small" offset_y="22" alignment_y="3"/>
+				</element>
+				<element id="label_trade_name_theirs" font="hud_small" offset_y="-16" alignment_y="3"/>
+			</element>
+			<element id="button_trade_theirbag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
+			<element id="button_trade_theirbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
+			<element id="button_trade_theirbag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
+			<element id="button_trade_theirbag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
+			<element id="button_trade_theirbag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
+			<element id="button_trade_theirbag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
+			<element id="button_trade_theirbag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
+			<element id="button_trade_theirbag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
+			<element id="element_trade_gold_theirs" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="182" size_y="42" alignment_x="0" alignment_y="2">
+				<element id="textbox_trade_gold_theirs" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="10"/>
+			</element>
+		</element>
+		<element id="element_trade_yours" offset_x="156" offset_y="216" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="10">
+			<element id="image_trade_gold_yours" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2" clickable="false"/>
+			<element id="image_trade_portrait_yours" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0" clickable="false">
+				<element id="button_trade_accept_yours" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="80" size_x="122" size_y="32">
+					<element id="label_trade_status_yours" font="hud_small" text="Accept" offset_y="22" alignment_y="3"/>
+				</element>
+				<element id="label_trade_name_yours" font="hud_small" offset_y="-16" alignment_y="3"/>
+			</element>
+			<element id="button_trade_yourbag_0" style="style_hud_slot" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="0"/>
+			<element id="button_trade_yourbag_1" style="style_hud_slot" offset_x="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="1"/>
+			<element id="button_trade_yourbag_2" style="style_hud_slot" offset_x="128" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="2"/>
+			<element id="button_trade_yourbag_3" style="style_hud_slot" offset_x="192" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="3"/>
+			<element id="button_trade_yourbag_4" style="style_hud_slot" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="4"/>
+			<element id="button_trade_yourbag_5" style="style_hud_slot" offset_x="64" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="5"/>
+			<element id="button_trade_yourbag_6" style="style_hud_slot" offset_x="128" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="6"/>
+			<element id="button_trade_yourbag_7" style="style_hud_slot" offset_x="192" offset_y="64" size_x="64" size_y="64" alignment_x="0" alignment_y="0" index="7"/>
+			<element id="element_trade_gold_yours" style="style_menu_textbox" offset_x="70" offset_y="60" size_x="182" size_y="42" alignment_x="0" alignment_y="2">
+				<element id="textbox_trade_gold_yours" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="10"/>
+			</element>
+		</element>
+		<element id="label_trade_status" font="hud_medium" text="Waiting for other player..." offset_y="90" alignment_y="0"/>
+	</element>
+	<element id="element_teleport" style="style_hud_bg" offset_y="-140" size_x="210" size_y="66" clickable="false">
+		<element id="label_teleport_timeleft" font="hud_medium" offset_y="44" alignment_y="3"/>
+	</element>
+	<element id="element_skills_tooltip" style="style_hud_item_tooltip_bg" size_x="520" size_y="350" alignment_x="0" alignment_y="0" clickable="false">
+		<element id="label_skills_tooltip_name" font="menu_buttons" offset_y="42" alignment_y="3"/>
+	</element>
+	<element id="element_buffs_tooltip" style="style_hud_item_tooltip_bg" size_x="420" size_y="168" alignment_x="0" alignment_y="0" clickable="false">
+		<element id="label_buffs_tooltip_name" font="menu_buttons" offset_y="42" alignment_y="3"/>
+		<element id="label_buffs_tooltip_duration" color="gray" font="hud_small" offset_y="146" alignment_y="3"/>
+	</element>
+	<element id="element_party" style="style_hud_item_tooltip_bg" size_x="420" size_y="168">
+		<element id="element_textbox_party" style="style_menu_textbox" offset_y="28" size_x="350" size_y="42">
+			<element id="textbox_party" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="20"/>
+		</element>
+		<element id="label_party_title" font="menu_buttons" text="Enter Party Name" offset_y="56" alignment_y="3"/>
+	</element>
+	<element id="element_chat" style="style_menu_textbox" offset_x="28" offset_y="-140" size_x="492" size_y="28" alignment_x="0" alignment_y="2">
+		<element id="textbox_chat" font="hud_small" offset_x="6" offset_y="20" alignment_x="0" alignment_y="3" maxlength="100"/>
+	</element>
+	<element id="element_editor_buttonbar" size_x="240" size_y="24" alignment_x="2" alignment_y="0">
+		<element id="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+			<element id="label_editor_buttonbar_new" font="hud_tiny" text="New" offset_y="16" alignment_y="3"/>
+		</element>
+		<element id="button_editor_buttonbar_resize" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="60" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+			<element id="label_editor_buttonbar_resize" font="hud_tiny" text="Resize" offset_y="16" alignment_y="3"/>
+		</element>
+		<element id="button_editor_buttonbar_save" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="120" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+			<element id="label_editor_buttonbar_save" font="hud_tiny" text="Save" offset_y="16" alignment_y="3"/>
+		</element>
+		<element id="button_editor_buttonbar_load" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="180" size_x="60" size_y="24" alignment_x="0" alignment_y="0">
+			<element id="label_editor_buttonbar_load" font="hud_tiny" text="Load" offset_y="16" alignment_y="3"/>
+		</element>
+	</element>
+	<element id="element_editor_newmap" style="style_menu_window" size_x="562" size_y="392">
+		<element id="button_editor_newmap_create" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
+			<element id="label_editor_newmap_create" font="hud_medium" text="Create" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="button_editor_newmap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
+			<element id="label_editor_newmap_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="element_editor_newmap_filename" style="style_menu_textbox" offset_x="210" offset_y="84" size_x="280" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_newmap_filename" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
+			<element id="label_editor_newmap_filename" font="hud_medium" text="Filename" offset_y="30" size_x="302" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="element_editor_newmap_width" style="style_menu_textbox" offset_x="210" offset_y="154" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_newmap_width" font="hud_medium" offset_x="6" offset_y="30" size_x="104" size_y="42" alignment_x="0" alignment_y="3" maxlength="3"/>
+			<element id="label_editor_newmap_width" font="hud_medium" text="Width" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="element_editor_newmap_height" style="style_menu_textbox" offset_x="210" offset_y="224" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_newmap_height" font="hud_medium" offset_x="6" offset_y="30" size_x="104" size_y="42" alignment_x="0" alignment_y="3" maxlength="3"/>
+			<element id="label_editor_newmap_height" font="hud_medium" text="Height" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="label_editor_newmap_title" font="menu_buttons" text="New Map" offset_y="48" alignment_y="3"/>
+	</element>
+	<element id="element_editor_resizemap" style="style_menu_window" size_x="562" size_y="450">
+		<element id="button_editor_resizemap_resize" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
+			<element id="label_editor_resizemap_create" font="hud_medium" text="Resize" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="button_editor_resizemap_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="104" offset_y="-34" size_x="180" size_y="44" alignment_y="2">
+			<element id="label_editor_resizemap_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
+		</element>
+		<element id="element_editor_resizemap_minx" style="style_menu_textbox" offset_x="210" offset_y="84" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_resizemap_minx" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
+			<element id="label_editor_resizemap_minx" font="hud_medium" text="Min X" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="element_editor_resizemap_miny" style="style_menu_textbox" offset_x="210" offset_y="154" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_resizemap_miny" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
+			<element id="label_editor_resizemap_miny" font="hud_medium" text="Min Y" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="element_editor_resizemap_maxx" style="style_menu_textbox" offset_x="210" offset_y="224" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_resizemap_maxx" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
+			<element id="label_editor_resizemap_maxx" font="hud_medium" text="Max X" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="element_editor_resizemap_maxy" style="style_menu_textbox" offset_x="210" offset_y="294" size_x="104" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_resizemap_maxy" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="3"/>
+			<element id="label_editor_resizemap_maxy" font="hud_medium" text="Max Y" offset_y="30" size_x="126" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="label_editor_resizemap_title" font="menu_buttons" text="Resize Map" offset_y="48" alignment_y="3"/>
+	</element>
+	<element id="element_editor_savemap" offset_x="140" offset_y="-14" size_x="350" size_y="42" alignment_x="0" alignment_y="2">
+		<element id="element_editor_savemap_box" style="style_menu_textbox" offset_x="104" size_x="492" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_savemap" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
+			<element id="label_editor_savemap" font="hud_medium" text="Save" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
+		</element>
+	</element>
+	<element id="element_editor_loadmap" offset_x="140" offset_y="-14" size_x="350" size_y="42" alignment_x="0" alignment_y="2">
+		<element id="element_editor_loadmap_box" style="style_menu_textbox" offset_x="104" size_x="492" size_y="42" alignment_x="0" alignment_y="0">
+			<element id="textbox_editor_loadmap" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
+			<element id="label_editor_loadmap" font="hud_medium" text="Load" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
+		</element>
+	</element>
+	<element id="element_editor_textures" style="style_hud_item_tooltip_bg" size_x="1028" size_y="692"/>
+	<element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>
 </element>
