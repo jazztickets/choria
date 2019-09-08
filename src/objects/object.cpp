@@ -363,7 +363,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Save positions
 	Fighter->ResultPosition = Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f;
-	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Size.x/2 + 10 + BATTLE_HEALTHBAR_WIDTH/2, -Character->Portrait->Size.y/2);
+	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Size.x/2 + (10 + BATTLE_HEALTHBAR_WIDTH/2) * ae::_Element::GetUIScale(), -Character->Portrait->Size.y/2);
 
 	// Name
 	ae::Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);

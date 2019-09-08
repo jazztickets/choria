@@ -95,9 +95,6 @@ _HUD::_HUD() {
 	MessageLabel = ae::Assets.Elements["label_hud_message"];
 	RespawnInstructions = ae::Assets.Elements["label_died_respawn"];
 
-	GoldElement->BaseSize.x = ButtonBarElement->BaseSize.x;
-	GoldElement->CalculateBounds();
-
 	DarkOverlayElement->SetActive(false);
 	ConfirmElement->SetActive(false);
 	DiedElement->SetActive(false);
@@ -716,6 +713,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		BlacksmithScreen->Render(BlendFactor);
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
+		GoldElement->Render();
 		DrawParty();
 		DrawTeleport();
 		DrawConfirm();
@@ -1013,7 +1011,7 @@ void _HUD::DrawChat(double Time, bool IgnoreTimeout) {
 	// Set up UI position
 	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
 	int SpacingY = -(Font->MaxAbove + Font->MaxBelow);
-	glm::vec2 DrawPosition = glm::vec2(ChatElement->Bounds.Start.x + 5 * ae::_Element::GetUIScale(), ChatElement->Bounds.End.y);
+	glm::vec2 DrawPosition = glm::vec2(ChatElement->Bounds.Start.x, ChatElement->Bounds.End.y);
 	DrawPosition.y += 2 * SpacingY;
 
 	// Draw messages
@@ -1472,8 +1470,9 @@ void _HUD::AddStatChange(_StatChange &StatChange) {
 			StatChangeUI.Battle = true;
 		}
 		else  {
-			StatChangeUI.StartPosition = GoldElement->Bounds.Start;
-			StatChangeUI.StartPosition.x += -45;
+			ae::_TextBounds TextBounds;
+			GoldElement->Font->GetStringDimensions(GoldElement->Text, TextBounds);
+			StatChangeUI.StartPosition = glm::vec2(GoldElement->Bounds.Start.x + -TextBounds.Width / 2, GoldElement->Bounds.Start.y + TextBounds.AboveBase);
 		}
 
 		// Get amount
@@ -1505,6 +1504,9 @@ void _HUD::ClearBattleStatChanges() {
 // Update hud labels
 void _HUD::UpdateLabels() {
 	std::stringstream Buffer;
+
+	// Update portrait
+	ae::Assets.Elements["image_hud_portrait"]->Texture = Player->Character->Portrait;
 
 	// Update name
 	ae::Assets.Elements["label_hud_name"]->Text = Player->Name;

@@ -150,11 +150,14 @@
         </element>
         <element id="label_menu_confirm_warning" font="hud_medium" text="Are you sure?" offset_y="56" alignment_y="3"/>
     </element>
-    <element id="element_hud" size_x="210" size_y="112" alignment_x="0" alignment_y="0" clickable="false">
-        <element id="label_hud_name" font="menu_buttons" offset_x="28" offset_y="42" alignment_x="0" alignment_y="3">
-            <element id="label_hud_level" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
-                <element id="label_hud_party" color="gray" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
-                    <element id="label_hud_hardcore" color="red" font="hud_small" text="Hardcore" offset_y="28" alignment_x="0" alignment_y="3"/>
+    <element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0" clickable="false"/>
+    <element id="element_hud" alignment_x="0" alignment_y="0" clickable="false">
+        <element id="image_hud_portrait" texture="textures/portraits/joe.png" size_x="100" size_y="100" offset_x="10" offset_y="10" alignment_x="0" alignment_y="0" clickable="false">
+            <element id="label_hud_name" font="menu_buttons" offset_x="100" offset_y="30" alignment_x="0" alignment_y="3">
+                <element id="label_hud_level" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
+                    <element id="label_hud_party" color="gray" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
+                        <element id="label_hud_hardcore" color="red" font="hud_small" text="Hardcore" offset_y="28" alignment_x="0" alignment_y="3"/>
+                    </element>
                 </element>
             </element>
         </element>
@@ -183,7 +186,7 @@
     <element id="element_battle" style="style_hud_bg" offset_y="-48" size_x="1406" size_y="800" clickable="false" index="0">
         <element id="label_battle_title" font="battle_large" offset_y="62" alignment_y="3"/>
     </element>
-    <element id="element_buttonbar" size_x="336" size_y="48" alignment_x="2" alignment_y="0" index="1">
+    <element id="element_buttonbar" size_x="288" size_y="48" alignment_x="1" alignment_y="0" index="1">
         <element id="button_buttonbar_join" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
             <element id="image_buttonbar_join" texture="textures/hud/join.png" size_x="48" size_y="48" clickable="false"/>
             <element id="label_buttonbar_join" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
@@ -206,15 +209,16 @@
         </element>
         <element id="button_buttonbar_menu" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="240" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
             <element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48" clickable="false"/>
-            <element id="label_hud_gold" color="gold" font="hud_small" offset_x="16" offset_y="34" alignment_x="2" alignment_y="3"/>
-            <element id="label_hud_clock" font="hud_tiny" offset_y="76" alignment_x="0" alignment_y="3">
-                <element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_y="24" alignment_x="0" alignment_y="3"/>
-            </element>
             <element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
         </element>
+        <element id="label_hud_clock" font="hud_tiny" offset_x="0" offset_y="69" alignment_x="1" alignment_y="3">
+            <element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_y="19" alignment_x="1" alignment_y="3"/>
+        </element>
+        <!--
         <element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0">
             <element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="48" size_y="48" clickable="false"/>
         </element>
+        -->
     </element>
     <element id="element_hud_statuseffects" offset_y="-140" size_x="492" size_y="44" alignment_y="2" index="2"/>
     <element id="element_actionbar" offset_y="-14" size_x="512" size_y="64" alignment_y="2" index="3">
@@ -411,7 +415,7 @@
         </element>
         <element id="label_party_title" font="menu_buttons" text="Enter Party Name" offset_y="56" alignment_y="3"/>
     </element>
-    <element id="element_chat" style="style_menu_textbox" offset_x="34" offset_y="-140" size_x="492" size_y="28" alignment_x="0" alignment_y="2">
+    <element id="element_chat" style="style_menu_textbox" offset_x="28" offset_y="-140" size_x="492" size_y="28" alignment_x="0" alignment_y="2">
         <element id="textbox_chat" font="hud_small" offset_x="6" offset_y="20" alignment_x="0" alignment_y="3" maxlength="100"/>
     </element>
     <element id="element_editor_buttonbar" size_x="240" size_y="24" alignment_x="2" alignment_y="0">
