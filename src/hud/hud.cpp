@@ -1090,6 +1090,7 @@ void _HUD::DrawMinigame(double BlendFactor) {
 	MinigameElement->CalculateChildrenBounds(false);
 
 	// Draw element
+	ae::Graphics.FadeScreen(0.8f);
 	MinigameElement->Render();
 
 	// Draw game
@@ -1188,7 +1189,7 @@ void _HUD::DrawRecentItems() {
 		ae::Graphics.DrawScaledImage(DrawPosition, RecentItem.Item->Texture, Color);
 
 		// Draw count
-		ae::Assets.Fonts["hud_small"]->DrawText("+" + std::to_string(RecentItem.Count), DrawPosition + glm::vec2(-32, 10) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
+		ae::Assets.Fonts["hud_small"]->DrawText("+" + std::to_string(RecentItem.Count), DrawPosition + glm::vec2(-35, 7) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
 
 		// Update position
 		DrawPosition.y -= (RecentItem.Item->Texture->Size.y + 5) * ae::_Element::GetUIScale();

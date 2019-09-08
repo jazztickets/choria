@@ -1638,6 +1638,9 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	if(Player->Controller->WaitForServer)
 		return;
 
+	if(Player->Character->Minigame)
+		return;
+
 	// Send use to server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_USE);
