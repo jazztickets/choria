@@ -781,8 +781,6 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		RespawnInstructions->Text = Buffer.str();
 		Buffer.str("");
 
-		DiedElement->Size = ae::Graphics.CurrentSize;
-		DiedElement->CalculateBounds(false);
 		DiedElement->SetActive(true);
 		DiedElement->Render();
 	}
@@ -958,8 +956,6 @@ void _HUD::DrawConfirm() {
 	if(!ConfirmElement->Active)
 		return;
 
-	DarkOverlayElement->Size = ae::Graphics.CurrentSize;
-	DarkOverlayElement->CalculateBounds(false);
 	DarkOverlayElement->SetActive(true);
 	DarkOverlayElement->Render();
 
