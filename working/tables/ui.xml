@@ -150,9 +150,8 @@
 		</element>
 		<element id="label_menu_confirm_warning" font="hud_medium" text="Are you sure?" offset_y="56" alignment_y="3"/>
 	</element>
-	<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0" clickable="false"/>
 	<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-20" offset_y="59" alignment_x="2" alignment_y="0"/>
-	<element id="element_hud" alignment_x="0" alignment_y="0" clickable="false">
+	<element id="element_hud" size_x="100%" size_y="100%" clickable="false">
 		<element id="image_hud_portrait" texture="textures/portraits/joe.png" offset_x="10" offset_y="10" size_x="100" size_y="100" alignment_x="0" alignment_y="0" clickable="false">
 			<element id="label_hud_name" font="menu_buttons" offset_x="100" offset_y="30" alignment_x="0" alignment_y="3">
 				<element id="label_hud_level" font="hud_small" offset_y="28" alignment_x="0" alignment_y="3">
@@ -162,6 +161,7 @@
 				</element>
 			</element>
 		</element>
+		<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0" clickable="false"/>
 	</element>
 	<element id="element_hud_health" offset_x="-420" offset_y="-26" size_x="210" size_y="44" alignment_y="2" clickable="false">
 		<element id="image_hud_health_bar_empty" texture="textures/hud_repeat/health_empty.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
@@ -331,11 +331,13 @@
 		<element id="label_blacksmith_level" font="hud_small" offset_y="80" alignment_y="3"/>
 		<element id="label_blacksmith_cost" font="hud_medium" offset_y="126" alignment_y="3"/>
 	</element>
-	<element id="element_minigame" style="style_minigame_bg" index="12">
-		<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-56" alignment_y="3"/>
-		<element id="label_minigame_cost" color="gold" font="hud_medium" text="Cost" offset_y="-16" alignment_y="3"/>
-		<element id="label_minigame_token_image" texture="textures/items/token.png" offset_y="-44" size_x="44" size_y="44" alignment_x="2" alignment_y="0" clickable="false">
-			<element id="label_minigame_tokens" font="hud_small" offset_x="-46" offset_y="30" alignment_x="2" alignment_y="3"/>
+	<element id="element_minigame" style="style_hud_bg" size_x="100%" size_y="100%" index="12">
+		<element id="element_minigame_board" style="style_minigame_bg">
+			<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-56" alignment_y="3"/>
+			<element id="label_minigame_cost" color="gold" font="hud_medium" text="Cost" offset_y="-16" alignment_y="3"/>
+			<element id="label_minigame_token_image" texture="textures/items/token.png" offset_y="-44" size_x="44" size_y="44" alignment_x="2" alignment_y="0" clickable="false">
+				<element id="label_minigame_tokens" font="hud_small" offset_x="-46" offset_y="30" alignment_x="2" alignment_y="3"/>
+			</element>
 		</element>
 	</element>
 	<element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>

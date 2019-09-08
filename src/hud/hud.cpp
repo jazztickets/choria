@@ -178,8 +178,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		// Update minigame
 		if(Player->Character->Minigame && Minigame) {
 			if(Minigame->State == _Minigame::StateType::CANDROP && Player->Inventory->CountItem(Player->Character->Minigame->RequiredItem) >= Player->Character->Minigame->Cost) {
-				if(ae::Input.GetMouse().y > MinigameElement->Bounds.Start.y && ae::Input.GetMouse().y < MinigameElement->Bounds.End.y)
-					Minigame->HandleMouseButton(MouseEvent);
+				Minigame->HandleMouseButton(MouseEvent);
 
 				// Pay
 				if(Minigame->State == _Minigame::StateType::DROPPED) {
@@ -714,7 +713,6 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		BlacksmithScreen->Render(BlendFactor);
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
-		GoldElement->Render();
 		ae::Assets.Elements["label_hud_pvp"]->Render();
 		DrawParty();
 		DrawTeleport();
@@ -899,6 +897,10 @@ void _HUD::InitMinigame() {
 		CostElement->Text += "s";
 	CostElement->Text += " to play";
 
+	// Disable certain ui elements
+	ButtonBarElement->SetClickable(false);
+	ActionBarElement->SetClickable(false);
+
 	// Create minigame
 	Minigame = new _Minigame(Player->Character->Minigame);
 }
@@ -966,6 +968,11 @@ void _HUD::DrawConfirm() {
 bool _HUD::CloseMinigame() {
 	bool WasOpen = MinigameElement->Active;
 
+	// Re-enable ui elements
+	ButtonBarElement->SetClickable(true);
+	ActionBarElement->SetClickable(true);
+
+	// Cleanup
 	MinigameElement->SetActive(false);
 	delete Minigame;
 	Minigame = nullptr;
@@ -1080,13 +1087,13 @@ void _HUD::DrawMinigame(double BlendFactor) {
 	else
 		CostElement->Color = ae::Assets.Colors["gold"];
 
-	// Make sure size is non-odd
-	Minigame->GetUIBoundary(MinigameElement->Bounds);
-	MinigameElement->Size = MinigameElement->Bounds.End - MinigameElement->Bounds.Start;
-	MinigameElement->CalculateChildrenBounds(false);
+	// Update board size
+	ae::_Element *BoardElement = ae::Assets.Elements["element_minigame_board"];
+	Minigame->GetUIBoundary(BoardElement->Bounds);
+	BoardElement->Size = BoardElement->Bounds.End - BoardElement->Bounds.Start;
+	BoardElement->CalculateChildrenBounds(false);
 
 	// Draw element
-	ae::Graphics.FadeScreen(0.8f);
 	MinigameElement->Render();
 
 	// Draw game
