@@ -151,6 +151,7 @@
 		<element id="label_menu_confirm_warning" font="hud_medium" text="Are you sure?" offset_y="56" alignment_y="3"/>
 	</element>
 	<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0" clickable="false"/>
+	<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-20" offset_y="59" alignment_x="2" alignment_y="0"/>
 	<element id="element_hud" alignment_x="0" alignment_y="0" clickable="false">
 		<element id="image_hud_portrait" texture="textures/portraits/joe.png" offset_x="10" offset_y="10" size_x="100" size_y="100" alignment_x="0" alignment_y="0" clickable="false">
 			<element id="label_hud_name" font="menu_buttons" offset_x="100" offset_y="30" alignment_x="0" alignment_y="3">
@@ -177,10 +178,8 @@
 		<element id="image_hud_experience_bar_full" texture="textures/hud_repeat/experience_full.png" size_y="10" alignment_x="0" alignment_y="0" clickable="false"/>
 		<element id="label_hud_experience" font="hud_small" offset_y="-6" alignment_y="3"/>
 	</element>
-	<element id="element_hud_recentitems" offset_x="-90" offset_y="180" alignment_x="2" alignment_y="0" clickable="false">
-		<element id="label_hud_recentitems" font="hud_small" text="Recent Items" offset_y="-6" alignment_y="3"/>
-	</element>
-	<element id="element_hud_message" style="style_hud_bg" offset_y="48" alignment_y="0" clickable="false">
+	<element id="element_hud_recentitems" offset_x="-80" offset_y="-50" alignment_x="2" alignment_y="2" clickable="false"/>
+	<element id="element_hud_message" style="style_hud_bg" offset_y="80" alignment_y="0" clickable="false">
 		<element id="label_hud_message" font="menu_buttons" offset_y="42" alignment_y="3"/>
 	</element>
 	<element id="element_battle" style="style_hud_bg" offset_y="-48" size_x="1406" size_y="800" clickable="false" index="0">
@@ -211,9 +210,7 @@
 			<element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48" clickable="false"/>
 			<element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
-		<element id="label_hud_clock" font="hud_tiny" offset_y="69" alignment_y="3">
-			<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_y="19" alignment_y="3"/>
-		</element>
+		<element id="label_hud_clock" font="hud_tiny" offset_y="70" alignment_y="3"/>
 		<element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_portrait_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0" enabled="false">
 			<element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="48" size_y="48" clickable="false" enabled="false"/>
 		</element>

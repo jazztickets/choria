@@ -112,6 +112,7 @@ _HUD::_HUD() {
 	MessageElement->SetActive(false);
 	RecentItemsElement->SetActive(false);
 
+	ae::Assets.Elements["label_hud_pvp"]->SetActive(true);
 	ae::Assets.Elements["element_hud"]->SetActive(true);
 
 	CharacterScreen = new _CharacterScreen(this, ae::Assets.Elements["element_character"]);
@@ -714,6 +715,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 		SkillScreen->Render(BlendFactor);
 		CharacterScreen->Render(BlendFactor);
 		GoldElement->Render();
+		ae::Assets.Elements["label_hud_pvp"]->Render();
 		DrawParty();
 		DrawTeleport();
 		DrawConfirm();
@@ -1172,7 +1174,6 @@ void _HUD::DrawRecentItems() {
 
 	// Draw items
 	glm::vec2 DrawPosition = ae::Assets.Elements["element_hud_recentitems"]->Bounds.Start;
-	DrawPosition.y += 25;
 	for(auto &RecentItem : RecentItems) {
 
 		// Get alpha
@@ -1187,10 +1188,14 @@ void _HUD::DrawRecentItems() {
 		ae::Graphics.DrawScaledImage(DrawPosition, RecentItem.Item->Texture, Color);
 
 		// Draw count
-		if(RecentItem.Count > 1)
-			ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(RecentItem.Count), DrawPosition + glm::vec2(20, 20), ae::RIGHT_BASELINE, Color);
+		ae::Assets.Fonts["hud_small"]->DrawText("+" + std::to_string(RecentItem.Count), DrawPosition + glm::vec2(-32, 10) * ae::_Element::GetUIScale(), ae::RIGHT_BASELINE, Color);
 
-		DrawPosition.y += RecentItem.Item->Texture->Size.y + 5;
+		// Update position
+		DrawPosition.y -= (RecentItem.Item->Texture->Size.y + 5) * ae::_Element::GetUIScale();
+
+		// Don't draw off screen
+		if(DrawPosition.y < (RecentItem.Item->Texture->Size.y * ae::_Element::GetUIScale()))
+			break;
 	}
 
 	RecentItemsElement->SetActive(false);
