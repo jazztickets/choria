@@ -198,7 +198,7 @@ void _Menu::InitNewCharacter() {
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
 	if(!ShowRespawn)
-		ae::Assets.Elements["button_ingame_respawn"]->SetActive(false);
+		ae::Assets.Elements["button_menu_ingame_respawn"]->SetActive(false);
 
 	if(!ShowExitWarning)
 		ae::Assets.Elements["label_menu_ingame_exitwarning"]->SetActive(false);
@@ -242,8 +242,8 @@ void _Menu::InitKeybindings() {
 
 // Show the confirm screen
 void _Menu::ConfirmAction() {
-	CurrentLayout = ae::Assets.Elements["element_menu_confirm"];
-	ae::Assets.Elements["label_menu_confirm_warning"]->Text = "Are you sure?";
+	CurrentLayout = ae::Assets.Elements["element_confirm"];
+	ae::Assets.Elements["label_confirm_warning"]->Text = "Are you sure?";
 
 	CurrentLayout->SetActive(true);
 }
@@ -269,11 +269,11 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 
 	ChangeLayout("element_menu_connect");
 
-	ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
+	ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
 	if(UseConfig)
 		Host->SetText(Config.LastHost);
 
-	ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
+	ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
 	if(UseConfig)
 		Port->SetText(Config.LastPort);
 
@@ -281,7 +281,7 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "";
 
-	ae::_Element *Button = ae::Assets.Elements["button_connect_connect"];
+	ae::_Element *Button = ae::Assets.Elements["button_menu_connect_connect"];
 	Button->Children.front()->Text = "Connect";
 
 	// Set focus
@@ -297,10 +297,10 @@ void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
 void _Menu::InitAccount() {
 	ChangeLayout("element_menu_account");
 
-	ae::_Element *Username = ae::Assets.Elements["textbox_account_username"];
+	ae::_Element *Username = ae::Assets.Elements["textbox_menu_account_username"];
 	Username->SetText(DefaultUsername);
 
-	ae::_Element *Password = ae::Assets.Elements["textbox_account_password"];
+	ae::_Element *Password = ae::Assets.Elements["textbox_menu_account_password"];
 	Password->SetText(DefaultPassword);
 	Password->Password = true;
 
@@ -308,7 +308,7 @@ void _Menu::InitAccount() {
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "";
 
-	ae::_Element *Button = ae::Assets.Elements["button_account_login"];
+	ae::_Element *Button = ae::Assets.Elements["button_menu_account_login"];
 	Button->SetEnabled(true);
 
 	// Set focus
@@ -388,8 +388,8 @@ void _Menu::CreateCharacter(bool Hardcore) {
 }
 
 void _Menu::ConnectToHost() {
-	ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
-	ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
+	ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
+	ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
 	if(Host->Text.length() == 0) {
 		ae::FocusedElement = Host;
 		return;
@@ -408,7 +408,7 @@ void _Menu::ConnectToHost() {
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "Connecting...";
 
-	ae::_Element *Button = ae::Assets.Elements["button_connect_connect"];
+	ae::_Element *Button = ae::Assets.Elements["button_menu_connect_connect"];
 	Button->Children.front()->Text = "Cancel";
 
 	ae::FocusedElement = nullptr;
@@ -432,8 +432,8 @@ void _Menu::PlayCharacter(size_t Slot) {
 
 // Send login info
 void _Menu::SendAccountInfo(bool CreateAccount) {
-	ae::_Element *Username = ae::Assets.Elements["textbox_account_username"];
-	ae::_Element *Password = ae::Assets.Elements["textbox_account_password"];
+	ae::_Element *Username = ae::Assets.Elements["textbox_menu_account_username"];
+	ae::_Element *Password = ae::Assets.Elements["textbox_menu_account_password"];
 	ae::_Element *Label = ae::Assets.Elements["label_menu_account_message"];
 
 	// Check username
@@ -458,7 +458,7 @@ void _Menu::SendAccountInfo(bool CreateAccount) {
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "Logging in...";
 
-	ae::_Element *Button = ae::Assets.Elements["button_account_login"];
+	ae::_Element *Button = ae::Assets.Elements["button_menu_account_login"];
 	Button->SetEnabled(false);
 
 	// Send information
@@ -826,26 +826,26 @@ void _Menu::UpdateOptions() {
 
 	// Set sound volume
 	Buffer << Config.SoundVolume;
-	ae::Assets.Elements["label_options_soundvolume"]->Text = Buffer.str();
+	ae::Assets.Elements["label_menu_options_soundvolume_value"]->Text = Buffer.str();
 	Buffer.str("");
 
 	// Set music volume
 	Buffer << Config.MusicVolume;
-	ae::Assets.Elements["label_options_musicvolume"]->Text = Buffer.str();
+	ae::Assets.Elements["label_menu_options_musicvolume_value"]->Text = Buffer.str();
 	Buffer.str("");
 
-	ae::Assets.Elements["button_options_soundvolume"]->SetOffsetPercent(glm::vec2(Config.SoundVolume, 0));
-	ae::Assets.Elements["button_options_musicvolume"]->SetOffsetPercent(glm::vec2(Config.MusicVolume, 0));
+	ae::Assets.Elements["button_menu_options_soundvolume"]->SetOffsetPercent(glm::vec2(Config.SoundVolume, 0));
+	ae::Assets.Elements["button_menu_options_musicvolume"]->SetOffsetPercent(glm::vec2(Config.MusicVolume, 0));
 }
 
 // Update config and audio volumes from options
 void _Menu::UpdateVolume() {
-	ae::_Element *SoundSlider = ae::Assets.Elements["element_options_soundvolume"];
-	ae::_Element *MusicSlider = ae::Assets.Elements["element_options_musicvolume"];
-	ae::_Element *SoundVolume = ae::Assets.Elements["label_options_soundvolume"];
-	ae::_Element *MusicVolume = ae::Assets.Elements["label_options_musicvolume"];
-	ae::_Element *SoundButton = ae::Assets.Elements["button_options_soundvolume"];
-	ae::_Element *MusicButton = ae::Assets.Elements["button_options_musicvolume"];
+	ae::_Element *SoundSlider = ae::Assets.Elements["element_menu_options_soundvolume"];
+	ae::_Element *MusicSlider = ae::Assets.Elements["element_menu_options_musicvolume"];
+	ae::_Element *SoundVolume = ae::Assets.Elements["label_menu_options_soundvolume_value"];
+	ae::_Element *MusicVolume = ae::Assets.Elements["label_menu_options_musicvolume_value"];
+	ae::_Element *SoundButton = ae::Assets.Elements["button_menu_options_soundvolume"];
+	ae::_Element *MusicButton = ae::Assets.Elements["button_menu_options_musicvolume"];
 
 	// Handle clicking inside slider elements
 	if(!SoundButton->PressedElement && SoundSlider->PressedElement) {
@@ -1181,19 +1181,19 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		// Handle click
 		switch(State) {
 			case STATE_TITLE: {
-				if(Clicked->Name == "button_title_play") {
+				if(Clicked->Name == "button_menu_title_play") {
 					PlayState.Connect(true);
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_title_joinserver") {
+				else if(Clicked->Name == "button_menu_title_joinserver") {
 					InitConnect(true);
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_title_options") {
+				else if(Clicked->Name == "button_menu_title_options") {
 					InitOptions();
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_title_exit") {
+				else if(Clicked->Name == "button_menu_title_exit") {
 					Framework.Done = true;
 				}
 			} break;
@@ -1294,7 +1294,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 			} break;
 			case STATE_CONNECT: {
-				if(Clicked->Name == "button_connect_connect") {
+				if(Clicked->Name == "button_menu_connect_connect") {
 					if(!PlayState.Network->IsDisconnected()) {
 						PlayState.Network->Disconnect(true);
 						InitConnect(false);
@@ -1304,36 +1304,36 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_connect_back") {
+				else if(Clicked->Name == "button_menu_connect_back") {
 					InitTitle(true);
 					PlayClickSound();
 				}
 			} break;
 			case STATE_ACCOUNT: {
-				if(Clicked->Name == "button_account_login") {
+				if(Clicked->Name == "button_menu_account_login") {
 					SendAccountInfo();
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_account_create") {
+				else if(Clicked->Name == "button_menu_account_create") {
 					SendAccountInfo(true);
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_account_back") {
+				else if(Clicked->Name == "button_menu_account_back") {
 					InitConnect(true);
 					PlayClickSound();
 				}
 			} break;
 			case STATE_OPTIONS: {
-				if(Clicked->Name == "button_options_fullscreen") {
+				if(Clicked->Name == "button_menu_options_fullscreen") {
 					SetFullscreen(!Config.Fullscreen);
 					UpdateOptions();
 				}
-				else if(Clicked->Name == "button_options_keybindings") {
+				else if(Clicked->Name == "button_menu_options_keybindings") {
 					InitKeybindings();
 
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_options_back") {
+				else if(Clicked->Name == "button_menu_options_back") {
 					if(FromInGame)
 						InitInGame();
 					else
@@ -1363,22 +1363,22 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 			} break;
 			case STATE_INGAME: {
-				if(Clicked->Name == "button_ingame_respawn") {
+				if(Clicked->Name == "button_menu_ingame_respawn") {
 					ae::_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::WORLD_RESPAWN);
 					PlayState.Network->SendPacket(Packet);
 					InitPlay();
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_ingame_resume") {
+				else if(Clicked->Name == "button_menu_ingame_resume") {
 					InitPlay();
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_ingame_options") {
+				else if(Clicked->Name == "button_menu_ingame_options") {
 					InitOptions();
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_ingame_exit") {
+				else if(Clicked->Name == "button_menu_ingame_exit") {
 					ExitGame();
 					PlayClickSound();
 				}
@@ -1475,8 +1475,8 @@ void _Menu::Render() {
 void _Menu::HandleConnect() {
 	switch(State) {
 		case STATE_CONNECT: {
-			ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
-			ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
+			ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
+			ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
 
 			// Save connection information
 			Config.LastHost = Host->Text;
@@ -1605,7 +1605,7 @@ void _Menu::SetAccountMessage(const std::string &Message) {
 	Label->Text = Message;
 	Label->Color = ae::Assets.Colors["red"];
 
-	ae::_Element *Button = ae::Assets.Elements["button_account_login"];
+	ae::_Element *Button = ae::Assets.Elements["button_menu_account_login"];
 	Button->SetEnabled(true);
 }
 
@@ -1625,8 +1625,8 @@ void _Menu::PlayClickSound() {
 void _Menu::FocusNextElement() {
 	switch(State) {
 		case STATE_CONNECT: {
-			ae::_Element *Host = ae::Assets.Elements["textbox_connect_host"];
-			ae::_Element *Port = ae::Assets.Elements["textbox_connect_port"];
+			ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
+			ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
 
 			if(ae::FocusedElement == Host)
 				ae::FocusedElement = Port;
@@ -1636,8 +1636,8 @@ void _Menu::FocusNextElement() {
 			ae::FocusedElement->ResetCursor();
 		} break;
 		case STATE_ACCOUNT: {
-			ae::_Element *Username = ae::Assets.Elements["textbox_account_username"];
-			ae::_Element *Password = ae::Assets.Elements["textbox_account_password"];
+			ae::_Element *Username = ae::Assets.Elements["textbox_menu_account_username"];
+			ae::_Element *Password = ae::Assets.Elements["textbox_menu_account_password"];
 
 			if(ae::FocusedElement == Username)
 				ae::FocusedElement = Password;

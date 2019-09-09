@@ -76,7 +76,7 @@ _HUD::_HUD() {
 	ae::Assets.Elements["label_hud_pvp"]->Text = "";
 
 	DarkOverlayElement = ae::Assets.Elements["element_dark_overlay"];
-	ConfirmElement = ae::Assets.Elements["element_menu_confirm"];
+	ConfirmElement = ae::Assets.Elements["element_confirm"];
 	DiedElement = ae::Assets.Elements["element_died"];
 	StatusEffectsElement = ae::Assets.Elements["element_hud_statuseffects"];
 	ActionBarElement = ae::Assets.Elements["element_actionbar"];
@@ -883,7 +883,7 @@ void _HUD::SetBarState(bool State) {
 
 // Initialize the confirm screen
 void _HUD::InitConfirm(const std::string &WarningMessage) {
-	ae::Assets.Elements["label_menu_confirm_warning"]->Text = WarningMessage;
+	ae::Assets.Elements["label_confirm_warning"]->Text = WarningMessage;
 
 	ConfirmElement->SetActive(true);
 }
