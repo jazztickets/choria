@@ -146,7 +146,7 @@ void _InventoryScreen::DrawBag(BagType Type) {
 			}
 
 			// Draw price if using vendor
-			HUD->DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false);
+			HUD->DrawItemPrice(Slot->Item, Slot->Count, DrawPosition, false, Slot->Upgrades);
 
 			// Draw upgrade count if using blacksmith
 			if(HUD->Player->Character->Blacksmith && Slot->Item->MaxLevel) {

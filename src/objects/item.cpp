@@ -562,7 +562,7 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
+int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
 	if(!Vendor)
 		return 0;
 
@@ -574,6 +574,12 @@ int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const {
 		Percent = Vendor->SellPercent;
 
 	int Price = (int)(Cost * Percent) * QueryCount;
+
+	// Add some value for upgrades
+	if(Level) {
+		for(int i = 1; i <= Level; i++)
+			Price += GetUpgradePrice(i) * Percent;
+	}
 
 	// Cap
 	if(Price < 0)

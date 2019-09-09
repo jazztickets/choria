@@ -1113,7 +1113,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 			// Get price of stack
 			Amount = std::min((int)Amount, InventorySlot.Count);
-			int Price = InventorySlot.Item->GetPrice(Vendor, Amount, Buy);
+			int Price = InventorySlot.Item->GetPrice(Vendor, Amount, Buy, InventorySlot.Upgrades);
 
 			// Update gold
 			Player->Character->UpdateGold(Price);

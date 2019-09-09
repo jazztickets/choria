@@ -213,7 +213,7 @@ class _HUD {
 		void DrawActionBar();
 		void DrawParty();
 		void DrawMessage();
-		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy);
+		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level=0);
 		void DrawCursorItem();
 
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);

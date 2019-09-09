@@ -70,7 +70,7 @@ class _Item {
 
 		void GetEquipmentSlot(_Slot &Slot) const;
 
-		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy) const;
+		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
 		int GetUpgradePrice(int Level) const;
 
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;

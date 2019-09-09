@@ -492,7 +492,7 @@ void _HUD::Update(double FrameTime) {
 				if(Player->Inventory->IsValidSlot(Tooltip.Slot)) {
 					Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
 					if(Tooltip.InventorySlot.Item && Player->Character->Vendor)
-						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Character->Vendor, Tooltip.InventorySlot.Count, false);
+						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Character->Vendor, Tooltip.InventorySlot.Count, false, Tooltip.InventorySlot.Upgrades);
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
@@ -1250,12 +1250,12 @@ void _HUD::DrawCursorItem() {
 }
 
 // Draws an item's price
-void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy) {
+void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level) {
 	if(!Player->Character->Vendor)
 		return;
 
 	// Real price
-	int Price = Item->GetPrice(Player->Character->Vendor, Count, Buy);
+	int Price = Item->GetPrice(Player->Character->Vendor, Count, Buy, Level);
 
 	// Color
 	glm::vec4 Color;
