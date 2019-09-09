@@ -234,7 +234,7 @@
 			<element id="image_inventory_tabs_key" texture="textures/hud/tab_key.png" size_x="48" size_y="48"/>
 		</element>
 	</element>
-	<element id="element_equipment" style="style_equipment_bg" offset_x="-429" size_x="238" size_y="384" index="4">
+	<element id="element_equipment" style="style_equipment_bg" offset_x="-429" size_x="238" size_y="384" clickable="true" index="4">
 		<element id="image_equipment" texture="textures/hud/body.png" size_x="156" size_y="350"/>
 		<element id="button_equipment_bag_0" style="style_hud_slot_alpha" offset_x="88" offset_y="8" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="0"/>
 		<element id="button_equipment_bag_1" style="style_hud_slot_alpha" offset_x="88" offset_y="94" size_x="64" size_y="64" alignment_x="0" alignment_y="0" clickable="true" index="1"/>
@@ -331,29 +331,7 @@
 		<element id="label_blacksmith_level" font="hud_small" offset_y="80" alignment_y="3"/>
 		<element id="label_blacksmith_cost" font="hud_medium" offset_y="126" alignment_y="3"/>
 	</element>
-	<element id="element_minigame" style="style_hud_bg" size_x="100%" size_y="100%" index="12">
-		<element id="element_minigame_board" style="style_minigame_bg">
-			<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-56" alignment_y="3"/>
-			<element id="label_minigame_cost" color="gold" font="hud_medium" text="Cost" offset_y="-16" alignment_y="3"/>
-			<element id="label_minigame_token_image" texture="textures/items/token.png" offset_y="-44" size_x="44" size_y="44" alignment_x="2" alignment_y="0">
-				<element id="label_minigame_tokens" font="hud_small" offset_x="-46" offset_y="30" alignment_x="2" alignment_y="3"/>
-			</element>
-		</element>
-	</element>
-	<element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
-	<element id="element_dark_overlay" style="style_hud_bg" size_x="100%" size_y="100%"/>
-	<element id="element_skills" style="style_hud_bg" size_x="666" size_y="632" index="11"/>
-	<element id="element_died" style="style_hud_died_bg" size_x="100%" size_y="100%" alignment_x="0" alignment_y="0">
-		<element id="label_died" font="hud_large" text="You died" offset_y="140" alignment_y="3"/>
-		<element id="label_died_respawn" font="menu_buttons" offset_y="210" alignment_y="3"/>
-		<element id="label_died_gold" font="hud_medium" offset_y="-140" alignment_y="2"/>
-	</element>
-	<element id="element_item_tooltip" style="style_hud_item_tooltip_bg" size_x="350" size_y="420" alignment_x="0" alignment_y="0">
-		<element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
-		<element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
-	</element>
-	<element id="element_character" style="style_hud_bg" size_x="350" size_y="702" alignment_x="2"/>
-	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="444" size_y="420">
+	<element id="element_trade" style="style_hud_bg" offset_x="276" size_x="444" size_y="420" clickable="true">
 		<element id="element_trade_theirs" offset_x="156" offset_y="14" size_x="256" size_y="128" alignment_x="0" alignment_y="0" index="9">
 			<element id="image_trade_gold_theirs" texture="textures/hud/gold.png" offset_x="10" offset_y="60" size_x="44" size_y="44" alignment_x="0" alignment_y="2"/>
 			<element id="image_trade_portrait_theirs" offset_x="-122" offset_y="44" size_x="90" size_y="90" alignment_x="0" alignment_y="0">
@@ -396,6 +374,28 @@
 		</element>
 		<element id="label_trade_status" font="hud_medium" text="Waiting for other player..." offset_y="90" alignment_y="0"/>
 	</element>
+	<element id="element_minigame" style="style_hud_bg" size_x="100%" size_y="100%" index="12">
+		<element id="element_minigame_board" style="style_minigame_bg">
+			<element id="label_minigame_name" font="hud_large" text="Game" offset_y="-56" alignment_y="3"/>
+			<element id="label_minigame_cost" color="gold" font="hud_medium" text="Cost" offset_y="-16" alignment_y="3"/>
+			<element id="label_minigame_token_image" texture="textures/items/token.png" offset_y="-44" size_x="44" size_y="44" alignment_x="2" alignment_y="0">
+				<element id="label_minigame_tokens" font="hud_small" offset_x="-46" offset_y="30" alignment_x="2" alignment_y="3"/>
+			</element>
+		</element>
+	</element>
+	<element id="element_keys" style="style_equipment_bg" offset_x="-301" size_x="494" size_y="384" index="14"/>
+	<element id="element_dark_overlay" style="style_hud_bg" size_x="100%" size_y="100%"/>
+	<element id="element_skills" style="style_hud_bg" size_x="666" size_y="632" index="11"/>
+	<element id="element_died" style="style_hud_died_bg" size_x="100%" size_y="100%" alignment_x="0" alignment_y="0">
+		<element id="label_died" font="hud_large" text="You died" offset_y="140" alignment_y="3"/>
+		<element id="label_died_respawn" font="menu_buttons" offset_y="210" alignment_y="3"/>
+		<element id="label_died_gold" font="hud_medium" offset_y="-140" alignment_y="2"/>
+	</element>
+	<element id="element_item_tooltip" style="style_hud_item_tooltip_bg" size_x="350" size_y="420" alignment_x="0" alignment_y="0">
+		<element id="label_item_tooltip_name" font="menu_buttons" offset_y="44" alignment_y="3"/>
+		<element id="label_item_tooltip_type" font="hud_small" offset_y="76" alignment_y="3"/>
+	</element>
+	<element id="element_character" style="style_hud_bg" size_x="350" size_y="702" alignment_x="2"/>
 	<element id="element_teleport" style="style_hud_bg" offset_y="-140" size_x="210" size_y="66">
 		<element id="label_teleport_timeleft" font="hud_medium" offset_y="44" alignment_y="3"/>
 	</element>
