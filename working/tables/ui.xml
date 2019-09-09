@@ -150,7 +150,6 @@
 		</element>
 		<element id="label_menu_confirm_warning" font="hud_medium" text="Are you sure?" offset_y="56" alignment_y="3"/>
 	</element>
-	<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-20" offset_y="59" alignment_x="2" alignment_y="0"/>
 	<element id="element_hud" size_x="100%" size_y="100%" clickable="false">
 		<element id="image_hud_portrait" texture="textures/portraits/joe.png" offset_x="10" offset_y="10" size_x="100" size_y="100" alignment_x="0" alignment_y="0" clickable="false">
 			<element id="label_hud_name" font="menu_buttons" offset_x="100" offset_y="30" alignment_x="0" alignment_y="3">
@@ -162,6 +161,7 @@
 			</element>
 		</element>
 		<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0" clickable="false"/>
+		<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-20" offset_y="59" alignment_x="2" alignment_y="0"/>
 	</element>
 	<element id="element_hud_health" offset_x="-420" offset_y="-26" size_x="210" size_y="44" alignment_y="2" clickable="false">
 		<element id="image_hud_health_bar_empty" texture="textures/hud_repeat/health_empty.png" size_y="44" alignment_x="0" alignment_y="0" clickable="false"/>
