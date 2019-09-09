@@ -83,6 +83,7 @@ ae::_Element *_StatusEffect::CreateUIElement(ae::_Element *Parent) {
 	Element->Index = 0;
 	Element->UserData = (void *)this;
 	Element->Parent = Parent;
+	Element->Clickable = true;
 	Parent->Children.push_back(Element);
 
 	return Element;
