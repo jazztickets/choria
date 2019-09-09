@@ -601,7 +601,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->BaseSize = Portrait.Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Portrait.Texture;
-		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
+		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
 		Button->Index = (int)Portrait.ID;
 		Button->Clickable = true;
 		PortraitsElement->Children.push_back(Button);
@@ -656,7 +656,7 @@ void _Menu::LoadBuildButtons() {
 		Button->BaseSize = Build.Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Build.Texture;
-		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
+		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
 		Button->Index = (int)Build.ID;
 		Button->Clickable = true;
 		BuildsElement->Children.push_back(Button);
