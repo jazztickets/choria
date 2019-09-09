@@ -84,7 +84,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	Thread(nullptr) {
 
 	if(!Network->HasConnection())
-		throw std::runtime_error("Unable to bind address!");
+		throw std::runtime_error("Unable to start server!");
 
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
