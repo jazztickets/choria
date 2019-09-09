@@ -79,6 +79,7 @@ void _SkillScreen::Init() {
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
 		Button->Index = (int)Skill->ID;
+		Button->Clickable = true;
 		Element->Children.push_back(Button);
 
 		// Add level label
@@ -100,6 +101,7 @@ void _SkillScreen::Init() {
 		PlusButton->Alignment = ae::CENTER_MIDDLE;
 		PlusButton->Style = ae::Assets.Styles["style_menu_button"];
 		PlusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		PlusButton->Clickable = true;
 		Element->Children.push_back(PlusButton);
 
 		// Add minus button
@@ -111,6 +113,7 @@ void _SkillScreen::Init() {
 		MinusButton->Alignment = ae::CENTER_MIDDLE;
 		MinusButton->Style = ae::Assets.Styles["style_menu_button"];
 		MinusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		MinusButton->Clickable = true;
 		Element->Children.push_back(MinusButton);
 
 		// Add plus label

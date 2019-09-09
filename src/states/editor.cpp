@@ -825,6 +825,7 @@ void _EditorState::InitTextures() {
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Atlas = Map->TileAtlas;
 		Button->TextureIndex = i;
+		Button->Clickable = true;
 		TexturesElement->Children.push_back(Button);
 
 		// Update position

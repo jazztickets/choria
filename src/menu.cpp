@@ -505,6 +505,7 @@ void _Menu::LoadCharacterSlots() {
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Index = (int)i;
 		Button->Checked = i == PreSelectedSlot ? true : false;
+		Button->Clickable = true;
 		CharacterSlotsElement->Children.push_back(Button);
 
 		// Add image for portrait
@@ -549,7 +550,6 @@ void _Menu::LoadCharacterSlots() {
 		CharacterSlots[i].Level->Text = "";
 		CharacterSlots[i].Hardcore->Text = "";
 		CharacterSlots[i].Image->Texture = nullptr;
-		CharacterSlots[i].Image->Clickable = false;
 		CharacterSlots[i].Used = false;
 		CharacterSlots[i].CanPlay = true;
 
@@ -603,6 +603,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
 		Button->Index = (int)Portrait.ID;
+		Button->Clickable = true;
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
@@ -657,6 +658,7 @@ void _Menu::LoadBuildButtons() {
 		Button->Texture = Build.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_portrait_hover"];
 		Button->Index = (int)Build.ID;
+		Button->Clickable = true;
 		BuildsElement->Children.push_back(Button);
 
 		// Add label
@@ -667,7 +669,6 @@ void _Menu::LoadBuildButtons() {
 		Label->Parent = Button;
 		Label->BaseOffset = glm::vec2(0, 122);
 		Label->Alignment = ae::CENTER_BASELINE;
-		Label->Clickable = false;
 		Button->Children.push_back(Label);
 
 		// Update position
@@ -710,6 +711,7 @@ void _Menu::LoadKeybindings() {
 		PrimaryButton->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
 		PrimaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
 		PrimaryButton->Index = i;
+		PrimaryButton->Clickable = true;
 		KeyBindingsElement->Children.push_back(PrimaryButton);
 
 		// Add primary key
@@ -719,7 +721,6 @@ void _Menu::LoadKeybindings() {
 		PrimaryKey->Parent = PrimaryButton;
 		PrimaryKey->BaseOffset = glm::vec2(0, 32);
 		PrimaryKey->Alignment = ae::CENTER_BASELINE;
-		PrimaryKey->Clickable = false;
 		PrimaryButton->Children.push_back(PrimaryKey);
 
 		// Add secondary key button
@@ -733,6 +734,7 @@ void _Menu::LoadKeybindings() {
 		SecondaryButton->DisabledStyle = ae::Assets.Styles["style_menu_button_disabled"];
 		SecondaryButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
 		SecondaryButton->Index = i;
+		SecondaryButton->Clickable = true;
 		KeyBindingsElement->Children.push_back(SecondaryButton);
 
 		// Add secondary key
@@ -742,7 +744,6 @@ void _Menu::LoadKeybindings() {
 		SecondaryKey->Parent = SecondaryButton;
 		SecondaryKey->BaseOffset = glm::vec2(0, 32);
 		SecondaryKey->Alignment = ae::CENTER_BASELINE;
-		SecondaryKey->Clickable = false;
 		SecondaryButton->Children.push_back(SecondaryKey);
 
 		// Add label
@@ -752,7 +753,6 @@ void _Menu::LoadKeybindings() {
 		Label->Parent = PrimaryButton;
 		Label->BaseOffset = glm::vec2(-168, 32);
 		Label->Alignment = ae::CENTER_BASELINE;
-		Label->Clickable = false;
 		PrimaryButton->Children.push_back(Label);
 
 		// Disable chat rebinding
@@ -772,7 +772,6 @@ void _Menu::LoadKeybindings() {
 			PrimaryLabel->Parent = PrimaryButton;
 			PrimaryLabel->BaseOffset = glm::vec2(0, -14);
 			PrimaryLabel->Alignment = ae::CENTER_BASELINE;
-			PrimaryLabel->Clickable = false;
 			PrimaryButton->Children.push_back(PrimaryLabel);
 
 			// Add secondary
@@ -782,7 +781,6 @@ void _Menu::LoadKeybindings() {
 			SecondaryLabel->Parent = SecondaryButton;
 			SecondaryLabel->BaseOffset = glm::vec2(0, -14);
 			SecondaryLabel->Alignment = ae::CENTER_BASELINE;
-			SecondaryLabel->Clickable = false;
 			SecondaryButton->Children.push_back(SecondaryLabel);
 		}
 

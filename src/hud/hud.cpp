@@ -898,8 +898,8 @@ void _HUD::InitMinigame() {
 	CostElement->Text += " to play";
 
 	// Disable certain ui elements
-	ButtonBarElement->SetClickable(false);
-	ActionBarElement->SetClickable(false);
+	ButtonBarElement->SetClickable(false, 2);
+	ActionBarElement->SetClickable(false, 2);
 
 	// Create minigame
 	Minigame = new _Minigame(Player->Character->Minigame);
@@ -969,8 +969,8 @@ bool _HUD::CloseMinigame() {
 	bool WasOpen = MinigameElement->Active;
 
 	// Re-enable ui elements
-	ButtonBarElement->SetClickable(true);
-	ActionBarElement->SetClickable(true);
+	ButtonBarElement->SetClickable(true, 2);
+	ActionBarElement->SetClickable(true, 2);
 
 	// Cleanup
 	MinigameElement->SetActive(false);
