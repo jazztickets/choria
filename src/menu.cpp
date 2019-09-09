@@ -168,15 +168,15 @@ void _Menu::InitCharacters() {
 
 // Init new player popup
 void _Menu::InitNewCharacter() {
-	ae::_Element *CreateButton = ae::Assets.Elements["button_newcharacter_create"];
-	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_newcharacter_createhardcore"];
+	ae::_Element *CreateButton = ae::Assets.Elements["button_menu_new_create"];
+	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_menu_new_createhardcore"];
 	CreateButton->SetEnabled(false);
 	CreateHardcoreButton->SetEnabled(false);
 
-	ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
+	ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 	Name->SetText("");
 
-	ae::_Element *Label = ae::Assets.Elements["label_menu_newcharacter_name"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_new_name"];
 	Label->Text = "Name";
 	Label->Color = glm::vec4(1.0f);
 
@@ -354,7 +354,7 @@ size_t _Menu::GetSelectedCharacter() {
 void _Menu::CreateCharacter(bool Hardcore) {
 
 	// Check length
-	ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
+	ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 	if(Name->Text.length() == 0)
 		return;
 
@@ -932,9 +932,9 @@ void _Menu::ValidateCreateCharacter() {
 	uint32_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
 
 	// Check name length
-	ae::_Element *CreateButton = ae::Assets.Elements["button_newcharacter_create"];
-	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_newcharacter_createhardcore"];
-	ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
+	ae::_Element *CreateButton = ae::Assets.Elements["button_menu_new_create"];
+	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_menu_new_createhardcore"];
+	ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 	if(Name->Text.length() > 0)
 		NameValid = true;
 	else
@@ -953,8 +953,8 @@ void _Menu::ValidateCreateCharacter() {
 
 // Update ui button states
 void _Menu::UpdateCharacterButtons() {
-	ae::_Element *DeleteButton = ae::Assets.Elements["button_characters_delete"];
-	ae::_Element *PlayButton = ae::Assets.Elements["button_characters_play"];
+	ae::_Element *DeleteButton = ae::Assets.Elements["button_menu_characters_delete"];
+	ae::_Element *PlayButton = ae::Assets.Elements["button_menu_characters_play"];
 	DeleteButton->SetEnabled(false);
 	PlayButton->SetEnabled(false);
 
@@ -1200,13 +1200,13 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			case STATE_CHARACTERS: {
 				if(CharactersState == CHARACTERS_NONE) {
 
-					if(Clicked->Name == "button_characters_delete") {
+					if(Clicked->Name == "button_menu_characters_delete") {
 						CharactersState = CHARACTERS_DELETE;
 						ae::Assets.Elements["element_menu_characters"]->SetClickable(false);
 						ConfirmAction();
 						PlayClickSound();
 					}
-					else if(Clicked->Name == "button_characters_play") {
+					else if(Clicked->Name == "button_menu_characters_play") {
 						size_t SelectedSlot = GetSelectedCharacter();
 						if(SelectedSlot < CharacterSlots.size() && CharacterSlots[SelectedSlot].Used) {
 							PlayCharacter(SelectedSlot);
@@ -1214,7 +1214,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 						PlayClickSound();
 					}
-					else if(Clicked->Name == "button_characters_back") {
+					else if(Clicked->Name == "button_menu_characters_back") {
 						PlayState.Network->Disconnect();
 						PlayClickSound();
 					}
@@ -1253,7 +1253,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 							ae::_Element *Button = Element;
 							Button->Checked = false;
 							if((size_t)Button->Index == SelectedID) {
-								ae::_Element *Name = ae::Assets.Elements["textbox_newcharacter_name"];
+								ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 								ae::FocusedElement = Name;
 								Name->ResetCursor();
 								Button->Checked = true;
@@ -1262,15 +1262,15 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 						ValidateCreateCharacter();
 					}
-					else if(Clicked->Name == "button_newcharacter_create") {
+					else if(Clicked->Name == "button_menu_new_create") {
 						CreateCharacter();
 						PlayClickSound();
 					}
-					else if(Clicked->Name == "button_newcharacter_createhardcore") {
+					else if(Clicked->Name == "button_menu_new_createhardcore") {
 						CreateCharacter(true);
 						PlayClickSound();
 					}
-					else if(Clicked->Name == "button_newcharacter_cancel") {
+					else if(Clicked->Name == "button_menu_new_cancel") {
 						RequestCharacterList();
 						PlayClickSound();
 					}
@@ -1581,7 +1581,7 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 			RequestCharacterList();
 		} break;
 		case PacketType::CREATECHARACTER_INUSE: {
-			ae::_Element *Label = ae::Assets.Elements["label_menu_newcharacter_name"];
+			ae::_Element *Label = ae::Assets.Elements["label_menu_new_name"];
 			Label->Text = "Name in use";
 			Label->Color = ae::Assets.Colors["red"];
 		} break;

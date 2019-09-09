@@ -18,13 +18,13 @@
 	</element>
 	<element id="element_menu_characters" style="style_hud_bg" size_x="1264" size_y="984">
 		<element id="element_menu_character_slots" offset_y="210" size_x="1136" size_y="590" alignment_y="0"/>
-		<element id="button_characters_delete" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-210" offset_y="364" size_x="180" size_y="66" clickable="true">
+		<element id="button_menu_characters_delete" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-210" offset_y="364" size_x="180" size_y="66" clickable="true">
 			<element id="label_menu_characters_delete" font="menu_buttons" text="Delete" offset_y="44" alignment_y="3"/>
 		</element>
-		<element id="button_characters_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="364" size_x="180" size_y="66" clickable="true">
+		<element id="button_menu_characters_play" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="364" size_x="180" size_y="66" clickable="true">
 			<element id="label_menu_characters_play" font="menu_buttons" text="Play" offset_y="44" alignment_y="3"/>
 		</element>
-		<element id="button_characters_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="364" size_x="180" size_y="66" clickable="true">
+		<element id="button_menu_characters_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="364" size_x="180" size_y="66" clickable="true">
 			<element id="label_menu_characters_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
 		</element>
 		<element id="label_menu_characters_title" font="hud_large" text="Characters" offset_y="-350"/>
@@ -33,21 +33,21 @@
 	<element id="element_menu_new" style="style_menu_window" size_x="846" size_y="880">
 		<element id="element_menu_new_portraits" size_x="846" size_y="350" alignment_y="0"/>
 		<element id="element_menu_new_builds" offset_y="350" size_x="846" size_y="350" alignment_y="0"/>
-		<element id="button_newcharacter_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
-			<element id="label_menu_newcharacter_create" font="hud_medium" text="Create" offset_y="32" alignment_y="3"/>
+		<element id="button_menu_new_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
+			<element id="label_menu_new_create" font="hud_medium" text="Create" offset_y="32" alignment_y="3"/>
 		</element>
-		<element id="button_newcharacter_createhardcore" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-238" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
-			<element id="label_menu_newcharacter_createhardcore" font="hud_medium" text="Create Hardcore" offset_y="32" alignment_y="3"/>
+		<element id="button_menu_new_createhardcore" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-238" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
+			<element id="label_menu_new_createhardcore" font="hud_medium" text="Create Hardcore" offset_y="32" alignment_y="3"/>
 		</element>
-		<element id="button_newcharacter_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="238" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
-			<element id="label_menu_newcharacter_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
+		<element id="button_menu_new_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="238" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
+			<element id="label_menu_new_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
 		</element>
-		<element id="element_newcharacter_name" style="style_menu_textbox" offset_y="-90" size_x="350" size_y="42" alignment_y="2" clickable="true">
-			<element id="textbox_newcharacter_name" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="15"/>
-			<element id="label_menu_newcharacter_name" font="hud_medium" text="Name" offset_y="-34" alignment_y="0"/>
+		<element id="element_menu_new_name" style="style_menu_textbox" offset_y="-90" size_x="350" size_y="42" alignment_y="2" clickable="true">
+			<element id="textbox_menu_new_name" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="15"/>
+			<element id="label_menu_new_name" font="hud_medium" text="Name" offset_y="-34" alignment_y="0"/>
 		</element>
-		<element id="label_menu_newcharacter_portraits" font="hud_medium" text="Select a portrait" offset_y="40" alignment_y="3"/>
-		<element id="label_menu_newcharacter_builds" font="hud_medium" text="Select a starting build" offset_y="390" alignment_y="3"/>
+		<element id="label_menu_new_portraits" font="hud_medium" text="Select a portrait" offset_y="40" alignment_y="3"/>
+		<element id="label_menu_new_builds" font="hud_medium" text="Select a starting build" offset_y="390" alignment_y="3"/>
 	</element>
 	<element id="element_menu_connect" style="style_hud_bg" size_x="720" size_y="984">
 		<element id="element_connect_host" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2" clickable="true">
