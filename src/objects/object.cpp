@@ -436,11 +436,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_empty"]->Texture);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Textures["textures/hud_repeat/stamina_empty.png"]);
 
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Fighter->TurnTimer, BarSize.y) + BarOffset;
-	ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_experience_bar_full"]->Texture);
+	ae::Graphics.DrawImage(BarBounds, ae::Assets.Textures["textures/hud_repeat/stamina_full.png"]);
 
 	// Get background for items used
 	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
