@@ -1275,6 +1275,10 @@ void _HUD::SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action) {
 	// Check for bringing new skill/item onto bar
 	if(OldSlot >= Player->Character->ActionBar.size()) {
 
+		// Check for valid item types
+		if(Action.Item && !(Action.Item->IsSkill() || Action.Item->IsConsumable()))
+			return;
+
 		// Remove duplicate skills
 		for(size_t i = 0; i < Player->Character->ActionBar.size(); i++) {
 			if(Player->Character->ActionBar[i] == Action)
