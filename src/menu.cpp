@@ -169,12 +169,13 @@ void _Menu::InitCharacters() {
 // Init new player popup
 void _Menu::InitNewCharacter() {
 	ae::_Element *CreateButton = ae::Assets.Elements["button_menu_new_create"];
-	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_menu_new_createhardcore"];
 	CreateButton->SetEnabled(false);
-	CreateHardcoreButton->SetEnabled(false);
 
 	ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 	Name->SetText("");
+
+	ae::_Element *Check = ae::Assets.Elements["label_menu_new_hardcore_check"];
+	Check->Text = "";
 
 	ae::_Element *Label = ae::Assets.Elements["label_menu_new_name"];
 	Label->Text = "Name";
@@ -933,7 +934,6 @@ void _Menu::ValidateCreateCharacter() {
 
 	// Check name length
 	ae::_Element *CreateButton = ae::Assets.Elements["button_menu_new_create"];
-	ae::_Element *CreateHardcoreButton = ae::Assets.Elements["button_menu_new_createhardcore"];
 	ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 	if(Name->Text.length() > 0)
 		NameValid = true;
@@ -943,11 +943,9 @@ void _Menu::ValidateCreateCharacter() {
 	// Enable button
 	if(PortraitID != 0 && BuildID != 0 && NameValid) {
 		CreateButton->SetEnabled(true);
-		CreateHardcoreButton->SetEnabled(true);
 	}
 	else {
 		CreateButton->SetEnabled(false);
-		CreateHardcoreButton->SetEnabled(false);
 	}
 }
 
@@ -1262,12 +1260,13 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 						ValidateCreateCharacter();
 					}
-					else if(Clicked->Name == "button_menu_new_create") {
-						CreateCharacter();
-						PlayClickSound();
+					else if(Clicked->Name == "button_menu_new_hardcore") {
+						ae::_Element *Check = ae::Assets.Elements["label_menu_new_hardcore_check"];
+						Check->Text = Check->Text == "" ? "X" : "";
 					}
-					else if(Clicked->Name == "button_menu_new_createhardcore") {
-						CreateCharacter(true);
+					else if(Clicked->Name == "button_menu_new_create") {
+						ae::_Element *Check = ae::Assets.Elements["label_menu_new_hardcore_check"];
+						CreateCharacter(Check->Text == "X");
 						PlayClickSound();
 					}
 					else if(Clicked->Name == "button_menu_new_cancel") {

@@ -33,13 +33,17 @@
 	<element id="element_menu_new" style="style_menu_window" size_x="846" size_y="880">
 		<element id="element_menu_new_portraits" size_x="846" size_y="350" alignment_y="0"/>
 		<element id="element_menu_new_builds" offset_y="350" size_x="846" size_y="350" alignment_y="0"/>
-		<element id="button_menu_new_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
+		<element id="element_menu_new_hardcore" offset_x="-330" offset_y="-22" size_x="210" size_y="44" alignment_y="2">
+			<element id="label_menu_new_hardcore" font="hud_medium" text="Hardcore" offset_y="32" alignment_y="3">
+				<element id="button_menu_new_hardcore" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_x="65" offset_y="-10" size_x="44" size_y="44" alignment_x="0" clickable="true">
+					<element id="label_menu_new_hardcore_check" font="hud_medium"/>
+				</element>
+			</element>
+		</element>
+		<element id="button_menu_new_create" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-95" offset_y="-22" size_x="170" size_y="44" alignment_y="2" clickable="true">
 			<element id="label_menu_new_create" font="hud_medium" text="Create" offset_y="32" alignment_y="3"/>
 		</element>
-		<element id="button_menu_new_createhardcore" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_x="-238" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
-			<element id="label_menu_new_createhardcore" font="hud_medium" text="Create Hardcore" offset_y="32" alignment_y="3"/>
-		</element>
-		<element id="button_menu_new_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="238" offset_y="-22" size_x="210" size_y="44" alignment_y="2" clickable="true">
+		<element id="button_menu_new_cancel" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="95" offset_y="-22" size_x="170" size_y="44" alignment_y="2" clickable="true">
 			<element id="label_menu_new_cancel" font="hud_medium" text="Cancel" offset_y="32" alignment_y="3"/>
 		</element>
 		<element id="element_menu_new_name" style="style_menu_textbox" offset_y="-90" size_x="350" size_y="42" alignment_y="2" clickable="true">
