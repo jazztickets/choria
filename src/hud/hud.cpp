@@ -873,6 +873,12 @@ void _HUD::UpdateButtonBarLabels() {
 	ae::Assets.Elements["label_buttonbar_menu"]->Text = ae::Actions.GetInputNameForAction(Action::MENU_BACK).substr(0, HUD_KEYNAME_LENGTH);
 }
 
+// Set clickable state of action/button bar
+void _HUD::SetBarState(bool State) {
+	ButtonBarElement->SetClickable(State, 2);
+	ActionBarElement->SetClickable(State, 2);
+}
+
 // Initialize the confirm screen
 void _HUD::InitConfirm(const std::string &WarningMessage) {
 	ae::Assets.Elements["label_menu_confirm_warning"]->Text = WarningMessage;
@@ -898,8 +904,7 @@ void _HUD::InitMinigame() {
 	CostElement->Text += " to play";
 
 	// Disable certain ui elements
-	ButtonBarElement->SetClickable(false, 2);
-	ActionBarElement->SetClickable(false, 2);
+	SetBarState(false);
 
 	// Create minigame
 	Minigame = new _Minigame(Player->Character->Minigame);
@@ -969,8 +974,7 @@ bool _HUD::CloseMinigame() {
 	bool WasOpen = MinigameElement->Active;
 
 	// Re-enable ui elements
-	ButtonBarElement->SetClickable(true, 2);
-	ActionBarElement->SetClickable(true, 2);
+	SetBarState(true);
 
 	// Cleanup
 	MinigameElement->SetActive(false);

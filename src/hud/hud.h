@@ -153,6 +153,7 @@ class _HUD {
 		void UpdateButtonBarLabels();
 
 		// Windows
+		void SetBarState(bool State);
 		void InitConfirm(const std::string &WarningMessage);
 		void InitMinigame();
 		void InitParty();

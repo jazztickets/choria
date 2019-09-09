@@ -203,6 +203,7 @@ void _Menu::InitInGame() {
 	if(!ShowExitWarning)
 		ae::Assets.Elements["label_menu_ingame_exitwarning"]->SetActive(false);
 
+	PlayState.HUD->SetBarState(false);
 	PlayState.SendStatus(_Character::STATUS_MENU);
 	State = STATE_INGAME;
 	FromInGame = true;
@@ -214,6 +215,7 @@ void _Menu::InitPlay() {
 		CurrentLayout->SetActive(false);
 	CurrentLayout = nullptr;
 
+	PlayState.HUD->SetBarState(true);
 	PlayState.SendStatus(_Character::STATUS_NONE);
 	State = STATE_NONE;
 }
