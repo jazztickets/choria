@@ -104,7 +104,7 @@ _Minigame::_Minigame(const _MinigameType *Minigame) :
 				Tip->RigidBody.CollisionMask = 1;
 				Tip->RigidBody.CollisionGroup = 2;
 				Tip->RigidBody.ForcePosition(glm::vec2(X, Y-0.5f));
-				Tip->Texture = ae::Assets.Textures["textures/minigames/peg.png"];
+				Tip->Texture = ae::Assets.Textures["textures/minigames/halfpeg.png"];
 				Tip->Scale = glm::vec2(0.5f, 0.5f);
 				Tip->Shape.HalfWidth = glm::vec2(0.5f, 0.0f) * Sprite->Scale;
 				Grid->AddObject(Tip, Tip->RigidBody.Position, Tip->Shape.HalfWidth);
@@ -330,7 +330,7 @@ void _Minigame::Render(double BlendFactor) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv_static"]);
 			ae::Graphics.DrawSprite(Position, Item->Item->Texture, (float)Time * 50);
 			if(Item->Count > 1)
-				ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Item->Count) + "x", glm::vec2(Position) + glm::vec2(0.30f, 0.5f), ae::LEFT_BASELINE, glm::vec4(1), 1/64.0f);
+				ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Item->Count), glm::vec2(Position) + glm::vec2(0.30f, 0.5f), ae::LEFT_BASELINE, glm::vec4(1), 1/64.0f);
 		}
 
 		Position.x += 2;

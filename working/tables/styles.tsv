@@ -15,6 +15,6 @@ style_hud_slot_alpha_amulet			ortho_pos_uv	textures/hud/slot_amulet.png	inventor
 style_hud_item_tooltip_bg	item_tooltip_bg		ortho_pos			1
 style_battle_slot_red	red_alpha	red	ortho_pos			1
 style_battle_slot_green	green_alpha	green	ortho_pos			1
-style_minigame_bg	dark_brown		ortho_pos			1
+style_minigame_bg	minigame_bg		ortho_pos			1
 style_equipment_bg	equipment_bg		ortho_pos			1
 style_tabs_bg	equipment_bg_dark		ortho_pos			1
