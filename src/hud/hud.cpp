@@ -1545,7 +1545,7 @@ void _HUD::UpdateLabels() {
 	ae::Assets.Elements["label_hud_hardcore"]->SetActive(Player->Character->Hardcore);
 
 	// Update gold
-	Buffer << Player->Character->Gold << " Gold";
+	Buffer << Player->Character->Gold;
 	GoldElement->Text = Buffer.str();
 	Buffer.str("");
 	if(Player->Character->Gold < 0)

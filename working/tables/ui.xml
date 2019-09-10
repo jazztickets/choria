@@ -175,8 +175,11 @@
 				</element>
 			</element>
 		</element>
-		<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-20" offset_y="15" alignment_x="2" alignment_y="0"/>
-		<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-20" offset_y="59" alignment_x="2" alignment_y="0"/>
+		<element id="image_hud_gold" texture="textures/hud/gold.png" offset_x="-20" offset_y="15" size_x="48" size_y="48" alignment_x="2" alignment_y="0">
+			<element id="label_hud_gold" color="gold" font="hud_small" offset_x="-55" offset_y="36" alignment_x="2" alignment_y="3"/>
+		</element>
+		<element id="label_hud_pvp" color="red" font="hud_tiny" text="PVP Zone" offset_x="-200" offset_y="20" alignment_x="1" alignment_y="0"/>
+		<element id="label_hud_clock" font="hud_tiny" offset_x="200" offset_y="20" alignment_x="1" alignment_y="0"/>
 	</element>
 	<element id="element_hud_health" offset_x="-420" offset_y="-26" size_x="210" size_y="44" alignment_y="2">
 		<element id="image_hud_health_bar_empty" texture="textures/hud_repeat/health_empty.png" size_y="44" alignment_x="0" alignment_y="0"/>
@@ -225,7 +228,6 @@
 			<element id="image_buttonbar_menu" texture="textures/hud/menu.png" size_x="48" size_y="48"/>
 			<element id="label_buttonbar_menu" font="hud_tiny" offset_x="4" offset_y="42" alignment_x="0" alignment_y="3"/>
 		</element>
-		<element id="label_hud_clock" font="hud_tiny" offset_y="70" alignment_y="3"/>
 		<element id="button_buttonbar_fullscreen" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="288" size_x="48" size_y="48" alignment_x="0" alignment_y="0" clickable="true" enabled="false">
 			<element id="image_buttonbar_fullscreen" texture="textures/hud/fullscreen.png" size_x="48" size_y="48" enabled="false"/>
 		</element>
