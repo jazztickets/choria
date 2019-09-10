@@ -1318,9 +1318,15 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 				else if(Clicked->Parent && Clicked->Parent->Name == "element_menu_browse_servers") {
 					if((size_t)Clicked->Index < ConnectServers.size()) {
+
+						// Set ip and port
 						ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
 						Host->Text = ConnectServers[Clicked->Index].IP + ":" + std::to_string(ConnectServers[Clicked->Index].Port);
 						ValidateConnect();
+
+						// Connect on double click
+						if(DoubleClick)
+							ConnectToHost();
 					}
 				}
 			} break;
@@ -1621,6 +1627,14 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 // Add a game server to the server list
 void _Menu::AddConnectServer(_ConnectServer &ConnectServer) {
 	ConnectServer.Ping = (SDL_GetPerformanceCounter() - PingTime) / (double)SDL_GetPerformanceFrequency();
+
+	// Check for duplicates
+	for(const auto &Server : ConnectServers) {
+		if(Server.IP == ConnectServer.IP && Server.Port == ConnectServer.Port)
+			return;
+	}
+
+	// Add server
 	ConnectServers.push_back(ConnectServer);
 }
 
@@ -1657,18 +1671,20 @@ void _Menu::RenderBrowser() {
 	// Set layout
 	float SpacingY = FirstElement->Size.y;
 	glm::vec2 DrawPosition = FirstElement->Bounds.Start + glm::vec2(10 * ae::_Element::GetUIScale(), FirstElement->Size.y / 2 + Font->MaxHeight - Font->MaxAbove + Font->MaxBelow);
-	glm::vec2 Offset[4] = {
+	glm::vec2 Offset[3] = {
 		{ 0, 0 },
-		{ 450 * ae::_Element::GetUIScale(), 0 },
 		{ 575 * ae::_Element::GetUIScale(), 0 },
-		{ 700 * ae::_Element::GetUIScale(), 0 },
+		{ 690 * ae::_Element::GetUIScale(), 0 },
+		//{ 450 * ae::_Element::GetUIScale(), 0 },
+		//{ 575 * ae::_Element::GetUIScale(), 0 },
+		//{ 700 * ae::_Element::GetUIScale(), 0 },
 	};
 
 	// Draw header
 	Font->DrawText("Server", DrawPosition + glm::vec2(0, -SpacingY) + Offset[0], ae::LEFT_BASELINE);
 	Font->DrawText("Players", DrawPosition + glm::vec2(0, -SpacingY) + Offset[1], ae::LEFT_BASELINE);
 	Font->DrawText("Hardcore", DrawPosition + glm::vec2(0, -SpacingY) + Offset[2], ae::LEFT_BASELINE);
-	Font->DrawText("Ping", DrawPosition + glm::vec2(0, -SpacingY) + Offset[3], ae::LEFT_BASELINE);
+	//Font->DrawText("Ping", DrawPosition + glm::vec2(0, -SpacingY) + Offset[3], ae::LEFT_BASELINE);
 
 	// Draw servers
 	size_t Count = 0;
@@ -1677,7 +1693,7 @@ void _Menu::RenderBrowser() {
 		Font->DrawText(ConnectServer.IP + ":" + std::to_string(ConnectServer.Port), DrawPosition + Offset[0], ae::LEFT_BASELINE);
 		Font->DrawText(std::to_string(ConnectServer.Players) + "/" + std::to_string(ConnectServer.MaxPlayers), DrawPosition + Offset[1], ae::LEFT_BASELINE);
 		Font->DrawText(HardcoreText, DrawPosition + Offset[2], ae::LEFT_BASELINE);
-		Font->DrawText(std::to_string((int)(ConnectServer.Ping * 1000)) + "ms", DrawPosition + Offset[3], ae::LEFT_BASELINE);
+		//Font->DrawText(std::to_string((int)(ConnectServer.Ping * 1000)) + "ms", DrawPosition + Offset[3], ae::LEFT_BASELINE);
 
 		DrawPosition.y += SpacingY;
 
