@@ -40,7 +40,6 @@
 #include <ae/program.h>
 #include <ae/actions.h>
 #include <ae/framelimit.h>
-#include <ae/buffer.h>
 #include <ae/audio.h>
 #include <ae/random.h>
 #include <ae/ui.h>
@@ -82,7 +81,8 @@ _PlayState::_PlayState() :
 	Framebuffer(nullptr),
 	Server(nullptr),
 	HostAddress("127.0.0.1"),
-	ConnectPort(DEFAULT_NETWORKPORT) {
+	ConnectPort(DEFAULT_NETWORKPORT),
+	PongPacket(1024) {
 }
 
 // Load level and set up objects
@@ -560,6 +560,34 @@ void _PlayState::Update(double FrameTime) {
 	CoinSoundPlayed = false;
 	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
 	//	std::cout << "Client: O=" << ObjectManager->Objects.size() << " B=" << (int)(Battle != nullptr) << std::endl;
+
+	// Handle pongs
+	ae::_NetworkAddress PongAddress;
+	while(Network->CheckPings(PongPacket, PongAddress)) {
+
+		// Read header
+		char IP[16];
+		PongAddress.GetIP(IP);
+		PingType Type = PongPacket.Read<PingType>();
+
+		// Handle ping types
+		switch(Type) {
+			case PingType::SERVER_INFO_RESPONSE: {
+				_ConnectServer ConnectServer;
+				ConnectServer.IP = IP;
+				ConnectServer.Port = PongPacket.Read<uint16_t>();
+				ConnectServer.PlayerCount = PongPacket.Read<int>();
+				ConnectServer.Hardcore = PongPacket.ReadBit();
+				Menu.AddConnectServer(ConnectServer);
+				//std::cout << "Client Received: ip=" << ConnectServer.IP << " Port=" << ConnectServer.Port << " PlayerCount=" << ConnectServer.PlayerCount << " Hardcore=" << ConnectServer.Hardcore << std::endl;
+			} break;
+			default:
+			break;
+		}
+
+		// Reset packet
+		PongPacket.StartRead();
+	}
 
 	// Update network
 	Network->Update(FrameTime);

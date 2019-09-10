@@ -23,6 +23,7 @@
 // Enumerations
 enum class PingType : uint8_t {
 	SERVER_INFO,
+	SERVER_INFO_RESPONSE,
 };
 
 enum class PacketType : uint8_t {

@@ -20,6 +20,7 @@
 #include <glm/vec3.hpp>
 #include <ae/type.h>
 #include <ae/state.h>
+#include <ae/buffer.h>
 #include <ae/log.h>
 #include <unordered_map>
 
@@ -175,6 +176,9 @@ class _PlayState : public ae::_State {
 		void DeleteMap();
 
 		void SetViewProjection(ae::_Camera *CameraUsed);
+
+		// Network
+		ae::_Buffer PongPacket;
 };
 
 extern _PlayState PlayState;

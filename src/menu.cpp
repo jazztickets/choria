@@ -24,6 +24,7 @@
 #include <ae/clientnetwork.h>
 #include <ae/ui.h>
 #include <ae/input.h>
+#include <ae/font.h>
 #include <ae/actions.h>
 #include <ae/buffer.h>
 #include <ae/audio.h>
@@ -201,10 +202,8 @@ void _Menu::InitBrowseServers() {
 
 	ae::Audio.PlayMusic(ae::Assets.Music["intro.ogg"]);
 
-	// Send ping
-	ae::_Buffer Packet;
-	Packet.Write<PingType>(PingType::SERVER_INFO);
-	PlayState.Network->BroadcastPing(Packet, DEFAULT_NETWORKPINGPORT);
+	// Get server list
+	RefreshServers();
 
 	State = STATE_BROWSE;
 }
@@ -1320,6 +1319,9 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				if(Clicked->Name == "button_menu_browse_connect") {
 					PlayClickSound();
 				}
+				else if(Clicked->Name == "button_menu_browse_refresh") {
+					RefreshServers();
+				}
 				else if(Clicked->Name == "button_menu_browse_back") {
 					InitTitle(true);
 					PlayClickSound();
@@ -1475,6 +1477,7 @@ void _Menu::Render() {
 		} break;
 		case STATE_BROWSE: {
 			ae::Assets.Elements["element_menu_browse"]->Render();
+			RenderBrowser();
 		} break;
 		case STATE_CONNECT: {
 			ae::Assets.Elements["element_menu_connect"]->Render();
@@ -1637,6 +1640,11 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 	}
 }
 
+// Add a game server to the server list
+void _Menu::AddConnectServer(const _ConnectServer &ConnectServer) {
+	ConnectServers.push_back(ConnectServer);
+}
+
 // Set message for account screen
 void _Menu::SetAccountMessage(const std::string &Message) {
 	ae::_Element *Label = ae::Assets.Elements["label_menu_account_message"];
@@ -1657,6 +1665,26 @@ void _Menu::SetTitleMessage(const std::string &Message) {
 // Play menu click sound
 void _Menu::PlayClickSound() {
 	ae::Audio.PlaySound(ae::Assets.Sounds["click0.ogg"]);
+}
+
+// Render server browser
+void _Menu::RenderBrowser() {
+
+	// Get ui elements
+	ae::_Element *FirstElement = ae::Assets.Elements["element_menu_browse_server_0"];
+	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
+
+	// Iterate over servers
+	glm::vec2 DrawPosition = FirstElement->Bounds.Start + glm::vec2(10 * ae::_Element::GetUIScale(), FirstElement->Size.y / 2 + Font->MaxHeight - Font->MaxAbove + Font->MaxBelow);
+	float SpacingY = FirstElement->Size.y;
+	if(!ConnectServers.size())
+		Font->DrawText("No servers found", DrawPosition, ae::LEFT_BASELINE);
+
+	for(const auto &ConnectServer : ConnectServers) {
+		Font->DrawText(ConnectServer.IP, DrawPosition, ae::LEFT_BASELINE);
+
+		DrawPosition.y += SpacingY;
+	};
 }
 
 // Cycle focused elements
@@ -1687,4 +1715,14 @@ void _Menu::FocusNextElement() {
 		default:
 		break;
 	}
+}
+
+// Get list of lan servers
+void _Menu::RefreshServers() {
+	ConnectServers.clear();
+
+	// Send ping
+	ae::_Buffer Packet;
+	Packet.Write<PingType>(PingType::SERVER_INFO);
+	PlayState.Network->SendPingPacket(Packet, ae::_NetworkAddress(ae::NETWORK_BROADCAST, DEFAULT_NETWORKPINGPORT));
 }
