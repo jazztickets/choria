@@ -4,6 +4,8 @@ style_menu_button_disabled	menu_button_disabled		ortho_pos			1
 style_menu_button_hover	menu_button_hover		ortho_pos			1
 style_menu_window	menu_window		ortho_pos			1
 style_menu_textbox	menu_button_dark	menu_button	ortho_pos			1
+style_menu_box_bg0	menu_button_bg0		ortho_pos			1
+style_menu_box_bg1	menu_button_bg1		ortho_pos			1
 style_menu_hover	highlight		ortho_pos			1
 style_hud_bg	dark		ortho_pos			1
 style_hud_died_bg	died		ortho_pos			1

@@ -20,6 +20,7 @@
 // Libraries
 #include <ae/type.h>
 #include <ae/log.h>
+#include <ae/buffer.h>
 #include <glm/vec4.hpp>
 #include <unordered_map>
 #include <memory>
@@ -159,4 +160,5 @@ class _Server {
 
 		// Threading
 		std::thread *Thread;
+		ae::_Buffer PingPacket;
 };

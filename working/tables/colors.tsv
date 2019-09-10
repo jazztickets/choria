@@ -29,5 +29,7 @@ menu_button_dark	0.02	0.02	0.02	1
 menu_button_disabled	0.08	0.08	0.08	1
 menu_button_hover	0.2	0.2	0.24	1
 menu_button_border	0.05	0.05	0.1	1
+menu_button_bg0	0.07	0.07	0.11	1
+menu_button_bg1	0.09	0.09	0.14	1
 menu_window	0.05	0.05	0.09	1
 minigame_bg	0.12	0.06	0.03	1

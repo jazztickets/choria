@@ -1207,8 +1207,8 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "button_menu_title_joinserver") {
-					InitConnect(true);
-					//InitBrowseServers();
+					//InitConnect(true);
+					InitBrowseServers();
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "button_menu_title_options") {

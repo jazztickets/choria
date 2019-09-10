@@ -20,7 +20,6 @@
 #include <ae/peer.h>
 #include <ae/manager.h>
 #include <ae/database.h>
-#include <ae/buffer.h>
 #include <ae/util.h>
 #include <objects/object.h>
 #include <objects/components/character.h>
@@ -80,12 +79,14 @@ _Server::_Server(uint16_t NetworkPort) :
 	Time(0.0),
 	SaveTime(0.0),
 	BotTime(0.0),
-	Network(new ae::_ServerNetwork(Config.MaxClients, NetworkPort, DEFAULT_NETWORKPINGPORT)),
-	Thread(nullptr) {
+	Network(new ae::_ServerNetwork(Config.MaxClients, NetworkPort)),
+	Thread(nullptr),
+	PingPacket(1024) {
 
 	if(!Network->HasConnection())
 		throw std::runtime_error("Unable to start server!");
 
+	Network->CreatePingSocket(DEFAULT_NETWORKPINGPORT);
 	Network->SetFakeLag(Config.FakeLag);
 	Network->SetUpdatePeriod(Config.NetworkRate);
 
@@ -158,13 +159,12 @@ void _Server::Update(double FrameTime) {
 	//	std::cout << "Server: O=" << ObjectManager->Objects.size() << " B=" << BattleManager->Objects.size() << std::endl;
 
 	// Handle pings
-	ae::_Buffer PingData(0);
 	ENetAddress PingAddress;
-	while(Network->CheckPings(PingData, &PingAddress)) {
+	while(Network->CheckPings(PingPacket, &PingAddress)) {
 		char IPString[16];
 		enet_address_get_host_ip(&PingAddress, IPString, 16);
-		PingType Type = PingData.Read<PingType>();
-		std::cout << "Received: " << IPString << " " << PingAddress.port << (int)Type << " " << PingData.GetCurrentSize() << std::endl;
+		PingType Type = PingPacket.Read<PingType>();
+		std::cout << "Received: " << IPString << " " << PingAddress.port << " " << (int)Type << " " << PingPacket.GetAllocatedSize() << std::endl;
 	}
 
 	// Update network
