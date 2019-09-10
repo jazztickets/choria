@@ -15,6 +15,7 @@ choria 0.9.0 -
 - Added per-pixel lighting and smooth camera scrolling
 - Added server clock and day/night cycle
 - Added background maps
+- Added LAN server browser
 - Added options menu
 - Added hardcore mode
 - Added experimental bots
@@ -23,7 +24,6 @@ choria 0.9.0 -
 - Added Lua for scripting
 - Added various commands to dedicated server
 - Added alt-enter to toggle fullscreen/windowed mode
-- Window size can now be changed in the config file
 - Switched to mingw for Windows builds
 - Reworked design tool to use python/ajax instead of apache/php
 
