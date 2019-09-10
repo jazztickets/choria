@@ -1317,7 +1317,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					PlayClickSound();
 				}
 				else if(Clicked->Parent && Clicked->Parent->Name == "element_menu_browse_servers") {
-					if((size_t)Clicked->Index < ConnectServers.size()) {
+					if(PlayState.Network->IsDisconnected() && (size_t)Clicked->Index < ConnectServers.size()) {
 
 						// Set ip and port
 						ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
