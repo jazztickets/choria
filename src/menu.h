@@ -54,6 +54,7 @@ class _Menu {
 			STATE_NONE,
 			STATE_TITLE,
 			STATE_CHARACTERS,
+			STATE_BROWSE,
 			STATE_CONNECT,
 			STATE_ACCOUNT,
 			STATE_OPTIONS,
@@ -77,6 +78,7 @@ class _Menu {
 		void InitTitle(bool Disconnect=false);
 		void InitCharacters();
 		void InitNewCharacter();
+		void InitBrowseServers();
 		void InitConnect(bool UseConfig, bool ConnectNow=false);
 		void InitAccount();
 		void InitInGame();

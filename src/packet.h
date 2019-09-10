@@ -21,6 +21,10 @@
 #include <cstdint>
 
 // Enumerations
+enum class PingType : uint8_t {
+	SERVER_INFO,
+};
+
 enum class PacketType : uint8_t {
 	VERSION,
 	ACCOUNT_EXISTS,

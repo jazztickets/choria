@@ -80,7 +80,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	Time(0.0),
 	SaveTime(0.0),
 	BotTime(0.0),
-	Network(new ae::_ServerNetwork(Config.MaxClients, NetworkPort)),
+	Network(new ae::_ServerNetwork(Config.MaxClients, NetworkPort, DEFAULT_NETWORKPINGPORT)),
 	Thread(nullptr) {
 
 	if(!Network->HasConnection())
@@ -156,6 +156,16 @@ void _Server::StopServer(int Seconds) {
 void _Server::Update(double FrameTime) {
 	//if(std::abs(std::fmod(Time, 1.0)) >= 0.99)
 	//	std::cout << "Server: O=" << ObjectManager->Objects.size() << " B=" << BattleManager->Objects.size() << std::endl;
+
+	// Handle pings
+	ae::_Buffer PingData(0);
+	ENetAddress PingAddress;
+	while(Network->CheckPings(PingData, &PingAddress)) {
+		char IPString[16];
+		enet_address_get_host_ip(&PingAddress, IPString, 16);
+		PingType Type = PingData.Read<PingType>();
+		std::cout << "Received: " << IPString << " " << PingAddress.port << (int)Type << " " << PingData.GetCurrentSize() << std::endl;
+	}
 
 	// Update network
 	Network->Update(FrameTime);

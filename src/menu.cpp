@@ -195,6 +195,20 @@ void _Menu::InitNewCharacter() {
 	CharactersState = CHARACTERS_CREATE;
 }
 
+// Browse LAN servers
+void _Menu::InitBrowseServers() {
+	ChangeLayout("element_menu_browse");
+
+	ae::Audio.PlayMusic(ae::Assets.Music["intro.ogg"]);
+
+	// Send ping
+	ae::_Buffer Packet;
+	Packet.Write<PingType>(PingType::SERVER_INFO);
+	PlayState.Network->BroadcastPing(Packet, DEFAULT_NETWORKPINGPORT);
+
+	State = STATE_BROWSE;
+}
+
 // In-game menu
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
@@ -1025,6 +1039,15 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 				}
 			}
 		} break;
+		case STATE_BROWSE: {
+			switch(Action) {
+				case Action::MENU_GO:
+				break;
+				case Action::MENU_BACK:
+					InitTitle(true);
+				break;
+			}
+		} break;
 		case STATE_CONNECT: {
 			switch(Action) {
 				case Action::MENU_GO:
@@ -1185,6 +1208,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 				else if(Clicked->Name == "button_menu_title_joinserver") {
 					InitConnect(true);
+					//InitBrowseServers();
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "button_menu_title_options") {
@@ -1292,12 +1316,24 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					}
 				}
 			} break;
+			case STATE_BROWSE: {
+				if(Clicked->Name == "button_menu_browse_connect") {
+					PlayClickSound();
+				}
+				else if(Clicked->Name == "button_menu_browse_back") {
+					InitTitle(true);
+					PlayClickSound();
+				}
+			} break;
 			case STATE_CONNECT: {
 				if(Clicked->Name == "button_menu_connect_connect") {
+
+					// Clicked cancel button
 					if(!PlayState.Network->IsDisconnected()) {
 						PlayState.Network->Disconnect(true);
 						InitConnect(false);
 					}
+					// Clicked connect button
 					else
 						ConnectToHost();
 
@@ -1436,6 +1472,9 @@ void _Menu::Render() {
 				if(CurrentLayout)
 					CurrentLayout->Render();
 			}
+		} break;
+		case STATE_BROWSE: {
+			ae::Assets.Elements["element_menu_browse"]->Render();
 		} break;
 		case STATE_CONNECT: {
 			ae::Assets.Elements["element_menu_connect"]->Render();

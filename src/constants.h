@@ -32,6 +32,7 @@ const  double       DEFAULT_MAXFPS                  =  180.0;
 const  size_t       DEFAULT_MAXCLIENTS              =  500;
 const  double       DEFAULT_NETWORKRATE             =  1.0/20.0;
 const  uint16_t     DEFAULT_NETWORKPORT             =  31234;
+const  uint16_t     DEFAULT_NETWORKPINGPORT         =  31235;
 const  double       DEFAULT_TIMESTEP                =  1/100.0;
 const  double       DEFAULT_AUTOSAVE_PERIOD         =  60.0;
 //     Camera

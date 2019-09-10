@@ -53,6 +53,30 @@
 		<element id="label_menu_new_portraits" font="hud_medium" text="Select a portrait" offset_y="40" alignment_y="3"/>
 		<element id="label_menu_new_builds" font="hud_medium" text="Select a starting build" offset_y="390" alignment_y="3"/>
 	</element>
+	<element id="element_menu_browse" style="style_hud_bg" size_x="1000" size_y="984">
+		<element id="element_menu_browse_servers" offset_y="-200">
+			<element id="element_menu_browse_server_0" style="style_menu_textbox" hover_style="style_menu_button_hover" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_1" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="42" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_2" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="84" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_3" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="126" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_4" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="168" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_5" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="210" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_6" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="252" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_7" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="294" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_8" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="336" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_9" style="style_menu_textbox" hover_style="style_menu_button_hover" offset_y="378" size_x="800" size_y="42" clickable="true"/>
+		</element>
+		<element id="button_menu_browse_refresh" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-210" offset_y="364" size_x="180" size_y="66" clickable="true">
+			<element id="label_menu_browse_refresh" font="menu_buttons" text="Refresh" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_menu_browse_connect" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="364" size_x="180" size_y="66" clickable="true">
+			<element id="label_menu_browse_connect" font="menu_buttons" text="Connect" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="button_menu_browse_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="364" size_x="180" size_y="66" clickable="true">
+			<element id="label_menu_browse_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
+		</element>
+		<element id="label_menu_browse_title" font="hud_large" text="Local Servers" offset_y="-350"/>
+	</element>
 	<element id="element_menu_connect" style="style_hud_bg" size_x="720" size_y="984">
 		<element id="element_menu_connect_host" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2" clickable="true">
 			<element id="textbox_menu_connect_host" font="hud_medium" offset_x="6" offset_y="30" size_x="350" size_y="42" alignment_x="0" alignment_y="3" maxlength="32"/>
