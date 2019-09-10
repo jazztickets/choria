@@ -576,10 +576,10 @@ void _PlayState::Update(double FrameTime) {
 				_ConnectServer ConnectServer;
 				ConnectServer.IP = IP;
 				ConnectServer.Port = PongPacket.Read<uint16_t>();
-				ConnectServer.PlayerCount = PongPacket.Read<int>();
+				ConnectServer.Players = PongPacket.Read<uint16_t>();
+				ConnectServer.MaxPlayers = PongPacket.Read<uint16_t>();
 				ConnectServer.Hardcore = PongPacket.ReadBit();
 				Menu.AddConnectServer(ConnectServer);
-				//std::cout << "Client Received: ip=" << ConnectServer.IP << " Port=" << ConnectServer.Port << " PlayerCount=" << ConnectServer.PlayerCount << " Hardcore=" << ConnectServer.Hardcore << std::endl;
 			} break;
 			default:
 			break;

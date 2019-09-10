@@ -162,7 +162,6 @@ void _Server::Update(double FrameTime) {
 	ae::_NetworkAddress PingAddress;
 	while(Network->CheckPings(PingPacket, PingAddress)) {
 		PingType Type = PingPacket.Read<PingType>();
-		//std::cout << "Server Received: h=" << PingAddress.Host << " p=" << PingAddress.Port << " type=" << (int)Type << " asize=" << PingPacket.GetAllocatedSize() << std::endl;
 
 		// Handle ping types
 		switch(Type) {
@@ -170,7 +169,8 @@ void _Server::Update(double FrameTime) {
 				ae::_Buffer PongPacket;
 				PongPacket.Write<PingType>(PingType::SERVER_INFO_RESPONSE);
 				PongPacket.Write<uint16_t>(Network->GetListenPort());
-				PongPacket.Write<int>(Network->GetPeers().size());
+				PongPacket.Write<uint16_t>(Network->GetPeers().size());
+				PongPacket.Write<uint16_t>(Network->GetMaxPeers());
 				PongPacket.WriteBit(Hardcore);
 				Network->SendPingPacket(PongPacket, ae::_NetworkAddress(PingAddress.Host, PingAddress.Port));
 			} break;

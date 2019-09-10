@@ -36,7 +36,9 @@ namespace ae {
 struct _ConnectServer {
 	std::string IP;
 	uint16_t Port;
-	int PlayerCount;
+	double Ping;
+	int Players;
+	int MaxPlayers;
 	bool Hardcore;
 };
 
@@ -109,7 +111,7 @@ class _Menu {
 		void HandleDisconnect(bool WasSinglePlayer);
 		void HandlePacket(ae::_Buffer &Buffer, PacketType Type);
 
-		void AddConnectServer(const _ConnectServer &ConnectServer);
+		void AddConnectServer(_ConnectServer &ConnectServer);
 		void SetUsername(const std::string &Value) { DefaultUsername = Value; }
 		void SetPassword(const std::string &Value) { DefaultPassword = Value; }
 		void SetTitleMessage(const std::string &Message);
@@ -178,6 +180,7 @@ class _Menu {
 		bool HardcoreServer;
 
 		// Multiplayer
+		uint64_t PingTime;
 		std::vector<_ConnectServer> ConnectServers;
 
 };

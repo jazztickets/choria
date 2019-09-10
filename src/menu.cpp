@@ -39,6 +39,7 @@
 #include <stats.h>
 #include <packet.h>
 #include <version.h>
+#include <SDL_timer.h>
 #include <SDL_keycode.h>
 #include <SDL_mouse.h>
 #include <sstream>
@@ -107,6 +108,7 @@ _Menu::_Menu() {
 	HardcoreServer = false;
 	RebindType = -1;
 	RebindAction = -1;
+	PingTime = 0;
 
 	ResetInGameState();
 }
@@ -1641,7 +1643,8 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 }
 
 // Add a game server to the server list
-void _Menu::AddConnectServer(const _ConnectServer &ConnectServer) {
+void _Menu::AddConnectServer(_ConnectServer &ConnectServer) {
+	ConnectServer.Ping = (SDL_GetPerformanceCounter() - PingTime) / (double)SDL_GetPerformanceFrequency();
 	ConnectServers.push_back(ConnectServer);
 }
 
@@ -1674,14 +1677,30 @@ void _Menu::RenderBrowser() {
 	ae::_Element *FirstElement = ae::Assets.Elements["element_menu_browse_server_0"];
 	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
 
-	// Iterate over servers
+	// Set layout
 	glm::vec2 DrawPosition = FirstElement->Bounds.Start + glm::vec2(10 * ae::_Element::GetUIScale(), FirstElement->Size.y / 2 + Font->MaxHeight - Font->MaxAbove + Font->MaxBelow);
-	float SpacingY = FirstElement->Size.y;
-	if(!ConnectServers.size())
-		Font->DrawText("No servers found", DrawPosition, ae::LEFT_BASELINE);
+	glm::vec2 Offset[4] = {
+		{ 0, 0 },
+		{ 450 * ae::_Element::GetUIScale(), 0 },
+		{ 575 * ae::_Element::GetUIScale(), 0 },
+		{ 700 * ae::_Element::GetUIScale(), 0 },
+	};
 
+	float SpacingY = FirstElement->Size.y;
+
+	// Draw header
+	Font->DrawText("Server", DrawPosition + glm::vec2(0, -SpacingY) + Offset[0], ae::LEFT_BASELINE);
+	Font->DrawText("Players", DrawPosition + glm::vec2(0, -SpacingY) + Offset[1], ae::LEFT_BASELINE);
+	Font->DrawText("Hardcore", DrawPosition + glm::vec2(0, -SpacingY) + Offset[2], ae::LEFT_BASELINE);
+	Font->DrawText("Ping", DrawPosition + glm::vec2(0, -SpacingY) + Offset[3], ae::LEFT_BASELINE);
+
+	// Iterate over servers
 	for(const auto &ConnectServer : ConnectServers) {
-		Font->DrawText(ConnectServer.IP, DrawPosition, ae::LEFT_BASELINE);
+		std::string HardcoreText = ConnectServer.Hardcore ? "Yes" : "No";
+		Font->DrawText(ConnectServer.IP + ":" + std::to_string(ConnectServer.Port), DrawPosition + Offset[0], ae::LEFT_BASELINE);
+		Font->DrawText(std::to_string(ConnectServer.Players) + "/" + std::to_string(ConnectServer.MaxPlayers), DrawPosition + Offset[1], ae::LEFT_BASELINE);
+		Font->DrawText(HardcoreText, DrawPosition + Offset[2], ae::LEFT_BASELINE);
+		Font->DrawText(std::to_string((int)(ConnectServer.Ping * 1000)) + "ms", DrawPosition + Offset[3], ae::LEFT_BASELINE);
 
 		DrawPosition.y += SpacingY;
 	};
@@ -1725,4 +1744,6 @@ void _Menu::RefreshServers() {
 	ae::_Buffer Packet;
 	Packet.Write<PingType>(PingType::SERVER_INFO);
 	PlayState.Network->SendPingPacket(Packet, ae::_NetworkAddress(ae::NETWORK_BROADCAST, DEFAULT_NETWORKPINGPORT));
+
+	PingTime = SDL_GetPerformanceCounter();
 }
