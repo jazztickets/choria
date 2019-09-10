@@ -1316,6 +1316,13 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					InitTitle(true);
 					PlayClickSound();
 				}
+				else if(Clicked->Parent && Clicked->Parent->Name == "element_menu_browse_servers") {
+					if((size_t)Clicked->Index < ConnectServers.size()) {
+						ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
+						Host->Text = ConnectServers[Clicked->Index].IP + ":" + std::to_string(ConnectServers[Clicked->Index].Port);
+						ValidateConnect();
+					}
+				}
 			} break;
 			case STATE_ACCOUNT: {
 				if(Clicked->Name == "button_menu_account_login") {
@@ -1643,10 +1650,12 @@ void _Menu::PlayClickSound() {
 void _Menu::RenderBrowser() {
 
 	// Get ui elements
+	ae::_Element *MainElement = ae::Assets.Elements["element_menu_browse_servers"];
 	ae::_Element *FirstElement = ae::Assets.Elements["element_menu_browse_server_0"];
 	ae::_Font *Font = ae::Assets.Fonts["hud_small"];
 
 	// Set layout
+	float SpacingY = FirstElement->Size.y;
 	glm::vec2 DrawPosition = FirstElement->Bounds.Start + glm::vec2(10 * ae::_Element::GetUIScale(), FirstElement->Size.y / 2 + Font->MaxHeight - Font->MaxAbove + Font->MaxBelow);
 	glm::vec2 Offset[4] = {
 		{ 0, 0 },
@@ -1655,15 +1664,14 @@ void _Menu::RenderBrowser() {
 		{ 700 * ae::_Element::GetUIScale(), 0 },
 	};
 
-	float SpacingY = FirstElement->Size.y;
-
 	// Draw header
 	Font->DrawText("Server", DrawPosition + glm::vec2(0, -SpacingY) + Offset[0], ae::LEFT_BASELINE);
 	Font->DrawText("Players", DrawPosition + glm::vec2(0, -SpacingY) + Offset[1], ae::LEFT_BASELINE);
 	Font->DrawText("Hardcore", DrawPosition + glm::vec2(0, -SpacingY) + Offset[2], ae::LEFT_BASELINE);
 	Font->DrawText("Ping", DrawPosition + glm::vec2(0, -SpacingY) + Offset[3], ae::LEFT_BASELINE);
 
-	// Iterate over servers
+	// Draw servers
+	size_t Count = 0;
 	for(const auto &ConnectServer : ConnectServers) {
 		std::string HardcoreText = ConnectServer.Hardcore ? "Yes" : "No";
 		Font->DrawText(ConnectServer.IP + ":" + std::to_string(ConnectServer.Port), DrawPosition + Offset[0], ae::LEFT_BASELINE);
@@ -1672,6 +1680,11 @@ void _Menu::RenderBrowser() {
 		Font->DrawText(std::to_string((int)(ConnectServer.Ping * 1000)) + "ms", DrawPosition + Offset[3], ae::LEFT_BASELINE);
 
 		DrawPosition.y += SpacingY;
+
+		// Check count
+		Count++;
+		if(Count >= MainElement->Children.size())
+			break;
 	};
 }
 

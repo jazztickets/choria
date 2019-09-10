@@ -28,7 +28,7 @@
 			<element id="label_menu_characters_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
 		</element>
 		<element id="label_menu_characters_title" font="hud_large" text="Characters" offset_y="-350"/>
-		<element id="label_menu_characters_hardcore" color="red" font="hud_medium" text="Hardcore Server" offset_y="450"/>
+		<element id="label_menu_characters_hardcore" color="red" font="hud_medium" text="Hardcore Server" offset_y="440"/>
 	</element>
 	<element id="element_menu_new" style="style_menu_window" size_x="846" size_y="880">
 		<element id="element_menu_new_portraits" size_x="846" size_y="350" alignment_y="0"/>
