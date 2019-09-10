@@ -198,18 +198,6 @@ void _Menu::InitNewCharacter() {
 	CharactersState = CHARACTERS_CREATE;
 }
 
-// Browse LAN servers
-void _Menu::InitBrowseServers() {
-	ChangeLayout("element_menu_browse");
-
-	ae::Audio.PlayMusic(ae::Assets.Music["intro.ogg"]);
-
-	// Get server list
-	RefreshServers();
-
-	State = STATE_BROWSE;
-}
-
 // In-game menu
 void _Menu::InitInGame() {
 	ChangeLayout("element_menu_ingame");
@@ -279,34 +267,34 @@ void _Menu::ExitGame() {
 	RequestCharacterList();
 }
 
-// Init connect screen
-void _Menu::InitConnect(bool UseConfig, bool ConnectNow) {
+// Browse LAN servers
+void _Menu::InitBrowseServers(bool UseConfig, bool ConnectNow) {
 	PlayState.Network->Disconnect();
 
-	ChangeLayout("element_menu_connect");
+	ChangeLayout("element_menu_browse");
+	ae::Audio.PlayMusic(ae::Assets.Music["intro.ogg"]);
 
-	ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
+	// Get ui elements
+	ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
+	ae::_Element *Message = ae::Assets.Elements["label_menu_browse_message"];
+	ae::_Element *Button = ae::Assets.Elements["button_menu_browse_connect"];
+
+	// Set last host
 	if(UseConfig)
-		Host->SetText(Config.LastHost);
+		Host->SetText(Config.LastHost + ":" + Config.LastPort);
 
-	ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
-	if(UseConfig)
-		Port->SetText(Config.LastPort);
-
-	ae::_Element *Label = ae::Assets.Elements["label_menu_connect_message"];
-	Label->Color = glm::vec4(1.0f);
-	Label->Text = "";
-
-	ae::_Element *Button = ae::Assets.Elements["button_menu_connect_connect"];
+	// Set ui states
+	Message->Color = glm::vec4(1.0f);
+	Message->Text = "";
 	Button->Children.front()->Text = "Connect";
+	ValidateConnect();
 
-	// Set focus
-	ae::FocusedElement = Host;
-	Host->ResetCursor();
-
-	State = STATE_CONNECT;
+	// Get server list
+	RefreshServers();
 	if(ConnectNow)
 		ConnectToHost();
+
+	State = STATE_BROWSE;
 }
 
 // Init account info screen
@@ -403,28 +391,28 @@ void _Menu::CreateCharacter(bool Hardcore) {
 	PlayState.Network->SendPacket(Packet);
 }
 
+// Connect to a server
 void _Menu::ConnectToHost() {
-	ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
-	ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
+	ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
 	if(Host->Text.length() == 0) {
-		ae::FocusedElement = Host;
 		return;
 	}
 
-	if(Port->Text.length() == 0) {
-		ae::FocusedElement = Port;
-		return;
-	}
+	// Get IP and port
+	std::string IP;
+	std::string Port;
+	SplitHost(Host->Text, IP, Port);
 
-	PlayState.HostAddress = Host->Text;
-	PlayState.ConnectPort = ae::ToNumber<uint16_t>(Port->Text);
+	// Connect
+	PlayState.HostAddress = IP;
+	PlayState.ConnectPort = ae::ToNumber<uint16_t>(Port);
 	PlayState.Connect(false);
 
-	ae::_Element *Label = ae::Assets.Elements["label_menu_connect_message"];
+	ae::_Element *Label = ae::Assets.Elements["label_menu_browse_message"];
 	Label->Color = glm::vec4(1.0f);
 	Label->Text = "Connecting...";
 
-	ae::_Element *Button = ae::Assets.Elements["button_menu_connect_connect"];
+	ae::_Element *Button = ae::Assets.Elements["button_menu_browse_connect"];
 	Button->Children.front()->Text = "Cancel";
 
 	ae::FocusedElement = nullptr;
@@ -1043,22 +1031,10 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 		case STATE_BROWSE: {
 			switch(Action) {
 				case Action::MENU_GO:
-				break;
-				case Action::MENU_BACK:
-					InitTitle(true);
-				break;
-			}
-		} break;
-		case STATE_CONNECT: {
-			switch(Action) {
-				case Action::MENU_GO:
 					ConnectToHost();
 				break;
 				case Action::MENU_BACK:
 					InitTitle(true);
-				break;
-				case Action::MENU_DOWN:
-					FocusNextElement();
 				break;
 			}
 		} break;
@@ -1068,7 +1044,7 @@ bool _Menu::HandleAction(int InputType, size_t Action, int Value) {
 					SendAccountInfo();
 				break;
 				case Action::MENU_BACK:
-					InitConnect(true);
+					InitBrowseServers(true);
 				break;
 				case Action::MENU_DOWN:
 					FocusNextElement();
@@ -1119,6 +1095,9 @@ bool _Menu::HandleKey(const ae::_KeyEvent &KeyEvent) {
 			if(CharactersState == CHARACTERS_CREATE) {
 				ValidateCreateCharacter();
 			}
+		} break;
+		case STATE_BROWSE: {
+			ValidateConnect();
 		} break;
 		case STATE_KEYBINDINGS: {
 
@@ -1208,8 +1187,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "button_menu_title_joinserver") {
-					//InitConnect(true);
-					InitBrowseServers();
+					InitBrowseServers(true);
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "button_menu_title_options") {
@@ -1319,23 +1297,11 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			} break;
 			case STATE_BROWSE: {
 				if(Clicked->Name == "button_menu_browse_connect") {
-					PlayClickSound();
-				}
-				else if(Clicked->Name == "button_menu_browse_refresh") {
-					RefreshServers();
-				}
-				else if(Clicked->Name == "button_menu_browse_back") {
-					InitTitle(true);
-					PlayClickSound();
-				}
-			} break;
-			case STATE_CONNECT: {
-				if(Clicked->Name == "button_menu_connect_connect") {
 
 					// Clicked cancel button
 					if(!PlayState.Network->IsDisconnected()) {
 						PlayState.Network->Disconnect(true);
-						InitConnect(false);
+						InitBrowseServers(false);
 					}
 					// Clicked connect button
 					else
@@ -1343,7 +1309,10 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 					PlayClickSound();
 				}
-				else if(Clicked->Name == "button_menu_connect_back") {
+				else if(Clicked->Name == "button_menu_browse_refresh") {
+					RefreshServers();
+				}
+				else if(Clicked->Name == "button_menu_browse_back") {
 					InitTitle(true);
 					PlayClickSound();
 				}
@@ -1358,7 +1327,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 					PlayClickSound();
 				}
 				else if(Clicked->Name == "button_menu_account_back") {
-					InitConnect(true);
+					InitBrowseServers(true);
 					PlayClickSound();
 				}
 			} break;
@@ -1481,9 +1450,6 @@ void _Menu::Render() {
 			ae::Assets.Elements["element_menu_browse"]->Render();
 			RenderBrowser();
 		} break;
-		case STATE_CONNECT: {
-			ae::Assets.Elements["element_menu_connect"]->Render();
-		} break;
 		case STATE_ACCOUNT: {
 			ae::Assets.Elements["element_menu_account"]->Render();
 		} break;
@@ -1517,15 +1483,18 @@ void _Menu::Render() {
 // Connect
 void _Menu::HandleConnect() {
 	switch(State) {
-		case STATE_CONNECT: {
-			ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
-			ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
+		case STATE_BROWSE: {
+			ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
+			std::string IP;
+			std::string Port;
+			SplitHost(Host->Text, IP, Port);
 
 			// Save connection information
-			Config.LastHost = Host->Text;
-			Config.LastPort = Port->Text;
+			Config.LastHost = IP;
+			Config.LastPort = Port;
 			Config.Save();
 
+			// Load account screen
 			InitAccount();
 		} break;
 		default:
@@ -1542,9 +1511,9 @@ void _Menu::HandleDisconnect(bool WasSinglePlayer) {
 		InitTitle();
 	}
 	else {
-		InitConnect(true);
+		InitBrowseServers(true);
 
-		ae::_Element *Label = ae::Assets.Elements["label_menu_connect_message"];
+		ae::_Element *Label = ae::Assets.Elements["label_menu_browse_message"];
 		Label->Color = ae::Assets.Colors["red"];
 		Label->Text = "Disconnected from server";
 	}
@@ -1709,17 +1678,6 @@ void _Menu::RenderBrowser() {
 // Cycle focused elements
 void _Menu::FocusNextElement() {
 	switch(State) {
-		case STATE_CONNECT: {
-			ae::_Element *Host = ae::Assets.Elements["textbox_menu_connect_host"];
-			ae::_Element *Port = ae::Assets.Elements["textbox_menu_connect_port"];
-
-			if(ae::FocusedElement == Host)
-				ae::FocusedElement = Port;
-			else if(ae::FocusedElement == Port || ae::FocusedElement == nullptr)
-				ae::FocusedElement = Host;
-
-			ae::FocusedElement->ResetCursor();
-		} break;
 		case STATE_ACCOUNT: {
 			ae::_Element *Username = ae::Assets.Elements["textbox_menu_account_username"];
 			ae::_Element *Password = ae::Assets.Elements["textbox_menu_account_password"];
@@ -1746,4 +1704,30 @@ void _Menu::RefreshServers() {
 	PlayState.Network->SendPingPacket(Packet, ae::_NetworkAddress(ae::NETWORK_BROADCAST, DEFAULT_NETWORKPINGPORT));
 
 	PingTime = SDL_GetPerformanceCounter();
+}
+
+// Set connect button enabled state
+void _Menu::ValidateConnect() {
+	ae::_Element *Button = ae::Assets.Elements["button_menu_browse_connect"];
+	ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
+
+	// Enable
+	Button->SetEnabled(true);
+
+	// Disable if blank
+	if(Host->Text == "")
+		Button->SetEnabled(false);
+}
+
+// Split host string into ip and port. Return default game port if none
+void _Menu::SplitHost(const std::string &Host, std::string &IP, std::string &Port) {
+	size_t ColonIndex = Host.find_first_of(':');
+	if(ColonIndex != std::string::npos) {
+		IP = Host.substr(0, ColonIndex);
+		Port = Host.substr(ColonIndex + 1);
+	}
+	else {
+		IP = Host;
+		Port = std::to_string(DEFAULT_NETWORKPORT);
+	}
 }

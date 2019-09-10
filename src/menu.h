@@ -64,7 +64,6 @@ class _Menu {
 			STATE_TITLE,
 			STATE_CHARACTERS,
 			STATE_BROWSE,
-			STATE_CONNECT,
 			STATE_ACCOUNT,
 			STATE_OPTIONS,
 			STATE_KEYBINDINGS,
@@ -87,8 +86,7 @@ class _Menu {
 		void InitTitle(bool Disconnect=false);
 		void InitCharacters();
 		void InitNewCharacter();
-		void InitBrowseServers();
-		void InitConnect(bool UseConfig, bool ConnectNow=false);
+		void InitBrowseServers(bool UseConfig, bool ConnectNow=false);
 		void InitAccount();
 		void InitInGame();
 		void InitPlay();
@@ -143,6 +141,8 @@ class _Menu {
 		void FocusNextElement();
 
 		void RefreshServers();
+		void ValidateConnect();
+		void SplitHost(const std::string &Host, std::string &IP, std::string &Port);
 		void LoadCharacterSlots();
 		void LoadPortraitButtons();
 		void LoadBuildButtons();

@@ -55,45 +55,32 @@
 	</element>
 	<element id="element_menu_browse" style="style_hud_bg" size_x="1000" size_y="984">
 		<element id="element_menu_browse_servers" offset_y="-200">
-			<element id="element_menu_browse_server_0" style="style_menu_box_bg0" hover_style="style_menu_button_hover" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_1" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="42" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_2" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="84" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_3" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="126" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_4" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="168" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_5" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="210" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_6" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="252" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_7" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="294" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_8" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="336" size_x="800" size_y="42" clickable="true"/>
-			<element id="element_menu_browse_server_9" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="378" size_x="800" size_y="42" clickable="true"/>
+			<element id="element_menu_browse_server_0" style="style_menu_box_bg0" hover_style="style_menu_button_hover" size_x="800" size_y="42" clickable="true" index="0"/>
+			<element id="element_menu_browse_server_1" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="42" size_x="800" size_y="42" clickable="true" index="1"/>
+			<element id="element_menu_browse_server_2" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="84" size_x="800" size_y="42" clickable="true" index="2"/>
+			<element id="element_menu_browse_server_3" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="126" size_x="800" size_y="42" clickable="true" index="3"/>
+			<element id="element_menu_browse_server_4" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="168" size_x="800" size_y="42" clickable="true" index="4"/>
+			<element id="element_menu_browse_server_5" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="210" size_x="800" size_y="42" clickable="true" index="5"/>
+			<element id="element_menu_browse_server_6" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="252" size_x="800" size_y="42" clickable="true" index="6"/>
+			<element id="element_menu_browse_server_7" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="294" size_x="800" size_y="42" clickable="true" index="7"/>
+			<element id="element_menu_browse_server_8" style="style_menu_box_bg0" hover_style="style_menu_button_hover" offset_y="336" size_x="800" size_y="42" clickable="true" index="8"/>
+			<element id="element_menu_browse_server_9" style="style_menu_box_bg1" hover_style="style_menu_button_hover" offset_y="378" size_x="800" size_y="42" clickable="true" index="9"/>
 		</element>
-		<element id="button_menu_browse_refresh" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-210" offset_y="364" size_x="180" size_y="66" clickable="true">
+		<element id="label_menu_browse_message" text="" font="menu_buttons" offset_y="770" alignment_y="3"/>
+		<element id="element_menu_browse_host" style="style_menu_textbox" offset_x="0" offset_y="340" size_x="430" size_y="42" clickable="true">
+			<element id="textbox_menu_browse_host" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
+			<element id="label_menu_browse_host" font="menu_buttons" text="Host" offset_x="-445" offset_y="0" alignment_x="2"/>
+		</element>
+		<element id="button_menu_browse_refresh" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-210" offset_y="424" size_x="180" size_y="66" clickable="true">
 			<element id="label_menu_browse_refresh" font="menu_buttons" text="Refresh" offset_y="44" alignment_y="3"/>
 		</element>
-		<element id="button_menu_browse_connect" style="style_menu_button" hover_style="style_menu_button_hover" offset_y="364" size_x="180" size_y="66" clickable="true">
+		<element id="button_menu_browse_connect" style="style_menu_button" hover_style="style_menu_button_hover" disabled_style="style_menu_button_disabled" offset_y="424" size_x="180" size_y="66" clickable="true">
 			<element id="label_menu_browse_connect" font="menu_buttons" text="Connect" offset_y="44" alignment_y="3"/>
 		</element>
-		<element id="button_menu_browse_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="364" size_x="180" size_y="66" clickable="true">
+		<element id="button_menu_browse_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="210" offset_y="424" size_x="180" size_y="66" clickable="true">
 			<element id="label_menu_browse_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
 		</element>
 		<element id="label_menu_browse_title" font="hud_large" text="Local Servers" offset_y="-350"/>
-	</element>
-	<element id="element_menu_connect" style="style_hud_bg" size_x="720" size_y="984">
-		<element id="element_menu_connect_host" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2" clickable="true">
-			<element id="textbox_menu_connect_host" font="hud_medium" offset_x="6" offset_y="30" size_x="350" size_y="42" alignment_x="0" alignment_y="3" maxlength="32"/>
-			<element id="label_menu_connect_host" font="menu_buttons" text="Host" offset_y="-48"/>
-		</element>
-		<element id="element_menu_connect_port" style="style_menu_textbox" offset_y="-420" size_x="350" size_y="42" alignment_y="2" clickable="true">
-			<element id="textbox_menu_connect_port" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="5"/>
-			<element id="label_menu_connect_port" font="menu_buttons" text="Port" offset_y="-48"/>
-			<element id="label_menu_connect_message" font="menu_buttons" offset_y="154" alignment_y="3"/>
-		</element>
-		<element id="button_menu_connect_connect" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="-104" offset_y="322" size_x="180" size_y="66" clickable="true">
-			<element id="label_menu_connect_connect" font="menu_buttons" text="Connect" offset_y="44" alignment_y="3"/>
-		</element>
-		<element id="button_menu_connect_back" style="style_menu_button" hover_style="style_menu_button_hover" offset_x="104" offset_y="322" size_x="180" size_y="66" clickable="true">
-			<element id="label_menu_connect_back" font="menu_buttons" text="Back" offset_y="44" alignment_y="3"/>
-		</element>
-		<element id="label_menu_connect_title" font="hud_large" text="Connect" offset_y="-350"/>
 	</element>
 	<element id="element_menu_account" style="style_hud_bg" size_x="720" size_y="984">
 		<element id="element_menu_account_username" style="style_menu_textbox" offset_y="-562" size_x="350" size_y="42" alignment_y="2" clickable="true">

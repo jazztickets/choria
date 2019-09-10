@@ -131,7 +131,7 @@ void _PlayState::Init() {
 	MenuCameraTargetPosition = GetRandomMapPosition();
 
 	if(ConnectNow)
-		Menu.InitConnect(true, true);
+		Menu.InitBrowseServers(true, true);
 	else
 		Menu.InitTitle();
 }
