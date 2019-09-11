@@ -51,6 +51,7 @@ void _Fighter::CreateBattleElement(ae::_Element *Parent) {
 	BattleElement->UserData = Object;
 	BattleElement->Parent = Parent;
 	BattleElement->Style = (BattleSide == 0) ? ae::Assets.Styles["style_battle_slot_green"] : ae::Assets.Styles["style_battle_slot_red"];
+	BattleElement->Clickable = true;
 	BattleElement->CalculateBounds();
 	Parent->Children.push_back(BattleElement);
 }
