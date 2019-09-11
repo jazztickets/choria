@@ -1486,6 +1486,7 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 	// Update source object
 	if(ActionResult.Source.Object) {
 		ActionResult.Source.Object->Fighter->TurnTimer = 0.0;
+		ActionResult.Source.Object->Character->Stamina = 0.0;
 		ActionResult.Source.Object->Character->Action.Unset();
 		ActionResult.Source.Object->Character->Targets.clear();
 

@@ -167,6 +167,9 @@ class _Character {
 		int BaseDamageBlock;
 		int BasePierce;
 		int BaseMoveSpeed;
+		int BaseMaxStamina;
+		float BaseStaminaRegen;
+		double BaseStaminaRegenDelay;
 		int BaseBattleSpeed;
 		double BaseAttackPeriod;
 		int BaseEvasion;
@@ -182,6 +185,10 @@ class _Character {
 		int ManaRegen;
 		float HealPower;
 		float AttackPower;
+		float Stamina;
+		float MaxStamina;
+		float StaminaRegen;
+		double StaminaRegenDelay;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;

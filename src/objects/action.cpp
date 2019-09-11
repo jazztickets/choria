@@ -109,6 +109,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	// Update stats
 	Source->UpdateStats(ActionResult.Source);
 	Source->Fighter->TurnTimer = 0.0;
+	Source->Character->Stamina -= 20;
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
@@ -225,7 +226,6 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 
 // Return target type of action used
 TargetType _Action::GetTargetType() {
-
 	if(Item)
 		return Item->TargetID;
 

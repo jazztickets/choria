@@ -447,6 +447,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Fighter->GoldStolen = 0;
 	if(Server) {
 		Object->Character->GenerateNextBattle();
+		Object->Character->Stamina = 0;
 		Object->Fighter->TurnTimer = ae::GetRandomReal(0, BATTLE_MAX_START_TURNTIMER);
 
 		// Send player join packet to current objects

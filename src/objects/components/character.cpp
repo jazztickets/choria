@@ -75,6 +75,9 @@ _Character::_Character(_Object *Object) :
 	BaseDamageBlock(0),
 	BasePierce(0),
 	BaseMoveSpeed(100),
+	BaseMaxStamina(100),
+	BaseStaminaRegen(25.0f),
+	BaseStaminaRegenDelay(1.0),
 	BaseBattleSpeed(100),
 	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
 	BaseEvasion(0),
@@ -89,6 +92,10 @@ _Character::_Character(_Object *Object) :
 	ManaRegen(0),
 	HealPower(0.0f),
 	AttackPower(0.0f),
+	Stamina(0.0f),
+	MaxStamina(0.0f),
+	StaminaRegen(0.0f),
+	StaminaRegenDelay(0.0),
 	MinDamage(0),
 	MaxDamage(0),
 	Armor(0),
@@ -282,6 +289,9 @@ void _Character::CalculateStats() {
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
+	MaxStamina = BaseMaxStamina;
+	StaminaRegen = BaseStaminaRegen;
+	StaminaRegenDelay = BaseStaminaRegenDelay;
 	HealthRegen = BaseHealthRegen;
 	ManaRegen = BaseManaRegen;
 	HealPower = BaseHealPower;

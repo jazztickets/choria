@@ -144,8 +144,14 @@ void _Object::Update(double FrameTime) {
 
 		// Check turn timer
 		if(Character->Battle) {
-			if(!Character->Stunned)
+			if(!Character->Stunned) {
 				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->BattleSpeed / 100.0;
+
+				// Update stamina
+				Character->Stamina += FrameTime * Character->StaminaRegen;
+				if(Character->Stamina > Character->MaxStamina)
+					Character->Stamina = Character->MaxStamina;
+			}
 		}
 		else
 			Fighter->TurnTimer = 1.0;
@@ -428,7 +434,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		Buffer.str("");
 	}
 
-	// Draw turn timer
+	// Draw stamina
 	BarOffset.y += BarSize.y + BarPaddingY;
 	BarSize.y = 8 * ae::_Element::GetUIScale();
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
@@ -439,7 +445,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Textures["textures/hud_repeat/stamina_empty.png"]);
 
 	// Draw full bar
-	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Fighter->TurnTimer, BarSize.y) + BarOffset;
+	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Character->Stamina / (float)(Character->MaxStamina), BarSize.y) + BarOffset;
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Textures["textures/hud_repeat/stamina_full.png"]);
 
 	// Get background for items used
@@ -1117,7 +1123,6 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 
 	// Check for needed commands
 	if(!Character->Action.IsSet()) {
-
 		uint8_t ActionBarSlot = Data.Read<uint8_t>();
 		int TargetCount = Data.Read<uint8_t>();
 		if(!TargetCount)
