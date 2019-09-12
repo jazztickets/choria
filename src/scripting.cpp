@@ -418,9 +418,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_pushinteger(LuaState, Object->Character->Status);
 	lua_setfield(LuaState, -2, "Status");
 
-	lua_pushnumber(LuaState, Object->Fighter->TurnTimer);
-	lua_setfield(LuaState, -2, "TurnTimer");
-
 	lua_pushboolean(LuaState, Object->Character->Action.IsSet());
 	lua_setfield(LuaState, -2, "BattleActionIsSet");
 
@@ -441,6 +438,9 @@ void _Scripting::PushObject(_Object *Object) {
 
 	lua_pushinteger(LuaState, Object->Character->MaxMana);
 	lua_setfield(LuaState, -2, "MaxMana");
+
+	lua_pushinteger(LuaState, Object->Character->Stamina);
+	lua_setfield(LuaState, -2, "Stamina");
 
 	lua_pushnumber(LuaState, Object->Character->AttackPower);
 	lua_setfield(LuaState, -2, "AttackPower");

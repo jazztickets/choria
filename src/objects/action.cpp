@@ -108,8 +108,6 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Update stats
 	Source->UpdateStats(ActionResult.Source);
-	Source->Fighter->TurnTimer = 0.0;
-	Source->Character->Stamina -= 20;
 
 	// Build packet for results
 	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
@@ -120,6 +118,7 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
+	Data.Write<float>(Source->Character->Stamina);
 	Data.Write<uint32_t>(ItemID);
 	Data.Write<char>((char)ActionResult.ActionUsed.InventorySlot);
 

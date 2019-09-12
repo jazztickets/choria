@@ -29,7 +29,6 @@ _Fighter::_Fighter(_Object *Object) :
 	ResultPosition(0.0f, 0.0f),
 	StatPosition(0.0f, 0.0f),
 	LastTarget{nullptr, nullptr},
-	TurnTimer(0.0),
 	GoldStolen(0),
 	JoinedBattle(false),
 	BattleSide(0) {

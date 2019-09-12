@@ -142,48 +142,37 @@ void _Object::Update(double FrameTime) {
 		if(Server && Character->Battle && IsMonster())
 			UpdateMonsterAI(FrameTime);
 
-		// Check turn timer
+		// Update stamina
 		if(Character->Battle) {
 			if(!Character->Stunned) {
-				Fighter->TurnTimer += FrameTime * (1.0 / Character->BaseAttackPeriod) * Character->BattleSpeed / 100.0;
-
-				// Update stamina
 				Character->Stamina += FrameTime * Character->StaminaRegen;
 				if(Character->Stamina > Character->MaxStamina)
 					Character->Stamina = Character->MaxStamina;
 			}
 		}
-		else
-			Fighter->TurnTimer = 1.0;
 
 		// Resolve action
-		if(Fighter->TurnTimer >= 1.0) {
-			Fighter->TurnTimer = 1.0;
+		if(Server && Character->Action.IsSet()) {
+			ScopeType Scope = ScopeType::WORLD;
+			if(Character->Battle)
+				Scope = ScopeType::BATTLE;
 
-			if(Server && Character->Action.IsSet()) {
-				ScopeType Scope = ScopeType::WORLD;
-				if(Character->Battle)
-					Scope = ScopeType::BATTLE;
-
-				ae::_Buffer Packet;
-				if(Character->Action.Resolve(Packet, this, Scope)) {
-					SendPacket(Packet);
-				}
-				else {
-
-					// Can't use action so send an action clear packet
-					ae::_Buffer FailPacket;
-					FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
-					FailPacket.Write<ae::NetworkIDType>(NetworkID);
-					SendPacket(FailPacket);
-				}
-
-				Character->Action.Unset();
+			ae::_Buffer Packet;
+			if(Character->Action.Resolve(Packet, this, Scope)) {
+				SendPacket(Packet);
 			}
+			else {
+
+				// Can't use action so send an action clear packet
+				ae::_Buffer FailPacket;
+				FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
+				FailPacket.Write<ae::NetworkIDType>(NetworkID);
+				SendPacket(FailPacket);
+			}
+
+			Character->Action.Unset();
 		}
 	}
-	else
-		Fighter->TurnTimer = 0.0;
 
 	// Update status effects
 	if(Character) {
@@ -219,6 +208,8 @@ void _Object::Update(double FrameTime) {
 
 // Update bot AI
 void _Object::UpdateBot(double FrameTime) {
+	//TODO fix
+	return;
 
 	// Call ai script
 	if(!Character->Battle && Scripting->StartMethodCall("Bot_Server", "Update")) {
@@ -247,7 +238,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 	// Update battle
 	if(Character->Battle) {
-		if(Fighter->TurnTimer >= 1.0 && !Character->Action.IsSet()) {
+		if(!Character->Action.IsSet()) {
 
 			// Set skill used
 			size_t ActionBarIndex = 0;
@@ -287,8 +278,11 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 	if(!Monster->AI.length())
 		return;
 
+	//TODO fix
+	return;
+
 	// Call AI script to get action
-	if(Fighter->TurnTimer >= 1.0 && !Character->Action.IsSet()) {
+	if(!Character->Action.IsSet()) {
 
 		// Separate object list
 		std::list<_Object *> Allies, Enemies;
@@ -383,7 +377,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Get health/mana bar positions
 	glm::vec2 BarSize = glm::vec2(BATTLE_HEALTHBAR_WIDTH, BATTLE_HEALTHBAR_HEIGHT) * ae::_Element::GetUIScale();
 	glm::vec2 BarOffset(Fighter->BattleElement->Size.x + 10 * ae::_Element::GetUIScale(), 0);
-	float BarPaddingY = 6 * ae::_Element::GetUIScale();
+	float BarPaddingY = 5 * ae::_Element::GetUIScale();
 
 	// Get bar element bounds
 	ae::_Bounds BarBounds;
@@ -406,7 +400,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw health text
 	std::stringstream Buffer;
-	Buffer << ae::Round(Character->Health) << " / " << ae::Round(Character->MaxHealth);
+	Buffer << Character->Health << " / " << Character->MaxHealth;
 	SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 	Buffer.str("");
 
@@ -429,16 +423,16 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 		ae::Graphics.DrawImage(BarBounds, ae::Assets.Elements["image_hud_mana_bar_full"]->Texture);
 
 		// Draw mana text
-		Buffer << ae::Round(Character->Mana) << " / " << ae::Round(Character->MaxMana);
+		Buffer << Character->Mana << " / " << Character->MaxMana;
 		SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
 		Buffer.str("");
 	}
 
 	// Draw stamina
 	BarOffset.y += BarSize.y + BarPaddingY;
-	BarSize.y = 8 * ae::_Element::GetUIScale();
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
+	BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
 
 	// Draw empty bar
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
@@ -447,6 +441,11 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Draw full bar
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x * Character->Stamina / (float)(Character->MaxStamina), BarSize.y) + BarOffset;
 	ae::Graphics.DrawImage(BarBounds, ae::Assets.Textures["textures/hud_repeat/stamina_full.png"]);
+
+	// Draw stamina text
+	//Buffer << (int)(Character->Stamina) << " / " << (int)(Character->MaxStamina);
+	//SmallFont->DrawText(Buffer.str(), BarCenter + glm::vec2(0, TextOffsetY), ae::CENTER_BASELINE, GlobalColor);
+	//Buffer.str("");
 
 	// Get background for items used
 	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
@@ -784,7 +783,7 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
 	Data.Write<int>(Character->EquipmentBattleSpeed);
-	Data.Write<double>(Fighter->TurnTimer);
+	Data.Write<float>(Character->Stamina);
 	Data.Write<uint8_t>(Fighter->BattleSide);
 
 	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
@@ -887,7 +886,7 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Character->EquipmentBattleSpeed = Data.Read<int>();
 	if(!IsClient)
 		Character->BaseBattleSpeed = Character->EquipmentBattleSpeed;
-	Fighter->TurnTimer = Data.Read<double>();
+	Character->Stamina = Data.Read<float>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
 
 	Character->DeleteStatusEffects();
@@ -967,8 +966,8 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Stamina change
 	if(StatChange.HasStat(StatType::STAMINA)) {
-		Fighter->TurnTimer += StatChange.Values[StatType::STAMINA].Float;
-		Fighter->TurnTimer = glm::clamp(Fighter->TurnTimer, 0.0, 1.0);
+		Character->Stamina += StatChange.Values[StatType::STAMINA].Float;
+		Character->Stamina = glm::clamp(Character->Stamina, 0.0f, Character->MaxStamina);
 	}
 
 	// Action bar upgrade

@@ -56,7 +56,6 @@ class _Fighter {
 
 		// State
 		std::list<uint32_t> ItemDropsReceived;
-		double TurnTimer;
 		int GoldStolen;
 		bool JoinedBattle;
 		uint8_t BattleSide;

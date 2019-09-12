@@ -462,6 +462,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			bool DecrementItem = Data.ReadBit();
 			bool SkillUnlocked = Data.ReadBit();
 			bool ItemUnlocked = Data.ReadBit();
+			float Stamina = Data.Read<float>();
 			uint32_t ItemID = Data.Read<uint32_t>();
 			int InventorySlot = (int)Data.Read<char>();
 			ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
@@ -475,7 +476,6 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 			// Update source object
 			if(ActionResult.Source.Object) {
-				ActionResult.Source.Object->Fighter->TurnTimer = 0.0;
 				ActionResult.Source.Object->Character->Action.Unset();
 				ActionResult.Source.Object->Character->Targets.clear();
 

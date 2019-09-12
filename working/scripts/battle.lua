@@ -1,5 +1,6 @@
 -- Base Attack Skill --
 Base_Attack = {
+	Stamina = 0,
 
 	New = function(self, Object)
 		Object = Object or {}
@@ -10,6 +11,16 @@ Base_Attack = {
 
 	GetInfo = function(self, Item)
 		return ""
+	end,
+
+	CanUse = function(self, Level, Object)
+		return Object.Stamina > self.Stamina
+	end,
+
+	ApplyCost = function(self, Level, Result)
+		Result.Source.Stamina = -self.Stamina
+
+		return Result
 	end,
 
 	GetDamageType = function(self, Object)

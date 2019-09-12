@@ -195,6 +195,7 @@ end
 Skill_Attack = Base_Attack:New()
 Skill_Attack.BaseChance = 4
 Skill_Attack.ChancePerLevel = 2
+Skill_Attack.Stamina = 20
 
 function Skill_Attack.GetChance(self, Level)
 

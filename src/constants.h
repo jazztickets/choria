@@ -86,7 +86,6 @@ const  int          BATTLE_ROWS_PER_SIDE            =  4;
 const  int          BATTLE_COLUMN_SPACING           =  324;
 const  double       BATTLE_DEFAULTATTACKPERIOD      =  2.0;
 const  double       BATTLE_WAITDEADTIME             =  0.75;
-const  double       BATTLE_MAX_START_TURNTIMER      =  0.35;
 const  float        BATTLE_HEALTHBAR_WIDTH          =  126;
 const  float        BATTLE_HEALTHBAR_HEIGHT         =  30;
 const  int          BATTLE_MIN_SPEED                =  5;
