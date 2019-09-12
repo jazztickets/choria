@@ -118,7 +118,7 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
 	Packet.Write<uint32_t>(ItemID);
-	Packet.Write<char>((char)ActionResult.ActionUsed.InventorySlot);
+	Packet.Write<char>((char)Source->Character->Action.InventorySlot);
 
 	// Write source updates
 	ActionResult.Source.Serialize(Packet);
@@ -146,6 +146,8 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Get item used
 	const _Item *ItemUsed = Source->Character->Action.Item;
+
+	// Unlock skill
 	bool SkillUnlocked = false;
 	if(ItemUsed->IsSkill()) {
 		Source->Character->Skills[ItemUsed->ID] = 0;

@@ -164,30 +164,38 @@ void _Object::Update(double FrameTime) {
 			if(Character->Battle)
 				Scope = ScopeType::BATTLE;
 
-			switch(Character->Action.State) {
-				case ActionStateType::SET: {
+			// Update action state
+			_Action &Action = Character->Action;
+			switch(Action.State) {
+				case ActionStateType::START: {
 
-					if(!Character->Action.Start(this, Scope)) {
-
-						// Can't use action so send an action clear packet
-						ae::_Buffer FailPacket;
-						FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
-						FailPacket.Write<ae::NetworkIDType>(NetworkID);
-						SendPacket(FailPacket);
+					// Attempt to start action
+					if(!Action.Start(this, Scope)) {
+						ae::_Buffer Packet;
+						Packet.Write<PacketType>(PacketType::ACTION_CLEAR);
+						Packet.Write<ae::NetworkIDType>(NetworkID);
+						SendPacket(Packet);
 					}
-
-					Character->Action.State = ActionStateType::ANIMATION;
+					else {
+						Action.State = ActionStateType::ANIMATION;
+						Action.ApplyTimer = 0.0;
+						Action.ApplyTime = 1.0;
+					}
 				} break;
 				case ActionStateType::ANIMATION: {
-					Character->Action.State = ActionStateType::APPLY;
+					Action.ApplyTimer += FrameTime;
+					if(Action.ApplyTimer >= Action.ApplyTime) {
+						Action.ApplyTimer = Action.ApplyTime;
+						Action.State = ActionStateType::APPLY;
+					}
 				} break;
 				case ActionStateType::APPLY: {
 					ae::_Buffer Packet;
 					Packet.Write<PacketType>(PacketType::ACTION_APPLY);
-					Character->Action.Apply(Packet, this, Scope);
+					Action.Apply(Packet, this, Scope);
 					SendPacket(Packet);
 
-					Character->Action.State = ActionStateType::NONE;
+					Action.State = ActionStateType::NONE;
 				} break;
 				default:
 				break;
@@ -1161,7 +1169,7 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 		return;
 
 	// Set state
-	Character->Action.State = ActionStateType::SET;
+	Character->Action.State = ActionStateType::START;
 
 	// Get targets
 	Character->Targets.clear();

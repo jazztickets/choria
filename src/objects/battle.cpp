@@ -126,7 +126,12 @@ void _Battle::Update(double FrameTime) {
 				ActionResult.LastPosition = ActionResult.Position;
 
 				// Interpolate between start and end position of action used
-				ActionResult.Position = glm::mix(StartPosition, ActionResult.Target.Object->Fighter->ResultPosition, std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0));
+				ActionResult.Position = glm::mix(
+					StartPosition,
+					ActionResult.Target.Object->Fighter->ResultPosition,
+					std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0)
+				);
+
 				if(ActionResult.Time == 0.0)
 					ActionResult.LastPosition = ActionResult.Position;
 			}

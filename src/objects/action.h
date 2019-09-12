@@ -59,7 +59,7 @@ enum class ScopeType : uint8_t {
 // State of action
 enum class ActionStateType : uint8_t {
 	NONE,
-	SET,
+	START,
 	ANIMATION,
 	APPLY,
 	COOLDOWN,
@@ -81,11 +81,11 @@ class _Action {
 
 	public:
 
-		_Action() : Item(nullptr), State(ActionStateType::NONE), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
+		_Action() : Item(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), ApplyTimer(0.0), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
 		_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
 		bool operator==(const _Action &Action) const { return Action.Item == Item; }
-		bool operator!=(const _Action &Action) const { return !(Action.Item == Item); }
+		bool operator!=(const _Action &Action) const { return Action.Item != Item; }
 
 		void Serialize(ae::_Buffer &Data);
 		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
@@ -94,13 +94,15 @@ class _Action {
 		bool Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope);
 		void HandleSummons(_ActionResult &ActionResult);
 
-		bool IsSet() const { return !(Item == nullptr); }
-		void Unset() { Item = nullptr; Count = 0; Duration = 0.0; Level = 0; InventorySlot = -1; ActionBarSlot = -1; }
+		bool IsSet() const { return Item != nullptr; }
+		void Unset() { Item = nullptr; Count = 0; ApplyTime = 0.0; ApplyTimer = 0.0; Duration = 0.0; Level = 0; InventorySlot = -1; ActionBarSlot = -1; }
 
 		TargetType GetTargetType();
 
 		const _Item *Item;
 		ActionStateType State;
+		double ApplyTime;
+		double ApplyTimer;
 		double Duration;
 		int Level;
 		int Count;
