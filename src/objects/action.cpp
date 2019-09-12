@@ -35,7 +35,6 @@
 
 // Serialize action
 void _Action::Serialize(ae::_Buffer &Data) {
-
 	uint32_t ItemID = 0;
 	if(Item)
 		ItemID = Item->ID;
@@ -45,14 +44,13 @@ void _Action::Serialize(ae::_Buffer &Data) {
 
 // Unserialize action
 void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
-
 	uint32_t ItemID = Data.Read<uint32_t>();
 
 	Item = Stats->Items.at(ItemID);
 }
 
 // Resolve action
-bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
+bool _Action::Start(_Object *Source, ScopeType Scope) {
 
 	// Check for deleted targets
 	for(auto Iterator = Source->Character->Targets.begin(); Iterator != Source->Character->Targets.end(); ) {
@@ -110,19 +108,49 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	Source->UpdateStats(ActionResult.Source);
 
 	// Build packet for results
-	Data.Write<PacketType>(PacketType::ACTION_RESULTS);
-	Data.WriteBit(DecrementItem);
-	Data.WriteBit(SkillUnlocked);
-	Data.WriteBit(ItemUnlocked);
-	Data.WriteBit(KeyUnlocked);
+	ae::_Buffer Packet;
+	Packet.Write<PacketType>(PacketType::ACTION_START);
+	Packet.WriteBit(DecrementItem);
+	Packet.WriteBit(SkillUnlocked);
+	Packet.WriteBit(ItemUnlocked);
+	Packet.WriteBit(KeyUnlocked);
 
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
-	Data.Write<uint32_t>(ItemID);
-	Data.Write<char>((char)ActionResult.ActionUsed.InventorySlot);
+	Packet.Write<uint32_t>(ItemID);
+	Packet.Write<char>((char)ActionResult.ActionUsed.InventorySlot);
 
 	// Write source updates
-	ActionResult.Source.Serialize(Data);
+	ActionResult.Source.Serialize(Packet);
+
+	// Send list of targets
+	Packet.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
+	for(auto &Target : Source->Character->Targets) {
+		Packet.Write<ae::NetworkIDType>(Target->NetworkID);
+	}
+
+	// Send packet
+	Source->SendPacket(Packet);
+
+	return true;
+}
+
+// Apply action after animation
+bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
+
+	// Create action result
+	_ActionResult ActionResult;
+	ActionResult.Source.Object = Source;
+	ActionResult.Scope = Scope;
+	ActionResult.ActionUsed = Source->Character->Action;
+
+	// Get item used
+	const _Item *ItemUsed = Source->Character->Action.Item;
+	bool SkillUnlocked = false;
+	if(ItemUsed->IsSkill()) {
+		Source->Character->Skills[ItemUsed->ID] = 0;
+		SkillUnlocked = true;
+	}
 
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
@@ -238,6 +266,5 @@ _ActionResult::_ActionResult() :
 	Time(0.0),
 	Timeout(HUD_ACTIONRESULT_TIMEOUT),
 	Speed(HUD_ACTIONRESULT_SPEED),
-	Miss(false),
 	Scope(ScopeType::ALL) {
 }

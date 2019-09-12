@@ -164,7 +164,8 @@ class _PlayState : public ae::_State {
 		void HandleBattleLeave(ae::_Buffer &Data);
 		void HandleBattleEnd(ae::_Buffer &Data);
 		void HandleActionClear(ae::_Buffer &Data);
-		void HandleActionResults(ae::_Buffer &Data);
+		void HandleActionStart(ae::_Buffer &Data);
+		void HandleActionApply(ae::_Buffer &Data);
 		void HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange);
 		void HandleHUD(ae::_Buffer &Data);
 		void HandleMinigameSeed(ae::_Buffer &Data);

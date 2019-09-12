@@ -884,8 +884,11 @@ void _PlayState::HandlePacket(ae::_Buffer &Data) {
 		case PacketType::ACTION_CLEAR:
 			HandleActionClear(Data);
 		break;
-		case PacketType::ACTION_RESULTS:
-			HandleActionResults(Data);
+		case PacketType::ACTION_START:
+			HandleActionStart(Data);
+		break;
+		case PacketType::ACTION_APPLY:
+			HandleActionApply(Data);
 		break;
 		case PacketType::STAT_CHANGE: {
 			_StatChange StatChange;
@@ -1461,8 +1464,8 @@ void _PlayState::HandleActionClear(ae::_Buffer &Data) {
 	Object->Character->Targets.clear();
 }
 
-// Handles the result of a turn in battle
-void _PlayState::HandleActionResults(ae::_Buffer &Data) {
+// Handles the start of an action use
+void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
@@ -1485,7 +1488,6 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 
 	// Update source object
 	if(ActionResult.Source.Object) {
-		//ActionResult.Source.Object->Character->Stamina = Stamina;
 		ActionResult.Source.Object->Character->Action.Unset();
 		ActionResult.Source.Object->Character->Targets.clear();
 
@@ -1513,12 +1515,37 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 		}
 	}
 
+	// Read targets
+	uint8_t TargetCount = Data.Read<uint8_t>();
+	for(uint8_t i = 0; i < TargetCount; i++) {
+
+		// Get object id
+		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
+		ActionResult.Target.Object = ObjectManager->GetObject(NetworkID);
+		if(!ActionResult.Target.Object)
+			continue;
+
+		// Add action result to battle
+		if(Battle)
+			Battle->ActionResults.push_back(ActionResult);
+	}
+
+	// Play audio
+	if(ActionResult.ActionUsed.Item)
+		ActionResult.ActionUsed.Item->PlaySound(Scripting);
+}
+
+// Handle action apply
+void _PlayState::HandleActionApply(ae::_Buffer &Data) {
+	_ActionResult ActionResult;
+
 	// Update targets
 	uint8_t TargetCount = Data.Read<uint8_t>();
 	for(uint8_t i = 0; i < TargetCount; i++) {
 		HandleStatChange(Data, ActionResult.Source);
 		HandleStatChange(Data, ActionResult.Target);
 
+		/*
 		if(Battle) {
 
 			// No damage dealt
@@ -1543,11 +1570,9 @@ void _PlayState::HandleActionResults(ae::_Buffer &Data) {
 
 			Battle->ActionResults.push_back(ActionResult);
 		}
+		*/
 	}
 
-	// Play audio
-	if(ActionResult.ActionUsed.Item)
-		ActionResult.ActionUsed.Item->PlaySound(Scripting);
 }
 
 // Handles a stat change

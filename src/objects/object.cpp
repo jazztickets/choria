@@ -157,25 +157,41 @@ void _Object::Update(double FrameTime) {
 		}
 
 		// Resolve action
-		if(Server && Character->Action.IsSet()) {
+		if(Server) {
+
+			// Get scope
 			ScopeType Scope = ScopeType::WORLD;
 			if(Character->Battle)
 				Scope = ScopeType::BATTLE;
 
-			ae::_Buffer Packet;
-			if(Character->Action.Resolve(Packet, this, Scope)) {
-				SendPacket(Packet);
-			}
-			else {
+			switch(Character->Action.State) {
+				case ActionStateType::SET: {
 
-				// Can't use action so send an action clear packet
-				ae::_Buffer FailPacket;
-				FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
-				FailPacket.Write<ae::NetworkIDType>(NetworkID);
-				SendPacket(FailPacket);
-			}
+					if(!Character->Action.Start(this, Scope)) {
 
-			Character->Action.Unset();
+						// Can't use action so send an action clear packet
+						ae::_Buffer FailPacket;
+						FailPacket.Write<PacketType>(PacketType::ACTION_CLEAR);
+						FailPacket.Write<ae::NetworkIDType>(NetworkID);
+						SendPacket(FailPacket);
+					}
+
+					Character->Action.State = ActionStateType::ANIMATION;
+				} break;
+				case ActionStateType::ANIMATION: {
+					Character->Action.State = ActionStateType::APPLY;
+				} break;
+				case ActionStateType::APPLY: {
+					ae::_Buffer Packet;
+					Packet.Write<PacketType>(PacketType::ACTION_APPLY);
+					Character->Action.Apply(Packet, this, Scope);
+					SendPacket(Packet);
+
+					Character->Action.State = ActionStateType::NONE;
+				} break;
+				default:
+				break;
+			}
 		}
 	}
 
@@ -1130,25 +1146,30 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 // Set action and targets
 void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager) {
 
-	// Check for needed commands
-	if(!Character->Action.IsSet()) {
-		uint8_t ActionBarSlot = Data.Read<uint8_t>();
-		int TargetCount = Data.Read<uint8_t>();
-		if(!TargetCount)
-			return;
+	// Check state
+	if(Character->Action.State != ActionStateType::NONE)
+		return;
 
-		// Get skillbar action
-		if(!Character->GetActionFromActionBar(Character->Action, ActionBarSlot))
-			return;
+	// Read packet
+	uint8_t ActionBarSlot = Data.Read<uint8_t>();
+	int TargetCount = Data.Read<uint8_t>();
+	if(!TargetCount)
+		return;
 
-		// Get targets
-		Character->Targets.clear();
-		for(int i = 0; i < TargetCount; i++) {
-			ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
-			_Object *Target = ObjectManager->GetObject(NetworkID);
-			if(Target && Character->Action.Item->CanTarget(this, Target))
-				Character->Targets.push_back(Target);
-		}
+	// Get skillbar action
+	if(!Character->GetActionFromActionBar(Character->Action, ActionBarSlot))
+		return;
+
+	// Set state
+	Character->Action.State = ActionStateType::SET;
+
+	// Get targets
+	Character->Targets.clear();
+	for(int i = 0; i < TargetCount; i++) {
+		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
+		_Object *Target = ObjectManager->GetObject(NetworkID);
+		if(Target && Character->Action.Item->CanTarget(this, Target))
+			Character->Targets.push_back(Target);
 	}
 }
 

@@ -56,6 +56,15 @@ enum class ScopeType : uint8_t {
 	ALL
 };
 
+// State of action
+enum class ActionStateType : uint8_t {
+	NONE,
+	SET,
+	ANIMATION,
+	APPLY,
+	COOLDOWN,
+};
+
 struct _Summon {
 	_Summon() : ID(0), Health(0), Mana(0), Armor(0), MinDamage(0), MaxDamage(0) { }
 
@@ -72,7 +81,7 @@ class _Action {
 
 	public:
 
-		_Action() : Item(nullptr), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
+		_Action() : Item(nullptr), State(ActionStateType::NONE), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
 		_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
 		bool operator==(const _Action &Action) const { return Action.Item == Item; }
@@ -81,7 +90,8 @@ class _Action {
 		void Serialize(ae::_Buffer &Data);
 		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
 
-		bool Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope);
+		bool Start(_Object *Source, ScopeType Scope);
+		bool Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope);
 		void HandleSummons(_ActionResult &ActionResult);
 
 		bool IsSet() const { return !(Item == nullptr); }
@@ -90,6 +100,7 @@ class _Action {
 		TargetType GetTargetType();
 
 		const _Item *Item;
+		ActionStateType State;
 		double Duration;
 		int Level;
 		int Count;
@@ -111,6 +122,5 @@ struct _ActionResult {
 	double Time;
 	double Timeout;
 	double Speed;
-	bool Miss;
 	ScopeType Scope;
 };

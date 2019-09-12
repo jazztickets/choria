@@ -455,7 +455,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				Scripting->FinishMethodCall();
 			}
 		} break;
-		case PacketType::ACTION_RESULTS: {
+		case PacketType::ACTION_START: {
 
 			// Create result
 			_ActionResult ActionResult;
