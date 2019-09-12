@@ -462,7 +462,6 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			bool DecrementItem = Data.ReadBit();
 			bool SkillUnlocked = Data.ReadBit();
 			bool ItemUnlocked = Data.ReadBit();
-			float Stamina = Data.Read<float>();
 			uint32_t ItemID = Data.Read<uint32_t>();
 			int InventorySlot = (int)Data.Read<char>();
 			ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);

@@ -144,10 +144,15 @@ void _Object::Update(double FrameTime) {
 
 		// Update stamina
 		if(Character->Battle) {
-			if(!Character->Stunned) {
+			if(Character->StaminaRegenTimer > 0) {
+				Character->StaminaRegenTimer -= FrameTime;
+			}
+			else if(!Character->Stunned) {
 				Character->Stamina += FrameTime * Character->StaminaRegen;
 				if(Character->Stamina > Character->MaxStamina)
 					Character->Stamina = Character->MaxStamina;
+
+				Character->StaminaRegenTimer = 0;
 			}
 		}
 
@@ -966,8 +971,13 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 	// Stamina change
 	if(StatChange.HasStat(StatType::STAMINA)) {
-		Character->Stamina += StatChange.Values[StatType::STAMINA].Float;
+		float Change = StatChange.Values[StatType::STAMINA].Float;
+		Character->Stamina += Change;
 		Character->Stamina = glm::clamp(Character->Stamina, 0.0f, Character->MaxStamina);
+
+		// Start recharge delay
+		if(Change < 0)
+			Character->StaminaRegenTimer = Character->StaminaRegenDelay;
 	}
 
 	// Action bar upgrade

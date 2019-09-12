@@ -96,6 +96,7 @@ _Character::_Character(_Object *Object) :
 	MaxStamina(0.0f),
 	StaminaRegen(0.0f),
 	StaminaRegenDelay(0.0),
+	StaminaRegenTimer(0.0),
 	MinDamage(0),
 	MaxDamage(0),
 	Armor(0),

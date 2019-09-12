@@ -118,7 +118,6 @@ bool _Action::Resolve(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
-	Data.Write<float>(Source->Character->Stamina);
 	Data.Write<uint32_t>(ItemID);
 	Data.Write<char>((char)ActionResult.ActionUsed.InventorySlot);
 

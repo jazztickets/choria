@@ -189,6 +189,7 @@ class _Character {
 		float MaxStamina;
 		float StaminaRegen;
 		double StaminaRegenDelay;
+		double StaminaRegenTimer;
 		int MinDamage;
 		int MaxDamage;
 		int Armor;
