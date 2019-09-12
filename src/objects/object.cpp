@@ -389,7 +389,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	BarBounds.Start = SlotPosition + glm::vec2(0, 0) + BarOffset;
 	BarBounds.End = SlotPosition + glm::vec2(BarSize.x, BarSize.y) + BarOffset;
 	glm::vec2 BarCenter = (BarBounds.Start + BarBounds.End) / 2.0f;
-	float BarEndX = BarBounds.End.x;
 
 	// Get text size
 	ae::_Font *SmallFont = ae::Assets.Fonts["hud_small"];
@@ -456,13 +455,14 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
 
 	// Draw the action used
+	/*
 	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide && Character->Action.Item) {
 		glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2((-ItemBackTexture->Size.x/2 - 16) * ae::_Element::GetUIScale(), Fighter->BattleElement->Size.y/2);
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		if(!Character->Action.Item->IsSkill())
 			ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
 		ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
-	}
+	}*/
 
 	// Draw potential action to use
 	for(auto &BattleTarget : ClientPlayer->Character->Targets) {
@@ -487,7 +487,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 			// Draw background icon
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-			glm::vec2 DrawPosition = glm::ivec2(BarEndX + 12 * ae::_Element::GetUIScale(), SlotPosition.y + Fighter->BattleElement->Size.y/2);
+			glm::vec2 DrawPosition = glm::ivec2(Fighter->ResultPosition.x - ItemBackTexture->Size.x/2 * ae::_Element::GetUIScale(), Fighter->ResultPosition.y);
 			if(ClientPlayer->Fighter->PotentialAction.Item && !ClientPlayer->Fighter->PotentialAction.Item->IsSkill()) {
 				DrawPosition.x += ItemBackTexture->Size.x/2 * ae::_Element::GetUIScale();
 				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, Color);
@@ -495,7 +495,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			else
 				DrawPosition.x += Texture->Size.x/2 * ae::_Element::GetUIScale();
 
-			// Draw item
+			// Draw action icon
 			ae::Graphics.DrawScaledImage(DrawPosition, Texture, Color);
 		}
 	}
