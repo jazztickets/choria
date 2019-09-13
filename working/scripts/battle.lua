@@ -1,7 +1,6 @@
 -- Base Attack Skill --
 Base_Attack = {
 	Stamina = 0,
-	SwingTime = 0,
 
 	New = function(self, Object)
 		Object = Object or {}

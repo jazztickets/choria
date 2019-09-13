@@ -155,15 +155,6 @@ class _Object : public ae::_BaseObject {
 
 	private:
 
-		template <typename Type>
-		void GetValue(const std::unordered_map<std::string, std::string> &Map, const std::string &Field, Type &Value) {
-			const auto &MapIterator = Map.find(Field);
-			if(MapIterator != Map.end()) {
-				std::stringstream Stream(MapIterator->second);
-				Stream >> Value;
-			}
-		}
-
 };
 
 inline bool CompareObjects(const _Object *First, const _Object *Second) {
