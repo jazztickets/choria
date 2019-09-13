@@ -157,13 +157,6 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	// Get item used
 	const _Item *ItemUsed = Source->Character->Action.Item;
 
-	// Unlock skill
-	bool SkillUnlocked = false;
-	if(ItemUsed->IsSkill()) {
-		Source->Character->Skills[ItemUsed->ID] = 0;
-		SkillUnlocked = true;
-	}
-
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
 	for(auto &Target : Source->Character->Targets) {
@@ -174,8 +167,7 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object = Target;
 
 		// Call Use script
-		if(!SkillUnlocked)
-			ItemUsed->Use(Source->Scripting, ActionResult);
+		ItemUsed->Use(Source->Scripting, ActionResult);
 
 		// Update objects
 		ActionResult.Source.Object->UpdateStats(ActionResult.Source);
