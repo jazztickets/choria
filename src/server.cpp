@@ -986,6 +986,7 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(!Player->Character->Action.IsSet()) {
 			Player->Character->Targets.clear();
 			Player->Character->Targets.push_back(Player);
+			Player->Character->Action.State = ActionStateType::START;
 			Player->Character->Action.Item = Item;
 			Player->Character->Action.Level = Item->Level;
 			Player->Character->Action.Duration = Item->Duration;

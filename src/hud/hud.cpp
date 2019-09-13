@@ -432,7 +432,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				break;
 			}
 		}
-		// Use action
+		// Use action from actionbar
 		else if(ActionBarElement->GetClickedElement()) {
 			uint8_t Slot = (uint8_t)ActionBarElement->GetClickedElement()->Index;
 			if(Player->Character->Battle)
