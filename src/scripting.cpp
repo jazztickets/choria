@@ -909,8 +909,10 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 		Object->Character->Action.Item = nullptr;
 		lua_pushboolean(LuaState, false);
 	}
-	else
+	else {
+		Object->Character->Action.State = ActionStateType::START;
 		lua_pushboolean(LuaState, true);
+	}
 
 	return 1;
 }

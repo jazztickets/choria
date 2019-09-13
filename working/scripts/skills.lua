@@ -7,6 +7,7 @@ Skill_MonsterAttack = Base_Attack:New()
 -- Crow attack --
 
 Skill_CrowAttack = Base_Attack:New()
+Skill_CrowAttack.Stamina = 50
 
 function Skill_CrowAttack.Proc(self, Roll, Level, Duration, Source, Target, Result)
 	if Roll <= 15 then

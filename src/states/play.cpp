@@ -1491,7 +1491,8 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	// Get source change
 	HandleStatChange(Data, ActionResult.Source);
 	BattleAction.Source = ActionResult.Source.Object;
-	BattleAction.Texture = ActionResult.ActionUsed.Item->Texture;
+	if(ActionResult.ActionUsed.Item)
+		BattleAction.Texture = ActionResult.ActionUsed.Item->Texture;
 	BattleAction.ReactTime = ReactTime;
 	BattleAction.FlyTime = FlyTime;
 

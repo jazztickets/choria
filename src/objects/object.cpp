@@ -305,9 +305,6 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 	if(!Monster->AI.length())
 		return;
 
-	//TODO fix
-	return;
-
 	// Call AI script to get action
 	if(!Character->Action.IsSet()) {
 
@@ -475,16 +472,6 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Get background for items used
 	const ae::_Texture *ItemBackTexture = ae::Assets.Textures["textures/hud/item_back.png"];
-
-	// Draw the action used
-	/*
-	if(ClientPlayer->Fighter->BattleSide == Fighter->BattleSide && Character->Action.Item) {
-		glm::vec2 ItemUsingPosition = SlotPosition + glm::vec2((-ItemBackTexture->Size.x/2 - 16) * ae::_Element::GetUIScale(), Fighter->BattleElement->Size.y/2);
-		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		if(!Character->Action.Item->IsSkill())
-			ae::Graphics.DrawScaledImage(ItemUsingPosition, ItemBackTexture, GlobalColor);
-		ae::Graphics.DrawScaledImage(ItemUsingPosition, Character->Action.Item->Texture, GlobalColor);
-	}*/
 
 	// Draw potential action to use
 	for(auto &BattleTarget : ClientPlayer->Character->Targets) {
