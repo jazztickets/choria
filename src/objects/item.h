@@ -74,6 +74,7 @@ class _Item {
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
 		int GetUpgradePrice(int Level) const;
 
+		// Scripts
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		bool CanTarget(_Object *Source, _Object *Target) const;
 		bool CheckScope(ScopeType CheckScope) const;
@@ -81,6 +82,7 @@ class _Item {
 		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		void PlaySound(_Scripting *Scripting) const;
+		bool GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const;
 
 		float GetAverageDamage(int Upgrades) const;
 		float GetMinDamage(int Upgrades) const;
@@ -122,6 +124,9 @@ class _Item {
 		int BattleSpeed;
 		int MoveSpeed;
 		int DropRate;
+		double AttackDelay;
+		double AttackTime;
+		double Cooldown;
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;

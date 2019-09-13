@@ -1493,8 +1493,8 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	BattleAction.Source = ActionResult.Source.Object;
 	if(ActionResult.ActionUsed.Item)
 		BattleAction.Texture = ActionResult.ActionUsed.Item->Texture;
-	BattleAction.ReactTime = ReactTime;
-	BattleAction.FlyTime = FlyTime;
+	BattleAction.AttackDelay = ReactTime;
+	BattleAction.AttackTime = FlyTime;
 
 	// Use item on client
 	if(Player == ActionResult.Source.Object) {

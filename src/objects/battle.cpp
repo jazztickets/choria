@@ -126,12 +126,12 @@ void _Battle::Update(double FrameTime) {
 				BattleAction.LastPosition = BattleAction.Position;
 
 				// Interpolate between start and end position of action used
-				if(BattleAction.Time >= BattleAction.ReactTime && BattleAction.FlyTime > 0.0) {
-					double Time = BattleAction.Time - BattleAction.ReactTime;
+				if(BattleAction.Time >= BattleAction.AttackDelay && BattleAction.AttackTime > 0.0) {
+					double Time = BattleAction.Time - BattleAction.AttackDelay;
 					BattleAction.Position = glm::mix(
 						StartPosition,
 						BattleAction.Target->Fighter->ResultPosition,
-						Time / BattleAction.FlyTime
+						Time / BattleAction.AttackTime
 					);
 				}
 				else
@@ -140,7 +140,7 @@ void _Battle::Update(double FrameTime) {
 
 			// Update timer
 			BattleAction.Time += FrameTime;
-			if(BattleAction.Time >= BattleAction.ReactTime + BattleAction.FlyTime) {
+			if(BattleAction.Time >= BattleAction.AttackDelay + BattleAction.AttackTime) {
 				Iterator = BattleActions.erase(Iterator);
 			}
 			else

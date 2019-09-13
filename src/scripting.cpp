@@ -516,6 +516,15 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 	lua_pushinteger(LuaState, Upgrades);
 	lua_setfield(LuaState, -2, "Upgrades");
 
+	lua_pushnumber(LuaState, Item->AttackDelay);
+	lua_setfield(LuaState, -2, "AttackDelay");
+
+	lua_pushnumber(LuaState, Item->AttackTime);
+	lua_setfield(LuaState, -2, "AttackTime");
+
+	lua_pushnumber(LuaState, Item->Cooldown);
+	lua_setfield(LuaState, -2, "Cooldown");
+
 	lua_pushlightuserdata(LuaState, (void *)Item);
 	lua_setfield(LuaState, -2, "Pointer");
 }

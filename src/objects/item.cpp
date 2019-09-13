@@ -648,6 +648,24 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	return true;
 }
 
+// Return attack times from skill script. Return false if function doesn't exist.
+bool _Item::GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
+
+	// Check script's function
+	if(Scripting->StartMethodCall(Script, "GetAttackTimes")) {
+		Scripting->PushObject(Object);
+		Scripting->MethodCall(1, 3);
+		AttackDelay = Scripting->GetReal(1);
+		AttackTime = Scripting->GetReal(2);
+		Cooldown = Scripting->GetReal(3);
+		Scripting->FinishMethodCall();
+
+		return true;
+	}
+
+	return false;
+}
+
 // Check if an item can target an object
 bool _Item::CanTarget(_Object *Source, _Object *Target) const {
 	if(TargetAlive && !Target->Character->IsAlive())

@@ -257,6 +257,9 @@ void _Stats::LoadItems() {
 		Item->DropRate = Database->GetInt<int>("droprate");
 		Item->ResistanceTypeID = Database->GetInt<uint32_t>("restype_id");
 		Item->Resistance = Database->GetInt<int>("res");
+		Item->AttackDelay = Database->GetReal("attack_delay");
+		Item->AttackTime = Database->GetReal("attack_time");
+		Item->Cooldown = Database->GetReal("cooldown");
 		Item->Tradable = Database->GetInt<int>("tradable");
 		Item->TargetAlive = Database->GetInt<int>("target_alive");
 		Item->TargetID = (TargetType)Database->GetInt<int>("target_id");

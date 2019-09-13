@@ -112,12 +112,12 @@ class _Action {
 
 // Action used in battle
 struct _BattleAction {
-	_BattleAction() : Source(nullptr), Target(nullptr), ReactTime(0.0), FlyTime(0.0), Time(0.0), LastPosition({0.0f, 0.0f}), Position({0.0f, 0.0f}), Texture(nullptr) { }
+	_BattleAction() : Source(nullptr), Target(nullptr), AttackDelay(0.0), AttackTime(0.0), Time(0.0), LastPosition({0.0f, 0.0f}), Position({0.0f, 0.0f}), Texture(nullptr) { }
 
 	_Object *Source;
 	_Object *Target;
-	double ReactTime;
-	double FlyTime;
+	double AttackDelay;
+	double AttackTime;
 	double Time;
 	glm::vec2 LastPosition;
 	glm::vec2 Position;

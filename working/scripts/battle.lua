@@ -32,6 +32,15 @@ Base_Attack = {
 		return self.Item.DamageType
 	end,
 
+	GetAttackTimes = function(self, Object)
+		Weapon = Object.GetInventoryItem(BAG_EQUIPMENT, INVENTORY_HAND1)
+		if Weapon ~= nil then
+			return Weapon.AttackDelay, Weapon.AttackTime, Weapon.Cooldown
+		end
+
+		return self.Item.AttackDelay, self.Item.AttackTime, self.Item.Cooldown
+	end,
+
 	GenerateDamage = function(self, Level, Source)
 		Damage = Source.GenerateDamage()
 

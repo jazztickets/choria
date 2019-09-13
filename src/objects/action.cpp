@@ -72,11 +72,23 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	bool ItemUnlocked = false;
 	bool KeyUnlocked = false;
 	bool DecrementItem = false;
+	double AttackDelay = 0.0;
+	double AttackTime = 0.0;
+	double Cooldown = 0.0;
 
 	// Use item
 	if(ItemUsed) {
 		if(!ItemUsed->CanUse(Source->Scripting, ActionResult))
 			return false;
+
+		// Get attack times
+		AttackDelay = ItemUsed->AttackDelay;
+		AttackTime = ItemUsed->AttackTime;
+
+		// Get attack times from skill
+		ItemUsed->GetAttackTimes(Source->Scripting, Source, AttackDelay, AttackTime, Cooldown);
+		if(Source->Character->Battle)
+			ApplyTime = AttackDelay + AttackTime;
 
 		// Apply skill cost
 		if(ItemUsed->IsSkill() && Source->Character->HasLearned(ItemUsed) && InventorySlot == -1) {
@@ -117,18 +129,12 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	Packet.WriteBit(ItemUnlocked);
 	Packet.WriteBit(KeyUnlocked);
 
-	//TODO fix
-	double ReactTime = 0.5;
-	double FlyTime = 0.3;
-	if(Source->Character->Battle)
-		ApplyTime = ReactTime + FlyTime;
-
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
 	Packet.Write<uint32_t>(ItemID);
 	Packet.Write<char>((char)Source->Character->Action.InventorySlot);
-	Packet.Write<float>(ReactTime);
-	Packet.Write<float>(FlyTime);
+	Packet.Write<float>(AttackDelay);
+	Packet.Write<float>(AttackTime);
 
 	// Write source updates
 	ActionResult.Source.Serialize(Packet);
