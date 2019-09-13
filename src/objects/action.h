@@ -81,7 +81,7 @@ class _Action {
 
 	public:
 
-		_Action() : Item(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), ApplyTimer(0.0), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
+		_Action() : Item(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
 		_Action(const _Item *Item) : _Action() { this->Item = Item; }
 
 		bool operator==(const _Action &Action) const { return Action.Item == Item; }
@@ -94,15 +94,15 @@ class _Action {
 		bool Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope);
 		void HandleSummons(_ActionResult &ActionResult);
 
-		bool IsSet() const { return Item != nullptr; }
-		void Unset() { Item = nullptr; Count = 0; ApplyTime = 0.0; ApplyTimer = 0.0; Duration = 0.0; Level = 0; InventorySlot = -1; ActionBarSlot = -1; }
+		bool IsSet() const { return State != ActionStateType::NONE; }
+		void Unset() { Item = nullptr; State = ActionStateType::NONE; Count = 0; ApplyTime = 0.0; Time = 0.0; Duration = 0.0; Level = 0; InventorySlot = -1; ActionBarSlot = -1; }
 
 		TargetType GetTargetType();
 
 		const _Item *Item;
 		ActionStateType State;
 		double ApplyTime;
-		double ApplyTimer;
+		double Time;
 		double Duration;
 		int Level;
 		int Count;
@@ -110,7 +110,21 @@ class _Action {
 		int ActionBarSlot;
 };
 
-// Structures
+// Action used in battle
+struct _BattleAction {
+	_BattleAction() : Source(nullptr), Target(nullptr), ReactTime(0.0), FlyTime(0.0), Time(0.0), LastPosition({0.0f, 0.0f}), Position({0.0f, 0.0f}), Texture(nullptr) { }
+
+	_Object *Source;
+	_Object *Target;
+	double ReactTime;
+	double FlyTime;
+	double Time;
+	glm::vec2 LastPosition;
+	glm::vec2 Position;
+	const ae::_Texture *Texture;
+};
+
+// Result of an action use
 struct _ActionResult {
 	_ActionResult();
 

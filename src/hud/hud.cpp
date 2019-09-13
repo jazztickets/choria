@@ -441,7 +441,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				PlayState.SendActionUse(Slot);
 		}
 		// Handle mouse click during combat
-		else if(EnableMouseCombat && Player->Character->Battle && Player->Fighter->PotentialAction.IsSet()) {
+		else if(EnableMouseCombat && Player->Character->Battle && Player->Fighter->PotentialAction.Item) {
 			Player->Character->Battle->ClientSetAction((uint8_t)Player->Fighter->PotentialAction.ActionBarSlot);
 		}
 
@@ -536,7 +536,7 @@ void _HUD::Update(double FrameTime) {
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserData;
-				if(EnableMouseCombat && MouseObject && Player->Character->Battle && Player->Fighter->PotentialAction.IsSet() && Player->Fighter->PotentialAction.Item->UseMouseTargetting() && Player->Fighter->PotentialAction.Item->CanTarget(Player, MouseObject)) {
+				if(EnableMouseCombat && MouseObject && Player->Character->Battle && Player->Fighter->PotentialAction.Item && Player->Fighter->PotentialAction.Item->UseMouseTargetting() && Player->Fighter->PotentialAction.Item->CanTarget(Player, MouseObject)) {
 					Player->Character->Battle->ClientSetTarget(Player->Fighter->PotentialAction.Item, MouseObject->Fighter->BattleSide, MouseObject);
 				}
 			} break;

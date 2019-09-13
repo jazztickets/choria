@@ -305,7 +305,7 @@ void _SkillScreen::EquipSkill(uint32_t SkillID) {
 
 		// Find an empty slot
 		for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
-			if(!HUD->Player->Character->ActionBar[i].IsSet()) {
+			if(!HUD->Player->Character->ActionBar[i].Item) {
 				HUD->SetActionBar(i, HUD->Player->Character->ActionBar.size(), Skill);
 				return;
 			}

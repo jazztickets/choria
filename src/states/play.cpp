@@ -1469,6 +1469,9 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	if(!Player)
 		return;
 
+	// Create battle action
+	_BattleAction BattleAction;
+
 	// Create result
 	_ActionResult ActionResult;
 	bool DecrementItem = Data.ReadBit();
@@ -1477,6 +1480,8 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	bool KeyUnlocked = Data.ReadBit();
 	uint32_t ItemID = Data.Read<uint32_t>();
 	int InventorySlot = (int)Data.Read<char>();
+	float ReactTime = Data.Read<float>();
+	float FlyTime = Data.Read<float>();
 	ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
 
 	// Set texture
@@ -1485,33 +1490,33 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 
 	// Get source change
 	HandleStatChange(Data, ActionResult.Source);
+	BattleAction.Source = ActionResult.Source.Object;
+	BattleAction.Texture = ActionResult.ActionUsed.Item->Texture;
+	BattleAction.ReactTime = ReactTime;
+	BattleAction.FlyTime = FlyTime;
 
-	// Update source object
-	if(ActionResult.Source.Object) {
-		ActionResult.Source.Object->Character->Action.Unset();
-		ActionResult.Source.Object->Character->Targets.clear();
+	// Use item on client
+	if(Player == ActionResult.Source.Object) {
+		if(ActionResult.ActionUsed.Item) {
 
-		// Use item on client
-		if(Player == ActionResult.Source.Object) {
-			if(ActionResult.ActionUsed.Item) {
-
-				if(DecrementItem) {
-					size_t Index;
-					if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
-						Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
-						Player->Character->RefreshActionBarCount();
-					}
+			// Spend item
+			if(DecrementItem) {
+				size_t Index;
+				if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
+					Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
+					Player->Character->RefreshActionBarCount();
 				}
-
-				if(SkillUnlocked)
-					Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
-
-				if(ItemUnlocked)
-					Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
-
-				if(KeyUnlocked)
-					Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Item, 1));
 			}
+
+			// Unlock a skill
+			if(SkillUnlocked)
+				Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+
+			if(ItemUnlocked)
+				Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
+
+			if(KeyUnlocked)
+				Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Item, 1));
 		}
 	}
 
@@ -1526,8 +1531,10 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 			continue;
 
 		// Add action result to battle
-		if(Battle)
-			Battle->ActionResults.push_back(ActionResult);
+		if(Battle) {
+			BattleAction.Target = ActionResult.Target.Object;
+			Battle->BattleActions.push_back(BattleAction);
+		}
 	}
 
 	// Play audio
@@ -1544,6 +1551,9 @@ void _PlayState::HandleActionApply(ae::_Buffer &Data) {
 	for(uint8_t i = 0; i < TargetCount; i++) {
 		HandleStatChange(Data, ActionResult.Source);
 		HandleStatChange(Data, ActionResult.Target);
+
+		ActionResult.Source.Object->Character->Action.Unset();
+		ActionResult.Source.Object->Character->Targets.clear();
 
 		/*
 		if(Battle) {
@@ -1685,7 +1695,10 @@ void _PlayState::SendActionUse(uint8_t Slot) {
 	if(Slot >= Player->Character->ActionBar.size())
 		return;
 
-	if(!Player->Character->ActionBar[Slot].IsSet())
+	if(!Player->Character->ActionBar[Slot].Item)
+		return;
+
+	if(Player->Character->Action.IsSet())
 		return;
 
 	if(Player->Controller->WaitForServer)

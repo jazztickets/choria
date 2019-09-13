@@ -114,32 +114,34 @@ void _Battle::Update(double FrameTime) {
 	}
 	else {
 
-		// Update action results
-		for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
-			_ActionResult &ActionResult = *Iterator;
+		// Update battle actions
+		for(auto Iterator = BattleActions.begin(); Iterator != BattleActions.end(); ) {
+			_BattleAction &BattleAction = *Iterator;
 
 			// Update action used position
-			if(BattleElement && ActionResult.Source.Object && ActionResult.Target.Object) {
+			if(BattleElement && BattleAction.Source && BattleAction.Target) {
 
 				// Find start position
-				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(ActionResult.Source.Object->Character->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0) * ae::_Element::GetUIScale();
-				ActionResult.LastPosition = ActionResult.Position;
+				glm::vec2 StartPosition = BattleAction.Source->Fighter->ResultPosition - glm::vec2(BattleAction.Source->Character->Portrait->Size.x/2 + BattleAction.Texture->Size.x/2 + 10, 0) * ae::_Element::GetUIScale();
+				BattleAction.LastPosition = BattleAction.Position;
 
 				// Interpolate between start and end position of action used
-				ActionResult.Position = glm::mix(
-					StartPosition,
-					ActionResult.Target.Object->Fighter->ResultPosition,
-					std::min(ActionResult.Time * ActionResult.Speed / ActionResult.Timeout, 1.0)
-				);
-
-				if(ActionResult.Time == 0.0)
-					ActionResult.LastPosition = ActionResult.Position;
+				if(BattleAction.Time >= BattleAction.ReactTime && BattleAction.FlyTime > 0.0) {
+					double Time = BattleAction.Time - BattleAction.ReactTime;
+					BattleAction.Position = glm::mix(
+						StartPosition,
+						BattleAction.Target->Fighter->ResultPosition,
+						Time / BattleAction.FlyTime
+					);
+				}
+				else
+					BattleAction.LastPosition = BattleAction.Position = StartPosition;
 			}
 
 			// Update timer
-			ActionResult.Time += FrameTime;
-			if(ActionResult.Time >= ActionResult.Timeout) {
-				Iterator = ActionResults.erase(Iterator);
+			BattleAction.Time += FrameTime;
+			if(BattleAction.Time >= BattleAction.ReactTime + BattleAction.FlyTime) {
+				Iterator = BattleActions.erase(Iterator);
 			}
 			else
 				++Iterator;
@@ -157,32 +159,27 @@ void _Battle::Render(double BlendFactor) {
 	for(auto &Object : Objects)
 		Object->RenderBattle(ClientPlayer, Time);
 
-	// Draw action results
-	for(auto &ActionResult : ActionResults)
-		RenderActionResults(ActionResult, BlendFactor);
+	// Draw battle actions
+	for(auto &BattleAction : BattleActions)
+		RenderBattleAction(BattleAction, BlendFactor);
 }
 
-// Render results of an action
-void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFactor) {
-	if(!ActionResult.Target.Object || !ActionResult.Source.Object)
+// Render battle actions
+void _Battle::RenderBattleAction(_BattleAction &BattleAction, double BlendFactor) {
+	if(!BattleAction.Target || !BattleAction.Source)
 		return;
 
-	// Get alpha
-	double TimeLeft = ActionResult.Timeout - ActionResult.Time;
-	float AlphaPercent = 1.0f;
-	if(TimeLeft < HUD_ACTIONRESULT_FADETIME)
-		AlphaPercent = (float)(TimeLeft / HUD_ACTIONRESULT_FADETIME);
-
 	// Get final draw position
-	glm::vec2 DrawPosition = glm::mix(ActionResult.LastPosition, ActionResult.Position, BlendFactor);
+	glm::vec2 DrawPosition = glm::mix(BattleAction.LastPosition, BattleAction.Position, BlendFactor);
 
 	// Draw icon
-	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, AlphaPercent);
+	glm::vec4 WhiteAlpha = glm::vec4(0.5f, 0.5f, 0.5f, 1);
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-	if(ActionResult.ActionUsed.Item && !ActionResult.ActionUsed.Item->IsSkill())
-		ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
-	ae::Graphics.DrawScaledImage(DrawPosition, ActionResult.Texture, WhiteAlpha);
+	//if(BattleAction.ActionUsed.Item && !BattleAction.ActionUsed.Item->IsSkill())
+	ae::Graphics.DrawScaledImage(DrawPosition, ae::Assets.Textures["textures/hud/item_back.png"], WhiteAlpha);
+	ae::Graphics.DrawScaledImage(DrawPosition, BattleAction.Texture, WhiteAlpha);
 
+	/*
 	// Draw damage dealt
 	glm::vec4 TextColor = glm::vec4(1.0f);
 	if(ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer > 0)
@@ -198,6 +195,7 @@ void _Battle::RenderActionResults(_ActionResult &ActionResult, double BlendFacto
 	else if(ActionResult.Target.HasStat(StatType::HEALTH))
 		Buffer << std::abs(ActionResult.Target.Values[StatType::HEALTH].Integer);
 	ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + glm::vec2(0, 7), ae::CENTER_BASELINE, TextColor);
+	*/
 }
 
 // Sends an action selection to the server
@@ -219,11 +217,11 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 	// Check for changing an action
 	bool ChangingAction = false;
-	if(ClientPlayer->Fighter->PotentialAction.IsSet() && Action != ClientPlayer->Fighter->PotentialAction)
+	if(ClientPlayer->Fighter->PotentialAction.Item && Action != ClientPlayer->Fighter->PotentialAction)
 		ChangingAction = true;
 
 	// Choose an action to use
-	if(!ClientPlayer->Fighter->PotentialAction.IsSet() || ChangingAction) {
+	if(!ClientPlayer->Fighter->PotentialAction.Item || ChangingAction) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
@@ -304,7 +302,9 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		ClientNetwork->SendPacket(Packet);
 
-		ClientPlayer->Character->Action.Item = Item;
+		//ClientPlayer->Character->Action.Item = Item;
+		ClientPlayer->Character->Action.State = ActionStateType::START;
+
 		ClientPlayer->Fighter->PotentialAction.Unset();
 	}
 }
@@ -452,7 +452,7 @@ void _Battle::AddObject(_Object *Object, uint8_t Side, bool Join) {
 	Object->Fighter->GoldStolen = 0;
 	if(Server) {
 		Object->Character->GenerateNextBattle();
-		Object->Character->Stamina = 0;
+		Object->Character->Stamina = 50;
 
 		// Send player join packet to current objects
 		if(Join) {
@@ -842,10 +842,10 @@ void _Battle::CreateBattleElements(int SideIndex, _Object *Object) {
 void _Battle::RemoveObject(_Object *RemoveObject) {
 
 	// Remove action results
-	for(auto Iterator = ActionResults.begin(); Iterator != ActionResults.end(); ) {
-		_ActionResult &ActionResult = *Iterator;
-		if(ActionResult.Source.Object == RemoveObject || ActionResult.Target.Object == RemoveObject) {
-			Iterator = ActionResults.erase(Iterator);
+	for(auto Iterator = BattleActions.begin(); Iterator != BattleActions.end(); ) {
+		_BattleAction &BattleAction = *Iterator;
+		if(BattleAction.Source == RemoveObject || BattleAction.Target == RemoveObject) {
+			Iterator = BattleActions.erase(Iterator);
 		}
 		else
 			++Iterator;

@@ -178,14 +178,12 @@ void _Object::Update(double FrameTime) {
 					}
 					else {
 						Action.State = ActionStateType::ANIMATION;
-						Action.ApplyTimer = 0.0;
-						Action.ApplyTime = 1.0;
 					}
 				} break;
 				case ActionStateType::ANIMATION: {
-					Action.ApplyTimer += FrameTime;
-					if(Action.ApplyTimer >= Action.ApplyTime) {
-						Action.ApplyTimer = Action.ApplyTime;
+					Action.Time += FrameTime;
+					if(Action.Time >= Action.ApplyTime) {
+						Action.Time = Action.ApplyTime;
 						Action.State = ActionStateType::APPLY;
 					}
 				} break;
@@ -490,7 +488,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw potential action to use
 	for(auto &BattleTarget : ClientPlayer->Character->Targets) {
-		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.IsSet()) {
+		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.Item) {
 
 			// Get texture
 			const ae::_Texture *Texture = nullptr;
@@ -601,7 +599,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	// Write action bar
 	Json::Value ActionBarNode;
 	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
-		if(Character->ActionBar[i].IsSet()) {
+		if(Character->ActionBar[i].Item) {
 			Json::Value ActionNode;
 			ActionNode["slot"] = (Json::Value::UInt64)i;
 			ActionNode["id"] = Character->ActionBar[i].Item ? Character->ActionBar[i].Item->ID : 0;

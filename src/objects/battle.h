@@ -99,7 +99,7 @@ class _Battle : public ae::_BaseObject {
 
 		// Objects
 		std::list<_Object *> Objects;
-		std::list<_ActionResult> ActionResults;
+		std::list<_BattleAction> BattleActions;
 
 		// Attributes
 		double Difficulty[2];
@@ -122,7 +122,7 @@ class _Battle : public ae::_BaseObject {
 		void GetObjectList(int Side, std::list<_Object *> &SideObjects);
 		void GetAliveObjectList(int Side, std::list<_Object *> &AliveObjects);
 
-		void RenderActionResults(_ActionResult &ActionResult, double BlendFactor);
+		void RenderBattleAction(_BattleAction &BattleAction, double BlendFactor);
 
 		// State
 		double Time;

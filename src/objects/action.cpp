@@ -51,6 +51,8 @@ void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 // Resolve action
 bool _Action::Start(_Object *Source, ScopeType Scope) {
+	ApplyTime = 0.0;
+	Time = 0.0;
 
 	// Check for deleted targets
 	for(auto Iterator = Source->Character->Targets.begin(); Iterator != Source->Character->Targets.end(); ) {
@@ -115,10 +117,18 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	Packet.WriteBit(ItemUnlocked);
 	Packet.WriteBit(KeyUnlocked);
 
+	//TODO fix
+	double ReactTime = 0.5;
+	double FlyTime = 0.3;
+	if(Source->Character->Battle)
+		ApplyTime = ReactTime + FlyTime;
+
 	// Write action used
 	uint32_t ItemID = ItemUsed ? ItemUsed->ID : 0;
 	Packet.Write<uint32_t>(ItemID);
 	Packet.Write<char>((char)Source->Character->Action.InventorySlot);
+	Packet.Write<float>(ReactTime);
+	Packet.Write<float>(FlyTime);
 
 	// Write source updates
 	ActionResult.Source.Serialize(Packet);

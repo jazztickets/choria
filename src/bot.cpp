@@ -161,7 +161,7 @@ void _Bot::Update(double FrameTime) {
 
 	// Update battle system
 	if(Battle) {
-		if(!Player->Fighter->PotentialAction.IsSet()) {
+		if(!Player->Fighter->PotentialAction.Item) {
 			Battle->ClientHandleInput(Action::GAME_SKILL1);
 			Battle->ClientHandleInput(Action::GAME_SKILL1);
 		}
@@ -520,7 +520,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 						ActionResult.Speed = HUD_ACTIONRESULT_SPEED;
 					}
 
-					Battle->ActionResults.push_back(ActionResult);
+					//Battle->ActionResults.push_back(ActionResult);
 				}
 				else if(ActionResult.Target.Object == Player) {
 				}
