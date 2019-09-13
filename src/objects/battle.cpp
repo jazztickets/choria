@@ -302,9 +302,6 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		ClientNetwork->SendPacket(Packet);
 
-		//ClientPlayer->Character->Action.Item = Item;
-		ClientPlayer->Character->Action.State = ActionStateType::START;
-
 		ClientPlayer->Fighter->PotentialAction.Unset();
 	}
 }
@@ -935,8 +932,10 @@ void _Battle::ClientHandlePlayerAction(ae::_Buffer &Data) {
 	uint32_t ItemID = Data.Read<uint32_t>();
 
 	_Object *Object = Manager->GetObject(NetworkID);
-	if(Object)
+	if(Object) {
 		Object->Character->Action.Item = Stats->Items.at(ItemID);
+		Object->Character->Action.State = ActionStateType::START;
+	}
 }
 
 // Send a packet to all players

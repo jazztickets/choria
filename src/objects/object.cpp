@@ -171,6 +171,8 @@ void _Object::Update(double FrameTime) {
 
 					// Attempt to start action
 					if(!Action.Start(this, Scope)) {
+						Action.State = ActionStateType::NONE;
+
 						ae::_Buffer Packet;
 						Packet.Write<PacketType>(PacketType::ACTION_CLEAR);
 						Packet.Write<ae::NetworkIDType>(NetworkID);
@@ -280,6 +282,8 @@ void _Object::UpdateBot(double FrameTime) {
 			ActionResult.ActionUsed = Character->Action;
 			if(!Character->Action.Item->CanUse(Scripting, ActionResult))
 				Character->Action.Item = nullptr;
+
+			Character->Action.State = ActionStateType::START;
 
 			// Separate object list
 			std::list<_Object *> Allies, Enemies;
@@ -1140,7 +1144,7 @@ void _Object::ApplyDeathPenalty(float Penalty, int BountyLoss) {
 void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectManager) {
 
 	// Check state
-	if(Character->Action.State != ActionStateType::NONE)
+	if(Character->Action.IsSet())
 		return;
 
 	// Read packet
