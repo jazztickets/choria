@@ -259,7 +259,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				Map->Stats = Stats;
 				Map->Clock = Clock;
 				Map->NetworkID = MapID;
-				Map->Load(&Stats->Maps.at(MapID));
+				//Map->Load(&Stats->Maps.at(MapID));
 				AssignPlayer(nullptr);
 			}
 		} break;

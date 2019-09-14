@@ -735,7 +735,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 		Map = MapManager->CreateWithID(MapID);
 		Map->Clock = Save->Clock;
 		Map->Server = this;
-		Map->Load(&Stats->Maps.at(MapID));
+		//Map->Load(&Stats->Maps.at(MapID));
 	}
 
 	// Get old map

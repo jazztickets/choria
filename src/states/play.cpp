@@ -91,6 +91,7 @@ void _PlayState::Init() {
 	Map = nullptr;
 	Battle = nullptr;
 	HUD = nullptr;
+	MenuMap = nullptr;
 	Time = 0.0;
 	CoinSoundPlayed = false;
 
@@ -118,11 +119,17 @@ void _PlayState::Init() {
 	AssignPlayer(nullptr);
 
 	// Load menu map
-	MenuMap = new _Map();
-	MenuMap->Stats = Stats;
-	MenuMap->UseAtlas = true;
-	MenuMap->Clock = ae::GetRandomInt(0, MAP_DAY_LENGTH);
-	MenuMap->Load(&Stats->Maps.at(10));
+	try {
+		MenuMap = new _Map();
+		MenuMap->Stats = Stats;
+		MenuMap->UseAtlas = true;
+		MenuMap->Clock = ae::GetRandomInt(0, MAP_DAY_LENGTH);
+		//MenuMap->Load(&Stats->Maps.at(10));
+	}
+	catch(std::exception &Error) {
+		delete MenuMap;
+		MenuMap = nullptr;
+	}
 	AssignPlayer(nullptr);
 
 	// Set position of menu map camera
@@ -632,7 +639,8 @@ void _PlayState::Update(double FrameTime) {
 
 		// Update camera movement
 		MenuCamera->Update(FrameTime);
-		MenuMap->Update(FrameTime * 10.0f);
+		if(MenuMap)
+			MenuMap->Update(FrameTime * 10.0f);
 
 		return;
 	}
@@ -729,7 +737,8 @@ void _PlayState::Render(double BlendFactor) {
 		SetViewProjection(MenuCamera);
 
 		// Render background map
-		MenuMap->Render(MenuCamera, Framebuffer, nullptr, BlendFactor);
+		if(MenuMap)
+			MenuMap->Render(MenuCamera, Framebuffer, nullptr, BlendFactor);
 	}
 
 	// Draw menu
@@ -756,6 +765,8 @@ void _PlayState::PlayDeathSound() {
 
 // Get a random location in the background map
 glm::vec3 _PlayState::GetRandomMapPosition() {
+	if(!MenuMap)
+		return glm::vec3(0, 0, CAMERA_DISTANCE);
 
 	return glm::vec3(ae::GetRandomInt(15, MenuMap->Size.x - 15), ae::GetRandomInt(10, MenuMap->Size.y - 10), CAMERA_DISTANCE);
 }
@@ -943,7 +954,7 @@ void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 		Map->UseAtlas = true;
 		Map->Clock = Clock;
 		Map->NetworkID = MapID;
-		Map->Load(&Stats->Maps.at(MapID));
+		//Map->Load(&Stats->Maps.at(MapID));
 		AssignPlayer(nullptr);
 
 		ae::Audio.PlayMusic(ae::Assets.Music[Map->Music]);

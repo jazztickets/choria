@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+	<scopes>
+		<scope id="world" name="World"/>
+		<scope id="battle" name="Battle"/>
+		<scope id="all" name="All"/>
+	</scopes>
+	<damage_types>
+		<damage_type id="all" name="All"/>
+		<damage_type id="physical" name="Physical"/>
+		<damage_type id="fire" name="Fire"/>
+		<damage_type id="cold" name="Cold"/>
+		<damage_type id="lightning" name="Lightning"/>
+		<damage_type id="poison" name="Poison"/>
+		<damage_type id="bleed" name="Bleed"/>
+		<damage_type id="stun" name="Stun"/>
+	</damage_types>
+	<item_types>
+		<item_type id="helmet" name="Helmet"/>
+		<item_type id="armor" name="Armor"/>
+		<item_type id="boots" name="Boots"/>
+		<item_type id="one_hand" name="One-Handed Weapon"/>
+		<item_type id="two_hand" name="Two-Handed Weapon"/>
+		<item_type id="shield" name="Shield"/>
+		<item_type id="ring" name="Ring"/>
+		<item_type id="amulet" name="Amulet"/>
+		<item_type id="consumable" name="Consumable"/>
+		<item_type id="tradable" name="Tradable"/>
+		<item_type id="unlockable" name="Unlockable"/>
+		<item_type id="key" name="Key"/>
+		<item_type id="skill" name="Skill"/>
+	</item_types>
+	<events>
+		<event id="S" name="Spawn"/>
+		<event id="ME" name="Map Entrance"/>
+		<event id="M" name="Map Change"/>
+		<event id="V" name="Vendor"/>
+		<event id="T" name="Trader"/>
+		<event id="K" name="Key"/>
+		<event id="SC" name="Script"/>
+		<event id="P" name="Portal"/>
+		<event id="J" name="Jump"/>
+		<event id="B" name="Black Smith"/>
+		<event id="G" name="Minigame"/>
+	</events>
+	<portraits>
+		<portrait id="joe" texture="textures/portraits/joe.png"/>
+		<portrait id="jeb" texture="textures/portraits/jeb.png"/>
+		<portrait id="bim" texture="textures/portraits/bim.png"/>
+		<portrait id="sib" texture="textures/portraits/sib.png"/>
+		<portrait id="biff" texture="textures/portraits/biff.png"/>
+		<portrait id="jone" texture="textures/portraits/jone.png"/>
+		<portrait id="leb" texture="textures/portraits/leb.png"/>
+		<portrait id="jas" texture="textures/portraits/jas.png"/>
+		<portrait id="pete" texture="textures/portraits/pete.png"/>
+	</portraits>
+	<models>
+		<model id="warrior" texture="textures/models/warrior.png"/>
+		<model id="mage" texture="textures/models/mage.png"/>
+		<model id="cleric" texture="textures/models/cleric.png"/>
+		<model id="thief" texture="textures/models/thief.png"/>
+		<model id="paladin" texture="textures/models/paladin.png"/>
+		<model id="warlock" texture="textures/models/warlock.png"/>
+		<model id="beggar" texture="textures/models/beggar.png"/>
+		<model id="hunter" texture="textures/models/hunter.png"/>
+		<model id="gambler" texture="textures/models/gambler.png"/>
+	</models>
+	<items>
+		<item id="short_sword" name="Short Sword" type="one_hand" texture="textures/items/short_sword.png">
+			<price buy="50" tradable="true"/>
+			<damage min="20" max="40" type="physical" />
+			<use attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
+			<skills>
+				<skill id="attack"/>
+			</skills>
+		</item>
+		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
+			<price buy="50" tradable="true"/>
+			<damage min="20" max="40" type="physical" />
+			<use attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
+			<skills>
+				<skill id="attack"/>
+			</skills>
+		</item>
+	</items>
+	<skills>
+		<skill id="attack" name="Attack" texture="textures/skills/attack.png">
+			<target type="enemy" alive="true" />
+			<use scope="battle" script="Skill_Attack"/>
+		</skill>
+		<skill id="monster_attack" name="Monster Attack" texture="textures/skills/monster_attack.png">
+			<target type="enemy" alive="true" />
+			<use scope="battle" script="Skill_MonsterAttack"/>
+		</skill>
+	</skills>
+	<builds>
+		<build name="Warrior" model="warrior" starting="true" texture="textures/builds/warrior.png">
+			<items>
+				<item id="ss"/>
+			</items>
+		</build>
+	</builds>
+	<vendors>
+		<vendor id="ham_weapons">
+			<item id="ss"/>
+		</vendor>
+	</vendors>
+	<monsters>
+		<monster id="crow" name="Crow" portrait="textures/monsters/crow.png">
+			<stats health="40" experience="1" gold="1"/>
+			<damage min="5" max="10"/>
+			<ai id="dumb"/>
+			<resists>
+				<resist id="fire" value="-0.25"/>
+			</resists>
+			<skills>
+				<skill id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
+			</skills>
+			<drops>
+				<drop id="none" odds="80"/>
+			</drops>
+		</monster>
+	</monsters>
+	<zones>
+		<zone id="crow" min="1" max="3">
+			<monster id="crow" odds="1"/>
+		</zone>
+	</zones>
+</data>

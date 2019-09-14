@@ -116,7 +116,6 @@ class _EditorState : public ae::_State {
 
 		// Map
 		_Map *Map;
-		uint32_t MapID;
 		std::string FilePath;
 		double Clock;
 		bool UseClockAmbientLight;

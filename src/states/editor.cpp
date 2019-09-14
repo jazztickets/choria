@@ -116,7 +116,6 @@ void _EditorState::Init() {
 	Clock = 60.0 * 12.0;
 	UseClockAmbientLight = false;
 	Map = nullptr;
-	MapID = 0;
 	if(FilePath != "") {
 		LoadMapTextBox->Text = FilePath;
 		LoadMap();
@@ -1001,12 +1000,11 @@ void _EditorState::LoadMap() {
 	_Map *NewMap = new _Map();
 	NewMap->Stats = Stats;
 	NewMap->UseAtlas = true;
-	uint32_t OldMapID = MapID;
 	try {
-		MapID = Stats->GetMapIDByPath(Path);
-		NewMap->Load(&Stats->Maps.at(MapID));
+		NewMap->Load(Path);
 	}
 	catch(std::exception &Error) {
+		std::cout << Error.what() << std::endl;
 		delete NewMap;
 		NewMap = nullptr;
 	}
@@ -1022,13 +1020,12 @@ void _EditorState::LoadMap() {
 		// Set camera position
 		glm::ivec2 Position(0, 0);
 		if(!Map->FindEvent(_Event(_Map::EVENT_SPAWN, 0), Position)) {
-			if(!Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, OldMapID), Position))
-				Map->FindEvent(_Event(_Map::EVENT_MAPENTRANCE, OldMapID), Position);
+			//if(!Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, OldMapID), Position))
+			//	Map->FindEvent(_Event(_Map::EVENT_MAPENTRANCE, OldMapID), Position);
 		}
 		Camera->ForcePosition(glm::vec3(Position, CAMERA_DISTANCE));
 
 		// Save map id
-		MapID = Stats->GetMapIDByPath(Path);
 		UseClockAmbientLight = false;
 		if(Map->IsOutside)
 			UseClockAmbientLight = true;

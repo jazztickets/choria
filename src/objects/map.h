@@ -143,7 +143,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void SetTile(const glm::ivec2 &Position, const _Tile *Tile) { Tiles[Position.x][Position.y] = *Tile; }
 
 		// File IO
-		void Load(const _MapStat *MapStat, bool Static=false);
+		void Load(const std::string &Path, bool Static=false);
 		bool Save(const std::string &Path);
 
 		void NodeToPosition(void *Node, glm::ivec2 &Position) {

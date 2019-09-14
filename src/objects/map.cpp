@@ -726,19 +726,20 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 }
 
 // Load map
-void _Map::Load(const _MapStat *MapStat, bool Static) {
+void _Map::Load(const std::string &Path, bool Static) {
 
 	// Load file
-	gzifstream File(MapStat->File.c_str());
+	gzifstream File(Path.c_str());
 	if(!File)
-		throw std::runtime_error("Cannot load map: " + MapStat->File);
+		throw std::runtime_error("Cannot load map: " + Path);
 
 	// Save map stats
-	AmbientLight = MapStat->AmbientLight;
-	IsOutside = MapStat->Outside;
-	Music = MapStat->Music;
+	AmbientLight = glm::vec4(0.3, 0.3, 0.3, 1);
+	IsOutside = true;
+	Music = "";
 
 	// Load background map
+	/*
 	if(UseAtlas && MapStat->BackgroundMapID) {
 		BackgroundOffset = MapStat->BackgroundOffset;
 
@@ -751,11 +752,12 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 			delete BackgroundMap;
 			BackgroundMap = nullptr;
 		}
-	}
+	}*/
 
 	// Load tiles
 	_Tile *Tile = nullptr;
 	_Object *Object = nullptr;
+	int TileIndex = 0;
 	while(!File.eof() && File.peek() != EOF) {
 
 		// Read chunk type
@@ -776,14 +778,13 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 				FreeMap();
 				AllocateMap();
 			} break;
-			// Tile
+			// Begin new tile
 			case 'T': {
 				glm::ivec2 Coordinate;
-				File >> Coordinate.x >> Coordinate.y;
-				if(Coordinate.x < Size.x && Coordinate.y < Size.y)
-					Tile = &Tiles[Coordinate.x][Coordinate.y];
-				else
-					Tile = nullptr;
+				Coordinate.x = TileIndex % Size.x;
+				Coordinate.y = TileIndex / Size.x;
+				Tile = &Tiles[Coordinate.x][Coordinate.y];
+				TileIndex++;
 			} break;
 			// Texture index
 			case 'b': {
@@ -842,7 +843,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 
 	// Initialize 2d tile rendering
 	if(UseAtlas) {
-		InitAtlas(MapStat->Atlas, Static);
+		InitAtlas("textures/map/atlas0.png", Static);
 	}
 
 	// Initialize path finding
@@ -867,7 +868,7 @@ bool _Map::Save(const std::string &Path) {
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			const _Tile &Tile = Tiles[i][j];
-			Output << "T " << i << " " << j << '\n';
+			Output << "T" << '\n';
 			if(Tile.TextureIndex[0])
 				Output << "b " << Tile.TextureIndex[0] << '\n';
 			if(Tile.TextureIndex[1])
