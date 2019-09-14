@@ -169,7 +169,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 			ae::Graphics.SetColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
 			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_STATIC]);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
@@ -193,7 +193,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 			ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
 
 			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_DYNAMIC]);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 
 			glm::mat4 Transform(1.0f);
 			glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
@@ -227,7 +227,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 			glUniformMatrix4fv(Program->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS]);
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
 			glBindTexture(GL_TEXTURE_2D, Atlas->Texture->ID);
 
@@ -245,7 +245,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 				glUniformMatrix4fv(Program->ModelTransformID, 1, GL_FALSE, glm::value_ptr(Transform));
 
 				// Texture transform
-				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1, 30));
+				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1U, 30U));
 				glm::mat4 TextureTransform(1.0f);
 				TextureTransform[3][0] = TextureCoords[0];
 				TextureTransform[3][1] = TextureCoords[1];
@@ -267,7 +267,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 			glUniformMatrix4fv(Program->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(ae::Graphics.Ortho));
 			glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer[VBO_ATLAS_DYNAMIC]);
 			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (GLvoid *)(sizeof(float) * 8));
 			glBindTexture(GL_TEXTURE_2D, Atlas->Texture->ID);
 
@@ -281,7 +281,7 @@ void _BenchmarkState::Render(double BlendFactor) {
 			for(int i = 0; i < CALLS; i++) {
 				glm::vec2 Start(ae::GetRandomInt(0, ae::Graphics.CurrentSize.x), ae::GetRandomInt(0, ae::Graphics.CurrentSize.y));
 				glm::vec2 End(Start + glm::vec2(64));
-				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1, 30));
+				glm::vec4 TextureCoords = Atlas->GetTextureCoords(ae::GetRandomInt(1U, 30U));
 
 				Vertices[Index++] = End.x;
 				Vertices[Index++] = Start.y;

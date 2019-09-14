@@ -27,7 +27,7 @@ class _TraderScreen : public _Screen {
 
 	public:
 
-		_TraderScreen(_HUD *HUD, ae::_Element *Element);
+		_TraderScreen(_HUD *MainHUD, ae::_Element *MainElement);
 
 		void Init() override;
 		bool Close(bool SendNotify=true) override;

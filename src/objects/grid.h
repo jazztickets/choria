@@ -30,7 +30,7 @@ namespace ae {
 struct _GridTile {
 	_GridTile() { }
 
-	std::list<const void *> Objects;
+	std::list<void *> Objects;
 };
 
 // Uniform grid class
@@ -42,12 +42,12 @@ class _Grid {
 		~_Grid();
 
 		// Objects
-		void AddObject(const void *Object, const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths);
-		void RemoveObject(const void *Object);
+		void AddObject(void *Object, const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths);
+		void RemoveObject(void *Object) { }
 
 		// Collision
 		void GetTileBounds(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, ae::_Bounds &Bounds) const;
-		void GetObjectList(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, std::list<const void *> &PotentialObjects);
+		void GetObjectList(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, std::list<void *> &PotentialObjects);
 
 		// Debug
 		void Render();

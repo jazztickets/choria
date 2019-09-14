@@ -27,8 +27,8 @@
 #include <sstream>
 
 // Constructor
-_BlacksmithScreen::_BlacksmithScreen(_HUD *HUD, ae::_Element *Element) :
-	_Screen(HUD, Element) {
+_BlacksmithScreen::_BlacksmithScreen(_HUD *MainHUD, ae::_Element *MainElement) :
+	_Screen(MainHUD, MainElement) {
 }
 
 // Initialize

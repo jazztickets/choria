@@ -156,7 +156,7 @@ class _Menu {
 		void ResetInGameState();
 
 		void ShowNewKey(ae::_Element *Button, int Type);
-		void ClearAction(int Action, int Type);
+		void ClearAction(size_t Action, int Type);
 		void RemapInput(int InputType, int Input);
 
 		// States

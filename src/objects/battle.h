@@ -63,7 +63,7 @@ class _Battle : public ae::_BaseObject {
 	public:
 
 		_Battle();
-		~_Battle();
+		~_Battle() override;
 
 		// Objects
 		void AddObject(_Object *Object, uint8_t Side, bool Join=false);

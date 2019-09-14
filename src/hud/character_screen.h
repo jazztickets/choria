@@ -25,7 +25,7 @@ class _CharacterScreen : public _Screen {
 
 	public:
 
-		_CharacterScreen(_HUD *HUD, ae::_Element *Element);
+		_CharacterScreen(_HUD *MainHUD, ae::_Element *MainElement);
 
 		void Render(double BlendFactor) override;
 

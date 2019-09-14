@@ -19,9 +19,9 @@
 #include <ae/ui.h>
 
 // Constructor
-_Screen::_Screen(_HUD *HUD, ae::_Element *Element) :
-	HUD(HUD),
-	Element(Element) {
+_Screen::_Screen(_HUD *MainHUD, ae::_Element *MainElement) :
+	HUD(MainHUD),
+	Element(MainElement) {
 
 	Element->SetActive(false);
 }

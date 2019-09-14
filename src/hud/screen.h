@@ -29,7 +29,7 @@ class _Screen {
 
 	public:
 
-		_Screen(_HUD *HUD, ae::_Element *Element);
+		_Screen(_HUD *MainHUD, ae::_Element *MainElement);
 		virtual ~_Screen() { }
 
 		virtual void Init() { }

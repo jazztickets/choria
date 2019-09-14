@@ -237,8 +237,6 @@ void _Object::Update(double FrameTime) {
 
 // Update bot AI
 void _Object::UpdateBot(double FrameTime) {
-	//TODO fix
-	return;
 
 	// Call ai script
 	if(!Character->Battle && Scripting->StartMethodCall("Bot_Server", "Update")) {

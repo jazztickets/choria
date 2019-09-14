@@ -48,7 +48,7 @@ _Grid::~_Grid() {
 }
 
 // Adds an object to the collision grid
-void _Grid::AddObject(const void *Object, const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths) {
+void _Grid::AddObject(void *Object, const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths) {
 
 	// Get the object's bounding rectangle in world space
 	ae::_Bounds Bounds;
@@ -94,17 +94,17 @@ void _Grid::GetTileBounds(const glm::vec2 &ObjectPosition, const glm::vec2 &Obje
 }
 
 // Get a list of pontential objects that an object could collide with
-void _Grid::GetObjectList(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, std::list<const void *> &PotentialObjects) {
+void _Grid::GetObjectList(const glm::vec2 &ObjectPosition, const glm::vec2 &ObjectHalfWidths, std::list<void *> &PotentialObjects) {
 
 	// Get the object's bounding rectangle in world space
 	ae::_Bounds Bounds;
 	GetTileBounds(ObjectPosition + Offset, ObjectHalfWidths, Bounds);
 
 	// Check tiles for objects
-	std::unordered_map<const void *, int> ObjectMap;
+	std::unordered_map<void *, int> ObjectMap;
 	for(int i = Bounds.Start.x; i <= Bounds.End.x; i++) {
 		for(int j = Bounds.Start.y; j <= Bounds.End.y; j++) {
-			for(const auto &Object : Tiles[i][j].Objects) {
+			for(auto &Object : Tiles[i][j].Objects) {
 				if(ObjectMap.find(Object) == ObjectMap.end()) {
 					PotentialObjects.push_front(Object);
 					ObjectMap[Object] = 1;

@@ -28,7 +28,7 @@ class _InventoryScreen : public _Screen {
 
 	public:
 
-		_InventoryScreen(_HUD *HUD, ae::_Element *Element);
+		_InventoryScreen(_HUD *MainHUD, ae::_Element *MainElement);
 
 		bool Close(bool SendNotify=true) override;
 		void Toggle() override;

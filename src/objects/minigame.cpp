@@ -165,7 +165,7 @@ void _Minigame::Update(double FrameTime) {
 			continue;
 
 		// Get list of objects from grid
-		std::list<const void *> PotentialObjects;
+		std::list<void *> PotentialObjects;
 		Grid->GetObjectList(Sprite->RigidBody.Position, Sprite->Shape.HalfWidth, PotentialObjects);
 		for(auto &TestObject : PotentialObjects) {
 			_Sprite *TestSprite = (_Sprite *)TestObject;

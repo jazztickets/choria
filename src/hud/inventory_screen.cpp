@@ -31,8 +31,8 @@
 #include <sstream>
 
 // Constructor
-_InventoryScreen::_InventoryScreen(_HUD *HUD, ae::_Element *Element) :
-	_Screen(HUD, Element) {
+_InventoryScreen::_InventoryScreen(_HUD *MainHUD, ae::_Element *MainElement) :
+	_Screen(MainHUD, MainElement) {
 
 	EquipmentElement = ae::Assets.Elements["element_equipment"];
 	InventoryElement = ae::Assets.Elements["element_inventory"];

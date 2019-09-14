@@ -29,7 +29,7 @@ class _TradeScreen : public _Screen {
 
 	public:
 
-		_TradeScreen(_HUD *HUD, ae::_Element *Element);
+		_TradeScreen(_HUD *MainHUD, ae::_Element *MainElement);
 
 		void Init() override;
 		bool Close(bool SendNotify=true) override;

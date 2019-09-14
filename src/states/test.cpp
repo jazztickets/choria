@@ -65,7 +65,7 @@ void _TestState::Init() {
 
 		// Drop ball over highest value prize
 		float X = 0;
-		if(0) {
+		if((0)) {
 			int HighestPrizeIndex = 0;
 			int HighestPrizeValue = 0;
 			int Index = 0;

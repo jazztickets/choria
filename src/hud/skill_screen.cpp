@@ -34,8 +34,8 @@
 #include <sstream>
 
 // Constructor
-_SkillScreen::_SkillScreen(_HUD *HUD, ae::_Element *Element) :
-	_Screen(HUD, Element) {
+_SkillScreen::_SkillScreen(_HUD *MainHUD, ae::_Element *MainElement) :
+	_Screen(MainHUD, MainElement) {
 }
 
 // Initialize

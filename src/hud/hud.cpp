@@ -814,24 +814,6 @@ void _HUD::ToggleChat() {
 	}
 }
 
-// Toggles the teleport state
-void _HUD::ToggleTeleport() {
-	return;
-
-	if(!Player->Character->CanTeleport())
-		return;
-
-	if(!Player->Controller->WaitForServer && !TeleportElement->Active) {
-		CloseWindows(true);
-		PlayState.SendStatus(_Character::STATUS_TELEPORT);
-		Player->Controller->WaitForServer = true;
-	}
-	else {
-		Player->Controller->WaitForServer = false;
-		CloseWindows(true);
-	}
-}
-
 // Open/close party screen
 void _HUD::ToggleParty(bool IgnoreNextChar) {
 	if(Player->Controller->WaitForServer || !Player->Character->CanOpenParty())
@@ -1133,7 +1115,7 @@ void _HUD::DrawActionBar() {
 		}
 
 		// Draw hotkey
-		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((int)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-28, -15) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
+		ae::Assets.Fonts["hud_tiny"]->DrawText(ae::Actions.GetInputNameForAction((size_t)(Action::GAME_SKILL1 + i)), DrawPosition + glm::vec2(-28, -15) * ae::_Element::GetUIScale(), ae::LEFT_BASELINE);
 	}
 }
 

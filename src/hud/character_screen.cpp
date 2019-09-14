@@ -27,8 +27,8 @@
 #include <sstream>
 
 // Constructor
-_CharacterScreen::_CharacterScreen(_HUD *HUD, ae::_Element *Element) :
-	_Screen(HUD, Element) {
+_CharacterScreen::_CharacterScreen(_HUD *MainHUD, ae::_Element *MainElement) :
+	_Screen(MainHUD, MainElement) {
 }
 
 // Render

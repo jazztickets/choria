@@ -28,7 +28,7 @@ class _VendorScreen : public _Screen {
 
 	public:
 
-		_VendorScreen(_HUD *HUD, ae::_Element *Element);
+		_VendorScreen(_HUD *MainHUD, ae::_Element *MainElement);
 
 		void Init() override;
 		bool Close(bool SendNotify=true) override;

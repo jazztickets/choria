@@ -34,8 +34,8 @@
 #include <sstream>
 
 // Constructor
-_TradeScreen::_TradeScreen(_HUD *HUD, ae::_Element *Element) :
-	_Screen(HUD, Element) {
+_TradeScreen::_TradeScreen(_HUD *MainHUD, ae::_Element *MainElement) :
+	_Screen(MainHUD, MainElement) {
 }
 
 // Initialize

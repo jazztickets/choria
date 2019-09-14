@@ -51,7 +51,7 @@ const std::string CharacterButtonPrefix = "button_characters_slot";
 const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
 
-const int KeyBindings[] = {
+static const size_t KeyBindings[] = {
 	Action::GAME_UP,
 	Action::GAME_DOWN,
 	Action::GAME_LEFT,
@@ -74,7 +74,7 @@ const int KeyBindings[] = {
 	Action::MISC_CONSOLE,
 };
 
-const char *KeyBindingNames[] = {
+static const char *KeyBindingNames[] = {
 	"Move Up",
 	"Move Down",
 	"Move Left",
@@ -702,7 +702,7 @@ void _Menu::LoadKeybindings() {
 	glm::vec2 Size(140, 50);
 
 	// Iterate over actions
-	size_t i = 0;
+	int i = 0;
 	glm::vec2 Offset(StartingPosition);
 	for(const auto &Action : KeyBindings) {
 
@@ -896,12 +896,12 @@ void _Menu::ShowNewKey(ae::_Element *Button, int Type) {
 
 	// Set action text
 	RebindType = Type;
-	RebindAction = KeyBindings[Button->Index];
+	RebindAction = (int)KeyBindings[(size_t)Button->Index];
 	NewKeyActionElement->Text = KeyBindingNames[Button->Index];
 }
 
 // Clear action on keybinding page
-void _Menu::ClearAction(int Action, int Type) {
+void _Menu::ClearAction(size_t Action, int Type) {
 	for(int i = 0; i < ae::_Input::INPUT_COUNT; i++) {
 		if(ae::Actions.GetInputForAction(i, Action, Type) != -1)
 			ae::Actions.ClearMappingsForAction(i, Action, Type);
@@ -920,10 +920,10 @@ void _Menu::RemapInput(int InputType, int Input) {
 	ae::Actions.ClearMappingForInput(InputType, Input);
 
 	// Clear out existing action
-	ClearAction(RebindAction, RebindType);
+	ClearAction((size_t)RebindAction, RebindType);
 
 	// Add new binding
-	ae::Actions.AddInputMap(RebindType, InputType, Input, RebindAction, 1.0f, -1.0f, false);
+	ae::Actions.AddInputMap(RebindType, InputType, Input, (size_t)RebindAction, 1.0f, -1.0f, false);
 
 	// Update menu labels
 	InitKeybindings();
@@ -1321,7 +1321,7 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 						// Set ip and port
 						ae::_Element *Host = ae::Assets.Elements["textbox_menu_browse_host"];
-						Host->Text = ConnectServers[Clicked->Index].IP + ":" + std::to_string(ConnectServers[Clicked->Index].Port);
+						Host->Text = ConnectServers[(size_t)Clicked->Index].IP + ":" + std::to_string(ConnectServers[(size_t)Clicked->Index].Port);
 						ValidateConnect();
 
 						// Connect on double click
@@ -1701,7 +1701,7 @@ void _Menu::RenderBrowser() {
 		Count++;
 		if(Count >= MainElement->Children.size())
 			break;
-	};
+	}
 }
 
 // Cycle focused elements

@@ -31,8 +31,8 @@
 #include <sstream>
 
 // Constructor
-_VendorScreen::_VendorScreen(_HUD *HUD, ae::_Element *Element) :
-	_Screen(HUD, Element) {
+_VendorScreen::_VendorScreen(_HUD *MainHUD, ae::_Element *MainElement) :
+	_Screen(MainHUD, MainElement) {
 }
 
 // Initialize

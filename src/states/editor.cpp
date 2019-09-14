@@ -392,7 +392,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
 			_Object *Object = new _Object;
 			Object->Position = WorldCursor;
-			Object->Light = ObjectData;
+			Object->Light = (int)ObjectData;
 			Map->StaticObjects.push_back(Object);
 		}
 	}
