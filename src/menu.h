@@ -164,7 +164,6 @@ class _Menu {
 		std::string DefaultPassword;
 		bool FromInGame;
 		int RebindType;
-		int RebindInput;
 		int RebindAction;
 
 		// UI

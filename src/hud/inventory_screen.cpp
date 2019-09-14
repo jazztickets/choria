@@ -44,7 +44,7 @@ _InventoryScreen::_InventoryScreen(_HUD *HUD, ae::_Element *Element) :
 }
 
 // Close screen
-bool _InventoryScreen::Close() {
+bool _InventoryScreen::Close(bool SendNotify) {
 	bool WasOpen = Element->Active;
 	HUD->Cursor.Reset();
 

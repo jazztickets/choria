@@ -29,7 +29,7 @@ class _SkillScreen : public _Screen {
 		_SkillScreen(_HUD *HUD, ae::_Element *Element);
 
 		void Init() override;
-		bool Close() override;
+		bool Close(bool SendNotify=true) override;
 
 		void Toggle() override;
 		void Render(double BlendFactor) override;

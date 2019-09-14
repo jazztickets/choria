@@ -156,7 +156,7 @@ void _SkillScreen::Init() {
 }
 
 // Close screen
-bool _SkillScreen::Close() {
+bool _SkillScreen::Close(bool SendNotify) {
 	bool WasOpen = Element->Active;
 
 	Element->SetActive(false);

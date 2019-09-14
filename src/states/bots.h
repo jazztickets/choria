@@ -51,7 +51,7 @@ class _BotsState : public ae::_State {
 		void ShowCommands();
 		void Add();
 		void DisconnectAll();
-		void HandleQuit();
+		void HandleQuit() override;
 
 		std::string HostAddress;
 		uint16_t Port;

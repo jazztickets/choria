@@ -30,8 +30,8 @@ class _Battle;
 class _Map;
 class _Stats;
 class _Scripting;
+class _StatChange;
 struct _Event;
-struct _StatChange;
 
 namespace ae {
 	template<class T> class _Manager;
