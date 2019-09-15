@@ -218,6 +218,9 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void AdjacentCost(void *State, std::vector<micropather::StateCost> *Neighbors) override;
 		void PrintStateInfo(void *State) override { }
 
+		// Tiles
+		uint32_t GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint32_t Bit);
+
 		// Rendering
 		uint32_t TileVertexBufferID;
 		uint32_t TileElementBufferID;

@@ -495,73 +495,35 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 
 // Set texture indexes for each layer based on base texture index
 void _Map::BuildLayers(bool NoTrans) {
-	for(int j = 1; j < Size.y-1; j++) {
-		for(int i = 1; i < Size.x-1; i++) {
-			_Tile &TileC = Tiles[i+0][j+0];
+	for(int j = 0; j < Size.y; j++) {
+		for(int i = 0; i < Size.x; i++) {
+			_Tile &Tile = Tiles[i+0][j+0];
 			if(NoTrans) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = 0;
-				TileC.TextureIndex[2] = 0;
-				TileC.TextureIndex[3] = 0;
+				Tile.TextureIndex[0] = Tile.BaseTextureIndex;
+				Tile.TextureIndex[1] = 0;
+				Tile.TextureIndex[2] = 0;
+				Tile.TextureIndex[3] = 0;
 				continue;
 			}
 
-			_Tile &TileN = Tiles[i+0][j-1];
-			_Tile &TileE = Tiles[i+1][j+0];
-			_Tile &TileS = Tiles[i+0][j+1];
-			_Tile &TileW = Tiles[i-1][j+0];
-			_Tile &TileNW = Tiles[i-1][j-1];
-			_Tile &TileNE = Tiles[i+1][j-1];
-			_Tile &TileSW = Tiles[i-1][j+1];
-			_Tile &TileSE = Tiles[i+1][j+1];
+			// Set base texture
+			Tile.TextureIndex[0] = Tile.BaseTextureIndex;
 
+			// Get edge transition texture index
 			uint32_t EdgeTrans = 0;
-			TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-			if(TileC.BaseTextureIndex > TileN.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileN.BaseTextureIndex;
-				EdgeTrans |= 1;
-			}
-			if(TileC.BaseTextureIndex > TileE.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileE.BaseTextureIndex;
-				EdgeTrans |= 2;
-			}
-			if(TileC.BaseTextureIndex > TileS.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileS.BaseTextureIndex;
-				EdgeTrans |= 4;
-			}
-			if(TileC.BaseTextureIndex > TileW.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileW.BaseTextureIndex;
-				EdgeTrans |= 8;
-			}
-			TileC.TextureIndex[2] = EdgeTrans;
+			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+0, j-1), 1);
+			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+1, j+0), 2);
+			EdgeTrans |= GetTransition(Tile, glm::ivec2(i+0, j+1), 4);
+			EdgeTrans |= GetTransition(Tile, glm::ivec2(i-1, j+0), 8);
+			Tile.TextureIndex[2] = EdgeTrans;
 
+			// Get corner transition texture index
 			uint32_t CornerTrans = 0;
-			if(TileC.BaseTextureIndex > TileNW.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileNW.BaseTextureIndex;
-				CornerTrans |= 1;
-			}
-			if(TileC.BaseTextureIndex > TileNE.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileNE.BaseTextureIndex;
-				CornerTrans |= 2;
-			}
-			if(TileC.BaseTextureIndex > TileSE.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileSE.BaseTextureIndex;
-				CornerTrans |= 4;
-			}
-			if(TileC.BaseTextureIndex > TileSW.BaseTextureIndex) {
-				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
-				TileC.TextureIndex[1] = TileSW.BaseTextureIndex;
-				CornerTrans |= 8;
-			}
-
-			TileC.TextureIndex[3] = 16 + CornerTrans;
+			CornerTrans |= GetTransition(Tile, glm::ivec2(i-1, j-1), 1);
+			CornerTrans |= GetTransition(Tile, glm::ivec2(i+1, j-1), 2);
+			CornerTrans |= GetTransition(Tile, glm::ivec2(i+1, j+1), 4);
+			CornerTrans |= GetTransition(Tile, glm::ivec2(i-1, j+1), 8);
+			Tile.TextureIndex[3] = 16 + CornerTrans;
 		}
 	}
 }
@@ -1270,4 +1232,21 @@ void _Map::AdjacentCost(void *State, std::vector<micropather::StateCost> *Neighb
 		micropather::StateCost NodeCost = { PositionToNode(NewPosition), Cost };
 		Neighbors->push_back(NodeCost);
 	}
+}
+
+// Return 'Bit' if 'Tile' has a lower precedence than the tile in CheckPosition
+uint32_t _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint32_t Bit) {
+
+	// Get valid tile to check
+	glm::ivec2 CheckCoord = GetValidCoord(CheckPosition);
+	_Tile &TileCheck = Tiles[CheckCoord.x][CheckCoord.y];
+
+	// Check hierarchy
+	if(Tile.BaseTextureIndex > TileCheck.BaseTextureIndex) {
+		Tile.TextureIndex[0] = Tile.BaseTextureIndex;
+		Tile.TextureIndex[1] = TileCheck.BaseTextureIndex;
+		return Bit;
+	}
+
+	return 0;
 }
