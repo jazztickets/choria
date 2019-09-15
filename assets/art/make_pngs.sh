@@ -12,6 +12,12 @@ type pngcrush >/dev/null 2>&1 || {
 	exit 1;
 }
 
+# check for xmllint
+type xmllint >/dev/null 2>&1 || {
+	echo >&2 "xmllint is not installed ";
+	exit 1;
+}
+
 # get parameters
 file=$1
 scale=$2

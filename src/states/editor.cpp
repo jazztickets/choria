@@ -920,7 +920,7 @@ void _EditorState::CreateMap() {
 	Map->Stats = Stats;
 	Map->UseAtlas = true;
 	Map->Size = Size;
-	Map->InitAtlas("textures/map/" + MAP_DEFAULT_TILESET);
+	Map->InitAtlas("textures/map/default.png");
 	Map->AllocateMap();
 	FilePath = NewMapFilenameTextBox->Text;
 
