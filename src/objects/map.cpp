@@ -562,7 +562,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	}
 
 	// Draw layers
-	RenderLayer("map", Bounds, glm::vec3(0.0f), 0);
+	RenderTiles("map", Bounds, glm::vec3(0.0f), 0);
 	//RenderLayer("map", Bounds, glm::vec3(0.0f), 1);
 
 	// Render objects
@@ -628,16 +628,22 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	}
 }
 
-// Render either floor or foreground texture tiles
-void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static) {
+// Render map
+void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static) {
+
+	// Set shader parameters
 	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
+	ae::Graphics.SetTextureID(TileAtlas->Texture->ID);
+	ae::Graphics.EnableAttribs(3);
 	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
 
+	// Build tiles
 	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;
-
 	if(!Static) {
+
+		// Iterate over viewable tiles
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
 
@@ -658,12 +664,11 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 		FaceIndex = Size.x * Size.y * 2;
 	}
 
+	// Get buffer sizes
 	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(_TileVertexBuffer);
 	GLsizeiptr ElementBufferSize = FaceIndex * (int)sizeof(glm::u32vec3);
 
-	ae::Graphics.SetTextureID(TileAtlas->Texture->ID);
-	ae::Graphics.EnableAttribs(3);
-
+	// Bind buffers
 	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID);
 	if(!Static)
 		glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices);
@@ -673,8 +678,11 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	if(!Static)
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
+
+	// Render buffer
 	glDrawElements(GL_TRIANGLES, FaceIndex * 3, GL_UNSIGNED_INT, nullptr);
 
+	// Reset internal state
 	ae::Graphics.DirtyState();
 }
 
