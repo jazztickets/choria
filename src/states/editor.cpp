@@ -1084,7 +1084,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 			// Apply filters
 			if(Filter & MAP_RENDER_TEXTURE)
-				Tile.TextureIndex[Layer] = Brush->TextureIndex[Layer];
+				Tile.BaseTextureIndex = Brush->TextureIndex[0];
 			if(Filter & MAP_RENDER_WALL)
 				Tile.Wall = Brush->Wall;
 			if(Filter & MAP_RENDER_ZONE)
@@ -1100,6 +1100,8 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 			Map->SetTile(TilePosition, &Tile);
 		}
 	}
+
+	Map->BuildLayers();
 }
 
 // Deletes the map

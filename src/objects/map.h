@@ -73,8 +73,9 @@ struct _Event {
 };
 
 struct _Tile {
-	_Tile() : TextureIndex{0, 0, 0}, Zone(0), Wall(false), PVP(false) { }
+	_Tile() : TextureIndex{0, 0, 0}, BaseTextureIndex(0), Zone(0), Wall(false), PVP(false) { }
 	uint32_t TextureIndex[MAP_LAYERS];
+	uint32_t BaseTextureIndex;
 	uint32_t Zone;
 	_Event Event;
 	bool Wall;
@@ -82,7 +83,7 @@ struct _Tile {
 };
 
 struct _TileVertexBuffer {
-	float Data[6];
+	float Data[8];
 };
 
 // Classes
@@ -125,6 +126,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		bool IsPVPZone(const glm::ivec2 &Position) const;
 
 		// Graphics
+		void BuildLayers();
 		void Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
 		void RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static=false);
 		int AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB);

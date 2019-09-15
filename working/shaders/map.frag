@@ -8,16 +8,18 @@ uniform vec4 color;
 
 in vec2 texture_coord0;
 in vec2 texture_coord1;
+in vec2 texture_coord2;
 out vec4 out_color;
 
 void main() {
 	vec4 texture_color_back = texture(sampler0, texture_coord0);
-	vec4 texture_color_fore = texture(sampler1, texture_coord1);
+	vec4 texture_color_fore = texture(sampler0, texture_coord1);
+	vec4 texture_color_trans = texture(sampler1, texture_coord2);
 
 	// Blend first two textures
 	vec4 texture_color;
 	if(texture_color_fore.a > 0)
-		texture_color = texture_color_back * (1 - texture_color_fore.a) + texture_color_fore * texture_color_fore.a;
+		texture_color = texture_color_back * (1 - texture_color_trans.a) + texture_color_fore * texture_color_trans.a;
 	else
 		texture_color = texture_color_back;
 

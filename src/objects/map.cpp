@@ -493,7 +493,69 @@ bool _Map::IsPVPZone(const glm::ivec2 &Position) const {
 	return GetTile(Position)->PVP;
 }
 
-// Renders the map
+// Set texture indexes for each layer based on base texture index
+void _Map::BuildLayers() {
+	for(int j = 1; j < Size.y-1; j++) {
+		for(int i = 1; i < Size.x-1; i++) {
+			_Tile &TileC = Tiles[i+0][j+0];
+			_Tile &TileN = Tiles[i+0][j-1];
+			_Tile &TileE = Tiles[i+1][j+0];
+			_Tile &TileS = Tiles[i+0][j+1];
+			_Tile &TileW = Tiles[i-1][j+0];
+			_Tile &TileNW = Tiles[i-1][j-1];
+			_Tile &TileNE = Tiles[i+1][j-1];
+			_Tile &TileSW = Tiles[i-1][j+1];
+			_Tile &TileSE = Tiles[i+1][j+1];
+
+			uint32_t Trans = 0;
+			TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+			if(TileC.BaseTextureIndex > TileN.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileN.BaseTextureIndex;
+				Trans |= 3;
+			}
+			if(TileC.BaseTextureIndex > TileE.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileE.BaseTextureIndex;
+				Trans |= 6;
+			}
+			if(TileC.BaseTextureIndex > TileS.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileS.BaseTextureIndex;
+				Trans |= 12;
+			}
+			if(TileC.BaseTextureIndex > TileW.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileW.BaseTextureIndex;
+				Trans |= 9;
+			}
+
+			if(TileC.BaseTextureIndex > TileNW.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileNW.BaseTextureIndex;
+				Trans |= 1;
+			}
+			if(TileC.BaseTextureIndex > TileNE.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileNE.BaseTextureIndex;
+				Trans |= 2;
+			}
+			if(TileC.BaseTextureIndex > TileSW.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileSW.BaseTextureIndex;
+				Trans |= 8;
+			}
+			if(TileC.BaseTextureIndex > TileSE.BaseTextureIndex) {
+				TileC.TextureIndex[0] = TileC.BaseTextureIndex;
+				TileC.TextureIndex[1] = TileSE.BaseTextureIndex;
+				Trans |= 4;
+			}
+			TileC.TextureIndex[2] = Trans;
+		}
+	}
+}
+
+// Renders the map and all objects
 void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *ClientPlayer, double BlendFactor, int RenderFlags) {
 
 	// Set lights for editor
@@ -564,7 +626,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, TileAtlas->Texture->ID);
+		glBindTexture(GL_TEXTURE_2D, TransAtlas->Texture->ID);
 		glActiveTexture(GL_TEXTURE0);
 		ae::Graphics.DirtyState();
 	}
@@ -573,9 +635,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	RenderTiles("map", Bounds, glm::vec3(0.0f), false);
 
 	// Render objects
-	for(const auto &Object : Objects) {
+	for(const auto &Object : Objects)
 		Object->Render(ClientPlayer);
-	}
 
 	// Check for flags
 	if(!RenderFlags)
@@ -642,7 +703,7 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
 	ae::Graphics.SetTextureID(TileAtlas->Texture->ID);
-	ae::Graphics.EnableAttribs(3);
+	ae::Graphics.EnableAttribs(4);
 	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
 
 	// Build tiles
@@ -654,13 +715,14 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
 
-				// Build buffer with background and foreground layers
-				glm::vec4 TextureCoordsBack = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[0]);
-				glm::vec4 TextureCoordsFore = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[1]);
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoordsBack[0], TextureCoordsBack[1], TextureCoordsFore[0], TextureCoordsFore[1] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoordsBack[2], TextureCoordsBack[1], TextureCoordsFore[2], TextureCoordsFore[1] };
-				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoordsBack[0], TextureCoordsBack[3], TextureCoordsFore[0], TextureCoordsFore[3] };
-				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoordsBack[2], TextureCoordsBack[3], TextureCoordsFore[2], TextureCoordsFore[3] };
+				// Build buffer with background, foreground, and transition layers
+				glm::vec4 BackCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[0]);
+				glm::vec4 ForeCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[1]);
+				glm::vec4 TransCoords = TransAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[2]);
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, BackCoords[0], BackCoords[1], ForeCoords[0], ForeCoords[1], TransCoords[0], TransCoords[1] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, BackCoords[2], BackCoords[1], ForeCoords[2], ForeCoords[1], TransCoords[2], TransCoords[1] };
+				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, BackCoords[0], BackCoords[3], ForeCoords[0], ForeCoords[3], TransCoords[0], TransCoords[3] };
+				TileVertices[VertexIndex++] = { i + 1.0f, j + 1.0f, BackCoords[2], BackCoords[3], ForeCoords[2], ForeCoords[3], TransCoords[2], TransCoords[3] };
 
 				FaceIndex += 2;
 			}
@@ -682,6 +744,7 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), nullptr);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 2));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 4));
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 6));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	if(!Static)
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
@@ -804,12 +867,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 			// Texture index
 			case 'b': {
 				if(Tile)
-					File >> Tile->TextureIndex[0];
-			} break;
-			// Foreground texture index
-			case 'f': {
-				if(Tile)
-					File >> Tile->TextureIndex[1];
+					File >> Tile->BaseTextureIndex;
 			} break;
 			// Zone
 			case 'z': {
@@ -859,6 +917,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 	// Initialize 2d tile rendering
 	if(UseAtlas) {
 		InitAtlas("textures/map/default.png", Static);
+		BuildLayers();
 	}
 
 	// Initialize path finding
@@ -884,10 +943,8 @@ bool _Map::Save(const std::string &Path) {
 		for(int i = 0; i < Size.x; i++) {
 			const _Tile &Tile = Tiles[i][j];
 			Output << "T" << '\n';
-			if(Tile.TextureIndex[0])
-				Output << "b " << Tile.TextureIndex[0] << '\n';
-			if(Tile.TextureIndex[1])
-				Output << "f " << Tile.TextureIndex[1] << '\n';
+			if(Tile.BaseTextureIndex)
+				Output << "b " << Tile.BaseTextureIndex << '\n';
 			if(Tile.Zone)
 				Output << "z " << Tile.Zone << '\n';
 			if(Tile.Event.Type)
