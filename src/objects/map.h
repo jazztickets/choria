@@ -34,6 +34,17 @@
 #include <map>
 #include <sstream>
 
+// Constants
+const int MAP_VERSION = 1;
+const int MAP_TILE_WIDTH = 64;
+const int MAP_TILE_HEIGHT = 64;
+const int MAP_LAYERS = 2;
+const double MAP_DAY_LENGTH = 24.0*60.0;
+const double MAP_CLOCK_SPEED = 1.0;
+const double MAP_EDITOR_CLOCK_SPEED = 200.0;
+const glm::vec4 MAP_AMBIENT_LIGHT = glm::vec4(0.3, 0.3, 0.3, 1);
+const std::string MAP_DEFAULT_TILESET = "atlas0.png";
+
 // Forward Declarations
 class _Object;
 class _Server;
@@ -64,11 +75,15 @@ struct _Event {
 
 struct _Tile {
 	_Tile() : TextureIndex{0, 0}, Zone(0), Wall(false), PVP(false) { }
-	uint32_t TextureIndex[2];
+	uint32_t TextureIndex[MAP_LAYERS];
 	uint32_t Zone;
 	_Event Event;
 	bool Wall;
 	bool PVP;
+};
+
+struct _TileVertexBuffer {
+	float Data[6];
 };
 
 // Classes
@@ -112,7 +127,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 		// Graphics
 		void Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *ClientPlayer, double BlendFactor, int RenderFlags=0);
-		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static=false);
+		void RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static=false);
 		int AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *Program, glm::vec4 AABB);
 
 		// Collision
@@ -204,7 +219,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		// Rendering
 		uint32_t TileVertexBufferID[2];
 		uint32_t TileElementBufferID;
-		glm::vec4 *TileVertices[2];
+		_TileVertexBuffer *TileVertices[MAP_LAYERS];
 		glm::u32vec3 *TileFaces;
 
 		// Network

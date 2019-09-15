@@ -130,15 +130,16 @@ void _TestState::Init() {
 
 	//Framework.Done = true;
 
-	//Minigame = new _Minigame(&Stats->Minigames.at(1));
-	//Minigame->Debug = -1;
-	//Minigame->StartGame(1049117602);
-	//Minigame->Drop(4.3513402938842773);
-	//Minigame->StartGame(1290408577);
-	//Minigame->Drop(-7.1556816101074219);
-	//Minigame->StartGame(2109853616);
-	//Minigame->Drop(-4.879331111907959);
-
+	if((0)){
+		Minigame = new _Minigame(&Stats->Minigames.at(1));
+		Minigame->Debug = -1;
+		Minigame->StartGame(1049117602);
+		Minigame->Drop(4.3513402938842773);
+		Minigame->StartGame(1290408577);
+		Minigame->Drop(-7.1556816101074219);
+		Minigame->StartGame(2109853616);
+		Minigame->Drop(-4.879331111907959);
+	}
 }
 
 // Close
@@ -222,6 +223,12 @@ void _TestState::Render(double BlendFactor) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["text"]);
 		glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(Camera->Transform));
 	}
+
+	ae::Assets.Programs["pos_uv_static"]->AmbientLight = glm::vec4(1.0f);
+
+	ae::Graphics.SetProgram(ae::Assets.Programs["pos_uv"]);
+	glUniformMatrix4fv(ae::Assets.Programs["pos_uv"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+	ae::Graphics.SetColor(glm::vec4(1.0f));
 
 	if(Minigame)
 		Minigame->Render(BlendFactor);

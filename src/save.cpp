@@ -34,6 +34,9 @@
 #include <limits>
 #include <algorithm>
 
+// Constants
+static const double DEFAULT_CLOCK = 8.0*60.0;
+
 // Constructor
 _Save::_Save() :
 	Secret(0),
@@ -365,7 +368,7 @@ void _Save::CreateDefaultDatabase() {
 
 	// Write settings
 	Secret = ae::GetRandomInt((uint64_t)1, std::numeric_limits<uint64_t>::max());
-	Clock = MAP_CLOCK_START;
+	Clock = DEFAULT_CLOCK;
 	SaveSettings();
 
 	// Accounts

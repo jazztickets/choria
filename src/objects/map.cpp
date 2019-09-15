@@ -100,8 +100,10 @@ _Map::_Map() :
 	Pather(nullptr),
 	TileVertexBufferID{0, 0},
 	TileElementBufferID(0),
-	TileVertices{nullptr, nullptr},
 	TileFaces(nullptr) {
+
+	for(int i = 0; i < MAP_LAYERS; i++)
+		TileVertices[i] = nullptr;
 }
 
 // Destructor
@@ -210,8 +212,8 @@ void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
 	// Create a static vbo
 	if(Static) {
 		uint32_t VertexIndex = 0;
-		TileVertices[0] = new glm::vec4[TileVertexCount];
-		TileVertices[1] = new glm::vec4[TileVertexCount];
+		for(int i = 0; i < MAP_LAYERS; i++)
+			TileVertices[i] = new _TileVertexBuffer[TileVertexCount];
 
 		for(int k = 0; k < 2; k++) {
 			VertexIndex = 0;
@@ -235,11 +237,11 @@ void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(glm::u32vec3) * TileFaceCount, TileFaces, GL_STATIC_DRAW);
 	}
 	else {
-		TileVertices[0] = new glm::vec4[TileVertexCount];
+		TileVertices[0] = new _TileVertexBuffer[TileVertexCount];
 
 		glGenBuffers(1, &TileVertexBufferID[0]);
 		glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[0]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(_TileVertexBuffer) * TileVertexCount, nullptr, GL_DYNAMIC_DRAW);
 
 		glGenBuffers(1, &TileElementBufferID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
@@ -250,8 +252,10 @@ void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
 // Free memory used by texture atlas
 void _Map::CloseAtlas() {
 	delete TileAtlas;
-	delete[] TileVertices[0];
-	delete[] TileVertices[1];
+	for(int i = 0; i < MAP_LAYERS; i++) {
+		delete[] TileVertices[i];
+		TileVertices[i] = nullptr;
+	}
 	delete[] TileFaces;
 	glDeleteBuffers(1, &TileVertexBufferID[0]);
 	glDeleteBuffers(1, &TileVertexBufferID[1]);
@@ -261,8 +265,6 @@ void _Map::CloseAtlas() {
 	TileVertexBufferID[1] = 0;
 	TileElementBufferID = 0;
 	TileAtlas = nullptr;
-	TileVertices[0] = nullptr;
-	TileVertices[1] = nullptr;
 	TileFaces = nullptr;
 }
 
@@ -521,6 +523,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	}
 
 	// Draw background map
+	/*
 	if(BackgroundMap) {
 		BackgroundMap->Clock = Clock;
 		BackgroundMap->SetAmbientLightByClock();
@@ -546,7 +549,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 0, true);
 		BackgroundMap->RenderLayer("pos_uv_static", BackgroundBounds, BackgroundOffset, 1, true);
 	}
-
+*/
 	// Get render bounds
 	glm::vec4 Bounds = Camera->GetAABB();
 	Bounds[0] = glm::clamp(Bounds[0], 0.0f, (float)Size.x);
@@ -558,14 +561,17 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	if(Framebuffer) {
 		ae::Assets.Programs["map"]->Use();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glActiveTexture(GL_TEXTURE1);
+		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, Framebuffer->TextureID);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, TileAtlas->Texture->ID);
 		glActiveTexture(GL_TEXTURE0);
+		ae::Graphics.DirtyState();
 	}
 
 	// Draw layers
 	RenderLayer("map", Bounds, glm::vec3(0.0f), 0);
-	RenderLayer("map", Bounds, glm::vec3(0.0f), 1);
+	//RenderLayer("map", Bounds, glm::vec3(0.0f), 1);
 
 	// Render objects
 	for(const auto &Object : Objects) {
@@ -631,11 +637,10 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 }
 
 // Render either floor or foreground texture tiles
-void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, int Layer, bool Static) {
+void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm::vec3 &Offset, bool Static) {
 	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
 	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
-	glUniformMatrix4fv(ae::Assets.Programs[Program]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 
 	uint32_t VertexIndex = 0;
 	int FaceIndex = 0;
@@ -643,33 +648,36 @@ void _Map::RenderLayer(const std::string &Program, glm::vec4 &Bounds, const glm:
 	if(!Static) {
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
-				glm::vec4 TextureCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[Layer]);
-				TileVertices[0][VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoords[0], TextureCoords[1] };
-				TileVertices[0][VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoords[2], TextureCoords[1] };
-				TileVertices[0][VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoords[0], TextureCoords[3] };
-				TileVertices[0][VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoords[2], TextureCoords[3] };
+
+				// Build buffer with background and foreground layers
+				glm::vec4 TextureCoordsBack = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[0]);
+				glm::vec4 TextureCoordsFore = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[1]);
+				TileVertices[0][VertexIndex++] = { i + 0.0f, j + 0.0f, TextureCoordsBack[0], TextureCoordsBack[1], TextureCoordsFore[0], TextureCoordsFore[1] };
+				TileVertices[0][VertexIndex++] = { i + 1.0f, j + 0.0f, TextureCoordsBack[2], TextureCoordsBack[1], TextureCoordsFore[2], TextureCoordsFore[1] };
+				TileVertices[0][VertexIndex++] = { i + 0.0f, j + 1.0f, TextureCoordsBack[0], TextureCoordsBack[3], TextureCoordsFore[0], TextureCoordsFore[3] };
+				TileVertices[0][VertexIndex++] = { i + 1.0f, j + 1.0f, TextureCoordsBack[2], TextureCoordsBack[3], TextureCoordsFore[2], TextureCoordsFore[3] };
 
 				FaceIndex += 2;
 			}
 		}
-		Layer = 0;
 	}
 	else {
 		VertexIndex = (uint32_t)(Size.x * Size.y * 4);
 		FaceIndex = Size.x * Size.y * 2;
 	}
 
-	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(glm::vec4);
+	GLsizeiptr VertexBufferSize = VertexIndex * sizeof(_TileVertexBuffer);
 	GLsizeiptr ElementBufferSize = FaceIndex * (int)sizeof(glm::u32vec3);
 
 	ae::Graphics.SetTextureID(TileAtlas->Texture->ID);
-	ae::Graphics.EnableAttribs(2);
+	ae::Graphics.EnableAttribs(3);
 
-	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[Layer]);
+	glBindBuffer(GL_ARRAY_BUFFER, TileVertexBufferID[0]);
 	if(!Static)
-		glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices[Layer]);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), nullptr);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void *)sizeof(glm::vec2));
+		glBufferSubData(GL_ARRAY_BUFFER, 0, VertexBufferSize, TileVertices[0]);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), nullptr);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 2));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(_TileVertexBuffer), (const void *)(sizeof(float) * 4));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, TileElementBufferID);
 	if(!Static)
 		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, ElementBufferSize, TileFaces);
@@ -1041,7 +1049,7 @@ void _Map::GetPVPPlayers(const _Object *Player, std::list<_Object *> &Players, b
 _Object *_Map::FindTradePlayer(const _Object *Player, float MaxDistanceSquared) {
 
 	_Object *ClosestPlayer = nullptr;
-	float ClosestDistanceSquared = HUGE_VAL;
+	float ClosestDistanceSquared = std::numeric_limits<float>::infinity();
 	for(const auto &Object : Objects) {
 		if(!Object->Character)
 			continue;
@@ -1069,7 +1077,7 @@ bool _Map::FindEvent(const _Event &Event, glm::ivec2 &Position) const {
 
 	// Return closest position
 	glm::ivec2 StartPosition = Position;
-	float ClosestDistanceSquared = HUGE_VAL;
+	float ClosestDistanceSquared = std::numeric_limits<float>::infinity();
 	for(const auto &CheckPosition : Iterator->second) {
 		glm::vec2 Delta = StartPosition - CheckPosition;
 		float DistanceSquared = glm::dot(Delta, Delta);

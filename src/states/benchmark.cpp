@@ -24,6 +24,7 @@
 #include <ae/atlas.h>
 #include <ae/texture.h>
 #include <ae/program.h>
+#include <objects/map.h>
 #include <framework.h>
 #include <constants.h>
 #include <SDL_scancode.h>

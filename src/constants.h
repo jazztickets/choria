@@ -48,16 +48,6 @@ const  uint32_t     ACCOUNT_BOTS_ID                 =  2;
 const  size_t       ACCOUNT_MAX_USERNAME_SIZE       =  20;
 const  size_t       ACCOUNT_MAX_PASSWORD_SIZE       =  20;
 const  int          ACCOUNT_MAX_CHARACTER_SLOTS     =  10;
-//     Map
-const  int          MAP_VERSION                     =  1;
-const  int          MAP_TILE_WIDTH                  =  64;
-const  int          MAP_TILE_HEIGHT                 =  64;
-const  double       MAP_CLOCK_START                 =  8.0*60.0;
-const  double       MAP_DAY_LENGTH                  =  24.0*60.0;
-const  double       MAP_CLOCK_SPEED                 =  1.0;
-const  double       MAP_EDITOR_CLOCK_SPEED          =  200.0;
-const  glm::vec4    MAP_AMBIENT_LIGHT               =  glm::vec4(0.3,0.3,0.3,1);
-const  std::string  MAP_DEFAULT_TILESET             =  "atlas0.png";
 //     HUD
 const  int          HUD_CHAT_MESSAGES               =  15;
 const  int          HUD_CHAT_TIMEOUT                =  10;
