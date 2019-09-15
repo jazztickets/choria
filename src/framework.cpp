@@ -33,6 +33,7 @@
 #include <ae/ui.h>
 #include <ae/console.h>
 #include <ae/framelimit.h>
+#include <objects/map.h>
 #include <config.h>
 #include <constants.h>
 #include <menu.h>
@@ -444,6 +445,7 @@ void _Framework::LoadAssets() {
 	ae::Assets.LoadTextureDirectory("textures/status/");
 
 	// Load tables
+	ae::Assets.LoadAtlasDirectory("textures/map/", glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
 	ae::Assets.LoadLayers("tables/layers.tsv");
 	ae::Assets.LoadPrograms("tables/programs.tsv");
 	ae::Assets.LoadColors("tables/colors.tsv");

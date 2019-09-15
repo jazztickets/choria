@@ -54,7 +54,7 @@
 #include <iomanip>
 
 // Color overlays for zones
-const glm::vec4 ZoneColors[] = {
+static const glm::vec4 ZoneColors[] = {
 	{ 1.0f, 0.0f, 0.0f, 0.4f },
 	{ 0.0f, 1.0f, 0.0f, 0.4f },
 	{ 0.0f, 0.0f, 1.0f, 0.4f },
@@ -64,7 +64,7 @@ const glm::vec4 ZoneColors[] = {
 };
 
 // Colors of each time cycle
-const std::vector<glm::vec4> DayCycles = {
+static const std::vector<glm::vec4> DayCycles = {
 	{ 0.05f, 0.05f, 0.3f,  1 },
 	{ 0.10f, 0.10f, 0.1f,  1 },
 	{ 0.6f,  0.6f,  0.45f, 1 },
@@ -73,7 +73,7 @@ const std::vector<glm::vec4> DayCycles = {
 };
 
 // Time of each cycle change
-const std::vector<double> DayCyclesTime = {
+static const std::vector<double> DayCyclesTime = {
 	0.0  * 60.0,
 	6.0  * 60.0,
 	12.5 * 60.0,
@@ -81,12 +81,15 @@ const std::vector<double> DayCyclesTime = {
 	18.0 * 60.0,
 };
 
+static const std::string MAP_TRANS_ATLAS = "textures/map/trans.png";
+
 // Constructor
 _Map::_Map() :
 	Tiles(nullptr),
 	Size(0, 0),
 	UseAtlas(false),
 	TileAtlas(nullptr),
+	TransAtlas(nullptr),
 	AmbientLight(MAP_AMBIENT_LIGHT),
 	IsOutside(true),
 	Clock(0),
@@ -187,11 +190,16 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 
 // Initialize the texture atlas
 void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
-	const ae::_Texture *AtlasTexture = ae::Assets.Textures[AtlasPath];
-	if(!AtlasTexture)
+
+	// Load tile atlas
+	TileAtlas = ae::Assets.Atlases[AtlasPath];
+	if(!TileAtlas)
 		throw std::runtime_error("Can't find atlas: " + AtlasPath);
 
-	TileAtlas = new ae::_Atlas(AtlasTexture, glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
+	// Load transition atlas
+	TransAtlas = ae::Assets.Atlases[MAP_TRANS_ATLAS];
+	if(!TransAtlas)
+		throw std::runtime_error("Can't find atlas: " + MAP_TRANS_ATLAS);
 
 	GLuint TileVertexCount = (GLuint)(4 * Size.x * Size.y);
 	GLuint TileFaceCount = (GLuint)(2 * Size.x * Size.y);
@@ -247,7 +255,6 @@ void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
 
 // Free memory used by texture atlas
 void _Map::CloseAtlas() {
-	delete TileAtlas;
 	delete[] TileVertices;
 	delete[] TileFaces;
 	glDeleteBuffers(1, &TileVertexBufferID);
@@ -256,6 +263,7 @@ void _Map::CloseAtlas() {
 	TileVertexBufferID = 0;
 	TileElementBufferID = 0;
 	TileAtlas = nullptr;
+	TransAtlas = nullptr;
 	TileFaces = nullptr;
 	TileVertices = nullptr;
 }
@@ -562,8 +570,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	}
 
 	// Draw layers
-	RenderTiles("map", Bounds, glm::vec3(0.0f), 0);
-	//RenderLayer("map", Bounds, glm::vec3(0.0f), 1);
+	RenderTiles("map", Bounds, glm::vec3(0.0f), false);
 
 	// Render objects
 	for(const auto &Object : Objects) {

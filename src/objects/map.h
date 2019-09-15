@@ -38,7 +38,7 @@
 const int MAP_VERSION = 1;
 const int MAP_TILE_WIDTH = 64;
 const int MAP_TILE_HEIGHT = 64;
-const int MAP_LAYERS = 2;
+const int MAP_LAYERS = 3;
 const double MAP_DAY_LENGTH = 24.0*60.0;
 const double MAP_CLOCK_SPEED = 1.0;
 const double MAP_EDITOR_CLOCK_SPEED = 200.0;
@@ -73,7 +73,7 @@ struct _Event {
 };
 
 struct _Tile {
-	_Tile() : TextureIndex{0, 0}, Zone(0), Wall(false), PVP(false) { }
+	_Tile() : TextureIndex{0, 0, 0}, Zone(0), Wall(false), PVP(false) { }
 	uint32_t TextureIndex[MAP_LAYERS];
 	uint32_t Zone;
 	_Event Event;
@@ -176,6 +176,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		// Graphics
 		bool UseAtlas;
 		const ae::_Atlas *TileAtlas;
+		const ae::_Atlas *TransAtlas;
 		glm::vec4 AmbientLight;
 		int IsOutside;
 		double Clock;

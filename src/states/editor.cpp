@@ -1018,7 +1018,7 @@ void _EditorState::LoadMap() {
 		FilePath = LoadMapTextBox->Text;
 
 		// Set camera position
-		glm::ivec2 Position(0, 0);
+		glm::ivec2 Position(Map->Size.x/2, Map->Size.y/2);
 		if(!Map->FindEvent(_Event(_Map::EVENT_SPAWN, 0), Position)) {
 			//if(!Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, OldMapID), Position))
 			//	Map->FindEvent(_Event(_Map::EVENT_MAPENTRANCE, OldMapID), Position);
