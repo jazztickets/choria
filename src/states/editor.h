@@ -127,7 +127,7 @@ class _EditorState : public ae::_State {
 
 		// Brush
 		int BrushMode;
-		int Layer;
+		bool ShowTransitions;
 		float BrushRadius;
 		_Tile *Brush;
 

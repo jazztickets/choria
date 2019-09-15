@@ -107,7 +107,7 @@ void _EditorState::Init() {
 	Framebuffer = new ae::_Framebuffer(ae::Graphics.CurrentSize);
 
 	// Set filters
-	Layer = 0;
+	ShowTransitions = false;
 	Filter = 0;
 	Filter |= MAP_RENDER_TEXTURE;
 	Filter |= MAP_RENDER_WALL;
@@ -284,7 +284,8 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				Map->DeleteStaticObject(WorldCursor);
 			break;
 			case SDL_SCANCODE_TAB:
-				Layer = !Layer;
+				ShowTransitions = !ShowTransitions;
+				Map->BuildLayers(ShowTransitions);
 			break;
 			case SDL_SCANCODE_SPACE:
 				ToggleTextures();
@@ -364,7 +365,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(TexturesElement->GetClickedElement()) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
 				ae::_Element *Button = TexturesElement->GetClickedElement();
-				Brush->TextureIndex[Layer] = Button->TextureIndex;
+				Brush->BaseTextureIndex = Button->TextureIndex;
 				CloseWindows();
 			}
 		}
@@ -616,15 +617,15 @@ void _EditorState::DrawBrushInfo() {
 		TextureBounds.End = DrawPosition + glm::vec2(Map->TileAtlas->Size) / 2.0f;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
-		ae::Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->TextureIndex[Layer]));
+		ae::Graphics.DrawAtlas(TextureBounds, Map->TileAtlas->Texture, Map->TileAtlas->GetTextureCoords(Brush->BaseTextureIndex));
 
 		DrawPosition.y += 70 * ae::_Element::GetUIScale();
 
 		// Draw layer
-		if(Layer)
-			Buffer << "Fore";
+		if(ShowTransitions)
+			Buffer << "Transitions";
 		else
-			Buffer << "Back";
+			Buffer << "Base";
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 
@@ -1084,7 +1085,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 			// Apply filters
 			if(Filter & MAP_RENDER_TEXTURE)
-				Tile.BaseTextureIndex = Brush->TextureIndex[0];
+				Tile.BaseTextureIndex = Brush->BaseTextureIndex;
 			if(Filter & MAP_RENDER_WALL)
 				Tile.Wall = Brush->Wall;
 			if(Filter & MAP_RENDER_ZONE)
@@ -1101,7 +1102,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 		}
 	}
 
-	Map->BuildLayers();
+	Map->BuildLayers(ShowTransitions);
 }
 
 // Deletes the map
