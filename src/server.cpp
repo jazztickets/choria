@@ -506,10 +506,13 @@ void _Server::HandleCharacterCreate(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Get character information
 	bool IsHardcore = Data.ReadBit();
 	std::string Name(Data.ReadString());
-	uint32_t PortraitID = Data.Read<uint32_t>();
+	const _Portrait *Portrait = Stats->GetPortrait(Data.Read<uint8_t>());
 	uint32_t BuildID = Data.Read<uint32_t>();
 	uint32_t Slot = Data.Read<uint8_t>();
 	if(Name.size() > PLAYER_NAME_SIZE)
+		return;
+
+	if(!Portrait)
 		return;
 
 	// Check number of characters in account
@@ -525,7 +528,7 @@ void _Server::HandleCharacterCreate(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Create the character
-	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, IsHardcore, Name, PortraitID, BuildID);
+	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, IsHardcore, Name, Portrait, BuildID);
 
 	// Notify the client
 	ae::_Buffer NewPacket;
@@ -698,7 +701,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
 		Packet.Write<uint8_t>(Player.Character->Hardcore);
 		Packet.WriteString(Save->Database->GetString("name"));
-		Packet.Write<uint32_t>(Player.Character->PortraitID);
+		Packet.Write<uint8_t>(Player.Character->Portrait->NetworkID);
 		Packet.Write<int>(Player.Character->Health);
 		Packet.Write<int>(Player.Character->Experience);
 	}
@@ -850,7 +853,7 @@ _Object *_Server::CreateBot() {
 	uint32_t CharacterID = Save->GetCharacterID(ACCOUNT_BOTS_ID, Slot);
 	if(!CharacterID) {
 		std::string Name = "bot_test";
-		CharacterID = Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, 1, 1);
+		CharacterID = Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, &Stats->Portraits.at("joe"), 1);
 	}
 
 	// Create object

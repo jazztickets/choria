@@ -555,7 +555,7 @@ void _HUD::Update(double FrameTime) {
 
 			ae::Assets.Elements["textbox_trade_gold_theirs"]->Text = std::to_string(Player->Character->TradePlayer->Character->TradeGold);
 			ae::Assets.Elements["label_trade_name_theirs"]->Text = Player->Character->TradePlayer->Name;
-			ae::Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->Character->TradePlayer->Character->Portrait;
+			ae::Assets.Elements["image_trade_portrait_theirs"]->Texture = Player->Character->TradePlayer->Character->Portrait->Texture;
 		}
 	}
 
@@ -1507,7 +1507,7 @@ void _HUD::UpdateLabels() {
 	std::stringstream Buffer;
 
 	// Update portrait
-	ae::Assets.Elements["image_hud_portrait"]->Texture = Player->Character->Portrait;
+	ae::Assets.Elements["image_hud_portrait"]->Texture = Player->Character->Portrait->Texture;
 
 	// Update name
 	ae::Assets.Elements["label_hud_name"]->Text = Player->Name;

@@ -234,7 +234,7 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, uint32_t PortraitID, uint32_t BuildID) {
+uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, const _Portrait *Portrait, uint32_t BuildID) {
 	if(!BuildID)
 		BuildID = 1;
 
@@ -259,7 +259,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
 	Object.Character->Hardcore = Hardcore;
-	Object.Character->PortraitID = PortraitID;
+	Object.Character->Portrait = Portrait;
 	Object.ModelID = Build->ModelID;
 	Object.Character->CharacterID = (uint32_t)Database->GetLastInsertID();
 	Object.Character->ActionBar = Build->Character->ActionBar;

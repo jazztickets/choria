@@ -31,6 +31,7 @@ class _Stats;
 class _Battle;
 class _HUD;
 class _StatusEffect;
+struct _Portrait;
 struct _OldVendor;
 struct _OldTrader;
 struct _OldMinigameType;
@@ -124,8 +125,7 @@ class _Character {
 
 		// Render
 		const ae::_Texture *StatusTexture;
-		const ae::_Texture *Portrait;
-		uint32_t PortraitID;
+		const _Portrait *Portrait;
 
 		// State
 		std::unordered_map<uint32_t, double> BattleCooldown;

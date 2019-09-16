@@ -174,7 +174,7 @@ void _TradeScreen::ResetTradeTheirsWindow() {
 	ae::Assets.Elements["textbox_trade_gold_theirs"]->SetText("0");
 	ae::Assets.Elements["textbox_trade_gold_yours"]->SetText("0");
 	ae::Assets.Elements["label_trade_name_yours"]->Text = HUD->Player->Name;
-	ae::Assets.Elements["image_trade_portrait_yours"]->Texture = HUD->Player->Character->Portrait;
+	ae::Assets.Elements["image_trade_portrait_yours"]->Texture = HUD->Player->Character->Portrait->Texture;
 }
 
 // Trade with another player

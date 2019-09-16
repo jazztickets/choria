@@ -49,8 +49,8 @@ struct _OldMapStat {
 
 struct _Portrait {
 	std::string ID;
-	int Rank;
 	const ae::_Texture *Texture;
+	uint8_t NetworkID;
 };
 
 struct _OldModel {
@@ -61,6 +61,7 @@ struct _OldModel {
 struct _Model {
 	std::string ID;
 	const ae::_Texture *Texture;
+	uint8_t NetworkID;
 };
 
 struct _OldBuild {
@@ -178,9 +179,9 @@ class _Stats {
 		void GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty=1.0) const;
 
 		// Menu
+		const _Portrait *GetPortrait(uint8_t NetworkID) const;
 		void GetPortraits(std::list<_Portrait> &PortraitList) const;
 		void GetStartingBuilds(std::list<_OldBuild> &OldBuilds) const;
-		const ae::_Texture *GetPortraitImage(uint8_t PortraitID) const;
 
 		// Monsters
 		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const;
@@ -211,7 +212,7 @@ class _Stats {
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
 		std::unordered_map<std::string, _Portrait> Portraits;
-		std::unordered_map<uint8_t, std::string> PortraitsIndex;
+		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
 		std::unordered_map<std::string, _Model> Models;
 		std::unordered_map<std::string, const _Object *> Builds;
 

@@ -31,7 +31,7 @@
 
 // Compare function for sorting portraits
 bool ComparePortrait(const _Portrait &First, const _Portrait &Second) {
-	return First.Rank < Second.Rank;
+	return First.NetworkID < Second.NetworkID;
 }
 
 // Constructor
@@ -125,22 +125,26 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Missing '" + Node.first + "' node in " + Path);
 	}
 
+	uint8_t NetworkID;
+
 	// Load portraits
-	int Rank = 0;
+	NetworkID = 1;
 	for(tinyxml2::XMLElement *ChildNode = Nodes["portraits"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
 		_Portrait Portrait;
 		Portrait.ID = GetString(ChildNode, "id");
 		Portrait.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
-		Portrait.Rank = Rank++;
+		Portrait.NetworkID = NetworkID++;
 		Portraits[Portrait.ID] = Portrait;
-		PortraitsIndex[Portrait.Rank] = Portrait.ID;
+		PortraitsIndex[Portrait.NetworkID] = &Portrait;
 	}
 
 	// Load models
+	NetworkID = 1;
 	for(tinyxml2::XMLElement *ChildNode = Nodes["models"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
 		_Model Model;
 		Model.ID = GetString(ChildNode, "id");
 		Model.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		Model.NetworkID = NetworkID++;
 		Models[Model.ID] = Model;
 	}
 
@@ -600,7 +604,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 	if(Database->FetchRow()) {
 		Object->Character->Level = Database->GetInt<int>("level");
 		Object->Name = Database->GetString("name");
-		Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
+		//Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
 		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
 		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
 		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
@@ -634,6 +638,15 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 	Database->CloseQuery();
 }
 
+// Get portrait texture by network id
+const _Portrait *_Stats::GetPortrait(uint8_t NetworkID) const {
+	const auto &Iterator = PortraitsIndex.find(NetworkID);
+	if(Iterator == PortraitsIndex.end())
+		return nullptr;
+
+	return Iterator->second;
+}
+
 // Get list of portraits sorted by rank
 void _Stats::GetPortraits(std::list<_Portrait> &PortraitList) const {
 	for(const auto &Portrait : Portraits)
@@ -657,19 +670,6 @@ void _Stats::GetStartingBuilds(std::list<_OldBuild> &Builds) const {
 	}
 
 	Database->CloseQuery();
-}
-
-// Get portrait texture by id
-const ae::_Texture *_Stats::GetPortraitImage(uint8_t PortraitID) const {
-	const auto &Index = PortraitsIndex.find(PortraitID);
-	if(Index == PortraitsIndex.end())
-		return nullptr;
-
-	const auto &Portrait = Portraits.find(Index->second);
-	if(Portrait == Portraits.end())
-		return nullptr;
-
-	return Portrait->second.Texture;
 }
 
 // Randomly generates a list of monsters from a zone

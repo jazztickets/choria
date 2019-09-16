@@ -210,7 +210,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				size_t Slot = Data.Read<uint8_t>();
 				Data.Read<uint8_t>();
 				Data.ReadString();
-				Data.Read<uint32_t>();
+				Data.Read<uint8_t>();
 				Data.Read<int>();
 				Data.Read<int>();
 
@@ -225,7 +225,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 				Packet.WriteBit(0);
 				Packet.WriteString(Name.c_str());
-				Packet.Write<uint32_t>(1);
+				Packet.Write<uint8_t>(1);
 				Packet.Write<uint32_t>(1);
 				Packet.Write<uint8_t>(0);
 				Network->SendPacket(Packet);

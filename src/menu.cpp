@@ -385,7 +385,7 @@ void _Menu::CreateCharacter(bool Hardcore) {
 	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 	Packet.WriteBit(Hardcore);
 	Packet.WriteString(Name->Text.c_str());
-	Packet.Write<uint32_t>(PortraitID);
+	Packet.Write<uint8_t>(PortraitID);
 	Packet.Write<uint32_t>(BuildID);
 	Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 	PlayState.Network->SendPacket(Packet);
@@ -1560,7 +1560,7 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 				size_t Slot = Buffer.Read<uint8_t>();
 				bool Hardcore = Buffer.Read<uint8_t>();
 				CharacterSlots[Slot].Name->Text = Buffer.ReadString();
-				uint32_t PortraitID = Buffer.Read<uint32_t>();
+				const _Portrait *Portrait = PlayState.Stats->GetPortrait(Buffer.Read<uint8_t>());
 				int Health = Buffer.Read<int>();
 				int Experience = Buffer.Read<int>();
 
@@ -1586,7 +1586,10 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 				   CharacterSlots[Slot].CanPlay = false;
 
 				// Set portrait
-				CharacterSlots[Slot].Image->Texture = PlayState.Stats->GetPortraitImage(PortraitID);
+				if(Portrait)
+					CharacterSlots[Slot].Image->Texture = Portrait->Texture;
+
+				// Set size
 				if(CharacterSlots[Slot].Image->Texture)
 					CharacterSlots[Slot].Image->BaseSize = CharacterSlots[Slot].Image->Texture->Size;
 

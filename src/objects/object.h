@@ -82,12 +82,12 @@ class _Object : public ae::_BaseObject {
 		void UnserializeSaveData(const std::string &JsonString);
 
 		// Network
-		void SerializeCreate(ae::_Buffer &Data);
 		void SerializeUpdate(ae::_Buffer &Data);
-		void SerializeStats(ae::_Buffer &Data);
-		void SerializeBattle(ae::_Buffer &Data);
+		void SerializeCreate(ae::_Buffer &Data);
 		void UnserializeCreate(ae::_Buffer &Data);
+		void SerializeStats(ae::_Buffer &Data);
 		void UnserializeStats(ae::_Buffer &Data);
+		void SerializeBattle(ae::_Buffer &Data);
 		void UnserializeBattle(ae::_Buffer &Data, bool IsClient);
 		void SendPacket(ae::_Buffer &Packet);
 

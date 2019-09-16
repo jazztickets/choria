@@ -389,7 +389,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Save positions
 	Fighter->ResultPosition = Fighter->BattleElement->Bounds.Start + Fighter->BattleElement->Size / 2.0f;
-	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Size.x/2 + (10 + BATTLE_HEALTHBAR_WIDTH/2) * ae::_Element::GetUIScale(), -Character->Portrait->Size.y/2);
+	Fighter->StatPosition = Fighter->ResultPosition + glm::vec2(Character->Portrait->Texture->Size.x/2 + (10 + BATTLE_HEALTHBAR_WIDTH/2) * ae::_Element::GetUIScale(), -Character->Portrait->Texture->Size.y/2);
 
 	// Name
 	ae::Assets.Fonts["hud_medium"]->DrawText(Name, SlotPosition + glm::vec2(0, -12), ae::LEFT_BASELINE, GlobalColor);
@@ -397,7 +397,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 	// Portrait
 	if(Character->Portrait) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawScaledImage(SlotPosition + glm::vec2(Character->Portrait->Size/2) * ae::_Element::GetUIScale(), Character->Portrait, GlobalColor);
+		ae::Graphics.DrawScaledImage(SlotPosition + glm::vec2(Character->Portrait->Texture->Size/2) * ae::_Element::GetUIScale(), Character->Portrait->Texture, GlobalColor);
 	}
 
 	// Get health/mana bar positions
@@ -533,7 +533,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["map_y"] = Position.y;
 	StatsNode["spawnmap_id"] = Character->SpawnMapID;
 	StatsNode["spawnpoint"] = Character->SpawnPoint;
-	StatsNode["portrait_id"] = Character->PortraitID;
+	StatsNode["portrait"] = Character->Portrait->ID;
 	StatsNode["model_id"] = ModelID;
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
 	StatsNode["health"] = Character->Health;
@@ -639,7 +639,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["spawnmap_id"].asUInt();
 	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
 	Character->Hardcore = StatsNode["hardcore"].asBool();
-	Character->PortraitID = StatsNode["portrait_id"].asUInt();
+	Character->Portrait = &Stats->Portraits.at(StatsNode["portrait"].asString());
 	ModelID = StatsNode["model_id"].asUInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
@@ -707,20 +707,6 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 		Character->Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
 }
 
-// Serialize for ObjectCreate
-void _Object::SerializeCreate(ae::_Buffer &Data) {
-	Data.Write<ae::NetworkIDType>(NetworkID);
-	Data.Write<glm::ivec2>(Position);
-	Data.WriteString(Name.c_str());
-	if(Character)
-		Data.Write<uint8_t>(Character->PortraitID);
-	else
-		Data.Write<uint8_t>(0);
-	Data.Write<uint8_t>(ModelID);
-	Data.Write<uint8_t>(Light);
-	Data.WriteBit(Character->Invisible);
-}
-
 // Serialize for ObjectUpdate
 void _Object::SerializeUpdate(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
@@ -735,12 +721,43 @@ void _Object::SerializeUpdate(ae::_Buffer &Data) {
 		Data.Write<uint8_t>(Light);
 }
 
+// Serialize for ObjectCreate
+void _Object::SerializeCreate(ae::_Buffer &Data) {
+	Data.Write<ae::NetworkIDType>(NetworkID);
+	Data.Write<glm::ivec2>(Position);
+	Data.WriteString(Name.c_str());
+	if(Character)
+		Data.Write<uint8_t>(Character->Portrait->NetworkID);
+	else
+		Data.Write<uint8_t>(0);
+	Data.Write<uint8_t>(ModelID);
+	Data.Write<uint8_t>(Light);
+	Data.WriteBit(Character->Invisible);
+}
+
+// Unserialize for ObjectCreate
+void _Object::UnserializeCreate(ae::_Buffer &Data) {
+	Position = Data.Read<glm::ivec2>();
+	Name = Data.ReadString();
+	uint8_t	PortraitID = Data.Read<uint8_t>();
+	ModelID = Data.Read<uint8_t>();
+	Light = Data.Read<uint8_t>();
+	bool Invisible = Data.ReadBit();
+
+	if(Character) {
+		Character->Invisible = Invisible;
+		Character->Portrait = Stats->GetPortrait(PortraitID);
+	}
+
+	ModelTexture = Stats->OldModels.at(ModelID).Texture;
+}
+
 // Serialize object stats
 void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint8_t>(Light);
-	Data.Write<uint32_t>(ModelID);
-	Data.Write<uint32_t>(Character->PortraitID);
+	Data.Write<uint8_t>(ModelID);
+	Data.Write<uint8_t>(Character->Portrait->NetworkID);
 	Data.WriteString(Character->PartyName.c_str());
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
@@ -789,46 +806,12 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	}
 }
 
-// Serialize object for battle
-void _Object::SerializeBattle(ae::_Buffer &Data) {
-	Data.Write<ae::NetworkIDType>(NetworkID);
-	Data.Write<uint32_t>(Monster->DatabaseID);
-	Data.Write<glm::ivec2>(Position);
-	Data.Write<int>(Character->Health);
-	Data.Write<int>(Character->MaxHealth);
-	Data.Write<int>(Character->Mana);
-	Data.Write<int>(Character->MaxMana);
-	Data.Write<int>(Character->EquipmentBattleSpeed);
-	Data.Write<float>(Character->Stamina);
-	Data.Write<uint8_t>(Fighter->BattleSide);
-
-	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
-	for(auto &StatusEffect : Character->StatusEffects) {
-		StatusEffect->Serialize(Data);
-	}
-}
-
-// Unserialize for ObjectCreate
-void _Object::UnserializeCreate(ae::_Buffer &Data) {
-	Position = Data.Read<glm::ivec2>();
-	Name = Data.ReadString();
-	uint8_t	PortraitID = Data.Read<uint8_t>();
-	if(PortraitID && Character)
-		Character->PortraitID = PortraitID;
-	ModelID = Data.Read<uint8_t>();
-	Light = Data.Read<uint8_t>();
-	Character->Invisible = Data.ReadBit();
-
-	Character->Portrait = Stats->GetPortraitImage(Character->PortraitID);
-	ModelTexture = Stats->OldModels.at(ModelID).Texture;
-}
-
 // Unserialize object stats
 void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Name = Data.ReadString();
 	Light = Data.Read<uint8_t>();
-	ModelID = Data.Read<uint32_t>();
-	Character->PortraitID = Data.Read<uint32_t>();
+	ModelID = Data.Read<uint8_t>();
+	Character->Portrait = Stats->GetPortrait(Data.Read<uint8_t>());
 	Character->PartyName = Data.ReadString();
 	Character->Health = Data.Read<int>();
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
@@ -887,6 +870,25 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 
 	Character->RefreshActionBarCount();
 	Character->CalculateStats();
+}
+
+// Serialize object for battle
+void _Object::SerializeBattle(ae::_Buffer &Data) {
+	Data.Write<ae::NetworkIDType>(NetworkID);
+	Data.Write<uint32_t>(Monster->DatabaseID);
+	Data.Write<glm::ivec2>(Position);
+	Data.Write<int>(Character->Health);
+	Data.Write<int>(Character->MaxHealth);
+	Data.Write<int>(Character->Mana);
+	Data.Write<int>(Character->MaxMana);
+	Data.Write<int>(Character->EquipmentBattleSpeed);
+	Data.Write<float>(Character->Stamina);
+	Data.Write<uint8_t>(Fighter->BattleSide);
+
+	Data.Write<uint8_t>((uint8_t)Character->StatusEffects.size());
+	for(auto &StatusEffect : Character->StatusEffects) {
+		StatusEffect->Serialize(Data);
+	}
 }
 
 // Unserialize battle stats

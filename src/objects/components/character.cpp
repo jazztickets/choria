@@ -39,7 +39,6 @@ _Character::_Character(_Object *Object) :
 
 	StatusTexture(nullptr),
 	Portrait(nullptr),
-	PortraitID(0),
 
 	Gold(0),
 	NextBattle(0),
