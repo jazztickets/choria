@@ -25,7 +25,7 @@
 class _Sprite;
 class _Grid;
 struct _MinigameItem;
-struct _MinigameType;
+struct _OldMinigameType;
 
 namespace ae {
 	template<class T> class _Manager;
@@ -45,7 +45,7 @@ class _Minigame {
 			DONE,
 		};
 
-		_Minigame(const _MinigameType *Minigame);
+		_Minigame(const _OldMinigameType *Minigame);
 		~_Minigame();
 
 		// Update
@@ -70,7 +70,7 @@ class _Minigame {
 		_Grid *Grid;
 
 		// Stats
-		const _MinigameType *Minigame;
+		const _OldMinigameType *Minigame;
 		std::vector<const _MinigameItem *> Prizes;
 
 		// State

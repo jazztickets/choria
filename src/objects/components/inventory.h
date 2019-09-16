@@ -26,7 +26,7 @@
 const size_t NOSLOT = (size_t)-1;
 
 // Forward Declarations
-struct _Trader;
+struct _OldTrader;
 class _Object;
 class _Item;
 class _Stats;
@@ -136,7 +136,7 @@ class _Inventory {
 		bool SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count);
 
 		// Traders
-		_Slot GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots);
+		_Slot GetRequiredItemSlots(const _OldTrader *Trader, std::vector<_Slot> &RequiredItemSlots);
 
 		// Bags
 		_Bag &GetBag(BagType Bag) { return Bags[(size_t)Bag]; }

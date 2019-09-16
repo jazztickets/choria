@@ -43,9 +43,6 @@
 
 _EditorState EditorState;
 
-// Constants
-const std::string MAPS_PATH = "maps/";
-
 // Constructor
 _EditorState::_EditorState() :
 	Framebuffer(nullptr),
@@ -1044,7 +1041,7 @@ void _EditorState::Go() {
 		switch(Tile->Event.Type) {
 			case _Map::EVENT_MAPENTRANCE:
 			case _Map::EVENT_MAPCHANGE: {
-				ToggleLoadMap(GetCleanMapName(Stats->Maps.at(Tile->Event.Data).File));
+				ToggleLoadMap(GetCleanMapName(Stats->OldMaps.at(Tile->Event.Data).File));
 			} break;
 			case _Map::EVENT_VENDOR: {
 				std::stringstream Buffer;

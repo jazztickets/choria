@@ -436,7 +436,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			for(uint8_t i = 0; i < ItemCount; i++) {
 
 				uint32_t ItemID = Data.Read<uint32_t>();
-				const _Item *Item = Stats->Items.at(ItemID);
+				const _Item *Item = Stats->OldItems.at(ItemID);
 				int Upgrades = (int)Data.Read<uint8_t>();
 				int Count = (int)Data.Read<uint8_t>();
 
@@ -464,7 +464,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			bool ItemUnlocked = Data.ReadBit();
 			uint32_t ItemID = Data.Read<uint32_t>();
 			int InventorySlot = (int)Data.Read<char>();
-			ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
+			ActionResult.ActionUsed.Item = Stats->OldItems.at(ItemID);
 
 			// Set texture
 			if(ActionResult.ActionUsed.Item)

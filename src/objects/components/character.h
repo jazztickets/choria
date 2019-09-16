@@ -31,10 +31,10 @@ class _Stats;
 class _Battle;
 class _HUD;
 class _StatusEffect;
-struct _Vendor;
-struct _Trader;
-struct _MinigameType;
-struct _Blacksmith;
+struct _OldVendor;
+struct _OldTrader;
+struct _OldMinigameType;
+struct _OldBlacksmith;
 
 // Structures
 struct _Unlock {
@@ -219,10 +219,10 @@ class _Character {
 		std::vector<_Action> ActionBar;
 
 		// Events
-		const _Vendor *Vendor;
-		const _Trader *Trader;
-		const _Blacksmith *Blacksmith;
-		const _MinigameType *Minigame;
+		const _OldVendor *Vendor;
+		const _OldTrader *Trader;
+		const _OldBlacksmith *Blacksmith;
+		const _OldMinigameType *Minigame;
 		uint32_t Seed;
 
 		// Trading

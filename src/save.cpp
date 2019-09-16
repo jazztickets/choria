@@ -36,6 +36,7 @@
 
 // Constants
 static const double DEFAULT_CLOCK = 8.0*60.0;
+static const int SAVE_VERSION = 4;
 
 // Constructor
 _Save::_Save() :
@@ -56,7 +57,7 @@ _Save::_Save() :
 	}
 
 	// Check version
-	if(SaveVersion != DEFAULT_SAVE_VERSION) {
+	if(SaveVersion != SAVE_VERSION) {
 
 		// Rename old file
 		if(SaveVersion > 0) {
@@ -238,8 +239,8 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 		BuildID = 1;
 
 	// Load build
-	const auto &BuildIterator = Stats->Builds.find(BuildID);
-	if(BuildIterator == Stats->Builds.end())
+	const auto &BuildIterator = Stats->OldBuilds.find(BuildID);
+	if(BuildIterator == Stats->OldBuilds.end())
 		throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
 
 	const _Object *Build = BuildIterator->second;
@@ -362,7 +363,7 @@ void _Save::CreateDefaultDatabase() {
 
 	// Create settings row
 	Database->PrepareQuery("INSERT INTO settings(version) VALUES (@version)");
-	Database->BindInt(1, DEFAULT_SAVE_VERSION);
+	Database->BindInt(1, SAVE_VERSION);
 	Database->FetchRow();
 	Database->CloseQuery();
 

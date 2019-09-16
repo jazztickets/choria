@@ -441,22 +441,22 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 	try {
 		switch(Event.Type) {
 			case _Map::EVENT_TRADER:
-				Object->Character->Trader = &Server->Stats->Traders.at(Event.Data);
+				Object->Character->Trader = &Server->Stats->OldTraders.at(Event.Data);
 				if(!Object->Character->Trader->ID)
 					return;
 			break;
 			case _Map::EVENT_VENDOR:
-				Object->Character->Vendor = &Server->Stats->Vendors.at(Event.Data);
+				Object->Character->Vendor = &Server->Stats->OldVendors.at(Event.Data);
 				if(!Object->Character->Vendor->ID)
 					return;
 			break;
 			case _Map::EVENT_BLACKSMITH:
-				Object->Character->Blacksmith = &Server->Stats->Blacksmiths.at(Event.Data);
+				Object->Character->Blacksmith = &Server->Stats->OldBlacksmiths.at(Event.Data);
 				if(!Object->Character->Blacksmith->ID)
 					return;
 			break;
 			case _Map::EVENT_MINIGAME: {
-				Object->Character->Minigame = &Server->Stats->Minigames.at(Event.Data);
+				Object->Character->Minigame = &Server->Stats->OldMinigames.at(Event.Data);
 				if(!Object->Character->Minigame->ID)
 					return;
 			} break;
@@ -743,11 +743,11 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 			continue;
 
 		// Check for valid light
-		const auto &Iterator = Stats->Lights.find((uint32_t)Object->Light);
-		if(Iterator == Stats->Lights.end())
+		const auto &Iterator = Stats->OldLights.find((uint32_t)Object->Light);
+		if(Iterator == Stats->OldLights.end())
 		   continue;
 
-		const _LightType &LightType = Iterator->second;
+		const _OldLightType &LightType = Iterator->second;
 
 		// Check to see if light is in frustum
 		glm::vec2 Point(Object->Position.x + 0.5f, Object->Position.y + 0.5f);
@@ -786,10 +786,10 @@ void _Map::Load(const std::string &Path, bool Static) {
 	if(!File)
 		throw std::runtime_error("Cannot load map: " + Path);
 
-	// Save map stats
-	AmbientLight = glm::vec4(0.3, 0.3, 0.3, 1);
-	IsOutside = true;
-	Music = "";
+	// Get base map name
+	size_t PrefixPosition = Path.find(MAPS_PATH);
+	if(PrefixPosition != std::string::npos)
+		Name = Path.substr(PrefixPosition + MAPS_PATH.length(), Path.find(".map.gz") - MAPS_PATH.length());
 
 	// Load background map
 	/*
@@ -956,7 +956,7 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 
 		// Set message for client
 		if(!Server) {
-			const _Item *Item = Object->Stats->Items.at(Tile->Event.Data);
+			const _Item *Item = Object->Stats->OldItems.at(Tile->Event.Data);
 			if(Item && Object->Character->HUD)
 				Object->Character->HUD->SetMessage("You need a " + Item->Name);
 		}

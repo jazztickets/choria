@@ -724,7 +724,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 		EventType = _Map::EVENT_SPAWN;
 	}
 	// Verify map id
-	else if(Stats->Maps.find(MapID) == Stats->Maps.end() || Stats->Maps.at(MapID).File == "maps/")
+	else if(Stats->OldMaps.find(MapID) == Stats->OldMaps.end() || Stats->OldMaps.at(MapID).File == "maps/")
 		return;
 
 	// Get map
@@ -1066,7 +1066,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get vendor
-	const _Vendor *Vendor = Player->Character->Vendor;
+	const _OldVendor *Vendor = Player->Character->Vendor;
 	if(!Vendor)
 		return;
 
@@ -1490,7 +1490,7 @@ void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Validate
 	_Object *Player = Peer->Object;
-	const _MinigameType *Minigame = Player->Character->Minigame;
+	const _OldMinigameType *Minigame = Player->Character->Minigame;
 	if(!Minigame || Player->Inventory->CountItem(Minigame->RequiredItem) < Minigame->Cost)
 		return;
 
@@ -1539,7 +1539,7 @@ void _Server::HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Minigame.Bucket < Minigame.Prizes.size()) {
 		const _MinigameItem *MinigameItem = Minigame.Prizes[Minigame.Bucket];
 		if(MinigameItem && MinigameItem->Item) {
-			SendItem(Peer, Stats->Items.at(MinigameItem->Item->ID), MinigameItem->Count);
+			SendItem(Peer, Stats->OldItems.at(MinigameItem->Item->ID), MinigameItem->Count);
 		}
 	}
 }
@@ -1666,10 +1666,10 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		uint32_t ItemID = Data.Read<uint32_t>();
 		int Count = Data.Read<int>();
 
-		if(Stats->Items.find(ItemID) == Stats->Items.end())
+		if(Stats->OldItems.find(ItemID) == Stats->OldItems.end())
 			return;
 
-		SendItem(Peer, Stats->Items.at(ItemID), Count);
+		SendItem(Peer, Stats->OldItems.at(ItemID), Count);
 	}
 	else if(Command == "gold") {
 		bool Adjust = Data.ReadBit();
@@ -1759,9 +1759,9 @@ void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
 		return;
 
 	// Find script
-	auto Iterator = Stats->Scripts.find(ScriptID);
-	if(Iterator != Stats->Scripts.end()) {
-		const _Script &Script = Iterator->second;
+	auto Iterator = Stats->OldScripts.find(ScriptID);
+	if(Iterator != Stats->OldScripts.end()) {
+		const _OldScript &Script = Iterator->second;
 
 		_StatChange StatChange;
 		StatChange.Object = Object;

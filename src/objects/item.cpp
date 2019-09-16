@@ -51,7 +51,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	TooltipName->Text = Name;
 	TooltipType->Text = "";
 	if(Type != ItemType::NONE)
-		TooltipType->Text = Player->Stats->ItemTypes.at((uint32_t)Type);
+		TooltipType->Text = Player->Stats->OldItemTypes.at((uint32_t)Type);
 
 	// Set up window size
 	glm::vec2 Size;
@@ -109,7 +109,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	// Draw target text
 	if(TargetID != TargetType::NONE) {
 		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
-		std::string InfoText = "Target " + Player->Stats->TargetTypes.at((uint32_t)TargetID);
+		std::string InfoText = "Target " + Player->Stats->OldTargetTypes.at((uint32_t)TargetID);
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += LargeSpacingY;
 	}
@@ -185,7 +185,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	// Damage type
 	if(!IsSkill() && DamageTypeID > 1) {
 		std::stringstream Buffer;
-		Buffer << Stats->DamageTypes.at(DamageTypeID);
+		Buffer << Stats->OldDamageTypes.at(DamageTypeID);
 		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Type", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -282,7 +282,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetResistance(Upgrades), CompareInventory.Item->GetResistance(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes.at(ResistanceTypeID) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Player->Stats->OldDamageTypes.at(ResistanceTypeID) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
@@ -562,7 +562,7 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
+int _Item::GetPrice(const _OldVendor *Vendor, int QueryCount, bool Buy, int Level) const {
 	if(!Vendor)
 		return 0;
 

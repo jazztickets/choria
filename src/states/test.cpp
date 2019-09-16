@@ -58,7 +58,7 @@ void _TestState::Init() {
 		//double StartTime = SDL_GetPerformanceCounter();
 		uint32_t Seed = ae::GetRandomInt((uint32_t)1, std::numeric_limits<uint32_t>::max());
 
-		Minigame = new _Minigame(&Stats->Minigames.at(1));
+		Minigame = new _Minigame(&Stats->OldMinigames.at(1));
 		Minigame->IsServer = true;
 		Minigame->Debug = 0;
 		Minigame->StartGame(Seed);
@@ -131,7 +131,7 @@ void _TestState::Init() {
 	//Framework.Done = true;
 
 	if((0)){
-		Minigame = new _Minigame(&Stats->Minigames.at(1));
+		Minigame = new _Minigame(&Stats->OldMinigames.at(1));
 		Minigame->Debug = -1;
 		Minigame->StartGame(1049117602);
 		Minigame->Drop(4.3513402938842773);

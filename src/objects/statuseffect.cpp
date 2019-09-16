@@ -67,7 +67,7 @@ void _StatusEffect::Serialize(ae::_Buffer &Data) {
 // Unserialize from network
 void _StatusEffect::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	uint32_t BuffID = Data.Read<uint32_t>();
-	Buff = Stats->Buffs.at(BuffID);
+	Buff = Stats->OldBuffs.at(BuffID);
 	Level = Data.Read<int>();
 	Duration = Data.Read<float>();
 	MaxDuration = Data.Read<float>();

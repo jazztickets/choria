@@ -1146,22 +1146,22 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 	// Handle event
 	switch(EventType) {
 		case _Map::EVENT_VENDOR:
-			Player->Character->Vendor = &Stats->Vendors.at(EventData);
+			Player->Character->Vendor = &Stats->OldVendors.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->VendorScreen->Init();
 		break;
 		case _Map::EVENT_TRADER:
-			Player->Character->Trader = &Stats->Traders.at(EventData);
+			Player->Character->Trader = &Stats->OldTraders.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->TraderScreen->Init();
 		break;
 		case _Map::EVENT_BLACKSMITH:
-			Player->Character->Blacksmith = &Stats->Blacksmiths.at(EventData);
+			Player->Character->Blacksmith = &Stats->OldBlacksmiths.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->BlacksmithScreen->Init();
 		break;
 		case _Map::EVENT_MINIGAME:
-			Player->Character->Minigame = &Stats->Minigames.at(EventData);
+			Player->Character->Minigame = &Stats->OldMinigames.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->InitMinigame();
 		break;
@@ -1203,7 +1203,7 @@ void _PlayState::HandleInventoryAdd(ae::_Buffer &Data){
 
 	_RecentItem RecentItem;
 	RecentItem.Count = (int)Data.Read<uint8_t>();
-	RecentItem.Item = Stats->Items.at(Data.Read<uint32_t>());
+	RecentItem.Item = Stats->OldItems.at(Data.Read<uint32_t>());
 	HUD->RecentItems.push_back(RecentItem);
 
 	Player->Inventory->AddItem(RecentItem.Item, 0, RecentItem.Count);
@@ -1442,7 +1442,7 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 		_RecentItem RecentItem;
 
 		uint32_t ItemID = Data.Read<uint32_t>();
-		RecentItem.Item = Stats->Items.at(ItemID);
+		RecentItem.Item = Stats->OldItems.at(ItemID);
 		int Upgrades = (int)Data.Read<uint8_t>();
 		RecentItem.Count = (int)Data.Read<uint8_t>();
 
@@ -1493,7 +1493,7 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	int InventorySlot = (int)Data.Read<char>();
 	float ReactTime = Data.Read<float>();
 	float FlyTime = Data.Read<float>();
-	ActionResult.ActionUsed.Item = Stats->Items.at(ItemID);
+	ActionResult.ActionUsed.Item = Stats->OldItems.at(ItemID);
 
 	// Set texture
 	if(ActionResult.ActionUsed.Item)
@@ -1620,7 +1620,7 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 
 			// Play buff sounds
 			if(StatChange.HasStat(StatType::ID)) {
-				const _Buff *Buff = Stats->Buffs.at((uint32_t)StatChange.Values[StatType::ID].Integer);
+				const _Buff *Buff = Stats->OldBuffs.at((uint32_t)StatChange.Values[StatType::ID].Integer);
 				if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
 					Scripting->MethodCall(0, 0);
 					Scripting->FinishMethodCall();

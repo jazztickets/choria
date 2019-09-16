@@ -46,7 +46,7 @@ void _Action::Serialize(ae::_Buffer &Data) {
 void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	uint32_t ItemID = Data.Read<uint32_t>();
 
-	Item = Stats->Items.at(ItemID);
+	Item = Stats->OldItems.at(ItemID);
 }
 
 // Resolve action

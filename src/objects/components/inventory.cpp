@@ -388,7 +388,7 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
-_Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots) {
+_Slot _Inventory::GetRequiredItemSlots(const _OldTrader *Trader, std::vector<_Slot> &RequiredItemSlots) {
 
 	// Find a slot for the reward
 	_Slot RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
@@ -438,7 +438,7 @@ void _InventorySlot::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 	uint32_t ItemID = Data.Read<uint32_t>();
 	if(ItemID) {
-		Item = Stats->Items.at(ItemID);
+		Item = Stats->OldItems.at(ItemID);
 		Upgrades = Data.Read<uint8_t>();
 		Count = Data.Read<uint8_t>();
 	}

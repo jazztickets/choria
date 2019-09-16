@@ -25,7 +25,7 @@
 class _Object;
 class _Scripting;
 class _Stats;
-struct _Vendor;
+struct _OldVendor;
 struct _Cursor;
 struct _Slot;
 
@@ -71,7 +71,7 @@ class _Item {
 
 		void GetEquipmentSlot(_Slot &Slot) const;
 
-		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
+		int GetPrice(const _OldVendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
 		int GetUpgradePrice(int Level) const;
 
 		// Scripts

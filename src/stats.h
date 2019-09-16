@@ -28,12 +28,16 @@
 class _Object;
 class _Buff;
 
+namespace tinyxml2 {
+	class XMLElement;
+}
+
 namespace ae {
 	class _Database;
 }
 
 // Structures
-struct _MapStat {
+struct _OldMapStat {
 	std::string File;
 	std::string Atlas;
 	std::string Music;
@@ -43,24 +47,35 @@ struct _MapStat {
 	bool Outside;
 };
 
-struct _Portrait {
+struct _OldPortrait {
+	uint32_t ID;
+	const ae::_Texture *Texture;
+};
+
+struct _OldModel {
 	uint32_t ID;
 	const ae::_Texture *Texture;
 };
 
 struct _Model {
-	uint32_t ID;
+	std::string ID;
 	const ae::_Texture *Texture;
 };
 
-struct _Build {
+struct _OldBuild {
 	uint32_t ID;
 	uint32_t ModelID;
 	std::string Name;
 	const ae::_Texture *Texture;
 };
 
-struct _Script {
+struct _Build {
+	std::string Name;
+	std::string Model;
+	const ae::_Texture *Texture;
+};
+
+struct _OldScript {
 	uint32_t ID;
 	std::string Name;
 	int Level;
@@ -82,7 +97,7 @@ struct _DamageType {
 	std::string Name;
 };
 
-struct _Zone {
+struct _OldZone {
 	uint32_t MonsterID;
 	uint32_t Odds;
 	int Max;
@@ -93,7 +108,7 @@ struct _EventName {
 	std::string ShortName;
 };
 
-struct _Vendor {
+struct _OldVendor {
 	size_t GetSlotFromID(uint32_t ID) const;
 
 	uint32_t ID;
@@ -108,7 +123,7 @@ struct _TraderItem {
 	int Count;
 };
 
-struct _Trader {
+struct _OldTrader {
 	uint32_t ID;
 	std::string Name;
 	const _Item *RewardItem;
@@ -117,7 +132,7 @@ struct _Trader {
 	std::vector<_TraderItem> Items;
 };
 
-struct _Blacksmith {
+struct _OldBlacksmith {
 	uint32_t ID;
 	std::string Name;
 	int Level;
@@ -128,7 +143,7 @@ struct _MinigameItem {
 	int Count;
 };
 
-struct _MinigameType {
+struct _OldMinigameType {
 	uint32_t ID;
 	std::string Name;
 	std::string Script;
@@ -137,13 +152,13 @@ struct _MinigameType {
 	std::vector<_MinigameItem> Items;
 };
 
-struct _ItemDrop {
-	_ItemDrop(uint32_t ItemID, uint32_t Odds) : ItemID(ItemID), Odds(Odds) { }
+struct _OldItemDrop {
+	_OldItemDrop(uint32_t ItemID, uint32_t Odds) : ItemID(ItemID), Odds(Odds) { }
 	uint32_t ItemID;
 	uint32_t Odds;
 };
 
-struct _LightType {
+struct _OldLightType {
 	uint32_t ID;
 	std::string Name;
 	glm::vec3 Color;
@@ -162,8 +177,8 @@ class _Stats {
 		void GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty=1.0) const;
 
 		// Menu
-		void GetPortraits(std::list<_Portrait> &Portraits) const;
-		void GetStartingBuilds(std::list<_Build> &Builds) const;
+		void GetPortraits(std::list<_OldPortrait> &Portraits) const;
+		void GetStartingBuilds(std::list<_OldBuild> &OldBuilds) const;
 		const ae::_Texture *GetPortraitImage(uint32_t PortraitID) const;
 
 		// Monsters
@@ -178,21 +193,24 @@ class _Stats {
 		std::vector<_EventName> EventNames;
 		std::vector<_Level> Levels;
 
-		std::unordered_map<uint32_t, _MapStat> Maps;
-		std::unordered_map<uint32_t, _Vendor> Vendors;
-		std::unordered_map<uint32_t, _Trader> Traders;
-		std::unordered_map<uint32_t, _Blacksmith> Blacksmiths;
-		std::unordered_map<uint32_t, _MinigameType> Minigames;
-		std::unordered_map<uint32_t, _Script> Scripts;
-		std::unordered_map<uint32_t, _Model> Models;
-		std::unordered_map<uint32_t, _LightType> Lights;
-		std::unordered_map<uint32_t, std::string> ItemTypes;
-		std::unordered_map<uint32_t, std::string> TargetTypes;
-		std::unordered_map<uint32_t, std::string> DamageTypes;
+		std::unordered_map<uint32_t, _OldMapStat> OldMaps;
+		std::unordered_map<uint32_t, _OldVendor> OldVendors;
+		std::unordered_map<uint32_t, _OldTrader> OldTraders;
+		std::unordered_map<uint32_t, _OldBlacksmith> OldBlacksmiths;
+		std::unordered_map<uint32_t, _OldMinigameType> OldMinigames;
+		std::unordered_map<uint32_t, _OldScript> OldScripts;
+		std::unordered_map<uint32_t, _OldModel> OldModels;
+		std::unordered_map<uint32_t, _OldLightType> OldLights;
+		std::unordered_map<uint32_t, std::string> OldItemTypes;
+		std::unordered_map<uint32_t, std::string> OldTargetTypes;
+		std::unordered_map<uint32_t, std::string> OldDamageTypes;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
-		std::unordered_map<uint32_t, const _Item *> Items;
-		std::unordered_map<uint32_t, const _Buff *> Buffs;
-		std::unordered_map<uint32_t, const _Object *> Builds;
+		std::unordered_map<uint32_t, const _Item *> OldItems;
+		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
+		std::unordered_map<uint32_t, const _Object *> OldBuilds;
+
+		std::unordered_map<std::string, _Model> Models;
+		std::unordered_map<std::string, const _Object *> Builds;
 
 		// Database
 		ae::_Database *Database;
@@ -200,22 +218,25 @@ class _Stats {
 
 	private:
 
-		void LoadMaps();
-		void LoadEvents();
-		void LoadLevels();
-		void LoadBuffs();
-		void LoadItemTypes();
-		void LoadStatTypes();
-		void LoadTargetTypes();
-		void LoadDamageTypes();
-		void LoadItems();
-		void LoadVendors();
-		void LoadTraders();
-		void LoadBlacksmiths();
-		void LoadMinigames();
-		void LoadModels();
-		void LoadBuilds();
-		void LoadScripts();
-		void LoadLights();
+		void LoadData(const std::string &Path);
+		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute);
+
+		void OldLoadMaps();
+		void OldLoadEvents();
+		void OldLoadLevels();
+		void OldLoadBuffs();
+		void OldLoadItemTypes();
+		void OldLoadStatTypes();
+		void OldLoadTargetTypes();
+		void OldLoadDamageTypes();
+		void OldLoadItems();
+		void OldLoadVendors();
+		void OldLoadTraders();
+		void OldLoadBlacksmiths();
+		void OldLoadMinigames();
+		void OldLoadModels();
+		void OldLoadBuilds();
+		void OldLoadScripts();
+		void OldLoadLights();
 
 };

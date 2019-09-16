@@ -25,59 +25,115 @@
 #include <objects/components/inventory.h>
 #include <objects/components/monster.h>
 #include <constants.h>
+#include <tinyxml2.h>
 #include <algorithm>
 #include <iostream>
 
 // Constructor
 _Stats::_Stats(bool Headless) :
-	Headless(Headless) {
+Headless(Headless) {
 
 	// Load database that stores game data
 	Database = new ae::_Database("stats/stats.db", true);
 
+	// Load game data
+	LoadData("data/stats.xml");
+
 	// Load spreadsheet data
-	LoadMaps();
-	LoadEvents();
-	LoadLevels();
-	LoadBuffs();
-	LoadItemTypes();
-	LoadStatTypes();
-	LoadTargetTypes();
-	LoadDamageTypes();
-	LoadItems();
-	LoadVendors();
-	LoadTraders();
-	LoadBlacksmiths();
-	LoadMinigames();
-	LoadModels();
-	LoadBuilds();
-	LoadScripts();
-	LoadLights();
+	OldLoadMaps();
+	OldLoadEvents();
+	OldLoadLevels();
+	OldLoadBuffs();
+	OldLoadItemTypes();
+	OldLoadStatTypes();
+	OldLoadTargetTypes();
+	OldLoadDamageTypes();
+	OldLoadItems();
+	OldLoadVendors();
+	OldLoadTraders();
+	OldLoadBlacksmiths();
+	OldLoadMinigames();
+	OldLoadModels();
+	OldLoadBuilds();
+	OldLoadScripts();
+	OldLoadLights();
 }
 
 // Destructor
 _Stats::~_Stats() {
 
-	for(const auto &Item : Items)
+	for(const auto &Item : OldItems)
 		delete Item.second;
 
-	for(const auto &Buff : Buffs)
+	for(const auto &Buff : OldBuffs)
 		delete Buff.second;
 
-	for(const auto &Build : Builds)
+	for(const auto &Build : OldBuilds)
 		delete Build.second;
 
 	delete Database;
 }
 
+// Get string attribute from node
+const char *_Stats::GetString(tinyxml2::XMLElement *Node, const char *Attribute) {
+	const char *Value = Node->Attribute(Attribute);
+	if(!Value)
+		throw std::runtime_error("Missing '" + std::string(Attribute) + "' attribute in '" + std::string(Node->Name()) + "' node!");
+
+	return Value;
+}
+
+// Load data
+void _Stats::LoadData(const std::string &Path) {
+
+	// Load file
+	tinyxml2::XMLDocument Document;
+	if(Document.LoadFile(Path.c_str()) != tinyxml2::XML_SUCCESS)
+		throw std::runtime_error("Error loading: " + Path);
+
+	// Get data node
+	tinyxml2::XMLElement *DataNode = Document.FirstChildElement();
+
+	// Build map of nodes
+	std::unordered_map<std::string, tinyxml2::XMLElement *> Nodes(
+	{
+		{ "scopes", DataNode->FirstChildElement("scopes") },
+		{ "damage_types", DataNode->FirstChildElement("damage_types") },
+		{ "item_types", DataNode->FirstChildElement("item_types") },
+		{ "events", DataNode->FirstChildElement("events") },
+		{ "portraits", DataNode->FirstChildElement("portraits") },
+		{ "models", DataNode->FirstChildElement("models") },
+		{ "items", DataNode->FirstChildElement("items") },
+		{ "skills", DataNode->FirstChildElement("skills") },
+		{ "builds", DataNode->FirstChildElement("builds") },
+		{ "vendors", DataNode->FirstChildElement("vendors") },
+		{ "monsters", DataNode->FirstChildElement("monsters") },
+		{ "zones", DataNode->FirstChildElement("zones") },
+	});
+
+	// Check nodes
+	for(const auto &Node : Nodes) {
+		if(!Node.second)
+			throw std::runtime_error("Missing '" + Node.first + "' node in " + Path);
+	}
+
+	// Load models
+	for(tinyxml2::XMLElement *ChildNode = Nodes["models"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_Model Model;
+		Model.ID = GetString(ChildNode, "id");
+		Model.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		Models[Model.ID] = Model;
+	}
+}
+
 // Load map data
-void _Stats::LoadMaps() {
+void _Stats::OldLoadMaps() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM map");
 
 	// Get data
-	_MapStat Map;
+	_OldMapStat Map;
 	while(Database->FetchRow()) {
 		Map.File = Database->GetString("file");
 		Map.Atlas = Database->GetString("atlas");
@@ -92,13 +148,13 @@ void _Stats::LoadMaps() {
 		Map.BackgroundOffset.y = (float)Database->GetReal("background_y");
 		Map.BackgroundOffset.z = (float)Database->GetReal("background_z");
 
-		Maps[Database->GetInt<uint32_t>("id")] = Map;
+		OldMaps[Database->GetInt<uint32_t>("id")] = Map;
 	}
 	Database->CloseQuery();
 }
 
 // Load event data
-void _Stats::LoadEvents() {
+void _Stats::OldLoadEvents() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM event");
@@ -114,7 +170,7 @@ void _Stats::LoadEvents() {
 }
 
 // Loads level data
-void _Stats::LoadLevels() {
+void _Stats::OldLoadLevels() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM level");
@@ -142,7 +198,7 @@ void _Stats::LoadLevels() {
 }
 
 // Load buffs
-void _Stats::LoadBuffs() {
+void _Stats::OldLoadBuffs() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM buff");
@@ -154,15 +210,15 @@ void _Stats::LoadBuffs() {
 		Buff->Name = Database->GetString("name");
 		Buff->Script = Database->GetString("script");
 		Buff->Texture = ae::Assets.Textures[Database->GetString("texture")];
-		Buffs[Buff->ID] = Buff;
+		OldBuffs[Buff->ID] = Buff;
 	}
 	Database->CloseQuery();
 
-	Buffs[0] = nullptr;
+	OldBuffs[0] = nullptr;
 }
 
 // Load item types
-void _Stats::LoadItemTypes() {
+void _Stats::OldLoadItemTypes() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM itemtype");
@@ -170,13 +226,13 @@ void _Stats::LoadItemTypes() {
 	// Get data
 	while(Database->FetchRow()) {
 		uint32_t ID = Database->GetInt<uint32_t>("id");
-		ItemTypes[ID] = Database->GetString("name");
+		OldItemTypes[ID] = Database->GetString("name");
 	}
 	Database->CloseQuery();
 }
 
 // Load upgrade scales from stat types
-void _Stats::LoadStatTypes() {
+void _Stats::OldLoadStatTypes() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM stattype");
@@ -190,7 +246,7 @@ void _Stats::LoadStatTypes() {
 }
 
 // Load target type strings
-void _Stats::LoadTargetTypes() {
+void _Stats::OldLoadTargetTypes() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM target");
@@ -198,13 +254,13 @@ void _Stats::LoadTargetTypes() {
 	// Get data
 	while(Database->FetchRow()) {
 		uint32_t ID = Database->GetInt<uint32_t>("id");
-		TargetTypes[ID] = Database->GetString("name");
+		OldTargetTypes[ID] = Database->GetString("name");
 	}
 	Database->CloseQuery();
 }
 
 // Load damage types
-void _Stats::LoadDamageTypes() {
+void _Stats::OldLoadDamageTypes() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM damagetype");
@@ -212,13 +268,13 @@ void _Stats::LoadDamageTypes() {
 	// Get data
 	while(Database->FetchRow()) {
 		uint32_t ID = Database->GetInt<uint32_t>("id");
-		DamageTypes[ID] = Database->GetString("name");
+		OldDamageTypes[ID] = Database->GetString("name");
 	}
 	Database->CloseQuery();
 }
 
 // Load items
-void _Stats::LoadItems() {
+void _Stats::OldLoadItems() {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM item");
@@ -269,22 +325,22 @@ void _Stats::LoadItems() {
 		if(!Headless && Item->Texture == nullptr && TexturePath != "")
 			throw std::runtime_error("Can't find texture " + TexturePath);
 
-		Items[Item->ID] = Item;
+		OldItems[Item->ID] = Item;
 	}
 	Database->CloseQuery();
 
-	Items[0] = nullptr;
+	OldItems[0] = nullptr;
 }
 
 // Loads vendor data
-void _Stats::LoadVendors() {
-	Vendors.clear();
+void _Stats::OldLoadVendors() {
+	OldVendors.clear();
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM vendor");
 
 	// Get data
-	_Vendor Vendor;
+	_OldVendor Vendor;
 	while(Database->FetchRow()) {
 		Vendor.ID = Database->GetInt<uint32_t>("id");
 		Vendor.Name = Database->GetString("name");
@@ -296,28 +352,28 @@ void _Stats::LoadVendors() {
 		Database->PrepareQuery("SELECT item_id FROM vendoritem vi, item i where vi.vendor_id = @vendor_id and i.id = vi.item_id order by i.cost", 1);
 		Database->BindInt(1, Vendor.ID, 1);
 		while(Database->FetchRow(1)) {
-			Vendor.Items.push_back(Items[Database->GetInt<uint32_t>("item_id", 1)]);
+			Vendor.Items.push_back(OldItems[Database->GetInt<uint32_t>("item_id", 1)]);
 		}
 		Database->CloseQuery(1);
 
-		Vendors[Vendor.ID] = Vendor;
+		OldVendors[Vendor.ID] = Vendor;
 	}
 	Database->CloseQuery();
 }
 
 // Loads trader data
-void _Stats::LoadTraders() {
-	Traders.clear();
+void _Stats::OldLoadTraders() {
+	OldTraders.clear();
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM trader");
 
 	// Get data
-	_Trader Trader;
+	_OldTrader Trader;
 	while(Database->FetchRow()) {
 		Trader.ID = Database->GetInt<uint32_t>("id");
 		Trader.Name = Database->GetString("name");
-		Trader.RewardItem = Items[Database->GetInt<uint32_t>("item_id")];
+		Trader.RewardItem = OldItems[Database->GetInt<uint32_t>("item_id")];
 		Trader.Upgrades = 0;
 		Trader.Count = Database->GetInt<int>("count");
 		Trader.Items.clear();
@@ -327,87 +383,87 @@ void _Stats::LoadTraders() {
 		Database->BindInt(1, Trader.ID, 1);
 		while(Database->FetchRow(1)) {
 			_TraderItem TraderItem;
-			TraderItem.Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			TraderItem.Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			TraderItem.Count = Database->GetInt<int>("count", 1);
 			Trader.Items.push_back(TraderItem);
 		}
 		Database->CloseQuery(1);
 
-		Traders[Trader.ID] = Trader;
+		OldTraders[Trader.ID] = Trader;
 	}
 	Database->CloseQuery();
 }
 
 // Loads blacksmith data
-void _Stats::LoadBlacksmiths() {
-	Blacksmiths.clear();
+void _Stats::OldLoadBlacksmiths() {
+	OldBlacksmiths.clear();
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM blacksmith");
 
 	// Get data
-	_Blacksmith Blacksmith;
+	_OldBlacksmith Blacksmith;
 	while(Database->FetchRow()) {
 		Blacksmith.ID = Database->GetInt<uint32_t>("id");
 		Blacksmith.Name = Database->GetString("name");
 		Blacksmith.Level = Database->GetInt<int>("level");
-		Blacksmiths[Blacksmith.ID] = Blacksmith;
+		OldBlacksmiths[Blacksmith.ID] = Blacksmith;
 	}
 	Database->CloseQuery();
 }
 
 // Load minigames
-void _Stats::LoadMinigames() {
-	Minigames.clear();
+void _Stats::OldLoadMinigames() {
+	OldMinigames.clear();
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM minigame");
 
 	// Get data
-	_MinigameType Minigame;
+	_OldMinigameType Minigame;
 	while(Database->FetchRow()) {
 		Minigame.ID = Database->GetInt<uint32_t>("id");
 		Minigame.Name = Database->GetString("name");
 		Minigame.Script = Database->GetString("script");
 		Minigame.Cost = Database->GetInt<int>("cost");
-		Minigame.RequiredItem = Items[Database->GetInt<uint32_t>("item_id")];
+		Minigame.RequiredItem = OldItems[Database->GetInt<uint32_t>("item_id")];
 
 		// Get items
 		Database->PrepareQuery("SELECT item_id, count FROM minigameitem where minigame_id = @minigame_id", 1);
 		Database->BindInt(1, Minigame.ID, 1);
 		while(Database->FetchRow(1)) {
 			_MinigameItem MinigameItem;
-			MinigameItem.Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			MinigameItem.Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			MinigameItem.Count = Database->GetInt<int>("count", 1);
 			Minigame.Items.push_back(MinigameItem);
 		}
 		Database->CloseQuery(1);
 
-		Minigames[Minigame.ID] = Minigame;
+		OldMinigames[Minigame.ID] = Minigame;
 	}
 	Database->CloseQuery();
 }
 
 // Load model textures
-void _Stats::LoadModels() {
-	Models.clear();
+void _Stats::OldLoadModels() {
+	OldModels.clear();
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM model");
 
 	// Get data
-	_Model Model;
+	_OldModel Model;
 	while(Database->FetchRow()) {
 		Model.ID = Database->GetInt<uint32_t>("id");
 		Model.Texture = ae::Assets.Textures[Database->GetString("texture")];
 
-		Models[Model.ID] = Model;
+		OldModels[Model.ID] = Model;
 	}
 	Database->CloseQuery();
 }
 
 // Load preset builds
-void _Stats::LoadBuilds() {
+void _Stats::OldLoadBuilds() {
 
 	// Get build info
 	Database->PrepareQuery("SELECT * FROM build");
@@ -426,7 +482,7 @@ void _Stats::LoadBuilds() {
 		Database->PrepareQuery("SELECT * FROM builditem WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
-			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			const _Item *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item)
 				Object->Inventory->AddItem(Item, 0, Database->GetInt<int>("count", 1));
 		}
@@ -436,7 +492,7 @@ void _Stats::LoadBuilds() {
 		Database->PrepareQuery("SELECT * FROM buildskill WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
-			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			const _Item *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item)
 				Object->Character->Skills[Item->ID] = Database->GetInt<int>("level", 1);
 		}
@@ -446,7 +502,7 @@ void _Stats::LoadBuilds() {
 		Database->PrepareQuery("SELECT * FROM buildactionbar WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
-			const _Item *Item = Items[Database->GetInt<uint32_t>("item_id", 1)];
+			const _Item *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item) {
 				size_t Slot = (size_t)Database->GetInt<uint32_t>("slot", 1);
 				if(Slot < Object->Character->ActionBar.size())
@@ -456,42 +512,42 @@ void _Stats::LoadBuilds() {
 		Database->CloseQuery(1);
 
 		// Save build
-		Builds[BuildID] = Object;
+		OldBuilds[BuildID] = Object;
 	}
 	Database->CloseQuery();
 
-	Builds[0] = nullptr;
+	OldBuilds[0] = nullptr;
 }
 
 // Load scripts
-void _Stats::LoadScripts() {
-	Scripts.clear();
+void _Stats::OldLoadScripts() {
+	OldScripts.clear();
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM script");
 
 	// Get data
-	_Script Script;
+	_OldScript Script;
 	while(Database->FetchRow()) {
 		Script.ID = Database->GetInt<uint32_t>("id");
 		Script.Name = Database->GetString("name");
 		Script.Level = Database->GetInt<int>("level");
 		Script.Cooldown = Database->GetReal("cooldown");
 
-		Scripts[Script.ID] = Script;
+		OldScripts[Script.ID] = Script;
 	}
 	Database->CloseQuery();
 }
 
 // Load lights
-void _Stats::LoadLights() {
-	Lights.clear();
+void _Stats::OldLoadLights() {
+	OldLights.clear();
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM light");
 
 	// Get data
-	_LightType Light;
+	_OldLightType Light;
 	while(Database->FetchRow()) {
 		Light.ID = Database->GetInt<uint32_t>("id");
 		Light.Name = Database->GetString("name");
@@ -500,7 +556,7 @@ void _Stats::LoadLights() {
 		Light.Color[2] = Database->GetReal("b");
 		Light.Radius = Database->GetReal("radius");
 
-		Lights[Light.ID] = Light;
+		OldLights[Light.ID] = Light;
 	}
 	Database->CloseQuery();
 }
@@ -531,8 +587,8 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
 
 		// Load build
-		const auto &BuildIterator = Builds.find(BuildID);
-		if(BuildIterator == Builds.end())
+		const auto &BuildIterator = OldBuilds.find(BuildID);
+		if(BuildIterator == OldBuilds.end())
 			throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
 
 		const _Object *Build = BuildIterator->second;
@@ -552,12 +608,12 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 }
 
 // Get list of portraits
-void _Stats::GetPortraits(std::list<_Portrait> &Portraits) const {
+void _Stats::GetPortraits(std::list<_OldPortrait> &Portraits) const {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM portrait ORDER BY rank");
 	while(Database->FetchRow()) {
-		_Portrait Portrait;
+		_OldPortrait Portrait;
 		Portrait.ID = Database->GetInt<uint32_t>("id");
 		Portrait.Texture = ae::Assets.Textures[Database->GetString("texture")];
 
@@ -568,12 +624,12 @@ void _Stats::GetPortraits(std::list<_Portrait> &Portraits) const {
 }
 
 // Get list of builds
-void _Stats::GetStartingBuilds(std::list<_Build> &Builds) const {
+void _Stats::GetStartingBuilds(std::list<_OldBuild> &Builds) const {
 
 	// Run query
 	Database->PrepareQuery("SELECT * FROM build WHERE starting = 1 ORDER BY rank");
 	while(Database->FetchRow()) {
-		_Build Build;
+		_OldBuild Build;
 		Build.ID = Database->GetInt<uint32_t>("id");
 		Build.Name = Database->GetString("name");
 		Build.Texture = ae::Assets.Textures[Database->GetString("texture")];
@@ -654,14 +710,14 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 		Database->BindInt(1, ZoneID);
 
 		// Get monsters in zone
-		std::vector<_Zone> Zone;
+		std::vector<_OldZone> Zone;
 		uint32_t OddsSum = 0;
 		int MaxTotal = 0;
 		bool HasZeroMax = true;
 		while(Database->FetchRow()) {
 
 			// Get zone data
-			_Zone ZoneData;
+			_OldZone ZoneData;
 			ZoneData.MonsterID = Database->GetInt<uint32_t>("monster_id");
 			ZoneData.Odds = Database->GetInt<uint32_t>("odds");
 			ZoneData.Max = Database->GetInt<int>("max");
@@ -719,7 +775,7 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate,
 	Database->BindInt(1, MonsterID);
 
 	// Get list of possible drops and build CDT
-	std::list<_ItemDrop> PossibleItemDrops;
+	std::list<_OldItemDrop> PossibleItemDrops;
 	uint32_t OddsSum = 0;
 	while(Database->FetchRow()) {
 		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
@@ -733,7 +789,7 @@ void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate,
 		Odds *= 1.0f + DropRate / 100.0f * Scale;
 
 		OddsSum += Odds;
-		PossibleItemDrops.push_back(_ItemDrop(ItemID, OddsSum));
+		PossibleItemDrops.push_back(_OldItemDrop(ItemID, OddsSum));
 	}
 	Database->CloseQuery();
 
@@ -773,7 +829,7 @@ const _Level *_Stats::FindLevel(int Experience) const {
 }
 
 // Convert vendor slot from item id
-size_t _Vendor::GetSlotFromID(uint32_t ID) const {
+size_t _OldVendor::GetSlotFromID(uint32_t ID) const {
 
 	size_t Index = 0;
 	for(const auto &Item : Items) {

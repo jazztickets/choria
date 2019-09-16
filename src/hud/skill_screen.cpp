@@ -57,7 +57,7 @@ void _SkillScreen::Init() {
 	// Get all player skills
 	std::list<const _Item *> SortedSkills;
 	for(auto &SkillID : HUD->Player->Character->Skills) {
-		const _Item *Skill = PlayState.Stats->Items.at(SkillID.first);
+		const _Item *Skill = PlayState.Stats->OldItems.at(SkillID.first);
 		if(!Skill)
 			continue;
 
@@ -235,7 +235,7 @@ void _SkillScreen::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)ChildElement->Parent->Index;
-			if(SkillPointsRemaining <= 0 || HUD->Player->Character->Skills[SkillID] >= HUD->Player->Stats->Items.at(SkillID)->MaxLevel)
+			if(SkillPointsRemaining <= 0 || HUD->Player->Character->Skills[SkillID] >= HUD->Player->Stats->OldItems.at(SkillID)->MaxLevel)
 				ChildElement->SetActive(false);
 			else
 				ChildElement->SetActive(true);
@@ -287,7 +287,7 @@ void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 // Equip a skill
 void _SkillScreen::EquipSkill(uint32_t SkillID) {
-	const _Item *Skill = PlayState.Stats->Items.at(SkillID);
+	const _Item *Skill = PlayState.Stats->OldItems.at(SkillID);
 	if(Skill) {
 
 		// Check skill

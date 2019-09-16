@@ -591,7 +591,7 @@ void _Menu::LoadPortraitButtons() {
 	size_t i = 0;
 
 	// Load portraits
-	std::list<_Portrait> Portraits;
+	std::list<_OldPortrait> Portraits;
 	PlayState.Stats->GetPortraits(Portraits);
 
 	// Iterate over portraits
@@ -646,7 +646,7 @@ void _Menu::LoadBuildButtons() {
 	size_t i = 0;
 
 	// Load builds
-	std::list<_Build> Builds;
+	std::list<_OldBuild> Builds;
 	PlayState.Stats->GetStartingBuilds(Builds);
 
 	// Iterate over builds

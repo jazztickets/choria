@@ -43,13 +43,14 @@ const double MAP_DAY_LENGTH = 24.0*60.0;
 const double MAP_CLOCK_SPEED = 1.0;
 const double MAP_EDITOR_CLOCK_SPEED = 200.0;
 const glm::vec4 MAP_AMBIENT_LIGHT = glm::vec4(0.3, 0.3, 0.3, 1);
+const std::string MAPS_PATH = "maps/";
 
 // Forward Declarations
 class _Object;
 class _Server;
 class _Stats;
 class _Battle;
-struct _MapStat;
+struct _OldMapStat;
 
 namespace ae {
 	class _Buffer;
@@ -171,6 +172,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void *PositionToNode(const glm::ivec2 &Position) { return (void *)(intptr_t)(Position.y * Size.x + Position.x); }
 
 		// Map data
+		std::string Name;
 		_Tile **Tiles;
 		glm::ivec2 Size;
 		std::map<_Event, std::vector<glm::ivec2>> IndexedEvents;

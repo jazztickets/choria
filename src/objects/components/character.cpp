@@ -355,7 +355,7 @@ void _Character::CalculateStats() {
 	// Calculate skills points used
 	SkillPointsUsed = 0;
 	for(const auto &SkillLevel : Skills) {
-		const _Item *Skill = Object->Stats->Items.at(SkillLevel.first);
+		const _Item *Skill = Object->Stats->OldItems.at(SkillLevel.first);
 		if(Skill)
 			SkillPointsUsed += SkillLevel.second;
 	}
@@ -602,7 +602,7 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(SkillID == 0)
 		return;
 
-	const _Item *Skill = Object->Stats->Items.at(SkillID);
+	const _Item *Skill = Object->Stats->OldItems.at(SkillID);
 	if(Skill == nullptr)
 		return;
 

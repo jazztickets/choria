@@ -102,7 +102,7 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 
 	// Add damage types
 	lua_newtable(LuaState);
-	for(const auto &Iterator : Stats->DamageTypes) {
+	for(const auto &Iterator : Stats->OldDamageTypes) {
 
 		// Add pointer to table
 		lua_pushstring(LuaState, Iterator.second.c_str());
@@ -170,7 +170,7 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 void _Scripting::InjectItemPointers(const _Stats *Stats) {
 
 	// Add item pointers to lua tables
-	for(const auto &Iterator : Stats->Items) {
+	for(const auto &Iterator : Stats->OldItems) {
 		const _Item *Item = Iterator.second;
 		if(!Item)
 			continue;
@@ -283,7 +283,7 @@ void _Scripting::InjectMonsters(const _Stats *Stats) {
 void _Scripting::InjectBuffs(const _Stats *Stats) {
 
 	// Add buffs
-	for(const auto &Iterator : Stats->Buffs) {
+	for(const auto &Iterator : Stats->OldBuffs) {
 		const _Buff *Buff = Iterator.second;
 		if(Buff) {
 
