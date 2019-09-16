@@ -135,7 +135,7 @@ void _Stats::LoadData(const std::string &Path) {
 		Portrait.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
 		Portrait.NetworkID = NetworkID++;
 		Portraits[Portrait.ID] = Portrait;
-		PortraitsIndex[Portrait.NetworkID] = &Portrait;
+		PortraitsIndex[Portrait.NetworkID] = &Portraits[Portrait.ID];
 	}
 
 	// Load models

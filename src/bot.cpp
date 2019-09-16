@@ -226,7 +226,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				Packet.WriteBit(0);
 				Packet.WriteString(Name.c_str());
 				Packet.Write<uint8_t>(1);
-				Packet.Write<uint32_t>(1);
+				Packet.Write<uint8_t>(1);
 				Packet.Write<uint8_t>(0);
 				Network->SendPacket(Packet);
 

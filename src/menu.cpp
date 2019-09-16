@@ -322,14 +322,14 @@ void _Menu::InitAccount() {
 	State = STATE_ACCOUNT;
 }
 
-// Get the selected portrait id
-uint32_t _Menu::GetSelectedIconID(ae::_Element *ParentElement) {
+// Get the selected icon id from an element
+uint8_t _Menu::GetSelectedIconID(ae::_Element *ParentElement) {
 
 	// Check for selected portrait
 	for(auto &Element : ParentElement->Children) {
 		ae::_Element *Button = Element;
 		if(Button->Checked)
-			return (uint32_t)Button->Index;
+			return (uint8_t)Button->Index;
 	}
 
 	return 0;
@@ -363,12 +363,12 @@ void _Menu::CreateCharacter(bool Hardcore) {
 		return;
 
 	// Get portrait id
-	uint32_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
+	uint8_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
 	if(PortraitID == 0)
 		return;
 
 	// Get build id
-	uint32_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
+	uint8_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
 	if(BuildID == 0)
 		return;
 
@@ -386,7 +386,7 @@ void _Menu::CreateCharacter(bool Hardcore) {
 	Packet.WriteBit(Hardcore);
 	Packet.WriteString(Name->Text.c_str());
 	Packet.Write<uint8_t>(PortraitID);
-	Packet.Write<uint32_t>(BuildID);
+	Packet.Write<uint8_t>(BuildID);
 	Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 	PlayState.Network->SendPacket(Packet);
 }
@@ -607,7 +607,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
-		Button->Index = Index;
+		Button->Index = Portrait.NetworkID;
 		Button->Clickable = true;
 		PortraitsElement->Children.push_back(Button);
 
@@ -931,8 +931,8 @@ void _Menu::RemapInput(int InputType, int Input) {
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
-	uint32_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
-	uint32_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
+	uint8_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
+	uint8_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
 
 	// Check name length
 	ae::_Element *CreateButton = ae::Assets.Elements["button_menu_new_create"];

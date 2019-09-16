@@ -127,7 +127,7 @@ class _Menu {
 		void RenderBrowser();
 		void ChangeLayout(const std::string &ElementName);
 
-		uint32_t GetSelectedIconID(ae::_Element *ParentElement);
+		uint8_t GetSelectedIconID(ae::_Element *ParentElement);
 		size_t GetSelectedCharacter();
 		void ValidateCreateCharacter();
 		void UpdateCharacterButtons();

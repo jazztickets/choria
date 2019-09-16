@@ -507,7 +507,7 @@ void _Server::HandleCharacterCreate(ae::_Buffer &Data, ae::_Peer *Peer) {
 	bool IsHardcore = Data.ReadBit();
 	std::string Name(Data.ReadString());
 	const _Portrait *Portrait = Stats->GetPortrait(Data.Read<uint8_t>());
-	uint32_t BuildID = Data.Read<uint32_t>();
+	uint8_t BuildID = Data.Read<uint8_t>();
 	uint32_t Slot = Data.Read<uint8_t>();
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
