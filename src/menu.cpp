@@ -587,17 +587,16 @@ void _Menu::LoadPortraitButtons() {
 	ae::_Element *PortraitsElement = ae::Assets.Elements["element_menu_new_portraits"];
 	ClearPortraits();
 
-	glm::vec2 Offset(14, 70);
-	size_t i = 0;
-
-	// Load portraits
-	std::list<_OldPortrait> Portraits;
+	// Get portraits
+	std::list<_Portrait> Portraits;
 	PlayState.Stats->GetPortraits(Portraits);
 
 	// Iterate over portraits
+	int Index = 0;
+	glm::vec2 Offset(14, 70);
 	for(const auto &Portrait : Portraits) {
 		if(!Portrait.Texture)
-			throw std::runtime_error("Cannot find texture for portrait id " + std::to_string(Portrait.ID));
+			throw std::runtime_error("Cannot find texture for portrait '" + Portrait.ID + "'");
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
@@ -608,7 +607,7 @@ void _Menu::LoadPortraitButtons() {
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Portrait.Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
-		Button->Index = (int)Portrait.ID;
+		Button->Index = Index;
 		Button->Clickable = true;
 		PortraitsElement->Children.push_back(Button);
 
@@ -619,7 +618,7 @@ void _Menu::LoadPortraitButtons() {
 			Offset.x = 14;
 		}
 
-		i++;
+		Index++;
 	}
 
 	PortraitsElement->CalculateBounds();

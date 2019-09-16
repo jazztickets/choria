@@ -47,8 +47,9 @@ struct _OldMapStat {
 	bool Outside;
 };
 
-struct _OldPortrait {
-	uint32_t ID;
+struct _Portrait {
+	std::string ID;
+	int Rank;
 	const ae::_Texture *Texture;
 };
 
@@ -177,7 +178,7 @@ class _Stats {
 		void GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty=1.0) const;
 
 		// Menu
-		void GetPortraits(std::list<_OldPortrait> &Portraits) const;
+		void GetPortraits(std::list<_Portrait> &PortraitList) const;
 		void GetStartingBuilds(std::list<_OldBuild> &OldBuilds) const;
 		const ae::_Texture *GetPortraitImage(uint32_t PortraitID) const;
 
@@ -209,6 +210,7 @@ class _Stats {
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
+		std::unordered_map<std::string, _Portrait> Portraits;
 		std::unordered_map<std::string, _Model> Models;
 		std::unordered_map<std::string, const _Object *> Builds;
 

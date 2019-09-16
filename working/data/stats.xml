@@ -45,14 +45,14 @@
 	</events>
 	<portraits>
 		<portrait id="joe" texture="textures/portraits/joe.png"/>
-		<portrait id="jeb" texture="textures/portraits/jeb.png"/>
 		<portrait id="bim" texture="textures/portraits/bim.png"/>
-		<portrait id="sib" texture="textures/portraits/sib.png"/>
+		<portrait id="jeb" texture="textures/portraits/jeb.png"/>
 		<portrait id="biff" texture="textures/portraits/biff.png"/>
+		<portrait id="sib" texture="textures/portraits/sib.png"/>
 		<portrait id="jone" texture="textures/portraits/jone.png"/>
-		<portrait id="leb" texture="textures/portraits/leb.png"/>
 		<portrait id="jas" texture="textures/portraits/jas.png"/>
 		<portrait id="pete" texture="textures/portraits/pete.png"/>
+		<portrait id="leb" texture="textures/portraits/leb.png"/>
 	</portraits>
 	<models>
 		<model id="warrior" texture="textures/models/warrior.png"/>

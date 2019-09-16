@@ -29,6 +29,11 @@
 #include <algorithm>
 #include <iostream>
 
+// Compare function for sorting portraits
+bool ComparePortrait(const _Portrait &First, const _Portrait &Second) {
+	return First.Rank < Second.Rank;
+}
+
 // Constructor
 _Stats::_Stats(bool Headless) :
 Headless(Headless) {
@@ -61,6 +66,9 @@ Headless(Headless) {
 
 // Destructor
 _Stats::~_Stats() {
+
+	for(const auto &Build : Builds)
+		delete Build.second;
 
 	for(const auto &Item : OldItems)
 		delete Item.second;
@@ -117,12 +125,30 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Missing '" + Node.first + "' node in " + Path);
 	}
 
+	// Load portraits
+	int Rank = 0;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["portraits"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_Portrait Portrait;
+		Portrait.ID = GetString(ChildNode, "id");
+		Portrait.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		Portrait.Rank = Rank++;
+		Portraits[Portrait.ID] = Portrait;
+	}
+
 	// Load models
 	for(tinyxml2::XMLElement *ChildNode = Nodes["models"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
 		_Model Model;
 		Model.ID = GetString(ChildNode, "id");
 		Model.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
 		Models[Model.ID] = Model;
+	}
+
+	// Load builds
+	for(tinyxml2::XMLElement *ChildNode = Nodes["builds"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_Object *Object = new _Object();
+		Object->Name = GetString(ChildNode, "name");
+		Object->ModelTexture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		Builds[Object->Name] = Object;
 	}
 }
 
@@ -607,20 +633,12 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 	Database->CloseQuery();
 }
 
-// Get list of portraits
-void _Stats::GetPortraits(std::list<_OldPortrait> &Portraits) const {
+// Get list of portraits sorted by rank
+void _Stats::GetPortraits(std::list<_Portrait> &PortraitList) const {
+	for(const auto &Portrait : Portraits)
+		PortraitList.push_back(Portrait.second);
 
-	// Run query
-	Database->PrepareQuery("SELECT * FROM portrait ORDER BY rank");
-	while(Database->FetchRow()) {
-		_OldPortrait Portrait;
-		Portrait.ID = Database->GetInt<uint32_t>("id");
-		Portrait.Texture = ae::Assets.Textures[Database->GetString("texture")];
-
-		Portraits.push_back(Portrait);
-	}
-
-	Database->CloseQuery();
+	PortraitList.sort(ComparePortrait);
 }
 
 // Get list of builds
