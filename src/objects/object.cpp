@@ -713,10 +713,10 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 	Data.Write<glm::ivec2>(Position);
 	Data.WriteString(Name.c_str());
 	if(Character)
-		Data.Write<uint32_t>(Character->PortraitID);
+		Data.Write<uint8_t>(Character->PortraitID);
 	else
-		Data.Write<uint32_t>(0);
-	Data.Write<uint32_t>(ModelID);
+		Data.Write<uint8_t>(0);
+	Data.Write<uint8_t>(ModelID);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 }
@@ -812,10 +812,10 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
-	uint32_t PortraitID = Data.Read<uint32_t>();
+	uint8_t	PortraitID = Data.Read<uint8_t>();
 	if(PortraitID && Character)
 		Character->PortraitID = PortraitID;
-	ModelID = Data.Read<uint32_t>();
+	ModelID = Data.Read<uint8_t>();
 	Light = Data.Read<uint8_t>();
 	Character->Invisible = Data.ReadBit();
 

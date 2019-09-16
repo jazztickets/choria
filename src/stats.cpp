@@ -133,6 +133,7 @@ void _Stats::LoadData(const std::string &Path) {
 		Portrait.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
 		Portrait.Rank = Rank++;
 		Portraits[Portrait.ID] = Portrait;
+		PortraitsIndex[Portrait.Rank] = Portrait.ID;
 	}
 
 	// Load models
@@ -659,18 +660,16 @@ void _Stats::GetStartingBuilds(std::list<_OldBuild> &Builds) const {
 }
 
 // Get portrait texture by id
-const ae::_Texture *_Stats::GetPortraitImage(uint32_t PortraitID) const {
-	const ae::_Texture *Image = nullptr;
+const ae::_Texture *_Stats::GetPortraitImage(uint8_t PortraitID) const {
+	const auto &Index = PortraitsIndex.find(PortraitID);
+	if(Index == PortraitsIndex.end())
+		return nullptr;
 
-	// Run query
-	Database->PrepareQuery("SELECT texture FROM portrait WHERE id = @portrait_id");
-	Database->BindInt(1, PortraitID);
-	if(Database->FetchRow()) {
-		Image = ae::Assets.Textures[Database->GetString("texture")];
-	}
-	Database->CloseQuery();
+	const auto &Portrait = Portraits.find(Index->second);
+	if(Portrait == Portraits.end())
+		return nullptr;
 
-	return Image;
+	return Portrait->second.Texture;
 }
 
 // Randomly generates a list of monsters from a zone
