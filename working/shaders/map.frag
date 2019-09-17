@@ -23,7 +23,7 @@ void main() {
 	// Blend first two textures
 	vec4 texture_color;
 	if(trans > 0)
-		texture_color = texture_color_back * (1 - trans) + texture_color_fore * trans;
+		texture_color = mix(texture_color_back, texture_color_fore, trans);
 	else
 		texture_color = texture_color_back;
 

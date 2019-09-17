@@ -671,7 +671,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw event type
-		Buffer << Stats->EventNames[(size_t)Brush->Event.Type].Name;
+		Buffer << Stats->EventTypes.at(Brush->Event.Type).second;
 
 		Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -872,7 +872,7 @@ void _EditorState::InitEvents() {
 	glm::vec2 Size = glm::vec2(160, 64);
 	glm::vec2 Offset(Start);
 
-	size_t Count = Stats->EventNames.size();
+	size_t Count = Stats->EventTypes.size();
 	EventsElement->BaseSize.x = Start.x + (Spacing.x + Size.x) * 4;
 	EventsElement->BaseSize.y = Start.y + (Spacing.y + Size.y) * (Count / 4);
 	for(size_t i = 0; i < Count; i++) {
@@ -892,7 +892,7 @@ void _EditorState::InitEvents() {
 		Label->Parent = Button;
 		Label->BaseOffset = glm::vec2(0, 38);
 		Label->Alignment = ae::CENTER_BASELINE;
-		Label->Text = Stats->EventNames[i].Name;
+		Label->Text = Stats->EventTypes.at((EventType)i).second;
 		Label->Font = ae::Assets.Fonts["hud_small"];
 		Button->Children.push_back(Label);
 

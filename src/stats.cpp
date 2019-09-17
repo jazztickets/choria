@@ -52,7 +52,6 @@ _Stats::_Stats(bool Headless) :
 
 	// Load spreadsheet data
 	OldLoadMaps();
-	OldLoadEvents();
 	OldLoadLevels();
 	OldLoadBuffs();
 	OldLoadStatTypes();
@@ -112,6 +111,21 @@ const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *A
 
 // Load types
 void _Stats::LoadTypes() {
+	EventTypes = {
+		{ EventType::NONE,        { "",   "None"         } },
+		{ EventType::SCRIPT,      { "SC", "Script"       } },
+		{ EventType::SPAWN,       { "S",  "Spawn"        } },
+		{ EventType::MAPENTRANCE, { "ME", "Map Entrance" } },
+		{ EventType::MAPCHANGE,   { "M",  "Map Change"   } },
+		{ EventType::PORTAL,      { "P",  "Portal"       } },
+		{ EventType::JUMP,        { "J",  "Jump"         } },
+		{ EventType::KEY,         { "K",  "Key"          } },
+		{ EventType::VENDOR,      { "V",  "Vendor"       } },
+		{ EventType::TRADER,      { "T",  "Trader"       } },
+		{ EventType::BLACKSMITH,  { "B",  "Black Smith"  } },
+		{ EventType::MINIGAME,    { "G",  "Minigame"     } },
+	};
+
 	ScopeTypes = {
 		{ ScopeType::NONE,   { "none",   "None"   } },
 		{ ScopeType::WORLD,  { "world",  "World"  } },
@@ -304,22 +318,6 @@ void _Stats::OldLoadMaps() {
 		Map.BackgroundOffset.z = (float)Database->GetReal("background_z");
 
 		OldMaps[Database->GetInt<uint32_t>("id")] = Map;
-	}
-	Database->CloseQuery();
-}
-
-// Load event data
-void _Stats::OldLoadEvents() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM event");
-
-	// Get data
-	_EventName Event;
-	while(Database->FetchRow()) {
-		Event.Name = Database->GetString("name");
-		Event.ShortName = Database->GetString("shortname");
-		EventNames.push_back(Event);
 	}
 	Database->CloseQuery();
 }

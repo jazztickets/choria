@@ -184,7 +184,6 @@ class _Stats {
 		const _Level *FindLevel(int Experience) const;
 		int GetMaxLevel() const { return (int)Levels.size(); }
 
-		std::vector<_EventName> EventNames;
 		std::vector<_Level> Levels;
 
 		std::unordered_map<uint32_t, _OldMapStat> OldMaps;
@@ -200,6 +199,7 @@ class _Stats {
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
+		std::unordered_map<EventType, std::pair<std::string, std::string> > EventTypes;
 		std::unordered_map<ItemType, std::pair<std::string, std::string> > ItemTypes;
 		std::unordered_map<ScopeType, std::pair<std::string, std::string> > ScopeTypes;
 		std::unordered_map<TargetType, std::pair<std::string, std::string> > TargetTypes;
@@ -225,7 +225,6 @@ class _Stats {
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
 
 		void OldLoadMaps();
-		void OldLoadEvents();
 		void OldLoadLevels();
 		void OldLoadBuffs();
 		void OldLoadStatTypes();

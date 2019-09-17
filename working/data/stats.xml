@@ -10,19 +10,6 @@
 		<damage_type id="bleed" name="Bleed"/>
 		<damage_type id="stun" name="Stun"/>
 	</damage_types>
-	<events>
-		<event id="S" name="Spawn"/>
-		<event id="ME" name="Map Entrance"/>
-		<event id="M" name="Map Change"/>
-		<event id="V" name="Vendor"/>
-		<event id="T" name="Trader"/>
-		<event id="K" name="Key"/>
-		<event id="SC" name="Script"/>
-		<event id="P" name="Portal"/>
-		<event id="J" name="Jump"/>
-		<event id="B" name="Black Smith"/>
-		<event id="G" name="Minigame"/>
-	</events>
 	<portraits>
 		<portrait id="joe" texture="textures/portraits/joe.png"/>
 		<portrait id="bim" texture="textures/portraits/bim.png"/>

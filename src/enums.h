@@ -22,18 +22,17 @@
 // Event types
 enum class EventType : uint8_t {
 	NONE,
+	SCRIPT,
 	SPAWN,
 	MAPENTRANCE,
 	MAPCHANGE,
-	VENDOR,
-	TRADER,
-	KEY,
-	SCRIPT,
 	PORTAL,
 	JUMP,
+	KEY,
+	VENDOR,
+	TRADER,
 	BLACKSMITH,
 	MINIGAME,
-	COUNT,
 };
 
 // Item types
