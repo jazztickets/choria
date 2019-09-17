@@ -87,7 +87,7 @@ class _Battle : public ae::_BaseObject {
 		bool ClientHandleInput(size_t Action);
 		void ClientHandlePlayerAction(ae::_Buffer &Data);
 		void ClientSetAction(uint8_t ActionBarSlot);
-		void ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget);
+		void ClientSetTarget(const _BaseItem *Item, int Side, _Object *InitialTarget);
 
 		// Pointers
 		const _Stats *Stats;

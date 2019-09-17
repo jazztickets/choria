@@ -34,7 +34,7 @@ class _Stats;
 class _Save;
 class _Object;
 class _Scripting;
-class _Item;
+class _BaseItem;
 
 namespace ae {
 	template<class T> class _Manager;
@@ -153,7 +153,7 @@ class _Server {
 		void HandleDisconnect(ae::_NetworkEvent &Event);
 		void HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer);
 
-		void SendItem(ae::_Peer *Peer, const _Item *Item, int Count);
+		void SendItem(ae::_Peer *Peer, const _BaseItem *Item, int Count);
 		void SendPlayerInfo(ae::_Peer *Peer);
 		void SendCharacterList(ae::_Peer *Peer);
 		void SendTradeInformation(_Object *Sender, _Object *Receiver);

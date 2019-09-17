@@ -102,7 +102,7 @@ class _Character {
 		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
 
 		// Skills
-		bool HasLearned(const _Item *Skill) const;
+		bool HasLearned(const _BaseItem *Skill) const;
 		int GetSkillPointsAvailable() const { return SkillPoints - SkillPointsUsed; }
 		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 
@@ -112,7 +112,7 @@ class _Character {
 		void DeleteStatusEffects();
 
 		// Unlocks
-		bool HasUnlocked(const _Item *Item) const;
+		bool HasUnlocked(const _BaseItem *Item) const;
 
 		// Base
 		_Object *Object;

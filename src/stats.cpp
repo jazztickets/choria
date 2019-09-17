@@ -332,9 +332,9 @@ void _Stats::OldLoadItems() {
 
 		std::string TexturePath = Database->GetString("texture");
 
-		_Item *Item = new _Item;
+		_BaseItem *Item = new _BaseItem;
 		Item->Stats = this;
-		Item->ID = ItemID;
+		Item->NetworkID = ItemID;
 		Item->Name = Database->GetString("name");
 		Item->Texture = ae::Assets.Textures[TexturePath];
 		Item->Script = Database->GetString("script");
@@ -370,7 +370,7 @@ void _Stats::OldLoadItems() {
 		if(!Headless && Item->Texture == nullptr && TexturePath != "")
 			throw std::runtime_error("Can't find texture " + TexturePath);
 
-		OldItems[Item->ID] = Item;
+		OldItems[Item->NetworkID] = Item;
 	}
 	Database->CloseQuery();
 
@@ -509,7 +509,7 @@ void _Stats::OldLoadBuilds() {
 		Database->PrepareQuery("SELECT * FROM builditem WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
-			const _Item *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
+			const _BaseItem *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item)
 				Object->Inventory->AddItem(Item, 0, Database->GetInt<int>("count", 1));
 		}
@@ -519,9 +519,9 @@ void _Stats::OldLoadBuilds() {
 		Database->PrepareQuery("SELECT * FROM buildskill WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
-			const _Item *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
+			const _BaseItem *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item)
-				Object->Character->Skills[Item->ID] = Database->GetInt<int>("level", 1);
+				Object->Character->Skills[Item->NetworkID] = Database->GetInt<int>("level", 1);
 		}
 		Database->CloseQuery(1);
 
@@ -529,7 +529,7 @@ void _Stats::OldLoadBuilds() {
 		Database->PrepareQuery("SELECT * FROM buildactionbar WHERE build_id = @build_id", 1);
 		Database->BindInt(1, BuildID, 1);
 		while(Database->FetchRow(1)) {
-			const _Item *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
+			const _BaseItem *Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
 			if(Item) {
 				size_t Slot = (size_t)Database->GetInt<uint32_t>("slot", 1);
 				if(Slot < Object->Character->ActionBar.size())
@@ -846,7 +846,7 @@ size_t _OldVendor::GetSlotFromID(uint32_t ID) const {
 
 	size_t Index = 0;
 	for(const auto &Item : Items) {
-		if(Item->ID == ID)
+		if(Item->NetworkID == ID)
 			return Index;
 
 		Index++;

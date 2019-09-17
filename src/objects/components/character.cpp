@@ -322,7 +322,7 @@ void _Character::CalculateStats() {
 	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
 
 		// Check each item
-		const _Item *Item = EquipmentBag.Slots[i].Item;
+		const _BaseItem *Item = EquipmentBag.Slots[i].Item;
 		int Upgrades = EquipmentBag.Slots[i].Upgrades;
 		if(Item) {
 
@@ -354,7 +354,7 @@ void _Character::CalculateStats() {
 	// Calculate skills points used
 	SkillPointsUsed = 0;
 	for(const auto &SkillLevel : Skills) {
-		const _Item *Skill = Object->Stats->OldItems.at(SkillLevel.first);
+		const _BaseItem *Skill = Object->Stats->OldItems.at(SkillLevel.first);
 		if(Skill)
 			SkillPointsUsed += SkillLevel.second;
 	}
@@ -364,7 +364,7 @@ void _Character::CalculateStats() {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = Object;
 		if(GetActionFromActionBar(ActionResult.ActionUsed, i)) {
-			const _Item *Skill = ActionResult.ActionUsed.Item;
+			const _BaseItem *Skill = ActionResult.ActionUsed.Item;
 			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
 
 				// Get passive stat changes
@@ -551,10 +551,10 @@ int _Character::GenerateDamage() {
 void _Character::RefreshActionBarCount() {
 	SkillPointsOnActionBar = 0;
 	for(size_t i = 0; i < ActionBar.size(); i++) {
-		const _Item *Item = ActionBar[i].Item;
+		const _BaseItem *Item = ActionBar[i].Item;
 		if(Item) {
 			if(Item->IsSkill() && HasLearned(Item))
-				SkillPointsOnActionBar += Skills[Item->ID];
+				SkillPointsOnActionBar += Skills[Item->NetworkID];
 			else
 				ActionBar[i].Count = Object->Inventory->CountItem(Item);
 		}
@@ -572,7 +572,7 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 
 		// Determine if item is a skill, then look at object's skill levels
 		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
-			ReturnAction.Level = Skills[ReturnAction.Item->ID];
+			ReturnAction.Level = Skills[ReturnAction.Item->NetworkID];
 		else
 			ReturnAction.Level = ReturnAction.Item->Level;
 
@@ -586,11 +586,11 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 }
 
 // Return true if the object has the skill unlocked
-bool _Character::HasLearned(const _Item *Skill) const {
+bool _Character::HasLearned(const _BaseItem *Skill) const {
 	if(!Skill)
 		return false;
 
-	if(Skills.find(Skill->ID) != Skills.end())
+	if(Skills.find(Skill->NetworkID) != Skills.end())
 		return true;
 
 	return false;
@@ -601,7 +601,7 @@ void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 	if(SkillID == 0)
 		return;
 
-	const _Item *Skill = Object->Stats->OldItems.at(SkillID);
+	const _BaseItem *Skill = Object->Stats->OldItems.at(SkillID);
 	if(Skill == nullptr)
 		return;
 
@@ -680,7 +680,7 @@ void _Character::DeleteStatusEffects() {
 }
 
 // Return true if the object has the item unlocked
-bool _Character::HasUnlocked(const _Item *Item) const {
+bool _Character::HasUnlocked(const _BaseItem *Item) const {
 	if(!Item)
 		return false;
 

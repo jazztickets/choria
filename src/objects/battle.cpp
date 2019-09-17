@@ -231,7 +231,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ClientPlayer->Character->Targets.clear();
 
 		// Check if item can be used
-		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
+		const _BaseItem *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
 		if(Item) {
 			if(!Item->CanUse(Scripting, ActionResult))
 				Item = nullptr;
@@ -281,7 +281,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
 		ActionResult.ActionUsed = Action;
-		const _Item *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
+		const _BaseItem *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
 		if(!Item->CanUse(Scripting, ActionResult)) {
 			ClientPlayer->Fighter->PotentialAction.Unset();
 			ClientPlayer->Character->Targets.clear();
@@ -307,7 +307,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 }
 
 // Set target for client
-void _Battle::ClientSetTarget(const _Item *Item, int Side, _Object *InitialTarget) {
+void _Battle::ClientSetTarget(const _BaseItem *Item, int Side, _Object *InitialTarget) {
 	ClientPlayer->Character->Targets.clear();
 
 	// Can't change self targets
@@ -356,7 +356,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 		return;
 
 	// Can't change self targetting actions
-	const _Item *Item = ClientPlayer->Fighter->PotentialAction.Item;
+	const _BaseItem *Item = ClientPlayer->Fighter->PotentialAction.Item;
 	if(Item->TargetID == TargetType::SELF)
 		return;
 
@@ -929,7 +929,7 @@ bool _Battle::ClientHandleInput(size_t Action) {
 void _Battle::ClientHandlePlayerAction(ae::_Buffer &Data) {
 
 	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
-	uint32_t ItemID = Data.Read<uint32_t>();
+	uint16_t ItemID = Data.Read<uint16_t>();
 
 	_Object *Object = Manager->GetObject(NetworkID);
 	if(Object) {

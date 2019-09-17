@@ -565,7 +565,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 			if(InventorySlot.Item) {
 				Json::Value ItemNode;
 				ItemNode["slot"] = (Json::Value::UInt64)i;
-				ItemNode["id"] = InventorySlot.Item->ID;
+				ItemNode["id"] = InventorySlot.Item->NetworkID;
 				ItemNode["upgrades"] = InventorySlot.Upgrades;
 				ItemNode["count"] = InventorySlot.Count;
 				BagNode.append(ItemNode);
@@ -591,7 +591,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 		if(Character->ActionBar[i].Item) {
 			Json::Value ActionNode;
 			ActionNode["slot"] = (Json::Value::UInt64)i;
-			ActionNode["id"] = Character->ActionBar[i].Item ? Character->ActionBar[i].Item->ID : 0;
+			ActionNode["id"] = Character->ActionBar[i].Item ? Character->ActionBar[i].Item->NetworkID : 0;
 			ActionBarNode.append(ActionNode);
 		}
 	}

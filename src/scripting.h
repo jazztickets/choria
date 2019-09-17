@@ -25,7 +25,7 @@
 // Forward Declarations
 class _Object;
 class _Battle;
-class _Item;
+class _BaseItem;
 class _Stats;
 class _StatChange;
 class _StatusEffect;
@@ -83,7 +83,7 @@ class _Scripting {
 
 	private:
 
-		static void PushItem(lua_State *LuaState, const _Item *Item, int Upgrades);
+		static void PushItem(lua_State *LuaState, const _BaseItem *Item, int Upgrades);
 
 		static int RandomGetInt(lua_State *LuaState);
 		static int AudioPlay(lua_State *LuaState);

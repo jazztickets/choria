@@ -25,7 +25,7 @@
 // Forward Declarations
 class _Stats;
 class _Object;
-class _Item;
+class _BaseItem;
 class _Buff;
 struct _ActionResult;
 
@@ -82,7 +82,7 @@ class _Action {
 	public:
 
 		_Action() : Item(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
-		_Action(const _Item *Item) : _Action() { this->Item = Item; }
+		_Action(const _BaseItem *Item) : _Action() { this->Item = Item; }
 
 		bool operator==(const _Action &Action) const { return Action.Item == Item; }
 		bool operator!=(const _Action &Action) const { return Action.Item != Item; }
@@ -99,7 +99,7 @@ class _Action {
 
 		TargetType GetTargetType();
 
-		const _Item *Item;
+		const _BaseItem *Item;
 		ActionStateType State;
 		double ApplyTime;
 		double Time;

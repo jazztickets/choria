@@ -1203,7 +1203,7 @@ void _PlayState::HandleInventoryAdd(ae::_Buffer &Data){
 
 	_RecentItem RecentItem;
 	RecentItem.Count = (int)Data.Read<uint8_t>();
-	RecentItem.Item = Stats->OldItems.at(Data.Read<uint32_t>());
+	RecentItem.Item = Stats->OldItems.at(Data.Read<uint16_t>());
 	HUD->RecentItems.push_back(RecentItem);
 
 	Player->Inventory->AddItem(RecentItem.Item, 0, RecentItem.Count);
@@ -1522,7 +1522,7 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 
 			// Unlock a skill
 			if(SkillUnlocked)
-				Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+				Player->Character->Skills[ActionResult.ActionUsed.Item->NetworkID] = 0;
 
 			if(ItemUnlocked)
 				Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;

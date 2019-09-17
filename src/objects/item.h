@@ -51,7 +51,7 @@ enum class ItemType : uint32_t {
 };
 
 // Classes
-class _Item {
+class _BaseItem {
 
 	public:
 
@@ -102,7 +102,7 @@ class _Item {
 
 		const _Stats *Stats;
 
-		uint32_t ID;
+		uint16_t NetworkID;
 		std::string Name;
 		std::string Script;
 		const ae::_Texture *Texture;
@@ -141,6 +141,6 @@ class _Item {
 
 };
 
-inline bool CompareItems(const _Item *First, const _Item *Second) {
+inline bool CompareItems(const _BaseItem *First, const _BaseItem *Second) {
 	return First->Name < Second->Name;
 }

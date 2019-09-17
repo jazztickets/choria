@@ -413,7 +413,7 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 }
 
 // Send an item to the player
-void _Server::SendItem(ae::_Peer *Peer, const _Item *Item, int Count) {
+void _Server::SendItem(ae::_Peer *Peer, const _BaseItem *Item, int Count) {
 	if(!ValidatePeer(Peer))
 	   return;
 
@@ -428,7 +428,7 @@ void _Server::SendItem(ae::_Peer *Peer, const _Item *Item, int Count) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::INVENTORY_ADD);
 	Packet.Write<uint8_t>((uint8_t)Count);
-	Packet.Write<uint32_t>(Item->ID);
+	Packet.Write<uint16_t>(Item->NetworkID);
 	Player->Inventory->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
 
@@ -961,7 +961,7 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		return;
 
 	// Get item
-	const _Item *Item = Player->Inventory->GetSlot(Slot).Item;
+	const _BaseItem *Item = Player->Inventory->GetSlot(Slot).Item;
 	if(!Item)
 		return;
 
@@ -1089,7 +1089,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		TargetSlot.Unserialize(Data);
 
 		// Get item info
-		const _Item *Item = Vendor->Items[Slot.Index];
+		const _BaseItem *Item = Vendor->Items[Slot.Index];
 		int Price = Item->GetPrice(Vendor, Amount, Buy);
 
 		// Not enough gold
@@ -1129,7 +1129,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Player->Character->CalculateStats();
 
 		// Log
-		Log << "[PURCHASE] Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
+		Log << "[PURCHASE] Player " << Player->Name << " buys " << (int)Amount << "x " << Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << Item->NetworkID << " gold=" << Player->Character->Gold << " )" << std::endl;
 	}
 	// Sell item
 	else {
@@ -1154,7 +1154,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 			}
 
 			// Log
-			Log << "[SELL] Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
+			Log << "[SELL] Player " << Player->Name << " sells " << Amount << "x " << InventorySlot.Item->Name << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->NetworkID << " gold=" << Player->Character->Gold << " )" << std::endl;
 
 			// Update items
 			Player->Inventory->UpdateItemCount(Slot, -Amount);
@@ -1481,7 +1481,7 @@ void _Server::HandleBlacksmithUpgrade(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Log
-	Log << "[UPGRADE] Player " << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->ID << " gold=" << Player->Character->Gold << " )" << std::endl;
+	Log << "[UPGRADE] Player " << Player->Name << " upgrades " << InventorySlot.Item->Name << " to level " << InventorySlot.Upgrades << " ( character_id=" << Peer->CharacterID << " item_id=" << InventorySlot.Item->NetworkID << " gold=" << Player->Character->Gold << " )" << std::endl;
 
 	Player->Character->CalculateStats();
 }
@@ -1542,7 +1542,7 @@ void _Server::HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Minigame.Bucket < Minigame.Prizes.size()) {
 		const _MinigameItem *MinigameItem = Minigame.Prizes[Minigame.Bucket];
 		if(MinigameItem && MinigameItem->Item) {
-			SendItem(Peer, Stats->OldItems.at(MinigameItem->Item->ID), MinigameItem->Count);
+			SendItem(Peer, Stats->OldItems.at(MinigameItem->Item->NetworkID), MinigameItem->Count);
 		}
 	}
 }
@@ -1713,9 +1713,9 @@ void _Server::HandleActionUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
 		Packet.Write<ae::NetworkIDType>(Player->NetworkID);
 		if(Player->Character->Action.Item)
-			Packet.Write<uint32_t>(Player->Character->Action.Item->ID);
+			Packet.Write<uint16_t>(Player->Character->Action.Item->NetworkID);
 		else
-			Packet.Write<uint32_t>(0);
+			Packet.Write<uint16_t>(0);
 
 		Player->Character->Battle->BroadcastPacket(Packet);
 	}

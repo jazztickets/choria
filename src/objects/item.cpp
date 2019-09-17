@@ -38,7 +38,7 @@
 #include <iostream>
 
 // Draw tooltip
-void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
+void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
@@ -121,7 +121,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 	if(IsSkill()) {
 
 		// Get skill level
-		auto SkillIterator = Player->Character->Skills.find(ID);
+		auto SkillIterator = Player->Character->Skills.find(NetworkID);
 		if(SkillIterator != Player->Character->Skills.end())
 			DrawLevel = SkillIterator->second;
 		else
@@ -433,7 +433,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 				InfoText = "Already unlocked";
 		} break;
 		case ItemType::KEY: {
-			if(!Player->Inventory->GetBag(BagType::KEYS).HasItemID(ID))
+			if(!Player->Inventory->GetBag(BagType::KEYS).HasItemID(NetworkID))
 				InfoText = "Right-click to add to keychain";
 			else
 				InfoText = "Already in keychain";
@@ -459,7 +459,7 @@ void _Item::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const 
 }
 
 // Draw item description
-void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
+void _BaseItem::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
 
 	// Check for scripting function
 	std::string Info = "";
@@ -496,7 +496,7 @@ void _Item::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int 
 }
 
 // Get target count based on target type
-int _Item::GetTargetCount() const {
+int _BaseItem::GetTargetCount() const {
 
 	int TargetCount = 0;
 	switch(TargetID) {
@@ -529,7 +529,7 @@ int _Item::GetTargetCount() const {
 }
 
 // Return a valid equipment slot for an item
-void _Item::GetEquipmentSlot(_Slot &Slot) const {
+void _BaseItem::GetEquipmentSlot(_Slot &Slot) const {
 
 	Slot.Type = BagType::EQUIPMENT;
 	switch(Type) {
@@ -562,7 +562,7 @@ void _Item::GetEquipmentSlot(_Slot &Slot) const {
 }
 
 // Returns the item's price to/from a vendor
-int _Item::GetPrice(const _OldVendor *Vendor, int QueryCount, bool Buy, int Level) const {
+int _BaseItem::GetPrice(const _OldVendor *Vendor, int QueryCount, bool Buy, int Level) const {
 	if(!Vendor)
 		return 0;
 
@@ -591,7 +591,7 @@ int _Item::GetPrice(const _OldVendor *Vendor, int QueryCount, bool Buy, int Leve
 }
 
 // Get upgrade price
-int _Item::GetUpgradePrice(int Level) const {
+int _BaseItem::GetUpgradePrice(int Level) const {
 	if(MaxLevel <= 0)
 		return 0;
 
@@ -599,7 +599,7 @@ int _Item::GetUpgradePrice(int Level) const {
 }
 
 // Return true if the item can be used
-bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
+bool _BaseItem::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	_Object *Object = ActionResult.Source.Object;
 	if(!Object)
 		return false;
@@ -610,7 +610,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 
 	// Check for item in key bag
 	if(IsKey())
-		return !Object->Inventory->GetBag(BagType::KEYS).HasItemID(ID);
+		return !Object->Inventory->GetBag(BagType::KEYS).HasItemID(NetworkID);
 
 	// Unlocking item
 	if(IsUnlockable())
@@ -649,7 +649,7 @@ bool _Item::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Return attack times from skill script. Return false if function doesn't exist.
-bool _Item::GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
+bool _BaseItem::GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
 
 	// Check script's function
 	if(Scripting->StartMethodCall(Script, "GetAttackTimes")) {
@@ -667,7 +667,7 @@ bool _Item::GetAttackTimes(_Scripting *Scripting, _Object *Object, double &Attac
 }
 
 // Check if an item can target an object
-bool _Item::CanTarget(_Object *Source, _Object *Target) const {
+bool _BaseItem::CanTarget(_Object *Source, _Object *Target) const {
 	if(TargetAlive && !Target->Character->IsAlive())
 		return false;
 
@@ -687,7 +687,7 @@ bool _Item::CanTarget(_Object *Source, _Object *Target) const {
 }
 
 // Check if the item can be used in the given scope
-bool _Item::CheckScope(ScopeType CheckScope) const {
+bool _BaseItem::CheckScope(ScopeType CheckScope) const {
 	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != CheckScope))
 		return false;
 
@@ -695,7 +695,7 @@ bool _Item::CheckScope(ScopeType CheckScope) const {
 }
 
 // Apply the cost
-void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _BaseItem::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushActionResult(&ActionResult);
@@ -706,7 +706,7 @@ void _Item::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const 
 }
 
 // Use an item
-void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _BaseItem::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Use")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushInt(ActionResult.ActionUsed.Duration);
@@ -720,7 +720,7 @@ void _Item::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Get passive stats
-void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _BaseItem::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Stats")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
@@ -732,84 +732,84 @@ void _Item::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Play audio through scripting
-void _Item::PlaySound(_Scripting *Scripting) const {
+void _BaseItem::PlaySound(_Scripting *Scripting) const {
 	if(Scripting->StartMethodCall(Script, "PlaySound")) {
 		Scripting->MethodCall(0, 0);
 		Scripting->FinishMethodCall();
 	}
 }
 
-float _Item::GetAverageDamage(int Upgrades) const {
+float _BaseItem::GetAverageDamage(int Upgrades) const {
 	return (GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
 }
 
 // Get min damage
-float _Item::GetMinDamage(int Upgrades) const {
+float _BaseItem::GetMinDamage(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage);
 }
 
 // Get max damage
-float _Item::GetMaxDamage(int Upgrades) const {
+float _BaseItem::GetMaxDamage(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage);
 }
 
 // Get armor
-float _Item::GetArmor(int Upgrades) const {
+float _BaseItem::GetArmor(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::ARMOR, Upgrades, Armor);
 }
 
 // Get damage block
-float _Item::GetDamageBlock(int Upgrades) const {
+float _BaseItem::GetDamageBlock(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::DAMAGEBLOCK, Upgrades, DamageBlock);
 }
 
 // Get pierce
-float _Item::GetPierce(int Upgrades) const {
+float _BaseItem::GetPierce(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::PIERCE, Upgrades, Pierce);
 }
 
 // Get max health
-float _Item::GetMaxHealth(int Upgrades) const {
+float _BaseItem::GetMaxHealth(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MAXHEALTH, Upgrades, MaxHealth);
 }
 
 // Get max mana
-float _Item::GetMaxMana(int Upgrades) const {
+float _BaseItem::GetMaxMana(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MAXMANA, Upgrades, MaxMana);
 }
 
 // Get health regen
-float _Item::GetHealthRegen(int Upgrades) const {
+float _BaseItem::GetHealthRegen(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::HEALTHREGEN, Upgrades, HealthRegen);
 }
 
 // Get mana regen
-float _Item::GetManaRegen(int Upgrades) const {
+float _BaseItem::GetManaRegen(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MANAREGEN, Upgrades, ManaRegen);
 }
 
 // Get battle speed
-float _Item::GetBattleSpeed(int Upgrades) const {
+float _BaseItem::GetBattleSpeed(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::BATTLESPEED, Upgrades, BattleSpeed);
 }
 
 // Get move speed
-float _Item::GetMoveSpeed(int Upgrades) const {
+float _BaseItem::GetMoveSpeed(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MOVESPEED, Upgrades, MoveSpeed);
 }
 
 // Get resistance
-float _Item::GetResistance(int Upgrades) const {
+float _BaseItem::GetResistance(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::RESIST, Upgrades, Resistance);
 }
 
 // Get drop rate
-float _Item::GetDropRate(int Upgrades) const {
+float _BaseItem::GetDropRate(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::DROPRATE, Upgrades, DropRate);
 }
 
 // Get appropriate text color when comparing items
-glm::vec4 _Item::GetCompareColor(float ItemValue, float EquippedValue) const {
+glm::vec4 _BaseItem::GetCompareColor(float ItemValue, float EquippedValue) const {
 	if(ItemValue > EquippedValue)
 		return ae::Assets.Colors["green"];
 	else if(ItemValue < EquippedValue)
@@ -819,7 +819,7 @@ glm::vec4 _Item::GetCompareColor(float ItemValue, float EquippedValue) const {
 }
 
 // Return value of a stat after upgrades
-template<typename T> T _Item::GetUpgradedValue(StatType Type, int Upgrades, T Value) const {
+template<typename T> T _BaseItem::GetUpgradedValue(StatType Type, int Upgrades, T Value) const {
 	if(MaxLevel <= 0)
 		return Value;
 

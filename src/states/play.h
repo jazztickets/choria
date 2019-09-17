@@ -29,7 +29,7 @@ class _HUD;
 class _Map;
 class _Battle;
 class _Object;
-class _Item;
+class _BaseItem;
 class _Server;
 class _Stats;
 class _StatChange;

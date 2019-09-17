@@ -171,7 +171,7 @@ void _Scripting::InjectItemPointers(const _Stats *Stats) {
 
 	// Add item pointers to lua tables
 	for(const auto &Iterator : Stats->OldItems) {
-		const _Item *Item = Iterator.second;
+		const _BaseItem *Item = Iterator.second;
 		if(!Item)
 			continue;
 
@@ -486,7 +486,7 @@ void _Scripting::PushObject(_Object *Object) {
 }
 
 // Push item onto stack
-void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) {
+void _Scripting::PushItem(lua_State *LuaState, const _BaseItem *Item, int Upgrades) {
 	if(!Item) {
 		lua_pushnil(LuaState);
 		return;
@@ -494,7 +494,7 @@ void _Scripting::PushItem(lua_State *LuaState, const _Item *Item, int Upgrades) 
 
 	lua_newtable(LuaState);
 
-	lua_pushinteger(LuaState, (int)Item->ID);
+	lua_pushinteger(LuaState, (int)Item->NetworkID);
 	lua_setfield(LuaState, -2, "ID");
 
 	lua_pushinteger(LuaState, (int)Item->Type);
@@ -848,7 +848,7 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 	// Get self pointer
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 
-	const _Item *Item = nullptr;
+	const _BaseItem *Item = nullptr;
 	int Upgrades = 0;
 
 	// Get item
@@ -1091,7 +1091,7 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 int _Scripting::ItemGenerateDamage(lua_State *LuaState) {
 
 	// Get self pointer
-	_Item *Item = (_Item *)lua_touserdata(LuaState, lua_upvalueindex(1));
+	_BaseItem *Item = (_BaseItem *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	int Upgrades = (int)lua_tointeger(LuaState, 1);
 
 	lua_pushinteger(LuaState, ae::GetRandomInt((int)Item->GetMinDamage(Upgrades), (int)Item->GetMaxDamage(Upgrades)));

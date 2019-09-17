@@ -84,7 +84,7 @@ void _Inventory::UnserializeSlot(ae::_Buffer &Data, const _Stats *Stats) {
 }
 
 // Search for an item in the inventory
-bool _Inventory::FindItem(const _Item *Item, size_t &Slot, size_t StartSlot) {
+bool _Inventory::FindItem(const _BaseItem *Item, size_t &Slot, size_t StartSlot) {
 
 	_Bag &Bag = GetBag(BagType::INVENTORY);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
@@ -113,7 +113,7 @@ bool _Inventory::HasItemID(uint32_t ItemID) {
 }
 
 // Count the number of a certain item in inventory
-int _Inventory::CountItem(const _Item *Item) {
+int _Inventory::CountItem(const _BaseItem *Item) {
 	int Count = 0;
 	_Bag &Bag = GetBag(BagType::INVENTORY);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
@@ -125,7 +125,7 @@ int _Inventory::CountItem(const _Item *Item) {
 }
 
 // Checks if an item can be equipped
-bool _Inventory::CanEquipItem(size_t Slot, const _Item *Item) {
+bool _Inventory::CanEquipItem(size_t Slot, const _BaseItem *Item) {
 	if(!Item)
 		return true;
 
@@ -246,7 +246,7 @@ int _Inventory::UpdateItemCount(const _Slot &Slot, int Amount) {
 }
 
 // Reduce item count for a particular item
-void _Inventory::SpendItems(const _Item *Item, int Count) {
+void _Inventory::SpendItems(const _BaseItem *Item, int Count) {
 
 	_Bag &Bag = GetBag(BagType::INVENTORY);
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
@@ -262,7 +262,7 @@ void _Inventory::SpendItems(const _Item *Item, int Count) {
 }
 
 // Find a suitable slot for an item
-_Slot _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
+_Slot _Inventory::FindSlotForItem(const _BaseItem *Item, int Upgrades, int Count) {
 	_Slot Slot = FindSlotForItemInBag(BagType::EQUIPMENT, Item, Upgrades, Count);
 	if(!IsValidSlot(Slot))
 		Slot = FindSlotForItemInBag(BagType::INVENTORY, Item, Upgrades, Count);
@@ -271,7 +271,7 @@ _Slot _Inventory::FindSlotForItem(const _Item *Item, int Upgrades, int Count) {
 }
 
 // Find a slot for an item in a certain bag
-_Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int Upgrades, int Count) {
+_Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _BaseItem *Item, int Upgrades, int Count) {
 	_Slot EmptySlot;
 	_Bag &Bag = Bags[(size_t)BagType];
 	for(size_t i = 0; i < Bag.Slots.size(); i++) {
@@ -291,7 +291,7 @@ _Slot _Inventory::FindSlotForItemInBag(BagType BagType, const _Item *Item, int U
 }
 
 // Attempts to add an item to the inventory
-bool _Inventory::AddItem(const _Item *Item, int Upgrades, int Count, _Slot TargetSlot) {
+bool _Inventory::AddItem(const _BaseItem *Item, int Upgrades, int Count, _Slot TargetSlot) {
 	if(!Count)
 		return false;
 
@@ -395,7 +395,7 @@ _Slot _Inventory::GetRequiredItemSlots(const _OldTrader *Trader, std::vector<_Sl
 
 	// Go through required items
 	for(size_t i = 0; i < Trader->Items.size(); i++) {
-		const _Item *RequiredItem = Trader->Items[i].Item;
+		const _BaseItem *RequiredItem = Trader->Items[i].Item;
 		int RequiredCount = Trader->Items[i].Count;
 		RequiredItemSlots[i].Type = BagType::NONE;
 
@@ -425,18 +425,18 @@ _Slot _Inventory::GetRequiredItemSlots(const _OldTrader *Trader, std::vector<_Sl
 // Serialize a slot
 void _InventorySlot::Serialize(ae::_Buffer &Data) {
 	if(Item) {
-		Data.Write<uint32_t>(Item->ID);
+		Data.Write<uint16_t>(Item->NetworkID);
 		Data.Write<uint8_t>((uint8_t)Upgrades);
 		Data.Write<uint8_t>((uint8_t)Count);
 	}
 	else
-		Data.Write<uint32_t>(0);
+		Data.Write<uint16_t>(0);
 }
 
 // Unserialize a slot
 void _InventorySlot::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
-	uint32_t ItemID = Data.Read<uint32_t>();
+	uint16_t ItemID = Data.Read<uint16_t>();
 	if(ItemID) {
 		Item = Stats->OldItems.at(ItemID);
 		Upgrades = Data.Read<uint8_t>();
@@ -501,7 +501,7 @@ void _Bag::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 // Check for an item
 bool _Bag::HasItemID(uint32_t ItemID) {
 	for(size_t i = 0; i < Slots.size(); i++) {
-		if(Slots[i].Item && Slots[i].Item->ID == ItemID)
+		if(Slots[i].Item && Slots[i].Item->NetworkID == ItemID)
 			return true;
 	}
 

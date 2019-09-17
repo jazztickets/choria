@@ -105,18 +105,18 @@ struct _OldVendor {
 	std::string Name;
 	float BuyPercent;
 	float SellPercent;
-	std::vector<const _Item *> Items;
+	std::vector<const _BaseItem *> Items;
 };
 
 struct _TraderItem {
-	const _Item *Item;
+	const _BaseItem *Item;
 	int Count;
 };
 
 struct _OldTrader {
 	uint32_t ID;
 	std::string Name;
-	const _Item *RewardItem;
+	const _BaseItem *RewardItem;
 	int Upgrades;
 	int Count;
 	std::vector<_TraderItem> Items;
@@ -129,7 +129,7 @@ struct _OldBlacksmith {
 };
 
 struct _MinigameItem {
-	const _Item *Item;
+	const _BaseItem *Item;
 	int Count;
 };
 
@@ -138,7 +138,7 @@ struct _OldMinigameType {
 	std::string Name;
 	std::string Script;
 	int Cost;
-	const _Item *RequiredItem;
+	const _BaseItem *RequiredItem;
 	std::vector<_MinigameItem> Items;
 };
 
@@ -195,7 +195,7 @@ class _Stats {
 		std::unordered_map<uint32_t, std::string> OldTargetTypes;
 		std::unordered_map<uint32_t, std::string> OldDamageTypes;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
-		std::unordered_map<uint32_t, const _Item *> OldItems;
+		std::unordered_map<uint32_t, const _BaseItem *> OldItems;
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 

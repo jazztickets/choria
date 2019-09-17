@@ -55,9 +55,9 @@ void _SkillScreen::Init() {
 	size_t i = 0;
 
 	// Get all player skills
-	std::list<const _Item *> SortedSkills;
+	std::list<const _BaseItem *> SortedSkills;
 	for(auto &SkillID : HUD->Player->Character->Skills) {
-		const _Item *Skill = PlayState.Stats->OldItems.at(SkillID.first);
+		const _BaseItem *Skill = PlayState.Stats->OldItems.at(SkillID.first);
 		if(!Skill)
 			continue;
 
@@ -78,7 +78,7 @@ void _SkillScreen::Init() {
 		Button->BaseSize = Skill->Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
-		Button->Index = (int)Skill->ID;
+		Button->Index = (int)Skill->NetworkID;
 		Button->Clickable = true;
 		Element->Children.push_back(Button);
 
@@ -89,7 +89,7 @@ void _SkillScreen::Init() {
 		LevelLabel->BaseOffset = LevelOffset;
 		LevelLabel->Alignment = ae::CENTER_BASELINE;
 		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
-		LevelLabel->Index = (int)Skill->ID;
+		LevelLabel->Index = (int)Skill->NetworkID;
 		Element->Children.push_back(LevelLabel);
 
 		// Add plus button
@@ -287,7 +287,7 @@ void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount) {
 
 // Equip a skill
 void _SkillScreen::EquipSkill(uint32_t SkillID) {
-	const _Item *Skill = PlayState.Stats->OldItems.at(SkillID);
+	const _BaseItem *Skill = PlayState.Stats->OldItems.at(SkillID);
 	if(Skill) {
 
 		// Check skill

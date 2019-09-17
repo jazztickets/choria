@@ -65,7 +65,7 @@ void _VendorScreen::Render(double BlendFactor) {
 
 	// Draw vendor items
 	for(size_t i = 0; i < HUD->Player->Character->Vendor->Items.size(); i++) {
-		const _Item *Item = HUD->Player->Character->Vendor->Items[i];
+		const _BaseItem *Item = HUD->Player->Character->Vendor->Items[i];
 		if(Item && !HUD->Cursor.IsEqual(i, _HUD::WINDOW_VENDOR)) {
 
 			// Get bag button

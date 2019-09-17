@@ -418,7 +418,7 @@ void _Minigame::RefreshPrizes() {
 	if(Debug > 0) {
 		for(auto &Prize : Prizes) {
 			if(Prize && Prize->Item)
-				std::cout << Prize->Item->ID << std::endl;
+				std::cout << Prize->Item->NetworkID << std::endl;
 			else
 				std::cout << 0 << std::endl;
 		}

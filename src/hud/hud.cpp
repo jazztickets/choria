@@ -242,11 +242,11 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				break;
 				case WINDOW_SKILLS:
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(Player->Character->Skills[Tooltip.InventorySlot.Item->ID] > 0)
+						if(Player->Character->Skills[Tooltip.InventorySlot.Item->NetworkID] > 0)
 							Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						SkillScreen->EquipSkill(Tooltip.InventorySlot.Item->ID);
+						SkillScreen->EquipSkill(Tooltip.InventorySlot.Item->NetworkID);
 					}
 				break;
 			}
@@ -727,7 +727,7 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Draw item information
 		DrawCursorItem();
-		const _Item *Item = Tooltip.InventorySlot.Item;
+		const _BaseItem *Item = Tooltip.InventorySlot.Item;
 		if(Item) {
 
 			// Compare items
@@ -1105,7 +1105,7 @@ void _HUD::DrawActionBar() {
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item icon
-		const _Item *Item = Player->Character->ActionBar[i].Item;
+		const _BaseItem *Item = Player->Character->ActionBar[i].Item;
 		if(Item) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
@@ -1232,7 +1232,7 @@ void _HUD::DrawCursorItem() {
 }
 
 // Draws an item's price
-void _HUD::DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level) {
+void _HUD::DrawItemPrice(const _BaseItem *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level) {
 	if(!Player->Character->Vendor)
 		return;
 

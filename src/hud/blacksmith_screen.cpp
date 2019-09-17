@@ -86,7 +86,7 @@ void _BlacksmithScreen::Render(double BlendFactor) {
 		glm::vec2 DrawPosition = (BagButton->Bounds.Start + BagButton->Bounds.End) / 2.0f;
 
 		const _InventorySlot &InventorySlot = HUD->Player->Inventory->GetSlot(UpgradeSlot);
-		const _Item *Item = InventorySlot.Item;
+		const _BaseItem *Item = InventorySlot.Item;
 		if(Item) {
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);

@@ -82,7 +82,7 @@ void _TraderScreen::Render(double BlendFactor) {
 		glm::vec2 DrawPosition = (Button->Bounds.Start + Button->Bounds.End) / 2.0f;
 
 		// Draw item
-		const _Item *Item = HUD->Player->Character->Trader->Items[i].Item;
+		const _BaseItem *Item = HUD->Player->Character->Trader->Items[i].Item;
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.DrawScaledImage(DrawPosition, Item->Texture);
 

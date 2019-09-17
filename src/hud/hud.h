@@ -36,7 +36,7 @@ class _TraderScreen;
 class _BlacksmithScreen;
 class _SkillScreen;
 class _Object;
-class _Item;
+class _BaseItem;
 class _StatusEffect;
 class _Action;
 class _Scripting;
@@ -83,7 +83,7 @@ struct _Message {
 struct _RecentItem {
 	_RecentItem() : Item(nullptr), Count(0), Time(0.0) { }
 
-	const _Item *Item;
+	const _BaseItem *Item;
 	int Count;
 	double Time;
 };
@@ -212,7 +212,7 @@ class _HUD {
 		void DrawActionBar();
 		void DrawParty();
 		void DrawMessage();
-		void DrawItemPrice(const _Item *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level=0);
+		void DrawItemPrice(const _BaseItem *Item, int Count, const glm::vec2 &DrawPosition, bool Buy, int Level=0);
 		void DrawCursorItem();
 
 		void SetActionBar(size_t Slot, size_t OldSlot, const _Action &Action);
