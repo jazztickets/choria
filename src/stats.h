@@ -197,9 +197,9 @@ class _Stats {
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
-		std::unordered_map<ItemType, std::string> ItemTypes;
-		std::unordered_map<ScopeType, std::string> ScopeTypes;
-		std::unordered_map<TargetType, std::string> TargetTypes;
+		std::unordered_map<ItemType, std::pair<std::string, std::string> > ItemTypes;
+		std::unordered_map<ScopeType, std::pair<std::string, std::string> > ScopeTypes;
+		std::unordered_map<TargetType, std::pair<std::string, std::string> > TargetTypes;
 
 		std::unordered_map<std::string, _BaseItem> Items;
 		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
@@ -216,6 +216,7 @@ class _Stats {
 
 	private:
 
+		void LoadTypes();
 		void LoadData(const std::string &Path);
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);

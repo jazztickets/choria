@@ -47,6 +47,7 @@ _Stats::_Stats(bool Headless) :
 	Database = new ae::_Database("stats/stats.db", true);
 
 	// Load game data
+	LoadTypes();
 	LoadData("data/stats.xml");
 
 	// Load spreadsheet data
@@ -109,6 +110,46 @@ const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *A
 	return Iterator->second;
 }
 
+// Load types
+void _Stats::LoadTypes() {
+	ScopeTypes = {
+		{ ScopeType::NONE,   { "none",   "None"   } },
+		{ ScopeType::WORLD,  { "world",  "World"  } },
+		{ ScopeType::BATTLE, { "battle", "Battle" } },
+		{ ScopeType::ALL,    { "all",    "All"    } },
+	};
+
+	TargetTypes = {
+		{ TargetType::NONE,        { "none",             "None"             } },
+		{ TargetType::SELF,        { "self",             "Self"             } },
+		{ TargetType::ENEMY,       { "enemy",            "Enemy"            } },
+		{ TargetType::ALLY,        { "ally",             "Ally"             } },
+		{ TargetType::ENEMY_MULTI, { "multiple_enemies", "Multiple Enemies" } },
+		{ TargetType::ALLY_MULTI,  { "multiple_allies",  "Multiple Allies"  } },
+		{ TargetType::ENEMY_ALL,   { "all_enemies",      "All Enemies"      } },
+		{ TargetType::ALLY_ALL,    { "all_allies",       "All Allies"       } },
+		{ TargetType::ANY,         { "any",              "Any"              } },
+		{ TargetType::ALL,         { "all",              "All"              } },
+	};
+
+	ItemTypes = {
+		{ ItemType::NONE,             { "none",       "None"              } },
+		{ ItemType::SKILL,            { "skill",      "Skill"             } },
+		{ ItemType::HELMET,           { "helmet",     "Helmet"            } },
+		{ ItemType::ARMOR,            { "armor",      "Armor"             } },
+		{ ItemType::BOOTS,            { "boots",      "Boots"             } },
+		{ ItemType::ONEHANDED_WEAPON, { "one_hand",   "One-Handed Weapon" } },
+		{ ItemType::TWOHANDED_WEAPON, { "two_hand",   "Two-Handed Weapon" } },
+		{ ItemType::SHIELD,           { "shield",     "Shield"            } },
+		{ ItemType::RING,             { "ring",       "Ring"              } },
+		{ ItemType::AMULET,           { "amulet",     "Amulet"            } },
+		{ ItemType::CONSUMABLE,       { "consumable", "Consumable"        } },
+		{ ItemType::TRADABLE,         { "tradable",   "Tradable"          } },
+		{ ItemType::UNLOCKABLE,       { "unlockable", "Unlockable"        } },
+		{ ItemType::KEY,              { "key",        "Key"               } },
+	};
+}
+
 // Load data
 void _Stats::LoadData(const std::string &Path) {
 
@@ -123,10 +164,7 @@ void _Stats::LoadData(const std::string &Path) {
 	// Build map of nodes
 	std::unordered_map<std::string, tinyxml2::XMLElement *> Nodes(
 	{
-		{ "scopes", DataNode->FirstChildElement("scopes") },
-		{ "target_types", DataNode->FirstChildElement("target_types") },
 		{ "damage_types", DataNode->FirstChildElement("damage_types") },
-		{ "item_types", DataNode->FirstChildElement("item_types") },
 		{ "events", DataNode->FirstChildElement("events") },
 		{ "portraits", DataNode->FirstChildElement("portraits") },
 		{ "models", DataNode->FirstChildElement("models") },
@@ -145,6 +183,19 @@ void _Stats::LoadData(const std::string &Path) {
 	}
 
 	uint8_t NetworkID;
+
+	// Build index for types
+	std::unordered_map<std::string, ScopeType> ScopeTypesIndex;
+	for(const auto &Scope : ScopeTypes)
+		ScopeTypesIndex[Scope.second.first] = Scope.first;
+
+	std::unordered_map<std::string, TargetType> TargetTypesIndex;
+	for(const auto &TargetType : TargetTypes)
+		TargetTypesIndex[TargetType.second.first] = TargetType.first;
+
+	std::unordered_map<std::string, ItemType> ItemTypesIndex;
+	for(const auto &ItemType : ItemTypes)
+		ItemTypesIndex[ItemType.second.first] = ItemType.first;
 
 	// Load portraits
 	NetworkID = 1;
@@ -176,54 +227,6 @@ void _Stats::LoadData(const std::string &Path) {
 		ModelsIndex[Model.NetworkID] = &Models[Model.ID];
 	}
 
-	// Load scopes
-	NetworkID = 1;
-	std::unordered_map<std::string, ScopeType> ScopeTypesMap;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["scopes"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
-		std::string ID = GetString(ChildNode, "id");
-		if(ScopeTypesMap.find(ID) != ScopeTypesMap.end())
-			throw std::runtime_error("Duplicate scope id '" + ID + "' in " + Path);
-
-		std::string Name = GetString(ChildNode, "name");
-
-		ScopeTypesMap[ID] = (ScopeType)NetworkID;
-		ScopeTypes[(ScopeType)NetworkID] = Name;
-		NetworkID++;
-	}
-	ScopeTypes[ScopeType::NONE] = "";
-
-	// Load target types
-	NetworkID = 1;
-	std::unordered_map<std::string, TargetType> TargetTypesMap;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["target_types"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
-		std::string ID = GetString(ChildNode, "id");
-		if(TargetTypesMap.find(ID) != TargetTypesMap.end())
-			throw std::runtime_error("Duplicate target_type id '" + ID + "' in " + Path);
-
-		std::string Name = GetString(ChildNode, "name");
-
-		TargetTypesMap[ID] = (TargetType)NetworkID;
-		TargetTypes[(TargetType)NetworkID] = Name;
-		NetworkID++;
-	}
-	TargetTypes[TargetType::NONE] = "";
-
-	// Load item types
-	NetworkID = 1;
-	std::unordered_map<std::string, ItemType> ItemTypesMap;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["item_types"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
-		std::string ID = GetString(ChildNode, "id");
-		if(ItemTypesMap.find(ID) != ItemTypesMap.end())
-			throw std::runtime_error("Duplicate item_type id '" + ID + "' in " + Path);
-
-		std::string Name = GetString(ChildNode, "name");
-
-		ItemTypesMap[ID] = (ItemType)NetworkID;
-		ItemTypes[(ItemType)NetworkID] = Name;
-		NetworkID++;
-	}
-	ItemTypes[ItemType::NONE] = "";
-
 	// Load items
 	NetworkID = 1;
 	for(tinyxml2::XMLElement *ChildNode = Nodes["items"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
@@ -233,7 +236,7 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate item id '" + Item.ID + "' in " + Path);
 
 		// Item type
-		Item.Type = ItemTypesMap[GetString(ChildNode, "type")];
+		Item.Type = ItemTypesIndex[GetString(ChildNode, "type")];
 		if(Item.Type == ItemType::NONE)
 			throw std::runtime_error("Bad item type for '" + Item.ID + "' in " + Path);
 
@@ -255,7 +258,7 @@ void _Stats::LoadData(const std::string &Path) {
 		Item.AttackDelay = UseNode->DoubleAttribute("attack_delay");
 		Item.AttackTime = UseNode->DoubleAttribute("attack_time");
 		Item.Cooldown = UseNode->DoubleAttribute("cooldown");
-		Item.Scope = ScopeTypesMap[GetString(UseNode, "scope", false)];
+		Item.Scope = ScopeTypesIndex[GetString(UseNode, "scope", false)];
 
 		Item.NetworkID = NetworkID++;
 		Items[Item.ID] = Item;

@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
-	<scopes>
-		<scope id="world" name="World"/>
-		<scope id="battle" name="Battle"/>
-		<scope id="all" name="All"/>
-	</scopes>
-	<target_types>
-		<target_type id="self" name="Self"/>
-		<target_type id="enemy" name="Enemy"/>
-		<target_type id="ally" name="Ally"/>
-		<target_type id="multiple_enemies" name="Multiple Enemies"/>
-		<target_type id="multiple_allies" name="Multiple Allies"/>
-		<target_type id="all_enemies" name="All Enemies"/>
-		<target_type id="all_allies" name="All Allies"/>
-		<target_type id="any" name="Any"/>
-	</target_types>
 	<damage_types>
 		<damage_type id="all" name="All"/>
 		<damage_type id="physical" name="Physical"/>
@@ -25,21 +10,6 @@
 		<damage_type id="bleed" name="Bleed"/>
 		<damage_type id="stun" name="Stun"/>
 	</damage_types>
-	<item_types>
-		<item_type id="helmet" name="Helmet"/>
-		<item_type id="armor" name="Armor"/>
-		<item_type id="boots" name="Boots"/>
-		<item_type id="one_hand" name="One-Handed Weapon"/>
-		<item_type id="two_hand" name="Two-Handed Weapon"/>
-		<item_type id="shield" name="Shield"/>
-		<item_type id="ring" name="Ring"/>
-		<item_type id="amulet" name="Amulet"/>
-		<item_type id="consumable" name="Consumable"/>
-		<item_type id="tradable" name="Tradable"/>
-		<item_type id="unlockable" name="Unlockable"/>
-		<item_type id="key" name="Key"/>
-		<item_type id="skill" name="Skill"/>
-	</item_types>
 	<events>
 		<event id="S" name="Spawn"/>
 		<event id="ME" name="Map Entrance"/>

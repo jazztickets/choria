@@ -86,7 +86,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 	TooltipName->Text = Name;
 	TooltipType->Text = "";
 	if(Type != ItemType::NONE)
-		TooltipType->Text = Player->Stats->ItemTypes.at(Type);
+		TooltipType->Text = Player->Stats->ItemTypes.at(Type).second;
 
 	// Set up window size
 	glm::vec2 Size;
@@ -144,7 +144,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 	// Draw target text
 	if(TargetID != TargetType::NONE) {
 		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
-		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(TargetID);
+		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(TargetID).second;
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += LargeSpacingY;
 	}
