@@ -199,6 +199,11 @@ class _Stats {
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
+		std::unordered_map<ItemType, std::string> ItemTypes;
+		std::unordered_map<ScopeType, std::string> ScopeTypes;
+
+		std::unordered_map<std::string, _BaseItem> Items;
+		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
 		std::unordered_map<std::string, _Portrait> Portraits;
 		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
 		std::unordered_map<std::string, _Model> Models;
@@ -213,7 +218,8 @@ class _Stats {
 	private:
 
 		void LoadData(const std::string &Path);
-		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute);
+		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
+		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
 
 		void OldLoadMaps();
 		void OldLoadEvents();

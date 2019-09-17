@@ -77,7 +77,7 @@
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
 			<price buy="50" tradable="true"/>
 			<damage min="20" max="40" type="physical" />
-			<use attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
+			<use scope="all" attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
 			<skills>
 				<skill id="attack"/>
 			</skills>

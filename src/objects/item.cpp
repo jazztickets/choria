@@ -37,6 +37,41 @@
 #include <algorithm>
 #include <iostream>
 
+// Constructor
+_BaseItem::_BaseItem() :
+	Stats(nullptr),
+	NetworkID(0),
+	Texture(nullptr),
+	Type(ItemType::NONE),
+	Level(0),
+	MaxLevel(0),
+	Duration(0.0),
+	Cost(0),
+	DamageTypeID(0),
+	MinDamage(0),
+	MaxDamage(0),
+	Armor(0),
+	DamageBlock(0),
+	Pierce(0),
+	MaxHealth(0),
+	MaxMana(0),
+	HealthRegen(0),
+	ManaRegen(0),
+	BattleSpeed(0),
+	MoveSpeed(0),
+	DropRate(0),
+	AttackDelay(0.0),
+	AttackTime(0.0),
+	Cooldown(0.0),
+	ResistanceTypeID(0),
+	Resistance(0),
+	Tradable(true),
+	TargetAlive(true),
+	TargetID(TargetType::NONE),
+	Scope(ScopeType::NONE),
+	UnlockID(0) {
+}
+
 // Draw tooltip
 void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)

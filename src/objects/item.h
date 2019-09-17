@@ -55,6 +55,8 @@ class _BaseItem {
 
 	public:
 
+		_BaseItem();
+
 		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
@@ -102,6 +104,7 @@ class _BaseItem {
 
 		const _Stats *Stats;
 
+		std::string ID;
 		uint16_t NetworkID;
 		std::string Name;
 		std::string Script;

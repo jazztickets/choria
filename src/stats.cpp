@@ -87,12 +87,26 @@ _Stats::~_Stats() {
 }
 
 // Get string attribute from node
-const char *_Stats::GetString(tinyxml2::XMLElement *Node, const char *Attribute) {
+const char *_Stats::GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required) {
 	const char *Value = Node->Attribute(Attribute);
-	if(!Value)
-		throw std::runtime_error("Missing '" + std::string(Attribute) + "' attribute in '" + std::string(Node->Name()) + "' node!");
+	if(!Value) {
+		if(Required)
+			throw std::runtime_error("Missing '" + std::string(Attribute) + "' attribute in '" + std::string(Node->Name()) + "' node!");
+
+		return "";
+	}
 
 	return Value;
+}
+
+// Get a valid texture from an attribute
+const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *Attribute) {
+	std::string Value = GetString(Node, Attribute);
+	const auto &Iterator = ae::Assets.Textures.find(Value);
+	if(Iterator == ae::Assets.Textures.end())
+		throw std::runtime_error("Cannot find texture '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
+
+	return Iterator->second;
 }
 
 // Load data
@@ -136,8 +150,12 @@ void _Stats::LoadData(const std::string &Path) {
 	for(tinyxml2::XMLElement *ChildNode = Nodes["portraits"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
 		_Portrait Portrait;
 		Portrait.ID = GetString(ChildNode, "id");
-		Portrait.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		if(Portraits.find(Portrait.ID) != Portraits.end())
+			throw std::runtime_error("Duplicate portraits id '" + Portrait.ID + "' in " + Path);
+
+		Portrait.Texture = GetTexture(ChildNode, "texture");
 		Portrait.NetworkID = NetworkID++;
+
 		Portraits[Portrait.ID] = Portrait;
 		PortraitsIndex[Portrait.NetworkID] = &Portraits[Portrait.ID];
 	}
@@ -147,12 +165,84 @@ void _Stats::LoadData(const std::string &Path) {
 	for(tinyxml2::XMLElement *ChildNode = Nodes["models"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
 		_Model Model;
 		Model.ID = GetString(ChildNode, "id");
-		Model.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
-		Model.NetworkID = NetworkID++;
 		if(Models.find(Model.ID) != Models.end())
 			throw std::runtime_error("Duplicate model id '" + Model.ID + "' in " + Path);
+
+		Model.Texture = GetTexture(ChildNode, "texture");
+		Model.NetworkID = NetworkID++;
+
 		Models[Model.ID] = Model;
 		ModelsIndex[Model.NetworkID] = &Models[Model.ID];
+	}
+
+	// Load scopes
+	NetworkID = 1;
+	std::unordered_map<std::string, ScopeType> ScopeTypesMap;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["scopes"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		std::string ID = GetString(ChildNode, "id");
+		if(ScopeTypesMap.find(ID) != ScopeTypesMap.end())
+			throw std::runtime_error("Duplicate scopes id '" + ID + "' in " + Path);
+
+		std::string Name = GetString(ChildNode, "name");
+
+		ScopeTypesMap[ID] = (ScopeType)NetworkID;
+		ScopeTypes[(ScopeType)NetworkID] = Name;
+		NetworkID++;
+	}
+	ScopeTypes[ScopeType::NONE] = "";
+
+	// Load itemtypes
+	NetworkID = 1;
+	std::unordered_map<std::string, ItemType> ItemTypesMap;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["item_types"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		std::string ID = GetString(ChildNode, "id");
+		if(ItemTypesMap.find(ID) != ItemTypesMap.end())
+			throw std::runtime_error("Duplicate item_type id '" + ID + "' in " + Path);
+
+		std::string Name = GetString(ChildNode, "name");
+
+		ItemTypesMap[ID] = (ItemType)NetworkID;
+		ItemTypes[(ItemType)NetworkID] = Name;
+		NetworkID++;
+	}
+	ItemTypes[ItemType::NONE] = "";
+
+	// Load items
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["items"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_BaseItem Item;
+		Item.ID = GetString(ChildNode, "id");
+		if(Items.find(Item.ID) != Items.end())
+			throw std::runtime_error("Duplicate item id '" + Item.ID + "' in " + Path);
+
+		// Item type
+		Item.Type = ItemTypesMap[GetString(ChildNode, "type")];
+		if(Item.Type == ItemType::NONE)
+			throw std::runtime_error("Bad item type for '" + Item.ID + "' in " + Path);
+
+		// Texture
+		Item.Texture = GetTexture(ChildNode, "texture");
+
+		// Get prices
+		tinyxml2::XMLElement *PriceNode = ChildNode->FirstChildElement("price");
+		Item.Cost = PriceNode->IntAttribute("buy");
+		Item.Tradable = PriceNode->BoolAttribute("tradable");
+
+		// Get damage
+		tinyxml2::XMLElement *DamageNode = ChildNode->FirstChildElement("damage");
+		Item.MinDamage = DamageNode->IntAttribute("min");
+		Item.MaxDamage = DamageNode->IntAttribute("max");
+
+		// Get use stats
+		tinyxml2::XMLElement *UseNode = ChildNode->FirstChildElement("use");
+		Item.AttackDelay = UseNode->DoubleAttribute("attack_delay");
+		Item.AttackTime = UseNode->DoubleAttribute("attack_time");
+		Item.Cooldown = UseNode->DoubleAttribute("cooldown");
+		Item.Scope = ScopeTypesMap[GetString(UseNode, "scope", false)];
+
+		Item.NetworkID = NetworkID++;
+		Items[Item.ID] = Item;
+		ItemsIndex[Item.NetworkID] = &Items[Item.ID];
 	}
 
 	// Load builds
