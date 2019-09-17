@@ -41,7 +41,7 @@ bool CompareBuild(const _Object *First, const _Object *Second) {
 
 // Constructor
 _Stats::_Stats(bool Headless) :
-Headless(Headless) {
+	Headless(Headless) {
 
 	// Load database that stores game data
 	Database = new ae::_Database("stats/stats.db", true);
@@ -100,8 +100,10 @@ const char *_Stats::GetString(tinyxml2::XMLElement *Node, const char *Attribute,
 // Get a valid texture from an attribute
 const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *Attribute) {
 	std::string Value = GetString(Node, Attribute);
+
+	// Search for texture
 	const auto &Iterator = ae::Assets.Textures.find(Value);
-	if(Iterator == ae::Assets.Textures.end())
+	if(!Headless && Iterator == ae::Assets.Textures.end())
 		throw std::runtime_error("Cannot find texture '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
 
 	return Iterator->second;
