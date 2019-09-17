@@ -5,6 +5,16 @@
 		<scope id="battle" name="Battle"/>
 		<scope id="all" name="All"/>
 	</scopes>
+	<target_types>
+		<target_type id="self" name="Self"/>
+		<target_type id="enemy" name="Enemy"/>
+		<target_type id="ally" name="Ally"/>
+		<target_type id="multiple_enemies" name="Multiple Enemies"/>
+		<target_type id="multiple_allies" name="Multiple Allies"/>
+		<target_type id="all_enemies" name="All Enemies"/>
+		<target_type id="all_allies" name="All Allies"/>
+		<target_type id="any" name="Any"/>
+	</target_types>
 	<damage_types>
 		<damage_type id="all" name="All"/>
 		<damage_type id="physical" name="Physical"/>

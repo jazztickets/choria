@@ -54,9 +54,7 @@ Headless(Headless) {
 	OldLoadEvents();
 	OldLoadLevels();
 	OldLoadBuffs();
-	OldLoadItemTypes();
 	OldLoadStatTypes();
-	OldLoadTargetTypes();
 	OldLoadDamageTypes();
 	OldLoadItems();
 	OldLoadVendors();
@@ -124,6 +122,7 @@ void _Stats::LoadData(const std::string &Path) {
 	std::unordered_map<std::string, tinyxml2::XMLElement *> Nodes(
 	{
 		{ "scopes", DataNode->FirstChildElement("scopes") },
+		{ "target_types", DataNode->FirstChildElement("target_types") },
 		{ "damage_types", DataNode->FirstChildElement("damage_types") },
 		{ "item_types", DataNode->FirstChildElement("item_types") },
 		{ "events", DataNode->FirstChildElement("events") },
@@ -181,7 +180,7 @@ void _Stats::LoadData(const std::string &Path) {
 	for(tinyxml2::XMLElement *ChildNode = Nodes["scopes"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
 		std::string ID = GetString(ChildNode, "id");
 		if(ScopeTypesMap.find(ID) != ScopeTypesMap.end())
-			throw std::runtime_error("Duplicate scopes id '" + ID + "' in " + Path);
+			throw std::runtime_error("Duplicate scope id '" + ID + "' in " + Path);
 
 		std::string Name = GetString(ChildNode, "name");
 
@@ -191,7 +190,23 @@ void _Stats::LoadData(const std::string &Path) {
 	}
 	ScopeTypes[ScopeType::NONE] = "";
 
-	// Load itemtypes
+	// Load target types
+	NetworkID = 1;
+	std::unordered_map<std::string, TargetType> TargetTypesMap;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["target_types"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		std::string ID = GetString(ChildNode, "id");
+		if(TargetTypesMap.find(ID) != TargetTypesMap.end())
+			throw std::runtime_error("Duplicate target_type id '" + ID + "' in " + Path);
+
+		std::string Name = GetString(ChildNode, "name");
+
+		TargetTypesMap[ID] = (TargetType)NetworkID;
+		TargetTypes[(TargetType)NetworkID] = Name;
+		NetworkID++;
+	}
+	TargetTypes[TargetType::NONE] = "";
+
+	// Load item types
 	NetworkID = 1;
 	std::unordered_map<std::string, ItemType> ItemTypesMap;
 	for(tinyxml2::XMLElement *ChildNode = Nodes["item_types"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
@@ -352,20 +367,6 @@ void _Stats::OldLoadBuffs() {
 	OldBuffs[0] = nullptr;
 }
 
-// Load item types
-void _Stats::OldLoadItemTypes() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM itemtype");
-
-	// Get data
-	while(Database->FetchRow()) {
-		uint32_t ID = Database->GetInt<uint32_t>("id");
-		OldItemTypes[ID] = Database->GetString("name");
-	}
-	Database->CloseQuery();
-}
-
 // Load upgrade scales from stat types
 void _Stats::OldLoadStatTypes() {
 
@@ -376,20 +377,6 @@ void _Stats::OldLoadStatTypes() {
 	while(Database->FetchRow()) {
 		StatType ID = (StatType)Database->GetInt<uint32_t>("id");
 		UpgradeScale[ID] = Database->GetReal("upgrade_scale");
-	}
-	Database->CloseQuery();
-}
-
-// Load target type strings
-void _Stats::OldLoadTargetTypes() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM target");
-
-	// Get data
-	while(Database->FetchRow()) {
-		uint32_t ID = Database->GetInt<uint32_t>("id");
-		OldTargetTypes[ID] = Database->GetString("name");
 	}
 	Database->CloseQuery();
 }

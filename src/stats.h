@@ -191,8 +191,6 @@ class _Stats {
 		std::unordered_map<uint32_t, _OldMinigameType> OldMinigames;
 		std::unordered_map<uint32_t, _OldScript> OldScripts;
 		std::unordered_map<uint32_t, _OldLightType> OldLights;
-		std::unordered_map<uint32_t, std::string> OldItemTypes;
-		std::unordered_map<uint32_t, std::string> OldTargetTypes;
 		std::unordered_map<uint32_t, std::string> OldDamageTypes;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 		std::unordered_map<uint32_t, const _BaseItem *> OldItems;
@@ -201,6 +199,7 @@ class _Stats {
 
 		std::unordered_map<ItemType, std::string> ItemTypes;
 		std::unordered_map<ScopeType, std::string> ScopeTypes;
+		std::unordered_map<TargetType, std::string> TargetTypes;
 
 		std::unordered_map<std::string, _BaseItem> Items;
 		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
@@ -225,9 +224,7 @@ class _Stats {
 		void OldLoadEvents();
 		void OldLoadLevels();
 		void OldLoadBuffs();
-		void OldLoadItemTypes();
 		void OldLoadStatTypes();
-		void OldLoadTargetTypes();
 		void OldLoadDamageTypes();
 		void OldLoadItems();
 		void OldLoadVendors();
