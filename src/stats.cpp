@@ -63,7 +63,6 @@ Headless(Headless) {
 	OldLoadTraders();
 	OldLoadBlacksmiths();
 	OldLoadMinigames();
-	OldLoadModels();
 	OldLoadBuilds();
 	OldLoadScripts();
 	OldLoadLights();
@@ -486,24 +485,6 @@ void _Stats::OldLoadMinigames() {
 		Database->CloseQuery(1);
 
 		OldMinigames[Minigame.ID] = Minigame;
-	}
-	Database->CloseQuery();
-}
-
-// Load model textures
-void _Stats::OldLoadModels() {
-	OldModels.clear();
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM model");
-
-	// Get data
-	_OldModel Model;
-	while(Database->FetchRow()) {
-		Model.ID = Database->GetInt<uint32_t>("id");
-		Model.Texture = ae::Assets.Textures[Database->GetString("texture")];
-
-		OldModels[Model.ID] = Model;
 	}
 	Database->CloseQuery();
 }

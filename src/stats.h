@@ -195,7 +195,6 @@ class _Stats {
 		std::unordered_map<uint32_t, _OldBlacksmith> OldBlacksmiths;
 		std::unordered_map<uint32_t, _OldMinigameType> OldMinigames;
 		std::unordered_map<uint32_t, _OldScript> OldScripts;
-		std::unordered_map<uint32_t, _OldModel> OldModels;
 		std::unordered_map<uint32_t, _OldLightType> OldLights;
 		std::unordered_map<uint32_t, std::string> OldItemTypes;
 		std::unordered_map<uint32_t, std::string> OldTargetTypes;
@@ -234,7 +233,6 @@ class _Stats {
 		void OldLoadTraders();
 		void OldLoadBlacksmiths();
 		void OldLoadMinigames();
-		void OldLoadModels();
 		void OldLoadBuilds();
 		void OldLoadScripts();
 		void OldLoadLights();
