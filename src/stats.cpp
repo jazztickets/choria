@@ -179,7 +179,6 @@ void _Stats::LoadData(const std::string &Path) {
 	std::unordered_map<std::string, tinyxml2::XMLElement *> Nodes(
 	{
 		{ "damage_types", DataNode->FirstChildElement("damage_types") },
-		{ "events", DataNode->FirstChildElement("events") },
 		{ "portraits", DataNode->FirstChildElement("portraits") },
 		{ "models", DataNode->FirstChildElement("models") },
 		{ "items", DataNode->FirstChildElement("items") },
