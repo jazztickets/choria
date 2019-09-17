@@ -51,9 +51,9 @@ class _BaseItem {
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
 		bool IsStackable() const { return !IsEquippable(); }
-		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ANY; }
-		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::ENEMY_MULTI || TargetID == TargetType::ENEMY_ALL || TargetID == TargetType::ANY; }
-		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::ALLY_MULTI || TargetID == TargetType::ALLY_ALL || TargetID == TargetType::ANY; }
+		bool UseMouseTargetting() const { return TargetID == TargetType::SELF || TargetID == TargetType::ENEMY || TargetID == TargetType::ALLY || TargetID == TargetType::MULTIPLE_ENEMIES || TargetID == TargetType::MULTIPLE_ALLIES || TargetID == TargetType::ANY; }
+		bool CanTargetEnemy() const {  return TargetID == TargetType::ENEMY || TargetID == TargetType::MULTIPLE_ENEMIES || TargetID == TargetType::ALL_ENEMIES || TargetID == TargetType::ANY; }
+		bool CanTargetAlly() const {  return TargetID == TargetType::SELF || TargetID == TargetType::ALLY || TargetID == TargetType::MULTIPLE_ALLIES || TargetID == TargetType::ALL_ALLIES || TargetID == TargetType::ANY; }
 		int GetTargetCount() const;
 
 		void GetEquipmentSlot(_Slot &Slot) const;

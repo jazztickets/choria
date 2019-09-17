@@ -120,16 +120,16 @@ void _Stats::LoadTypes() {
 	};
 
 	TargetTypes = {
-		{ TargetType::NONE,        { "none",             "None"             } },
-		{ TargetType::SELF,        { "self",             "Self"             } },
-		{ TargetType::ENEMY,       { "enemy",            "Enemy"            } },
-		{ TargetType::ALLY,        { "ally",             "Ally"             } },
-		{ TargetType::ENEMY_MULTI, { "multiple_enemies", "Multiple Enemies" } },
-		{ TargetType::ALLY_MULTI,  { "multiple_allies",  "Multiple Allies"  } },
-		{ TargetType::ENEMY_ALL,   { "all_enemies",      "All Enemies"      } },
-		{ TargetType::ALLY_ALL,    { "all_allies",       "All Allies"       } },
-		{ TargetType::ANY,         { "any",              "Any"              } },
-		{ TargetType::ALL,         { "all",              "All"              } },
+		{ TargetType::NONE,              { "none",             "None"             } },
+		{ TargetType::SELF,              { "self",             "Self"             } },
+		{ TargetType::ENEMY,             { "enemy",            "Enemy"            } },
+		{ TargetType::ALLY,              { "ally",             "Ally"             } },
+		{ TargetType::MULTIPLE_ENEMIES,  { "multiple_enemies", "Multiple Enemies" } },
+		{ TargetType::MULTIPLE_ALLIES,   { "multiple_allies",  "Multiple Allies"  } },
+		{ TargetType::ALL_ENEMIES,       { "all_enemies",      "All Enemies"      } },
+		{ TargetType::ALL_ALLIES,        { "all_allies",       "All Allies"       } },
+		{ TargetType::ANY,               { "any",              "Any"              } },
+		{ TargetType::ALL,               { "all",              "All"              } },
 	};
 
 	ItemTypes = {

@@ -541,16 +541,16 @@ int _BaseItem::GetTargetCount() const {
 		case TargetType::ALLY:
 			TargetCount = 1;
 		break;
-		case TargetType::ENEMY_MULTI:
+		case TargetType::MULTIPLE_ENEMIES:
 			TargetCount = BATTLE_MULTI_TARGET_COUNT;
 		break;
-		case TargetType::ALLY_MULTI:
+		case TargetType::MULTIPLE_ALLIES:
 			TargetCount = BATTLE_MULTI_TARGET_COUNT;
 		break;
-		case TargetType::ENEMY_ALL:
+		case TargetType::ALL_ENEMIES:
 			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
 		break;
-		case TargetType::ALLY_ALL:
+		case TargetType::ALL_ALLIES:
 			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
 		break;
 		case TargetType::ANY:
