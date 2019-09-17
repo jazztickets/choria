@@ -126,6 +126,7 @@ class _EditorState : public ae::_State {
 		int Filter;
 
 		// UI
+		ae::_Element *EditorElement;
 		ae::_Element *ButtonBarElement;
 		ae::_Element *TexturesElement;
 		ae::_Element *EventsElement;

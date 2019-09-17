@@ -73,6 +73,7 @@ void _EditorState::Init() {
 	ae::Audio.StopMusic();
 
 	// Setup UI
+	EditorElement = ae::Assets.Elements["element_editor"];
 	ButtonBarElement = ae::Assets.Elements["element_editor_buttonbar"];
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
@@ -89,7 +90,7 @@ void _EditorState::Init() {
 	ResizeMaxYTextBox = ae::Assets.Elements["textbox_editor_resizemap_maxy"];
 	SaveMapTextBox = ae::Assets.Elements["textbox_editor_savemap"];
 	LoadMapTextBox = ae::Assets.Elements["textbox_editor_loadmap"];
-	ButtonBarElement->SetActive(true);
+	EditorElement->SetActive(true);
 	TexturesElement->SetActive(false);
 	EventsElement->SetActive(false);
 	NewMapElement->SetActive(false);
@@ -573,13 +574,7 @@ void _EditorState::Render(double BlendFactor) {
 	}
 
 	// Draw UI
-	ButtonBarElement->Render();
-	TexturesElement->Render();
-	EventsElement->Render();
-	NewMapElement->Render();
-	ResizeMapElement->Render();
-	SaveMapElement->Render();
-	LoadMapElement->Render();
+	EditorElement->Render();
 }
 
 // Get clean map name
