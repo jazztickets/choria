@@ -504,6 +504,7 @@
 			<element id="label_editor_loadmap" font="hud_medium" text="Load" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
 		</element>
 	</element>
-	<element id="element_editor_textures" style="style_hud_item_tooltip_bg" size_x="1028" size_y="692" clickable="true"/>
+	<element id="element_editor_textures" style="style_hud_bg" size_x="1028" size_y="692" clickable="true"/>
+	<element id="element_editor_events" style="style_hud_bg" clickable="true"/>
 	<element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>
 </element>

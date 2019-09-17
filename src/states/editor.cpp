@@ -49,6 +49,7 @@ _EditorState::_EditorState() :
 	Map(nullptr),
 	ButtonBarElement(nullptr),
 	TexturesElement(nullptr),
+	EventsElement(nullptr),
 	NewMapElement(nullptr),
 	SaveMapElement(nullptr),
 	LoadMapElement(nullptr),
@@ -69,6 +70,7 @@ void _EditorState::Init() {
 	// Setup UI
 	ButtonBarElement = ae::Assets.Elements["element_editor_buttonbar"];
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
+	EventsElement = ae::Assets.Elements["element_editor_events"];
 	NewMapElement = ae::Assets.Elements["element_editor_newmap"];
 	ResizeMapElement = ae::Assets.Elements["element_editor_resizemap"];
 	SaveMapElement = ae::Assets.Elements["element_editor_savemap"];
@@ -84,6 +86,7 @@ void _EditorState::Init() {
 	LoadMapTextBox = ae::Assets.Elements["textbox_editor_loadmap"];
 	ButtonBarElement->SetActive(true);
 	TexturesElement->SetActive(false);
+	EventsElement->SetActive(false);
 	NewMapElement->SetActive(false);
 	ResizeMapElement->SetActive(false);
 	SaveMapElement->SetActive(false);
@@ -137,6 +140,7 @@ void _EditorState::Close() {
 	delete Framebuffer;
 
 	ClearTextures();
+	ClearEvents();
 	CloseMap();
 }
 
@@ -237,16 +241,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 					UseClockAmbientLight = !UseClockAmbientLight;
 			break;
 			case SDL_SCANCODE_E:
-				if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
-					Brush->Event.Type--;
-					if(Brush->Event.Type >= _Map::EVENT_COUNT)
-						Brush->Event.Type = _Map::EVENT_COUNT-1;
-				}
-				else {
-					Brush->Event.Type++;
-					if(Brush->Event.Type >= _Map::EVENT_COUNT)
-						Brush->Event.Type = _Map::EVENT_NONE;
-				}
+				ToggleEvents();
 			break;
 			case SDL_SCANCODE_W:
 				Brush->Wall = !Brush->Wall;
@@ -363,6 +358,14 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(TexturesElement->GetClickedElement() != TexturesElement) {
 				ae::_Element *Button = TexturesElement->GetClickedElement();
 				Brush->BaseTextureIndex = Button->TextureIndex;
+				CloseWindows();
+			}
+		}
+		// Event select
+		else if(EventsElement->GetClickedElement()) {
+			if(EventsElement->GetClickedElement() != EventsElement) {
+				ae::_Element *Button = EventsElement->GetClickedElement();
+				Brush->Event.Type = (uint32_t)Button->Index;
 				CloseWindows();
 			}
 		}
@@ -567,6 +570,7 @@ void _EditorState::Render(double BlendFactor) {
 	// Draw UI
 	ButtonBarElement->Render();
 	TexturesElement->Render();
+	EventsElement->Render();
 	NewMapElement->Render();
 	ResizeMapElement->Render();
 	SaveMapElement->Render();
@@ -768,6 +772,17 @@ void _EditorState::ToggleTextures() {
 	}
 }
 
+// Show the event select screen
+void _EditorState::ToggleEvents() {
+	if(!EventsElement->Active) {
+		CloseWindows();
+		InitEvents();
+	}
+	else {
+		CloseWindows();
+	}
+}
+
 // Show save map screen
 void _EditorState::ToggleSaveMap() {
 	if(!Map)
@@ -801,10 +816,16 @@ void _EditorState::ClearTextures() {
 	TexturesElement->Children.clear();
 }
 
+// Delete memory used by events screen
+void _EditorState::ClearEvents() {
+	for(auto &Child : EventsElement->Children)
+		delete Child;
+
+	EventsElement->Children.clear();
+}
+
 // Init texture select
 void _EditorState::InitTextures() {
-
-	// Clear old children
 	ClearTextures();
 
 	glm::vec2 Start = glm::vec2(20, 20);
@@ -812,13 +833,10 @@ void _EditorState::InitTextures() {
 	glm::vec2 Offset(Start);
 
 	uint32_t TextureCount = (uint32_t)(Map->TileAtlas->Texture->Size.x * Map->TileAtlas->Texture->Size.y / (Map->TileAtlas->Size.x * Map->TileAtlas->Size.y));
-
-	// Iterate over textures
 	for(uint32_t i = 0; i < TextureCount; i++) {
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
-		Button->Name = "button_skills_skill";
 		Button->Parent = TexturesElement;
 		Button->BaseOffset = Offset;
 		Button->BaseSize = Map->TileAtlas->Size;
@@ -838,6 +856,51 @@ void _EditorState::InitTextures() {
 
 	TexturesElement->CalculateBounds();
 	TexturesElement->SetActive(true);
+}
+
+// Init event select
+void _EditorState::InitEvents() {
+	ClearEvents();
+
+	glm::vec2 Start = glm::vec2(20, 20);
+	glm::vec2 Spacing = glm::vec2(20, 20);
+	glm::vec2 Size = glm::vec2(160, 64);
+	glm::vec2 Offset(Start);
+
+	size_t Count = Stats->EventNames.size();
+	EventsElement->BaseSize.x = Start.x + (Spacing.x + Size.x) * 4;
+	EventsElement->BaseSize.y = Start.y + (Spacing.y + Size.y) * (Count / 4);
+	for(size_t i = 0; i < Count; i++) {
+
+		// Add button
+		ae::_Element *Button = new ae::_Element();
+		Button->Parent = EventsElement;
+		Button->BaseOffset = Offset;
+		Button->BaseSize = Size;
+		Button->Alignment = ae::LEFT_TOP;
+		Button->Clickable = true;
+		Button->Index = (int)i;
+		Button->Style = ae::Assets.Styles["style_menu_button"];
+		EventsElement->Children.push_back(Button);
+
+		ae::_Element *Label = new ae::_Element();
+		Label->Parent = Button;
+		Label->BaseOffset = glm::vec2(0, 38);
+		Label->Alignment = ae::CENTER_BASELINE;
+		Label->Text = Stats->EventNames[i].Name;
+		Label->Font = ae::Assets.Fonts["hud_small"];
+		Button->Children.push_back(Label);
+
+		// Update position
+		Offset.x += Size.x + Spacing.x;
+		if(Offset.x > EventsElement->BaseSize.x - Size.x) {
+			Offset.y += Size.y + Spacing.y;
+			Offset.x = Start.x;
+		}
+	}
+
+	EventsElement->CalculateBounds();
+	EventsElement->SetActive(true);
 }
 
 // Init new map
@@ -892,6 +955,7 @@ bool _EditorState::CloseWindows() {
 	bool WasOpen = TexturesElement->Active | NewMapElement->Active | ResizeMapElement->Active | SaveMapElement->Active | LoadMapElement->Active;
 
 	TexturesElement->SetActive(false);
+	EventsElement->SetActive(false);
 	NewMapElement->SetActive(false);
 	ResizeMapElement->SetActive(false);
 	SaveMapElement->SetActive(false);

@@ -76,7 +76,6 @@ class _EditorState : public ae::_State {
 
 	private:
 
-		void ClearTextures();
 		void CloseMap();
 		void CreateMap();
 		void ResizeMap();
@@ -85,16 +84,20 @@ class _EditorState : public ae::_State {
 		void Go();
 
 		void ToggleTextures();
+		void ToggleEvents();
 		void ToggleNewMap();
 		void ToggleResize();
 		void ToggleSaveMap();
 		void ToggleLoadMap(const std::string &TempPath = "");
 
 		void InitTextures();
+		void InitEvents();
 		void InitNewMap();
 		void InitResize();
 		void InitSaveMap();
 		void InitLoadMap(const std::string &TempPath = "");
+		void ClearTextures();
+		void ClearEvents();
 		bool CloseWindows();
 
 		// Brushes
@@ -141,6 +144,7 @@ class _EditorState : public ae::_State {
 		// UI
 		ae::_Element *ButtonBarElement;
 		ae::_Element *TexturesElement;
+		ae::_Element *EventsElement;
 		ae::_Element *NewMapElement;
 		ae::_Element *ResizeMapElement;
 		ae::_Element *SaveMapElement;
