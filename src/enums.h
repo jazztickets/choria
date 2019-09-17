@@ -128,3 +128,15 @@ enum class StatType : int {
 	CLOCK,
 	COUNT,
 };
+
+// Render flags
+enum MapRenderType {
+	MAP_RENDER_BOUNDARY          = (1 << 1),
+	MAP_RENDER_TEXTURE           = (1 << 2),
+	MAP_RENDER_WALL              = (1 << 3),
+	MAP_RENDER_PVP               = (1 << 4),
+	MAP_RENDER_ZONE              = (1 << 5),
+	MAP_RENDER_EVENTTYPE         = (1 << 6),
+	MAP_RENDER_EVENTDATA         = (1 << 7),
+	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
+};

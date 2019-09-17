@@ -36,7 +36,6 @@
 #include <ae/graphics.h>
 #include <ae/random.h>
 #include <ae/light.h>
-#include <states/editor.h>
 #include <server.h>
 #include <constants.h>
 #include <stats.h>
