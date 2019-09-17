@@ -53,11 +53,6 @@ struct _Portrait {
 	uint8_t NetworkID;
 };
 
-struct _OldModel {
-	uint32_t ID;
-	const ae::_Texture *Texture;
-};
-
 struct _Model {
 	std::string ID;
 	const ae::_Texture *Texture;
