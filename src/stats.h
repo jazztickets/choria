@@ -64,13 +64,6 @@ struct _Model {
 	uint8_t NetworkID;
 };
 
-struct _OldBuild {
-	uint32_t ID;
-	uint32_t ModelID;
-	std::string Name;
-	const ae::_Texture *Texture;
-};
-
 struct _Build {
 	std::string Name;
 	std::string Model;
@@ -180,8 +173,9 @@ class _Stats {
 
 		// Menu
 		const _Portrait *GetPortrait(uint8_t NetworkID) const;
-		void GetPortraits(std::list<_Portrait> &PortraitList) const;
-		void GetStartingBuilds(std::list<_OldBuild> &OldBuilds) const;
+		const _Model *GetModel(uint8_t NetworkID) const;
+		void GetPortraits(std::list<const _Portrait *> &PortraitList) const;
+		void GetStartingBuilds(std::list<const _Object *> &BuildsList) const;
 
 		// Monsters
 		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const;
@@ -214,6 +208,8 @@ class _Stats {
 		std::unordered_map<std::string, _Portrait> Portraits;
 		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
 		std::unordered_map<std::string, _Model> Models;
+		std::unordered_map<uint8_t, const _Model *> ModelsIndex;
+
 		std::unordered_map<std::string, const _Object *> Builds;
 
 		// Database

@@ -99,6 +99,11 @@
 				<item id="ss"/>
 			</items>
 		</build>
+		<build name="Mage" model="mage" starting="true" texture="textures/builds/mage.png">
+			<items>
+				<item id="ss"/>
+			</items>
+		</build>
 	</builds>
 	<vendors>
 		<vendor id="ham_weapons">

@@ -322,17 +322,17 @@ void _Menu::InitAccount() {
 	State = STATE_ACCOUNT;
 }
 
-// Get the selected icon id from an element
-uint8_t _Menu::GetSelectedIconID(ae::_Element *ParentElement) {
+// Get the selected build from the character create screen
+void *_Menu::GetSelectedUserData(ae::_Element *ParentElement) {
 
 	// Check for selected portrait
 	for(auto &Element : ParentElement->Children) {
 		ae::_Element *Button = Element;
 		if(Button->Checked)
-			return (uint8_t)Button->Index;
+			return Button->UserData;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 // Get the selected character slot
@@ -362,14 +362,14 @@ void _Menu::CreateCharacter(bool Hardcore) {
 	if(Name->Text.length() == 0)
 		return;
 
-	// Get portrait id
-	uint8_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
-	if(PortraitID == 0)
+	// Get portrait
+	const _Portrait *Portrait = (const _Portrait *)GetSelectedUserData(ae::Assets.Elements["element_menu_new_portraits"]);
+	if(!Portrait)
 		return;
 
-	// Get build id
-	uint8_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
-	if(BuildID == 0)
+	// Get build
+	const _Object *Build = (const _Object *)GetSelectedUserData(ae::Assets.Elements["element_menu_new_builds"]);
+	if(!Build)
 		return;
 
 	// Get slot
@@ -385,8 +385,8 @@ void _Menu::CreateCharacter(bool Hardcore) {
 	Packet.Write<PacketType>(PacketType::CREATECHARACTER_INFO);
 	Packet.WriteBit(Hardcore);
 	Packet.WriteString(Name->Text.c_str());
-	Packet.Write<uint8_t>(PortraitID);
-	Packet.Write<uint8_t>(BuildID);
+	Packet.Write<uint8_t>(Portrait->NetworkID);
+	Packet.WriteString(Build->Name.c_str());
 	Packet.Write<uint8_t>((uint8_t)SelectedSlot);
 	PlayState.Network->SendPacket(Packet);
 }
@@ -588,37 +588,34 @@ void _Menu::LoadPortraitButtons() {
 	ClearPortraits();
 
 	// Get portraits
-	std::list<_Portrait> Portraits;
+	std::list<const _Portrait *> Portraits;
 	PlayState.Stats->GetPortraits(Portraits);
 
 	// Iterate over portraits
-	int Index = 0;
 	glm::vec2 Offset(14, 70);
 	for(const auto &Portrait : Portraits) {
-		if(!Portrait.Texture)
-			throw std::runtime_error("Cannot find texture for portrait '" + Portrait.ID + "'");
+		if(!Portrait->Texture)
+			throw std::runtime_error("Cannot find texture for portrait '" + Portrait->ID + "'");
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
 		Button->Name = NewCharacterPortraitPrefix;
 		Button->Parent = PortraitsElement;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = Portrait.Texture->Size;
+		Button->BaseSize = Portrait->Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
-		Button->Texture = Portrait.Texture;
+		Button->Texture = Portrait->Texture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
-		Button->Index = Portrait.NetworkID;
+		Button->UserData = (void *)Portrait;
 		Button->Clickable = true;
 		PortraitsElement->Children.push_back(Button);
 
 		// Update position
-		Offset.x += Portrait.Texture->Size.x + 14;
-		if(Offset.x > PortraitsElement->BaseSize.x - Portrait.Texture->Size.x - 14) {
-			Offset.y += Portrait.Texture->Size.y + 14;
+		Offset.x += Portrait->Texture->Size.x + 14;
+		if(Offset.x > PortraitsElement->BaseSize.x - Portrait->Texture->Size.x - 14) {
+			Offset.y += Portrait->Texture->Size.y + 14;
 			Offset.x = 14;
 		}
-
-		Index++;
 	}
 
 	PortraitsElement->CalculateBounds();
@@ -641,35 +638,31 @@ void _Menu::LoadBuildButtons() {
 	ae::_Element *BuildsElement = ae::Assets.Elements["element_menu_new_builds"];
 	ClearBuilds();
 
-	glm::vec2 Offset(14, 70);
-	size_t i = 0;
-
 	// Load builds
-	std::list<_OldBuild> Builds;
+	std::list<const _Object *> Builds;
 	PlayState.Stats->GetStartingBuilds(Builds);
 
 	// Iterate over builds
+	glm::vec2 Offset(14, 70);
 	for(const auto &Build : Builds) {
-		if(!Build.Texture)
-			throw std::runtime_error("Cannot find texture for build id " + std::to_string(Build.ID));
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
 		Button->Name = NewCharacterBuildPrefix;
 		Button->Parent = BuildsElement;
 		Button->BaseOffset = Offset;
-		Button->BaseSize = Build.Texture->Size;
+		Button->BaseSize = Build->BuildTexture->Size;
 		Button->Alignment = ae::LEFT_TOP;
-		Button->Texture = Build.Texture;
+		Button->Texture = Build->BuildTexture;
 		Button->HoverStyle = ae::Assets.Styles["style_menu_hover"];
-		Button->Index = (int)Build.ID;
+		Button->UserData = (void *)Build;
 		Button->Clickable = true;
 		BuildsElement->Children.push_back(Button);
 
 		// Add label
 		ae::_Element *Label = new ae::_Element();
 		Label->Font = ae::Assets.Fonts["hud_small"];
-		Label->Text = Build.Name;
+		Label->Text = Build->Name;
 		Label->Color = glm::vec4(1.0f);
 		Label->Parent = Button;
 		Label->BaseOffset = glm::vec2(0, 122);
@@ -678,12 +671,10 @@ void _Menu::LoadBuildButtons() {
 
 		// Update position
 		Offset.x += 114;
-		if(Offset.x > BuildsElement->BaseSize.x - Build.Texture->Size.x - 14) {
-			Offset.y += Build.Texture->Size.y + 32;
+		if(Offset.x > BuildsElement->BaseSize.x - Build->BuildTexture->Size.x - 14) {
+			Offset.y += Build->BuildTexture->Size.y + 32;
 			Offset.x = 14;
 		}
-
-		i++;
 	}
 
 	BuildsElement->CalculateBounds();
@@ -931,8 +922,8 @@ void _Menu::RemapInput(int InputType, int Input) {
 // Check new character screen for portrait and name
 void _Menu::ValidateCreateCharacter() {
 	bool NameValid = false;
-	uint8_t PortraitID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_portraits"]);
-	uint8_t BuildID = GetSelectedIconID(ae::Assets.Elements["element_menu_new_builds"]);
+	const _Portrait *Portrait = (const _Portrait *)GetSelectedUserData(ae::Assets.Elements["element_menu_new_portraits"]);
+	const _Object *Build = (const _Object *)GetSelectedUserData(ae::Assets.Elements["element_menu_new_builds"]);
 
 	// Check name length
 	ae::_Element *CreateButton = ae::Assets.Elements["button_menu_new_create"];
@@ -943,12 +934,10 @@ void _Menu::ValidateCreateCharacter() {
 		ae::FocusedElement = Name;
 
 	// Enable button
-	if(PortraitID != 0 && BuildID != 0 && NameValid) {
+	if(Portrait && Build && NameValid)
 		CreateButton->SetEnabled(true);
-	}
-	else {
+	else
 		CreateButton->SetEnabled(false);
-	}
 }
 
 // Update ui button states
@@ -1246,13 +1235,13 @@ void _Menu::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				}
 				else if(CharactersState == CHARACTERS_CREATE) {
 					if(Clicked->Name == NewCharacterPortraitPrefix || Clicked->Name == NewCharacterBuildPrefix) {
-						size_t SelectedID = (size_t)Clicked->Index;
+						ae::_Element *SelectedButton = Clicked;
 
 						// Unselect all portraits and select the clicked element
 						for(auto &Element : Clicked->Parent->Children) {
 							ae::_Element *Button = Element;
 							Button->Checked = false;
-							if((size_t)Button->Index == SelectedID) {
+							if(Button == SelectedButton) {
 								ae::_Element *Name = ae::Assets.Elements["textbox_menu_new_name"];
 								ae::FocusedElement = Name;
 								Name->ResetCursor();

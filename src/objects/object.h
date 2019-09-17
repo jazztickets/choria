@@ -40,6 +40,7 @@ class _Scripting;
 class _StatChange;
 class _StatusEffect;
 class _HUD;
+struct _Model;
 struct _Tile;
 struct _ActionResult;
 struct _Slot;
@@ -149,8 +150,8 @@ class _Object : public ae::_BaseObject {
 		glm::ivec2 ServerPosition;
 
 		// Render
-		const ae::_Texture *ModelTexture;
-		uint32_t ModelID;
+		const _Model *Model;
+		const ae::_Texture *BuildTexture;
 		int Light;
 
 	private:

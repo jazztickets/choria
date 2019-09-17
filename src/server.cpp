@@ -507,7 +507,7 @@ void _Server::HandleCharacterCreate(ae::_Buffer &Data, ae::_Peer *Peer) {
 	bool IsHardcore = Data.ReadBit();
 	std::string Name(Data.ReadString());
 	const _Portrait *Portrait = Stats->GetPortrait(Data.Read<uint8_t>());
-	uint8_t BuildID = Data.Read<uint8_t>();
+	const _Object *Build = Stats->Builds.at(Data.ReadString());
 	uint32_t Slot = Data.Read<uint8_t>();
 	if(Name.size() > PLAYER_NAME_SIZE)
 		return;
@@ -528,7 +528,7 @@ void _Server::HandleCharacterCreate(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Create the character
-	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, IsHardcore, Name, Portrait, BuildID);
+	Save->CreateCharacter(Stats, Scripting, Peer->AccountID, Slot, IsHardcore, Name, Portrait, Build);
 
 	// Notify the client
 	ae::_Buffer NewPacket;
@@ -853,7 +853,7 @@ _Object *_Server::CreateBot() {
 	uint32_t CharacterID = Save->GetCharacterID(ACCOUNT_BOTS_ID, Slot);
 	if(!CharacterID) {
 		std::string Name = "bot_test";
-		CharacterID = Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, &Stats->Portraits.at("joe"), 1);
+		CharacterID = Save->CreateCharacter(Stats, Scripting, ACCOUNT_BOTS_ID, Slot, Hardcore, Name, &Stats->Portraits.at("joe"), Stats->Builds.at("Warrior"));
 	}
 
 	// Create object

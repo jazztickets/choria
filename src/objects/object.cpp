@@ -69,8 +69,8 @@ _Object::_Object() :
 	Position(0, 0),
 	ServerPosition(0, 0),
 
-	ModelTexture(nullptr),
-	ModelID(0),
+	Model(nullptr),
+	BuildTexture(nullptr),
 	Light(0) {
 
 	Inventory = new _Inventory();
@@ -330,7 +330,7 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 
 // Renders the player while walking around the world
 void _Object::Render(const _Object *ClientPlayer) {
-	if(Map && ModelTexture) {
+	if(Map && Model->Texture) {
 
 		// Setup shader
 		ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
@@ -342,7 +342,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		if(Character->HUD && Character->HUD->ShowDebug) {
 			DrawPosition = glm::vec3(ServerPosition, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 			ae::Graphics.SetColor(glm::vec4(1, 0, 0, 1));
-			ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
+			ae::Graphics.DrawSprite(DrawPosition, Model->Texture);
 		}
 
 		// Set invisible alpha
@@ -353,7 +353,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 		// Draw model
 		DrawPosition = glm::vec3(Position, 0.0f) + glm::vec3(0.5f, 0.5f, 0);
 		ae::Graphics.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, Alpha));
-		ae::Graphics.DrawSprite(DrawPosition, ModelTexture);
+		ae::Graphics.DrawSprite(DrawPosition, Model->Texture);
 		if(Character->StatusTexture) {
 			ae::Graphics.DrawSprite(DrawPosition, Character->StatusTexture);
 		}
@@ -364,7 +364,7 @@ void _Object::Render(const _Object *ClientPlayer) {
 			if(Character->Bounty > 0)
 				NameText += " ([c cyan]" + std::to_string(Character->Bounty) + "[c white])";
 
-			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f / ModelTexture->Size.x);
+			ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(NameText, glm::vec2(DrawPosition) + glm::vec2(0, -0.5f), ae::CENTER_BASELINE, 1.0f / Model->Texture->Size.x);
 		}
 	}
 }
@@ -534,7 +534,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["spawnmap_id"] = Character->SpawnMapID;
 	StatsNode["spawnpoint"] = Character->SpawnPoint;
 	StatsNode["portrait"] = Character->Portrait->ID;
-	StatsNode["model_id"] = ModelID;
+	StatsNode["model"] = Model->ID;
 	StatsNode["actionbar_size"] = (Json::Value::UInt64)Character->ActionBar.size();
 	StatsNode["health"] = Character->Health;
 	StatsNode["mana"] = Character->Mana;
@@ -636,11 +636,11 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	Character->LoadMapID = (ae::NetworkIDType)StatsNode["map_id"].asUInt();
 	Position.x = StatsNode["map_x"].asInt();
 	Position.y = StatsNode["map_y"].asInt();
+	Model = &Stats->Models.at(StatsNode["model"].asString());
 	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["spawnmap_id"].asUInt();
 	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
 	Character->Hardcore = StatsNode["hardcore"].asBool();
 	Character->Portrait = &Stats->Portraits.at(StatsNode["portrait"].asString());
-	ModelID = StatsNode["model_id"].asUInt();
 	Character->Health = StatsNode["health"].asInt();
 	Character->Mana = StatsNode["mana"].asInt();
 	Character->Experience = StatsNode["experience"].asInt();
@@ -730,7 +730,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 		Data.Write<uint8_t>(Character->Portrait->NetworkID);
 	else
 		Data.Write<uint8_t>(0);
-	Data.Write<uint8_t>(ModelID);
+	Data.Write<uint8_t>(Model->NetworkID);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 }
@@ -739,8 +739,8 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
-	uint8_t	PortraitID = Data.Read<uint8_t>();
-	ModelID = Data.Read<uint8_t>();
+	uint8_t PortraitID = Data.Read<uint8_t>();
+	Model = Stats->GetModel(Data.Read<uint8_t>());
 	Light = Data.Read<uint8_t>();
 	bool Invisible = Data.ReadBit();
 
@@ -748,15 +748,13 @@ void _Object::UnserializeCreate(ae::_Buffer &Data) {
 		Character->Invisible = Invisible;
 		Character->Portrait = Stats->GetPortrait(PortraitID);
 	}
-
-	ModelTexture = Stats->OldModels.at(ModelID).Texture;
 }
 
 // Serialize object stats
 void _Object::SerializeStats(ae::_Buffer &Data) {
 	Data.WriteString(Name.c_str());
 	Data.Write<uint8_t>(Light);
-	Data.Write<uint8_t>(ModelID);
+	Data.Write<uint8_t>(Model->NetworkID);
 	Data.Write<uint8_t>(Character->Portrait->NetworkID);
 	Data.WriteString(Character->PartyName.c_str());
 	Data.Write<int>(Character->Health);
@@ -810,7 +808,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Name = Data.ReadString();
 	Light = Data.Read<uint8_t>();
-	ModelID = Data.Read<uint8_t>();
+	Model = Stats->GetModel(Data.Read<uint8_t>());
 	Character->Portrait = Stats->GetPortrait(Data.Read<uint8_t>());
 	Character->PartyName = Data.ReadString();
 	Character->Health = Data.Read<int>();
@@ -829,8 +827,6 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Character->PlayerKills = Data.Read<int>();
 	Character->GamesPlayed = Data.Read<int>();
 	Character->Bounty = Data.Read<int>();
-
-	ModelTexture = Stats->OldModels.at(ModelID).Texture;
 
 	// Read inventory
 	Inventory->Unserialize(Data, Stats);

@@ -30,8 +30,13 @@
 #include <iostream>
 
 // Compare function for sorting portraits
-bool ComparePortrait(const _Portrait &First, const _Portrait &Second) {
-	return First.NetworkID < Second.NetworkID;
+bool ComparePortrait(const _Portrait *First, const _Portrait *Second) {
+	return First->NetworkID < Second->NetworkID;
+}
+
+// Compare function for sorting models
+bool CompareBuild(const _Object *First, const _Object *Second) {
+	return First->NetworkID < Second->NetworkID;
 }
 
 // Constructor
@@ -145,14 +150,24 @@ void _Stats::LoadData(const std::string &Path) {
 		Model.ID = GetString(ChildNode, "id");
 		Model.Texture = ae::Assets.Textures[GetString(ChildNode, "texture")];
 		Model.NetworkID = NetworkID++;
+		if(Models.find(Model.ID) != Models.end())
+			throw std::runtime_error("Duplicate model id '" + Model.ID + "' in " + Path);
 		Models[Model.ID] = Model;
+		ModelsIndex[Model.NetworkID] = &Models[Model.ID];
 	}
 
 	// Load builds
+	NetworkID = 1;
 	for(tinyxml2::XMLElement *ChildNode = Nodes["builds"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
 		_Object *Object = new _Object();
 		Object->Name = GetString(ChildNode, "name");
-		Object->ModelTexture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		Object->NetworkID = NetworkID++;
+		Object->Model = &Models.at(GetString(ChildNode, "model"));
+		Object->BuildTexture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		if(!Object->BuildTexture)
+			throw std::runtime_error("Cannot find build texture for build '" + Object->Name + "' in " + Path);
+		if(Builds.find(Object->Name) != Builds.end())
+			throw std::runtime_error("Duplicate build name '" + Object->Name + "' in " + Path);
 		Builds[Object->Name] = Object;
 	}
 }
@@ -506,7 +521,7 @@ void _Stats::OldLoadBuilds() {
 		// Create object
 		_Object *Object = new _Object();
 		Object->Name = std::string("build_") + Database->GetString("name");
-		Object->ModelID = Database->GetInt<uint32_t>("model_id");
+		//Object->ModelID = Database->GetInt<uint32_t>("model_id");
 		Object->Character->ActionBar.resize(Database->GetInt<uint32_t>("actionbarsize"));
 
 		// Get items
@@ -638,7 +653,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 	Database->CloseQuery();
 }
 
-// Get portrait texture by network id
+// Get portrait by network id
 const _Portrait *_Stats::GetPortrait(uint8_t NetworkID) const {
 	const auto &Iterator = PortraitsIndex.find(NetworkID);
 	if(Iterator == PortraitsIndex.end())
@@ -647,29 +662,29 @@ const _Portrait *_Stats::GetPortrait(uint8_t NetworkID) const {
 	return Iterator->second;
 }
 
+// Get model by network id
+const _Model *_Stats::GetModel(uint8_t NetworkID) const {
+	const auto &Iterator = ModelsIndex.find(NetworkID);
+	if(Iterator == ModelsIndex.end())
+		return nullptr;
+
+	return Iterator->second;
+}
+
 // Get list of portraits sorted by rank
-void _Stats::GetPortraits(std::list<_Portrait> &PortraitList) const {
+void _Stats::GetPortraits(std::list<const _Portrait *> &PortraitList) const {
 	for(const auto &Portrait : Portraits)
-		PortraitList.push_back(Portrait.second);
+		PortraitList.push_back(&Portrait.second);
 
 	PortraitList.sort(ComparePortrait);
 }
 
-// Get list of builds
-void _Stats::GetStartingBuilds(std::list<_OldBuild> &Builds) const {
+// Get list of starting builds sorted by rank
+void _Stats::GetStartingBuilds(std::list<const _Object *> &BuildsList) const {
+	for(const auto &Build : Builds)
+		BuildsList.push_back(Build.second);
 
-	// Run query
-	Database->PrepareQuery("SELECT * FROM build WHERE starting = 1 ORDER BY rank");
-	while(Database->FetchRow()) {
-		_OldBuild Build;
-		Build.ID = Database->GetInt<uint32_t>("id");
-		Build.Name = Database->GetString("name");
-		Build.Texture = ae::Assets.Textures[Database->GetString("texture")];
-
-		Builds.push_back(Build);
-	}
-
-	Database->CloseQuery();
+	BuildsList.sort(CompareBuild);
 }
 
 // Randomly generates a list of monsters from a zone

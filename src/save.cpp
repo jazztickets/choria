@@ -234,16 +234,7 @@ void _Save::DeleteCharacter(uint32_t CharacterID) {
 }
 
 // Create character
-uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, const _Portrait *Portrait, uint32_t BuildID) {
-	if(!BuildID)
-		BuildID = 1;
-
-	// Load build
-	const auto &BuildIterator = Stats->OldBuilds.find(BuildID);
-	if(BuildIterator == Stats->OldBuilds.end())
-		throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
-
-	const _Object *Build = BuildIterator->second;
+uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, const _Portrait *Portrait, const _Object *Build) {
 
 	// Create new database row
 	int Index = 1;
@@ -260,7 +251,7 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	Object.Scripting = Scripting;
 	Object.Character->Hardcore = Hardcore;
 	Object.Character->Portrait = Portrait;
-	Object.ModelID = Build->ModelID;
+	Object.Model = Build->Model;
 	Object.Character->CharacterID = (uint32_t)Database->GetLastInsertID();
 	Object.Character->ActionBar = Build->Character->ActionBar;
 	Object.Inventory->Bags = Build->Inventory->GetBags();
