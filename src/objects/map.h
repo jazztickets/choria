@@ -21,6 +21,7 @@
 #include <ae/baseobject.h>
 #include <ae/network.h>
 #include <ae/texture.h>
+#include <enums.h>
 #include <path/micropather.h>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -63,13 +64,13 @@ namespace ae {
 
 // Structures
 struct _Event {
-	_Event() : Type(0), Data(0) { }
-	_Event(uint32_t Type, uint32_t Data) : Type(Type), Data(Data) { }
+	_Event() : Type(EventType::NONE), Data(0) { }
+	_Event(EventType Type, uint32_t Data) : Type(Type), Data(Data) { }
 
 	bool operator==(const _Event &Event) const { return Event.Type == Type && Event.Data == Data; }
 	bool operator<(const _Event &Event) const { return std::tie(Event.Type, Event.Data) < std::tie(Type, Data); }
 
-	uint32_t Type;
+	EventType Type;
 	uint32_t Data;
 };
 
@@ -91,22 +92,6 @@ struct _TileVertexBuffer {
 class _Map : public ae::_BaseObject, public micropather::Graph {
 
 	public:
-
-		enum EventType {
-			EVENT_NONE,
-			EVENT_SPAWN,
-			EVENT_MAPENTRANCE,
-			EVENT_MAPCHANGE,
-			EVENT_VENDOR,
-			EVENT_TRADER,
-			EVENT_KEY,
-			EVENT_SCRIPT,
-			EVENT_PORTAL,
-			EVENT_JUMP,
-			EVENT_BLACKSMITH,
-			EVENT_MINIGAME,
-			EVENT_COUNT
-		};
 
 		_Map();
 		~_Map() override;

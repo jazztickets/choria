@@ -1062,7 +1062,7 @@ int _Object::Move() {
 
 // Return true if the object can respec
 bool _Object::CanRespec() const {
-	if(Map && Map->IsValidPosition(Position) && GetTile()->Event.Type == _Map::EVENT_SPAWN)
+	if(Map && Map->IsValidPosition(Position) && GetTile()->Event.Type == EventType::SPAWN)
 		return true;
 
 	return false;

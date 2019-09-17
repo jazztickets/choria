@@ -44,11 +44,6 @@ enum MapRenderType {
 	MAP_RENDER_EDITOR_AMBIENT    = (1 << 8),
 };
 
-enum BrushModeType {
-	EDITOR_BRUSH_MODE_TILE,
-	EDITOR_BRUSH_MODE_OBJECT,
-};
-
 // Classes
 class _EditorState : public ae::_State {
 

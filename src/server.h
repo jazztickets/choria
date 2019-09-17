@@ -21,6 +21,7 @@
 #include <ae/type.h>
 #include <ae/log.h>
 #include <ae/buffer.h>
+#include <enums.h>
 #include <glm/vec4.hpp>
 #include <unordered_map>
 #include <memory>
@@ -66,7 +67,7 @@ class _Server {
 		void JoinThread();
 		void StopServer(int Seconds=0);
 
-		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType);
+		void SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, EventType Event);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);
 		void StartTeleport(_Object *Object, double Time);
 		void SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName);

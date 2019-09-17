@@ -43,6 +43,11 @@
 
 _EditorState EditorState;
 
+enum BrushModeType {
+	EDITOR_BRUSH_MODE_TILE,
+	EDITOR_BRUSH_MODE_OBJECT,
+};
+
 // Constructor
 _EditorState::_EditorState() :
 	Framebuffer(nullptr),
@@ -365,7 +370,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(EventsElement->GetClickedElement()) {
 			if(EventsElement->GetClickedElement() != EventsElement) {
 				ae::_Element *Button = EventsElement->GetClickedElement();
-				Brush->Event.Type = (uint32_t)Button->Index;
+				Brush->Event.Type = (EventType)Button->Index;
 				CloseWindows();
 			}
 		}
@@ -666,7 +671,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw event type
-		Buffer << Stats->EventNames[Brush->Event.Type].Name;
+		Buffer << Stats->EventNames[(size_t)Brush->Event.Type].Name;
 
 		Filter & MAP_RENDER_EVENTTYPE ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -1081,9 +1086,9 @@ void _EditorState::LoadMap() {
 
 		// Set camera position
 		glm::ivec2 Position(Map->Size.x/2, Map->Size.y/2);
-		if(!Map->FindEvent(_Event(_Map::EVENT_SPAWN, 0), Position)) {
-			//if(!Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, OldMapID), Position))
-			//	Map->FindEvent(_Event(_Map::EVENT_MAPENTRANCE, OldMapID), Position);
+		if(!Map->FindEvent(_Event(EventType::SPAWN, 0), Position)) {
+			//if(!Map->FindEvent(_Event(EventType::MAPCHANGE, OldMapID), Position))
+			//	Map->FindEvent(_Event(EventType::MAPENTRANCE, OldMapID), Position);
 		}
 		Camera->ForcePosition(glm::vec3(Position, CAMERA_DISTANCE));
 
@@ -1103,25 +1108,27 @@ void _EditorState::Go() {
 	if(Map->IsValidPosition(WorldCursor)) {
 		const _Tile *Tile = Map->GetTile(WorldCursor);
 		switch(Tile->Event.Type) {
-			case _Map::EVENT_MAPENTRANCE:
-			case _Map::EVENT_MAPCHANGE: {
+			case EventType::MAPENTRANCE:
+			case EventType::MAPCHANGE: {
 				ToggleLoadMap(GetCleanMapName(Stats->OldMaps.at(Tile->Event.Data).File));
 			} break;
-			case _Map::EVENT_VENDOR: {
+			case EventType::VENDOR: {
 				std::stringstream Buffer;
 				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=vendoritem&vendor_id=" << Tile->Event.Data << "\"";
 				system(Buffer.str().c_str());
 			} break;
-			case _Map::EVENT_TRADER: {
+			case EventType::TRADER: {
 				std::stringstream Buffer;
 				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=traderitem&trader_id=" << Tile->Event.Data << "\"";
 				system(Buffer.str().c_str());
 			} break;
-			case _Map::EVENT_SCRIPT: {
+			case EventType::SCRIPT: {
 				std::stringstream Buffer;
 				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=script\"";
 				system(Buffer.str().c_str());
 			} break;
+			default:
+			break;
 		}
 	}
 }

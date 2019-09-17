@@ -19,9 +19,12 @@
 
 // Libraries
 #include <objects/item.h>
+#include <objects/statchange.h>
+#include <enums.h>
 #include <unordered_map>
 #include <list>
 #include <vector>
+#include <glm/vec4.hpp>
 #include <glm/vec3.hpp>
 
 // Forward Declarations

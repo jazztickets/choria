@@ -457,7 +457,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 		else if(Console->Command == "event") {
 			if(Parameters.size() == 2) {
 				if(Network && Network->IsConnected()) {
-					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
+					Packet.Write<EventType>((EventType)ae::ToNumber<uint8_t>(Parameters[0]));
 					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[1]));
 					Network->SendPacket(Packet);
 				}
@@ -1139,31 +1139,33 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 		return;
 
 	// Read packet
-	uint32_t EventType = Data.Read<uint32_t>();
+	EventType Event = Data.Read<EventType>();
 	uint32_t EventData = Data.Read<uint32_t>();
 	Player->Position = Data.Read<glm::ivec2>();
 
 	// Handle event
-	switch(EventType) {
-		case _Map::EVENT_VENDOR:
+	switch(Event) {
+		case EventType::VENDOR:
 			Player->Character->Vendor = &Stats->OldVendors.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->VendorScreen->Init();
 		break;
-		case _Map::EVENT_TRADER:
+		case EventType::TRADER:
 			Player->Character->Trader = &Stats->OldTraders.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->TraderScreen->Init();
 		break;
-		case _Map::EVENT_BLACKSMITH:
+		case EventType::BLACKSMITH:
 			Player->Character->Blacksmith = &Stats->OldBlacksmiths.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->BlacksmithScreen->Init();
 		break;
-		case _Map::EVENT_MINIGAME:
+		case EventType::MINIGAME:
 			Player->Character->Minigame = &Stats->OldMinigames.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->InitMinigame();
+		break;
+		default:
 		break;
 	}
 }

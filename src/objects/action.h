@@ -19,6 +19,7 @@
 
 // Libraries
 #include <objects/statchange.h>
+#include <enums.h>
 #include <glm/vec2.hpp>
 #include <cstdint>
 
@@ -33,37 +34,6 @@ namespace ae {
 	class _Texture;
 	class _Buffer;
 }
-
-// Types of targets
-enum class TargetType : uint32_t {
-	NONE,
-	SELF,
-	ENEMY,
-	ALLY,
-	ENEMY_MULTI,
-	ALLY_MULTI,
-	ENEMY_ALL,
-	ALLY_ALL,
-	ANY,
-	ALL,
-};
-
-// Scope of action
-enum class ScopeType : uint8_t {
-	NONE,
-	WORLD,
-	BATTLE,
-	ALL
-};
-
-// State of action
-enum class ActionStateType : uint8_t {
-	NONE,
-	START,
-	ANIMATION,
-	APPLY,
-	COOLDOWN,
-};
 
 struct _Summon {
 	_Summon() : ID(0), Health(0), Mana(0), Armor(0), MinDamage(0), MaxDamage(0) { }

@@ -19,7 +19,8 @@
 
 // Libraries
 #include <ae/texture.h>
-#include <objects/action.h>
+#include <enums.h>
+#include <glm/vec4.hpp>
 
 // Forward Declarations
 class _Object;
@@ -28,27 +29,11 @@ class _Stats;
 struct _OldVendor;
 struct _Cursor;
 struct _Slot;
+struct _ActionResult;
 
 namespace ae {
 	class _Texture;
 }
-
-enum class ItemType : uint32_t {
-	NONE,
-	SKILL,
-	HELMET,
-	ARMOR,
-	BOOTS,
-	ONEHANDED_WEAPON,
-	TWOHANDED_WEAPON,
-	SHIELD,
-	RING,
-	AMULET,
-	CONSUMABLE,
-	TRADABLE,
-	UNLOCKABLE,
-	KEY,
-};
 
 // Classes
 class _BaseItem {

@@ -295,41 +295,41 @@ void _Map::CheckEvents(_Object *Object) const {
 	if(Server && Object->Character->TeleportTime == 0.0) {
 		Object->Character->TeleportTime = -1.0;
 		Object->Character->Status = _Character::STATUS_NONE;
-		Server->SpawnPlayer(Object, Object->Character->SpawnMapID, _Map::EVENT_SPAWN);
+		Server->SpawnPlayer(Object, Object->Character->SpawnMapID, EventType::SPAWN);
 		return;
 	}
 
 	// Handle events
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
 	switch(Tile->Event.Type) {
-		case _Map::EVENT_SPAWN:
+		case EventType::SPAWN:
 			if(Server && !(Object->Character->SpawnMapID == NetworkID && Object->Character->SpawnPoint == Tile->Event.Data))
 				Server->SendMessage(Object->Peer, "Spawn point set", "yellow");
 
 			Object->Character->SpawnMapID = NetworkID;
 			Object->Character->SpawnPoint = Tile->Event.Data;
 		break;
-		case _Map::EVENT_MAPENTRANCE:
-		case _Map::EVENT_MAPCHANGE:
+		case EventType::MAPENTRANCE:
+		case EventType::MAPCHANGE:
 			if(Server)
-				Server->SpawnPlayer(Object, (ae::NetworkIDType)Tile->Event.Data, _Map::EVENT_MAPENTRANCE);
+				Server->SpawnPlayer(Object, (ae::NetworkIDType)Tile->Event.Data, EventType::MAPENTRANCE);
 			else
 				Object->Controller->WaitForServer = true;
 		break;
-		case _Map::EVENT_VENDOR:
-		case _Map::EVENT_TRADER:
-		case _Map::EVENT_BLACKSMITH:
-		case _Map::EVENT_MINIGAME: {
+		case EventType::VENDOR:
+		case EventType::TRADER:
+		case EventType::BLACKSMITH:
+		case EventType::MINIGAME: {
 			if(Server)
 				StartEvent(Object, Tile->Event);
 			else
 				Object->Controller->WaitForServer = true;
 		} break;
-		case _Map::EVENT_SCRIPT: {
+		case EventType::SCRIPT: {
 			if(Server)
 				Server->RunEventScript(Tile->Event.Data, Object);
 		} break;
-		case _Map::EVENT_PORTAL: {
+		case EventType::PORTAL: {
 			if(Server) {
 
 				// Find matching even/odd event
@@ -339,7 +339,7 @@ void _Map::CheckEvents(_Object *Object) const {
 			else
 				Object->Controller->WaitForServer = true;
 		} break;
-		case _Map::EVENT_JUMP: {
+		case EventType::JUMP: {
 			if(Server) {
 
 				// Find next jump
@@ -370,7 +370,7 @@ void _Map::IndexEvents() {
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			const _Tile &Tile = Tiles[i][j];
-			if(Tile.Event.Type != EVENT_NONE) {
+			if(Tile.Event.Type != EventType::NONE) {
 				IndexedEvents[Tile.Event].push_back(glm::ivec2(i, j));
 			}
 		}
@@ -440,22 +440,22 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 	// Handle event types
 	try {
 		switch(Event.Type) {
-			case _Map::EVENT_TRADER:
+			case EventType::TRADER:
 				Object->Character->Trader = &Server->Stats->OldTraders.at(Event.Data);
 				if(!Object->Character->Trader->ID)
 					return;
 			break;
-			case _Map::EVENT_VENDOR:
+			case EventType::VENDOR:
 				Object->Character->Vendor = &Server->Stats->OldVendors.at(Event.Data);
 				if(!Object->Character->Vendor->ID)
 					return;
 			break;
-			case _Map::EVENT_BLACKSMITH:
+			case EventType::BLACKSMITH:
 				Object->Character->Blacksmith = &Server->Stats->OldBlacksmiths.at(Event.Data);
 				if(!Object->Character->Blacksmith->ID)
 					return;
 			break;
-			case _Map::EVENT_MINIGAME: {
+			case EventType::MINIGAME: {
 				Object->Character->Minigame = &Server->Stats->OldMinigames.at(Event.Data);
 				if(!Object->Character->Minigame->ID)
 					return;
@@ -473,14 +473,14 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 	if(Object->Peer->ENetPeer) {
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::EVENT_START);
-		Packet.Write<uint32_t>(Event.Type);
+		Packet.Write<EventType>(Event.Type);
 		Packet.Write<uint32_t>(Event.Data);
 		Packet.Write<glm::ivec2>(Object->Position);
 		Server->Network->SendPacket(Packet, Object->Peer);
 	}
 
 	// Generate seed
-	if(Event.Type == _Map::EVENT_MINIGAME) {
+	if(Event.Type == EventType::MINIGAME) {
 		Object->SendSeed(false);
 	}
 }
@@ -661,8 +661,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 			}
 
 			// Draw event info
-			if(Tile->Event.Type > 0) {
-				std::string EventText = Stats->EventNames[Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
+			if(Tile->Event.Type > EventType::NONE) {
+				std::string EventText = Stats->EventNames[(size_t)Tile->Event.Type].ShortName + std::string(" ") + std::to_string(Tile->Event.Data);
 				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 64.0f);
 			}
 		}
@@ -851,8 +851,11 @@ void _Map::Load(const std::string &Path, bool Static) {
 			} break;
 			// Event
 			case 'e': {
-				if(Tile)
-					File >> Tile->Event.Type >> Tile->Event.Data;
+				if(Tile) {
+					int Type;
+					File >> Type >> Tile->Event.Data;
+					Tile->Event.Type = (EventType)Type;
+				}
 			} break;
 			// Wall
 			case 'w': {
@@ -922,8 +925,8 @@ bool _Map::Save(const std::string &Path) {
 				Output << "b " << Tile.BaseTextureIndex << '\n';
 			if(Tile.Zone)
 				Output << "z " << Tile.Zone << '\n';
-			if(Tile.Event.Type)
-				Output << "e " << Tile.Event.Type << " " << Tiles[i][j].Event.Data << '\n';
+			if(Tile.Event.Type != EventType::NONE)
+				Output << "e " << (int)Tile.Event.Type << " " << Tiles[i][j].Event.Data << '\n';
 			if(Tile.Wall)
 				Output << "w " << Tile.Wall << '\n';
 			if(Tile.PVP)
@@ -950,7 +953,7 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 		return false;
 
 	const _Tile *Tile = &Tiles[Position.x][Position.y];
-	if(Tile->Event.Type == _Map::EVENT_KEY) {
+	if(Tile->Event.Type == EventType::KEY) {
 		if(Object->Inventory->HasItemID(Tile->Event.Data))
 			return true;
 

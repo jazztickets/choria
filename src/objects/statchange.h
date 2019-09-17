@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <enums.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <string>
@@ -39,51 +40,6 @@ struct StatTypeHash {
 	std::size_t operator()(T t) const {
 		return static_cast<std::uint64_t>(t);
 	}
-};
-
-// Types of stats
-enum class StatType : int {
-	ID,
-	BUFF,
-	BUFFLEVEL,
-	BUFFDURATION,
-	HEALTH,
-	MAXHEALTH,
-	MANA,
-	MAXMANA,
-	HEALTHREGEN,
-	MANAREGEN,
-	HEALPOWER,
-	ATTACKPOWER,
-	MINDAMAGE,
-	MAXDAMAGE,
-	ARMOR,
-	DAMAGEBLOCK,
-	PIERCE,
-	MOVESPEED,
-	STAMINA,
-	BATTLESPEED,
-	DROPRATE,
-	HITCHANCE,
-	EVASION,
-	STUNNED,
-	RESISTTYPE,
-	RESIST,
-	EXPERIENCE,
-	GOLD,
-	GOLDSTOLEN,
-	INVISIBLE,
-	ACTIONBARSIZE,
-	MISS,
-	CRIT,
-	FLEE,
-	BATTLE,
-	HUNT,
-	BOUNTYHUNT,
-	TELEPORT,
-	LIGHT,
-	CLOCK,
-	COUNT,
 };
 
 enum class StatValueType : int {

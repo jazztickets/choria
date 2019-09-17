@@ -574,7 +574,7 @@ void _Server::HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Send map and players to new player
-	SpawnPlayer(Peer->Object, Peer->Object->Character->LoadMapID, _Map::EVENT_NONE);
+	SpawnPlayer(Peer->Object, Peer->Object->Character->LoadMapID, EventType::NONE);
 
 	// Broadcast message
 	std::string Message = Peer->Object->Name + " has joined the server";
@@ -626,7 +626,7 @@ void _Server::HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		Player->Character->Health = Player->Character->MaxHealth / 2;
 		Player->Character->Mana = Player->Character->MaxMana / 2;
-		SpawnPlayer(Player, Player->Character->SpawnMapID, _Map::EVENT_SPAWN);
+		SpawnPlayer(Player, Player->Character->SpawnMapID, EventType::SPAWN);
 	}
 }
 
@@ -712,7 +712,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t EventType) {
+void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, EventType Event) {
 	if(!Stats)
 		return;
 
@@ -724,7 +724,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 		MapID = Player->Character->SpawnMapID;
 		if(MapID == 0)
 			MapID = 1;
-		EventType = _Map::EVENT_SPAWN;
+		Event = EventType::SPAWN;
 	}
 	// Verify map id
 	else if(Stats->OldMaps.find(MapID) == Stats->OldMaps.end() || Stats->OldMaps.at(MapID).File == "maps/")
@@ -752,16 +752,16 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 		Player->Map = Map;
 
 		// Check for spawning from events
-		if(EventType != _Map::EVENT_NONE) {
+		if(Event != EventType::NONE) {
 
 			// Find spawn point in map
 			uint32_t SpawnPoint = Player->Character->SpawnPoint;
-			if(EventType == _Map::EVENT_MAPENTRANCE)
+			if(Event == EventType::MAPENTRANCE)
 				SpawnPoint = OldMap->NetworkID;
 
 			// Default to mapchange event if entrance not found
-			if(!Map->FindEvent(_Event(EventType, SpawnPoint), Player->Position))
-				Map->FindEvent(_Event(_Map::EVENT_MAPCHANGE, SpawnPoint), Player->Position);
+			if(!Map->FindEvent(_Event(Event, SpawnPoint), Player->Position))
+				Map->FindEvent(_Event(EventType::MAPCHANGE, SpawnPoint), Player->Position);
 		}
 
 		// Add player to map
@@ -787,7 +787,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, uint32_t Eve
 			Player->Character->Path.clear();
 	}
 	else {
-		Map->FindEvent(_Event(EventType, Player->Character->SpawnPoint), Player->Position);
+		Map->FindEvent(_Event(Event, Player->Character->SpawnPoint), Player->Position);
 		SendPlayerPosition(Player->Peer);
 		SendHUD(Player->Peer);
 	}
@@ -1653,7 +1653,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "event") {
 		_Event Event;
-		Event.Type = Data.Read<uint32_t>();
+		Event.Type = Data.Read<EventType>();
 		Event.Data = Data.Read<uint32_t>();
 
 		Player->Map->StartEvent(Player, Event);
@@ -1682,7 +1682,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 	else if(Command == "map") {
 		ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
-		SpawnPlayer(Player, MapID, _Map::EVENT_MAPENTRANCE);
+		SpawnPlayer(Player, MapID, EventType::MAPENTRANCE);
 	}
 	else if(Command == "move") {
 		uint8_t X = Data.Read<uint8_t>();
