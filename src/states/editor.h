@@ -33,6 +33,11 @@ namespace ae {
 	class _Framebuffer;
 }
 
+enum class EditorModeType : int {
+	TILE,
+	OBJECT,
+};
+
 // Classes
 class _EditorState : public ae::_State {
 
@@ -65,6 +70,7 @@ class _EditorState : public ae::_State {
 		void ResizeMap();
 		void SaveMap();
 		void LoadMap();
+		void SwitchBrushModes(int BrushMode);
 		void Go();
 
 		void ToggleTextures();
@@ -113,7 +119,7 @@ class _EditorState : public ae::_State {
 		glm::ivec2 CopyEnd;
 
 		// Brush
-		int BrushMode;
+		EditorModeType Mode;
 		bool ShowTransitions;
 		float BrushRadius;
 		_Tile *Brush;

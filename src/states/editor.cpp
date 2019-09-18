@@ -43,11 +43,6 @@
 
 _EditorState EditorState;
 
-enum BrushModeType {
-	EDITOR_BRUSH_MODE_TILE,
-	EDITOR_BRUSH_MODE_OBJECT,
-};
-
 // Constructor
 _EditorState::_EditorState() :
 	Framebuffer(nullptr),
@@ -135,7 +130,7 @@ void _EditorState::Init() {
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
 	WorldCursor = glm::vec2(0.0f, 0.0f);
-	BrushMode = EDITOR_BRUSH_MODE_TILE;
+	Mode = EditorModeType::TILE;
 	ObjectType = 0;
 	ObjectData = 1;
 }
@@ -219,30 +214,11 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 					Framework.Done = true;
 			break;
 			case SDL_SCANCODE_1:
-				BrushMode = EDITOR_BRUSH_MODE_TILE;
-				Filter = 0;
-				Filter |= MAP_RENDER_TEXTURE;
-				Filter |= MAP_RENDER_WALL;
-			break;
 			case SDL_SCANCODE_2:
-				BrushMode = EDITOR_BRUSH_MODE_TILE;
-				Filter = 0;
-				Filter |= MAP_RENDER_ZONE;
-			break;
 			case SDL_SCANCODE_3:
-				BrushMode = EDITOR_BRUSH_MODE_TILE;
-				Filter = 0;
-				Filter |= MAP_RENDER_PVP;
-			break;
 			case SDL_SCANCODE_4:
-				BrushMode = EDITOR_BRUSH_MODE_TILE;
-				Filter = 0;
-				Filter |= MAP_RENDER_EVENTTYPE;
-				Filter |= MAP_RENDER_EVENTDATA;
-			break;
 			case SDL_SCANCODE_5:
-				BrushMode = EDITOR_BRUSH_MODE_OBJECT;
-				Filter = 0;
+				SwitchBrushModes((int)(KeyEvent.Scancode - SDL_SCANCODE_1 + 1));
 			break;
 			case SDL_SCANCODE_T:
 				if(ae::Input.ModKeyDown(KMOD_CTRL))
@@ -340,7 +316,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						Camera->Set2DPosition(WorldCursor);
 				break;
 				case SDL_BUTTON_MIDDLE: {
-					if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+					if(Mode == EditorModeType::TILE) {
 						DrawCopyBounds = true;
 						CopyStart = Map->GetValidCoord(WorldCursor);
 					}
@@ -378,6 +354,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(ClickedElement->Parent && ClickedElement->Parent == EventTypesElement) {
 				ae::_Element *Button = ClickedElement;
 				Brush->Event.Type = (EventType)Button->Index;
+				SwitchBrushModes(4);
 				CloseWindows();
 			}
 		}
@@ -401,7 +378,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		}
 
 		// Place object
-		if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+		if(Mode == EditorModeType::OBJECT) {
 			_Object *Object = new _Object;
 			Object->Position = WorldCursor;
 			Object->Light = (int)ObjectData;
@@ -421,7 +398,7 @@ void _EditorState::HandleMouseWheel(int Direction) {
 		if(ae::Input.ModKeyDown(KMOD_SHIFT))
 			Direction *= 10;
 
-		if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+		if(Mode == EditorModeType::TILE) {
 			if(Filter & MAP_RENDER_ZONE) {
 				AdjustValue(Brush->Zone, Direction);
 			}
@@ -429,7 +406,7 @@ void _EditorState::HandleMouseWheel(int Direction) {
 				AdjustValue(Brush->Event.Data, Direction);
 			}
 		}
-		else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+		else if(Mode == EditorModeType::OBJECT) {
 			AdjustValue(ObjectData, Direction);
 		}
 	}
@@ -483,7 +460,7 @@ void _EditorState::Update(double FrameTime) {
 	}
 
 	// Handle mouse input
-	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+	if(Mode == EditorModeType::TILE) {
 		if(ae::Input.MouseDown(SDL_BUTTON_LEFT) && !(ae::Input.ModKeyDown(KMOD_CTRL)) && ae::Graphics.Element->HitElement == nullptr) {
 			ApplyBrush(WorldCursor);
 		}
@@ -531,7 +508,7 @@ void _EditorState::Render(double BlendFactor) {
 	}
 
 	// Draw tile brush size
-	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+	if(Mode == EditorModeType::TILE) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["pos"]);
 		ae::Graphics.SetColor(glm::vec4(1.0f));
 		ae::Graphics.DrawCircle(glm::vec3(WorldCursor, 0.0f), BrushRadius);
@@ -616,7 +593,7 @@ void _EditorState::DrawBrushInfo() {
 	ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos"]);
 	ae::Graphics.SetColor(glm::vec4(0, 0, 0, 0.8f));
 	ae::Graphics.DrawRectangle(DrawPosition - glm::vec2(64, 64) * ae::_Element::GetUIScale(), DrawPosition + glm::vec2(64, 194) * ae::_Element::GetUIScale(), true);
-	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
+	if(Mode == EditorModeType::TILE) {
 
 		// Draw texture
 		ae::_Bounds TextureBounds;
@@ -687,7 +664,7 @@ void _EditorState::DrawBrushInfo() {
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
 		Buffer.str("");
 	}
-	else if(BrushMode == EDITOR_BRUSH_MODE_OBJECT) {
+	else if(Mode == EditorModeType::OBJECT) {
 
 		// Draw object type
 		Buffer << "Lights";
@@ -715,7 +692,7 @@ void _EditorState::AdjustValue(uint32_t &Value, int Direction) {
 
 // Paste tiles
 void _EditorState::Paste() {
-	if(BrushMode != EDITOR_BRUSH_MODE_TILE)
+	if(Mode != EditorModeType::TILE)
 		return;
 
 	// Get offsets
@@ -1102,6 +1079,38 @@ void _EditorState::LoadMap() {
 	}
 
 	CloseWindows();
+}
+
+// Set brush mode
+void _EditorState::SwitchBrushModes(int BrushMode) {
+	switch(BrushMode) {
+		case 1:
+			Mode = EditorModeType::TILE;
+			Filter = 0;
+			Filter |= MAP_RENDER_TEXTURE;
+			Filter |= MAP_RENDER_WALL;
+		break;
+		case 2:
+			Mode = EditorModeType::TILE;
+			Filter = 0;
+			Filter |= MAP_RENDER_ZONE;
+		break;
+		case 3:
+			Mode = EditorModeType::TILE;
+			Filter = 0;
+			Filter |= MAP_RENDER_PVP;
+		break;
+		case 4:
+			Mode = EditorModeType::TILE;
+			Filter = 0;
+			Filter |= MAP_RENDER_EVENTTYPE;
+			Filter |= MAP_RENDER_EVENTDATA;
+		break;
+		case 5:
+			Mode = EditorModeType::OBJECT;
+			Filter = 0;
+		break;
+	}
 }
 
 // Open browser or load map under cursor
