@@ -75,8 +75,10 @@ void _EditorState::Init() {
 	// Setup UI
 	EditorElement = ae::Assets.Elements["element_editor"];
 	ButtonBarElement = ae::Assets.Elements["element_editor_buttonbar"];
+	ClockElement = ae::Assets.Elements["element_editor_clock"];
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
+	EventTypesElement = ae::Assets.Elements["element_editor_eventtypes"];
 	NewMapElement = ae::Assets.Elements["element_editor_newmap"];
 	ResizeMapElement = ae::Assets.Elements["element_editor_resizemap"];
 	SaveMapElement = ae::Assets.Elements["element_editor_savemap"];
@@ -334,7 +336,8 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				break;
 				// Scroll map
 				case SDL_BUTTON_RIGHT:
-					Camera->Set2DPosition(WorldCursor);
+					if(!ae::Graphics.Element->HitElement)
+						Camera->Set2DPosition(WorldCursor);
 				break;
 				case SDL_BUTTON_MIDDLE: {
 					if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
@@ -569,7 +572,7 @@ void _EditorState::Render(double BlendFactor) {
 	// Clock
 	if(Map) {
 		Map->GetClockAsString(Buffer);
-		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), glm::vec2(ae::Graphics.ViewportSize.x - 84 * ae::_Element::GetUIScale(), 50 * ae::_Element::GetUIScale()));
+		ClockElement->Text = Buffer.str();
 		Buffer.str("");
 	}
 
@@ -818,10 +821,10 @@ void _EditorState::ClearTextures() {
 
 // Delete memory used by events screen
 void _EditorState::ClearEvents() {
-	for(auto &Child : EventsElement->Children)
+	for(auto &Child : EventTypesElement->Children)
 		delete Child;
 
-	EventsElement->Children.clear();
+	EventTypesElement->Children.clear();
 }
 
 // Init texture select
@@ -870,18 +873,20 @@ void _EditorState::InitEvents() {
 	size_t Count = Stats->EventTypes.size();
 	EventsElement->BaseSize.x = Start.x + (Spacing.x + Size.x) * 4;
 	EventsElement->BaseSize.y = Start.y + (Spacing.y + Size.y) * (Count / 4);
+	EventTypesElement->BaseSize = EventsElement->BaseSize;
 	for(size_t i = 0; i < Count; i++) {
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();
-		Button->Parent = EventsElement;
+		Button->Parent = EventTypesElement;
 		Button->BaseOffset = Offset;
 		Button->BaseSize = Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Clickable = true;
 		Button->Index = (int)i;
 		Button->Style = ae::Assets.Styles["style_menu_button"];
-		EventsElement->Children.push_back(Button);
+		Button->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
+		EventTypesElement->Children.push_back(Button);
 
 		ae::_Element *Label = new ae::_Element();
 		Label->Parent = Button;

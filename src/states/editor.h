@@ -128,8 +128,10 @@ class _EditorState : public ae::_State {
 		// UI
 		ae::_Element *EditorElement;
 		ae::_Element *ButtonBarElement;
+		ae::_Element *ClockElement;
 		ae::_Element *TexturesElement;
 		ae::_Element *EventsElement;
+		ae::_Element *EventTypesElement;
 		ae::_Element *NewMapElement;
 		ae::_Element *ResizeMapElement;
 		ae::_Element *SaveMapElement;

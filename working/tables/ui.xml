@@ -433,18 +433,19 @@
 		<element id="textbox_chat" font="hud_small" offset_x="6" offset_y="20" alignment_x="0" alignment_y="3" maxlength="100"/>
 	</element>
 	<element id="element_editor" size_x="100%" size_y="100%">
-		<element id="element_editor_buttonbar" size_x="240" size_y="24" alignment_x="2" alignment_y="0">
-			<element id="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_hover" size_x="60" size_y="24" alignment_x="0" alignment_y="0" clickable="true">
-				<element id="label_editor_buttonbar_new" font="hud_tiny" text="New" offset_y="16" alignment_y="3"/>
+		<element id="element_editor_clock" offset_x="-26" offset_y="58" alignment_x="2" alignment_y="0" font="hud_tiny"/>
+		<element id="element_editor_buttonbar" size_x="240" size_y="36" alignment_x="2" alignment_y="0">
+			<element id="button_editor_buttonbar_new" style="style_buttonbar_slot" hover_style="style_menu_hover" size_x="60" size_y="100%" alignment_x="0" alignment_y="0" clickable="true">
+				<element id="label_editor_buttonbar_new" font="hud_tiny" text="New" offset_y="24" alignment_y="3"/>
 			</element>
-			<element id="button_editor_buttonbar_resize" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="60" size_x="60" size_y="24" alignment_x="0" alignment_y="0" clickable="true">
-				<element id="label_editor_buttonbar_resize" font="hud_tiny" text="Resize" offset_y="16" alignment_y="3"/>
+			<element id="button_editor_buttonbar_resize" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="60" size_x="60" size_y="100%" alignment_x="0" alignment_y="0" clickable="true">
+				<element id="label_editor_buttonbar_resize" font="hud_tiny" text="Resize" offset_y="24" alignment_y="3"/>
 			</element>
-			<element id="button_editor_buttonbar_save" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="120" size_x="60" size_y="24" alignment_x="0" alignment_y="0" clickable="true">
-				<element id="label_editor_buttonbar_save" font="hud_tiny" text="Save" offset_y="16" alignment_y="3"/>
+			<element id="button_editor_buttonbar_save" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="120" size_x="60" size_y="100%" alignment_x="0" alignment_y="0" clickable="true">
+				<element id="label_editor_buttonbar_save" font="hud_tiny" text="Save" offset_y="24" alignment_y="3"/>
 			</element>
-			<element id="button_editor_buttonbar_load" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="180" size_x="60" size_y="24" alignment_x="0" alignment_y="0" clickable="true">
-				<element id="label_editor_buttonbar_load" font="hud_tiny" text="Load" offset_y="16" alignment_y="3"/>
+			<element id="button_editor_buttonbar_load" style="style_buttonbar_slot" hover_style="style_menu_hover" offset_x="180" size_x="60" size_y="100%" alignment_x="0" alignment_y="0" clickable="true">
+				<element id="label_editor_buttonbar_load" font="hud_tiny" text="Load" offset_y="24" alignment_y="3"/>
 			</element>
 		</element>
 		<element id="element_editor_newmap" style="style_menu_window" size_x="562" size_y="392" clickable="true">
@@ -496,17 +497,19 @@
 		<element id="element_editor_savemap" offset_x="140" offset_y="-14" size_x="350" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
 			<element id="element_editor_savemap_box" style="style_menu_textbox" offset_x="104" size_x="492" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
 				<element id="textbox_editor_savemap" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
-				<element id="label_editor_savemap" font="hud_medium" text="Save" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
+				<element id="label_editor_savemap" font="hud_medium" text="Save" offset_y="30" size_x="506" alignment_x="2" alignment_y="3"/>
 			</element>
 		</element>
 		<element id="element_editor_loadmap" offset_x="140" offset_y="-14" size_x="350" size_y="42" alignment_x="0" alignment_y="2" clickable="true">
 			<element id="element_editor_loadmap_box" style="style_menu_textbox" offset_x="104" size_x="492" size_y="42" alignment_x="0" alignment_y="0" clickable="true">
 				<element id="textbox_editor_loadmap" font="hud_medium" offset_x="6" offset_y="30" alignment_x="0" alignment_y="3" maxlength="32"/>
-				<element id="label_editor_loadmap" font="hud_medium" text="Load" offset_y="32" size_x="506" alignment_x="2" alignment_y="3"/>
+				<element id="label_editor_loadmap" font="hud_medium" text="Load" offset_y="30" size_x="506" alignment_x="2" alignment_y="3"/>
 			</element>
 		</element>
 		<element id="element_editor_textures" style="style_hud_bg" size_x="1028" size_y="692" clickable="true"/>
-		<element id="element_editor_events" style="style_hud_bg" clickable="true"/>
+		<element id="element_editor_events" style="style_hud_bg" clickable="true">
+			<element id="element_editor_eventtypes"/>
+		</element>
 	</element>
 	<element id="label_menu_title_version" font="hud_small" offset_x="28" offset_y="-28" alignment_x="0" alignment_y="2"/>
 </element>
