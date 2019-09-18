@@ -1806,4 +1806,6 @@ void _PlayState::SetViewProjection(ae::_Camera *CameraUsed) {
 	glUniformMatrix4fv(ae::Assets.Programs["text"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 	ae::Graphics.SetProgram(ae::Assets.Programs["map"]);
 	glUniformMatrix4fv(ae::Assets.Programs["map"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
+	ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
+	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->ViewProjectionTransformID, 1, GL_FALSE, glm::value_ptr(CameraUsed->Transform));
 }

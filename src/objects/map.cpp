@@ -543,6 +543,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glm::vec4 AmbientLightEditor(1.0f);
 		ae::Assets.Programs["map"]->AmbientLight = AmbientLightEditor;
+		ae::Assets.Programs["map_object"]->AmbientLight = AmbientLightEditor;
 		ae::Assets.Programs["pos_uv_static"]->AmbientLight = AmbientLightEditor;
 	}
 	else {
@@ -682,7 +683,6 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 	ae::Graphics.SetProgram(ae::Assets.Programs[Program]);
 	ae::Graphics.SetColor(glm::vec4(1.0f));
 	ae::Graphics.SetTextureID(TileAtlas->Texture->ID);
-	ae::Graphics.EnableAttribs(5);
 	glUniformMatrix4fv(ae::Assets.Programs[Program]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::mat4(1.0f), Offset)));
 
 	// Build tiles
