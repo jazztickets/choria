@@ -19,7 +19,9 @@
 #include <ae/database.h>
 #include <ae/random.h>
 #include <ae/assets.h>
+#include <ae/files.h>
 #include <objects/object.h>
+#include <objects/map.h>
 #include <objects/buff.h>
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
@@ -48,6 +50,7 @@ _Stats::_Stats(bool Headless) :
 
 	// Load game data
 	LoadTypes();
+	LoadMapDirectory();
 	LoadData("data/stats.xml");
 
 	// Load spreadsheet data
@@ -162,6 +165,24 @@ void _Stats::LoadTypes() {
 		{ ItemType::UNLOCKABLE,       { "unlockable", "Unlockable"        } },
 		{ ItemType::KEY,              { "key",        "Key"               } },
 	};
+}
+
+// Load map directory and build map array
+void _Stats::LoadMapDirectory() {
+	ae::NetworkIDType NetworkID = 1;
+	ae::_Files Files(MAPS_PATH);
+	for(const auto &File : Files.Nodes) {
+
+		// Get clean map name
+		size_t DotPosition = File.find(".map.gz");
+		std::string Name;
+		if(DotPosition == 0)
+			throw std::runtime_error("Bad map name: " + File);
+
+		Name = File.substr(0, DotPosition);
+		MapsIndex[Name] = NetworkID;
+	}
+	MapsIndex[""] = 0;
 }
 
 // Load data

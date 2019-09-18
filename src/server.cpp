@@ -95,9 +95,16 @@ _Server::_Server(uint16_t NetworkPort) :
 	BattleManager = new ae::_Manager<_Battle>();
 	Stats = new _Stats(true);
 	Save = new _Save();
-
 	Scripting = new _Scripting();
 	Scripting->Setup(Stats, SCRIPTS_GAME);
+
+	// Create empty map objects with network ids from stats
+	for(const auto &MapNetworkID : Stats->MapsIndex) {
+		if(MapNetworkID.second) {
+			_Map *Map = MapManager->CreateWithID(MapNetworkID.second);
+			Map->Name = MapNetworkID.first;
+		}
+	}
 
 	Log.Open((Config.LogPath + "server.log").c_str());
 	Log << "[SERVER_START] Listening on port " << NetworkPort << std::endl;
@@ -114,7 +121,7 @@ _Server::~_Server() {
 	// Save players
 	Save->StartTransaction();
 	for(auto &Object : ObjectManager->Objects)
-		Save->SavePlayer(Object, Object->GetMapID(), &Log);
+		Save->SavePlayer(Object, &Log);
 	Save->EndTransaction();
 
 	delete MapManager;
@@ -269,7 +276,7 @@ void _Server::Update(double FrameTime) {
 		// Save players
 		Save->StartTransaction();
 		for(auto &Object : ObjectManager->Objects)
-			Save->SavePlayer(Object, Object->GetMapID(), &Log);
+			Save->SavePlayer(Object, &Log);
 		Save->EndTransaction();
 	}
 
@@ -574,7 +581,7 @@ void _Server::HandleCharacterPlay(ae::_Buffer &Data, ae::_Peer *Peer) {
 	}
 
 	// Send map and players to new player
-	SpawnPlayer(Peer->Object, Peer->Object->Character->LoadMapID, EventType::NONE);
+	SpawnPlayer(Peer->Object, Peer->Object->Character->LoadMap, EventType::NONE);
 
 	// Broadcast message
 	std::string Message = Peer->Object->Name + " has joined the server";
@@ -626,7 +633,7 @@ void _Server::HandleRespawn(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		Player->Character->Health = Player->Character->MaxHealth / 2;
 		Player->Character->Mana = Player->Character->MaxMana / 2;
-		SpawnPlayer(Player, Player->Character->SpawnMapID, EventType::SPAWN);
+		SpawnPlayer(Player, Player->Character->SpawnMap, EventType::SPAWN);
 	}
 }
 
@@ -697,6 +704,7 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 	while(Save->Database->FetchRow()) {
 		_Object Player;
 		Player.Stats = Stats;
+		Player.Server = this;
 		Player.UnserializeSaveData(Save->Database->GetString("data"));
 		Packet.Write<uint8_t>(Save->Database->GetInt<uint8_t>("slot"));
 		Packet.Write<uint8_t>(Player.Character->Hardcore);
@@ -712,33 +720,26 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, EventType Event) {
-	if(!Stats)
-		return;
-
+void _Server::SpawnPlayer(_Object *Player, const _Map *LoadMap, EventType Event) {
 	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
 	   return;
 
 	// Use spawn point for new characters
-	if(MapID == 0) {
-		MapID = Player->Character->SpawnMapID;
-		if(MapID == 0)
-			MapID = 1;
+	_Map *Map = nullptr;
+	if(!LoadMap) {
+		Map = Player->Character->SpawnMap;
 		Event = EventType::SPAWN;
 	}
-	// Verify map id
-	else if(Stats->OldMaps.find(MapID) == Stats->OldMaps.end() || Stats->OldMaps.at(MapID).File == "maps/")
-		return;
 
-	// Get map
-	_Map *Map = MapManager->GetObject(MapID);
+	// Bad map
+	if(!Map)
+		throw std::runtime_error("Player " + Player->Name + " has no map!");
 
 	// Load map
-	if(!Map) {
-		Map = MapManager->CreateWithID(MapID);
+	if(!Map->Loaded) {
 		Map->Clock = Save->Clock;
 		Map->Server = this;
-		//Map->Load(&Stats->Maps.at(MapID));
+		Map->Load(MAPS_PATH + Map->Name + ".map.gz");
 	}
 
 	// Get old map
@@ -755,7 +756,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, EventType Ev
 		if(Event != EventType::NONE) {
 
 			// Find spawn point in map
-			uint32_t SpawnPoint = Player->Character->SpawnPoint;
+			uint32_t SpawnPoint = 0;//Player->Character->SpawnPoint;
 			if(Event == EventType::MAPENTRANCE)
 				SpawnPoint = OldMap->NetworkID;
 
@@ -773,7 +774,7 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, EventType Ev
 			// Send new map id
 			ae::_Buffer Packet;
 			Packet.Write<PacketType>(PacketType::WORLD_CHANGEMAPS);
-			Packet.Write<uint32_t>(MapID);
+			Packet.Write<uint32_t>(Map->NetworkID);
 			Packet.Write<double>(Save->Clock);
 			Network->SendPacket(Packet, Player->Peer);
 
@@ -787,7 +788,8 @@ void _Server::SpawnPlayer(_Object *Player, ae::NetworkIDType MapID, EventType Ev
 			Player->Character->Path.clear();
 	}
 	else {
-		Map->FindEvent(_Event(Event, Player->Character->SpawnPoint), Player->Position);
+		//Map->FindEvent(_Event(Event, Player->Character->SpawnPoint), Player->Position);
+		Player->Position = glm::ivec2(5, 5);
 		SendPlayerPosition(Player->Peer);
 		SendHUD(Player->Peer);
 	}
@@ -832,7 +834,8 @@ _Object *_Server::CreatePlayer(ae::_Peer *Peer) {
 	Player->Stats = Stats;
 	Peer->Object = Player;
 
-	Save->LoadPlayer(Stats, Player);
+	// Load
+	Save->LoadPlayer(Player);
 
 	return Player;
 }
@@ -863,7 +866,7 @@ _Object *_Server::CreateBot() {
 	Bot->Server = this;
 	Bot->Character->CharacterID = CharacterID;
 	Bot->Stats = Stats;
-	Save->LoadPlayer(Stats, Bot);
+	Save->LoadPlayer(Bot);
 
 	// Create fake peer
 	Bot->Peer = new ae::_Peer(nullptr);
@@ -1588,7 +1591,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		if(Player->Map) {
 			BroadcastMessage(Peer, Player->Name + " has left the server", "gray");
-			Player->Character->LoadMapID = Player->GetMapID();
+			Player->Character->LoadMap = Player->Map;
 		}
 
 		// Penalize player for leaving battle
@@ -1596,7 +1599,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 			Player->Character->Health = 0;
 			Player->Character->Mana = Player->Character->MaxMana / 2;
-			Player->Character->LoadMapID = 0;
+			Player->Character->LoadMap = nullptr;
 			Player->Character->DeleteStatusEffects();
 		}
 
@@ -1612,7 +1615,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 		// Save player
 		Save->StartTransaction();
-		Save->SavePlayer(Player, Player->Character->LoadMapID, &Log);
+		Save->SavePlayer(Player, &Log);
 		Save->EndTransaction();
 
 		Player->Deleted = true;
@@ -1681,8 +1684,8 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		SendHUD(Peer);
 	}
 	else if(Command == "map") {
-		ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
-		SpawnPlayer(Player, MapID, EventType::MAPENTRANCE);
+		//ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
+		//SpawnPlayer(Player, MapID, EventType::MAPENTRANCE);
 	}
 	else if(Command == "move") {
 		uint8_t X = Data.Read<uint8_t>();

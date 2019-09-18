@@ -954,7 +954,12 @@ void _PlayState::HandleChangeMaps(ae::_Buffer &Data) {
 		Map->UseAtlas = true;
 		Map->Clock = Clock;
 		Map->NetworkID = MapID;
-		//Map->Load(&Stats->Maps.at(MapID));
+		for(const auto &Iterator : Stats->MapsIndex) {
+			if(Iterator.second == MapID) {
+				Map->Load(MAPS_PATH + Iterator.first + ".map.gz");
+				break;
+			}
+		}
 		AssignPlayer(nullptr);
 
 		ae::Audio.PlayMusic(ae::Assets.Music[Map->Music]);

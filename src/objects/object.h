@@ -122,7 +122,6 @@ class _Object : public ae::_BaseObject {
 		// Map
 		bool CanRespec() const;
 		const _Tile *GetTile() const;
-		ae::NetworkIDType GetMapID() const;
 
 		// Path finding
 		bool Pathfind(const glm::ivec2 &StartPosition, const glm::ivec2 &EndPosition);

@@ -51,6 +51,9 @@
 #include <iostream>
 #include <iomanip>
 
+// Constants
+static const std::string DEFAULT_MAP = "start";
+
 // Constructor
 _Object::_Object() :
 	Name(""),
@@ -531,7 +534,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["hardcore"] = Character->Hardcore;
 	StatsNode["map_x"] = Position.x;
 	StatsNode["map_y"] = Position.y;
-	StatsNode["spawnmap_id"] = Character->SpawnMapID;
+	StatsNode["spawnmap"] = Character->SpawnMap ? Character->SpawnMap->Name : DEFAULT_MAP;
 	StatsNode["spawnpoint"] = Character->SpawnPoint;
 	StatsNode["portrait"] = Character->Portrait->ID;
 	StatsNode["model"] = Model->ID;
@@ -633,12 +636,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Get stats
 	Json::Value StatsNode = Data["stats"];
-	Character->LoadMapID = (ae::NetworkIDType)StatsNode["map_id"].asUInt();
+	Character->LoadMap = Server->MapManager->GetObject(Stats->MapsIndex.at(StatsNode["map"].asString()));
 	Position.x = StatsNode["map_x"].asInt();
 	Position.y = StatsNode["map_y"].asInt();
 	Model = &Stats->Models.at(StatsNode["model"].asString());
-	Character->SpawnMapID = (ae::NetworkIDType)StatsNode["spawnmap_id"].asUInt();
-	Character->SpawnPoint = StatsNode["spawnpoint"].asUInt();
+	Character->SpawnMap = Server->MapManager->GetObject(Stats->MapsIndex.at(StatsNode["spawnmap"].asString()));
+	Character->SpawnPoint = StatsNode["spawnpoint"].asString();
 	Character->Hardcore = StatsNode["hardcore"].asBool();
 	Character->Portrait = &Stats->Portraits.at(StatsNode["portrait"].asString());
 	Character->Health = StatsNode["health"].asInt();
@@ -1072,14 +1075,6 @@ bool _Object::CanRespec() const {
 const _Tile *_Object::GetTile() const {
 
 	return Map->GetTile(Position);
-}
-
-// Get map id, return 0 if none
-ae::NetworkIDType _Object::GetMapID() const {
-	if(!Map)
-		return 0;
-
-	return Map->NetworkID;
 }
 
 // Stop a battle

@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <ae/type.h>
 #include <objects/item.h>
 #include <objects/statchange.h>
 #include <enums.h>
@@ -199,6 +200,7 @@ class _Stats {
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
+		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
 		std::unordered_map<EventType, std::pair<std::string, std::string> > EventTypes;
 		std::unordered_map<ItemType, std::pair<std::string, std::string> > ItemTypes;
 		std::unordered_map<ScopeType, std::pair<std::string, std::string> > ScopeTypes;
@@ -220,6 +222,7 @@ class _Stats {
 	private:
 
 		void LoadTypes();
+		void LoadMapDirectory();
 		void LoadData(const std::string &Path);
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);

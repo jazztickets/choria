@@ -60,8 +60,8 @@ class _Save {
 		uint32_t CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint32_t AccountID, uint32_t Slot, bool Hardcore, const std::string &Name, const _Portrait *Portrait, const _Object *Build);
 
 		// Objects
-		void SavePlayer(const _Object *Player, ae::NetworkIDType MapID, ae::_LogFile *Log);
-		void LoadPlayer(const _Stats *Stats, _Object *Player);
+		void SavePlayer(const _Object *Player, ae::_LogFile *Log);
+		void LoadPlayer(_Object *Player);
 
 		// State
 		uint64_t Secret;

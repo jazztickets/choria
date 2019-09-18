@@ -99,7 +99,6 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void AllocateMap();
 		void ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize);
 		void InitAtlas(const std::string AtlasPath, bool Static=false);
-		void CloseAtlas();
 
 		void Update(double FrameTime) override;
 
@@ -157,6 +156,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void *PositionToNode(const glm::ivec2 &Position) { return (void *)(intptr_t)(Position.y * Size.x + Position.x); }
 
 		// Map data
+		bool Loaded;
 		std::string Name;
 		_Tile **Tiles;
 		glm::ivec2 Size;
@@ -198,6 +198,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 	private:
 
+		void CloseAtlas();
 		void FreeMap();
 
 		// Path finding

@@ -31,6 +31,7 @@ class _Stats;
 class _Battle;
 class _HUD;
 class _StatusEffect;
+class _Map;
 struct _Portrait;
 struct _OldVendor;
 struct _OldTrader;
@@ -236,9 +237,9 @@ class _Character {
 		_Action Action;
 
 		// Map
-		ae::NetworkIDType LoadMapID;
-		ae::NetworkIDType SpawnMapID;
-		uint32_t SpawnPoint;
+		_Map *LoadMap;
+		_Map *SpawnMap;
+		std::string SpawnPoint;
 		double TeleportTime;
 
 		// HUD

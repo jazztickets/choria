@@ -123,9 +123,8 @@ _Character::_Character(_Object *Object) :
 	WaitingForTrade(false),
 	TradeAccepted(false),
 
-	LoadMapID(0),
-	SpawnMapID(1),
-	SpawnPoint(0),
+	LoadMap(nullptr),
+	SpawnMap(nullptr),
 	TeleportTime(-1),
 
 	MenuOpen(false),

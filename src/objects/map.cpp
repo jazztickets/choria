@@ -84,6 +84,7 @@ static const std::string MAP_TRANS_ATLAS = "textures/map/trans.png";
 
 // Constructor
 _Map::_Map() :
+	Loaded(false),
 	Tiles(nullptr),
 	Size(0, 0),
 	UseAtlas(false),
@@ -278,8 +279,10 @@ void _Map::FreeMap() {
 	}
 }
 
-// Updates the map and sends object updates
+// Updates the map
 void _Map::Update(double FrameTime) {
+	if(!Loaded)
+		return;
 
 	// Update clock
 	Clock += FrameTime * MAP_CLOCK_SPEED;
@@ -294,7 +297,7 @@ void _Map::CheckEvents(_Object *Object) const {
 	if(Server && Object->Character->TeleportTime == 0.0) {
 		Object->Character->TeleportTime = -1.0;
 		Object->Character->Status = _Character::STATUS_NONE;
-		Server->SpawnPlayer(Object, Object->Character->SpawnMapID, EventType::SPAWN);
+		Server->SpawnPlayer(Object, Object->Character->SpawnMap, EventType::SPAWN);
 		return;
 	}
 
@@ -302,18 +305,22 @@ void _Map::CheckEvents(_Object *Object) const {
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
 	switch(Tile->Event.Type) {
 		case EventType::SPAWN:
-			if(Server && !(Object->Character->SpawnMapID == NetworkID && Object->Character->SpawnPoint == Tile->Event.Data))
+			/*
+			if(Server && !(Object->Character->SpawnMap == NetworkID && Object->Character->SpawnPoint == Tile->Event.Data))
 				Server->SendMessage(Object->Peer, "Spawn point set", "yellow");
 
-			Object->Character->SpawnMapID = NetworkID;
+			Object->Character->SpawnMap = NetworkID;
 			Object->Character->SpawnPoint = Tile->Event.Data;
+			*/
 		break;
 		case EventType::MAPENTRANCE:
 		case EventType::MAPCHANGE:
+			/*
 			if(Server)
 				Server->SpawnPlayer(Object, (ae::NetworkIDType)Tile->Event.Data, EventType::MAPENTRANCE);
 			else
 				Object->Controller->WaitForServer = true;
+				*/
 		break;
 		case EventType::VENDOR:
 		case EventType::TRADER:
@@ -899,6 +906,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 
 	// Initialize path finding
 	Pather = new micropather::MicroPather(this, (unsigned)(Size.x * Size.y), 4);
+	Loaded = true;
 }
 
 // Saves the level to a file
