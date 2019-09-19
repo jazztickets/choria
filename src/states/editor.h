@@ -43,8 +43,6 @@ class _EditorState : public ae::_State {
 
 	public:
 
-		_EditorState();
-
 		void Init() override;
 		void Close() override;
 
@@ -65,6 +63,8 @@ class _EditorState : public ae::_State {
 
 	private:
 
+		void AllocateCopy();
+		void CloseCopy();
 		void CloseMap();
 		void CreateMap();
 		void ResizeMap();
@@ -96,7 +96,8 @@ class _EditorState : public ae::_State {
 		void AdjustValue(uint32_t &Value, int Direction);
 
 		// Copy/Paste
-		void Paste();
+		void CopyTiles();
+		void PasteTiles();
 		void GetDrawBounds(glm::ivec2 &Start, glm::ivec2 &End);
 
 		// General
@@ -109,11 +110,13 @@ class _EditorState : public ae::_State {
 
 		// Map
 		_Map *Map;
+		_Tile **CopyBuffer;
 		std::string FilePath;
 		double Clock;
 		bool UseClockAmbientLight;
 
 		// Copy paste
+		bool Copied;
 		bool DrawCopyBounds;
 		glm::ivec2 CopyStart;
 		glm::ivec2 CopyEnd;

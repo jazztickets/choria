@@ -43,23 +43,6 @@
 
 _EditorState EditorState;
 
-// Constructor
-_EditorState::_EditorState() :
-	Framebuffer(nullptr),
-	Map(nullptr),
-	ButtonBarElement(nullptr),
-	TexturesElement(nullptr),
-	EventsElement(nullptr),
-	NewMapElement(nullptr),
-	SaveMapElement(nullptr),
-	LoadMapElement(nullptr),
-	NewMapFilenameTextBox(nullptr),
-	NewMapWidthTextBox(nullptr),
-	NewMapHeightTextBox(nullptr),
-	SaveMapTextBox(nullptr),
-	LoadMapTextBox(nullptr) {
-}
-
 // Initializes the state
 void _EditorState::Init() {
 	ae::Graphics.Element->SetActive(false);
@@ -120,6 +103,7 @@ void _EditorState::Init() {
 	Clock = 60.0 * 12.0;
 	UseClockAmbientLight = false;
 	Map = nullptr;
+	CopyBuffer = nullptr;
 	if(FilePath != "") {
 		LoadMapTextBox->Text = FilePath;
 		LoadMap();
@@ -127,6 +111,7 @@ void _EditorState::Init() {
 	else
 		ToggleNewMap();
 
+	Copied = false;
 	DrawCopyBounds = false;
 	CopyStart = glm::ivec2(0, 0);
 	CopyEnd = glm::ivec2(0, 0);
@@ -145,6 +130,7 @@ void _EditorState::Close() {
 
 	ClearTextures();
 	ClearEvents();
+	CloseCopy();
 	CloseMap();
 }
 
@@ -255,7 +241,7 @@ bool _EditorState::HandleKey(const ae::_KeyEvent &KeyEvent) {
 				Go();
 			break;
 			case SDL_SCANCODE_V:
-				Paste();
+				PasteTiles();
 			break;
 			case SDL_SCANCODE_D:
 				Map->DeleteStaticObject(WorldCursor);
@@ -391,8 +377,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 	}
 	// Release middle mouse
 	else if(MouseEvent.Button == SDL_BUTTON_MIDDLE) {
-		DrawCopyBounds = false;
-		GetDrawBounds(CopyStart, CopyEnd);
+		CopyTiles();
 	}
 }
 
@@ -580,6 +565,31 @@ std::string _EditorState::GetCleanMapName(const std::string &Path) {
 	return CleanName;
 }
 
+// Allocate buffer for copy and paste
+void _EditorState::AllocateCopy() {
+	if(!Map)
+		return;
+
+	CloseCopy();
+
+	CopyBuffer = new _Tile*[Map->Size.x];
+	for(int i = 0; i < Map->Size.x; i++)
+		CopyBuffer[i] = new _Tile[Map->Size.y];
+
+	Copied = false;
+}
+
+// Free memory used by copy and paste buffer
+void _EditorState::CloseCopy() {
+	if(CopyBuffer && Map) {
+		for(int i = 0; i < Map->Size.x; i++)
+			delete[] CopyBuffer[i];
+		delete[] CopyBuffer;
+
+		CopyBuffer = nullptr;
+	}
+}
+
 // Draw information about the brush
 void _EditorState::DrawBrushInfo() {
 	if(!Map)
@@ -691,9 +701,32 @@ void _EditorState::AdjustValue(uint32_t &Value, int Direction) {
 	Value = (uint32_t)IntVal;
 }
 
-// Paste tiles
-void _EditorState::Paste() {
+// Copy tiles
+void _EditorState::CopyTiles() {
 	if(Mode != EditorModeType::TILE)
+		return;
+
+	// Set state
+	DrawCopyBounds = false;
+	Copied = true;
+
+	// Get copy bounds
+	GetDrawBounds(CopyStart, CopyEnd);
+
+	// Copy tiles
+	for(int j = 0; j < CopyEnd.y - CopyStart.y + 1; j++) {
+		for(int i = 0; i < CopyEnd.x - CopyStart.x + 1; i++) {
+			glm::ivec2 CopyCoord = glm::ivec2(i, j) + CopyStart;
+			if(Map->IsValidPosition(CopyCoord)) {
+				CopyBuffer[CopyCoord.x][CopyCoord.y] = Map->Tiles[CopyCoord.x][CopyCoord.y];
+			}
+		}
+	}
+}
+
+// Paste tiles
+void _EditorState::PasteTiles() {
+	if(Mode != EditorModeType::TILE || !Copied)
 		return;
 
 	// Get offsets
@@ -706,10 +739,13 @@ void _EditorState::Paste() {
 			glm::ivec2 CopyCoord = glm::ivec2(i, j) + CopyPosition;
 			glm::ivec2 PasteCoord = glm::ivec2(i, j) + PastePosition;
 			if(Map->IsValidPosition(CopyCoord) && Map->IsValidPosition(PasteCoord)) {
-				Map->Tiles[PasteCoord.x][PasteCoord.y] = Map->Tiles[CopyCoord.x][CopyCoord.y];
+				Map->Tiles[PasteCoord.x][PasteCoord.y] = CopyBuffer[CopyCoord.x][CopyCoord.y];
 			}
 		}
 	}
+
+	// Rebuild map tiles
+	Map->BuildLayers(ShowTransitions);
 }
 
 // Get tile range from anchor point to world cursor
@@ -996,7 +1032,9 @@ void _EditorState::ResizeMap() {
 	glm::ivec2 NewSize = glm::clamp(Max - Min, 2, 255);
 
 	// Resize map
+	CloseCopy();
 	Map->ResizeMap(Min, NewSize);
+	AllocateCopy();
 
 	// Close
 	CloseWindows();
@@ -1064,6 +1102,9 @@ void _EditorState::LoadMap() {
 		// Set map
 		Map = NewMap;
 		FilePath = LoadMapTextBox->Text;
+
+		// Allocate copy tiles
+		AllocateCopy();
 
 		// Set camera position
 		glm::ivec2 Position(Map->Size.x/2, Map->Size.y/2);
