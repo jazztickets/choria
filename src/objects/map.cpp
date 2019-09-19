@@ -671,7 +671,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 			// Draw event info
 			if(Tile->Event.Type > EventType::NONE) {
 				std::string EventText = Stats->EventTypes.at(Tile->Event.Type).first + std::string(" ") + Tile->Event.Data;
-				ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(EventText, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, 1.0f / 64.0f);
+				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 64.0f);
 			}
 		}
 	}
