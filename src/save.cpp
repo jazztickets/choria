@@ -37,7 +37,6 @@
 // Constants
 static const double DEFAULT_CLOCK = 8.0*60.0;
 static const int SAVE_VERSION = 4;
-static const std::string DEFAULT_SPAWN = "start";
 
 // Constructor
 _Save::_Save() :
@@ -250,7 +249,6 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 	_Object Object;
 	Object.Stats = Stats;
 	Object.Scripting = Scripting;
-	Object.Character->SpawnPoint = DEFAULT_SPAWN;
 	Object.Character->Hardcore = Hardcore;
 	Object.Character->Portrait = Portrait;
 	Object.Model = Build->Model;
@@ -278,6 +276,8 @@ uint32_t _Save::CreateCharacter(const _Stats *Stats, _Scripting *Scripting, uint
 void _Save::SavePlayer(const _Object *Player, ae::_LogFile *Log) {
 	if(Player->Character->CharacterID == 0)
 		return;
+
+	//TODO fix
 
 	// Reset spawn point if player is dead
 	//if(!Player->Character->IsAlive())

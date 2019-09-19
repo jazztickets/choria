@@ -534,6 +534,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	StatsNode["hardcore"] = Character->Hardcore;
 	StatsNode["map_x"] = Position.x;
 	StatsNode["map_y"] = Position.y;
+	StatsNode["map"] = Character->LoadMap ? Character->LoadMap->Name : "";
 	StatsNode["spawnmap"] = Character->SpawnMap ? Character->SpawnMap->Name : DEFAULT_MAP;
 	StatsNode["spawnpoint"] = Character->SpawnPoint;
 	StatsNode["portrait"] = Character->Portrait->ID;

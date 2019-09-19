@@ -720,12 +720,12 @@ void _Server::SendCharacterList(ae::_Peer *Peer) {
 }
 
 // Spawns a player at a particular spawn point
-void _Server::SpawnPlayer(_Object *Player, const _Map *LoadMap, EventType Event) {
+void _Server::SpawnPlayer(_Object *Player, _Map *LoadMap, EventType Event) {
 	if(!ValidatePeer(Player->Peer) || !Player->Peer->CharacterID)
 	   return;
 
 	// Use spawn point for new characters
-	_Map *Map = nullptr;
+	_Map *Map = LoadMap;
 	if(!LoadMap) {
 		Map = Player->Character->SpawnMap;
 		Event = EventType::SPAWN;
@@ -756,9 +756,9 @@ void _Server::SpawnPlayer(_Object *Player, const _Map *LoadMap, EventType Event)
 		if(Event != EventType::NONE) {
 
 			// Find spawn point in map
-			uint32_t SpawnPoint = 0;//Player->Character->SpawnPoint;
+			std::string SpawnPoint = Player->Character->SpawnPoint;
 			if(Event == EventType::MAPENTRANCE)
-				SpawnPoint = OldMap->NetworkID;
+				SpawnPoint = OldMap->Name;
 
 			// Default to mapchange event if entrance not found
 			if(!Map->FindEvent(_Event(Event, SpawnPoint), Player->Position))
@@ -788,6 +788,7 @@ void _Server::SpawnPlayer(_Object *Player, const _Map *LoadMap, EventType Event)
 			Player->Character->Path.clear();
 	}
 	else {
+		//TODO fix
 		//Map->FindEvent(_Event(Event, Player->Character->SpawnPoint), Player->Position);
 		Player->Position = glm::ivec2(5, 5);
 		SendPlayerPosition(Player->Peer);
@@ -1657,7 +1658,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	else if(Command == "event") {
 		_Event Event;
 		Event.Type = Data.Read<EventType>();
-		Event.Data = Data.Read<uint32_t>();
+		Event.Data = Data.ReadString();
 
 		Player->Map->StartEvent(Player, Event);
 	}
@@ -1684,6 +1685,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		SendHUD(Peer);
 	}
 	else if(Command == "map") {
+		//TODO fix
 		//ae::NetworkIDType MapID = Data.Read<ae::NetworkIDType>();
 		//SpawnPlayer(Player, MapID, EventType::MAPENTRANCE);
 	}

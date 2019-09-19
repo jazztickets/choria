@@ -109,15 +109,8 @@ void _Config::SetDefaults() {
 	NetworkRate = DEFAULT_NETWORKRATE;
 	NetworkPort = DEFAULT_NETWORKPORT;
 	ShowTutorial = 1;
-	DesignToolURL = "http://localhost:8000";
 	LastHost = "127.0.0.1";
 	LastPort = std::to_string(DEFAULT_NETWORKPORT);
-
-#ifdef _WIN32
-	BrowserCommand = "explorer";
-#else
-	BrowserCommand = "xdg-open";
-#endif
 
 	LoadDefaultInputBindings(false);
 }
@@ -236,8 +229,6 @@ void _Config::Load() {
 	GetValue("max_clients", MaxClients);
 	GetValue("network_rate", NetworkRate);
 	GetValue("network_port", NetworkPort);
-	GetValue("browser_command", BrowserCommand);
-	GetValue("designtool_url", DesignToolURL);
 	GetValue("showtutorial", ShowTutorial);
 	GetValue("last_host", LastHost);
 	GetValue("last_port", LastPort);
@@ -296,8 +287,6 @@ void _Config::Save() {
 	File << "max_clients=" << MaxClients << std::endl;
 	File << "network_rate=" << NetworkRate << std::endl;
 	File << "network_port=" << NetworkPort << std::endl;
-	File << "browser_command=" << BrowserCommand << std::endl;
-	File << "designtool_url=" << DesignToolURL << std::endl;
 	File << "showtutorial=" << ShowTutorial << std::endl;
 	File << "last_host=" << LastHost << std::endl;
 	File << "last_port=" << LastPort << std::endl;

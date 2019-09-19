@@ -138,6 +138,7 @@ class _EditorState : public ae::_State {
 		ae::_Element *TexturesElement;
 		ae::_Element *EventsElement;
 		ae::_Element *EventTypesElement;
+		ae::_Element *EventDataElement;
 		ae::_Element *NewMapElement;
 		ae::_Element *ResizeMapElement;
 		ae::_Element *SaveMapElement;

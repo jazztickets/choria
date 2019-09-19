@@ -63,10 +63,6 @@ class _Config {
 		double NetworkRate;
 		uint16_t NetworkPort;
 
-		// Editor
-		std::string BrowserCommand;
-		std::string DesignToolURL;
-
 		// Misc
 		int ShowTutorial;
 		std::string LastHost;

@@ -291,7 +291,7 @@ void _Map::Update(double FrameTime) {
 }
 
 // Check for events
-void _Map::CheckEvents(_Object *Object) const {
+void _Map::CheckEvents(_Object *Object) {
 
 	// Check for teleporting
 	if(Server && Object->Character->TeleportTime == 0.0) {
@@ -301,17 +301,16 @@ void _Map::CheckEvents(_Object *Object) const {
 		return;
 	}
 
+	//TODO fix
 	// Handle events
 	const _Tile *Tile = &Tiles[Object->Position.x][Object->Position.y];
 	switch(Tile->Event.Type) {
 		case EventType::SPAWN:
-			/*
-			if(Server && !(Object->Character->SpawnMap == NetworkID && Object->Character->SpawnPoint == Tile->Event.Data))
+			if(Server && !(Object->Character->SpawnMap == this && Object->Character->SpawnPoint == Tile->Event.Data))
 				Server->SendMessage(Object->Peer, "Spawn point set", "yellow");
 
-			Object->Character->SpawnMap = NetworkID;
+			Object->Character->SpawnMap = this;
 			Object->Character->SpawnPoint = Tile->Event.Data;
-			*/
 		break;
 		case EventType::MAPENTRANCE:
 		case EventType::MAPCHANGE:
@@ -332,14 +331,14 @@ void _Map::CheckEvents(_Object *Object) const {
 				Object->Controller->WaitForServer = true;
 		} break;
 		case EventType::SCRIPT: {
-			if(Server)
-				Server->RunEventScript(Tile->Event.Data, Object);
+			//if(Server)
+			//	Server->RunEventScript(Tile->Event.OldData, Object);
 		} break;
 		case EventType::PORTAL: {
 			if(Server) {
 
 				// Find matching even/odd event
-				FindEvent(_Event(Tile->Event.Type, Tile->Event.Data ^ 1), Object->Position);
+				//FindEvent(_Event(Tile->Event.Type, Tile->Event.OldData ^ 1), Object->Position);
 				Server->SendPlayerPosition(Object->Peer);
 			}
 			else
@@ -349,7 +348,7 @@ void _Map::CheckEvents(_Object *Object) const {
 			if(Server) {
 
 				// Find next jump
-				FindEvent(_Event(Tile->Event.Type, Tile->Event.Data + 1), Object->Position);
+				//FindEvent(_Event(Tile->Event.Type, Tile->Event.OldData + 1), Object->Position);
 				Server->SendPlayerPosition(Object->Peer);
 			}
 			else
@@ -445,31 +444,33 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 
 	// Handle event types
 	try {
+		//TODO fix
+		/*
 		switch(Event.Type) {
 			case EventType::TRADER:
-				Object->Character->Trader = &Server->Stats->OldTraders.at(Event.Data);
+				Object->Character->Trader = &Server->Stats->OldTraders.at(Event.OldData);
 				if(!Object->Character->Trader->ID)
 					return;
 			break;
 			case EventType::VENDOR:
-				Object->Character->Vendor = &Server->Stats->OldVendors.at(Event.Data);
+				Object->Character->Vendor = &Server->Stats->OldVendors.at(Event.OldData);
 				if(!Object->Character->Vendor->ID)
 					return;
 			break;
 			case EventType::BLACKSMITH:
-				Object->Character->Blacksmith = &Server->Stats->OldBlacksmiths.at(Event.Data);
+				Object->Character->Blacksmith = &Server->Stats->OldBlacksmiths.at(Event.OldData);
 				if(!Object->Character->Blacksmith->ID)
 					return;
 			break;
 			case EventType::MINIGAME: {
-				Object->Character->Minigame = &Server->Stats->OldMinigames.at(Event.Data);
+				Object->Character->Minigame = &Server->Stats->OldMinigames.at(Event.OldData);
 				if(!Object->Character->Minigame->ID)
 					return;
 			} break;
 			default:
 				return;
 			break;
-		}
+		}*/
 	}
 	catch(std::exception &Error) {
 		return;
@@ -480,7 +481,7 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::EVENT_START);
 		Packet.Write<EventType>(Event.Type);
-		Packet.Write<uint32_t>(Event.Data);
+		Packet.WriteString(Event.Data.c_str());
 		Packet.Write<glm::ivec2>(Object->Position);
 		Server->Network->SendPacket(Packet, Object->Peer);
 	}
@@ -669,8 +670,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 
 			// Draw event info
 			if(Tile->Event.Type > EventType::NONE) {
-				std::string EventText = Stats->EventTypes.at(Tile->Event.Type).first + std::string(" ") + std::to_string(Tile->Event.Data);
-				ae::Assets.Fonts["hud_medium"]->DrawText(EventText, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, ae::Assets.Colors["cyan"], 1.0f / 64.0f);
+				std::string EventText = Stats->EventTypes.at(Tile->Event.Type).first + std::string(" ") + Tile->Event.Data;
+				ae::Assets.Fonts["hud_medium"]->DrawTextFormatted(EventText, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, 1.0f / 64.0f);
 			}
 		}
 	}
@@ -823,6 +824,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 		char ChunkType;
 		File >> ChunkType;
 
+		// Handle chunks
 		switch(ChunkType) {
 			// Map version
 			case 'V': {
@@ -859,8 +861,13 @@ void _Map::Load(const std::string &Path, bool Static) {
 			case 'e': {
 				if(Tile) {
 					int Type;
-					File >> Type >> Tile->Event.Data;
+					File >> Type;
+
+					char Buffer[1024];
+					File.ignore(1);
+					File.getline(Buffer, 1024, '\n');
 					Tile->Event.Type = (EventType)Type;
+					Tile->Event.Data = Buffer;
 				}
 			} break;
 			// Wall
@@ -961,14 +968,16 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 
 	const _Tile *Tile = &Tiles[Position.x][Position.y];
 	if(Tile->Event.Type == EventType::KEY) {
-		if(Object->Inventory->HasItemID(Tile->Event.Data))
-			return true;
+		//TODO fix
+		//if(Object->Inventory->HasItemID(Tile->Event.Data))
+		//	return true;
 
 		// Set message for client
 		if(!Server) {
-			const _BaseItem *Item = Object->Stats->OldItems.at(Tile->Event.Data);
-			if(Item && Object->Character->HUD)
-				Object->Character->HUD->SetMessage("You need a " + Item->Name);
+			//TODO fix
+			//const _BaseItem *Item = Object->Stats->OldItems.at(Tile->Event.OldData);
+			//if(Item && Object->Character->HUD)
+			//	Object->Character->HUD->SetMessage("You need a " + Item->Name);
 		}
 
 		return false;

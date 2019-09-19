@@ -965,7 +965,7 @@ int _Scripting::ObjectFindEvent(lua_State *LuaState) {
 
 	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
 	EventType Type = (EventType)lua_tointeger(LuaState, 1);
-	uint32_t Data = (uint32_t)lua_tointeger(LuaState, 2);
+	std::string Data = lua_tostring(LuaState, 2);
 	if(!Object->Map)
 		return 0;
 
@@ -992,7 +992,7 @@ int _Scripting::ObjectGetTileEvent(lua_State *LuaState) {
 	const _Event &Event = Object->Map->GetTile(glm::ivec2(X, Y))->Event;
 
 	lua_pushinteger(LuaState, (int)Event.Type);
-	lua_pushinteger(LuaState, Event.Data);
+	lua_pushstring(LuaState, Event.Data.c_str());
 
 	return 2;
 }

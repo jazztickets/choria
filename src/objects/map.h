@@ -64,14 +64,14 @@ namespace ae {
 
 // Structures
 struct _Event {
-	_Event() : Type(EventType::NONE), Data(0) { }
-	_Event(EventType Type, uint32_t Data) : Type(Type), Data(Data) { }
+	_Event() : Type(EventType::NONE) { }
+	_Event(EventType Type, const std::string &Data) : Type(Type), Data(Data) { }
 
 	bool operator==(const _Event &Event) const { return Event.Type == Type && Event.Data == Data; }
 	bool operator<(const _Event &Event) const { return std::tie(Event.Type, Event.Data) < std::tie(Type, Data); }
 
 	EventType Type;
-	uint32_t Data;
+	std::string Data;
 };
 
 struct _Tile {
@@ -103,7 +103,7 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 		void Update(double FrameTime) override;
 
 		// Events
-		void CheckEvents(_Object *Object) const;
+		void CheckEvents(_Object *Object);
 		void IndexEvents();
 		void GetClockAsString(std::stringstream &Buffer) const;
 		void SetAmbientLightByClock();

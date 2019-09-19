@@ -67,7 +67,7 @@ class _Server {
 		void JoinThread();
 		void StopServer(int Seconds=0);
 
-		void SpawnPlayer(_Object *Player, const _Map *LoadMap, EventType Event);
+		void SpawnPlayer(_Object *Player, _Map *LoadMap, EventType Event);
 		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);
 		void StartTeleport(_Object *Object, double Time);
 		void SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName);

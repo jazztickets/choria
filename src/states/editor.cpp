@@ -74,6 +74,7 @@ void _EditorState::Init() {
 	TexturesElement = ae::Assets.Elements["element_editor_textures"];
 	EventsElement = ae::Assets.Elements["element_editor_events"];
 	EventTypesElement = ae::Assets.Elements["element_editor_eventtypes"];
+	EventDataElement = ae::Assets.Elements["textbox_editor_eventdata"];
 	NewMapElement = ae::Assets.Elements["element_editor_newmap"];
 	ResizeMapElement = ae::Assets.Elements["element_editor_resizemap"];
 	SaveMapElement = ae::Assets.Elements["element_editor_savemap"];
@@ -307,8 +308,10 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			switch(MouseEvent.Button) {
 				// Eyedropper tool
 				case SDL_BUTTON_LEFT:
-					if(ae::Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor))
+					if(ae::Input.ModKeyDown(KMOD_CTRL) && Map->IsValidPosition(WorldCursor)) {
 						*Brush = *Map->GetTile(WorldCursor);
+						EventDataElement->Text = Brush->Event.Data;
+					}
 				break;
 				// Scroll map
 				case SDL_BUTTON_RIGHT:
@@ -354,6 +357,7 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			if(ClickedElement->Parent && ClickedElement->Parent == EventTypesElement) {
 				ae::_Element *Button = ClickedElement;
 				Brush->Event.Type = (EventType)Button->Index;
+				Brush->Event.Data = EventDataElement->Text;
 				SwitchBrushModes(4);
 				CloseWindows();
 			}
@@ -401,9 +405,6 @@ void _EditorState::HandleMouseWheel(int Direction) {
 		if(Mode == EditorModeType::TILE) {
 			if(Filter & MAP_RENDER_ZONE) {
 				AdjustValue(Brush->Zone, Direction);
-			}
-			else if(Filter & MAP_RENDER_EVENTDATA) {
-				AdjustValue(Brush->Event.Data, Direction);
 			}
 		}
 		else if(Mode == EditorModeType::OBJECT) {
@@ -658,7 +659,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw event data
-		Buffer << "Data " << Brush->Event.Data;
+		Buffer << Brush->Event.Data;
 
 		Filter & MAP_RENDER_EVENTDATA ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -937,7 +938,7 @@ void _EditorState::InitLoadMap(const std::string &TempPath) {
 
 // Close all open windows
 bool _EditorState::CloseWindows() {
-	bool WasOpen = TexturesElement->Active | NewMapElement->Active | ResizeMapElement->Active | SaveMapElement->Active | LoadMapElement->Active;
+	bool WasOpen = TexturesElement->Active | EventsElement->Active | NewMapElement->Active | ResizeMapElement->Active | SaveMapElement->Active | LoadMapElement->Active;
 
 	TexturesElement->SetActive(false);
 	EventsElement->SetActive(false);
@@ -1066,7 +1067,8 @@ void _EditorState::LoadMap() {
 
 		// Set camera position
 		glm::ivec2 Position(Map->Size.x/2, Map->Size.y/2);
-		if(!Map->FindEvent(_Event(EventType::SPAWN, 0), Position)) {
+		if(!Map->FindEvent(_Event(EventType::SPAWN, ""), Position)) {
+			//TODO fix
 			//if(!Map->FindEvent(_Event(EventType::MAPCHANGE, OldMapID), Position))
 			//	Map->FindEvent(_Event(EventType::MAPENTRANCE, OldMapID), Position);
 		}
@@ -1122,22 +1124,8 @@ void _EditorState::Go() {
 		switch(Tile->Event.Type) {
 			case EventType::MAPENTRANCE:
 			case EventType::MAPCHANGE: {
-				ToggleLoadMap(GetCleanMapName(Stats->OldMaps.at(Tile->Event.Data).File));
-			} break;
-			case EventType::VENDOR: {
-				std::stringstream Buffer;
-				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=vendoritem&vendor_id=" << Tile->Event.Data << "\"";
-				system(Buffer.str().c_str());
-			} break;
-			case EventType::TRADER: {
-				std::stringstream Buffer;
-				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=traderitem&trader_id=" << Tile->Event.Data << "\"";
-				system(Buffer.str().c_str());
-			} break;
-			case EventType::SCRIPT: {
-				std::stringstream Buffer;
-				Buffer << Config.BrowserCommand << " \"" << Config.DesignToolURL << "/?table=script\"";
-				system(Buffer.str().c_str());
+				//TODO fix
+				//ToggleLoadMap(GetCleanMapName(Stats->OldMaps.at(Tile->Event.OldData).File));
 			} break;
 			default:
 			break;
