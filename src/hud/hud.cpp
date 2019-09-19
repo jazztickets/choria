@@ -528,7 +528,7 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.InventorySlot.Item = PlayState.Stats->OldItems.at((uint32_t)Tooltip.Slot.Index);
+				Tooltip.InventorySlot.Item = PlayState.Stats->ItemsIndex.at((uint32_t)Tooltip.Slot.Index);
 			} break;
 			case WINDOW_ACTIONBAR: {
 				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())

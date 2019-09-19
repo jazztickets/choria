@@ -269,6 +269,8 @@ void _Stats::LoadData(const std::string &Path) {
 		if(Items.find(Item.ID) != Items.end())
 			throw std::runtime_error("Duplicate item id '" + Item.ID + "' in " + Path);
 
+		Item.Name = GetString(ChildNode, "name");
+
 		// Item type
 		Item.Type = ItemTypesIndex[GetString(ChildNode, "type")];
 		if(Item.Type == ItemType::NONE)

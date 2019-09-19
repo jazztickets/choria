@@ -569,7 +569,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 			if(InventorySlot.Item) {
 				Json::Value ItemNode;
 				ItemNode["slot"] = (Json::Value::UInt64)i;
-				ItemNode["id"] = InventorySlot.Item->NetworkID;
+				ItemNode["id"] = InventorySlot.Item->ID;
 				ItemNode["upgrades"] = InventorySlot.Upgrades;
 				ItemNode["count"] = InventorySlot.Count;
 				BagNode.append(ItemNode);
@@ -671,7 +671,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	for(Json::ValueIterator BagNode = Data["items"].begin(); BagNode != Data["items"].end(); BagNode++) {
 		for(const Json::Value &ItemNode : *BagNode) {
 			_InventorySlot InventorySlot;
-			InventorySlot.Item = Stats->OldItems.at(ItemNode["id"].asUInt());
+			InventorySlot.Item = &Stats->Items.at(ItemNode["id"].asString());
 			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
 			InventorySlot.Count = ItemNode["count"].asInt();
 			BagType Bag = (BagType)std::stoul(BagNode.name());
@@ -685,14 +685,14 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set skills
 	for(const Json::Value &SkillNode : Data["skills"]) {
 		uint32_t ItemID = SkillNode["id"].asUInt();
-		Character->Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->OldItems.at(ItemID)->MaxLevel);
+		Character->Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->ItemsIndex.at(ItemID)->MaxLevel);
 	}
 
 	// Set actionbar
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
 		if(Slot < Character->ActionBar.size())
-			Character->ActionBar[Slot].Item = Stats->OldItems.at(ActionNode["id"].asUInt());
+			Character->ActionBar[Slot].Item = Stats->ItemsIndex.at(ActionNode["id"].asUInt());
 	}
 
 	// Set status effects

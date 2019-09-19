@@ -749,7 +749,7 @@ void _Battle::ServerEndBattle() {
 			Packet.Write<uint32_t>(Iterator.first);
 			Packet.Write<uint8_t>(0);
 			Packet.Write<uint8_t>((uint8_t)Iterator.second);
-			Object->Inventory->AddItem(Stats->OldItems.at(Iterator.first), 0, Iterator.second);
+			Object->Inventory->AddItem(Stats->ItemsIndex.at(Iterator.first), 0, Iterator.second);
 		}
 
 		// Update bot goal
@@ -933,7 +933,7 @@ void _Battle::ClientHandlePlayerAction(ae::_Buffer &Data) {
 
 	_Object *Object = Manager->GetObject(NetworkID);
 	if(Object) {
-		Object->Character->Action.Item = Stats->OldItems.at(ItemID);
+		Object->Character->Action.Item = Stats->ItemsIndex.at(ItemID);
 		Object->Character->Action.State = ActionStateType::START;
 	}
 }

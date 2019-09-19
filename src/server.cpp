@@ -1546,7 +1546,7 @@ void _Server::HandleMinigameGetPrize(ae::_Buffer &Data, ae::_Peer *Peer) {
 	if(Minigame.Bucket < Minigame.Prizes.size()) {
 		const _MinigameItem *MinigameItem = Minigame.Prizes[Minigame.Bucket];
 		if(MinigameItem && MinigameItem->Item) {
-			SendItem(Peer, Stats->OldItems.at(MinigameItem->Item->NetworkID), MinigameItem->Count);
+			SendItem(Peer, Stats->ItemsIndex.at(MinigameItem->Item->NetworkID), MinigameItem->Count);
 		}
 	}
 }
@@ -1670,13 +1670,13 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 		SendHUD(Peer);
 	}
 	else if(Command == "give") {
-		uint32_t ItemID = Data.Read<uint32_t>();
+		std::string ItemID = Data.ReadString();
 		int Count = Data.Read<int>();
 
-		if(Stats->OldItems.find(ItemID) == Stats->OldItems.end())
+		if(Stats->Items.find(ItemID) == Stats->Items.end())
 			return;
 
-		SendItem(Peer, Stats->OldItems.at(ItemID), Count);
+		SendItem(Peer, &Stats->Items.at(ItemID), Count);
 	}
 	else if(Command == "gold") {
 		bool Adjust = Data.ReadBit();

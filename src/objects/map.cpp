@@ -975,7 +975,7 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 		// Set message for client
 		if(!Server) {
 			//TODO fix
-			//const _BaseItem *Item = Object->Stats->OldItems.at(Tile->Event.OldData);
+			//const _BaseItem *Item = Object->Stats->ItemsIndex.at(Tile->Event.OldData);
 			//if(Item && Object->Character->HUD)
 			//	Object->Character->HUD->SetMessage("You need a " + Item->Name);
 		}

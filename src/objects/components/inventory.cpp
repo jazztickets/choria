@@ -438,7 +438,7 @@ void _InventorySlot::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 
 	uint16_t ItemID = Data.Read<uint16_t>();
 	if(ItemID) {
-		Item = Stats->OldItems.at(ItemID);
+		Item = Stats->ItemsIndex.at(ItemID);
 		Upgrades = Data.Read<uint8_t>();
 		Count = Data.Read<uint8_t>();
 	}

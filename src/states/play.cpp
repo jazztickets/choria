@@ -468,7 +468,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 		else if(Console->Command == "give") {
 			if(Parameters.size() == 2) {
 				if(Network && Network->IsConnected()) {
-					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
+					Packet.WriteString(Parameters[0].c_str());
 					Packet.Write<int>(ae::ToNumber<int>(Parameters[1]));
 					Network->SendPacket(Packet);
 				}
@@ -1211,7 +1211,7 @@ void _PlayState::HandleInventoryAdd(ae::_Buffer &Data){
 
 	_RecentItem RecentItem;
 	RecentItem.Count = (int)Data.Read<uint8_t>();
-	RecentItem.Item = Stats->OldItems.at(Data.Read<uint16_t>());
+	RecentItem.Item = Stats->ItemsIndex.at(Data.Read<uint16_t>());
 	HUD->RecentItems.push_back(RecentItem);
 
 	Player->Inventory->AddItem(RecentItem.Item, 0, RecentItem.Count);
@@ -1450,7 +1450,7 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 		_RecentItem RecentItem;
 
 		uint32_t ItemID = Data.Read<uint32_t>();
-		RecentItem.Item = Stats->OldItems.at(ItemID);
+		RecentItem.Item = Stats->ItemsIndex.at(ItemID);
 		int Upgrades = (int)Data.Read<uint8_t>();
 		RecentItem.Count = (int)Data.Read<uint8_t>();
 
@@ -1501,7 +1501,7 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	int InventorySlot = (int)Data.Read<char>();
 	float ReactTime = Data.Read<float>();
 	float FlyTime = Data.Read<float>();
-	ActionResult.ActionUsed.Item = Stats->OldItems.at(ItemID);
+	ActionResult.ActionUsed.Item = Stats->ItemsIndex.at(ItemID);
 
 	// Set texture
 	if(ActionResult.ActionUsed.Item)
