@@ -103,9 +103,9 @@ bool _Inventory::FindItem(const _BaseItem *Item, size_t &Slot, size_t StartSlot)
 }
 
 // Return true if a certain item id is in the inventory
-bool _Inventory::HasItemID(uint32_t ItemID) {
+bool _Inventory::HasItem(const std::string &ID) {
 	for(auto &Bag : Bags) {
-		if(Bag.HasItemID(ItemID))
+		if(Bag.HasItem(ID))
 			return true;
 	}
 
@@ -499,9 +499,9 @@ void _Bag::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 }
 
 // Check for an item
-bool _Bag::HasItemID(uint32_t ItemID) {
+bool _Bag::HasItem(const std::string &ID) {
 	for(size_t i = 0; i < Slots.size(); i++) {
-		if(Slots[i].Item && Slots[i].Item->NetworkID == ItemID)
+		if(Slots[i].Item && Slots[i].Item->ID == ID)
 			return true;
 	}
 

@@ -968,16 +968,14 @@ bool _Map::CanMoveTo(const glm::ivec2 &Position, _Object *Object) {
 
 	const _Tile *Tile = &Tiles[Position.x][Position.y];
 	if(Tile->Event.Type == EventType::KEY) {
-		//TODO fix
-		//if(Object->Inventory->HasItemID(Tile->Event.Data))
-		//	return true;
+		if(Object->Inventory->HasItem(Tile->Event.Data))
+			return true;
 
 		// Set message for client
 		if(!Server) {
-			//TODO fix
-			//const _BaseItem *Item = Object->Stats->ItemsIndex.at(Tile->Event.OldData);
-			//if(Item && Object->Character->HUD)
-			//	Object->Character->HUD->SetMessage("You need a " + Item->Name);
+			const _BaseItem *Item = &Object->Stats->Items.at(Tile->Event.Data);
+			if(Item && Object->Character->HUD)
+				Object->Character->HUD->SetMessage("You need a " + Item->Name);
 		}
 
 		return false;

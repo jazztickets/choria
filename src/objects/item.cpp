@@ -452,7 +452,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 				InfoText = "Already unlocked";
 		} break;
 		case ItemType::KEY: {
-			if(!Player->Inventory->GetBag(BagType::KEYS).HasItemID(NetworkID))
+			if(!Player->Inventory->GetBag(BagType::KEYS).HasItem(ID))
 				InfoText = "Right-click to add to keychain";
 			else
 				InfoText = "Already in keychain";
@@ -629,7 +629,7 @@ bool _BaseItem::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const
 
 	// Check for item in key bag
 	if(IsKey())
-		return !Object->Inventory->GetBag(BagType::KEYS).HasItemID(NetworkID);
+		return !Object->Inventory->GetBag(BagType::KEYS).HasItem(ID);
 
 	// Unlocking item
 	if(IsUnlockable())
