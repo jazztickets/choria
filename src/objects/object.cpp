@@ -881,7 +881,6 @@ void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<int>(Character->MaxHealth);
 	Data.Write<int>(Character->Mana);
 	Data.Write<int>(Character->MaxMana);
-	Data.Write<int>(Character->EquipmentBattleSpeed);
 	Data.Write<float>(Character->Stamina);
 	Data.Write<uint8_t>(Fighter->BattleSide);
 
@@ -901,9 +900,6 @@ void _Object::UnserializeBattle(ae::_Buffer &Data, bool IsClient) {
 	Character->BaseMaxHealth = Character->MaxHealth = Data.Read<int>();
 	Character->Mana = Data.Read<int>();
 	Character->BaseMaxMana = Character->MaxMana = Data.Read<int>();
-	Character->EquipmentBattleSpeed = Data.Read<int>();
-	if(!IsClient)
-		Character->BaseBattleSpeed = Character->EquipmentBattleSpeed;
 	Character->Stamina = Data.Read<float>();
 	Fighter->BattleSide = Data.Read<uint8_t>();
 

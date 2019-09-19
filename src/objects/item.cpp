@@ -339,22 +339,6 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 		StatDrawn = true;
 	}
 
-	// Battle speed
-	int DrawBattleSpeed = (int)GetBattleSpeed(Upgrades);
-	if(DrawBattleSpeed != 0) {
-		std::stringstream Buffer;
-		Buffer << (DrawBattleSpeed < 0 ? "" : "+") << DrawBattleSpeed << "%";
-
-		glm::vec4 Color(1.0f);
-		if(CompareInventory.Item)
-			Color = GetCompareColor(GetBattleSpeed(Upgrades), CompareInventory.Item->GetBattleSpeed(CompareInventory.Upgrades));
-
-		ae::Assets.Fonts["hud_medium"]->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
-		DrawPosition.y += SpacingY;
-		StatDrawn = true;
-	}
-
 	// Health regen
 	int DrawHealthRegen = (int)GetHealthRegen(Upgrades);
 	if(DrawHealthRegen != 0) {
@@ -821,11 +805,6 @@ float _BaseItem::GetHealthRegen(int Upgrades) const {
 // Get mana regen
 float _BaseItem::GetManaRegen(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::MANAREGEN, Upgrades, ManaRegen);
-}
-
-// Get battle speed
-float _BaseItem::GetBattleSpeed(int Upgrades) const {
-	return GetUpgradedValue<float>(StatType::BATTLESPEED, Upgrades, BattleSpeed);
 }
 
 // Get move speed

@@ -77,8 +77,6 @@ _Character::_Character(_Object *Object) :
 	BaseMaxStamina(100),
 	BaseStaminaRegen(25.0f),
 	BaseStaminaRegenDelay(1.0),
-	BaseBattleSpeed(100),
-	BaseAttackPeriod(BATTLE_DEFAULTATTACKPERIOD),
 	BaseEvasion(0),
 	BaseHitChance(100),
 	BaseDropRate(0),
@@ -102,8 +100,6 @@ _Character::_Character(_Object *Object) :
 	DamageBlock(0),
 	Pierce(0),
 	MoveSpeed(100),
-	BattleSpeed(0),
-	EquipmentBattleSpeed(0),
 	Evasion(0),
 	HitChance(100),
 	DropRate(0),
@@ -295,7 +291,6 @@ void _Character::CalculateStats() {
 	ManaRegen = BaseManaRegen;
 	HealPower = BaseHealPower;
 	AttackPower = BaseAttackPower;
-	BattleSpeed = BaseBattleSpeed;
 	Evasion = BaseEvasion;
 	HitChance = BaseHitChance;
 	MinDamage = BaseMinDamage;
@@ -341,7 +336,6 @@ void _Character::CalculateStats() {
 			MaxMana += Item->GetMaxMana(Upgrades);
 			HealthRegen += Item->GetHealthRegen(Upgrades);
 			ManaRegen += Item->GetManaRegen(Upgrades);
-			BattleSpeed += Item->GetBattleSpeed(Upgrades);
 			MoveSpeed += Item->GetMoveSpeed(Upgrades);
 			DropRate += Item->GetDropRate(Upgrades);
 
@@ -372,9 +366,6 @@ void _Character::CalculateStats() {
 			}
 		}
 	}
-
-	// Get speed before buffs
-	EquipmentBattleSpeed = BattleSpeed;
 
 	// Get buff stats
 	for(const auto &StatusEffect : StatusEffects) {
@@ -409,8 +400,6 @@ void _Character::CalculateStats() {
 	Resistances[2] = (int)(ArmorResist * 100);
 
 	// Cap speed
-	if(BattleSpeed < BATTLE_MIN_SPEED)
-		BattleSpeed = BATTLE_MIN_SPEED;
 	if(MoveSpeed < PLAYER_MIN_MOVESPEED)
 		MoveSpeed = PLAYER_MIN_MOVESPEED;
 
@@ -466,8 +455,6 @@ void _Character::CalculateStatBonuses(_StatChange &StatChange) {
 	if(StatChange.HasStat(StatType::ATTACKPOWER))
 		AttackPower += StatChange.Values[StatType::ATTACKPOWER].Float;
 
-	if(StatChange.HasStat(StatType::BATTLESPEED))
-		BattleSpeed += StatChange.Values[StatType::BATTLESPEED].Integer;
 	if(StatChange.HasStat(StatType::HITCHANCE))
 		HitChance += StatChange.Values[StatType::HITCHANCE].Integer;
 	if(StatChange.HasStat(StatType::EVASION))

@@ -81,7 +81,6 @@ class _BaseItem {
 		float GetMaxMana(int Upgrades) const;
 		float GetHealthRegen(int Upgrades) const;
 		float GetManaRegen(int Upgrades) const;
-		float GetBattleSpeed(int Upgrades) const;
 		float GetMoveSpeed(int Upgrades) const;
 		float GetResistance(int Upgrades) const;
 		float GetDropRate(int Upgrades) const;

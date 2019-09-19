@@ -74,7 +74,6 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "Pierce",        { StatType::PIERCE        , StatValueType::INTEGER } },
 	{ "MoveSpeed",     { StatType::MOVESPEED     , StatValueType::INTEGER } },
 	{ "Stamina",       { StatType::STAMINA       , StatValueType::FLOAT   } },
-	{ "BattleSpeed",   { StatType::BATTLESPEED   , StatValueType::INTEGER } },
 	{ "DropRate",      { StatType::DROPRATE      , StatValueType::INTEGER } },
 	{ "HitChance",     { StatType::HITCHANCE     , StatValueType::INTEGER } },
 	{ "Evasion",       { StatType::EVASION       , StatValueType::INTEGER } },

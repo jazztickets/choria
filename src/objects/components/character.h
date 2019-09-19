@@ -171,8 +171,6 @@ class _Character {
 		int BaseMaxStamina;
 		float BaseStaminaRegen;
 		double BaseStaminaRegenDelay;
-		int BaseBattleSpeed;
-		double BaseAttackPeriod;
 		int BaseEvasion;
 		int BaseHitChance;
 		int BaseDropRate;
@@ -197,8 +195,6 @@ class _Character {
 		int DamageBlock;
 		int Pierce;
 		int MoveSpeed;
-		int BattleSpeed;
-		int EquipmentBattleSpeed;
 		int Evasion;
 		int HitChance;
 		int DropRate;

@@ -105,13 +105,6 @@ void _CharacterScreen::Render(double BlendFactor) {
 	Buffer.str("");
 	DrawPosition.y += SpacingY;
 
-	// Battle speed
-	Buffer << HUD->Player->Character->BattleSpeed << "%";
-	Font->DrawText("Battle Speed", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
-	Font->DrawText(Buffer.str(), DrawPosition + Spacing);
-	Buffer.str("");
-	DrawPosition.y += SpacingY;
-
 	// Hit chance
 	Buffer << HUD->Player->Character->HitChance << "%";
 	Font->DrawText("Hit Chance", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
