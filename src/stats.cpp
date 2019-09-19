@@ -279,20 +279,26 @@ void _Stats::LoadData(const std::string &Path) {
 
 		// Get prices
 		tinyxml2::XMLElement *PriceNode = ChildNode->FirstChildElement("price");
-		Item.Cost = PriceNode->IntAttribute("buy");
-		Item.Tradable = PriceNode->BoolAttribute("tradable");
+		if(PriceNode) {
+			Item.Cost = PriceNode->IntAttribute("buy");
+			Item.Tradable = PriceNode->BoolAttribute("tradable");
+		}
 
 		// Get damage
 		tinyxml2::XMLElement *DamageNode = ChildNode->FirstChildElement("damage");
-		Item.MinDamage = DamageNode->IntAttribute("min");
-		Item.MaxDamage = DamageNode->IntAttribute("max");
+		if(DamageNode) {
+			Item.MinDamage = DamageNode->IntAttribute("min");
+			Item.MaxDamage = DamageNode->IntAttribute("max");
+		}
 
 		// Get use stats
 		tinyxml2::XMLElement *UseNode = ChildNode->FirstChildElement("use");
-		Item.AttackDelay = UseNode->DoubleAttribute("attack_delay");
-		Item.AttackTime = UseNode->DoubleAttribute("attack_time");
-		Item.Cooldown = UseNode->DoubleAttribute("cooldown");
-		Item.Scope = ScopeTypesIndex[GetString(UseNode, "scope", false)];
+		if(UseNode) {
+			Item.AttackDelay = UseNode->DoubleAttribute("attack_delay");
+			Item.AttackTime = UseNode->DoubleAttribute("attack_time");
+			Item.Cooldown = UseNode->DoubleAttribute("cooldown");
+			Item.Scope = ScopeTypesIndex[GetString(UseNode, "scope", false)];
+		}
 
 		Item.NetworkID = NetworkID++;
 		Items[Item.ID] = Item;

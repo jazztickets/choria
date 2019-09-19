@@ -33,6 +33,10 @@
 		<model id="gambler" texture="textures/models/gambler.png"/>
 	</models>
 	<items>
+		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
+			<price buy="0" tradable="false"/>
+			<use scope="world"/>
+		</item>
 		<item id="short_sword" name="Short Sword" type="one_hand" texture="textures/items/short_sword.png">
 			<price buy="50" tradable="true"/>
 			<damage min="20" max="40" type="physical" />
@@ -73,8 +77,8 @@
 		</build>
 	</builds>
 	<vendors>
-		<vendor id="ham_weapons">
-			<item id="ss"/>
+		<vendor id="start">
+			<item id="rat_key"/>
 		</vendor>
 	</vendors>
 	<monsters>
