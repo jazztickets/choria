@@ -210,6 +210,7 @@ class _Stats {
 		void LoadData(const std::string &Path);
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
+		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute);
 
 		void OldLoadMaps();
 		void OldLoadLevels();

@@ -92,7 +92,7 @@ const char *_Stats::GetString(tinyxml2::XMLElement *Node, const char *Attribute,
 	return Value;
 }
 
-// Get a valid texture from an attribute
+// Get a valid texture from an id attribute
 const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *Attribute) {
 	std::string Value = GetString(Node, Attribute);
 
@@ -102,6 +102,18 @@ const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *A
 		throw std::runtime_error("Cannot find texture '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
 
 	return Iterator->second;
+}
+
+// Get a valid item from an id attribute
+const _BaseItem *_Stats::GetItem(tinyxml2::XMLElement *Node, const char *Attribute) {
+	std::string Value = GetString(Node, Attribute);
+
+	// Search for item
+	const auto &Iterator = Items.find(Value);
+	if(Iterator == Items.end())
+		throw std::runtime_error("Cannot find item '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
+
+	return &Iterator->second;
 }
 
 // Load types
@@ -333,6 +345,12 @@ void _Stats::LoadData(const std::string &Path) {
 		Vendor.ID = GetString(ChildNode, "id");
 		if(Vendors.find(Vendor.ID) != Vendors.end())
 			throw std::runtime_error("Duplicate vendor id '" + Vendor.ID + "' in " + Path);
+
+		// Load items
+		for(tinyxml2::XMLElement *ItemNode = ChildNode->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
+			const _BaseItem *Item = GetItem(ItemNode, "id");
+			Vendor.Items.push_back(Item);
+		}
 
 		Vendor.NetworkID = NetworkID++;
 		Vendors[Vendor.ID] = Vendor;
