@@ -342,6 +342,14 @@ void _EditorState::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			// Clicked event type button
 			if(ClickedElement->Parent && ClickedElement->Parent == EventTypesElement) {
 				ae::_Element *Button = ClickedElement;
+
+				// Validate data
+				switch((EventType)Button->Index) {
+					case EventType::VENDOR:
+						if(Stats->Vendors.find(EventDataElement->Text) == Stats->Vendors.end())
+							return;
+					break;
+				}
 				Brush->Event.Type = (EventType)Button->Index;
 				Brush->Event.Data = EventDataElement->Text;
 				SwitchBrushModes(4);
@@ -1125,8 +1133,8 @@ void _EditorState::LoadMap() {
 }
 
 // Set brush mode
-void _EditorState::SwitchBrushModes(int BrushMode) {
-	switch(BrushMode) {
+void _EditorState::SwitchBrushModes(int Key) {
+	switch(Key) {
 		case 1:
 			Mode = EditorModeType::TILE;
 			Filter = 0;

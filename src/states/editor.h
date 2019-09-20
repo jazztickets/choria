@@ -70,7 +70,7 @@ class _EditorState : public ae::_State {
 		void ResizeMap();
 		void SaveMap();
 		void LoadMap();
-		void SwitchBrushModes(int BrushMode);
+		void SwitchBrushModes(int Key);
 		void Go();
 
 		void ToggleTextures();
