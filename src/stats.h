@@ -40,17 +40,6 @@ namespace ae {
 	class _Database;
 }
 
-// Structures
-struct _OldMapStat {
-	std::string File;
-	std::string Atlas;
-	std::string Music;
-	glm::vec4 AmbientLight;
-	glm::vec3 BackgroundOffset;
-	uint32_t BackgroundMapID;
-	bool Outside;
-};
-
 struct _Portrait {
 	std::string ID;
 	const ae::_Texture *Texture;
@@ -87,10 +76,6 @@ struct _Level {
 	int SkillPoints;
 };
 
-struct _DamageType {
-	std::string Name;
-};
-
 struct _OldZone {
 	uint32_t MonsterID;
 	uint32_t Odds;
@@ -102,14 +87,15 @@ struct _EventName {
 	std::string ShortName;
 };
 
-struct _OldVendor {
-	size_t GetSlotFromID(uint32_t ID) const;
+struct _Vendor {
+	_Vendor() : BuyPercent(1.0f), SellPercent(0.5f) { }
+	size_t GetSlotFromID(const std::string &ItemID) const;
 
-	uint32_t ID;
-	std::string Name;
+	std::string ID;
 	float BuyPercent;
 	float SellPercent;
 	std::vector<const _BaseItem *> Items;
+	uint16_t NetworkID;
 };
 
 struct _TraderItem {
@@ -209,6 +195,7 @@ class _Stats {
 		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
 		std::unordered_map<std::string, _Model> Models;
 		std::unordered_map<uint8_t, const _Model *> ModelsIndex;
+		std::unordered_map<std::string, _Vendor> Vendors;
 
 		std::unordered_map<std::string, const _Object *> Builds;
 

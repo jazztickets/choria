@@ -33,7 +33,7 @@ class _HUD;
 class _StatusEffect;
 class _Map;
 struct _Portrait;
-struct _OldVendor;
+struct _Vendor;
 struct _OldTrader;
 struct _OldMinigameType;
 struct _OldBlacksmith;
@@ -216,7 +216,7 @@ class _Character {
 		std::vector<_Action> ActionBar;
 
 		// Events
-		const _OldVendor *Vendor;
+		const _Vendor *Vendor;
 		const _OldTrader *Trader;
 		const _OldBlacksmith *Blacksmith;
 		const _OldMinigameType *Minigame;

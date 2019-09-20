@@ -51,7 +51,6 @@ class _Object;
 class _Server;
 class _Stats;
 class _Battle;
-struct _OldMapStat;
 
 namespace ae {
 	class _Buffer;

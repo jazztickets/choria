@@ -581,7 +581,7 @@ void _BaseItem::GetEquipmentSlot(_Slot &Slot) const {
 }
 
 // Returns the item's price to/from a vendor
-int _BaseItem::GetPrice(const _OldVendor *Vendor, int QueryCount, bool Buy, int Level) const {
+int _BaseItem::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
 	if(!Vendor)
 		return 0;
 

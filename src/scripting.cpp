@@ -1054,7 +1054,7 @@ int _Scripting::ObjectVendorExchange(lua_State *LuaState) {
 	if(Buy) {
 
 		// Get parameters
-		uint32_t ItemID = (uint32_t)lua_tointeger(LuaState, 2);
+		std::string ItemID = lua_tostring(LuaState, 2);
 		int Amount = (int)lua_tointeger(LuaState, 3);
 
 		// Build packet

@@ -1073,7 +1073,7 @@ void _Server::HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer) {
 	_Object *Player = Peer->Object;
 
 	// Get vendor
-	const _OldVendor *Vendor = Player->Character->Vendor;
+	const _Vendor *Vendor = Player->Character->Vendor;
 	if(!Vendor)
 		return;
 

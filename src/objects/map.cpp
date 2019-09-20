@@ -445,32 +445,31 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 	// Handle event types
 	try {
 		//TODO fix
-		/*
 		switch(Event.Type) {
 			case EventType::TRADER:
-				Object->Character->Trader = &Server->Stats->OldTraders.at(Event.OldData);
+				//Object->Character->Trader = &Server->Stats->OldTraders.at(Event.OldData);
 				if(!Object->Character->Trader->ID)
 					return;
 			break;
 			case EventType::VENDOR:
-				Object->Character->Vendor = &Server->Stats->OldVendors.at(Event.OldData);
-				if(!Object->Character->Vendor->ID)
+				Object->Character->Vendor = &Server->Stats->Vendors.at(Event.Data);
+				if(!Object->Character->Vendor)
 					return;
 			break;
 			case EventType::BLACKSMITH:
-				Object->Character->Blacksmith = &Server->Stats->OldBlacksmiths.at(Event.OldData);
+				//Object->Character->Blacksmith = &Server->Stats->OldBlacksmiths.at(Event.OldData);
 				if(!Object->Character->Blacksmith->ID)
 					return;
 			break;
 			case EventType::MINIGAME: {
-				Object->Character->Minigame = &Server->Stats->OldMinigames.at(Event.OldData);
+				//Object->Character->Minigame = &Server->Stats->OldMinigames.at(Event.OldData);
 				if(!Object->Character->Minigame->ID)
 					return;
 			} break;
 			default:
 				return;
 			break;
-		}*/
+		}
 	}
 	catch(std::exception &Error) {
 		return;

@@ -325,6 +325,18 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate build name '" + Object->Name + "' in " + Path);
 		Builds[Object->Name] = Object;
 	}
+
+	// Load vendors
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["vendors"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_Vendor Vendor;
+		Vendor.ID = GetString(ChildNode, "id");
+		if(Vendors.find(Vendor.ID) != Vendors.end())
+			throw std::runtime_error("Duplicate vendor id '" + Vendor.ID + "' in " + Path);
+
+		Vendor.NetworkID = NetworkID++;
+		Vendors[Vendor.ID] = Vendor;
+	}
 }
 
 // Loads level data
@@ -767,11 +779,10 @@ const _Level *_Stats::FindLevel(int Experience) const {
 }
 
 // Convert vendor slot from item id
-size_t _OldVendor::GetSlotFromID(uint32_t ID) const {
-
+size_t _Vendor::GetSlotFromID(const std::string &ItemID) const {
 	size_t Index = 0;
 	for(const auto &Item : Items) {
-		if(Item->NetworkID == ID)
+		if(Item->ID == ItemID)
 			return Index;
 
 		Index++;

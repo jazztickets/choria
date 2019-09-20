@@ -1152,7 +1152,7 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 	// Handle event
 	switch(Event) {
 		case EventType::VENDOR:
-			//Player->Character->Vendor = &Stats->OldVendors.at(EventData);
+			Player->Character->Vendor = &Stats->Vendors.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->VendorScreen->Init();
 		break;
