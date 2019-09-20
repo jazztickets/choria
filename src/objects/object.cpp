@@ -1210,7 +1210,8 @@ void _Object::SendPacket(ae::_Buffer &Packet) {
 
 // Check if object is a monster
 bool _Object::IsMonster() const {
-	 return Monster->DatabaseID != 0;
+	//TODO Monster != nullptr
+	return Monster->DatabaseID != 0;
 }
 
 // Create list of nodes to destination

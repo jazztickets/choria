@@ -73,9 +73,6 @@ _Stats::~_Stats() {
 	for(const auto &Buff : OldBuffs)
 		delete Buff.second;
 
-	for(const auto &Build : OldBuilds)
-		delete Build.second;
-
 	delete Database;
 }
 
@@ -107,6 +104,8 @@ const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *A
 // Get a valid item from an id attribute
 const _BaseItem *_Stats::GetItem(tinyxml2::XMLElement *Node, const char *Attribute) {
 	std::string Value = GetString(Node, Attribute);
+	if(Value == "none")
+		return nullptr;
 
 	// Search for item
 	const auto &Iterator = Items.find(Value);
@@ -355,6 +354,56 @@ void _Stats::LoadData(const std::string &Path) {
 		Vendor.NetworkID = NetworkID++;
 		Vendors[Vendor.ID] = Vendor;
 	}
+
+	// Load monsters
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["monsters"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_MonsterStat Monster;
+		Monster.ID = GetString(ChildNode, "id");
+		if(Monsters.find(Monster.ID) != Monsters.end())
+			throw std::runtime_error("Duplicate monster id '" + Monster.ID + "' in " + Path);
+
+		Monster.Name = GetString(ChildNode, "name");
+		Monster.Texture = GetTexture(ChildNode, "texture");
+
+		// Get stats
+		tinyxml2::XMLElement *StatsNode = ChildNode->FirstChildElement("stats");
+		if(StatsNode) {
+			Monster.AI = GetString(StatsNode, "ai");
+			Monster.Health = StatsNode->IntAttribute("health");
+			Monster.Mana = StatsNode->IntAttribute("mana");
+		}
+
+		// Get damage
+		tinyxml2::XMLElement *DamageNode = ChildNode->FirstChildElement("damage");
+		if(DamageNode) {
+			Monster.MinDamage = DamageNode->IntAttribute("min");
+			Monster.MaxDamage = DamageNode->IntAttribute("max");
+		}
+
+		// Load actions
+		tinyxml2::XMLElement *ActionsNode = ChildNode->FirstChildElement("actions");
+		if(!ActionsNode)
+			throw std::runtime_error("No skills node for monster id '" + Monster.ID + "' in " + Path);
+
+		for(tinyxml2::XMLElement *ActionNode = ActionsNode->FirstChildElement("action"); ActionNode != nullptr; ActionNode = ActionNode->NextSiblingElement()) {
+			//const _BaseItem *Item = GetItem(ActionNode, "id");
+		}
+
+		// Load drops
+		tinyxml2::XMLElement *DropsNode = ChildNode->FirstChildElement("drops");
+		if(DropsNode) {
+			for(tinyxml2::XMLElement *DropNode = DropsNode->FirstChildElement("drop"); DropNode != nullptr; DropNode = DropNode->NextSiblingElement()) {
+				_Drop Drop;
+				Drop.Item = GetItem(DropNode, "id");
+				Drop.Odds = DropNode->UnsignedAttribute("odds");
+				Monster.Drops.push_back(Drop);
+			}
+		}
+
+		Monster.NetworkID = NetworkID++;
+		Monsters[Monster.ID] = Monster;
+	}
 }
 
 // Loads level data
@@ -566,19 +615,6 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience");
 		Object->Monster->GoldGiven = Database->GetInt<int>("gold");
 		Object->Monster->AI = Database->GetString("ai_name");
-		uint32_t BuildID = Database->GetInt<uint32_t>("build_id");
-
-		// Load build
-		const auto &BuildIterator = OldBuilds.find(BuildID);
-		if(BuildIterator == OldBuilds.end())
-			throw std::runtime_error("Can't find build_id " + std::to_string(BuildID));
-
-		const _Object *Build = BuildIterator->second;
-
-		// Copy build
-		Object->Inventory->Bags = Build->Inventory->GetBags();
-		Object->Character->ActionBar = Build->Character->ActionBar;
-		Object->Character->Skills = Build->Character->Skills;
 		Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
 		Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
 		Object->Character->Gold = Object->Monster->GoldGiven;

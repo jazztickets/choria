@@ -82,9 +82,23 @@ struct _OldZone {
 	int Max;
 };
 
-struct _EventName {
+struct _Drop {
+	const _BaseItem *Item;
+	uint32_t Odds;
+};
+
+struct _MonsterStat {
+	_MonsterStat() : Health(0), Mana(0), MinDamage(0), MaxDamage(0) { }
+	std::string ID;
 	std::string Name;
-	std::string ShortName;
+	std::string AI;
+	const ae::_Texture *Texture;
+	std::vector<_Drop> Drops;
+	int Health;
+	int Mana;
+	int MinDamage;
+	int MaxDamage;
+	uint16_t NetworkID;
 };
 
 struct _Vendor {
@@ -180,7 +194,6 @@ class _Stats {
 		std::unordered_map<uint32_t, _OldLightType> OldLights;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
-		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
 		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
 		std::unordered_map<DamageType, std::pair<std::string, std::string> > DamageTypes;
@@ -196,6 +209,8 @@ class _Stats {
 		std::unordered_map<std::string, _Model> Models;
 		std::unordered_map<uint8_t, const _Model *> ModelsIndex;
 		std::unordered_map<std::string, _Vendor> Vendors;
+		std::unordered_map<std::string, _MonsterStat> Monsters;
+		std::unordered_map<std::string, const _MonsterStat *> MonstersIndex;
 
 		std::unordered_map<std::string, const _Object *> Builds;
 

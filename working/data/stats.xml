@@ -72,18 +72,18 @@
 		</vendor>
 	</vendors>
 	<monsters>
-		<monster id="crow" name="Crow" portrait="textures/monsters/crow.png">
-			<stats health="40" experience="1" gold="1"/>
+		<monster id="crow" name="Crow" texture="textures/monsters/crow.png">
+			<stats ai="dumb" health="40" experience="1" gold="1"/>
 			<damage min="5" max="10"/>
-			<ai id="dumb"/>
+			<actions>
+				<action id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
+			</actions>
 			<resists>
 				<resist id="fire" value="-0.25"/>
 			</resists>
-			<skills>
-				<skill id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
-			</skills>
 			<drops>
 				<drop id="none" odds="80"/>
+				<drop id="healing_salve" odds="20"/>
 			</drops>
 		</monster>
 	</monsters>
