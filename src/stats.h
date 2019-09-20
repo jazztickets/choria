@@ -243,7 +243,6 @@ class _Stats {
 		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 
-		void OldLoadMaps();
 		void OldLoadLevels();
 		void OldLoadBuffs();
 		void OldLoadStatTypes();

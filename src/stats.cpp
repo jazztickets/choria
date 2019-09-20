@@ -260,13 +260,13 @@ void _Stats::LoadData(const std::string &Path) {
 
 	// Load portraits
 	NetworkID = 1;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["portraits"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["portraits"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Portrait Portrait;
-		Portrait.ID = GetString(ChildNode, "id");
+		Portrait.ID = GetString(Node, "id");
 		if(Portraits.find(Portrait.ID) != Portraits.end())
 			throw std::runtime_error("Duplicate portraits id '" + Portrait.ID + "' in " + Path);
 
-		Portrait.Texture = GetTexture(ChildNode, "texture");
+		Portrait.Texture = GetTexture(Node, "texture");
 		Portrait.NetworkID = NetworkID++;
 
 		Portraits[Portrait.ID] = Portrait;
@@ -275,13 +275,13 @@ void _Stats::LoadData(const std::string &Path) {
 
 	// Load models
 	NetworkID = 1;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["models"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["models"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Model Model;
-		Model.ID = GetString(ChildNode, "id");
+		Model.ID = GetString(Node, "id");
 		if(Models.find(Model.ID) != Models.end())
 			throw std::runtime_error("Duplicate model id '" + Model.ID + "' in " + Path);
 
-		Model.Texture = GetTexture(ChildNode, "texture");
+		Model.Texture = GetTexture(Node, "texture");
 		Model.NetworkID = NetworkID++;
 
 		Models[Model.ID] = Model;
@@ -290,24 +290,24 @@ void _Stats::LoadData(const std::string &Path) {
 
 	// Load skills
 	NetworkID = 1;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["skills"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["skills"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_BaseItem Skill;
-		Skill.ID = GetString(ChildNode, "id");
+		Skill.ID = GetString(Node, "id");
 		if(Items.find(Skill.ID) != Items.end())
 			throw std::runtime_error("Duplicate skill id '" + Skill.ID + "' in " + Path);
 
-		Skill.Name = GetString(ChildNode, "name");
-		Skill.Texture = GetTexture(ChildNode, "texture");
+		Skill.Name = GetString(Node, "name");
+		Skill.Texture = GetTexture(Node, "texture");
 
 		// Get target
-		tinyxml2::XMLElement *TargetNode = ChildNode->FirstChildElement("target");
+		tinyxml2::XMLElement *TargetNode = Node->FirstChildElement("target");
 		if(TargetNode) {
 			Skill.TargetID = TargetTypesIndex[GetString(TargetNode, "type")];
 			Skill.TargetAlive = TargetNode->BoolAttribute("alive");
 		}
 
 		// Get use
-		tinyxml2::XMLElement *UseNode = ChildNode->FirstChildElement("use");
+		tinyxml2::XMLElement *UseNode = Node->FirstChildElement("use");
 		if(UseNode) {
 			Skill.Scope = ScopeTypesIndex[GetString(UseNode, "scope")];
 			Skill.Script = GetString(UseNode, "script");
@@ -320,38 +320,38 @@ void _Stats::LoadData(const std::string &Path) {
 
 	// Load items
 	NetworkID = 1;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["items"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["items"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_BaseItem Item;
-		Item.ID = GetString(ChildNode, "id");
+		Item.ID = GetString(Node, "id");
 		if(Items.find(Item.ID) != Items.end())
 			throw std::runtime_error("Duplicate item id '" + Item.ID + "' in " + Path);
 
-		Item.Name = GetString(ChildNode, "name");
+		Item.Name = GetString(Node, "name");
 
 		// Item type
-		Item.Type = ItemTypesIndex[GetString(ChildNode, "type")];
+		Item.Type = ItemTypesIndex[GetString(Node, "type")];
 		if(Item.Type == ItemType::NONE)
 			throw std::runtime_error("Bad item type for '" + Item.ID + "' in " + Path);
 
 		// Texture
-		Item.Texture = GetTexture(ChildNode, "texture");
+		Item.Texture = GetTexture(Node, "texture");
 
 		// Get prices
-		tinyxml2::XMLElement *PriceNode = ChildNode->FirstChildElement("price");
+		tinyxml2::XMLElement *PriceNode = Node->FirstChildElement("price");
 		if(PriceNode) {
 			Item.Cost = PriceNode->IntAttribute("buy");
 			Item.Tradable = PriceNode->BoolAttribute("tradable");
 		}
 
 		// Get damage
-		tinyxml2::XMLElement *DamageNode = ChildNode->FirstChildElement("damage");
+		tinyxml2::XMLElement *DamageNode = Node->FirstChildElement("damage");
 		if(DamageNode) {
 			Item.MinDamage = DamageNode->IntAttribute("min");
 			Item.MaxDamage = DamageNode->IntAttribute("max");
 		}
 
 		// Get use stats
-		tinyxml2::XMLElement *UseNode = ChildNode->FirstChildElement("use");
+		tinyxml2::XMLElement *UseNode = Node->FirstChildElement("use");
 		if(UseNode) {
 			Item.AttackDelay = UseNode->DoubleAttribute("attack_delay");
 			Item.AttackTime = UseNode->DoubleAttribute("attack_time");
@@ -366,12 +366,12 @@ void _Stats::LoadData(const std::string &Path) {
 
 	// Load builds
 	NetworkID = 1;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["builds"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["builds"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Object *Object = new _Object();
-		Object->Name = GetString(ChildNode, "name");
+		Object->Name = GetString(Node, "name");
 		Object->NetworkID = NetworkID++;
-		Object->Model = &Models.at(GetString(ChildNode, "model"));
-		Object->BuildTexture = ae::Assets.Textures[GetString(ChildNode, "texture")];
+		Object->Model = &Models.at(GetString(Node, "model"));
+		Object->BuildTexture = ae::Assets.Textures[GetString(Node, "texture")];
 		if(!Object->BuildTexture)
 			throw std::runtime_error("Cannot find build texture for build '" + Object->Name + "' in " + Path);
 		if(Builds.find(Object->Name) != Builds.end())
@@ -381,14 +381,14 @@ void _Stats::LoadData(const std::string &Path) {
 
 	// Load vendors
 	NetworkID = 1;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["vendors"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["vendors"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Vendor Vendor;
-		Vendor.ID = GetString(ChildNode, "id");
+		Vendor.ID = GetString(Node, "id");
 		if(Vendors.find(Vendor.ID) != Vendors.end())
 			throw std::runtime_error("Duplicate vendor id '" + Vendor.ID + "' in " + Path);
 
 		// Load items
-		for(tinyxml2::XMLElement *ItemNode = ChildNode->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
+		for(tinyxml2::XMLElement *ItemNode = Node->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
 			const _BaseItem *Item = GetItem(ItemNode, "id");
 			Vendor.Items.push_back(Item);
 		}
@@ -399,17 +399,17 @@ void _Stats::LoadData(const std::string &Path) {
 
 	// Load monsters
 	NetworkID = 1;
-	for(tinyxml2::XMLElement *ChildNode = Nodes["monsters"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["monsters"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_MonsterStat Monster;
-		Monster.ID = GetString(ChildNode, "id");
+		Monster.ID = GetString(Node, "id");
 		if(Monsters.find(Monster.ID) != Monsters.end())
 			throw std::runtime_error("Duplicate monster id '" + Monster.ID + "' in " + Path);
 
-		Monster.Name = GetString(ChildNode, "name");
-		Monster.Texture = GetTexture(ChildNode, "texture");
+		Monster.Name = GetString(Node, "name");
+		Monster.Texture = GetTexture(Node, "texture");
 
 		// Get stats
-		tinyxml2::XMLElement *StatsNode = ChildNode->FirstChildElement("stats");
+		tinyxml2::XMLElement *StatsNode = Node->FirstChildElement("stats");
 		if(StatsNode) {
 			Monster.AI = GetString(StatsNode, "ai");
 			Monster.Health = StatsNode->IntAttribute("health");
@@ -417,14 +417,14 @@ void _Stats::LoadData(const std::string &Path) {
 		}
 
 		// Get damage
-		tinyxml2::XMLElement *DamageNode = ChildNode->FirstChildElement("damage");
+		tinyxml2::XMLElement *DamageNode = Node->FirstChildElement("damage");
 		if(DamageNode) {
 			Monster.MinDamage = DamageNode->IntAttribute("min");
 			Monster.MaxDamage = DamageNode->IntAttribute("max");
 		}
 
 		// Load actions
-		tinyxml2::XMLElement *ActionsNode = ChildNode->FirstChildElement("actions");
+		tinyxml2::XMLElement *ActionsNode = Node->FirstChildElement("actions");
 		if(!ActionsNode)
 			throw std::runtime_error("No skills node for monster id '" + Monster.ID + "' in " + Path);
 
@@ -436,7 +436,7 @@ void _Stats::LoadData(const std::string &Path) {
 		}
 
 		// Load drops
-		tinyxml2::XMLElement *DropsNode = ChildNode->FirstChildElement("drops");
+		tinyxml2::XMLElement *DropsNode = Node->FirstChildElement("drops");
 		if(DropsNode) {
 			for(tinyxml2::XMLElement *DropNode = DropsNode->FirstChildElement("drop"); DropNode != nullptr; DropNode = DropNode->NextSiblingElement()) {
 				_Drop Drop;
@@ -451,17 +451,17 @@ void _Stats::LoadData(const std::string &Path) {
 	}
 
 	// Load zones
-	for(tinyxml2::XMLElement *ChildNode = Nodes["zones"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+	for(tinyxml2::XMLElement *Node = Nodes["zones"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Zone Zone;
-		Zone.ID = GetString(ChildNode, "id");
+		Zone.ID = GetString(Node, "id");
 		if(Zones.find(Zone.ID) != Zones.end())
 			throw std::runtime_error("Duplicate zone id '" + Zone.ID + "' in " + Path);
 
-		Zone.Min = ChildNode->IntAttribute("min", 1);
-		Zone.Max = ChildNode->IntAttribute("max", Zone.Min);
+		Zone.Min = Node->IntAttribute("min", 1);
+		Zone.Max = Node->IntAttribute("max", Zone.Min);
 
 		// Load monsters
-		for(tinyxml2::XMLElement *MonsterNode = ChildNode->FirstChildElement("monster"); MonsterNode != nullptr; MonsterNode = MonsterNode->NextSiblingElement()) {
+		for(tinyxml2::XMLElement *MonsterNode = Node->FirstChildElement("monster"); MonsterNode != nullptr; MonsterNode = MonsterNode->NextSiblingElement()) {
 			_ZoneMonster ZoneMonster;
 			ZoneMonster.Monster = GetMonster(MonsterNode, "id");
 			ZoneMonster.Odds = MonsterNode->UnsignedAttribute("odds");
