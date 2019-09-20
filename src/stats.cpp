@@ -102,9 +102,9 @@ const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *A
 }
 
 // Get a valid item from an id attribute
-const _BaseItem *_Stats::GetItem(tinyxml2::XMLElement *Node, const char *Attribute) {
+const _BaseItem *_Stats::GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone) {
 	std::string Value = GetString(Node, Attribute);
-	if(Value == "none")
+	if(AllowNone && Value == "none")
 		return nullptr;
 
 	// Search for item
@@ -276,6 +276,36 @@ void _Stats::LoadData(const std::string &Path) {
 		ModelsIndex[Model.NetworkID] = &Models[Model.ID];
 	}
 
+	// Load skills
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *ChildNode = Nodes["skills"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_BaseItem Skill;
+		Skill.ID = GetString(ChildNode, "id");
+		if(Items.find(Skill.ID) != Items.end())
+			throw std::runtime_error("Duplicate skill id '" + Skill.ID + "' in " + Path);
+
+		Skill.Name = GetString(ChildNode, "name");
+		Skill.Texture = GetTexture(ChildNode, "texture");
+
+		// Get target
+		tinyxml2::XMLElement *TargetNode = ChildNode->FirstChildElement("target");
+		if(TargetNode) {
+			Skill.TargetID = TargetTypesIndex[GetString(TargetNode, "type")];
+			Skill.TargetAlive = TargetNode->BoolAttribute("alive");
+		}
+
+		// Get use
+		tinyxml2::XMLElement *UseNode = ChildNode->FirstChildElement("use");
+		if(UseNode) {
+			Skill.Scope = ScopeTypesIndex[GetString(UseNode, "scope")];
+			Skill.Script = GetString(UseNode, "script");
+		}
+
+		Skill.NetworkID = NetworkID++;
+		Items[Skill.ID] = Skill;
+		ItemsIndex[Skill.NetworkID] = &Items[Skill.ID];
+	}
+
 	// Load items
 	NetworkID = 1;
 	for(tinyxml2::XMLElement *ChildNode = Nodes["items"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
@@ -387,7 +417,10 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("No skills node for monster id '" + Monster.ID + "' in " + Path);
 
 		for(tinyxml2::XMLElement *ActionNode = ActionsNode->FirstChildElement("action"); ActionNode != nullptr; ActionNode = ActionNode->NextSiblingElement()) {
-			//const _BaseItem *Item = GetItem(ActionNode, "id");
+			const _BaseItem *Item = GetItem(ActionNode, "id");
+
+			//TODO add monster action struct
+			Monster.Actions.push_back(Item);
 		}
 
 		// Load drops
@@ -395,7 +428,7 @@ void _Stats::LoadData(const std::string &Path) {
 		if(DropsNode) {
 			for(tinyxml2::XMLElement *DropNode = DropsNode->FirstChildElement("drop"); DropNode != nullptr; DropNode = DropNode->NextSiblingElement()) {
 				_Drop Drop;
-				Drop.Item = GetItem(DropNode, "id");
+				Drop.Item = GetItem(DropNode, "id", true);
 				Drop.Odds = DropNode->UnsignedAttribute("odds");
 				Monster.Drops.push_back(Drop);
 			}

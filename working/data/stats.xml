@@ -22,6 +22,16 @@
 		<model id="hunter" texture="textures/models/hunter.png"/>
 		<model id="gambler" texture="textures/models/gambler.png"/>
 	</models>
+	<skills>
+		<skill id="attack" name="Attack" texture="textures/skills/attack.png">
+			<target type="enemy" alive="true" />
+			<use scope="battle" script="Skill_Attack"/>
+		</skill>
+		<skill id="monster_attack" name="Monster Attack" texture="textures/skills/monster_attack.png">
+			<target type="enemy" alive="true" />
+			<use scope="battle" script="Skill_MonsterAttack"/>
+		</skill>
+	</skills>
 	<items>
 		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
 			<price buy="5" tradable="false"/>
@@ -44,16 +54,6 @@
 			</skills>
 		</item>
 	</items>
-	<skills>
-		<skill id="attack" name="Attack" texture="textures/skills/attack.png">
-			<target type="enemy" alive="true" />
-			<use scope="battle" script="Skill_Attack"/>
-		</skill>
-		<skill id="monster_attack" name="Monster Attack" texture="textures/skills/monster_attack.png">
-			<target type="enemy" alive="true" />
-			<use scope="battle" script="Skill_MonsterAttack"/>
-		</skill>
-	</skills>
 	<builds>
 		<build name="Warrior" model="warrior" starting="true" texture="textures/builds/warrior.png">
 			<items>

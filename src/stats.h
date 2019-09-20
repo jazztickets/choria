@@ -93,6 +93,7 @@ struct _MonsterStat {
 	std::string Name;
 	std::string AI;
 	const ae::_Texture *Texture;
+	std::vector<const _BaseItem *> Actions;
 	std::vector<_Drop> Drops;
 	int Health;
 	int Mana;
@@ -225,7 +226,8 @@ class _Stats {
 		void LoadData(const std::string &Path);
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
-		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute);
+		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone=false);
+		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 
 		void OldLoadMaps();
 		void OldLoadLevels();
