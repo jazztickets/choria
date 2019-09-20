@@ -93,7 +93,7 @@ const char *_Stats::GetString(tinyxml2::XMLElement *Node, const char *Attribute,
 const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *Attribute) {
 	std::string Value = GetString(Node, Attribute);
 
-	// Search for texture
+	// Search
 	const auto &Iterator = ae::Assets.Textures.find(Value);
 	if(!Headless && Iterator == ae::Assets.Textures.end())
 		throw std::runtime_error("Cannot find texture '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
@@ -107,10 +107,22 @@ const _BaseItem *_Stats::GetItem(tinyxml2::XMLElement *Node, const char *Attribu
 	if(AllowNone && Value == "none")
 		return nullptr;
 
-	// Search for item
+	// Search
 	const auto &Iterator = Items.find(Value);
 	if(Iterator == Items.end())
 		throw std::runtime_error("Cannot find item '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
+
+	return &Iterator->second;
+}
+
+// Get a valid monster from an id attribute
+const _MonsterStat *_Stats::GetMonster(tinyxml2::XMLElement *Node, const char *Attribute) {
+	std::string Value = GetString(Node, Attribute);
+
+	// Search
+	const auto &Iterator = Monsters.find(Value);
+	if(Iterator == Monsters.end())
+		throw std::runtime_error("Cannot find monster '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
 
 	return &Iterator->second;
 }
@@ -436,6 +448,27 @@ void _Stats::LoadData(const std::string &Path) {
 
 		Monster.NetworkID = NetworkID++;
 		Monsters[Monster.ID] = Monster;
+	}
+
+	// Load zones
+	for(tinyxml2::XMLElement *ChildNode = Nodes["zones"]->FirstChildElement(); ChildNode != nullptr; ChildNode = ChildNode->NextSiblingElement()) {
+		_Zone Zone;
+		Zone.ID = GetString(ChildNode, "id");
+		if(Zones.find(Zone.ID) != Zones.end())
+			throw std::runtime_error("Duplicate zone id '" + Zone.ID + "' in " + Path);
+
+		Zone.Min = ChildNode->IntAttribute("min", 1);
+		Zone.Max = ChildNode->IntAttribute("max", Zone.Min);
+
+		// Load monsters
+		for(tinyxml2::XMLElement *MonsterNode = ChildNode->FirstChildElement("monster"); MonsterNode != nullptr; MonsterNode = MonsterNode->NextSiblingElement()) {
+			_ZoneMonster ZoneMonster;
+			ZoneMonster.Monster = GetMonster(MonsterNode, "id");
+			ZoneMonster.Odds = MonsterNode->UnsignedAttribute("odds");
+			Zone.Monsters.push_back(ZoneMonster);
+		}
+
+		Zones[Zone.ID] = Zone;
 	}
 }
 

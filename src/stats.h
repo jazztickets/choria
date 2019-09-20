@@ -102,6 +102,18 @@ struct _MonsterStat {
 	uint16_t NetworkID;
 };
 
+struct _ZoneMonster {
+	const _MonsterStat *Monster;
+	uint32_t Odds;
+};
+
+struct _Zone {
+	std::string ID;
+	std::vector<_ZoneMonster> Monsters;
+	int Min;
+	int Max;
+};
+
 struct _Vendor {
 	_Vendor() : BuyPercent(1.0f), SellPercent(0.5f) { }
 	size_t GetSlotFromID(const std::string &ItemID) const;
@@ -213,6 +225,7 @@ class _Stats {
 		std::unordered_map<std::string, _MonsterStat> Monsters;
 		std::unordered_map<std::string, const _MonsterStat *> MonstersIndex;
 
+		std::unordered_map<std::string, _Zone> Zones;
 		std::unordered_map<std::string, const _Object *> Builds;
 
 		// Database
@@ -227,6 +240,7 @@ class _Stats {
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone=false);
+		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 
 		void OldLoadMaps();
