@@ -1190,8 +1190,6 @@ void _Object::SendSeed(bool Generate) {
 
 // Convert input state bitfield to direction
 void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
-
-	// Get new position
 	if(InputState & MOVE_UP)
 		Direction.y += -1;
 	if(InputState & MOVE_DOWN)
@@ -1200,10 +1198,6 @@ void _Object::GetDirectionFromInput(int InputState, glm::ivec2 &Direction) {
 		Direction.x += -1;
 	if(InputState & MOVE_RIGHT)
 		Direction.x += 1;
-
-	// Remove diagonols
-	if(Direction.x != 0 && Direction.y != 0)
-		Direction.x = 0;
 }
 
 // Send packet to player or broadcast during battle
