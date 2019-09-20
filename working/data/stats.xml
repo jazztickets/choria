@@ -37,8 +37,11 @@
 			<price buy="5" tradable="false"/>
 			<use scope="world"/>
 		</item>
+		<item id="game_token" name="Game Token" type="tradable" texture="textures/items/token.png">
+			<price buy="10"/>
+		</item>
 		<item id="short_sword" name="Short Sword" type="one_hand" texture="textures/items/short_sword.png">
-			<price buy="50" tradable="true"/>
+			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
 			<use attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
 			<skills>
@@ -46,7 +49,7 @@
 			</skills>
 		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
-			<price buy="50" tradable="true"/>
+			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
 			<use scope="all" attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
 			<skills>
@@ -69,8 +72,17 @@
 	<vendors>
 		<vendor id="start">
 			<item id="rat_key"/>
+			<item id="game_token"/>
 		</vendor>
 	</vendors>
+	<minigames>
+		<minigame id="ball_drop" required_item="game_token">
+			<item id="game_token" count="5"/>
+			<item id="rat_key"/>
+			<item id="healing_salve"/>
+			<item id="short_sword"/>
+		</minigame>
+	</minigames>
 	<monsters>
 		<monster id="crow" name="Crow" texture="textures/monsters/crow.png">
 			<stats ai="dumb" health="40" experience="1" gold="1"/>

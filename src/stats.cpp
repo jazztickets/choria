@@ -59,7 +59,6 @@ _Stats::_Stats(bool Headless) :
 	OldLoadStatTypes();
 	OldLoadTraders();
 	OldLoadBlacksmiths();
-	OldLoadMinigames();
 	OldLoadScripts();
 	OldLoadLights();
 }
@@ -233,6 +232,7 @@ void _Stats::LoadData(const std::string &Path) {
 		{ "skills", DataNode->FirstChildElement("skills") },
 		{ "builds", DataNode->FirstChildElement("builds") },
 		{ "vendors", DataNode->FirstChildElement("vendors") },
+		{ "minigames", DataNode->FirstChildElement("minigames") },
 		{ "monsters", DataNode->FirstChildElement("monsters") },
 		{ "zones", DataNode->FirstChildElement("zones") },
 	});
@@ -303,7 +303,7 @@ void _Stats::LoadData(const std::string &Path) {
 		tinyxml2::XMLElement *TargetNode = Node->FirstChildElement("target");
 		if(TargetNode) {
 			Skill.Target = TargetTypesIndex[GetString(TargetNode, "type")];
-			Skill.TargetAlive = TargetNode->BoolAttribute("alive");
+			Skill.TargetAlive = TargetNode->BoolAttribute("alive", true);
 		}
 
 		// Get use
@@ -340,7 +340,7 @@ void _Stats::LoadData(const std::string &Path) {
 		tinyxml2::XMLElement *PriceNode = Node->FirstChildElement("price");
 		if(PriceNode) {
 			Item.Cost = PriceNode->IntAttribute("buy");
-			Item.Tradable = PriceNode->BoolAttribute("tradable");
+			Item.Tradable = PriceNode->BoolAttribute("tradable", true);
 		}
 
 		// Get damage
@@ -395,6 +395,29 @@ void _Stats::LoadData(const std::string &Path) {
 
 		Vendor.NetworkID = NetworkID++;
 		Vendors[Vendor.ID] = Vendor;
+	}
+
+	// Load minigames
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *Node = Nodes["minigames"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
+		_MinigameStat Minigame;
+		Minigame.ID = GetString(Node, "id");
+		if(Minigames.find(Minigame.ID) != Minigames.end())
+			throw std::runtime_error("Duplicate minigame id '" + Minigame.ID + "' in " + Path);
+
+		Minigame.RequiredItem = GetItem(Node, "required_item");
+		Minigame.Cost = Node->IntAttribute("count", 1);
+
+		// Load prizes
+		for(tinyxml2::XMLElement *ItemNode = Node->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
+			_MinigameItem MinigameItem;
+			MinigameItem.Item = GetItem(ItemNode, "id");
+			MinigameItem.Count = ItemNode->IntAttribute("count", 1);
+			Minigame.Items.push_back(MinigameItem);
+		}
+
+		Minigame.NetworkID = NetworkID++;
+		Minigames[Minigame.ID] = Minigame;
 	}
 
 	// Load monsters
@@ -581,38 +604,6 @@ void _Stats::OldLoadBlacksmiths() {
 		Blacksmith.Name = Database->GetString("name");
 		Blacksmith.Level = Database->GetInt<int>("level");
 		OldBlacksmiths[Blacksmith.ID] = Blacksmith;
-	}
-	Database->CloseQuery();
-}
-
-// Load minigames
-void _Stats::OldLoadMinigames() {
-	OldMinigames.clear();
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM minigame");
-
-	// Get data
-	_OldMinigameType Minigame;
-	while(Database->FetchRow()) {
-		Minigame.ID = Database->GetInt<uint32_t>("id");
-		Minigame.Name = Database->GetString("name");
-		Minigame.Script = Database->GetString("script");
-		Minigame.Cost = Database->GetInt<int>("cost");
-		//Minigame.RequiredItem = OldItems[Database->GetInt<uint32_t>("item_id")];
-
-		// Get items
-		Database->PrepareQuery("SELECT item_id, count FROM minigameitem where minigame_id = @minigame_id", 1);
-		Database->BindInt(1, Minigame.ID, 1);
-		while(Database->FetchRow(1)) {
-			_MinigameItem MinigameItem;
-			//MinigameItem.Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
-			MinigameItem.Count = Database->GetInt<int>("count", 1);
-			Minigame.Items.push_back(MinigameItem);
-		}
-		Database->CloseQuery(1);
-
-		OldMinigames[Minigame.ID] = Minigame;
 	}
 	Database->CloseQuery();
 }

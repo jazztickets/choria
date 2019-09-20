@@ -35,7 +35,7 @@ class _Map;
 struct _Portrait;
 struct _Vendor;
 struct _OldTrader;
-struct _OldMinigameType;
+struct _MinigameStat;
 struct _OldBlacksmith;
 
 // Structures
@@ -219,7 +219,7 @@ class _Character {
 		const _Vendor *Vendor;
 		const _OldTrader *Trader;
 		const _OldBlacksmith *Blacksmith;
-		const _OldMinigameType *Minigame;
+		const _MinigameStat *Minigame;
 		uint32_t Seed;
 
 		// Trading

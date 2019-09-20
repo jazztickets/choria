@@ -1167,7 +1167,7 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 			HUD->BlacksmithScreen->Init();
 		break;
 		case EventType::MINIGAME:
-			//Player->Character->Minigame = &Stats->OldMinigames.at(EventData);
+			Player->Character->Minigame = &Stats->Minigames.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->InitMinigame();
 		break;

@@ -1497,7 +1497,7 @@ void _Server::HandleMinigamePay(ae::_Buffer &Data, ae::_Peer *Peer) {
 
 	// Validate
 	_Object *Player = Peer->Object;
-	const _OldMinigameType *Minigame = Player->Character->Minigame;
+	const _MinigameStat *Minigame = Player->Character->Minigame;
 	if(!Minigame || Player->Inventory->CountItem(Minigame->RequiredItem) < Minigame->Cost)
 		return;
 

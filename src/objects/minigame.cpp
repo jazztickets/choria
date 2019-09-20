@@ -38,7 +38,7 @@
 #include <iostream>
 
 // Constructor
-_Minigame::_Minigame(const _OldMinigameType *Minigame) :
+_Minigame::_Minigame(const _MinigameStat *Minigame) :
 	IsServer(false),
 	Minigame(Minigame),
 	State(StateType::NEEDSEED),

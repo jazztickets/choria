@@ -462,8 +462,8 @@ void _Map::StartEvent(_Object *Object, _Event Event) const {
 					return;
 			break;
 			case EventType::MINIGAME: {
-				//Object->Character->Minigame = &Server->Stats->OldMinigames.at(Event.OldData);
-				if(!Object->Character->Minigame->ID)
+				Object->Character->Minigame = &Server->Stats->Minigames.at(Event.Data);
+				if(!Object->Character->Minigame)
 					return;
 			} break;
 			default:
