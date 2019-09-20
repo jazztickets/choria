@@ -302,7 +302,7 @@ void _Stats::LoadData(const std::string &Path) {
 		// Get target
 		tinyxml2::XMLElement *TargetNode = Node->FirstChildElement("target");
 		if(TargetNode) {
-			Skill.TargetID = TargetTypesIndex[GetString(TargetNode, "type")];
+			Skill.Target = TargetTypesIndex[GetString(TargetNode, "type")];
 			Skill.TargetAlive = TargetNode->BoolAttribute("alive");
 		}
 

@@ -67,7 +67,7 @@ _BaseItem::_BaseItem() :
 	Resistance(0),
 	Tradable(true),
 	TargetAlive(true),
-	TargetID(TargetType::NONE),
+	Target(TargetType::NONE),
 	Scope(ScopeType::NONE),
 	UnlockID(0) {
 }
@@ -142,9 +142,9 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 	DrawPosition.y += LargeSpacingY;
 
 	// Draw target text
-	if(TargetID != TargetType::NONE) {
+	if(Target != TargetType::NONE) {
 		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
-		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(TargetID).second;
+		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(Target).second;
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
 		DrawPosition.y += LargeSpacingY;
 	}
@@ -429,7 +429,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 		break;
 		case ItemType::SKILL:
 			if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
-				if(CheckScope(ScopeType::WORLD) && TargetID != TargetType::NONE)
+				if(CheckScope(ScopeType::WORLD) && Target != TargetType::NONE)
 					InfoText = "Left-click to use";
 			}
 			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
@@ -518,7 +518,7 @@ void _BaseItem::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, 
 int _BaseItem::GetTargetCount() const {
 
 	int TargetCount = 0;
-	switch(TargetID) {
+	switch(Target) {
 		case TargetType::SELF:
 			TargetCount = 1;
 		break;

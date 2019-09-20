@@ -249,7 +249,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			int StartingSide = !ClientPlayer->Fighter->BattleSide;
 
 			// Pick sides depending on action
-			if(Item->TargetID != TargetType::ANY && Item->CanTargetAlly()) {
+			if(Item->Target != TargetType::ANY && Item->CanTargetAlly()) {
 				StartingSide = ClientPlayer->Fighter->BattleSide;
 				if(!ClientPlayer->Fighter->LastTarget[StartingSide])
 					ClientPlayer->Fighter->LastTarget[StartingSide] = ClientPlayer;
@@ -311,7 +311,7 @@ void _Battle::ClientSetTarget(const _BaseItem *Item, int Side, _Object *InitialT
 	ClientPlayer->Character->Targets.clear();
 
 	// Can't change self targets
-	if(Item->TargetID == TargetType::SELF) {
+	if(Item->Target == TargetType::SELF) {
 		ClientPlayer->Character->Targets.push_back(ClientPlayer);
 		return;
 	}
@@ -357,14 +357,14 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 
 	// Can't change self targetting actions
 	const _BaseItem *Item = ClientPlayer->Fighter->PotentialAction.Item;
-	if(Item->TargetID == TargetType::SELF)
+	if(Item->Target == TargetType::SELF)
 		return;
 
 	// Get current target side
 	int BattleTargetSide = ClientPlayer->Character->Targets.front()->Fighter->BattleSide;
 
 	// Change sides
-	if(Item->TargetID == TargetType::ANY && ChangeSides)
+	if(Item->Target == TargetType::ANY && ChangeSides)
 		BattleTargetSide = !BattleTargetSide;
 
 	// Get list of objects on target side

@@ -263,7 +263,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 // Return target type of action used
 TargetType _Action::GetTargetType() {
 	if(Item)
-		return Item->TargetID;
+		return Item->Target;
 
 	return TargetType::NONE;
 }

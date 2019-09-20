@@ -358,7 +358,7 @@ void _Character::CalculateStats() {
 		ActionResult.Source.Object = Object;
 		if(GetActionFromActionBar(ActionResult.ActionUsed, i)) {
 			const _BaseItem *Skill = ActionResult.ActionUsed.Item;
-			if(Skill->IsSkill() && Skill->TargetID == TargetType::NONE) {
+			if(Skill->IsSkill() && Skill->Target == TargetType::NONE) {
 
 				// Get passive stat changes
 				Skill->GetStats(Object->Scripting, ActionResult);
