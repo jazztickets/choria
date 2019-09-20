@@ -24,7 +24,7 @@
 	</models>
 	<items>
 		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
-			<price buy="0" tradable="false"/>
+			<price buy="5" tradable="false"/>
 			<use scope="world"/>
 		</item>
 		<item id="short_sword" name="Short Sword" type="one_hand" texture="textures/items/short_sword.png">

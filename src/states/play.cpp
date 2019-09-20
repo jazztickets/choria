@@ -457,7 +457,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 		else if(Console->Command == "event") {
 			if(Parameters.size() == 2) {
 				if(Network && Network->IsConnected()) {
-					Packet.Write<EventType>((EventType)ae::ToNumber<uint8_t>(Parameters[0]));
+					Packet.Write<EventType>((EventType)ae::ToNumber<int>(Parameters[0]));
 					Packet.WriteString(Parameters[1].c_str());
 					Network->SendPacket(Packet);
 				}
