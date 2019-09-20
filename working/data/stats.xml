@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
-	<damage_types>
-		<damage_type id="all" name="All"/>
-		<damage_type id="physical" name="Physical"/>
-		<damage_type id="fire" name="Fire"/>
-		<damage_type id="cold" name="Cold"/>
-		<damage_type id="lightning" name="Lightning"/>
-		<damage_type id="poison" name="Poison"/>
-		<damage_type id="bleed" name="Bleed"/>
-		<damage_type id="stun" name="Stun"/>
-	</damage_types>
 	<portraits>
 		<portrait id="joe" texture="textures/portraits/joe.png"/>
 		<portrait id="bim" texture="textures/portraits/bim.png"/>

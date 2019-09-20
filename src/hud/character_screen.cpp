@@ -138,7 +138,7 @@ void _CharacterScreen::Render(double BlendFactor) {
 			continue;
 
 		Buffer << Resistance.second << "%";
-		Font->DrawText(HUD->Player->Stats->OldDamageTypes.at(Resistance.first) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		Font->DrawText(HUD->Player->Stats->DamageTypes.at((DamageType)Resistance.first).second + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		Font->DrawText(Buffer.str(), DrawPosition + Spacing);
 		Buffer.str("");
 		DrawPosition.y += SpacingY;

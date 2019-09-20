@@ -187,20 +187,17 @@ class _Stats {
 
 		std::vector<_Level> Levels;
 
-		std::unordered_map<uint32_t, _OldMapStat> OldMaps;
-		std::unordered_map<uint32_t, _OldVendor> OldVendors;
 		std::unordered_map<uint32_t, _OldTrader> OldTraders;
 		std::unordered_map<uint32_t, _OldBlacksmith> OldBlacksmiths;
 		std::unordered_map<uint32_t, _OldMinigameType> OldMinigames;
 		std::unordered_map<uint32_t, _OldScript> OldScripts;
 		std::unordered_map<uint32_t, _OldLightType> OldLights;
-		std::unordered_map<uint32_t, std::string> OldDamageTypes;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
-		std::unordered_map<uint32_t, const _BaseItem *> OldItems;
 		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 		std::unordered_map<uint32_t, const _Object *> OldBuilds;
 
 		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
+		std::unordered_map<DamageType, std::pair<std::string, std::string> > DamageTypes;
 		std::unordered_map<EventType, std::pair<std::string, std::string> > EventTypes;
 		std::unordered_map<ItemType, std::pair<std::string, std::string> > ItemTypes;
 		std::unordered_map<ScopeType, std::pair<std::string, std::string> > ScopeTypes;
@@ -231,13 +228,9 @@ class _Stats {
 		void OldLoadLevels();
 		void OldLoadBuffs();
 		void OldLoadStatTypes();
-		void OldLoadDamageTypes();
-		void OldLoadItems();
-		void OldLoadVendors();
 		void OldLoadTraders();
 		void OldLoadBlacksmiths();
 		void OldLoadMinigames();
-		void OldLoadBuilds();
 		void OldLoadScripts();
 		void OldLoadLights();
 

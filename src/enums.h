@@ -84,6 +84,20 @@ enum class ActionStateType : uint8_t {
 	COOLDOWN,
 };
 
+// Damage types
+enum class DamageType : uint8_t {
+	NONE,
+	ALL,
+	PHYSICAL,
+	FIRE,
+	COLD,
+	LIGHTNING,
+	DIVINE,
+	DARK,
+	POISON,
+	BLEED,
+};
+
 // Types of stats
 enum class StatType : int {
 	ID,

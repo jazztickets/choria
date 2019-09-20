@@ -220,7 +220,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 	// Damage type
 	if(!IsSkill() && DamageTypeID > 1) {
 		std::stringstream Buffer;
-		Buffer << Stats->OldDamageTypes.at(DamageTypeID);
+		Buffer << Stats->DamageTypes.at((DamageType)DamageTypeID).second;
 		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Type", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE);
 		DrawPosition.y += SpacingY;
@@ -317,7 +317,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 		if(CompareInventory.Item)
 			Color = GetCompareColor(GetResistance(Upgrades), CompareInventory.Item->GetResistance(CompareInventory.Upgrades));
 
-		ae::Assets.Fonts["hud_medium"]->DrawText(Player->Stats->OldDamageTypes.at(ResistanceTypeID) + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
+		ae::Assets.Fonts["hud_medium"]->DrawText(Player->Stats->DamageTypes.at((DamageType)ResistanceTypeID).second + " Resist", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE, Color);
 		DrawPosition.y += SpacingY;
 		StatDrawn = true;
