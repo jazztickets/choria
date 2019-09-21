@@ -22,7 +22,6 @@
 #include <cstdint>
 
 // Forward Declarations
-class _Object;
 class _Scripting;
 class _StatChange;
 
@@ -36,13 +35,13 @@ class _Buff {
 	public:
 
 		void DrawTooltip(_Scripting *Scripting, int Level, double Duration) const;
-
 		void ExecuteScript(_Scripting *Scripting, const std::string &Function, int Level, _StatChange &StatChange) const;
 
-		uint32_t ID;
+		std::string ID;
 		std::string Name;
 		std::string Script;
 		const ae::_Texture *Texture;
+		uint16_t NetworkID;
 
 	private:
 

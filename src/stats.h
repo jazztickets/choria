@@ -19,6 +19,7 @@
 
 // Libraries
 #include <ae/type.h>
+#include <objects/buff.h>
 #include <objects/item.h>
 #include <objects/statchange.h>
 #include <enums.h>
@@ -216,6 +217,8 @@ class _Stats {
 
 		std::unordered_map<std::string, _BaseItem> Items;
 		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
+		std::unordered_map<std::string, _Buff> Buffs;
+		std::unordered_map<uint16_t, const _Buff *> BuffsIndex;
 		std::unordered_map<std::string, _Portrait> Portraits;
 		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
 		std::unordered_map<std::string, _Model> Models;
@@ -246,7 +249,6 @@ class _Stats {
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 
 		void OldLoadLevels();
-		void OldLoadBuffs();
 		void OldLoadStatTypes();
 		void OldLoadScripts();
 		void OldLoadLights();

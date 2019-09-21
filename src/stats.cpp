@@ -55,7 +55,6 @@ _Stats::_Stats(bool Headless) :
 
 	// Load spreadsheet data
 	OldLoadLevels();
-	OldLoadBuffs();
 	OldLoadStatTypes();
 	OldLoadScripts();
 	OldLoadLights();
@@ -228,6 +227,7 @@ void _Stats::LoadData(const std::string &Path) {
 		{ "models", DataNode->FirstChildElement("models") },
 		{ "items", DataNode->FirstChildElement("items") },
 		{ "skills", DataNode->FirstChildElement("skills") },
+		{ "buffs", DataNode->FirstChildElement("buffs") },
 		{ "builds", DataNode->FirstChildElement("builds") },
 		{ "vendors", DataNode->FirstChildElement("vendors") },
 		{ "traders", DataNode->FirstChildElement("traders") },
@@ -243,8 +243,6 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Missing '" + Node.first + "' node in " + Path);
 	}
 
-	uint8_t NetworkID;
-
 	// Build index for types
 	std::unordered_map<std::string, ScopeType> ScopeTypesIndex;
 	for(const auto &Scope : ScopeTypes)
@@ -259,7 +257,7 @@ void _Stats::LoadData(const std::string &Path) {
 		ItemTypesIndex[ItemType.second.first] = ItemType.first;
 
 	// Load portraits
-	NetworkID = 1;
+	uint8_t NetworkID = 1;
 	for(tinyxml2::XMLElement *Node = Nodes["portraits"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Portrait Portrait;
 		Portrait.ID = GetString(Node, "id");
@@ -316,6 +314,23 @@ void _Stats::LoadData(const std::string &Path) {
 		Skill.NetworkID = NetworkID++;
 		Items[Skill.ID] = Skill;
 		ItemsIndex[Skill.NetworkID] = &Items[Skill.ID];
+	}
+
+	// Load buffs
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *Node = Nodes["buffs"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
+		_Buff Buff;
+		Buff.ID = GetString(Node, "id");
+		if(Buffs.find(Buff.ID) != Buffs.end())
+			throw std::runtime_error("Duplicate buff id '" + Buff.ID + "' in " + Path);
+
+		Buff.Name = GetString(Node, "name");
+		Buff.Script = GetString(Node, "script");
+		Buff.Texture = GetTexture(Node, "texture");
+
+		Buff.NetworkID = NetworkID++;
+		Buffs[Buff.ID] = Buff;
+		BuffsIndex[Buff.NetworkID] = &Buffs[Buff.ID];
 	}
 
 	// Load items
@@ -558,26 +573,6 @@ void _Stats::OldLoadLevels() {
 	}
 
 	Levels[Levels.size()-1].NextLevel = 0;
-}
-
-// Load buffs
-void _Stats::OldLoadBuffs() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM buff");
-
-	// Get data
-	while(Database->FetchRow()) {
-		_Buff *Buff = new _Buff;
-		Buff->ID = Database->GetInt<uint32_t>("id");
-		Buff->Name = Database->GetString("name");
-		Buff->Script = Database->GetString("script");
-		Buff->Texture = ae::Assets.Textures[Database->GetString("texture")];
-		OldBuffs[Buff->ID] = Buff;
-	}
-	Database->CloseQuery();
-
-	OldBuffs[0] = nullptr;
 }
 
 // Load upgrade scales from stat types

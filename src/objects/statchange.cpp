@@ -52,7 +52,7 @@ void _StatChange::Serialize(ae::_Buffer &Data) {
 		// Write data
 		if(Iterator.first == StatType::BUFF) {
 			_Buff *Buff = (_Buff *)(Iterator.second.Pointer);
-			Data.Write<uint32_t>(Buff->ID);
+			Data.Write<uint16_t>(Buff->NetworkID);
 		}
 		else
 			Data.Write<int>(Iterator.second.Integer);

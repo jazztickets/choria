@@ -58,7 +58,7 @@ _StatusEffect::~_StatusEffect() {
 
 // Serialize for network
 void _StatusEffect::Serialize(ae::_Buffer &Data) {
-	Data.Write<uint32_t>(Buff->ID);
+	Data.Write<uint16_t>(Buff->NetworkID);
 	Data.Write<int>(Level);
 	Data.Write<float>((float)Duration);
 	Data.Write<float>((float)MaxDuration);
@@ -66,11 +66,12 @@ void _StatusEffect::Serialize(ae::_Buffer &Data) {
 
 // Unserialize from network
 void _StatusEffect::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
-	uint32_t BuffID = Data.Read<uint32_t>();
-	Buff = Stats->OldBuffs.at(BuffID);
+	uint16_t BuffID = Data.Read<uint16_t>();
 	Level = Data.Read<int>();
 	Duration = Data.Read<float>();
 	MaxDuration = Data.Read<float>();
+
+	Buff = Stats->BuffsIndex.at(BuffID);
 }
 
 // Create element for hud
