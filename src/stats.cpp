@@ -57,8 +57,6 @@ _Stats::_Stats(bool Headless) :
 	OldLoadLevels();
 	OldLoadBuffs();
 	OldLoadStatTypes();
-	OldLoadTraders();
-	OldLoadBlacksmiths();
 	OldLoadScripts();
 	OldLoadLights();
 }
@@ -232,6 +230,8 @@ void _Stats::LoadData(const std::string &Path) {
 		{ "skills", DataNode->FirstChildElement("skills") },
 		{ "builds", DataNode->FirstChildElement("builds") },
 		{ "vendors", DataNode->FirstChildElement("vendors") },
+		{ "traders", DataNode->FirstChildElement("traders") },
+		{ "blacksmiths", DataNode->FirstChildElement("blacksmiths") },
 		{ "minigames", DataNode->FirstChildElement("minigames") },
 		{ "monsters", DataNode->FirstChildElement("monsters") },
 		{ "zones", DataNode->FirstChildElement("zones") },
@@ -397,6 +397,43 @@ void _Stats::LoadData(const std::string &Path) {
 		Vendors[Vendor.ID] = Vendor;
 	}
 
+	// Load traders
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *Node = Nodes["traders"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
+		_Trader Trader;
+		Trader.ID = GetString(Node, "id");
+		if(Traders.find(Trader.ID) != Traders	.end())
+			throw std::runtime_error("Duplicate trader id '" + Trader.ID + "' in " + Path);
+
+		Trader.RewardItem = GetItem(Node, "reward_item");
+		Trader.RewardCount = Node->IntAttribute("reward_count", 1);
+
+		// Load required items
+		for(tinyxml2::XMLElement *ItemNode = Node->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
+			_TraderItem TraderItem;
+			TraderItem.Item = GetItem(ItemNode, "id");
+			TraderItem.Count = ItemNode->IntAttribute("count", 1);
+			Trader.Items.push_back(TraderItem);
+		}
+
+		Trader.NetworkID = NetworkID++;
+		Traders[Trader.ID] = Trader;
+	}
+
+	// Load blacksmiths
+	NetworkID = 1;
+	for(tinyxml2::XMLElement *Node = Nodes["blacksmiths"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
+		_Blacksmith Blacksmith;
+		Blacksmith.ID = GetString(Node, "id");
+		if(Blacksmiths.find(Blacksmith.ID) != Blacksmiths.end())
+			throw std::runtime_error("Duplicate blacksmith id '" + Blacksmith.ID + "' in " + Path);
+
+		Blacksmith.Name = GetString(Node, "name");
+		Blacksmith.Level = Node->IntAttribute("level");
+		Blacksmith.NetworkID = NetworkID++;
+		Blacksmiths[Blacksmith.ID] = Blacksmith;
+	}
+
 	// Load minigames
 	NetworkID = 1;
 	for(tinyxml2::XMLElement *Node = Nodes["minigames"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
@@ -553,57 +590,6 @@ void _Stats::OldLoadStatTypes() {
 	while(Database->FetchRow()) {
 		StatType ID = (StatType)Database->GetInt<uint32_t>("id");
 		UpgradeScale[ID] = Database->GetReal("upgrade_scale");
-	}
-	Database->CloseQuery();
-}
-
-// Loads trader data
-void _Stats::OldLoadTraders() {
-	OldTraders.clear();
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM trader");
-
-	// Get data
-	_OldTrader Trader;
-	while(Database->FetchRow()) {
-		Trader.ID = Database->GetInt<uint32_t>("id");
-		Trader.Name = Database->GetString("name");
-		//Trader.RewardItem = OldItems[Database->GetInt<uint32_t>("item_id")];
-		Trader.Upgrades = 0;
-		Trader.Count = Database->GetInt<int>("count");
-		Trader.Items.clear();
-
-		// Get items
-		Database->PrepareQuery("SELECT item_id, count FROM traderitem where trader_id = @trader_id", 1);
-		Database->BindInt(1, Trader.ID, 1);
-		while(Database->FetchRow(1)) {
-			_TraderItem TraderItem;
-			//TraderItem.Item = OldItems[Database->GetInt<uint32_t>("item_id", 1)];
-			TraderItem.Count = Database->GetInt<int>("count", 1);
-			Trader.Items.push_back(TraderItem);
-		}
-		Database->CloseQuery(1);
-
-		OldTraders[Trader.ID] = Trader;
-	}
-	Database->CloseQuery();
-}
-
-// Loads blacksmith data
-void _Stats::OldLoadBlacksmiths() {
-	OldBlacksmiths.clear();
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM blacksmith");
-
-	// Get data
-	_OldBlacksmith Blacksmith;
-	while(Database->FetchRow()) {
-		Blacksmith.ID = Database->GetInt<uint32_t>("id");
-		Blacksmith.Name = Database->GetString("name");
-		Blacksmith.Level = Database->GetInt<int>("level");
-		OldBlacksmiths[Blacksmith.ID] = Blacksmith;
 	}
 	Database->CloseQuery();
 }

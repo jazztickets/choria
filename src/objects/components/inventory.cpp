@@ -388,10 +388,10 @@ bool _Inventory::SplitStack(ae::_Buffer &Data, const _Slot &Slot, int Count) {
 }
 
 // Fills an array with inventory indices correlating to a trader's required items
-_Slot _Inventory::GetRequiredItemSlots(const _OldTrader *Trader, std::vector<_Slot> &RequiredItemSlots) {
+_Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot> &RequiredItemSlots) {
 
 	// Find a slot for the reward
-	_Slot RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->Count);
+	_Slot RewardItemSlot = FindSlotForItem(Trader->RewardItem, Trader->Upgrades, Trader->RewardCount);
 
 	// Go through required items
 	for(size_t i = 0; i < Trader->Items.size(); i++) {

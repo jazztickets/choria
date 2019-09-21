@@ -104,7 +104,7 @@ void _TraderScreen::Render(double BlendFactor) {
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 		ae::Graphics.DrawScaledImage(DrawPosition, HUD->Player->Character->Trader->RewardItem->Texture);
 
-		if(HUD->Player->Character->Trader->Count > 1)
-			ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(HUD->Player->Character->Trader->Count), DrawPosition + CountOffset, ae::RIGHT_BASELINE);
+		if(HUD->Player->Character->Trader->RewardCount > 1)
+			ae::Assets.Fonts["hud_tiny"]->DrawText(std::to_string(HUD->Player->Character->Trader->RewardCount), DrawPosition + CountOffset, ae::RIGHT_BASELINE);
 	}
 }

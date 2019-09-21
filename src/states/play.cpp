@@ -1148,7 +1148,6 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 	std::string EventData = Data.ReadString();
 	Player->Position = Data.Read<glm::ivec2>();
 
-	//TODOfix
 	// Handle event
 	switch(Event) {
 		case EventType::VENDOR:
@@ -1157,12 +1156,12 @@ void _PlayState::HandleEventStart(ae::_Buffer &Data) {
 			HUD->VendorScreen->Init();
 		break;
 		case EventType::TRADER:
-			//Player->Character->Trader = &Stats->OldTraders.at(EventData);
+			Player->Character->Trader = &Stats->Traders.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->TraderScreen->Init();
 		break;
 		case EventType::BLACKSMITH:
-			//Player->Character->Blacksmith = &Stats->OldBlacksmiths.at(EventData);
+			Player->Character->Blacksmith = &Stats->Blacksmiths.at(EventData);
 			Player->Controller->WaitForServer = false;
 			HUD->BlacksmithScreen->Init();
 		break;
@@ -1191,13 +1190,13 @@ void _PlayState::HandleInventory(ae::_Buffer &Data) {
 
 		// Update recent items
 		if(HUD->RecentItems.size() && HUD->RecentItems.back().Item == Player->Character->Trader->RewardItem) {
-			HUD->RecentItems.back().Count += Player->Character->Trader->Count;
+			HUD->RecentItems.back().Count += Player->Character->Trader->RewardCount;
 			HUD->RecentItems.back().Time = 0.0;
 		}
 		else {
 			_RecentItem RecentItem;
 			RecentItem.Item = Player->Character->Trader->RewardItem;
-			RecentItem.Count = Player->Character->Trader->Count;
+			RecentItem.Count = Player->Character->Trader->RewardCount;
 
 			HUD->RecentItems.push_back(RecentItem);
 		}

@@ -75,6 +75,18 @@
 			<item id="game_token"/>
 		</vendor>
 	</vendors>
+	<traders>
+		<trader id="rat_man" reward_item="rat_key" reward_count="2">
+			<item id="healing_salve" count="2"/>
+			<item id="short_sword"/>
+		</trader>
+	</traders>
+	<blacksmiths>
+		<blacksmith id="apprentice" name="Apprentice" level="5"/>
+		<blacksmith id="journeyman" name="Journeyman" level="10"/>
+		<blacksmith id="skilled" name="Skilled" level="15"/>
+		<blacksmith id="master" name="Master" level="20"/>
+	</blacksmiths>
 	<minigames>
 		<minigame id="ball_drop" required_item="game_token">
 			<item id="game_token" count="5"/>

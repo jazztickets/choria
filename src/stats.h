@@ -130,19 +130,21 @@ struct _TraderItem {
 	int Count;
 };
 
-struct _OldTrader {
-	uint32_t ID;
+struct _Trader {
+	std::string ID;
 	std::string Name;
 	const _BaseItem *RewardItem;
 	int Upgrades;
-	int Count;
+	int RewardCount;
 	std::vector<_TraderItem> Items;
+	uint16_t NetworkID;
 };
 
-struct _OldBlacksmith {
-	uint32_t ID;
+struct _Blacksmith {
+	std::string ID;
 	std::string Name;
 	int Level;
+	uint16_t NetworkID;
 };
 
 struct _MinigameItem {
@@ -200,8 +202,6 @@ class _Stats {
 
 		std::vector<_Level> Levels;
 
-		std::unordered_map<uint32_t, _OldTrader> OldTraders;
-		std::unordered_map<uint32_t, _OldBlacksmith> OldBlacksmiths;
 		std::unordered_map<uint32_t, _OldScript> OldScripts;
 		std::unordered_map<uint32_t, _OldLightType> OldLights;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
@@ -221,6 +221,8 @@ class _Stats {
 		std::unordered_map<std::string, _Model> Models;
 		std::unordered_map<uint8_t, const _Model *> ModelsIndex;
 		std::unordered_map<std::string, _Vendor> Vendors;
+		std::unordered_map<std::string, _Trader> Traders;
+		std::unordered_map<std::string, _Blacksmith> Blacksmiths;
 		std::unordered_map<std::string, _MinigameStat> Minigames;
 		std::unordered_map<std::string, _MonsterStat> Monsters;
 		std::unordered_map<std::string, const _MonsterStat *> MonstersIndex;
@@ -246,8 +248,6 @@ class _Stats {
 		void OldLoadLevels();
 		void OldLoadBuffs();
 		void OldLoadStatTypes();
-		void OldLoadTraders();
-		void OldLoadBlacksmiths();
 		void OldLoadScripts();
 		void OldLoadLights();
 

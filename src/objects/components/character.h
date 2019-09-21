@@ -34,9 +34,9 @@ class _StatusEffect;
 class _Map;
 struct _Portrait;
 struct _Vendor;
-struct _OldTrader;
+struct _Trader;
 struct _MinigameStat;
-struct _OldBlacksmith;
+struct _Blacksmith;
 
 // Structures
 struct _Unlock {
@@ -217,8 +217,8 @@ class _Character {
 
 		// Events
 		const _Vendor *Vendor;
-		const _OldTrader *Trader;
-		const _OldBlacksmith *Blacksmith;
+		const _Trader *Trader;
+		const _Blacksmith *Blacksmith;
 		const _MinigameStat *Minigame;
 		uint32_t Seed;
 
