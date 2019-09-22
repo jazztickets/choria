@@ -66,9 +66,6 @@ _Stats::~_Stats() {
 	for(const auto &Build : Builds)
 		delete Build.second;
 
-	for(const auto &Buff : OldBuffs)
-		delete Buff.second;
-
 	delete Database;
 }
 

@@ -698,7 +698,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set status effects
 	for(const Json::Value &StatusEffectNode : Data["statuseffects"]) {
 		_StatusEffect *StatusEffect = new _StatusEffect();
-		StatusEffect->Buff = Stats->OldBuffs.at(StatusEffectNode["id"].asUInt());
+		StatusEffect->Buff = &Stats->Buffs.at(StatusEffectNode["id"].asString());
 		StatusEffect->Level = StatusEffectNode["level"].asInt();
 		StatusEffect->Duration = StatusEffectNode["duration"].asDouble();
 		StatusEffect->MaxDuration = StatusEffectNode["maxduration"].asDouble();

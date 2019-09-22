@@ -283,8 +283,8 @@ void _Scripting::InjectMonsters(const _Stats *Stats) {
 void _Scripting::InjectBuffs(const _Stats *Stats) {
 
 	// Add buffs
-	for(const auto &Iterator : Stats->OldBuffs) {
-		const _Buff *Buff = Iterator.second;
+	for(const auto &Iterator : Stats->Buffs) {
+		const _Buff *Buff = &Iterator.second;
 		if(Buff) {
 
 			// Get table
@@ -293,7 +293,7 @@ void _Scripting::InjectBuffs(const _Stats *Stats) {
 				throw std::runtime_error("InjectBuffs: " + Buff->Script + " is not a table!");
 
 			// Add ID
-			lua_pushstring(LuaState, Buff->ID.c_str());
+			lua_pushinteger(LuaState, Buff->NetworkID);
 			lua_setfield(LuaState, -2, "ID");
 
 			// Add pointer

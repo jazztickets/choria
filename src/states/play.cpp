@@ -1627,7 +1627,7 @@ void _PlayState::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 
 			// Play buff sounds
 			if(StatChange.HasStat(StatType::ID)) {
-				const _Buff *Buff = Stats->OldBuffs.at((uint32_t)StatChange.Values[StatType::ID].Integer);
+				const _Buff *Buff = Stats->BuffsIndex.at((uint32_t)StatChange.Values[StatType::ID].Integer);
 				if(Buff && Scripting->StartMethodCall(Buff->Script, "PlaySound")) {
 					Scripting->MethodCall(0, 0);
 					Scripting->FinishMethodCall();

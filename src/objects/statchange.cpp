@@ -84,8 +84,8 @@ void _StatChange::Unserialize(ae::_Buffer &Data, ae::_Manager<_Object> *Manager)
 
 		// Get data
 		if(Type == StatType::BUFF) {
-			uint32_t BuffID = Data.Read<uint32_t>();
-			Values[Type].Pointer = (void *)Object->Stats->OldBuffs.at(BuffID);
+			uint16_t BuffID = Data.Read<uint16_t>();
+			Values[Type].Pointer = (void *)Object->Stats->BuffsIndex.at(BuffID);
 		}
 		else
 			Values[Type].Integer = Data.Read<int>();

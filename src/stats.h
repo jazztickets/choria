@@ -206,7 +206,6 @@ class _Stats {
 		std::unordered_map<uint32_t, _OldScript> OldScripts;
 		std::unordered_map<uint32_t, _OldLightType> OldLights;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
-		std::unordered_map<uint32_t, const _Buff *> OldBuffs;
 
 		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
 		std::unordered_map<DamageType, std::pair<std::string, std::string> > DamageTypes;
