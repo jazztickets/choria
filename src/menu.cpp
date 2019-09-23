@@ -51,7 +51,7 @@ const std::string CharacterButtonPrefix = "button_characters_slot";
 const std::string NewCharacterPortraitPrefix = "button_newcharacter_portrait";
 const std::string NewCharacterBuildPrefix = "button_newcharacter_build";
 
-static const size_t KeyBindings[] = {
+const size_t KeyBindings[] = {
 	Action::GAME_UP,
 	Action::GAME_DOWN,
 	Action::GAME_LEFT,
@@ -74,7 +74,7 @@ static const size_t KeyBindings[] = {
 	Action::MISC_CONSOLE,
 };
 
-static const char *KeyBindingNames[] = {
+const std::string KeyBindingNames[] = {
 	"Move Up",
 	"Move Down",
 	"Move Left",
@@ -752,7 +752,7 @@ void _Menu::LoadKeybindings() {
 		PrimaryButton->Children.push_back(Label);
 
 		// Disable chat rebinding
-		if(std::string(KeyBindingNames[i]) == "Chat") {
+		if(KeyBindingNames[i] == "Chat") {
 			PrimaryButton->SetEnabled(false);
 			SecondaryButton->SetEnabled(false);
 			Label->SetEnabled(true);

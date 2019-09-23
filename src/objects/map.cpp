@@ -53,7 +53,7 @@
 #include <iomanip>
 
 // Color overlays for zones
-static const glm::vec4 ZoneColors[] = {
+const glm::vec4 ZoneColors[] = {
 	{ 1.0f, 0.0f, 0.0f, 0.4f },
 	{ 0.0f, 1.0f, 0.0f, 0.4f },
 	{ 0.0f, 0.0f, 1.0f, 0.4f },
@@ -63,7 +63,7 @@ static const glm::vec4 ZoneColors[] = {
 };
 
 // Colors of each time cycle
-static const std::vector<glm::vec4> DayCycles = {
+const std::vector<glm::vec4> DayCycles = {
 	{ 0.05f, 0.05f, 0.3f,  1 },
 	{ 0.10f, 0.10f, 0.1f,  1 },
 	{ 0.6f,  0.6f,  0.45f, 1 },
@@ -72,7 +72,7 @@ static const std::vector<glm::vec4> DayCycles = {
 };
 
 // Time of each cycle change
-static const std::vector<double> DayCyclesTime = {
+const std::vector<double> DayCyclesTime = {
 	0.0  * 60.0,
 	6.0  * 60.0,
 	12.5 * 60.0,
@@ -80,7 +80,7 @@ static const std::vector<double> DayCyclesTime = {
 	18.0 * 60.0,
 };
 
-static const std::string MAP_TRANS_ATLAS = "textures/map/trans.png";
+const std::string MAP_TRANS_ATLAS = "textures/map/trans.png";
 
 // Constructor
 _Map::_Map() :

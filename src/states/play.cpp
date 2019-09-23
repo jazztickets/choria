@@ -124,7 +124,7 @@ void _PlayState::Init() {
 		MenuMap->Stats = Stats;
 		MenuMap->UseAtlas = true;
 		MenuMap->Clock = ae::GetRandomInt(0, MAP_DAY_LENGTH);
-		MenuMap->Load("");
+		MenuMap->Load("maps/start.map.gz");
 	}
 	catch(std::exception &Error) {
 		delete MenuMap;

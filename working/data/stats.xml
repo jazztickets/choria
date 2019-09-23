@@ -55,9 +55,9 @@
 			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
 			<use scope="all" attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
-			<skills>
-				<skill id="attack"/>
-			</skills>
+		</item>
+		<item id="battle_potion" name="Battle Potion" type="consumable" script="Item_BattlePotion" texture="textures/items/death_potion.png">
+			<use scope="world"/>
 		</item>
 	</items>
 	<builds>

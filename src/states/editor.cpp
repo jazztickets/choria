@@ -41,6 +41,9 @@
 #include <SDL_keycode.h>
 #include <SDL_mouse.h>
 
+// Constants
+const double EDITOR_CLOCK_SPEED = 200.0;
+
 _EditorState EditorState;
 
 // Initializes the state
@@ -463,12 +466,12 @@ void _EditorState::Update(double FrameTime) {
 	// Handle key input
 	if(ae::Input.KeyDown(SDL_SCANCODE_T) && !ae::Input.ModKeyDown(KMOD_CTRL)) {
 		if(ae::Input.ModKeyDown(KMOD_SHIFT)) {
-			Clock -= FrameTime * MAP_EDITOR_CLOCK_SPEED;
+			Clock -= FrameTime * EDITOR_CLOCK_SPEED;
 			if(Clock < 0)
 				Clock += MAP_DAY_LENGTH;
 		}
 		else {
-			Clock += FrameTime * MAP_EDITOR_CLOCK_SPEED;
+			Clock += FrameTime * EDITOR_CLOCK_SPEED;
 			if(Clock >= MAP_DAY_LENGTH)
 				Clock -= MAP_DAY_LENGTH;
 		}

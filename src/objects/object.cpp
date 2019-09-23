@@ -52,7 +52,7 @@
 #include <iomanip>
 
 // Constants
-static const std::string DEFAULT_MAP = "start";
+const std::string DEFAULT_MAP = "start";
 
 // Constructor
 _Object::_Object() :

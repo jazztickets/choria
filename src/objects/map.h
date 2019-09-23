@@ -42,7 +42,6 @@ const int MAP_TILE_HEIGHT = 64;
 const int MAP_LAYERS = 4;
 const double MAP_DAY_LENGTH = 24.0*60.0;
 const double MAP_CLOCK_SPEED = 1.0;
-const double MAP_EDITOR_CLOCK_SPEED = 200.0;
 const glm::vec4 MAP_AMBIENT_LIGHT = glm::vec4(0.3, 0.3, 0.3, 1);
 const std::string MAPS_PATH = "maps/";
 

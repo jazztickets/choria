@@ -32,7 +32,7 @@
 #include <iostream>
 
 // Constants
-static const int DEFAULT_ACTIONBAR_SIZE = 4;
+const int DEFAULT_ACTIONBAR_SIZE = 4;
 
 // Compare function for sorting portraits
 bool ComparePortrait(const _Portrait *First, const _Portrait *Second) {
@@ -342,6 +342,7 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate item id '" + Item.ID + "' in " + Path);
 
 		Item.Name = GetString(Node, "name");
+		Item.Script = GetString(Node, "script", false);
 
 		// Item type
 		Item.Type = ItemTypesIndex[GetString(Node, "type")];

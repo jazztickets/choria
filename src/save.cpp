@@ -35,8 +35,8 @@
 #include <algorithm>
 
 // Constants
-static const double DEFAULT_CLOCK = 8.0*60.0;
-static const int SAVE_VERSION = 4;
+const double DEFAULT_CLOCK = 8.0*60.0;
+const int SAVE_VERSION = 4;
 
 // Constructor
 _Save::_Save() :
