@@ -175,7 +175,6 @@ void _Framework::Init(int ArgumentCount, char **Arguments) {
 			Console->CommandList.push_back("gold");
 			Console->CommandList.push_back("map");
 			Console->CommandList.push_back("move");
-			Console->CommandList.push_back("search");
 		}
 
 		// Sort commands

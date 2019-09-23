@@ -497,33 +497,6 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 			else
 				Console->AddMessage("usage: move [x] [y]");
 		}
-		else if(Console->Command == "search") {
-			if(Parameters.size() == 2) {
-				std::string Table = Parameters[0];
-				std::string Search = "%" + Parameters[1] + "%";
-
-				// Search database for keyword
-				ae::_Database *Database = PlayState.Stats->Database;
-				try {
-					Database->PrepareQuery("SELECT id, name FROM " + Table + " WHERE name like @search");
-					Database->BindString(1, Search);
-					while(Database->FetchRow()) {
-						int ID = Database->GetInt<int>("id");
-						std::string Name = Database->GetString("name");
-
-						// Add messages
-						std::stringstream Buffer;
-						Buffer << std::setw(3) << ID << " " << Name << std::endl;
-						Console->AddMessage(Buffer.str());
-					}
-					Database->CloseQuery();
-				} catch(std::exception &Error) {
-					Console->AddMessage(Error.what());
-				}
-			}
-			else
-				Console->AddMessage("usage: search [table] [query]");
-		}
 		else {
 			return false;
 		}
