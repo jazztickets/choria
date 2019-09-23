@@ -1771,7 +1771,7 @@ void _Server::RunEventScript(const std::string &Script, _Object *Object) {
 	ae::TokenizeString(Script, Parameters);
 
 	// Find script
-	if(Scripting->StartMethodCall(Parameters[0], "Activate")) {
+	if(Scripting->StartMethodCall("Script_" + Parameters[0], "Activate")) {
 		_StatChange StatChange;
 		StatChange.Object = Object;
 

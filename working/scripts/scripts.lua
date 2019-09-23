@@ -1,24 +1,16 @@
-Script_Rejuv = { BaseHealth = 5, BaseMana = 5 }
+Script_heal = {}
 
-function Script_Rejuv.Activate(self, Level, Object, Change)
-	Change.Health = self.BaseHealth * Level
-	Change.Mana = self.BaseMana * Level
-
-	return Change
-end
-
-Script_Lava = { BaseHealth = -10 }
-
-function Script_Lava.Activate(self, Level, Object, Change)
-	Change.Health = self.BaseHealth * Level
+function Script_heal.Activate(self, Health, Mana, Object, Change)
+	Change.Health = Health
+	Change.Mana = Mana
 
 	return Change
 end
 
-Script_Boss = {}
+Script_boss = {}
 
-function Script_Boss.Activate(self, Level, Object, Change)
-	Change.Battle = Level
+function Script_boss.Activate(self, ZoneName, Object, Change)
+	--Change.Battle = ZoneName
 
 	return Change
 end
