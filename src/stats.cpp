@@ -59,7 +59,6 @@ _Stats::_Stats(bool Headless) :
 	// Load spreadsheet data
 	OldLoadLevels();
 	OldLoadStatTypes();
-	OldLoadScripts();
 	OldLoadLights();
 }
 
@@ -587,26 +586,6 @@ void _Stats::OldLoadStatTypes() {
 	while(Database->FetchRow()) {
 		StatType ID = (StatType)Database->GetInt<uint32_t>("id");
 		UpgradeScale[ID] = Database->GetReal("upgrade_scale");
-	}
-	Database->CloseQuery();
-}
-
-// Load scripts
-void _Stats::OldLoadScripts() {
-	OldScripts.clear();
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM script");
-
-	// Get data
-	_OldScript Script;
-	while(Database->FetchRow()) {
-		Script.ID = Database->GetInt<uint32_t>("id");
-		Script.Name = Database->GetString("name");
-		Script.Level = Database->GetInt<int>("level");
-		Script.Cooldown = Database->GetReal("cooldown");
-
-		OldScripts[Script.ID] = Script;
 	}
 	Database->CloseQuery();
 }

@@ -1762,39 +1762,40 @@ void _Server::SendHUD(ae::_Peer *Peer) {
 }
 
 // Run event script from map
-void _Server::RunEventScript(uint32_t ScriptID, _Object *Object) {
+void _Server::RunEventScript(const std::string &Script, _Object *Object) {
 	if(!Object)
 		return;
 
-	// Find script
-	auto Iterator = Stats->OldScripts.find(ScriptID);
-	if(Iterator != Stats->OldScripts.end()) {
-		const _OldScript &Script = Iterator->second;
+	// Get parameters
+	std::vector<std::string> Parameters;
+	ae::TokenizeString(Script, Parameters);
 
+	// Find script
+	if(Scripting->StartMethodCall(Parameters[0], "Activate")) {
 		_StatChange StatChange;
 		StatChange.Object = Object;
-		if(Scripting->StartMethodCall(Script.Name, "Activate")) {
-			Scripting->PushInt(Script.Level);
-			Scripting->PushReal(Script.Cooldown);
-			Scripting->PushObject(StatChange.Object);
-			Scripting->PushStatChange(&StatChange);
-			Scripting->MethodCall(4, 1);
-			Scripting->GetStatChange(1, StatChange);
-			Scripting->FinishMethodCall();
 
-			StatChange.Object->UpdateStats(StatChange);
+		// Handle parameters
+		for(size_t i = 1; i < Parameters.size(); i++)
+			Scripting->PushString(Parameters[i]);
+		Scripting->PushObject(StatChange.Object);
+		Scripting->PushStatChange(&StatChange);
+		Scripting->MethodCall((int)(Parameters.size()) - 1 + 2, 1);
+		Scripting->GetStatChange(1, StatChange);
+		Scripting->FinishMethodCall();
 
-			// Notify peer
-			if(Object->Peer) {
+		StatChange.Object->UpdateStats(StatChange);
 
-				// Build packet
-				ae::_Buffer Packet;
-				Packet.Write<PacketType>(PacketType::STAT_CHANGE);
-				StatChange.Serialize(Packet);
+		// Notify peer
+		if(Object->Peer) {
 
-				// Send packet to player
-				Network->SendPacket(Packet, Object->Peer);
-			}
+			// Build packet
+			ae::_Buffer Packet;
+			Packet.Write<PacketType>(PacketType::STAT_CHANGE);
+			StatChange.Serialize(Packet);
+
+			// Send packet to player
+			Network->SendPacket(Packet, Object->Peer);
 		}
 	}
 }

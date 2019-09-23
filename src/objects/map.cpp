@@ -331,8 +331,8 @@ void _Map::CheckEvents(_Object *Object) {
 				Object->Controller->WaitForServer = true;
 		} break;
 		case EventType::SCRIPT: {
-			//if(Server)
-			//	Server->RunEventScript(Tile->Event.OldData, Object);
+			if(Server)
+				Server->RunEventScript(Tile->Event.Data, Object);
 		} break;
 		case EventType::PORTAL: {
 			if(Server) {

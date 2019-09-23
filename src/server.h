@@ -74,7 +74,7 @@ class _Server {
 		void BroadcastMessage(ae::_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName);
 		void SendHUD(ae::_Peer *Peer);
 		void SendPlayerPosition(ae::_Peer *Peer);
-		void RunEventScript(uint32_t ScriptID, _Object *Object);
+		void RunEventScript(const std::string &Script, _Object *Object);
 		void SetClock(double Clock);
 
 		// Packet handling

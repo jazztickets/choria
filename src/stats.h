@@ -203,7 +203,6 @@ class _Stats {
 
 		std::vector<_Level> Levels;
 
-		std::unordered_map<uint32_t, _OldScript> OldScripts;
 		std::unordered_map<uint32_t, _OldLightType> OldLights;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 
@@ -249,7 +248,6 @@ class _Stats {
 
 		void OldLoadLevels();
 		void OldLoadStatTypes();
-		void OldLoadScripts();
 		void OldLoadLights();
 
 };

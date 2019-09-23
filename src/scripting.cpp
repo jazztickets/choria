@@ -596,6 +596,11 @@ void _Scripting::PushItemParameters(int Level, double Duration) {
 	lua_setfield(LuaState, -2, "Duration");
 }
 
+// Push string
+void _Scripting::PushString(const std::string &Value) {
+	lua_pushstring(LuaState, Value.c_str());
+}
+
 // Push int value
 void _Scripting::PushInt(int Value) {
 	lua_pushinteger(LuaState, Value);
