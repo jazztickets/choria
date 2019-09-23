@@ -788,9 +788,7 @@ void _Server::SpawnPlayer(_Object *Player, _Map *LoadMap, EventType Event) {
 			Player->Character->Path.clear();
 	}
 	else {
-		//TODO fix
-		//Map->FindEvent(_Event(Event, Player->Character->SpawnPoint), Player->Position);
-		Player->Position = glm::ivec2(5, 5);
+		Map->FindEvent(_Event(Event, Player->Character->SpawnPoint), Player->Position);
 		SendPlayerPosition(Player->Peer);
 		SendHUD(Player->Peer);
 	}
@@ -1599,8 +1597,7 @@ void _Server::HandleExit(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(Player->Character->Battle) {
 			Player->ApplyDeathPenalty(PLAYER_DEATH_GOLD_PENALTY, 0);
 			Player->Character->Health = 0;
-			Player->Character->Mana = Player->Character->MaxMana / 2;
-			Player->Character->LoadMap = nullptr;
+			Player->Character->Mana = 0;
 			Player->Character->DeleteStatusEffects();
 		}
 

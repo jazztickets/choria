@@ -277,16 +277,9 @@ void _Save::SavePlayer(const _Object *Player, ae::_LogFile *Log) {
 	if(Player->Character->CharacterID == 0)
 		return;
 
-	//TODO fix
-
-	// Reset spawn point if player is dead
-	//if(!Player->Character->IsAlive())
-	//	SaveMap = "";
-
 	// Get player stats
 	Json::Value Data;
 	Player->SerializeSaveData(Data);
-	//Data["stats"]["map_id"] = SaveMap;
 
 	// Get JSON string
 	Json::StreamWriterBuilder Writer;
@@ -326,10 +319,6 @@ void _Save::LoadPlayer(_Object *Player) {
 
 	// Get stats
 	Player->Character->CalculateStats();
-
-	// Max sure player has health
-	if(!Player->Character->IsAlive() && !Player->Character->Hardcore)
-		Player->Character->Health = Player->Character->MaxHealth / 2;
 }
 
 // Get save version from database
