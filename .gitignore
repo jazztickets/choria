@@ -3,6 +3,7 @@
 *.~lock*
 *.zip
 CMakeLists.txt.user
+.vscode/
 bin/
 build/
 export/
