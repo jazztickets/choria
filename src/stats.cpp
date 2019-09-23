@@ -31,6 +31,9 @@
 #include <algorithm>
 #include <iostream>
 
+// Constants
+static const int DEFAULT_ACTIONBAR_SIZE = 4;
+
 // Compare function for sorting portraits
 bool ComparePortrait(const _Portrait *First, const _Portrait *Second) {
 	return First->NetworkID < Second->NetworkID;
@@ -384,6 +387,7 @@ void _Stats::LoadData(const std::string &Path) {
 		Object->NetworkID = NetworkID++;
 		Object->Model = &Models.at(GetString(Node, "model"));
 		Object->BuildTexture = ae::Assets.Textures[GetString(Node, "texture")];
+		Object->Character->ActionBar.resize(DEFAULT_ACTIONBAR_SIZE);
 		if(!Object->BuildTexture)
 			throw std::runtime_error("Cannot find build texture for build '" + Object->Name + "' in " + Path);
 		if(Builds.find(Object->Name) != Builds.end())
