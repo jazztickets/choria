@@ -23,8 +23,11 @@
 		<model id="hunter" texture="textures/models/hunter.png"/>
 		<model id="gambler" texture="textures/models/gambler.png"/>
 	</models>
+	<buffs>
+		<buff id="healing" name="Healing" script="Buff_Healing" texture="textures/buffs/healing.png"/>
+	</buffs>
 	<skills>
-		<skill id="attack" name="Attack" texture="textures/skills/attack.png">
+		<skill id="attack" name="Attack" max_level="20" texture="textures/skills/attack.png">
 			<target type="enemy" alive="true" />
 			<use scope="battle" script="Skill_Attack"/>
 		</skill>
@@ -33,9 +36,6 @@
 			<use scope="battle" script="Skill_MonsterAttack"/>
 		</skill>
 	</skills>
-	<buffs>
-		<buff id="healing" name="Healing" script="Buff_Healing" texture="textures/buffs/healing.png"/>
-	</buffs>
 	<items>
 		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
 			<price buy="5" tradable="false"/>

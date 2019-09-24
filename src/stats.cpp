@@ -285,36 +285,6 @@ void _Stats::LoadData(const std::string &Path) {
 		ModelsIndex[Model.NetworkID] = &Models[Model.ID];
 	}
 
-	// Load skills
-	NetworkID = 1;
-	for(tinyxml2::XMLElement *Node = Nodes["skills"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
-		_BaseItem Skill;
-		Skill.ID = GetString(Node, "id");
-		if(Items.find(Skill.ID) != Items.end())
-			throw std::runtime_error("Duplicate skill id '" + Skill.ID + "' in " + Path);
-
-		Skill.Name = GetString(Node, "name");
-		Skill.Texture = GetTexture(Node, "texture");
-
-		// Get target
-		tinyxml2::XMLElement *TargetNode = Node->FirstChildElement("target");
-		if(TargetNode) {
-			Skill.Target = TargetTypesIndex[GetString(TargetNode, "type")];
-			Skill.TargetAlive = TargetNode->BoolAttribute("alive", true);
-		}
-
-		// Get use
-		tinyxml2::XMLElement *UseNode = Node->FirstChildElement("use");
-		if(UseNode) {
-			Skill.Scope = ScopeTypesIndex[GetString(UseNode, "scope")];
-			Skill.Script = GetString(UseNode, "script");
-		}
-
-		Skill.NetworkID = NetworkID++;
-		Items[Skill.ID] = Skill;
-		ItemsIndex[Skill.NetworkID] = &Items[Skill.ID];
-	}
-
 	// Load buffs
 	NetworkID = 1;
 	for(tinyxml2::XMLElement *Node = Nodes["buffs"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
@@ -332,8 +302,40 @@ void _Stats::LoadData(const std::string &Path) {
 		BuffsIndex[Buff.NetworkID] = &Buffs[Buff.ID];
 	}
 
-	// Load items
+	// Load skills
 	NetworkID = 1;
+	for(tinyxml2::XMLElement *Node = Nodes["skills"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
+		_BaseItem Skill;
+		Skill.ID = GetString(Node, "id");
+		if(Items.find(Skill.ID) != Items.end())
+			throw std::runtime_error("Duplicate skill id '" + Skill.ID + "' in " + Path);
+
+		Skill.Type = ItemType::SKILL;
+		Skill.Name = GetString(Node, "name");
+		Skill.Texture = GetTexture(Node, "texture");
+		Skill.MaxLevel = Node->IntAttribute("max_level", 1);
+
+		// Get target
+		tinyxml2::XMLElement *TargetNode = Node->FirstChildElement("target");
+		if(TargetNode) {
+			Skill.Target = TargetTypesIndex[GetString(TargetNode, "type")];
+			Skill.TargetAlive = TargetNode->BoolAttribute("alive", true);
+		}
+
+		// Get use
+		tinyxml2::XMLElement *UseNode = Node->FirstChildElement("use");
+		if(UseNode) {
+			Skill.Scope = ScopeTypesIndex[GetString(UseNode, "scope")];
+			Skill.Script = GetString(UseNode, "script");
+		}
+
+		Skill.Stats = this;
+		Skill.NetworkID = NetworkID++;
+		Items[Skill.ID] = Skill;
+		ItemsIndex[Skill.NetworkID] = &Items[Skill.ID];
+	}
+
+	// Load items
 	for(tinyxml2::XMLElement *Node = Nodes["items"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_BaseItem Item;
 		Item.ID = GetString(Node, "id");
@@ -374,6 +376,7 @@ void _Stats::LoadData(const std::string &Path) {
 			Item.Scope = ScopeTypesIndex[GetString(UseNode, "scope", false)];
 		}
 
+		Item.Stats = this;
 		Item.NetworkID = NetworkID++;
 		Items[Item.ID] = Item;
 		ItemsIndex[Item.NetworkID] = &Items[Item.ID];
