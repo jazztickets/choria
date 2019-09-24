@@ -482,7 +482,7 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate monster id '" + Monster.ID + "' in " + Path);
 
 		Monster.Name = GetString(Node, "name");
-		Monster.Texture = GetTexture(Node, "texture");
+		Monster.Portrait = &Portraits.at(GetString(Node, "portrait"));
 
 		// Get stats
 		tinyxml2::XMLElement *StatsNode = Node->FirstChildElement("stats");
@@ -490,6 +490,8 @@ void _Stats::LoadData(const std::string &Path) {
 			Monster.AI = GetString(StatsNode, "ai");
 			Monster.Health = StatsNode->IntAttribute("health");
 			Monster.Mana = StatsNode->IntAttribute("mana");
+			Monster.Experience = StatsNode->IntAttribute("experience");
+			Monster.Gold = StatsNode->IntAttribute("gold");
 		}
 
 		// Get damage
@@ -524,6 +526,7 @@ void _Stats::LoadData(const std::string &Path) {
 
 		Monster.NetworkID = NetworkID++;
 		Monsters[Monster.ID] = Monster;
+		MonstersIndex[Monster.NetworkID] = &Monsters[Monster.ID];
 	}
 
 	// Load zones
@@ -616,35 +619,22 @@ void _Stats::OldLoadLights() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(uint16_t MonsterID, _Object *Object, double Difficulty) const {
-	Object->Monster->DatabaseID = MonsterID;
-
-	// Run query
-	Database->PrepareQuery("SELECT m.*, ai.name as ai_name FROM monster m, ai WHERE m.ai_id = ai.id AND m.id = @monster_id");
-	Database->BindInt(1, MonsterID);
+void _Stats::GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, double Difficulty) const {
+	Object->Monster->MonsterStat = MonsterStat;
 
 	// Get data
-	if(Database->FetchRow()) {
-		Object->Character->Level = Database->GetInt<int>("level");
-		Object->Name = Database->GetString("name");
-		Object->Character->Portrait = &Portraits.at("crow");
-		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
-		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
-		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
-		Object->Character->BaseMaxDamage = Database->GetInt<int>("maxdamage");
-		Object->Character->BaseArmor = Database->GetInt<int>("armor");
-		Object->Character->BaseDamageBlock = Database->GetInt<int>("block");
-		Object->Monster->ExperienceGiven = Database->GetInt<int>("experience");
-		Object->Monster->GoldGiven = Database->GetInt<int>("gold");
-		Object->Monster->AI = Database->GetString("ai_name");
-		Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
-		Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
-		Object->Character->Gold = Object->Monster->GoldGiven;
-		Object->Character->CalcLevelStats = false;
-	}
-
-	// Free memory
-	Database->CloseQuery();
+	Object->Name = MonsterStat->Name;
+	Object->Character->Portrait = MonsterStat->Portrait;
+	Object->Character->BaseMaxHealth = (int)(MonsterStat->Health * Difficulty);
+	Object->Character->BaseMaxMana = MonsterStat->Mana;
+	Object->Character->BaseMinDamage = MonsterStat->MinDamage;
+	Object->Character->BaseMaxDamage = MonsterStat->MaxDamage;
+	Object->Character->BaseArmor = 0;
+	Object->Character->BaseDamageBlock = 0;
+	Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
+	Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
+	Object->Character->Gold = MonsterStat->Gold;
+	Object->Character->CalcLevelStats = false;
 }
 
 // Get portrait by network id

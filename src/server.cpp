@@ -1954,13 +1954,13 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Battle->Difficulty[1] = Difficulty;
 
 			// Add monsters
-			for(auto &Monster : Monsters) {
+			for(auto &MonsterStat : Monsters) {
 				_Object *Object = ObjectManager->Create();
 				Object->Server = this;
 				Object->Scripting = Scripting;
-				Object->Monster->DatabaseID = Monster->NetworkID;
+				Object->Monster->MonsterStat = MonsterStat;
 				Object->Stats = Stats;
-				Stats->GetMonsterStats(Monster->NetworkID, Object, Difficulty);
+				Stats->GetMonsterStats(MonsterStat, Object, Difficulty);
 				Object->Character->CalculateStats();
 				Battle->AddObject(Object, 1);
 			}

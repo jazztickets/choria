@@ -209,7 +209,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 		int SideCount = 0;
 		for(auto &Object : Battle->Objects) {
 			if(Object->Fighter->BattleSide == SourceObject->Fighter->BattleSide) {
-				if(Object->Monster->Owner == SourceObject && Object->Monster->DatabaseID == SummonDatabaseID) {
+				if(Object->Monster->Owner == SourceObject && Object->Monster->MonsterStat->NetworkID == SummonDatabaseID) {
 					ExistingSummon = Object;
 				}
 
@@ -235,10 +235,10 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 			_Object *Object = SourceObject->Server->ObjectManager->Create();
 			Object->Server = SourceObject->Server;
 			Object->Scripting = SourceObject->Scripting;
-			Object->Monster->DatabaseID = SummonDatabaseID;
 			Object->Stats = SourceObject->Stats;
+			Object->Monster->MonsterStat = Object->Stats->MonstersIndex.at(SummonDatabaseID);
 			Object->Monster->Owner = SourceObject;
-			SourceObject->Stats->GetMonsterStats(Object->Monster->DatabaseID, Object);
+			SourceObject->Stats->GetMonsterStats(Object->Monster->MonsterStat, Object);
 
 			// Add stats from script
 			Object->Character->Health = Object->Character->BaseMaxHealth = ActionResult.Summon.Health;

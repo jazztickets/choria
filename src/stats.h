@@ -76,10 +76,11 @@ struct _Drop {
 };
 
 struct _MonsterStat {
-	_MonsterStat() : Health(0), Mana(0), MinDamage(0), MaxDamage(0) { }
+	_MonsterStat() : Health(0), Mana(0), MinDamage(0), MaxDamage(0), Experience(0), Gold(0) { }
 	std::string ID;
 	std::string Name;
 	std::string AI;
+	const _Portrait *Portrait;
 	const ae::_Texture *Texture;
 	std::vector<const _BaseItem *> Actions;
 	std::vector<_Drop> Drops;
@@ -87,6 +88,8 @@ struct _MonsterStat {
 	int Mana;
 	int MinDamage;
 	int MaxDamage;
+	int Experience;
+	int Gold;
 	uint16_t NetworkID;
 };
 
@@ -173,7 +176,7 @@ class _Stats {
 		~_Stats();
 
 		// General Stats
-		void GetMonsterStats(uint16_t MonsterID, _Object *Object, double Difficulty=1.0) const;
+		void GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, double Difficulty=1.0) const;
 
 		// Menu
 		const _Portrait *GetPortrait(uint8_t NetworkID) const;
@@ -215,7 +218,7 @@ class _Stats {
 		std::unordered_map<std::string, _Blacksmith> Blacksmiths;
 		std::unordered_map<std::string, _MinigameStat> Minigames;
 		std::unordered_map<std::string, _MonsterStat> Monsters;
-		std::unordered_map<std::string, const _MonsterStat *> MonstersIndex;
+		std::unordered_map<uint16_t, const _MonsterStat *> MonstersIndex;
 		std::unordered_map<std::string, _Zone> Zones;
 		std::unordered_map<std::string, const _Object *> Builds;
 

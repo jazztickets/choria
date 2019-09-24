@@ -529,7 +529,7 @@ void _Battle::Unserialize(ae::_Buffer &Data, _HUD *HUD) {
 		_Object *Object = nullptr;
 		if(DatabaseID) {
 			Object = Manager->CreateWithID(NetworkID);
-			Stats->GetMonsterStats(DatabaseID, Object);
+			Stats->GetMonsterStats(Stats->MonstersIndex.at(DatabaseID), Object);
 		}
 		else
 			Object = Manager->GetObject(NetworkID);
@@ -583,11 +583,11 @@ void _Battle::ServerEndBattle() {
 			}
 
 			// Sum experience and gold
-			SideStats[Side].TotalExperienceGiven += Object->Monster->ExperienceGiven;
+			SideStats[Side].TotalExperienceGiven += Object->Monster->MonsterStat->Experience;
 
 			// Calculate gold based on monster or player
 			if(Object->IsMonster())
-				SideStats[Side].TotalGoldGiven += Object->Monster->GoldGiven + Object->Fighter->GoldStolen;
+				SideStats[Side].TotalGoldGiven += Object->Monster->MonsterStat->Gold + Object->Fighter->GoldStolen;
 			else
 				SideStats[Side].TotalGoldGiven += Object->Character->Bounty + Object->Fighter->GoldStolen + (int)(Object->Character->Gold * BountyEarned + 0.5f);
 		}
@@ -650,7 +650,7 @@ void _Battle::ServerEndBattle() {
 			std::list<uint32_t> ItemDrops;
 			for(auto &Object : SideObjects[!WinningSide]) {
 				if(Object->IsMonster())
-					Stats->GenerateItemDrops(Object->Monster->DatabaseID, 1, DropRate, ItemDrops);
+					Stats->GenerateItemDrops(Object->Monster->MonsterStat->NetworkID, 1, DropRate, ItemDrops);
 			}
 
 			// Boss drops aren't divided up

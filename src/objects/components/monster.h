@@ -23,6 +23,7 @@
 
 // Forward Declarations
 class _Object;
+struct _MonsterStat;
 
 // Classes
 class _Monster {
@@ -36,10 +37,7 @@ class _Monster {
 
 		// Attributes
 		_Object *Owner;
-		uint16_t DatabaseID;
-		int ExperienceGiven;
-		int GoldGiven;
-		std::string AI;
+		const _MonsterStat *MonsterStat;
 
 	private:
 

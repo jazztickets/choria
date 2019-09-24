@@ -307,7 +307,7 @@ void _Object::UpdateBot(double FrameTime) {
 
 // Update monster AI during battle
 void _Object::UpdateMonsterAI(double FrameTime) {
-	if(!Monster->AI.length())
+	if(Monster->MonsterStat->AI.empty())
 		return;
 
 	// Call AI script to get action
@@ -319,7 +319,7 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 
 		// Call lua script
 		if(Enemies.size()) {
-			if(Scripting->StartMethodCall(Monster->AI, "Update")) {
+			if(Scripting->StartMethodCall(Monster->MonsterStat->AI, "Update")) {
 				Character->Targets.clear();
 				Scripting->PushObject(this);
 				Scripting->PushObjectList(Enemies);
@@ -875,7 +875,10 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 // Serialize object for battle
 void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
-	Data.Write<uint16_t>(Monster->DatabaseID);
+	if(Monster->MonsterStat)
+		Data.Write<uint16_t>(Monster->MonsterStat->NetworkID);
+	else
+		Data.Write<uint16_t>(0);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
@@ -1212,8 +1215,7 @@ void _Object::SendPacket(ae::_Buffer &Packet) {
 
 // Check if object is a monster
 bool _Object::IsMonster() const {
-	//TODO Monster != nullptr
-	return Monster->DatabaseID != 0;
+	return Monster->MonsterStat != nullptr;
 }
 
 // Create list of nodes to destination
