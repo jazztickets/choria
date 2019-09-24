@@ -55,7 +55,7 @@ class _Fighter {
 		_Object *LastTarget[2];
 
 		// State
-		std::list<uint32_t> ItemDropsReceived;
+		std::list<const _BaseItem *> ItemDropsReceived;
 		int GoldStolen;
 		bool JoinedBattle;
 		uint8_t BattleSide;

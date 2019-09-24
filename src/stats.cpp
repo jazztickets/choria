@@ -519,7 +519,7 @@ void _Stats::LoadData(const std::string &Path) {
 			for(tinyxml2::XMLElement *DropNode = DropsNode->FirstChildElement("drop"); DropNode != nullptr; DropNode = DropNode->NextSiblingElement()) {
 				_Drop Drop;
 				Drop.Item = GetItem(DropNode, "id", true);
-				Drop.Odds = DropNode->UnsignedAttribute("odds");
+				Drop.Odds = DropNode->IntAttribute("odds");
 				Monster.Drops.push_back(Drop);
 			}
 		}
@@ -618,7 +618,7 @@ void _Stats::OldLoadLights() {
 	Database->CloseQuery();
 }
 
-// Gets monsters stats from the database
+// Set object's monster stats
 void _Stats::GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, double Difficulty) const {
 	Object->Monster->MonsterStat = MonsterStat;
 
@@ -757,52 +757,51 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, const std::string 
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateItemDrops(uint16_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const {
-	if(MonsterID == 0)
+void _Stats::GenerateItemDrops(const _MonsterStat *MonsterStat, int Count, int DropRate, std::list<const _BaseItem *> &ItemDrops) const {
+	if(!MonsterStat)
 		return;
 
-	// Run query
-	Database->PrepareQuery("SELECT item_id, odds FROM monsterdrop WHERE monster_id = @monster_id");
-	Database->BindInt(1, MonsterID);
-
 	// Get list of possible drops and build CDT
-	std::list<_OldItemDrop> PossibleItemDrops;
-	uint32_t OddsSum = 0;
-	while(Database->FetchRow()) {
-		uint32_t ItemID = Database->GetInt<uint32_t>("item_id");
-		uint32_t Odds = 100 * Database->GetInt<uint32_t>("odds");
+	int OddsSum = 0;
+	std::list<_Drop> PossibleItemDrops;
+	for(const auto &MonsterDrop : MonsterStat->Drops) {
+		int Odds = 100 * MonsterDrop.Odds;
 
+		// Reduce chance that nothing drops
 		float Scale = 1.0f;
-		if(ItemID == 0)
+		if(!MonsterDrop.Item)
 			Scale = BATTLE_NOTHINGDROP_SCALE;
 
 		// Improve odds of items
 		Odds *= 1.0f + DropRate / 100.0f * Scale;
-
 		OddsSum += Odds;
-		PossibleItemDrops.push_back(_OldItemDrop(ItemID, OddsSum));
+
+		// Add to list of drops
+		_Drop Drop;
+		Drop.Item = MonsterDrop.Item;
+		Drop.Odds = OddsSum;
+		PossibleItemDrops.push_back(Drop);
 	}
-	Database->CloseQuery();
 
 	// Check for items
 	if(OddsSum > 0) {
 
 		// Generate items
-		for(uint32_t i = 0; i < Count; i++) {
-			uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
+		for(int i = 0; i < Count; i++) {
+			int RandomNumber = ae::GetRandomInt(1, OddsSum);
 
 			// Find item id in CDT
-			uint32_t ItemID = 0;
+			const _BaseItem *Item = nullptr;
 			for(auto &MonsterDrop : PossibleItemDrops) {
 				if(RandomNumber <= MonsterDrop.Odds) {
-					ItemID = MonsterDrop.ItemID;
+					Item = MonsterDrop.Item;
 					break;
 				}
 			}
 
 			// Populate item list
-			if(ItemID)
-				ItemDrops.push_back(ItemID);
+			if(Item)
+				ItemDrops.push_back(Item);
 		}
 	}
 }

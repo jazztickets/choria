@@ -647,10 +647,10 @@ void _Battle::ServerEndBattle() {
 			std::vector<_Object *> ObjectArray { std::begin(RewardObjects), std::end(RewardObjects) };
 
 			// Generate items drops
-			std::list<uint32_t> ItemDrops;
+			std::list<const _BaseItem *> ItemDrops;
 			for(auto &Object : SideObjects[!WinningSide]) {
 				if(Object->IsMonster())
-					Stats->GenerateItemDrops(Object->Monster->MonsterStat->NetworkID, 1, DropRate, ItemDrops);
+					Stats->GenerateItemDrops(Object->Monster->MonsterStat, 1, DropRate, ItemDrops);
 			}
 
 			// Boss drops aren't divided up
@@ -733,10 +733,10 @@ void _Battle::ServerEndBattle() {
 		Packet.Write<int>(GoldEarned);
 
 		// Sort item drops
-		std::unordered_map<uint32_t, int> SortedItems;
-		for(auto &ItemID : Object->Fighter->ItemDropsReceived) {
-			SortedItems[ItemID]++;
-		}
+		std::unordered_map<const _BaseItem *, int> SortedItems;
+		for(auto &Item : Object->Fighter->ItemDropsReceived)
+			SortedItems[Item]++;
+
 		Object->Fighter->ItemDropsReceived.clear();
 
 		// Write item count
@@ -745,10 +745,10 @@ void _Battle::ServerEndBattle() {
 
 		// Write items
 		for(auto &Iterator : SortedItems) {
-			Packet.Write<uint32_t>(Iterator.first);
+			Packet.Write<uint16_t>(Iterator.first->NetworkID);
 			Packet.Write<uint8_t>(0);
 			Packet.Write<uint8_t>((uint8_t)Iterator.second);
-			Object->Inventory->AddItem(Stats->ItemsIndex.at(Iterator.first), 0, Iterator.second);
+			Object->Inventory->AddItem(Iterator.first, 0, Iterator.second);
 		}
 
 		// Update bot goal

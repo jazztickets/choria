@@ -72,7 +72,7 @@ struct _Level {
 
 struct _Drop {
 	const _BaseItem *Item;
-	uint32_t Odds;
+	int Odds;
 };
 
 struct _MonsterStat {
@@ -154,12 +154,6 @@ struct _MinigameStat {
 	uint16_t NetworkID;
 };
 
-struct _OldItemDrop {
-	_OldItemDrop(uint32_t ItemID, uint32_t Odds) : ItemID(ItemID), Odds(Odds) { }
-	uint32_t ItemID;
-	uint32_t Odds;
-};
-
 struct _OldLightType {
 	uint32_t ID;
 	std::string Name;
@@ -186,7 +180,7 @@ class _Stats {
 
 		// Monsters
 		void GenerateMonsterListFromZone(int AdditionalCount, const std::string &ZoneID, std::list<const _MonsterStat *> &Monsters, bool &Boss, double &Cooldown) const;
-		void GenerateItemDrops(uint16_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const;
+		void GenerateItemDrops(const _MonsterStat *MonsterStat, int Count, int DropRate, std::list<const _BaseItem *> &ItemDrops) const;
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[(size_t)Level-1]; }
