@@ -47,6 +47,7 @@ enum class StatValueType : int {
 	INTEGER,
 	FLOAT,
 	POINTER,
+	STRING,
 };
 
 struct _StatStorage {
@@ -88,7 +89,7 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "Miss",          { StatType::MISS          , StatValueType::BOOLEAN } },
 	{ "Crit",          { StatType::CRIT          , StatValueType::BOOLEAN } },
 	{ "Flee",          { StatType::FLEE          , StatValueType::BOOLEAN } },
-	{ "Battle",        { StatType::BATTLE        , StatValueType::INTEGER } },
+	{ "Battle",        { StatType::BATTLE        , StatValueType::STRING  } },
 	{ "Hunt",          { StatType::HUNT          , StatValueType::FLOAT   } },
 	{ "BountyHunt",    { StatType::BOUNTYHUNT    , StatValueType::FLOAT   } },
 	{ "Teleport",      { StatType::TELEPORT      , StatValueType::FLOAT   } },
@@ -96,10 +97,11 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 	{ "Clock",         { StatType::CLOCK         , StatValueType::FLOAT   } },
 };
 
-union _Value {
+struct _Value {
 	int Integer;
 	float Float;
 	void *Pointer;
+	std::string String;
 };
 
 // Stat changes

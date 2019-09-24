@@ -129,7 +129,7 @@ class _Character {
 		const _Portrait *Portrait;
 
 		// State
-		std::unordered_map<uint32_t, double> BattleCooldown;
+		std::unordered_map<std::string, double> BattleCooldown;
 		std::string PartyName;
 		int Gold;
 		int NextBattle;

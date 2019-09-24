@@ -696,6 +696,9 @@ void _Scripting::GetStatChange(int Index, _StatChange &StatChange) {
 				case StatValueType::POINTER:
 					StatChange.Values[Iterator->second.Type].Pointer = lua_touserdata(LuaState, -1);
 				break;
+				case StatValueType::STRING:
+					StatChange.Values[Iterator->second.Type].String = lua_tostring(LuaState, -1);
+				break;
 			}
 		}
 

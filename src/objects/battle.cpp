@@ -62,7 +62,6 @@ _Battle::_Battle() :
 
 	Difficulty{0.0, 1.0},
 	Cooldown(0.0),
-	Zone(0),
 	SideCount{0, 0},
 	PVP(false),
 	BountyEarned(0.0f),
@@ -524,7 +523,7 @@ void _Battle::Unserialize(ae::_Buffer &Data, _HUD *HUD) {
 
 		// Get object data
 		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
-		uint32_t DatabaseID = Data.Read<uint32_t>();
+		uint16_t DatabaseID = Data.Read<uint16_t>();
 
 		// Get object pointers
 		_Object *Object = nullptr;
@@ -706,8 +705,8 @@ void _Battle::ServerEndBattle() {
 		}
 
 		// Start cooldown timer
-		if(Object->Character->IsAlive() && Cooldown > 0.0 && Zone)
-			Object->Character->BattleCooldown[Zone] = Cooldown;
+		if(Object->Character->IsAlive() && Cooldown > 0.0 && !ZoneID.empty())
+			Object->Character->BattleCooldown[ZoneID] = Cooldown;
 
 		// Update stats
 		int CurrentLevel = Object->Character->Level;

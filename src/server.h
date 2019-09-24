@@ -47,7 +47,7 @@ namespace ae {
 
 struct _BattleEvent {
 	_Object *Object;
-	uint32_t Zone;
+	std::string ZoneID;
 	float BountyEarned;
 	float BountyClaimed;
 	int PVP;
@@ -68,7 +68,7 @@ class _Server {
 		void StopServer(int Seconds=0);
 
 		void SpawnPlayer(_Object *Player, _Map *LoadMap, EventType Event);
-		void QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);
+		void QueueBattle(_Object *Object, const std::string &ZoneID, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed);
 		void StartTeleport(_Object *Object, double Time);
 		void SendMessage(ae::_Peer *Peer, const std::string &Message, const std::string &ColorName);
 		void BroadcastMessage(ae::_Peer *IgnorePeer, const std::string &Message, const std::string &ColorName);

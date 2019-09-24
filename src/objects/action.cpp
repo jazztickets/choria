@@ -202,7 +202,7 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 	if(Battle) {
 
 		// Get database id
-		uint32_t SummonDatabaseID = ActionResult.Summon.ID;
+		uint16_t SummonDatabaseID = ActionResult.Summon.ID;
 
 		// Check for existing summon
 		_Object *ExistingSummon = nullptr;

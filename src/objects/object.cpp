@@ -875,7 +875,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 // Serialize object for battle
 void _Object::SerializeBattle(ae::_Buffer &Data) {
 	Data.Write<ae::NetworkIDType>(NetworkID);
-	Data.Write<uint32_t>(Monster->DatabaseID);
+	Data.Write<uint16_t>(Monster->DatabaseID);
 	Data.Write<glm::ivec2>(Position);
 	Data.Write<int>(Character->Health);
 	Data.Write<int>(Character->MaxHealth);
@@ -1014,7 +1014,7 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 			// Start battle
 			if(StatChange.HasStat(StatType::BATTLE))
-				Server->QueueBattle(this, (uint32_t)StatChange.Values[StatType::BATTLE].Integer, true, false, 0.0f, 0.0f);
+				Server->QueueBattle(this, StatChange.Values[StatType::BATTLE].String, true, false, 0.0f, 0.0f);
 
 			// Start PVP
 			if(StatChange.HasStat(StatType::HUNT))
@@ -1051,7 +1051,9 @@ int _Object::Move() {
 	// Move player
 	if(Map->CanMoveTo(Position + Direction, this)) {
 		Position += Direction;
-		if(GetTile()->Zone > 0 && Character->Invisible != 1)
+
+		// Update next battle counter
+		if(!GetTile()->ZoneID.empty() && Character->Invisible != 1)
 			Character->NextBattle--;
 
 		return InputState;

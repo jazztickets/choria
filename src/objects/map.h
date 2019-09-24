@@ -73,11 +73,11 @@ struct _Event {
 };
 
 struct _Tile {
-	_Tile() : TextureIndex{0, 0, 0, 0}, BaseTextureIndex(0), Zone(0), Wall(false), PVP(false) { }
+	_Tile() : TextureIndex{0, 0, 0, 0}, BaseTextureIndex(0), Wall(false), PVP(false) { }
 	uint32_t TextureIndex[MAP_LAYERS];
 	uint32_t BaseTextureIndex;
-	uint32_t Zone;
 	_Event Event;
+	std::string ZoneID;
 	bool Wall;
 	bool PVP;
 };

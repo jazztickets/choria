@@ -423,7 +423,7 @@ bool _PlayState::HandleCommand(ae::_Console *Console) {
 		if(Console->Command == "battle") {
 			if(Parameters.size() == 1) {
 				if(Network && Network->IsConnected()) {
-					Packet.Write<uint32_t>(ae::ToNumber<uint32_t>(Parameters[0]));
+					Packet.WriteString(Parameters[0].c_str());
 					Network->SendPacket(Packet);
 				}
 			}
@@ -1373,7 +1373,7 @@ void _PlayState::HandleBattleJoin(ae::_Buffer &Data) {
 
 	// Read header
 	ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
-	uint32_t DatabaseID = Data.Read<uint32_t>();
+	uint16_t DatabaseID = Data.Read<uint16_t>();
 
 	// Get object
 	_Object *Object = ObjectManager->GetObject(NetworkID);

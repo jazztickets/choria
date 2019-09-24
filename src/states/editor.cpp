@@ -398,12 +398,7 @@ void _EditorState::HandleMouseWheel(int Direction) {
 		if(ae::Input.ModKeyDown(KMOD_SHIFT))
 			Direction *= 10;
 
-		if(Mode == EditorModeType::TILE) {
-			if(Filter & MAP_RENDER_ZONE) {
-				AdjustValue(Brush->Zone, Direction);
-			}
-		}
-		else if(Mode == EditorModeType::OBJECT) {
+		if(Mode == EditorModeType::OBJECT) {
 			AdjustValue(ObjectData, Direction);
 		}
 	}
@@ -650,7 +645,7 @@ void _EditorState::DrawBrushInfo() {
 		DrawPosition.y += TextSpacingY;
 
 		// Draw zone
-		Buffer << "Zone " << Brush->Zone;
+		Buffer << "Zone " << Brush->ZoneID;
 
 		Filter & MAP_RENDER_ZONE ? Color.a = 1.0f : Color.a = 0.5f;
 		ae::Assets.Fonts["hud_tiny"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, Color);
@@ -1209,7 +1204,7 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 			if(Filter & MAP_RENDER_WALL)
 				Tile.Wall = Brush->Wall;
 			if(Filter & MAP_RENDER_ZONE)
-				Tile.Zone = Brush->Zone;
+				Tile.ZoneID = Brush->ZoneID;
 			if(Filter & MAP_RENDER_PVP)
 				Tile.PVP = Brush->PVP;
 			if(Filter & MAP_RENDER_EVENTTYPE)

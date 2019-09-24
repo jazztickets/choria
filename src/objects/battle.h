@@ -104,7 +104,7 @@ class _Battle : public ae::_BaseObject {
 		// Attributes
 		double Difficulty[2];
 		double Cooldown;
-		uint32_t Zone;
+		std::string ZoneID;
 		int SideCount[2];
 		bool PVP;
 		float BountyEarned;

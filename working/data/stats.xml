@@ -10,6 +10,7 @@
 		<portrait id="jas" texture="textures/portraits/jas.png"/>
 		<portrait id="pete" texture="textures/portraits/pete.png"/>
 		<portrait id="leb" texture="textures/portraits/leb.png"/>
+		<portrait id="crow" texture="textures/monsters/crow.png"/>
 	</portraits>
 	<models>
 		<model id="warrior" texture="textures/models/warrior.png"/>

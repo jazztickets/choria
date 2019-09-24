@@ -360,7 +360,7 @@ void _Map::CheckEvents(_Object *Object) {
 				Object->Character->Trader = nullptr;
 
 				if(Object->Character->NextBattle <= 0) {
-					Server->QueueBattle(Object, Tile->Zone, false, false, 0.0f, 0.0f);
+					Server->QueueBattle(Object, Tile->ZoneID, false, false, 0.0f, 0.0f);
 				}
 			}
 		break;
@@ -636,8 +636,9 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 				_Tile *Tile = &Tiles[i][j];
 
 				// Draw zone color
-				if(!Tile->Wall && Tile->Zone > 0) {
-					ae::Graphics.SetColor(ZoneColors[Tile->Zone % CurrentZoneColors]);
+				if(!Tile->Wall && !Tile->ZoneID.empty()) {
+					//TODO fix
+					ae::Graphics.SetColor(ZoneColors[Stats->Zones.at(Tile->ZoneID).NetworkID % CurrentZoneColors]);
 					ae::Graphics.DrawRectangle(glm::vec2(i, j), glm::vec2(i+1, j+1), true);
 				}
 			}
@@ -658,8 +659,8 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 			else {
 
 				// Draw zone number
-				if((RenderFlags & MAP_RENDER_ZONE) && Tile->Zone > 0)
-					ae::Assets.Fonts["hud_medium"]->DrawText(std::to_string(Tile->Zone), glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
+				if((RenderFlags & MAP_RENDER_ZONE) && !Tile->ZoneID.empty())
+					ae::Assets.Fonts["hud_medium"]->DrawText(Tile->ZoneID, glm::vec2(DrawPosition), ae::CENTER_MIDDLE, glm::vec4(1.0f), 1.0f / 64.0f);
 
 				// Draw PVP
 				if((RenderFlags & MAP_RENDER_PVP) && Tile->PVP)
@@ -853,7 +854,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 			// Zone
 			case 'z': {
 				if(Tile)
-					File >> Tile->Zone;
+					File >> Tile->ZoneID;
 			} break;
 			// Event
 			case 'e': {
@@ -935,8 +936,8 @@ bool _Map::Save(const std::string &Path) {
 			Output << "T" << '\n';
 			if(Tile.BaseTextureIndex)
 				Output << "b " << Tile.BaseTextureIndex << '\n';
-			if(Tile.Zone)
-				Output << "z " << Tile.Zone << '\n';
+			if(!Tile.ZoneID.empty())
+				Output << "z " << Tile.ZoneID << '\n';
 			if(Tile.Event.Type != EventType::NONE)
 				Output << "e " << (int)Tile.Event.Type << " " << Tiles[i][j].Event.Data << '\n';
 			if(Tile.Wall)

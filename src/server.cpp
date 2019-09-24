@@ -795,10 +795,10 @@ void _Server::SpawnPlayer(_Object *Player, _Map *LoadMap, EventType Event) {
 }
 
 // Queue a battle for an object
-void _Server::QueueBattle(_Object *Object, uint32_t Zone, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed) {
+void _Server::QueueBattle(_Object *Object, const std::string &ZoneID, bool Scripted, bool PVP, float BountyEarned, float BountyClaimed) {
 	_BattleEvent BattleEvent;
 	BattleEvent.Object = Object;
-	BattleEvent.Zone = Zone;
+	BattleEvent.ZoneID = ZoneID;
 	BattleEvent.Scripted = Scripted;
 	BattleEvent.PVP = PVP;
 	BattleEvent.BountyEarned = BountyEarned;
@@ -1634,7 +1634,7 @@ void _Server::HandleCommand(ae::_Buffer &Data, ae::_Peer *Peer) {
 	// Process command
 	std::string Command = Data.ReadString();
 	if(Command == "battle") {
-		uint32_t ZoneID = Data.Read<uint32_t>();
+		std::string ZoneID = Data.ReadString();
 		QueueBattle(Player, ZoneID, false, false, 0.0f, 0.0f);
 	}
 	else if(Command == "bounty") {
@@ -1856,7 +1856,7 @@ void _Server::SendTradeInformation(_Object *Sender, _Object *Receiver) {
 void _Server::StartBattle(_BattleEvent &BattleEvent) {
 
 	// Return if object is already in battle or in zone 0
-	if(BattleEvent.Object->Character->Battle || (!BattleEvent.PVP && !BattleEvent.Zone))
+	if(BattleEvent.Object->Character->Battle || (!BattleEvent.PVP && BattleEvent.ZoneID.empty()))
 		return;
 
 	// Handle PVP
@@ -1894,7 +1894,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 	}
 	else {
 
-		// Get a list of players
+		// Get a list of nearby players
 		std::list<_Object *> Players;
 		BattleEvent.Object->Map->GetPotentialBattlePlayers(BattleEvent.Object, BATTLE_COOP_DISTANCE, BATTLE_MAX_OBJECTS_PER_SIDE-1, Players);
 		int AdditionalCount = 0;
@@ -1902,16 +1902,16 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			AdditionalCount = (int)Players.size();
 
 		// Get monsters
-		std::list<uint32_t> MonsterIDs;
+		std::list<const _MonsterStat *> Monsters;
 		bool Boss = false;
 		double Cooldown = 0.0;
-		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.Zone, MonsterIDs, Boss, Cooldown);
+		Stats->GenerateMonsterListFromZone(AdditionalCount, BattleEvent.ZoneID, Monsters, Boss, Cooldown);
 
 		// Fight if there are monsters
-		if(MonsterIDs.size()) {
+		if(Monsters.size()) {
 
 			// Check for cooldown
-			if(BattleEvent.Object->Character->BattleCooldown.find(BattleEvent.Zone) != BattleEvent.Object->Character->BattleCooldown.end())
+			if(BattleEvent.Object->Character->BattleCooldown.find(BattleEvent.ZoneID) != BattleEvent.Object->Character->BattleCooldown.end())
 				return;
 
 			// Create a new battle instance
@@ -1921,7 +1921,7 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Battle->Server = this;
 			Battle->Boss = Boss;
 			Battle->Cooldown = Cooldown;
-			Battle->Zone = BattleEvent.Zone;
+			Battle->ZoneID = BattleEvent.ZoneID;
 			Battle->Scripting = Scripting;
 			Scripting->CreateBattle(Battle);
 
@@ -1954,13 +1954,13 @@ void _Server::StartBattle(_BattleEvent &BattleEvent) {
 			Battle->Difficulty[1] = Difficulty;
 
 			// Add monsters
-			for(auto &MonsterID : MonsterIDs) {
+			for(auto &Monster : Monsters) {
 				_Object *Object = ObjectManager->Create();
 				Object->Server = this;
 				Object->Scripting = Scripting;
-				Object->Monster->DatabaseID = MonsterID;
+				Object->Monster->DatabaseID = Monster->NetworkID;
 				Object->Stats = Stats;
-				Stats->GetMonsterStats(MonsterID, Object, Difficulty);
+				Stats->GetMonsterStats(Monster->NetworkID, Object, Difficulty);
 				Object->Character->CalculateStats();
 				Battle->AddObject(Object, 1);
 			}

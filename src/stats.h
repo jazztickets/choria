@@ -59,13 +59,6 @@ struct _Build {
 	const ae::_Texture *Texture;
 };
 
-struct _OldScript {
-	uint32_t ID;
-	std::string Name;
-	int Level;
-	double Cooldown;
-};
-
 struct _Level {
 	int Level;
 	int Experience;
@@ -75,12 +68,6 @@ struct _Level {
 	int Damage;
 	int Armor;
 	int SkillPoints;
-};
-
-struct _OldZone {
-	uint32_t MonsterID;
-	uint32_t Odds;
-	int Max;
 };
 
 struct _Drop {
@@ -105,7 +92,8 @@ struct _MonsterStat {
 
 struct _ZoneMonster {
 	const _MonsterStat *Monster;
-	uint32_t Odds;
+	int Odds;
+	int Max;
 };
 
 struct _Zone {
@@ -113,6 +101,7 @@ struct _Zone {
 	std::vector<_ZoneMonster> Monsters;
 	int Min;
 	int Max;
+	uint16_t NetworkID;
 };
 
 struct _Vendor {
@@ -184,7 +173,7 @@ class _Stats {
 		~_Stats();
 
 		// General Stats
-		void GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty=1.0) const;
+		void GetMonsterStats(uint16_t MonsterID, _Object *Object, double Difficulty=1.0) const;
 
 		// Menu
 		const _Portrait *GetPortrait(uint8_t NetworkID) const;
@@ -193,8 +182,8 @@ class _Stats {
 		void GetStartingBuilds(std::list<const _Object *> &BuildsList) const;
 
 		// Monsters
-		void GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const;
-		void GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const;
+		void GenerateMonsterListFromZone(int AdditionalCount, const std::string &ZoneID, std::list<const _MonsterStat *> &Monsters, bool &Boss, double &Cooldown) const;
+		void GenerateItemDrops(uint16_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const;
 
 		// Levels
 		const _Level *GetLevel(int Level) const { return &Levels[(size_t)Level-1]; }
@@ -227,7 +216,6 @@ class _Stats {
 		std::unordered_map<std::string, _MinigameStat> Minigames;
 		std::unordered_map<std::string, _MonsterStat> Monsters;
 		std::unordered_map<std::string, const _MonsterStat *> MonstersIndex;
-
 		std::unordered_map<std::string, _Zone> Zones;
 		std::unordered_map<std::string, const _Object *> Builds;
 

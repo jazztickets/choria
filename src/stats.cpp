@@ -527,6 +527,7 @@ void _Stats::LoadData(const std::string &Path) {
 	}
 
 	// Load zones
+	NetworkID = 1;
 	for(tinyxml2::XMLElement *Node = Nodes["zones"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Zone Zone;
 		Zone.ID = GetString(Node, "id");
@@ -540,10 +541,12 @@ void _Stats::LoadData(const std::string &Path) {
 		for(tinyxml2::XMLElement *MonsterNode = Node->FirstChildElement("monster"); MonsterNode != nullptr; MonsterNode = MonsterNode->NextSiblingElement()) {
 			_ZoneMonster ZoneMonster;
 			ZoneMonster.Monster = GetMonster(MonsterNode, "id");
-			ZoneMonster.Odds = MonsterNode->UnsignedAttribute("odds");
+			ZoneMonster.Odds = MonsterNode->IntAttribute("odds");
+			ZoneMonster.Max = MonsterNode->IntAttribute("max");
 			Zone.Monsters.push_back(ZoneMonster);
 		}
 
+		Zone.NetworkID = NetworkID++;
 		Zones[Zone.ID] = Zone;
 	}
 }
@@ -613,7 +616,7 @@ void _Stats::OldLoadLights() {
 }
 
 // Gets monsters stats from the database
-void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficulty) const {
+void _Stats::GetMonsterStats(uint16_t MonsterID, _Object *Object, double Difficulty) const {
 	Object->Monster->DatabaseID = MonsterID;
 
 	// Run query
@@ -624,7 +627,7 @@ void _Stats::GetMonsterStats(uint32_t MonsterID, _Object *Object, double Difficu
 	if(Database->FetchRow()) {
 		Object->Character->Level = Database->GetInt<int>("level");
 		Object->Name = Database->GetString("name");
-		//Object->Character->Portrait = ae::Assets.Textures[Database->GetString("portrait")];
+		Object->Character->Portrait = &Portraits.at("crow");
 		Object->Character->BaseMaxHealth = (int)(Database->GetInt<int>("health") * Difficulty);
 		Object->Character->BaseMaxMana = Database->GetInt<int>("mana");
 		Object->Character->BaseMinDamage = Database->GetInt<int>("mindamage");
@@ -679,71 +682,47 @@ void _Stats::GetStartingBuilds(std::list<const _Object *> &BuildsList) const {
 }
 
 // Randomly generates a list of monsters from a zone
-void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, std::list<uint32_t> &Monsters, bool &Boss, double &Cooldown) const {
-	if(ZoneID == 0)
+void _Stats::GenerateMonsterListFromZone(int AdditionalCount, const std::string &ZoneID, std::list<const _MonsterStat *> &Monsters, bool &Boss, double &Cooldown) const {
+	if(ZoneID.empty())
+		return;
+
+	if(Zones.find(ZoneID) == Zones.end())
 		return;
 
 	// Get zone info
-	Database->PrepareQuery("SELECT boss, cooldown, minspawn, maxspawn FROM zone WHERE id = @zone_id");
-	Database->BindInt(1, ZoneID);
-
-	// Get spawn range
-	int MinSpawn = 0;
-	int MaxSpawn = 0;
-	if(Database->FetchRow()) {
-		Boss = Database->GetInt<int>("boss");
-		Cooldown = Database->GetReal("cooldown");
-		MinSpawn = Database->GetInt<int>("minspawn");
-		MaxSpawn = Database->GetInt<int>("maxspawn");
-	}
-	Database->CloseQuery();
+	const _Zone *Zone = &Zones.at(ZoneID);
 
 	// If boss zone then use odds parameter as monster count
 	if(Boss) {
-
-		// Run query
-		Database->PrepareQuery("SELECT monster_id, odds FROM zonedata WHERE zone_id = @zone_id");
-		Database->BindInt(1, ZoneID);
-		while(Database->FetchRow()) {
-			uint32_t MonsterID = Database->GetInt<uint32_t>("monster_id");
-			uint32_t Count = Database->GetInt<uint32_t>("odds");
-
-			// Populate monster list
-			for(uint32_t i = 0; i < Count; i++)
-				Monsters.push_back(MonsterID);
+		for(const auto &ZoneMonster : Zone->Monsters) {
+			for(int i = 0; i < ZoneMonster.Odds; i++) {
+				Monsters.push_back(ZoneMonster.Monster);
+			}
 		}
-		Database->CloseQuery();
 	}
 	else {
 
-		// Get monster count
-		int MonsterCount = ae::GetRandomInt(MinSpawn, MaxSpawn);
-
-		// No monsters
-		if(MonsterCount == 0)
+		// Get random number of monsters
+		int MonsterCount = ae::GetRandomInt(Zone->Min, Zone->Max);
+		if(!MonsterCount)
 			return;
 
-		MonsterCount += AdditionalCount;
-
 		// Cap monster count
+		MonsterCount += AdditionalCount;
 		MonsterCount = std::min(MonsterCount, BATTLE_MAX_OBJECTS_PER_SIDE);
 
-		// Run query
-		Database->PrepareQuery("SELECT * FROM zonedata WHERE zone_id = @zone_id");
-		Database->BindInt(1, ZoneID);
-
-		// Get monsters in zone
-		std::vector<_OldZone> Zone;
-		uint32_t OddsSum = 0;
+		// Build CDT for monsters
+		std::vector<_ZoneMonster> ZoneCDT;
+		int OddsSum = 0;
 		int MaxTotal = 0;
 		bool HasZeroMax = true;
-		while(Database->FetchRow()) {
+		for(const auto &ZoneMonster : Zone->Monsters) {
 
 			// Get zone data
-			_OldZone ZoneData;
-			ZoneData.MonsterID = Database->GetInt<uint32_t>("monster_id");
-			ZoneData.Odds = Database->GetInt<uint32_t>("odds");
-			ZoneData.Max = Database->GetInt<int>("max");
+			_ZoneMonster ZoneData;
+			ZoneData.Monster = ZoneMonster.Monster;
+			ZoneData.Odds = ZoneMonster.Odds;
+			ZoneData.Max = ZoneMonster.Max;
 
 			// Increase max for each player if set
 			if(ZoneData.Max > 0) {
@@ -755,9 +734,8 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 
 			OddsSum += ZoneData.Odds;
 			ZoneData.Odds = OddsSum;
-			Zone.push_back(ZoneData);
+			ZoneCDT.push_back(ZoneData);
 		}
-		Database->CloseQuery();
 
 		// Check for monsters in zone
 		if(OddsSum > 0) {
@@ -767,18 +745,18 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 				MonsterCount = std::min(MaxTotal, MonsterCount);
 
 			// Generate monsters
-			std::unordered_map<uint32_t, int> MonsterTotals;
+			std::unordered_map<const _MonsterStat *, int> MonsterTotals;
 			while((int)Monsters.size() < MonsterCount) {
 
 				// Find monster in CDT
-				uint32_t RandomNumber = ae::GetRandomInt((uint32_t)1, OddsSum);
-				for(const auto &ZoneData : Zone) {
+				int RandomNumber = ae::GetRandomInt(1, OddsSum);
+				for(const auto &ZoneData : ZoneCDT) {
 					if(RandomNumber <= ZoneData.Odds) {
 
 						// Check monster max
-						if(ZoneData.Max == 0 || (ZoneData.Max > 0 && MonsterTotals[ZoneData.MonsterID] < ZoneData.Max)) {
-							MonsterTotals[ZoneData.MonsterID]++;
-							Monsters.push_back(ZoneData.MonsterID);
+						if(ZoneData.Max == 0 || (ZoneData.Max > 0 && MonsterTotals[ZoneData.Monster] < ZoneData.Max)) {
+							MonsterTotals[ZoneData.Monster]++;
+							Monsters.push_back(ZoneData.Monster);
 						}
 						break;
 					}
@@ -789,7 +767,7 @@ void _Stats::GenerateMonsterListFromZone(int AdditionalCount, uint32_t ZoneID, s
 }
 
 // Generates a list of items dropped from a monster
-void _Stats::GenerateItemDrops(uint32_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const {
+void _Stats::GenerateItemDrops(uint16_t MonsterID, uint32_t Count, int DropRate, std::list<uint32_t> &ItemDrops) const {
 	if(MonsterID == 0)
 		return;
 

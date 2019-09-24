@@ -9,8 +9,8 @@ end
 
 Script_boss = {}
 
-function Script_boss.Activate(self, ZoneName, Object, Change)
-	--Change.Battle = ZoneName
+function Script_boss.Activate(self, Zone, Object, Change)
+	Change.Battle = Zone
 
 	return Change
 end
