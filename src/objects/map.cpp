@@ -749,11 +749,11 @@ int _Map::AddLights(const std::list<_Object *> *ObjectList, const ae::_Program *
 			continue;
 
 		// Check for valid light
-		const auto &Iterator = Stats->OldLights.find((uint32_t)Object->Light);
-		if(Iterator == Stats->OldLights.end())
+		const auto &Iterator = Stats->Lights.find((uint32_t)Object->Light);
+		if(Iterator == Stats->Lights.end())
 		   continue;
 
-		const _OldLightType &LightType = Iterator->second;
+		const _LightType &LightType = Iterator->second;
 
 		// Check to see if light is in frustum
 		glm::vec2 Point(Object->Position.x + 0.5f, Object->Position.y + 0.5f);

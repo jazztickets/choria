@@ -155,9 +155,8 @@ struct _WeaponType {
 	std::vector<const _BaseItem *> Skills;
 };
 
-struct _OldLightType {
+struct _LightType {
 	uint32_t ID;
-	std::string Name;
 	glm::vec3 Color;
 	float Radius;
 };
@@ -190,7 +189,7 @@ class _Stats {
 
 		std::vector<_Level> Levels;
 
-		std::unordered_map<uint32_t, _OldLightType> OldLights;
+		std::unordered_map<uint32_t, _LightType> Lights;
 		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
 
 		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
@@ -227,6 +226,7 @@ class _Stats {
 		void LoadTypes();
 		void LoadMapDirectory();
 		void LoadLevels(const std::string &Path);
+		void LoadLights(const std::string &Path);
 		void LoadData(const std::string &Path);
 
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
@@ -234,8 +234,5 @@ class _Stats {
 		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone=false);
 		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
-
-		void OldLoadStatTypes();
-		void OldLoadLights();
 
 };

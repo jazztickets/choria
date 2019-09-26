@@ -837,5 +837,6 @@ template<typename T> T _BaseItem::GetUpgradedValue(StatType Type, int Upgrades, 
 	if(MaxLevel <= 0)
 		return Value;
 
-	return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
+	//return Value + (T)(GAME_UPGRADE_AMOUNT * Stats->UpgradeScale.at(Type) * Upgrades * std::abs(Value));
+	return Value + (T)(GAME_UPGRADE_AMOUNT * 1 * Upgrades * std::abs(Value));
 }

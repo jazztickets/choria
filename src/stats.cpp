@@ -57,8 +57,7 @@ _Stats::_Stats(bool Headless) :
 	LoadMapDirectory();
 	LoadData("data/stats.xml");
 	LoadLevels("data/levels.tsv");
-	OldLoadStatTypes();
-	OldLoadLights();
+	LoadLights("data/lights.tsv");
 }
 
 // Destructor
@@ -597,8 +596,6 @@ void _Stats::LoadLevels(const std::string &Path) {
 
 	// Read the file
 	while(!File.eof() && File.peek() != EOF) {
-
-		// Read data
 		_Level Level;
 		File >> Level.Level >> Level.Experience;
 		Levels.push_back(Level);
@@ -615,40 +612,27 @@ void _Stats::LoadLevels(const std::string &Path) {
 	Levels[Levels.size()-1].NextLevel = 0;
 }
 
-// Load upgrade scales from stat types
-void _Stats::OldLoadStatTypes() {
-
-	// Run query
-	Database->PrepareQuery("SELECT * FROM stattype");
-
-	// Get data
-	while(Database->FetchRow()) {
-		StatType ID = (StatType)Database->GetInt<uint32_t>("id");
-		UpgradeScale[ID] = Database->GetReal("upgrade_scale");
-	}
-	Database->CloseQuery();
-}
-
 // Load lights
-void _Stats::OldLoadLights() {
-	OldLights.clear();
+void _Stats::LoadLights(const std::string &Path) {
 
-	// Run query
-	Database->PrepareQuery("SELECT * FROM light");
+	// Load file
+	std::ifstream File(Path.c_str(), std::ios::in);
+	if(!File)
+		throw std::runtime_error("Error loading: " + Path);
 
-	// Get data
-	_OldLightType Light;
-	while(Database->FetchRow()) {
-		Light.ID = Database->GetInt<uint32_t>("id");
-		Light.Name = Database->GetString("name");
-		Light.Color[0] = Database->GetReal("r");
-		Light.Color[1] = Database->GetReal("g");
-		Light.Color[2] = Database->GetReal("b");
-		Light.Radius = Database->GetReal("radius");
+	// Skip header
+	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-		OldLights[Light.ID] = Light;
+	// Read the file
+	while(!File.eof() && File.peek() != EOF) {
+		_LightType Light;
+		File >> Light.ID >> Light.Color.r >> Light.Color.g >> Light.Color.b >> Light.Radius;
+		Lights[Light.ID] = Light;
+
+		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
-	Database->CloseQuery();
+
+	File.close();
 }
 
 // Set object's monster stats
