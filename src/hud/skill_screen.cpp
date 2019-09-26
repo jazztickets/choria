@@ -92,48 +92,6 @@ void _SkillScreen::Init() {
 		LevelLabel->Index = (int)Skill->NetworkID;
 		Element->Children.push_back(LevelLabel);
 
-		// Add plus button
-		ae::_Element *PlusButton = new ae::_Element();
-		PlusButton->Name = "button_skills_plus";
-		PlusButton->Parent = Button;
-		PlusButton->BaseSize = ButtonSize;
-		PlusButton->BaseOffset = PlusOffset;
-		PlusButton->Alignment = ae::CENTER_MIDDLE;
-		PlusButton->Style = ae::Assets.Styles["style_menu_button"];
-		PlusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		PlusButton->Clickable = true;
-		Element->Children.push_back(PlusButton);
-
-		// Add minus button
-		ae::_Element *MinusButton = new ae::_Element();
-		MinusButton->Name = "button_skills_minus";
-		MinusButton->Parent = Button;
-		MinusButton->BaseSize = ButtonSize;
-		MinusButton->BaseOffset = MinusOffset;
-		MinusButton->Alignment = ae::CENTER_MIDDLE;
-		MinusButton->Style = ae::Assets.Styles["style_menu_button"];
-		MinusButton->HoverStyle = ae::Assets.Styles["style_menu_button_hover"];
-		MinusButton->Clickable = true;
-		Element->Children.push_back(MinusButton);
-
-		// Add plus label
-		ae::_Element *PlusLabel = new ae::_Element();
-		PlusLabel->Parent = PlusButton;
-		PlusLabel->Text = "+";
-		PlusLabel->BaseOffset = LabelOffset;
-		PlusLabel->Alignment = ae::CENTER_MIDDLE;
-		PlusLabel->Font = ae::Assets.Fonts["hud_medium"];
-		PlusButton->Children.push_back(PlusLabel);
-
-		// Add minus label
-		ae::_Element *MinusLabel = new ae::_Element();
-		MinusLabel->Parent = MinusButton;
-		MinusLabel->Text = "-";
-		MinusLabel->BaseOffset = LabelOffset + glm::vec2(0, 2);
-		MinusLabel->Alignment = ae::CENTER_MIDDLE;
-		MinusLabel->Font = ae::Assets.Fonts["hud_medium"];
-		MinusButton->Children.push_back(MinusLabel);
-
 		// Update position
 		Offset.x += Skill->Texture->Size.x + Spacing.x;
 		if(Offset.x > Element->BaseSize.x - Skill->Texture->Size.x) {
@@ -185,28 +143,6 @@ void _SkillScreen::Render(double BlendFactor) {
 		return;
 
 	Element->Render();
-
-	// Show remaining skill points
-	std::string Text = std::to_string(HUD->Player->Character->GetSkillPointsAvailable()) + " skill point";
-	if(HUD->Player->Character->GetSkillPointsAvailable() != 1)
-		Text += "s";
-
-	glm::vec2 DrawPosition = glm::vec2((Element->Bounds.End.x + Element->Bounds.Start.x) / 2, Element->Bounds.End.y - 42);
-	ae::Assets.Fonts["hud_medium"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE);
-
-	// Show skill points unused
-	int SkillPointsUnused = HUD->Player->Character->SkillPointsUsed - HUD->Player->Character->SkillPointsOnActionBar;
-	if(SkillPointsUnused > 0) {
-		DrawPosition.y += 30;
-
-		Text = std::to_string(SkillPointsUnused) + " skill point";
-		if(SkillPointsUnused != 1)
-			Text += "s";
-
-		Text += " unused";
-
-		ae::Assets.Fonts["hud_small"]->DrawText(Text, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["red"]);
-	}
 }
 
 // Delete memory used by skill page
@@ -222,9 +158,6 @@ void _SkillScreen::ClearSkills() {
 // Shows or hides the plus/minus buttons
 void _SkillScreen::RefreshSkillButtons() {
 
-	// Get remaining points
-	int SkillPointsRemaining = HUD->Player->Character->GetSkillPointsAvailable();
-
 	// Loop through buttons
 	for(auto &ChildElement : Element->Children) {
 		if(ChildElement->Name == "label_skills_level") {
@@ -235,7 +168,7 @@ void _SkillScreen::RefreshSkillButtons() {
 
 			// Get skill
 			uint32_t SkillID = (uint32_t)ChildElement->Parent->Index;
-			if(SkillPointsRemaining <= 0 || HUD->Player->Character->Skills[SkillID] >= HUD->Player->Stats->ItemsIndex.at(SkillID)->MaxLevel)
+			if(HUD->Player->Character->Skills[SkillID] >= HUD->Player->Stats->ItemsIndex.at(SkillID)->MaxLevel)
 				ChildElement->SetActive(false);
 			else
 				ChildElement->SetActive(true);
@@ -250,39 +183,6 @@ void _SkillScreen::RefreshSkillButtons() {
 				ChildElement->SetActive(true);
 		}
 	}
-}
-
-
-// Adjust skill level
-void _SkillScreen::AdjustSkillLevel(uint32_t SkillID, int Amount) {
-	if(SkillID == 0)
-		return;
-
-	if(Amount < 0 && !HUD->Player->CanRespec()) {
-		HUD->SetMessage("You can only respec on spawn points");
-		return;
-	}
-
-	ae::_Buffer Packet;
-	Packet.Write<PacketType>(PacketType::SKILLS_SKILLADJUST);
-
-	// Sell skill
-	Packet.Write<uint32_t>(SkillID);
-	Packet.Write<int>(Amount);
-
-	int OldSkillLevel = HUD->Player->Character->Skills[SkillID];
-	HUD->Player->Character->AdjustSkillLevel(SkillID, Amount);
-
-	// Equip new skills
-	if(Amount > 0 && OldSkillLevel == 0) {
-		EquipSkill(SkillID);
-	}
-
-	PlayState.Network->SendPacket(Packet);
-
-	// Update player
-	HUD->Player->Character->CalculateStats();
-	RefreshSkillButtons();
 }
 
 // Equip a skill

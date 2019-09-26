@@ -390,9 +390,6 @@ void _Server::HandlePacket(ae::_Buffer &Data, ae::_Peer *Peer) {
 		case PacketType::ACTIONBAR_CHANGED:
 			HandleActionBarChanged(Data, Peer);
 		break;
-		case PacketType::SKILLS_SKILLADJUST:
-			HandleSkillAdjust(Data, Peer);
-		break;
 		case PacketType::TRADE_REQUEST:
 			HandleTradeRequest(Data, Peer);
 		break;
@@ -1192,26 +1189,6 @@ void _Server::HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer) {
 	Packet.Write<PacketType>(PacketType::INVENTORY);
 	Player->Inventory->Serialize(Packet);
 	Network->SendPacket(Packet, Peer);
-}
-
-// Handles a skill adjust
-void _Server::HandleSkillAdjust(ae::_Buffer &Data, ae::_Peer *Peer) {
-	if(!ValidatePeer(Peer))
-		return;
-
-	_Object *Player = Peer->Object;
-
-	// Process packet
-	uint32_t SkillID = Data.Read<uint32_t>();
-	int Amount = Data.Read<int>();
-
-	// Check respec condition
-	if(Amount < 0 && !Player->CanRespec())
-		return;
-
-	// Update values
-	Player->Character->AdjustSkillLevel(SkillID, Amount);
-	Player->Character->CalculateStats();
 }
 
 // Handle a trade request

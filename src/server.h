@@ -92,7 +92,6 @@ class _Server {
 		void HandleInventoryDelete(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleVendorExchange(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleTraderAccept(ae::_Buffer &Data, ae::_Peer *Peer);
-		void HandleSkillAdjust(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleChatMessage(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleTradeRequest(ae::_Buffer &Data, ae::_Peer *Peer);
 		void HandleTradeCancel(ae::_Buffer &Data, ae::_Peer *Peer);

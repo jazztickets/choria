@@ -587,7 +587,6 @@ void _Stats::OldLoadLevels() {
 	while(Database->FetchRow()) {
 		Level.Level = Database->GetInt<int>("level");
 		Level.Experience = Database->GetInt<int>("experience");
-		Level.SkillPoints = Database->GetInt<int>("skillpoints");
 		Level.Health = Database->GetInt<int>("health");
 		Level.Mana = Database->GetInt<int>("mana");
 		Level.Damage = Database->GetInt<int>("damage");

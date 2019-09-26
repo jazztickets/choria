@@ -67,7 +67,6 @@ struct _Level {
 	int Mana;
 	int Damage;
 	int Armor;
-	int SkillPoints;
 };
 
 struct _Drop {

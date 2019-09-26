@@ -364,14 +364,6 @@ void _Scripting::PushObject(_Object *Object) {
 	lua_setfield(LuaState, -2, "GetInventoryItem");
 
 	lua_pushlightuserdata(LuaState, Object);
-	lua_pushcclosure(LuaState, &ObjectGetSkillPointsAvailable, 1);
-	lua_setfield(LuaState, -2, "GetSkillPointsAvailable");
-
-	lua_pushlightuserdata(LuaState, Object);
-	lua_pushcclosure(LuaState, &ObjectSpendSkillPoints, 1);
-	lua_setfield(LuaState, -2, "SpendSkillPoints");
-
-	lua_pushlightuserdata(LuaState, Object);
 	lua_pushcclosure(LuaState, &ObjectSetAction, 1);
 	lua_setfield(LuaState, -2, "SetAction");
 
@@ -870,36 +862,6 @@ int _Scripting::ObjectGetInventoryItem(lua_State *LuaState) {
 
 	// Push item
 	PushItem(LuaState, Item, Upgrades);
-
-	return 1;
-}
-
-// Return the number of skills available
-int _Scripting::ObjectGetSkillPointsAvailable(lua_State *LuaState) {
-
-	// Get self pointer
-	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-
-	// Push value
-	lua_pushinteger(LuaState, Object->Character->GetSkillPointsAvailable());
-
-	return 1;
-}
-
-// Spend skill points
-int _Scripting::ObjectSpendSkillPoints(lua_State *LuaState) {
-
-	// Get parameters
-	_Object *Object = (_Object *)lua_touserdata(LuaState, lua_upvalueindex(1));
-	uint32_t SkillID = (uint32_t)lua_tointeger(LuaState, 1);
-	int Amount = (int)lua_tointeger(LuaState, 2);
-
-	// Spend points
-	Object->Character->AdjustSkillLevel(SkillID, Amount);
-	Object->Character->CalculateStats();
-
-	// Push points available
-	lua_pushinteger(LuaState, Object->Character->GetSkillPointsAvailable());
 
 	return 1;
 }

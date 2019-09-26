@@ -310,15 +310,6 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 		else if(InventoryScreen->Element->GetClickedElement()) {
 			InventoryScreen->InitInventoryTab(InventoryScreen->Element->GetClickedElement()->Index);
 		}
-		// Check skill level up/down
-		else if(SkillScreen->Element->GetClickedElement()) {
-			if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_plus") {
-				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Parent->Index, 1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT));
-			}
-			else if(SkillScreen->Element->GetClickedElement()->Name == "button_skills_minus") {
-				SkillScreen->AdjustSkillLevel((uint32_t)SkillScreen->Element->GetClickedElement()->Parent->Index, -(1 + 4 * ae::Input.ModKeyDown(KMOD_SHIFT)));
-			}
-		}
 		// Accept trader button
 		else if(TraderScreen->Element->GetClickedElement() == ae::Assets.Elements["button_trader_accept"]) {
 			ae::_Buffer Packet;

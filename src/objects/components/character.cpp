@@ -104,10 +104,6 @@ _Character::_Character(_Object *Object) :
 	HitChance(100),
 	DropRate(0),
 
-	SkillPoints(0),
-	SkillPointsUsed(0),
-	SkillPointsOnActionBar(0),
-
 	Vendor(nullptr),
 	Trader(nullptr),
 	Blacksmith(nullptr),
@@ -344,14 +340,6 @@ void _Character::CalculateStats() {
 		}
 	}
 
-	// Calculate skills points used
-	SkillPointsUsed = 0;
-	for(const auto &SkillLevel : Skills) {
-		const _BaseItem *Skill = Object->Stats->ItemsIndex.at(SkillLevel.first);
-		if(Skill)
-			SkillPointsUsed += SkillLevel.second;
-	}
-
 	// Get skill bonus
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		_ActionResult ActionResult;
@@ -436,7 +424,6 @@ void _Character::CalculateLevelStats() {
 	BaseMaxDamage = LevelStat->Damage + 1;
 	BaseArmor = LevelStat->Armor;
 	BaseDamageBlock = 0;
-	SkillPoints = LevelStat->SkillPoints;
 }
 
 // Update an object's stats from a statchange
@@ -535,13 +522,10 @@ int _Character::GenerateDamage() {
 
 // Update counts on action bar
 void _Character::RefreshActionBarCount() {
-	SkillPointsOnActionBar = 0;
 	for(size_t i = 0; i < ActionBar.size(); i++) {
 		const _BaseItem *Item = ActionBar[i].Item;
 		if(Item) {
-			if(Item->IsSkill() && HasLearned(Item))
-				SkillPointsOnActionBar += Skills[Item->NetworkID];
-			else
+			if(!Item->IsSkill())
 				ActionBar[i].Count = Object->Inventory->CountItem(Item);
 		}
 		else
@@ -580,44 +564,6 @@ bool _Character::HasLearned(const _BaseItem *Skill) const {
 		return true;
 
 	return false;
-}
-
-// Updates a skill level
-void _Character::AdjustSkillLevel(uint32_t SkillID, int Amount) {
-	if(SkillID == 0)
-		return;
-
-	const _BaseItem *Skill = Object->Stats->ItemsIndex.at(SkillID);
-	if(Skill == nullptr)
-		return;
-
-	// Buying
-	if(Amount > 0) {
-
-		// Cap points
-		int PointsToSpend = std::min(GetSkillPointsAvailable(), Amount);
-		PointsToSpend = std::min(PointsToSpend, Skill->MaxLevel - Skills[SkillID]);
-
-		// Update level
-		Skills[SkillID] += PointsToSpend;
-	}
-	else if(Amount < 0) {
-
-		// Update level
-		Skills[SkillID] += Amount;
-		if(Skills[SkillID] < 0)
-			Skills[SkillID] = 0;
-
-		// Update action bar
-		if(Skills[SkillID] == 0) {
-			for(size_t i = 0; i < ActionBar.size(); i++) {
-				if(ActionBar[i].Item == Skill) {
-					ActionBar[i].Unset();
-					break;
-				}
-			}
-		}
-	}
 }
 
 // Reset ui state variables

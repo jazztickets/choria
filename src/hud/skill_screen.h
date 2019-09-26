@@ -36,7 +36,6 @@ class _SkillScreen : public _Screen {
 
 		void ClearSkills();
 		void RefreshSkillButtons();
-		void AdjustSkillLevel(uint32_t SkillID, int Amount);
 		void EquipSkill(uint32_t SkillID);
 
 	private:
