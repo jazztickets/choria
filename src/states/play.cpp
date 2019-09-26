@@ -1421,7 +1421,7 @@ void _PlayState::HandleBattleEnd(ae::_Buffer &Data) {
 	for(uint8_t i = 0; i < ItemCount; i++) {
 		_RecentItem RecentItem;
 
-		uint32_t ItemID = Data.Read<uint32_t>();
+		uint16_t ItemID = Data.Read<uint16_t>();
 		RecentItem.Item = Stats->ItemsIndex.at(ItemID);
 		int Upgrades = (int)Data.Read<uint8_t>();
 		RecentItem.Count = (int)Data.Read<uint8_t>();
@@ -1469,7 +1469,7 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	bool SkillUnlocked = Data.ReadBit();
 	bool ItemUnlocked = Data.ReadBit();
 	bool KeyUnlocked = Data.ReadBit();
-	uint32_t ItemID = Data.Read<uint32_t>();
+	uint16_t ItemID = Data.Read<uint16_t>();
 	int InventorySlot = (int)Data.Read<char>();
 	float ReactTime = Data.Read<float>();
 	float FlyTime = Data.Read<float>();

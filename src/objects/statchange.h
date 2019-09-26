@@ -98,9 +98,12 @@ const std::unordered_map<std::string, _StatStorage> StatStringToType = {
 };
 
 struct _Value {
-	int Integer;
-	float Float;
-	void *Pointer;
+	union {
+		int Integer;
+		float Float;
+		void *Pointer;
+	};
+
 	std::string String;
 };
 

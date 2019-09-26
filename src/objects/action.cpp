@@ -35,16 +35,16 @@
 
 // Serialize action
 void _Action::Serialize(ae::_Buffer &Data) {
-	uint32_t ItemID = 0;
+	uint16_t ItemID = 0;
 	if(Item)
 		ItemID = Item->NetworkID;
 
-	Data.Write<uint32_t>(ItemID);
+	Data.Write<uint16_t>(ItemID);
 }
 
 // Unserialize action
 void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
-	uint32_t ItemID = Data.Read<uint32_t>();
+	uint16_t ItemID = Data.Read<uint16_t>();
 
 	Item = ItemID ? Stats->ItemsIndex.at(ItemID) : nullptr;
 }
@@ -130,8 +130,8 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	Packet.WriteBit(KeyUnlocked);
 
 	// Write action used
-	uint32_t ItemID = ItemUsed ? ItemUsed->NetworkID : 0;
-	Packet.Write<uint32_t>(ItemID);
+	uint16_t ItemID = ItemUsed ? ItemUsed->NetworkID : 0;
+	Packet.Write<uint16_t>(ItemID);
 	Packet.Write<char>((char)Source->Character->Action.InventorySlot);
 	Packet.Write<float>(AttackDelay);
 	Packet.Write<float>(AttackTime);

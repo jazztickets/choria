@@ -435,7 +435,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			uint8_t ItemCount = Data.Read<uint8_t>();
 			for(uint8_t i = 0; i < ItemCount; i++) {
 
-				uint32_t ItemID = Data.Read<uint32_t>();
+				uint16_t ItemID = Data.Read<uint16_t>();
 				const _BaseItem *Item = Stats->ItemsIndex.at(ItemID);
 				int Upgrades = (int)Data.Read<uint8_t>();
 				int Count = (int)Data.Read<uint8_t>();
@@ -462,7 +462,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			bool DecrementItem = Data.ReadBit();
 			bool SkillUnlocked = Data.ReadBit();
 			bool ItemUnlocked = Data.ReadBit();
-			uint32_t ItemID = Data.Read<uint32_t>();
+			uint16_t ItemID = Data.Read<uint16_t>();
 			int InventorySlot = (int)Data.Read<char>();
 			ActionResult.ActionUsed.Item = Stats->ItemsIndex.at(ItemID);
 

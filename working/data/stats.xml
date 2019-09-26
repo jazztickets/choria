@@ -55,7 +55,7 @@
 		<item id="short_sword" name="Short Sword" type="one_hand" weapon_type="sword" texture="textures/items/short_sword.png">
 			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
-			<use attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
+			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
 		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
 			<price buy="50"/>

@@ -583,7 +583,8 @@ void _Battle::ServerEndBattle() {
 			}
 
 			// Sum experience and gold
-			SideStats[Side].TotalExperienceGiven += Object->Monster->MonsterStat->Experience;
+			if(Object->IsMonster())
+				SideStats[Side].TotalExperienceGiven += Object->Monster->MonsterStat->Experience;
 
 			// Calculate gold based on monster or player
 			if(Object->IsMonster())
