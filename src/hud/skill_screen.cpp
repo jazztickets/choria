@@ -101,7 +101,6 @@ void _SkillScreen::Init() {
 
 		i++;
 	}
-	PlayState.Stats->Database->CloseQuery();
 
 	Element->CalculateBounds();
 	Element->SetActive(true);
