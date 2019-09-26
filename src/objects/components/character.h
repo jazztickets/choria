@@ -147,7 +147,6 @@ class _Character {
 		int GoldLost;
 
 		// Levels
-		bool CalcLevelStats;
 		int Level;
 		int Experience;
 		int ExperienceNeeded;

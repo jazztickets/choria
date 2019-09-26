@@ -30,6 +30,7 @@
 #include <tinyxml2.h>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 // Constants
 const int DEFAULT_ACTIONBAR_SIZE = 4;
@@ -55,9 +56,7 @@ _Stats::_Stats(bool Headless) :
 	LoadTypes();
 	LoadMapDirectory();
 	LoadData("data/stats.xml");
-
-	// Load spreadsheet data
-	OldLoadLevels();
+	LoadLevels("data/levels.tsv");
 	OldLoadStatTypes();
 	OldLoadLights();
 }
@@ -577,28 +576,32 @@ void _Stats::LoadData(const std::string &Path) {
 }
 
 // Loads level data
-void _Stats::OldLoadLevels() {
+void _Stats::LoadLevels(const std::string &Path) {
 
-	// Run query
-	Database->PrepareQuery("SELECT * FROM level");
+	// Load file
+	std::ifstream File(Path.c_str(), std::ios::in);
+	if(!File)
+		throw std::runtime_error("Error loading: " + Path);
 
-	// Get data
-	_Level Level;
-	while(Database->FetchRow()) {
-		Level.Level = Database->GetInt<int>("level");
-		Level.Experience = Database->GetInt<int>("experience");
-		Level.Health = Database->GetInt<int>("health");
-		Level.Mana = Database->GetInt<int>("mana");
-		Level.Damage = Database->GetInt<int>("damage");
-		Level.Armor = Database->GetInt<int>("armor");
+	// Skip header
+	File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	// Read the file
+	while(!File.eof() && File.peek() != EOF) {
+
+		// Read data
+		_Level Level;
+		File >> Level.Level >> Level.Experience;
 		Levels.push_back(Level);
+
+		File.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
-	Database->CloseQuery();
+
+	File.close();
 
 	// Calculate next level
-	for(size_t i = 1; i < Levels.size(); i++) {
+	for(size_t i = 1; i < Levels.size(); i++)
 		Levels[i-1].NextLevel = Levels[i].Experience - Levels[i-1].Experience;
-	}
 
 	Levels[Levels.size()-1].NextLevel = 0;
 }
@@ -655,7 +658,6 @@ void _Stats::GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, d
 	Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
 	Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
 	Object->Character->Gold = MonsterStat->Gold;
-	Object->Character->CalcLevelStats = false;
 }
 
 // Get portrait by network id

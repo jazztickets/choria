@@ -1405,7 +1405,7 @@ void _Menu::SetFullscreen(bool Fullscreen) {
 		Config.Save();
 
 		// Reload fonts
-		ae::Assets.LoadFonts("tables/fonts.tsv");
+		ae::Assets.LoadFonts("ui/fonts.tsv");
 	}
 }
 

@@ -63,10 +63,6 @@ struct _Level {
 	int Level;
 	int Experience;
 	int NextLevel;
-	int Health;
-	int Mana;
-	int Damage;
-	int Armor;
 };
 
 struct _Drop {
@@ -230,14 +226,15 @@ class _Stats {
 
 		void LoadTypes();
 		void LoadMapDirectory();
+		void LoadLevels(const std::string &Path);
 		void LoadData(const std::string &Path);
+
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone=false);
 		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 
-		void OldLoadLevels();
 		void OldLoadStatTypes();
 		void OldLoadLights();
 

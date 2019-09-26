@@ -281,8 +281,6 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 				// Set player pointer
 				if(Object->NetworkID == ClientNetworkID)
 					AssignPlayer(Object);
-				else
-					Object->Character->CalcLevelStats = false;
 			}
 
 			if(Player) {
@@ -568,7 +566,6 @@ void _Bot::HandleStatChange(ae::_Buffer &Data, _StatChange &StatChange) {
 void _Bot::AssignPlayer(_Object *Object) {
 	Player = Object;
 	if(Player) {
-		Player->Character->CalcLevelStats = true;
 		Player->Character->Path.clear();
 	}
 
@@ -584,7 +581,6 @@ _Object *_Bot::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID) {
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
-	Object->Character->CalcLevelStats = false;
 	Object->UnserializeCreate(Data);
 
 	// Add to map

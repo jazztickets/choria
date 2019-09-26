@@ -445,20 +445,20 @@ void _Framework::LoadAssets() {
 
 	// Load tables
 	ae::Assets.LoadAtlasDirectory("textures/map/", glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
-	ae::Assets.LoadLayers("tables/layers.tsv");
-	ae::Assets.LoadPrograms("tables/programs.tsv");
-	ae::Assets.LoadColors("tables/colors.tsv");
-	ae::Assets.LoadStyles("tables/styles.tsv");
+	ae::Assets.LoadLayers("data/layers.tsv");
+	ae::Assets.LoadPrograms("shaders/programs.tsv");
+	ae::Assets.LoadColors("ui/colors.tsv");
+	ae::Assets.LoadStyles("ui/styles.tsv");
 	ae::Assets.LoadSounds("sounds/");
 	ae::Assets.LoadMusic("music/");
 
 	// Load font names only
-	ae::Assets.LoadFonts("tables/fonts.tsv", false);
+	ae::Assets.LoadFonts("ui/fonts.tsv", false);
 
 	// Load UI
-	ae::Assets.LoadUI("tables/ui.xml");
-	//ae::Assets.SaveUI("tables/ui_new.xml");
+	ae::Assets.LoadUI("ui/ui.xml");
+	//ae::Assets.SaveUI("ui/ui_new.xml");
 
 	// Load font files
-	ae::Assets.LoadFonts("tables/fonts.tsv");
+	ae::Assets.LoadFonts("ui/fonts.tsv");
 }

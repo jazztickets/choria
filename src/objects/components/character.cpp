@@ -18,6 +18,7 @@
 #include <objects/components/character.h>
 #include <objects/components/inventory.h>
 #include <objects/components/controller.h>
+#include <objects/components/monster.h>
 #include <objects/object.h>
 #include <objects/statuseffect.h>
 #include <objects/buff.h>
@@ -56,7 +57,6 @@ _Character::_Character(_Object *Object) :
 	Bounty(0),
 	GoldLost(0),
 
-	CalcLevelStats(true),
 	Level(0),
 	Experience(0),
 	ExperienceNeeded(0),
@@ -275,8 +275,18 @@ void _Character::UpdateStatus() {
 // Calculates all of the player stats
 void _Character::CalculateStats() {
 
-	// Get base stats
+	// Get level stats
 	CalculateLevelStats();
+
+	// Set base stats
+	if(!Object->Monster->MonsterStat) {
+		BaseMaxHealth = 100;
+		BaseMaxMana = 0;
+		BaseMinDamage = 1;
+		BaseMaxDamage = 2;
+		BaseArmor = 0;
+		BaseDamageBlock = 0;
+	}
 
 	MaxHealth = BaseMaxHealth;
 	MaxMana = BaseMaxMana;
@@ -399,7 +409,7 @@ void _Character::CalculateStats() {
 
 // Calculate base level stats
 void _Character::CalculateLevelStats() {
-	if(!Object->Stats || !CalcLevelStats)
+	if(!Object->Stats)
 		return;
 
 	// Cap min experience
@@ -416,14 +426,6 @@ void _Character::CalculateLevelStats() {
 	Level = LevelStat->Level;
 	ExperienceNextLevel = LevelStat->NextLevel;
 	ExperienceNeeded = (Level == Object->Stats->GetMaxLevel()) ? 0 : LevelStat->NextLevel - (Experience - LevelStat->Experience);
-
-	// Set base attributes
-	BaseMaxHealth = LevelStat->Health;
-	BaseMaxMana = LevelStat->Mana;
-	BaseMinDamage = LevelStat->Damage;
-	BaseMaxDamage = LevelStat->Damage + 1;
-	BaseArmor = LevelStat->Armor;
-	BaseDamageBlock = 0;
 }
 
 // Update an object's stats from a statchange

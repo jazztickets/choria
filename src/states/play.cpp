@@ -958,8 +958,6 @@ void _PlayState::HandleObjectList(ae::_Buffer &Data) {
 		// Set player pointer
 		if(Object->NetworkID == ClientNetworkID)
 			AssignPlayer(Object);
-		else
-			Object->Character->CalcLevelStats = false;
 	}
 
 	if(Player) {
@@ -1670,7 +1668,6 @@ _Object *_PlayState::CreateObject(ae::_Buffer &Data, ae::NetworkIDType NetworkID
 	Object->Scripting = Scripting;
 	Object->Stats = Stats;
 	Object->Map = Map;
-	Object->Character->CalcLevelStats = false;
 	Object->UnserializeCreate(Data);
 
 	// Add to map
@@ -1742,8 +1739,6 @@ void _PlayState::SendStatus(uint8_t Status) {
 // Assigns the client player pointer
 void _PlayState::AssignPlayer(_Object *Object) {
 	Player = Object;
-	if(Player)
-		Player->Character->CalcLevelStats = true;
 
 	if(HUD) {
 		HUD->SetPlayer(Player);
