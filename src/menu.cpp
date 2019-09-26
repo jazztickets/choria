@@ -1567,7 +1567,6 @@ void _Menu::HandlePacket(ae::_Buffer &Buffer, PacketType Type) {
 					}
 					else
 						CharacterSlots[Slot].Hardcore->Text = "Hardcore";
-
 				}
 
 				// Check server settings

@@ -28,11 +28,11 @@
 	</buffs>
 	<skills>
 		<skill id="attack" name="Attack" max_level="20" texture="textures/skills/attack.png">
-			<target type="enemy" alive="true" />
+			<target type="enemy"/>
 			<use scope="battle" script="Skill_Attack"/>
 		</skill>
 		<skill id="monster_attack" name="Monster Attack" texture="textures/skills/monster_attack.png">
-			<target type="enemy" alive="true" />
+			<target type="enemy"/>
 			<use scope="battle" script="Skill_MonsterAttack"/>
 		</skill>
 	</skills>
@@ -58,12 +58,12 @@
 			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
 		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
-			<price buy="50"/>
-			<damage min="20" max="40" type="physical" />
-			<use scope="all" attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
+			<price buy="5"/>
+			<target type="self" />
+			<use scope="all" level="30" duration="5" script="Item_HealingSalve"/>
 		</item>
-		<item id="battle_potion" name="Battle Potion" type="consumable" script="Item_BattlePotion" texture="textures/items/death_potion.png">
-			<use scope="world"/>
+		<item id="battle_potion" name="Battle Potion" type="consumable" texture="textures/items/death_potion.png">
+			<use scope="world" script="Item_BattlePotion"/>
 		</item>
 	</items>
 	<builds>

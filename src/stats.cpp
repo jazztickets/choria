@@ -361,7 +361,6 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate item id '" + Item.ID + "' in " + Path);
 
 		Item.Name = GetString(Node, "name");
-		Item.Script = GetString(Node, "script", false);
 
 		// Item type
 		Item.Type = ItemTypesIndex[GetString(Node, "type")];
@@ -385,13 +384,23 @@ void _Stats::LoadData(const std::string &Path) {
 			Item.MaxDamage = DamageNode->IntAttribute("max");
 		}
 
+		// Get target
+		tinyxml2::XMLElement *TargetNode = Node->FirstChildElement("target");
+		if(TargetNode) {
+			Item.Target = TargetTypesIndex[GetString(TargetNode, "type")];
+			Item.TargetAlive = TargetNode->BoolAttribute("alive", true);
+		}
+
 		// Get use stats
 		tinyxml2::XMLElement *UseNode = Node->FirstChildElement("use");
 		if(UseNode) {
+			Item.Scope = ScopeTypesIndex[GetString(UseNode, "scope", false)];
 			Item.AttackDelay = UseNode->DoubleAttribute("attack_delay");
 			Item.AttackTime = UseNode->DoubleAttribute("attack_time");
 			Item.Cooldown = UseNode->DoubleAttribute("cooldown");
-			Item.Scope = ScopeTypesIndex[GetString(UseNode, "scope", false)];
+			Item.Level = UseNode->IntAttribute("level");
+			Item.Duration = UseNode->DoubleAttribute("duration");
+			Item.Script = GetString(UseNode, "script", false);
 		}
 
 		Item.Stats = this;
