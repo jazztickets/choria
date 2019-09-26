@@ -224,9 +224,10 @@ void _Stats::LoadData(const std::string &Path) {
 	{
 		{ "portraits", DataNode->FirstChildElement("portraits") },
 		{ "models", DataNode->FirstChildElement("models") },
-		{ "items", DataNode->FirstChildElement("items") },
-		{ "skills", DataNode->FirstChildElement("skills") },
 		{ "buffs", DataNode->FirstChildElement("buffs") },
+		{ "skills", DataNode->FirstChildElement("skills") },
+		{ "weapon_types", DataNode->FirstChildElement("weapon_types") },
+		{ "items", DataNode->FirstChildElement("items") },
 		{ "builds", DataNode->FirstChildElement("builds") },
 		{ "vendors", DataNode->FirstChildElement("vendors") },
 		{ "traders", DataNode->FirstChildElement("traders") },
@@ -333,6 +334,24 @@ void _Stats::LoadData(const std::string &Path) {
 		Skill.NetworkID = NetworkID++;
 		Items[Skill.ID] = Skill;
 		ItemsIndex[Skill.NetworkID] = &Items[Skill.ID];
+	}
+
+	// Load weapon types
+	for(tinyxml2::XMLElement *Node = Nodes["weapon_types"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
+		_WeaponType WeaponType;
+		WeaponType.ID = GetString(Node, "id");
+		if(WeaponTypes.find(WeaponType.ID) != WeaponTypes.end())
+			throw std::runtime_error("Duplicate weapon_type id '" + WeaponType.ID + "' in " + Path);
+
+		WeaponType.Name = GetString(Node, "name");
+
+		// Load skills granted
+		for(tinyxml2::XMLElement *SkillNode = Node->FirstChildElement("skills"); SkillNode != nullptr; SkillNode = SkillNode->NextSiblingElement()) {
+			const _BaseItem *Skill = GetItem(SkillNode, "id");
+			WeaponType.Skills.push_back(Skill);
+		}
+
+		WeaponTypes[WeaponType.ID] = WeaponType;
 	}
 
 	// Load items

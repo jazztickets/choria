@@ -154,6 +154,12 @@ struct _MinigameStat {
 	uint16_t NetworkID;
 };
 
+struct _WeaponType {
+	std::string ID;
+	std::string Name;
+	std::vector<const _BaseItem *> Skills;
+};
+
 struct _OldLightType {
 	uint32_t ID;
 	std::string Name;
@@ -201,6 +207,7 @@ class _Stats {
 
 		std::unordered_map<std::string, _BaseItem> Items;
 		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
+		std::unordered_map<std::string, _WeaponType> WeaponTypes;
 		std::unordered_map<std::string, _Buff> Buffs;
 		std::unordered_map<uint16_t, const _Buff *> BuffsIndex;
 		std::unordered_map<std::string, _Portrait> Portraits;

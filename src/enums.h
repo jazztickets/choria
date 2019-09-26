@@ -36,7 +36,7 @@ enum class EventType : uint8_t {
 };
 
 // Item types
-enum class ItemType : uint32_t {
+enum class ItemType : uint8_t {
 	NONE,
 	SKILL,
 	HELMET,
@@ -54,7 +54,7 @@ enum class ItemType : uint32_t {
 };
 
 // Types of targets
-enum class TargetType : uint32_t {
+enum class TargetType : uint8_t {
 	NONE,
 	SELF,
 	ENEMY,

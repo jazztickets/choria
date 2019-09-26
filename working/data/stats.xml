@@ -36,6 +36,14 @@
 			<use scope="battle" script="Skill_MonsterAttack"/>
 		</skill>
 	</skills>
+	<weapon_types>
+		<weapon_type id="unarmed" name="Unarmed">
+			<skill id="attack"/>
+		</weapon_type>
+		<weapon_type id="sword" name="Sword">
+			<skill id="attack"/>
+		</weapon_type>
+	</weapon_types>
 	<items>
 		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
 			<price buy="5" tradable="false"/>
@@ -44,13 +52,10 @@
 		<item id="game_token" name="Game Token" type="tradable" texture="textures/items/token.png">
 			<price buy="10"/>
 		</item>
-		<item id="short_sword" name="Short Sword" type="one_hand" texture="textures/items/short_sword.png">
+		<item id="short_sword" name="Short Sword" type="one_hand" weapon_type="sword" texture="textures/items/short_sword.png">
 			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
 			<use attack_delay="0.5" attack_time="0.3" cooldown="0.2" />
-			<skills>
-				<skill id="attack"/>
-			</skills>
 		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
 			<price buy="50"/>
