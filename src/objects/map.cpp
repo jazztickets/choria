@@ -756,6 +756,7 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 	// Load tiles
 	_Tile *Tile = nullptr;
 	_Object *Object = nullptr;
+	int TileIndex = 0;
 	while(!File.eof() && File.peek() != EOF) {
 
 		// Read chunk type
@@ -779,11 +780,10 @@ void _Map::Load(const _MapStat *MapStat, bool Static) {
 			// Tile
 			case 'T': {
 				glm::ivec2 Coordinate;
-				File >> Coordinate.x >> Coordinate.y;
-				if(Coordinate.x < Size.x && Coordinate.y < Size.y)
-					Tile = &Tiles[Coordinate.x][Coordinate.y];
-				else
-					Tile = nullptr;
+				Coordinate.x = TileIndex % Size.x;
+				Coordinate.y = TileIndex / Size.x;
+				Tile = &Tiles[Coordinate.x][Coordinate.y];
+				TileIndex++;
 			} break;
 			// Texture index
 			case 'b': {
@@ -867,7 +867,7 @@ bool _Map::Save(const std::string &Path) {
 	for(int j = 0; j < Size.y; j++) {
 		for(int i = 0; i < Size.x; i++) {
 			const _Tile &Tile = Tiles[i][j];
-			Output << "T " << i << " " << j << '\n';
+			Output << "T" << '\n';
 			if(Tile.TextureIndex[0])
 				Output << "b " << Tile.TextureIndex[0] << '\n';
 			if(Tile.TextureIndex[1])
