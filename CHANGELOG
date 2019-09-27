@@ -1,4 +1,4 @@
-choria 0.5.0 -
+choria 0.5.0 - 2019-09-27
 - Replaced irrlicht with a custom SDL2/OpenGL based engine
 - Reworked entire UI and all artwork
 - Reworked all game content
@@ -14,6 +14,8 @@ choria 0.5.0 -
 - Added various map events: doors, portals, custom scripts
 - Added per-pixel lighting and smooth camera scrolling
 - Added server clock and day/night cycle
+- Added bounty system
+- Added gambling minigame
 - Added background maps
 - Added LAN server browser
 - Added options menu

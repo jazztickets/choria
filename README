@@ -4,7 +4,7 @@ by Alan Witkowski
 Latest version can be found at:
 https://github.com/jazztickets/choria
 
-Save data is in ~/.local/share/choria for linux and %APPDATA%/choria for windows.
+Save data is in ~/.local/share/choria2015 for linux and %APPDATA%/choria2015 for windows.
 
 ----- BUILDING -----
 
