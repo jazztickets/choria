@@ -235,37 +235,34 @@ void _Scripting::InjectMonsters(const _Stats *Stats) {
 
 	// Add stats to lua table
 	lua_newtable(LuaState);
-	Stats->Database->PrepareQuery("SELECT * FROM monster");
-	while(Stats->Database->FetchRow()) {
-		uint32_t ID = Stats->Database->GetInt<uint32_t>("id");
-		std::string Name = Stats->Database->GetString("name");
+	for(const auto &Monster : Stats->Monsters) {
 
 		// Make ID the key to the table
-		lua_pushinteger(LuaState, ID);
+		lua_pushstring(LuaState, Monster.first.c_str());
 
 		// Make new table for attributes
 		lua_newtable(LuaState);
 
 		// Set attributes
-		lua_pushinteger(LuaState, ID);
+		lua_pushstring(LuaState, Monster.first.c_str());
 		lua_setfield(LuaState, -2, "ID");
 
-		lua_pushstring(LuaState, Name.c_str());
+		lua_pushstring(LuaState, Monster.second.Name.c_str());
 		lua_setfield(LuaState, -2, "Name");
 
-		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("health"));
+		lua_pushinteger(LuaState, Monster.second.Health);
 		lua_setfield(LuaState, -2, "Health");
 
-		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("mana"));
+		lua_pushinteger(LuaState, Monster.second.Mana);
 		lua_setfield(LuaState, -2, "Mana");
 
-		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("armor"));
+		lua_pushinteger(LuaState, Monster.second.Armor);
 		lua_setfield(LuaState, -2, "Armor");
 
-		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("mindamage"));
+		lua_pushinteger(LuaState, Monster.second.MinDamage);
 		lua_setfield(LuaState, -2, "MinDamage");
 
-		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("maxdamage"));
+		lua_pushinteger(LuaState, Monster.second.MaxDamage);
 		lua_setfield(LuaState, -2, "MaxDamage");
 
 		// Add attributes to table
@@ -274,9 +271,6 @@ void _Scripting::InjectMonsters(const _Stats *Stats) {
 
 	// Give name to global table
 	lua_setglobal(LuaState, "Monsters");
-
-	// Free memory
-	Stats->Database->CloseQuery();
 }
 
 // Inject buffs stat data

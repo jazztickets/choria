@@ -44,6 +44,7 @@ namespace ae {
 struct _Portrait {
 	std::string ID;
 	const ae::_Texture *Texture;
+	bool Starting;
 	uint8_t NetworkID;
 };
 
@@ -71,7 +72,7 @@ struct _Drop {
 };
 
 struct _MonsterStat {
-	_MonsterStat() : Health(0), Mana(0), MinDamage(0), MaxDamage(0), Experience(0), Gold(0) { }
+	_MonsterStat() : Health(0), Mana(0), Armor(0), MinDamage(0), MaxDamage(0), Experience(0), Gold(0) { }
 	std::string ID;
 	std::string Name;
 	std::string AI;
@@ -81,6 +82,7 @@ struct _MonsterStat {
 	std::vector<_Drop> Drops;
 	int Health;
 	int Mana;
+	int Armor;
 	int MinDamage;
 	int MaxDamage;
 	int Experience;
@@ -175,7 +177,7 @@ class _Stats {
 		// Menu
 		const _Portrait *GetPortrait(uint8_t NetworkID) const;
 		const _Model *GetModel(uint8_t NetworkID) const;
-		void GetPortraits(std::list<const _Portrait *> &PortraitList) const;
+		void GetStartingPortraits(std::list<const _Portrait *> &PortraitList) const;
 		void GetStartingBuilds(std::list<const _Object *> &BuildsList) const;
 
 		// Monsters

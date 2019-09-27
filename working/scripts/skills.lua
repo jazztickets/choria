@@ -840,7 +840,7 @@ Skill_DemonicConjuring.BaseArmor = 1
 Skill_DemonicConjuring.HealthPerLevel = 40
 Skill_DemonicConjuring.DamagePerLevel = 10
 Skill_DemonicConjuring.ArmorPerLevel = 1
-Skill_DemonicConjuring.Monster = Monsters[23]
+Skill_DemonicConjuring.Monster = Monsters["demon"]
 
 function Skill_DemonicConjuring.GetHealth(self, Level)
 	return math.floor(self.BaseHealth + (Level - 1) * self.HealthPerLevel)

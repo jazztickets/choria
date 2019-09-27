@@ -589,13 +589,11 @@ void _Menu::LoadPortraitButtons() {
 
 	// Get portraits
 	std::list<const _Portrait *> Portraits;
-	PlayState.Stats->GetPortraits(Portraits);
+	PlayState.Stats->GetStartingPortraits(Portraits);
 
 	// Iterate over portraits
 	glm::vec2 Offset(14, 70);
 	for(const auto &Portrait : Portraits) {
-		if(!Portrait->Texture)
-			throw std::runtime_error("Cannot find texture for portrait '" + Portrait->ID + "'");
 
 		// Add button
 		ae::_Element *Button = new ae::_Element();

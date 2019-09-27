@@ -84,11 +84,14 @@ const char *_Stats::GetString(tinyxml2::XMLElement *Node, const char *Attribute,
 
 // Get a valid texture from an id attribute
 const ae::_Texture *_Stats::GetTexture(tinyxml2::XMLElement *Node, const char *Attribute) {
+	if(Headless)
+		return nullptr;
+
 	std::string Value = GetString(Node, Attribute);
 
 	// Search
 	const auto &Iterator = ae::Assets.Textures.find(Value);
-	if(!Headless && Iterator == ae::Assets.Textures.end())
+	if(Iterator == ae::Assets.Textures.end())
 		throw std::runtime_error("Cannot find texture '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
 
 	return Iterator->second;
@@ -263,6 +266,7 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate portraits id '" + Portrait.ID + "' in " + Path);
 
 		Portrait.Texture = GetTexture(Node, "texture");
+		Portrait.Starting = Node->BoolAttribute("starting", false);
 		Portrait.NetworkID = NetworkID++;
 
 		Portraits[Portrait.ID] = Portrait;
@@ -415,10 +419,8 @@ void _Stats::LoadData(const std::string &Path) {
 		Object->Name = GetString(Node, "name");
 		Object->NetworkID = NetworkID++;
 		Object->Model = &Models.at(GetString(Node, "model"));
-		Object->BuildTexture = ae::Assets.Textures[GetString(Node, "texture")];
+		Object->BuildTexture = GetTexture(Node, "texture");
 		Object->Character->ActionBar.resize(DEFAULT_ACTIONBAR_SIZE);
-		if(!Object->BuildTexture)
-			throw std::runtime_error("Cannot find build texture for build '" + Object->Name + "' in " + Path);
 		if(Builds.find(Object->Name) != Builds.end())
 			throw std::runtime_error("Duplicate build name '" + Object->Name + "' in " + Path);
 		Builds[Object->Name] = Object;
@@ -519,6 +521,7 @@ void _Stats::LoadData(const std::string &Path) {
 			Monster.AI = GetString(StatsNode, "ai");
 			Monster.Health = StatsNode->IntAttribute("health");
 			Monster.Mana = StatsNode->IntAttribute("mana");
+			Monster.Armor = StatsNode->IntAttribute("armor");
 			Monster.Experience = StatsNode->IntAttribute("experience");
 			Monster.Gold = StatsNode->IntAttribute("gold");
 		}
@@ -672,9 +675,11 @@ const _Model *_Stats::GetModel(uint8_t NetworkID) const {
 }
 
 // Get list of portraits sorted by rank
-void _Stats::GetPortraits(std::list<const _Portrait *> &PortraitList) const {
-	for(const auto &Portrait : Portraits)
-		PortraitList.push_back(&Portrait.second);
+void _Stats::GetStartingPortraits(std::list<const _Portrait *> &PortraitList) const {
+	for(const auto &Portrait : Portraits) {
+		if(Portrait.second.Starting)
+			PortraitList.push_back(&Portrait.second);
+	}
 
 	PortraitList.sort(ComparePortrait);
 }
