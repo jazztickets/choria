@@ -451,6 +451,8 @@ void _EditorState::HandleQuit() {
 // Updates the current state
 void _EditorState::Update(double FrameTime) {
 	ae::Graphics.Element->Update(FrameTime, ae::Input.GetMouse());
+	if(ae::Graphics.Element->HitElement)
+		std::cout << ae::Graphics.Element->HitElement << std::endl;
 
 	if(!Map)
 		return;
@@ -469,7 +471,7 @@ void _EditorState::Update(double FrameTime) {
 
 	// Handle mouse input
 	if(BrushMode == EDITOR_BRUSH_MODE_TILE) {
-		if(ae::Input.MouseDown(SDL_BUTTON_LEFT) && !(ae::Input.ModKeyDown(KMOD_CTRL)) && ae::Graphics.Element->HitElement == ae::Graphics.Element) {
+		if(ae::Input.MouseDown(SDL_BUTTON_LEFT) && !(ae::Input.ModKeyDown(KMOD_CTRL)) && ae::Graphics.Element->HitElement == nullptr) {
 			ApplyBrush(WorldCursor);
 		}
 	}

@@ -2,6 +2,7 @@
 *.swp
 *.~lock*
 *.zip
+.vscode
 CMakeLists.txt.user
 bin/
 build/

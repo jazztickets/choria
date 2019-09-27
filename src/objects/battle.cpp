@@ -122,7 +122,7 @@ void _Battle::Update(double FrameTime) {
 			if(BattleElement && ActionResult.Source.Object && ActionResult.Target.Object) {
 
 				// Find start position
-				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(ActionResult.Source.Object->Character->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0);
+				glm::vec2 StartPosition = ActionResult.Source.Object->Fighter->ResultPosition - glm::vec2(ActionResult.Source.Object->Character->Portrait->Size.x/2 + ActionResult.Texture->Size.x/2 + 10, 0) * ae::_Element::GetUIScale();
 				ActionResult.LastPosition = ActionResult.Position;
 
 				// Interpolate between start and end position of action used
