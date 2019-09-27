@@ -106,7 +106,6 @@ const  float        INVENTORY_TOOLTIP_WIDTH         =  350;
 const  float        INVENTORY_TOOLTIP_HEIGHT        =  480;
 const  int          INVENTORY_MAX_TRADE_ITEMS       =  8;
 const  int          INVENTORY_SIZE                  =  24;
-const  int          INVENTORY_MAX_STACK             =  255;
 const  int          INVENTORY_INCREMENT_MODIFIER    =  5;
 const  int          INVENTORY_SPLIT_MODIFIER        =  5;
 //     Trader
@@ -116,5 +115,3 @@ const  float        MENU_ACCEPTINPUT_FADE           =  0.7f;
 const  float        MENU_PAUSE_FADE                 =  0.7f;
 const  double       MENU_DOUBLECLICK_TIME           =  0.250;
 const  float        MENU_MAP_SCROLL_SPEED           =  0.005f;
-//     Scripting
-const  std::string  SCRIPTS_GAME                    =  "scripts/game.lua";

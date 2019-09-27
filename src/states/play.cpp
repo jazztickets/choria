@@ -106,7 +106,7 @@ void _PlayState::Init() {
 	Framebuffer = new ae::_Framebuffer(ae::Graphics.CurrentSize);
 
 	Scripting = new _Scripting();
-	Scripting->Setup(Stats, SCRIPTS_GAME);
+	Scripting->Setup(Stats, GAME_SCRIPTS);
 
 	HUD = new _HUD();
 	HUD->Scripting = Scripting;

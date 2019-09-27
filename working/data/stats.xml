@@ -31,6 +31,10 @@
 			<target type="enemy"/>
 			<use scope="battle" script="Skill_Attack"/>
 		</skill>
+		<skill id="cleave" name="Cleave" max_level="20" texture="textures/skills/cleave.png">
+			<target type="multiple_enemies"/>
+			<use scope="battle" script="Skill_Cleave"/>
+		</skill>
 		<skill id="monster_attack" name="Monster Attack" texture="textures/skills/monster_attack.png">
 			<target type="enemy"/>
 			<use scope="battle" script="Skill_MonsterAttack"/>
@@ -42,6 +46,9 @@
 		</weapon_type>
 		<weapon_type id="sword" name="Sword">
 			<skill id="attack"/>
+		</weapon_type>
+		<weapon_type id="two_handed_axe" name="Two-handed Axe">
+			<skill id="cleave"/>
 		</weapon_type>
 	</weapon_types>
 	<items>
@@ -55,6 +62,11 @@
 		<item id="short_sword" name="Short Sword" type="one_hand" weapon_type="sword" texture="textures/items/short_sword.png">
 			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
+			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
+		</item>
+		<item id="axe" name="Axe" type="two_hand" weapon_type="two_handed_axe" texture="textures/items/axe.png">
+			<price buy="50"/>
+			<damage min="50" max="120" type="physical" />
 			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
 		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">

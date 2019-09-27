@@ -96,7 +96,7 @@ _Server::_Server(uint16_t NetworkPort) :
 	Stats = new _Stats(true);
 	Save = new _Save();
 	Scripting = new _Scripting();
-	Scripting->Setup(Stats, SCRIPTS_GAME);
+	Scripting->Setup(Stats, GAME_SCRIPTS);
 
 	// Create empty map objects with network ids from stats
 	for(const auto &MapNetworkID : Stats->MapsIndex) {

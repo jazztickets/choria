@@ -37,10 +37,6 @@ namespace tinyxml2 {
 	class XMLElement;
 }
 
-namespace ae {
-	class _Database;
-}
-
 struct _Portrait {
 	std::string ID;
 	const ae::_Texture *Texture;

@@ -50,7 +50,7 @@ _Bot::_Bot(const _Stats *Stats, const std::string &Username, const std::string &
 	ObjectManager = new ae::_Manager<_Object>();
 
 	Scripting = new _Scripting();
-	Scripting->Setup(Stats, SCRIPTS_GAME);
+	Scripting->Setup(Stats, GAME_SCRIPTS);
 	Script = "Bot_Client";
 
 	Network->Connect(HostAddress, Port);

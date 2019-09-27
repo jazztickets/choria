@@ -18,12 +18,13 @@
 #pragma once
 
 // Libraries
-#include <constants.h>
 #include <vector>
 #include <string>
 #include <cstdint>
 
+// Constants
 const size_t NOSLOT = (size_t)-1;
+const int INVENTORY_MAX_STACK = 255;
 
 // Forward Declarations
 struct _Trader;

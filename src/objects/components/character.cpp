@@ -24,6 +24,7 @@
 #include <objects/buff.h>
 #include <ae/buffer.h>
 #include <ae/random.h>
+#include <constants.h>
 #include <scripting.h>
 #include <packet.h>
 #include <stats.h>

@@ -22,6 +22,9 @@
 #include <list>
 #include <string>
 
+// Constants
+const std::string GAME_SCRIPTS = "scripts/game.lua";
+
 // Forward Declarations
 class _Object;
 class _Battle;

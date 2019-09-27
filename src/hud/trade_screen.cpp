@@ -29,6 +29,7 @@
 #include <ae/util.h>
 #include <ae/font.h>
 #include <ae/ui.h>
+#include <constants.h>
 #include <packet.h>
 #include <stats.h>
 #include <sstream>
