@@ -49,9 +49,6 @@ bool CompareBuild(const _Object *First, const _Object *Second) {
 _Stats::_Stats(bool Headless) :
 	Headless(Headless) {
 
-	// Load database that stores game data
-	Database = new ae::_Database("stats/stats.db", true);
-
 	// Load game data
 	LoadTypes();
 	LoadMapDirectory();
@@ -62,11 +59,8 @@ _Stats::_Stats(bool Headless) :
 
 // Destructor
 _Stats::~_Stats() {
-
 	for(const auto &Build : Builds)
 		delete Build.second;
-
-	delete Database;
 }
 
 // Get string attribute from node

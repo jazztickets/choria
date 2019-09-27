@@ -195,29 +195,23 @@ void _Scripting::InjectItems(const _Stats *Stats) {
 
 	// Add stats to lua table
 	lua_newtable(LuaState);
-	Stats->Database->PrepareQuery("SELECT * FROM item");
-	while(Stats->Database->FetchRow()) {
-		uint32_t ID = Stats->Database->GetInt<uint32_t>("id");
-		std::string Name = Stats->Database->GetString("name");
+	for(const auto &Item : Stats->Items) {
 
 		// Make ID the key to the table
-		lua_pushinteger(LuaState, ID);
+		lua_pushstring(LuaState, Item.first.c_str());
 
 		// Make new table for attributes
 		lua_newtable(LuaState);
 
 		// Set attributes
-		lua_pushinteger(LuaState, ID);
+		lua_pushstring(LuaState, Item.first.c_str());
 		lua_setfield(LuaState, -2, "ID");
 
-		lua_pushstring(LuaState, Name.c_str());
+		lua_pushstring(LuaState, Item.second.Name.c_str());
 		lua_setfield(LuaState, -2, "Name");
 
-		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("cost"));
+		lua_pushinteger(LuaState, Item.second.Cost);
 		lua_setfield(LuaState, -2, "Cost");
-
-		lua_pushinteger(LuaState, Stats->Database->GetInt<int>("itemtype_id"));
-		lua_setfield(LuaState, -2, "Type");
 
 		// Add attributes to table
 		lua_settable(LuaState, -3);
@@ -225,9 +219,6 @@ void _Scripting::InjectItems(const _Stats *Stats) {
 
 	// Give name to global table
 	lua_setglobal(LuaState, "Items");
-
-	// Free memory
-	Stats->Database->CloseQuery();
 }
 
 // Inject monster stats

@@ -219,10 +219,6 @@ class _Stats {
 		std::unordered_map<std::string, _Zone> Zones;
 		std::unordered_map<std::string, const _Object *> Builds;
 
-		// Database
-		ae::_Database *Database;
-		bool Headless;
-
 	private:
 
 		void LoadTypes();
@@ -237,4 +233,5 @@ class _Stats {
 		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 
+		bool Headless;
 };
