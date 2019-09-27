@@ -116,6 +116,20 @@ const _MonsterStat *_Stats::GetMonster(tinyxml2::XMLElement *Node, const char *A
 	return &Iterator->second;
 }
 
+// Get a valid weapon type from an id attribute
+const _WeaponType *_Stats::GetWeaponType(tinyxml2::XMLElement *Node, const char *Attribute) {
+	std::string Value = GetString(Node, Attribute, false);
+	if(Value.empty())
+		return nullptr;
+
+	// Search
+	const auto &Iterator = WeaponTypes.find(Value);
+	if(Iterator == WeaponTypes.end())
+		throw std::runtime_error("Cannot find weapon_type '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
+
+	return &Iterator->second;
+}
+
 // Load types
 void _Stats::LoadTypes() {
 	EventTypes = {
@@ -363,7 +377,7 @@ void _Stats::LoadData(const std::string &Path) {
 		if(Item.Type == ItemType::NONE)
 			throw std::runtime_error("Bad item type for '" + Item.ID + "' in " + Path);
 
-		// Texture
+		Item.WeaponType = GetWeaponType(Node, "weapon_type");
 		Item.Texture = GetTexture(Node, "texture");
 
 		// Get prices

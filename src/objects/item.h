@@ -30,6 +30,7 @@ struct _Vendor;
 struct _Cursor;
 struct _Slot;
 struct _ActionResult;
+struct _WeaponType;
 
 namespace ae {
 	class _Texture;
@@ -94,6 +95,7 @@ class _BaseItem {
 		std::string Script;
 		const ae::_Texture *Texture;
 		ItemType Type;
+		const _WeaponType *WeaponType;
 		int Level;
 		int MaxLevel;
 		double Duration;

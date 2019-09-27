@@ -228,6 +228,7 @@ class _Stats {
 		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone=false);
 		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
+		const _WeaponType *GetWeaponType(tinyxml2::XMLElement *Node, const char *Attribute);
 
 		bool Headless;
 };

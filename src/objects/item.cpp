@@ -43,6 +43,7 @@ _BaseItem::_BaseItem() :
 	NetworkID(0),
 	Texture(nullptr),
 	Type(ItemType::NONE),
+	WeaponType(nullptr),
 	Level(0),
 	MaxLevel(0),
 	Duration(0.0),
