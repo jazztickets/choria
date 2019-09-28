@@ -39,12 +39,8 @@
 
 // Constructor
 _BaseItem::_BaseItem() :
-	NetworkID(0),
-	Texture(nullptr),
 	Type(ItemType::NONE),
 	WeaponType(nullptr),
-	Level(0),
-	MaxLevel(0),
 	Duration(0.0),
 	Cost(0),
 	DamageTypeID(0),
@@ -65,10 +61,7 @@ _BaseItem::_BaseItem() :
 	Cooldown(0.0),
 	ResistanceTypeID(0),
 	Resistance(0),
-	Tradable(true),
-	TargetAlive(true),
-	Target(TargetType::NONE),
-	Scope(ScopeType::NONE) {
+	Tradable(true) {
 }
 
 // Draw tooltip

@@ -29,6 +29,12 @@ class _Skill : public _Usable {
 
 		_Skill();
 
+		int Experience;
+
 	private:
 
 };
+
+inline bool CompareSkills(const _Skill *First, const _Skill *Second) {
+	return First->Name < Second->Name;
+}

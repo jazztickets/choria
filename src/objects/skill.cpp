@@ -18,5 +18,6 @@
 #include <objects/skill.h>
 
 // Constructor
-_Skill::_Skill() {
+_Skill::_Skill() :
+	Experience(0) {
 }

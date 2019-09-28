@@ -113,7 +113,7 @@
 			<stats ai="dumb" health="40" experience="1" gold="1"/>
 			<damage min="5" max="10"/>
 			<actions>
-				<action id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
+				<action skill_id="monster_attack" attack_delay="0.5" attack_time="0.3" cooldown="0.5"/>
 			</actions>
 			<resists>
 				<resist id="fire" value="-0.25"/>

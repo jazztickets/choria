@@ -21,6 +21,7 @@
 #include <ae/type.h>
 #include <objects/buff.h>
 #include <objects/item.h>
+#include <objects/skill.h>
 #include <objects/statchange.h>
 #include <enums.h>
 #include <unordered_map>
@@ -74,7 +75,7 @@ struct _MonsterStat {
 	std::string AI;
 	const _Portrait *Portrait;
 	const ae::_Texture *Texture;
-	std::vector<const _BaseItem *> Actions;
+	//std::vector<const _Usable *> Actions;
 	std::vector<_Drop> Drops;
 	int Health;
 	int Mana;
@@ -150,7 +151,7 @@ struct _MinigameStat {
 struct _WeaponType {
 	std::string ID;
 	std::string Name;
-	std::vector<const _BaseItem *> Skills;
+	std::vector<const _Skill *> Skills;
 };
 
 struct _LightType {
@@ -167,9 +168,6 @@ class _Stats {
 		_Stats(bool Headless=false);
 		~_Stats();
 
-		// General Stats
-		void GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, double Difficulty=1.0) const;
-
 		// Menu
 		const _Portrait *GetPortrait(uint8_t NetworkID) const;
 		const _Model *GetModel(uint8_t NetworkID) const;
@@ -177,6 +175,7 @@ class _Stats {
 		void GetStartingBuilds(std::list<const _Object *> &BuildsList) const;
 
 		// Monsters
+		void GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, double Difficulty=1.0) const;
 		void GenerateMonsterListFromZone(int AdditionalCount, const std::string &ZoneID, std::list<const _MonsterStat *> &Monsters, bool &Boss, double &Cooldown) const;
 		void GenerateItemDrops(const _MonsterStat *MonsterStat, int Count, int DropRate, std::list<const _BaseItem *> &ItemDrops) const;
 
@@ -185,35 +184,39 @@ class _Stats {
 		const _Level *FindLevel(int Experience) const;
 		int GetMaxLevel() const { return (int)Levels.size(); }
 
-		std::vector<_Level> Levels;
-
-		std::unordered_map<uint32_t, _LightType> Lights;
-		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
-
-		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
+		// Types
 		std::unordered_map<DamageType, std::pair<std::string, std::string> > DamageTypes;
 		std::unordered_map<EventType, std::pair<std::string, std::string> > EventTypes;
 		std::unordered_map<ItemType, std::pair<std::string, std::string> > ItemTypes;
 		std::unordered_map<ScopeType, std::pair<std::string, std::string> > ScopeTypes;
 		std::unordered_map<TargetType, std::pair<std::string, std::string> > TargetTypes;
 
+		// Objects
 		std::unordered_map<std::string, _BaseItem> Items;
-		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
+		std::unordered_map<std::string, _Skill> Skills;
 		std::unordered_map<std::string, _WeaponType> WeaponTypes;
 		std::unordered_map<std::string, _Buff> Buffs;
-		std::unordered_map<uint16_t, const _Buff *> BuffsIndex;
 		std::unordered_map<std::string, _Portrait> Portraits;
-		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
 		std::unordered_map<std::string, _Model> Models;
-		std::unordered_map<uint8_t, const _Model *> ModelsIndex;
 		std::unordered_map<std::string, _Vendor> Vendors;
 		std::unordered_map<std::string, _Trader> Traders;
 		std::unordered_map<std::string, _Blacksmith> Blacksmiths;
 		std::unordered_map<std::string, _MinigameStat> Minigames;
 		std::unordered_map<std::string, _MonsterStat> Monsters;
-		std::unordered_map<uint16_t, const _MonsterStat *> MonstersIndex;
 		std::unordered_map<std::string, _Zone> Zones;
 		std::unordered_map<std::string, const _Object *> Builds;
+		std::unordered_map<uint32_t, _LightType> Lights;
+		std::unordered_map<StatType, double, StatTypeHash> UpgradeScale;
+		std::vector<_Level> Levels;
+
+		// Indexes
+		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
+		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
+		std::unordered_map<uint16_t, const _Skill *> SkillsIndex;
+		std::unordered_map<uint16_t, const _Buff *> BuffsIndex;
+		std::unordered_map<uint8_t, const _Model *> ModelsIndex;
+		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
+		std::unordered_map<uint16_t, const _MonsterStat *> MonstersIndex;
 
 	private:
 
@@ -228,6 +231,7 @@ class _Stats {
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone=false);
+		const _Skill *GetSkill(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _WeaponType *GetWeaponType(tinyxml2::XMLElement *Node, const char *Attribute);

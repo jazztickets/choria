@@ -18,5 +18,12 @@
 #include <objects/usable.h>
 
 // Constructor
-_Usable::_Usable() {
+_Usable::_Usable() :
+	Texture(nullptr),
+	NetworkID(0),
+	Level(0),
+	MaxLevel(0),
+	Target(TargetType::NONE),
+	Scope(ScopeType::NONE),
+	TargetAlive(true) {
 }

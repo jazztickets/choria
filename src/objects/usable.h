@@ -18,17 +18,31 @@
 #pragma once
 
 // Libraries
+#include <enums.h>
 #include <string>
+#include <cstdint>
 
 // Forward Declarations
+namespace ae {
+	class _Texture;
+}
 
-// Classes
+// An object that goes into an action bar slot
 class _Usable {
 
 	public:
 
 		_Usable();
 
-	private:
+		std::string ID;
+		std::string Name;
+		std::string Script;
+		const ae::_Texture *Texture;
+		uint16_t NetworkID;
+		int Level;
+		int MaxLevel;
+		TargetType Target;
+		ScopeType Scope;
+		bool TargetAlive;
 
 };

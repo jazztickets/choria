@@ -20,7 +20,6 @@
 // Libraries
 #include <objects/usable.h>
 #include <ae/texture.h>
-#include <enums.h>
 #include <glm/vec4.hpp>
 
 // Forward Declarations
@@ -32,10 +31,6 @@ struct _Cursor;
 struct _Slot;
 struct _ActionResult;
 struct _WeaponType;
-
-namespace ae {
-	class _Texture;
-}
 
 // Classes
 class _BaseItem : public _Usable {
@@ -88,15 +83,8 @@ class _BaseItem : public _Usable {
 		float GetDropRate(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
 
-		std::string ID;
-		uint16_t NetworkID;
-		std::string Name;
-		std::string Script;
-		const ae::_Texture *Texture;
 		ItemType Type;
 		const _WeaponType *WeaponType;
-		int Level;
-		int MaxLevel;
 		double Duration;
 		int Cost;
 		uint32_t DamageTypeID;
@@ -118,9 +106,6 @@ class _BaseItem : public _Usable {
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;
-		bool TargetAlive;
-		TargetType Target;
-		ScopeType Scope;
 
 	private:
 

@@ -106,6 +106,16 @@ const _BaseItem *_Stats::GetItem(tinyxml2::XMLElement *Node, const char *Attribu
 	return &Iterator->second;
 }
 
+// Get a valid skill from an id attribute
+const _Skill *_Stats::GetSkill(tinyxml2::XMLElement *Node, const char *Attribute) {
+	std::string Value = GetString(Node, Attribute);
+	const auto &Iterator = Skills.find(Value);
+	if(Iterator == Skills.end())
+		throw std::runtime_error("Cannot find skill '" + Value + "' for attribute '" + std::string(Attribute) + "' in element '" + std::string(Node->Name()) + "'");
+
+	return &Iterator->second;
+}
+
 // Get a valid monster from an id attribute
 const _MonsterStat *_Stats::GetMonster(tinyxml2::XMLElement *Node, const char *Attribute) {
 	std::string Value = GetString(Node, Attribute);
@@ -333,12 +343,11 @@ void _Stats::LoadData(const std::string &Path) {
 	// Load skills
 	NetworkID = 1;
 	for(tinyxml2::XMLElement *Node = Nodes["skills"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
-		_BaseItem Skill;
+		_Skill Skill;
 		Skill.ID = GetString(Node, "id");
 		if(Items.find(Skill.ID) != Items.end())
 			throw std::runtime_error("Duplicate skill id '" + Skill.ID + "' in " + Path);
 
-		Skill.Type = ItemType::SKILL;
 		Skill.Name = GetString(Node, "name");
 		Skill.Texture = GetTexture(Node, "texture");
 		Skill.MaxLevel = Node->IntAttribute("max_level", 1);
@@ -358,8 +367,8 @@ void _Stats::LoadData(const std::string &Path) {
 		}
 
 		Skill.NetworkID = NetworkID++;
-		Items[Skill.ID] = Skill;
-		ItemsIndex[Skill.NetworkID] = &Items[Skill.ID];
+		Skills[Skill.ID] = Skill;
+		SkillsIndex[Skill.NetworkID] = &Skills[Skill.ID];
 	}
 
 	// Load weapon types
@@ -373,7 +382,7 @@ void _Stats::LoadData(const std::string &Path) {
 
 		// Load skills granted
 		for(tinyxml2::XMLElement *SkillNode = Node->FirstChildElement("skill"); SkillNode != nullptr; SkillNode = SkillNode->NextSiblingElement()) {
-			const _BaseItem *Skill = GetItem(SkillNode, "id");
+			const _Skill *Skill = GetSkill(SkillNode, "id");
 			WeaponType.Skills.push_back(Skill);
 		}
 
@@ -381,6 +390,7 @@ void _Stats::LoadData(const std::string &Path) {
 	}
 
 	// Load items
+	NetworkID = 1;
 	for(tinyxml2::XMLElement *Node = Nodes["items"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_BaseItem Item;
 		Item.ID = GetString(Node, "id");
@@ -577,10 +587,10 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("No skills node for monster id '" + Monster.ID + "' in " + Path);
 
 		for(tinyxml2::XMLElement *ActionNode = ActionsNode->FirstChildElement("action"); ActionNode != nullptr; ActionNode = ActionNode->NextSiblingElement()) {
-			const _BaseItem *Item = GetItem(ActionNode, "id");
+			//const _Skill *Skill = GetSkill(ActionNode, "skill_id");
 
 			//TODO add monster action struct
-			Monster.Actions.push_back(Item);
+			//Monster.Actions.push_back(Skill);
 		}
 
 		// Load drops
@@ -676,24 +686,6 @@ void _Stats::LoadLights(const std::string &Path) {
 	File.close();
 }
 
-// Set object's monster stats
-void _Stats::GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, double Difficulty) const {
-	Object->Monster->MonsterStat = MonsterStat;
-
-	// Get data
-	Object->Name = MonsterStat->Name;
-	Object->Character->Portrait = MonsterStat->Portrait;
-	Object->Character->BaseMaxHealth = (int)(MonsterStat->Health * Difficulty);
-	Object->Character->BaseMaxMana = MonsterStat->Mana;
-	Object->Character->BaseMinDamage = MonsterStat->MinDamage;
-	Object->Character->BaseMaxDamage = MonsterStat->MaxDamage;
-	Object->Character->BaseArmor = 0;
-	Object->Character->BaseDamageBlock = 0;
-	Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
-	Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
-	Object->Character->Gold = MonsterStat->Gold;
-}
-
 // Get portrait by network id
 const _Portrait *_Stats::GetPortrait(uint8_t NetworkID) const {
 	const auto &Iterator = PortraitsIndex.find(NetworkID);
@@ -728,6 +720,24 @@ void _Stats::GetStartingBuilds(std::list<const _Object *> &BuildsList) const {
 		BuildsList.push_back(Build.second);
 
 	BuildsList.sort(CompareBuild);
+}
+
+// Set object's monster stats
+void _Stats::GetMonsterStats(const _MonsterStat *MonsterStat, _Object *Object, double Difficulty) const {
+	Object->Monster->MonsterStat = MonsterStat;
+
+	// Get data
+	Object->Name = MonsterStat->Name;
+	Object->Character->Portrait = MonsterStat->Portrait;
+	Object->Character->BaseMaxHealth = (int)(MonsterStat->Health * Difficulty);
+	Object->Character->BaseMaxMana = MonsterStat->Mana;
+	Object->Character->BaseMinDamage = MonsterStat->MinDamage;
+	Object->Character->BaseMaxDamage = MonsterStat->MaxDamage;
+	Object->Character->BaseArmor = 0;
+	Object->Character->BaseDamageBlock = 0;
+	Object->Character->Health = Object->Character->MaxHealth = Object->Character->BaseMaxHealth;
+	Object->Character->Mana = Object->Character->MaxMana = Object->Character->BaseMaxMana;
+	Object->Character->Gold = MonsterStat->Gold;
 }
 
 // Randomly generates a list of monsters from a zone

@@ -584,7 +584,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	for(auto &Skill : Character->Skills) {
 		Json::Value SkillNode;
 		SkillNode["id"] = Skill.first;
-		SkillNode["level"] = Skill.second;
+		SkillNode["experience"] = Skill.second;
 		SkillsNode.append(SkillNode);
 	}
 	Data["skills"] = SkillsNode;
@@ -689,7 +689,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set skills
 	for(const Json::Value &SkillNode : Data["skills"]) {
 		std::string SkillID = SkillNode["id"].asString();
-		Character->Skills[SkillID] = std::min(SkillNode["level"].asInt(), Stats->Items.at(SkillID).MaxLevel);
+		Character->Skills[SkillID] = SkillNode["experience"].asInt();
 	}
 
 	// Set actionbar
@@ -788,7 +788,7 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	// Write skills
 	Data.Write<uint16_t>((uint16_t)Character->Skills.size());
 	for(const auto &Skill : Character->Skills) {
-		Data.Write<uint16_t>(Stats->Items.at(Skill.first).NetworkID);
+		Data.Write<uint16_t>(Stats->Skills.at(Skill.first).NetworkID);
 		Data.Write<int>(Skill.second);
 	}
 
@@ -844,7 +844,7 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	for(uint16_t i = 0; i < SkillCount; i++) {
 		uint16_t SkillID = Data.Read<uint16_t>();
 		int Points = Data.Read<int>();
-		Character->Skills[Stats->ItemsIndex.at(SkillID)->ID] = Points;
+		Character->Skills[Stats->SkillsIndex.at(SkillID)->ID] = Points;
 	}
 
 	// Read action bar

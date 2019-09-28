@@ -55,9 +55,9 @@ void _SkillScreen::Init() {
 	size_t i = 0;
 
 	// Get all player skills
-	std::list<const _BaseItem *> SortedSkills;
+	std::list<const _Skill *> SortedSkills;
 	for(auto &SkillID : HUD->Player->Character->Skills) {
-		const _BaseItem *Skill = &PlayState.Stats->Items.at(SkillID.first);
+		const _Skill *Skill = &PlayState.Stats->Skills.at(SkillID.first);
 		if(!Skill)
 			continue;
 
@@ -65,7 +65,7 @@ void _SkillScreen::Init() {
 	}
 
 	// Sort skills
-	SortedSkills.sort(CompareItems);
+	SortedSkills.sort(CompareSkills);
 
 	// Iterate over skills
 	for(auto &Skill : SortedSkills) {
