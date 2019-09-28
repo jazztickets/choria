@@ -127,7 +127,7 @@ void _InventoryScreen::DrawBag(BagType Type) {
 
 			// Get bag button
 			std::stringstream Buffer;
-			Buffer << "button_" << Bag.Name << "_bag_" << i;
+			Buffer << "button_" << Bag.ID << "_bag_" << i;
 			ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 			Buffer.str("");
 
@@ -140,7 +140,7 @@ void _InventoryScreen::DrawBag(BagType Type) {
 
 			// Draw two handed weapon twice in equipment bag
 			if(Type == BagType::EQUIPMENT && i == EquipmentType::HAND1 && Slot->Item->Type == ItemType::TWOHANDED_WEAPON) {
-				Buffer << "button_" << Bag.Name << "_bag_" << EquipmentType::HAND2;
+				Buffer << "button_" << Bag.ID << "_bag_" << EquipmentType::HAND2;
 				ae::_Element *Button = ae::Assets.Elements[Buffer.str()];
 				ae::Graphics.DrawScaledImage((Button->Bounds.Start + Button->Bounds.End) / 2.0f, Slot->Item->Texture, ae::Assets.Colors["itemfade"]);
 			}

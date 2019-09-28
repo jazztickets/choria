@@ -575,7 +575,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 				BagNode.append(ItemNode);
 			}
 		}
-		ItemsNode[std::to_string((int)Bag.Type)] = BagNode;
+		ItemsNode[Bag.ID] = BagNode;
 	}
 	Data["items"] = ItemsNode;
 
@@ -675,11 +675,14 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 			InventorySlot.Item = &Stats->Items.at(ItemNode["id"].asString());
 			InventorySlot.Upgrades = ItemNode["upgrades"].asInt();
 			InventorySlot.Count = ItemNode["count"].asInt();
-			BagType Bag = (BagType)std::stoul(BagNode.name());
-			if(Inventory->GetBag(Bag).StaticSize)
-				Inventory->GetBag(Bag).Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
+			_Bag *Bag = Inventory->GetBagByID(BagNode.name());
+			if(!Bag)
+				throw std::runtime_error("Bad bag id: " + BagNode.name());
+
+			if(Bag->StaticSize)
+				Bag->Slots[ItemNode["slot"].asUInt64()] = InventorySlot;
 			else
-				Inventory->GetBag(Bag).Slots.push_back(InventorySlot);
+				Bag->Slots.push_back(InventorySlot);
 		}
 	}
 

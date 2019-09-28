@@ -23,8 +23,9 @@
 
 // Constructor
 _Inventory::_Inventory() {
-
 	Bags.resize((size_t)BagType::COUNT);
+
+	// Set sizes
 	GetBag(BagType::EQUIPMENT).Slots.resize(EquipmentType::COUNT);
 	GetBag(BagType::INVENTORY).Slots.resize(INVENTORY_SIZE);
 	GetBag(BagType::TRADE).Slots.resize(INVENTORY_MAX_TRADE_ITEMS);
@@ -32,16 +33,18 @@ _Inventory::_Inventory() {
 	for(auto &Slot : GetBag(BagType::EQUIPMENT).Slots)
 		Slot.MaxCount = 1;
 
+	// Set ID
+	GetBag(BagType::EQUIPMENT).ID = "equipment";
+	GetBag(BagType::INVENTORY).ID = "inventory";
+	GetBag(BagType::TRADE).ID = "trade";
+	GetBag(BagType::KEYS).ID = "keys";
+
+	// Set type
 	GetBag(BagType::NONE).Type = BagType::NONE;
 	GetBag(BagType::EQUIPMENT).Type = BagType::EQUIPMENT;
 	GetBag(BagType::INVENTORY).Type = BagType::INVENTORY;
 	GetBag(BagType::TRADE).Type = BagType::TRADE;
 	GetBag(BagType::KEYS).Type = BagType::KEYS;
-
-	GetBag(BagType::EQUIPMENT).Name = "equipment";
-	GetBag(BagType::INVENTORY).Name = "inventory";
-	GetBag(BagType::TRADE).Name = "trade";
-	GetBag(BagType::KEYS).Name = "keys";
 }
 
 // Serialize
@@ -55,7 +58,7 @@ void _Inventory::Serialize(ae::_Buffer &Data) {
 // Serialize a inventory slot
 void _Inventory::SerializeSlot(ae::_Buffer &Data, const _Slot &Slot) {
 	if(Slot.Type == BagType::NONE)
-		throw std::runtime_error("_Slot::Serialize - Bag is NULL");
+		throw std::runtime_error(std::string(__FUNCTION__) + " - Bag is NULL");
 
 	// Slot index
 	Slot.Serialize(Data);
@@ -420,6 +423,16 @@ _Slot _Inventory::GetRequiredItemSlots(const _Trader *Trader, std::vector<_Slot>
 	}
 
 	return RewardItemSlot;
+}
+
+// Search for bag by id
+_Bag *_Inventory::GetBagByID(const std::string &ID) {
+	for(auto &Bag : Bags) {
+		if(Bag.ID == ID)
+			return &Bag;
+	}
+
+	return nullptr;
 }
 
 // Serialize a slot
