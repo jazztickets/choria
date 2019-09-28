@@ -11,17 +11,6 @@
 		<portrait id="pete" texture="textures/portraits/pete.png"/>
 		<portrait id="leb" texture="textures/portraits/leb.png"/>
 	</portraits>
-	<models>
-		<model id="warrior" texture="textures/models/warrior.png"/>
-		<model id="mage" texture="textures/models/mage.png"/>
-		<model id="cleric" texture="textures/models/cleric.png"/>
-		<model id="thief" texture="textures/models/thief.png"/>
-		<model id="paladin" texture="textures/models/paladin.png"/>
-		<model id="warlock" texture="textures/models/warlock.png"/>
-		<model id="beggar" texture="textures/models/beggar.png"/>
-		<model id="hunter" texture="textures/models/hunter.png"/>
-		<model id="gambler" texture="textures/models/gambler.png"/>
-	</models>
 	<buffs>
 		<buff id="healing" name="Healing" script="Buff_Healing" texture="textures/buffs/healing.png"/>
 	</buffs>

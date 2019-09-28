@@ -220,6 +220,7 @@ class _Stats {
 		void LoadTypes();
 		void LoadMapDirectory();
 		void LoadPortraitsDirectory(const std::string &Path);
+		void LoadModelsDirectory(const std::string &Path);
 		void LoadLevels(const std::string &Path);
 		void LoadLights(const std::string &Path);
 		void LoadData(const std::string &Path);

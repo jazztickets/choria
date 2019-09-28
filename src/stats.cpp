@@ -51,6 +51,7 @@ _Stats::_Stats(bool Headless) :
 	// Load game data
 	LoadTypes();
 	LoadMapDirectory();
+	LoadModelsDirectory("textures/models/");
 	LoadPortraitsDirectory("textures/monsters/");
 	LoadLevels("data/levels.tsv");
 	LoadLights("data/lights.tsv");
@@ -200,11 +201,9 @@ void _Stats::LoadMapDirectory() {
 	ae::NetworkIDType NetworkID = 1;
 	ae::_Files Files(MAPS_PATH);
 	for(const auto &File : Files.Nodes) {
-
-		// Get clean map name
 		size_t DotPosition = File.find(".map.gz");
-		if(DotPosition == 0)
-			throw std::runtime_error("Bad map filename: " + File);
+		if(!DotPosition)
+			throw std::runtime_error("Bad filename: " + Files.Path + File);
 
 		std::string Name = File.substr(0, DotPosition);
 		MapsIndex[Name] = NetworkID;
@@ -217,11 +216,9 @@ void _Stats::LoadPortraitsDirectory(const std::string &Path) {
 	uint16_t NetworkID = Portraits.size() + 1;
 	ae::_Files Files(Path);
 	for(const auto &File : Files.Nodes) {
-
-		// Get clean file name
 		size_t DotPosition = File.find(".");
-		if(DotPosition == 0)
-			throw std::runtime_error("Bad portrait filename: " + Files.Path + File);
+		if(!DotPosition)
+			throw std::runtime_error("Bad filename: " + Files.Path + File);
 
 		_Portrait Portrait;
 		Portrait.ID = File.substr(0, DotPosition);
@@ -231,6 +228,25 @@ void _Stats::LoadPortraitsDirectory(const std::string &Path) {
 
 		Portraits[Portrait.ID] = Portrait;
 		PortraitsIndex[Portrait.NetworkID] = &Portraits[Portrait.ID];
+	}
+}
+
+// Load models directory
+void _Stats::LoadModelsDirectory(const std::string &Path) {
+	uint16_t NetworkID = Models.size() + 1;
+	ae::_Files Files(Path);
+	for(const auto &File : Files.Nodes) {
+		size_t DotPosition = File.find(".");
+		if(!DotPosition)
+			throw std::runtime_error("Bad filename: " + Files.Path + File);
+
+		_Model Model;
+		Model.ID = File.substr(0, DotPosition);
+		Model.Texture = ae::Assets.Textures[Files.Path + File];
+		Model.NetworkID = NetworkID++;
+
+		Models[Model.ID] = Model;
+		ModelsIndex[Model.NetworkID] = &Models[Model.ID];
 	}
 }
 
@@ -249,7 +265,6 @@ void _Stats::LoadData(const std::string &Path) {
 	std::unordered_map<std::string, tinyxml2::XMLElement *> Nodes(
 	{
 		{ "portraits", DataNode->FirstChildElement("portraits") },
-		{ "models", DataNode->FirstChildElement("models") },
 		{ "buffs", DataNode->FirstChildElement("buffs") },
 		{ "skills", DataNode->FirstChildElement("skills") },
 		{ "weapon_types", DataNode->FirstChildElement("weapon_types") },
@@ -296,21 +311,6 @@ void _Stats::LoadData(const std::string &Path) {
 
 		Portraits[Portrait.ID] = Portrait;
 		PortraitsIndex[Portrait.NetworkID] = &Portraits[Portrait.ID];
-	}
-
-	// Load models
-	NetworkID = 1;
-	for(tinyxml2::XMLElement *Node = Nodes["models"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
-		_Model Model;
-		Model.ID = GetString(Node, "id");
-		if(Models.find(Model.ID) != Models.end())
-			throw std::runtime_error("Duplicate model id '" + Model.ID + "' in " + Path);
-
-		Model.Texture = GetTexture(Node, "texture");
-		Model.NetworkID = NetworkID++;
-
-		Models[Model.ID] = Model;
-		ModelsIndex[Model.NetworkID] = &Models[Model.ID];
 	}
 
 	// Load buffs
