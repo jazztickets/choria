@@ -79,6 +79,7 @@ void _SkillScreen::Init() {
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
 		Button->UserData = (void *)Skill;
+		Button->Index = Skill->NetworkID;
 		Button->Clickable = true;
 		Element->Children.push_back(Button);
 
@@ -90,6 +91,7 @@ void _SkillScreen::Init() {
 		LevelLabel->Alignment = ae::CENTER_BASELINE;
 		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
 		LevelLabel->UserData = (void *)Skill;
+		LevelLabel->Index = Skill->NetworkID;
 		Element->Children.push_back(LevelLabel);
 
 		// Update position

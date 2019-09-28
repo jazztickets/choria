@@ -353,7 +353,8 @@ void _Character::CalculateStats() {
 		// Get skills unlocked
 		if(Item->WeaponType) {
 			for(const auto &Skill : Item->WeaponType->Skills) {
-
+				if(Skills.find(Skill->ID) == Skills.end())
+					Skills[Skill->ID] = 0;
 			}
 		}
 	}

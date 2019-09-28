@@ -373,7 +373,7 @@ void _Stats::LoadData(const std::string &Path) {
 		WeaponType.Name = GetString(Node, "name");
 
 		// Load skills granted
-		for(tinyxml2::XMLElement *SkillNode = Node->FirstChildElement("skills"); SkillNode != nullptr; SkillNode = SkillNode->NextSiblingElement()) {
+		for(tinyxml2::XMLElement *SkillNode = Node->FirstChildElement("skill"); SkillNode != nullptr; SkillNode = SkillNode->NextSiblingElement()) {
 			const _BaseItem *Skill = GetItem(SkillNode, "id");
 			WeaponType.Skills.push_back(Skill);
 		}
