@@ -52,9 +52,9 @@ class _BaseItem {
 		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
 		bool IsStackable() const { return !IsEquippable(); }
-		bool UseMouseTargetting() const { return Target == TargetType::SELF || Target == TargetType::ENEMY || Target == TargetType::ALLY || Target == TargetType::MULTIPLE_ENEMIES || Target == TargetType::MULTIPLE_ALLIES || Target == TargetType::ANY; }
-		bool CanTargetEnemy() const {  return Target == TargetType::ENEMY || Target == TargetType::MULTIPLE_ENEMIES || Target == TargetType::ALL_ENEMIES || Target == TargetType::ANY; }
-		bool CanTargetAlly() const {  return Target == TargetType::SELF || Target == TargetType::ALLY || Target == TargetType::MULTIPLE_ALLIES || Target == TargetType::ALL_ALLIES || Target == TargetType::ANY; }
+		bool UseMouseTargetting() const { return Target == TargetType::SELF || Target == TargetType::ENEMY || Target == TargetType::ALLY || Target == TargetType::ANY; }
+		bool CanTargetEnemy() const {  return Target == TargetType::ENEMY || Target == TargetType::ANY; }
+		bool CanTargetAlly() const {  return Target == TargetType::SELF || Target == TargetType::ALLY || Target == TargetType::ANY; }
 		int GetTargetCount() const;
 
 		void GetEquipmentSlot(_Slot &Slot) const;
@@ -122,7 +122,6 @@ class _BaseItem {
 		bool TargetAlive;
 		TargetType Target;
 		ScopeType Scope;
-		uint32_t UnlockID;
 
 	private:
 

@@ -36,7 +36,7 @@
 
 // Constants
 const double DEFAULT_CLOCK = 8.0*60.0;
-const int SAVE_VERSION = 4;
+const int SAVE_VERSION = 5;
 
 // Constructor
 _Save::_Save() :

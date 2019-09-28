@@ -1500,10 +1500,10 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 
 			// Unlock a skill
 			if(SkillUnlocked)
-				Player->Character->Skills[ActionResult.ActionUsed.Item->NetworkID] = 0;
+				Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
 
 			if(ItemUnlocked)
-				Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
+				Player->Character->Unlocks[ActionResult.ActionUsed.Item->ID].Level = 1;
 
 			if(KeyUnlocked)
 				Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Item, 1));

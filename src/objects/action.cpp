@@ -104,11 +104,11 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 			Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 			DecrementItem = true;
 			if(ItemUsed->IsSkill()) {
-				Source->Character->Skills[ItemUsed->NetworkID] = 0;
+				Source->Character->Skills[ItemUsed->ID] = 0;
 				SkillUnlocked = true;
 			}
 			else if(ItemUsed->IsUnlockable()) {
-				Source->Character->Unlocks[ItemUsed->UnlockID].Level = 1;
+				Source->Character->Unlocks[ItemUsed->ID].Level = 1;
 				ItemUnlocked = true;
 			}
 			else if(ItemUsed->IsKey()) {

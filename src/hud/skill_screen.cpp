@@ -57,7 +57,7 @@ void _SkillScreen::Init() {
 	// Get all player skills
 	std::list<const _BaseItem *> SortedSkills;
 	for(auto &SkillID : HUD->Player->Character->Skills) {
-		const _BaseItem *Skill = PlayState.Stats->ItemsIndex.at(SkillID.first);
+		const _BaseItem *Skill = &PlayState.Stats->Items.at(SkillID.first);
 		if(!Skill)
 			continue;
 
@@ -78,7 +78,7 @@ void _SkillScreen::Init() {
 		Button->BaseSize = Skill->Texture->Size;
 		Button->Alignment = ae::LEFT_TOP;
 		Button->Texture = Skill->Texture;
-		Button->Index = (int)Skill->NetworkID;
+		Button->UserData = (void *)Skill;
 		Button->Clickable = true;
 		Element->Children.push_back(Button);
 
@@ -89,7 +89,7 @@ void _SkillScreen::Init() {
 		LevelLabel->BaseOffset = LevelOffset;
 		LevelLabel->Alignment = ae::CENTER_BASELINE;
 		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
-		LevelLabel->Index = (int)Skill->NetworkID;
+		LevelLabel->UserData = (void *)Skill;
 		Element->Children.push_back(LevelLabel);
 
 		// Update position
@@ -160,54 +160,35 @@ void _SkillScreen::RefreshSkillButtons() {
 	// Loop through buttons
 	for(auto &ChildElement : Element->Children) {
 		if(ChildElement->Name == "label_skills_level") {
-			uint32_t SkillID = (uint32_t)ChildElement->Index;
-			ChildElement->Text = std::to_string(HUD->Player->Character->Skills[SkillID]);
-		}
-		else if(ChildElement->Name == "button_skills_plus") {
-
-			// Get skill
-			uint32_t SkillID = (uint32_t)ChildElement->Parent->Index;
-			if(HUD->Player->Character->Skills[SkillID] >= HUD->Player->Stats->ItemsIndex.at(SkillID)->MaxLevel)
-				ChildElement->SetActive(false);
-			else
-				ChildElement->SetActive(true);
-		}
-		else if(ChildElement->Name == "button_skills_minus") {
-
-			// Get skill
-			uint32_t SkillID = (uint32_t)ChildElement->Parent->Index;
-			if(HUD->Player->Character->Skills[SkillID] == 0)
-				ChildElement->SetActive(false);
-			else
-				ChildElement->SetActive(true);
+			const _BaseItem *Skill = (const _BaseItem *)ChildElement->UserData;
+			ChildElement->Text = std::to_string(HUD->Player->Character->Skills[Skill->ID]);
 		}
 	}
 }
 
 // Equip a skill
-void _SkillScreen::EquipSkill(uint32_t SkillID) {
-	const _BaseItem *Skill = PlayState.Stats->ItemsIndex.at(SkillID);
-	if(Skill) {
+void _SkillScreen::EquipSkill(const _BaseItem *Skill) {
+	if(!Skill)
+		return;
 
-		// Check skill
-		if(!HUD->Player->Character->HasLearned(Skill))
+	// Check skill
+	if(!HUD->Player->Character->HasLearned(Skill))
+		return;
+
+	if(!HUD->Player->Character->Skills[Skill->ID])
+		return;
+
+	// Find existing action
+	for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
+		if(HUD->Player->Character->ActionBar[i].Item == Skill)
 			return;
+	}
 
-		if(!HUD->Player->Character->Skills[SkillID])
+	// Find an empty slot
+	for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
+		if(!HUD->Player->Character->ActionBar[i].Item) {
+			HUD->SetActionBar(i, HUD->Player->Character->ActionBar.size(), Skill);
 			return;
-
-		// Find existing action
-		for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
-			if(HUD->Player->Character->ActionBar[i].Item == Skill)
-				return;
-		}
-
-		// Find an empty slot
-		for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
-			if(!HUD->Player->Character->ActionBar[i].Item) {
-				HUD->SetActionBar(i, HUD->Player->Character->ActionBar.size(), Skill);
-				return;
-			}
 		}
 	}
 }

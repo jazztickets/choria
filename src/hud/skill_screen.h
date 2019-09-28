@@ -21,6 +21,9 @@
 #include <hud/screen.h>
 #include <cstdint>
 
+// Forward Declarations
+class _BaseItem;
+
 // Classes
 class _SkillScreen : public _Screen {
 
@@ -36,7 +39,7 @@ class _SkillScreen : public _Screen {
 
 		void ClearSkills();
 		void RefreshSkillButtons();
-		void EquipSkill(uint32_t SkillID);
+		void EquipSkill(const _BaseItem *Skill);
 
 	private:
 

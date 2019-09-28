@@ -201,10 +201,10 @@ class _Character {
 		std::list<_StatusEffect *> StatusEffects;
 
 		// Unlocks
-		std::unordered_map<uint32_t, _Unlock> Unlocks;
+		std::unordered_map<std::string, _Unlock> Unlocks;
 
 		// Skills
-		std::unordered_map<uint32_t, int> Skills;
+		std::unordered_map<std::string, int> Skills;
 
 		// Action bar
 		std::vector<_Action> ActionBar;

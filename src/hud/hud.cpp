@@ -242,11 +242,11 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				break;
 				case WINDOW_SKILLS:
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-						if(Player->Character->Skills[Tooltip.InventorySlot.Item->NetworkID] > 0)
+						if(Player->Character->Skills[Tooltip.InventorySlot.Item->ID] > 0)
 							Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						SkillScreen->EquipSkill(Tooltip.InventorySlot.Item->NetworkID);
+						SkillScreen->EquipSkill(Tooltip.InventorySlot.Item);
 					}
 				break;
 			}

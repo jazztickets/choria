@@ -489,11 +489,11 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 						}
 
 						if(SkillUnlocked) {
-							Player->Character->Skills[ActionResult.ActionUsed.Item->NetworkID] = 0;
+							Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
 						}
 
 						if(ItemUnlocked) {
-							Player->Character->Unlocks[ActionResult.ActionUsed.Item->UnlockID].Level = 1;
+							Player->Character->Unlocks[ActionResult.ActionUsed.Item->ID].Level = 1;
 						}
 					}
 				}
@@ -507,6 +507,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 				if(Battle) {
 
+					/*
 					// No damage dealt
 					if((ActionResult.ActionUsed.GetTargetType() == TargetType::ENEMY || ActionResult.ActionUsed.GetTargetType() == TargetType::ALL_ENEMIES)
 					   && ((ActionResult.Target.HasStat(StatType::HEALTH) && ActionResult.Target.Values[StatType::HEALTH].Integer == 0) || ActionResult.Target.HasStat(StatType::MISS))) {
@@ -517,6 +518,7 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 						ActionResult.Timeout = HUD_ACTIONRESULT_TIMEOUT;
 						ActionResult.Speed = HUD_ACTIONRESULT_SPEED;
 					}
+					*/
 
 					//Battle->ActionResults.push_back(ActionResult);
 				}

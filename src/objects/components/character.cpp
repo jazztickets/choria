@@ -321,33 +321,40 @@ void _Character::CalculateStats() {
 	float WeaponDamageModifier = 1.0f;
 	_Bag &EquipmentBag = Object->Inventory->GetBag(BagType::EQUIPMENT);
 	for(size_t i = 0; i < EquipmentBag.Slots.size(); i++) {
-
-		// Check each item
 		const _BaseItem *Item = EquipmentBag.Slots[i].Item;
+		if(!Item)
+			continue;
+
+		// Get upgrade level
 		int Upgrades = EquipmentBag.Slots[i].Upgrades;
-		if(Item) {
 
-			// Add damage
-			if(Item->Type != ItemType::SHIELD) {
-				ItemMinDamage += Item->GetMinDamage(Upgrades);
-				ItemMaxDamage += Item->GetMaxDamage(Upgrades);
+		// Add damage
+		if(Item->Type != ItemType::SHIELD) {
+			ItemMinDamage += Item->GetMinDamage(Upgrades);
+			ItemMaxDamage += Item->GetMaxDamage(Upgrades);
+		}
+		Pierce += Item->GetPierce(Upgrades);
+
+		// Add defense
+		ItemArmor += Item->GetArmor(Upgrades);
+		ItemDamageBlock += Item->GetDamageBlock(Upgrades);
+
+		// Stat changes
+		MaxHealth += Item->GetMaxHealth(Upgrades);
+		MaxMana += Item->GetMaxMana(Upgrades);
+		HealthRegen += Item->GetHealthRegen(Upgrades);
+		ManaRegen += Item->GetManaRegen(Upgrades);
+		MoveSpeed += Item->GetMoveSpeed(Upgrades);
+		DropRate += Item->GetDropRate(Upgrades);
+
+		// Add resistances
+		Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
+
+		// Get skills unlocked
+		if(Item->WeaponType) {
+			for(const auto &Skill : Item->WeaponType->Skills) {
+
 			}
-			Pierce += Item->GetPierce(Upgrades);
-
-			// Add defense
-			ItemArmor += Item->GetArmor(Upgrades);
-			ItemDamageBlock += Item->GetDamageBlock(Upgrades);
-
-			// Stat changes
-			MaxHealth += Item->GetMaxHealth(Upgrades);
-			MaxMana += Item->GetMaxMana(Upgrades);
-			HealthRegen += Item->GetHealthRegen(Upgrades);
-			ManaRegen += Item->GetManaRegen(Upgrades);
-			MoveSpeed += Item->GetMoveSpeed(Upgrades);
-			DropRate += Item->GetDropRate(Upgrades);
-
-			// Add resistances
-			Resistances[Item->ResistanceTypeID] += Item->GetResistance(Upgrades);
 		}
 	}
 
@@ -545,7 +552,7 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 
 		// Determine if item is a skill, then look at object's skill levels
 		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
-			ReturnAction.Level = Skills[ReturnAction.Item->NetworkID];
+			ReturnAction.Level = Skills[ReturnAction.Item->ID];
 		else
 			ReturnAction.Level = ReturnAction.Item->Level;
 
@@ -563,7 +570,7 @@ bool _Character::HasLearned(const _BaseItem *Skill) const {
 	if(!Skill)
 		return false;
 
-	if(Skills.find(Skill->NetworkID) != Skills.end())
+	if(Skills.find(Skill->ID) != Skills.end())
 		return true;
 
 	return false;
@@ -619,7 +626,7 @@ bool _Character::HasUnlocked(const _BaseItem *Item) const {
 	if(!Item)
 		return false;
 
-	if(Unlocks.find(Item->UnlockID) != Unlocks.end())
+	if(Unlocks.find(Item->ID) != Unlocks.end())
 		return true;
 
 	return false;

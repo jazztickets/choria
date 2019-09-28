@@ -32,7 +32,7 @@
 			<use scope="battle" script="Skill_Attack"/>
 		</skill>
 		<skill id="cleave" name="Cleave" max_level="20" texture="textures/skills/cleave.png">
-			<target type="multiple_enemies"/>
+			<target type="enemy"/>
 			<use scope="battle" script="Skill_Cleave"/>
 		</skill>
 		<skill id="monster_attack" name="Monster Attack" texture="textures/skills/monster_attack.png">
@@ -52,13 +52,6 @@
 		</weapon_type>
 	</weapon_types>
 	<items>
-		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
-			<price buy="5" tradable="false"/>
-			<use scope="world"/>
-		</item>
-		<item id="game_token" name="Game Token" type="tradable" texture="textures/items/token.png">
-			<price buy="10"/>
-		</item>
 		<item id="short_sword" name="Short Sword" type="one_hand" weapon_type="sword" texture="textures/items/short_sword.png">
 			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
@@ -69,6 +62,9 @@
 			<damage min="50" max="120" type="physical" />
 			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />
 		</item>
+		<item id="action_slot1" name="Action Slot I" type="unlockable" texture="textures/items/actionslot1.png">
+			<use scope="world" script="Item_ActionSlot"/>
+		</item>
 		<item id="healing_salve" name="Healing Salve" type="consumable" texture="textures/items/healing_salve.png">
 			<price buy="5"/>
 			<target type="self" />
@@ -76,6 +72,13 @@
 		</item>
 		<item id="battle_potion" name="Battle Potion" type="consumable" texture="textures/items/death_potion.png">
 			<use scope="world" script="Item_BattlePotion"/>
+		</item>
+		<item id="rat_key" name="Rat Key" type="key" texture="textures/items/key.png">
+			<price buy="5" tradable="false"/>
+			<use scope="world"/>
+		</item>
+		<item id="game_token" name="Game Token" type="tradable" texture="textures/items/token.png">
+			<price buy="10"/>
 		</item>
 	</items>
 	<builds>

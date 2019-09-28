@@ -592,12 +592,13 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	// Write action bar
 	Json::Value ActionBarNode;
 	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
-		if(Character->ActionBar[i].Item) {
-			Json::Value ActionNode;
-			ActionNode["slot"] = (Json::Value::UInt64)i;
-			ActionNode["id"] = Character->ActionBar[i].Item ? Character->ActionBar[i].Item->NetworkID : 0;
-			ActionBarNode.append(ActionNode);
-		}
+		if(!Character->ActionBar[i].Item)
+			continue;
+
+		Json::Value ActionNode;
+		ActionNode["slot"] = (Json::Value::UInt64)i;
+		ActionNode["id"] = Character->ActionBar[i].Item->ID;
+		ActionBarNode.append(ActionNode);
 	}
 	Data["actionbar"] = ActionBarNode;
 
@@ -684,15 +685,15 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Set skills
 	for(const Json::Value &SkillNode : Data["skills"]) {
-		uint32_t ItemID = SkillNode["id"].asUInt();
-		Character->Skills[ItemID] = std::min(SkillNode["level"].asInt(), Stats->ItemsIndex.at(ItemID)->MaxLevel);
+		std::string SkillID = SkillNode["id"].asString();
+		Character->Skills[SkillID] = std::min(SkillNode["level"].asInt(), Stats->Items.at(SkillID).MaxLevel);
 	}
 
 	// Set actionbar
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
 		if(Slot < Character->ActionBar.size())
-			Character->ActionBar[Slot].Item = Stats->ItemsIndex.at(ActionNode["id"].asUInt());
+			Character->ActionBar[Slot].Item = &Stats->Items.at(ActionNode["id"].asString());
 	}
 
 	// Set status effects
@@ -708,7 +709,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 
 	// Set unlocks
 	for(const Json::Value &UnlockNode : Data["unlocks"])
-		Character->Unlocks[UnlockNode["id"].asUInt()].Level = UnlockNode["level"].asInt();
+		Character->Unlocks[UnlockNode["id"].asString()].Level = UnlockNode["level"].asInt();
 }
 
 // Serialize for ObjectUpdate
@@ -782,9 +783,9 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	Inventory->Serialize(Data);
 
 	// Write skills
-	Data.Write<uint32_t>((uint32_t)Character->Skills.size());
+	Data.Write<uint16_t>((uint16_t)Character->Skills.size());
 	for(const auto &Skill : Character->Skills) {
-		Data.Write<uint32_t>(Skill.first);
+		Data.Write<uint16_t>(Stats->Items.at(Skill.first).NetworkID);
 		Data.Write<int>(Skill.second);
 	}
 
@@ -795,9 +796,9 @@ void _Object::SerializeStats(ae::_Buffer &Data) {
 	}
 
 	// Write unlocks
-	Data.Write<uint32_t>((uint32_t)Character->Unlocks.size());
+	Data.Write<uint16_t>((uint16_t)Character->Unlocks.size());
 	for(const auto &Unlock : Character->Unlocks) {
-		Data.Write<uint32_t>(Unlock.first);
+		Data.Write<uint16_t>(Stats->Items.at(Unlock.first).NetworkID);
 		Data.Write<int>(Unlock.second.Level);
 	}
 
@@ -836,11 +837,11 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 	Inventory->Unserialize(Data, Stats);
 
 	// Read skills
-	uint32_t SkillCount = Data.Read<uint32_t>();
-	for(uint32_t i = 0; i < SkillCount; i++) {
-		uint32_t SkillID = Data.Read<uint32_t>();
+	uint16_t SkillCount = Data.Read<uint16_t>();
+	for(uint16_t i = 0; i < SkillCount; i++) {
+		uint16_t SkillID = Data.Read<uint16_t>();
 		int Points = Data.Read<int>();
-		Character->Skills[SkillID] = Points;
+		Character->Skills[Stats->ItemsIndex.at(SkillID)->ID] = Points;
 	}
 
 	// Read action bar
@@ -850,11 +851,11 @@ void _Object::UnserializeStats(ae::_Buffer &Data) {
 		Character->ActionBar[i].Unserialize(Data, Stats);
 
 	// Read unlocks
-	uint32_t UnlockCount = Data.Read<uint32_t>();
-	for(uint32_t i = 0; i < UnlockCount; i++) {
-		uint32_t UnlockID = Data.Read<uint32_t>();
+	uint16_t UnlockCount = Data.Read<uint16_t>();
+	for(uint16_t i = 0; i < UnlockCount; i++) {
+		uint16_t UnlockID = Data.Read<uint16_t>();
 		int Level = Data.Read<int>();
-		Character->Unlocks[UnlockID].Level = Level;
+		Character->Unlocks[Stats->ItemsIndex.at(UnlockID)->ID].Level = Level;
 	}
 
 	// Read status effects

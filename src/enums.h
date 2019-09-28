@@ -59,12 +59,7 @@ enum class TargetType : uint8_t {
 	SELF,
 	ENEMY,
 	ALLY,
-	MULTIPLE_ENEMIES,
-	MULTIPLE_ALLIES,
-	ALL_ENEMIES,
-	ALL_ALLIES,
 	ANY,
-	ALL,
 };
 
 // Scope of action

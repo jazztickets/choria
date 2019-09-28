@@ -69,8 +69,7 @@ _BaseItem::_BaseItem() :
 	Tradable(true),
 	TargetAlive(true),
 	Target(TargetType::NONE),
-	Scope(ScopeType::NONE),
-	UnlockID(0) {
+	Scope(ScopeType::NONE) {
 }
 
 // Draw tooltip
@@ -157,7 +156,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 	if(IsSkill()) {
 
 		// Get skill level
-		auto SkillIterator = Player->Character->Skills.find(NetworkID);
+		auto SkillIterator = Player->Character->Skills.find(ID);
 		if(SkillIterator != Player->Character->Skills.end())
 			DrawLevel = SkillIterator->second;
 		else
@@ -412,6 +411,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 
 	// Draw help text
 	std::string InfoText;
+	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	switch(Type) {
 		case ItemType::ONEHANDED_WEAPON:
 		case ItemType::TWOHANDED_WEAPON:
@@ -442,33 +442,39 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 					if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
 						InfoText = "Right-click to learn";
 				}
-				else
+				else {
 					InfoText = "Already learned";
+					InfoColor = ae::Assets.Colors["red"];
+				}
 			}
 		break;
 		case ItemType::UNLOCKABLE: {
 			if(!Player->Character->HasUnlocked(this))
 				InfoText = "Right-click to unlock";
-			else
+			else {
 				InfoText = "Already unlocked";
+				InfoColor = ae::Assets.Colors["red"];
+			}
 		} break;
 		case ItemType::KEY: {
 			if(!Player->Inventory->GetBag(BagType::KEYS).HasItem(ID))
 				InfoText = "Right-click to add to keychain";
-			else
+			else {
 				InfoText = "Already in keychain";
+				InfoColor = ae::Assets.Colors["red"];
+			}
 		} break;
 		default:
 		break;
 	}
 
 	if(InfoText.length()) {
-		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, InfoColor);
 		DrawPosition.y += ControlSpacingY;
 	}
 
 	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		ae::Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, ae::CENTER_BASELINE, InfoColor);
 		DrawPosition.y += SpacingY;
 	}
 
@@ -520,28 +526,10 @@ int _BaseItem::GetTargetCount() const {
 
 	int TargetCount = 0;
 	switch(Target) {
-		case TargetType::SELF:
-			TargetCount = 1;
-		break;
-		case TargetType::ALLY:
-			TargetCount = 1;
-		break;
-		case TargetType::MULTIPLE_ENEMIES:
-			TargetCount = BATTLE_MULTI_TARGET_COUNT;
-		break;
-		case TargetType::MULTIPLE_ALLIES:
-			TargetCount = BATTLE_MULTI_TARGET_COUNT;
-		break;
-		case TargetType::ALL_ENEMIES:
-			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
-		break;
-		case TargetType::ALL_ALLIES:
-			TargetCount = BATTLE_MAX_OBJECTS_PER_SIDE;
-		break;
-		case TargetType::ANY:
-			TargetCount = 1;
+		case TargetType::NONE:
 		break;
 		default:
+			TargetCount = 1;
 		break;
 	}
 
