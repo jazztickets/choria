@@ -1025,9 +1025,9 @@ _StatusEffect *_Object::UpdateStats(_StatChange &StatChange) {
 
 			// Start PVP
 			if(StatChange.HasStat(StatType::HUNT))
-				Server->QueueBattle(this, 0, false, true, StatChange.Values[StatType::HUNT].Float, 0.0f);
+				Server->QueueBattle(this, "", false, true, StatChange.Values[StatType::HUNT].Float, 0.0f);
 			if(StatChange.HasStat(StatType::BOUNTYHUNT))
-				Server->QueueBattle(this, 0, false, true, 0.0f, StatChange.Values[StatType::BOUNTYHUNT].Float);
+				Server->QueueBattle(this, "", false, true, 0.0f, StatChange.Values[StatType::BOUNTYHUNT].Float);
 		}
 
 		// Set clock

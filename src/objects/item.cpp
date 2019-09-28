@@ -39,7 +39,6 @@
 
 // Constructor
 _BaseItem::_BaseItem() :
-	Stats(nullptr),
 	NetworkID(0),
 	Texture(nullptr),
 	Type(ItemType::NONE),
@@ -73,7 +72,7 @@ _BaseItem::_BaseItem() :
 }
 
 // Draw tooltip
-void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
+void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
@@ -183,11 +182,11 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 	}
 
 	// Draw description
-	DrawDescription(Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
+	DrawDescription(Player->Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
 
 	// Draw next level description
 	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel)
-		DrawDescription(Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
+		DrawDescription(Player->Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -220,7 +219,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, _Scripting *Scripting, co
 	// Damage type
 	if(!IsSkill() && DamageTypeID > 1) {
 		std::stringstream Buffer;
-		Buffer << Stats->DamageTypes.at((DamageType)DamageTypeID).second;
+		Buffer << Player->Stats->DamageTypes.at((DamageType)DamageTypeID).second;
 		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Type", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
 		ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition + Spacing, ae::LEFT_BASELINE);
 		DrawPosition.y += SpacingY;

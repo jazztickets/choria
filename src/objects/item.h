@@ -18,6 +18,7 @@
 #pragma once
 
 // Libraries
+#include <objects/usable.h>
 #include <ae/texture.h>
 #include <enums.h>
 #include <glm/vec4.hpp>
@@ -37,13 +38,13 @@ namespace ae {
 }
 
 // Classes
-class _BaseItem {
+class _BaseItem : public _Usable {
 
 	public:
 
 		_BaseItem();
 
-		void DrawTooltip(const glm::vec2 &Offset, _Scripting *Scripting, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
+		void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsSkill() const { return Type == ItemType::SKILL; }
@@ -86,8 +87,6 @@ class _BaseItem {
 		float GetResistance(int Upgrades) const;
 		float GetDropRate(int Upgrades) const;
 		template<typename T> T GetUpgradedValue(StatType Type, int Upgrades, T Value) const;
-
-		const _Stats *Stats;
 
 		std::string ID;
 		uint16_t NetworkID;

@@ -357,7 +357,6 @@ void _Stats::LoadData(const std::string &Path) {
 			Skill.Script = GetString(UseNode, "script");
 		}
 
-		Skill.Stats = this;
 		Skill.NetworkID = NetworkID++;
 		Items[Skill.ID] = Skill;
 		ItemsIndex[Skill.NetworkID] = &Items[Skill.ID];
@@ -431,7 +430,6 @@ void _Stats::LoadData(const std::string &Path) {
 			Item.Script = GetString(UseNode, "script", false);
 		}
 
-		Item.Stats = this;
 		Item.NetworkID = NetworkID++;
 		Items[Item.ID] = Item;
 		ItemsIndex[Item.NetworkID] = &Items[Item.ID];
