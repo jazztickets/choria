@@ -735,7 +735,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 		Data.Write<uint8_t>(Character->Portrait->NetworkID);
 	else
 		Data.Write<uint8_t>(0);
-	Data.Write<uint8_t>(Model->NetworkID);
+	Data.Write<uint16_t>(Model->NetworkID);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 }
@@ -744,7 +744,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
-	uint8_t PortraitID = Data.Read<uint8_t>();
+	uint16_t PortraitID = Data.Read<uint16_t>();
 	Model = Stats->GetModel(Data.Read<uint8_t>());
 	Light = Data.Read<uint8_t>();
 	bool Invisible = Data.ReadBit();

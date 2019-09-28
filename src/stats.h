@@ -47,7 +47,7 @@ struct _Portrait {
 struct _Model {
 	std::string ID;
 	const ae::_Texture *Texture;
-	uint8_t NetworkID;
+	uint16_t NetworkID;
 };
 
 struct _Build {
@@ -219,6 +219,7 @@ class _Stats {
 
 		void LoadTypes();
 		void LoadMapDirectory();
+		void LoadPortraitsDirectory(const std::string &Path);
 		void LoadLevels(const std::string &Path);
 		void LoadLights(const std::string &Path);
 		void LoadData(const std::string &Path);

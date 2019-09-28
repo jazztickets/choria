@@ -51,9 +51,10 @@ _Stats::_Stats(bool Headless) :
 	// Load game data
 	LoadTypes();
 	LoadMapDirectory();
-	LoadData("data/stats.xml");
+	LoadPortraitsDirectory("textures/monsters/");
 	LoadLevels("data/levels.tsv");
 	LoadLights("data/lights.tsv");
+	LoadData("data/stats.xml");
 }
 
 // Destructor
@@ -132,6 +133,7 @@ const _WeaponType *_Stats::GetWeaponType(tinyxml2::XMLElement *Node, const char 
 
 // Load types
 void _Stats::LoadTypes() {
+
 	EventTypes = {
 		{ EventType::NONE,        { "",   "None"         } },
 		{ EventType::SCRIPT,      { "SC", "Script"       } },
@@ -201,14 +203,35 @@ void _Stats::LoadMapDirectory() {
 
 		// Get clean map name
 		size_t DotPosition = File.find(".map.gz");
-		std::string Name;
 		if(DotPosition == 0)
-			throw std::runtime_error("Bad map name: " + File);
+			throw std::runtime_error("Bad map filename: " + File);
 
-		Name = File.substr(0, DotPosition);
+		std::string Name = File.substr(0, DotPosition);
 		MapsIndex[Name] = NetworkID;
 	}
 	MapsIndex[""] = 0;
+}
+
+// Load portraits directory
+void _Stats::LoadPortraitsDirectory(const std::string &Path) {
+	uint16_t NetworkID = Portraits.size() + 1;
+	ae::_Files Files(Path);
+	for(const auto &File : Files.Nodes) {
+
+		// Get clean file name
+		size_t DotPosition = File.find(".");
+		if(DotPosition == 0)
+			throw std::runtime_error("Bad portrait filename: " + Files.Path + File);
+
+		_Portrait Portrait;
+		Portrait.ID = File.substr(0, DotPosition);
+		Portrait.Texture = ae::Assets.Textures[Files.Path + File];
+		Portrait.Starting = false;
+		Portrait.NetworkID = NetworkID++;
+
+		Portraits[Portrait.ID] = Portrait;
+		PortraitsIndex[Portrait.NetworkID] = &Portraits[Portrait.ID];
+	}
 }
 
 // Load data
@@ -260,7 +283,7 @@ void _Stats::LoadData(const std::string &Path) {
 		ItemTypesIndex[ItemType.second.first] = ItemType.first;
 
 	// Load portraits
-	uint8_t NetworkID = 1;
+	uint16_t NetworkID = Portraits.size() + 1;
 	for(tinyxml2::XMLElement *Node = Nodes["portraits"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Portrait Portrait;
 		Portrait.ID = GetString(Node, "id");
@@ -268,7 +291,7 @@ void _Stats::LoadData(const std::string &Path) {
 			throw std::runtime_error("Duplicate portraits id '" + Portrait.ID + "' in " + Path);
 
 		Portrait.Texture = GetTexture(Node, "texture");
-		Portrait.Starting = Node->BoolAttribute("starting", false);
+		Portrait.Starting = true;
 		Portrait.NetworkID = NetworkID++;
 
 		Portraits[Portrait.ID] = Portrait;

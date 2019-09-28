@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <data>
 	<portraits>
-		<portrait id="joe" texture="textures/portraits/joe.png" starting="true"/>
-		<portrait id="bim" texture="textures/portraits/bim.png" starting="true"/>
-		<portrait id="jeb" texture="textures/portraits/jeb.png" starting="true"/>
-		<portrait id="biff" texture="textures/portraits/biff.png" starting="true"/>
-		<portrait id="sib" texture="textures/portraits/sib.png" starting="true"/>
-		<portrait id="jone" texture="textures/portraits/jone.png" starting="true"/>
-		<portrait id="jas" texture="textures/portraits/jas.png" starting="true"/>
-		<portrait id="pete" texture="textures/portraits/pete.png" starting="true"/>
-		<portrait id="leb" texture="textures/portraits/leb.png" starting="true"/>
-		<portrait id="crow" texture="textures/monsters/crow.png"/>
+		<portrait id="joe" texture="textures/portraits/joe.png"/>
+		<portrait id="bim" texture="textures/portraits/bim.png"/>
+		<portrait id="jeb" texture="textures/portraits/jeb.png"/>
+		<portrait id="biff" texture="textures/portraits/biff.png"/>
+		<portrait id="sib" texture="textures/portraits/sib.png"/>
+		<portrait id="jone" texture="textures/portraits/jone.png"/>
+		<portrait id="jas" texture="textures/portraits/jas.png"/>
+		<portrait id="pete" texture="textures/portraits/pete.png"/>
+		<portrait id="leb" texture="textures/portraits/leb.png"/>
 	</portraits>
 	<models>
 		<model id="warrior" texture="textures/models/warrior.png"/>
@@ -82,13 +81,13 @@
 		</item>
 	</items>
 	<builds>
-		<build name="Warrior" model="warrior" starting="true" texture="textures/builds/warrior.png">
+		<build name="Warrior" model="warrior" texture="textures/builds/warrior.png">
 			<items>
 				<item id="short_sword"/>
 				<item id="healing_salve" count="3" slot="1"/>
 			</items>
 		</build>
-		<build name="Mage" model="mage" starting="true" texture="textures/builds/mage.png">
+		<build name="Mage" model="mage" texture="textures/builds/mage.png">
 			<items>
 				<item id="short_sword"/>
 			</items>
