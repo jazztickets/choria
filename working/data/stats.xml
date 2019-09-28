@@ -85,7 +85,7 @@
 		<build name="Warrior" model="warrior" starting="true" texture="textures/builds/warrior.png">
 			<items>
 				<item id="short_sword"/>
-				<item id="healing_salve" count="3"/>
+				<item id="healing_salve" count="3" slot="1"/>
 			</items>
 		</build>
 		<build name="Mage" model="mage" starting="true" texture="textures/builds/mage.png">

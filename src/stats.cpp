@@ -432,6 +432,9 @@ void _Stats::LoadData(const std::string &Path) {
 			for(tinyxml2::XMLElement *ItemNode = ItemsNode->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
 				const _BaseItem *Item = GetItem(ItemNode, "id");
 				int Count = ItemNode->IntAttribute("count", 1);
+				size_t Slot = (size_t)ItemNode->IntAttribute("slot", -1);
+				if(Slot < Object->Character->ActionBar.size())
+					Object->Character->ActionBar[Slot].Item = Item;
 				Object->Inventory->AddItem(Item, 0, Count);
 			}
 		}
