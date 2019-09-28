@@ -419,12 +419,24 @@ void _Stats::LoadData(const std::string &Path) {
 	for(tinyxml2::XMLElement *Node = Nodes["builds"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
 		_Object *Object = new _Object();
 		Object->Name = GetString(Node, "name");
-		Object->NetworkID = NetworkID++;
+		if(Builds.find(Object->Name) != Builds.end())
+			throw std::runtime_error("Duplicate build name '" + Object->Name + "' in " + Path);
+
 		Object->Model = &Models.at(GetString(Node, "model"));
 		Object->BuildTexture = GetTexture(Node, "texture");
 		Object->Character->ActionBar.resize(DEFAULT_ACTIONBAR_SIZE);
-		if(Builds.find(Object->Name) != Builds.end())
-			throw std::runtime_error("Duplicate build name '" + Object->Name + "' in " + Path);
+
+		// Load build items
+		tinyxml2::XMLElement *ItemsNode = Node->FirstChildElement("items");
+		if(ItemsNode) {
+			for(tinyxml2::XMLElement *ItemNode = ItemsNode->FirstChildElement("item"); ItemNode != nullptr; ItemNode = ItemNode->NextSiblingElement()) {
+				const _BaseItem *Item = GetItem(ItemNode, "id");
+				int Count = ItemNode->IntAttribute("count", 1);
+				Object->Inventory->AddItem(Item, 0, Count);
+			}
+		}
+
+		Object->NetworkID = NetworkID++;
 		Builds[Object->Name] = Object;
 	}
 
