@@ -37,6 +37,10 @@
 #include <algorithm>
 #include <iostream>
 
+// Constants
+const int TOOLTIP_HELP_SPACING = 28;
+const int TOOLTIP_ATTRIBUTE_SPACING = 10;
+
 // Constructor
 _BaseItem::_BaseItem() :
 	Type(ItemType::NONE),
@@ -60,80 +64,28 @@ _BaseItem::_BaseItem() :
 	Tradable(true) {
 }
 
-// Draw tooltip
+// Draw item tooltip
 void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
-	ae::_Element *TooltipElement = ae::Assets.Elements["element_item_tooltip"];
-	ae::_Element *TooltipName = ae::Assets.Elements["label_item_tooltip_name"];
-	ae::_Element *TooltipType = ae::Assets.Elements["label_item_tooltip_type"];
-	TooltipElement->SetActive(true);
+	glm::vec2 Spacing = glm::vec2(TOOLTIP_ATTRIBUTE_SPACING, 0) * ae::_Element::GetUIScale();
+	float SpacingY = TOOLTIP_SPACING * ae::_Element::GetUIScale();
+	float ControlSpacingY = TOOLTIP_HELP_SPACING * ae::_Element::GetUIScale();
 
-	// Set label values
-	TooltipName->Text = Name;
-	TooltipType->Text = "";
+	// Get item type
+	std::string TypeText;
 	if(Type != ItemType::NONE)
-		TooltipType->Text = Player->Stats->ItemTypes.at(Type).second;
+		TypeText = Player->Stats->ItemTypes.at(Type).second;
 
-	// Set up window size
-	glm::vec2 Size;
-	Size.x = INVENTORY_TOOLTIP_WIDTH * ae::_Element::GetUIScale();
-	float SidePadding = 36 * ae::_Element::GetUIScale();
-	float SpacingY = 36 * ae::_Element::GetUIScale();
-	float ControlSpacingY = 28 * ae::_Element::GetUIScale();
-	float LargeSpacingY = 56 * ae::_Element::GetUIScale();
-	glm::vec2 Spacing = glm::vec2(10, 0) * ae::_Element::GetUIScale();
-
-	// Set window width
-	ae::_TextBounds TextBounds;
-	ae::Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
-	Size.x = std::max(Size.x, (float)TextBounds.Width / ae::_Element::GetUIScale()) + SidePadding * 2;
+	// Draw tooltip window
+	glm::vec2 DrawPosition;
+	glm::vec2 Size(INVENTORY_TOOLTIP_WIDTH, INVENTORY_TOOLTIP_HEIGHT);
+	float SidePadding = TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
 	if(ResistanceTypeID)
-		Size.x += 36 * ae::_Element::GetUIScale();
+		Size.x += TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
 
-	// Set window height
-	Size.y = INVENTORY_TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
-	if(Player->Character->Vendor)
-		Size.y += LargeSpacingY;
-
-	// Position window
-	glm::vec2 WindowOffset = Position;
-
-	// Center vertically
-	if(Position.y < 0) {
-		WindowOffset.y = (ae::Graphics.CurrentSize.y - Size.y) / 2;
-	}
-	else {
-		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET * ae::_Element::GetUIScale();
-		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
-	}
-
-	// Reposition window if out of bounds
-	if(WindowOffset.x + Size.x > ae::Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
-		WindowOffset.x -= Size.x + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
-	if(WindowOffset.y + Size.y > ae::Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
-		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
-
-	TooltipElement->Offset = WindowOffset;
-	TooltipElement->Size = Size;
-	TooltipElement->CalculateBounds(false);
-
-	// Render tooltip
-	TooltipElement->Render();
-	TooltipElement->SetActive(false);
-
-	// Set draw position to center of window
-	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
-	DrawPosition.y += LargeSpacingY;
-
-	// Draw target text
-	if(Target != TargetType::NONE) {
-		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
-		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(Target).second;
-		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
-		DrawPosition.y += LargeSpacingY;
-	}
+	DrawTooltipBase(Position, Player, TypeText, DrawPosition, Size);
 
 	// Get level of item
 	int DrawLevel = Level;
@@ -141,8 +93,8 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 
 	// Draw upgrade level for items
 	if(Tooltip.ItemUpgrades) {
-		ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.ItemUpgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-		DrawPosition.y += SpacingY;
+		DrawLevel = Tooltip.ItemUpgrades;
+		ShowLevel = true;
 	}
 
 	// Draw description

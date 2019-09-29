@@ -403,6 +403,7 @@ void _Stats::LoadData(const std::string &Path) {
 		if(Item.Type == ItemType::NONE)
 			throw std::runtime_error("Bad item type for '" + Item.ID + "' in " + Path);
 
+		Item.MaxLevel = Node->IntAttribute("max_level", 1);
 		Item.WeaponType = GetWeaponType(Node, "weapon_type");
 		Item.Texture = GetTexture(Node, "texture");
 

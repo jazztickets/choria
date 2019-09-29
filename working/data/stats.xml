@@ -40,7 +40,7 @@
 		</weapon_type>
 	</weapon_types>
 	<items>
-		<item id="short_sword" name="Short Sword" type="one_hand" weapon_type="sword" texture="textures/items/short_sword.png">
+		<item id="short_sword" name="Short Sword" type="one_hand" max_level="20" weapon_type="sword" texture="textures/items/short_sword.png">
 			<price buy="50"/>
 			<damage min="20" max="40" type="physical" />
 			<use attack_delay="0.5" attack_time="0.3" stamina="25" cooldown="0.2" />

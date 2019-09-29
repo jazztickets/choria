@@ -23,6 +23,10 @@
 #include <cstdint>
 #include <glm/vec2.hpp>
 
+// Constants
+const int TOOLTIP_SIDE_PADDING = 36;
+const int TOOLTIP_SPACING = 36;
+
 // Forward Declarations
 class _Scripting;
 class _Object;
@@ -54,6 +58,7 @@ class _Usable {
 		virtual bool IsEquippable() const { return false; }
 
 		// HUD
+		void DrawTooltipBase(const glm::vec2 &Position, const _Object *Player, const std::string &TypeText, glm::vec2 &DrawPosition, glm::vec2 &Size) const;
 		virtual void DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const { }
 		virtual int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const { return 0; }
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;

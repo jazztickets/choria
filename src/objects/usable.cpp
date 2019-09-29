@@ -20,12 +20,16 @@
 #include <objects/components/character.h>
 #include <objects/components/fighter.h>
 #include <ae/assets.h>
+#include <ae/graphics.h>
 #include <ae/font.h>
+#include <constants.h>
+#include <stats.h>
 #include <scripting.h>
 #include <sstream>
 
-//TODO fix
-#include <objects/components/inventory.h>
+// Constants
+const int TOOLTIP_LARGE_SPACING = 56;
+const int TOOLTIP_TARGET_OFFSET = -28;
 
 // Constructor
 _Usable::_Usable() :
@@ -47,8 +51,82 @@ _Usable::~_Usable() {
 
 }
 
+// Draw tooltip window and header
+void _Usable::DrawTooltipBase(const glm::vec2 &Position, const _Object *Player, const std::string &TypeText, glm::vec2 &DrawPosition, glm::vec2 &Size) const {
+
+	// Get elements
+	ae::_Element *TooltipElement = ae::Assets.Elements["element_item_tooltip"];
+	ae::_Element *TooltipName = ae::Assets.Elements["label_item_tooltip_name"];
+	ae::_Element *TooltipType = ae::Assets.Elements["label_item_tooltip_type"];
+
+	// Set up spacing
+	float SidePadding = TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
+	float LargeSpacingY = TOOLTIP_LARGE_SPACING * ae::_Element::GetUIScale();
+
+	// Set label values
+	TooltipName->Text = Name;
+	TooltipType->Text = TypeText;
+
+	// Get size of name
+	ae::_TextBounds TextBounds;
+	ae::Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
+
+	// Set window size
+	Size.x = Size.x * ae::_Element::GetUIScale();
+	Size.x = std::max(Size.x, (float)TextBounds.Width / ae::_Element::GetUIScale()) + SidePadding * 2;
+	Size.y = INVENTORY_TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
+	if(Player->Character->Vendor)
+		Size.y += LargeSpacingY;
+
+	// Position window
+	glm::vec2 WindowOffset = Position;
+
+	// Center vertically
+	if(Position.y < 0) {
+		WindowOffset.y = (ae::Graphics.CurrentSize.y - Size.y) / 2;
+	}
+	else {
+		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET * ae::_Element::GetUIScale();
+		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+	}
+
+	// Reposition window if out of bounds
+	if(WindowOffset.x + Size.x > ae::Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
+		WindowOffset.x -= Size.x + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
+	if(WindowOffset.y + Size.y > ae::Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
+		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
+
+	// Set element bounds
+	TooltipElement->Offset = WindowOffset;
+	TooltipElement->Size = Size;
+	TooltipElement->CalculateBounds(false);
+
+	// Render
+	TooltipElement->SetActive(true);
+	TooltipElement->Render();
+	TooltipElement->SetActive(false);
+
+	// Set draw position to center of window
+	DrawPosition = glm::vec2((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
+	DrawPosition.y += LargeSpacingY;
+
+	// Draw target text
+	if(Target != TargetType::NONE) {
+		DrawPosition.y += TOOLTIP_TARGET_OFFSET * ae::_Element::GetUIScale();
+		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(Target).second;
+		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
+		DrawPosition.y += LargeSpacingY;
+	}
+}
+
 // Draw description
 void _Usable::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
+
+	// Draw level text
+	if(ShowLevel) {
+		ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		DrawPosition.y += SpacingY;
+	}
 
 	// Check for scripting function
 	std::string Info = "";
@@ -59,12 +137,6 @@ void _Usable::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, in
 		Scripting->MethodCall(1, 1);
 		Info = Scripting->GetString(1);
 		Scripting->FinishMethodCall();
-
-		// Draw level text
-		if(ShowLevel) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
-		}
 
 		std::stringstream Buffer(Info);
 		std::string Token;

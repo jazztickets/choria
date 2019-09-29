@@ -27,9 +27,6 @@
 #include <constants.h>
 #include <glm/vec4.hpp>
 
-const float TOOLTIP_WIDTH = 350;
-const float TOOLTIP_HEIGHT = 480;
-
 // Constructor
 _Skill::_Skill() :
 	Experience(0) {
@@ -40,68 +37,13 @@ void _Skill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const
 	if(!Player)
 		return;
 
-	ae::_Element *TooltipElement = ae::Assets.Elements["element_item_tooltip"];
-	ae::_Element *TooltipName = ae::Assets.Elements["label_item_tooltip_name"];
-	ae::_Element *TooltipType = ae::Assets.Elements["label_item_tooltip_type"];
-	TooltipElement->SetActive(true);
+	float SpacingY = TOOLTIP_SPACING * ae::_Element::GetUIScale();
 
-	// Set label values
-	TooltipName->Text = Name;
-	TooltipType->Text = "Skill";
-
-	// Set up window size
-	glm::vec2 Size;
-	Size.x = TOOLTIP_WIDTH * ae::_Element::GetUIScale();
-	float SidePadding = 36 * ae::_Element::GetUIScale();
-	float SpacingY = 36 * ae::_Element::GetUIScale();
-	float LargeSpacingY = 56 * ae::_Element::GetUIScale();
-
-	// Set window width
-	ae::_TextBounds TextBounds;
-	ae::Assets.Fonts["hud_medium"]->GetStringDimensions(TooltipName->Text, TextBounds);
-	Size.x = std::max(Size.x, (float)TextBounds.Width / ae::_Element::GetUIScale()) + SidePadding * 2;
-	Size.x += 42 * ae::_Element::GetUIScale();
-
-	// Set window height
-	Size.y = TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
-
-	// Position window
-	glm::vec2 WindowOffset = Position;
-
-	// Center vertically
-	if(Position.y < 0) {
-		WindowOffset.y = (ae::Graphics.CurrentSize.y - Size.y) / 2;
-	}
-	else {
-		WindowOffset.x += INVENTORY_TOOLTIP_OFFSET * ae::_Element::GetUIScale();
-		WindowOffset.y += -(TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
-	}
-
-	// Reposition window if out of bounds
-	if(WindowOffset.x + Size.x > ae::Graphics.Element->Bounds.End.x - INVENTORY_TOOLTIP_PADDING)
-		WindowOffset.x -= Size.x + INVENTORY_TOOLTIP_OFFSET + INVENTORY_TOOLTIP_PADDING;
-	if(WindowOffset.y + Size.y > ae::Graphics.Element->Bounds.End.y - INVENTORY_TOOLTIP_PADDING)
-		WindowOffset.y -= Size.y + INVENTORY_TOOLTIP_OFFSET - (TooltipElement->Bounds.End.y - TooltipElement->Bounds.Start.y) / 2;
-
-	TooltipElement->Offset = WindowOffset;
-	TooltipElement->Size = Size;
-	TooltipElement->CalculateBounds(false);
-
-	// Render tooltip
-	TooltipElement->Render();
-	TooltipElement->SetActive(false);
-
-	// Set draw position to center of window
-	glm::vec2 DrawPosition((int)(TooltipElement->Size.x / 2 + WindowOffset.x), (int)TooltipType->Bounds.End.y);
-	DrawPosition.y += LargeSpacingY;
-
-	// Draw target text
-	if(Target != TargetType::NONE) {
-		DrawPosition.y -= 28 * ae::_Element::GetUIScale();
-		std::string InfoText = "Target " + Player->Stats->TargetTypes.at(Target).second;
-		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, glm::vec4(1.0f));
-		DrawPosition.y += LargeSpacingY;
-	}
+	// Draw tooltip window
+	glm::vec2 DrawPosition;
+	glm::vec2 Size(INVENTORY_TOOLTIP_WIDTH, INVENTORY_TOOLTIP_HEIGHT);
+	float SidePadding = TOOLTIP_SIDE_PADDING * ae::_Element::GetUIScale();
+	DrawTooltipBase(Position, Player, "Skill", DrawPosition, Size);
 
 	// Get level skill
 	int DrawLevel = Level;
@@ -129,6 +71,7 @@ void _Skill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const
 	if(Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel)
 		DrawDescription(Player->Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
 
+	// Draw help text
 	std::string InfoText;
 	glm::vec4 InfoColor = ae::Assets.Colors["gray"];
 	if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
@@ -144,7 +87,6 @@ void _Skill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const
 		InfoColor = ae::Assets.Colors["red"];
 	}
 
-	if(InfoText.length()) {
+	if(InfoText.length())
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, InfoColor);
-	}
 }
