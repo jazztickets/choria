@@ -47,7 +47,7 @@ _Usable::~_Usable() {
 
 }
 
-// Draw item description
+// Draw description
 void _Usable::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
 
 	// Check for scripting function
@@ -161,24 +161,9 @@ bool _Usable::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(!Object)
 		return false;
 
-	// Unlocking skill for the first time
-	if(IsSkill() && ActionResult.ActionUsed.InventorySlot != -1)
-		return !Object->Character->HasLearned(AsSkill());
-
-	// Check for item in key bag
-	if(IsKey())
-		return !Object->Inventory->GetBag(BagType::KEYS).HasItem(ID);
-
-	// Unlocking item
-	if(IsUnlockable())
-		return !Object->Character->HasUnlocked(AsItem());
-
-	// Check for item count
-	if(!ActionResult.ActionUsed.Usable->IsSkill()) {
-		size_t Index;
-		if(!Object->Inventory->FindItem(ActionResult.ActionUsed.Usable->AsItem(), Index, (size_t)ActionResult.ActionUsed.InventorySlot))
-			return false;
-	}
+	// See if the action can be used
+	if(!CheckRequirements(Scripting, ActionResult))
+		return false;
 
 	// Check scope
 	if(!CheckScope(ActionResult.Scope))
@@ -228,6 +213,7 @@ bool _Usable::CanTarget(_Object *SourceObject, _Object *TargetObject) const {
 // Get target count based on target type
 int _Usable::GetTargetCount() const {
 
+	//TODO get count from script
 	int TargetCount = 0;
 	switch(Target) {
 		case TargetType::NONE:

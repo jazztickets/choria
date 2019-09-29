@@ -597,6 +597,7 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 
 		Json::Value ActionNode;
 		ActionNode["slot"] = (Json::Value::UInt64)i;
+		ActionNode["type"] = Character->ActionBar[i].Usable->IsSkill() ? "skill" : "item";
 		ActionNode["id"] = Character->ActionBar[i].Usable->ID;
 		ActionBarNode.append(ActionNode);
 	}
@@ -695,7 +696,12 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	// Set actionbar
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
-		if(Slot < Character->ActionBar.size())
+		if(Slot >= Character->ActionBar.size())
+			continue;
+
+		if(ActionNode["type"].asString() == "skill")
+			Character->ActionBar[Slot].Usable = &Stats->Skills.at(ActionNode["id"].asString());
+		else
 			Character->ActionBar[Slot].Usable = &Stats->Items.at(ActionNode["id"].asString());
 	}
 

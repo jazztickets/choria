@@ -38,7 +38,6 @@ enum class EventType : uint8_t {
 // Item types
 enum class ItemType : uint8_t {
 	NONE,
-	SKILL,
 	HELMET,
 	ARMOR,
 	BOOTS,

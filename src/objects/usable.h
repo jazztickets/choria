@@ -89,4 +89,7 @@ class _Usable {
 		ScopeType Scope;
 		bool TargetAlive;
 
+	protected:
+
+		virtual bool CheckRequirements(_Scripting *Scripting, _ActionResult &ActionResult) const { return true; }
 };

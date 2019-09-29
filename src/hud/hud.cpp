@@ -1531,3 +1531,10 @@ void _HUD::UpdateLabels() {
 	else
 		GoldElement->Color = ae::Assets.Colors["gold"];
 }
+
+// Copy inventory slot to cursor
+void _Cursor::SetInventorySlot(_InventorySlot &InventorySlot) {
+   Usable = InventorySlot.Item;
+   ItemCount = InventorySlot.Count;
+   ItemUpgrades = InventorySlot.Upgrades;
+}

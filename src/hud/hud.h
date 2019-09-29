@@ -67,11 +67,7 @@ struct _Cursor {
 	}
 
 	bool IsEqual(size_t Slot, int Window) { return this->Slot.Index == Slot && this->Window == Window; }
-	void SetInventorySlot(_InventorySlot &InventorySlot) {
-		Usable = (const _Usable *)InventorySlot.Item;
-		ItemCount = InventorySlot.Count;
-		ItemUpgrades = InventorySlot.Upgrades;
-	}
+	void SetInventorySlot(_InventorySlot &InventorySlot);
 
 	_Slot Slot;
 	const _StatusEffect *StatusEffect;

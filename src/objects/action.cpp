@@ -35,24 +35,37 @@
 
 // Serialize action
 void _Action::Serialize(ae::_Buffer &Data) {
-	uint16_t ItemID = 0;
-	if(Usable)
-		ItemID = Usable->NetworkID;
-
-	Data.Write<uint16_t>(ItemID);
+	uint16_t NetworkID = 0;
+	if(Usable) {
+		NetworkID = Usable->NetworkID;
+		Data.Write<uint16_t>(NetworkID);
+		Data.WriteBit(Usable->IsSkill());
+	}
+	else {
+		Data.Write<uint16_t>(NetworkID);
+	}
 }
 
 // Unserialize action
 void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	uint16_t ItemID = Data.Read<uint16_t>();
-
-	Usable = ItemID ? Stats->ItemsIndex.at(ItemID) : nullptr;
+	bool IsSkill = false;
+	if(ItemID) {
+		IsSkill = Data.ReadBit();
+		if(IsSkill)
+			Usable = Stats->SkillsIndex.at(ItemID);
+		else
+			Usable = Stats->ItemsIndex.at(ItemID);
+	}
+	else
+		Usable = nullptr;
 }
 
 // Resolve action
 bool _Action::Start(_Object *Source, ScopeType Scope) {
-	ApplyTime = 0.0;
-	Time = 0.0;
+	const _Usable *Usable = Source->Character->Action.Usable;
+	if(!Usable)
+		return false;
 
 	// Check for deleted targets
 	for(auto Iterator = Source->Character->Targets.begin(); Iterator != Source->Character->Targets.end(); ) {
@@ -62,13 +75,15 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 			++Iterator;
 	}
 
+	ApplyTime = 0.0;
+	Time = 0.0;
+
 	// Build action result struct
 	_ActionResult ActionResult;
 	ActionResult.Source.Object = Source;
 	ActionResult.Scope = Scope;
 	ActionResult.ActionUsed = Source->Character->Action;
-	const _Usable *ItemUsed = Source->Character->Action.Usable;
-	bool SkillUnlocked = false;
+
 	bool ItemUnlocked = false;
 	bool KeyUnlocked = false;
 	bool DecrementItem = false;
@@ -78,41 +93,39 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 
 	//TODO fix casts for items/skills
 
-	// Use item
-	if(ItemUsed) {
-		if(!ItemUsed->CanUse(Source->Scripting, ActionResult))
+	// Check use
+	if(!Usable->CanUse(Source->Scripting, ActionResult))
+		return false;
+
+	// Get attack times
+	AttackDelay = Usable->AttackDelay;
+	AttackTime = Usable->AttackTime;
+
+	// Get attack times from skill
+	Usable->GetAttackTimes(Source->Scripting, Source, AttackDelay, AttackTime, Cooldown);
+	if(Source->Character->Battle)
+		ApplyTime = AttackDelay + AttackTime;
+
+	// Apply skill cost
+	if(Usable->IsSkill() && Source->Character->HasLearned((const _Skill *)Usable) && InventorySlot == -1) {
+
+		Usable->ApplyCost(Source->Scripting, ActionResult);
+	}
+	// Apply item cost
+	else {
+		size_t Index;
+		if(!Source->Inventory->FindItem(Usable->AsItem(), Index, (size_t)InventorySlot))
 			return false;
 
-		// Get attack times
-		AttackDelay = ItemUsed->AttackDelay;
-		AttackTime = ItemUsed->AttackTime;
-
-		// Get attack times from skill
-		ItemUsed->GetAttackTimes(Source->Scripting, Source, AttackDelay, AttackTime, Cooldown);
-		if(Source->Character->Battle)
-			ApplyTime = AttackDelay + AttackTime;
-
-		// Apply skill cost
-		if(ItemUsed->IsSkill() && Source->Character->HasLearned((const _Skill *)ItemUsed) && InventorySlot == -1) {
-
-			ItemUsed->ApplyCost(Source->Scripting, ActionResult);
+		Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
+		DecrementItem = true;
+		if(Usable->IsUnlockable()) {
+			Source->Character->Unlocks[Usable->ID].Level = 1;
+			ItemUnlocked = true;
 		}
-		// Apply item cost
-		else {
-			size_t Index;
-			if(!Source->Inventory->FindItem(ItemUsed->AsItem(), Index, (size_t)InventorySlot))
-				return false;
-
-			Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
-			DecrementItem = true;
-			if(ItemUsed->IsUnlockable()) {
-				Source->Character->Unlocks[ItemUsed->ID].Level = 1;
-				ItemUnlocked = true;
-			}
-			else if(ItemUsed->IsKey()) {
-				Source->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ItemUsed->AsItem(), 1));
-				KeyUnlocked = true;
-			}
+		else if(Usable->IsKey()) {
+			Source->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(Usable->AsItem(), 1));
+			KeyUnlocked = true;
 		}
 	}
 
@@ -123,13 +136,12 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_START);
 	Packet.WriteBit(DecrementItem);
-	Packet.WriteBit(SkillUnlocked);
 	Packet.WriteBit(ItemUnlocked);
 	Packet.WriteBit(KeyUnlocked);
 
 	// Write action used
-	uint16_t ItemID = ItemUsed ? ItemUsed->NetworkID : 0;
-	Packet.Write<uint16_t>(ItemID);
+	Packet.WriteBit(Usable->IsSkill());
+	Packet.Write<uint16_t>(Usable->NetworkID);
 	Packet.Write<char>((char)Source->Character->Action.InventorySlot);
 	Packet.Write<float>(AttackDelay);
 	Packet.Write<float>(AttackTime);

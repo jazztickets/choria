@@ -87,6 +87,7 @@ class _BaseItem : public _Usable {
 
 	private:
 
+		bool CheckRequirements(_Scripting *Scripting, _ActionResult &ActionResult) const override;
 		glm::vec4 GetCompareColor(float ItemValue, float EquippedValue) const;
 
 };

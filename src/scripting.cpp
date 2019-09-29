@@ -140,8 +140,6 @@ void _Scripting::InjectStats(const _Stats *Stats) {
 	lua_setglobal(LuaState, "INVENTORY_AMULET");
 
 	// Push item types
-	lua_pushinteger(LuaState, (int)ItemType::SKILL);
-	lua_setglobal(LuaState, "ITEM_SKILL");
 	lua_pushinteger(LuaState, (int)ItemType::HELMET);
 	lua_setglobal(LuaState, "ITEM_HELMET");
 	lua_pushinteger(LuaState, (int)ItemType::ARMOR);

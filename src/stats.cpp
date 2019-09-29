@@ -177,7 +177,6 @@ void _Stats::LoadTypes() {
 
 	ItemTypes = {
 		{ ItemType::NONE,             { "none",       "None"              } },
-		{ ItemType::SKILL,            { "skill",      "Skill"             } },
 		{ ItemType::HELMET,           { "helmet",     "Helmet"            } },
 		{ ItemType::ARMOR,            { "armor",      "Armor"             } },
 		{ ItemType::BOOTS,            { "boots",      "Boots"             } },

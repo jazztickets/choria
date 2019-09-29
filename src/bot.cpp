@@ -458,11 +458,14 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			// Create result
 			_ActionResult ActionResult;
 			bool DecrementItem = Data.ReadBit();
-			bool SkillUnlocked = Data.ReadBit();
 			bool ItemUnlocked = Data.ReadBit();
+			bool IsSkill = Data.ReadBit();
 			uint16_t ItemID = Data.Read<uint16_t>();
 			int InventorySlot = (int)Data.Read<char>();
-			ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
+			if(IsSkill)
+				ActionResult.ActionUsed.Usable = Stats->SkillsIndex.at(ItemID);
+			else
+				ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
 
 			// Set texture
 			if(ActionResult.ActionUsed.Usable)
@@ -486,10 +489,6 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 								Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 								Player->Character->RefreshActionBarCount();
 							}
-						}
-
-						if(SkillUnlocked) {
-							Player->Character->Skills[ActionResult.ActionUsed.Usable->ID] = 0;
 						}
 
 						if(ItemUnlocked) {

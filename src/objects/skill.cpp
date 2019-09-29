@@ -139,11 +139,9 @@ void _Skill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const
 		if(Scope == ScopeType::NONE)
 			InfoText = "Passive skills must be equipped";
 	}
-	else {
-		if(!IsLocked) {
-			InfoText = "Already learned";
-			InfoColor = ae::Assets.Colors["red"];
-		}
+	else if(!IsLocked) {
+		InfoText = "Already learned";
+		InfoColor = ae::Assets.Colors["red"];
 	}
 
 	if(InfoText.length()) {

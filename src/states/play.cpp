@@ -1464,14 +1464,18 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 	// Create result
 	_ActionResult ActionResult;
 	bool DecrementItem = Data.ReadBit();
-	bool SkillUnlocked = Data.ReadBit();
 	bool ItemUnlocked = Data.ReadBit();
 	bool KeyUnlocked = Data.ReadBit();
+	bool IsSkill = Data.ReadBit();
 	uint16_t ItemID = Data.Read<uint16_t>();
 	int InventorySlot = (int)Data.Read<char>();
 	float ReactTime = Data.Read<float>();
 	float FlyTime = Data.Read<float>();
-	ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
+
+	if(IsSkill)
+		ActionResult.ActionUsed.Usable = Stats->SkillsIndex.at(ItemID);
+	else
+		ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
 
 	// Set texture
 	if(ActionResult.ActionUsed.Usable)
@@ -1497,10 +1501,6 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 					Player->Character->RefreshActionBarCount();
 				}
 			}
-
-			// Unlock a skill
-			if(SkillUnlocked)
-				Player->Character->Skills[ActionResult.ActionUsed.Usable->ID] = 0;
 
 			if(ItemUnlocked)
 				Player->Character->Unlocks[ActionResult.ActionUsed.Usable->ID].Level = 1;

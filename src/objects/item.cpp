@@ -91,8 +91,6 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	Size.x = std::max(Size.x, (float)TextBounds.Width / ae::_Element::GetUIScale()) + SidePadding * 2;
 	if(ResistanceTypeID)
 		Size.x += 36 * ae::_Element::GetUIScale();
-	else if(IsSkill())
-		Size.x += 42 * ae::_Element::GetUIScale();
 
 	// Set window height
 	Size.y = INVENTORY_TOOLTIP_HEIGHT * ae::_Element::GetUIScale();
@@ -137,45 +135,18 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 		DrawPosition.y += LargeSpacingY;
 	}
 
-	// Get level of item or skill
+	// Get level of item
 	int DrawLevel = Level;
-	bool IsLocked = false;
 	bool ShowLevel = false;
-	if(IsSkill()) {
 
-		// Get skill level
-		auto SkillIterator = Player->Character->Skills.find(ID);
-		if(SkillIterator != Player->Character->Skills.end())
-			DrawLevel = SkillIterator->second;
-		else
-			IsLocked = true;
-
-		// For skills set minimum of level 1
-		DrawLevel = std::max(DrawLevel, 1);
-
-		// Show vendor skills at level 1
-		if(Tooltip.Window == _HUD::WINDOW_EQUIPMENT || Tooltip.Window == _HUD::WINDOW_INVENTORY || Tooltip.Window == _HUD::WINDOW_VENDOR)
-			DrawLevel = 1;
-
-		// Determine whether to show level
-		if(Tooltip.Window == _HUD::WINDOW_SKILLS || Tooltip.Window == _HUD::WINDOW_ACTIONBAR)
-			ShowLevel = true;
-	}
-	else {
-
-		// Draw upgrade level for items
-		if(Tooltip.ItemUpgrades) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.ItemUpgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
-		}
+	// Draw upgrade level for items
+	if(Tooltip.ItemUpgrades) {
+		ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.ItemUpgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		DrawPosition.y += SpacingY;
 	}
 
 	// Draw description
 	DrawDescription(Player->Scripting, DrawPosition, DrawLevel, ShowLevel, Size.x - SidePadding * 2, SpacingY);
-
-	// Draw next level description
-	if(IsSkill() && Tooltip.Window == _HUD::WINDOW_SKILLS && DrawLevel < MaxLevel)
-		DrawDescription(Player->Scripting, DrawPosition, DrawLevel+1, true, Size.x - SidePadding * 2, SpacingY);
 
 	// Get item to compare
 	_InventorySlot CompareInventory;
@@ -206,7 +177,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	}
 
 	// Damage type
-	if(!IsSkill() && DamageTypeID > 1) {
+	if(DamageTypeID > 1) {
 		std::stringstream Buffer;
 		Buffer << Player->Stats->DamageTypes.at((DamageType)DamageTypeID).second;
 		ae::Assets.Fonts["hud_medium"]->DrawText("Damage Type", DrawPosition + -Spacing, ae::RIGHT_BASELINE);
@@ -416,26 +387,6 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 			else if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR && CheckScope(ScopeType::WORLD))
 				InfoText = "Left-click to use";
 		break;
-		case ItemType::SKILL:
-			if(Tooltip.Window == _HUD::WINDOW_ACTIONBAR) {
-				if(CheckScope(ScopeType::WORLD) && Target != TargetType::NONE)
-					InfoText = "Left-click to use";
-			}
-			else if(Tooltip.Window == _HUD::WINDOW_SKILLS) {
-				if(Scope == ScopeType::NONE)
-					InfoText = "Passive skills must be equipped";
-			}
-			else {
-				if(IsLocked) {
-					if(Tooltip.Window == _HUD::WINDOW_INVENTORY)
-						InfoText = "Right-click to learn";
-				}
-				else {
-					InfoText = "Already learned";
-					InfoColor = ae::Assets.Colors["red"];
-				}
-			}
-		break;
 		case ItemType::UNLOCKABLE: {
 			if(!Player->Character->HasUnlocked(this))
 				InfoText = "Right-click to unlock";
@@ -604,6 +555,25 @@ float _BaseItem::GetResistance(int Upgrades) const {
 // Get drop rate
 float _BaseItem::GetDropRate(int Upgrades) const {
 	return GetUpgradedValue<float>(StatType::DROPRATE, Upgrades, DropRate);
+}
+
+// Check if an item can be used
+bool _BaseItem::CheckRequirements(_Scripting *Scripting, _ActionResult &ActionResult) const {
+
+	// Check for item in key bag
+	if(IsKey())
+		return !ActionResult.Source.Object->Inventory->GetBag(BagType::KEYS).HasItem(ID);
+
+	// Unlocking item
+	if(IsUnlockable())
+		return !ActionResult.Source.Object->Character->HasUnlocked(AsItem());
+
+	// Check for item count
+	size_t Index;
+	if(!ActionResult.Source.Object->Inventory->FindItem(ActionResult.ActionUsed.Usable->AsItem(), Index, (size_t)ActionResult.ActionUsed.InventorySlot))
+		return false;
+
+	return true;
 }
 
 // Get appropriate text color when comparing items
