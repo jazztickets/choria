@@ -472,43 +472,6 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	}
 }
 
-// Draw item description
-void _BaseItem::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const {
-
-	// Check for scripting function
-	std::string Info = "";
-	if(Scripting->StartMethodCall(Script, "GetInfo")) {
-
-		// Get description from script
-		Scripting->PushItemParameters(DrawLevel, Duration);
-		Scripting->MethodCall(1, 1);
-		Info = Scripting->GetString(1);
-		Scripting->FinishMethodCall();
-
-		// Draw level text
-		if(ShowLevel) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(DrawLevel), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
-			DrawPosition.y += SpacingY;
-		}
-
-		std::stringstream Buffer(Info);
-		std::string Token;
-
-		// Draw description
-		float TextSpacingY = 26 * ae::_Element::GetUIScale();
-		while(std::getline(Buffer, Token, '\n')) {
-			std::list<std::string> Strings;
-			ae::Assets.Fonts["hud_small"]->BreakupString(Token, Width, Strings, true);
-			for(const auto &LineToken : Strings) {
-				ae::Assets.Fonts["hud_small"]->DrawTextFormatted(LineToken, DrawPosition, ae::CENTER_BASELINE);
-				DrawPosition.y += TextSpacingY;
-			}
-		}
-
-		DrawPosition.y += SpacingY;
-	}
-}
-
 // Return a valid equipment slot for an item
 void _BaseItem::GetEquipmentSlot(_Slot &Slot) const {
 

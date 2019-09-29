@@ -520,11 +520,11 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Usable = PlayState.Stats->ItemsIndex.at((uint32_t)Tooltip.Slot.Index);
+				Tooltip.Usable = (const _Skill *)HitElement->UserData;//PlayState.Stats->SkillsIndex.at((uint16_t)Tooltip.Slot.Index);
 			} break;
 			case WINDOW_ACTIONBAR: {
-				//if(Tooltip.Slot.Index < Player->Character->ActionBar.size())
-				//	Tooltip.Usable = Player->Character->ActionBar[Tooltip.Slot.Index].Item;
+				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())
+					Tooltip.Usable = Player->Character->ActionBar[Tooltip.Slot.Index].Usable;
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserData;

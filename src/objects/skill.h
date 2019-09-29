@@ -30,7 +30,7 @@ class _Skill : public _Usable {
 		_Skill();
 
 		bool IsSkill() const override { return true; }
-		void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
+		void DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
 
 		int Experience;
 

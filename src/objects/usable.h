@@ -54,8 +54,9 @@ class _Usable {
 		virtual bool IsEquippable() const { return false; }
 
 		// HUD
-		virtual void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const { }
+		virtual void DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const { }
 		virtual int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const { return 0; }
+		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		// Scripts
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;

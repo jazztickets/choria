@@ -37,8 +37,7 @@ class _BaseItem : public _Usable {
 
 		_BaseItem();
 
-		void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
-		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
+		void DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
 
 		bool IsConsumable() const override { return Type == ItemType::CONSUMABLE; }
 		bool IsKey() const override { return Type == ItemType::KEY; }
