@@ -230,17 +230,17 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ClientPlayer->Character->Targets.clear();
 
 		// Check if item can be used
-		const _Usable *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
-		if(Item) {
-			if(!Item->CanUse(Scripting, ActionResult))
-				Item = nullptr;
+		const _Usable *Usable = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
+		if(Usable) {
+			if(!Usable->CanUse(Scripting, ActionResult))
+				Usable = nullptr;
 
-			if(Item && !Item->IsSkill() && ClientPlayer->Character->ActionBar[ActionBarSlot].Count == 0)
-				Item = nullptr;
+			if(Usable && !Usable->IsSkill() && ClientPlayer->Character->ActionBar[ActionBarSlot].Count == 0)
+				Usable = nullptr;
 		}
 
 		// Set up initial target
-		if(Item) {
+		if(Usable) {
 			if(Config.ShowTutorial && ClientPlayer->Character->Level == 1 && ClientPlayer->Character->HUD)
 				ClientPlayer->Character->HUD->SetMessage("Hit up/down or use mouse to change targets. Press " + ae::Actions.GetInputNameForAction(Action::GAME_SKILL1 + ActionBarSlot) + " again to confirm.");
 
@@ -248,19 +248,19 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 			int StartingSide = !ClientPlayer->Fighter->BattleSide;
 
 			// Pick sides depending on action
-			if(Item->Target != TargetType::ANY && Item->CanTargetAlly()) {
+			if(Usable->Target != TargetType::ANY && Usable->CanTargetAlly()) {
 				StartingSide = ClientPlayer->Fighter->BattleSide;
 				if(!ClientPlayer->Fighter->LastTarget[StartingSide])
 					ClientPlayer->Fighter->LastTarget[StartingSide] = ClientPlayer;
 			}
 
 			// Set target
-			ClientSetTarget(Item, StartingSide, ClientPlayer->Fighter->LastTarget[StartingSide]);
+			ClientSetTarget(Usable, StartingSide, ClientPlayer->Fighter->LastTarget[StartingSide]);
 		}
 
 		// Set potential skill
 		if(ClientPlayer->Character->Targets.size()) {
-			ClientPlayer->Fighter->PotentialAction.Usable = Item;
+			ClientPlayer->Fighter->PotentialAction.Usable = Usable;
 			ClientPlayer->Fighter->PotentialAction.ActionBarSlot = ActionBarSlot;
 		}
 		else
@@ -280,8 +280,8 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
 		ActionResult.ActionUsed = Action;
-		const _Usable *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
-		if(!Item->CanUse(Scripting, ActionResult)) {
+		const _Usable *Usable = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
+		if(!Usable->CanUse(Scripting, ActionResult)) {
 			ClientPlayer->Fighter->PotentialAction.Unset();
 			ClientPlayer->Character->Targets.clear();
 			return;
@@ -306,11 +306,11 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 }
 
 // Set target for client
-void _Battle::ClientSetTarget(const _Usable *Item, int Side, _Object *InitialTarget) {
+void _Battle::ClientSetTarget(const _Usable *Usable, int Side, _Object *InitialTarget) {
 	ClientPlayer->Character->Targets.clear();
 
 	// Can't change self targets
-	if(Item->Target == TargetType::SELF) {
+	if(Usable->Target == TargetType::SELF) {
 		ClientPlayer->Character->Targets.push_back(ClientPlayer);
 		return;
 	}
@@ -322,16 +322,16 @@ void _Battle::ClientSetTarget(const _Usable *Item, int Side, _Object *InitialTar
 
 	// Get iterator to last target
 	_Object *LastTarget = InitialTarget;
-	if(ObjectList.size() && LastTarget && Item->CanTarget(ClientPlayer, LastTarget))
+	if(ObjectList.size() && LastTarget && Usable->CanTarget(ClientPlayer, LastTarget))
 	   Iterator = std::find(ObjectList.begin(), ObjectList.end(), LastTarget);
 
 	// Set up targets
-	int TargetCount = Item->GetTargetCount();
+	int TargetCount = Usable->GetTargetCount();
 	for(size_t i = 0; i < ObjectList.size(); i++) {
 
 		// Check for valid target
 		_Object *Target = *Iterator;
-		if(Item->CanTarget(ClientPlayer, Target)) {
+		if(Usable->CanTarget(ClientPlayer, Target)) {
 
 			// Add object to list of targets
 			ClientPlayer->Character->Targets.push_back(Target);
@@ -355,15 +355,15 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 		return;
 
 	// Can't change self targetting actions
-	const _Usable *Item = ClientPlayer->Fighter->PotentialAction.Usable;
-	if(Item->Target == TargetType::SELF)
+	const _Usable *Usable = ClientPlayer->Fighter->PotentialAction.Usable;
+	if(Usable->Target == TargetType::SELF)
 		return;
 
 	// Get current target side
 	int BattleTargetSide = ClientPlayer->Character->Targets.front()->Fighter->BattleSide;
 
 	// Change sides
-	if(Item->Target == TargetType::ANY && ChangeSides)
+	if(Usable->Target == TargetType::ANY && ChangeSides)
 		BattleTargetSide = !BattleTargetSide;
 
 	// Get list of objects on target side
@@ -382,7 +382,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 	// Get max available targets
 	size_t MaxTargets = 0;
 	for(auto &Target : ObjectList) {
-		if(Item->CanTarget(ClientPlayer, Target))
+		if(Usable->CanTarget(ClientPlayer, Target))
 			MaxTargets++;
 	}
 
@@ -420,7 +420,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 			NewTarget = *Iterator;
 
 		// Check break condition
-		if(Item->CanTarget(ClientPlayer, NewTarget)) {
+		if(Usable->CanTarget(ClientPlayer, NewTarget)) {
 			ClientPlayer->Character->Targets.push_back(NewTarget);
 
 			// Update count

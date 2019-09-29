@@ -170,9 +170,6 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	ActionResult.Scope = Scope;
 	ActionResult.ActionUsed = Source->Character->Action;
 
-	// Get item used
-	const _Usable *ItemUsed = Source->Character->Action.Usable;
-
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
 	for(auto &Target : Source->Character->Targets) {
@@ -183,7 +180,7 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object = Target;
 
 		// Call Use script
-		ItemUsed->Use(Source->Scripting, ActionResult);
+		Source->Character->Action.Usable->Use(Source->Scripting, ActionResult);
 
 		// Update objects
 		ActionResult.Source.Object->UpdateStats(ActionResult.Source);

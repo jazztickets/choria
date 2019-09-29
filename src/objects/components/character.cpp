@@ -364,11 +364,11 @@ void _Character::CalculateStats() {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = Object;
 		if(GetActionFromActionBar(ActionResult.ActionUsed, i)) {
-			const _Usable *Skill = ActionResult.ActionUsed.Usable;
-			if(Skill->IsSkill() && Skill->Target == TargetType::NONE) {
+			const _Usable *Usable = ActionResult.ActionUsed.Usable;
+			if(Usable->IsSkill() && Usable->Target == TargetType::NONE) {
 
 				// Get passive stat changes
-				Skill->GetStats(Object->Scripting, ActionResult);
+				Usable->GetStats(Object->Scripting, ActionResult);
 				CalculateStatBonuses(ActionResult.Source);
 			}
 		}

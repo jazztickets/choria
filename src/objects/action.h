@@ -47,6 +47,20 @@ struct _Summon {
 	int MaxDamage;
 };
 
+// Action used in battle
+struct _BattleAction {
+	_BattleAction() : Source(nullptr), Target(nullptr), AttackDelay(0.0), AttackTime(0.0), Time(0.0), LastPosition({0.0f, 0.0f}), Position({0.0f, 0.0f}), Texture(nullptr) { }
+
+	_Object *Source;
+	_Object *Target;
+	double AttackDelay;
+	double AttackTime;
+	double Time;
+	glm::vec2 LastPosition;
+	glm::vec2 Position;
+	const ae::_Texture *Texture;
+};
+
 // Action
 class _Action {
 
@@ -79,20 +93,6 @@ class _Action {
 		int Count;
 		int InventorySlot;
 		int ActionBarSlot;
-};
-
-// Action used in battle
-struct _BattleAction {
-	_BattleAction() : Source(nullptr), Target(nullptr), AttackDelay(0.0), AttackTime(0.0), Time(0.0), LastPosition({0.0f, 0.0f}), Position({0.0f, 0.0f}), Texture(nullptr) { }
-
-	_Object *Source;
-	_Object *Target;
-	double AttackDelay;
-	double AttackTime;
-	double Time;
-	glm::vec2 LastPosition;
-	glm::vec2 Position;
-	const ae::_Texture *Texture;
 };
 
 // Result of an action use
