@@ -29,6 +29,8 @@ class _Skill : public _Usable {
 
 		_Skill();
 
+		bool IsSkill() const override { return true; }
+
 		int Experience;
 
 	private:

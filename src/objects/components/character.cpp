@@ -364,7 +364,7 @@ void _Character::CalculateStats() {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = Object;
 		if(GetActionFromActionBar(ActionResult.ActionUsed, i)) {
-			const _BaseItem *Skill = ActionResult.ActionUsed.Item;
+			const _Usable *Skill = ActionResult.ActionUsed.Usable;
 			if(Skill->IsSkill() && Skill->Target == TargetType::NONE) {
 
 				// Get passive stat changes
@@ -534,10 +534,10 @@ int _Character::GenerateDamage() {
 // Update counts on action bar
 void _Character::RefreshActionBarCount() {
 	for(size_t i = 0; i < ActionBar.size(); i++) {
-		const _BaseItem *Item = ActionBar[i].Item;
-		if(Item) {
-			if(!Item->IsSkill())
-				ActionBar[i].Count = Object->Inventory->CountItem(Item);
+		const _Usable *Usable = ActionBar[i].Usable;
+		if(Usable) {
+			if(!Usable->IsSkill())
+				ActionBar[i].Count = Object->Inventory->CountItem(Usable->AsItem());
 		}
 		else
 			ActionBar[i].Count = 0;
@@ -547,18 +547,18 @@ void _Character::RefreshActionBarCount() {
 // Return an action struct from an action bar slot
 bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 	if(Slot < ActionBar.size()) {
-		ReturnAction.Item = ActionBar[Slot].Item;
-		if(!ReturnAction.Item)
+		ReturnAction.Usable = ActionBar[Slot].Usable;
+		if(!ReturnAction.Usable)
 			return false;
 
 		// Determine if item is a skill, then look at object's skill levels
-		if(ReturnAction.Item->IsSkill() && HasLearned(ReturnAction.Item))
-			ReturnAction.Level = Skills[ReturnAction.Item->ID];
+		if(ReturnAction.Usable->IsSkill() && HasLearned(ReturnAction.Usable->AsSkill()))
+			ReturnAction.Level = Skills[ReturnAction.Usable->ID];
 		else
-			ReturnAction.Level = ReturnAction.Item->Level;
+			ReturnAction.Level = ReturnAction.Usable->Level;
 
 		// Set duration for certain items
-		ReturnAction.Duration = ReturnAction.Item->Duration;
+		ReturnAction.Duration = ReturnAction.Usable->Duration;
 
 		return true;
 	}
@@ -567,7 +567,7 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 }
 
 // Return true if the object has the skill unlocked
-bool _Character::HasLearned(const _BaseItem *Skill) const {
+bool _Character::HasLearned(const _Skill *Skill) const {
 	if(!Skill)
 		return false;
 

@@ -988,7 +988,7 @@ void _Server::HandleInventoryUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		if(!Player->Character->Action.IsSet()) {
 			Player->Character->Targets.clear();
 			Player->Character->Targets.push_back(Player);
-			Player->Character->Action.Item = Item;
+			Player->Character->Action.Usable = Item;
 			Player->Character->Action.State = ActionStateType::START;
 			Player->Character->Action.Level = Item->Level;
 			Player->Character->Action.Duration = Item->Duration;
@@ -1691,8 +1691,8 @@ void _Server::HandleActionUse(ae::_Buffer &Data, ae::_Peer *Peer) {
 		ae::_Buffer Packet;
 		Packet.Write<PacketType>(PacketType::BATTLE_ACTION);
 		Packet.Write<ae::NetworkIDType>(Player->NetworkID);
-		if(Player->Character->Action.Item)
-			Packet.Write<uint16_t>(Player->Character->Action.Item->NetworkID);
+		if(Player->Character->Action.Usable)
+			Packet.Write<uint16_t>(Player->Character->Action.Usable->NetworkID);
 		else
 			Packet.Write<uint16_t>(0);
 

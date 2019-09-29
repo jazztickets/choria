@@ -24,12 +24,10 @@
 
 // Forward Declarations
 class _Object;
-class _Scripting;
 class _Stats;
 struct _Vendor;
 struct _Cursor;
 struct _Slot;
-struct _ActionResult;
 struct _WeaponType;
 
 // Classes
@@ -42,31 +40,16 @@ class _BaseItem : public _Usable {
 		void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
-		bool IsSkill() const { return Type == ItemType::SKILL; }
-		bool IsConsumable() const { return Type == ItemType::CONSUMABLE; }
-		bool IsKey() const { return Type == ItemType::KEY; }
-		bool IsUnlockable() const { return Type == ItemType::UNLOCKABLE; }
+		bool IsConsumable() const override { return Type == ItemType::CONSUMABLE; }
+		bool IsKey() const override { return Type == ItemType::KEY; }
+		bool IsUnlockable() const override { return Type == ItemType::UNLOCKABLE; }
 		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
 		bool IsStackable() const { return !IsEquippable(); }
-		bool UseMouseTargetting() const { return Target == TargetType::SELF || Target == TargetType::ENEMY || Target == TargetType::ALLY || Target == TargetType::ANY; }
-		bool CanTargetEnemy() const {  return Target == TargetType::ENEMY || Target == TargetType::ANY; }
-		bool CanTargetAlly() const {  return Target == TargetType::SELF || Target == TargetType::ALLY || Target == TargetType::ANY; }
-		int GetTargetCount() const;
 
 		void GetEquipmentSlot(_Slot &Slot) const;
 
-		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level=0) const;
-		int GetUpgradePrice(int Level) const;
-
-		// Scripts
-		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		bool CanTarget(_Object *Source, _Object *Target) const;
-		bool CheckScope(ScopeType CheckScope) const;
-		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void PlaySound(_Scripting *Scripting) const;
-		bool GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const;
+		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const;
+		int GetUpgradePrice(int Upgrades) const;
 
 		float GetAverageDamage(int Upgrades) const;
 		float GetMinDamage(int Upgrades) const;
@@ -85,7 +68,6 @@ class _BaseItem : public _Usable {
 
 		ItemType Type;
 		const _WeaponType *WeaponType;
-		double Duration;
 		int Cost;
 		uint32_t DamageTypeID;
 		int MinDamage;
@@ -100,9 +82,6 @@ class _BaseItem : public _Usable {
 		int BattleSpeed;
 		int MoveSpeed;
 		int DropRate;
-		double AttackDelay;
-		double AttackTime;
-		double Cooldown;
 		uint32_t ResistanceTypeID;
 		int Resistance;
 		bool Tradable;

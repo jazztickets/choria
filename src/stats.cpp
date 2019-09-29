@@ -465,7 +465,7 @@ void _Stats::LoadData(const std::string &Path) {
 				int Count = ItemNode->IntAttribute("count", 1);
 				size_t Slot = (size_t)ItemNode->IntAttribute("slot", -1);
 				if(Slot < Object->Character->ActionBar.size())
-					Object->Character->ActionBar[Slot].Item = Item;
+					Object->Character->ActionBar[Slot].Usable = Item;
 				Object->Inventory->AddItem(Item, 0, Count);
 			}
 		}

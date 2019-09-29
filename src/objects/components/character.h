@@ -32,6 +32,8 @@ class _Battle;
 class _HUD;
 class _StatusEffect;
 class _Map;
+class _BaseItem;
+class _Skill;
 struct _Portrait;
 struct _Vendor;
 struct _Trader;
@@ -103,7 +105,7 @@ class _Character {
 		bool GetActionFromActionBar(_Action &ReturnAction, size_t Slot);
 
 		// Skills
-		bool HasLearned(const _BaseItem *Skill) const;
+		bool HasLearned(const _Skill *Skill) const;
 
 		// UI
 		void ResetUIState();

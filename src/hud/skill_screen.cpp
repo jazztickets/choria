@@ -52,7 +52,6 @@ void _SkillScreen::Init() {
 	glm::vec2 MinusOffset(16, 52);
 	glm::vec2 LabelOffset(0, 2);
 	glm::vec2 ButtonSize(23, 23);
-	size_t i = 0;
 
 	// Get all player skills
 	std::list<const _Skill *> SortedSkills;
@@ -92,6 +91,7 @@ void _SkillScreen::Init() {
 		LevelLabel->Font = ae::Assets.Fonts["hud_small"];
 		LevelLabel->UserData = (void *)Skill;
 		LevelLabel->Index = Skill->NetworkID;
+		LevelLabel->Text = std::to_string(HUD->Player->Character->Skills[Skill->ID]);
 		Element->Children.push_back(LevelLabel);
 
 		// Update position
@@ -100,15 +100,11 @@ void _SkillScreen::Init() {
 			Offset.y += Skill->Texture->Size.y + Spacing.y;
 			Offset.x = Start.x;
 		}
-
-		i++;
 	}
 
 	Element->CalculateBounds();
 	Element->SetActive(true);
 	HUD->CharacterScreen->Element->SetActive(true);
-
-	RefreshSkillButtons();
 	HUD->Cursor.Reset();
 
 	PlayState.SendStatus(_Character::STATUS_SKILLS);
@@ -156,20 +152,8 @@ void _SkillScreen::ClearSkills() {
 	Element->Children.clear();
 }
 
-// Shows or hides the plus/minus buttons
-void _SkillScreen::RefreshSkillButtons() {
-
-	// Loop through buttons
-	for(auto &ChildElement : Element->Children) {
-		if(ChildElement->Name == "label_skills_level") {
-			const _BaseItem *Skill = (const _BaseItem *)ChildElement->UserData;
-			ChildElement->Text = std::to_string(HUD->Player->Character->Skills[Skill->ID]);
-		}
-	}
-}
-
 // Equip a skill
-void _SkillScreen::EquipSkill(const _BaseItem *Skill) {
+void _SkillScreen::EquipSkill(const _Skill *Skill) {
 	if(!Skill)
 		return;
 
@@ -182,13 +166,13 @@ void _SkillScreen::EquipSkill(const _BaseItem *Skill) {
 
 	// Find existing action
 	for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
-		if(HUD->Player->Character->ActionBar[i].Item == Skill)
+		if(HUD->Player->Character->ActionBar[i].Usable == Skill)
 			return;
 	}
 
 	// Find an empty slot
 	for(size_t i = 0; i < HUD->Player->Character->ActionBar.size(); i++) {
-		if(!HUD->Player->Character->ActionBar[i].Item) {
+		if(!HUD->Player->Character->ActionBar[i].Usable) {
 			HUD->SetActionBar(i, HUD->Player->Character->ActionBar.size(), Skill);
 			return;
 		}

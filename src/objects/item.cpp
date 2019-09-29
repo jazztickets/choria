@@ -41,7 +41,6 @@
 _BaseItem::_BaseItem() :
 	Type(ItemType::NONE),
 	WeaponType(nullptr),
-	Duration(0.0),
 	Cost(0),
 	DamageTypeID(0),
 	MinDamage(0),
@@ -56,9 +55,6 @@ _BaseItem::_BaseItem() :
 	BattleSpeed(0),
 	MoveSpeed(0),
 	DropRate(0),
-	AttackDelay(0.0),
-	AttackTime(0.0),
-	Cooldown(0.0),
 	ResistanceTypeID(0),
 	Resistance(0),
 	Tradable(true) {
@@ -513,21 +509,6 @@ void _BaseItem::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, 
 	}
 }
 
-// Get target count based on target type
-int _BaseItem::GetTargetCount() const {
-
-	int TargetCount = 0;
-	switch(Target) {
-		case TargetType::NONE:
-		break;
-		default:
-			TargetCount = 1;
-		break;
-	}
-
-	return TargetCount;
-}
-
 // Return a valid equipment slot for an item
 void _BaseItem::GetEquipmentSlot(_Slot &Slot) const {
 
@@ -562,7 +543,7 @@ void _BaseItem::GetEquipmentSlot(_Slot &Slot) const {
 }
 
 // Returns the item's price to/from a vendor
-int _BaseItem::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Level) const {
+int _BaseItem::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades) const {
 	if(!Vendor)
 		return 0;
 
@@ -576,8 +557,8 @@ int _BaseItem::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Lev
 	int Price = (int)(Cost * Percent) * QueryCount;
 
 	// Add some value for upgrades
-	if(Level) {
-		for(int i = 1; i <= Level; i++)
+	if(Upgrades) {
+		for(int i = 1; i <= Upgrades; i++)
 			Price += GetUpgradePrice(i) * Percent;
 	}
 
@@ -591,152 +572,11 @@ int _BaseItem::GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Lev
 }
 
 // Get upgrade price
-int _BaseItem::GetUpgradePrice(int Level) const {
+int _BaseItem::GetUpgradePrice(int Upgrades) const {
 	if(MaxLevel <= 0)
 		return 0;
 
-	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Level * Cost + GAME_BASE_UPGRADE_COST));
-}
-
-// Return true if the item can be used
-bool _BaseItem::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	_Object *Object = ActionResult.Source.Object;
-	if(!Object)
-		return false;
-
-	// Unlocking skill for the first time
-	if(IsSkill() && ActionResult.ActionUsed.InventorySlot != -1)
-		return !Object->Character->HasLearned(this);
-
-	// Check for item in key bag
-	if(IsKey())
-		return !Object->Inventory->GetBag(BagType::KEYS).HasItem(ID);
-
-	// Unlocking item
-	if(IsUnlockable())
-		return !Object->Character->HasUnlocked(this);
-
-	// Check for item count
-	if(!ActionResult.ActionUsed.Item->IsSkill()) {
-		size_t Index;
-		if(!Object->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)ActionResult.ActionUsed.InventorySlot))
-			return false;
-	}
-
-	// Check scope
-	if(!CheckScope(ActionResult.Scope))
-		return false;
-
-	// Check if target is alive
-	if(Object->Character->Targets.size() == 1) {
-		_Object *Target = *Object->Character->Targets.begin();
-		if(!CanTarget(Object, Target))
-			return false;
-	}
-
-	// Check script's function
-	if(Scripting->StartMethodCall(Script, "CanUse")) {
-		Scripting->PushInt(ActionResult.ActionUsed.Level);
-		Scripting->PushObject(ActionResult.Source.Object);
-		Scripting->MethodCall(2, 1);
-		int Value = Scripting->GetBoolean(1);
-		Scripting->FinishMethodCall();
-
-		return Value;
-	}
-
-	return true;
-}
-
-// Return attack times from skill script. Return false if function doesn't exist.
-bool _BaseItem::GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
-
-	// Check script's function
-	if(Scripting->StartMethodCall(Script, "GetAttackTimes")) {
-		Scripting->PushObject(Object);
-		Scripting->MethodCall(1, 3);
-		AttackDelay = Scripting->GetReal(1);
-		AttackTime = Scripting->GetReal(2);
-		Cooldown = Scripting->GetReal(3);
-		Scripting->FinishMethodCall();
-
-		return true;
-	}
-
-	return false;
-}
-
-// Check if an item can target an object
-bool _BaseItem::CanTarget(_Object *Source, _Object *Target) const {
-	if(TargetAlive && !Target->Character->IsAlive())
-		return false;
-
-	if(!TargetAlive && Target->Character->IsAlive())
-		return false;
-
-	if(Source->Character->Battle) {
-
-		if(Source->Fighter->BattleSide == Target->Fighter->BattleSide && !CanTargetAlly())
-			return false;
-
-		if(Source->Fighter->BattleSide != Target->Fighter->BattleSide && !CanTargetEnemy())
-			return false;
-	}
-
-	return true;
-}
-
-// Check if the item can be used in the given scope
-bool _BaseItem::CheckScope(ScopeType CheckScope) const {
-	if(Scope == ScopeType::NONE || (Scope != ScopeType::ALL && Scope != CheckScope))
-		return false;
-
-	return true;
-}
-
-// Apply the cost
-void _BaseItem::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
-		Scripting->PushInt(ActionResult.ActionUsed.Level);
-		Scripting->PushActionResult(&ActionResult);
-		Scripting->MethodCall(2, 1);
-		Scripting->GetActionResult(1, ActionResult);
-		Scripting->FinishMethodCall();
-	}
-}
-
-// Use an item
-void _BaseItem::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(Script, "Use")) {
-		Scripting->PushInt(ActionResult.ActionUsed.Level);
-		Scripting->PushInt(ActionResult.ActionUsed.Duration);
-		Scripting->PushObject(ActionResult.Source.Object);
-		Scripting->PushObject(ActionResult.Target.Object);
-		Scripting->PushActionResult(&ActionResult);
-		Scripting->MethodCall(5, 1);
-		Scripting->GetActionResult(1, ActionResult);
-		Scripting->FinishMethodCall();
-	}
-}
-
-// Get passive stats
-void _BaseItem::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
-	if(Scripting->StartMethodCall(Script, "Stats")) {
-		Scripting->PushInt(ActionResult.ActionUsed.Level);
-		Scripting->PushObject(ActionResult.Source.Object);
-		Scripting->PushStatChange(&ActionResult.Source);
-		Scripting->MethodCall(3, 1);
-		Scripting->GetStatChange(1, ActionResult.Source);
-		Scripting->FinishMethodCall();
-	}
-}
-
-// Play audio through scripting
-void _BaseItem::PlaySound(_Scripting *Scripting) const {
-	if(Scripting->StartMethodCall(Script, "PlaySound")) {
-		Scripting->MethodCall(0, 0);
-		Scripting->FinishMethodCall();
-	}
+	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Upgrades * Cost + GAME_BASE_UPGRADE_COST));
 }
 
 float _BaseItem::GetAverageDamage(int Upgrades) const {

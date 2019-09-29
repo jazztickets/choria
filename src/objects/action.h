@@ -26,8 +26,9 @@
 // Forward Declarations
 class _Stats;
 class _Object;
-class _BaseItem;
+class _Usable;
 class _Buff;
+class _BaseItem;
 struct _ActionResult;
 
 namespace ae {
@@ -51,11 +52,11 @@ class _Action {
 
 	public:
 
-		_Action() : Item(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
-		_Action(const _BaseItem *Item) : _Action() { this->Item = Item; }
+		_Action() : Usable(nullptr), State(ActionStateType::NONE), ApplyTime(0.0), Time(0.0), Duration(0.0), Level(0), Count(0), InventorySlot(-1), ActionBarSlot(-1) { }
+		_Action(const _Usable *Usable) : _Action() { this->Usable = Usable; }
 
-		bool operator==(const _Action &Action) const { return Action.Item == Item; }
-		bool operator!=(const _Action &Action) const { return Action.Item != Item; }
+		bool operator==(const _Action &Action) const { return Action.Usable == Usable; }
+		bool operator!=(const _Action &Action) const { return Action.Usable != Usable; }
 
 		void Serialize(ae::_Buffer &Data);
 		void Unserialize(ae::_Buffer &Data, const _Stats *Stats);
@@ -65,11 +66,11 @@ class _Action {
 		void HandleSummons(_ActionResult &ActionResult);
 
 		bool IsSet() const { return State != ActionStateType::NONE; }
-		void Unset() { Item = nullptr; State = ActionStateType::NONE; Count = 0; ApplyTime = 0.0; Time = 0.0; Duration = 0.0; Level = 0; InventorySlot = -1; ActionBarSlot = -1; }
+		void Unset() { Usable = nullptr; State = ActionStateType::NONE; Count = 0; ApplyTime = 0.0; Time = 0.0; Duration = 0.0; Level = 0; InventorySlot = -1; ActionBarSlot = -1; }
 
 		TargetType GetTargetType();
 
-		const _BaseItem *Item;
+		const _Usable *Usable;
 		ActionStateType State;
 		double ApplyTime;
 		double Time;

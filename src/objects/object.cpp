@@ -281,8 +281,8 @@ void _Object::UpdateBot(double FrameTime) {
 			ActionResult.Source.Object = this;
 			ActionResult.Scope = ScopeType::BATTLE;
 			ActionResult.ActionUsed = Character->Action;
-			if(!Character->Action.Item->CanUse(Scripting, ActionResult))
-				Character->Action.Item = nullptr;
+			if(!Character->Action.Usable->CanUse(Scripting, ActionResult))
+				Character->Action.Usable = nullptr;
 
 			Character->Action.State = ActionStateType::START;
 
@@ -480,18 +480,18 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 
 	// Draw potential action to use
 	for(auto &BattleTarget : ClientPlayer->Character->Targets) {
-		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.Item) {
+		if(BattleTarget == this && ClientPlayer->Fighter->PotentialAction.Usable) {
 
 			// Get texture
 			const ae::_Texture *Texture = nullptr;
-			if(ClientPlayer->Fighter->PotentialAction.Item) {
+			if(ClientPlayer->Fighter->PotentialAction.Usable) {
 
 				// Skip dead targets
-				if(!ClientPlayer->Fighter->PotentialAction.Item->CanTarget(ClientPlayer, BattleTarget))
+				if(!ClientPlayer->Fighter->PotentialAction.Usable->CanTarget(ClientPlayer, BattleTarget))
 					break;
 
 				// Get texture
-				Texture = ClientPlayer->Fighter->PotentialAction.Item->Texture;
+				Texture = ClientPlayer->Fighter->PotentialAction.Usable->Texture;
 			}
 
 			// Make icon flash
@@ -502,7 +502,7 @@ void _Object::RenderBattle(_Object *ClientPlayer, double Time) {
 			// Draw background icon
 			ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
 			glm::vec2 DrawPosition = glm::ivec2(Fighter->ResultPosition.x - ItemBackTexture->Size.x/2 * ae::_Element::GetUIScale(), Fighter->ResultPosition.y);
-			if(ClientPlayer->Fighter->PotentialAction.Item && !ClientPlayer->Fighter->PotentialAction.Item->IsSkill()) {
+			if(ClientPlayer->Fighter->PotentialAction.Usable && !ClientPlayer->Fighter->PotentialAction.Usable->IsSkill()) {
 				DrawPosition.x += ItemBackTexture->Size.x/2 * ae::_Element::GetUIScale();
 				ae::Graphics.DrawScaledImage(DrawPosition, ItemBackTexture, Color);
 			}
@@ -592,12 +592,12 @@ void _Object::SerializeSaveData(Json::Value &Data) const {
 	// Write action bar
 	Json::Value ActionBarNode;
 	for(size_t i = 0; i < Character->ActionBar.size(); i++) {
-		if(!Character->ActionBar[i].Item)
+		if(!Character->ActionBar[i].Usable)
 			continue;
 
 		Json::Value ActionNode;
 		ActionNode["slot"] = (Json::Value::UInt64)i;
-		ActionNode["id"] = Character->ActionBar[i].Item->ID;
+		ActionNode["id"] = Character->ActionBar[i].Usable->ID;
 		ActionBarNode.append(ActionNode);
 	}
 	Data["actionbar"] = ActionBarNode;
@@ -696,7 +696,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	for(const Json::Value &ActionNode : Data["actionbar"]) {
 		uint32_t Slot = ActionNode["slot"].asUInt();
 		if(Slot < Character->ActionBar.size())
-			Character->ActionBar[Slot].Item = &Stats->Items.at(ActionNode["id"].asString());
+			Character->ActionBar[Slot].Usable = &Stats->Items.at(ActionNode["id"].asString());
 	}
 
 	// Set status effects
@@ -1162,7 +1162,7 @@ void _Object::SetActionUsing(ae::_Buffer &Data, ae::_Manager<_Object> *ObjectMan
 	for(int i = 0; i < TargetCount; i++) {
 		ae::NetworkIDType NetworkID = Data.Read<ae::NetworkIDType>();
 		_Object *Target = ObjectManager->GetObject(NetworkID);
-		if(Target && Character->Action.Item->CanTarget(this, Target))
+		if(Target && Character->Action.Usable->CanTarget(this, Target))
 			Character->Targets.push_back(Target);
 	}
 }

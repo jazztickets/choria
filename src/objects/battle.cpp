@@ -216,11 +216,11 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 	// Check for changing an action
 	bool ChangingAction = false;
-	if(ClientPlayer->Fighter->PotentialAction.Item && Action != ClientPlayer->Fighter->PotentialAction)
+	if(ClientPlayer->Fighter->PotentialAction.Usable && Action != ClientPlayer->Fighter->PotentialAction)
 		ChangingAction = true;
 
 	// Choose an action to use
-	if(!ClientPlayer->Fighter->PotentialAction.Item || ChangingAction) {
+	if(!ClientPlayer->Fighter->PotentialAction.Usable || ChangingAction) {
 		_ActionResult ActionResult;
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
@@ -230,7 +230,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ClientPlayer->Character->Targets.clear();
 
 		// Check if item can be used
-		const _BaseItem *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
+		const _Usable *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
 		if(Item) {
 			if(!Item->CanUse(Scripting, ActionResult))
 				Item = nullptr;
@@ -260,7 +260,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 
 		// Set potential skill
 		if(ClientPlayer->Character->Targets.size()) {
-			ClientPlayer->Fighter->PotentialAction.Item = Item;
+			ClientPlayer->Fighter->PotentialAction.Usable = Item;
 			ClientPlayer->Fighter->PotentialAction.ActionBarSlot = ActionBarSlot;
 		}
 		else
@@ -280,7 +280,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.Source.Object = ClientPlayer;
 		ActionResult.Scope = ScopeType::BATTLE;
 		ActionResult.ActionUsed = Action;
-		const _BaseItem *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Item;
+		const _Usable *Item = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
 		if(!Item->CanUse(Scripting, ActionResult)) {
 			ClientPlayer->Fighter->PotentialAction.Unset();
 			ClientPlayer->Character->Targets.clear();
@@ -306,7 +306,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 }
 
 // Set target for client
-void _Battle::ClientSetTarget(const _BaseItem *Item, int Side, _Object *InitialTarget) {
+void _Battle::ClientSetTarget(const _Usable *Item, int Side, _Object *InitialTarget) {
 	ClientPlayer->Character->Targets.clear();
 
 	// Can't change self targets
@@ -355,7 +355,7 @@ void _Battle::ChangeTarget(int Direction, bool ChangeSides) {
 		return;
 
 	// Can't change self targetting actions
-	const _BaseItem *Item = ClientPlayer->Fighter->PotentialAction.Item;
+	const _Usable *Item = ClientPlayer->Fighter->PotentialAction.Usable;
 	if(Item->Target == TargetType::SELF)
 		return;
 
@@ -933,7 +933,7 @@ void _Battle::ClientHandlePlayerAction(ae::_Buffer &Data) {
 
 	_Object *Object = Manager->GetObject(NetworkID);
 	if(Object) {
-		Object->Character->Action.Item = Stats->ItemsIndex.at(ItemID);
+		Object->Character->Action.Usable = Stats->ItemsIndex.at(ItemID);
 		Object->Character->Action.State = ActionStateType::START;
 	}
 }

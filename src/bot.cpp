@@ -161,7 +161,7 @@ void _Bot::Update(double FrameTime) {
 
 	// Update battle system
 	if(Battle) {
-		if(!Player->Fighter->PotentialAction.Item) {
+		if(!Player->Fighter->PotentialAction.Usable) {
 			Battle->ClientHandleInput(Action::GAME_SKILL1);
 			Battle->ClientHandleInput(Action::GAME_SKILL1);
 		}
@@ -462,11 +462,11 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 			bool ItemUnlocked = Data.ReadBit();
 			uint16_t ItemID = Data.Read<uint16_t>();
 			int InventorySlot = (int)Data.Read<char>();
-			ActionResult.ActionUsed.Item = Stats->ItemsIndex.at(ItemID);
+			ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
 
 			// Set texture
-			if(ActionResult.ActionUsed.Item)
-				ActionResult.Texture = ActionResult.ActionUsed.Item->Texture;
+			if(ActionResult.ActionUsed.Usable)
+				ActionResult.Texture = ActionResult.ActionUsed.Usable->Texture;
 
 			// Get source change
 			HandleStatChange(Data, ActionResult.Source);
@@ -478,22 +478,22 @@ void _Bot::HandlePacket(ae::_Buffer &Data) {
 
 				// Use item on client
 				if(Player == ActionResult.Source.Object) {
-					if(ActionResult.ActionUsed.Item) {
+					if(ActionResult.ActionUsed.Usable) {
 
 						if(DecrementItem) {
 							size_t Index;
-							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Item, Index, (size_t)InventorySlot)) {
+							if(Player->Inventory->FindItem(ActionResult.ActionUsed.Usable->AsItem(), Index, (size_t)InventorySlot)) {
 								Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 								Player->Character->RefreshActionBarCount();
 							}
 						}
 
 						if(SkillUnlocked) {
-							Player->Character->Skills[ActionResult.ActionUsed.Item->ID] = 0;
+							Player->Character->Skills[ActionResult.ActionUsed.Usable->ID] = 0;
 						}
 
 						if(ItemUnlocked) {
-							Player->Character->Unlocks[ActionResult.ActionUsed.Item->ID].Level = 1;
+							Player->Character->Unlocks[ActionResult.ActionUsed.Usable->ID].Level = 1;
 						}
 					}
 				}

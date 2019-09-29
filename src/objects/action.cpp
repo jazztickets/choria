@@ -36,8 +36,8 @@
 // Serialize action
 void _Action::Serialize(ae::_Buffer &Data) {
 	uint16_t ItemID = 0;
-	if(Item)
-		ItemID = Item->NetworkID;
+	if(Usable)
+		ItemID = Usable->NetworkID;
 
 	Data.Write<uint16_t>(ItemID);
 }
@@ -46,7 +46,7 @@ void _Action::Serialize(ae::_Buffer &Data) {
 void _Action::Unserialize(ae::_Buffer &Data, const _Stats *Stats) {
 	uint16_t ItemID = Data.Read<uint16_t>();
 
-	Item = ItemID ? Stats->ItemsIndex.at(ItemID) : nullptr;
+	Usable = ItemID ? Stats->ItemsIndex.at(ItemID) : nullptr;
 }
 
 // Resolve action
@@ -67,7 +67,7 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	ActionResult.Source.Object = Source;
 	ActionResult.Scope = Scope;
 	ActionResult.ActionUsed = Source->Character->Action;
-	const _BaseItem *ItemUsed = Source->Character->Action.Item;
+	const _Usable *ItemUsed = Source->Character->Action.Usable;
 	bool SkillUnlocked = false;
 	bool ItemUnlocked = false;
 	bool KeyUnlocked = false;
@@ -75,6 +75,8 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	double AttackDelay = 0.0;
 	double AttackTime = 0.0;
 	double Cooldown = 0.0;
+
+	//TODO fix casts for items/skills
 
 	// Use item
 	if(ItemUsed) {
@@ -91,28 +93,24 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 			ApplyTime = AttackDelay + AttackTime;
 
 		// Apply skill cost
-		if(ItemUsed->IsSkill() && Source->Character->HasLearned(ItemUsed) && InventorySlot == -1) {
+		if(ItemUsed->IsSkill() && Source->Character->HasLearned((const _Skill *)ItemUsed) && InventorySlot == -1) {
 
 			ItemUsed->ApplyCost(Source->Scripting, ActionResult);
 		}
 		// Apply item cost
 		else {
 			size_t Index;
-			if(!Source->Inventory->FindItem(ItemUsed, Index, (size_t)InventorySlot))
+			if(!Source->Inventory->FindItem(ItemUsed->AsItem(), Index, (size_t)InventorySlot))
 				return false;
 
 			Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
 			DecrementItem = true;
-			if(ItemUsed->IsSkill()) {
-				Source->Character->Skills[ItemUsed->ID] = 0;
-				SkillUnlocked = true;
-			}
-			else if(ItemUsed->IsUnlockable()) {
+			if(ItemUsed->IsUnlockable()) {
 				Source->Character->Unlocks[ItemUsed->ID].Level = 1;
 				ItemUnlocked = true;
 			}
 			else if(ItemUsed->IsKey()) {
-				Source->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ItemUsed, 1));
+				Source->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ItemUsed->AsItem(), 1));
 				KeyUnlocked = true;
 			}
 		}
@@ -161,7 +159,7 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 	ActionResult.ActionUsed = Source->Character->Action;
 
 	// Get item used
-	const _BaseItem *ItemUsed = Source->Character->Action.Item;
+	const _Usable *ItemUsed = Source->Character->Action.Usable;
 
 	// Update each target
 	Data.Write<uint8_t>((uint8_t)Source->Character->Targets.size());
@@ -262,8 +260,8 @@ void _Action::HandleSummons(_ActionResult &ActionResult) {
 
 // Return target type of action used
 TargetType _Action::GetTargetType() {
-	if(Item)
-		return Item->Target;
+	if(Usable)
+		return Usable->Target;
 
 	return TargetType::NONE;
 }
