@@ -232,7 +232,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		// Check if item can be used
 		const _Usable *Usable = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
 		if(Usable) {
-			if(!Usable->CanUse(Scripting, ActionResult))
+			if(!Usable->CallCanUse(Scripting, ActionResult))
 				Usable = nullptr;
 
 			if(Usable && !Usable->IsSkill() && ClientPlayer->Character->ActionBar[ActionBarSlot].Count == 0)
@@ -281,7 +281,7 @@ void _Battle::ClientSetAction(uint8_t ActionBarSlot) {
 		ActionResult.Scope = ScopeType::BATTLE;
 		ActionResult.ActionUsed = Action;
 		const _Usable *Usable = ClientPlayer->Character->ActionBar[ActionBarSlot].Usable;
-		if(!Usable->CanUse(Scripting, ActionResult)) {
+		if(!Usable->CallCanUse(Scripting, ActionResult)) {
 			ClientPlayer->Fighter->PotentialAction.Unset();
 			ClientPlayer->Character->Targets.clear();
 			return;

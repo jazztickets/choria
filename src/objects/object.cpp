@@ -281,7 +281,7 @@ void _Object::UpdateBot(double FrameTime) {
 			ActionResult.Source.Object = this;
 			ActionResult.Scope = ScopeType::BATTLE;
 			ActionResult.ActionUsed = Character->Action;
-			if(!Character->Action.Usable->CanUse(Scripting, ActionResult))
+			if(!Character->Action.Usable->CallCanUse(Scripting, ActionResult))
 				Character->Action.Usable = nullptr;
 
 			Character->Action.State = ActionStateType::START;

@@ -1463,16 +1463,13 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 
 	// Create result
 	_ActionResult ActionResult;
-	bool DecrementItem = Data.ReadBit();
-	bool ItemUnlocked = Data.ReadBit();
-	bool KeyUnlocked = Data.ReadBit();
-	bool IsSkill = Data.ReadBit();
+	ActionResultFlag ActionFlags = Data.Read<ActionResultFlag>();
 	uint16_t ItemID = Data.Read<uint16_t>();
-	int InventorySlot = (int)Data.Read<char>();
+	int InventorySlot = Data.Read<uint8_t>();
 	float ReactTime = Data.Read<float>();
 	float FlyTime = Data.Read<float>();
 
-	if(IsSkill)
+	if(ActionFlags & ActionResultFlag::SKILL)
 		ActionResult.ActionUsed.Usable = Stats->SkillsIndex.at(ItemID);
 	else
 		ActionResult.ActionUsed.Usable = Stats->ItemsIndex.at(ItemID);
@@ -1494,7 +1491,7 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 		if(ActionResult.ActionUsed.Usable) {
 
 			// Spend item
-			if(DecrementItem) {
+			if(ActionFlags & ActionResultFlag::DECREMENT) {
 				size_t Index;
 				if(Player->Inventory->FindItem(ActionResult.ActionUsed.Usable->AsItem(), Index, (size_t)InventorySlot)) {
 					Player->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
@@ -1502,10 +1499,10 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 				}
 			}
 
-			if(ItemUnlocked)
+			if(ActionFlags & ActionResultFlag::UNLOCK)
 				Player->Character->Unlocks[ActionResult.ActionUsed.Usable->ID].Level = 1;
 
-			if(KeyUnlocked)
+			if(ActionFlags & ActionResultFlag::KEY)
 				Player->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(ActionResult.ActionUsed.Usable->AsItem(), 1));
 		}
 	}
@@ -1529,7 +1526,7 @@ void _PlayState::HandleActionStart(ae::_Buffer &Data) {
 
 	// Play audio
 	if(ActionResult.ActionUsed.Usable)
-		ActionResult.ActionUsed.Usable->PlaySound(Scripting);
+		ActionResult.ActionUsed.Usable->CallPlaySound(Scripting);
 }
 
 // Handle action apply

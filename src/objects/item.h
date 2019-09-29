@@ -45,11 +45,11 @@ class _BaseItem : public _Usable {
 		bool IsEquippable() const override { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
 		bool IsStackable() const { return !IsEquippable(); }
 
-		void GetEquipmentSlot(_Slot &Slot) const;
-
 		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const override;
 		int GetUpgradePrice(int Upgrades) const;
+		bool ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const override;
 
+		void GetEquipmentSlot(_Slot &Slot) const;
 		float GetAverageDamage(int Upgrades) const;
 		float GetMinDamage(int Upgrades) const;
 		float GetMaxDamage(int Upgrades) const;

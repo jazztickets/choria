@@ -445,6 +445,30 @@ int _BaseItem::GetUpgradePrice(int Upgrades) const {
 	return (int)(std::ceil(GAME_UPGRADE_COST_MULTIPLIER * Upgrades * Cost + GAME_BASE_UPGRADE_COST));
 }
 
+// Apply cost and return non zero flags to continue with action result
+bool _BaseItem::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const {
+	size_t Index;
+	if(!ActionResult.Source.Object->Inventory->FindItem(AsItem(), Index, (size_t)ActionResult.Source.Object->Character->Action.InventorySlot))
+		return false;
+
+	// Spend item
+	ActionResult.Source.Object->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
+	ResultFlags |= ActionResultFlag::DECREMENT;
+
+	// Unlock item
+	if(IsUnlockable()) {
+		ActionResult.Source.Object->Character->Unlocks[ID].Level = 1;
+		ResultFlags |= ActionResultFlag::UNLOCK;
+	}
+	// Add key to keychain
+	else if(IsKey()) {
+		ActionResult.Source.Object->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(this, 1));
+		ResultFlags |= ActionResultFlag::KEY;
+	}
+
+	return true;
+}
+
 float _BaseItem::GetAverageDamage(int Upgrades) const {
 	return (GetUpgradedValue<float>(StatType::MINDAMAGE, Upgrades, MinDamage) + GetUpgradedValue<float>(StatType::MAXDAMAGE, Upgrades, MaxDamage)) / 2.0f;
 }

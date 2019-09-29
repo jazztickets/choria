@@ -157,7 +157,7 @@ void _Usable::DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, in
 }
 
 // Apply the cost
-void _Usable::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Usable::CallApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "ApplyCost")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushActionResult(&ActionResult);
@@ -168,7 +168,7 @@ void _Usable::ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) cons
 }
 
 // Get passive stats
-void _Usable::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Usable::CallStats(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Stats")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushObject(ActionResult.Source.Object);
@@ -180,7 +180,7 @@ void _Usable::GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const
 }
 
 // Return attack times from skill script. Return false if function doesn't exist.
-bool _Usable::GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
+bool _Usable::CallGetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const {
 
 	// Check script's function
 	if(Scripting->StartMethodCall(Script, "GetAttackTimes")) {
@@ -198,7 +198,7 @@ bool _Usable::GetAttackTimes(_Scripting *Scripting, _Object *Object, double &Att
 }
 
 // Use an item
-void _Usable::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
+void _Usable::CallUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	if(Scripting->StartMethodCall(Script, "Use")) {
 		Scripting->PushInt(ActionResult.ActionUsed.Level);
 		Scripting->PushInt(ActionResult.ActionUsed.Duration);
@@ -212,7 +212,7 @@ void _Usable::Use(_Scripting *Scripting, _ActionResult &ActionResult) const {
 }
 
 // Play audio through scripting
-void _Usable::PlaySound(_Scripting *Scripting) const {
+void _Usable::CallPlaySound(_Scripting *Scripting) const {
 	if(Scripting->StartMethodCall(Script, "PlaySound")) {
 		Scripting->MethodCall(0, 0);
 		Scripting->FinishMethodCall();
@@ -228,7 +228,7 @@ bool _Usable::CheckScope(ScopeType CheckScope) const {
 }
 
 // Return true if the item can be used
-bool _Usable::CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
+bool _Usable::CallCanUse(_Scripting *Scripting, _ActionResult &ActionResult) const {
 	_Object *Object = ActionResult.Source.Object;
 	if(!Object)
 		return false;

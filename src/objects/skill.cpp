@@ -90,3 +90,10 @@ void _Skill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const
 	if(InfoText.length())
 		ae::Assets.Fonts["hud_small"]->DrawText(InfoText, DrawPosition, ae::CENTER_BASELINE, InfoColor);
 }
+
+// Apply cost and return non zero flags to continue with action result
+bool _Skill::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const {
+	CallApplyCost(ActionResult.Source.Object->Scripting, ActionResult);
+
+	return true;
+}

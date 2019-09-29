@@ -368,7 +368,7 @@ void _Character::CalculateStats() {
 			if(Usable->IsSkill() && Usable->Target == TargetType::NONE) {
 
 				// Get passive stat changes
-				Usable->GetStats(Object->Scripting, ActionResult);
+				Usable->CallStats(Object->Scripting, ActionResult);
 				CalculateStatBonuses(ActionResult.Source);
 			}
 		}

@@ -84,17 +84,12 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	ActionResult.Scope = Scope;
 	ActionResult.ActionUsed = Source->Character->Action;
 
-	bool ItemUnlocked = false;
-	bool KeyUnlocked = false;
-	bool DecrementItem = false;
 	double AttackDelay = 0.0;
 	double AttackTime = 0.0;
 	double Cooldown = 0.0;
 
-	//TODO fix casts for items/skills
-
 	// Check use
-	if(!Usable->CanUse(Source->Scripting, ActionResult))
+	if(!Usable->CallCanUse(Source->Scripting, ActionResult))
 		return false;
 
 	// Get attack times
@@ -102,32 +97,18 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	AttackTime = Usable->AttackTime;
 
 	// Get attack times from skill
-	Usable->GetAttackTimes(Source->Scripting, Source, AttackDelay, AttackTime, Cooldown);
+	Usable->CallGetAttackTimes(Source->Scripting, Source, AttackDelay, AttackTime, Cooldown);
 	if(Source->Character->Battle)
 		ApplyTime = AttackDelay + AttackTime;
 
-	// Apply skill cost
-	if(Usable->IsSkill() && Source->Character->HasLearned((const _Skill *)Usable) && InventorySlot == -1) {
+	// Apply cost of action
+	ActionResultFlag ActionFlags = ActionResultFlag::NONE;
+	if(!Usable->ApplyCost(ActionResult, ActionFlags))
+		return false;
 
-		Usable->ApplyCost(Source->Scripting, ActionResult);
-	}
-	// Apply item cost
-	else {
-		size_t Index;
-		if(!Source->Inventory->FindItem(Usable->AsItem(), Index, (size_t)InventorySlot))
-			return false;
-
-		Source->Inventory->UpdateItemCount(_Slot(BagType::INVENTORY, Index), -1);
-		DecrementItem = true;
-		if(Usable->IsUnlockable()) {
-			Source->Character->Unlocks[Usable->ID].Level = 1;
-			ItemUnlocked = true;
-		}
-		else if(Usable->IsKey()) {
-			Source->Inventory->GetBag(BagType::KEYS).Slots.push_back(_InventorySlot(Usable->AsItem(), 1));
-			KeyUnlocked = true;
-		}
-	}
+	// Set skill flag
+	if(Usable->IsSkill())
+		ActionFlags |= ActionResultFlag::SKILL;
 
 	// Update stats
 	Source->UpdateStats(ActionResult.Source);
@@ -135,14 +116,11 @@ bool _Action::Start(_Object *Source, ScopeType Scope) {
 	// Build packet for results
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::ACTION_START);
-	Packet.WriteBit(DecrementItem);
-	Packet.WriteBit(ItemUnlocked);
-	Packet.WriteBit(KeyUnlocked);
+	Packet.Write<ActionResultFlag>(ActionFlags);
 
 	// Write action used
-	Packet.WriteBit(Usable->IsSkill());
 	Packet.Write<uint16_t>(Usable->NetworkID);
-	Packet.Write<char>((char)Source->Character->Action.InventorySlot);
+	Packet.Write<uint8_t>(Source->Character->Action.InventorySlot);
 	Packet.Write<float>(AttackDelay);
 	Packet.Write<float>(AttackTime);
 
@@ -180,7 +158,7 @@ bool _Action::Apply(ae::_Buffer &Data, _Object *Source, ScopeType Scope) {
 		ActionResult.Target.Object = Target;
 
 		// Call Use script
-		Source->Character->Action.Usable->Use(Source->Scripting, ActionResult);
+		Source->Character->Action.Usable->CallUse(Source->Scripting, ActionResult);
 
 		// Update objects
 		ActionResult.Source.Object->UpdateStats(ActionResult.Source);

@@ -867,7 +867,7 @@ int _Scripting::ObjectSetAction(lua_State *LuaState) {
 	ActionResult.Source.Object = Object;
 	ActionResult.Scope = ScopeType::BATTLE;
 	ActionResult.ActionUsed = Object->Character->Action;
-	if(!Object->Character->Action.Usable->CanUse(Object->Scripting, ActionResult)) {
+	if(!Object->Character->Action.Usable->CallCanUse(Object->Scripting, ActionResult)) {
 		Object->Character->Action.Usable = nullptr;
 		lua_pushboolean(LuaState, false);
 	}

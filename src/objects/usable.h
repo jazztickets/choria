@@ -32,6 +32,7 @@ class _Scripting;
 class _Object;
 class _BaseItem;
 class _Skill;
+class _Action;
 struct _Slot;
 struct _Cursor;
 struct _Vendor;
@@ -39,6 +40,19 @@ struct _ActionResult;
 namespace ae {
 	class _Texture;
 }
+
+// Enumerations
+enum class ActionResultFlag : uint8_t {
+	NONE      = 0,
+	SKILL     = 1 << 0,
+	DECREMENT = 1 << 1,
+	KEY       = 1 << 2,
+	UNLOCK    = 1 << 3,
+};
+
+inline bool operator&(const ActionResultFlag &Left, const ActionResultFlag &Right) { return (uint8_t)Left & (uint8_t)Right; }
+inline ActionResultFlag operator|(const ActionResultFlag &Left, const ActionResultFlag &Right) { return (ActionResultFlag)((uint8_t)Left | (uint8_t)Right); }
+inline ActionResultFlag &operator|=(ActionResultFlag &Left, ActionResultFlag Right) { return Left = Left | Right; }
 
 // An object that goes into an action bar slot
 class _Usable {
@@ -51,6 +65,8 @@ class _Usable {
 		// Objects
 		const _BaseItem *AsItem() const { return (const _BaseItem *)this; }
 		const _Skill *AsSkill() const { return (const _Skill *)this; }
+
+		// Types
 		virtual bool IsSkill() const { return false; }
 		virtual bool IsConsumable() const { return false; }
 		virtual bool IsKey() const { return false; }
@@ -64,16 +80,19 @@ class _Usable {
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		// Scripts
-		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		bool GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const;
-		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void ApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void Use(_Scripting *Scripting, _ActionResult &ActionResult) const;
-		void PlaySound(_Scripting *Scripting) const;
+		bool CallCanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		bool CallGetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const;
+		void CallStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void CallApplyCost(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void CallUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
+		void CallPlaySound(_Scripting *Scripting) const;
+
+		// Requirements
+		virtual bool ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const { return true; }
 		bool CheckScope(ScopeType CheckScope) const;
 
 		// Targetting
-		bool UseMouseTargetting() const { return Target == TargetType::SELF || Target == TargetType::ENEMY || Target == TargetType::ALLY || Target == TargetType::ANY; }
+		bool UseMouseTargetting() const { return Target != TargetType::NONE; }
 		bool CanTarget(_Object *SourceObject, _Object *TargetObject) const;
 		bool CanTargetEnemy() const {  return Target == TargetType::ENEMY || Target == TargetType::ANY; }
 		bool CanTargetAlly() const {  return Target == TargetType::SELF || Target == TargetType::ALLY || Target == TargetType::ANY; }
