@@ -20,25 +20,21 @@
 // Libraries
 #include <objects/usable.h>
 
-// Forward Declarations
-
 // Classes
-class _Skill : public _Usable {
+class _BaseSkill : public _Usable {
 
 	public:
 
-		_Skill();
+		_BaseSkill();
 
 		bool IsSkill() const override { return true; }
 		void DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
 		bool ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const override;
 
-		int Experience;
-
 	private:
 
 };
 
-inline bool CompareSkills(const _Skill *First, const _Skill *Second) {
+inline bool CompareSkills(const _BaseSkill *First, const _BaseSkill *Second) {
 	return First->Name < Second->Name;
 }

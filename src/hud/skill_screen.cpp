@@ -54,9 +54,9 @@ void _SkillScreen::Init() {
 	glm::vec2 ButtonSize(23, 23);
 
 	// Get all player skills
-	std::list<const _Skill *> SortedSkills;
+	std::list<const _BaseSkill *> SortedSkills;
 	for(auto &SkillID : HUD->Player->Character->Skills) {
-		const _Skill *Skill = &PlayState.Stats->Skills.at(SkillID.first);
+		const _BaseSkill *Skill = &PlayState.Stats->Skills.at(SkillID.first);
 		if(!Skill)
 			continue;
 
@@ -153,15 +153,12 @@ void _SkillScreen::ClearSkills() {
 }
 
 // Equip a skill
-void _SkillScreen::EquipSkill(const _Skill *Skill) {
+void _SkillScreen::EquipSkill(const _BaseSkill *Skill) {
 	if(!Skill)
 		return;
 
 	// Check skill
 	if(!HUD->Player->Character->HasLearned(Skill))
-		return;
-
-	if(!HUD->Player->Character->Skills[Skill->ID])
 		return;
 
 	// Find existing action

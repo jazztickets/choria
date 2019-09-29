@@ -151,7 +151,7 @@ struct _MinigameStat {
 struct _WeaponType {
 	std::string ID;
 	std::string Name;
-	std::vector<const _Skill *> Skills;
+	std::vector<const _BaseSkill *> Skills;
 };
 
 struct _LightType {
@@ -193,7 +193,7 @@ class _Stats {
 
 		// Objects
 		std::unordered_map<std::string, _BaseItem> Items;
-		std::unordered_map<std::string, _Skill> Skills;
+		std::unordered_map<std::string, _BaseSkill> Skills;
 		std::unordered_map<std::string, _WeaponType> WeaponTypes;
 		std::unordered_map<std::string, _Buff> Buffs;
 		std::unordered_map<std::string, _Portrait> Portraits;
@@ -212,7 +212,7 @@ class _Stats {
 		// Indexes
 		std::unordered_map<std::string, ae::NetworkIDType> MapsIndex;
 		std::unordered_map<uint16_t, const _BaseItem *> ItemsIndex;
-		std::unordered_map<uint16_t, const _Skill *> SkillsIndex;
+		std::unordered_map<uint16_t, const _BaseSkill *> SkillsIndex;
 		std::unordered_map<uint16_t, const _Buff *> BuffsIndex;
 		std::unordered_map<uint8_t, const _Model *> ModelsIndex;
 		std::unordered_map<uint8_t, const _Portrait *> PortraitsIndex;
@@ -231,7 +231,7 @@ class _Stats {
 		const char *GetString(tinyxml2::XMLElement *Node, const char *Attribute, bool Required=true);
 		const ae::_Texture *GetTexture(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _BaseItem *GetItem(tinyxml2::XMLElement *Node, const char *Attribute, bool AllowNone=false);
-		const _Skill *GetSkill(tinyxml2::XMLElement *Node, const char *Attribute);
+		const _BaseSkill *GetSkill(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _MonsterStat *GetMonster(tinyxml2::XMLElement *Node, const char *Attribute);
 		ScopeType GetScope(tinyxml2::XMLElement *Node, const char *Attribute);
 		const _WeaponType *GetWeaponType(tinyxml2::XMLElement *Node, const char *Attribute);

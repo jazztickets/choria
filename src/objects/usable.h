@@ -31,7 +31,7 @@ const int TOOLTIP_SPACING = 36;
 class _Scripting;
 class _Object;
 class _BaseItem;
-class _Skill;
+class _BaseSkill;
 class _Action;
 struct _Slot;
 struct _Cursor;
@@ -64,7 +64,7 @@ class _Usable {
 
 		// Objects
 		const _BaseItem *AsItem() const { return (const _BaseItem *)this; }
-		const _Skill *AsSkill() const { return (const _Skill *)this; }
+		const _BaseSkill *AsSkill() const { return (const _BaseSkill *)this; }
 
 		// Types
 		virtual bool IsSkill() const { return false; }

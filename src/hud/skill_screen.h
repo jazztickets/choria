@@ -22,7 +22,7 @@
 #include <cstdint>
 
 // Forward Declarations
-class _Skill;
+class _BaseSkill;
 
 // Classes
 class _SkillScreen : public _Screen {
@@ -38,7 +38,7 @@ class _SkillScreen : public _Screen {
 		void Render(double BlendFactor) override;
 
 		void ClearSkills();
-		void EquipSkill(const _Skill *Skill);
+		void EquipSkill(const _BaseSkill *Skill);
 
 	private:
 

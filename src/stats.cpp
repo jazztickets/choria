@@ -107,7 +107,7 @@ const _BaseItem *_Stats::GetItem(tinyxml2::XMLElement *Node, const char *Attribu
 }
 
 // Get a valid skill from an id attribute
-const _Skill *_Stats::GetSkill(tinyxml2::XMLElement *Node, const char *Attribute) {
+const _BaseSkill *_Stats::GetSkill(tinyxml2::XMLElement *Node, const char *Attribute) {
 	std::string Value = GetString(Node, Attribute);
 	const auto &Iterator = Skills.find(Value);
 	if(Iterator == Skills.end())
@@ -342,7 +342,7 @@ void _Stats::LoadData(const std::string &Path) {
 	// Load skills
 	NetworkID = 1;
 	for(tinyxml2::XMLElement *Node = Nodes["skills"]->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement()) {
-		_Skill Skill;
+		_BaseSkill Skill;
 		Skill.ID = GetString(Node, "id");
 		if(Items.find(Skill.ID) != Items.end())
 			throw std::runtime_error("Duplicate skill id '" + Skill.ID + "' in " + Path);
@@ -381,7 +381,7 @@ void _Stats::LoadData(const std::string &Path) {
 
 		// Load skills granted
 		for(tinyxml2::XMLElement *SkillNode = Node->FirstChildElement("skill"); SkillNode != nullptr; SkillNode = SkillNode->NextSiblingElement()) {
-			const _Skill *Skill = GetSkill(SkillNode, "id");
+			const _BaseSkill *Skill = GetSkill(SkillNode, "id");
 			WeaponType.Skills.push_back(Skill);
 		}
 

@@ -520,7 +520,7 @@ void _HUD::Update(double FrameTime) {
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.Usable = (const _Skill *)HitElement->UserData;//PlayState.Stats->SkillsIndex.at((uint16_t)Tooltip.Slot.Index);
+				Tooltip.Usable = (const _BaseSkill *)HitElement->UserData;
 			} break;
 			case WINDOW_ACTIONBAR: {
 				if(Tooltip.Slot.Index < Player->Character->ActionBar.size())

@@ -28,12 +28,11 @@
 #include <glm/vec4.hpp>
 
 // Constructor
-_Skill::_Skill() :
-	Experience(0) {
+_BaseSkill::_BaseSkill() {
 }
 
 // Draw skill tooltip
-void _Skill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
+void _BaseSkill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
 	if(!Player)
 		return;
 
@@ -92,7 +91,7 @@ void _Skill::DrawTooltip(const glm::vec2 &Position, const _Object *Player, const
 }
 
 // Apply cost and return non zero flags to continue with action result
-bool _Skill::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const {
+bool _BaseSkill::ApplyCost(_ActionResult &ActionResult, ActionResultFlag &ResultFlags) const {
 	CallApplyCost(ActionResult.Source.Object->Scripting, ActionResult);
 
 	return true;

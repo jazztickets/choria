@@ -567,7 +567,7 @@ bool _Character::GetActionFromActionBar(_Action &ReturnAction, size_t Slot) {
 }
 
 // Return true if the object has the skill unlocked
-bool _Character::HasLearned(const _Skill *Skill) const {
+bool _Character::HasLearned(const _BaseSkill *Skill) const {
 	if(!Skill)
 		return false;
 
