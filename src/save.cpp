@@ -123,7 +123,7 @@ void _Save::GetSettings() {
 		std::istringstream Stream(Database->GetString(0));
 		std::string Errors;
 		if(!Json::parseFromStream(Reader, Stream, &Data, &Errors))
-			throw std::runtime_error("_Save::GetSettings: " + Errors);
+			throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " " + Errors);
 
 		// Get settings
 		Secret = Data["secret"].asUInt64();

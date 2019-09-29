@@ -38,7 +38,7 @@ _Fighter::_Fighter(_Object *Object) :
 // Create a UI element for battle
 void _Fighter::CreateBattleElement(ae::_Element *Parent) {
 	if(BattleElement)
-		throw std::runtime_error("_Fighter::CreateBattleElement: BattleElement already exists!");
+		throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " BattleElement already exists!");
 
 	BattleElement = new ae::_Element();
 	BattleElement->Name = "battle_element";

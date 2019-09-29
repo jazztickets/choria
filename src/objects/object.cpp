@@ -635,7 +635,7 @@ void _Object::UnserializeSaveData(const std::string &JsonString) {
 	std::istringstream Stream(JsonString);
 	std::string Errors;
 	if(!Json::parseFromStream(Reader, Stream, &Data, &Errors))
-		throw std::runtime_error("_Object::UnserializeSaveData: " + Errors);
+		throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " " + Errors);
 
 	// Get stats
 	Json::Value StatsNode = Data["stats"];

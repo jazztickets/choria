@@ -58,7 +58,7 @@ void _Inventory::Serialize(ae::_Buffer &Data) {
 // Serialize a inventory slot
 void _Inventory::SerializeSlot(ae::_Buffer &Data, const _Slot &Slot) {
 	if(Slot.Type == BagType::NONE)
-		throw std::runtime_error(std::string(__FUNCTION__) + " - Bag is NULL");
+		throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " - Bag is NULL");
 
 	// Slot index
 	Slot.Serialize(Data);

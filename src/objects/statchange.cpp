@@ -37,7 +37,7 @@ _StatChange::_StatChange() :
 // Serialize network
 void _StatChange::Serialize(ae::_Buffer &Data) {
 	if(!Object)
-		throw std::runtime_error("_StatChange::Serialize: Object is null!");
+		throw std::runtime_error(std::string(__PRETTY_FUNCTION__) + " - Object is null!");
 
 	// Write header
 	Data.Write<ae::NetworkIDType>(Object->NetworkID);
