@@ -192,7 +192,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			}
 		}
 
-		if(Tooltip.InventorySlot.Item) {
+		if(Tooltip.Usable) {
 			switch(Tooltip.Window) {
 				case WINDOW_TRADEYOURS:
 				case WINDOW_EQUIPMENT:
@@ -243,11 +243,11 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				case WINDOW_SKILLS:
 					if(MouseEvent.Button == SDL_BUTTON_LEFT) {
 						//TODO check if skill can be used
-						//if(Player->Character->Skills[Tooltip.InventorySlot.Item->ID] > 0)
+						//if(Player->Character->Skills[Tooltip.Usable->ID] > 0)
 							Cursor = Tooltip;
 					}
 					else if(MouseEvent.Button == SDL_BUTTON_RIGHT) {
-						SkillScreen->EquipSkill(Tooltip.InventorySlot.Item->AsSkill());
+						SkillScreen->EquipSkill(Tooltip.Usable->AsSkill());
 					}
 				break;
 			}
@@ -331,7 +331,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 			}
 		}
 		// Released an item
-		else if(Cursor.InventorySlot.Item) {
+		else if(Cursor.Usable) {
 
 			// Check source window
 			switch(Cursor.Window) {
@@ -360,21 +360,21 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						break;
 						// Sell an item
 						case WINDOW_VENDOR:
-							VendorScreen->SellItem(&Cursor, Cursor.InventorySlot.Count);
+							VendorScreen->SellItem(&Cursor, Cursor.ItemCount);
 						break;
 						// Upgrade an item
 						case WINDOW_BLACKSMITH:
 
 							// Replace item if dragging onto upgrade slot only
-							if(Cursor.InventorySlot.Item->IsEquippable() && Tooltip.Slot.Index != 1)
+							if(Cursor.Usable->IsEquippable() && Tooltip.Slot.Index != 1)
 								BlacksmithScreen->UpgradeSlot = Cursor.Slot;
 						break;
 						// Move item to actionbar
 						case WINDOW_ACTIONBAR:
-							if((Cursor.Window == WINDOW_EQUIPMENT || Cursor.Window == WINDOW_INVENTORY) && !Cursor.InventorySlot.Item->IsSkill())
-								SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.InventorySlot.Item);
+							if((Cursor.Window == WINDOW_EQUIPMENT || Cursor.Window == WINDOW_INVENTORY) && !Cursor.Usable->IsSkill())
+								SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.Usable);
 							else if(Cursor.Window == WINDOW_ACTIONBAR)
-								SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
+								SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.Usable);
 						break;
 						// Delete item
 						case -1: {
@@ -399,13 +399,13 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 						case WINDOW_INVENTORY:
 
 							// Swap actionbar with inventory
-							if(Tooltip.InventorySlot.Item && !Tooltip.InventorySlot.Item->IsSkill())
-								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), Tooltip.InventorySlot.Item);
+							if(Tooltip.Usable && !Tooltip.Usable->IsSkill())
+								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), Tooltip.Usable);
 							else
 								SetActionBar(Cursor.Slot.Index, Player->Character->ActionBar.size(), nullptr);
 						break;
 						case WINDOW_ACTIONBAR:
-							SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.InventorySlot.Item);
+							SetActionBar(Tooltip.Slot.Index, Cursor.Slot.Index, Cursor.Usable);
 						break;
 						default:
 
@@ -419,7 +419,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 				break;
 				case WINDOW_SKILLS:
 					if(Tooltip.Window == WINDOW_ACTIONBAR) {
-						SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.InventorySlot.Item);
+						SetActionBar(Tooltip.Slot.Index, Player->Character->ActionBar.size(), Cursor.Usable);
 					}
 				break;
 			}
@@ -439,7 +439,7 @@ void _HUD::HandleMouseButton(const ae::_MouseEvent &MouseEvent) {
 
 		if(Player->Character->WaitingForTrade) {
 			if(MouseEvent.Button == SDL_BUTTON_LEFT) {
-				if(!Cursor.InventorySlot.Item) {
+				if(!Cursor.Usable) {
 
 					// Check for accept button
 					ae::_Element *AcceptButton = ae::Assets.Elements["button_trade_accept_yours"];
@@ -482,49 +482,49 @@ void _HUD::Update(double FrameTime) {
 			case WINDOW_INVENTORY:
 			case WINDOW_TRADEYOURS: {
 				if(Player->Inventory->IsValidSlot(Tooltip.Slot)) {
-					Tooltip.InventorySlot = Player->Inventory->GetSlot(Tooltip.Slot);
-					if(Tooltip.InventorySlot.Item && Player->Character->Vendor)
-						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Character->Vendor, Tooltip.InventorySlot.Count, false, Tooltip.InventorySlot.Upgrades);
+					Tooltip.SetInventorySlot(Player->Inventory->GetSlot(Tooltip.Slot));
+					if(Tooltip.Usable && Player->Character->Vendor)
+						Tooltip.Cost = Tooltip.Usable->GetPrice(Player->Character->Vendor, Tooltip.ItemCount, false, Tooltip.ItemUpgrades);
 				}
 			} break;
 			case WINDOW_TRADETHEIRS: {
 				if(Player->Character->TradePlayer && Player->Character->TradePlayer->Inventory->IsValidSlot(Tooltip.Slot)) {
-					Tooltip.InventorySlot = Player->Character->TradePlayer->Inventory->GetSlot(Tooltip.Slot);
+					Tooltip.SetInventorySlot(Player->Character->TradePlayer->Inventory->GetSlot(Tooltip.Slot));
 				}
 			} break;
 			case WINDOW_VENDOR: {
 				if(Player->Character->Vendor && Tooltip.Slot.Index < Player->Character->Vendor->Items.size()) {
-					Tooltip.InventorySlot.Item = Player->Character->Vendor->Items[Tooltip.Slot.Index];
+					Tooltip.Usable = Player->Character->Vendor->Items[Tooltip.Slot.Index];
 					if(ae::Input.ModKeyDown(KMOD_SHIFT))
-						Tooltip.InventorySlot.Count = INVENTORY_INCREMENT_MODIFIER;
+						Tooltip.ItemCount = INVENTORY_INCREMENT_MODIFIER;
 					else
-						Tooltip.InventorySlot.Count = 1;
+						Tooltip.ItemCount = 1;
 
-					if(Tooltip.InventorySlot.Item)
-						Tooltip.Cost = Tooltip.InventorySlot.Item->GetPrice(Player->Character->Vendor, Tooltip.InventorySlot.Count, true);
+					if(Tooltip.Usable)
+						Tooltip.Cost = Tooltip.Usable->GetPrice(Player->Character->Vendor, Tooltip.ItemCount, true);
 				}
 			} break;
 			case WINDOW_TRADER: {
 				if(Player->Character->Trader) {
 					if(Tooltip.Slot.Index < Player->Character->Trader->Items.size())
-						Tooltip.InventorySlot.Item = Player->Character->Trader->Items[Tooltip.Slot.Index].Item;
+						Tooltip.Usable = Player->Character->Trader->Items[Tooltip.Slot.Index].Item;
 					else if(Tooltip.Slot.Index == TRADER_MAXITEMS)
-						Tooltip.InventorySlot.Item = Player->Character->Trader->RewardItem;
+						Tooltip.Usable = Player->Character->Trader->RewardItem;
 				}
 			} break;
 			case WINDOW_BLACKSMITH: {
 				if(Player->Character->Blacksmith && Player->Inventory->IsValidSlot(BlacksmithScreen->UpgradeSlot)) {
-					Tooltip.InventorySlot = Player->Inventory->GetSlot(BlacksmithScreen->UpgradeSlot);
-					if(Tooltip.InventorySlot.Upgrades < Tooltip.InventorySlot.Item->MaxLevel)
-						Tooltip.InventorySlot.Upgrades++;
+					Tooltip.SetInventorySlot(Player->Inventory->GetSlot(BlacksmithScreen->UpgradeSlot));
+					if(Tooltip.ItemUpgrades < Tooltip.Usable->MaxLevel)
+						Tooltip.ItemUpgrades++;
 				}
 			} break;
 			case WINDOW_SKILLS: {
-				Tooltip.InventorySlot.Item = PlayState.Stats->ItemsIndex.at((uint32_t)Tooltip.Slot.Index);
+				Tooltip.Usable = PlayState.Stats->ItemsIndex.at((uint32_t)Tooltip.Slot.Index);
 			} break;
 			case WINDOW_ACTIONBAR: {
 				//if(Tooltip.Slot.Index < Player->Character->ActionBar.size())
-				//	Tooltip.InventorySlot.Item = Player->Character->ActionBar[Tooltip.Slot.Index].Item;
+				//	Tooltip.Usable = Player->Character->ActionBar[Tooltip.Slot.Index].Item;
 			} break;
 			case WINDOW_BATTLE: {
 				_Object *MouseObject = (_Object *)HitElement->UserData;
@@ -719,39 +719,43 @@ void _HUD::Render(_Map *Map, double BlendFactor, double Time) {
 
 		// Draw item information
 		DrawCursorItem();
-		const _BaseItem *Item = Tooltip.InventorySlot.Item;
-		if(Item) {
+		const _Usable *Usable = Tooltip.Usable;
+		if(Usable) {
 
 			// Compare items
 			_Slot CompareSlot;
-			Item->GetEquipmentSlot(CompareSlot);
-			if(Item->IsEquippable() && (Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH)) {
 
-				// Get equipment slot to compare
-				switch(Tooltip.Window) {
-					case WINDOW_BLACKSMITH:
-						CompareSlot = BlacksmithScreen->UpgradeSlot;
-					break;
-					case WINDOW_EQUIPMENT:
-						CompareSlot.Type = BagType::NONE;
-					break;
-					default:
-					break;
-				}
+			if(Usable->IsEquippable()) {
+				const _BaseItem *Item = Usable->AsItem();
+				Item->GetEquipmentSlot(CompareSlot);
+				if(Tooltip.Window == WINDOW_EQUIPMENT || Tooltip.Window == WINDOW_INVENTORY || Tooltip.Window == WINDOW_VENDOR || Tooltip.Window == WINDOW_TRADETHEIRS || Tooltip.Window == WINDOW_BLACKSMITH) {
 
-				// Check for valid slot
-				if(Player->Inventory->IsValidSlot(CompareSlot)) {
+					// Get equipment slot to compare
+					switch(Tooltip.Window) {
+						case WINDOW_BLACKSMITH:
+							CompareSlot = BlacksmithScreen->UpgradeSlot;
+						break;
+						case WINDOW_EQUIPMENT:
+							CompareSlot.Type = BagType::NONE;
+						break;
+						default:
+						break;
+					}
 
-					// Draw equipped item tooltip
-					_Cursor EquippedTooltip;
-					EquippedTooltip.InventorySlot = Player->Inventory->GetSlot(CompareSlot);
-					if(EquippedTooltip.InventorySlot.Item)
-						EquippedTooltip.InventorySlot.Item->DrawTooltip(glm::vec2(0, -1), Player, EquippedTooltip, _Slot());
+					// Check for valid slot
+					if(Player->Inventory->IsValidSlot(CompareSlot)) {
+
+						// Draw equipped item tooltip
+						_Cursor EquippedTooltip;
+						EquippedTooltip.SetInventorySlot(Player->Inventory->GetSlot(CompareSlot));
+						if(EquippedTooltip.Usable)
+							EquippedTooltip.Usable->DrawTooltip(glm::vec2(0, -1), Player, EquippedTooltip, _Slot());
+					}
 				}
 			}
 
 			// Draw item tooltip
-			Item->DrawTooltip(ae::Input.GetMouse(), Player, Tooltip, CompareSlot);
+			Usable->DrawTooltip(ae::Input.GetMouse(), Player, Tooltip, CompareSlot);
 		}
 
 		// Draw status effects
@@ -1216,10 +1220,10 @@ void _HUD::StopTeleport() {
 
 // Draws the item under the cursor
 void _HUD::DrawCursorItem() {
-	if(Cursor.InventorySlot.Item) {
+	if(Cursor.Usable) {
 		glm::vec2 DrawPosition = ae::Input.GetMouse();
 		ae::Graphics.SetProgram(ae::Assets.Programs["ortho_pos_uv"]);
-		ae::Graphics.DrawScaledImage(DrawPosition, Cursor.InventorySlot.Item->Texture, ae::Assets.Colors["itemfade"]);
+		ae::Graphics.DrawScaledImage(DrawPosition, Cursor.Usable->Texture, ae::Assets.Colors["itemfade"]);
 	}
 }
 

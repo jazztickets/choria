@@ -21,3 +21,8 @@
 _Skill::_Skill() :
 	Experience(0) {
 }
+
+// Draw skill tooltip
+void _Skill::DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const {
+
+}

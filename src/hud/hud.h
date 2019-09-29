@@ -37,6 +37,7 @@ class _BlacksmithScreen;
 class _SkillScreen;
 class _Object;
 class _BaseItem;
+class _Usable;
 class _StatusEffect;
 class _Action;
 class _Scripting;
@@ -55,19 +56,28 @@ struct _Cursor {
 	_Cursor() { Reset(); }
 
 	void Reset() {
-		InventorySlot.Reset();
-		Cost = 0;
-		StatusEffect = nullptr;
 		Slot.Type = BagType::NONE;
 		Slot.Index = NOSLOT;
+		StatusEffect = nullptr;
+		Usable = nullptr;
+		ItemCount = 0;
+		ItemUpgrades = 0;
+		Cost = 0;
 		Window = -1;
 	}
 
 	bool IsEqual(size_t Slot, int Window) { return this->Slot.Index == Slot && this->Window == Window; }
+	void SetInventorySlot(_InventorySlot &InventorySlot) {
+		Usable = (const _Usable *)InventorySlot.Item;
+		ItemCount = InventorySlot.Count;
+		ItemUpgrades = InventorySlot.Upgrades;
+	}
 
-	_InventorySlot InventorySlot;
-	const _StatusEffect *StatusEffect;
 	_Slot Slot;
+	const _StatusEffect *StatusEffect;
+	const _Usable *Usable;
+	int ItemUpgrades;
+	int ItemCount;
 	int Cost;
 	int Window;
 };

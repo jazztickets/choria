@@ -37,18 +37,18 @@ class _BaseItem : public _Usable {
 
 		_BaseItem();
 
-		void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const;
+		void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const override;
 		void DrawDescription(_Scripting *Scripting, glm::vec2 &DrawPosition, int DrawLevel, bool ShowLevel, float Width, float SpacingY) const;
 
 		bool IsConsumable() const override { return Type == ItemType::CONSUMABLE; }
 		bool IsKey() const override { return Type == ItemType::KEY; }
 		bool IsUnlockable() const override { return Type == ItemType::UNLOCKABLE; }
-		bool IsEquippable() const { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
+		bool IsEquippable() const override { return Type >= ItemType::HELMET && Type <= ItemType::AMULET; }
 		bool IsStackable() const { return !IsEquippable(); }
 
 		void GetEquipmentSlot(_Slot &Slot) const;
 
-		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const;
+		int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const override;
 		int GetUpgradePrice(int Upgrades) const;
 
 		float GetAverageDamage(int Upgrades) const;

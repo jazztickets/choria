@@ -88,23 +88,23 @@ void _VendorScreen::Render(double BlendFactor) {
 }
 
 // Buys an item
-void _VendorScreen::BuyItem(_Cursor *Item, _Slot TargetSlot) {
+void _VendorScreen::BuyItem(_Cursor *Cursor, _Slot TargetSlot) {
 	_Slot VendorSlot;
-	VendorSlot.Index = Item->Slot.Index;
+	VendorSlot.Index = Cursor->Slot.Index;
 
 	// Notify server
 	ae::_Buffer Packet;
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(1);
-	Packet.Write<uint8_t>((uint8_t)Item->InventorySlot.Count);
+	Packet.Write<uint8_t>((uint8_t)Cursor->ItemCount);
 	VendorSlot.Serialize(Packet);
 	TargetSlot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
 }
 
 // Sell an item
-void _VendorScreen::SellItem(_Cursor *CursorItem, int Amount) {
-	if(!CursorItem->InventorySlot.Item || !HUD->Player->Character->Vendor)
+void _VendorScreen::SellItem(_Cursor *Cursor, int Amount) {
+	if(!Cursor->Usable || !HUD->Player->Character->Vendor)
 		return;
 
 	// Notify server
@@ -112,6 +112,6 @@ void _VendorScreen::SellItem(_Cursor *CursorItem, int Amount) {
 	Packet.Write<PacketType>(PacketType::VENDOR_EXCHANGE);
 	Packet.WriteBit(0);
 	Packet.Write<uint8_t>((uint8_t)Amount);
-	CursorItem->Slot.Serialize(Packet);
+	Cursor->Slot.Serialize(Packet);
 	PlayState.Network->SendPacket(Packet);
 }

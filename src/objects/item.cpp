@@ -164,8 +164,8 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	else {
 
 		// Draw upgrade level for items
-		if(Tooltip.InventorySlot.Upgrades) {
-			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.InventorySlot.Upgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
+		if(Tooltip.ItemUpgrades) {
+			ae::Assets.Fonts["hud_small"]->DrawText("Level " + std::to_string(Tooltip.ItemUpgrades), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
 			DrawPosition.y += SpacingY;
 		}
 	}
@@ -183,7 +183,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 		CompareInventory = Player->Inventory->GetSlot(CompareSlot);
 
 	bool StatDrawn = false;
-	int Upgrades = Tooltip.InventorySlot.Upgrades;
+	int Upgrades = Tooltip.ItemUpgrades;
 
 	// Damage
 	int DrawMinDamage = (int)GetMinDamage(Upgrades);
@@ -382,7 +382,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 	if(Player->Character->Vendor) {
 		std::stringstream Buffer;
 		if(Tooltip.Window == _HUD::WINDOW_VENDOR) {
-			Buffer << "Buy " << Tooltip.InventorySlot.Count << "x for " << Tooltip.Cost << " gold";
+			Buffer << "Buy " << Tooltip.ItemCount << "x for " << Tooltip.Cost << " gold";
 			ae::Assets.Fonts["hud_medium"]->DrawText(Buffer.str(), DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gold"]);
 			DrawPosition.y += SpacingY;
 			ae::Assets.Fonts["hud_small"]->DrawText("Right-click to buy", DrawPosition, ae::CENTER_BASELINE, ae::Assets.Colors["gray"]);
@@ -461,7 +461,7 @@ void _BaseItem::DrawTooltip(const glm::vec2 &Position, const _Object *Player, co
 		DrawPosition.y += ControlSpacingY;
 	}
 
-	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.InventorySlot.Count > 1) {
+	if(Tooltip.Window == _HUD::WINDOW_INVENTORY && Tooltip.ItemCount > 1) {
 		ae::Assets.Fonts["hud_small"]->DrawText("Ctrl+click to split", DrawPosition, ae::CENTER_BASELINE, InfoColor);
 		DrawPosition.y += SpacingY;
 	}

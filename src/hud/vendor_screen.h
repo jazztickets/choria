@@ -35,8 +35,8 @@ class _VendorScreen : public _Screen {
 
 		void Render(double BlendFactor) override;
 
-		void BuyItem(_Cursor *Item, _Slot TargetSlot=_Slot());
-		void SellItem(_Cursor *CursorItem, int Amount);
+		void BuyItem(_Cursor *Cursor, _Slot TargetSlot=_Slot());
+		void SellItem(_Cursor *Cursor, int Amount);
 
 	private:
 

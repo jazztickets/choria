@@ -21,12 +21,16 @@
 #include <enums.h>
 #include <string>
 #include <cstdint>
+#include <glm/vec2.hpp>
 
 // Forward Declarations
 class _Scripting;
 class _Object;
 class _BaseItem;
 class _Skill;
+struct _Slot;
+struct _Cursor;
+struct _Vendor;
 struct _ActionResult;
 namespace ae {
 	class _Texture;
@@ -47,9 +51,13 @@ class _Usable {
 		virtual bool IsConsumable() const { return false; }
 		virtual bool IsKey() const { return false; }
 		virtual bool IsUnlockable() const { return false; }
+		virtual bool IsEquippable() const { return false; }
+
+		// HUD
+		virtual void DrawTooltip(const glm::vec2 &Offset, const _Object *Player, const _Cursor &Tooltip, const _Slot &CompareSlot) const { }
+		virtual int GetPrice(const _Vendor *Vendor, int QueryCount, bool Buy, int Upgrades=0) const { return 0; }
 
 		// Scripts
-//		virtual bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		bool CanUse(_Scripting *Scripting, _ActionResult &ActionResult) const;
 		bool GetAttackTimes(_Scripting *Scripting, _Object *Object, double &AttackDelay, double &AttackTime, double &Cooldown) const;
 		void GetStats(_Scripting *Scripting, _ActionResult &ActionResult) const;
