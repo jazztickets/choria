@@ -16,7 +16,7 @@ import urllib
 import sqlite3
 import subprocess
 
-db_file = '../../working/stats/stats.db'
+db_file = '../data/stats.db'
 db = sqlite3.connect(db_file)
 db.execute("PRAGMA foreign_keys=ON")
 cursor = db.cursor()
