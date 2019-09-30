@@ -133,7 +133,6 @@ void _EditorState::Close() {
 
 	ClearTextures();
 	ClearEvents();
-	CloseCopy();
 	CloseMap();
 }
 
@@ -585,13 +584,14 @@ void _EditorState::AllocateCopy() {
 
 // Free memory used by copy and paste buffer
 void _EditorState::CloseCopy() {
-	if(CopyBuffer && Map) {
-		for(int i = 0; i < Map->Size.x; i++)
-			delete[] CopyBuffer[i];
-		delete[] CopyBuffer;
+	if(!CopyBuffer || !Map)
+		return;
 
-		CopyBuffer = nullptr;
-	}
+	for(int i = 0; i < Map->Size.x; i++)
+		delete[] CopyBuffer[i];
+	delete[] CopyBuffer;
+
+	CopyBuffer = nullptr;
 }
 
 // Draw information about the brush
@@ -1103,7 +1103,6 @@ void _EditorState::LoadMap() {
 	// Set new map
 	if(NewMap) {
 		CloseMap();
-		CloseCopy();
 
 		// Set map
 		Map = NewMap;
@@ -1222,6 +1221,8 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 
 // Deletes the map
 void _EditorState::CloseMap() {
+	CloseCopy();
+
 	delete Map;
 	Map = nullptr;
 }
