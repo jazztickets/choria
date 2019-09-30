@@ -576,8 +576,6 @@ void _EditorState::AllocateCopy() {
 	if(!Map)
 		return;
 
-	CloseCopy();
-
 	CopyBuffer = new _Tile*[Map->Size.x];
 	for(int i = 0; i < Map->Size.x; i++)
 		CopyBuffer[i] = new _Tile[Map->Size.y];
@@ -1105,6 +1103,7 @@ void _EditorState::LoadMap() {
 	// Set new map
 	if(NewMap) {
 		CloseMap();
+		CloseCopy();
 
 		// Set map
 		Map = NewMap;
