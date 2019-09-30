@@ -866,8 +866,11 @@ void _Map::Load(const std::string &Path, bool Static) {
 					char Buffer[1024];
 					File.ignore(1);
 					File.getline(Buffer, 1024, '\n');
-					if(!Server)
-						Tile->BaseTextureIndex = TileAtlas->TileMap.at(Buffer).Index;
+					if(!Server) {
+						const ae::_TileData &TileData = TileAtlas->TileMap.at(Buffer);
+						Tile->BaseTextureIndex = TileData.Index;
+						Tile->Hierarchy = TileData.Hierarchy;
+					}
 				}
 			} break;
 			// Zone
@@ -1277,7 +1280,7 @@ uint32_t _Map::GetTransition(_Tile &Tile, const glm::ivec2 &CheckPosition, uint3
 	_Tile &TileCheck = Tiles[CheckCoord.x][CheckCoord.y];
 
 	// Check hierarchy
-	if(Tile.BaseTextureIndex > TileCheck.BaseTextureIndex) {
+	if(Tile.Hierarchy < TileCheck.Hierarchy) {
 		Tile.TextureIndex[0] = Tile.BaseTextureIndex;
 		Tile.TextureIndex[1] = TileCheck.BaseTextureIndex;
 		return Bit;

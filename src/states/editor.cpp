@@ -1198,8 +1198,10 @@ void _EditorState::ApplyBrush(const glm::vec2 &Position) {
 			Map->GetTile(TilePosition, Tile);
 
 			// Apply filters
-			if(Filter & MAP_RENDER_TEXTURE)
+			if(Filter & MAP_RENDER_TEXTURE) {
 				Tile.BaseTextureIndex = Brush->BaseTextureIndex;
+				Tile.Hierarchy = Map->TileAtlas->TileMapIndex.at(Tile.BaseTextureIndex)->Hierarchy;
+			}
 			if(Filter & MAP_RENDER_WALL)
 				Tile.Wall = Brush->Wall;
 			if(Filter & MAP_RENDER_ZONE)
