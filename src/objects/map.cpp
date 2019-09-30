@@ -35,7 +35,6 @@
 #include <ae/peer.h>
 #include <ae/graphics.h>
 #include <ae/random.h>
-#include <ae/light.h>
 #include <server.h>
 #include <constants.h>
 #include <stats.h>
@@ -704,12 +703,13 @@ void _Map::RenderTiles(const std::string &Program, glm::vec4 &Bounds, const glm:
 		// Iterate over viewable tiles
 		for(int j = (int)Bounds[1]; j < Bounds[3]; j++) {
 			for(int i = (int)Bounds[0]; i < Bounds[2]; i++) {
+				const _Tile &Tile = Tiles[i][j];
 
 				// Build buffer with background, foreground, and transition layers
-				glm::vec4 BackCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[0]);
-				glm::vec4 ForeCoords = TileAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[1]);
-				glm::vec4 EdgeCoords = TransAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[2]);
-				glm::vec4 CornerCoords = TransAtlas->GetTextureCoords(Tiles[i][j].TextureIndex[3]);
+				glm::vec4 BackCoords = TileAtlas->GetTextureCoords(Tile.TextureIndex[0]);
+				glm::vec4 ForeCoords = TileAtlas->GetTextureCoords(Tile.TextureIndex[1]);
+				glm::vec4 EdgeCoords = TransAtlas->GetTextureCoords(Tile.TextureIndex[2]);
+				glm::vec4 CornerCoords = TransAtlas->GetTextureCoords(Tile.TextureIndex[3]);
 				TileVertices[VertexIndex++] = { i + 0.0f, j + 0.0f, BackCoords[0], BackCoords[1], ForeCoords[0], ForeCoords[1], EdgeCoords[0], EdgeCoords[1], CornerCoords[0], CornerCoords[1] };
 				TileVertices[VertexIndex++] = { i + 1.0f, j + 0.0f, BackCoords[2], BackCoords[1], ForeCoords[2], ForeCoords[1], EdgeCoords[2], EdgeCoords[1], CornerCoords[2], CornerCoords[1] };
 				TileVertices[VertexIndex++] = { i + 0.0f, j + 1.0f, BackCoords[0], BackCoords[3], ForeCoords[0], ForeCoords[3], EdgeCoords[0], EdgeCoords[3], CornerCoords[0], CornerCoords[3] };
