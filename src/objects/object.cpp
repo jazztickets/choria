@@ -335,6 +335,9 @@ void _Object::UpdateMonsterAI(double FrameTime) {
 void _Object::Render(const _Object *ClientPlayer) {
 	if(Map && Model->Texture) {
 
+		// Setup shader
+		ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
+
 		// Draw debug server position
 		glm::vec3 DrawPosition;
 		if(Character->HUD && Character->HUD->ShowDebug) {
@@ -739,7 +742,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 		Data.Write<uint8_t>(Character->Portrait->NetworkID);
 	else
 		Data.Write<uint8_t>(0);
-	Data.Write<uint16_t>(Model->NetworkID);
+	Data.Write<uint8_t>(Model->NetworkID);
 	Data.Write<uint8_t>(Light);
 	Data.WriteBit(Character->Invisible);
 }
@@ -748,7 +751,7 @@ void _Object::SerializeCreate(ae::_Buffer &Data) {
 void _Object::UnserializeCreate(ae::_Buffer &Data) {
 	Position = Data.Read<glm::ivec2>();
 	Name = Data.ReadString();
-	uint16_t PortraitID = Data.Read<uint16_t>();
+	uint8_t PortraitID = Data.Read<uint8_t>();
 	Model = Stats->GetModel(Data.Read<uint8_t>());
 	Light = Data.Read<uint8_t>();
 	bool Invisible = Data.ReadBit();

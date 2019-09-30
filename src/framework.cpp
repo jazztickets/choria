@@ -445,7 +445,6 @@ void _Framework::LoadAssets() {
 
 	// Load tables
 	ae::Assets.LoadAtlasDirectory("textures/map/", glm::ivec2(MAP_TILE_WIDTH, MAP_TILE_HEIGHT), 1);
-	ae::Assets.LoadLayers("data/layers.tsv");
 	ae::Assets.LoadPrograms("shaders/programs.tsv");
 	ae::Assets.LoadColors("ui/colors.tsv");
 	ae::Assets.LoadStyles("ui/styles.tsv");

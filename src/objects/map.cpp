@@ -614,7 +614,7 @@ void _Map::Render(ae::_Camera *Camera, ae::_Framebuffer *Framebuffer, _Object *C
 	// Draw layers
 	RenderTiles("map", Bounds, glm::vec3(0.0f), false);
 
-	// Setup shader
+	// Set program for objects
 	ae::Graphics.SetProgram(ae::Assets.Programs["map_object"]);
 	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->TextureTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
 	glUniformMatrix4fv(ae::Assets.Programs["map_object"]->ModelTransformID, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
