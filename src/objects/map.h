@@ -96,7 +96,8 @@ class _Map : public ae::_BaseObject, public micropather::Graph {
 
 		void AllocateMap();
 		void ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize);
-		void InitAtlas(const std::string AtlasPath, bool Static=false);
+		void InitAtlas(const std::string AtlasPath);
+		void InitVertices(bool Static=false);
 
 		void Update(double FrameTime) override;
 

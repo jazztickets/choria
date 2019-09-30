@@ -181,15 +181,17 @@ void _Map::ResizeMap(glm::ivec2 Offset, glm::ivec2 NewSize) {
 	// Init new data
 	Tiles = NewTiles;
 	Size = NewSize;
-	if(OldTextureAtlas != "")
+	if(OldTextureAtlas != "") {
 		InitAtlas(OldTextureAtlas);
+		InitVertices();
+	}
 
 	// Update index
 	IndexEvents();
 }
 
 // Initialize the texture atlas
-void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
+void _Map::InitAtlas(const std::string AtlasPath) {
 
 	// Load tile atlas
 	TileAtlas = ae::Assets.Atlases[AtlasPath];
@@ -200,7 +202,10 @@ void _Map::InitAtlas(const std::string AtlasPath, bool Static) {
 	TransAtlas = ae::Assets.Atlases[MAP_TRANS_ATLAS];
 	if(!TransAtlas)
 		throw std::runtime_error("Can't find atlas: " + MAP_TRANS_ATLAS);
+}
 
+// Initialize vbo and vertex data
+void _Map::InitVertices(bool Static) {
 	GLuint TileVertexCount = (GLuint)(4 * Size.x * Size.y);
 	GLuint TileFaceCount = (GLuint)(2 * Size.x * Size.y);
 
@@ -803,6 +808,9 @@ void _Map::Load(const std::string &Path, bool Static) {
 	if(PrefixPosition != std::string::npos)
 		Name = Path.substr(PrefixPosition + MAPS_PATH.length(), Path.find(".map.gz") - MAPS_PATH.length());
 
+	if(UseAtlas)
+		InitAtlas("textures/map/default.png");
+
 	// Load background map
 	/*
 	if(UseAtlas && MapStat->BackgroundMapID) {
@@ -854,8 +862,12 @@ void _Map::Load(const std::string &Path, bool Static) {
 			} break;
 			// Texture index
 			case 'b': {
-				if(Tile)
-					File >> Tile->BaseTextureIndex;
+				if(Tile) {
+					char Buffer[1024];
+					File.ignore(1);
+					File.getline(Buffer, 1024, '\n');
+					Tile->BaseTextureIndex = TileAtlas->TileMap.at(Buffer).Index;
+				}
 			} break;
 			// Zone
 			case 'z': {
@@ -912,7 +924,7 @@ void _Map::Load(const std::string &Path, bool Static) {
 
 	// Initialize 2d tile rendering
 	if(UseAtlas) {
-		InitAtlas("textures/map/default.png", Static);
+		InitVertices(Static);
 		BuildLayers();
 	}
 
@@ -941,7 +953,7 @@ bool _Map::Save(const std::string &Path) {
 			const _Tile &Tile = Tiles[i][j];
 			Output << "T" << '\n';
 			if(Tile.BaseTextureIndex)
-				Output << "b " << Tile.BaseTextureIndex << '\n';
+				Output << "b " << TileAtlas->TileMapIndex.at(Tile.BaseTextureIndex)->ID << '\n';
 			if(!Tile.ZoneID.empty())
 				Output << "z " << Tile.ZoneID << '\n';
 			if(Tile.Event.Type != EventType::NONE)

@@ -1011,6 +1011,7 @@ void _EditorState::CreateMap() {
 	Map->UseAtlas = true;
 	Map->Size = Size;
 	Map->InitAtlas("textures/map/default.png");
+	Map->InitVertices();
 	Map->AllocateMap();
 	FilePath = NewMapFilenameTextBox->Text;
 
